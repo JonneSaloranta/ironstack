@@ -7,12 +7,12 @@
 </div>
 
 <div class="card">
-  <h3 style="margin-top:0;">{% trans "Current PRs" %}</h3>
+  <h3 style="margin-top:0;">{% trans "Current" %} <abbr title="{% trans "Personal Records" %}">PRs</abbr></h3>
   <dl>
     <dt>{% trans "Max weight" %}</dt>
     <dd>{% if records.max_weight %}{{ records.max_weight|weight:request.user }}{% else %}—{% endif %}</dd>
 
-    <dt>{% trans "Estimated 1RM" %}</dt>
+    <dt>{% trans "Estimated" %} <abbr title="{% trans "One-Rep Max" %}">1RM</abbr></dt>
     <dd>{% if records.estimated_1rm %}{{ records.estimated_1rm|weight:request.user }}{% else %}—{% endif %}</dd>
 
     <dt>{% trans "Best set volume" %}</dt>
@@ -27,7 +27,7 @@
   <h3 style="margin-top:0;">{% trans "Rep maxes" %}</h3>
   <ul class="prescription-list">
     {% for rep_count, weight in records.rep_specific_pr.items %}
-      <li>{{ rep_count }}RM: {% if weight %}{{ weight|weight:request.user }}{% else %}—{% endif %}</li>
+      <li>{{ rep_count }}<abbr title="{% trans "Rep Max" %}">RM</abbr>: {% if weight %}{{ weight|weight:request.user }}{% else %}—{% endif %}</li>
     {% endfor %}
   </ul>
 </div>

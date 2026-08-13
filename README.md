@@ -436,6 +436,33 @@ button beside "Back to programs" at the bottom, "New" sits directly
 under the "My programs" heading, above that list. 1 new test (311
 total).
 
+**Abbreviation tooltips, and BMI category ranges as actual weight.**
+RPE, RIR, 1RM, PR, the "5RM"-style rep-max shorthand, and BMI are all
+real jargon to a new user — every occurrence (form field labels
+included) now wraps the abbreviation in an HTML `<abbr title="...">`,
+so hovering (or a screen reader) reveals "Rate of Perceived Exertion",
+"Reps In Reserve", "One-Rep Max", "Personal Record"/"Personal Records",
+"Rep Max", and "Body Mass Index" respectively, without permanently
+lengthening the visible label. New `apps.core.formatting` module holds
+the canonical expansion text plus two small lazy helpers
+(`abbr_label`, `lazy_format_html`) for building a translatable,
+HTML-safe form-field label at class-definition time — genuinely
+necessary because a Django `Meta.labels` value has to stay lazy
+(`gettext_lazy`), and a lazy proxy only renders unescaped HTML if its
+resolved type is itself already `SafeString`. Separately, the BMI
+category ranges table (`apps.core.bmi.category_rows`) now also shows
+the equivalent weight range for each category once a height is on
+file — "Normal weight" as a bare "18.5–25" BMI-number range doesn't
+say much on its own; "59.9–81.0 kg" does. All 320 extracted strings
+were retranslated in this pass too — several existing strings had to
+split around their new `<abbr>` tags (e.g. "Estimated 1RM:" → "Estimated"
++ the tag), which produces a fresh, untranslated `msgid` even though
+the sentence itself didn't really change; `msgmerge`'s fuzzy-match
+against the old string is a reasonable starting point but reliably
+wrong (and `compilemessages` silently skips fuzzy entries, falling
+back to English), so every fuzzy/untranslated entry got a deliberate,
+reviewed translation instead. 5 new tests (319 total).
+
 ## Local development
 
 ```bash

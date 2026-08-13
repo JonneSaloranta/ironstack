@@ -16,13 +16,13 @@
 </div>
 
 {% if one_rm_chart %}
-  <h2>{% trans "Estimated 1RM trend" %}</h2>
+  <h2>{% trans "Estimated" %} <abbr title="{% trans "One-Rep Max" %}">1RM</abbr> {% trans "trend" %}</h2>
   {% trans "Estimated 1RM" as one_rm_title %}
   {% include "core/_chart.html" with chart=one_rm_chart chart_title=one_rm_title unit_label=weight_unit_label %}
 {% else %}
   <div class="card empty-state"><p>{% trans "Not enough history in this range for a trend line." %}</p></div>
 {% endif %}
 
-<p><a href="{% url 'records:exercise-records' exercise.pk %}">{% trans "View current PRs" %}</a></p>
+<p><a href="{% url 'records:exercise-records' exercise.pk %}">{% trans "View current" %} <abbr title="{% trans "Personal Records" %}">PRs</abbr></a></p>
 <p><a class="button-secondary" href="{% url 'exercises:exercise-detail' exercise.pk %}">&larr; {% trans "Back to exercise" %}</a></p>
 {% endblock %}

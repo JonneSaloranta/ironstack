@@ -2,6 +2,13 @@ from django import forms
 from django.utils.translation import gettext_lazy as _
 
 from apps.core import units as core_units
+from apps.core.formatting import (
+    ONE_RM_FULL,
+    RIR_FULL,
+    RPE_FULL,
+    abbr_label,
+    lazy_format_html,
+)
 from apps.exercises.services import visible_to as exercises_visible_to
 
 from .models import ExercisePrescription, Program, Workout
@@ -58,9 +65,15 @@ class ExercisePrescriptionForm(forms.ModelForm):
         ]
         labels = {
             "exercise": _("exercise"),
-            "target_rpe": _("Target RPE"),
-            "target_rir": _("Target RIR"),
-            "percentage_target": _("Percentage target (% 1RM)"),
+            "target_rpe": lazy_format_html(
+                "{} {}", _("Target"), abbr_label(_("RPE"), RPE_FULL)
+            ),
+            "target_rir": lazy_format_html(
+                "{} {}", _("Target"), abbr_label(_("RIR"), RIR_FULL)
+            ),
+            "percentage_target": lazy_format_html(
+                "{} (% {})", _("Percentage target"), abbr_label(_("1RM"), ONE_RM_FULL)
+            ),
         }
 
     def __init__(self, *args, user=None, **kwargs):

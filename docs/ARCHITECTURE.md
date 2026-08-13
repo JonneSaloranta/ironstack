@@ -214,6 +214,29 @@ ISO 639-1 — not `ee`, which is Ewe).
   system package installed in the Docker image (`Dockerfile`) — needed
   for `compilemessages` to run at all, in both the dev and production
   images.
+- Jargon abbreviations (RPE, RIR, 1RM, PR, "5RM"-style rep-max shorthand,
+  BMI) are wrapped in an HTML `<abbr title="...">` wherever they appear
+  — hovering (or a screen reader) reveals the full term without
+  permanently lengthening the visible label. `apps.core.formatting`
+  provides the canonical English expansion for each and two small lazy
+  helpers: `abbr_label(abbreviation, expansion)` builds one HTML-safe,
+  translatable `<abbr>` label (for a form field's `Meta.labels`, which
+  must stay lazy — evaluated at class-definition time); `lazy_format_html`
+  composes one together with surrounding plain text (e.g. "Target
+  <abbr>RPE</abbr>") without forcing early evaluation. In templates,
+  the same pattern is just inline `<abbr title="{% trans "..." %}">RPE</abbr>`
+  — no helper needed there, since the template engine already defers
+  rendering to request time.
+- Regenerating the catalogs after adding new translatable strings: run
+  `makemessages` for all six locales, then re-translate whatever
+  `msgfmt --statistics locale/<lang>/LC_MESSAGES/django.po` reports as
+  fuzzy or untranslated (`msgmerge`, which `makemessages` runs
+  internally, fuzzy-matches a changed string against its closest former
+  neighbor — useful as a starting point, but always wrong enough to need
+  a human pass, and `compilemessages`/`msgfmt` silently skip
+  fuzzy-flagged entries at compile time, falling back to the English
+  source, so a fuzzy match left unreviewed isn't just imprecise, it's
+  invisible).
 
 ## API layer
 

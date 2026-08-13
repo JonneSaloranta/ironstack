@@ -2,11 +2,15 @@
 {% comment %}
 Shared BMI display: current value + category (when computable) and the
 WHO category ranges table (always, once shown at all — see each
-caller for what "shown at all" means on that page). Expects:
-bmi_categories, and optionally bmi / bmi_category.
+caller for what "shown at all" means on that page), plus — once a
+height is on file — the equivalent weight range for each category at
+that height, so "Normal weight" means something concrete rather than
+just a bare BMI number range. Expects: bmi_category_rows (list of
+apps.core.bmi.CategoryRow), weight_unit_label, and optionally
+bmi / bmi_category.
 {% endcomment %}
 <div class="card">
-  <h3 style="margin-top:0;">{% trans "BMI" %}</h3>
+  <h3 style="margin-top:0;"><abbr title="{% trans "Body Mass Index" %}">{% trans "BMI" %}</abbr></h3>
   {% if bmi %}
     <p style="margin:0 0 0.75rem;">
       <strong style="font-size:1.5rem;">{{ bmi }}</strong>
@@ -19,15 +23,31 @@ bmi_categories, and optionally bmi / bmi_category.
   {% endif %}
   <table class="bar-chart-table">
     <caption class="visually-hidden">{% trans "BMI category ranges" %}</caption>
+    <thead>
+      <tr>
+        <th scope="col"></th>
+        <th scope="col">{% trans "BMI" %}</th>
+        {% if bmi_category_rows.0.weight_high %}
+          <th scope="col">{% trans "Weight" %}</th>
+        {% endif %}
+      </tr>
+    </thead>
     <tbody>
-      {% for category in bmi_categories %}
-        <tr{% if category == bmi_category %} class="bmi-current-row"{% endif %}>
-          <th scope="row">{{ category.name }}</th>
+      {% for row in bmi_category_rows %}
+        <tr{% if row.category == bmi_category %} class="bmi-current-row"{% endif %}>
+          <th scope="row">{{ row.category.name }}</th>
           <td>
-            {% if category.low is None %}{% blocktrans with high=category.high %}below {{ high }}{% endblocktrans %}
-            {% elif category.high is None %}{% blocktrans with low=category.low %}{{ low }} and above{% endblocktrans %}
-            {% else %}{{ category.low }}–{{ category.high }}{% endif %}
+            {% if row.category.low is None %}{% blocktrans with high=row.category.high %}below {{ high }}{% endblocktrans %}
+            {% elif row.category.high is None %}{% blocktrans with low=row.category.low %}{{ low }} and above{% endblocktrans %}
+            {% else %}{{ row.category.low }}–{{ row.category.high }}{% endif %}
           </td>
+          {% if bmi_category_rows.0.weight_high %}
+            <td>
+              {% if row.weight_low is None %}{% blocktrans with high=row.weight_high unit=weight_unit_label %}below {{ high }} {{ unit }}{% endblocktrans %}
+              {% elif row.weight_high is None %}{% blocktrans with low=row.weight_low unit=weight_unit_label %}{{ low }} {{ unit }} and above{% endblocktrans %}
+              {% else %}{{ row.weight_low }}–{{ row.weight_high }} {{ weight_unit_label }}{% endif %}
+            </td>
+          {% endif %}
         </tr>
       {% endfor %}
     </tbody>

@@ -15,8 +15,14 @@ msgstr "Часовой пояс"
 msgid "Units"
 msgstr "Единицы измерения"
 
-msgid "Show BMI on the dashboard"
-msgstr "Показывать ИМТ на панели"
+msgid "Show"
+msgstr "Показывать"
+
+msgid "BMI"
+msgstr "ИМТ"
+
+msgid "on the dashboard"
+msgstr "на панели"
 
 msgid "Language"
 msgstr "Язык"
@@ -42,7 +48,6 @@ msgstr "Настройки сохранены."
 msgid "Duration (minutes)"
 msgstr "Длительность (минуты)"
 
-#, python-format
 msgid "Distance (%(unit)s)"
 msgstr "Дистанция (%(unit)s)"
 
@@ -97,6 +102,24 @@ msgstr "Избыточный вес"
 msgid "Obese"
 msgstr "Ожирение"
 
+msgid "Rate of Perceived Exertion"
+msgstr "Субъективная оценка нагрузки"
+
+msgid "Reps In Reserve"
+msgstr "Повторения в запасе"
+
+msgid "One-Rep Max"
+msgstr "Максимум на одно повторение"
+
+msgid "Personal Record"
+msgstr "Личный рекорд"
+
+msgid "Rep Max"
+msgstr "Максимум повторений"
+
+msgid "Body Mass Index"
+msgstr "Индекс массы тела"
+
 msgid "equipment"
 msgstr "оборудование"
 
@@ -127,7 +150,6 @@ msgstr "тип движения"
 msgid "weight logging"
 msgstr "запись веса"
 
-#, python-format
 msgid "Value (%(unit)s)"
 msgstr "Значение (%(unit)s)"
 
@@ -158,20 +180,24 @@ msgstr "Шаблоны не предназначены для прямого и�
 msgid "exercise"
 msgstr "упражнение"
 
-msgid "Target RPE"
-msgstr "Целевой RPE"
+msgid "Target"
+msgstr "Целевой"
 
-msgid "Target RIR"
-msgstr "Целевой RIR"
+msgid "RPE"
+msgstr "RPE"
 
-msgid "Percentage target (% 1RM)"
-msgstr "Процентная цель (% от 1ПМ)"
+msgid "RIR"
+msgstr "RIR"
 
-#, python-format
+msgid "Percentage target"
+msgstr "Процентная цель"
+
+msgid "1RM"
+msgstr "1ПМ"
+
 msgid "Target weight (%(unit)s)"
 msgstr "Целевой вес (%(unit)s)"
 
-#, python-format
 msgid "Weight increment (%(unit)s)"
 msgstr "Прибавка веса (%(unit)s)"
 
@@ -241,46 +267,36 @@ msgstr "Пока нет завершённой истории по этому у
 msgid "Manual progression — you control the next weight and target."
 msgstr "Ручная прогрессия — вы сами контролируете следующий вес и цель."
 
-#, python-format
 msgid "Missed the target %(streak)s sessions in a row at %(weight)s kg — even maintenance loading should come down, to %(deload)s kg."
 msgstr "Цель не достигнута %(streak)s раз подряд при весе %(weight)s кг — даже поддерживающую нагрузку стоит снизить до %(deload)s кг."
 
 msgid "Maintenance — keeping the same load."
 msgstr "Поддержание — сохраняем ту же нагрузку."
 
-#, python-format
 msgid "Hit every rep last session at %(weight)s kg — adding %(increment)s kg."
 msgstr "Все повторения выполнены в прошлый раз с весом %(weight)s кг — добавляем %(increment)s кг."
 
-#, python-format
 msgid "Missed target reps %(streak)s sessions in a row at %(weight)s kg — recommending a deload to %(deload)s kg."
 msgstr "Целевые повторения не достигнуты %(streak)s раз подряд при весе %(weight)s кг — рекомендуется снижение до %(deload)s кг."
 
-#, python-format
 msgid "Missed target reps last session at %(weight)s kg — try the same weight again before increasing."
 msgstr "Целевые повторения не достигнуты в прошлый раз при весе %(weight)s кг — попробуйте тот же вес ещё раз перед увеличением."
 
-#, python-format
 msgid "Hit the top of your rep range on every set at %(weight)s kg — adding %(increment)s kg and resetting to the bottom of the range."
 msgstr "Достигнут верх диапазона повторений в каждом подходе при весе %(weight)s кг — добавляем %(increment)s кг и возвращаемся к нижней границе диапазона."
 
-#, python-format
 msgid "Still within your rep range at %(weight)s kg — repeat the same weight and aim for more reps next time."
 msgstr "Всё ещё в пределах диапазона повторений при весе %(weight)s кг — повторите тот же вес и в следующий раз стремитесь к большему числу повторений."
 
-#, python-format
 msgid "Missed the bottom of your rep range %(streak)s sessions in a row at %(weight)s kg — recommending a deload to %(deload)s kg."
 msgstr "Нижняя граница диапазона повторений не достигнута %(streak)s раз подряд при весе %(weight)s кг — рекомендуется снижение до %(deload)s кг."
 
-#, python-format
 msgid "Missed the bottom of your rep range last session at %(weight)s kg — try the same weight again."
 msgstr "Нижняя граница диапазона повторений не достигнута в прошлый раз при весе %(weight)s кг — попробуйте тот же вес ещё раз."
 
-#, python-format
 msgid "Hit the top of your rep range for %(streak)s sessions in a row at %(weight)s kg — adding %(increment)s kg."
 msgstr "Верхняя граница диапазона повторений достигнута %(streak)s раз подряд при весе %(weight)s кг — добавляем %(increment)s кг."
 
-#, python-format
 msgid "Within your rep range at %(weight)s kg — keep working toward the top of the range before increasing."
 msgstr "В пределах диапазона повторений при весе %(weight)s кг — продолжайте двигаться к верхней границе перед увеличением."
 
@@ -299,22 +315,18 @@ msgstr "Для этого предписания не задана процен�
 msgid "No 1RM available yet — log a set first, or enter your 1RM manually."
 msgstr "1ПМ пока недоступен — сначала запишите подход или введите 1ПМ вручную."
 
-#, python-format
 msgid "%(percentage)s%% of %(one_rm)s kg (%(source)s) = %(suggested)s kg."
 msgstr "%(percentage)s%% от %(one_rm)s кг (%(source)s) = %(suggested)s кг."
 
 msgid "No RIR logged against a target yet — log sets with RIR to use this method."
 msgstr "RIR ещё не записан относительно цели — записывайте подходы с RIR, чтобы использовать этот метод."
 
-#, python-format
 msgid "Target RIR %(target)s, actual %(actual)g — more in reserve than planned, adding %(increment)s kg."
 msgstr "Целевой RIR %(target)s, фактический %(actual)g — резерва больше, чем планировалось, добавляем %(increment)s кг."
 
-#, python-format
 msgid "Target RIR %(target)s, actual %(actual)g — notably closer to failure than planned, easing back to %(deload)s kg."
 msgstr "Целевой RIR %(target)s, фактический %(actual)g — заметно ближе к отказу, чем планировалось, снижаем до %(deload)s кг."
 
-#, python-format
 msgid "Target RIR %(target)s, actual %(actual)g — close enough to plan, hold the weight."
 msgstr "Целевой RIR %(target)s, фактический %(actual)g — достаточно близко к плану, оставляем вес прежним."
 
@@ -342,19 +354,12 @@ msgstr "повторения"
 msgid "Target reps"
 msgstr "Целевые повторения"
 
-msgid "RPE"
-msgstr "RPE"
-
-msgid "RIR"
-msgstr "RIR"
-
 msgid "Failed set"
 msgstr "Неудачный подход"
 
 msgid "Warm-up"
 msgstr "Разминка"
 
-#, python-format
 msgid "Weight (%(unit)s)"
 msgstr "Вес (%(unit)s)"
 
@@ -373,7 +378,6 @@ msgstr "Отменено"
 msgid "This session is no longer in progress."
 msgstr "Эта тренировка больше не активна."
 
-#, python-format
 msgid "New PR — %(exercise)s: %(record_type)s %(value)s"
 msgstr "Новый рекорд — %(exercise)s: %(record_type)s %(value)s"
 
@@ -401,7 +405,6 @@ msgstr "Что-то пошло не так на нашей стороне. Ва�
 msgid "Profile"
 msgstr "Профиль"
 
-#, python-format
 msgid "Signed in as <strong>%(username)s</strong>"
 msgstr "Вы вошли как <strong>%(username)s</strong>"
 
@@ -426,29 +429,24 @@ msgstr "Уже есть аккаунт? Войти"
 msgid "Edit activity"
 msgstr "Изменить активность"
 
-#, python-format
 msgid "Edit %(name)s"
 msgstr "Изменить %(name)s"
 
 msgid "Save"
 msgstr "Сохранить"
 
-#, python-format
 msgid "Back to %(name)s"
 msgstr "Назад к %(name)s"
 
 msgid "Inactive"
 msgstr "Неактивно"
 
-#, python-format
 msgid "%(count)s logged · total duration %(total_duration)s"
 msgstr "записано: %(count)s · общая длительность %(total_duration)s"
 
-#, python-format
 msgid "total distance %(distance)s %(unit)s"
 msgstr "общая дистанция %(distance)s %(unit)s"
 
-#, python-format
 msgid "total calories %(calories)s"
 msgstr "всего калорий %(calories)s"
 
@@ -503,7 +501,6 @@ msgstr "Новый"
 msgid "Custom"
 msgstr "Свой"
 
-#, python-format
 msgid "%(counter)s logged"
 msgid_plural "%(counter)s logged"
 msgstr[0] "%(counter)s записана"
@@ -543,27 +540,35 @@ msgstr "Объём по группам мышц"
 msgid "No data in this range."
 msgstr "Нет данных за этот период."
 
-msgid "Recent PRs"
-msgstr "Недавние рекорды"
+msgid "Recent"
+msgstr "Недавние"
 
-msgid "No PRs in this range."
-msgstr "Нет рекордов за этот период."
+msgid "Personal Records"
+msgstr "Личные рекорды"
 
-#, python-format
+msgid "No"
+msgstr "Нет"
+
+msgid "in this range."
+msgstr "за этот период."
+
 msgid "%(name)s analytics"
 msgstr "Аналитика: %(name)s"
 
 msgid "Sessions"
 msgstr "Тренировки"
 
-msgid "Estimated 1RM trend"
-msgstr "Динамика оценённого 1ПМ"
+msgid "Estimated"
+msgstr "Оценённый"
+
+msgid "trend"
+msgstr "динамика"
 
 msgid "Not enough history in this range for a trend line."
 msgstr "Недостаточно истории за этот период для линии тренда."
 
-msgid "View current PRs"
-msgstr "Посмотреть текущие рекорды"
+msgid "View current"
+msgstr "Посмотреть текущие"
 
 msgid "Back to exercise"
 msgstr "Назад к упражнению"
@@ -586,19 +591,14 @@ msgstr "Тренировка"
 msgid "Programs"
 msgstr "Программы"
 
-#, python-format
 msgid "%(title)s, %(counter)s category"
 msgid_plural "%(title)s, %(counter)s categories"
 msgstr[0] "%(title)s, %(counter)s категория"
 msgstr[1] "%(title)s, %(counter)s категории"
 msgstr[2] "%(title)s, %(counter)s категорий"
 
-#, python-format
 msgid "%(title)s by category"
 msgstr "%(title)s по категориям"
-
-msgid "BMI"
-msgstr "ИМТ"
 
 msgid "Not enough data yet — set your height and log a body weight to see your current BMI here."
 msgstr "Пока недостаточно данных — укажите рост и запишите вес тела, чтобы увидеть здесь ваш ИМТ."
@@ -606,15 +606,18 @@ msgstr "Пока недостаточно данных — укажите рос
 msgid "BMI category ranges"
 msgstr "Диапазоны категорий ИМТ"
 
-#, python-format
 msgid "below %(high)s"
 msgstr "менее %(high)s"
 
-#, python-format
 msgid "%(low)s and above"
 msgstr "%(low)s и выше"
 
-#, python-format
+msgid "below %(high)s %(unit)s"
+msgstr "менее %(high)s %(unit)s"
+
+msgid "%(low)s %(unit)s and above"
+msgstr "%(low)s %(unit)s и выше"
+
 msgid "%(title)s trend over time, %(counter)s reading"
 msgid_plural "%(title)s trend over time, %(counter)s readings"
 msgstr[0] "%(title)s во времени, %(counter)s измерение"
@@ -651,7 +654,6 @@ msgstr "Продолжить тренировку"
 msgid "Freeform workout"
 msgstr "Свободная тренировка"
 
-#, python-format
 msgid "started %(started_at)s"
 msgstr "начато %(started_at)s"
 
@@ -685,7 +687,6 @@ msgstr "Страницы списка упражнений"
 msgid "Previous"
 msgstr "Назад"
 
-#, python-format
 msgid "Page %(number)s of %(total)s"
 msgstr "Страница %(number)s из %(total)s"
 
@@ -707,8 +708,8 @@ msgstr "Основные мышцы"
 msgid "Secondary muscles"
 msgstr "Второстепенные мышцы"
 
-msgid "Your PRs"
-msgstr "Ваши рекорды"
+msgid "Your"
+msgstr "Ваши"
 
 msgid "Current personal records for this exercise."
 msgstr "Текущие личные рекорды для этого упражнения."
@@ -716,8 +717,8 @@ msgstr "Текущие личные рекорды для этого упраж�
 msgid "Strength trend"
 msgstr "Динамика силы"
 
-msgid "Estimated 1RM over time and training volume."
-msgstr "Оценённый 1ПМ во времени и объём тренировок."
+msgid "over time and training volume."
+msgstr "во времени и объём тренировок."
 
 msgid "Deactivate this exercise? It will no longer appear when browsing or prescribing."
 msgstr "Отключить это упражнение? Оно больше не будет отображаться при просмотре или назначении."
@@ -752,7 +753,6 @@ msgstr "Все группы мышц"
 msgid "Edit reading"
 msgstr "Изменить измерение"
 
-#, python-format
 msgid "Edit %(name)s reading"
 msgstr "Изменить измерение: %(name)s"
 
@@ -777,7 +777,6 @@ msgstr "Назад к отслеживанию тела"
 msgid "New measurement type"
 msgstr "Новый тип измерения"
 
-#, python-format
 msgid "Latest: %(value)s %(unit)s"
 msgstr "Последнее: %(value)s %(unit)s"
 
@@ -799,7 +798,6 @@ msgstr "Удалить упражнение"
 msgid "Delete program"
 msgstr "Удалить программу"
 
-#, python-format
 msgid "Delete <strong>%(name)s</strong> and all of its workouts and exercises? This cannot be undone."
 msgstr "Удалить <strong>%(name)s</strong> и все его тренировки и упражнения? Это действие необратимо."
 
@@ -812,7 +810,6 @@ msgstr "Встроенный шаблон"
 msgid "My template"
 msgstr "Мой шаблон"
 
-#, python-format
 msgid "Version %(version)s · updated %(updated)s"
 msgstr "Версия %(version)s · обновлено %(updated)s"
 
@@ -852,7 +849,6 @@ msgstr "Мои программы"
 msgid "Template"
 msgstr "Шаблон"
 
-#, python-format
 msgid "%(counter)s workout"
 msgid_plural "%(counter)s workouts"
 msgstr[0] "%(counter)s тренировка"
@@ -883,12 +879,11 @@ msgstr "Новая тренировка"
 msgid "Delete workout"
 msgstr "Удалить тренировку"
 
-#, python-format
 msgid "%(name)s records"
 msgstr "Рекорды: %(name)s"
 
-msgid "Current PRs"
-msgstr "Текущие рекорды"
+msgid "Current"
+msgstr "Текущие"
 
 msgid "Best set volume"
 msgstr "Лучший объём подхода"
@@ -902,7 +897,6 @@ msgstr "Максимумы по повторениям"
 msgid "Rep records by weight"
 msgstr "Рекорды повторений по весу"
 
-#, python-format
 msgid "%(weight)s: %(reps)s reps"
 msgstr "%(weight)s: %(reps)s повторений"
 
@@ -921,7 +915,6 @@ msgstr "Ваш пароль обновлён."
 msgid "Back to profile"
 msgstr "Назад к профилю"
 
-#, python-format
 msgid "Target: %(count)s × %(min)s-%(max)s"
 msgstr "Цель: %(count)s × %(min)s-%(max)s"
 
@@ -931,12 +924,8 @@ msgstr "Новый рекорд"
 msgid "Max weight:"
 msgstr "Максимальный вес:"
 
-#, python-format
 msgid "Most reps at %(weight)s:"
 msgstr "Больше всего повторений с весом %(weight)s:"
-
-msgid "Estimated 1RM:"
-msgstr "Оценённый 1ПМ:"
 
 msgid "Set volume:"
 msgstr "Объём подхода:"
@@ -944,7 +933,6 @@ msgstr "Объём подхода:"
 msgid "Session volume:"
 msgstr "Объём тренировки:"
 
-#, python-format
 msgid "(previous: %(previous)s)"
 msgstr "(предыдущий: %(previous)s)"
 
@@ -963,7 +951,6 @@ msgstr "Н"
 msgid "No sets logged yet."
 msgstr "Подходы ещё не записаны."
 
-#, python-format
 msgid "Suggested: %(weight)s"
 msgstr "Предложено: %(weight)s"
 
@@ -985,11 +972,9 @@ msgstr "Добавить"
 msgid "Back to workout"
 msgstr "Назад к тренировке"
 
-#, python-format
 msgid "Started %(started)s"
 msgstr "Начато %(started)s"
 
-#, python-format
 msgid "ended %(ended)s"
 msgstr "завершено %(ended)s"
 
@@ -1011,18 +996,17 @@ msgstr "Назад к истории"
 msgid "Workout history"
 msgstr "История тренировок"
 
-msgid "Start freeform workout"
-msgstr "Начать свободную тренировку"
-
 msgid "No workouts logged yet."
 msgstr "Тренировки ещё не записаны."
 
-msgid "Start one above, or pick a workout from one of your programs."
-msgstr "Начните выше или выберите тренировку из одной из ваших программ."
+msgid "Start one below, or pick a workout from one of your programs."
+msgstr "Начните ниже или выберите тренировку из одной из ваших программ."
+
+msgid "Start freeform workout"
+msgstr "Начать свободную тренировку"
 
 msgid "Edit set"
 msgstr "Изменить подход"
 
-#, python-format
 msgid "Edit set %(number)s"
 msgstr "Изменить подход %(number)s"

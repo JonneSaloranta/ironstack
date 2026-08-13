@@ -311,7 +311,9 @@ class ExerciseAnalyticsViewTests(TestCase):
         _log_completed_session(self.alice, self.exercise, Decimal("52.5"), [5], days_ago=0)
         response = self.client.get(reverse("analytics:exercise", args=[self.exercise.pk]))
         self.assertIsNotNone(response.context["one_rm_chart"])
-        self.assertContains(response, "<h2>Estimated 1RM trend</h2>")
+        self.assertContains(
+            response, '<h2>Estimated <abbr title="One-Rep Max">1RM</abbr> trend</h2>'
+        )
 
     def test_404_for_another_users_private_exercise(self):
         bob = User.objects.create_user(username="bob", password="s3cret-pass")

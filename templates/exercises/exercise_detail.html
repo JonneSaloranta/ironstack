@@ -40,13 +40,13 @@
 </div>
 
 <a class="card card-link" href="{% url 'records:exercise-records' exercise.pk %}">
-  <strong>{% trans "Your PRs" %}</strong>
+  <strong>{% trans "Your" %} <abbr title="{% trans "Personal Records" %}">PRs</abbr></strong>
   <p class="text-muted">{% trans "Current personal records for this exercise." %}</p>
 </a>
 
 <a class="card card-link" href="{% url 'analytics:exercise' exercise.pk %}">
   <strong>{% trans "Strength trend" %}</strong>
-  <p class="text-muted">{% trans "Estimated 1RM over time and training volume." %}</p>
+  <p class="text-muted">{% trans "Estimated" %} <abbr title="{% trans "One-Rep Max" %}">1RM</abbr> {% trans "over time and training volume." %}</p>
 </a>
 
 {% if exercise.owner_id == request.user.id and exercise.active %}

@@ -6,6 +6,7 @@ from django.utils.translation import gettext as _
 from django.views.generic import CreateView, UpdateView
 
 from apps.core import bmi as bmi_services
+from apps.core import units as core_units
 from apps.measurements import services as measurement_services
 from apps.measurements.models import MeasurementType
 
@@ -39,8 +40,11 @@ class ProfileView(LoginRequiredMixin, UpdateView):
         # page height itself lives on, so the ranges (and the current
         # value, once computable) need to be findable here regardless of
         # whether that dashboard card has ever had reason to render.
-        context["bmi_categories"] = bmi_services.BMI_CATEGORIES
         user = self.request.user
+        context["bmi_category_rows"] = bmi_services.category_rows(
+            user.height, user.unit_system
+        )
+        context["weight_unit_label"] = core_units.weight_unit_label(user.unit_system)
         if user.show_bmi and user.height:
             body_weight_type = MeasurementType.objects.filter(
                 name="Body weight", owner=None

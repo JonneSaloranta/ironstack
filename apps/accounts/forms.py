@@ -6,6 +6,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.utils.translation import gettext_lazy as _
 
 from apps.core import units as core_units
+from apps.core.formatting import BMI_FULL, abbr_label, lazy_format_html
 
 from .models import UnitSystem, User
 
@@ -41,7 +42,9 @@ class ProfileForm(forms.ModelForm):
         fields = ["unit_system", "timezone", "height", "show_bmi", "language"]
         labels = {
             "unit_system": _("Units"),
-            "show_bmi": _("Show BMI on the dashboard"),
+            "show_bmi": lazy_format_html(
+                "{} {} {}", _("Show"), abbr_label(_("BMI"), BMI_FULL), _("on the dashboard")
+            ),
             "language": _("Language"),
         }
         help_texts = {

@@ -229,7 +229,8 @@ class ProfileViewTests(TestCase):
         instead of the two sitting next to each other."""
         response = self.client.get(reverse("profile"))
         self.assertContains(response, 'class="checkbox-field"')
-        self.assertContains(response, "Show BMI on the dashboard")
+        self.assertContains(response, "Show")
+        self.assertContains(response, "on the dashboard")
         self.assertContains(response, "Turns off the BMI card")
 
 

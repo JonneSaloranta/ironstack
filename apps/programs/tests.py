@@ -114,6 +114,22 @@ class ExercisePrescriptionUnitConversionTests(TestCase):
         self.assertContains(response, "Target weight (lb)")
         self.assertContains(response, "220.46")
 
+    def test_rpe_rir_and_1rm_labels_explain_the_abbreviation(self):
+        prescription = ExercisePrescription.objects.create(
+            workout=self.workout, exercise=self.exercise
+        )
+        response = self.client.get(
+            reverse(
+                "programs:prescription-update",
+                args=[self.program.pk, self.workout.pk, prescription.pk],
+            )
+        )
+        self.assertContains(
+            response, '<abbr title="Rate of Perceived Exertion">RPE</abbr>'
+        )
+        self.assertContains(response, '<abbr title="Reps In Reserve">RIR</abbr>')
+        self.assertContains(response, '<abbr title="One-Rep Max">1RM</abbr>')
+
 
 class ProgramVisibilityServiceTests(TestCase):
     def setUp(self):

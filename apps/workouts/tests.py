@@ -233,6 +233,16 @@ class SetLoggingFlowTests(TestCase):
         self.performed = self.session.performed_exercises.get()
         self.client.login(username="alice", password="s3cret-pass")
 
+    def test_rpe_and_rir_labels_explain_the_abbreviation(self):
+        """RPE/RIR are opaque jargon to a new user — the field label
+        itself carries the expansion via a native <abbr title="...">
+        tooltip, not just the bare letters."""
+        response = self.client.get(reverse("workouts:session-detail", args=[self.session.pk]))
+        self.assertContains(
+            response, '<abbr title="Rate of Perceived Exertion">RPE</abbr>'
+        )
+        self.assertContains(response, '<abbr title="Reps In Reserve">RIR</abbr>')
+
     def test_logging_a_set_via_the_view(self):
         response = self.client.post(
             reverse("workouts:set-log", args=[self.performed.pk]),

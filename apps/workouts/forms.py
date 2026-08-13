@@ -2,6 +2,7 @@ from django import forms
 from django.utils.translation import gettext_lazy as _
 
 from apps.core import units as core_units
+from apps.core.formatting import RIR_FULL, RPE_FULL, abbr_label
 from apps.exercises.services import visible_to as exercises_visible_to
 
 from .models import ExerciseSet, PerformedExercise
@@ -37,8 +38,8 @@ class ExerciseSetForm(forms.ModelForm):
         labels = {
             "reps": _("reps"),
             "target_reps": _("Target reps"),
-            "rpe": _("RPE"),
-            "rir": _("RIR"),
+            "rpe": abbr_label(_("RPE"), RPE_FULL),
+            "rir": abbr_label(_("RIR"), RIR_FULL),
             "is_failure": _("Failed set"),
             "is_warmup": _("Warm-up"),
             "notes": _("notes"),

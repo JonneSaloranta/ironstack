@@ -7,7 +7,7 @@ from django.urls import reverse
 from django.utils import timezone
 from django.views.defaults import permission_denied
 
-from apps.core.bmi import BMI_CATEGORIES, calculate_bmi, category_for
+from apps.core.bmi import BMI_CATEGORIES, calculate_bmi, category_for, category_rows
 from apps.core.charts import build_bar_series, build_chart_series
 from apps.core.templatetags.core_extras import duration
 from apps.core.units import (
@@ -84,6 +84,32 @@ class BMICalculationTests(TestCase):
         self.assertIsNone(BMI_CATEGORIES[-1].high)
         for earlier, later in zip(BMI_CATEGORIES, BMI_CATEGORIES[1:]):
             self.assertEqual(earlier.high, later.low)
+
+    def test_category_rows_convert_bmi_bounds_to_a_weight_range_at_a_given_height(self):
+        rows = category_rows(Decimal("1.80"), "metric")
+        normal = next(r for r in rows if r.category.name == "Normal weight")
+        self.assertEqual(normal.weight_low, Decimal("59.9"))
+        self.assertEqual(normal.weight_high, Decimal("81.0"))
+
+    def test_category_rows_convert_to_the_users_display_unit(self):
+        rows = category_rows(Decimal("1.80"), "imperial")
+        normal = next(r for r in rows if r.category.name == "Normal weight")
+        # 59.94 kg / 81.0 kg -> lb
+        self.assertEqual(normal.weight_low, Decimal("132.2"))
+        self.assertEqual(normal.weight_high, Decimal("178.6"))
+
+    def test_open_ended_categories_have_one_none_weight_bound(self):
+        rows = category_rows(Decimal("1.80"), "metric")
+        underweight = next(r for r in rows if r.category.name == "Underweight")
+        obese = next(r for r in rows if r.category.name == "Obese")
+        self.assertIsNone(underweight.weight_low)
+        self.assertIsNotNone(underweight.weight_high)
+        self.assertIsNotNone(obese.weight_low)
+        self.assertIsNone(obese.weight_high)
+
+    def test_no_height_means_no_weight_bounds_at_all(self):
+        rows = category_rows(None, "metric")
+        self.assertTrue(all(r.weight_low is None and r.weight_high is None for r in rows))
 
 
 class DurationFilterTests(TestCase):
@@ -417,6 +443,34 @@ class DashboardWidgetsTests(TestCase):
         self.assertEqual(response.context["bmi"], Decimal("25.5"))
         self.assertEqual(response.context["bmi_category"].name, "Overweight")
         self.assertContains(response, "Overweight")
+
+    def test_bmi_card_shows_the_equivalent_weight_range_per_category(self):
+        """Regression: the category ranges table only ever showed bare
+        BMI numbers ("18.5–25") with no indication of what that actually
+        means in kg/lb for this specific user's height."""
+        self.alice.height = Decimal("1.80")
+        self.alice.save()
+        from apps.measurements.models import BodyMeasurement, MeasurementType
+
+        body_weight_type = MeasurementType.objects.get(name="Body weight", owner=None)
+        BodyMeasurement.objects.create(
+            user=self.alice, measurement_type=body_weight_type, value=Decimal("82.5")
+        )
+        response = self.client.get(reverse("dashboard"))
+        self.assertContains(response, "59.9")
+        self.assertContains(response, "81.0")
+
+    def test_bmi_heading_explains_the_abbreviation(self):
+        self.alice.height = Decimal("1.80")
+        self.alice.save()
+        from apps.measurements.models import BodyMeasurement, MeasurementType
+
+        body_weight_type = MeasurementType.objects.get(name="Body weight", owner=None)
+        BodyMeasurement.objects.create(
+            user=self.alice, measurement_type=body_weight_type, value=Decimal("82.5")
+        )
+        response = self.client.get(reverse("dashboard"))
+        self.assertContains(response, '<abbr title="Body Mass Index">BMI</abbr>')
 
     def test_dashboard_does_not_duplicate_main_nav_destinations(self):
         """Regression: the dashboard used to carry its own "Analytics",

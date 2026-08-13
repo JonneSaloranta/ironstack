@@ -32,16 +32,16 @@
   <div class="card empty-state"><p>{% trans "No data in this range." %}</p></div>
 {% endif %}
 
-<h2>{% trans "Recent PRs" %}</h2>
+<h2>{% trans "Recent" %} <abbr title="{% trans "Personal Records" %}">PRs</abbr></h2>
 {% for record in recent_prs %}
   <div class="card">
     <strong>{{ record.exercise.name }}</strong>
     <div class="text-muted">
-      {{ record.get_record_type_display }}: {{ record|pr_value:request.user }}{% if record.rep_count %} ({{ record.rep_count }}RM){% endif %}
+      {{ record.get_record_type_display }}: {{ record|pr_value:request.user }}{% if record.rep_count %} ({{ record.rep_count }}<abbr title="{% trans "Rep Max" %}">RM</abbr>){% endif %}
       — {{ record.achieved_at|date:"Y-m-d" }}
     </div>
   </div>
 {% empty %}
-  <div class="card empty-state"><p>{% trans "No PRs in this range." %}</p></div>
+  <div class="card empty-state"><p>{% trans "No" %} <abbr title="{% trans "Personal Records" %}">PRs</abbr> {% trans "in this range." %}</p></div>
 {% endfor %}
 {% endblock %}

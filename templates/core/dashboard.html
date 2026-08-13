@@ -34,7 +34,7 @@
 
 {% if recent_prs %}
   <div class="card">
-    <strong>{% trans "Recent PRs" %}</strong>
+    <strong>{% trans "Recent" %} <abbr title="{% trans "Personal Records" %}">PRs</abbr></strong>
     {% for record in recent_prs %}
       <p class="text-muted" style="margin:0.35rem 0 0;">
         {{ record.exercise.name }} — {{ record.get_record_type_display }}: {{ record|pr_value:request.user }}

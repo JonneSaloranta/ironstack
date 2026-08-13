@@ -68,7 +68,9 @@ class DashboardView(LoginRequiredMixin, TemplateView):
             if bmi is not None:
                 context["bmi"] = bmi
                 context["bmi_category"] = bmi_services.category_for(bmi)
-                context["bmi_categories"] = bmi_services.BMI_CATEGORIES
+                context["bmi_category_rows"] = bmi_services.category_rows(
+                    user.height, user.unit_system
+                )
         return context
 
 

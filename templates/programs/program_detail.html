@@ -53,7 +53,7 @@
           <strong>{{ prescription.exercise.name }}</strong>
           — {{ prescription.set_count }} × {{ prescription.min_reps }}-{{ prescription.max_reps }}
           {% if prescription.target_weight %} @ {{ prescription.target_weight|weight:request.user }}{% endif %}
-          {% if prescription.target_rpe %} @ RPE {{ prescription.target_rpe }}{% endif %}
+          {% if prescription.target_rpe %} @ <abbr title="{% trans "Rate of Perceived Exertion" %}">RPE</abbr> {{ prescription.target_rpe }}{% endif %}
           {% if can_edit %}
             <a href="{% url 'programs:prescription-update' program.pk workout.pk prescription.pk %}">{% trans "Edit" %}</a>
           {% endif %}
