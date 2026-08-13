@@ -1,0 +1,26 @@
+{% comment %}
+Single-metric bar chart (category comparison), shared across
+apps.analytics. One color for every bar: the x-axis labels already carry
+category identity, so a categorical hue per bar would just be noise (see
+dataviz skill "color-formula" — categorical color is for distinguishing
+overlapping series, not restating what the label already says).
+
+Category labels live in the hover tooltip and the accompanying table
+(always rendered alongside this partial), not as SVG text under each
+bar — with an unbounded number of categories (weeks, muscle groups),
+fitting readable labels under narrow bars without collisions isn't
+guaranteed, and the table is the reliable, accessible source of exact
+figures either way.
+
+Expects: chart (apps.core.charts.BarSeries), chart_title, unit_label.
+{% endcomment %}
+<div class="chart-card">
+  <svg class="chart-svg" viewBox="0 0 {{ chart.width }} {{ chart.height }}" role="img"
+       aria-label="{{ chart_title }}, {{ chart.bars|length }} categories">
+    {% for bar in chart.bars %}
+      <rect class="bar-rect" x="{{ bar.x }}" y="{{ bar.y }}" width="{{ bar.width }}" height="{{ bar.height }}" rx="3">
+        <title>{{ bar.label }}: {{ bar.value }} {{ unit_label }}</title>
+      </rect>
+    {% endfor %}
+  </svg>
+</div>

@@ -1,0 +1,5 @@
+<nav class="range-filter" aria-label="Date range">
+  {% for key, label in range_choices %}
+    <a href="?range={{ key }}" {% if date_range.key == key %}aria-current="true"{% endif %}>{{ label }}</a>
+  {% endfor %}
+</nav>

@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}Analytics — IronStack{% endblock %}
+{% block content %}
+<div class="top-bar">
+  <h1 style="margin:0;">Analytics</h1>
+</div>
+
+{% include "analytics/_range_filter.html" %}
+
+<div class="card">
+  <dl class="stat-row">
+    <div><dt>Workouts</dt><dd>{{ summary.session_count }}</dd></div>
+    <div><dt>Training time</dt><dd>{{ summary.total_duration }}</dd></div>
+    <div><dt>Total volume</dt><dd>{{ summary.total_volume }} kg</dd></div>
+  </dl>
+</div>
+
+<h2>Weekly training volume</h2>
+{% if weekly_volume_chart %}
+  {% include "core/_bar_chart.html" with chart=weekly_volume_chart chart_title="Weekly training volume" unit_label="kg" %}
+{% else %}
+  <div class="card empty-state"><p>No completed workouts in this range.</p></div>
+{% endif %}
+
+<h2>Muscle-group volume</h2>
+{% if muscle_group_chart %}
+  {% include "core/_bar_chart.html" with chart=muscle_group_chart chart_title="Muscle-group volume" unit_label="kg" %}
+{% else %}
+  <div class="card empty-state"><p>No data in this range.</p></div>
+{% endif %}
+
+<h2>Recent PRs</h2>
+{% for record in recent_prs %}
+  <div class="card">
+    <strong>{{ record.exercise.name }}</strong>
+    <div class="text-muted">
+      {{ record.get_record_type_display }}: {{ record.value }}{% if record.rep_count %} ({{ record.rep_count }}RM){% endif %}
+      — {{ record.achieved_at|date:"Y-m-d" }}
+    </div>
+  </div>
+{% empty %}
+  <div class="card empty-state"><p>No PRs in this range.</p></div>
+{% endfor %}
+{% endblock %}

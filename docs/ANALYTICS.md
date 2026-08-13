@@ -77,3 +77,35 @@ Start with straightforward ORM queries and indexes.
 Only add denormalized/cached aggregates when profiling demonstrates a need.
 
 Analytics must always respect user ownership.
+
+## Implementation
+
+Body/circumference/custom-measurement trends and activity minutes/
+distance/frequency already got dedicated, working pages in Phases 8-9
+(`apps.measurements`, `apps.activities`) — `apps.analytics` doesn't
+duplicate those. What it adds:
+
+- `/analytics/` — a dashboard: training summary (workouts, training
+  time, total volume), a weekly training volume bar chart, a
+  muscle-group volume bar chart (a set's full volume counts toward every
+  primary muscle group its exercise targets — the simplest defensible
+  split, rather than dividing fractionally with no principled basis),
+  and PR history (reuses `apps.records`' immutable achievement log).
+- `/analytics/exercises/<pk>/` — per-exercise strength trend: estimated
+  1RM over time (one point per session — that session's best estimate,
+  not one point per set, so the trend stays readable) plus session
+  count/volume in range.
+- Date-range filtering (`apps.analytics.dateranges`) is shared by both:
+  presets resolve relative to today; an explicit `start`/`end` pair (the
+  "custom range" requirement) overrides any preset.
+- Training-load volume (here) intentionally counts failed sets — the
+  work still happened — unlike `apps.records`' PR eligibility, which
+  requires a clean, successful set to count as a record.
+- `apps.core.charts` gained `build_bar_series` alongside the existing
+  `build_chart_series` (Phase 8/9), so bar and line charts share the
+  same model-agnostic, tested foundation.
+
+Also feeds `docs/UI.md`'s dashboard content list directly:
+`apps.core.views.DashboardView` now shows this week's volume, the 3 most
+recent PRs, and the latest body-weight reading, alongside the existing
+in-progress-workout banner.

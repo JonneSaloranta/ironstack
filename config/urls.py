@@ -11,5 +11,6 @@ urlpatterns = [
     path("records/", include("apps.records.urls")),
     path("measurements/", include("apps.measurements.urls")),
     path("activities/", include("apps.activities.urls")),
+    path("analytics/", include("apps.analytics.urls")),
     path("", include("apps.core.urls")),
 ]

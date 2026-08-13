@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}{{ exercise.name }} analytics — IronStack{% endblock %}
+{% block content %}
+<div class="top-bar">
+  <h1 style="margin:0;">{{ exercise.name }}</h1>
+</div>
+
+{% include "analytics/_range_filter.html" %}
+
+<div class="card">
+  <dl class="stat-row">
+    <div><dt>Sessions</dt><dd>{{ summary.session_count }}</dd></div>
+    <div><dt>Total volume</dt><dd>{{ summary.total_volume }} kg</dd></div>
+  </dl>
+</div>
+
+{% if one_rm_chart %}
+  {% include "core/_chart.html" with chart=one_rm_chart chart_title="Estimated 1RM" unit_label="kg" %}
+{% else %}
+  <div class="card empty-state"><p>Not enough history in this range for a trend line.</p></div>
+{% endif %}
+
+<p><a href="{% url 'records:exercise-records' exercise.pk %}">View current PRs</a></p>
+<p><a href="{% url 'exercises:exercise-detail' exercise.pk %}">&larr; Back to exercise</a></p>
+{% endblock %}

@@ -145,6 +145,32 @@ totals canonical values, but the view wasn't converting the total before
 handing it to the template, unlike the already-converted per-entry
 values. Fixed and re-verified live, with a regression test added.
 
+Phase 10 (Analytics) — `apps/analytics`. `apps.measurements`/
+`apps.activities` already had dedicated trend pages from Phases 8-9, so
+this phase adds only what didn't have a home yet: a dashboard
+(`/analytics/` — training summary, a weekly-volume bar chart, a
+muscle-group-volume bar chart, PR history) and per-exercise strength
+trend (`/analytics/exercises/<pk>/` — estimated 1RM over time, one point
+per session). `apps.core.charts` gained `build_bar_series` alongside the
+existing line-chart builder, so both chart types share one tested,
+model-agnostic foundation. Date-range filtering
+(`apps.analytics.dateranges`) is shared across both pages: six presets
+plus an explicit `start`/`end` override for docs/ANALYTICS.md's "custom
+range". Training-load volume here deliberately counts failed sets (the
+work still happened) — a real, intentional divergence from
+`apps.records`' stricter PR eligibility, not an inconsistency. Also
+enhanced `apps.core`'s main dashboard with the widgets
+`docs/UI.md` calls for: this week's volume, recent PRs, latest body
+weight. 51 new tests (222 total). Manually seeding realistic workout
+history to verify live surfaced a false alarm rather than a real bug —
+"Training time: 32 days" from a first pass — traced to the seeding
+script itself (it backdated `started_at` without also backdating
+`ended_at`), not the analytics query; re-seeding with a realistic
+`ended_at` showed the correct duration, confirming the calculation was
+right all along. Also confirmed the estimated-1RM trend, both bar
+charts, and the date-range filter each read correctly against real
+multi-session history over HTTP.
+
 ## Local development
 
 ```bash

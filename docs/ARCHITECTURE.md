@@ -79,7 +79,15 @@ Body weight, body fat, circumferences, custom measurements.
 Manually logged non-gym activities.
 
 ### analytics
-Aggregations, trends, dashboards, chart data.
+Aggregations, trends, dashboards, chart data. No models — every query is
+computed live from `workouts`/`records` history, scoped by `apps.core.charts`'
+model-agnostic chart builders and a small `dateranges` module
+(`apps.analytics.dateranges`) shared by every date-range-filterable view.
+`apps.measurements`/`apps.activities` already have their own dedicated,
+working trend pages from Phases 8-9 — `analytics` doesn't duplicate
+those, only what didn't have a home yet: cross-exercise training volume,
+muscle-group volume, PR history, and per-exercise strength trend (1RM
+over time).
 
 ### core
 Shared utilities and cross-cutting concerns: unit conversion

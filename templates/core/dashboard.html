@@ -9,6 +9,33 @@
   </form>
 </div>
 
+{% if week_summary.session_count or body_weight is not None %}
+  <div class="card">
+    <dl class="stat-row">
+      <div><dt>This week's volume</dt><dd>{{ week_summary.total_volume }} kg</dd></div>
+      {% if body_weight is not None %}
+        <div><dt>Body weight</dt><dd>{{ body_weight }} {{ body_weight_unit }}</dd></div>
+      {% endif %}
+    </dl>
+  </div>
+{% endif %}
+
+{% if recent_prs %}
+  <div class="card">
+    <strong>Recent PRs</strong>
+    {% for record in recent_prs %}
+      <p class="text-muted" style="margin:0.35rem 0 0;">
+        {{ record.exercise.name }} — {{ record.get_record_type_display }}: {{ record.value }}
+      </p>
+    {% endfor %}
+  </div>
+{% endif %}
+
+<a class="card card-link" href="{% url 'analytics:dashboard' %}">
+  <strong>Analytics</strong>
+  <p class="text-muted">Training volume, muscle-group breakdown, and PR history.</p>
+</a>
+
 {% if in_progress_session %}
   <a class="card card-link" href="{% url 'workouts:session-detail' in_progress_session.pk %}">
     <strong>Continue workout</strong>

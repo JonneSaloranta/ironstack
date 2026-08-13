@@ -5,7 +5,7 @@ from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
 
-from apps.core.charts import build_chart_series
+from apps.core.charts import build_bar_series, build_chart_series
 from apps.core.units import (
     cm_to_meters,
     inches_to_meters,
@@ -94,6 +94,42 @@ class ChartSeriesServiceTests(TestCase):
         self.assertEqual(series.points[-1].x, Decimal("580.00"))
 
 
+class BarSeriesServiceTests(TestCase):
+    """apps.analytics plots category comparisons (weekly volume,
+    muscle-group volume) through this shared, model-agnostic utility."""
+
+    def test_no_categories_returns_no_series(self):
+        self.assertIsNone(build_bar_series([]))
+
+    def test_a_single_category_is_still_a_valid_series(self):
+        series = build_bar_series([("Chest", Decimal("1000"))])
+        self.assertIsNotNone(series)
+        self.assertEqual(len(series.bars), 1)
+
+    def test_bars_are_capped_at_the_max_thickness(self):
+        # Few wide categories shouldn't produce bars that fill the slot.
+        series = build_bar_series([("A", Decimal("1")), ("B", Decimal("2"))], width=600)
+        for bar in series.bars:
+            self.assertLessEqual(bar.width, Decimal("24"))
+
+    def test_tallest_bar_reaches_the_full_plot_height(self):
+        series = build_bar_series(
+            [("A", Decimal("50")), ("B", Decimal("100"))], height=200, padding=20
+        )
+        tallest = series.bars[1]
+        self.assertEqual(tallest.height, Decimal("160.00"))
+        self.assertEqual(tallest.y, Decimal("20.00"))
+
+    def test_all_zero_values_do_not_divide_by_zero(self):
+        series = build_bar_series([("A", Decimal("0")), ("B", Decimal("0"))])
+        self.assertIsNotNone(series)
+        self.assertEqual(series.bars[0].height, Decimal("0.00"))
+
+    def test_category_order_is_preserved_not_resorted(self):
+        series = build_bar_series([("Z", Decimal("1")), ("A", Decimal("5"))])
+        self.assertEqual([bar.label for bar in series.bars], ["Z", "A"])
+
+
 class HealthcheckTests(TestCase):
     def test_healthcheck_returns_200_without_auth(self):
         response = self.client.get(reverse("healthcheck"))
@@ -106,3 +142,56 @@ class DashboardAccessTests(TestCase):
         response = self.client.get(reverse("dashboard"))
         self.assertEqual(response.status_code, 302)
         self.assertIn(reverse("login"), response.url)
+
+
+class DashboardWidgetsTests(TestCase):
+    """docs/UI.md dashboard content: this week's volume, recent PRs, body
+    weight — see apps.core.views.DashboardView."""
+
+    def setUp(self):
+        from django.contrib.auth import get_user_model
+
+        self.User = get_user_model()
+        self.alice = self.User.objects.create_user(username="alice", password="s3cret-pass")
+        self.client.login(username="alice", password="s3cret-pass")
+
+    def test_dashboard_renders_with_no_history(self):
+        response = self.client.get(reverse("dashboard"))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context["week_summary"].session_count, 0)
+        self.assertIsNone(response.context["body_weight"])
+
+    def test_body_weight_widget_shows_the_latest_reading_in_display_units(self):
+        from decimal import Decimal
+
+        from apps.measurements.models import BodyMeasurement, MeasurementType
+
+        body_weight_type = MeasurementType.objects.get(name="Body weight", owner=None)
+        BodyMeasurement.objects.create(
+            user=self.alice, measurement_type=body_weight_type, value=Decimal("82.5")
+        )
+        response = self.client.get(reverse("dashboard"))
+        self.assertEqual(response.context["body_weight"], Decimal("82.50"))
+        self.assertContains(response, "82.50 kg")
+
+    def test_recent_prs_widget_only_shows_the_logged_in_users_own_prs(self):
+        from decimal import Decimal
+
+        from django.utils import timezone
+
+        from apps.exercises.models import Exercise
+        from apps.records.models import PersonalRecord, PRType
+
+        bob = self.User.objects.create_user(username="bob", password="s3cret-pass")
+        exercise = Exercise.objects.create(name="Test Snatch", owner=None)
+        PersonalRecord.objects.create(
+            user=bob,
+            exercise=exercise,
+            record_type=PRType.MAX_WEIGHT,
+            value=Decimal("999"),
+            weight=Decimal("999"),
+            reps=1,
+            achieved_at=timezone.now(),
+        )
+        response = self.client.get(reverse("dashboard"))
+        self.assertEqual(list(response.context["recent_prs"]), [])

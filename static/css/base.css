@@ -345,6 +345,55 @@ h2 {
   color: var(--color-text-muted);
 }
 
+.bar-rect {
+  fill: var(--color-accent);
+}
+
+/* Date-range filter */
+.range-filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.range-filter a {
+  padding: 0.35rem 0.7rem;
+  border-radius: 999px;
+  border: 1px solid var(--color-border);
+  color: var(--color-text-muted);
+  text-decoration: none;
+  font-size: 0.85rem;
+}
+
+.range-filter a[aria-current="true"] {
+  background: var(--color-accent);
+  color: #fff;
+  border-color: var(--color-accent);
+}
+
+.stat-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin: 0;
+}
+
+.stat-row div {
+  flex: 1 1 8rem;
+}
+
+.stat-row dt {
+  color: var(--color-text-muted);
+  font-size: 0.75rem;
+}
+
+.stat-row dd {
+  margin: 0.15rem 0 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
 .suggestion-banner {
   background: var(--color-bg);
   border: 1px solid var(--color-border);
