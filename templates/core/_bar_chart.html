@@ -1,16 +1,18 @@
 {% comment %}
 Single-metric bar chart (category comparison), shared across
 apps.analytics. One color for every bar: the x-axis labels already carry
-category identity, so a categorical hue per bar would just be noise (see
-dataviz skill "color-formula" — categorical color is for distinguishing
-overlapping series, not restating what the label already says).
+category identity via the table below, so a categorical hue per bar
+would just be noise (see dataviz skill "color-formula" — categorical
+color is for distinguishing overlapping series, not restating what a
+label already says).
 
-Category labels live in the hover tooltip and the accompanying table
-(always rendered alongside this partial), not as SVG text under each
-bar — with an unbounded number of categories (weeks, muscle groups),
-fitting readable labels under narrow bars without collisions isn't
-guaranteed, and the table is the reliable, accessible source of exact
-figures either way.
+The bars alone have no visible category labels — with an unbounded
+number of categories (weeks, muscle groups), fitting readable text under
+narrow bars without collisions isn't guaranteed — so the table directly
+below is what actually carries "which bar is which" for a sighted user,
+not just an accessibility fallback: without it, this chart is a row of
+same-colored bars nobody can read. It also means the hover tooltip's
+figures are never the only way to reach them.
 
 Expects: chart (apps.core.charts.BarSeries), chart_title, unit_label.
 {% endcomment %}
@@ -23,4 +25,12 @@ Expects: chart (apps.core.charts.BarSeries), chart_title, unit_label.
       </rect>
     {% endfor %}
   </svg>
+  <table class="bar-chart-table">
+    <caption class="visually-hidden">{{ chart_title }} by category</caption>
+    <tbody>
+      {% for bar in chart.bars %}
+        <tr><th scope="row">{{ bar.label }}</th><td>{{ bar.value }} {{ unit_label }}</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
 </div>

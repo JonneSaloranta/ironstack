@@ -17,7 +17,8 @@
 {% endif %}
 
 {% if chart %}
-  {% include "core/_chart.html" with chart_title=activity_type.name unit_label="min" %}
+  <h2>Duration trend</h2>
+  {% include "core/_chart.html" with chart_title="Duration" unit_label="min" %}
 {% endif %}
 
 <form class="card" method="post" action="{% url 'activities:log' activity_type.pk %}">

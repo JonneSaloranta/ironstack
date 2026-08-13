@@ -109,3 +109,29 @@ Also feeds `docs/UI.md`'s dashboard content list directly:
 `apps.core.views.DashboardView` now shows this week's volume, the 3 most
 recent PRs, and the latest body-weight reading, alongside the existing
 in-progress-workout banner.
+
+### Chart titles/legends audit (post-Phase 11)
+
+Every chart in the app is single-series (one line, or one set of
+same-colored bars), which per the dataviz skill's own rule never needs a
+legend box — but only if the chart's title is actually visible to a
+sighted user, not just present for screen readers. An audit of every
+`core/_chart.html`/`core/_bar_chart.html` usage found two real gaps and
+fixed both:
+
+- Three line-chart pages (measurements, activities, per-exercise
+  strength trend) carried their title only in the SVG `aria-label`,
+  invisible on the page itself. Each now has a visible `<h2>` heading
+  directly above the chart, matching the pattern the analytics dashboard's
+  bar charts already used correctly. The activities page's heading was
+  also wrong in substance, not just missing: it showed the activity type
+  name (e.g. "Running") where "Duration trend" is what's actually
+  plotted.
+- The bar charts (weekly volume, muscle-group volume) had **no visible
+  category labels at all** — no x-axis text, no legend, and (despite a
+  code comment claiming otherwise) no table — only a per-bar hover
+  tooltip, which isn't discoverable on touch devices. `core/_bar_chart.html`
+  now renders a small table (category, value) directly below every bar
+  chart, which is the real fix — not a legend, since a categorical color
+  key wouldn't have helped when every bar is deliberately the same color
+  (see the file's own reasoning for why).

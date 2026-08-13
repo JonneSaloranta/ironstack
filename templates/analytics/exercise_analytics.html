@@ -15,6 +15,7 @@
 </div>
 
 {% if one_rm_chart %}
+  <h2>Estimated 1RM trend</h2>
   {% include "core/_chart.html" with chart=one_rm_chart chart_title="Estimated 1RM" unit_label="kg" %}
 {% else %}
   <div class="card empty-state"><p>Not enough history in this range for a trend line.</p></div>

@@ -252,6 +252,27 @@ class LoggingFlowTests(TestCase):
         self.assertIsNotNone(response.context["chart"])
         self.assertContains(response, "<svg")
 
+    def test_chart_has_a_visible_heading_naming_the_metric_not_just_the_type(self):
+        """Regression: the chart's title used to be just the activity
+        type name (e.g. "Running"), which doesn't say the chart is
+        specifically about duration (as opposed to distance/calories) --
+        and it only ever reached the screen-reader-only aria-label, never
+        anything a sighted user could see."""
+        Activity.objects.create(
+            user=self.alice,
+            activity_type=self.activity_type,
+            date="2026-01-01",
+            duration=timedelta(minutes=30),
+        )
+        Activity.objects.create(
+            user=self.alice,
+            activity_type=self.activity_type,
+            date="2026-01-02",
+            duration=timedelta(minutes=45),
+        )
+        response = self.client.get(reverse("activities:history", args=[self.activity_type.pk]))
+        self.assertContains(response, "<h2>Duration trend</h2>")
+
     def test_summary_total_distance_is_converted_to_the_display_unit(self):
         # Regression: summarize() totals canonical meters; the view must
         # convert before the template renders it next to "km"/"mi".

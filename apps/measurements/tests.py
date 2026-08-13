@@ -197,6 +197,18 @@ class LoggingFlowTests(TestCase):
         self.assertIsNotNone(response.context["chart"])
         self.assertContains(response, "<svg")
 
+    def test_chart_has_a_visible_heading_not_just_a_screen_reader_label(self):
+        """Regression: the chart used to carry its title only in the SVG's
+        aria-label, invisible to sighted users."""
+        BodyMeasurement.objects.create(
+            user=self.alice, measurement_type=self.measurement_type, value=Decimal("80")
+        )
+        BodyMeasurement.objects.create(
+            user=self.alice, measurement_type=self.measurement_type, value=Decimal("81")
+        )
+        response = self.client.get(reverse("measurements:history", args=[self.measurement_type.pk]))
+        self.assertContains(response, "<h2>Trend</h2>")
+
 
 class CustomMeasurementTypeFlowTests(TestCase):
     def setUp(self):

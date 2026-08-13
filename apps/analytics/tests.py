@@ -244,6 +244,21 @@ class AnalyticsDashboardViewTests(TestCase):
         response = self.client.get(reverse("analytics:dashboard"))
         self.assertEqual(response.context["summary"].session_count, 0)
 
+    def test_bar_charts_render_a_table_with_readable_category_labels(self):
+        """Regression: the bar charts used to have no visible way at all
+        to tell which bar was which category (no x-axis text, no legend,
+        no table) -- only a hover tooltip, undiscoverable on touch
+        devices. The category name must appear as real page text, not
+        just inside an SVG <title> tooltip."""
+        chest = MuscleGroup.objects.create(name="Test Chest Bar")
+        exercise = Exercise.objects.create(name="Test Bench Bar", owner=None)
+        exercise.primary_muscle_groups.set([chest])
+        _log_completed_session(self.alice, exercise, Decimal("80"), [5, 5, 5])
+
+        response = self.client.get(reverse("analytics:dashboard"))
+        self.assertContains(response, '<table class="bar-chart-table">')
+        self.assertContains(response, "<th scope=\"row\">Test Chest Bar</th>")
+
 
 class ExerciseAnalyticsViewTests(TestCase):
     def setUp(self):
@@ -259,6 +274,13 @@ class ExerciseAnalyticsViewTests(TestCase):
     def test_renders_for_a_visible_exercise(self):
         response = self.client.get(reverse("analytics:exercise", args=[self.exercise.pk]))
         self.assertEqual(response.status_code, 200)
+
+    def test_chart_has_a_visible_heading_not_just_a_screen_reader_label(self):
+        _log_completed_session(self.alice, self.exercise, Decimal("50"), [5], days_ago=7)
+        _log_completed_session(self.alice, self.exercise, Decimal("52.5"), [5], days_ago=0)
+        response = self.client.get(reverse("analytics:exercise", args=[self.exercise.pk]))
+        self.assertIsNotNone(response.context["one_rm_chart"])
+        self.assertContains(response, "<h2>Estimated 1RM trend</h2>")
 
     def test_404_for_another_users_private_exercise(self):
         bob = User.objects.create_user(username="bob", password="s3cret-pass")
