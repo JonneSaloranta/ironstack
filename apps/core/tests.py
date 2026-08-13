@@ -7,6 +7,7 @@ from django.urls import reverse
 from django.utils import timezone
 from django.views.defaults import permission_denied
 
+from apps.core.bmi import BMI_CATEGORIES, calculate_bmi, category_for
 from apps.core.charts import build_bar_series, build_chart_series
 from apps.core.templatetags.core_extras import duration
 from apps.core.units import (
@@ -52,6 +53,37 @@ class UnitConversionTests(TestCase):
     def test_inches_round_trip(self):
         inches = Decimal("33.5")
         self.assertEqual(meters_to_inches(inches_to_meters(inches)), inches)
+
+
+class BMICalculationTests(TestCase):
+    def test_calculate_bmi_known_value(self):
+        # 82.5 kg at 1.80 m -> a textbook example, ~25.5
+        bmi = calculate_bmi(Decimal("82.5"), Decimal("1.80"))
+        self.assertEqual(bmi, Decimal("25.5"))
+
+    def test_missing_weight_or_height_returns_none(self):
+        self.assertIsNone(calculate_bmi(None, Decimal("1.80")))
+        self.assertIsNone(calculate_bmi(Decimal("82.5"), None))
+
+    def test_non_positive_height_returns_none_rather_than_dividing_by_zero(self):
+        self.assertIsNone(calculate_bmi(Decimal("82.5"), Decimal("0")))
+
+    def test_category_for_covers_every_boundary(self):
+        self.assertEqual(category_for(Decimal("18.4")).name, "Underweight")
+        self.assertEqual(category_for(Decimal("18.5")).name, "Normal weight")
+        self.assertEqual(category_for(Decimal("24.9")).name, "Normal weight")
+        self.assertEqual(category_for(Decimal("25.0")).name, "Overweight")
+        self.assertEqual(category_for(Decimal("29.9")).name, "Overweight")
+        self.assertEqual(category_for(Decimal("30.0")).name, "Obese")
+
+    def test_categories_are_contiguous_and_exhaustive(self):
+        """Every category's high bound is the next one's low bound, and
+        the whole range from 0 to infinity is covered — no gap a real
+        BMI value could fall through uncategorized."""
+        self.assertIsNone(BMI_CATEGORIES[0].low)
+        self.assertIsNone(BMI_CATEGORIES[-1].high)
+        for earlier, later in zip(BMI_CATEGORIES, BMI_CATEGORIES[1:]):
+            self.assertEqual(earlier.high, later.low)
 
 
 class DurationFilterTests(TestCase):
@@ -272,6 +304,15 @@ class BottomNavTests(TestCase):
         response = self.client.get(reverse("login"))
         self.assertNotContains(response, 'class="bottom-nav"')
 
+    def test_progress_nav_link_points_to_the_analytics_dashboard(self):
+        """Regression: "Progress" used to link to Body tracking (measurements),
+        not the actual training-volume/PR/strength-trend analytics page —
+        a mismatch between the label and where it actually led."""
+        response = self.client.get(reverse("dashboard"))
+        self.assertContains(
+            response, f'href="{reverse("analytics:dashboard")}" aria-label="Progress"'
+        )
+
 
 class DashboardWidgetsTests(TestCase):
     """docs/UI.md dashboard content: this week's workouts/volume, recent
@@ -322,6 +363,72 @@ class DashboardWidgetsTests(TestCase):
         response = self.client.get(reverse("dashboard"))
         self.assertEqual(response.context["body_weight"], Decimal("82.50"))
         self.assertContains(response, "82.50 kg")
+
+    def test_bmi_is_not_shown_without_a_height(self):
+        from apps.measurements.models import BodyMeasurement, MeasurementType
+
+        body_weight_type = MeasurementType.objects.get(name="Body weight", owner=None)
+        BodyMeasurement.objects.create(
+            user=self.alice, measurement_type=body_weight_type, value=Decimal("82.5")
+        )
+        response = self.client.get(reverse("dashboard"))
+        self.assertNotIn("bmi", response.context)
+        self.assertContains(response, "Add your height")
+
+    def test_bmi_is_not_shown_without_a_logged_body_weight(self):
+        self.alice.height = Decimal("1.80")
+        self.alice.save()
+        response = self.client.get(reverse("dashboard"))
+        self.assertNotIn("bmi", response.context)
+
+    def test_bmi_and_category_are_shown_once_height_and_weight_both_exist(self):
+        from apps.measurements.models import BodyMeasurement, MeasurementType
+
+        self.alice.height = Decimal("1.80")
+        self.alice.save()
+        body_weight_type = MeasurementType.objects.get(name="Body weight", owner=None)
+        BodyMeasurement.objects.create(
+            user=self.alice, measurement_type=body_weight_type, value=Decimal("82.5")
+        )
+        response = self.client.get(reverse("dashboard"))
+        self.assertEqual(response.context["bmi"], Decimal("25.5"))
+        self.assertEqual(response.context["bmi_category"].name, "Overweight")
+        self.assertContains(response, "Overweight")
+
+    def test_dashboard_does_not_duplicate_main_nav_destinations(self):
+        """Regression: the dashboard used to carry its own "Analytics",
+        "Workout history", and "Programs" cards that led to the exact
+        same pages the bottom nav already links to — each URL should now
+        appear exactly once on the page (from the nav)."""
+        response = self.client.get(reverse("dashboard"))
+        content = response.content.decode()
+        for url_name in ["workouts:session-list", "programs:program-list", "analytics:dashboard"]:
+            url = reverse(url_name)
+            self.assertEqual(
+                content.count(url), 1, f"{url_name} ({url}) should appear only once, in the nav"
+            )
+
+    def test_bmi_is_hidden_when_the_user_has_turned_it_off(self):
+        from apps.measurements.models import BodyMeasurement, MeasurementType
+
+        self.alice.height = Decimal("1.80")
+        self.alice.show_bmi = False
+        self.alice.save()
+        body_weight_type = MeasurementType.objects.get(name="Body weight", owner=None)
+        BodyMeasurement.objects.create(
+            user=self.alice, measurement_type=body_weight_type, value=Decimal("82.5")
+        )
+        response = self.client.get(reverse("dashboard"))
+        self.assertNotIn("bmi", response.context)
+        # The height nudge shouldn't appear either — the user has
+        # opted out of the whole BMI feature, not just this instance.
+        self.assertNotContains(response, "Add your height")
+
+    def test_dashboard_has_no_logout_button(self):
+        """Regression: the dashboard used to duplicate the logout button
+        already available on the profile page."""
+        response = self.client.get(reverse("dashboard"))
+        self.assertNotContains(response, reverse("logout"))
 
     def test_recent_prs_widget_only_shows_the_logged_in_users_own_prs(self):
         from decimal import Decimal

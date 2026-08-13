@@ -115,8 +115,18 @@ confidence and reason as a plain, editable default, never forced (see
 
 ### Dashboard
 Implemented: this week's workouts and volume, recent PRs (last 3), body
-weight, and an in-progress-workout banner that doubles as "continue/last
-workout". Two items from this doc's original wishlist were deliberately
+weight, BMI (see below), and an in-progress-workout banner that doubles
+as "continue/last workout". No logout button here — it lives on the
+Profile page only, not duplicated.
+
+**BMI**: shown only once both a height (set on the Profile page) and at
+least one logged body weight exist, alongside the WHO category ranges
+table with the user's own row highlighted — a bare number with no
+context isn't useful. A `show_bmi` profile toggle turns the card off
+outright for anyone who'd rather not see it, independent of whether it's
+computable; the "add your height" nudge card respects the toggle too.
+
+Two items from this doc's original wishlist were deliberately
 not built as dashboard widgets:
 - **Recent activity** — `apps.activities` already has its own working,
   dedicated history page per activity type; a dashboard widget would
@@ -130,9 +140,19 @@ not built as dashboard widgets:
 
 ### Mobile navigation
 All five bottom-nav sections are real, not placeholders: Home
-(dashboard), Workout (session history/start), Programs, Progress (body
-tracking), Profile (unit/timezone preferences, password change — added
+(dashboard), Workout (session history/start), Programs, Progress
+(analytics dashboard — training volume, muscle-group breakdown, PR
+history), Profile (unit/timezone preferences, password change — added
 Phase 11, previously a dead link since Phase 1).
+
+"Progress" originally linked to Body tracking (measurements) — retargeted
+to the analytics dashboard once a post-launch review found the label
+didn't match where it led, and pointed out that the dashboard's own
+"Analytics"/"Workout history"/"Programs" cards duplicated what the main
+nav already reached. Those three cards were removed; Body tracking stays
+reachable from its own dashboard card instead (it isn't in the bottom nav
+at all now, alongside Browse exercises and Activities — none of the
+three needed a dedicated nav slot).
 
 ### States
 - **Loading**: `.htmx-request` (`static/css/base.css`) dims and disables
@@ -175,6 +195,12 @@ link's own `aria-label`, and desktop re-shows the label text alongside
 the icon once there's room (`display: inline` past the `768px`
 breakpoint).
 
+Icons and the bar itself were enlarged post-launch (1.5rem → 1.9rem
+icons, 3.5rem → 4.25rem bar height, plus explicit `padding-top` on each
+link so icons aren't flush against the bar's top edge) — the original
+sizing felt cramped specifically when the app is installed and run as a
+standalone PWA, with no browser chrome nearby to lean on for scale.
+
 ### Accessibility
 Beyond the base checklist above: a skip-to-content link
 (`.skip-link`, visible on focus); every hand-rolled `<input>`/`<select>`
@@ -187,6 +213,24 @@ a given chart is deliberately the same color (see
 post-Phase-11 audit, not part of the original Phase 11 pass — two real
 gaps were found and fixed; see `docs/ANALYTICS.md` "Chart titles/legends
 audit".
+
+### Deleting a logged workout
+`WorkoutSession.delete` is reachable only from the session's own detail
+page (with a confirm dialog), deliberately not from the `/workouts`
+history list even though that list can show many sessions at once — a
+destructive action stays one deliberate navigation away from an
+accidental tap, rather than sitting on every row of a scrollable list.
+Works regardless of status (in-progress, completed, or abandoned) —
+distinct from `abandon`, which keeps the session in history marked
+abandoned rather than removing it.
+
+### Navigational buttons
+Every "Back to X" link (program/exercise/workout/measurement/activity/
+records pages, every create/edit form, and the error pages) is styled as
+a button (`.button-secondary` — outlined, lower-emphasis than the solid
+`.button` a page's primary action uses) rather than a bare text link:
+easier to spot, and a full `--touch-target` (2.75rem) hit area instead of
+whatever a line of text happens to occupy.
 
 ### PWA
 Installable, not offline-capable — see `docs/ROADMAP.md` "Future

@@ -63,3 +63,23 @@ def meters_to_inches(meters: Decimal) -> Decimal:
 
 def inches_to_meters(inches: Decimal) -> Decimal:
     return _quantize(inches * _M_PER_INCH, _LENGTH_PLACES)
+
+
+# Weight is stored in kg everywhere outside apps.measurements (workout
+# sets, prescriptions, PRs, analytics) — these three helpers are the
+# single dispatch point for converting it to/from a user's preferred
+# `unit_system` ("metric"/"imperial"), so every one of those call sites
+# converts the same way instead of each re-implementing the branch.
+# (apps.measurements.units has its own broader to_display/to_canonical
+# dispatch across weight/length/percentage kinds — this is the same idea,
+# just scoped to the one kind everything outside that app needs.)
+def kg_to_display(kg: Decimal, unit_system: str) -> Decimal:
+    return kg_to_lb(kg) if unit_system == "imperial" else kg
+
+
+def display_to_kg(value: Decimal, unit_system: str) -> Decimal:
+    return lb_to_kg(value) if unit_system == "imperial" else value
+
+
+def weight_unit_label(unit_system: str) -> str:
+    return "lb" if unit_system == "imperial" else "kg"

@@ -8,6 +8,8 @@ from django.views.generic import TemplateView
 
 from apps.analytics import dateranges
 from apps.analytics import services as analytics_services
+from apps.core import bmi as bmi_services
+from apps.core import units as core_units
 from apps.measurements import services as measurement_services
 from apps.measurements import units as measurement_units
 from apps.measurements.models import MeasurementType
@@ -37,10 +39,13 @@ class DashboardView(LoginRequiredMixin, TemplateView):
         context["recent_prs"] = analytics_services.pr_history(
             user, dateranges.resolve("30d"), limit=3
         )
+        context["weight_unit_label"] = core_units.weight_unit_label(user.unit_system)
 
         body_weight_type = MeasurementType.objects.filter(name="Body weight", owner=None).first()
+        latest_weight_kg = None
         if body_weight_type:
             latest = measurement_services.latest_for(user, body_weight_type)
+            latest_weight_kg = latest.value if latest else None
             context["body_weight"] = (
                 measurement_units.to_display(
                     latest.value, body_weight_type.unit_kind, user.unit_system
@@ -51,6 +56,19 @@ class DashboardView(LoginRequiredMixin, TemplateView):
             context["body_weight_unit"] = measurement_units.display_unit_label(
                 body_weight_type.unit_kind, user.unit_system
             )
+
+        # BMI needs both a height (set on the profile) and at least one
+        # logged body weight — shown only once both exist, alongside the
+        # plain category ranges (apps.core.bmi) so the number has context
+        # rather than standing alone. `show_bmi` is a separate opt-out a
+        # user can flip on the profile page regardless of whether it'd
+        # otherwise be computable.
+        if user.show_bmi:
+            bmi = bmi_services.calculate_bmi(latest_weight_kg, user.height)
+            if bmi is not None:
+                context["bmi"] = bmi
+                context["bmi_category"] = bmi_services.category_for(bmi)
+                context["bmi_categories"] = bmi_services.BMI_CATEGORIES
         return context
 
 

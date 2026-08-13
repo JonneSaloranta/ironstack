@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.test import TestCase
@@ -59,6 +61,58 @@ class ExercisePrescriptionModelTests(TestCase):
         )
         with self.assertRaises(ValidationError):
             prescription.full_clean()
+
+
+class ExercisePrescriptionUnitConversionTests(TestCase):
+    """Regression: ExercisePrescriptionForm always stored target_weight /
+    weight_increment as raw kg with a hardcoded "(kg)" label, so an
+    imperial-preference user entering a value in pounds had it stored (and
+    later re-shown to them) as if it were kilograms."""
+
+    def setUp(self):
+        self.alice = User.objects.create_user(
+            username="alice", password="s3cret-pass", unit_system="imperial"
+        )
+        self.program = Program.objects.create(owner=self.alice, name="My Program")
+        self.workout = Workout.objects.create(program=self.program, name="Day 1")
+        self.exercise = Exercise.objects.create(name="Test Move", owner=None)
+        self.client.login(username="alice", password="s3cret-pass")
+
+    def test_creating_a_prescription_in_pounds_stores_the_canonical_kg_value(self):
+        self.client.post(
+            reverse(
+                "programs:prescription-create",
+                args=[self.program.pk, self.workout.pk],
+            ),
+            {
+                "exercise": self.exercise.pk,
+                "order": 0,
+                "set_count": 3,
+                "min_reps": 8,
+                "max_reps": 12,
+                "target_weight": "220.46",
+                "weight_increment": "5",
+                "progression_method": "manual",
+            },
+        )
+        prescription = ExercisePrescription.objects.get(workout=self.workout)
+        self.assertEqual(prescription.target_weight, Decimal("100.00"))
+        self.assertEqual(prescription.weight_increment, Decimal("2.27"))
+
+    def test_edit_form_shows_pounds_label_and_prefill(self):
+        prescription = ExercisePrescription.objects.create(
+            workout=self.workout,
+            exercise=self.exercise,
+            target_weight=Decimal("100"),
+        )
+        response = self.client.get(
+            reverse(
+                "programs:prescription-update",
+                args=[self.program.pk, self.workout.pk, prescription.pk],
+            )
+        )
+        self.assertContains(response, "Target weight (lb)")
+        self.assertContains(response, "220.46")
 
 
 class ProgramVisibilityServiceTests(TestCase):

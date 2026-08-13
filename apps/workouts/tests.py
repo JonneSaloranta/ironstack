@@ -181,6 +181,49 @@ class SessionViewPermissionTests(TestCase):
         self.assertEqual(response.status_code, 404)
         self.assertEqual(performed.sets.count(), 0)
 
+    def test_cannot_delete_another_users_session(self):
+        response = self.client.post(
+            reverse("workouts:session-delete", args=[self.bob_session.pk])
+        )
+        self.assertEqual(response.status_code, 404)
+        self.assertTrue(WorkoutSession.objects.filter(pk=self.bob_session.pk).exists())
+
+    def test_deleting_a_session_requires_post(self):
+        session = services.start_session(self.alice, workout=None)
+        response = self.client.get(reverse("workouts:session-delete", args=[session.pk]))
+        self.assertEqual(response.status_code, 405)
+        self.assertTrue(WorkoutSession.objects.filter(pk=session.pk).exists())
+
+    def test_can_delete_own_session(self):
+        session = services.start_session(self.alice, workout=None)
+        response = self.client.post(reverse("workouts:session-delete", args=[session.pk]))
+        self.assertRedirects(response, reverse("workouts:session-list"))
+        self.assertFalse(WorkoutSession.objects.filter(pk=session.pk).exists())
+
+    def test_can_delete_a_completed_session(self):
+        """Regression: deleting was added specifically so a mistaken or
+        unwanted logged workout can be removed from history — including
+        after it's been completed, not just while in progress."""
+        session = services.start_session(self.alice, workout=None)
+        services.complete_session(session)
+        response = self.client.post(reverse("workouts:session-delete", args=[session.pk]))
+        self.assertRedirects(response, reverse("workouts:session-list"))
+        self.assertFalse(WorkoutSession.objects.filter(pk=session.pk).exists())
+
+    def test_delete_is_reachable_from_the_session_detail_page_not_the_list(self):
+        """Deleting is a detail-page-only action — the list page (which
+        can show many sessions at once) deliberately has no per-row
+        delete button, to keep an accidental tap far from a destructive
+        action reachable in one click."""
+        session = services.start_session(self.alice, workout=None)
+        delete_url = reverse("workouts:session-delete", args=[session.pk])
+        list_response = self.client.get(reverse("workouts:session-list"))
+        self.assertNotContains(list_response, delete_url)
+        detail_response = self.client.get(
+            reverse("workouts:session-detail", args=[session.pk])
+        )
+        self.assertContains(detail_response, delete_url)
+
 
 class SetLoggingFlowTests(TestCase):
     def setUp(self):
@@ -227,6 +270,39 @@ class SetLoggingFlowTests(TestCase):
         exercise_set = services.log_set(self.performed, weight=Decimal("100"), reps=5)
         self.client.post(reverse("workouts:set-delete", args=[exercise_set.pk]))
         self.assertEqual(self.performed.sets.count(), 0)
+
+    def test_logging_a_set_in_pounds_stores_the_canonical_kg_value(self):
+        """Regression: ExerciseSetForm always stored the submitted number
+        as raw kg, so an imperial-preference user entering a weight in
+        pounds would have it stored (and later shown right back to them)
+        as if it were kilograms — over double the real weight."""
+        self.alice.unit_system = "imperial"
+        self.alice.save()
+        self.client.post(
+            reverse("workouts:set-log", args=[self.performed.pk]),
+            {"weight": "220.46", "reps": "5"},
+        )
+        logged = self.performed.sets.get()
+        self.assertEqual(logged.weight, Decimal("100.00"))
+
+    def test_set_log_form_shows_a_pounds_label_and_prefill_for_an_imperial_user(self):
+        self.alice.unit_system = "imperial"
+        self.alice.save()
+        services.log_set(self.performed, weight=Decimal("100"), reps=5)  # 220.46 lb repeat-last
+        response = self.client.get(reverse("workouts:session-detail", args=[self.session.pk]))
+        self.assertContains(response, "Weight (lb)")
+        self.assertContains(response, "220.46")
+
+    def test_editing_a_set_in_pounds_stores_the_canonical_kg_value(self):
+        self.alice.unit_system = "imperial"
+        self.alice.save()
+        exercise_set = services.log_set(self.performed, weight=Decimal("100"), reps=5)
+        self.client.post(
+            reverse("workouts:set-edit", args=[exercise_set.pk]),
+            {"weight": "225", "reps": "4"},
+        )
+        exercise_set.refresh_from_db()
+        self.assertEqual(exercise_set.weight, Decimal("102.06"))
 
     def test_completed_and_abandoned_sessions_remain_visible_in_history(self):
         services.complete_session(self.session)

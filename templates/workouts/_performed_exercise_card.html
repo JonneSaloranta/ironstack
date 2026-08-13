@@ -1,32 +1,34 @@
+{% load core_extras %}
+{% load records_extras %}
 <div id="performed-exercise-{{ pe.id }}" class="card">
   <h3 style="margin:0 0 0.25rem;">{{ pe.exercise.name }}</h3>
   {% if pe.set_count %}
     <p class="text-muted">
       Target: {{ pe.set_count }} × {{ pe.min_reps }}-{{ pe.max_reps }}
-      {% if pe.target_weight %} @ {{ pe.target_weight }} kg{% endif %}
+      {% if pe.target_weight %} @ {{ pe.target_weight|weight:request.user }}{% endif %}
       {% if pe.target_rpe %} @ RPE {{ pe.target_rpe }}{% endif %}
     </p>
   {% endif %}
 
   {% for record in new_prs %}
     <div class="pr-banner" role="status">
-      <strong>New PR</strong> — {{ record.weight }} kg × {{ record.reps }}
+      <strong>New PR</strong> — {{ record.weight|weight:request.user }} × {{ record.reps }}
       <div>
         {% if record.record_type == "max_weight" %}
-          Max weight: {{ record.value }} kg
+          Max weight: {{ record|pr_value:request.user }}
         {% elif record.record_type == "rep_pr" %}
-          Most reps at {{ record.weight }} kg: {{ record.value }}
+          Most reps at {{ record.weight|weight:request.user }}: {{ record|pr_value:request.user }}
         {% elif record.record_type == "rep_specific_pr" %}
-          {{ record.rep_count }}RM: {{ record.value }} kg
+          {{ record.rep_count }}RM: {{ record|pr_value:request.user }}
         {% elif record.record_type == "estimated_1rm" %}
-          Estimated 1RM: {{ record.value }} kg
+          Estimated 1RM: {{ record|pr_value:request.user }}
         {% elif record.record_type == "set_volume" %}
-          Set volume: {{ record.value }} kg
+          Set volume: {{ record|pr_value:request.user }}
         {% elif record.record_type == "session_volume" %}
-          Session volume: {{ record.value }} kg
+          Session volume: {{ record|pr_value:request.user }}
         {% endif %}
         {% if record.previous_value %}
-          <span class="text-muted">(previous: {{ record.previous_value }})</span>
+          <span class="text-muted">(previous: {{ record|pr_previous_value:request.user }})</span>
         {% endif %}
       </div>
     </div>
@@ -41,7 +43,7 @@
       {% for s in pe.sets.all %}
         <tr>
           <td>{{ s.set_number }}{% if s.is_warmup %} <span class="tag tag-muted">W</span>{% endif %}</td>
-          <td>{{ s.weight }} kg</td>
+          <td>{{ s.weight|weight:request.user }}</td>
           <td>{{ s.reps }}{% if s.is_failure %} <span class="tag tag-muted">F</span>{% endif %}</td>
           <td class="set-actions">
             <a href="{% url 'workouts:set-edit' s.pk %}">Edit</a>
@@ -64,7 +66,7 @@
     {% if suggestion %}
       <div class="suggestion-banner">
         {% if suggestion.suggested_weight %}
-          <strong>Suggested: {{ suggestion.suggested_weight }} kg
+          <strong>Suggested: {{ suggestion.suggested_weight|weight:request.user }}
             {% if suggestion.target_min_reps %}× {{ suggestion.target_min_reps }}{% if suggestion.target_max_reps and suggestion.target_max_reps != suggestion.target_min_reps %}-{{ suggestion.target_max_reps }}{% endif %}{% endif %}
           </strong>
           <span class="tag tag-muted">{{ suggestion.confidence|capfirst }} confidence</span>

@@ -148,6 +148,21 @@ live program — is the source of truth for anything already performed.
   boundaries in the dashboard and analytics are computed using the user's
   stored timezone preference.
 
+A post-launch audit found this rule wasn't actually followed everywhere:
+`apps.measurements` converted correctly, but workout sets, PRs, exercise
+prescriptions, and analytics totals/charts all stored and displayed raw
+kilograms with a hardcoded "kg" label, and — more seriously —
+`ExerciseSetForm`/`ExercisePrescriptionForm` stored whatever number was
+*typed* as kg with no conversion at all, so an imperial-preference user's
+entry was silently wrong by a factor of ~2.2. Fixed across the board: entry
+forms convert to/from canonical kg the same way `BodyMeasurementForm`
+already did; display goes through a shared `apps.core.units` dispatch
+(`kg_to_display`/`display_to_kg`/`weight_unit_label`) — a `weight`
+template filter for one-off spots (`apps.core.templatetags.core_extras`),
+and `apps.records.services.format_value`/`format_previous_value` for PR
+figures specifically, since a `rep_pr`'s value is a rep count rather than
+a weight and must never be run through the conversion.
+
 ## API layer
 
 No REST/DRF API is built in the initial implementation. `ARCHITECTURE.md`'s

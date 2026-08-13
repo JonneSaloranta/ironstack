@@ -13,6 +13,7 @@ urlpatterns = [
     path("<int:pk>/", views.WorkoutSessionDetailView.as_view(), name="session-detail"),
     path("<int:pk>/complete/", views.session_complete, name="session-complete"),
     path("<int:pk>/abandon/", views.session_abandon, name="session-abandon"),
+    path("<int:pk>/delete/", views.session_delete, name="session-delete"),
     path(
         "<int:session_pk>/exercises/add/",
         views.performed_exercise_add,

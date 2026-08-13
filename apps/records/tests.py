@@ -279,3 +279,19 @@ class SetLoggingNotifiesNewPRsTests(TestCase):
             HTTP_HX_REQUEST="true",
         )
         self.assertContains(response, "New PR")
+
+    def test_new_pr_flash_message_shows_the_converted_weight_with_its_unit(self):
+        """Regression: the "New PR" flash message used to interpolate the
+        raw stored kg value directly, unconverted and with no unit label
+        at all, for every record type — including for an
+        imperial-preference user, who'd see a plain number that was
+        neither their unit nor labeled as anything."""
+        self.alice.unit_system = "imperial"
+        self.alice.save()
+        response = self.client.post(
+            reverse("workouts:set-log", args=[self.performed.pk]),
+            {"weight": "225", "reps": "5"},
+            follow=True,
+        )
+        messages = [str(m) for m in response.context["messages"]]
+        self.assertTrue(any("225.0 lb" in m or "225.00 lb" in m for m in messages), messages)

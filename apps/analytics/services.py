@@ -13,12 +13,22 @@ from dataclasses import dataclass
 from datetime import timedelta
 from decimal import Decimal
 
+from apps.core import units as core_units
 from apps.core.charts import build_bar_series, build_chart_series
 from apps.records.models import PersonalRecord
 from apps.records.one_rep_max import OneRepMaxCalculator
 from apps.workouts.models import ExerciseSet, WorkoutSession, WorkoutSessionStatus
 
 _one_rep_max = OneRepMaxCalculator()
+
+
+def _weight_display(value, user):
+    """Convert a canonical-kg volume/1RM figure to `user`'s preferred
+    display unit before it's staged into a summary or chart — the same
+    "convert before building the series" convention apps.measurements
+    uses, so a chart's own min/max/point values are already in the unit
+    its label claims, not just re-labeled kg. See apps.core.units."""
+    return core_units.kg_to_display(value, getattr(user, "unit_system", "metric"))
 
 
 def _completed_sessions(user, date_range):
@@ -61,7 +71,9 @@ def training_summary(user, date_range) -> TrainingSummary:
         (s.weight * s.reps for s in _training_sets(user, date_range)), Decimal("0")
     )
     return TrainingSummary(
-        session_count=len(sessions), total_duration=total_duration, total_volume=total_volume
+        session_count=len(sessions),
+        total_duration=total_duration,
+        total_volume=_weight_display(total_volume, user),
     )
 
 
@@ -76,7 +88,9 @@ def weekly_volume_series(user, date_range):
             exercise_set.weight * exercise_set.reps
         )
     ordered = sorted(weekly.items())
-    return build_bar_series([(week.strftime("%b %d"), volume) for week, volume in ordered])
+    return build_bar_series(
+        [(week.strftime("%b %d"), _weight_display(volume, user)) for week, volume in ordered]
+    )
 
 
 def muscle_group_volume_series(user, date_range):
@@ -94,7 +108,7 @@ def muscle_group_volume_series(user, date_range):
         for muscle_group in exercise_set.performed_exercise.exercise.primary_muscle_groups.all():
             totals[muscle_group.name] = totals.get(muscle_group.name, Decimal("0")) + volume
     ordered = sorted(totals.items(), key=lambda item: item[1], reverse=True)
-    return build_bar_series(ordered)
+    return build_bar_series([(label, _weight_display(volume, user)) for label, volume in ordered])
 
 
 def pr_history(user, date_range, limit=None):
@@ -118,7 +132,9 @@ def exercise_summary(user, exercise, date_range) -> ExerciseAnalyticsSummary:
     sets = list(_training_sets(user, date_range, exercise=exercise))
     session_ids = {s.performed_exercise.session_id for s in sets}
     total_volume = sum((s.weight * s.reps for s in sets), Decimal("0"))
-    return ExerciseAnalyticsSummary(session_count=len(session_ids), total_volume=total_volume)
+    return ExerciseAnalyticsSummary(
+        session_count=len(session_ids), total_volume=_weight_display(total_volume, user)
+    )
 
 
 def exercise_one_rm_trend(user, exercise, date_range):
@@ -147,5 +163,5 @@ def exercise_one_rm_trend(user, exercise, date_range):
         if session_date not in best_per_session or estimate > best_per_session[session_date]:
             best_per_session[session_date] = estimate
 
-    readings = [(value, date) for date, value in best_per_session.items()]
+    readings = [(_weight_display(value, user), date) for date, value in best_per_session.items()]
     return build_chart_series(readings)

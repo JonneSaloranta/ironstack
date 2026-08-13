@@ -10,17 +10,17 @@
 <div class="card">
   <dl class="stat-row">
     <div><dt>Sessions</dt><dd>{{ summary.session_count }}</dd></div>
-    <div><dt>Total volume</dt><dd>{{ summary.total_volume }} kg</dd></div>
+    <div><dt>Total volume</dt><dd>{{ summary.total_volume }} {{ weight_unit_label }}</dd></div>
   </dl>
 </div>
 
 {% if one_rm_chart %}
   <h2>Estimated 1RM trend</h2>
-  {% include "core/_chart.html" with chart=one_rm_chart chart_title="Estimated 1RM" unit_label="kg" %}
+  {% include "core/_chart.html" with chart=one_rm_chart chart_title="Estimated 1RM" unit_label=weight_unit_label %}
 {% else %}
   <div class="card empty-state"><p>Not enough history in this range for a trend line.</p></div>
 {% endif %}
 
 <p><a href="{% url 'records:exercise-records' exercise.pk %}">View current PRs</a></p>
-<p><a href="{% url 'exercises:exercise-detail' exercise.pk %}">&larr; Back to exercise</a></p>
+<p><a class="button-secondary" href="{% url 'exercises:exercise-detail' exercise.pk %}">&larr; Back to exercise</a></p>
 {% endblock %}

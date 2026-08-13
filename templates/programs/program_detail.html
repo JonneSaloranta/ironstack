@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load core_extras %}
 {% block title %}{{ program.name }} — IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
@@ -49,7 +50,7 @@
         <li>
           <strong>{{ prescription.exercise.name }}</strong>
           — {{ prescription.set_count }} × {{ prescription.min_reps }}-{{ prescription.max_reps }}
-          {% if prescription.target_weight %} @ {{ prescription.target_weight }} kg{% endif %}
+          {% if prescription.target_weight %} @ {{ prescription.target_weight|weight:request.user }}{% endif %}
           {% if prescription.target_rpe %} @ RPE {{ prescription.target_rpe }}{% endif %}
           {% if can_edit %}
             <a href="{% url 'programs:prescription-update' program.pk workout.pk prescription.pk %}">Edit</a>
@@ -83,5 +84,5 @@
   </form>
 {% endif %}
 
-<p><a href="{% url 'programs:program-list' %}">&larr; Back to programs</a></p>
+<p><a class="button-secondary" href="{% url 'programs:program-list' %}">&larr; Back to programs</a></p>
 {% endblock %}

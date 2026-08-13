@@ -14,8 +14,20 @@
   {{ form.non_field_errors }}
   {% for field in form %}
     <div class="field">
-      {{ field.label_tag }}
-      {{ field }}
+      {% if field.field.widget.input_type == "checkbox" %}
+        {% comment %}
+          A checkbox reads better with the box directly beside its own
+          label than stacked under a block label meant for text inputs.
+        {% endcomment %}
+        <label class="checkbox-field">
+          {{ field }}
+          {{ field.label }}
+        </label>
+      {% else %}
+        {{ field.label_tag }}
+        {{ field }}
+      {% endif %}
+      {% if field.help_text %}<p class="field-help">{{ field.help_text }}</p>{% endif %}
       {% if field.errors %}<p class="field-error">{{ field.errors|striptags }}</p>{% endif %}
     </div>
   {% endfor %}

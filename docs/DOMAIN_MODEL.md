@@ -12,6 +12,16 @@ User-related data includes:
 
 Internal values should use consistent canonical units. Convert for display.
 
+Also carries an optional `height` (canonical meters, entered/displayed in
+cm or inches like any other length reading — see `apps.core.units`) and a
+`show_bmi` toggle. Both exist solely for `apps.core.bmi`: the dashboard
+computes BMI from `height` and the user's latest logged body weight
+(`apps.measurements`) whenever both exist, showing the WHO category
+thresholds (underweight/normal/overweight/obese) alongside the current
+value so the number has context rather than standing alone. `show_bmi`
+lets a user turn the whole card off regardless of whether it's
+computable — nothing else in the app reads either field.
+
 ## Exercise
 
 An exercise represents a movement.
@@ -151,6 +161,12 @@ Fields include:
 - start time
 - end time
 - status
+
+A user can permanently delete their own session (any status, including
+completed) — a deliberate escape hatch for a mistaken or unwanted logged
+workout, distinct from `abandon`'s soft "still in history, marked
+abandoned" state. Only reachable from the session's own detail page, not
+the history list, so it's never one accidental tap away while browsing.
 
 ## PerformedExercise
 

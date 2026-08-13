@@ -32,5 +32,10 @@
   </form>
 {% endif %}
 
-<p><a href="{% url 'workouts:session-list' %}">&larr; Back to history</a></p>
+<form method="post" action="{% url 'workouts:session-delete' session.pk %}" onsubmit="return confirm('Delete this workout? This cannot be undone.');">
+  {% csrf_token %}
+  <button type="submit" class="button-danger">Delete workout</button>
+</form>
+
+<p><a class="button-secondary" href="{% url 'workouts:session-list' %}">&larr; Back to history</a></p>
 {% endblock %}

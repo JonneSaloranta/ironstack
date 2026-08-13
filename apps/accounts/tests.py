@@ -82,6 +82,77 @@ class ProfileViewTests(TestCase):
         self.alice.refresh_from_db()
         self.assertEqual(self.alice.timezone, "UTC")
 
+    def test_setting_height_in_cm_stores_the_canonical_meters_value(self):
+        from decimal import Decimal
+
+        self.client.post(
+            reverse("profile"),
+            {"unit_system": "metric", "timezone": "UTC", "height": "180"},
+        )
+        self.alice.refresh_from_db()
+        self.assertEqual(self.alice.height, Decimal("1.8000"))
+
+    def test_setting_height_in_inches_stores_the_canonical_meters_value(self):
+        from decimal import Decimal
+
+        self.alice.unit_system = "imperial"
+        self.alice.save()
+        self.client.post(
+            reverse("profile"),
+            {"unit_system": "imperial", "timezone": "UTC", "height": "70"},
+        )
+        self.alice.refresh_from_db()
+        self.assertEqual(self.alice.height, Decimal("1.7780"))
+
+    def test_edit_form_prefills_height_in_the_users_preferred_unit(self):
+        from decimal import Decimal
+
+        self.alice.height = Decimal("1.8")
+        self.alice.save()
+        response = self.client.get(reverse("profile"))
+        self.assertContains(response, "Height (cm)")
+        self.assertContains(response, 'value="180.0"')
+
+    def test_clearing_height_sets_it_to_none(self):
+        from decimal import Decimal
+
+        self.alice.height = Decimal("1.8")
+        self.alice.save()
+        self.client.post(
+            reverse("profile"), {"unit_system": "metric", "timezone": "UTC", "height": ""}
+        )
+        self.alice.refresh_from_db()
+        self.assertIsNone(self.alice.height)
+
+    def test_show_bmi_defaults_to_true(self):
+        self.assertTrue(self.alice.show_bmi)
+
+    def test_unchecking_show_bmi_turns_it_off(self):
+        # An unchecked checkbox simply isn't sent in the POST body.
+        self.client.post(reverse("profile"), {"unit_system": "metric", "timezone": "UTC"})
+        self.alice.refresh_from_db()
+        self.assertFalse(self.alice.show_bmi)
+
+    def test_checking_show_bmi_turns_it_back_on(self):
+        self.alice.show_bmi = False
+        self.alice.save()
+        self.client.post(
+            reverse("profile"),
+            {"unit_system": "metric", "timezone": "UTC", "show_bmi": "on"},
+        )
+        self.alice.refresh_from_db()
+        self.assertTrue(self.alice.show_bmi)
+
+    def test_show_bmi_renders_as_an_inline_checkbox_with_its_own_label(self):
+        """Regression: every field (including a lone checkbox) rendered
+        through the generic block-level label_tag + field layout, which
+        stacked "Show BMI on the dashboard" above an isolated checkbox
+        instead of the two sitting next to each other."""
+        response = self.client.get(reverse("profile"))
+        self.assertContains(response, 'class="checkbox-field"')
+        self.assertContains(response, "Show BMI on the dashboard")
+        self.assertContains(response, "Turns off the BMI card")
+
 
 class PasswordChangeTests(TestCase):
     """The URLs (django.contrib.auth.urls) already existed since Phase 1,

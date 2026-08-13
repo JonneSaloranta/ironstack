@@ -4,6 +4,7 @@ from django.http import HttpResponseNotAllowed
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.generic import DetailView, ListView
 
+from apps.core import units as core_units
 from apps.programs import services as program_services
 from apps.programs.models import Workout
 
@@ -82,6 +83,14 @@ def session_abandon(request, pk):
     return redirect("workouts:session-detail", pk=session.pk)
 
 
+def session_delete(request, pk):
+    if request.method != "POST":
+        return HttpResponseNotAllowed(["POST"])
+    session = get_object_or_404(services.sessions_for(request.user), pk=pk)
+    session.delete()
+    return redirect("workouts:session-list")
+
+
 def performed_exercise_add(request, session_pk):
     session = get_object_or_404(
         services.sessions_for(request.user),
@@ -134,26 +143,48 @@ def _build_set_form(user, performed_exercise, session=None):
             initial["weight"] = suggestion.suggested_weight
         if suggestion.target_min_reps is not None:
             initial["reps"] = suggestion.target_min_reps
-    return ExerciseSetForm(initial=initial), suggestion
+    # `initial["weight"]` above is canonical kg (from stored history or
+    # the progression engine) — ExerciseSetForm displays/accepts the
+    # user's preferred unit, so it must be converted here before the
+    # form ever renders it, the same as an instance's own weight is
+    # converted inside the form itself.
+    if initial.get("weight") is not None:
+        unit_system = getattr(user, "unit_system", "metric")
+        initial["weight"] = core_units.kg_to_display(initial["weight"], unit_system)
+    return ExerciseSetForm(initial=initial, user=user), suggestion
 
 
 def set_log(request, performed_exercise_pk):
     if request.method != "POST":
         return HttpResponseNotAllowed(["POST"])
     performed_exercise = _owned_performed_exercise_or_404(request, performed_exercise_pk)
-    form = ExerciseSetForm(request.POST)
+    form = ExerciseSetForm(request.POST, user=request.user)
     new_prs = []
     suggestion = None
     if not performed_exercise.session.is_in_progress:
         form.add_error(None, "This session is no longer in progress.")
     elif form.is_valid():
-        logged_set = services.log_set(performed_exercise, **form.cleaned_data)
+        # services.log_set takes cleaned_data directly rather than going
+        # through form.save() (there's no ExerciseSet instance to save
+        # onto yet — set_number is computed here), so the form's own
+        # display-unit -> canonical-kg conversion (see ExerciseSetForm.save)
+        # has to be repeated here rather than reused.
+        fields = dict(form.cleaned_data)
+        fields["weight"] = core_units.display_to_kg(
+            fields["weight"], getattr(request.user, "unit_system", "metric")
+        )
+        logged_set = services.log_set(performed_exercise, **fields)
         new_prs = records_services.check_and_record_prs(logged_set)
         for record in new_prs:
+            # Regression: this message used to interpolate record.value
+            # directly — always raw kg, unconverted and unlabeled for an
+            # imperial-preference user. records_services.format_value is
+            # the same conversion the "Recent PRs" templates use.
             messages.success(
                 request,
                 f"New PR — {performed_exercise.exercise.name}: "
-                f"{record.get_record_type_display()} {record.value}",
+                f"{record.get_record_type_display()} "
+                f"{records_services.format_value(record, request.user)}",
             )
         form, suggestion = _build_set_form(request.user, performed_exercise)
     return _render_session_or_card(
@@ -167,7 +198,7 @@ def set_edit(request, pk):
     )
     performed_exercise = exercise_set.performed_exercise
     if request.method == "POST":
-        form = ExerciseSetForm(request.POST, instance=exercise_set)
+        form = ExerciseSetForm(request.POST, instance=exercise_set, user=request.user)
         if form.is_valid():
             form.save()
             new_form, suggestion = _build_set_form(request.user, performed_exercise)
@@ -175,7 +206,7 @@ def set_edit(request, pk):
                 request, performed_exercise, new_form, suggestion=suggestion
             )
     else:
-        form = ExerciseSetForm(instance=exercise_set)
+        form = ExerciseSetForm(instance=exercise_set, user=request.user)
     return render(
         request,
         "workouts/set_edit_form.html",

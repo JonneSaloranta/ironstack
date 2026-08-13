@@ -18,6 +18,8 @@ from decimal import Decimal
 
 from django.db.models import Max
 
+from apps.core import units as core_units
+
 from .models import PersonalRecord, PRType
 from .one_rep_max import OneRepMaxCalculator
 
@@ -226,3 +228,53 @@ def _upsert_session_volume_record(qs, user, exercise, exercise_set, session):
         return record
 
     return None
+
+
+def display_value(record, user):
+    """A `PersonalRecord`'s headline `.value`, unit-converted for
+    `user`'s preferred unit — every record type except `rep_pr`, whose
+    value is a plain rep count, not a weight (see `PersonalRecord`'s
+    docstring for which types mean what). Returns the bare number; use
+    `format_value` for a display string that also carries the unit.
+    """
+    if record.record_type == PRType.REP_PR:
+        return record.value
+    return core_units.kg_to_display(record.value, getattr(user, "unit_system", "metric"))
+
+
+def display_previous_value(record, user):
+    """Same conversion as `display_value`, for the transient
+    `.previous_value` a freshly-checked PR carries."""
+    previous = getattr(record, "previous_value", None)
+    if previous is None:
+        return None
+    if record.record_type == PRType.REP_PR:
+        return previous
+    return core_units.kg_to_display(previous, getattr(user, "unit_system", "metric"))
+
+
+def _formatted(record, value, user):
+    if value is None:
+        return ""
+    if record.record_type == PRType.REP_PR:
+        return str(value)
+    unit_system = getattr(user, "unit_system", "metric")
+    return f"{value} {core_units.weight_unit_label(unit_system)}"
+
+
+def format_value(record, user):
+    """`display_value`, suffixed with the right unit (e.g. "225.0 lb")
+    or bare for a rep count. Shared by the recent-PRs templates
+    (apps.records.templatetags.records_extras) and the "New PR" flash
+    message (apps.workouts.views.set_log) so both agree on the same
+    conversion instead of each re-implementing it — regression: that
+    message used to interpolate the raw kg value directly, unconverted
+    and unlabeled, even for an imperial-preference user.
+    """
+    return _formatted(record, display_value(record, user), user)
+
+
+def format_previous_value(record, user):
+    """Same formatting as `format_value`, for the transient
+    `.previous_value` a freshly-checked PR carries."""
+    return _formatted(record, display_previous_value(record, user), user)

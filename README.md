@@ -302,6 +302,95 @@ who popularized it is standard practice in fitness literature and
 implies no endorsement. All four system templates verified copyable
 end-to-end in a single test. 9 new tests (264 total).
 
+**Date/time pickers, workout deletion, "Back to" buttons, mobile nav
+sizing, unit-consistency audit, and BMI.**
+
+- **Remaining date/time field** — `BodyMeasurementForm.recorded_at` was
+  the one field the earlier date/time-picker pass missed (a plain-text
+  datetime), now a native `datetime-local` picker with the same
+  widget-`format=` + field-`input_formats=` combination the activity
+  date/time fix already established (Django's default
+  `DATETIME_INPUT_FORMATS` never includes the "T"-separated format
+  `datetime-local` submits).
+- **Delete a logged workout** — a `session_delete` view, reachable from
+  the workout's own detail page (with a confirm dialog) but deliberately
+  *not* from the `/workouts` history list, which can show many sessions
+  at once — keeping a destructive action out of reach of an accidental
+  tap on a list row.
+- **"Back to X" links restyled as buttons** — every one of them (program,
+  exercise, workout, measurement, activity, records, and form pages, plus
+  the error pages) was a bare text link, easy to miss and a small touch
+  target. New `.button-secondary` style (outlined, lower-emphasis than
+  the solid `.button` used for primary actions).
+- **Mobile nav enlarged** — icons grown from 1.5rem to 1.9rem and the bar
+  from 3.5rem to 4.25rem tall, plus explicit top padding on each link so
+  icons aren't flush against the bar's top edge; motivated specifically
+  by how cramped the previous sizing felt in a PWA's standalone window
+  (no browser chrome to lean on for scale reference).
+- **Unit-consistency audit (metric/imperial)** — a real, significant bug:
+  outside `apps.measurements` (which already converted correctly),
+  *every* weight in the app — workout sets, PRs, exercise prescriptions,
+  analytics totals/charts, the "New PR" flash message — was stored and
+  redisplayed as raw kilograms with a hardcoded "kg" label, regardless of
+  the user's unit preference. Worse, `ExerciseSetForm.weight` and
+  `ExercisePrescriptionForm.target_weight`/`weight_increment` took
+  whatever number was typed and stored it *as kg* with no conversion —
+  an imperial user entering "225" got 225 kg stored, not 225 lb converted
+  to ~102 kg. Fixed at both ends: entry forms now convert to/from
+  canonical kg the same way `BodyMeasurementForm` already did, and
+  display (analytics service functions, chart series, PR figures, the
+  flash message) converts via a shared `apps.core.units` dispatch — a new
+  `weight` template filter for one-off spots, and
+  `apps.records.services.format_value`/`format_previous_value` for
+  record figures specifically (record-type-aware: a `rep_pr`'s value is
+  a rep count, not a weight, so it's never run through unit conversion).
+- **Height + BMI** — `User.height` (canonical meters, entered/displayed
+  in cm or inches like any other length reading) plus `apps.core.bmi`
+  (WHO category thresholds — underweight/normal/overweight/obese). The
+  dashboard shows the current BMI and category alongside the full ranges
+  table (with the user's own category row highlighted) whenever both a
+  height and a logged body weight exist; a `show_bmi` profile toggle
+  turns the whole feature off outright for anyone who'd rather not see
+  the number, independent of whether it's computable.
+- **/workouts list delete removed, dashboard logout button removed**
+  (follow-up requests) — deleting stays a detail-page-only action; log
+  out stays reachable from the profile page only, not duplicated on the
+  dashboard.
+- **Nav vs. dashboard duplication** — the "Progress" nav tab linked to
+  Body tracking (measurements), not the actual analytics/progress-charts
+  page, and the dashboard carried its own "Analytics", "Workout
+  history", and "Programs" cards that led to exactly the same places the
+  main nav already did. "Progress" now points to the analytics
+  dashboard; the three redundant cards are gone (Body tracking, Browse
+  exercises, and Activities stay as dashboard cards — none of the three
+  has its own nav slot).
+- **BMI toggle styling** — the checkbox rendered through the same
+  block-label-then-field layout as every text field, stacking "Show BMI
+  on the dashboard" above an isolated checkbox instead of the two
+  sitting together. New `.checkbox-field` layout (box beside its own
+  label) for any boolean field going forward. Caught in the same pass: a
+  multi-line `{# ... #}` Django comment in that template rendered
+  literally instead of being stripped — Django's single-line comment tag
+  doesn't reliably span lines; multi-line explanatory comments need
+  `{% comment %}...{% endcomment %}` instead.
+- **Top-bar/card spacing** — `.top-bar` had no `margin-bottom`, so its
+  bottom border sat flush against whatever followed; on any page where a
+  `.card` came immediately after, the two borders touched with no gap,
+  reading as one doubled/overlapping line rather than a header
+  underline. Fixed with a `margin-bottom` matching `.card`'s own spacing
+  rhythm.
+- **Overlapping/oversized buttons on the program page** — `.button`
+  (used on `<a>` tags for "Edit"/"Add exercise"/"Add workout") had no
+  `display` set, so it defaulted to plain inline — an inline box's
+  padding and `min-height` don't reserve real space in normal document
+  flow, so the button visually overlapped whatever block-level element
+  (typically a sibling `<form>`/`<button>`) immediately followed it. Now
+  `display: inline-flex` (properly sized *and* centers its label) with a
+  `margin-bottom` for breathing room between stacked action rows;
+  `.set-actions button`'s existing small-button override keeps that
+  layout (workout Edit/Delete, set-row Edit/Delete) unaffected.
+- 34 new tests (298 total).
+
 ## Local development
 
 ```bash

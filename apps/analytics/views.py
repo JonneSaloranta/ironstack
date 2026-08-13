@@ -3,6 +3,7 @@ from datetime import date
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import DetailView, TemplateView
 
+from apps.core import units as core_units
 from apps.exercises.services import visible_to as exercises_visible_to
 
 from . import dateranges, services
@@ -31,6 +32,7 @@ class AnalyticsDashboardView(LoginRequiredMixin, TemplateView):
         context["weekly_volume_chart"] = services.weekly_volume_series(user, date_range)
         context["muscle_group_chart"] = services.muscle_group_volume_series(user, date_range)
         context["recent_prs"] = services.pr_history(user, date_range, limit=15)
+        context["weight_unit_label"] = core_units.weight_unit_label(user.unit_system)
         return context
 
 
@@ -51,4 +53,5 @@ class ExerciseAnalyticsView(LoginRequiredMixin, DetailView):
         context["range_choices"] = dateranges.RANGE_CHOICES
         context["summary"] = services.exercise_summary(user, exercise, date_range)
         context["one_rm_chart"] = services.exercise_one_rm_trend(user, exercise, date_range)
+        context["weight_unit_label"] = core_units.weight_unit_label(user.unit_system)
         return context

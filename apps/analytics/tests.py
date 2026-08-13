@@ -90,6 +90,16 @@ class TrainingSummaryTests(TestCase):
         summary = services.training_summary(self.alice, dateranges.resolve("all"))
         self.assertEqual(summary.session_count, 0)
 
+    def test_total_volume_converts_to_pounds_for_an_imperial_user(self):
+        """Regression: total_volume used to always be raw kg, so an
+        imperial-preference user saw a "kg" figure mislabeled/rendered as
+        if it were their preferred unit."""
+        self.alice.unit_system = "imperial"
+        self.alice.save()
+        _log_completed_session(self.alice, self.exercise, Decimal("100"), [5])  # 500 kg volume
+        summary = services.training_summary(self.alice, dateranges.resolve("all"))
+        self.assertEqual(summary.total_volume, Decimal("1102.31"))  # 500 kg -> lb
+
 
 class WeeklyVolumeSeriesTests(TestCase):
     def setUp(self):
@@ -107,6 +117,13 @@ class WeeklyVolumeSeriesTests(TestCase):
         # Two sessions land in the same week (grouped into one bar), one
         # in an earlier week -> two bars total.
         self.assertEqual(len(series.bars), 2)
+
+    def test_bar_values_convert_to_pounds_for_an_imperial_user(self):
+        self.alice.unit_system = "imperial"
+        self.alice.save()
+        _log_completed_session(self.alice, self.exercise, Decimal("100"), [5], days_ago=0)
+        series = services.weekly_volume_series(self.alice, dateranges.resolve("all"))
+        self.assertEqual(series.bars[0].value, Decimal("1102.31"))
 
 
 class MuscleGroupVolumeSeriesTests(TestCase):

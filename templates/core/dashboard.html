@@ -1,19 +1,17 @@
 {% extends "base.html" %}
+{% load core_extras %}
+{% load records_extras %}
 {% block title %}Dashboard — IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
   <h1 style="margin:0;">IronStack</h1>
-  <form method="post" action="{% url 'logout' %}">
-    {% csrf_token %}
-    <button type="submit">Log out</button>
-  </form>
 </div>
 
 {% if week_summary.session_count or body_weight is not None %}
   <div class="card">
     <dl class="stat-row">
       <div><dt>This week's workouts</dt><dd>{{ week_summary.session_count }}</dd></div>
-      <div><dt>This week's volume</dt><dd>{{ week_summary.total_volume }} kg</dd></div>
+      <div><dt>This week's volume</dt><dd>{{ week_summary.total_volume }} {{ weight_unit_label }}</dd></div>
       {% if body_weight is not None %}
         <div><dt>Body weight</dt><dd>{{ body_weight }} {{ body_weight_unit }}</dd></div>
       {% endif %}
@@ -21,21 +19,46 @@
   </div>
 {% endif %}
 
+{% if bmi %}
+  <div class="card">
+    <h3 style="margin-top:0;">BMI</h3>
+    <p style="margin:0 0 0.75rem;">
+      <strong style="font-size:1.5rem;">{{ bmi }}</strong>
+      <span class="tag tag-accent">{{ bmi_category.name }}</span>
+    </p>
+    <table class="bar-chart-table">
+      <caption class="visually-hidden">BMI category ranges</caption>
+      <tbody>
+        {% for category in bmi_categories %}
+          <tr{% if category == bmi_category %} class="bmi-current-row"{% endif %}>
+            <th scope="row">{{ category.name }}</th>
+            <td>
+              {% if category.low is None %}below {{ category.high }}
+              {% elif category.high is None %}{{ category.low }} and above
+              {% else %}{{ category.low }}–{{ category.high }}{% endif %}
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% elif user.show_bmi and not user.height %}
+  <a class="card card-link" href="{% url 'profile' %}">
+    <strong>Add your height</strong>
+    <p class="text-muted">Set it on your profile to see your BMI alongside a logged body weight.</p>
+  </a>
+{% endif %}
+
 {% if recent_prs %}
   <div class="card">
     <strong>Recent PRs</strong>
     {% for record in recent_prs %}
       <p class="text-muted" style="margin:0.35rem 0 0;">
-        {{ record.exercise.name }} — {{ record.get_record_type_display }}: {{ record.value }}
+        {{ record.exercise.name }} — {{ record.get_record_type_display }}: {{ record|pr_value:request.user }}
       </p>
     {% endfor %}
   </div>
 {% endif %}
-
-<a class="card card-link" href="{% url 'analytics:dashboard' %}">
-  <strong>Analytics</strong>
-  <p class="text-muted">Training volume, muscle-group breakdown, and PR history.</p>
-</a>
 
 {% if in_progress_session %}
   <a class="card card-link" href="{% url 'workouts:session-detail' in_progress_session.pk %}">
@@ -51,16 +74,6 @@
     <p>Start one from a program, or log a freeform workout.</p>
   </div>
 {% endif %}
-
-<a class="card card-link" href="{% url 'workouts:session-list' %}">
-  <strong>Workout history</strong>
-  <p class="text-muted">Past sessions and progress over time.</p>
-</a>
-
-<a class="card card-link" href="{% url 'programs:program-list' %}">
-  <strong>Programs</strong>
-  <p class="text-muted">Create a program, or copy a built-in template.</p>
-</a>
 
 <a class="card card-link" href="{% url 'exercises:exercise-list' %}">
   <strong>Browse exercises</strong>

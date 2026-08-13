@@ -179,6 +179,39 @@ class LoggingFlowTests(TestCase):
         entry.refresh_from_db()
         self.assertEqual(entry.value, Decimal("81.5"))
 
+    def test_recorded_at_uses_a_native_datetime_picker_not_plain_text(self):
+        """Regression: recorded_at used to render as a plain text input
+        the user had to type by hand instead of a native picker."""
+        response = self.client.get(
+            reverse("measurements:history", args=[self.measurement_type.pk])
+        )
+        self.assertContains(response, 'type="datetime-local"')
+
+    def test_editing_pre_fills_the_datetime_picker_in_iso_format(self):
+        from datetime import datetime
+
+        from django.utils import timezone as dj_timezone
+
+        entry = BodyMeasurement.objects.create(
+            user=self.alice,
+            measurement_type=self.measurement_type,
+            value=Decimal("80"),
+            recorded_at=dj_timezone.make_aware(datetime(2026, 3, 15, 7, 30)),
+        )
+        response = self.client.get(reverse("measurements:entry-edit", args=[entry.pk]))
+        self.assertContains(response, 'value="2026-03-15T07:30"')
+
+    def test_a_datetime_local_style_submission_is_accepted(self):
+        """The picker itself submits a "T"-separated value, not the
+        space-separated one Django defaults to accepting."""
+        response = self.client.post(
+            reverse("measurements:log", args=[self.measurement_type.pk]),
+            {"value": "80", "recorded_at": "2026-03-15T07:30", "notes": ""},
+        )
+        self.assertEqual(response.status_code, 302)
+        entry = BodyMeasurement.objects.get(user=self.alice)
+        self.assertEqual(entry.recorded_at.strftime("%Y-%m-%d %H:%M"), "2026-03-15 07:30")
+
     def test_deleting_a_reading_removes_it(self):
         entry = BodyMeasurement.objects.create(
             user=self.alice, measurement_type=self.measurement_type, value=Decimal("80")
