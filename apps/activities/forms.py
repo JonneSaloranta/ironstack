@@ -1,6 +1,7 @@
 from datetime import timedelta
 
 from django import forms
+from django.utils.translation import gettext_lazy as _
 
 from . import units
 from .models import Activity, ActivityType
@@ -21,7 +22,7 @@ class ActivityForm(forms.ModelForm):
     pattern as apps.measurements.forms.BodyMeasurementForm.
     """
 
-    duration_minutes = forms.IntegerField(min_value=1, label="Duration (minutes)")
+    duration_minutes = forms.IntegerField(min_value=1, label=_("Duration (minutes)"))
     distance = forms.DecimalField(max_digits=8, decimal_places=2, required=False)
 
     class Meta:
@@ -53,7 +54,7 @@ class ActivityForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         if user is not None:
             label = units.distance_unit_label(user.unit_system)
-            self.fields["distance"].label = f"Distance ({label})"
+            self.fields["distance"].label = _("Distance (%(unit)s)") % {"unit": label}
         if self.instance.pk:
             self.initial["duration_minutes"] = int(self.instance.duration.total_seconds() // 60)
             if self.instance.distance is not None and user is not None:

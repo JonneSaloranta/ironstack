@@ -1,10 +1,9 @@
-{% load core_extras %}
-{% load records_extras %}
+{% load i18n core_extras records_extras %}
 <div id="performed-exercise-{{ pe.id }}" class="card">
   <h3 style="margin:0 0 0.25rem;">{{ pe.exercise.name }}</h3>
   {% if pe.set_count %}
     <p class="text-muted">
-      Target: {{ pe.set_count }} × {{ pe.min_reps }}-{{ pe.max_reps }}
+      {% blocktrans with count=pe.set_count min=pe.min_reps max=pe.max_reps %}Target: {{ count }} × {{ min }}-{{ max }}{% endblocktrans %}
       {% if pe.target_weight %} @ {{ pe.target_weight|weight:request.user }}{% endif %}
       {% if pe.target_rpe %} @ RPE {{ pe.target_rpe }}{% endif %}
     </p>
@@ -12,23 +11,23 @@
 
   {% for record in new_prs %}
     <div class="pr-banner" role="status">
-      <strong>New PR</strong> — {{ record.weight|weight:request.user }} × {{ record.reps }}
+      <strong>{% trans "New PR" %}</strong> — {{ record.weight|weight:request.user }} × {{ record.reps }}
       <div>
         {% if record.record_type == "max_weight" %}
-          Max weight: {{ record|pr_value:request.user }}
+          {% trans "Max weight:" %} {{ record|pr_value:request.user }}
         {% elif record.record_type == "rep_pr" %}
-          Most reps at {{ record.weight|weight:request.user }}: {{ record|pr_value:request.user }}
+          {% blocktrans with weight=record.weight|weight:request.user %}Most reps at {{ weight }}:{% endblocktrans %} {{ record|pr_value:request.user }}
         {% elif record.record_type == "rep_specific_pr" %}
           {{ record.rep_count }}RM: {{ record|pr_value:request.user }}
         {% elif record.record_type == "estimated_1rm" %}
-          Estimated 1RM: {{ record|pr_value:request.user }}
+          {% trans "Estimated 1RM:" %} {{ record|pr_value:request.user }}
         {% elif record.record_type == "set_volume" %}
-          Set volume: {{ record|pr_value:request.user }}
+          {% trans "Set volume:" %} {{ record|pr_value:request.user }}
         {% elif record.record_type == "session_volume" %}
-          Session volume: {{ record|pr_value:request.user }}
+          {% trans "Session volume:" %} {{ record|pr_value:request.user }}
         {% endif %}
         {% if record.previous_value %}
-          <span class="text-muted">(previous: {{ record|pr_previous_value:request.user }})</span>
+          <span class="text-muted">{% blocktrans with previous=record|pr_previous_value:request.user %}(previous: {{ previous }}){% endblocktrans %}</span>
         {% endif %}
       </div>
     </div>
@@ -37,26 +36,26 @@
   <div class="table-wrap">
   <table class="set-table">
     <thead>
-      <tr><th>Set</th><th>Weight</th><th>Reps</th><th></th></tr>
+      <tr><th>{% trans "Set" %}</th><th>{% trans "Weight" %}</th><th>{% trans "Reps" %}</th><th></th></tr>
     </thead>
     <tbody>
       {% for s in pe.sets.all %}
         <tr>
-          <td>{{ s.set_number }}{% if s.is_warmup %} <span class="tag tag-muted">W</span>{% endif %}</td>
+          <td>{{ s.set_number }}{% if s.is_warmup %} <span class="tag tag-muted">{% trans "W" %}</span>{% endif %}</td>
           <td>{{ s.weight|weight:request.user }}</td>
-          <td>{{ s.reps }}{% if s.is_failure %} <span class="tag tag-muted">F</span>{% endif %}</td>
+          <td>{{ s.reps }}{% if s.is_failure %} <span class="tag tag-muted">{% trans "F" %}</span>{% endif %}</td>
           <td class="set-actions">
-            <a href="{% url 'workouts:set-edit' s.pk %}">Edit</a>
+            <a href="{% url 'workouts:set-edit' s.pk %}">{% trans "Edit" %}</a>
             <form method="post" action="{% url 'workouts:set-delete' s.pk %}"
                   hx-post="{% url 'workouts:set-delete' s.pk %}"
                   hx-target="#performed-exercise-{{ pe.id }}" hx-swap="outerHTML">
               {% csrf_token %}
-              <button type="submit" class="button-danger">Delete</button>
+              <button type="submit" class="button-danger">{% trans "Delete" %}</button>
             </form>
           </td>
         </tr>
       {% empty %}
-        <tr><td colspan="4" class="text-muted">No sets logged yet.</td></tr>
+        <tr><td colspan="4" class="text-muted">{% trans "No sets logged yet." %}</td></tr>
       {% endfor %}
     </tbody>
   </table>
@@ -66,10 +65,15 @@
     {% if suggestion %}
       <div class="suggestion-banner">
         {% if suggestion.suggested_weight %}
-          <strong>Suggested: {{ suggestion.suggested_weight|weight:request.user }}
+          <strong>{% blocktrans with weight=suggestion.suggested_weight|weight:request.user %}Suggested: {{ weight }}{% endblocktrans %}
             {% if suggestion.target_min_reps %}× {{ suggestion.target_min_reps }}{% if suggestion.target_max_reps and suggestion.target_max_reps != suggestion.target_min_reps %}-{{ suggestion.target_max_reps }}{% endif %}{% endif %}
           </strong>
-          <span class="tag tag-muted">{{ suggestion.confidence|capfirst }} confidence</span>
+          <span class="tag tag-muted">
+            {% if suggestion.confidence == "low" %}{% trans "Low confidence" %}
+            {% elif suggestion.confidence == "medium" %}{% trans "Medium confidence" %}
+            {% elif suggestion.confidence == "high" %}{% trans "High confidence" %}
+            {% endif %}
+          </span>
         {% endif %}
         <div class="text-muted">{{ suggestion.reason }}</div>
       </div>
@@ -85,7 +89,7 @@
           {{ field }}
         </label>
       {% endfor %}
-      <button type="submit">Log set</button>
+      <button type="submit">{% trans "Log set" %}</button>
     </form>
   {% endif %}
 </div>

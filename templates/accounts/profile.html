@@ -1,12 +1,13 @@
 {% extends "base.html" %}
-{% block title %}Profile — IronStack{% endblock %}
+{% load i18n %}
+{% block title %}{% trans "Profile" %} — IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
-  <h1 style="margin:0;">Profile</h1>
+  <h1 style="margin:0;">{% trans "Profile" %}</h1>
 </div>
 
 <div class="card">
-  <p class="text-muted">Signed in as <strong>{{ user.username }}</strong></p>
+  <p class="text-muted">{% blocktrans with username=user.username %}Signed in as <strong>{{ username }}</strong>{% endblocktrans %}</p>
 </div>
 
 <form class="card" method="post">
@@ -31,7 +32,7 @@
       {% if field.errors %}<p class="field-error">{{ field.errors|striptags }}</p>{% endif %}
     </div>
   {% endfor %}
-  <button type="submit">Save preferences</button>
+  <button type="submit">{% trans "Save preferences" %}</button>
 </form>
 
 {% if user.show_bmi %}
@@ -39,11 +40,11 @@
 {% endif %}
 
 <a class="card card-link" href="{% url 'password_change' %}">
-  <strong>Change password</strong>
+  <strong>{% trans "Change password" %}</strong>
 </a>
 
 <form method="post" action="{% url 'logout' %}">
   {% csrf_token %}
-  <button type="submit" class="button-danger">Log out</button>
+  <button type="submit" class="button-danger">{% trans "Log out" %}</button>
 </form>
 {% endblock %}

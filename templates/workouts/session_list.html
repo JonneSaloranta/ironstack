@@ -1,27 +1,28 @@
 {% extends "base.html" %}
-{% block title %}Workout history — IronStack{% endblock %}
+{% load i18n %}
+{% block title %}{% trans "Workout history" %} — IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
-  <h1 style="margin:0;">Workouts</h1>
+  <h1 style="margin:0;">{% trans "Workouts" %}</h1>
 </div>
 
 <form method="post" action="{% url 'workouts:session-start-freeform' %}">
   {% csrf_token %}
-  <button type="submit">Start freeform workout</button>
+  <button type="submit">{% trans "Start freeform workout" %}</button>
 </form>
 
 {% for session in sessions %}
   <a class="card card-link" href="{% url 'workouts:session-detail' session.pk %}">
-    <strong>{% if session.workout %}{{ session.workout.name }}{% else %}Freeform workout{% endif %}</strong>
+    <strong>{% if session.workout %}{{ session.workout.name }}{% else %}{% trans "Freeform workout" %}{% endif %}</strong>
     <span class="tag {% if session.status == 'completed' %}tag-success{% elif session.status == 'abandoned' %}tag-muted{% elif session.status == 'in_progress' %}tag-accent{% endif %}">{{ session.get_status_display }}</span>
     <div class="text-muted">{{ session.started_at|date:"Y-m-d H:i" }}</div>
   </a>
 {% empty %}
   <div class="card empty-state">
-    <p>No workouts logged yet.</p>
-    <p>Start one above, or pick a workout from one of your programs.</p>
+    <p>{% trans "No workouts logged yet." %}</p>
+    <p>{% trans "Start one above, or pick a workout from one of your programs." %}</p>
   </div>
 {% endfor %}
 
-<p><a class="button-secondary" href="{% url 'programs:program-list' %}">&larr; Back to programs</a></p>
+<p><a class="button-secondary" href="{% url 'programs:program-list' %}">&larr; {% trans "Back to programs" %}</a></p>
 {% endblock %}

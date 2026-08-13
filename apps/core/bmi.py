@@ -8,6 +8,8 @@ category ranges so a user can see where they land, never as advice.
 from dataclasses import dataclass
 from decimal import ROUND_HALF_UP, Decimal
 
+from django.utils.translation import gettext_lazy as _
+
 BMI_PLACES = Decimal("0.1")
 
 
@@ -18,11 +20,15 @@ class BMICategory:
     high: Decimal | None  # exclusive
 
 
+# Built once at import time, so these must stay lazy translations
+# (gettext_lazy) — an eager gettext() call here would freeze every
+# category's name into whatever language happened to be active during
+# process startup, never re-translating per-request afterward.
 BMI_CATEGORIES = [
-    BMICategory("Underweight", None, Decimal("18.5")),
-    BMICategory("Normal weight", Decimal("18.5"), Decimal("25")),
-    BMICategory("Overweight", Decimal("25"), Decimal("30")),
-    BMICategory("Obese", Decimal("30"), None),
+    BMICategory(_("Underweight"), None, Decimal("18.5")),
+    BMICategory(_("Normal weight"), Decimal("18.5"), Decimal("25")),
+    BMICategory(_("Overweight"), Decimal("25"), Decimal("30")),
+    BMICategory(_("Obese"), Decimal("30"), None),
 ]
 
 

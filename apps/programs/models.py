@@ -3,6 +3,7 @@ from decimal import Decimal
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 
 from apps.core.models import TimeStampedModel
 from apps.exercises.models import Exercise
@@ -32,8 +33,8 @@ class Program(TimeStampedModel):
         on_delete=models.CASCADE,
         help_text="Null for built-in system templates.",
     )
-    name = models.CharField(max_length=100)
-    description = models.TextField(blank=True)
+    name = models.CharField(max_length=100, verbose_name=_("name"))
+    description = models.TextField(blank=True, verbose_name=_("description"))
     is_template = models.BooleanField(
         default=False,
         help_text="Available to be copied rather than run directly.",
@@ -57,13 +58,13 @@ class Program(TimeStampedModel):
 
 
 class Weekday(models.IntegerChoices):
-    MONDAY = 0, "Monday"
-    TUESDAY = 1, "Tuesday"
-    WEDNESDAY = 2, "Wednesday"
-    THURSDAY = 3, "Thursday"
-    FRIDAY = 4, "Friday"
-    SATURDAY = 5, "Saturday"
-    SUNDAY = 6, "Sunday"
+    MONDAY = 0, _("Monday")
+    TUESDAY = 1, _("Tuesday")
+    WEDNESDAY = 2, _("Wednesday")
+    THURSDAY = 3, _("Thursday")
+    FRIDAY = 4, _("Friday")
+    SATURDAY = 5, _("Saturday")
+    SUNDAY = 6, _("Sunday")
 
 
 class Workout(TimeStampedModel):
@@ -75,12 +76,12 @@ class Workout(TimeStampedModel):
     """
 
     program = models.ForeignKey(Program, related_name="workouts", on_delete=models.CASCADE)
-    name = models.CharField(max_length=100)
-    order = models.PositiveIntegerField(default=0)
+    name = models.CharField(max_length=100, verbose_name=_("name"))
+    order = models.PositiveIntegerField(default=0, verbose_name=_("order"))
     scheduled_weekday = models.IntegerField(
-        choices=Weekday.choices, null=True, blank=True
+        choices=Weekday.choices, null=True, blank=True, verbose_name=_("scheduled weekday")
     )
-    notes = models.TextField(blank=True)
+    notes = models.TextField(blank=True, verbose_name=_("notes"))
 
     class Meta:
         ordering = ["program_id", "order", "id"]
@@ -94,13 +95,13 @@ class ProgressionMethod(models.TextChoices):
     apps.progression (Phase 6) — this enum just records, per prescription,
     which one applies; apps.progression will interpret it."""
 
-    DOUBLE_PROGRESSION = "double_progression", "Double progression"
-    LINEAR = "linear", "Linear"
-    PERCENTAGE_BASED = "percentage_based", "Percentage based"
-    RPE_RIR = "rpe_rir", "RPE/RIR based"
-    REP_RANGE = "rep_range", "Rep range"
-    MAINTENANCE = "maintenance", "Maintenance"
-    MANUAL = "manual", "Manual"
+    DOUBLE_PROGRESSION = "double_progression", _("Double progression")
+    LINEAR = "linear", _("Linear")
+    PERCENTAGE_BASED = "percentage_based", _("Percentage based")
+    RPE_RIR = "rpe_rir", _("RPE/RIR based")
+    REP_RANGE = "rep_range", _("Rep range")
+    MAINTENANCE = "maintenance", _("Maintenance")
+    MANUAL = "manual", _("Manual")
 
 
 class ExercisePrescription(TimeStampedModel):
@@ -118,10 +119,10 @@ class ExercisePrescription(TimeStampedModel):
     exercise = models.ForeignKey(
         Exercise, related_name="prescriptions", on_delete=models.PROTECT
     )
-    order = models.PositiveIntegerField(default=0)
-    set_count = models.PositiveIntegerField(default=3)
-    min_reps = models.PositiveIntegerField(default=8)
-    max_reps = models.PositiveIntegerField(default=12)
+    order = models.PositiveIntegerField(default=0, verbose_name=_("order"))
+    set_count = models.PositiveIntegerField(default=3, verbose_name=_("set count"))
+    min_reps = models.PositiveIntegerField(default=8, verbose_name=_("minimum reps"))
+    max_reps = models.PositiveIntegerField(default=12, verbose_name=_("maximum reps"))
     target_weight = models.DecimalField(
         max_digits=6,
         decimal_places=2,
@@ -146,7 +147,7 @@ class ExercisePrescription(TimeStampedModel):
     percentage_target = models.DecimalField(
         max_digits=5, decimal_places=2, null=True, blank=True
     )
-    notes = models.TextField(blank=True)
+    notes = models.TextField(blank=True, verbose_name=_("notes"))
 
     class Meta:
         ordering = ["workout_id", "order", "id"]
@@ -156,4 +157,4 @@ class ExercisePrescription(TimeStampedModel):
 
     def clean(self):
         if self.min_reps and self.max_reps and self.min_reps > self.max_reps:
-            raise ValidationError({"min_reps": "Minimum reps cannot exceed maximum reps."})
+            raise ValidationError({"min_reps": _("Minimum reps cannot exceed maximum reps.")})

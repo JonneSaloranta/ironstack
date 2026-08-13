@@ -1,9 +1,9 @@
-<!doctype html>
+{% load i18n %}<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Something went wrong — IronStack</title>
+  <title>{% trans "Something went wrong" %} — IronStack</title>
   <style>
     /* Deliberately standalone: Django renders 500.html with no request
        context and no context processors (the error may mean the DB or
@@ -42,8 +42,8 @@
 </head>
 <body>
   <div class="card">
-    <p>Something went wrong on our end. Your data is safe — try again in a moment.</p>
-    <p><a class="button-secondary" href="/">&larr; Back to dashboard</a></p>
+    <p>{% trans "Something went wrong on our end. Your data is safe — try again in a moment." %}</p>
+    <p><a class="button-secondary" href="/">&larr; {% trans "Back to dashboard" %}</a></p>
   </div>
 </body>
 </html>

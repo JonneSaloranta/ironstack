@@ -1,40 +1,45 @@
 {% extends "base.html" %}
-{% block title %}Programs — IronStack{% endblock %}
+{% load i18n %}
+{% block title %}{% trans "Programs" %} — IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
-  <h1 style="margin:0;">Programs</h1>
-  <a class="button" href="{% url 'programs:program-create' %}">New</a>
+  <h1 style="margin:0;">{% trans "Programs" %}</h1>
+  <a class="button" href="{% url 'programs:program-create' %}">{% trans "New" %}</a>
 </div>
 
-<h2>My programs</h2>
+<h2>{% trans "My programs" %}</h2>
 {% for program in programs %}
   <a class="card card-link" href="{% url 'programs:program-detail' program.pk %}">
     <strong>{{ program.name }}</strong>
-    {% if program.is_template %}<span class="tag tag-muted">Template</span>{% endif %}
-    <div class="text-muted">{{ program.workout_count }} workout{{ program.workout_count|pluralize }}</div>
+    {% if program.is_template %}<span class="tag tag-muted">{% trans "Template" %}</span>{% endif %}
+    <div class="text-muted">
+      {% blocktrans count counter=program.workout_count %}{{ counter }} workout{% plural %}{{ counter }} workouts{% endblocktrans %}
+    </div>
   </a>
 {% empty %}
   <div class="card empty-state">
-    <p>No programs yet.</p>
-    <p>Create one, or copy a template below to get started.</p>
+    <p>{% trans "No programs yet." %}</p>
+    <p>{% trans "Create one, or copy a template below to get started." %}</p>
   </div>
 {% endfor %}
 
-<h2>Built-in templates</h2>
+<h2>{% trans "Built-in templates" %}</h2>
 {% for template in templates %}
   <div class="card">
     <a class="card-link" href="{% url 'programs:program-detail' template.pk %}">
       <strong>{{ template.name }}</strong>
-      <div class="text-muted">{{ template.workout_count }} workout{{ template.workout_count|pluralize }}</div>
+      <div class="text-muted">
+        {% blocktrans count counter=template.workout_count %}{{ counter }} workout{% plural %}{{ counter }} workouts{% endblocktrans %}
+      </div>
     </a>
     <form method="post" action="{% url 'programs:program-copy' template.pk %}">
       {% csrf_token %}
-      <button type="submit">Copy to my programs</button>
+      <button type="submit">{% trans "Copy to my programs" %}</button>
     </form>
   </div>
 {% empty %}
   <div class="card empty-state">
-    <p>No built-in templates available.</p>
+    <p>{% trans "No built-in templates available." %}</p>
   </div>
 {% endfor %}
 {% endblock %}

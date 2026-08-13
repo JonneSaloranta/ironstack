@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.db import models
 from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
 
 from apps.core.models import TimeStampedModel
 
@@ -14,9 +15,9 @@ class UnitKind(models.TextChoices):
     PERCENTAGE: dimensionless 0-100, no unit conversion at all.
     """
 
-    WEIGHT = "weight", "Weight"
-    LENGTH = "length", "Length/circumference"
-    PERCENTAGE = "percentage", "Percentage"
+    WEIGHT = "weight", _("Weight")
+    LENGTH = "length", _("Length/circumference")
+    PERCENTAGE = "percentage", _("Percentage")
 
 
 class MeasurementType(models.Model):
@@ -30,8 +31,10 @@ class MeasurementType(models.Model):
     user retires a custom type they no longer track.
     """
 
-    name = models.CharField(max_length=50)
-    unit_kind = models.CharField(max_length=20, choices=UnitKind.choices)
+    name = models.CharField(max_length=50, verbose_name=_("name"))
+    unit_kind = models.CharField(
+        max_length=20, choices=UnitKind.choices, verbose_name=_("unit kind")
+    )
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         related_name="custom_measurement_types",
@@ -81,8 +84,10 @@ class BodyMeasurement(TimeStampedModel):
     )
     value = models.DecimalField(max_digits=8, decimal_places=4)
     # Indexed: history/chart pages (Meta.ordering below) order by this.
-    recorded_at = models.DateTimeField(default=timezone.now, db_index=True)
-    notes = models.TextField(blank=True)
+    recorded_at = models.DateTimeField(
+        default=timezone.now, db_index=True, verbose_name=_("recorded at")
+    )
+    notes = models.TextField(blank=True, verbose_name=_("notes"))
 
     class Meta:
         ordering = ["-recorded_at"]

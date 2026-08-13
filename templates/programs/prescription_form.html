@@ -1,8 +1,9 @@
 {% extends "base.html" %}
-{% block title %}{% if form.instance.pk %}Edit exercise{% else %}Add exercise{% endif %} — IronStack{% endblock %}
+{% load i18n %}
+{% block title %}{% if form.instance.pk %}{% trans "Edit exercise" %}{% else %}{% trans "Add exercise" %}{% endif %} — IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
-  <h1 style="margin:0;">{% if form.instance.pk %}Edit exercise{% else %}Add exercise{% endif %}</h1>
+  <h1 style="margin:0;">{% if form.instance.pk %}{% trans "Edit exercise" %}{% else %}{% trans "Add exercise" %}{% endif %}</h1>
 </div>
 
 <form class="card" method="post">
@@ -15,15 +16,15 @@
       {% if field.errors %}<p class="field-error">{{ field.errors|striptags }}</p>{% endif %}
     </div>
   {% endfor %}
-  <button type="submit">Save</button>
+  <button type="submit">{% trans "Save" %}</button>
 </form>
 
 {% if form.instance.pk %}
-  <form method="post" action="{% url 'programs:prescription-delete' program.pk workout.pk form.instance.pk %}" onsubmit="return confirm('Remove this exercise from the workout?');">
+  <form method="post" action="{% url 'programs:prescription-delete' program.pk workout.pk form.instance.pk %}" onsubmit="return confirm('{% trans "Remove this exercise from the workout?" %}');">
     {% csrf_token %}
-    <button type="submit" class="button-danger">Remove exercise</button>
+    <button type="submit" class="button-danger">{% trans "Remove exercise" %}</button>
   </form>
 {% endif %}
 
-<p><a class="button-secondary" href="{% url 'programs:program-detail' program.pk %}">&larr; Back to {{ program.name }}</a></p>
+<p><a class="button-secondary" href="{% url 'programs:program-detail' program.pk %}">&larr; {% blocktrans with name=program.name %}Back to {{ name }}{% endblocktrans %}</a></p>
 {% endblock %}

@@ -1,25 +1,27 @@
 {% extends "base.html" %}
-{% load core_extras %}
+{% load i18n core_extras %}
 {% block title %}{{ activity_type.name }} — IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
   <h1 style="margin:0;">{{ activity_type.name }}</h1>
-  {% if not activity_type.active %}<span class="tag tag-muted">Inactive</span>{% endif %}
+  {% if not activity_type.active %}<span class="tag tag-muted">{% trans "Inactive" %}</span>{% endif %}
 </div>
 
 {% if summary.count %}
   <div class="card">
     <p class="text-muted">
-      {{ summary.count }} logged · total duration {{ summary.total_duration|duration }}
-      {% if summary.total_distance is not None %} · total distance {{ summary.total_distance }} {{ distance_label }}{% endif %}
-      {% if summary.total_calories is not None %} · total calories {{ summary.total_calories }}{% endif %}
+      {% blocktrans with count=summary.count total_duration=summary.total_duration|duration %}{{ count }} logged · total duration {{ total_duration }}{% endblocktrans %}
+      {% if summary.total_distance is not None %} · {% blocktrans with distance=summary.total_distance unit=distance_label %}total distance {{ distance }} {{ unit }}{% endblocktrans %}{% endif %}
+      {% if summary.total_calories is not None %} · {% blocktrans with calories=summary.total_calories %}total calories {{ calories }}{% endblocktrans %}{% endif %}
     </p>
   </div>
 {% endif %}
 
 {% if chart %}
-  <h2>Duration trend</h2>
-  {% include "core/_chart.html" with chart_title="Duration" unit_label="min" %}
+  <h2>{% trans "Duration trend" %}</h2>
+  {% trans "Duration" as duration_chart_title %}
+  {% trans "min" as duration_unit_label %}
+  {% include "core/_chart.html" with chart_title=duration_chart_title unit_label=duration_unit_label %}
 {% endif %}
 
 <form class="card" method="post" action="{% url 'activities:log' activity_type.pk %}">
@@ -32,13 +34,13 @@
       {% if field.errors %}<p class="field-error">{{ field.errors|striptags }}</p>{% endif %}
     </div>
   {% endfor %}
-  <button type="submit">Log activity</button>
+  <button type="submit">{% trans "Log activity" %}</button>
 </form>
 
 <div class="table-wrap">
 <table class="set-table">
   <thead>
-    <tr><th>Date</th><th>Duration</th><th>Distance</th><th></th></tr>
+    <tr><th>{% trans "Date" %}</th><th>{% trans "Duration" %}</th><th>{% trans "Distance" %}</th><th></th></tr>
   </thead>
   <tbody>
     {% for entry in history %}
@@ -47,26 +49,26 @@
         <td>{{ entry.duration|duration }}</td>
         <td>{% if entry.display_distance is not None %}{{ entry.display_distance }} {{ distance_label }}{% else %}—{% endif %}</td>
         <td class="set-actions">
-          <a href="{% url 'activities:entry-edit' entry.pk %}">Edit</a>
-          <form method="post" action="{% url 'activities:entry-delete' entry.pk %}" onsubmit="return confirm('Delete this activity?');">
+          <a href="{% url 'activities:entry-edit' entry.pk %}">{% trans "Edit" %}</a>
+          <form method="post" action="{% url 'activities:entry-delete' entry.pk %}" onsubmit="return confirm('{% trans "Delete this activity?" %}');">
             {% csrf_token %}
-            <button type="submit" class="button-danger">Delete</button>
+            <button type="submit" class="button-danger">{% trans "Delete" %}</button>
           </form>
         </td>
       </tr>
     {% empty %}
-      <tr><td colspan="4" class="text-muted">No activities logged yet.</td></tr>
+      <tr><td colspan="4" class="text-muted">{% trans "No activities logged yet." %}</td></tr>
     {% endfor %}
   </tbody>
 </table>
 </div>
 
 {% if can_deactivate and activity_type.active %}
-  <form method="post" action="{% url 'activities:type-deactivate' activity_type.pk %}" onsubmit="return confirm('Deactivate this activity type? It will no longer appear when logging new activities.');">
+  <form method="post" action="{% url 'activities:type-deactivate' activity_type.pk %}" onsubmit="return confirm('{% trans "Deactivate this activity type? It will no longer appear when logging new activities." %}');">
     {% csrf_token %}
-    <button type="submit" class="button-danger">Deactivate type</button>
+    <button type="submit" class="button-danger">{% trans "Deactivate type" %}</button>
   </form>
 {% endif %}
 
-<p><a class="button-secondary" href="{% url 'activities:type-list' %}">&larr; Back to activities</a></p>
+<p><a class="button-secondary" href="{% url 'activities:type-list' %}">&larr; {% trans "Back to activities" %}</a></p>
 {% endblock %}

@@ -1,37 +1,38 @@
 {% extends "base.html" %}
-{% load core_extras %}
-{% load records_extras %}
-{% block title %}Analytics — IronStack{% endblock %}
+{% load i18n core_extras records_extras %}
+{% block title %}{% trans "Analytics" %} — IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
-  <h1 style="margin:0;">Analytics</h1>
+  <h1 style="margin:0;">{% trans "Analytics" %}</h1>
 </div>
 
 {% include "analytics/_range_filter.html" %}
 
 <div class="card">
   <dl class="stat-row">
-    <div><dt>Workouts</dt><dd>{{ summary.session_count }}</dd></div>
-    <div><dt>Training time</dt><dd>{{ summary.total_duration|duration }}</dd></div>
-    <div><dt>Total volume</dt><dd>{{ summary.total_volume }} {{ weight_unit_label }}</dd></div>
+    <div><dt>{% trans "Workouts" %}</dt><dd>{{ summary.session_count }}</dd></div>
+    <div><dt>{% trans "Training time" %}</dt><dd>{{ summary.total_duration|duration }}</dd></div>
+    <div><dt>{% trans "Total volume" %}</dt><dd>{{ summary.total_volume }} {{ weight_unit_label }}</dd></div>
   </dl>
 </div>
 
-<h2>Weekly training volume</h2>
+<h2>{% trans "Weekly training volume" %}</h2>
 {% if weekly_volume_chart %}
-  {% include "core/_bar_chart.html" with chart=weekly_volume_chart chart_title="Weekly training volume" unit_label=weight_unit_label %}
+  {% trans "Weekly training volume" as weekly_volume_title %}
+  {% include "core/_bar_chart.html" with chart=weekly_volume_chart chart_title=weekly_volume_title unit_label=weight_unit_label %}
 {% else %}
-  <div class="card empty-state"><p>No completed workouts in this range.</p></div>
+  <div class="card empty-state"><p>{% trans "No completed workouts in this range." %}</p></div>
 {% endif %}
 
-<h2>Muscle-group volume</h2>
+<h2>{% trans "Muscle-group volume" %}</h2>
 {% if muscle_group_chart %}
-  {% include "core/_bar_chart.html" with chart=muscle_group_chart chart_title="Muscle-group volume" unit_label=weight_unit_label %}
+  {% trans "Muscle-group volume" as muscle_group_title %}
+  {% include "core/_bar_chart.html" with chart=muscle_group_chart chart_title=muscle_group_title unit_label=weight_unit_label %}
 {% else %}
-  <div class="card empty-state"><p>No data in this range.</p></div>
+  <div class="card empty-state"><p>{% trans "No data in this range." %}</p></div>
 {% endif %}
 
-<h2>Recent PRs</h2>
+<h2>{% trans "Recent PRs" %}</h2>
 {% for record in recent_prs %}
   <div class="card">
     <strong>{{ record.exercise.name }}</strong>
@@ -41,6 +42,6 @@
     </div>
   </div>
 {% empty %}
-  <div class="card empty-state"><p>No PRs in this range.</p></div>
+  <div class="card empty-state"><p>{% trans "No PRs in this range." %}</p></div>
 {% endfor %}
 {% endblock %}

@@ -1,7 +1,8 @@
 {% extends "base.html" %}
-{% block title %}Sign up — IronStack{% endblock %}
+{% load i18n %}
+{% block title %}{% trans "Sign up" %} — IronStack{% endblock %}
 {% block content %}
-<h1>Create your account</h1>
+<h1>{% trans "Create your account" %}</h1>
 <form method="post" novalidate>
   {% csrf_token %}
   {% for field in form %}
@@ -14,7 +15,7 @@
       {% endfor %}
     </div>
   {% endfor %}
-  <button type="submit">Sign up</button>
+  <button type="submit">{% trans "Sign up" %}</button>
 </form>
-<p><a href="{% url 'login' %}">Already have an account? Log in</a></p>
+<p><a href="{% url 'login' %}">{% trans "Already have an account? Log in" %}</a></p>
 {% endblock %}

@@ -1,8 +1,9 @@
 {% extends "base.html" %}
-{% block title %}Not allowed — IronStack{% endblock %}
+{% load i18n %}
+{% block title %}{% trans "Not allowed" %} — IronStack{% endblock %}
 {% block content %}
 <div class="card empty-state">
-  <p>You don't have permission to do that.</p>
-  <p><a class="button-secondary" href="{% url 'dashboard' %}">&larr; Back to dashboard</a></p>
+  <p>{% trans "You don't have permission to do that." %}</p>
+  <p><a class="button-secondary" href="{% url 'dashboard' %}">&larr; {% trans "Back to dashboard" %}</a></p>
 </div>
 {% endblock %}

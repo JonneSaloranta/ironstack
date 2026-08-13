@@ -2,6 +2,7 @@ from django.contrib import messages
 from django.contrib.auth import login
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
+from django.utils.translation import gettext as _
 from django.views.generic import CreateView, UpdateView
 
 from apps.core import bmi as bmi_services
@@ -58,5 +59,5 @@ class ProfileView(LoginRequiredMixin, UpdateView):
 
     def form_valid(self, form):
         response = super().form_valid(form)
-        messages.success(self.request, "Preferences saved.")
+        messages.success(self.request, _("Preferences saved."))
         return response

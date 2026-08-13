@@ -1,59 +1,60 @@
 {% extends "base.html" %}
+{% load i18n %}
 {% block title %}{{ exercise.name }} — IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
   <h1 style="margin:0;">{{ exercise.name }}</h1>
   {% if exercise.owner_id == request.user.id %}
-    <a class="button" href="{% url 'exercises:exercise-update' exercise.pk %}">Edit</a>
+    <a class="button" href="{% url 'exercises:exercise-update' exercise.pk %}">{% trans "Edit" %}</a>
   {% endif %}
 </div>
 
 <div class="card">
   {% if not exercise.active %}
-    <p class="tag tag-muted">Inactive</p>
+    <p class="tag tag-muted">{% trans "Inactive" %}</p>
   {% endif %}
   {% if exercise.description %}<p>{{ exercise.description }}</p>{% endif %}
 
   <dl>
-    <dt>Movement type</dt>
+    <dt>{% trans "Movement type" %}</dt>
     <dd>{{ exercise.get_movement_type_display }}</dd>
 
-    <dt>Weight logging</dt>
+    <dt>{% trans "Weight logging" %}</dt>
     <dd>{{ exercise.get_weight_input_mode_display }}</dd>
 
     {% if exercise.equipment %}
-      <dt>Equipment</dt>
+      <dt>{% trans "Equipment" %}</dt>
       <dd>{{ exercise.equipment.name }}</dd>
     {% endif %}
 
     {% if exercise.primary_muscle_groups.all %}
-      <dt>Primary muscles</dt>
+      <dt>{% trans "Primary muscles" %}</dt>
       <dd>{% for mg in exercise.primary_muscle_groups.all %}{{ mg.name }}{% if not forloop.last %}, {% endif %}{% endfor %}</dd>
     {% endif %}
 
     {% if exercise.secondary_muscle_groups.all %}
-      <dt>Secondary muscles</dt>
+      <dt>{% trans "Secondary muscles" %}</dt>
       <dd>{% for mg in exercise.secondary_muscle_groups.all %}{{ mg.name }}{% if not forloop.last %}, {% endif %}{% endfor %}</dd>
     {% endif %}
   </dl>
 </div>
 
 <a class="card card-link" href="{% url 'records:exercise-records' exercise.pk %}">
-  <strong>Your PRs</strong>
-  <p class="text-muted">Current personal records for this exercise.</p>
+  <strong>{% trans "Your PRs" %}</strong>
+  <p class="text-muted">{% trans "Current personal records for this exercise." %}</p>
 </a>
 
 <a class="card card-link" href="{% url 'analytics:exercise' exercise.pk %}">
-  <strong>Strength trend</strong>
-  <p class="text-muted">Estimated 1RM over time and training volume.</p>
+  <strong>{% trans "Strength trend" %}</strong>
+  <p class="text-muted">{% trans "Estimated 1RM over time and training volume." %}</p>
 </a>
 
 {% if exercise.owner_id == request.user.id and exercise.active %}
-  <form method="post" action="{% url 'exercises:exercise-deactivate' exercise.pk %}" onsubmit="return confirm('Deactivate this exercise? It will no longer appear when browsing or prescribing.');">
+  <form method="post" action="{% url 'exercises:exercise-deactivate' exercise.pk %}" onsubmit="return confirm('{% trans "Deactivate this exercise? It will no longer appear when browsing or prescribing." %}');">
     {% csrf_token %}
-    <button type="submit" class="button-danger">Deactivate</button>
+    <button type="submit" class="button-danger">{% trans "Deactivate" %}</button>
   </form>
 {% endif %}
 
-<p><a class="button-secondary" href="{% url 'exercises:exercise-list' %}">&larr; Back to exercises</a></p>
+<p><a class="button-secondary" href="{% url 'exercises:exercise-list' %}">&larr; {% trans "Back to exercises" %}</a></p>
 {% endblock %}

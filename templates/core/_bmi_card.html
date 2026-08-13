@@ -1,3 +1,4 @@
+{% load i18n %}
 {% comment %}
 Shared BMI display: current value + category (when computable) and the
 WHO category ranges table (always, once shown at all — see each
@@ -5,7 +6,7 @@ caller for what "shown at all" means on that page). Expects:
 bmi_categories, and optionally bmi / bmi_category.
 {% endcomment %}
 <div class="card">
-  <h3 style="margin-top:0;">BMI</h3>
+  <h3 style="margin-top:0;">{% trans "BMI" %}</h3>
   {% if bmi %}
     <p style="margin:0 0 0.75rem;">
       <strong style="font-size:1.5rem;">{{ bmi }}</strong>
@@ -13,19 +14,18 @@ bmi_categories, and optionally bmi / bmi_category.
     </p>
   {% else %}
     <p class="text-muted" style="margin:0 0 0.75rem;">
-      Not enough data yet — set your height and log a body weight to see
-      your current BMI here.
+      {% trans "Not enough data yet — set your height and log a body weight to see your current BMI here." %}
     </p>
   {% endif %}
   <table class="bar-chart-table">
-    <caption class="visually-hidden">BMI category ranges</caption>
+    <caption class="visually-hidden">{% trans "BMI category ranges" %}</caption>
     <tbody>
       {% for category in bmi_categories %}
         <tr{% if category == bmi_category %} class="bmi-current-row"{% endif %}>
           <th scope="row">{{ category.name }}</th>
           <td>
-            {% if category.low is None %}below {{ category.high }}
-            {% elif category.high is None %}{{ category.low }} and above
+            {% if category.low is None %}{% blocktrans with high=category.high %}below {{ high }}{% endblocktrans %}
+            {% elif category.high is None %}{% blocktrans with low=category.low %}{{ low }} and above{% endblocktrans %}
             {% else %}{{ category.low }}–{{ category.high }}{% endif %}
           </td>
         </tr>

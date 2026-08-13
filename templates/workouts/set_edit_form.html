@@ -1,8 +1,9 @@
 {% extends "base.html" %}
-{% block title %}Edit set — IronStack{% endblock %}
+{% load i18n %}
+{% block title %}{% trans "Edit set" %} — IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
-  <h1 style="margin:0;">Edit set {{ exercise_set.set_number }}</h1>
+  <h1 style="margin:0;">{% blocktrans with number=exercise_set.set_number %}Edit set {{ number }}{% endblocktrans %}</h1>
 </div>
 
 <form class="card" method="post">
@@ -15,8 +16,8 @@
       {% if field.errors %}<p class="field-error">{{ field.errors|striptags }}</p>{% endif %}
     </div>
   {% endfor %}
-  <button type="submit">Save</button>
+  <button type="submit">{% trans "Save" %}</button>
 </form>
 
-<p><a class="button-secondary" href="{% url 'workouts:session-detail' session.pk %}">&larr; Back to workout</a></p>
+<p><a class="button-secondary" href="{% url 'workouts:session-detail' session.pk %}">&larr; {% trans "Back to workout" %}</a></p>
 {% endblock %}

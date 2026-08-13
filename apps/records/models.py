@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 
 from apps.core.models import TimeStampedModel
 from apps.exercises.models import Exercise
@@ -7,12 +8,12 @@ from apps.workouts.models import ExerciseSet
 
 
 class PRType(models.TextChoices):
-    MAX_WEIGHT = "max_weight", "Max weight"
-    REP_PR = "rep_pr", "Rep PR"
-    REP_SPECIFIC_PR = "rep_specific_pr", "Rep-specific PR"
-    ESTIMATED_1RM = "estimated_1rm", "Estimated 1RM"
-    SET_VOLUME = "set_volume", "Set volume"
-    SESSION_VOLUME = "session_volume", "Session volume"
+    MAX_WEIGHT = "max_weight", _("Max weight")
+    REP_PR = "rep_pr", _("Rep PR")
+    REP_SPECIFIC_PR = "rep_specific_pr", _("Rep-specific PR")
+    ESTIMATED_1RM = "estimated_1rm", _("Estimated 1RM")
+    SET_VOLUME = "set_volume", _("Set volume")
+    SESSION_VOLUME = "session_volume", _("Session volume")
 
 
 class PersonalRecord(TimeStampedModel):

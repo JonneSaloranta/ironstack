@@ -1,10 +1,12 @@
+from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 
 
 class UnitSystem(models.TextChoices):
-    METRIC = "metric", "Metric (kg, km)"
-    IMPERIAL = "imperial", "Imperial (lb, mi)"
+    METRIC = "metric", _("Metric (kg, km)")
+    IMPERIAL = "imperial", _("Imperial (lb, mi)")
 
 
 class User(AbstractUser):
@@ -36,6 +38,16 @@ class User(AbstractUser):
         help_text="Whether the dashboard's BMI card is shown at all — "
         "independent of whether height/weight exist to compute it, so a "
         "user who'd rather not see the figure can turn it off outright.",
+    )
+    # Applied by apps.accounts.middleware.UserLanguageMiddleware — a
+    # distinct concern from unit_system/timezone above (see
+    # config.settings.base's LANGUAGES comment). Defaults to
+    # settings.LANGUAGE_CODE's base language ("en-us" -> "en") rather
+    # than an empty string, so a freshly created user always has an
+    # explicit, valid choice rather than silently falling back to
+    # whatever LocaleMiddleware would otherwise guess.
+    language = models.CharField(
+        max_length=10, choices=settings.LANGUAGES, default=settings.LANGUAGE_CODE.split("-")[0]
     )
 
     def __str__(self):

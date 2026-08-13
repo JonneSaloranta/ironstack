@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 
 from apps.core.models import TimeStampedModel
 
@@ -29,15 +30,15 @@ class Equipment(models.Model):
 
     class Meta:
         ordering = ["name"]
-        verbose_name_plural = "equipment"
+        verbose_name_plural = _("equipment")
 
     def __str__(self):
         return self.name
 
 
 class MovementType(models.TextChoices):
-    COMPOUND = "compound", "Compound"
-    ISOLATION = "isolation", "Isolation"
+    COMPOUND = "compound", _("Compound")
+    ISOLATION = "isolation", _("Isolation")
 
 
 class WeightInputMode(models.TextChoices):
@@ -51,8 +52,8 @@ class WeightInputMode(models.TextChoices):
     agree on the same convention — see docs/DOMAIN_MODEL.md.
     """
 
-    TOTAL = "total", "Total load"
-    PER_HAND = "per_hand", "Per hand / dumbbell"
+    TOTAL = "total", _("Total load")
+    PER_HAND = "per_hand", _("Per hand / dumbbell")
 
 
 class Exercise(TimeStampedModel):
@@ -65,13 +66,19 @@ class Exercise(TimeStampedModel):
     (see docs/DOMAIN_MODEL.md).
     """
 
-    name = models.CharField(max_length=100)
-    description = models.TextField(blank=True)
+    name = models.CharField(max_length=100, verbose_name=_("name"))
+    description = models.TextField(blank=True, verbose_name=_("description"))
     primary_muscle_groups = models.ManyToManyField(
-        MuscleGroup, related_name="primary_exercises", blank=True
+        MuscleGroup,
+        related_name="primary_exercises",
+        blank=True,
+        verbose_name=_("primary muscle groups"),
     )
     secondary_muscle_groups = models.ManyToManyField(
-        MuscleGroup, related_name="secondary_exercises", blank=True
+        MuscleGroup,
+        related_name="secondary_exercises",
+        blank=True,
+        verbose_name=_("secondary muscle groups"),
     )
     equipment = models.ForeignKey(
         Equipment,
@@ -79,14 +86,19 @@ class Exercise(TimeStampedModel):
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
+        verbose_name=_("equipment"),
     )
     movement_type = models.CharField(
-        max_length=20, choices=MovementType.choices, default=MovementType.COMPOUND
+        max_length=20,
+        choices=MovementType.choices,
+        default=MovementType.COMPOUND,
+        verbose_name=_("movement type"),
     )
     weight_input_mode = models.CharField(
         max_length=20,
         choices=WeightInputMode.choices,
         default=WeightInputMode.TOTAL,
+        verbose_name=_("weight logging"),
     )
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,

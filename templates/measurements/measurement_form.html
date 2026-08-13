@@ -1,8 +1,9 @@
 {% extends "base.html" %}
-{% block title %}Edit reading — IronStack{% endblock %}
+{% load i18n %}
+{% block title %}{% trans "Edit reading" %} — IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
-  <h1 style="margin:0;">Edit {{ measurement_type.name }} reading</h1>
+  <h1 style="margin:0;">{% blocktrans with name=measurement_type.name %}Edit {{ name }} reading{% endblocktrans %}</h1>
 </div>
 
 <form class="card" method="post">
@@ -15,8 +16,8 @@
       {% if field.errors %}<p class="field-error">{{ field.errors|striptags }}</p>{% endif %}
     </div>
   {% endfor %}
-  <button type="submit">Save</button>
+  <button type="submit">{% trans "Save" %}</button>
 </form>
 
-<p><a class="button-secondary" href="{% url 'measurements:history' measurement_type.pk %}">&larr; Back to {{ measurement_type.name }}</a></p>
+<p><a class="button-secondary" href="{% url 'measurements:history' measurement_type.pk %}">&larr; {% blocktrans with name=measurement_type.name %}Back to {{ name }}{% endblocktrans %}</a></p>
 {% endblock %}

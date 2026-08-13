@@ -153,8 +153,8 @@ not built as dashboard widgets:
 All five bottom-nav sections are real, not placeholders: Home
 (dashboard), Workout (session history/start), Programs, Progress
 (analytics dashboard — training volume, muscle-group breakdown, PR
-history), Profile (unit/timezone preferences, password change — added
-Phase 11, previously a dead link since Phase 1).
+history), Profile (unit/timezone/language preferences, password change —
+added Phase 11, previously a dead link since Phase 1).
 
 "Progress" originally linked to Body tracking (measurements) — retargeted
 to the analytics dashboard once a post-launch review found the label

@@ -391,6 +391,32 @@ sizing, unit-consistency audit, and BMI.**
   layout (workout Edit/Delete, set-row Edit/Delete) unaffected.
 - 34 new tests (298 total).
 
+**Internationalization (i18n) — six languages.** All UI text (templates,
+form labels/help_text/errors, model choice labels, flash messages, the
+progression engine's explanatory `reason` strings) is now marked for
+translation and translated into English, Finnish, Swedish, Russian,
+Italian, and Estonian, using Django's own gettext `.po`/`.mo`
+machinery — no new dependency beyond the `gettext` system package
+(`Dockerfile`) `compilemessages` needs to build `.mo` files from the
+committed `.po` sources, run automatically at container startup. A new
+`User.language` field (profile page, alongside unit/timezone
+preferences) drives it via `apps.accounts.middleware.UserLanguageMiddleware`,
+which re-derives the active language from the database on every request
+rather than caching it in a session or cookie. Deliberately out of
+scope: seeded reference data (exercise names, muscle groups, built-in
+program templates, ...) and any user-entered text — those are content,
+not UI chrome, and would need a model-translation layer
+(`django-modeltranslation` or similar) to translate at all; gettext only
+ever matches strings actually present in its `.po` catalog, so a
+user's own data always renders exactly as typed, in every language.
+Caught and fixed two real bugs along the way: Django's own
+`LANGUAGE_SESSION_KEY` doesn't exist in this Django version (the
+middleware doesn't need a session at all, so it was simplified rather
+than worked around), and Russian's PLURAL_FORMS needs its real 3-way
+rule (one/few/many — e.g. "3 тренировки" vs. "5 тренировок"), not
+gettext's English-shaped 2-form default. See `docs/ARCHITECTURE.md`
+"Internationalization" for the full write-up. 5 new tests (310 total).
+
 ## Local development
 
 ```bash

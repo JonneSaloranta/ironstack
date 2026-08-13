@@ -8,14 +8,15 @@ from dataclasses import dataclass
 from datetime import date, timedelta
 
 from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
 
 RANGE_CHOICES = [
-    ("7d", "7 days"),
-    ("30d", "30 days"),
-    ("3m", "3 months"),
-    ("6m", "6 months"),
-    ("1y", "1 year"),
-    ("all", "All time"),
+    ("7d", _("7 days")),
+    ("30d", _("30 days")),
+    ("3m", _("3 months")),
+    ("6m", _("6 months")),
+    ("1y", _("1 year")),
+    ("all", _("All time")),
 ]
 
 _PRESET_DAYS = {"7d": 7, "30d": 30, "3m": 90, "6m": 182, "1y": 365}

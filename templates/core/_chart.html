@@ -1,3 +1,4 @@
+{% load i18n %}
 {% comment %}
 Single-series line chart (change-over-time), shared by apps.measurements
 and apps.activities. No legend — one series, so the card heading already
@@ -11,7 +12,7 @@ Expects: chart (apps.core.charts.ChartSeries), chart_title, unit_label.
     <span>{{ chart.max_value }} {{ unit_label }}</span>
   </div>
   <svg class="chart-svg" viewBox="0 0 {{ chart.width }} {{ chart.height }}" role="img"
-       aria-label="{{ chart_title }} trend over time, {{ chart.points|length }} readings">
+       aria-label="{% blocktrans count counter=chart.points|length with title=chart_title %}{{ title }} trend over time, {{ counter }} reading{% plural %}{{ title }} trend over time, {{ counter }} readings{% endblocktrans %}">
     <polyline class="chart-line" points="{{ chart.polyline }}" fill="none" />
     {% for point in chart.points %}
       <circle class="chart-point" cx="{{ point.x }}" cy="{{ point.y }}" r="5">

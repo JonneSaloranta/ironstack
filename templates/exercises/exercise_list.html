@@ -1,15 +1,16 @@
 {% extends "base.html" %}
-{% block title %}Exercises — IronStack{% endblock %}
+{% load i18n %}
+{% block title %}{% trans "Exercises" %} — IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
-  <h1 style="margin:0;">Exercises</h1>
-  <a class="button" href="{% url 'exercises:exercise-create' %}">New</a>
+  <h1 style="margin:0;">{% trans "Exercises" %}</h1>
+  <a class="button" href="{% url 'exercises:exercise-create' %}">{% trans "New" %}</a>
 </div>
 
 <form class="exercise-filters" hx-get="{% url 'exercises:exercise-list' %}" hx-target="#exercise-results" hx-trigger="input changed delay:300ms from:#id_q, change from:#id_muscle_group" hx-push-url="true">
-  <input type="search" id="id_q" name="q" placeholder="Search exercises…" value="{{ query }}" aria-label="Search exercises">
-  <select id="id_muscle_group" name="muscle_group" aria-label="Filter by muscle group">
-    <option value="">All muscle groups</option>
+  <input type="search" id="id_q" name="q" placeholder="{% trans "Search exercises…" %}" value="{{ query }}" aria-label="{% trans "Search exercises" %}">
+  <select id="id_muscle_group" name="muscle_group" aria-label="{% trans "Filter by muscle group" %}">
+    <option value="">{% trans "All muscle groups" %}</option>
     {% for mg in muscle_groups %}
       <option value="{{ mg.id }}" {% if selected_muscle_group == mg.id|stringformat:"s" %}selected{% endif %}>{{ mg.name }}</option>
     {% endfor %}

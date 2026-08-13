@@ -1,5 +1,5 @@
-{% load static %}<!doctype html>
-<html lang="en">
+{% load static i18n %}<!doctype html>
+<html lang="{{ LANGUAGE_CODE }}">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -13,28 +13,28 @@
   <script src="{% static 'js/alpine.min.js' %}" defer></script>
 </head>
 <body>
-  <a class="skip-link" href="#main-content">Skip to content</a>
+  <a class="skip-link" href="#main-content">{% trans "Skip to content" %}</a>
   {% if user.is_authenticated %}
-  <nav class="bottom-nav" aria-label="Main navigation">
-    <a href="{% url 'dashboard' %}" aria-label="Home" {% if request.resolver_match.url_name == 'dashboard' %}aria-current="page"{% endif %}>
+  <nav class="bottom-nav" aria-label="{% trans "Main navigation" %}">
+    <a href="{% url 'dashboard' %}" aria-label="{% trans "Home" %}" {% if request.resolver_match.url_name == 'dashboard' %}aria-current="page"{% endif %}>
       <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-8 9 8"/><path d="M5 10v10a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V10"/></svg>
-      <span class="nav-label">Home</span>
+      <span class="nav-label">{% trans "Home" %}</span>
     </a>
-    <a href="{% url 'analytics:dashboard' %}" aria-label="Progress" {% if request.resolver_match.app_name == 'analytics' %}aria-current="page"{% endif %}>
+    <a href="{% url 'analytics:dashboard' %}" aria-label="{% trans "Progress" %}" {% if request.resolver_match.app_name == 'analytics' %}aria-current="page"{% endif %}>
       <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 17 9 11 13 15 21 6"/><polyline points="15 6 21 6 21 12"/></svg>
-      <span class="nav-label">Progress</span>
+      <span class="nav-label">{% trans "Progress" %}</span>
     </a>
-    <a href="{% url 'workouts:session-list' %}" aria-label="Workout" {% if request.resolver_match.app_name == 'workouts' %}aria-current="page"{% endif %}>
+    <a href="{% url 'workouts:session-list' %}" aria-label="{% trans "Workout" %}" {% if request.resolver_match.app_name == 'workouts' %}aria-current="page"{% endif %}>
       <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><line x1="6" y1="12" x2="18" y2="12"/><rect x="2" y="9" width="3" height="6" rx="1"/><rect x="19" y="9" width="3" height="6" rx="1"/><rect x="5" y="7" width="2" height="10" rx="1"/><rect x="17" y="7" width="2" height="10" rx="1"/></svg>
-      <span class="nav-label">Workout</span>
+      <span class="nav-label">{% trans "Workout" %}</span>
     </a>
-    <a href="{% url 'programs:program-list' %}" aria-label="Programs" {% if request.resolver_match.app_name == 'programs' %}aria-current="page"{% endif %}>
+    <a href="{% url 'programs:program-list' %}" aria-label="{% trans "Programs" %}" {% if request.resolver_match.app_name == 'programs' %}aria-current="page"{% endif %}>
       <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v1"/><line x1="8" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="16" y2="14"/><line x1="8" y1="18" x2="13" y2="18"/></svg>
-      <span class="nav-label">Programs</span>
+      <span class="nav-label">{% trans "Programs" %}</span>
     </a>
-    <a href="{% url 'profile' %}" aria-label="Profile" {% if request.resolver_match.url_name == 'profile' %}aria-current="page"{% endif %}>
+    <a href="{% url 'profile' %}" aria-label="{% trans "Profile" %}" {% if request.resolver_match.url_name == 'profile' %}aria-current="page"{% endif %}>
       <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>
-      <span class="nav-label">Profile</span>
+      <span class="nav-label">{% trans "Profile" %}</span>
     </a>
   </nav>
   {% endif %}

@@ -2,6 +2,7 @@ from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseNotAllowed
 from django.shortcuts import get_object_or_404, redirect, render
+from django.utils.translation import gettext as _
 from django.views.generic import DetailView, ListView
 
 from apps.core import units as core_units
@@ -162,7 +163,7 @@ def set_log(request, performed_exercise_pk):
     new_prs = []
     suggestion = None
     if not performed_exercise.session.is_in_progress:
-        form.add_error(None, "This session is no longer in progress.")
+        form.add_error(None, _("This session is no longer in progress."))
     elif form.is_valid():
         # services.log_set takes cleaned_data directly rather than going
         # through form.save() (there's no ExerciseSet instance to save
@@ -182,9 +183,12 @@ def set_log(request, performed_exercise_pk):
             # the same conversion the "Recent PRs" templates use.
             messages.success(
                 request,
-                f"New PR — {performed_exercise.exercise.name}: "
-                f"{record.get_record_type_display()} "
-                f"{records_services.format_value(record, request.user)}",
+                _("New PR — %(exercise)s: %(record_type)s %(value)s")
+                % {
+                    "exercise": performed_exercise.exercise.name,
+                    "record_type": record.get_record_type_display(),
+                    "value": records_services.format_value(record, request.user),
+                },
             )
         form, suggestion = _build_set_form(request.user, performed_exercise)
     return _render_session_or_card(

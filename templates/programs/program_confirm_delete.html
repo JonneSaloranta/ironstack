@@ -1,16 +1,17 @@
 {% extends "base.html" %}
-{% block title %}Delete program — IronStack{% endblock %}
+{% load i18n %}
+{% block title %}{% trans "Delete program" %} — IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
-  <h1 style="margin:0;">Delete program</h1>
+  <h1 style="margin:0;">{% trans "Delete program" %}</h1>
 </div>
 
 <div class="card">
-  <p>Delete <strong>{{ program.name }}</strong> and all of its workouts and exercises? This cannot be undone.</p>
+  <p>{% blocktrans with name=program.name %}Delete <strong>{{ name }}</strong> and all of its workouts and exercises? This cannot be undone.{% endblocktrans %}</p>
   <form method="post">
     {% csrf_token %}
-    <button type="submit" class="button-danger">Delete</button>
+    <button type="submit" class="button-danger">{% trans "Delete" %}</button>
   </form>
-  <p><a href="{% url 'programs:program-detail' program.pk %}">Cancel</a></p>
+  <p><a href="{% url 'programs:program-detail' program.pk %}">{% trans "Cancel" %}</a></p>
 </div>
 {% endblock %}

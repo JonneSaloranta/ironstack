@@ -1,7 +1,6 @@
 {% extends "base.html" %}
-{% load core_extras %}
-{% load records_extras %}
-{% block title %}Dashboard — IronStack{% endblock %}
+{% load i18n core_extras records_extras %}
+{% block title %}{% trans "Dashboard" %} — IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
   <h1 style="margin:0;">IronStack</h1>
@@ -10,10 +9,10 @@
 {% if week_summary.session_count or body_weight is not None %}
   <div class="card">
     <dl class="stat-row">
-      <div><dt>This week's workouts</dt><dd>{{ week_summary.session_count }}</dd></div>
-      <div><dt>This week's volume</dt><dd>{{ week_summary.total_volume }} {{ weight_unit_label }}</dd></div>
+      <div><dt>{% trans "This week's workouts" %}</dt><dd>{{ week_summary.session_count }}</dd></div>
+      <div><dt>{% trans "This week's volume" %}</dt><dd>{{ week_summary.total_volume }} {{ weight_unit_label }}</dd></div>
       {% if body_weight is not None %}
-        <div><dt>Body weight</dt><dd>{{ body_weight }} {{ body_weight_unit }}</dd></div>
+        <div><dt>{% trans "Body weight" %}</dt><dd>{{ body_weight }} {{ body_weight_unit }}</dd></div>
       {% endif %}
     </dl>
   </div>
@@ -23,19 +22,19 @@
   {% include "core/_bmi_card.html" %}
 {% elif user.show_bmi and not user.height %}
   <a class="card card-link" href="{% url 'profile' %}">
-    <strong>Add your height</strong>
-    <p class="text-muted">Set it on your profile to see your BMI alongside a logged body weight.</p>
+    <strong>{% trans "Add your height" %}</strong>
+    <p class="text-muted">{% trans "Set it on your profile to see your BMI alongside a logged body weight." %}</p>
   </a>
 {% elif user.show_bmi and user.height and body_weight is None %}
   <a class="card card-link" href="{% url 'measurements:type-list' %}">
-    <strong>Log a body weight</strong>
-    <p class="text-muted">Your height is set — log a body weight to see your BMI.</p>
+    <strong>{% trans "Log a body weight" %}</strong>
+    <p class="text-muted">{% trans "Your height is set — log a body weight to see your BMI." %}</p>
   </a>
 {% endif %}
 
 {% if recent_prs %}
   <div class="card">
-    <strong>Recent PRs</strong>
+    <strong>{% trans "Recent PRs" %}</strong>
     {% for record in recent_prs %}
       <p class="text-muted" style="margin:0.35rem 0 0;">
         {{ record.exercise.name }} — {{ record.get_record_type_display }}: {{ record|pr_value:request.user }}
@@ -46,31 +45,31 @@
 
 {% if in_progress_session %}
   <a class="card card-link" href="{% url 'workouts:session-detail' in_progress_session.pk %}">
-    <strong>Continue workout</strong>
+    <strong>{% trans "Continue workout" %}</strong>
     <p class="text-muted">
-      {% if in_progress_session.workout %}{{ in_progress_session.workout.name }}{% else %}Freeform workout{% endif %}
-      — started {{ in_progress_session.started_at|date:"H:i" }}
+      {% if in_progress_session.workout %}{{ in_progress_session.workout.name }}{% else %}{% trans "Freeform workout" %}{% endif %}
+      — {% blocktrans with started_at=in_progress_session.started_at|date:"H:i" %}started {{ started_at }}{% endblocktrans %}
     </p>
   </a>
 {% else %}
   <div class="card empty-state">
-    <p>No workout in progress.</p>
-    <p>Start one from a program, or log a freeform workout.</p>
+    <p>{% trans "No workout in progress." %}</p>
+    <p>{% trans "Start one from a program, or log a freeform workout." %}</p>
   </div>
 {% endif %}
 
 <a class="card card-link" href="{% url 'exercises:exercise-list' %}">
-  <strong>Browse exercises</strong>
-  <p class="text-muted">Explore the exercise library or add your own.</p>
+  <strong>{% trans "Browse exercises" %}</strong>
+  <p class="text-muted">{% trans "Explore the exercise library or add your own." %}</p>
 </a>
 
 <a class="card card-link" href="{% url 'measurements:type-list' %}">
-  <strong>Body tracking</strong>
-  <p class="text-muted">Log body weight, measurements, and trends.</p>
+  <strong>{% trans "Body tracking" %}</strong>
+  <p class="text-muted">{% trans "Log body weight, measurements, and trends." %}</p>
 </a>
 
 <a class="card card-link" href="{% url 'activities:type-list' %}">
-  <strong>Activities</strong>
-  <p class="text-muted">Log a run, ride, or any other non-gym activity.</p>
+  <strong>{% trans "Activities" %}</strong>
+  <p class="text-muted">{% trans "Log a run, ride, or any other non-gym activity." %}</p>
 </a>
 {% endblock %}

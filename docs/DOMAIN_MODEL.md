@@ -22,6 +22,12 @@ value so the number has context rather than standing alone. `show_bmi`
 lets a user turn the whole card off regardless of whether it's
 computable — nothing else in the app reads either field.
 
+Also carries `language` — the UI language (one of the six shipped
+locales, see `ARCHITECTURE.md` "Internationalization"), applied by
+`apps.accounts.middleware.UserLanguageMiddleware`. Distinct from
+`unit_system`/`timezone`: it changes what language the interface reads
+in, not what units or "today" mean.
+
 ## Exercise
 
 An exercise represents a movement.

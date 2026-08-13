@@ -3,6 +3,7 @@ from zoneinfo import available_timezones
 
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
+from django.utils.translation import gettext_lazy as _
 
 from apps.core import units as core_units
 
@@ -30,15 +31,21 @@ class ProfileForm(forms.ModelForm):
     exist to compute it.
     """
 
-    timezone = forms.ChoiceField(choices=sorted((tz, tz) for tz in available_timezones()))
+    timezone = forms.ChoiceField(
+        choices=sorted((tz, tz) for tz in available_timezones()), label=_("Timezone")
+    )
     height = forms.DecimalField(max_digits=6, decimal_places=1, required=False)
 
     class Meta:
         model = User
-        fields = ["unit_system", "timezone", "height", "show_bmi"]
-        labels = {"show_bmi": "Show BMI on the dashboard"}
+        fields = ["unit_system", "timezone", "height", "show_bmi", "language"]
+        labels = {
+            "unit_system": _("Units"),
+            "show_bmi": _("Show BMI on the dashboard"),
+            "language": _("Language"),
+        }
         help_texts = {
-            "show_bmi": "Turns off the BMI card and its category ranges entirely."
+            "show_bmi": _("Turns off the BMI card and its category ranges entirely.")
         }
 
     def __init__(self, *args, **kwargs):
@@ -49,7 +56,9 @@ class ProfileForm(forms.ModelForm):
         # system — matches what the user actually saw on the label.
         self._unit_system = self.instance.unit_system
         is_metric = self._unit_system == UnitSystem.METRIC
-        self.fields["height"].label = f"Height ({'cm' if is_metric else 'in'})"
+        self.fields["height"].label = (
+            _("Height (cm)") if is_metric else _("Height (in)")
+        )
         if self.instance.height is not None:
             # Canonical storage keeps 0.1mm precision (see the model
             # field's help_text) — quantized down here to what's

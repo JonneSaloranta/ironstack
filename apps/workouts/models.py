@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.db import models
 from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
 
 from apps.core.models import TimeStampedModel
 from apps.exercises.models import Exercise
@@ -8,10 +9,10 @@ from apps.programs.models import ExercisePrescription, Program, ProgressionMetho
 
 
 class WorkoutSessionStatus(models.TextChoices):
-    PLANNED = "planned", "Planned"
-    IN_PROGRESS = "in_progress", "In progress"
-    COMPLETED = "completed", "Completed"
-    ABANDONED = "abandoned", "Abandoned"
+    PLANNED = "planned", _("Planned")
+    IN_PROGRESS = "in_progress", _("In progress")
+    COMPLETED = "completed", _("Completed")
+    ABANDONED = "abandoned", _("Abandoned")
 
 
 class WorkoutSession(TimeStampedModel):

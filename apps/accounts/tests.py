@@ -11,6 +11,45 @@ class CustomUserModelTests(TestCase):
         self.assertEqual(user.unit_system, "metric")
         self.assertEqual(user.timezone, "UTC")
 
+    def test_language_defaults_to_english(self):
+        user = User.objects.create_user(username="alice", password="s3cret-pass")
+        self.assertEqual(user.language, "en")
+
+
+class LanguagePreferenceTests(TestCase):
+    """apps.accounts.middleware.UserLanguageMiddleware — a logged-in
+    user's stored `language` (set on the profile page) drives Django's
+    gettext-based UI translation, overriding whatever LocaleMiddleware
+    would otherwise guess from the session/cookie/Accept-Language header.
+    """
+
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        self.client.login(username="alice", password="s3cret-pass")
+
+    def test_setting_language_on_profile_persists_it(self):
+        self.client.post(
+            reverse("profile"), {"unit_system": "metric", "timezone": "UTC", "language": "fi"}
+        )
+        self.alice.refresh_from_db()
+        self.assertEqual(self.alice.language, "fi")
+
+    def test_dashboard_renders_in_the_users_chosen_language(self):
+        self.alice.language = "fi"
+        self.alice.save()
+        response = self.client.get(reverse("dashboard"))
+        self.assertContains(response, 'aria-label="Koti"')  # "Home" nav link
+
+    def test_dashboard_renders_in_english_by_default(self):
+        response = self.client.get(reverse("dashboard"))
+        self.assertContains(response, 'aria-label="Home"')
+
+    def test_language_choice_affects_translatable_form_labels_too(self):
+        self.alice.language = "fi"
+        self.alice.save()
+        response = self.client.get(reverse("profile"))
+        self.assertContains(response, "Aikavyöhyke")  # "Timezone" label
+
 
 class SignupFlowTests(TestCase):
     def test_signup_creates_user_and_logs_in(self):
@@ -67,7 +106,8 @@ class ProfileViewTests(TestCase):
 
     def test_updating_unit_system_and_timezone(self):
         response = self.client.post(
-            reverse("profile"), {"unit_system": "imperial", "timezone": "America/New_York"}
+            reverse("profile"),
+            {"unit_system": "imperial", "timezone": "America/New_York", "language": "en"},
         )
         self.assertRedirects(response, reverse("profile"))
         self.alice.refresh_from_db()
@@ -76,7 +116,8 @@ class ProfileViewTests(TestCase):
 
     def test_invalid_timezone_is_rejected(self):
         response = self.client.post(
-            reverse("profile"), {"unit_system": "metric", "timezone": "Not/A_Real_Zone"}
+            reverse("profile"),
+            {"unit_system": "metric", "timezone": "Not/A_Real_Zone", "language": "en"},
         )
         self.assertEqual(response.status_code, 200)  # re-rendered with errors
         self.alice.refresh_from_db()
@@ -87,7 +128,7 @@ class ProfileViewTests(TestCase):
 
         self.client.post(
             reverse("profile"),
-            {"unit_system": "metric", "timezone": "UTC", "height": "180"},
+            {"unit_system": "metric", "timezone": "UTC", "height": "180", "language": "en"},
         )
         self.alice.refresh_from_db()
         self.assertEqual(self.alice.height, Decimal("1.8000"))
@@ -99,7 +140,7 @@ class ProfileViewTests(TestCase):
         self.alice.save()
         self.client.post(
             reverse("profile"),
-            {"unit_system": "imperial", "timezone": "UTC", "height": "70"},
+            {"unit_system": "imperial", "timezone": "UTC", "height": "70", "language": "en"},
         )
         self.alice.refresh_from_db()
         self.assertEqual(self.alice.height, Decimal("1.7780"))
@@ -119,7 +160,8 @@ class ProfileViewTests(TestCase):
         self.alice.height = Decimal("1.8")
         self.alice.save()
         self.client.post(
-            reverse("profile"), {"unit_system": "metric", "timezone": "UTC", "height": ""}
+            reverse("profile"),
+            {"unit_system": "metric", "timezone": "UTC", "height": "", "language": "en"},
         )
         self.alice.refresh_from_db()
         self.assertIsNone(self.alice.height)
@@ -129,7 +171,10 @@ class ProfileViewTests(TestCase):
 
     def test_unchecking_show_bmi_turns_it_off(self):
         # An unchecked checkbox simply isn't sent in the POST body.
-        self.client.post(reverse("profile"), {"unit_system": "metric", "timezone": "UTC"})
+        self.client.post(
+            reverse("profile"),
+            {"unit_system": "metric", "timezone": "UTC", "language": "en"},
+        )
         self.alice.refresh_from_db()
         self.assertFalse(self.alice.show_bmi)
 
@@ -138,7 +183,7 @@ class ProfileViewTests(TestCase):
         self.alice.save()
         self.client.post(
             reverse("profile"),
-            {"unit_system": "metric", "timezone": "UTC", "show_bmi": "on"},
+            {"unit_system": "metric", "timezone": "UTC", "show_bmi": "on", "language": "en"},
         )
         self.alice.refresh_from_db()
         self.assertTrue(self.alice.show_bmi)

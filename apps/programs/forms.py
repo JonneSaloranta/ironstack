@@ -1,4 +1,5 @@
 from django import forms
+from django.utils.translation import gettext_lazy as _
 
 from apps.core import units as core_units
 from apps.exercises.services import visible_to as exercises_visible_to
@@ -11,10 +12,10 @@ class ProgramForm(forms.ModelForm):
         model = Program
         fields = ["name", "description", "is_template"]
         labels = {
-            "is_template": "Save as a personal template",
+            "is_template": _("Save as a personal template"),
         }
         help_texts = {
-            "is_template": (
+            "is_template": _(
                 "Templates aren't meant to be run directly — copy them into a "
                 "new program (from the program page) whenever you start a new cycle, "
                 "keeping the original untouched."
@@ -56,9 +57,10 @@ class ExercisePrescriptionForm(forms.ModelForm):
             "notes",
         ]
         labels = {
-            "target_rpe": "Target RPE",
-            "target_rir": "Target RIR",
-            "percentage_target": "Percentage target (% 1RM)",
+            "exercise": _("exercise"),
+            "target_rpe": _("Target RPE"),
+            "target_rir": _("Target RIR"),
+            "percentage_target": _("Percentage target (% 1RM)"),
         }
 
     def __init__(self, *args, user=None, **kwargs):
@@ -69,8 +71,10 @@ class ExercisePrescriptionForm(forms.ModelForm):
         self.fields["exercise"].queryset = exercises_visible_to(user)
         unit_system = getattr(user, "unit_system", "metric")
         unit_label = core_units.weight_unit_label(unit_system)
-        self.fields["target_weight"].label = f"Target weight ({unit_label})"
-        self.fields["weight_increment"].label = f"Weight increment ({unit_label})"
+        self.fields["target_weight"].label = _("Target weight (%(unit)s)") % {"unit": unit_label}
+        self.fields["weight_increment"].label = _("Weight increment (%(unit)s)") % {
+            "unit": unit_label
+        }
         if self.instance.pk:
             if self.instance.target_weight is not None:
                 self.initial["target_weight"] = core_units.kg_to_display(
@@ -105,5 +109,5 @@ class ExercisePrescriptionForm(forms.ModelForm):
         min_reps = cleaned_data.get("min_reps")
         max_reps = cleaned_data.get("max_reps")
         if min_reps and max_reps and min_reps > max_reps:
-            self.add_error("min_reps", "Minimum reps cannot exceed maximum reps.")
+            self.add_error("min_reps", _("Minimum reps cannot exceed maximum reps."))
         return cleaned_data

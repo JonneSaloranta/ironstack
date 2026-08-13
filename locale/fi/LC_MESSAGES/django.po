@@ -1,0 +1,1024 @@
+# IronStack translation catalog.
+msgid ""
+msgstr ""
+"Project-Id-Version: IronStack\n"
+"Report-Msgid-Bugs-To: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: fi\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Timezone"
+msgstr "Aikavyöhyke"
+
+msgid "Units"
+msgstr "Yksiköt"
+
+msgid "Show BMI on the dashboard"
+msgstr "Näytä BMI kojelaudalla"
+
+msgid "Language"
+msgstr "Kieli"
+
+msgid "Turns off the BMI card and its category ranges entirely."
+msgstr "Piilottaa BMI-kortin ja sen luokka-asteikot kokonaan."
+
+msgid "Height (cm)"
+msgstr "Pituus (cm)"
+
+msgid "Height (in)"
+msgstr "Pituus (in)"
+
+msgid "Metric (kg, km)"
+msgstr "Metrinen (kg, km)"
+
+msgid "Imperial (lb, mi)"
+msgstr "Imperiaalinen (lb, mi)"
+
+msgid "Preferences saved."
+msgstr "Asetukset tallennettu."
+
+msgid "Duration (minutes)"
+msgstr "Kesto (minuuttia)"
+
+#, python-format
+msgid "Distance (%(unit)s)"
+msgstr "Matka (%(unit)s)"
+
+msgid "name"
+msgstr "nimi"
+
+msgid "date"
+msgstr "päivämäärä"
+
+msgid "start time"
+msgstr "aloitusaika"
+
+msgid "distance"
+msgstr "matka"
+
+msgid "calories"
+msgstr "kalorit"
+
+msgid "notes"
+msgstr "muistiinpanot"
+
+msgid "activities"
+msgstr "aktiviteetit"
+
+msgid "7 days"
+msgstr "7 päivää"
+
+msgid "30 days"
+msgstr "30 päivää"
+
+msgid "3 months"
+msgstr "3 kuukautta"
+
+msgid "6 months"
+msgstr "6 kuukautta"
+
+msgid "1 year"
+msgstr "1 vuosi"
+
+msgid "All time"
+msgstr "Koko aika"
+
+msgid "Underweight"
+msgstr "Alipainoinen"
+
+msgid "Normal weight"
+msgstr "Normaalipaino"
+
+msgid "Overweight"
+msgstr "Ylipainoinen"
+
+msgid "Obese"
+msgstr "Lihavuus"
+
+msgid "equipment"
+msgstr "välineet"
+
+msgid "Compound"
+msgstr "Moninivelliike"
+
+msgid "Isolation"
+msgstr "Eristävä liike"
+
+msgid "Total load"
+msgstr "Kokonaispaino"
+
+msgid "Per hand / dumbbell"
+msgstr "Per käsi / käsipaino"
+
+msgid "description"
+msgstr "kuvaus"
+
+msgid "primary muscle groups"
+msgstr "ensisijaiset lihasryhmät"
+
+msgid "secondary muscle groups"
+msgstr "toissijaiset lihasryhmät"
+
+msgid "movement type"
+msgstr "liiketyyppi"
+
+msgid "weight logging"
+msgstr "painon kirjaus"
+
+#, python-format
+msgid "Value (%(unit)s)"
+msgstr "Arvo (%(unit)s)"
+
+msgid "Value"
+msgstr "Arvo"
+
+msgid "Weight"
+msgstr "Paino"
+
+msgid "Length/circumference"
+msgstr "Pituus/ympärysmitta"
+
+msgid "Percentage"
+msgstr "Prosentti"
+
+msgid "unit kind"
+msgstr "yksikkötyyppi"
+
+msgid "recorded at"
+msgstr "kirjattu"
+
+msgid "Save as a personal template"
+msgstr "Tallenna henkilökohtaisena mallina"
+
+msgid "Templates aren't meant to be run directly — copy them into a new program (from the program page) whenever you start a new cycle, keeping the original untouched."
+msgstr "Malleja ei ole tarkoitettu suoraan käytettäväksi — kopioi ne uudeksi ohjelmaksi (ohjelmasivulta) aina kun aloitat uuden jakson, jolloin alkuperäinen pysyy koskemattomana."
+
+msgid "exercise"
+msgstr "liike"
+
+msgid "Target RPE"
+msgstr "Tavoite RPE"
+
+msgid "Target RIR"
+msgstr "Tavoite RIR"
+
+msgid "Percentage target (% 1RM)"
+msgstr "Prosenttitavoite (% 1RM)"
+
+#, python-format
+msgid "Target weight (%(unit)s)"
+msgstr "Tavoitepaino (%(unit)s)"
+
+#, python-format
+msgid "Weight increment (%(unit)s)"
+msgstr "Painon lisäys (%(unit)s)"
+
+msgid "Minimum reps cannot exceed maximum reps."
+msgstr "Vähimmäistoistomäärä ei voi olla suurempi kuin enimmäistoistomäärä."
+
+msgid "Monday"
+msgstr "Maanantai"
+
+msgid "Tuesday"
+msgstr "Tiistai"
+
+msgid "Wednesday"
+msgstr "Keskiviikko"
+
+msgid "Thursday"
+msgstr "Torstai"
+
+msgid "Friday"
+msgstr "Perjantai"
+
+msgid "Saturday"
+msgstr "Lauantai"
+
+msgid "Sunday"
+msgstr "Sunnuntai"
+
+msgid "order"
+msgstr "järjestys"
+
+msgid "scheduled weekday"
+msgstr "ajoitettu viikonpäivä"
+
+msgid "Double progression"
+msgstr "Kaksoisprogressio"
+
+msgid "Linear"
+msgstr "Lineaarinen"
+
+msgid "Percentage based"
+msgstr "Prosenttipohjainen"
+
+msgid "RPE/RIR based"
+msgstr "RPE/RIR-pohjainen"
+
+msgid "Rep range"
+msgstr "Toistoväli"
+
+msgid "Maintenance"
+msgstr "Ylläpito"
+
+msgid "Manual"
+msgstr "Manuaalinen"
+
+msgid "set count"
+msgstr "sarjojen määrä"
+
+msgid "minimum reps"
+msgstr "vähimmäistoistot"
+
+msgid "maximum reps"
+msgstr "enimmäistoistot"
+
+msgid "No completed history for this exercise yet — starting at the prescribed target."
+msgstr "Tälle liikkeelle ei vielä ole suoritushistoriaa — aloitetaan ohjelmoidusta tavoitteesta."
+
+msgid "Manual progression — you control the next weight and target."
+msgstr "Manuaalinen progressio — hallitset itse seuraavan painon ja tavoitteen."
+
+#, python-format
+msgid "Missed the target %(streak)s sessions in a row at %(weight)s kg — even maintenance loading should come down, to %(deload)s kg."
+msgstr "Tavoite jäi saavuttamatta %(streak)s kertaa peräkkäin painolla %(weight)s kg — jopa ylläpitokuorman pitäisi laskea, %(deload)s kg:aan."
+
+msgid "Maintenance — keeping the same load."
+msgstr "Ylläpito — sama kuorma pysyy."
+
+#, python-format
+msgid "Hit every rep last session at %(weight)s kg — adding %(increment)s kg."
+msgstr "Kaikki toistot onnistuivat viime kerralla painolla %(weight)s kg — lisätään %(increment)s kg."
+
+#, python-format
+msgid "Missed target reps %(streak)s sessions in a row at %(weight)s kg — recommending a deload to %(deload)s kg."
+msgstr "Toistotavoite jäi saavuttamatta %(streak)s kertaa peräkkäin painolla %(weight)s kg — suositellaan keventämistä painoon %(deload)s kg."
+
+#, python-format
+msgid "Missed target reps last session at %(weight)s kg — try the same weight again before increasing."
+msgstr "Toistotavoite jäi saavuttamatta viime kerralla painolla %(weight)s kg — kokeile samaa painoa uudelleen ennen nostoa."
+
+#, python-format
+msgid "Hit the top of your rep range on every set at %(weight)s kg — adding %(increment)s kg and resetting to the bottom of the range."
+msgstr "Toistoväli täyttyi ylärajaan asti joka sarjassa painolla %(weight)s kg — lisätään %(increment)s kg ja palataan välin alarajalle."
+
+#, python-format
+msgid "Still within your rep range at %(weight)s kg — repeat the same weight and aim for more reps next time."
+msgstr "Yhä toistovälin sisällä painolla %(weight)s kg — toista sama paino ja tavoittele enemmän toistoja ensi kerralla."
+
+#, python-format
+msgid "Missed the bottom of your rep range %(streak)s sessions in a row at %(weight)s kg — recommending a deload to %(deload)s kg."
+msgstr "Toistovälin alaraja jäi saavuttamatta %(streak)s kertaa peräkkäin painolla %(weight)s kg — suositellaan keventämistä painoon %(deload)s kg."
+
+#, python-format
+msgid "Missed the bottom of your rep range last session at %(weight)s kg — try the same weight again."
+msgstr "Toistovälin alaraja jäi saavuttamatta viime kerralla painolla %(weight)s kg — kokeile samaa painoa uudelleen."
+
+#, python-format
+msgid "Hit the top of your rep range for %(streak)s sessions in a row at %(weight)s kg — adding %(increment)s kg."
+msgstr "Toistovälin yläraja täyttyi %(streak)s kertaa peräkkäin painolla %(weight)s kg — lisätään %(increment)s kg."
+
+#, python-format
+msgid "Within your rep range at %(weight)s kg — keep working toward the top of the range before increasing."
+msgstr "Toistovälin sisällä painolla %(weight)s kg — jatka kohti välin ylärajaa ennen nostoa."
+
+msgid "a manually entered 1RM"
+msgstr "manuaalisesti syötetty 1RM"
+
+msgid "your latest estimated-1RM PR"
+msgstr "viimeisin arvioitu 1RM-ennätys"
+
+msgid "a live estimate from your most recent set"
+msgstr "tuore arvio viimeisimmästä sarjasta"
+
+msgid "No percentage target configured on this prescription."
+msgstr "Tälle ohjelmoinnille ei ole asetettu prosenttitavoitetta."
+
+msgid "No 1RM available yet — log a set first, or enter your 1RM manually."
+msgstr "1RM:ää ei vielä ole saatavilla — kirjaa ensin sarja tai syötä 1RM manuaalisesti."
+
+#, python-format
+msgid "%(percentage)s%% of %(one_rm)s kg (%(source)s) = %(suggested)s kg."
+msgstr "%(percentage)s%% painosta %(one_rm)s kg (%(source)s) = %(suggested)s kg."
+
+msgid "No RIR logged against a target yet — log sets with RIR to use this method."
+msgstr "RIR:ää ei vielä ole kirjattu tavoitetta vasten — kirjaa sarjoja RIR:llä käyttääksesi tätä menetelmää."
+
+#, python-format
+msgid "Target RIR %(target)s, actual %(actual)g — more in reserve than planned, adding %(increment)s kg."
+msgstr "Tavoite-RIR %(target)s, toteutunut %(actual)g — enemmän reserviä kuin suunniteltu, lisätään %(increment)s kg."
+
+#, python-format
+msgid "Target RIR %(target)s, actual %(actual)g — notably closer to failure than planned, easing back to %(deload)s kg."
+msgstr "Tavoite-RIR %(target)s, toteutunut %(actual)g — huomattavasti lähempänä uupumusta kuin suunniteltu, kevennetään painoon %(deload)s kg."
+
+#, python-format
+msgid "Target RIR %(target)s, actual %(actual)g — close enough to plan, hold the weight."
+msgstr "Tavoite-RIR %(target)s, toteutunut %(actual)g — riittävän lähellä suunnitelmaa, pidetään sama paino."
+
+msgid "Max weight"
+msgstr "Maksimipaino"
+
+msgid "Rep PR"
+msgstr "Toistoennätys"
+
+msgid "Rep-specific PR"
+msgstr "Toistokohtainen ennätys"
+
+msgid "Estimated 1RM"
+msgstr "Arvioitu 1RM"
+
+msgid "Set volume"
+msgstr "Sarjan volyymi"
+
+msgid "Session volume"
+msgstr "Treenin volyymi"
+
+msgid "reps"
+msgstr "toistot"
+
+msgid "Target reps"
+msgstr "Tavoitetoistot"
+
+msgid "RPE"
+msgstr "RPE"
+
+msgid "RIR"
+msgstr "RIR"
+
+msgid "Failed set"
+msgstr "Epäonnistunut sarja"
+
+msgid "Warm-up"
+msgstr "Lämmittely"
+
+#, python-format
+msgid "Weight (%(unit)s)"
+msgstr "Paino (%(unit)s)"
+
+msgid "Planned"
+msgstr "Suunniteltu"
+
+msgid "In progress"
+msgstr "Käynnissä"
+
+msgid "Completed"
+msgstr "Valmis"
+
+msgid "Abandoned"
+msgstr "Keskeytetty"
+
+msgid "This session is no longer in progress."
+msgstr "Tämä treeni ei ole enää käynnissä."
+
+#, python-format
+msgid "New PR — %(exercise)s: %(record_type)s %(value)s"
+msgstr "Uusi ennätys — %(exercise)s: %(record_type)s %(value)s"
+
+msgid "Not allowed"
+msgstr "Ei sallittu"
+
+msgid "You don't have permission to do that."
+msgstr "Sinulla ei ole oikeutta tehdä tätä."
+
+msgid "Back to dashboard"
+msgstr "Takaisin kojelaudalle"
+
+msgid "Not found"
+msgstr "Ei löytynyt"
+
+msgid "That page doesn't exist, or you don't have access to it."
+msgstr "Sivua ei ole olemassa, tai sinulla ei ole pääsyä siihen."
+
+msgid "Something went wrong"
+msgstr "Jokin meni pieleen"
+
+msgid "Something went wrong on our end. Your data is safe — try again in a moment."
+msgstr "Jokin meni pieleen meidän puolellamme. Tietosi ovat turvassa — yritä hetken kuluttua uudelleen."
+
+msgid "Profile"
+msgstr "Profiili"
+
+#, python-format
+msgid "Signed in as <strong>%(username)s</strong>"
+msgstr "Kirjautunut käyttäjänä <strong>%(username)s</strong>"
+
+msgid "Save preferences"
+msgstr "Tallenna asetukset"
+
+msgid "Change password"
+msgstr "Vaihda salasana"
+
+msgid "Log out"
+msgstr "Kirjaudu ulos"
+
+msgid "Sign up"
+msgstr "Rekisteröidy"
+
+msgid "Create your account"
+msgstr "Luo tilisi"
+
+msgid "Already have an account? Log in"
+msgstr "Onko sinulla jo tili? Kirjaudu sisään"
+
+msgid "Edit activity"
+msgstr "Muokkaa aktiviteettia"
+
+#, python-format
+msgid "Edit %(name)s"
+msgstr "Muokkaa: %(name)s"
+
+msgid "Save"
+msgstr "Tallenna"
+
+#, python-format
+msgid "Back to %(name)s"
+msgstr "Takaisin: %(name)s"
+
+msgid "Inactive"
+msgstr "Ei aktiivinen"
+
+#, python-format
+msgid "%(count)s logged · total duration %(total_duration)s"
+msgstr "%(count)s kirjattu · kokonaiskesto %(total_duration)s"
+
+#, python-format
+msgid "total distance %(distance)s %(unit)s"
+msgstr "kokonaismatka %(distance)s %(unit)s"
+
+#, python-format
+msgid "total calories %(calories)s"
+msgstr "kalorit yhteensä %(calories)s"
+
+msgid "Duration trend"
+msgstr "Kesto ajan myötä"
+
+msgid "Duration"
+msgstr "Kesto"
+
+msgid "min"
+msgstr "min"
+
+msgid "Log activity"
+msgstr "Kirjaa aktiviteetti"
+
+msgid "Date"
+msgstr "Päivämäärä"
+
+msgid "Distance"
+msgstr "Matka"
+
+msgid "Edit"
+msgstr "Muokkaa"
+
+msgid "Delete this activity?"
+msgstr "Poistetaanko tämä aktiviteetti?"
+
+msgid "Delete"
+msgstr "Poista"
+
+msgid "No activities logged yet."
+msgstr "Aktiviteetteja ei ole vielä kirjattu."
+
+msgid "Deactivate this activity type? It will no longer appear when logging new activities."
+msgstr "Poistetaanko tämä aktiviteettityyppi käytöstä? Se ei enää näy uusia aktiviteetteja kirjattaessa."
+
+msgid "Deactivate type"
+msgstr "Poista tyyppi käytöstä"
+
+msgid "Back to activities"
+msgstr "Takaisin aktiviteetteihin"
+
+msgid "New activity type"
+msgstr "Uusi aktiviteettityyppi"
+
+msgid "Activities"
+msgstr "Aktiviteetit"
+
+msgid "New"
+msgstr "Uusi"
+
+msgid "Custom"
+msgstr "Oma"
+
+#, python-format
+msgid "%(counter)s logged"
+msgid_plural "%(counter)s logged"
+msgstr[0] "%(counter)s kirjattu"
+msgstr[1] "%(counter)s kirjattu"
+
+msgid "No activities yet"
+msgstr "Ei aktiviteetteja vielä"
+
+msgid "No activity types yet."
+msgstr "Aktiviteettityyppejä ei ole vielä."
+
+msgid "Date range"
+msgstr "Ajanjakso"
+
+msgid "Analytics"
+msgstr "Analytiikka"
+
+msgid "Workouts"
+msgstr "Treenit"
+
+msgid "Training time"
+msgstr "Treeniaika"
+
+msgid "Total volume"
+msgstr "Kokonaisvolyymi"
+
+msgid "Weekly training volume"
+msgstr "Viikoittainen treenivolyymi"
+
+msgid "No completed workouts in this range."
+msgstr "Ei valmiita treenejä tällä ajanjaksolla."
+
+msgid "Muscle-group volume"
+msgstr "Lihasryhmien volyymi"
+
+msgid "No data in this range."
+msgstr "Ei tietoja tällä ajanjaksolla."
+
+msgid "Recent PRs"
+msgstr "Viimeisimmät ennätykset"
+
+msgid "No PRs in this range."
+msgstr "Ei ennätyksiä tällä ajanjaksolla."
+
+#, python-format
+msgid "%(name)s analytics"
+msgstr "%(name)s – analytiikka"
+
+msgid "Sessions"
+msgstr "Treenikerrat"
+
+msgid "Estimated 1RM trend"
+msgstr "Arvioitu 1RM ajan myötä"
+
+msgid "Not enough history in this range for a trend line."
+msgstr "Ei tarpeeksi historiaa tällä ajanjaksolla trendiviivaa varten."
+
+msgid "View current PRs"
+msgstr "Näytä nykyiset ennätykset"
+
+msgid "Back to exercise"
+msgstr "Takaisin liikkeeseen"
+
+msgid "Skip to content"
+msgstr "Siirry sisältöön"
+
+msgid "Main navigation"
+msgstr "Päävalikko"
+
+msgid "Home"
+msgstr "Koti"
+
+msgid "Progress"
+msgstr "Edistyminen"
+
+msgid "Workout"
+msgstr "Treeni"
+
+msgid "Programs"
+msgstr "Ohjelmat"
+
+#, python-format
+msgid "%(title)s, %(counter)s category"
+msgid_plural "%(title)s, %(counter)s categories"
+msgstr[0] "%(title)s, %(counter)s kategoria"
+msgstr[1] "%(title)s, %(counter)s kategoriaa"
+
+#, python-format
+msgid "%(title)s by category"
+msgstr "%(title)s luokittain"
+
+msgid "BMI"
+msgstr "BMI"
+
+msgid "Not enough data yet — set your height and log a body weight to see your current BMI here."
+msgstr "Ei vielä tarpeeksi tietoja — aseta pituutesi ja kirjaa painosi nähdäksesi BMI:si täällä."
+
+msgid "BMI category ranges"
+msgstr "BMI-luokka-asteikot"
+
+#, python-format
+msgid "below %(high)s"
+msgstr "alle %(high)s"
+
+#, python-format
+msgid "%(low)s and above"
+msgstr "%(low)s ja yli"
+
+#, python-format
+msgid "%(title)s trend over time, %(counter)s reading"
+msgid_plural "%(title)s trend over time, %(counter)s readings"
+msgstr[0] "%(title)s ajan myötä, %(counter)s mittaus"
+msgstr[1] "%(title)s ajan myötä, %(counter)s mittausta"
+
+msgid "Dashboard"
+msgstr "Kojelauta"
+
+msgid "This week's workouts"
+msgstr "Tämän viikon treenit"
+
+msgid "This week's volume"
+msgstr "Tämän viikon volyymi"
+
+msgid "Body weight"
+msgstr "Kehon paino"
+
+msgid "Add your height"
+msgstr "Lisää pituutesi"
+
+msgid "Set it on your profile to see your BMI alongside a logged body weight."
+msgstr "Aseta se profiilissasi nähdäksesi BMI:si kirjatun kehon painon rinnalla."
+
+msgid "Log a body weight"
+msgstr "Kirjaa kehon paino"
+
+msgid "Your height is set — log a body weight to see your BMI."
+msgstr "Pituutesi on asetettu — kirjaa kehon paino nähdäksesi BMI:si."
+
+msgid "Continue workout"
+msgstr "Jatka treeniä"
+
+msgid "Freeform workout"
+msgstr "Vapaamuotoinen treeni"
+
+#, python-format
+msgid "started %(started_at)s"
+msgstr "aloitettu %(started_at)s"
+
+msgid "No workout in progress."
+msgstr "Ei käynnissä olevaa treeniä."
+
+msgid "Start one from a program, or log a freeform workout."
+msgstr "Aloita yksi ohjelmasta tai kirjaa vapaamuotoinen treeni."
+
+msgid "Browse exercises"
+msgstr "Selaa liikkeitä"
+
+msgid "Explore the exercise library or add your own."
+msgstr "Tutki liikekirjastoa tai lisää oma liikkeesi."
+
+msgid "Body tracking"
+msgstr "Kehon seuranta"
+
+msgid "Log body weight, measurements, and trends."
+msgstr "Kirjaa kehon paino, mitat ja trendit."
+
+msgid "Log a run, ride, or any other non-gym activity."
+msgstr "Kirjaa juoksu, pyöräily tai mikä tahansa muu kuntosalin ulkopuolinen aktiviteetti."
+
+msgid "No exercises match your search."
+msgstr "Haullasi ei löytynyt liikkeitä."
+
+msgid "Exercise list pages"
+msgstr "Liikelistan sivut"
+
+msgid "Previous"
+msgstr "Edellinen"
+
+#, python-format
+msgid "Page %(number)s of %(total)s"
+msgstr "Sivu %(number)s / %(total)s"
+
+msgid "Next"
+msgstr "Seuraava"
+
+msgid "Movement type"
+msgstr "Liiketyyppi"
+
+msgid "Weight logging"
+msgstr "Painon kirjaus"
+
+msgid "Equipment"
+msgstr "Välineet"
+
+msgid "Primary muscles"
+msgstr "Ensisijaiset lihakset"
+
+msgid "Secondary muscles"
+msgstr "Toissijaiset lihakset"
+
+msgid "Your PRs"
+msgstr "Ennätyksesi"
+
+msgid "Current personal records for this exercise."
+msgstr "Nykyiset henkilökohtaiset ennätykset tälle liikkeelle."
+
+msgid "Strength trend"
+msgstr "Voiman kehitys"
+
+msgid "Estimated 1RM over time and training volume."
+msgstr "Arvioitu 1RM ajan myötä ja treenivolyymi."
+
+msgid "Deactivate this exercise? It will no longer appear when browsing or prescribing."
+msgstr "Poistetaanko tämä liike käytöstä? Se ei enää näy selattaessa tai ohjelmoitaessa."
+
+msgid "Deactivate"
+msgstr "Poista käytöstä"
+
+msgid "Back to exercises"
+msgstr "Takaisin liikkeisiin"
+
+msgid "Edit exercise"
+msgstr "Muokkaa liikettä"
+
+msgid "New exercise"
+msgstr "Uusi liike"
+
+msgid "Exercises"
+msgstr "Liikkeet"
+
+msgid "Search exercises…"
+msgstr "Hae liikkeitä…"
+
+msgid "Search exercises"
+msgstr "Hae liikkeitä"
+
+msgid "Filter by muscle group"
+msgstr "Suodata lihasryhmän mukaan"
+
+msgid "All muscle groups"
+msgstr "Kaikki lihasryhmät"
+
+msgid "Edit reading"
+msgstr "Muokkaa mittausta"
+
+#, python-format
+msgid "Edit %(name)s reading"
+msgstr "Muokkaa mittausta: %(name)s"
+
+msgid "Trend"
+msgstr "Trendi"
+
+msgid "Log reading"
+msgstr "Kirjaa mittaus"
+
+msgid "Delete this reading?"
+msgstr "Poistetaanko tämä mittaus?"
+
+msgid "No readings logged yet."
+msgstr "Mittauksia ei ole vielä kirjattu."
+
+msgid "Deactivate this measurement type? It will no longer appear when logging new readings."
+msgstr "Poistetaanko tämä mittaustyyppi käytöstä? Se ei enää näy uusia mittauksia kirjattaessa."
+
+msgid "Back to body tracking"
+msgstr "Takaisin kehon seurantaan"
+
+msgid "New measurement type"
+msgstr "Uusi mittaustyyppi"
+
+#, python-format
+msgid "Latest: %(value)s %(unit)s"
+msgstr "Viimeisin: %(value)s %(unit)s"
+
+msgid "No readings yet"
+msgstr "Ei mittauksia vielä"
+
+msgid "No measurement types yet."
+msgstr "Mittaustyyppejä ei ole vielä."
+
+msgid "Add exercise"
+msgstr "Lisää liike"
+
+msgid "Remove this exercise from the workout?"
+msgstr "Poistetaanko tämä liike treenistä?"
+
+msgid "Remove exercise"
+msgstr "Poista liike"
+
+msgid "Delete program"
+msgstr "Poista ohjelma"
+
+#, python-format
+msgid "Delete <strong>%(name)s</strong> and all of its workouts and exercises? This cannot be undone."
+msgstr "Poistetaanko <strong>%(name)s</strong> sekä kaikki sen treenit ja liikkeet? Tätä ei voi perua."
+
+msgid "Cancel"
+msgstr "Peruuta"
+
+msgid "Built-in template"
+msgstr "Sisäänrakennettu malli"
+
+msgid "My template"
+msgstr "Oma malli"
+
+#, python-format
+msgid "Version %(version)s · updated %(updated)s"
+msgstr "Versio %(version)s · päivitetty %(updated)s"
+
+msgid "Copy to a new program"
+msgstr "Kopioi uudeksi ohjelmaksi"
+
+msgid "Delete this workout and its exercises?"
+msgstr "Poistetaanko tämä treeni ja sen liikkeet?"
+
+msgid "No exercises yet."
+msgstr "Ei vielä liikkeitä."
+
+msgid "Start workout"
+msgstr "Aloita treeni"
+
+msgid "No workouts yet."
+msgstr "Ei vielä treenejä."
+
+msgid "Add workout"
+msgstr "Lisää treeni"
+
+msgid "Delete this program? This cannot be undone."
+msgstr "Poistetaanko tämä ohjelma? Tätä ei voi perua."
+
+msgid "Back to programs"
+msgstr "Takaisin ohjelmiin"
+
+msgid "Edit program"
+msgstr "Muokkaa ohjelmaa"
+
+msgid "New program"
+msgstr "Uusi ohjelma"
+
+msgid "My programs"
+msgstr "Omat ohjelmat"
+
+msgid "Template"
+msgstr "Malli"
+
+#, python-format
+msgid "%(counter)s workout"
+msgid_plural "%(counter)s workouts"
+msgstr[0] "%(counter)s treeni"
+msgstr[1] "%(counter)s treeniä"
+
+msgid "No programs yet."
+msgstr "Ei vielä ohjelmia."
+
+msgid "Create one, or copy a template below to get started."
+msgstr "Luo uusi tai kopioi malli alta aloittaaksesi."
+
+msgid "Built-in templates"
+msgstr "Sisäänrakennetut mallit"
+
+msgid "Copy to my programs"
+msgstr "Kopioi omiin ohjelmiin"
+
+msgid "No built-in templates available."
+msgstr "Sisäänrakennettuja malleja ei ole saatavilla."
+
+msgid "Edit workout"
+msgstr "Muokkaa treeniä"
+
+msgid "New workout"
+msgstr "Uusi treeni"
+
+msgid "Delete workout"
+msgstr "Poista treeni"
+
+#, python-format
+msgid "%(name)s records"
+msgstr "%(name)s – ennätykset"
+
+msgid "Current PRs"
+msgstr "Nykyiset ennätykset"
+
+msgid "Best set volume"
+msgstr "Paras sarjavolyymi"
+
+msgid "Best session volume"
+msgstr "Paras treenivolyymi"
+
+msgid "Rep maxes"
+msgstr "Toistomaksimit"
+
+msgid "Rep records by weight"
+msgstr "Toistoennätykset painoittain"
+
+#, python-format
+msgid "%(weight)s: %(reps)s reps"
+msgstr "%(weight)s: %(reps)s toistoa"
+
+msgid "Log in"
+msgstr "Kirjaudu sisään"
+
+msgid "Create an account"
+msgstr "Luo tili"
+
+msgid "Password changed"
+msgstr "Salasana vaihdettu"
+
+msgid "Your password has been updated."
+msgstr "Salasanasi on päivitetty."
+
+msgid "Back to profile"
+msgstr "Takaisin profiiliin"
+
+#, python-format
+msgid "Target: %(count)s × %(min)s-%(max)s"
+msgstr "Tavoite: %(count)s × %(min)s-%(max)s"
+
+msgid "New PR"
+msgstr "Uusi ennätys"
+
+msgid "Max weight:"
+msgstr "Maksimipaino:"
+
+#, python-format
+msgid "Most reps at %(weight)s:"
+msgstr "Eniten toistoja painolla %(weight)s:"
+
+msgid "Estimated 1RM:"
+msgstr "Arvioitu 1RM:"
+
+msgid "Set volume:"
+msgstr "Sarjan volyymi:"
+
+msgid "Session volume:"
+msgstr "Treenin volyymi:"
+
+#, python-format
+msgid "(previous: %(previous)s)"
+msgstr "(edellinen: %(previous)s)"
+
+msgid "Set"
+msgstr "Sarja"
+
+msgid "Reps"
+msgstr "Toistot"
+
+msgid "W"
+msgstr "L"
+
+msgid "F"
+msgstr "E"
+
+msgid "No sets logged yet."
+msgstr "Sarjoja ei ole vielä kirjattu."
+
+#, python-format
+msgid "Suggested: %(weight)s"
+msgstr "Ehdotus: %(weight)s"
+
+msgid "Low confidence"
+msgstr "Matala luotettavuus"
+
+msgid "Medium confidence"
+msgstr "Kohtalainen luotettavuus"
+
+msgid "High confidence"
+msgstr "Korkea luotettavuus"
+
+msgid "Log set"
+msgstr "Kirjaa sarja"
+
+msgid "Add"
+msgstr "Lisää"
+
+msgid "Back to workout"
+msgstr "Takaisin treeniin"
+
+#, python-format
+msgid "Started %(started)s"
+msgstr "Aloitettu %(started)s"
+
+#, python-format
+msgid "ended %(ended)s"
+msgstr "päättyi %(ended)s"
+
+msgid "Complete workout"
+msgstr "Merkitse valmiiksi"
+
+msgid "Abandon this workout? It stays in your history as abandoned."
+msgstr "Keskeytetäänkö tämä treeni? Se jää historiaasi keskeytettynä."
+
+msgid "Abandon workout"
+msgstr "Keskeytä treeni"
+
+msgid "Delete this workout? This cannot be undone."
+msgstr "Poistetaanko tämä treeni? Tätä ei voi perua."
+
+msgid "Back to history"
+msgstr "Takaisin historiaan"
+
+msgid "Workout history"
+msgstr "Treenihistoria"
+
+msgid "Start freeform workout"
+msgstr "Aloita vapaamuotoinen treeni"
+
+msgid "No workouts logged yet."
+msgstr "Treenejä ei ole vielä kirjattu."
+
+msgid "Start one above, or pick a workout from one of your programs."
+msgstr "Aloita yllä tai valitse treeni jostain ohjelmastasi."
+
+msgid "Edit set"
+msgstr "Muokkaa sarjaa"
+
+#, python-format
+msgid "Edit set %(number)s"
+msgstr "Muokkaa sarjaa %(number)s"

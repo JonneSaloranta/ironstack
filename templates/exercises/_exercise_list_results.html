@@ -1,8 +1,9 @@
+{% load i18n %}
 {% for exercise in exercises %}
   <a class="card card-link" href="{% url 'exercises:exercise-detail' exercise.pk %}">
     <div>
       <strong>{{ exercise.name }}</strong>
-      {% if exercise.is_custom %}<span class="tag">Custom</span>{% endif %}
+      {% if exercise.is_custom %}<span class="tag">{% trans "Custom" %}</span>{% endif %}
       <div class="text-muted">
         {% for mg in exercise.primary_muscle_groups.all %}{{ mg.name }}{% if not forloop.last %}, {% endif %}{% endfor %}
         {% if exercise.equipment %} · {{ exercise.equipment.name }}{% endif %}
@@ -11,18 +12,18 @@
   </a>
 {% empty %}
   <div class="card empty-state">
-    <p>No exercises match your search.</p>
+    <p>{% trans "No exercises match your search." %}</p>
   </div>
 {% endfor %}
 
 {% if is_paginated %}
-  <nav class="pagination" aria-label="Exercise list pages">
+  <nav class="pagination" aria-label="{% trans "Exercise list pages" %}">
     {% if page_obj.has_previous %}
-      <a href="?page={{ page_obj.previous_page_number }}&q={{ query }}&muscle_group={{ selected_muscle_group }}">Previous</a>
+      <a href="?page={{ page_obj.previous_page_number }}&q={{ query }}&muscle_group={{ selected_muscle_group }}">{% trans "Previous" %}</a>
     {% endif %}
-    <span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+    <span>{% blocktrans with number=page_obj.number total=page_obj.paginator.num_pages %}Page {{ number }} of {{ total }}{% endblocktrans %}</span>
     {% if page_obj.has_next %}
-      <a href="?page={{ page_obj.next_page_number }}&q={{ query }}&muscle_group={{ selected_muscle_group }}">Next</a>
+      <a href="?page={{ page_obj.next_page_number }}&q={{ query }}&muscle_group={{ selected_muscle_group }}">{% trans "Next" %}</a>
     {% endif %}
   </nav>
 {% endif %}

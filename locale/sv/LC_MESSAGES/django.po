@@ -1,0 +1,1024 @@
+# IronStack translation catalog.
+msgid ""
+msgstr ""
+"Project-Id-Version: IronStack\n"
+"Report-Msgid-Bugs-To: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: sv\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Timezone"
+msgstr "Tidszon"
+
+msgid "Units"
+msgstr "Enheter"
+
+msgid "Show BMI on the dashboard"
+msgstr "Visa BMI på instrumentpanelen"
+
+msgid "Language"
+msgstr "Språk"
+
+msgid "Turns off the BMI card and its category ranges entirely."
+msgstr "Stänger av BMI-kortet och dess kategoriintervall helt."
+
+msgid "Height (cm)"
+msgstr "Längd (cm)"
+
+msgid "Height (in)"
+msgstr "Längd (in)"
+
+msgid "Metric (kg, km)"
+msgstr "Metriskt (kg, km)"
+
+msgid "Imperial (lb, mi)"
+msgstr "Brittiskt (lb, mi)"
+
+msgid "Preferences saved."
+msgstr "Inställningarna har sparats."
+
+msgid "Duration (minutes)"
+msgstr "Varaktighet (minuter)"
+
+#, python-format
+msgid "Distance (%(unit)s)"
+msgstr "Distans (%(unit)s)"
+
+msgid "name"
+msgstr "namn"
+
+msgid "date"
+msgstr "datum"
+
+msgid "start time"
+msgstr "starttid"
+
+msgid "distance"
+msgstr "distans"
+
+msgid "calories"
+msgstr "kalorier"
+
+msgid "notes"
+msgstr "anteckningar"
+
+msgid "activities"
+msgstr "aktiviteter"
+
+msgid "7 days"
+msgstr "7 dagar"
+
+msgid "30 days"
+msgstr "30 dagar"
+
+msgid "3 months"
+msgstr "3 månader"
+
+msgid "6 months"
+msgstr "6 månader"
+
+msgid "1 year"
+msgstr "1 år"
+
+msgid "All time"
+msgstr "All tid"
+
+msgid "Underweight"
+msgstr "Undervikt"
+
+msgid "Normal weight"
+msgstr "Normalvikt"
+
+msgid "Overweight"
+msgstr "Övervikt"
+
+msgid "Obese"
+msgstr "Fetma"
+
+msgid "equipment"
+msgstr "utrustning"
+
+msgid "Compound"
+msgstr "Flerledsövning"
+
+msgid "Isolation"
+msgstr "Isoleringsövning"
+
+msgid "Total load"
+msgstr "Total belastning"
+
+msgid "Per hand / dumbbell"
+msgstr "Per hand / hantel"
+
+msgid "description"
+msgstr "beskrivning"
+
+msgid "primary muscle groups"
+msgstr "primära muskelgrupper"
+
+msgid "secondary muscle groups"
+msgstr "sekundära muskelgrupper"
+
+msgid "movement type"
+msgstr "rörelsetyp"
+
+msgid "weight logging"
+msgstr "viktloggning"
+
+#, python-format
+msgid "Value (%(unit)s)"
+msgstr "Värde (%(unit)s)"
+
+msgid "Value"
+msgstr "Värde"
+
+msgid "Weight"
+msgstr "Vikt"
+
+msgid "Length/circumference"
+msgstr "Längd/omkrets"
+
+msgid "Percentage"
+msgstr "Procent"
+
+msgid "unit kind"
+msgstr "enhetstyp"
+
+msgid "recorded at"
+msgstr "registrerad"
+
+msgid "Save as a personal template"
+msgstr "Spara som personlig mall"
+
+msgid "Templates aren't meant to be run directly — copy them into a new program (from the program page) whenever you start a new cycle, keeping the original untouched."
+msgstr "Mallar är inte avsedda att köras direkt — kopiera dem till ett nytt program (från programsidan) varje gång du börjar en ny cykel, så förblir originalet orört."
+
+msgid "exercise"
+msgstr "övning"
+
+msgid "Target RPE"
+msgstr "Mål-RPE"
+
+msgid "Target RIR"
+msgstr "Mål-RIR"
+
+msgid "Percentage target (% 1RM)"
+msgstr "Procentmål (% 1RM)"
+
+#, python-format
+msgid "Target weight (%(unit)s)"
+msgstr "Målvikt (%(unit)s)"
+
+#, python-format
+msgid "Weight increment (%(unit)s)"
+msgstr "Viktökning (%(unit)s)"
+
+msgid "Minimum reps cannot exceed maximum reps."
+msgstr "Minsta antal repetitioner kan inte överstiga högsta antal."
+
+msgid "Monday"
+msgstr "Måndag"
+
+msgid "Tuesday"
+msgstr "Tisdag"
+
+msgid "Wednesday"
+msgstr "Onsdag"
+
+msgid "Thursday"
+msgstr "Torsdag"
+
+msgid "Friday"
+msgstr "Fredag"
+
+msgid "Saturday"
+msgstr "Lördag"
+
+msgid "Sunday"
+msgstr "Söndag"
+
+msgid "order"
+msgstr "ordning"
+
+msgid "scheduled weekday"
+msgstr "schemalagd veckodag"
+
+msgid "Double progression"
+msgstr "Dubbel progression"
+
+msgid "Linear"
+msgstr "Linjär"
+
+msgid "Percentage based"
+msgstr "Procentbaserad"
+
+msgid "RPE/RIR based"
+msgstr "RPE/RIR-baserad"
+
+msgid "Rep range"
+msgstr "Repetitionsintervall"
+
+msgid "Maintenance"
+msgstr "Underhåll"
+
+msgid "Manual"
+msgstr "Manuell"
+
+msgid "set count"
+msgstr "antal set"
+
+msgid "minimum reps"
+msgstr "minsta antal repetitioner"
+
+msgid "maximum reps"
+msgstr "högsta antal repetitioner"
+
+msgid "No completed history for this exercise yet — starting at the prescribed target."
+msgstr "Ingen genomförd historik för denna övning ännu — startar vid det föreskrivna målet."
+
+msgid "Manual progression — you control the next weight and target."
+msgstr "Manuell progression — du styr nästa vikt och mål."
+
+#, python-format
+msgid "Missed the target %(streak)s sessions in a row at %(weight)s kg — even maintenance loading should come down, to %(deload)s kg."
+msgstr "Missade målet %(streak)s pass i rad vid %(weight)s kg — även underhållsbelastningen bör sänkas, till %(deload)s kg."
+
+msgid "Maintenance — keeping the same load."
+msgstr "Underhåll — behåller samma belastning."
+
+#, python-format
+msgid "Hit every rep last session at %(weight)s kg — adding %(increment)s kg."
+msgstr "Klarade alla repetitioner senaste passet vid %(weight)s kg — lägger till %(increment)s kg."
+
+#, python-format
+msgid "Missed target reps %(streak)s sessions in a row at %(weight)s kg — recommending a deload to %(deload)s kg."
+msgstr "Missade repetitionsmålet %(streak)s pass i rad vid %(weight)s kg — rekommenderar avlastning till %(deload)s kg."
+
+#, python-format
+msgid "Missed target reps last session at %(weight)s kg — try the same weight again before increasing."
+msgstr "Missade repetitionsmålet senaste passet vid %(weight)s kg — prova samma vikt igen innan du ökar."
+
+#, python-format
+msgid "Hit the top of your rep range on every set at %(weight)s kg — adding %(increment)s kg and resetting to the bottom of the range."
+msgstr "Nådde toppen av repetitionsintervallet i varje set vid %(weight)s kg — lägger till %(increment)s kg och återställer till intervallets botten."
+
+#, python-format
+msgid "Still within your rep range at %(weight)s kg — repeat the same weight and aim for more reps next time."
+msgstr "Fortfarande inom repetitionsintervallet vid %(weight)s kg — upprepa samma vikt och sikta på fler repetitioner nästa gång."
+
+#, python-format
+msgid "Missed the bottom of your rep range %(streak)s sessions in a row at %(weight)s kg — recommending a deload to %(deload)s kg."
+msgstr "Missade botten av repetitionsintervallet %(streak)s pass i rad vid %(weight)s kg — rekommenderar avlastning till %(deload)s kg."
+
+#, python-format
+msgid "Missed the bottom of your rep range last session at %(weight)s kg — try the same weight again."
+msgstr "Missade botten av repetitionsintervallet senaste passet vid %(weight)s kg — prova samma vikt igen."
+
+#, python-format
+msgid "Hit the top of your rep range for %(streak)s sessions in a row at %(weight)s kg — adding %(increment)s kg."
+msgstr "Nådde toppen av repetitionsintervallet %(streak)s pass i rad vid %(weight)s kg — lägger till %(increment)s kg."
+
+#, python-format
+msgid "Within your rep range at %(weight)s kg — keep working toward the top of the range before increasing."
+msgstr "Inom repetitionsintervallet vid %(weight)s kg — fortsätt jobba mot toppen av intervallet innan du ökar."
+
+msgid "a manually entered 1RM"
+msgstr "en manuellt angiven 1RM"
+
+msgid "your latest estimated-1RM PR"
+msgstr "ditt senaste uppskattade 1RM-PR"
+
+msgid "a live estimate from your most recent set"
+msgstr "en aktuell uppskattning från ditt senaste set"
+
+msgid "No percentage target configured on this prescription."
+msgstr "Inget procentmål har konfigurerats för denna föreskrift."
+
+msgid "No 1RM available yet — log a set first, or enter your 1RM manually."
+msgstr "Ingen 1RM tillgänglig ännu — logga ett set först, eller ange din 1RM manuellt."
+
+#, python-format
+msgid "%(percentage)s%% of %(one_rm)s kg (%(source)s) = %(suggested)s kg."
+msgstr "%(percentage)s%% av %(one_rm)s kg (%(source)s) = %(suggested)s kg."
+
+msgid "No RIR logged against a target yet — log sets with RIR to use this method."
+msgstr "Ingen RIR loggad mot ett mål ännu — logga set med RIR för att använda denna metod."
+
+#, python-format
+msgid "Target RIR %(target)s, actual %(actual)g — more in reserve than planned, adding %(increment)s kg."
+msgstr "Mål-RIR %(target)s, faktiskt %(actual)g — mer i reserv än planerat, lägger till %(increment)s kg."
+
+#, python-format
+msgid "Target RIR %(target)s, actual %(actual)g — notably closer to failure than planned, easing back to %(deload)s kg."
+msgstr "Mål-RIR %(target)s, faktiskt %(actual)g — märkbart närmare utmattning än planerat, lättar till %(deload)s kg."
+
+#, python-format
+msgid "Target RIR %(target)s, actual %(actual)g — close enough to plan, hold the weight."
+msgstr "Mål-RIR %(target)s, faktiskt %(actual)g — nära nog planen, behåll vikten."
+
+msgid "Max weight"
+msgstr "Maxvikt"
+
+msgid "Rep PR"
+msgstr "Repetitions-PR"
+
+msgid "Rep-specific PR"
+msgstr "Repetitionsspecifikt PR"
+
+msgid "Estimated 1RM"
+msgstr "Uppskattad 1RM"
+
+msgid "Set volume"
+msgstr "Setvolym"
+
+msgid "Session volume"
+msgstr "Passets volym"
+
+msgid "reps"
+msgstr "repetitioner"
+
+msgid "Target reps"
+msgstr "Målrepetitioner"
+
+msgid "RPE"
+msgstr "RPE"
+
+msgid "RIR"
+msgstr "RIR"
+
+msgid "Failed set"
+msgstr "Misslyckat set"
+
+msgid "Warm-up"
+msgstr "Uppvärmning"
+
+#, python-format
+msgid "Weight (%(unit)s)"
+msgstr "Vikt (%(unit)s)"
+
+msgid "Planned"
+msgstr "Planerat"
+
+msgid "In progress"
+msgstr "Pågår"
+
+msgid "Completed"
+msgstr "Slutfört"
+
+msgid "Abandoned"
+msgstr "Avbrutet"
+
+msgid "This session is no longer in progress."
+msgstr "Detta pass pågår inte längre."
+
+#, python-format
+msgid "New PR — %(exercise)s: %(record_type)s %(value)s"
+msgstr "Nytt PR — %(exercise)s: %(record_type)s %(value)s"
+
+msgid "Not allowed"
+msgstr "Inte tillåtet"
+
+msgid "You don't have permission to do that."
+msgstr "Du har inte behörighet att göra det."
+
+msgid "Back to dashboard"
+msgstr "Tillbaka till instrumentpanelen"
+
+msgid "Not found"
+msgstr "Hittades inte"
+
+msgid "That page doesn't exist, or you don't have access to it."
+msgstr "Sidan finns inte, eller så har du inte åtkomst till den."
+
+msgid "Something went wrong"
+msgstr "Något gick fel"
+
+msgid "Something went wrong on our end. Your data is safe — try again in a moment."
+msgstr "Något gick fel på vår sida. Din data är säker — försök igen om en stund."
+
+msgid "Profile"
+msgstr "Profil"
+
+#, python-format
+msgid "Signed in as <strong>%(username)s</strong>"
+msgstr "Inloggad som <strong>%(username)s</strong>"
+
+msgid "Save preferences"
+msgstr "Spara inställningar"
+
+msgid "Change password"
+msgstr "Byt lösenord"
+
+msgid "Log out"
+msgstr "Logga ut"
+
+msgid "Sign up"
+msgstr "Registrera dig"
+
+msgid "Create your account"
+msgstr "Skapa ditt konto"
+
+msgid "Already have an account? Log in"
+msgstr "Har du redan ett konto? Logga in"
+
+msgid "Edit activity"
+msgstr "Redigera aktivitet"
+
+#, python-format
+msgid "Edit %(name)s"
+msgstr "Redigera %(name)s"
+
+msgid "Save"
+msgstr "Spara"
+
+#, python-format
+msgid "Back to %(name)s"
+msgstr "Tillbaka till %(name)s"
+
+msgid "Inactive"
+msgstr "Inaktiv"
+
+#, python-format
+msgid "%(count)s logged · total duration %(total_duration)s"
+msgstr "%(count)s loggade · total varaktighet %(total_duration)s"
+
+#, python-format
+msgid "total distance %(distance)s %(unit)s"
+msgstr "total distans %(distance)s %(unit)s"
+
+#, python-format
+msgid "total calories %(calories)s"
+msgstr "totalt kalorier %(calories)s"
+
+msgid "Duration trend"
+msgstr "Varaktighetstrend"
+
+msgid "Duration"
+msgstr "Varaktighet"
+
+msgid "min"
+msgstr "min"
+
+msgid "Log activity"
+msgstr "Logga aktivitet"
+
+msgid "Date"
+msgstr "Datum"
+
+msgid "Distance"
+msgstr "Distans"
+
+msgid "Edit"
+msgstr "Redigera"
+
+msgid "Delete this activity?"
+msgstr "Ta bort denna aktivitet?"
+
+msgid "Delete"
+msgstr "Ta bort"
+
+msgid "No activities logged yet."
+msgstr "Inga aktiviteter loggade ännu."
+
+msgid "Deactivate this activity type? It will no longer appear when logging new activities."
+msgstr "Inaktivera denna aktivitetstyp? Den visas inte längre när du loggar nya aktiviteter."
+
+msgid "Deactivate type"
+msgstr "Inaktivera typ"
+
+msgid "Back to activities"
+msgstr "Tillbaka till aktiviteter"
+
+msgid "New activity type"
+msgstr "Ny aktivitetstyp"
+
+msgid "Activities"
+msgstr "Aktiviteter"
+
+msgid "New"
+msgstr "Ny"
+
+msgid "Custom"
+msgstr "Anpassad"
+
+#, python-format
+msgid "%(counter)s logged"
+msgid_plural "%(counter)s logged"
+msgstr[0] "%(counter)s loggad"
+msgstr[1] "%(counter)s loggade"
+
+msgid "No activities yet"
+msgstr "Inga aktiviteter ännu"
+
+msgid "No activity types yet."
+msgstr "Inga aktivitetstyper ännu."
+
+msgid "Date range"
+msgstr "Datumintervall"
+
+msgid "Analytics"
+msgstr "Analys"
+
+msgid "Workouts"
+msgstr "Träningspass"
+
+msgid "Training time"
+msgstr "Träningstid"
+
+msgid "Total volume"
+msgstr "Total volym"
+
+msgid "Weekly training volume"
+msgstr "Veckovis träningsvolym"
+
+msgid "No completed workouts in this range."
+msgstr "Inga slutförda träningspass i detta intervall."
+
+msgid "Muscle-group volume"
+msgstr "Muskelgruppsvolym"
+
+msgid "No data in this range."
+msgstr "Ingen data i detta intervall."
+
+msgid "Recent PRs"
+msgstr "Senaste PR"
+
+msgid "No PRs in this range."
+msgstr "Inga PR i detta intervall."
+
+#, python-format
+msgid "%(name)s analytics"
+msgstr "%(name)s – analys"
+
+msgid "Sessions"
+msgstr "Pass"
+
+msgid "Estimated 1RM trend"
+msgstr "Trend för uppskattad 1RM"
+
+msgid "Not enough history in this range for a trend line."
+msgstr "Inte tillräckligt med historik i detta intervall för en trendlinje."
+
+msgid "View current PRs"
+msgstr "Visa aktuella PR"
+
+msgid "Back to exercise"
+msgstr "Tillbaka till övningen"
+
+msgid "Skip to content"
+msgstr "Hoppa till innehåll"
+
+msgid "Main navigation"
+msgstr "Huvudnavigering"
+
+msgid "Home"
+msgstr "Hem"
+
+msgid "Progress"
+msgstr "Framsteg"
+
+msgid "Workout"
+msgstr "Träning"
+
+msgid "Programs"
+msgstr "Program"
+
+#, python-format
+msgid "%(title)s, %(counter)s category"
+msgid_plural "%(title)s, %(counter)s categories"
+msgstr[0] "%(title)s, %(counter)s kategori"
+msgstr[1] "%(title)s, %(counter)s kategorier"
+
+#, python-format
+msgid "%(title)s by category"
+msgstr "%(title)s per kategori"
+
+msgid "BMI"
+msgstr "BMI"
+
+msgid "Not enough data yet — set your height and log a body weight to see your current BMI here."
+msgstr "Inte tillräckligt med data ännu — ange din längd och logga en kroppsvikt för att se din BMI här."
+
+msgid "BMI category ranges"
+msgstr "BMI-kategoriintervall"
+
+#, python-format
+msgid "below %(high)s"
+msgstr "under %(high)s"
+
+#, python-format
+msgid "%(low)s and above"
+msgstr "%(low)s och över"
+
+#, python-format
+msgid "%(title)s trend over time, %(counter)s reading"
+msgid_plural "%(title)s trend over time, %(counter)s readings"
+msgstr[0] "%(title)s över tid, %(counter)s mätvärde"
+msgstr[1] "%(title)s över tid, %(counter)s mätvärden"
+
+msgid "Dashboard"
+msgstr "Instrumentpanel"
+
+msgid "This week's workouts"
+msgstr "Denna veckas pass"
+
+msgid "This week's volume"
+msgstr "Denna veckas volym"
+
+msgid "Body weight"
+msgstr "Kroppsvikt"
+
+msgid "Add your height"
+msgstr "Lägg till din längd"
+
+msgid "Set it on your profile to see your BMI alongside a logged body weight."
+msgstr "Ange den på din profil för att se din BMI tillsammans med en loggad kroppsvikt."
+
+msgid "Log a body weight"
+msgstr "Logga en kroppsvikt"
+
+msgid "Your height is set — log a body weight to see your BMI."
+msgstr "Din längd är angiven — logga en kroppsvikt för att se din BMI."
+
+msgid "Continue workout"
+msgstr "Fortsätt träningspass"
+
+msgid "Freeform workout"
+msgstr "Fritt träningspass"
+
+#, python-format
+msgid "started %(started_at)s"
+msgstr "startade %(started_at)s"
+
+msgid "No workout in progress."
+msgstr "Inget pågående träningspass."
+
+msgid "Start one from a program, or log a freeform workout."
+msgstr "Starta ett från ett program, eller logga ett fritt träningspass."
+
+msgid "Browse exercises"
+msgstr "Bläddra bland övningar"
+
+msgid "Explore the exercise library or add your own."
+msgstr "Utforska övningsbiblioteket eller lägg till din egen."
+
+msgid "Body tracking"
+msgstr "Kroppsspårning"
+
+msgid "Log body weight, measurements, and trends."
+msgstr "Logga kroppsvikt, mått och trender."
+
+msgid "Log a run, ride, or any other non-gym activity."
+msgstr "Logga en löprunda, cykeltur eller annan aktivitet utanför gymmet."
+
+msgid "No exercises match your search."
+msgstr "Inga övningar matchar din sökning."
+
+msgid "Exercise list pages"
+msgstr "Sidor för övningslista"
+
+msgid "Previous"
+msgstr "Föregående"
+
+#, python-format
+msgid "Page %(number)s of %(total)s"
+msgstr "Sida %(number)s av %(total)s"
+
+msgid "Next"
+msgstr "Nästa"
+
+msgid "Movement type"
+msgstr "Rörelsetyp"
+
+msgid "Weight logging"
+msgstr "Viktloggning"
+
+msgid "Equipment"
+msgstr "Utrustning"
+
+msgid "Primary muscles"
+msgstr "Primära muskler"
+
+msgid "Secondary muscles"
+msgstr "Sekundära muskler"
+
+msgid "Your PRs"
+msgstr "Dina PR"
+
+msgid "Current personal records for this exercise."
+msgstr "Aktuella personliga rekord för denna övning."
+
+msgid "Strength trend"
+msgstr "Styrketrend"
+
+msgid "Estimated 1RM over time and training volume."
+msgstr "Uppskattad 1RM över tid och träningsvolym."
+
+msgid "Deactivate this exercise? It will no longer appear when browsing or prescribing."
+msgstr "Inaktivera denna övning? Den visas inte längre vid bläddring eller föreskrivning."
+
+msgid "Deactivate"
+msgstr "Inaktivera"
+
+msgid "Back to exercises"
+msgstr "Tillbaka till övningar"
+
+msgid "Edit exercise"
+msgstr "Redigera övning"
+
+msgid "New exercise"
+msgstr "Ny övning"
+
+msgid "Exercises"
+msgstr "Övningar"
+
+msgid "Search exercises…"
+msgstr "Sök övningar…"
+
+msgid "Search exercises"
+msgstr "Sök övningar"
+
+msgid "Filter by muscle group"
+msgstr "Filtrera efter muskelgrupp"
+
+msgid "All muscle groups"
+msgstr "Alla muskelgrupper"
+
+msgid "Edit reading"
+msgstr "Redigera mätvärde"
+
+#, python-format
+msgid "Edit %(name)s reading"
+msgstr "Redigera %(name)s-mätvärde"
+
+msgid "Trend"
+msgstr "Trend"
+
+msgid "Log reading"
+msgstr "Logga mätvärde"
+
+msgid "Delete this reading?"
+msgstr "Ta bort detta mätvärde?"
+
+msgid "No readings logged yet."
+msgstr "Inga mätvärden loggade ännu."
+
+msgid "Deactivate this measurement type? It will no longer appear when logging new readings."
+msgstr "Inaktivera denna mättyp? Den visas inte längre när du loggar nya mätvärden."
+
+msgid "Back to body tracking"
+msgstr "Tillbaka till kroppsspårning"
+
+msgid "New measurement type"
+msgstr "Ny mättyp"
+
+#, python-format
+msgid "Latest: %(value)s %(unit)s"
+msgstr "Senaste: %(value)s %(unit)s"
+
+msgid "No readings yet"
+msgstr "Inga mätvärden ännu"
+
+msgid "No measurement types yet."
+msgstr "Inga mättyper ännu."
+
+msgid "Add exercise"
+msgstr "Lägg till övning"
+
+msgid "Remove this exercise from the workout?"
+msgstr "Ta bort denna övning från träningspasset?"
+
+msgid "Remove exercise"
+msgstr "Ta bort övning"
+
+msgid "Delete program"
+msgstr "Ta bort program"
+
+#, python-format
+msgid "Delete <strong>%(name)s</strong> and all of its workouts and exercises? This cannot be undone."
+msgstr "Ta bort <strong>%(name)s</strong> och alla dess träningspass och övningar? Detta kan inte ångras."
+
+msgid "Cancel"
+msgstr "Avbryt"
+
+msgid "Built-in template"
+msgstr "Inbyggd mall"
+
+msgid "My template"
+msgstr "Min mall"
+
+#, python-format
+msgid "Version %(version)s · updated %(updated)s"
+msgstr "Version %(version)s · uppdaterad %(updated)s"
+
+msgid "Copy to a new program"
+msgstr "Kopiera till nytt program"
+
+msgid "Delete this workout and its exercises?"
+msgstr "Ta bort detta träningspass och dess övningar?"
+
+msgid "No exercises yet."
+msgstr "Inga övningar ännu."
+
+msgid "Start workout"
+msgstr "Starta träningspass"
+
+msgid "No workouts yet."
+msgstr "Inga träningspass ännu."
+
+msgid "Add workout"
+msgstr "Lägg till träningspass"
+
+msgid "Delete this program? This cannot be undone."
+msgstr "Ta bort detta program? Detta kan inte ångras."
+
+msgid "Back to programs"
+msgstr "Tillbaka till program"
+
+msgid "Edit program"
+msgstr "Redigera program"
+
+msgid "New program"
+msgstr "Nytt program"
+
+msgid "My programs"
+msgstr "Mina program"
+
+msgid "Template"
+msgstr "Mall"
+
+#, python-format
+msgid "%(counter)s workout"
+msgid_plural "%(counter)s workouts"
+msgstr[0] "%(counter)s träningspass"
+msgstr[1] "%(counter)s träningspass"
+
+msgid "No programs yet."
+msgstr "Inga program ännu."
+
+msgid "Create one, or copy a template below to get started."
+msgstr "Skapa ett, eller kopiera en mall nedan för att komma igång."
+
+msgid "Built-in templates"
+msgstr "Inbyggda mallar"
+
+msgid "Copy to my programs"
+msgstr "Kopiera till mina program"
+
+msgid "No built-in templates available."
+msgstr "Inga inbyggda mallar tillgängliga."
+
+msgid "Edit workout"
+msgstr "Redigera träningspass"
+
+msgid "New workout"
+msgstr "Nytt träningspass"
+
+msgid "Delete workout"
+msgstr "Ta bort träningspass"
+
+#, python-format
+msgid "%(name)s records"
+msgstr "%(name)s – rekord"
+
+msgid "Current PRs"
+msgstr "Aktuella PR"
+
+msgid "Best set volume"
+msgstr "Bästa setvolym"
+
+msgid "Best session volume"
+msgstr "Bästa passvolym"
+
+msgid "Rep maxes"
+msgstr "Repetitionsmaxar"
+
+msgid "Rep records by weight"
+msgstr "Repetitionsrekord per vikt"
+
+#, python-format
+msgid "%(weight)s: %(reps)s reps"
+msgstr "%(weight)s: %(reps)s repetitioner"
+
+msgid "Log in"
+msgstr "Logga in"
+
+msgid "Create an account"
+msgstr "Skapa ett konto"
+
+msgid "Password changed"
+msgstr "Lösenordet har ändrats"
+
+msgid "Your password has been updated."
+msgstr "Ditt lösenord har uppdaterats."
+
+msgid "Back to profile"
+msgstr "Tillbaka till profilen"
+
+#, python-format
+msgid "Target: %(count)s × %(min)s-%(max)s"
+msgstr "Mål: %(count)s × %(min)s-%(max)s"
+
+msgid "New PR"
+msgstr "Nytt PR"
+
+msgid "Max weight:"
+msgstr "Maxvikt:"
+
+#, python-format
+msgid "Most reps at %(weight)s:"
+msgstr "Flest repetitioner vid %(weight)s:"
+
+msgid "Estimated 1RM:"
+msgstr "Uppskattad 1RM:"
+
+msgid "Set volume:"
+msgstr "Setvolym:"
+
+msgid "Session volume:"
+msgstr "Passets volym:"
+
+#, python-format
+msgid "(previous: %(previous)s)"
+msgstr "(föregående: %(previous)s)"
+
+msgid "Set"
+msgstr "Set"
+
+msgid "Reps"
+msgstr "Repetitioner"
+
+msgid "W"
+msgstr "U"
+
+msgid "F"
+msgstr "M"
+
+msgid "No sets logged yet."
+msgstr "Inga set loggade ännu."
+
+#, python-format
+msgid "Suggested: %(weight)s"
+msgstr "Föreslaget: %(weight)s"
+
+msgid "Low confidence"
+msgstr "Låg tillförlitlighet"
+
+msgid "Medium confidence"
+msgstr "Medelhög tillförlitlighet"
+
+msgid "High confidence"
+msgstr "Hög tillförlitlighet"
+
+msgid "Log set"
+msgstr "Logga set"
+
+msgid "Add"
+msgstr "Lägg till"
+
+msgid "Back to workout"
+msgstr "Tillbaka till träningspasset"
+
+#, python-format
+msgid "Started %(started)s"
+msgstr "Startade %(started)s"
+
+#, python-format
+msgid "ended %(ended)s"
+msgstr "avslutades %(ended)s"
+
+msgid "Complete workout"
+msgstr "Slutför träningspass"
+
+msgid "Abandon this workout? It stays in your history as abandoned."
+msgstr "Avbryt detta träningspass? Det finns kvar i din historik som avbrutet."
+
+msgid "Abandon workout"
+msgstr "Avbryt träningspass"
+
+msgid "Delete this workout? This cannot be undone."
+msgstr "Ta bort detta träningspass? Detta kan inte ångras."
+
+msgid "Back to history"
+msgstr "Tillbaka till historik"
+
+msgid "Workout history"
+msgstr "Träningshistorik"
+
+msgid "Start freeform workout"
+msgstr "Starta fritt träningspass"
+
+msgid "No workouts logged yet."
+msgstr "Inga träningspass loggade ännu."
+
+msgid "Start one above, or pick a workout from one of your programs."
+msgstr "Starta ett ovan, eller välj ett träningspass från ett av dina program."
+
+msgid "Edit set"
+msgstr "Redigera set"
+
+#, python-format
+msgid "Edit set %(number)s"
+msgstr "Redigera set %(number)s"

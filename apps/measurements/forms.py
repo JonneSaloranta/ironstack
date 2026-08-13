@@ -1,4 +1,5 @@
 from django import forms
+from django.utils.translation import gettext_lazy as _
 
 from . import units
 from .models import BodyMeasurement, MeasurementType
@@ -52,7 +53,9 @@ class BodyMeasurementForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         if measurement_type is not None and user is not None:
             label = units.display_unit_label(measurement_type.unit_kind, user.unit_system)
-            self.fields["value"].label = f"Value ({label})" if label else "Value"
+            self.fields["value"].label = (
+                _("Value (%(unit)s)") % {"unit": label} if label else _("Value")
+            )
             if self.instance.pk:
                 self.initial["value"] = units.to_display(
                     self.instance.value, measurement_type.unit_kind, user.unit_system

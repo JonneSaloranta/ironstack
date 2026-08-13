@@ -1,26 +1,28 @@
 {% extends "base.html" %}
-{% load core_extras %}
+{% load i18n core_extras %}
 {% block title %}{{ program.name }} — IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
   <h1 style="margin:0;">{{ program.name }}</h1>
   {% if can_edit %}
-    <a class="button" href="{% url 'programs:program-update' program.pk %}">Edit</a>
+    <a class="button" href="{% url 'programs:program-update' program.pk %}">{% trans "Edit" %}</a>
   {% endif %}
 </div>
 
 <div class="card">
   {% if program.is_system_template %}
-    <span class="tag tag-muted">Built-in template</span>
+    <span class="tag tag-muted">{% trans "Built-in template" %}</span>
   {% elif program.is_template %}
-    <span class="tag tag-muted">My template</span>
+    <span class="tag tag-muted">{% trans "My template" %}</span>
   {% endif %}
   {% if program.description %}<p>{{ program.description }}</p>{% endif %}
-  <p class="text-muted">Version {{ program.version }} · updated {{ program.updated_at|date:"Y-m-d" }}</p>
+  <p class="text-muted">
+    {% blocktrans with version=program.version updated=program.updated_at|date:"Y-m-d" %}Version {{ version }} · updated {{ updated }}{% endblocktrans %}
+  </p>
   {% if program.is_template %}
     <form method="post" action="{% url 'programs:program-copy' program.pk %}">
       {% csrf_token %}
-      <button type="submit">Copy to a new program</button>
+      <button type="submit">{% trans "Copy to a new program" %}</button>
     </form>
   {% endif %}
 </div>
@@ -36,10 +38,10 @@
       </h3>
       {% if can_edit %}
         <span class="set-actions">
-          <a href="{% url 'programs:workout-update' program.pk workout.pk %}">Edit</a>
-          <form method="post" action="{% url 'programs:workout-delete' program.pk workout.pk %}" onsubmit="return confirm('Delete this workout and its exercises?');">
+          <a href="{% url 'programs:workout-update' program.pk workout.pk %}">{% trans "Edit" %}</a>
+          <form method="post" action="{% url 'programs:workout-delete' program.pk workout.pk %}" onsubmit="return confirm('{% trans "Delete this workout and its exercises?" %}');">
             {% csrf_token %}
-            <button type="submit" class="button-danger">Delete</button>
+            <button type="submit" class="button-danger">{% trans "Delete" %}</button>
           </form>
         </span>
       {% endif %}
@@ -53,36 +55,36 @@
           {% if prescription.target_weight %} @ {{ prescription.target_weight|weight:request.user }}{% endif %}
           {% if prescription.target_rpe %} @ RPE {{ prescription.target_rpe }}{% endif %}
           {% if can_edit %}
-            <a href="{% url 'programs:prescription-update' program.pk workout.pk prescription.pk %}">Edit</a>
+            <a href="{% url 'programs:prescription-update' program.pk workout.pk prescription.pk %}">{% trans "Edit" %}</a>
           {% endif %}
         </li>
       {% empty %}
-        <li class="text-muted">No exercises yet.</li>
+        <li class="text-muted">{% trans "No exercises yet." %}</li>
       {% endfor %}
     </ul>
 
     {% if can_edit %}
-      <a class="button" href="{% url 'programs:prescription-create' program.pk workout.pk %}">Add exercise</a>
+      <a class="button" href="{% url 'programs:prescription-create' program.pk workout.pk %}">{% trans "Add exercise" %}</a>
     {% endif %}
 
     <form method="post" action="{% url 'workouts:session-start' workout.pk %}">
       {% csrf_token %}
-      <button type="submit">Start workout</button>
+      <button type="submit">{% trans "Start workout" %}</button>
     </form>
   </div>
 {% empty %}
   <div class="card empty-state">
-    <p>No workouts yet.</p>
+    <p>{% trans "No workouts yet." %}</p>
   </div>
 {% endfor %}
 
 {% if can_edit %}
-  <a class="button" href="{% url 'programs:workout-create' program.pk %}">Add workout</a>
-  <form method="post" action="{% url 'programs:program-delete' program.pk %}" onsubmit="return confirm('Delete this program? This cannot be undone.');">
+  <a class="button" href="{% url 'programs:workout-create' program.pk %}">{% trans "Add workout" %}</a>
+  <form method="post" action="{% url 'programs:program-delete' program.pk %}" onsubmit="return confirm('{% trans "Delete this program? This cannot be undone." %}');">
     {% csrf_token %}
-    <button type="submit" class="button-danger">Delete program</button>
+    <button type="submit" class="button-danger">{% trans "Delete program" %}</button>
   </form>
 {% endif %}
 
-<p><a class="button-secondary" href="{% url 'programs:program-list' %}">&larr; Back to programs</a></p>
+<p><a class="button-secondary" href="{% url 'programs:program-list' %}">&larr; {% trans "Back to programs" %}</a></p>
 {% endblock %}

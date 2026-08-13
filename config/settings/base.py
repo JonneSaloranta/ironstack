@@ -56,9 +56,17 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.locale.LocaleMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
+    # Must come after AuthenticationMiddleware (needs request.user) but
+    # still runs before the view/template rendering, so it can override
+    # LocaleMiddleware's own guess (cookie/Accept-Language) with a
+    # logged-in user's stored preference (apps.accounts.models.User.language,
+    # set on the profile page) for this same request/response — see the
+    # middleware's own docstring.
+    "apps.accounts.middleware.UserLanguageMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
@@ -76,6 +84,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "django.template.context_processors.i18n",
             ],
         },
     },
@@ -108,9 +117,23 @@ LOGIN_URL = "login"
 LOGIN_REDIRECT_URL = "dashboard"
 LOGOUT_REDIRECT_URL = "login"
 
-# Canonical locale: units/timezones are per-user preferences handled in
-# apps.core / apps.accounts, not by Django's i18n machinery.
+# UI language is a per-user preference (User.language, set on the
+# profile page — apps.accounts.middleware.UserLanguageMiddleware applies
+# it) using Django's own gettext .po/.mo translation machinery. This is
+# a distinct concern from unit_system/timezone, which stay
+# apps.core/apps.accounts preferences unrelated to Django's i18n
+# framework — display units and "what time is it" don't change with UI
+# language.
 LANGUAGE_CODE = "en-us"
+LANGUAGES = [
+    ("en", "English"),
+    ("fi", "Suomi"),
+    ("sv", "Svenska"),
+    ("ru", "Русский"),
+    ("it", "Italiano"),
+    ("et", "Eesti"),
+]
+LOCALE_PATHS = [BASE_DIR / "locale"]
 TIME_ZONE = "UTC"
 USE_I18N = True
 USE_TZ = True

@@ -1,8 +1,9 @@
 {% extends "base.html" %}
-{% block title %}{% if object %}Edit program{% else %}New program{% endif %} — IronStack{% endblock %}
+{% load i18n %}
+{% block title %}{% if object %}{% trans "Edit program" %}{% else %}{% trans "New program" %}{% endif %} — IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
-  <h1 style="margin:0;">{% if object %}Edit program{% else %}New program{% endif %}</h1>
+  <h1 style="margin:0;">{% if object %}{% trans "Edit program" %}{% else %}{% trans "New program" %}{% endif %}</h1>
 </div>
 
 <form class="card" method="post">
@@ -15,6 +16,6 @@
       {% if field.errors %}<p class="field-error">{{ field.errors|striptags }}</p>{% endif %}
     </div>
   {% endfor %}
-  <button type="submit">Save</button>
+  <button type="submit">{% trans "Save" %}</button>
 </form>
 {% endblock %}

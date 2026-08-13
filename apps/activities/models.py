@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 
 from apps.core.models import TimeStampedModel
 
@@ -14,7 +15,7 @@ class ActivityType(models.Model):
     correctly after a custom type is retired.
     """
 
-    name = models.CharField(max_length=50)
+    name = models.CharField(max_length=50, verbose_name=_("name"))
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         related_name="custom_activity_types",
@@ -66,16 +67,18 @@ class Activity(TimeStampedModel):
         ActivityType, related_name="activities", on_delete=models.PROTECT
     )
     # Indexed: history/chart pages (Meta.ordering below) order by this.
-    date = models.DateField(db_index=True)
-    start_time = models.TimeField(null=True, blank=True)
+    date = models.DateField(db_index=True, verbose_name=_("date"))
+    start_time = models.TimeField(null=True, blank=True, verbose_name=_("start time"))
     duration = models.DurationField()
-    distance = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    calories = models.PositiveIntegerField(null=True, blank=True)
-    notes = models.TextField(blank=True)
+    distance = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True, verbose_name=_("distance")
+    )
+    calories = models.PositiveIntegerField(null=True, blank=True, verbose_name=_("calories"))
+    notes = models.TextField(blank=True, verbose_name=_("notes"))
 
     class Meta:
         ordering = ["-date", "-start_time"]
-        verbose_name_plural = "activities"
+        verbose_name_plural = _("activities")
 
     def __str__(self):
         return f"{self.activity_type.name} ({self.date})"

@@ -1,5 +1,6 @@
 {% extends "base.html" %}
-{% block title %}{{ exercise.name }} analytics — IronStack{% endblock %}
+{% load i18n %}
+{% block title %}{% blocktrans with name=exercise.name %}{{ name }} analytics{% endblocktrans %} — IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
   <h1 style="margin:0;">{{ exercise.name }}</h1>
@@ -9,18 +10,19 @@
 
 <div class="card">
   <dl class="stat-row">
-    <div><dt>Sessions</dt><dd>{{ summary.session_count }}</dd></div>
-    <div><dt>Total volume</dt><dd>{{ summary.total_volume }} {{ weight_unit_label }}</dd></div>
+    <div><dt>{% trans "Sessions" %}</dt><dd>{{ summary.session_count }}</dd></div>
+    <div><dt>{% trans "Total volume" %}</dt><dd>{{ summary.total_volume }} {{ weight_unit_label }}</dd></div>
   </dl>
 </div>
 
 {% if one_rm_chart %}
-  <h2>Estimated 1RM trend</h2>
-  {% include "core/_chart.html" with chart=one_rm_chart chart_title="Estimated 1RM" unit_label=weight_unit_label %}
+  <h2>{% trans "Estimated 1RM trend" %}</h2>
+  {% trans "Estimated 1RM" as one_rm_title %}
+  {% include "core/_chart.html" with chart=one_rm_chart chart_title=one_rm_title unit_label=weight_unit_label %}
 {% else %}
-  <div class="card empty-state"><p>Not enough history in this range for a trend line.</p></div>
+  <div class="card empty-state"><p>{% trans "Not enough history in this range for a trend line." %}</p></div>
 {% endif %}
 
-<p><a href="{% url 'records:exercise-records' exercise.pk %}">View current PRs</a></p>
-<p><a class="button-secondary" href="{% url 'exercises:exercise-detail' exercise.pk %}">&larr; Back to exercise</a></p>
+<p><a href="{% url 'records:exercise-records' exercise.pk %}">{% trans "View current PRs" %}</a></p>
+<p><a class="button-secondary" href="{% url 'exercises:exercise-detail' exercise.pk %}">&larr; {% trans "Back to exercise" %}</a></p>
 {% endblock %}

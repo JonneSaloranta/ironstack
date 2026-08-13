@@ -163,6 +163,58 @@ and `apps.records.services.format_value`/`format_previous_value` for PR
 figures specifically, since a `rep_pr`'s value is a rep count rather than
 a weight and must never be run through the conversion.
 
+## Internationalization
+
+UI text is translated with Django's own gettext-based `.po`/`.mo`
+machinery — no extra dependency. Six languages ship: English (`en`,
+also the source language every `msgid` is written in), Finnish (`fi`),
+Swedish (`sv`), Russian (`ru`), Italian (`it`), and Estonian (`et`,
+ISO 639-1 — not `ee`, which is Ewe).
+
+- `User.language` (`apps.accounts`) is the per-user preference, set on
+  the profile page — a distinct concern from `unit_system`/`timezone`
+  above; UI language doesn't change what units or "today" mean.
+  `apps.accounts.middleware.UserLanguageMiddleware` (after
+  `AuthenticationMiddleware`, before the view) calls
+  `translation.activate(user.language)` for a logged-in user, overriding
+  `django.middleware.locale.LocaleMiddleware`'s own cookie/
+  Accept-Language guess for that same request. There's deliberately no
+  session/cookie caching of the choice on top of the database field —
+  `user.language` is re-read every request, so there's only one place
+  the value can ever live.
+- Templates use `{% load i18n %}` + `{% trans %}`/`{% blocktrans %}`
+  (with `{% blocktrans count %}` for plurals — gettext's real per-locale
+  plural rules, e.g. Russian's three forms, not a naive `|pluralize`).
+  Python-side strings (form labels/help_text/errors, model
+  `verbose_name`, `TextChoices` labels, view flash messages, the
+  progression engine's explanatory `reason` strings) use
+  `gettext_lazy as _` at class/module-definition time and `gettext as _`
+  inside view functions, matching Django's own convention for why the
+  two differ (lazy vs. immediate evaluation).
+- **What's translated vs. not**: all UI chrome — labels, buttons,
+  messages, headings — is translated. Seeded reference *data* (exercise
+  names, muscle groups, equipment, measurement/activity type names,
+  built-in program template names/descriptions) is **not** — that's
+  content translation, a different problem needing a
+  model-translation layer (e.g. `django-modeltranslation`) rather than
+  gettext, and would be a real new dependency without a strong enough
+  reason yet per this project's "avoid unnecessary dependencies" rule.
+  A user's own data (exercise names they typed, program names, notes)
+  is never translated either way, correctly — gettext only ever matches
+  strings that exist in the `.po` catalog.
+- Workflow: `python manage.py makemessages -l <lang> ...` extracts
+  every `{% trans %}`/`_()` call into `locale/<lang>/LC_MESSAGES/django.po`;
+  `python manage.py compilemessages` builds the `.mo` files gettext
+  actually reads at runtime. The latter runs automatically at container
+  startup (`docker-compose.yml`/`docker-compose.override.yml`, right
+  after `migrate`), so only the `.po` sources are committed — `.mo` is
+  gitignored, the same "commit the source, generate the artifact"
+  split as `static/` vs. `staticfiles/`.
+- `gettext` (the GNU tool, providing `msgfmt`/`msguniq`/`msgmerge`) is a
+  system package installed in the Docker image (`Dockerfile`) — needed
+  for `compilemessages` to run at all, in both the dev and production
+  images.
+
 ## API layer
 
 No REST/DRF API is built in the initial implementation. `ARCHITECTURE.md`'s

@@ -1,4 +1,5 @@
 from django import forms
+from django.utils.translation import gettext_lazy as _
 
 from apps.core import units as core_units
 from apps.exercises.services import visible_to as exercises_visible_to
@@ -34,18 +35,22 @@ class ExerciseSetForm(forms.ModelForm):
             "notes",
         ]
         labels = {
-            "target_reps": "Target reps",
-            "rpe": "RPE",
-            "rir": "RIR",
-            "is_failure": "Failed set",
-            "is_warmup": "Warm-up",
+            "reps": _("reps"),
+            "target_reps": _("Target reps"),
+            "rpe": _("RPE"),
+            "rir": _("RIR"),
+            "is_failure": _("Failed set"),
+            "is_warmup": _("Warm-up"),
+            "notes": _("notes"),
         }
 
     def __init__(self, *args, user=None, **kwargs):
         self.user = user
         super().__init__(*args, **kwargs)
         unit_system = getattr(user, "unit_system", "metric")
-        self.fields["weight"].label = f"Weight ({core_units.weight_unit_label(unit_system)})"
+        self.fields["weight"].label = _("Weight (%(unit)s)") % {
+            "unit": core_units.weight_unit_label(unit_system)
+        }
         if self.instance.pk:
             self.initial["weight"] = core_units.kg_to_display(self.instance.weight, unit_system)
 
@@ -62,6 +67,7 @@ class PerformedExerciseAddForm(forms.ModelForm):
     class Meta:
         model = PerformedExercise
         fields = ["exercise"]
+        labels = {"exercise": _("exercise")}
 
     def __init__(self, *args, user=None, **kwargs):
         super().__init__(*args, **kwargs)

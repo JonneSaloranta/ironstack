@@ -11,5 +11,11 @@ db.sqlite3
 staticfiles/
 media/
 
+# Compiled translation catalogs — derived from the committed locale/*/LC_MESSAGES/django.po
+# sources via `manage.py compilemessages`, run automatically at container startup
+# (docker-compose.yml); regenerate locally with the same command rather than committing
+# the binaries.
+*.mo
+
 .DS_Store
 *.swp
