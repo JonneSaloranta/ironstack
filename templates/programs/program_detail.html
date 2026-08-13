@@ -5,18 +5,23 @@
   <h1 style="margin:0;">{{ program.name }}</h1>
   {% if can_edit %}
     <a class="button" href="{% url 'programs:program-update' program.pk %}">Edit</a>
-  {% else %}
-    <form method="post" action="{% url 'programs:program-copy' program.pk %}">
-      {% csrf_token %}
-      <button type="submit">Copy to my programs</button>
-    </form>
   {% endif %}
 </div>
 
 <div class="card">
-  {% if program.is_system_template %}<span class="tag tag-muted">Template</span>{% endif %}
+  {% if program.is_system_template %}
+    <span class="tag tag-muted">Built-in template</span>
+  {% elif program.is_template %}
+    <span class="tag tag-muted">My template</span>
+  {% endif %}
   {% if program.description %}<p>{{ program.description }}</p>{% endif %}
   <p class="text-muted">Version {{ program.version }} · updated {{ program.updated_at|date:"Y-m-d" }}</p>
+  {% if program.is_template %}
+    <form method="post" action="{% url 'programs:program-copy' program.pk %}">
+      {% csrf_token %}
+      <button type="submit">Copy to a new program</button>
+    </form>
+  {% endif %}
 </div>
 
 {% for workout in program.workouts.all %}

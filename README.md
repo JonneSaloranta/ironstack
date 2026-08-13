@@ -284,6 +284,24 @@ Post-v1 fixes and additions (user-requested, not a numbered phase):
   short recent window.
 - 23 new tests (255 total).
 
+**Personal program templates, and three more well-known built-in
+templates.** `Program.is_template` already existed (Phase 3, system
+templates only) but was never exposed for a user's own programs.
+`ProgramForm` now includes it ("Save as a personal template"); the
+program page shows a "My template" tag and a "Copy to a new program"
+button for any of the user's own template-flagged programs, the same
+copy mechanism system templates already used — copying only ever depends
+on being able to *see* the source program at all, never on `is_template`
+itself, so a personal template stays exactly as private as any other
+program (tested explicitly: another user still gets a 404 trying to copy
+someone else's template). Seeded three more built-in templates alongside
+the original generic "Full Body A/B/C": Arnold Split (the classic 6-day
+bodybuilding split), Push/Pull/Legs, and 5×5 Strength — real,
+widely-documented training methodologies; naming one after the lifter
+who popularized it is standard practice in fitness literature and
+implies no endorsement. All four system templates verified copyable
+end-to-end in a single test. 9 new tests (264 total).
+
 ## Local development
 
 ```bash

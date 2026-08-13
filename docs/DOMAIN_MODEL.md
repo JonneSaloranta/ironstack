@@ -77,6 +77,20 @@ Program
 
 A program may optionally have a schedule.
 
+`is_template` marks a program as copyable rather than meant to be run
+directly — true for every built-in system program (`owner` null,
+seeded: a generic full-body split plus several well-known named
+programs — Arnold Split, Push/Pull/Legs, 5×5 Strength) and, on request,
+settable by a user on their own programs too, so someone can keep a
+personal template (e.g. "My PPL Template") and copy it into a fresh,
+independently-editable program each time they start a new training
+block, leaving the template itself untouched. Copying (`services.copy_program`)
+works the same way regardless of whether the source is a system or
+personal template — it only ever depends on the copying user being able
+to see the source program at all (`services.visible_to`), never on
+`is_template` itself, which is a UI affordance for the owner, not a
+visibility grant.
+
 ## Workout
 
 A planned workout inside a program.

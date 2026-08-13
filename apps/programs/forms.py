@@ -8,7 +8,17 @@ from .models import ExercisePrescription, Program, Workout
 class ProgramForm(forms.ModelForm):
     class Meta:
         model = Program
-        fields = ["name", "description"]
+        fields = ["name", "description", "is_template"]
+        labels = {
+            "is_template": "Save as a personal template",
+        }
+        help_texts = {
+            "is_template": (
+                "Templates aren't meant to be run directly — copy them into a "
+                "new program (from the program page) whenever you start a new cycle, "
+                "keeping the original untouched."
+            ),
+        }
 
 
 class WorkoutForm(forms.ModelForm):

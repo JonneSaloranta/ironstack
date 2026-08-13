@@ -10,6 +10,7 @@
 {% for program in programs %}
   <a class="card card-link" href="{% url 'programs:program-detail' program.pk %}">
     <strong>{{ program.name }}</strong>
+    {% if program.is_template %}<span class="tag tag-muted">Template</span>{% endif %}
     <div class="text-muted">{{ program.workout_count }} workout{{ program.workout_count|pluralize }}</div>
   </a>
 {% empty %}
@@ -19,7 +20,7 @@
   </div>
 {% endfor %}
 
-<h2>Templates</h2>
+<h2>Built-in templates</h2>
 {% for template in templates %}
   <div class="card">
     <a class="card-link" href="{% url 'programs:program-detail' template.pk %}">

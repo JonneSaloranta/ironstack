@@ -19,6 +19,32 @@ class ProgramTemplateSeedTests(TestCase):
         first_workout = program.workouts.order_by("order").first()
         self.assertGreater(first_workout.prescriptions.count(), 0)
 
+    def test_additional_seeded_templates_exist_and_are_well_formed(self):
+        expected_workout_counts = {
+            "Arnold Split (6-Day)": 3,
+            "Push/Pull/Legs": 3,
+            "5x5 Strength (A/B)": 2,
+        }
+        for name, expected_count in expected_workout_counts.items():
+            program = Program.objects.get(name=name, owner=None)
+            self.assertTrue(program.is_template, name)
+            self.assertEqual(program.workouts.count(), expected_count, name)
+            for workout in program.workouts.all():
+                self.assertGreater(workout.prescriptions.count(), 0, f"{name} / {workout.name}")
+
+    def test_all_seeded_system_templates_are_copyable_end_to_end(self):
+        alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        for template in Program.objects.filter(owner=None, is_template=True):
+            copy = services.copy_program(template, owner=alice)
+            self.assertEqual(copy.workouts.count(), template.workouts.count())
+            copy_prescription_count = ExercisePrescription.objects.filter(
+                workout__program=copy
+            ).count()
+            template_prescription_count = ExercisePrescription.objects.filter(
+                workout__program=template
+            ).count()
+            self.assertEqual(copy_prescription_count, template_prescription_count)
+
 
 class ExercisePrescriptionModelTests(TestCase):
     def setUp(self):
@@ -137,6 +163,22 @@ class ProgramViewPermissionTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertFalse(response.context["can_edit"])
 
+    def test_own_template_shows_a_copy_button_and_template_tag(self):
+        my_template = Program.objects.create(
+            owner=self.alice, name="My Own Template", is_template=True
+        )
+        response = self.client.get(
+            reverse("programs:program-detail", args=[my_template.pk])
+        )
+        self.assertContains(response, "My template")
+        self.assertContains(response, "Copy to a new program")
+
+    def test_regular_own_program_shows_neither_template_tag_nor_copy_button(self):
+        program = Program.objects.create(owner=self.alice, name="Regular")
+        response = self.client.get(reverse("programs:program-detail", args=[program.pk]))
+        self.assertNotContains(response, "My template")
+        self.assertNotContains(response, "Copy to a new program")
+
 
 class ProgramCreateEditFlowTests(TestCase):
     def setUp(self):
@@ -152,6 +194,31 @@ class ProgramCreateEditFlowTests(TestCase):
         self.assertRedirects(
             response, reverse("programs:program-detail", args=[program.pk])
         )
+
+    def test_create_program_defaults_to_not_a_template(self):
+        self.client.post(reverse("programs:program-create"), {"name": "Regular Program"})
+        program = Program.objects.get(name="Regular Program")
+        self.assertFalse(program.is_template)
+
+    def test_can_mark_my_own_program_as_a_personal_template(self):
+        response = self.client.post(
+            reverse("programs:program-create"),
+            {"name": "My Template", "is_template": "on"},
+        )
+        program = Program.objects.get(name="My Template")
+        self.assertTrue(program.is_template)
+        self.assertRedirects(
+            response, reverse("programs:program-detail", args=[program.pk])
+        )
+
+    def test_editing_a_program_can_toggle_is_template(self):
+        program = Program.objects.create(owner=self.alice, name="Toggle Me")
+        self.client.post(
+            reverse("programs:program-update", args=[program.pk]),
+            {"name": "Toggle Me", "is_template": "on"},
+        )
+        program.refresh_from_db()
+        self.assertTrue(program.is_template)
 
     def test_editing_a_program_bumps_version(self):
         program = Program.objects.create(owner=self.alice, name="Original")
@@ -231,3 +298,37 @@ class ProgramCopyViewTests(TestCase):
             reverse("programs:program-copy", args=[bob_program.pk])
         )
         self.assertEqual(response.status_code, 404)
+
+    def test_cannot_copy_another_users_private_program_even_if_flagged_as_a_template(self):
+        """is_template is a UI affordance for the owner, not a visibility
+        grant — a personal template stays exactly as private as any
+        other program belonging to someone else."""
+        bob = User.objects.create_user(username="bob", password="s3cret-pass")
+        bob_template = Program.objects.create(
+            owner=bob, name="Bob's Template", is_template=True
+        )
+        response = self.client.post(
+            reverse("programs:program-copy", args=[bob_template.pk])
+        )
+        self.assertEqual(response.status_code, 404)
+
+    def test_can_copy_my_own_template_into_a_fresh_program(self):
+        my_template = Program.objects.create(
+            owner=self.alice, name="My PPL Template", is_template=True
+        )
+        Workout.objects.create(program=my_template, name="Push")
+        response = self.client.post(
+            reverse("programs:program-copy", args=[my_template.pk])
+        )
+        new_program = (
+            Program.objects.filter(owner=self.alice, name="My PPL Template")
+            .exclude(pk=my_template.pk)
+            .get()
+        )
+        self.assertRedirects(
+            response, reverse("programs:program-detail", args=[new_program.pk])
+        )
+        self.assertFalse(new_program.is_template)
+        self.assertEqual(new_program.workouts.count(), 1)
+        # The original template is untouched.
+        self.assertTrue(Program.objects.get(pk=my_template.pk).is_template)
