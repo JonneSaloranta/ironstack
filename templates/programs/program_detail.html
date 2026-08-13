@@ -38,6 +38,7 @@
         <li>
           <strong>{{ prescription.exercise.name }}</strong>
           — {{ prescription.set_count }} × {{ prescription.min_reps }}-{{ prescription.max_reps }}
+          {% if prescription.target_weight %} @ {{ prescription.target_weight }} kg{% endif %}
           {% if prescription.target_rpe %} @ RPE {{ prescription.target_rpe }}{% endif %}
           {% if can_edit %}
             <a href="{% url 'programs:prescription-update' program.pk workout.pk prescription.pk %}">Edit</a>
@@ -51,6 +52,11 @@
     {% if can_edit %}
       <a class="button" href="{% url 'programs:prescription-create' program.pk workout.pk %}">Add exercise</a>
     {% endif %}
+
+    <form method="post" action="{% url 'workouts:session-start' workout.pk %}">
+      {% csrf_token %}
+      <button type="submit">Start workout</button>
+    </form>
   </div>
 {% empty %}
   <div class="card empty-state">

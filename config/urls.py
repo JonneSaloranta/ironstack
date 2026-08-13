@@ -7,5 +7,6 @@ urlpatterns = [
     path("accounts/", include("apps.accounts.urls")),
     path("exercises/", include("apps.exercises.urls")),
     path("programs/", include("apps.programs.urls")),
+    path("workouts/", include("apps.workouts.urls")),
     path("", include("apps.core.urls")),
 ]

@@ -122,6 +122,15 @@ class ExercisePrescription(TimeStampedModel):
     set_count = models.PositiveIntegerField(default=3)
     min_reps = models.PositiveIntegerField(default=8)
     max_reps = models.PositiveIntegerField(default=12)
+    target_weight = models.DecimalField(
+        max_digits=6,
+        decimal_places=2,
+        null=True,
+        blank=True,
+        help_text="Canonical kg. What a workout session snapshots as its "
+        "starting target — set manually for now; a future progression "
+        "engine (Phase 6) may update it between cycles.",
+    )
     target_rpe = models.DecimalField(
         max_digits=3, decimal_places=1, null=True, blank=True
     )

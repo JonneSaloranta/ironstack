@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}{% if session.workout %}{{ session.workout.name }}{% else %}Freeform workout{% endif %} — IronStack{% endblock %}
+{% block content %}
+<div class="top-bar">
+  <h1 style="margin:0;">{% if session.workout %}{{ session.workout.name }}{% else %}Freeform workout{% endif %}</h1>
+  <span class="tag {% if session.status == 'completed' %}tag-success{% elif session.status == 'abandoned' %}tag-muted{% endif %}">{{ session.get_status_display }}</span>
+</div>
+
+<p class="text-muted">
+  Started {{ session.started_at|date:"Y-m-d H:i" }}
+  {% if session.ended_at %} · ended {{ session.ended_at|date:"Y-m-d H:i" }}{% endif %}
+</p>
+
+{% for pe in session.performed_exercises.all %}
+  {% include "workouts/_performed_exercise_card.html" with pe=pe set_form=pe.set_form %}
+{% empty %}
+  <div class="card empty-state">
+    <p>No exercises yet.</p>
+  </div>
+{% endfor %}
+
+{% if session.is_in_progress %}
+  <a class="button" href="{% url 'workouts:performed-exercise-add' session.pk %}">Add exercise</a>
+
+  <form method="post" action="{% url 'workouts:session-complete' session.pk %}">
+    {% csrf_token %}
+    <button type="submit">Complete workout</button>
+  </form>
+  <form method="post" action="{% url 'workouts:session-abandon' session.pk %}" onsubmit="return confirm('Abandon this workout? It stays in your history as abandoned.');">
+    {% csrf_token %}
+    <button type="submit" class="button-danger">Abandon workout</button>
+  </form>
+{% endif %}
+
+<p><a href="{% url 'workouts:session-list' %}">&larr; Back to history</a></p>
+{% endblock %}

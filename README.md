@@ -25,6 +25,22 @@ structural edit — see `docs/ARCHITECTURE.md` "snapshot-on-start" for why
 this is enough to satisfy the historical-trustworthiness rule once workout
 logging (Phase 4) exists.
 
+Phase 4 (Workout logging) — workout sessions (`apps/workouts`):
+`WorkoutSession` → `PerformedExercise` → `ExerciseSet`. Starting a session
+from a `Workout` is where snapshot-on-start actually happens:
+`services.start_session` copies each prescription's exercise, sets, rep
+range, target weight, and progression method onto the session's own
+`PerformedExercise` rows, so later edits or deletes of the prescription
+never change what the session already recorded (covered directly by
+tests). Sessions can also start freeform (no program) and exercises can be
+added mid-session beyond what was planned. Set logging is HTMX-driven —
+each submit swaps in the updated set list and a fresh entry form
+pre-filled by repeating the last set's weight/reps, so back-to-back sets
+need no retyping; falls back to a normal page redirect without
+JavaScript. Sessions, performed exercises, and sets are strictly private —
+never shared like programs' system templates. Workout history lists
+in-progress, completed, and abandoned sessions alike.
+
 ## Local development
 
 ```bash

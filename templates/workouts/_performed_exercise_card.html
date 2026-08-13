@@ -1,0 +1,52 @@
+<div id="performed-exercise-{{ pe.id }}" class="card">
+  <h3 style="margin:0 0 0.25rem;">{{ pe.exercise.name }}</h3>
+  {% if pe.set_count %}
+    <p class="text-muted">
+      Target: {{ pe.set_count }} × {{ pe.min_reps }}-{{ pe.max_reps }}
+      {% if pe.target_weight %} @ {{ pe.target_weight }} kg{% endif %}
+      {% if pe.target_rpe %} @ RPE {{ pe.target_rpe }}{% endif %}
+    </p>
+  {% endif %}
+
+  <table class="set-table">
+    <thead>
+      <tr><th>Set</th><th>Weight</th><th>Reps</th><th></th></tr>
+    </thead>
+    <tbody>
+      {% for s in pe.sets.all %}
+        <tr>
+          <td>{{ s.set_number }}{% if s.is_warmup %} <span class="tag tag-muted">W</span>{% endif %}</td>
+          <td>{{ s.weight }} kg</td>
+          <td>{{ s.reps }}{% if s.is_failure %} <span class="tag tag-muted">F</span>{% endif %}</td>
+          <td class="set-actions">
+            <a href="{% url 'workouts:set-edit' s.pk %}">Edit</a>
+            <form method="post" action="{% url 'workouts:set-delete' s.pk %}"
+                  hx-post="{% url 'workouts:set-delete' s.pk %}"
+                  hx-target="#performed-exercise-{{ pe.id }}" hx-swap="outerHTML">
+              {% csrf_token %}
+              <button type="submit" class="button-danger">Delete</button>
+            </form>
+          </td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="4" class="text-muted">No sets logged yet.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  {% if session.is_in_progress %}
+    <form class="set-log-form" method="post" action="{% url 'workouts:set-log' pe.id %}"
+          hx-post="{% url 'workouts:set-log' pe.id %}"
+          hx-target="#performed-exercise-{{ pe.id }}" hx-swap="outerHTML">
+      {% csrf_token %}
+      {{ set_form.non_field_errors }}
+      {% for field in set_form %}
+        <label class="set-field">
+          {{ field.label }}
+          {{ field }}
+        </label>
+      {% endfor %}
+      <button type="submit">Log set</button>
+    </form>
+  {% endif %}
+</div>

@@ -26,6 +26,7 @@ class ExercisePrescriptionForm(forms.ModelForm):
             "set_count",
             "min_reps",
             "max_reps",
+            "target_weight",
             "target_rpe",
             "target_rir",
             "progression_method",
@@ -33,6 +34,13 @@ class ExercisePrescriptionForm(forms.ModelForm):
             "percentage_target",
             "notes",
         ]
+        labels = {
+            "target_weight": "Target weight (kg)",
+            "target_rpe": "Target RPE",
+            "target_rir": "Target RIR",
+            "weight_increment": "Weight increment (kg)",
+            "percentage_target": "Percentage target (% 1RM)",
+        }
 
     def __init__(self, *args, user=None, **kwargs):
         super().__init__(*args, **kwargs)

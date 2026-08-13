@@ -9,10 +9,25 @@
   </form>
 </div>
 
-<div class="card empty-state">
-  <p>No workouts logged yet.</p>
-  <p>Programs, workout logging, and progress tracking arrive in later phases.</p>
-</div>
+{% if in_progress_session %}
+  <a class="card card-link" href="{% url 'workouts:session-detail' in_progress_session.pk %}">
+    <strong>Continue workout</strong>
+    <p class="text-muted">
+      {% if in_progress_session.workout %}{{ in_progress_session.workout.name }}{% else %}Freeform workout{% endif %}
+      — started {{ in_progress_session.started_at|date:"H:i" }}
+    </p>
+  </a>
+{% else %}
+  <div class="card empty-state">
+    <p>No workout in progress.</p>
+    <p>Start one from a program, or log a freeform workout.</p>
+  </div>
+{% endif %}
+
+<a class="card card-link" href="{% url 'workouts:session-list' %}">
+  <strong>Workout history</strong>
+  <p class="text-muted">Past sessions and progress over time.</p>
+</a>
 
 <a class="card card-link" href="{% url 'programs:program-list' %}">
   <strong>Programs</strong>

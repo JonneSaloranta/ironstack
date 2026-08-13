@@ -51,6 +51,7 @@ def copy_program(source: Program, owner) -> Program:
                 set_count=prescription.set_count,
                 min_reps=prescription.min_reps,
                 max_reps=prescription.max_reps,
+                target_weight=prescription.target_weight,
                 target_rpe=prescription.target_rpe,
                 target_rir=prescription.target_rir,
                 progression_method=prescription.progression_method,
