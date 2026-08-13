@@ -297,6 +297,19 @@ h2 {
   flex: 1 1 100%;
 }
 
+.pr-banner {
+  background: var(--color-success);
+  color: #fff;
+  border-radius: var(--radius);
+  padding: 0.5rem 0.75rem;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.pr-banner .text-muted {
+  color: rgba(255, 255, 255, 0.75);
+}
+
 /* Desktop: sidebar layout, bottom nav hidden */
 @media (min-width: 768px) {
   body {

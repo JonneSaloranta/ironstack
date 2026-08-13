@@ -21,12 +21,24 @@ accounts
 exercises
 programs
 workouts
+records
 progression
 measurements
 activities
 analytics
 core
 ```
+
+`records` (PR engine) was not in CLAUDE.md's original suggested list; it
+was added in Phase 5 as the structure evolved, per CLAUDE.md's "exact
+structure may evolve if implementation demonstrates a better
+organization." PRs are a big enough concern (own model, own detection
+logic, own future dashboard) that folding them into `workouts` would have
+started overloading that app; `records` depends one-directionally on
+`workouts` (`PersonalRecord.source_set` and PR detection read
+`ExerciseSet` history) and on `exercises` (`PersonalRecord.exercise`) —
+neither of those apps knows `records` exists, so the dependency only ever
+points one way.
 
 Keep domain logic separated from presentation.
 
@@ -45,6 +57,11 @@ Programs, workouts, prescriptions, scheduling, templates, program versions.
 
 ### workouts
 Workout sessions, performed sets, workout history.
+
+### records
+Personal record detection and storage (max weight, rep PRs, rep-specific
+PRs, estimated 1RM, set/session volume). Derived from `workouts` history
+only — never from `programs` — so program edits can't affect PRs.
 
 ### progression
 Progression methods and weight suggestion logic.
@@ -136,6 +153,14 @@ AnalyticsService
 
 Avoid large monolithic services. Split responsibilities when they become difficult to test or understand.
 
+`apps.records` implements `PRService` and `OneRepMaxCalculator` as plain
+functions/a small class in `services.py`/`one_rep_max.py` rather than a
+single `PRService` class — there was no shared state or polymorphism to
+justify a class, per "keep the actual API clean and idiomatic" (see
+`docs/PROGRESSION.md`, which asks the same of the future progression
+service). `OneRepMaxCalculator` is a real class, though, since swapping
+formulas (`docs/PR_SYSTEM.md`) is naturally an object with configuration.
+
 ## Security
 
 Every user-owned object must be scoped to the authenticated user.
@@ -144,6 +169,7 @@ Explicitly test that one user cannot access another user's:
 - programs
 - workouts
 - sets
+- personal records
 - measurements
 - activities
 - analytics data

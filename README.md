@@ -41,6 +41,25 @@ JavaScript. Sessions, performed exercises, and sets are strictly private —
 never shared like programs' system templates. Workout history lists
 in-progress, completed, and abandoned sessions alike.
 
+Phase 5 (PR engine) — a new `apps/records` app (not in the original
+suggested list; see `docs/ARCHITECTURE.md` for why). `PersonalRecord` is
+an append-only achievement log covering all six PR types from
+`docs/PR_SYSTEM.md` (max weight, rep PR, rep-specific PR/"NRM", estimated
+1RM, set volume, session volume). Detection (`services.check_and_record_prs`)
+runs once per newly logged set, always comparing against live-computed
+history — nothing is cached from a prior run, and the module never
+references `Program`/`Workout`/`ExercisePrescription` at all, so program
+edits provably can't touch PRs. Warmup and failed sets never count.
+Estimated 1RM goes through a swappable `OneRepMaxCalculator`
+(`one_rep_max.py`, Epley by default). Session volume is the one type
+that's a running total rather than a single set's raw number, so later
+sets in the same session update the existing record instead of each
+firing their own notification — otherwise a good session would spam a
+"New PR" banner after every set. Set logging shows a PR banner
+(HTMX-instant, plus a Django message as a no-JS fallback); each exercise
+also has a "Your PRs" page showing current bests computed live. 28 new
+tests (92 total).
+
 ## Local development
 
 ```bash

@@ -1,3 +1,4 @@
+from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseNotAllowed
 from django.shortcuts import get_object_or_404, redirect, render
@@ -5,6 +6,7 @@ from django.views.generic import DetailView, ListView
 
 from apps.programs import services as program_services
 from apps.programs.models import Workout
+from apps.records import services as records_services
 
 from . import services
 from .forms import ExerciseSetForm, PerformedExerciseAddForm
@@ -101,12 +103,20 @@ def set_log(request, performed_exercise_pk):
         return HttpResponseNotAllowed(["POST"])
     performed_exercise = _owned_performed_exercise_or_404(request, performed_exercise_pk)
     form = ExerciseSetForm(request.POST)
+    new_prs = []
     if not performed_exercise.session.is_in_progress:
         form.add_error(None, "This session is no longer in progress.")
     elif form.is_valid():
-        services.log_set(performed_exercise, **form.cleaned_data)
+        logged_set = services.log_set(performed_exercise, **form.cleaned_data)
+        new_prs = records_services.check_and_record_prs(logged_set)
+        for record in new_prs:
+            messages.success(
+                request,
+                f"New PR — {performed_exercise.exercise.name}: "
+                f"{record.get_record_type_display()} {record.value}",
+            )
         form = ExerciseSetForm(initial=services.default_set_values(performed_exercise))
-    return _render_session_or_card(request, performed_exercise, form)
+    return _render_session_or_card(request, performed_exercise, form, new_prs=new_prs)
 
 
 def set_edit(request, pk):
@@ -141,11 +151,16 @@ def set_delete(request, pk):
     return _render_session_or_card(request, performed_exercise, form)
 
 
-def _render_session_or_card(request, performed_exercise, set_form):
+def _render_session_or_card(request, performed_exercise, set_form, new_prs=None):
     if request.headers.get("HX-Request"):
         return render(
             request,
             "workouts/_performed_exercise_card.html",
-            {"pe": performed_exercise, "set_form": set_form, "session": performed_exercise.session},
+            {
+                "pe": performed_exercise,
+                "set_form": set_form,
+                "session": performed_exercise.session,
+                "new_prs": new_prs or [],
+            },
         )
     return redirect("workouts:session-detail", pk=performed_exercise.session_id)

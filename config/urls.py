@@ -8,5 +8,6 @@ urlpatterns = [
     path("exercises/", include("apps.exercises.urls")),
     path("programs/", include("apps.programs.urls")),
     path("workouts/", include("apps.workouts.urls")),
+    path("records/", include("apps.records.urls")),
     path("", include("apps.core.urls")),
 ]

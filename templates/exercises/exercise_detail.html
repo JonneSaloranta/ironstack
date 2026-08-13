@@ -38,6 +38,11 @@
   </dl>
 </div>
 
+<a class="card card-link" href="{% url 'records:exercise-records' exercise.pk %}">
+  <strong>Your PRs</strong>
+  <p class="text-muted">Current personal records for this exercise.</p>
+</a>
+
 {% if exercise.owner_id == request.user.id and exercise.active %}
   <form method="post" action="{% url 'exercises:exercise-deactivate' exercise.pk %}" onsubmit="return confirm('Deactivate this exercise? It will no longer appear when browsing or prescribing.');">
     {% csrf_token %}

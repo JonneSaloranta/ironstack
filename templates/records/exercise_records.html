@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}{{ exercise.name }} records — IronStack{% endblock %}
+{% block content %}
+<div class="top-bar">
+  <h1 style="margin:0;">{{ exercise.name }}</h1>
+</div>
+
+<div class="card">
+  <h3 style="margin-top:0;">Current PRs</h3>
+  <dl>
+    <dt>Max weight</dt>
+    <dd>{% if records.max_weight %}{{ records.max_weight }} kg{% else %}—{% endif %}</dd>
+
+    <dt>Estimated 1RM</dt>
+    <dd>{% if records.estimated_1rm %}{{ records.estimated_1rm }} kg{% else %}—{% endif %}</dd>
+
+    <dt>Best set volume</dt>
+    <dd>{% if records.set_volume %}{{ records.set_volume }} kg{% else %}—{% endif %}</dd>
+
+    <dt>Best session volume</dt>
+    <dd>{% if records.session_volume %}{{ records.session_volume }} kg{% else %}—{% endif %}</dd>
+  </dl>
+</div>
+
+<div class="card">
+  <h3 style="margin-top:0;">Rep maxes</h3>
+  <ul class="prescription-list">
+    {% for rep_count, weight in records.rep_specific_pr.items %}
+      <li>{{ rep_count }}RM: {% if weight %}{{ weight }} kg{% else %}—{% endif %}</li>
+    {% endfor %}
+  </ul>
+</div>
+
+{% if records.rep_pr %}
+  <div class="card">
+    <h3 style="margin-top:0;">Rep records by weight</h3>
+    <ul class="prescription-list">
+      {% for weight, reps in records.rep_pr.items %}
+        <li>{{ weight }} kg: {{ reps }} reps</li>
+      {% endfor %}
+    </ul>
+  </div>
+{% endif %}
+
+<p><a href="{% url 'exercises:exercise-detail' exercise.pk %}">&larr; Back to exercise</a></p>
+{% endblock %}

@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     "apps.exercises",
     "apps.programs",
     "apps.workouts",
+    "apps.records",
     "apps.progression",
     "apps.measurements",
     "apps.activities",
