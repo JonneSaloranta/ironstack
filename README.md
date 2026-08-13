@@ -234,6 +234,56 @@ worth of new features:
   annotated counts (including the cross-user scoping correctness for the
   activities one), and the custom error templates.
 
+Post-v1 fixes and additions (user-requested, not a numbered phase):
+
+- **Chart titles/legends audit** — every chart's title used to reach only
+  the SVG `aria-label` (invisible to sighted users) on three pages; the
+  bar charts had no visible category labels at all despite a code
+  comment claiming otherwise. Both fixed — see `docs/ANALYTICS.md`
+  "Chart titles/legends audit".
+- **Desktop nav** — was briefly, genuinely broken ("way too big"): CSS
+  Grid's default stretch + an inherited mobile `flex: 1` combined to make
+  each of the 5 sidebar links grow into an equal fifth of the full page
+  height. Rewritten as a horizontal top bar (matching mobile's row
+  direction instead of switching to a column), which fixes the bug more
+  fundamentally than patching the sidebar would have.
+- **Mobile nav** — reordered to Home, Progress, Workout, Programs,
+  Profile; icon-only (hand-drawn inline SVGs) with the label visually
+  hidden and carried instead by each link's `aria-label`, reappearing as
+  text on desktop where there's room for both.
+- **Training-time duration formatting** — a raw `{{ timedelta }}` was
+  rendering real seconds/microseconds ("0:03:19.893476"). Added a shared
+  `duration` template filter (`apps.core.templatetags.core_extras`,
+  rounds to the nearest minute) used everywhere a training/activity
+  duration renders.
+- **Activity date/time inputs** — now native `type="date"`/`type="time"`
+  pickers instead of plain text, with explicit widget `format=` so
+  editing an existing entry pre-fills correctly (Django's
+  locale-dependent default format doesn't reliably match what those
+  input types expect — same pitfall as this app's earlier
+  datetime-local decision).
+- **Direct workout-delete button** — `workout_delete` already worked but
+  was only reachable via Edit workout → Delete workout; now also a
+  direct button on the program page next to each workout's Edit link.
+- **Installable PWA** (explicit request; `docs/ROADMAP.md`'s "Future
+  possibilities" specifically says not to build this unprompted, but an
+  explicit ask overrides that caution) — a web manifest, a hand-drawn
+  barbell icon, and a minimal service worker, served at the site root
+  (`/manifest.json`, `/sw.js` — not `/static/`, which matters for the
+  service worker's scope). Deliberately installable only, not
+  offline-capable: the worker only cache-first's genuinely static assets
+  and never intercepts a page, form, or HTMX response, so nothing here
+  can show stale workout data or silently lose a logged set while
+  offline — see `docs/ROADMAP.md`'s "Future possibilities" for exactly
+  where that line is drawn.
+- Investigated a reported "date range doesn't filter analytics" bug and
+  could not reproduce it — seeded sessions 2 and 60 days apart and
+  confirmed over HTTP that every stat and the weekly-volume chart's own
+  bar count correctly change across every preset. Left as-is; most
+  likely explanation is the account being tested only had data within a
+  short recent window.
+- 23 new tests (255 total).
+
 ## Local development
 
 ```bash

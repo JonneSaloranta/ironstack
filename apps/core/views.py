@@ -1,7 +1,8 @@
 from datetime import timedelta
 
+from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpResponse
+from django.http import Http404, HttpResponse
 from django.utils import timezone
 from django.views.generic import TemplateView
 
@@ -56,3 +57,30 @@ class DashboardView(LoginRequiredMixin, TemplateView):
 def healthcheck(request):
     """Unauthenticated liveness endpoint for Docker/reverse-proxy checks."""
     return HttpResponse("ok")
+
+
+def _serve_static_root_file(filename, content_type):
+    """Serve a file from the `static/` source directory at the *site
+    root* rather than under `/static/`. A service worker's default scope
+    is the directory it's served from — `/sw.js` covers the whole app,
+    `/static/sw.js` would only ever cover `/static/`, which is useless.
+    Reads the source file directly (not STATIC_ROOT), so this works
+    whether or not `collectstatic` has run yet.
+    """
+    path = settings.BASE_DIR / "static" / filename
+    try:
+        content = path.read_bytes()
+    except FileNotFoundError:
+        raise Http404 from None
+    response = HttpResponse(content, content_type=content_type)
+    if filename == "sw.js":
+        response["Service-Worker-Allowed"] = "/"
+    return response
+
+
+def service_worker(request):
+    return _serve_static_root_file("sw.js", "application/javascript")
+
+
+def web_manifest(request):
+    return _serve_static_root_file("manifest.json", "application/manifest+json")

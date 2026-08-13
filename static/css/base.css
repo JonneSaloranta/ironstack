@@ -160,6 +160,18 @@ input[type="radio"] {
   color: var(--color-accent);
 }
 
+.nav-icon {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+/* Icon-only on mobile — the label stays in the accessibility tree via
+   the link's own aria-label, not this (hidden) text, since there's no
+   room to show both icon and text at this width. */
+.nav-label {
+  display: none;
+}
+
 .top-bar {
   display: flex;
   align-items: center;
@@ -494,8 +506,20 @@ h2 {
        screen) — on a wide desktop bar that would stretch 5 links across
        the full viewport width with huge gaps; size to content instead. */
     flex: none;
+    gap: 0.5rem;
     padding: 0.75rem 1.5rem;
     font-size: 1rem;
+  }
+
+  .nav-icon {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+
+  /* Desktop has room for both — icon-only was specifically a mobile
+     space constraint. */
+  .nav-label {
+    display: inline;
   }
 
   .container {

@@ -29,7 +29,13 @@
         {% endif %}
       </h3>
       {% if can_edit %}
-        <a href="{% url 'programs:workout-update' program.pk workout.pk %}">Edit</a>
+        <span class="set-actions">
+          <a href="{% url 'programs:workout-update' program.pk workout.pk %}">Edit</a>
+          <form method="post" action="{% url 'programs:workout-delete' program.pk workout.pk %}" onsubmit="return confirm('Delete this workout and its exercises?');">
+            {% csrf_token %}
+            <button type="submit" class="button-danger">Delete</button>
+          </form>
+        </span>
       {% endif %}
     </div>
 

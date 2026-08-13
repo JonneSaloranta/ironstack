@@ -5,6 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>{% block title %}IronStack{% endblock %}</title>
   <link rel="stylesheet" href="{% static 'css/base.css' %}">
+  <link rel="manifest" href="{% url 'web-manifest' %}">
+  <meta name="theme-color" content="#101317">
+  <link rel="icon" href="{% static 'icons/favicon-32.png' %}">
+  <link rel="apple-touch-icon" href="{% static 'icons/apple-touch-icon.png' %}">
   <script src="{% static 'js/htmx.min.js' %}" defer></script>
   <script src="{% static 'js/alpine.min.js' %}" defer></script>
 </head>
@@ -12,11 +16,26 @@
   <a class="skip-link" href="#main-content">Skip to content</a>
   {% if user.is_authenticated %}
   <nav class="bottom-nav" aria-label="Main navigation">
-    <a href="{% url 'dashboard' %}" {% if request.resolver_match.url_name == 'dashboard' %}aria-current="page"{% endif %}>Home</a>
-    <a href="{% url 'workouts:session-list' %}" {% if request.resolver_match.app_name == 'workouts' %}aria-current="page"{% endif %}>Workout</a>
-    <a href="{% url 'programs:program-list' %}" {% if request.resolver_match.app_name == 'programs' %}aria-current="page"{% endif %}>Programs</a>
-    <a href="{% url 'measurements:type-list' %}" {% if request.resolver_match.app_name == 'measurements' %}aria-current="page"{% endif %}>Progress</a>
-    <a href="{% url 'profile' %}" {% if request.resolver_match.url_name == 'profile' %}aria-current="page"{% endif %}>Profile</a>
+    <a href="{% url 'dashboard' %}" aria-label="Home" {% if request.resolver_match.url_name == 'dashboard' %}aria-current="page"{% endif %}>
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-8 9 8"/><path d="M5 10v10a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V10"/></svg>
+      <span class="nav-label">Home</span>
+    </a>
+    <a href="{% url 'measurements:type-list' %}" aria-label="Progress" {% if request.resolver_match.app_name == 'measurements' %}aria-current="page"{% endif %}>
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 17 9 11 13 15 21 6"/><polyline points="15 6 21 6 21 12"/></svg>
+      <span class="nav-label">Progress</span>
+    </a>
+    <a href="{% url 'workouts:session-list' %}" aria-label="Workout" {% if request.resolver_match.app_name == 'workouts' %}aria-current="page"{% endif %}>
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><line x1="6" y1="12" x2="18" y2="12"/><rect x="2" y="9" width="3" height="6" rx="1"/><rect x="19" y="9" width="3" height="6" rx="1"/><rect x="5" y="7" width="2" height="10" rx="1"/><rect x="17" y="7" width="2" height="10" rx="1"/></svg>
+      <span class="nav-label">Workout</span>
+    </a>
+    <a href="{% url 'programs:program-list' %}" aria-label="Programs" {% if request.resolver_match.app_name == 'programs' %}aria-current="page"{% endif %}>
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v1"/><line x1="8" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="16" y2="14"/><line x1="8" y1="18" x2="13" y2="18"/></svg>
+      <span class="nav-label">Programs</span>
+    </a>
+    <a href="{% url 'profile' %}" aria-label="Profile" {% if request.resolver_match.url_name == 'profile' %}aria-current="page"{% endif %}>
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>
+      <span class="nav-label">Profile</span>
+    </a>
   </nav>
   {% endif %}
 
@@ -28,5 +47,14 @@
     {% endif %}
     {% block content %}{% endblock %}
   </main>
+  <script>
+    // See static/sw.js for exactly what this does and, just as
+    // deliberately, doesn't do (no offline caching of pages/data).
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("{% url 'service-worker' %}");
+      });
+    }
+  </script>
 </body>
 </html>

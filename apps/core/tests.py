@@ -190,11 +190,87 @@ class HealthcheckTests(TestCase):
         self.assertEqual(response.content.decode(), "ok")
 
 
+class PWATests(TestCase):
+    """Installable-PWA support: manifest + service worker, served at the
+    site root (not /static/) so the service worker's scope covers the
+    whole app — see apps.core.views._serve_static_root_file."""
+
+    def test_manifest_is_served_at_the_root_without_auth(self):
+        response = self.client.get("/manifest.json")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response["Content-Type"], "application/manifest+json")
+
+    def test_manifest_is_valid_json_naming_the_app_and_icons(self):
+        import json
+
+        response = self.client.get("/manifest.json")
+        manifest = json.loads(response.content)
+        self.assertEqual(manifest["name"], "IronStack")
+        self.assertEqual(manifest["display"], "standalone")
+        self.assertGreaterEqual(len(manifest["icons"]), 2)
+
+    def test_service_worker_is_served_at_the_root_without_auth(self):
+        response = self.client.get("/sw.js")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response["Content-Type"], "application/javascript")
+        # The scope-widening header matters as much as the 200 itself --
+        # without it (or root placement), the worker's default scope
+        # would only ever cover wherever it was served from.
+        self.assertEqual(response["Service-Worker-Allowed"], "/")
+
+    def test_service_worker_never_caches_non_static_requests(self):
+        """The whole point: pages/forms/HTMX responses must never be
+        served from a cache, or a stale "workout history" could be shown
+        as if current (CLAUDE.md — historical trustworthiness)."""
+        content = self.client.get("/sw.js").content.decode()
+        self.assertIn('pathname.startsWith("/static/")', content)
+
+    def test_base_page_links_the_manifest_and_registers_the_service_worker(self):
+        from django.contrib.auth import get_user_model
+
+        get_user_model().objects.create_user(username="alice", password="s3cret-pass")
+        self.client.login(username="alice", password="s3cret-pass")
+        response = self.client.get(reverse("dashboard"))
+        self.assertContains(response, '<link rel="manifest" href="/manifest.json">')
+        self.assertContains(response, "serviceWorker.register")
+
+
 class DashboardAccessTests(TestCase):
     def test_dashboard_requires_login(self):
         response = self.client.get(reverse("dashboard"))
         self.assertEqual(response.status_code, 302)
         self.assertIn(reverse("login"), response.url)
+
+
+class BottomNavTests(TestCase):
+    """Mobile nav: Home, Progress, Workout, Programs, Profile in that
+    order, icon-only on mobile — each link's accessible name comes from
+    aria-label since the text label is visually hidden at that width
+    (re-shown alongside the icon on desktop)."""
+
+    def setUp(self):
+        from django.contrib.auth import get_user_model
+
+        User = get_user_model()
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        self.client.login(username="alice", password="s3cret-pass")
+
+    def test_nav_order_and_labels(self):
+        response = self.client.get(reverse("dashboard"))
+        content = response.content.decode()
+        positions = [content.find(f'aria-label="{label}"') for label in
+                     ["Home", "Progress", "Workout", "Programs", "Profile"]]
+        self.assertTrue(all(p != -1 for p in positions), positions)
+        self.assertEqual(positions, sorted(positions))
+
+    def test_every_nav_link_has_an_icon(self):
+        response = self.client.get(reverse("dashboard"))
+        self.assertContains(response, "nav-icon", count=5)
+
+    def test_nav_hidden_for_anonymous_users(self):
+        self.client.logout()
+        response = self.client.get(reverse("login"))
+        self.assertNotContains(response, 'class="bottom-nav"')
 
 
 class DashboardWidgetsTests(TestCase):

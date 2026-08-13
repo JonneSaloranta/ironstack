@@ -174,6 +174,17 @@ class ProgramCreateEditFlowTests(TestCase):
         self.assertEqual(program.version, 2)
         self.assertTrue(program.workouts.filter(name="Workout A").exists())
 
+    def test_program_detail_page_offers_a_direct_delete_button_per_workout(self):
+        """Regression: workout_delete already worked, but was only
+        reachable via Edit workout -> Delete workout, a click deeper
+        than necessary and easy to miss."""
+        program = Program.objects.create(owner=self.alice, name="Original")
+        workout = Workout.objects.create(program=program, name="Day 1")
+        response = self.client.get(reverse("programs:program-detail", args=[program.pk]))
+        self.assertContains(
+            response, reverse("programs:workout-delete", args=[program.pk, workout.pk])
+        )
+
     def test_adding_a_prescription_limits_exercise_choices_to_visible_exercises(self):
         program = Program.objects.create(owner=self.alice, name="Original")
         workout = Workout.objects.create(program=program, name="Day 1")

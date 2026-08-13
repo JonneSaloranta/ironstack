@@ -155,6 +155,26 @@ Charts (`docs/ANALYTICS.md`) scale up for free — `viewBox` + `width:
 widens past the `768px` breakpoint (`static/css/base.css`), no separate
 desktop chart sizing needed.
 
+The bottom nav becomes a horizontal top bar on desktop (`position:
+sticky; top: 0`), not a sidebar — deliberately the same
+`flex-direction: row` as mobile, just pinned to the top instead of the
+bottom. An earlier sidebar version had a real bug worth remembering: CSS
+Grid's default item alignment stretched the nav column to the full page
+height, and the nav links' mobile `flex: 1` (correct there — equal-width
+tabs in a narrow horizontal bar) then grew each link into an equal fifth
+of that height once the direction switched to a column — hugely
+oversized nav items. Keeping the same row direction at every width
+sidesteps that failure mode entirely rather than patching around it.
+
+### Mobile navigation
+Order: Home, Progress, Workout, Programs, Profile. Icon-only on mobile
+(inline SVGs, `.nav-icon`) — no room for both icon and label at
+360–430px — with the label visually hidden (`.nav-label { display:
+none }`) rather than removed: the accessible name comes from each
+link's own `aria-label`, and desktop re-shows the label text alongside
+the icon once there's room (`display: inline` past the `768px`
+breakpoint).
+
 ### Accessibility
 Beyond the base checklist above: a skip-to-content link
 (`.skip-link`, visible on focus); every hand-rolled `<input>`/`<select>`
@@ -167,3 +187,17 @@ a given chart is deliberately the same color (see
 post-Phase-11 audit, not part of the original Phase 11 pass — two real
 gaps were found and fixed; see `docs/ANALYTICS.md` "Chart titles/legends
 audit".
+
+### PWA
+Installable, not offline-capable — see `docs/ROADMAP.md` "Future
+possibilities" for exactly where that line is drawn and why. A web
+manifest (`static/manifest.json`, served at `/manifest.json` — the site
+root, not `/static/`, matters for the service worker's scope) declares
+name/icons/`display: standalone`/theme color; a hand-drawn barbell icon
+(`static/icons/icon.svg`, rasterized to the PNG sizes browsers actually
+request) doubles as the app icon and favicon. The service worker
+(`static/sw.js`) exists only to satisfy installability criteria and
+cache-first genuinely static assets (CSS/JS/icons) — it explicitly never
+intercepts a page, form submission, or HTMX response, so nothing here
+can ever show stale workout data or silently swallow a logged set while
+offline.
