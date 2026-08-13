@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Body tracking — IronStack{% endblock %}
+{% block content %}
+<div class="top-bar">
+  <h1 style="margin:0;">Body tracking</h1>
+  <a class="button" href="{% url 'measurements:type-create' %}">New</a>
+</div>
+
+{% for measurement_type in measurement_types %}
+  <a class="card card-link" href="{% url 'measurements:history' measurement_type.pk %}">
+    <strong>{{ measurement_type.name }}</strong>
+    {% if measurement_type.is_custom %}<span class="tag">Custom</span>{% endif %}
+    <div class="text-muted">
+      {% if measurement_type.latest_display is not None %}
+        Latest: {{ measurement_type.latest_display }} {{ measurement_type.unit_label }}
+      {% else %}
+        No readings yet
+      {% endif %}
+    </div>
+  </a>
+{% empty %}
+  <div class="card empty-state">
+    <p>No measurement types yet.</p>
+  </div>
+{% endfor %}
+{% endblock %}

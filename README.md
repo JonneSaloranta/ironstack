@@ -100,6 +100,26 @@ rendering bug during manual verification: Python's `str, Enum` mix
 stringifies as `Confidence.HIGH` instead of `high` — switched both
 `Confidence` and `ProgressionAction` to `enum.StrEnum`.
 
+Phase 8 (Body tracking) — `apps/measurements`: `MeasurementType`
+(system-seeded weight/body fat %/waist/chest/arm/thigh/hip/neck, plus
+user-created custom types — same ownership/soft-delete pattern as
+`apps.exercises.Exercise`) and `BodyMeasurement` (a time-stamped
+reading). `apps.core.units` gained cm/inch conversions (circumferences
+round-trip through the meters canonical unit at 0.1mm precision so no
+realistic input gets rounded away); `apps.measurements.units` dispatches
+by `unit_kind` plus the user's metric/imperial preference onto those, so
+a value is entered and displayed in whatever unit the user actually
+reads, converted to canonical storage on save. Each type gets its own
+history page: a hand-rolled inline-SVG line chart (no new JS dependency —
+plotted server-side via `services.build_chart_series`, keeping the
+scaling/normalization math out of the template) alongside the full
+editable table, which doubles as the chart's accessible data source. 27
+new tests (161 total). Manual HTTP verification caught and fixed a real
+display bug the test suite's exact-value assertions didn't: the chart
+used raw 4-decimal-place canonical values instead of the user's converted
+display units — now both the chart and table read from the same
+converted values.
+
 ## Local development
 
 ```bash

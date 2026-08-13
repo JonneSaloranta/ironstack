@@ -4,9 +4,13 @@ from django.test import TestCase
 from django.urls import reverse
 
 from apps.core.units import (
+    cm_to_meters,
+    inches_to_meters,
     kg_to_lb,
     km_to_meters,
     lb_to_kg,
+    meters_to_cm,
+    meters_to_inches,
     meters_to_km,
     meters_to_miles,
     miles_to_meters,
@@ -30,6 +34,18 @@ class UnitConversionTests(TestCase):
     def test_conversions_use_decimal_not_float(self):
         result = kg_to_lb(Decimal("82.5"))
         self.assertIsInstance(result, Decimal)
+
+    def test_cm_round_trip_preserves_half_centimeter_precision(self):
+        # A body circumference reported to the nearest half-cm must not be
+        # rounded away by going through the meters canonical unit.
+        cm = Decimal("85.5")
+        meters = cm_to_meters(cm)
+        self.assertEqual(meters, Decimal("0.8550"))
+        self.assertEqual(meters_to_cm(meters), cm)
+
+    def test_inches_round_trip(self):
+        inches = Decimal("33.5")
+        self.assertEqual(meters_to_inches(inches_to_meters(inches)), inches)
 
 
 class HealthcheckTests(TestCase):

@@ -201,6 +201,17 @@ Supported measurements:
 
 Users may add custom measurements.
 
+Implemented as `MeasurementType` (system-seeded for the list above, plus
+user-created custom types — same ownership/soft-delete pattern as
+`Exercise`) with a `unit_kind` (weight/length/percentage) that decides how
+`apps.measurements.units` converts a reading between canonical storage
+and the user's display unit: weight in kg/lb, length (circumferences) in
+cm/inches, percentage unconverted. Canonical storage follows
+`ARCHITECTURE.md`'s "meters for distance" rule even for circumferences,
+at enough decimal places (0.1mm) that a cm/inch round-trip never loses
+precision — display values are then rounded to what's actually worth
+looking at (0.01 kg, 0.1 cm/inch) independently of that storage decision.
+
 ## PR
 
 PRs should be derived from historical performance and/or stored as immutable achievement records where useful.

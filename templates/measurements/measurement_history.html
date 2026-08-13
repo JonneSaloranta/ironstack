@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}{{ measurement_type.name }} — IronStack{% endblock %}
+{% block content %}
+<div class="top-bar">
+  <h1 style="margin:0;">{{ measurement_type.name }}</h1>
+  {% if not measurement_type.active %}<span class="tag tag-muted">Inactive</span>{% endif %}
+</div>
+
+{% if chart %}
+  {% include "measurements/_chart.html" %}
+{% endif %}
+
+<form class="card" method="post" action="{% url 'measurements:log' measurement_type.pk %}">
+  {% csrf_token %}
+  {{ form.non_field_errors }}
+  {% for field in form %}
+    <div class="field">
+      {{ field.label_tag }}
+      {{ field }}
+      {% if field.errors %}<p class="field-error">{{ field.errors|striptags }}</p>{% endif %}
+    </div>
+  {% endfor %}
+  <button type="submit">Log reading</button>
+</form>
+
+<table class="set-table">
+  <thead>
+    <tr><th>Date</th><th>Value</th><th></th></tr>
+  </thead>
+  <tbody>
+    {% for entry in history %}
+      <tr>
+        <td>{{ entry.recorded_at|date:"Y-m-d H:i" }}</td>
+        <td>{{ entry.display_value }} {{ unit_label }}</td>
+        <td class="set-actions">
+          <a href="{% url 'measurements:entry-edit' entry.pk %}">Edit</a>
+          <form method="post" action="{% url 'measurements:entry-delete' entry.pk %}" onsubmit="return confirm('Delete this reading?');">
+            {% csrf_token %}
+            <button type="submit" class="button-danger">Delete</button>
+          </form>
+        </td>
+      </tr>
+    {% empty %}
+      <tr><td colspan="3" class="text-muted">No readings logged yet.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% if can_deactivate and measurement_type.active %}
+  <form method="post" action="{% url 'measurements:type-deactivate' measurement_type.pk %}" onsubmit="return confirm('Deactivate this measurement type? It will no longer appear when logging new readings.');">
+    {% csrf_token %}
+    <button type="submit" class="button-danger">Deactivate type</button>
+  </form>
+{% endif %}
+
+<p><a href="{% url 'measurements:type-list' %}">&larr; Back to body tracking</a></p>
+{% endblock %}
