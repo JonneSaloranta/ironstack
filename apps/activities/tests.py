@@ -293,3 +293,40 @@ class CustomActivityTypeFlowTests(TestCase):
         response = self.client.get(reverse("activities:type-list"))
         names = {at.name for at in response.context["activity_types"]}
         self.assertNotIn("Climbing", names)
+
+
+class ActivityTypeListEntryCountTests(TestCase):
+    """Regression coverage for the list page's Count annotation (Phase 11
+    query review): must count only the logged-in user's own entries
+    against a type, even though a system type is shared by every user."""
+
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        self.bob = User.objects.create_user(username="bob", password="s3cret-pass")
+        self.activity_type = ActivityType.objects.get(name="Running")
+        self.client.login(username="alice", password="s3cret-pass")
+
+    def test_entry_count_reflects_only_the_current_users_activities(self):
+        Activity.objects.create(
+            user=self.alice,
+            activity_type=self.activity_type,
+            date="2026-01-01",
+            duration=timedelta(minutes=30),
+        )
+        Activity.objects.create(
+            user=self.bob,
+            activity_type=self.activity_type,
+            date="2026-01-01",
+            duration=timedelta(minutes=30),
+        )
+        Activity.objects.create(
+            user=self.bob,
+            activity_type=self.activity_type,
+            date="2026-01-02",
+            duration=timedelta(minutes=30),
+        )
+        response = self.client.get(reverse("activities:type-list"))
+        running = next(
+            at for at in response.context["activity_types"] if at.pk == self.activity_type.pk
+        )
+        self.assertEqual(running.entry_count, 1)

@@ -107,6 +107,32 @@ input[type="radio"] {
   outline-offset: 2px;
 }
 
+/* Visually hidden until focused — lets keyboard/screen-reader users jump
+   past the nav straight to the page content. */
+.skip-link {
+  position: absolute;
+  top: -3rem;
+  left: 0.5rem;
+  z-index: 100;
+  background: var(--color-accent);
+  color: #fff;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius);
+  text-decoration: none;
+}
+
+.skip-link:focus {
+  top: 0.5rem;
+}
+
+/* Free loading feedback for every HTMX interaction in the app — htmx
+   adds/removes this class on the triggering element automatically
+   around each request, no per-form wiring needed. */
+.htmx-request {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
 /* Mobile bottom navigation */
 .bottom-nav {
   position: fixed;
@@ -243,6 +269,12 @@ h2 {
 }
 
 /* Workout logging */
+/* Wide tables scroll within themselves on narrow screens rather than
+   pushing the whole page wider (mobile-first, docs/UI.md). */
+.table-wrap {
+  overflow-x: auto;
+}
+
 .set-table {
   width: 100%;
   border-collapse: collapse;

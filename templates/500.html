@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Something went wrong — IronStack</title>
+  <style>
+    /* Deliberately standalone: Django renders 500.html with no request
+       context and no context processors (the error may mean the DB or
+       session backend itself is down), so this can't rely on {% url %},
+       {% static %}, or anything else base.html depends on — inline
+       styles only, matching the app's usual dark palette by hand. */
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #101317;
+      color: #e7eaee;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    }
+    .card {
+      max-width: 24rem;
+      margin: 1rem;
+      padding: 1.5rem;
+      background: #181c22;
+      border: 1px solid #2a2f37;
+      border-radius: 0.5rem;
+      text-align: center;
+    }
+    a { color: #5b9dfd; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <p>Something went wrong on our end. Your data is safe — try again in a moment.</p>
+    <p><a href="/">Back to dashboard</a></p>
+  </div>
+</body>
+</html>

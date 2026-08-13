@@ -1,9 +1,11 @@
 from datetime import timedelta
 from decimal import Decimal
 
-from django.test import TestCase
+from django.core.exceptions import PermissionDenied
+from django.test import RequestFactory, TestCase, override_settings
 from django.urls import reverse
 from django.utils import timezone
+from django.views.defaults import permission_denied
 
 from apps.core.charts import build_bar_series, build_chart_series
 from apps.core.units import (
@@ -128,6 +130,27 @@ class BarSeriesServiceTests(TestCase):
     def test_category_order_is_preserved_not_resorted(self):
         series = build_bar_series([("Z", Decimal("1")), ("A", Decimal("5"))])
         self.assertEqual([bar.label for bar in series.bars], ["Z", "A"])
+
+
+class ErrorPageTests(TestCase):
+    """Phase 11 polish: custom 404/403 pages instead of the bare Django/
+    browser default, styled consistently with the rest of the app. Only
+    rendered with DEBUG=False — Django shows its own debug page otherwise,
+    which is what dev should see."""
+
+    @override_settings(DEBUG=False, ALLOWED_HOSTS=["testserver"])
+    def test_404_uses_the_custom_template(self):
+        response = self.client.get("/this-page-does-not-exist/")
+        self.assertEqual(response.status_code, 404)
+        self.assertTemplateUsed(response, "404.html")
+        self.assertContains(response, "Back to dashboard", status_code=404)
+
+    @override_settings(DEBUG=False, ALLOWED_HOSTS=["testserver"])
+    def test_403_uses_the_custom_template(self):
+        request = RequestFactory().get("/")
+        response = permission_denied(request, PermissionDenied())
+        self.assertEqual(response.status_code, 403)
+        self.assertIn(b"permission", response.content.lower())
 
 
 class HealthcheckTests(TestCase):

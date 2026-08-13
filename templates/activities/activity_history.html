@@ -33,6 +33,7 @@
   <button type="submit">Log activity</button>
 </form>
 
+<div class="table-wrap">
 <table class="set-table">
   <thead>
     <tr><th>Date</th><th>Duration</th><th>Distance</th><th></th></tr>
@@ -56,6 +57,7 @@
     {% endfor %}
   </tbody>
 </table>
+</div>
 
 {% if can_deactivate and activity_type.active %}
   <form method="post" action="{% url 'activities:type-deactivate' activity_type.pk %}" onsubmit="return confirm('Deactivate this activity type? It will no longer appear when logging new activities.');">

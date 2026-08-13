@@ -64,7 +64,9 @@ class PersonalRecord(TimeStampedModel):
         on_delete=models.SET_NULL,
         related_name="prs_achieved",
     )
-    achieved_at = models.DateTimeField()
+    # Indexed: PR history (Meta.ordering below, apps.analytics.pr_history)
+    # orders and range-filters by this on every request.
+    achieved_at = models.DateTimeField(db_index=True)
 
     class Meta:
         ordering = ["-achieved_at"]

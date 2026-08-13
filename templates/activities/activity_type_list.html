@@ -11,8 +11,8 @@
     <strong>{{ activity_type.name }}</strong>
     {% if activity_type.is_custom %}<span class="tag">Custom</span>{% endif %}
     <div class="text-muted">
-      {% if activity_type.summary.count %}
-        {{ activity_type.summary.count }} logged
+      {% if activity_type.entry_count %}
+        {{ activity_type.entry_count }} logged
       {% else %}
         No activities yet
       {% endif %}

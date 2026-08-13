@@ -118,6 +118,17 @@ class ProgramViewPermissionTests(TestCase):
         self.assertEqual(response.status_code, 404)
         self.assertFalse(self.bob_program.workouts.filter(name="Sneaky Workout").exists())
 
+    def test_list_annotates_workout_count_correctly(self):
+        """Regression coverage for Phase 11's query-count fix: the list
+        page annotates workout_count in the queryset instead of calling
+        `program.workouts.count` per row in the template."""
+        program = Program.objects.create(owner=self.alice, name="Annotated Program")
+        Workout.objects.create(program=program, name="Day 1")
+        Workout.objects.create(program=program, name="Day 2")
+        response = self.client.get(reverse("programs:program-list"))
+        found = next(p for p in response.context["programs"] if p.pk == program.pk)
+        self.assertEqual(found.workout_count, 2)
+
     def test_can_view_system_template(self):
         template = Program.objects.get(name="Full Body A/B/C", owner=None)
         response = self.client.get(

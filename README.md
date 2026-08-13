@@ -171,6 +171,69 @@ right all along. Also confirmed the estimated-1RM trend, both bar
 charts, and the date-range filter each read correctly against real
 multi-session history over HTTP.
 
+Phase 11 (Polish) — final pass across the whole app rather than one app's
+worth of new features:
+
+- **Query review**: two real N+1s found and fixed. The programs list
+  called `program.workouts.count` per row in the template (twice —
+  once for the number, once for `|pluralize`); the activities list
+  called the full `services.summarize()` per row, materializing every
+  logged `Activity` row just to display a count. Both replaced with a
+  single annotated `Count()` query per list — the activities fix
+  specifically filters on the current user (`Count("activities",
+  filter=Q(activities__user=user))`), since an unfiltered count would
+  have shown every user's total against a shared system type. Added
+  `db_index=True` to the four date fields every history/analytics view
+  filters and orders by (`WorkoutSession.started_at`,
+  `PersonalRecord.achieved_at`, `BodyMeasurement.recorded_at`,
+  `Activity.date`) — targeted at query patterns already built, not
+  speculative.
+- **Accessibility**: a skip-to-content link, `.htmx-request` styling so
+  every HTMX interaction in the app gets free loading feedback with no
+  per-form wiring, and an audit confirming every hand-rolled `<input>`/
+  `<select>` outside the standard `field.label_tag` form loop already
+  carries an explicit `aria-label`.
+- **Error handling**: custom 404/403 templates (extend `base.html` —
+  Django passes them a normal request context) and a deliberately
+  *standalone* 500 template with hand-copied inline styles, since Django
+  renders it with no context processors at all — the moment it's needed
+  may mean the DB or session backend itself is down, so it can't lean on
+  `{% url %}`, `{% static %}`, or anything else `base.html` depends on.
+- **Mobile**: wide tables (set logging, measurement/activity history)
+  now scroll within themselves (`.table-wrap { overflow-x: auto }`)
+  instead of pushing the whole page wider on narrow screens.
+- **A real functional gap, not just visual polish**: the "Profile"
+  bottom-nav tab had been a dead `href="#"` placeholder since Phase 1 —
+  and `unit_system`/`timezone` had driven unit conversion since Phase 8
+  with no UI to ever change them after signup. Built
+  `apps.accounts.ProfileView` (unit system, timezone — a real
+  `zoneinfo.available_timezones()` dropdown, not free text) and wired up
+  Django's built-in password-change flow, whose URLs had existed since
+  Phase 1 but had no templates — visiting `/accounts/password_change/`
+  would have thrown `TemplateDoesNotExist`.
+- **Docker production review**: `python manage.py check --deploy`
+  against `config.settings.production` passes clean. Found and fixed a
+  real deployment footgun: the bundled nginx config is HTTP-only, but
+  `DJANGO_SECURE_SSL_REDIRECT` defaults `true` — deployed exactly as
+  shipped, this is an infinite redirect loop (nginx always reports
+  `X-Forwarded-Proto: http`, Django redirects every request to HTTPS,
+  which routes right back through the same HTTP-only nginx). Documented
+  clearly in `docs/SECURITY.md` with the three ways to actually resolve
+  it, rather than silently shipping a broken default or bundling
+  certificate automation that can't be generically tested without a real
+  domain. Also added a `web` healthcheck (hits the existing `/healthz/`)
+  and gated nginx's startup on it (`depends_on: web: condition:
+  service_healthy`) instead of nginx merely waiting for the container to
+  start rather than actually be ready — verified live: nginx now visibly
+  waits through "Waiting → Healthy" before starting. Added explicit
+  gunicorn worker/timeout/logging flags, previously left at gunicorn's
+  bare defaults (1 worker).
+- 10 new tests (232 total): profile updates (including an invalid-
+  timezone rejection), the password-change flow end-to-end (change
+  password, confirm the new one authenticates), both N+1 fixes'
+  annotated counts (including the cross-user scoping correctness for the
+  activities one), and the custom error templates.
+
 ## Local development
 
 ```bash
@@ -211,6 +274,11 @@ Compose merges in automatically. Do not ship it to a server. On the
 production host, only `docker-compose.yml` should be present, and `.env`
 must set real secrets, `DJANGO_ALLOWED_HOSTS`, etc. — see
 `docs/SECURITY.md`.
+
+**Before your first production deploy**, read `docs/SECURITY.md`'s "TLS"
+section — the bundled nginx config is HTTP-only, and the default
+`DJANGO_SECURE_SSL_REDIRECT=true` will redirect-loop until you either put
+a TLS-terminating proxy in front of this stack or explicitly opt out.
 
 ```bash
 docker compose -f docker-compose.yml up -d --build

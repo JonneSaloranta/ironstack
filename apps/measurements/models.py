@@ -80,7 +80,8 @@ class BodyMeasurement(TimeStampedModel):
         MeasurementType, related_name="measurements", on_delete=models.PROTECT
     )
     value = models.DecimalField(max_digits=8, decimal_places=4)
-    recorded_at = models.DateTimeField(default=timezone.now)
+    # Indexed: history/chart pages (Meta.ordering below) order by this.
+    recorded_at = models.DateTimeField(default=timezone.now, db_index=True)
     notes = models.TextField(blank=True)
 
     class Meta:

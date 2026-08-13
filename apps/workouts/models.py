@@ -39,7 +39,9 @@ class WorkoutSession(TimeStampedModel):
         choices=WorkoutSessionStatus.choices,
         default=WorkoutSessionStatus.IN_PROGRESS,
     )
-    started_at = models.DateTimeField(default=timezone.now)
+    # Indexed: every history/analytics view orders and range-filters by
+    # this (Meta.ordering below, apps.analytics.dateranges filters).
+    started_at = models.DateTimeField(default=timezone.now, db_index=True)
     ended_at = models.DateTimeField(null=True, blank=True)
 
     class Meta:

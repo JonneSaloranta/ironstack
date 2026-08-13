@@ -1,4 +1,5 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import Count
 from django.http import HttpResponseNotAllowed
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
@@ -14,13 +15,17 @@ class ProgramListView(LoginRequiredMixin, ListView):
     context_object_name = "programs"
 
     def get_queryset(self):
-        return services.editable_by(self.request.user)
+        # Annotated once here rather than `program.workouts.count` in the
+        # template, which would issue its own COUNT query per row (and
+        # twice per row at that, once for the number and once for
+        # |pluralize) instead of one query for the whole list.
+        return services.editable_by(self.request.user).annotate(workout_count=Count("workouts"))
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["templates"] = Program.objects.filter(
             owner__isnull=True, is_template=True
-        )
+        ).annotate(workout_count=Count("workouts"))
         return context
 
 

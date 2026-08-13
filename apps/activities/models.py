@@ -65,7 +65,8 @@ class Activity(TimeStampedModel):
     activity_type = models.ForeignKey(
         ActivityType, related_name="activities", on_delete=models.PROTECT
     )
-    date = models.DateField()
+    # Indexed: history/chart pages (Meta.ordering below) order by this.
+    date = models.DateField(db_index=True)
     start_time = models.TimeField(null=True, blank=True)
     duration = models.DurationField()
     distance = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)

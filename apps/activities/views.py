@@ -1,6 +1,7 @@
 import dataclasses
 
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import Count, Q
 from django.http import HttpResponseNotAllowed
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
@@ -16,14 +17,16 @@ class ActivityTypeListView(LoginRequiredMixin, ListView):
     context_object_name = "activity_types"
 
     def get_queryset(self):
-        return services.visible_to(self.request.user)
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
+        # The list page only needs a count per type — annotate it in one
+        # query rather than materializing every logged Activity row per
+        # type via services.summarize() (which the history page needs in
+        # full, but the list page doesn't). Filtered on this user
+        # explicitly: activity_type may be a system type shared by every
+        # user, so an unfiltered Count would leak other users' totals.
         user = self.request.user
-        for activity_type in context["activity_types"]:
-            activity_type.summary = services.summarize(services.history_for(user, activity_type))
-        return context
+        return services.visible_to(user).annotate(
+            entry_count=Count("activities", filter=Q(activities__user=user))
+        )
 
 
 class ActivityTypeCreateView(LoginRequiredMixin, CreateView):

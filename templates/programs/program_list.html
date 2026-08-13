@@ -10,7 +10,7 @@
 {% for program in programs %}
   <a class="card card-link" href="{% url 'programs:program-detail' program.pk %}">
     <strong>{{ program.name }}</strong>
-    <div class="text-muted">{{ program.workouts.count }} workout{{ program.workouts.count|pluralize }}</div>
+    <div class="text-muted">{{ program.workout_count }} workout{{ program.workout_count|pluralize }}</div>
   </a>
 {% empty %}
   <div class="card empty-state">
@@ -24,7 +24,7 @@
   <div class="card">
     <a class="card-link" href="{% url 'programs:program-detail' template.pk %}">
       <strong>{{ template.name }}</strong>
-      <div class="text-muted">{{ template.workouts.count }} workout{{ template.workouts.count|pluralize }}</div>
+      <div class="text-muted">{{ template.workout_count }} workout{{ template.workout_count|pluralize }}</div>
     </a>
     <form method="post" action="{% url 'programs:program-copy' template.pk %}">
       {% csrf_token %}

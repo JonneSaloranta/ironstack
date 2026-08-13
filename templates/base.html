@@ -9,17 +9,18 @@
   <script src="{% static 'js/alpine.min.js' %}" defer></script>
 </head>
 <body>
+  <a class="skip-link" href="#main-content">Skip to content</a>
   {% if user.is_authenticated %}
   <nav class="bottom-nav" aria-label="Main navigation">
     <a href="{% url 'dashboard' %}" {% if request.resolver_match.url_name == 'dashboard' %}aria-current="page"{% endif %}>Home</a>
     <a href="{% url 'workouts:session-list' %}" {% if request.resolver_match.app_name == 'workouts' %}aria-current="page"{% endif %}>Workout</a>
     <a href="{% url 'programs:program-list' %}" {% if request.resolver_match.app_name == 'programs' %}aria-current="page"{% endif %}>Programs</a>
     <a href="{% url 'measurements:type-list' %}" {% if request.resolver_match.app_name == 'measurements' %}aria-current="page"{% endif %}>Progress</a>
-    <a href="#">Profile</a>
+    <a href="{% url 'profile' %}" {% if request.resolver_match.url_name == 'profile' %}aria-current="page"{% endif %}>Profile</a>
   </nav>
   {% endif %}
 
-  <main class="container">
+  <main class="container" id="main-content">
     {% if messages %}
       {% for message in messages %}
         <div class="card" role="status">{{ message }}</div>
