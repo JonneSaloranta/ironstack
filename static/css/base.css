@@ -469,26 +469,31 @@ h2 {
   font-size: 0.9rem;
 }
 
-/* Desktop: sidebar layout, bottom nav hidden */
+/* Desktop: horizontal top nav bar (not a sidebar) — same flex-direction:
+   row as mobile, just pinned to the top instead of the bottom, so the
+   nav items behave like a normal horizontal bar rather than stretching
+   to fill a sidebar's height. */
 @media (min-width: 768px) {
   body {
     padding-bottom: 0;
-    display: grid;
-    grid-template-columns: 14rem 1fr;
-    min-height: 100vh;
   }
 
   .bottom-nav {
-    position: static;
-    flex-direction: column;
+    position: sticky;
+    top: 0;
+    z-index: 10;
     height: auto;
-    width: 14rem;
+    min-height: var(--nav-height);
+    justify-content: center;
     border-top: none;
-    border-right: 1px solid var(--color-border);
+    border-bottom: 1px solid var(--color-border);
   }
 
   .bottom-nav a {
-    justify-content: flex-start;
+    /* Un-set the mobile flex:1 (equal-width tabs filling a narrow
+       screen) — on a wide desktop bar that would stretch 5 links across
+       the full viewport width with huge gaps; size to content instead. */
+    flex: none;
     padding: 0.75rem 1.5rem;
     font-size: 1rem;
   }

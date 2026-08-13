@@ -8,6 +8,7 @@ from django.utils import timezone
 from django.views.defaults import permission_denied
 
 from apps.core.charts import build_bar_series, build_chart_series
+from apps.core.templatetags.core_extras import duration
 from apps.core.units import (
     cm_to_meters,
     inches_to_meters,
@@ -51,6 +52,35 @@ class UnitConversionTests(TestCase):
     def test_inches_round_trip(self):
         inches = Decimal("33.5")
         self.assertEqual(meters_to_inches(inches_to_meters(inches)), inches)
+
+
+class DurationFilterTests(TestCase):
+    """Regression: a raw {{ some_timedelta }} rendered real seconds/
+    microseconds from whenever a session was actually started/completed
+    (e.g. "0:03:19.893476") — meaningless noise for a training-time
+    stat. See apps.core.templatetags.core_extras.duration."""
+
+    def test_none_renders_as_empty_string(self):
+        self.assertEqual(duration(None), "")
+
+    def test_minutes_only(self):
+        self.assertEqual(duration(timedelta(minutes=45)), "45min")
+
+    def test_hours_and_minutes(self):
+        self.assertEqual(duration(timedelta(hours=1, minutes=15)), "1h 15min")
+
+    def test_whole_hours_only(self):
+        self.assertEqual(duration(timedelta(hours=2)), "2h")
+
+    def test_rounds_to_the_nearest_minute_dropping_seconds_and_microseconds(self):
+        messy = timedelta(hours=0, minutes=3, seconds=19, microseconds=893475)
+        self.assertEqual(duration(messy), "3min")
+
+    def test_seconds_round_up_into_the_next_minute_when_past_the_halfway_point(self):
+        self.assertEqual(duration(timedelta(minutes=1, seconds=31)), "2min")
+
+    def test_zero_duration(self):
+        self.assertEqual(duration(timedelta()), "0min")
 
 
 class ChartSeriesServiceTests(TestCase):
@@ -168,8 +198,8 @@ class DashboardAccessTests(TestCase):
 
 
 class DashboardWidgetsTests(TestCase):
-    """docs/UI.md dashboard content: this week's volume, recent PRs, body
-    weight — see apps.core.views.DashboardView."""
+    """docs/UI.md dashboard content: this week's workouts/volume, recent
+    PRs, body weight — see apps.core.views.DashboardView."""
 
     def setUp(self):
         from django.contrib.auth import get_user_model
@@ -183,6 +213,26 @@ class DashboardWidgetsTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context["week_summary"].session_count, 0)
         self.assertIsNone(response.context["body_weight"])
+
+    def test_this_weeks_workout_count_is_shown_not_just_computed(self):
+        """Regression: week_summary.session_count was already computed
+        into the context but never rendered anywhere on the page."""
+        from datetime import timedelta
+
+        from apps.exercises.models import Exercise
+        from apps.workouts import services as workout_services
+
+        exercise = Exercise.objects.create(name="Test Row", owner=None)
+        session = workout_services.start_session(self.alice, workout=None)
+        performed = workout_services.add_performed_exercise(session, exercise)
+        workout_services.log_set(performed, weight=Decimal("40"), reps=10)
+        workout_services.complete_session(session)
+        session.ended_at = session.started_at + timedelta(minutes=20)
+        session.save(update_fields=["ended_at"])
+
+        response = self.client.get(reverse("dashboard"))
+        self.assertEqual(response.context["week_summary"].session_count, 1)
+        self.assertContains(response, "This week's workouts")
 
     def test_body_weight_widget_shows_the_latest_reading_in_display_units(self):
         from decimal import Decimal

@@ -34,6 +34,18 @@ class ActivityForm(forms.ModelForm):
             "calories",
             "notes",
         ]
+        widgets = {
+            # Native browser date/time pickers instead of a plain text
+            # field the user has to type by hand. The explicit `format=`
+            # matters here, not just the `type=` attrs: without it, the
+            # widget pre-fills an existing value using Django's
+            # locale-dependent DATE_INPUT_FORMATS/TIME_INPUT_FORMATS,
+            # which don't reliably match what `type="date"`/`type="time"`
+            # expect (YYYY-MM-DD / HH:MM) — same pitfall as
+            # datetime-local inputs elsewhere in this app.
+            "date": forms.DateInput(attrs={"type": "date"}, format="%Y-%m-%d"),
+            "start_time": forms.TimeInput(attrs={"type": "time"}, format="%H:%M"),
+        }
 
     def __init__(self, *args, user=None, activity_type=None, **kwargs):
         self.user = user

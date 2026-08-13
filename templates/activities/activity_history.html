@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load core_extras %}
 {% block title %}{{ activity_type.name }} — IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
@@ -9,7 +10,7 @@
 {% if summary.count %}
   <div class="card">
     <p class="text-muted">
-      {{ summary.count }} logged · total duration {{ summary.total_duration }}
+      {{ summary.count }} logged · total duration {{ summary.total_duration|duration }}
       {% if summary.total_distance is not None %} · total distance {{ summary.total_distance }} {{ distance_label }}{% endif %}
       {% if summary.total_calories is not None %} · total calories {{ summary.total_calories }}{% endif %}
     </p>
@@ -43,7 +44,7 @@
     {% for entry in history %}
       <tr>
         <td>{{ entry.date|date:"Y-m-d" }}{% if entry.start_time %} {{ entry.start_time|time:"H:i" }}{% endif %}</td>
-        <td>{{ entry.duration }}</td>
+        <td>{{ entry.duration|duration }}</td>
         <td>{% if entry.display_distance is not None %}{{ entry.display_distance }} {{ distance_label }}{% else %}—{% endif %}</td>
         <td class="set-actions">
           <a href="{% url 'activities:entry-edit' entry.pk %}">Edit</a>

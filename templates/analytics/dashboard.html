@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load core_extras %}
 {% block title %}Analytics — IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
@@ -10,7 +11,7 @@
 <div class="card">
   <dl class="stat-row">
     <div><dt>Workouts</dt><dd>{{ summary.session_count }}</dd></div>
-    <div><dt>Training time</dt><dd>{{ summary.total_duration }}</dd></div>
+    <div><dt>Training time</dt><dd>{{ summary.total_duration|duration }}</dd></div>
     <div><dt>Total volume</dt><dd>{{ summary.total_volume }} kg</dd></div>
   </dl>
 </div>

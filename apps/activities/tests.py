@@ -172,6 +172,30 @@ class LoggingFlowTests(TestCase):
         self.activity_type = ActivityType.objects.get(name="Running")
         self.client.login(username="alice", password="s3cret-pass")
 
+    def test_date_and_start_time_use_native_pickers_not_plain_text(self):
+        """Regression: date/start_time used to render as plain text
+        inputs the user had to type by hand instead of a native
+        calendar/clock picker."""
+        response = self.client.get(reverse("activities:history", args=[self.activity_type.pk]))
+        self.assertContains(response, 'type="date"')
+        self.assertContains(response, 'type="time"')
+
+    def test_editing_an_activity_pre_fills_the_date_and_time_pickers_correctly(self):
+        """The picker's pre-filled value must be ISO format
+        (YYYY-MM-DD / HH:MM) — Django's locale-dependent default
+        formatting doesn't reliably match what type="date"/type="time"
+        expect."""
+        entry = Activity.objects.create(
+            user=self.alice,
+            activity_type=self.activity_type,
+            date="2026-03-15",
+            start_time="07:30",
+            duration=timedelta(minutes=30),
+        )
+        response = self.client.get(reverse("activities:entry-edit", args=[entry.pk]))
+        self.assertContains(response, 'value="2026-03-15"')
+        self.assertContains(response, 'value="07:30"')
+
     def test_logging_an_activity_in_metric_converts_km_to_canonical_meters(self):
         response = self.client.post(
             reverse("activities:log", args=[self.activity_type.pk]),
