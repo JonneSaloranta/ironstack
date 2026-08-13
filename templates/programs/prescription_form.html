@@ -26,5 +26,6 @@
   </form>
 {% endif %}
 
-<p><a class="button-secondary" href="{% url 'programs:program-detail' program.pk %}">&larr; {% blocktrans with name=program.name %}Back to {{ name }}{% endblocktrans %}</a></p>
+{% trans program.name as program_display_name %}
+<p><a class="button-secondary" href="{% url 'programs:program-detail' program.pk %}">&larr; {% blocktrans with name=program_display_name %}Back to {{ name }}{% endblocktrans %}</a></p>
 {% endblock %}

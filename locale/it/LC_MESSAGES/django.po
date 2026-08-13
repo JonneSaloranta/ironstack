@@ -120,6 +120,135 @@ msgstr "Massimale di ripetizioni"
 msgid "Body Mass Index"
 msgstr "Indice di massa corporea"
 
+msgid "Ab Wheel Rollout"
+msgstr "Ab wheel"
+
+msgid "Barbell Back Squat"
+msgstr "Squat con bilanciere"
+
+msgid "Barbell Bench Press"
+msgstr "Panca piana con bilanciere"
+
+msgid "Barbell Row"
+msgstr "Rematore con bilanciere"
+
+msgid "Calf Raise"
+msgstr "Sollevamento polpacci"
+
+msgid "Conventional Deadlift"
+msgstr "Stacco da terra"
+
+msgid "Dumbbell Bench Press"
+msgstr "Panca piana con manubri"
+
+msgid "Dumbbell Bicep Curl"
+msgstr "Curl bicipiti con manubri"
+
+msgid "Dumbbell Shoulder Press"
+msgstr "Military press con manubri"
+
+msgid "Face Pull"
+msgstr "Face pull"
+
+msgid "Front Squat"
+msgstr "Front squat"
+
+msgid "Hammer Curl"
+msgstr "Curl a martello"
+
+msgid "Hip Thrust"
+msgstr "Hip thrust"
+
+msgid "Incline Barbell Bench Press"
+msgstr "Panca inclinata con bilanciere"
+
+msgid "Lat Pulldown"
+msgstr "Lat machine"
+
+msgid "Lateral Raise"
+msgstr "Alzate laterali"
+
+msgid "Leg Curl"
+msgstr "Leg curl"
+
+msgid "Leg Press"
+msgstr "Leg press"
+
+msgid "Overhead Press"
+msgstr "Military press"
+
+msgid "Plank"
+msgstr "Plank"
+
+msgid "Pull-Up"
+msgstr "Trazioni alla sbarra"
+
+msgid "Romanian Deadlift"
+msgstr "Stacco rumeno"
+
+msgid "Seated Cable Row"
+msgstr "Rematore al cavo da seduto"
+
+msgid "Skull Crusher"
+msgstr "French press"
+
+msgid "Triceps Pushdown"
+msgstr "Push down ai tricipiti"
+
+msgid "Abs"
+msgstr "Addominali"
+
+msgid "Back"
+msgstr "Schiena"
+
+msgid "Biceps"
+msgstr "Bicipiti"
+
+msgid "Calves"
+msgstr "Polpacci"
+
+msgid "Chest"
+msgstr "Petto"
+
+msgid "Forearms"
+msgstr "Avambracci"
+
+msgid "Glutes"
+msgstr "Glutei"
+
+msgid "Hamstrings"
+msgstr "Femorali"
+
+msgid "Quads"
+msgstr "Quadricipiti"
+
+msgid "Shoulders"
+msgstr "Spalle"
+
+msgid "Triceps"
+msgstr "Tricipiti"
+
+msgid "Barbell"
+msgstr "Bilanciere"
+
+msgid "Bodyweight"
+msgstr "Corpo libero"
+
+msgid "Cable"
+msgstr "Cavo"
+
+msgid "Dumbbell"
+msgstr "Manubrio"
+
+msgid "Kettlebell"
+msgstr "Kettlebell"
+
+msgid "Machine"
+msgstr "Macchina"
+
+msgid "Resistance Band"
+msgstr "Elastico"
+
 msgid "equipment"
 msgstr "attrezzatura"
 
@@ -203,6 +332,78 @@ msgstr "Incremento del peso (%(unit)s)"
 
 msgid "Minimum reps cannot exceed maximum reps."
 msgstr "Le ripetizioni minime non possono superare quelle massime."
+
+msgid "Full Body A/B/C"
+msgstr "Corpo intero A/B/C"
+
+msgid "Arnold Split (6-Day)"
+msgstr "Split di Arnold (6 giorni)"
+
+msgid "Push/Pull/Legs"
+msgstr "Push/Pull/Gambe"
+
+msgid "5x5 Strength (A/B)"
+msgstr "Forza 5x5 (A/B)"
+
+msgid "Upper/Lower Split (4-Day)"
+msgstr "Split Alto/Basso (4 giorni)"
+
+msgid "German Volume Training"
+msgstr "German Volume Training"
+
+msgid "A classic three-day full-body template: one squat/press/row day, one deadlift/press/pull day, and one accessory-focused day. Copy it and adjust weights/increments to your own."
+msgstr "Un classico modello full-body di tre giorni: un giorno di squat/panca/rematore, un giorno di stacco/panca/trazioni e un giorno dedicato agli esercizi accessori. Copialo e adatta pesi/incrementi a te stesso."
+
+msgid "The classic 6-day bodybuilding split popularized by Arnold Schwarzenegger in the 1970s: chest/back, shoulders/arms, and legs, each trained twice a week. Rotate through all three workouts, then repeat — not tied to fixed calendar days."
+msgstr "Il classico split da 6 giorni per il bodybuilding reso popolare da Arnold Schwarzenegger negli anni '70: petto/schiena, spalle/braccia e gambe, ciascuno allenato due volte a settimana. Ruota tra i tre allenamenti e ripeti — non legato a giorni fissi della settimana."
+
+msgid "A widely used 3-day split organized by movement pattern rather than body part: pushing muscles, pulling muscles, then legs. Popular for both strength and bodybuilding goals."
+msgstr "Uno split di 3 giorni molto diffuso, organizzato per schema di movimento anziché per gruppo muscolare: muscoli di spinta, muscoli di trazione, poi gambe. Popolare sia per obiettivi di forza che di bodybuilding."
+
+msgid "A classic beginner barbell strength program: two alternating full-body workouts built around low-rep, high-set compound lifts with linear weight progression each session."
+msgstr "Un classico programma di forza con bilanciere per principianti: due allenamenti full-body alternati costruiti attorno a esercizi multiarticolari a basse ripetizioni e alte serie, con progressione lineare del peso a ogni sessione."
+
+msgid "A 4-day split alternating upper-body and lower-body sessions twice each per week — a common middle ground between full-body and single-muscle-group routines, popular for balancing strength and volume without training every day."
+msgstr "Uno split di 4 giorni che alterna sessioni per la parte superiore e inferiore del corpo due volte a settimana ciascuna — una via di mezzo comune tra routine full-body e per singolo gruppo muscolare, popolare per bilanciare forza e volume senza allenarsi ogni giorno."
+
+msgid "The classic 10x10 high-volume method: one main lift per workout done for ten sets of ten reps at a fixed, moderate weight, paired with a lighter accessory movement. Brutal on paper, simple in practice — built for muscle growth, not 1-rep-max testing."
+msgstr "Il classico metodo ad alto volume 10x10: un esercizio principale per allenamento eseguito in dieci serie da dieci ripetizioni con un peso fisso e moderato, abbinato a un movimento accessorio più leggero. Brutale sulla carta, semplice nella pratica — pensato per l'ipertrofia, non per testare l'1RM."
+
+msgid "Workout A"
+msgstr "Allenamento A"
+
+msgid "Workout B"
+msgstr "Allenamento B"
+
+msgid "Workout C"
+msgstr "Allenamento C"
+
+msgid "Chest & Back"
+msgstr "Petto e schiena"
+
+msgid "Shoulders & Arms"
+msgstr "Spalle e braccia"
+
+msgid "Legs"
+msgstr "Gambe"
+
+msgid "Push"
+msgstr "Push"
+
+msgid "Pull"
+msgstr "Pull"
+
+msgid "Upper A"
+msgstr "Alto A"
+
+msgid "Lower A"
+msgstr "Basso A"
+
+msgid "Upper B"
+msgstr "Alto B"
+
+msgid "Lower B"
+msgstr "Basso B"
 
 msgid "Monday"
 msgstr "Lunedì"

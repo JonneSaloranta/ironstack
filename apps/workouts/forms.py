@@ -1,4 +1,5 @@
 from django import forms
+from django.utils.translation import gettext as _gettext
 from django.utils.translation import gettext_lazy as _
 
 from apps.core import units as core_units
@@ -73,3 +74,6 @@ class PerformedExerciseAddForm(forms.ModelForm):
     def __init__(self, *args, user=None, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields["exercise"].queryset = exercises_visible_to(user)
+        # See apps.programs.forms.ExercisePrescriptionForm's identical
+        # override for why this is needed at all.
+        self.fields["exercise"].label_from_instance = lambda obj: _gettext(obj.name)

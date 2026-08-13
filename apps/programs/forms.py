@@ -1,4 +1,5 @@
 from django import forms
+from django.utils.translation import gettext as _gettext
 from django.utils.translation import gettext_lazy as _
 
 from apps.core import units as core_units
@@ -82,6 +83,17 @@ class ExercisePrescriptionForm(forms.ModelForm):
         # Only exercises this user can actually see (system + own custom)
         # may be prescribed — mirrors apps.exercises visibility rules.
         self.fields["exercise"].queryset = exercises_visible_to(user)
+        # ModelChoiceField renders each <option> via str(exercise) by
+        # default (Exercise.__str__ returns self.name) — that bypasses
+        # the template layer entirely, so {% trans %} there can't reach
+        # it. label_from_instance is the documented hook for controlling
+        # that per-option text; gettext() (not the module's lazy `_`)
+        # since this runs per-request, with translation already active,
+        # not at class-definition time. A no-op for a user's own custom
+        # exercise (never in the seed catalog — see
+        # apps.exercises.i18n_content), same as everywhere else this
+        # pattern is used.
+        self.fields["exercise"].label_from_instance = lambda obj: _gettext(obj.name)
         unit_system = getattr(user, "unit_system", "metric")
         unit_label = core_units.weight_unit_label(unit_system)
         self.fields["target_weight"].label = _("Target weight (%(unit)s)") % {"unit": unit_label}

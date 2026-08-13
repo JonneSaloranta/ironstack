@@ -470,7 +470,7 @@ class DashboardWidgetsTests(TestCase):
             user=self.alice, measurement_type=body_weight_type, value=Decimal("82.5")
         )
         response = self.client.get(reverse("dashboard"))
-        self.assertContains(response, '<abbr title="Body Mass Index">BMI</abbr>')
+        self.assertContains(response, '<abbr tabindex="0" title="Body Mass Index">BMI</abbr>')
 
     def test_dashboard_does_not_duplicate_main_nav_destinations(self):
         """Regression: the dashboard used to carry its own "Analytics",

@@ -2,11 +2,11 @@
 {% for exercise in exercises %}
   <a class="card card-link" href="{% url 'exercises:exercise-detail' exercise.pk %}">
     <div>
-      <strong>{{ exercise.name }}</strong>
+      <strong>{% trans exercise.name %}</strong>
       {% if exercise.is_custom %}<span class="tag">{% trans "Custom" %}</span>{% endif %}
       <div class="text-muted">
-        {% for mg in exercise.primary_muscle_groups.all %}{{ mg.name }}{% if not forloop.last %}, {% endif %}{% endfor %}
-        {% if exercise.equipment %} · {{ exercise.equipment.name }}{% endif %}
+        {% for mg in exercise.primary_muscle_groups.all %}{% trans mg.name %}{% if not forloop.last %}, {% endif %}{% endfor %}
+        {% if exercise.equipment %} · {% trans exercise.equipment.name %}{% endif %}
       </div>
     </div>
   </a>

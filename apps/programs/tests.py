@@ -26,6 +26,8 @@ class ProgramTemplateSeedTests(TestCase):
             "Arnold Split (6-Day)": 3,
             "Push/Pull/Legs": 3,
             "5x5 Strength (A/B)": 2,
+            "Upper/Lower Split (4-Day)": 4,
+            "German Volume Training": 2,
         }
         for name, expected_count in expected_workout_counts.items():
             program = Program.objects.get(name=name, owner=None)
@@ -46,6 +48,30 @@ class ProgramTemplateSeedTests(TestCase):
                 workout__program=template
             ).count()
             self.assertEqual(copy_prescription_count, template_prescription_count)
+
+
+class ProgramContentTranslationTests(TestCase):
+    """Built-in template names/descriptions/workout names are content,
+    not UI chrome — see apps.programs.i18n_content and
+    docs/ARCHITECTURE.md "Internationalization"."""
+
+    def setUp(self):
+        self.alice = User.objects.create_user(
+            username="alice", password="s3cret-pass", language="fi"
+        )
+        self.client.login(username="alice", password="s3cret-pass")
+
+    def test_template_name_and_workout_name_render_translated(self):
+        program = Program.objects.get(name="Push/Pull/Legs", owner=None)
+        response = self.client.get(reverse("programs:program-detail", args=[program.pk]))
+        self.assertContains(response, "Työntö/Veto/Jalat")
+        self.assertNotContains(response, "Push/Pull/Legs")
+        self.assertContains(response, "Työntö")  # "Push" workout name
+
+    def test_a_users_own_program_name_is_never_translated(self):
+        program = Program.objects.create(owner=self.alice, name="My Weird Program")
+        response = self.client.get(reverse("programs:program-detail", args=[program.pk]))
+        self.assertContains(response, "My Weird Program")
 
 
 class ExercisePrescriptionModelTests(TestCase):
@@ -125,10 +151,10 @@ class ExercisePrescriptionUnitConversionTests(TestCase):
             )
         )
         self.assertContains(
-            response, '<abbr title="Rate of Perceived Exertion">RPE</abbr>'
+            response, '<abbr tabindex="0" title="Rate of Perceived Exertion">RPE</abbr>'
         )
-        self.assertContains(response, '<abbr title="Reps In Reserve">RIR</abbr>')
-        self.assertContains(response, '<abbr title="One-Rep Max">1RM</abbr>')
+        self.assertContains(response, '<abbr tabindex="0" title="Reps In Reserve">RIR</abbr>')
+        self.assertContains(response, '<abbr tabindex="0" title="One-Rep Max">1RM</abbr>')
 
 
 class ProgramVisibilityServiceTests(TestCase):

@@ -120,6 +120,135 @@ msgstr "Rep Max"
 msgid "Body Mass Index"
 msgstr "Body Mass Index"
 
+msgid "Ab Wheel Rollout"
+msgstr "Ab Wheel Rollout"
+
+msgid "Barbell Back Squat"
+msgstr "Barbell Back Squat"
+
+msgid "Barbell Bench Press"
+msgstr "Barbell Bench Press"
+
+msgid "Barbell Row"
+msgstr "Barbell Row"
+
+msgid "Calf Raise"
+msgstr "Calf Raise"
+
+msgid "Conventional Deadlift"
+msgstr "Conventional Deadlift"
+
+msgid "Dumbbell Bench Press"
+msgstr "Dumbbell Bench Press"
+
+msgid "Dumbbell Bicep Curl"
+msgstr "Dumbbell Bicep Curl"
+
+msgid "Dumbbell Shoulder Press"
+msgstr "Dumbbell Shoulder Press"
+
+msgid "Face Pull"
+msgstr "Face Pull"
+
+msgid "Front Squat"
+msgstr "Front Squat"
+
+msgid "Hammer Curl"
+msgstr "Hammer Curl"
+
+msgid "Hip Thrust"
+msgstr "Hip Thrust"
+
+msgid "Incline Barbell Bench Press"
+msgstr "Incline Barbell Bench Press"
+
+msgid "Lat Pulldown"
+msgstr "Lat Pulldown"
+
+msgid "Lateral Raise"
+msgstr "Lateral Raise"
+
+msgid "Leg Curl"
+msgstr "Leg Curl"
+
+msgid "Leg Press"
+msgstr "Leg Press"
+
+msgid "Overhead Press"
+msgstr "Overhead Press"
+
+msgid "Plank"
+msgstr "Plank"
+
+msgid "Pull-Up"
+msgstr "Pull-Up"
+
+msgid "Romanian Deadlift"
+msgstr "Romanian Deadlift"
+
+msgid "Seated Cable Row"
+msgstr "Seated Cable Row"
+
+msgid "Skull Crusher"
+msgstr "Skull Crusher"
+
+msgid "Triceps Pushdown"
+msgstr "Triceps Pushdown"
+
+msgid "Abs"
+msgstr "Abs"
+
+msgid "Back"
+msgstr "Back"
+
+msgid "Biceps"
+msgstr "Biceps"
+
+msgid "Calves"
+msgstr "Calves"
+
+msgid "Chest"
+msgstr "Chest"
+
+msgid "Forearms"
+msgstr "Forearms"
+
+msgid "Glutes"
+msgstr "Glutes"
+
+msgid "Hamstrings"
+msgstr "Hamstrings"
+
+msgid "Quads"
+msgstr "Quads"
+
+msgid "Shoulders"
+msgstr "Shoulders"
+
+msgid "Triceps"
+msgstr "Triceps"
+
+msgid "Barbell"
+msgstr "Barbell"
+
+msgid "Bodyweight"
+msgstr "Bodyweight"
+
+msgid "Cable"
+msgstr "Cable"
+
+msgid "Dumbbell"
+msgstr "Dumbbell"
+
+msgid "Kettlebell"
+msgstr "Kettlebell"
+
+msgid "Machine"
+msgstr "Machine"
+
+msgid "Resistance Band"
+msgstr "Resistance Band"
+
 msgid "equipment"
 msgstr "equipment"
 
@@ -203,6 +332,78 @@ msgstr "Weight increment (%(unit)s)"
 
 msgid "Minimum reps cannot exceed maximum reps."
 msgstr "Minimum reps cannot exceed maximum reps."
+
+msgid "Full Body A/B/C"
+msgstr "Full Body A/B/C"
+
+msgid "Arnold Split (6-Day)"
+msgstr "Arnold Split (6-Day)"
+
+msgid "Push/Pull/Legs"
+msgstr "Push/Pull/Legs"
+
+msgid "5x5 Strength (A/B)"
+msgstr "5x5 Strength (A/B)"
+
+msgid "Upper/Lower Split (4-Day)"
+msgstr "Upper/Lower Split (4-Day)"
+
+msgid "German Volume Training"
+msgstr "German Volume Training"
+
+msgid "A classic three-day full-body template: one squat/press/row day, one deadlift/press/pull day, and one accessory-focused day. Copy it and adjust weights/increments to your own."
+msgstr "A classic three-day full-body template: one squat/press/row day, one deadlift/press/pull day, and one accessory-focused day. Copy it and adjust weights/increments to your own."
+
+msgid "The classic 6-day bodybuilding split popularized by Arnold Schwarzenegger in the 1970s: chest/back, shoulders/arms, and legs, each trained twice a week. Rotate through all three workouts, then repeat — not tied to fixed calendar days."
+msgstr "The classic 6-day bodybuilding split popularized by Arnold Schwarzenegger in the 1970s: chest/back, shoulders/arms, and legs, each trained twice a week. Rotate through all three workouts, then repeat — not tied to fixed calendar days."
+
+msgid "A widely used 3-day split organized by movement pattern rather than body part: pushing muscles, pulling muscles, then legs. Popular for both strength and bodybuilding goals."
+msgstr "A widely used 3-day split organized by movement pattern rather than body part: pushing muscles, pulling muscles, then legs. Popular for both strength and bodybuilding goals."
+
+msgid "A classic beginner barbell strength program: two alternating full-body workouts built around low-rep, high-set compound lifts with linear weight progression each session."
+msgstr "A classic beginner barbell strength program: two alternating full-body workouts built around low-rep, high-set compound lifts with linear weight progression each session."
+
+msgid "A 4-day split alternating upper-body and lower-body sessions twice each per week — a common middle ground between full-body and single-muscle-group routines, popular for balancing strength and volume without training every day."
+msgstr "A 4-day split alternating upper-body and lower-body sessions twice each per week — a common middle ground between full-body and single-muscle-group routines, popular for balancing strength and volume without training every day."
+
+msgid "The classic 10x10 high-volume method: one main lift per workout done for ten sets of ten reps at a fixed, moderate weight, paired with a lighter accessory movement. Brutal on paper, simple in practice — built for muscle growth, not 1-rep-max testing."
+msgstr "The classic 10x10 high-volume method: one main lift per workout done for ten sets of ten reps at a fixed, moderate weight, paired with a lighter accessory movement. Brutal on paper, simple in practice — built for muscle growth, not 1-rep-max testing."
+
+msgid "Workout A"
+msgstr "Workout A"
+
+msgid "Workout B"
+msgstr "Workout B"
+
+msgid "Workout C"
+msgstr "Workout C"
+
+msgid "Chest & Back"
+msgstr "Chest & Back"
+
+msgid "Shoulders & Arms"
+msgstr "Shoulders & Arms"
+
+msgid "Legs"
+msgstr "Legs"
+
+msgid "Push"
+msgstr "Push"
+
+msgid "Pull"
+msgstr "Pull"
+
+msgid "Upper A"
+msgstr "Upper A"
+
+msgid "Lower A"
+msgstr "Lower A"
+
+msgid "Upper B"
+msgstr "Upper B"
+
+msgid "Lower B"
+msgstr "Lower B"
 
 msgid "Monday"
 msgstr "Monday"

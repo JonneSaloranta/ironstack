@@ -237,6 +237,33 @@ ISO 639-1 — not `ee`, which is Ewe).
   fuzzy-flagged entries at compile time, falling back to the English
   source, so a fuzzy match left unreviewed isn't just imprecise, it's
   invisible).
+- **Seeded content** (built-in exercise names, muscle groups, equipment,
+  program template names/descriptions, workout names —
+  `apps.exercises`/`apps.programs` migrations) *is* translated, unlike a
+  user's own data, using the same gettext catalog rather than a
+  model-translation library: the value **stored** in the database always
+  stays canonical English (it's what `get_or_create(name=...)` and
+  uniqueness constraints match against), but the **display** is looked
+  up through the catalog at render time via `{% trans someobj.name %}`
+  — Django's `trans` tag accepts a variable, not just a string literal,
+  and runs its resolved value through `gettext()`. Since `makemessages`
+  can only discover literal `_("...")`/`{% trans "..." %}` calls, not
+  what a variable will resolve to at runtime, `apps.exercises.i18n_content`
+  and `apps.programs.i18n_content` each hold a dedicated list of
+  `gettext_lazy("...")` calls for every one of these seeded values —
+  imported and executed by nothing, existing solely so `makemessages`
+  extracts them into the catalog `{% trans someobj.name %}` then looks
+  up. This is safe applied unconditionally, including on a user's own
+  data (a custom exercise name, a personal program name): a string with
+  no catalog entry is simply gettext's normal "no translation found"
+  case, rendering exactly as typed rather than erroring or corrupting
+  it. A `ModelChoiceField` (e.g. the exercise picker on a prescription
+  form) needs one extra step beyond the template tag, since Django
+  renders its `<option>` text via `str(obj)` internally, never reaching
+  the template layer at all — `label_from_instance` is overridden
+  (`apps.programs.forms.ExercisePrescriptionForm`,
+  `apps.workouts.forms.PerformedExerciseAddForm`) to route that same
+  text through `gettext()` too.
 
 ## API layer
 

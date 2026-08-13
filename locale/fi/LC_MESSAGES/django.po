@@ -120,6 +120,135 @@ msgstr "Toistomaksimi"
 msgid "Body Mass Index"
 msgstr "Painoindeksi"
 
+msgid "Ab Wheel Rollout"
+msgstr "Vatsapyörärullaus"
+
+msgid "Barbell Back Squat"
+msgstr "Takakyykky tangolla"
+
+msgid "Barbell Bench Press"
+msgstr "Penkkipunnerrus tangolla"
+
+msgid "Barbell Row"
+msgstr "Kulmasoutu tangolla"
+
+msgid "Calf Raise"
+msgstr "Pohjekohotus"
+
+msgid "Conventional Deadlift"
+msgstr "Maastaveto"
+
+msgid "Dumbbell Bench Press"
+msgstr "Penkkipunnerrus käsipainoilla"
+
+msgid "Dumbbell Bicep Curl"
+msgstr "Hauiskääntö käsipainoilla"
+
+msgid "Dumbbell Shoulder Press"
+msgstr "Pystypunnerrus käsipainoilla"
+
+msgid "Face Pull"
+msgstr "Face pull -veto"
+
+msgid "Front Squat"
+msgstr "Etukyykky"
+
+msgid "Hammer Curl"
+msgstr "Vasarakääntö"
+
+msgid "Hip Thrust"
+msgstr "Lantionnosto"
+
+msgid "Incline Barbell Bench Press"
+msgstr "Vinopenkkipunnerrus tangolla"
+
+msgid "Lat Pulldown"
+msgstr "Ylätalja"
+
+msgid "Lateral Raise"
+msgstr "Sivunosto"
+
+msgid "Leg Curl"
+msgstr "Reiden koukistus"
+
+msgid "Leg Press"
+msgstr "Jalkaprässi"
+
+msgid "Overhead Press"
+msgstr "Pystypunnerrus"
+
+msgid "Plank"
+msgstr "Lankku"
+
+msgid "Pull-Up"
+msgstr "Leuanveto"
+
+msgid "Romanian Deadlift"
+msgstr "Romanialainen maastaveto"
+
+msgid "Seated Cable Row"
+msgstr "Istumasoutu taljalla"
+
+msgid "Skull Crusher"
+msgstr "Ojentajapunnerrus tangolla"
+
+msgid "Triceps Pushdown"
+msgstr "Ojentajaveto taljalla"
+
+msgid "Abs"
+msgstr "Vatsa"
+
+msgid "Back"
+msgstr "Selkä"
+
+msgid "Biceps"
+msgstr "Hauis"
+
+msgid "Calves"
+msgstr "Pohkeet"
+
+msgid "Chest"
+msgstr "Rinta"
+
+msgid "Forearms"
+msgstr "Kyynärvarret"
+
+msgid "Glutes"
+msgstr "Pakarat"
+
+msgid "Hamstrings"
+msgstr "Takareidet"
+
+msgid "Quads"
+msgstr "Etureidet"
+
+msgid "Shoulders"
+msgstr "Hartiat"
+
+msgid "Triceps"
+msgstr "Ojentaja"
+
+msgid "Barbell"
+msgstr "Tanko"
+
+msgid "Bodyweight"
+msgstr "Oma keho"
+
+msgid "Cable"
+msgstr "Talja"
+
+msgid "Dumbbell"
+msgstr "Käsipaino"
+
+msgid "Kettlebell"
+msgstr "Kahvakuula"
+
+msgid "Machine"
+msgstr "Laite"
+
+msgid "Resistance Band"
+msgstr "Kuminauha"
+
 msgid "equipment"
 msgstr "välineet"
 
@@ -203,6 +332,78 @@ msgstr "Painon lisäys (%(unit)s)"
 
 msgid "Minimum reps cannot exceed maximum reps."
 msgstr "Vähimmäistoistomäärä ei voi olla suurempi kuin enimmäistoistomäärä."
+
+msgid "Full Body A/B/C"
+msgstr "Koko kehon A/B/C"
+
+msgid "Arnold Split (6-Day)"
+msgstr "Arnold-jako (6 päivää)"
+
+msgid "Push/Pull/Legs"
+msgstr "Työntö/Veto/Jalat"
+
+msgid "5x5 Strength (A/B)"
+msgstr "5x5-voima (A/B)"
+
+msgid "Upper/Lower Split (4-Day)"
+msgstr "Ylä/Ala-jako (4 päivää)"
+
+msgid "German Volume Training"
+msgstr "Saksalainen volyymiharjoittelu"
+
+msgid "A classic three-day full-body template: one squat/press/row day, one deadlift/press/pull day, and one accessory-focused day. Copy it and adjust weights/increments to your own."
+msgstr "Klassinen kolmen päivän koko kehon malli: yksi kyykky/punnerrus/soutu-päivä, yksi maastaveto/punnerrus/veto-päivä ja yksi apuliikkeisiin keskittyvä päivä. Kopioi se ja säädä painot/lisäykset omiksesi."
+
+msgid "The classic 6-day bodybuilding split popularized by Arnold Schwarzenegger in the 1970s: chest/back, shoulders/arms, and legs, each trained twice a week. Rotate through all three workouts, then repeat — not tied to fixed calendar days."
+msgstr "Klassinen 6 päivän kehonrakennusjako, jonka teki suosituksi Arnold Schwarzenegger 1970-luvulla: rinta/selkä, hartiat/kädet ja jalat, kukin harjoitettuna kahdesti viikossa. Kierrä kaikki kolme treeniä ja toista — ei sidottu tiettyihin viikonpäiviin."
+
+msgid "A widely used 3-day split organized by movement pattern rather than body part: pushing muscles, pulling muscles, then legs. Popular for both strength and bodybuilding goals."
+msgstr "Laajalti käytetty kolmen päivän jako, joka on järjestetty liikemallin, ei kehonosan, mukaan: työntävät lihakset, vetävät lihakset ja jalat. Suosittu sekä voima- että kehonrakennustavoitteisiin."
+
+msgid "A classic beginner barbell strength program: two alternating full-body workouts built around low-rep, high-set compound lifts with linear weight progression each session."
+msgstr "Klassinen aloittelijan tankovoimaohjelma: kaksi vuorottelevaa koko kehon treeniä, jotka rakentuvat vähätoistoisten, monisarjaisten moninivelliikkeiden ympärille lineaarisella painon nousulla joka kerta."
+
+msgid "A 4-day split alternating upper-body and lower-body sessions twice each per week — a common middle ground between full-body and single-muscle-group routines, popular for balancing strength and volume without training every day."
+msgstr "4 päivän jako, joka vuorottelee ylä- ja alavartalotreenejä kahdesti viikossa kumpaakin — yleinen välimuoto koko kehon ja yksittäisen lihasryhmän ohjelmien välillä, suosittu voiman ja volyymin tasapainottamiseen ilman päivittäistä treeniä."
+
+msgid "The classic 10x10 high-volume method: one main lift per workout done for ten sets of ten reps at a fixed, moderate weight, paired with a lighter accessory movement. Brutal on paper, simple in practice — built for muscle growth, not 1-rep-max testing."
+msgstr "Klassinen 10x10-korkean volyymin menetelmä: yksi päänostoliike per treeni tehtynä kymmenenä sarjana kymmentä toistoa kiinteällä, kohtuullisella painolla, yhdistettynä kevyempään apuliikkeeseen. Paperilla raaka, käytännössä yksinkertainen — rakennettu lihaskasvuun, ei 1RM-testaukseen."
+
+msgid "Workout A"
+msgstr "Treeni A"
+
+msgid "Workout B"
+msgstr "Treeni B"
+
+msgid "Workout C"
+msgstr "Treeni C"
+
+msgid "Chest & Back"
+msgstr "Rinta ja selkä"
+
+msgid "Shoulders & Arms"
+msgstr "Hartiat ja kädet"
+
+msgid "Legs"
+msgstr "Jalat"
+
+msgid "Push"
+msgstr "Työntö"
+
+msgid "Pull"
+msgstr "Veto"
+
+msgid "Upper A"
+msgstr "Ylävartalo A"
+
+msgid "Lower A"
+msgstr "Alavartalo A"
+
+msgid "Upper B"
+msgstr "Ylävartalo B"
+
+msgid "Lower B"
+msgstr "Alavartalo B"
 
 msgid "Monday"
 msgstr "Maanantai"

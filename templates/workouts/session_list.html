@@ -8,7 +8,7 @@
 
 {% for session in sessions %}
   <a class="card card-link" href="{% url 'workouts:session-detail' session.pk %}">
-    <strong>{% if session.workout %}{{ session.workout.name }}{% else %}{% trans "Freeform workout" %}{% endif %}</strong>
+    <strong>{% if session.workout %}{% trans session.workout.name %}{% else %}{% trans "Freeform workout" %}{% endif %}</strong>
     <span class="tag {% if session.status == 'completed' %}tag-success{% elif session.status == 'abandoned' %}tag-muted{% elif session.status == 'in_progress' %}tag-accent{% endif %}">{{ session.get_status_display }}</span>
     <div class="text-muted">{{ session.started_at|date:"Y-m-d H:i" }}</div>
   </a>

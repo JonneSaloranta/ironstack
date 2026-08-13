@@ -7,7 +7,8 @@
 </div>
 
 <div class="card">
-  <p>{% blocktrans with name=program.name %}Delete <strong>{{ name }}</strong> and all of its workouts and exercises? This cannot be undone.{% endblocktrans %}</p>
+  {% trans program.name as program_display_name %}
+  <p>{% blocktrans with name=program_display_name %}Delete <strong>{{ name }}</strong> and all of its workouts and exercises? This cannot be undone.{% endblocktrans %}</p>
   <form method="post">
     {% csrf_token %}
     <button type="submit" class="button-danger">{% trans "Delete" %}</button>

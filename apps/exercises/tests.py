@@ -15,6 +15,52 @@ class ExerciseLibrarySeedTests(TestCase):
         self.assertGreaterEqual(Equipment.objects.count(), 5)
         self.assertGreater(Exercise.objects.filter(owner=None).count(), 0)
 
+    def test_second_seed_migration_adds_more_exercises(self):
+        for name in [
+            "Romanian Deadlift",
+            "Front Squat",
+            "Incline Barbell Bench Press",
+            "Hip Thrust",
+            "Seated Cable Row",
+            "Face Pull",
+            "Lateral Raise",
+            "Hammer Curl",
+            "Skull Crusher",
+            "Ab Wheel Rollout",
+        ]:
+            self.assertTrue(
+                Exercise.objects.filter(name=name, owner=None).exists(), name
+            )
+
+
+class ExerciseContentTranslationTests(TestCase):
+    """Seeded exercise/muscle-group/equipment *names* are content, not UI
+    chrome — the stored value stays canonical English (matched by
+    get_or_create/uniqueness elsewhere), but the display goes through
+    gettext too, via apps.exercises.i18n_content's extraction catalog —
+    see docs/ARCHITECTURE.md "Internationalization"."""
+
+    def setUp(self):
+        self.alice = User.objects.create_user(
+            username="alice", password="s3cret-pass", language="fi"
+        )
+        self.client.login(username="alice", password="s3cret-pass")
+
+    def test_exercise_name_renders_translated_for_a_non_english_user(self):
+        exercise = Exercise.objects.get(name="Barbell Back Squat", owner=None)
+        response = self.client.get(reverse("exercises:exercise-detail", args=[exercise.pk]))
+        self.assertContains(response, "Takakyykky tangolla")
+        self.assertNotContains(response, "Barbell Back Squat")
+
+    def test_a_users_own_custom_exercise_name_is_never_translated(self):
+        """gettext only ever matches strings actually present in the
+        catalog — a custom name a user typed themselves was never
+        extracted into it, so it always renders exactly as typed,
+        regardless of UI language."""
+        exercise = Exercise.objects.create(name="My Weird Custom Move", owner=self.alice)
+        response = self.client.get(reverse("exercises:exercise-detail", args=[exercise.pk]))
+        self.assertContains(response, "My Weird Custom Move")
+
 
 class ExerciseModelTests(TestCase):
     def test_system_exercise_names_must_be_unique(self):

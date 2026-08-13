@@ -65,6 +65,13 @@ unique among system exercises, and unique per-user among a user's own
 custom exercises — two different users may each name a custom exercise the
 same thing.
 
+25 system exercises are seeded (`apps.exercises` migrations 0002, 0004),
+covering all 11 muscle groups across barbell/dumbbell/machine/cable/
+bodyweight/kettlebell equipment. System exercise (and `MuscleGroup`/
+`Equipment`) names are translated for display — the stored name always
+stays canonical English — see `ARCHITECTURE.md` → "Internationalization"
+for how.
+
 ## MuscleGroup
 
 Examples:
@@ -100,7 +107,12 @@ A program may optionally have a schedule.
 `is_template` marks a program as copyable rather than meant to be run
 directly — true for every built-in system program (`owner` null,
 seeded: a generic full-body split plus several well-known named
-programs — Arnold Split, Push/Pull/Legs, 5×5 Strength) and, on request,
+programs — Arnold Split, Push/Pull/Legs, 5×5 Strength, Upper/Lower
+Split, German Volume Training — 6 total, `apps.programs` migrations
+0002/0004/0006). Names/descriptions/workout names of these built-in
+templates are translated for display the same way system exercise names
+are (`ARCHITECTURE.md` → "Internationalization") — the stored value
+always stays canonical English. `is_template` is, on request,
 settable by a user on their own programs too, so someone can keep a
 personal template (e.g. "My PPL Template") and copy it into a fresh,
 independently-editable program each time they start a new training

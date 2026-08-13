@@ -232,6 +232,43 @@ input[type="radio"] {
   color: var(--color-text-muted);
 }
 
+/* Jargon abbreviations (RPE, RIR, 1RM, PR, BMI, ...) carry their full
+   expansion in `title`, but a plain `title` attribute has no touch
+   equivalent — iOS/Android give a touchscreen user no gesture that
+   reveals it, unlike a mouse's hover. Each `<abbr>` is made focusable
+   (`tabindex="0"`, apps.core.formatting.abbr_label / the same attribute
+   hand-written in templates) so tapping it *focuses* it, and this CSS
+   tooltip reveals `title` on `:focus` as well as `:hover` — the same
+   content, now reachable by tap, keyboard, and mouse alike. */
+abbr[title] {
+  text-decoration: underline dotted;
+  text-decoration-color: var(--color-text-muted);
+  cursor: help;
+  position: relative;
+}
+
+abbr[title]:focus {
+  outline: none;
+}
+
+abbr[title]:hover::after,
+abbr[title]:focus::after {
+  content: attr(title);
+  position: absolute;
+  left: 0;
+  bottom: 100%;
+  margin-bottom: 0.3rem;
+  padding: 0.35rem 0.5rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  color: var(--color-text);
+  font-size: 0.75rem;
+  font-weight: normal;
+  white-space: nowrap;
+  z-index: 20;
+}
+
 .exercise-filters {
   display: flex;
   gap: 0.5rem;

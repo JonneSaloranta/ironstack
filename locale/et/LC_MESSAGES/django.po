@@ -120,6 +120,135 @@ msgstr "Korduste maksimum"
 msgid "Body Mass Index"
 msgstr "Kehamassiindeks"
 
+msgid "Ab Wheel Rollout"
+msgstr "Kõhurullimine rattaga"
+
+msgid "Barbell Back Squat"
+msgstr "Kang-kükk"
+
+msgid "Barbell Bench Press"
+msgstr "Kangi lamades surumine"
+
+msgid "Barbell Row"
+msgstr "Kangi sõudmine"
+
+msgid "Calf Raise"
+msgstr "Sääretõsted"
+
+msgid "Conventional Deadlift"
+msgstr "Kangi tõmme maast"
+
+msgid "Dumbbell Bench Press"
+msgstr "Hantlitega lamades surumine"
+
+msgid "Dumbbell Bicep Curl"
+msgstr "Hantli biitsepsi tõste"
+
+msgid "Dumbbell Shoulder Press"
+msgstr "Hantlitega õlgade surumine"
+
+msgid "Face Pull"
+msgstr "Näotõmme"
+
+msgid "Front Squat"
+msgstr "Eesmine kükk"
+
+msgid "Hammer Curl"
+msgstr "Vasar-biitseps"
+
+msgid "Hip Thrust"
+msgstr "Puusatõste"
+
+msgid "Incline Barbell Bench Press"
+msgstr "Kaldpingi kangiga surumine"
+
+msgid "Lat Pulldown"
+msgstr "Ülemine tõmme"
+
+msgid "Lateral Raise"
+msgstr "Külgtõsted"
+
+msgid "Leg Curl"
+msgstr "Reie painutus"
+
+msgid "Leg Press"
+msgstr "Jalgade surumine"
+
+msgid "Overhead Press"
+msgstr "Ülapea surumine"
+
+msgid "Plank"
+msgstr "Planku"
+
+msgid "Pull-Up"
+msgstr "Kangile tõmme"
+
+msgid "Romanian Deadlift"
+msgstr "Rumeenia tõmme"
+
+msgid "Seated Cable Row"
+msgstr "Istudes tross-sõudmine"
+
+msgid "Skull Crusher"
+msgstr "Kolju-purustaja"
+
+msgid "Triceps Pushdown"
+msgstr "Trombiteosa surumine trossiga"
+
+msgid "Abs"
+msgstr "Kõhulihased"
+
+msgid "Back"
+msgstr "Selg"
+
+msgid "Biceps"
+msgstr "Biitseps"
+
+msgid "Calves"
+msgstr "Sääred"
+
+msgid "Chest"
+msgstr "Rind"
+
+msgid "Forearms"
+msgstr "Küünarvarred"
+
+msgid "Glutes"
+msgstr "Tuharad"
+
+msgid "Hamstrings"
+msgstr "Reie tagaküljed"
+
+msgid "Quads"
+msgstr "Reie esiküljed"
+
+msgid "Shoulders"
+msgstr "Õlad"
+
+msgid "Triceps"
+msgstr "Trombiteos"
+
+msgid "Barbell"
+msgstr "Kang"
+
+msgid "Bodyweight"
+msgstr "Kehakaal"
+
+msgid "Cable"
+msgstr "Tross"
+
+msgid "Dumbbell"
+msgstr "Hantel"
+
+msgid "Kettlebell"
+msgstr "Kettlebell"
+
+msgid "Machine"
+msgstr "Masin"
+
+msgid "Resistance Band"
+msgstr "Vastupanulint"
+
 msgid "equipment"
 msgstr "varustus"
 
@@ -203,6 +332,78 @@ msgstr "Kaalu suurendus (%(unit)s)"
 
 msgid "Minimum reps cannot exceed maximum reps."
 msgstr "Minimaalne korduste arv ei tohi ületada maksimaalset."
+
+msgid "Full Body A/B/C"
+msgstr "Terve keha A/B/C"
+
+msgid "Arnold Split (6-Day)"
+msgstr "Arnoldi jaotus (6 päeva)"
+
+msgid "Push/Pull/Legs"
+msgstr "Lükkamine/Tõmme/Jalad"
+
+msgid "5x5 Strength (A/B)"
+msgstr "5x5 jõud (A/B)"
+
+msgid "Upper/Lower Split (4-Day)"
+msgstr "Ülakeha/Alakeha jaotus (4 päeva)"
+
+msgid "German Volume Training"
+msgstr "Saksa mahutreening"
+
+msgid "A classic three-day full-body template: one squat/press/row day, one deadlift/press/pull day, and one accessory-focused day. Copy it and adjust weights/increments to your own."
+msgstr "Klassikaline kolmepäevane terve keha mall: kükk/surumine/sõudmine päev, tõmme/surumine/tõmme päev ning abiharjutustele keskenduv päev. Kopeeri see ja kohanda kaalusid/lisandusi enda järgi."
+
+msgid "The classic 6-day bodybuilding split popularized by Arnold Schwarzenegger in the 1970s: chest/back, shoulders/arms, and legs, each trained twice a week. Rotate through all three workouts, then repeat — not tied to fixed calendar days."
+msgstr "Klassikaline 6-päevane kehaehituse jaotus, mille tegi 1970. aastatel populaarseks Arnold Schwarzenegger: rind/selg, õlad/käed ja jalad, igaüks trennis kaks korda nädalas. Vaheta kõiki kolme trenni ja korda — ei ole seotud kindlate nädalapäevadega."
+
+msgid "A widely used 3-day split organized by movement pattern rather than body part: pushing muscles, pulling muscles, then legs. Popular for both strength and bodybuilding goals."
+msgstr "Laialt kasutatav 3-päevane jaotus, mis on korraldatud liikumismustri, mitte kehaosa järgi: lükkavad lihased, tõmbavad lihased ja seejärel jalad. Populaarne nii jõu- kui kehaehituse eesmärkidel."
+
+msgid "A classic beginner barbell strength program: two alternating full-body workouts built around low-rep, high-set compound lifts with linear weight progression each session."
+msgstr "Klassikaline algajate kangi jõuprogramm: kaks vahelduvat terve keha trenni, mis on üles ehitatud väheste kordustega, paljude seeriatega mitmeliigeselistele harjutustele koos lineaarse kaalu kasvuga igal korral."
+
+msgid "A 4-day split alternating upper-body and lower-body sessions twice each per week — a common middle ground between full-body and single-muscle-group routines, popular for balancing strength and volume without training every day."
+msgstr "4-päevane jaotus, mis vahetab ülakeha ja alakeha trenne kaks korda nädalas kumbagi — levinud kesktee terve keha ja üksiku lihasgrupi programmide vahel, populaarne jõu ja mahu tasakaalustamiseks ilma iga päev trennis käimata."
+
+msgid "The classic 10x10 high-volume method: one main lift per workout done for ten sets of ten reps at a fixed, moderate weight, paired with a lighter accessory movement. Brutal on paper, simple in practice — built for muscle growth, not 1-rep-max testing."
+msgstr "Klassikaline 10x10 suure mahu meetod: üks põhiharjutus trenni kohta, tehtud kümne seeriaga kümme kordust fikseeritud mõõduka kaaluga, koos kergema abiharjutusega. Paberil brutaalne, praktikas lihtne — loodud lihaskasvuks, mitte 1RM testimiseks."
+
+msgid "Workout A"
+msgstr "Trenn A"
+
+msgid "Workout B"
+msgstr "Trenn B"
+
+msgid "Workout C"
+msgstr "Trenn C"
+
+msgid "Chest & Back"
+msgstr "Rind ja selg"
+
+msgid "Shoulders & Arms"
+msgstr "Õlad ja käed"
+
+msgid "Legs"
+msgstr "Jalad"
+
+msgid "Push"
+msgstr "Lükkamine"
+
+msgid "Pull"
+msgstr "Tõmme"
+
+msgid "Upper A"
+msgstr "Ülakeha A"
+
+msgid "Lower A"
+msgstr "Alakeha A"
+
+msgid "Upper B"
+msgstr "Ülakeha B"
+
+msgid "Lower B"
+msgstr "Alakeha B"
 
 msgid "Monday"
 msgstr "Esmaspäev"

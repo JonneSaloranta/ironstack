@@ -35,8 +35,16 @@ BMI_FULL = _("Body Mass Index")
 #: `abbreviation`/`expansion` arguments are themselves typically
 #: `gettext_lazy` results, resolved together only once the label is
 #: actually rendered, in whatever language is active then.
+#:
+#: `tabindex="0"` makes the `<abbr>` itself focusable — necessary for
+#: `static/css/base.css`'s `abbr[title]:focus::after` tooltip to be
+#: reachable at all on a touchscreen: iOS/Android have no gesture that
+#: reveals a plain `title` attribute (no hover, and tapping a
+#: non-focusable element doesn't focus it), so without this the
+#: expansion would only ever be visible to a mouse user hovering it —
+#: exactly backwards for a mobile-first app.
 abbr_label = lazy(lambda abbreviation, expansion: format_html(
-    '<abbr title="{}">{}</abbr>', expansion, abbreviation
+    '<abbr tabindex="0" title="{}">{}</abbr>', expansion, abbreviation
 ), SafeString)
 
 #: Lazy `django.utils.html.format_html` — for composing an `abbr_label`

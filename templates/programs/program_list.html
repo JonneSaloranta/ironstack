@@ -10,7 +10,7 @@
 <p><a class="button" href="{% url 'programs:program-create' %}">{% trans "New" %}</a></p>
 {% for program in programs %}
   <a class="card card-link" href="{% url 'programs:program-detail' program.pk %}">
-    <strong>{{ program.name }}</strong>
+    <strong>{% trans program.name %}</strong>
     {% if program.is_template %}<span class="tag tag-muted">{% trans "Template" %}</span>{% endif %}
     <div class="text-muted">
       {% blocktrans count counter=program.workout_count %}{{ counter }} workout{% plural %}{{ counter }} workouts{% endblocktrans %}
@@ -27,7 +27,7 @@
 {% for template in templates %}
   <div class="card">
     <a class="card-link" href="{% url 'programs:program-detail' template.pk %}">
-      <strong>{{ template.name }}</strong>
+      <strong>{% trans template.name %}</strong>
       <div class="text-muted">
         {% blocktrans count counter=template.workout_count %}{{ counter }} workout{% plural %}{{ counter }} workouts{% endblocktrans %}
       </div>

@@ -12,7 +12,7 @@
   <select id="id_muscle_group" name="muscle_group" aria-label="{% trans "Filter by muscle group" %}">
     <option value="">{% trans "All muscle groups" %}</option>
     {% for mg in muscle_groups %}
-      <option value="{{ mg.id }}" {% if selected_muscle_group == mg.id|stringformat:"s" %}selected{% endif %}>{{ mg.name }}</option>
+      <option value="{{ mg.id }}" {% if selected_muscle_group == mg.id|stringformat:"s" %}selected{% endif %}>{% trans mg.name %}</option>
     {% endfor %}
   </select>
 </form>

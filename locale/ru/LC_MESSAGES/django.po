@@ -120,6 +120,135 @@ msgstr "Максимум повторений"
 msgid "Body Mass Index"
 msgstr "Индекс массы тела"
 
+msgid "Ab Wheel Rollout"
+msgstr "Ролик для пресса"
+
+msgid "Barbell Back Squat"
+msgstr "Приседания со штангой"
+
+msgid "Barbell Bench Press"
+msgstr "Жим штанги лёжа"
+
+msgid "Barbell Row"
+msgstr "Тяга штанги в наклоне"
+
+msgid "Calf Raise"
+msgstr "Подъём на носки"
+
+msgid "Conventional Deadlift"
+msgstr "Становая тяга"
+
+msgid "Dumbbell Bench Press"
+msgstr "Жим гантелей лёжа"
+
+msgid "Dumbbell Bicep Curl"
+msgstr "Подъём гантелей на бицепс"
+
+msgid "Dumbbell Shoulder Press"
+msgstr "Жим гантелей сидя"
+
+msgid "Face Pull"
+msgstr "Тяга к лицу"
+
+msgid "Front Squat"
+msgstr "Фронтальные приседания"
+
+msgid "Hammer Curl"
+msgstr "Молотковый подъём на бицепс"
+
+msgid "Hip Thrust"
+msgstr "Ягодичный мост"
+
+msgid "Incline Barbell Bench Press"
+msgstr "Жим штанги на наклонной скамье"
+
+msgid "Lat Pulldown"
+msgstr "Тяга верхнего блока"
+
+msgid "Lateral Raise"
+msgstr "Разведение гантелей в стороны"
+
+msgid "Leg Curl"
+msgstr "Сгибание ног"
+
+msgid "Leg Press"
+msgstr "Жим ногами"
+
+msgid "Overhead Press"
+msgstr "Жим штанги стоя"
+
+msgid "Plank"
+msgstr "Планка"
+
+msgid "Pull-Up"
+msgstr "Подтягивания"
+
+msgid "Romanian Deadlift"
+msgstr "Румынская тяга"
+
+msgid "Seated Cable Row"
+msgstr "Тяга блока сидя"
+
+msgid "Skull Crusher"
+msgstr "Французский жим лёжа"
+
+msgid "Triceps Pushdown"
+msgstr "Разгибание рук на блоке"
+
+msgid "Abs"
+msgstr "Пресс"
+
+msgid "Back"
+msgstr "Спина"
+
+msgid "Biceps"
+msgstr "Бицепс"
+
+msgid "Calves"
+msgstr "Икры"
+
+msgid "Chest"
+msgstr "Грудь"
+
+msgid "Forearms"
+msgstr "Предплечья"
+
+msgid "Glutes"
+msgstr "Ягодицы"
+
+msgid "Hamstrings"
+msgstr "Задняя поверхность бедра"
+
+msgid "Quads"
+msgstr "Квадрицепсы"
+
+msgid "Shoulders"
+msgstr "Плечи"
+
+msgid "Triceps"
+msgstr "Трицепс"
+
+msgid "Barbell"
+msgstr "Штанга"
+
+msgid "Bodyweight"
+msgstr "Собственный вес"
+
+msgid "Cable"
+msgstr "Блок"
+
+msgid "Dumbbell"
+msgstr "Гантель"
+
+msgid "Kettlebell"
+msgstr "Гиря"
+
+msgid "Machine"
+msgstr "Тренажёр"
+
+msgid "Resistance Band"
+msgstr "Резиновая лента"
+
 msgid "equipment"
 msgstr "оборудование"
 
@@ -203,6 +332,78 @@ msgstr "Прибавка веса (%(unit)s)"
 
 msgid "Minimum reps cannot exceed maximum reps."
 msgstr "Минимальное количество повторений не может превышать максимальное."
+
+msgid "Full Body A/B/C"
+msgstr "Всё тело A/B/C"
+
+msgid "Arnold Split (6-Day)"
+msgstr "Сплит Арнольда (6 дней)"
+
+msgid "Push/Pull/Legs"
+msgstr "Жим/Тяга/Ноги"
+
+msgid "5x5 Strength (A/B)"
+msgstr "5×5 Сила (A/B)"
+
+msgid "Upper/Lower Split (4-Day)"
+msgstr "Верх/Низ (4 дня)"
+
+msgid "German Volume Training"
+msgstr "Немецкий объёмный тренинг"
+
+msgid "A classic three-day full-body template: one squat/press/row day, one deadlift/press/pull day, and one accessory-focused day. Copy it and adjust weights/increments to your own."
+msgstr "Классический трёхдневный шаблон для всего тела: день приседаний/жима/тяги, день становой/жима/тяги и день вспомогательных упражнений. Скопируйте и настройте веса/прибавки под себя."
+
+msgid "The classic 6-day bodybuilding split popularized by Arnold Schwarzenegger in the 1970s: chest/back, shoulders/arms, and legs, each trained twice a week. Rotate through all three workouts, then repeat — not tied to fixed calendar days."
+msgstr "Классический 6-дневный сплит для бодибилдинга, популяризированный Арнольдом Шварценеггером в 1970-х: грудь/спина, плечи/руки и ноги, каждая группа прорабатывается дважды в неделю. Чередуйте все три тренировки и повторяйте — без привязки к дням недели."
+
+msgid "A widely used 3-day split organized by movement pattern rather than body part: pushing muscles, pulling muscles, then legs. Popular for both strength and bodybuilding goals."
+msgstr "Широко используемый 3-дневный сплит, организованный по типу движения, а не по группе мышц: толкающие мышцы, тянущие мышцы, затем ноги. Популярен как для силовых, так и для бодибилдинг-целей."
+
+msgid "A classic beginner barbell strength program: two alternating full-body workouts built around low-rep, high-set compound lifts with linear weight progression each session."
+msgstr "Классическая силовая программа со штангой для новичков: две чередующиеся тренировки на всё тело, построенные вокруг базовых упражнений с малым числом повторений и большим числом подходов, с линейной прогрессией веса на каждой тренировке."
+
+msgid "A 4-day split alternating upper-body and lower-body sessions twice each per week — a common middle ground between full-body and single-muscle-group routines, popular for balancing strength and volume without training every day."
+msgstr "4-дневный сплит, чередующий тренировки верха и низа тела дважды в неделю каждую — распространённый компромисс между программами на всё тело и на отдельные группы мышц, популярен для баланса силы и объёма без ежедневных тренировок."
+
+msgid "The classic 10x10 high-volume method: one main lift per workout done for ten sets of ten reps at a fixed, moderate weight, paired with a lighter accessory movement. Brutal on paper, simple in practice — built for muscle growth, not 1-rep-max testing."
+msgstr "Классический метод высокого объёма 10×10: одно основное упражнение за тренировку выполняется десятью подходами по десять повторений с фиксированным умеренным весом, в паре с более лёгким вспомогательным движением. На бумаге жестоко, на практике просто — создано для роста мышц, а не для проверки 1ПМ."
+
+msgid "Workout A"
+msgstr "Тренировка A"
+
+msgid "Workout B"
+msgstr "Тренировка B"
+
+msgid "Workout C"
+msgstr "Тренировка C"
+
+msgid "Chest & Back"
+msgstr "Грудь и спина"
+
+msgid "Shoulders & Arms"
+msgstr "Плечи и руки"
+
+msgid "Legs"
+msgstr "Ноги"
+
+msgid "Push"
+msgstr "Жим"
+
+msgid "Pull"
+msgstr "Тяга"
+
+msgid "Upper A"
+msgstr "Верх A"
+
+msgid "Lower A"
+msgstr "Низ A"
+
+msgid "Upper B"
+msgstr "Верх B"
+
+msgid "Lower B"
+msgstr "Низ B"
 
 msgid "Monday"
 msgstr "Понедельник"

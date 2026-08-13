@@ -1,9 +1,9 @@
 {% extends "base.html" %}
 {% load i18n %}
-{% block title %}{{ exercise.name }} — IronStack{% endblock %}
+{% block title %}{% trans exercise.name %} — IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
-  <h1 style="margin:0;">{{ exercise.name }}</h1>
+  <h1 style="margin:0;">{% trans exercise.name %}</h1>
   {% if exercise.owner_id == request.user.id %}
     <a class="button" href="{% url 'exercises:exercise-update' exercise.pk %}">{% trans "Edit" %}</a>
   {% endif %}
@@ -24,29 +24,29 @@
 
     {% if exercise.equipment %}
       <dt>{% trans "Equipment" %}</dt>
-      <dd>{{ exercise.equipment.name }}</dd>
+      <dd>{% trans exercise.equipment.name %}</dd>
     {% endif %}
 
     {% if exercise.primary_muscle_groups.all %}
       <dt>{% trans "Primary muscles" %}</dt>
-      <dd>{% for mg in exercise.primary_muscle_groups.all %}{{ mg.name }}{% if not forloop.last %}, {% endif %}{% endfor %}</dd>
+      <dd>{% for mg in exercise.primary_muscle_groups.all %}{% trans mg.name %}{% if not forloop.last %}, {% endif %}{% endfor %}</dd>
     {% endif %}
 
     {% if exercise.secondary_muscle_groups.all %}
       <dt>{% trans "Secondary muscles" %}</dt>
-      <dd>{% for mg in exercise.secondary_muscle_groups.all %}{{ mg.name }}{% if not forloop.last %}, {% endif %}{% endfor %}</dd>
+      <dd>{% for mg in exercise.secondary_muscle_groups.all %}{% trans mg.name %}{% if not forloop.last %}, {% endif %}{% endfor %}</dd>
     {% endif %}
   </dl>
 </div>
 
 <a class="card card-link" href="{% url 'records:exercise-records' exercise.pk %}">
-  <strong>{% trans "Your" %} <abbr title="{% trans "Personal Records" %}">PRs</abbr></strong>
+  <strong>{% trans "Your" %} <abbr tabindex="0" title="{% trans "Personal Records" %}">PRs</abbr></strong>
   <p class="text-muted">{% trans "Current personal records for this exercise." %}</p>
 </a>
 
 <a class="card card-link" href="{% url 'analytics:exercise' exercise.pk %}">
   <strong>{% trans "Strength trend" %}</strong>
-  <p class="text-muted">{% trans "Estimated" %} <abbr title="{% trans "One-Rep Max" %}">1RM</abbr> {% trans "over time and training volume." %}</p>
+  <p class="text-muted">{% trans "Estimated" %} <abbr tabindex="0" title="{% trans "One-Rep Max" %}">1RM</abbr> {% trans "over time and training volume." %}</p>
 </a>
 
 {% if exercise.owner_id == request.user.id and exercise.active %}

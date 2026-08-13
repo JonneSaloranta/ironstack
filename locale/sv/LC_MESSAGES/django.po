@@ -120,6 +120,135 @@ msgstr "Repetitionsmax"
 msgid "Body Mass Index"
 msgstr "Body mass-index"
 
+msgid "Ab Wheel Rollout"
+msgstr "Ab wheel-rullning"
+
+msgid "Barbell Back Squat"
+msgstr "Knäböj med skivstång"
+
+msgid "Barbell Bench Press"
+msgstr "Bänkpress med skivstång"
+
+msgid "Barbell Row"
+msgstr "Rodd med skivstång"
+
+msgid "Calf Raise"
+msgstr "Vadpress"
+
+msgid "Conventional Deadlift"
+msgstr "Marklyft"
+
+msgid "Dumbbell Bench Press"
+msgstr "Hantelpress i bänk"
+
+msgid "Dumbbell Bicep Curl"
+msgstr "Hantelcurl"
+
+msgid "Dumbbell Shoulder Press"
+msgstr "Hantelpress axlar"
+
+msgid "Face Pull"
+msgstr "Face pull"
+
+msgid "Front Squat"
+msgstr "Frontböj"
+
+msgid "Hammer Curl"
+msgstr "Hammercurl"
+
+msgid "Hip Thrust"
+msgstr "Höftlyft"
+
+msgid "Incline Barbell Bench Press"
+msgstr "Lutande bänkpress med skivstång"
+
+msgid "Lat Pulldown"
+msgstr "Latsdrag"
+
+msgid "Lateral Raise"
+msgstr "Sidolyft"
+
+msgid "Leg Curl"
+msgstr "Bencurl"
+
+msgid "Leg Press"
+msgstr "Benpress"
+
+msgid "Overhead Press"
+msgstr "Militärpress"
+
+msgid "Plank"
+msgstr "Planka"
+
+msgid "Pull-Up"
+msgstr "Pull-up"
+
+msgid "Romanian Deadlift"
+msgstr "Rumänsk marklyft"
+
+msgid "Seated Cable Row"
+msgstr "Sittande rodd i kabel"
+
+msgid "Skull Crusher"
+msgstr "Skallkrossare"
+
+msgid "Triceps Pushdown"
+msgstr "Tricepspress i kabel"
+
+msgid "Abs"
+msgstr "Mage"
+
+msgid "Back"
+msgstr "Rygg"
+
+msgid "Biceps"
+msgstr "Biceps"
+
+msgid "Calves"
+msgstr "Vader"
+
+msgid "Chest"
+msgstr "Bröst"
+
+msgid "Forearms"
+msgstr "Underarmar"
+
+msgid "Glutes"
+msgstr "Säte"
+
+msgid "Hamstrings"
+msgstr "Baklår"
+
+msgid "Quads"
+msgstr "Lår"
+
+msgid "Shoulders"
+msgstr "Axlar"
+
+msgid "Triceps"
+msgstr "Triceps"
+
+msgid "Barbell"
+msgstr "Skivstång"
+
+msgid "Bodyweight"
+msgstr "Kroppsvikt"
+
+msgid "Cable"
+msgstr "Kabel"
+
+msgid "Dumbbell"
+msgstr "Hantel"
+
+msgid "Kettlebell"
+msgstr "Kettlebell"
+
+msgid "Machine"
+msgstr "Maskin"
+
+msgid "Resistance Band"
+msgstr "Träningsband"
+
 msgid "equipment"
 msgstr "utrustning"
 
@@ -203,6 +332,78 @@ msgstr "Viktökning (%(unit)s)"
 
 msgid "Minimum reps cannot exceed maximum reps."
 msgstr "Minsta antal repetitioner kan inte överstiga högsta antal."
+
+msgid "Full Body A/B/C"
+msgstr "Helkropp A/B/C"
+
+msgid "Arnold Split (6-Day)"
+msgstr "Arnold-split (6 dagar)"
+
+msgid "Push/Pull/Legs"
+msgstr "Push/Pull/Ben"
+
+msgid "5x5 Strength (A/B)"
+msgstr "5x5-styrka (A/B)"
+
+msgid "Upper/Lower Split (4-Day)"
+msgstr "Överkropp/Underkropp (4 dagar)"
+
+msgid "German Volume Training"
+msgstr "Tysk volymträning"
+
+msgid "A classic three-day full-body template: one squat/press/row day, one deadlift/press/pull day, and one accessory-focused day. Copy it and adjust weights/increments to your own."
+msgstr "En klassisk tredagars helkroppsmall: en böj/press/rodd-dag, en marklyft/press/drag-dag och en dag fokuserad på accessoriska övningar. Kopiera den och justera vikter/ökningar efter dig själv."
+
+msgid "The classic 6-day bodybuilding split popularized by Arnold Schwarzenegger in the 1970s: chest/back, shoulders/arms, and legs, each trained twice a week. Rotate through all three workouts, then repeat — not tied to fixed calendar days."
+msgstr "Den klassiska 6-dagars bodybuilding-splitten som populariserades av Arnold Schwarzenegger på 1970-talet: bröst/rygg, axlar/armar och ben, var och en tränad två gånger i veckan. Rotera genom alla tre passen och upprepa — inte bunden till fasta veckodagar."
+
+msgid "A widely used 3-day split organized by movement pattern rather than body part: pushing muscles, pulling muscles, then legs. Popular for both strength and bodybuilding goals."
+msgstr "En allmänt använd 3-dagars split organiserad efter rörelsemönster snarare än kroppsdel: skjutande muskler, dragande muskler, sedan ben. Populär för både styrke- och bodybuildingmål."
+
+msgid "A classic beginner barbell strength program: two alternating full-body workouts built around low-rep, high-set compound lifts with linear weight progression each session."
+msgstr "Ett klassiskt styrkeprogram med skivstång för nybörjare: två alternerande helkroppspass byggda kring flerledsövningar med låga repetitioner och många set, med linjär viktökning varje pass."
+
+msgid "A 4-day split alternating upper-body and lower-body sessions twice each per week — a common middle ground between full-body and single-muscle-group routines, popular for balancing strength and volume without training every day."
+msgstr "En 4-dagars split som alternerar överkropps- och underkroppspass två gånger vardera per vecka — en vanlig mellanväg mellan helkropps- och enskilda muskelgruppsrutiner, populär för att balansera styrka och volym utan att träna varje dag."
+
+msgid "The classic 10x10 high-volume method: one main lift per workout done for ten sets of ten reps at a fixed, moderate weight, paired with a lighter accessory movement. Brutal on paper, simple in practice — built for muscle growth, not 1-rep-max testing."
+msgstr "Den klassiska 10x10-högvolymmetoden: en huvudövning per pass utförd i tio set om tio repetitioner med en fast, måttlig vikt, ihopparad med en lättare accessorisk övning. Brutal på papper, enkel i praktiken — byggd för muskeltillväxt, inte 1RM-testning."
+
+msgid "Workout A"
+msgstr "Pass A"
+
+msgid "Workout B"
+msgstr "Pass B"
+
+msgid "Workout C"
+msgstr "Pass C"
+
+msgid "Chest & Back"
+msgstr "Bröst & rygg"
+
+msgid "Shoulders & Arms"
+msgstr "Axlar & armar"
+
+msgid "Legs"
+msgstr "Ben"
+
+msgid "Push"
+msgstr "Push"
+
+msgid "Pull"
+msgstr "Pull"
+
+msgid "Upper A"
+msgstr "Överkropp A"
+
+msgid "Lower A"
+msgstr "Underkropp A"
+
+msgid "Upper B"
+msgstr "Överkropp B"
+
+msgid "Lower B"
+msgstr "Underkropp B"
 
 msgid "Monday"
 msgstr "Måndag"

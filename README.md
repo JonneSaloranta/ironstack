@@ -463,6 +463,55 @@ wrong (and `compilemessages` silently skips fuzzy entries, falling
 back to English), so every fuzzy/untranslated entry got a deliberate,
 reviewed translation instead. 5 new tests (319 total).
 
+**Mobile-friendly `<abbr>` tooltips, 10 more exercises + 2 more program
+templates, and translating all seeded exercise/program content.**
+
+- The `<abbr title="...">` tooltips added in the previous pass only
+  ever reached a mouse user — iOS/Android give no gesture that reveals
+  a plain `title` attribute, so on a touchscreen (this is a
+  mobile-first app) they were effectively invisible. Every `<abbr>`
+  (`apps.core.formatting.abbr_label`, and the hand-written ones in
+  templates) now carries `tabindex="0"`, and `static/css/base.css` adds
+  a small themed tooltip shown on `:focus` as well as `:hover` —
+  content attribute-derived (`content: attr(title)`), so tapping,
+  keyboard-focusing, or hovering the abbreviation all reveal the same
+  expansion now.
+- 10 more built-in exercises (`apps.exercises` migration 0004: Romanian
+  Deadlift, Front Squat, Incline Barbell Bench Press, Hip Thrust, Seated
+  Cable Row, Face Pull, Lateral Raise, Hammer Curl, Skull Crusher, Ab
+  Wheel Rollout — 25 total now) and 2 more program templates
+  (`apps.programs` migration 0006: Upper/Lower Split (4-Day), German
+  Volume Training — 6 total now), using only muscle groups/equipment
+  already seeded.
+- Built-in exercise names, muscle groups, equipment, and program
+  template names/descriptions/workout names are now translated for
+  display in all 6 languages — genuinely different from the UI-chrome
+  translation earlier: this is database *content*, so the value
+  **stored** in the DB always stays canonical English (still what
+  `get_or_create(name=...)`/uniqueness constraints match against), and
+  only the **display** goes through gettext, via `{% trans someobj.name %}`
+  (Django's `trans` tag accepts a variable, running its resolved value
+  through `gettext()` — not just a string literal). Since `makemessages`
+  can't discover what a variable will resolve to at runtime, two new
+  extraction-only modules (`apps.exercises.i18n_content`,
+  `apps.programs.i18n_content` — imported and executed by nothing) each
+  hold a `gettext_lazy("...")` call per seeded name/description so
+  `makemessages` finds them anyway. This is safe to apply
+  unconditionally, including to a user's own data (their custom
+  exercise names, their own program names) — a string with no catalog
+  entry is just gettext's ordinary "no translation" case, rendering
+  exactly as typed rather than erroring. One extra step for the
+  exercise-picker `<select>` (`ExercisePrescriptionForm`,
+  `PerformedExerciseAddForm`): Django renders a `ModelChoiceField`'s
+  `<option>` text via `str(obj)` internally, bypassing the template
+  layer entirely, so `label_from_instance` is overridden to route that
+  through `gettext()` too. No new dependency (no model-translation
+  library) — this is the same gettext catalog the UI-chrome pass
+  already built, just fed from two more source locations. All 397
+  extracted strings (up from 320) translated across all 5 non-English
+  catalogs; `msgfmt --statistics` confirms 0 fuzzy/untranslated. 9 new
+  tests (324 total).
+
 ## Local development
 
 ```bash

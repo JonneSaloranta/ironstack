@@ -312,7 +312,7 @@ class ExerciseAnalyticsViewTests(TestCase):
         response = self.client.get(reverse("analytics:exercise", args=[self.exercise.pk]))
         self.assertIsNotNone(response.context["one_rm_chart"])
         self.assertContains(
-            response, '<h2>Estimated <abbr title="One-Rep Max">1RM</abbr> trend</h2>'
+            response, '<h2>Estimated <abbr tabindex="0" title="One-Rep Max">1RM</abbr> trend</h2>'
         )
 
     def test_404_for_another_users_private_exercise(self):

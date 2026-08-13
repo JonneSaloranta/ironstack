@@ -1,9 +1,9 @@
 {% extends "base.html" %}
 {% load i18n %}
-{% block title %}{% if session.workout %}{{ session.workout.name }}{% else %}{% trans "Freeform workout" %}{% endif %} — IronStack{% endblock %}
+{% block title %}{% if session.workout %}{% trans session.workout.name %}{% else %}{% trans "Freeform workout" %}{% endif %} — IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
-  <h1 style="margin:0;">{% if session.workout %}{{ session.workout.name }}{% else %}{% trans "Freeform workout" %}{% endif %}</h1>
+  <h1 style="margin:0;">{% if session.workout %}{% trans session.workout.name %}{% else %}{% trans "Freeform workout" %}{% endif %}</h1>
   <span class="tag {% if session.status == 'completed' %}tag-success{% elif session.status == 'abandoned' %}tag-muted{% endif %}">{{ session.get_status_display }}</span>
 </div>
 
