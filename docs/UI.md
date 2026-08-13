@@ -119,12 +119,23 @@ weight, BMI (see below), and an in-progress-workout banner that doubles
 as "continue/last workout". No logout button here — it lives on the
 Profile page only, not duplicated.
 
-**BMI**: shown only once both a height (set on the Profile page) and at
-least one logged body weight exist, alongside the WHO category ranges
+**BMI**: dashboard card once both a height (set on the Profile page) and
+at least one logged body weight exist, alongside the WHO category ranges
 table with the user's own row highlighted — a bare number with no
 context isn't useful. A `show_bmi` profile toggle turns the card off
 outright for anyone who'd rather not see it, independent of whether it's
-computable; the "add your height" nudge card respects the toggle too.
+computable. Three dashboard states, each with its own nudge card (all
+respecting the toggle) rather than silently showing nothing: no height
+yet ("add your height"), height set but no body weight logged yet ("log
+a body weight"), and both present (the actual BMI card,
+`templates/core/_bmi_card.html`).
+
+The ranges table (plus the current value once computable) is *also*
+shown unconditionally on the Profile page itself, right below the
+`show_bmi` toggle — the dashboard card is reachable only through a chain
+of "if this, if that" states, so a user who hadn't logged a body weight
+yet had no way to find the scale at all; Profile is guaranteed reachable
+from the main nav regardless of data state.
 
 Two items from this doc's original wishlist were deliberately
 not built as dashboard widgets:

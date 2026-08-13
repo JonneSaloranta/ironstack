@@ -143,6 +143,40 @@ class ProfileViewTests(TestCase):
         self.alice.refresh_from_db()
         self.assertTrue(self.alice.show_bmi)
 
+    def test_bmi_category_ranges_are_shown_even_with_no_height_or_weight_yet(self):
+        """Regression: the BMI category ranges only ever appeared inside
+        the dashboard's BMI card, which itself only rendered once both a
+        height and a logged body weight existed — so a user who hadn't
+        gotten that far yet had no way to find the scale at all. The
+        profile page (where height and the show_bmi toggle both live)
+        shows it unconditionally instead."""
+        response = self.client.get(reverse("profile"))
+        self.assertContains(response, "Underweight")
+        self.assertContains(response, "Normal weight")
+        self.assertContains(response, "Overweight")
+        self.assertContains(response, "Obese")
+
+    def test_bmi_ranges_are_hidden_on_profile_when_show_bmi_is_off(self):
+        self.alice.show_bmi = False
+        self.alice.save()
+        response = self.client.get(reverse("profile"))
+        self.assertNotContains(response, "Normal weight")
+
+    def test_current_bmi_is_shown_on_profile_once_computable(self):
+        from decimal import Decimal
+
+        from apps.measurements.models import BodyMeasurement, MeasurementType
+
+        self.alice.height = Decimal("1.80")
+        self.alice.save()
+        body_weight_type = MeasurementType.objects.get(name="Body weight", owner=None)
+        BodyMeasurement.objects.create(
+            user=self.alice, measurement_type=body_weight_type, value=Decimal("82.5")
+        )
+        response = self.client.get(reverse("profile"))
+        self.assertContains(response, "25.5")
+        self.assertContains(response, "Overweight")
+
     def test_show_bmi_renders_as_an_inline_checkbox_with_its_own_label(self):
         """Regression: every field (including a lone checkbox) rendered
         through the generic block-level label_tag + field layout, which

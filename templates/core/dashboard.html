@@ -20,32 +20,16 @@
 {% endif %}
 
 {% if bmi %}
-  <div class="card">
-    <h3 style="margin-top:0;">BMI</h3>
-    <p style="margin:0 0 0.75rem;">
-      <strong style="font-size:1.5rem;">{{ bmi }}</strong>
-      <span class="tag tag-accent">{{ bmi_category.name }}</span>
-    </p>
-    <table class="bar-chart-table">
-      <caption class="visually-hidden">BMI category ranges</caption>
-      <tbody>
-        {% for category in bmi_categories %}
-          <tr{% if category == bmi_category %} class="bmi-current-row"{% endif %}>
-            <th scope="row">{{ category.name }}</th>
-            <td>
-              {% if category.low is None %}below {{ category.high }}
-              {% elif category.high is None %}{{ category.low }} and above
-              {% else %}{{ category.low }}–{{ category.high }}{% endif %}
-            </td>
-          </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
+  {% include "core/_bmi_card.html" %}
 {% elif user.show_bmi and not user.height %}
   <a class="card card-link" href="{% url 'profile' %}">
     <strong>Add your height</strong>
     <p class="text-muted">Set it on your profile to see your BMI alongside a logged body weight.</p>
+  </a>
+{% elif user.show_bmi and user.height and body_weight is None %}
+  <a class="card card-link" href="{% url 'measurements:type-list' %}">
+    <strong>Log a body weight</strong>
+    <p class="text-muted">Your height is set — log a body weight to see your BMI.</p>
   </a>
 {% endif %}
 

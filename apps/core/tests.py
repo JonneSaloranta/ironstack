@@ -381,6 +381,29 @@ class DashboardWidgetsTests(TestCase):
         response = self.client.get(reverse("dashboard"))
         self.assertNotIn("bmi", response.context)
 
+    def test_a_nudge_to_log_body_weight_shows_once_height_is_set(self):
+        """Regression: once a height was set but no body weight had ever
+        been logged, the dashboard silently showed nothing at all about
+        BMI — no card, no explanation, not even the "add your height"
+        nudge (since height already existed) — just a gap where the
+        feature seemed to have disappeared."""
+        self.alice.height = Decimal("1.80")
+        self.alice.save()
+        response = self.client.get(reverse("dashboard"))
+        self.assertContains(response, "Log a body weight")
+
+    def test_no_body_weight_nudge_once_a_body_weight_exists(self):
+        from apps.measurements.models import BodyMeasurement, MeasurementType
+
+        self.alice.height = Decimal("1.80")
+        self.alice.save()
+        body_weight_type = MeasurementType.objects.get(name="Body weight", owner=None)
+        BodyMeasurement.objects.create(
+            user=self.alice, measurement_type=body_weight_type, value=Decimal("82.5")
+        )
+        response = self.client.get(reverse("dashboard"))
+        self.assertNotContains(response, "Log a body weight")
+
     def test_bmi_and_category_are_shown_once_height_and_weight_both_exist(self):
         from apps.measurements.models import BodyMeasurement, MeasurementType
 

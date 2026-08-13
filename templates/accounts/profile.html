@@ -34,6 +34,10 @@
   <button type="submit">Save preferences</button>
 </form>
 
+{% if user.show_bmi %}
+  {% include "core/_bmi_card.html" %}
+{% endif %}
+
 <a class="card card-link" href="{% url 'password_change' %}">
   <strong>Change password</strong>
 </a>

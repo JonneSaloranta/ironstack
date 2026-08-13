@@ -4,6 +4,10 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, UpdateView
 
+from apps.core import bmi as bmi_services
+from apps.measurements import services as measurement_services
+from apps.measurements.models import MeasurementType
+
 from .forms import ProfileForm, SignupForm
 
 
@@ -25,6 +29,32 @@ class ProfileView(LoginRequiredMixin, UpdateView):
 
     def get_object(self):
         return self.request.user
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # The BMI category ranges are shown here unconditionally — not
+        # just on the dashboard's BMI card, which only ever appears once
+        # a height *and* a logged body weight both exist. This is the
+        # page height itself lives on, so the ranges (and the current
+        # value, once computable) need to be findable here regardless of
+        # whether that dashboard card has ever had reason to render.
+        context["bmi_categories"] = bmi_services.BMI_CATEGORIES
+        user = self.request.user
+        if user.show_bmi and user.height:
+            body_weight_type = MeasurementType.objects.filter(
+                name="Body weight", owner=None
+            ).first()
+            latest = (
+                measurement_services.latest_for(user, body_weight_type)
+                if body_weight_type
+                else None
+            )
+            if latest:
+                bmi = bmi_services.calculate_bmi(latest.value, user.height)
+                if bmi is not None:
+                    context["bmi"] = bmi
+                    context["bmi_category"] = bmi_services.category_for(bmi)
+        return context
 
     def form_valid(self, form):
         response = super().form_valid(form)
