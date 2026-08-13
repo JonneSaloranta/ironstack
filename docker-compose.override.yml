@@ -1,0 +1,18 @@
+# Automatically merged by `docker compose up` for local development.
+# Do NOT deploy this file to production — use docker-compose.yml alone there
+# (e.g. `docker compose -f docker-compose.yml up -d` on the server, or simply
+# don't ship this file with the production checkout).
+services:
+  web:
+    build:
+      args:
+        REQUIREMENTS_FILE: requirements/dev.txt
+    environment:
+      DJANGO_SETTINGS_MODULE: config.settings.dev
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    command: >
+      sh -c "python manage.py migrate --noinput &&
+             python manage.py runserver 0.0.0.0:8000"

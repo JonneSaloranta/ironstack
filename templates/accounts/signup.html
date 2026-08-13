@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Sign up — IronStack{% endblock %}
+{% block content %}
+<h1>Create your account</h1>
+<form method="post" novalidate>
+  {% csrf_token %}
+  {% for field in form %}
+    <div>
+      <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+      {{ field }}
+      {% if field.help_text %}<p class="empty-state" style="padding: 0;">{{ field.help_text }}</p>{% endif %}
+      {% for error in field.errors %}
+        <p role="alert" style="color: var(--color-danger);">{{ error }}</p>
+      {% endfor %}
+    </div>
+  {% endfor %}
+  <button type="submit">Sign up</button>
+</form>
+<p><a href="{% url 'login' %}">Already have an account? Log in</a></p>
+{% endblock %}

@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Dashboard — IronStack{% endblock %}
+{% block content %}
+<div class="top-bar">
+  <h1 style="margin:0;">IronStack</h1>
+  <form method="post" action="{% url 'logout' %}">
+    {% csrf_token %}
+    <button type="submit">Log out</button>
+  </form>
+</div>
+
+<div class="card empty-state">
+  <p>No workouts logged yet.</p>
+  <p>Programs, workout logging, and progress tracking arrive in later phases.</p>
+</div>
+
+<a class="card card-link" href="{% url 'exercises:exercise-list' %}">
+  <strong>Browse exercises</strong>
+  <p class="text-muted">Explore the exercise library or add your own.</p>
+</a>
+{% endblock %}

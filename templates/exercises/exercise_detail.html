@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}{{ exercise.name }} — IronStack{% endblock %}
+{% block content %}
+<div class="top-bar">
+  <h1 style="margin:0;">{{ exercise.name }}</h1>
+  {% if exercise.owner_id == request.user.id %}
+    <a class="button" href="{% url 'exercises:exercise-update' exercise.pk %}">Edit</a>
+  {% endif %}
+</div>
+
+<div class="card">
+  {% if not exercise.active %}
+    <p class="tag tag-muted">Inactive</p>
+  {% endif %}
+  {% if exercise.description %}<p>{{ exercise.description }}</p>{% endif %}
+
+  <dl>
+    <dt>Movement type</dt>
+    <dd>{{ exercise.get_movement_type_display }}</dd>
+
+    <dt>Weight logging</dt>
+    <dd>{{ exercise.get_weight_input_mode_display }}</dd>
+
+    {% if exercise.equipment %}
+      <dt>Equipment</dt>
+      <dd>{{ exercise.equipment.name }}</dd>
+    {% endif %}
+
+    {% if exercise.primary_muscle_groups.all %}
+      <dt>Primary muscles</dt>
+      <dd>{% for mg in exercise.primary_muscle_groups.all %}{{ mg.name }}{% if not forloop.last %}, {% endif %}{% endfor %}</dd>
+    {% endif %}
+
+    {% if exercise.secondary_muscle_groups.all %}
+      <dt>Secondary muscles</dt>
+      <dd>{% for mg in exercise.secondary_muscle_groups.all %}{{ mg.name }}{% if not forloop.last %}, {% endif %}{% endfor %}</dd>
+    {% endif %}
+  </dl>
+</div>
+
+{% if exercise.owner_id == request.user.id and exercise.active %}
+  <form method="post" action="{% url 'exercises:exercise-deactivate' exercise.pk %}" onsubmit="return confirm('Deactivate this exercise? It will no longer appear when browsing or prescribing.');">
+    {% csrf_token %}
+    <button type="submit" class="button-danger">Deactivate</button>
+  </form>
+{% endif %}
+
+<p><a href="{% url 'exercises:exercise-list' %}">&larr; Back to exercises</a></p>
+{% endblock %}

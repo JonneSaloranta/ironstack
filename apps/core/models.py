@@ -1,0 +1,14 @@
+from django.db import models
+
+
+class TimeStampedModel(models.Model):
+    """Abstract base adding created/updated timestamps.
+
+    Reused across apps instead of redefining these fields on every model.
+    """
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        abstract = True

@@ -1,0 +1,31 @@
+{% load static %}<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>{% block title %}IronStack{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'css/base.css' %}">
+  <script src="{% static 'js/htmx.min.js' %}" defer></script>
+  <script src="{% static 'js/alpine.min.js' %}" defer></script>
+</head>
+<body>
+  {% if user.is_authenticated %}
+  <nav class="bottom-nav" aria-label="Main navigation">
+    <a href="{% url 'dashboard' %}" {% if request.resolver_match.url_name == 'dashboard' %}aria-current="page"{% endif %}>Home</a>
+    <a href="#">Workout</a>
+    <a href="#">Programs</a>
+    <a href="#">Progress</a>
+    <a href="#">Profile</a>
+  </nav>
+  {% endif %}
+
+  <main class="container">
+    {% if messages %}
+      {% for message in messages %}
+        <div class="card" role="status">{{ message }}</div>
+      {% endfor %}
+    {% endif %}
+    {% block content %}{% endblock %}
+  </main>
+</body>
+</html>

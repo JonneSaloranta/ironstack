@@ -1,0 +1,242 @@
+/* IronStack base styles — mobile-first, ~360-430px baseline, then desktop. */
+
+:root {
+  --color-bg: #101317;
+  --color-surface: #181c22;
+  --color-border: #2a2f37;
+  --color-text: #e7eaee;
+  --color-text-muted: #9aa3ad;
+  --color-accent: #5b9dfd;
+  --color-danger: #e5636a;
+  --color-success: #4fb477;
+  --nav-height: 3.5rem;
+  --touch-target: 2.75rem;
+  --radius: 0.5rem;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  padding-bottom: calc(var(--nav-height) + env(safe-area-inset-bottom));
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  line-height: 1.4;
+}
+
+a {
+  color: var(--color-accent);
+}
+
+.container {
+  width: 100%;
+  max-width: 30rem;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+.card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.empty-state {
+  text-align: center;
+  color: var(--color-text-muted);
+  padding: 2rem 1rem;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button,
+.button {
+  min-height: var(--touch-target);
+  min-width: var(--touch-target);
+  border-radius: var(--radius);
+  border: 1px solid var(--color-border);
+  background: var(--color-accent);
+  color: #fff;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+}
+
+label {
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+input,
+select,
+textarea {
+  width: 100%;
+  min-height: var(--touch-target);
+  padding: 0.5rem;
+  border-radius: var(--radius);
+  border: 1px solid var(--color-border);
+  background: var(--color-bg);
+  color: var(--color-text);
+  margin-bottom: 0.75rem;
+}
+
+input[type="checkbox"],
+input[type="radio"] {
+  width: auto;
+  min-height: 0;
+  min-width: 0;
+  margin: 0 0.5rem 0 0;
+  vertical-align: middle;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* Mobile bottom navigation */
+.bottom-nav {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: var(--nav-height);
+  padding-bottom: env(safe-area-inset-bottom);
+  display: flex;
+  background: var(--color-surface);
+  border-top: 1px solid var(--color-border);
+}
+
+.bottom-nav a {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-muted);
+  text-decoration: none;
+  font-size: 0.8rem;
+}
+
+.bottom-nav a[aria-current="page"] {
+  color: var(--color-accent);
+}
+
+.top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+/* Exercises: list, filters, detail */
+.text-muted {
+  color: var(--color-text-muted);
+  font-size: 0.85rem;
+}
+
+.tag {
+  display: inline-block;
+  font-size: 0.7rem;
+  padding: 0.1rem 0.4rem;
+  border-radius: 999px;
+  background: var(--color-accent);
+  color: #fff;
+  margin-left: 0.4rem;
+}
+
+.tag-muted {
+  background: var(--color-border);
+  color: var(--color-text-muted);
+}
+
+.exercise-filters {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.card-link {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+}
+
+.pagination {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: var(--color-text-muted);
+  font-size: 0.85rem;
+}
+
+.field {
+  margin-bottom: 0.75rem;
+}
+
+.field-error {
+  color: var(--color-danger);
+  font-size: 0.85rem;
+  margin: -0.5rem 0 0.75rem;
+}
+
+dl {
+  margin: 0;
+}
+
+dt {
+  color: var(--color-text-muted);
+  font-size: 0.8rem;
+  margin-top: 0.75rem;
+}
+
+dd {
+  margin: 0.15rem 0 0;
+}
+
+.button-danger {
+  background: var(--color-danger);
+}
+
+/* Desktop: sidebar layout, bottom nav hidden */
+@media (min-width: 768px) {
+  body {
+    padding-bottom: 0;
+    display: grid;
+    grid-template-columns: 14rem 1fr;
+    min-height: 100vh;
+  }
+
+  .bottom-nav {
+    position: static;
+    flex-direction: column;
+    height: auto;
+    width: 14rem;
+    border-top: none;
+    border-right: 1px solid var(--color-border);
+  }
+
+  .bottom-nav a {
+    justify-content: flex-start;
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+  }
+
+  .container {
+    max-width: 48rem;
+    padding: 2rem;
+  }
+}
