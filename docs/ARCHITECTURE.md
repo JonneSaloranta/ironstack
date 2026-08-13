@@ -64,7 +64,13 @@ PRs, estimated 1RM, set/session volume). Derived from `workouts` history
 only — never from `programs` — so program edits can't affect PRs.
 
 ### progression
-Progression methods and weight suggestion logic.
+Progression methods and weight suggestion logic. Has no models of its
+own — a decision is recomputed live from `workouts` (session/set history)
+and `records` (as one of the three 1RM sources for percentage-based
+progression) each time, the same "derive, don't cache" approach `records`
+uses for PRs. Not yet wired into any view/template — `docs/ROADMAP.md`
+Phase 7 ("Smart suggestions") is where this becomes a UI-facing weight
+suggestion; Phase 6 only had to deliver the underlying decision.
 
 ### measurements
 Body weight, body fat, circumferences, custom measurements.

@@ -45,6 +45,20 @@ may result in:
 
 Do not base the decision on a single simplistic rule when enough history exists. Recent performance trend should be considered.
 
+## Rep Range Progression
+
+Listed as its own method (distinct from Double Progression above) but not
+otherwise elaborated on originally — implemented as double progression's
+more patient sibling: instead of increasing off a single top-of-range
+session, it requires the same session to repeat (two sessions in a row at
+the top of the range, same weight) before recommending more weight. This
+is the concrete form "recent performance trend should be considered"
+takes here — apply it on the upside; a single strong session should still
+count immediately for Double Progression (matching the 12/12/12 example
+above), while Rep Range Progression is the deliberately slower option for
+exercises where a fluke session shouldn't trigger a jump. Both still fall
+back to maintaining or deloading the same way Linear Progression does.
+
 ## Linear Progression
 
 Increase load according to a configured increment.
@@ -125,6 +139,14 @@ Repeated failure may result in:
 
 The user remains in control.
 
+Implemented as: one missed/failed session at a weight just maintains
+(try again); two *consecutive* missed/failed sessions at the *same*
+weight escalates to a deload (10% off). A single bad session is never
+enough on its own — matches "failure is a signal, not an automatic
+command." Applies to Linear, Double Progression, Rep Range, and
+Maintenance; RPE/RIR uses its own actual-vs-target comparison instead
+(see above) since it has a more direct signal to work from.
+
 ## API/service concept
 
 A progression service should be independently testable.
@@ -138,6 +160,16 @@ calculate_progression(
     progression_settings,
 )
 ```
+
+Implemented as `apps.progression.engine.calculate_progression(user,
+prescription)`, returning a `ProgressionResult` (`action`,
+`suggested_weight`, `reason`, `sessions_considered`, `one_rm_source`) —
+`exercise_history`/`progression_settings` didn't need to be separate
+parameters once `prescription` (which already carries every progression
+setting — method, increment, rep range, target weight/RPE/RIR,
+percentage target) and `user` (from which history is looked up directly)
+were available, per "keep the actual API clean and idiomatic for the
+project" above.
 
 Keep the actual API clean and idiomatic for the project.
 

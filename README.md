@@ -60,6 +60,22 @@ firing their own notification — otherwise a good session would spam a
 also has a "Your PRs" page showing current bests computed live. 28 new
 tests (92 total).
 
+Phase 6 (Progression engine) — `apps/progression/engine.py`:
+`calculate_progression(user, prescription)` implements all seven methods
+from `docs/PROGRESSION.md` (manual, maintenance, linear, double
+progression, rep range, percentage-based, RPE/RIR) as pure domain logic —
+no models, no views yet (that's Phase 7, "Smart suggestions"; this phase
+only had to get the decision right). Every method judges past sessions
+against what was actually snapshotted for them at the time (not the live
+prescription), consistent with the historical-trustworthiness rule.
+Failure handling is uniform: one missed session maintains, two
+consecutive missed sessions at the same weight escalates to a 10%
+deload. Percentage-based tries three 1RM sources in priority order —
+manually supplied, latest estimated-1RM PR (`apps/records`), or a live
+estimate from the most recent set — always reporting which one it used.
+26 new tests (118 total), including a determinism check (same inputs →
+identical `ProgressionResult`) and per-user isolation.
+
 ## Local development
 
 ```bash
