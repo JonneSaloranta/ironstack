@@ -79,6 +79,8 @@ class BarPoint:
     y: Decimal
     width: Decimal
     height: Decimal
+    label_x: Decimal  # center of the bar — anchor point for the category label below it
+    label_y: Decimal
 
 
 @dataclass(frozen=True)
@@ -86,7 +88,15 @@ class BarSeries:
     bars: list
     max_value: Decimal
     width: int
-    height: int
+    height: int  # total SVG height, including the reserved label band below the plot
+
+
+# Reserved band below the plot area for each bar's own category label,
+# rotated to fit an unbounded number of categories without guaranteed
+# collisions — see build_bar_series' docstring. Added on top of the
+# caller's requested `height` (which stays the plot area's height, so
+# existing callers that don't care about labels don't need to change).
+LABEL_BAND = Decimal("38")
 
 
 def build_bar_series(categories, *, width=600, height=200, padding=20):
@@ -94,6 +104,13 @@ def build_bar_series(categories, *, width=600, height=200, padding=20):
     order (not sorted here — callers decide chronological vs.
     ranked-by-value). Returns None for no categories at all; unlike line
     charts, a single bar is still a meaningful comparison-of-one.
+
+    Each bar carries its own `label_x`/`label_y` so the template can draw
+    the category name directly under the bar (rotated, since labels are
+    typically wider than a bar's slot) — the exact figures still live in
+    the table below for anyone who needs precision or a screen reader,
+    but a bar chart with unlabeled bars is hard to read at a glance, so
+    the chart itself needs the names too, not just the table.
     """
     categories = list(categories)
     if not categories:
@@ -106,6 +123,7 @@ def build_bar_series(categories, *, width=600, height=200, padding=20):
     baseline = Decimal(height - padding)
     slot_width = plot_width / Decimal(len(categories))
     bar_width = min(slot_width * Decimal("0.6"), MAX_BAR_THICKNESS)
+    label_y = baseline + Decimal("14")
 
     bars = []
     for i, (label, value) in enumerate(categories):
@@ -120,7 +138,11 @@ def build_bar_series(categories, *, width=600, height=200, padding=20):
                 y=(baseline - bar_height).quantize(TWO_PLACES),
                 width=bar_width.quantize(TWO_PLACES),
                 height=bar_height.quantize(TWO_PLACES),
+                label_x=(bar_x + bar_width / 2).quantize(TWO_PLACES),
+                label_y=label_y.quantize(TWO_PLACES),
             )
         )
 
-    return BarSeries(bars=bars, max_value=max_value, width=width, height=height)
+    return BarSeries(
+        bars=bars, max_value=max_value, width=width, height=height + int(LABEL_BAND)
+    )

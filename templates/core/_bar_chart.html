@@ -7,23 +7,26 @@ would just be noise (see dataviz skill "color-formula" — categorical
 color is for distinguishing overlapping series, not restating what a
 label already says).
 
-The bars alone have no visible category labels — with an unbounded
-number of categories (weeks, muscle groups), fitting readable text under
-narrow bars without collisions isn't guaranteed — so the table directly
-below is what actually carries "which bar is which" for a sighted user,
-not just an accessibility fallback: without it, this chart is a row of
-same-colored bars nobody can read. It also means the hover tooltip's
-figures are never the only way to reach them.
+Each bar's own category name is drawn directly under it (rotated, so an
+unbounded number of categories — weeks, muscle groups — doesn't force
+truncation as aggressively as horizontal text would) — a chart with
+same-colored, unlabeled bars isn't readable at a glance. The table below
+still carries the exact figures for anyone who needs precision or a
+screen reader, and the hover tooltip's figures are never the only way
+to reach them either.
 
 Expects: chart (apps.core.charts.BarSeries), chart_title, unit_label.
 {% endcomment %}
 <div class="chart-card">
-  <svg class="chart-svg" viewBox="0 0 {{ chart.width }} {{ chart.height }}" role="img"
+  <svg class="chart-svg" width="{{ chart.width }}" height="{{ chart.height }}"
+       viewBox="0 0 {{ chart.width }} {{ chart.height }}" role="img"
        aria-label="{% blocktrans count counter=chart.bars|length with title=chart_title %}{{ title }}, {{ counter }} category{% plural %}{{ title }}, {{ counter }} categories{% endblocktrans %}">
     {% for bar in chart.bars %}
       <rect class="bar-rect" x="{{ bar.x }}" y="{{ bar.y }}" width="{{ bar.width }}" height="{{ bar.height }}" rx="3">
         <title>{{ bar.label }}: {{ bar.value }} {{ unit_label }}</title>
       </rect>
+      <text class="bar-label" x="{{ bar.label_x }}" y="{{ bar.label_y }}"
+            transform="rotate(-40 {{ bar.label_x }} {{ bar.label_y }})">{{ bar.label }}</text>
     {% endfor %}
   </svg>
   <table class="bar-chart-table">

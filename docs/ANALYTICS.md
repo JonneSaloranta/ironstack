@@ -132,6 +132,13 @@ fixed both:
   code comment claiming otherwise) no table — only a per-bar hover
   tooltip, which isn't discoverable on touch devices. `core/_bar_chart.html`
   now renders a small table (category, value) directly below every bar
-  chart, which is the real fix — not a legend, since a categorical color
-  key wouldn't have helped when every bar is deliberately the same color
-  (see the file's own reasoning for why).
+  chart — not a legend, since a categorical color key wouldn't have
+  helped when every bar is deliberately the same color (see the file's
+  own reasoning for why).
+- Follow-up: even with the table, an unlabeled row of same-colored bars
+  read as broken rather than minimal, so each bar now also carries its
+  own rotated `<text>` label directly in the SVG
+  (`apps.core.charts.build_bar_series` reserves a label band below the
+  plot area and computes each bar's label position) — the table stays
+  as the precise, always-accessible source of the exact figures, but
+  the chart itself is readable at a glance now too.

@@ -193,11 +193,22 @@ input[type="radio"] {
 
 .top-bar {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
+  gap: 0.5rem;
   padding: 1rem;
   margin-bottom: 1rem;
   border-bottom: 1px solid var(--color-border);
+}
+
+.top-bar form,
+.top-bar .button,
+.top-bar button {
+  /* The shared button margin-bottom (spacing between stacked action
+     rows elsewhere) would otherwise nudge a top-bar button off its
+     centered alignment next to the heading. */
+  margin-bottom: 0;
 }
 
 /* Exercises: list, filters, detail */
@@ -456,6 +467,12 @@ h2 {
 
 .bar-rect {
   fill: var(--color-accent);
+}
+
+.bar-label {
+  font-size: 9px;
+  fill: var(--color-text-muted);
+  text-anchor: end;
 }
 
 .bar-chart-table {

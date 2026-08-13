@@ -276,6 +276,20 @@ class AnalyticsDashboardViewTests(TestCase):
         self.assertContains(response, '<table class="bar-chart-table">')
         self.assertContains(response, "<th scope=\"row\">Test Chest Bar</th>")
 
+    def test_bar_chart_labels_the_bars_directly_not_just_the_table(self):
+        """Regression: bars were deliberately unlabeled in the SVG itself
+        (only the table below named them), which read as broken/blank —
+        a chart of same-colored, nameless bars. Each bar now carries its
+        own <text> label too."""
+        chest = MuscleGroup.objects.create(name="Test Chest Direct")
+        exercise = Exercise.objects.create(name="Test Bench Direct", owner=None)
+        exercise.primary_muscle_groups.set([chest])
+        _log_completed_session(self.alice, exercise, Decimal("80"), [5, 5, 5])
+
+        response = self.client.get(reverse("analytics:dashboard"))
+        self.assertContains(response, 'class="bar-label"')
+        self.assertContains(response, ">Test Chest Direct<")
+
 
 class ExerciseAnalyticsViewTests(TestCase):
     def setUp(self):

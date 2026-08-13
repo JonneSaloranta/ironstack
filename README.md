@@ -417,6 +417,25 @@ rule (one/few/many — e.g. "3 тренировки" vs. "5 тренировок
 gettext's English-shaped 2-form default. See `docs/ARCHITECTURE.md`
 "Internationalization" for the full write-up. 5 new tests (310 total).
 
+**Bar chart labels, and two button placement fixes.** Bar charts (weekly
+training volume, muscle-group volume) had deliberately unlabeled bars —
+a color-coded row with no visible name, readable only via the table
+below or a hover tooltip — which read as broken rather than just
+minimal. Each bar now carries its own rotated `<text>` label directly in
+the SVG (`apps.core.charts.build_bar_series` now reserves a label band
+and computes each bar's label position); the exact figures still live in
+the table below. Also added explicit `width`/`height` attributes to
+every chart `<svg>` (previously `viewBox`-only) — a defensive fix for
+inconsistent height:auto intrinsic-sizing behavior across browsers when
+only `viewBox` is present. "Start freeform workout"
+(`templates/workouts/session_list.html`) and "New"
+(`templates/programs/program_list.html`) were both sitting crammed
+against their page heading in the top-bar; moved out to their own
+better-separated spots — freeform-start now sits as a secondary-styled
+button beside "Back to programs" at the bottom, "New" sits directly
+under the "My programs" heading, above that list. 1 new test (311
+total).
+
 ## Local development
 
 ```bash

@@ -6,11 +6,6 @@
   <h1 style="margin:0;">{% trans "Workouts" %}</h1>
 </div>
 
-<form method="post" action="{% url 'workouts:session-start-freeform' %}">
-  {% csrf_token %}
-  <button type="submit">{% trans "Start freeform workout" %}</button>
-</form>
-
 {% for session in sessions %}
   <a class="card card-link" href="{% url 'workouts:session-detail' session.pk %}">
     <strong>{% if session.workout %}{{ session.workout.name }}{% else %}{% trans "Freeform workout" %}{% endif %}</strong>
@@ -20,9 +15,15 @@
 {% empty %}
   <div class="card empty-state">
     <p>{% trans "No workouts logged yet." %}</p>
-    <p>{% trans "Start one above, or pick a workout from one of your programs." %}</p>
+    <p>{% trans "Start one below, or pick a workout from one of your programs." %}</p>
   </div>
 {% endfor %}
 
-<p><a class="button-secondary" href="{% url 'programs:program-list' %}">&larr; {% trans "Back to programs" %}</a></p>
+<p>
+  <a class="button-secondary" href="{% url 'programs:program-list' %}">&larr; {% trans "Back to programs" %}</a>
+  <form style="display:inline-block" method="post" action="{% url 'workouts:session-start-freeform' %}">
+    {% csrf_token %}
+    <button type="submit" class="button-secondary">{% trans "Start freeform workout" %}</button>
+  </form>
+</p>
 {% endblock %}

@@ -4,10 +4,10 @@
 {% block content %}
 <div class="top-bar">
   <h1 style="margin:0;">{% trans "Programs" %}</h1>
-  <a class="button" href="{% url 'programs:program-create' %}">{% trans "New" %}</a>
 </div>
 
 <h2>{% trans "My programs" %}</h2>
+<p><a class="button" href="{% url 'programs:program-create' %}">{% trans "New" %}</a></p>
 {% for program in programs %}
   <a class="card card-link" href="{% url 'programs:program-detail' program.pk %}">
     <strong>{{ program.name }}</strong>
