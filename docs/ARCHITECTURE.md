@@ -82,7 +82,12 @@ Manually logged non-gym activities.
 Aggregations, trends, dashboards, chart data.
 
 ### core
-Shared utilities and cross-cutting concerns.
+Shared utilities and cross-cutting concerns: unit conversion
+(`apps.core.units`) and single-series chart data prep
+(`apps.core.charts.build_chart_series` — normalizes a list of `(value,
+date)` readings into SVG-ready coordinates; kept model-agnostic so any
+app plotting a trend, currently `measurements` and `activities`, shares
+one implementation instead of each rolling its own).
 
 ## Historical data rule
 

@@ -1,15 +1,17 @@
 {% comment %}
-Single-series line chart (change-over-time). No legend — one series, so
-the card heading already names what's plotted (see dataviz skill
-"marks-and-anatomy"). Exact figures live in the table below; this is the
-trend, not the record.
+Single-series line chart (change-over-time), shared by apps.measurements
+and apps.activities. No legend — one series, so the card heading already
+names what's plotted (see dataviz skill "marks-and-anatomy"). Exact
+figures live in the table below; this is the trend, not the record.
+
+Expects: chart (apps.core.charts.ChartSeries), chart_title, unit_label.
 {% endcomment %}
 <div class="chart-card">
   <div class="chart-range">
     <span>{{ chart.max_value }} {{ unit_label }}</span>
   </div>
   <svg class="chart-svg" viewBox="0 0 {{ chart.width }} {{ chart.height }}" role="img"
-       aria-label="{{ measurement_type.name }} trend over time, {{ chart.points|length }} readings">
+       aria-label="{{ chart_title }} trend over time, {{ chart.points|length }} readings">
     <polyline class="chart-line" points="{{ chart.polyline }}" fill="none" />
     {% for point in chart.points %}
       <circle class="chart-point" cx="{{ point.x }}" cy="{{ point.y }}" r="5">

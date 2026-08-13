@@ -7,7 +7,7 @@
 </div>
 
 {% if chart %}
-  {% include "measurements/_chart.html" %}
+  {% include "core/_chart.html" with chart_title=measurement_type.name %}
 {% endif %}
 
 <form class="card" method="post" action="{% url 'measurements:log' measurement_type.pk %}">

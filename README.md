@@ -120,6 +120,31 @@ used raw 4-decimal-place canonical values instead of the user's converted
 display units — now both the chart and table read from the same
 converted values.
 
+Phase 9 (Activities) — `apps/activities`: `ActivityType` (a starting set
+of common types seeded — Running, Walking, Cycling, Swimming, Hiking,
+Rowing, Yoga, Other — not an exhaustive doc-specified list like
+`MeasurementType`, since `docs/DOMAIN_MODEL.md` expects users to add
+their own) and `Activity` (date, optional start time, duration, optional
+distance/calories, notes). `build_chart_series` was generic enough
+already that this phase needed the exact same thing Phase 8 built for
+measurements, so rather than duplicate it or have `apps.activities`
+import from the unrelated sibling `apps.measurements`, it was promoted to
+`apps.core.charts` — both apps' history pages, and the shared chart
+template (`templates/core/_chart.html`), now use the one shared
+implementation, model-agnostic via plain `(value, date)` tuples. Each
+activity type's history page charts total duration (the one metric every
+activity type has, unlike distance/calories which are optional) alongside
+a summary card (count, total duration, total distance/calories) and the
+full editable table — this phase's "activity analytics"; cross-activity
+dashboards are Phase 10. 25 new tests (186 total) plus a chart-test
+relocation to `apps.core` to match the refactor. Manual HTTP verification
+again caught a real bug past the test suite: the summary card's total
+distance displayed raw canonical meters labeled "km" (e.g. "18000.00 km"
+for what should read "18.00 km") — `services.summarize()` correctly
+totals canonical values, but the view wasn't converting the total before
+handing it to the template, unlike the already-converted per-entry
+values. Fixed and re-verified live, with a regression test added.
+
 ## Local development
 
 ```bash

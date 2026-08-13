@@ -10,5 +10,6 @@ urlpatterns = [
     path("workouts/", include("apps.workouts.urls")),
     path("records/", include("apps.records.urls")),
     path("measurements/", include("apps.measurements.urls")),
+    path("activities/", include("apps.activities.urls")),
     path("", include("apps.core.urls")),
 ]

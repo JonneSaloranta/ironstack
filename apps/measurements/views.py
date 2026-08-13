@@ -1,5 +1,3 @@
-from types import SimpleNamespace
-
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseNotAllowed
 from django.shortcuts import get_object_or_404, redirect, render
@@ -67,12 +65,8 @@ class MeasurementHistoryView(LoginRequiredMixin, DetailView):
         context["history"] = history
         context["unit_label"] = unit_label
         # The chart plots display units (what the user actually reads),
-        # not canonical storage — same converted values as the table,
-        # via lightweight stand-ins rather than mutating the real entries.
-        chart_points = [
-            SimpleNamespace(value=entry.display_value, recorded_at=entry.recorded_at)
-            for entry in history
-        ]
+        # not canonical storage — same converted values as the table.
+        chart_points = [(entry.display_value, entry.recorded_at) for entry in history]
         context["chart"] = services.build_chart_series(chart_points)
         context["form"] = BodyMeasurementForm(user=user, measurement_type=measurement_type)
         context["can_deactivate"] = measurement_type.owner_id == user.id

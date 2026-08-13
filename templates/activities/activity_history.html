@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}{{ activity_type.name }} — IronStack{% endblock %}
+{% block content %}
+<div class="top-bar">
+  <h1 style="margin:0;">{{ activity_type.name }}</h1>
+  {% if not activity_type.active %}<span class="tag tag-muted">Inactive</span>{% endif %}
+</div>
+
+{% if summary.count %}
+  <div class="card">
+    <p class="text-muted">
+      {{ summary.count }} logged · total duration {{ summary.total_duration }}
+      {% if summary.total_distance is not None %} · total distance {{ summary.total_distance }} {{ distance_label }}{% endif %}
+      {% if summary.total_calories is not None %} · total calories {{ summary.total_calories }}{% endif %}
+    </p>
+  </div>
+{% endif %}
+
+{% if chart %}
+  {% include "core/_chart.html" with chart_title=activity_type.name unit_label="min" %}
+{% endif %}
+
+<form class="card" method="post" action="{% url 'activities:log' activity_type.pk %}">
+  {% csrf_token %}
+  {{ form.non_field_errors }}
+  {% for field in form %}
+    <div class="field">
+      {{ field.label_tag }}
+      {{ field }}
+      {% if field.errors %}<p class="field-error">{{ field.errors|striptags }}</p>{% endif %}
+    </div>
+  {% endfor %}
+  <button type="submit">Log activity</button>
+</form>
+
+<table class="set-table">
+  <thead>
+    <tr><th>Date</th><th>Duration</th><th>Distance</th><th></th></tr>
+  </thead>
+  <tbody>
+    {% for entry in history %}
+      <tr>
+        <td>{{ entry.date|date:"Y-m-d" }}{% if entry.start_time %} {{ entry.start_time|time:"H:i" }}{% endif %}</td>
+        <td>{{ entry.duration }}</td>
+        <td>{% if entry.display_distance is not None %}{{ entry.display_distance }} {{ distance_label }}{% else %}—{% endif %}</td>
+        <td class="set-actions">
+          <a href="{% url 'activities:entry-edit' entry.pk %}">Edit</a>
+          <form method="post" action="{% url 'activities:entry-delete' entry.pk %}" onsubmit="return confirm('Delete this activity?');">
+            {% csrf_token %}
+            <button type="submit" class="button-danger">Delete</button>
+          </form>
+        </td>
+      </tr>
+    {% empty %}
+      <tr><td colspan="4" class="text-muted">No activities logged yet.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% if can_deactivate and activity_type.active %}
+  <form method="post" action="{% url 'activities:type-deactivate' activity_type.pk %}" onsubmit="return confirm('Deactivate this activity type? It will no longer appear when logging new activities.');">
+    {% csrf_token %}
+    <button type="submit" class="button-danger">Deactivate type</button>
+  </form>
+{% endif %}
+
+<p><a href="{% url 'activities:type-list' %}">&larr; Back to activities</a></p>
+{% endblock %}

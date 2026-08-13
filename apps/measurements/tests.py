@@ -4,7 +4,7 @@ from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse
 
-from . import services, units
+from . import units
 from .models import BodyMeasurement, MeasurementType, UnitKind
 
 User = get_user_model()
@@ -86,66 +86,6 @@ class MeasurementTypeModelTests(TestCase):
         system = MeasurementType.objects.get(name="Waist")
         self.assertTrue(custom.is_custom)
         self.assertFalse(system.is_custom)
-
-
-class ChartSeriesServiceTests(TestCase):
-    def setUp(self):
-        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
-        self.measurement_type = MeasurementType.objects.get(name="Body weight")
-
-    def _measurement(self, value, recorded_at):
-        return BodyMeasurement(
-            user=self.alice,
-            measurement_type=self.measurement_type,
-            value=Decimal(value),
-            recorded_at=recorded_at,
-        )
-
-    def test_fewer_than_two_points_returns_no_series(self):
-        from django.utils import timezone
-
-        self.assertIsNone(services.build_chart_series([]))
-        self.assertIsNone(services.build_chart_series([self._measurement("80", timezone.now())]))
-
-    def test_series_is_ordered_chronologically_regardless_of_input_order(self):
-        from datetime import timedelta
-
-        from django.utils import timezone
-
-        now = timezone.now()
-        newer = self._measurement("82", now)
-        older = self._measurement("80", now - timedelta(days=7))
-        series = services.build_chart_series([newer, older])
-        self.assertEqual([p.value for p in series.points], [Decimal("80"), Decimal("82")])
-
-    def test_min_and_max_are_tracked(self):
-        from datetime import timedelta
-
-        from django.utils import timezone
-
-        now = timezone.now()
-        measurements = [
-            self._measurement("80", now - timedelta(days=2)),
-            self._measurement("85", now - timedelta(days=1)),
-            self._measurement("78", now),
-        ]
-        series = services.build_chart_series(measurements)
-        self.assertEqual(series.min_value, Decimal("78"))
-        self.assertEqual(series.max_value, Decimal("85"))
-
-    def test_equal_values_do_not_divide_by_zero(self):
-        from datetime import timedelta
-
-        from django.utils import timezone
-
-        now = timezone.now()
-        measurements = [
-            self._measurement("80", now - timedelta(days=1)),
-            self._measurement("80", now),
-        ]
-        series = services.build_chart_series(measurements)
-        self.assertIsNotNone(series)
-        self.assertEqual(series.points[0].y, series.points[1].y)
 
 
 class MeasurementViewPermissionTests(TestCase):

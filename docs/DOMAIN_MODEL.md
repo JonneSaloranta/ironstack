@@ -185,6 +185,15 @@ Fields:
 
 Users may create custom activity types.
 
+Implemented as `ActivityType` (a starting set of common types seeded, not
+an exhaustive doc-specified list like `MeasurementType` — users are
+expected to add their own) plus `Activity`. `date` and `start_time` are
+kept as separate fields rather than one combined timestamp: `start_time`
+is optional, since logging "went for a run today" shouldn't require also
+stating a precise clock time. `distance` is optional too (canonical
+meters) — plenty of activity types have none — and converts to km/miles
+the same way `BodyMeasurement`'s length readings convert to cm/inches.
+
 ## BodyMeasurement
 
 Stores a time-stamped body measurement.
