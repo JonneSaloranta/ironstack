@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block title %}{{ program.name }} — IronStack{% endblock %}
+{% block content %}
+<div class="top-bar">
+  <h1 style="margin:0;">{{ program.name }}</h1>
+  {% if can_edit %}
+    <a class="button" href="{% url 'programs:program-update' program.pk %}">Edit</a>
+  {% else %}
+    <form method="post" action="{% url 'programs:program-copy' program.pk %}">
+      {% csrf_token %}
+      <button type="submit">Copy to my programs</button>
+    </form>
+  {% endif %}
+</div>
+
+<div class="card">
+  {% if program.is_system_template %}<span class="tag tag-muted">Template</span>{% endif %}
+  {% if program.description %}<p>{{ program.description }}</p>{% endif %}
+  <p class="text-muted">Version {{ program.version }} · updated {{ program.updated_at|date:"Y-m-d" }}</p>
+</div>
+
+{% for workout in program.workouts.all %}
+  <div class="card">
+    <div class="top-bar" style="padding:0; border:0;">
+      <h3 style="margin:0;">
+        {{ workout.name }}
+        {% if workout.scheduled_weekday is not None %}
+          <span class="tag tag-muted">{{ workout.get_scheduled_weekday_display }}</span>
+        {% endif %}
+      </h3>
+      {% if can_edit %}
+        <a href="{% url 'programs:workout-update' program.pk workout.pk %}">Edit</a>
+      {% endif %}
+    </div>
+
+    <ul class="prescription-list">
+      {% for prescription in workout.prescriptions.all %}
+        <li>
+          <strong>{{ prescription.exercise.name }}</strong>
+          — {{ prescription.set_count }} × {{ prescription.min_reps }}-{{ prescription.max_reps }}
+          {% if prescription.target_rpe %} @ RPE {{ prescription.target_rpe }}{% endif %}
+          {% if can_edit %}
+            <a href="{% url 'programs:prescription-update' program.pk workout.pk prescription.pk %}">Edit</a>
+          {% endif %}
+        </li>
+      {% empty %}
+        <li class="text-muted">No exercises yet.</li>
+      {% endfor %}
+    </ul>
+
+    {% if can_edit %}
+      <a class="button" href="{% url 'programs:prescription-create' program.pk workout.pk %}">Add exercise</a>
+    {% endif %}
+  </div>
+{% empty %}
+  <div class="card empty-state">
+    <p>No workouts yet.</p>
+  </div>
+{% endfor %}
+
+{% if can_edit %}
+  <a class="button" href="{% url 'programs:workout-create' program.pk %}">Add workout</a>
+  <form method="post" action="{% url 'programs:program-delete' program.pk %}" onsubmit="return confirm('Delete this program? This cannot be undone.');">
+    {% csrf_token %}
+    <button type="submit" class="button-danger">Delete program</button>
+  </form>
+{% endif %}
+
+<p><a href="{% url 'programs:program-list' %}">&larr; Back to programs</a></p>
+{% endblock %}

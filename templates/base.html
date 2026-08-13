@@ -13,7 +13,7 @@
   <nav class="bottom-nav" aria-label="Main navigation">
     <a href="{% url 'dashboard' %}" {% if request.resolver_match.url_name == 'dashboard' %}aria-current="page"{% endif %}>Home</a>
     <a href="#">Workout</a>
-    <a href="#">Programs</a>
+    <a href="{% url 'programs:program-list' %}" {% if request.resolver_match.app_name == 'programs' %}aria-current="page"{% endif %}>Programs</a>
     <a href="#">Progress</a>
     <a href="#">Profile</a>
   </nav>

@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Delete program — IronStack{% endblock %}
+{% block content %}
+<div class="top-bar">
+  <h1 style="margin:0;">Delete program</h1>
+</div>
+
+<div class="card">
+  <p>Delete <strong>{{ program.name }}</strong> and all of its workouts and exercises? This cannot be undone.</p>
+  <form method="post">
+    {% csrf_token %}
+    <button type="submit" class="button-danger">Delete</button>
+  </form>
+  <p><a href="{% url 'programs:program-detail' program.pk %}">Cancel</a></p>
+</div>
+{% endblock %}

@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Programs — IronStack{% endblock %}
+{% block content %}
+<div class="top-bar">
+  <h1 style="margin:0;">Programs</h1>
+  <a class="button" href="{% url 'programs:program-create' %}">New</a>
+</div>
+
+<h2>My programs</h2>
+{% for program in programs %}
+  <a class="card card-link" href="{% url 'programs:program-detail' program.pk %}">
+    <strong>{{ program.name }}</strong>
+    <div class="text-muted">{{ program.workouts.count }} workout{{ program.workouts.count|pluralize }}</div>
+  </a>
+{% empty %}
+  <div class="card empty-state">
+    <p>No programs yet.</p>
+    <p>Create one, or copy a template below to get started.</p>
+  </div>
+{% endfor %}
+
+<h2>Templates</h2>
+{% for template in templates %}
+  <div class="card">
+    <a class="card-link" href="{% url 'programs:program-detail' template.pk %}">
+      <strong>{{ template.name }}</strong>
+      <div class="text-muted">{{ template.workouts.count }} workout{{ template.workouts.count|pluralize }}</div>
+    </a>
+    <form method="post" action="{% url 'programs:program-copy' template.pk %}">
+      {% csrf_token %}
+      <button type="submit">Copy to my programs</button>
+    </form>
+  </div>
+{% empty %}
+  <div class="card empty-state">
+    <p>No built-in templates available.</p>
+  </div>
+{% endfor %}
+{% endblock %}

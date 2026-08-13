@@ -15,6 +15,16 @@ exercises (private to their owner); browse/search/filter UI with HTMX-backed
 live filtering; soft-delete via an `active` flag so history stays intact
 after an exercise is retired.
 
+Phase 3 (Programs) — programs (`apps/programs`): `Program` → `Workout` →
+`ExercisePrescription`, private to their owner except built-in system
+templates (seeded, read-only, copyable via `services.copy_program`, which
+deep-copies workouts/prescriptions into a new program the user can edit
+independently of the source). Optional per-workout weekday scheduling.
+`Program.version`/`updated_at` are display-only counters, bumped on any
+structural edit — see `docs/ARCHITECTURE.md` "snapshot-on-start" for why
+this is enough to satisfy the historical-trustworthiness rule once workout
+logging (Phase 4) exists.
+
 ## Local development
 
 ```bash

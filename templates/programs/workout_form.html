@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}{% if form.instance.pk %}Edit workout{% else %}New workout{% endif %} — IronStack{% endblock %}
+{% block content %}
+<div class="top-bar">
+  <h1 style="margin:0;">{% if form.instance.pk %}Edit workout{% else %}New workout{% endif %}</h1>
+</div>
+
+<form class="card" method="post">
+  {% csrf_token %}
+  {{ form.non_field_errors }}
+  {% for field in form %}
+    <div class="field">
+      {{ field.label_tag }}
+      {{ field }}
+      {% if field.errors %}<p class="field-error">{{ field.errors|striptags }}</p>{% endif %}
+    </div>
+  {% endfor %}
+  <button type="submit">Save</button>
+</form>
+
+{% if form.instance.pk %}
+  <form method="post" action="{% url 'programs:workout-delete' program.pk form.instance.pk %}" onsubmit="return confirm('Delete this workout and its exercises?');">
+    {% csrf_token %}
+    <button type="submit" class="button-danger">Delete workout</button>
+  </form>
+{% endif %}
+
+<p><a href="{% url 'programs:program-detail' program.pk %}">&larr; Back to {{ program.name }}</a></p>
+{% endblock %}
