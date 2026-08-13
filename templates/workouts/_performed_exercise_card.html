@@ -59,6 +59,17 @@
   </table>
 
   {% if session.is_in_progress %}
+    {% if suggestion %}
+      <div class="suggestion-banner">
+        {% if suggestion.suggested_weight %}
+          <strong>Suggested: {{ suggestion.suggested_weight }} kg
+            {% if suggestion.target_min_reps %}× {{ suggestion.target_min_reps }}{% if suggestion.target_max_reps and suggestion.target_max_reps != suggestion.target_min_reps %}-{{ suggestion.target_max_reps }}{% endif %}{% endif %}
+          </strong>
+          <span class="tag tag-muted">{{ suggestion.confidence|capfirst }} confidence</span>
+        {% endif %}
+        <div class="text-muted">{{ suggestion.reason }}</div>
+      </div>
+    {% endif %}
     <form class="set-log-form" method="post" action="{% url 'workouts:set-log' pe.id %}"
           hx-post="{% url 'workouts:set-log' pe.id %}"
           hx-target="#performed-exercise-{{ pe.id }}" hx-swap="outerHTML">

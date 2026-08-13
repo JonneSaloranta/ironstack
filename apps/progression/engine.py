@@ -17,7 +17,7 @@ models: there is no new state to store.
 
 from dataclasses import dataclass
 from decimal import Decimal
-from enum import Enum
+from enum import StrEnum
 
 from apps.programs.models import ProgressionMethod
 from apps.records.models import PersonalRecord, PRType
@@ -41,7 +41,7 @@ TWO_PLACES = Decimal("0.01")
 _one_rep_max = OneRepMaxCalculator()
 
 
-class ProgressionAction(str, Enum):
+class ProgressionAction(StrEnum):
     INCREASE = "increase"
     MAINTAIN = "maintain"
     DECREASE = "decrease"

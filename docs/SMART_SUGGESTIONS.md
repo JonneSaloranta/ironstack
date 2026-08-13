@@ -122,3 +122,28 @@ When insufficient data exists, fall back to:
 - simple progression rules
 
 Do not pretend to have confidence when there is not enough history.
+
+## Implementation
+
+`apps.progression.suggestions.suggest_weight(user, prescription)` is
+`WeightSuggestionEngine`. It composes `ProgressionEngine`
+(`apps.progression.engine.calculate_progression`) with the prescription's
+own configured rep range, adding only what the engine doesn't already
+produce: `target_min_reps`/`target_max_reps` and a `confidence` level.
+Confidence is a direct, deterministic function of how much evidence the
+underlying decision used — never a black-box score:
+
+- `insufficient_data` or `manual` action → low
+- `calculated` (percentage-based) → high for a manual or PR-backed 1RM,
+  medium for a live single-set estimate
+- otherwise (trend-based increase/maintain/decrease/deload) → high with
+  2+ supporting sessions, medium with 1, low with none
+
+Reached from the UI in `apps.workouts.views._build_set_form`: a
+performed exercise's very first set (only) gets its weight/reps
+pre-filled from the suggestion, with the confidence and reason shown
+alongside as plain, editable form defaults — never validated against,
+never forced. `apps.workouts` cannot import `apps.progression` directly
+(the dependency already runs the other way, since progression reads
+workout history), so this composition happens at the view layer, the one
+place allowed to cross that boundary — see `docs/ARCHITECTURE.md`.

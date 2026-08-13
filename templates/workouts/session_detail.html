@@ -12,7 +12,7 @@
 </p>
 
 {% for pe in session.performed_exercises.all %}
-  {% include "workouts/_performed_exercise_card.html" with pe=pe set_form=pe.set_form %}
+  {% include "workouts/_performed_exercise_card.html" with pe=pe set_form=pe.set_form suggestion=pe.suggestion %}
 {% empty %}
   <div class="card empty-state">
     <p>No exercises yet.</p>

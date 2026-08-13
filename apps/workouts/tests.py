@@ -237,3 +237,67 @@ class SetLoggingFlowTests(TestCase):
         session_ids = {s.pk for s in response.context["sessions"]}
         self.assertIn(self.session.pk, session_ids)
         self.assertIn(other_session.pk, session_ids)
+
+
+class SmartSuggestionIntegrationTests(TestCase):
+    """Phase 7: the progression engine's suggestion reaches the logging
+    form as a pre-filled, freely-overridable default — never a black box,
+    never forced (docs/SMART_SUGGESTIONS.md)."""
+
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        self.workout, self.prescription = _make_workout_with_prescription(self.alice)
+        self.session = services.start_session(self.alice, workout=self.workout)
+        self.performed = self.session.performed_exercises.get()
+        self.client.login(username="alice", password="s3cret-pass")
+
+    def test_detail_page_shows_a_suggestion_before_any_set_is_logged(self):
+        response = self.client.get(reverse("workouts:session-detail", args=[self.session.pk]))
+        performed = response.context["session"].performed_exercises.all()[0]
+        self.assertIsNotNone(performed.suggestion)
+        # No history yet -> insufficient data, falls back to the
+        # prescribed target (docs/SMART_SUGGESTIONS.md "Insufficient
+        # history").
+        self.assertEqual(performed.suggestion.suggested_weight, Decimal("100.00"))
+        self.assertContains(response, "Suggested: 100.00 kg")
+
+    def test_the_suggested_weight_pre_fills_the_set_log_form(self):
+        response = self.client.get(reverse("workouts:session-detail", args=[self.session.pk]))
+        performed = response.context["session"].performed_exercises.all()[0]
+        self.assertEqual(performed.set_form.initial["weight"], Decimal("100.00"))
+
+    def test_user_can_log_a_different_weight_than_the_one_suggested(self):
+        """"Never prevent a user from entering a different value" —
+        exercised end-to-end: the suggestion pre-fills 100kg, but nothing
+        stops logging something else entirely."""
+        response = self.client.post(
+            reverse("workouts:set-log", args=[self.performed.pk]),
+            {"weight": "37.5", "reps": "12"},
+        )
+        self.assertEqual(response.status_code, 302)
+        logged = self.performed.sets.get()
+        self.assertEqual(logged.weight, Decimal("37.5"))
+        self.assertEqual(logged.reps, 12)
+
+    def test_suggestion_disappears_once_a_set_has_been_logged(self):
+        services.log_set(self.performed, weight=Decimal("100"), reps=5)
+        response = self.client.get(reverse("workouts:session-detail", args=[self.session.pk]))
+        performed = response.context["session"].performed_exercises.all()[0]
+        self.assertIsNone(performed.suggestion)
+
+    def test_freeform_exercises_with_no_prescription_get_no_suggestion(self):
+        freeform_session = services.start_session(self.alice, workout=None)
+        exercise = Exercise.objects.create(name="Ad Hoc Move", owner=None)
+        performed = services.add_performed_exercise(freeform_session, exercise)
+
+        response = self.client.get(
+            reverse("workouts:session-detail", args=[freeform_session.pk])
+        )
+        performed = response.context["session"].performed_exercises.all()[0]
+        self.assertIsNone(performed.suggestion)
+
+    def test_completed_sessions_show_no_suggestion(self):
+        services.complete_session(self.session)
+        response = self.client.get(reverse("workouts:session-detail", args=[self.session.pk]))
+        performed = response.context["session"].performed_exercises.all()[0]
+        self.assertIsNone(performed.suggestion)

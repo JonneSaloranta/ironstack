@@ -76,6 +76,30 @@ estimate from the most recent set — always reporting which one it used.
 26 new tests (118 total), including a determinism check (same inputs →
 identical `ProgressionResult`) and per-user isolation.
 
+Phase 7 (Smart suggestions) — `apps/progression/suggestions.py`:
+`WeightSuggestionEngine` (`suggest_weight(user, prescription)`), kept as
+its own module separate from `ProgressionEngine` per
+`docs/SMART_SUGGESTIONS.md`'s architecture note. Composes the Phase 6
+decision with the prescription's rep range and a deterministic
+low/medium/high confidence (based on how many sessions of evidence
+backed the decision, or which 1RM source percentage-based used — never a
+black-box score). Reaches the logging UI via
+`apps.workouts.views._build_set_form`: a performed exercise's first set
+gets pre-filled from the suggestion, shown alongside its confidence and
+plain-language reason — purely a form default the user can freely
+override before submitting, same as the existing "repeat last set"
+convenience it falls back to for every set after the first. Since
+`apps.progression` already depends on `apps.workouts` (it reads session
+history), the composition happens at the view layer rather than in
+`apps.workouts.services`, to avoid a circular app dependency. 14 new
+tests (132 total), including the doc's own worked "reached the top of the
+rep range in the last two sessions → 82.5 kg" example, and an end-to-end
+test logging a materially different weight than the one suggested to
+confirm nothing blocks overriding it. Also caught and fixed a real
+rendering bug during manual verification: Python's `str, Enum` mix
+stringifies as `Confidence.HIGH` instead of `high` — switched both
+`Confidence` and `ProgressionAction` to `enum.StrEnum`.
+
 ## Local development
 
 ```bash
