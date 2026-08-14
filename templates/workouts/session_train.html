@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Training" %} — IronStack{% endblock %}
+{% block content %}
+<div class="top-bar">
+  <h1 style="margin:0;">{% if session.workout %}{% trans session.workout.name %}{% else %}{% trans "Freeform workout" %}{% endif %}</h1>
+  <a class="button-secondary" href="{% url 'workouts:session-detail' session.pk %}">{% trans "Full view" %}</a>
+</div>
+
+{% comment %}
+Rest timer lives outside #train-panel deliberately — it must survive
+the hx-swap that happens every time a set is logged or Prev/Next is
+tapped, or a countdown in progress would reset to zero mid-rest.
+Started automatically via the "rest-timer-start" HX-Trigger event
+apps.workouts.views.train_set_log sends on a successful log (see that
+view for why a generic htmx:afterRequest listener isn't enough), or
+manually with the presets below.
+{% endcomment %}
+<div class="rest-timer" x-data="ironstackRestTimer()" @rest-timer-start.window="start($event.detail.seconds)">
+  <div class="rest-timer-row" x-show="running" x-cloak>
+    <span class="rest-timer-display" x-text="formatted"></span>
+    <button type="button" class="button-secondary" @click="adjust(-15)">−15s</button>
+    <button type="button" class="button-secondary" @click="adjust(15)">+15s</button>
+    <button type="button" class="button-secondary" @click="stop()">{% trans "Skip rest" %}</button>
+  </div>
+  <div class="rest-timer-row" x-show="!running">
+    <span class="text-muted">{% trans "Rest timer" %}</span>
+    <button type="button" class="button-secondary" @click="start(60)">60s</button>
+    <button type="button" class="button-secondary" @click="start(90)">90s</button>
+    <button type="button" class="button-secondary" @click="start(120)">120s</button>
+  </div>
+</div>
+
+{% include "workouts/_train_panel.html" %}
+
+<form method="post" action="{% url 'workouts:session-complete' session.pk %}">
+  {% csrf_token %}
+  <button type="submit">{% trans "Complete workout" %}</button>
+</form>
+<form method="post" action="{% url 'workouts:session-abandon' session.pk %}" onsubmit="return confirm('{% trans "Abandon this workout? It stays in your history as abandoned." %}');">
+  {% csrf_token %}
+  <button type="submit" class="button-danger">{% trans "Abandon workout" %}</button>
+</form>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  // Training mode's rest timer — plain client-side countdown, no server
+  // round-trip needed while it runs. `duration` is only kept so +/-15s
+  // adjustments after the timer hits 0 have something sane to restart
+  // from; the countdown itself is driven entirely by `remaining`.
+  function ironstackRestTimer() {
+    return {
+      remaining: 0,
+      running: false,
+      intervalId: null,
+      get formatted() {
+        const total = Math.max(0, this.remaining);
+        const m = Math.floor(total / 60);
+        const s = total % 60;
+        return m + ":" + String(s).padStart(2, "0");
+      },
+      start(seconds) {
+        clearInterval(this.intervalId);
+        this.remaining = seconds;
+        this.running = true;
+        this.intervalId = setInterval(() => {
+          this.remaining -= 1;
+          if (this.remaining <= 0) {
+            this.stop();
+          }
+        }, 1000);
+      },
+      adjust(delta) {
+        this.remaining = Math.max(0, this.remaining + delta);
+      },
+      stop() {
+        clearInterval(this.intervalId);
+        this.running = false;
+        this.remaining = 0;
+      },
+    };
+  }
+</script>
+{% endblock %}

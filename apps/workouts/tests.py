@@ -387,3 +387,239 @@ class SmartSuggestionIntegrationTests(TestCase):
         response = self.client.get(reverse("workouts:session-detail", args=[self.session.pk]))
         performed = response.context["session"].performed_exercises.all()[0]
         self.assertIsNone(performed.suggestion)
+
+
+class PerformedExerciseCompletionTests(TestCase):
+    """Training mode's "what's next" stepper is built on this — see
+    apps.workouts.services.is_performed_exercise_complete/
+    first_incomplete_performed_exercise."""
+
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        self.workout, self.prescription = _make_workout_with_prescription(
+            self.alice, set_count=3
+        )
+        self.session = services.start_session(self.alice, workout=self.workout)
+        self.performed = self.session.performed_exercises.get()
+
+    def test_a_prescribed_exercise_is_incomplete_until_it_reaches_its_set_count(self):
+        self.assertFalse(services.is_performed_exercise_complete(self.performed))
+        services.log_set(self.performed, weight=Decimal("100"), reps=5)
+        services.log_set(self.performed, weight=Decimal("100"), reps=5)
+        self.assertFalse(services.is_performed_exercise_complete(self.performed))
+        services.log_set(self.performed, weight=Decimal("100"), reps=5)
+        self.assertTrue(services.is_performed_exercise_complete(self.performed))
+
+    def test_a_freeform_exercise_with_no_set_count_is_complete_after_one_set(self):
+        freeform_session = services.start_session(self.alice, workout=None)
+        exercise = Exercise.objects.create(name="Ad Hoc Move", owner=None)
+        performed = services.add_performed_exercise(freeform_session, exercise)
+        self.assertFalse(services.is_performed_exercise_complete(performed))
+        services.log_set(performed, weight=Decimal("20"), reps=10)
+        self.assertTrue(services.is_performed_exercise_complete(performed))
+
+    def test_first_incomplete_returns_the_first_exercise_still_missing_sets(self):
+        second = services.add_performed_exercise(
+            self.session, Exercise.objects.create(name="Second Move", owner=None)
+        )
+        self.assertEqual(
+            services.first_incomplete_performed_exercise([self.performed, second]),
+            self.performed,
+        )
+        for _ in range(3):
+            services.log_set(self.performed, weight=Decimal("100"), reps=5)
+        self.assertEqual(
+            services.first_incomplete_performed_exercise([self.performed, second]), second
+        )
+
+    def test_first_incomplete_returns_none_once_everything_is_done(self):
+        for _ in range(3):
+            services.log_set(self.performed, weight=Decimal("100"), reps=5)
+        self.assertIsNone(services.first_incomplete_performed_exercise([self.performed]))
+
+
+class TrainingModeViewTests(TestCase):
+    """Training mode (docs/UI.md "Training mode") — a focused, one-page
+    view for logging sets mid-workout: current exercise, what's next,
+    and the same smart suggestion the full session-detail page shows."""
+
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        self.bob = User.objects.create_user(username="bob", password="s3cret-pass")
+        self.workout, self.prescription = _make_workout_with_prescription(
+            self.alice, set_count=2
+        )
+        self.session = services.start_session(self.alice, workout=self.workout)
+        self.performed = self.session.performed_exercises.get()
+        self.client.login(username="alice", password="s3cret-pass")
+
+    def test_training_page_requires_login(self):
+        self.client.logout()
+        response = self.client.get(reverse("workouts:session-train", args=[self.session.pk]))
+        self.assertEqual(response.status_code, 302)
+
+    def test_cannot_view_another_users_session_training_page(self):
+        bob_session = services.start_session(self.bob, workout=None)
+        response = self.client.get(reverse("workouts:session-train", args=[bob_session.pk]))
+        self.assertEqual(response.status_code, 404)
+
+    def test_a_completed_session_redirects_to_the_full_detail_page(self):
+        services.complete_session(self.session)
+        response = self.client.get(reverse("workouts:session-train", args=[self.session.pk]))
+        self.assertRedirects(
+            response, reverse("workouts:session-detail", args=[self.session.pk])
+        )
+
+    def test_training_page_shows_the_first_incomplete_exercise(self):
+        response = self.client.get(reverse("workouts:session-train", args=[self.session.pk]))
+        self.assertEqual(response.context["current"], self.performed)
+        self.assertContains(response, "Test Squat")
+        self.assertContains(response, "Exercise 1 of 1")
+
+    def test_pe_query_param_overrides_the_auto_picked_current_exercise(self):
+        second = services.add_performed_exercise(
+            self.session, Exercise.objects.create(name="Second Move", owner=None)
+        )
+        response = self.client.get(
+            reverse("workouts:session-train", args=[self.session.pk]), {"pe": second.pk}
+        )
+        self.assertEqual(response.context["current"], second)
+
+    def test_logging_a_set_stays_on_the_same_exercise_until_the_target_is_met(self):
+        response = self.client.post(
+            reverse("workouts:train-set-log", args=[self.performed.pk]),
+            {"weight": "100", "reps": "5"},
+            HTTP_HX_REQUEST="true",
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context["current"], self.performed)
+        self.assertEqual(self.performed.sets.count(), 1)
+
+    def test_logging_the_final_set_auto_advances_to_the_next_exercise(self):
+        second = services.add_performed_exercise(
+            self.session, Exercise.objects.create(name="Second Move", owner=None)
+        )
+        services.log_set(self.performed, weight=Decimal("100"), reps=5)
+        response = self.client.post(
+            reverse("workouts:train-set-log", args=[self.performed.pk]),
+            {"weight": "100", "reps": "5"},
+            HTTP_HX_REQUEST="true",
+        )
+        self.assertEqual(response.context["current"], second)
+
+    def test_all_exercises_done_shows_the_completion_banner(self):
+        for _ in range(2):
+            services.log_set(self.performed, weight=Decimal("100"), reps=5)
+        response = self.client.get(reverse("workouts:session-train", args=[self.session.pk]))
+        self.assertTrue(response.context["all_done"])
+        self.assertContains(response, "All exercises done for today.")
+
+    def test_a_validation_error_keeps_the_same_exercise_and_logs_nothing(self):
+        response = self.client.post(
+            reverse("workouts:train-set-log", args=[self.performed.pk]),
+            {"weight": "", "reps": ""},
+            HTTP_HX_REQUEST="true",
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context["current"], self.performed)
+        self.assertEqual(self.performed.sets.count(), 0)
+        self.assertTrue(response.context["set_form"].errors)
+
+    def test_a_successful_log_sets_the_rest_timer_hx_trigger_header(self):
+        response = self.client.post(
+            reverse("workouts:train-set-log", args=[self.performed.pk]),
+            {"weight": "100", "reps": "5"},
+            HTTP_HX_REQUEST="true",
+        )
+        self.assertIn("rest-timer-start", response["HX-Trigger"])
+
+    def test_a_failed_log_does_not_set_the_rest_timer_hx_trigger_header(self):
+        response = self.client.post(
+            reverse("workouts:train-set-log", args=[self.performed.pk]),
+            {"weight": "", "reps": ""},
+            HTTP_HX_REQUEST="true",
+        )
+        self.assertNotIn("HX-Trigger", response)
+
+    def test_cannot_log_a_set_on_another_users_performed_exercise_via_training_mode(self):
+        bob_session = services.start_session(self.bob, workout=None)
+        performed = PerformedExercise.objects.create(
+            session=bob_session, exercise=Exercise.objects.create(name="X", owner=None)
+        )
+        response = self.client.post(
+            reverse("workouts:train-set-log", args=[performed.pk]),
+            {"weight": "100", "reps": "5"},
+        )
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(performed.sets.count(), 0)
+
+    def test_a_non_htmx_request_redirects_back_to_the_training_page(self):
+        """Regression: without the HX-Request check, this endpoint would
+        return the bare #train-panel fragment as a full response to a
+        plain (no-JS) form POST — no <head>, no stylesheet, no nav.
+        set_log's identical _render_session_or_card fallback is the
+        established pattern this mirrors."""
+        response = self.client.post(
+            reverse("workouts:train-set-log", args=[self.performed.pk]),
+            {"weight": "100", "reps": "5"},
+        )
+        self.assertRedirects(
+            response, reverse("workouts:session-train", args=[self.session.pk])
+        )
+        self.assertEqual(self.performed.sets.count(), 1)
+
+    def test_train_set_log_requires_post(self):
+        response = self.client.get(
+            reverse("workouts:train-set-log", args=[self.performed.pk])
+        )
+        self.assertEqual(response.status_code, 405)
+
+    def test_freeform_session_with_no_exercises_shows_an_add_exercise_prompt(self):
+        freeform_session = services.start_session(self.alice, workout=None)
+        response = self.client.get(
+            reverse("workouts:session-train", args=[freeform_session.pk])
+        )
+        self.assertContains(response, "No exercises yet.")
+        self.assertContains(
+            response, reverse("workouts:performed-exercise-add", args=[freeform_session.pk])
+        )
+
+    def test_full_view_link_points_back_to_the_session_detail_page(self):
+        response = self.client.get(reverse("workouts:session-train", args=[self.session.pk]))
+        self.assertContains(
+            response, reverse("workouts:session-detail", args=[self.session.pk])
+        )
+
+
+class TrainingFabTests(TestCase):
+    """The floating "go to training mode" button (base.html, gated on
+    apps.workouts.context_processors.active_workout_session) has to
+    appear from *any* page, not just the workout ones — that's the
+    entire point (docs/UI.md "Training mode")."""
+
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        self.client.login(username="alice", password="s3cret-pass")
+
+    def test_fab_hidden_with_no_session_in_progress(self):
+        response = self.client.get(reverse("dashboard"))
+        self.assertNotContains(response, "training-fab")
+
+    def test_fab_shown_from_any_page_while_a_session_is_in_progress(self):
+        session = services.start_session(self.alice, workout=None)
+        for url_name in ["dashboard", "workouts:session-list", "programs:program-list"]:
+            with self.subTest(url_name=url_name):
+                response = self.client.get(reverse(url_name))
+                self.assertContains(
+                    response, reverse("workouts:session-train", args=[session.pk])
+                )
+
+    def test_fab_hidden_once_the_session_is_completed(self):
+        session = services.start_session(self.alice, workout=None)
+        services.complete_session(session)
+        response = self.client.get(reverse("dashboard"))
+        self.assertNotContains(response, "training-fab")
+
+    def test_fab_hidden_for_anonymous_users(self):
+        response = self.client.get(reverse("login"))
+        self.assertNotContains(response, "training-fab")

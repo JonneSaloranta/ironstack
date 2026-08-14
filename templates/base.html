@@ -39,6 +39,12 @@
   </nav>
   {% endif %}
 
+  {% if active_workout_session %}
+    <a class="training-fab" href="{% url 'workouts:session-train' active_workout_session.pk %}" aria-label="{% trans "Continue training" %}">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><line x1="6" y1="12" x2="18" y2="12"/><rect x="2" y="9" width="3" height="6" rx="1"/><rect x="19" y="9" width="3" height="6" rx="1"/><rect x="5" y="7" width="2" height="10" rx="1"/><rect x="17" y="7" width="2" height="10" rx="1"/></svg>
+    </a>
+  {% endif %}
+
   <main class="container" id="main-content">
     {% if messages %}
       {% for message in messages %}
@@ -47,6 +53,7 @@
     {% endif %}
     {% block content %}{% endblock %}
   </main>
+  {% block extra_scripts %}{% endblock %}
   <script>
     // See static/sw.js for exactly what this does and, just as
     // deliberately, doesn't do (no offline caching of pages/data).

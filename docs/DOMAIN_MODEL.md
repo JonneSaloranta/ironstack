@@ -190,6 +190,13 @@ workout, distinct from `abandon`'s soft "still in history, marked
 abandoned" state. Only reachable from the session's own detail page, not
 the history list, so it's never one accidental tap away while browsing.
 
+While `status` is `in_progress`, the session is also reachable via
+"training mode" (`UI.md` "Training mode") — a focused,
+one-exercise-at-a-time alternative to the full detail page, linked from a
+floating button shown on every page. No new fields or state on the model
+itself: training mode's "current exercise" and rest timer are both
+computed/client-side, not persisted.
+
 ## PerformedExercise
 
 Represents one exercise within a `WorkoutSession`, holding the **snapshot**

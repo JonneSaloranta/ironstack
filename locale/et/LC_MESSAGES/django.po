@@ -836,6 +836,9 @@ msgstr "Trenn"
 msgid "Programs"
 msgstr "Programmid"
 
+msgid "Continue training"
+msgstr "Jätka trenni"
+
 msgid "%(title)s, %(counter)s category"
 msgid_plural "%(title)s, %(counter)s categories"
 msgstr[0] "%(title)s, %(counter)s kategooria"
@@ -1205,6 +1208,21 @@ msgstr "Kõrge kindlus"
 msgid "Log set"
 msgstr "Logi seeria"
 
+msgid "Exercise %(position)s of %(total)s"
+msgstr "Harjutus %(position)s / %(total)s"
+
+msgid "All exercises done for today."
+msgstr "Kõik tänased harjutused tehtud."
+
+msgid "This exercise is done — logging another set is still fine if you want one."
+msgstr "See harjutus on tehtud — võid siiski lisada veel ühe seeria, kui soovid."
+
+msgid "Fewer options"
+msgstr "Vähem valikuid"
+
+msgid "More options (RPE, RIR, notes…)"
+msgstr "Rohkem valikuid (RPE, RIR, märkmed…)"
+
 msgid "Add"
 msgstr "Lisa"
 
@@ -1243,6 +1261,18 @@ msgstr "Alusta allpool või vali trenn ühest oma programmist."
 
 msgid "Start freeform workout"
 msgstr "Alusta vabavormis trenni"
+
+msgid "Training"
+msgstr "Trenn"
+
+msgid "Full view"
+msgstr "Täisvaade"
+
+msgid "Skip rest"
+msgstr "Jäta puhkus vahele"
+
+msgid "Rest timer"
+msgstr "Puhkeajastin"
 
 msgid "Edit set"
 msgstr "Muuda seeriat"

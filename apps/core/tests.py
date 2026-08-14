@@ -5,7 +5,7 @@ from django.core.exceptions import PermissionDenied
 from django.test import RequestFactory, TestCase, override_settings
 from django.urls import reverse
 from django.utils import timezone, translation
-from django.views.defaults import permission_denied
+from django.views.defaults import permission_denied, server_error
 
 from apps.core.bmi import BMI_CATEGORIES, calculate_bmi, category_for, category_rows
 from apps.core.charts import build_bar_series, build_chart_series
@@ -266,6 +266,20 @@ class ErrorPageTests(TestCase):
         response = permission_denied(request, PermissionDenied())
         self.assertEqual(response.status_code, 403)
         self.assertIn(b"permission", response.content.lower())
+
+    def test_500_template_actually_renders(self):
+        """Regression: templates/500.html used to explain, in a comment
+        inside its <style> block, that it "can't rely on {% url %}" —
+        but Django's template lexer scans the whole file for {% %}
+        regardless of surrounding CSS/HTML comment syntax, so that
+        literal "{% url %}" (with no arguments) was parsed as a real,
+        broken tag. The custom error page crashed on every render — a
+        real 500 would have shown Django's raw default error instead of
+        this page, defeating the entire point of having one. Found by
+        actually calling the handler, not just checking the file exists."""
+        response = server_error(RequestFactory().get("/"))
+        self.assertEqual(response.status_code, 500)
+        self.assertIn(b"Something went wrong", response.content)
 
 
 class HealthcheckTests(TestCase):

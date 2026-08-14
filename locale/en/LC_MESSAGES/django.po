@@ -836,6 +836,9 @@ msgstr "Workout"
 msgid "Programs"
 msgstr "Programs"
 
+msgid "Continue training"
+msgstr "Continue training"
+
 msgid "%(title)s, %(counter)s category"
 msgid_plural "%(title)s, %(counter)s categories"
 msgstr[0] "%(title)s, %(counter)s category"
@@ -1205,6 +1208,21 @@ msgstr "High confidence"
 msgid "Log set"
 msgstr "Log set"
 
+msgid "Exercise %(position)s of %(total)s"
+msgstr "Exercise %(position)s of %(total)s"
+
+msgid "All exercises done for today."
+msgstr "All exercises done for today."
+
+msgid "This exercise is done — logging another set is still fine if you want one."
+msgstr "This exercise is done — logging another set is still fine if you want one."
+
+msgid "Fewer options"
+msgstr "Fewer options"
+
+msgid "More options (RPE, RIR, notes…)"
+msgstr "More options (RPE, RIR, notes…)"
+
 msgid "Add"
 msgstr "Add"
 
@@ -1243,6 +1261,18 @@ msgstr "Start one below, or pick a workout from one of your programs."
 
 msgid "Start freeform workout"
 msgstr "Start freeform workout"
+
+msgid "Training"
+msgstr "Training"
+
+msgid "Full view"
+msgstr "Full view"
+
+msgid "Skip rest"
+msgstr "Skip rest"
+
+msgid "Rest timer"
+msgstr "Rest timer"
 
 msgid "Edit set"
 msgstr "Edit set"

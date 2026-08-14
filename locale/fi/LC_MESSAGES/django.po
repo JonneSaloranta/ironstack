@@ -836,6 +836,9 @@ msgstr "Treeni"
 msgid "Programs"
 msgstr "Ohjelmat"
 
+msgid "Continue training"
+msgstr "Jatka harjoittelua"
+
 msgid "%(title)s, %(counter)s category"
 msgid_plural "%(title)s, %(counter)s categories"
 msgstr[0] "%(title)s, %(counter)s kategoria"
@@ -1205,6 +1208,21 @@ msgstr "Korkea luotettavuus"
 msgid "Log set"
 msgstr "Kirjaa sarja"
 
+msgid "Exercise %(position)s of %(total)s"
+msgstr "Liike %(position)s / %(total)s"
+
+msgid "All exercises done for today."
+msgstr "Kaikki tämän päivän liikkeet tehty."
+
+msgid "This exercise is done — logging another set is still fine if you want one."
+msgstr "Tämä liike on tehty — voit silti kirjata lisäsarjan halutessasi."
+
+msgid "Fewer options"
+msgstr "Vähemmän valintoja"
+
+msgid "More options (RPE, RIR, notes…)"
+msgstr "Lisää valintoja (RPE, RIR, muistiinpanot…)"
+
 msgid "Add"
 msgstr "Lisää"
 
@@ -1243,6 +1261,18 @@ msgstr "Aloita alta tai valitse treeni jostain ohjelmastasi."
 
 msgid "Start freeform workout"
 msgstr "Aloita vapaamuotoinen treeni"
+
+msgid "Training"
+msgstr "Harjoittelu"
+
+msgid "Full view"
+msgstr "Koko näkymä"
+
+msgid "Skip rest"
+msgstr "Ohita lepo"
+
+msgid "Rest timer"
+msgstr "Lepoajastin"
 
 msgid "Edit set"
 msgstr "Muokkaa sarjaa"

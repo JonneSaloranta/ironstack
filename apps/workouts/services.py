@@ -101,3 +101,35 @@ def log_set(performed_exercise, **fields):
     return ExerciseSet.objects.create(
         performed_exercise=performed_exercise, set_number=next_number, **fields
     )
+
+
+def is_performed_exercise_complete(performed_exercise):
+    """Whether a performed exercise has nothing obviously left to log —
+    the definition training mode's "what's next" stepper (see
+    `first_incomplete_performed_exercise`) is built on. A prescribed
+    exercise (`set_count` snapshotted from the plan) is complete once it
+    has that many sets; a freeform/ad-hoc addition has no target to
+    compare against, so it's treated as complete once it has at least one
+    set — there's no way to know a user wants a second set on an
+    unplanned exercise until they say so via `train-set-log`'s "add
+    another set" affordance, which stays available regardless of this.
+
+    Reads `.sets.all()` (not `.count()`) so a caller that already
+    prefetched `performed_exercises__sets` doesn't trigger an extra query
+    per exercise.
+    """
+    set_total = len(performed_exercise.sets.all())
+    if performed_exercise.set_count:
+        return set_total >= performed_exercise.set_count
+    return set_total >= 1
+
+
+def first_incomplete_performed_exercise(performed_exercises):
+    """The first performed exercise (in program order) that still has
+    sets left to log — training mode's default "current exercise", per
+    `is_performed_exercise_complete`. `None` once every exercise in the
+    list is done."""
+    for performed_exercise in performed_exercises:
+        if not is_performed_exercise_complete(performed_exercise):
+            return performed_exercise
+    return None

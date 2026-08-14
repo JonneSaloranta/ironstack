@@ -1,0 +1,103 @@
+{% load i18n core_extras workouts_extras %}
+<div id="train-panel">
+
+{% if performed_exercises %}
+  <div class="train-progress-steps">
+    {% for pe in performed_exercises %}
+      <span class="train-step {% if pe == current %}train-step-current{% elif pe|is_complete %}train-step-done{% endif %}"></span>
+    {% endfor %}
+  </div>
+
+  <div class="train-progress">
+    {% if prev_pe %}
+      <a class="button-secondary" href="?pe={{ prev_pe.id }}" hx-get="?pe={{ prev_pe.id }}" hx-select="#train-panel" hx-target="#train-panel" hx-swap="outerHTML" aria-label="{% trans "Previous" %}">&larr;</a>
+    {% else %}
+      <span class="button-secondary" style="visibility:hidden;" aria-hidden="true">&larr;</span>
+    {% endif %}
+    <span class="text-muted">
+      {% if current %}{% blocktrans with position=index|add:1 total=total %}Exercise {{ position }} of {{ total }}{% endblocktrans %}{% endif %}
+    </span>
+    {% if next_pe %}
+      <a class="button-secondary" href="?pe={{ next_pe.id }}" hx-get="?pe={{ next_pe.id }}" hx-select="#train-panel" hx-target="#train-panel" hx-swap="outerHTML" aria-label="{% trans "Next" %}">&rarr;</a>
+    {% else %}
+      <span class="button-secondary" style="visibility:hidden;" aria-hidden="true">&rarr;</span>
+    {% endif %}
+  </div>
+{% endif %}
+
+{% for record in new_prs %}
+  <div class="pr-banner" role="status">
+    <strong><abbr tabindex="0" title="{% trans "Personal Record" %}">{% trans "New PR" %}</abbr></strong> — {{ record.weight|weight:request.user }} × {{ record.reps }}
+  </div>
+{% endfor %}
+
+{% if all_done %}
+  <div class="card empty-state">
+    <p>🎉 {% trans "All exercises done for today." %}</p>
+  </div>
+{% endif %}
+
+{% if current %}
+  <div class="card">
+    <h2 style="margin:0 0 0.25rem;">{% trans current.exercise.name %}</h2>
+    {% if current.set_count %}
+      <p class="text-muted">
+        {% blocktrans with count=current.set_count min=current.min_reps max=current.max_reps %}Target: {{ count }} × {{ min }}-{{ max }}{% endblocktrans %}
+        {% if current.target_weight %} @ {{ current.target_weight|weight:request.user }}{% endif %}
+      </p>
+    {% endif %}
+
+    {% if current.sets.all %}
+      <div class="train-set-history">
+        {% for s in current.sets.all %}
+          <span class="tag">{{ s.set_number }}: {{ s.weight|weight:request.user }} × {{ s.reps }}</span>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    {% if suggestion and suggestion.suggested_weight %}
+      <div class="suggestion-banner">
+        <strong>{% blocktrans with weight=suggestion.suggested_weight|weight:request.user %}Suggested: {{ weight }}{% endblocktrans %}
+          {% if suggestion.target_min_reps %}× {{ suggestion.target_min_reps }}{% if suggestion.target_max_reps and suggestion.target_max_reps != suggestion.target_min_reps %}-{{ suggestion.target_max_reps }}{% endif %}{% endif %}
+        </strong>
+        <div class="text-muted">{{ suggestion.reason }}</div>
+      </div>
+    {% endif %}
+
+    {% if current|is_complete and not all_done %}
+      <p class="text-muted">{% trans "This exercise is done — logging another set is still fine if you want one." %}</p>
+    {% endif %}
+
+    <form class="set-log-form" x-data="{more:false}" method="post" action="{% url 'workouts:train-set-log' current.id %}"
+          hx-post="{% url 'workouts:train-set-log' current.id %}"
+          hx-target="#train-panel" hx-swap="outerHTML">
+      {% csrf_token %}
+      {{ set_form.non_field_errors }}
+      <label class="set-field">
+        {{ set_form.weight.label }}
+        {{ set_form.weight }}
+      </label>
+      <label class="set-field">
+        {{ set_form.reps.label }}
+        {{ set_form.reps }}
+      </label>
+      <button type="button" class="button-secondary" style="flex:1 1 100%;" @click="more = !more" x-text="more ? '{% trans "Fewer options" %}' : '{% trans "More options (RPE, RIR, notes…)" %}'"></button>
+      <div x-show="more" x-cloak style="flex:1 1 100%; display:flex; flex-wrap:wrap; gap:0.5rem;">
+        <label class="set-field">{{ set_form.target_reps.label }} {{ set_form.target_reps }}</label>
+        <label class="set-field">{{ set_form.rpe.label }} {{ set_form.rpe }}</label>
+        <label class="set-field">{{ set_form.rir.label }} {{ set_form.rir }}</label>
+        <label class="checkbox-field" style="flex:1 1 100%;">{{ set_form.is_warmup }} {{ set_form.is_warmup.label }}</label>
+        <label class="checkbox-field" style="flex:1 1 100%;">{{ set_form.is_failure }} {{ set_form.is_failure.label }}</label>
+        <label class="set-field" style="flex:1 1 100%;">{{ set_form.notes.label }} {{ set_form.notes }}</label>
+      </div>
+      <button type="submit">{% trans "Log set" %}</button>
+    </form>
+  </div>
+{% else %}
+  <div class="card empty-state">
+    <p>{% trans "No exercises yet." %}</p>
+    <a class="button" href="{% url 'workouts:performed-exercise-add' session.pk %}">{% trans "Add exercise" %}</a>
+  </div>
+{% endif %}
+
+</div>

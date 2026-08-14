@@ -836,6 +836,9 @@ msgstr "Träning"
 msgid "Programs"
 msgstr "Program"
 
+msgid "Continue training"
+msgstr "Fortsätt träna"
+
 msgid "%(title)s, %(counter)s category"
 msgid_plural "%(title)s, %(counter)s categories"
 msgstr[0] "%(title)s, %(counter)s kategori"
@@ -1205,6 +1208,21 @@ msgstr "Hög tillförlitlighet"
 msgid "Log set"
 msgstr "Logga set"
 
+msgid "Exercise %(position)s of %(total)s"
+msgstr "Övning %(position)s av %(total)s"
+
+msgid "All exercises done for today."
+msgstr "Alla dagens övningar klara."
+
+msgid "This exercise is done — logging another set is still fine if you want one."
+msgstr "Den här övningen är klar — du kan ändå logga ett extra set om du vill."
+
+msgid "Fewer options"
+msgstr "Färre alternativ"
+
+msgid "More options (RPE, RIR, notes…)"
+msgstr "Fler alternativ (RPE, RIR, anteckningar…)"
+
 msgid "Add"
 msgstr "Lägg till"
 
@@ -1243,6 +1261,18 @@ msgstr "Starta ett nedan, eller välj ett träningspass från ett av dina progra
 
 msgid "Start freeform workout"
 msgstr "Starta fritt träningspass"
+
+msgid "Training"
+msgstr "Träning"
+
+msgid "Full view"
+msgstr "Fullständig vy"
+
+msgid "Skip rest"
+msgstr "Hoppa över vila"
+
+msgid "Rest timer"
+msgstr "Vilotimer"
 
 msgid "Edit set"
 msgstr "Redigera set"

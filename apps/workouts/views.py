@@ -1,4 +1,7 @@
+import json
+
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseNotAllowed
 from django.shortcuts import get_object_or_404, redirect, render
@@ -20,6 +23,12 @@ from apps.records import services as records_services
 from . import services
 from .forms import ExerciseSetForm, PerformedExerciseAddForm
 from .models import ExerciseSet, PerformedExercise, WorkoutSessionStatus
+
+# Training mode's rest-timer default (docs/UI.md "Training mode") — a
+# fixed UI convenience, not a domain/progression rule, so it lives here
+# rather than as a per-prescription model field; the timer widget itself
+# lets a user adjust or skip it freely for any single rest either way.
+REST_SECONDS = 90
 
 
 class WorkoutSessionListView(LoginRequiredMixin, ListView):
@@ -49,6 +58,148 @@ class WorkoutSessionDetailView(LoginRequiredMixin, DetailView):
                 self.request.user, performed_exercise, session=self.object
             )
         return context
+
+
+@login_required
+def session_train(request, pk):
+    """Explicit `@login_required`, unlike this module's other function
+    views: `services.sessions_for(request.user)` crashes rather than
+    returning an empty queryset for an anonymous `AnonymousUser`
+    (Django's ORM rejects filtering a ForeignKey against it), and this
+    view is reachable from a button shown on *every* page, including to
+    a session that's expired mid-visit — a clean redirect to login is
+    worth the one extra line here even though the sibling views in this
+    file share the same latent gap.
+
+    Training mode (docs/UI.md "Training mode") — a single, focused page
+    for actually being at the gym mid-workout: one exercise at a time,
+    what's next, a rest timer, and the same smart suggestion the full
+    session-detail page shows, without that page's full history/edit/
+    delete chrome. Reachable from the floating button `base.html` shows
+    on every page while a session is in progress (see
+    apps.workouts.context_processors.active_workout_session).
+    """
+    session = get_object_or_404(
+        services.sessions_for(request.user).select_related("workout").prefetch_related(
+            "performed_exercises__exercise", "performed_exercises__sets"
+        ),
+        pk=pk,
+    )
+    if not session.is_in_progress:
+        # Nothing left to train mid-workout once it's completed/abandoned
+        # — the full detail page is the right place to review it.
+        return redirect("workouts:session-detail", pk=session.pk)
+    return render(request, "workouts/session_train.html", _train_context(request, session))
+
+
+def _find_performed_exercise(performed_exercises, pk):
+    if not pk:
+        return None
+    return next((pe for pe in performed_exercises if str(pe.pk) == str(pk)), None)
+
+
+def _train_context(request, session, current=None):
+    """Shared by the training-mode page and its HTMX set-log endpoint.
+
+    `current` lets a caller pin a specific exercise (e.g. re-showing the
+    same one after a validation error) instead of falling back to the
+    `?pe=` query param or the auto-picked first incomplete exercise —
+    see `session_train`/`train_set_log`.
+    """
+    performed_exercises = list(session.performed_exercises.all())
+    if current is None:
+        current = _find_performed_exercise(performed_exercises, request.GET.get("pe"))
+    if current is None:
+        current = services.first_incomplete_performed_exercise(performed_exercises)
+    if current is None and performed_exercises:
+        current = performed_exercises[-1]
+
+    index = performed_exercises.index(current) if current in performed_exercises else -1
+    set_form = suggestion = None
+    if current is not None:
+        set_form, suggestion = _build_set_form(request.user, current, session=session)
+
+    return {
+        "session": session,
+        "performed_exercises": performed_exercises,
+        "current": current,
+        "index": index,
+        "total": len(performed_exercises),
+        "prev_pe": performed_exercises[index - 1] if index > 0 else None,
+        "next_pe": (
+            performed_exercises[index + 1] if 0 <= index < len(performed_exercises) - 1 else None
+        ),
+        "all_done": bool(performed_exercises)
+        and services.first_incomplete_performed_exercise(performed_exercises) is None,
+        "set_form": set_form,
+        "suggestion": suggestion,
+        "new_prs": [],
+    }
+
+
+@login_required
+def train_set_log(request, performed_exercise_pk):
+    if request.method != "POST":
+        return HttpResponseNotAllowed(["POST"])
+    performed_exercise = _owned_performed_exercise_or_404(request, performed_exercise_pk)
+    session = performed_exercise.session
+    form = ExerciseSetForm(request.POST, user=request.user)
+    if not session.is_in_progress:
+        form.add_error(None, _("This session is no longer in progress."))
+    logged = session.is_in_progress and form.is_valid()
+    new_prs = []
+    if logged:
+        fields = dict(form.cleaned_data)
+        fields["weight"] = core_units.display_to_kg(
+            fields["weight"], getattr(request.user, "unit_system", "metric")
+        )
+        logged_set = services.log_set(performed_exercise, **fields)
+        new_prs = records_services.check_and_record_prs(logged_set)
+
+    if not request.headers.get("HX-Request"):
+        # Same fallback set_log/_render_session_or_card use: without JS,
+        # the browser does a plain form POST and expects a full page back
+        # — this endpoint only ever renders the #train-panel *fragment*,
+        # which has no <head>/stylesheet/nav of its own. A validation
+        # error's details don't survive this redirect (same tradeoff
+        # set_log already accepts for the same reason), but that's
+        # strictly better than serving an unstyled, chromeless fragment
+        # as if it were the whole page.
+        return redirect("workouts:session-train", pk=session.pk)
+
+    if logged:
+        # Stay on the same exercise if it still has sets left to log
+        # (default_set_values will repeat this one as the next default);
+        # otherwise hand off to whichever exercise is next incomplete —
+        # the same auto-advance _train_context falls back to on a plain
+        # page load, just computed right after the set that may have
+        # just finished this one. `performed_exercise` here was fetched
+        # without a sets prefetch, so `.sets.all()` (inside
+        # is_performed_exercise_complete) queries fresh and already sees
+        # the set just logged above.
+        next_current = (
+            performed_exercise
+            if not services.is_performed_exercise_complete(performed_exercise)
+            else None
+        )
+        context = _train_context(request, session, current=next_current)
+    else:
+        # Validation error (or session no longer in progress) — keep
+        # showing the same exercise and the bound form with its errors,
+        # rather than silently discarding what the user typed.
+        context = _train_context(request, session, current=performed_exercise)
+        context["set_form"] = form
+    context["new_prs"] = new_prs
+    response = render(request, "workouts/_train_panel.html", context)
+    if logged:
+        # Tells the rest-timer widget (base.html/session_train.html, kept
+        # outside this HTMX swap target so a countdown in progress
+        # survives it) to auto-start — but only on an actual successful
+        # log, never on a validation error, which a generic
+        # htmx:afterRequest listener couldn't tell apart from this (both
+        # return 200 so the swap happens either way).
+        response["HX-Trigger"] = json.dumps({"rest-timer-start": {"seconds": REST_SECONDS}})
+    return response
 
 
 def session_start(request, workout_pk):

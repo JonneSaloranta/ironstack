@@ -7,9 +7,16 @@
   <style>
     /* Deliberately standalone: Django renders 500.html with no request
        context and no context processors (the error may mean the DB or
-       session backend itself is down), so this can't rely on {% url %},
-       {% static %}, or anything else base.html depends on — inline
-       styles only, matching the app's usual dark palette by hand. */
+       session backend itself is down), so this can't rely on the url or
+       static template tags, or anything else base.html depends on —
+       inline styles only, matching the app's usual dark palette by hand.
+       (Also: never write those Django tag names inside this file's own
+       delimiter syntax, even in a comment like this one — the template
+       lexer scans the whole file for that delimiter pair regardless of
+       CSS/HTML comment syntax. This page crashed on every real 500 for
+       exactly that reason until apps.core.tests.ErrorPageTests caught
+       it — ask for the git history here rather than reproducing what
+       broke it.) */
     body {
       margin: 0;
       min-height: 100vh;

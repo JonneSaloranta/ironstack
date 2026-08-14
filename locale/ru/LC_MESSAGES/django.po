@@ -837,6 +837,9 @@ msgstr "Тренировка"
 msgid "Programs"
 msgstr "Программы"
 
+msgid "Continue training"
+msgstr "Продолжить тренировку"
+
 msgid "%(title)s, %(counter)s category"
 msgid_plural "%(title)s, %(counter)s categories"
 msgstr[0] "%(title)s, %(counter)s категория"
@@ -1209,6 +1212,21 @@ msgstr "Высокая уверенность"
 msgid "Log set"
 msgstr "Записать подход"
 
+msgid "Exercise %(position)s of %(total)s"
+msgstr "Упражнение %(position)s из %(total)s"
+
+msgid "All exercises done for today."
+msgstr "Все упражнения на сегодня выполнены."
+
+msgid "This exercise is done — logging another set is still fine if you want one."
+msgstr "Это упражнение выполнено — можно записать ещё один подход, если хотите."
+
+msgid "Fewer options"
+msgstr "Меньше параметров"
+
+msgid "More options (RPE, RIR, notes…)"
+msgstr "Больше параметров (RPE, RIR, заметки…)"
+
 msgid "Add"
 msgstr "Добавить"
 
@@ -1247,6 +1265,18 @@ msgstr "Начните ниже или выберите тренировку и�
 
 msgid "Start freeform workout"
 msgstr "Начать свободную тренировку"
+
+msgid "Training"
+msgstr "Тренировка"
+
+msgid "Full view"
+msgstr "Полный вид"
+
+msgid "Skip rest"
+msgstr "Пропустить отдых"
+
+msgid "Rest timer"
+msgstr "Таймер отдыха"
 
 msgid "Edit set"
 msgstr "Изменить подход"

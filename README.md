@@ -547,6 +547,63 @@ remaining content-translation gap.**
   catalogs (411 total, up from 397); `msgfmt --statistics` confirms 0
   fuzzy/untranslated. 9 new tests (333 total).
 
+**Training mode** — a focused, one-page, in-workout screen: current
+exercise, what's next, a rest timer, and the smart weight suggestion,
+reachable from a floating button on every page while a session is in
+progress.
+
+- A new floating action button (`.training-fab`, dumbbell icon, small
+  pulsing "live" dot) appears bottom-right on *every* page — not just
+  the workout ones — whenever the logged-in user has a session in
+  progress, via a new global context processor
+  (`apps.workouts.context_processors.active_workout_session`). Tapping
+  it opens `/workouts/<id>/train/`.
+- Training mode shows one exercise at a time: target, the same
+  `suggest_weight` suggestion the full session-detail page shows (still
+  just an editable default, never forced), sets already logged, and a
+  compact log-set form (weight/reps up front, RPE/RIR/notes/warmup/
+  failure behind a "More options" disclosure). The "current" exercise is
+  automatic — the first one still short of its target set count
+  (`apps.workouts.services.is_performed_exercise_complete`/
+  `first_incomplete_performed_exercise`) — but Prev/Next always lets a
+  user jump anywhere regardless, matching "the user always has final
+  control" (CLAUDE.md). Logging an exercise's last set auto-advances to
+  the next incomplete one.
+- A pure client-side (Alpine.js) rest timer with 60/90/120s presets,
+  ±15s adjust, and skip — no model field, no server round trip while
+  it's running. Auto-starts after a successful log via htmx's
+  `HX-Trigger` response header, which is what lets the view tell
+  "successfully logged" apart from "validation error, same 200 status,
+  re-showing the form" — a generic `htmx:afterRequest` listener can't
+  make that distinction. The timer widget lives outside the HTMX swap
+  target on purpose, so a countdown in progress survives every panel
+  swap.
+- Fully progressive-enhancement-safe: every interaction is a real link/
+  form POST first, HTMX just upgrades it to a partial swap.
+  `train_set_log` explicitly checks for `HX-Request` and redirects to
+  the full page otherwise, rather than ever returning the bare
+  training-panel fragment (no `<head>`/stylesheet/nav) as if it were a
+  whole document.
+- Two real, pre-existing bugs turned up while building and testing this
+  and got fixed alongside it, unrelated to training mode itself but
+  found because of it: (1) `templates/500.html`'s own comment
+  explained, using literal Django tag syntax, that the page "can't rely
+  on the url tag" — but Django's template lexer parses that syntax
+  anywhere in the file regardless of surrounding CSS/HTML comments, so
+  that comment was itself a broken, argument-less tag invocation. The
+  custom error page crashed on every real 500, meaning a genuine server
+  error would have shown Django's raw default page instead. (2) None of
+  `apps.workouts`' function-based views (only its class-based ones) ever
+  required login — `services.sessions_for(AnonymousUser())` crashes
+  rather than returning empty, so an anonymous visitor hitting any of
+  them 500'd instead of getting a clean redirect to login. Decorated the
+  two new training-mode views (`session_train`, `train_set_log`) with
+  `@login_required`; the older sibling views share the same latent gap
+  but are unchanged here — out of scope for this feature.
+- `docs/UI.md` gained a full "Training mode" implementation section. 10
+  new UI strings translated across all 5 non-English catalogs (421
+  total). 26 new tests (358 total).
+
 ## Local development
 
 ```bash

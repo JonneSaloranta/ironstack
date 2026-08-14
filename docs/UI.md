@@ -113,6 +113,77 @@ same form for a performed exercise's first set only, shown with its
 confidence and reason as a plain, editable default, never forced (see
 `docs/SMART_SUGGESTIONS.md`).
 
+### Training mode
+A second, deliberately narrower way to log the same sets — the full
+session-detail page (above) shows every exercise in the workout at once
+with its complete history and edit/delete controls, which is the right
+tool for reviewing or correcting a workout but too much to actually hold
+a phone and squint at between sets at the gym. Training mode
+(`apps.workouts.views.session_train`/`train_set_log`,
+`templates/workouts/session_train.html`/`_train_panel.html`) shows one
+exercise at a time: its target, the suggested weight (same
+`suggest_weight` engine and same "editable default, never forced" rule
+as the full page), sets already logged this exercise, a compact log-set
+form, and a rest timer — nothing else.
+
+**Reaching it**: a floating round button (`.training-fab`, a dumbbell
+icon with a small pulsing "live" dot) appears in the bottom-right corner
+of *every* page, not just the workout ones, whenever the logged-in user
+has a session in progress — the whole point is not having to navigate
+back to the workout section first. This is a global context processor
+(`apps.workouts.context_processors.active_workout_session`, registered
+in `config/settings/base.py`), not something each view adds to its own
+context, so it works from the dashboard, exercise library, anywhere.
+Hidden for anonymous users and once the session is completed/abandoned.
+
+**Current exercise**: automatically the first exercise (in program
+order) that still has sets left to log against its target
+(`apps.workouts.services.is_performed_exercise_complete`/
+`first_incomplete_performed_exercise` — a prescribed exercise is
+"complete" once it has its snapshotted `set_count`; a freeform/ad-hoc
+addition, which has no target, counts as complete after one set, since
+there's no way to know a user wants a second one until they say so).
+Logging that exercise's last needed set auto-advances to the next
+incomplete one. This is only ever the *default* — Prev/Next buttons
+(`?pe=<id>`, also a plain link so it works with JS disabled) let a user
+jump to any exercise in the workout regardless of completion state,
+matching "the user always has final control over ... progression" (this
+doc's parent, CLAUDE.md). Once every exercise is done, the last one
+stays shown (with a "done" banner above it) rather than the page going
+blank — logging a bonus set is still one tap away, and Complete/Abandon
+buttons are always present, not gated on finishing everything.
+
+**Rest timer**: pure client-side countdown (Alpine.js, `x-data`
+component defined inline in `session_train.html`) — no server round
+trip while it's running, no model field for it. Presets (60/90/120s)
+plus ±15s adjustment and skip. Auto-starts after a successful log via
+htmx's `HX-Trigger` response header (`train_set_log` sets
+`rest-timer-start` only on an actual successful log — a generic
+`htmx:afterRequest` listener can't distinguish that from a validation
+error re-showing the same form, since both return HTTP 200). The timer
+widget deliberately sits *outside* the HTMX swap target
+(`#train-panel`) in the page's DOM — logging a set or navigating
+Prev/Next swaps the exercise panel, and a countdown in progress would
+reset to zero if it were nested inside that swapped region.
+
+**Progressive enhancement**: every training-mode interaction (Prev/Next,
+logging a set) works as a plain link/form POST with JS disabled — HTMX
+just upgrades it to a partial swap instead of a full page reload
+(`hx-select="#train-panel"` on Prev/Next reuses `session_train`'s own
+full-page response and extracts just the fragment, so there's no
+separate "just the panel" endpoint to keep in sync). `train_set_log`
+explicitly checks the `HX-Request` header and redirects to the full page
+for a non-HTMX POST, rather than ever returning the bare `#train-panel`
+fragment as if it were a whole document — that fragment has no
+`<head>`/stylesheet/nav of its own.
+
+Not built: a per-prescription custom rest duration (`ExercisePrescription`
+has no such field — the three presets are a fixed UI convenience, not a
+domain rule) and in-training set editing/deletion (corrections stay on
+the full session-detail page, reachable via the "Full view" link — kept
+out of training mode deliberately, to keep its one screen to logging
+forward, not fixing mistakes).
+
 ### Dashboard
 Implemented: this week's workouts and volume, recent PRs (last 3), body
 weight, BMI (see below), and an in-progress-workout banner that doubles

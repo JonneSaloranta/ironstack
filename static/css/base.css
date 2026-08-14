@@ -117,6 +117,13 @@ input[type="radio"] {
   vertical-align: middle;
 }
 
+/* Alpine.js hasn't run yet on first paint (loaded with `defer`) — any
+   x-show="false"-by-default element needs this or it flashes visible
+   for a moment before Alpine hides it. */
+[x-cloak] {
+  display: none !important;
+}
+
 :focus-visible {
   outline: 2px solid var(--color-accent);
   outline-offset: 2px;
@@ -189,6 +196,55 @@ input[type="radio"] {
    room to show both icon and text at this width. */
 .nav-label {
   display: none;
+}
+
+/* Training mode's floating entry point — shown on every page (base.html,
+   gated on apps.workouts.context_processors.active_workout_session)
+   whenever the user has a workout in progress, so it's reachable from
+   wherever they are, not just the workout pages themselves. Sits above
+   the mobile bottom-nav bar; repositioned near the bottom-right corner
+   with no bar to clear on desktop, in the media query below. */
+.training-fab {
+  position: fixed;
+  right: 1rem;
+  bottom: calc(var(--nav-height) + env(safe-area-inset-bottom) + 1rem);
+  z-index: 90;
+  width: 3.5rem;
+  height: 3.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--color-accent);
+  color: #fff;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+  text-decoration: none;
+}
+
+.training-fab .nav-icon {
+  width: 1.75rem;
+  height: 1.75rem;
+}
+
+/* The "still going" pulse — a plain dumbbell glyph alone doesn't say
+   *live*, and this is the one button in the app meant to catch the eye
+   from any page. */
+.training-fab::after {
+  content: "";
+  position: absolute;
+  top: 0.15rem;
+  right: 0.15rem;
+  width: 0.65rem;
+  height: 0.65rem;
+  border-radius: 50%;
+  background: var(--color-success);
+  border: 2px solid var(--color-bg);
+  animation: training-fab-pulse 2s ease-in-out infinite;
+}
+
+@keyframes training-fab-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
 }
 
 .top-bar {
@@ -600,6 +656,13 @@ h2 {
   font-weight: 600;
 }
 
+.train-set-history {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-bottom: 0.5rem;
+}
+
 .suggestion-banner {
   background: var(--color-bg);
   border: 1px solid var(--color-border);
@@ -655,4 +718,82 @@ h2 {
     max-width: 48rem;
     padding: 2rem;
   }
+
+  /* No bottom-nav bar to clear on desktop — the mobile offset would
+     otherwise leave a large, pointless gap under the button. */
+  .training-fab {
+    bottom: 1.5rem;
+  }
+}
+
+/* Training mode (workouts/session_train.html) */
+.rest-timer {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+}
+
+.rest-timer-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.rest-timer-row .button-secondary {
+  margin-bottom: 0;
+  min-height: 2.25rem;
+  padding: 0.35rem 0.75rem;
+}
+
+.rest-timer-display {
+  font-size: 1.5rem;
+  font-variant-numeric: tabular-nums;
+  min-width: 3.5rem;
+}
+
+.train-progress {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.train-progress-nav {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.train-progress-nav a,
+.train-progress-nav span {
+  min-height: 2.25rem;
+  min-width: 2.25rem;
+  padding: 0.35rem 0.6rem;
+}
+
+.train-progress-steps {
+  display: flex;
+  gap: 0.3rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.train-step {
+  width: 0.6rem;
+  height: 0.6rem;
+  border-radius: 50%;
+  background: var(--color-border);
+}
+
+.train-step-done {
+  background: var(--color-success);
+}
+
+.train-step-current {
+  background: var(--color-accent);
+  transform: scale(1.3);
 }

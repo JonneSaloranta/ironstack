@@ -836,6 +836,9 @@ msgstr "Allenamento"
 msgid "Programs"
 msgstr "Programmi"
 
+msgid "Continue training"
+msgstr "Continua l'allenamento"
+
 msgid "%(title)s, %(counter)s category"
 msgid_plural "%(title)s, %(counter)s categories"
 msgstr[0] "%(title)s, %(counter)s categoria"
@@ -1205,6 +1208,21 @@ msgstr "Alta affidabilità"
 msgid "Log set"
 msgstr "Registra serie"
 
+msgid "Exercise %(position)s of %(total)s"
+msgstr "Esercizio %(position)s di %(total)s"
+
+msgid "All exercises done for today."
+msgstr "Tutti gli esercizi di oggi completati."
+
+msgid "This exercise is done — logging another set is still fine if you want one."
+msgstr "Questo esercizio è completato — puoi comunque registrare un'altra serie se vuoi."
+
+msgid "Fewer options"
+msgstr "Meno opzioni"
+
+msgid "More options (RPE, RIR, notes…)"
+msgstr "Altre opzioni (RPE, RIR, note…)"
+
 msgid "Add"
 msgstr "Aggiungi"
 
@@ -1243,6 +1261,18 @@ msgstr "Iniziane uno qui sotto, oppure scegli un allenamento da uno dei tuoi pro
 
 msgid "Start freeform workout"
 msgstr "Inizia allenamento libero"
+
+msgid "Training"
+msgstr "Allenamento"
+
+msgid "Full view"
+msgstr "Vista completa"
+
+msgid "Skip rest"
+msgstr "Salta il riposo"
+
+msgid "Rest timer"
+msgstr "Timer di riposo"
 
 msgid "Edit set"
 msgstr "Modifica serie"
