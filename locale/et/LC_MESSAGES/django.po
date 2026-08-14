@@ -1121,6 +1121,27 @@ msgstr "Uus trenn"
 msgid "Delete workout"
 msgstr "Kustuta trenn"
 
+msgid "Dismiss"
+msgstr "Sulge"
+
+msgid "New PR"
+msgstr "Uus rekord"
+
+msgid "Max weight:"
+msgstr "Maksimumkaal:"
+
+msgid "Most reps at %(weight)s:"
+msgstr "Enim kordusi kaaluga %(weight)s:"
+
+msgid "Set volume:"
+msgstr "Seeria maht:"
+
+msgid "Session volume:"
+msgstr "Trenni maht:"
+
+msgid "(previous: %(previous)s)"
+msgstr "(eelmine: %(previous)s)"
+
 msgid "%(name)s records"
 msgstr "%(name)s – rekordid"
 
@@ -1159,24 +1180,6 @@ msgstr "Tagasi profiili juurde"
 
 msgid "Target: %(count)s × %(min)s-%(max)s"
 msgstr "Sihtmärk: %(count)s × %(min)s-%(max)s"
-
-msgid "New PR"
-msgstr "Uus rekord"
-
-msgid "Max weight:"
-msgstr "Maksimumkaal:"
-
-msgid "Most reps at %(weight)s:"
-msgstr "Enim kordusi kaaluga %(weight)s:"
-
-msgid "Set volume:"
-msgstr "Seeria maht:"
-
-msgid "Session volume:"
-msgstr "Trenni maht:"
-
-msgid "(previous: %(previous)s)"
-msgstr "(eelmine: %(previous)s)"
 
 msgid "Set"
 msgstr "Seeria"

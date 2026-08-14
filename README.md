@@ -604,6 +604,33 @@ progress.
   new UI strings translated across all 5 non-English catalogs (421
   total). 26 new tests (358 total).
 
+**New-PR notifications became top-of-screen toasts.**
+
+- Every "New PR" notice — from the full session-detail page and training
+  mode alike — now renders as a toast fixed to the top of the screen
+  (`#pr-toast-container`, defined once in `base.html`) instead of an
+  inline banner buried inside whichever exercise card triggered it.
+  Implemented as an HTMX out-of-band swap
+  (`templates/records/_pr_toasts.html`, shared by both card templates)
+  rather than any new JS state — the same rich per-PR detail (max
+  weight/rep PR/1RM/set & session volume, previous value) that used to
+  live in `.pr-banner` renders exactly as before, just relocated. Each
+  toast auto-dismisses after 6 seconds (Alpine `x-show` + a timeout) and
+  carries its own close button, so timing stays overridable —
+  CLAUDE.md/`docs/UI.md`'s "user always has final control" applies to a
+  toast's lifetime too, not just to weights and progression.
+- Fixed a real, related bug found while doing this: `messages.success`
+  for a new PR used to fire unconditionally, including on every HTMX
+  request — but nothing ever consumes `django.contrib.messages` there
+  (only `base.html`'s full-page `{% if messages %}` loop does), so the
+  message sat in the store and would resurface, stale, on whatever
+  unrelated full page the user happened to load next. Now only the no-JS
+  fallback path (a plain POST + redirect) flashes a message; the HTMX
+  path gets the toast instead.
+- 1 new UI string (`"Dismiss"`, the toast close button's label)
+  translated across all 5 non-English catalogs (422 total,
+  0 fuzzy/untranslated). 4 new tests (362 total).
+
 ## Local development
 
 ```bash

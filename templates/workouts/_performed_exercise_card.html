@@ -1,4 +1,4 @@
-{% load i18n core_extras records_extras %}
+{% load i18n core_extras %}
 <div id="performed-exercise-{{ pe.id }}" class="card">
   <h3 style="margin:0 0 0.25rem;">{% trans pe.exercise.name %}</h3>
   {% if pe.set_count %}
@@ -8,30 +8,6 @@
       {% if pe.target_rpe %} @ <abbr tabindex="0" title="{% trans "Rate of Perceived Exertion" %}">RPE</abbr> {{ pe.target_rpe }}{% endif %}
     </p>
   {% endif %}
-
-  {% for record in new_prs %}
-    <div class="pr-banner" role="status">
-      <strong><abbr tabindex="0" title="{% trans "Personal Record" %}">{% trans "New PR" %}</abbr></strong> — {{ record.weight|weight:request.user }} × {{ record.reps }}
-      <div>
-        {% if record.record_type == "max_weight" %}
-          {% trans "Max weight:" %} {{ record|pr_value:request.user }}
-        {% elif record.record_type == "rep_pr" %}
-          {% blocktrans with weight=record.weight|weight:request.user %}Most reps at {{ weight }}:{% endblocktrans %} {{ record|pr_value:request.user }}
-        {% elif record.record_type == "rep_specific_pr" %}
-          {{ record.rep_count }}<abbr tabindex="0" title="{% trans "Rep Max" %}">RM</abbr>: {{ record|pr_value:request.user }}
-        {% elif record.record_type == "estimated_1rm" %}
-          {% trans "Estimated" %} <abbr tabindex="0" title="{% trans "One-Rep Max" %}">1RM</abbr>: {{ record|pr_value:request.user }}
-        {% elif record.record_type == "set_volume" %}
-          {% trans "Set volume:" %} {{ record|pr_value:request.user }}
-        {% elif record.record_type == "session_volume" %}
-          {% trans "Session volume:" %} {{ record|pr_value:request.user }}
-        {% endif %}
-        {% if record.previous_value %}
-          <span class="text-muted">{% blocktrans with previous=record|pr_previous_value:request.user %}(previous: {{ previous }}){% endblocktrans %}</span>
-        {% endif %}
-      </div>
-    </div>
-  {% endfor %}
 
   <div class="table-wrap">
   <table class="set-table">
@@ -93,3 +69,4 @@
     </form>
   {% endif %}
 </div>
+{% include "records/_pr_toasts.html" %}

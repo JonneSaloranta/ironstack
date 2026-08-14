@@ -25,12 +25,6 @@
   </div>
 {% endif %}
 
-{% for record in new_prs %}
-  <div class="pr-banner" role="status">
-    <strong><abbr tabindex="0" title="{% trans "Personal Record" %}">{% trans "New PR" %}</abbr></strong> — {{ record.weight|weight:request.user }} × {{ record.reps }}
-  </div>
-{% endfor %}
-
 {% if all_done %}
   <div class="card empty-state">
     <p>🎉 {% trans "All exercises done for today." %}</p>
@@ -101,3 +95,4 @@
 {% endif %}
 
 </div>
+{% include "records/_pr_toasts.html" %}

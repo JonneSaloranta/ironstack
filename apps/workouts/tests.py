@@ -590,6 +590,27 @@ class TrainingModeViewTests(TestCase):
             response, reverse("workouts:session-detail", args=[self.session.pk])
         )
 
+    def test_a_new_pr_renders_as_a_top_of_screen_toast(self):
+        """See apps.records.tests.SetLoggingNotifiesNewPRsTests for the
+        equivalent full-session-detail-page coverage — training mode's
+        train_set_log shares the exact same toast partial
+        (templates/records/_pr_toasts.html)."""
+        response = self.client.post(
+            reverse("workouts:train-set-log", args=[self.performed.pk]),
+            {"weight": "100", "reps": "5"},
+            HTTP_HX_REQUEST="true",
+        )
+        self.assertContains(response, 'hx-swap-oob="afterbegin:#pr-toast-container"')
+
+    def test_a_non_htmx_pr_still_flashes_a_message(self):
+        response = self.client.post(
+            reverse("workouts:train-set-log", args=[self.performed.pk]),
+            {"weight": "100", "reps": "5"},
+            follow=True,
+        )
+        messages = [str(m) for m in response.context["messages"]]
+        self.assertTrue(any("New PR" in m for m in messages), messages)
+
 
 class TrainingFabTests(TestCase):
     """The floating "go to training mode" button (base.html, gated on

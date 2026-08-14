@@ -165,6 +165,7 @@ def train_set_log(request, performed_exercise_pk):
         # set_log already accepts for the same reason), but that's
         # strictly better than serving an unstyled, chromeless fragment
         # as if it were the whole page.
+        _flash_new_prs(request, performed_exercise, new_prs)
         return redirect("workouts:session-train", pk=session.pk)
 
     if logged:
@@ -306,6 +307,26 @@ def _build_set_form(user, performed_exercise, session=None):
     return ExerciseSetForm(initial=initial, user=user), suggestion
 
 
+def _flash_new_prs(request, performed_exercise, new_prs):
+    """The no-JS fallback's only way to report a new PR — an HTMX
+    request gets a toast instead (templates/records/_pr_toasts.html).
+    Shared by set_log and train_set_log so the message text/conversion
+    logic exists in exactly one place."""
+    for record in new_prs:
+        # records_services.format_value is the same conversion the
+        # "Recent PRs" templates use, so an imperial-preference user
+        # sees their own unit here too, not raw stored kg.
+        messages.success(
+            request,
+            _("New PR — %(exercise)s: %(record_type)s %(value)s")
+            % {
+                "exercise": performed_exercise.exercise.name,
+                "record_type": record.get_record_type_display(),
+                "value": records_services.format_value(record, request.user),
+            },
+        )
+
+
 def set_log(request, performed_exercise_pk):
     if request.method != "POST":
         return HttpResponseNotAllowed(["POST"])
@@ -327,20 +348,19 @@ def set_log(request, performed_exercise_pk):
         )
         logged_set = services.log_set(performed_exercise, **fields)
         new_prs = records_services.check_and_record_prs(logged_set)
-        for record in new_prs:
-            # Regression: this message used to interpolate record.value
-            # directly — always raw kg, unconverted and unlabeled for an
-            # imperial-preference user. records_services.format_value is
-            # the same conversion the "Recent PRs" templates use.
-            messages.success(
-                request,
-                _("New PR — %(exercise)s: %(record_type)s %(value)s")
-                % {
-                    "exercise": performed_exercise.exercise.name,
-                    "record_type": record.get_record_type_display(),
-                    "value": records_services.format_value(record, request.user),
-                },
-            )
+        if not request.headers.get("HX-Request"):
+            # Only for the no-JS fallback (a plain POST + redirect,
+            # `_render_session_or_card` below) — an HTMX request instead
+            # gets the same news via a toast (templates/records/
+            # _pr_toasts.html, an out-of-band swap included from the
+            # re-rendered card). Regression: this used to fire
+            # unconditionally, including on every HTMX request, where
+            # nothing ever consumes django.contrib.messages (only
+            # base.html's full-page `{% if messages %}` loop does) — the
+            # message sat in the store and would suddenly resurface,
+            # stale, whenever the user's next *actual* full page load
+            # happened to be, however much later and unrelated that was.
+            _flash_new_prs(request, performed_exercise, new_prs)
         form, suggestion = _build_set_form(request.user, performed_exercise)
     return _render_session_or_card(
         request, performed_exercise, form, new_prs=new_prs, suggestion=suggestion

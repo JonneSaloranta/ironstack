@@ -1121,6 +1121,27 @@ msgstr "Uusi treeni"
 msgid "Delete workout"
 msgstr "Poista treeni"
 
+msgid "Dismiss"
+msgstr "Sulje"
+
+msgid "New PR"
+msgstr "Uusi ennätys"
+
+msgid "Max weight:"
+msgstr "Maksimipaino:"
+
+msgid "Most reps at %(weight)s:"
+msgstr "Eniten toistoja painolla %(weight)s:"
+
+msgid "Set volume:"
+msgstr "Sarjan volyymi:"
+
+msgid "Session volume:"
+msgstr "Treenin volyymi:"
+
+msgid "(previous: %(previous)s)"
+msgstr "(edellinen: %(previous)s)"
+
 msgid "%(name)s records"
 msgstr "%(name)s – ennätykset"
 
@@ -1159,24 +1180,6 @@ msgstr "Takaisin profiiliin"
 
 msgid "Target: %(count)s × %(min)s-%(max)s"
 msgstr "Tavoite: %(count)s × %(min)s-%(max)s"
-
-msgid "New PR"
-msgstr "Uusi ennätys"
-
-msgid "Max weight:"
-msgstr "Maksimipaino:"
-
-msgid "Most reps at %(weight)s:"
-msgstr "Eniten toistoja painolla %(weight)s:"
-
-msgid "Set volume:"
-msgstr "Sarjan volyymi:"
-
-msgid "Session volume:"
-msgstr "Treenin volyymi:"
-
-msgid "(previous: %(previous)s)"
-msgstr "(edellinen: %(previous)s)"
 
 msgid "Set"
 msgstr "Sarja"

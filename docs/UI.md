@@ -248,8 +248,18 @@ three needed a dedicated nav slot).
   `base.html`) and a deliberately standalone `500.html` (Django renders
   it with no context processors at all, so it can't depend on
   `{% url %}`/`{% static %}` — see `templates/500.html`'s own comment).
-- **Success**: the Django messages framework (PR banners, "Preferences
-  saved", etc.), rendered in `base.html`.
+- **Success**: the Django messages framework ("Preferences saved", etc.),
+  rendered in `base.html`. New-PR notices are the one exception — they
+  render as a toast fixed to the top of the screen instead
+  (`templates/records/_pr_toasts.html`, an HTMX out-of-band swap into
+  `#pr-toast-container`; see "Workout logging" → training mode note
+  below), auto-dismissing after 6 seconds with its own close button. The
+  messages framework is still used as the no-JS fallback for a PR notice
+  specifically (a plain form POST has no HTMX to do an out-of-band swap
+  with) — but only there: it used to fire unconditionally, including on
+  every HTMX request, where nothing ever consumes it, so a PR message
+  would sit in the store and resurface stale on some unrelated later
+  full page load.
 
 ### Desktop
 Charts (`docs/ANALYTICS.md`) scale up for free — `viewBox` + `width:

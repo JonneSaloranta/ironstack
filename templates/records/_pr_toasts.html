@@ -1,0 +1,51 @@
+{% load i18n core_extras records_extras %}
+{% comment %}
+Shared by templates/workouts/_performed_exercise_card.html and
+_train_panel.html — both compute `new_prs` (a list of freshly created
+apps.records.models.PersonalRecord rows) after logging a set and include
+this partial to report them.
+
+Renders as an HTMX out-of-band swap (`hx-swap-oob`) rather than inline in
+whichever card/panel triggered it: a PR is a happy, transient "look what
+you just did" moment, not part of the exercise's own state, so it
+belongs in a toast fixed to the top of the screen (`#pr-toast-container`,
+base.html) — reachable regardless of which exercise or page put it
+there — rather than buried inside a card the user may already have
+scrolled past. `hx-swap-oob="afterbegin:..."` requires this to sit as a
+*top-level* sibling in the including template's response, not nested
+inside the element that template's own hx-swap already targets — htmx's
+out-of-band scan only looks at direct children of the response.
+
+Each toast auto-dismisses on its own (Alpine `x-show` + a timeout) and
+carries a manual close button too — the CLAUDE.md/UI.md "user always has
+final control" principle applies to a toast's timing as much as to a
+progression suggestion.
+{% endcomment %}
+{% if new_prs %}
+<div hx-swap-oob="afterbegin:#pr-toast-container">
+  {% for record in new_prs %}
+    <div class="pr-banner" role="status" x-data="{show: true}" x-show="show" x-transition.opacity.duration.300ms x-init="setTimeout(() => show = false, 6000)">
+      <button type="button" class="pr-toast-close" @click="show = false" aria-label="{% trans "Dismiss" %}">&times;</button>
+      <strong><abbr tabindex="0" title="{% trans "Personal Record" %}">{% trans "New PR" %}</abbr></strong> — {{ record.weight|weight:request.user }} × {{ record.reps }}
+      <div>
+        {% if record.record_type == "max_weight" %}
+          {% trans "Max weight:" %} {{ record|pr_value:request.user }}
+        {% elif record.record_type == "rep_pr" %}
+          {% blocktrans with weight=record.weight|weight:request.user %}Most reps at {{ weight }}:{% endblocktrans %} {{ record|pr_value:request.user }}
+        {% elif record.record_type == "rep_specific_pr" %}
+          {{ record.rep_count }}<abbr tabindex="0" title="{% trans "Rep Max" %}">RM</abbr>: {{ record|pr_value:request.user }}
+        {% elif record.record_type == "estimated_1rm" %}
+          {% trans "Estimated" %} <abbr tabindex="0" title="{% trans "One-Rep Max" %}">1RM</abbr>: {{ record|pr_value:request.user }}
+        {% elif record.record_type == "set_volume" %}
+          {% trans "Set volume:" %} {{ record|pr_value:request.user }}
+        {% elif record.record_type == "session_volume" %}
+          {% trans "Session volume:" %} {{ record|pr_value:request.user }}
+        {% endif %}
+        {% if record.previous_value %}
+          <span class="text-muted">{% blocktrans with previous=record|pr_previous_value:request.user %}(previous: {{ previous }}){% endblocktrans %}</span>
+        {% endif %}
+      </div>
+    </div>
+  {% endfor %}
+</div>
+{% endif %}

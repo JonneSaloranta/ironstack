@@ -1125,6 +1125,27 @@ msgstr "Новая тренировка"
 msgid "Delete workout"
 msgstr "Удалить тренировку"
 
+msgid "Dismiss"
+msgstr "Закрыть"
+
+msgid "New PR"
+msgstr "Новый рекорд"
+
+msgid "Max weight:"
+msgstr "Максимальный вес:"
+
+msgid "Most reps at %(weight)s:"
+msgstr "Больше всего повторений с весом %(weight)s:"
+
+msgid "Set volume:"
+msgstr "Объём подхода:"
+
+msgid "Session volume:"
+msgstr "Объём тренировки:"
+
+msgid "(previous: %(previous)s)"
+msgstr "(предыдущий: %(previous)s)"
+
 msgid "%(name)s records"
 msgstr "Рекорды: %(name)s"
 
@@ -1163,24 +1184,6 @@ msgstr "Назад к профилю"
 
 msgid "Target: %(count)s × %(min)s-%(max)s"
 msgstr "Цель: %(count)s × %(min)s-%(max)s"
-
-msgid "New PR"
-msgstr "Новый рекорд"
-
-msgid "Max weight:"
-msgstr "Максимальный вес:"
-
-msgid "Most reps at %(weight)s:"
-msgstr "Больше всего повторений с весом %(weight)s:"
-
-msgid "Set volume:"
-msgstr "Объём подхода:"
-
-msgid "Session volume:"
-msgstr "Объём тренировки:"
-
-msgid "(previous: %(previous)s)"
-msgstr "(предыдущий: %(previous)s)"
 
 msgid "Set"
 msgstr "Подход"

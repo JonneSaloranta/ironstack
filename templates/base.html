@@ -14,6 +14,15 @@
 </head>
 <body>
   <a class="skip-link" href="#main-content">{% trans "Skip to content" %}</a>
+  {% comment %}
+  Empty by default — populated via HTMX out-of-band swaps whenever a
+  logged set creates a new PR (templates/records/_pr_toasts.html,
+  included from _performed_exercise_card.html/_train_panel.html). Lives
+  here, once, so a PR toast shows up top-of-screen regardless of which
+  page/card triggered it, and survives whatever the triggering card's
+  own hx-swap does to that card's own DOM subtree.
+  {% endcomment %}
+  <div id="pr-toast-container" class="toast-container" aria-live="polite"></div>
   {% if user.is_authenticated %}
   <nav class="bottom-nav" aria-label="{% trans "Main navigation" %}">
     <a href="{% url 'dashboard' %}" aria-label="{% trans "Home" %}" {% if request.resolver_match.url_name == 'dashboard' %}aria-current="page"{% endif %}>

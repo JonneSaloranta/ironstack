@@ -295,3 +295,30 @@ class SetLoggingNotifiesNewPRsTests(TestCase):
         )
         messages = [str(m) for m in response.context["messages"]]
         self.assertTrue(any("225.0 lb" in m or "225.00 lb" in m for m in messages), messages)
+
+    def test_htmx_response_renders_the_pr_as_a_top_of_screen_toast(self):
+        """New PRs render as an HTMX out-of-band swap into the toast
+        container base.html defines once (#pr-toast-container, fixed to
+        the top of the screen) — not inline in the exercise card itself."""
+        response = self.client.post(
+            reverse("workouts:set-log", args=[self.performed.pk]),
+            {"weight": "100", "reps": "5"},
+            HTTP_HX_REQUEST="true",
+        )
+        self.assertContains(response, 'hx-swap-oob="afterbegin:#pr-toast-container"')
+
+    def test_an_htmx_request_does_not_flash_a_message(self):
+        """Regression: messages.success used to fire unconditionally,
+        including on every HTMX request — but nothing ever consumes
+        django.contrib.messages there (only base.html's full-page `{% if
+        messages %}` loop does), so the message sat in the store and
+        would resurface, stale, on whatever the user's next *unrelated*
+        full page load happened to be. HTMX requests get the toast
+        instead (see test above); the message store must stay empty."""
+        self.client.post(
+            reverse("workouts:set-log", args=[self.performed.pk]),
+            {"weight": "100", "reps": "5"},
+            HTTP_HX_REQUEST="true",
+        )
+        response = self.client.get(reverse("workouts:session-list"))
+        self.assertNotContains(response, "New PR")

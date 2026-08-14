@@ -510,17 +510,56 @@ h2 {
   flex: 1 1 100%;
 }
 
+/* PR toasts (templates/records/_pr_toasts.html) — fixed to the top of
+   the screen via .toast-container below, one .pr-banner per new PR,
+   stacked newest-first, each auto-dismissing on its own. */
+.toast-container {
+  position: fixed;
+  top: env(safe-area-inset-top);
+  left: 0;
+  right: 0;
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem 0;
+  /* The container spans the full width so its children can center
+     themselves, but it has no visible content of its own — clicks
+     through the gaps between toasts must still reach the page. */
+  pointer-events: none;
+}
+
 .pr-banner {
+  pointer-events: auto;
+  position: relative;
+  width: 100%;
+  max-width: 28rem;
   background: var(--color-success);
   color: #fff;
   border-radius: var(--radius);
-  padding: 0.5rem 0.75rem;
-  margin-bottom: 0.5rem;
+  padding: 0.5rem 2rem 0.5rem 0.75rem;
   font-size: 0.9rem;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
 }
 
 .pr-banner .text-muted {
   color: rgba(255, 255, 255, 0.75);
+}
+
+.pr-toast-close {
+  position: absolute;
+  top: 0.15rem;
+  right: 0.15rem;
+  min-height: auto;
+  min-width: auto;
+  padding: 0.25rem 0.5rem;
+  margin-bottom: 0;
+  border: none;
+  background: transparent;
+  color: #fff;
+  font-size: 1.1rem;
+  line-height: 1;
 }
 
 /* Measurement trend chart — single series, no legend needed */

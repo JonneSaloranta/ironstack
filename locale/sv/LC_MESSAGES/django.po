@@ -1121,6 +1121,27 @@ msgstr "Nytt träningspass"
 msgid "Delete workout"
 msgstr "Ta bort träningspass"
 
+msgid "Dismiss"
+msgstr "Stäng"
+
+msgid "New PR"
+msgstr "Nytt PR"
+
+msgid "Max weight:"
+msgstr "Maxvikt:"
+
+msgid "Most reps at %(weight)s:"
+msgstr "Flest repetitioner vid %(weight)s:"
+
+msgid "Set volume:"
+msgstr "Setvolym:"
+
+msgid "Session volume:"
+msgstr "Passets volym:"
+
+msgid "(previous: %(previous)s)"
+msgstr "(föregående: %(previous)s)"
+
 msgid "%(name)s records"
 msgstr "%(name)s – rekord"
 
@@ -1159,24 +1180,6 @@ msgstr "Tillbaka till profilen"
 
 msgid "Target: %(count)s × %(min)s-%(max)s"
 msgstr "Mål: %(count)s × %(min)s-%(max)s"
-
-msgid "New PR"
-msgstr "Nytt PR"
-
-msgid "Max weight:"
-msgstr "Maxvikt:"
-
-msgid "Most reps at %(weight)s:"
-msgstr "Flest repetitioner vid %(weight)s:"
-
-msgid "Set volume:"
-msgstr "Setvolym:"
-
-msgid "Session volume:"
-msgstr "Passets volym:"
-
-msgid "(previous: %(previous)s)"
-msgstr "(föregående: %(previous)s)"
 
 msgid "Set"
 msgstr "Set"

@@ -1121,6 +1121,27 @@ msgstr "New workout"
 msgid "Delete workout"
 msgstr "Delete workout"
 
+msgid "Dismiss"
+msgstr "Dismiss"
+
+msgid "New PR"
+msgstr "New PR"
+
+msgid "Max weight:"
+msgstr "Max weight:"
+
+msgid "Most reps at %(weight)s:"
+msgstr "Most reps at %(weight)s:"
+
+msgid "Set volume:"
+msgstr "Set volume:"
+
+msgid "Session volume:"
+msgstr "Session volume:"
+
+msgid "(previous: %(previous)s)"
+msgstr "(previous: %(previous)s)"
+
 msgid "%(name)s records"
 msgstr "%(name)s records"
 
@@ -1159,24 +1180,6 @@ msgstr "Back to profile"
 
 msgid "Target: %(count)s × %(min)s-%(max)s"
 msgstr "Target: %(count)s × %(min)s-%(max)s"
-
-msgid "New PR"
-msgstr "New PR"
-
-msgid "Max weight:"
-msgstr "Max weight:"
-
-msgid "Most reps at %(weight)s:"
-msgstr "Most reps at %(weight)s:"
-
-msgid "Set volume:"
-msgstr "Set volume:"
-
-msgid "Session volume:"
-msgstr "Session volume:"
-
-msgid "(previous: %(previous)s)"
-msgstr "(previous: %(previous)s)"
 
 msgid "Set"
 msgstr "Set"
