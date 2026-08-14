@@ -748,6 +748,32 @@ shared across every user the same way the achievements carousel is.
   runner), verified by inspecting the rendered page and checking the
   script's syntax directly.
 
+**Fixed: "the charts are missing their bars" — a service-worker caching
+bug, not a chart bug.**
+
+- The report ("bars missing" — the exact same symptom fixed once already
+  earlier this session) traced to something else entirely: rendering
+  the same analytics page directly against the live server showed
+  perfectly correct `<rect>` markup and CSS the whole time. The real
+  cause was `static/sw.js`'s fetch handler, which cached every static
+  asset **pure cache-first** — once `base.css` was cached once, it was
+  served from that cache *forever*, the network never consulted again
+  for it at all. Since static files here aren't served at content-hashed
+  URLs (no `ManifestStaticFilesStorage`), this meant a whole session's
+  worth of CSS fixes were permanently invisible to any browser (or
+  installed PWA) that had already cached an old `base.css` — the bar
+  chart CSS just happened to be the one someone actually noticed missing.
+- Fixed by switching to stale-while-revalidate: the cached copy is still
+  served immediately (fast, works offline), but every request also
+  refetches in the background (`event.waitUntil` keeps the worker alive
+  for it) and updates the cache for the *next* request — a deployed fix
+  now reaches every browser within one extra load instead of never.
+  `STATIC_CACHE`'s version string was also bumped once, forcing every
+  existing installation to discard its stale cache immediately rather
+  than only self-healing gradually.
+- 1 new test (404 total) confirming the fetch handler no longer matches
+  the old cache-first shape.
+
 ## Local development
 
 ```bash

@@ -324,6 +324,21 @@ class PWATests(TestCase):
         content = self.client.get("/sw.js").content.decode()
         self.assertIn('pathname.startsWith("/static/")', content)
 
+    def test_static_assets_use_stale_while_revalidate_not_pure_cache_first(self):
+        """Regression: a pure cache-first strategy served a cached
+        CSS/JS asset forever once cached even once, never re-checking
+        the network for it again — since static files aren't served at
+        content-hashed URLs (no ManifestStaticFilesStorage), any later
+        fix (e.g. a whole session's worth of chart/nav/layout CSS
+        changes) was permanently invisible to a browser that had
+        already cached the old version. A stale-while-revalidate
+        fetch handler always refetches in the background (event.waitUntil
+        keeps the worker alive for it) and updates the cache for next
+        time, even when it serves the cached copy immediately."""
+        content = self.client.get("/sw.js").content.decode()
+        self.assertIn("event.waitUntil", content)
+        self.assertIn("cache.put(event.request, response)", content)
+
     def test_base_page_links_the_manifest_and_registers_the_service_worker(self):
         from django.contrib.auth import get_user_model
 

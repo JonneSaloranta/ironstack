@@ -8,10 +8,24 @@
 // worker exists only to (a) make the app installable — a fetch handler
 // is part of most browsers' installability criteria — and (b) speed up
 // repeat loads of genuinely static assets (CSS/JS/icons) via a
-// cache-first strategy. Every other request (pages, forms, HTMX
-// responses) always goes straight to the network, untouched.
+// stale-while-revalidate strategy. Every other request (pages, forms,
+// HTMX responses) always goes straight to the network, untouched.
+//
+// Regression fixed here: this used to be pure cache-first — once an
+// asset (e.g. base.css) was cached, it was served from that cache
+// *forever*, with the network never consulted again for it at all.
+// Static files here aren't served at content-hashed URLs (no
+// ManifestStaticFilesStorage), so every later CSS/JS fix was
+// permanently invisible to any browser that had already cached the old
+// version — including, concretely, a whole session's worth of chart/
+// nav/layout CSS fixes never reaching a user whose phone had cached
+// base.css before any of them shipped. See the fetch handler below.
 
-const STATIC_CACHE = "ironstack-static-v1";
+// Bumped alongside the fetch handler's fix below (v1 -> v2) so every
+// existing installation discards its old cache once on update, rather
+// than only self-healing gradually as each individual asset happens to
+// get re-requested.
+const STATIC_CACHE = "ironstack-static-v2";
 
 self.addEventListener("install", () => {
   self.skipWaiting();
@@ -40,15 +54,26 @@ self.addEventListener("fetch", (event) => {
   }
 
   event.respondWith(
-    caches.open(STATIC_CACHE).then((cache) =>
-      cache.match(event.request).then(
-        (cached) =>
-          cached ||
-          fetch(event.request).then((response) => {
-            cache.put(event.request, response.clone());
-            return response;
-          })
-      )
-    )
+    caches.open(STATIC_CACHE).then(async (cache) => {
+      const cached = await cache.match(event.request);
+      if (cached) {
+        // Serve the cached copy immediately — fast, and works offline —
+        // but always refetch in the background too and update the
+        // cache for the *next* request. event.waitUntil keeps the
+        // worker alive long enough for that background refetch to
+        // finish even though the response has already gone out.
+        event.waitUntil(
+          fetch(event.request)
+            .then((response) => cache.put(event.request, response))
+            .catch(() => {}) // offline — next request just serves the same cached copy again
+        );
+        return cached;
+      }
+      // Nothing cached yet — fetch from the network and cache it for
+      // next time, same as before for a first-ever request.
+      const response = await fetch(event.request);
+      cache.put(event.request, response.clone());
+      return response;
+    })
   );
 });

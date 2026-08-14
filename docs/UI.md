@@ -409,7 +409,25 @@ name/icons/`display: standalone`/theme color; a hand-drawn barbell icon
 (`static/icons/icon.svg`, rasterized to the PNG sizes browsers actually
 request) doubles as the app icon and favicon. The service worker
 (`static/sw.js`) exists only to satisfy installability criteria and
-cache-first genuinely static assets (CSS/JS/icons) — it explicitly never
-intercepts a page, form submission, or HTMX response, so nothing here
-can ever show stale workout data or silently swallow a logged set while
-offline.
+stale-while-revalidate genuinely static assets (CSS/JS/icons) — it
+explicitly never intercepts a page, form submission, or HTMX response,
+so nothing here can ever show stale workout data or silently swallow a
+logged set while offline.
+
+Static assets were originally cached pure cache-first — regression: once
+an asset was cached, it was served from that cache *forever*, since
+these files aren't served at content-hashed URLs (no
+`ManifestStaticFilesStorage`), so the network was never consulted again
+for it. A whole session's worth of CSS fixes (chart bars going missing
+being the one that actually got reported) was consequently invisible to
+any returning visitor whose browser had cached `base.css` before those
+fixes shipped — a real, unaddressed live-deploy caching bug, not a bug
+in the CSS itself. Fixed with stale-while-revalidate instead: the cached
+copy is still served immediately (fast, works offline), but every
+request also refetches in the background (`event.waitUntil` keeps the
+worker alive for it) and updates the cache for the *next* request, so a
+deployed fix reaches every browser within one extra load rather than
+never. `STATIC_CACHE`'s version string was also bumped once alongside
+this fix specifically to force every existing installation to discard
+its old cache immediately, rather than only self-healing gradually as
+each asset happened to get re-requested.
