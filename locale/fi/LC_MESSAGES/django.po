@@ -861,6 +861,12 @@ msgstr "Kirjaudu ulos"
 msgid "IronStack version %(version)s"
 msgstr "IronStack versio %(version)s"
 
+msgid "Changelog"
+msgstr "Muutosloki"
+
+msgid "Dismiss"
+msgstr "Sulje"
+
 msgid "Sign up"
 msgstr "Rekisteröidy"
 
@@ -1059,9 +1065,6 @@ msgstr "Ei vielä API-avaimia."
 
 msgid "Skip to content"
 msgstr "Siirry sisältöön"
-
-msgid "Dismiss"
-msgstr "Sulje"
 
 msgid "Main navigation"
 msgstr "Päävalikko"

@@ -861,6 +861,12 @@ msgstr "Log out"
 msgid "IronStack version %(version)s"
 msgstr "IronStack version %(version)s"
 
+msgid "Changelog"
+msgstr "Changelog"
+
+msgid "Dismiss"
+msgstr "Dismiss"
+
 msgid "Sign up"
 msgstr "Sign up"
 
@@ -1059,9 +1065,6 @@ msgstr "No API keys yet."
 
 msgid "Skip to content"
 msgstr "Skip to content"
-
-msgid "Dismiss"
-msgstr "Dismiss"
 
 msgid "Main navigation"
 msgstr "Main navigation"

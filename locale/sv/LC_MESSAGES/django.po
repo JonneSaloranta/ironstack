@@ -861,6 +861,12 @@ msgstr "Logga ut"
 msgid "IronStack version %(version)s"
 msgstr "IronStack version %(version)s"
 
+msgid "Changelog"
+msgstr "Ändringslogg"
+
+msgid "Dismiss"
+msgstr "Stäng"
+
 msgid "Sign up"
 msgstr "Registrera dig"
 
@@ -1059,9 +1065,6 @@ msgstr "Inga API-nycklar än."
 
 msgid "Skip to content"
 msgstr "Hoppa till innehåll"
-
-msgid "Dismiss"
-msgstr "Stäng"
 
 msgid "Main navigation"
 msgstr "Huvudnavigering"

@@ -864,6 +864,12 @@ msgstr "Выйти"
 msgid "IronStack version %(version)s"
 msgstr "IronStack версия %(version)s"
 
+msgid "Changelog"
+msgstr "Список изменений"
+
+msgid "Dismiss"
+msgstr "Закрыть"
+
 msgid "Sign up"
 msgstr "Зарегистрироваться"
 
@@ -1064,9 +1070,6 @@ msgstr "Пока нет API-ключей."
 
 msgid "Skip to content"
 msgstr "Перейти к содержимому"
-
-msgid "Dismiss"
-msgstr "Закрыть"
 
 msgid "Main navigation"
 msgstr "Главное меню"

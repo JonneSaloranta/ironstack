@@ -17,6 +17,7 @@ from django.views.defaults import permission_denied, server_error
 
 from apps.core import backups as backup_services
 from apps.core.bmi import BMI_CATEGORIES, calculate_bmi, category_for, category_rows
+from apps.core.changelog import _render, render_changelog_html
 from apps.core.charts import build_bar_series, build_chart_series
 from apps.core.context_processors import app_version
 from apps.core.greetings import _GREETINGS_BY_BUCKET, _time_bucket, random_greeting
@@ -471,6 +472,16 @@ class VersionTests(TestCase):
         self.assertContains(response, 'class="app-version"')
         self.assertContains(response, get_version())
 
+    def test_clicking_the_version_number_opens_a_changelog_modal(self):
+        from django.contrib.auth import get_user_model
+
+        get_user_model().objects.create_user(username="alice", password="s3cret-pass")
+        self.client.login(username="alice", password="s3cret-pass")
+        response = self.client.get(reverse("profile"))
+        self.assertContains(response, 'class="modal-backdrop"')
+        self.assertContains(response, 'class="modal-body"')
+        self.assertContains(response, "[1.0.0]")
+
     def test_get_git_sha_is_unknown_without_a_baked_in_file(self):
         """GIT_SHA is only ever written by scripts/build.sh's production
         build path (Dockerfile) — a dev container (or any plain
@@ -511,6 +522,57 @@ class VersionTests(TestCase):
         call_command("version_info", "--pretty", stdout=out)
         self.assertIn("\n", out.getvalue())
         self.assertEqual(json.loads(out.getvalue())["version"], get_version())
+
+
+class ChangelogTests(TestCase):
+    """apps.core.changelog — a narrowly-scoped Markdown-subset renderer
+    for CHANGELOG.md specifically (not a general-purpose Markdown
+    library — see that module's own docstring for why), powering the
+    profile page's version-number modal."""
+
+    def test_renders_the_real_changelog_file_without_error(self):
+        html = render_changelog_html()
+        self.assertIn("<h3>", html)
+        self.assertIn("[1.0.0]", html)
+
+    def test_headings(self):
+        html = _render("# Title\n\n## [1.1.0] — 2026-01-01\n\n### Added\n- A thing\n")
+        self.assertNotIn("Title", html)  # the top-level title is skipped
+        self.assertIn("<h3>[1.1.0] — 2026-01-01</h3>", html)
+        self.assertIn("<h4>Added</h4>", html)
+
+    def test_bullets_including_a_soft_wrapped_continuation_line(self):
+        html = _render("- First point\n  still the first point\n- Second point\n")
+        self.assertIn("<li>First point still the first point</li>", html)
+        self.assertIn("<li>Second point</li>", html)
+
+    def test_a_blank_line_ends_a_list(self):
+        html = _render("- One\n\nA plain paragraph.\n")
+        self.assertIn("<ul><li>One</li></ul>", html)
+        self.assertIn("<p>A plain paragraph.</p>", html)
+
+    def test_inline_code_bold_and_links(self):
+        html = _render("- Uses `apps.core` and **bold** and [a link](https://example.com).\n")
+        self.assertIn("<code>apps.core</code>", html)
+        self.assertIn("<strong>bold</strong>", html)
+        self.assertIn(
+            '<a href="https://example.com" target="_blank" rel="noopener">a link</a>', html
+        )
+
+    def test_html_in_the_source_is_escaped_not_executed(self):
+        html = _render("- <script>alert(1)</script>\n")
+        self.assertNotIn("<script>", html)
+        self.assertIn("&lt;script&gt;", html)
+
+    def test_missing_file_returns_empty_string_rather_than_raising(self):
+        from django.test import override_settings
+
+        render_changelog_html.cache_clear()
+        try:
+            with override_settings(BASE_DIR=Path("/nonexistent-dir-for-testing")):
+                self.assertEqual(render_changelog_html(), "")
+        finally:
+            render_changelog_html.cache_clear()
 
 
 class BackupTests(TestCase):

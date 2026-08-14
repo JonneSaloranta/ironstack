@@ -459,7 +459,11 @@ so the two aren't easy to mis-click for each other.
 
 The footer shows the running version (`.app-version`, small and muted,
 below the logout button) — see `docs/ARCHITECTURE.md` "Versioning" for
-where that value comes from.
+where that value comes from. It's a button, not just text: clicking it
+opens a modal (`.modal-backdrop`/`.modal-card`, this app's first —
+Alpine `x-show`, dismissible via backdrop click, Escape, or its own
+close button) rendering `CHANGELOG.md` in full, so every past version
+and what changed is one tap away without leaving the app.
 
 ### PWA
 Installable, not offline-capable — see `docs/ROADMAP.md` "Future

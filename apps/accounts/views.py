@@ -5,6 +5,8 @@ from django.urls import reverse_lazy
 from django.utils.translation import gettext as _
 from django.views.generic import CreateView, UpdateView
 
+from apps.core import changelog as changelog_services
+
 from .forms import AccountDetailsForm, ProfileForm, SignupForm
 
 
@@ -26,6 +28,14 @@ class ProfileView(LoginRequiredMixin, UpdateView):
 
     def get_object(self):
         return self.request.user
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Powers the version-number modal (docs/ARCHITECTURE.md
+        # "Versioning") — cached in apps.core.changelog, so this is a
+        # cheap lookup, not a re-parse of CHANGELOG.md on every load.
+        context["changelog_html"] = changelog_services.render_changelog_html()
+        return context
 
     def form_valid(self, form):
         response = super().form_valid(form)

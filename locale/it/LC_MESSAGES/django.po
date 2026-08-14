@@ -861,6 +861,12 @@ msgstr "Esci"
 msgid "IronStack version %(version)s"
 msgstr "IronStack versione %(version)s"
 
+msgid "Changelog"
+msgstr "Registro delle modifiche"
+
+msgid "Dismiss"
+msgstr "Chiudi"
+
 msgid "Sign up"
 msgstr "Registrati"
 
@@ -1059,9 +1065,6 @@ msgstr "Ancora nessuna chiave API."
 
 msgid "Skip to content"
 msgstr "Vai al contenuto"
-
-msgid "Dismiss"
-msgstr "Chiudi"
 
 msgid "Main navigation"
 msgstr "Navigazione principale"

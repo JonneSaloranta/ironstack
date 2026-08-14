@@ -369,11 +369,116 @@ abbr[title]:focus::after {
   margin: 0 0 1rem;
 }
 
+/* A <button>, not just styled text — clicking it opens the changelog
+   modal below, so it needs the usual button resets (no native
+   background/border) on top of looking like the plain muted footer
+   text it always was. */
 .app-version {
+  display: block;
+  width: 100%;
+  background: none;
+  border: none;
+  font: inherit;
   color: var(--color-text-muted);
   font-size: 0.75rem;
   text-align: center;
   margin: 1.5rem 0 0.5rem;
+  padding: 0.5rem;
+  cursor: pointer;
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  text-underline-offset: 3px;
+}
+
+.app-version:hover,
+.app-version:focus-visible {
+  color: var(--color-text);
+}
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.modal-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  width: 100%;
+  max-width: 30rem;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem;
+  border-bottom: 1px solid var(--color-border);
+  flex-shrink: 0;
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  color: var(--color-text);
+  font-size: 1.5rem;
+  line-height: 1;
+  padding: 0.25rem 0.5rem;
+  cursor: pointer;
+}
+
+.modal-body {
+  padding: 1rem;
+  overflow-y: auto;
+}
+
+.modal-body h3 {
+  margin: 1.25rem 0 0.5rem;
+  font-size: 1rem;
+}
+
+.modal-body h3:first-child {
+  margin-top: 0;
+}
+
+.modal-body h4 {
+  margin: 0.75rem 0 0.25rem;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--color-text-muted);
+}
+
+.modal-body p {
+  color: var(--color-text-muted);
+  margin: 0 0 0.75rem;
+}
+
+.modal-body ul {
+  margin: 0 0 0.75rem;
+  padding-left: 1.25rem;
+}
+
+.modal-body li {
+  margin-bottom: 0.4rem;
+}
+
+.modal-body code {
+  background: var(--color-bg);
+  padding: 0.1rem 0.3rem;
+  border-radius: 0.25rem;
+  font-size: 0.85em;
 }
 
 /* Profile page's staff-only Admin/Backups section — visually set apart

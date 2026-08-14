@@ -1027,6 +1027,23 @@ the three old nudge-card strings no longer exist). Tests moved from
 `apps.core`/`apps.accounts` to `apps.measurements` alongside the
 feature (514 total, full suite green).
 
+**A changelog viewer, and `CHANGELOG.md` kept current.**
+
+- `CHANGELOG.md` now has an `[Unreleased]` section (Keep a Changelog
+  style) for everything that's landed since the `[1.0.0]` entry —
+  backups, the name-privacy toggle, and the BMI move above.
+- Clicking the version number on the profile page opens a modal
+  showing that whole file — every past version and what changed,
+  without leaving the app. `apps.core.changelog` renders it with a
+  small, deliberately narrow Markdown-subset parser (headings, bullets
+  with soft-wrapped continuation lines, `` `code` ``/`**bold**`/
+  `[links](url)`) scoped to exactly what `CHANGELOG.md` actually uses,
+  rather than a full Markdown library — that file is the only thing
+  that writes it, so there was no real parsing surface to cover.
+  Result is cached the same way `apps.core.version.get_version()` is.
+- 1 new UI string translated across fi/sv/ru/it/et (515 total, 0
+  fuzzy/untranslated). 8 new tests (522 total, full suite green).
+
 ## Local development
 
 ```bash

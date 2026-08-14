@@ -861,6 +861,12 @@ msgstr "Logi välja"
 msgid "IronStack version %(version)s"
 msgstr "IronStack versioon %(version)s"
 
+msgid "Changelog"
+msgstr "Muudatuste logi"
+
+msgid "Dismiss"
+msgstr "Sulge"
+
 msgid "Sign up"
 msgstr "Registreeru"
 
@@ -1059,9 +1065,6 @@ msgstr "Veel pole API-võtmeid."
 
 msgid "Skip to content"
 msgstr "Liigu sisu juurde"
-
-msgid "Dismiss"
-msgstr "Sulge"
 
 msgid "Main navigation"
 msgstr "Peamenüü"
