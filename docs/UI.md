@@ -168,13 +168,28 @@ reset to zero if it were nested inside that swapped region. When the
 countdown reaches zero on its own it also plays a short two-tone chime
 — synthesized with the Web Audio API (an oscillator, not an audio file,
 so nothing needs shipping/loading for one beep) and wrapped in
-try/catch for browsers that block audio without a prior gesture or
-don't support it at all, in which case the visible countdown reaching
-zero is all that happens. A speaker icon next to the "Rest timer" label
-mutes/unmutes it; `muted` persists in `localStorage` (a device setting,
-not a server-side preference — the same reasoning as a browser's own
-volume control) so it survives across page loads. A manual "Skip rest"
-never beeps — only the countdown actually finishing does.
+try/catch for a browser that doesn't support Web Audio at all, in which
+case the visible countdown reaching zero is all that happens. A speaker
+icon next to the "Rest timer" label mutes/unmutes it; `muted` persists
+in `localStorage` (a device setting, not a server-side preference — the
+same reasoning as a browser's own volume control) so it survives across
+page loads. A manual "Skip rest" never beeps — only the countdown
+actually finishing does.
+
+One `AudioContext` is created lazily, once, and reused for the page's
+whole life — regression: the original version created a fresh one
+inside `beep()` itself every time, which is silent on iOS Safari (and
+other WebKit browsers) specifically, because they refuse to ever
+produce sound from a context that wasn't created/resumed synchronously
+*inside* a genuine user gesture, and `beep()` only ever runs from a
+`setInterval` callback (the countdown reaching zero) or an `HX-Trigger`
+event handled well after the "Log set" tap that caused it — neither
+counts. Fixed by unlocking the context (creating it, then scheduling a
+near-silent blip, which is what actually satisfies iOS specifically —
+calling `resume()` alone isn't reliably enough there) on the very first
+tap/touch anywhere on the page, which is guaranteed to happen before any
+rest period could ever finish, since reaching training mode at all means
+the user just tapped something.
 
 **Progressive enhancement**: every training-mode interaction (Prev/Next,
 logging a set) works as a plain link/form POST with JS disabled — HTMX

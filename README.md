@@ -725,6 +725,29 @@ shared across every user the same way the achievements carousel is.
   read, so a read-then-write pass is actually idempotent.
 - 12 new tests (403 total).
 
+**Fixed: the rest timer's sound never played on iOS Safari.**
+
+- Real cause, not a Safari quirk to work around blindly: iOS Safari (and
+  other WebKit browsers) refuse to ever produce sound from a Web Audio
+  `AudioContext` unless it was created/resumed *synchronously inside a
+  genuine user gesture* — but `beep()` only ever ran from a
+  `setInterval` callback (the countdown reaching zero) or an
+  `HX-Trigger` event handled well after the "Log set" tap that caused
+  it, and the original implementation created a brand-new `AudioContext`
+  fresh inside `beep()` itself every single time, which is silent there
+  no matter what.
+- Fixed by creating one `AudioContext` lazily, once, and unlocking it
+  (scheduling a near-silent blip — `resume()` alone isn't reliably
+  enough on iOS specifically) on the very first tap/touch anywhere on
+  the page, which is guaranteed to happen before any rest period could
+  ever finish, since reaching training mode at all means the user just
+  tapped something. `beep()` now reuses that same unlocked context for
+  the rest of the page's life instead of creating a fresh, never-unlocked
+  one each time.
+- Pure client-side JS — no new tests (this app has no browser-level test
+  runner), verified by inspecting the rendered page and checking the
+  script's syntax directly.
+
 ## Local development
 
 ```bash
