@@ -346,10 +346,11 @@ reasons: it's baked into the Docker image the same `COPY . .` step
 that bakes in the application code itself, so bumping a release is
 one file edit plus a rebuild, no migration or settings change; and,
 being plain text, it's trivially readable by tooling that isn't
-Python at all — a future backup script can `cat VERSION` to stamp an
-archive, and a future restore path can compare a backup's stamped
-version against the running instance's before attempting to load it,
-without either script needing to import Django. `apps.core.version.
+Python at all — `scripts/backup.sh` reads it (indirectly, via
+`version_info` below) to stamp an archive's manifest, and
+`scripts/restore.sh` shows it next to the running instance's own
+version before restoring, without either script needing to import
+Django (see `docs/BACKUP.md`). `apps.core.version.
 get_version()` reads and caches it; `apps.core.context_processors.
 app_version` puts it in every template's context (`{{ app_version }}`)
 so any page can display it, even though only the profile page footer
@@ -357,8 +358,8 @@ does today. `CHANGELOG.md` maps version numbers to what changed —
 distinct from `README.md`'s "Status" section, which is the detailed,
 ongoing build log updated with every feature as it lands.
 
-Two more pieces of build/release metadata exist for the same "future
-backup/restore tooling" reason, both in `apps.core.version`:
+Two more pieces of build/release metadata exist for the same backup/
+restore tooling, both in `apps.core.version`:
 
 - **Git commit** (`get_git_sha()`): reads a `GIT_SHA` file the same way
   as `VERSION`, but that file is a build artifact, never committed
@@ -383,9 +384,10 @@ backup/restore tooling" reason, both in `apps.core.version`:
 
 `python manage.py version_info [--pretty]` bundles all three
 (version, git commit, migration state) plus a timestamp into one JSON
-blob — the intended call a future backup script makes to stamp an
-archive, and a future restore path makes to check a backup's metadata
-against the instance it's restoring into.
+blob — `scripts/backup.sh` calls it to write each archive's
+`manifest.json`, and `scripts/restore.sh` calls it again at restore
+time to show what's currently running next to what's in the archive.
+See `docs/BACKUP.md` for the full backup/restore workflow.
 
 ## Domain services
 

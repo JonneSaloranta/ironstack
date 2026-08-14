@@ -60,12 +60,23 @@
 </div>
 
 {% if user.is_staff %}
-  <div class="card card-action-row">
-    <div>
-      <strong>{% trans "Admin" %}</strong>
-      <p class="text-muted">{% trans "Manage tiers, keys, and reference data across the whole instance." %}</p>
+  <div class="danger-zone">
+    <h2>{% trans "Administration" %}</h2>
+    <div class="card card-action-row">
+      <div>
+        <strong>{% trans "Admin" %}</strong>
+        <p class="text-muted">{% trans "Manage tiers, keys, and reference data across the whole instance." %}</p>
+      </div>
+      <a class="button-secondary" href="{% url 'admin:index' %}">{% trans "Open" %}</a>
     </div>
-    <a class="button-secondary" href="{% url 'admin:index' %}">{% trans "Open" %}</a>
+
+    <div class="card card-action-row">
+      <div>
+        <strong>{% trans "Backups" %}</strong>
+        <p class="text-muted">{% trans "Create, download, and restore full backups of this instance." %}</p>
+      </div>
+      <a class="button-secondary" href="{% url 'backup-list' %}">{% trans "Open" %}</a>
+    </div>
   </div>
 {% endif %}
 

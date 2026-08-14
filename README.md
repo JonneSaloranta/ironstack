@@ -958,6 +958,31 @@ fi/sv/ru/it/et (496 total, 0 fuzzy/untranslated). 3 new tests.
 - 6 new tests (487 total, full suite green). No new UI strings —
   none of this is user-facing chrome.
 
+**Backups: host-side scripts, plus a web UI for admins.** See
+`docs/BACKUP.md` for the full picture — two independent mechanisms:
+
+- `scripts/backup.sh`/`restore.sh` — run from the Docker host, the
+  same `pg_dump`/`pg_restore` approach as above but reachable through
+  `docker compose exec`'s local socket access to `db`; restore stops
+  `web` first, so nothing is using the database while it's replaced.
+- Profile → Administration → Backups (`apps.core.backups`, admin-only)
+  — create/download/restore without leaving the app, stored in a new
+  `backups_data` volume. Restore here is real riskier — asked
+  explicitly and confirmed before building it, since the request
+  handling it is itself using the very database connection about to
+  be replaced. Restores into a freshly created, differently-named
+  database first and only swaps it in for the live one
+  (`ALTER DATABASE ... RENAME`) once the new data has actually loaded
+  — an earlier version dropped-then-restored-in-place, and a
+  `pg_restore` failure partway through (a client/server version
+  mismatch, caught during testing) left the live database completely
+  empty with nothing to fall back on.
+- The profile page's staff-only "Admin"/"Backups" cards now sit in a
+  `.danger-zone` (red-bordered box, red heading) — set visually apart
+  from the plain cards above them.
+- 20 new UI strings translated across fi/sv/ru/it/et (516 total, 0
+  fuzzy/untranslated). 17 new tests (504 total, full suite green).
+
 ## Local development
 
 ```bash
@@ -1018,6 +1043,10 @@ first, then start the stack without `--build` so it uses that image:
 ./scripts/build.sh
 docker compose -f docker-compose.yml up -d
 ```
+
+**Backups**: `./scripts/backup.sh` / `./scripts/restore.sh` — see
+`docs/BACKUP.md` for what's captured and the (destructive, confirmed-
+before-touching-anything) restore flow.
 
 ## Tests & linting
 

@@ -279,6 +279,12 @@ msgstr "Stai facendo le ore piccole, %(username)s? Anche le leggende hanno bisog
 msgid "Late night, %(username)s. Tomorrow's gains start with tonight's rest."
 msgstr "Tarda notte, %(username)s. I progressi di domani iniziano con il riposo di stanotte."
 
+msgid "Backup created: %(name)s"
+msgstr "Backup creato: %(name)s"
+
+msgid "Restored from backup: %(name)s"
+msgstr "Ripristinato dal backup: %(name)s"
+
 msgid "Ab Wheel Rollout"
 msgstr "Ab wheel"
 
@@ -837,6 +843,12 @@ msgstr "Admin"
 msgid "Manage tiers, keys, and reference data across the whole instance."
 msgstr "Gestisci livelli, chiavi e dati di riferimento per l'intera istanza."
 
+msgid "Backups"
+msgstr "Backup"
+
+msgid "Create, download, and restore full backups of this instance."
+msgstr "Crea, scarica e ripristina backup completi di questa istanza."
+
 msgid "Log out"
 msgstr "Esci"
 
@@ -1090,6 +1102,54 @@ msgid "%(title)s trend over time, %(counter)s reading"
 msgid_plural "%(title)s trend over time, %(counter)s readings"
 msgstr[0] "%(title)s nel tempo, %(counter)s lettura"
 msgstr[1] "%(title)s nel tempo, %(counter)s letture"
+
+msgid "Create backup"
+msgstr "Crea backup"
+
+msgid "Created"
+msgstr "Creato"
+
+msgid "Size"
+msgstr "Dimensione"
+
+msgid "Download"
+msgstr "Scarica"
+
+msgid "Restore"
+msgstr "Ripristina"
+
+msgid "No backups yet."
+msgstr "Ancora nessun backup."
+
+msgid "Restore backup"
+msgstr "Ripristina backup"
+
+msgid "This will permanently replace the current database and every file under media/ with the contents of %(name)s. This cannot be undone."
+msgstr "Questa operazione sostituirà permanentemente il database attuale e tutti i file in media/ con il contenuto di %(name)s. Non può essere annullata."
+
+msgid "If in doubt, create a fresh backup of the current state first, then come back here."
+msgstr "In caso di dubbio, crea prima un nuovo backup dello stato attuale e poi torna qui."
+
+msgid "Backup"
+msgstr "Backup"
+
+msgid "Version"
+msgstr "Versione"
+
+msgid "Git commit"
+msgstr "Commit Git"
+
+msgid "Running instance"
+msgstr "Istanza in esecuzione"
+
+msgid "Really replace the current database and media with this backup? This cannot be undone."
+msgstr "Sostituire davvero il database e i media attuali con questo backup? Non può essere annullato."
+
+msgid "Restore this backup"
+msgstr "Ripristina questo backup"
+
+msgid "Back to backups"
+msgstr "Torna ai backup"
 
 msgid "Dashboard"
 msgstr "Dashboard"

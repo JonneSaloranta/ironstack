@@ -279,6 +279,12 @@ msgstr "Bränner du midnattsoljan, %(username)s? Även legender behöver sömn."
 msgid "Late night, %(username)s. Tomorrow's gains start with tonight's rest."
 msgstr "Sen kväll, %(username)s. Morgondagens framsteg börjar med nattens vila."
 
+msgid "Backup created: %(name)s"
+msgstr "Säkerhetskopia skapad: %(name)s"
+
+msgid "Restored from backup: %(name)s"
+msgstr "Återställd från säkerhetskopia: %(name)s"
+
 msgid "Ab Wheel Rollout"
 msgstr "Ab wheel-rullning"
 
@@ -837,6 +843,12 @@ msgstr "Admin"
 msgid "Manage tiers, keys, and reference data across the whole instance."
 msgstr "Hantera nivåer, nycklar och referensdata över hela instansen."
 
+msgid "Backups"
+msgstr "Säkerhetskopior"
+
+msgid "Create, download, and restore full backups of this instance."
+msgstr "Skapa, ladda ner och återställ fullständiga säkerhetskopior av den här instansen."
+
 msgid "Log out"
 msgstr "Logga ut"
 
@@ -1090,6 +1102,54 @@ msgid "%(title)s trend over time, %(counter)s reading"
 msgid_plural "%(title)s trend over time, %(counter)s readings"
 msgstr[0] "%(title)s över tid, %(counter)s mätvärde"
 msgstr[1] "%(title)s över tid, %(counter)s mätvärden"
+
+msgid "Create backup"
+msgstr "Skapa säkerhetskopia"
+
+msgid "Created"
+msgstr "Skapad"
+
+msgid "Size"
+msgstr "Storlek"
+
+msgid "Download"
+msgstr "Ladda ner"
+
+msgid "Restore"
+msgstr "Återställ"
+
+msgid "No backups yet."
+msgstr "Inga säkerhetskopior ännu."
+
+msgid "Restore backup"
+msgstr "Återställ säkerhetskopia"
+
+msgid "This will permanently replace the current database and every file under media/ with the contents of %(name)s. This cannot be undone."
+msgstr "Detta ersätter permanent den aktuella databasen och alla filer under media/ med innehållet i %(name)s. Detta kan inte ångras."
+
+msgid "If in doubt, create a fresh backup of the current state first, then come back here."
+msgstr "Om du är osäker, skapa först en ny säkerhetskopia av det aktuella tillståndet och kom sedan tillbaka hit."
+
+msgid "Backup"
+msgstr "Säkerhetskopia"
+
+msgid "Version"
+msgstr "Version"
+
+msgid "Git commit"
+msgstr "Git-commit"
+
+msgid "Running instance"
+msgstr "Körande instans"
+
+msgid "Really replace the current database and media with this backup? This cannot be undone."
+msgstr "Vill du verkligen ersätta den aktuella databasen och media med den här säkerhetskopian? Detta kan inte ångras."
+
+msgid "Restore this backup"
+msgstr "Återställ den här säkerhetskopian"
+
+msgid "Back to backups"
+msgstr "Tillbaka till säkerhetskopior"
 
 msgid "Dashboard"
 msgstr "Instrumentpanel"

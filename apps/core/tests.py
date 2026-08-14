@@ -1,10 +1,13 @@
 import io
 import json
+import tarfile
 from datetime import timedelta
 from decimal import Decimal
 from pathlib import Path
 from tempfile import TemporaryDirectory
+from unittest import mock
 
+from django.contrib.auth import get_user_model
 from django.core.exceptions import PermissionDenied
 from django.core.management import call_command
 from django.test import RequestFactory, TestCase, override_settings
@@ -12,6 +15,7 @@ from django.urls import reverse
 from django.utils import timezone, translation
 from django.views.defaults import permission_denied, server_error
 
+from apps.core import backups as backup_services
 from apps.core.bmi import BMI_CATEGORIES, calculate_bmi, category_for, category_rows
 from apps.core.charts import build_bar_series, build_chart_series
 from apps.core.context_processors import app_version
@@ -478,6 +482,141 @@ class VersionTests(TestCase):
         call_command("version_info", "--pretty", stdout=out)
         self.assertIn("\n", out.getvalue())
         self.assertEqual(json.loads(out.getvalue())["version"], get_version())
+
+
+class BackupTests(TestCase):
+    """apps.core.backups — the admin-only web-UI backup mechanism (see
+    that module's own docstring for how and why it's a separate
+    mechanism from scripts/backup.sh/restore.sh). The destructive
+    restore_backup() is deliberately never called for real here — it
+    drops and recreates the actual database via subprocess, which
+    would corrupt this test run's own database. Its safe surface
+    (create/list/download/manifest) is exercised for real against a
+    temporary BACKUP_DIR; BackupViewTests below mocks restore_backup
+    itself to verify the view wires it up correctly."""
+
+    def setUp(self):
+        self.tmpdir = TemporaryDirectory()
+        self.addCleanup(self.tmpdir.cleanup)
+        patcher = mock.patch.object(backup_services, "BACKUP_DIR", Path(self.tmpdir.name))
+        patcher.start()
+        self.addCleanup(patcher.stop)
+
+    def test_list_backups_is_empty_initially(self):
+        self.assertEqual(backup_services.list_backups(), [])
+
+    def test_create_backup_writes_a_real_archive_with_all_three_files(self):
+        name = backup_services.create_backup()
+        self.assertTrue(name.startswith("ironstack-backup-"))
+        path = backup_services.BACKUP_DIR / name
+        self.assertTrue(path.is_file())
+        with tarfile.open(path, "r:gz") as tar:
+            names = tar.getnames()
+        self.assertIn("database.dump", names)
+        self.assertIn("media.tar", names)
+        self.assertIn("manifest.json", names)
+
+    def test_list_backups_finds_a_created_backup(self):
+        name = backup_services.create_backup()
+        backups = backup_services.list_backups()
+        self.assertEqual(len(backups), 1)
+        self.assertEqual(backups[0]["name"], name)
+        self.assertGreater(backups[0]["size"], 0)
+
+    def test_read_manifest_returns_the_backups_own_version_info(self):
+        name = backup_services.create_backup()
+        manifest = backup_services.read_manifest(name)
+        self.assertEqual(manifest["version"], get_version())
+        self.assertIn("migrations", manifest)
+
+    def test_safe_archive_path_rejects_path_traversal_and_dotted_names(self):
+        for bad in ["../etc/passwd", "..\\evil", "/etc/passwd", ".", ".."]:
+            with self.assertRaises(backup_services.InvalidBackupName):
+                backup_services.safe_archive_path(bad)
+
+    def test_safe_archive_path_rejects_a_name_that_doesnt_exist(self):
+        with self.assertRaises(backup_services.InvalidBackupName):
+            backup_services.safe_archive_path("does-not-exist.tar.gz")
+
+    def test_safe_archive_path_accepts_a_real_backup(self):
+        name = backup_services.create_backup()
+        self.assertEqual(backup_services.safe_archive_path(name), backup_services.BACKUP_DIR / name)
+
+
+class BackupViewTests(TestCase):
+    """Admin-only backup management linked from the profile page."""
+
+    def setUp(self):
+        self.tmpdir = TemporaryDirectory()
+        self.addCleanup(self.tmpdir.cleanup)
+        patcher = mock.patch.object(backup_services, "BACKUP_DIR", Path(self.tmpdir.name))
+        patcher.start()
+        self.addCleanup(patcher.stop)
+
+        User = get_user_model()
+        self.admin = User.objects.create_user(
+            username="admin", password="s3cret-pass", is_staff=True
+        )
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+
+    def test_list_view_requires_login(self):
+        response = self.client.get(reverse("backup-list"))
+        self.assertEqual(response.status_code, 302)
+
+    def test_list_view_requires_staff(self):
+        self.client.login(username="alice", password="s3cret-pass")
+        response = self.client.get(reverse("backup-list"))
+        self.assertEqual(response.status_code, 403)
+
+    def test_list_view_shows_backups_to_staff(self):
+        self.client.login(username="admin", password="s3cret-pass")
+        name = backup_services.create_backup()
+        response = self.client.get(reverse("backup-list"))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, name)
+
+    def test_posting_to_list_view_creates_a_backup_and_redirects(self):
+        self.client.login(username="admin", password="s3cret-pass")
+        response = self.client.post(reverse("backup-list"))
+        self.assertRedirects(response, reverse("backup-list"))
+        self.assertEqual(len(backup_services.list_backups()), 1)
+
+    def test_download_view_streams_the_archive(self):
+        self.client.login(username="admin", password="s3cret-pass")
+        name = backup_services.create_backup()
+        response = self.client.get(reverse("backup-download", args=[name]))
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(name, response["Content-Disposition"])
+
+    def test_download_view_requires_staff(self):
+        self.client.login(username="alice", password="s3cret-pass")
+        response = self.client.get(reverse("backup-download", args=["nope.tar.gz"]))
+        self.assertEqual(response.status_code, 403)
+
+    def test_download_view_404s_for_a_nonexistent_backup(self):
+        self.client.login(username="admin", password="s3cret-pass")
+        response = self.client.get(reverse("backup-download", args=["nope.tar.gz"]))
+        self.assertEqual(response.status_code, 404)
+
+    def test_restore_confirm_view_shows_both_manifests(self):
+        self.client.login(username="admin", password="s3cret-pass")
+        name = backup_services.create_backup()
+        response = self.client.get(reverse("backup-restore", args=[name]))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, get_version())
+
+    def test_restore_confirm_view_requires_staff(self):
+        self.client.login(username="alice", password="s3cret-pass")
+        response = self.client.get(reverse("backup-restore", args=["nope.tar.gz"]))
+        self.assertEqual(response.status_code, 403)
+
+    def test_posting_restore_calls_restore_backup_and_redirects_to_profile(self):
+        self.client.login(username="admin", password="s3cret-pass")
+        name = backup_services.create_backup()
+        with mock.patch.object(backup_services, "restore_backup") as mock_restore:
+            response = self.client.post(reverse("backup-restore", args=[name]))
+        mock_restore.assert_called_once_with(name)
+        self.assertRedirects(response, reverse("profile"))
 
 
 class DashboardAccessTests(TestCase):

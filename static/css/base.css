@@ -376,6 +376,26 @@ abbr[title]:focus::after {
   margin: 1.5rem 0 0.5rem;
 }
 
+/* Profile page's staff-only Admin/Backups section — visually set apart
+   as a "danger zone" (red border/heading) since everything inside it
+   can affect every user on the instance, not just the one looking at
+   it, unlike the plain cards above it. */
+.danger-zone {
+  border: 1px solid var(--color-danger);
+  border-radius: var(--radius);
+  padding: 0.75rem 1rem 1rem;
+  margin-bottom: 1rem;
+}
+
+.danger-zone h2 {
+  color: var(--color-danger);
+  margin-top: 0;
+}
+
+.danger-zone .card:last-child {
+  margin-bottom: 0;
+}
+
 .pagination {
   display: flex;
   justify-content: space-between;

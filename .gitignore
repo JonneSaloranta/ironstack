@@ -23,5 +23,11 @@ media/
 # whatever commit produced a given image, not part of the source itself.
 GIT_SHA
 
+# Backup archives (scripts/backup.sh, docs/BACKUP.md) — contain real
+# user data, never committed. Copy them off-host yourself for actual
+# disaster recovery; this directory existing on the same disk as the
+# running stack is not a backup strategy on its own.
+backups/
+
 .DS_Store
 *.swp

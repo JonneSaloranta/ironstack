@@ -378,10 +378,14 @@ class ProfileViewTests(TestCase):
         self.alice.is_staff = True
         self.alice.save()
         response = self.client.get(reverse("profile"))
-        self.assertContains(response, 'class="card card-action-row"', count=4)
+        # Account details, Change password, API keys + Admin, Backups
+        # (the latter two inside the staff-only "danger zone").
+        self.assertContains(response, 'class="card card-action-row"', count=5)
         self.assertContains(
             response, f'<a class="button-secondary" href="{reverse("admin:index")}">'
         )
+        self.assertContains(response, 'class="danger-zone"')
+        self.assertContains(response, reverse("backup-list"))
 
 
 class PasswordChangeTests(TestCase):

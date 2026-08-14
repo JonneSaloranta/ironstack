@@ -279,6 +279,12 @@ msgstr "Burning the midnight oil, %(username)s? Even legends need sleep."
 msgid "Late night, %(username)s. Tomorrow's gains start with tonight's rest."
 msgstr "Late night, %(username)s. Tomorrow's gains start with tonight's rest."
 
+msgid "Backup created: %(name)s"
+msgstr "Backup created: %(name)s"
+
+msgid "Restored from backup: %(name)s"
+msgstr "Restored from backup: %(name)s"
+
 msgid "Ab Wheel Rollout"
 msgstr "Ab Wheel Rollout"
 
@@ -837,6 +843,12 @@ msgstr "Admin"
 msgid "Manage tiers, keys, and reference data across the whole instance."
 msgstr "Manage tiers, keys, and reference data across the whole instance."
 
+msgid "Backups"
+msgstr "Backups"
+
+msgid "Create, download, and restore full backups of this instance."
+msgstr "Create, download, and restore full backups of this instance."
+
 msgid "Log out"
 msgstr "Log out"
 
@@ -1090,6 +1102,54 @@ msgid "%(title)s trend over time, %(counter)s reading"
 msgid_plural "%(title)s trend over time, %(counter)s readings"
 msgstr[0] "%(title)s trend over time, %(counter)s reading"
 msgstr[1] "%(title)s trend over time, %(counter)s readings"
+
+msgid "Create backup"
+msgstr "Create backup"
+
+msgid "Created"
+msgstr "Created"
+
+msgid "Size"
+msgstr "Size"
+
+msgid "Download"
+msgstr "Download"
+
+msgid "Restore"
+msgstr "Restore"
+
+msgid "No backups yet."
+msgstr "No backups yet."
+
+msgid "Restore backup"
+msgstr "Restore backup"
+
+msgid "This will permanently replace the current database and every file under media/ with the contents of %(name)s. This cannot be undone."
+msgstr "This will permanently replace the current database and every file under media/ with the contents of %(name)s. This cannot be undone."
+
+msgid "If in doubt, create a fresh backup of the current state first, then come back here."
+msgstr "If in doubt, create a fresh backup of the current state first, then come back here."
+
+msgid "Backup"
+msgstr "Backup"
+
+msgid "Version"
+msgstr "Version"
+
+msgid "Git commit"
+msgstr "Git commit"
+
+msgid "Running instance"
+msgstr "Running instance"
+
+msgid "Really replace the current database and media with this backup? This cannot be undone."
+msgstr "Really replace the current database and media with this backup? This cannot be undone."
+
+msgid "Restore this backup"
+msgstr "Restore this backup"
+
+msgid "Back to backups"
+msgstr "Back to backups"
 
 msgid "Dashboard"
 msgstr "Dashboard"

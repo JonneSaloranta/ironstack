@@ -279,6 +279,12 @@ msgstr "Põletad küünlaid mõlemast otsast, %(username)s? Isegi legendid vajav
 msgid "Late night, %(username)s. Tomorrow's gains start with tonight's rest."
 msgstr "Hiline õhtu, %(username)s. Homsed edusammud algavad tänase puhkuse pealt."
 
+msgid "Backup created: %(name)s"
+msgstr "Varukoopia loodud: %(name)s"
+
+msgid "Restored from backup: %(name)s"
+msgstr "Taastatud varukoopiast: %(name)s"
+
 msgid "Ab Wheel Rollout"
 msgstr "Kõhurullimine rattaga"
 
@@ -837,6 +843,12 @@ msgstr "Haldus"
 msgid "Manage tiers, keys, and reference data across the whole instance."
 msgstr "Halda tasemeid, võtmeid ja viiteandmeid kogu teenuse ulatuses."
 
+msgid "Backups"
+msgstr "Varukoopiad"
+
+msgid "Create, download, and restore full backups of this instance."
+msgstr "Loo, laadi alla ja taasta selle teenuse täielikke varukoopiaid."
+
 msgid "Log out"
 msgstr "Logi välja"
 
@@ -1090,6 +1102,54 @@ msgid "%(title)s trend over time, %(counter)s reading"
 msgid_plural "%(title)s trend over time, %(counter)s readings"
 msgstr[0] "%(title)s aja jooksul, %(counter)s mõõtmine"
 msgstr[1] "%(title)s aja jooksul, %(counter)s mõõtmist"
+
+msgid "Create backup"
+msgstr "Loo varukoopia"
+
+msgid "Created"
+msgstr "Loodud"
+
+msgid "Size"
+msgstr "Suurus"
+
+msgid "Download"
+msgstr "Laadi alla"
+
+msgid "Restore"
+msgstr "Taasta"
+
+msgid "No backups yet."
+msgstr "Varukoopiaid pole veel."
+
+msgid "Restore backup"
+msgstr "Taasta varukoopia"
+
+msgid "This will permanently replace the current database and every file under media/ with the contents of %(name)s. This cannot be undone."
+msgstr "See asendab jäädavalt praeguse andmebaasi ja kõik media/-kausta failid varukoopia %(name)s sisuga. Seda ei saa tagasi võtta."
+
+msgid "If in doubt, create a fresh backup of the current state first, then come back here."
+msgstr "Kui oled ebakindel, loo kõigepealt värske varukoopia praegusest olekust ja tule seejärel tagasi."
+
+msgid "Backup"
+msgstr "Varukoopia"
+
+msgid "Version"
+msgstr "Versioon"
+
+msgid "Git commit"
+msgstr "Git-commit"
+
+msgid "Running instance"
+msgstr "Töötav teenus"
+
+msgid "Really replace the current database and media with this backup? This cannot be undone."
+msgstr "Kas tõesti asendada praegune andmebaas ja meedia selle varukoopiaga? Seda ei saa tagasi võtta."
+
+msgid "Restore this backup"
+msgstr "Taasta see varukoopia"
+
+msgid "Back to backups"
+msgstr "Tagasi varukoopiate juurde"
 
 msgid "Dashboard"
 msgstr "Töölaud"

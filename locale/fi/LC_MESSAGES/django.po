@@ -279,6 +279,12 @@ msgstr "Palatko keskiyön öljyä, %(username)s? Legendatkin tarvitsevat unta."
 msgid "Late night, %(username)s. Tomorrow's gains start with tonight's rest."
 msgstr "Myöhäinen ilta, %(username)s. Huomisen edistys alkaa tämän yön levosta."
 
+msgid "Backup created: %(name)s"
+msgstr "Varmuuskopio luotu: %(name)s"
+
+msgid "Restored from backup: %(name)s"
+msgstr "Palautettu varmuuskopiosta: %(name)s"
+
 msgid "Ab Wheel Rollout"
 msgstr "Vatsapyörärullaus"
 
@@ -837,6 +843,12 @@ msgstr "Hallinta"
 msgid "Manage tiers, keys, and reference data across the whole instance."
 msgstr "Hallitse tasoja, avaimia ja viitetietoja koko palvelun laajuudelta."
 
+msgid "Backups"
+msgstr "Varmuuskopiot"
+
+msgid "Create, download, and restore full backups of this instance."
+msgstr "Luo, lataa ja palauta täydellisiä varmuuskopioita tästä asennuksesta."
+
 msgid "Log out"
 msgstr "Kirjaudu ulos"
 
@@ -1090,6 +1102,54 @@ msgid "%(title)s trend over time, %(counter)s reading"
 msgid_plural "%(title)s trend over time, %(counter)s readings"
 msgstr[0] "%(title)s ajan myötä, %(counter)s mittaus"
 msgstr[1] "%(title)s ajan myötä, %(counter)s mittausta"
+
+msgid "Create backup"
+msgstr "Luo varmuuskopio"
+
+msgid "Created"
+msgstr "Luotu"
+
+msgid "Size"
+msgstr "Koko"
+
+msgid "Download"
+msgstr "Lataa"
+
+msgid "Restore"
+msgstr "Palauta"
+
+msgid "No backups yet."
+msgstr "Ei vielä varmuuskopioita."
+
+msgid "Restore backup"
+msgstr "Palauta varmuuskopio"
+
+msgid "This will permanently replace the current database and every file under media/ with the contents of %(name)s. This cannot be undone."
+msgstr "Tämä korvaa pysyvästi nykyisen tietokannan ja jokaisen media/-hakemiston tiedoston varmuuskopion %(name)s sisällöllä. Tätä ei voi perua."
+
+msgid "If in doubt, create a fresh backup of the current state first, then come back here."
+msgstr "Jos olet epävarma, luo ensin tuore varmuuskopio nykytilasta ja palaa sitten tänne."
+
+msgid "Backup"
+msgstr "Varmuuskopio"
+
+msgid "Version"
+msgstr "Versio"
+
+msgid "Git commit"
+msgstr "Git-commit"
+
+msgid "Running instance"
+msgstr "Käynnissä oleva asennus"
+
+msgid "Really replace the current database and media with this backup? This cannot be undone."
+msgstr "Korvataanko nykyinen tietokanta ja media todella tällä varmuuskopiolla? Tätä ei voi perua."
+
+msgid "Restore this backup"
+msgstr "Palauta tämä varmuuskopio"
+
+msgid "Back to backups"
+msgstr "Takaisin varmuuskopioihin"
 
 msgid "Dashboard"
 msgstr "Kojelauta"

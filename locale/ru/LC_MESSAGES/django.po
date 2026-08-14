@@ -282,6 +282,12 @@ msgstr "Не спишь допоздна, %(username)s? Даже легенда�
 msgid "Late night, %(username)s. Tomorrow's gains start with tonight's rest."
 msgstr "Поздний вечер, %(username)s. Завтрашний прогресс начинается с сегодняшнего отдыха."
 
+msgid "Backup created: %(name)s"
+msgstr "Резервная копия создана: %(name)s"
+
+msgid "Restored from backup: %(name)s"
+msgstr "Восстановлено из резервной копии: %(name)s"
+
 msgid "Ab Wheel Rollout"
 msgstr "Ролик для пресса"
 
@@ -840,6 +846,12 @@ msgstr "Админ"
 msgid "Manage tiers, keys, and reference data across the whole instance."
 msgstr "Управляйте уровнями, ключами и справочными данными для всего сервера."
 
+msgid "Backups"
+msgstr "Резервные копии"
+
+msgid "Create, download, and restore full backups of this instance."
+msgstr "Создавайте, скачивайте и восстанавливайте полные резервные копии этого экземпляра."
+
 msgid "Log out"
 msgstr "Выйти"
 
@@ -1097,6 +1109,54 @@ msgid_plural "%(title)s trend over time, %(counter)s readings"
 msgstr[0] "%(title)s во времени, %(counter)s измерение"
 msgstr[1] "%(title)s во времени, %(counter)s измерения"
 msgstr[2] "%(title)s во времени, %(counter)s измерений"
+
+msgid "Create backup"
+msgstr "Создать резервную копию"
+
+msgid "Created"
+msgstr "Создано"
+
+msgid "Size"
+msgstr "Размер"
+
+msgid "Download"
+msgstr "Скачать"
+
+msgid "Restore"
+msgstr "Восстановить"
+
+msgid "No backups yet."
+msgstr "Резервных копий пока нет."
+
+msgid "Restore backup"
+msgstr "Восстановить резервную копию"
+
+msgid "This will permanently replace the current database and every file under media/ with the contents of %(name)s. This cannot be undone."
+msgstr "Это навсегда заменит текущую базу данных и все файлы в media/ содержимым резервной копии %(name)s. Это действие нельзя отменить."
+
+msgid "If in doubt, create a fresh backup of the current state first, then come back here."
+msgstr "Если сомневаетесь, сначала создайте новую резервную копию текущего состояния, а затем вернитесь сюда."
+
+msgid "Backup"
+msgstr "Резервная копия"
+
+msgid "Version"
+msgstr "Версия"
+
+msgid "Git commit"
+msgstr "Git-коммит"
+
+msgid "Running instance"
+msgstr "Работающий экземпляр"
+
+msgid "Really replace the current database and media with this backup? This cannot be undone."
+msgstr "Действительно заменить текущую базу данных и медиафайлы этой резервной копией? Это действие нельзя отменить."
+
+msgid "Restore this backup"
+msgstr "Восстановить эту резервную копию"
+
+msgid "Back to backups"
+msgstr "Назад к резервным копиям"
 
 msgid "Dashboard"
 msgstr "Панель управления"

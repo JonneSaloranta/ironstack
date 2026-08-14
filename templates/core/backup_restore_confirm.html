@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Restore backup" %} — IronStack{% endblock %}
+{% block content %}
+<div class="top-bar">
+  <h1 style="margin:0;">{% trans "Restore backup" %}</h1>
+</div>
+
+<div class="card">
+  <p>
+    {% blocktrans with name=name %}This will permanently replace the current database and every file under media/ with the contents of {{ name }}. This cannot be undone.{% endblocktrans %}
+  </p>
+  <p class="text-muted">
+    {% trans "If in doubt, create a fresh backup of the current state first, then come back here." %}
+  </p>
+</div>
+
+<div class="card">
+  <strong>{% trans "Backup" %}</strong>
+  <dl>
+    <dt>{% trans "Version" %}</dt><dd>{{ backup_manifest.version }}</dd>
+    <dt>{% trans "Git commit" %}</dt><dd>{{ backup_manifest.git_sha }}</dd>
+    <dt>{% trans "Created" %}</dt><dd>{{ backup_manifest.generated_at }}</dd>
+  </dl>
+</div>
+
+<div class="card">
+  <strong>{% trans "Running instance" %}</strong>
+  <dl>
+    <dt>{% trans "Version" %}</dt><dd>{{ running_manifest.version }}</dd>
+    <dt>{% trans "Git commit" %}</dt><dd>{{ running_manifest.git_sha }}</dd>
+  </dl>
+</div>
+
+<form method="post" onsubmit="return confirm('{% trans "Really replace the current database and media with this backup? This cannot be undone." %}');">
+  {% csrf_token %}
+  <button type="submit" class="button-danger">{% trans "Restore this backup" %}</button>
+</form>
+
+<p><a class="button-secondary" href="{% url 'backup-list' %}">&larr; {% trans "Back to backups" %}</a></p>
+{% endblock %}

@@ -433,11 +433,21 @@ pill/active-fill styling, not a text link pretending to be one).
 "Account details" (username/name/email — `apps.accounts.
 AccountDetailsView`, kept separate from both the preferences form and
 the password change flow), "Change password", "API keys", and (staff
-only) "Admin" each render as a `.card-action-row`: descriptive text on
-the left, a single explicit `.button-secondary` on the right as the
-only actual link. Regression: these used to be one giant
-`<a class="card card-link">` wrapping the whole card, with nothing
-about a plain card visually signaling it was clickable at all.
+only) "Admin"/"Backups" each render as a `.card-action-row`:
+descriptive text on the left, a single explicit `.button-secondary` on
+the right as the only actual link. Regression: these used to be one
+giant `<a class="card card-link">` wrapping the whole card, with
+nothing about a plain card visually signaling it was clickable at all.
+
+The staff-only "Admin"/"Backups" cards sit inside a `.danger-zone` —
+a red-bordered box with a red `<h2>Administration</h2>` heading, set
+visually apart from the plain cards above it since everything inside
+can affect every user on the instance, not just the one looking at it.
+The "Backups" page itself (`docs/BACKUP.md` "Web UI") follows the same
+idea further: "Create backup" is an ordinary (blue) button, but each
+row's "Restore" is `.button-danger` and pushed to the far right
+(`margin-left: auto` inside `.set-actions`) away from "Download",
+so the two aren't easy to mis-click for each other.
 
 The footer shows the running version (`.app-version`, small and muted,
 below the logout button) — see `docs/ARCHITECTURE.md` "Versioning" for
