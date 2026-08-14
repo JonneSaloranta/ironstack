@@ -43,10 +43,11 @@ class User(AbstractUser):
         default=True,
         help_text="A privacy setting, not a display one: the dashboard's "
         "achievements carousel (longest streak, workout count, PRs, "
-        "total volume — see apps.analytics.achievements) is shared "
-        "across every user on this instance, so this controls whether "
-        "*this* user's own achievements are included in what everyone "
-        "sees, not whether they personally see the carousel at all.",
+        "total volume) and \"Recently active\" list (last time this user "
+        "started a workout — see apps.analytics.achievements) are both "
+        "shared across every user on this instance, so this controls "
+        "whether *this* user's own data is included in what everyone "
+        "sees, not whether they personally see either widget at all.",
     )
     # Applied by apps.accounts.middleware.UserLanguageMiddleware — a
     # distinct concern from unit_system/timezone above (see

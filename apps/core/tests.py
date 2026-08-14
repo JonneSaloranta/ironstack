@@ -629,3 +629,46 @@ class AchievementsCarouselTests(TestCase):
         response = self.client.get(reverse("dashboard"))
         self.assertFalse(response.context["achievements"])
         self.assertNotContains(response, "achievements-carousel")
+
+
+class RecentlyActiveListTests(TestCase):
+    """The dashboard's "Recently active" list — same shared-across-
+    users, privacy-toggle-gated pattern as the achievements carousel
+    (both driven by apps.analytics.achievements)."""
+
+    def setUp(self):
+        from django.contrib.auth import get_user_model
+
+        self.User = get_user_model()
+        self.alice = self.User.objects.create_user(username="alice", password="s3cret-pass")
+        self.client.login(username="alice", password="s3cret-pass")
+
+    def test_no_list_with_no_sessions_at_all(self):
+        response = self.client.get(reverse("dashboard"))
+        self.assertFalse(response.context["recently_active"])
+        self.assertNotContains(response, "recent-activity-list")
+
+    def test_list_shows_once_a_session_exists(self):
+        from apps.workouts import services as workout_services
+
+        workout_services.start_session(self.alice, workout=None)
+        response = self.client.get(reverse("dashboard"))
+        self.assertContains(response, "recent-activity-list")
+        self.assertContains(response, "alice")
+
+    def test_an_in_progress_session_shows_training_now(self):
+        from apps.workouts import services as workout_services
+
+        workout_services.start_session(self.alice, workout=None)
+        response = self.client.get(reverse("dashboard"))
+        self.assertContains(response, "Training now")
+
+    def test_opting_out_removes_this_user_from_the_list(self):
+        from apps.workouts import services as workout_services
+
+        workout_services.start_session(self.alice, workout=None)
+        self.alice.show_achievements = False
+        self.alice.save()
+        response = self.client.get(reverse("dashboard"))
+        self.assertFalse(response.context["recently_active"])
+        self.assertNotContains(response, "recent-activity-list")

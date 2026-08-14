@@ -9,14 +9,23 @@ new streak is the point (see `User.show_achievements` for the opt-out).
 """
 
 from dataclasses import dataclass
+from datetime import datetime, timedelta
 from decimal import Decimal
 
 from django.contrib.auth import get_user_model
+from django.utils import timezone
 from django.utils.translation import gettext, ngettext
 
 from apps.core import units as core_units
 from apps.records.models import PersonalRecord
 from apps.workouts.models import ExerciseSet, WorkoutSession, WorkoutSessionStatus
+
+# How recent counts as "recent" for RecentActivity.is_recent's green-dot
+# tier below — a fitness-specific judgment call (not a config value or a
+# per-user preference, since there's no principled way for a user to
+# tune "how impressive is this"), distinct from is_in_progress's own
+# "training right now" tier.
+_RECENT_ACTIVITY_WINDOW = timedelta(hours=24)
 
 
 @dataclass(frozen=True)
@@ -25,6 +34,14 @@ class Achievement:
     label: str
     value: str
     username: str
+
+
+@dataclass(frozen=True)
+class RecentActivity:
+    username: str
+    last_active_at: datetime  # the latest session's started_at
+    is_in_progress: bool
+    is_recent: bool
 
 
 def longest_workout_streak_days(user):
@@ -139,3 +156,37 @@ def achievement_highlights():
     for user in User.objects.filter(show_achievements=True).order_by("username"):
         highlights.extend(_highlights_for(user))
     return highlights
+
+
+def recently_active_users(limit=10):
+    """The dashboard's "Recently active" list (docs/UI.md) — every
+    opted-in user (`User.show_achievements` — the same "share my
+    training activity" setting the achievements carousel uses; see its
+    docstring) who has started at least one workout session, most
+    recently active first. Counts *any* session status, not just
+    completed ones: starting a workout is itself a sign of activity,
+    and it's what lets an in-progress session surface as "training now"
+    rather than just an ordinary timestamp.
+
+    `limit` keeps this to a glanceable size rather than a wall of
+    usernames on an instance with many users — this app is typically
+    self-hosted for one household or a small gym, so this is a modest
+    default cap, not a paginated feature.
+    """
+    User = get_user_model()
+    now = timezone.now()
+    activity = []
+    for user in User.objects.filter(show_achievements=True):
+        latest = WorkoutSession.objects.filter(user=user).order_by("-started_at").first()
+        if latest is None:
+            continue
+        activity.append(
+            RecentActivity(
+                username=user.username,
+                last_active_at=latest.started_at,
+                is_in_progress=latest.status == WorkoutSessionStatus.IN_PROGRESS,
+                is_recent=(now - latest.started_at) <= _RECENT_ACTIVITY_WINDOW,
+            )
+        )
+    activity.sort(key=lambda entry: entry.last_active_at, reverse=True)
+    return activity[:limit] if limit else activity

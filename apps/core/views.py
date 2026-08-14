@@ -80,6 +80,7 @@ class DashboardView(LoginRequiredMixin, TemplateView):
         # carousel from me" toggle — see that function's docstring), so
         # there's nothing left to gate here.
         context["achievements"] = achievement_services.achievement_highlights()
+        context["recently_active"] = achievement_services.recently_active_users()
         return context
 
 

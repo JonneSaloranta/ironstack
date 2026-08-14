@@ -328,8 +328,8 @@ class ProfileViewTests(TestCase):
 
     def test_show_achievements_field_is_on_the_profile_page(self):
         response = self.client.get(reverse("profile"))
-        self.assertContains(response, "Share my achievements")
-        self.assertContains(response, "keep your own stats private")
+        self.assertContains(response, "Share my activity")
+        self.assertContains(response, "keep your own activity private")
 
 
 class PasswordChangeTests(TestCase):

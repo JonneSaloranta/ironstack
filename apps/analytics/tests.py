@@ -352,6 +352,72 @@ class AchievementsTests(TestCase):
         self.assertIn("1", bob_workouts.value)
 
 
+class RecentlyActiveUsersTests(TestCase):
+    """apps.analytics.achievements.recently_active_users — the
+    dashboard's "Recently active" list."""
+
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        self.exercise = Exercise.objects.create(name="Test Squat", owner=None)
+
+    def test_a_user_with_no_sessions_at_all_is_excluded(self):
+        self.assertEqual(achievements.recently_active_users(), [])
+
+    def test_starting_a_session_counts_as_activity_even_incomplete(self):
+        """A session doesn't have to be *completed* to count — starting
+        one is itself a sign of activity, unlike the achievements
+        carousel's per-figure counts."""
+        workout_services.start_session(self.alice, workout=None)
+        usernames = [entry.username for entry in achievements.recently_active_users()]
+        self.assertEqual(usernames, ["alice"])
+
+    def test_most_recently_active_user_comes_first(self):
+        bob = User.objects.create_user(username="bob", password="s3cret-pass")
+        older = _log_completed_session(self.alice, self.exercise, Decimal("100"), [5])
+        older.started_at = timezone.now() - timedelta(days=5)
+        older.save(update_fields=["started_at"])
+        _log_completed_session(bob, self.exercise, Decimal("100"), [5])  # just now
+
+        usernames = [entry.username for entry in achievements.recently_active_users()]
+        self.assertEqual(usernames, ["bob", "alice"])
+
+    def test_only_the_latest_session_counts_per_user(self):
+        _log_completed_session(self.alice, self.exercise, Decimal("100"), [5], days_ago=10)
+        _log_completed_session(self.alice, self.exercise, Decimal("100"), [5], days_ago=0)
+        entries = achievements.recently_active_users()
+        self.assertEqual(len(entries), 1)
+        self.assertTrue(entries[0].is_recent)
+
+    def test_an_in_progress_session_is_flagged_as_training_now(self):
+        workout_services.start_session(self.alice, workout=None)
+        entry = achievements.recently_active_users()[0]
+        self.assertTrue(entry.is_in_progress)
+
+    def test_a_completed_session_is_not_flagged_as_training_now(self):
+        _log_completed_session(self.alice, self.exercise, Decimal("100"), [5])
+        entry = achievements.recently_active_users()[0]
+        self.assertFalse(entry.is_in_progress)
+
+    def test_activity_older_than_a_day_is_not_flagged_recent(self):
+        session = _log_completed_session(self.alice, self.exercise, Decimal("100"), [5])
+        session.started_at = timezone.now() - timedelta(days=2)
+        session.save(update_fields=["started_at"])
+        entry = achievements.recently_active_users()[0]
+        self.assertFalse(entry.is_recent)
+
+    def test_a_user_who_opted_out_is_excluded(self):
+        self.alice.show_achievements = False
+        self.alice.save()
+        _log_completed_session(self.alice, self.exercise, Decimal("100"), [5])
+        self.assertEqual(achievements.recently_active_users(), [])
+
+    def test_the_list_is_capped_at_the_given_limit(self):
+        for i in range(3):
+            user = User.objects.create_user(username=f"lifter{i}", password="s3cret-pass")
+            _log_completed_session(user, self.exercise, Decimal("100"), [5])
+        self.assertEqual(len(achievements.recently_active_users(limit=2)), 2)
+
+
 class AnalyticsDashboardViewTests(TestCase):
     def setUp(self):
         self.alice = User.objects.create_user(username="alice", password="s3cret-pass")

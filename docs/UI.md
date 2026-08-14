@@ -232,6 +232,25 @@ under it — the nav now sits above ordinary page content and tooltips,
 below the floating training button/PR toasts (deliberately still above
 everything, nav included).
 
+**"Recently active" list** (`apps.analytics.achievements.recently_active_users`,
+same template): a plain list, one row per opted-in user who has ever
+started a workout session, most recently active first, capped to 10
+rows. Same sharing/privacy model as the achievements carousel above —
+`User.show_achievements` governs both, so its label/help text now say
+"activity" rather than narrowly "achievements". Counts *any* session
+status, not just completed ones (starting a workout is itself a sign of
+activity), which is what lets a still-in-progress session show as
+**"Training now"** (an accent-colored pulsing dot, the same visual
+language as the training FAB's own "still going" indicator) instead of
+an ordinary elapsed-time reading. Otherwise each row shows
+`{{ time }} ago` — the magnitude/unit part (`"2 hours"`, `"3 days"`)
+comes from Django's own built-in `timesince` filter, which is already
+translated into every locale this app ships as part of Django core, so
+only the wrapping phrase itself needed a new translatable string. A
+session within the last 24 hours also gets a plain green dot (no pulse)
+as a secondary, at-a-glance freshness cue; older activity gets a plain
+muted dot.
+
 **BMI**: dashboard card once both a height (set on the Profile page) and
 at least one logged body weight exist, alongside the WHO category ranges
 table with the user's own row highlighted — a bare number with no

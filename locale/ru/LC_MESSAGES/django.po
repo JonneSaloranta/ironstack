@@ -24,8 +24,8 @@ msgstr "ИМТ"
 msgid "on the dashboard"
 msgstr "на панели"
 
-msgid "Share my achievements"
-msgstr "Показывать мои достижения"
+msgid "Share my activity"
+msgstr "Показывать мою активность"
 
 msgid "Language"
 msgstr "Язык"
@@ -33,8 +33,8 @@ msgstr "Язык"
 msgid "Turns off the BMI card and its category ranges entirely."
 msgstr "Полностью отключает карточку ИМТ и диапазоны категорий."
 
-msgid "Lets everyone using this instance see your longest streak, workout count, PRs, and total weight lifted in the dashboard's achievements carousel. Turn off to keep your own stats private — you'll still see everyone else's."
-msgstr "Позволяет всем пользователям этого сервера видеть вашу самую длинную серию, количество тренировок, рекорды и общий поднятый вес в карусели достижений на панели. Отключите, чтобы скрыть свои данные — вы всё равно будете видеть данные остальных."
+msgid "Lets everyone using this instance see your longest streak, workout count, PRs, total weight lifted, and when you last trained, in the dashboard's achievements carousel and \"Recently active\" list. Turn off to keep your own activity private — you'll still see everyone else's."
+msgstr "Позволяет всем пользователям этого сервера видеть вашу самую длинную серию, количество тренировок, рекорды, общий поднятый вес и время последней тренировки в карусели достижений и списке «Недавняя активность» на панели. Отключите, чтобы скрыть свою активность — вы всё равно будете видеть активность остальных."
 
 msgid "Height (cm)"
 msgstr "Рост (см)"
@@ -917,6 +917,15 @@ msgstr "Достижения"
 
 msgid "Show achievement %(position)s"
 msgstr "Показать достижение %(position)s"
+
+msgid "Recently active"
+msgstr "Недавняя активность"
+
+msgid "Training now"
+msgstr "Тренируется сейчас"
+
+msgid "%(time)s ago"
+msgstr "%(time)s назад"
 
 msgid "This week's workouts"
 msgstr "Тренировки на этой неделе"

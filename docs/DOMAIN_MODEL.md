@@ -34,13 +34,15 @@ in, not what units or "today" mean.
 
 Also carries `show_achievements` — unlike every other boolean toggle on
 this model, this is a *privacy* setting rather than a personal display
-preference: the dashboard's achievements carousel
-(`apps.analytics.achievements`, `UI.md` "Achievements carousel") is
-shared across every user on the instance, so this controls whether
-*this* user's own longest streak/workout count/PRs/total weight lifted
-are included in what everyone sees, not whether they personally see the
-carousel — turning it off doesn't hide the carousel from its owner, it
-hides the owner's own figures from everyone, themselves included.
+preference: the dashboard's achievements carousel and "Recently active"
+list (`apps.analytics.achievements`, `UI.md` "Achievements carousel" /
+"Recently active" list) are both shared across every user on the
+instance, so this controls whether *this* user's own data — longest
+streak/workout count/PRs/total weight lifted, and when they last
+started a workout — is included in what everyone sees, not whether they
+personally see either widget — turning it off doesn't hide them from
+their owner, it hides the owner's own data from everyone, themselves
+included.
 
 ## Exercise
 

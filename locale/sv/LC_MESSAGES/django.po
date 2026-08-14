@@ -24,8 +24,8 @@ msgstr "BMI"
 msgid "on the dashboard"
 msgstr "på instrumentpanelen"
 
-msgid "Share my achievements"
-msgstr "Dela mina prestationer"
+msgid "Share my activity"
+msgstr "Dela min aktivitet"
 
 msgid "Language"
 msgstr "Språk"
@@ -33,8 +33,8 @@ msgstr "Språk"
 msgid "Turns off the BMI card and its category ranges entirely."
 msgstr "Stänger av BMI-kortet och dess kategoriintervall helt."
 
-msgid "Lets everyone using this instance see your longest streak, workout count, PRs, and total weight lifted in the dashboard's achievements carousel. Turn off to keep your own stats private — you'll still see everyone else's."
-msgstr "Låter alla som använder den här instansen se din längsta svit, antal träningspass, PR och total lyft vikt i instrumentpanelens prestationskarusell. Stäng av för att hålla dina egna siffror privata — du ser fortfarande allas andras."
+msgid "Lets everyone using this instance see your longest streak, workout count, PRs, total weight lifted, and when you last trained, in the dashboard's achievements carousel and \"Recently active\" list. Turn off to keep your own activity private — you'll still see everyone else's."
+msgstr "Låter alla som använder den här instansen se din längsta svit, antal träningspass, PR, total lyft vikt och när du senast tränade, i instrumentpanelens prestationskarusell och listan \"Senast aktiva\". Stäng av för att hålla din egen aktivitet privat — du ser fortfarande allas andras."
 
 msgid "Height (cm)"
 msgstr "Längd (cm)"
@@ -911,6 +911,15 @@ msgstr "Prestationer"
 
 msgid "Show achievement %(position)s"
 msgstr "Visa prestation %(position)s"
+
+msgid "Recently active"
+msgstr "Senast aktiva"
+
+msgid "Training now"
+msgstr "Tränar just nu"
+
+msgid "%(time)s ago"
+msgstr "%(time)s sedan"
 
 msgid "This week's workouts"
 msgstr "Denna veckas pass"

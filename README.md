@@ -692,6 +692,39 @@ anywhere.**
   (e.g. "Europe/Helsinki") now actually takes effect.
 - 5 new tests (390 total).
 
+**"Recently active" dashboard list** — who's been training and when,
+shared across every user the same way the achievements carousel is.
+
+- A new list (`apps.analytics.achievements.recently_active_users`) shows
+  every opted-in user who has ever started a workout session, most
+  recently active first, capped to 10 rows. Counts any session status,
+  not just completed ones — starting a workout is itself a sign of
+  activity, and it's what lets a still-in-progress session show as
+  "Training now" (an accent-colored pulsing dot, same visual language as
+  the training FAB's own indicator) instead of an ordinary elapsed-time
+  reading. A session within the last 24 hours also gets a plain green
+  dot as a secondary freshness cue.
+- Relative time ("2 hours ago", "3 days ago") only needed one new
+  translatable string for the wrapping phrase — the magnitude/unit part
+  comes from Django's own built-in `timesince` filter, already
+  translated into every locale this app ships as part of Django core.
+- `User.show_achievements` now governs both the achievements carousel
+  and this list (same privacy semantics as before — off hides *this*
+  user's own data from everyone, themselves included); its label/help
+  text were reworded from "achievements" to "activity" to reflect the
+  broader scope.
+- Found and fixed a real bug in the scratchpad translation-regeneration
+  tooling used all session (not part of the committed app) while adding
+  this feature's one new string with an embedded quote mark
+  (`"Recently active"` inside a help text): its .po parser captured each
+  line's content verbatim, including po's own backslash-escaping,
+  without ever decoding it back to a real character — harmless for
+  every previous string (none had a literal quote/backslash in them),
+  but each regeneration re-escaped the already-escaped content further,
+  reaching 7 backslashes deep before being caught. Fixed by decoding on
+  read, so a read-then-write pass is actually idempotent.
+- 12 new tests (403 total).
+
 ## Local development
 
 ```bash

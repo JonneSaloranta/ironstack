@@ -47,11 +47,12 @@ class ProfileForm(forms.ModelForm):
     on/off switch for the BMI card itself: some people would simply
     rather not see the number at all, regardless of whether height/weight
     exist to compute it. `show_achievements` is a privacy setting, not a
-    display one: the dashboard's achievements carousel
-    (apps.analytics.achievements) is shared across every user on this
-    instance, so this controls whether *this* user's own longest streak/
-    workout count/PRs/total weight lifted are included in what everyone
-    sees — off keeps their own stats private while they still see
+    display one: the dashboard's achievements carousel and "Recently
+    active" list (apps.analytics.achievements) are both shared across
+    every user on this instance, so this controls whether *this* user's
+    own data (longest streak/workout count/PRs/total weight lifted, and
+    when they last started a workout) is included in what everyone
+    sees — off keeps their own activity private while they still see
     everyone else's.
     """
 
@@ -80,16 +81,17 @@ class ProfileForm(forms.ModelForm):
             "show_bmi": lazy_format_html(
                 "{} {} {}", _("Show"), abbr_label(_("BMI"), BMI_FULL), _("on the dashboard")
             ),
-            "show_achievements": _("Share my achievements"),
+            "show_achievements": _("Share my activity"),
             "language": _("Language"),
         }
         help_texts = {
             "show_bmi": _("Turns off the BMI card and its category ranges entirely."),
             "show_achievements": _(
                 "Lets everyone using this instance see your longest streak, "
-                "workout count, PRs, and total weight lifted in the "
-                "dashboard's achievements carousel. Turn off to keep your "
-                "own stats private — you'll still see everyone else's."
+                "workout count, PRs, total weight lifted, and when you last "
+                "trained, in the dashboard's achievements carousel and "
+                "\"Recently active\" list. Turn off to keep your own "
+                "activity private — you'll still see everyone else's."
             ),
         }
 

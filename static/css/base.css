@@ -763,6 +763,50 @@ h2 {
   background: var(--color-accent);
 }
 
+/* "Recently active" list (templates/core/dashboard.html) */
+.recent-activity-list {
+  list-style: none;
+  margin: 0.5rem 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.recent-activity-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.recent-activity-dot {
+  flex-shrink: 0;
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 50%;
+  background: var(--color-border);
+}
+
+.recent-activity-dot-recent {
+  background: var(--color-success);
+}
+
+/* Same pulse as the training FAB's own "still going" dot — deliberately
+   the same visual language for "a workout is happening right now". */
+.recent-activity-dot-live {
+  background: var(--color-accent);
+  animation: training-fab-pulse 2s ease-in-out infinite;
+}
+
+.recent-activity-username {
+  font-weight: 600;
+  flex: 1;
+}
+
+.recent-activity-time {
+  font-size: 0.8rem;
+}
+
 .train-set-history {
   display: flex;
   flex-wrap: wrap;

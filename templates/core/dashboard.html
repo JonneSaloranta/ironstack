@@ -41,6 +41,23 @@
   </div>
 {% endif %}
 
+{% if recently_active %}
+  <div class="card">
+    <strong>{% trans "Recently active" %}</strong>
+    <ul class="recent-activity-list">
+      {% for entry in recently_active %}
+        <li class="recent-activity-row">
+          <span class="recent-activity-dot {% if entry.is_in_progress %}recent-activity-dot-live{% elif entry.is_recent %}recent-activity-dot-recent{% endif %}" aria-hidden="true"></span>
+          <span class="recent-activity-username">{{ entry.username }}</span>
+          <span class="text-muted recent-activity-time">
+            {% if entry.is_in_progress %}{% trans "Training now" %}{% else %}{% blocktrans with time=entry.last_active_at|timesince %}{{ time }} ago{% endblocktrans %}{% endif %}
+          </span>
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
+{% endif %}
+
 {% if week_summary.session_count or body_weight is not None %}
   <div class="card">
     <dl class="stat-row">

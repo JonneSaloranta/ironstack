@@ -24,8 +24,8 @@ msgstr "BMI"
 msgid "on the dashboard"
 msgstr "on the dashboard"
 
-msgid "Share my achievements"
-msgstr "Share my achievements"
+msgid "Share my activity"
+msgstr "Share my activity"
 
 msgid "Language"
 msgstr "Language"
@@ -33,8 +33,8 @@ msgstr "Language"
 msgid "Turns off the BMI card and its category ranges entirely."
 msgstr "Turns off the BMI card and its category ranges entirely."
 
-msgid "Lets everyone using this instance see your longest streak, workout count, PRs, and total weight lifted in the dashboard's achievements carousel. Turn off to keep your own stats private — you'll still see everyone else's."
-msgstr "Lets everyone using this instance see your longest streak, workout count, PRs, and total weight lifted in the dashboard's achievements carousel. Turn off to keep your own stats private — you'll still see everyone else's."
+msgid "Lets everyone using this instance see your longest streak, workout count, PRs, total weight lifted, and when you last trained, in the dashboard's achievements carousel and \"Recently active\" list. Turn off to keep your own activity private — you'll still see everyone else's."
+msgstr "Lets everyone using this instance see your longest streak, workout count, PRs, total weight lifted, and when you last trained, in the dashboard's achievements carousel and \"Recently active\" list. Turn off to keep your own activity private — you'll still see everyone else's."
 
 msgid "Height (cm)"
 msgstr "Height (cm)"
@@ -911,6 +911,15 @@ msgstr "Achievements"
 
 msgid "Show achievement %(position)s"
 msgstr "Show achievement %(position)s"
+
+msgid "Recently active"
+msgstr "Recently active"
+
+msgid "Training now"
+msgstr "Training now"
+
+msgid "%(time)s ago"
+msgstr "%(time)s ago"
 
 msgid "This week's workouts"
 msgstr "This week's workouts"
