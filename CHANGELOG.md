@@ -14,6 +14,8 @@ remains the authoritative history.
 
 ## [Unreleased]
 
+## [1.1.0] — 2026-08-15
+
 ### Added
 - Backup & restore, two independent mechanisms (`docs/BACKUP.md`):
   `scripts/backup.sh`/`restore.sh` on the Docker host, and an
