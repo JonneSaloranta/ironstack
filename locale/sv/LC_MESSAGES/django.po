@@ -840,6 +840,9 @@ msgstr "Hantera nivåer, nycklar och referensdata över hela instansen."
 msgid "Log out"
 msgstr "Logga ut"
 
+msgid "IronStack version %(version)s"
+msgstr "IronStack version %(version)s"
+
 msgid "Sign up"
 msgstr "Registrera dig"
 

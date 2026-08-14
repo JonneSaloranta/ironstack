@@ -840,6 +840,9 @@ msgstr "Gestisci livelli, chiavi e dati di riferimento per l'intera istanza."
 msgid "Log out"
 msgstr "Esci"
 
+msgid "IronStack version %(version)s"
+msgstr "IronStack versione %(version)s"
+
 msgid "Sign up"
 msgstr "Registrati"
 

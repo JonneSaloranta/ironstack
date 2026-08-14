@@ -843,6 +843,9 @@ msgstr "Управляйте уровнями, ключами и справоч�
 msgid "Log out"
 msgstr "Выйти"
 
+msgid "IronStack version %(version)s"
+msgstr "IronStack версия %(version)s"
+
 msgid "Sign up"
 msgstr "Зарегистрироваться"
 

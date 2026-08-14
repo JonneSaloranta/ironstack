@@ -840,6 +840,9 @@ msgstr "Hallitse tasoja, avaimia ja viitetietoja koko palvelun laajuudelta."
 msgid "Log out"
 msgstr "Kirjaudu ulos"
 
+msgid "IronStack version %(version)s"
+msgstr "IronStack versio %(version)s"
+
 msgid "Sign up"
 msgstr "Rekisteröidy"
 

@@ -918,6 +918,17 @@ retroactively shifted past muscle-group volume charts. 6 new UI
 strings translated across fi/sv/ru/it/et (495 total, 0 fuzzy/
 untranslated). 2 new tests.
 
+**Application version, single source of truth for future backup/
+restore tooling.** A plain-text `VERSION` file at the repo root (not a
+hardcoded Python constant, not derived from git) is read and cached by
+`apps.core.version.get_version()`; `apps.core.context_processors.
+app_version` exposes it in every template's context. Shown today in
+the profile page footer (`.app-version`); intended to be the same
+value a future backup archive stamps itself with and a future restore
+path checks against, without either needing to import Django — see
+`docs/ARCHITECTURE.md` "Versioning". 1 new UI string translated across
+fi/sv/ru/it/et (496 total, 0 fuzzy/untranslated). 3 new tests.
+
 ## Local development
 
 ```bash

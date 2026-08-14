@@ -840,6 +840,9 @@ msgstr "Halda tasemeid, võtmeid ja viiteandmeid kogu teenuse ulatuses."
 msgid "Log out"
 msgstr "Logi välja"
 
+msgid "IronStack version %(version)s"
+msgstr "IronStack versioon %(version)s"
+
 msgid "Sign up"
 msgstr "Registreeru"
 

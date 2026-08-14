@@ -9,6 +9,7 @@ from django.views.defaults import permission_denied, server_error
 
 from apps.core.bmi import BMI_CATEGORIES, calculate_bmi, category_for, category_rows
 from apps.core.charts import build_bar_series, build_chart_series
+from apps.core.context_processors import app_version
 from apps.core.greetings import _GREETINGS_BY_BUCKET, _time_bucket, random_greeting
 from apps.core.templatetags.core_extras import duration, translate_content
 from apps.core.units import (
@@ -23,6 +24,7 @@ from apps.core.units import (
     meters_to_miles,
     miles_to_meters,
 )
+from apps.core.version import get_version
 
 
 class UnitConversionTests(TestCase):
@@ -401,6 +403,35 @@ class PWATests(TestCase):
         response = self.client.get(reverse("dashboard"))
         self.assertContains(response, '<link rel="manifest" href="/manifest.json">')
         self.assertContains(response, "serviceWorker.register")
+
+
+class VersionTests(TestCase):
+    """Single source of truth for the running IronStack version — a
+    plain-text VERSION file at the repo root (apps.core.version), not
+    hardcoded in Python, so it's readable by future non-Python tooling
+    (a backup/restore script) too. Made available in every template via
+    apps.core.context_processors.app_version, rendered today only in
+    the profile page footer."""
+
+    def test_get_version_reads_the_version_file(self):
+        from django.conf import settings
+
+        expected = (settings.BASE_DIR / "VERSION").read_text().strip()
+        self.assertEqual(get_version(), expected)
+        self.assertRegex(get_version(), r"^\d+\.\d+\.\d+$")
+
+    def test_context_processor_exposes_app_version(self):
+        request = RequestFactory().get("/")
+        self.assertEqual(app_version(request), {"app_version": get_version()})
+
+    def test_profile_page_shows_the_version_in_its_footer(self):
+        from django.contrib.auth import get_user_model
+
+        get_user_model().objects.create_user(username="alice", password="s3cret-pass")
+        self.client.login(username="alice", password="s3cret-pass")
+        response = self.client.get(reverse("profile"))
+        self.assertContains(response, 'class="app-version"')
+        self.assertContains(response, get_version())
 
 
 class DashboardAccessTests(TestCase):

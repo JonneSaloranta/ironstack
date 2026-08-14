@@ -337,6 +337,24 @@ mobile-first end-user UI everywhere else in this app — a legitimate,
 common split for a self-hosted app's own back office, not an
 inconsistency to fix.
 
+## Versioning
+
+A plain-text `VERSION` file at the repo root (e.g. `1.0.0`) is the
+single source of truth for the running instance's version — not a
+hardcoded Python constant and not derived from git at runtime. Two
+reasons: it's baked into the Docker image the same `COPY . .` step
+that bakes in the application code itself, so bumping a release is
+one file edit plus a rebuild, no migration or settings change; and,
+being plain text, it's trivially readable by tooling that isn't
+Python at all — a future backup script can `cat VERSION` to stamp an
+archive, and a future restore path can compare a backup's stamped
+version against the running instance's before attempting to load it,
+without either script needing to import Django. `apps.core.version.
+get_version()` reads and caches it; `apps.core.context_processors.
+app_version` puts it in every template's context (`{{ app_version }}`)
+so any page can display it, even though only the profile page footer
+does today.
+
 ## Domain services
 
 Important services should be independently testable.

@@ -73,4 +73,6 @@
   {% csrf_token %}
   <button type="submit" class="button-danger">{% trans "Log out" %}</button>
 </form>
+
+<p class="app-version">{% blocktrans with version=app_version %}IronStack version {{ version }}{% endblocktrans %}</p>
 {% endblock %}

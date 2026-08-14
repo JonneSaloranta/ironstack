@@ -439,6 +439,10 @@ only actual link. Regression: these used to be one giant
 `<a class="card card-link">` wrapping the whole card, with nothing
 about a plain card visually signaling it was clickable at all.
 
+The footer shows the running version (`.app-version`, small and muted,
+below the logout button) — see `docs/ARCHITECTURE.md` "Versioning" for
+where that value comes from.
+
 ### PWA
 Installable, not offline-capable — see `docs/ROADMAP.md` "Future
 possibilities" for exactly where that line is drawn and why. A web

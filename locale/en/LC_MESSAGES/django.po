@@ -840,6 +840,9 @@ msgstr "Manage tiers, keys, and reference data across the whole instance."
 msgid "Log out"
 msgstr "Log out"
 
+msgid "IronStack version %(version)s"
+msgstr "IronStack version %(version)s"
+
 msgid "Sign up"
 msgstr "Sign up"
 
