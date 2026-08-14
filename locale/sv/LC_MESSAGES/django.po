@@ -21,8 +21,8 @@ msgstr "Visa"
 msgid "BMI"
 msgstr "BMI"
 
-msgid "on the dashboard"
-msgstr "på instrumentpanelen"
+msgid "on the body weight page"
+msgstr "på sidan för kroppsvikt"
 
 msgid "Share my activity"
 msgstr "Dela min aktivitet"
@@ -1180,18 +1180,6 @@ msgstr "Denna veckas pass"
 
 msgid "This week's volume"
 msgstr "Denna veckas volym"
-
-msgid "Add your height"
-msgstr "Lägg till din längd"
-
-msgid "Set it on your profile to see your BMI alongside a logged body weight."
-msgstr "Ange den på din profil för att se din BMI tillsammans med en loggad kroppsvikt."
-
-msgid "Log a body weight"
-msgstr "Logga en kroppsvikt"
-
-msgid "Your height is set — log a body weight to see your BMI."
-msgstr "Din längd är angiven — logga en kroppsvikt för att se din BMI."
 
 msgid "Continue workout"
 msgstr "Fortsätt träningspass"

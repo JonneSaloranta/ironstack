@@ -801,88 +801,6 @@ class DashboardWidgetsTests(TestCase):
         self.assertEqual(response.context["body_weight"], Decimal("82.50"))
         self.assertContains(response, "82.50 kg")
 
-    def test_bmi_is_not_shown_without_a_height(self):
-        from apps.measurements.models import BodyMeasurement, MeasurementType
-
-        body_weight_type = MeasurementType.objects.get(name="Body weight", owner=None)
-        BodyMeasurement.objects.create(
-            user=self.alice, measurement_type=body_weight_type, value=Decimal("82.5")
-        )
-        response = self.client.get(reverse("dashboard"))
-        self.assertNotIn("bmi", response.context)
-        self.assertContains(response, "Add your height")
-
-    def test_bmi_is_not_shown_without_a_logged_body_weight(self):
-        self.alice.height = Decimal("1.80")
-        self.alice.save()
-        response = self.client.get(reverse("dashboard"))
-        self.assertNotIn("bmi", response.context)
-
-    def test_a_nudge_to_log_body_weight_shows_once_height_is_set(self):
-        """Regression: once a height was set but no body weight had ever
-        been logged, the dashboard silently showed nothing at all about
-        BMI — no card, no explanation, not even the "add your height"
-        nudge (since height already existed) — just a gap where the
-        feature seemed to have disappeared."""
-        self.alice.height = Decimal("1.80")
-        self.alice.save()
-        response = self.client.get(reverse("dashboard"))
-        self.assertContains(response, "Log a body weight")
-
-    def test_no_body_weight_nudge_once_a_body_weight_exists(self):
-        from apps.measurements.models import BodyMeasurement, MeasurementType
-
-        self.alice.height = Decimal("1.80")
-        self.alice.save()
-        body_weight_type = MeasurementType.objects.get(name="Body weight", owner=None)
-        BodyMeasurement.objects.create(
-            user=self.alice, measurement_type=body_weight_type, value=Decimal("82.5")
-        )
-        response = self.client.get(reverse("dashboard"))
-        self.assertNotContains(response, "Log a body weight")
-
-    def test_bmi_and_category_are_shown_once_height_and_weight_both_exist(self):
-        from apps.measurements.models import BodyMeasurement, MeasurementType
-
-        self.alice.height = Decimal("1.80")
-        self.alice.save()
-        body_weight_type = MeasurementType.objects.get(name="Body weight", owner=None)
-        BodyMeasurement.objects.create(
-            user=self.alice, measurement_type=body_weight_type, value=Decimal("82.5")
-        )
-        response = self.client.get(reverse("dashboard"))
-        self.assertEqual(response.context["bmi"], Decimal("25.5"))
-        self.assertEqual(response.context["bmi_category"].name, "Overweight")
-        self.assertContains(response, "Overweight")
-
-    def test_bmi_card_shows_the_equivalent_weight_range_per_category(self):
-        """Regression: the category ranges table only ever showed bare
-        BMI numbers ("18.5–25") with no indication of what that actually
-        means in kg/lb for this specific user's height."""
-        self.alice.height = Decimal("1.80")
-        self.alice.save()
-        from apps.measurements.models import BodyMeasurement, MeasurementType
-
-        body_weight_type = MeasurementType.objects.get(name="Body weight", owner=None)
-        BodyMeasurement.objects.create(
-            user=self.alice, measurement_type=body_weight_type, value=Decimal("82.5")
-        )
-        response = self.client.get(reverse("dashboard"))
-        self.assertContains(response, "59.9")
-        self.assertContains(response, "81.0")
-
-    def test_bmi_heading_explains_the_abbreviation(self):
-        self.alice.height = Decimal("1.80")
-        self.alice.save()
-        from apps.measurements.models import BodyMeasurement, MeasurementType
-
-        body_weight_type = MeasurementType.objects.get(name="Body weight", owner=None)
-        BodyMeasurement.objects.create(
-            user=self.alice, measurement_type=body_weight_type, value=Decimal("82.5")
-        )
-        response = self.client.get(reverse("dashboard"))
-        self.assertContains(response, '<abbr tabindex="0" title="Body Mass Index">BMI</abbr>')
-
     def test_dashboard_does_not_duplicate_main_nav_destinations(self):
         """Regression: the dashboard used to carry its own "Analytics",
         "Workout history", and "Programs" cards that led to the exact
@@ -895,22 +813,6 @@ class DashboardWidgetsTests(TestCase):
             self.assertEqual(
                 content.count(url), 1, f"{url_name} ({url}) should appear only once, in the nav"
             )
-
-    def test_bmi_is_hidden_when_the_user_has_turned_it_off(self):
-        from apps.measurements.models import BodyMeasurement, MeasurementType
-
-        self.alice.height = Decimal("1.80")
-        self.alice.show_bmi = False
-        self.alice.save()
-        body_weight_type = MeasurementType.objects.get(name="Body weight", owner=None)
-        BodyMeasurement.objects.create(
-            user=self.alice, measurement_type=body_weight_type, value=Decimal("82.5")
-        )
-        response = self.client.get(reverse("dashboard"))
-        self.assertNotIn("bmi", response.context)
-        # The height nudge shouldn't appear either — the user has
-        # opted out of the whole BMI feature, not just this instance.
-        self.assertNotContains(response, "Add your height")
 
     def test_dashboard_has_no_logout_button(self):
         """Regression: the dashboard used to duplicate the logout button

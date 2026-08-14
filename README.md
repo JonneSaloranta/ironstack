@@ -1006,6 +1006,27 @@ fi/sv/ru/it/et (496 total, 0 fuzzy/untranslated). 3 new tests.
 - 2 new UI strings translated across fi/sv/ru/it/et (518 total, 0
   fuzzy/untranslated). 12 new tests (516 total, full suite green).
 
+**BMI moved from the dashboard/profile to the "Body weight" page.**
+
+BMI only ever meant anything alongside a logged body weight, and the
+"Body weight" measurement history page (`apps.measurements`) is where
+one actually gets logged — so that's where the number (once
+computable) and the WHO category ranges table live now, right above
+the log-a-reading form, instead of the dashboard's old three-nudge-
+card chain ("add your height" → "log a body weight" → the actual
+card) or the profile page's unconditional copy of the same table. The
+`show_bmi`/`height` settings themselves stay on the profile page —
+only the card/table moved, gated the same way it always was
+(`show_bmi`, and now specifically the system "Body weight" type — any
+other measurement, e.g. waist or a custom type, never shows it).
+`templates/core/_bmi_card.html`'s own "not enough data yet" fallback
+covers every missing-data sub-state, so no separate nudge cards were
+needed on the new page. 1 new UI string translated across fi/sv/ru/
+it/et (514 total, 0 fuzzy/untranslated — net fewer than before, since
+the three old nudge-card strings no longer exist). Tests moved from
+`apps.core`/`apps.accounts` to `apps.measurements` alongside the
+feature (514 total, full suite green).
+
 ## Local development
 
 ```bash

@@ -72,20 +72,6 @@
   </div>
 {% endif %}
 
-{% if bmi %}
-  {% include "core/_bmi_card.html" %}
-{% elif user.show_bmi and not user.height %}
-  <a class="card card-link" href="{% url 'profile' %}">
-    <strong>{% trans "Add your height" %}</strong>
-    <p class="text-muted">{% trans "Set it on your profile to see your BMI alongside a logged body weight." %}</p>
-  </a>
-{% elif user.show_bmi and user.height and body_weight is None %}
-  <a class="card card-link" href="{% url 'measurements:type-list' %}">
-    <strong>{% trans "Log a body weight" %}</strong>
-    <p class="text-muted">{% trans "Your height is set — log a body weight to see your BMI." %}</p>
-  </a>
-{% endif %}
-
 {% if recent_prs %}
   <div class="card">
     <strong>{% trans "Recent" %} <abbr tabindex="0" title="{% trans "Personal Records" %}">PRs</abbr></strong>

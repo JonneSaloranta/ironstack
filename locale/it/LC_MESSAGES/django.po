@@ -21,8 +21,8 @@ msgstr "Mostra"
 msgid "BMI"
 msgstr "BMI"
 
-msgid "on the dashboard"
-msgstr "nella dashboard"
+msgid "on the body weight page"
+msgstr "nella pagina del peso corporeo"
 
 msgid "Share my activity"
 msgstr "Condividi la mia attività"
@@ -1180,18 +1180,6 @@ msgstr "Allenamenti di questa settimana"
 
 msgid "This week's volume"
 msgstr "Volume di questa settimana"
-
-msgid "Add your height"
-msgstr "Aggiungi la tua altezza"
-
-msgid "Set it on your profile to see your BMI alongside a logged body weight."
-msgstr "Impostala sul tuo profilo per vedere il tuo BMI insieme a un peso corporeo registrato."
-
-msgid "Log a body weight"
-msgstr "Registra un peso corporeo"
-
-msgid "Your height is set — log a body weight to see your BMI."
-msgstr "La tua altezza è impostata: registra un peso corporeo per vedere il tuo BMI."
 
 msgid "Continue workout"
 msgstr "Continua l'allenamento"

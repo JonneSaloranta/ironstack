@@ -21,8 +21,8 @@ msgstr "Показывать"
 msgid "BMI"
 msgstr "ИМТ"
 
-msgid "on the dashboard"
-msgstr "на панели"
+msgid "on the body weight page"
+msgstr "на странице веса тела"
 
 msgid "Share my activity"
 msgstr "Показывать мою активность"
@@ -1187,18 +1187,6 @@ msgstr "Тренировки на этой неделе"
 
 msgid "This week's volume"
 msgstr "Объём за эту неделю"
-
-msgid "Add your height"
-msgstr "Добавьте свой рост"
-
-msgid "Set it on your profile to see your BMI alongside a logged body weight."
-msgstr "Укажите его в профиле, чтобы видеть ИМТ рядом с записанным весом тела."
-
-msgid "Log a body weight"
-msgstr "Записать вес тела"
-
-msgid "Your height is set — log a body weight to see your BMI."
-msgstr "Ваш рост указан — запишите вес тела, чтобы увидеть ИМТ."
 
 msgid "Continue workout"
 msgstr "Продолжить тренировку"

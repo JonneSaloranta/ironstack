@@ -4,6 +4,9 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.views.generic import CreateView, DetailView, ListView
 
+from apps.core import bmi as bmi_services
+from apps.core import units as core_units
+
 from . import services, units
 from .forms import BodyMeasurementForm, MeasurementTypeForm
 from .models import BodyMeasurement, MeasurementType
@@ -70,6 +73,26 @@ class MeasurementHistoryView(LoginRequiredMixin, DetailView):
         context["chart"] = services.build_chart_series(chart_points)
         context["form"] = BodyMeasurementForm(user=user, measurement_type=measurement_type)
         context["can_deactivate"] = measurement_type.owner_id == user.id
+
+        # BMI lives here, not on the dashboard/profile — it only ever
+        # meant anything alongside a *logged body weight*, and this is
+        # the page that logs one. Gated the same way it always was:
+        # `show_bmi` (a personal display toggle) and specifically the
+        # system "Body weight" type, since BMI has nothing to say about
+        # any other measurement (waist, body fat %, ...).
+        is_body_weight_type = (
+            measurement_type.name == "Body weight" and measurement_type.owner_id is None
+        )
+        if user.show_bmi and is_body_weight_type:
+            context["bmi_category_rows"] = bmi_services.category_rows(
+                user.height, user.unit_system
+            )
+            context["weight_unit_label"] = core_units.weight_unit_label(user.unit_system)
+            if user.height and history:
+                bmi = bmi_services.calculate_bmi(history[0].value, user.height)
+                if bmi is not None:
+                    context["bmi"] = bmi
+                    context["bmi_category"] = bmi_services.category_for(bmi)
         return context
 
 

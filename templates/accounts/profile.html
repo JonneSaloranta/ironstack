@@ -31,10 +31,6 @@
   <button type="submit">{% trans "Save preferences" %}</button>
 </form>
 
-{% if user.show_bmi %}
-  {% include "core/_bmi_card.html" %}
-{% endif %}
-
 <div class="card card-action-row">
   <div>
     <strong>{% trans "Account details" %}</strong>

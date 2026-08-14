@@ -243,6 +243,118 @@ class LoggingFlowTests(TestCase):
         self.assertContains(response, "<h2>Trend</h2>")
 
 
+class BMIOnBodyWeightHistoryPageTests(TestCase):
+    """BMI (apps.core.bmi) moved here from the dashboard/profile — it
+    only ever meant anything alongside a logged body weight, and this
+    is the page that logs one. Gated by the profile's show_bmi toggle
+    and specifically the system "Body weight" type."""
+
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        self.body_weight_type = MeasurementType.objects.get(name="Body weight", owner=None)
+        self.client.login(username="alice", password="s3cret-pass")
+
+    def _history_url(self):
+        return reverse("measurements:history", args=[self.body_weight_type.pk])
+
+    def test_bmi_is_not_shown_without_a_height(self):
+        BodyMeasurement.objects.create(
+            user=self.alice, measurement_type=self.body_weight_type, value=Decimal("82.5")
+        )
+        response = self.client.get(self._history_url())
+        self.assertNotIn("bmi", response.context)
+        self.assertContains(response, "Not enough data yet")
+
+    def test_bmi_is_not_shown_without_a_logged_body_weight(self):
+        self.alice.height = Decimal("1.80")
+        self.alice.save()
+        response = self.client.get(self._history_url())
+        self.assertNotIn("bmi", response.context)
+
+    def test_bmi_and_category_are_shown_once_height_and_weight_both_exist(self):
+        self.alice.height = Decimal("1.80")
+        self.alice.save()
+        BodyMeasurement.objects.create(
+            user=self.alice, measurement_type=self.body_weight_type, value=Decimal("82.5")
+        )
+        response = self.client.get(self._history_url())
+        self.assertEqual(response.context["bmi"], Decimal("25.5"))
+        self.assertEqual(response.context["bmi_category"].name, "Overweight")
+        self.assertContains(response, "Overweight")
+
+    def test_bmi_uses_the_most_recently_logged_weight(self):
+        self.alice.height = Decimal("1.80")
+        self.alice.save()
+        BodyMeasurement.objects.create(
+            user=self.alice, measurement_type=self.body_weight_type, value=Decimal("100")
+        )
+        BodyMeasurement.objects.create(
+            user=self.alice, measurement_type=self.body_weight_type, value=Decimal("82.5")
+        )
+        response = self.client.get(self._history_url())
+        self.assertEqual(response.context["bmi"], Decimal("25.5"))
+
+    def test_bmi_card_shows_the_equivalent_weight_range_per_category(self):
+        self.alice.height = Decimal("1.80")
+        self.alice.save()
+        BodyMeasurement.objects.create(
+            user=self.alice, measurement_type=self.body_weight_type, value=Decimal("82.5")
+        )
+        response = self.client.get(self._history_url())
+        self.assertContains(response, "59.9")
+        self.assertContains(response, "81.0")
+
+    def test_bmi_heading_explains_the_abbreviation(self):
+        self.alice.height = Decimal("1.80")
+        self.alice.save()
+        BodyMeasurement.objects.create(
+            user=self.alice, measurement_type=self.body_weight_type, value=Decimal("82.5")
+        )
+        response = self.client.get(self._history_url())
+        self.assertContains(response, '<abbr tabindex="0" title="Body Mass Index">BMI</abbr>')
+
+    def test_bmi_is_hidden_when_the_user_has_turned_it_off(self):
+        self.alice.height = Decimal("1.80")
+        self.alice.show_bmi = False
+        self.alice.save()
+        BodyMeasurement.objects.create(
+            user=self.alice, measurement_type=self.body_weight_type, value=Decimal("82.5")
+        )
+        response = self.client.get(self._history_url())
+        self.assertNotIn("bmi", response.context)
+        self.assertNotContains(response, "BMI")
+
+    def test_bmi_is_never_shown_on_a_non_body_weight_measurement_page(self):
+        self.alice.height = Decimal("1.80")
+        self.alice.save()
+        BodyMeasurement.objects.create(
+            user=self.alice, measurement_type=self.body_weight_type, value=Decimal("82.5")
+        )
+        waist_type = MeasurementType.objects.get(name="Waist")
+        response = self.client.get(reverse("measurements:history", args=[waist_type.pk]))
+        self.assertNotIn("bmi", response.context)
+        self.assertNotContains(response, "BMI")
+
+    def test_bmi_no_longer_appears_on_the_dashboard_or_profile(self):
+        """Regression: BMI used to live on both the dashboard and
+        profile page — moved here entirely, not duplicated."""
+        self.alice.height = Decimal("1.80")
+        self.alice.save()
+        BodyMeasurement.objects.create(
+            user=self.alice, measurement_type=self.body_weight_type, value=Decimal("82.5")
+        )
+        dashboard_response = self.client.get(reverse("dashboard"))
+        profile_response = self.client.get(reverse("profile"))
+        self.assertNotIn("bmi", dashboard_response.context)
+        self.assertNotContains(dashboard_response, "BMI")
+        self.assertNotIn("bmi", profile_response.context)
+        # The show_bmi *setting* still lives on the profile page (its
+        # checkbox label mentions "BMI") — only the card/table itself
+        # moved, so this checks for the category-ranges table's own
+        # heading rather than the word "BMI" appearing at all.
+        self.assertNotContains(profile_response, "BMI category ranges")
+
+
 class CustomMeasurementTypeFlowTests(TestCase):
     def setUp(self):
         self.alice = User.objects.create_user(username="alice", password="s3cret-pass")

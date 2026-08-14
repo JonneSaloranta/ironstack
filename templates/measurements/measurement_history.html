@@ -7,6 +7,10 @@
   {% if not measurement_type.active %}<span class="tag tag-muted">{% trans "Inactive" %}</span>{% endif %}
 </div>
 
+{% if bmi_category_rows %}
+  {% include "core/_bmi_card.html" %}
+{% endif %}
+
 {% if chart %}
   <h2>{% trans "Trend" %}</h2>
   {% include "core/_chart.html" with chart_title=measurement_type.name|translate_content %}

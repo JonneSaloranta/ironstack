@@ -14,17 +14,20 @@ Internal values should use consistent canonical units. Convert for display.
 
 Also carries an optional `height` (canonical meters, entered/displayed in
 cm or inches like any other length reading — see `apps.core.units`) and a
-`show_bmi` toggle. Both exist solely for `apps.core.bmi`: the dashboard
-computes BMI from `height` and the user's latest logged body weight
-(`apps.measurements`) whenever both exist, showing the WHO category
-thresholds (underweight/normal/overweight/obese) alongside the current
-value so the number has context rather than standing alone. Once a
-height is on file, `apps.core.bmi.category_rows` also converts each
-category's BMI bounds into the equivalent weight range at that height
-(in the user's display unit) — "Normal weight" as a bare BMI number
-range doesn't say much on its own, but "59.9–81.0 kg" does. `show_bmi`
-lets a user turn the whole card off regardless of whether it's
-computable — nothing else in the app reads either field.
+`show_bmi` toggle. Both exist solely for `apps.core.bmi`: the "Body
+weight" measurement history page (`apps.measurements`, not the
+dashboard or Profile — BMI only ever means anything alongside a
+logged body weight, and that's the page that logs one) computes BMI
+from `height` and the latest logged body weight whenever both exist,
+showing the WHO category thresholds (underweight/normal/overweight/
+obese) alongside the current value so the number has context rather
+than standing alone. Once a height is on file, `apps.core.bmi.
+category_rows` also converts each category's BMI bounds into the
+equivalent weight range at that height (in the user's display unit) —
+"Normal weight" as a bare BMI number range doesn't say much on its
+own, but "59.9–81.0 kg" does. `show_bmi` lets a user turn the whole
+card off regardless of whether it's computable — nothing else in the
+app reads either field.
 
 Also carries `language` — the UI language (one of the six shipped
 locales, see `ARCHITECTURE.md` "Internationalization"), applied by

@@ -57,9 +57,11 @@ class ProfileForm(forms.ModelForm):
     converted to/from canonical meters here. `height` is optional and
     exists solely to compute BMI (apps.core.bmi) alongside a logged body
     weight — nothing else in the app reads it. `show_bmi` is a separate
-    on/off switch for the BMI card itself: some people would simply
-    rather not see the number at all, regardless of whether height/weight
-    exist to compute it. `show_achievements` is a privacy setting, not a
+    on/off switch for the BMI card itself, shown on the "Body weight"
+    measurement history page (apps.measurements), not here: some people
+    would simply rather not see the number at all, regardless of
+    whether height/weight exist to compute it. `show_achievements` is
+    a privacy setting, not a
     display one: the dashboard's achievements carousel and "Recently
     active" list (apps.analytics.achievements) are both shared across
     every user on this instance, so this controls whether *this* user's
@@ -97,7 +99,10 @@ class ProfileForm(forms.ModelForm):
         labels = {
             "unit_system": _("Units"),
             "show_bmi": lazy_format_html(
-                "{} {} {}", _("Show"), abbr_label(_("BMI"), BMI_FULL), _("on the dashboard")
+                "{} {} {}",
+                _("Show"),
+                abbr_label(_("BMI"), BMI_FULL),
+                _("on the body weight page"),
             ),
             "show_achievements": _("Share my activity"),
             "show_name_to_others": _("Show my name to others"),
