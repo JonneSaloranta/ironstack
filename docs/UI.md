@@ -300,8 +300,13 @@ not built as dashboard widgets:
 All five bottom-nav sections are real, not placeholders: Home
 (dashboard), Workout (session history/start), Programs, Progress
 (analytics dashboard — training volume, muscle-group breakdown, PR
-history), Profile (unit/timezone/language preferences, password change —
-added Phase 11, previously a dead link since Phase 1).
+history), Profile (unit/timezone/language preferences, account details,
+password change — added Phase 11, previously a dead link since Phase 1).
+Each nav item's active state (`aria-current="page"`) is keyed off
+`request.resolver_match.view_name`, the namespaced form — Home and
+Progress once both matched on the bare `url_name` "dashboard" (Django's
+core dashboard and the analytics dashboard happen to share that name
+within their own apps), lighting up both at once while viewing Progress.
 
 "Progress" originally linked to Body tracking (measurements) — retargeted
 to the analytics dashboard once a post-launch review found the label
@@ -415,6 +420,21 @@ patterns are deliberately exempt: the mobile bottom-nav (its own
 icon-first `aria-current` styling, not a page-body link) and
 `.range-filter`'s date-range tabs (a segmented control with its own
 pill/active-fill styling, not a text link pretending to be one).
+
+### Profile page
+Opens with a varied, time-of-day-aware greeting (`apps.core.greetings`,
+`.profile-greeting`) instead of a static "Signed in as X" card — mixes
+encouragement and light humor, picked at random on every render from a
+pool keyed to morning/afternoon/evening/night in the user's own active
+timezone. Below the preferences form, "Account details" (username/
+name/email — `apps.accounts.AccountDetailsView`, kept separate from
+both the preferences form and the password change flow), "Change
+password", "API keys", and (staff only) "Admin" each render as a
+`.card-action-row`: descriptive text on the left, a single explicit
+`.button-secondary` on the right as the only actual link. Regression:
+these used to be one giant `<a class="card card-link">` wrapping the
+whole card, with nothing about a plain card visually signaling it was
+clickable at all.
 
 ### PWA
 Installable, not offline-capable — see `docs/ROADMAP.md` "Future

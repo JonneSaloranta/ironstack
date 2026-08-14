@@ -51,6 +51,9 @@ msgstr "Imperial (lb, mi)"
 msgid "Preferences saved."
 msgstr "Preferences saved."
 
+msgid "Account details saved."
+msgstr "Account details saved."
+
 msgid "Duration (minutes)"
 msgstr "Duration (minutes)"
 
@@ -228,6 +231,54 @@ msgstr "Rep Max"
 msgid "Body Mass Index"
 msgstr "Body Mass Index"
 
+msgid "Good morning, %(username)s! Time to get after it."
+msgstr "Good morning, %(username)s! Time to get after it."
+
+msgid "Rise and grind, %(username)s — the weights aren't going to lift themselves."
+msgstr "Rise and grind, %(username)s — the weights aren't going to lift themselves."
+
+msgid "Morning, %(username)s. Today's a great day for a new personal record."
+msgstr "Morning, %(username)s. Today's a great day for a new personal record."
+
+msgid "Good morning, %(username)s. Coffee first, then conquer the day."
+msgstr "Good morning, %(username)s. Coffee first, then conquer the day."
+
+msgid "Good afternoon, %(username)s! Keep the momentum going."
+msgstr "Good afternoon, %(username)s! Keep the momentum going."
+
+msgid "Hey %(username)s, halfway through the day and still standing — not bad."
+msgstr "Hey %(username)s, halfway through the day and still standing — not bad."
+
+msgid "Afternoon, %(username)s. Perfect time to sneak in a workout."
+msgstr "Afternoon, %(username)s. Perfect time to sneak in a workout."
+
+msgid "Good afternoon, %(username)s. Lunch was earned, apparently."
+msgstr "Good afternoon, %(username)s. Lunch was earned, apparently."
+
+msgid "Good evening, %(username)s! One more push before the day's done."
+msgstr "Good evening, %(username)s! One more push before the day's done."
+
+msgid "Evening, %(username)s. A great time to log today's work."
+msgstr "Evening, %(username)s. A great time to log today's work."
+
+msgid "Hey %(username)s, the evening session hits different."
+msgstr "Hey %(username)s, the evening session hits different."
+
+msgid "Good evening, %(username)s — finish the day stronger than you started it."
+msgstr "Good evening, %(username)s — finish the day stronger than you started it."
+
+msgid "Still up, %(username)s? Respect the hustle."
+msgstr "Still up, %(username)s? Respect the hustle."
+
+msgid "Good night, %(username)s — recovery is part of the program too."
+msgstr "Good night, %(username)s — recovery is part of the program too."
+
+msgid "Burning the midnight oil, %(username)s? Even legends need sleep."
+msgstr "Burning the midnight oil, %(username)s? Even legends need sleep."
+
+msgid "Late night, %(username)s. Tomorrow's gains start with tonight's rest."
+msgstr "Late night, %(username)s. Tomorrow's gains start with tonight's rest."
+
 msgid "Ab Wheel Rollout"
 msgstr "Ab Wheel Rollout"
 
@@ -239,6 +290,9 @@ msgstr "Barbell Bench Press"
 
 msgid "Barbell Row"
 msgstr "Barbell Row"
+
+msgid "Barbell Shrug"
+msgstr "Barbell Shrug"
 
 msgid "Calf Raise"
 msgstr "Calf Raise"
@@ -297,8 +351,14 @@ msgstr "Romanian Deadlift"
 msgid "Seated Cable Row"
 msgstr "Seated Cable Row"
 
+msgid "Side Plank"
+msgstr "Side Plank"
+
 msgid "Skull Crusher"
 msgstr "Skull Crusher"
+
+msgid "Straight-Arm Pulldown"
+msgstr "Straight-Arm Pulldown"
 
 msgid "Triceps Pushdown"
 msgstr "Triceps Pushdown"
@@ -327,11 +387,20 @@ msgstr "Glutes"
 msgid "Hamstrings"
 msgstr "Hamstrings"
 
+msgid "Lats"
+msgstr "Lats"
+
+msgid "Obliques"
+msgstr "Obliques"
+
 msgid "Quads"
 msgstr "Quads"
 
 msgid "Shoulders"
 msgstr "Shoulders"
+
+msgid "Traps"
+msgstr "Traps"
 
 msgid "Triceps"
 msgstr "Triceps"
@@ -732,14 +801,29 @@ msgstr "Something went wrong"
 msgid "Something went wrong on our end. Your data is safe — try again in a moment."
 msgstr "Something went wrong on our end. Your data is safe — try again in a moment."
 
-msgid "Signed in as <strong>%(username)s</strong>"
-msgstr "Signed in as <strong>%(username)s</strong>"
+msgid "Account details"
+msgstr "Account details"
+
+msgid "Save"
+msgstr "Save"
+
+msgid "Back to profile"
+msgstr "Back to profile"
 
 msgid "Save preferences"
 msgstr "Save preferences"
 
+msgid "Update your username, name, and email address."
+msgstr "Update your username, name, and email address."
+
+msgid "Open"
+msgstr "Open"
+
 msgid "Change password"
 msgstr "Change password"
+
+msgid "Update the password you use to sign in."
+msgstr "Update the password you use to sign in."
 
 msgid "API keys"
 msgstr "API keys"
@@ -773,9 +857,6 @@ msgstr "Edit activity"
 
 msgid "Edit %(name)s"
 msgstr "Edit %(name)s"
-
-msgid "Save"
-msgstr "Save"
 
 msgid "Back to %(name)s"
 msgstr "Back to %(name)s"
@@ -954,9 +1035,6 @@ msgstr "Revoke"
 
 msgid "No API keys yet."
 msgstr "No API keys yet."
-
-msgid "Back to profile"
-msgstr "Back to profile"
 
 msgid "Skip to content"
 msgstr "Skip to content"

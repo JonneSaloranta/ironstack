@@ -34,6 +34,19 @@ class SignupForm(UserCreationForm):
         fields = ("username", "email")
 
 
+class AccountDetailsForm(forms.ModelForm):
+    """Editable account identity — username, name, email — kept
+    deliberately separate from ProfileForm's display preferences
+    (unit_system/timezone/height/etc.) and from the password itself
+    (django.contrib.auth's own PasswordChangeForm/view already handles
+    that, with its own re-authentication requirement that a plain
+    ModelForm save shouldn't bypass for these fields)."""
+
+    class Meta:
+        model = User
+        fields = ["username", "first_name", "last_name", "email"]
+
+
 class ProfileForm(forms.ModelForm):
     """Display preferences — unit_system/timezone drive unit conversion
     (apps.core.units, apps.measurements.units, apps.activities.units) and

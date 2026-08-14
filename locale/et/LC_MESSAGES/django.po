@@ -51,6 +51,9 @@ msgstr "Inglise mõõdustik (lb, mi)"
 msgid "Preferences saved."
 msgstr "Eelistused salvestatud."
 
+msgid "Account details saved."
+msgstr "Konto andmed on salvestatud."
+
 msgid "Duration (minutes)"
 msgstr "Kestus (minutit)"
 
@@ -228,6 +231,54 @@ msgstr "Korduste maksimum"
 msgid "Body Mass Index"
 msgstr "Kehamassiindeks"
 
+msgid "Good morning, %(username)s! Time to get after it."
+msgstr "Tere hommikust, %(username)s! Aeg asuda tegudele."
+
+msgid "Rise and grind, %(username)s — the weights aren't going to lift themselves."
+msgstr "Üles ja tööle, %(username)s — raskused ei tõsta end ise."
+
+msgid "Morning, %(username)s. Today's a great day for a new personal record."
+msgstr "Tere hommikust, %(username)s. Täna on hea päev uue isikliku rekordi jaoks."
+
+msgid "Good morning, %(username)s. Coffee first, then conquer the day."
+msgstr "Tere hommikust, %(username)s. Kõigepealt kohv, siis vallutame päeva."
+
+msgid "Good afternoon, %(username)s! Keep the momentum going."
+msgstr "Head päeva jätku, %(username)s! Hoia hoog üleval."
+
+msgid "Hey %(username)s, halfway through the day and still standing — not bad."
+msgstr "Hei %(username)s, pool päeva läbi ja ikka veel jalul — pole paha."
+
+msgid "Afternoon, %(username)s. Perfect time to sneak in a workout."
+msgstr "Tere päevast, %(username)s. Täiuslik hetk trenniks."
+
+msgid "Good afternoon, %(username)s. Lunch was earned, apparently."
+msgstr "Head päeva jätku, %(username)s. Lõuna oli ilmselt ära teenitud."
+
+msgid "Good evening, %(username)s! One more push before the day's done."
+msgstr "Tere õhtust, %(username)s! Veel üks pingutus enne päeva lõppu."
+
+msgid "Evening, %(username)s. A great time to log today's work."
+msgstr "Õhtut, %(username)s. Hea hetk tänase treeningu kirjapanekuks."
+
+msgid "Hey %(username)s, the evening session hits different."
+msgstr "Hei %(username)s, õhtune trenn tundub alati eriline."
+
+msgid "Good evening, %(username)s — finish the day stronger than you started it."
+msgstr "Tere õhtust, %(username)s — lõpeta päev tugevamana, kui sa selle alustasid."
+
+msgid "Still up, %(username)s? Respect the hustle."
+msgstr "Ikka veel üleval, %(username)s? Austus visaduse eest."
+
+msgid "Good night, %(username)s — recovery is part of the program too."
+msgstr "Head ööd, %(username)s — taastumine on samuti osa programmist."
+
+msgid "Burning the midnight oil, %(username)s? Even legends need sleep."
+msgstr "Põletad küünlaid mõlemast otsast, %(username)s? Isegi legendid vajavad und."
+
+msgid "Late night, %(username)s. Tomorrow's gains start with tonight's rest."
+msgstr "Hiline õhtu, %(username)s. Homsed edusammud algavad tänase puhkuse pealt."
+
 msgid "Ab Wheel Rollout"
 msgstr "Kõhurullimine rattaga"
 
@@ -239,6 +290,9 @@ msgstr "Kangi lamades surumine"
 
 msgid "Barbell Row"
 msgstr "Kangi sõudmine"
+
+msgid "Barbell Shrug"
+msgstr "Õlgade kehitus kangiga"
 
 msgid "Calf Raise"
 msgstr "Sääretõsted"
@@ -297,8 +351,14 @@ msgstr "Rumeenia tõmme"
 msgid "Seated Cable Row"
 msgstr "Istudes tross-sõudmine"
 
+msgid "Side Plank"
+msgstr "Külgplank"
+
 msgid "Skull Crusher"
 msgstr "Kolju-purustaja"
+
+msgid "Straight-Arm Pulldown"
+msgstr "Sirge käega allatõmme"
 
 msgid "Triceps Pushdown"
 msgstr "Trombiteosa surumine trossiga"
@@ -327,11 +387,20 @@ msgstr "Tuharad"
 msgid "Hamstrings"
 msgstr "Reie tagaküljed"
 
+msgid "Lats"
+msgstr "Selja laiad lihased"
+
+msgid "Obliques"
+msgstr "Kaldkõhulihased"
+
 msgid "Quads"
 msgstr "Reie esiküljed"
 
 msgid "Shoulders"
 msgstr "Õlad"
+
+msgid "Traps"
+msgstr "Trapetslihased"
 
 msgid "Triceps"
 msgstr "Trombiteos"
@@ -732,14 +801,29 @@ msgstr "Midagi läks valesti"
 msgid "Something went wrong on our end. Your data is safe — try again in a moment."
 msgstr "Meie poolel läks midagi valesti. Sinu andmed on turvalised — proovi hetke pärast uuesti."
 
-msgid "Signed in as <strong>%(username)s</strong>"
-msgstr "Sisse logitud kasutajana <strong>%(username)s</strong>"
+msgid "Account details"
+msgstr "Konto andmed"
+
+msgid "Save"
+msgstr "Salvesta"
+
+msgid "Back to profile"
+msgstr "Tagasi profiili juurde"
 
 msgid "Save preferences"
 msgstr "Salvesta eelistused"
 
+msgid "Update your username, name, and email address."
+msgstr "Uuenda oma kasutajanime, nime ja e-posti aadressi."
+
+msgid "Open"
+msgstr "Ava"
+
 msgid "Change password"
 msgstr "Muuda parooli"
+
+msgid "Update the password you use to sign in."
+msgstr "Uuenda parooli, millega sisse logid."
 
 msgid "API keys"
 msgstr "API-võtmed"
@@ -773,9 +857,6 @@ msgstr "Muuda tegevust"
 
 msgid "Edit %(name)s"
 msgstr "Muuda: %(name)s"
-
-msgid "Save"
-msgstr "Salvesta"
 
 msgid "Back to %(name)s"
 msgstr "Tagasi: %(name)s"
@@ -954,9 +1035,6 @@ msgstr "Tühista"
 
 msgid "No API keys yet."
 msgstr "Veel pole API-võtmeid."
-
-msgid "Back to profile"
-msgstr "Tagasi profiili juurde"
 
 msgid "Skip to content"
 msgstr "Liigu sisu juurde"

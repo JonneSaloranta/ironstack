@@ -85,12 +85,20 @@ unique among system exercises, and unique per-user among a user's own
 custom exercises — two different users may each name a custom exercise the
 same thing.
 
-25 system exercises are seeded (`apps.exercises` migrations 0002, 0004),
-covering all 11 muscle groups across barbell/dumbbell/machine/cable/
-bodyweight/kettlebell equipment. System exercise (and `MuscleGroup`/
-`Equipment`) names are translated for display — the stored name always
-stays canonical English — see `ARCHITECTURE.md` → "Internationalization"
-for how.
+28 system exercises are seeded (`apps.exercises` migrations 0002, 0004,
+0005), covering all 14 muscle groups across barbell/dumbbell/machine/
+cable/bodyweight/kettlebell equipment. The original 11 groups (Chest,
+Back, Shoulders, Biceps, Triceps, Quads, Hamstrings, Glutes, Calves,
+Abs, Forearms) were joined by three more commonly split out on their
+own rather than folded into a broader neighbor — Traps, Lats, and
+Obliques (migration 0005) — each shipped with one new exercise of its
+own rather than retagging an existing one, since `Exercise.primary_/
+secondary_muscle_groups` is live current-state metadata that analytics
+reads directly, not a historical snapshot, so retagging an existing
+exercise would retroactively shift past muscle-group volume charts.
+System exercise (and `MuscleGroup`/`Equipment`) names are translated
+for display — the stored name always stays canonical English — see
+`ARCHITECTURE.md` → "Internationalization" for how.
 
 ## MuscleGroup
 

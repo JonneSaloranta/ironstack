@@ -11,7 +11,7 @@ User = get_user_model()
 
 class ExerciseLibrarySeedTests(TestCase):
     def test_seed_migration_creates_muscle_groups_equipment_and_exercises(self):
-        self.assertEqual(MuscleGroup.objects.count(), 11)
+        self.assertEqual(MuscleGroup.objects.count(), 14)
         self.assertGreaterEqual(Equipment.objects.count(), 5)
         self.assertGreater(Exercise.objects.filter(owner=None).count(), 0)
 
@@ -30,6 +30,31 @@ class ExerciseLibrarySeedTests(TestCase):
         ]:
             self.assertTrue(
                 Exercise.objects.filter(name=name, owner=None).exists(), name
+            )
+
+    def test_third_seed_migration_adds_traps_lats_and_obliques(self):
+        """Regression: the original 11 seeded muscle groups left out
+        Traps, Lats, and Obliques — three groups mainstream fitness
+        apps usually list on their own rather than folding into a
+        broader neighbor (Back/Abs)."""
+        for name in ["Traps", "Lats", "Obliques"]:
+            self.assertTrue(MuscleGroup.objects.filter(name=name).exists(), name)
+
+    def test_third_seed_migration_adds_one_exercise_per_new_muscle_group(self):
+        """Each new muscle group ships with at least one exercise tagged
+        to it, so it isn't an empty option in the muscle-group filter —
+        see the migration's own docstring for why existing exercises
+        aren't retagged instead."""
+        cases = [
+            ("Barbell Shrug", "Traps"),
+            ("Straight-Arm Pulldown", "Lats"),
+            ("Side Plank", "Obliques"),
+        ]
+        for exercise_name, muscle_group_name in cases:
+            exercise = Exercise.objects.get(name=exercise_name, owner=None)
+            self.assertTrue(
+                exercise.primary_muscle_groups.filter(name=muscle_group_name).exists(),
+                exercise_name,
             )
 
 

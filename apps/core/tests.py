@@ -9,6 +9,7 @@ from django.views.defaults import permission_denied, server_error
 
 from apps.core.bmi import BMI_CATEGORIES, calculate_bmi, category_for, category_rows
 from apps.core.charts import build_bar_series, build_chart_series
+from apps.core.greetings import _GREETINGS_BY_BUCKET, _time_bucket, random_greeting
 from apps.core.templatetags.core_extras import duration, translate_content
 from apps.core.units import (
     cm_to_meters,
@@ -245,6 +246,58 @@ class BarSeriesServiceTests(TestCase):
     def test_category_order_is_preserved_not_resorted(self):
         series = build_bar_series([("Z", Decimal("1")), ("A", Decimal("5"))])
         self.assertEqual([bar.label for bar in series.bars], ["Z", "A"])
+
+
+class GreetingTests(TestCase):
+    """Profile page greeting: varied, time-of-day-aware, mixing
+    encouragement and humor (apps.core.greetings) instead of a flat
+    "Signed in as X" line."""
+
+    def test_time_bucket_boundaries(self):
+        self.assertEqual(_time_bucket(4), "night")
+        self.assertEqual(_time_bucket(5), "morning")
+        self.assertEqual(_time_bucket(11), "morning")
+        self.assertEqual(_time_bucket(12), "afternoon")
+        self.assertEqual(_time_bucket(17), "afternoon")
+        self.assertEqual(_time_bucket(18), "evening")
+        self.assertEqual(_time_bucket(22), "evening")
+        self.assertEqual(_time_bucket(23), "night")
+        self.assertEqual(_time_bucket(0), "night")
+
+    def test_greeting_substitutes_the_username(self):
+        from django.contrib.auth import get_user_model
+
+        User = get_user_model()
+        user = User.objects.create_user(username="taylor", password="s3cret-pass")
+        morning = timezone.datetime(2026, 1, 1, 8, 0, tzinfo=timezone.get_default_timezone())
+        greeting = random_greeting(user, now=morning)
+        self.assertIn("taylor", greeting)
+
+    def test_greeting_is_drawn_from_the_bucket_matching_the_current_time(self):
+        from django.contrib.auth import get_user_model
+
+        User = get_user_model()
+        user = User.objects.create_user(username="taylor", password="s3cret-pass")
+        expected_untranslated = {str(t) for t in _GREETINGS_BY_BUCKET["night"]}
+        late_night = timezone.datetime(2026, 1, 1, 1, 0, tzinfo=timezone.get_default_timezone())
+        seen = set()
+        for _i in range(30):
+            greeting = random_greeting(user, now=late_night)
+            seen.add(greeting.replace("taylor", "%(username)s"))
+        self.assertTrue(seen.issubset(expected_untranslated))
+
+    def test_greeting_varies_across_calls(self):
+        """Not a strict guarantee (it's random), but with 4 candidates
+        and 30 draws the odds of only ever hitting one are astronomically
+        small — this exists to catch an accidental hardcoded pick, not
+        to pin down exact randomness."""
+        from django.contrib.auth import get_user_model
+
+        User = get_user_model()
+        user = User.objects.create_user(username="taylor", password="s3cret-pass")
+        morning = timezone.datetime(2026, 1, 1, 8, 0, tzinfo=timezone.get_default_timezone())
+        seen = {random_greeting(user, now=morning) for _ in range(30)}
+        self.assertGreater(len(seen), 1)
 
 
 class ErrorPageTests(TestCase):

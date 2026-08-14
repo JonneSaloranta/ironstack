@@ -879,6 +879,42 @@ request, and the range filter is a segmented tab control (own pill
 styling, active-state fill), not a text link. 2 new UI strings
 translated across fi/sv/ru/it/et (469 total, 0 fuzzy/untranslated).
 
+**Profile page: greeting instead of a static card, explicit CTA
+buttons on every action card, and a new "Account details" page.**
+
+- The page used to open with a plain, permanent "Signed in as X" card.
+  Replaced with a varied, time-of-day-aware greeting
+  (`apps.core.greetings.random_greeting`) that mixes encouragement and
+  light humor — a random pick from a 4-line pool keyed to morning/
+  afternoon/evening/night in the user's own active timezone, no card
+  wrapper.
+- "Change password", "API keys", and (staff-only) "Admin" used to each
+  be one giant `<a class="card card-link">` — the whole card was
+  clickable but nothing about a plain card visually said so. Each is
+  now a `.card-action-row`: description text on the left, a single
+  explicit `.button-secondary` on the right as the only actual link.
+- New "Account details" page/card (`apps.accounts.AccountDetailsView`,
+  next to "Change password") — username, first/last name, and email,
+  kept deliberately separate from both the preferences form and the
+  password-change flow (which keeps its own re-authentication
+  requirement).
+- 21 new UI strings translated across fi/sv/ru/it/et (489 total, 0
+  fuzzy/untranslated — 16 of them the greeting pool itself). 10 new
+  tests (479 total, full suite green).
+
+**Three more muscle groups seeded: Traps, Lats, Obliques.**
+
+The original 11 seeded muscle groups left out three that mainstream
+fitness apps usually split out on their own rather than folding into a
+broader neighbor. Each new group ships with one new exercise of its
+own (Barbell Shrug, Straight-Arm Pulldown, Side Plank) rather than
+retagging an existing one — `Exercise.primary_/secondary_muscle_groups`
+is live, current-state metadata that analytics reads directly, not a
+historical snapshot, so retagging an existing exercise would have
+retroactively shifted past muscle-group volume charts. 6 new UI
+strings translated across fi/sv/ru/it/et (495 total, 0 fuzzy/
+untranslated). 2 new tests.
+
 ## Local development
 
 ```bash

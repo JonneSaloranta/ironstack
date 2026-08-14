@@ -51,6 +51,9 @@ msgstr "Имперская (фунты, мили)"
 msgid "Preferences saved."
 msgstr "Настройки сохранены."
 
+msgid "Account details saved."
+msgstr "Данные аккаунта сохранены."
+
 msgid "Duration (minutes)"
 msgstr "Длительность (минуты)"
 
@@ -231,6 +234,54 @@ msgstr "Максимум повторений"
 msgid "Body Mass Index"
 msgstr "Индекс массы тела"
 
+msgid "Good morning, %(username)s! Time to get after it."
+msgstr "Доброе утро, %(username)s! Пора действовать."
+
+msgid "Rise and grind, %(username)s — the weights aren't going to lift themselves."
+msgstr "Подъём, %(username)s — штанга сама себя не поднимет."
+
+msgid "Morning, %(username)s. Today's a great day for a new personal record."
+msgstr "Доброе утро, %(username)s. Сегодня отличный день для нового рекорда."
+
+msgid "Good morning, %(username)s. Coffee first, then conquer the day."
+msgstr "Доброе утро, %(username)s. Сначала кофе, потом покоряем день."
+
+msgid "Good afternoon, %(username)s! Keep the momentum going."
+msgstr "Добрый день, %(username)s! Не сбавляй темп."
+
+msgid "Hey %(username)s, halfway through the day and still standing — not bad."
+msgstr "Привет, %(username)s, день наполовину позади, а ты всё ещё держишься — неплохо."
+
+msgid "Afternoon, %(username)s. Perfect time to sneak in a workout."
+msgstr "Добрый день, %(username)s. Отличное время для тренировки."
+
+msgid "Good afternoon, %(username)s. Lunch was earned, apparently."
+msgstr "Добрый день, %(username)s. Обед, судя по всему, был заслуженным."
+
+msgid "Good evening, %(username)s! One more push before the day's done."
+msgstr "Добрый вечер, %(username)s! Ещё одно усилие перед концом дня."
+
+msgid "Evening, %(username)s. A great time to log today's work."
+msgstr "Вечер, %(username)s. Хорошее время, чтобы записать сегодняшнюю тренировку."
+
+msgid "Hey %(username)s, the evening session hits different."
+msgstr "Привет, %(username)s, вечерняя тренировка всегда особенная."
+
+msgid "Good evening, %(username)s — finish the day stronger than you started it."
+msgstr "Добрый вечер, %(username)s — закончи день сильнее, чем начал."
+
+msgid "Still up, %(username)s? Respect the hustle."
+msgstr "Всё ещё не спишь, %(username)s? Уважение за упорство."
+
+msgid "Good night, %(username)s — recovery is part of the program too."
+msgstr "Спокойной ночи, %(username)s — восстановление тоже часть программы."
+
+msgid "Burning the midnight oil, %(username)s? Even legends need sleep."
+msgstr "Не спишь допоздна, %(username)s? Даже легендам нужен сон."
+
+msgid "Late night, %(username)s. Tomorrow's gains start with tonight's rest."
+msgstr "Поздний вечер, %(username)s. Завтрашний прогресс начинается с сегодняшнего отдыха."
+
 msgid "Ab Wheel Rollout"
 msgstr "Ролик для пресса"
 
@@ -242,6 +293,9 @@ msgstr "Жим штанги лёжа"
 
 msgid "Barbell Row"
 msgstr "Тяга штанги в наклоне"
+
+msgid "Barbell Shrug"
+msgstr "Шраги со штангой"
 
 msgid "Calf Raise"
 msgstr "Подъём на носки"
@@ -300,8 +354,14 @@ msgstr "Румынская тяга"
 msgid "Seated Cable Row"
 msgstr "Тяга блока сидя"
 
+msgid "Side Plank"
+msgstr "Боковая планка"
+
 msgid "Skull Crusher"
 msgstr "Французский жим лёжа"
+
+msgid "Straight-Arm Pulldown"
+msgstr "Пуловер на прямых руках в блоке"
 
 msgid "Triceps Pushdown"
 msgstr "Разгибание рук на блоке"
@@ -330,11 +390,20 @@ msgstr "Ягодицы"
 msgid "Hamstrings"
 msgstr "Задняя поверхность бедра"
 
+msgid "Lats"
+msgstr "Широчайшие"
+
+msgid "Obliques"
+msgstr "Косые мышцы"
+
 msgid "Quads"
 msgstr "Квадрицепсы"
 
 msgid "Shoulders"
 msgstr "Плечи"
+
+msgid "Traps"
+msgstr "Трапеции"
 
 msgid "Triceps"
 msgstr "Трицепс"
@@ -735,14 +804,29 @@ msgstr "Что-то пошло не так"
 msgid "Something went wrong on our end. Your data is safe — try again in a moment."
 msgstr "Что-то пошло не так на нашей стороне. Ваши данные в безопасности — попробуйте снова через минуту."
 
-msgid "Signed in as <strong>%(username)s</strong>"
-msgstr "Вы вошли как <strong>%(username)s</strong>"
+msgid "Account details"
+msgstr "Данные аккаунта"
+
+msgid "Save"
+msgstr "Сохранить"
+
+msgid "Back to profile"
+msgstr "Назад к профилю"
 
 msgid "Save preferences"
 msgstr "Сохранить настройки"
 
+msgid "Update your username, name, and email address."
+msgstr "Обновите имя пользователя, имя и адрес электронной почты."
+
+msgid "Open"
+msgstr "Открыть"
+
 msgid "Change password"
 msgstr "Изменить пароль"
+
+msgid "Update the password you use to sign in."
+msgstr "Обновите пароль, который вы используете для входа."
 
 msgid "API keys"
 msgstr "API-ключи"
@@ -776,9 +860,6 @@ msgstr "Изменить активность"
 
 msgid "Edit %(name)s"
 msgstr "Изменить %(name)s"
-
-msgid "Save"
-msgstr "Сохранить"
 
 msgid "Back to %(name)s"
 msgstr "Назад к %(name)s"
@@ -959,9 +1040,6 @@ msgstr "Отозвать"
 
 msgid "No API keys yet."
 msgstr "Пока нет API-ключей."
-
-msgid "Back to profile"
-msgstr "Назад к профилю"
 
 msgid "Skip to content"
 msgstr "Перейти к содержимому"

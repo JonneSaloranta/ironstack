@@ -51,6 +51,9 @@ msgstr "Imperiale (lb, mi)"
 msgid "Preferences saved."
 msgstr "Preferenze salvate."
 
+msgid "Account details saved."
+msgstr "Dettagli account salvati."
+
 msgid "Duration (minutes)"
 msgstr "Durata (minuti)"
 
@@ -228,6 +231,54 @@ msgstr "Massimale di ripetizioni"
 msgid "Body Mass Index"
 msgstr "Indice di massa corporea"
 
+msgid "Good morning, %(username)s! Time to get after it."
+msgstr "Buongiorno, %(username)s! È ora di darsi da fare."
+
+msgid "Rise and grind, %(username)s — the weights aren't going to lift themselves."
+msgstr "Su, %(username)s — i pesi non si sollevano da soli."
+
+msgid "Morning, %(username)s. Today's a great day for a new personal record."
+msgstr "Buongiorno, %(username)s. Oggi è un ottimo giorno per un nuovo record personale."
+
+msgid "Good morning, %(username)s. Coffee first, then conquer the day."
+msgstr "Buongiorno, %(username)s. Prima il caffè, poi si conquista la giornata."
+
+msgid "Good afternoon, %(username)s! Keep the momentum going."
+msgstr "Buon pomeriggio, %(username)s! Mantieni lo slancio."
+
+msgid "Hey %(username)s, halfway through the day and still standing — not bad."
+msgstr "Ehi %(username)s, metà giornata fatta e sei ancora in piedi — niente male."
+
+msgid "Afternoon, %(username)s. Perfect time to sneak in a workout."
+msgstr "Buon pomeriggio, %(username)s. Il momento perfetto per un allenamento."
+
+msgid "Good afternoon, %(username)s. Lunch was earned, apparently."
+msgstr "Buon pomeriggio, %(username)s. A quanto pare il pranzo te lo sei meritato."
+
+msgid "Good evening, %(username)s! One more push before the day's done."
+msgstr "Buonasera, %(username)s! Un ultimo sforzo prima che finisca la giornata."
+
+msgid "Evening, %(username)s. A great time to log today's work."
+msgstr "Sera, %(username)s. Un buon momento per registrare l'allenamento di oggi."
+
+msgid "Hey %(username)s, the evening session hits different."
+msgstr "Ehi %(username)s, l'allenamento serale ha tutto un altro sapore."
+
+msgid "Good evening, %(username)s — finish the day stronger than you started it."
+msgstr "Buonasera, %(username)s — finisci la giornata più forte di come l'hai iniziata."
+
+msgid "Still up, %(username)s? Respect the hustle."
+msgstr "Ancora sveglio, %(username)s? Rispetto per l'impegno."
+
+msgid "Good night, %(username)s — recovery is part of the program too."
+msgstr "Buonanotte, %(username)s — anche il recupero fa parte del programma."
+
+msgid "Burning the midnight oil, %(username)s? Even legends need sleep."
+msgstr "Stai facendo le ore piccole, %(username)s? Anche le leggende hanno bisogno di dormire."
+
+msgid "Late night, %(username)s. Tomorrow's gains start with tonight's rest."
+msgstr "Tarda notte, %(username)s. I progressi di domani iniziano con il riposo di stanotte."
+
 msgid "Ab Wheel Rollout"
 msgstr "Ab wheel"
 
@@ -239,6 +290,9 @@ msgstr "Panca piana con bilanciere"
 
 msgid "Barbell Row"
 msgstr "Rematore con bilanciere"
+
+msgid "Barbell Shrug"
+msgstr "Shrug con bilanciere"
 
 msgid "Calf Raise"
 msgstr "Sollevamento polpacci"
@@ -297,8 +351,14 @@ msgstr "Stacco rumeno"
 msgid "Seated Cable Row"
 msgstr "Rematore al cavo da seduto"
 
+msgid "Side Plank"
+msgstr "Plank laterale"
+
 msgid "Skull Crusher"
 msgstr "French press"
+
+msgid "Straight-Arm Pulldown"
+msgstr "Pulldown a braccia tese"
 
 msgid "Triceps Pushdown"
 msgstr "Push down ai tricipiti"
@@ -327,11 +387,20 @@ msgstr "Glutei"
 msgid "Hamstrings"
 msgstr "Femorali"
 
+msgid "Lats"
+msgstr "Dorsali"
+
+msgid "Obliques"
+msgstr "Obliqui"
+
 msgid "Quads"
 msgstr "Quadricipiti"
 
 msgid "Shoulders"
 msgstr "Spalle"
+
+msgid "Traps"
+msgstr "Trapezi"
 
 msgid "Triceps"
 msgstr "Tricipiti"
@@ -732,14 +801,29 @@ msgstr "Qualcosa è andato storto"
 msgid "Something went wrong on our end. Your data is safe — try again in a moment."
 msgstr "Qualcosa è andato storto da parte nostra. I tuoi dati sono al sicuro: riprova tra un momento."
 
-msgid "Signed in as <strong>%(username)s</strong>"
-msgstr "Accesso effettuato come <strong>%(username)s</strong>"
+msgid "Account details"
+msgstr "Dettagli account"
+
+msgid "Save"
+msgstr "Salva"
+
+msgid "Back to profile"
+msgstr "Torna al profilo"
 
 msgid "Save preferences"
 msgstr "Salva preferenze"
 
+msgid "Update your username, name, and email address."
+msgstr "Aggiorna il tuo nome utente, nome ed e-mail."
+
+msgid "Open"
+msgstr "Apri"
+
 msgid "Change password"
 msgstr "Cambia password"
+
+msgid "Update the password you use to sign in."
+msgstr "Aggiorna la password che usi per accedere."
 
 msgid "API keys"
 msgstr "Chiavi API"
@@ -773,9 +857,6 @@ msgstr "Modifica attività"
 
 msgid "Edit %(name)s"
 msgstr "Modifica %(name)s"
-
-msgid "Save"
-msgstr "Salva"
 
 msgid "Back to %(name)s"
 msgstr "Torna a %(name)s"
@@ -954,9 +1035,6 @@ msgstr "Revoca"
 
 msgid "No API keys yet."
 msgstr "Ancora nessuna chiave API."
-
-msgid "Back to profile"
-msgstr "Torna al profilo"
 
 msgid "Skip to content"
 msgstr "Vai al contenuto"

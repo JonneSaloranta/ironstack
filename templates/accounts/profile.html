@@ -6,9 +6,7 @@
   <h1 style="margin:0;">{% trans "Profile" %}</h1>
 </div>
 
-<div class="card">
-  <p class="text-muted">{% blocktrans with username=user.username %}Signed in as <strong>{{ username }}</strong>{% endblocktrans %}</p>
-</div>
+<p class="profile-greeting">{{ greeting }}</p>
 
 <form class="card" method="post">
   {% csrf_token %}
@@ -39,20 +37,38 @@
   {% include "core/_bmi_card.html" %}
 {% endif %}
 
-<a class="card card-link" href="{% url 'password_change' %}">
-  <strong>{% trans "Change password" %}</strong>
-</a>
+<div class="card card-action-row">
+  <div>
+    <strong>{% trans "Account details" %}</strong>
+    <p class="text-muted">{% trans "Update your username, name, and email address." %}</p>
+  </div>
+  <a class="button-secondary" href="{% url 'account-details' %}">{% trans "Open" %}</a>
+</div>
 
-<a class="card card-link" href="{% url 'api_keys:key-list' %}">
-  <strong>{% trans "API keys" %}</strong>
-  <p class="text-muted">{% trans "Manage keys other apps can use to access your data." %}</p>
-</a>
+<div class="card card-action-row">
+  <div>
+    <strong>{% trans "Change password" %}</strong>
+    <p class="text-muted">{% trans "Update the password you use to sign in." %}</p>
+  </div>
+  <a class="button-secondary" href="{% url 'password_change' %}">{% trans "Open" %}</a>
+</div>
+
+<div class="card card-action-row">
+  <div>
+    <strong>{% trans "API keys" %}</strong>
+    <p class="text-muted">{% trans "Manage keys other apps can use to access your data." %}</p>
+  </div>
+  <a class="button-secondary" href="{% url 'api_keys:key-list' %}">{% trans "Open" %}</a>
+</div>
 
 {% if user.is_staff %}
-  <a class="card card-link" href="{% url 'admin:index' %}">
-    <strong>{% trans "Admin" %}</strong>
-    <p class="text-muted">{% trans "Manage tiers, keys, and reference data across the whole instance." %}</p>
-  </a>
+  <div class="card card-action-row">
+    <div>
+      <strong>{% trans "Admin" %}</strong>
+      <p class="text-muted">{% trans "Manage tiers, keys, and reference data across the whole instance." %}</p>
+    </div>
+    <a class="button-secondary" href="{% url 'admin:index' %}">{% trans "Open" %}</a>
+  </div>
 {% endif %}
 
 <form method="post" action="{% url 'logout' %}">

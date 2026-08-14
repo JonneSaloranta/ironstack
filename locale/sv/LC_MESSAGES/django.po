@@ -51,6 +51,9 @@ msgstr "Brittiskt (lb, mi)"
 msgid "Preferences saved."
 msgstr "Inställningarna har sparats."
 
+msgid "Account details saved."
+msgstr "Kontouppgifterna har sparats."
+
 msgid "Duration (minutes)"
 msgstr "Varaktighet (minuter)"
 
@@ -228,6 +231,54 @@ msgstr "Repetitionsmax"
 msgid "Body Mass Index"
 msgstr "Body mass-index"
 
+msgid "Good morning, %(username)s! Time to get after it."
+msgstr "God morgon, %(username)s! Dags att sätta igång."
+
+msgid "Rise and grind, %(username)s — the weights aren't going to lift themselves."
+msgstr "Upp och hoppa, %(username)s — vikterna lyfter inte sig själva."
+
+msgid "Morning, %(username)s. Today's a great day for a new personal record."
+msgstr "God morgon, %(username)s. Idag är en bra dag för ett nytt personbästa."
+
+msgid "Good morning, %(username)s. Coffee first, then conquer the day."
+msgstr "God morgon, %(username)s. Kaffe först, sedan erövras dagen."
+
+msgid "Good afternoon, %(username)s! Keep the momentum going."
+msgstr "God eftermiddag, %(username)s! Håll farten uppe."
+
+msgid "Hey %(username)s, halfway through the day and still standing — not bad."
+msgstr "Hej %(username)s, halva dagen avklarad och fortfarande på benen — inte illa."
+
+msgid "Afternoon, %(username)s. Perfect time to sneak in a workout."
+msgstr "Eftermiddag, %(username)s. Perfekt tid för ett träningspass."
+
+msgid "Good afternoon, %(username)s. Lunch was earned, apparently."
+msgstr "God eftermiddag, %(username)s. Lunchen var visst förtjänad."
+
+msgid "Good evening, %(username)s! One more push before the day's done."
+msgstr "God kväll, %(username)s! Ett sista tag innan dagen är slut."
+
+msgid "Evening, %(username)s. A great time to log today's work."
+msgstr "Kväll, %(username)s. Bra tid att logga dagens pass."
+
+msgid "Hey %(username)s, the evening session hits different."
+msgstr "Hej %(username)s, kvällspasset känns alltid speciellt."
+
+msgid "Good evening, %(username)s — finish the day stronger than you started it."
+msgstr "God kväll, %(username)s — avsluta dagen starkare än du började den."
+
+msgid "Still up, %(username)s? Respect the hustle."
+msgstr "Fortfarande vaken, %(username)s? Respekt för slitet."
+
+msgid "Good night, %(username)s — recovery is part of the program too."
+msgstr "God natt, %(username)s — återhämtning är också en del av programmet."
+
+msgid "Burning the midnight oil, %(username)s? Even legends need sleep."
+msgstr "Bränner du midnattsoljan, %(username)s? Även legender behöver sömn."
+
+msgid "Late night, %(username)s. Tomorrow's gains start with tonight's rest."
+msgstr "Sen kväll, %(username)s. Morgondagens framsteg börjar med nattens vila."
+
 msgid "Ab Wheel Rollout"
 msgstr "Ab wheel-rullning"
 
@@ -239,6 +290,9 @@ msgstr "Bänkpress med skivstång"
 
 msgid "Barbell Row"
 msgstr "Rodd med skivstång"
+
+msgid "Barbell Shrug"
+msgstr "Axelryckning med skivstång"
 
 msgid "Calf Raise"
 msgstr "Vadpress"
@@ -297,8 +351,14 @@ msgstr "Rumänsk marklyft"
 msgid "Seated Cable Row"
 msgstr "Sittande rodd i kabel"
 
+msgid "Side Plank"
+msgstr "Sidoplanka"
+
 msgid "Skull Crusher"
 msgstr "Skallkrossare"
+
+msgid "Straight-Arm Pulldown"
+msgstr "Raka armdrag i kabelmaskin"
 
 msgid "Triceps Pushdown"
 msgstr "Tricepspress i kabel"
@@ -327,11 +387,20 @@ msgstr "Säte"
 msgid "Hamstrings"
 msgstr "Baklår"
 
+msgid "Lats"
+msgstr "Latissimus"
+
+msgid "Obliques"
+msgstr "Sneda magmuskler"
+
 msgid "Quads"
 msgstr "Lår"
 
 msgid "Shoulders"
 msgstr "Axlar"
+
+msgid "Traps"
+msgstr "Trapezius"
 
 msgid "Triceps"
 msgstr "Triceps"
@@ -732,14 +801,29 @@ msgstr "Något gick fel"
 msgid "Something went wrong on our end. Your data is safe — try again in a moment."
 msgstr "Något gick fel på vår sida. Din data är säker — försök igen om en stund."
 
-msgid "Signed in as <strong>%(username)s</strong>"
-msgstr "Inloggad som <strong>%(username)s</strong>"
+msgid "Account details"
+msgstr "Kontouppgifter"
+
+msgid "Save"
+msgstr "Spara"
+
+msgid "Back to profile"
+msgstr "Tillbaka till profilen"
 
 msgid "Save preferences"
 msgstr "Spara inställningar"
 
+msgid "Update your username, name, and email address."
+msgstr "Uppdatera ditt användarnamn, namn och e-postadress."
+
+msgid "Open"
+msgstr "Öppna"
+
 msgid "Change password"
 msgstr "Byt lösenord"
+
+msgid "Update the password you use to sign in."
+msgstr "Uppdatera lösenordet du använder för att logga in."
 
 msgid "API keys"
 msgstr "API-nycklar"
@@ -773,9 +857,6 @@ msgstr "Redigera aktivitet"
 
 msgid "Edit %(name)s"
 msgstr "Redigera %(name)s"
-
-msgid "Save"
-msgstr "Spara"
 
 msgid "Back to %(name)s"
 msgstr "Tillbaka till %(name)s"
@@ -954,9 +1035,6 @@ msgstr "Återkalla"
 
 msgid "No API keys yet."
 msgstr "Inga API-nycklar än."
-
-msgid "Back to profile"
-msgstr "Tillbaka till profilen"
 
 msgid "Skip to content"
 msgstr "Hoppa till innehåll"

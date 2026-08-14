@@ -1,6 +1,7 @@
 """Translation catalog for seeded *content*, not UI chrome — exercise
 names, muscle group names, and equipment names (apps.exercises.migrations'
-seed data) are stored in the database in canonical English, the same
+seed data, including migration 0005's extra muscle groups) are stored
+in the database in canonical English, the same
 value used for `get_or_create(name=...)` lookups and uniqueness
 constraints elsewhere, so the stored value itself must never be
 translated. This module exists solely so `makemessages` extracts these
@@ -16,12 +17,13 @@ these seeded names — see docs/ARCHITECTURE.md "Internationalization".
 
 from django.utils.translation import gettext_lazy as _
 
-# Exercise names (apps.exercises.migrations 0002, 0004).
+# Exercise names (apps.exercises.migrations 0002, 0004, 0005).
 EXERCISE_NAMES = [
     _("Ab Wheel Rollout"),
     _("Barbell Back Squat"),
     _("Barbell Bench Press"),
     _("Barbell Row"),
+    _("Barbell Shrug"),
     _("Calf Raise"),
     _("Conventional Deadlift"),
     _("Dumbbell Bench Press"),
@@ -41,11 +43,13 @@ EXERCISE_NAMES = [
     _("Pull-Up"),
     _("Romanian Deadlift"),
     _("Seated Cable Row"),
+    _("Side Plank"),
     _("Skull Crusher"),
+    _("Straight-Arm Pulldown"),
     _("Triceps Pushdown"),
 ]
 
-# Muscle group names (apps.exercises.migrations 0002).
+# Muscle group names (apps.exercises.migrations 0002, 0005).
 MUSCLE_GROUP_NAMES = [
     _("Abs"),
     _("Back"),
@@ -55,8 +59,11 @@ MUSCLE_GROUP_NAMES = [
     _("Forearms"),
     _("Glutes"),
     _("Hamstrings"),
+    _("Lats"),
+    _("Obliques"),
     _("Quads"),
     _("Shoulders"),
+    _("Traps"),
     _("Triceps"),
 ]
 

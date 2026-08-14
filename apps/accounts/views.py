@@ -6,11 +6,12 @@ from django.utils.translation import gettext as _
 from django.views.generic import CreateView, UpdateView
 
 from apps.core import bmi as bmi_services
+from apps.core import greetings as greeting_services
 from apps.core import units as core_units
 from apps.measurements import services as measurement_services
 from apps.measurements.models import MeasurementType
 
-from .forms import ProfileForm, SignupForm
+from .forms import AccountDetailsForm, ProfileForm, SignupForm
 
 
 class SignupView(CreateView):
@@ -41,6 +42,7 @@ class ProfileView(LoginRequiredMixin, UpdateView):
         # value, once computable) need to be findable here regardless of
         # whether that dashboard card has ever had reason to render.
         user = self.request.user
+        context["greeting"] = greeting_services.random_greeting(user)
         context["bmi_category_rows"] = bmi_services.category_rows(
             user.height, user.unit_system
         )
@@ -64,4 +66,24 @@ class ProfileView(LoginRequiredMixin, UpdateView):
     def form_valid(self, form):
         response = super().form_valid(form)
         messages.success(self.request, _("Preferences saved."))
+        return response
+
+
+class AccountDetailsView(LoginRequiredMixin, UpdateView):
+    """Username/name/email — kept as its own page rather than folded
+    into ProfileView's preferences form, next to "Change password" on
+    the profile page: both are account-identity actions distinct from
+    display preferences, and both already redirect straight back to
+    that page's own toast rather than a separate confirmation page."""
+
+    form_class = AccountDetailsForm
+    template_name = "accounts/account_details_form.html"
+    success_url = reverse_lazy("account-details")
+
+    def get_object(self):
+        return self.request.user
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        messages.success(self.request, _("Account details saved."))
         return response

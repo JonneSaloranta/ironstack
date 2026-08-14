@@ -346,6 +346,29 @@ abbr[title]:focus::after {
   color: inherit;
 }
 
+/* A card whose whole surface used to be the link — easy to miss that
+   it was clickable at all, since nothing about a plain card visually
+   says "press me". Text stays in a plain, non-link block on the left;
+   the only actual link is the button on the right, so the affordance
+   is explicit instead of implied by the entire card. */
+.card-action-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.card-action-row .button-secondary {
+  margin-bottom: 0;
+  flex-shrink: 0;
+}
+
+.profile-greeting {
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin: 0 0 1rem;
+}
+
 .pagination {
   display: flex;
   justify-content: space-between;

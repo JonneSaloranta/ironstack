@@ -356,6 +356,42 @@ class ProfileViewTests(TestCase):
         self.assertContains(response, 'id="pr-toast-container"')
         self.assertContains(response, "pr-banner")
 
+    def test_greeting_replaces_the_static_signed_in_as_card(self):
+        """Regression: the profile page used to open with a plain,
+        permanent "Signed in as X" .card — now a varied, time-of-day
+        greeting (apps.core.greetings) with no card wrapper."""
+        response = self.client.get(reverse("profile"))
+        self.assertContains(response, 'class="profile-greeting"')
+        self.assertIn("alice", response.context["greeting"])
+        self.assertNotContains(response, "Signed in as")
+
+    def test_account_details_password_and_api_key_cards_each_have_their_own_cta_button(self):
+        """Regression: the whole "Change password"/"API keys" card used
+        to be one big <a>, with nothing visually marking it as
+        clickable. Each card is now a plain (non-link) container with
+        an explicit .button-secondary as the only link."""
+        response = self.client.get(reverse("profile"))
+        self.assertContains(response, 'class="card card-action-row"', count=3)
+        self.assertContains(
+            response, f'<a class="button-secondary" href="{reverse("account-details")}">'
+        )
+        self.assertContains(
+            response, f'<a class="button-secondary" href="{reverse("password_change")}">'
+        )
+        self.assertContains(
+            response,
+            f'<a class="button-secondary" href="{reverse("api_keys:key-list")}">',
+        )
+
+    def test_admin_card_also_has_its_own_cta_button_when_shown(self):
+        self.alice.is_staff = True
+        self.alice.save()
+        response = self.client.get(reverse("profile"))
+        self.assertContains(response, 'class="card card-action-row"', count=4)
+        self.assertContains(
+            response, f'<a class="button-secondary" href="{reverse("admin:index")}">'
+        )
+
 
 class PasswordChangeTests(TestCase):
     """The URLs (django.contrib.auth.urls) already existed since Phase 1,
@@ -381,3 +417,77 @@ class PasswordChangeTests(TestCase):
         self.assertRedirects(response, reverse("password_change_done"))
         self.client.logout()
         self.assertTrue(self.client.login(username="alice", password="a-very-strong-new-pass-1"))
+
+
+class AccountDetailsTests(TestCase):
+    """Username/name/email — a separate page from ProfileView's display
+    preferences and from the password itself, linked from the profile
+    page's "Account details" card."""
+
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        self.client.login(username="alice", password="s3cret-pass")
+
+    def test_requires_login(self):
+        self.client.logout()
+        response = self.client.get(reverse("account-details"))
+        self.assertEqual(response.status_code, 302)
+
+    def test_form_renders_prefilled_with_the_current_users_details(self):
+        self.alice.first_name = "Alice"
+        self.alice.email = "alice@example.com"
+        self.alice.save()
+        response = self.client.get(reverse("account-details"))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Alice")
+        self.assertContains(response, "alice@example.com")
+
+    def test_updating_details_saves_and_shows_a_toast(self):
+        response = self.client.post(
+            reverse("account-details"),
+            {
+                "username": "alice",
+                "first_name": "Alice",
+                "last_name": "Smith",
+                "email": "alice.smith@example.com",
+            },
+            follow=True,
+        )
+        self.alice.refresh_from_db()
+        self.assertEqual(self.alice.first_name, "Alice")
+        self.assertEqual(self.alice.last_name, "Smith")
+        self.assertEqual(self.alice.email, "alice.smith@example.com")
+        self.assertContains(response, "Account details saved.")
+        self.assertContains(response, 'id="pr-toast-container"')
+
+    def test_username_can_be_changed_and_still_used_to_log_in(self):
+        response = self.client.post(
+            reverse("account-details"),
+            {"username": "alice2", "first_name": "", "last_name": "", "email": ""},
+        )
+        self.assertRedirects(response, reverse("account-details"))
+        self.alice.refresh_from_db()
+        self.assertEqual(self.alice.username, "alice2")
+        self.client.logout()
+        self.assertTrue(self.client.login(username="alice2", password="s3cret-pass"))
+
+    def test_username_must_stay_unique(self):
+        User.objects.create_user(username="bob", password="s3cret-pass")
+        response = self.client.post(
+            reverse("account-details"),
+            {"username": "bob", "first_name": "", "last_name": "", "email": ""},
+        )
+        self.assertEqual(response.status_code, 200)  # re-rendered with errors
+        self.alice.refresh_from_db()
+        self.assertEqual(self.alice.username, "alice")
+
+    def test_account_details_card_links_next_to_change_password_on_profile(self):
+        response = self.client.get(reverse("profile"))
+        content = response.content.decode()
+        account_pos = content.find(reverse("account-details"))
+        password_pos = content.find(reverse("password_change"))
+        self.assertNotEqual(account_pos, -1)
+        self.assertNotEqual(password_pos, -1)
+        # "Next to" — no other card-action-row between the two.
+        between = content[account_pos:password_pos]
+        self.assertEqual(between.count("card-action-row"), 1)

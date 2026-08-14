@@ -51,6 +51,9 @@ msgstr "Imperiaalinen (lb, mi)"
 msgid "Preferences saved."
 msgstr "Asetukset tallennettu."
 
+msgid "Account details saved."
+msgstr "Tilin tiedot tallennettu."
+
 msgid "Duration (minutes)"
 msgstr "Kesto (minuuttia)"
 
@@ -228,6 +231,54 @@ msgstr "Toistomaksimi"
 msgid "Body Mass Index"
 msgstr "Painoindeksi"
 
+msgid "Good morning, %(username)s! Time to get after it."
+msgstr "Huomenta, %(username)s! Aika tarttua toimeen."
+
+msgid "Rise and grind, %(username)s — the weights aren't going to lift themselves."
+msgstr "Ylös ja hommiin, %(username)s — painot eivät nosta itse itseään."
+
+msgid "Morning, %(username)s. Today's a great day for a new personal record."
+msgstr "Huomenta, %(username)s. Tänään on hyvä päivä uudelle ennätykselle."
+
+msgid "Good morning, %(username)s. Coffee first, then conquer the day."
+msgstr "Huomenta, %(username)s. Kahvi ensin, sitten päivä valloitetaan."
+
+msgid "Good afternoon, %(username)s! Keep the momentum going."
+msgstr "Hyvää iltapäivää, %(username)s! Pidä vauhti yllä."
+
+msgid "Hey %(username)s, halfway through the day and still standing — not bad."
+msgstr "Hei %(username)s, päivästä puolet takana ja yhä pystyssä — ei hassumpaa."
+
+msgid "Afternoon, %(username)s. Perfect time to sneak in a workout."
+msgstr "Iltapäivää, %(username)s. Täydellinen hetki treenille."
+
+msgid "Good afternoon, %(username)s. Lunch was earned, apparently."
+msgstr "Hyvää iltapäivää, %(username)s. Lounas oli ilmeisesti ansaittu."
+
+msgid "Good evening, %(username)s! One more push before the day's done."
+msgstr "Hyvää iltaa, %(username)s! Vielä yksi ponnistus ennen päivän päättymistä."
+
+msgid "Evening, %(username)s. A great time to log today's work."
+msgstr "Iltaa, %(username)s. Hyvä hetki kirjata päivän treeni."
+
+msgid "Hey %(username)s, the evening session hits different."
+msgstr "Hei %(username)s, iltatreeni tuntuu aina erilaiselta."
+
+msgid "Good evening, %(username)s — finish the day stronger than you started it."
+msgstr "Hyvää iltaa, %(username)s — lopeta päivä vahvempana kuin aloitit sen."
+
+msgid "Still up, %(username)s? Respect the hustle."
+msgstr "Vieläkö hereillä, %(username)s? Kunnioitusta sinnikkyydelle."
+
+msgid "Good night, %(username)s — recovery is part of the program too."
+msgstr "Hyvää yötä, %(username)s — palautuminen kuuluu myös ohjelmaan."
+
+msgid "Burning the midnight oil, %(username)s? Even legends need sleep."
+msgstr "Palatko keskiyön öljyä, %(username)s? Legendatkin tarvitsevat unta."
+
+msgid "Late night, %(username)s. Tomorrow's gains start with tonight's rest."
+msgstr "Myöhäinen ilta, %(username)s. Huomisen edistys alkaa tämän yön levosta."
+
 msgid "Ab Wheel Rollout"
 msgstr "Vatsapyörärullaus"
 
@@ -239,6 +290,9 @@ msgstr "Penkkipunnerrus tangolla"
 
 msgid "Barbell Row"
 msgstr "Kulmasoutu tangolla"
+
+msgid "Barbell Shrug"
+msgstr "Hartiakohautus tangolla"
 
 msgid "Calf Raise"
 msgstr "Pohjekohotus"
@@ -297,8 +351,14 @@ msgstr "Romanialainen maastaveto"
 msgid "Seated Cable Row"
 msgstr "Istumasoutu taljalla"
 
+msgid "Side Plank"
+msgstr "Sivulankku"
+
 msgid "Skull Crusher"
 msgstr "Ojentajapunnerrus tangolla"
+
+msgid "Straight-Arm Pulldown"
+msgstr "Suorakätinen taljaveto"
 
 msgid "Triceps Pushdown"
 msgstr "Ojentajaveto taljalla"
@@ -327,11 +387,20 @@ msgstr "Pakarat"
 msgid "Hamstrings"
 msgstr "Takareidet"
 
+msgid "Lats"
+msgstr "Leveät selkälihakset"
+
+msgid "Obliques"
+msgstr "Vinot vatsalihakset"
+
 msgid "Quads"
 msgstr "Etureidet"
 
 msgid "Shoulders"
 msgstr "Hartiat"
+
+msgid "Traps"
+msgstr "Epäkäslihakset"
 
 msgid "Triceps"
 msgstr "Ojentaja"
@@ -732,14 +801,29 @@ msgstr "Jokin meni pieleen"
 msgid "Something went wrong on our end. Your data is safe — try again in a moment."
 msgstr "Jokin meni pieleen meidän puolellamme. Tietosi ovat turvassa — yritä hetken kuluttua uudelleen."
 
-msgid "Signed in as <strong>%(username)s</strong>"
-msgstr "Kirjautunut käyttäjänä <strong>%(username)s</strong>"
+msgid "Account details"
+msgstr "Tilin tiedot"
+
+msgid "Save"
+msgstr "Tallenna"
+
+msgid "Back to profile"
+msgstr "Takaisin profiiliin"
 
 msgid "Save preferences"
 msgstr "Tallenna asetukset"
 
+msgid "Update your username, name, and email address."
+msgstr "Päivitä käyttäjätunnuksesi, nimesi ja sähköpostiosoitteesi."
+
+msgid "Open"
+msgstr "Avaa"
+
 msgid "Change password"
 msgstr "Vaihda salasana"
+
+msgid "Update the password you use to sign in."
+msgstr "Päivitä salasana, jolla kirjaudut sisään."
 
 msgid "API keys"
 msgstr "API-avaimet"
@@ -773,9 +857,6 @@ msgstr "Muokkaa aktiviteettia"
 
 msgid "Edit %(name)s"
 msgstr "Muokkaa: %(name)s"
-
-msgid "Save"
-msgstr "Tallenna"
 
 msgid "Back to %(name)s"
 msgstr "Takaisin: %(name)s"
@@ -954,9 +1035,6 @@ msgstr "Peruuta"
 
 msgid "No API keys yet."
 msgstr "Ei vielä API-avaimia."
-
-msgid "Back to profile"
-msgstr "Takaisin profiiliin"
 
 msgid "Skip to content"
 msgstr "Siirry sisältöön"
