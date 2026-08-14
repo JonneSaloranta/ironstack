@@ -17,5 +17,11 @@ media/
 # the binaries.
 *.mo
 
+# Build-time metadata (docs/ARCHITECTURE.md "Versioning") — written into
+# the image by the Dockerfile's runtime stage from scripts/build.sh's
+# GIT_SHA build-arg; never committed since it's a build artifact tied to
+# whatever commit produced a given image, not part of the source itself.
+GIT_SHA
+
 .DS_Store
 *.swp

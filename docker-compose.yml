@@ -17,6 +17,9 @@ services:
       dockerfile: Dockerfile
       args:
         REQUIREMENTS_FILE: requirements/production.txt
+        GIT_SHA: ${GIT_SHA:-unknown}
+        APP_VERSION: ${APP_VERSION:-unknown}
+        BUILD_DATE: ${BUILD_DATE:-unknown}
     restart: unless-stopped
     env_file: .env
     environment:

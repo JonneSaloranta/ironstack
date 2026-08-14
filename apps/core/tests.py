@@ -1,7 +1,12 @@
+import io
+import json
 from datetime import timedelta
 from decimal import Decimal
+from pathlib import Path
+from tempfile import TemporaryDirectory
 
 from django.core.exceptions import PermissionDenied
+from django.core.management import call_command
 from django.test import RequestFactory, TestCase, override_settings
 from django.urls import reverse
 from django.utils import timezone, translation
@@ -24,7 +29,7 @@ from apps.core.units import (
     meters_to_miles,
     miles_to_meters,
 )
-from apps.core.version import get_version
+from apps.core.version import get_git_sha, get_migration_state, get_version
 
 
 class UnitConversionTests(TestCase):
@@ -432,6 +437,47 @@ class VersionTests(TestCase):
         response = self.client.get(reverse("profile"))
         self.assertContains(response, 'class="app-version"')
         self.assertContains(response, get_version())
+
+    def test_get_git_sha_is_unknown_without_a_baked_in_file(self):
+        """GIT_SHA is only ever written by scripts/build.sh's production
+        build path (Dockerfile) — a dev container (or any plain
+        `docker compose up -d --build`) has no such file."""
+        get_git_sha.cache_clear()
+        try:
+            self.assertEqual(get_git_sha(), "unknown")
+        finally:
+            get_git_sha.cache_clear()
+
+    def test_get_git_sha_reads_a_baked_in_file_when_present(self):
+        get_git_sha.cache_clear()
+        try:
+            with TemporaryDirectory() as tmp:
+                (Path(tmp) / "GIT_SHA").write_text("abc1234\n")
+                with override_settings(BASE_DIR=Path(tmp)):
+                    self.assertEqual(get_git_sha(), "abc1234")
+        finally:
+            get_git_sha.cache_clear()
+
+    def test_get_migration_state_reports_the_latest_migration_per_app(self):
+        state = get_migration_state()
+        self.assertIn("accounts", state)
+        self.assertIn("exercises", state)
+        self.assertTrue(all(isinstance(name, str) for name in state.values()))
+
+    def test_version_info_command_prints_a_json_blob_with_every_field(self):
+        out = io.StringIO()
+        call_command("version_info", stdout=out)
+        data = json.loads(out.getvalue())
+        self.assertEqual(data["version"], get_version())
+        self.assertEqual(data["git_sha"], get_git_sha())
+        self.assertIn("accounts", data["migrations"])
+        self.assertIn("generated_at", data)
+
+    def test_version_info_command_pretty_flag_indents_the_output(self):
+        out = io.StringIO()
+        call_command("version_info", "--pretty", stdout=out)
+        self.assertIn("\n", out.getvalue())
+        self.assertEqual(json.loads(out.getvalue())["version"], get_version())
 
 
 class DashboardAccessTests(TestCase):

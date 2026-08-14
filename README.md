@@ -929,6 +929,35 @@ path checks against, without either needing to import Django — see
 `docs/ARCHITECTURE.md` "Versioning". 1 new UI string translated across
 fi/sv/ru/it/et (496 total, 0 fuzzy/untranslated). 3 new tests.
 
+**More release metadata for v1.0.0: git commit, migration state, a
+`version_info` command, `CHANGELOG.md`.**
+
+- `apps.core.version.get_git_sha()` reads an image-baked `GIT_SHA`
+  file (never committed — a build artifact, not source), distinct
+  from `VERSION` since two builds can share a version number but
+  never a commit. `scripts/build.sh` is the optional build path that
+  actually fills it in (along with `APP_VERSION`/`BUILD_DATE`) via
+  Docker build-args, which the `Dockerfile`'s runtime stage turns into
+  both that file and standard OCI image labels
+  (`org.opencontainers.image.revision`/`.version`/`.created` —
+  inspectable via `docker image inspect`). The plain `docker compose
+  up -d --build` from this README's own "Production" section still
+  works unchanged — everything just defaults to "unknown" instead.
+- `apps.core.version.get_migration_state()` reads Django's own
+  migration-recorder table — the real compatibility signal for
+  whether a database backup is safe to load into a given code
+  version, which a version string alone can't answer.
+- `python manage.py version_info [--pretty]` bundles version/git
+  commit/migration state/timestamp into one JSON blob — the intended
+  call a future backup script makes to stamp an archive, and a future
+  restore path makes to check a backup against the instance it's
+  restoring into.
+- New `CHANGELOG.md` (Keep a Changelog style) maps version numbers to
+  what changed, distinct from this README's "Status" section (the
+  detailed, ongoing build log).
+- 6 new tests (487 total, full suite green). No new UI strings —
+  none of this is user-facing chrome.
+
 ## Local development
 
 ```bash
@@ -977,6 +1006,17 @@ a TLS-terminating proxy in front of this stack or explicitly opt out.
 
 ```bash
 docker compose -f docker-compose.yml up -d --build
+```
+
+For an image whose `VERSION`/git commit/build date are actually baked
+into its OCI labels (`docker image inspect`) and a `version_info`
+management command instead of defaulting to "unknown" — see
+`docs/ARCHITECTURE.md` "Versioning" — build with `scripts/build.sh`
+first, then start the stack without `--build` so it uses that image:
+
+```bash
+./scripts/build.sh
+docker compose -f docker-compose.yml up -d
 ```
 
 ## Tests & linting

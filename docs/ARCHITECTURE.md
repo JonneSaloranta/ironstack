@@ -353,7 +353,39 @@ without either script needing to import Django. `apps.core.version.
 get_version()` reads and caches it; `apps.core.context_processors.
 app_version` puts it in every template's context (`{{ app_version }}`)
 so any page can display it, even though only the profile page footer
-does today.
+does today. `CHANGELOG.md` maps version numbers to what changed —
+distinct from `README.md`'s "Status" section, which is the detailed,
+ongoing build log updated with every feature as it lands.
+
+Two more pieces of build/release metadata exist for the same "future
+backup/restore tooling" reason, both in `apps.core.version`:
+
+- **Git commit** (`get_git_sha()`): reads a `GIT_SHA` file the same way
+  as `VERSION`, but that file is a build artifact, never committed
+  (`.gitignore`) — only `scripts/build.sh` writes it, by passing
+  `GIT_SHA`/`APP_VERSION`/`BUILD_DATE` as Docker build-args that the
+  `Dockerfile`'s runtime stage turns into both the `GIT_SHA` file and
+  OCI image labels (`org.opencontainers.image.revision`/`.version`/
+  `.created` — inspectable via `docker image inspect` without the app
+  even running). A plain `docker compose up -d --build` skips the
+  script and gets "unknown" for all three — harmless, since none of
+  this is required for the app to run; it only exists for anyone who
+  wants precise build provenance. Kept distinct from `VERSION`
+  deliberately: two builds can share a version number (e.g. a hotfix
+  before the next bump), but never share a commit.
+- **Migration state** (`get_migration_state()`): the real technical
+  compatibility signal for whether a database backup is safe to load
+  into a given code version — `VERSION` alone can't answer that,
+  since two different versions could in principle share a migration
+  state or not. Reads Django's own migration-recorder table directly,
+  so unlike `get_version()`/`get_git_sha()` it's never cached (it
+  reflects live database state).
+
+`python manage.py version_info [--pretty]` bundles all three
+(version, git commit, migration state) plus a timestamp into one JSON
+blob — the intended call a future backup script makes to stamp an
+archive, and a future restore path makes to check a backup's metadata
+against the instance it's restoring into.
 
 ## Domain services
 

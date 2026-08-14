@@ -25,6 +25,22 @@ COPY --from=build /venv /venv
 ENV PATH="/venv/bin:${PATH}"
 RUN useradd --create-home --uid 1000 django
 COPY . .
+
+# Build-time metadata (docs/ARCHITECTURE.md "Versioning") — none of
+# these are required for `docker compose up -d --build` to work; they
+# default to "unknown" so that simple path is unaffected.
+# scripts/build.sh fills them in for anyone who wants full version/
+# build metadata baked into the image and its OCI labels.
+ARG GIT_SHA=unknown
+ARG APP_VERSION=unknown
+ARG BUILD_DATE=unknown
+RUN echo "$GIT_SHA" > GIT_SHA
+LABEL org.opencontainers.image.title="IronStack" \
+      org.opencontainers.image.description="Self-hosted, mobile-first fitness and activity tracker" \
+      org.opencontainers.image.version="$APP_VERSION" \
+      org.opencontainers.image.revision="$GIT_SHA" \
+      org.opencontainers.image.created="$BUILD_DATE"
+
 RUN mkdir -p /app/staticfiles /app/media && chown -R django:django /app
 USER django
 EXPOSE 8000
