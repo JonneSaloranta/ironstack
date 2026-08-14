@@ -12,5 +12,7 @@ urlpatterns = [
     path("measurements/", include("apps.measurements.urls")),
     path("activities/", include("apps.activities.urls")),
     path("analytics/", include("apps.analytics.urls")),
+    path("api/v1/", include("apps.api.urls")),
+    path("api/keys/", include("apps.api.urls_web")),
     path("", include("apps.core.urls")),
 ]

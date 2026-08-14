@@ -150,6 +150,54 @@ msgstr "1 год"
 msgid "All time"
 msgstr "За всё время"
 
+msgid "Create"
+msgstr "Создание"
+
+msgid "Read"
+msgstr "Чтение"
+
+msgid "Update"
+msgstr "Изменение"
+
+msgid "Delete"
+msgstr "Удалить"
+
+msgid "Name"
+msgstr "Название"
+
+msgid "A label to tell your keys apart."
+msgstr "Метка, чтобы отличать ваши ключи друг от друга."
+
+msgid "Profile"
+msgstr "Профиль"
+
+msgid "Exercises"
+msgstr "Упражнения"
+
+msgid "Programs"
+msgstr "Программы"
+
+msgid "Workouts"
+msgstr "Тренировки"
+
+msgid "Measurements"
+msgstr "Измерения"
+
+msgid "Activities"
+msgstr "Активности"
+
+msgid "Records"
+msgstr "Рекорды"
+
+msgid "Analytics"
+msgstr "Аналитика"
+
+msgid "You've reached your maximum number of API keys."
+msgstr "Вы достигли максимального количества API-ключей."
+
+msgid "API key revoked."
+msgstr "API-ключ отозван."
+
 msgid "Underweight"
 msgstr "Недостаточный вес"
 
@@ -684,9 +732,6 @@ msgstr "Что-то пошло не так"
 msgid "Something went wrong on our end. Your data is safe — try again in a moment."
 msgstr "Что-то пошло не так на нашей стороне. Ваши данные в безопасности — попробуйте снова через минуту."
 
-msgid "Profile"
-msgstr "Профиль"
-
 msgid "Signed in as <strong>%(username)s</strong>"
 msgstr "Вы вошли как <strong>%(username)s</strong>"
 
@@ -695,6 +740,12 @@ msgstr "Сохранить настройки"
 
 msgid "Change password"
 msgstr "Изменить пароль"
+
+msgid "API keys"
+msgstr "API-ключи"
+
+msgid "Manage keys other apps can use to access your data."
+msgstr "Управляйте ключами, с помощью которых другие приложения могут получать доступ к вашим данным."
 
 msgid "Log out"
 msgstr "Выйти"
@@ -756,9 +807,6 @@ msgstr "Изменить"
 msgid "Delete this activity?"
 msgstr "Удалить эту активность?"
 
-msgid "Delete"
-msgstr "Удалить"
-
 msgid "No activities logged yet."
 msgstr "Активности ещё не записаны."
 
@@ -773,9 +821,6 @@ msgstr "Назад к активностям"
 
 msgid "New activity type"
 msgstr "Новый тип активности"
-
-msgid "Activities"
-msgstr "Активности"
 
 msgid "New"
 msgstr "Новый"
@@ -797,12 +842,6 @@ msgstr "Типов активности пока нет."
 
 msgid "Date range"
 msgstr "Диапазон дат"
-
-msgid "Analytics"
-msgstr "Аналитика"
-
-msgid "Workouts"
-msgstr "Тренировки"
 
 msgid "Training time"
 msgstr "Время тренировок"
@@ -855,6 +894,57 @@ msgstr "Посмотреть текущие"
 msgid "Back to exercise"
 msgstr "Назад к упражнению"
 
+msgid "API key created"
+msgstr "API-ключ создан"
+
+msgid "Copy this key now — you won't be able to see it again."
+msgstr "Скопируйте этот ключ сейчас — вы больше не сможете его увидеть."
+
+msgid "Done"
+msgstr "Готово"
+
+msgid "New API key"
+msgstr "Новый API-ключ"
+
+msgid "Choose exactly what this key is allowed to do, per resource — leave everything unchecked for a context to block it entirely."
+msgstr "Выберите точно, что этот ключ может делать в каждом разделе — оставьте всё непомеченным, чтобы полностью заблокировать раздел."
+
+msgid "Context"
+msgstr "Раздел"
+
+msgid "Create key"
+msgstr "Создать ключ"
+
+msgid "Back to API keys"
+msgstr "Назад к API-ключам"
+
+msgid "You can create %(counter)s more key."
+msgid_plural "You can create %(counter)s more keys."
+msgstr[0] "Вы можете создать ещё %(counter)s ключ."
+msgstr[1] "Вы можете создать ещё %(counter)s ключа."
+msgstr[2] "Вы можете создать ещё %(counter)s ключей."
+
+msgid "Tier: %(tier)s"
+msgstr "Уровень: %(tier)s"
+
+msgid "last used %(time)s ago"
+msgstr "последнее использование %(time)s назад"
+
+msgid "never used"
+msgstr "никогда не использовался"
+
+msgid "Revoke this API key? Anything using it will stop working immediately."
+msgstr "Отозвать этот API-ключ? Всё, что его использует, немедленно перестанет работать."
+
+msgid "Revoke"
+msgstr "Отозвать"
+
+msgid "No API keys yet."
+msgstr "Пока нет API-ключей."
+
+msgid "Back to profile"
+msgstr "Назад к профилю"
+
 msgid "Skip to content"
 msgstr "Перейти к содержимому"
 
@@ -869,9 +959,6 @@ msgstr "Прогресс"
 
 msgid "Workout"
 msgstr "Тренировка"
-
-msgid "Programs"
-msgstr "Программы"
 
 msgid "Continue training"
 msgstr "Продолжить тренировку"
@@ -1031,9 +1118,6 @@ msgstr "Изменить упражнение"
 
 msgid "New exercise"
 msgstr "Новое упражнение"
-
-msgid "Exercises"
-msgstr "Упражнения"
 
 msgid "Search exercises…"
 msgstr "Поиск упражнений…"
@@ -1223,9 +1307,6 @@ msgstr "Пароль изменён"
 
 msgid "Your password has been updated."
 msgstr "Ваш пароль обновлён."
-
-msgid "Back to profile"
-msgstr "Назад к профилю"
 
 msgid "Target: %(count)s × %(min)s-%(max)s"
 msgstr "Цель: %(count)s × %(min)s-%(max)s"

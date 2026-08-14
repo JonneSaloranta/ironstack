@@ -147,6 +147,54 @@ msgstr "1 år"
 msgid "All time"
 msgstr "All tid"
 
+msgid "Create"
+msgstr "Skapa"
+
+msgid "Read"
+msgstr "Läsa"
+
+msgid "Update"
+msgstr "Uppdatera"
+
+msgid "Delete"
+msgstr "Ta bort"
+
+msgid "Name"
+msgstr "Namn"
+
+msgid "A label to tell your keys apart."
+msgstr "En etikett för att skilja dina nycklar åt."
+
+msgid "Profile"
+msgstr "Profil"
+
+msgid "Exercises"
+msgstr "Övningar"
+
+msgid "Programs"
+msgstr "Program"
+
+msgid "Workouts"
+msgstr "Träningspass"
+
+msgid "Measurements"
+msgstr "Mätningar"
+
+msgid "Activities"
+msgstr "Aktiviteter"
+
+msgid "Records"
+msgstr "Rekord"
+
+msgid "Analytics"
+msgstr "Analys"
+
+msgid "You've reached your maximum number of API keys."
+msgstr "Du har nått ditt max antal API-nycklar."
+
+msgid "API key revoked."
+msgstr "API-nyckeln har återkallats."
+
 msgid "Underweight"
 msgstr "Undervikt"
 
@@ -681,9 +729,6 @@ msgstr "Något gick fel"
 msgid "Something went wrong on our end. Your data is safe — try again in a moment."
 msgstr "Något gick fel på vår sida. Din data är säker — försök igen om en stund."
 
-msgid "Profile"
-msgstr "Profil"
-
 msgid "Signed in as <strong>%(username)s</strong>"
 msgstr "Inloggad som <strong>%(username)s</strong>"
 
@@ -692,6 +737,12 @@ msgstr "Spara inställningar"
 
 msgid "Change password"
 msgstr "Byt lösenord"
+
+msgid "API keys"
+msgstr "API-nycklar"
+
+msgid "Manage keys other apps can use to access your data."
+msgstr "Hantera nycklar som andra appar kan använda för att komma åt dina data."
 
 msgid "Log out"
 msgstr "Logga ut"
@@ -753,9 +804,6 @@ msgstr "Redigera"
 msgid "Delete this activity?"
 msgstr "Ta bort denna aktivitet?"
 
-msgid "Delete"
-msgstr "Ta bort"
-
 msgid "No activities logged yet."
 msgstr "Inga aktiviteter loggade ännu."
 
@@ -770,9 +818,6 @@ msgstr "Tillbaka till aktiviteter"
 
 msgid "New activity type"
 msgstr "Ny aktivitetstyp"
-
-msgid "Activities"
-msgstr "Aktiviteter"
 
 msgid "New"
 msgstr "Ny"
@@ -793,12 +838,6 @@ msgstr "Inga aktivitetstyper ännu."
 
 msgid "Date range"
 msgstr "Datumintervall"
-
-msgid "Analytics"
-msgstr "Analys"
-
-msgid "Workouts"
-msgstr "Träningspass"
 
 msgid "Training time"
 msgstr "Träningstid"
@@ -851,6 +890,56 @@ msgstr "Visa aktuella"
 msgid "Back to exercise"
 msgstr "Tillbaka till övningen"
 
+msgid "API key created"
+msgstr "API-nyckel skapad"
+
+msgid "Copy this key now — you won't be able to see it again."
+msgstr "Kopiera den här nyckeln nu — du kan inte se den igen."
+
+msgid "Done"
+msgstr "Klar"
+
+msgid "New API key"
+msgstr "Ny API-nyckel"
+
+msgid "Choose exactly what this key is allowed to do, per resource — leave everything unchecked for a context to block it entirely."
+msgstr "Välj exakt vad den här nyckeln får göra, per resurs — lämna allt omarkerat för att blockera en resurs helt."
+
+msgid "Context"
+msgstr "Kontext"
+
+msgid "Create key"
+msgstr "Skapa nyckel"
+
+msgid "Back to API keys"
+msgstr "Tillbaka till API-nycklar"
+
+msgid "You can create %(counter)s more key."
+msgid_plural "You can create %(counter)s more keys."
+msgstr[0] "Du kan skapa %(counter)s nyckel till."
+msgstr[1] "Du kan skapa %(counter)s nycklar till."
+
+msgid "Tier: %(tier)s"
+msgstr "Nivå: %(tier)s"
+
+msgid "last used %(time)s ago"
+msgstr "senast använd för %(time)s sedan"
+
+msgid "never used"
+msgstr "aldrig använd"
+
+msgid "Revoke this API key? Anything using it will stop working immediately."
+msgstr "Återkalla den här API-nyckeln? Allt som använder den slutar fungera omedelbart."
+
+msgid "Revoke"
+msgstr "Återkalla"
+
+msgid "No API keys yet."
+msgstr "Inga API-nycklar än."
+
+msgid "Back to profile"
+msgstr "Tillbaka till profilen"
+
 msgid "Skip to content"
 msgstr "Hoppa till innehåll"
 
@@ -865,9 +954,6 @@ msgstr "Framsteg"
 
 msgid "Workout"
 msgstr "Träning"
-
-msgid "Programs"
-msgstr "Program"
 
 msgid "Continue training"
 msgstr "Fortsätt träna"
@@ -1025,9 +1111,6 @@ msgstr "Redigera övning"
 
 msgid "New exercise"
 msgstr "Ny övning"
-
-msgid "Exercises"
-msgstr "Övningar"
 
 msgid "Search exercises…"
 msgstr "Sök övningar…"
@@ -1217,9 +1300,6 @@ msgstr "Lösenordet har ändrats"
 
 msgid "Your password has been updated."
 msgstr "Ditt lösenord har uppdaterats."
-
-msgid "Back to profile"
-msgstr "Tillbaka till profilen"
 
 msgid "Target: %(count)s × %(min)s-%(max)s"
 msgstr "Mål: %(count)s × %(min)s-%(max)s"

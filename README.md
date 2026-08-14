@@ -774,6 +774,55 @@ bug, not a chart bug.**
 - 1 new test (404 total) confirming the fetch handler no longer matches
   the old cache-first shape.
 
+**A real, public API** — explicitly requested, and explicitly crossing
+`docs/ARCHITECTURE.md`'s original "no REST/DRF API... until an actual
+client needs it" guidance, so this one started with two clarifying
+questions rather than an implementation: Django REST Framework vs.
+hand-rolled, and full resource scope now vs. a smaller first pass. Both
+answered with the recommended option — DRF, and every resource area at
+once. See `docs/API.md` for the complete picture; summary of what
+shipped:
+
+- **Authentication**: per-user API keys (`Authorization: Bearer <key>`),
+  never session/cookie auth. A key's secret is shown exactly once at
+  creation and stored only as a SHA-256 hash.
+- **Authorization**: every key carries independent Create/Read/Update/
+  Delete flags *per context* (profile, exercises, programs, workouts,
+  measurements, activities, records, analytics) — a key scoped to
+  "programs: read" can't touch exercises at all, and can't write
+  programs either, checked fresh on every request.
+- **Rate limiting**: every key belongs to an admin-editable
+  `RateLimitTier` (requests/minute + requests/day) — editing a tier's
+  numbers in Django admin takes effect on every key on that tier
+  immediately, no redeploy. Seeded with three tiers (Basic/Standard/
+  Extended); counters live in a new `django_cache` database table
+  (Django's `DatabaseCache` backend) rather than the in-memory default,
+  since gunicorn's multiple worker processes don't share memory — an
+  in-memory counter would silently allow `worker_count` times the
+  configured rate.
+- **Key management**: self-service from Profile → "API keys" — create
+  (name + an 8-context × 4-verb permission grid), list, revoke. Capped
+  at `ApiSettings.max_api_keys_per_user` (admin-editable, default 10)
+  keys per user.
+- **Endpoints**: full CRUD (where it makes sense) across all 8 contexts
+  — exercises, programs/workouts/prescriptions, workout session logging
+  (including a real "log a set" endpoint that runs PR detection exactly
+  like the web UI's own does), measurement/activity types and entries,
+  read-only personal records, and read-only analytics summaries/
+  achievements. Every endpoint calls the exact same `apps/*/services.py`
+  functions the server-rendered web views already use — never a second
+  copy of ownership-scoping or domain logic. All weights/lengths are
+  canonical units (kg/meters), never converted to a display-unit
+  preference — a deliberate choice for an unambiguous machine contract,
+  documented in `docs/API.md` "Canonical units, always".
+- New `apps.api` app: models (`ApiKey`, `ApiKeyPermission`,
+  `RateLimitTier`, `ApiSettings`), DRF authentication/permission/
+  throttle classes, serializers/viewsets for every context, a
+  self-service key-management UI, and Django admin coverage for
+  everything admin-adjustable.
+- 26 new/changed UI strings translated across fi/sv/ru/it/et (463 total,
+  0 fuzzy/untranslated). 52 new tests (456 total).
+
 ## Local development
 
 ```bash

@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% trans "API key created" %} — IronStack{% endblock %}
+{% block content %}
+<div class="top-bar">
+  <h1 style="margin:0;">{% trans "API key created" %}</h1>
+</div>
+
+<div class="card">
+  <p><strong>{% trans "Copy this key now — you won't be able to see it again." %}</strong></p>
+  <p class="text-muted">{{ api_key.name }}</p>
+  <textarea readonly rows="3" style="font-family:monospace; font-size:0.85rem;" onclick="this.select();">{{ raw_secret }}</textarea>
+</div>
+
+<p><a class="button" href="{% url 'api_keys:key-list' %}">{% trans "Done" %}</a></p>
+{% endblock %}

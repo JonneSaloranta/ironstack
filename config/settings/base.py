@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "rest_framework",
     # IronStack apps
     "apps.core",
     "apps.accounts",
@@ -51,6 +52,7 @@ INSTALLED_APPS = [
     "apps.measurements",
     "apps.activities",
     "apps.analytics",
+    "apps.api",
 ]
 
 MIDDLEWARE = [
@@ -151,3 +153,45 @@ MEDIA_URL = "media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# Backs both Django's generic cache API and, more importantly here,
+# apps.api's rate-limit throttling (DRF's throttle classes read/write
+# request counters through this same cache). Production runs multiple
+# gunicorn workers (docker-compose.yml, --workers 3) as separate
+# processes with no shared memory, so Django's default LocMemCache would
+# give each worker its own independent counter — a key's real allowed
+# throughput would end up worker_count times its configured limit,
+# silently. The database cache backend is a real shared store without
+# adding Redis or any other new infrastructure dependency; the table it
+# needs is created by `manage.py createcachetable`, wired into
+# docker-compose's startup command right after `migrate` the same way
+# `compilemessages` already is.
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.db.DatabaseCache",
+        "LOCATION": "django_cache",
+    }
+}
+
+# apps.api — see docs/API.md. Authentication/permission/throttling are
+# all API-key-driven (apps.api.auth/permissions/throttling), never
+# session/cookie auth — this is a machine-to-machine API, not a second
+# way to drive the same server-rendered UI a browser uses.
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": ["apps.api.auth.ApiKeyAuthentication"],
+    "DEFAULT_PERMISSION_CLASSES": ["apps.api.permissions.HasContextPermission"],
+    "DEFAULT_THROTTLE_CLASSES": [
+        "apps.api.throttling.ApiKeyMinuteThrottle",
+        "apps.api.throttling.ApiKeyDayThrottle",
+    ],
+    # Both throttle classes compute their actual rate per-request from
+    # the authenticated key's own tier (see apps.api.throttling) — these
+    # DEFAULT_THROTTLE_RATES entries exist only because DRF's
+    # SimpleRateThrottle requires *some* configured rate to key its
+    # per-scope cache namespace by; the real numbers never come from here.
+    "DEFAULT_THROTTLE_RATES": {"api_key_minute": "1000/min", "api_key_day": "1000000/day"},
+    "DEFAULT_RENDERER_CLASSES": ["rest_framework.renderers.JSONRenderer"],
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
+    "PAGE_SIZE": 25,
+    "DATETIME_FORMAT": "iso-8601",
+}

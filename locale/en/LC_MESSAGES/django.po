@@ -147,6 +147,54 @@ msgstr "1 year"
 msgid "All time"
 msgstr "All time"
 
+msgid "Create"
+msgstr "Create"
+
+msgid "Read"
+msgstr "Read"
+
+msgid "Update"
+msgstr "Update"
+
+msgid "Delete"
+msgstr "Delete"
+
+msgid "Name"
+msgstr "Name"
+
+msgid "A label to tell your keys apart."
+msgstr "A label to tell your keys apart."
+
+msgid "Profile"
+msgstr "Profile"
+
+msgid "Exercises"
+msgstr "Exercises"
+
+msgid "Programs"
+msgstr "Programs"
+
+msgid "Workouts"
+msgstr "Workouts"
+
+msgid "Measurements"
+msgstr "Measurements"
+
+msgid "Activities"
+msgstr "Activities"
+
+msgid "Records"
+msgstr "Records"
+
+msgid "Analytics"
+msgstr "Analytics"
+
+msgid "You've reached your maximum number of API keys."
+msgstr "You've reached your maximum number of API keys."
+
+msgid "API key revoked."
+msgstr "API key revoked."
+
 msgid "Underweight"
 msgstr "Underweight"
 
@@ -681,9 +729,6 @@ msgstr "Something went wrong"
 msgid "Something went wrong on our end. Your data is safe — try again in a moment."
 msgstr "Something went wrong on our end. Your data is safe — try again in a moment."
 
-msgid "Profile"
-msgstr "Profile"
-
 msgid "Signed in as <strong>%(username)s</strong>"
 msgstr "Signed in as <strong>%(username)s</strong>"
 
@@ -692,6 +737,12 @@ msgstr "Save preferences"
 
 msgid "Change password"
 msgstr "Change password"
+
+msgid "API keys"
+msgstr "API keys"
+
+msgid "Manage keys other apps can use to access your data."
+msgstr "Manage keys other apps can use to access your data."
 
 msgid "Log out"
 msgstr "Log out"
@@ -753,9 +804,6 @@ msgstr "Edit"
 msgid "Delete this activity?"
 msgstr "Delete this activity?"
 
-msgid "Delete"
-msgstr "Delete"
-
 msgid "No activities logged yet."
 msgstr "No activities logged yet."
 
@@ -770,9 +818,6 @@ msgstr "Back to activities"
 
 msgid "New activity type"
 msgstr "New activity type"
-
-msgid "Activities"
-msgstr "Activities"
 
 msgid "New"
 msgstr "New"
@@ -793,12 +838,6 @@ msgstr "No activity types yet."
 
 msgid "Date range"
 msgstr "Date range"
-
-msgid "Analytics"
-msgstr "Analytics"
-
-msgid "Workouts"
-msgstr "Workouts"
 
 msgid "Training time"
 msgstr "Training time"
@@ -851,6 +890,56 @@ msgstr "View current"
 msgid "Back to exercise"
 msgstr "Back to exercise"
 
+msgid "API key created"
+msgstr "API key created"
+
+msgid "Copy this key now — you won't be able to see it again."
+msgstr "Copy this key now — you won't be able to see it again."
+
+msgid "Done"
+msgstr "Done"
+
+msgid "New API key"
+msgstr "New API key"
+
+msgid "Choose exactly what this key is allowed to do, per resource — leave everything unchecked for a context to block it entirely."
+msgstr "Choose exactly what this key is allowed to do, per resource — leave everything unchecked for a context to block it entirely."
+
+msgid "Context"
+msgstr "Context"
+
+msgid "Create key"
+msgstr "Create key"
+
+msgid "Back to API keys"
+msgstr "Back to API keys"
+
+msgid "You can create %(counter)s more key."
+msgid_plural "You can create %(counter)s more keys."
+msgstr[0] "You can create %(counter)s more key."
+msgstr[1] "You can create %(counter)s more keys."
+
+msgid "Tier: %(tier)s"
+msgstr "Tier: %(tier)s"
+
+msgid "last used %(time)s ago"
+msgstr "last used %(time)s ago"
+
+msgid "never used"
+msgstr "never used"
+
+msgid "Revoke this API key? Anything using it will stop working immediately."
+msgstr "Revoke this API key? Anything using it will stop working immediately."
+
+msgid "Revoke"
+msgstr "Revoke"
+
+msgid "No API keys yet."
+msgstr "No API keys yet."
+
+msgid "Back to profile"
+msgstr "Back to profile"
+
 msgid "Skip to content"
 msgstr "Skip to content"
 
@@ -865,9 +954,6 @@ msgstr "Progress"
 
 msgid "Workout"
 msgstr "Workout"
-
-msgid "Programs"
-msgstr "Programs"
 
 msgid "Continue training"
 msgstr "Continue training"
@@ -1025,9 +1111,6 @@ msgstr "Edit exercise"
 
 msgid "New exercise"
 msgstr "New exercise"
-
-msgid "Exercises"
-msgstr "Exercises"
 
 msgid "Search exercises…"
 msgstr "Search exercises…"
@@ -1217,9 +1300,6 @@ msgstr "Password changed"
 
 msgid "Your password has been updated."
 msgstr "Your password has been updated."
-
-msgid "Back to profile"
-msgstr "Back to profile"
 
 msgid "Target: %(count)s × %(min)s-%(max)s"
 msgstr "Target: %(count)s × %(min)s-%(max)s"

@@ -62,7 +62,7 @@ class TrainingSummary:
     total_volume: Decimal
 
 
-def training_summary(user, date_range) -> TrainingSummary:
+def _training_summary(user, date_range, *, convert) -> TrainingSummary:
     sessions = list(_completed_sessions(user, date_range))
     total_duration = sum(
         (s.ended_at - s.started_at for s in sessions if s.ended_at), timedelta()
@@ -73,8 +73,22 @@ def training_summary(user, date_range) -> TrainingSummary:
     return TrainingSummary(
         session_count=len(sessions),
         total_duration=total_duration,
-        total_volume=_weight_display(total_volume, user),
+        total_volume=_weight_display(total_volume, user) if convert else total_volume,
     )
+
+
+def training_summary(user, date_range) -> TrainingSummary:
+    return _training_summary(user, date_range, convert=True)
+
+
+def training_summary_canonical(user, date_range) -> TrainingSummary:
+    """Same figures as `training_summary`, but `total_volume` stays
+    canonical kg rather than converting to the user's display unit —
+    for apps.api, which never applies that conversion on any endpoint
+    (see apps.api.serializers' own docstring for why: an unambiguous
+    unit a machine caller can rely on regardless of who's asking, not a
+    human-facing preference)."""
+    return _training_summary(user, date_range, convert=False)
 
 
 def weekly_volume_series(user, date_range):

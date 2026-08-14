@@ -147,6 +147,54 @@ msgstr "1 vuosi"
 msgid "All time"
 msgstr "Koko aika"
 
+msgid "Create"
+msgstr "Luonti"
+
+msgid "Read"
+msgstr "Luku"
+
+msgid "Update"
+msgstr "Muokkaus"
+
+msgid "Delete"
+msgstr "Poista"
+
+msgid "Name"
+msgstr "Nimi"
+
+msgid "A label to tell your keys apart."
+msgstr "Nimike, jolla erotat avaimesi toisistaan."
+
+msgid "Profile"
+msgstr "Profiili"
+
+msgid "Exercises"
+msgstr "Liikkeet"
+
+msgid "Programs"
+msgstr "Ohjelmat"
+
+msgid "Workouts"
+msgstr "Treenit"
+
+msgid "Measurements"
+msgstr "Mittaukset"
+
+msgid "Activities"
+msgstr "Aktiviteetit"
+
+msgid "Records"
+msgstr "Ennätykset"
+
+msgid "Analytics"
+msgstr "Analytiikka"
+
+msgid "You've reached your maximum number of API keys."
+msgstr "Olet saavuttanut API-avainten enimmäismäärän."
+
+msgid "API key revoked."
+msgstr "API-avain peruutettu."
+
 msgid "Underweight"
 msgstr "Alipainoinen"
 
@@ -681,9 +729,6 @@ msgstr "Jokin meni pieleen"
 msgid "Something went wrong on our end. Your data is safe — try again in a moment."
 msgstr "Jokin meni pieleen meidän puolellamme. Tietosi ovat turvassa — yritä hetken kuluttua uudelleen."
 
-msgid "Profile"
-msgstr "Profiili"
-
 msgid "Signed in as <strong>%(username)s</strong>"
 msgstr "Kirjautunut käyttäjänä <strong>%(username)s</strong>"
 
@@ -692,6 +737,12 @@ msgstr "Tallenna asetukset"
 
 msgid "Change password"
 msgstr "Vaihda salasana"
+
+msgid "API keys"
+msgstr "API-avaimet"
+
+msgid "Manage keys other apps can use to access your data."
+msgstr "Hallitse avaimia, joilla muut sovellukset voivat käyttää tietojasi."
 
 msgid "Log out"
 msgstr "Kirjaudu ulos"
@@ -753,9 +804,6 @@ msgstr "Muokkaa"
 msgid "Delete this activity?"
 msgstr "Poistetaanko tämä aktiviteetti?"
 
-msgid "Delete"
-msgstr "Poista"
-
 msgid "No activities logged yet."
 msgstr "Aktiviteetteja ei ole vielä kirjattu."
 
@@ -770,9 +818,6 @@ msgstr "Takaisin aktiviteetteihin"
 
 msgid "New activity type"
 msgstr "Uusi aktiviteettityyppi"
-
-msgid "Activities"
-msgstr "Aktiviteetit"
 
 msgid "New"
 msgstr "Uusi"
@@ -793,12 +838,6 @@ msgstr "Aktiviteettityyppejä ei ole vielä."
 
 msgid "Date range"
 msgstr "Ajanjakso"
-
-msgid "Analytics"
-msgstr "Analytiikka"
-
-msgid "Workouts"
-msgstr "Treenit"
 
 msgid "Training time"
 msgstr "Treeniaika"
@@ -851,6 +890,56 @@ msgstr "Näytä nykyiset"
 msgid "Back to exercise"
 msgstr "Takaisin liikkeeseen"
 
+msgid "API key created"
+msgstr "API-avain luotu"
+
+msgid "Copy this key now — you won't be able to see it again."
+msgstr "Kopioi tämä avain nyt — et näe sitä enää uudelleen."
+
+msgid "Done"
+msgstr "Valmis"
+
+msgid "New API key"
+msgstr "Uusi API-avain"
+
+msgid "Choose exactly what this key is allowed to do, per resource — leave everything unchecked for a context to block it entirely."
+msgstr "Valitse tarkalleen mitä tämä avain saa tehdä kussakin osiossa — jätä kaikki valitsematta estääksesi osion kokonaan."
+
+msgid "Context"
+msgstr "Osio"
+
+msgid "Create key"
+msgstr "Luo avain"
+
+msgid "Back to API keys"
+msgstr "Takaisin API-avaimiin"
+
+msgid "You can create %(counter)s more key."
+msgid_plural "You can create %(counter)s more keys."
+msgstr[0] "Voit luoda %(counter)s avaimen lisää."
+msgstr[1] "Voit luoda %(counter)s avainta lisää."
+
+msgid "Tier: %(tier)s"
+msgstr "Taso: %(tier)s"
+
+msgid "last used %(time)s ago"
+msgstr "viimeksi käytetty %(time)s sitten"
+
+msgid "never used"
+msgstr "ei koskaan käytetty"
+
+msgid "Revoke this API key? Anything using it will stop working immediately."
+msgstr "Peruutetaanko tämä API-avain? Kaikki sitä käyttävä lakkaa toimimasta välittömästi."
+
+msgid "Revoke"
+msgstr "Peruuta"
+
+msgid "No API keys yet."
+msgstr "Ei vielä API-avaimia."
+
+msgid "Back to profile"
+msgstr "Takaisin profiiliin"
+
 msgid "Skip to content"
 msgstr "Siirry sisältöön"
 
@@ -865,9 +954,6 @@ msgstr "Edistyminen"
 
 msgid "Workout"
 msgstr "Treeni"
-
-msgid "Programs"
-msgstr "Ohjelmat"
 
 msgid "Continue training"
 msgstr "Jatka harjoittelua"
@@ -1025,9 +1111,6 @@ msgstr "Muokkaa liikettä"
 
 msgid "New exercise"
 msgstr "Uusi liike"
-
-msgid "Exercises"
-msgstr "Liikkeet"
 
 msgid "Search exercises…"
 msgstr "Hae liikkeitä…"
@@ -1217,9 +1300,6 @@ msgstr "Salasana vaihdettu"
 
 msgid "Your password has been updated."
 msgstr "Salasanasi on päivitetty."
-
-msgid "Back to profile"
-msgstr "Takaisin profiiliin"
 
 msgid "Target: %(count)s × %(min)s-%(max)s"
 msgstr "Tavoite: %(count)s × %(min)s-%(max)s"

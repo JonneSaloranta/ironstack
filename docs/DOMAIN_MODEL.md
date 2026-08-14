@@ -44,6 +44,14 @@ personally see either widget — turning it off doesn't hide them from
 their owner, it hides the owner's own data from everyone, themselves
 included.
 
+A user may also hold `ApiKey`s (`apps.api`, see `docs/API.md`) — up to
+`ApiSettings.max_api_keys_per_user` (admin-editable, default 10) at
+once, each with its own `RateLimitTier` and per-context CRUD
+permissions. Kept in a separate app rather than on `User` directly since
+API access is a distinct concern from the account itself, the same
+reasoning `apps.progression`/`apps.records` live apart from
+`apps.workouts`.
+
 ## Exercise
 
 An exercise represents a movement.

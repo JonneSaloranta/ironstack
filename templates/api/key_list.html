@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% trans "API keys" %} — IronStack{% endblock %}
+{% block content %}
+<div class="top-bar">
+  <h1 style="margin:0;">{% trans "API keys" %}</h1>
+  {% if remaining_quota > 0 %}
+    <a class="button" href="{% url 'api_keys:key-create' %}">{% trans "New" %}</a>
+  {% endif %}
+</div>
+
+<p class="text-muted">
+  {% blocktrans count counter=remaining_quota %}You can create {{ counter }} more key.{% plural %}You can create {{ counter }} more keys.{% endblocktrans %}
+</p>
+
+{% for key in keys %}
+  <div class="card">
+    <strong>{{ key.name }}</strong>
+    <span class="tag tag-muted">{{ key.prefix }}…</span>
+    <div class="text-muted">
+      {% blocktrans with tier=key.tier.name %}Tier: {{ tier }}{% endblocktrans %}
+      {% if key.last_used_at %}
+        · {% blocktrans with time=key.last_used_at|timesince %}last used {{ time }} ago{% endblocktrans %}
+      {% else %}
+        · {% trans "never used" %}
+      {% endif %}
+    </div>
+    <form method="post" action="{% url 'api_keys:key-revoke' key.pk %}" onsubmit="return confirm('{% trans "Revoke this API key? Anything using it will stop working immediately." %}');">
+      {% csrf_token %}
+      <button type="submit" class="button-danger">{% trans "Revoke" %}</button>
+    </form>
+  </div>
+{% empty %}
+  <div class="card empty-state">
+    <p>{% trans "No API keys yet." %}</p>
+  </div>
+{% endfor %}
+
+<p><a class="button-secondary" href="{% url 'profile' %}">&larr; {% trans "Back to profile" %}</a></p>
+{% endblock %}

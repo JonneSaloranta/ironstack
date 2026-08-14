@@ -1,0 +1,565 @@
+from django.contrib.auth import get_user_model
+from django.test import TestCase
+from django.urls import reverse
+from rest_framework.test import APITestCase
+
+from apps.exercises.models import Exercise
+from apps.workouts import services as workout_services
+
+from . import crypto, services
+from .models import ApiKey, ApiKeyPermission, ApiSettings, RateLimitTier
+
+User = get_user_model()
+
+
+def _all_permissions(**overrides):
+    """Every context granted every CRUD verb by default, with per-context
+    overrides for tests that need a narrower key."""
+    contexts = [
+        "profile",
+        "exercises",
+        "programs",
+        "workouts",
+        "measurements",
+        "activities",
+        "records",
+        "analytics",
+    ]
+    base = {
+        context: {"can_create": True, "can_read": True, "can_update": True, "can_delete": True}
+        for context in contexts
+    }
+    base.update(overrides)
+    return base
+
+
+def _create_key(user, **permission_overrides):
+    api_key, raw_secret = services.create_api_key(
+        user, name="Test key", permissions=_all_permissions(**permission_overrides)
+    )
+    return api_key, raw_secret
+
+
+class RateLimitTierModelTests(TestCase):
+    def test_default_tiers_are_seeded(self):
+        """apps.api migration 0002 — a fresh install has something to
+        assign new keys to immediately."""
+        self.assertTrue(RateLimitTier.objects.filter(is_default=True).exists())
+
+    def test_str_shows_the_rates(self):
+        tier = RateLimitTier.objects.create(
+            name="Custom", requests_per_minute=42, requests_per_day=999
+        )
+        self.assertIn("42", str(tier))
+        self.assertIn("999", str(tier))
+
+
+class ApiSettingsModelTests(TestCase):
+    def test_load_creates_a_singleton_with_sensible_defaults(self):
+        settings_obj = ApiSettings.load()
+        self.assertEqual(settings_obj.pk, 1)
+        self.assertEqual(settings_obj.max_api_keys_per_user, 10)
+
+    def test_load_always_returns_the_same_row(self):
+        first = ApiSettings.load()
+        first.max_api_keys_per_user = 3
+        first.save()
+        second = ApiSettings.load()
+        self.assertEqual(second.pk, 1)
+        self.assertEqual(second.max_api_keys_per_user, 3)
+
+    def test_save_always_pins_pk_to_1(self):
+        obj = ApiSettings(max_api_keys_per_user=5)
+        obj.save()
+        self.assertEqual(obj.pk, 1)
+        self.assertEqual(ApiSettings.objects.count(), 1)
+
+
+class CryptoTests(TestCase):
+    def test_generate_secret_is_unique_each_time(self):
+        first = crypto.generate_secret()
+        second = crypto.generate_secret()
+        self.assertNotEqual(first[0], second[0])
+
+    def test_hash_is_deterministic(self):
+        raw_secret, _prefix, key_hash = crypto.generate_secret()
+        self.assertEqual(crypto.hash_secret(raw_secret), key_hash)
+
+    def test_prefix_is_a_stable_slice_of_the_secret(self):
+        raw_secret, prefix, _hash = crypto.generate_secret()
+        self.assertTrue(raw_secret.startswith(prefix))
+        self.assertTrue(prefix.startswith("isk_"))
+
+
+class ApiKeyServiceTests(TestCase):
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+
+    def test_create_api_key_returns_the_raw_secret_once(self):
+        api_key, raw_secret = _create_key(self.alice)
+        self.assertEqual(crypto.hash_secret(raw_secret), api_key.key_hash)
+
+    def test_create_api_key_assigns_the_default_tier(self):
+        api_key, _secret = _create_key(self.alice)
+        self.assertEqual(api_key.tier, RateLimitTier.objects.get(is_default=True))
+
+    def test_create_api_key_creates_all_context_permission_rows(self):
+        api_key, _secret = _create_key(self.alice)
+        self.assertEqual(api_key.permissions.count(), 8)
+
+    def test_permissions_reflect_what_was_requested(self):
+        api_key, _secret = _create_key(self.alice, exercises={"can_read": True})
+        exercises_perm = api_key.permissions.get(context="exercises")
+        self.assertTrue(exercises_perm.can_read)
+        self.assertFalse(exercises_perm.can_create)
+
+    def test_remaining_quota_decreases_as_keys_are_created(self):
+        self.assertEqual(services.remaining_key_quota(self.alice), 10)
+        _create_key(self.alice)
+        self.assertEqual(services.remaining_key_quota(self.alice), 9)
+
+    def test_create_api_key_raises_once_quota_is_exhausted(self):
+        ApiSettings.load()  # ensure the singleton exists
+        settings_obj = ApiSettings.load()
+        settings_obj.max_api_keys_per_user = 1
+        settings_obj.save()
+        _create_key(self.alice)
+        with self.assertRaises(ValueError):
+            _create_key(self.alice)
+
+    def test_quota_is_scoped_per_user(self):
+        bob = User.objects.create_user(username="bob", password="s3cret-pass")
+        _create_key(self.alice)
+        self.assertEqual(services.remaining_key_quota(bob), 10)
+
+    def test_revoke_deletes_the_key(self):
+        api_key, _secret = _create_key(self.alice)
+        services.revoke_api_key(api_key)
+        self.assertFalse(ApiKey.objects.filter(pk=api_key.pk).exists())
+
+    def test_set_permissions_updates_an_existing_key_without_duplicating_rows(self):
+        api_key, _secret = _create_key(self.alice)
+        services.set_permissions(api_key, {"exercises": {"can_read": True}})
+        self.assertEqual(api_key.permissions.count(), 8)
+        self.assertTrue(api_key.permissions.get(context="exercises").can_read)
+
+
+class ApiKeyAuthenticationTests(APITestCase):
+    """apps.api.auth.ApiKeyAuthentication — exercised through a real view
+    (the profile endpoint) rather than unit-testing the authenticator in
+    isolation, since its whole job is only meaningful in that context."""
+
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        self.api_key, self.raw_secret = _create_key(self.alice)
+
+    def test_a_valid_key_authenticates(self):
+        response = self.client.get(
+            reverse("api:profile"), HTTP_AUTHORIZATION=f"Bearer {self.raw_secret}"
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data["username"], "alice")
+
+    def test_no_authorization_header_is_rejected(self):
+        response = self.client.get(reverse("api:profile"))
+        self.assertEqual(response.status_code, 401)
+
+    def test_an_unknown_secret_is_rejected(self):
+        response = self.client.get(
+            reverse("api:profile"), HTTP_AUTHORIZATION="Bearer isk_not-a-real-key"
+        )
+        self.assertEqual(response.status_code, 401)
+
+    def test_a_revoked_key_is_rejected(self):
+        services.revoke_api_key(self.api_key)
+        response = self.client.get(
+            reverse("api:profile"), HTTP_AUTHORIZATION=f"Bearer {self.raw_secret}"
+        )
+        self.assertEqual(response.status_code, 401)
+
+    def test_an_inactive_key_is_rejected(self):
+        self.api_key.is_active = False
+        self.api_key.save()
+        response = self.client.get(
+            reverse("api:profile"), HTTP_AUTHORIZATION=f"Bearer {self.raw_secret}"
+        )
+        self.assertEqual(response.status_code, 401)
+
+    def test_a_successful_request_updates_last_used_at(self):
+        self.assertIsNone(self.api_key.last_used_at)
+        self.client.get(reverse("api:profile"), HTTP_AUTHORIZATION=f"Bearer {self.raw_secret}")
+        self.api_key.refresh_from_db()
+        self.assertIsNotNone(self.api_key.last_used_at)
+
+
+class ContextPermissionTests(APITestCase):
+    """apps.api.permissions.HasContextPermission — exercised through the
+    exercises endpoint (list = read, create = create)."""
+
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+
+    def _auth(self, raw_secret):
+        return {"HTTP_AUTHORIZATION": f"Bearer {raw_secret}"}
+
+    def test_a_key_with_read_can_list(self):
+        _api_key, raw_secret = _create_key(self.alice, exercises={"can_read": True})
+        response = self.client.get(reverse("api:exercise-list"), **self._auth(raw_secret))
+        self.assertEqual(response.status_code, 200)
+
+    def test_a_key_without_read_cannot_list(self):
+        _api_key, raw_secret = _create_key(self.alice, exercises={"can_read": False})
+        response = self.client.get(reverse("api:exercise-list"), **self._auth(raw_secret))
+        self.assertEqual(response.status_code, 403)
+
+    def test_a_key_with_read_but_not_create_cannot_post(self):
+        _api_key, raw_secret = _create_key(
+            self.alice, exercises={"can_read": True, "can_create": False}
+        )
+        response = self.client.post(
+            reverse("api:exercise-list"),
+            {"name": "Should Fail"},
+            format="json",
+            **self._auth(raw_secret),
+        )
+        self.assertEqual(response.status_code, 403)
+        self.assertFalse(Exercise.objects.filter(name="Should Fail").exists())
+
+    def test_a_key_with_create_can_post(self):
+        _api_key, raw_secret = _create_key(self.alice, exercises={"can_create": True})
+        response = self.client.post(
+            reverse("api:exercise-list"),
+            {"name": "API Custom Curl"},
+            format="json",
+            **self._auth(raw_secret),
+        )
+        self.assertEqual(response.status_code, 201)
+        self.assertTrue(Exercise.objects.filter(name="API Custom Curl", owner=self.alice).exists())
+
+    def test_permissions_are_scoped_per_context_not_all_or_nothing(self):
+        """A key granted only "programs" access must not be able to
+        touch "exercises" — the whole point of context-scoped keys."""
+        _api_key, raw_secret = _create_key(self.alice, exercises={}, programs={"can_read": True})
+        exercises_response = self.client.get(
+            reverse("api:exercise-list"), **self._auth(raw_secret)
+        )
+        programs_response = self.client.get(reverse("api:program-list"), **self._auth(raw_secret))
+        self.assertEqual(exercises_response.status_code, 403)
+        self.assertEqual(programs_response.status_code, 200)
+
+
+class RateLimitingTests(APITestCase):
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        self.tiny_tier = RateLimitTier.objects.create(
+            name="TestTiny", requests_per_minute=2, requests_per_day=1000
+        )
+        api_key, self.raw_secret = _create_key(self.alice)
+        api_key.tier = self.tiny_tier
+        api_key.save()
+
+    def test_requests_beyond_the_tiers_per_minute_limit_are_throttled(self):
+        auth = {"HTTP_AUTHORIZATION": f"Bearer {self.raw_secret}"}
+        statuses = [
+            self.client.get(reverse("api:profile"), **auth).status_code for _ in range(3)
+        ]
+        self.assertEqual(statuses, [200, 200, 429])
+
+    def test_editing_a_tiers_rate_takes_effect_without_recreating_the_key(self):
+        """The whole point of an admin-editable tier — bump the number
+        and every key on it is affected immediately."""
+        self.tiny_tier.requests_per_minute = 100
+        self.tiny_tier.save()
+        auth = {"HTTP_AUTHORIZATION": f"Bearer {self.raw_secret}"}
+        statuses = [
+            self.client.get(reverse("api:profile"), **auth).status_code for _ in range(5)
+        ]
+        self.assertTrue(all(code == 200 for code in statuses))
+
+
+class ProfileEndpointTests(APITestCase):
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        _api_key, self.raw_secret = _create_key(self.alice)
+
+    def _auth(self):
+        return {"HTTP_AUTHORIZATION": f"Bearer {self.raw_secret}"}
+
+    def test_get_returns_the_authenticated_users_own_profile(self):
+        response = self.client.get(reverse("api:profile"), **self._auth())
+        self.assertEqual(response.data["username"], "alice")
+
+    def test_patch_updates_preferences(self):
+        response = self.client.patch(
+            reverse("api:profile"), {"unit_system": "imperial"}, format="json", **self._auth()
+        )
+        self.assertEqual(response.status_code, 200)
+        self.alice.refresh_from_db()
+        self.assertEqual(self.alice.unit_system, "imperial")
+
+    def test_username_is_read_only(self):
+        response = self.client.patch(
+            reverse("api:profile"), {"username": "renamed"}, format="json", **self._auth()
+        )
+        self.assertEqual(response.status_code, 200)
+        self.alice.refresh_from_db()
+        self.assertEqual(self.alice.username, "alice")
+
+
+class WorkoutLoggingEndpointTests(APITestCase):
+    """The most important end-to-end path: logging a set via the API
+    must trigger PR detection exactly like apps.workouts.views.set_log
+    does for the web UI — see apps.api.views.ExerciseSetViewSet."""
+
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        self.exercise = Exercise.objects.create(name="API Test Squat", owner=None)
+        _api_key, self.raw_secret = _create_key(self.alice)
+
+    def _auth(self):
+        return {"HTTP_AUTHORIZATION": f"Bearer {self.raw_secret}"}
+
+    def test_starting_a_freeform_session_and_logging_a_set_creates_prs(self):
+        session_response = self.client.post(
+            reverse("api:session-list"), {}, format="json", **self._auth()
+        )
+        self.assertEqual(session_response.status_code, 201)
+        session_id = session_response.data["id"]
+
+        pe_response = self.client.post(
+            reverse("api:performed-exercise-list"),
+            {"session": session_id, "exercise": self.exercise.pk},
+            format="json",
+            **self._auth(),
+        )
+        self.assertEqual(pe_response.status_code, 201)
+        pe_id = pe_response.data["id"]
+
+        set_response = self.client.post(
+            reverse("api:set-list"),
+            {"performed_exercise": pe_id, "weight": "100.00", "reps": 5},
+            format="json",
+            **self._auth(),
+        )
+        self.assertEqual(set_response.status_code, 201)
+        self.assertEqual(set_response.data["set_number"], 1)
+
+        records_response = self.client.get(reverse("api:record-list"), **self._auth())
+        self.assertGreater(records_response.data["count"], 0)
+
+    def test_cannot_log_a_set_on_another_users_performed_exercise(self):
+        bob = User.objects.create_user(username="bob", password="s3cret-pass")
+        bob_session = workout_services.start_session(bob, workout=None)
+        bob_pe = workout_services.add_performed_exercise(bob_session, self.exercise)
+
+        response = self.client.post(
+            reverse("api:set-list"),
+            {"performed_exercise": bob_pe.pk, "weight": "100.00", "reps": 5},
+            format="json",
+            **self._auth(),
+        )
+        self.assertEqual(response.status_code, 400)
+
+    def test_cannot_log_a_set_once_the_session_is_completed(self):
+        session = workout_services.start_session(self.alice, workout=None)
+        performed = workout_services.add_performed_exercise(session, self.exercise)
+        workout_services.complete_session(session)
+
+        response = self.client.post(
+            reverse("api:set-list"),
+            {"performed_exercise": performed.pk, "weight": "100.00", "reps": 5},
+            format="json",
+            **self._auth(),
+        )
+        self.assertEqual(response.status_code, 400)
+
+    def test_completing_a_session_via_patch(self):
+        session = workout_services.start_session(self.alice, workout=None)
+        response = self.client.patch(
+            reverse("api:session-detail", args=[session.pk]),
+            {"status": "completed"},
+            format="json",
+            **self._auth(),
+        )
+        self.assertEqual(response.status_code, 200)
+        session.refresh_from_db()
+        self.assertEqual(session.status, "completed")
+        self.assertIsNotNone(session.ended_at)
+
+    def test_an_invalid_status_transition_is_rejected(self):
+        session = workout_services.start_session(self.alice, workout=None)
+        response = self.client.patch(
+            reverse("api:session-detail", args=[session.pk]),
+            {"status": "in_progress"},
+            format="json",
+            **self._auth(),
+        )
+        self.assertEqual(response.status_code, 400)
+
+
+class OwnedResourceViewSetTests(APITestCase):
+    """apps.api.viewsets.OwnedResourceViewSet, via the exercises endpoint
+    — covers the shared ownership shape every OwnedResourceViewSet
+    subclass gets for free."""
+
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        self.bob = User.objects.create_user(username="bob", password="s3cret-pass")
+        _api_key, self.raw_secret = _create_key(self.alice)
+        self.system_exercise = Exercise.objects.create(name="System Move", owner=None)
+        self.bobs_exercise = Exercise.objects.create(name="Bob's Move", owner=self.bob)
+
+    def _auth(self):
+        return {"HTTP_AUTHORIZATION": f"Bearer {self.raw_secret}"}
+
+    def test_system_exercises_are_visible(self):
+        response = self.client.get(
+            reverse("api:exercise-detail", args=[self.system_exercise.pk]), **self._auth()
+        )
+        self.assertEqual(response.status_code, 200)
+
+    def test_another_users_custom_exercise_is_not_visible(self):
+        response = self.client.get(
+            reverse("api:exercise-detail", args=[self.bobs_exercise.pk]), **self._auth()
+        )
+        self.assertEqual(response.status_code, 404)
+
+    def test_cannot_edit_a_system_exercise(self):
+        response = self.client.patch(
+            reverse("api:exercise-detail", args=[self.system_exercise.pk]),
+            {"name": "Hijacked"},
+            format="json",
+            **self._auth(),
+        )
+        self.assertEqual(response.status_code, 404)
+
+    def test_deleting_a_custom_exercise_soft_deletes_it(self):
+        mine = Exercise.objects.create(name="My Move", owner=self.alice)
+        response = self.client.delete(
+            reverse("api:exercise-detail", args=[mine.pk]), **self._auth()
+        )
+        self.assertEqual(response.status_code, 204)
+        mine.refresh_from_db()
+        self.assertFalse(mine.active)
+        self.assertTrue(Exercise.objects.filter(pk=mine.pk).exists())  # never hard-deleted
+
+
+class ProgramHardDeleteTests(APITestCase):
+    """Program is the one OwnedResourceViewSet with soft_delete=False —
+    it has no `active` field and its web view really deletes."""
+
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        _api_key, self.raw_secret = _create_key(self.alice)
+
+    def test_deleting_a_program_actually_removes_it(self):
+        from apps.programs.models import Program
+
+        program = Program.objects.create(owner=self.alice, name="Delete Me")
+        response = self.client.delete(
+            reverse("api:program-detail", args=[program.pk]),
+            HTTP_AUTHORIZATION=f"Bearer {self.raw_secret}",
+        )
+        self.assertEqual(response.status_code, 204)
+        self.assertFalse(Program.objects.filter(pk=program.pk).exists())
+
+
+class ApiKeyManagementViewTests(TestCase):
+    """The self-service, session-authenticated key management pages —
+    apps.api.views_web."""
+
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        self.client.login(username="alice", password="s3cret-pass")
+
+    def test_requires_login(self):
+        self.client.logout()
+        response = self.client.get(reverse("api_keys:key-list"))
+        self.assertEqual(response.status_code, 302)
+
+    def test_creating_a_key_shows_the_secret_exactly_once(self):
+        import re
+
+        data = {"name": "My new key", "exercises__can_read": "on"}
+        create_response = self.client.post(reverse("api_keys:key-create"), data)
+        self.assertEqual(create_response.status_code, 302)
+        api_key = ApiKey.objects.get(user=self.alice)
+
+        first_view = self.client.get(reverse("api_keys:key-created", args=[api_key.pk]))
+        # The list page legitimately shows the short, non-secret prefix
+        # ("isk_xxxxxxxx…") for identification — what must never appear
+        # a second time is the *full* raw secret itself.
+        match = re.search(r"isk_[A-Za-z0-9_-]{20,}", first_view.content.decode())
+        self.assertIsNotNone(match, "the full raw secret should be shown on first view")
+        raw_secret = match.group(0)
+
+        second_view = self.client.get(reverse("api_keys:key-created", args=[api_key.pk]))
+        self.assertRedirects(second_view, reverse("api_keys:key-list"))
+        list_response = self.client.get(reverse("api_keys:key-list"))
+        self.assertContains(list_response, api_key.prefix)  # the short prefix is fine to show
+        self.assertNotContains(list_response, raw_secret)  # the full secret is never shown again
+
+    def test_cannot_view_another_users_key_created_page(self):
+        bob = User.objects.create_user(username="bob", password="s3cret-pass")
+        api_key, _secret = _create_key(bob)
+        response = self.client.get(reverse("api_keys:key-created", args=[api_key.pk]))
+        self.assertEqual(response.status_code, 404)
+
+    def test_revoking_a_key_deletes_it(self):
+        api_key, _secret = _create_key(self.alice)
+        self.client.post(reverse("api_keys:key-revoke", args=[api_key.pk]))
+        self.assertFalse(ApiKey.objects.filter(pk=api_key.pk).exists())
+
+    def test_cannot_revoke_another_users_key(self):
+        bob = User.objects.create_user(username="bob", password="s3cret-pass")
+        api_key, _secret = _create_key(bob)
+        response = self.client.post(reverse("api_keys:key-revoke", args=[api_key.pk]))
+        self.assertEqual(response.status_code, 404)
+        self.assertTrue(ApiKey.objects.filter(pk=api_key.pk).exists())
+
+    def test_creation_is_blocked_once_the_quota_is_reached(self):
+        settings_obj = ApiSettings.load()
+        settings_obj.max_api_keys_per_user = 1
+        settings_obj.save()
+        _create_key(self.alice)
+        response = self.client.get(reverse("api_keys:key-create"))
+        self.assertRedirects(response, reverse("api_keys:key-list"))
+        self.assertEqual(ApiKey.objects.filter(user=self.alice).count(), 1)
+
+    def test_permission_grid_creates_the_right_permission_rows(self):
+        data = {"name": "Read-only exercises", "exercises__can_read": "on"}
+        self.client.post(reverse("api_keys:key-create"), data)
+        api_key = ApiKey.objects.get(user=self.alice)
+        exercises_perm = api_key.permissions.get(context="exercises")
+        self.assertTrue(exercises_perm.can_read)
+        self.assertFalse(exercises_perm.can_create)
+        programs_perm = api_key.permissions.get(context="programs")
+        self.assertFalse(programs_perm.can_read)
+
+
+class ApiKeyAdminTests(TestCase):
+    def test_only_one_tier_can_be_the_default(self):
+        from django.contrib.admin.sites import AdminSite
+
+        from .admin import RateLimitTierAdmin
+
+        first = RateLimitTier.objects.create(name="First", is_default=True)
+        second = RateLimitTier.objects.create(name="Second", is_default=False)
+        second.is_default = True
+
+        admin_instance = RateLimitTierAdmin(RateLimitTier, AdminSite())
+        admin_instance.save_model(request=None, obj=second, form=None, change=True)
+
+        first.refresh_from_db()
+        self.assertFalse(first.is_default)
+        self.assertTrue(RateLimitTier.objects.get(pk=second.pk).is_default)
+
+
+class ApiKeyPermissionModelTests(TestCase):
+    def test_context_is_unique_per_key(self):
+        from django.db import IntegrityError, transaction
+
+        alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        api_key, _secret = _create_key(alice)
+        with self.assertRaises(IntegrityError), transaction.atomic():
+            ApiKeyPermission.objects.create(api_key=api_key, context="exercises")

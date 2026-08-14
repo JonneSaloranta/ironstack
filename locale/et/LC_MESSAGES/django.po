@@ -147,6 +147,54 @@ msgstr "1 aasta"
 msgid "All time"
 msgstr "Kogu aeg"
 
+msgid "Create"
+msgstr "Loomine"
+
+msgid "Read"
+msgstr "Lugemine"
+
+msgid "Update"
+msgstr "Muutmine"
+
+msgid "Delete"
+msgstr "Kustuta"
+
+msgid "Name"
+msgstr "Nimi"
+
+msgid "A label to tell your keys apart."
+msgstr "Silt, mille abil eristada oma võtmeid."
+
+msgid "Profile"
+msgstr "Profiil"
+
+msgid "Exercises"
+msgstr "Harjutused"
+
+msgid "Programs"
+msgstr "Programmid"
+
+msgid "Workouts"
+msgstr "Trennid"
+
+msgid "Measurements"
+msgstr "Mõõtmised"
+
+msgid "Activities"
+msgstr "Tegevused"
+
+msgid "Records"
+msgstr "Rekordid"
+
+msgid "Analytics"
+msgstr "Analüütika"
+
+msgid "You've reached your maximum number of API keys."
+msgstr "Oled saavutanud API-võtmete maksimumarvu."
+
+msgid "API key revoked."
+msgstr "API-võti tühistatud."
+
 msgid "Underweight"
 msgstr "Alakaal"
 
@@ -681,9 +729,6 @@ msgstr "Midagi läks valesti"
 msgid "Something went wrong on our end. Your data is safe — try again in a moment."
 msgstr "Meie poolel läks midagi valesti. Sinu andmed on turvalised — proovi hetke pärast uuesti."
 
-msgid "Profile"
-msgstr "Profiil"
-
 msgid "Signed in as <strong>%(username)s</strong>"
 msgstr "Sisse logitud kasutajana <strong>%(username)s</strong>"
 
@@ -692,6 +737,12 @@ msgstr "Salvesta eelistused"
 
 msgid "Change password"
 msgstr "Muuda parooli"
+
+msgid "API keys"
+msgstr "API-võtmed"
+
+msgid "Manage keys other apps can use to access your data."
+msgstr "Halda võtmeid, mida teised rakendused saavad kasutada sinu andmetele ligipääsuks."
 
 msgid "Log out"
 msgstr "Logi välja"
@@ -753,9 +804,6 @@ msgstr "Muuda"
 msgid "Delete this activity?"
 msgstr "Kustutada see tegevus?"
 
-msgid "Delete"
-msgstr "Kustuta"
-
 msgid "No activities logged yet."
 msgstr "Tegevusi pole veel logitud."
 
@@ -770,9 +818,6 @@ msgstr "Tagasi tegevuste juurde"
 
 msgid "New activity type"
 msgstr "Uus tegevuse tüüp"
-
-msgid "Activities"
-msgstr "Tegevused"
 
 msgid "New"
 msgstr "Uus"
@@ -793,12 +838,6 @@ msgstr "Tegevuse tüüpe pole veel."
 
 msgid "Date range"
 msgstr "Kuupäevavahemik"
-
-msgid "Analytics"
-msgstr "Analüütika"
-
-msgid "Workouts"
-msgstr "Trennid"
 
 msgid "Training time"
 msgstr "Trenniaeg"
@@ -851,6 +890,56 @@ msgstr "Vaata praeguseid"
 msgid "Back to exercise"
 msgstr "Tagasi harjutuse juurde"
 
+msgid "API key created"
+msgstr "API-võti loodud"
+
+msgid "Copy this key now — you won't be able to see it again."
+msgstr "Kopeeri see võti nüüd — sa ei näe seda enam uuesti."
+
+msgid "Done"
+msgstr "Valmis"
+
+msgid "New API key"
+msgstr "Uus API-võti"
+
+msgid "Choose exactly what this key is allowed to do, per resource — leave everything unchecked for a context to block it entirely."
+msgstr "Vali täpselt, mida see võti tohib igas kontekstis teha — jäta kõik märkimata, et kontekst täielikult blokeerida."
+
+msgid "Context"
+msgstr "Kontekst"
+
+msgid "Create key"
+msgstr "Loo võti"
+
+msgid "Back to API keys"
+msgstr "Tagasi API-võtmete juurde"
+
+msgid "You can create %(counter)s more key."
+msgid_plural "You can create %(counter)s more keys."
+msgstr[0] "Saad luua veel %(counter)s võtme."
+msgstr[1] "Saad luua veel %(counter)s võtit."
+
+msgid "Tier: %(tier)s"
+msgstr "Tase: %(tier)s"
+
+msgid "last used %(time)s ago"
+msgstr "viimati kasutatud %(time)s tagasi"
+
+msgid "never used"
+msgstr "pole kunagi kasutatud"
+
+msgid "Revoke this API key? Anything using it will stop working immediately."
+msgstr "Tühistada see API-võti? Kõik, mis seda kasutab, lakkab kohe töötamast."
+
+msgid "Revoke"
+msgstr "Tühista"
+
+msgid "No API keys yet."
+msgstr "Veel pole API-võtmeid."
+
+msgid "Back to profile"
+msgstr "Tagasi profiili juurde"
+
 msgid "Skip to content"
 msgstr "Liigu sisu juurde"
 
@@ -865,9 +954,6 @@ msgstr "Edenemine"
 
 msgid "Workout"
 msgstr "Trenn"
-
-msgid "Programs"
-msgstr "Programmid"
 
 msgid "Continue training"
 msgstr "Jätka trenni"
@@ -1025,9 +1111,6 @@ msgstr "Muuda harjutust"
 
 msgid "New exercise"
 msgstr "Uus harjutus"
-
-msgid "Exercises"
-msgstr "Harjutused"
 
 msgid "Search exercises…"
 msgstr "Otsi harjutusi…"
@@ -1217,9 +1300,6 @@ msgstr "Parool muudetud"
 
 msgid "Your password has been updated."
 msgstr "Sinu parool on uuendatud."
-
-msgid "Back to profile"
-msgstr "Tagasi profiili juurde"
 
 msgid "Target: %(count)s × %(min)s-%(max)s"
 msgstr "Sihtmärk: %(count)s × %(min)s-%(max)s"

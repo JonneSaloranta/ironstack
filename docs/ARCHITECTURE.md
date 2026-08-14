@@ -300,11 +300,21 @@ ISO 639-1 — not `ee`, which is Ewe).
 
 ## API layer
 
-No REST/DRF API is built in the initial implementation. `ARCHITECTURE.md`'s
-extensibility goal (future mobile clients, integrations) is satisfied by
-keeping domain services HTTP-agnostic, which is already required. A thin API
-layer can be added later without touching domain logic. Do not add Django
-REST Framework or similar until an actual client needs it.
+A real API (`apps.api`, Django REST Framework) was added on explicit
+request — see `docs/API.md` for the full picture: authentication
+(per-user API keys, `Authorization: Bearer`), authorization (per-key,
+per-context CRUD permissions), and rate limiting (admin-editable tiers).
+This section's original guidance ("no REST/DRF API... do not add DRF
+until an actual client needs it") described the phase-1-through-11
+state and is superseded for anything API-specific by `docs/API.md` — it
+stayed true up to that point, and this repo's domain services having
+stayed HTTP-agnostic all along (a requirement regardless of whether an
+API existed) is exactly what made adding one later, without touching
+any service function, actually straightforward rather than aspirational.
+Every `apps.api` view calls the same `apps/*/services.py` functions the
+server-rendered web views already call — see `docs/API.md`'s own
+"Endpoints" section for concrete examples (set logging, PR detection,
+ownership scoping) of what that means in practice.
 
 ## Domain services
 

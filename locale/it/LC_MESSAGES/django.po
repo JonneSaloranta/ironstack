@@ -147,6 +147,54 @@ msgstr "1 anno"
 msgid "All time"
 msgstr "Sempre"
 
+msgid "Create"
+msgstr "Creazione"
+
+msgid "Read"
+msgstr "Lettura"
+
+msgid "Update"
+msgstr "Modifica"
+
+msgid "Delete"
+msgstr "Elimina"
+
+msgid "Name"
+msgstr "Nome"
+
+msgid "A label to tell your keys apart."
+msgstr "Un'etichetta per distinguere le tue chiavi."
+
+msgid "Profile"
+msgstr "Profilo"
+
+msgid "Exercises"
+msgstr "Esercizi"
+
+msgid "Programs"
+msgstr "Programmi"
+
+msgid "Workouts"
+msgstr "Allenamenti"
+
+msgid "Measurements"
+msgstr "Misurazioni"
+
+msgid "Activities"
+msgstr "Attività"
+
+msgid "Records"
+msgstr "Record"
+
+msgid "Analytics"
+msgstr "Analisi"
+
+msgid "You've reached your maximum number of API keys."
+msgstr "Hai raggiunto il numero massimo di chiavi API."
+
+msgid "API key revoked."
+msgstr "Chiave API revocata."
+
 msgid "Underweight"
 msgstr "Sottopeso"
 
@@ -681,9 +729,6 @@ msgstr "Qualcosa è andato storto"
 msgid "Something went wrong on our end. Your data is safe — try again in a moment."
 msgstr "Qualcosa è andato storto da parte nostra. I tuoi dati sono al sicuro: riprova tra un momento."
 
-msgid "Profile"
-msgstr "Profilo"
-
 msgid "Signed in as <strong>%(username)s</strong>"
 msgstr "Accesso effettuato come <strong>%(username)s</strong>"
 
@@ -692,6 +737,12 @@ msgstr "Salva preferenze"
 
 msgid "Change password"
 msgstr "Cambia password"
+
+msgid "API keys"
+msgstr "Chiavi API"
+
+msgid "Manage keys other apps can use to access your data."
+msgstr "Gestisci le chiavi che altre app possono usare per accedere ai tuoi dati."
 
 msgid "Log out"
 msgstr "Esci"
@@ -753,9 +804,6 @@ msgstr "Modifica"
 msgid "Delete this activity?"
 msgstr "Eliminare questa attività?"
 
-msgid "Delete"
-msgstr "Elimina"
-
 msgid "No activities logged yet."
 msgstr "Nessuna attività registrata ancora."
 
@@ -770,9 +818,6 @@ msgstr "Torna alle attività"
 
 msgid "New activity type"
 msgstr "Nuovo tipo di attività"
-
-msgid "Activities"
-msgstr "Attività"
 
 msgid "New"
 msgstr "Nuovo"
@@ -793,12 +838,6 @@ msgstr "Nessun tipo di attività ancora."
 
 msgid "Date range"
 msgstr "Intervallo di date"
-
-msgid "Analytics"
-msgstr "Analisi"
-
-msgid "Workouts"
-msgstr "Allenamenti"
 
 msgid "Training time"
 msgstr "Tempo di allenamento"
@@ -851,6 +890,56 @@ msgstr "Visualizza gli attuali"
 msgid "Back to exercise"
 msgstr "Torna all'esercizio"
 
+msgid "API key created"
+msgstr "Chiave API creata"
+
+msgid "Copy this key now — you won't be able to see it again."
+msgstr "Copia questa chiave ora — non potrai vederla di nuovo."
+
+msgid "Done"
+msgstr "Fatto"
+
+msgid "New API key"
+msgstr "Nuova chiave API"
+
+msgid "Choose exactly what this key is allowed to do, per resource — leave everything unchecked for a context to block it entirely."
+msgstr "Scegli esattamente cosa può fare questa chiave, per ogni risorsa — lascia tutto deselezionato per bloccare completamente un contesto."
+
+msgid "Context"
+msgstr "Contesto"
+
+msgid "Create key"
+msgstr "Crea chiave"
+
+msgid "Back to API keys"
+msgstr "Torna alle chiavi API"
+
+msgid "You can create %(counter)s more key."
+msgid_plural "You can create %(counter)s more keys."
+msgstr[0] "Puoi creare ancora %(counter)s chiave."
+msgstr[1] "Puoi creare ancora %(counter)s chiavi."
+
+msgid "Tier: %(tier)s"
+msgstr "Livello: %(tier)s"
+
+msgid "last used %(time)s ago"
+msgstr "usata l'ultima volta %(time)s fa"
+
+msgid "never used"
+msgstr "mai usata"
+
+msgid "Revoke this API key? Anything using it will stop working immediately."
+msgstr "Revocare questa chiave API? Tutto ciò che la usa smetterà di funzionare immediatamente."
+
+msgid "Revoke"
+msgstr "Revoca"
+
+msgid "No API keys yet."
+msgstr "Ancora nessuna chiave API."
+
+msgid "Back to profile"
+msgstr "Torna al profilo"
+
 msgid "Skip to content"
 msgstr "Vai al contenuto"
 
@@ -865,9 +954,6 @@ msgstr "Progressi"
 
 msgid "Workout"
 msgstr "Allenamento"
-
-msgid "Programs"
-msgstr "Programmi"
 
 msgid "Continue training"
 msgstr "Continua l'allenamento"
@@ -1025,9 +1111,6 @@ msgstr "Modifica esercizio"
 
 msgid "New exercise"
 msgstr "Nuovo esercizio"
-
-msgid "Exercises"
-msgstr "Esercizi"
 
 msgid "Search exercises…"
 msgstr "Cerca esercizi…"
@@ -1217,9 +1300,6 @@ msgstr "Password modificata"
 
 msgid "Your password has been updated."
 msgstr "La tua password è stata aggiornata."
-
-msgid "Back to profile"
-msgstr "Torna al profilo"
 
 msgid "Target: %(count)s × %(min)s-%(max)s"
 msgstr "Obiettivo: %(count)s × %(min)s-%(max)s"

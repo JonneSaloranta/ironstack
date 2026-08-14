@@ -4,6 +4,14 @@
 
 Use Django authentication and a custom user model.
 
+`apps.api` (see `docs/API.md`) adds a second, deliberately separate
+authentication path — per-user API keys (`Authorization: Bearer`), never
+session/cookie auth — for programmatic access. A key's secret is shown
+once at creation and stored only as a SHA-256 hash (`ApiKey.key_hash`);
+authorization is checked per-request against that specific key's own
+per-context CRUD permissions (`apps.api.permissions.HasContextPermission`),
+never against the wider Django permission system.
+
 Production requirements:
 - DEBUG=False
 - secure cookies

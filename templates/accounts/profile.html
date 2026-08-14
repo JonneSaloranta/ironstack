@@ -43,6 +43,11 @@
   <strong>{% trans "Change password" %}</strong>
 </a>
 
+<a class="card card-link" href="{% url 'api_keys:key-list' %}">
+  <strong>{% trans "API keys" %}</strong>
+  <p class="text-muted">{% trans "Manage keys other apps can use to access your data." %}</p>
+</a>
+
 <form method="post" action="{% url 'logout' %}">
   {% csrf_token %}
   <button type="submit" class="button-danger">{% trans "Log out" %}</button>
