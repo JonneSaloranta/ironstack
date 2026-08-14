@@ -51,6 +51,30 @@ msgstr "Kestus (minutit)"
 msgid "Distance (%(unit)s)"
 msgstr "Vahemaa (%(unit)s)"
 
+msgid "Running"
+msgstr "Jooksmine"
+
+msgid "Cycling"
+msgstr "Jalgrattasõit"
+
+msgid "Swimming"
+msgstr "Ujumine"
+
+msgid "Walking"
+msgstr "Kõndimine"
+
+msgid "Hiking"
+msgstr "Matkamine"
+
+msgid "Rowing"
+msgstr "Sõudmine"
+
+msgid "Yoga"
+msgstr "Jooga"
+
+msgid "Other"
+msgstr "Muu"
+
 msgid "name"
 msgstr "nimi"
 
@@ -284,6 +308,27 @@ msgstr "Väärtus (%(unit)s)"
 
 msgid "Value"
 msgstr "Väärtus"
+
+msgid "Body weight"
+msgstr "Kehakaal"
+
+msgid "Body fat %"
+msgstr "Kehurasva %"
+
+msgid "Waist"
+msgstr "Vöökoht"
+
+msgid "Arm"
+msgstr "Käsivars"
+
+msgid "Thigh"
+msgstr "Reis"
+
+msgid "Hip"
+msgstr "Puus"
+
+msgid "Neck"
+msgstr "Kael"
 
 msgid "Weight"
 msgstr "Kaal"
@@ -830,9 +875,6 @@ msgstr "Selle nädala trennid"
 
 msgid "This week's volume"
 msgstr "Selle nädala maht"
-
-msgid "Body weight"
-msgstr "Kehakaal"
 
 msgid "Add your height"
 msgstr "Lisa oma pikkus"

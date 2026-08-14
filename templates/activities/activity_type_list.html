@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load i18n %}
+{% load i18n core_extras %}
 {% block title %}{% trans "Activities" %} — IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
@@ -9,7 +9,7 @@
 
 {% for activity_type in activity_types %}
   <a class="card card-link" href="{% url 'activities:history' activity_type.pk %}">
-    <strong>{{ activity_type.name }}</strong>
+    <strong>{{ activity_type.name|translate_content }}</strong>
     {% if activity_type.is_custom %}<span class="tag">{% trans "Custom" %}</span>{% endif %}
     <div class="text-muted">
       {% if activity_type.entry_count %}

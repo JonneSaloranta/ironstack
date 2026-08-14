@@ -1,9 +1,9 @@
 {% extends "base.html" %}
-{% load i18n %}
+{% load i18n core_extras %}
 {% block title %}{% trans "Edit reading" %} — IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
-  <h1 style="margin:0;">{% blocktrans with name=measurement_type.name %}Edit {{ name }} reading{% endblocktrans %}</h1>
+  <h1 style="margin:0;">{% blocktrans with name=measurement_type.name|translate_content %}Edit {{ name }} reading{% endblocktrans %}</h1>
 </div>
 
 <form class="card" method="post">
@@ -19,5 +19,5 @@
   <button type="submit">{% trans "Save" %}</button>
 </form>
 
-<p><a class="button-secondary" href="{% url 'measurements:history' measurement_type.pk %}">&larr; {% blocktrans with name=measurement_type.name %}Back to {{ name }}{% endblocktrans %}</a></p>
+<p><a class="button-secondary" href="{% url 'measurements:history' measurement_type.pk %}">&larr; {% blocktrans with name=measurement_type.name|translate_content %}Back to {{ name }}{% endblocktrans %}</a></p>
 {% endblock %}

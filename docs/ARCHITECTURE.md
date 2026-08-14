@@ -194,14 +194,13 @@ ISO 639-1 — not `ee`, which is Ewe).
 - **What's translated vs. not**: all UI chrome — labels, buttons,
   messages, headings — is translated. Seeded reference *data* (exercise
   names, muscle groups, equipment, measurement/activity type names,
-  built-in program template names/descriptions) is **not** — that's
-  content translation, a different problem needing a
-  model-translation layer (e.g. `django-modeltranslation`) rather than
-  gettext, and would be a real new dependency without a strong enough
-  reason yet per this project's "avoid unnecessary dependencies" rule.
-  A user's own data (exercise names they typed, program names, notes)
-  is never translated either way, correctly — gettext only ever matches
-  strings that exist in the `.po` catalog.
+  built-in program template names/descriptions) **is** too, via the
+  same gettext catalog rather than a model-translation library like
+  `django-modeltranslation` — see "Seeded content" below for how. A
+  user's own data (exercise names they typed, program names, notes,
+  custom measurement/activity types) is never translated either way,
+  correctly — gettext only ever matches strings that exist in the
+  `.po` catalog.
 - Workflow: `python manage.py makemessages -l <lang> ...` extracts
   every `{% trans %}`/`_()` call into `locale/<lang>/LC_MESSAGES/django.po`;
   `python manage.py compilemessages` builds the `.mo` files gettext
@@ -238,9 +237,10 @@ ISO 639-1 — not `ee`, which is Ewe).
   source, so a fuzzy match left unreviewed isn't just imprecise, it's
   invisible).
 - **Seeded content** (built-in exercise names, muscle groups, equipment,
-  program template names/descriptions, workout names —
-  `apps.exercises`/`apps.programs` migrations) *is* translated, unlike a
-  user's own data, using the same gettext catalog rather than a
+  program template names/descriptions, workout names, measurement type
+  names, activity type names — `apps.exercises`/`apps.programs`/
+  `apps.measurements`/`apps.activities` migrations) *is* translated,
+  unlike a user's own data, using the same gettext catalog rather than a
   model-translation library: the value **stored** in the database always
   stays canonical English (it's what `get_or_create(name=...)` and
   uniqueness constraints match against), but the **display** is looked
@@ -248,8 +248,9 @@ ISO 639-1 — not `ee`, which is Ewe).
   — Django's `trans` tag accepts a variable, not just a string literal,
   and runs its resolved value through `gettext()`. Since `makemessages`
   can only discover literal `_("...")`/`{% trans "..." %}` calls, not
-  what a variable will resolve to at runtime, `apps.exercises.i18n_content`
-  and `apps.programs.i18n_content` each hold a dedicated list of
+  what a variable will resolve to at runtime, `apps.exercises.i18n_content`,
+  `apps.programs.i18n_content`, `apps.measurements.i18n_content`, and
+  `apps.activities.i18n_content` each hold a dedicated list of
   `gettext_lazy("...")` calls for every one of these seeded values —
   imported and executed by nothing, existing solely so `makemessages`
   extracts them into the catalog `{% trans someobj.name %}` then looks
@@ -264,6 +265,22 @@ ISO 639-1 — not `ee`, which is Ewe).
   (`apps.programs.forms.ExercisePrescriptionForm`,
   `apps.workouts.forms.PerformedExerciseAddForm`) to route that same
   text through `gettext()` too.
+- **Gotcha: `{% trans someobj.name %}` breaks on a literal "%" in the
+  content.** Django's `TranslateNode` (`django/templatetags/i18n.py`)
+  doubles every `%` in a resolved *variable's* value before using it as
+  the gettext msgid, then undoes the doubling on the way back out — a
+  step meant for literal `%%` a template author writes by hand in
+  template source to escape it from string-format interpolation, but
+  applied unconditionally to variables too. `MeasurementType`'s seeded
+  "Body fat %" hit exactly this: the tag looked up "Body fat %%", found
+  no match, and silently fell back to the untranslated English string.
+  `apps.core.templatetags.core_extras.translate_content` is a `|filter`
+  that calls `gettext()` directly with no doubling, and is used instead
+  of `{% trans %}` for `MeasurementType`/`ActivityType` names throughout
+  `templates/measurements/`/`templates/activities/`. Exercise/program
+  content currently contains no "%" so `{% trans someobj.name %}` is
+  still correct there, but reach for `translate_content` instead for any
+  future seeded content that might contain one.
 
 ## API layer
 

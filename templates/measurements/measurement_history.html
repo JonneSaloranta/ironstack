@@ -1,15 +1,15 @@
 {% extends "base.html" %}
-{% load i18n %}
-{% block title %}{{ measurement_type.name }} — IronStack{% endblock %}
+{% load i18n core_extras %}
+{% block title %}{{ measurement_type.name|translate_content }} — IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
-  <h1 style="margin:0;">{{ measurement_type.name }}</h1>
+  <h1 style="margin:0;">{{ measurement_type.name|translate_content }}</h1>
   {% if not measurement_type.active %}<span class="tag tag-muted">{% trans "Inactive" %}</span>{% endif %}
 </div>
 
 {% if chart %}
   <h2>{% trans "Trend" %}</h2>
-  {% include "core/_chart.html" with chart_title=measurement_type.name %}
+  {% include "core/_chart.html" with chart_title=measurement_type.name|translate_content %}
 {% endif %}
 
 <form class="card" method="post" action="{% url 'measurements:log' measurement_type.pk %}">

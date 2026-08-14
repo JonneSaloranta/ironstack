@@ -51,6 +51,30 @@ msgstr "Kesto (minuuttia)"
 msgid "Distance (%(unit)s)"
 msgstr "Matka (%(unit)s)"
 
+msgid "Running"
+msgstr "Juoksu"
+
+msgid "Cycling"
+msgstr "Pyöräily"
+
+msgid "Swimming"
+msgstr "Uinti"
+
+msgid "Walking"
+msgstr "Kävely"
+
+msgid "Hiking"
+msgstr "Vaellus"
+
+msgid "Rowing"
+msgstr "Soutu"
+
+msgid "Yoga"
+msgstr "Jooga"
+
+msgid "Other"
+msgstr "Muu"
+
 msgid "name"
 msgstr "nimi"
 
@@ -284,6 +308,27 @@ msgstr "Arvo (%(unit)s)"
 
 msgid "Value"
 msgstr "Arvo"
+
+msgid "Body weight"
+msgstr "Kehon paino"
+
+msgid "Body fat %"
+msgstr "Rasvaprosentti"
+
+msgid "Waist"
+msgstr "Vyötärö"
+
+msgid "Arm"
+msgstr "Käsivarsi"
+
+msgid "Thigh"
+msgstr "Reisi"
+
+msgid "Hip"
+msgstr "Lantio"
+
+msgid "Neck"
+msgstr "Kaula"
 
 msgid "Weight"
 msgstr "Paino"
@@ -830,9 +875,6 @@ msgstr "Tämän viikon treenit"
 
 msgid "This week's volume"
 msgstr "Tämän viikon volyymi"
-
-msgid "Body weight"
-msgstr "Kehon paino"
 
 msgid "Add your height"
 msgstr "Lisää pituutesi"

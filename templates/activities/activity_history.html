@@ -1,9 +1,9 @@
 {% extends "base.html" %}
 {% load i18n core_extras %}
-{% block title %}{{ activity_type.name }} — IronStack{% endblock %}
+{% block title %}{{ activity_type.name|translate_content }} — IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
-  <h1 style="margin:0;">{{ activity_type.name }}</h1>
+  <h1 style="margin:0;">{{ activity_type.name|translate_content }}</h1>
   {% if not activity_type.active %}<span class="tag tag-muted">{% trans "Inactive" %}</span>{% endif %}
 </div>
 

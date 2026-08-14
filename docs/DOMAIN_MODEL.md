@@ -246,6 +246,10 @@ stating a precise clock time. `distance` is optional too (canonical
 meters) — plenty of activity types have none — and converts to km/miles
 the same way `BodyMeasurement`'s length readings convert to cm/inches.
 
+The 8 seeded system activity type names are translated for display the
+same way system exercise/program names are — see `ARCHITECTURE.md` →
+"Internationalization"; the stored name always stays canonical English.
+
 ## BodyMeasurement
 
 Stores a time-stamped body measurement.
@@ -272,6 +276,11 @@ cm/inches, percentage unconverted. Canonical storage follows
 at enough decimal places (0.1mm) that a cm/inch round-trip never loses
 precision — display values are then rounded to what's actually worth
 looking at (0.01 kg, 0.1 cm/inch) independently of that storage decision.
+
+The 8 seeded system measurement type names are translated for display the
+same way system exercise/program names are — see `ARCHITECTURE.md` →
+"Internationalization", including that section's note on "Body fat %"
+and why `{% trans %}` alone isn't enough for content containing a "%".
 
 ## PR
 

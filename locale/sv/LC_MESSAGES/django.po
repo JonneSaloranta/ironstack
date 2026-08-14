@@ -51,6 +51,30 @@ msgstr "Varaktighet (minuter)"
 msgid "Distance (%(unit)s)"
 msgstr "Distans (%(unit)s)"
 
+msgid "Running"
+msgstr "Löpning"
+
+msgid "Cycling"
+msgstr "Cykling"
+
+msgid "Swimming"
+msgstr "Simning"
+
+msgid "Walking"
+msgstr "Promenad"
+
+msgid "Hiking"
+msgstr "Vandring"
+
+msgid "Rowing"
+msgstr "Rodd"
+
+msgid "Yoga"
+msgstr "Yoga"
+
+msgid "Other"
+msgstr "Övrigt"
+
 msgid "name"
 msgstr "namn"
 
@@ -284,6 +308,27 @@ msgstr "Värde (%(unit)s)"
 
 msgid "Value"
 msgstr "Värde"
+
+msgid "Body weight"
+msgstr "Kroppsvikt"
+
+msgid "Body fat %"
+msgstr "Kroppsfett %"
+
+msgid "Waist"
+msgstr "Midja"
+
+msgid "Arm"
+msgstr "Arm"
+
+msgid "Thigh"
+msgstr "Lår"
+
+msgid "Hip"
+msgstr "Höft"
+
+msgid "Neck"
+msgstr "Hals"
 
 msgid "Weight"
 msgstr "Vikt"
@@ -830,9 +875,6 @@ msgstr "Denna veckas pass"
 
 msgid "This week's volume"
 msgstr "Denna veckas volym"
-
-msgid "Body weight"
-msgstr "Kroppsvikt"
 
 msgid "Add your height"
 msgstr "Lägg till din längd"

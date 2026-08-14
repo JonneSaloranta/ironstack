@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load i18n %}
+{% load i18n core_extras %}
 {% block title %}{% trans "Body tracking" %} — IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
@@ -9,7 +9,7 @@
 
 {% for measurement_type in measurement_types %}
   <a class="card card-link" href="{% url 'measurements:history' measurement_type.pk %}">
-    <strong>{{ measurement_type.name }}</strong>
+    <strong>{{ measurement_type.name|translate_content }}</strong>
     {% if measurement_type.is_custom %}<span class="tag">{% trans "Custom" %}</span>{% endif %}
     <div class="text-muted">
       {% if measurement_type.latest_display is not None %}

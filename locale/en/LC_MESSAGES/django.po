@@ -51,6 +51,30 @@ msgstr "Duration (minutes)"
 msgid "Distance (%(unit)s)"
 msgstr "Distance (%(unit)s)"
 
+msgid "Running"
+msgstr "Running"
+
+msgid "Cycling"
+msgstr "Cycling"
+
+msgid "Swimming"
+msgstr "Swimming"
+
+msgid "Walking"
+msgstr "Walking"
+
+msgid "Hiking"
+msgstr "Hiking"
+
+msgid "Rowing"
+msgstr "Rowing"
+
+msgid "Yoga"
+msgstr "Yoga"
+
+msgid "Other"
+msgstr "Other"
+
 msgid "name"
 msgstr "name"
 
@@ -284,6 +308,27 @@ msgstr "Value (%(unit)s)"
 
 msgid "Value"
 msgstr "Value"
+
+msgid "Body weight"
+msgstr "Body weight"
+
+msgid "Body fat %"
+msgstr "Body fat %"
+
+msgid "Waist"
+msgstr "Waist"
+
+msgid "Arm"
+msgstr "Arm"
+
+msgid "Thigh"
+msgstr "Thigh"
+
+msgid "Hip"
+msgstr "Hip"
+
+msgid "Neck"
+msgstr "Neck"
 
 msgid "Weight"
 msgstr "Weight"
@@ -830,9 +875,6 @@ msgstr "This week's workouts"
 
 msgid "This week's volume"
 msgstr "This week's volume"
-
-msgid "Body weight"
-msgstr "Body weight"
 
 msgid "Add your height"
 msgstr "Add your height"

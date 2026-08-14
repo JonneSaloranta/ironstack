@@ -512,6 +512,41 @@ templates, and translating all seeded exercise/program content.**
   catalogs; `msgfmt --statistics` confirms 0 fuzzy/untranslated. 9 new
   tests (324 total).
 
+**Translate seeded measurement/activity type names too — the one
+remaining content-translation gap.**
+
+- Auditing "is anything still unimplemented?" turned up a genuine, real
+  gap: the previous pass translated exercise/muscle-group/equipment/
+  program content but never gave the same treatment to `MeasurementType`
+  (Body weight, Body fat %, Waist, Chest, Arm, Thigh, Hip, Neck) or
+  `ActivityType` (Running, Cycling, Swimming, Walking, Hiking, Rowing,
+  Yoga, Other) names — seeded content structurally identical to the
+  exercises/programs case. Fixed the same way: two new extraction-only
+  catalog modules (`apps.measurements.i18n_content`,
+  `apps.activities.i18n_content`), templates wrapping the display value
+  instead of the stored one.
+- This surfaced a genuine Django limitation, not just an oversight:
+  `{% trans someobj.name %}` doubles every literal `%` in a resolved
+  *variable's* value before the gettext lookup and undoes the doubling
+  afterwards (`TranslateNode`'s "restore percent signs" step — meant for
+  a `%%` a template author writes by hand in template source, applied
+  unconditionally to variables too). `MeasurementType`'s seeded "Body
+  fat %" hit this exactly: it looked up "Body fat %%", found nothing,
+  and silently rendered the untranslated English string instead of
+  erroring — the kind of bug that only shows up by actually reading the
+  rendered page in the target language, not by reasoning about the code.
+  Fixed with a new `translate_content` filter
+  (`apps.core.templatetags.core_extras`) that calls `gettext()` directly
+  with no doubling; used in place of `{% trans %}` throughout
+  `templates/measurements/`/`templates/activities/`. Exercise/program
+  content has no `%` today so `{% trans someobj.name %}` stays correct
+  there, but `translate_content` is now the documented answer for any
+  future seeded content that might contain one — see
+  `docs/ARCHITECTURE.md` "Internationalization".
+- 16 new strings extracted and translated across all 5 non-English
+  catalogs (411 total, up from 397); `msgfmt --statistics` confirms 0
+  fuzzy/untranslated. 9 new tests (333 total).
+
 ## Local development
 
 ```bash

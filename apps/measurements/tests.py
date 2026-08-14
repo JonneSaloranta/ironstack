@@ -265,3 +265,47 @@ class CustomMeasurementTypeFlowTests(TestCase):
         response = self.client.get(reverse("measurements:type-list"))
         names = {mt.name for mt in response.context["measurement_types"]}
         self.assertNotIn("Calf", names)
+
+
+class MeasurementTypeContentTranslationTests(TestCase):
+    """Seeded measurement type *names* are content, not UI chrome — the
+    stored value stays canonical English (matched by get_or_create
+    elsewhere), but the display goes through gettext too, via
+    apps.measurements.i18n_content's extraction catalog — see
+    docs/ARCHITECTURE.md "Internationalization"."""
+
+    def setUp(self):
+        self.alice = User.objects.create_user(
+            username="alice", password="s3cret-pass", language="fi"
+        )
+        self.client.login(username="alice", password="s3cret-pass")
+
+    def test_measurement_type_name_renders_translated_for_a_non_english_user(self):
+        measurement_type = MeasurementType.objects.get(name="Waist", owner=None)
+        response = self.client.get(reverse("measurements:history", args=[measurement_type.pk]))
+        self.assertContains(response, "Vyötärö")
+        self.assertNotContains(response, ">Waist<")
+
+    def test_a_content_name_containing_a_percent_sign_still_translates(self):
+        """Regression: Django's `{% trans someobj.name %}` tag doubles every
+        "%" in a resolved *variable* before the gettext lookup and undoes
+        it after (meant for literal `%%` written in template source, but
+        applied to variables too) — so "Body fat %" looked up "Body fat %%",
+        found nothing, and silently fell back to English. Fixed by using
+        apps.core.templatetags.core_extras.translate_content (a direct
+        gettext() call) instead of `{% trans %}` for this content."""
+        measurement_type = MeasurementType.objects.get(name="Body fat %", owner=None)
+        response = self.client.get(reverse("measurements:history", args=[measurement_type.pk]))
+        self.assertContains(response, "Rasvaprosentti")
+        self.assertNotContains(response, "Body fat %")
+
+    def test_a_users_own_custom_type_name_is_never_translated(self):
+        """gettext only ever matches strings actually present in the
+        catalog — a custom name a user typed themselves was never
+        extracted into it, so it always renders exactly as typed,
+        regardless of UI language."""
+        measurement_type = MeasurementType.objects.create(
+            name="My Weird Custom Measurement", owner=self.alice, unit_kind=UnitKind.LENGTH
+        )
+        response = self.client.get(reverse("measurements:history", args=[measurement_type.pk]))
+        self.assertContains(response, "My Weird Custom Measurement")

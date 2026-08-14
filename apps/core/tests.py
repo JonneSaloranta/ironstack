@@ -4,12 +4,12 @@ from decimal import Decimal
 from django.core.exceptions import PermissionDenied
 from django.test import RequestFactory, TestCase, override_settings
 from django.urls import reverse
-from django.utils import timezone
+from django.utils import timezone, translation
 from django.views.defaults import permission_denied
 
 from apps.core.bmi import BMI_CATEGORIES, calculate_bmi, category_for, category_rows
 from apps.core.charts import build_bar_series, build_chart_series
-from apps.core.templatetags.core_extras import duration
+from apps.core.templatetags.core_extras import duration, translate_content
 from apps.core.units import (
     cm_to_meters,
     inches_to_meters,
@@ -139,6 +139,33 @@ class DurationFilterTests(TestCase):
 
     def test_zero_duration(self):
         self.assertEqual(duration(timedelta()), "0min")
+
+
+class TranslateContentFilterTests(TestCase):
+    """Regression: Django's `{% trans someobj.name %}` tag doubles every
+    "%" in a resolved template *variable* before the gettext lookup and
+    undoes the doubling afterwards (django/templatetags/i18n.py's
+    "Restore percent signs" step — meant for literal `%%` written by hand
+    in template source, applied unconditionally to variables too), so a
+    seeded content string containing a real "%" (e.g. MeasurementType
+    "Body fat %") never matches its catalog entry and silently falls back
+    to English. See apps.core.templatetags.core_extras.translate_content."""
+
+    def test_translates_a_value_containing_a_percent_sign(self):
+        with translation.override("fi"):
+            self.assertEqual(translate_content("Body fat %"), "Rasvaprosentti")
+
+    def test_translates_a_value_with_no_percent_sign_too(self):
+        with translation.override("fi"):
+            self.assertEqual(translate_content("Waist"), "Vyötärö")
+
+    def test_falsy_value_passes_through_unchanged(self):
+        self.assertEqual(translate_content(""), "")
+        self.assertIsNone(translate_content(None))
+
+    def test_content_never_extracted_into_the_catalog_renders_unchanged(self):
+        with translation.override("fi"):
+            self.assertEqual(translate_content("My Custom Thing"), "My Custom Thing")
 
 
 class ChartSeriesServiceTests(TestCase):

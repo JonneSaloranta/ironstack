@@ -3,10 +3,39 @@ cross-cutting display formatting (see apps.core.units, apps.core.charts).
 """
 
 from django import template
+from django.utils.translation import gettext
 
 from apps.core import units as core_units
 
 register = template.Library()
+
+
+@register.filter
+def translate_content(value):
+    """Translate a piece of seeded *content* (an exercise/program/
+    measurement-type/activity-type name — see docs/ARCHITECTURE.md
+    "Internationalization") whose value might contain a literal "%".
+
+    The usual pattern for this is `{% trans someobj.name %}`, but Django's
+    `{% trans %}` tag — when given a template *variable* rather than a
+    string literal — doubles every "%" in the resolved value before
+    passing it to gettext as the msgid, then undoes the doubling on the
+    way back out (`django/templatetags/i18n.py`, "Restore percent
+    signs" — meant for literal `%%` written by hand in template source
+    to escape it from string-format interpolation, but applied
+    unconditionally to variables too). For a value with a single, real
+    "%" — e.g. the seeded MeasurementType name "Body fat %" — this looks
+    up the catalog for "Body fat %%", finds nothing, and silently falls
+    back to the untranslated English string. This filter calls
+    `gettext()` directly on the resolved value instead, with no
+    doubling, so it translates correctly regardless of "%" in the text.
+    Prefer `{% trans someobj.name %}` for content known not to contain
+    "%" (exercises, programs, muscle groups, equipment all currently
+    don't); use this filter for anything that might.
+    """
+    if not value:
+        return value
+    return gettext(value)
 
 
 @register.filter

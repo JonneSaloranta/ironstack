@@ -51,6 +51,30 @@ msgstr "Длительность (минуты)"
 msgid "Distance (%(unit)s)"
 msgstr "Дистанция (%(unit)s)"
 
+msgid "Running"
+msgstr "Бег"
+
+msgid "Cycling"
+msgstr "Велоспорт"
+
+msgid "Swimming"
+msgstr "Плавание"
+
+msgid "Walking"
+msgstr "Ходьба"
+
+msgid "Hiking"
+msgstr "Пеший туризм"
+
+msgid "Rowing"
+msgstr "Гребля"
+
+msgid "Yoga"
+msgstr "Йога"
+
+msgid "Other"
+msgstr "Другое"
+
 msgid "name"
 msgstr "название"
 
@@ -284,6 +308,27 @@ msgstr "Значение (%(unit)s)"
 
 msgid "Value"
 msgstr "Значение"
+
+msgid "Body weight"
+msgstr "Вес тела"
+
+msgid "Body fat %"
+msgstr "Процент жира"
+
+msgid "Waist"
+msgstr "Талия"
+
+msgid "Arm"
+msgstr "Рука"
+
+msgid "Thigh"
+msgstr "Бедро"
+
+msgid "Hip"
+msgstr "Бёдра"
+
+msgid "Neck"
+msgstr "Шея"
 
 msgid "Weight"
 msgstr "Вес"
@@ -833,9 +878,6 @@ msgstr "Тренировки на этой неделе"
 
 msgid "This week's volume"
 msgstr "Объём за эту неделю"
-
-msgid "Body weight"
-msgstr "Вес тела"
 
 msgid "Add your height"
 msgstr "Добавьте свой рост"

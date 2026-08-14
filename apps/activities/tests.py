@@ -375,3 +375,34 @@ class ActivityTypeListEntryCountTests(TestCase):
             at for at in response.context["activity_types"] if at.pk == self.activity_type.pk
         )
         self.assertEqual(running.entry_count, 1)
+
+
+class ActivityTypeContentTranslationTests(TestCase):
+    """Seeded activity type *names* are content, not UI chrome — the
+    stored value stays canonical English (matched by get_or_create
+    elsewhere), but the display goes through gettext too, via
+    apps.activities.i18n_content's extraction catalog — see
+    docs/ARCHITECTURE.md "Internationalization"."""
+
+    def setUp(self):
+        self.alice = User.objects.create_user(
+            username="alice", password="s3cret-pass", language="fi"
+        )
+        self.client.login(username="alice", password="s3cret-pass")
+
+    def test_activity_type_name_renders_translated_for_a_non_english_user(self):
+        activity_type = ActivityType.objects.get(name="Running", owner=None)
+        response = self.client.get(reverse("activities:history", args=[activity_type.pk]))
+        self.assertContains(response, "Juoksu")
+        self.assertNotContains(response, ">Running<")
+
+    def test_a_users_own_custom_type_name_is_never_translated(self):
+        """gettext only ever matches strings actually present in the
+        catalog — a custom name a user typed themselves was never
+        extracted into it, so it always renders exactly as typed,
+        regardless of UI language."""
+        activity_type = ActivityType.objects.create(
+            name="My Weird Custom Activity", owner=self.alice
+        )
+        response = self.client.get(reverse("activities:history", args=[activity_type.pk]))
+        self.assertContains(response, "My Weird Custom Activity")
