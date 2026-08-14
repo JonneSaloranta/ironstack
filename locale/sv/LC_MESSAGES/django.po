@@ -24,11 +24,17 @@ msgstr "BMI"
 msgid "on the dashboard"
 msgstr "på instrumentpanelen"
 
+msgid "Share my achievements"
+msgstr "Dela mina prestationer"
+
 msgid "Language"
 msgstr "Språk"
 
 msgid "Turns off the BMI card and its category ranges entirely."
 msgstr "Stänger av BMI-kortet och dess kategoriintervall helt."
+
+msgid "Lets everyone using this instance see your longest streak, workout count, PRs, and total weight lifted in the dashboard's achievements carousel. Turn off to keep your own stats private — you'll still see everyone else's."
+msgstr "Låter alla som använder den här instansen se din längsta svit, antal träningspass, PR och total lyft vikt i instrumentpanelens prestationskarusell. Stäng av för att hålla dina egna siffror privata — du ser fortfarande allas andras."
 
 msgid "Height (cm)"
 msgstr "Längd (cm)"
@@ -95,6 +101,33 @@ msgstr "anteckningar"
 
 msgid "activities"
 msgstr "aktiviteter"
+
+msgid "Longest streak"
+msgstr "Längsta sviten"
+
+msgid "%(counter)s day"
+msgid_plural "%(counter)s days"
+msgstr[0] "%(counter)s dag"
+msgstr[1] "%(counter)s dagar"
+
+msgid "Workouts completed"
+msgstr "Träningspass genomförda"
+
+msgid "%(counter)s workout"
+msgid_plural "%(counter)s workouts"
+msgstr[0] "%(counter)s träningspass"
+msgstr[1] "%(counter)s träningspass"
+
+msgid "Personal records"
+msgstr "Personliga rekord"
+
+msgid "%(counter)s PR"
+msgid_plural "%(counter)s PRs"
+msgstr[0] "%(counter)s PR"
+msgstr[1] "%(counter)s PR"
+
+msgid "Total weight lifted"
+msgstr "Total lyft vikt"
 
 msgid "7 days"
 msgstr "7 dagar"
@@ -873,6 +906,12 @@ msgstr[1] "%(title)s över tid, %(counter)s mätvärden"
 msgid "Dashboard"
 msgstr "Instrumentpanel"
 
+msgid "Achievements"
+msgstr "Prestationer"
+
+msgid "Show achievement %(position)s"
+msgstr "Visa prestation %(position)s"
+
 msgid "This week's workouts"
 msgstr "Denna veckas pass"
 
@@ -1092,11 +1131,6 @@ msgstr "Mina program"
 msgid "Template"
 msgstr "Mall"
 
-msgid "%(counter)s workout"
-msgid_plural "%(counter)s workouts"
-msgstr[0] "%(counter)s träningspass"
-msgstr[1] "%(counter)s träningspass"
-
 msgid "No programs yet."
 msgstr "Inga program ännu."
 
@@ -1271,11 +1305,17 @@ msgstr "Träning"
 msgid "Full view"
 msgstr "Fullständig vy"
 
-msgid "Skip rest"
-msgstr "Hoppa över vila"
-
 msgid "Rest timer"
 msgstr "Vilotimer"
+
+msgid "Unmute rest timer sound"
+msgstr "Slå på ljud för vilotimer"
+
+msgid "Mute rest timer sound"
+msgstr "Stäng av ljud för vilotimer"
+
+msgid "Skip rest"
+msgstr "Hoppa över vila"
 
 msgid "Edit set"
 msgstr "Redigera set"

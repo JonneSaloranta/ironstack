@@ -24,11 +24,17 @@ msgstr "BMI"
 msgid "on the dashboard"
 msgstr "on the dashboard"
 
+msgid "Share my achievements"
+msgstr "Share my achievements"
+
 msgid "Language"
 msgstr "Language"
 
 msgid "Turns off the BMI card and its category ranges entirely."
 msgstr "Turns off the BMI card and its category ranges entirely."
+
+msgid "Lets everyone using this instance see your longest streak, workout count, PRs, and total weight lifted in the dashboard's achievements carousel. Turn off to keep your own stats private — you'll still see everyone else's."
+msgstr "Lets everyone using this instance see your longest streak, workout count, PRs, and total weight lifted in the dashboard's achievements carousel. Turn off to keep your own stats private — you'll still see everyone else's."
 
 msgid "Height (cm)"
 msgstr "Height (cm)"
@@ -95,6 +101,33 @@ msgstr "notes"
 
 msgid "activities"
 msgstr "activities"
+
+msgid "Longest streak"
+msgstr "Longest streak"
+
+msgid "%(counter)s day"
+msgid_plural "%(counter)s days"
+msgstr[0] "%(counter)s day"
+msgstr[1] "%(counter)s days"
+
+msgid "Workouts completed"
+msgstr "Workouts completed"
+
+msgid "%(counter)s workout"
+msgid_plural "%(counter)s workouts"
+msgstr[0] "%(counter)s workout"
+msgstr[1] "%(counter)s workouts"
+
+msgid "Personal records"
+msgstr "Personal records"
+
+msgid "%(counter)s PR"
+msgid_plural "%(counter)s PRs"
+msgstr[0] "%(counter)s PR"
+msgstr[1] "%(counter)s PRs"
+
+msgid "Total weight lifted"
+msgstr "Total weight lifted"
 
 msgid "7 days"
 msgstr "7 days"
@@ -873,6 +906,12 @@ msgstr[1] "%(title)s trend over time, %(counter)s readings"
 msgid "Dashboard"
 msgstr "Dashboard"
 
+msgid "Achievements"
+msgstr "Achievements"
+
+msgid "Show achievement %(position)s"
+msgstr "Show achievement %(position)s"
+
 msgid "This week's workouts"
 msgstr "This week's workouts"
 
@@ -1092,11 +1131,6 @@ msgstr "My programs"
 msgid "Template"
 msgstr "Template"
 
-msgid "%(counter)s workout"
-msgid_plural "%(counter)s workouts"
-msgstr[0] "%(counter)s workout"
-msgstr[1] "%(counter)s workouts"
-
 msgid "No programs yet."
 msgstr "No programs yet."
 
@@ -1271,11 +1305,17 @@ msgstr "Training"
 msgid "Full view"
 msgstr "Full view"
 
-msgid "Skip rest"
-msgstr "Skip rest"
-
 msgid "Rest timer"
 msgstr "Rest timer"
+
+msgid "Unmute rest timer sound"
+msgstr "Unmute rest timer sound"
+
+msgid "Mute rest timer sound"
+msgstr "Mute rest timer sound"
+
+msgid "Skip rest"
+msgstr "Skip rest"
 
 msgid "Edit set"
 msgstr "Edit set"

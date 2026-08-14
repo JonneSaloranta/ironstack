@@ -631,6 +631,44 @@ progress.
   translated across all 5 non-English catalogs (422 total,
   0 fuzzy/untranslated). 4 new tests (362 total).
 
+**Achievements carousel (shared across all users), a rest-timer sound +
+mute toggle, and two mobile layout fixes.**
+
+- A new dashboard carousel (`apps.analytics.achievements`) auto-rotates
+  through all-time highlight cards — longest streak (consecutive
+  calendar days with a completed workout), total workouts, total PRs,
+  total weight lifted — pausing on hover/focus, always overridable via
+  a dot row. Unlike every other dashboard widget it's **shared across
+  every user on the instance**: each card names whose achievement it
+  is, and a new `User.show_achievements` field is a *privacy* setting
+  (default on) rather than a personal display toggle — turning it off
+  removes that user's own figures from what the carousel shows to
+  everyone, themselves included, not a "hide the carousel from me"
+  switch. Requested, then refined mid-build once the first (personal-
+  only) version was up: the carousel became shared, the toggle's
+  semantics flipped to match, and usernames were added to each card.
+- Fixed a real layout bug found immediately after building the first
+  version: each slide was left in normal document flow, so the
+  *carousel's own height* followed whichever slide happened to be
+  showing, and the whole page below it visibly jumped up and down every
+  ~4.5s as it rotated between a one-line and a two-line achievement.
+  Slides are now absolutely positioned inside a fixed-min-height box —
+  swapping which one is visible no longer changes the container's size
+  at all.
+- Fixed a second, unrelated real bug found alongside it: `.bottom-nav`
+  had no `z-index` set, so a card near the bottom of a long page — the
+  profile page's BMI card, via its `<abbr>` tooltip specifically — could
+  render *over* the nav bar instead of under it on mobile. The nav now
+  sits above ordinary page content/tooltips, below the floating
+  training button and PR toasts (deliberately still topmost).
+- Training mode's rest timer now plays a short two-tone chime
+  (synthesized with the Web Audio API — no audio asset to ship) when
+  the countdown reaches zero on its own; a manual "Skip rest" stays
+  silent. A speaker icon next to the timer mutes/unmutes it, persisted
+  in `localStorage` (a device setting, not a server-side preference).
+- 3 new/changed UI strings translated across all 5 non-English catalogs
+  (434 total, 0 fuzzy/untranslated). 23 new/changed tests (385 total).
+
 ## Local development
 
 ```bash

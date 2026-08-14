@@ -6,6 +6,41 @@
   <h1 style="margin:0;">IronStack</h1>
 </div>
 
+{% if achievements %}
+  <div class="card achievements-carousel" role="region" aria-label="{% trans "Achievements" %}"
+       x-data="ironstackCarousel({{ achievements|length }})" x-init="start()" @mouseenter="stop()" @mouseleave="start()">
+    {% comment %}
+    Slides are absolutely positioned inside .achievements-slides (a
+    fixed-min-height box) rather than left in normal flow — regression:
+    with x-show toggling display:none/flex on normal-flow siblings, the
+    *container's* height followed whichever slide happened to be
+    visible, so the whole page below the carousel visibly jumped up and
+    down every few seconds as it auto-rotated between shorter and
+    longer achievements.
+    {% endcomment %}
+    <div class="achievements-slides">
+      {% for achievement in achievements %}
+        <div class="achievement-slide" x-show="index === {{ forloop.counter0 }}" x-transition.opacity.duration.400ms>
+          <span class="achievement-icon" aria-hidden="true">{% if achievement.icon == "streak" %}🔥{% elif achievement.icon == "workouts" %}💪{% elif achievement.icon == "pr" %}🏆{% elif achievement.icon == "volume" %}⚡{% endif %}</span>
+          <div>
+            <strong class="achievement-value">{{ achievement.value }}</strong>
+            <div class="text-muted">{{ achievement.label }} — {{ achievement.username }}</div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+    {% if achievements|length > 1 %}
+      <div class="achievements-dots">
+        {% for achievement in achievements %}
+          <button type="button" class="achievements-dot" :class="index === {{ forloop.counter0 }} && 'achievements-dot-active'"
+                  @click="goto({{ forloop.counter0 }})"
+                  aria-label="{% blocktrans with position=forloop.counter %}Show achievement {{ position }}{% endblocktrans %}"></button>
+        {% endfor %}
+      </div>
+    {% endif %}
+  </div>
+{% endif %}
+
 {% if week_summary.session_count or body_weight is not None %}
   <div class="card">
     <dl class="stat-row">
@@ -72,4 +107,35 @@
   <strong>{% trans "Activities" %}</strong>
   <p class="text-muted">{% trans "Log a run, ride, or any other non-gym activity." %}</p>
 </a>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  // Achievements carousel (apps.analytics.achievements) — auto-advances
+  // through whichever highlight cards the server rendered, pausing on
+  // hover/focus so a user reading one isn't fighting the timer, and the
+  // dot row (also Alpine-driven) always lets a user jump straight to a
+  // specific card instead — "auto-rotate" is only ever the default.
+  function ironstackCarousel(total) {
+    return {
+      index: 0,
+      total: total,
+      timer: null,
+      start() {
+        if (this.total < 2) return;
+        clearInterval(this.timer);
+        this.timer = setInterval(() => {
+          this.index = (this.index + 1) % this.total;
+        }, 4500);
+      },
+      stop() {
+        clearInterval(this.timer);
+      },
+      goto(i) {
+        this.index = i;
+        this.start();
+      },
+    };
+  }
+</script>
 {% endblock %}

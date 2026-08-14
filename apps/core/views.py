@@ -6,6 +6,7 @@ from django.http import Http404, HttpResponse
 from django.utils import timezone
 from django.views.generic import TemplateView
 
+from apps.analytics import achievements as achievement_services
 from apps.analytics import dateranges
 from apps.analytics import services as analytics_services
 from apps.core import bmi as bmi_services
@@ -71,6 +72,14 @@ class DashboardView(LoginRequiredMixin, TemplateView):
                 context["bmi_category_rows"] = bmi_services.category_rows(
                     user.height, user.unit_system
                 )
+
+        # Shared across every user on this instance, not scoped to
+        # `user` — apps.analytics.achievements.achievement_highlights
+        # already excludes anyone with show_achievements=False (a
+        # privacy opt-out of being *included*, not a personal "hide the
+        # carousel from me" toggle — see that function's docstring), so
+        # there's nothing left to gate here.
+        context["achievements"] = achievement_services.achievement_highlights()
         return context
 
 

@@ -7,10 +7,11 @@ from django.urls import reverse
 from django.utils import timezone
 
 from apps.exercises.models import Exercise, MuscleGroup
+from apps.records import services as records_services
 from apps.records.models import PersonalRecord, PRType
 from apps.workouts import services as workout_services
 
-from . import dateranges, services
+from . import achievements, dateranges, services
 
 User = get_user_model()
 
@@ -229,6 +230,126 @@ class ExerciseAnalyticsServiceTests(TestCase):
         )
         # The 200kg warmup must never appear as the higher estimate.
         self.assertTrue(all(point.value < Decimal("200") for point in series.points))
+
+
+class AchievementsTests(TestCase):
+    """apps.analytics.achievements — all-time dashboard-carousel
+    highlights, deliberately unbounded by any DateRange (unlike
+    everything else in this file) and, unlike everything else in this
+    file, shared across every user rather than scoped to one."""
+
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        self.exercise = Exercise.objects.create(name="Test Squat", owner=None)
+
+    def test_no_completed_workouts_returns_no_highlights(self):
+        self.assertEqual(achievements.achievement_highlights(), [])
+
+    def test_longest_streak_counts_consecutive_days(self):
+        _log_completed_session(self.alice, self.exercise, Decimal("100"), [5], days_ago=2)
+        _log_completed_session(self.alice, self.exercise, Decimal("100"), [5], days_ago=1)
+        _log_completed_session(self.alice, self.exercise, Decimal("100"), [5], days_ago=0)
+        self.assertEqual(achievements.longest_workout_streak_days(self.alice), 3)
+
+    def test_a_gap_breaks_the_streak(self):
+        _log_completed_session(self.alice, self.exercise, Decimal("100"), [5], days_ago=5)
+        _log_completed_session(self.alice, self.exercise, Decimal("100"), [5], days_ago=1)
+        _log_completed_session(self.alice, self.exercise, Decimal("100"), [5], days_ago=0)
+        self.assertEqual(achievements.longest_workout_streak_days(self.alice), 2)
+
+    def test_the_longest_streak_survives_after_it_ends(self):
+        """"Longest streak" is an all-time best, not the user's current
+        streak — a 3-day run from ten days ago should still show even
+        though today's run is only 1 day so far."""
+        _log_completed_session(self.alice, self.exercise, Decimal("100"), [5], days_ago=10)
+        _log_completed_session(self.alice, self.exercise, Decimal("100"), [5], days_ago=9)
+        _log_completed_session(self.alice, self.exercise, Decimal("100"), [5], days_ago=8)
+        _log_completed_session(self.alice, self.exercise, Decimal("100"), [5], days_ago=0)
+        self.assertEqual(achievements.longest_workout_streak_days(self.alice), 3)
+
+    def test_two_sessions_on_the_same_day_count_as_one_day(self):
+        _log_completed_session(self.alice, self.exercise, Decimal("100"), [5], days_ago=0)
+        _log_completed_session(self.alice, self.exercise, Decimal("100"), [5], days_ago=0)
+        self.assertEqual(achievements.longest_workout_streak_days(self.alice), 1)
+
+    def test_highlights_always_include_streak_and_workout_count(self):
+        _log_completed_session(self.alice, self.exercise, Decimal("100"), [5])
+        icons = [h.icon for h in achievements.achievement_highlights()]
+        self.assertIn("streak", icons)
+        self.assertIn("workouts", icons)
+
+    def test_each_highlight_carries_its_own_username(self):
+        _log_completed_session(self.alice, self.exercise, Decimal("100"), [5])
+        highlights = achievements.achievement_highlights()
+        self.assertTrue(all(h.username == "alice" for h in highlights))
+
+    def test_workout_count_reflects_only_completed_sessions(self):
+        _log_completed_session(self.alice, self.exercise, Decimal("100"), [5])
+        workout_services.start_session(self.alice, workout=None)  # left in progress
+        highlights = achievements.achievement_highlights()
+        workouts = next(h for h in highlights if h.icon == "workouts")
+        self.assertIn("1", workouts.value)
+
+    def test_pr_highlight_only_appears_once_a_pr_exists(self):
+        session = workout_services.start_session(self.alice, workout=None)
+        performed = workout_services.add_performed_exercise(session, self.exercise)
+        logged_set = workout_services.log_set(performed, weight=Decimal("100"), reps=5)
+        records_services.check_and_record_prs(logged_set)
+        workout_services.complete_session(session)
+        icons = [h.icon for h in achievements.achievement_highlights()]
+        self.assertIn("pr", icons)
+
+    def test_no_pr_highlight_without_any_recorded_prs(self):
+        _log_completed_session(self.alice, self.exercise, Decimal("100"), [5])
+        icons = [h.icon for h in achievements.achievement_highlights()]
+        self.assertNotIn("pr", icons)
+
+    def test_volume_highlight_reflects_the_users_display_unit(self):
+        self.alice.unit_system = "imperial"
+        self.alice.save()
+        _log_completed_session(self.alice, self.exercise, Decimal("100"), [5])  # 500 kg
+        highlights = achievements.achievement_highlights()
+        volume = next(h for h in highlights if h.icon == "volume")
+        self.assertIn("lb", volume.value)
+
+    def test_no_volume_highlight_without_any_logged_sets(self):
+        session = workout_services.start_session(self.alice, workout=None)
+        workout_services.complete_session(session)  # completed, but no exercises/sets at all
+        icons = [h.icon for h in achievements.achievement_highlights()]
+        self.assertNotIn("volume", icons)
+
+    def test_highlights_include_every_opted_in_user(self):
+        """The carousel is shared, not personal — regression: an earlier
+        version scoped this to a single viewing user."""
+        bob = User.objects.create_user(username="bob", password="s3cret-pass")
+        _log_completed_session(self.alice, self.exercise, Decimal("100"), [5])
+        _log_completed_session(bob, self.exercise, Decimal("999"), [5])
+        usernames = {h.username for h in achievements.achievement_highlights()}
+        self.assertEqual(usernames, {"alice", "bob"})
+
+    def test_a_user_who_opted_out_is_excluded_entirely(self):
+        """show_achievements is a privacy setting ("don't show my stats
+        to anyone"), not a personal display toggle — turning it off
+        removes that user's own highlights from the shared result the
+        same way it would for anyone else viewing it."""
+        self.alice.show_achievements = False
+        self.alice.save()
+        _log_completed_session(self.alice, self.exercise, Decimal("100"), [5])
+        self.assertEqual(achievements.achievement_highlights(), [])
+
+    def test_one_users_data_does_not_leak_into_anothers_figures(self):
+        bob = User.objects.create_user(username="bob", password="s3cret-pass")
+        _log_completed_session(self.alice, self.exercise, Decimal("100"), [5])
+        _log_completed_session(bob, self.exercise, Decimal("999"), [5, 5])
+        highlights = achievements.achievement_highlights()
+        alice_workouts = next(
+            h for h in highlights if h.icon == "workouts" and h.username == "alice"
+        )
+        bob_workouts = next(
+            h for h in highlights if h.icon == "workouts" and h.username == "bob"
+        )
+        self.assertIn("1", alice_workouts.value)
+        self.assertIn("1", bob_workouts.value)
 
 
 class AnalyticsDashboardViewTests(TestCase):

@@ -24,11 +24,17 @@ msgstr "ИМТ"
 msgid "on the dashboard"
 msgstr "на панели"
 
+msgid "Share my achievements"
+msgstr "Показывать мои достижения"
+
 msgid "Language"
 msgstr "Язык"
 
 msgid "Turns off the BMI card and its category ranges entirely."
 msgstr "Полностью отключает карточку ИМТ и диапазоны категорий."
+
+msgid "Lets everyone using this instance see your longest streak, workout count, PRs, and total weight lifted in the dashboard's achievements carousel. Turn off to keep your own stats private — you'll still see everyone else's."
+msgstr "Позволяет всем пользователям этого сервера видеть вашу самую длинную серию, количество тренировок, рекорды и общий поднятый вес в карусели достижений на панели. Отключите, чтобы скрыть свои данные — вы всё равно будете видеть данные остальных."
 
 msgid "Height (cm)"
 msgstr "Рост (см)"
@@ -95,6 +101,36 @@ msgstr "заметки"
 
 msgid "activities"
 msgstr "активности"
+
+msgid "Longest streak"
+msgstr "Самая длинная серия"
+
+msgid "%(counter)s day"
+msgid_plural "%(counter)s days"
+msgstr[0] "%(counter)s день"
+msgstr[1] "%(counter)s дня"
+msgstr[2] "%(counter)s дней"
+
+msgid "Workouts completed"
+msgstr "Тренировок выполнено"
+
+msgid "%(counter)s workout"
+msgid_plural "%(counter)s workouts"
+msgstr[0] "%(counter)s тренировка"
+msgstr[1] "%(counter)s тренировки"
+msgstr[2] "%(counter)s тренировок"
+
+msgid "Personal records"
+msgstr "Личных рекордов"
+
+msgid "%(counter)s PR"
+msgid_plural "%(counter)s PRs"
+msgstr[0] "%(counter)s рекорд"
+msgstr[1] "%(counter)s рекорда"
+msgstr[2] "%(counter)s рекордов"
+
+msgid "Total weight lifted"
+msgstr "Всего поднято веса"
 
 msgid "7 days"
 msgstr "7 дней"
@@ -876,6 +912,12 @@ msgstr[2] "%(title)s во времени, %(counter)s измерений"
 msgid "Dashboard"
 msgstr "Панель управления"
 
+msgid "Achievements"
+msgstr "Достижения"
+
+msgid "Show achievement %(position)s"
+msgstr "Показать достижение %(position)s"
+
 msgid "This week's workouts"
 msgstr "Тренировки на этой неделе"
 
@@ -1095,12 +1137,6 @@ msgstr "Мои программы"
 msgid "Template"
 msgstr "Шаблон"
 
-msgid "%(counter)s workout"
-msgid_plural "%(counter)s workouts"
-msgstr[0] "%(counter)s тренировка"
-msgstr[1] "%(counter)s тренировки"
-msgstr[2] "%(counter)s тренировок"
-
 msgid "No programs yet."
 msgstr "Программ пока нет."
 
@@ -1275,11 +1311,17 @@ msgstr "Тренировка"
 msgid "Full view"
 msgstr "Полный вид"
 
-msgid "Skip rest"
-msgstr "Пропустить отдых"
-
 msgid "Rest timer"
 msgstr "Таймер отдыха"
+
+msgid "Unmute rest timer sound"
+msgstr "Включить звук таймера отдыха"
+
+msgid "Mute rest timer sound"
+msgstr "Отключить звук таймера отдыха"
+
+msgid "Skip rest"
+msgstr "Пропустить отдых"
 
 msgid "Edit set"
 msgstr "Изменить подход"

@@ -39,6 +39,15 @@ class User(AbstractUser):
         "independent of whether height/weight exist to compute it, so a "
         "user who'd rather not see the figure can turn it off outright.",
     )
+    show_achievements = models.BooleanField(
+        default=True,
+        help_text="A privacy setting, not a display one: the dashboard's "
+        "achievements carousel (longest streak, workout count, PRs, "
+        "total volume — see apps.analytics.achievements) is shared "
+        "across every user on this instance, so this controls whether "
+        "*this* user's own achievements are included in what everyone "
+        "sees, not whether they personally see the carousel at all.",
+    )
     # Applied by apps.accounts.middleware.UserLanguageMiddleware — a
     # distinct concern from unit_system/timezone above (see
     # config.settings.base's LANGUAGES comment). Defaults to

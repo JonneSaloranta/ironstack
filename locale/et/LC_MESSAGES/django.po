@@ -24,11 +24,17 @@ msgstr "KMI"
 msgid "on the dashboard"
 msgstr "töölaual"
 
+msgid "Share my achievements"
+msgstr "Jaga minu saavutusi"
+
 msgid "Language"
 msgstr "Keel"
 
 msgid "Turns off the BMI card and its category ranges entirely."
 msgstr "Lülitab KMI kaardi ja selle kategooriavahemikud täielikult välja."
+
+msgid "Lets everyone using this instance see your longest streak, workout count, PRs, and total weight lifted in the dashboard's achievements carousel. Turn off to keep your own stats private — you'll still see everyone else's."
+msgstr "Lubab kõigil selle teenuse kasutajatel näha sinu pikimat seeriat, trennide arvu, rekordeid ja tõstetud kogukaalu töölaua saavutuste karussellis. Lülita välja, et hoida oma andmed privaatsena — näed siiski teiste omi."
 
 msgid "Height (cm)"
 msgstr "Pikkus (cm)"
@@ -95,6 +101,33 @@ msgstr "märkmed"
 
 msgid "activities"
 msgstr "tegevused"
+
+msgid "Longest streak"
+msgstr "Pikim seeria"
+
+msgid "%(counter)s day"
+msgid_plural "%(counter)s days"
+msgstr[0] "%(counter)s päev"
+msgstr[1] "%(counter)s päeva"
+
+msgid "Workouts completed"
+msgstr "Trenne tehtud"
+
+msgid "%(counter)s workout"
+msgid_plural "%(counter)s workouts"
+msgstr[0] "%(counter)s trenn"
+msgstr[1] "%(counter)s trenni"
+
+msgid "Personal records"
+msgstr "Isiklikke rekordeid"
+
+msgid "%(counter)s PR"
+msgid_plural "%(counter)s PRs"
+msgstr[0] "%(counter)s rekord"
+msgstr[1] "%(counter)s rekordit"
+
+msgid "Total weight lifted"
+msgstr "Tõstetud kaal kokku"
 
 msgid "7 days"
 msgstr "7 päeva"
@@ -873,6 +906,12 @@ msgstr[1] "%(title)s aja jooksul, %(counter)s mõõtmist"
 msgid "Dashboard"
 msgstr "Töölaud"
 
+msgid "Achievements"
+msgstr "Saavutused"
+
+msgid "Show achievement %(position)s"
+msgstr "Näita saavutust %(position)s"
+
 msgid "This week's workouts"
 msgstr "Selle nädala trennid"
 
@@ -1092,11 +1131,6 @@ msgstr "Minu programmid"
 msgid "Template"
 msgstr "Mall"
 
-msgid "%(counter)s workout"
-msgid_plural "%(counter)s workouts"
-msgstr[0] "%(counter)s trenn"
-msgstr[1] "%(counter)s trenni"
-
 msgid "No programs yet."
 msgstr "Programme pole veel."
 
@@ -1271,11 +1305,17 @@ msgstr "Trenn"
 msgid "Full view"
 msgstr "Täisvaade"
 
-msgid "Skip rest"
-msgstr "Jäta puhkus vahele"
-
 msgid "Rest timer"
 msgstr "Puhkeajastin"
+
+msgid "Unmute rest timer sound"
+msgstr "Lülita puhkeajastiku heli sisse"
+
+msgid "Mute rest timer sound"
+msgstr "Vaigista puhkeajastiku heli"
+
+msgid "Skip rest"
+msgstr "Jäta puhkus vahele"
 
 msgid "Edit set"
 msgstr "Muuda seeriat"

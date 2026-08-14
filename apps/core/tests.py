@@ -569,3 +569,63 @@ class DashboardWidgetsTests(TestCase):
         )
         response = self.client.get(reverse("dashboard"))
         self.assertEqual(list(response.context["recent_prs"]), [])
+
+
+class AchievementsCarouselTests(TestCase):
+    """The dashboard achievements carousel (apps.analytics.achievements)
+    is shared across every user, not scoped to whoever's viewing it —
+    show_achievements is a privacy setting ("don't show my stats to
+    anyone"), not a personal "hide the carousel from me" toggle."""
+
+    def setUp(self):
+        from django.contrib.auth import get_user_model
+
+        self.User = get_user_model()
+        self.alice = self.User.objects.create_user(username="alice", password="s3cret-pass")
+        self.client.login(username="alice", password="s3cret-pass")
+
+    def _log_a_completed_workout(self, user=None):
+        from decimal import Decimal
+
+        from apps.exercises.models import Exercise
+        from apps.workouts import services as workout_services
+
+        exercise = Exercise.objects.create(name="Test Deadlift", owner=None)
+        session = workout_services.start_session(user or self.alice, workout=None)
+        performed = workout_services.add_performed_exercise(session, exercise)
+        workout_services.log_set(performed, weight=Decimal("100"), reps=5)
+        workout_services.complete_session(session)
+
+    def test_no_carousel_with_no_completed_workouts(self):
+        response = self.client.get(reverse("dashboard"))
+        self.assertFalse(response.context["achievements"])
+        self.assertNotContains(response, "achievements-carousel")
+
+    def test_carousel_shows_once_a_workout_is_completed(self):
+        self._log_a_completed_workout()
+        response = self.client.get(reverse("dashboard"))
+        self.assertContains(response, "achievements-carousel")
+        self.assertTrue(response.context["achievements"])
+
+    def test_carousel_still_shows_a_housemates_achievements_when_this_users_toggle_is_off(self):
+        """Regression: an earlier version treated show_achievements as
+        "hide the carousel from me" — turning it off must only remove
+        *this* user's own stats from the shared carousel, not the
+        carousel itself, and a housemate's achievements must still
+        appear."""
+        bob = self.User.objects.create_user(username="bob", password="s3cret-pass")
+        self._log_a_completed_workout(user=bob)
+        self.alice.show_achievements = False
+        self.alice.save()
+        response = self.client.get(reverse("dashboard"))
+        self.assertContains(response, "achievements-carousel")
+        usernames = {h.username for h in response.context["achievements"]}
+        self.assertEqual(usernames, {"bob"})
+
+    def test_opting_out_removes_this_users_own_achievements_from_the_carousel(self):
+        self._log_a_completed_workout()
+        self.alice.show_achievements = False
+        self.alice.save()
+        response = self.client.get(reverse("dashboard"))
+        self.assertFalse(response.context["achievements"])
+        self.assertNotContains(response, "achievements-carousel")

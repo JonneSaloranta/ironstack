@@ -164,7 +164,17 @@ error re-showing the same form, since both return HTTP 200). The timer
 widget deliberately sits *outside* the HTMX swap target
 (`#train-panel`) in the page's DOM — logging a set or navigating
 Prev/Next swaps the exercise panel, and a countdown in progress would
-reset to zero if it were nested inside that swapped region.
+reset to zero if it were nested inside that swapped region. When the
+countdown reaches zero on its own it also plays a short two-tone chime
+— synthesized with the Web Audio API (an oscillator, not an audio file,
+so nothing needs shipping/loading for one beep) and wrapped in
+try/catch for browsers that block audio without a prior gesture or
+don't support it at all, in which case the visible countdown reaching
+zero is all that happens. A speaker icon next to the "Rest timer" label
+mutes/unmutes it; `muted` persists in `localStorage` (a device setting,
+not a server-side preference — the same reasoning as a browser's own
+volume control) so it survives across page loads. A manual "Skip rest"
+never beeps — only the countdown actually finishing does.
 
 **Progressive enhancement**: every training-mode interaction (Prev/Next,
 logging a set) works as a plain link/form POST with JS disabled — HTMX
@@ -186,9 +196,41 @@ forward, not fixing mistakes).
 
 ### Dashboard
 Implemented: this week's workouts and volume, recent PRs (last 3), body
-weight, BMI (see below), and an in-progress-workout banner that doubles
-as "continue/last workout". No logout button here — it lives on the
-Profile page only, not duplicated.
+weight, BMI (see below), an achievements carousel (see below), and an
+in-progress-workout banner that doubles as "continue/last workout". No
+logout button here — it lives on the Profile page only, not duplicated.
+
+**Achievements carousel** (`apps.analytics.achievements`,
+`templates/core/dashboard.html`): a small `.card` at the top of the
+dashboard, auto-rotating every 4.5s through all-time highlight cards —
+longest streak (consecutive calendar days with a completed workout),
+total workouts completed, total PRs, and total weight lifted — pausing
+on hover/focus and always overridable via a dot row (auto-rotate is only
+ever the default, never the only way to move between cards). Unlike
+every other dashboard widget, this one is **shared across every user on
+the instance**, not personal to whoever's looking at it — each card
+names whose achievement it is (a self-hosted app is typically a
+household/small-gym's own server, where seeing a housemate hit a new
+streak is the point, not a bug). `User.show_achievements` is
+consequently a *privacy* setting rather than a display one: turning it
+off removes that user's own figures from what the carousel shows to
+**everyone**, themselves included — not a personal "hide the carousel
+from me" toggle the way `show_bmi` is for BMI. A user with zero
+completed workouts contributes no cards; the carousel itself doesn't
+render at all if nobody currently has anything to show.
+
+Implementation notes: each achievement slide is absolutely positioned
+inside a fixed-min-height box rather than left in normal flow —
+regression: with only `x-show`'s display toggling, the *container's*
+height followed whichever slide was currently visible, so the page
+content below the carousel visibly jumped up and down every rotation as
+it cycled between a one-line and a two-line achievement. Also fixed
+alongside this: `.bottom-nav` had no `z-index` at all, so a card near
+the bottom of a long page (the profile page's BMI card, specifically its
+`<abbr>` tooltip) could end up painted *over* the nav bar instead of
+under it — the nav now sits above ordinary page content and tooltips,
+below the floating training button/PR toasts (deliberately still above
+everything, nav included).
 
 **BMI**: dashboard card once both a height (set on the Profile page) and
 at least one logged body weight exist, alongside the WHO category ranges

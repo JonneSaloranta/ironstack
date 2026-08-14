@@ -233,6 +233,38 @@ class ProfileViewTests(TestCase):
         self.assertContains(response, "on the dashboard")
         self.assertContains(response, "Turns off the BMI card")
 
+    def test_show_achievements_defaults_to_true(self):
+        self.assertTrue(self.alice.show_achievements)
+
+    def test_unchecking_show_achievements_turns_it_off(self):
+        # An unchecked checkbox simply isn't sent in the POST body.
+        self.client.post(
+            reverse("profile"),
+            {"unit_system": "metric", "timezone": "UTC", "language": "en"},
+        )
+        self.alice.refresh_from_db()
+        self.assertFalse(self.alice.show_achievements)
+
+    def test_checking_show_achievements_turns_it_back_on(self):
+        self.alice.show_achievements = False
+        self.alice.save()
+        self.client.post(
+            reverse("profile"),
+            {
+                "unit_system": "metric",
+                "timezone": "UTC",
+                "show_achievements": "on",
+                "language": "en",
+            },
+        )
+        self.alice.refresh_from_db()
+        self.assertTrue(self.alice.show_achievements)
+
+    def test_show_achievements_field_is_on_the_profile_page(self):
+        response = self.client.get(reverse("profile"))
+        self.assertContains(response, "Share my achievements")
+        self.assertContains(response, "keep your own stats private")
+
 
 class PasswordChangeTests(TestCase):
     """The URLs (django.contrib.auth.urls) already existed since Phase 1,

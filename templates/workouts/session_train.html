@@ -17,6 +17,15 @@ view for why a generic htmx:afterRequest listener isn't enough), or
 manually with the presets below.
 {% endcomment %}
 <div class="rest-timer" x-data="ironstackRestTimer()" @rest-timer-start.window="start($event.detail.seconds)">
+  <div class="rest-timer-header">
+    <span class="text-muted">{% trans "Rest timer" %}</span>
+    <button type="button" class="rest-timer-mute" @click="toggleMute()"
+            :aria-label="muted ? '{% trans "Unmute rest timer sound" %}' : '{% trans "Mute rest timer sound" %}'"
+            :aria-pressed="muted">
+      <svg x-show="!muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="4 8 8 8 12 4 12 20 8 16 4 16 4 8"/><path d="M16 8a5 5 0 0 1 0 8"/><path d="M19 5a9 9 0 0 1 0 14"/></svg>
+      <svg x-show="muted" x-cloak viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="4 8 8 8 12 4 12 20 8 16 4 16 4 8"/><line x1="16" y1="8" x2="22" y2="14"/><line x1="22" y1="8" x2="16" y2="14"/></svg>
+    </button>
+  </div>
   <div class="rest-timer-row" x-show="running" x-cloak>
     <span class="rest-timer-display" x-text="formatted"></span>
     <button type="button" class="button-secondary" @click="adjust(-15)">−15s</button>
@@ -24,7 +33,6 @@ manually with the presets below.
     <button type="button" class="button-secondary" @click="stop()">{% trans "Skip rest" %}</button>
   </div>
   <div class="rest-timer-row" x-show="!running">
-    <span class="text-muted">{% trans "Rest timer" %}</span>
     <button type="button" class="button-secondary" @click="start(60)">60s</button>
     <button type="button" class="button-secondary" @click="start(90)">90s</button>
     <button type="button" class="button-secondary" @click="start(120)">120s</button>
@@ -46,14 +54,19 @@ manually with the presets below.
 {% block extra_scripts %}
 <script>
   // Training mode's rest timer — plain client-side countdown, no server
-  // round-trip needed while it runs. `duration` is only kept so +/-15s
-  // adjustments after the timer hits 0 have something sane to restart
-  // from; the countdown itself is driven entirely by `remaining`.
+  // round-trip needed while it runs. The countdown itself is driven
+  // entirely by `remaining`. `muted` persists in localStorage (not a
+  // server-side user preference — it's a device/browser setting, same
+  // reasoning as e.g. a browser's own volume control) so it survives
+  // across page loads without needing a model field or round trip.
+  const MUTE_STORAGE_KEY = "ironstack-rest-timer-muted";
+
   function ironstackRestTimer() {
     return {
       remaining: 0,
       running: false,
       intervalId: null,
+      muted: localStorage.getItem(MUTE_STORAGE_KEY) === "true",
       get formatted() {
         const total = Math.max(0, this.remaining);
         const m = Math.floor(total / 60);
@@ -67,17 +80,56 @@ manually with the presets below.
         this.intervalId = setInterval(() => {
           this.remaining -= 1;
           if (this.remaining <= 0) {
-            this.stop();
+            this.finish();
           }
         }, 1000);
       },
       adjust(delta) {
         this.remaining = Math.max(0, this.remaining + delta);
       },
+      // Countdown reaching zero on its own — the only path that plays a
+      // sound, distinct from a manual "Skip rest" (stop() below), which
+      // shouldn't beep since the user is the one ending it.
+      finish() {
+        clearInterval(this.intervalId);
+        this.running = false;
+        this.remaining = 0;
+        this.beep();
+      },
       stop() {
         clearInterval(this.intervalId);
         this.running = false;
         this.remaining = 0;
+      },
+      toggleMute() {
+        this.muted = !this.muted;
+        localStorage.setItem(MUTE_STORAGE_KEY, this.muted);
+      },
+      beep() {
+        if (this.muted) return;
+        // Web Audio API — a synthesized two-tone chime, so no audio
+        // asset needs shipping/loading for one short beep. Wrapped in
+        // try/catch: browsers that block audio without a prior user
+        // gesture, or don't support Web Audio at all, just get the
+        // (still very visible) countdown reaching zero, nothing more.
+        try {
+          const ctx = new (window.AudioContext || window.webkitAudioContext)();
+          [880, 1320].forEach((freq, i) => {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.frequency.value = freq;
+            const startAt = ctx.currentTime + i * 0.18;
+            gain.gain.setValueAtTime(0.001, startAt);
+            gain.gain.exponentialRampToValueAtTime(0.25, startAt + 0.02);
+            gain.gain.exponentialRampToValueAtTime(0.001, startAt + 0.35);
+            osc.start(startAt);
+            osc.stop(startAt + 0.35);
+          });
+        } catch (e) {
+          // Silently skip — see comment above.
+        }
       },
     };
   }

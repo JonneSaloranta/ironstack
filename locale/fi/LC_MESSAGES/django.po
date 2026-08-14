@@ -24,11 +24,17 @@ msgstr "BMI"
 msgid "on the dashboard"
 msgstr "kojelaudalla"
 
+msgid "Share my achievements"
+msgstr "Jaa omat saavutukseni"
+
 msgid "Language"
 msgstr "Kieli"
 
 msgid "Turns off the BMI card and its category ranges entirely."
 msgstr "Piilottaa BMI-kortin ja sen luokka-asteikot kokonaan."
+
+msgid "Lets everyone using this instance see your longest streak, workout count, PRs, and total weight lifted in the dashboard's achievements carousel. Turn off to keep your own stats private — you'll still see everyone else's."
+msgstr "Antaa kaikkien tämän palvelun käyttäjien nähdä pisimmän putkesi, treenimääräsi, ennätyksesi ja nostetun kokonaispainosi etusivun saavutuskarusellissa. Poista käytöstä pitääksesi omat tietosi yksityisinä — näet silti muiden tiedot."
 
 msgid "Height (cm)"
 msgstr "Pituus (cm)"
@@ -95,6 +101,33 @@ msgstr "muistiinpanot"
 
 msgid "activities"
 msgstr "aktiviteetit"
+
+msgid "Longest streak"
+msgstr "Pisin putki"
+
+msgid "%(counter)s day"
+msgid_plural "%(counter)s days"
+msgstr[0] "%(counter)s päivä"
+msgstr[1] "%(counter)s päivää"
+
+msgid "Workouts completed"
+msgstr "Treenejä tehty"
+
+msgid "%(counter)s workout"
+msgid_plural "%(counter)s workouts"
+msgstr[0] "%(counter)s treeni"
+msgstr[1] "%(counter)s treeniä"
+
+msgid "Personal records"
+msgstr "Ennätyksiä"
+
+msgid "%(counter)s PR"
+msgid_plural "%(counter)s PRs"
+msgstr[0] "%(counter)s ennätys"
+msgstr[1] "%(counter)s ennätystä"
+
+msgid "Total weight lifted"
+msgstr "Nostettu paino yhteensä"
 
 msgid "7 days"
 msgstr "7 päivää"
@@ -873,6 +906,12 @@ msgstr[1] "%(title)s ajan myötä, %(counter)s mittausta"
 msgid "Dashboard"
 msgstr "Kojelauta"
 
+msgid "Achievements"
+msgstr "Saavutukset"
+
+msgid "Show achievement %(position)s"
+msgstr "Näytä saavutus %(position)s"
+
 msgid "This week's workouts"
 msgstr "Tämän viikon treenit"
 
@@ -1092,11 +1131,6 @@ msgstr "Omat ohjelmat"
 msgid "Template"
 msgstr "Malli"
 
-msgid "%(counter)s workout"
-msgid_plural "%(counter)s workouts"
-msgstr[0] "%(counter)s treeni"
-msgstr[1] "%(counter)s treeniä"
-
 msgid "No programs yet."
 msgstr "Ei vielä ohjelmia."
 
@@ -1271,11 +1305,17 @@ msgstr "Harjoittelu"
 msgid "Full view"
 msgstr "Koko näkymä"
 
-msgid "Skip rest"
-msgstr "Ohita lepo"
-
 msgid "Rest timer"
 msgstr "Lepoajastin"
+
+msgid "Unmute rest timer sound"
+msgstr "Poista lepoajastimen äänen mykistys"
+
+msgid "Mute rest timer sound"
+msgstr "Mykistä lepoajastimen ääni"
+
+msgid "Skip rest"
+msgstr "Ohita lepo"
 
 msgid "Edit set"
 msgstr "Muokkaa sarjaa"

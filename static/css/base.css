@@ -161,6 +161,15 @@ input[type="radio"] {
   left: 0;
   right: 0;
   bottom: 0;
+  /* Regression: had no z-index at all (auto), so anything else with its
+     own stacking context — most visibly the <abbr> tooltip popups
+     (z-index: 20) a card near the bottom of a long page (e.g. the
+     profile page's BMI card) could render close enough to the bar to
+     overlap it — painted over the nav instead of under it. Below the
+     floating training button/PR toasts (they're deliberately meant to
+     float above everything, nav included) but above ordinary page
+     content and its tooltips. */
+  z-index: 50;
   height: var(--nav-height);
   padding-bottom: env(safe-area-inset-bottom);
   display: flex;
@@ -695,6 +704,65 @@ h2 {
   font-weight: 600;
 }
 
+/* Achievements carousel (templates/core/dashboard.html) */
+.achievements-carousel {
+  position: relative;
+}
+
+/* Fixed-height box the individual slides are absolutely positioned
+   inside of (see the template's own comment on .achievement-slide) —
+   this height, not any slide's own content, is what determines the
+   carousel's box size, so swapping between a one-line and a two-line
+   achievement never reflows the rest of the page. Sized for two lines
+   of the label+username row at the app's narrowest supported width. */
+.achievements-slides {
+  position: relative;
+  min-height: 3.75rem;
+}
+
+.achievement-slide {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.achievement-icon {
+  font-size: 1.8rem;
+  line-height: 1;
+}
+
+.achievement-value {
+  display: block;
+  font-size: 1.3rem;
+}
+
+.achievements-dots {
+  display: flex;
+  justify-content: center;
+  gap: 0.4rem;
+  margin-top: 0.75rem;
+}
+
+.achievements-dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  min-height: 0;
+  min-width: 0;
+  padding: 0;
+  margin-bottom: 0;
+  border: none;
+  border-radius: 50%;
+  background: var(--color-border);
+}
+
+.achievements-dot-active {
+  background: var(--color-accent);
+}
+
 .train-set-history {
   display: flex;
   flex-wrap: wrap;
@@ -723,7 +791,7 @@ h2 {
   .bottom-nav {
     position: sticky;
     top: 0;
-    z-index: 10;
+    z-index: 50;
     height: auto;
     min-height: var(--nav-height);
     justify-content: center;
@@ -772,6 +840,31 @@ h2 {
   border-radius: var(--radius);
   padding: 0.75rem 1rem;
   margin-bottom: 1rem;
+}
+
+.rest-timer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.rest-timer-mute {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.25rem;
+  min-width: 2.25rem;
+  margin-bottom: 0;
+  padding: 0.35rem;
+  border: none;
+  background: transparent;
+  color: var(--color-text-muted);
+}
+
+.rest-timer-mute svg {
+  width: 1.1rem;
+  height: 1.1rem;
 }
 
 .rest-timer-row {

@@ -29,7 +29,13 @@ class ProfileForm(forms.ModelForm):
     weight — nothing else in the app reads it. `show_bmi` is a separate
     on/off switch for the BMI card itself: some people would simply
     rather not see the number at all, regardless of whether height/weight
-    exist to compute it.
+    exist to compute it. `show_achievements` is a privacy setting, not a
+    display one: the dashboard's achievements carousel
+    (apps.analytics.achievements) is shared across every user on this
+    instance, so this controls whether *this* user's own longest streak/
+    workout count/PRs/total weight lifted are included in what everyone
+    sees — off keeps their own stats private while they still see
+    everyone else's.
     """
 
     timezone = forms.ChoiceField(
@@ -39,16 +45,30 @@ class ProfileForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ["unit_system", "timezone", "height", "show_bmi", "language"]
+        fields = [
+            "unit_system",
+            "timezone",
+            "height",
+            "show_bmi",
+            "show_achievements",
+            "language",
+        ]
         labels = {
             "unit_system": _("Units"),
             "show_bmi": lazy_format_html(
                 "{} {} {}", _("Show"), abbr_label(_("BMI"), BMI_FULL), _("on the dashboard")
             ),
+            "show_achievements": _("Share my achievements"),
             "language": _("Language"),
         }
         help_texts = {
-            "show_bmi": _("Turns off the BMI card and its category ranges entirely.")
+            "show_bmi": _("Turns off the BMI card and its category ranges entirely."),
+            "show_achievements": _(
+                "Lets everyone using this instance see your longest streak, "
+                "workout count, PRs, and total weight lifted in the "
+                "dashboard's achievements carousel. Turn off to keep your "
+                "own stats private — you'll still see everyone else's."
+            ),
         }
 
     def __init__(self, *args, **kwargs):
