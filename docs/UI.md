@@ -401,7 +401,20 @@ records pages, every create/edit form, and the error pages) is styled as
 a button (`.button-secondary` — outlined, lower-emphasis than the solid
 `.button` a page's primary action uses) rather than a bare text link:
 easier to spot, and a full `--touch-target` (2.75rem) hit area instead of
-whatever a line of text happens to occupy.
+whatever a line of text happens to occupy. The same rule now applies to
+every other in-page action link too — Cancel, the row-level Edit links
+in workout/measurement/activity history tables (compacted to
+`--touch-target: auto` inside `.set-actions`, matching the row's own
+Delete button), exercise-list pagination, "View current PRs", and
+login/signup's counterpart link. Where the old link carried both prose
+and a call to action in one sentence ("Already have an account? Log
+in"), that's now split: plain muted text for the question, a short
+`.button-secondary` for the action — so the label stays scannable
+inside a button while the context is still right next to it. Two
+patterns are deliberately exempt: the mobile bottom-nav (its own
+icon-first `aria-current` styling, not a page-body link) and
+`.range-filter`'s date-range tabs (a segmented control with its own
+pill/active-fill styling, not a text link pretending to be one).
 
 ### PWA
 Installable, not offline-capable — see `docs/ROADMAP.md` "Future

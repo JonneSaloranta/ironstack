@@ -762,8 +762,11 @@ msgstr "Registrati"
 msgid "Create your account"
 msgstr "Crea il tuo account"
 
-msgid "Already have an account? Log in"
-msgstr "Hai già un account? Accedi"
+msgid "Already have an account?"
+msgstr "Hai già un account?"
+
+msgid "Log in"
+msgstr "Accedi"
 
 msgid "Edit activity"
 msgstr "Modifica attività"
@@ -1304,8 +1307,8 @@ msgstr "Record di ripetizioni per peso"
 msgid "%(weight)s: %(reps)s reps"
 msgstr "%(weight)s: %(reps)s ripetizioni"
 
-msgid "Log in"
-msgstr "Accedi"
+msgid "Don't have an account?"
+msgstr "Non hai un account?"
 
 msgid "Create an account"
 msgstr "Crea un account"

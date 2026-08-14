@@ -36,7 +36,7 @@
         <td>{{ entry.recorded_at|date:"Y-m-d H:i" }}</td>
         <td>{{ entry.display_value }} {{ unit_label }}</td>
         <td class="set-actions">
-          <a href="{% url 'measurements:entry-edit' entry.pk %}">{% trans "Edit" %}</a>
+          <a class="button-secondary" href="{% url 'measurements:entry-edit' entry.pk %}">{% trans "Edit" %}</a>
           <form method="post" action="{% url 'measurements:entry-delete' entry.pk %}" onsubmit="return confirm('{% trans "Delete this reading?" %}');">
             {% csrf_token %}
             <button type="submit" class="button-danger">{% trans "Delete" %}</button>

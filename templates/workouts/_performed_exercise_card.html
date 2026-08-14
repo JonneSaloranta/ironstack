@@ -21,7 +21,7 @@
           <td>{{ s.weight|weight:request.user }}</td>
           <td>{{ s.reps }}{% if s.is_failure %} <span class="tag tag-muted">{% trans "F" %}</span>{% endif %}</td>
           <td class="set-actions">
-            <a href="{% url 'workouts:set-edit' s.pk %}">{% trans "Edit" %}</a>
+            <a class="button-secondary" href="{% url 'workouts:set-edit' s.pk %}">{% trans "Edit" %}</a>
             <form method="post" action="{% url 'workouts:set-delete' s.pk %}"
                   hx-post="{% url 'workouts:set-delete' s.pk %}"
                   hx-target="#performed-exercise-{{ pe.id }}" hx-swap="outerHTML">

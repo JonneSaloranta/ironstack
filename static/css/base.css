@@ -488,8 +488,10 @@ h2 {
   margin: 0;
 }
 
-.set-actions button {
+.set-actions button,
+.set-actions .button-secondary {
   min-height: auto;
+  min-width: auto;
   margin-bottom: 0;
   padding: 0.25rem 0.5rem;
   font-size: 0.8rem;

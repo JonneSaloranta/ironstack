@@ -762,8 +762,11 @@ msgstr "Registreeru"
 msgid "Create your account"
 msgstr "Loo oma konto"
 
-msgid "Already have an account? Log in"
-msgstr "Kas sul on juba konto? Logi sisse"
+msgid "Already have an account?"
+msgstr "Kas sul on juba konto?"
+
+msgid "Log in"
+msgstr "Logi sisse"
 
 msgid "Edit activity"
 msgstr "Muuda tegevust"
@@ -1304,8 +1307,8 @@ msgstr "Korduste rekordid kaalu järgi"
 msgid "%(weight)s: %(reps)s reps"
 msgstr "%(weight)s: %(reps)s kordust"
 
-msgid "Log in"
-msgstr "Logi sisse"
+msgid "Don't have an account?"
+msgstr "Kas sul pole veel kontot?"
 
 msgid "Create an account"
 msgstr "Loo konto"

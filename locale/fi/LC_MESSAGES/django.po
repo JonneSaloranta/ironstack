@@ -762,8 +762,11 @@ msgstr "Rekisteröidy"
 msgid "Create your account"
 msgstr "Luo tilisi"
 
-msgid "Already have an account? Log in"
-msgstr "Onko sinulla jo tili? Kirjaudu sisään"
+msgid "Already have an account?"
+msgstr "Onko sinulla jo tili?"
+
+msgid "Log in"
+msgstr "Kirjaudu sisään"
 
 msgid "Edit activity"
 msgstr "Muokkaa aktiviteettia"
@@ -1304,8 +1307,8 @@ msgstr "Toistoennätykset painoittain"
 msgid "%(weight)s: %(reps)s reps"
 msgstr "%(weight)s: %(reps)s toistoa"
 
-msgid "Log in"
-msgstr "Kirjaudu sisään"
+msgid "Don't have an account?"
+msgstr "Eikö sinulla ole vielä tiliä?"
 
 msgid "Create an account"
 msgstr "Luo tili"

@@ -762,8 +762,11 @@ msgstr "Sign up"
 msgid "Create your account"
 msgstr "Create your account"
 
-msgid "Already have an account? Log in"
-msgstr "Already have an account? Log in"
+msgid "Already have an account?"
+msgstr "Already have an account?"
+
+msgid "Log in"
+msgstr "Log in"
 
 msgid "Edit activity"
 msgstr "Edit activity"
@@ -1304,8 +1307,8 @@ msgstr "Rep records by weight"
 msgid "%(weight)s: %(reps)s reps"
 msgstr "%(weight)s: %(reps)s reps"
 
-msgid "Log in"
-msgstr "Log in"
+msgid "Don't have an account?"
+msgstr "Don't have an account?"
 
 msgid "Create an account"
 msgstr "Create an account"

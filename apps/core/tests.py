@@ -417,6 +417,32 @@ class BottomNavTests(TestCase):
             response, f'href="{reverse("analytics:dashboard")}" aria-label="Progress"'
         )
 
+    def test_only_progress_is_current_on_the_analytics_dashboard(self):
+        """Regression: both "dashboard" (core) and "analytics:dashboard"
+        share the bare url_name "dashboard", so a naive
+        request.resolver_match.url_name == 'dashboard' check on the Home
+        link also matched while viewing Progress — lighting up both nav
+        items at once. Must key off the namespaced view_name instead."""
+        response = self.client.get(reverse("analytics:dashboard"))
+        content = response.content.decode()
+        self.assertNotIn('aria-current="page"', self._nav_tag(content, "Home"))
+        self.assertIn('aria-current="page"', self._nav_tag(content, "Progress"))
+
+    def test_home_is_current_on_the_dashboard(self):
+        response = self.client.get(reverse("dashboard"))
+        content = response.content.decode()
+        self.assertIn('aria-current="page"', self._nav_tag(content, "Home"))
+
+    @staticmethod
+    def _nav_tag(content, label):
+        """The full opening <a ...> tag for the nav item with this
+        aria-label, so aria-current can be asserted present/absent on
+        the right link specifically rather than anywhere on the page."""
+        label_pos = content.find(f'aria-label="{label}"')
+        tag_start = content.rfind("<a", 0, label_pos)
+        tag_end = content.find(">", label_pos)
+        return content[tag_start : tag_end + 1]
+
 
 class DashboardWidgetsTests(TestCase):
     """docs/UI.md dashboard content: this week's workouts/volume, recent

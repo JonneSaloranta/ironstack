@@ -762,8 +762,11 @@ msgstr "Registrera dig"
 msgid "Create your account"
 msgstr "Skapa ditt konto"
 
-msgid "Already have an account? Log in"
-msgstr "Har du redan ett konto? Logga in"
+msgid "Already have an account?"
+msgstr "Har du redan ett konto?"
+
+msgid "Log in"
+msgstr "Logga in"
 
 msgid "Edit activity"
 msgstr "Redigera aktivitet"
@@ -1304,8 +1307,8 @@ msgstr "Repetitionsrekord per vikt"
 msgid "%(weight)s: %(reps)s reps"
 msgstr "%(weight)s: %(reps)s repetitioner"
 
-msgid "Log in"
-msgstr "Logga in"
+msgid "Don't have an account?"
+msgstr "Har du inget konto?"
 
 msgid "Create an account"
 msgstr "Skapa ett konto"

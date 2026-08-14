@@ -19,11 +19,11 @@
 {% if is_paginated %}
   <nav class="pagination" aria-label="{% trans "Exercise list pages" %}">
     {% if page_obj.has_previous %}
-      <a href="?page={{ page_obj.previous_page_number }}&q={{ query }}&muscle_group={{ selected_muscle_group }}">{% trans "Previous" %}</a>
+      <a class="button-secondary" href="?page={{ page_obj.previous_page_number }}&q={{ query }}&muscle_group={{ selected_muscle_group }}">{% trans "Previous" %}</a>
     {% endif %}
     <span>{% blocktrans with number=page_obj.number total=page_obj.paginator.num_pages %}Page {{ number }} of {{ total }}{% endblocktrans %}</span>
     {% if page_obj.has_next %}
-      <a href="?page={{ page_obj.next_page_number }}&q={{ query }}&muscle_group={{ selected_muscle_group }}">{% trans "Next" %}</a>
+      <a class="button-secondary" href="?page={{ page_obj.next_page_number }}&q={{ query }}&muscle_group={{ selected_muscle_group }}">{% trans "Next" %}</a>
     {% endif %}
   </nav>
 {% endif %}

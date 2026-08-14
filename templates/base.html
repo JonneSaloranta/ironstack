@@ -39,7 +39,7 @@
   </div>
   {% if user.is_authenticated %}
   <nav class="bottom-nav" aria-label="{% trans "Main navigation" %}">
-    <a href="{% url 'dashboard' %}" aria-label="{% trans "Home" %}" {% if request.resolver_match.url_name == 'dashboard' %}aria-current="page"{% endif %}>
+    <a href="{% url 'dashboard' %}" aria-label="{% trans "Home" %}" {% if request.resolver_match.view_name == 'dashboard' %}aria-current="page"{% endif %}>
       <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-8 9 8"/><path d="M5 10v10a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V10"/></svg>
       <span class="nav-label">{% trans "Home" %}</span>
     </a>
@@ -55,7 +55,7 @@
       <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v1"/><line x1="8" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="16" y2="14"/><line x1="8" y1="18" x2="13" y2="18"/></svg>
       <span class="nav-label">{% trans "Programs" %}</span>
     </a>
-    <a href="{% url 'profile' %}" aria-label="{% trans "Profile" %}" {% if request.resolver_match.url_name == 'profile' %}aria-current="page"{% endif %}>
+    <a href="{% url 'profile' %}" aria-label="{% trans "Profile" %}" {% if request.resolver_match.view_name == 'profile' %}aria-current="page"{% endif %}>
       <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>
       <span class="nav-label">{% trans "Profile" %}</span>
     </a>

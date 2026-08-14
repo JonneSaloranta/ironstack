@@ -13,6 +13,6 @@
     {% csrf_token %}
     <button type="submit" class="button-danger">{% trans "Delete" %}</button>
   </form>
-  <p><a href="{% url 'programs:program-detail' program.pk %}">{% trans "Cancel" %}</a></p>
+  <p><a class="button-secondary" href="{% url 'programs:program-detail' program.pk %}">{% trans "Cancel" %}</a></p>
 </div>
 {% endblock %}

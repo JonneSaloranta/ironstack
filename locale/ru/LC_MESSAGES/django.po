@@ -765,8 +765,11 @@ msgstr "Зарегистрироваться"
 msgid "Create your account"
 msgstr "Создайте аккаунт"
 
-msgid "Already have an account? Log in"
-msgstr "Уже есть аккаунт? Войти"
+msgid "Already have an account?"
+msgstr "Уже есть аккаунт?"
+
+msgid "Log in"
+msgstr "Войти"
 
 msgid "Edit activity"
 msgstr "Изменить активность"
@@ -1311,8 +1314,8 @@ msgstr "Рекорды повторений по весу"
 msgid "%(weight)s: %(reps)s reps"
 msgstr "%(weight)s: %(reps)s повторений"
 
-msgid "Log in"
-msgstr "Войти"
+msgid "Don't have an account?"
+msgstr "Нет аккаунта?"
 
 msgid "Create an account"
 msgstr "Создать аккаунт"

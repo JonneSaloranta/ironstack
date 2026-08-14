@@ -23,6 +23,6 @@
   <div class="card empty-state"><p>{% trans "Not enough history in this range for a trend line." %}</p></div>
 {% endif %}
 
-<p><a href="{% url 'records:exercise-records' exercise.pk %}">{% trans "View current" %} <abbr tabindex="0" title="{% trans "Personal Records" %}">PRs</abbr></a></p>
+<p><a class="button-secondary" href="{% url 'records:exercise-records' exercise.pk %}">{% trans "View current" %} <abbr tabindex="0" title="{% trans "Personal Records" %}">PRs</abbr></a></p>
 <p><a class="button-secondary" href="{% url 'exercises:exercise-detail' exercise.pk %}">&larr; {% trans "Back to exercise" %}</a></p>
 {% endblock %}

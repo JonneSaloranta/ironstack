@@ -855,6 +855,30 @@ model would then need admin coverage written twice.
 - 2 new UI strings translated across fi/sv/ru/it/et (468 total,
   0 fuzzy/untranslated). 3 new tests (462 total).
 
+**Bottom-nav "Home"/"Progress" both lit up on the Progress page** — a
+real bug: the Home link's active check compared
+`request.resolver_match.url_name`, but Django's core dashboard and the
+analytics dashboard both happen to be named `"dashboard"` in their own
+app — `url_name` drops the namespace, so it matched on *both* pages.
+Fixed by checking `resolver_match.view_name` (namespaced) instead,
+applied to the Profile link too for the same latent reason. 2 new
+regression tests (464 total).
+
+**Plain text links restyled as CTA buttons**, continuing the "'Back to
+X' links restyled as buttons" fix above to every remaining bare `<a>`
+in the app (Cancel on program delete, row-level Edit links in workout/
+measurement/activity history tables, exercise-list pagination, "View
+current PRs") — all now `.button-secondary`, with any surrounding
+context kept as plain text next to the button rather than folded into
+its label. Login/signup's combined link+prose ("Already have an
+account? Log in") was split into muted question text plus a short CTA
+button, matching how the rest of the app pairs a link with nearby
+text. The mobile bottom-nav and the `.range-filter` date-range tabs
+were deliberately left alone — the nav is out of scope per explicit
+request, and the range filter is a segmented tab control (own pill
+styling, active-state fill), not a text link. 2 new UI strings
+translated across fi/sv/ru/it/et (469 total, 0 fuzzy/untranslated).
+
 ## Local development
 
 ```bash
