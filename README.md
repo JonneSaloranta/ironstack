@@ -669,6 +669,29 @@ mute toggle, and two mobile layout fixes.**
 - 3 new/changed UI strings translated across all 5 non-English catalogs
   (434 total, 0 fuzzy/untranslated). 23 new/changed tests (385 total).
 
+**Fixed: a user's timezone preference was never actually applied
+anywhere.**
+
+- A real, significant bug: `User.timezone` (set on the profile page)
+  was validated and stored correctly, but nothing in the app ever
+  called `django.utils.timezone.activate()` — so every rendered
+  date/time, and "today"/"this week" boundaries on the dashboard and in
+  analytics, silently used `settings.TIME_ZONE` (UTC) for every user
+  regardless of what they'd chosen. Fixed with a new
+  `UserTimezoneMiddleware` (`apps.accounts.middleware`), the same
+  after-auth-before-view placement and "re-derive from the database
+  every request" pattern as the existing `UserLanguageMiddleware`.
+- Also fixed the specific case that surfaced this: selecting
+  "localtime" from the timezone dropdown looked like it should mean
+  "use my device's own local time", but it's actually a fixed,
+  non-dynamic `zoneinfo` alias (whatever `/etc/localtime` resolves to
+  inside the container — UTC in this image) — a server-rendered app has
+  no way to detect a visiting device's timezone without separate
+  client-side plumbing this app doesn't have. Removed it (and tzdata's
+  own "Factory" placeholder alias) from the picker; a real IANA zone
+  (e.g. "Europe/Helsinki") now actually takes effect.
+- 5 new tests (390 total).
+
 ## Local development
 
 ```bash

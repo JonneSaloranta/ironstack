@@ -145,8 +145,24 @@ live program — is the source of truth for anything already performed.
   regardless of the user's display preference. Conversion to the user's
   preferred unit system happens only at the template/service boundary.
 - All timestamps are stored in UTC (`USE_TZ=True`); "today"/"this week"
-  boundaries in the dashboard and analytics are computed using the user's
-  stored timezone preference.
+  boundaries in the dashboard and analytics, and every rendered date/time,
+  use the user's stored timezone preference —
+  `apps.accounts.middleware.UserTimezoneMiddleware` calls
+  `django.utils.timezone.activate(user.timezone)` once per request (same
+  after-auth, before-view placement and "re-derive from the database
+  every request" pattern as `UserLanguageMiddleware`), which both
+  `timezone.localdate()`/`timezone.localtime()` calls and every plain
+  `{{ some_datetime|date:"..." }}` template filter then read
+  automatically. This is a real fix, not a restatement of what was
+  already true: nothing ever called `timezone.activate()` before it, so
+  every user saw UTC regardless of their profile setting, and "this
+  week" itself could be computed wrong near a user's own midnight if it
+  didn't line up with UTC's. `ProfileForm`'s timezone choices also drop
+  a couple of non-geographic `zoneinfo` aliases ("localtime", "Factory")
+  that are actively misleading rather than just unfamiliar —
+  "localtime" reads as "detect my device's own timezone" but is a fixed
+  server-side alias with nothing dynamic about it; see
+  `apps.accounts.forms._MISLEADING_TIMEZONE_ALIASES`.
 
 A post-launch audit found this rule wasn't actually followed everywhere:
 `apps.measurements` converted correctly, but workout sets, PRs, exercise

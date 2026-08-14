@@ -51,6 +51,72 @@ class LanguagePreferenceTests(TestCase):
         self.assertContains(response, "Aikavyöhyke")  # "Timezone" label
 
 
+class TimezonePreferenceTests(TestCase):
+    """apps.accounts.middleware.UserTimezoneMiddleware — regression: a
+    logged-in user's stored `timezone` (set on the profile page) was
+    saved and validated but never actually applied anywhere; every
+    timezone-aware render silently used settings.TIME_ZONE (UTC)
+    regardless of what a user had chosen."""
+
+    def setUp(self):
+        from datetime import datetime
+        from datetime import timezone as dt_timezone
+
+        from apps.workouts import services as workout_services
+
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        self.client.login(username="alice", password="s3cret-pass")
+        self.session = workout_services.start_session(self.alice, workout=None)
+        # Deliberately close to UTC midnight so a +14 zone lands on the
+        # *next* calendar date — the clearest possible signal that the
+        # active timezone, not just the clock face, actually changed.
+        self.session.started_at = datetime(2026, 1, 1, 23, 0, tzinfo=dt_timezone.utc)
+        self.session.save(update_fields=["started_at"])
+
+    def test_a_logged_datetime_renders_in_utc_by_default(self):
+        response = self.client.get(reverse("workouts:session-list"))
+        self.assertContains(response, "2026-01-01 23:00")
+
+    def test_a_logged_datetime_renders_in_the_users_chosen_timezone(self):
+        self.alice.timezone = "Pacific/Kiritimati"  # UTC+14, no DST
+        self.alice.save()
+        response = self.client.get(reverse("workouts:session-list"))
+        self.assertContains(response, "2026-01-02 13:00")
+        self.assertNotContains(response, "2026-01-01 23:00")
+
+    def test_setting_timezone_on_profile_persists_and_takes_effect_immediately(self):
+        self.client.post(
+            reverse("profile"),
+            {"unit_system": "metric", "timezone": "Pacific/Kiritimati", "language": "en"},
+        )
+        self.alice.refresh_from_db()
+        self.assertEqual(self.alice.timezone, "Pacific/Kiritimati")
+        response = self.client.get(reverse("workouts:session-list"))
+        self.assertContains(response, "2026-01-02 13:00")
+
+    def test_an_invalid_stored_timezone_does_not_crash_the_request(self):
+        """ProfileForm always validates against the real IANA list, but
+        a hand-edited/stale value (direct ORM write, admin, a future
+        tzdata removal) shouldn't 500 the whole app — falls back to
+        settings.TIME_ZONE instead."""
+        self.alice.timezone = "Not/A_Real_Zone"
+        self.alice.save()
+        response = self.client.get(reverse("workouts:session-list"))
+        self.assertEqual(response.status_code, 200)
+
+    def test_misleading_timezone_aliases_are_not_offered_as_choices(self):
+        """"localtime" reads as "use my device's own timezone" but is
+        actually a fixed server-side alias (whatever /etc/localtime
+        resolves to in the container, typically UTC) — nothing about it
+        is dynamic, so offering it just reproduces the exact confusion
+        this whole feature fixes. "Factory" is tzdata's own placeholder
+        for "no real zone", never a meaningful choice."""
+        response = self.client.get(reverse("profile"))
+        self.assertNotContains(response, 'value="localtime"')
+        self.assertNotContains(response, 'value="Factory"')
+        self.assertContains(response, 'value="Europe/Helsinki"')
+
+
 class SignupFlowTests(TestCase):
     def test_signup_creates_user_and_logs_in(self):
         response = self.client.post(

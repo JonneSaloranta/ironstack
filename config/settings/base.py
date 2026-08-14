@@ -67,6 +67,10 @@ MIDDLEWARE = [
     # set on the profile page) for this same request/response — see the
     # middleware's own docstring.
     "apps.accounts.middleware.UserLanguageMiddleware",
+    # Same after-auth, before-view placement as UserLanguageMiddleware
+    # just above — see apps.accounts.middleware.UserTimezoneMiddleware's
+    # own docstring for what this fixes.
+    "apps.accounts.middleware.UserTimezoneMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]

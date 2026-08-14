@@ -10,6 +10,23 @@ from apps.core.formatting import BMI_FULL, abbr_label, lazy_format_html
 
 from .models import UnitSystem, User
 
+# `zoneinfo.available_timezones()` includes a handful of non-geographic
+# aliases alongside real IANA "Area/Location" zones. Both are
+# specifically misleading rather than just unfamiliar, so they're
+# dropped from the picker instead of merely being oddly-named options:
+# "localtime" sounds like it means "detect and use my device's own
+# timezone" but is actually a *fixed* server-side alias (whatever
+# /etc/localtime resolves to on the machine running this container,
+# typically UTC in a minimal Docker image) — nothing about it is
+# dynamic, and a server-rendered app has no way to know a visiting
+# device's timezone without separate client-side detection this app
+# doesn't do (see apps.accounts.middleware.UserTimezoneMiddleware for
+# why picking a real zone, e.g. "Europe/Helsinki", is what actually
+# makes the "Timezone" setting work). "Factory" is tzdata's own
+# placeholder for "no real zone configured" — never a meaningful choice
+# for a user to make.
+_MISLEADING_TIMEZONE_ALIASES = {"localtime", "Factory"}
+
 
 class SignupForm(UserCreationForm):
     class Meta(UserCreationForm.Meta):
@@ -39,7 +56,12 @@ class ProfileForm(forms.ModelForm):
     """
 
     timezone = forms.ChoiceField(
-        choices=sorted((tz, tz) for tz in available_timezones()), label=_("Timezone")
+        choices=sorted(
+            (tz, tz)
+            for tz in available_timezones()
+            if tz not in _MISLEADING_TIMEZONE_ALIASES
+        ),
+        label=_("Timezone"),
     )
     height = forms.DecimalField(max_digits=6, decimal_places=1, required=False)
 
