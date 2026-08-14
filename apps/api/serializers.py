@@ -418,4 +418,9 @@ class AchievementSerializer(serializers.Serializer):
     icon = serializers.CharField()
     label = serializers.CharField()
     value = serializers.CharField()
-    username = serializers.CharField()
+    # Matches apps.analytics.achievements.Achievement's own field name
+    # (renamed from `username`) — this can be "alice (Alice)", not
+    # necessarily the bare username, once a user opts in via
+    # User.show_name_to_others, so the API field is named for what it
+    # actually contains.
+    display_name = serializers.CharField()

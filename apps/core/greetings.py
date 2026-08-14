@@ -80,8 +80,12 @@ def random_greeting(user, *, now=None):
     (`django.utils.timezone.localtime`, which respects whatever
     timezone `apps.accounts.middleware.TimezoneMiddleware` already
     activated for this request from the user's own preference — see
-    that middleware's docstring)."""
+    that middleware's docstring). Addresses `user` by first name if
+    they've set one, their username otherwise — this is a user looking
+    at their own dashboard, not something shown to anyone else, so
+    `User.show_name_to_others` (which only governs what *other* users
+    see — apps.analytics.achievements) doesn't apply here."""
     current = timezone.localtime(now)
     bucket = _time_bucket(current.hour)
     template = random.choice(_GREETINGS_BY_BUCKET[bucket])
-    return template % {"username": user.username}
+    return template % {"username": user.first_name or user.username}

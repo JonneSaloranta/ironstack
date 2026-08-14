@@ -16,6 +16,36 @@ class CustomUserModelTests(TestCase):
         self.assertEqual(user.language, "en")
 
 
+class PublicDisplayNameTests(TestCase):
+    """User.public_display_name() — what other users see for this user
+    (apps.analytics.achievements); a separate concern from this user's
+    own dashboard greeting (apps.core.greetings), which always uses
+    their first name regardless of this setting."""
+
+    def test_falls_back_to_the_username_with_no_first_name_set(self):
+        user = User.objects.create_user(username="alice", password="s3cret-pass")
+        self.assertEqual(user.public_display_name(), "alice")
+
+    def test_includes_the_first_name_when_set_and_opted_in(self):
+        user = User.objects.create_user(
+            username="alice", password="s3cret-pass", first_name="Alice"
+        )
+        self.assertEqual(user.public_display_name(), "alice (Alice)")
+
+    def test_falls_back_to_the_username_when_opted_out_even_with_a_first_name_set(self):
+        user = User.objects.create_user(
+            username="alice",
+            password="s3cret-pass",
+            first_name="Alice",
+            show_name_to_others=False,
+        )
+        self.assertEqual(user.public_display_name(), "alice")
+
+    def test_show_name_to_others_defaults_to_true(self):
+        user = User.objects.create_user(username="alice", password="s3cret-pass")
+        self.assertTrue(user.show_name_to_others)
+
+
 class LanguagePreferenceTests(TestCase):
     """apps.accounts.middleware.UserLanguageMiddleware — a logged-in
     user's stored `language` (set on the profile page) drives Django's
@@ -330,6 +360,36 @@ class ProfileViewTests(TestCase):
         response = self.client.get(reverse("profile"))
         self.assertContains(response, "Share my activity")
         self.assertContains(response, "keep your own activity private")
+
+    def test_show_name_to_others_defaults_to_true(self):
+        self.assertTrue(self.alice.show_name_to_others)
+
+    def test_unchecking_show_name_to_others_turns_it_off(self):
+        self.client.post(
+            reverse("profile"),
+            {"unit_system": "metric", "timezone": "UTC", "language": "en"},
+        )
+        self.alice.refresh_from_db()
+        self.assertFalse(self.alice.show_name_to_others)
+
+    def test_checking_show_name_to_others_turns_it_back_on(self):
+        self.alice.show_name_to_others = False
+        self.alice.save()
+        self.client.post(
+            reverse("profile"),
+            {
+                "unit_system": "metric",
+                "timezone": "UTC",
+                "show_name_to_others": "on",
+                "language": "en",
+            },
+        )
+        self.alice.refresh_from_db()
+        self.assertTrue(self.alice.show_name_to_others)
+
+    def test_show_name_to_others_field_is_on_the_profile_page(self):
+        response = self.client.get(reverse("profile"))
+        self.assertContains(response, "Show my name to others")
 
     def test_admin_link_is_hidden_for_a_regular_user(self):
         response = self.client.get(reverse("profile"))

@@ -27,6 +27,9 @@ msgstr "på instrumentpanelen"
 msgid "Share my activity"
 msgstr "Dela min aktivitet"
 
+msgid "Show my name to others"
+msgstr "Visa mitt namn för andra"
+
 msgid "Language"
 msgstr "Språk"
 
@@ -35,6 +38,9 @@ msgstr "Stänger av BMI-kortet och dess kategoriintervall helt."
 
 msgid "Lets everyone using this instance see your longest streak, workout count, PRs, total weight lifted, and when you last trained, in the dashboard's achievements carousel and \"Recently active\" list. Turn off to keep your own activity private — you'll still see everyone else's."
 msgstr "Låter alla som använder den här instansen se din längsta svit, antal träningspass, PR, total lyft vikt och när du senast tränade, i instrumentpanelens prestationskarusell och listan \"Senast aktiva\". Stäng av för att hålla din egen aktivitet privat — du ser fortfarande allas andras."
+
+msgid "Shows your first name next to your username wherever others can see it (the achievements carousel and \"Recently active\" list). Turn off to show just your username there, like before this setting existed."
+msgstr "Visar ditt förnamn bredvid ditt användarnamn överallt där andra kan se det (prestationskarusellen och listan \"Senast aktiva\"). Stäng av för att bara visa ditt användarnamn där, som innan den här inställningen fanns."
 
 msgid "Height (cm)"
 msgstr "Längd (cm)"

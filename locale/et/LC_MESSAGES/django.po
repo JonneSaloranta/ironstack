@@ -27,6 +27,9 @@ msgstr "töölaual"
 msgid "Share my activity"
 msgstr "Jaga minu tegevust"
 
+msgid "Show my name to others"
+msgstr "Näita minu nime teistele"
+
 msgid "Language"
 msgstr "Keel"
 
@@ -35,6 +38,9 @@ msgstr "Lülitab KMI kaardi ja selle kategooriavahemikud täielikult välja."
 
 msgid "Lets everyone using this instance see your longest streak, workout count, PRs, total weight lifted, and when you last trained, in the dashboard's achievements carousel and \"Recently active\" list. Turn off to keep your own activity private — you'll still see everyone else's."
 msgstr "Lubab kõigil selle teenuse kasutajatel näha sinu pikimat seeriat, trennide arvu, rekordeid, tõstetud kogukaalu ja viimase trenni aega töölaua saavutuste karussellis ja \"Viimati aktiivsed\" nimekirjas. Lülita välja, et hoida oma tegevus privaatsena — näed siiski teiste tegevust."
+
+msgid "Shows your first name next to your username wherever others can see it (the achievements carousel and \"Recently active\" list). Turn off to show just your username there, like before this setting existed."
+msgstr "Näitab sinu eesnime kasutajanime kõrval kõikjal, kus teised seda näevad (saavutuste karussell ja \"Viimati aktiivsed\" nimekiri). Lülita välja, et näidata seal ainult kasutajanime, nagu enne selle seade olemasolu."
 
 msgid "Height (cm)"
 msgstr "Pikkus (cm)"

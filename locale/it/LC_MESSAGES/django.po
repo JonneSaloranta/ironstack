@@ -27,6 +27,9 @@ msgstr "nella dashboard"
 msgid "Share my activity"
 msgstr "Condividi la mia attività"
 
+msgid "Show my name to others"
+msgstr "Mostra il mio nome agli altri"
+
 msgid "Language"
 msgstr "Lingua"
 
@@ -35,6 +38,9 @@ msgstr "Disattiva completamente la scheda BMI e i suoi intervalli di categoria."
 
 msgid "Lets everyone using this instance see your longest streak, workout count, PRs, total weight lifted, and when you last trained, in the dashboard's achievements carousel and \"Recently active\" list. Turn off to keep your own activity private — you'll still see everyone else's."
 msgstr "Permette a chiunque usi questa istanza di vedere la tua serie più lunga, il numero di allenamenti, i record, il peso totale sollevato e quando ti sei allenato l'ultima volta, nel carosello dei traguardi e nell'elenco \"Attivi di recente\" della dashboard. Disattiva per tenere privata la tua attività — vedrai comunque quella degli altri."
+
+msgid "Shows your first name next to your username wherever others can see it (the achievements carousel and \"Recently active\" list). Turn off to show just your username there, like before this setting existed."
+msgstr "Mostra il tuo nome accanto al tuo nome utente ovunque gli altri possano vederlo (il carosello dei traguardi e l'elenco \"Attivi di recente\"). Disattiva per mostrare lì solo il tuo nome utente, come prima che questa impostazione esistesse."
 
 msgid "Height (cm)"
 msgstr "Altezza (cm)"

@@ -27,6 +27,9 @@ msgstr "kojelaudalla"
 msgid "Share my activity"
 msgstr "Jaa oma toimintani"
 
+msgid "Show my name to others"
+msgstr "Näytä nimeni muille"
+
 msgid "Language"
 msgstr "Kieli"
 
@@ -35,6 +38,9 @@ msgstr "Piilottaa BMI-kortin ja sen luokka-asteikot kokonaan."
 
 msgid "Lets everyone using this instance see your longest streak, workout count, PRs, total weight lifted, and when you last trained, in the dashboard's achievements carousel and \"Recently active\" list. Turn off to keep your own activity private — you'll still see everyone else's."
 msgstr "Antaa kaikkien tämän palvelun käyttäjien nähdä pisimmän putkesi, treenimääräsi, ennätyksesi, nostetun kokonaispainosi ja viimeisimmän treenisi ajankohdan etusivun saavutuskarusellissa ja \"Viimeksi aktiivisena\" -listassa. Poista käytöstä pitääksesi oman toimintasi yksityisenä — näet silti muiden tiedot."
+
+msgid "Shows your first name next to your username wherever others can see it (the achievements carousel and \"Recently active\" list). Turn off to show just your username there, like before this setting existed."
+msgstr "Näyttää etunimesi käyttäjätunnuksesi vieressä kaikkialla, missä muut voivat sen nähdä (saavutuskaruselli ja \"Viimeksi aktiivisena\" -lista). Poista käytöstä näyttääksesi siellä vain käyttäjätunnuksesi, kuten ennen tämän asetuksen olemassaoloa."
 
 msgid "Height (cm)"
 msgstr "Pituus (cm)"

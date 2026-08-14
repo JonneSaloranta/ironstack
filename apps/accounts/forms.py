@@ -66,7 +66,11 @@ class ProfileForm(forms.ModelForm):
     own data (longest streak/workout count/PRs/total weight lifted, and
     when they last started a workout) is included in what everyone
     sees — off keeps their own activity private while they still see
-    everyone else's.
+    everyone else's. `show_name_to_others` is a second, more granular
+    privacy setting: whether this user's first name is ever shown
+    alongside their username in that same carousel/list
+    (`User.public_display_name()`) — the username itself is always
+    shown regardless, unaffected by this toggle.
     """
 
     timezone = forms.ChoiceField(
@@ -87,6 +91,7 @@ class ProfileForm(forms.ModelForm):
             "height",
             "show_bmi",
             "show_achievements",
+            "show_name_to_others",
             "language",
         ]
         labels = {
@@ -95,6 +100,7 @@ class ProfileForm(forms.ModelForm):
                 "{} {} {}", _("Show"), abbr_label(_("BMI"), BMI_FULL), _("on the dashboard")
             ),
             "show_achievements": _("Share my activity"),
+            "show_name_to_others": _("Show my name to others"),
             "language": _("Language"),
         }
         help_texts = {
@@ -105,6 +111,12 @@ class ProfileForm(forms.ModelForm):
                 "trained, in the dashboard's achievements carousel and "
                 "\"Recently active\" list. Turn off to keep your own "
                 "activity private — you'll still see everyone else's."
+            ),
+            "show_name_to_others": _(
+                "Shows your first name next to your username wherever "
+                "others can see it (the achievements carousel and "
+                "\"Recently active\" list). Turn off to show just your "
+                "username there, like before this setting existed."
             ),
         }
 

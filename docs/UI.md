@@ -274,6 +274,15 @@ session within the last 24 hours also gets a plain green dot (no pulse)
 as a secondary, at-a-glance freshness cue; older activity gets a plain
 muted dot.
 
+Both the carousel and this list show `User.public_display_name()`, not
+a bare `user.username` — "username (First name)" if the user has both
+set a first name and opted in via the profile's separate "Show my name
+to others" toggle (`show_name_to_others`, on by default), the bare
+username otherwise. A second, more granular privacy control layered on
+top of `show_achievements`: that one decides whether a user's data
+appears here *at all*; this one only decides whether their first name
+is part of it once it does.
+
 **BMI**: dashboard card once both a height (set on the Profile page) and
 at least one logged body weight exist, alongside the WHO category ranges
 table with the user's own row highlighted — a bare number with no

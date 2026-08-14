@@ -278,10 +278,10 @@ class AchievementsTests(TestCase):
         self.assertIn("streak", icons)
         self.assertIn("workouts", icons)
 
-    def test_each_highlight_carries_its_own_username(self):
+    def test_each_highlight_carries_its_own_display_name(self):
         _log_completed_session(self.alice, self.exercise, Decimal("100"), [5])
         highlights = achievements.achievement_highlights()
-        self.assertTrue(all(h.username == "alice" for h in highlights))
+        self.assertTrue(all(h.display_name == "alice" for h in highlights))
 
     def test_workout_count_reflects_only_completed_sessions(self):
         _log_completed_session(self.alice, self.exercise, Decimal("100"), [5])
@@ -324,8 +324,8 @@ class AchievementsTests(TestCase):
         bob = User.objects.create_user(username="bob", password="s3cret-pass")
         _log_completed_session(self.alice, self.exercise, Decimal("100"), [5])
         _log_completed_session(bob, self.exercise, Decimal("999"), [5])
-        usernames = {h.username for h in achievements.achievement_highlights()}
-        self.assertEqual(usernames, {"alice", "bob"})
+        display_names = {h.display_name for h in achievements.achievement_highlights()}
+        self.assertEqual(display_names, {"alice", "bob"})
 
     def test_a_user_who_opted_out_is_excluded_entirely(self):
         """show_achievements is a privacy setting ("don't show my stats
@@ -343,13 +343,28 @@ class AchievementsTests(TestCase):
         _log_completed_session(bob, self.exercise, Decimal("999"), [5, 5])
         highlights = achievements.achievement_highlights()
         alice_workouts = next(
-            h for h in highlights if h.icon == "workouts" and h.username == "alice"
+            h for h in highlights if h.icon == "workouts" and h.display_name == "alice"
         )
         bob_workouts = next(
-            h for h in highlights if h.icon == "workouts" and h.username == "bob"
+            h for h in highlights if h.icon == "workouts" and h.display_name == "bob"
         )
         self.assertIn("1", alice_workouts.value)
         self.assertIn("1", bob_workouts.value)
+
+    def test_display_name_includes_the_first_name_when_opted_in(self):
+        self.alice.first_name = "Alice"
+        self.alice.save()
+        _log_completed_session(self.alice, self.exercise, Decimal("100"), [5])
+        highlights = achievements.achievement_highlights()
+        self.assertTrue(all(h.display_name == "alice (Alice)" for h in highlights))
+
+    def test_display_name_is_just_the_username_when_opted_out(self):
+        self.alice.first_name = "Alice"
+        self.alice.show_name_to_others = False
+        self.alice.save()
+        _log_completed_session(self.alice, self.exercise, Decimal("100"), [5])
+        highlights = achievements.achievement_highlights()
+        self.assertTrue(all(h.display_name == "alice" for h in highlights))
 
 
 class RecentlyActiveUsersTests(TestCase):
@@ -368,8 +383,8 @@ class RecentlyActiveUsersTests(TestCase):
         one is itself a sign of activity, unlike the achievements
         carousel's per-figure counts."""
         workout_services.start_session(self.alice, workout=None)
-        usernames = [entry.username for entry in achievements.recently_active_users()]
-        self.assertEqual(usernames, ["alice"])
+        display_names = [entry.display_name for entry in achievements.recently_active_users()]
+        self.assertEqual(display_names, ["alice"])
 
     def test_most_recently_active_user_comes_first(self):
         bob = User.objects.create_user(username="bob", password="s3cret-pass")
@@ -378,8 +393,8 @@ class RecentlyActiveUsersTests(TestCase):
         older.save(update_fields=["started_at"])
         _log_completed_session(bob, self.exercise, Decimal("100"), [5])  # just now
 
-        usernames = [entry.username for entry in achievements.recently_active_users()]
-        self.assertEqual(usernames, ["bob", "alice"])
+        display_names = [entry.display_name for entry in achievements.recently_active_users()]
+        self.assertEqual(display_names, ["bob", "alice"])
 
     def test_only_the_latest_session_counts_per_user(self):
         _log_completed_session(self.alice, self.exercise, Decimal("100"), [5], days_ago=10)

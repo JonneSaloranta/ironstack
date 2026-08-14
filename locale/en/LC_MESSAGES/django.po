@@ -27,6 +27,9 @@ msgstr "on the dashboard"
 msgid "Share my activity"
 msgstr "Share my activity"
 
+msgid "Show my name to others"
+msgstr "Show my name to others"
+
 msgid "Language"
 msgstr "Language"
 
@@ -35,6 +38,9 @@ msgstr "Turns off the BMI card and its category ranges entirely."
 
 msgid "Lets everyone using this instance see your longest streak, workout count, PRs, total weight lifted, and when you last trained, in the dashboard's achievements carousel and \"Recently active\" list. Turn off to keep your own activity private — you'll still see everyone else's."
 msgstr "Lets everyone using this instance see your longest streak, workout count, PRs, total weight lifted, and when you last trained, in the dashboard's achievements carousel and \"Recently active\" list. Turn off to keep your own activity private — you'll still see everyone else's."
+
+msgid "Shows your first name next to your username wherever others can see it (the achievements carousel and \"Recently active\" list). Turn off to show just your username there, like before this setting existed."
+msgstr "Shows your first name next to your username wherever others can see it (the achievements carousel and \"Recently active\" list). Turn off to show just your username there, like before this setting existed."
 
 msgid "Height (cm)"
 msgstr "Height (cm)"

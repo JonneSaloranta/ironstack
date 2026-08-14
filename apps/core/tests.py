@@ -311,6 +311,35 @@ class GreetingTests(TestCase):
         seen = {random_greeting(user, now=morning) for _ in range(30)}
         self.assertGreater(len(seen), 1)
 
+    def test_greeting_uses_the_first_name_when_set(self):
+        """A user's own greeting always addresses them by first name if
+        they've set one — unlike apps.analytics.achievements'
+        public_display_name(), this isn't gated by
+        User.show_name_to_others, since it's this user looking at their
+        own dashboard, not something shown to anyone else."""
+        from django.contrib.auth import get_user_model
+
+        User = get_user_model()
+        user = User.objects.create_user(
+            username="taylor",
+            password="s3cret-pass",
+            first_name="Taylor",
+            show_name_to_others=False,
+        )
+        morning = timezone.datetime(2026, 1, 1, 8, 0, tzinfo=timezone.get_default_timezone())
+        greeting = random_greeting(user, now=morning)
+        self.assertIn("Taylor", greeting)
+        self.assertNotIn("taylor", greeting)
+
+    def test_greeting_falls_back_to_the_username_with_no_first_name(self):
+        from django.contrib.auth import get_user_model
+
+        User = get_user_model()
+        user = User.objects.create_user(username="taylor", password="s3cret-pass")
+        morning = timezone.datetime(2026, 1, 1, 8, 0, tzinfo=timezone.get_default_timezone())
+        greeting = random_greeting(user, now=morning)
+        self.assertIn("taylor", greeting)
+
 
 class ErrorPageTests(TestCase):
     """Phase 11 polish: custom 404/403 pages instead of the bare Django/
@@ -960,8 +989,8 @@ class AchievementsCarouselTests(TestCase):
         self.alice.save()
         response = self.client.get(reverse("dashboard"))
         self.assertContains(response, "achievements-carousel")
-        usernames = {h.username for h in response.context["achievements"]}
-        self.assertEqual(usernames, {"bob"})
+        display_names = {h.display_name for h in response.context["achievements"]}
+        self.assertEqual(display_names, {"bob"})
 
     def test_opting_out_removes_this_users_own_achievements_from_the_carousel(self):
         self._log_a_completed_workout()

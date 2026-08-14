@@ -26,7 +26,7 @@
           <span class="achievement-icon" aria-hidden="true">{% if achievement.icon == "streak" %}🔥{% elif achievement.icon == "workouts" %}💪{% elif achievement.icon == "pr" %}🏆{% elif achievement.icon == "volume" %}⚡{% endif %}</span>
           <div>
             <strong class="achievement-value">{{ achievement.value }}</strong>
-            <div class="text-muted">{{ achievement.label }} — {{ achievement.username }}</div>
+            <div class="text-muted">{{ achievement.label }} — {{ achievement.display_name }}</div>
           </div>
         </div>
       {% endfor %}
@@ -50,7 +50,7 @@
       {% for entry in recently_active %}
         <li class="recent-activity-row">
           <span class="recent-activity-dot {% if entry.is_in_progress %}recent-activity-dot-live{% elif entry.is_recent %}recent-activity-dot-recent{% endif %}" aria-hidden="true"></span>
-          <span class="recent-activity-username">{{ entry.username }}</span>
+          <span class="recent-activity-username">{{ entry.display_name }}</span>
           <span class="text-muted recent-activity-time">
             {% if entry.is_in_progress %}{% trans "Training now" %}{% else %}{% blocktrans with time=entry.last_active_at|timesince %}{{ time }} ago{% endblocktrans %}{% endif %}
           </span>

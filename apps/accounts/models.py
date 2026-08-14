@@ -49,6 +49,15 @@ class User(AbstractUser):
         "whether *this* user's own data is included in what everyone "
         "sees, not whether they personally see either widget at all.",
     )
+    show_name_to_others = models.BooleanField(
+        default=True,
+        help_text="A second, more granular privacy setting than "
+        "show_achievements: whether other users on this instance ever see "
+        "this user's first name (see public_display_name()) — the "
+        "username itself is always shown regardless, since it was already "
+        "visible everywhere show_achievements applies before this field "
+        "existed. Off falls back to the username alone.",
+    )
     # Applied by apps.accounts.middleware.UserLanguageMiddleware — a
     # distinct concern from unit_system/timezone above (see
     # config.settings.base's LANGUAGES comment). Defaults to
@@ -61,4 +70,19 @@ class User(AbstractUser):
     )
 
     def __str__(self):
+        return self.username
+
+    def public_display_name(self):
+        """What OTHER users see for this user — the achievements
+        carousel and "Recently active" list (apps.analytics.achievements),
+        currently the only places one user's identity is ever shown to
+        another. Username plus first name if `show_name_to_others` is on
+        and a first name is actually set; the bare username otherwise.
+        Distinct from this user's own dashboard greeting
+        (apps.core.greetings), which always uses their first name
+        directly — that's this user looking at their own name, not
+        something shown to anyone else, so show_name_to_others doesn't
+        apply there."""
+        if self.show_name_to_others and self.first_name:
+            return f"{self.username} ({self.first_name})"
         return self.username

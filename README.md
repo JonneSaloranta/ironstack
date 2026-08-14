@@ -983,6 +983,29 @@ fi/sv/ru/it/et (496 total, 0 fuzzy/untranslated). 3 new tests.
 - 20 new UI strings translated across fi/sv/ru/it/et (516 total, 0
   fuzzy/untranslated). 17 new tests (504 total, full suite green).
 
+**A privacy toggle for first names, and greetings that use yours.**
+
+- New profile setting "Show my name to others" (`User.
+  show_name_to_others`, on by default) — a second, more granular
+  privacy control layered on top of `show_achievements`: that one
+  decides whether a user's data appears in the achievements carousel/
+  "Recently active" list *at all*; this one only decides whether their
+  first name is part of it once it does. `User.public_display_name()`
+  is "username (First name)" when on and a first name is set, the bare
+  username otherwise — the username itself was already shown
+  everywhere `show_achievements` applies, so there's nothing left to
+  hide with this one off.
+- The dashboard greeting (`apps.core.greetings`) now addresses a user
+  by first name if they've set one — unaffected by the new toggle,
+  since that only governs what *other* users see, and a greeting is a
+  user looking at their own name.
+- The achievements API endpoint's `AchievementSerializer` field is
+  renamed `username` → `display_name` to match — a small breaking
+  change to that response shape, made now while the API has no
+  established external consumers yet.
+- 2 new UI strings translated across fi/sv/ru/it/et (518 total, 0
+  fuzzy/untranslated). 12 new tests (516 total, full suite green).
+
 ## Local development
 
 ```bash

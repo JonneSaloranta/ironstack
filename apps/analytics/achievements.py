@@ -33,12 +33,12 @@ class Achievement:
     icon: str
     label: str
     value: str
-    username: str
+    display_name: str
 
 
 @dataclass(frozen=True)
 class RecentActivity:
-    username: str
+    display_name: str
     last_active_at: datetime  # the latest session's started_at
     is_in_progress: bool
     is_recent: bool
@@ -95,6 +95,7 @@ def _highlights_for(user):
         Decimal("0"),
     )
     unit_system = getattr(user, "unit_system", "metric")
+    display_name = user.public_display_name()
 
     highlights = [
         Achievement(
@@ -102,7 +103,7 @@ def _highlights_for(user):
             label=gettext("Longest streak"),
             value=ngettext("%(counter)s day", "%(counter)s days", streak_days)
             % {"counter": streak_days},
-            username=user.username,
+            display_name=display_name,
         ),
         Achievement(
             icon="workouts",
@@ -113,7 +114,7 @@ def _highlights_for(user):
             label=gettext("Workouts completed"),
             value=ngettext("%(counter)s workout", "%(counter)s workouts", total_workouts)
             % {"counter": total_workouts},
-            username=user.username,
+            display_name=display_name,
         ),
     ]
     if total_prs:
@@ -123,7 +124,7 @@ def _highlights_for(user):
                 label=gettext("Personal records"),
                 value=ngettext("%(counter)s PR", "%(counter)s PRs", total_prs)
                 % {"counter": total_prs},
-                username=user.username,
+                display_name=display_name,
             )
         )
     if total_volume_kg:
@@ -135,7 +136,7 @@ def _highlights_for(user):
                     f"{core_units.kg_to_display(total_volume_kg, unit_system)} "
                     f"{core_units.weight_unit_label(unit_system)}"
                 ),
-                username=user.username,
+                display_name=display_name,
             )
         )
     return highlights
@@ -182,7 +183,7 @@ def recently_active_users(limit=10):
             continue
         activity.append(
             RecentActivity(
-                username=user.username,
+                display_name=user.public_display_name(),
                 last_active_at=latest.started_at,
                 is_in_progress=latest.status == WorkoutSessionStatus.IN_PROGRESS,
                 is_recent=(now - latest.started_at) <= _RECENT_ACTIVITY_WINDOW,

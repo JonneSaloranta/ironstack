@@ -27,6 +27,9 @@ msgstr "на панели"
 msgid "Share my activity"
 msgstr "Показывать мою активность"
 
+msgid "Show my name to others"
+msgstr "Показывать моё имя другим"
+
 msgid "Language"
 msgstr "Язык"
 
@@ -35,6 +38,9 @@ msgstr "Полностью отключает карточку ИМТ и диа�
 
 msgid "Lets everyone using this instance see your longest streak, workout count, PRs, total weight lifted, and when you last trained, in the dashboard's achievements carousel and \"Recently active\" list. Turn off to keep your own activity private — you'll still see everyone else's."
 msgstr "Позволяет всем пользователям этого сервера видеть вашу самую длинную серию, количество тренировок, рекорды, общий поднятый вес и время последней тренировки в карусели достижений и списке «Недавняя активность» на панели. Отключите, чтобы скрыть свою активность — вы всё равно будете видеть активность остальных."
+
+msgid "Shows your first name next to your username wherever others can see it (the achievements carousel and \"Recently active\" list). Turn off to show just your username there, like before this setting existed."
+msgstr "Показывает ваше имя рядом с именем пользователя везде, где его могут видеть другие (карусель достижений и список «Недавняя активность»). Отключите, чтобы показывать там только имя пользователя, как было до появления этой настройки."
 
 msgid "Height (cm)"
 msgstr "Рост (см)"

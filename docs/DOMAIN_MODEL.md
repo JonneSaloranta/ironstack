@@ -44,6 +44,18 @@ personally see either widget — turning it off doesn't hide them from
 their owner, it hides the owner's own data from everyone, themselves
 included.
 
+`show_name_to_others` is a second, more granular privacy setting on
+top of `show_achievements`: whether this user's first name is ever
+shown alongside their username in that same carousel/list
+(`User.public_display_name()`, "username (First name)" format when on
+and a first name is set — the bare username otherwise, since the
+username itself was already visible everywhere `show_achievements`
+applies before this field existed, so there's nothing left for it to
+hide when off). Distinct from a user's own dashboard greeting
+(`apps.core.greetings`), which always addresses them by first name
+directly — that's a user looking at their own name, not something
+shown to anyone else, so this setting doesn't apply there.
+
 A user may also hold `ApiKey`s (`apps.api`, see `docs/API.md`) — up to
 `ApiSettings.max_api_keys_per_user` (admin-editable, default 10) at
 once, each with its own `RateLimitTier` and per-context CRUD
