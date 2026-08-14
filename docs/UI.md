@@ -215,6 +215,14 @@ weight, BMI (see below), an achievements carousel (see below), and an
 in-progress-workout banner that doubles as "continue/last workout". No
 logout button here — it lives on the Profile page only, not duplicated.
 
+Opens with a varied, time-of-day-aware greeting (`apps.core.greetings`,
+`.dashboard-greeting`, right below the "IronStack" heading) — mixes
+encouragement and light humor, picked at random on every render from a
+pool keyed to morning/afternoon/evening/night in the user's own active
+timezone. Originally lived on the profile page in place of a static
+"Signed in as X" card, then moved here: Home is the page a user
+actually lands on, so that's where a greeting belongs.
+
 **Achievements carousel** (`apps.analytics.achievements`,
 `templates/core/dashboard.html`): a small `.card` at the top of the
 dashboard, auto-rotating every 4.5s through all-time highlight cards —
@@ -422,19 +430,14 @@ icon-first `aria-current` styling, not a page-body link) and
 pill/active-fill styling, not a text link pretending to be one).
 
 ### Profile page
-Opens with a varied, time-of-day-aware greeting (`apps.core.greetings`,
-`.profile-greeting`) instead of a static "Signed in as X" card — mixes
-encouragement and light humor, picked at random on every render from a
-pool keyed to morning/afternoon/evening/night in the user's own active
-timezone. Below the preferences form, "Account details" (username/
-name/email — `apps.accounts.AccountDetailsView`, kept separate from
-both the preferences form and the password change flow), "Change
-password", "API keys", and (staff only) "Admin" each render as a
-`.card-action-row`: descriptive text on the left, a single explicit
-`.button-secondary` on the right as the only actual link. Regression:
-these used to be one giant `<a class="card card-link">` wrapping the
-whole card, with nothing about a plain card visually signaling it was
-clickable at all.
+"Account details" (username/name/email — `apps.accounts.
+AccountDetailsView`, kept separate from both the preferences form and
+the password change flow), "Change password", "API keys", and (staff
+only) "Admin" each render as a `.card-action-row`: descriptive text on
+the left, a single explicit `.button-secondary` on the right as the
+only actual link. Regression: these used to be one giant
+`<a class="card card-link">` wrapping the whole card, with nothing
+about a plain card visually signaling it was clickable at all.
 
 ### PWA
 Installable, not offline-capable — see `docs/ROADMAP.md` "Future

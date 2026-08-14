@@ -6,7 +6,6 @@ from django.utils.translation import gettext as _
 from django.views.generic import CreateView, UpdateView
 
 from apps.core import bmi as bmi_services
-from apps.core import greetings as greeting_services
 from apps.core import units as core_units
 from apps.measurements import services as measurement_services
 from apps.measurements.models import MeasurementType
@@ -42,7 +41,6 @@ class ProfileView(LoginRequiredMixin, UpdateView):
         # value, once computable) need to be findable here regardless of
         # whether that dashboard card has ever had reason to render.
         user = self.request.user
-        context["greeting"] = greeting_services.random_greeting(user)
         context["bmi_category_rows"] = bmi_services.category_rows(
             user.height, user.unit_system
         )

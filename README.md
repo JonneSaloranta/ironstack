@@ -879,15 +879,18 @@ request, and the range filter is a segmented tab control (own pill
 styling, active-state fill), not a text link. 2 new UI strings
 translated across fi/sv/ru/it/et (469 total, 0 fuzzy/untranslated).
 
-**Profile page: greeting instead of a static card, explicit CTA
-buttons on every action card, and a new "Account details" page.**
+**Dashboard greeting, explicit CTA buttons on every profile action
+card, and a new "Account details" page.**
 
-- The page used to open with a plain, permanent "Signed in as X" card.
-  Replaced with a varied, time-of-day-aware greeting
+- The profile page used to open with a plain, permanent "Signed in as
+  X" card. Replaced with a varied, time-of-day-aware greeting
   (`apps.core.greetings.random_greeting`) that mixes encouragement and
   light humor — a random pick from a 4-line pool keyed to morning/
-  afternoon/evening/night in the user's own active timezone, no card
-  wrapper.
+  afternoon/evening/night in the user's own active timezone. Then
+  moved again, this time to the dashboard (`.dashboard-greeting`,
+  right below the "IronStack" heading) — Home is the page a user
+  actually lands on, so that's where a greeting belongs, not a
+  preferences page.
 - "Change password", "API keys", and (staff-only) "Admin" used to each
   be one giant `<a class="card card-link">` — the whole card was
   clickable but nothing about a plain card visually said so. Each is

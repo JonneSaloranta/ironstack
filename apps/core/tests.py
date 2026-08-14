@@ -249,9 +249,10 @@ class BarSeriesServiceTests(TestCase):
 
 
 class GreetingTests(TestCase):
-    """Profile page greeting: varied, time-of-day-aware, mixing
+    """Dashboard greeting: varied, time-of-day-aware, mixing
     encouragement and humor (apps.core.greetings) instead of a flat
-    "Signed in as X" line."""
+    "Signed in as X" line — originally on the profile page, moved to
+    the dashboard (Home)."""
 
     def test_time_bucket_boundaries(self):
         self.assertEqual(_time_bucket(4), "night")
@@ -513,6 +514,14 @@ class DashboardWidgetsTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context["week_summary"].session_count, 0)
         self.assertIsNone(response.context["body_weight"])
+
+    def test_dashboard_shows_a_greeting(self):
+        """Regression: the varied, time-of-day-aware greeting
+        (apps.core.greetings) originally opened the profile page — moved
+        here instead, since Home is the page a user actually lands on."""
+        response = self.client.get(reverse("dashboard"))
+        self.assertContains(response, 'class="dashboard-greeting"')
+        self.assertIn("alice", response.context["greeting"])
 
     def test_this_weeks_workout_count_is_shown_not_just_computed(self):
         """Regression: week_summary.session_count was already computed

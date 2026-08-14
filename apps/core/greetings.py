@@ -1,7 +1,9 @@
-"""A varied, time-of-day-aware greeting for the profile page, replacing
-the flat "Signed in as X" line. Mixes encouragement and light humor and
-is picked at random on every render, so the same page can read
-differently from one visit to the next.
+"""A varied, time-of-day-aware greeting for the dashboard (Home), where
+it replaced the profile page's old flat "Signed in as X" line — Home is
+the page a user actually lands on, so that's where a greeting belongs.
+Mixes encouragement and light humor and is picked at random on every
+render, so the same page can read differently from one visit to the
+next.
 
 Each candidate string is wrapped in `gettext_lazy` (not `gettext`) at
 module import time — that's deliberate: `gettext_lazy` defers the

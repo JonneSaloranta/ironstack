@@ -356,15 +356,6 @@ class ProfileViewTests(TestCase):
         self.assertContains(response, 'id="pr-toast-container"')
         self.assertContains(response, "pr-banner")
 
-    def test_greeting_replaces_the_static_signed_in_as_card(self):
-        """Regression: the profile page used to open with a plain,
-        permanent "Signed in as X" .card — now a varied, time-of-day
-        greeting (apps.core.greetings) with no card wrapper."""
-        response = self.client.get(reverse("profile"))
-        self.assertContains(response, 'class="profile-greeting"')
-        self.assertIn("alice", response.context["greeting"])
-        self.assertNotContains(response, "Signed in as")
-
     def test_account_details_password_and_api_key_cards_each_have_their_own_cta_button(self):
         """Regression: the whole "Change password"/"API keys" card used
         to be one big <a>, with nothing visually marking it as

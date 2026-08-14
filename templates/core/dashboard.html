@@ -6,6 +6,8 @@
   <h1 style="margin:0;">IronStack</h1>
 </div>
 
+<p class="dashboard-greeting">{{ greeting }}</p>
+
 {% if achievements %}
   <div class="card achievements-carousel" role="region" aria-label="{% trans "Achievements" %}"
        x-data="ironstackCarousel({{ achievements|length }})" x-init="start()" @mouseenter="stop()" @mouseleave="start()">

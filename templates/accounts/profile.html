@@ -6,8 +6,6 @@
   <h1 style="margin:0;">{% trans "Profile" %}</h1>
 </div>
 
-<p class="profile-greeting">{{ greeting }}</p>
-
 <form class="card" method="post">
   {% csrf_token %}
   {{ form.non_field_errors }}

@@ -363,7 +363,7 @@ abbr[title]:focus::after {
   flex-shrink: 0;
 }
 
-.profile-greeting {
+.dashboard-greeting {
   font-size: 1.3rem;
   font-weight: 600;
   margin: 0 0 1rem;

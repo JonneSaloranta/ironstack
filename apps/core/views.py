@@ -10,6 +10,7 @@ from apps.analytics import achievements as achievement_services
 from apps.analytics import dateranges
 from apps.analytics import services as analytics_services
 from apps.core import bmi as bmi_services
+from apps.core import greetings as greeting_services
 from apps.core import units as core_units
 from apps.measurements import services as measurement_services
 from apps.measurements import units as measurement_units
@@ -30,6 +31,7 @@ class DashboardView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         user = self.request.user
+        context["greeting"] = greeting_services.random_greeting(user)
         context["in_progress_session"] = (
             sessions_for(user).filter(status=WorkoutSessionStatus.IN_PROGRESS).first()
         )
