@@ -1,0 +1,142 @@
+/* Restyles Django's own admin to match IronStack's palette
+   (static/css/base.css's :root) instead of building a parallel
+   custom admin UI — see docs/ARCHITECTURE.md "API layer"-adjacent
+   reasoning: the admin already does everything needed (list views,
+   filters, search, inline editing, permission checks); duplicating
+   that as a hand-rolled page would just be a worse-tested rebuild of
+   it. Loaded via templates/admin/base_site.html's `extrastyle` block,
+   after Django's own admin/css/base.css and dark_mode.css, so these
+   custom-property overrides win by source order at equal specificity
+   — no need to fight Django's own selectors' specificity.
+
+   IronStack has no light/dark toggle of its own (static/css/base.css
+   ships one fixed dark palette) — the same palette is applied here to
+   all three of Django admin's theme states (default/light, OS
+   `prefers-color-scheme: dark`, and the manual toggle's
+   `data-theme="dark"`) so the admin looks the same regardless of
+   toggle state, and the toggle itself is hidden below since it would
+   otherwise offer a choice that doesn't actually do anything. */
+
+:root,
+html[data-theme="light"],
+html[data-theme="dark"] {
+  --primary: #1b212b;
+  --secondary: #101317;
+  --accent: #5b9dfd;
+  --primary-fg: #e7eaee;
+
+  --body-fg: #e7eaee;
+  --body-bg: #101317;
+  --body-quiet-color: #9aa3ad;
+  --body-loud-color: #ffffff;
+
+  --header-color: #e7eaee;
+  --header-branding-color: #5b9dfd;
+  --header-bg: #101317;
+  --header-link-color: #e7eaee;
+
+  --breadcrumbs-fg: #9aa3ad;
+  --breadcrumbs-link-fg: #e7eaee;
+  --breadcrumbs-bg: #181c22;
+
+  --link-fg: #5b9dfd;
+  --link-hover-color: #7fb2ff;
+  --link-selected-fg: #5b9dfd;
+
+  --hairline-color: #2a2f37;
+  --border-color: #2a2f37;
+
+  --error-fg: #e5636a;
+
+  --message-success-bg: #163a25;
+  --message-warning-bg: #4a3a12;
+  --message-error-bg: #3a1417;
+
+  --darkened-bg: #181c22;
+  --selected-bg: #1f2530;
+  --selected-row: #1f2530;
+
+  --button-fg: #ffffff;
+  --button-bg: #5b9dfd;
+  --button-hover-bg: #4a8ae8;
+  --default-button-bg: #5b9dfd;
+  --default-button-hover-bg: #4a8ae8;
+  --close-button-bg: #2a2f37;
+  --close-button-hover-bg: #3a4049;
+  --delete-button-bg: #e5636a;
+  --delete-button-hover-bg: #cf4d54;
+
+  --object-tools-fg: #ffffff;
+  --object-tools-bg: #2a2f37;
+  --object-tools-hover-bg: #3a4049;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --primary: #1b212b;
+    --secondary: #101317;
+    --accent: #5b9dfd;
+    --primary-fg: #e7eaee;
+
+    --body-fg: #e7eaee;
+    --body-bg: #101317;
+    --body-quiet-color: #9aa3ad;
+    --body-loud-color: #ffffff;
+
+    --breadcrumbs-link-fg: #e7eaee;
+    --breadcrumbs-bg: #181c22;
+
+    --link-fg: #5b9dfd;
+    --link-hover-color: #7fb2ff;
+    --link-selected-fg: #5b9dfd;
+
+    --hairline-color: #2a2f37;
+    --border-color: #2a2f37;
+
+    --error-fg: #e5636a;
+    --message-success-bg: #163a25;
+    --message-warning-bg: #4a3a12;
+    --message-error-bg: #3a1417;
+
+    --darkened-bg: #181c22;
+    --selected-bg: #1f2530;
+    --selected-row: #1f2530;
+
+    --close-button-bg: #2a2f37;
+    --close-button-hover-bg: #3a4049;
+  }
+}
+
+/* No theme choice actually changes anything above — offering the
+   toggle anyway would just be a control that visibly does nothing. */
+.theme-toggle {
+  display: none !important;
+}
+
+#branding h1,
+#branding a:link,
+#branding a:visited {
+  color: var(--header-branding-color);
+}
+
+div.breadcrumbs {
+  border-bottom: 1px solid var(--border-color);
+}
+
+.module h2,
+.module caption,
+.inline-group h2 {
+  border-radius: 0.35rem 0.35rem 0 0;
+}
+
+#content-related .module {
+  border-radius: 0.5rem;
+}
+
+.button,
+input[type="submit"],
+input[type="button"],
+.submit-row input,
+a.button {
+  border-radius: 0.4rem;
+}

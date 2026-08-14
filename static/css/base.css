@@ -556,6 +556,13 @@ h2 {
   color: rgba(255, 255, 255, 0.75);
 }
 
+/* Django messages framework toasts (base.html) reuse .pr-banner's
+   shape/positioning — this is just the "error" level's color, success
+   (and every other level actually used) stays the default green. */
+.pr-banner-error {
+  background: var(--color-danger);
+}
+
 .pr-toast-close {
   position: absolute;
   top: 0.15rem;

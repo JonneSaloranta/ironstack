@@ -195,6 +195,9 @@ msgstr "Hai raggiunto il numero massimo di chiavi API."
 msgid "API key revoked."
 msgstr "Chiave API revocata."
 
+msgid "Administration"
+msgstr "Amministrazione"
+
 msgid "Underweight"
 msgstr "Sottopeso"
 
@@ -744,6 +747,12 @@ msgstr "Chiavi API"
 msgid "Manage keys other apps can use to access your data."
 msgstr "Gestisci le chiavi che altre app possono usare per accedere ai tuoi dati."
 
+msgid "Admin"
+msgstr "Admin"
+
+msgid "Manage tiers, keys, and reference data across the whole instance."
+msgstr "Gestisci livelli, chiavi e dati di riferimento per l'intera istanza."
+
 msgid "Log out"
 msgstr "Esci"
 
@@ -835,6 +844,12 @@ msgstr "Nessuna attività ancora"
 
 msgid "No activity types yet."
 msgstr "Nessun tipo di attività ancora."
+
+msgid "Django site admin"
+msgstr "Amministrazione del sito Django"
+
+msgid "Django administration"
+msgstr "Amministrazione Django"
 
 msgid "Date range"
 msgstr "Intervallo di date"
@@ -942,6 +957,9 @@ msgstr "Torna al profilo"
 
 msgid "Skip to content"
 msgstr "Vai al contenuto"
+
+msgid "Dismiss"
+msgstr "Chiudi"
 
 msgid "Main navigation"
 msgstr "Navigazione principale"
@@ -1246,9 +1264,6 @@ msgstr "Nuovo allenamento"
 
 msgid "Delete workout"
 msgstr "Elimina allenamento"
-
-msgid "Dismiss"
-msgstr "Chiudi"
 
 msgid "New PR"
 msgstr "Nuovo record"

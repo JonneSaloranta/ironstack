@@ -316,6 +316,27 @@ server-rendered web views already call — see `docs/API.md`'s own
 "Endpoints" section for concrete examples (set logging, PR detection,
 ownership scoping) of what that means in practice.
 
+## Admin site
+
+Django's own admin (`/admin/`) is used as-is for staff/superuser
+back-office tasks (seeded reference data, `RateLimitTier`/`ApiSettings`
+tuning, user management) — re-themed to match IronStack's palette
+(`static/css/admin_theme.css`, `templates/admin/base_site.html`,
+branding set in `apps.core.admin`) rather than a hand-built parallel
+admin page. Explicitly considered and rejected: a custom admin UI would
+duplicate list views, filters, search, inline editing, and permission
+checks the built-in admin already provides correctly, in direct
+conflict with "do not create duplicate abstractions when an existing
+one can be extended" — and every future model added to any app would
+then need admin coverage written twice. The restyle only overrides
+Django admin's own CSS custom properties (a supported, documented
+customization point since Django 4.x/5.x, not template surgery), so
+upgrading Django's admin internals doesn't require re-doing this work.
+The admin is a desktop/power-user surface by design, distinct from the
+mobile-first end-user UI everywhere else in this app — a legitimate,
+common split for a self-hosted app's own back office, not an
+inconsistency to fix.
+
 ## Domain services
 
 Important services should be independently testable.

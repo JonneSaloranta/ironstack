@@ -324,18 +324,21 @@ three needed a dedicated nav slot).
   `base.html`) and a deliberately standalone `500.html` (Django renders
   it with no context processors at all, so it can't depend on
   `{% url %}`/`{% static %}` — see `templates/500.html`'s own comment).
-- **Success**: the Django messages framework ("Preferences saved", etc.),
-  rendered in `base.html`. New-PR notices are the one exception — they
-  render as a toast fixed to the top of the screen instead
-  (`templates/records/_pr_toasts.html`, an HTMX out-of-band swap into
-  `#pr-toast-container`; see "Workout logging" → training mode note
-  below), auto-dismissing after 6 seconds with its own close button. The
-  messages framework is still used as the no-JS fallback for a PR notice
-  specifically (a plain form POST has no HTMX to do an out-of-band swap
-  with) — but only there: it used to fire unconditionally, including on
-  every HTMX request, where nothing ever consumes it, so a PR message
-  would sit in the store and resurface stale on some unrelated later
-  full page load.
+- **Success**: all feedback — the Django messages framework ("Preferences
+  saved", etc.) and new-PR notices alike — renders as a toast fixed to
+  the top of the screen, sharing one `#pr-toast-container` and the same
+  `.pr-banner` markup/behavior (Alpine `x-show` + `setTimeout`, own close
+  button, auto-dismissing after 6 seconds). The messages framework is
+  rendered directly into that container in `base.html`; PR notices are
+  the one path that also arrives via an HTMX out-of-band swap
+  (`templates/records/_pr_toasts.html`; see "Workout logging" → training
+  mode note below) for the no-JS-navigation case, since a plain full page
+  load still needs its own PR toast rather than waiting on an HTMX swap
+  that never runs on that request. Error-level messages
+  (`message.tags == "error"`) get the `.pr-banner-error` variant instead
+  of the default success styling. Nothing renders as a permanent static
+  card anymore — every piece of transient feedback disappears on its
+  own.
 
 ### Desktop
 Charts (`docs/ANALYTICS.md`) scale up for free — `viewBox` + `width:

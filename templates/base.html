@@ -15,14 +15,28 @@
 <body>
   <a class="skip-link" href="#main-content">{% trans "Skip to content" %}</a>
   {% comment %}
-  Empty by default — populated via HTMX out-of-band swaps whenever a
-  logged set creates a new PR (templates/records/_pr_toasts.html,
-  included from _performed_exercise_card.html/_train_panel.html). Lives
-  here, once, so a PR toast shows up top-of-screen regardless of which
-  page/card triggered it, and survives whatever the triggering card's
-  own hx-swap does to that card's own DOM subtree.
+  Populated two ways: directly below, with any Django `messages`
+  framework message this request's response carries ("Preferences
+  saved.", "API key revoked.", ...) — regression: these used to render
+  as a plain, permanent `.card` at the top of <main>, staying on screen
+  until the next full page navigation happened to push it off; also via
+  HTMX out-of-band swaps whenever a logged set creates a new PR
+  (templates/records/_pr_toasts.html, included from
+  _performed_exercise_card.html/_train_panel.html). Lives here, once, so
+  a toast shows up top-of-screen regardless of which page/card
+  triggered it, and survives whatever the triggering card's own hx-swap
+  does to that card's own DOM subtree.
   {% endcomment %}
-  <div id="pr-toast-container" class="toast-container" aria-live="polite"></div>
+  <div id="pr-toast-container" class="toast-container" aria-live="polite">
+    {% for message in messages %}
+      <div class="pr-banner {% if message.tags == 'error' %}pr-banner-error{% endif %}" role="status"
+           x-data="{show: true}" x-show="show" x-transition.opacity.duration.300ms
+           x-init="setTimeout(() => show = false, 6000)">
+        <button type="button" class="pr-toast-close" @click="show = false" aria-label="{% trans "Dismiss" %}">&times;</button>
+        {{ message }}
+      </div>
+    {% endfor %}
+  </div>
   {% if user.is_authenticated %}
   <nav class="bottom-nav" aria-label="{% trans "Main navigation" %}">
     <a href="{% url 'dashboard' %}" aria-label="{% trans "Home" %}" {% if request.resolver_match.url_name == 'dashboard' %}aria-current="page"{% endif %}>
@@ -55,11 +69,6 @@
   {% endif %}
 
   <main class="container" id="main-content">
-    {% if messages %}
-      {% for message in messages %}
-        <div class="card" role="status">{{ message }}</div>
-      {% endfor %}
-    {% endif %}
     {% block content %}{% endblock %}
   </main>
   {% block extra_scripts %}{% endblock %}

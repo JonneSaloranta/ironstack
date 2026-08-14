@@ -198,6 +198,9 @@ msgstr "Вы достигли максимального количества AP
 msgid "API key revoked."
 msgstr "API-ключ отозван."
 
+msgid "Administration"
+msgstr "Администрирование"
+
 msgid "Underweight"
 msgstr "Недостаточный вес"
 
@@ -747,6 +750,12 @@ msgstr "API-ключи"
 msgid "Manage keys other apps can use to access your data."
 msgstr "Управляйте ключами, с помощью которых другие приложения могут получать доступ к вашим данным."
 
+msgid "Admin"
+msgstr "Админ"
+
+msgid "Manage tiers, keys, and reference data across the whole instance."
+msgstr "Управляйте уровнями, ключами и справочными данными для всего сервера."
+
 msgid "Log out"
 msgstr "Выйти"
 
@@ -839,6 +848,12 @@ msgstr "Активностей пока нет"
 
 msgid "No activity types yet."
 msgstr "Типов активности пока нет."
+
+msgid "Django site admin"
+msgstr "Администрирование сайта Django"
+
+msgid "Django administration"
+msgstr "Администрирование Django"
 
 msgid "Date range"
 msgstr "Диапазон дат"
@@ -947,6 +962,9 @@ msgstr "Назад к профилю"
 
 msgid "Skip to content"
 msgstr "Перейти к содержимому"
+
+msgid "Dismiss"
+msgstr "Закрыть"
 
 msgid "Main navigation"
 msgstr "Главное меню"
@@ -1253,9 +1271,6 @@ msgstr "Новая тренировка"
 
 msgid "Delete workout"
 msgstr "Удалить тренировку"
-
-msgid "Dismiss"
-msgstr "Закрыть"
 
 msgid "New PR"
 msgstr "Новый рекорд"

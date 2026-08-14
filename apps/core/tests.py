@@ -356,6 +356,28 @@ class DashboardAccessTests(TestCase):
         self.assertIn(reverse("login"), response.url)
 
 
+class AdminThemeTests(TestCase):
+    """Django's own admin, re-themed to match IronStack rather than a
+    hand-built parallel admin page (apps.core.admin,
+    templates/admin/base_site.html, static/css/admin_theme.css) — see
+    that CSS file's own comment for the reasoning."""
+
+    def test_branding_is_ironstack_not_django(self):
+        response = self.client.get(reverse("admin:login"))
+        self.assertContains(response, "IronStack")
+        self.assertNotContains(response, "Django administration")
+
+    def test_theme_css_is_linked(self):
+        response = self.client.get(reverse("admin:login"))
+        self.assertContains(response, "admin_theme.css")
+
+    def test_theme_css_file_exists_and_overrides_admin_variables(self):
+        from django.conf import settings
+
+        content = (settings.BASE_DIR / "static" / "css" / "admin_theme.css").read_text()
+        self.assertIn("--body-bg", content)
+
+
 class BottomNavTests(TestCase):
     """Mobile nav: Home, Progress, Workout, Programs, Profile in that
     order, icon-only on mobile — each link's accessible name comes from

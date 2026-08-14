@@ -195,6 +195,9 @@ msgstr "Du har nått ditt max antal API-nycklar."
 msgid "API key revoked."
 msgstr "API-nyckeln har återkallats."
 
+msgid "Administration"
+msgstr "Administration"
+
 msgid "Underweight"
 msgstr "Undervikt"
 
@@ -744,6 +747,12 @@ msgstr "API-nycklar"
 msgid "Manage keys other apps can use to access your data."
 msgstr "Hantera nycklar som andra appar kan använda för att komma åt dina data."
 
+msgid "Admin"
+msgstr "Admin"
+
+msgid "Manage tiers, keys, and reference data across the whole instance."
+msgstr "Hantera nivåer, nycklar och referensdata över hela instansen."
+
 msgid "Log out"
 msgstr "Logga ut"
 
@@ -835,6 +844,12 @@ msgstr "Inga aktiviteter ännu"
 
 msgid "No activity types yet."
 msgstr "Inga aktivitetstyper ännu."
+
+msgid "Django site admin"
+msgstr "Django webbplatsadministration"
+
+msgid "Django administration"
+msgstr "Django-administration"
 
 msgid "Date range"
 msgstr "Datumintervall"
@@ -942,6 +957,9 @@ msgstr "Tillbaka till profilen"
 
 msgid "Skip to content"
 msgstr "Hoppa till innehåll"
+
+msgid "Dismiss"
+msgstr "Stäng"
 
 msgid "Main navigation"
 msgstr "Huvudnavigering"
@@ -1246,9 +1264,6 @@ msgstr "Nytt träningspass"
 
 msgid "Delete workout"
 msgstr "Ta bort träningspass"
-
-msgid "Dismiss"
-msgstr "Stäng"
 
 msgid "New PR"
 msgstr "Nytt PR"

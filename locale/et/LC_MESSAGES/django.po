@@ -195,6 +195,9 @@ msgstr "Oled saavutanud API-võtmete maksimumarvu."
 msgid "API key revoked."
 msgstr "API-võti tühistatud."
 
+msgid "Administration"
+msgstr "Haldus"
+
 msgid "Underweight"
 msgstr "Alakaal"
 
@@ -744,6 +747,12 @@ msgstr "API-võtmed"
 msgid "Manage keys other apps can use to access your data."
 msgstr "Halda võtmeid, mida teised rakendused saavad kasutada sinu andmetele ligipääsuks."
 
+msgid "Admin"
+msgstr "Haldus"
+
+msgid "Manage tiers, keys, and reference data across the whole instance."
+msgstr "Halda tasemeid, võtmeid ja viiteandmeid kogu teenuse ulatuses."
+
 msgid "Log out"
 msgstr "Logi välja"
 
@@ -835,6 +844,12 @@ msgstr "Tegevusi veel pole"
 
 msgid "No activity types yet."
 msgstr "Tegevuse tüüpe pole veel."
+
+msgid "Django site admin"
+msgstr "Django saidi haldus"
+
+msgid "Django administration"
+msgstr "Django haldus"
 
 msgid "Date range"
 msgstr "Kuupäevavahemik"
@@ -942,6 +957,9 @@ msgstr "Tagasi profiili juurde"
 
 msgid "Skip to content"
 msgstr "Liigu sisu juurde"
+
+msgid "Dismiss"
+msgstr "Sulge"
 
 msgid "Main navigation"
 msgstr "Peamenüü"
@@ -1246,9 +1264,6 @@ msgstr "Uus trenn"
 
 msgid "Delete workout"
 msgstr "Kustuta trenn"
-
-msgid "Dismiss"
-msgstr "Sulge"
 
 msgid "New PR"
 msgstr "Uus rekord"

@@ -331,6 +331,31 @@ class ProfileViewTests(TestCase):
         self.assertContains(response, "Share my activity")
         self.assertContains(response, "keep your own activity private")
 
+    def test_admin_link_is_hidden_for_a_regular_user(self):
+        response = self.client.get(reverse("profile"))
+        self.assertNotContains(response, reverse("admin:index"))
+
+    def test_admin_link_is_shown_for_staff(self):
+        self.alice.is_staff = True
+        self.alice.save()
+        response = self.client.get(reverse("profile"))
+        self.assertContains(response, reverse("admin:index"))
+
+    def test_saving_preferences_shows_a_dismissable_toast_not_a_static_card(self):
+        """Regression: "Preferences saved." used to render as a plain,
+        permanent .card at the top of <main>, staying on screen until
+        the next full page navigation happened to push it off — now the
+        same top-of-screen toast every other Django message (and PR
+        notice) uses."""
+        response = self.client.post(
+            reverse("profile"),
+            {"unit_system": "metric", "timezone": "UTC", "language": "en"},
+            follow=True,
+        )
+        self.assertContains(response, "Preferences saved.")
+        self.assertContains(response, 'id="pr-toast-container"')
+        self.assertContains(response, "pr-banner")
+
 
 class PasswordChangeTests(TestCase):
     """The URLs (django.contrib.auth.urls) already existed since Phase 1,

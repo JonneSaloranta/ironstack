@@ -195,6 +195,9 @@ msgstr "Olet saavuttanut API-avainten enimmäismäärän."
 msgid "API key revoked."
 msgstr "API-avain peruutettu."
 
+msgid "Administration"
+msgstr "Hallinta"
+
 msgid "Underweight"
 msgstr "Alipainoinen"
 
@@ -744,6 +747,12 @@ msgstr "API-avaimet"
 msgid "Manage keys other apps can use to access your data."
 msgstr "Hallitse avaimia, joilla muut sovellukset voivat käyttää tietojasi."
 
+msgid "Admin"
+msgstr "Hallinta"
+
+msgid "Manage tiers, keys, and reference data across the whole instance."
+msgstr "Hallitse tasoja, avaimia ja viitetietoja koko palvelun laajuudelta."
+
 msgid "Log out"
 msgstr "Kirjaudu ulos"
 
@@ -835,6 +844,12 @@ msgstr "Ei aktiviteetteja vielä"
 
 msgid "No activity types yet."
 msgstr "Aktiviteettityyppejä ei ole vielä."
+
+msgid "Django site admin"
+msgstr "Django-sivuston hallinta"
+
+msgid "Django administration"
+msgstr "Django-hallinta"
 
 msgid "Date range"
 msgstr "Ajanjakso"
@@ -942,6 +957,9 @@ msgstr "Takaisin profiiliin"
 
 msgid "Skip to content"
 msgstr "Siirry sisältöön"
+
+msgid "Dismiss"
+msgstr "Sulje"
 
 msgid "Main navigation"
 msgstr "Päävalikko"
@@ -1246,9 +1264,6 @@ msgstr "Uusi treeni"
 
 msgid "Delete workout"
 msgstr "Poista treeni"
-
-msgid "Dismiss"
-msgstr "Sulje"
 
 msgid "New PR"
 msgstr "Uusi ennätys"

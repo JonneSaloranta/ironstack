@@ -195,6 +195,9 @@ msgstr "You've reached your maximum number of API keys."
 msgid "API key revoked."
 msgstr "API key revoked."
 
+msgid "Administration"
+msgstr "Administration"
+
 msgid "Underweight"
 msgstr "Underweight"
 
@@ -744,6 +747,12 @@ msgstr "API keys"
 msgid "Manage keys other apps can use to access your data."
 msgstr "Manage keys other apps can use to access your data."
 
+msgid "Admin"
+msgstr "Admin"
+
+msgid "Manage tiers, keys, and reference data across the whole instance."
+msgstr "Manage tiers, keys, and reference data across the whole instance."
+
 msgid "Log out"
 msgstr "Log out"
 
@@ -835,6 +844,12 @@ msgstr "No activities yet"
 
 msgid "No activity types yet."
 msgstr "No activity types yet."
+
+msgid "Django site admin"
+msgstr "Django site admin"
+
+msgid "Django administration"
+msgstr "Django administration"
 
 msgid "Date range"
 msgstr "Date range"
@@ -942,6 +957,9 @@ msgstr "Back to profile"
 
 msgid "Skip to content"
 msgstr "Skip to content"
+
+msgid "Dismiss"
+msgstr "Dismiss"
 
 msgid "Main navigation"
 msgstr "Main navigation"
@@ -1246,9 +1264,6 @@ msgstr "New workout"
 
 msgid "Delete workout"
 msgstr "Delete workout"
-
-msgid "Dismiss"
-msgstr "Dismiss"
 
 msgid "New PR"
 msgstr "New PR"

@@ -1,0 +1,30 @@
+{% extends "admin/base.html" %}
+{% load static %}
+{% comment %}
+Otherwise identical to Django's own admin/base_site.html (site_header/
+site_title/index_title are set in Python — apps.core.admin — and read
+from context here exactly as the stock template does) — the only
+addition is the extrastyle block below, loading
+static/css/admin_theme.css so this stays Django's real admin, just
+re-themed to match IronStack's own palette. See that CSS file's own
+comment for why a restyle rather than a hand-built admin page.
+{% endcomment %}
+
+{% block title %}{% if subtitle %}{{ subtitle }} | {% endif %}{{ title }} | {{ site_title|default:_('Django site admin') }}{% endblock %}
+
+{% block branding %}
+<div id="site-name"><a href="{% url 'admin:index' %}">{{ site_header|default:_('Django administration') }}</a></div>
+{% if user.is_anonymous %}
+  {% include "admin/color_theme_toggle.html" %}
+{% endif %}
+{% endblock %}
+
+{% block nav-global %}{% endblock %}
+
+{% block extrastyle %}
+  <link rel="stylesheet" href="{% static 'css/admin_theme.css' %}">
+{% endblock %}
+
+{% block extrahead %}
+  <link rel="icon" href="{% static 'icons/favicon-32.png' %}">
+{% endblock %}

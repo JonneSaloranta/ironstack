@@ -823,6 +823,38 @@ shipped:
 - 26 new/changed UI strings translated across fi/sv/ru/it/et (463 total,
   0 fuzzy/untranslated). 52 new tests (456 total).
 
+**Django admin re-themed to match IronStack**, instead of a hand-built
+parallel admin page — asked as an explicit either/or, answered with a
+recommendation and reasoning before implementing (see
+`docs/ARCHITECTURE.md` "Admin site" for the full case): a custom admin
+UI would duplicate list views, filters, inline editing, and permission
+checks Django's own admin already provides correctly, and every future
+model would then need admin coverage written twice.
+
+- `static/css/admin_theme.css` overrides Django admin's own CSS custom
+  properties (a supported customization point since Django 4.x/5.x) to
+  match `static/css/base.css`'s palette — applied to all three of
+  admin's theme states (light/dark/OS-preference) identically, since
+  IronStack itself has no light/dark toggle of its own; the
+  now-meaningless toggle is hidden.
+- Branding ("IronStack" instead of "Django administration") set in
+  `apps.core.admin`; `templates/admin/base_site.html` adds the CSS link
+  and a matching favicon, otherwise identical to Django's own template.
+- 3 new UI strings translated across fi/sv/ru/it/et (466 total,
+  0 fuzzy/untranslated). 3 new tests (459 total).
+
+**Admin link on profile + messages unified into toasts.**
+
+- Profile now shows an "Admin" card-link to `/admin/`, visible only to
+  `is_staff` users (the same check Django's own admin login gate uses).
+- The Django messages framework no longer renders as a permanent card in
+  `<main>`; it now shares `#pr-toast-container` and the `.pr-banner`
+  markup/behavior with PR notices — same auto-dismiss-after-6s, same
+  close button. Error-tagged messages get a new `.pr-banner-error`
+  (red) variant instead of the default success styling.
+- 2 new UI strings translated across fi/sv/ru/it/et (468 total,
+  0 fuzzy/untranslated). 3 new tests (462 total).
+
 ## Local development
 
 ```bash
