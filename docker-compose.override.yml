@@ -4,6 +4,16 @@
 # don't ship this file with the production checkout).
 services:
   web:
+    # Overrides docker-compose.yml's own `image:` (the published GHCR
+    # tag) with a distinct local one — a dev build (requirements/dev.txt,
+    # runserver, bind-mounted source) must never end up tagged the same
+    # as the real production image, or a later `docker compose -f
+    # docker-compose.yml pull` on the same machine could resolve to a
+    # stale local dev image instead of actually pulling from GHCR (this
+    # bit before: an earlier session had scripts/build.sh's production
+    # build repeatedly overwrite the dev image because both used to
+    # share one tag).
+    image: ironstack-dev
     build:
       args:
         REQUIREMENTS_FILE: requirements/dev.txt
@@ -26,4 +36,5 @@ services:
   # explicitly with `docker compose --profile manual up backup-scheduler`
   # if you want to test it locally.
   backup-scheduler:
+    image: ironstack-dev
     profiles: ["manual"]

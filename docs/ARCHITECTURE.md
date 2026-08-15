@@ -371,17 +371,21 @@ restore tooling, both in `apps.core.version`:
 
 - **Git commit** (`get_git_sha()`): reads a `GIT_SHA` file the same way
   as `VERSION`, but that file is a build artifact, never committed
-  (`.gitignore`) — only `scripts/build.sh` writes it, by passing
-  `GIT_SHA`/`APP_VERSION`/`BUILD_DATE` as Docker build-args that the
-  `Dockerfile`'s runtime stage turns into both the `GIT_SHA` file and
-  OCI image labels (`org.opencontainers.image.revision`/`.version`/
+  (`.gitignore`) — only a build that passes `GIT_SHA`/`APP_VERSION`/
+  `BUILD_DATE` as Docker build-args gets real values here; the
+  `Dockerfile`'s runtime stage turns them into both the `GIT_SHA` file
+  and OCI image labels (`org.opencontainers.image.revision`/`.version`/
   `.created` — inspectable via `docker image inspect` without the app
-  even running). A plain `docker compose up -d --build` skips the
-  script and gets "unknown" for all three — harmless, since none of
-  this is required for the app to run; it only exists for anyone who
-  wants precise build provenance. Kept distinct from `VERSION`
-  deliberately: two builds can share a version number (e.g. a hotfix
-  before the next bump), but never share a commit.
+  even running). Two builds do this: `scripts/build.sh` for a local
+  build, and `.github/workflows/ci.yml`'s `publish-image` job for the
+  image it pushes to `ghcr.io/jonnesaloranta/ironstack` (`:latest` +
+  `:<VERSION>`) on every push to master, once `lint-and-test` has
+  passed. A plain `docker compose up -d --build` skips both and gets
+  "unknown" for all three — harmless, since none of this is required
+  for the app to run; it only exists for anyone who wants precise
+  build provenance. Kept distinct from `VERSION` deliberately: two
+  builds can share a version number (e.g. a hotfix before the next
+  bump), but never share a commit.
 - **Migration state** (`get_migration_state()`): the real technical
   compatibility signal for whether a database backup is safe to load
   into a given code version — `VERSION` alone can't answer that,

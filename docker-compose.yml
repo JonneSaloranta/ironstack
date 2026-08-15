@@ -12,6 +12,16 @@ services:
       retries: 10
 
   web:
+    # Published by .github/workflows/ci.yml's publish-image job on
+    # every push to master — :latest plus a :<VERSION> tag. `docker
+    # compose pull && docker compose up -d` (no --build) uses this
+    # image directly, no local build needed on the production host at
+    # all. `build:` below stays as a local-build fallback — `docker
+    # compose up --build`/`scripts/build.sh` still work exactly as
+    # before, e.g. for anyone who'd rather not depend on GHCR. Pin a
+    # specific released version instead of always-latest by setting
+    # IRONSTACK_IMAGE_TAG in .env (see .env.example).
+    image: ghcr.io/jonnesaloranta/ironstack:${IRONSTACK_IMAGE_TAG:-latest}
     build: &web-build
       context: .
       dockerfile: Dockerfile
@@ -59,6 +69,7 @@ services:
   # manage.py create_backup` instead — there's no separate on/off
   # toggle for it.
   backup-scheduler:
+    image: ghcr.io/jonnesaloranta/ironstack:${IRONSTACK_IMAGE_TAG:-latest}
     build: *web-build
     restart: unless-stopped
     env_file: .env

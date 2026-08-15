@@ -1152,3 +1152,47 @@ full detail on each.
     existing CI. No new runtime dependency, plain GitHub config.
   - 7 new tests (581 total, full suite green). 1 new UI string
     translated across fi/sv/ru/it/et (561 total, 0 fuzzy/untranslated).
+
+**Published Docker images — GitHub Container Registry, published on
+every push to master.** Production used to mean either building the
+image on the server itself (`docker compose up -d --build`) or running
+`scripts/build.sh` locally and shipping that image over — now CI does
+it once, centrally, and every server just pulls.
+
+- A new `publish-image` job in `.github/workflows/ci.yml`, gated with
+  `needs: lint-and-test` and `if: ... github.ref == 'refs/heads/master'`
+  — only a push that's both landed on master *and* passed lint/tests
+  gets published, never a pull request or another branch, so
+  `:latest` always reflects code that's actually green. Pushes to
+  `ghcr.io/jonnesaloranta/ironstack`, tagged `:latest` and the repo's
+  own `VERSION` file's value (e.g. `:1.1.0`) — both tags, every time.
+  Uses `GITHUB_TOKEN` (`packages: write`, requested only on this job —
+  the workflow's top-level `permissions` default to `contents: read`
+  otherwise) rather than a new PAT secret. Same `GIT_SHA`/`APP_VERSION`/
+  `BUILD_DATE` build-args `scripts/build.sh` already passed for a local
+  build, so the published image's `GIT_SHA` file and OCI labels
+  (`docs/ARCHITECTURE.md` "Versioning") are populated the same way.
+- `docker-compose.yml`'s `web`/`backup-scheduler` gained an `image:`
+  pointing at that same tag (`${IRONSTACK_IMAGE_TAG:-latest}`, pinnable
+  via `.env`) — `docker compose pull && docker compose up -d` now works
+  standalone, no build step on the production host at all. `build:`
+  stays too, unchanged, as a local-build fallback (both `docker compose
+  up --build` and `scripts/build.sh` keep working exactly as before)
+  since `image:` + `build:` together is Compose's own supported
+  pattern for "prefer the named image if present, otherwise build it."
+- Real risk caught before it could bite: adding `image:` to the base
+  compose file means `docker-compose.override.yml` (always merged for
+  local dev) would otherwise inherit that same tag for a *dev* build
+  too — a `docker compose up --build` locally would then tag the
+  result identically to the real published image. This exact failure
+  mode had already happened once before this session (`scripts/build.sh`
+  overwriting the dev image because both shared one tag then). Fixed
+  by giving the dev override its own distinct `image: ironstack-dev`
+  for both `web` and `backup-scheduler`, verified via `docker compose
+  config` (and `--profile manual config` for the latter) actually
+  resolving to the two different names as expected.
+- No new tests (pure infra — Compose/CI config, no Python/UI change);
+  verified with `docker compose config`/`docker compose -f
+  docker-compose.yml -f docker-compose.tls.yml config` against every
+  compose file combination instead. `docs/ARCHITECTURE.md`
+  "Versioning" and `README.md`'s "Production deployment" both updated.

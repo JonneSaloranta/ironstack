@@ -9,6 +9,12 @@ on:
   pull_request:
     branches: [master, dev]
 
+# Least-privilege default — GITHUB_TOKEN gets read-only repo access
+# unless a job explicitly asks for more (publish-image below asks for
+# packages: write, and only that job gets it).
+permissions:
+  contents: read
+
 jobs:
   lint-and-test:
     runs-on: ubuntu-latest
@@ -78,3 +84,53 @@ jobs:
 
       - name: Test
         run: pytest
+
+  # Publishes the production image to GitHub Container Registry — only
+  # once lint-and-test above has actually passed (needs:), and only
+  # for a real push landing on master (if:), never a pull request or
+  # any other branch, so a published `:latest` always reflects code
+  # that's both merged and green, never a branch still under review.
+  # See docs/ARCHITECTURE.md "Versioning" for the same GIT_SHA/
+  # APP_VERSION/BUILD_DATE metadata scripts/build.sh already bakes in
+  # for a local build — this does the equivalent for the published one.
+  publish-image:
+    needs: lint-and-test
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Compute image metadata
+        id: meta
+        run: |
+          echo "version=$(cat VERSION)" >> "$GITHUB_OUTPUT"
+          echo "git_sha=$(git rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
+          echo "build_date=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> "$GITHUB_OUTPUT"
+          # GHCR requires a lowercase image path; github.repository
+          # preserves whatever case the repo itself has (JonneSaloranta/ironstack).
+          echo "image=ghcr.io/$(echo '${{ github.repository }}' | tr '[:upper:]' '[:lower:]')" >> "$GITHUB_OUTPUT"
+
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: docker/setup-buildx-action@v3
+
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          build-args: |
+            GIT_SHA=${{ steps.meta.outputs.git_sha }}
+            APP_VERSION=${{ steps.meta.outputs.version }}
+            BUILD_DATE=${{ steps.meta.outputs.build_date }}
+          tags: |
+            ${{ steps.meta.outputs.image }}:latest
+            ${{ steps.meta.outputs.image }}:${{ steps.meta.outputs.version }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max

@@ -130,9 +130,20 @@ Compose merges in automatically — do not ship it to a server. On the
 production host, only `docker-compose.yml` should be present, with
 `.env` set to real secrets, `DJANGO_ALLOWED_HOSTS`, etc.
 
+`.github/workflows/ci.yml` publishes a production image to GitHub
+Container Registry (`ghcr.io/jonnesaloranta/ironstack`, tagged
+`:latest` and `:<VERSION>`) on every push to master that passes CI —
+`docker-compose.yml` already points at it, so the normal deploy is
+just pulling and starting, no build step on the server at all:
+
 ```bash
-docker compose -f docker-compose.yml up -d --build
+docker compose -f docker-compose.yml pull
+docker compose -f docker-compose.yml up -d
 ```
+
+Pin a specific released version instead of always the latest push by
+setting `IRONSTACK_IMAGE_TAG` in `.env` (see `.env.example`). If the
+GHCR package is private, `docker login ghcr.io` on the host first.
 
 **Before your first deploy, read [`docs/SECURITY.md`](docs/SECURITY.md)'s
 "TLS" section** — the bundled nginx config is HTTP-only, and the
@@ -140,9 +151,17 @@ default `DJANGO_SECURE_SSL_REDIRECT=true` will redirect-loop until you
 either add TLS (`docker-compose.tls.yml` is a ready-to-use overlay for
 that) or explicitly opt out.
 
-For a release image with `VERSION`/git commit/build date actually
-baked into its OCI labels (see `docs/ARCHITECTURE.md` "Versioning"),
-build with `scripts/build.sh` first, then start without `--build`:
+Prefer building locally instead of pulling? That still works
+unchanged:
+
+```bash
+docker compose -f docker-compose.yml up -d --build
+```
+
+or, for the same version/git-commit/build-date metadata the published
+image gets baked into its OCI labels (see `docs/ARCHITECTURE.md`
+"Versioning"), build with `scripts/build.sh` first, then start without
+`--build`:
 
 ```bash
 ./scripts/build.sh
