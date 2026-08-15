@@ -250,7 +250,16 @@ class BMIOnBodyWeightHistoryPageTests(TestCase):
     and specifically the system "Body weight" type."""
 
     def setUp(self):
-        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        # onboarding_completed=True: these tests assert the literal
+        # absence of "BMI" from the whole page — apps.accounts's
+        # onboarding modal (shown to any not-yet-onboarded user on
+        # every page) asks for height specifically to compute BMI, so
+        # a default, unrelated user would make that assertion collide
+        # with content that has nothing to do with what's being tested
+        # here.
+        self.alice = User.objects.create_user(
+            username="alice", password="s3cret-pass", onboarding_completed=True
+        )
         self.body_weight_type = MeasurementType.objects.get(name="Body weight", owner=None)
         self.client.login(username="alice", password="s3cret-pass")
 
