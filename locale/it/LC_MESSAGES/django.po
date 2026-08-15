@@ -252,6 +252,18 @@ msgstr "Ora del backup (UTC)"
 msgid "Keep the most recent"
 msgstr "Conserva i più recenti"
 
+msgid "Category"
+msgstr "Categoria"
+
+msgid "Subject"
+msgstr "Oggetto"
+
+msgid "Message"
+msgstr "Messaggio"
+
+msgid "Accept new feedback"
+msgstr "Accetta nuovi feedback"
+
 msgid "Good morning, %(username)s! Time to get after it."
 msgstr "Buongiorno, %(username)s! È ora di darsi da fare."
 
@@ -309,6 +321,18 @@ msgstr "A che ora (UTC) viene eseguito il backup automatico giornaliero."
 msgid "How many backups to keep — older ones are deleted automatically after each new one is created. 0 keeps every backup forever."
 msgstr "Quanti backup conservare: quelli più vecchi vengono eliminati automaticamente dopo la creazione di ognuno nuovo. 0 conserva tutti i backup per sempre."
 
+msgid "Lets any signed-in user submit feedback from their profile page. Turning this off only closes new submissions — feedback already on file stays visible to staff."
+msgstr "Consente a qualsiasi utente registrato di inviare feedback dalla propria pagina profilo. Disattivarlo chiude solo i nuovi invii — il feedback già ricevuto resta visibile allo staff."
+
+msgid "Progress"
+msgstr "Progressi"
+
+msgid "Body measurements"
+msgstr "Misure corporee"
+
+msgid "Account & profile"
+msgstr "Account e profilo"
+
 msgid "Backup created: %(name)s"
 msgstr "Backup creato: %(name)s"
 
@@ -317,6 +341,15 @@ msgstr "Impostazioni di backup salvate."
 
 msgid "Restored from backup: %(name)s"
 msgstr "Ripristinato dal backup: %(name)s"
+
+msgid "Feedback isn't currently being accepted."
+msgstr "Al momento non vengono accettati feedback."
+
+msgid "Thanks for the feedback!"
+msgstr "Grazie per il feedback!"
+
+msgid "Feedback settings saved."
+msgstr "Impostazioni feedback salvate."
 
 msgid "Ab Wheel Rollout"
 msgstr "Ab wheel"
@@ -870,6 +903,12 @@ msgstr "Chiavi API"
 msgid "Manage keys other apps can use to access your data."
 msgstr "Gestisci le chiavi che altre app possono usare per accedere ai tuoi dati."
 
+msgid "Feedback"
+msgstr "Feedback"
+
+msgid "Report a bug, request something, or tell us what's confusing."
+msgstr "Segnala un bug, proponi qualcosa o dicci cosa non è chiaro."
+
 msgid "Admin"
 msgstr "Admin"
 
@@ -881,6 +920,9 @@ msgstr "Backup"
 
 msgid "Create, download, and restore full backups of this instance."
 msgstr "Crea, scarica e ripristina backup completi di questa istanza."
+
+msgid "Read what users have submitted, and turn submissions on or off."
+msgstr "Leggi cosa hanno inviato gli utenti e attiva o disattiva l'invio."
 
 msgid "Log out"
 msgstr "Esci"
@@ -1099,9 +1141,6 @@ msgstr "Navigazione principale"
 msgid "Home"
 msgstr "Home"
 
-msgid "Progress"
-msgstr "Progressi"
-
 msgid "Workout"
 msgstr "Allenamento"
 
@@ -1247,11 +1286,14 @@ msgstr "Registra peso corporeo, misurazioni e tendenze."
 msgid "Log a run, ride, or any other non-gym activity."
 msgstr "Registra una corsa, un giro in bici o qualsiasi altra attività fuori dalla palestra."
 
-msgid "No exercises match your search."
-msgstr "Nessun esercizio corrisponde alla tua ricerca."
+msgid "Bug reports, ideas, anything that's confusing — only visible to the people running this instance."
+msgstr "Segnalazioni di bug, idee, qualsiasi cosa non chiara — visibile solo a chi gestisce questa istanza."
 
-msgid "Exercise list pages"
-msgstr "Pagine dell'elenco esercizi"
+msgid "Send feedback"
+msgstr "Invia feedback"
+
+msgid "Submissions"
+msgstr "Invii"
 
 msgid "Previous"
 msgstr "Precedente"
@@ -1261,6 +1303,15 @@ msgstr "Pagina %(number)s di %(total)s"
 
 msgid "Next"
 msgstr "Successiva"
+
+msgid "No feedback yet."
+msgstr "Nessun feedback ancora."
+
+msgid "No exercises match your search."
+msgstr "Nessun esercizio corrisponde alla tua ricerca."
+
+msgid "Exercise list pages"
+msgstr "Pagine dell'elenco esercizi"
 
 msgid "Movement type"
 msgstr "Tipo di movimento"

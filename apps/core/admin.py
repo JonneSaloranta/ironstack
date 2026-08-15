@@ -2,7 +2,7 @@
 from django.contrib import admin
 from django.utils.translation import gettext_lazy as _
 
-from .models import BackupSettings
+from .models import BackupSettings, Feedback, FeedbackSettings
 
 # Restyles Django's own admin (templates/admin/base_site.html,
 # static/css/admin_theme.css) to match IronStack's branding/palette
@@ -30,4 +30,36 @@ class BackupSettingsAdmin(admin.ModelAdmin):
         return not BackupSettings.objects.exists()
 
     def has_delete_permission(self, request, obj=None):
+        return False
+
+
+@admin.register(FeedbackSettings)
+class FeedbackSettingsAdmin(admin.ModelAdmin):
+    """Singleton, same pattern as BackupSettingsAdmin above — Profile →
+    Administration → Feedback's own settings card is the normal way to
+    change this; this exists so an admin can also do it from /admin/."""
+
+    list_display = ["enabled"]
+
+    def has_add_permission(self, request):
+        return not FeedbackSettings.objects.exists()
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+
+@admin.register(Feedback)
+class FeedbackAdmin(admin.ModelAdmin):
+    """Read-mostly inbox — Profile → Administration → Feedback
+    (apps.core.views_feedback.FeedbackListView) is the normal way staff
+    browse this; this exists so it's also reachable from /admin/,
+    filterable/searchable there in ways the plain list page doesn't
+    offer."""
+
+    list_display = ["created_at", "user", "category", "subject"]
+    list_filter = ["category", "created_at"]
+    search_fields = ["subject", "message", "user__username"]
+    readonly_fields = ["user", "category", "subject", "message", "created_at", "updated_at"]
+
+    def has_add_permission(self, request):
         return False

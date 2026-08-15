@@ -21,7 +21,7 @@ from apps.core.changelog import _render, render_changelog_html
 from apps.core.charts import build_bar_series, build_chart_series
 from apps.core.context_processors import app_version
 from apps.core.greetings import _GREETINGS_BY_BUCKET, _time_bucket, random_greeting
-from apps.core.models import BackupSettings
+from apps.core.models import BackupSettings, Feedback, FeedbackSettings
 from apps.core.templatetags.core_extras import duration, translate_content
 from apps.core.units import (
     cm_to_meters,
@@ -954,6 +954,157 @@ class BackupViewTests(TestCase):
             response = self.client.post(reverse("backup-restore", args=[name]))
         mock_restore.assert_called_once_with(name)
         self.assertRedirects(response, reverse("profile"))
+
+
+class FeedbackSettingsModelTests(TestCase):
+    """apps.core.models.FeedbackSettings — same admin-tunable singleton
+    pattern as BackupSettings/apps.api.models.ApiSettings."""
+
+    def test_load_creates_the_singleton_enabled_by_default(self):
+        self.assertTrue(FeedbackSettings.load().enabled)
+
+    def test_load_always_returns_the_same_row(self):
+        first = FeedbackSettings.load()
+        first.enabled = False
+        first.save()
+        second = FeedbackSettings.load()
+        self.assertEqual(first.pk, second.pk)
+        self.assertFalse(second.enabled)
+
+    def test_save_always_targets_pk_1_even_for_a_fresh_instance(self):
+        settings_row = FeedbackSettings(enabled=False)
+        settings_row.save()
+        self.assertEqual(settings_row.pk, 1)
+        self.assertEqual(FeedbackSettings.objects.count(), 1)
+
+    def test_delete_is_a_no_op(self):
+        settings_row = FeedbackSettings.load()
+        settings_row.delete()
+        self.assertTrue(FeedbackSettings.objects.filter(pk=1).exists())
+
+
+class FeedbackModelTests(TestCase):
+    def setUp(self):
+        User = get_user_model()
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+
+    def test_str_combines_category_and_subject(self):
+        feedback = Feedback.objects.create(
+            user=self.alice,
+            category=Feedback.Category.PROGRESS,
+            subject="Chart is confusing",
+            message="The y-axis doesn't say what unit it's in.",
+        )
+        self.assertEqual(str(feedback), "Progress: Chart is confusing")
+
+    def test_ordering_is_newest_first(self):
+        older = Feedback.objects.create(
+            user=self.alice, category=Feedback.Category.OTHER, subject="First", message="..."
+        )
+        newer = Feedback.objects.create(
+            user=self.alice, category=Feedback.Category.OTHER, subject="Second", message="..."
+        )
+        self.assertEqual(list(Feedback.objects.all()), [newer, older])
+
+
+class FeedbackViewTests(TestCase):
+    """Profile → Feedback (any signed-in user) and Profile →
+    Administration → Feedback (staff only)."""
+
+    def setUp(self):
+        User = get_user_model()
+        self.admin = User.objects.create_user(
+            username="admin", password="s3cret-pass", is_staff=True
+        )
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+
+    def test_create_view_requires_login(self):
+        response = self.client.get(reverse("feedback-create"))
+        self.assertEqual(response.status_code, 302)
+
+    def test_any_signed_in_user_can_submit_feedback(self):
+        self.client.login(username="alice", password="s3cret-pass")
+        response = self.client.post(
+            reverse("feedback-create"),
+            {
+                "category": Feedback.Category.PROGRESS,
+                "subject": "Chart is confusing",
+                "message": "The y-axis doesn't say what unit it's in.",
+            },
+        )
+        self.assertRedirects(response, reverse("profile"))
+        feedback = Feedback.objects.get()
+        self.assertEqual(feedback.user, self.alice)
+        self.assertEqual(feedback.category, Feedback.Category.PROGRESS)
+        self.assertEqual(feedback.subject, "Chart is confusing")
+
+    def test_create_view_is_gated_by_feedback_settings(self):
+        settings_row = FeedbackSettings.load()
+        settings_row.enabled = False
+        settings_row.save()
+        self.client.login(username="alice", password="s3cret-pass")
+        response = self.client.post(
+            reverse("feedback-create"),
+            {"category": Feedback.Category.OTHER, "subject": "x", "message": "y"},
+        )
+        self.assertRedirects(response, reverse("profile"))
+        self.assertEqual(Feedback.objects.count(), 0)
+
+    def test_feedback_card_hidden_from_profile_when_disabled(self):
+        settings_row = FeedbackSettings.load()
+        settings_row.enabled = False
+        settings_row.save()
+        self.client.login(username="alice", password="s3cret-pass")
+        response = self.client.get(reverse("profile"))
+        self.assertNotContains(response, reverse("feedback-create"))
+
+    def test_list_view_requires_login(self):
+        response = self.client.get(reverse("feedback-list"))
+        self.assertEqual(response.status_code, 302)
+
+    def test_list_view_requires_staff(self):
+        self.client.login(username="alice", password="s3cret-pass")
+        response = self.client.get(reverse("feedback-list"))
+        self.assertEqual(response.status_code, 403)
+
+    def test_list_view_shows_submitted_feedback_to_staff(self):
+        Feedback.objects.create(
+            user=self.alice,
+            category=Feedback.Category.OTHER,
+            subject="A wild subject",
+            message="A wild message",
+        )
+        self.client.login(username="admin", password="s3cret-pass")
+        response = self.client.get(reverse("feedback-list"))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "A wild subject")
+        self.assertContains(response, "A wild message")
+
+    def test_a_regular_user_never_sees_another_users_feedback(self):
+        Feedback.objects.create(
+            user=self.admin,
+            category=Feedback.Category.OTHER,
+            subject="Admin-only subject",
+            message="...",
+        )
+        self.client.login(username="alice", password="s3cret-pass")
+        response = self.client.get(reverse("feedback-list"))
+        self.assertEqual(response.status_code, 403)
+
+    def test_posting_save_settings_updates_feedback_settings_and_redirects(self):
+        self.client.login(username="admin", password="s3cret-pass")
+        response = self.client.post(
+            reverse("feedback-list"),
+            {"action": "save_settings"},  # "enabled" omitted — unchecked checkbox isn't sent
+        )
+        self.assertRedirects(response, reverse("feedback-list"))
+        self.assertFalse(FeedbackSettings.load().enabled)
+
+    def test_settings_form_requires_staff(self):
+        self.client.login(username="alice", password="s3cret-pass")
+        response = self.client.post(reverse("feedback-list"), {"action": "save_settings"})
+        self.assertEqual(response.status_code, 403)
+        self.assertTrue(FeedbackSettings.load().enabled)  # default untouched
 
 
 class DashboardAccessTests(TestCase):

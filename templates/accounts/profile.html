@@ -55,6 +55,16 @@
   <a class="button-secondary" href="{% url 'api_keys:key-list' %}">{% trans "Open" %}</a>
 </div>
 
+{% if feedback_enabled %}
+  <div class="card card-action-row">
+    <div>
+      <strong>{% trans "Feedback" %}</strong>
+      <p class="text-muted">{% trans "Report a bug, request something, or tell us what's confusing." %}</p>
+    </div>
+    <a class="button-secondary" href="{% url 'feedback-create' %}">{% trans "Open" %}</a>
+  </div>
+{% endif %}
+
 {% if user.is_staff %}
   <div class="danger-zone">
     <h2>{% trans "Administration" %}</h2>
@@ -72,6 +82,14 @@
         <p class="text-muted">{% trans "Create, download, and restore full backups of this instance." %}</p>
       </div>
       <a class="button-secondary" href="{% url 'backup-list' %}">{% trans "Open" %}</a>
+    </div>
+
+    <div class="card card-action-row">
+      <div>
+        <strong>{% trans "Feedback" %}</strong>
+        <p class="text-muted">{% trans "Read what users have submitted, and turn submissions on or off." %}</p>
+      </div>
+      <a class="button-secondary" href="{% url 'feedback-list' %}">{% trans "Open" %}</a>
     </div>
   </div>
 {% endif %}

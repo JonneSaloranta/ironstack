@@ -255,6 +255,18 @@ msgstr "Час резервного копирования (UTC)"
 msgid "Keep the most recent"
 msgstr "Хранить последние"
 
+msgid "Category"
+msgstr "Категория"
+
+msgid "Subject"
+msgstr "Тема"
+
+msgid "Message"
+msgstr "Сообщение"
+
+msgid "Accept new feedback"
+msgstr "Принимать новые отзывы"
+
 msgid "Good morning, %(username)s! Time to get after it."
 msgstr "Доброе утро, %(username)s! Пора действовать."
 
@@ -312,6 +324,18 @@ msgstr "Время (UTC), в которое запускается ежедне�
 msgid "How many backups to keep — older ones are deleted automatically after each new one is created. 0 keeps every backup forever."
 msgstr "Сколько резервных копий хранить — более старые удаляются автоматически после создания каждой новой. 0 означает хранить все копии вечно."
 
+msgid "Lets any signed-in user submit feedback from their profile page. Turning this off only closes new submissions — feedback already on file stays visible to staff."
+msgstr "Позволяет любому вошедшему пользователю отправлять отзыв со своей страницы профиля. Отключение этой опции закрывает только приём новых сообщений — уже полученные отзывы остаются видны персоналу."
+
+msgid "Progress"
+msgstr "Прогресс"
+
+msgid "Body measurements"
+msgstr "Замеры тела"
+
+msgid "Account & profile"
+msgstr "Аккаунт и профиль"
+
 msgid "Backup created: %(name)s"
 msgstr "Резервная копия создана: %(name)s"
 
@@ -320,6 +344,15 @@ msgstr "Настройки резервного копирования сохр�
 
 msgid "Restored from backup: %(name)s"
 msgstr "Восстановлено из резервной копии: %(name)s"
+
+msgid "Feedback isn't currently being accepted."
+msgstr "В настоящее время отзывы не принимаются."
+
+msgid "Thanks for the feedback!"
+msgstr "Спасибо за отзыв!"
+
+msgid "Feedback settings saved."
+msgstr "Настройки отзывов сохранены."
 
 msgid "Ab Wheel Rollout"
 msgstr "Ролик для пресса"
@@ -873,6 +906,12 @@ msgstr "API-ключи"
 msgid "Manage keys other apps can use to access your data."
 msgstr "Управляйте ключами, с помощью которых другие приложения могут получать доступ к вашим данным."
 
+msgid "Feedback"
+msgstr "Обратная связь"
+
+msgid "Report a bug, request something, or tell us what's confusing."
+msgstr "Сообщите об ошибке, предложите что-то или расскажите, что показалось непонятным."
+
 msgid "Admin"
 msgstr "Админ"
 
@@ -884,6 +923,9 @@ msgstr "Резервные копии"
 
 msgid "Create, download, and restore full backups of this instance."
 msgstr "Создавайте, скачивайте и восстанавливайте полные резервные копии этого экземпляра."
+
+msgid "Read what users have submitted, and turn submissions on or off."
+msgstr "Читайте отзывы пользователей и включайте или отключайте приём новых сообщений."
 
 msgid "Log out"
 msgstr "Выйти"
@@ -1104,9 +1146,6 @@ msgstr "Главное меню"
 msgid "Home"
 msgstr "Главная"
 
-msgid "Progress"
-msgstr "Прогресс"
-
 msgid "Workout"
 msgstr "Тренировка"
 
@@ -1254,11 +1293,14 @@ msgstr "Записывайте вес тела, измерения и тенде
 msgid "Log a run, ride, or any other non-gym activity."
 msgstr "Записывайте пробежку, велопрогулку или любую другую активность вне зала."
 
-msgid "No exercises match your search."
-msgstr "По вашему запросу упражнений не найдено."
+msgid "Bug reports, ideas, anything that's confusing — only visible to the people running this instance."
+msgstr "Сообщения об ошибках, идеи, всё, что непонятно — видно только тем, кто администрирует этот экземпляр."
 
-msgid "Exercise list pages"
-msgstr "Страницы списка упражнений"
+msgid "Send feedback"
+msgstr "Отправить отзыв"
+
+msgid "Submissions"
+msgstr "Отправленные сообщения"
 
 msgid "Previous"
 msgstr "Назад"
@@ -1268,6 +1310,15 @@ msgstr "Страница %(number)s из %(total)s"
 
 msgid "Next"
 msgstr "Далее"
+
+msgid "No feedback yet."
+msgstr "Пока нет отзывов."
+
+msgid "No exercises match your search."
+msgstr "По вашему запросу упражнений не найдено."
+
+msgid "Exercise list pages"
+msgstr "Страницы списка упражнений"
 
 msgid "Movement type"
 msgstr "Тип движения"

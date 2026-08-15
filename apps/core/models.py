@@ -70,3 +70,73 @@ class BackupSettings(models.Model):
 
     def __str__(self):
         return "Backup settings"
+
+
+class FeedbackSettings(models.Model):
+    """Singleton row (always pk=1 — see `load()`) holding the single
+    knob for apps.core.views_feedback.FeedbackCreateView: whether
+    submitting new feedback is currently open at all. Same pattern as
+    BackupSettings/apps.api.models.ApiSettings above. Turning this off
+    only closes new submissions (gated in the view itself, not just
+    hidden on the profile page — see FeedbackCreateView.dispatch) —
+    it never touches feedback already on file, which stays visible to
+    staff either way."""
+
+    enabled = models.BooleanField(
+        default=True,
+        help_text=_(
+            "Lets any signed-in user submit feedback from their profile page. "
+            "Turning this off only closes new submissions — feedback already "
+            "on file stays visible to staff."
+        ),
+    )
+
+    def save(self, *args, **kwargs):
+        self.pk = 1
+        super().save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        pass  # singleton — deleting it would just silently recreate defaults on next load()
+
+    @classmethod
+    def load(cls):
+        obj, _created = cls.objects.get_or_create(pk=1)
+        return obj
+
+    def __str__(self):
+        return "Feedback settings"
+
+
+class Feedback(TimeStampedModel):
+    """A free-text note from a user about the application itself (a bug,
+    a request, a "this is confusing" — not fitness data), submitted from
+    Profile → Feedback and visible only to staff (Profile → Administration
+    → Feedback, or /admin/) — never to other regular users, and not tied
+    to any support-ticket workflow beyond that: this is a one-way inbox,
+    not a two-way conversation thread."""
+
+    class Category(models.TextChoices):
+        WORKOUTS = "workouts", _("Workouts")
+        PROGRAMS = "programs", _("Programs")
+        PROGRESS = "progress", _("Progress")
+        MEASUREMENTS = "measurements", _("Body measurements")
+        ACTIVITIES = "activities", _("Activities")
+        ACCOUNT = "account", _("Account & profile")
+        OTHER = "other", _("Other")
+
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="feedback_submissions",
+    )
+    category = models.CharField(
+        max_length=20, choices=Category.choices, default=Category.OTHER
+    )
+    subject = models.CharField(max_length=200)
+    message = models.TextField()
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"{self.get_category_display()}: {self.subject}"

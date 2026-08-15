@@ -252,6 +252,18 @@ msgstr "Varmuuskopioinnin kellonaika (UTC)"
 msgid "Keep the most recent"
 msgstr "Säilytä uusimmat"
 
+msgid "Category"
+msgstr "Kategoria"
+
+msgid "Subject"
+msgstr "Aihe"
+
+msgid "Message"
+msgstr "Viesti"
+
+msgid "Accept new feedback"
+msgstr "Ota vastaan uutta palautetta"
+
 msgid "Good morning, %(username)s! Time to get after it."
 msgstr "Huomenta, %(username)s! Aika tarttua toimeen."
 
@@ -309,6 +321,18 @@ msgstr "Mihin kellonaikaan (UTC) päivittäinen automaattinen varmuuskopiointi a
 msgid "How many backups to keep — older ones are deleted automatically after each new one is created. 0 keeps every backup forever."
 msgstr "Kuinka monta varmuuskopiota säilytetään — vanhemmat poistetaan automaattisesti aina uuden luonnin jälkeen. 0 säilyttää kaikki varmuuskopiot ikuisesti."
 
+msgid "Lets any signed-in user submit feedback from their profile page. Turning this off only closes new submissions — feedback already on file stays visible to staff."
+msgstr "Antaa minkä tahansa kirjautuneen käyttäjän lähettää palautetta profiilisivultaan. Tämän pois kytkeminen sulkee vain uusien palautteiden lähettämisen — jo lähetetty palaute pysyy henkilökunnan nähtävissä."
+
+msgid "Progress"
+msgstr "Edistyminen"
+
+msgid "Body measurements"
+msgstr "Kehon mittaukset"
+
+msgid "Account & profile"
+msgstr "Tili ja profiili"
+
 msgid "Backup created: %(name)s"
 msgstr "Varmuuskopio luotu: %(name)s"
 
@@ -317,6 +341,15 @@ msgstr "Varmuuskopioinnin asetukset tallennettu."
 
 msgid "Restored from backup: %(name)s"
 msgstr "Palautettu varmuuskopiosta: %(name)s"
+
+msgid "Feedback isn't currently being accepted."
+msgstr "Palautetta ei tällä hetkellä oteta vastaan."
+
+msgid "Thanks for the feedback!"
+msgstr "Kiitos palautteesta!"
+
+msgid "Feedback settings saved."
+msgstr "Palauteasetukset tallennettu."
 
 msgid "Ab Wheel Rollout"
 msgstr "Vatsapyörärullaus"
@@ -870,6 +903,12 @@ msgstr "API-avaimet"
 msgid "Manage keys other apps can use to access your data."
 msgstr "Hallitse avaimia, joilla muut sovellukset voivat käyttää tietojasi."
 
+msgid "Feedback"
+msgstr "Palaute"
+
+msgid "Report a bug, request something, or tell us what's confusing."
+msgstr "Ilmoita bugista, ehdota jotain tai kerro, mikä on epäselvää."
+
 msgid "Admin"
 msgstr "Hallinta"
 
@@ -881,6 +920,9 @@ msgstr "Varmuuskopiot"
 
 msgid "Create, download, and restore full backups of this instance."
 msgstr "Luo, lataa ja palauta täydellisiä varmuuskopioita tästä asennuksesta."
+
+msgid "Read what users have submitted, and turn submissions on or off."
+msgstr "Lue mitä käyttäjät ovat lähettäneet, ja kytke palautteen lähettäminen päälle tai pois."
 
 msgid "Log out"
 msgstr "Kirjaudu ulos"
@@ -1099,9 +1141,6 @@ msgstr "Päävalikko"
 msgid "Home"
 msgstr "Koti"
 
-msgid "Progress"
-msgstr "Edistyminen"
-
 msgid "Workout"
 msgstr "Treeni"
 
@@ -1247,11 +1286,14 @@ msgstr "Kirjaa kehon paino, mitat ja trendit."
 msgid "Log a run, ride, or any other non-gym activity."
 msgstr "Kirjaa juoksu, pyöräily tai mikä tahansa muu kuntosalin ulkopuolinen aktiviteetti."
 
-msgid "No exercises match your search."
-msgstr "Haullasi ei löytynyt liikkeitä."
+msgid "Bug reports, ideas, anything that's confusing — only visible to the people running this instance."
+msgstr "Bugiraportit, ideat, mikä tahansa epäselvä — näkyy vain tätä asennusta ylläpitäville."
 
-msgid "Exercise list pages"
-msgstr "Liikelistan sivut"
+msgid "Send feedback"
+msgstr "Lähetä palaute"
+
+msgid "Submissions"
+msgstr "Lähetetyt palautteet"
 
 msgid "Previous"
 msgstr "Edellinen"
@@ -1261,6 +1303,15 @@ msgstr "Sivu %(number)s / %(total)s"
 
 msgid "Next"
 msgstr "Seuraava"
+
+msgid "No feedback yet."
+msgstr "Ei vielä palautetta."
+
+msgid "No exercises match your search."
+msgstr "Haullasi ei löytynyt liikkeitä."
+
+msgid "Exercise list pages"
+msgstr "Liikelistan sivut"
 
 msgid "Movement type"
 msgstr "Liiketyyppi"

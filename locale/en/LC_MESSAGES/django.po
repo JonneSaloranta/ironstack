@@ -252,6 +252,18 @@ msgstr "Backup hour (UTC)"
 msgid "Keep the most recent"
 msgstr "Keep the most recent"
 
+msgid "Category"
+msgstr "Category"
+
+msgid "Subject"
+msgstr "Subject"
+
+msgid "Message"
+msgstr "Message"
+
+msgid "Accept new feedback"
+msgstr "Accept new feedback"
+
 msgid "Good morning, %(username)s! Time to get after it."
 msgstr "Good morning, %(username)s! Time to get after it."
 
@@ -309,6 +321,18 @@ msgstr "What time (UTC) the daily automatic backup runs at."
 msgid "How many backups to keep — older ones are deleted automatically after each new one is created. 0 keeps every backup forever."
 msgstr "How many backups to keep — older ones are deleted automatically after each new one is created. 0 keeps every backup forever."
 
+msgid "Lets any signed-in user submit feedback from their profile page. Turning this off only closes new submissions — feedback already on file stays visible to staff."
+msgstr "Lets any signed-in user submit feedback from their profile page. Turning this off only closes new submissions — feedback already on file stays visible to staff."
+
+msgid "Progress"
+msgstr "Progress"
+
+msgid "Body measurements"
+msgstr "Body measurements"
+
+msgid "Account & profile"
+msgstr "Account & profile"
+
 msgid "Backup created: %(name)s"
 msgstr "Backup created: %(name)s"
 
@@ -317,6 +341,15 @@ msgstr "Backup settings saved."
 
 msgid "Restored from backup: %(name)s"
 msgstr "Restored from backup: %(name)s"
+
+msgid "Feedback isn't currently being accepted."
+msgstr "Feedback isn't currently being accepted."
+
+msgid "Thanks for the feedback!"
+msgstr "Thanks for the feedback!"
+
+msgid "Feedback settings saved."
+msgstr "Feedback settings saved."
 
 msgid "Ab Wheel Rollout"
 msgstr "Ab Wheel Rollout"
@@ -870,6 +903,12 @@ msgstr "API keys"
 msgid "Manage keys other apps can use to access your data."
 msgstr "Manage keys other apps can use to access your data."
 
+msgid "Feedback"
+msgstr "Feedback"
+
+msgid "Report a bug, request something, or tell us what's confusing."
+msgstr "Report a bug, request something, or tell us what's confusing."
+
 msgid "Admin"
 msgstr "Admin"
 
@@ -881,6 +920,9 @@ msgstr "Backups"
 
 msgid "Create, download, and restore full backups of this instance."
 msgstr "Create, download, and restore full backups of this instance."
+
+msgid "Read what users have submitted, and turn submissions on or off."
+msgstr "Read what users have submitted, and turn submissions on or off."
 
 msgid "Log out"
 msgstr "Log out"
@@ -1099,9 +1141,6 @@ msgstr "Main navigation"
 msgid "Home"
 msgstr "Home"
 
-msgid "Progress"
-msgstr "Progress"
-
 msgid "Workout"
 msgstr "Workout"
 
@@ -1247,11 +1286,14 @@ msgstr "Log body weight, measurements, and trends."
 msgid "Log a run, ride, or any other non-gym activity."
 msgstr "Log a run, ride, or any other non-gym activity."
 
-msgid "No exercises match your search."
-msgstr "No exercises match your search."
+msgid "Bug reports, ideas, anything that's confusing — only visible to the people running this instance."
+msgstr "Bug reports, ideas, anything that's confusing — only visible to the people running this instance."
 
-msgid "Exercise list pages"
-msgstr "Exercise list pages"
+msgid "Send feedback"
+msgstr "Send feedback"
+
+msgid "Submissions"
+msgstr "Submissions"
 
 msgid "Previous"
 msgstr "Previous"
@@ -1261,6 +1303,15 @@ msgstr "Page %(number)s of %(total)s"
 
 msgid "Next"
 msgstr "Next"
+
+msgid "No feedback yet."
+msgstr "No feedback yet."
+
+msgid "No exercises match your search."
+msgstr "No exercises match your search."
+
+msgid "Exercise list pages"
+msgstr "Exercise list pages"
 
 msgid "Movement type"
 msgstr "Movement type"

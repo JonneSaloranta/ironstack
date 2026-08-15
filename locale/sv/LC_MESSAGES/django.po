@@ -252,6 +252,18 @@ msgstr "Tid för säkerhetskopiering (UTC)"
 msgid "Keep the most recent"
 msgstr "Behåll de senaste"
 
+msgid "Category"
+msgstr "Kategori"
+
+msgid "Subject"
+msgstr "Ämne"
+
+msgid "Message"
+msgstr "Meddelande"
+
+msgid "Accept new feedback"
+msgstr "Ta emot ny feedback"
+
 msgid "Good morning, %(username)s! Time to get after it."
 msgstr "God morgon, %(username)s! Dags att sätta igång."
 
@@ -309,6 +321,18 @@ msgstr "Vilken tid (UTC) den dagliga automatiska säkerhetskopieringen körs."
 msgid "How many backups to keep — older ones are deleted automatically after each new one is created. 0 keeps every backup forever."
 msgstr "Hur många säkerhetskopior som ska behållas — äldre tas bort automatiskt efter att en ny skapats. 0 behåller alla säkerhetskopior för alltid."
 
+msgid "Lets any signed-in user submit feedback from their profile page. Turning this off only closes new submissions — feedback already on file stays visible to staff."
+msgstr "Låter alla inloggade användare skicka feedback från sin profilsida. Att stänga av detta stänger bara nya inskick — redan inskickad feedback förblir synlig för personalen."
+
+msgid "Progress"
+msgstr "Framsteg"
+
+msgid "Body measurements"
+msgstr "Kroppsmått"
+
+msgid "Account & profile"
+msgstr "Konto och profil"
+
 msgid "Backup created: %(name)s"
 msgstr "Säkerhetskopia skapad: %(name)s"
 
@@ -317,6 +341,15 @@ msgstr "Säkerhetskopieringens inställningar sparade."
 
 msgid "Restored from backup: %(name)s"
 msgstr "Återställd från säkerhetskopia: %(name)s"
+
+msgid "Feedback isn't currently being accepted."
+msgstr "Feedback tas inte emot just nu."
+
+msgid "Thanks for the feedback!"
+msgstr "Tack för din feedback!"
+
+msgid "Feedback settings saved."
+msgstr "Feedback-inställningarna sparade."
 
 msgid "Ab Wheel Rollout"
 msgstr "Ab wheel-rullning"
@@ -870,6 +903,12 @@ msgstr "API-nycklar"
 msgid "Manage keys other apps can use to access your data."
 msgstr "Hantera nycklar som andra appar kan använda för att komma åt dina data."
 
+msgid "Feedback"
+msgstr "Feedback"
+
+msgid "Report a bug, request something, or tell us what's confusing."
+msgstr "Rapportera en bugg, önska något, eller berätta vad som känns förvirrande."
+
 msgid "Admin"
 msgstr "Admin"
 
@@ -881,6 +920,9 @@ msgstr "Säkerhetskopior"
 
 msgid "Create, download, and restore full backups of this instance."
 msgstr "Skapa, ladda ner och återställ fullständiga säkerhetskopior av den här instansen."
+
+msgid "Read what users have submitted, and turn submissions on or off."
+msgstr "Läs vad användare har skickat in, och slå på eller av inskickning."
 
 msgid "Log out"
 msgstr "Logga ut"
@@ -1099,9 +1141,6 @@ msgstr "Huvudnavigering"
 msgid "Home"
 msgstr "Hem"
 
-msgid "Progress"
-msgstr "Framsteg"
-
 msgid "Workout"
 msgstr "Träning"
 
@@ -1247,11 +1286,14 @@ msgstr "Logga kroppsvikt, mått och trender."
 msgid "Log a run, ride, or any other non-gym activity."
 msgstr "Logga en löprunda, cykeltur eller annan aktivitet utanför gymmet."
 
-msgid "No exercises match your search."
-msgstr "Inga övningar matchar din sökning."
+msgid "Bug reports, ideas, anything that's confusing — only visible to the people running this instance."
+msgstr "Buggrapporter, idéer, allt som känns förvirrande — synligt bara för dem som driver den här instansen."
 
-msgid "Exercise list pages"
-msgstr "Sidor för övningslista"
+msgid "Send feedback"
+msgstr "Skicka feedback"
+
+msgid "Submissions"
+msgstr "Inskickade"
 
 msgid "Previous"
 msgstr "Föregående"
@@ -1261,6 +1303,15 @@ msgstr "Sida %(number)s av %(total)s"
 
 msgid "Next"
 msgstr "Nästa"
+
+msgid "No feedback yet."
+msgstr "Ingen feedback ännu."
+
+msgid "No exercises match your search."
+msgstr "Inga övningar matchar din sökning."
+
+msgid "Exercise list pages"
+msgstr "Sidor för övningslista"
 
 msgid "Movement type"
 msgstr "Rörelsetyp"

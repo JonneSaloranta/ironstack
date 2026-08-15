@@ -3,7 +3,6 @@ apps.core.backups for what actually happens and why restore here
 carries real risk that scripts/restore.sh's version doesn't."""
 
 from django.contrib import messages
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.http import FileResponse, Http404
 from django.shortcuts import redirect
 from django.urls import reverse
@@ -13,16 +12,8 @@ from django.views.generic import TemplateView, View
 from apps.core import backups as backup_services
 from apps.core import version as version_services
 from apps.core.forms import BackupSettingsForm
+from apps.core.mixins import StaffRequiredMixin
 from apps.core.models import BackupSettings
-
-
-class StaffRequiredMixin(LoginRequiredMixin, UserPassesTestMixin):
-    """Every backup view exposes/replaces the entire database — the
-    same is_staff check that gates the admin-only card on the profile
-    page (apps.accounts) and Django's own /admin/ login."""
-
-    def test_func(self):
-        return self.request.user.is_staff
 
 
 class BackupListView(StaffRequiredMixin, TemplateView):

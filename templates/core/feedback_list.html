@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Feedback" %} — IronStack{% endblock %}
+{% block content %}
+<div class="top-bar">
+  <h1 style="margin:0;">{% trans "Feedback" %}</h1>
+</div>
+
+<h2>{% trans "Settings" %}</h2>
+<form class="card" method="post">
+  {% csrf_token %}
+  {{ settings_form.non_field_errors }}
+  {% for field in settings_form %}
+    <div class="field">
+      {% if field.field.widget.input_type == "checkbox" %}
+        <label class="checkbox-field">{{ field }}{{ field.label }}</label>
+      {% else %}
+        {{ field.label_tag }}{{ field }}
+      {% endif %}
+      {% if field.help_text %}<p class="field-help">{{ field.help_text }}</p>{% endif %}
+      {% if field.errors %}<p class="field-error">{{ field.errors|striptags }}</p>{% endif %}
+    </div>
+  {% endfor %}
+  <button type="submit">{% trans "Save settings" %}</button>
+</form>
+
+<h2>{% trans "Submissions" %}</h2>
+{% if feedback_items %}
+  {% for item in feedback_items %}
+    <div class="card">
+      <div class="card-action-row">
+        <div>
+          <strong>{{ item.subject }}</strong>
+          <p class="text-muted">{{ item.get_category_display }} — {{ item.user }} — {{ item.created_at|date:"Y-m-d H:i" }}</p>
+        </div>
+      </div>
+      <p>{{ item.message|linebreaksbr }}</p>
+    </div>
+  {% endfor %}
+
+  {% if is_paginated %}
+    <div class="card-action-row">
+      {% if page_obj.has_previous %}
+        <a class="button-secondary" href="?page={{ page_obj.previous_page_number }}">{% trans "Previous" %}</a>
+      {% endif %}
+      <span>{% blocktrans with number=page_obj.number total=page_obj.paginator.num_pages %}Page {{ number }} of {{ total }}{% endblocktrans %}</span>
+      {% if page_obj.has_next %}
+        <a class="button-secondary" href="?page={{ page_obj.next_page_number }}">{% trans "Next" %}</a>
+      {% endif %}
+    </div>
+  {% endif %}
+{% else %}
+  <div class="card empty-state">
+    <p>{% trans "No feedback yet." %}</p>
+  </div>
+{% endif %}
+
+<p><a class="button-secondary" href="{% url 'profile' %}">&larr; {% trans "Back to profile" %}</a></p>
+{% endblock %}

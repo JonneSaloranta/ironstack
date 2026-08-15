@@ -500,7 +500,8 @@ class ProfileViewTests(TestCase):
         clickable. Each card is now a plain (non-link) container with
         an explicit .button-secondary as the only link."""
         response = self.client.get(reverse("profile"))
-        self.assertContains(response, 'class="card card-action-row"', count=3)
+        # Account details, Change password, API keys, Feedback.
+        self.assertContains(response, 'class="card card-action-row"', count=4)
         self.assertContains(
             response, f'<a class="button-secondary" href="{reverse("account-details")}">'
         )
@@ -516,9 +517,10 @@ class ProfileViewTests(TestCase):
         self.alice.is_staff = True
         self.alice.save()
         response = self.client.get(reverse("profile"))
-        # Account details, Change password, API keys + Admin, Backups
-        # (the latter two inside the staff-only "danger zone").
-        self.assertContains(response, 'class="card card-action-row"', count=5)
+        # Account details, Change password, API keys, Feedback + Admin,
+        # Backups, Feedback (the latter three inside the staff-only
+        # "danger zone").
+        self.assertContains(response, 'class="card card-action-row"', count=7)
         self.assertContains(
             response, f'<a class="button-secondary" href="{reverse("admin:index")}">'
         )

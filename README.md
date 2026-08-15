@@ -1096,6 +1096,26 @@ full detail on each.
   (`apps.core.backups.prune_backups`) — `0` keeps every backup forever.
   See `docs/BACKUP.md` "Adjusting the schedule". 9 new UI strings
   translated across fi/sv/ru/it/et (543 total, 0 fuzzy/untranslated).
+- **User feedback**: any signed-in user can now submit feedback (a
+  category — Workouts/Programs/Progress/Body measurements/Activities/
+  Account & profile/Other — plus a subject and a free-text message)
+  from a new "Feedback" card on the profile page
+  (`apps.core.models.Feedback`, `apps.core.views_feedback.
+  FeedbackCreateView`). Visible only to staff, from a matching
+  "Feedback" card under Profile → Administration → Feedback
+  (`FeedbackListView`) or `/admin/` — never to other regular users. A
+  one-way inbox, not a two-way conversation thread. Whether submissions
+  are currently open is itself an admin-adjustable singleton toggle
+  (`apps.core.models.FeedbackSettings`, the same `pk=1` pattern as
+  `BackupSettings`/`ApiSettings`) with its own settings card on that
+  same staff-only page — turning it off only closes new submissions,
+  gated in the view itself (not just the profile card's link) the same
+  way `DJANGO_SIGNUP_ENABLED` gates signup; feedback already on file
+  stays visible to staff either way. `StaffRequiredMixin` (the
+  `is_staff` check every admin-only page under `apps.core` uses) moved
+  out of `views_backup.py` into its own `apps/core/mixins.py` so this
+  reuses it instead of redefining it. 16 new tests. 17 new UI strings
+  translated across fi/sv/ru/it/et (560 total, 0 fuzzy/untranslated).
 
 ## Local development
 

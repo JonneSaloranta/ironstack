@@ -252,6 +252,18 @@ msgstr "Varunduse kellaaeg (UTC)"
 msgid "Keep the most recent"
 msgstr "Säilita uusimad"
 
+msgid "Category"
+msgstr "Kategooria"
+
+msgid "Subject"
+msgstr "Teema"
+
+msgid "Message"
+msgstr "Sõnum"
+
+msgid "Accept new feedback"
+msgstr "Võta vastu uut tagasisidet"
+
 msgid "Good morning, %(username)s! Time to get after it."
 msgstr "Tere hommikust, %(username)s! Aeg asuda tegudele."
 
@@ -309,6 +321,18 @@ msgstr "Millisel kellaajal (UTC) käivitub igapäevane automaatne varundus."
 msgid "How many backups to keep — older ones are deleted automatically after each new one is created. 0 keeps every backup forever."
 msgstr "Mitu varukoopiat säilitatakse — vanemad kustutatakse automaatselt pärast iga uue loomist. 0 säilitab kõik varukoopiad igavesti."
 
+msgid "Lets any signed-in user submit feedback from their profile page. Turning this off only closes new submissions — feedback already on file stays visible to staff."
+msgstr "Võimaldab igal sisselogitud kasutajal saata tagasisidet oma profiililehelt. Selle väljalülitamine sulgeb ainult uute tagasisidete saatmise — juba saadetud tagasiside jääb personalile nähtavaks."
+
+msgid "Progress"
+msgstr "Edenemine"
+
+msgid "Body measurements"
+msgstr "Kehamõõdud"
+
+msgid "Account & profile"
+msgstr "Konto ja profiil"
+
 msgid "Backup created: %(name)s"
 msgstr "Varukoopia loodud: %(name)s"
 
@@ -317,6 +341,15 @@ msgstr "Varunduse seaded salvestatud."
 
 msgid "Restored from backup: %(name)s"
 msgstr "Taastatud varukoopiast: %(name)s"
+
+msgid "Feedback isn't currently being accepted."
+msgstr "Hetkel tagasisidet vastu ei võeta."
+
+msgid "Thanks for the feedback!"
+msgstr "Aitäh tagasiside eest!"
+
+msgid "Feedback settings saved."
+msgstr "Tagasiside seaded salvestatud."
 
 msgid "Ab Wheel Rollout"
 msgstr "Kõhurullimine rattaga"
@@ -870,6 +903,12 @@ msgstr "API-võtmed"
 msgid "Manage keys other apps can use to access your data."
 msgstr "Halda võtmeid, mida teised rakendused saavad kasutada sinu andmetele ligipääsuks."
 
+msgid "Feedback"
+msgstr "Tagasiside"
+
+msgid "Report a bug, request something, or tell us what's confusing."
+msgstr "Teata veast, tee ettepanek või anna teada, mis on segane."
+
 msgid "Admin"
 msgstr "Haldus"
 
@@ -881,6 +920,9 @@ msgstr "Varukoopiad"
 
 msgid "Create, download, and restore full backups of this instance."
 msgstr "Loo, laadi alla ja taasta selle teenuse täielikke varukoopiaid."
+
+msgid "Read what users have submitted, and turn submissions on or off."
+msgstr "Loe, mida kasutajad on saatnud, ning lülita saatmine sisse või välja."
 
 msgid "Log out"
 msgstr "Logi välja"
@@ -1099,9 +1141,6 @@ msgstr "Peamenüü"
 msgid "Home"
 msgstr "Avaleht"
 
-msgid "Progress"
-msgstr "Edenemine"
-
 msgid "Workout"
 msgstr "Trenn"
 
@@ -1247,11 +1286,14 @@ msgstr "Logi kehakaal, mõõdud ja trendid."
 msgid "Log a run, ride, or any other non-gym activity."
 msgstr "Logi jooks, rattasõit või mis tahes muu tegevus väljaspool jõusaali."
 
-msgid "No exercises match your search."
-msgstr "Su otsingule ei vastanud ükski harjutus."
+msgid "Bug reports, ideas, anything that's confusing — only visible to the people running this instance."
+msgstr "Veateated, ideed, mis iganes on segane — nähtav ainult selle installatsiooni haldajatele."
 
-msgid "Exercise list pages"
-msgstr "Harjutuste loendi lehed"
+msgid "Send feedback"
+msgstr "Saada tagasiside"
+
+msgid "Submissions"
+msgstr "Saadetud tagasisided"
 
 msgid "Previous"
 msgstr "Eelmine"
@@ -1261,6 +1303,15 @@ msgstr "Lehekülg %(number)s / %(total)s"
 
 msgid "Next"
 msgstr "Järgmine"
+
+msgid "No feedback yet."
+msgstr "Tagasisidet pole veel."
+
+msgid "No exercises match your search."
+msgstr "Su otsingule ei vastanud ükski harjutus."
+
+msgid "Exercise list pages"
+msgstr "Harjutuste loendi lehed"
 
 msgid "Movement type"
 msgstr "Liigutuse tüüp"

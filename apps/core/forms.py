@@ -1,7 +1,7 @@
 from django import forms
 from django.utils.translation import gettext_lazy as _
 
-from .models import BackupSettings
+from .models import BackupSettings, Feedback, FeedbackSettings
 
 
 class BackupSettingsForm(forms.ModelForm):
@@ -20,3 +20,29 @@ class BackupSettingsForm(forms.ModelForm):
             "hour": _("Backup hour (UTC)"),
             "retention_count": _("Keep the most recent"),
         }
+
+
+class FeedbackForm(forms.ModelForm):
+    """Profile → Feedback — the form any signed-in user fills in
+    themselves; `user` is set from the request in the view, not exposed
+    here as a field."""
+
+    class Meta:
+        model = Feedback
+        fields = ["category", "subject", "message"]
+        labels = {
+            "category": _("Category"),
+            "subject": _("Subject"),
+            "message": _("Message"),
+        }
+
+
+class FeedbackSettingsForm(forms.ModelForm):
+    """Profile → Administration → Feedback's own settings card — see
+    apps.core.models.FeedbackSettings for what the toggle actually
+    does once saved."""
+
+    class Meta:
+        model = FeedbackSettings
+        fields = ["enabled"]
+        labels = {"enabled": _("Accept new feedback")}

@@ -9,6 +9,7 @@ from django.utils.translation import gettext as _
 from django.views.generic import CreateView, UpdateView
 
 from apps.core import changelog as changelog_services
+from apps.core.models import FeedbackSettings
 
 from .forms import AccountDetailsForm, ProfileForm, RateLimitedAuthenticationForm, SignupForm
 
@@ -66,6 +67,11 @@ class ProfileView(LoginRequiredMixin, UpdateView):
         # "Versioning") — cached in apps.core.changelog, so this is a
         # cheap lookup, not a re-parse of CHANGELOG.md on every load.
         context["changelog_html"] = changelog_services.render_changelog_html()
+        # Hides the "Feedback" card below when submissions are closed —
+        # apps.core.views_feedback.FeedbackCreateView enforces the same
+        # setting itself, so this is just avoiding a dead link, not the
+        # actual gate.
+        context["feedback_enabled"] = FeedbackSettings.load().enabled
         return context
 
     def form_valid(self, form):
