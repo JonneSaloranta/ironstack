@@ -100,6 +100,10 @@ Do not create duplicate abstractions when an existing abstraction can be extende
 
 Before adding a dependency, check whether Django, HTMX, Alpine.js, or existing project code already solves the problem.
 
+## Commit messages
+
+Use Conventional Commits (`<type>[optional scope]: <description>`) for the summary line — e.g. `feat(backups): add admin-only web UI for creating and restoring backups`, `fix(nav): stop Home lighting up alongside Progress`, `docs: update CHANGELOG.md for 1.1.0`. Common types: `feat`, `fix`, `docs`, `refactor`, `test`, `chore`. A longer body explaining the why (matching this project's established style) is still welcome below the summary line.
+
 ## Implementation order
 
 Implement in phases:
