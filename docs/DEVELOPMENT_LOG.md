@@ -1235,3 +1235,35 @@ actually running the suite.
   `python3.12 -m venv` command, and `docs/DEVELOPMENT.md`'s pinned-
   versions list (also dropped the `(LTS)` label next to Django, since
   that specific claim isn't actually known to hold for 6.1).
+
+**Automatic GitHub Releases on every version bump, using CHANGELOG.md
+as the release notes.** A new `create-release` job in
+`.github/workflows/ci.yml`, chained after `publish-image`
+(`needs: [lint-and-test, publish-image]`) so a release only ever
+points at a commit that's both green and has a real Docker image
+published for it.
+
+- No new trigger, no separate `git tag` step: bumping the repo-root
+  `VERSION` file and pushing to master was already this project's
+  entire release procedure (`docs/ARCHITECTURE.md` "Versioning") —
+  the job diffs `VERSION` between the commit before this push and the
+  one it lands on, and only proceeds if it actually changed. Guards
+  the edge case where `github.event.before` is the all-zero SHA (a
+  branch's very first push, or a rewritten history) by treating that
+  as "not a version bump" rather than failing.
+- Release notes are read straight out of `CHANGELOG.md`'s own section
+  for that version (the same `## [X.Y.Z]` heading `apps.core.changelog`
+  already parses for the profile page's changelog modal) — nothing
+  duplicated into the workflow file itself. A version with no matching
+  section still gets a release, with a placeholder body pointing at
+  the commit history, rather than silently skipping it or failing the
+  whole job over a documentation gap.
+- `VERSION`'s content is validated as a plain `X.Y.Z` string before
+  anything else runs — a malformed value fails loudly instead of
+  creating a release tagged `vunknown` or similar.
+- Verified everything short of an actual live version bump (out of
+  scope to trigger just to test this): full YAML parse, and the
+  extraction/trim/semver-check shell logic run directly against this
+  repo's own real `CHANGELOG.md`, confirming a clean, correctly
+  leading/trailing-blank-trimmed section for `1.1.0` and the right
+  fallback behavior for a version with no section at all.
