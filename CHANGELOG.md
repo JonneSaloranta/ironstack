@@ -14,6 +14,8 @@ lands and remains the authoritative history.
 
 ## [Unreleased]
 
+## [1.2.0] — 2026-08-15
+
 ### Added
 - Optional two-factor authentication (TOTP), Profile → "Two-factor
   authentication" — QR-code setup, single-use backup codes, and an
