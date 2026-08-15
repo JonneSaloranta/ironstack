@@ -1115,3 +1115,9 @@ before-touching-anything) restore flow.
 ruff check .
 pytest
 ```
+
+`.github/workflows/ci.yml` runs the same two checks (plus a missing-
+migrations check and compiling the locale catalogs first, so
+translation-content tests aren't testing against stale/absent `.mo`
+files) automatically on every push and pull request against `master`
+and `dev`, against a real `postgres:16-alpine` service container.

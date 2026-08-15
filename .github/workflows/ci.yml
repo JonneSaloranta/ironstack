@@ -1,0 +1,80 @@
+name: CI
+
+# On push (including merges) to master/dev, and on any pull request
+# targeting them — so a bad change is caught before it merges, not
+# just after.
+on:
+  push:
+    branches: [master, dev]
+  pull_request:
+    branches: [master, dev]
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+
+    # Matches docker-compose.yml's `postgres:16-alpine` — same major
+    # version scripts/backup.sh's postgresql-client-16 is pinned to
+    # (see docs/BACKUP.md), for the same reason: keep dev/CI/prod on
+    # one Postgres version rather than three.
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: ironstack
+          POSTGRES_USER: ironstack
+          POSTGRES_PASSWORD: ironstack
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U ironstack"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      DJANGO_SECRET_KEY: ci-only-secret-key-not-used-anywhere-real
+      POSTGRES_DB: ironstack
+      POSTGRES_USER: ironstack
+      POSTGRES_PASSWORD: ironstack
+      POSTGRES_HOST: localhost
+      POSTGRES_PORT: 5432
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          # dev.txt just does `-r base.txt` — both need to be in the
+          # cache key, or a base.txt-only change wouldn't bust a cache
+          # keyed on dev.txt's unchanged text.
+          cache-dependency-path: |
+            requirements/base.txt
+            requirements/dev.txt
+
+      # gettext (msgfmt) — needed to compile locale/*/LC_MESSAGES/*.po
+      # into the .mo files translation-content tests read; not part of
+      # the base runner image. Matches the Dockerfile's own
+      # `apt-get install ... gettext` for the same reason.
+      - name: Install gettext
+        run: sudo apt-get update && sudo apt-get install -y gettext
+
+      - name: Install Python dependencies
+        run: pip install -r requirements/dev.txt
+
+      - name: Compile translation catalogs
+        run: python manage.py compilemessages
+
+      - name: Lint (ruff)
+        run: ruff check .
+
+      # Catches a model change committed without its migration —
+      # docs/ARCHITECTURE.md's own "verify migrations" step, enforced
+      # here instead of relying on remembering to run it locally.
+      - name: Check for missing migrations
+        run: python manage.py makemigrations --check --dry-run
+
+      - name: Test
+        run: pytest
