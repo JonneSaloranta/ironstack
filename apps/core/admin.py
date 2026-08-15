@@ -2,6 +2,8 @@
 from django.contrib import admin
 from django.utils.translation import gettext_lazy as _
 
+from apps.accounts.forms import RateLimitedAdminAuthenticationForm
+
 from .models import BackupSettings, Feedback, FeedbackSettings
 
 # Restyles Django's own admin (templates/admin/base_site.html,
@@ -13,6 +15,14 @@ from .models import BackupSettings, Feedback, FeedbackSettings
 admin.site.site_header = "IronStack"
 admin.site.site_title = "IronStack"
 admin.site.index_title = _("Administration")
+
+# /admin/login/ is a completely separate login view/form from the
+# regular site's (apps.accounts.views.RateLimitedLoginView, wired at
+# /accounts/login/) — without this, it stayed wide open to brute-force
+# even after that one got rate-limited, and it's arguably the more
+# valuable target of the two (full backend/database access). See
+# RateLimitedAdminAuthenticationForm's own docstring.
+admin.site.login_form = RateLimitedAdminAuthenticationForm
 
 
 @admin.register(BackupSettings)

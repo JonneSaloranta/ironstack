@@ -292,6 +292,58 @@ class LoginRateLimitTests(TestCase):
             self.assertNotContains(response, "Too many failed login attempts")
 
 
+class AdminLoginRateLimitTests(TestCase):
+    """apps.accounts.forms.RateLimitedAdminAuthenticationForm —
+    /admin/login/ is Django's own, completely separate login view/form
+    from the one LoginRateLimitTests above covers; without this it
+    stayed wide open to brute-force even after the regular login got
+    rate-limited."""
+
+    def setUp(self):
+        User.objects.create_user(
+            username="admin", password="s3cret-pass", is_staff=True, is_superuser=True
+        )
+        cache.clear()
+
+    def tearDown(self):
+        cache.clear()
+
+    def _attempt(self, password="wrong-password", ip="203.0.113.10"):
+        return self.client.post(
+            reverse("admin:login"),
+            {"username": "admin", "password": password},
+            REMOTE_ADDR=ip,
+            HTTP_X_REAL_IP=ip,
+        )
+
+    def test_the_nth_failed_attempt_locks_out_further_tries(self):
+        for _ in range(LOGIN_ATTEMPT_LIMIT):
+            self._attempt()
+        response = self._attempt()
+        self.assertContains(response, "Too many failed login attempts")
+
+    def test_lockout_blocks_even_the_correct_password(self):
+        for _ in range(LOGIN_ATTEMPT_LIMIT):
+            self._attempt()
+        response = self._attempt(password="s3cret-pass")
+        self.assertContains(response, "Too many failed login attempts")
+        self.assertNotIn("_auth_user_id", self.client.session)
+
+    def test_admin_lockout_is_a_separate_counter_from_the_regular_login(self):
+        """Same client IP, same near-simultaneous failed attempts on
+        both endpoints — locking out /admin/login/ must not also lock
+        out /accounts/login/ for that IP, and vice versa."""
+        for _ in range(LOGIN_ATTEMPT_LIMIT):
+            self._attempt(ip="203.0.113.10")
+        response = self.client.post(
+            reverse("login"),
+            {"username": "admin", "password": "wrong-password"},
+            REMOTE_ADDR="203.0.113.10",
+            HTTP_X_REAL_IP="203.0.113.10",
+        )
+        self.assertNotContains(response, "Too many failed login attempts")
+
+
 class ProfileViewTests(TestCase):
     """Phase 11 polish: the "Profile" nav link was a dead `href="#"`
     placeholder since Phase 1, even though unit_system/timezone have

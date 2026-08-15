@@ -2,6 +2,7 @@ from decimal import Decimal
 from zoneinfo import available_timezones
 
 from django import forms
+from django.contrib.admin.forms import AdminAuthenticationForm
 from django.contrib.auth.forms import AuthenticationForm, PasswordResetForm, UserCreationForm
 from django.core.cache import cache
 from django.utils.translation import gettext_lazy as _
@@ -66,25 +67,37 @@ def _client_ip(request):
     return request.META.get("HTTP_X_REAL_IP") or request.META.get("REMOTE_ADDR", "unknown")
 
 
-class RateLimitedAuthenticationForm(AuthenticationForm):
-    """Blocks further login attempts from the same client for
-    LOGIN_ATTEMPT_WINDOW_SECONDS after LOGIN_ATTEMPT_LIMIT failed
-    attempts within that window. Keyed by client IP, not the submitted
-    username: keying by username alone would let an attacker cycle
-    through guessed usernames from one source freely, and would let an
-    attacker lock a *real* user out on purpose by deliberately failing
-    their login from elsewhere — a denial-of-service against that one
-    account. IP-based keying costs the attacker actual infrastructure
-    to route around instead. Uses the same shared DatabaseCache
-    apps.api's throttling does, for the same reason: gunicorn runs
-    multiple worker processes with no shared memory, so an in-process
-    counter would let each worker serve its own independent allowance.
+class _RateLimitedLoginMixin:
+    """Shared by RateLimitedAuthenticationForm and
+    RateLimitedAdminAuthenticationForm below — blocks further login
+    attempts from the same client for `window_seconds` after `limit`
+    failed attempts within that window. Keyed by client IP, not the
+    submitted username: keying by username alone would let an attacker
+    cycle through guessed usernames from one source freely, and would
+    let an attacker lock a *real* user out on purpose by deliberately
+    failing their login from elsewhere — a denial-of-service against
+    that one account. IP-based keying costs the attacker actual
+    infrastructure to route around instead. Uses the same shared
+    DatabaseCache apps.api's throttling does, for the same reason:
+    gunicorn runs multiple worker processes with no shared memory, so
+    an in-process counter would let each worker serve its own
+    independent allowance.
+
+    `cache_key_prefix` is distinct per subclass deliberately — a
+    regular login attempt and an admin login attempt from the same IP
+    (plausible on a shared/office network) don't count against each
+    other's allowance, since they're different endpoints with a
+    different risk/legitimate-retry profile.
     """
 
+    cache_key_prefix = "login-attempts"
+    limit = LOGIN_ATTEMPT_LIMIT
+    window_seconds = LOGIN_ATTEMPT_WINDOW_SECONDS
+
     def clean(self):
-        cache_key = f"login-attempts:{_client_ip(self.request)}"
+        cache_key = f"{self.cache_key_prefix}:{_client_ip(self.request)}"
         attempts = cache.get(cache_key, 0)
-        if attempts >= LOGIN_ATTEMPT_LIMIT:
+        if attempts >= self.limit:
             raise forms.ValidationError(
                 _("Too many failed login attempts. Try again in a few minutes."),
                 code="rate_limited",
@@ -92,10 +105,33 @@ class RateLimitedAuthenticationForm(AuthenticationForm):
         try:
             cleaned_data = super().clean()
         except forms.ValidationError:
-            cache.set(cache_key, attempts + 1, LOGIN_ATTEMPT_WINDOW_SECONDS)
+            cache.set(cache_key, attempts + 1, self.window_seconds)
             raise
         cache.delete(cache_key)
         return cleaned_data
+
+
+class RateLimitedAuthenticationForm(_RateLimitedLoginMixin, AuthenticationForm):
+    pass
+
+
+class RateLimitedAdminAuthenticationForm(_RateLimitedLoginMixin, AdminAuthenticationForm):
+    """Django's own /admin/ login (AdminSite.login()) has its own,
+    completely separate login view/form from the one
+    RateLimitedAuthenticationForm above protects — it's never routed
+    through django.contrib.auth.urls or apps.accounts.views.
+    RateLimitedLoginView at all, so without this, brute-forcing
+    /admin/login/ directly was wide open even after the regular login
+    got rate-limited. Wired in via apps.core.admin's
+    `admin.site.login_form = RateLimitedAdminAuthenticationForm`.
+    AdminSite.login() internally delegates to django.contrib.auth.
+    views.LoginView (passing this as `authentication_form`), which is
+    what actually supplies the `request` this form's clean() needs —
+    no extra view-level wiring required the way the non-admin login
+    needed RateLimitedLoginView.get_form_kwargs (LoginView already
+    does that itself)."""
+
+    cache_key_prefix = "admin-login-attempts"
 
 
 class RateLimitedPasswordResetForm(PasswordResetForm):
