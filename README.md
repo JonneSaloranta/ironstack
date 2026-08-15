@@ -145,6 +145,33 @@ Pin a specific released version instead of always the latest push by
 setting `IRONSTACK_IMAGE_TAG` in `.env` (see `.env.example`). If the
 GHCR package is private, `docker login ghcr.io` on the host first.
 
+### Updating
+
+Same two commands as the initial deploy above — pull the new image,
+then recreate the container with it:
+
+```bash
+docker compose -f docker-compose.yml pull
+docker compose -f docker-compose.yml up -d
+```
+
+No extra manual step needed for a routine update: the `web` service's
+own startup command already runs `migrate`, `collectstatic`, and
+`compilemessages` every time the container starts (`docker-compose.yml`),
+so schema changes, new static assets, and updated translations all
+apply automatically on the new version's first start. Existing data
+(`postgres_data`/`static_data`/`media_data`/`backups_data` volumes)
+isn't touched by recreating the container.
+
+Still worth doing before any update, as routine hygiene rather than
+because the automatic part is untrustworthy: take a fresh backup first
+(the profile page's admin-only Backups screen, or `./scripts/backup.sh`
+— see [`docs/BACKUP.md`](docs/BACKUP.md)), and skim
+[`CHANGELOG.md`](CHANGELOG.md) for anything under "Changed"/"Removed"
+if you're jumping more than one version at once — a deliberately
+breaking change (a newly *required* setting with no default, a manual
+one-time step) would be called out there rather than assumed silent.
+
 **Before your first deploy, read [`docs/SECURITY.md`](docs/SECURITY.md)'s
 "TLS" section** — the bundled nginx config is HTTP-only, and the
 default `DJANGO_SECURE_SSL_REDIRECT=true` will redirect-loop until you
