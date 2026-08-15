@@ -78,6 +78,30 @@ msgstr "Parool"
 msgid "Incorrect password."
 msgstr "Vale parool."
 
+msgid "First name"
+msgstr "Eesnimi"
+
+msgid "Used to personalize your dashboard greeting, and next to your username wherever your activity is shown to others (if you allow that in your profile)."
+msgstr "Kasutatakse töölaua tervituse isikupärastamiseks ning sinu kasutajanime kõrval kõikjal, kus sinu tegevust teistele näidatakse (kui lubad seda oma profiilis)."
+
+msgid "Email"
+msgstr "E-post"
+
+msgid "Used only for password-reset emails if you ever get locked out. Never shown to other users."
+msgstr "Kasutatakse ainult parooli lähtestamise e-kirjade jaoks, kui jääd kunagi kontost välja. Ei näidata kunagi teistele kasutajatele."
+
+msgid "Logged as your first body-weight entry, so your progress charts have a starting point. Leave blank and log it anytime from the Body weight page instead."
+msgstr "Salvestatakse sinu esimese kehakaalu kirjena, et edenemisgraafikutel oleks lähtepunkt. Jäta tühjaks ja lisa kaal hiljem lehelt \"Kehakaal\"."
+
+msgid "Sets whether weights and distances are shown in kg/km or lb/mi throughout the app. Change this anytime from your profile."
+msgstr "Määrab, kas kaalud ja vahemaad kuvatakse rakenduses kg/km või lb/mi ühikutes. Saad seda igal ajal profiilis muuta."
+
+msgid "Current weight (%(unit)s)"
+msgstr "Praegune kaal (%(unit)s)"
+
+msgid "Current weight"
+msgstr "Praegune kaal"
+
 msgid "Metric (kg, km)"
 msgstr "Meetermõõdustik (kg, km)"
 
@@ -927,11 +951,20 @@ msgstr "Midagi läks valesti"
 msgid "Something went wrong on our end. Your data is safe — try again in a moment."
 msgstr "Meie poolel läks midagi valesti. Sinu andmed on turvalised — proovi hetke pärast uuesti."
 
-msgid "Account details"
-msgstr "Konto andmed"
+msgid "Welcome to IronStack"
+msgstr "Tere tulemast IronStacki"
+
+msgid "Not now"
+msgstr "Mitte praegu"
+
+msgid "A few quick details help IronStack work better for you — every field below is optional, and you can always change them later from your profile."
+msgstr "Mõned kiired andmed aitavad IronStackil sinu jaoks paremini toimida — iga allolev väli on valikuline ja saad neid hiljem alati oma profiilis muuta."
 
 msgid "Save"
 msgstr "Salvesta"
+
+msgid "Account details"
+msgstr "Konto andmed"
 
 msgid "Back to profile"
 msgstr "Tagasi profiili juurde"

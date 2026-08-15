@@ -78,6 +78,30 @@ msgstr "Password"
 msgid "Incorrect password."
 msgstr "Incorrect password."
 
+msgid "First name"
+msgstr "First name"
+
+msgid "Used to personalize your dashboard greeting, and next to your username wherever your activity is shown to others (if you allow that in your profile)."
+msgstr "Used to personalize your dashboard greeting, and next to your username wherever your activity is shown to others (if you allow that in your profile)."
+
+msgid "Email"
+msgstr "Email"
+
+msgid "Used only for password-reset emails if you ever get locked out. Never shown to other users."
+msgstr "Used only for password-reset emails if you ever get locked out. Never shown to other users."
+
+msgid "Logged as your first body-weight entry, so your progress charts have a starting point. Leave blank and log it anytime from the Body weight page instead."
+msgstr "Logged as your first body-weight entry, so your progress charts have a starting point. Leave blank and log it anytime from the Body weight page instead."
+
+msgid "Sets whether weights and distances are shown in kg/km or lb/mi throughout the app. Change this anytime from your profile."
+msgstr "Sets whether weights and distances are shown in kg/km or lb/mi throughout the app. Change this anytime from your profile."
+
+msgid "Current weight (%(unit)s)"
+msgstr "Current weight (%(unit)s)"
+
+msgid "Current weight"
+msgstr "Current weight"
+
 msgid "Metric (kg, km)"
 msgstr "Metric (kg, km)"
 
@@ -927,11 +951,20 @@ msgstr "Something went wrong"
 msgid "Something went wrong on our end. Your data is safe — try again in a moment."
 msgstr "Something went wrong on our end. Your data is safe — try again in a moment."
 
-msgid "Account details"
-msgstr "Account details"
+msgid "Welcome to IronStack"
+msgstr "Welcome to IronStack"
+
+msgid "Not now"
+msgstr "Not now"
+
+msgid "A few quick details help IronStack work better for you — every field below is optional, and you can always change them later from your profile."
+msgstr "A few quick details help IronStack work better for you — every field below is optional, and you can always change them later from your profile."
 
 msgid "Save"
 msgstr "Save"
+
+msgid "Account details"
+msgstr "Account details"
 
 msgid "Back to profile"
 msgstr "Back to profile"

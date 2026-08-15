@@ -78,6 +78,30 @@ msgstr "Lösenord"
 msgid "Incorrect password."
 msgstr "Fel lösenord."
 
+msgid "First name"
+msgstr "Förnamn"
+
+msgid "Used to personalize your dashboard greeting, and next to your username wherever your activity is shown to others (if you allow that in your profile)."
+msgstr "Används för att anpassa hälsningen på instrumentpanelen, och bredvid ditt användarnamn där din aktivitet visas för andra (om du tillåter det i din profil)."
+
+msgid "Email"
+msgstr "E-post"
+
+msgid "Used only for password-reset emails if you ever get locked out. Never shown to other users."
+msgstr "Används endast för lösenordsåterställningsmejl om du någonsin blir utelåst. Visas aldrig för andra användare."
+
+msgid "Logged as your first body-weight entry, so your progress charts have a starting point. Leave blank and log it anytime from the Body weight page instead."
+msgstr "Loggas som din första kroppsviktspost, så att dina förloppsdiagram får en startpunkt. Lämna tomt och logga den istället när som helst från sidan Kroppsvikt."
+
+msgid "Sets whether weights and distances are shown in kg/km or lb/mi throughout the app. Change this anytime from your profile."
+msgstr "Anger om vikter och avstånd visas i kg/km eller lb/mi i hela appen. Ändra detta när som helst från din profil."
+
+msgid "Current weight (%(unit)s)"
+msgstr "Nuvarande vikt (%(unit)s)"
+
+msgid "Current weight"
+msgstr "Nuvarande vikt"
+
 msgid "Metric (kg, km)"
 msgstr "Metriskt (kg, km)"
 
@@ -927,11 +951,20 @@ msgstr "Något gick fel"
 msgid "Something went wrong on our end. Your data is safe — try again in a moment."
 msgstr "Något gick fel på vår sida. Din data är säker — försök igen om en stund."
 
-msgid "Account details"
-msgstr "Kontouppgifter"
+msgid "Welcome to IronStack"
+msgstr "Välkommen till IronStack"
+
+msgid "Not now"
+msgstr "Inte nu"
+
+msgid "A few quick details help IronStack work better for you — every field below is optional, and you can always change them later from your profile."
+msgstr "Några snabba uppgifter hjälper IronStack att fungera bättre för dig — varje fält nedan är valfritt, och du kan alltid ändra dem senare från din profil."
 
 msgid "Save"
 msgstr "Spara"
+
+msgid "Account details"
+msgstr "Kontouppgifter"
 
 msgid "Back to profile"
 msgstr "Tillbaka till profilen"

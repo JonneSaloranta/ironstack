@@ -78,6 +78,30 @@ msgstr "Salasana"
 msgid "Incorrect password."
 msgstr "Väärä salasana."
 
+msgid "First name"
+msgstr "Etunimi"
+
+msgid "Used to personalize your dashboard greeting, and next to your username wherever your activity is shown to others (if you allow that in your profile)."
+msgstr "Käytetään kojelaudan tervehdyksen personointiin, ja käyttäjänimesi vieressä kaikkialla, missä aktiviteettisi näytetään muille (jos sallit sen profiilissasi)."
+
+msgid "Email"
+msgstr "Sähköposti"
+
+msgid "Used only for password-reset emails if you ever get locked out. Never shown to other users."
+msgstr "Käytetään vain salasanan palautusviesteihin, jos jäät joskus lukkoon tilistäsi. Ei näytetä koskaan muille käyttäjille."
+
+msgid "Logged as your first body-weight entry, so your progress charts have a starting point. Leave blank and log it anytime from the Body weight page instead."
+msgstr "Tallennetaan ensimmäiseksi painomerkinnäksesi, jotta edistymiskaavioillasi on lähtöpiste. Voit myös jättää tämän tyhjäksi ja kirjata painon milloin tahansa Kehon paino -sivulta."
+
+msgid "Sets whether weights and distances are shown in kg/km or lb/mi throughout the app. Change this anytime from your profile."
+msgstr "Määrittää, näytetäänkö painot ja matkat sovelluksessa yksiköissä kg/km vai lb/mi. Voit muuttaa tätä milloin tahansa profiilistasi."
+
+msgid "Current weight (%(unit)s)"
+msgstr "Nykyinen paino (%(unit)s)"
+
+msgid "Current weight"
+msgstr "Nykyinen paino"
+
 msgid "Metric (kg, km)"
 msgstr "Metrinen (kg, km)"
 
@@ -927,11 +951,20 @@ msgstr "Jokin meni pieleen"
 msgid "Something went wrong on our end. Your data is safe — try again in a moment."
 msgstr "Jokin meni pieleen meidän puolellamme. Tietosi ovat turvassa — yritä hetken kuluttua uudelleen."
 
-msgid "Account details"
-msgstr "Tilin tiedot"
+msgid "Welcome to IronStack"
+msgstr "Tervetuloa IronStackiin"
+
+msgid "Not now"
+msgstr "Ei nyt"
+
+msgid "A few quick details help IronStack work better for you — every field below is optional, and you can always change them later from your profile."
+msgstr "Muutama tieto auttaa IronStackia toimimaan sinulle paremmin — jokainen alla oleva kenttä on valinnainen, ja voit aina muuttaa niitä myöhemmin profiilistasi."
 
 msgid "Save"
 msgstr "Tallenna"
+
+msgid "Account details"
+msgstr "Tilin tiedot"
 
 msgid "Back to profile"
 msgstr "Takaisin profiiliin"

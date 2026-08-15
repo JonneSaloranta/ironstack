@@ -1469,3 +1469,58 @@ on those same pages disclaiming responsibility for data loss.
   consumption, regenerate, password-gated disable, and the admin
   recovery action), and again in Finnish after translating (setup
   page, profile card, login page logo and disclaimer).
+
+**A one-time onboarding modal for new users.** Asked directly: a
+popup right after login, asking for email/name/weight/other settings,
+explaining what each is used for. Deliberately skippable, not a
+blocking gate — consistent with docs/PRODUCT_REQUIREMENTS.md's "the
+user always has final control" — and every field is optional even on
+the "Save" path itself, not just via the separate "Not now" button.
+
+- `User.onboarding_completed` (default `False`) gates it. The
+  migration that adds the field backfills `True` onto every account
+  that already existed at that point (a `RunPython` step, not just
+  the field default), so it never retroactively appears for someone
+  already using the app — only for accounts created afterward.
+- Shown via a new context processor,
+  `apps.accounts.context_processors.onboarding` (same reasoning as
+  the existing `apps.workouts.context_processors.
+  active_workout_session`: the modal has to appear on whatever page a
+  user happens to land on right after login, not one specific view,
+  so gating it per-view would mean threading a flag through every
+  view in the app instead of once, globally, in `base.html`).
+- `OnboardingForm` is a plain `Form`, not a `ModelForm`: it writes to
+  `User` (first name, email, unit system) and, for weight, straight
+  into `apps.measurements.models.BodyMeasurement` under the same
+  system "Body weight" type `apps.measurements`' own logging form
+  uses — a weight entered here shows up on the Body weight history
+  page like any other logged reading, not a separate "onboarding
+  weight" field bolted onto `User`.
+- HTMX-driven like every other form in this app: submitting "Save" or
+  "Not now" (two buttons, one form, distinguished by an `action`
+  value — skipping still has to mark the prompt seen, or it would
+  just reappear on the very next page) posts to `OnboardingView`,
+  which re-renders the same modal fragment either way — with field
+  errors on a failed save, or as just its own empty wrapper `<div>` on
+  success, so the modal disappears without a full page navigation.
+- A real naming-collision bug caught before it shipped, not by a
+  test: the modal's form was initially context-keyed as `"form"`,
+  which the context processor merges into *every* page's context —
+  including pages like Profile that already have their own
+  view-specific `form` (`ProfileForm`) in context under that exact
+  same name. Renamed to `onboarding_form` throughout.
+- 14 new tests (model default, context-processor visibility across
+  three states, save/skip/validation-error/login-required for the
+  view, including the kg⇄lb weight-unit conversion and that a failed
+  save's data is never persisted by a subsequent skip). Because the
+  modal is now included on literally every page, the full suite (not
+  just `apps.accounts`) was re-run end to end to check for incidental
+  collisions with other pages' own content — all 658 tests (644
+  existing + 14 new) pass unchanged. 11 new UI strings translated
+  across fi/sv/ru/it/et (624 total, 0 fuzzy/untranslated).
+  Live-verified over curl: the modal appearing on an unrelated page
+  right after a fresh login, saving with a weight in both kg and lb
+  (converted correctly to canonical kg), skipping, an invalid email
+  being rejected without completing onboarding, a skip afterward
+  correctly discarding that earlier invalid attempt rather than
+  saving it, and the whole flow again in Finnish.

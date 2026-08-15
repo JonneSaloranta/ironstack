@@ -401,3 +401,107 @@ class TwoFactorDisableForm(forms.Form):
         if not self.user.check_password(password):
             raise forms.ValidationError(_("Incorrect password."), code="invalid")
         return password
+
+
+class OnboardingForm(forms.Form):
+    """apps.accounts.views.OnboardingView / templates/accounts/
+    _onboarding_modal.html — the one-time, entirely optional prompt
+    shown on whatever page a user lands on right after their first
+    login. Deliberately a plain Form, not a ModelForm: it writes to
+    both `User` (name/email/units) and, for weight,
+    apps.measurements.models.BodyMeasurement — the same "Body weight"
+    system measurement type apps.measurements' own logging form uses,
+    so a weight entered here shows up on the Body weight history page
+    exactly like any other logged reading, not a separate, special
+    "onboarding weight" field on User itself. Every field is optional
+    (required=False) — the whole point of a skippable prompt is that
+    leaving any single field blank is a completely normal outcome, not
+    a validation error."""
+
+    first_name = forms.CharField(
+        max_length=150,
+        required=False,
+        label=_("First name"),
+        help_text=_(
+            "Used to personalize your dashboard greeting, and next to your "
+            "username wherever your activity is shown to others (if you "
+            "allow that in your profile)."
+        ),
+    )
+    email = forms.EmailField(
+        required=False,
+        label=_("Email"),
+        help_text=_(
+            "Used only for password-reset emails if you ever get locked "
+            "out. Never shown to other users."
+        ),
+    )
+    weight = forms.DecimalField(
+        max_digits=8,
+        decimal_places=2,
+        required=False,
+        min_value=0,
+        help_text=_(
+            "Logged as your first body-weight entry, so your progress "
+            "charts have a starting point. Leave blank and log it anytime "
+            "from the Body weight page instead."
+        ),
+    )
+    unit_system = forms.ChoiceField(
+        choices=UnitSystem.choices,
+        label=_("Units"),
+        help_text=_(
+            "Sets whether weights and distances are shown in kg/km or "
+            "lb/mi throughout the app. Change this anytime from your "
+            "profile."
+        ),
+    )
+
+    def __init__(self, *args, user, **kwargs):
+        self.user = user
+        super().__init__(*args, **kwargs)
+        self.fields["first_name"].initial = user.first_name
+        self.fields["email"].initial = user.email
+        self.fields["unit_system"].initial = user.unit_system
+        unit_label = core_units.weight_unit_label(user.unit_system)
+        self.fields["weight"].label = (
+            _("Current weight (%(unit)s)") % {"unit": unit_label}
+            if unit_label
+            else _("Current weight")
+        )
+
+    def save(self):
+        # Local imports: apps.measurements depends on apps.accounts
+        # (apps.measurements.units imports apps.accounts.models.
+        # UnitSystem), so importing it at module level here would risk
+        # a circular import the moment anything in apps.measurements
+        # ever needed apps.accounts.forms — nothing does today, but
+        # keeping the dependency one-directional at module-load time
+        # costs nothing and avoids relying on import order.
+        from apps.measurements import units as measurement_units
+        from apps.measurements.models import BodyMeasurement, MeasurementType
+
+        user = self.user
+        user.first_name = self.cleaned_data["first_name"]
+        user.email = self.cleaned_data["email"]
+        user.unit_system = self.cleaned_data["unit_system"]
+        user.onboarding_completed = True
+        user.save(update_fields=["first_name", "email", "unit_system", "onboarding_completed"])
+
+        weight = self.cleaned_data.get("weight")
+        if weight:
+            measurement_type = MeasurementType.objects.filter(
+                name="Body weight", owner=None
+            ).first()
+            # Absent only if an operator deleted the system-seeded type
+            # entirely (apps.measurements lets a user deactivate but
+            # never delete it) — skip silently rather than error out of
+            # an otherwise-successful save over one optional field.
+            if measurement_type is not None:
+                BodyMeasurement.objects.create(
+                    user=user,
+                    measurement_type=measurement_type,
+                    value=measurement_units.to_canonical(
+                        weight, measurement_type.unit_kind, user.unit_system
+                    ),
+                )

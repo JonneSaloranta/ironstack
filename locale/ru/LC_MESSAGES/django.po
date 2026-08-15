@@ -78,6 +78,30 @@ msgstr "Пароль"
 msgid "Incorrect password."
 msgstr "Неверный пароль."
 
+msgid "First name"
+msgstr "Имя"
+
+msgid "Used to personalize your dashboard greeting, and next to your username wherever your activity is shown to others (if you allow that in your profile)."
+msgstr "Используется для персонализации приветствия на панели, а также рядом с вашим именем пользователя везде, где ваша активность показывается другим (если вы разрешили это в профиле)."
+
+msgid "Email"
+msgstr "Эл. почта"
+
+msgid "Used only for password-reset emails if you ever get locked out. Never shown to other users."
+msgstr "Используется только для писем сброса пароля, если вы когда-нибудь потеряете доступ. Никогда не показывается другим пользователям."
+
+msgid "Logged as your first body-weight entry, so your progress charts have a starting point. Leave blank and log it anytime from the Body weight page instead."
+msgstr "Записывается как ваша первая запись веса тела, чтобы на графиках прогресса была отправная точка. Можно оставить пустым и добавить вес позже на странице «Вес тела»."
+
+msgid "Sets whether weights and distances are shown in kg/km or lb/mi throughout the app. Change this anytime from your profile."
+msgstr "Определяет, отображаются ли веса и расстояния в приложении в кг/км или в фунтах/милях. Изменить можно в любой момент в профиле."
+
+msgid "Current weight (%(unit)s)"
+msgstr "Текущий вес (%(unit)s)"
+
+msgid "Current weight"
+msgstr "Текущий вес"
+
 msgid "Metric (kg, km)"
 msgstr "Метрическая (кг, км)"
 
@@ -930,11 +954,20 @@ msgstr "Что-то пошло не так"
 msgid "Something went wrong on our end. Your data is safe — try again in a moment."
 msgstr "Что-то пошло не так на нашей стороне. Ваши данные в безопасности — попробуйте снова через минуту."
 
-msgid "Account details"
-msgstr "Данные аккаунта"
+msgid "Welcome to IronStack"
+msgstr "Добро пожаловать в IronStack"
+
+msgid "Not now"
+msgstr "Не сейчас"
+
+msgid "A few quick details help IronStack work better for you — every field below is optional, and you can always change them later from your profile."
+msgstr "Немного информации поможет IronStack работать для вас лучше — все поля ниже необязательны, и вы всегда можете изменить их позже в профиле."
 
 msgid "Save"
 msgstr "Сохранить"
+
+msgid "Account details"
+msgstr "Данные аккаунта"
 
 msgid "Back to profile"
 msgstr "Назад к профилю"

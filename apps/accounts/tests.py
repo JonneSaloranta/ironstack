@@ -1,4 +1,5 @@
 import re
+from decimal import Decimal
 from urllib.parse import urlparse
 
 from django.contrib import admin
@@ -1146,3 +1147,135 @@ class AuthPageBrandingTests(TestCase):
         response = self.client.get(reverse("signup"))
         self.assertContains(response, "auth-brand")
         self.assertContains(response, "IronStack")
+
+
+class OnboardingModelTests(TestCase):
+    def test_new_users_default_to_not_onboarded(self):
+        user = User.objects.create_user(username="nora", password="s3cret-pass")
+        self.assertFalse(user.onboarding_completed)
+
+
+class OnboardingContextProcessorTests(TestCase):
+    """apps.accounts.context_processors.onboarding — merged into every
+    page's context (templates/base.html always includes
+    accounts/_onboarding_modal.html), not just one view's."""
+
+    def test_anonymous_visitor_never_sees_it(self):
+        response = self.client.get(reverse("login"))
+        self.assertNotIn("show_onboarding", response.context)
+
+    def test_a_not_yet_onboarded_user_sees_it_on_an_unrelated_page(self):
+        User.objects.create_user(username="oscar", password="s3cret-pass")
+        self.client.login(username="oscar", password="s3cret-pass")
+        response = self.client.get(reverse("profile"))
+        self.assertTrue(response.context["show_onboarding"])
+        self.assertContains(response, "Welcome to IronStack")
+
+    def test_an_already_onboarded_user_never_sees_it(self):
+        user = User.objects.create_user(username="paula", password="s3cret-pass")
+        user.onboarding_completed = True
+        user.save()
+        self.client.login(username="paula", password="s3cret-pass")
+        response = self.client.get(reverse("profile"))
+        self.assertNotIn("show_onboarding", response.context)
+        self.assertNotContains(response, "Welcome to IronStack")
+
+
+class OnboardingViewTests(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username="quinn", password="s3cret-pass")
+        self.client.login(username="quinn", password="s3cret-pass")
+
+    def test_requires_login(self):
+        self.client.logout()
+        response = self.client.post(reverse("onboarding"), {"action": "skip"})
+        self.assertEqual(response.status_code, 302)
+
+    def test_saving_updates_the_user_and_marks_onboarding_complete(self):
+        response = self.client.post(
+            reverse("onboarding"),
+            {
+                "action": "save",
+                "first_name": "Quinn",
+                "email": "quinn@example.com",
+                "unit_system": "metric",
+            },
+        )
+        self.assertEqual(response.status_code, 200)
+        self.user.refresh_from_db()
+        self.assertTrue(self.user.onboarding_completed)
+        self.assertEqual(self.user.first_name, "Quinn")
+        self.assertEqual(self.user.email, "quinn@example.com")
+
+    def test_every_field_is_optional_an_entirely_blank_save_still_completes_it(self):
+        response = self.client.post(
+            reverse("onboarding"), {"action": "save", "unit_system": "metric"}
+        )
+        self.assertEqual(response.status_code, 200)
+        self.user.refresh_from_db()
+        self.assertTrue(self.user.onboarding_completed)
+
+    def test_a_weight_is_logged_as_a_body_weight_measurement_not_a_user_field(self):
+        from apps.measurements.models import BodyMeasurement
+
+        self.client.post(
+            reverse("onboarding"),
+            {"action": "save", "unit_system": "metric", "weight": "80.5"},
+        )
+        measurement = BodyMeasurement.objects.get(
+            user=self.user, measurement_type__name="Body weight"
+        )
+        self.assertEqual(measurement.value, Decimal("80.5000"))
+
+    def test_a_weight_entered_in_pounds_is_converted_to_canonical_kilograms(self):
+        from apps.measurements.models import BodyMeasurement
+
+        self.client.post(
+            reverse("onboarding"),
+            {"action": "save", "unit_system": "imperial", "weight": "220"},
+        )
+        measurement = BodyMeasurement.objects.get(
+            user=self.user, measurement_type__name="Body weight"
+        )
+        self.assertAlmostEqual(float(measurement.value), 99.79, places=1)
+
+    def test_leaving_weight_blank_creates_no_measurement(self):
+        from apps.measurements.models import BodyMeasurement
+
+        self.client.post(reverse("onboarding"), {"action": "save", "unit_system": "metric"})
+        self.assertFalse(BodyMeasurement.objects.filter(user=self.user).exists())
+
+    def test_an_invalid_email_re_renders_the_modal_with_the_error_and_does_not_complete_it(self):
+        response = self.client.post(
+            reverse("onboarding"),
+            {"action": "save", "email": "not-an-email", "unit_system": "metric"},
+        )
+        self.assertContains(response, "field-error")
+        self.user.refresh_from_db()
+        self.assertFalse(self.user.onboarding_completed)
+
+    def test_skip_marks_onboarding_complete_without_saving_any_field(self):
+        response = self.client.post(
+            reverse("onboarding"), {"action": "skip", "first_name": "Ignored"}
+        )
+        self.assertEqual(response.status_code, 200)
+        self.user.refresh_from_db()
+        self.assertTrue(self.user.onboarding_completed)
+        self.assertEqual(self.user.first_name, "")
+
+    def test_skip_after_a_failed_save_does_not_persist_the_invalid_attempt(self):
+        self.client.post(
+            reverse("onboarding"),
+            {"action": "save", "email": "not-an-email", "unit_system": "metric"},
+        )
+        self.client.post(reverse("onboarding"), {"action": "skip"})
+        self.user.refresh_from_db()
+        self.assertTrue(self.user.onboarding_completed)
+        self.assertEqual(self.user.email, "")
+
+    def test_success_response_no_longer_contains_the_modal(self):
+        response = self.client.post(
+            reverse("onboarding"), {"action": "save", "unit_system": "metric"}
+        )
+        self.assertNotContains(response, "Welcome to IronStack")
+        self.assertContains(response, 'id="onboarding-modal-container"')

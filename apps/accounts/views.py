@@ -15,6 +15,7 @@ from apps.core.models import FeedbackSettings
 from . import twofactor
 from .forms import (
     AccountDetailsForm,
+    OnboardingForm,
     ProfileForm,
     RateLimitedAuthenticationForm,
     RateLimitedPasswordResetForm,
@@ -305,4 +306,35 @@ class TwoFactorRegenerateBackupCodesView(LoginRequiredMixin, View):
         codes = twofactor.generate_backup_codes(request.user)
         return render(
             request, "accounts/two_factor_backup_codes.html", {"backup_codes": codes}
+        )
+
+
+class OnboardingView(LoginRequiredMixin, View):
+    """Handles both submit paths of templates/accounts/
+    _onboarding_modal.html (globally included from base.html, gated by
+    apps.accounts.context_processors.onboarding): "Save" and "Not now"
+    are two submit buttons on the same form, distinguished by the
+    `action` value, since skipping still has to mark the prompt seen
+    the same way saving does — otherwise it would just reappear on the
+    very next page. HTMX-driven like the rest of this app's forms: a
+    failed validation re-renders the same fragment with field errors
+    (still targeting the modal's own container), a successful save or
+    skip re-renders it with `show_onboarding` False, which is just the
+    fragment's own empty wrapper `<div>` — the modal disappears from
+    the page without a full navigation either way."""
+
+    def post(self, request, *args, **kwargs):
+        if request.POST.get("action") == "skip":
+            request.user.onboarding_completed = True
+            request.user.save(update_fields=["onboarding_completed"])
+            return render(request, "accounts/_onboarding_modal.html", {})
+
+        form = OnboardingForm(request.POST, user=request.user)
+        if form.is_valid():
+            form.save()
+            return render(request, "accounts/_onboarding_modal.html", {})
+        return render(
+            request,
+            "accounts/_onboarding_modal.html",
+            {"onboarding_form": form, "show_onboarding": True},
         )

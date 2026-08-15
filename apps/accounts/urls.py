@@ -2,6 +2,7 @@ from django.urls import path
 
 from .views import (
     AccountDetailsView,
+    OnboardingView,
     ProfileView,
     SignupView,
     TwoFactorDisableView,
@@ -15,6 +16,7 @@ urlpatterns = [
     path("signup/", SignupView.as_view(), name="signup"),
     path("profile/", ProfileView.as_view(), name="profile"),
     path("account-details/", AccountDetailsView.as_view(), name="account-details"),
+    path("onboarding/", OnboardingView.as_view(), name="onboarding"),
     path("two-factor/setup/", TwoFactorSetupView.as_view(), name="two-factor-setup"),
     path("two-factor/manage/", TwoFactorManageView.as_view(), name="two-factor-manage"),
     path("two-factor/disable/", TwoFactorDisableView.as_view(), name="two-factor-disable"),

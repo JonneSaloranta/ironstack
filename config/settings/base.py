@@ -113,6 +113,7 @@ TEMPLATES = [
                 "django.template.context_processors.i18n",
                 "apps.workouts.context_processors.active_workout_session",
                 "apps.core.context_processors.app_version",
+                "apps.accounts.context_processors.onboarding",
             ],
         },
     },

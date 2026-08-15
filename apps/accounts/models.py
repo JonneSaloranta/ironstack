@@ -88,6 +88,17 @@ class User(AbstractUser):
     totp_secret = models.CharField(max_length=32, blank=True, default="")
     totp_enabled = models.BooleanField(default=False)
 
+    # apps.accounts.context_processors.onboarding / views.OnboardingView /
+    # templates/accounts/_onboarding_modal.html — a one-time, skippable
+    # prompt shown on whatever page a user lands on right after their
+    # first login, asking for name/email/starting weight/units and
+    # explaining what each is used for. False is the right default for
+    # every *newly created* account; the migration that added this field
+    # backfills True onto every account that already existed at that
+    # point, so onboarding never retroactively appears for someone who
+    # was already using the app before this feature shipped.
+    onboarding_completed = models.BooleanField(default=False)
+
     def __str__(self):
         return self.username
 
