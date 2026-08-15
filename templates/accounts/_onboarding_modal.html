@@ -1,0 +1,34 @@
+{% load i18n %}
+<div id="onboarding-modal-container">
+{% if show_onboarding %}
+  <div class="modal-backdrop">
+    <div class="modal-card" role="dialog" aria-modal="true" aria-label="{% trans "Welcome to IronStack" %}">
+      <div class="modal-header">
+        <h2 style="margin:0;">{% trans "Welcome to IronStack" %}</h2>
+        <button type="submit" form="onboarding-form" name="action" value="skip" formnovalidate
+                class="modal-close" aria-label="{% trans "Not now" %}">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p>{% trans "A few quick details help IronStack work better for you — every field below is optional, and you can always change them later from your profile." %}</p>
+        <form id="onboarding-form" method="post" action="{% url 'onboarding' %}"
+              hx-post="{% url 'onboarding' %}" hx-target="#onboarding-modal-container" hx-swap="outerHTML" novalidate>
+          {% csrf_token %}
+          {{ onboarding_form.non_field_errors }}
+          {% for field in onboarding_form %}
+            <div class="field">
+              {{ field.label_tag }}
+              {{ field }}
+              {% if field.help_text %}<p class="field-help">{{ field.help_text }}</p>{% endif %}
+              {% if field.errors %}<p class="field-error">{{ field.errors|striptags }}</p>{% endif %}
+            </div>
+          {% endfor %}
+          <div style="display:flex; gap:0.75rem; margin-top:1rem;">
+            <button type="submit" name="action" value="save">{% trans "Save" %}</button>
+            <button type="submit" name="action" value="skip" class="button-secondary" formnovalidate>{% trans "Not now" %}</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+{% endif %}
+</div>

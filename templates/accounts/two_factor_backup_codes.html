@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% trans "New backup codes" %} — IronStack{% endblock %}
+{% block content %}
+<div class="top-bar">
+  <h1 style="margin:0;">{% trans "New backup codes" %}</h1>
+</div>
+<div class="card">
+  <p class="text-muted">{% trans "Each one works once, if you ever lose access to your authenticator app. They won't be shown again — save them somewhere safe now. Your old backup codes no longer work." %}</p>
+  <ul>
+    {% for code in backup_codes %}
+      <li><code>{{ code }}</code></li>
+    {% endfor %}
+  </ul>
+</div>
+<p><a class="button" href="{% url 'profile' %}">{% trans "Done" %}</a></p>
+{% endblock %}

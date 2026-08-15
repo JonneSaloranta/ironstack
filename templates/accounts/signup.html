@@ -2,6 +2,7 @@
 {% load i18n %}
 {% block title %}{% trans "Sign up" %} — IronStack{% endblock %}
 {% block content %}
+{% include "registration/_auth_brand.html" %}
 <h1>{% trans "Create your account" %}</h1>
 <form method="post" novalidate>
   {% csrf_token %}
@@ -18,4 +19,5 @@
   <button type="submit">{% trans "Sign up" %}</button>
 </form>
 <p class="text-muted">{% trans "Already have an account?" %} <a class="button-secondary" href="{% url 'login' %}">{% trans "Log in" %}</a></p>
+{% include "registration/_auth_disclaimer.html" %}
 {% endblock %}

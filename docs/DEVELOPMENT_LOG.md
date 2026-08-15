@@ -1267,3 +1267,272 @@ published for it.
   repo's own real `CHANGELOG.md`, confirming a clean, correctly
   leading/trailing-blank-trimmed section for `1.1.0` and the right
   fallback behavior for a version with no section at all.
+
+**Restore from an uploaded backup file, not just one already on the
+server.** The web UI could already download and restore backups it
+had created itself, but had no way to restore from a `.tar.gz` an
+admin had downloaded earlier and now had sitting on their own
+computer — asked directly ("I want to upload a backup I downloaded
+earlier and restore from it").
+
+- A new "Upload backup" card (Profile → Administration → Backups)
+  takes a `.tar.gz` file (`apps.core.forms.BackupUploadForm`,
+  `enctype="multipart/form-data"`) and, once
+  `apps.core.backups.save_uploaded_backup()` confirms it's a real
+  backup archive (readable, all three of `database.dump`/`media.tar`/
+  `manifest.json` present — rejected with a clear form error
+  otherwise, before anything touches `BACKUP_DIR` at all), stores it
+  under a fresh, server-generated name and redirects straight into the
+  exact same restore-confirmation page a server-created backup uses —
+  upload is just a second way to get a valid archive into `BACKUP_DIR`,
+  nothing about actually restoring one is different. The stored
+  filename never uses whatever the browser sent (same "don't trust
+  anything from the request" reasoning `safe_archive_path()` already
+  applies to a restore/download target).
+- `save_uploaded_backup()` writes with `shutil.copyfileobj` rather
+  than Django `UploadedFile`'s own `.chunks()` — works the same for a
+  real multipart upload and for a plain file-like object, so the
+  function doesn't assume anything Django-specific about its input
+  beyond `read()`/`seek()`. Caught during testing: the first version
+  used `.chunks()` and broke every service-level test that passed a
+  plain `io.BytesIO` directly, rather than wrapping it in a real
+  Django upload object just to satisfy that one method.
+- `compose/nginx/nginx.conf`'s `client_max_body_size` raised from 20M
+  to 200M — a real backup can grow well past the old limit once
+  media/logged data exist, and 20M was already an arbitrary number,
+  not load-bearing for anything else.
+- 9 new tests. 8 new UI strings translated across fi/sv/ru/it/et (569
+  total, 0 fuzzy/untranslated). Live-verified end to end in Finnish: a
+  real multipart upload of a hand-built valid archive redirected
+  straight to its restore-confirmation page showing the archive's own
+  manifest; a garbage upload was rejected with the translated form
+  error and nothing was written to `BACKUP_DIR`.
+
+**Backup metadata, deletion, and a dedicated "Automatic backups"
+section separate from manual/uploaded ones.** Asked directly: show
+more about each backup (app version, ...), let admins delete one from
+the list, and distinguish automatic backups from the rest — asked
+again, more specifically, once the first pass only added an inline tag
+to one shared list: split them into two clearly separated sections
+instead, and fix mobile layout issues (row content overflowing the
+screen, inconsistent row heights) the richer per-row content had
+introduced.
+
+- `apps.core.backups.create_backup()` gained a `source` parameter
+  (`"manual"` by default) recorded straight into the archive's own
+  `manifest.json` — `apps.core.management.commands.backup_scheduler`
+  is the only built-in caller that ever passes `"scheduled"` (via a
+  new `--source` option on the `create_backup` management command).
+  `list_backups()` reads it back per backup (along with `version`/
+  `git_sha`, already in every manifest from the versioning work) to
+  drive both the "Version" line and the source tag — falling back to
+  `"manual"` for a backup made before this field existed, or for a
+  manifest that can't be read for any reason, rather than breaking the
+  whole list page over one backup's own metadata. Uploaded backups are
+  tagged `"uploaded"` purely from their filename prefix
+  (`save_uploaded_backup()`'s own naming) — their manifest belongs to
+  whatever instance originally created the archive and has no way to
+  record how it later got here. A `git_sha` of the literal string
+  `"unknown"` (`apps.core.version.get_git_sha()`'s own fallback for an
+  image that skipped `scripts/build.sh`) is deliberately not shown at
+  all — a bare "(unknown)" next to a version number reads as an error,
+  not useful info, unlike the labeled "Git commit: unknown" the
+  restore-confirm page already showed elsewhere.
+- `apps.core.views_backup.BackupListView` now hands the template three
+  separate things: `newest_scheduled` (one backup or `None`),
+  `older_scheduled_backups` (collapsed by default behind a "▾ Show N
+  earlier automatic backups" toggle — Alpine `x-show`, no server
+  round-trip), and `manual_backups` (everything else, always shown
+  individually). `templates/core/backup_list.html` renders these as
+  two headed sections, "Automatic backups" and "Manual & uploaded
+  backups", rather than one interleaved list with an inline tag — a
+  daily schedule produces a fundamentally different kind of list
+  (many, similar, low-effort) than a person deliberately clicking a
+  button or uploading a file (few, each intentional), and the two
+  deserve visual separation, not just a tag to tell them apart within
+  one list.
+- A new `BackupDeleteView`/`apps.core.backups.delete_backup()` —
+  non-destructive to anything actually running (only ever discards a
+  copy in storage), so just a plain confirm-then-POST like any other
+  delete in this app, no manifest-comparison confirm page of restore's
+  own.
+- `templates/core/_backup_row.html` extracted so both sections render
+  each row identically without duplicating the markup.
+- **Mobile layout, fixed twice after being reported broken on a real
+  device.** First pass: the original 5-column table (Created/Size/
+  Version/tag/3 action buttons) forced real horizontal overflow on
+  narrow screens — reworked to a 2-column table (a single stacked info
+  cell, an actions cell), `.set-actions` gained `flex-wrap: wrap` so
+  its 3 buttons stack instead of forcing width, `.set-table td` gained
+  `overflow-wrap: break-word`, and a new `.button-wrap` class let the
+  toggle button's own label (long in several languages) wrap instead
+  of forcing its own width. A second report (row bottom borders
+  sitting at visibly different heights row to row, from `.set-table
+  td`'s default `vertical-align: middle`) was patched with
+  `vertical-align: top` — a real improvement, but still patching a
+  table where sibling rows fundamentally have to share column widths
+  and a row's own height depends on what's in *every* cell of that
+  row, not just its own content.
+  Second pass, asked directly ("put a box around each one and drop the
+  line underneath them instead"): dropped the `<table>`/`.set-table`
+  approach for this page entirely — `templates/core/_backup_row.html`
+  now renders one `.card` per backup (the same per-item card pattern
+  `templates/core/feedback_list.html` already uses), each sizing
+  itself independently with no shared row/column grid to jitter
+  against a neighbor's content in the first place. `.table-wrap`/
+  `.set-table` stay exactly as they were for the *other* wide tables
+  in the app (workout set logging, measurement/activity history) —
+  only this page's markup changed, not the shared classes' own
+  definitions (the `vertical-align`/`overflow-wrap` additions from the
+  first pass stay too, still a real improvement for those).
+- 12 new tests. 12 new UI strings translated across fi/sv/ru/it/et (577
+  total, 0 fuzzy/untranslated). Live-verified in Finnish at each step:
+  the version line (and its "(unknown)" hiding), both section headings
+  and their own empty states, the collapse toggle actually hiding/
+  showing the right rows, and a real delete redirecting with the
+  correct translated success message.
+
+**Two-factor authentication, plus login/signup branding and a
+site-wide disclaimer footer.** Asked in one message: a 2FA setting on
+the profile page; while at it, fix the login/signup pages missing the
+IronStack logo/wordmark; and add an admin-editable disclaimer footer
+on those same pages disclaiming responsibility for data loss.
+
+- TOTP (RFC 6238), via `pyotp` (not `django-otp` — see
+  `docs/SECURITY.md` "Two-factor authentication" for the reasoning)
+  plus `qrcode[pil]` to render the setup QR code as an inline
+  `data:image/png;base64,...` image, no separate image-serving
+  endpoint. `User` gained `totp_secret`/`totp_enabled`; a new
+  `TwoFactorBackupCode` model holds 10 single-use, password-hasher-
+  hashed recovery codes per user. The secret is written to the user as
+  soon as setup starts (Profile → "Two-factor authentication" → "Set
+  up"), before it's confirmed — `totp_enabled` only flips to `True`
+  once the confirmation code succeeds, so an abandoned setup attempt
+  never blocks a future plain-password login.
+- The login flow's second step, `TwoFactorVerifyView`
+  (`RateLimitedLoginView.form_valid` detours here instead of calling
+  `login()` when the user has 2FA enabled, staging their id in the
+  session under `pre_2fa_user_id` until a correct code arrives) — its
+  own rate limit (5 wrong codes / 5 minutes) is keyed by user ID
+  rather than client IP, deliberately different from every other
+  rate limit in this app: by this step the attacker already has a
+  correct password and a specific account, so IP-keying alone would
+  be trivially routed around. Accepts either a live TOTP code or one
+  of the backup codes, disambiguated by whether the submitted value is
+  6 digits.
+  `TwoFactorManageView` consolidates "regenerate backup codes" and
+  "disable" (password-gated) on one page, matching the existing
+  "Account details"/"API keys" pattern of the profile linking out to a
+  dedicated page per concern rather than crowding buttons onto the
+  card itself. A new Django-admin action, "Disable two-factor
+  authentication for selected users", is the recovery path for
+  someone locked out with no working authenticator and no backup
+  codes left — the one situation the self-service flows can't help
+  with, since both require either the password and a working second
+  factor, or the password alone but never a bypass of the second
+  factor entirely.
+- `templates/registration/_auth_brand.html` (the icon + "IronStack"
+  wordmark) and `templates/registration/_auth_disclaimer.html` (the
+  footer, rendered only when non-blank) are now included on both
+  `login.html` and `signup.html`. The disclaimer text itself comes
+  from a new singleton, `SiteDisclaimer` (same `pk=1`/`load()` pattern
+  as `ApiSettings`/`BackupSettings`/`FeedbackSettings`), editable only
+  from Django admin, with a sensible default and deliberately left
+  untranslated — it's operator-facing legal text a self-hoster is
+  meant to actually write themselves, not app chrome.
+- Two real bugs caught by the new tests, not by manual curl testing:
+  `TwoFactorSetupView`/`TwoFactorManageView`/`TwoFactorDisableView`
+  each override `dispatch()` to redirect based on `request.user`
+  state (already enabled, not enabled yet, ...) before ever calling
+  `super().dispatch()` — but `LoginRequiredMixin`'s own
+  authentication check *is* that `super().dispatch()` call, so an
+  anonymous request crashed with `AttributeError` (`AnonymousUser` has
+  no `totp_enabled`) instead of redirecting to login. Fixed by
+  checking `request.user.is_authenticated` first, before touching any
+  2FA-specific attribute, in all three. Also found (while still doing
+  the earlier curl-based verification, before tests existed):
+  `TwoFactorRegenerateBackupCodesView` returned 405 because it called
+  `TemplateView.as_view(...)( request)` from inside another view's
+  POST handler — that re-dispatches the *original* request through a
+  second CBV's own method-routing, and a bare `TemplateView` has no
+  `post()`. Fixed with a plain `django.shortcuts.render()` call
+  instead.
+- 39 new tests, covering the TOTP/backup-code service functions
+  directly, the full setup/confirm/login-verify/disable/regenerate
+  view flows (including both bugs above once fixed), the rate limiter,
+  the admin recovery action, and the disclaimer/branding rendering
+  (including blank-text-hides-the-footer). 36 new UI strings
+  translated across fi/sv/ru/it/et (613 total, 0 fuzzy/untranslated).
+  Live-verified end to end, twice: once by hand over curl with real
+  TOTP codes computed inside the container (setup, login redirect,
+  verify success/failure/lockout, backup-code login and single-use
+  consumption, regenerate, password-gated disable, and the admin
+  recovery action), and again in Finnish after translating (setup
+  page, profile card, login page logo and disclaimer).
+
+**A one-time onboarding modal for new users.** Asked directly: a
+popup right after login, asking for email/name/weight/other settings,
+explaining what each is used for. Deliberately skippable, not a
+blocking gate — consistent with docs/PRODUCT_REQUIREMENTS.md's "the
+user always has final control" — and every field is optional even on
+the "Save" path itself, not just via the separate "Not now" button.
+
+- `User.onboarding_completed` (default `False`) gates it. The
+  migration that adds the field backfills `True` onto every account
+  that already existed at that point (a `RunPython` step, not just
+  the field default), so it never retroactively appears for someone
+  already using the app — only for accounts created afterward.
+- Shown via a new context processor,
+  `apps.accounts.context_processors.onboarding` (same reasoning as
+  the existing `apps.workouts.context_processors.
+  active_workout_session`: the modal has to appear on whatever page a
+  user happens to land on right after login, not one specific view,
+  so gating it per-view would mean threading a flag through every
+  view in the app instead of once, globally, in `base.html`).
+- `OnboardingForm` is a plain `Form`, not a `ModelForm`: it writes to
+  `User` (first name, email, unit system) and, for weight, straight
+  into `apps.measurements.models.BodyMeasurement` under the same
+  system "Body weight" type `apps.measurements`' own logging form
+  uses — a weight entered here shows up on the Body weight history
+  page like any other logged reading, not a separate "onboarding
+  weight" field bolted onto `User`.
+- HTMX-driven like every other form in this app: submitting "Save" or
+  "Not now" (two buttons, one form, distinguished by an `action`
+  value — skipping still has to mark the prompt seen, or it would
+  just reappear on the very next page) posts to `OnboardingView`,
+  which re-renders the same modal fragment either way — with field
+  errors on a failed save, or as just its own empty wrapper `<div>` on
+  success, so the modal disappears without a full page navigation.
+- A real naming-collision bug caught before it shipped, not by a
+  test: the modal's form was initially context-keyed as `"form"`,
+  which the context processor merges into *every* page's context —
+  including pages like Profile that already have their own
+  view-specific `form` (`ProfileForm`) in context under that exact
+  same name. Renamed to `onboarding_form` throughout.
+- 14 new tests (model default, context-processor visibility across
+  three states, save/skip/validation-error/login-required for the
+  view, including the kg⇄lb weight-unit conversion and that a failed
+  save's data is never persisted by a subsequent skip). Because the
+  modal is now included on literally every page, the full suite (not
+  just `apps.accounts`) was re-run end to end to check for incidental
+  collisions with other pages' own content — all 658 tests (644
+  existing + 14 new) pass unchanged. 11 new UI strings translated
+  across fi/sv/ru/it/et (624 total, 0 fuzzy/untranslated).
+  Live-verified over curl: the modal appearing on an unrelated page
+  right after a fresh login, saving with a weight in both kg and lb
+  (converted correctly to canonical kg), skipping, an invalid email
+  being rejected without completing onboarding, a skip afterward
+  correctly discarding that earlier invalid attempt rather than
+  saving it, and the whole flow again in Finnish.
+
+**Height added to the same onboarding prompt**, asked for right after
+it shipped. A plain `User.height` field (same shape and cm/inch
+conversion as `ProfileForm`'s own), not a repeated measurement like
+weight — one-off context for BMI (`apps.core.bmi`), not something
+logged over time. 3 new tests (metric and imperial conversion, and
+that leaving it blank leaves `height` unset rather than zeroing it).
+1 new UI string translated across fi/sv/ru/it/et (625 total, 0
+fuzzy/untranslated) — the "Height (cm)"/"Height (in)" labels
+themselves were already translated, reused from `ProfileForm`.
+Live-verified: 180.5cm and 70in both round-tripped to the correct
+canonical meters value, and the field renders correctly in Finnish.

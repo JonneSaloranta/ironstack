@@ -9,6 +9,7 @@ from unittest import mock
 
 from django.contrib.auth import get_user_model
 from django.core.exceptions import PermissionDenied
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.core.management import call_command
 from django.test import RequestFactory, TestCase, override_settings
 from django.urls import reverse
@@ -640,6 +641,47 @@ class BackupTests(TestCase):
         self.assertEqual(backups[0]["name"], name)
         self.assertGreater(backups[0]["size"], 0)
 
+    def test_create_backup_defaults_to_manual_source(self):
+        backup_services.create_backup()
+        self.assertEqual(backup_services.list_backups()[0]["source"], "manual")
+
+    def test_create_backup_records_a_custom_source(self):
+        backup_services.create_backup(source="scheduled")
+        self.assertEqual(backup_services.list_backups()[0]["source"], "scheduled")
+
+    def test_list_backups_reports_version_and_git_sha_from_the_manifest(self):
+        backup_services.create_backup()
+        backup = backup_services.list_backups()[0]
+        self.assertEqual(backup["version"], get_version())
+        self.assertEqual(backup["git_sha"], get_git_sha())
+
+    def test_list_backups_tags_an_uploaded_backup_as_uploaded(self):
+        buf = io.BytesIO()
+        with tarfile.open(fileobj=buf, mode="w:gz") as tar:
+            for member_name, content in (
+                ("database.dump", b"x"),
+                ("media.tar", b"x"),
+                ("manifest.json", json.dumps({"version": "9.9.9"}).encode()),
+            ):
+                data = io.BytesIO(content)
+                info = tarfile.TarInfo(name=member_name)
+                info.size = len(content)
+                tar.addfile(info, data)
+        buf.seek(0)
+        backup_services.save_uploaded_backup(buf)
+        backup = backup_services.list_backups()[0]
+        self.assertEqual(backup["source"], "uploaded")
+        self.assertIsNone(backup["version"])  # the uploaded archive's own manifest isn't read
+
+    def test_delete_backup_removes_the_file(self):
+        name = backup_services.create_backup()
+        backup_services.delete_backup(name)
+        self.assertEqual(backup_services.list_backups(), [])
+
+    def test_delete_backup_rejects_an_invalid_name(self):
+        with self.assertRaises(backup_services.InvalidBackupName):
+            backup_services.delete_backup("../../etc/passwd")
+
     def test_read_manifest_returns_the_backups_own_version_info(self):
         name = backup_services.create_backup()
         manifest = backup_services.read_manifest(name)
@@ -682,6 +724,66 @@ class BackupTests(TestCase):
         remaining = [b["name"] for b in backup_services.list_backups()]
         self.assertEqual(remaining, [second])
         self.assertNotIn(first, remaining)
+
+    def _build_valid_archive_bytes(self):
+        """A minimal, real .tar.gz with all three members
+        save_uploaded_backup() requires — same shape create_backup()
+        itself writes, just built directly in memory rather than via a
+        real pg_dump/tar of MEDIA_ROOT."""
+        buf = io.BytesIO()
+        with tarfile.open(fileobj=buf, mode="w:gz") as tar:
+            for member_name, content in (
+                ("database.dump", b"fake dump"),
+                ("media.tar", b"fake media"),
+                ("manifest.json", json.dumps({"version": "9.9.9"}).encode()),
+            ):
+                data = io.BytesIO(content)
+                info = tarfile.TarInfo(name=member_name)
+                info.size = len(content)
+                tar.addfile(info, data)
+        buf.seek(0)
+        return buf
+
+    def test_save_uploaded_backup_accepts_a_valid_archive_and_names_it_uploaded(self):
+        name = backup_services.save_uploaded_backup(self._build_valid_archive_bytes())
+        self.assertTrue(name.startswith("ironstack-backup-uploaded-"))
+        self.assertTrue((backup_services.BACKUP_DIR / name).is_file())
+
+    def test_save_uploaded_backup_ignores_the_client_supplied_name(self):
+        """The stored filename is always server-generated — never
+        whatever the uploaded file object's own .name happens to be,
+        the same "don't trust the request" reasoning safe_archive_path()
+        applies elsewhere in this module."""
+        upload = self._build_valid_archive_bytes()
+        upload.name = "../../etc/passwd.tar.gz"
+        name = backup_services.save_uploaded_backup(upload)
+        self.assertNotIn("..", name)
+        self.assertTrue(name.startswith("ironstack-backup-uploaded-"))
+
+    def test_save_uploaded_backup_rejects_a_non_tar_file(self):
+        with self.assertRaises(backup_services.InvalidBackupArchive):
+            backup_services.save_uploaded_backup(io.BytesIO(b"not a tarball at all"))
+        self.assertEqual(backup_services.list_backups(), [])
+
+    def test_save_uploaded_backup_rejects_a_tar_missing_required_members(self):
+        buf = io.BytesIO()
+        with tarfile.open(fileobj=buf, mode="w:gz") as tar:
+            data = io.BytesIO(b"just this")
+            info = tarfile.TarInfo(name="database.dump")
+            info.size = len(b"just this")
+            tar.addfile(info, data)
+        buf.seek(0)
+        with self.assertRaises(backup_services.InvalidBackupArchive):
+            backup_services.save_uploaded_backup(buf)
+        self.assertEqual(backup_services.list_backups(), [])
+
+    def test_save_uploaded_backup_prunes_down_to_the_retention_setting(self):
+        settings_row = BackupSettings.load()
+        settings_row.retention_count = 1
+        settings_row.save()
+        backup_services.create_backup()
+        backup_services.save_uploaded_backup(self._build_valid_archive_bytes())
+        self.assertEqual(len(backup_services.list_backups()), 1)
 
 
 class BackupSettingsModelTests(TestCase):
@@ -774,6 +876,30 @@ class BackupManagementCommandTests(TestCase):
         ):
             Command().handle()
         self.assertEqual(len(backup_services.list_backups()), 1)
+
+    def test_backup_scheduler_tags_its_own_backups_as_scheduled(self):
+        """Profile → Administration → Backups tags each backup by who/
+        what made it — the scheduler is the only built-in caller that
+        passes --source scheduled to the create_backup management
+        command (apps.core.backups.create_backup's own docstring)."""
+        from apps.core.management.commands.backup_scheduler import Command
+
+        sleep_calls = {"count": 0}
+
+        def fake_sleep(_seconds):
+            sleep_calls["count"] += 1
+            if sleep_calls["count"] >= 2:
+                raise KeyboardInterrupt
+
+        with (
+            mock.patch(
+                "apps.core.management.commands.backup_scheduler.time.sleep",
+                side_effect=fake_sleep,
+            ),
+            self.assertRaises(KeyboardInterrupt),
+        ):
+            Command().handle()
+        self.assertEqual(backup_services.list_backups()[0]["source"], "scheduled")
 
     def test_backup_scheduler_skips_creating_a_backup_when_disabled(self):
         """The "Automatic daily backups" toggle (Profile → Administration
@@ -886,11 +1012,115 @@ class BackupViewTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, name)
 
+    def test_list_view_shows_only_the_newest_of_several_scheduled_backups(self):
+        """Older scheduled backups are handed to the template
+        separately (older_scheduled_backups), collapsed behind a
+        toggle, rather than cluttering the automatic-backups section —
+        see BackupListView.get_context_data's own docstring/comment."""
+        backup_services.create_backup(source="scheduled")
+        newest = backup_services.create_backup(source="scheduled")
+        self.client.login(username="admin", password="s3cret-pass")
+        response = self.client.get(reverse("backup-list"))
+        self.assertEqual(response.context["newest_scheduled"]["name"], newest)
+        self.assertEqual(len(response.context["older_scheduled_backups"]), 1)
+
+    def test_list_view_shows_manual_and_uploaded_backups_individually(self):
+        """Manual/uploaded backups get their own section from
+        automatic ones, and never collapse within it — each was a
+        deliberate, individual action."""
+        backup_services.create_backup(source="manual")
+        backup_services.create_backup(source="manual")
+        self.client.login(username="admin", password="s3cret-pass")
+        response = self.client.get(reverse("backup-list"))
+        self.assertEqual(len(response.context["manual_backups"]), 2)
+        self.assertIsNone(response.context["newest_scheduled"])
+        self.assertEqual(response.context["older_scheduled_backups"], [])
+
+    def test_posting_delete_removes_the_backup_and_redirects(self):
+        self.client.login(username="admin", password="s3cret-pass")
+        name = backup_services.create_backup()
+        response = self.client.post(reverse("backup-delete", args=[name]))
+        self.assertRedirects(response, reverse("backup-list"))
+        self.assertEqual(backup_services.list_backups(), [])
+
+    def test_delete_requires_staff(self):
+        self.client.login(username="alice", password="s3cret-pass")
+        name = backup_services.create_backup()
+        response = self.client.post(reverse("backup-delete", args=[name]))
+        self.assertEqual(response.status_code, 403)
+        self.assertEqual(len(backup_services.list_backups()), 1)
+
+    def test_delete_404s_for_a_nonexistent_backup(self):
+        self.client.login(username="admin", password="s3cret-pass")
+        response = self.client.post(reverse("backup-delete", args=["nope.tar.gz"]))
+        self.assertEqual(response.status_code, 404)
+
     def test_posting_to_list_view_creates_a_backup_and_redirects(self):
         self.client.login(username="admin", password="s3cret-pass")
         response = self.client.post(reverse("backup-list"))
         self.assertRedirects(response, reverse("backup-list"))
         self.assertEqual(len(backup_services.list_backups()), 1)
+
+    def _build_valid_upload(self, name="my-download.tar.gz"):
+        buf = io.BytesIO()
+        with tarfile.open(fileobj=buf, mode="w:gz") as tar:
+            for member_name, content in (
+                ("database.dump", b"fake dump"),
+                ("media.tar", b"fake media"),
+                ("manifest.json", json.dumps({"version": "9.9.9"}).encode()),
+            ):
+                data = io.BytesIO(content)
+                info = tarfile.TarInfo(name=member_name)
+                info.size = len(content)
+                tar.addfile(info, data)
+        return SimpleUploadedFile(name, buf.getvalue(), content_type="application/gzip")
+
+    def test_uploading_a_valid_backup_redirects_straight_to_its_restore_confirm_page(self):
+        self.client.login(username="admin", password="s3cret-pass")
+        response = self.client.post(
+            reverse("backup-list"),
+            {"action": "upload_backup", "archive": self._build_valid_upload()},
+        )
+        backups = backup_services.list_backups()
+        self.assertEqual(len(backups), 1)
+        self.assertRedirects(response, reverse("backup-restore", args=[backups[0]["name"]]))
+
+    def test_uploading_a_non_tar_gz_filename_shows_a_form_error_without_saving_anything(self):
+        self.client.login(username="admin", password="s3cret-pass")
+        upload = SimpleUploadedFile("not-a-backup.txt", b"hello", content_type="text/plain")
+        response = self.client.post(
+            reverse("backup-list"), {"action": "upload_backup", "archive": upload}
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "field-error")
+        self.assertEqual(backup_services.list_backups(), [])
+
+    def test_uploading_a_tar_gz_missing_required_members_shows_a_form_error(self):
+        self.client.login(username="admin", password="s3cret-pass")
+        buf = io.BytesIO()
+        with tarfile.open(fileobj=buf, mode="w:gz") as tar:
+            data = io.BytesIO(b"just this")
+            info = tarfile.TarInfo(name="database.dump")
+            info.size = len(b"just this")
+            tar.addfile(info, data)
+        upload = SimpleUploadedFile(
+            "incomplete.tar.gz", buf.getvalue(), content_type="application/gzip"
+        )
+        response = self.client.post(
+            reverse("backup-list"), {"action": "upload_backup", "archive": upload}
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "field-error")
+        self.assertEqual(backup_services.list_backups(), [])
+
+    def test_upload_requires_staff(self):
+        self.client.login(username="alice", password="s3cret-pass")
+        response = self.client.post(
+            reverse("backup-list"),
+            {"action": "upload_backup", "archive": self._build_valid_upload()},
+        )
+        self.assertEqual(response.status_code, 403)
+        self.assertEqual(backup_services.list_backups(), [])
 
     def test_list_view_shows_the_settings_form_prefilled_with_current_values(self):
         settings_row = BackupSettings.load()

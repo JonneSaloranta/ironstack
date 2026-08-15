@@ -58,7 +58,7 @@ class Command(BaseCommand):
                 self.stdout.write("Automatic backups are disabled — skipping.")
                 continue
             try:
-                call_command("create_backup")
+                call_command("create_backup", source="scheduled")
             except Exception as exc:
                 # Deliberately broad: any failure here must never take
                 # the scheduler process itself down.

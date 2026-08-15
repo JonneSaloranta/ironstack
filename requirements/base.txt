@@ -6,3 +6,13 @@ gunicorn>=26.0.0,<27.0
 # throttling) that hand-rolling it would just re-invent a worse version
 # of what this already does well — see docs/API.md.
 djangorestframework>=3.18.0,<3.19
+# apps.accounts.twofactor — TOTP (RFC 6238) generation/verification is
+# security-critical, narrow-purpose code that shouldn't be hand-rolled
+# (unlike, say, this project's own Markdown-subset changelog parser or
+# scrollbar CSS) — pyotp is a small, focused, widely-used library that
+# does exactly that and nothing else, not django-otp's heavier
+# multi-device-type framework this project doesn't need. qrcode
+# renders the setup QR code server-side (a data: URI embedded directly
+# in the page, no separate image endpoint).
+pyotp>=2.9,<3.0
+qrcode[pil]>=8.0,<9.0

@@ -22,6 +22,31 @@ class BackupSettingsForm(forms.ModelForm):
         }
 
 
+class BackupUploadForm(forms.Form):
+    """Profile → Administration → Backups' "Upload backup" card — lets
+    an admin restore from a .tar.gz they downloaded earlier (from this
+    instance or another one) instead of only ever picking from what's
+    already sitting in BACKUP_DIR. Only a basic filename-shape check
+    here; the real validation (readable archive, all three expected
+    members present) happens in apps.core.backups.save_uploaded_backup,
+    called from the view once this form's own clean() passes — kept
+    out of the form the same way every other real validation in this
+    app lives in a service function, not a form/view."""
+
+    archive = forms.FileField(
+        label=_("Backup file"),
+        help_text=_(
+            "A .tar.gz backup archive previously downloaded from an IronStack instance."
+        ),
+    )
+
+    def clean_archive(self):
+        archive = self.cleaned_data["archive"]
+        if not archive.name.endswith(".tar.gz"):
+            raise forms.ValidationError(_("Must be a .tar.gz file."))
+        return archive
+
+
 class FeedbackForm(forms.ModelForm):
     """Profile → Feedback — the form any signed-in user fills in
     themselves; `user` is set from the request in the view, not exposed

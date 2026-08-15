@@ -9,6 +9,12 @@ msgstr ""
 "Language: en\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
+msgid "Two-factor authentication"
+msgstr "Two-factor authentication"
+
+msgid "Disable two-factor authentication for selected users"
+msgstr "Disable two-factor authentication for selected users"
+
 msgid "Too many failed login attempts. Try again in a few minutes."
 msgstr "Too many failed login attempts. Try again in a few minutes."
 
@@ -54,11 +60,59 @@ msgstr "Height (cm)"
 msgid "Height (in)"
 msgstr "Height (in)"
 
+msgid "Verification code"
+msgstr "Verification code"
+
+msgid "Incorrect code — check your authenticator app and try again."
+msgstr "Incorrect code — check your authenticator app and try again."
+
+msgid "Too many incorrect codes. Try again in a few minutes."
+msgstr "Too many incorrect codes. Try again in a few minutes."
+
+msgid "Incorrect code."
+msgstr "Incorrect code."
+
+msgid "Password"
+msgstr "Password"
+
+msgid "Incorrect password."
+msgstr "Incorrect password."
+
+msgid "First name"
+msgstr "First name"
+
+msgid "Used to personalize your dashboard greeting, and next to your username wherever your activity is shown to others (if you allow that in your profile)."
+msgstr "Used to personalize your dashboard greeting, and next to your username wherever your activity is shown to others (if you allow that in your profile)."
+
+msgid "Email"
+msgstr "Email"
+
+msgid "Used only for password-reset emails if you ever get locked out. Never shown to other users."
+msgstr "Used only for password-reset emails if you ever get locked out. Never shown to other users."
+
+msgid "Logged as your first body-weight entry, so your progress charts have a starting point. Leave blank and log it anytime from the Body weight page instead."
+msgstr "Logged as your first body-weight entry, so your progress charts have a starting point. Leave blank and log it anytime from the Body weight page instead."
+
+msgid "Used together with a logged body weight to show your BMI. Leave blank to skip this — you can add it anytime from your profile."
+msgstr "Used together with a logged body weight to show your BMI. Leave blank to skip this — you can add it anytime from your profile."
+
+msgid "Sets whether weights and distances are shown in kg/km or lb/mi throughout the app. Change this anytime from your profile."
+msgstr "Sets whether weights and distances are shown in kg/km or lb/mi throughout the app. Change this anytime from your profile."
+
+msgid "Current weight (%(unit)s)"
+msgstr "Current weight (%(unit)s)"
+
+msgid "Current weight"
+msgstr "Current weight"
+
 msgid "Metric (kg, km)"
 msgstr "Metric (kg, km)"
 
 msgid "Imperial (lb, mi)"
 msgstr "Imperial (lb, mi)"
+
+msgid "Shown as a footer note on the login and signup pages. Leave blank to hide it entirely."
+msgstr "Shown as a footer note on the login and signup pages. Leave blank to hide it entirely."
 
 msgid "Registration is currently closed."
 msgstr "Registration is currently closed."
@@ -68,6 +122,12 @@ msgstr "Preferences saved."
 
 msgid "Account details saved."
 msgstr "Account details saved."
+
+msgid "Two-factor authentication is already enabled."
+msgstr "Two-factor authentication is already enabled."
+
+msgid "Two-factor authentication turned off."
+msgstr "Two-factor authentication turned off."
 
 msgid "Duration (minutes)"
 msgstr "Duration (minutes)"
@@ -255,6 +315,15 @@ msgstr "Backup hour (UTC)"
 msgid "Keep the most recent"
 msgstr "Keep the most recent"
 
+msgid "Backup file"
+msgstr "Backup file"
+
+msgid "A .tar.gz backup archive previously downloaded from an IronStack instance."
+msgstr "A .tar.gz backup archive previously downloaded from an IronStack instance."
+
+msgid "Must be a .tar.gz file."
+msgstr "Must be a .tar.gz file."
+
 msgid "Category"
 msgstr "Category"
 
@@ -341,6 +410,15 @@ msgstr "Backup created: %(name)s"
 
 msgid "Backup settings saved."
 msgstr "Backup settings saved."
+
+msgid "Not a valid IronStack backup archive — expected a .tar.gz containing database.dump, media.tar, and manifest.json."
+msgstr "Not a valid IronStack backup archive — expected a .tar.gz containing database.dump, media.tar, and manifest.json."
+
+msgid "Backup uploaded: %(name)s"
+msgstr "Backup uploaded: %(name)s"
+
+msgid "Backup deleted: %(name)s"
+msgstr "Backup deleted: %(name)s"
 
 msgid "Restored from backup: %(name)s"
 msgstr "Restored from backup: %(name)s"
@@ -876,11 +954,20 @@ msgstr "Something went wrong"
 msgid "Something went wrong on our end. Your data is safe — try again in a moment."
 msgstr "Something went wrong on our end. Your data is safe — try again in a moment."
 
-msgid "Account details"
-msgstr "Account details"
+msgid "Welcome to IronStack"
+msgstr "Welcome to IronStack"
+
+msgid "Not now"
+msgstr "Not now"
+
+msgid "A few quick details help IronStack work better for you — every field below is optional, and you can always change them later from your profile."
+msgstr "A few quick details help IronStack work better for you — every field below is optional, and you can always change them later from your profile."
 
 msgid "Save"
 msgstr "Save"
+
+msgid "Account details"
+msgstr "Account details"
 
 msgid "Back to profile"
 msgstr "Back to profile"
@@ -899,6 +986,18 @@ msgstr "Change password"
 
 msgid "Update the password you use to sign in."
 msgstr "Update the password you use to sign in."
+
+msgid "Enabled — protecting your account with a second step at login."
+msgstr "Enabled — protecting your account with a second step at login."
+
+msgid "Add a second step at login, using an authenticator app."
+msgstr "Add a second step at login, using an authenticator app."
+
+msgid "Manage"
+msgstr "Manage"
+
+msgid "Set up"
+msgstr "Set up"
 
 msgid "API keys"
 msgstr "API keys"
@@ -950,6 +1049,66 @@ msgstr "Already have an account?"
 
 msgid "Log in"
 msgstr "Log in"
+
+msgid "New backup codes"
+msgstr "New backup codes"
+
+msgid "Each one works once, if you ever lose access to your authenticator app. They won't be shown again — save them somewhere safe now. Your old backup codes no longer work."
+msgstr "Each one works once, if you ever lose access to your authenticator app. They won't be shown again — save them somewhere safe now. Your old backup codes no longer work."
+
+msgid "Done"
+msgstr "Done"
+
+msgid "Disable two-factor authentication"
+msgstr "Disable two-factor authentication"
+
+msgid "Enter your password to confirm. This removes your authenticator and deletes your remaining backup codes."
+msgstr "Enter your password to confirm. This removes your authenticator and deletes your remaining backup codes."
+
+msgid "Cancel"
+msgstr "Cancel"
+
+msgid "Two-factor authentication is enabled on your account."
+msgstr "Two-factor authentication is enabled on your account."
+
+msgid "Backup codes"
+msgstr "Backup codes"
+
+msgid "Replace your current codes with a fresh set. The old ones stop working immediately."
+msgstr "Replace your current codes with a fresh set. The old ones stop working immediately."
+
+msgid "Replace your backup codes? The old ones will stop working."
+msgstr "Replace your backup codes? The old ones will stop working."
+
+msgid "Regenerate"
+msgstr "Regenerate"
+
+msgid "Removes your authenticator and backup codes. Requires your password."
+msgstr "Removes your authenticator and backup codes. Requires your password."
+
+msgid "Disable"
+msgstr "Disable"
+
+msgid "Two-factor authentication is now enabled."
+msgstr "Two-factor authentication is now enabled."
+
+msgid "Save these backup codes"
+msgstr "Save these backup codes"
+
+msgid "Each one works once, if you ever lose access to your authenticator app. They won't be shown again — save them somewhere safe now."
+msgstr "Each one works once, if you ever lose access to your authenticator app. They won't be shown again — save them somewhere safe now."
+
+msgid "Scan this QR code with an authenticator app (e.g. Google Authenticator, Authy, or a password manager with built-in support), then enter the 6-digit code it shows to confirm setup."
+msgstr "Scan this QR code with an authenticator app (e.g. Google Authenticator, Authy, or a password manager with built-in support), then enter the 6-digit code it shows to confirm setup."
+
+msgid "Two-factor authentication QR code"
+msgstr "Two-factor authentication QR code"
+
+msgid "Can't scan the code? Enter this key manually:"
+msgstr "Can't scan the code? Enter this key manually:"
+
+msgid "Confirm and enable"
+msgstr "Confirm and enable"
 
 msgid "Edit activity"
 msgstr "Edit activity"
@@ -1094,9 +1253,6 @@ msgstr "API key created"
 msgid "Copy this key now — you won't be able to see it again."
 msgstr "Copy this key now — you won't be able to see it again."
 
-msgid "Done"
-msgstr "Done"
-
 msgid "New API key"
 msgstr "New API key"
 
@@ -1150,6 +1306,21 @@ msgstr "Workout"
 msgid "Continue training"
 msgstr "Continue training"
 
+msgid "Automatic"
+msgstr "Automatic"
+
+msgid "Uploaded"
+msgstr "Uploaded"
+
+msgid "Download"
+msgstr "Download"
+
+msgid "Restore"
+msgstr "Restore"
+
+msgid "Delete this backup? This cannot be undone."
+msgstr "Delete this backup? This cannot be undone."
+
 msgid "%(title)s, %(counter)s category"
 msgid_plural "%(title)s, %(counter)s categories"
 msgstr[0] "%(title)s, %(counter)s category"
@@ -1184,26 +1355,40 @@ msgstr[1] "%(title)s trend over time, %(counter)s readings"
 msgid "Create backup"
 msgstr "Create backup"
 
+msgid "Upload backup"
+msgstr "Upload backup"
+
+msgid "Restore from a backup file you downloaded earlier, instead of one already listed below."
+msgstr "Restore from a backup file you downloaded earlier, instead of one already listed below."
+
+msgid "Upload and continue"
+msgstr "Upload and continue"
+
 msgid "Settings"
 msgstr "Settings"
 
 msgid "Save settings"
 msgstr "Save settings"
 
-msgid "Created"
-msgstr "Created"
+msgid "Automatic backups"
+msgstr "Automatic backups"
 
-msgid "Size"
-msgstr "Size"
+msgid "▾ Show %(counter)s earlier automatic backup"
+msgid_plural "▾ Show %(counter)s earlier automatic backups"
+msgstr[0] "▾ Show %(counter)s earlier automatic backup"
+msgstr[1] "▾ Show %(counter)s earlier automatic backups"
 
-msgid "Download"
-msgstr "Download"
+msgid "Hide earlier automatic backups"
+msgstr "Hide earlier automatic backups"
 
-msgid "Restore"
-msgstr "Restore"
+msgid "No automatic backups yet."
+msgstr "No automatic backups yet."
 
-msgid "No backups yet."
-msgstr "No backups yet."
+msgid "Manual & uploaded backups"
+msgstr "Manual & uploaded backups"
+
+msgid "No manual or uploaded backups yet."
+msgstr "No manual or uploaded backups yet."
 
 msgid "Restore backup"
 msgstr "Restore backup"
@@ -1222,6 +1407,9 @@ msgstr "Version"
 
 msgid "Git commit"
 msgstr "Git commit"
+
+msgid "Created"
+msgstr "Created"
 
 msgid "Running instance"
 msgstr "Running instance"
@@ -1421,9 +1609,6 @@ msgstr "Delete program"
 msgid "Delete <strong>%(name)s</strong> and all of its workouts and exercises? This cannot be undone."
 msgstr "Delete <strong>%(name)s</strong> and all of its workouts and exercises? This cannot be undone."
 
-msgid "Cancel"
-msgstr "Cancel"
-
 msgid "Built-in template"
 msgstr "Built-in template"
 
@@ -1594,6 +1779,15 @@ msgstr "Send reset link"
 
 msgid "Password reset on %(site_name)s"
 msgstr "Password reset on %(site_name)s"
+
+msgid "Two-factor verification"
+msgstr "Two-factor verification"
+
+msgid "Enter the 6-digit code from your authenticator app, or one of your backup codes."
+msgstr "Enter the 6-digit code from your authenticator app, or one of your backup codes."
+
+msgid "Verify"
+msgstr "Verify"
 
 msgid "Target: %(count)s × %(min)s-%(max)s"
 msgstr "Target: %(count)s × %(min)s-%(max)s"

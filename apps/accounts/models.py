@@ -69,6 +69,36 @@ class User(AbstractUser):
         max_length=10, choices=settings.LANGUAGES, default=settings.LANGUAGE_CODE.split("-")[0]
     )
 
+    # Two-factor authentication (apps.accounts.twofactor,
+    # apps.accounts.views.TwoFactorSetupView/TwoFactorVerifyView) — a
+    # single TOTP secret per user, no separate "device" model, since
+    # nothing here needs more than one authenticator at a time. The
+    # secret is stored as plain text, deliberately: the server has to
+    # be able to read it back to compute the expected code on every
+    # login (unlike a password, this can't be one-way hashed), and this
+    # project has no existing field-level-encryption infrastructure to
+    # build that on top of without adding real scope beyond what was
+    # asked — see docs/SECURITY.md "Two-factor authentication" for this
+    # trade-off spelled out plainly rather than silently assumed.
+    # `totp_secret` is set as soon as setup starts (so the QR code
+    # shown mid-setup and the code the user submits to confirm it are
+    # generated from the same value); `totp_enabled` only flips to True
+    # once that confirmation succeeds, so an abandoned, never-confirmed
+    # setup attempt never blocks a future login.
+    totp_secret = models.CharField(max_length=32, blank=True, default="")
+    totp_enabled = models.BooleanField(default=False)
+
+    # apps.accounts.context_processors.onboarding / views.OnboardingView /
+    # templates/accounts/_onboarding_modal.html — a one-time, skippable
+    # prompt shown on whatever page a user lands on right after their
+    # first login, asking for name/email/starting weight/units and
+    # explaining what each is used for. False is the right default for
+    # every *newly created* account; the migration that added this field
+    # backfills True onto every account that already existed at that
+    # point, so onboarding never retroactively appears for someone who
+    # was already using the app before this feature shipped.
+    onboarding_completed = models.BooleanField(default=False)
+
     def __str__(self):
         return self.username
 
@@ -86,3 +116,72 @@ class User(AbstractUser):
         if self.show_name_to_others and self.first_name:
             return f"{self.username} ({self.first_name})"
         return self.username
+
+
+class TwoFactorBackupCode(models.Model):
+    """One single-use recovery code for a user who's enabled 2FA
+    (apps.accounts.twofactor.generate_backup_codes) — the standard
+    fallback for "I lost my authenticator device" that doesn't require
+    an admin to intervene. Hashed with Django's own password hasher
+    (`code_hash`, via make_password/check_password) rather than a fast
+    digest like apps.api.models.ApiKey.key_hash's SHA-256: a backup
+    code is entered as rarely as a password and deserves the same
+    timing-attack-resistant, deliberately-slow treatment, unlike an API
+    key sent on every single request where a fast hash matters for
+    server load. The plain code itself is only ever shown once, right
+    after generation — never stored anywhere, never recoverable."""
+
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="backup_codes"
+    )
+    code_hash = models.CharField(max_length=128)
+    created_at = models.DateTimeField(auto_now_add=True)
+    used_at = models.DateTimeField(null=True, blank=True)
+
+    def __str__(self):
+        return f"Backup code for {self.user} ({'used' if self.used_at else 'unused'})"
+
+
+_DEFAULT_DISCLAIMER_TEXT = (
+    "This is a self-hosted, independently operated instance. The person "
+    "or organization running it is not responsible for any data loss. "
+    "Back up your data regularly."
+)
+
+
+class SiteDisclaimer(models.Model):
+    """Singleton row (always pk=1 — see `load()`), the same pattern as
+    apps.core.models.BackupSettings/FeedbackSettings — a footer note
+    shown on the login and signup pages (apps.accounts.views.
+    RateLimitedLoginView/SignupView), editable from /admin/ without a
+    redeploy. Plain text, not translated per-viewer the way UI chrome
+    is: it's operator-authored content specific to *this* instance
+    (who's running it, what they will or won't be liable for), so
+    unlike this app's own strings there's nothing for gettext to
+    translate — an operator who wants it in another language edits it
+    directly. Blank hides it entirely, for an operator who'd rather
+    not show one at all."""
+
+    text = models.TextField(
+        default=_DEFAULT_DISCLAIMER_TEXT,
+        blank=True,
+        help_text=_(
+            "Shown as a footer note on the login and signup pages. "
+            "Leave blank to hide it entirely."
+        ),
+    )
+
+    def save(self, *args, **kwargs):
+        self.pk = 1
+        super().save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        pass  # singleton — deleting it would just silently recreate the default on next load()
+
+    @classmethod
+    def load(cls):
+        obj, _created = cls.objects.get_or_create(pk=1)
+        return obj
+
+    def __str__(self):
+        return "Site disclaimer"

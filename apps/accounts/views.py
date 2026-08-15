@@ -1,23 +1,30 @@
 from django.conf import settings
 from django.contrib import messages
-from django.contrib.auth import login
+from django.contrib.auth import get_user_model, login
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView, PasswordResetView
-from django.shortcuts import redirect
-from django.urls import reverse_lazy
+from django.http import Http404
+from django.shortcuts import redirect, render
+from django.urls import reverse, reverse_lazy
 from django.utils.translation import gettext as _
-from django.views.generic import CreateView, UpdateView
+from django.views.generic import CreateView, FormView, TemplateView, UpdateView, View
 
 from apps.core import changelog as changelog_services
 from apps.core.models import FeedbackSettings
 
+from . import twofactor
 from .forms import (
     AccountDetailsForm,
+    OnboardingForm,
     ProfileForm,
     RateLimitedAuthenticationForm,
     RateLimitedPasswordResetForm,
     SignupForm,
+    TwoFactorDisableForm,
+    TwoFactorSetupConfirmForm,
+    TwoFactorVerifyForm,
 )
+from .models import SiteDisclaimer
 
 
 class SignupView(CreateView):
@@ -36,6 +43,11 @@ class SignupView(CreateView):
             return redirect("login")
         return super().dispatch(request, *args, **kwargs)
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["disclaimer_text"] = SiteDisclaimer.load().text
+        return context
+
     def form_valid(self, form):
         response = super().form_valid(form)
         login(self.request, self.object)
@@ -47,16 +59,35 @@ class RateLimitedLoginView(LoginView):
     force protection at all — apps.api's rate limiting is a completely
     separate, API-key-only mechanism. See
     apps.accounts.forms.RateLimitedAuthenticationForm for the actual
-    limiting; this subclass exists to plug that form in and to expose
-    SIGNUP_ENABLED so the template can hide the "create an account"
-    link when registration is closed."""
+    limiting; this subclass exists to plug that form in, to expose
+    SIGNUP_ENABLED/the site disclaimer to the template, and to detour
+    through a second factor (form_valid below) for a user who's
+    enabled 2FA."""
 
     authentication_form = RateLimitedAuthenticationForm
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["signup_enabled"] = settings.SIGNUP_ENABLED
+        context["disclaimer_text"] = SiteDisclaimer.load().text
         return context
+
+    def form_valid(self, form):
+        # Username/password already checked correct at this point
+        # (AuthenticationForm.clean already ran) — django.contrib.auth.
+        # views.LoginView's own form_valid would log the user in
+        # immediately here. A user with 2FA enabled instead gets
+        # parked one step short of that: their id goes into the
+        # session under a key that only TwoFactorVerifyView reads, and
+        # nothing calls login() (so request.user stays anonymous, no
+        # session-fixation-relevant state changes yet) until they
+        # actually submit a correct code there.
+        user = form.get_user()
+        if user.totp_enabled:
+            self.request.session["pre_2fa_user_id"] = user.pk
+            next_url = self.get_success_url()
+            return redirect(f"{reverse('two-factor-verify')}?next={next_url}")
+        return super().form_valid(form)
 
 
 class RateLimitedPasswordResetView(PasswordResetView):
@@ -118,3 +149,192 @@ class AccountDetailsView(LoginRequiredMixin, UpdateView):
         response = super().form_valid(form)
         messages.success(self.request, _("Account details saved."))
         return response
+
+
+class TwoFactorVerifyView(FormView):
+    """The login flow's second step, reached only via
+    RateLimitedLoginView.form_valid's redirect once a correct password
+    was already entered for a user with 2FA enabled. Deliberately not
+    LoginRequiredMixin — the user isn't authenticated yet at this
+    point, that's the whole reason this view exists."""
+
+    template_name = "registration/two_factor_verify.html"
+    form_class = TwoFactorVerifyForm
+
+    def dispatch(self, request, *args, **kwargs):
+        # No pending login to complete (a direct visit, an already-
+        # completed/expired flow, ...) — nothing to verify a code
+        # against, so back to the start.
+        if "pre_2fa_user_id" not in request.session:
+            return redirect("login")
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_user(self):
+        User = get_user_model()
+        try:
+            return User.objects.get(pk=self.request.session["pre_2fa_user_id"])
+        except User.DoesNotExist:
+            raise Http404 from None
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["user"] = self.get_user()
+        return kwargs
+
+    def form_valid(self, form):
+        user = self.get_user()
+        del self.request.session["pre_2fa_user_id"]
+        login(self.request, user)
+        next_url = self.request.GET.get("next") or settings.LOGIN_REDIRECT_URL
+        return redirect(next_url)
+
+
+class TwoFactorManageView(LoginRequiredMixin, TemplateView):
+    """Profile → Two-factor authentication → "Manage", once already
+    enabled — consolidates "regenerate backup codes" and "disable" in
+    one place, the same way Profile itself only ever links out to a
+    dedicated page for anything with more than one simple action
+    (Account details, API keys, ...) rather than crowding several
+    buttons onto the profile card itself."""
+
+    template_name = "accounts/two_factor_manage.html"
+
+    def dispatch(self, request, *args, **kwargs):
+        # Must check is_authenticated before touching totp_enabled at
+        # all: LoginRequiredMixin's own redirect-to-login only happens
+        # inside super().dispatch() below, so an anonymous request
+        # would otherwise crash on AnonymousUser having no such
+        # attribute instead of being sent to the login page.
+        if not request.user.is_authenticated:
+            return super().dispatch(request, *args, **kwargs)
+        if not request.user.totp_enabled:
+            return redirect("two-factor-setup")
+        return super().dispatch(request, *args, **kwargs)
+
+
+class TwoFactorSetupView(LoginRequiredMixin, FormView):
+    """Profile → Two-factor authentication → "Set up" — GET generates
+    (or reuses, if this is a retry) a TOTP secret and shows it as a QR
+    code plus the raw text fallback; POST confirms the user actually
+    configured it correctly before `totp_enabled` ever flips to True.
+    See apps.accounts.twofactor's own module docstring for why the
+    secret is written to the user as soon as setup starts, not only
+    once confirmed."""
+
+    template_name = "accounts/two_factor_setup.html"
+    form_class = TwoFactorSetupConfirmForm
+
+    def dispatch(self, request, *args, **kwargs):
+        # See TwoFactorManageView.dispatch's comment above — same
+        # reason for checking is_authenticated before totp_enabled.
+        if not request.user.is_authenticated:
+            return super().dispatch(request, *args, **kwargs)
+        if request.user.totp_enabled:
+            messages.info(request, _("Two-factor authentication is already enabled."))
+            return redirect("profile")
+        if not request.user.totp_secret:
+            request.user.totp_secret = twofactor.generate_totp_secret()
+            request.user.save(update_fields=["totp_secret"])
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["user"] = self.request.user
+        return kwargs
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        uri = twofactor.provisioning_uri(self.request.user, self.request.user.totp_secret)
+        context["qr_code_data_uri"] = twofactor.qr_code_data_uri(uri)
+        context["secret"] = self.request.user.totp_secret
+        return context
+
+    def form_valid(self, form):
+        self.request.user.totp_enabled = True
+        self.request.user.save(update_fields=["totp_enabled"])
+        self.backup_codes = twofactor.generate_backup_codes(self.request.user)
+        return self.render_to_response(
+            self.get_context_data(form=form, backup_codes=self.backup_codes, just_enabled=True)
+        )
+
+
+class TwoFactorDisableView(LoginRequiredMixin, FormView):
+    """Requires the account's own password — see
+    apps.accounts.forms.TwoFactorDisableForm's own docstring for why
+    this isn't just a JS confirm() like most other destructive actions
+    in this app."""
+
+    template_name = "accounts/two_factor_disable.html"
+    form_class = TwoFactorDisableForm
+
+    def dispatch(self, request, *args, **kwargs):
+        # See TwoFactorManageView.dispatch's comment above — same
+        # reason for checking is_authenticated before totp_enabled.
+        if not request.user.is_authenticated:
+            return super().dispatch(request, *args, **kwargs)
+        if not request.user.totp_enabled:
+            return redirect("profile")
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["user"] = self.request.user
+        return kwargs
+
+    def form_valid(self, form):
+        user = self.request.user
+        user.totp_enabled = False
+        user.totp_secret = ""
+        user.save(update_fields=["totp_enabled", "totp_secret"])
+        user.backup_codes.all().delete()
+        messages.success(self.request, _("Two-factor authentication turned off."))
+        return redirect("profile")
+
+
+class TwoFactorRegenerateBackupCodesView(LoginRequiredMixin, View):
+    """Replaces every existing backup code with a fresh set — the only
+    recovery path if they're ever used up (or lost) without disabling
+    2FA outright first. A plain confirm-then-POST (JS confirm(), like
+    most other destructive-ish actions here) rather than a password
+    re-entry like disabling: unlike turning 2FA off, this can't weaken
+    an account's own protection, only invalidate codes that might
+    already be lost anyway."""
+
+    def post(self, request, *args, **kwargs):
+        if not request.user.totp_enabled:
+            raise Http404
+        codes = twofactor.generate_backup_codes(request.user)
+        return render(
+            request, "accounts/two_factor_backup_codes.html", {"backup_codes": codes}
+        )
+
+
+class OnboardingView(LoginRequiredMixin, View):
+    """Handles both submit paths of templates/accounts/
+    _onboarding_modal.html (globally included from base.html, gated by
+    apps.accounts.context_processors.onboarding): "Save" and "Not now"
+    are two submit buttons on the same form, distinguished by the
+    `action` value, since skipping still has to mark the prompt seen
+    the same way saving does — otherwise it would just reappear on the
+    very next page. HTMX-driven like the rest of this app's forms: a
+    failed validation re-renders the same fragment with field errors
+    (still targeting the modal's own container), a successful save or
+    skip re-renders it with `show_onboarding` False, which is just the
+    fragment's own empty wrapper `<div>` — the modal disappears from
+    the page without a full navigation either way."""
+
+    def post(self, request, *args, **kwargs):
+        if request.POST.get("action") == "skip":
+            request.user.onboarding_completed = True
+            request.user.save(update_fields=["onboarding_completed"])
+            return render(request, "accounts/_onboarding_modal.html", {})
+
+        form = OnboardingForm(request.POST, user=request.user)
+        if form.is_valid():
+            form.save()
+            return render(request, "accounts/_onboarding_modal.html", {})
+        return render(
+            request,
+            "accounts/_onboarding_modal.html",
+            {"onboarding_form": form, "show_onboarding": True},
+        )

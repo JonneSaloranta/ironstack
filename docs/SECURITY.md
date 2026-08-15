@@ -103,6 +103,63 @@ limit — every submission counts here, not just ones for a real email
 address, since there's no such thing as a "failed" password-reset
 request to count selectively.
 
+## Two-factor authentication
+
+Optional, per-user, TOTP-based (RFC 6238) — Profile → "Two-factor
+authentication" → "Set up", scanning the QR code into any standard
+authenticator app. Implemented with `pyotp` (secret generation/
+verification) and `qrcode[pil]` (rendering the setup QR as an inline
+`data:image/png;base64,...` image, no separate image-serving endpoint)
+rather than `django-otp`: TOTP's crypto is security-critical and
+shouldn't be hand-rolled, but this app only ever needed exactly the
+RFC 6238 generate/verify pair for a single authenticator per user, not
+`django-otp`'s heavier multi-device/multi-method framework.
+
+**The TOTP secret (`User.totp_secret`) is stored as plain text, not
+encrypted at rest.** This is a deliberate trade-off, not an oversight:
+unlike a password, the server has to be able to read the secret back
+on every login to compute the expected 6-digit code itself — a
+one-way hash (as used for passwords) can't work here. Doing this
+properly would mean field-level encryption with its own separately-
+managed key, which this project has no existing infrastructure for.
+Anyone with read access to the production database (or a downloaded
+backup, see `docs/BACKUP.md`) can therefore reconstruct a user's live
+TOTP codes. Treat database access and backup files with the same care
+as you would the passwords table.
+
+Backup codes (`TwoFactorBackupCode`, 10 generated at setup and on any
+regeneration) are hashed with Django's own password hasher
+(`make_password`/`check_password`), not a fast digest like
+`apps.api.models.ApiKey.key_hash`'s SHA-256 — a backup code is
+entered as rarely as a password and deserves the same slow-hash
+treatment, unlike an API key that's checked on every request where a
+fast hash matters for server load. Each code is single-use
+(`used_at` is stamped the moment one is consumed).
+
+The login flow's second step
+(`apps.accounts.views.TwoFactorVerifyView`, reached only via
+`RateLimitedLoginView.form_valid`'s redirect once the password alone
+was already correct) has its own rate limit, separate from the
+brute-force protection above: 5 incorrect codes within 5 minutes locks
+out further attempts, **keyed by user ID rather than client IP**. This
+is deliberate: by this step an attacker already has a correct
+password and a specific account in mind, so an IP-keyed limit alone
+would be trivially routed around by retrying from a different address.
+Setup's own confirmation step (before `totp_enabled` ever flips to
+`True`) has no rate limit — nothing sensitive is guarded yet at that
+point, and the secret used there is discarded/regenerated on any
+retry if the user abandons setup.
+
+**Recovery for a fully locked-out user** (lost authenticator device
+*and* lost/exhausted backup codes) has no self-service path by
+design — that would defeat the point of a second factor. An
+administrator can clear it from Django admin: the `User` list has a
+"Disable two-factor authentication for selected users" action
+(`apps.accounts.admin.UserAdmin.disable_two_factor`), which clears
+`totp_enabled`, `totp_secret`, and every backup code for the selected
+users, letting them log in with just their password again and,
+if they choose, set 2FA back up from scratch.
+
 ## Cross-Site Request Forgery (CSRF)
 
 `config.settings.production` derives `CSRF_TRUSTED_ORIGINS` from

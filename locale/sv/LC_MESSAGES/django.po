@@ -9,6 +9,12 @@ msgstr ""
 "Language: sv\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
+msgid "Two-factor authentication"
+msgstr "Tvåfaktorsautentisering"
+
+msgid "Disable two-factor authentication for selected users"
+msgstr "Inaktivera tvåfaktorsautentisering för valda användare"
+
 msgid "Too many failed login attempts. Try again in a few minutes."
 msgstr "För många misslyckade inloggningsförsök. Försök igen om några minuter."
 
@@ -54,11 +60,59 @@ msgstr "Längd (cm)"
 msgid "Height (in)"
 msgstr "Längd (in)"
 
+msgid "Verification code"
+msgstr "Verifieringskod"
+
+msgid "Incorrect code — check your authenticator app and try again."
+msgstr "Fel kod — kontrollera din autentiseringsapp och försök igen."
+
+msgid "Too many incorrect codes. Try again in a few minutes."
+msgstr "För många felaktiga koder. Försök igen om några minuter."
+
+msgid "Incorrect code."
+msgstr "Fel kod."
+
+msgid "Password"
+msgstr "Lösenord"
+
+msgid "Incorrect password."
+msgstr "Fel lösenord."
+
+msgid "First name"
+msgstr "Förnamn"
+
+msgid "Used to personalize your dashboard greeting, and next to your username wherever your activity is shown to others (if you allow that in your profile)."
+msgstr "Används för att anpassa hälsningen på instrumentpanelen, och bredvid ditt användarnamn där din aktivitet visas för andra (om du tillåter det i din profil)."
+
+msgid "Email"
+msgstr "E-post"
+
+msgid "Used only for password-reset emails if you ever get locked out. Never shown to other users."
+msgstr "Används endast för lösenordsåterställningsmejl om du någonsin blir utelåst. Visas aldrig för andra användare."
+
+msgid "Logged as your first body-weight entry, so your progress charts have a starting point. Leave blank and log it anytime from the Body weight page instead."
+msgstr "Loggas som din första kroppsviktspost, så att dina förloppsdiagram får en startpunkt. Lämna tomt och logga den istället när som helst från sidan Kroppsvikt."
+
+msgid "Used together with a logged body weight to show your BMI. Leave blank to skip this — you can add it anytime from your profile."
+msgstr "Används tillsammans med en loggad kroppsvikt för att visa ditt BMI. Lämna tomt för att hoppa över detta — du kan lägga till det när som helst från din profil."
+
+msgid "Sets whether weights and distances are shown in kg/km or lb/mi throughout the app. Change this anytime from your profile."
+msgstr "Anger om vikter och avstånd visas i kg/km eller lb/mi i hela appen. Ändra detta när som helst från din profil."
+
+msgid "Current weight (%(unit)s)"
+msgstr "Nuvarande vikt (%(unit)s)"
+
+msgid "Current weight"
+msgstr "Nuvarande vikt"
+
 msgid "Metric (kg, km)"
 msgstr "Metriskt (kg, km)"
 
 msgid "Imperial (lb, mi)"
 msgstr "Brittiskt (lb, mi)"
+
+msgid "Shown as a footer note on the login and signup pages. Leave blank to hide it entirely."
+msgstr "Visas som en sidfotsnotis på inloggnings- och registreringssidorna. Lämna tomt för att dölja den helt."
 
 msgid "Registration is currently closed."
 msgstr "Registrering är för närvarande stängd."
@@ -68,6 +122,12 @@ msgstr "Inställningarna har sparats."
 
 msgid "Account details saved."
 msgstr "Kontouppgifterna har sparats."
+
+msgid "Two-factor authentication is already enabled."
+msgstr "Tvåfaktorsautentisering är redan aktiverad."
+
+msgid "Two-factor authentication turned off."
+msgstr "Tvåfaktorsautentisering avstängd."
 
 msgid "Duration (minutes)"
 msgstr "Varaktighet (minuter)"
@@ -255,6 +315,15 @@ msgstr "Tid för säkerhetskopiering (UTC)"
 msgid "Keep the most recent"
 msgstr "Behåll de senaste"
 
+msgid "Backup file"
+msgstr "Säkerhetskopiefil"
+
+msgid "A .tar.gz backup archive previously downloaded from an IronStack instance."
+msgstr "Ett .tar.gz-säkerhetskopiearkiv som tidigare laddats ner från en IronStack-instans."
+
+msgid "Must be a .tar.gz file."
+msgstr "Måste vara en .tar.gz-fil."
+
 msgid "Category"
 msgstr "Kategori"
 
@@ -341,6 +410,15 @@ msgstr "Säkerhetskopia skapad: %(name)s"
 
 msgid "Backup settings saved."
 msgstr "Säkerhetskopieringens inställningar sparade."
+
+msgid "Not a valid IronStack backup archive — expected a .tar.gz containing database.dump, media.tar, and manifest.json."
+msgstr "Inte ett giltigt IronStack-säkerhetskopiearkiv — förväntade en .tar.gz som innehåller database.dump, media.tar och manifest.json."
+
+msgid "Backup uploaded: %(name)s"
+msgstr "Säkerhetskopia uppladdad: %(name)s"
+
+msgid "Backup deleted: %(name)s"
+msgstr "Säkerhetskopia borttagen: %(name)s"
 
 msgid "Restored from backup: %(name)s"
 msgstr "Återställd från säkerhetskopia: %(name)s"
@@ -876,11 +954,20 @@ msgstr "Något gick fel"
 msgid "Something went wrong on our end. Your data is safe — try again in a moment."
 msgstr "Något gick fel på vår sida. Din data är säker — försök igen om en stund."
 
-msgid "Account details"
-msgstr "Kontouppgifter"
+msgid "Welcome to IronStack"
+msgstr "Välkommen till IronStack"
+
+msgid "Not now"
+msgstr "Inte nu"
+
+msgid "A few quick details help IronStack work better for you — every field below is optional, and you can always change them later from your profile."
+msgstr "Några snabba uppgifter hjälper IronStack att fungera bättre för dig — varje fält nedan är valfritt, och du kan alltid ändra dem senare från din profil."
 
 msgid "Save"
 msgstr "Spara"
+
+msgid "Account details"
+msgstr "Kontouppgifter"
 
 msgid "Back to profile"
 msgstr "Tillbaka till profilen"
@@ -899,6 +986,18 @@ msgstr "Byt lösenord"
 
 msgid "Update the password you use to sign in."
 msgstr "Uppdatera lösenordet du använder för att logga in."
+
+msgid "Enabled — protecting your account with a second step at login."
+msgstr "Aktiverad — skyddar ditt konto med ett andra steg vid inloggning."
+
+msgid "Add a second step at login, using an authenticator app."
+msgstr "Lägg till ett andra steg vid inloggning med en autentiseringsapp."
+
+msgid "Manage"
+msgstr "Hantera"
+
+msgid "Set up"
+msgstr "Konfigurera"
 
 msgid "API keys"
 msgstr "API-nycklar"
@@ -950,6 +1049,66 @@ msgstr "Har du redan ett konto?"
 
 msgid "Log in"
 msgstr "Logga in"
+
+msgid "New backup codes"
+msgstr "Nya reservkoder"
+
+msgid "Each one works once, if you ever lose access to your authenticator app. They won't be shown again — save them somewhere safe now. Your old backup codes no longer work."
+msgstr "Varje kod fungerar en gång, om du någonsin förlorar åtkomsten till din autentiseringsapp. De visas inte igen — spara dem på ett säkert ställe nu. Dina gamla reservkoder fungerar inte längre."
+
+msgid "Done"
+msgstr "Klar"
+
+msgid "Disable two-factor authentication"
+msgstr "Inaktivera tvåfaktorsautentisering"
+
+msgid "Enter your password to confirm. This removes your authenticator and deletes your remaining backup codes."
+msgstr "Ange ditt lösenord för att bekräfta. Detta tar bort din autentiseringsapp och dina återstående reservkoder."
+
+msgid "Cancel"
+msgstr "Avbryt"
+
+msgid "Two-factor authentication is enabled on your account."
+msgstr "Tvåfaktorsautentisering är aktiverad på ditt konto."
+
+msgid "Backup codes"
+msgstr "Reservkoder"
+
+msgid "Replace your current codes with a fresh set. The old ones stop working immediately."
+msgstr "Ersätt dina nuvarande koder med en ny uppsättning. De gamla slutar fungera omedelbart."
+
+msgid "Replace your backup codes? The old ones will stop working."
+msgstr "Ersätta dina reservkoder? De gamla slutar fungera."
+
+msgid "Regenerate"
+msgstr "Skapa nya"
+
+msgid "Removes your authenticator and backup codes. Requires your password."
+msgstr "Tar bort din autentiseringsapp och reservkoder. Kräver ditt lösenord."
+
+msgid "Disable"
+msgstr "Inaktivera"
+
+msgid "Two-factor authentication is now enabled."
+msgstr "Tvåfaktorsautentisering är nu aktiverad."
+
+msgid "Save these backup codes"
+msgstr "Spara dessa reservkoder"
+
+msgid "Each one works once, if you ever lose access to your authenticator app. They won't be shown again — save them somewhere safe now."
+msgstr "Varje kod fungerar en gång, om du någonsin förlorar åtkomsten till din autentiseringsapp. De visas inte igen — spara dem på ett säkert ställe nu."
+
+msgid "Scan this QR code with an authenticator app (e.g. Google Authenticator, Authy, or a password manager with built-in support), then enter the 6-digit code it shows to confirm setup."
+msgstr "Skanna denna QR-kod med en autentiseringsapp (t.ex. Google Authenticator, Authy eller en lösenordshanterare med inbyggt stöd), och ange sedan den 6-siffriga koden den visar för att bekräfta konfigurationen."
+
+msgid "Two-factor authentication QR code"
+msgstr "QR-kod för tvåfaktorsautentisering"
+
+msgid "Can't scan the code? Enter this key manually:"
+msgstr "Kan du inte skanna koden? Ange denna nyckel manuellt:"
+
+msgid "Confirm and enable"
+msgstr "Bekräfta och aktivera"
 
 msgid "Edit activity"
 msgstr "Redigera aktivitet"
@@ -1094,9 +1253,6 @@ msgstr "API-nyckel skapad"
 msgid "Copy this key now — you won't be able to see it again."
 msgstr "Kopiera den här nyckeln nu — du kan inte se den igen."
 
-msgid "Done"
-msgstr "Klar"
-
 msgid "New API key"
 msgstr "Ny API-nyckel"
 
@@ -1150,6 +1306,21 @@ msgstr "Träning"
 msgid "Continue training"
 msgstr "Fortsätt träna"
 
+msgid "Automatic"
+msgstr "Automatisk"
+
+msgid "Uploaded"
+msgstr "Uppladdad"
+
+msgid "Download"
+msgstr "Ladda ner"
+
+msgid "Restore"
+msgstr "Återställ"
+
+msgid "Delete this backup? This cannot be undone."
+msgstr "Vill du ta bort den här säkerhetskopian? Detta kan inte ångras."
+
 msgid "%(title)s, %(counter)s category"
 msgid_plural "%(title)s, %(counter)s categories"
 msgstr[0] "%(title)s, %(counter)s kategori"
@@ -1184,26 +1355,40 @@ msgstr[1] "%(title)s över tid, %(counter)s mätvärden"
 msgid "Create backup"
 msgstr "Skapa säkerhetskopia"
 
+msgid "Upload backup"
+msgstr "Ladda upp säkerhetskopia"
+
+msgid "Restore from a backup file you downloaded earlier, instead of one already listed below."
+msgstr "Återställ från en säkerhetskopia du laddade ner tidigare, istället för en som redan listas nedan."
+
+msgid "Upload and continue"
+msgstr "Ladda upp och fortsätt"
+
 msgid "Settings"
 msgstr "Inställningar"
 
 msgid "Save settings"
 msgstr "Spara inställningar"
 
-msgid "Created"
-msgstr "Skapad"
+msgid "Automatic backups"
+msgstr "Automatiska säkerhetskopior"
 
-msgid "Size"
-msgstr "Storlek"
+msgid "▾ Show %(counter)s earlier automatic backup"
+msgid_plural "▾ Show %(counter)s earlier automatic backups"
+msgstr[0] "▾ Visa %(counter)s tidigare automatisk säkerhetskopia"
+msgstr[1] "▾ Visa %(counter)s tidigare automatiska säkerhetskopior"
 
-msgid "Download"
-msgstr "Ladda ner"
+msgid "Hide earlier automatic backups"
+msgstr "Dölj tidigare automatiska säkerhetskopior"
 
-msgid "Restore"
-msgstr "Återställ"
+msgid "No automatic backups yet."
+msgstr "Inga automatiska säkerhetskopior ännu."
 
-msgid "No backups yet."
-msgstr "Inga säkerhetskopior ännu."
+msgid "Manual & uploaded backups"
+msgstr "Manuella och uppladdade säkerhetskopior"
+
+msgid "No manual or uploaded backups yet."
+msgstr "Inga manuella eller uppladdade säkerhetskopior ännu."
 
 msgid "Restore backup"
 msgstr "Återställ säkerhetskopia"
@@ -1222,6 +1407,9 @@ msgstr "Version"
 
 msgid "Git commit"
 msgstr "Git-commit"
+
+msgid "Created"
+msgstr "Skapad"
 
 msgid "Running instance"
 msgstr "Körande instans"
@@ -1421,9 +1609,6 @@ msgstr "Ta bort program"
 msgid "Delete <strong>%(name)s</strong> and all of its workouts and exercises? This cannot be undone."
 msgstr "Ta bort <strong>%(name)s</strong> och alla dess träningspass och övningar? Detta kan inte ångras."
 
-msgid "Cancel"
-msgstr "Avbryt"
-
 msgid "Built-in template"
 msgstr "Inbyggd mall"
 
@@ -1594,6 +1779,15 @@ msgstr "Skicka återställningslänk"
 
 msgid "Password reset on %(site_name)s"
 msgstr "Lösenordsåterställning på %(site_name)s"
+
+msgid "Two-factor verification"
+msgstr "Tvåfaktorsverifiering"
+
+msgid "Enter the 6-digit code from your authenticator app, or one of your backup codes."
+msgstr "Ange den 6-siffriga koden från din autentiseringsapp, eller en av dina reservkoder."
+
+msgid "Verify"
+msgstr "Verifiera"
 
 msgid "Target: %(count)s × %(min)s-%(max)s"
 msgstr "Mål: %(count)s × %(min)s-%(max)s"

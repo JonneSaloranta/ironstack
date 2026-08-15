@@ -49,6 +49,22 @@
 
 <div class="card card-action-row">
   <div>
+    <strong>{% trans "Two-factor authentication" %}</strong>
+    {% if user.totp_enabled %}
+      <p class="text-muted">{% trans "Enabled — protecting your account with a second step at login." %}</p>
+    {% else %}
+      <p class="text-muted">{% trans "Add a second step at login, using an authenticator app." %}</p>
+    {% endif %}
+  </div>
+  {% if user.totp_enabled %}
+    <a class="button-secondary" href="{% url 'two-factor-manage' %}">{% trans "Manage" %}</a>
+  {% else %}
+    <a class="button-secondary" href="{% url 'two-factor-setup' %}">{% trans "Set up" %}</a>
+  {% endif %}
+</div>
+
+<div class="card card-action-row">
+  <div>
     <strong>{% trans "API keys" %}</strong>
     <p class="text-muted">{% trans "Manage keys other apps can use to access your data." %}</p>
   </div>
