@@ -5,6 +5,18 @@ version: 2
 # rather than daily: dependency updates are worth batching and
 # reviewing deliberately, not reacting to individually as they land.
 # Every PR still has to pass .github/workflows/ci.yml before merging.
+#
+# Every ecosystem below is restricted to minor/patch updates only — a
+# major version (Django 5.0→6.1, ...) is exactly the kind of change
+# this project's own docs pin a specific line to on purpose
+# (docs/DEVELOPMENT.md "Pinned versions & tooling"), and is real
+# enough of a risk that it deserves a human deciding to go looking for
+# it, not a routine PR that looks the same as a patch bump. Bump a
+# major version by hand (Dockerfile's FROM tag, requirements/*.txt's
+# own range pin, .github/workflows/ci.yml's python-version, ...) when
+# you actually want to, then verify it the way docs/DEVELOPMENT_LOG.md's
+# "Verified the Dependabot-proposed dependency bumps" entry did:
+# rebuild clean, run the full suite, live-check a few pages.
 updates:
   - package-ecosystem: pip
     directory: /requirements
@@ -16,13 +28,37 @@ updates:
       # so most weeks this is just picking up patch releases.
       python-dependencies:
         patterns: ["*"]
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
 
   - package-ecosystem: docker
     directory: /
     schedule:
       interval: weekly
+    ignore:
+      # Docker image tags don't follow real semver the way pip
+      # packages do — a tag like "python:3.12-slim" only has two
+      # numeric components, so Dependabot maps the *first* one to
+      # "major" (always 3, for the whole Python 3.x line) and the
+      # *second* to "minor". The Python 3.12→3.14 jump that prompted
+      # this file existing at all was, by that classification, a
+      # semver-*minor* update, not major — ignoring only semver-major
+      # here (as the pip/github-actions ecosystems below do) would
+      # have let it straight back through. Same reasoning applies to
+      # nginx's "1.27-alpine"-style tags. Patch-level bumps (a specific
+      # third digit) still flow through automatically where a tag
+      # actually has one; postgres/python/nginx's own tags here don't,
+      # so in practice this ecosystem now only ever proposes a genuine
+      # security-patch PR, not a routine version-chasing one.
+      - dependency-name: "*"
+        update-types:
+          ["version-update:semver-major", "version-update:semver-minor"]
 
   - package-ecosystem: github-actions
     directory: /
     schedule:
       interval: weekly
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
