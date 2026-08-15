@@ -401,6 +401,15 @@ blob — `scripts/backup.sh` calls it to write each archive's
 time to show what's currently running next to what's in the archive.
 See `docs/BACKUP.md` for the full backup/restore workflow.
 
+Bumping `VERSION` and pushing to master is also the entire release
+procedure — `.github/workflows/ci.yml`'s `create-release` job diffs
+`VERSION` against the commit before the push, and if it changed,
+creates a GitHub Release (`vX.Y.Z`, gated the same way `publish-image`
+is: `lint-and-test` and `publish-image` both have to succeed first)
+with `CHANGELOG.md`'s own section for that version as the release
+notes — read directly, never duplicated into the workflow file. No
+separate `git tag` step; the tag is created as part of the release.
+
 ## Domain services
 
 Important services should be independently testable.

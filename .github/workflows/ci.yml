@@ -10,8 +10,8 @@ on:
     branches: [master, dev]
 
 # Least-privilege default — GITHUB_TOKEN gets read-only repo access
-# unless a job explicitly asks for more (publish-image below asks for
-# packages: write, and only that job gets it).
+# unless a job explicitly asks for more (publish-image and
+# create-release below each ask for their own, only on those jobs).
 permissions:
   contents: read
 
@@ -134,3 +134,73 @@ jobs:
             ${{ steps.meta.outputs.image }}:${{ steps.meta.outputs.version }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+  # Cuts a GitHub Release whenever a push to master actually bumps the
+  # repo-root VERSION file (docs/ARCHITECTURE.md "Versioning") —
+  # bumping it is already the one-file-edit signal this project treats
+  # as "this is a real release" (see docs/DEVELOPMENT_LOG.md's own
+  # "Bump VERSION to ..." entries), so this needs no separate `git tag`
+  # step or its own trigger: the release IS the version bump landing on
+  # master, gated the same way publish-image is (needs: both
+  # lint-and-test and publish-image, so a release only ever points at
+  # a commit that's both green and has a real image published for it).
+  # The release notes are CHANGELOG.md's own section for that version —
+  # not duplicated here, just read.
+  create-release:
+    needs: [lint-and-test, publish-image]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          # Need the commit before this push to diff VERSION against —
+          # a shallow (default) checkout wouldn't have it.
+          fetch-depth: 0
+
+      - name: Check whether VERSION changed in this push
+        id: version_check
+        run: |
+          before="${{ github.event.before }}"
+          # A branch's very first push (or a history rewrite) reports
+          # an all-zero "before" SHA that doesn't exist to diff
+          # against — treat that as "not a version bump" rather than
+          # failing the job.
+          if [ "$before" = "0000000000000000000000000000000000000000" ] \
+             || ! git cat-file -e "$before" 2>/dev/null; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          elif git diff --name-only "$before" "${{ github.sha }}" -- VERSION | grep -qx VERSION; then
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Extract this version's CHANGELOG.md section and create the release
+        if: steps.version_check.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          version="$(cat VERSION)"
+          if ! [[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "VERSION ('$version') isn't a plain X.Y.Z semantic version — skipping release." >&2
+            exit 1
+          fi
+
+          notes_file="$(mktemp)"
+          awk -v ver="$version" '
+            $0 ~ "^## \\[" ver "\\]" { found=1; next }
+            found && /^## \[/ { found=0 }
+            found { print }
+          ' CHANGELOG.md | sed -e '/./,$!d' | tac | sed -e '/./,$!d' | tac > "$notes_file"
+
+          if [ ! -s "$notes_file" ]; then
+            echo "No CHANGELOG.md section found for $version — using a placeholder body." >&2
+            echo "_No changelog entry found for this version — see the commit history._" > "$notes_file"
+          fi
+
+          gh release create "v$version" \
+            --repo "${{ github.repository }}" \
+            --target "${{ github.sha }}" \
+            --title "v$version" \
+            --notes-file "$notes_file"
