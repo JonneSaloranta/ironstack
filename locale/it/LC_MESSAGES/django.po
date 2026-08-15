@@ -9,6 +9,12 @@ msgstr ""
 "Language: it\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
+msgid "Two-factor authentication"
+msgstr "Autenticazione a due fattori"
+
+msgid "Disable two-factor authentication for selected users"
+msgstr "Disattiva l'autenticazione a due fattori per gli utenti selezionati"
+
 msgid "Too many failed login attempts. Try again in a few minutes."
 msgstr "Troppi tentativi di accesso falliti. Riprova tra qualche minuto."
 
@@ -54,11 +60,32 @@ msgstr "Altezza (cm)"
 msgid "Height (in)"
 msgstr "Altezza (in)"
 
+msgid "Verification code"
+msgstr "Codice di verifica"
+
+msgid "Incorrect code — check your authenticator app and try again."
+msgstr "Codice errato — controlla la tua app di autenticazione e riprova."
+
+msgid "Too many incorrect codes. Try again in a few minutes."
+msgstr "Troppi codici errati. Riprova tra qualche minuto."
+
+msgid "Incorrect code."
+msgstr "Codice errato."
+
+msgid "Password"
+msgstr "Password"
+
+msgid "Incorrect password."
+msgstr "Password errata."
+
 msgid "Metric (kg, km)"
 msgstr "Metrico (kg, km)"
 
 msgid "Imperial (lb, mi)"
 msgstr "Imperiale (lb, mi)"
+
+msgid "Shown as a footer note on the login and signup pages. Leave blank to hide it entirely."
+msgstr "Mostrato come nota a piè di pagina nelle pagine di accesso e registrazione. Lascia vuoto per nasconderlo completamente."
 
 msgid "Registration is currently closed."
 msgstr "La registrazione è attualmente chiusa."
@@ -68,6 +95,12 @@ msgstr "Preferenze salvate."
 
 msgid "Account details saved."
 msgstr "Dettagli account salvati."
+
+msgid "Two-factor authentication is already enabled."
+msgstr "L'autenticazione a due fattori è già attiva."
+
+msgid "Two-factor authentication turned off."
+msgstr "Autenticazione a due fattori disattivata."
 
 msgid "Duration (minutes)"
 msgstr "Durata (minuti)"
@@ -918,6 +951,18 @@ msgstr "Cambia password"
 msgid "Update the password you use to sign in."
 msgstr "Aggiorna la password che usi per accedere."
 
+msgid "Enabled — protecting your account with a second step at login."
+msgstr "Attiva — protegge il tuo account con un secondo passaggio all'accesso."
+
+msgid "Add a second step at login, using an authenticator app."
+msgstr "Aggiungi un secondo passaggio all'accesso tramite un'app di autenticazione."
+
+msgid "Manage"
+msgstr "Gestisci"
+
+msgid "Set up"
+msgstr "Configura"
+
 msgid "API keys"
 msgstr "Chiavi API"
 
@@ -968,6 +1013,66 @@ msgstr "Hai già un account?"
 
 msgid "Log in"
 msgstr "Accedi"
+
+msgid "New backup codes"
+msgstr "Nuovi codici di backup"
+
+msgid "Each one works once, if you ever lose access to your authenticator app. They won't be shown again — save them somewhere safe now. Your old backup codes no longer work."
+msgstr "Ognuno funziona una sola volta, nel caso perdessi l'accesso alla tua app di autenticazione. Non verranno mostrati di nuovo — salvali ora in un posto sicuro. I tuoi vecchi codici di backup non funzionano più."
+
+msgid "Done"
+msgstr "Fatto"
+
+msgid "Disable two-factor authentication"
+msgstr "Disattiva l'autenticazione a due fattori"
+
+msgid "Enter your password to confirm. This removes your authenticator and deletes your remaining backup codes."
+msgstr "Inserisci la password per confermare. Questo rimuove il tuo autenticatore e i codici di backup rimanenti."
+
+msgid "Cancel"
+msgstr "Annulla"
+
+msgid "Two-factor authentication is enabled on your account."
+msgstr "L'autenticazione a due fattori è attiva sul tuo account."
+
+msgid "Backup codes"
+msgstr "Codici di backup"
+
+msgid "Replace your current codes with a fresh set. The old ones stop working immediately."
+msgstr "Sostituisci i codici attuali con un nuovo set. Quelli vecchi smettono di funzionare immediatamente."
+
+msgid "Replace your backup codes? The old ones will stop working."
+msgstr "Sostituire i codici di backup? Quelli vecchi smetteranno di funzionare."
+
+msgid "Regenerate"
+msgstr "Rigenera"
+
+msgid "Removes your authenticator and backup codes. Requires your password."
+msgstr "Rimuove il tuo autenticatore e i codici di backup. Richiede la password."
+
+msgid "Disable"
+msgstr "Disattiva"
+
+msgid "Two-factor authentication is now enabled."
+msgstr "L'autenticazione a due fattori è ora attiva."
+
+msgid "Save these backup codes"
+msgstr "Salva questi codici di backup"
+
+msgid "Each one works once, if you ever lose access to your authenticator app. They won't be shown again — save them somewhere safe now."
+msgstr "Ognuno funziona una sola volta, nel caso perdessi l'accesso alla tua app di autenticazione. Non verranno mostrati di nuovo — salvali ora in un posto sicuro."
+
+msgid "Scan this QR code with an authenticator app (e.g. Google Authenticator, Authy, or a password manager with built-in support), then enter the 6-digit code it shows to confirm setup."
+msgstr "Scansiona questo codice QR con un'app di autenticazione (ad es. Google Authenticator, Authy o un gestore di password con supporto integrato), quindi inserisci il codice a 6 cifre mostrato per confermare la configurazione."
+
+msgid "Two-factor authentication QR code"
+msgstr "Codice QR per l'autenticazione a due fattori"
+
+msgid "Can't scan the code? Enter this key manually:"
+msgstr "Non riesci a scansionare il codice? Inserisci questa chiave manualmente:"
+
+msgid "Confirm and enable"
+msgstr "Conferma e attiva"
 
 msgid "Edit activity"
 msgstr "Modifica attività"
@@ -1111,9 +1216,6 @@ msgstr "Chiave API creata"
 
 msgid "Copy this key now — you won't be able to see it again."
 msgstr "Copia questa chiave ora — non potrai vederla di nuovo."
-
-msgid "Done"
-msgstr "Fatto"
 
 msgid "New API key"
 msgstr "Nuova chiave API"
@@ -1471,9 +1573,6 @@ msgstr "Elimina programma"
 msgid "Delete <strong>%(name)s</strong> and all of its workouts and exercises? This cannot be undone."
 msgstr "Eliminare <strong>%(name)s</strong> e tutti i suoi allenamenti ed esercizi? Questa azione non può essere annullata."
 
-msgid "Cancel"
-msgstr "Annulla"
-
 msgid "Built-in template"
 msgstr "Modello integrato"
 
@@ -1644,6 +1743,15 @@ msgstr "Invia link di reimpostazione"
 
 msgid "Password reset on %(site_name)s"
 msgstr "Reimpostazione password su %(site_name)s"
+
+msgid "Two-factor verification"
+msgstr "Verifica a due fattori"
+
+msgid "Enter the 6-digit code from your authenticator app, or one of your backup codes."
+msgstr "Inserisci il codice a 6 cifre dalla tua app di autenticazione, oppure uno dei tuoi codici di backup."
+
+msgid "Verify"
+msgstr "Verifica"
 
 msgid "Target: %(count)s × %(min)s-%(max)s"
 msgstr "Obiettivo: %(count)s × %(min)s-%(max)s"

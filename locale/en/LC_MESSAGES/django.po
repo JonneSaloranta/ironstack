@@ -9,6 +9,12 @@ msgstr ""
 "Language: en\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
+msgid "Two-factor authentication"
+msgstr "Two-factor authentication"
+
+msgid "Disable two-factor authentication for selected users"
+msgstr "Disable two-factor authentication for selected users"
+
 msgid "Too many failed login attempts. Try again in a few minutes."
 msgstr "Too many failed login attempts. Try again in a few minutes."
 
@@ -54,11 +60,32 @@ msgstr "Height (cm)"
 msgid "Height (in)"
 msgstr "Height (in)"
 
+msgid "Verification code"
+msgstr "Verification code"
+
+msgid "Incorrect code — check your authenticator app and try again."
+msgstr "Incorrect code — check your authenticator app and try again."
+
+msgid "Too many incorrect codes. Try again in a few minutes."
+msgstr "Too many incorrect codes. Try again in a few minutes."
+
+msgid "Incorrect code."
+msgstr "Incorrect code."
+
+msgid "Password"
+msgstr "Password"
+
+msgid "Incorrect password."
+msgstr "Incorrect password."
+
 msgid "Metric (kg, km)"
 msgstr "Metric (kg, km)"
 
 msgid "Imperial (lb, mi)"
 msgstr "Imperial (lb, mi)"
+
+msgid "Shown as a footer note on the login and signup pages. Leave blank to hide it entirely."
+msgstr "Shown as a footer note on the login and signup pages. Leave blank to hide it entirely."
 
 msgid "Registration is currently closed."
 msgstr "Registration is currently closed."
@@ -68,6 +95,12 @@ msgstr "Preferences saved."
 
 msgid "Account details saved."
 msgstr "Account details saved."
+
+msgid "Two-factor authentication is already enabled."
+msgstr "Two-factor authentication is already enabled."
+
+msgid "Two-factor authentication turned off."
+msgstr "Two-factor authentication turned off."
 
 msgid "Duration (minutes)"
 msgstr "Duration (minutes)"
@@ -918,6 +951,18 @@ msgstr "Change password"
 msgid "Update the password you use to sign in."
 msgstr "Update the password you use to sign in."
 
+msgid "Enabled — protecting your account with a second step at login."
+msgstr "Enabled — protecting your account with a second step at login."
+
+msgid "Add a second step at login, using an authenticator app."
+msgstr "Add a second step at login, using an authenticator app."
+
+msgid "Manage"
+msgstr "Manage"
+
+msgid "Set up"
+msgstr "Set up"
+
 msgid "API keys"
 msgstr "API keys"
 
@@ -968,6 +1013,66 @@ msgstr "Already have an account?"
 
 msgid "Log in"
 msgstr "Log in"
+
+msgid "New backup codes"
+msgstr "New backup codes"
+
+msgid "Each one works once, if you ever lose access to your authenticator app. They won't be shown again — save them somewhere safe now. Your old backup codes no longer work."
+msgstr "Each one works once, if you ever lose access to your authenticator app. They won't be shown again — save them somewhere safe now. Your old backup codes no longer work."
+
+msgid "Done"
+msgstr "Done"
+
+msgid "Disable two-factor authentication"
+msgstr "Disable two-factor authentication"
+
+msgid "Enter your password to confirm. This removes your authenticator and deletes your remaining backup codes."
+msgstr "Enter your password to confirm. This removes your authenticator and deletes your remaining backup codes."
+
+msgid "Cancel"
+msgstr "Cancel"
+
+msgid "Two-factor authentication is enabled on your account."
+msgstr "Two-factor authentication is enabled on your account."
+
+msgid "Backup codes"
+msgstr "Backup codes"
+
+msgid "Replace your current codes with a fresh set. The old ones stop working immediately."
+msgstr "Replace your current codes with a fresh set. The old ones stop working immediately."
+
+msgid "Replace your backup codes? The old ones will stop working."
+msgstr "Replace your backup codes? The old ones will stop working."
+
+msgid "Regenerate"
+msgstr "Regenerate"
+
+msgid "Removes your authenticator and backup codes. Requires your password."
+msgstr "Removes your authenticator and backup codes. Requires your password."
+
+msgid "Disable"
+msgstr "Disable"
+
+msgid "Two-factor authentication is now enabled."
+msgstr "Two-factor authentication is now enabled."
+
+msgid "Save these backup codes"
+msgstr "Save these backup codes"
+
+msgid "Each one works once, if you ever lose access to your authenticator app. They won't be shown again — save them somewhere safe now."
+msgstr "Each one works once, if you ever lose access to your authenticator app. They won't be shown again — save them somewhere safe now."
+
+msgid "Scan this QR code with an authenticator app (e.g. Google Authenticator, Authy, or a password manager with built-in support), then enter the 6-digit code it shows to confirm setup."
+msgstr "Scan this QR code with an authenticator app (e.g. Google Authenticator, Authy, or a password manager with built-in support), then enter the 6-digit code it shows to confirm setup."
+
+msgid "Two-factor authentication QR code"
+msgstr "Two-factor authentication QR code"
+
+msgid "Can't scan the code? Enter this key manually:"
+msgstr "Can't scan the code? Enter this key manually:"
+
+msgid "Confirm and enable"
+msgstr "Confirm and enable"
 
 msgid "Edit activity"
 msgstr "Edit activity"
@@ -1111,9 +1216,6 @@ msgstr "API key created"
 
 msgid "Copy this key now — you won't be able to see it again."
 msgstr "Copy this key now — you won't be able to see it again."
-
-msgid "Done"
-msgstr "Done"
 
 msgid "New API key"
 msgstr "New API key"
@@ -1471,9 +1573,6 @@ msgstr "Delete program"
 msgid "Delete <strong>%(name)s</strong> and all of its workouts and exercises? This cannot be undone."
 msgstr "Delete <strong>%(name)s</strong> and all of its workouts and exercises? This cannot be undone."
 
-msgid "Cancel"
-msgstr "Cancel"
-
 msgid "Built-in template"
 msgstr "Built-in template"
 
@@ -1644,6 +1743,15 @@ msgstr "Send reset link"
 
 msgid "Password reset on %(site_name)s"
 msgstr "Password reset on %(site_name)s"
+
+msgid "Two-factor verification"
+msgstr "Two-factor verification"
+
+msgid "Enter the 6-digit code from your authenticator app, or one of your backup codes."
+msgstr "Enter the 6-digit code from your authenticator app, or one of your backup codes."
+
+msgid "Verify"
+msgstr "Verify"
 
 msgid "Target: %(count)s × %(min)s-%(max)s"
 msgstr "Target: %(count)s × %(min)s-%(max)s"

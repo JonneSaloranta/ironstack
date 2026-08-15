@@ -9,6 +9,12 @@ msgstr ""
 "Language: sv\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
+msgid "Two-factor authentication"
+msgstr "Tvåfaktorsautentisering"
+
+msgid "Disable two-factor authentication for selected users"
+msgstr "Inaktivera tvåfaktorsautentisering för valda användare"
+
 msgid "Too many failed login attempts. Try again in a few minutes."
 msgstr "För många misslyckade inloggningsförsök. Försök igen om några minuter."
 
@@ -54,11 +60,32 @@ msgstr "Längd (cm)"
 msgid "Height (in)"
 msgstr "Längd (in)"
 
+msgid "Verification code"
+msgstr "Verifieringskod"
+
+msgid "Incorrect code — check your authenticator app and try again."
+msgstr "Fel kod — kontrollera din autentiseringsapp och försök igen."
+
+msgid "Too many incorrect codes. Try again in a few minutes."
+msgstr "För många felaktiga koder. Försök igen om några minuter."
+
+msgid "Incorrect code."
+msgstr "Fel kod."
+
+msgid "Password"
+msgstr "Lösenord"
+
+msgid "Incorrect password."
+msgstr "Fel lösenord."
+
 msgid "Metric (kg, km)"
 msgstr "Metriskt (kg, km)"
 
 msgid "Imperial (lb, mi)"
 msgstr "Brittiskt (lb, mi)"
+
+msgid "Shown as a footer note on the login and signup pages. Leave blank to hide it entirely."
+msgstr "Visas som en sidfotsnotis på inloggnings- och registreringssidorna. Lämna tomt för att dölja den helt."
 
 msgid "Registration is currently closed."
 msgstr "Registrering är för närvarande stängd."
@@ -68,6 +95,12 @@ msgstr "Inställningarna har sparats."
 
 msgid "Account details saved."
 msgstr "Kontouppgifterna har sparats."
+
+msgid "Two-factor authentication is already enabled."
+msgstr "Tvåfaktorsautentisering är redan aktiverad."
+
+msgid "Two-factor authentication turned off."
+msgstr "Tvåfaktorsautentisering avstängd."
 
 msgid "Duration (minutes)"
 msgstr "Varaktighet (minuter)"
@@ -918,6 +951,18 @@ msgstr "Byt lösenord"
 msgid "Update the password you use to sign in."
 msgstr "Uppdatera lösenordet du använder för att logga in."
 
+msgid "Enabled — protecting your account with a second step at login."
+msgstr "Aktiverad — skyddar ditt konto med ett andra steg vid inloggning."
+
+msgid "Add a second step at login, using an authenticator app."
+msgstr "Lägg till ett andra steg vid inloggning med en autentiseringsapp."
+
+msgid "Manage"
+msgstr "Hantera"
+
+msgid "Set up"
+msgstr "Konfigurera"
+
 msgid "API keys"
 msgstr "API-nycklar"
 
@@ -968,6 +1013,66 @@ msgstr "Har du redan ett konto?"
 
 msgid "Log in"
 msgstr "Logga in"
+
+msgid "New backup codes"
+msgstr "Nya reservkoder"
+
+msgid "Each one works once, if you ever lose access to your authenticator app. They won't be shown again — save them somewhere safe now. Your old backup codes no longer work."
+msgstr "Varje kod fungerar en gång, om du någonsin förlorar åtkomsten till din autentiseringsapp. De visas inte igen — spara dem på ett säkert ställe nu. Dina gamla reservkoder fungerar inte längre."
+
+msgid "Done"
+msgstr "Klar"
+
+msgid "Disable two-factor authentication"
+msgstr "Inaktivera tvåfaktorsautentisering"
+
+msgid "Enter your password to confirm. This removes your authenticator and deletes your remaining backup codes."
+msgstr "Ange ditt lösenord för att bekräfta. Detta tar bort din autentiseringsapp och dina återstående reservkoder."
+
+msgid "Cancel"
+msgstr "Avbryt"
+
+msgid "Two-factor authentication is enabled on your account."
+msgstr "Tvåfaktorsautentisering är aktiverad på ditt konto."
+
+msgid "Backup codes"
+msgstr "Reservkoder"
+
+msgid "Replace your current codes with a fresh set. The old ones stop working immediately."
+msgstr "Ersätt dina nuvarande koder med en ny uppsättning. De gamla slutar fungera omedelbart."
+
+msgid "Replace your backup codes? The old ones will stop working."
+msgstr "Ersätta dina reservkoder? De gamla slutar fungera."
+
+msgid "Regenerate"
+msgstr "Skapa nya"
+
+msgid "Removes your authenticator and backup codes. Requires your password."
+msgstr "Tar bort din autentiseringsapp och reservkoder. Kräver ditt lösenord."
+
+msgid "Disable"
+msgstr "Inaktivera"
+
+msgid "Two-factor authentication is now enabled."
+msgstr "Tvåfaktorsautentisering är nu aktiverad."
+
+msgid "Save these backup codes"
+msgstr "Spara dessa reservkoder"
+
+msgid "Each one works once, if you ever lose access to your authenticator app. They won't be shown again — save them somewhere safe now."
+msgstr "Varje kod fungerar en gång, om du någonsin förlorar åtkomsten till din autentiseringsapp. De visas inte igen — spara dem på ett säkert ställe nu."
+
+msgid "Scan this QR code with an authenticator app (e.g. Google Authenticator, Authy, or a password manager with built-in support), then enter the 6-digit code it shows to confirm setup."
+msgstr "Skanna denna QR-kod med en autentiseringsapp (t.ex. Google Authenticator, Authy eller en lösenordshanterare med inbyggt stöd), och ange sedan den 6-siffriga koden den visar för att bekräfta konfigurationen."
+
+msgid "Two-factor authentication QR code"
+msgstr "QR-kod för tvåfaktorsautentisering"
+
+msgid "Can't scan the code? Enter this key manually:"
+msgstr "Kan du inte skanna koden? Ange denna nyckel manuellt:"
+
+msgid "Confirm and enable"
+msgstr "Bekräfta och aktivera"
 
 msgid "Edit activity"
 msgstr "Redigera aktivitet"
@@ -1111,9 +1216,6 @@ msgstr "API-nyckel skapad"
 
 msgid "Copy this key now — you won't be able to see it again."
 msgstr "Kopiera den här nyckeln nu — du kan inte se den igen."
-
-msgid "Done"
-msgstr "Klar"
 
 msgid "New API key"
 msgstr "Ny API-nyckel"
@@ -1471,9 +1573,6 @@ msgstr "Ta bort program"
 msgid "Delete <strong>%(name)s</strong> and all of its workouts and exercises? This cannot be undone."
 msgstr "Ta bort <strong>%(name)s</strong> och alla dess träningspass och övningar? Detta kan inte ångras."
 
-msgid "Cancel"
-msgstr "Avbryt"
-
 msgid "Built-in template"
 msgstr "Inbyggd mall"
 
@@ -1644,6 +1743,15 @@ msgstr "Skicka återställningslänk"
 
 msgid "Password reset on %(site_name)s"
 msgstr "Lösenordsåterställning på %(site_name)s"
+
+msgid "Two-factor verification"
+msgstr "Tvåfaktorsverifiering"
+
+msgid "Enter the 6-digit code from your authenticator app, or one of your backup codes."
+msgstr "Ange den 6-siffriga koden från din autentiseringsapp, eller en av dina reservkoder."
+
+msgid "Verify"
+msgstr "Verifiera"
 
 msgid "Target: %(count)s × %(min)s-%(max)s"
 msgstr "Mål: %(count)s × %(min)s-%(max)s"

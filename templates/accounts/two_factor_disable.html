@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Disable two-factor authentication" %} — IronStack{% endblock %}
+{% block content %}
+<div class="top-bar">
+  <h1 style="margin:0;">{% trans "Disable two-factor authentication" %}</h1>
+</div>
+<div class="card">
+  <p>{% trans "Enter your password to confirm. This removes your authenticator and deletes your remaining backup codes." %}</p>
+</div>
+<form class="card" method="post">
+  {% csrf_token %}
+  {{ form.non_field_errors }}
+  {% for field in form %}
+    <div class="field">
+      {{ field.label_tag }}
+      {{ field }}
+      {% if field.errors %}<p class="field-error">{{ field.errors|striptags }}</p>{% endif %}
+    </div>
+  {% endfor %}
+  <button type="submit" class="button-danger">{% trans "Disable two-factor authentication" %}</button>
+</form>
+<p><a class="button-secondary" href="{% url 'profile' %}">&larr; {% trans "Cancel" %}</a></p>
+{% endblock %}

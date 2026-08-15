@@ -9,6 +9,12 @@ msgstr ""
 "Language: fi\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
+msgid "Two-factor authentication"
+msgstr "Kaksivaiheinen tunnistautuminen"
+
+msgid "Disable two-factor authentication for selected users"
+msgstr "Poista kaksivaiheinen tunnistautuminen käytöstä valituilta käyttäjiltä"
+
 msgid "Too many failed login attempts. Try again in a few minutes."
 msgstr "Liian monta epäonnistunutta kirjautumisyritystä. Yritä uudelleen muutaman minuutin kuluttua."
 
@@ -54,11 +60,32 @@ msgstr "Pituus (cm)"
 msgid "Height (in)"
 msgstr "Pituus (in)"
 
+msgid "Verification code"
+msgstr "Vahvistuskoodi"
+
+msgid "Incorrect code — check your authenticator app and try again."
+msgstr "Väärä koodi — tarkista tunnistautumissovelluksesi ja yritä uudelleen."
+
+msgid "Too many incorrect codes. Try again in a few minutes."
+msgstr "Liian monta väärää koodia. Yritä uudelleen muutaman minuutin kuluttua."
+
+msgid "Incorrect code."
+msgstr "Väärä koodi."
+
+msgid "Password"
+msgstr "Salasana"
+
+msgid "Incorrect password."
+msgstr "Väärä salasana."
+
 msgid "Metric (kg, km)"
 msgstr "Metrinen (kg, km)"
 
 msgid "Imperial (lb, mi)"
 msgstr "Imperiaalinen (lb, mi)"
+
+msgid "Shown as a footer note on the login and signup pages. Leave blank to hide it entirely."
+msgstr "Näytetään alatunnisteessa kirjautumis- ja rekisteröitymissivuilla. Jätä tyhjäksi piilottaaksesi sen kokonaan."
 
 msgid "Registration is currently closed."
 msgstr "Rekisteröityminen on tällä hetkellä suljettu."
@@ -68,6 +95,12 @@ msgstr "Asetukset tallennettu."
 
 msgid "Account details saved."
 msgstr "Tilin tiedot tallennettu."
+
+msgid "Two-factor authentication is already enabled."
+msgstr "Kaksivaiheinen tunnistautuminen on jo käytössä."
+
+msgid "Two-factor authentication turned off."
+msgstr "Kaksivaiheinen tunnistautuminen poistettu käytöstä."
 
 msgid "Duration (minutes)"
 msgstr "Kesto (minuuttia)"
@@ -918,6 +951,18 @@ msgstr "Vaihda salasana"
 msgid "Update the password you use to sign in."
 msgstr "Päivitä salasana, jolla kirjaudut sisään."
 
+msgid "Enabled — protecting your account with a second step at login."
+msgstr "Käytössä — suojaa tiliäsi toisella vaiheella kirjautuessa."
+
+msgid "Add a second step at login, using an authenticator app."
+msgstr "Lisää toinen vaihe kirjautumiseen tunnistautumissovelluksen avulla."
+
+msgid "Manage"
+msgstr "Hallitse"
+
+msgid "Set up"
+msgstr "Ota käyttöön"
+
 msgid "API keys"
 msgstr "API-avaimet"
 
@@ -968,6 +1013,66 @@ msgstr "Onko sinulla jo tili?"
 
 msgid "Log in"
 msgstr "Kirjaudu sisään"
+
+msgid "New backup codes"
+msgstr "Uudet varakoodit"
+
+msgid "Each one works once, if you ever lose access to your authenticator app. They won't be shown again — save them somewhere safe now. Your old backup codes no longer work."
+msgstr "Jokainen koodi toimii kerran, jos menetät pääsyn tunnistautumissovellukseesi. Niitä ei näytetä enää uudelleen — tallenna ne nyt turvalliseen paikkaan. Vanhat varakoodisi eivät enää toimi."
+
+msgid "Done"
+msgstr "Valmis"
+
+msgid "Disable two-factor authentication"
+msgstr "Poista kaksivaiheinen tunnistautuminen käytöstä"
+
+msgid "Enter your password to confirm. This removes your authenticator and deletes your remaining backup codes."
+msgstr "Vahvista antamalla salasanasi. Tämä poistaa tunnistautumissovelluksesi ja jäljellä olevat varakoodisi."
+
+msgid "Cancel"
+msgstr "Peruuta"
+
+msgid "Two-factor authentication is enabled on your account."
+msgstr "Kaksivaiheinen tunnistautuminen on käytössä tililläsi."
+
+msgid "Backup codes"
+msgstr "Varakoodit"
+
+msgid "Replace your current codes with a fresh set. The old ones stop working immediately."
+msgstr "Korvaa nykyiset koodisi uusilla. Vanhat lakkaavat toimimasta välittömästi."
+
+msgid "Replace your backup codes? The old ones will stop working."
+msgstr "Korvataanko varakoodit? Vanhat lakkaavat toimimasta."
+
+msgid "Regenerate"
+msgstr "Luo uudet"
+
+msgid "Removes your authenticator and backup codes. Requires your password."
+msgstr "Poistaa tunnistautumissovelluksen ja varakoodit. Vaatii salasanasi."
+
+msgid "Disable"
+msgstr "Poista käytöstä"
+
+msgid "Two-factor authentication is now enabled."
+msgstr "Kaksivaiheinen tunnistautuminen on nyt käytössä."
+
+msgid "Save these backup codes"
+msgstr "Tallenna nämä varakoodit"
+
+msgid "Each one works once, if you ever lose access to your authenticator app. They won't be shown again — save them somewhere safe now."
+msgstr "Jokainen koodi toimii kerran, jos menetät pääsyn tunnistautumissovellukseesi. Niitä ei näytetä enää uudelleen — tallenna ne nyt turvalliseen paikkaan."
+
+msgid "Scan this QR code with an authenticator app (e.g. Google Authenticator, Authy, or a password manager with built-in support), then enter the 6-digit code it shows to confirm setup."
+msgstr "Skannaa tämä QR-koodi tunnistautumissovelluksella (esim. Google Authenticator, Authy tai salasananhallinta, jossa on sisäänrakennettu tuki), ja vahvista käyttöönotto syöttämällä sen näyttämä 6-numeroinen koodi."
+
+msgid "Two-factor authentication QR code"
+msgstr "Kaksivaiheisen tunnistautumisen QR-koodi"
+
+msgid "Can't scan the code? Enter this key manually:"
+msgstr "Etkö voi skannata koodia? Syötä tämä avain käsin:"
+
+msgid "Confirm and enable"
+msgstr "Vahvista ja ota käyttöön"
 
 msgid "Edit activity"
 msgstr "Muokkaa aktiviteettia"
@@ -1111,9 +1216,6 @@ msgstr "API-avain luotu"
 
 msgid "Copy this key now — you won't be able to see it again."
 msgstr "Kopioi tämä avain nyt — et näe sitä enää uudelleen."
-
-msgid "Done"
-msgstr "Valmis"
 
 msgid "New API key"
 msgstr "Uusi API-avain"
@@ -1471,9 +1573,6 @@ msgstr "Poista ohjelma"
 msgid "Delete <strong>%(name)s</strong> and all of its workouts and exercises? This cannot be undone."
 msgstr "Poistetaanko <strong>%(name)s</strong> sekä kaikki sen treenit ja liikkeet? Tätä ei voi perua."
 
-msgid "Cancel"
-msgstr "Peruuta"
-
 msgid "Built-in template"
 msgstr "Sisäänrakennettu malli"
 
@@ -1644,6 +1743,15 @@ msgstr "Lähetä palautuslinkki"
 
 msgid "Password reset on %(site_name)s"
 msgstr "Salasanan palautus palvelussa %(site_name)s"
+
+msgid "Two-factor verification"
+msgstr "Kaksivaiheinen vahvistus"
+
+msgid "Enter the 6-digit code from your authenticator app, or one of your backup codes."
+msgstr "Syötä tunnistautumissovelluksen 6-numeroinen koodi tai jokin varakoodeistasi."
+
+msgid "Verify"
+msgstr "Vahvista"
 
 msgid "Target: %(count)s × %(min)s-%(max)s"
 msgstr "Tavoite: %(count)s × %(min)s-%(max)s"

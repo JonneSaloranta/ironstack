@@ -9,6 +9,12 @@ msgstr ""
 "Language: et\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
+msgid "Two-factor authentication"
+msgstr "Kaheastmeline autentimine"
+
+msgid "Disable two-factor authentication for selected users"
+msgstr "Lülita kaheastmeline autentimine valitud kasutajatel välja"
+
 msgid "Too many failed login attempts. Try again in a few minutes."
 msgstr "Liiga palju ebaõnnestunud sisselogimiskatseid. Proovi mõne minuti pärast uuesti."
 
@@ -54,11 +60,32 @@ msgstr "Pikkus (cm)"
 msgid "Height (in)"
 msgstr "Pikkus (in)"
 
+msgid "Verification code"
+msgstr "Kinnituskood"
+
+msgid "Incorrect code — check your authenticator app and try again."
+msgstr "Vale kood — kontrolli oma autentimisrakendust ja proovi uuesti."
+
+msgid "Too many incorrect codes. Try again in a few minutes."
+msgstr "Liiga palju valesid koode. Proovi mõne minuti pärast uuesti."
+
+msgid "Incorrect code."
+msgstr "Vale kood."
+
+msgid "Password"
+msgstr "Parool"
+
+msgid "Incorrect password."
+msgstr "Vale parool."
+
 msgid "Metric (kg, km)"
 msgstr "Meetermõõdustik (kg, km)"
 
 msgid "Imperial (lb, mi)"
 msgstr "Inglise mõõdustik (lb, mi)"
+
+msgid "Shown as a footer note on the login and signup pages. Leave blank to hide it entirely."
+msgstr "Kuvatakse jaluses sisselogimis- ja registreerumislehel. Jäta tühjaks, et see täielikult peita."
 
 msgid "Registration is currently closed."
 msgstr "Registreerumine on hetkel suletud."
@@ -68,6 +95,12 @@ msgstr "Eelistused salvestatud."
 
 msgid "Account details saved."
 msgstr "Konto andmed on salvestatud."
+
+msgid "Two-factor authentication is already enabled."
+msgstr "Kaheastmeline autentimine on juba sisse lülitatud."
+
+msgid "Two-factor authentication turned off."
+msgstr "Kaheastmeline autentimine välja lülitatud."
 
 msgid "Duration (minutes)"
 msgstr "Kestus (minutit)"
@@ -918,6 +951,18 @@ msgstr "Muuda parooli"
 msgid "Update the password you use to sign in."
 msgstr "Uuenda parooli, millega sisse logid."
 
+msgid "Enabled — protecting your account with a second step at login."
+msgstr "Sees — kaitseb sinu kontot sisselogimisel täiendava sammuga."
+
+msgid "Add a second step at login, using an authenticator app."
+msgstr "Lisa sisselogimisele täiendav samm autentimisrakenduse abil."
+
+msgid "Manage"
+msgstr "Halda"
+
+msgid "Set up"
+msgstr "Seadista"
+
 msgid "API keys"
 msgstr "API-võtmed"
 
@@ -968,6 +1013,66 @@ msgstr "Kas sul on juba konto?"
 
 msgid "Log in"
 msgstr "Logi sisse"
+
+msgid "New backup codes"
+msgstr "Uued varukoodid"
+
+msgid "Each one works once, if you ever lose access to your authenticator app. They won't be shown again — save them somewhere safe now. Your old backup codes no longer work."
+msgstr "Iga kood töötab üks kord, kui kaotad juurdepääsu oma autentimisrakendusele. Neid enam uuesti ei näidata — salvesta need nüüd turvalisse kohta. Sinu vanad varukoodid enam ei kehti."
+
+msgid "Done"
+msgstr "Valmis"
+
+msgid "Disable two-factor authentication"
+msgstr "Lülita kaheastmeline autentimine välja"
+
+msgid "Enter your password to confirm. This removes your authenticator and deletes your remaining backup codes."
+msgstr "Kinnitamiseks sisesta oma parool. See eemaldab sinu autentimisrakenduse ja allesjäänud varukoodid."
+
+msgid "Cancel"
+msgstr "Loobu"
+
+msgid "Two-factor authentication is enabled on your account."
+msgstr "Sinu kontol on kaheastmeline autentimine sisse lülitatud."
+
+msgid "Backup codes"
+msgstr "Varukoodid"
+
+msgid "Replace your current codes with a fresh set. The old ones stop working immediately."
+msgstr "Asenda praegused koodid uutega. Vanad lakkavad kohe töötamast."
+
+msgid "Replace your backup codes? The old ones will stop working."
+msgstr "Kas asendada varukoodid? Vanad lakkavad töötamast."
+
+msgid "Regenerate"
+msgstr "Loo uued"
+
+msgid "Removes your authenticator and backup codes. Requires your password."
+msgstr "Eemaldab autentimisrakenduse ja varukoodid. Nõuab sinu parooli."
+
+msgid "Disable"
+msgstr "Lülita välja"
+
+msgid "Two-factor authentication is now enabled."
+msgstr "Kaheastmeline autentimine on nüüd sisse lülitatud."
+
+msgid "Save these backup codes"
+msgstr "Salvesta need varukoodid"
+
+msgid "Each one works once, if you ever lose access to your authenticator app. They won't be shown again — save them somewhere safe now."
+msgstr "Iga kood töötab üks kord, kui kaotad juurdepääsu oma autentimisrakendusele. Neid enam uuesti ei näidata — salvesta need nüüd turvalisse kohta."
+
+msgid "Scan this QR code with an authenticator app (e.g. Google Authenticator, Authy, or a password manager with built-in support), then enter the 6-digit code it shows to confirm setup."
+msgstr "Skaneeri see QR-kood autentimisrakendusega (nt Google Authenticator, Authy või sisseehitatud toega paroolihaldur) ning sisesta seadistuse kinnitamiseks kuvatav 6-kohaline kood."
+
+msgid "Two-factor authentication QR code"
+msgstr "Kaheastmelise autentimise QR-kood"
+
+msgid "Can't scan the code? Enter this key manually:"
+msgstr "Ei saa koodi skaneerida? Sisesta see võti käsitsi:"
+
+msgid "Confirm and enable"
+msgstr "Kinnita ja lülita sisse"
 
 msgid "Edit activity"
 msgstr "Muuda tegevust"
@@ -1111,9 +1216,6 @@ msgstr "API-võti loodud"
 
 msgid "Copy this key now — you won't be able to see it again."
 msgstr "Kopeeri see võti nüüd — sa ei näe seda enam uuesti."
-
-msgid "Done"
-msgstr "Valmis"
 
 msgid "New API key"
 msgstr "Uus API-võti"
@@ -1471,9 +1573,6 @@ msgstr "Kustuta programm"
 msgid "Delete <strong>%(name)s</strong> and all of its workouts and exercises? This cannot be undone."
 msgstr "Kas kustutada <strong>%(name)s</strong> ning kõik selle trennid ja harjutused? Seda ei saa tagasi võtta."
 
-msgid "Cancel"
-msgstr "Loobu"
-
 msgid "Built-in template"
 msgstr "Sisseehitatud mall"
 
@@ -1644,6 +1743,15 @@ msgstr "Saada lähtestamislink"
 
 msgid "Password reset on %(site_name)s"
 msgstr "Parooli lähtestamine teenuses %(site_name)s"
+
+msgid "Two-factor verification"
+msgstr "Kaheastmeline kinnitamine"
+
+msgid "Enter the 6-digit code from your authenticator app, or one of your backup codes."
+msgstr "Sisesta oma autentimisrakenduse 6-kohaline kood või üks oma varukoodidest."
+
+msgid "Verify"
+msgstr "Kinnita"
 
 msgid "Target: %(count)s × %(min)s-%(max)s"
 msgstr "Sihtmärk: %(count)s × %(min)s-%(max)s"

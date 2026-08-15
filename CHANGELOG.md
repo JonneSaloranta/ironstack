@@ -14,6 +14,15 @@ lands and remains the authoritative history.
 
 ## [Unreleased]
 
+### Added
+- Optional two-factor authentication (TOTP), Profile → "Two-factor
+  authentication" — QR-code setup, single-use backup codes, and an
+  admin recovery action for a fully locked-out user. See
+  `docs/SECURITY.md` "Two-factor authentication".
+- The login and signup pages now show the IronStack logo/wordmark.
+- A site-wide disclaimer footer on the login and signup pages,
+  editable from Django admin (default text provided, blank hides it).
+
 ## [1.1.0] — 2026-08-15
 
 ### Added

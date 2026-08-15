@@ -10,6 +10,7 @@ from django.utils.translation import gettext_lazy as _
 from apps.core import units as core_units
 from apps.core.formatting import BMI_FULL, abbr_label, lazy_format_html
 
+from . import twofactor
 from .models import UnitSystem, User
 
 # apps.accounts.views.RateLimitedLoginView's brute-force protection —
@@ -29,6 +30,18 @@ LOGIN_ATTEMPT_WINDOW_SECONDS = 15 * 60
 # different legitimate retry rates.
 PASSWORD_RESET_ATTEMPT_LIMIT = 5
 PASSWORD_RESET_ATTEMPT_WINDOW_SECONDS = 15 * 60
+
+# apps.accounts.views.TwoFactorVerifyView's own protection — a 6-digit
+# TOTP code only has a million possible values, so this login step
+# needs its own brute-force limit just as much as the password one
+# does. Keyed by *user*, not client IP (see TwoFactorVerifyForm.
+# clean_code below): by this stage the attacker already has a correct
+# password and a specific account in mind, so limiting by IP alone
+# would let them route around it trivially, and there's no legitimate-
+# user harm in tying the limit to the one account actually being
+# verified.
+TWOFACTOR_ATTEMPT_LIMIT = 5
+TWOFACTOR_ATTEMPT_WINDOW_SECONDS = 5 * 60
 
 # `zoneinfo.available_timezones()` includes a handful of non-geographic
 # aliases alongside real IANA "Area/Location" zones. Both are
@@ -299,3 +312,92 @@ class ProfileForm(forms.ModelForm):
         if commit:
             instance.save()
         return instance
+
+
+class TwoFactorSetupConfirmForm(forms.Form):
+    """Profile → Two-factor authentication → setup's own confirm step
+    — proves the user actually configured their authenticator app
+    correctly (scanned the right QR code, device clock close enough to
+    the server's) before `totp_enabled` ever flips to True. No rate
+    limiting here unlike TwoFactorVerifyForm below: this only ever runs
+    against an already-authenticated user's own just-generated secret
+    (shown to them moments earlier), not as a login gate an outside
+    attacker could brute-force."""
+
+    code = forms.CharField(label=_("Verification code"), max_length=6)
+
+    def __init__(self, *args, user=None, **kwargs):
+        self.user = user
+        super().__init__(*args, **kwargs)
+
+    def clean_code(self):
+
+        code = self.cleaned_data["code"].strip()
+        if not twofactor.verify_totp_code(self.user.totp_secret, code):
+            raise forms.ValidationError(
+                _("Incorrect code — check your authenticator app and try again."),
+                code="invalid",
+            )
+        return code
+
+
+class TwoFactorVerifyForm(forms.Form):
+    """The login flow's second step (apps.accounts.views.
+    TwoFactorVerifyView) — one field takes either a 6-digit TOTP code
+    or a backup code (apps.accounts.twofactor.verify_and_consume_backup_code),
+    told apart by shape: a plain 6-digit value tries TOTP first, since
+    that's what a normal, working login uses every time; anything else
+    (or a 6-digit value that doesn't verify — someone who mistyped a
+    backup code that happened to be all digits, however unlikely) falls
+    back to a backup-code lookup."""
+
+    code = forms.CharField(label=_("Verification code"))
+
+    def __init__(self, *args, user=None, **kwargs):
+        self.user = user
+        super().__init__(*args, **kwargs)
+
+    def clean_code(self):
+
+        cache_key = f"2fa-attempts:{self.user.pk}"
+        attempts = cache.get(cache_key, 0)
+        if attempts >= TWOFACTOR_ATTEMPT_LIMIT:
+            raise forms.ValidationError(
+                _("Too many incorrect codes. Try again in a few minutes."),
+                code="rate_limited",
+            )
+
+        code = self.cleaned_data["code"].strip()
+        verified = False
+        if code.isdigit() and len(code) == 6:
+            verified = twofactor.verify_totp_code(self.user.totp_secret, code)
+        if not verified:
+            verified = twofactor.verify_and_consume_backup_code(self.user, code)
+
+        if not verified:
+            cache.set(cache_key, attempts + 1, TWOFACTOR_ATTEMPT_WINDOW_SECONDS)
+            raise forms.ValidationError(_("Incorrect code."), code="invalid")
+        cache.delete(cache_key)
+        return code
+
+
+class TwoFactorDisableForm(forms.Form):
+    """Profile → Two-factor authentication → "Disable" — requires the
+    account's own password, not just a JS confirm() like most other
+    destructive actions in this app: unlike deleting a workout or a
+    backup, turning 2FA off is a real security-relevant change that a
+    hijacked-but-not-fully-compromised session (e.g. someone briefly at
+    an unlocked, logged-in device) shouldn't be able to do with a
+    single tap."""
+
+    password = forms.CharField(label=_("Password"), widget=forms.PasswordInput)
+
+    def __init__(self, *args, user=None, **kwargs):
+        self.user = user
+        super().__init__(*args, **kwargs)
+
+    def clean_password(self):
+        password = self.cleaned_data["password"]
+        if not self.user.check_password(password):
+            raise forms.ValidationError(_("Incorrect password."), code="invalid")
+        return password

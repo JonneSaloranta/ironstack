@@ -59,6 +59,37 @@ a {
   padding: 2rem 1rem;
 }
 
+/* Login/signup (templates/registration/_auth_brand.html) — the only
+   pages in the app with no nav bar and no other visual cue what
+   they're looking at, so a first-time visitor sees at least a name
+   before ever creating an account. */
+.auth-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.auth-brand img {
+  border-radius: var(--radius);
+}
+
+.auth-brand span {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+/* templates/registration/_auth_disclaimer.html — an operator-editable
+   footer note (apps.accounts.models.SiteDisclaimer, via /admin/), not
+   this app's own copy, so deliberately understated rather than styled
+   like a warning banner. */
+.auth-disclaimer {
+  margin-top: 2rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--color-border);
+  font-size: 0.8rem;
+}
+
 button,
 input,
 select,

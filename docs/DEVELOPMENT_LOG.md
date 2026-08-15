@@ -1391,3 +1391,81 @@ introduced.
   and their own empty states, the collapse toggle actually hiding/
   showing the right rows, and a real delete redirecting with the
   correct translated success message.
+
+**Two-factor authentication, plus login/signup branding and a
+site-wide disclaimer footer.** Asked in one message: a 2FA setting on
+the profile page; while at it, fix the login/signup pages missing the
+IronStack logo/wordmark; and add an admin-editable disclaimer footer
+on those same pages disclaiming responsibility for data loss.
+
+- TOTP (RFC 6238), via `pyotp` (not `django-otp` — see
+  `docs/SECURITY.md` "Two-factor authentication" for the reasoning)
+  plus `qrcode[pil]` to render the setup QR code as an inline
+  `data:image/png;base64,...` image, no separate image-serving
+  endpoint. `User` gained `totp_secret`/`totp_enabled`; a new
+  `TwoFactorBackupCode` model holds 10 single-use, password-hasher-
+  hashed recovery codes per user. The secret is written to the user as
+  soon as setup starts (Profile → "Two-factor authentication" → "Set
+  up"), before it's confirmed — `totp_enabled` only flips to `True`
+  once the confirmation code succeeds, so an abandoned setup attempt
+  never blocks a future plain-password login.
+- The login flow's second step, `TwoFactorVerifyView`
+  (`RateLimitedLoginView.form_valid` detours here instead of calling
+  `login()` when the user has 2FA enabled, staging their id in the
+  session under `pre_2fa_user_id` until a correct code arrives) — its
+  own rate limit (5 wrong codes / 5 minutes) is keyed by user ID
+  rather than client IP, deliberately different from every other
+  rate limit in this app: by this step the attacker already has a
+  correct password and a specific account, so IP-keying alone would
+  be trivially routed around. Accepts either a live TOTP code or one
+  of the backup codes, disambiguated by whether the submitted value is
+  6 digits.
+  `TwoFactorManageView` consolidates "regenerate backup codes" and
+  "disable" (password-gated) on one page, matching the existing
+  "Account details"/"API keys" pattern of the profile linking out to a
+  dedicated page per concern rather than crowding buttons onto the
+  card itself. A new Django-admin action, "Disable two-factor
+  authentication for selected users", is the recovery path for
+  someone locked out with no working authenticator and no backup
+  codes left — the one situation the self-service flows can't help
+  with, since both require either the password and a working second
+  factor, or the password alone but never a bypass of the second
+  factor entirely.
+- `templates/registration/_auth_brand.html` (the icon + "IronStack"
+  wordmark) and `templates/registration/_auth_disclaimer.html` (the
+  footer, rendered only when non-blank) are now included on both
+  `login.html` and `signup.html`. The disclaimer text itself comes
+  from a new singleton, `SiteDisclaimer` (same `pk=1`/`load()` pattern
+  as `ApiSettings`/`BackupSettings`/`FeedbackSettings`), editable only
+  from Django admin, with a sensible default and deliberately left
+  untranslated — it's operator-facing legal text a self-hoster is
+  meant to actually write themselves, not app chrome.
+- Two real bugs caught by the new tests, not by manual curl testing:
+  `TwoFactorSetupView`/`TwoFactorManageView`/`TwoFactorDisableView`
+  each override `dispatch()` to redirect based on `request.user`
+  state (already enabled, not enabled yet, ...) before ever calling
+  `super().dispatch()` — but `LoginRequiredMixin`'s own
+  authentication check *is* that `super().dispatch()` call, so an
+  anonymous request crashed with `AttributeError` (`AnonymousUser` has
+  no `totp_enabled`) instead of redirecting to login. Fixed by
+  checking `request.user.is_authenticated` first, before touching any
+  2FA-specific attribute, in all three. Also found (while still doing
+  the earlier curl-based verification, before tests existed):
+  `TwoFactorRegenerateBackupCodesView` returned 405 because it called
+  `TemplateView.as_view(...)( request)` from inside another view's
+  POST handler — that re-dispatches the *original* request through a
+  second CBV's own method-routing, and a bare `TemplateView` has no
+  `post()`. Fixed with a plain `django.shortcuts.render()` call
+  instead.
+- 39 new tests, covering the TOTP/backup-code service functions
+  directly, the full setup/confirm/login-verify/disable/regenerate
+  view flows (including both bugs above once fixed), the rate limiter,
+  the admin recovery action, and the disclaimer/branding rendering
+  (including blank-text-hides-the-footer). 36 new UI strings
+  translated across fi/sv/ru/it/et (613 total, 0 fuzzy/untranslated).
+  Live-verified end to end, twice: once by hand over curl with real
+  TOTP codes computed inside the container (setup, login redirect,
+  verify success/failure/lockout, backup-code login and single-use
+  consumption, regenerate, password-gated disable, and the admin
+  recovery action), and again in Finnish after translating (setup
+  page, profile card, login page logo and disclaimer).

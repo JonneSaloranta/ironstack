@@ -9,6 +9,12 @@ msgstr ""
 "Language: ru\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 
+msgid "Two-factor authentication"
+msgstr "Двухфакторная аутентификация"
+
+msgid "Disable two-factor authentication for selected users"
+msgstr "Отключить двухфакторную аутентификацию для выбранных пользователей"
+
 msgid "Too many failed login attempts. Try again in a few minutes."
 msgstr "Слишком много неудачных попыток входа. Повторите попытку через несколько минут."
 
@@ -54,11 +60,32 @@ msgstr "Рост (см)"
 msgid "Height (in)"
 msgstr "Рост (дюймы)"
 
+msgid "Verification code"
+msgstr "Код подтверждения"
+
+msgid "Incorrect code — check your authenticator app and try again."
+msgstr "Неверный код — проверьте приложение-аутентификатор и попробуйте снова."
+
+msgid "Too many incorrect codes. Try again in a few minutes."
+msgstr "Слишком много неверных кодов. Повторите попытку через несколько минут."
+
+msgid "Incorrect code."
+msgstr "Неверный код."
+
+msgid "Password"
+msgstr "Пароль"
+
+msgid "Incorrect password."
+msgstr "Неверный пароль."
+
 msgid "Metric (kg, km)"
 msgstr "Метрическая (кг, км)"
 
 msgid "Imperial (lb, mi)"
 msgstr "Имперская (фунты, мили)"
+
+msgid "Shown as a footer note on the login and signup pages. Leave blank to hide it entirely."
+msgstr "Отображается в подвале на страницах входа и регистрации. Оставьте пустым, чтобы полностью скрыть."
 
 msgid "Registration is currently closed."
 msgstr "Регистрация сейчас закрыта."
@@ -68,6 +95,12 @@ msgstr "Настройки сохранены."
 
 msgid "Account details saved."
 msgstr "Данные аккаунта сохранены."
+
+msgid "Two-factor authentication is already enabled."
+msgstr "Двухфакторная аутентификация уже включена."
+
+msgid "Two-factor authentication turned off."
+msgstr "Двухфакторная аутентификация отключена."
 
 msgid "Duration (minutes)"
 msgstr "Длительность (минуты)"
@@ -921,6 +954,18 @@ msgstr "Изменить пароль"
 msgid "Update the password you use to sign in."
 msgstr "Обновите пароль, который вы используете для входа."
 
+msgid "Enabled — protecting your account with a second step at login."
+msgstr "Включено — защищает вашу учётную запись дополнительным шагом при входе."
+
+msgid "Add a second step at login, using an authenticator app."
+msgstr "Добавьте дополнительный шаг при входе с помощью приложения-аутентификатора."
+
+msgid "Manage"
+msgstr "Управление"
+
+msgid "Set up"
+msgstr "Настроить"
+
 msgid "API keys"
 msgstr "API-ключи"
 
@@ -971,6 +1016,66 @@ msgstr "Уже есть аккаунт?"
 
 msgid "Log in"
 msgstr "Войти"
+
+msgid "New backup codes"
+msgstr "Новые резервные коды"
+
+msgid "Each one works once, if you ever lose access to your authenticator app. They won't be shown again — save them somewhere safe now. Your old backup codes no longer work."
+msgstr "Каждый код работает один раз — на случай, если вы потеряете доступ к приложению-аутентификатору. Они больше не будут показаны — сохраните их сейчас в надёжном месте. Старые резервные коды больше не действуют."
+
+msgid "Done"
+msgstr "Готово"
+
+msgid "Disable two-factor authentication"
+msgstr "Отключить двухфакторную аутентификацию"
+
+msgid "Enter your password to confirm. This removes your authenticator and deletes your remaining backup codes."
+msgstr "Введите пароль для подтверждения. Это удалит ваш аутентификатор и оставшиеся резервные коды."
+
+msgid "Cancel"
+msgstr "Отмена"
+
+msgid "Two-factor authentication is enabled on your account."
+msgstr "На вашей учётной записи включена двухфакторная аутентификация."
+
+msgid "Backup codes"
+msgstr "Резервные коды"
+
+msgid "Replace your current codes with a fresh set. The old ones stop working immediately."
+msgstr "Замените текущие коды новым набором. Старые коды перестанут действовать немедленно."
+
+msgid "Replace your backup codes? The old ones will stop working."
+msgstr "Заменить резервные коды? Старые перестанут работать."
+
+msgid "Regenerate"
+msgstr "Создать заново"
+
+msgid "Removes your authenticator and backup codes. Requires your password."
+msgstr "Удаляет аутентификатор и резервные коды. Требуется ваш пароль."
+
+msgid "Disable"
+msgstr "Отключить"
+
+msgid "Two-factor authentication is now enabled."
+msgstr "Двухфакторная аутентификация теперь включена."
+
+msgid "Save these backup codes"
+msgstr "Сохраните эти резервные коды"
+
+msgid "Each one works once, if you ever lose access to your authenticator app. They won't be shown again — save them somewhere safe now."
+msgstr "Каждый код работает один раз — на случай, если вы потеряете доступ к приложению-аутентификатору. Они больше не будут показаны — сохраните их сейчас в надёжном месте."
+
+msgid "Scan this QR code with an authenticator app (e.g. Google Authenticator, Authy, or a password manager with built-in support), then enter the 6-digit code it shows to confirm setup."
+msgstr "Отсканируйте этот QR-код в приложении-аутентификаторе (например, Google Authenticator, Authy или менеджере паролей со встроенной поддержкой), затем введите показанный 6-значный код, чтобы подтвердить настройку."
+
+msgid "Two-factor authentication QR code"
+msgstr "QR-код двухфакторной аутентификации"
+
+msgid "Can't scan the code? Enter this key manually:"
+msgstr "Не получается отсканировать код? Введите этот ключ вручную:"
+
+msgid "Confirm and enable"
+msgstr "Подтвердить и включить"
 
 msgid "Edit activity"
 msgstr "Изменить активность"
@@ -1115,9 +1220,6 @@ msgstr "API-ключ создан"
 
 msgid "Copy this key now — you won't be able to see it again."
 msgstr "Скопируйте этот ключ сейчас — вы больше не сможете его увидеть."
-
-msgid "Done"
-msgstr "Готово"
 
 msgid "New API key"
 msgstr "Новый API-ключ"
@@ -1479,9 +1581,6 @@ msgstr "Удалить программу"
 msgid "Delete <strong>%(name)s</strong> and all of its workouts and exercises? This cannot be undone."
 msgstr "Удалить <strong>%(name)s</strong> и все его тренировки и упражнения? Это действие необратимо."
 
-msgid "Cancel"
-msgstr "Отмена"
-
 msgid "Built-in template"
 msgstr "Встроенный шаблон"
 
@@ -1652,6 +1751,15 @@ msgstr "Отправить ссылку для сброса"
 
 msgid "Password reset on %(site_name)s"
 msgstr "Сброс пароля на %(site_name)s"
+
+msgid "Two-factor verification"
+msgstr "Двухфакторная проверка"
+
+msgid "Enter the 6-digit code from your authenticator app, or one of your backup codes."
+msgstr "Введите 6-значный код из приложения-аутентификатора или один из резервных кодов."
+
+msgid "Verify"
+msgstr "Подтвердить"
 
 msgid "Target: %(count)s × %(min)s-%(max)s"
 msgstr "Цель: %(count)s × %(min)s-%(max)s"

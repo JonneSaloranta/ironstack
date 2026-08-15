@@ -1,6 +1,7 @@
 import re
 from urllib.parse import urlparse
 
+from django.contrib import admin
 from django.contrib.auth import get_user_model
 from django.core import mail
 from django.core.cache import cache
@@ -9,7 +10,9 @@ from django.urls import reverse
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 
+from apps.accounts import twofactor
 from apps.accounts.forms import LOGIN_ATTEMPT_LIMIT, PASSWORD_RESET_ATTEMPT_LIMIT
+from apps.accounts.models import SiteDisclaimer
 
 User = get_user_model()
 
@@ -552,8 +555,9 @@ class ProfileViewTests(TestCase):
         clickable. Each card is now a plain (non-link) container with
         an explicit .button-secondary as the only link."""
         response = self.client.get(reverse("profile"))
-        # Account details, Change password, API keys, Feedback.
-        self.assertContains(response, 'class="card card-action-row"', count=4)
+        # Account details, Change password, Two-factor authentication,
+        # API keys, Feedback.
+        self.assertContains(response, 'class="card card-action-row"', count=5)
         self.assertContains(
             response, f'<a class="button-secondary" href="{reverse("account-details")}">'
         )
@@ -569,10 +573,10 @@ class ProfileViewTests(TestCase):
         self.alice.is_staff = True
         self.alice.save()
         response = self.client.get(reverse("profile"))
-        # Account details, Change password, API keys, Feedback + Admin,
-        # Backups, Feedback (the latter three inside the staff-only
-        # "danger zone").
-        self.assertContains(response, 'class="card card-action-row"', count=7)
+        # Account details, Change password, Two-factor authentication,
+        # API keys, Feedback + Admin, Backups, Feedback (the latter
+        # three inside the staff-only "danger zone").
+        self.assertContains(response, 'class="card card-action-row"', count=8)
         self.assertContains(
             response, f'<a class="button-secondary" href="{reverse("admin:index")}">'
         )
@@ -798,3 +802,347 @@ class AccountDetailsTests(TestCase):
         # "Next to" — no other card-action-row between the two.
         between = content[account_pos:password_pos]
         self.assertEqual(between.count("card-action-row"), 1)
+
+
+class TwoFactorServiceTests(TestCase):
+    """apps.accounts.twofactor — the RFC 6238 math itself is pyotp's
+    job; this covers the thin IronStack-specific layer on top."""
+
+    def setUp(self):
+        self.user = User.objects.create_user(username="frank", password="s3cret-pass")
+
+    def test_generate_totp_secret_returns_a_valid_base32_string(self):
+        import pyotp
+
+        secret = twofactor.generate_totp_secret()
+        # pyotp.TOTP() raising nothing and producing a 6-digit code is
+        # proof enough that this is a well-formed base32 secret.
+        code = pyotp.TOTP(secret).now()
+        self.assertEqual(len(code), 6)
+        self.assertTrue(code.isdigit())
+
+    def test_verify_totp_code_accepts_the_current_real_code(self):
+        import pyotp
+
+        secret = twofactor.generate_totp_secret()
+        code = pyotp.TOTP(secret).now()
+        self.assertTrue(twofactor.verify_totp_code(secret, code))
+
+    def test_verify_totp_code_rejects_a_wrong_code(self):
+        secret = twofactor.generate_totp_secret()
+        self.assertFalse(twofactor.verify_totp_code(secret, "000000"))
+
+    def test_provisioning_uri_names_the_issuer_and_the_username(self):
+        secret = twofactor.generate_totp_secret()
+        uri = twofactor.provisioning_uri(self.user, secret)
+        self.assertIn("IronStack", uri)
+        self.assertIn("frank", uri)
+
+    def test_qr_code_data_uri_is_a_real_png(self):
+        uri = twofactor.provisioning_uri(self.user, twofactor.generate_totp_secret())
+        data_uri = twofactor.qr_code_data_uri(uri)
+        self.assertTrue(data_uri.startswith("data:image/png;base64,"))
+
+    def test_generate_backup_codes_returns_the_configured_count(self):
+        codes = twofactor.generate_backup_codes(self.user)
+        self.assertEqual(len(codes), twofactor.BACKUP_CODE_COUNT)
+        self.assertEqual(self.user.backup_codes.count(), twofactor.BACKUP_CODE_COUNT)
+
+    def test_generate_backup_codes_replaces_any_existing_set(self):
+        first_batch = twofactor.generate_backup_codes(self.user)
+        second_batch = twofactor.generate_backup_codes(self.user)
+        self.assertEqual(self.user.backup_codes.count(), twofactor.BACKUP_CODE_COUNT)
+        self.assertNotEqual(set(first_batch), set(second_batch))
+
+    def test_verify_and_consume_backup_code_accepts_once_then_rejects(self):
+        codes = twofactor.generate_backup_codes(self.user)
+        self.assertTrue(twofactor.verify_and_consume_backup_code(self.user, codes[0]))
+        self.assertFalse(twofactor.verify_and_consume_backup_code(self.user, codes[0]))
+
+    def test_verify_and_consume_backup_code_rejects_an_unknown_code(self):
+        twofactor.generate_backup_codes(self.user)
+        self.assertFalse(
+            twofactor.verify_and_consume_backup_code(self.user, "0000-0000-0000-0000")
+        )
+
+
+class TwoFactorSetupTests(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username="grace", password="s3cret-pass")
+        self.client.login(username="grace", password="s3cret-pass")
+
+    def test_requires_login(self):
+        self.client.logout()
+        response = self.client.get(reverse("two-factor-setup"))
+        self.assertEqual(response.status_code, 302)
+
+    def test_get_generates_and_saves_a_secret_immediately(self):
+        self.assertEqual(self.user.totp_secret, "")
+        response = self.client.get(reverse("two-factor-setup"))
+        self.assertEqual(response.status_code, 200)
+        self.user.refresh_from_db()
+        self.assertNotEqual(self.user.totp_secret, "")
+        self.assertFalse(self.user.totp_enabled)  # not yet confirmed
+
+    def test_get_shows_a_qr_code_and_the_secret_as_text(self):
+        response = self.client.get(reverse("two-factor-setup"))
+        self.assertContains(response, "data:image/png;base64,")
+        self.user.refresh_from_db()
+        self.assertContains(response, self.user.totp_secret)
+
+    def test_already_enabled_redirects_to_profile(self):
+        self.user.totp_enabled = True
+        self.user.totp_secret = twofactor.generate_totp_secret()
+        self.user.save()
+        response = self.client.get(reverse("two-factor-setup"))
+        self.assertRedirects(response, reverse("profile"))
+
+    def test_confirming_with_the_correct_code_enables_2fa_and_shows_backup_codes(self):
+        import pyotp
+
+        self.client.get(reverse("two-factor-setup"))  # generates the secret
+        self.user.refresh_from_db()
+        code = pyotp.TOTP(self.user.totp_secret).now()
+        response = self.client.post(reverse("two-factor-setup"), {"code": code})
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "now enabled")
+        self.user.refresh_from_db()
+        self.assertTrue(self.user.totp_enabled)
+        self.assertEqual(self.user.backup_codes.count(), twofactor.BACKUP_CODE_COUNT)
+
+    def test_confirming_with_the_wrong_code_does_not_enable_2fa(self):
+        self.client.get(reverse("two-factor-setup"))
+        response = self.client.post(reverse("two-factor-setup"), {"code": "000000"})
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "field-error")
+        self.user.refresh_from_db()
+        self.assertFalse(self.user.totp_enabled)
+
+
+class TwoFactorLoginFlowTests(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username="henry", password="s3cret-pass")
+        self.user.totp_secret = twofactor.generate_totp_secret()
+        self.user.totp_enabled = True
+        self.user.save()
+        cache.clear()
+
+    def tearDown(self):
+        cache.clear()
+
+    def _current_code(self):
+        import pyotp
+
+        return pyotp.TOTP(self.user.totp_secret).now()
+
+    def test_correct_password_redirects_to_verify_instead_of_logging_in(self):
+        response = self.client.post(
+            reverse("login"), {"username": "henry", "password": "s3cret-pass"}
+        )
+        self.assertRedirects(
+            response, reverse("two-factor-verify") + "?next=/", fetch_redirect_response=False
+        )
+        self.assertNotIn("_auth_user_id", self.client.session)
+
+    def test_verify_without_a_pending_login_redirects_to_login(self):
+        response = self.client.get(reverse("two-factor-verify"))
+        self.assertRedirects(response, reverse("login"))
+
+    def test_correct_totp_code_completes_login(self):
+        self.client.post(reverse("login"), {"username": "henry", "password": "s3cret-pass"})
+        response = self.client.post(reverse("two-factor-verify"), {"code": self._current_code()})
+        self.assertRedirects(response, "/")
+        self.assertIn("_auth_user_id", self.client.session)
+
+    def test_wrong_code_does_not_complete_login(self):
+        self.client.post(reverse("login"), {"username": "henry", "password": "s3cret-pass"})
+        response = self.client.post(reverse("two-factor-verify"), {"code": "000000"})
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Incorrect code")
+        self.assertNotIn("_auth_user_id", self.client.session)
+
+    def test_a_valid_backup_code_completes_login_and_is_consumed(self):
+        codes = twofactor.generate_backup_codes(self.user)
+        self.client.post(reverse("login"), {"username": "henry", "password": "s3cret-pass"})
+        response = self.client.post(reverse("two-factor-verify"), {"code": codes[0]})
+        self.assertRedirects(response, "/")
+        self.assertEqual(self.user.backup_codes.filter(used_at__isnull=False).count(), 1)
+
+    def test_a_user_without_2fa_logs_in_directly(self):
+        User.objects.create_user(username="iris", password="s3cret-pass")
+        response = self.client.post(
+            reverse("login"), {"username": "iris", "password": "s3cret-pass"}
+        )
+        self.assertRedirects(response, "/")
+        self.assertIn("_auth_user_id", self.client.session)
+
+
+class TwoFactorVerifyRateLimitTests(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username="jack", password="s3cret-pass")
+        self.user.totp_secret = twofactor.generate_totp_secret()
+        self.user.totp_enabled = True
+        self.user.save()
+        cache.clear()
+        self.client.post(reverse("login"), {"username": "jack", "password": "s3cret-pass"})
+
+    def tearDown(self):
+        cache.clear()
+
+    def _attempt(self):
+        return self.client.post(reverse("two-factor-verify"), {"code": "000000"})
+
+    def test_the_nth_wrong_attempt_locks_out_further_tries(self):
+        from apps.accounts.forms import TWOFACTOR_ATTEMPT_LIMIT
+
+        for _ in range(TWOFACTOR_ATTEMPT_LIMIT):
+            self._attempt()
+        response = self._attempt()
+        self.assertContains(response, "Too many incorrect codes")
+
+    def test_lockout_blocks_even_the_correct_code(self):
+        import pyotp
+
+        from apps.accounts.forms import TWOFACTOR_ATTEMPT_LIMIT
+
+        for _ in range(TWOFACTOR_ATTEMPT_LIMIT):
+            self._attempt()
+        code = pyotp.TOTP(self.user.totp_secret).now()
+        response = self.client.post(reverse("two-factor-verify"), {"code": code})
+        self.assertContains(response, "Too many incorrect codes")
+        self.assertNotIn("_auth_user_id", self.client.session)
+
+
+class TwoFactorDisableTests(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username="karen", password="s3cret-pass")
+        self.user.totp_secret = twofactor.generate_totp_secret()
+        self.user.totp_enabled = True
+        self.user.save()
+        twofactor.generate_backup_codes(self.user)
+        self.client.login(username="karen", password="s3cret-pass")
+
+    def test_requires_login(self):
+        self.client.logout()
+        response = self.client.get(reverse("two-factor-disable"))
+        self.assertEqual(response.status_code, 302)
+
+    def test_redirects_to_profile_if_2fa_isnt_enabled(self):
+        self.user.totp_enabled = False
+        self.user.save()
+        response = self.client.get(reverse("two-factor-disable"))
+        self.assertRedirects(response, reverse("profile"))
+
+    def test_wrong_password_does_not_disable(self):
+        response = self.client.post(reverse("two-factor-disable"), {"password": "wrong"})
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Incorrect password")
+        self.user.refresh_from_db()
+        self.assertTrue(self.user.totp_enabled)
+
+    def test_correct_password_disables_and_clears_everything(self):
+        response = self.client.post(reverse("two-factor-disable"), {"password": "s3cret-pass"})
+        self.assertRedirects(response, reverse("profile"))
+        self.user.refresh_from_db()
+        self.assertFalse(self.user.totp_enabled)
+        self.assertEqual(self.user.totp_secret, "")
+        self.assertEqual(self.user.backup_codes.count(), 0)
+
+
+class TwoFactorRegenerateBackupCodesTests(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username="liam", password="s3cret-pass")
+        self.user.totp_secret = twofactor.generate_totp_secret()
+        self.user.totp_enabled = True
+        self.user.save()
+        self.old_codes = twofactor.generate_backup_codes(self.user)
+        self.client.login(username="liam", password="s3cret-pass")
+
+    def test_requires_login(self):
+        self.client.logout()
+        response = self.client.post(reverse("two-factor-regenerate-backup-codes"))
+        self.assertEqual(response.status_code, 302)
+
+    def test_requires_2fa_enabled(self):
+        self.user.totp_enabled = False
+        self.user.save()
+        response = self.client.post(reverse("two-factor-regenerate-backup-codes"))
+        self.assertEqual(response.status_code, 404)
+
+    def test_replaces_the_codes_and_shows_the_new_set(self):
+        response = self.client.post(reverse("two-factor-regenerate-backup-codes"))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "New backup codes")
+        self.assertEqual(self.user.backup_codes.count(), twofactor.BACKUP_CODE_COUNT)
+        for old_code in self.old_codes:
+            self.assertFalse(twofactor.verify_and_consume_backup_code(self.user, old_code))
+
+
+class TwoFactorAdminActionTests(TestCase):
+    def test_disable_two_factor_action_clears_everything(self):
+        from apps.accounts.admin import UserAdmin
+
+        user = User.objects.create_user(username="mona", password="s3cret-pass")
+        user.totp_secret = twofactor.generate_totp_secret()
+        user.totp_enabled = True
+        user.save()
+        twofactor.generate_backup_codes(user)
+
+        UserAdmin(User, admin.site).disable_two_factor(None, User.objects.filter(pk=user.pk))
+
+        user.refresh_from_db()
+        self.assertFalse(user.totp_enabled)
+        self.assertEqual(user.totp_secret, "")
+        self.assertEqual(user.backup_codes.count(), 0)
+
+
+class SiteDisclaimerTests(TestCase):
+    def test_load_creates_the_singleton_with_the_default_text(self):
+        disclaimer = SiteDisclaimer.load()
+        self.assertIn("not responsible for any data loss", disclaimer.text)
+
+    def test_load_always_returns_the_same_row(self):
+        first = SiteDisclaimer.load()
+        first.text = "Custom text"
+        first.save()
+        second = SiteDisclaimer.load()
+        self.assertEqual(first.pk, second.pk)
+        self.assertEqual(second.text, "Custom text")
+
+    def test_delete_is_a_no_op(self):
+        disclaimer = SiteDisclaimer.load()
+        disclaimer.delete()
+        self.assertTrue(SiteDisclaimer.objects.filter(pk=1).exists())
+
+    def test_shown_on_the_login_page(self):
+        disclaimer = SiteDisclaimer.load()
+        disclaimer.text = "A distinctive test disclaimer string."
+        disclaimer.save()
+        response = self.client.get(reverse("login"))
+        self.assertContains(response, "A distinctive test disclaimer string.")
+
+    def test_shown_on_the_signup_page(self):
+        disclaimer = SiteDisclaimer.load()
+        disclaimer.text = "A distinctive test disclaimer string."
+        disclaimer.save()
+        response = self.client.get(reverse("signup"))
+        self.assertContains(response, "A distinctive test disclaimer string.")
+
+    def test_blank_text_hides_the_footer_entirely(self):
+        disclaimer = SiteDisclaimer.load()
+        disclaimer.text = ""
+        disclaimer.save()
+        response = self.client.get(reverse("login"))
+        self.assertNotContains(response, "auth-disclaimer")
+
+
+class AuthPageBrandingTests(TestCase):
+    def test_login_page_shows_the_ironstack_brand_header(self):
+        response = self.client.get(reverse("login"))
+        self.assertContains(response, "auth-brand")
+        self.assertContains(response, "IronStack")
+
+    def test_signup_page_shows_the_ironstack_brand_header(self):
+        response = self.client.get(reverse("signup"))
+        self.assertContains(response, "auth-brand")
+        self.assertContains(response, "IronStack")
