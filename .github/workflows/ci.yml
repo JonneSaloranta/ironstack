@@ -51,7 +51,7 @@ jobs:
 
       - uses: actions/setup-python@v7
         with:
-          python-version: "3.12"
+          python-version: "3.14"
           cache: pip
           # dev.txt just does `-r base.txt` — both need to be in the
           # cache key, or a base.txt-only change wouldn't bust a cache

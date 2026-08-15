@@ -7,8 +7,8 @@ your progress in real charts — all on your own infrastructure.
 
 [![CI](https://github.com/JonneSaloranta/ironstack/actions/workflows/ci.yml/badge.svg)](https://github.com/JonneSaloranta/ironstack/actions/workflows/ci.yml)
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPLv3-blue.svg)](LICENSE)
-[![Python 3.12](https://img.shields.io/badge/python-3.12-blue.svg)](https://www.python.org/)
-[![Django 5](https://img.shields.io/badge/django-5.x-092E20.svg)](https://www.djangoproject.com/)
+[![Python 3.14](https://img.shields.io/badge/python-3.14-blue.svg)](https://www.python.org/)
+[![Django 6](https://img.shields.io/badge/django-6.x-092E20.svg)](https://www.djangoproject.com/)
 [![i18n](https://img.shields.io/badge/i18n-6%20languages-informational.svg)](docs/ARCHITECTURE.md#internationalization)
 
 ## Features
@@ -65,7 +65,7 @@ for local development; nothing needs editing to get started.
 ### Without Docker
 
 ```bash
-python3.12 -m venv .venv
+python3.14 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements/dev.txt
 cp .env.example .env   # set POSTGRES_HOST=localhost

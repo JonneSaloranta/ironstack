@@ -1196,3 +1196,42 @@ it once, centrally, and every server just pulls.
   docker-compose.yml -f docker-compose.tls.yml config` against every
   compose file combination instead. `docs/ARCHITECTURE.md`
   "Versioning" and `README.md`'s "Production deployment" both updated.
+
+**Verified the Dependabot-proposed dependency bumps, then reconciled
+the rest of the repo to match.** Four Dependabot PRs were merged
+directly on GitHub (`actions/checkout` 4→7, `actions/setup-python`
+5→7, the Dockerfile's `python:3.12-slim`→`3.14-slim`, and a grouped
+bump of Django 5.0→6.1, psycopg 3.1→3.3.4, gunicorn 22→26,
+djangorestframework 3.15→3.18, pytest 8→9.1.1, pytest-django 4.8→4.14,
+factory_boy 3.3→3.3.3, ruff 0.5→0.16.2) — real major-version jumps on
+several of these, not the patch/minor bumps Dependabot's config
+otherwise mostly proposes, and enough of them bundled together that
+"it's just Dependabot" wasn't a safe enough reason to trust without
+actually running the suite.
+
+- Rebuilt the image from a clean `--no-cache --pull` (had to
+  `docker builder prune`/`docker image prune` first — the host had
+  filled its disk from this session's accumulated build cache) and ran
+  the full suite against it for real: ruff clean, no missing
+  migrations, all 581 tests green, live-verified pages/admin/API
+  endpoints all still responding correctly. A stray finding during
+  verification that turned out to be a red herring, not a bug: `/app/
+  .venv` inside the container looked like it still had a `python3.12`
+  layout even after the rebuild — actually a stale directory left over
+  on the *host* from early in this project's life, bind-mounted in by
+  `docker-compose.override.yml`'s `.:/app` and irrelevant to the
+  image's real venv (`/venv`, per the `Dockerfile`, correctly showing
+  `python3.14` throughout).
+- Dependabot's own per-file scanning has no way to know that the
+  Dockerfile's `FROM` tag and `.github/workflows/ci.yml`'s
+  `setup-python` `python-version:` string are the same logical
+  version — it left the workflow pinned at 3.12 while the image moved
+  to 3.14, silently reintroducing exactly the "keep dev/CI/prod on one
+  version" gap this project has otherwise cared about (see the
+  Postgres-version comment already in `ci.yml`). Fixed by bumping
+  `ci.yml`'s `python-version` to `"3.14"` too, plus every other place
+  that named the old versions: `pyproject.toml`'s ruff
+  `target-version` (`py312`→`py314`), `README.md`'s badges and
+  `python3.12 -m venv` command, and `docs/DEVELOPMENT.md`'s pinned-
+  versions list (also dropped the `(LTS)` label next to Django, since
+  that specific claim isn't actually known to hold for 6.1).

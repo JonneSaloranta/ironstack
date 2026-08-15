@@ -2,8 +2,8 @@
 
 ## Pinned versions & tooling
 
-- Python 3.12
-- Django 5.x (LTS)
+- Python 3.14
+- Django 6.x
 - PostgreSQL 16
 - `psycopg` (v3) as the only new runtime dependency for DB connectivity
 - Dev-only: `pytest`, `pytest-django`, `factory_boy` for tests; `ruff` for
