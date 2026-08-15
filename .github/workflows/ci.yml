@@ -154,26 +154,30 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@v7
-        with:
-          # Need the commit before this push to diff VERSION against —
-          # a shallow (default) checkout wouldn't have it.
-          fetch-depth: 0
 
-      - name: Check whether VERSION changed in this push
+      # Checks whether a release already exists for the *current*
+      # VERSION, rather than diffing VERSION against the previous push
+      # (github.event.before) — that first approach broke the first
+      # time a version-bump push's CI went green on lint-and-test/
+      # publish-image but failed elsewhere (or this job itself failed
+      # transiently): the next, fix-forward push has a `before` that
+      # *also* already has the bumped VERSION, so nothing looked
+      # "changed" and the release silently never got created. Asking
+      # "does v$VERSION already exist" instead is idempotent — it
+      # fires exactly once per unique VERSION value no matter how many
+      # pushes/retries it takes to get a green run for it, and never
+      # double-creates a release on a later push that doesn't touch
+      # VERSION at all.
+      - name: Check whether v$VERSION already has a release
         id: version_check
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          before="${{ github.event.before }}"
-          # A branch's very first push (or a history rewrite) reports
-          # an all-zero "before" SHA that doesn't exist to diff
-          # against — treat that as "not a version bump" rather than
-          # failing the job.
-          if [ "$before" = "0000000000000000000000000000000000000000" ] \
-             || ! git cat-file -e "$before" 2>/dev/null; then
+          version="$(cat VERSION)"
+          if gh release view "v$version" --repo "${{ github.repository }}" >/dev/null 2>&1; then
             echo "changed=false" >> "$GITHUB_OUTPUT"
-          elif git diff --name-only "$before" "${{ github.sha }}" -- VERSION | grep -qx VERSION; then
-            echo "changed=true" >> "$GITHUB_OUTPUT"
           else
-            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "changed=true" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Extract this version's CHANGELOG.md section and create the release

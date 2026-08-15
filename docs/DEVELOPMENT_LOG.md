@@ -1536,3 +1536,36 @@ fuzzy/untranslated) — the "Height (cm)"/"Height (in)" labels
 themselves were already translated, reused from `ProfileForm`.
 Live-verified: 180.5cm and 70in both round-tripped to the correct
 canonical meters value, and the field renders correctly in Finnish.
+
+**Cutting the 1.2.0 release surfaced two real bugs — one in the app,
+one in the release pipeline itself.** `VERSION` bumped to `1.2.0`,
+`CHANGELOG.md`'s `[Unreleased]` cut into a dated section, `dev` merged
+into `master`.
+
+- CI's `pytest` run (not `python manage.py test --keepdb`, which is
+  what every local verification this session had used) failed:
+  `BMIOnBodyWeightHistoryPageTests` in `apps.measurements` asserts the
+  literal absence of "BMI" from the whole page when a user has BMI
+  turned off — the onboarding modal's height field mentions "BMI" in
+  its own help text, and that test's user, like any freshly created
+  one, hadn't onboarded yet. Missed locally because the height field
+  was only re-verified against `apps.accounts`'s own tests, not the
+  full cross-app suite — the exact kind of collision the full-suite
+  rerun after the *first* onboarding-modal commit was specifically
+  meant to catch, skipped this time as "low risk" for what looked like
+  a small, additive change. Fixed by creating that test's user
+  already onboarded (the modal is irrelevant noise for what it
+  actually checks), verified with a full `pytest -q` run matching CI
+  exactly (661 passed).
+- Pushing the fix surfaced a second, independent bug: CI went green
+  end to end, but no release was created. `create-release`'s check for
+  "did VERSION change" diffed against `github.event.before` — the
+  commit immediately before *this* push, which was the first (failed)
+  1.2.0 attempt that had *already* bumped VERSION. Nothing looked
+  different, so the release step silently skipped. Fixed by changing
+  the check's whole question from "did VERSION change in this push"
+  to "does a release for the current VERSION already exist"
+  (`gh release view "v$version"`) — idempotent regardless of how many
+  pushes or failed runs it takes to land a version bump, and it can
+  no longer be silently starved by a fix-forward commit whose own
+  `before` already carried the bump.
