@@ -255,6 +255,15 @@ msgstr "Ora del backup (UTC)"
 msgid "Keep the most recent"
 msgstr "Conserva i più recenti"
 
+msgid "Backup file"
+msgstr "File di backup"
+
+msgid "A .tar.gz backup archive previously downloaded from an IronStack instance."
+msgstr "Un archivio di backup .tar.gz scaricato in precedenza da un'istanza IronStack."
+
+msgid "Must be a .tar.gz file."
+msgstr "Deve essere un file .tar.gz."
+
 msgid "Category"
 msgstr "Categoria"
 
@@ -341,6 +350,15 @@ msgstr "Backup creato: %(name)s"
 
 msgid "Backup settings saved."
 msgstr "Impostazioni di backup salvate."
+
+msgid "Not a valid IronStack backup archive — expected a .tar.gz containing database.dump, media.tar, and manifest.json."
+msgstr "Non è un archivio di backup IronStack valido: previsto un file .tar.gz contenente database.dump, media.tar e manifest.json."
+
+msgid "Backup uploaded: %(name)s"
+msgstr "Backup caricato: %(name)s"
+
+msgid "Backup deleted: %(name)s"
+msgstr "Backup eliminato: %(name)s"
 
 msgid "Restored from backup: %(name)s"
 msgstr "Ripristinato dal backup: %(name)s"
@@ -1150,6 +1168,21 @@ msgstr "Allenamento"
 msgid "Continue training"
 msgstr "Continua l'allenamento"
 
+msgid "Automatic"
+msgstr "Automatico"
+
+msgid "Uploaded"
+msgstr "Caricato"
+
+msgid "Download"
+msgstr "Scarica"
+
+msgid "Restore"
+msgstr "Ripristina"
+
+msgid "Delete this backup? This cannot be undone."
+msgstr "Eliminare questo backup? Non può essere annullato."
+
 msgid "%(title)s, %(counter)s category"
 msgid_plural "%(title)s, %(counter)s categories"
 msgstr[0] "%(title)s, %(counter)s categoria"
@@ -1184,26 +1217,40 @@ msgstr[1] "%(title)s nel tempo, %(counter)s letture"
 msgid "Create backup"
 msgstr "Crea backup"
 
+msgid "Upload backup"
+msgstr "Carica backup"
+
+msgid "Restore from a backup file you downloaded earlier, instead of one already listed below."
+msgstr "Ripristina da un file di backup scaricato in precedenza, invece di uno già elencato di seguito."
+
+msgid "Upload and continue"
+msgstr "Carica e continua"
+
 msgid "Settings"
 msgstr "Impostazioni"
 
 msgid "Save settings"
 msgstr "Salva impostazioni"
 
-msgid "Created"
-msgstr "Creato"
+msgid "Automatic backups"
+msgstr "Backup automatici"
 
-msgid "Size"
-msgstr "Dimensione"
+msgid "▾ Show %(counter)s earlier automatic backup"
+msgid_plural "▾ Show %(counter)s earlier automatic backups"
+msgstr[0] "▾ Mostra %(counter)s backup automatico precedente"
+msgstr[1] "▾ Mostra %(counter)s backup automatici precedenti"
 
-msgid "Download"
-msgstr "Scarica"
+msgid "Hide earlier automatic backups"
+msgstr "Nascondi i backup automatici precedenti"
 
-msgid "Restore"
-msgstr "Ripristina"
+msgid "No automatic backups yet."
+msgstr "Nessun backup automatico ancora."
 
-msgid "No backups yet."
-msgstr "Ancora nessun backup."
+msgid "Manual & uploaded backups"
+msgstr "Backup manuali e caricati"
+
+msgid "No manual or uploaded backups yet."
+msgstr "Nessun backup manuale o caricato ancora."
 
 msgid "Restore backup"
 msgstr "Ripristina backup"
@@ -1222,6 +1269,9 @@ msgstr "Versione"
 
 msgid "Git commit"
 msgstr "Commit Git"
+
+msgid "Created"
+msgstr "Creato"
 
 msgid "Running instance"
 msgstr "Istanza in esecuzione"

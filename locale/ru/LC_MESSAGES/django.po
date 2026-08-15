@@ -258,6 +258,15 @@ msgstr "Час резервного копирования (UTC)"
 msgid "Keep the most recent"
 msgstr "Хранить последние"
 
+msgid "Backup file"
+msgstr "Файл резервной копии"
+
+msgid "A .tar.gz backup archive previously downloaded from an IronStack instance."
+msgstr "Архив резервной копии .tar.gz, ранее скачанный с экземпляра IronStack."
+
+msgid "Must be a .tar.gz file."
+msgstr "Файл должен быть в формате .tar.gz."
+
 msgid "Category"
 msgstr "Категория"
 
@@ -344,6 +353,15 @@ msgstr "Резервная копия создана: %(name)s"
 
 msgid "Backup settings saved."
 msgstr "Настройки резервного копирования сохранены."
+
+msgid "Not a valid IronStack backup archive — expected a .tar.gz containing database.dump, media.tar, and manifest.json."
+msgstr "Это не корректный архив резервной копии IronStack — ожидался файл .tar.gz, содержащий database.dump, media.tar и manifest.json."
+
+msgid "Backup uploaded: %(name)s"
+msgstr "Резервная копия загружена: %(name)s"
+
+msgid "Backup deleted: %(name)s"
+msgstr "Резервная копия удалена: %(name)s"
 
 msgid "Restored from backup: %(name)s"
 msgstr "Восстановлено из резервной копии: %(name)s"
@@ -1155,6 +1173,21 @@ msgstr "Тренировка"
 msgid "Continue training"
 msgstr "Продолжить тренировку"
 
+msgid "Automatic"
+msgstr "Автоматический"
+
+msgid "Uploaded"
+msgstr "Загружено"
+
+msgid "Download"
+msgstr "Скачать"
+
+msgid "Restore"
+msgstr "Восстановить"
+
+msgid "Delete this backup? This cannot be undone."
+msgstr "Удалить эту резервную копию? Это действие нельзя отменить."
+
 msgid "%(title)s, %(counter)s category"
 msgid_plural "%(title)s, %(counter)s categories"
 msgstr[0] "%(title)s, %(counter)s категория"
@@ -1191,26 +1224,41 @@ msgstr[2] "%(title)s во времени, %(counter)s измерений"
 msgid "Create backup"
 msgstr "Создать резервную копию"
 
+msgid "Upload backup"
+msgstr "Загрузить резервную копию"
+
+msgid "Restore from a backup file you downloaded earlier, instead of one already listed below."
+msgstr "Восстановите из файла резервной копии, который вы скачали ранее, вместо уже перечисленных ниже."
+
+msgid "Upload and continue"
+msgstr "Загрузить и продолжить"
+
 msgid "Settings"
 msgstr "Настройки"
 
 msgid "Save settings"
 msgstr "Сохранить настройки"
 
-msgid "Created"
-msgstr "Создано"
+msgid "Automatic backups"
+msgstr "Автоматические резервные копии"
 
-msgid "Size"
-msgstr "Размер"
+msgid "▾ Show %(counter)s earlier automatic backup"
+msgid_plural "▾ Show %(counter)s earlier automatic backups"
+msgstr[0] "▾ Показать %(counter)s более раннюю автоматическую резервную копию"
+msgstr[1] "▾ Показать %(counter)s более ранние автоматические резервные копии"
+msgstr[2] "▾ Показать %(counter)s более ранних автоматических резервных копий"
 
-msgid "Download"
-msgstr "Скачать"
+msgid "Hide earlier automatic backups"
+msgstr "Скрыть более ранние автоматические резервные копии"
 
-msgid "Restore"
-msgstr "Восстановить"
+msgid "No automatic backups yet."
+msgstr "Пока нет автоматических резервных копий."
 
-msgid "No backups yet."
-msgstr "Резервных копий пока нет."
+msgid "Manual & uploaded backups"
+msgstr "Ручные и загруженные резервные копии"
+
+msgid "No manual or uploaded backups yet."
+msgstr "Пока нет ручных или загруженных резервных копий."
 
 msgid "Restore backup"
 msgstr "Восстановить резервную копию"
@@ -1229,6 +1277,9 @@ msgstr "Версия"
 
 msgid "Git commit"
 msgstr "Git-коммит"
+
+msgid "Created"
+msgstr "Создано"
 
 msgid "Running instance"
 msgstr "Работающий экземпляр"

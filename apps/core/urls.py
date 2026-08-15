@@ -1,7 +1,12 @@
 from django.urls import path
 
 from .views import DashboardView, healthcheck, service_worker, web_manifest
-from .views_backup import BackupDownloadView, BackupListView, BackupRestoreView
+from .views_backup import (
+    BackupDeleteView,
+    BackupDownloadView,
+    BackupListView,
+    BackupRestoreView,
+)
 from .views_feedback import FeedbackCreateView, FeedbackListView
 
 urlpatterns = [
@@ -14,6 +19,7 @@ urlpatterns = [
     path("backups/", BackupListView.as_view(), name="backup-list"),
     path("backups/<str:name>/download/", BackupDownloadView.as_view(), name="backup-download"),
     path("backups/<str:name>/restore/", BackupRestoreView.as_view(), name="backup-restore"),
+    path("backups/<str:name>/delete/", BackupDeleteView.as_view(), name="backup-delete"),
     path("feedback/", FeedbackCreateView.as_view(), name="feedback-create"),
     path("feedback/admin/", FeedbackListView.as_view(), name="feedback-list"),
 ]

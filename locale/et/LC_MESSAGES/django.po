@@ -255,6 +255,15 @@ msgstr "Varunduse kellaaeg (UTC)"
 msgid "Keep the most recent"
 msgstr "Säilita uusimad"
 
+msgid "Backup file"
+msgstr "Varukoopia fail"
+
+msgid "A .tar.gz backup archive previously downloaded from an IronStack instance."
+msgstr "Varem IronStacki installatsioonist allalaaditud .tar.gz varunduse arhiiv."
+
+msgid "Must be a .tar.gz file."
+msgstr "Fail peab olema .tar.gz-vormingus."
+
 msgid "Category"
 msgstr "Kategooria"
 
@@ -341,6 +350,15 @@ msgstr "Varukoopia loodud: %(name)s"
 
 msgid "Backup settings saved."
 msgstr "Varunduse seaded salvestatud."
+
+msgid "Not a valid IronStack backup archive — expected a .tar.gz containing database.dump, media.tar, and manifest.json."
+msgstr "Ei ole kehtiv IronStacki varukoopia arhiiv — oodati .tar.gz faili, mis sisaldab database.dump, media.tar ja manifest.json faile."
+
+msgid "Backup uploaded: %(name)s"
+msgstr "Varukoopia üles laaditud: %(name)s"
+
+msgid "Backup deleted: %(name)s"
+msgstr "Varukoopia kustutatud: %(name)s"
 
 msgid "Restored from backup: %(name)s"
 msgstr "Taastatud varukoopiast: %(name)s"
@@ -1150,6 +1168,21 @@ msgstr "Trenn"
 msgid "Continue training"
 msgstr "Jätka trenni"
 
+msgid "Automatic"
+msgstr "Automaatne"
+
+msgid "Uploaded"
+msgstr "Üles laaditud"
+
+msgid "Download"
+msgstr "Laadi alla"
+
+msgid "Restore"
+msgstr "Taasta"
+
+msgid "Delete this backup? This cannot be undone."
+msgstr "Kas kustutada see varukoopia? Seda ei saa tagasi võtta."
+
 msgid "%(title)s, %(counter)s category"
 msgid_plural "%(title)s, %(counter)s categories"
 msgstr[0] "%(title)s, %(counter)s kategooria"
@@ -1184,26 +1217,40 @@ msgstr[1] "%(title)s aja jooksul, %(counter)s mõõtmist"
 msgid "Create backup"
 msgstr "Loo varukoopia"
 
+msgid "Upload backup"
+msgstr "Laadi varukoopia üles"
+
+msgid "Restore from a backup file you downloaded earlier, instead of one already listed below."
+msgstr "Taasta varem allalaaditud varukoopia failist, mitte allpool juba loetletud failist."
+
+msgid "Upload and continue"
+msgstr "Laadi üles ja jätka"
+
 msgid "Settings"
 msgstr "Seaded"
 
 msgid "Save settings"
 msgstr "Salvesta seaded"
 
-msgid "Created"
-msgstr "Loodud"
+msgid "Automatic backups"
+msgstr "Automaatsed varukoopiad"
 
-msgid "Size"
-msgstr "Suurus"
+msgid "▾ Show %(counter)s earlier automatic backup"
+msgid_plural "▾ Show %(counter)s earlier automatic backups"
+msgstr[0] "▾ Näita %(counter)s varasem automaatne varukoopia"
+msgstr[1] "▾ Näita %(counter)s varasemat automaatset varukoopiat"
 
-msgid "Download"
-msgstr "Laadi alla"
+msgid "Hide earlier automatic backups"
+msgstr "Peida varasemad automaatsed varukoopiad"
 
-msgid "Restore"
-msgstr "Taasta"
+msgid "No automatic backups yet."
+msgstr "Automaatseid varukoopiaid pole veel."
 
-msgid "No backups yet."
-msgstr "Varukoopiaid pole veel."
+msgid "Manual & uploaded backups"
+msgstr "Käsitsi tehtud ja üles laaditud varukoopiad"
+
+msgid "No manual or uploaded backups yet."
+msgstr "Käsitsi tehtud või üles laaditud varukoopiaid pole veel."
 
 msgid "Restore backup"
 msgstr "Taasta varukoopia"
@@ -1222,6 +1269,9 @@ msgstr "Versioon"
 
 msgid "Git commit"
 msgstr "Git-commit"
+
+msgid "Created"
+msgstr "Loodud"
 
 msgid "Running instance"
 msgstr "Töötav teenus"

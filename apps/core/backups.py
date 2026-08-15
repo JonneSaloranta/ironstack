@@ -36,6 +36,14 @@ class InvalidBackupName(Exception):
     pass
 
 
+class InvalidBackupArchive(Exception):
+    """Raised by save_uploaded_backup() below for anything that isn't
+    a readable .tar.gz containing every member a real backup has —
+    checked before ever writing into BACKUP_DIR, so a bad upload
+    doesn't clutter the backup list with a file that would only fail
+    later, at restore time, instead of right away."""
+
+
 def _db_config():
     return settings.DATABASES["default"]
 
@@ -64,11 +72,43 @@ def safe_archive_path(name):
     return path
 
 
+#: Filename prefix create_backup() never uses for anything it writes
+#: itself (see its own "-uploaded-" vs. plain "-" naming) — the one
+#: reliable signal that a given archive arrived via "Upload backup"
+#: rather than being created by this instance, since an uploaded
+#: archive's own manifest.json belongs to whatever instance originally
+#: made it and has no way to know it's since been uploaded elsewhere.
+_UPLOADED_PREFIX = "ironstack-backup-uploaded-"
+
+
+def _backup_origin(path):
+    """(source, version, git_sha) for one backup — source is "uploaded"
+    for anything save_uploaded_backup() wrote, otherwise whatever
+    create_backup() itself recorded in the archive's own manifest.json
+    ("scheduled" from the backup-scheduler service, "manual" from the
+    web UI's "Create backup" button or the create_backup management
+    command — see create_backup()'s own `source` parameter), falling
+    back to "manual" for a backup made before this field existed at
+    all, or for one whose manifest can't be read for any reason (a
+    corrupted archive shouldn't break the whole list page over just
+    its own source tag)."""
+    if path.name.startswith(_UPLOADED_PREFIX):
+        return "uploaded", None, None
+    try:
+        with tarfile.open(path, "r:gz") as tar:
+            member = tar.extractfile("manifest.json")
+            manifest = json.loads(member.read())
+    except (tarfile.TarError, KeyError, json.JSONDecodeError, OSError):
+        return "manual", None, None
+    return manifest.get("source", "manual"), manifest.get("version"), manifest.get("git_sha")
+
+
 def list_backups():
     BACKUP_DIR.mkdir(parents=True, exist_ok=True)
     backups = []
     for path in sorted(BACKUP_DIR.glob("ironstack-backup-*.tar.gz"), reverse=True):
         stat = path.stat()
+        source, version, git_sha = _backup_origin(path)
         backups.append(
             {
                 "name": path.name,
@@ -76,6 +116,9 @@ def list_backups():
                 "created_at": timezone.datetime.fromtimestamp(
                     stat.st_mtime, tz=timezone.get_current_timezone()
                 ),
+                "source": source,
+                "version": version,
+                "git_sha": git_sha,
             }
         )
     return backups
@@ -95,12 +138,22 @@ def prune_backups(retention_count):
         (BACKUP_DIR / backup["name"]).unlink(missing_ok=True)
 
 
-def create_backup():
+def create_backup(source="manual"):
     """Dumps the database, archives media/, and writes a version_info
     manifest, bundled into one `ironstack-backup-<timestamp>.tar.gz` in
     BACKUP_DIR, then prunes down to BackupSettings.load().retention_count
     (Profile → Administration → Backups). Returns the new archive's
-    filename."""
+    filename.
+
+    `source` is recorded in the manifest and is purely descriptive —
+    apps.core.management.commands.backup_scheduler is the only caller
+    that ever passes "scheduled"; the web UI's "Create backup" button
+    and the plain `create_backup` management command (e.g. from a host
+    cron entry someone set up themselves — see docs/BACKUP.md) both
+    leave it at the "manual" default, since there's no way to tell
+    those two apart from here anyway. list_backups()/_backup_origin()
+    read it back to tag each backup in Profile → Administration →
+    Backups."""
     BACKUP_DIR.mkdir(parents=True, exist_ok=True)
     # Microseconds too, not just down to the second — two backups
     # created within the same second (a fast retry, an admin clicking
@@ -130,6 +183,7 @@ def create_backup():
             "git_sha": get_git_sha(),
             "migrations": get_migration_state(),
             "generated_at": timezone.now().isoformat(),
+            "source": source,
         }
         (tmp / "manifest.json").write_text(json.dumps(manifest, indent=2))
 
@@ -137,6 +191,51 @@ def create_backup():
         with tarfile.open(BACKUP_DIR / archive_name, "w:gz") as tar:
             for filename in ("database.dump", "media.tar", "manifest.json"):
                 tar.add(tmp / filename, arcname=filename)
+
+    prune_backups(BackupSettings.load().retention_count)
+    return archive_name
+
+
+_UPLOAD_REQUIRED_MEMBERS = {"database.dump", "media.tar", "manifest.json"}
+
+
+def save_uploaded_backup(uploaded_file):
+    """Profile → Administration → Backups' "Upload backup" card
+    (apps.core.views_backup.BackupListView) — accepts a .tar.gz
+    previously downloaded (from this instance or another one running a
+    compatible version) and stores it in BACKUP_DIR under a fresh,
+    server-generated name, never the client-supplied filename — the
+    same "don't trust anything from the request" reasoning
+    safe_archive_path() already applies to a restore/download target
+    name. Runs through the exact same restore path afterward
+    (views_backup.BackupRestoreView) as a backup this instance created
+    itself — upload is just a second way to get a valid archive into
+    BACKUP_DIR, nothing about actually restoring one is different.
+    Also prunes down to the retention setting, same as create_backup()
+    — an upload counts as a backup existing here now, same as one."""
+    try:
+        with tarfile.open(fileobj=uploaded_file, mode="r:gz") as tar:
+            missing = _UPLOAD_REQUIRED_MEMBERS - set(tar.getnames())
+            if missing:
+                raise InvalidBackupArchive(f"missing {', '.join(sorted(missing))}")
+    except tarfile.TarError as exc:
+        raise InvalidBackupArchive("not a valid .tar.gz archive") from exc
+
+    BACKUP_DIR.mkdir(parents=True, exist_ok=True)
+    # Microseconds too — see create_backup()'s own comment on why
+    # (two uploads landing in the same wall-clock second would
+    # otherwise silently overwrite each other).
+    stamp = timezone.now().strftime("%Y%m%d-%H%M%S-%f")
+    archive_name = f"ironstack-backup-uploaded-{stamp}.tar.gz"
+    uploaded_file.seek(0)
+    # copyfileobj rather than Django UploadedFile's own .chunks() —
+    # works the same for a real multipart upload (an InMemoryUploadedFile/
+    # TemporaryUploadedFile, both real files) and for a plain
+    # file-like object (io.BytesIO, e.g. in a test), so this function
+    # doesn't need to assume anything Django-specific about its input
+    # beyond read()/seek().
+    with open(BACKUP_DIR / archive_name, "wb") as dest:
+        shutil.copyfileobj(uploaded_file, dest)
 
     prune_backups(BackupSettings.load().retention_count)
     return archive_name
@@ -150,6 +249,19 @@ def read_manifest(name):
     with tarfile.open(path, "r:gz") as tar:
         member = tar.extractfile("manifest.json")
         return json.loads(member.read())
+
+
+def delete_backup(name):
+    """Removes one backup from BACKUP_DIR — Profile → Administration →
+    Backups' own "Delete" action. Unlike restoring, this is
+    non-destructive to anything actually running (it only ever
+    discards a copy sitting in storage), so unlike restore_backup()
+    below it needs no confirm-page/manifest-comparison ceremony of its
+    own beyond the same JS confirm() every other delete in this app
+    uses. `safe_archive_path` does the same traversal/existence check
+    every other name-based lookup in this module already relies on."""
+    path = safe_archive_path(name)
+    path.unlink()
 
 
 def _psql(maintenance_args, env, sql):

@@ -75,8 +75,42 @@ Profile → Administration → Backups (`apps.core.backups`,
 `apps.core.views_backup`; `is_staff` required, same gate as `/admin/`
 and the rest of that page's "danger zone"). "Create backup" writes
 the same three files (`database.dump`/`media.tar`/`manifest.json`)
-into one `.tar.gz`, listed with a size/timestamp and "Download"/
-"Restore" next to each.
+into one `.tar.gz`, listed with a size/timestamp, the app version (and
+git commit, if the running image has one baked in — `docs/ARCHITECTURE.md`
+"Versioning") it was made from, and "Download"/"Restore"/"Delete" next
+to each. "Delete" just discards the copy in storage — nothing running
+is affected, so unlike restore it's a plain confirm-then-POST, no
+manifest-comparison page of its own.
+
+**Where each backup came from is tracked and shown**, in two separate
+sections: "Automatic backups" (the `backup-scheduler` service — see
+"Automatic backups" below) and "Manual & uploaded backups" (the
+"Create backup" button, the `create_backup` management command run
+directly — e.g. from a host cron entry someone set up themselves — or
+an uploaded file, each tagged "Manual"/"Uploaded" within that shared
+section). Kept apart because a daily schedule produces a
+fundamentally different kind of list — many, similar, low-effort —
+than a person deliberately clicking a button or uploading a file — few,
+each intentional. Automatic backups can pile up fast at their default
+daily cadence — only the single newest one shows outright; the rest
+collapse behind a "Show N earlier automatic backups" toggle right
+below it. Manual/uploaded backups always show individually, since each
+was a deliberate, one-at-a-time action.
+
+**Restoring from a backup you downloaded earlier** (from this
+instance or a different one running a compatible version) — the
+"Upload backup" card takes a `.tar.gz` file directly, validates it's a
+real backup archive (readable, and containing all three of
+`database.dump`/`media.tar`/`manifest.json` — rejected with a clear
+error otherwise, before anything is written to disk) via
+`apps.core.backups.save_uploaded_backup()`, stores it under a fresh,
+server-generated name (never the filename the browser sent — same
+"don't trust anything from the request" reasoning
+`safe_archive_path()` already applies), and goes straight into the
+same restore-confirmation page a server-created backup uses. Subject
+to the reverse proxy's own upload size limit
+(`compose/nginx/nginx.conf`'s `client_max_body_size`, `200M` by
+default — raise it there if a real backup ever grows past that).
 
 **Restore here is riskier than the script's version, on purpose
 accepted rather than avoided** — asked explicitly and confirmed before

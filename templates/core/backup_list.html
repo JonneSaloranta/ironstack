@@ -11,6 +11,23 @@
   <button type="submit" name="action" value="create_backup">{% trans "Create backup" %}</button>
 </form>
 
+<h2>{% trans "Upload backup" %}</h2>
+<form class="card" method="post" enctype="multipart/form-data">
+  {% csrf_token %}
+  <input type="hidden" name="action" value="upload_backup">
+  <p class="text-muted">{% trans "Restore from a backup file you downloaded earlier, instead of one already listed below." %}</p>
+  {{ upload_form.non_field_errors }}
+  {% for field in upload_form %}
+    <div class="field">
+      {{ field.label_tag }}
+      {{ field }}
+      {% if field.help_text %}<p class="field-help">{{ field.help_text }}</p>{% endif %}
+      {% if field.errors %}<p class="field-error">{{ field.errors|striptags }}</p>{% endif %}
+    </div>
+  {% endfor %}
+  <button type="submit">{% trans "Upload and continue" %}</button>
+</form>
+
 <h2>{% trans "Settings" %}</h2>
 <form class="card" method="post">
   {% csrf_token %}
@@ -34,33 +51,37 @@
   <button type="submit">{% trans "Save settings" %}</button>
 </form>
 
-{% if backups %}
-  <div class="table-wrap">
-  <table class="set-table">
-    <thead>
-      <tr>
-        <th>{% trans "Created" %}</th>
-        <th>{% trans "Size" %}</th>
-        <th></th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for backup in backups %}
-        <tr>
-          <td>{{ backup.created_at|date:"Y-m-d H:i" }}</td>
-          <td>{{ backup.size|filesizeformat }}</td>
-          <td class="set-actions">
-            <a class="button-secondary" href="{% url 'backup-download' backup.name %}">{% trans "Download" %}</a>
-            <a class="button button-danger" style="margin-left:auto;" href="{% url 'backup-restore' backup.name %}">{% trans "Restore" %}</a>
-          </td>
-        </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+<h2>{% trans "Automatic backups" %}</h2>
+{% if newest_scheduled %}
+  <div x-data="{ showOlderAuto: false }">
+    {% include "core/_backup_row.html" with backup=newest_scheduled %}
+    {% if older_scheduled_backups %}
+      <button type="button" class="button-secondary button-wrap" @click="showOlderAuto = !showOlderAuto"
+              :aria-expanded="showOlderAuto.toString()">
+        <span x-show="!showOlderAuto">{% blocktrans count counter=older_scheduled_backups|length %}▾ Show {{ counter }} earlier automatic backup{% plural %}▾ Show {{ counter }} earlier automatic backups{% endblocktrans %}</span>
+        <span x-show="showOlderAuto" x-cloak>▴ {% trans "Hide earlier automatic backups" %}</span>
+      </button>
+      <div x-show="showOlderAuto" x-cloak>
+        {% for older in older_scheduled_backups %}
+          {% include "core/_backup_row.html" with backup=older %}
+        {% endfor %}
+      </div>
+    {% endif %}
   </div>
 {% else %}
   <div class="card empty-state">
-    <p>{% trans "No backups yet." %}</p>
+    <p>{% trans "No automatic backups yet." %}</p>
+  </div>
+{% endif %}
+
+<h2>{% trans "Manual & uploaded backups" %}</h2>
+{% if manual_backups %}
+  {% for backup in manual_backups %}
+    {% include "core/_backup_row.html" %}
+  {% endfor %}
+{% else %}
+  <div class="card empty-state">
+    <p>{% trans "No manual or uploaded backups yet." %}</p>
   </div>
 {% endif %}
 

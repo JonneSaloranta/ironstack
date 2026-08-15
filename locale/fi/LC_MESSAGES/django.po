@@ -255,6 +255,15 @@ msgstr "Varmuuskopioinnin kellonaika (UTC)"
 msgid "Keep the most recent"
 msgstr "Säilytä uusimmat"
 
+msgid "Backup file"
+msgstr "Varmuuskopiotiedosto"
+
+msgid "A .tar.gz backup archive previously downloaded from an IronStack instance."
+msgstr "Aiemmin IronStack-asennuksesta ladattu .tar.gz-varmuuskopioarkisto."
+
+msgid "Must be a .tar.gz file."
+msgstr "Tiedoston tulee olla .tar.gz-muodossa."
+
 msgid "Category"
 msgstr "Kategoria"
 
@@ -341,6 +350,15 @@ msgstr "Varmuuskopio luotu: %(name)s"
 
 msgid "Backup settings saved."
 msgstr "Varmuuskopioinnin asetukset tallennettu."
+
+msgid "Not a valid IronStack backup archive — expected a .tar.gz containing database.dump, media.tar, and manifest.json."
+msgstr "Ei kelvollinen IronStack-varmuuskopioarkisto — odotettiin .tar.gz-tiedostoa, joka sisältää database.dump-, media.tar- ja manifest.json-tiedostot."
+
+msgid "Backup uploaded: %(name)s"
+msgstr "Varmuuskopio ladattu: %(name)s"
+
+msgid "Backup deleted: %(name)s"
+msgstr "Varmuuskopio poistettu: %(name)s"
 
 msgid "Restored from backup: %(name)s"
 msgstr "Palautettu varmuuskopiosta: %(name)s"
@@ -1150,6 +1168,21 @@ msgstr "Treeni"
 msgid "Continue training"
 msgstr "Jatka harjoittelua"
 
+msgid "Automatic"
+msgstr "Automaattinen"
+
+msgid "Uploaded"
+msgstr "Ladattu"
+
+msgid "Download"
+msgstr "Lataa"
+
+msgid "Restore"
+msgstr "Palauta"
+
+msgid "Delete this backup? This cannot be undone."
+msgstr "Poistetaanko tämä varmuuskopio? Tätä ei voi perua."
+
 msgid "%(title)s, %(counter)s category"
 msgid_plural "%(title)s, %(counter)s categories"
 msgstr[0] "%(title)s, %(counter)s kategoria"
@@ -1184,26 +1217,40 @@ msgstr[1] "%(title)s ajan myötä, %(counter)s mittausta"
 msgid "Create backup"
 msgstr "Luo varmuuskopio"
 
+msgid "Upload backup"
+msgstr "Lataa varmuuskopio"
+
+msgid "Restore from a backup file you downloaded earlier, instead of one already listed below."
+msgstr "Palauta aiemmin lataamastasi varmuuskopiotiedostosta, sen sijaan että valitsisit jo alla listatuista."
+
+msgid "Upload and continue"
+msgstr "Lataa ja jatka"
+
 msgid "Settings"
 msgstr "Asetukset"
 
 msgid "Save settings"
 msgstr "Tallenna asetukset"
 
-msgid "Created"
-msgstr "Luotu"
+msgid "Automatic backups"
+msgstr "Automaattiset varmuuskopiot"
 
-msgid "Size"
-msgstr "Koko"
+msgid "▾ Show %(counter)s earlier automatic backup"
+msgid_plural "▾ Show %(counter)s earlier automatic backups"
+msgstr[0] "▾ Näytä %(counter)s aiempi automaattinen varmuuskopio"
+msgstr[1] "▾ Näytä %(counter)s aiempaa automaattista varmuuskopiota"
 
-msgid "Download"
-msgstr "Lataa"
+msgid "Hide earlier automatic backups"
+msgstr "Piilota aiemmat automaattiset varmuuskopiot"
 
-msgid "Restore"
-msgstr "Palauta"
+msgid "No automatic backups yet."
+msgstr "Ei vielä automaattisia varmuuskopioita."
 
-msgid "No backups yet."
-msgstr "Ei vielä varmuuskopioita."
+msgid "Manual & uploaded backups"
+msgstr "Manuaaliset ja ladatut varmuuskopiot"
+
+msgid "No manual or uploaded backups yet."
+msgstr "Ei vielä manuaalisia tai ladattuja varmuuskopioita."
 
 msgid "Restore backup"
 msgstr "Palauta varmuuskopio"
@@ -1222,6 +1269,9 @@ msgstr "Versio"
 
 msgid "Git commit"
 msgstr "Git-commit"
+
+msgid "Created"
+msgstr "Luotu"
 
 msgid "Running instance"
 msgstr "Käynnissä oleva asennus"

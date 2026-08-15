@@ -255,6 +255,15 @@ msgstr "Tid för säkerhetskopiering (UTC)"
 msgid "Keep the most recent"
 msgstr "Behåll de senaste"
 
+msgid "Backup file"
+msgstr "Säkerhetskopiefil"
+
+msgid "A .tar.gz backup archive previously downloaded from an IronStack instance."
+msgstr "Ett .tar.gz-säkerhetskopiearkiv som tidigare laddats ner från en IronStack-instans."
+
+msgid "Must be a .tar.gz file."
+msgstr "Måste vara en .tar.gz-fil."
+
 msgid "Category"
 msgstr "Kategori"
 
@@ -341,6 +350,15 @@ msgstr "Säkerhetskopia skapad: %(name)s"
 
 msgid "Backup settings saved."
 msgstr "Säkerhetskopieringens inställningar sparade."
+
+msgid "Not a valid IronStack backup archive — expected a .tar.gz containing database.dump, media.tar, and manifest.json."
+msgstr "Inte ett giltigt IronStack-säkerhetskopiearkiv — förväntade en .tar.gz som innehåller database.dump, media.tar och manifest.json."
+
+msgid "Backup uploaded: %(name)s"
+msgstr "Säkerhetskopia uppladdad: %(name)s"
+
+msgid "Backup deleted: %(name)s"
+msgstr "Säkerhetskopia borttagen: %(name)s"
 
 msgid "Restored from backup: %(name)s"
 msgstr "Återställd från säkerhetskopia: %(name)s"
@@ -1150,6 +1168,21 @@ msgstr "Träning"
 msgid "Continue training"
 msgstr "Fortsätt träna"
 
+msgid "Automatic"
+msgstr "Automatisk"
+
+msgid "Uploaded"
+msgstr "Uppladdad"
+
+msgid "Download"
+msgstr "Ladda ner"
+
+msgid "Restore"
+msgstr "Återställ"
+
+msgid "Delete this backup? This cannot be undone."
+msgstr "Vill du ta bort den här säkerhetskopian? Detta kan inte ångras."
+
 msgid "%(title)s, %(counter)s category"
 msgid_plural "%(title)s, %(counter)s categories"
 msgstr[0] "%(title)s, %(counter)s kategori"
@@ -1184,26 +1217,40 @@ msgstr[1] "%(title)s över tid, %(counter)s mätvärden"
 msgid "Create backup"
 msgstr "Skapa säkerhetskopia"
 
+msgid "Upload backup"
+msgstr "Ladda upp säkerhetskopia"
+
+msgid "Restore from a backup file you downloaded earlier, instead of one already listed below."
+msgstr "Återställ från en säkerhetskopia du laddade ner tidigare, istället för en som redan listas nedan."
+
+msgid "Upload and continue"
+msgstr "Ladda upp och fortsätt"
+
 msgid "Settings"
 msgstr "Inställningar"
 
 msgid "Save settings"
 msgstr "Spara inställningar"
 
-msgid "Created"
-msgstr "Skapad"
+msgid "Automatic backups"
+msgstr "Automatiska säkerhetskopior"
 
-msgid "Size"
-msgstr "Storlek"
+msgid "▾ Show %(counter)s earlier automatic backup"
+msgid_plural "▾ Show %(counter)s earlier automatic backups"
+msgstr[0] "▾ Visa %(counter)s tidigare automatisk säkerhetskopia"
+msgstr[1] "▾ Visa %(counter)s tidigare automatiska säkerhetskopior"
 
-msgid "Download"
-msgstr "Ladda ner"
+msgid "Hide earlier automatic backups"
+msgstr "Dölj tidigare automatiska säkerhetskopior"
 
-msgid "Restore"
-msgstr "Återställ"
+msgid "No automatic backups yet."
+msgstr "Inga automatiska säkerhetskopior ännu."
 
-msgid "No backups yet."
-msgstr "Inga säkerhetskopior ännu."
+msgid "Manual & uploaded backups"
+msgstr "Manuella och uppladdade säkerhetskopior"
+
+msgid "No manual or uploaded backups yet."
+msgstr "Inga manuella eller uppladdade säkerhetskopior ännu."
 
 msgid "Restore backup"
 msgstr "Återställ säkerhetskopia"
@@ -1222,6 +1269,9 @@ msgstr "Version"
 
 msgid "Git commit"
 msgstr "Git-commit"
+
+msgid "Created"
+msgstr "Skapad"
 
 msgid "Running instance"
 msgstr "Körande instans"

@@ -1,0 +1,23 @@
+{% load i18n %}
+<div class="card">
+  <div>{{ backup.created_at|date:"Y-m-d H:i" }}</div>
+  <p class="text-muted">
+    {{ backup.size|filesizeformat }} · {{ backup.version|default:"—" }}{% if backup.git_sha and backup.git_sha != "unknown" %} ({{ backup.git_sha }}){% endif %}
+  </p>
+  {% if backup.source == "scheduled" %}
+    <span class="tag">{% trans "Automatic" %}</span>
+  {% elif backup.source == "uploaded" %}
+    <span class="tag tag-success">{% trans "Uploaded" %}</span>
+  {% else %}
+    <span class="tag tag-muted">{% trans "Manual" %}</span>
+  {% endif %}
+  <div class="set-actions" style="margin-top:0.5rem;">
+    <a class="button-secondary" href="{% url 'backup-download' backup.name %}">{% trans "Download" %}</a>
+    <a class="button button-danger" href="{% url 'backup-restore' backup.name %}">{% trans "Restore" %}</a>
+    <form method="post" action="{% url 'backup-delete' backup.name %}" x-data="{}"
+          @submit="if (!confirm('{% trans "Delete this backup? This cannot be undone." %}')) $event.preventDefault()">
+      {% csrf_token %}
+      <button type="submit" class="button-secondary">{% trans "Delete" %}</button>
+    </form>
+  </div>
+</div>

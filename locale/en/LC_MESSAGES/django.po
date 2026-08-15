@@ -255,6 +255,15 @@ msgstr "Backup hour (UTC)"
 msgid "Keep the most recent"
 msgstr "Keep the most recent"
 
+msgid "Backup file"
+msgstr "Backup file"
+
+msgid "A .tar.gz backup archive previously downloaded from an IronStack instance."
+msgstr "A .tar.gz backup archive previously downloaded from an IronStack instance."
+
+msgid "Must be a .tar.gz file."
+msgstr "Must be a .tar.gz file."
+
 msgid "Category"
 msgstr "Category"
 
@@ -341,6 +350,15 @@ msgstr "Backup created: %(name)s"
 
 msgid "Backup settings saved."
 msgstr "Backup settings saved."
+
+msgid "Not a valid IronStack backup archive — expected a .tar.gz containing database.dump, media.tar, and manifest.json."
+msgstr "Not a valid IronStack backup archive — expected a .tar.gz containing database.dump, media.tar, and manifest.json."
+
+msgid "Backup uploaded: %(name)s"
+msgstr "Backup uploaded: %(name)s"
+
+msgid "Backup deleted: %(name)s"
+msgstr "Backup deleted: %(name)s"
 
 msgid "Restored from backup: %(name)s"
 msgstr "Restored from backup: %(name)s"
@@ -1150,6 +1168,21 @@ msgstr "Workout"
 msgid "Continue training"
 msgstr "Continue training"
 
+msgid "Automatic"
+msgstr "Automatic"
+
+msgid "Uploaded"
+msgstr "Uploaded"
+
+msgid "Download"
+msgstr "Download"
+
+msgid "Restore"
+msgstr "Restore"
+
+msgid "Delete this backup? This cannot be undone."
+msgstr "Delete this backup? This cannot be undone."
+
 msgid "%(title)s, %(counter)s category"
 msgid_plural "%(title)s, %(counter)s categories"
 msgstr[0] "%(title)s, %(counter)s category"
@@ -1184,26 +1217,40 @@ msgstr[1] "%(title)s trend over time, %(counter)s readings"
 msgid "Create backup"
 msgstr "Create backup"
 
+msgid "Upload backup"
+msgstr "Upload backup"
+
+msgid "Restore from a backup file you downloaded earlier, instead of one already listed below."
+msgstr "Restore from a backup file you downloaded earlier, instead of one already listed below."
+
+msgid "Upload and continue"
+msgstr "Upload and continue"
+
 msgid "Settings"
 msgstr "Settings"
 
 msgid "Save settings"
 msgstr "Save settings"
 
-msgid "Created"
-msgstr "Created"
+msgid "Automatic backups"
+msgstr "Automatic backups"
 
-msgid "Size"
-msgstr "Size"
+msgid "▾ Show %(counter)s earlier automatic backup"
+msgid_plural "▾ Show %(counter)s earlier automatic backups"
+msgstr[0] "▾ Show %(counter)s earlier automatic backup"
+msgstr[1] "▾ Show %(counter)s earlier automatic backups"
 
-msgid "Download"
-msgstr "Download"
+msgid "Hide earlier automatic backups"
+msgstr "Hide earlier automatic backups"
 
-msgid "Restore"
-msgstr "Restore"
+msgid "No automatic backups yet."
+msgstr "No automatic backups yet."
 
-msgid "No backups yet."
-msgstr "No backups yet."
+msgid "Manual & uploaded backups"
+msgstr "Manual & uploaded backups"
+
+msgid "No manual or uploaded backups yet."
+msgstr "No manual or uploaded backups yet."
 
 msgid "Restore backup"
 msgstr "Restore backup"
@@ -1222,6 +1269,9 @@ msgstr "Version"
 
 msgid "Git commit"
 msgstr "Git commit"
+
+msgid "Created"
+msgstr "Created"
 
 msgid "Running instance"
 msgstr "Running instance"
