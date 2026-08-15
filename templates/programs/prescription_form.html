@@ -20,7 +20,7 @@
 </form>
 
 {% if form.instance.pk %}
-  <form method="post" action="{% url 'programs:prescription-delete' program.pk workout.pk form.instance.pk %}" onsubmit="return confirm('{% trans "Remove this exercise from the workout?" %}');">
+  <form method="post" action="{% url 'programs:prescription-delete' program.pk workout.pk form.instance.pk %}" x-data="{}" @submit="if (!confirm('{% trans "Remove this exercise from the workout?" %}')) $event.preventDefault()">
     {% csrf_token %}
     <button type="submit" class="button-danger">{% trans "Remove exercise" %}</button>
   </form>

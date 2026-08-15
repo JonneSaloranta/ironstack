@@ -9,7 +9,7 @@ from django.urls import reverse
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 
-from apps.accounts.forms import LOGIN_ATTEMPT_LIMIT
+from apps.accounts.forms import LOGIN_ATTEMPT_LIMIT, PASSWORD_RESET_ATTEMPT_LIMIT
 
 User = get_user_model()
 
@@ -618,6 +618,60 @@ class PasswordResetFlowTests(TestCase):
             follow=True,
         )
         self.assertContains(response, "invalid, possibly because it has already been used")
+
+
+class PasswordResetRateLimitTests(TestCase):
+    """apps.accounts.forms.RateLimitedPasswordResetForm — without it,
+    PasswordResetView is wide open to spamming an arbitrary email
+    address with reset links using this instance's own SMTP relay."""
+
+    def setUp(self):
+        self.alice = User.objects.create_user(
+            username="alice", password="old-pass-123", email="alice@example.com"
+        )
+        cache.clear()
+
+    def tearDown(self):
+        cache.clear()
+
+    def _request(self, email="alice@example.com", ip="203.0.113.10"):
+        return self.client.post(
+            reverse("password_reset"),
+            {"email": email},
+            REMOTE_ADDR=ip,
+            HTTP_X_REAL_IP=ip,
+        )
+
+    def test_requests_under_the_limit_are_not_blocked(self):
+        for _ in range(PASSWORD_RESET_ATTEMPT_LIMIT - 1):
+            response = self._request()
+            self.assertRedirects(response, reverse("password_reset_done"))
+
+    def test_the_nth_request_locks_out_further_tries(self):
+        for _ in range(PASSWORD_RESET_ATTEMPT_LIMIT):
+            self._request()
+        response = self._request()
+        self.assertContains(response, "Too many password reset requests")
+        # The earlier, allowed requests sent real emails; the blocked
+        # one over the limit must not send a further one.
+        self.assertEqual(len(mail.outbox), PASSWORD_RESET_ATTEMPT_LIMIT)
+
+    def test_every_request_counts_toward_the_limit_not_just_ones_that_send_an_email(self):
+        """Unlike a login attempt, there's no "failed" password-reset
+        submission to count selectively — a request for an unknown
+        email is just as valid a submission (and just as easy to spam
+        with) as one for a real address, even though it sends no
+        email."""
+        for _ in range(PASSWORD_RESET_ATTEMPT_LIMIT):
+            self._request(email="nobody@example.com")
+        response = self._request(email="nobody@example.com")
+        self.assertContains(response, "Too many password reset requests")
+
+    def test_lockout_is_keyed_per_ip_not_globally(self):
+        for _ in range(PASSWORD_RESET_ATTEMPT_LIMIT):
+            self._request(ip="203.0.113.10")
+        response = self._request(ip="203.0.113.99")
+        self.assertRedirects(response, reverse("password_reset_done"))
 
 
 class AccountDetailsTests(TestCase):

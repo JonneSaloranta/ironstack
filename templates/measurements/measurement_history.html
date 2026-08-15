@@ -41,7 +41,7 @@
         <td>{{ entry.display_value }} {{ unit_label }}</td>
         <td class="set-actions">
           <a class="button-secondary" href="{% url 'measurements:entry-edit' entry.pk %}">{% trans "Edit" %}</a>
-          <form method="post" action="{% url 'measurements:entry-delete' entry.pk %}" onsubmit="return confirm('{% trans "Delete this reading?" %}');">
+          <form method="post" action="{% url 'measurements:entry-delete' entry.pk %}" x-data="{}" @submit="if (!confirm('{% trans "Delete this reading?" %}')) $event.preventDefault()">
             {% csrf_token %}
             <button type="submit" class="button-danger">{% trans "Delete" %}</button>
           </form>
@@ -55,7 +55,7 @@
 </div>
 
 {% if can_deactivate and measurement_type.active %}
-  <form method="post" action="{% url 'measurements:type-deactivate' measurement_type.pk %}" onsubmit="return confirm('{% trans "Deactivate this measurement type? It will no longer appear when logging new readings." %}');">
+  <form method="post" action="{% url 'measurements:type-deactivate' measurement_type.pk %}" x-data="{}" @submit="if (!confirm('{% trans "Deactivate this measurement type? It will no longer appear when logging new readings." %}')) $event.preventDefault()">
     {% csrf_token %}
     <button type="submit" class="button-danger">{% trans "Deactivate type" %}</button>
   </form>

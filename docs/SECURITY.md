@@ -91,6 +91,67 @@ see `apps.accounts.forms._client_ip`'s own docstring for why plain
 username, so an attacker can't lock a real user out on purpose by
 deliberately failing their login from elsewhere.
 
+The password-reset request view (`django.contrib.auth`'s
+`PasswordResetView`) had the identical gap — nothing stopped it being
+used as a free tool to spam an arbitrary email address with reset
+links over and over, using this instance's own SMTP relay to do it.
+`apps.accounts.forms.RateLimitedPasswordResetForm` (wired in via
+`apps.accounts.views.RateLimitedPasswordResetView`, registered ahead
+of `django.contrib.auth.urls`' own `password_reset/` the same way the
+login override is) applies the same 5-per-15-minutes, per-client-IP
+limit — every submission counts here, not just ones for a real email
+address, since there's no such thing as a "failed" password-reset
+request to count selectively.
+
+## Cross-Site Request Forgery (CSRF)
+
+`config.settings.production` derives `CSRF_TRUSTED_ORIGINS` from
+`DJANGO_ALLOWED_HOSTS` automatically — every host this instance
+answers to is also a host a real POST request to it should be trusted
+to have come from. If you see "CSRF verification failed" in production
+after changing how this instance is reached (a new domain, a proxy
+added in front, `DJANGO_ALLOWED_HOSTS` not updated to match), that
+mismatch is the first thing to check — Django 4+'s CSRF check compares
+the request's `Origin`/`Referer` against this list for HTTPS requests.
+
+## Content-Security-Policy
+
+`apps.core.middleware.ContentSecurityPolicyMiddleware` sets a CSP
+header on every response, in every environment. `default-src 'self'`
+plus tight per-directive allowances (no external scripts/styles/
+fonts/images beyond `data:` URIs, no framing by another site, no
+plugins, forms can only submit back to this same origin) — see the
+middleware's own docstring for the exact policy string and reasoning.
+
+Two allowances are worth knowing about, both scoped as narrowly as
+this stack currently allows:
+- `script-src 'unsafe-eval'` — Alpine.js evaluates `x-data`/`x-show`/
+  `@click`/... expression strings via `new Function()`, which CSP
+  treats as eval. Alpine ships a separate CSP-safe build (a restricted
+  expression parser) that would let this be dropped; not adopted here.
+- `style-src 'unsafe-inline'` — a number of templates use plain
+  `style="..."` attributes rather than a dedicated class.
+
+Every template's own inline `<script>` block and every native
+`onclick=`/`onsubmit=` attribute were removed as part of adding this
+header (moved to `static/js/*.js` loaded via `<script src>`, or
+converted to Alpine's own `x-data`/`@submit`/`@click` directive syntax
+— which is not a native browser inline-script mechanism at all, so it
+isn't affected by `script-src` lacking `'unsafe-inline'`). Don't
+reintroduce either in a new template — either would simply be silently
+blocked by the browser under this policy, with no server-side error to
+notice it by.
+
+## Dependency updates
+
+`.github/dependabot.yml` opens a weekly, reviewed PR for outdated pip
+(`requirements/`), Docker base image, and GitHub Actions dependencies
+— plain GitHub configuration, not a new runtime dependency. Every PR
+still has to pass `.github/workflows/ci.yml` (ruff, migration check,
+the full test suite) before merging like any other change.
+`requirements/*.txt` are range-pinned (`>=X,<Y`) rather than hash-
+locked, so most weeks this picks up patch releases within that range.
+
 ## Registration
 
 Self-hosted doesn't necessarily mean "open to the public internet" —

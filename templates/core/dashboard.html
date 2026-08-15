@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load i18n core_extras records_extras %}
+{% load static i18n core_extras records_extras %}
 {% block title %}{% trans "Dashboard" %} — IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
@@ -115,32 +115,5 @@
 {% endblock %}
 
 {% block extra_scripts %}
-<script>
-  // Achievements carousel (apps.analytics.achievements) — auto-advances
-  // through whichever highlight cards the server rendered, pausing on
-  // hover/focus so a user reading one isn't fighting the timer, and the
-  // dot row (also Alpine-driven) always lets a user jump straight to a
-  // specific card instead — "auto-rotate" is only ever the default.
-  function ironstackCarousel(total) {
-    return {
-      index: 0,
-      total: total,
-      timer: null,
-      start() {
-        if (this.total < 2) return;
-        clearInterval(this.timer);
-        this.timer = setInterval(() => {
-          this.index = (this.index + 1) % this.total;
-        }, 4500);
-      },
-      stop() {
-        clearInterval(this.timer);
-      },
-      goto(i) {
-        this.index = i;
-        this.start();
-      },
-    };
-  }
-</script>
+<script src="{% static 'js/dashboard-carousel.js' %}" defer></script>
 {% endblock %}

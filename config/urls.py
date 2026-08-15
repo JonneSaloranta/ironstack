@@ -1,16 +1,23 @@
 from django.contrib import admin
 from django.urls import include, path
 
-from apps.accounts.views import RateLimitedLoginView
+from apps.accounts.views import RateLimitedLoginView, RateLimitedPasswordResetView
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    # Must come before django.contrib.auth.urls' own "login/" below —
-    # Django resolves urlpatterns in order and both mount at
-    # "accounts/", so this is what actually serves /accounts/login/,
-    # under the same "login" name every existing {% url %}/reverse()
-    # call already uses (see apps.accounts.views.RateLimitedLoginView).
+    # Must come before django.contrib.auth.urls' own "login/"/
+    # "password_reset/" below — Django resolves urlpatterns in order
+    # and both mount at "accounts/", so these are what actually serve
+    # those two URLs, under the same "login"/"password_reset" names
+    # every existing {% url %}/reverse() call already uses (see
+    # apps.accounts.views.RateLimitedLoginView/
+    # RateLimitedPasswordResetView).
     path("accounts/login/", RateLimitedLoginView.as_view(), name="login"),
+    path(
+        "accounts/password_reset/",
+        RateLimitedPasswordResetView.as_view(),
+        name="password_reset",
+    ),
     path("accounts/", include("django.contrib.auth.urls")),
     path("accounts/", include("apps.accounts.urls")),
     path("exercises/", include("apps.exercises.urls")),

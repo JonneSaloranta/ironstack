@@ -68,6 +68,15 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    # Right next to SecurityMiddleware, which sets the other response-
+    # level security headers (X-Content-Type-Options, HSTS, ...) —
+    # see apps.core.middleware.ContentSecurityPolicyMiddleware's own
+    # docstring and docs/SECURITY.md "Content-Security-Policy" for the
+    # policy itself. Applied in every environment, not just production
+    # — a dev-only violation (e.g. a template that grew a stray
+    # external <script src>) is far easier to notice and fix locally
+    # than to discover it's been silently missing in prod all along.
+    "apps.core.middleware.ContentSecurityPolicyMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.locale.LocaleMiddleware",
     "django.middleware.common.CommonMiddleware",

@@ -50,7 +50,7 @@
 </a>
 
 {% if exercise.owner_id == request.user.id and exercise.active %}
-  <form method="post" action="{% url 'exercises:exercise-deactivate' exercise.pk %}" onsubmit="return confirm('{% trans "Deactivate this exercise? It will no longer appear when browsing or prescribing." %}');">
+  <form method="post" action="{% url 'exercises:exercise-deactivate' exercise.pk %}" x-data="{}" @submit="if (!confirm('{% trans "Deactivate this exercise? It will no longer appear when browsing or prescribing." %}')) $event.preventDefault()">
     {% csrf_token %}
     <button type="submit" class="button-danger">{% trans "Deactivate" %}</button>
   </form>

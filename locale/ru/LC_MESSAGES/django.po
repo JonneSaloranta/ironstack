@@ -12,6 +12,9 @@ msgstr ""
 msgid "Too many failed login attempts. Try again in a few minutes."
 msgstr "Слишком много неудачных попыток входа. Повторите попытку через несколько минут."
 
+msgid "Too many password reset requests. Try again in a few minutes."
+msgstr "Слишком много запросов на сброс пароля. Повторите попытку через несколько минут."
+
 msgid "Timezone"
 msgstr "Часовой пояс"
 

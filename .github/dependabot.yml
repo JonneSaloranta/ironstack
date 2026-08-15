@@ -1,0 +1,28 @@
+version: 2
+
+# Automated, reviewed dependency-update PRs — no new runtime
+# dependency (this is plain GitHub config, not a package). Weekly
+# rather than daily: dependency updates are worth batching and
+# reviewing deliberately, not reacting to individually as they land.
+# Every PR still has to pass .github/workflows/ci.yml before merging.
+updates:
+  - package-ecosystem: pip
+    directory: /requirements
+    schedule:
+      interval: weekly
+    groups:
+      # One combined PR per week instead of one per package — the
+      # requirements/*.txt files are already range-pinned (">=X,<Y"),
+      # so most weeks this is just picking up patch releases.
+      python-dependencies:
+        patterns: ["*"]
+
+  - package-ecosystem: docker
+    directory: /
+    schedule:
+      interval: weekly
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly

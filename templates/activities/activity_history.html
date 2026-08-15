@@ -50,7 +50,7 @@
         <td>{% if entry.display_distance is not None %}{{ entry.display_distance }} {{ distance_label }}{% else %}—{% endif %}</td>
         <td class="set-actions">
           <a class="button-secondary" href="{% url 'activities:entry-edit' entry.pk %}">{% trans "Edit" %}</a>
-          <form method="post" action="{% url 'activities:entry-delete' entry.pk %}" onsubmit="return confirm('{% trans "Delete this activity?" %}');">
+          <form method="post" action="{% url 'activities:entry-delete' entry.pk %}" x-data="{}" @submit="if (!confirm('{% trans "Delete this activity?" %}')) $event.preventDefault()">
             {% csrf_token %}
             <button type="submit" class="button-danger">{% trans "Delete" %}</button>
           </form>
@@ -64,7 +64,7 @@
 </div>
 
 {% if can_deactivate and activity_type.active %}
-  <form method="post" action="{% url 'activities:type-deactivate' activity_type.pk %}" onsubmit="return confirm('{% trans "Deactivate this activity type? It will no longer appear when logging new activities." %}');">
+  <form method="post" action="{% url 'activities:type-deactivate' activity_type.pk %}" x-data="{}" @submit="if (!confirm('{% trans "Deactivate this activity type? It will no longer appear when logging new activities." %}')) $event.preventDefault()">
     {% csrf_token %}
     <button type="submit" class="button-danger">{% trans "Deactivate type" %}</button>
   </form>

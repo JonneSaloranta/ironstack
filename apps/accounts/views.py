@@ -2,7 +2,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import login
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.views import LoginView
+from django.contrib.auth.views import LoginView, PasswordResetView
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.utils.translation import gettext as _
@@ -11,7 +11,13 @@ from django.views.generic import CreateView, UpdateView
 from apps.core import changelog as changelog_services
 from apps.core.models import FeedbackSettings
 
-from .forms import AccountDetailsForm, ProfileForm, RateLimitedAuthenticationForm, SignupForm
+from .forms import (
+    AccountDetailsForm,
+    ProfileForm,
+    RateLimitedAuthenticationForm,
+    RateLimitedPasswordResetForm,
+    SignupForm,
+)
 
 
 class SignupView(CreateView):
@@ -51,6 +57,20 @@ class RateLimitedLoginView(LoginView):
         context = super().get_context_data(**kwargs)
         context["signup_enabled"] = settings.SIGNUP_ENABLED
         return context
+
+
+class RateLimitedPasswordResetView(PasswordResetView):
+    """See apps.accounts.forms.RateLimitedPasswordResetForm for the
+    actual limiting; this subclass exists to plug that form in and to
+    give it the `request` it needs (PasswordResetForm doesn't accept
+    that kwarg itself the way AuthenticationForm does)."""
+
+    form_class = RateLimitedPasswordResetForm
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["request"] = self.request
+        return kwargs
 
 
 class ProfileView(LoginRequiredMixin, UpdateView):

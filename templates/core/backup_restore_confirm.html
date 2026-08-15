@@ -32,7 +32,7 @@
   </dl>
 </div>
 
-<form method="post" onsubmit="return confirm('{% trans "Really replace the current database and media with this backup? This cannot be undone." %}');">
+<form method="post" x-data="{}" @submit="if (!confirm('{% trans "Really replace the current database and media with this backup? This cannot be undone." %}')) $event.preventDefault()">
   {% csrf_token %}
   <button type="submit" class="button-danger">{% trans "Restore this backup" %}</button>
 </form>

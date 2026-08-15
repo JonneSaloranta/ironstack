@@ -10,9 +10,30 @@
   <link rel="icon" href="{% static 'icons/favicon-32.png' %}">
   <link rel="apple-touch-icon" href="{% static 'icons/apple-touch-icon.png' %}">
   <script src="{% static 'js/htmx.min.js' %}" defer></script>
+  {% comment %}
+  Any page-specific script defining a function an Alpine x-data=""
+  expression references (ironstackCarousel, ironstackRestTimer, ...)
+  must execute *before* alpine.min.js's own deferred script runs, not
+  just appear anywhere before it in the rendered page — deferred
+  scripts execute in document order, but Alpine's own auto-start calls
+  Alpine.start() synchronously the instant its script runs if the
+  document has already finished parsing (which is always true for
+  *any* deferred script, defer-by-definition only runs once parsing
+  completes) — it does not wait for a later deferred script's globals
+  to exist first. This used to work by accident when these were
+  unconverted inline <script> blocks lower in <body> (they ran
+  synchronously *during* parsing, before any deferred script could
+  run at all) — see apps.core.middleware.ContentSecurityPolicyMiddleware
+  for why they were moved to external files at all. Regression fixed:
+  the achievements carousel silently failed to init (ironstackCarousel
+  was still undefined when Alpine scanned x-data="ironstackCarousel(...)")
+  once it was moved below alpine.min.js in document order.
+  {% endcomment %}
+  {% block extra_scripts %}{% endblock %}
   <script src="{% static 'js/alpine.min.js' %}" defer></script>
+  <script src="{% static 'js/sw-register.js' %}" defer></script>
 </head>
-<body>
+<body data-service-worker-url="{% url 'service-worker' %}">
   <a class="skip-link" href="#main-content">{% trans "Skip to content" %}</a>
   {% comment %}
   Populated two ways: directly below, with any Django `messages`
@@ -71,15 +92,5 @@
   <main class="container" id="main-content">
     {% block content %}{% endblock %}
   </main>
-  {% block extra_scripts %}{% endblock %}
-  <script>
-    // See static/sw.js for exactly what this does and, just as
-    // deliberately, doesn't do (no offline caching of pages/data).
-    if ("serviceWorker" in navigator) {
-      window.addEventListener("load", () => {
-        navigator.serviceWorker.register("{% url 'service-worker' %}");
-      });
-    }
-  </script>
 </body>
 </html>

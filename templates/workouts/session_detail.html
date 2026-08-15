@@ -27,13 +27,13 @@
     {% csrf_token %}
     <button type="submit">{% trans "Complete workout" %}</button>
   </form>
-  <form method="post" action="{% url 'workouts:session-abandon' session.pk %}" onsubmit="return confirm('{% trans "Abandon this workout? It stays in your history as abandoned." %}');">
+  <form method="post" action="{% url 'workouts:session-abandon' session.pk %}" x-data="{}" @submit="if (!confirm('{% trans "Abandon this workout? It stays in your history as abandoned." %}')) $event.preventDefault()">
     {% csrf_token %}
     <button type="submit" class="button-danger">{% trans "Abandon workout" %}</button>
   </form>
 {% endif %}
 
-<form method="post" action="{% url 'workouts:session-delete' session.pk %}" onsubmit="return confirm('{% trans "Delete this workout? This cannot be undone." %}');">
+<form method="post" action="{% url 'workouts:session-delete' session.pk %}" x-data="{}" @submit="if (!confirm('{% trans "Delete this workout? This cannot be undone." %}')) $event.preventDefault()">
   {% csrf_token %}
   <button type="submit" class="button-danger">{% trans "Delete workout" %}</button>
 </form>

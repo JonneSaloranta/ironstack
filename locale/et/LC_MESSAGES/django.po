@@ -12,6 +12,9 @@ msgstr ""
 msgid "Too many failed login attempts. Try again in a few minutes."
 msgstr "Liiga palju ebaõnnestunud sisselogimiskatseid. Proovi mõne minuti pärast uuesti."
 
+msgid "Too many password reset requests. Try again in a few minutes."
+msgstr "Liiga palju parooli lähtestamise päringuid. Proovi mõne minuti pärast uuesti."
+
 msgid "Timezone"
 msgstr "Ajavöönd"
 

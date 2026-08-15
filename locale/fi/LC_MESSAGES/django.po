@@ -12,6 +12,9 @@ msgstr ""
 msgid "Too many failed login attempts. Try again in a few minutes."
 msgstr "Liian monta epäonnistunutta kirjautumisyritystä. Yritä uudelleen muutaman minuutin kuluttua."
 
+msgid "Too many password reset requests. Try again in a few minutes."
+msgstr "Liian monta salasanan palautuspyyntöä. Yritä uudelleen muutaman minuutin kuluttua."
+
 msgid "Timezone"
 msgstr "Aikavyöhyke"
 

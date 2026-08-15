@@ -2,7 +2,7 @@ from decimal import Decimal
 from zoneinfo import available_timezones
 
 from django import forms
-from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
+from django.contrib.auth.forms import AuthenticationForm, PasswordResetForm, UserCreationForm
 from django.core.cache import cache
 from django.utils.translation import gettext_lazy as _
 
@@ -18,6 +18,16 @@ from .models import UnitSystem, User
 # automated password guessing, not to be a tunable product feature.
 LOGIN_ATTEMPT_LIMIT = 5
 LOGIN_ATTEMPT_WINDOW_SECONDS = 15 * 60
+
+# apps.accounts.views.RateLimitedPasswordResetView's own protection —
+# without it, PasswordResetView (django.contrib.auth) is wide open to
+# being used as a free tool to spam an arbitrary email address with
+# reset links over and over, using this instance's own SMTP relay to
+# do it. Separate counter/window from the login limiter above: a
+# password-reset request and a failed login are different actions with
+# different legitimate retry rates.
+PASSWORD_RESET_ATTEMPT_LIMIT = 5
+PASSWORD_RESET_ATTEMPT_WINDOW_SECONDS = 15 * 60
 
 # `zoneinfo.available_timezones()` includes a handful of non-geographic
 # aliases alongside real IANA "Area/Location" zones. Both are
@@ -86,6 +96,42 @@ class RateLimitedAuthenticationForm(AuthenticationForm):
             raise
         cache.delete(cache_key)
         return cleaned_data
+
+
+class RateLimitedPasswordResetForm(PasswordResetForm):
+    """Blocks further password-reset requests from the same client
+    after PASSWORD_RESET_ATTEMPT_LIMIT within
+    PASSWORD_RESET_ATTEMPT_WINDOW_SECONDS. Keyed by client IP for the
+    same reason RateLimitedAuthenticationForm above is: keying by the
+    submitted email would let an attacker lock a real user's own
+    ability to request a reset by repeatedly submitting *their* address
+    from elsewhere. Every submission counts here, not just failed
+    ones — unlike a login attempt, there's no such thing as a "failed"
+    password-reset request to only count selectively (the form is
+    deliberately valid, and sends no email, for an address that
+    doesn't exist — see its own save(), unchanged here — so counting
+    only "failures" would count nothing at all).
+
+    django.contrib.auth.forms.PasswordResetForm doesn't accept a
+    `request` kwarg the way AuthenticationForm does, so
+    apps.accounts.views.RateLimitedPasswordResetView.get_form_kwargs
+    injects one explicitly for this subclass to use.
+    """
+
+    def __init__(self, *args, request=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.request = request
+
+    def clean(self):
+        cache_key = f"password-reset-attempts:{_client_ip(self.request)}"
+        attempts = cache.get(cache_key, 0)
+        if attempts >= PASSWORD_RESET_ATTEMPT_LIMIT:
+            raise forms.ValidationError(
+                _("Too many password reset requests. Try again in a few minutes."),
+                code="rate_limited",
+            )
+        cache.set(cache_key, attempts + 1, PASSWORD_RESET_ATTEMPT_WINDOW_SECONDS)
+        return super().clean()
 
 
 class AccountDetailsForm(forms.ModelForm):

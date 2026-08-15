@@ -25,7 +25,7 @@
         · {% trans "never used" %}
       {% endif %}
     </div>
-    <form method="post" action="{% url 'api_keys:key-revoke' key.pk %}" onsubmit="return confirm('{% trans "Revoke this API key? Anything using it will stop working immediately." %}');">
+    <form method="post" action="{% url 'api_keys:key-revoke' key.pk %}" x-data="{}" @submit="if (!confirm('{% trans "Revoke this API key? Anything using it will stop working immediately." %}')) $event.preventDefault()">
       {% csrf_token %}
       <button type="submit" class="button-danger">{% trans "Revoke" %}</button>
     </form>

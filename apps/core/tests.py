@@ -378,6 +378,24 @@ class ErrorPageTests(TestCase):
         self.assertIn(b"Something went wrong", response.content)
 
 
+class ContentSecurityPolicyTests(TestCase):
+    """apps.core.middleware.ContentSecurityPolicyMiddleware — see its
+    own docstring and docs/SECURITY.md for what each directive allows
+    and why."""
+
+    def test_header_is_present_on_a_plain_response(self):
+        response = self.client.get(reverse("healthcheck"))
+        self.assertIn("Content-Security-Policy", response)
+
+    def test_default_src_is_locked_to_self(self):
+        response = self.client.get(reverse("healthcheck"))
+        self.assertIn("default-src 'self'", response["Content-Security-Policy"])
+
+    def test_framing_by_another_site_is_blocked(self):
+        response = self.client.get(reverse("healthcheck"))
+        self.assertIn("frame-ancestors 'none'", response["Content-Security-Policy"])
+
+
 class HealthcheckTests(TestCase):
     def test_healthcheck_returns_200_without_auth(self):
         response = self.client.get(reverse("healthcheck"))
@@ -436,13 +454,20 @@ class PWATests(TestCase):
         self.assertIn("cache.put(event.request, response)", content)
 
     def test_base_page_links_the_manifest_and_registers_the_service_worker(self):
+        """The registration call itself lives in static/js/sw-register.js
+        (loaded via <script src>, not inline — see apps.core.middleware.
+        ContentSecurityPolicyMiddleware's docstring for why an inline
+        <script> block would just be silently blocked), fed the service
+        worker's own URL through a data-* attribute on <body> rather than
+        a template tag inside the script."""
         from django.contrib.auth import get_user_model
 
         get_user_model().objects.create_user(username="alice", password="s3cret-pass")
         self.client.login(username="alice", password="s3cret-pass")
         response = self.client.get(reverse("dashboard"))
         self.assertContains(response, '<link rel="manifest" href="/manifest.json">')
-        self.assertContains(response, "serviceWorker.register")
+        self.assertContains(response, 'src="/static/js/sw-register.js"')
+        self.assertContains(response, 'data-service-worker-url="/sw.js"')
 
 
 class VersionTests(TestCase):
