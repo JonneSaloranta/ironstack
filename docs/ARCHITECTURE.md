@@ -355,7 +355,7 @@ get_version()` reads and caches it; `apps.core.context_processors.
 app_version` puts it in every template's context (`{{ app_version }}`)
 so any page can display it, even though only the profile page footer
 does today. `CHANGELOG.md` maps version numbers to what changed —
-distinct from `README.md`'s "Status" section, which is the detailed,
+distinct from `docs/DEVELOPMENT_LOG.md`, which is the detailed,
 ongoing build log updated with every feature as it lands. Clicking the
 version number on the profile page opens a modal rendering that whole
 file (`apps.core.changelog.render_changelog_html()`) — a small,

@@ -8,9 +8,9 @@ a build and surfaced in the app (profile page footer, `version_info`
 management command).
 
 This file exists to answer "what changed between two versions", not to
-duplicate the detailed, ongoing build log — that's `README.md`'s
-"Status" section, which is updated with every feature as it lands and
-remains the authoritative history.
+duplicate the detailed, ongoing build log — that's
+`docs/DEVELOPMENT_LOG.md`, which is updated with every feature as it
+lands and remains the authoritative history.
 
 ## [Unreleased]
 
