@@ -987,6 +987,32 @@ h2 {
   font-size: 0.9rem;
 }
 
+/* Mobile: hide every scrollbar track (page itself, the changelog
+   modal's own scrolling body, and wide tables' horizontal scroll-
+   within-themselves container — .table-wrap, above) — scrolling still
+   works exactly the same, just without a visible track/thumb, closer
+   to how a native mobile app looks. Left alone on desktop (below,
+   min-width: 768px is where mouse/trackpad users benefit from an
+   actual visible scrollbar as a real UI affordance), so this is
+   scoped to a max-width query rather than a mobile-first default that
+   the desktop query would then need to undo. Three declarations
+   needed for the three browser engines' three different mechanisms —
+   none of them is a shorthand for the others. */
+@media (max-width: 767.98px) {
+  html,
+  .modal-body,
+  .table-wrap {
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* legacy Edge/IE */
+  }
+
+  html::-webkit-scrollbar,
+  .modal-body::-webkit-scrollbar,
+  .table-wrap::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, and other WebKit/Blink browsers */
+  }
+}
+
 /* Desktop: horizontal top nav bar (not a sidebar) — same flex-direction:
    row as mobile, just pinned to the top instead of the bottom, so the
    nav items behave like a normal horizontal bar rather than stretching
