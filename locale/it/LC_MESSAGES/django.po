@@ -9,6 +9,9 @@ msgstr ""
 "Language: it\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
+msgid "Too many failed login attempts. Try again in a few minutes."
+msgstr "Troppi tentativi di accesso falliti. Riprova tra qualche minuto."
+
 msgid "Timezone"
 msgstr "Fuso orario"
 
@@ -53,6 +56,9 @@ msgstr "Metrico (kg, km)"
 
 msgid "Imperial (lb, mi)"
 msgstr "Imperiale (lb, mi)"
+
+msgid "Registration is currently closed."
+msgstr "La registrazione è attualmente chiusa."
 
 msgid "Preferences saved."
 msgstr "Preferenze salvate."
@@ -1445,6 +1451,9 @@ msgstr "Record di ripetizioni per peso"
 msgid "%(weight)s: %(reps)s reps"
 msgstr "%(weight)s: %(reps)s ripetizioni"
 
+msgid "Forgot your password?"
+msgstr "Hai dimenticato la password?"
+
 msgid "Don't have an account?"
 msgstr "Non hai un account?"
 
@@ -1456,6 +1465,54 @@ msgstr "Password modificata"
 
 msgid "Your password has been updated."
 msgstr "La tua password è stata aggiornata."
+
+msgid "Password reset"
+msgstr "Reimposta password"
+
+msgid "Your password has been set. You can log in now."
+msgstr "La tua password è stata impostata. Ora puoi accedere."
+
+msgid "Set a new password"
+msgstr "Imposta una nuova password"
+
+msgid "Set new password"
+msgstr "Imposta nuova password"
+
+msgid "This password reset link is invalid, possibly because it has already been used or has expired."
+msgstr "Questo link per la reimpostazione della password non è valido, forse perché è già stato utilizzato o è scaduto."
+
+msgid "Request a new reset link"
+msgstr "Richiedi un nuovo link di reimpostazione"
+
+msgid "Reset password"
+msgstr "Reimposta password"
+
+msgid "If an account exists with that email address, we've sent a link to reset your password."
+msgstr "Se esiste un account con questo indirizzo email, ti abbiamo inviato un link per reimpostare la password."
+
+msgid "Back to login"
+msgstr "Torna al login"
+
+msgid "You're receiving this email because you (or someone else) requested a password reset for your account at %(site_name)s."
+msgstr "Ricevi questa email perché tu (o qualcun altro) hai richiesto la reimpostazione della password per il tuo account su %(site_name)s."
+
+msgid "Please go to the following page and choose a new password:"
+msgstr "Vai alla pagina seguente e scegli una nuova password:"
+
+msgid "Your username, in case you've forgotten: %(username)s"
+msgstr "Il tuo nome utente, nel caso l'avessi dimenticato: %(username)s"
+
+msgid "If you didn't request this, you can safely ignore this email."
+msgstr "Se non hai richiesto questo, puoi tranquillamente ignorare questa email."
+
+msgid "Enter your account's email address and we'll send you a link to reset your password."
+msgstr "Inserisci l'indirizzo email del tuo account e ti invieremo un link per reimpostare la password."
+
+msgid "Send reset link"
+msgstr "Invia link di reimpostazione"
+
+msgid "Password reset on %(site_name)s"
+msgstr "Reimpostazione password su %(site_name)s"
 
 msgid "Target: %(count)s × %(min)s-%(max)s"
 msgstr "Obiettivo: %(count)s × %(min)s-%(max)s"

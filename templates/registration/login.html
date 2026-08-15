@@ -19,5 +19,8 @@
   {% endfor %}
   <button type="submit">{% trans "Log in" %}</button>
 </form>
-<p class="text-muted">{% trans "Don't have an account?" %} <a class="button-secondary" href="{% url 'signup' %}">{% trans "Create an account" %}</a></p>
+<p><a href="{% url 'password_reset' %}">{% trans "Forgot your password?" %}</a></p>
+{% if signup_enabled %}
+  <p class="text-muted">{% trans "Don't have an account?" %} <a class="button-secondary" href="{% url 'signup' %}">{% trans "Create an account" %}</a></p>
+{% endif %}
 {% endblock %}

@@ -9,6 +9,9 @@ msgstr ""
 "Language: en\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
+msgid "Too many failed login attempts. Try again in a few minutes."
+msgstr "Too many failed login attempts. Try again in a few minutes."
+
 msgid "Timezone"
 msgstr "Timezone"
 
@@ -53,6 +56,9 @@ msgstr "Metric (kg, km)"
 
 msgid "Imperial (lb, mi)"
 msgstr "Imperial (lb, mi)"
+
+msgid "Registration is currently closed."
+msgstr "Registration is currently closed."
 
 msgid "Preferences saved."
 msgstr "Preferences saved."
@@ -1445,6 +1451,9 @@ msgstr "Rep records by weight"
 msgid "%(weight)s: %(reps)s reps"
 msgstr "%(weight)s: %(reps)s reps"
 
+msgid "Forgot your password?"
+msgstr "Forgot your password?"
+
 msgid "Don't have an account?"
 msgstr "Don't have an account?"
 
@@ -1456,6 +1465,54 @@ msgstr "Password changed"
 
 msgid "Your password has been updated."
 msgstr "Your password has been updated."
+
+msgid "Password reset"
+msgstr "Password reset"
+
+msgid "Your password has been set. You can log in now."
+msgstr "Your password has been set. You can log in now."
+
+msgid "Set a new password"
+msgstr "Set a new password"
+
+msgid "Set new password"
+msgstr "Set new password"
+
+msgid "This password reset link is invalid, possibly because it has already been used or has expired."
+msgstr "This password reset link is invalid, possibly because it has already been used or has expired."
+
+msgid "Request a new reset link"
+msgstr "Request a new reset link"
+
+msgid "Reset password"
+msgstr "Reset password"
+
+msgid "If an account exists with that email address, we've sent a link to reset your password."
+msgstr "If an account exists with that email address, we've sent a link to reset your password."
+
+msgid "Back to login"
+msgstr "Back to login"
+
+msgid "You're receiving this email because you (or someone else) requested a password reset for your account at %(site_name)s."
+msgstr "You're receiving this email because you (or someone else) requested a password reset for your account at %(site_name)s."
+
+msgid "Please go to the following page and choose a new password:"
+msgstr "Please go to the following page and choose a new password:"
+
+msgid "Your username, in case you've forgotten: %(username)s"
+msgstr "Your username, in case you've forgotten: %(username)s"
+
+msgid "If you didn't request this, you can safely ignore this email."
+msgstr "If you didn't request this, you can safely ignore this email."
+
+msgid "Enter your account's email address and we'll send you a link to reset your password."
+msgstr "Enter your account's email address and we'll send you a link to reset your password."
+
+msgid "Send reset link"
+msgstr "Send reset link"
+
+msgid "Password reset on %(site_name)s"
+msgstr "Password reset on %(site_name)s"
 
 msgid "Target: %(count)s × %(min)s-%(max)s"
 msgstr "Target: %(count)s × %(min)s-%(max)s"

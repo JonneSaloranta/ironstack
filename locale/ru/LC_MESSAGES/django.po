@@ -9,6 +9,9 @@ msgstr ""
 "Language: ru\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 
+msgid "Too many failed login attempts. Try again in a few minutes."
+msgstr "Слишком много неудачных попыток входа. Повторите попытку через несколько минут."
+
 msgid "Timezone"
 msgstr "Часовой пояс"
 
@@ -53,6 +56,9 @@ msgstr "Метрическая (кг, км)"
 
 msgid "Imperial (lb, mi)"
 msgstr "Имперская (фунты, мили)"
+
+msgid "Registration is currently closed."
+msgstr "Регистрация сейчас закрыта."
 
 msgid "Preferences saved."
 msgstr "Настройки сохранены."
@@ -1452,6 +1458,9 @@ msgstr "Рекорды повторений по весу"
 msgid "%(weight)s: %(reps)s reps"
 msgstr "%(weight)s: %(reps)s повторений"
 
+msgid "Forgot your password?"
+msgstr "Забыли пароль?"
+
 msgid "Don't have an account?"
 msgstr "Нет аккаунта?"
 
@@ -1463,6 +1472,54 @@ msgstr "Пароль изменён"
 
 msgid "Your password has been updated."
 msgstr "Ваш пароль обновлён."
+
+msgid "Password reset"
+msgstr "Сброс пароля"
+
+msgid "Your password has been set. You can log in now."
+msgstr "Ваш пароль установлен. Теперь вы можете войти."
+
+msgid "Set a new password"
+msgstr "Установите новый пароль"
+
+msgid "Set new password"
+msgstr "Установить новый пароль"
+
+msgid "This password reset link is invalid, possibly because it has already been used or has expired."
+msgstr "Эта ссылка для сброса пароля недействительна — возможно, она уже использована или истекла."
+
+msgid "Request a new reset link"
+msgstr "Запросить новую ссылку для сброса"
+
+msgid "Reset password"
+msgstr "Сбросить пароль"
+
+msgid "If an account exists with that email address, we've sent a link to reset your password."
+msgstr "Если аккаунт с таким адресом электронной почты существует, мы отправили на него ссылку для сброса пароля."
+
+msgid "Back to login"
+msgstr "Назад ко входу"
+
+msgid "You're receiving this email because you (or someone else) requested a password reset for your account at %(site_name)s."
+msgstr "Вы получили это письмо, потому что вы (или кто-то другой) запросили сброс пароля для вашего аккаунта на %(site_name)s."
+
+msgid "Please go to the following page and choose a new password:"
+msgstr "Перейдите на следующую страницу и выберите новый пароль:"
+
+msgid "Your username, in case you've forgotten: %(username)s"
+msgstr "Ваше имя пользователя, если вы его забыли: %(username)s"
+
+msgid "If you didn't request this, you can safely ignore this email."
+msgstr "Если вы не отправляли этот запрос, просто проигнорируйте это письмо."
+
+msgid "Enter your account's email address and we'll send you a link to reset your password."
+msgstr "Введите адрес электронной почты вашего аккаунта, и мы отправим вам ссылку для сброса пароля."
+
+msgid "Send reset link"
+msgstr "Отправить ссылку для сброса"
+
+msgid "Password reset on %(site_name)s"
+msgstr "Сброс пароля на %(site_name)s"
 
 msgid "Target: %(count)s × %(min)s-%(max)s"
 msgstr "Цель: %(count)s × %(min)s-%(max)s"

@@ -18,3 +18,12 @@ services:
              python manage.py createcachetable &&
              python manage.py compilemessages &&
              python manage.py runserver 0.0.0.0:8000"
+
+  # docs/BACKUP.md — automatic in production (docker-compose.yml alone),
+  # off by default here: an unrequested profile means plain `docker
+  # compose up` skips it entirely, so local dev isn't rebuilding a
+  # second image and running a scheduler nothing needs. Start it
+  # explicitly with `docker compose --profile manual up backup-scheduler`
+  # if you want to test it locally.
+  backup-scheduler:
+    profiles: ["manual"]

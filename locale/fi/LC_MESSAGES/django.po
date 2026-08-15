@@ -9,6 +9,9 @@ msgstr ""
 "Language: fi\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
+msgid "Too many failed login attempts. Try again in a few minutes."
+msgstr "Liian monta epäonnistunutta kirjautumisyritystä. Yritä uudelleen muutaman minuutin kuluttua."
+
 msgid "Timezone"
 msgstr "Aikavyöhyke"
 
@@ -53,6 +56,9 @@ msgstr "Metrinen (kg, km)"
 
 msgid "Imperial (lb, mi)"
 msgstr "Imperiaalinen (lb, mi)"
+
+msgid "Registration is currently closed."
+msgstr "Rekisteröityminen on tällä hetkellä suljettu."
 
 msgid "Preferences saved."
 msgstr "Asetukset tallennettu."
@@ -1445,6 +1451,9 @@ msgstr "Toistoennätykset painoittain"
 msgid "%(weight)s: %(reps)s reps"
 msgstr "%(weight)s: %(reps)s toistoa"
 
+msgid "Forgot your password?"
+msgstr "Unohtuiko salasana?"
+
 msgid "Don't have an account?"
 msgstr "Eikö sinulla ole vielä tiliä?"
 
@@ -1456,6 +1465,54 @@ msgstr "Salasana vaihdettu"
 
 msgid "Your password has been updated."
 msgstr "Salasanasi on päivitetty."
+
+msgid "Password reset"
+msgstr "Salasanan palautus"
+
+msgid "Your password has been set. You can log in now."
+msgstr "Salasanasi on asetettu. Voit kirjautua sisään nyt."
+
+msgid "Set a new password"
+msgstr "Aseta uusi salasana"
+
+msgid "Set new password"
+msgstr "Aseta uusi salasana"
+
+msgid "This password reset link is invalid, possibly because it has already been used or has expired."
+msgstr "Tämä salasanan palautuslinkki ei ole voimassa — se on ehkä jo käytetty tai vanhentunut."
+
+msgid "Request a new reset link"
+msgstr "Pyydä uusi palautuslinkki"
+
+msgid "Reset password"
+msgstr "Palauta salasana"
+
+msgid "If an account exists with that email address, we've sent a link to reset your password."
+msgstr "Jos kyseisellä sähköpostiosoitteella on tili, olemme lähettäneet siihen linkin salasanan palauttamiseksi."
+
+msgid "Back to login"
+msgstr "Takaisin kirjautumiseen"
+
+msgid "You're receiving this email because you (or someone else) requested a password reset for your account at %(site_name)s."
+msgstr "Saat tämän sähköpostin, koska sinä (tai joku muu) pyysi salasanan palautusta tilillesi palvelussa %(site_name)s."
+
+msgid "Please go to the following page and choose a new password:"
+msgstr "Siirry seuraavalle sivulle ja valitse uusi salasana:"
+
+msgid "Your username, in case you've forgotten: %(username)s"
+msgstr "Käyttäjätunnuksesi, jos olet unohtanut sen: %(username)s"
+
+msgid "If you didn't request this, you can safely ignore this email."
+msgstr "Jos et pyytänyt tätä, voit jättää tämän sähköpostin huomiotta."
+
+msgid "Enter your account's email address and we'll send you a link to reset your password."
+msgstr "Anna tilisi sähköpostiosoite, niin lähetämme sinulle linkin salasanan palauttamiseksi."
+
+msgid "Send reset link"
+msgstr "Lähetä palautuslinkki"
+
+msgid "Password reset on %(site_name)s"
+msgstr "Salasanan palautus palvelussa %(site_name)s"
 
 msgid "Target: %(count)s × %(min)s-%(max)s"
 msgstr "Tavoite: %(count)s × %(min)s-%(max)s"

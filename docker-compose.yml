@@ -12,7 +12,7 @@ services:
       retries: 10
 
   web:
-    build:
+    build: &web-build
       context: .
       dockerfile: Dockerfile
       args:
@@ -44,6 +44,33 @@ services:
              python manage.py compilemessages &&
              gunicorn config.wsgi:application --bind 0.0.0.0:8000
              --workers 3 --timeout 30 --access-logfile - --error-logfile -"
+
+  # Automatic daily backups (docs/BACKUP.md) — the same image as `web`
+  # (build: *web-build reuses its exact build config via a YAML
+  # anchor, so there's one source of truth for it, not two configs
+  # that could drift apart), just running apps.core.management.
+  # commands.backup_scheduler instead of gunicorn. Needs media_data
+  # too, not just backups_data: create_backup() archives MEDIA_ROOT's
+  # contents into every backup, and this is a separate container from
+  # `web` even though it's built from the same image, so it doesn't
+  # see `web`'s filesystem without its own mount of the same volume.
+  # Comment out or remove this service entirely if you'd rather rely
+  # on a host cron entry calling `docker compose exec web python
+  # manage.py create_backup` instead — there's no separate on/off
+  # toggle for it.
+  backup-scheduler:
+    build: *web-build
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      DJANGO_SETTINGS_MODULE: config.settings.production
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - media_data:/app/media
+      - backups_data:/app/backups
+    command: python manage.py backup_scheduler
 
   nginx:
     image: nginx:1.27-alpine

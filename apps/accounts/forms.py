@@ -2,13 +2,22 @@ from decimal import Decimal
 from zoneinfo import available_timezones
 
 from django import forms
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
+from django.core.cache import cache
 from django.utils.translation import gettext_lazy as _
 
 from apps.core import units as core_units
 from apps.core.formatting import BMI_FULL, abbr_label, lazy_format_html
 
 from .models import UnitSystem, User
+
+# apps.accounts.views.RateLimitedLoginView's brute-force protection —
+# no relation to apps.api's rate limiting, which is a completely
+# separate, API-key-only mechanism with its own admin-configurable
+# tiers. This one is fixed and simple on purpose: it exists to blunt
+# automated password guessing, not to be a tunable product feature.
+LOGIN_ATTEMPT_LIMIT = 5
+LOGIN_ATTEMPT_WINDOW_SECONDS = 15 * 60
 
 # `zoneinfo.available_timezones()` includes a handful of non-geographic
 # aliases alongside real IANA "Area/Location" zones. Both are
@@ -32,6 +41,51 @@ class SignupForm(UserCreationForm):
     class Meta(UserCreationForm.Meta):
         model = User
         fields = ("username", "email")
+
+
+def _client_ip(request):
+    """The `X-Real-IP` header `compose/nginx/nginx.conf` sets to
+    `$remote_addr` — nginx overwrites this unconditionally rather than
+    forwarding whatever a client sent, so it can't be spoofed by a
+    request that goes through that proxy. `REMOTE_ADDR` on its own
+    would be nginx's *own* container IP for every proxied request
+    (docker-compose.yml never publishes a port for `web` directly —
+    only `nginx` is reachable from outside), which would make every
+    visitor share one counter. Falls back to REMOTE_ADDR for direct,
+    no-proxy access (e.g. `runserver` in dev)."""
+    return request.META.get("HTTP_X_REAL_IP") or request.META.get("REMOTE_ADDR", "unknown")
+
+
+class RateLimitedAuthenticationForm(AuthenticationForm):
+    """Blocks further login attempts from the same client for
+    LOGIN_ATTEMPT_WINDOW_SECONDS after LOGIN_ATTEMPT_LIMIT failed
+    attempts within that window. Keyed by client IP, not the submitted
+    username: keying by username alone would let an attacker cycle
+    through guessed usernames from one source freely, and would let an
+    attacker lock a *real* user out on purpose by deliberately failing
+    their login from elsewhere — a denial-of-service against that one
+    account. IP-based keying costs the attacker actual infrastructure
+    to route around instead. Uses the same shared DatabaseCache
+    apps.api's throttling does, for the same reason: gunicorn runs
+    multiple worker processes with no shared memory, so an in-process
+    counter would let each worker serve its own independent allowance.
+    """
+
+    def clean(self):
+        cache_key = f"login-attempts:{_client_ip(self.request)}"
+        attempts = cache.get(cache_key, 0)
+        if attempts >= LOGIN_ATTEMPT_LIMIT:
+            raise forms.ValidationError(
+                _("Too many failed login attempts. Try again in a few minutes."),
+                code="rate_limited",
+            )
+        try:
+            cleaned_data = super().clean()
+        except forms.ValidationError:
+            cache.set(cache_key, attempts + 1, LOGIN_ATTEMPT_WINDOW_SECONDS)
+            raise
+        cache.delete(cache_key)
+        return cleaned_data
 
 
 class AccountDetailsForm(forms.ModelForm):

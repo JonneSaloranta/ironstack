@@ -1,0 +1,25 @@
+{$IRONSTACK_DOMAIN} {
+	encode gzip
+
+	# Mirrors compose/nginx/nginx.conf's own static/media handling —
+	# served directly by the proxy, never proxied through to gunicorn.
+	handle_path /static/* {
+		root * /app/staticfiles
+		file_server
+	}
+
+	handle_path /media/* {
+		root * /app/media
+		file_server
+	}
+
+	handle {
+		reverse_proxy web:8000 {
+			# nginx's own compose/nginx/nginx.conf sets this too — keeps
+			# one consistent header contract regardless of which proxy
+			# fronts the app (apps.accounts.forms._client_ip reads it
+			# for login rate limiting).
+			header_up X-Real-IP {http.request.remote.host}
+		}
+	}
+}

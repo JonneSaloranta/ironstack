@@ -31,6 +31,17 @@ def env_list(key, default=""):
     return [item.strip() for item in value.split(",") if item.strip()]
 
 
+def env_admins(key, default=""):
+    """Parses `"Name:email,Name2:email2"` into the `[(name, email), ...]`
+    pairs Django's ADMINS/MANAGERS settings expect."""
+    admins = []
+    for entry in env_list(key, default):
+        name, _, address = entry.partition(":")
+        if address:
+            admins.append((name.strip(), address.strip()))
+    return admins
+
+
 SECRET_KEY = env("DJANGO_SECRET_KEY", default="dev-insecure-secret-key-change-me")
 
 INSTALLED_APPS = [
@@ -196,3 +207,49 @@ REST_FRAMEWORK = {
     "PAGE_SIZE": 25,
     "DATETIME_FORMAT": "iso-8601",
 }
+
+# docs/SECURITY.md "Email" — needed for password reset
+# (django.contrib.auth's own PasswordResetView, wired in config.urls)
+# and, via ADMINS below, Django's built-in mail_admins error reporting.
+# Defaults to the console backend (prints the message instead of
+# sending it) whenever DJANGO_EMAIL_HOST isn't set, rather than failing
+# — password reset still "works" enough to unblock local development,
+# it just doesn't deliver anywhere real until SMTP is actually
+# configured. See docs/SECURITY.md before relying on this in
+# production.
+EMAIL_HOST = env("DJANGO_EMAIL_HOST", default="")
+if EMAIL_HOST:
+    EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+    EMAIL_PORT = int(env("DJANGO_EMAIL_PORT", default="587"))
+    EMAIL_HOST_USER = env("DJANGO_EMAIL_HOST_USER", default="")
+    EMAIL_HOST_PASSWORD = env("DJANGO_EMAIL_HOST_PASSWORD", default="")
+    EMAIL_USE_TLS = env_bool("DJANGO_EMAIL_USE_TLS", default=True)
+else:
+    EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+DEFAULT_FROM_EMAIL = env("DJANGO_DEFAULT_FROM_EMAIL", default="IronStack <noreply@localhost>")
+# Django's SMTP backend uses this as the envelope sender for its own
+# mail_admins() error reports (below) when nothing more specific is set.
+SERVER_EMAIL = DEFAULT_FROM_EMAIL
+
+# Whoever's listed here gets an email — via EMAIL_BACKEND above — for
+# every uncaught exception once DEBUG=False (config.settings.production),
+# Django's own built-in behavior (django.utils.log.AdminEmailHandler,
+# wired by Django's default LOGGING config — no override needed, no new
+# dependency like Sentry required for this baseline). Format:
+# "Name:email,Name2:email2". Empty by default, so nothing breaks if
+# it's never set — just no one gets notified of errors, the same
+# silence as before this existed.
+ADMINS = env_admins("DJANGO_ADMINS")
+MANAGERS = ADMINS
+
+# docs/SECURITY.md — self-hosted instances aren't necessarily meant to
+# accept public registration; set to false once the intended users have
+# accounts, or from the start if the instance is reachable beyond a
+# trusted network. Existing users can keep logging in either way, since
+# only SignupView reads this.
+SIGNUP_ENABLED = env_bool("DJANGO_SIGNUP_ENABLED", default=True)
+
+# apps.core.management.commands.backup_scheduler — docs/BACKUP.md.
+# UTC hour (0-23) the docker-compose.yml `backup-scheduler` service
+# runs `create_backup` at, once a day.
+BACKUP_HOUR = int(env("BACKUP_HOUR", default="3"))

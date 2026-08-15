@@ -9,6 +9,9 @@ msgstr ""
 "Language: et\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
+msgid "Too many failed login attempts. Try again in a few minutes."
+msgstr "Liiga palju ebaõnnestunud sisselogimiskatseid. Proovi mõne minuti pärast uuesti."
+
 msgid "Timezone"
 msgstr "Ajavöönd"
 
@@ -53,6 +56,9 @@ msgstr "Meetermõõdustik (kg, km)"
 
 msgid "Imperial (lb, mi)"
 msgstr "Inglise mõõdustik (lb, mi)"
+
+msgid "Registration is currently closed."
+msgstr "Registreerumine on hetkel suletud."
 
 msgid "Preferences saved."
 msgstr "Eelistused salvestatud."
@@ -1445,6 +1451,9 @@ msgstr "Korduste rekordid kaalu järgi"
 msgid "%(weight)s: %(reps)s reps"
 msgstr "%(weight)s: %(reps)s kordust"
 
+msgid "Forgot your password?"
+msgstr "Unustasid parooli?"
+
 msgid "Don't have an account?"
 msgstr "Kas sul pole veel kontot?"
 
@@ -1456,6 +1465,54 @@ msgstr "Parool muudetud"
 
 msgid "Your password has been updated."
 msgstr "Sinu parool on uuendatud."
+
+msgid "Password reset"
+msgstr "Parooli lähtestamine"
+
+msgid "Your password has been set. You can log in now."
+msgstr "Sinu parool on määratud. Nüüd saad sisse logida."
+
+msgid "Set a new password"
+msgstr "Määra uus parool"
+
+msgid "Set new password"
+msgstr "Määra uus parool"
+
+msgid "This password reset link is invalid, possibly because it has already been used or has expired."
+msgstr "See parooli lähtestamise link on kehtetu — võib-olla on seda juba kasutatud või on see aegunud."
+
+msgid "Request a new reset link"
+msgstr "Küsi uus lähtestamislink"
+
+msgid "Reset password"
+msgstr "Lähtesta parool"
+
+msgid "If an account exists with that email address, we've sent a link to reset your password."
+msgstr "Kui selle e-posti aadressiga konto on olemas, oleme saatnud sellele lingi parooli lähtestamiseks."
+
+msgid "Back to login"
+msgstr "Tagasi sisselogimise juurde"
+
+msgid "You're receiving this email because you (or someone else) requested a password reset for your account at %(site_name)s."
+msgstr "Saad selle kirja, kuna sina (või keegi teine) taotles oma %(site_name)s konto parooli lähtestamist."
+
+msgid "Please go to the following page and choose a new password:"
+msgstr "Mine järgmisele lehele ja vali uus parool:"
+
+msgid "Your username, in case you've forgotten: %(username)s"
+msgstr "Sinu kasutajanimi, kui oled selle unustanud: %(username)s"
+
+msgid "If you didn't request this, you can safely ignore this email."
+msgstr "Kui sa seda ei taotlenud, võid selle kirja rahulikult eirata."
+
+msgid "Enter your account's email address and we'll send you a link to reset your password."
+msgstr "Sisesta oma konto e-posti aadress ja saadame sulle lingi parooli lähtestamiseks."
+
+msgid "Send reset link"
+msgstr "Saada lähtestamislink"
+
+msgid "Password reset on %(site_name)s"
+msgstr "Parooli lähtestamine teenuses %(site_name)s"
 
 msgid "Target: %(count)s × %(min)s-%(max)s"
 msgstr "Sihtmärk: %(count)s × %(min)s-%(max)s"

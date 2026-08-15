@@ -9,6 +9,9 @@ msgstr ""
 "Language: sv\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
+msgid "Too many failed login attempts. Try again in a few minutes."
+msgstr "För många misslyckade inloggningsförsök. Försök igen om några minuter."
+
 msgid "Timezone"
 msgstr "Tidszon"
 
@@ -53,6 +56,9 @@ msgstr "Metriskt (kg, km)"
 
 msgid "Imperial (lb, mi)"
 msgstr "Brittiskt (lb, mi)"
+
+msgid "Registration is currently closed."
+msgstr "Registrering är för närvarande stängd."
 
 msgid "Preferences saved."
 msgstr "Inställningarna har sparats."
@@ -1445,6 +1451,9 @@ msgstr "Repetitionsrekord per vikt"
 msgid "%(weight)s: %(reps)s reps"
 msgstr "%(weight)s: %(reps)s repetitioner"
 
+msgid "Forgot your password?"
+msgstr "Har du glömt ditt lösenord?"
+
 msgid "Don't have an account?"
 msgstr "Har du inget konto?"
 
@@ -1456,6 +1465,54 @@ msgstr "Lösenordet har ändrats"
 
 msgid "Your password has been updated."
 msgstr "Ditt lösenord har uppdaterats."
+
+msgid "Password reset"
+msgstr "Återställning av lösenord"
+
+msgid "Your password has been set. You can log in now."
+msgstr "Ditt lösenord har angetts. Du kan logga in nu."
+
+msgid "Set a new password"
+msgstr "Ange ett nytt lösenord"
+
+msgid "Set new password"
+msgstr "Ange nytt lösenord"
+
+msgid "This password reset link is invalid, possibly because it has already been used or has expired."
+msgstr "Den här länken för lösenordsåterställning är ogiltig, kanske för att den redan har använts eller har gått ut."
+
+msgid "Request a new reset link"
+msgstr "Begär en ny återställningslänk"
+
+msgid "Reset password"
+msgstr "Återställ lösenord"
+
+msgid "If an account exists with that email address, we've sent a link to reset your password."
+msgstr "Om det finns ett konto med den e-postadressen har vi skickat en länk för att återställa ditt lösenord."
+
+msgid "Back to login"
+msgstr "Tillbaka till inloggning"
+
+msgid "You're receiving this email because you (or someone else) requested a password reset for your account at %(site_name)s."
+msgstr "Du får detta e-postmeddelande eftersom du (eller någon annan) begärde en lösenordsåterställning för ditt konto på %(site_name)s."
+
+msgid "Please go to the following page and choose a new password:"
+msgstr "Gå till följande sida och välj ett nytt lösenord:"
+
+msgid "Your username, in case you've forgotten: %(username)s"
+msgstr "Ditt användarnamn, ifall du har glömt det: %(username)s"
+
+msgid "If you didn't request this, you can safely ignore this email."
+msgstr "Om du inte begärde detta kan du ignorera det här e-postmeddelandet."
+
+msgid "Enter your account's email address and we'll send you a link to reset your password."
+msgstr "Ange din e-postadress så skickar vi en länk för att återställa ditt lösenord."
+
+msgid "Send reset link"
+msgstr "Skicka återställningslänk"
+
+msgid "Password reset on %(site_name)s"
+msgstr "Lösenordsåterställning på %(site_name)s"
 
 msgid "Target: %(count)s × %(min)s-%(max)s"
 msgstr "Mål: %(count)s × %(min)s-%(max)s"

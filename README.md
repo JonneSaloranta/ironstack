@@ -1044,6 +1044,48 @@ feature (514 total, full suite green).
 - 1 new UI string translated across fi/sv/ru/it/et (515 total, 0
   fuzzy/untranslated). 8 new tests (522 total, full suite green).
 
+**A production-readiness pass** — asked "what's left before this is
+production ready", answered with six concrete gaps, then asked to
+close all of them. See `docs/SECURITY.md` and `docs/BACKUP.md` for the
+full detail on each.
+
+- **TLS**: `docker-compose.tls.yml`, a ready-to-use overlay replacing
+  the bundled HTTP-only nginx with Caddy (`compose/caddy/Caddyfile`),
+  which provisions and renews a real Let's Encrypt certificate on its
+  own given just a domain name — the "recommended path"
+  `docs/SECURITY.md` already described, now copy-paste-ready instead
+  of prose you'd have to build yourself.
+- **Password reset**: `django.contrib.auth`'s URLs were already wired
+  up, but with no templates (`templates/registration/password_reset_*.
+  html`, `password_reset_email.html`, `_subject.txt` — six new files)
+  and no `EMAIL_BACKEND` configured at all, visiting `/accounts/
+  password_reset/` would 500. `DJANGO_EMAIL_HOST` (`.env.example`)
+  switches from a console-logging fallback to real SMTP; `DJANGO_ADMINS`
+  additionally opts into Django's own built-in `mail_admins` error
+  reporting for uncaught exceptions — deliberately not Sentry: once
+  SMTP is configured for password reset anyway, error emails are free,
+  no new dependency.
+- **Login brute-force protection**: `apps.accounts.forms.
+  RateLimitedAuthenticationForm` blocks further attempts from the same
+  client IP for 15 minutes after 5 failures within that window — a gap
+  distinct from `apps.api`'s per-key rate limiting, which never
+  touched the session-based web login at all.
+- **Signup gating**: `DJANGO_SIGNUP_ENABLED=false` closes self-service
+  registration, gating the URL itself rather than just hiding the
+  login page's link to it.
+- **Automatic backups**: a new `backup-scheduler` service
+  (`docker-compose.yml`) runs `manage.py create_backup` once a day,
+  on by default in production, off by default in local dev (a
+  `manual` Compose profile). Both mechanisms from the previous backup
+  work were manual-trigger only.
+- 33 new UI strings translated across fi/sv/ru/it/et (534 total, 0
+  fuzzy/untranslated). 21 new tests (543 total, full suite green) —
+  all six gaps were also live-verified end to end (a real password
+  reset email through to logging in with the new password, an actual
+  lockout after 5 failed logins, signup gated then live-tested
+  disabled, real backup archives created by the new command), not just
+  covered by the automated suite.
+
 ## Local development
 
 ```bash
@@ -1105,9 +1147,11 @@ first, then start the stack without `--build` so it uses that image:
 docker compose -f docker-compose.yml up -d
 ```
 
-**Backups**: `./scripts/backup.sh` / `./scripts/restore.sh` — see
-`docs/BACKUP.md` for what's captured and the (destructive, confirmed-
-before-touching-anything) restore flow.
+**Backups**: automatic by default (the `backup-scheduler` service,
+once a day) — plus `./scripts/backup.sh`/`restore.sh` and an
+admin-only web UI for on-demand ones. See `docs/BACKUP.md` for what's
+captured and the (destructive, confirmed-before-touching-anything)
+restore flow.
 
 ## Tests & linting
 

@@ -1,6 +1,15 @@
+import re
+from urllib.parse import urlparse
+
 from django.contrib.auth import get_user_model
-from django.test import TestCase
+from django.core import mail
+from django.core.cache import cache
+from django.test import TestCase, override_settings
 from django.urls import reverse
+from django.utils.encoding import force_bytes
+from django.utils.http import urlsafe_base64_encode
+
+from apps.accounts.forms import LOGIN_ATTEMPT_LIMIT
 
 User = get_user_model()
 
@@ -163,6 +172,51 @@ class SignupFlowTests(TestCase):
         self.assertIn("_auth_user_id", self.client.session)
 
 
+class SignupGatingTests(TestCase):
+    """docs/SECURITY.md — DJANGO_SIGNUP_ENABLED. Gates the URL itself,
+    not just the login page's link to it: a hidden link doesn't stop
+    someone who already knows/guesses the path."""
+
+    def test_signup_page_is_reachable_by_default(self):
+        response = self.client.get(reverse("signup"))
+        self.assertEqual(response.status_code, 200)
+
+    def test_signup_link_shown_on_login_page_by_default(self):
+        response = self.client.get(reverse("login"))
+        self.assertContains(response, reverse("signup"))
+
+    @override_settings(SIGNUP_ENABLED=False)
+    def test_signup_page_redirects_to_login_when_disabled(self):
+        response = self.client.get(reverse("signup"), follow=True)
+        self.assertRedirects(response, reverse("login"))
+        self.assertContains(response, "Registration is currently closed.")
+
+    @override_settings(SIGNUP_ENABLED=False)
+    def test_signup_post_is_also_blocked_when_disabled(self):
+        response = self.client.post(
+            reverse("signup"),
+            {
+                "username": "sneaky",
+                "email": "sneaky@example.com",
+                "password1": "a-very-strong-pass-1",
+                "password2": "a-very-strong-pass-1",
+            },
+        )
+        self.assertRedirects(response, reverse("login"))
+        self.assertFalse(User.objects.filter(username="sneaky").exists())
+
+    @override_settings(SIGNUP_ENABLED=False)
+    def test_signup_link_hidden_on_login_page_when_disabled(self):
+        response = self.client.get(reverse("login"))
+        self.assertNotContains(response, reverse("signup"))
+
+    @override_settings(SIGNUP_ENABLED=False)
+    def test_existing_users_can_still_log_in_when_signup_is_disabled(self):
+        User.objects.create_user(username="already-here", password="s3cret-pass")
+        login_ok = self.client.login(username="already-here", password="s3cret-pass")
+        self.assertTrue(login_ok)
+
+
 class LoginFlowTests(TestCase):
     def test_login_then_access_dashboard(self):
         User.objects.create_user(username="bob", password="s3cret-pass")
@@ -178,6 +232,64 @@ class LoginFlowTests(TestCase):
         response = self.client.get(reverse("dashboard"))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.wsgi_request.user.username, "carol")
+
+
+class LoginRateLimitTests(TestCase):
+    """apps.accounts.forms.RateLimitedAuthenticationForm — Django's own
+    login view has no brute-force protection at all otherwise (this is
+    a completely separate mechanism from apps.api's rate limiting,
+    which only ever applies to API keys)."""
+
+    def setUp(self):
+        User.objects.create_user(username="alice", password="s3cret-pass")
+        cache.clear()
+
+    def tearDown(self):
+        cache.clear()
+
+    def _attempt(self, password="wrong-password", ip="203.0.113.10"):
+        return self.client.post(
+            reverse("login"),
+            {"username": "alice", "password": password},
+            REMOTE_ADDR=ip,
+            HTTP_X_REAL_IP=ip,
+        )
+
+    def test_failed_attempts_under_the_limit_are_not_blocked(self):
+        for _ in range(LOGIN_ATTEMPT_LIMIT - 1):
+            response = self._attempt()
+            self.assertNotContains(response, "Too many failed login attempts")
+
+    def test_the_nth_failed_attempt_locks_out_further_tries(self):
+        for _ in range(LOGIN_ATTEMPT_LIMIT):
+            self._attempt()
+        response = self._attempt()
+        self.assertContains(response, "Too many failed login attempts")
+
+    def test_lockout_blocks_even_the_correct_password(self):
+        for _ in range(LOGIN_ATTEMPT_LIMIT):
+            self._attempt()
+        response = self._attempt(password="s3cret-pass")
+        self.assertContains(response, "Too many failed login attempts")
+        self.assertNotIn("_auth_user_id", self.client.session)
+
+    def test_lockout_is_keyed_per_ip_not_globally(self):
+        for _ in range(LOGIN_ATTEMPT_LIMIT):
+            self._attempt(ip="203.0.113.10")
+        response = self._attempt(ip="203.0.113.99")
+        self.assertNotContains(response, "Too many failed login attempts")
+
+    def test_a_successful_login_resets_the_counter(self):
+        for _ in range(LOGIN_ATTEMPT_LIMIT - 1):
+            self._attempt()
+        response = self._attempt(password="s3cret-pass")
+        self.assertIn("_auth_user_id", self.client.session)
+        self.client.logout()
+        # Back under the limit again — the earlier near-lockout was
+        # cleared by the successful login, not just paused.
+        for _ in range(LOGIN_ATTEMPT_LIMIT - 1):
+            response = self._attempt()
+            self.assertNotContains(response, "Too many failed login attempts")
 
 
 class ProfileViewTests(TestCase):
@@ -438,6 +550,72 @@ class PasswordChangeTests(TestCase):
         self.assertRedirects(response, reverse("password_change_done"))
         self.client.logout()
         self.assertTrue(self.client.login(username="alice", password="a-very-strong-new-pass-1"))
+
+
+class PasswordResetFlowTests(TestCase):
+    """django.contrib.auth.urls already wired these URLs up, but with
+    no templates (they'd 500) and no EMAIL_BACKEND configured — the
+    only self-service recovery for a forgotten password was an admin
+    manually resetting it via /admin/. See docs/SECURITY.md "Email"."""
+
+    def setUp(self):
+        self.alice = User.objects.create_user(
+            username="alice", password="old-pass-123", email="alice@example.com"
+        )
+
+    def test_reset_form_renders(self):
+        response = self.client.get(reverse("password_reset"))
+        self.assertEqual(response.status_code, 200)
+
+    def test_submitting_a_known_email_sends_a_reset_email(self):
+        response = self.client.post(reverse("password_reset"), {"email": "alice@example.com"})
+        self.assertRedirects(response, reverse("password_reset_done"))
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertIn("alice@example.com", mail.outbox[0].to)
+        self.assertIn("alice", mail.outbox[0].body)  # the username reminder
+
+    def test_submitting_an_unknown_email_shows_the_same_confirmation(self):
+        """No account-enumeration tell: the response looks identical
+        whether or not the address actually belongs to an account."""
+        response = self.client.post(
+            reverse("password_reset"), {"email": "nobody@example.com"}, follow=True
+        )
+        self.assertContains(response, "If an account exists with that email address")
+        self.assertEqual(len(mail.outbox), 0)
+
+    def test_following_the_emailed_link_resets_the_password(self):
+        self.client.post(reverse("password_reset"), {"email": "alice@example.com"})
+        match = re.search(r"https?://[^\s]+/accounts/reset/[^\s]+", mail.outbox[0].body)
+        self.assertIsNotNone(match, mail.outbox[0].body)
+        reset_path = urlparse(match.group(0)).path
+
+        # GET redirects the one-time token in the URL to a session-
+        # backed "set-password" URL (Django's own anti-Referer-leak
+        # mechanism) — that's the page/URL the form actually posts to.
+        confirm_response = self.client.get(reset_path, follow=True)
+        self.assertContains(confirm_response, "Set new password")
+        set_password_url = confirm_response.wsgi_request.path
+
+        response = self.client.post(
+            set_password_url,
+            {
+                "new_password1": "a-brand-new-strong-pass-1",
+                "new_password2": "a-brand-new-strong-pass-1",
+            },
+            follow=True,
+        )
+        self.assertContains(response, "Your password has been set")
+        self.assertTrue(
+            self.client.login(username="alice", password="a-brand-new-strong-pass-1")
+        )
+
+    def test_an_invalid_token_shows_the_invalid_link_message(self):
+        uidb64 = urlsafe_base64_encode(force_bytes(self.alice.pk))
+        response = self.client.get(
+            reverse("password_reset_confirm", kwargs={"uidb64": uidb64, "token": "bogus-token"}),
+            follow=True,
+        )
+        self.assertContains(response, "invalid, possibly because it has already been used")
 
 
 class AccountDetailsTests(TestCase):

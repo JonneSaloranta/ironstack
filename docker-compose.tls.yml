@@ -1,0 +1,43 @@
+# Optional overlay: automatic TLS via Caddy (Let's Encrypt), replacing
+# the bundled HTTP-only nginx — the "recommended path" docs/SECURITY.md
+# "TLS" describes, made copy-paste-ready. Needs a real domain name
+# already pointed at this host; Caddy provisions and renews the
+# certificate itself, no separate certbot step.
+#
+# Usage:
+#   IRONSTACK_DOMAIN=your.domain.example \
+#     docker compose -f docker-compose.yml -f docker-compose.tls.yml up -d
+#
+# DJANGO_SECURE_SSL_REDIRECT should stay at its default `true` in this
+# mode (docs/SECURITY.md) — Caddy forwards X-Forwarded-Proto: https
+# for real HTTPS requests, same as nginx would if you added TLS to it
+# directly instead of using this overlay.
+services:
+  nginx:
+    # Caddy (below) replaces nginx entirely in this mode — same
+    # static/media serving plus reverse proxying, just with TLS
+    # termination and renewal on top. An unrequested profile means
+    # plain `docker compose ... up` skips starting it.
+    profiles: ["disabled"]
+
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      IRONSTACK_DOMAIN: ${IRONSTACK_DOMAIN:?Set IRONSTACK_DOMAIN to your real domain name}
+    volumes:
+      - ./compose/caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - static_data:/app/staticfiles:ro
+      - media_data:/app/media:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      web:
+        condition: service_healthy
+
+volumes:
+  caddy_data:
+  caddy_config:

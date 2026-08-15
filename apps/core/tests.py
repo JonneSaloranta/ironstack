@@ -634,6 +634,89 @@ class BackupTests(TestCase):
         self.assertEqual(backup_services.safe_archive_path(name), backup_services.BACKUP_DIR / name)
 
 
+class BackupManagementCommandTests(TestCase):
+    """The CLI entry points docs/BACKUP.md's automatic backups
+    (docker-compose.yml's `backup-scheduler` service, or a host cron
+    entry) actually call — apps.core.management.commands.create_backup
+    and .backup_scheduler."""
+
+    def setUp(self):
+        self.tmpdir = TemporaryDirectory()
+        self.addCleanup(self.tmpdir.cleanup)
+        patcher = mock.patch.object(backup_services, "BACKUP_DIR", Path(self.tmpdir.name))
+        patcher.start()
+        self.addCleanup(patcher.stop)
+
+    def test_create_backup_command_writes_a_real_archive(self):
+        out = io.StringIO()
+        call_command("create_backup", stdout=out)
+        self.assertIn("Backup created:", out.getvalue())
+        self.assertEqual(len(backup_services.list_backups()), 1)
+
+    def test_seconds_until_a_hour_later_today(self):
+        from apps.core.management.commands.backup_scheduler import _seconds_until
+
+        noon = timezone.datetime(2026, 1, 1, 12, 0, tzinfo=timezone.get_default_timezone())
+        with mock.patch("django.utils.timezone.now", return_value=noon):
+            self.assertEqual(_seconds_until(15), 3 * 3600)
+
+    def test_seconds_until_wraps_to_tomorrow_once_the_hour_has_passed_today(self):
+        from apps.core.management.commands.backup_scheduler import _seconds_until
+
+        noon = timezone.datetime(2026, 1, 1, 12, 0, tzinfo=timezone.get_default_timezone())
+        with mock.patch("django.utils.timezone.now", return_value=noon):
+            self.assertEqual(_seconds_until(3), 15 * 3600)
+
+    def test_backup_scheduler_creates_a_backup_each_time_it_wakes_up(self):
+        """The real command loops forever — this exercises exactly one
+        wake-up by letting the first time.sleep() succeed (so handle()
+        proceeds to call create_backup) and making the *second* one
+        raise, standing in for "the process is being shut down"."""
+        from apps.core.management.commands.backup_scheduler import Command
+
+        sleep_calls = {"count": 0}
+
+        def fake_sleep(_seconds):
+            sleep_calls["count"] += 1
+            if sleep_calls["count"] >= 2:
+                raise KeyboardInterrupt
+
+        with (
+            mock.patch(
+                "apps.core.management.commands.backup_scheduler.time.sleep",
+                side_effect=fake_sleep,
+            ),
+            self.assertRaises(KeyboardInterrupt),
+        ):
+            Command().handle()
+        self.assertEqual(len(backup_services.list_backups()), 1)
+
+    def test_backup_scheduler_survives_a_failed_backup_attempt(self):
+        """A single failed backup must not take the whole scheduler
+        process down — otherwise one transient failure (e.g. the
+        database briefly unreachable) silently stops every future
+        scheduled backup until someone notices and restarts it."""
+        from apps.core.management.commands.backup_scheduler import Command
+
+        sleep_calls = {"count": 0}
+
+        def fake_sleep(_seconds):
+            sleep_calls["count"] += 1
+            if sleep_calls["count"] >= 2:
+                raise KeyboardInterrupt
+
+        with (
+            mock.patch(
+                "apps.core.management.commands.backup_scheduler.time.sleep",
+                side_effect=fake_sleep,
+            ),
+            mock.patch.object(backup_services, "create_backup", side_effect=RuntimeError("boom")),
+            self.assertRaises(KeyboardInterrupt),
+        ):
+            Command().handle()
+        self.assertEqual(sleep_calls["count"], 2)  # looped again instead of dying
+
+
 class BackupViewTests(TestCase):
     """Admin-only backup management linked from the profile page."""
 

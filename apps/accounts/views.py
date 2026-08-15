@@ -1,13 +1,16 @@
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import login
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.views import LoginView
+from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.utils.translation import gettext as _
 from django.views.generic import CreateView, UpdateView
 
 from apps.core import changelog as changelog_services
 
-from .forms import AccountDetailsForm, ProfileForm, SignupForm
+from .forms import AccountDetailsForm, ProfileForm, RateLimitedAuthenticationForm, SignupForm
 
 
 class SignupView(CreateView):
@@ -15,10 +18,38 @@ class SignupView(CreateView):
     template_name = "accounts/signup.html"
     success_url = reverse_lazy("dashboard")
 
+    def dispatch(self, request, *args, **kwargs):
+        # docs/SECURITY.md — a self-hosted instance isn't necessarily
+        # meant to accept public registration; DJANGO_SIGNUP_ENABLED
+        # gates this URL directly rather than only hiding its link on
+        # the login page, since a hidden link doesn't stop someone who
+        # already knows/guesses the path.
+        if not settings.SIGNUP_ENABLED:
+            messages.info(request, _("Registration is currently closed."))
+            return redirect("login")
+        return super().dispatch(request, *args, **kwargs)
+
     def form_valid(self, form):
         response = super().form_valid(form)
         login(self.request, self.object)
         return response
+
+
+class RateLimitedLoginView(LoginView):
+    """The bare `django.contrib.auth.urls` login view has no brute-
+    force protection at all — apps.api's rate limiting is a completely
+    separate, API-key-only mechanism. See
+    apps.accounts.forms.RateLimitedAuthenticationForm for the actual
+    limiting; this subclass exists to plug that form in and to expose
+    SIGNUP_ENABLED so the template can hide the "create an account"
+    link when registration is closed."""
+
+    authentication_form = RateLimitedAuthenticationForm
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["signup_enabled"] = settings.SIGNUP_ENABLED
+        return context
 
 
 class ProfileView(LoginRequiredMixin, UpdateView):

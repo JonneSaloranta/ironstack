@@ -120,6 +120,39 @@ specifically from the official PostgreSQL apt repository instead. Keep
 that pin and `docker-compose.yml`'s `postgres:16-alpine` in sync if the
 server's major version is ever upgraded.
 
+## Automatic backups
+
+Both mechanisms above are manual-trigger only. `docker-compose.yml`'s
+`backup-scheduler` service runs `manage.py create_backup` (the same
+CLI command a host cron entry could call directly — see below) once a
+day at `BACKUP_HOUR` (`.env.example`, default `03:00` UTC), forever,
+into the web-UI's `backups_data` volume — so a fresh install actually
+has a real disaster-recovery story instead of relying on someone
+remembering to click a button. On by default in production
+(`docker-compose.yml` alone); disabled in local dev
+(`docker-compose.override.yml` puts it behind a `manual` Compose
+profile that plain `docker compose up` doesn't activate — start it
+explicitly with `docker compose --profile manual up backup-scheduler`
+if you want to test it locally).
+
+A single failed backup attempt is logged (`docker compose logs
+backup-scheduler`) and the scheduler keeps running rather than the
+whole process dying and silently stopping every future backup until
+someone notices.
+
+Not a real cron daemon (no `cron` package added to the image just for
+this) — a plain sleep-until-target-hour loop
+(`apps.core.management.commands.backup_scheduler`) is enough for "runs
+automatically, roughly daily" without needing the host's own cron for
+what's otherwise a self-contained Docker Compose stack. If precise
+wall-clock timing matters more than that, remove the `backup-scheduler`
+service and point a real host cron entry at `docker compose exec web
+python manage.py create_backup` instead — same command, same
+`apps.core.backups.create_backup()` and `backups_data` volume the web
+UI's own "Create backup" button uses (see "Why two mechanisms" below
+for why `scripts/backup.sh` is a genuinely separate path rather than
+also calling this).
+
 ## Why two mechanisms
 
 The host script's `docker compose exec db pg_dump ...` (a local Unix
