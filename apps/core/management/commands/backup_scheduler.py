@@ -1,10 +1,11 @@
 import time
 from datetime import timedelta
 
-from django.conf import settings
 from django.core.management import call_command
 from django.core.management.base import BaseCommand
 from django.utils import timezone
+
+from apps.core.models import BackupSettings
 
 
 def _seconds_until(hour):
@@ -26,23 +27,36 @@ class Command(BaseCommand):
     entry at `docker compose exec web python manage.py create_backup`
     instead and drop this service.
 
+    Reads BackupSettings.load() fresh on every wake-up, not just once
+    at process startup — so changing the hour or toggling "enabled" on
+    Profile → Administration → Backups takes effect without restarting
+    this container. A settings change made *while* the loop is asleep
+    only takes effect from the *next* wake-up onward, since a sleep
+    already in progress isn't interrupted early.
+
     A single failed backup attempt (e.g. the database briefly
     unreachable) is logged and the loop keeps going rather than the
     whole scheduler process dying and silently stopping all future
     backups until someone notices and restarts it by hand.
     """
 
-    help = "Create a backup once a day at settings.BACKUP_HOUR (UTC), forever."
+    help = "Create a backup once a day at the admin-configured hour (UTC), forever."
 
     def handle(self, *args, **options):
-        hour = settings.BACKUP_HOUR
-        self.stdout.write(f"Backup scheduler started — daily at {hour:02d}:00 UTC.")
+        self.stdout.write("Backup scheduler started.")
         while True:
-            seconds = _seconds_until(hour)
+            backup_settings = BackupSettings.load()
+            seconds = _seconds_until(backup_settings.hour)
             self.stdout.write(
-                f"Next backup in {seconds // 3600}h {(seconds % 3600) // 60}min."
+                f"Next check in {seconds // 3600}h {(seconds % 3600) // 60}min "
+                f"(daily at {backup_settings.hour:02d}:00 UTC)."
             )
             time.sleep(seconds)
+
+            backup_settings = BackupSettings.load()  # may have changed while asleep
+            if not backup_settings.enabled:
+                self.stdout.write("Automatic backups are disabled — skipping.")
+                continue
             try:
                 call_command("create_backup")
             except Exception as exc:

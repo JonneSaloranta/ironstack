@@ -26,6 +26,7 @@ from django.core.management import call_command
 from django.db import connections
 from django.utils import timezone
 
+from apps.core.models import BackupSettings
 from apps.core.version import get_git_sha, get_migration_state, get_version
 
 BACKUP_DIR = Path(os.environ.get("BACKUP_DIR", "/app/backups"))
@@ -80,12 +81,33 @@ def list_backups():
     return backups
 
 
+def prune_backups(retention_count):
+    """Deletes the oldest backups beyond `retention_count`
+    (`list_backups()` is already newest-first). `retention_count <= 0`
+    means "keep everything" — never prunes. Called automatically from
+    `create_backup()` below, so every path that creates a backup (the
+    scheduler, the web UI's "Create backup" button, the `create_backup`
+    management command) prunes the same way, rather than each caller
+    needing to remember to."""
+    if retention_count <= 0:
+        return
+    for backup in list_backups()[retention_count:]:
+        (BACKUP_DIR / backup["name"]).unlink(missing_ok=True)
+
+
 def create_backup():
     """Dumps the database, archives media/, and writes a version_info
     manifest, bundled into one `ironstack-backup-<timestamp>.tar.gz` in
-    BACKUP_DIR. Returns the archive's filename."""
+    BACKUP_DIR, then prunes down to BackupSettings.load().retention_count
+    (Profile → Administration → Backups). Returns the new archive's
+    filename."""
     BACKUP_DIR.mkdir(parents=True, exist_ok=True)
-    stamp = timezone.now().strftime("%Y%m%d-%H%M%S")
+    # Microseconds too, not just down to the second — two backups
+    # created within the same second (a fast retry, an admin clicking
+    # "Create backup" right after a scheduled one landed) would
+    # otherwise share an identical filename and silently overwrite
+    # each other instead of both existing.
+    stamp = timezone.now().strftime("%Y%m%d-%H%M%S-%f")
 
     with TemporaryDirectory() as tmp_str:
         tmp = Path(tmp_str)
@@ -116,6 +138,7 @@ def create_backup():
             for filename in ("database.dump", "media.tar", "manifest.json"):
                 tar.add(tmp / filename, arcname=filename)
 
+    prune_backups(BackupSettings.load().retention_count)
     return archive_name
 
 

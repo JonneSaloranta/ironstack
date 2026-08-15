@@ -243,6 +243,15 @@ msgstr "Rep Max"
 msgid "Body Mass Index"
 msgstr "Body Mass Index"
 
+msgid "Automatic daily backups"
+msgstr "Automatic daily backups"
+
+msgid "Backup hour (UTC)"
+msgstr "Backup hour (UTC)"
+
+msgid "Keep the most recent"
+msgstr "Keep the most recent"
+
 msgid "Good morning, %(username)s! Time to get after it."
 msgstr "Good morning, %(username)s! Time to get after it."
 
@@ -291,8 +300,20 @@ msgstr "Burning the midnight oil, %(username)s? Even legends need sleep."
 msgid "Late night, %(username)s. Tomorrow's gains start with tonight's rest."
 msgstr "Late night, %(username)s. Tomorrow's gains start with tonight's rest."
 
+msgid "Turns the backup-scheduler service's daily backup off without needing to stop or remove that service."
+msgstr "Turns the backup-scheduler service's daily backup off without needing to stop or remove that service."
+
+msgid "What time (UTC) the daily automatic backup runs at."
+msgstr "What time (UTC) the daily automatic backup runs at."
+
+msgid "How many backups to keep — older ones are deleted automatically after each new one is created. 0 keeps every backup forever."
+msgstr "How many backups to keep — older ones are deleted automatically after each new one is created. 0 keeps every backup forever."
+
 msgid "Backup created: %(name)s"
 msgstr "Backup created: %(name)s"
+
+msgid "Backup settings saved."
+msgstr "Backup settings saved."
 
 msgid "Restored from backup: %(name)s"
 msgstr "Restored from backup: %(name)s"
@@ -1120,6 +1141,12 @@ msgstr[1] "%(title)s trend over time, %(counter)s readings"
 
 msgid "Create backup"
 msgstr "Create backup"
+
+msgid "Settings"
+msgstr "Settings"
+
+msgid "Save settings"
+msgstr "Save settings"
 
 msgid "Created"
 msgstr "Created"

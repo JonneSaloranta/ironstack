@@ -12,6 +12,8 @@ from django.views.generic import TemplateView, View
 
 from apps.core import backups as backup_services
 from apps.core import version as version_services
+from apps.core.forms import BackupSettingsForm
+from apps.core.models import BackupSettings
 
 
 class StaffRequiredMixin(LoginRequiredMixin, UserPassesTestMixin):
@@ -29,12 +31,31 @@ class BackupListView(StaffRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["backups"] = backup_services.list_backups()
+        context.setdefault(
+            "settings_form", BackupSettingsForm(instance=BackupSettings.load())
+        )
         return context
 
     def post(self, request, *args, **kwargs):
+        # Two distinct forms share this one page/URL — "Create backup"
+        # and the settings card below it — told apart by which submit
+        # button was actually clicked (name="action").
+        if request.POST.get("action") == "save_settings":
+            return self._save_settings(request)
         name = backup_services.create_backup()
         messages.success(request, _("Backup created: %(name)s") % {"name": name})
         return redirect("backup-list")
+
+    def _save_settings(self, request):
+        form = BackupSettingsForm(request.POST, instance=BackupSettings.load())
+        if form.is_valid():
+            form.save()
+            messages.success(request, _("Backup settings saved."))
+            return redirect("backup-list")
+        # Re-render with the invalid form's own errors rather than
+        # redirecting, the same as any other form on this app.
+        context = self.get_context_data(settings_form=form)
+        return self.render_to_response(context)
 
 
 class BackupDownloadView(StaffRequiredMixin, View):

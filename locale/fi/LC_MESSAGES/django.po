@@ -243,6 +243,15 @@ msgstr "Toistomaksimi"
 msgid "Body Mass Index"
 msgstr "Painoindeksi"
 
+msgid "Automatic daily backups"
+msgstr "Automaattiset päivittäiset varmuuskopiot"
+
+msgid "Backup hour (UTC)"
+msgstr "Varmuuskopioinnin kellonaika (UTC)"
+
+msgid "Keep the most recent"
+msgstr "Säilytä uusimmat"
+
 msgid "Good morning, %(username)s! Time to get after it."
 msgstr "Huomenta, %(username)s! Aika tarttua toimeen."
 
@@ -291,8 +300,20 @@ msgstr "Palatko keskiyön öljyä, %(username)s? Legendatkin tarvitsevat unta."
 msgid "Late night, %(username)s. Tomorrow's gains start with tonight's rest."
 msgstr "Myöhäinen ilta, %(username)s. Huomisen edistys alkaa tämän yön levosta."
 
+msgid "Turns the backup-scheduler service's daily backup off without needing to stop or remove that service."
+msgstr "Kytkee varmuuskopiointipalvelun päivittäisen varmuuskopioinnin pois päältä ilman, että kyseistä palvelua tarvitsee pysäyttää tai poistaa."
+
+msgid "What time (UTC) the daily automatic backup runs at."
+msgstr "Mihin kellonaikaan (UTC) päivittäinen automaattinen varmuuskopiointi ajetaan."
+
+msgid "How many backups to keep — older ones are deleted automatically after each new one is created. 0 keeps every backup forever."
+msgstr "Kuinka monta varmuuskopiota säilytetään — vanhemmat poistetaan automaattisesti aina uuden luonnin jälkeen. 0 säilyttää kaikki varmuuskopiot ikuisesti."
+
 msgid "Backup created: %(name)s"
 msgstr "Varmuuskopio luotu: %(name)s"
+
+msgid "Backup settings saved."
+msgstr "Varmuuskopioinnin asetukset tallennettu."
 
 msgid "Restored from backup: %(name)s"
 msgstr "Palautettu varmuuskopiosta: %(name)s"
@@ -1120,6 +1141,12 @@ msgstr[1] "%(title)s ajan myötä, %(counter)s mittausta"
 
 msgid "Create backup"
 msgstr "Luo varmuuskopio"
+
+msgid "Settings"
+msgstr "Asetukset"
+
+msgid "Save settings"
+msgstr "Tallenna asetukset"
 
 msgid "Created"
 msgstr "Luotu"

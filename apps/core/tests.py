@@ -21,6 +21,7 @@ from apps.core.changelog import _render, render_changelog_html
 from apps.core.charts import build_bar_series, build_chart_series
 from apps.core.context_processors import app_version
 from apps.core.greetings import _GREETINGS_BY_BUCKET, _time_bucket, random_greeting
+from apps.core.models import BackupSettings
 from apps.core.templatetags.core_extras import duration, translate_content
 from apps.core.units import (
     cm_to_meters,
@@ -633,6 +634,64 @@ class BackupTests(TestCase):
         name = backup_services.create_backup()
         self.assertEqual(backup_services.safe_archive_path(name), backup_services.BACKUP_DIR / name)
 
+    def test_create_backup_prunes_down_to_the_retention_setting(self):
+        settings_row = BackupSettings.load()
+        settings_row.retention_count = 2
+        settings_row.save()
+        for _ in range(4):
+            backup_services.create_backup()
+        self.assertEqual(len(backup_services.list_backups()), 2)
+
+    def test_retention_count_zero_keeps_every_backup(self):
+        settings_row = BackupSettings.load()
+        settings_row.retention_count = 0
+        settings_row.save()
+        for _ in range(3):
+            backup_services.create_backup()
+        self.assertEqual(len(backup_services.list_backups()), 3)
+
+    def test_prune_backups_keeps_the_newest(self):
+        first = backup_services.create_backup()
+        second = backup_services.create_backup()
+        backup_services.prune_backups(1)
+        remaining = [b["name"] for b in backup_services.list_backups()]
+        self.assertEqual(remaining, [second])
+        self.assertNotIn(first, remaining)
+
+
+class BackupSettingsModelTests(TestCase):
+    """apps.core.models.BackupSettings — same admin-tunable singleton
+    pattern as apps.api.models.ApiSettings."""
+
+    def test_load_creates_the_singleton_with_defaults(self):
+        settings_row = BackupSettings.load()
+        self.assertTrue(settings_row.enabled)
+        self.assertEqual(settings_row.retention_count, 14)
+
+    def test_default_hour_comes_from_the_backup_hour_setting(self):
+        with override_settings(BACKUP_HOUR=7):
+            settings_row = BackupSettings.load()
+        self.assertEqual(settings_row.hour, 7)
+
+    def test_load_always_returns_the_same_row(self):
+        first = BackupSettings.load()
+        first.retention_count = 30
+        first.save()
+        second = BackupSettings.load()
+        self.assertEqual(first.pk, second.pk)
+        self.assertEqual(second.retention_count, 30)
+
+    def test_save_always_targets_pk_1_even_for_a_fresh_instance(self):
+        settings_row = BackupSettings(enabled=False, hour=9, retention_count=5)
+        settings_row.save()
+        self.assertEqual(settings_row.pk, 1)
+        self.assertEqual(BackupSettings.objects.count(), 1)
+
+    def test_delete_is_a_no_op(self):
+        settings_row = BackupSettings.load()
+        settings_row.delete()
+        self.assertTrue(BackupSettings.objects.filter(pk=1).exists())
+
 
 class BackupManagementCommandTests(TestCase):
     """The CLI entry points docs/BACKUP.md's automatic backups
@@ -690,6 +749,59 @@ class BackupManagementCommandTests(TestCase):
         ):
             Command().handle()
         self.assertEqual(len(backup_services.list_backups()), 1)
+
+    def test_backup_scheduler_skips_creating_a_backup_when_disabled(self):
+        """The "Automatic daily backups" toggle (Profile → Administration
+        → Backups) — checked fresh on every wake-up, not just once at
+        process startup, so flipping it takes effect without restarting
+        this container."""
+        from apps.core.management.commands.backup_scheduler import Command
+
+        settings_row = BackupSettings.load()
+        settings_row.enabled = False
+        settings_row.save()
+
+        sleep_calls = {"count": 0}
+
+        def fake_sleep(_seconds):
+            sleep_calls["count"] += 1
+            if sleep_calls["count"] >= 1:
+                raise KeyboardInterrupt
+
+        with (
+            mock.patch(
+                "apps.core.management.commands.backup_scheduler.time.sleep",
+                side_effect=fake_sleep,
+            ),
+            self.assertRaises(KeyboardInterrupt),
+        ):
+            Command().handle()
+        self.assertEqual(len(backup_services.list_backups()), 0)
+
+    def test_backup_scheduler_reads_the_hour_from_backup_settings_not_the_static_setting(self):
+        from apps.core.management.commands.backup_scheduler import Command
+
+        settings_row = BackupSettings.load()
+        settings_row.hour = 9
+        settings_row.save()
+
+        noon = timezone.datetime(2026, 1, 1, 12, 0, tzinfo=timezone.get_default_timezone())
+        with (
+            mock.patch("django.utils.timezone.now", return_value=noon),
+            mock.patch(
+                "apps.core.management.commands.backup_scheduler.time.sleep",
+                side_effect=KeyboardInterrupt,
+            ) as mock_sleep,
+            self.assertRaises(KeyboardInterrupt),
+        ):
+            Command().handle()
+
+        # From "noon", the next 09:00 is tomorrow (today's has already
+        # passed) — 21 hours away. settings.BACKUP_HOUR's own default
+        # (3) would instead be 15 hours away from the same "noon", so
+        # this also confirms BackupSettings.hour is what's actually
+        # read, not the static setting.
+        mock_sleep.assert_called_once_with(21 * 3600)
 
     def test_backup_scheduler_survives_a_failed_backup_attempt(self):
         """A single failed backup must not take the whole scheduler
@@ -754,6 +866,57 @@ class BackupViewTests(TestCase):
         response = self.client.post(reverse("backup-list"))
         self.assertRedirects(response, reverse("backup-list"))
         self.assertEqual(len(backup_services.list_backups()), 1)
+
+    def test_list_view_shows_the_settings_form_prefilled_with_current_values(self):
+        settings_row = BackupSettings.load()
+        settings_row.hour = 4
+        settings_row.retention_count = 21
+        settings_row.save()
+        self.client.login(username="admin", password="s3cret-pass")
+        response = self.client.get(reverse("backup-list"))
+        self.assertContains(response, 'value="4"')
+        self.assertContains(response, 'value="21"')
+
+    def test_posting_save_settings_updates_backup_settings_and_redirects(self):
+        self.client.login(username="admin", password="s3cret-pass")
+        response = self.client.post(
+            reverse("backup-list"),
+            {"action": "save_settings", "hour": "6", "retention_count": "5"},
+            # "enabled" omitted — an unchecked checkbox isn't sent.
+        )
+        self.assertRedirects(response, reverse("backup-list"))
+        settings_row = BackupSettings.load()
+        self.assertFalse(settings_row.enabled)
+        self.assertEqual(settings_row.hour, 6)
+        self.assertEqual(settings_row.retention_count, 5)
+
+    def test_posting_save_settings_does_not_create_a_backup(self):
+        self.client.login(username="admin", password="s3cret-pass")
+        self.client.post(
+            reverse("backup-list"),
+            {"action": "save_settings", "enabled": "on", "hour": "6", "retention_count": "5"},
+        )
+        self.assertEqual(backup_services.list_backups(), [])
+
+    def test_posting_save_settings_with_an_invalid_hour_re_renders_with_an_error(self):
+        self.client.login(username="admin", password="s3cret-pass")
+        response = self.client.post(
+            reverse("backup-list"),
+            {"action": "save_settings", "enabled": "on", "hour": "24", "retention_count": "5"},
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "field-error")
+        settings_row = BackupSettings.load()
+        self.assertEqual(settings_row.hour, 3)  # default untouched
+
+    def test_settings_form_requires_staff(self):
+        self.client.login(username="alice", password="s3cret-pass")
+        response = self.client.post(
+            reverse("backup-list"),
+            {"action": "save_settings", "hour": "6", "retention_count": "5"},
+        )
+        self.assertEqual(response.status_code, 403)
+        self.assertEqual(BackupSettings.load().hour, 3)  # default untouched
 
     def test_download_view_streams_the_archive(self):
         self.client.login(username="admin", password="s3cret-pass")

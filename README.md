@@ -1085,6 +1085,17 @@ full detail on each.
   lockout after 5 failed logins, signup gated then live-tested
   disabled, real backup archives created by the new command), not just
   covered by the automated suite.
+- **Admin-adjustable backup settings**: the automatic scheduler's hour,
+  on/off state, and retention count used to be fixed by `BACKUP_HOUR`
+  at container start; now stored in the database
+  (`apps.core.models.BackupSettings`, the same `pk=1` singleton pattern
+  as `apps.api.models.ApiSettings`) and editable from a "Settings" card
+  on Profile → Administration → Backups (or `/admin/`), taking effect
+  the same day without restarting `backup-scheduler`. Retention is
+  enforced automatically after every backup, scheduled or manual
+  (`apps.core.backups.prune_backups`) — `0` keeps every backup forever.
+  See `docs/BACKUP.md` "Adjusting the schedule". 9 new UI strings
+  translated across fi/sv/ru/it/et (543 total, 0 fuzzy/untranslated).
 
 ## Local development
 

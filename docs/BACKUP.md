@@ -125,10 +125,9 @@ server's major version is ever upgraded.
 Both mechanisms above are manual-trigger only. `docker-compose.yml`'s
 `backup-scheduler` service runs `manage.py create_backup` (the same
 CLI command a host cron entry could call directly — see below) once a
-day at `BACKUP_HOUR` (`.env.example`, default `03:00` UTC), forever,
-into the web-UI's `backups_data` volume — so a fresh install actually
-has a real disaster-recovery story instead of relying on someone
-remembering to click a button. On by default in production
+day, forever, into the web-UI's `backups_data` volume — so a fresh
+install actually has a real disaster-recovery story instead of relying
+on someone remembering to click a button. On by default in production
 (`docker-compose.yml` alone); disabled in local dev
 (`docker-compose.override.yml` puts it behind a `manual` Compose
 profile that plain `docker compose up` doesn't activate — start it
@@ -139,6 +138,35 @@ A single failed backup attempt is logged (`docker compose logs
 backup-scheduler`) and the scheduler keeps running rather than the
 whole process dying and silently stopping every future backup until
 someone notices.
+
+### Adjusting the schedule
+
+The scheduler's hour, on/off state, and retention count are stored in
+the database (`apps.core.models.BackupSettings`, a singleton row — the
+same `pk=1` pattern as `apps.api.models.ApiSettings`), not baked into
+the container at startup, so they can be changed without restarting or
+redeploying anything:
+
+- **Profile → Administration → Backups** — a "Settings" card right
+  above the backup list lets any staff user toggle automatic backups
+  on/off, change what hour (UTC) they run at, and set how many backups
+  to keep.
+- `/admin/` also exposes `BackupSettings` directly (no add/delete —
+  there's always exactly one row).
+
+`BACKUP_HOUR` (`.env.example`, default `3`) only seeds that row's
+initial value on its first-ever read (`BackupSettings.load()`'s
+`get_or_create`) — once the row exists, further edits to `.env` don't
+do anything; use the Settings card or `/admin/` instead. The scheduler
+re-reads `BackupSettings` at the top of every loop iteration and again
+right before actually running, so a change takes effect the same day
+without needing to restart the `backup-scheduler` service.
+
+Retention is enforced automatically every time a backup is created —
+by the scheduler, by clicking "Create backup" in the web UI, or by
+running `manage.py create_backup` directly — deleting the oldest
+archives beyond the configured count (`apps.core.backups.prune_backups`).
+Setting it to `0` keeps every backup forever.
 
 Not a real cron daemon (no `cron` package added to the image just for
 this) — a plain sleep-until-target-hour loop

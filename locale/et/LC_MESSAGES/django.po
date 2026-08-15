@@ -243,6 +243,15 @@ msgstr "Korduste maksimum"
 msgid "Body Mass Index"
 msgstr "Kehamassiindeks"
 
+msgid "Automatic daily backups"
+msgstr "Automaatsed igapäevased varukoopiad"
+
+msgid "Backup hour (UTC)"
+msgstr "Varunduse kellaaeg (UTC)"
+
+msgid "Keep the most recent"
+msgstr "Säilita uusimad"
+
 msgid "Good morning, %(username)s! Time to get after it."
 msgstr "Tere hommikust, %(username)s! Aeg asuda tegudele."
 
@@ -291,8 +300,20 @@ msgstr "Põletad küünlaid mõlemast otsast, %(username)s? Isegi legendid vajav
 msgid "Late night, %(username)s. Tomorrow's gains start with tonight's rest."
 msgstr "Hiline õhtu, %(username)s. Homsed edusammud algavad tänase puhkuse pealt."
 
+msgid "Turns the backup-scheduler service's daily backup off without needing to stop or remove that service."
+msgstr "Lülitab varunduse ajastaja teenuse igapäevase varunduse välja ilma, et seda teenust oleks vaja peatada või eemaldada."
+
+msgid "What time (UTC) the daily automatic backup runs at."
+msgstr "Millisel kellaajal (UTC) käivitub igapäevane automaatne varundus."
+
+msgid "How many backups to keep — older ones are deleted automatically after each new one is created. 0 keeps every backup forever."
+msgstr "Mitu varukoopiat säilitatakse — vanemad kustutatakse automaatselt pärast iga uue loomist. 0 säilitab kõik varukoopiad igavesti."
+
 msgid "Backup created: %(name)s"
 msgstr "Varukoopia loodud: %(name)s"
+
+msgid "Backup settings saved."
+msgstr "Varunduse seaded salvestatud."
 
 msgid "Restored from backup: %(name)s"
 msgstr "Taastatud varukoopiast: %(name)s"
@@ -1120,6 +1141,12 @@ msgstr[1] "%(title)s aja jooksul, %(counter)s mõõtmist"
 
 msgid "Create backup"
 msgstr "Loo varukoopia"
+
+msgid "Settings"
+msgstr "Seaded"
+
+msgid "Save settings"
+msgstr "Salvesta seaded"
 
 msgid "Created"
 msgstr "Loodud"

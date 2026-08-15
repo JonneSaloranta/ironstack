@@ -246,6 +246,15 @@ msgstr "Максимум повторений"
 msgid "Body Mass Index"
 msgstr "Индекс массы тела"
 
+msgid "Automatic daily backups"
+msgstr "Автоматическое ежедневное резервное копирование"
+
+msgid "Backup hour (UTC)"
+msgstr "Час резервного копирования (UTC)"
+
+msgid "Keep the most recent"
+msgstr "Хранить последние"
+
 msgid "Good morning, %(username)s! Time to get after it."
 msgstr "Доброе утро, %(username)s! Пора действовать."
 
@@ -294,8 +303,20 @@ msgstr "Не спишь допоздна, %(username)s? Даже легенда�
 msgid "Late night, %(username)s. Tomorrow's gains start with tonight's rest."
 msgstr "Поздний вечер, %(username)s. Завтрашний прогресс начинается с сегодняшнего отдыха."
 
+msgid "Turns the backup-scheduler service's daily backup off without needing to stop or remove that service."
+msgstr "Отключает ежедневное резервное копирование службы планировщика без необходимости останавливать или удалять эту службу."
+
+msgid "What time (UTC) the daily automatic backup runs at."
+msgstr "Время (UTC), в которое запускается ежедневное автоматическое резервное копирование."
+
+msgid "How many backups to keep — older ones are deleted automatically after each new one is created. 0 keeps every backup forever."
+msgstr "Сколько резервных копий хранить — более старые удаляются автоматически после создания каждой новой. 0 означает хранить все копии вечно."
+
 msgid "Backup created: %(name)s"
 msgstr "Резервная копия создана: %(name)s"
+
+msgid "Backup settings saved."
+msgstr "Настройки резервного копирования сохранены."
 
 msgid "Restored from backup: %(name)s"
 msgstr "Восстановлено из резервной копии: %(name)s"
@@ -1127,6 +1148,12 @@ msgstr[2] "%(title)s во времени, %(counter)s измерений"
 
 msgid "Create backup"
 msgstr "Создать резервную копию"
+
+msgid "Settings"
+msgstr "Настройки"
+
+msgid "Save settings"
+msgstr "Сохранить настройки"
 
 msgid "Created"
 msgstr "Создано"

@@ -243,6 +243,15 @@ msgstr "Massimale di ripetizioni"
 msgid "Body Mass Index"
 msgstr "Indice di massa corporea"
 
+msgid "Automatic daily backups"
+msgstr "Backup giornalieri automatici"
+
+msgid "Backup hour (UTC)"
+msgstr "Ora del backup (UTC)"
+
+msgid "Keep the most recent"
+msgstr "Conserva i più recenti"
+
 msgid "Good morning, %(username)s! Time to get after it."
 msgstr "Buongiorno, %(username)s! È ora di darsi da fare."
 
@@ -291,8 +300,20 @@ msgstr "Stai facendo le ore piccole, %(username)s? Anche le leggende hanno bisog
 msgid "Late night, %(username)s. Tomorrow's gains start with tonight's rest."
 msgstr "Tarda notte, %(username)s. I progressi di domani iniziano con il riposo di stanotte."
 
+msgid "Turns the backup-scheduler service's daily backup off without needing to stop or remove that service."
+msgstr "Disattiva il backup giornaliero del servizio di pianificazione backup senza doverlo arrestare o rimuovere."
+
+msgid "What time (UTC) the daily automatic backup runs at."
+msgstr "A che ora (UTC) viene eseguito il backup automatico giornaliero."
+
+msgid "How many backups to keep — older ones are deleted automatically after each new one is created. 0 keeps every backup forever."
+msgstr "Quanti backup conservare: quelli più vecchi vengono eliminati automaticamente dopo la creazione di ognuno nuovo. 0 conserva tutti i backup per sempre."
+
 msgid "Backup created: %(name)s"
 msgstr "Backup creato: %(name)s"
+
+msgid "Backup settings saved."
+msgstr "Impostazioni di backup salvate."
 
 msgid "Restored from backup: %(name)s"
 msgstr "Ripristinato dal backup: %(name)s"
@@ -1120,6 +1141,12 @@ msgstr[1] "%(title)s nel tempo, %(counter)s letture"
 
 msgid "Create backup"
 msgstr "Crea backup"
+
+msgid "Settings"
+msgstr "Impostazioni"
+
+msgid "Save settings"
+msgstr "Salva impostazioni"
 
 msgid "Created"
 msgstr "Creato"
