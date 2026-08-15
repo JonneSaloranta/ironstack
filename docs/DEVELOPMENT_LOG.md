@@ -1524,3 +1524,15 @@ the "Save" path itself, not just via the separate "Not now" button.
   being rejected without completing onboarding, a skip afterward
   correctly discarding that earlier invalid attempt rather than
   saving it, and the whole flow again in Finnish.
+
+**Height added to the same onboarding prompt**, asked for right after
+it shipped. A plain `User.height` field (same shape and cm/inch
+conversion as `ProfileForm`'s own), not a repeated measurement like
+weight — one-off context for BMI (`apps.core.bmi`), not something
+logged over time. 3 new tests (metric and imperial conversion, and
+that leaving it blank leaves `height` unset rather than zeroing it).
+1 new UI string translated across fi/sv/ru/it/et (625 total, 0
+fuzzy/untranslated) — the "Height (cm)"/"Height (in)" labels
+themselves were already translated, reused from `ProfileForm`.
+Live-verified: 180.5cm and 70in both round-tripped to the correct
+canonical meters value, and the field renders correctly in Finnish.

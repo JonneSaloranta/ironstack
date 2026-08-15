@@ -93,6 +93,9 @@ msgstr "Kasutatakse ainult parooli lähtestamise e-kirjade jaoks, kui jääd kun
 msgid "Logged as your first body-weight entry, so your progress charts have a starting point. Leave blank and log it anytime from the Body weight page instead."
 msgstr "Salvestatakse sinu esimese kehakaalu kirjena, et edenemisgraafikutel oleks lähtepunkt. Jäta tühjaks ja lisa kaal hiljem lehelt \"Kehakaal\"."
 
+msgid "Used together with a logged body weight to show your BMI. Leave blank to skip this — you can add it anytime from your profile."
+msgstr "Kasutatakse koos salvestatud kehakaaluga sinu KMI näitamiseks. Jäta tühjaks, et see vahele jätta — saad selle hiljem oma profiilis lisada."
+
 msgid "Sets whether weights and distances are shown in kg/km or lb/mi throughout the app. Change this anytime from your profile."
 msgstr "Määrab, kas kaalud ja vahemaad kuvatakse rakenduses kg/km või lb/mi ühikutes. Saad seda igal ajal profiilis muuta."
 

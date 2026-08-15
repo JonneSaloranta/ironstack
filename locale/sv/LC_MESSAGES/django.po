@@ -93,6 +93,9 @@ msgstr "Används endast för lösenordsåterställningsmejl om du någonsin blir
 msgid "Logged as your first body-weight entry, so your progress charts have a starting point. Leave blank and log it anytime from the Body weight page instead."
 msgstr "Loggas som din första kroppsviktspost, så att dina förloppsdiagram får en startpunkt. Lämna tomt och logga den istället när som helst från sidan Kroppsvikt."
 
+msgid "Used together with a logged body weight to show your BMI. Leave blank to skip this — you can add it anytime from your profile."
+msgstr "Används tillsammans med en loggad kroppsvikt för att visa ditt BMI. Lämna tomt för att hoppa över detta — du kan lägga till det när som helst från din profil."
+
 msgid "Sets whether weights and distances are shown in kg/km or lb/mi throughout the app. Change this anytime from your profile."
 msgstr "Anger om vikter och avstånd visas i kg/km eller lb/mi i hela appen. Ändra detta när som helst från din profil."
 

@@ -1239,6 +1239,27 @@ class OnboardingViewTests(TestCase):
         )
         self.assertAlmostEqual(float(measurement.value), 99.79, places=1)
 
+    def test_a_height_in_cm_is_converted_to_canonical_meters_on_the_user(self):
+        self.client.post(
+            reverse("onboarding"),
+            {"action": "save", "unit_system": "metric", "height": "180.5"},
+        )
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.height, Decimal("1.8050"))
+
+    def test_a_height_in_inches_is_converted_to_canonical_meters_on_the_user(self):
+        self.client.post(
+            reverse("onboarding"),
+            {"action": "save", "unit_system": "imperial", "height": "70"},
+        )
+        self.user.refresh_from_db()
+        self.assertAlmostEqual(float(self.user.height), 1.778, places=3)
+
+    def test_leaving_height_blank_leaves_it_unset(self):
+        self.client.post(reverse("onboarding"), {"action": "save", "unit_system": "metric"})
+        self.user.refresh_from_db()
+        self.assertIsNone(self.user.height)
+
     def test_leaving_weight_blank_creates_no_measurement(self):
         from apps.measurements.models import BodyMeasurement
 

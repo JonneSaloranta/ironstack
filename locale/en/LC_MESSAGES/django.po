@@ -93,6 +93,9 @@ msgstr "Used only for password-reset emails if you ever get locked out. Never sh
 msgid "Logged as your first body-weight entry, so your progress charts have a starting point. Leave blank and log it anytime from the Body weight page instead."
 msgstr "Logged as your first body-weight entry, so your progress charts have a starting point. Leave blank and log it anytime from the Body weight page instead."
 
+msgid "Used together with a logged body weight to show your BMI. Leave blank to skip this — you can add it anytime from your profile."
+msgstr "Used together with a logged body weight to show your BMI. Leave blank to skip this — you can add it anytime from your profile."
+
 msgid "Sets whether weights and distances are shown in kg/km or lb/mi throughout the app. Change this anytime from your profile."
 msgstr "Sets whether weights and distances are shown in kg/km or lb/mi throughout the app. Change this anytime from your profile."
 

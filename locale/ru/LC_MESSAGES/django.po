@@ -93,6 +93,9 @@ msgstr "Используется только для писем сброса п�
 msgid "Logged as your first body-weight entry, so your progress charts have a starting point. Leave blank and log it anytime from the Body weight page instead."
 msgstr "Записывается как ваша первая запись веса тела, чтобы на графиках прогресса была отправная точка. Можно оставить пустым и добавить вес позже на странице «Вес тела»."
 
+msgid "Used together with a logged body weight to show your BMI. Leave blank to skip this — you can add it anytime from your profile."
+msgstr "Используется вместе с записанным весом тела для отображения ИМТ. Оставьте пустым, чтобы пропустить — вы можете добавить это позже в профиле."
+
 msgid "Sets whether weights and distances are shown in kg/km or lb/mi throughout the app. Change this anytime from your profile."
 msgstr "Определяет, отображаются ли веса и расстояния в приложении в кг/км или в фунтах/милях. Изменить можно в любой момент в профиле."
 

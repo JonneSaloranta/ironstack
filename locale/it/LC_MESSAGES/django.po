@@ -93,6 +93,9 @@ msgstr "Utilizzata solo per le email di reimpostazione della password nel caso r
 msgid "Logged as your first body-weight entry, so your progress charts have a starting point. Leave blank and log it anytime from the Body weight page instead."
 msgstr "Registrato come la tua prima rilevazione del peso corporeo, così i tuoi grafici di progresso hanno un punto di partenza. Lascia vuoto e registralo quando vuoi dalla pagina Peso corporeo."
 
+msgid "Used together with a logged body weight to show your BMI. Leave blank to skip this — you can add it anytime from your profile."
+msgstr "Usato insieme a un peso corporeo registrato per mostrare il tuo BMI. Lascia vuoto per saltare questo passaggio — puoi aggiungerlo quando vuoi dal tuo profilo."
+
 msgid "Sets whether weights and distances are shown in kg/km or lb/mi throughout the app. Change this anytime from your profile."
 msgstr "Imposta se pesi e distanze vengono mostrati in kg/km o lb/mi in tutta l'app. Modificalo quando vuoi dal tuo profilo."
 

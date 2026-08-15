@@ -93,6 +93,9 @@ msgstr "Käytetään vain salasanan palautusviesteihin, jos jäät joskus lukkoo
 msgid "Logged as your first body-weight entry, so your progress charts have a starting point. Leave blank and log it anytime from the Body weight page instead."
 msgstr "Tallennetaan ensimmäiseksi painomerkinnäksesi, jotta edistymiskaavioillasi on lähtöpiste. Voit myös jättää tämän tyhjäksi ja kirjata painon milloin tahansa Kehon paino -sivulta."
 
+msgid "Used together with a logged body weight to show your BMI. Leave blank to skip this — you can add it anytime from your profile."
+msgstr "Näytetään BMI:si yhdessä kirjatun painon kanssa. Jätä tyhjäksi ohittaaksesi tämän — voit lisätä sen milloin tahansa profiilistasi."
+
 msgid "Sets whether weights and distances are shown in kg/km or lb/mi throughout the app. Change this anytime from your profile."
 msgstr "Määrittää, näytetäänkö painot ja matkat sovelluksessa yksiköissä kg/km vai lb/mi. Voit muuttaa tätä milloin tahansa profiilistasi."
 

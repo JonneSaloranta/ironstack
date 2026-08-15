@@ -408,15 +408,17 @@ class OnboardingForm(forms.Form):
     _onboarding_modal.html — the one-time, entirely optional prompt
     shown on whatever page a user lands on right after their first
     login. Deliberately a plain Form, not a ModelForm: it writes to
-    both `User` (name/email/units) and, for weight,
+    both `User` (name/email/units/height) and, for weight,
     apps.measurements.models.BodyMeasurement — the same "Body weight"
     system measurement type apps.measurements' own logging form uses,
     so a weight entered here shows up on the Body weight history page
     exactly like any other logged reading, not a separate, special
-    "onboarding weight" field on User itself. Every field is optional
-    (required=False) — the whole point of a skippable prompt is that
-    leaving any single field blank is a completely normal outcome, not
-    a validation error."""
+    "onboarding weight" field on User itself. `height` stays a plain
+    User field (same as ProfileForm's own), since it's one-off context
+    for BMI rather than a reading logged repeatedly over time the way
+    weight is. Every field is optional (required=False) — the whole
+    point of a skippable prompt is that leaving any single field blank
+    is a completely normal outcome, not a validation error."""
 
     first_name = forms.CharField(
         max_length=150,
@@ -447,6 +449,21 @@ class OnboardingForm(forms.Form):
             "from the Body weight page instead."
         ),
     )
+    # Same field/conversion shape as ProfileForm's own `height` — stored
+    # on User (canonical meters), not a BodyMeasurement, since it's
+    # optional context for BMI (apps.core.bmi) rather than a repeated
+    # reading over time the way weight is.
+    height = forms.DecimalField(
+        max_digits=6,
+        decimal_places=1,
+        required=False,
+        min_value=0,
+        help_text=_(
+            "Used together with a logged body weight to show your BMI. "
+            "Leave blank to skip this — you can add it anytime from your "
+            "profile."
+        ),
+    )
     unit_system = forms.ChoiceField(
         choices=UnitSystem.choices,
         label=_("Units"),
@@ -469,6 +486,9 @@ class OnboardingForm(forms.Form):
             if unit_label
             else _("Current weight")
         )
+        self.fields["height"].label = (
+            _("Height (cm)") if user.unit_system == UnitSystem.METRIC else _("Height (in)")
+        )
 
     def save(self):
         # Local imports: apps.measurements depends on apps.accounts
@@ -485,8 +505,25 @@ class OnboardingForm(forms.Form):
         user.first_name = self.cleaned_data["first_name"]
         user.email = self.cleaned_data["email"]
         user.unit_system = self.cleaned_data["unit_system"]
+
+        height = self.cleaned_data.get("height")
+        if height is not None:
+            user.height = (
+                core_units.cm_to_meters(height)
+                if user.unit_system == UnitSystem.METRIC
+                else core_units.inches_to_meters(height)
+            )
+
         user.onboarding_completed = True
-        user.save(update_fields=["first_name", "email", "unit_system", "onboarding_completed"])
+        user.save(
+            update_fields=[
+                "first_name",
+                "email",
+                "unit_system",
+                "height",
+                "onboarding_completed",
+            ]
+        )
 
         weight = self.cleaned_data.get("weight")
         if weight:
