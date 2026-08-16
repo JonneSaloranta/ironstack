@@ -191,3 +191,46 @@ class DiaryEntryQuantityForm(forms.ModelForm):
 
         model = DiaryEntry
         fields = ["quantity", "notes"]
+
+
+class RecipeForm(forms.ModelForm):
+    class Meta:
+        from .models import Recipe
+
+        model = Recipe
+        fields = ["name", "servings", "instructions"]
+
+
+class RecipeIngredientForm(forms.ModelForm):
+    def __init__(self, *args, user, **kwargs):
+        from django.db.models import Q
+
+        from .models import Food
+
+        super().__init__(*args, **kwargs)
+        self.fields["food"].queryset = Food.objects.filter(
+            Q(owner=user) | Q(owner__isnull=True), active=True
+        ).order_by("name")
+
+    class Meta:
+        from .models import RecipeIngredient
+
+        model = RecipeIngredient
+        fields = ["food", "quantity"]
+
+
+class LogRecipeForm(forms.Form):
+    """Logs N servings of a recipe into the diary — the "diary
+    version" of DiaryAddEntryForm, for a recipe instead of a raw
+    food."""
+
+    meal_slot = forms.ModelChoiceField(queryset=None, label=_("Meal"))
+    quantity = forms.DecimalField(
+        max_digits=8, decimal_places=2, min_value=Decimal("0.01"), label=_("Servings")
+    )
+
+    def __init__(self, *args, user, **kwargs):
+        from . import services
+
+        super().__init__(*args, **kwargs)
+        self.fields["meal_slot"].queryset = services.visible_meal_slots(user)

@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{{ recipe.name }} — IronStack{% endblock %}
+{% block content %}
+<div class="top-bar">
+  <h1 style="margin:0;">{{ recipe.name }}</h1>
+  <a class="button-secondary" href="{% url 'nutrition:recipe-update' recipe.pk %}">{% trans "Edit" %}</a>
+</div>
+
+{% if recipe.instructions %}
+  <p class="text-muted">{{ recipe.instructions|linebreaksbr }}</p>
+{% endif %}
+
+<div class="card">
+  <strong>{% trans "Ingredients" %}</strong>
+  {% for ingredient in ingredients %}
+    <div class="card-action-row" style="padding:0.5rem 0;">
+      <div>
+        <span>{{ ingredient.food.name }}</span>
+        <span class="text-muted">— {{ ingredient.quantity }} {{ ingredient.food.serving_unit }}, {{ ingredient.nutrition.calories|floatformat:0 }} kcal</span>
+      </div>
+      <form method="post" action="{% url 'nutrition:recipe-ingredient-delete' recipe.pk ingredient.pk %}"
+            x-data="{}" @submit="if (!confirm('{% trans "Remove this ingredient?" %}')) $event.preventDefault()">
+        {% csrf_token %}
+        <button type="submit" class="button-danger">{% trans "Remove" %}</button>
+      </form>
+    </div>
+  {% empty %}
+    <p class="text-muted">{% trans "No ingredients yet." %}</p>
+  {% endfor %}
+  <a class="button-secondary" href="{% url 'nutrition:recipe-ingredient-create' recipe.pk %}">{% trans "+ Add ingredient" %}</a>
+</div>
+
+<div class="card">
+  <strong>{% trans "Nutrition" %}</strong>
+  <table class="set-table">
+    <thead>
+      <tr><th></th><th>{% trans "Total" %}</th><th>{% blocktrans with servings=recipe.servings %}Per serving (of {{ servings }}){% endblocktrans %}</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>{% trans "Calories" %}</td><td>{{ total.calories|floatformat:0 }}</td><td>{{ per_serving.calories|floatformat:0 }}</td></tr>
+      <tr><td>{% trans "Protein" %}</td><td>{{ total.protein_grams|floatformat:0 }} g</td><td>{{ per_serving.protein_grams|floatformat:0 }} g</td></tr>
+      <tr><td>{% trans "Carbohydrates" %}</td><td>{{ total.carbohydrate_grams|floatformat:0 }} g</td><td>{{ per_serving.carbohydrate_grams|floatformat:0 }} g</td></tr>
+      <tr><td>{% trans "Fat" %}</td><td>{{ total.fat_grams|floatformat:0 }} g</td><td>{{ per_serving.fat_grams|floatformat:0 }} g</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<form class="card" method="post" action="{% url 'nutrition:recipe-log' recipe.pk %}">
+  {% csrf_token %}
+  <strong>{% trans "Log to diary" %}</strong>
+  {{ log_form.non_field_errors }}
+  {% for field in log_form %}
+    <div class="field">
+      {{ field.label_tag }}
+      {{ field }}
+      {% if field.errors %}<p class="field-error">{{ field.errors|striptags }}</p>{% endif %}
+    </div>
+  {% endfor %}
+  <button type="submit">{% trans "Log today" %}</button>
+</form>
+
+<p><a class="button-secondary" href="{% url 'nutrition:recipe-list' %}">&larr; {% trans "Back to recipes" %}</a></p>
+
+<div class="danger-zone">
+  <form method="post" action="{% url 'nutrition:recipe-delete' recipe.pk %}"
+        x-data="{}" @submit="if (!confirm('{% trans "Delete this recipe?" %}')) $event.preventDefault()">
+    {% csrf_token %}
+    <button type="submit" class="button-danger">{% trans "Delete recipe" %}</button>
+  </form>
+</div>
+{% endblock %}

@@ -35,4 +35,20 @@ urlpatterns = [
     path("diary/entries/<int:pk>/edit/", views.diary_entry_edit, name="diary-entry-edit"),
     path("diary/entries/<int:pk>/delete/", views.diary_entry_delete, name="diary-entry-delete"),
     path("diary/<str:target_date>/", views.DiaryDayView.as_view(), name="diary-day"),
+    path("recipes/", views.RecipeListView.as_view(), name="recipe-list"),
+    path("recipes/new/", views.recipe_create, name="recipe-create"),
+    path("recipes/<int:pk>/", views.RecipeDetailView.as_view(), name="recipe-detail"),
+    path("recipes/<int:pk>/edit/", views.recipe_update, name="recipe-update"),
+    path("recipes/<int:pk>/delete/", views.recipe_delete, name="recipe-delete"),
+    path("recipes/<int:pk>/log/", views.recipe_log, name="recipe-log"),
+    path(
+        "recipes/<int:recipe_pk>/ingredients/new/",
+        views.recipe_ingredient_create,
+        name="recipe-ingredient-create",
+    ),
+    path(
+        "recipes/<int:recipe_pk>/ingredients/<int:pk>/delete/",
+        views.recipe_ingredient_delete,
+        name="recipe-ingredient-delete",
+    ),
 ]

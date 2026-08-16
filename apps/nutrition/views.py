@@ -27,6 +27,9 @@ from .forms import (
     DiaryEntryQuantityForm,
     FoodForm,
     GoalStepForm,
+    LogRecipeForm,
+    RecipeForm,
+    RecipeIngredientForm,
 )
 from .models import NutritionProfile, TargetSource
 
@@ -476,3 +479,121 @@ def diary_entry_delete(request, pk):
     target_date = entry.date
     entry.delete()
     return redirect("nutrition:diary-day", target_date=target_date.isoformat())
+
+
+class RecipeListView(LoginRequiredMixin, ListView):
+    template_name = "nutrition/recipe_list.html"
+    context_object_name = "recipes"
+
+    def get_queryset(self):
+        from .models import Recipe
+
+        return Recipe.objects.filter(owner=self.request.user).order_by("name")
+
+
+class RecipeDetailView(LoginRequiredMixin, View):
+    template_name = "nutrition/recipe_detail.html"
+
+    def get(self, request, pk):
+        recipe = _owned_recipe_or_404(request, pk)
+        ingredients = list(recipe.ingredients.select_related("food"))
+        for ingredient in ingredients:
+            ingredient.nutrition = services.scale_nutrition(ingredient.food, ingredient.quantity)
+        return render(
+            request,
+            self.template_name,
+            {
+                "recipe": recipe,
+                "ingredients": ingredients,
+                "total": services.recipe_total_nutrition(recipe),
+                "per_serving": services.recipe_per_serving_nutrition(recipe),
+                "log_form": LogRecipeForm(user=request.user),
+            },
+        )
+
+
+def _owned_recipe_or_404(request, pk):
+    from .models import Recipe
+
+    return get_object_or_404(Recipe, pk=pk, owner=request.user)
+
+
+def recipe_create(request):
+    form = RecipeForm(request.POST or None)
+    if request.method == "POST" and form.is_valid():
+        recipe = form.save(commit=False)
+        recipe.owner = request.user
+        recipe.save()
+        return redirect("nutrition:recipe-detail", pk=recipe.pk)
+    return render(request, "nutrition/recipe_form.html", {"form": form})
+
+
+def recipe_update(request, pk):
+    recipe = _owned_recipe_or_404(request, pk)
+    form = RecipeForm(request.POST or None, instance=recipe)
+    if request.method == "POST" and form.is_valid():
+        form.save()
+        return redirect("nutrition:recipe-detail", pk=recipe.pk)
+    return render(request, "nutrition/recipe_form.html", {"form": form, "recipe": recipe})
+
+
+def recipe_delete(request, pk):
+    if request.method != "POST":
+        return HttpResponseNotAllowed(["POST"])
+    recipe = _owned_recipe_or_404(request, pk)
+    recipe.delete()
+    return redirect("nutrition:recipe-list")
+
+
+def recipe_ingredient_create(request, recipe_pk):
+    recipe = _owned_recipe_or_404(request, recipe_pk)
+    form = RecipeIngredientForm(request.POST or None, user=request.user)
+    if request.method == "POST" and form.is_valid():
+        ingredient = form.save(commit=False)
+        ingredient.recipe = recipe
+        ingredient.save()
+        return redirect("nutrition:recipe-detail", pk=recipe.pk)
+    return render(
+        request, "nutrition/recipe_ingredient_form.html", {"form": form, "recipe": recipe}
+    )
+
+
+def recipe_ingredient_delete(request, recipe_pk, pk):
+    from .models import RecipeIngredient
+
+    if request.method != "POST":
+        return HttpResponseNotAllowed(["POST"])
+    recipe = _owned_recipe_or_404(request, recipe_pk)
+    ingredient = get_object_or_404(RecipeIngredient, pk=pk, recipe=recipe)
+    ingredient.delete()
+    return redirect("nutrition:recipe-detail", pk=recipe.pk)
+
+
+def recipe_log(request, pk):
+    from .models import DiaryEntry
+
+    recipe = _owned_recipe_or_404(request, pk)
+    if request.method != "POST":
+        return HttpResponseNotAllowed(["POST"])
+    form = LogRecipeForm(request.POST, user=request.user)
+    if not form.is_valid():
+        ingredients = list(recipe.ingredients.select_related("food"))
+        return render(
+            request,
+            "nutrition/recipe_detail.html",
+            {
+                "recipe": recipe,
+                "ingredients": ingredients,
+                "total": services.recipe_total_nutrition(recipe),
+                "per_serving": services.recipe_per_serving_nutrition(recipe),
+                "log_form": form,
+            },
+        )
+    entry = DiaryEntry.objects.create(
+        user=request.user,
+        date=timezone.localdate(),
+        meal_slot=form.cleaned_data["meal_slot"],
+        recipe=recipe,
+        quantity=form.cleaned_data["quantity"],
+    )
+    return redirect("nutrition:diary-day", target_date=entry.date.isoformat())

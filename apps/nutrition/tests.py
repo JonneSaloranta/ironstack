@@ -1400,3 +1400,89 @@ class DiaryDayViewTests(TestCase):
         self.client.logout()
         response = self.client.get(reverse("nutrition:diary-day"))
         self.assertEqual(response.status_code, 302)
+
+
+class RecipeViewTests(TestCase):
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        self.bob = User.objects.create_user(username="bob", password="s3cret-pass")
+        self.chicken = make_food(self.alice, name="Chicken")
+        self.rice = make_food(
+            self.alice, name="Rice", calories=130, protein_grams=Decimal("2.7"),
+            carbohydrate_grams=Decimal("28"), fat_grams=Decimal("0.3"),
+        )
+        self.client.login(username="alice", password="s3cret-pass")
+
+    def test_recipe_create(self):
+        response = self.client.post(
+            reverse("nutrition:recipe-create"),
+            {"name": "Bowl", "servings": "2", "instructions": ""},
+        )
+        self.assertEqual(response.status_code, 302)
+        recipe = Recipe.objects.get(name="Bowl")
+        self.assertEqual(recipe.owner, self.alice)
+
+    def test_recipe_list_only_shows_the_owners_own_recipes(self):
+        Recipe.objects.create(owner=self.alice, name="Alice's Bowl", servings=1)
+        Recipe.objects.create(owner=self.bob, name="Bob's Bowl", servings=1)
+        response = self.client.get(reverse("nutrition:recipe-list"))
+        names = [r.name for r in response.context["recipes"]]
+        self.assertIn("Alice's Bowl", names)
+        self.assertNotIn("Bob's Bowl", names)
+
+    def test_another_users_recipe_detail_is_a_404(self):
+        recipe = Recipe.objects.create(owner=self.bob, name="Bob's Bowl", servings=1)
+        response = self.client.get(reverse("nutrition:recipe-detail", args=[recipe.pk]))
+        self.assertEqual(response.status_code, 404)
+
+    def test_adding_and_removing_an_ingredient(self):
+        recipe = Recipe.objects.create(owner=self.alice, name="Bowl", servings=2)
+        response = self.client.post(
+            reverse("nutrition:recipe-ingredient-create", args=[recipe.pk]),
+            {"food": self.chicken.pk, "quantity": "300"},
+        )
+        self.assertEqual(response.status_code, 302)
+        ingredient = RecipeIngredient.objects.get(recipe=recipe)
+        self.assertEqual(ingredient.food, self.chicken)
+
+        response = self.client.post(
+            reverse("nutrition:recipe-ingredient-delete", args=[recipe.pk, ingredient.pk])
+        )
+        self.assertEqual(response.status_code, 302)
+        self.assertFalse(RecipeIngredient.objects.filter(pk=ingredient.pk).exists())
+
+    def test_recipe_detail_shows_correct_totals(self):
+        recipe = Recipe.objects.create(owner=self.alice, name="Bowl", servings=2)
+        RecipeIngredient.objects.create(
+            recipe=recipe, food=self.chicken, quantity=Decimal("300")
+        )
+        RecipeIngredient.objects.create(recipe=recipe, food=self.rice, quantity=Decimal("200"))
+        response = self.client.get(reverse("nutrition:recipe-detail", args=[recipe.pk]))
+        self.assertEqual(response.context["total"].calories, Decimal("755.0"))
+        self.assertEqual(response.context["per_serving"].calories, Decimal("377.50"))
+
+    def test_logging_a_recipe_creates_a_diary_entry(self):
+        recipe = Recipe.objects.create(owner=self.alice, name="Bowl", servings=2)
+        RecipeIngredient.objects.create(
+            recipe=recipe, food=self.chicken, quantity=Decimal("300")
+        )
+        slot = MealSlot.objects.get(name="Lunch", owner=None)
+        response = self.client.post(
+            reverse("nutrition:recipe-log", args=[recipe.pk]),
+            {"meal_slot": slot.pk, "quantity": "1"},
+        )
+        self.assertEqual(response.status_code, 302)
+        entry = DiaryEntry.objects.get(user=self.alice, recipe=recipe)
+        self.assertEqual(entry.meal_slot, slot)
+        self.assertEqual(entry.date, timezone.localdate())
+
+    def test_deleting_a_recipe_that_does_not_belong_to_the_user_is_a_404(self):
+        recipe = Recipe.objects.create(owner=self.bob, name="Bob's Bowl", servings=1)
+        response = self.client.post(reverse("nutrition:recipe-delete", args=[recipe.pk]))
+        self.assertEqual(response.status_code, 404)
+        self.assertTrue(Recipe.objects.filter(pk=recipe.pk).exists())
+
+    def test_requires_login(self):
+        self.client.logout()
+        response = self.client.get(reverse("nutrition:recipe-list"))
+        self.assertEqual(response.status_code, 302)

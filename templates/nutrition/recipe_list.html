@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Recipes" %} — IronStack{% endblock %}
+{% block content %}
+<div class="top-bar">
+  <h1 style="margin:0;">{% trans "Recipes" %}</h1>
+  <a class="button-secondary" href="{% url 'nutrition:recipe-create' %}">{% trans "+ New recipe" %}</a>
+</div>
+
+{% if recipes %}
+  {% for recipe in recipes %}
+    <div class="card card-action-row">
+      <div>
+        <strong>{{ recipe.name }}</strong>
+        <p class="text-muted">{{ recipe.servings }} {% trans "servings" %}</p>
+      </div>
+      <a class="button-secondary" href="{% url 'nutrition:recipe-detail' recipe.pk %}">{% trans "Open" %}</a>
+    </div>
+  {% endfor %}
+{% else %}
+  <div class="card empty-state">
+    <p>{% trans "No recipes yet." %}</p>
+  </div>
+{% endif %}
+
+<p><a class="button-secondary" href="{% url 'nutrition:diary-day' %}">&larr; {% trans "Back to diary" %}</a></p>
+{% endblock %}
