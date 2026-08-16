@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, timedelta
 from decimal import Decimal
 
 from django.contrib.auth import get_user_model
@@ -6,7 +6,8 @@ from django.core.exceptions import ValidationError
 from django.db import IntegrityError, transaction
 from django.test import TestCase
 
-from apps.nutrition import energy, macros
+from apps.measurements.models import BodyMeasurement, MeasurementType
+from apps.nutrition import energy, macros, suggestions, trends
 
 from .models import (
     ActivityJob,
@@ -503,3 +504,185 @@ class MacroCalculationTests(TestCase):
         self.assertEqual(result.protein_percent, Decimal("0"))
         self.assertEqual(result.carbohydrate_percent, Decimal("0"))
         self.assertEqual(result.fat_percent, Decimal("0"))
+
+
+def _d(day_offset):
+    return date(2026, 1, 1) + timedelta(days=day_offset)
+
+
+class BucketByDayTests(TestCase):
+    def test_same_day_readings_are_averaged(self):
+        readings = [(_d(0), Decimal("80.0")), (_d(0), Decimal("80.4"))]
+        self.assertEqual(trends.bucket_by_day(readings), {_d(0): Decimal("80.2")})
+
+    def test_different_days_stay_separate(self):
+        readings = [(_d(0), Decimal("80.0")), (_d(1), Decimal("79.5"))]
+        self.assertEqual(
+            trends.bucket_by_day(readings), {_d(0): Decimal("80.0"), _d(1): Decimal("79.5")}
+        )
+
+
+class MovingAverageTrendTests(TestCase):
+    def test_the_window_grows_until_it_reaches_full_size(self):
+        """Early points, with no earlier history yet, average over
+        whatever's actually available rather than treating missing
+        days as zero."""
+        readings = [(_d(0), Decimal("80")), (_d(1), Decimal("79")), (_d(2), Decimal("78"))]
+        trend = trends.moving_average_trend(readings)
+        self.assertEqual(
+            trend, [(_d(0), Decimal("80")), (_d(1), Decimal("79.5")), (_d(2), Decimal("79"))]
+        )
+
+    def test_empty_readings_returns_an_empty_trend(self):
+        self.assertEqual(trends.moving_average_trend([]), [])
+
+
+class ComputeTrendTests(TestCase):
+    def test_fewer_than_the_minimum_distinct_days_returns_none(self):
+        readings = [(_d(0), Decimal("80")), (_d(20), Decimal("78")), (_d(40), Decimal("76"))]
+        self.assertIsNone(trends.compute_trend(readings))
+
+    def test_a_span_shorter_than_the_minimum_returns_none_even_with_enough_days(self):
+        readings = [
+            (_d(0), Decimal("80")), (_d(3), Decimal("79.5")),
+            (_d(6), Decimal("79")), (_d(9), Decimal("78.5")),
+        ]
+        self.assertIsNone(trends.compute_trend(readings))
+
+    def test_a_constant_weight_yields_a_zero_rate(self):
+        readings = [(_d(offset), Decimal("80.0")) for offset in (0, 5, 10, 15, 20)]
+        result = trends.compute_trend(readings)
+        self.assertIsNotNone(result)
+        self.assertEqual(result.actual_rate_kg_per_week, Decimal("0.000"))
+
+    def test_isolated_widely_spaced_readings_give_an_exact_known_rate(self):
+        # Each reading is >7 days from its neighbors, so the moving
+        # average never smooths across readings -- the rate is exactly
+        # (77.0 - 80.0) kg over 30/7 weeks.
+        readings = [
+            (_d(0), Decimal("80.0")), (_d(10), Decimal("79.0")),
+            (_d(20), Decimal("78.0")), (_d(30), Decimal("77.0")),
+        ]
+        result = trends.compute_trend(readings)
+        self.assertEqual(result.actual_rate_kg_per_week, Decimal("-0.700"))
+        self.assertEqual(result.span_days, 30)
+        self.assertEqual(result.distinct_days, 4)
+
+    def test_an_increasing_trend_yields_a_positive_rate(self):
+        readings = [
+            (_d(0), Decimal("70.0")), (_d(10), Decimal("70.5")),
+            (_d(20), Decimal("71.0")), (_d(30), Decimal("71.5")),
+        ]
+        result = trends.compute_trend(readings)
+        self.assertGreater(result.actual_rate_kg_per_week, Decimal("0"))
+
+
+def _log_weight(user, day_offset, weight_kg):
+    from datetime import datetime
+    from datetime import timezone as dt_timezone
+
+    body_weight_type = MeasurementType.objects.get(name="Body weight", owner=None)
+    return BodyMeasurement.objects.create(
+        user=user,
+        measurement_type=body_weight_type,
+        value=Decimal(str(weight_kg)),
+        recorded_at=datetime.combine(_d(day_offset), datetime.min.time(), tzinfo=dt_timezone.utc),
+    )
+
+
+class CalorieAdjustmentSuggestionTests(TestCase):
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+
+    def _set_goal_and_target(self, rate, calories=2100):
+        NutritionGoal.objects.create(
+            user=self.alice, goal_type=GoalType.FAT_LOSS_MODERATE, target_rate_kg_per_week=rate
+        )
+        NutritionTarget.objects.create(
+            user=self.alice,
+            daily_calories=calories,
+            protein_grams=Decimal("176"),
+            carbohydrate_grams=Decimal("218"),
+            fat_grams=Decimal("58"),
+            source="calculated",
+        )
+
+    def test_no_goal_returns_no_active_goal(self):
+        result = suggestions.suggest_calorie_adjustment(self.alice)
+        self.assertEqual(result.action, suggestions.AdjustmentAction.NO_ACTIVE_GOAL)
+
+    def test_goal_without_a_target_returns_no_active_goal(self):
+        NutritionGoal.objects.create(
+            user=self.alice,
+            goal_type=GoalType.FAT_LOSS_MODERATE,
+            target_rate_kg_per_week=Decimal("-0.5"),
+        )
+        result = suggestions.suggest_calorie_adjustment(self.alice)
+        self.assertEqual(result.action, suggestions.AdjustmentAction.NO_ACTIVE_GOAL)
+
+    def test_no_weight_history_returns_insufficient_data(self):
+        self._set_goal_and_target(Decimal("-0.5"))
+        result = suggestions.suggest_calorie_adjustment(self.alice)
+        self.assertEqual(result.action, suggestions.AdjustmentAction.INSUFFICIENT_DATA)
+
+    def test_a_trend_right_at_the_tolerance_boundary_is_on_track(self):
+        self._set_goal_and_target(Decimal("-0.5"))
+        for offset, weight in [(0, "80.0"), (10, "79.5"), (20, "79.0"), (30, "78.5")]:
+            _log_weight(self.alice, offset, weight)
+        result = suggestions.suggest_calorie_adjustment(self.alice)
+        self.assertEqual(result.actual_rate_kg_per_week, Decimal("-0.350"))
+        self.assertEqual(result.action, suggestions.AdjustmentAction.ON_TRACK)
+        self.assertIsNone(result.suggested_daily_calories)
+
+    def test_losing_too_slowly_suggests_a_calorie_decrease(self):
+        self._set_goal_and_target(Decimal("-0.5"), calories=2100)
+        for offset, weight in [(0, "80.0"), (10, "79.8"), (20, "79.6"), (30, "79.4")]:
+            _log_weight(self.alice, offset, weight)
+        result = suggestions.suggest_calorie_adjustment(self.alice)
+        self.assertEqual(result.action, suggestions.AdjustmentAction.ADJUST)
+        self.assertEqual(result.actual_rate_kg_per_week, Decimal("-0.140"))
+        self.assertLess(result.delta_kcal, 0)
+        self.assertEqual(result.suggested_daily_calories, 2100 + result.delta_kcal)
+
+    def test_gaining_too_fast_on_a_cut_suggests_a_calorie_decrease_too(self):
+        # Losing *faster* than a fat-loss target is still "off track,"
+        # in the direction of needing more calories, not fewer.
+        self._set_goal_and_target(Decimal("-0.5"), calories=2100)
+        for offset, weight in [(0, "80.0"), (10, "79.0"), (20, "78.0"), (30, "77.0")]:
+            _log_weight(self.alice, offset, weight)
+        result = suggestions.suggest_calorie_adjustment(self.alice)
+        self.assertEqual(result.action, suggestions.AdjustmentAction.ADJUST)
+        self.assertGreater(result.delta_kcal, 0)
+
+    def test_a_single_adjustment_is_capped_even_if_the_raw_gap_is_larger(self):
+        self._set_goal_and_target(Decimal("-0.5"), calories=2100)
+        for offset, weight in [(0, "80.0"), (10, "79.8"), (20, "79.6"), (30, "79.4")]:
+            _log_weight(self.alice, offset, weight)
+        result = suggestions.suggest_calorie_adjustment(self.alice)
+        self.assertLessEqual(abs(result.delta_kcal), suggestions.MAX_SINGLE_ADJUSTMENT_KCAL)
+
+    def test_low_confidence_with_the_bare_minimum_of_data(self):
+        self._set_goal_and_target(Decimal("-0.5"))
+        for offset, weight in [(0, "80.0"), (10, "79.8"), (20, "79.6"), (30, "79.4")]:
+            _log_weight(self.alice, offset, weight)
+        result = suggestions.suggest_calorie_adjustment(self.alice)
+        self.assertEqual(result.confidence, suggestions.Confidence.LOW)
+
+    def test_high_confidence_with_a_long_dense_history(self):
+        self._set_goal_and_target(Decimal("-0.5"))
+        for offset in range(25):
+            _log_weight(self.alice, offset, Decimal("80.0") - Decimal("0.03") * offset)
+        result = suggestions.suggest_calorie_adjustment(self.alice)
+        self.assertEqual(result.confidence, suggestions.Confidence.HIGH)
+
+    def test_result_is_deterministic_for_the_same_data(self):
+        self._set_goal_and_target(Decimal("-0.5"))
+        for offset, weight in [(0, "80.0"), (10, "79.8"), (20, "79.6"), (30, "79.4")]:
+            _log_weight(self.alice, offset, weight)
+        first = suggestions.suggest_calorie_adjustment(self.alice)
+        second = suggestions.suggest_calorie_adjustment(self.alice)
+        self.assertEqual(first, second)
+
+    def test_reason_is_never_empty(self):
+        result = suggestions.suggest_calorie_adjustment(self.alice)
+        self.assertTrue(result.reason)

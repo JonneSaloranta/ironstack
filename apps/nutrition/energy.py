@@ -11,6 +11,12 @@ present them as such ("estimated," "recommended," "target" — never
 from dataclasses import dataclass
 from decimal import ROUND_HALF_UP, Decimal
 
+# Eager gettext, not gettext_lazy (unlike apps.core.bmi's BMI_CATEGORIES
+# or apps.progression.engine's reason strings): every translated string
+# here is built and consumed entirely within one function call — most
+# get joined together with str.join(), which a lazy proxy doesn't
+# support — never stashed at module/class load time, so laziness would
+# buy nothing.
 from django.utils.translation import gettext as _
 
 from .models import ActivityLevel, BiologicalSex, GoalType
@@ -109,7 +115,7 @@ def suggest_activity_level(
     job_points = {"sedentary": 0, "light": 1, "moderate": 2, "physical": 3}[activity_job]
     score += job_points
     if job_points:
-        reasons.append(str(_("a %(job)s job")) % {"job": activity_job.replace("_", " ")})
+        reasons.append(_("a %(job)s job") % {"job": activity_job.replace("_", " ")})
 
     if daily_steps is not None:
         if daily_steps >= 12500:
@@ -123,7 +129,7 @@ def suggest_activity_level(
         else:
             step_points = 0
         score += step_points
-        reasons.append(str(_("~%(steps)s steps/day")) % {"steps": daily_steps})
+        reasons.append(_("~%(steps)s steps/day") % {"steps": daily_steps})
 
     if training_sessions_per_week:
         if training_sessions_per_week >= 7:
@@ -136,7 +142,7 @@ def suggest_activity_level(
             training_points = 1
         score += training_points
         reasons.append(
-            str(_("%(count)s gym sessions a week")) % {"count": training_sessions_per_week}
+            _("%(count)s gym sessions a week") % {"count": training_sessions_per_week}
         )
 
     if other_exercise_minutes_per_week:
@@ -149,7 +155,7 @@ def suggest_activity_level(
         else:
             other_points = 1
         score += other_points
-        reasons.append(str(_("other regular exercise")))
+        reasons.append(_("other regular exercise"))
 
     if score <= 2:
         level = ActivityLevel.SEDENTARY
@@ -163,12 +169,12 @@ def suggest_activity_level(
         level = ActivityLevel.VERY_ACTIVE
 
     if reasons:
-        reason = str(_("Suggested: %(label)s — %(factors)s")) % {
+        reason = _("Suggested: %(label)s — %(factors)s") % {
             "label": ActivityLevel(level).label,
             "factors": ", ".join(reasons),
         }
     else:
-        reason = str(_("Suggested: %(label)s — no activity details given yet")) % {
+        reason = _("Suggested: %(label)s — no activity details given yet") % {
             "label": ActivityLevel(level).label
         }
     return ActivityLevelSuggestion(activity_level=level, reason=reason)
@@ -241,7 +247,7 @@ def calculate_calorie_target(
     final_calories = max(raw_calories, floor).quantize(CALORIE_PLACES, rounding=ROUND_HALF_UP)
 
     parts = [
-        str(_("Estimated maintenance (TDEE): %(tdee)s kcal/day.")) % {"tdee": int(tdee)},
+        _("Estimated maintenance (TDEE): %(tdee)s kcal/day.") % {"tdee": int(tdee)},
     ]
     if rate_was_capped:
         parts.append(
@@ -273,7 +279,7 @@ def calculate_calorie_target(
         )
     else:
         parts.append(
-            str(_("Target: %(rate)s kg/week → %(calories)s kcal/day."))
+            _("Target: %(rate)s kg/week → %(calories)s kcal/day.")
             % {"rate": capped_rate, "calories": int(final_calories)}
         )
 
