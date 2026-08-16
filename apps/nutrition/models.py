@@ -14,6 +14,8 @@ apps.measurements.units), there's no per-user display unit to convert
 between, so no unit_kind-style dispatch layer exists here.
 """
 
+from datetime import date
+
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
@@ -105,6 +107,15 @@ class NutritionProfile(TimeStampedModel):
 
     def __str__(self):
         return f"Nutrition profile: {self.user.username}"
+
+    @property
+    def age_years(self):
+        today = date.today()
+        had_birthday_this_year = (today.month, today.day) >= (
+            self.birth_date.month,
+            self.birth_date.day,
+        )
+        return today.year - self.birth_date.year - (0 if had_birthday_this_year else 1)
 
 
 class NutritionGoal(TimeStampedModel):

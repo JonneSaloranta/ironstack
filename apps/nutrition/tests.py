@@ -7,7 +7,7 @@ from django.db import IntegrityError, transaction
 from django.test import TestCase
 
 from apps.measurements.models import BodyMeasurement, MeasurementType
-from apps.nutrition import energy, macros, suggestions, trends
+from apps.nutrition import energy, macros, services, suggestions, trends
 
 from .models import (
     ActivityJob,
@@ -686,3 +686,105 @@ class CalorieAdjustmentSuggestionTests(TestCase):
     def test_reason_is_never_empty(self):
         result = suggestions.suggest_calorie_adjustment(self.alice)
         self.assertTrue(result.reason)
+
+
+class GoalAndTargetServiceTests(TestCase):
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+
+    def test_set_goal_ends_the_previous_open_goal_and_creates_a_new_one(self):
+        first = services.set_goal(
+            self.alice, goal_type=GoalType.FAT_LOSS_MODERATE,
+            target_rate_kg_per_week=Decimal("-0.5"),
+        )
+        second = services.set_goal(
+            self.alice, goal_type=GoalType.MAINTENANCE, target_rate_kg_per_week=Decimal("0")
+        )
+        first.refresh_from_db()
+        self.assertIsNotNone(first.ended_at)
+        self.assertIsNone(second.ended_at)
+        self.assertEqual(NutritionGoal.objects.filter(user=self.alice).count(), 2)
+
+    def test_set_target_ends_the_previous_open_target_and_creates_a_new_one(self):
+        breakdown = macros.calculate_macros(Decimal("80"), 2500, GoalType.MAINTENANCE)
+        first = services.set_target(
+            self.alice, goal=None, daily_calories=2500, macro_breakdown=breakdown,
+            source=TargetSource.CALCULATED, reason="initial",
+        )
+        second = services.set_target(
+            self.alice, goal=None, daily_calories=2350, macro_breakdown=breakdown,
+            source=TargetSource.ADJUSTED, reason="adjusted",
+        )
+        first.refresh_from_db()
+        self.assertIsNotNone(first.ended_at)
+        self.assertIsNone(second.ended_at)
+        self.assertEqual(NutritionTarget.objects.filter(user=self.alice).count(), 2)
+
+
+class CalculateTargetForGoalTests(TestCase):
+    def test_matches_calling_energy_and_macros_directly(self):
+        today = date.today()
+        birth_date = date(today.year - 30, today.month, today.day)
+        profile = NutritionProfile(
+            biological_sex=BiologicalSex.MALE,
+            birth_date=birth_date,
+            activity_job=ActivityJob.SEDENTARY,
+            activity_level=ActivityLevel.MODERATE,
+        )
+        calorie_result, macro_result = services.calculate_target_for_goal(
+            profile,
+            weight_kg=Decimal("80"),
+            height_cm=Decimal("180"),
+            goal_type=GoalType.FAT_LOSS_MODERATE,
+            target_rate_kg_per_week=Decimal("-0.5"),
+        )
+        expected_bmr = energy.calculate_bmr(Decimal("80"), Decimal("180"), 30, BiologicalSex.MALE)
+        expected_tdee = energy.calculate_tdee(expected_bmr, ActivityLevel.MODERATE)
+        expected_calorie_result = energy.calculate_calorie_target(
+            tdee=expected_tdee,
+            weight_kg=Decimal("80"),
+            height_cm=Decimal("180"),
+            age_years=30,
+            biological_sex=BiologicalSex.MALE,
+            goal_type=GoalType.FAT_LOSS_MODERATE,
+            target_rate_kg_per_week=Decimal("-0.5"),
+        )
+        self.assertEqual(calorie_result.daily_calories, expected_calorie_result.daily_calories)
+        expected_macros = macros.calculate_macros(
+            Decimal("80"), calorie_result.daily_calories, GoalType.FAT_LOSS_MODERATE
+        )
+        self.assertEqual(macro_result.protein_grams, expected_macros.protein_grams)
+        self.assertIn(str(int(expected_tdee)), calorie_result.reason)
+
+
+class ApplyAdjustmentSuggestionTests(TestCase):
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        self.goal = services.set_goal(
+            self.alice, goal_type=GoalType.FAT_LOSS_MODERATE,
+            target_rate_kg_per_week=Decimal("-0.5"),
+        )
+        breakdown = macros.calculate_macros(Decimal("80"), 2100, GoalType.FAT_LOSS_MODERATE)
+        self.target = services.set_target(
+            self.alice, goal=self.goal, daily_calories=2100, macro_breakdown=breakdown,
+            source=TargetSource.CALCULATED, reason="initial",
+        )
+        _log_weight(self.alice, 0, "80.0")
+
+    def test_accepting_a_suggestion_creates_a_new_adjusted_target(self):
+        suggestion = suggestions.AdjustmentSuggestion(
+            action=suggestions.AdjustmentAction.ADJUST,
+            target_rate_kg_per_week=Decimal("-0.5"),
+            actual_rate_kg_per_week=Decimal("-0.1"),
+            suggested_daily_calories=1900,
+            delta_kcal=-200,
+            confidence=suggestions.Confidence.MEDIUM,
+            reason="Test reason",
+        )
+        new_target = services.apply_adjustment_suggestion(self.alice, suggestion)
+        self.target.refresh_from_db()
+        self.assertIsNotNone(self.target.ended_at)
+        self.assertEqual(new_target.daily_calories, 1900)
+        self.assertEqual(new_target.source, TargetSource.ADJUSTED)
+        self.assertEqual(new_target.reason, "Test reason")
+        self.assertEqual(new_target.goal, self.goal)
