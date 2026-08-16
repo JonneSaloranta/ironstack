@@ -13,7 +13,7 @@ from django.utils.translation import gettext_lazy as _
 from apps.core import units as core_units
 
 from . import energy
-from .models import ActivityJob, ActivityLevel, BiologicalSex, GoalType
+from .models import ActivityJob, ActivityLevel, BiologicalSex, Food, GoalType, Recipe
 
 
 class BodyStepForm(forms.Form):
@@ -234,3 +234,68 @@ class LogRecipeForm(forms.Form):
 
         super().__init__(*args, **kwargs)
         self.fields["meal_slot"].queryset = services.visible_meal_slots(user)
+
+
+class DietPlanForm(forms.Form):
+    """Step 1 of the diet builder — see docs/NUTRITION.md "Diet
+    builder wizard". Calorie/macro fields are pre-filled from the
+    user's active NutritionTarget by the view, not defaulted here
+    (this form has no DB access of its own to that), and stay fully
+    editable — a plan doesn't have to match the live target exactly."""
+
+    name = forms.CharField(max_length=200, label=_("Plan name"))
+    target_calories = forms.IntegerField(min_value=1, label=_("Daily calories"))
+    target_protein_grams = forms.DecimalField(
+        max_digits=6, decimal_places=2, min_value=Decimal("0"), label=_("Protein (g)")
+    )
+    target_carbohydrate_grams = forms.DecimalField(
+        max_digits=6, decimal_places=2, min_value=Decimal("0"), label=_("Carbohydrates (g)")
+    )
+    target_fat_grams = forms.DecimalField(
+        max_digits=6, decimal_places=2, min_value=Decimal("0"), label=_("Fat (g)")
+    )
+    meal_slots = forms.ModelMultipleChoiceField(
+        queryset=None, widget=forms.CheckboxSelectMultiple, label=_("Which meals?")
+    )
+
+    def __init__(self, *args, user, **kwargs):
+        from . import services
+
+        super().__init__(*args, **kwargs)
+        self.fields["meal_slots"].queryset = services.visible_meal_slots(user)
+
+
+class DietPlanItemForm(forms.ModelForm):
+    """Swapping a single generated item — spec: change one meal or
+    food without rebuilding the whole plan."""
+
+    def __init__(self, *args, user, **kwargs):
+        from django.db.models import Q
+
+        super().__init__(*args, **kwargs)
+        self.fields["food"].queryset = Food.objects.filter(
+            Q(owner=user) | Q(owner__isnull=True), active=True
+        ).order_by("name")
+        self.fields["recipe"].queryset = Recipe.objects.filter(owner=user).order_by("name")
+        self.fields["food"].required = False
+        self.fields["recipe"].required = False
+
+    def clean(self):
+        cleaned = super().clean()
+        if bool(cleaned.get("food")) == bool(cleaned.get("recipe")):
+            raise forms.ValidationError(
+                _("Pick either a food or a recipe, not both or neither.")
+            )
+        return cleaned
+
+    class Meta:
+        from .models import DietPlanItem
+
+        model = DietPlanItem
+        fields = ["food", "recipe", "quantity"]
+
+
+class LogDietPlanForm(forms.Form):
+    date = forms.DateField(
+        widget=forms.DateInput(attrs={"type": "date"}), label=_("Log for date")
+    )

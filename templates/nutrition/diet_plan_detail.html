@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{{ plan.name }} — IronStack{% endblock %}
+{% block content %}
+<div class="top-bar">
+  <h1 style="margin:0;">{{ plan.name }}</h1>
+</div>
+<p class="text-muted">{{ plan.target_calories }} kcal/day — {{ plan.target_protein_grams|floatformat:0 }}g {% trans "protein" %}, {{ plan.target_carbohydrate_grams|floatformat:0 }}g {% trans "carbs" %}, {{ plan.target_fat_grams|floatformat:0 }}g {% trans "fat" %}</p>
+
+{% for meal in meals %}
+  <div class="card">
+    <strong>{{ meal.meal_slot.name }}</strong>
+    <span class="text-muted">— {{ meal.target_calories }} kcal</span>
+    {% for item in meal.items.all %}
+      <div class="card-action-row" style="padding:0.5rem 0;">
+        <div>
+          <span>{% if item.food %}{{ item.food.name }}{% else %}{{ item.recipe.name }}{% endif %}</span>
+          <span class="text-muted">— {{ item.quantity }} {% if item.food %}{{ item.food.serving_unit }}{% else %}{% trans "servings" %}{% endif %}, {{ item.nutrition.calories|floatformat:0 }} kcal</span>
+        </div>
+        <a class="button-secondary" href="{% url 'nutrition:diet-plan-item-edit' plan.pk item.pk %}">{% trans "Swap" %}</a>
+      </div>
+    {% empty %}
+      <p class="text-muted">{% trans "Nothing suggested yet — add some foods or recipes first." %}</p>
+    {% endfor %}
+  </div>
+{% endfor %}
+
+<form class="card" method="post" action="{% url 'nutrition:diet-plan-log' plan.pk %}">
+  {% csrf_token %}
+  <strong>{% trans "Log this plan to your diary" %}</strong>
+  {% for field in log_form %}
+    <div class="field">
+      {{ field.label_tag }}
+      {{ field }}
+    </div>
+  {% endfor %}
+  <button type="submit">{% trans "Log it" %}</button>
+</form>
+
+<p><a class="button-secondary" href="{% url 'nutrition:diet-plan-list' %}">&larr; {% trans "Back to diet plans" %}</a></p>
+
+<div class="danger-zone">
+  <form method="post" action="{% url 'nutrition:diet-plan-delete' plan.pk %}"
+        x-data="{}" @submit="if (!confirm('{% trans "Delete this plan?" %}')) $event.preventDefault()">
+    {% csrf_token %}
+    <button type="submit" class="button-danger">{% trans "Delete plan" %}</button>
+  </form>
+</div>
+{% endblock %}

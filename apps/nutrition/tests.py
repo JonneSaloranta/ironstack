@@ -10,7 +10,15 @@ from django.urls import reverse
 from django.utils import timezone
 
 from apps.measurements.models import BodyMeasurement, MeasurementType
-from apps.nutrition import energy, macros, openfoodfacts, services, suggestions, trends
+from apps.nutrition import (
+    diet_builder,
+    energy,
+    macros,
+    openfoodfacts,
+    services,
+    suggestions,
+    trends,
+)
 
 from .models import (
     ActivityJob,
@@ -1485,4 +1493,198 @@ class RecipeViewTests(TestCase):
     def test_requires_login(self):
         self.client.logout()
         response = self.client.get(reverse("nutrition:recipe-list"))
+        self.assertEqual(response.status_code, 302)
+
+
+class SplitCaloriesEvenlyTests(TestCase):
+    def test_splits_evenly_with_no_remainder(self):
+        self.assertEqual(diet_builder.split_calories_evenly(2400, 3), [800, 800, 800])
+
+    def test_the_remainder_is_absorbed_by_the_last_share(self):
+        shares = diet_builder.split_calories_evenly(2209, 3)
+        self.assertEqual(shares, [736, 736, 737])
+        self.assertEqual(sum(shares), 2209)
+
+    def test_zero_meals_returns_an_empty_list(self):
+        self.assertEqual(diet_builder.split_calories_evenly(2000, 0), [])
+
+
+class SuggestItemForCalorieBudgetTests(TestCase):
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+
+    def test_no_foods_or_recipes_returns_none(self):
+        self.assertIsNone(diet_builder.suggest_item_for_calorie_budget(self.alice, Decimal("500")))
+
+    def test_picks_the_closest_natural_match_and_scales_it_exactly(self):
+        make_food(self.alice, name="Chicken", calories=165)
+        make_food(self.alice, name="Oatmeal", calories=150)
+        make_food(self.alice, name="Yogurt", calories=100)
+        result = diet_builder.suggest_item_for_calorie_budget(self.alice, Decimal("736"))
+        self.assertEqual(result.food.name, "Chicken")
+        self.assertEqual(result.quantity, Decimal("446.06"))
+
+    def test_a_recipe_can_be_the_suggestion_too(self):
+        chicken = make_food(self.alice, name="Chicken", calories=165)
+        recipe = Recipe.objects.create(owner=self.alice, name="Bowl", servings=1)
+        RecipeIngredient.objects.create(recipe=recipe, food=chicken, quantity=Decimal("500"))
+        # per-serving calories for this 1-serving recipe = 825 -- much
+        # closer to a 800kcal budget than any bare food would be.
+        make_food(self.alice, name="Snack bar", calories=200)
+        result = diet_builder.suggest_item_for_calorie_budget(self.alice, Decimal("800"))
+        self.assertEqual(result.recipe, recipe)
+        self.assertIsNone(result.food)
+
+    def test_shared_foods_are_eligible_too(self):
+        make_food(None, name="Shared chicken", calories=165)
+        result = diet_builder.suggest_item_for_calorie_budget(self.alice, Decimal("500"))
+        self.assertIsNotNone(result)
+        self.assertEqual(result.food.name, "Shared chicken")
+
+
+class BuildAndApplyDietPlanTests(TestCase):
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        self.chicken = make_food(self.alice, name="Chicken", calories=165)
+        self.breakfast = MealSlot.objects.get(name="Breakfast", owner=None)
+        self.lunch = MealSlot.objects.get(name="Lunch", owner=None)
+
+    def test_build_creates_one_meal_per_slot_with_a_suggested_item(self):
+        plan = diet_builder.build_diet_plan(
+            self.alice,
+            name="Test plan",
+            goal=None,
+            target_calories=1600,
+            target_protein_grams=Decimal("120"),
+            target_carbohydrate_grams=Decimal("150"),
+            target_fat_grams=Decimal("40"),
+            meal_slots=[self.breakfast, self.lunch],
+        )
+        self.assertEqual(plan.meals.count(), 2)
+        for meal in plan.meals.all():
+            self.assertEqual(meal.items.count(), 1)
+        self.assertEqual(sum(m.target_calories for m in plan.meals.all()), 1600)
+
+    def test_building_a_new_plan_deactivates_the_previous_one(self):
+        first = diet_builder.build_diet_plan(
+            self.alice, name="First", goal=None, target_calories=1600,
+            target_protein_grams=Decimal("1"), target_carbohydrate_grams=Decimal("1"),
+            target_fat_grams=Decimal("1"), meal_slots=[self.breakfast],
+        )
+        second = diet_builder.build_diet_plan(
+            self.alice, name="Second", goal=None, target_calories=1800,
+            target_protein_grams=Decimal("1"), target_carbohydrate_grams=Decimal("1"),
+            target_fat_grams=Decimal("1"), meal_slots=[self.breakfast],
+        )
+        first.refresh_from_db()
+        self.assertFalse(first.is_active)
+        self.assertTrue(second.is_active)
+
+    def test_a_meal_slot_with_no_available_foods_still_gets_created_with_no_items(self):
+        bob = User.objects.create_user(username="bob", password="s3cret-pass")
+        plan = diet_builder.build_diet_plan(
+            bob, name="Empty", goal=None, target_calories=1600,
+            target_protein_grams=Decimal("1"), target_carbohydrate_grams=Decimal("1"),
+            target_fat_grams=Decimal("1"), meal_slots=[self.breakfast],
+        )
+        self.assertEqual(plan.meals.count(), 1)
+        self.assertEqual(plan.meals.first().items.count(), 0)
+
+    def test_apply_creates_a_diary_entry_per_item(self):
+        plan = diet_builder.build_diet_plan(
+            self.alice, name="Test plan", goal=None, target_calories=800,
+            target_protein_grams=Decimal("1"), target_carbohydrate_grams=Decimal("1"),
+            target_fat_grams=Decimal("1"), meal_slots=[self.breakfast, self.lunch],
+        )
+        created = diet_builder.apply_diet_plan(plan, date(2026, 1, 1))
+        self.assertEqual(len(created), 2)
+        entries = DiaryEntry.objects.filter(user=self.alice, date=date(2026, 1, 1))
+        self.assertEqual(entries.count(), 2)
+
+    def test_applying_a_plan_twice_does_not_touch_the_plan_itself(self):
+        plan = diet_builder.build_diet_plan(
+            self.alice, name="Test plan", goal=None, target_calories=800,
+            target_protein_grams=Decimal("1"), target_carbohydrate_grams=Decimal("1"),
+            target_fat_grams=Decimal("1"), meal_slots=[self.breakfast],
+        )
+        diet_builder.apply_diet_plan(plan, date(2026, 1, 1))
+        diet_builder.apply_diet_plan(plan, date(2026, 1, 2))
+        self.assertEqual(plan.meals.first().items.count(), 1)
+        self.assertEqual(DiaryEntry.objects.filter(user=self.alice).count(), 2)
+
+
+class DietPlanViewTests(TestCase):
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        self.bob = User.objects.create_user(username="bob", password="s3cret-pass")
+        self.chicken = make_food(self.alice, name="Chicken", calories=165)
+        self.breakfast = MealSlot.objects.get(name="Breakfast", owner=None)
+        self.client.login(username="alice", password="s3cret-pass")
+
+    def test_create_view_prefills_from_the_active_target(self):
+        goal = services.set_goal(
+            self.alice, goal_type=GoalType.MAINTENANCE, target_rate_kg_per_week=Decimal("0")
+        )
+        breakdown = macros.calculate_macros(Decimal("80"), 2500, GoalType.MAINTENANCE)
+        services.set_target(
+            self.alice, goal=goal, daily_calories=2500, macro_breakdown=breakdown,
+            source=TargetSource.CALCULATED, reason="",
+        )
+        response = self.client.get(reverse("nutrition:diet-plan-create"))
+        self.assertContains(response, 'value="2500"')
+
+    def test_posting_creates_a_plan_and_redirects_to_its_detail_page(self):
+        response = self.client.post(
+            reverse("nutrition:diet-plan-create"),
+            {
+                "name": "My plan", "target_calories": "1600",
+                "target_protein_grams": "120", "target_carbohydrate_grams": "150",
+                "target_fat_grams": "40", "meal_slots": [self.breakfast.pk],
+            },
+        )
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(DietPlan.objects.filter(user=self.alice, name="My plan").exists())
+
+    def test_another_users_plan_is_a_404(self):
+        plan = DietPlan.objects.create(
+            user=self.bob, name="Bob's plan", target_calories=2000,
+            target_protein_grams=Decimal("1"), target_carbohydrate_grams=Decimal("1"),
+            target_fat_grams=Decimal("1"),
+        )
+        response = self.client.get(reverse("nutrition:diet-plan-detail", args=[plan.pk]))
+        self.assertEqual(response.status_code, 404)
+
+    def test_swapping_an_item_updates_it(self):
+        plan = diet_builder.build_diet_plan(
+            self.alice, name="Plan", goal=None, target_calories=800,
+            target_protein_grams=Decimal("1"), target_carbohydrate_grams=Decimal("1"),
+            target_fat_grams=Decimal("1"), meal_slots=[self.breakfast],
+        )
+        item = plan.meals.first().items.first()
+        other_food = make_food(self.alice, name="Rice", calories=130)
+        response = self.client.post(
+            reverse("nutrition:diet-plan-item-edit", args=[plan.pk, item.pk]),
+            {"food": other_food.pk, "quantity": "200"},
+        )
+        self.assertEqual(response.status_code, 302)
+        item.refresh_from_db()
+        self.assertEqual(item.food, other_food)
+
+    def test_logging_the_plan_creates_diary_entries(self):
+        plan = diet_builder.build_diet_plan(
+            self.alice, name="Plan", goal=None, target_calories=800,
+            target_protein_grams=Decimal("1"), target_carbohydrate_grams=Decimal("1"),
+            target_fat_grams=Decimal("1"), meal_slots=[self.breakfast],
+        )
+        response = self.client.post(
+            reverse("nutrition:diet-plan-log", args=[plan.pk]), {"date": "2026-01-01"}
+        )
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(
+            DiaryEntry.objects.filter(user=self.alice, date=date(2026, 1, 1)).exists()
+        )
+
+    def test_requires_login(self):
+        self.client.logout()
+        response = self.client.get(reverse("nutrition:diet-plan-list"))
         self.assertEqual(response.status_code, 302)

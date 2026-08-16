@@ -51,4 +51,16 @@ urlpatterns = [
         views.recipe_ingredient_delete,
         name="recipe-ingredient-delete",
     ),
+    path("diet-plans/", views.DietPlanListView.as_view(), name="diet-plan-list"),
+    path("diet-plans/new/", views.DietPlanCreateView.as_view(), name="diet-plan-create"),
+    path(
+        "diet-plans/<int:pk>/", views.DietPlanDetailView.as_view(), name="diet-plan-detail"
+    ),
+    path("diet-plans/<int:pk>/delete/", views.diet_plan_delete, name="diet-plan-delete"),
+    path("diet-plans/<int:pk>/log/", views.diet_plan_log, name="diet-plan-log"),
+    path(
+        "diet-plans/<int:plan_pk>/items/<int:pk>/edit/",
+        views.diet_plan_item_edit,
+        name="diet-plan-item-edit",
+    ),
 ]

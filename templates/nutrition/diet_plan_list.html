@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Diet plans" %} — IronStack{% endblock %}
+{% block content %}
+<div class="top-bar">
+  <h1 style="margin:0;">{% trans "Diet plans" %}</h1>
+  <a class="button-secondary" href="{% url 'nutrition:diet-plan-create' %}">{% trans "+ New plan" %}</a>
+</div>
+
+{% if plans %}
+  {% for plan in plans %}
+    <div class="card card-action-row">
+      <div>
+        <strong>{{ plan.name }}</strong>
+        {% if plan.is_active %}<span class="tag">{% trans "Active" %}</span>{% endif %}
+        <p class="text-muted">{{ plan.target_calories }} kcal/day</p>
+      </div>
+      <a class="button-secondary" href="{% url 'nutrition:diet-plan-detail' plan.pk %}">{% trans "Open" %}</a>
+    </div>
+  {% endfor %}
+{% else %}
+  <div class="card empty-state">
+    <p>{% trans "No diet plans yet." %}</p>
+  </div>
+{% endif %}
+
+<p><a class="button-secondary" href="{% url 'nutrition:diary-day' %}">&larr; {% trans "Back to diary" %}</a></p>
+{% endblock %}

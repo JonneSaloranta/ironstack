@@ -17,7 +17,7 @@ from django.views.generic import CreateView, ListView, View
 
 from apps.measurements.models import BodyMeasurement, MeasurementType
 
-from . import energy, services
+from . import diet_builder, energy, services
 from .forms import (
     DEFAULT_RATES_JSON_SAFE,
     ActivityInputsForm,
@@ -25,8 +25,11 @@ from .forms import (
     BodyStepForm,
     DiaryAddEntryForm,
     DiaryEntryQuantityForm,
+    DietPlanForm,
+    DietPlanItemForm,
     FoodForm,
     GoalStepForm,
+    LogDietPlanForm,
     LogRecipeForm,
     RecipeForm,
     RecipeIngredientForm,
@@ -597,3 +600,128 @@ def recipe_log(request, pk):
         quantity=form.cleaned_data["quantity"],
     )
     return redirect("nutrition:diary-day", target_date=entry.date.isoformat())
+
+
+class DietPlanListView(LoginRequiredMixin, ListView):
+    template_name = "nutrition/diet_plan_list.html"
+    context_object_name = "plans"
+
+    def get_queryset(self):
+        from .models import DietPlan
+
+        return DietPlan.objects.filter(user=self.request.user).order_by("-created_at")
+
+
+class DietPlanCreateView(LoginRequiredMixin, View):
+    """Step 1 (and only step — see docs/NUTRITION.md "Diet builder
+    wizard") of the diet builder: one form, pre-filled from the active
+    target, generates the whole plan on submit. Review/swap happens on
+    the plan's own detail page afterward, not as further wizard steps —
+    unlike onboarding, there's nothing here that depends on an earlier
+    answer to render the next question."""
+
+    template_name = "nutrition/diet_plan_form.html"
+
+    def get(self, request):
+        from .models import NutritionTarget
+
+        target = NutritionTarget.objects.filter(
+            user=request.user, ended_at__isnull=True
+        ).first()
+        initial = {"name": "My diet plan"}
+        if target is not None:
+            initial.update(
+                target_calories=target.daily_calories,
+                target_protein_grams=target.protein_grams,
+                target_carbohydrate_grams=target.carbohydrate_grams,
+                target_fat_grams=target.fat_grams,
+            )
+        form = DietPlanForm(user=request.user, initial=initial)
+        return render(request, self.template_name, {"form": form})
+
+    def post(self, request):
+        from .models import NutritionTarget
+
+        form = DietPlanForm(request.POST, user=request.user)
+        if not form.is_valid():
+            return render(request, self.template_name, {"form": form})
+
+        target = NutritionTarget.objects.filter(
+            user=request.user, ended_at__isnull=True
+        ).first()
+        plan = diet_builder.build_diet_plan(
+            request.user,
+            name=form.cleaned_data["name"],
+            goal=target.goal if target else None,
+            target_calories=form.cleaned_data["target_calories"],
+            target_protein_grams=form.cleaned_data["target_protein_grams"],
+            target_carbohydrate_grams=form.cleaned_data["target_carbohydrate_grams"],
+            target_fat_grams=form.cleaned_data["target_fat_grams"],
+            meal_slots=list(form.cleaned_data["meal_slots"]),
+        )
+        return redirect("nutrition:diet-plan-detail", pk=plan.pk)
+
+
+def _owned_diet_plan_or_404(request, pk):
+    from .models import DietPlan
+
+    return get_object_or_404(DietPlan, pk=pk, user=request.user)
+
+
+class DietPlanDetailView(LoginRequiredMixin, View):
+    template_name = "nutrition/diet_plan_detail.html"
+
+    def get(self, request, pk):
+        plan = _owned_diet_plan_or_404(request, pk)
+        meals = list(plan.meals.select_related("meal_slot").prefetch_related("items"))
+        for meal in meals:
+            for item in meal.items.all():
+                item.nutrition = (
+                    services.scale_nutrition(item.food, item.quantity)
+                    if item.food_id
+                    else services.recipe_per_serving_nutrition(item.recipe).scaled_by(
+                        item.quantity
+                    )
+                )
+        return render(
+            request,
+            self.template_name,
+            {
+                "plan": plan,
+                "meals": meals,
+                "log_form": LogDietPlanForm(initial={"date": timezone.localdate()}),
+            },
+        )
+
+
+def diet_plan_delete(request, pk):
+    if request.method != "POST":
+        return HttpResponseNotAllowed(["POST"])
+    plan = _owned_diet_plan_or_404(request, pk)
+    plan.delete()
+    return redirect("nutrition:diet-plan-list")
+
+
+def diet_plan_item_edit(request, plan_pk, pk):
+    from .models import DietPlanItem
+
+    plan = _owned_diet_plan_or_404(request, plan_pk)
+    item = get_object_or_404(DietPlanItem, pk=pk, diet_plan_meal__diet_plan=plan)
+    form = DietPlanItemForm(request.POST or None, instance=item, user=request.user)
+    if request.method == "POST" and form.is_valid():
+        form.save()
+        return redirect("nutrition:diet-plan-detail", pk=plan.pk)
+    return render(
+        request, "nutrition/diet_plan_item_form.html", {"form": form, "plan": plan, "item": item}
+    )
+
+
+def diet_plan_log(request, pk):
+    plan = _owned_diet_plan_or_404(request, pk)
+    if request.method != "POST":
+        return HttpResponseNotAllowed(["POST"])
+    form = LogDietPlanForm(request.POST)
+    if not form.is_valid():
+        return redirect("nutrition:diet-plan-detail", pk=plan.pk)
+    diet_builder.apply_diet_plan(plan, form.cleaned_data["date"])
+    return redirect("nutrition:diary-day", target_date=form.cleaned_data["date"].isoformat())
