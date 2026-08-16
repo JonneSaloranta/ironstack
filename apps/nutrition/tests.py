@@ -1,0 +1,505 @@
+from datetime import date
+from decimal import Decimal
+
+from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
+from django.db import IntegrityError, transaction
+from django.test import TestCase
+
+from apps.nutrition import energy, macros
+
+from .models import (
+    ActivityJob,
+    ActivityLevel,
+    BiologicalSex,
+    DiaryEntry,
+    DietPlan,
+    DietPlanMeal,
+    Food,
+    GoalType,
+    MealSlot,
+    NutritionGoal,
+    NutritionProfile,
+    NutritionTarget,
+    Recipe,
+    RecipeIngredient,
+    ServingUnit,
+    TargetSource,
+)
+
+User = get_user_model()
+
+
+def make_food(owner, **kwargs):
+    defaults = {
+        "name": "Chicken breast",
+        "serving_size": Decimal("100"),
+        "serving_unit": ServingUnit.GRAM,
+        "calories": 165,
+        "protein_grams": Decimal("31"),
+        "carbohydrate_grams": Decimal("0"),
+        "fat_grams": Decimal("3.6"),
+    }
+    defaults.update(kwargs)
+    return Food.objects.create(owner=owner, **defaults)
+
+
+class MealSlotSeedTests(TestCase):
+    def test_seed_migration_creates_the_documented_default_slots(self):
+        names = list(
+            MealSlot.objects.filter(owner=None).order_by("order").values_list("name", flat=True)
+        )
+        self.assertEqual(names, ["Breakfast", "Lunch", "Dinner", "Evening snack"])
+
+    def test_a_user_can_create_their_own_meal_slot_with_the_same_name_as_another_users(self):
+        alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        bob = User.objects.create_user(username="bob", password="s3cret-pass")
+        MealSlot.objects.create(name="Pre-workout", owner=alice)
+        # Should not raise — unique_user_meal_slot_name is scoped per owner.
+        MealSlot.objects.create(name="Pre-workout", owner=bob)
+        self.assertTrue(MealSlot.objects.filter(name="Pre-workout", owner=alice).exists())
+        self.assertTrue(MealSlot.objects.filter(name="Pre-workout", owner=bob).exists())
+
+    def test_a_second_system_meal_slot_with_the_same_name_is_rejected(self):
+        with self.assertRaises(IntegrityError), transaction.atomic():
+            MealSlot.objects.create(name="Breakfast", owner=None)
+
+    def test_is_custom_reflects_ownership(self):
+        alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        custom = MealSlot.objects.create(name="Pre-workout", owner=alice)
+        system = MealSlot.objects.get(name="Breakfast", owner=None)
+        self.assertTrue(custom.is_custom)
+        self.assertFalse(system.is_custom)
+
+
+class NutritionGoalHistoryTests(TestCase):
+    """NutritionGoal is append-only — see docs/NUTRITION.md
+    "NutritionGoal": setting a new goal must never overwrite an old
+    one, only stamp ended_at on it."""
+
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+
+    def test_only_one_open_goal_per_user_is_allowed_at_the_database_level(self):
+        NutritionGoal.objects.create(
+            user=self.alice,
+            goal_type=GoalType.FAT_LOSS_MODERATE,
+            target_rate_kg_per_week=Decimal("-0.5"),
+        )
+        with self.assertRaises(IntegrityError), transaction.atomic():
+            NutritionGoal.objects.create(
+                user=self.alice,
+                goal_type=GoalType.MAINTENANCE,
+                target_rate_kg_per_week=Decimal("0"),
+            )
+
+    def test_ending_a_goal_and_starting_a_new_one_preserves_the_old_row(self):
+        first = NutritionGoal.objects.create(
+            user=self.alice,
+            goal_type=GoalType.FAT_LOSS_MODERATE,
+            target_rate_kg_per_week=Decimal("-0.5"),
+        )
+        first.ended_at = first.started_at
+        first.save(update_fields=["ended_at"])
+        NutritionGoal.objects.create(
+            user=self.alice,
+            goal_type=GoalType.MAINTENANCE,
+            target_rate_kg_per_week=Decimal("0"),
+        )
+        self.assertEqual(NutritionGoal.objects.filter(user=self.alice).count(), 2)
+        self.assertIsNotNone(NutritionGoal.objects.get(pk=first.pk).ended_at)
+
+
+class NutritionTargetHistoryTests(TestCase):
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+
+    def test_only_one_open_target_per_user_is_allowed_at_the_database_level(self):
+        NutritionTarget.objects.create(
+            user=self.alice,
+            daily_calories=2500,
+            protein_grams=Decimal("180"),
+            carbohydrate_grams=Decimal("280"),
+            fat_grams=Decimal("70"),
+            source=TargetSource.CALCULATED,
+        )
+        with self.assertRaises(IntegrityError), transaction.atomic():
+            NutritionTarget.objects.create(
+                user=self.alice,
+                daily_calories=2350,
+                protein_grams=Decimal("180"),
+                carbohydrate_grams=Decimal("250"),
+                fat_grams=Decimal("65"),
+                source=TargetSource.ADJUSTED,
+            )
+
+
+class FoodModelTests(TestCase):
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+
+    def test_str_includes_brand_when_present(self):
+        food = make_food(self.alice, brand="Acme")
+        self.assertEqual(str(food), "Chicken breast (Acme)")
+
+    def test_str_omits_brand_when_blank(self):
+        food = make_food(self.alice)
+        self.assertEqual(str(food), "Chicken breast")
+
+    def test_optional_extras_default_to_none_not_zero(self):
+        food = make_food(self.alice)
+        self.assertIsNone(food.fiber_grams)
+        self.assertIsNone(food.sodium_mg)
+
+
+class RecipeIngredientTests(TestCase):
+    def test_ingredients_are_ordered(self):
+        alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        recipe = Recipe.objects.create(owner=alice, name="Chicken Rice Bowl", servings=2)
+        chicken = make_food(alice, name="Chicken")
+        rice = make_food(alice, name="Rice")
+        RecipeIngredient.objects.create(
+            recipe=recipe, food=rice, quantity=Decimal("200"), order=1
+        )
+        RecipeIngredient.objects.create(
+            recipe=recipe, food=chicken, quantity=Decimal("300"), order=0
+        )
+        self.assertEqual(
+            list(recipe.ingredients.values_list("food__name", flat=True)), ["Chicken", "Rice"]
+        )
+
+
+class DiaryEntryConstraintTests(TestCase):
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        self.food = make_food(self.alice)
+        self.recipe = Recipe.objects.create(owner=self.alice, name="Bowl")
+        self.meal_slot = MealSlot.objects.get(name="Breakfast", owner=None)
+
+    def test_a_food_entry_is_valid(self):
+        entry = DiaryEntry(
+            user=self.alice,
+            date=date(2026, 1, 1),
+            meal_slot=self.meal_slot,
+            food=self.food,
+            quantity=Decimal("150"),
+        )
+        entry.full_clean()  # should not raise
+
+    def test_neither_food_nor_recipe_is_rejected_by_clean(self):
+        entry = DiaryEntry(
+            user=self.alice, date=date(2026, 1, 1), meal_slot=self.meal_slot,
+            quantity=Decimal("1"),
+        )
+        with self.assertRaises(ValidationError):
+            entry.clean()
+
+    def test_both_food_and_recipe_is_rejected_by_clean(self):
+        entry = DiaryEntry(
+            user=self.alice, date=date(2026, 1, 1), meal_slot=self.meal_slot,
+            food=self.food, recipe=self.recipe, quantity=Decimal("1"),
+        )
+        with self.assertRaises(ValidationError):
+            entry.clean()
+
+    def test_neither_food_nor_recipe_is_rejected_at_the_database_level(self):
+        with self.assertRaises(IntegrityError), transaction.atomic():
+            DiaryEntry.objects.create(
+                user=self.alice, date=date(2026, 1, 1), meal_slot=self.meal_slot,
+                quantity=Decimal("1"),
+            )
+
+    def test_both_food_and_recipe_is_rejected_at_the_database_level(self):
+        with self.assertRaises(IntegrityError), transaction.atomic():
+            DiaryEntry.objects.create(
+                user=self.alice, date=date(2026, 1, 1), meal_slot=self.meal_slot,
+                food=self.food, recipe=self.recipe, quantity=Decimal("1"),
+            )
+
+
+class DietPlanTests(TestCase):
+    def test_a_plan_can_have_meals_with_a_calorie_split(self):
+        alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        plan = DietPlan.objects.create(
+            user=alice,
+            name="Cut plan",
+            target_calories=2500,
+            target_protein_grams=Decimal("180"),
+            target_carbohydrate_grams=Decimal("280"),
+            target_fat_grams=Decimal("70"),
+        )
+        breakfast = MealSlot.objects.get(name="Breakfast", owner=None)
+        DietPlanMeal.objects.create(diet_plan=plan, meal_slot=breakfast, target_calories=650)
+        self.assertEqual(plan.meals.count(), 1)
+        self.assertEqual(plan.meals.first().target_calories, 650)
+
+
+class NutritionProfileModelTests(TestCase):
+    def test_one_profile_per_user(self):
+        alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        NutritionProfile.objects.create(
+            user=alice,
+            biological_sex=BiologicalSex.FEMALE,
+            birth_date=date(1995, 1, 1),
+            activity_job=ActivityJob.SEDENTARY,
+            activity_level=ActivityLevel.MODERATE,
+        )
+        with self.assertRaises(IntegrityError), transaction.atomic():
+            NutritionProfile.objects.create(
+                user=alice,
+                biological_sex=BiologicalSex.FEMALE,
+                birth_date=date(1995, 1, 1),
+                activity_job=ActivityJob.SEDENTARY,
+                activity_level=ActivityLevel.MODERATE,
+            )
+
+
+class BMRCalculationTests(TestCase):
+    def test_known_value_male(self):
+        # Textbook example: 30yo male, 80kg, 180cm.
+        bmr = energy.calculate_bmr(Decimal("80"), Decimal("180"), 30, BiologicalSex.MALE)
+        self.assertEqual(bmr, Decimal("1780"))
+
+    def test_known_value_female(self):
+        # 25yo female, 60kg, 165cm.
+        bmr = energy.calculate_bmr(Decimal("60"), Decimal("165"), 25, BiologicalSex.FEMALE)
+        self.assertEqual(bmr, Decimal("1345"))
+
+    def test_male_and_female_constants_differ_by_166(self):
+        """The Mifflin-St Jeor formula differs only by its final
+        constant (+5 male, -161 female) -- same inputs should differ
+        by exactly 166."""
+        male = energy.calculate_bmr(Decimal("70"), Decimal("170"), 30, BiologicalSex.MALE)
+        female = energy.calculate_bmr(Decimal("70"), Decimal("170"), 30, BiologicalSex.FEMALE)
+        self.assertEqual(male - female, Decimal("166"))
+
+
+class TDEECalculationTests(TestCase):
+    def test_known_value(self):
+        tdee = energy.calculate_tdee(Decimal("1780"), ActivityLevel.MODERATE)
+        self.assertEqual(tdee, Decimal("2759"))
+
+    def test_every_activity_level_has_a_multiplier_greater_than_one(self):
+        for level, multiplier in energy.ACTIVITY_MULTIPLIERS.items():
+            self.assertGreaterEqual(multiplier, Decimal("1"))
+
+    def test_multipliers_increase_monotonically_with_activity(self):
+        ordered = [
+            energy.ACTIVITY_MULTIPLIERS[level]
+            for level in [
+                ActivityLevel.SEDENTARY,
+                ActivityLevel.LIGHT,
+                ActivityLevel.MODERATE,
+                ActivityLevel.ACTIVE,
+                ActivityLevel.VERY_ACTIVE,
+            ]
+        ]
+        self.assertEqual(ordered, sorted(ordered))
+
+
+class ActivityLevelSuggestionTests(TestCase):
+    def test_no_activity_at_all_suggests_sedentary(self):
+        suggestion = energy.suggest_activity_level(activity_job=ActivityJob.SEDENTARY)
+        self.assertEqual(suggestion.activity_level, ActivityLevel.SEDENTARY)
+
+    def test_maximum_activity_across_every_signal_suggests_very_active(self):
+        suggestion = energy.suggest_activity_level(
+            activity_job=ActivityJob.PHYSICAL,
+            daily_steps=15000,
+            training_sessions_per_week=7,
+            other_exercise_minutes_per_week=400,
+        )
+        self.assertEqual(suggestion.activity_level, ActivityLevel.VERY_ACTIVE)
+
+    def test_a_middling_profile_suggests_moderate(self):
+        suggestion = energy.suggest_activity_level(
+            activity_job=ActivityJob.MODERATE,
+            daily_steps=8000,
+            training_sessions_per_week=4,
+        )
+        self.assertEqual(suggestion.activity_level, ActivityLevel.MODERATE)
+
+    def test_reason_is_a_non_empty_explanation(self):
+        suggestion = energy.suggest_activity_level(
+            activity_job=ActivityJob.LIGHT, daily_steps=6000
+        )
+        self.assertTrue(suggestion.reason)
+        self.assertIn("Suggested", suggestion.reason)
+
+
+class RateSafetyTests(TestCase):
+    def test_fat_loss_cap_is_one_percent_of_bodyweight(self):
+        cap = energy.max_safe_rate_kg_per_week(Decimal("80"), GoalType.FAT_LOSS_AGGRESSIVE)
+        self.assertEqual(cap, Decimal("-0.80"))
+
+    def test_muscle_gain_cap_is_half_a_percent_of_bodyweight(self):
+        cap = energy.max_safe_rate_kg_per_week(Decimal("80"), GoalType.MUSCLE_GAIN_AGGRESSIVE)
+        self.assertEqual(cap, Decimal("0.40"))
+
+    def test_maintenance_cap_is_zero(self):
+        cap = energy.max_safe_rate_kg_per_week(Decimal("80"), GoalType.MAINTENANCE)
+        self.assertEqual(cap, Decimal("0"))
+
+    def test_a_rate_within_the_cap_is_not_clamped(self):
+        clamped = energy.clamp_rate(Decimal("80"), GoalType.FAT_LOSS_MODERATE, Decimal("-0.5"))
+        self.assertEqual(clamped, Decimal("-0.5"))
+
+    def test_a_rate_beyond_the_cap_is_clamped_to_it(self):
+        clamped = energy.clamp_rate(Decimal("50"), GoalType.FAT_LOSS_AGGRESSIVE, Decimal("-0.75"))
+        self.assertEqual(clamped, Decimal("-0.50"))
+
+    def test_muscle_gain_rate_beyond_the_cap_is_clamped_to_it(self):
+        clamped = energy.clamp_rate(
+            Decimal("50"), GoalType.MUSCLE_GAIN_AGGRESSIVE, Decimal("1.0")
+        )
+        self.assertEqual(clamped, Decimal("0.25"))
+
+
+class CalorieFloorTests(TestCase):
+    def test_floor_is_the_sex_based_minimum_when_bmr_is_low(self):
+        # Small person -> 90% of BMR is below the clinical minimum.
+        floor = energy.calorie_floor(Decimal("50"), Decimal("155"), 25, BiologicalSex.FEMALE)
+        self.assertEqual(floor, Decimal("1200"))
+
+    def test_floor_rises_above_the_sex_based_minimum_for_a_high_bmr(self):
+        # Large/muscular person -> 90% of BMR exceeds the generic 1500.
+        floor = energy.calorie_floor(Decimal("130"), Decimal("195"), 25, BiologicalSex.MALE)
+        self.assertGreater(floor, Decimal("1500"))
+
+
+class CalorieTargetTests(TestCase):
+    """apps.nutrition.energy.calculate_calorie_target — the full
+    goal -> calorie pipeline. See docs/NUTRITION.md "Safety bounds":
+    both the rate cap and the absolute floor can fire independently."""
+
+    def test_moderate_cut_matches_the_expected_deficit(self):
+        result = energy.calculate_calorie_target(
+            tdee=Decimal("2650"),
+            weight_kg=Decimal("80"),
+            height_cm=Decimal("180"),
+            age_years=30,
+            biological_sex=BiologicalSex.MALE,
+            goal_type=GoalType.FAT_LOSS_MODERATE,
+            target_rate_kg_per_week=Decimal("-0.5"),
+        )
+        self.assertEqual(result.daily_calories, 2100)
+        self.assertFalse(result.rate_was_capped)
+        self.assertFalse(result.floor_was_applied)
+
+    def test_maintenance_returns_tdee_unchanged(self):
+        result = energy.calculate_calorie_target(
+            tdee=Decimal("2650"),
+            weight_kg=Decimal("80"),
+            height_cm=Decimal("180"),
+            age_years=30,
+            biological_sex=BiologicalSex.MALE,
+            goal_type=GoalType.MAINTENANCE,
+            target_rate_kg_per_week=Decimal("0"),
+        )
+        self.assertEqual(result.daily_calories, 2650)
+
+    def test_an_unsafe_rate_and_a_resulting_floor_breach_are_both_reported(self):
+        # Small person requesting an aggressive cut: the rate itself
+        # gets capped, and the resulting calories still need the
+        # absolute floor.
+        result = energy.calculate_calorie_target(
+            tdee=Decimal("1419"),
+            weight_kg=Decimal("50"),
+            height_cm=Decimal("155"),
+            age_years=25,
+            biological_sex=BiologicalSex.FEMALE,
+            goal_type=GoalType.FAT_LOSS_AGGRESSIVE,
+            target_rate_kg_per_week=Decimal("-0.75"),
+        )
+        self.assertTrue(result.rate_was_capped)
+        self.assertTrue(result.floor_was_applied)
+        self.assertEqual(result.daily_calories, 1200)
+
+    def test_reason_is_never_empty_and_mentions_the_tdee(self):
+        result = energy.calculate_calorie_target(
+            tdee=Decimal("2650"),
+            weight_kg=Decimal("80"),
+            height_cm=Decimal("180"),
+            age_years=30,
+            biological_sex=BiologicalSex.MALE,
+            goal_type=GoalType.FAT_LOSS_MODERATE,
+            target_rate_kg_per_week=Decimal("-0.5"),
+        )
+        self.assertIn("2650", result.reason)
+
+    def test_muscle_gain_increases_calories_above_tdee(self):
+        result = energy.calculate_calorie_target(
+            tdee=Decimal("2650"),
+            weight_kg=Decimal("80"),
+            height_cm=Decimal("180"),
+            age_years=30,
+            biological_sex=BiologicalSex.MALE,
+            goal_type=GoalType.MUSCLE_GAIN_LEAN,
+            target_rate_kg_per_week=Decimal("0.125"),
+        )
+        self.assertGreater(result.daily_calories, 2650)
+
+
+class MacroCalculationTests(TestCase):
+    def test_maintenance_known_values(self):
+        result = macros.calculate_macros(Decimal("80"), 2500, GoalType.MAINTENANCE)
+        self.assertEqual(result.protein_grams, Decimal("144.00"))
+        self.assertEqual(result.fat_grams, Decimal("69.44"))
+        self.assertEqual(result.carbohydrate_grams, Decimal("324.75"))
+        self.assertFalse(result.fat_was_reduced)
+        self.assertFalse(result.protein_was_reduced)
+
+    def test_fat_loss_uses_higher_protein_per_kg(self):
+        result = macros.calculate_macros(Decimal("80"), 2100, GoalType.FAT_LOSS_MODERATE)
+        self.assertEqual(result.protein_grams, Decimal("176.00"))
+        self.assertEqual(result.fat_grams, Decimal("58.33"))
+        self.assertEqual(result.carbohydrate_grams, Decimal("217.75"))
+
+    def test_grams_and_kcal_always_agree(self):
+        """Regression guard: kcal figures are derived from the
+        *quantized* grams, not the other way around, so a displayed
+        gram figure and its kcal figure can never silently disagree."""
+        result = macros.calculate_macros(Decimal("80"), 2500, GoalType.MAINTENANCE)
+        self.assertEqual(result.protein_kcal, result.protein_grams * 4)
+        self.assertEqual(result.fat_kcal, result.fat_grams * 9)
+        self.assertEqual(result.carbohydrate_kcal, result.carbohydrate_grams * 4)
+
+    def test_percentages_sum_to_roughly_a_hundred(self):
+        result = macros.calculate_macros(Decimal("80"), 2500, GoalType.MAINTENANCE)
+        total = result.protein_percent + result.carbohydrate_percent + result.fat_percent
+        self.assertAlmostEqual(float(total), 100.0, delta=0.2)
+
+    def test_a_very_low_calorie_high_protein_target_reduces_fat_before_going_negative(self):
+        result = macros.calculate_macros(Decimal("100"), 1000, GoalType.FAT_LOSS_MODERATE)
+        self.assertTrue(result.fat_was_reduced)
+        self.assertFalse(result.protein_was_reduced)
+        self.assertEqual(result.carbohydrate_grams, Decimal("0.00"))
+        self.assertGreaterEqual(result.fat_grams, Decimal("0"))
+
+    def test_an_extreme_target_where_protein_alone_exceeds_calories_reduces_protein_too(self):
+        result = macros.calculate_macros(Decimal("150"), 1000, GoalType.FAT_LOSS_MODERATE)
+        self.assertTrue(result.protein_was_reduced)
+        self.assertTrue(result.fat_was_reduced)
+        self.assertEqual(result.protein_kcal, Decimal("1000"))
+        self.assertEqual(result.fat_grams, Decimal("0.00"))
+        self.assertEqual(result.carbohydrate_grams, Decimal("0.00"))
+
+    def test_custom_protein_and_fat_overrides_are_respected(self):
+        result = macros.calculate_macros(
+            Decimal("80"),
+            2500,
+            GoalType.MAINTENANCE,
+            protein_g_per_kg=Decimal("3.0"),
+            fat_percent=Decimal("0.3"),
+        )
+        self.assertEqual(result.protein_grams, Decimal("240.00"))
+        # fat_kcal is derived from the quantized grams (83.33 g), so it
+        # lands a hair under the raw 750 kcal target -- by design, see
+        # calculate_macros' own docstring.
+        self.assertAlmostEqual(float(result.fat_kcal), 750.0, delta=0.1)
+
+    def test_zero_calories_does_not_divide_by_zero(self):
+        result = macros.calculate_macros(Decimal("80"), 0, GoalType.MAINTENANCE)
+        self.assertEqual(result.protein_percent, Decimal("0"))
+        self.assertEqual(result.carbohydrate_percent, Decimal("0"))
+        self.assertEqual(result.fat_percent, Decimal("0"))
