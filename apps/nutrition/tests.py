@@ -1372,6 +1372,22 @@ class DiaryEntryEditDeleteViewTests(TestCase):
         response = self.client.get(reverse("nutrition:diary-entry-delete", args=[self.entry.pk]))
         self.assertEqual(response.status_code, 405)
 
+    def test_anonymous_access_redirects_rather_than_500ing(self):
+        """Regression: these plain function views had no login
+        protection at all -- an anonymous request tried to filter
+        DiaryEntry.objects.get(..., user=AnonymousUser()), which isn't
+        a real model instance Django's ORM can extract a pk from,
+        crashing with a 500 instead of redirecting to login."""
+        self.client.logout()
+        edit_response = self.client.get(
+            reverse("nutrition:diary-entry-edit", args=[self.entry.pk])
+        )
+        self.assertEqual(edit_response.status_code, 302)
+        delete_response = self.client.post(
+            reverse("nutrition:diary-entry-delete", args=[self.entry.pk])
+        )
+        self.assertEqual(delete_response.status_code, 302)
+
 
 class DiaryDayViewTests(TestCase):
     def setUp(self):
@@ -1494,6 +1510,17 @@ class RecipeViewTests(TestCase):
         self.client.logout()
         response = self.client.get(reverse("nutrition:recipe-list"))
         self.assertEqual(response.status_code, 302)
+
+    def test_the_plain_function_views_also_require_login(self):
+        recipe = Recipe.objects.create(owner=self.alice, name="Bowl", servings=2)
+        self.client.logout()
+        for response in [
+            self.client.get(reverse("nutrition:recipe-create")),
+            self.client.get(reverse("nutrition:recipe-update", args=[recipe.pk])),
+            self.client.post(reverse("nutrition:recipe-delete", args=[recipe.pk])),
+            self.client.get(reverse("nutrition:recipe-ingredient-create", args=[recipe.pk])),
+        ]:
+            self.assertEqual(response.status_code, 302)
 
 
 class SplitCaloriesEvenlyTests(TestCase):
@@ -1687,4 +1714,137 @@ class DietPlanViewTests(TestCase):
     def test_requires_login(self):
         self.client.logout()
         response = self.client.get(reverse("nutrition:diet-plan-list"))
+        self.assertEqual(response.status_code, 302)
+
+    def test_the_plain_function_views_also_require_login(self):
+        plan = diet_builder.build_diet_plan(
+            self.alice, name="Plan", goal=None, target_calories=800,
+            target_protein_grams=Decimal("1"), target_carbohydrate_grams=Decimal("1"),
+            target_fat_grams=Decimal("1"), meal_slots=[self.breakfast],
+        )
+        item = plan.meals.first().items.first()
+        self.client.logout()
+        for response in [
+            self.client.post(reverse("nutrition:diet-plan-delete", args=[plan.pk])),
+            self.client.get(reverse("nutrition:diet-plan-item-edit", args=[plan.pk, item.pk])),
+            self.client.post(reverse("nutrition:diet-plan-log", args=[plan.pk])),
+        ]:
+            self.assertEqual(response.status_code, 302)
+
+
+class IsTrainingDayTests(TestCase):
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+
+    def test_false_with_no_sessions_at_all(self):
+        self.assertFalse(services.is_training_day(self.alice, date(2026, 1, 1)))
+
+    def test_true_for_a_completed_session_that_day(self):
+        from apps.workouts.services import complete_session, start_session
+
+        session = start_session(self.alice, workout=None)
+        session.started_at = timezone.make_aware(
+            timezone.datetime(2026, 1, 1, 10, 0)
+        )
+        session.save(update_fields=["started_at"])
+        complete_session(session)
+        self.assertTrue(services.is_training_day(self.alice, date(2026, 1, 1)))
+
+    def test_false_for_a_session_that_was_never_completed(self):
+        from apps.workouts.services import start_session
+
+        session = start_session(self.alice, workout=None)
+        session.started_at = timezone.make_aware(
+            timezone.datetime(2026, 1, 1, 10, 0)
+        )
+        session.save(update_fields=["started_at"])
+        self.assertFalse(services.is_training_day(self.alice, date(2026, 1, 1)))
+
+
+class NutritionDashboardExtrasTests(TestCase):
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        self.client.login(username="alice", password="s3cret-pass")
+        NutritionProfile.objects.create(
+            user=self.alice, biological_sex=BiologicalSex.MALE, birth_date=date(1996, 1, 1),
+            activity_job=ActivityJob.MODERATE, activity_level=ActivityLevel.MODERATE,
+        )
+
+    def test_shows_rest_day_with_no_workout_session(self):
+        response = self.client.get(reverse("nutrition:dashboard"))
+        self.assertContains(response, "Rest day")
+
+    def test_shows_training_day_with_a_completed_session_today(self):
+        from apps.workouts.services import complete_session, start_session
+
+        session = start_session(self.alice, workout=None)
+        complete_session(session)
+        response = self.client.get(reverse("nutrition:dashboard"))
+        self.assertContains(response, "Training day")
+
+    def test_no_goal_means_no_suggestion_card(self):
+        response = self.client.get(reverse("nutrition:dashboard"))
+        self.assertIsNone(response.context["suggestion"])
+
+    def test_a_goal_with_no_weight_history_shows_insufficient_data(self):
+        goal = services.set_goal(
+            self.alice, goal_type=GoalType.FAT_LOSS_MODERATE,
+            target_rate_kg_per_week=Decimal("-0.5"),
+        )
+        breakdown = macros.calculate_macros(Decimal("80"), 2100, GoalType.FAT_LOSS_MODERATE)
+        services.set_target(
+            self.alice, goal=goal, daily_calories=2100, macro_breakdown=breakdown,
+            source=TargetSource.CALCULATED, reason="",
+        )
+        response = self.client.get(reverse("nutrition:dashboard"))
+        self.assertEqual(
+            response.context["suggestion"].action, suggestions.AdjustmentAction.INSUFFICIENT_DATA
+        )
+
+    def test_weight_chart_is_none_with_fewer_than_two_readings(self):
+        response = self.client.get(reverse("nutrition:dashboard"))
+        self.assertIsNone(response.context["weight_chart"])
+
+    def test_weight_chart_appears_with_enough_readings(self):
+        _log_weight(self.alice, 0, "80.0")
+        _log_weight(self.alice, 5, "79.5")
+        response = self.client.get(reverse("nutrition:dashboard"))
+        self.assertIsNotNone(response.context["weight_chart"])
+
+
+class AcceptAdjustmentSuggestionViewTests(TestCase):
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        self.client.login(username="alice", password="s3cret-pass")
+        self.goal = services.set_goal(
+            self.alice, goal_type=GoalType.FAT_LOSS_MODERATE,
+            target_rate_kg_per_week=Decimal("-0.5"),
+        )
+        breakdown = macros.calculate_macros(Decimal("80"), 2100, GoalType.FAT_LOSS_MODERATE)
+        self.target = services.set_target(
+            self.alice, goal=self.goal, daily_calories=2100, macro_breakdown=breakdown,
+            source=TargetSource.CALCULATED, reason="",
+        )
+
+    def test_accepting_when_off_track_creates_a_new_target(self):
+        for offset, weight in [(0, "80.0"), (10, "79.8"), (20, "79.6"), (30, "79.4")]:
+            _log_weight(self.alice, offset, weight)
+        self.client.post(reverse("nutrition:accept-adjustment-suggestion"))
+        self.target.refresh_from_db()
+        self.assertIsNotNone(self.target.ended_at)
+        new_target = NutritionTarget.objects.get(user=self.alice, ended_at__isnull=True)
+        self.assertEqual(new_target.source, TargetSource.ADJUSTED)
+
+    def test_accepting_with_insufficient_data_does_nothing(self):
+        self.client.post(reverse("nutrition:accept-adjustment-suggestion"))
+        self.target.refresh_from_db()
+        self.assertIsNone(self.target.ended_at)
+
+    def test_requires_post(self):
+        response = self.client.get(reverse("nutrition:accept-adjustment-suggestion"))
+        self.assertEqual(response.status_code, 405)
+
+    def test_requires_login(self):
+        self.client.logout()
+        response = self.client.post(reverse("nutrition:accept-adjustment-suggestion"))
         self.assertEqual(response.status_code, 302)

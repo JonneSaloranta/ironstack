@@ -4,6 +4,11 @@
 {% block content %}
 <div class="top-bar">
   <h1 style="margin:0;">{% trans "Nutrition" %}</h1>
+  {% if is_training_day %}
+    <span class="tag">{% trans "Training day" %}</span>
+  {% else %}
+    <span class="tag-muted">{% trans "Rest day" %}</span>
+  {% endif %}
 </div>
 
 <div class="card">
@@ -18,10 +23,54 @@
         <td>{% trans "Protein" %}</td>
         <td>{{ totals.protein_grams|floatformat:0 }}{% if target %} / {{ target.protein_grams|floatformat:0 }}{% endif %} g</td>
       </tr>
+      <tr>
+        <td>{% trans "Carbohydrates" %}</td>
+        <td>{{ totals.carbohydrate_grams|floatformat:0 }}{% if target %} / {{ target.carbohydrate_grams|floatformat:0 }}{% endif %} g</td>
+      </tr>
+      <tr>
+        <td>{% trans "Fat" %}</td>
+        <td>{{ totals.fat_grams|floatformat:0 }}{% if target %} / {{ target.fat_grams|floatformat:0 }}{% endif %} g</td>
+      </tr>
     </tbody>
   </table>
   <a class="button-secondary" href="{% url 'nutrition:diary-day' %}">{% trans "Open food diary" %}</a>
 </div>
+
+{% if suggestion %}
+  {% if suggestion.action == "adjust" %}
+    <div class="card">
+      <strong>{% trans "Is your current target working?" %}</strong>
+      <p>{{ suggestion.reason }}</p>
+      <p class="text-muted">
+        {% if suggestion.confidence == "high" %}{% trans "High confidence" %}
+        {% elif suggestion.confidence == "medium" %}{% trans "Medium confidence" %}
+        {% else %}{% trans "Low confidence" %}{% endif %}
+      </p>
+      <form method="post" action="{% url 'nutrition:accept-adjustment-suggestion' %}">
+        {% csrf_token %}
+        <button type="submit">
+          {% blocktrans with calories=suggestion.suggested_daily_calories %}Adjust to {{ calories }} kcal/day{% endblocktrans %}
+        </button>
+      </form>
+    </div>
+  {% elif suggestion.action == "on_track" %}
+    <div class="card empty-state">
+      <p>{{ suggestion.reason }}</p>
+    </div>
+  {% elif suggestion.action == "insufficient_data" %}
+    <div class="card empty-state">
+      <p>{{ suggestion.reason }}</p>
+    </div>
+  {% endif %}
+{% endif %}
+
+{% if weight_chart %}
+  <div class="card">
+    <strong>{% trans "Weight trend" %}</strong>
+    {% trans "Weight" as weight_chart_title %}
+    {% include "core/_chart.html" with chart=weight_chart chart_title=weight_chart_title unit_label=weight_unit_label %}
+  </div>
+{% endif %}
 
 {% if target %}
   <div class="card">
@@ -46,4 +95,15 @@
     <p>{{ goal.get_goal_type_display }} — {{ goal.target_rate_kg_per_week }} kg/week</p>
   </div>
 {% endif %}
+
+<div class="card card-action-row">
+  <div>
+    <strong>{% trans "Recipes & diet plans" %}</strong>
+    <p class="text-muted">{% trans "Manage your recipes or build a full diet plan." %}</p>
+  </div>
+  <div style="display:flex; gap:0.5rem;">
+    <a class="button-secondary" href="{% url 'nutrition:recipe-list' %}">{% trans "Recipes" %}</a>
+    <a class="button-secondary" href="{% url 'nutrition:diet-plan-list' %}">{% trans "Diet plans" %}</a>
+  </div>
+</div>
 {% endblock %}

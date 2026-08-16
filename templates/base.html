@@ -64,6 +64,10 @@
       <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-8 9 8"/><path d="M5 10v10a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V10"/></svg>
       <span class="nav-label">{% trans "Home" %}</span>
     </a>
+    <a href="{% url 'nutrition:dashboard' %}" aria-label="{% trans "Nutrition" %}" {% if request.resolver_match.app_name == 'nutrition' %}aria-current="page"{% endif %}>
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 2v6a2 2 0 0 0 2 2h0a2 2 0 0 0 2-2V2"/><path d="M8 10v12"/><path d="M17 2c-1.5 0-3 1.5-3 5s1 5 2 5.5V22"/></svg>
+      <span class="nav-label">{% trans "Nutrition" %}</span>
+    </a>
     <a href="{% url 'analytics:dashboard' %}" aria-label="{% trans "Progress" %}" {% if request.resolver_match.app_name == 'analytics' %}aria-current="page"{% endif %}>
       <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 17 9 11 13 15 21 6"/><polyline points="15 6 21 6 21 12"/></svg>
       <span class="nav-label">{% trans "Progress" %}</span>

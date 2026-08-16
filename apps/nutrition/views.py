@@ -9,6 +9,7 @@ atomically only on the last step's POST.
 from datetime import date
 from decimal import Decimal
 
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseNotAllowed
 from django.shortcuts import get_object_or_404, redirect, render
@@ -255,25 +256,61 @@ class OnboardingReviewView(_OnboardingStepView):
 
 class NutritionDashboardView(LoginRequiredMixin, View):
     """Redirects a not-yet-onboarded user to the wizard; otherwise
-    today's calories/macros vs. target (spec section 16 — "how much
-    should I eat today, how much have I eaten"). Training-day
-    awareness and the dynamic-adjustment suggestion card land here in
-    a later phase (docs/NUTRITION.md phases 6/9), once the food diary
-    below has real data behind it."""
+    answers spec section 16's questions at a glance: today's calories/
+    macros vs. target, a weight trend chart, whether today is a
+    training day (informational only — apps.nutrition.services.
+    is_training_day, no separate calorie target derived from it, see
+    docs/NUTRITION.md "Integration with existing apps"), and the
+    dynamic-adjustment suggestion card (apps.nutrition.suggestions) —
+    "is this working, does something need to change.\""""
 
     def get(self, request):
         if not hasattr(request.user, "nutrition_profile"):
             return redirect("nutrition:onboarding-body")
+        from apps.core import units as core_units
+        from apps.core.charts import build_chart_series
+        from apps.measurements import units as measurement_units
+        from apps.measurements.services import history_for
+
         from .models import NutritionGoal, NutritionTarget
+        from .suggestions import suggest_calorie_adjustment
 
         goal = NutritionGoal.objects.filter(user=request.user, ended_at__isnull=True).first()
         target = NutritionTarget.objects.filter(user=request.user, ended_at__isnull=True).first()
         today = timezone.localdate()
         totals = services.daily_totals(request.user, today)
+
+        weight_type = MeasurementType.objects.filter(name="Body weight", owner=None).first()
+        weight_chart = None
+        if weight_type is not None:
+            # Charted in the user's own display unit, not canonical kg
+            # — same convention as apps.measurements.views.
+            # MeasurementHistoryView's own chart.
+            readings = [
+                (
+                    measurement_units.to_display(
+                        m.value, weight_type.unit_kind, request.user.unit_system
+                    ),
+                    m.recorded_at,
+                )
+                for m in history_for(request.user, weight_type, limit=30)
+            ]
+            weight_chart = build_chart_series(readings)
+        weight_unit_label = core_units.weight_unit_label(request.user.unit_system)
+
         return render(
             request,
             "nutrition/dashboard.html",
-            {"goal": goal, "target": target, "totals": totals, "today": today},
+            {
+                "weight_unit_label": weight_unit_label,
+                "goal": goal,
+                "target": target,
+                "totals": totals,
+                "today": today,
+                "is_training_day": services.is_training_day(request.user, today),
+                "weight_chart": weight_chart,
+                "suggestion": suggest_calorie_adjustment(request.user) if goal else None,
+            },
         )
 
 
@@ -463,6 +500,7 @@ def _owned_diary_entry_or_404(request, pk):
     return get_object_or_404(DiaryEntry, pk=pk, user=request.user)
 
 
+@login_required
 def diary_entry_edit(request, pk):
     entry = _owned_diary_entry_or_404(request, pk)
     if request.method == "POST":
@@ -475,6 +513,7 @@ def diary_entry_edit(request, pk):
     return render(request, "nutrition/diary_entry_form.html", {"form": form, "entry": entry})
 
 
+@login_required
 def diary_entry_delete(request, pk):
     if request.method != "POST":
         return HttpResponseNotAllowed(["POST"])
@@ -521,6 +560,7 @@ def _owned_recipe_or_404(request, pk):
     return get_object_or_404(Recipe, pk=pk, owner=request.user)
 
 
+@login_required
 def recipe_create(request):
     form = RecipeForm(request.POST or None)
     if request.method == "POST" and form.is_valid():
@@ -531,6 +571,7 @@ def recipe_create(request):
     return render(request, "nutrition/recipe_form.html", {"form": form})
 
 
+@login_required
 def recipe_update(request, pk):
     recipe = _owned_recipe_or_404(request, pk)
     form = RecipeForm(request.POST or None, instance=recipe)
@@ -540,6 +581,7 @@ def recipe_update(request, pk):
     return render(request, "nutrition/recipe_form.html", {"form": form, "recipe": recipe})
 
 
+@login_required
 def recipe_delete(request, pk):
     if request.method != "POST":
         return HttpResponseNotAllowed(["POST"])
@@ -548,6 +590,7 @@ def recipe_delete(request, pk):
     return redirect("nutrition:recipe-list")
 
 
+@login_required
 def recipe_ingredient_create(request, recipe_pk):
     recipe = _owned_recipe_or_404(request, recipe_pk)
     form = RecipeIngredientForm(request.POST or None, user=request.user)
@@ -561,6 +604,7 @@ def recipe_ingredient_create(request, recipe_pk):
     )
 
 
+@login_required
 def recipe_ingredient_delete(request, recipe_pk, pk):
     from .models import RecipeIngredient
 
@@ -572,6 +616,7 @@ def recipe_ingredient_delete(request, recipe_pk, pk):
     return redirect("nutrition:recipe-detail", pk=recipe.pk)
 
 
+@login_required
 def recipe_log(request, pk):
     from .models import DiaryEntry
 
@@ -694,6 +739,7 @@ class DietPlanDetailView(LoginRequiredMixin, View):
         )
 
 
+@login_required
 def diet_plan_delete(request, pk):
     if request.method != "POST":
         return HttpResponseNotAllowed(["POST"])
@@ -702,6 +748,7 @@ def diet_plan_delete(request, pk):
     return redirect("nutrition:diet-plan-list")
 
 
+@login_required
 def diet_plan_item_edit(request, plan_pk, pk):
     from .models import DietPlanItem
 
@@ -716,6 +763,7 @@ def diet_plan_item_edit(request, plan_pk, pk):
     )
 
 
+@login_required
 def diet_plan_log(request, pk):
     plan = _owned_diet_plan_or_404(request, pk)
     if request.method != "POST":
@@ -725,3 +773,18 @@ def diet_plan_log(request, pk):
         return redirect("nutrition:diet-plan-detail", pk=plan.pk)
     diet_builder.apply_diet_plan(plan, form.cleaned_data["date"])
     return redirect("nutrition:diary-day", target_date=form.cleaned_data["date"].isoformat())
+
+
+@login_required
+def accept_adjustment_suggestion(request):
+    """Accepting the dashboard's dynamic-adjustment card — never
+    automatic (docs/NUTRITION.md "Dynamic calorie adjustment"), always
+    this one explicit POST from a user action."""
+    from .suggestions import AdjustmentAction, suggest_calorie_adjustment
+
+    if request.method != "POST":
+        return HttpResponseNotAllowed(["POST"])
+    suggestion = suggest_calorie_adjustment(request.user)
+    if suggestion.action == AdjustmentAction.ADJUST:
+        services.apply_adjustment_suggestion(request.user, suggestion)
+    return redirect("nutrition:dashboard")

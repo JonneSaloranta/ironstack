@@ -6,6 +6,11 @@ app_name = "nutrition"
 
 urlpatterns = [
     path("", views.NutritionDashboardView.as_view(), name="dashboard"),
+    path(
+        "adjustment/accept/",
+        views.accept_adjustment_suggestion,
+        name="accept-adjustment-suggestion",
+    ),
     path("onboarding/body/", views.OnboardingBodyView.as_view(), name="onboarding-body"),
     path(
         "onboarding/activity/",

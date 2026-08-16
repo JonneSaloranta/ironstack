@@ -1392,10 +1392,14 @@ class AdminThemeTests(TestCase):
 
 
 class BottomNavTests(TestCase):
-    """Mobile nav: Home, Progress, Workout, Programs, Profile in that
-    order, icon-only on mobile — each link's accessible name comes from
-    aria-label since the text label is visually hidden at that width
-    (re-shown alongside the icon on desktop)."""
+    """Mobile nav: Home, Nutrition, Progress, Workout, Programs, Profile
+    in that order, icon-only on mobile — each link's accessible name
+    comes from aria-label since the text label is visually hidden at
+    that width (re-shown alongside the icon on desktop). "Nutrition"
+    is the 6th item, added alongside apps.nutrition
+    (docs/NUTRITION.md "Navigation") — a daily-use surface like
+    Workout, not an occasional one like Measurements/Activities/
+    Records, which don't get their own nav slot."""
 
     def setUp(self):
         from django.contrib.auth import get_user_model
@@ -1408,13 +1412,13 @@ class BottomNavTests(TestCase):
         response = self.client.get(reverse("dashboard"))
         content = response.content.decode()
         positions = [content.find(f'aria-label="{label}"') for label in
-                     ["Home", "Progress", "Workout", "Programs", "Profile"]]
+                     ["Home", "Nutrition", "Progress", "Workout", "Programs", "Profile"]]
         self.assertTrue(all(p != -1 for p in positions), positions)
         self.assertEqual(positions, sorted(positions))
 
     def test_every_nav_link_has_an_icon(self):
         response = self.client.get(reverse("dashboard"))
-        self.assertContains(response, "nav-icon", count=5)
+        self.assertContains(response, "nav-icon", count=6)
 
     def test_nav_hidden_for_anonymous_users(self):
         self.client.logout()

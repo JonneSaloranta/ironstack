@@ -312,3 +312,17 @@ def visible_meal_slots(user):
     from .models import MealSlot
 
     return MealSlot.objects.filter(Q(owner=user) | Q(owner__isnull=True), active=True)
+
+
+def is_training_day(user, target_date):
+    """Whether `target_date` has at least one *completed* workout
+    session — the same filter apps.analytics.services uses to define
+    "training day" everywhere else. Informational only
+    (docs/NUTRITION.md "Integration with existing apps" — no separate
+    training-day calorie target is derived from this in this pass, it
+    only labels the dashboard)."""
+    from apps.workouts.models import WorkoutSession, WorkoutSessionStatus
+
+    return WorkoutSession.objects.filter(
+        user=user, status=WorkoutSessionStatus.COMPLETED, started_at__date=target_date
+    ).exists()
