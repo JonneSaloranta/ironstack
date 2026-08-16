@@ -151,7 +151,8 @@ defaults, user can rename/add.
 owner (nullable FK), name, brand (optional), serving_size, serving_unit,
 calories, protein_grams, carbohydrate_grams, fat_grams,
 fiber_grams / sugar_grams / saturated_fat_grams / sodium_mg (all
-optional/nullable), active
+optional/nullable), off_id (nullable, unique), off_synced_at (nullable),
+active
 ```
 
 `serving_unit` choices: `g`, `ml`, `piece` — precise mass/volume for
@@ -159,15 +160,47 @@ most foods, a count unit for things like "1 egg" where a gram weight
 isn't how anyone thinks about it. All nutrition fields are *per
 `serving_size` of `serving_unit`* — e.g. "100 g → 165 kcal" for
 chicken breast, not "per gram." `owner` nullable, matching
-`MeasurementType` again: every v1 food is user-created
-(`owner=request.user`), but leaving the column nullable now means a
-future shared/imported food library (a barcode/nutrition-database
-integration, explicitly flagged in the spec as "don't add it now, but
-don't make it hard to add later") can populate `owner=None` rows
-without a schema change. No such integration is being added in this
-pass — no new dependency, per CLAUDE.md's "before adding a dependency,
-check whether existing code already solves the problem," and here
-nothing needs one yet.
+`MeasurementType` again: user-created foods have `owner=request.user`;
+foods imported from OpenFoodFacts (below) get `owner=None` — shared,
+system-visible library rows, the same "system vs. custom" split every
+other owner-nullable model in this app already uses.
+
+### OpenFoodFacts integration
+
+Requested explicitly, and explicitly scoped to **on-demand lookup, not
+a bulk import**: OpenFoodFacts' full dataset is ~3.5 million products
+(multiple GB compressed, tens of GB as rows) — importing and
+periodically re-syncing all of it is disproportionate for this app's
+self-hosted, single/small-household deployment target, and was
+rejected for exactly that reason when discussed directly. Instead:
+
+- `apps/nutrition/openfoodfacts.py` — a thin client
+  (`search_products(query)`, `get_product(barcode)`) against OFF's
+  public read API (`world.openfoodfacts.org`), using `requests` (new
+  dependency — no existing project code does outbound HTTP to a JSON
+  API, `apps.accounts.twofactor`'s `pyotp`/`qrcode` precedent is the
+  closest, and hand-rolling this on `urllib` would just reimplement a
+  worse `requests`). Parses a raw OFF product into this app's `Food`
+  field shape; a product missing core macros entirely is skipped
+  rather than creating a useless empty row.
+- The food-search flow (`apps.nutrition` diary/recipe "add food")
+  searches local `Food` rows first; if OpenFoodFacts lookup is enabled
+  or turns up more, results are shown as an "Import" action that
+  creates (or refreshes) a shared `Food` row with `owner=None`,
+  `off_id` set to OFF's own barcode.
+- **"Update automatically if it changes"** is satisfied by staleness,
+  not a background job: any `Food` row with an `off_id` older than
+  `OPENFOODFACTS_STALENESS_DAYS` (14, matching the interval
+  originally asked for) is transparently re-fetched and updated the
+  next time it's looked up or logged, rather than a scheduler
+  re-syncing the whole dataset on a timer — there's no dataset to
+  re-sync once nothing is bulk-imported in the first place.
+- `OpenFoodFactsSettings` (singleton, same `ApiSettings`/
+  `BackupSettings`/`FeedbackSettings` pattern) has one field,
+  `enabled` — an operator can turn off all outbound OpenFoodFacts
+  requests entirely (no internet egress, or a simple preference not to
+  call a third-party service from their own server), same reasoning as
+  `DJANGO_SIGNUP_ENABLED`/optional `DJANGO_EMAIL_HOST`.
 
 ### `Recipe` / `RecipeIngredient`
 

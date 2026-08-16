@@ -10,6 +10,7 @@ from .models import (
     NutritionGoal,
     NutritionProfile,
     NutritionTarget,
+    OpenFoodFactsSettings,
     Recipe,
     RecipeIngredient,
 )
@@ -44,9 +45,23 @@ class MealSlotAdmin(admin.ModelAdmin):
 
 @admin.register(Food)
 class FoodAdmin(admin.ModelAdmin):
-    list_display = ["name", "brand", "owner", "calories", "active"]
+    list_display = ["name", "brand", "owner", "calories", "off_id", "active"]
     list_filter = ["active"]
-    search_fields = ["name", "brand"]
+    search_fields = ["name", "brand", "off_id"]
+
+
+@admin.register(OpenFoodFactsSettings)
+class OpenFoodFactsSettingsAdmin(admin.ModelAdmin):
+    """Singleton — same pattern as apps.core.admin's
+    BackupSettingsAdmin/FeedbackSettingsAdmin."""
+
+    list_display = ["__str__", "enabled"]
+
+    def has_add_permission(self, request):
+        return not OpenFoodFactsSettings.objects.exists()
+
+    def has_delete_permission(self, request, obj=None):
+        return False
 
 
 class RecipeIngredientInline(admin.TabularInline):

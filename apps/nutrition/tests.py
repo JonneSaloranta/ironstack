@@ -1,13 +1,16 @@
 from datetime import date, timedelta
 from decimal import Decimal
+from unittest import mock
 
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError, transaction
 from django.test import TestCase
+from django.urls import reverse
+from django.utils import timezone
 
 from apps.measurements.models import BodyMeasurement, MeasurementType
-from apps.nutrition import energy, macros, services, suggestions, trends
+from apps.nutrition import energy, macros, openfoodfacts, services, suggestions, trends
 
 from .models import (
     ActivityJob,
@@ -22,6 +25,7 @@ from .models import (
     NutritionGoal,
     NutritionProfile,
     NutritionTarget,
+    OpenFoodFactsSettings,
     Recipe,
     RecipeIngredient,
     ServingUnit,
@@ -788,3 +792,328 @@ class ApplyAdjustmentSuggestionTests(TestCase):
         self.assertEqual(new_target.source, TargetSource.ADJUSTED)
         self.assertEqual(new_target.reason, "Test reason")
         self.assertEqual(new_target.goal, self.goal)
+
+
+RAW_OFF_PRODUCT = {
+    "code": "1234567890123",
+    "product_name": "Test Muesli",
+    "brands": "Acme, Other Brand",
+    "nutriments": {
+        "energy-kcal_100g": 350,
+        "proteins_100g": 10.5,
+        "carbohydrates_100g": 60,
+        "fat_100g": 8,
+        "fiber_100g": 7,
+        "sugars_100g": 15,
+        "saturated-fat_100g": 1.5,
+        "sodium_100g": 0.2,
+    },
+}
+
+
+class ParseProductTests(TestCase):
+    def test_a_complete_product_parses_correctly(self):
+        parsed = openfoodfacts.parse_product(RAW_OFF_PRODUCT)
+        self.assertEqual(parsed["off_id"], "1234567890123")
+        self.assertEqual(parsed["name"], "Test Muesli")
+        self.assertEqual(parsed["brand"], "Acme")
+        self.assertEqual(parsed["calories"], 350)
+        self.assertEqual(parsed["protein_grams"], Decimal("10.5"))
+        self.assertEqual(parsed["sodium_mg"], 200)
+
+    def test_missing_barcode_returns_none(self):
+        raw = {**RAW_OFF_PRODUCT, "code": None}
+        self.assertIsNone(openfoodfacts.parse_product(raw))
+
+    def test_missing_core_macro_returns_none(self):
+        raw = {**RAW_OFF_PRODUCT, "nutriments": {**RAW_OFF_PRODUCT["nutriments"]}}
+        del raw["nutriments"]["fat_100g"]
+        self.assertIsNone(openfoodfacts.parse_product(raw))
+
+    def test_missing_optional_extras_are_none_not_zero(self):
+        raw = {
+            "code": "111",
+            "product_name": "Bare product",
+            "nutriments": {
+                "energy-kcal_100g": 100,
+                "proteins_100g": 1,
+                "carbohydrates_100g": 1,
+                "fat_100g": 1,
+            },
+        }
+        parsed = openfoodfacts.parse_product(raw)
+        self.assertIsNone(parsed["fiber_grams"])
+        self.assertIsNone(parsed["sodium_mg"])
+
+
+class ImportOrRefreshFoodFromOffTests(TestCase):
+    def setUp(self):
+        OpenFoodFactsSettings.objects.all().delete()
+
+    def test_creates_a_new_shared_food_on_first_import(self):
+        with mock.patch.object(openfoodfacts, "get_product", return_value=RAW_OFF_PRODUCT):
+            food = services.import_or_refresh_food_from_off("1234567890123")
+        self.assertIsNotNone(food)
+        self.assertIsNone(food.owner)
+        self.assertEqual(food.off_id, "1234567890123")
+        self.assertIsNotNone(food.off_synced_at)
+
+    def test_a_fresh_existing_food_is_returned_without_a_network_call(self):
+        with mock.patch.object(openfoodfacts, "get_product", return_value=RAW_OFF_PRODUCT):
+            services.import_or_refresh_food_from_off("1234567890123")
+        with mock.patch.object(openfoodfacts, "get_product") as mocked:
+            services.import_or_refresh_food_from_off("1234567890123")
+        mocked.assert_not_called()
+
+    def test_a_stale_existing_food_is_refreshed(self):
+        with mock.patch.object(openfoodfacts, "get_product", return_value=RAW_OFF_PRODUCT):
+            food = services.import_or_refresh_food_from_off("1234567890123")
+        food.off_synced_at = timezone.now() - timedelta(days=20)
+        food.calories = 999
+        food.save()
+        updated_raw = {**RAW_OFF_PRODUCT}
+        with mock.patch.object(openfoodfacts, "get_product", return_value=updated_raw):
+            refreshed = services.import_or_refresh_food_from_off("1234567890123")
+        self.assertEqual(refreshed.pk, food.pk)
+        self.assertEqual(refreshed.calories, 350)
+
+    def test_disabled_settings_returns_none_without_a_network_call(self):
+        OpenFoodFactsSettings.objects.create(pk=1, enabled=False)
+        with mock.patch.object(openfoodfacts, "get_product") as mocked:
+            result = services.import_or_refresh_food_from_off("1234567890123")
+        self.assertIsNone(result)
+        mocked.assert_not_called()
+
+    def test_a_network_error_falls_back_to_the_existing_stale_row(self):
+        with mock.patch.object(openfoodfacts, "get_product", return_value=RAW_OFF_PRODUCT):
+            food = services.import_or_refresh_food_from_off("1234567890123")
+        food.off_synced_at = timezone.now() - timedelta(days=20)
+        food.save()
+        with mock.patch.object(
+            openfoodfacts, "get_product", side_effect=openfoodfacts.OpenFoodFactsError("boom")
+        ):
+            result = services.import_or_refresh_food_from_off("1234567890123")
+        self.assertEqual(result.pk, food.pk)
+
+    def test_no_product_found_returns_none_for_a_brand_new_barcode(self):
+        with mock.patch.object(openfoodfacts, "get_product", return_value=None):
+            result = services.import_or_refresh_food_from_off("0000000000000")
+        self.assertIsNone(result)
+
+
+class SearchFoodsTests(TestCase):
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+
+    def test_finds_the_users_own_and_shared_local_foods(self):
+        make_food(self.alice, name="Alice's Chicken")
+        make_food(None, name="Shared Rice")
+        make_food(None, name="Unrelated Broccoli")
+        with mock.patch.object(openfoodfacts, "search_products", return_value=[]):
+            local, off_results = services.search_foods(self.alice, "chicken")
+        self.assertEqual([f.name for f in local], ["Alice's Chicken"])
+
+    def test_off_results_already_imported_locally_are_not_repeated(self):
+        with mock.patch.object(openfoodfacts, "get_product", return_value=RAW_OFF_PRODUCT):
+            services.import_or_refresh_food_from_off("1234567890123")
+        with mock.patch.object(
+            openfoodfacts, "search_products", return_value=[RAW_OFF_PRODUCT]
+        ):
+            local, off_results = services.search_foods(self.alice, "muesli")
+        self.assertEqual(off_results, [])
+
+    def test_an_off_error_yields_an_empty_off_result_list_not_a_crash(self):
+        with mock.patch.object(
+            openfoodfacts, "search_products", side_effect=openfoodfacts.OpenFoodFactsError("x")
+        ):
+            local, off_results = services.search_foods(self.alice, "anything")
+        self.assertEqual(off_results, [])
+
+
+class OpenFoodFactsSettingsTests(TestCase):
+    def test_defaults_to_enabled(self):
+        self.assertTrue(OpenFoodFactsSettings.load().enabled)
+
+    def test_is_a_singleton(self):
+        first = OpenFoodFactsSettings.load()
+        first.enabled = False
+        first.save()
+        second = OpenFoodFactsSettings.load()
+        self.assertEqual(first.pk, second.pk)
+        self.assertFalse(second.enabled)
+
+
+class UserDeletionCascadeTests(TestCase):
+    """Regression: several apps.nutrition FKs used on_delete=PROTECT
+    on rows that are very commonly owned by the same user as the row
+    referencing them (a food logged in its own owner's diary, etc.) —
+    deleting that user tried to cascade both sides at once, which
+    PROTECT blocked outright. See docs/NUTRITION.md and each field's
+    own comment in models.py."""
+
+    def test_deleting_a_user_with_a_full_nutrition_history_does_not_raise(self):
+        alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        food = make_food(alice)
+        recipe = Recipe.objects.create(owner=alice, name="Bowl")
+        RecipeIngredient.objects.create(recipe=recipe, food=food, quantity=Decimal("100"))
+        slot = MealSlot.objects.create(name="Pre-workout", owner=alice)
+        DiaryEntry.objects.create(
+            user=alice, date=date(2026, 1, 1), meal_slot=slot, food=food,
+            quantity=Decimal("100"),
+        )
+        goal = services.set_goal(
+            alice, goal_type=GoalType.MAINTENANCE, target_rate_kg_per_week=Decimal("0")
+        )
+        breakdown = macros.calculate_macros(Decimal("80"), 2500, GoalType.MAINTENANCE)
+        services.set_target(
+            alice, goal=goal, daily_calories=2500, macro_breakdown=breakdown,
+            source=TargetSource.CALCULATED, reason="",
+        )
+        plan = DietPlan.objects.create(
+            user=alice, name="Plan", target_calories=2500,
+            target_protein_grams=Decimal("1"), target_carbohydrate_grams=Decimal("1"),
+            target_fat_grams=Decimal("1"),
+        )
+        plan_meal = DietPlanMeal.objects.create(diet_plan=plan, meal_slot=slot, target_calories=500)
+        from apps.nutrition.models import DietPlanItem
+
+        DietPlanItem.objects.create(diet_plan_meal=plan_meal, food=food, quantity=Decimal("100"))
+
+        alice.delete()  # must not raise ProtectedError
+        self.assertFalse(User.objects.filter(username="alice").exists())
+
+
+class OnboardingWizardTests(TestCase):
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        self.client.login(username="alice", password="s3cret-pass")
+
+    def _complete_body_step(self):
+        return self.client.post(
+            reverse("nutrition:onboarding-body"),
+            {
+                "biological_sex": BiologicalSex.MALE,
+                "birth_date": "1996-01-01",
+                "height": "180",
+                "weight": "80",
+            },
+        )
+
+    def _complete_activity_step(self):
+        return self.client.post(
+            reverse("nutrition:onboarding-activity"),
+            {
+                "activity_job": ActivityJob.MODERATE,
+                "daily_steps": "8000",
+                "training_sessions_per_week": "4",
+                "training_session_minutes": "60",
+                "other_exercise_minutes_per_week": "0",
+            },
+        )
+
+    def _complete_activity_level_step(self):
+        return self.client.post(
+            reverse("nutrition:onboarding-activity-level"),
+            {"activity_level": ActivityLevel.MODERATE},
+        )
+
+    def _complete_goal_step(self):
+        return self.client.post(
+            reverse("nutrition:onboarding-goal"),
+            {"goal_type": GoalType.FAT_LOSS_MODERATE, "target_weight": "74", "target_rate": "-0.5"},
+        )
+
+    def test_dashboard_redirects_to_onboarding_for_a_fresh_user(self):
+        response = self.client.get(reverse("nutrition:dashboard"))
+        self.assertRedirects(response, reverse("nutrition:onboarding-body"))
+
+    def test_jumping_ahead_to_a_later_step_bounces_back_to_the_start(self):
+        response = self.client.get(reverse("nutrition:onboarding-goal"))
+        self.assertRedirects(response, reverse("nutrition:onboarding-body"))
+
+    def test_the_full_wizard_creates_profile_goal_and_target(self):
+        self._complete_body_step()
+        self._complete_activity_step()
+        self._complete_activity_level_step()
+        self._complete_goal_step()
+        review_get = self.client.get(reverse("nutrition:onboarding-review"))
+        self.assertEqual(review_get.status_code, 200)
+        self.assertContains(review_get, "2209")
+
+        response = self.client.post(reverse("nutrition:onboarding-review"))
+        self.assertRedirects(response, reverse("nutrition:dashboard"))
+
+        self.alice.refresh_from_db()
+        self.assertEqual(self.alice.height, Decimal("1.8"))
+        profile = NutritionProfile.objects.get(user=self.alice)
+        self.assertEqual(profile.biological_sex, BiologicalSex.MALE)
+        goal = NutritionGoal.objects.get(user=self.alice, ended_at__isnull=True)
+        self.assertEqual(goal.target_weight, Decimal("74"))
+        target = NutritionTarget.objects.get(user=self.alice, ended_at__isnull=True)
+        self.assertEqual(target.daily_calories, 2209)
+        self.assertTrue(
+            BodyMeasurement.objects.filter(
+                user=self.alice, measurement_type__name="Body weight", value=Decimal("80")
+            ).exists()
+        )
+
+    def test_an_already_onboarded_user_is_redirected_away_from_every_step(self):
+        self._complete_body_step()
+        self._complete_activity_step()
+        self._complete_activity_level_step()
+        self._complete_goal_step()
+        self.client.post(reverse("nutrition:onboarding-review"))
+
+        for url_name in [
+            "onboarding-body", "onboarding-activity", "onboarding-activity-level",
+            "onboarding-goal", "onboarding-review",
+        ]:
+            response = self.client.get(reverse(f"nutrition:{url_name}"))
+            self.assertRedirects(response, reverse("nutrition:dashboard"))
+
+    def test_activity_level_step_shows_a_suggestion_derived_from_the_inputs(self):
+        self._complete_body_step()
+        self._complete_activity_step()
+        response = self.client.get(reverse("nutrition:onboarding-activity-level"))
+        self.assertContains(response, "Suggested")
+        self.assertContains(response, "moderate job")
+
+    def test_requires_login(self):
+        self.client.logout()
+        response = self.client.get(reverse("nutrition:onboarding-body"))
+        self.assertEqual(response.status_code, 302)
+
+    def test_invalid_body_step_data_redisplays_the_form_with_errors(self):
+        response = self.client.post(
+            reverse("nutrition:onboarding-body"),
+            {"biological_sex": "male", "birth_date": "", "height": "180", "weight": "80"},
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "field-error")
+
+
+class NutritionDashboardViewTests(TestCase):
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        self.client.login(username="alice", password="s3cret-pass")
+        NutritionProfile.objects.create(
+            user=self.alice,
+            biological_sex=BiologicalSex.MALE,
+            birth_date=date(1996, 1, 1),
+            activity_job=ActivityJob.MODERATE,
+            activity_level=ActivityLevel.MODERATE,
+        )
+        self.goal = services.set_goal(
+            self.alice, goal_type=GoalType.FAT_LOSS_MODERATE,
+            target_rate_kg_per_week=Decimal("-0.5"),
+        )
+        breakdown = macros.calculate_macros(Decimal("80"), 2209, GoalType.FAT_LOSS_MODERATE)
+        services.set_target(
+            self.alice, goal=self.goal, daily_calories=2209, macro_breakdown=breakdown,
+            source=TargetSource.CALCULATED, reason="test reason",
+        )
+
+    def test_shows_the_current_target_and_goal(self):
+        response = self.client.get(reverse("nutrition:dashboard"))
+        self.assertContains(response, "2209")
+        self.assertContains(response, "test reason")

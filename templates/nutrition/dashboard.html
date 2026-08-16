@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Nutrition" %} — IronStack{% endblock %}
+{% block content %}
+<div class="top-bar">
+  <h1 style="margin:0;">{% trans "Nutrition" %}</h1>
+</div>
+
+{% if target %}
+  <div class="card">
+    <strong>{% trans "Daily target" %}</strong>
+    <p style="font-size:1.5rem; font-weight:bold; margin:0.25rem 0;">
+      {% blocktrans with calories=target.daily_calories %}{{ calories }} kcal/day{% endblocktrans %}
+    </p>
+    <table class="set-table">
+      <tbody>
+        <tr><td>{% trans "Protein" %}</td><td>{{ target.protein_grams }} g</td></tr>
+        <tr><td>{% trans "Carbohydrates" %}</td><td>{{ target.carbohydrate_grams }} g</td></tr>
+        <tr><td>{% trans "Fat" %}</td><td>{{ target.fat_grams }} g</td></tr>
+      </tbody>
+    </table>
+    <p class="field-help">{{ target.reason }}</p>
+  </div>
+{% endif %}
+
+{% if goal %}
+  <div class="card">
+    <strong>{% trans "Current goal" %}</strong>
+    <p>{{ goal.get_goal_type_display }} — {{ goal.target_rate_kg_per_week }} kg/week</p>
+  </div>
+{% endif %}
+{% endblock %}

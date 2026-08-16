@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Nutrition setup" %} — IronStack{% endblock %}
+{% block content %}
+<div class="top-bar">
+  <h1 style="margin:0;">{% trans "Your estimated targets" %}</h1>
+</div>
+{% include "nutrition/_wizard_progress.html" %}
+
+<div class="card">
+  <p class="text-muted">{{ calorie_result.reason }}</p>
+  <p style="font-size:2rem; font-weight:bold; margin:0.5rem 0;">
+    {% blocktrans with calories=calorie_result.daily_calories %}{{ calories }} kcal/day{% endblocktrans %}
+  </p>
+  <table class="set-table">
+    <tbody>
+      <tr><td>{% trans "Protein" %}</td><td>{{ macro_result.protein_grams }} g</td><td>{{ macro_result.protein_percent }}%</td></tr>
+      <tr><td>{% trans "Carbohydrates" %}</td><td>{{ macro_result.carbohydrate_grams }} g</td><td>{{ macro_result.carbohydrate_percent }}%</td></tr>
+      <tr><td>{% trans "Fat" %}</td><td>{{ macro_result.fat_grams }} g</td><td>{{ macro_result.fat_percent }}%</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<p class="text-muted">{% trans "These are estimates, not exact figures — you'll be able to see how well they're actually working once you've logged some data, and adjust anytime." %}</p>
+
+<form method="post">
+  {% csrf_token %}
+  <button type="submit">{% trans "Save and start tracking" %}</button>
+</form>
+{% endblock %}

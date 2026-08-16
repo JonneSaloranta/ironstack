@@ -16,3 +16,10 @@ djangorestframework>=3.18.0,<3.19
 # in the page, no separate image endpoint).
 pyotp>=2.9,<3.0
 qrcode[pil]>=8.0,<9.0
+# apps.nutrition.openfoodfacts — on-demand product lookups against
+# OpenFoodFacts' public JSON API (docs/NUTRITION.md "OpenFoodFacts
+# integration"). No existing project code does outbound HTTP to a JSON
+# API; hand-rolling this on urllib would just reimplement a worse,
+# unmaintained version of what requests already does well (timeouts,
+# JSON decoding, connection pooling).
+requests>=2.32,<3.0

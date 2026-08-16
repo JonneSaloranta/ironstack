@@ -5,10 +5,16 @@ one place a goal or target row ever gets closed out.
 """
 
 from django.db import transaction
+from django.db.models import Q
 from django.utils import timezone
 
-from . import energy, macros
-from .models import NutritionGoal, NutritionTarget, TargetSource
+from . import energy, macros, openfoodfacts
+from .models import Food, NutritionGoal, NutritionTarget, OpenFoodFactsSettings, TargetSource
+
+# See docs/NUTRITION.md "OpenFoodFacts integration" — the interval a
+# food imported from OFF is trusted before being transparently
+# re-fetched on next use, instead of a periodic bulk re-sync.
+OPENFOODFACTS_STALENESS_DAYS = 14
 
 
 @transaction.atomic
@@ -100,3 +106,73 @@ def apply_adjustment_suggestion(user, suggestion):
         source=TargetSource.ADJUSTED,
         reason=suggestion.reason,
     )
+
+
+def _food_is_stale(food):
+    if food.off_synced_at is None:
+        return True
+    return (timezone.now() - food.off_synced_at).days >= OPENFOODFACTS_STALENESS_DAYS
+
+
+def import_or_refresh_food_from_off(barcode):
+    """Creates a shared (`owner=None`) `Food` row from OpenFoodFacts,
+    or refreshes an existing one if it's gone stale — see
+    docs/NUTRITION.md "OpenFoodFacts integration": staleness-triggered
+    refresh on next use, not a periodic bulk re-sync. Returns `None`
+    if the integration is turned off (OpenFoodFactsSettings) or OFF
+    has nothing usable for this barcode."""
+    if not OpenFoodFactsSettings.load().enabled:
+        return None
+
+    existing = Food.objects.filter(off_id=barcode).first()
+    if existing is not None and not _food_is_stale(existing):
+        return existing
+
+    try:
+        raw = openfoodfacts.get_product(barcode)
+    except openfoodfacts.OpenFoodFactsError:
+        # A flaky third-party API must never break a lookup that
+        # already has a (merely stale) local row to fall back on.
+        return existing
+    if raw is None:
+        return existing
+
+    parsed = openfoodfacts.parse_product(raw)
+    if parsed is None:
+        return existing
+
+    parsed["off_synced_at"] = timezone.now()
+    if existing is not None:
+        for field, value in parsed.items():
+            setattr(existing, field, value)
+        existing.save()
+        return existing
+    return Food.objects.create(owner=None, **parsed)
+
+
+def search_foods(user, query):
+    """Local foods (the user's own + shared/imported) matching
+    `query`, plus live OpenFoodFacts search results merged in. OFF
+    results aren't imported just for appearing in this list — only
+    `import_or_refresh_food_from_off` (called once the caller actually
+    picks one) ever creates or updates a `Food` row, so a search that
+    finds nothing useful leaves no trace."""
+    local = list(
+        Food.objects.filter(Q(owner=user) | Q(owner__isnull=True), active=True)
+        .filter(name__icontains=query)
+        .order_by("name")
+    )
+    off_results = []
+    if OpenFoodFactsSettings.load().enabled:
+        try:
+            off_results = [
+                parsed
+                for raw in openfoodfacts.search_products(query)
+                if (parsed := openfoodfacts.parse_product(raw)) is not None
+                # Skip anything already imported locally — no point
+                # offering to "import" a food that's already there.
+                and not Food.objects.filter(off_id=parsed["off_id"]).exists()
+            ]
+        except openfoodfacts.OpenFoodFactsError:
+            off_results = []
+    return local, off_results

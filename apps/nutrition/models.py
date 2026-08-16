@@ -171,8 +171,16 @@ class NutritionTarget(TimeStampedModel):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL, related_name="nutrition_targets", on_delete=models.CASCADE
     )
+    # CASCADE, not PROTECT: a goal and its targets always belong to
+    # the same user and are only ever deleted together (deleting the
+    # user cascades to both) — PROTECT would block exactly that
+    # cascade, since Django's deletion collector checks a PROTECT
+    # relation before resolving whether the referencer is also being
+    # deleted in the same operation. There is no scenario where a
+    # goal should survive its own targets being deleted, or vice
+    # versa.
     goal = models.ForeignKey(
-        NutritionGoal, related_name="targets", on_delete=models.PROTECT, null=True, blank=True
+        NutritionGoal, related_name="targets", on_delete=models.CASCADE, null=True, blank=True
     )
     daily_calories = models.PositiveIntegerField()
     protein_grams = models.DecimalField(max_digits=6, decimal_places=2)
@@ -244,11 +252,12 @@ class MealSlot(models.Model):
 
 class Food(TimeStampedModel):
     """A trackable food, with nutrition values per `serving_size` of
-    `serving_unit`. `owner` nullable for the same reason as
-    MealSlot/MeasurementType: every v1 food is user-created, but a
-    future shared/imported food library (out of scope for this pass —
-    see docs/NUTRITION.md "Food") can populate owner=None rows without
-    a schema change."""
+    `serving_unit`. `owner` nullable, matching MealSlot/
+    MeasurementType's system-or-custom split: a user-created food has
+    `owner=request.user`; a food imported from OpenFoodFacts
+    (apps.nutrition.openfoodfacts, docs/NUTRITION.md "OpenFoodFacts
+    integration") gets `owner=None` — a shared row every user can see
+    and log, the same as a system MeasurementType."""
 
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -273,6 +282,15 @@ class Food(TimeStampedModel):
         max_digits=6, decimal_places=2, null=True, blank=True
     )
     sodium_mg = models.PositiveIntegerField(null=True, blank=True)
+    # Set only for a food imported from OpenFoodFacts — their own
+    # barcode, unique when present (Postgres allows any number of
+    # NULLs alongside a unique constraint, so this stays optional for
+    # every user-created food). off_synced_at drives the staleness
+    # check apps.nutrition.services.import_or_refresh_food_from_off
+    # uses to decide whether to re-fetch before this food is next
+    # used, rather than a periodic bulk re-sync.
+    off_id = models.CharField(max_length=64, null=True, blank=True, unique=True)
+    off_synced_at = models.DateTimeField(null=True, blank=True)
     active = models.BooleanField(default=True)
 
     class Meta:
@@ -305,7 +323,13 @@ class RecipeIngredient(models.Model):
     uses — one function, not two copies of the same math."""
 
     recipe = models.ForeignKey(Recipe, related_name="ingredients", on_delete=models.CASCADE)
-    food = models.ForeignKey(Food, related_name="+", on_delete=models.PROTECT)
+    # CASCADE, not PROTECT: same reasoning as NutritionTarget.goal
+    # above — a food and the recipe ingredients that reference it are
+    # very often owned by the same user, so deleting that user cascades
+    # to both at once, and PROTECT would block exactly that cascade.
+    # Retiring a Food a normal user shouldn't touch is `active=False`
+    # (soft-delete), not a hard delete this FK needs to guard against.
+    food = models.ForeignKey(Food, related_name="+", on_delete=models.CASCADE)
     quantity = models.DecimalField(max_digits=8, decimal_places=2)
     order = models.PositiveSmallIntegerField(default=0)
 
@@ -326,12 +350,13 @@ class DiaryEntry(TimeStampedModel):
         settings.AUTH_USER_MODEL, related_name="diary_entries", on_delete=models.CASCADE
     )
     date = models.DateField(db_index=True)
-    meal_slot = models.ForeignKey(MealSlot, related_name="+", on_delete=models.PROTECT)
+    # CASCADE throughout — see RecipeIngredient.food's own comment.
+    meal_slot = models.ForeignKey(MealSlot, related_name="+", on_delete=models.CASCADE)
     food = models.ForeignKey(
-        Food, related_name="diary_entries", null=True, blank=True, on_delete=models.PROTECT
+        Food, related_name="diary_entries", null=True, blank=True, on_delete=models.CASCADE
     )
     recipe = models.ForeignKey(
-        Recipe, related_name="diary_entries", null=True, blank=True, on_delete=models.PROTECT
+        Recipe, related_name="diary_entries", null=True, blank=True, on_delete=models.CASCADE
     )
     # Grams/ml/pieces for a food entry, servings for a recipe entry.
     quantity = models.DecimalField(max_digits=8, decimal_places=2)
@@ -390,7 +415,8 @@ class DietPlan(TimeStampedModel):
 
 class DietPlanMeal(models.Model):
     diet_plan = models.ForeignKey(DietPlan, related_name="meals", on_delete=models.CASCADE)
-    meal_slot = models.ForeignKey(MealSlot, related_name="+", on_delete=models.PROTECT)
+    # CASCADE — see RecipeIngredient.food's own comment.
+    meal_slot = models.ForeignKey(MealSlot, related_name="+", on_delete=models.CASCADE)
     target_calories = models.PositiveIntegerField()
     order = models.PositiveSmallIntegerField(default=0)
 
@@ -405,11 +431,12 @@ class DietPlanItem(models.Model):
     diet_plan_meal = models.ForeignKey(
         DietPlanMeal, related_name="items", on_delete=models.CASCADE
     )
+    # CASCADE — see RecipeIngredient.food's own comment.
     food = models.ForeignKey(
-        Food, related_name="+", null=True, blank=True, on_delete=models.PROTECT
+        Food, related_name="+", null=True, blank=True, on_delete=models.CASCADE
     )
     recipe = models.ForeignKey(
-        Recipe, related_name="+", null=True, blank=True, on_delete=models.PROTECT
+        Recipe, related_name="+", null=True, blank=True, on_delete=models.CASCADE
     )
     quantity = models.DecimalField(max_digits=8, decimal_places=2)
     order = models.PositiveSmallIntegerField(default=0)
@@ -433,3 +460,29 @@ class DietPlanItem(models.Model):
     def __str__(self):
         item = self.food.name if self.food_id else self.recipe.name
         return f"{self.quantity} {item}"
+
+
+class OpenFoodFactsSettings(models.Model):
+    """Singleton — same pattern as apps.core.models.BackupSettings/
+    FeedbackSettings and apps.accounts.models.SiteDisclaimer. The only
+    way to turn off outbound OpenFoodFacts requests entirely (no
+    internet egress, or an operator's own preference not to call a
+    third-party service from their server) — see docs/NUTRITION.md
+    "OpenFoodFacts integration"."""
+
+    enabled = models.BooleanField(default=True)
+
+    def save(self, *args, **kwargs):
+        self.pk = 1
+        super().save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        pass  # singleton — deleting it would just silently recreate the default on next load()
+
+    @classmethod
+    def load(cls):
+        obj, _created = cls.objects.get_or_create(pk=1)
+        return obj
+
+    def __str__(self):
+        return "OpenFoodFacts settings"
