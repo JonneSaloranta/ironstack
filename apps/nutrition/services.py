@@ -2,7 +2,15 @@
 docs/NUTRITION.md "NutritionGoal"/"NutritionTarget". Views call these,
 never touch the append/supersede logic directly, so there's exactly
 one place a goal or target row ever gets closed out.
+
+Also home to the nutrition-scaling functions (scale_nutrition and
+friends) — these read real Food/Recipe rows and their relations, so
+they belong here rather than in a pure, DB-free module like
+apps.nutrition.energy/macros.
 """
+
+from dataclasses import dataclass
+from decimal import Decimal
 
 from django.db import transaction
 from django.db.models import Q
@@ -176,3 +184,131 @@ def search_foods(user, query):
         except openfoodfacts.OpenFoodFactsError:
             off_results = []
     return local, off_results
+
+
+@dataclass(frozen=True)
+class ScaledNutrition:
+    """One food/recipe amount's nutrition, already scaled to whatever
+    quantity was actually logged — the shape apps.nutrition.services.
+    scale_nutrition/diary_entry_nutrition/recipe_total_nutrition all
+    return, and what the food diary/recipe templates render directly.
+    """
+
+    calories: Decimal
+    protein_grams: Decimal
+    carbohydrate_grams: Decimal
+    fat_grams: Decimal
+    fiber_grams: Decimal | None
+    sugar_grams: Decimal | None
+    saturated_fat_grams: Decimal | None
+    sodium_mg: Decimal | None
+
+    def __add__(self, other):
+        def _add(a, b):
+            if a is None and b is None:
+                return None
+            return (a or Decimal("0")) + (b or Decimal("0"))
+
+        return ScaledNutrition(
+            calories=self.calories + other.calories,
+            protein_grams=self.protein_grams + other.protein_grams,
+            carbohydrate_grams=self.carbohydrate_grams + other.carbohydrate_grams,
+            fat_grams=self.fat_grams + other.fat_grams,
+            fiber_grams=_add(self.fiber_grams, other.fiber_grams),
+            sugar_grams=_add(self.sugar_grams, other.sugar_grams),
+            saturated_fat_grams=_add(self.saturated_fat_grams, other.saturated_fat_grams),
+            sodium_mg=_add(self.sodium_mg, other.sodium_mg),
+        )
+
+    def scaled_by(self, factor):
+        def _scale(value):
+            return value * factor if value is not None else None
+
+        return ScaledNutrition(
+            calories=self.calories * factor,
+            protein_grams=self.protein_grams * factor,
+            carbohydrate_grams=self.carbohydrate_grams * factor,
+            fat_grams=self.fat_grams * factor,
+            fiber_grams=_scale(self.fiber_grams),
+            sugar_grams=_scale(self.sugar_grams),
+            saturated_fat_grams=_scale(self.saturated_fat_grams),
+            sodium_mg=_scale(self.sodium_mg),
+        )
+
+
+ZERO_NUTRITION = ScaledNutrition(
+    calories=Decimal("0"),
+    protein_grams=Decimal("0"),
+    carbohydrate_grams=Decimal("0"),
+    fat_grams=Decimal("0"),
+    fiber_grams=None,
+    sugar_grams=None,
+    saturated_fat_grams=None,
+    sodium_mg=None,
+)
+
+
+def scale_nutrition(food, quantity) -> ScaledNutrition:
+    """`food`'s own nutrition values, scaled from its `serving_size`
+    to `quantity` (same unit as `food.serving_unit`) — the one place
+    this ratio is computed, reused by recipe totals and a diary entry
+    logging raw food directly (docs/NUTRITION.md "RecipeIngredient")."""
+    ratio = quantity / food.serving_size
+    return ScaledNutrition(
+        calories=Decimal(food.calories) * ratio,
+        protein_grams=food.protein_grams * ratio,
+        carbohydrate_grams=food.carbohydrate_grams * ratio,
+        fat_grams=food.fat_grams * ratio,
+        fiber_grams=food.fiber_grams * ratio if food.fiber_grams is not None else None,
+        sugar_grams=food.sugar_grams * ratio if food.sugar_grams is not None else None,
+        saturated_fat_grams=(
+            food.saturated_fat_grams * ratio if food.saturated_fat_grams is not None else None
+        ),
+        sodium_mg=food.sodium_mg * ratio if food.sodium_mg is not None else None,
+    )
+
+
+def recipe_total_nutrition(recipe) -> ScaledNutrition:
+    """Sum of every ingredient's own scaled nutrition."""
+    total = ZERO_NUTRITION
+    for ingredient in recipe.ingredients.select_related("food"):
+        total = total + scale_nutrition(ingredient.food, ingredient.quantity)
+    return total
+
+
+def recipe_per_serving_nutrition(recipe) -> ScaledNutrition:
+    servings = Decimal(recipe.servings) if recipe.servings else Decimal("1")
+    return recipe_total_nutrition(recipe).scaled_by(Decimal("1") / servings)
+
+
+def diary_entry_nutrition(entry) -> ScaledNutrition:
+    """A single DiaryEntry's nutrition — dispatches on whichever of
+    `food`/`recipe` is set (the model's own CheckConstraint guarantees
+    exactly one is). `quantity` means the food's own unit for a food
+    entry, servings for a recipe entry."""
+    if entry.food_id:
+        return scale_nutrition(entry.food, entry.quantity)
+    return recipe_per_serving_nutrition(entry.recipe).scaled_by(entry.quantity)
+
+
+def daily_totals(user, target_date) -> ScaledNutrition:
+    """Every DiaryEntry logged for `user` on `target_date`, summed —
+    the figure the food diary's "today so far" header shows."""
+    from .models import DiaryEntry
+
+    total = ZERO_NUTRITION
+    entries = DiaryEntry.objects.filter(user=user, date=target_date).select_related(
+        "food", "recipe"
+    )
+    for entry in entries:
+        total = total + diary_entry_nutrition(entry)
+    return total
+
+
+def visible_meal_slots(user):
+    """System defaults + this user's own, active only — same
+    system-or-custom visibility rule as apps.measurements.services.
+    visible_to."""
+    from .models import MealSlot
+
+    return MealSlot.objects.filter(Q(owner=user) | Q(owner__isnull=True), active=True)

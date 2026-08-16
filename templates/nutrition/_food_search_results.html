@@ -1,0 +1,51 @@
+{% load i18n %}
+<div id="food-search-results">
+  {% if query %}
+    {% if local %}
+      <h3>{% trans "Your foods" %}</h3>
+      {% for food in local %}
+        <form class="card card-action-row" method="post" action="{% url 'nutrition:diary-add-entry' %}">
+          {% csrf_token %}
+          <input type="hidden" name="food_id" value="{{ food.pk }}">
+          <input type="hidden" name="meal_slot" value="{{ meal_slot_id }}">
+          <input type="hidden" name="date" value="{{ date }}">
+          <div>
+            <strong>{{ food.name }}</strong>
+            <p class="text-muted">{{ food.calories }} kcal / {{ food.serving_size }} {{ food.serving_unit }}</p>
+          </div>
+          <div style="display:flex; gap:0.5rem; align-items:center;">
+            <input type="number" name="quantity" step="0.01" value="{{ food.serving_size }}" style="width:5rem;" aria-label="{% trans "Quantity" %}">
+            <button type="submit">{% trans "Add" %}</button>
+          </div>
+        </form>
+      {% endfor %}
+    {% endif %}
+
+    {% if off_results %}
+      <h3>{% trans "From OpenFoodFacts" %}</h3>
+      {% for product in off_results %}
+        <form class="card card-action-row" method="post" action="{% url 'nutrition:diary-add-entry' %}">
+          {% csrf_token %}
+          <input type="hidden" name="off_barcode" value="{{ product.off_id }}">
+          <input type="hidden" name="meal_slot" value="{{ meal_slot_id }}">
+          <input type="hidden" name="date" value="{{ date }}">
+          <div>
+            <strong>{{ product.name }}</strong>{% if product.brand %} <span class="text-muted">({{ product.brand }})</span>{% endif %}
+            <p class="text-muted">{{ product.calories }} kcal / {{ product.serving_size }} {{ product.serving_unit }}</p>
+          </div>
+          <div style="display:flex; gap:0.5rem; align-items:center;">
+            <input type="number" name="quantity" step="0.01" value="{{ product.serving_size }}" style="width:5rem;" aria-label="{% trans "Quantity" %}">
+            <button type="submit">{% trans "Import & add" %}</button>
+          </div>
+        </form>
+      {% endfor %}
+    {% endif %}
+
+    {% if not local and not off_results %}
+      <div class="card empty-state">
+        <p>{% trans "Nothing found." %}</p>
+        <p><a class="button-secondary" href="{% url 'nutrition:food-create' %}">{% trans "Create a custom food" %}</a></p>
+      </div>
+    {% endif %}
+  {% endif %}
+</div>

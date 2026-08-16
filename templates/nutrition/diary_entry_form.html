@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Edit entry" %} — IronStack{% endblock %}
+{% block content %}
+<div class="top-bar">
+  <h1 style="margin:0;">{% if entry.food %}{{ entry.food.name }}{% else %}{{ entry.recipe.name }}{% endif %}</h1>
+</div>
+
+<form class="card" method="post">
+  {% csrf_token %}
+  {{ form.non_field_errors }}
+  {% for field in form %}
+    <div class="field">
+      {{ field.label_tag }}
+      {{ field }}
+      {% if field.errors %}<p class="field-error">{{ field.errors|striptags }}</p>{% endif %}
+    </div>
+  {% endfor %}
+  <button type="submit">{% trans "Save" %}</button>
+</form>
+
+<p><a class="button-secondary" href="{% url 'nutrition:diary-day' target_date=entry.date.isoformat %}">&larr; {% trans "Back to diary" %}</a></p>
+{% endblock %}

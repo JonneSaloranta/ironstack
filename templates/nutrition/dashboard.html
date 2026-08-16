@@ -6,6 +6,23 @@
   <h1 style="margin:0;">{% trans "Nutrition" %}</h1>
 </div>
 
+<div class="card">
+  <strong>{% trans "Today so far" %}</strong>
+  <table class="set-table">
+    <tbody>
+      <tr>
+        <td>{% trans "Calories" %}</td>
+        <td>{{ totals.calories|floatformat:0 }}{% if target %} / {{ target.daily_calories }}{% endif %} kcal</td>
+      </tr>
+      <tr>
+        <td>{% trans "Protein" %}</td>
+        <td>{{ totals.protein_grams|floatformat:0 }}{% if target %} / {{ target.protein_grams|floatformat:0 }}{% endif %} g</td>
+      </tr>
+    </tbody>
+  </table>
+  <a class="button-secondary" href="{% url 'nutrition:diary-day' %}">{% trans "Open food diary" %}</a>
+</div>
+
 {% if target %}
   <div class="card">
     <strong>{% trans "Daily target" %}</strong>

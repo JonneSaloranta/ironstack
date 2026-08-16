@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Food diary" %} — IronStack{% endblock %}
+{% block content %}
+<div class="top-bar">
+  <h1 style="margin:0;">{{ date }}</h1>
+</div>
+
+<div style="display:flex; justify-content:space-between; margin-bottom:1rem;">
+  <a class="button-secondary" href="{% url 'nutrition:diary-day' target_date=previous_date.isoformat %}">&larr; {% trans "Previous day" %}</a>
+  <a class="button-secondary" href="{% url 'nutrition:diary-day' target_date=next_date.isoformat %}">{% trans "Next day" %} &rarr;</a>
+</div>
+
+<div class="card">
+  <strong>{% trans "Today's nutrition" %}</strong>
+  <table class="set-table">
+    <tbody>
+      <tr>
+        <td>{% trans "Calories" %}</td>
+        <td>
+          {% if target %}
+            {{ totals.calories|floatformat:0 }} / {{ target.daily_calories }} kcal
+          {% else %}
+            {{ totals.calories|floatformat:0 }} kcal
+          {% endif %}
+        </td>
+      </tr>
+      <tr>
+        <td>{% trans "Protein" %}</td>
+        <td>{{ totals.protein_grams|floatformat:0 }}{% if target %} / {{ target.protein_grams|floatformat:0 }}{% endif %} g</td>
+      </tr>
+      <tr>
+        <td>{% trans "Carbohydrates" %}</td>
+        <td>{{ totals.carbohydrate_grams|floatformat:0 }}{% if target %} / {{ target.carbohydrate_grams|floatformat:0 }}{% endif %} g</td>
+      </tr>
+      <tr>
+        <td>{% trans "Fat" %}</td>
+        <td>{{ totals.fat_grams|floatformat:0 }}{% if target %} / {{ target.fat_grams|floatformat:0 }}{% endif %} g</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+{% for slot in meal_slots %}
+  <div class="card">
+    <strong>{{ slot.name }}</strong>
+    {% for entry in slot.entries %}
+      <div class="card-action-row" style="padding:0.5rem 0;">
+        <div>
+          <span>{% if entry.food %}{{ entry.food.name }}{% else %}{{ entry.recipe.name }}{% endif %}</span>
+          <span class="text-muted">— {{ entry.quantity }} {{ entry.food.serving_unit|default:"servings" }}, {{ entry.nutrition.calories|floatformat:0 }} kcal</span>
+        </div>
+        <div style="display:flex; gap:0.5rem;">
+          <a class="button-secondary" href="{% url 'nutrition:diary-entry-edit' entry.pk %}">{% trans "Edit" %}</a>
+          <form method="post" action="{% url 'nutrition:diary-entry-delete' entry.pk %}"
+                x-data="{}" @submit="if (!confirm('{% trans "Remove this entry?" %}')) $event.preventDefault()">
+            {% csrf_token %}
+            <button type="submit" class="button-danger">{% trans "Delete" %}</button>
+          </form>
+        </div>
+      </div>
+    {% empty %}
+      <p class="text-muted">{% trans "Nothing logged yet." %}</p>
+    {% endfor %}
+    <a class="button-secondary" href="{% url 'nutrition:diary-add-entry' %}?date={{ date|date:'Y-m-d' }}">{% trans "+ Add food" %}</a>
+  </div>
+{% endfor %}
+
+<p><a class="button-secondary" href="{% url 'nutrition:food-list' %}">{% trans "Manage foods" %}</a></p>
+{% endblock %}

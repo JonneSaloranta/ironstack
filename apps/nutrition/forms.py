@@ -122,3 +122,72 @@ class GoalStepForm(forms.Form):
 DEFAULT_RATES_JSON_SAFE = {
     goal_type.value: str(rate) for goal_type, rate in energy.DEFAULT_RATE_KG_PER_WEEK.items()
 }
+
+
+class FoodForm(forms.ModelForm):
+    """A user's own custom food — see docs/NUTRITION.md "Food". Every
+    nutrition value is *per `serving_size` of `serving_unit`*, not per
+    gram — the label makes that explicit rather than assuming it's
+    obvious."""
+
+    class Meta:
+        from .models import Food
+
+        model = Food
+        fields = [
+            "name",
+            "brand",
+            "serving_size",
+            "serving_unit",
+            "calories",
+            "protein_grams",
+            "carbohydrate_grams",
+            "fat_grams",
+            "fiber_grams",
+            "sugar_grams",
+            "saturated_fat_grams",
+            "sodium_mg",
+        ]
+        help_texts = {
+            "serving_size": _(
+                "All the nutrition values below are for this amount, in the unit chosen "
+                "next to it — e.g. \"100 g\" if the values are per 100 grams."
+            ),
+        }
+
+
+class FoodSearchForm(forms.Form):
+    q = forms.CharField(required=False, label=_("Search foods"))
+
+
+class DiaryAddEntryForm(forms.Form):
+    """Adds one Food (local or freshly imported from OpenFoodFacts) to
+    a specific meal slot on a specific date. Exactly one of `food_id`/
+    `off_barcode` is expected — a local pick vs. an OFF search result
+    the user is importing on the fly (apps.nutrition.services.
+    import_or_refresh_food_from_off)."""
+
+    food_id = forms.IntegerField(required=False, widget=forms.HiddenInput)
+    off_barcode = forms.CharField(required=False, widget=forms.HiddenInput)
+    meal_slot = forms.ModelChoiceField(queryset=None)
+    quantity = forms.DecimalField(max_digits=8, decimal_places=2, min_value=Decimal("0.01"))
+
+    def __init__(self, *args, user, **kwargs):
+        from . import services
+
+        super().__init__(*args, **kwargs)
+        self.fields["meal_slot"].queryset = services.visible_meal_slots(user)
+
+    def clean(self):
+        cleaned = super().clean()
+        if not cleaned.get("food_id") and not cleaned.get("off_barcode"):
+            raise forms.ValidationError(_("Pick a food to add."))
+        return cleaned
+
+
+class DiaryEntryQuantityForm(forms.ModelForm):
+    class Meta:
+        from .models import DiaryEntry
+
+        model = DiaryEntry
+        fields = ["quantity", "notes"]

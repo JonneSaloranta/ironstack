@@ -10,8 +10,10 @@ from datetime import date
 from decimal import Decimal
 
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import redirect, render
-from django.views.generic import View
+from django.http import HttpResponseNotAllowed
+from django.shortcuts import get_object_or_404, redirect, render
+from django.utils import timezone
+from django.views.generic import CreateView, ListView, View
 
 from apps.measurements.models import BodyMeasurement, MeasurementType
 
@@ -21,6 +23,9 @@ from .forms import (
     ActivityInputsForm,
     ActivityLevelConfirmForm,
     BodyStepForm,
+    DiaryAddEntryForm,
+    DiaryEntryQuantityForm,
+    FoodForm,
     GoalStepForm,
 )
 from .models import NutritionProfile, TargetSource
@@ -243,9 +248,12 @@ class OnboardingReviewView(_OnboardingStepView):
 
 
 class NutritionDashboardView(LoginRequiredMixin, View):
-    """Placeholder — filled in properly once the food diary/dashboard
-    phase lands (docs/NUTRITION.md phase 7). For now: redirects a
-    not-yet-onboarded user to the wizard, otherwise a minimal summary."""
+    """Redirects a not-yet-onboarded user to the wizard; otherwise
+    today's calories/macros vs. target (spec section 16 — "how much
+    should I eat today, how much have I eaten"). Training-day
+    awareness and the dynamic-adjustment suggestion card land here in
+    a later phase (docs/NUTRITION.md phases 6/9), once the food diary
+    below has real data behind it."""
 
     def get(self, request):
         if not hasattr(request.user, "nutrition_profile"):
@@ -254,6 +262,217 @@ class NutritionDashboardView(LoginRequiredMixin, View):
 
         goal = NutritionGoal.objects.filter(user=request.user, ended_at__isnull=True).first()
         target = NutritionTarget.objects.filter(user=request.user, ended_at__isnull=True).first()
+        today = timezone.localdate()
+        totals = services.daily_totals(request.user, today)
         return render(
-            request, "nutrition/dashboard.html", {"goal": goal, "target": target}
+            request,
+            "nutrition/dashboard.html",
+            {"goal": goal, "target": target, "totals": totals, "today": today},
         )
+
+
+class FoodListView(LoginRequiredMixin, ListView):
+    template_name = "nutrition/food_list.html"
+    context_object_name = "foods"
+    paginate_by = 50
+
+    def get_queryset(self):
+        from django.db.models import Q
+
+        from .models import Food
+
+        qs = Food.objects.filter(
+            Q(owner=self.request.user) | Q(owner__isnull=True), active=True
+        ).order_by("name")
+        query = self.request.GET.get("q", "").strip()
+        if query:
+            qs = qs.filter(name__icontains=query)
+        return qs
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["query"] = self.request.GET.get("q", "")
+        return context
+
+
+class FoodCreateView(LoginRequiredMixin, CreateView):
+    form_class = FoodForm
+    template_name = "nutrition/food_form.html"
+
+    def form_valid(self, form):
+        form.instance.owner = self.request.user
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        from django.urls import reverse
+
+        return reverse("nutrition:food-list")
+
+
+class FoodSearchResultsView(LoginRequiredMixin, View):
+    """HTMX partial — local + live OpenFoodFacts results for the
+    add-to-diary search box (apps.nutrition.services.search_foods)."""
+
+    template_name = "nutrition/_food_search_results.html"
+
+    def get(self, request):
+        query = request.GET.get("q", "").strip()
+        target_date = request.GET.get("date", "")
+        meal_slot_id = request.GET.get("meal_slot", "")
+        local, off_results = ([], []) if not query else services.search_foods(request.user, query)
+        return render(
+            request,
+            self.template_name,
+            {
+                "local": local,
+                "off_results": off_results,
+                "date": target_date,
+                "meal_slot_id": meal_slot_id,
+                "query": query,
+            },
+        )
+
+
+def _parse_diary_date(value):
+    if not value:
+        return timezone.localdate()
+    try:
+        return date.fromisoformat(value)
+    except ValueError:
+        return timezone.localdate()
+
+
+class DiaryDayView(LoginRequiredMixin, View):
+    """The food diary for one day, grouped by meal slot — spec section
+    8: add/edit/remove a food, see calories and macros, see how much
+    is left against today's target."""
+
+    template_name = "nutrition/diary_day.html"
+
+    def get(self, request, target_date=None):
+        from .models import DiaryEntry, NutritionTarget
+
+        target_date = _parse_diary_date(target_date)
+        # A plain list, not a queryset, from here on: each slot gets
+        # its own `.entries` attribute below so the template can do a
+        # simple `{% for entry in slot.entries %}` — Django templates
+        # have no clean way to look a dict up by a *variable* key
+        # (`entries_by_slot[slot.pk]`) without a custom filter, so the
+        # entries are attached directly to the objects that already
+        # carry the right key instead.
+        meal_slots = list(services.visible_meal_slots(request.user))
+        entries = (
+            DiaryEntry.objects.filter(user=request.user, date=target_date)
+            .select_related("food", "recipe", "meal_slot")
+            .order_by("meal_slot__order", "created_at")
+        )
+        entries_by_slot_id = {slot.pk: [] for slot in meal_slots}
+        for entry in entries:
+            entry.nutrition = services.diary_entry_nutrition(entry)
+            entries_by_slot_id.setdefault(entry.meal_slot_id, []).append(entry)
+        for slot in meal_slots:
+            slot.entries = entries_by_slot_id.get(slot.pk, [])
+
+        totals = services.daily_totals(request.user, target_date)
+        target = NutritionTarget.objects.filter(
+            user=request.user, ended_at__isnull=True
+        ).first()
+
+        return render(
+            request,
+            self.template_name,
+            {
+                "date": target_date,
+                "previous_date": target_date - timezone.timedelta(days=1),
+                "next_date": target_date + timezone.timedelta(days=1),
+                "meal_slots": meal_slots,
+                "totals": totals,
+                "target": target,
+            },
+        )
+
+
+class DiaryAddEntryView(LoginRequiredMixin, View):
+    template_name = "nutrition/diary_add_entry.html"
+
+    def get(self, request):
+        target_date = request.GET.get("date", "")
+        return render(
+            request,
+            self.template_name,
+            {
+                "date": target_date or timezone.localdate().isoformat(),
+                "meal_slots": services.visible_meal_slots(request.user),
+            },
+        )
+
+    def post(self, request):
+        from .models import DiaryEntry, Food
+
+        form = DiaryAddEntryForm(request.POST, user=request.user)
+        target_date = _parse_diary_date(request.POST.get("date"))
+        if not form.is_valid():
+            return render(
+                request,
+                self.template_name,
+                {
+                    "form": form,
+                    "date": target_date.isoformat(),
+                    "meal_slots": services.visible_meal_slots(request.user),
+                },
+            )
+
+        food = None
+        if form.cleaned_data.get("food_id"):
+            food = get_object_or_404(
+                Food.objects.filter(active=True), pk=form.cleaned_data["food_id"]
+            )
+        elif form.cleaned_data.get("off_barcode"):
+            food = services.import_or_refresh_food_from_off(form.cleaned_data["off_barcode"])
+            if food is None:
+                form.add_error(None, "That food couldn't be imported — try again.")
+                return render(
+                    request,
+                    self.template_name,
+                    {
+                        "form": form,
+                        "date": target_date.isoformat(),
+                        "meal_slots": services.visible_meal_slots(request.user),
+                    },
+                )
+
+        DiaryEntry.objects.create(
+            user=request.user,
+            date=target_date,
+            meal_slot=form.cleaned_data["meal_slot"],
+            food=food,
+            quantity=form.cleaned_data["quantity"],
+        )
+        return redirect("nutrition:diary-day", target_date=target_date.isoformat())
+
+
+def _owned_diary_entry_or_404(request, pk):
+    from .models import DiaryEntry
+
+    return get_object_or_404(DiaryEntry, pk=pk, user=request.user)
+
+
+def diary_entry_edit(request, pk):
+    entry = _owned_diary_entry_or_404(request, pk)
+    if request.method == "POST":
+        form = DiaryEntryQuantityForm(request.POST, instance=entry)
+        if form.is_valid():
+            form.save()
+            return redirect("nutrition:diary-day", target_date=entry.date.isoformat())
+    else:
+        form = DiaryEntryQuantityForm(instance=entry)
+    return render(request, "nutrition/diary_entry_form.html", {"form": form, "entry": entry})
+
+
+def diary_entry_delete(request, pk):
+    if request.method != "POST":
+        return HttpResponseNotAllowed(["POST"])
+    entry = _owned_diary_entry_or_404(request, pk)
+    target_date = entry.date
+    entry.delete()
+    return redirect("nutrition:diary-day", target_date=target_date.isoformat())

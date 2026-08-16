@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Add food" %} — IronStack{% endblock %}
+{% block content %}
+<div class="top-bar">
+  <h1 style="margin:0;">{% trans "Add food" %}</h1>
+</div>
+
+{% if form.non_field_errors %}
+  <p class="field-error">{{ form.non_field_errors|striptags }}</p>
+{% endif %}
+
+<div class="card">
+  <div class="field">
+    <label for="id_meal_slot">{% trans "Meal" %}</label>
+    <select id="id_meal_slot" name="meal_slot"
+            hx-get="{% url 'nutrition:food-search' %}"
+            hx-trigger="change"
+            hx-target="#food-search-results"
+            hx-include="#id_q"
+            hx-vals='{"date": "{{ date }}"}'
+            hx-swap="outerHTML">
+      {% for slot in meal_slots %}
+        <option value="{{ slot.pk }}">{{ slot.name }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="field">
+    <label for="id_q">{% trans "Search foods" %}</label>
+    <input type="text" id="id_q" name="q"
+           hx-get="{% url 'nutrition:food-search' %}"
+           hx-trigger="keyup changed delay:400ms"
+           hx-target="#food-search-results"
+           hx-include="#id_meal_slot"
+           hx-vals='{"date": "{{ date }}"}'
+           hx-swap="outerHTML"
+           autocomplete="off"
+           placeholder="{% trans "e.g. chicken breast" %}">
+  </div>
+</div>
+
+<div id="food-search-results"></div>
+
+<p><a class="button-secondary" href="{% url 'nutrition:diary-day' target_date=date %}">&larr; {% trans "Back to diary" %}</a></p>
+{% endblock %}
