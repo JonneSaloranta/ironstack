@@ -39,6 +39,21 @@ UI:
 - accessibility
 - loading/error/empty states
 
+## v2 — Nutrition
+
+**Explicitly requested, in progress — see `docs/NUTRITION.md`.** Moved
+out of "future possibilities" below (where it sat as "do not implement
+merely because the architecture allows it") once it stopped being
+hypothetical.
+
+- calorie/macro needs estimate (BMR/TDEE) and goal-based targets
+- fat-loss/maintenance/muscle-gain goals with a chosen rate, historized
+- food diary, meals, recipes
+- guided diet-plan builder
+- weight-trend-based calorie adjustment suggestions
+- a nutrition dashboard, integrated with existing body-weight tracking
+  and (where the data supports it) training-day awareness
+
 ## Future possibilities
 
 Architecture may later support:
@@ -47,7 +62,7 @@ Architecture may later support:
 - Google Fit
 - smartwatch integrations
 - native mobile clients
-- nutrition
+- an external food/barcode database integration
 - advanced statistical models
 - additional progression algorithms
 

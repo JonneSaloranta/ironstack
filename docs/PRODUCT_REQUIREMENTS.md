@@ -21,6 +21,13 @@ The application must allow a user to:
 15. log non-gym activities manually
 16. view extensive analytics
 17. use the system comfortably on mobile and desktop
+18. know an explainable estimate of their daily calorie/macro needs
+19. set a fat-loss, maintenance, or muscle-gain goal at a chosen rate
+20. log food, meals, and recipes against calorie/macro targets
+21. build a diet plan matching a calorie/macro/meal-count target
+22. see whether their actual weight trend matches their goal, and
+    receive an explainable, non-forced calorie adjustment suggestion
+    when it doesn't (`docs/NUTRITION.md`)
 
 ## Explicitly out of scope for v1
 
@@ -29,13 +36,16 @@ Do not implement unless explicitly requested:
 - Apple Health integration
 - Google Fit integration
 - smartwatch integrations
-- nutrition tracking
-- calorie tracking as a food diary
 - social network
 - public profiles
 - messaging
 - subscriptions
 - advertisements
+
+**Nutrition/calorie tracking was on this list through v1 ("do not
+implement unless explicitly requested") — it was explicitly requested
+for v2, see `docs/NUTRITION.md`, so items 18-22 above are now real
+requirements, not a future possibility.**
 
 ## UX priorities
 
