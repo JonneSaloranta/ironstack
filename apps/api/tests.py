@@ -478,16 +478,13 @@ class ApiKeyManagementViewTests(TestCase):
         response = self.client.get(reverse("api_keys:key-list"))
         self.assertEqual(response.status_code, 302)
 
-    def test_the_key_list_page_shows_api_documentation(self):
+    def test_the_key_list_page_shows_api_documentation_with_the_real_host(self):
         """The "?" help button's modal (templates/api/key_list.html)
-        — base URL/curl/Python examples use a plain example.com
-        placeholder (not this request's own host — a self-hosted
-        deployment's real domain isn't necessarily what a reader
-        should paste verbatim, and host detection behind whatever
-        reverse proxy setup a given install uses isn't reliable enough
-        to build copy-paste examples on)."""
-        response = self.client.get(reverse("api_keys:key-list"))
-        self.assertContains(response, "https://example.com/api/v1/")
+        — the base-URL/curl/Python examples show this deployment's
+        actual host (request.scheme/get_host), not a placeholder, so
+        they're copy-pasteable as-is."""
+        response = self.client.get(reverse("api_keys:key-list"), SERVER_NAME="ironstack.example")
+        self.assertContains(response, "http://ironstack.example/api/v1/")
         self.assertContains(response, "curl")
         self.assertContains(response, "import requests")
 

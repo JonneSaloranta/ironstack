@@ -2426,3 +2426,26 @@ English as intended, and the base URL in every example read the real
 New test asserts the same thing with an explicit `SERVER_NAME`
 override, so a future change can't silently reintroduce a hardcoded
 placeholder host without a test noticing.
+
+## API docs modal: example.com, then back to the real host
+
+Two follow-up requests on the same modal, in opposite directions.
+First: swap the auto-detected `request.scheme`/`request.get_host()`
+base URL for a static `https://example.com` placeholder, and append a
+full endpoint-by-context reference table to the end of the modal
+(matching `docs/API.md`'s own Endpoints table) — both done, the
+endpoints table straightforwardly, the host swapped in all four
+places it appeared (base URL, both curl examples, the Python `BASE`
+constant), the one regression test updated to match. Then, one message
+later: "was the domain auto-detected before — if so, restore that."
+It was, so it's restored — reverted the same four spots back to
+`{{ request.scheme }}://{{ request.get_host }}`, and the test back to
+asserting the real (test-overridden) host appears, not a fixed string.
+The endpoint reference table added alongside the first change stays —
+that part of the request was never in question. `docs/API.md`'s own
+description of the modal ("using this deployment's own real host, not
+a placeholder") and the CHANGELOG's ("this deployment's own real
+address") both happened to already describe the reverted-to behavior
+correctly, having never been rewritten to describe the placeholder in
+between — so no doc text needed correcting this time, just the
+template and its test.

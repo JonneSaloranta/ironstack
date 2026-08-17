@@ -22,7 +22,7 @@
       <div class="modal-body">
         <h3>{% trans "Base URL" %}</h3>
         <p>{% trans "Every endpoint lives under:" %}</p>
-        <pre><code>https://example.com/api/v1/</code></pre>
+        <pre><code>{{ request.scheme }}://{{ request.get_host }}/api/v1/</code></pre>
 
         <h3>{% trans "Authentication" %}</h3>
         <p>{% trans "Send your key's secret (shown only once, right after you create it) as a Bearer token on every request:" %}</p>
@@ -35,12 +35,12 @@
         <p>{% trans "Always canonical: weight in kilograms, length in meters, energy in kcal — never converted to your own display-unit preference, so a script can rely on one meaning regardless of who's asking." %}</p>
 
         <h3>{% trans "Example: reading your profile (curl)" %}</h3>
-        <pre><code>curl https://example.com/api/v1/profile/ \
+        <pre><code>curl {{ request.scheme }}://{{ request.get_host }}/api/v1/profile/ \
   -H "Authorization: Bearer isk_your_secret_here"</code></pre>
 
         <h3>{% trans "Example: creating something (curl)" %}</h3>
         <p>{% trans "A POST with a JSON body — this adds a food to your library:" %}</p>
-        <pre><code>curl -X POST https://example.com/api/v1/foods/ \
+        <pre><code>curl -X POST {{ request.scheme }}://{{ request.get_host }}/api/v1/foods/ \
   -H "Authorization: Bearer isk_your_secret_here" \
   -H "Content-Type: application/json" \
   -d '{"name": "Chicken breast", "serving_size": "100",
@@ -51,7 +51,7 @@
         <h3>{% trans "Example: Python" %}</h3>
         <pre><code>import requests
 
-BASE = "https://example.com/api/v1/"
+BASE = "{{ request.scheme }}://{{ request.get_host }}/api/v1/"
 headers = {"Authorization": "Bearer isk_your_secret_here"}
 
 # Read
