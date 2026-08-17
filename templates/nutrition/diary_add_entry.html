@@ -10,6 +10,8 @@
   <p class="field-error">{{ form.non_field_errors|striptags }}</p>
 {% endif %}
 
+{% include "nutrition/_most_used_foods.html" with mode="diary" date=date meal_slots=meal_slots %}
+
 <div class="card" x-data="ironstackBarcodeScanner()">
   <div class="field">
     <label for="id_meal_slot">{% trans "Meal" %}</label>

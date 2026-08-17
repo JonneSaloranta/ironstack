@@ -47,6 +47,8 @@ urlpatterns = [
     path("diary/entries/<int:pk>/edit/", views.diary_entry_edit, name="diary-entry-edit"),
     path("diary/entries/<int:pk>/delete/", views.diary_entry_delete, name="diary-entry-delete"),
     path("diary/<str:target_date>/", views.DiaryDayView.as_view(), name="diary-day"),
+    path("diary/<str:source_date>/copy/", views.diary_day_copy, name="diary-day-copy"),
+    path("stats/", views.NutritionStatsView.as_view(), name="stats"),
     path("recipes/", views.RecipeListView.as_view(), name="recipe-list"),
     path("recipes/new/", views.recipe_create, name="recipe-create"),
     path("recipes/<int:pk>/", views.RecipeDetailView.as_view(), name="recipe-detail"),
@@ -57,6 +59,11 @@ urlpatterns = [
         "recipes/<int:recipe_pk>/ingredients/new/",
         views.recipe_ingredient_create,
         name="recipe-ingredient-create",
+    ),
+    path(
+        "recipes/<int:recipe_pk>/ingredients/<int:pk>/edit/",
+        views.recipe_ingredient_edit,
+        name="recipe-ingredient-edit",
     ),
     path(
         "recipes/<int:recipe_pk>/ingredients/<int:pk>/delete/",

@@ -927,8 +927,22 @@ msgstr "Eesmärk: %(target)s kg/nädal. Tegelik trend: %(actual)s kg/nädal — 
 msgid "Target: %(target)s kg/week. Actual trend: %(actual)s kg/week over the last %(days)s days. Suggested adjustment: %(delta)+d kcal/day."
 msgstr "Eesmärk: %(target)s kg/nädal. Tegelik trend: %(actual)s kg/nädal viimase %(days)s päeva jooksul. Soovitatud kohandus: %(delta)+d kcal/päevas."
 
+msgid "Pick a date to copy this day to."
+msgstr "Vali kuupäev, kuhu see päev kopeerida."
+
+msgid "Copied %(count)d entry to %(date)s."
+msgid_plural "Copied %(count)d entries to %(date)s."
+msgstr[0] "Kopeeriti %(count)d kirje kuupäevale %(date)s."
+msgstr[1] "Kopeeriti %(count)d kirjet kuupäevale %(date)s."
+
+msgid "Nothing to copy — that day has no entries."
+msgstr "Pole midagi kopeerida — sellel päeval pole kirjeid."
+
 msgid "That food couldn't be imported — try again."
 msgstr "Seda toitu ei õnnestunud importida — proovi uuesti."
+
+msgid "\"%(name)s\" created — now add its ingredients below."
+msgstr "\"%(name)s\" loodud — lisa selle koostisosad allpool."
 
 msgid "Save as a personal template"
 msgstr "Salvesta isikliku mallina"
@@ -1936,6 +1950,12 @@ msgstr "Midagi ei leitud."
 msgid "Create a custom food"
 msgstr "Loo kohandatud toit"
 
+msgid "Most used"
+msgstr "Enim kasutatud"
+
+msgid "+ Add"
+msgstr "+ Lisa"
+
 msgid "Nutri-Score %(grade)s"
 msgstr "Nutri-Score %(grade)s"
 
@@ -2080,6 +2100,9 @@ msgstr "Retseptid"
 msgid "Diet plans"
 msgstr "Toitumisplaanid"
 
+msgid "Statistics"
+msgstr "Statistika"
+
 msgid "Add food"
 msgstr "Lisa toit"
 
@@ -2109,6 +2132,15 @@ msgstr "Veel pole midagi logitud."
 
 msgid "+ Add food"
 msgstr "+ Lisa toit"
+
+msgid "Copy this day to another date"
+msgstr "Kopeeri see päev teisele kuupäevale"
+
+msgid "Copy to date"
+msgstr "Kopeeri kuupäevale"
+
+msgid "Copy"
+msgstr "Kopeeri"
 
 msgid "Manage foods"
 msgstr "Halda toite"
@@ -2284,6 +2316,21 @@ msgstr "Kokku"
 msgid "Per serving (of %(servings)s)"
 msgstr "Portsjoni kohta (%(servings)s-st)"
 
+msgid "Fiber"
+msgstr "Kiudained"
+
+msgid "Sugar"
+msgstr "Suhkur"
+
+msgid "Saturated fat"
+msgstr "Küllastunud rasv"
+
+msgid "Sodium"
+msgstr "Naatrium"
+
+msgid "Fiber, sugar, saturated fat, and sodium show here once at least one ingredient has that data (e.g. imported from OpenFoodFacts)."
+msgstr "Kiudained, suhkur, küllastunud rasv ja naatrium kuvatakse siin, kui vähemalt ühel koostisosal on need andmed (nt OpenFoodFactsist imporditud)."
+
 msgid "Log to diary"
 msgstr "Logi päevikusse"
 
@@ -2305,17 +2352,53 @@ msgstr "Muuda retsepti"
 msgid "New recipe"
 msgstr "Uus retsept"
 
-msgid "Add ingredient to %(name)s"
-msgstr "Lisa koostisosa retseptile %(name)s"
+msgid "Edit ingredient"
+msgstr "Muuda koostisosa"
 
 msgid "Back to recipe"
 msgstr "Tagasi retsepti juurde"
 
+msgid "Add ingredient to %(name)s"
+msgstr "Lisa koostisosa retseptile %(name)s"
+
 msgid "+ New recipe"
 msgstr "+ Uus retsept"
 
+msgid "%(calories)s kcal/serving"
+msgstr "%(calories)s kcal/portsjon"
+
+msgid "No recipes match your search."
+msgstr "Otsingule ei vastanud ühtegi retsepti."
+
 msgid "No recipes yet."
 msgstr "Veel pole retsepte."
+
+msgid "Nutrition statistics"
+msgstr "Toitumise statistika"
+
+msgid "Days logged"
+msgstr "Logitud päevi"
+
+msgid "Average calories"
+msgstr "Keskmine kalorikogus"
+
+msgid "Average protein"
+msgstr "Keskmine valk"
+
+msgid "Average carbohydrates"
+msgstr "Keskmised süsivesikud"
+
+msgid "Average fat"
+msgstr "Keskmine rasv"
+
+msgid "Averages only count days you actually logged something — a day with nothing logged isn't counted as zero calories."
+msgstr "Keskmised arvestavad ainult päevi, mil sa tegelikult midagi logisid — päeva, mil midagi ei logitud, ei loeta null kalori päevaks."
+
+msgid "Daily calories (last 30 days)"
+msgstr "Päevased kalorid (viimased 30 päeva)"
+
+msgid "Log a few days in your food diary to see your trend here."
+msgstr "Logi mõni päev oma toidupäevikusse, et näha siin oma trendi."
 
 msgid "Add exercise"
 msgstr "Lisa harjutus"

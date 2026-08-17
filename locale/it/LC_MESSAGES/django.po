@@ -927,8 +927,22 @@ msgstr "Obiettivo: %(target)s kg/settimana. Tendenza effettiva: %(actual)s kg/se
 msgid "Target: %(target)s kg/week. Actual trend: %(actual)s kg/week over the last %(days)s days. Suggested adjustment: %(delta)+d kcal/day."
 msgstr "Obiettivo: %(target)s kg/settimana. Tendenza effettiva: %(actual)s kg/settimana negli ultimi %(days)s giorni. Regolazione suggerita: %(delta)+d kcal/giorno."
 
+msgid "Pick a date to copy this day to."
+msgstr "Scegli una data in cui copiare questo giorno."
+
+msgid "Copied %(count)d entry to %(date)s."
+msgid_plural "Copied %(count)d entries to %(date)s."
+msgstr[0] "Copiata %(count)d voce in %(date)s."
+msgstr[1] "Copiate %(count)d voci in %(date)s."
+
+msgid "Nothing to copy — that day has no entries."
+msgstr "Niente da copiare — quel giorno non ha voci."
+
 msgid "That food couldn't be imported — try again."
 msgstr "Non è stato possibile importare questo alimento — riprova."
+
+msgid "\"%(name)s\" created — now add its ingredients below."
+msgstr "\"%(name)s\" creata — aggiungi ora i suoi ingredienti qui sotto."
 
 msgid "Save as a personal template"
 msgstr "Salva come modello personale"
@@ -1936,6 +1950,12 @@ msgstr "Nessun risultato."
 msgid "Create a custom food"
 msgstr "Crea un alimento personalizzato"
 
+msgid "Most used"
+msgstr "Più usati"
+
+msgid "+ Add"
+msgstr "+ Aggiungi"
+
 msgid "Nutri-Score %(grade)s"
 msgstr "Nutri-Score %(grade)s"
 
@@ -2080,6 +2100,9 @@ msgstr "Ricette"
 msgid "Diet plans"
 msgstr "Piani alimentari"
 
+msgid "Statistics"
+msgstr "Statistiche"
+
 msgid "Add food"
 msgstr "Aggiungi alimento"
 
@@ -2109,6 +2132,15 @@ msgstr "Nulla registrato ancora."
 
 msgid "+ Add food"
 msgstr "+ Aggiungi alimento"
+
+msgid "Copy this day to another date"
+msgstr "Copia questo giorno in un'altra data"
+
+msgid "Copy to date"
+msgstr "Copia alla data"
+
+msgid "Copy"
+msgstr "Copia"
 
 msgid "Manage foods"
 msgstr "Gestisci alimenti"
@@ -2284,6 +2316,21 @@ msgstr "Totale"
 msgid "Per serving (of %(servings)s)"
 msgstr "Per porzione (su %(servings)s)"
 
+msgid "Fiber"
+msgstr "Fibre"
+
+msgid "Sugar"
+msgstr "Zuccheri"
+
+msgid "Saturated fat"
+msgstr "Grassi saturi"
+
+msgid "Sodium"
+msgstr "Sodio"
+
+msgid "Fiber, sugar, saturated fat, and sodium show here once at least one ingredient has that data (e.g. imported from OpenFoodFacts)."
+msgstr "Fibre, zuccheri, grassi saturi e sodio vengono mostrati qui non appena almeno un ingrediente ha questi dati (ad es. importato da OpenFoodFacts)."
+
 msgid "Log to diary"
 msgstr "Registra nel diario"
 
@@ -2305,17 +2352,53 @@ msgstr "Modifica ricetta"
 msgid "New recipe"
 msgstr "Nuova ricetta"
 
-msgid "Add ingredient to %(name)s"
-msgstr "Aggiungi ingrediente a %(name)s"
+msgid "Edit ingredient"
+msgstr "Modifica ingrediente"
 
 msgid "Back to recipe"
 msgstr "Torna alla ricetta"
 
+msgid "Add ingredient to %(name)s"
+msgstr "Aggiungi ingrediente a %(name)s"
+
 msgid "+ New recipe"
 msgstr "+ Nuova ricetta"
 
+msgid "%(calories)s kcal/serving"
+msgstr "%(calories)s kcal/porzione"
+
+msgid "No recipes match your search."
+msgstr "Nessuna ricetta corrisponde alla tua ricerca."
+
 msgid "No recipes yet."
 msgstr "Nessuna ricetta ancora."
+
+msgid "Nutrition statistics"
+msgstr "Statistiche nutrizionali"
+
+msgid "Days logged"
+msgstr "Giorni registrati"
+
+msgid "Average calories"
+msgstr "Calorie medie"
+
+msgid "Average protein"
+msgstr "Proteine medie"
+
+msgid "Average carbohydrates"
+msgstr "Carboidrati medi"
+
+msgid "Average fat"
+msgstr "Grassi medi"
+
+msgid "Averages only count days you actually logged something — a day with nothing logged isn't counted as zero calories."
+msgstr "Le medie contano solo i giorni in cui hai effettivamente registrato qualcosa — un giorno senza registrazioni non viene conteggiato come zero calorie."
+
+msgid "Daily calories (last 30 days)"
+msgstr "Calorie giornaliere (ultimi 30 giorni)"
+
+msgid "Log a few days in your food diary to see your trend here."
+msgstr "Registra qualche giorno nel tuo diario alimentare per vedere qui il tuo andamento."
 
 msgid "Add exercise"
 msgstr "Aggiungi esercizio"

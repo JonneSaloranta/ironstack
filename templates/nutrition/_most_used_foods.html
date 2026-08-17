@@ -1,0 +1,40 @@
+{% load i18n l10n %}
+{% comment %}
+Quick-add panel shown above the search box wherever a food can be
+added — the user's top N most-used foods (apps.nutrition.services.
+most_used_foods), one tap instead of a fresh search every time.
+Mode-parameterized the same way _food_search_results.html is, since
+this shows up in the same three places that partial does.
+
+Expects: most_used (list of FoodUsage), mode ("diary"/"recipe"/
+"diet-plan-meal"), plus whichever of date/recipe/plan/meal that mode
+needs to build its post URL — same contract as _food_search_results.
+{% endcomment %}
+{% if most_used %}
+  <h2>{% trans "Most used" %}</h2>
+  {% if mode == "diary" %}
+    {% url 'nutrition:diary-add-entry' as post_url %}
+  {% elif mode == "recipe" %}
+    {% url 'nutrition:recipe-ingredient-create' recipe.pk as post_url %}
+  {% elif mode == "diet-plan-meal" %}
+    {% url 'nutrition:diet-plan-meal-item-add' plan.pk meal.pk as post_url %}
+  {% endif %}
+  {% for usage in most_used %}
+    <form class="card card-action-row" method="post" action="{{ post_url }}">
+      {% csrf_token %}
+      <input type="hidden" name="food_id" value="{{ usage.food.pk }}">
+      {% if mode == "diary" %}
+        <input type="hidden" name="meal_slot" value="{{ usage.meal_slot_id|default:meal_slots.0.pk }}">
+        <input type="hidden" name="date" value="{{ date }}">
+      {% endif %}
+      <div>
+        <strong>{{ usage.food.name }}</strong>
+        <p class="text-muted">{{ usage.quantity }} {{ usage.food.serving_unit }}</p>
+      </div>
+      <div style="display:flex; flex-wrap:wrap; gap:0.5rem; align-items:center;">
+        <input type="number" name="quantity" step="0.01" value="{{ usage.quantity|unlocalize }}" style="width:5rem;" aria-label="{% trans "Quantity" %}">
+        <button type="submit" class="button-secondary">{% trans "+ Add" %}</button>
+      </div>
+    </form>
+  {% endfor %}
+{% endif %}

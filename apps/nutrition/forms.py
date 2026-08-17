@@ -202,6 +202,21 @@ class RecipeForm(forms.ModelForm):
         fields = ["name", "servings", "instructions"]
 
 
+class RecipeIngredientQuantityForm(forms.ModelForm):
+    """Changes only how much of an already-picked ingredient a recipe
+    uses — same "quantity-only edit" shape as DiaryEntryQuantityForm
+    above. Before this existed, the only way to correct "200g rice"
+    to "250g rice" was to delete the ingredient and re-add it through
+    the whole search-and-pick flow again, losing its position in the
+    list in the process."""
+
+    class Meta:
+        from .models import RecipeIngredient
+
+        model = RecipeIngredient
+        fields = ["quantity"]
+
+
 class RecipeIngredientSearchForm(forms.Form):
     """Adds one Food (local or freshly imported from OpenFoodFacts) as
     a recipe ingredient — same shape as DiaryAddEntryForm above, minus

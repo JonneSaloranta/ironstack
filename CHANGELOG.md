@@ -60,14 +60,40 @@ lands and remains the authoritative history.
   immediately (Foods → select → "Refresh selected foods from
   OpenFoodFacts") instead of waiting for the normal 14-day
   staleness-triggered refresh.
+- A nutrition statistics page (Nutrition → "Statistics") — a 30-day
+  calorie chart plus average daily calories/macros, alongside the
+  current target for comparison.
+- Every place you can add a food (the food diary, a recipe's
+  ingredients, a diet-plan meal's items) now shows a "Most used"
+  quick-add list of your top 10 most-used foods — one tap instead of
+  a fresh search every time.
+- A day in the food diary can now be copied to another date ("Copy
+  this day to another date") — repeats every item logged that day
+  onto a new date in one action.
+- A recipe ingredient's quantity can now be edited directly, instead
+  of having to delete it and re-add it through search.
+- The recipe list now shows each recipe's calories per serving and
+  can be searched by name.
+- A recipe's nutrition breakdown now shows fiber, sugar, saturated
+  fat, and sodium too, whenever at least one ingredient has that data.
 
 ### Fixed
+- The Foods/Recipes/Diet plans pages' "back" link went to the food
+  diary instead of the nutrition dashboard, even when you'd arrived
+  from the dashboard's own "Quick links" — pressing "back" landed
+  somewhere you'd never actually been. The food diary itself had no
+  way back to the dashboard at all. Both fixed.
 - Date pickers on the recipe/diet-plan "log for date" fields and the
   onboarding wizard's date of birth showed blank instead of
   pre-filled whenever the site language wasn't English (e.g. in
   Finnish) — a browser rejects a date value that isn't in ISO
   format, and these were rendering it in the site's own date format
   instead.
+- The quantity field on every food-search "Add" card (diary, recipe
+  ingredients, diet-plan meals, browse) showed blank instead of
+  pre-filled whenever the site language uses a comma as its decimal
+  separator (e.g. Finnish) — same root cause as the date-picker fix
+  above, for `type="number"` instead of `type="date"`.
 - An OpenFoodFacts import-failure message in the food diary that was
   never translated.
 - Logging a diet plan to the diary with an invalid date silently did

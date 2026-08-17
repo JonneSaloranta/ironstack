@@ -309,6 +309,27 @@ Picking an OFF result imports it (`import_or_refresh_food_from_off`)
 the same way the diary does; nothing here re-derives nutrition by
 hand.
 
+Changing how much of an ingredient a recipe uses (`recipe_ingredient_
+edit`, `RecipeIngredientQuantityForm`) is a quantity-only edit, not a
+delete-and-re-add through the whole search-and-pick flow again —
+before this existed, correcting "200g rice" to "250g rice" meant
+losing the ingredient's position in the list too, since a fresh
+`RecipeIngredient` always gets appended at the end. Editing only ever
+touches `quantity`; the ingredient's own `order` and which `Food` it
+points at are untouched.
+
+The recipe list (`RecipeListView`) shows each recipe's per-serving
+calories directly, the same reason `food_list.html` shows a food's
+own calories rather than making every entry a guess until opened, and
+supports a `?q=` name search once a user has more than a handful of
+recipes — the same `name__icontains` pattern `FoodListView` already
+uses. The recipe detail page's nutrition table shows fiber, sugar,
+saturated fat, and sodium too whenever at least one ingredient
+carries that data (typically an OpenFoodFacts import, which usually
+has it; a hand-entered `Food` usually doesn't) — the same optional,
+nullable-not-zero fields `Food` itself has always stored but that,
+until now, nothing in the UI ever surfaced.
+
 ### `DiaryEntry` — one logged item
 
 ```
@@ -609,8 +630,26 @@ that would make this one section *less* consistent with the rest of
 the app rather than more intuitive. The one deliberate structural
 addition is the dashboard's single "Quick links" card reaching every
 nutrition sub-section (Food diary, Foods, Recipes, Diet plans,
-Calculators) in one place — previously split oddly across three
-different cards with no direct link to Foods at all.
+Calculators, Statistics) in one place — previously split oddly across
+three different cards with no direct link to Foods at all.
+
+**Every "back" link's target has to match every way a page can
+actually be reached, not just the first one it was built for.**
+Foods/Recipes/Diet plans were originally only ever reached from the
+food diary, so their own "back" link pointed there — reasonable at
+the time. Once the dashboard's "Quick links" card started linking to
+them directly too, that same link became actively wrong for anyone
+arriving that way: pressing "back" took them somewhere they'd never
+been, not back to the dashboard they'd actually come from. Fixed by
+pointing all three at the nutrition dashboard instead (their real,
+common parent once they're reachable two different ways), and the
+food diary itself — also reachable directly from the dashboard
+("Open food diary", "+ Log food now"), not just bottom-nav — gained
+the same "&larr; Back to nutrition" link it was missing entirely.
+General rule going forward: a "back" link's target is "this page's
+logical parent," never "wherever this page happened to be built to
+be reached from first" — those two drift apart exactly when a second
+entry point gets added later, as it did here.
 
 ### Camera barcode scanning
 
@@ -713,6 +752,81 @@ done:
 9. **Training-day awareness** — the informational label described
    above, once the rest is live.
 10. **Polish** — translations (6 languages, matching this project's
-    existing catalog), API viewsets, `apps.api` docs, accessibility
-    pass, full test suite + live verification, `docs/DEVELOPMENT_LOG.md`
-    + `CHANGELOG.md` entries.
+    existing catalog), accessibility pass, full test suite + live
+    verification, `docs/DEVELOPMENT_LOG.md` + `CHANGELOG.md` entries.
+    (`apps.api` viewsets for nutrition are not built yet — every other
+    context in `docs/API.md` has one; nutrition doesn't, which is a
+    real gap against this phase's original scope, not a deliberate
+    omission. Left as a follow-up rather than done in a rush alongside
+    everything else in this phase.)
+11. **Daily-use polish: statistics, quick re-log, copying a day** — see
+    "Nutrition statistics and quick re-log" below. Added once the rest
+    of the app had real day-to-day usage patterns to design against
+    (a stats page that only shows one day at a time, and no way to
+    repeat yesterday's logging without re-searching every item, were
+    both friction spotted only after the rest of the app was actually
+    being used, not gaps visible from the original spec alone).
+
+## Nutrition statistics and quick re-log
+
+Three small, independent additions once the rest of the app already
+had daily-use history to work from — none of them touch the domain
+model, all three are pure service functions over `DiaryEntry` plus a
+thin view/template:
+
+- **`/nutrition/stats/`** (`NutritionStatsView`) — the food diary only
+  ever shows one day; this answers "how have I actually been eating
+  the last month," the way `apps.analytics` answers the same question
+  for training. `apps.nutrition.services.calorie_history(user, days=30)`
+  returns exactly one point per day — including days nothing was
+  logged (`ZERO_NUTRITION`), the same "never skip a day, a quiet day
+  is a real dip" rule `apps.analytics.services.weekly_volume_series`
+  already uses — charted with the shared `apps.core.charts.
+  build_bar_series` (`templates/core/_bar_chart.html`, the same
+  component `apps.analytics`'s own stats page uses). `nutrition_stats`
+  averages calories/macros only over days something was actually
+  logged: counting an unlogged day as a zero-calorie day would drag
+  the average down for anyone who logs most days but not literally
+  every single one, which is most real usage. A fixed 30-day window,
+  not a range picker — this page has one chart, so the extra control
+  `apps.analytics` needs to keep several charts legible at once isn't
+  earning its keep here yet.
+- **"Most used" quick add** (`services.most_used_foods`,
+  `templates/nutrition/_most_used_foods.html`) — every place a food
+  can be added (the food diary, a recipe's ingredients, a diet-plan
+  meal's items) shows the signed-in user's top-10 most-used foods
+  above the search box, each a single-tap "+ Add." Most people eat a
+  fairly small rotation of the same handful of things — re-searching
+  "chicken breast" or a barcode every single time was needless
+  friction once there was real usage history to rank from. Ranked by
+  **frequency**, not recency: usage is counted across every place a
+  food actually gets added — the diary, recipe ingredients, and
+  diet-plan items combined, not just whichever one the panel happens
+  to be shown in — since "used the most" means overall, not "most
+  recent in this one context" (an earlier, diary-only, recency-ranked
+  version of this — "Log again" — was replaced once the ask was
+  generalized to every add-a-food context and to ranking by actual
+  frequency of use). Each entry still prefills a sensible quantity/
+  meal-slot default from the food's most recent diary use, if it has
+  one; a food only ever added via a recipe or diet plan falls back to
+  its own serving size with no meal-slot guess. Deliberately derived
+  live from `DiaryEntry`/`RecipeIngredient`/`DietPlanItem` history,
+  not a new `FavoriteFood` model — the same "derive, don't store a
+  duplicate" rule this app already follows everywhere else (a day's
+  totals are computed live, never cached), and a frequency ranking
+  needs no separate table to stay correct. Only ever counts the
+  signed-in user's own usage, never another user's, even for a shared
+  (`owner=None`) food both have used. One shared, mode-parameterized
+  template partial (`_most_used_foods.html`) serves all three
+  contexts, the same pattern `_food_search_results.html` already
+  established for the search results themselves.
+- **Copy a diary day** (`services.copy_diary_day`,
+  `templates/nutrition/diary_day.html`'s "Copy this day to another
+  date") — "I ate the same as yesterday" without re-adding every item
+  by hand: duplicates every `DiaryEntry` on one date onto another as
+  brand-new rows. The source day is never read back out or mutated —
+  same "an explicit action must never look like it silently touched
+  something else" reasoning as `merge_foods` — and copying is purely
+  additive: copying twice, or onto a day that already has entries,
+  adds more rows rather than silently deduplicating, matching how
+  every other diary mutation in this app behaves.

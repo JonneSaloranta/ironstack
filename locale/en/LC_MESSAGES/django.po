@@ -927,8 +927,22 @@ msgstr "Target: %(target)s kg/week. Actual trend: %(actual)s kg/week — on trac
 msgid "Target: %(target)s kg/week. Actual trend: %(actual)s kg/week over the last %(days)s days. Suggested adjustment: %(delta)+d kcal/day."
 msgstr "Target: %(target)s kg/week. Actual trend: %(actual)s kg/week over the last %(days)s days. Suggested adjustment: %(delta)+d kcal/day."
 
+msgid "Pick a date to copy this day to."
+msgstr "Pick a date to copy this day to."
+
+msgid "Copied %(count)d entry to %(date)s."
+msgid_plural "Copied %(count)d entries to %(date)s."
+msgstr[0] "Copied %(count)d entry to %(date)s."
+msgstr[1] "Copied %(count)d entries to %(date)s."
+
+msgid "Nothing to copy — that day has no entries."
+msgstr "Nothing to copy — that day has no entries."
+
 msgid "That food couldn't be imported — try again."
 msgstr "That food couldn't be imported — try again."
+
+msgid "\"%(name)s\" created — now add its ingredients below."
+msgstr "\"%(name)s\" created — now add its ingredients below."
 
 msgid "Save as a personal template"
 msgstr "Save as a personal template"
@@ -1936,6 +1950,12 @@ msgstr "Nothing found."
 msgid "Create a custom food"
 msgstr "Create a custom food"
 
+msgid "Most used"
+msgstr "Most used"
+
+msgid "+ Add"
+msgstr "+ Add"
+
 msgid "Nutri-Score %(grade)s"
 msgstr "Nutri-Score %(grade)s"
 
@@ -2080,6 +2100,9 @@ msgstr "Recipes"
 msgid "Diet plans"
 msgstr "Diet plans"
 
+msgid "Statistics"
+msgstr "Statistics"
+
 msgid "Add food"
 msgstr "Add food"
 
@@ -2109,6 +2132,15 @@ msgstr "Nothing logged yet."
 
 msgid "+ Add food"
 msgstr "+ Add food"
+
+msgid "Copy this day to another date"
+msgstr "Copy this day to another date"
+
+msgid "Copy to date"
+msgstr "Copy to date"
+
+msgid "Copy"
+msgstr "Copy"
 
 msgid "Manage foods"
 msgstr "Manage foods"
@@ -2284,6 +2316,21 @@ msgstr "Total"
 msgid "Per serving (of %(servings)s)"
 msgstr "Per serving (of %(servings)s)"
 
+msgid "Fiber"
+msgstr "Fiber"
+
+msgid "Sugar"
+msgstr "Sugar"
+
+msgid "Saturated fat"
+msgstr "Saturated fat"
+
+msgid "Sodium"
+msgstr "Sodium"
+
+msgid "Fiber, sugar, saturated fat, and sodium show here once at least one ingredient has that data (e.g. imported from OpenFoodFacts)."
+msgstr "Fiber, sugar, saturated fat, and sodium show here once at least one ingredient has that data (e.g. imported from OpenFoodFacts)."
+
 msgid "Log to diary"
 msgstr "Log to diary"
 
@@ -2305,17 +2352,53 @@ msgstr "Edit recipe"
 msgid "New recipe"
 msgstr "New recipe"
 
-msgid "Add ingredient to %(name)s"
-msgstr "Add ingredient to %(name)s"
+msgid "Edit ingredient"
+msgstr "Edit ingredient"
 
 msgid "Back to recipe"
 msgstr "Back to recipe"
 
+msgid "Add ingredient to %(name)s"
+msgstr "Add ingredient to %(name)s"
+
 msgid "+ New recipe"
 msgstr "+ New recipe"
 
+msgid "%(calories)s kcal/serving"
+msgstr "%(calories)s kcal/serving"
+
+msgid "No recipes match your search."
+msgstr "No recipes match your search."
+
 msgid "No recipes yet."
 msgstr "No recipes yet."
+
+msgid "Nutrition statistics"
+msgstr "Nutrition statistics"
+
+msgid "Days logged"
+msgstr "Days logged"
+
+msgid "Average calories"
+msgstr "Average calories"
+
+msgid "Average protein"
+msgstr "Average protein"
+
+msgid "Average carbohydrates"
+msgstr "Average carbohydrates"
+
+msgid "Average fat"
+msgstr "Average fat"
+
+msgid "Averages only count days you actually logged something — a day with nothing logged isn't counted as zero calories."
+msgstr "Averages only count days you actually logged something — a day with nothing logged isn't counted as zero calories."
+
+msgid "Daily calories (last 30 days)"
+msgstr "Daily calories (last 30 days)"
+
+msgid "Log a few days in your food diary to see your trend here."
+msgstr "Log a few days in your food diary to see your trend here."
 
 msgid "Add exercise"
 msgstr "Add exercise"

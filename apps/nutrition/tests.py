@@ -1603,6 +1603,182 @@ class NutritionComputationTests(TestCase):
         self.assertEqual(total.calories, Decimal("0"))
 
 
+class MostUsedFoodsTests(TestCase):
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        self.bob = User.objects.create_user(username="bob", password="s3cret-pass")
+        self.chicken = make_food(self.alice, name="Chicken")
+        self.rice = make_food(self.alice, name="Rice")
+        self.breakfast = MealSlot.objects.get(name="Breakfast", owner=None)
+        self.lunch = MealSlot.objects.get(name="Lunch", owner=None)
+
+    def test_ranks_by_how_often_a_food_was_logged_not_by_recency(self):
+        # Chicken logged twice (older), rice logged once (more recent)
+        # — chicken must still rank first, since this ranks by
+        # frequency, not by which was eaten most recently.
+        DiaryEntry.objects.create(
+            user=self.alice, date=date(2026, 1, 1), meal_slot=self.breakfast,
+            food=self.chicken, quantity=Decimal("100"),
+        )
+        DiaryEntry.objects.create(
+            user=self.alice, date=date(2026, 1, 2), meal_slot=self.breakfast,
+            food=self.chicken, quantity=Decimal("120"),
+        )
+        DiaryEntry.objects.create(
+            user=self.alice, date=date(2026, 1, 3), meal_slot=self.lunch,
+            food=self.rice, quantity=Decimal("200"),
+        )
+        usages = services.most_used_foods(self.alice)
+        self.assertEqual([u.food for u in usages], [self.chicken, self.rice])
+
+    def test_counts_usage_across_diary_recipes_and_diet_plans_combined(self):
+        recipe = Recipe.objects.create(owner=self.alice, name="Bowl", servings=1)
+        RecipeIngredient.objects.create(recipe=recipe, food=self.rice, quantity=Decimal("100"))
+        plan = DietPlan.objects.create(
+            user=self.alice, name="Plan", target_calories=2000,
+            target_protein_grams=Decimal("100"), target_carbohydrate_grams=Decimal("200"),
+            target_fat_grams=Decimal("60"),
+        )
+        meal = DietPlanMeal.objects.create(
+            diet_plan=plan, meal_slot=self.breakfast, target_calories=500
+        )
+        DietPlanItem.objects.create(diet_plan_meal=meal, food=self.rice, quantity=Decimal("50"))
+        DietPlanItem.objects.create(diet_plan_meal=meal, food=self.rice, quantity=Decimal("50"))
+        # Rice: 1 recipe use + 2 diet-plan uses = 3. Chicken: never used.
+        usages = services.most_used_foods(self.alice)
+        self.assertEqual([u.food for u in usages], [self.rice])
+
+    def test_prefills_the_most_recent_diary_quantity_and_meal_slot(self):
+        DiaryEntry.objects.create(
+            user=self.alice, date=date(2026, 1, 1), meal_slot=self.breakfast,
+            food=self.chicken, quantity=Decimal("100"),
+        )
+        DiaryEntry.objects.create(
+            user=self.alice, date=date(2026, 1, 2), meal_slot=self.lunch,
+            food=self.chicken, quantity=Decimal("250"),
+        )
+        usages = services.most_used_foods(self.alice)
+        self.assertEqual(usages[0].quantity, Decimal("250"))
+        self.assertEqual(usages[0].meal_slot_id, self.lunch.pk)
+
+    def test_falls_back_to_serving_size_for_a_food_never_logged_directly(self):
+        recipe = Recipe.objects.create(owner=self.alice, name="Bowl", servings=1)
+        RecipeIngredient.objects.create(recipe=recipe, food=self.rice, quantity=Decimal("100"))
+        usages = services.most_used_foods(self.alice)
+        self.assertEqual(usages[0].quantity, self.rice.serving_size)
+        self.assertIsNone(usages[0].meal_slot_id)
+
+    def test_never_counts_another_users_usage(self):
+        DiaryEntry.objects.create(
+            user=self.bob, date=date(2026, 1, 1), meal_slot=self.breakfast,
+            food=self.chicken, quantity=Decimal("100"),
+        )
+        self.assertEqual(services.most_used_foods(self.alice), [])
+
+    def test_no_usage_at_all_returns_an_empty_list(self):
+        self.assertEqual(services.most_used_foods(self.alice), [])
+
+    def test_respects_the_limit(self):
+        foods = [make_food(self.alice, name=f"Food {i}") for i in range(5)]
+        for food in foods:
+            DiaryEntry.objects.create(
+                user=self.alice, date=date(2026, 1, 1), meal_slot=self.breakfast,
+                food=food, quantity=Decimal("100"),
+            )
+        self.assertEqual(len(services.most_used_foods(self.alice, limit=3)), 3)
+
+
+class CopyDiaryDayTests(TestCase):
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        self.chicken = make_food(self.alice, name="Chicken")
+        self.breakfast = MealSlot.objects.get(name="Breakfast", owner=None)
+        self.lunch = MealSlot.objects.get(name="Lunch", owner=None)
+
+    def test_copies_every_entry_from_the_source_day(self):
+        DiaryEntry.objects.create(
+            user=self.alice, date=date(2026, 1, 1), meal_slot=self.breakfast,
+            food=self.chicken, quantity=Decimal("100"),
+        )
+        DiaryEntry.objects.create(
+            user=self.alice, date=date(2026, 1, 1), meal_slot=self.lunch,
+            food=self.chicken, quantity=Decimal("200"),
+        )
+        count = services.copy_diary_day(self.alice, date(2026, 1, 1), date(2026, 1, 5))
+        self.assertEqual(count, 2)
+        copied = DiaryEntry.objects.filter(user=self.alice, date=date(2026, 1, 5))
+        self.assertEqual(copied.count(), 2)
+        quantities = set(copied.values_list("quantity", flat=True))
+        self.assertEqual(quantities, {Decimal("100"), Decimal("200")})
+
+    def test_never_touches_the_source_day(self):
+        DiaryEntry.objects.create(
+            user=self.alice, date=date(2026, 1, 1), meal_slot=self.breakfast,
+            food=self.chicken, quantity=Decimal("100"),
+        )
+        services.copy_diary_day(self.alice, date(2026, 1, 1), date(2026, 1, 5))
+        source_day = DiaryEntry.objects.filter(user=self.alice, date=date(2026, 1, 1))
+        self.assertEqual(source_day.count(), 1)
+
+    def test_copying_an_empty_day_creates_nothing(self):
+        count = services.copy_diary_day(self.alice, date(2026, 1, 1), date(2026, 1, 5))
+        self.assertEqual(count, 0)
+        self.assertFalse(DiaryEntry.objects.filter(user=self.alice, date=date(2026, 1, 5)).exists())
+
+    def test_copying_onto_a_day_with_existing_entries_adds_rather_than_replaces(self):
+        DiaryEntry.objects.create(
+            user=self.alice, date=date(2026, 1, 1), meal_slot=self.breakfast,
+            food=self.chicken, quantity=Decimal("100"),
+        )
+        DiaryEntry.objects.create(
+            user=self.alice, date=date(2026, 1, 5), meal_slot=self.breakfast,
+            food=self.chicken, quantity=Decimal("50"),
+        )
+        services.copy_diary_day(self.alice, date(2026, 1, 1), date(2026, 1, 5))
+        target_day = DiaryEntry.objects.filter(user=self.alice, date=date(2026, 1, 5))
+        self.assertEqual(target_day.count(), 2)
+
+
+class CalorieHistoryAndStatsTests(TestCase):
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        self.chicken = make_food(self.alice, name="Chicken")
+        self.breakfast = MealSlot.objects.get(name="Breakfast", owner=None)
+
+    def test_history_has_one_point_per_day_including_unlogged_days(self):
+        history = services.calorie_history(self.alice, days=7)
+        self.assertEqual(len(history), 7)
+        self.assertTrue(all(totals.calories == Decimal("0") for _day, totals in history))
+
+    def test_history_is_oldest_first_and_reflects_logged_totals(self):
+        today = timezone.localdate()
+        DiaryEntry.objects.create(
+            user=self.alice, date=today, meal_slot=self.breakfast,
+            food=self.chicken, quantity=Decimal("100"),
+        )
+        history = services.calorie_history(self.alice, days=7)
+        self.assertEqual(history[0][0], today - timedelta(days=6))
+        self.assertEqual(history[-1][0], today)
+        self.assertEqual(history[-1][1].calories, Decimal("165"))
+
+    def test_stats_with_no_logged_days_returns_all_zero_not_an_error(self):
+        summary = services.nutrition_stats(self.alice, days=7)
+        self.assertEqual(summary.days_logged, 0)
+        self.assertEqual(summary.average_calories, Decimal("0"))
+
+    def test_stats_averages_only_over_days_something_was_logged(self):
+        today = timezone.localdate()
+        DiaryEntry.objects.create(
+            user=self.alice, date=today, meal_slot=self.breakfast,
+            food=self.chicken, quantity=Decimal("200"),  # 330 kcal
+        )
+        summary = services.nutrition_stats(self.alice, days=7)
+        # Only 1 of the 7 days had anything logged — the average must be
+        # that one day's own total, not diluted by the other 6 empty days.
+        self.assertEqual(summary.days_logged, 1)
+        self.assertEqual(summary.average_calories, Decimal("330"))
+
+
 class FoodListViewTests(TestCase):
     def setUp(self):
         self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
@@ -1630,6 +1806,15 @@ class FoodListViewTests(TestCase):
         self.client.logout()
         response = self.client.get(reverse("nutrition:food-list"))
         self.assertEqual(response.status_code, 302)
+
+    def test_the_back_link_returns_to_the_nutrition_dashboard(self):
+        """Regression: this used to link "back" to the food diary
+        instead — a leftover from before this page was also reachable
+        directly from the dashboard's own "Quick links" card, so
+        arriving that way and clicking "back" landed somewhere the
+        user never came from."""
+        response = self.client.get(reverse("nutrition:food-list"))
+        self.assertContains(response, "Back to nutrition")
 
 
 class FoodCreateViewTests(TestCase):
@@ -1734,6 +1919,116 @@ class DiaryAddEntryViewTests(TestCase):
         response = self.client.get(reverse("nutrition:diary-add-entry"))
         self.assertEqual(response.status_code, 302)
 
+    def test_shows_a_most_used_entry_for_a_previously_logged_food(self):
+        DiaryEntry.objects.create(
+            user=self.alice, date=date(2026, 1, 1), meal_slot=self.slot,
+            food=self.food, quantity=Decimal("150"),
+        )
+        response = self.client.get(reverse("nutrition:diary-add-entry"))
+        self.assertContains(response, "Most used")
+        self.assertContains(response, self.food.name)
+
+    def test_no_most_used_section_for_a_brand_new_user(self):
+        response = self.client.get(reverse("nutrition:diary-add-entry"))
+        self.assertNotContains(response, "Most used")
+
+    def test_tapping_a_most_used_food_creates_a_new_entry_with_the_same_details(self):
+        DiaryEntry.objects.create(
+            user=self.alice, date=date(2026, 1, 1), meal_slot=self.slot,
+            food=self.food, quantity=Decimal("150"),
+        )
+        response = self.client.post(
+            reverse("nutrition:diary-add-entry"),
+            {
+                "food_id": self.food.pk, "meal_slot": self.slot.pk,
+                "quantity": "150", "date": "2026-02-02",
+            },
+        )
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(
+            DiaryEntry.objects.filter(
+                user=self.alice, date=date(2026, 2, 2), quantity=Decimal("150")
+            ).exists()
+        )
+
+
+class DiaryDayCopyViewTests(TestCase):
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        self.food = make_food(self.alice)
+        self.slot = MealSlot.objects.get(name="Breakfast", owner=None)
+        self.client.login(username="alice", password="s3cret-pass")
+
+    def test_copies_entries_and_redirects_to_the_target_date(self):
+        DiaryEntry.objects.create(
+            user=self.alice, date=date(2026, 1, 1), meal_slot=self.slot,
+            food=self.food, quantity=Decimal("100"),
+        )
+        response = self.client.post(
+            reverse("nutrition:diary-day-copy", kwargs={"source_date": "2026-01-01"}),
+            {"target_date": "2026-01-05"},
+        )
+        self.assertRedirects(
+            response, reverse("nutrition:diary-day", kwargs={"target_date": "2026-01-05"})
+        )
+        self.assertTrue(
+            DiaryEntry.objects.filter(user=self.alice, date=date(2026, 1, 5)).exists()
+        )
+
+    def test_missing_target_date_shows_an_error_and_changes_nothing(self):
+        DiaryEntry.objects.create(
+            user=self.alice, date=date(2026, 1, 1), meal_slot=self.slot,
+            food=self.food, quantity=Decimal("100"),
+        )
+        response = self.client.post(
+            reverse("nutrition:diary-day-copy", kwargs={"source_date": "2026-01-01"}), {}
+        )
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(DiaryEntry.objects.filter(user=self.alice).count(), 1)
+
+    def test_requires_post(self):
+        response = self.client.get(
+            reverse("nutrition:diary-day-copy", kwargs={"source_date": "2026-01-01"})
+        )
+        self.assertEqual(response.status_code, 405)
+
+    def test_requires_login(self):
+        self.client.logout()
+        response = self.client.post(
+            reverse("nutrition:diary-day-copy", kwargs={"source_date": "2026-01-01"}),
+            {"target_date": "2026-01-05"},
+        )
+        self.assertEqual(response.status_code, 302)
+        self.assertFalse(DiaryEntry.objects.filter(date=date(2026, 1, 5)).exists())
+
+
+class NutritionStatsViewTests(TestCase):
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        self.food = make_food(self.alice)
+        self.slot = MealSlot.objects.get(name="Breakfast", owner=None)
+        self.client.login(username="alice", password="s3cret-pass")
+
+    def test_renders_the_chart_and_summary_for_a_user_with_history(self):
+        DiaryEntry.objects.create(
+            user=self.alice, date=timezone.localdate(), meal_slot=self.slot,
+            food=self.food, quantity=Decimal("100"),
+        )
+        response = self.client.get(reverse("nutrition:stats"))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context["summary"].days_logged, 1)
+        self.assertIsNotNone(response.context["calorie_chart"])
+
+    def test_renders_without_error_for_a_brand_new_user(self):
+        response = self.client.get(reverse("nutrition:stats"))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context["summary"].days_logged, 0)
+
+    def test_requires_login(self):
+        self.client.logout()
+        response = self.client.get(reverse("nutrition:stats"))
+        self.assertEqual(response.status_code, 302)
+
 
 class DiaryEntryEditDeleteViewTests(TestCase):
     def setUp(self):
@@ -1832,6 +2127,15 @@ class DiaryDayViewTests(TestCase):
         response = self.client.get(reverse("nutrition:diary-day"))
         self.assertEqual(response.status_code, 302)
 
+    def test_has_a_way_back_to_the_nutrition_dashboard(self):
+        """Regression: the diary day used to have no link back to the
+        nutrition dashboard at all — reachable directly from the
+        dashboard itself (Quick links, "+ Log food now"), it needs the
+        same "back to nutrition" affordance every other nutrition
+        section already has."""
+        response = self.client.get(reverse("nutrition:diary-day"))
+        self.assertContains(response, "Back to nutrition")
+
 
 class RecipeViewTests(TestCase):
     def setUp(self):
@@ -1853,6 +2157,14 @@ class RecipeViewTests(TestCase):
         recipe = Recipe.objects.get(name="Bowl")
         self.assertEqual(recipe.owner, self.alice)
 
+    def test_creating_a_recipe_shows_a_message_pointing_at_adding_ingredients(self):
+        response = self.client.post(
+            reverse("nutrition:recipe-create"),
+            {"name": "Bowl", "servings": "2", "instructions": ""},
+            follow=True,
+        )
+        self.assertContains(response, "add its ingredients")
+
     def test_recipe_list_only_shows_the_owners_own_recipes(self):
         Recipe.objects.create(owner=self.alice, name="Alice's Bowl", servings=1)
         Recipe.objects.create(owner=self.bob, name="Bob's Bowl", servings=1)
@@ -1860,6 +2172,28 @@ class RecipeViewTests(TestCase):
         names = [r.name for r in response.context["recipes"]]
         self.assertIn("Alice's Bowl", names)
         self.assertNotIn("Bob's Bowl", names)
+
+    def test_recipe_list_search_filters_by_name(self):
+        Recipe.objects.create(owner=self.alice, name="Chicken Bowl", servings=1)
+        Recipe.objects.create(owner=self.alice, name="Rice Salad", servings=1)
+        response = self.client.get(reverse("nutrition:recipe-list"), {"q": "chicken"})
+        names = [r.name for r in response.context["recipes"]]
+        self.assertEqual(names, ["Chicken Bowl"])
+
+    def test_recipe_list_shows_calories_per_serving(self):
+        recipe = Recipe.objects.create(owner=self.alice, name="Bowl", servings=2)
+        RecipeIngredient.objects.create(
+            recipe=recipe, food=self.chicken, quantity=Decimal("300")
+        )
+        response = self.client.get(reverse("nutrition:recipe-list"))
+        self.assertContains(response, "248 kcal/serving")
+
+    def test_the_back_link_returns_to_the_nutrition_dashboard(self):
+        """Regression: this used to link "back" to the food diary
+        instead of the dashboard the recipes list is now also directly
+        reachable from (Quick links)."""
+        response = self.client.get(reverse("nutrition:recipe-list"))
+        self.assertContains(response, "Back to nutrition")
 
     def test_another_users_recipe_detail_is_a_404(self):
         recipe = Recipe.objects.create(owner=self.bob, name="Bob's Bowl", servings=1)
@@ -1873,6 +2207,18 @@ class RecipeViewTests(TestCase):
         )
         self.assertContains(response, "barcode-scanner.js")
         self.assertContains(response, "ironstackBarcodeScanner()")
+
+    def test_the_ingredient_search_page_shows_most_used_foods(self):
+        other_recipe = Recipe.objects.create(owner=self.alice, name="Other", servings=1)
+        RecipeIngredient.objects.create(
+            recipe=other_recipe, food=self.chicken, quantity=Decimal("100")
+        )
+        recipe = Recipe.objects.create(owner=self.alice, name="Bowl", servings=2)
+        response = self.client.get(
+            reverse("nutrition:recipe-ingredient-create", args=[recipe.pk])
+        )
+        self.assertContains(response, "Most used")
+        self.assertContains(response, self.chicken.name)
 
     def test_adding_and_removing_an_ingredient(self):
         recipe = Recipe.objects.create(owner=self.alice, name="Bowl", servings=2)
@@ -1889,6 +2235,46 @@ class RecipeViewTests(TestCase):
         )
         self.assertEqual(response.status_code, 302)
         self.assertFalse(RecipeIngredient.objects.filter(pk=ingredient.pk).exists())
+
+    def test_editing_an_ingredients_quantity(self):
+        recipe = Recipe.objects.create(owner=self.alice, name="Bowl", servings=2)
+        ingredient = RecipeIngredient.objects.create(
+            recipe=recipe, food=self.chicken, quantity=Decimal("300")
+        )
+        response = self.client.post(
+            reverse("nutrition:recipe-ingredient-edit", args=[recipe.pk, ingredient.pk]),
+            {"quantity": "250"},
+        )
+        self.assertEqual(response.status_code, 302)
+        ingredient.refresh_from_db()
+        self.assertEqual(ingredient.quantity, Decimal("250"))
+
+    def test_editing_an_ingredient_keeps_its_original_position(self):
+        recipe = Recipe.objects.create(owner=self.alice, name="Bowl", servings=2)
+        first = RecipeIngredient.objects.create(
+            recipe=recipe, food=self.chicken, quantity=Decimal("300"), order=0
+        )
+        second = RecipeIngredient.objects.create(
+            recipe=recipe, food=self.rice, quantity=Decimal("200"), order=1
+        )
+        self.client.post(
+            reverse("nutrition:recipe-ingredient-edit", args=[recipe.pk, first.pk]),
+            {"quantity": "250"},
+        )
+        first.refresh_from_db()
+        second.refresh_from_db()
+        self.assertEqual(first.order, 0)
+        self.assertEqual(second.order, 1)
+
+    def test_editing_another_users_ingredient_is_a_404(self):
+        recipe = Recipe.objects.create(owner=self.bob, name="Bob's Bowl", servings=1)
+        ingredient = RecipeIngredient.objects.create(
+            recipe=recipe, food=self.chicken, quantity=Decimal("300")
+        )
+        response = self.client.get(
+            reverse("nutrition:recipe-ingredient-edit", args=[recipe.pk, ingredient.pk])
+        )
+        self.assertEqual(response.status_code, 404)
 
     def test_adding_an_ingredient_from_openfoodfacts_imports_and_links_it(self):
         recipe = Recipe.objects.create(owner=self.alice, name="Bowl", servings=2)
@@ -1932,6 +2318,21 @@ class RecipeViewTests(TestCase):
         response = self.client.get(reverse("nutrition:recipe-detail", args=[recipe.pk]))
         self.assertEqual(response.context["total"].calories, Decimal("755.0"))
         self.assertEqual(response.context["per_serving"].calories, Decimal("377.50"))
+
+    def test_recipe_detail_shows_fiber_when_an_ingredient_has_it(self):
+        fibrous = make_food(self.alice, name="Beans", fiber_grams=Decimal("6"))
+        recipe = Recipe.objects.create(owner=self.alice, name="Bowl", servings=1)
+        RecipeIngredient.objects.create(recipe=recipe, food=fibrous, quantity=Decimal("100"))
+        response = self.client.get(reverse("nutrition:recipe-detail", args=[recipe.pk]))
+        self.assertContains(response, "Fiber")
+
+    def test_recipe_detail_hides_optional_nutrients_when_no_ingredient_has_them(self):
+        recipe = Recipe.objects.create(owner=self.alice, name="Bowl", servings=1)
+        RecipeIngredient.objects.create(
+            recipe=recipe, food=self.chicken, quantity=Decimal("100")
+        )
+        response = self.client.get(reverse("nutrition:recipe-detail", args=[recipe.pk]))
+        self.assertNotContains(response, "<td>Fiber</td>")
 
     def test_logging_a_recipe_creates_a_diary_entry(self):
         recipe = Recipe.objects.create(owner=self.alice, name="Bowl", servings=2)
@@ -2195,6 +2596,24 @@ class DietPlanViewTests(TestCase):
         self.assertContains(response, "barcode-scanner.js")
         self.assertContains(response, "ironstackBarcodeScanner()")
 
+    def test_the_add_item_page_shows_most_used_foods(self):
+        rice = make_food(self.alice, name="Rice", calories=130)
+        DiaryEntry.objects.create(
+            user=self.alice, date=date(2026, 1, 1), meal_slot=self.breakfast,
+            food=rice, quantity=Decimal("100"),
+        )
+        plan = diet_builder.build_diet_plan(
+            self.alice, name="Plan", goal=None, target_calories=800,
+            target_protein_grams=Decimal("1"), target_carbohydrate_grams=Decimal("1"),
+            target_fat_grams=Decimal("1"), meal_slots=[self.breakfast],
+        )
+        meal = plan.meals.first()
+        response = self.client.get(
+            reverse("nutrition:diet-plan-meal-item-add", args=[plan.pk, meal.pk])
+        )
+        self.assertContains(response, "Most used")
+        self.assertContains(response, "Rice")
+
     def test_deleting_an_item_removes_only_that_item(self):
         plan = diet_builder.build_diet_plan(
             self.alice, name="Plan", goal=None, target_calories=800,
@@ -2257,6 +2676,13 @@ class DietPlanViewTests(TestCase):
         self.client.logout()
         response = self.client.get(reverse("nutrition:diet-plan-list"))
         self.assertEqual(response.status_code, 302)
+
+    def test_the_back_link_returns_to_the_nutrition_dashboard(self):
+        """Regression: this used to link "back" to the food diary
+        instead of the dashboard the diet-plan list is now also
+        directly reachable from (Quick links)."""
+        response = self.client.get(reverse("nutrition:diet-plan-list"))
+        self.assertContains(response, "Back to nutrition")
 
     def test_the_plain_function_views_also_require_login(self):
         plan = diet_builder.build_diet_plan(
@@ -2681,3 +3107,53 @@ class DateInputWidgetLocaleFormatTests(TestCase):
             form = BodyStepForm(user=self.alice, initial={"birth_date": date(1990, 12, 25)})
             rendered = str(form["birth_date"])
         self.assertIn('value="1990-12-25"', rendered)
+
+
+class NumberInputLocaleFormatTests(TestCase):
+    """Same class of bug as DateInputWidgetLocaleFormatTests above, for
+    HTML5 `type="number"` instead of `type="date"`: its `value`
+    attribute must use a period decimal separator regardless of
+    locale (the HTML spec's floating-point number token), but a raw
+    `{{ some_decimal }}` renders with the active locale's decimal
+    separator (Finnish uses a comma) — a browser silently rejects the
+    malformed value and leaves the field empty instead of prefilled.
+    Found live in a Finnish session while verifying the "Most used"
+    quick-add panel. Fixed with `{% load l10n %}` + `|unlocalize` on
+    every hand-written `type="number"` value in
+    `_food_search_results.html`/`_most_used_foods.html` — the only
+    hand-written number inputs in the app; every Django-form-rendered
+    NumberInput widget elsewhere already avoids this on its own."""
+
+    def setUp(self):
+        # A user's active UI language comes from their stored
+        # User.language preference (apps.accounts.middleware.
+        # UserLanguageMiddleware), re-derived fresh on every request —
+        # translation.override() wrapped around self.client.get() gets
+        # overridden right back by that middleware, so the language has
+        # to be set here instead (see this class's own docstring).
+        self.alice = User.objects.create_user(
+            username="alice", password="s3cret-pass", language="fi"
+        )
+        self.client.login(username="alice", password="s3cret-pass")
+        self.food = make_food(self.alice, serving_size=Decimal("100.5"))
+
+    def test_search_results_quantity_field_uses_a_period_in_finnish(self):
+        with mock.patch.object(openfoodfacts, "search_products", return_value=[]):
+            response = self.client.get(
+                reverse("nutrition:food-search"), {"q": self.food.name, "mode": "diary"}
+            )
+        # serving_size is a decimal_places=2 field, so "100.5" in is
+        # "100.50" back out — the point being the period, not the
+        # trailing zero.
+        self.assertContains(response, 'value="100.50"')
+        self.assertNotContains(response, 'value="100,50"')
+
+    def test_most_used_quantity_field_uses_a_period_in_finnish(self):
+        breakfast = MealSlot.objects.get(name="Breakfast", owner=None)
+        DiaryEntry.objects.create(
+            user=self.alice, date=date(2026, 1, 1), meal_slot=breakfast,
+            food=self.food, quantity=Decimal("150.5"),
+        )
+        response = self.client.get(reverse("nutrition:diary-add-entry"))
+        self.assertContains(response, 'value="150.50"')
+        self.assertNotContains(response, 'value="150,50"')

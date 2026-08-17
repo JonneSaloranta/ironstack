@@ -10,6 +10,8 @@
   <p class="field-error">{{ form.non_field_errors|striptags }}</p>
 {% endif %}
 
+{% include "nutrition/_most_used_foods.html" with mode="diet-plan-meal" plan=plan meal=meal %}
+
 <div class="card" x-data="ironstackBarcodeScanner()">
   <div class="field">
     <label for="id_q">{% trans "Search foods" %}</label>

@@ -3,7 +3,10 @@
 {% block title %}{% trans "Food diary" %} — IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
-  <h1 style="margin:0;">{{ date }}</h1>
+  <div>
+    <p class="text-muted" style="margin:0;">{% trans "Food diary" %}</p>
+    <h1 style="margin:0;">{{ date }}</h1>
+  </div>
 </div>
 
 {% url 'nutrition:diary-day' target_date='__DATE__' as date_url_template %}
@@ -69,5 +72,18 @@
   </div>
 {% endfor %}
 
-<p><a class="button-secondary" href="{% url 'nutrition:food-list' %}">{% trans "Manage foods" %}</a></p>
+<div class="card" x-data="{ open: false }">
+  <button type="button" class="button-secondary" @click="open = !open">{% trans "Copy this day to another date" %}</button>
+  <form x-show="open" x-cloak method="post" action="{% url 'nutrition:diary-day-copy' source_date=date.isoformat %}"
+        style="display:flex; flex-wrap:wrap; gap:0.5rem; align-items:center; margin-top:0.5rem;">
+    {% csrf_token %}
+    <input type="date" name="target_date" required aria-label="{% trans "Copy to date" %}">
+    <button type="submit">{% trans "Copy" %}</button>
+  </form>
+</div>
+
+<p style="display:flex; flex-wrap:wrap; gap:0.5rem;">
+  <a class="button-secondary" href="{% url 'nutrition:food-list' %}">{% trans "Manage foods" %}</a>
+  <a class="button-secondary" href="{% url 'nutrition:dashboard' %}">&larr; {% trans "Back to nutrition" %}</a>
+</p>
 {% endblock %}

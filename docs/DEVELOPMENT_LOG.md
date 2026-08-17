@@ -2053,3 +2053,188 @@ integration was deliberately scoped away from at the start.
   the real (non-mocked) OpenFoodFacts API, and confirmed the name and
   `off_synced_at` both came back correct — a genuine forced refresh,
   not a no-op.
+
+## Nutrition development plan and its first three follow-ups
+
+Asked directly for a development plan for `apps.nutrition`, to be
+implemented, not just written. Re-read `docs/NUTRITION.md`'s own
+"Phased implementation plan" first — phases 1-9 were all genuinely
+done, but two real gaps turned up: `apps.api` never got nutrition
+viewsets despite phase 10 asking for them (documented honestly as a
+known follow-up rather than silently dropped), and there was no way
+to see nutrition trends over more than one day at a time, no way to
+repeat a previous day's logging, and no way to quickly re-log a food
+you eat often — all real day-to-day friction that only becomes
+visible once an app has actual usage history to design against, not
+gaps the original spec could have named up front. Picked the three
+highest-value items against CLAUDE.md's own stated goals ("provide
+extensive statistics and charts", "training log first") and the
+`apps.api` gap as a separate documented follow-up, not built this
+round (CLAUDE.md: "do not attempt to build the entire application in
+one pass").
+
+**Nutrition statistics page** (`/nutrition/stats/`,
+`NutritionStatsView`) — a 30-day daily-calorie bar chart plus average
+calories/macros compared against the current target, reusing
+`apps.core.charts.build_bar_series`/`templates/core/_bar_chart.html`
+verbatim (the same component `apps.analytics`'s own stats page uses,
+not a second chart implementation). `calorie_history` always returns
+one point per day, including unlogged days as zero — the same
+"never skip a day" rule `apps.analytics.services.weekly_volume_series`
+already follows, so a genuinely quiet day shows as a real dip rather
+than compressing the timeline. `nutrition_stats`' averages count only
+days something was actually logged, deliberately: counting a day
+nobody logged anything as a zero-calorie day would understate the
+real average for anyone who logs most days but not literally every
+one, which is most real usage.
+
+**"Log again" quick re-log** (`services.recent_diary_foods`,
+wired into `diary_add_entry.html` above the search box) — a
+one-tap repeat of a user's most recently logged foods, each keeping
+the exact meal slot and quantity it was logged with last time.
+Deliberately derived live from `DiaryEntry` history rather than a new
+`FavoriteFood` model — the same "derive, don't store a duplicate"
+rule the rest of this app already follows for daily totals, so there
+was no real case for a new table just to rank recency/frequency.
+
+**Copy a diary day** (`services.copy_diary_day`, a collapsible form
+on `diary_day.html`) — "I ate the same as yesterday" without
+re-adding every item by hand. Duplicates every entry from one date
+onto another as brand-new rows; the source day is never read back out
+or mutated, and copying twice (or onto a day that already has
+entries) just adds more rows rather than silently deduplicating — the
+same "an explicit action does exactly what it says, nothing silently
+different" reasoning `merge_foods` already established, and the same
+CLAUDE.md "history must remain historically trustworthy" principle
+extended to nutrition data the rest of this app already leans on.
+
+18 new strings translated across fi/sv/ru/it/et (880 total messages,
+0 fuzzy/untranslated across all six locales including a genuine
+plural form for "Copied N entry/entries to <date>"). 262/262
+`apps.nutrition` tests pass; `ruff check` clean. Live-verified end to
+end as a real user in a Finnish session: the stats page rendered
+"Ravinnon tilastot" with a correct 250 kcal average (200 + 300 kcal
+over 2 logged days out of 30) and the right per-day chart tooltips;
+posting "Kopioi tämä päivä toiselle päivälle" duplicated a real entry
+onto a date three days out; tapping a "Kirjaa uudelleen" quick-add
+card created a new entry with the same food and quantity on a
+different date — all three confirmed by querying the database
+directly afterward, not just checking for a 200/302 response.
+
+## Nutrition navigation fix and recipe improvements
+
+Reported directly: "quick links, painan jotain ja siirryn sinne
+sivulle, sieltä sivulta ei pääse enää takaisin edelliseen näkymään"
+(pressing a Quick link and being unable to get back). Root cause: the
+Foods/Recipes/Diet plans list pages' "back" link was written back
+when those pages were only ever reached from the food diary, and
+still pointed there — reasonable at the time, actively wrong once the
+dashboard's own "Quick links" card started linking to them directly
+too. Arriving via Quick links and pressing "back" landed on the food
+diary, not the dashboard the user had actually come from. Fixed by
+pointing all three at the nutrition dashboard (their real common
+parent now that they're reachable two different ways), and gave the
+food diary itself — also directly reachable from the dashboard, not
+just bottom-nav — the same "&larr; Back to nutrition" link it never
+had. 4 new regression tests lock in the fix. Documented the general
+rule in `docs/NUTRITION.md`: a "back" link's target is a page's
+logical parent, not wherever it happened to be built to be reached
+from first — those drift apart the moment a second entry point is
+added later.
+
+(A follow-up ask — making every link's return target track the
+*exact* page a user actually came from, "id html tagin avulla" —
+is still unclear on what "id" was meant to refer to; paused pending
+clarification rather than guessing at a systematic rework across
+every template.)
+
+**Recipe creation and content, developed further** on direct request.
+Real gap found: a recipe ingredient's quantity could only be changed
+by deleting it and re-adding it through the whole search-and-pick
+flow again, losing its position in the list (`order`) in the process.
+`RecipeIngredientQuantityForm` + `recipe_ingredient_edit` fixes that
+with a quantity-only edit, same shape as the food diary's own
+`DiaryEntryQuantityForm`/`diary_entry_edit`. The recipe list
+(`RecipeListView`) gained a `?q=` name search (same
+`name__icontains` pattern `FoodListView` already uses) and now shows
+each recipe's calories per serving directly, instead of making every
+recipe a guess until opened. The recipe detail page's nutrition table
+now shows fiber, sugar, saturated fat, and sodium whenever at least
+one ingredient carries that data — fields `Food` has always stored
+(mostly populated by OpenFoodFacts imports) but that, until now,
+nothing in the whole nutrition UI ever surfaced anywhere. Creating a
+recipe now shows a one-time "created — now add its ingredients below"
+message, since the create-then-add-ingredients two-step flow wasn't
+obviously connected otherwise.
+
+9 new strings translated across fi/sv/ru/it/et (889 total messages, 0
+fuzzy/untranslated). 274/274 `apps.nutrition` tests pass (8 new: nav
+regression tests + ingredient-edit/search/nutrition-fields
+coverage); `ruff check` clean; `makemigrations --check` clean (no
+schema changes — everything here reuses existing fields). Live-
+verified end to end in a real Finnish session: built a two-ingredient
+recipe (one ingredient carrying fiber/sodium, the other not), and
+confirmed the detail page showed exactly "Kuitu"/"Natrium" and
+correctly hid "Sokeri"/"Tyydyttynyt rasva" (neither ingredient had
+that data — the per-field conditional, not an all-or-nothing table);
+edited an ingredient's quantity from 300g to 250g and confirmed via
+the database that its `order` stayed untouched; searched the recipe
+list by name and confirmed both a match and a "no results" case;
+created a new recipe and confirmed the "luotu — lisää sen ainesosat
+alla" toast rendered on the very next page.
+
+## "Most used" quick add, generalized and cross-context
+
+Asked directly: a quick-add panel showing the ~10 most-used
+ingredients wherever a food can be added, so a food eaten often
+doesn't need a fresh search every time. This generalizes and replaces
+the diary-only, recency-ranked "Log again" panel from earlier this
+session: `services.most_used_foods(user, limit=10)` ranks by
+**frequency** (a `collections.Counter` over `DiaryEntry` +
+`RecipeIngredient` + `DietPlanItem` usage combined, so "most used"
+means overall, not per-context), and one shared, mode-parameterized
+template partial (`_most_used_foods.html`, exactly
+`_food_search_results.html`'s own established pattern) shows it in
+all three add-a-food contexts — the food diary, a recipe's
+ingredients, and a diet-plan meal's items — not just the diary. Each
+entry still prefills a sensible quantity (and, where it exists, a
+meal slot) from that food's most recent direct diary use, falling
+back to the food's own serving size for a food only ever used via a
+recipe or diet plan. `recent_diary_foods` and its "Log again" UI are
+removed entirely rather than kept alongside the new panel — two
+similar-but-different quick-add lists on the same page would have
+been more confusing than either alone, and the new one is a strict
+superset of what the old one covered (any food the old one would
+have shown was, definitionally, used at least once).
+
+**A second real, live-found bug, same family as the earlier
+`type="date"` one**: the quantity field on every food-search "Add"
+card — not just the new "Most used" panel, the *existing*
+`_food_search_results.html` cards too — rendered its `value`
+attribute with the active locale's decimal separator (a comma in
+Finnish, `value="100,00"`), but HTML5 `type="number"` requires a
+period regardless of locale; a browser silently rejects the malformed
+value and leaves the field empty rather than pre-filled. Invisible
+with English active, exactly like the date bug, and found the same
+way: live-verifying the new feature in a Finnish session rather than
+trusting it because the (English-only) automated tests passed. Fixed
+with `{% load l10n %}` + the `|unlocalize` filter on the three
+hand-written `type="number"` inputs in the app (`_food_search_
+results.html` ×2, `_most_used_foods.html` ×1) — every other number
+input in the app is Django-form-widget-rendered and already immune,
+since `NumberInput.format_value` avoids localization on its own; only
+these hand-written ones bypassed that protection. 2 new regression
+tests (`NumberInputLocaleFormatTests`), same shape as
+`DateInputWidgetLocaleFormatTests`.
+
+1 new string translated across fi/sv/ru/it/et ("Most used" — net
+message count unchanged at 889, since "Log again" left the catalog
+the same moment "Most used" entered it). 280/280 `apps.nutrition`
+tests pass; `ruff check` clean; `makemigrations --check` clean.
+Live-verified end to end in a real Finnish session: built a usage
+history where one food was used 3 times (2 diary entries + 1 recipe
+ingredient) and another only once, confirmed "Eniten käytetyt" showed
+the first food ranked above the second on the diary add-food page
+*and* the recipe-ingredient-add page; confirmed the quantity field
+read `value="180.00"` (period) after the l10n fix, not
+`value="180,00"` (comma) as it did before.

@@ -1,4 +1,4 @@
-{% load i18n %}
+{% load i18n l10n %}
 <div id="food-search-results">
   {% if query %}
     {% if mode == "diary" %}
@@ -35,7 +35,7 @@
               <p class="text-muted">{{ food.calories }} kcal / {{ food.serving_size }} {{ food.serving_unit }}</p>
             </div>
             <div style="display:flex; flex-wrap:wrap; gap:0.5rem; align-items:center;">
-              <input type="number" name="quantity" step="0.01" value="{{ food.serving_size }}" style="width:5rem;" aria-label="{% trans "Quantity" %}">
+              <input type="number" name="quantity" step="0.01" value="{{ food.serving_size|unlocalize }}" style="width:5rem;" aria-label="{% trans "Quantity" %}">
               <button type="submit">{% trans "Add" %}</button>
             </div>
           </form>
@@ -61,7 +61,7 @@
             <button type="submit" class="button-secondary">{% trans "Import" %}</button>
           {% else %}
             <div style="display:flex; flex-wrap:wrap; gap:0.5rem; align-items:center;">
-              <input type="number" name="quantity" step="0.01" value="{{ product.serving_size }}" style="width:5rem;" aria-label="{% trans "Quantity" %}">
+              <input type="number" name="quantity" step="0.01" value="{{ product.serving_size|unlocalize }}" style="width:5rem;" aria-label="{% trans "Quantity" %}">
               <button type="submit">{% trans "Import & add" %}</button>
             </div>
           {% endif %}

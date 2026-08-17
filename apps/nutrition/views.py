@@ -9,6 +9,7 @@ atomically only on the last step's POST.
 from datetime import date
 from decimal import Decimal
 
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Max, Prefetch
@@ -17,6 +18,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.utils.translation import gettext as _
+from django.utils.translation import ngettext
 from django.views.generic import CreateView, ListView, View
 
 from apps.measurements.models import BodyMeasurement, MeasurementType
@@ -40,6 +42,7 @@ from .forms import (
     LogRecipeForm,
     MacroCalculatorForm,
     RecipeForm,
+    RecipeIngredientQuantityForm,
     RecipeIngredientSearchForm,
     WaterIntakeCalculatorForm,
 )
@@ -503,6 +506,32 @@ class DiaryDayView(LoginRequiredMixin, View):
         )
 
 
+@login_required
+def diary_day_copy(request, source_date):
+    """Duplicates one day's whole diary onto another date
+    (apps.nutrition.services.copy_diary_day) — "I ate the same as
+    yesterday" without re-adding every item by hand. POST-only, same
+    convention as every other diary mutation here."""
+    if request.method != "POST":
+        return HttpResponseNotAllowed(["POST"])
+    source_date = _parse_diary_date(source_date)
+    target_date = _parse_diary_date(request.POST.get("target_date"))
+    if not request.POST.get("target_date"):
+        messages.error(request, _("Pick a date to copy this day to."))
+        return redirect("nutrition:diary-day", target_date=source_date.isoformat())
+    count = services.copy_diary_day(request.user, source_date, target_date)
+    if count:
+        message = ngettext(
+            "Copied %(count)d entry to %(date)s.",
+            "Copied %(count)d entries to %(date)s.",
+            count,
+        ) % {"count": count, "date": target_date.isoformat()}
+        messages.success(request, message)
+    else:
+        messages.info(request, _("Nothing to copy — that day has no entries."))
+    return redirect("nutrition:diary-day", target_date=target_date.isoformat())
+
+
 class DiaryAddEntryView(LoginRequiredMixin, View):
     template_name = "nutrition/diary_add_entry.html"
 
@@ -514,6 +543,7 @@ class DiaryAddEntryView(LoginRequiredMixin, View):
             {
                 "date": target_date or timezone.localdate().isoformat(),
                 "meal_slots": services.visible_meal_slots(request.user),
+                "most_used": services.most_used_foods(request.user),
             },
         )
 
@@ -530,6 +560,7 @@ class DiaryAddEntryView(LoginRequiredMixin, View):
                     "form": form,
                     "date": target_date.isoformat(),
                     "meal_slots": services.visible_meal_slots(request.user),
+                    "most_used": services.most_used_foods(request.user),
                 },
             )
 
@@ -598,7 +629,22 @@ class RecipeListView(LoginRequiredMixin, ListView):
     def get_queryset(self):
         from .models import Recipe
 
-        return Recipe.objects.filter(owner=self.request.user).order_by("name")
+        qs = Recipe.objects.filter(owner=self.request.user).order_by("name")
+        query = self.request.GET.get("q", "").strip()
+        if query:
+            qs = qs.filter(name__icontains=query)
+        return qs
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["query"] = self.request.GET.get("q", "")
+        # Per-serving calories at a glance, without opening each
+        # recipe — the same reason food_list.html shows calories
+        # directly rather than making every recipe a guess until
+        # opened.
+        for recipe in context["recipes"]:
+            recipe.per_serving = services.recipe_per_serving_nutrition(recipe)
+        return context
 
 
 class RecipeDetailView(LoginRequiredMixin, View):
@@ -635,6 +681,10 @@ def recipe_create(request):
         recipe = form.save(commit=False)
         recipe.owner = request.user
         recipe.save()
+        messages.success(
+            request,
+            _('"%(name)s" created — now add its ingredients below.') % {"name": recipe.name},
+        )
         return redirect("nutrition:recipe-detail", pk=recipe.pk)
     return render(request, "nutrition/recipe_form.html", {"form": form})
 
@@ -670,7 +720,9 @@ def recipe_ingredient_create(request, recipe_pk):
     recipe = _owned_recipe_or_404(request, recipe_pk)
     if request.method != "POST":
         return render(
-            request, "nutrition/recipe_ingredient_form.html", {"recipe": recipe}
+            request,
+            "nutrition/recipe_ingredient_form.html",
+            {"recipe": recipe, "most_used": services.most_used_foods(request.user)},
         )
 
     form = RecipeIngredientSearchForm(request.POST)
@@ -703,6 +755,30 @@ def recipe_ingredient_create(request, recipe_pk):
         recipe=recipe, food=food, quantity=form.cleaned_data["quantity"], order=next_order
     )
     return redirect("nutrition:recipe-detail", pk=recipe.pk)
+
+
+@login_required
+def recipe_ingredient_edit(request, recipe_pk, pk):
+    """Changes only the quantity of an ingredient already on the
+    recipe — see RecipeIngredientQuantityForm's own docstring for why
+    this exists alongside create/delete rather than requiring a
+    delete-and-re-add round trip for a simple amount correction."""
+    from .models import RecipeIngredient
+
+    recipe = _owned_recipe_or_404(request, recipe_pk)
+    ingredient = get_object_or_404(RecipeIngredient, pk=pk, recipe=recipe)
+    if request.method == "POST":
+        form = RecipeIngredientQuantityForm(request.POST, instance=ingredient)
+        if form.is_valid():
+            form.save()
+            return redirect("nutrition:recipe-detail", pk=recipe.pk)
+    else:
+        form = RecipeIngredientQuantityForm(instance=ingredient)
+    return render(
+        request,
+        "nutrition/recipe_ingredient_edit_form.html",
+        {"form": form, "recipe": recipe, "ingredient": ingredient},
+    )
 
 
 @login_required
@@ -915,7 +991,7 @@ def diet_plan_meal_item_add(request, plan_pk, meal_pk):
         return render(
             request,
             "nutrition/diet_plan_meal_item_form.html",
-            {"plan": plan, "meal": meal},
+            {"plan": plan, "meal": meal, "most_used": services.most_used_foods(request.user)},
         )
 
     form = DietPlanMealItemSearchForm(request.POST)
@@ -1070,4 +1146,41 @@ class WaterIntakeCalculatorView(_CalculatorView):
         return calculators.estimate_daily_water_liters(
             weight_kg=form.canonical_weight_kg(),
             activity_level=form.cleaned_data["activity_level"],
+        )
+
+
+class NutritionStatsView(LoginRequiredMixin, View):
+    """"How much have I actually been eating lately" — the calorie
+    trend the daily diary total can't show on its own, since it only
+    ever shows one day at a time. A single fixed 30-day window, not a
+    range picker like apps.analytics's own stats page: a month is
+    already the natural "am I actually consistent" window for calorie
+    tracking, and this page has one chart, not several — the extra
+    control apps.analytics needs to keep several charts legible isn't
+    earning its keep here yet (docs/NUTRITION.md "Nutrition
+    statistics")."""
+
+    template_name = "nutrition/stats.html"
+
+    def get(self, request):
+        from apps.core.charts import build_bar_series
+
+        from .models import NutritionTarget
+
+        history = services.calorie_history(request.user)
+        summary = services.nutrition_stats(request.user)
+        target = NutritionTarget.objects.filter(
+            user=request.user, ended_at__isnull=True
+        ).first()
+        calorie_chart = build_bar_series(
+            [(day.strftime("%b %d"), totals.calories) for day, totals in history]
+        )
+        return render(
+            request,
+            self.template_name,
+            {
+                "calorie_chart": calorie_chart,
+                "summary": summary,
+                "target": target,
+            },
         )

@@ -411,6 +411,197 @@ def visible_meal_slots(user):
     return MealSlot.objects.filter(Q(owner=user) | Q(owner__isnull=True), active=True)
 
 
+@dataclass(frozen=True)
+class FoodUsage:
+    """One entry in a "quick add" panel — see `most_used_foods`.
+    `quantity`/`meal_slot_id` are sensible defaults to prefill, not
+    part of what ranks the food: the most recent diary quantity/meal
+    for that food if it's ever been logged directly, else the food's
+    own serving size and no meal-slot guess."""
+
+    food: object
+    quantity: object
+    meal_slot_id: object
+
+
+def most_used_foods(user, *, limit=10):
+    """The user's most frequently added foods, most-used first —
+    powers the "quick add" panel shown wherever a food can be added
+    (the food diary, recipe ingredients, diet-plan meal items), so a
+    food eaten often doesn't need re-typing into a search box every
+    single time. Ranked by frequency, not recency: usage is counted
+    across every place a food actually gets added for this user — the
+    diary, recipe ingredients, and diet-plan items — not just one of
+    them, since "used the most" means overall, not "most recent in
+    this one context." Only ever counts this user's own usage, even
+    for a shared (`owner=None`) food other users also have."""
+    from collections import Counter
+
+    from .models import DiaryEntry, DietPlanItem, Food, RecipeIngredient
+
+    counts = Counter()
+    counts.update(
+        DiaryEntry.objects.filter(user=user, food__isnull=False).values_list(
+            "food_id", flat=True
+        )
+    )
+    counts.update(RecipeIngredient.objects.filter(recipe__owner=user).values_list(
+        "food_id", flat=True
+    ))
+    counts.update(
+        DietPlanItem.objects.filter(
+            diet_plan_meal__diet_plan__user=user, food__isnull=False
+        ).values_list("food_id", flat=True)
+    )
+    if not counts:
+        return []
+
+    top_ids = [food_id for food_id, _count in counts.most_common(limit)]
+    foods_by_id = Food.objects.in_bulk(top_ids)
+
+    # The most recent diary entry per food, for a sensible quantity/
+    # meal-slot prefill — Postgres DISTINCT ON, matches this project's
+    # only supported database (docs/ARCHITECTURE.md).
+    last_diary_use = {
+        food_id: (quantity, meal_slot_id)
+        for food_id, quantity, meal_slot_id in DiaryEntry.objects.filter(
+            user=user, food_id__in=top_ids
+        )
+        .order_by("food_id", "-created_at")
+        .distinct("food_id")
+        .values_list("food_id", "quantity", "meal_slot_id")
+    }
+
+    usages = []
+    for food_id in top_ids:
+        food = foods_by_id.get(food_id)
+        if food is None:
+            continue
+        quantity, meal_slot_id = last_diary_use.get(food_id, (food.serving_size, None))
+        usages.append(FoodUsage(food=food, quantity=quantity, meal_slot_id=meal_slot_id))
+    return usages
+
+
+@transaction.atomic
+def copy_diary_day(user, source_date, target_date):
+    """Duplicates every DiaryEntry logged on `source_date` onto
+    `target_date` as brand new rows — "I ate the same as yesterday"
+    without re-searching and re-adding every item by hand. The source
+    day is never read back out or mutated (docs/NUTRITION.md /
+    CLAUDE.md's "history must remain historically trustworthy"
+    extends here the same way it does to `merge_foods`), and copying
+    is purely additive: running it twice, or copying onto a day that
+    already has entries, just adds more rows rather than silently
+    deduplicating — the same "an explicit user action always does
+    exactly what it says" rule as every other diary action in this
+    app. Returns how many entries were copied, so the caller can tell
+    a genuinely empty source day apart from a successful copy."""
+    from .models import DiaryEntry
+
+    source_entries = DiaryEntry.objects.filter(user=user, date=source_date)
+    new_entries = [
+        DiaryEntry(
+            user=user,
+            date=target_date,
+            meal_slot_id=entry.meal_slot_id,
+            food_id=entry.food_id,
+            recipe_id=entry.recipe_id,
+            quantity=entry.quantity,
+            notes=entry.notes,
+        )
+        for entry in source_entries
+    ]
+    DiaryEntry.objects.bulk_create(new_entries)
+    return len(new_entries)
+
+
+# How many days of calorie_history/nutrition_stats look back by
+# default — long enough to see a real weekly pattern (weekday vs.
+# weekend eating), short enough to stay one screen's worth of bars,
+# same "30" apps.nutrition.dashboard's own weight chart already uses
+# for the same reason (docs/NUTRITION.md dashboard weight chart).
+STATS_WINDOW_DAYS = 30
+
+
+def calorie_history(user, *, days=STATS_WINDOW_DAYS):
+    """The last `days` calendar days' totals (today inclusive), oldest
+    first, with exactly one entry per day — including days nothing was
+    logged at all (`ZERO_NUTRITION`), the same "always one point per
+    day, not just days with data" shape
+    apps.analytics.services.weekly_volume_series uses, so a genuinely
+    quiet day shows up as a real dip on the chart rather than a gap
+    that silently compresses the timeline."""
+    from .models import DiaryEntry
+
+    today = timezone.localdate()
+    start = today - timezone.timedelta(days=days - 1)
+    entries = DiaryEntry.objects.filter(
+        user=user, date__gte=start, date__lte=today
+    ).select_related("food", "recipe")
+
+    totals_by_date = {}
+    for entry in entries:
+        totals_by_date[entry.date] = totals_by_date.get(
+            entry.date, ZERO_NUTRITION
+        ) + diary_entry_nutrition(entry)
+
+    return [
+        (start + timezone.timedelta(days=offset), totals_by_date.get(
+            start + timezone.timedelta(days=offset), ZERO_NUTRITION
+        ))
+        for offset in range(days)
+    ]
+
+
+@dataclass(frozen=True)
+class NutritionStatsSummary:
+    """The nutrition stats page's headline numbers — see
+    `nutrition_stats`."""
+
+    days_logged: int
+    days_in_range: int
+    average_calories: Decimal
+    average_protein_grams: Decimal
+    average_carbohydrate_grams: Decimal
+    average_fat_grams: Decimal
+
+
+def nutrition_stats(user, *, days=STATS_WINDOW_DAYS) -> NutritionStatsSummary:
+    """Average daily calories/macros over `calorie_history`'s window,
+    counting only days something was actually logged. An unlogged day
+    is excluded from the average rather than counted as a zero-calorie
+    day — counting it as zero would drag the average down for anyone
+    who only logs most days, not every single day, which is most
+    real usage and shouldn't be punished by the stats page itself."""
+    history = calorie_history(user, days=days)
+    logged = [totals for _day, totals in history if totals.calories > 0]
+    days_logged = len(logged)
+    if not days_logged:
+        return NutritionStatsSummary(
+            days_logged=0,
+            days_in_range=days,
+            average_calories=Decimal("0"),
+            average_protein_grams=Decimal("0"),
+            average_carbohydrate_grams=Decimal("0"),
+            average_fat_grams=Decimal("0"),
+        )
+
+    count = Decimal(days_logged)
+
+    def _average(attr, places):
+        total = sum((getattr(totals, attr) for totals in logged), Decimal("0"))
+        return (total / count).quantize(Decimal(places))
+
+    return NutritionStatsSummary(
+        days_logged=days_logged,
+        days_in_range=days,
+        average_calories=_average("calories", "1"),
+        average_protein_grams=_average("protein_grams", "0.1"),
+        average_carbohydrate_grams=_average("carbohydrate_grams", "0.1"),
+        average_fat_grams=_average("fat_grams", "0.1"),
+    )
+
+
 def is_training_day(user, target_date):
     """Whether `target_date` has at least one *completed* workout
     session — the same filter apps.analytics.services uses to define

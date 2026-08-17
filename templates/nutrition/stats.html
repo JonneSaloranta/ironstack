@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Nutrition statistics" %} — IronStack{% endblock %}
+{% block content %}
+<div class="top-bar">
+  <h1 style="margin:0;">{% trans "Statistics" %}</h1>
+</div>
+
+<div class="card">
+  <dl class="stat-row">
+    <div><dt>{% trans "Days logged" %}</dt><dd>{{ summary.days_logged }} / {{ summary.days_in_range }}</dd></div>
+    <div><dt>{% trans "Average calories" %}</dt><dd>{{ summary.average_calories|floatformat:0 }}{% if target %} / {{ target.daily_calories }}{% endif %} kcal</dd></div>
+  </dl>
+  {% if summary.days_logged %}
+    <table class="set-table">
+      <tbody>
+        <tr>
+          <td>{% trans "Average protein" %}</td>
+          <td>{{ summary.average_protein_grams|floatformat:0 }}{% if target %} / {{ target.protein_grams|floatformat:0 }}{% endif %} g</td>
+        </tr>
+        <tr>
+          <td>{% trans "Average carbohydrates" %}</td>
+          <td>{{ summary.average_carbohydrate_grams|floatformat:0 }}{% if target %} / {{ target.carbohydrate_grams|floatformat:0 }}{% endif %} g</td>
+        </tr>
+        <tr>
+          <td>{% trans "Average fat" %}</td>
+          <td>{{ summary.average_fat_grams|floatformat:0 }}{% if target %} / {{ target.fat_grams|floatformat:0 }}{% endif %} g</td>
+        </tr>
+      </tbody>
+    </table>
+  {% endif %}
+  <p class="field-help">{% trans "Averages only count days you actually logged something — a day with nothing logged isn't counted as zero calories." %}</p>
+</div>
+
+<h2>{% trans "Daily calories (last 30 days)" %}</h2>
+{% if calorie_chart %}
+  {% trans "Daily calories" as calorie_chart_title %}
+  {% include "core/_bar_chart.html" with chart=calorie_chart chart_title=calorie_chart_title unit_label="kcal" %}
+{% else %}
+  <div class="card empty-state"><p>{% trans "Log a few days in your food diary to see your trend here." %}</p></div>
+{% endif %}
+
+<p><a class="button-secondary" href="{% url 'nutrition:dashboard' %}">&larr; {% trans "Back to nutrition" %}</a></p>
+{% endblock %}

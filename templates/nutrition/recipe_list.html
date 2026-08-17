@@ -7,21 +7,36 @@
   <a class="button-secondary" href="{% url 'nutrition:recipe-create' %}">{% trans "+ New recipe" %}</a>
 </div>
 
+<form class="card" method="get">
+  <div class="field">
+    <label for="id_q">{% trans "Search" %}</label>
+    <input type="text" name="q" id="id_q" value="{{ query }}">
+  </div>
+  <button type="submit">{% trans "Search" %}</button>
+</form>
+
 {% if recipes %}
   {% for recipe in recipes %}
     <div class="card card-action-row">
       <div>
         <strong>{{ recipe.name }}</strong>
-        <p class="text-muted">{{ recipe.servings }} {% trans "servings" %}</p>
+        <p class="text-muted">
+          {{ recipe.servings }} {% trans "servings" %}
+          — {% blocktrans with calories=recipe.per_serving.calories|floatformat:0 %}{{ calories }} kcal/serving{% endblocktrans %}
+        </p>
       </div>
       <a class="button-secondary" href="{% url 'nutrition:recipe-detail' recipe.pk %}">{% trans "Open" %}</a>
     </div>
   {% endfor %}
+{% elif query %}
+  <div class="card empty-state">
+    <p>{% trans "No recipes match your search." %}</p>
+  </div>
 {% else %}
   <div class="card empty-state">
     <p>{% trans "No recipes yet." %}</p>
   </div>
 {% endif %}
 
-<p><a class="button-secondary" href="{% url 'nutrition:diary-day' %}">&larr; {% trans "Back to diary" %}</a></p>
+<p><a class="button-secondary" href="{% url 'nutrition:dashboard' %}">&larr; {% trans "Back to nutrition" %}</a></p>
 {% endblock %}
