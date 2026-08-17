@@ -1,5 +1,6 @@
 import dataclasses
 
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Count, Q
 from django.http import HttpResponseNotAllowed
@@ -77,6 +78,7 @@ class ActivityHistoryView(LoginRequiredMixin, DetailView):
         return context
 
 
+@login_required
 def activity_log(request, type_pk):
     activity_type = get_object_or_404(services.visible_to(request.user), pk=type_pk)
     if request.method != "POST":
@@ -91,6 +93,7 @@ def _owned_activity_or_404(request, pk):
     return get_object_or_404(Activity, pk=pk, user=request.user)
 
 
+@login_required
 def activity_edit(request, pk):
     activity = _owned_activity_or_404(request, pk)
     if request.method == "POST":
@@ -111,6 +114,7 @@ def activity_edit(request, pk):
     )
 
 
+@login_required
 def activity_delete(request, pk):
     if request.method != "POST":
         return HttpResponseNotAllowed(["POST"])
@@ -120,6 +124,7 @@ def activity_delete(request, pk):
     return redirect("activities:history", pk=type_pk)
 
 
+@login_required
 def activity_type_deactivate(request, pk):
     if request.method != "POST":
         return HttpResponseNotAllowed(["POST"])

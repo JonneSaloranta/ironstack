@@ -1,3 +1,4 @@
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Count
 from django.http import HttpResponseNotAllowed
@@ -85,6 +86,7 @@ class ProgramDeleteView(LoginRequiredMixin, DeleteView):
         return reverse("programs:program-list")
 
 
+@login_required
 def program_copy(request, pk):
     if request.method != "POST":
         return HttpResponseNotAllowed(["POST"])
@@ -97,6 +99,7 @@ def _owned_program_or_404(request, program_pk):
     return get_object_or_404(services.editable_by(request.user), pk=program_pk)
 
 
+@login_required
 def workout_create(request, program_pk):
     program = _owned_program_or_404(request, program_pk)
     form = WorkoutForm(request.POST or None)
@@ -111,6 +114,7 @@ def workout_create(request, program_pk):
     )
 
 
+@login_required
 def workout_update(request, program_pk, pk):
     program = _owned_program_or_404(request, program_pk)
     workout = get_object_or_404(Workout, pk=pk, program=program)
@@ -124,6 +128,7 @@ def workout_update(request, program_pk, pk):
     )
 
 
+@login_required
 def workout_delete(request, program_pk, pk):
     if request.method != "POST":
         return HttpResponseNotAllowed(["POST"])
@@ -134,6 +139,7 @@ def workout_delete(request, program_pk, pk):
     return redirect("programs:program-detail", pk=program.pk)
 
 
+@login_required
 def prescription_create(request, program_pk, workout_pk):
     program = _owned_program_or_404(request, program_pk)
     workout = get_object_or_404(Workout, pk=workout_pk, program=program)
@@ -151,6 +157,7 @@ def prescription_create(request, program_pk, workout_pk):
     )
 
 
+@login_required
 def prescription_update(request, program_pk, workout_pk, pk):
     program = _owned_program_or_404(request, program_pk)
     workout = get_object_or_404(Workout, pk=workout_pk, program=program)
@@ -169,6 +176,7 @@ def prescription_update(request, program_pk, workout_pk, pk):
     )
 
 
+@login_required
 def prescription_delete(request, program_pk, workout_pk, pk):
     if request.method != "POST":
         return HttpResponseNotAllowed(["POST"])

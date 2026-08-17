@@ -151,6 +151,16 @@ class ExerciseListViewTests(TestCase):
         response = self.client.get(reverse("exercises:exercise-list"))
         self.assertEqual(response.status_code, 302)
 
+    def test_the_plain_function_view_also_requires_login(self):
+        # Regression: exercise_deactivate was missing @login_required,
+        # so an anonymous request crashed with a 500 instead of
+        # redirecting to login — same bug class as apps.nutrition's
+        # own equivalent fix.
+        exercise = Exercise.objects.create(name="Alice Move", owner=self.alice)
+        self.client.logout()
+        response = self.client.post(reverse("exercises:exercise-deactivate", args=[exercise.pk]))
+        self.assertEqual(response.status_code, 302)
+
     def test_list_shows_system_and_own_exercises_not_other_users(self):
         Exercise.objects.create(name="System Move", owner=None)
         Exercise.objects.create(name="Alice Move", owner=self.alice)

@@ -140,6 +140,32 @@ class SessionViewPermissionTests(TestCase):
         response = self.client.get(reverse("workouts:session-list"))
         self.assertEqual(response.status_code, 302)
 
+    def test_the_plain_function_views_also_require_login(self):
+        # Regression: these were missing @login_required entirely, so
+        # an anonymous request crashed with a 500 instead of
+        # redirecting to login — same bug class as apps.nutrition's
+        # own equivalent fix. (session_train/train_set_log already had
+        # the decorator, so they're not repeated here.)
+        workout, prescription = _make_workout_with_prescription(self.alice)
+        session = services.start_session(self.alice, workout=workout)
+        performed = services.add_performed_exercise(session, prescription.exercise)
+        exercise_set = services.log_set(performed, weight=Decimal("100"), reps=5)
+        self.client.logout()
+        for response in [
+            self.client.post(reverse("workouts:session-start-freeform")),
+            self.client.post(reverse("workouts:session-start", args=[workout.pk])),
+            self.client.post(reverse("workouts:session-complete", args=[session.pk])),
+            self.client.post(reverse("workouts:session-abandon", args=[session.pk])),
+            self.client.post(reverse("workouts:session-delete", args=[session.pk])),
+            self.client.post(
+                reverse("workouts:performed-exercise-add", args=[session.pk])
+            ),
+            self.client.post(reverse("workouts:set-log", args=[performed.pk])),
+            self.client.get(reverse("workouts:set-edit", args=[exercise_set.pk])),
+            self.client.post(reverse("workouts:set-delete", args=[exercise_set.pk])),
+        ]:
+            self.assertEqual(response.status_code, 302)
+
     def test_cannot_view_another_users_session(self):
         response = self.client.get(
             reverse("workouts:session-detail", args=[self.bob_session.pk])

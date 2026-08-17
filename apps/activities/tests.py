@@ -116,6 +116,27 @@ class ActivityViewPermissionTests(TestCase):
         response = self.client.get(reverse("activities:type-list"))
         self.assertEqual(response.status_code, 302)
 
+    def test_the_plain_function_views_also_require_login(self):
+        # Regression: these were missing @login_required entirely, so
+        # an anonymous request crashed with a 500 (AnonymousUser isn't
+        # a real Model instance, so `.filter(user=request.user)` can't
+        # resolve it) instead of redirecting to login — same bug class
+        # as apps.nutrition's own equivalent fix.
+        entry = Activity.objects.create(
+            user=self.alice,
+            activity_type=self.activity_type,
+            date="2026-01-01",
+            duration=timedelta(minutes=30),
+        )
+        self.client.logout()
+        for response in [
+            self.client.post(reverse("activities:log", args=[self.activity_type.pk])),
+            self.client.get(reverse("activities:entry-edit", args=[entry.pk])),
+            self.client.post(reverse("activities:entry-delete", args=[entry.pk])),
+            self.client.post(reverse("activities:type-deactivate", args=[self.activity_type.pk])),
+        ]:
+            self.assertEqual(response.status_code, 302)
+
     def test_cannot_view_another_users_custom_type(self):
         bobs_type = ActivityType.objects.create(name="Bob Only", owner=self.bob)
         response = self.client.get(reverse("activities:history", args=[bobs_type.pk]))

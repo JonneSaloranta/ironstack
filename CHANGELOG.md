@@ -33,6 +33,16 @@ lands and remains the authoritative history.
   never translated.
 - Logging a diet plan to the diary with an invalid date silently did
   nothing instead of showing the error.
+- Some button rows in the nutrition UI could run past the right edge
+  of the screen on mobile, especially with longer translated text.
+- Several actions across the training log, body measurements,
+  activities, exercises, and programs (starting/completing/deleting a
+  workout session, logging a set, editing/deleting a measurement or
+  activity entry, deactivating a custom exercise, copying a program,
+  and more) crashed instead of redirecting to login when accessed
+  while signed out.
+- A weekly-volume-chart test that intermittently failed whenever the
+  calendar date happened to fall on a Monday.
 
 ## [1.2.0] — 2026-08-15
 

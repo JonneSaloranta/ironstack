@@ -203,6 +203,7 @@ def train_set_log(request, performed_exercise_pk):
     return response
 
 
+@login_required
 def session_start(request, workout_pk):
     if request.method != "POST":
         return HttpResponseNotAllowed(["POST"])
@@ -213,6 +214,7 @@ def session_start(request, workout_pk):
     return redirect("workouts:session-detail", pk=session.pk)
 
 
+@login_required
 def session_start_freeform(request):
     if request.method != "POST":
         return HttpResponseNotAllowed(["POST"])
@@ -220,6 +222,7 @@ def session_start_freeform(request):
     return redirect("workouts:session-detail", pk=session.pk)
 
 
+@login_required
 def session_complete(request, pk):
     if request.method != "POST":
         return HttpResponseNotAllowed(["POST"])
@@ -228,6 +231,7 @@ def session_complete(request, pk):
     return redirect("workouts:session-detail", pk=session.pk)
 
 
+@login_required
 def session_abandon(request, pk):
     if request.method != "POST":
         return HttpResponseNotAllowed(["POST"])
@@ -236,6 +240,7 @@ def session_abandon(request, pk):
     return redirect("workouts:session-detail", pk=session.pk)
 
 
+@login_required
 def session_delete(request, pk):
     if request.method != "POST":
         return HttpResponseNotAllowed(["POST"])
@@ -244,6 +249,7 @@ def session_delete(request, pk):
     return redirect("workouts:session-list")
 
 
+@login_required
 def performed_exercise_add(request, session_pk):
     session = get_object_or_404(
         services.sessions_for(request.user),
@@ -327,6 +333,7 @@ def _flash_new_prs(request, performed_exercise, new_prs):
         )
 
 
+@login_required
 def set_log(request, performed_exercise_pk):
     if request.method != "POST":
         return HttpResponseNotAllowed(["POST"])
@@ -367,6 +374,7 @@ def set_log(request, performed_exercise_pk):
     )
 
 
+@login_required
 def set_edit(request, pk):
     exercise_set = get_object_or_404(
         ExerciseSet, pk=pk, performed_exercise__session__user=request.user
@@ -389,6 +397,7 @@ def set_edit(request, pk):
     )
 
 
+@login_required
 def set_delete(request, pk):
     if request.method != "POST":
         return HttpResponseNotAllowed(["POST"])

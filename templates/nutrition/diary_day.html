@@ -6,7 +6,7 @@
   <h1 style="margin:0;">{{ date }}</h1>
 </div>
 
-<div style="display:flex; justify-content:space-between; margin-bottom:1rem;">
+<div style="display:flex; flex-wrap:wrap; justify-content:space-between; gap:0.5rem; margin-bottom:1rem;">
   <a class="button-secondary" href="{% url 'nutrition:diary-day' target_date=previous_date.isoformat %}">&larr; {% trans "Previous day" %}</a>
   <a class="button-secondary" href="{% url 'nutrition:diary-day' target_date=next_date.isoformat %}">{% trans "Next day" %} &rarr;</a>
 </div>
@@ -50,7 +50,7 @@
           <span>{% if entry.food %}{{ entry.food.name }}{% else %}{{ entry.recipe.name }}{% endif %}</span>
           <span class="text-muted">— {{ entry.quantity }} {{ entry.food.serving_unit|default:"servings" }}, {{ entry.nutrition.calories|floatformat:0 }} kcal</span>
         </div>
-        <div style="display:flex; gap:0.5rem;">
+        <div style="display:flex; flex-wrap:wrap; gap:0.5rem;">
           <a class="button-secondary" href="{% url 'nutrition:diary-entry-edit' entry.pk %}">{% trans "Edit" %}</a>
           <form method="post" action="{% url 'nutrition:diary-entry-delete' entry.pk %}"
                 x-data="{}" @submit="if (!confirm('{% trans "Remove this entry?" %}')) $event.preventDefault()">

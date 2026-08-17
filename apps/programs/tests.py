@@ -220,6 +220,41 @@ class ProgramViewPermissionTests(TestCase):
         response = self.client.get(reverse("programs:program-list"))
         self.assertEqual(response.status_code, 302)
 
+    def test_the_plain_function_views_also_require_login(self):
+        # Regression: these were missing @login_required entirely, so
+        # an anonymous request crashed with a 500 instead of
+        # redirecting to login — same bug class as apps.nutrition's
+        # own equivalent fix.
+        from apps.exercises.models import Exercise
+
+        program = Program.objects.create(owner=self.alice, name="Alice Program")
+        workout = Workout.objects.create(program=program, name="Day 1")
+        exercise = Exercise.objects.create(name="Test Squat", owner=None)
+        prescription = ExercisePrescription.objects.create(workout=workout, exercise=exercise)
+        self.client.logout()
+        for response in [
+            self.client.post(reverse("programs:program-copy", args=[program.pk])),
+            self.client.get(reverse("programs:workout-create", args=[program.pk])),
+            self.client.get(reverse("programs:workout-update", args=[program.pk, workout.pk])),
+            self.client.post(reverse("programs:workout-delete", args=[program.pk, workout.pk])),
+            self.client.get(
+                reverse("programs:prescription-create", args=[program.pk, workout.pk])
+            ),
+            self.client.get(
+                reverse(
+                    "programs:prescription-update",
+                    args=[program.pk, workout.pk, prescription.pk],
+                )
+            ),
+            self.client.post(
+                reverse(
+                    "programs:prescription-delete",
+                    args=[program.pk, workout.pk, prescription.pk],
+                )
+            ),
+        ]:
+            self.assertEqual(response.status_code, 302)
+
     def test_cannot_view_another_users_program(self):
         response = self.client.get(
             reverse("programs:program-detail", args=[self.bob_program.pk])

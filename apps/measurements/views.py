@@ -1,3 +1,4 @@
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseNotAllowed
 from django.shortcuts import get_object_or_404, redirect, render
@@ -96,6 +97,7 @@ class MeasurementHistoryView(LoginRequiredMixin, DetailView):
         return context
 
 
+@login_required
 def measurement_log(request, type_pk):
     measurement_type = get_object_or_404(
         services.visible_to(request.user), pk=type_pk
@@ -114,6 +116,7 @@ def _owned_measurement_or_404(request, pk):
     return get_object_or_404(BodyMeasurement, pk=pk, user=request.user)
 
 
+@login_required
 def measurement_edit(request, pk):
     measurement = _owned_measurement_or_404(request, pk)
     if request.method == "POST":
@@ -137,6 +140,7 @@ def measurement_edit(request, pk):
     )
 
 
+@login_required
 def measurement_delete(request, pk):
     if request.method != "POST":
         return HttpResponseNotAllowed(["POST"])
@@ -146,6 +150,7 @@ def measurement_delete(request, pk):
     return redirect("measurements:history", pk=type_pk)
 
 
+@login_required
 def measurement_type_deactivate(request, pk):
     if request.method != "POST":
         return HttpResponseNotAllowed(["POST"])

@@ -385,8 +385,26 @@ abbr[title]:focus::after {
 .card-action-row {
   display: flex;
   align-items: center;
+  /* Mobile-first: on a narrow viewport a long label (translations run
+     noticeably longer than English — German/Finnish-style compound
+     words in particular can be one long unbreakable "word") can no
+     longer force the row past the viewport edge. Without this, a flex
+     item's default min-width:auto refuses to shrink text below its
+     longest unbreakable run, and with no wrap the row just overflows
+     the card instead of breaking onto a second line. */
+  flex-wrap: wrap;
   justify-content: space-between;
-  gap: 1rem;
+  gap: 0.5rem 1rem;
+}
+
+/* The text side (name/description) must be allowed to shrink below
+   its own min-content width, or the button(s) on the right get
+   pushed past the card's edge on a narrow screen — the classic
+   flexbox overflow trap. Buttons stay their natural size
+   (flex-shrink: 0 below) since shrinking *those* would just clip the
+   label instead of wrapping the row. */
+.card-action-row > *:first-child {
+  min-width: 0;
 }
 
 .card-action-row .button-secondary {

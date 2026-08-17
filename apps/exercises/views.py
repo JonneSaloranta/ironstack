@@ -1,3 +1,4 @@
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseNotAllowed
 from django.shortcuts import get_object_or_404, redirect
@@ -76,6 +77,7 @@ class ExerciseUpdateView(LoginRequiredMixin, UpdateView):
         return reverse_lazy("exercises:exercise-detail", args=[self.object.pk])
 
 
+@login_required
 def exercise_deactivate(request, pk):
     if request.method != "POST":
         return HttpResponseNotAllowed(["POST"])

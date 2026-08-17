@@ -1702,3 +1702,72 @@ split returned exactly 176.00g protein / 217.75g carbohydrate /
 3.1 L/day for an 80kg moderately-active user (2640ml base + 500ml
 activity bonus). `ruff check .`, `makemigrations --check --dry-run`,
 and the full 826-plus-new-tests cross-app suite all pass.
+
+**The anonymous-access `login_required` bug flagged as pre-existing
+in the previous entry turned out to be much wider than first
+reported** — asked directly to fix it if anything needed fixing, a
+full AST sweep of every `apps/*/views.py` for a plain function view
+missing `@login_required` (the class-based views were never at risk;
+`LoginRequiredMixin` is easy to forget to add once but impossible to
+half-apply) turned up 21 more affected views across four more apps,
+not just the two originally spotted:
+
+- `apps.workouts` (9 views — the core training-log surface itself):
+  `session_start`, `session_start_freeform`, `session_complete`,
+  `session_abandon`, `session_delete`, `performed_exercise_add`,
+  `set_log`, `set_edit`, `set_delete`. (`session_train`/
+  `train_set_log` already had the decorator.)
+- `apps.activities` (4): `activity_log`, `activity_edit`,
+  `activity_delete`, `activity_type_deactivate`.
+- `apps.exercises` (1): `exercise_deactivate`.
+- `apps.measurements` (4) and `apps.programs` (7) — the two flagged
+  last time — now actually fixed rather than just documented.
+
+`apps.core.views.healthcheck`/`service_worker`/`web_manifest` are
+deliberately excluded — a health-check endpoint and a PWA manifest/
+service-worker script have to be reachable without a session by
+design, not an oversight. One regression test added per app (matching
+`apps.nutrition`'s own `test_the_plain_function_views_also_require_
+login`), asserting each fixed URL redirects (302) for a logged-out
+client instead of crashing. All 192 tests across the five touched
+apps pass.
+
+**A mobile layout bug in `apps.nutrition`**: some button rows ran
+past the right edge of the screen — reported directly, alongside a
+request to check the whole nutrition UI's mobile fit given how much
+longer some translated labels run than their English source (German/
+Finnish-style compound words in particular can be one long
+unbreakable "word", and Russian labels routinely run 30-50% longer
+than English). Root cause: `.card-action-row` (the shared
+name-and-description-on-the-left, button-on-the-right pattern used
+throughout the app) had no `flex-wrap`, and flexbox's default
+`min-width: auto` refuses to let a text item shrink below its
+longest unbreakable run — so a long label had nowhere to go but push
+the button off the card. Fixed centrally in `static/css/base.css`
+(`flex-wrap: wrap` on `.card-action-row` itself, `min-width: 0` on
+its first child so the text can actually shrink/wrap first), which
+benefits every other page using the same class
+(`accounts/profile.html`, `core/feedback_list.html`, ...), not just
+nutrition. Four nutrition templates with their own one-off inline
+`display:flex` button/nav rows (the dashboard's "Recipes/Diet plans"
+button pair, the food-search result rows' quantity input + submit
+button, the diary day's previous/next-day nav and its per-entry edit/
+delete buttons) got the same `flex-wrap:wrap` added directly, since
+they don't use the shared class. Live-verified: `collectstatic` +
+re-fetching `static/css/base.css` over `curl` confirmed the new rule
+is actually served, and a logged-in Finnish session's rendered HTML
+for the diary page shows the new inline `flex-wrap:wrap` in place.
+
+**A genuinely unrelated test failure surfaced by chance while chasing
+the full suite down**: `apps.analytics.tests.WeeklyVolumeSeriesTests.
+test_sets_are_grouped_into_iso_weeks` failed with `3 != 2` the moment
+the real-world calendar date crossed into a Monday during this same
+session. The test logged sessions at `days_ago=0` and `days_ago=1`,
+assuming both always land in the same ISO week — true on six days out
+of seven, false specifically when "today" is a Monday, since ISO
+weeks start on Monday and "yesterday" is then already last week.
+Fixed by capping the second offset at `min(1, today.weekday())`
+(0 on a Monday, 1 every other day) so the two sessions are always
+provably in the same ISO week regardless of which real day the suite
+happens to run on, rather than hand-picking a fixed offset and hoping.
+Verified directly on a real Monday (today), where it now passes.

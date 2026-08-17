@@ -111,8 +111,19 @@ class WeeklyVolumeSeriesTests(TestCase):
         self.assertIsNone(services.weekly_volume_series(self.alice, dateranges.resolve("all")))
 
     def test_sets_are_grouped_into_iso_weeks(self):
+        # Regression: days_ago=1 for the second session used to be a
+        # fixed offset, which put it in an *earlier* ISO week than
+        # days_ago=0 whenever "today" happened to be a Monday (ISO
+        # weeks start on Monday, so "yesterday" is already last week
+        # on that one day out of seven) — producing 3 bars instead of
+        # the 2 this test expects. Capped at today.weekday() (0 on a
+        # Monday) so the two sessions are always provably in the same
+        # ISO week regardless of which real-world day the test runs on.
+        same_week_gap = min(1, date.today().weekday())
         _log_completed_session(self.alice, self.exercise, Decimal("100"), [5], days_ago=0)
-        _log_completed_session(self.alice, self.exercise, Decimal("100"), [5], days_ago=1)
+        _log_completed_session(
+            self.alice, self.exercise, Decimal("100"), [5], days_ago=same_week_gap
+        )
         _log_completed_session(self.alice, self.exercise, Decimal("100"), [5], days_ago=14)
         series = services.weekly_volume_series(self.alice, dateranges.resolve("all"))
         # Two sessions land in the same week (grouped into one bar), one

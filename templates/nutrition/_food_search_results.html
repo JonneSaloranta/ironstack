@@ -13,7 +13,7 @@
             <strong>{{ food.name }}</strong>
             <p class="text-muted">{{ food.calories }} kcal / {{ food.serving_size }} {{ food.serving_unit }}</p>
           </div>
-          <div style="display:flex; gap:0.5rem; align-items:center;">
+          <div style="display:flex; flex-wrap:wrap; gap:0.5rem; align-items:center;">
             <input type="number" name="quantity" step="0.01" value="{{ food.serving_size }}" style="width:5rem;" aria-label="{% trans "Quantity" %}">
             <button type="submit">{% trans "Add" %}</button>
           </div>
@@ -33,7 +33,7 @@
             <strong>{{ product.name }}</strong>{% if product.brand %} <span class="text-muted">({{ product.brand }})</span>{% endif %}
             <p class="text-muted">{{ product.calories }} kcal / {{ product.serving_size }} {{ product.serving_unit }}</p>
           </div>
-          <div style="display:flex; gap:0.5rem; align-items:center;">
+          <div style="display:flex; flex-wrap:wrap; gap:0.5rem; align-items:center;">
             <input type="number" name="quantity" step="0.01" value="{{ product.serving_size }}" style="width:5rem;" aria-label="{% trans "Quantity" %}">
             <button type="submit">{% trans "Import & add" %}</button>
           </div>

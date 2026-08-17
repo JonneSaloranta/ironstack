@@ -100,6 +100,25 @@ class MeasurementViewPermissionTests(TestCase):
         response = self.client.get(reverse("measurements:type-list"))
         self.assertEqual(response.status_code, 302)
 
+    def test_the_plain_function_views_also_require_login(self):
+        # Regression: these were missing @login_required entirely, so
+        # an anonymous request crashed with a 500 instead of
+        # redirecting to login — same bug class as apps.nutrition's
+        # own equivalent fix.
+        entry = BodyMeasurement.objects.create(
+            user=self.alice, measurement_type=self.measurement_type, value=Decimal("80")
+        )
+        self.client.logout()
+        for response in [
+            self.client.post(reverse("measurements:log", args=[self.measurement_type.pk])),
+            self.client.get(reverse("measurements:entry-edit", args=[entry.pk])),
+            self.client.post(reverse("measurements:entry-delete", args=[entry.pk])),
+            self.client.post(
+                reverse("measurements:type-deactivate", args=[self.measurement_type.pk])
+            ),
+        ]:
+            self.assertEqual(response.status_code, 302)
+
     def test_cannot_view_another_users_custom_type(self):
         bobs_type = MeasurementType.objects.create(
             name="Bob Only", owner=self.bob, unit_kind=UnitKind.LENGTH

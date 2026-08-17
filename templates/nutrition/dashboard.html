@@ -101,7 +101,7 @@
     <strong>{% trans "Recipes & diet plans" %}</strong>
     <p class="text-muted">{% trans "Manage your recipes or build a full diet plan." %}</p>
   </div>
-  <div style="display:flex; gap:0.5rem;">
+  <div style="display:flex; flex-wrap:wrap; gap:0.5rem;">
     <a class="button-secondary" href="{% url 'nutrition:recipe-list' %}">{% trans "Recipes" %}</a>
     <a class="button-secondary" href="{% url 'nutrition:diet-plan-list' %}">{% trans "Diet plans" %}</a>
   </div>
