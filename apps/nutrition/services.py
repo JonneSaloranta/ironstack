@@ -124,18 +124,25 @@ def _food_is_stale(food):
     return (timezone.now() - food.off_synced_at).days >= OPENFOODFACTS_STALENESS_DAYS
 
 
-def import_or_refresh_food_from_off(barcode):
+def import_or_refresh_food_from_off(barcode, *, force=False):
     """Creates a shared (`owner=None`) `Food` row from OpenFoodFacts,
     or refreshes an existing one if it's gone stale — see
     docs/NUTRITION.md "OpenFoodFacts integration": staleness-triggered
     refresh on next use, not a periodic bulk re-sync. Returns `None`
     if the integration is turned off (OpenFoodFactsSettings) or OFF
-    has nothing usable for this barcode."""
+    has nothing usable for this barcode.
+
+    `force=True` skips the staleness check and always re-fetches —
+    used only by `apps.nutrition.admin.FoodAdmin`'s "Refresh selected
+    foods from OpenFoodFacts" action, an explicit admin-initiated
+    request for specific rows, not a scheduled or unconditional
+    bulk re-sync (still the thing this whole integration was
+    deliberately scoped away from — see the module docstring)."""
     if not OpenFoodFactsSettings.load().enabled:
         return None
 
     existing = Food.objects.filter(off_id=barcode).first()
-    if existing is not None and not _food_is_stale(existing):
+    if existing is not None and not force and not _food_is_stale(existing):
         return existing
 
     try:
@@ -158,6 +165,32 @@ def import_or_refresh_food_from_off(barcode):
         existing.save()
         return existing
     return Food.objects.create(owner=None, **parsed)
+
+
+@transaction.atomic
+def merge_foods(keep, duplicates):
+    """The admin-only "these are actually the same food" cleanup tool
+    (`apps.nutrition.admin.FoodAdmin`) — re-points every reference to
+    `duplicates` onto `keep`, then deletes the now-unreferenced
+    duplicate rows. Deliberately never deletes a `DiaryEntry`/
+    `RecipeIngredient`/`DietPlanItem` itself, only changes which
+    `Food` row it points at — a duplicate entry in the food library is
+    a data-quality problem, not a reason to erase what a user actually
+    logged (docs/NUTRITION.md and CLAUDE.md's own "workout history
+    must remain historically trustworthy" apply here too: a merge
+    tidies the library, it must never look like the user's own diary
+    lost an entry). `keep` is chosen by whoever calls this, not
+    inferred — see the admin view for why that has to stay a human
+    decision, not a heuristic."""
+    from .models import DiaryEntry, DietPlanItem, RecipeIngredient
+
+    duplicate_ids = [food.pk for food in duplicates if food.pk != keep.pk]
+    if not duplicate_ids:
+        return
+    RecipeIngredient.objects.filter(food_id__in=duplicate_ids).update(food=keep)
+    DiaryEntry.objects.filter(food_id__in=duplicate_ids).update(food=keep)
+    DietPlanItem.objects.filter(food_id__in=duplicate_ids).update(food=keep)
+    Food.objects.filter(pk__in=duplicate_ids).delete()
 
 
 # EAN-8/UPC-A/EAN-13/ITF-14 cover every barcode format OpenFoodFacts

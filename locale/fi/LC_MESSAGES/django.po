@@ -651,6 +651,27 @@ msgstr "yksikkötyyppi"
 msgid "recorded at"
 msgstr "kirjattu"
 
+msgid "Refresh selected foods from OpenFoodFacts"
+msgstr "Päivitä valitut ruoat OpenFoodFactsista"
+
+msgid "None of the selected foods were imported from OpenFoodFacts."
+msgstr "Yksikään valituista ruoista ei ole tuotu OpenFoodFactsista."
+
+msgid "Refreshed %(refreshed)d of %(total)d food(s) from OpenFoodFacts."
+msgstr "Päivitettiin %(refreshed)d/%(total)d ruokaa OpenFoodFactsista."
+
+msgid "Merge selected foods into one…"
+msgstr "Yhdistä valitut ruoat yhdeksi…"
+
+msgid "Select at least two foods to merge."
+msgstr "Valitse vähintään kaksi ruokaa yhdistettäväksi."
+
+msgid "Merged %(count)d food(s) into “%(name)s”. Every diary entry, recipe ingredient, and diet-plan item that referenced one of them now points at it instead."
+msgstr "Yhdistettiin %(count)d ruokaa kohteeseen “%(name)s”. Jokainen ruokapäiväkirjan merkintä, resepti-ainesosa ja ruokavaliosuunnitelman kohde, joka viittasi johonkin niistä, viittaa nyt tähän."
+
+msgid "Merge foods"
+msgstr "Yhdistä ruoat"
+
 msgid "a %(job)s job"
 msgstr "%(job)s-työ"
 
@@ -741,6 +762,9 @@ msgstr "Ateria"
 msgid "Servings"
 msgstr "Annokset"
 
+msgid "Log for date"
+msgstr "Kirjaa päivälle"
+
 msgid "Plan name"
 msgstr "Suunnitelman nimi"
 
@@ -761,9 +785,6 @@ msgstr "Mitkä ateriat?"
 
 msgid "Pick either a food or a recipe, not both or neither."
 msgstr "Valitse joko ruoka tai resepti, ei molempia eikä kumpaakaan."
-
-msgid "Log for date"
-msgstr "Kirjaa päivälle"
 
 msgid "Age (years)"
 msgstr "Ikä (vuotta)"
@@ -1445,6 +1466,33 @@ msgstr "Django-sivuston hallinta"
 msgid "Django administration"
 msgstr "Django-hallinta"
 
+msgid "Pick which of these %(counter)s foods to keep. Every diary entry, recipe ingredient, and diet-plan item currently pointing at one of the others will be repointed at the one you keep — nothing a user has logged is deleted, only which food row it refers to changes. The other foods are then removed."
+msgstr "Valitse, mikä näistä %(counter)s ruoasta säilytetään. Jokainen ruokapäiväkirjan merkintä, resepti-ainesosa ja ruokavaliosuunnitelman kohde, joka viittaa johonkin muista, kohdistetaan säilytettävään — mitään käyttäjän kirjaamaa ei poisteta, vain se, mihin ruokariviin se viittaa, muuttuu. Muut ruoat poistetaan sen jälkeen."
+
+msgid "Keep"
+msgstr "Säilytä"
+
+msgid "Brand"
+msgstr "Merkki"
+
+msgid "Owner"
+msgstr "Omistaja"
+
+msgid "Calories"
+msgstr "Kalorit"
+
+msgid "Serving"
+msgstr "Annos"
+
+msgid "OFF id"
+msgstr "OFF-tunnus"
+
+msgid "shared"
+msgstr "jaettu"
+
+msgid "Merge"
+msgstr "Yhdistä"
+
 msgid "Date range"
 msgstr "Ajanjakso"
 
@@ -1849,6 +1897,18 @@ msgstr "Ei mittauksia vielä"
 msgid "No measurement types yet."
 msgstr "Mittaustyyppejä ei ole vielä."
 
+msgid "Scan barcode"
+msgstr "Skannaa viivakoodi"
+
+msgid "Scan a barcode"
+msgstr "Skannaa viivakoodi"
+
+msgid "Close"
+msgstr "Sulje"
+
+msgid "Point your camera at a barcode."
+msgstr "Suuntaa kamera viivakoodiin."
+
 msgid "Your foods"
 msgstr "Omat ruokasi"
 
@@ -1972,11 +2032,11 @@ msgstr "Lepopäivä"
 msgid "Today so far"
 msgstr "Tähän mennessä tänään"
 
-msgid "Calories"
-msgstr "Kalorit"
-
 msgid "Open food diary"
 msgstr "Avaa ruokapäiväkirja"
+
+msgid "+ Log food now"
+msgstr "+ Kirjaa ruoka nyt"
 
 msgid "Is your current target working?"
 msgstr "Toimiiko nykyinen tavoitteesi?"
@@ -2005,20 +2065,20 @@ msgstr "%(calories)s kcal/vrk"
 msgid "Current goal"
 msgstr "Nykyinen tavoite"
 
-msgid "Recipes & diet plans"
-msgstr "Reseptit ja ruokavaliosuunnitelmat"
+msgid "Quick links"
+msgstr "Pikalinkit"
 
-msgid "Manage your recipes or build a full diet plan."
-msgstr "Hallitse reseptejäsi tai rakenna koko ruokavaliosuunnitelma."
+msgid "Food diary"
+msgstr "Ruokapäiväkirja"
+
+msgid "Foods"
+msgstr "Ruoat"
 
 msgid "Recipes"
 msgstr "Reseptit"
 
 msgid "Diet plans"
 msgstr "Ruokavaliosuunnitelmat"
-
-msgid "BMR/TDEE, macros, body fat, and water intake — quick standalone estimates."
-msgstr "BMR/TDEE, makrot, rasvaprosentti ja vedenjuonti — nopeita, itsenäisiä arvioita."
 
 msgid "Add food"
 msgstr "Lisää ruoka"
@@ -2029,11 +2089,11 @@ msgstr "esim. kananrinta tai viivakoodi"
 msgid "Back to diary"
 msgstr "Takaisin päiväkirjaan"
 
-msgid "Food diary"
-msgstr "Ruokapäiväkirja"
-
 msgid "Previous day"
 msgstr "Edellinen päivä"
+
+msgid "Jump to date"
+msgstr "Siirry päivämäärään"
 
 msgid "Next day"
 msgstr "Seuraava päivä"
@@ -2152,9 +2212,6 @@ msgstr "Takaisin selaamiseen"
 msgid "New food"
 msgstr "Uusi ruoka"
 
-msgid "Foods"
-msgstr "Ruoat"
-
 msgid "+ New food"
 msgstr "+ Uusi ruoka"
 
@@ -2229,9 +2286,6 @@ msgstr "Per annos (%(servings)s annoksesta)"
 
 msgid "Log to diary"
 msgstr "Kirjaa päiväkirjaan"
-
-msgid "Log today"
-msgstr "Kirjaa tänään"
 
 msgid "Back to recipes"
 msgstr "Takaisin resepteihin"

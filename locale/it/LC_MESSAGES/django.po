@@ -651,6 +651,27 @@ msgstr "tipo di unità"
 msgid "recorded at"
 msgstr "registrato il"
 
+msgid "Refresh selected foods from OpenFoodFacts"
+msgstr "Aggiorna gli alimenti selezionati da OpenFoodFacts"
+
+msgid "None of the selected foods were imported from OpenFoodFacts."
+msgstr "Nessuno degli alimenti selezionati è stato importato da OpenFoodFacts."
+
+msgid "Refreshed %(refreshed)d of %(total)d food(s) from OpenFoodFacts."
+msgstr "Aggiornati %(refreshed)d di %(total)d alimenti da OpenFoodFacts."
+
+msgid "Merge selected foods into one…"
+msgstr "Unisci gli alimenti selezionati in uno solo…"
+
+msgid "Select at least two foods to merge."
+msgstr "Seleziona almeno due alimenti da unire."
+
+msgid "Merged %(count)d food(s) into “%(name)s”. Every diary entry, recipe ingredient, and diet-plan item that referenced one of them now points at it instead."
+msgstr "Uniti %(count)d alimenti in “%(name)s”. Ogni voce del diario, ingrediente di ricetta e elemento del piano alimentare che faceva riferimento a uno di essi ora fa riferimento a questo."
+
+msgid "Merge foods"
+msgstr "Unisci alimenti"
+
 msgid "a %(job)s job"
 msgstr "un lavoro %(job)s"
 
@@ -741,6 +762,9 @@ msgstr "Pasto"
 msgid "Servings"
 msgstr "Porzioni"
 
+msgid "Log for date"
+msgstr "Registra per la data"
+
 msgid "Plan name"
 msgstr "Nome del piano"
 
@@ -761,9 +785,6 @@ msgstr "Quali pasti?"
 
 msgid "Pick either a food or a recipe, not both or neither."
 msgstr "Scegli un alimento o una ricetta, non entrambi né nessuno dei due."
-
-msgid "Log for date"
-msgstr "Registra per la data"
 
 msgid "Age (years)"
 msgstr "Età (anni)"
@@ -1445,6 +1466,33 @@ msgstr "Amministrazione del sito Django"
 msgid "Django administration"
 msgstr "Amministrazione Django"
 
+msgid "Pick which of these %(counter)s foods to keep. Every diary entry, recipe ingredient, and diet-plan item currently pointing at one of the others will be repointed at the one you keep — nothing a user has logged is deleted, only which food row it refers to changes. The other foods are then removed."
+msgstr "Scegli quale di questi %(counter)s alimenti mantenere. Ogni voce del diario, ingrediente di ricetta e elemento del piano alimentare che attualmente punta a uno degli altri verrà reindirizzato a quello che mantieni — nulla di ciò che un utente ha registrato viene eliminato, cambia solo a quale alimento fa riferimento. Gli altri alimenti vengono poi rimossi."
+
+msgid "Keep"
+msgstr "Mantieni"
+
+msgid "Brand"
+msgstr "Marca"
+
+msgid "Owner"
+msgstr "Proprietario"
+
+msgid "Calories"
+msgstr "Calorie"
+
+msgid "Serving"
+msgstr "Porzione"
+
+msgid "OFF id"
+msgstr "ID OFF"
+
+msgid "shared"
+msgstr "condiviso"
+
+msgid "Merge"
+msgstr "Unisci"
+
 msgid "Date range"
 msgstr "Intervallo di date"
 
@@ -1849,6 +1897,18 @@ msgstr "Nessuna lettura ancora"
 msgid "No measurement types yet."
 msgstr "Nessun tipo di misurazione ancora."
 
+msgid "Scan barcode"
+msgstr "Scansiona codice a barre"
+
+msgid "Scan a barcode"
+msgstr "Scansiona un codice a barre"
+
+msgid "Close"
+msgstr "Chiudi"
+
+msgid "Point your camera at a barcode."
+msgstr "Inquadra un codice a barre con la fotocamera."
+
 msgid "Your foods"
 msgstr "I tuoi alimenti"
 
@@ -1972,11 +2032,11 @@ msgstr "Giorno di riposo"
 msgid "Today so far"
 msgstr "Finora oggi"
 
-msgid "Calories"
-msgstr "Calorie"
-
 msgid "Open food diary"
 msgstr "Apri il diario alimentare"
+
+msgid "+ Log food now"
+msgstr "+ Registra un alimento ora"
 
 msgid "Is your current target working?"
 msgstr "Il tuo obiettivo attuale sta funzionando?"
@@ -2005,20 +2065,20 @@ msgstr "%(calories)s kcal/giorno"
 msgid "Current goal"
 msgstr "Obiettivo attuale"
 
-msgid "Recipes & diet plans"
-msgstr "Ricette e piani alimentari"
+msgid "Quick links"
+msgstr "Collegamenti rapidi"
 
-msgid "Manage your recipes or build a full diet plan."
-msgstr "Gestisci le tue ricette o crea un piano alimentare completo."
+msgid "Food diary"
+msgstr "Diario alimentare"
+
+msgid "Foods"
+msgstr "Alimenti"
 
 msgid "Recipes"
 msgstr "Ricette"
 
 msgid "Diet plans"
 msgstr "Piani alimentari"
-
-msgid "BMR/TDEE, macros, body fat, and water intake — quick standalone estimates."
-msgstr "BMR/TDEE, macro, massa grassa e assunzione di acqua — stime rapide e indipendenti."
 
 msgid "Add food"
 msgstr "Aggiungi alimento"
@@ -2029,11 +2089,11 @@ msgstr "es. petto di pollo, o un codice a barre"
 msgid "Back to diary"
 msgstr "Torna al diario"
 
-msgid "Food diary"
-msgstr "Diario alimentare"
-
 msgid "Previous day"
 msgstr "Giorno precedente"
+
+msgid "Jump to date"
+msgstr "Vai alla data"
 
 msgid "Next day"
 msgstr "Giorno successivo"
@@ -2152,9 +2212,6 @@ msgstr "Torna alla navigazione"
 msgid "New food"
 msgstr "Nuovo alimento"
 
-msgid "Foods"
-msgstr "Alimenti"
-
 msgid "+ New food"
 msgstr "+ Nuovo alimento"
 
@@ -2229,9 +2286,6 @@ msgstr "Per porzione (su %(servings)s)"
 
 msgid "Log to diary"
 msgstr "Registra nel diario"
-
-msgid "Log today"
-msgstr "Registra oggi"
 
 msgid "Back to recipes"
 msgstr "Torna alle ricette"

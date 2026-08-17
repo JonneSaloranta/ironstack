@@ -42,8 +42,32 @@ lands and remains the authoritative history.
 - Foods now show a Nutri-Score (A-E) and NOVA (1-4) badge when
   OpenFoodFacts has graded them — a real, independently-published
   healthiness/processing-level scale, not one this app invents.
+- Every food-search box (diary, recipe ingredients, diet-plan meals,
+  browse/import) can now scan a barcode with your camera, on browsers
+  that support it, instead of only typing the digits in by hand.
+- The nutrition dashboard has a single "Quick links" section reaching
+  every part of nutrition (including Foods, which previously had no
+  direct link) and a "+ Log food now" shortcut.
+- The food diary's date header now has a date picker to jump straight
+  to any day, not just step one day at a time.
+- A recipe can now be logged to the diary for a past or future date,
+  not only today.
+- Admins can now merge duplicate foods in the shared library (Foods →
+  select two or more → "Merge selected foods into one…") — every
+  diary entry, recipe ingredient, and diet-plan item that referenced
+  a duplicate is repointed at the kept food, never deleted.
+- Admins can now force-refresh selected foods from OpenFoodFacts
+  immediately (Foods → select → "Refresh selected foods from
+  OpenFoodFacts") instead of waiting for the normal 14-day
+  staleness-triggered refresh.
 
 ### Fixed
+- Date pickers on the recipe/diet-plan "log for date" fields and the
+  onboarding wizard's date of birth showed blank instead of
+  pre-filled whenever the site language wasn't English (e.g. in
+  Finnish) — a browser rejects a date value that isn't in ISO
+  format, and these were rendering it in the site's own date format
+  instead.
 - An OpenFoodFacts import-failure message in the food diary that was
   never translated.
 - Logging a diet plan to the diary with an invalid date silently did

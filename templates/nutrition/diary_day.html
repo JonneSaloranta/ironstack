@@ -6,8 +6,11 @@
   <h1 style="margin:0;">{{ date }}</h1>
 </div>
 
-<div style="display:flex; flex-wrap:wrap; justify-content:space-between; gap:0.5rem; margin-bottom:1rem;">
+{% url 'nutrition:diary-day' target_date='__DATE__' as date_url_template %}
+<div style="display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:0.5rem; margin-bottom:1rem;">
   <a class="button-secondary" href="{% url 'nutrition:diary-day' target_date=previous_date.isoformat %}">&larr; {% trans "Previous day" %}</a>
+  <input type="date" value="{{ date|date:'Y-m-d' }}" aria-label="{% trans "Jump to date" %}"
+         x-data="{}" @change="window.location = '{{ date_url_template }}'.replace('__DATE__', $event.target.value)">
   <a class="button-secondary" href="{% url 'nutrition:diary-day' target_date=next_date.isoformat %}">{% trans "Next day" %} &rarr;</a>
 </div>
 

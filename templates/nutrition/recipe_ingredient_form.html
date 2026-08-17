@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load i18n %}
+{% load i18n static %}
 {% block title %}{% blocktrans with name=recipe.name %}Add ingredient to {{ name }}{% endblocktrans %} — IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
@@ -10,7 +10,7 @@
   <p class="field-error">{{ form.non_field_errors|striptags }}</p>
 {% endif %}
 
-<div class="card">
+<div class="card" x-data="ironstackBarcodeScanner()">
   <div class="field">
     <label for="id_q">{% trans "Search foods" %}</label>
     <input type="text" id="id_q" name="q"
@@ -22,9 +22,13 @@
            autocomplete="off"
            placeholder="{% trans "e.g. chicken breast, or a barcode number" %}">
   </div>
+  {% include "nutrition/_barcode_scan_button.html" with target_input_id="id_q" %}
 </div>
 
 <div id="food-search-results"></div>
 
 <p><a class="button-secondary" href="{% url 'nutrition:recipe-detail' recipe.pk %}">&larr; {% trans "Back to recipe" %}</a></p>
+{% endblock %}
+{% block extra_scripts %}
+<script src="{% static 'js/barcode-scanner.js' %}" defer></script>
 {% endblock %}

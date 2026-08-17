@@ -34,6 +34,7 @@
     </tbody>
   </table>
   <a class="button-secondary" href="{% url 'nutrition:diary-day' %}">{% trans "Open food diary" %}</a>
+  <a class="button-secondary" href="{% url 'nutrition:diary-add-entry' %}">{% trans "+ Log food now" %}</a>
 </div>
 
 {% if suggestion %}
@@ -96,22 +97,14 @@
   </div>
 {% endif %}
 
-<div class="card card-action-row">
-  <div>
-    <strong>{% trans "Recipes & diet plans" %}</strong>
-    <p class="text-muted">{% trans "Manage your recipes or build a full diet plan." %}</p>
-  </div>
+<div class="card">
+  <strong>{% trans "Quick links" %}</strong>
   <div style="display:flex; flex-wrap:wrap; gap:0.5rem;">
+    <a class="button-secondary" href="{% url 'nutrition:diary-day' %}">{% trans "Food diary" %}</a>
+    <a class="button-secondary" href="{% url 'nutrition:food-list' %}">{% trans "Foods" %}</a>
     <a class="button-secondary" href="{% url 'nutrition:recipe-list' %}">{% trans "Recipes" %}</a>
     <a class="button-secondary" href="{% url 'nutrition:diet-plan-list' %}">{% trans "Diet plans" %}</a>
+    <a class="button-secondary" href="{% url 'nutrition:calculators-home' %}">{% trans "Calculators" %}</a>
   </div>
-</div>
-
-<div class="card card-action-row">
-  <div>
-    <strong>{% trans "Calculators" %}</strong>
-    <p class="text-muted">{% trans "BMR/TDEE, macros, body fat, and water intake — quick standalone estimates." %}</p>
-  </div>
-  <a class="button-secondary" href="{% url 'nutrition:calculators-home' %}">{% trans "Open" %}</a>
 </div>
 {% endblock %}

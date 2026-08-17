@@ -26,7 +26,8 @@ class BodyStepForm(forms.Form):
         ),
     )
     birth_date = forms.DateField(
-        widget=forms.DateInput(attrs={"type": "date"}), label=_("Date of birth")
+        widget=forms.DateInput(attrs={"type": "date"}, format="%Y-%m-%d"),
+        label=_("Date of birth"),
     )
     height = forms.DecimalField(max_digits=6, decimal_places=1, min_value=Decimal("50"))
     weight = forms.DecimalField(max_digits=8, decimal_places=2, min_value=Decimal("20"))
@@ -224,18 +225,29 @@ class RecipeIngredientSearchForm(forms.Form):
 class LogRecipeForm(forms.Form):
     """Logs N servings of a recipe into the diary — the "diary
     version" of DiaryAddEntryForm, for a recipe instead of a raw
-    food."""
+    food. `date` defaults to today but is editable — same as
+    LogDietPlanForm, so logging a recipe eaten yesterday (or planned
+    for tomorrow) doesn't require leaving this page for a workaround
+    that doesn't actually exist elsewhere (the diary's own "add food"
+    search only ever offers Food, never a Recipe)."""
 
     meal_slot = forms.ModelChoiceField(queryset=None, label=_("Meal"))
     quantity = forms.DecimalField(
         max_digits=8, decimal_places=2, min_value=Decimal("0.01"), label=_("Servings")
     )
+    date = forms.DateField(
+        widget=forms.DateInput(attrs={"type": "date"}, format="%Y-%m-%d"),
+        label=_("Log for date"),
+    )
 
     def __init__(self, *args, user, **kwargs):
+        from django.utils import timezone
+
         from . import services
 
         super().__init__(*args, **kwargs)
         self.fields["meal_slot"].queryset = services.visible_meal_slots(user)
+        self.fields["date"].initial = timezone.localdate()
 
 
 class DietPlanForm(forms.Form):
@@ -320,7 +332,8 @@ class DietPlanMealItemSearchForm(forms.Form):
 
 class LogDietPlanForm(forms.Form):
     date = forms.DateField(
-        widget=forms.DateInput(attrs={"type": "date"}), label=_("Log for date")
+        widget=forms.DateInput(attrs={"type": "date"}, format="%Y-%m-%d"),
+        label=_("Log for date"),
     )
 
 

@@ -651,6 +651,27 @@ msgstr "enhetstyp"
 msgid "recorded at"
 msgstr "registrerad"
 
+msgid "Refresh selected foods from OpenFoodFacts"
+msgstr "Uppdatera valda livsmedel från OpenFoodFacts"
+
+msgid "None of the selected foods were imported from OpenFoodFacts."
+msgstr "Inget av de valda livsmedlen importerades från OpenFoodFacts."
+
+msgid "Refreshed %(refreshed)d of %(total)d food(s) from OpenFoodFacts."
+msgstr "Uppdaterade %(refreshed)d av %(total)d livsmedel från OpenFoodFacts."
+
+msgid "Merge selected foods into one…"
+msgstr "Slå ihop valda livsmedel till ett…"
+
+msgid "Select at least two foods to merge."
+msgstr "Välj minst två livsmedel att slå ihop."
+
+msgid "Merged %(count)d food(s) into “%(name)s”. Every diary entry, recipe ingredient, and diet-plan item that referenced one of them now points at it instead."
+msgstr "Slog ihop %(count)d livsmedel till “%(name)s”. Varje dagbokspost, receptingrediens och kostplansobjekt som tidigare pekade på något av dem pekar nu på detta istället."
+
+msgid "Merge foods"
+msgstr "Slå ihop livsmedel"
+
 msgid "a %(job)s job"
 msgstr "ett %(job)s-jobb"
 
@@ -741,6 +762,9 @@ msgstr "Måltid"
 msgid "Servings"
 msgstr "Portioner"
 
+msgid "Log for date"
+msgstr "Logga för datum"
+
 msgid "Plan name"
 msgstr "Planens namn"
 
@@ -761,9 +785,6 @@ msgstr "Vilka måltider?"
 
 msgid "Pick either a food or a recipe, not both or neither."
 msgstr "Välj antingen ett livsmedel eller ett recept, inte båda eller inget."
-
-msgid "Log for date"
-msgstr "Logga för datum"
 
 msgid "Age (years)"
 msgstr "Ålder (år)"
@@ -1445,6 +1466,33 @@ msgstr "Django webbplatsadministration"
 msgid "Django administration"
 msgstr "Django-administration"
 
+msgid "Pick which of these %(counter)s foods to keep. Every diary entry, recipe ingredient, and diet-plan item currently pointing at one of the others will be repointed at the one you keep — nothing a user has logged is deleted, only which food row it refers to changes. The other foods are then removed."
+msgstr "Välj vilket av dessa %(counter)s livsmedel som ska behållas. Varje dagbokspost, receptingrediens och kostplansobjekt som just nu pekar på något av de andra kommer att omdirigeras till det du behåller — inget en användare har loggat tas bort, bara vilken livsmedelsrad det pekar på ändras. De andra livsmedlen tas sedan bort."
+
+msgid "Keep"
+msgstr "Behåll"
+
+msgid "Brand"
+msgstr "Märke"
+
+msgid "Owner"
+msgstr "Ägare"
+
+msgid "Calories"
+msgstr "Kalorier"
+
+msgid "Serving"
+msgstr "Portion"
+
+msgid "OFF id"
+msgstr "OFF-id"
+
+msgid "shared"
+msgstr "delad"
+
+msgid "Merge"
+msgstr "Slå ihop"
+
 msgid "Date range"
 msgstr "Datumintervall"
 
@@ -1849,6 +1897,18 @@ msgstr "Inga mätvärden ännu"
 msgid "No measurement types yet."
 msgstr "Inga mättyper ännu."
 
+msgid "Scan barcode"
+msgstr "Skanna streckkod"
+
+msgid "Scan a barcode"
+msgstr "Skanna en streckkod"
+
+msgid "Close"
+msgstr "Stäng"
+
+msgid "Point your camera at a barcode."
+msgstr "Rikta kameran mot en streckkod."
+
 msgid "Your foods"
 msgstr "Dina livsmedel"
 
@@ -1972,11 +2032,11 @@ msgstr "Vilodag"
 msgid "Today so far"
 msgstr "Hittills idag"
 
-msgid "Calories"
-msgstr "Kalorier"
-
 msgid "Open food diary"
 msgstr "Öppna matdagbok"
+
+msgid "+ Log food now"
+msgstr "+ Logga mat nu"
 
 msgid "Is your current target working?"
 msgstr "Fungerar ditt nuvarande mål?"
@@ -2005,20 +2065,20 @@ msgstr "%(calories)s kcal/dag"
 msgid "Current goal"
 msgstr "Nuvarande mål"
 
-msgid "Recipes & diet plans"
-msgstr "Recept & kostplaner"
+msgid "Quick links"
+msgstr "Snabblänkar"
 
-msgid "Manage your recipes or build a full diet plan."
-msgstr "Hantera dina recept eller bygg en komplett kostplan."
+msgid "Food diary"
+msgstr "Matdagbok"
+
+msgid "Foods"
+msgstr "Livsmedel"
 
 msgid "Recipes"
 msgstr "Recept"
 
 msgid "Diet plans"
 msgstr "Kostplaner"
-
-msgid "BMR/TDEE, macros, body fat, and water intake — quick standalone estimates."
-msgstr "BMR/TDEE, makron, kroppsfett och vätskeintag — snabba, fristående uppskattningar."
 
 msgid "Add food"
 msgstr "Lägg till livsmedel"
@@ -2029,11 +2089,11 @@ msgstr "t.ex. kycklingfilé eller ett streckkodsnummer"
 msgid "Back to diary"
 msgstr "Tillbaka till dagboken"
 
-msgid "Food diary"
-msgstr "Matdagbok"
-
 msgid "Previous day"
 msgstr "Föregående dag"
+
+msgid "Jump to date"
+msgstr "Hoppa till datum"
 
 msgid "Next day"
 msgstr "Nästa dag"
@@ -2152,9 +2212,6 @@ msgstr "Tillbaka till bläddring"
 msgid "New food"
 msgstr "Nytt livsmedel"
 
-msgid "Foods"
-msgstr "Livsmedel"
-
 msgid "+ New food"
 msgstr "+ Nytt livsmedel"
 
@@ -2229,9 +2286,6 @@ msgstr "Per portion (av %(servings)s)"
 
 msgid "Log to diary"
 msgstr "Logga till dagbok"
-
-msgid "Log today"
-msgstr "Logga idag"
 
 msgid "Back to recipes"
 msgstr "Tillbaka till recept"

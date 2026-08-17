@@ -654,6 +654,27 @@ msgstr "тип единицы"
 msgid "recorded at"
 msgstr "записано"
 
+msgid "Refresh selected foods from OpenFoodFacts"
+msgstr "Обновить выбранные продукты из OpenFoodFacts"
+
+msgid "None of the selected foods were imported from OpenFoodFacts."
+msgstr "Ни один из выбранных продуктов не был импортирован из OpenFoodFacts."
+
+msgid "Refreshed %(refreshed)d of %(total)d food(s) from OpenFoodFacts."
+msgstr "Обновлено %(refreshed)d из %(total)d продуктов из OpenFoodFacts."
+
+msgid "Merge selected foods into one…"
+msgstr "Объединить выбранные продукты в один…"
+
+msgid "Select at least two foods to merge."
+msgstr "Выберите не менее двух продуктов для объединения."
+
+msgid "Merged %(count)d food(s) into “%(name)s”. Every diary entry, recipe ingredient, and diet-plan item that referenced one of them now points at it instead."
+msgstr "Объединено %(count)d продуктов в «%(name)s». Каждая запись дневника, ингредиент рецепта и пункт плана питания, ссылавшиеся на один из них, теперь ссылаются на этот."
+
+msgid "Merge foods"
+msgstr "Объединить продукты"
+
 msgid "a %(job)s job"
 msgstr "работа: %(job)s"
 
@@ -744,6 +765,9 @@ msgstr "Приём пищи"
 msgid "Servings"
 msgstr "Порции"
 
+msgid "Log for date"
+msgstr "Записать за дату"
+
 msgid "Plan name"
 msgstr "Название плана"
 
@@ -764,9 +788,6 @@ msgstr "Какие приёмы пищи?"
 
 msgid "Pick either a food or a recipe, not both or neither."
 msgstr "Выберите либо продукт, либо рецепт — не оба и не ни один."
-
-msgid "Log for date"
-msgstr "Записать за дату"
 
 msgid "Age (years)"
 msgstr "Возраст (лет)"
@@ -1449,6 +1470,33 @@ msgstr "Администрирование сайта Django"
 msgid "Django administration"
 msgstr "Администрирование Django"
 
+msgid "Pick which of these %(counter)s foods to keep. Every diary entry, recipe ingredient, and diet-plan item currently pointing at one of the others will be repointed at the one you keep — nothing a user has logged is deleted, only which food row it refers to changes. The other foods are then removed."
+msgstr "Выберите, какой из этих %(counter)s продуктов оставить. Каждая запись дневника, ингредиент рецепта и пункт плана питания, ссылающиеся сейчас на один из остальных, будут перенаправлены на тот, что вы оставите — ничего из записанного пользователем не удаляется, меняется лишь то, на какую запись продукта идёт ссылка. Остальные продукты будут удалены."
+
+msgid "Keep"
+msgstr "Оставить"
+
+msgid "Brand"
+msgstr "Бренд"
+
+msgid "Owner"
+msgstr "Владелец"
+
+msgid "Calories"
+msgstr "Калории"
+
+msgid "Serving"
+msgstr "Порция"
+
+msgid "OFF id"
+msgstr "OFF ID"
+
+msgid "shared"
+msgstr "общий"
+
+msgid "Merge"
+msgstr "Объединить"
+
 msgid "Date range"
 msgstr "Диапазон дат"
 
@@ -1857,6 +1905,18 @@ msgstr "Измерений пока нет"
 msgid "No measurement types yet."
 msgstr "Типов измерения пока нет."
 
+msgid "Scan barcode"
+msgstr "Сканировать штрихкод"
+
+msgid "Scan a barcode"
+msgstr "Отсканировать штрихкод"
+
+msgid "Close"
+msgstr "Закрыть"
+
+msgid "Point your camera at a barcode."
+msgstr "Наведите камеру на штрихкод."
+
 msgid "Your foods"
 msgstr "Ваши продукты"
 
@@ -1980,11 +2040,11 @@ msgstr "День отдыха"
 msgid "Today so far"
 msgstr "Сегодня на данный момент"
 
-msgid "Calories"
-msgstr "Калории"
-
 msgid "Open food diary"
 msgstr "Открыть дневник питания"
+
+msgid "+ Log food now"
+msgstr "+ Записать еду сейчас"
 
 msgid "Is your current target working?"
 msgstr "Работает ли ваша текущая цель?"
@@ -2013,20 +2073,20 @@ msgstr "%(calories)s ккал/день"
 msgid "Current goal"
 msgstr "Текущая цель"
 
-msgid "Recipes & diet plans"
-msgstr "Рецепты и планы питания"
+msgid "Quick links"
+msgstr "Быстрые ссылки"
 
-msgid "Manage your recipes or build a full diet plan."
-msgstr "Управляйте своими рецептами или составьте полный план питания."
+msgid "Food diary"
+msgstr "Дневник питания"
+
+msgid "Foods"
+msgstr "Продукты"
 
 msgid "Recipes"
 msgstr "Рецепты"
 
 msgid "Diet plans"
 msgstr "Планы питания"
-
-msgid "BMR/TDEE, macros, body fat, and water intake — quick standalone estimates."
-msgstr "BMR/TDEE, макронутриенты, процент жира и потребление воды — быстрые самостоятельные оценки."
 
 msgid "Add food"
 msgstr "Добавить продукт"
@@ -2037,11 +2097,11 @@ msgstr "например, куриная грудка или номер штри
 msgid "Back to diary"
 msgstr "Назад к дневнику"
 
-msgid "Food diary"
-msgstr "Дневник питания"
-
 msgid "Previous day"
 msgstr "Предыдущий день"
+
+msgid "Jump to date"
+msgstr "Перейти к дате"
 
 msgid "Next day"
 msgstr "Следующий день"
@@ -2160,9 +2220,6 @@ msgstr "Назад к просмотру"
 msgid "New food"
 msgstr "Новый продукт"
 
-msgid "Foods"
-msgstr "Продукты"
-
 msgid "+ New food"
 msgstr "+ Новый продукт"
 
@@ -2237,9 +2294,6 @@ msgstr "На порцию (из %(servings)s)"
 
 msgid "Log to diary"
 msgstr "Записать в дневник"
-
-msgid "Log today"
-msgstr "Записать сегодня"
 
 msgid "Back to recipes"
 msgstr "Назад к рецептам"

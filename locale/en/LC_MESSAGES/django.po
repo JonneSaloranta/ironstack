@@ -651,6 +651,27 @@ msgstr "unit kind"
 msgid "recorded at"
 msgstr "recorded at"
 
+msgid "Refresh selected foods from OpenFoodFacts"
+msgstr "Refresh selected foods from OpenFoodFacts"
+
+msgid "None of the selected foods were imported from OpenFoodFacts."
+msgstr "None of the selected foods were imported from OpenFoodFacts."
+
+msgid "Refreshed %(refreshed)d of %(total)d food(s) from OpenFoodFacts."
+msgstr "Refreshed %(refreshed)d of %(total)d food(s) from OpenFoodFacts."
+
+msgid "Merge selected foods into one…"
+msgstr "Merge selected foods into one…"
+
+msgid "Select at least two foods to merge."
+msgstr "Select at least two foods to merge."
+
+msgid "Merged %(count)d food(s) into “%(name)s”. Every diary entry, recipe ingredient, and diet-plan item that referenced one of them now points at it instead."
+msgstr "Merged %(count)d food(s) into “%(name)s”. Every diary entry, recipe ingredient, and diet-plan item that referenced one of them now points at it instead."
+
+msgid "Merge foods"
+msgstr "Merge foods"
+
 msgid "a %(job)s job"
 msgstr "a %(job)s job"
 
@@ -741,6 +762,9 @@ msgstr "Meal"
 msgid "Servings"
 msgstr "Servings"
 
+msgid "Log for date"
+msgstr "Log for date"
+
 msgid "Plan name"
 msgstr "Plan name"
 
@@ -761,9 +785,6 @@ msgstr "Which meals?"
 
 msgid "Pick either a food or a recipe, not both or neither."
 msgstr "Pick either a food or a recipe, not both or neither."
-
-msgid "Log for date"
-msgstr "Log for date"
 
 msgid "Age (years)"
 msgstr "Age (years)"
@@ -1445,6 +1466,33 @@ msgstr "Django site admin"
 msgid "Django administration"
 msgstr "Django administration"
 
+msgid "Pick which of these %(counter)s foods to keep. Every diary entry, recipe ingredient, and diet-plan item currently pointing at one of the others will be repointed at the one you keep — nothing a user has logged is deleted, only which food row it refers to changes. The other foods are then removed."
+msgstr "Pick which of these %(counter)s foods to keep. Every diary entry, recipe ingredient, and diet-plan item currently pointing at one of the others will be repointed at the one you keep — nothing a user has logged is deleted, only which food row it refers to changes. The other foods are then removed."
+
+msgid "Keep"
+msgstr "Keep"
+
+msgid "Brand"
+msgstr "Brand"
+
+msgid "Owner"
+msgstr "Owner"
+
+msgid "Calories"
+msgstr "Calories"
+
+msgid "Serving"
+msgstr "Serving"
+
+msgid "OFF id"
+msgstr "OFF id"
+
+msgid "shared"
+msgstr "shared"
+
+msgid "Merge"
+msgstr "Merge"
+
 msgid "Date range"
 msgstr "Date range"
 
@@ -1849,6 +1897,18 @@ msgstr "No readings yet"
 msgid "No measurement types yet."
 msgstr "No measurement types yet."
 
+msgid "Scan barcode"
+msgstr "Scan barcode"
+
+msgid "Scan a barcode"
+msgstr "Scan a barcode"
+
+msgid "Close"
+msgstr "Close"
+
+msgid "Point your camera at a barcode."
+msgstr "Point your camera at a barcode."
+
 msgid "Your foods"
 msgstr "Your foods"
 
@@ -1972,11 +2032,11 @@ msgstr "Rest day"
 msgid "Today so far"
 msgstr "Today so far"
 
-msgid "Calories"
-msgstr "Calories"
-
 msgid "Open food diary"
 msgstr "Open food diary"
+
+msgid "+ Log food now"
+msgstr "+ Log food now"
 
 msgid "Is your current target working?"
 msgstr "Is your current target working?"
@@ -2005,20 +2065,20 @@ msgstr "%(calories)s kcal/day"
 msgid "Current goal"
 msgstr "Current goal"
 
-msgid "Recipes & diet plans"
-msgstr "Recipes & diet plans"
+msgid "Quick links"
+msgstr "Quick links"
 
-msgid "Manage your recipes or build a full diet plan."
-msgstr "Manage your recipes or build a full diet plan."
+msgid "Food diary"
+msgstr "Food diary"
+
+msgid "Foods"
+msgstr "Foods"
 
 msgid "Recipes"
 msgstr "Recipes"
 
 msgid "Diet plans"
 msgstr "Diet plans"
-
-msgid "BMR/TDEE, macros, body fat, and water intake — quick standalone estimates."
-msgstr "BMR/TDEE, macros, body fat, and water intake — quick standalone estimates."
 
 msgid "Add food"
 msgstr "Add food"
@@ -2029,11 +2089,11 @@ msgstr "e.g. chicken breast, or a barcode number"
 msgid "Back to diary"
 msgstr "Back to diary"
 
-msgid "Food diary"
-msgstr "Food diary"
-
 msgid "Previous day"
 msgstr "Previous day"
+
+msgid "Jump to date"
+msgstr "Jump to date"
 
 msgid "Next day"
 msgstr "Next day"
@@ -2152,9 +2212,6 @@ msgstr "Back to browse"
 msgid "New food"
 msgstr "New food"
 
-msgid "Foods"
-msgstr "Foods"
-
 msgid "+ New food"
 msgstr "+ New food"
 
@@ -2229,9 +2286,6 @@ msgstr "Per serving (of %(servings)s)"
 
 msgid "Log to diary"
 msgstr "Log to diary"
-
-msgid "Log today"
-msgstr "Log today"
 
 msgid "Back to recipes"
 msgstr "Back to recipes"

@@ -740,7 +740,7 @@ def recipe_log(request, pk):
         )
     entry = DiaryEntry.objects.create(
         user=request.user,
-        date=timezone.localdate(),
+        date=form.cleaned_data["date"],
         meal_slot=form.cleaned_data["meal_slot"],
         recipe=recipe,
         quantity=form.cleaned_data["quantity"],

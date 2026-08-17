@@ -8,6 +8,7 @@ from django.db import IntegrityError, transaction
 from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
+from django.utils.translation import override as translation_override
 
 from apps.measurements.models import BodyMeasurement, MeasurementType
 from apps.nutrition import (
@@ -21,6 +22,7 @@ from apps.nutrition import (
     trends,
 )
 
+from .forms import BodyStepForm, LogDietPlanForm, LogRecipeForm
 from .models import (
     ActivityJob,
     ActivityLevel,
@@ -885,6 +887,19 @@ class ImportOrRefreshFoodFromOffTests(TestCase):
             services.import_or_refresh_food_from_off("1234567890123")
         mocked.assert_not_called()
 
+    def test_force_refreshes_a_fresh_existing_food_anyway(self):
+        with mock.patch.object(openfoodfacts, "get_product", return_value=RAW_OFF_PRODUCT):
+            food = services.import_or_refresh_food_from_off("1234567890123")
+        first_synced_at = food.off_synced_at
+        with mock.patch.object(
+            openfoodfacts, "get_product", return_value=RAW_OFF_PRODUCT
+        ) as mocked:
+            refreshed = services.import_or_refresh_food_from_off(
+                "1234567890123", force=True
+            )
+        mocked.assert_called_once_with("1234567890123")
+        self.assertGreater(refreshed.off_synced_at, first_synced_at)
+
     def test_a_stale_existing_food_is_refreshed(self):
         with mock.patch.object(openfoodfacts, "get_product", return_value=RAW_OFF_PRODUCT):
             food = services.import_or_refresh_food_from_off("1234567890123")
@@ -919,6 +934,156 @@ class ImportOrRefreshFoodFromOffTests(TestCase):
         with mock.patch.object(openfoodfacts, "get_product", return_value=None):
             result = services.import_or_refresh_food_from_off("0000000000000")
         self.assertIsNone(result)
+
+
+class MergeFoodsTests(TestCase):
+    """apps.nutrition.services.merge_foods — the admin-only duplicate
+    cleanup tool. The core guarantee under test: nothing a user
+    actually logged (a DiaryEntry, a RecipeIngredient, a
+    DietPlanItem) is ever deleted by a merge, only repointed."""
+
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        self.keep = make_food(None, name="Chicken Breast")
+        self.duplicate = make_food(None, name="Chicken breast (dupe)")
+
+    def test_diary_entries_are_repointed_not_deleted(self):
+        slot = MealSlot.objects.get(name="Lunch", owner=None)
+        entry = DiaryEntry.objects.create(
+            user=self.alice, date=date(2026, 1, 1), meal_slot=slot,
+            food=self.duplicate, quantity=Decimal("100"),
+        )
+        services.merge_foods(self.keep, [self.keep, self.duplicate])
+        entry.refresh_from_db()
+        self.assertEqual(entry.food, self.keep)
+
+    def test_recipe_ingredients_are_repointed_not_deleted(self):
+        recipe = Recipe.objects.create(owner=self.alice, name="Bowl", servings=1)
+        ingredient = RecipeIngredient.objects.create(
+            recipe=recipe, food=self.duplicate, quantity=Decimal("100")
+        )
+        services.merge_foods(self.keep, [self.keep, self.duplicate])
+        ingredient.refresh_from_db()
+        self.assertEqual(ingredient.food, self.keep)
+
+    def test_diet_plan_items_are_repointed_not_deleted(self):
+        plan = DietPlan.objects.create(
+            user=self.alice, name="Plan", target_calories=2000,
+            target_protein_grams=Decimal("1"), target_carbohydrate_grams=Decimal("1"),
+            target_fat_grams=Decimal("1"),
+        )
+        slot = MealSlot.objects.get(name="Lunch", owner=None)
+        meal = DietPlanMeal.objects.create(diet_plan=plan, meal_slot=slot, target_calories=500)
+        item = DietPlanItem.objects.create(
+            diet_plan_meal=meal, food=self.duplicate, quantity=Decimal("100")
+        )
+        services.merge_foods(self.keep, [self.keep, self.duplicate])
+        item.refresh_from_db()
+        self.assertEqual(item.food, self.keep)
+
+    def test_the_duplicate_is_deleted_and_the_kept_food_is_not(self):
+        services.merge_foods(self.keep, [self.keep, self.duplicate])
+        self.assertFalse(Food.objects.filter(pk=self.duplicate.pk).exists())
+        self.assertTrue(Food.objects.filter(pk=self.keep.pk).exists())
+
+    def test_merging_more_than_two_at_once(self):
+        third = make_food(None, name="Chicken breast (another dupe)")
+        services.merge_foods(self.keep, [self.keep, self.duplicate, third])
+        self.assertFalse(Food.objects.filter(pk=self.duplicate.pk).exists())
+        self.assertFalse(Food.objects.filter(pk=third.pk).exists())
+        self.assertTrue(Food.objects.filter(pk=self.keep.pk).exists())
+
+
+class FoodMergeAdminViewTests(TestCase):
+    def setUp(self):
+        self.admin_user = User.objects.create_superuser(
+            username="admin", password="s3cret-pass", email="admin@example.com"
+        )
+        self.client.login(username="admin", password="s3cret-pass")
+        self.keep = make_food(None, name="Chicken Breast")
+        self.duplicate = make_food(None, name="Chicken breast (dupe)")
+
+    def test_the_action_redirects_to_the_merge_view_with_the_selected_ids(self):
+        response = self.client.post(
+            reverse("admin:nutrition_food_changelist"),
+            {
+                "action": "merge_selected_foods",
+                "_selected_action": [self.keep.pk, self.duplicate.pk],
+            },
+        )
+        self.assertEqual(response.status_code, 302)
+        self.assertIn("nutrition/food/merge/", response.url)
+
+    def test_the_action_warns_and_does_nothing_with_only_one_selected(self):
+        response = self.client.post(
+            reverse("admin:nutrition_food_changelist"),
+            {"action": "merge_selected_foods", "_selected_action": [self.keep.pk]},
+            follow=True,
+        )
+        self.assertContains(response, "Select at least two foods to merge.")
+        self.assertTrue(Food.objects.filter(pk=self.duplicate.pk).exists())
+
+    def test_get_renders_a_form_listing_both_foods(self):
+        response = self.client.get(
+            reverse("admin:nutrition_food_merge"),
+            {"ids": f"{self.keep.pk},{self.duplicate.pk}"},
+        )
+        self.assertContains(response, "Chicken Breast")
+        self.assertContains(response, "Chicken breast (dupe)")
+
+    def test_post_merges_and_redirects_to_the_changelist(self):
+        response = self.client.post(
+            reverse("admin:nutrition_food_merge"),
+            {"ids": f"{self.keep.pk},{self.duplicate.pk}", "keep": self.keep.pk},
+        )
+        self.assertRedirects(response, reverse("admin:nutrition_food_changelist"))
+        self.assertFalse(Food.objects.filter(pk=self.duplicate.pk).exists())
+
+    def test_requires_staff_login(self):
+        self.client.logout()
+        response = self.client.get(
+            reverse("admin:nutrition_food_merge"),
+            {"ids": f"{self.keep.pk},{self.duplicate.pk}"},
+        )
+        self.assertEqual(response.status_code, 302)
+
+
+class RefreshSelectedFromOffAdminActionTests(TestCase):
+    def setUp(self):
+        self.admin_user = User.objects.create_superuser(
+            username="admin", password="s3cret-pass", email="admin@example.com"
+        )
+        self.client.login(username="admin", password="s3cret-pass")
+
+    def test_refreshes_only_the_off_imported_foods_in_the_selection(self):
+        off_food = make_food(None, name="Muesli", off_id="1234567890123")
+        custom_food = make_food(None, name="Homemade soup")
+        with mock.patch.object(
+            openfoodfacts, "get_product", return_value=RAW_OFF_PRODUCT
+        ) as mocked:
+            response = self.client.post(
+                reverse("admin:nutrition_food_changelist"),
+                {
+                    "action": "refresh_selected_from_off",
+                    "_selected_action": [off_food.pk, custom_food.pk],
+                },
+                follow=True,
+            )
+        mocked.assert_called_once_with("1234567890123")
+        self.assertContains(response, "Refreshed 1 of 1 food(s) from OpenFoodFacts.")
+
+    def test_none_selected_have_an_off_id_shows_a_warning_and_makes_no_calls(self):
+        custom_food = make_food(None, name="Homemade soup")
+        with mock.patch.object(openfoodfacts, "get_product") as mocked:
+            response = self.client.post(
+                reverse("admin:nutrition_food_changelist"),
+                {"action": "refresh_selected_from_off", "_selected_action": [custom_food.pk]},
+                follow=True,
+            )
+        mocked.assert_not_called()
+        self.assertContains(
+            response, "None of the selected foods were imported from OpenFoodFacts."
+        )
 
 
 class SearchFoodsTests(TestCase):
@@ -1087,6 +1252,11 @@ class FoodBrowseViewTests(TestCase):
         self.client.logout()
         response = self.client.get(reverse("nutrition:food-browse"))
         self.assertEqual(response.status_code, 302)
+
+    def test_the_camera_barcode_scanner_is_wired_up(self):
+        response = self.client.get(reverse("nutrition:food-browse"))
+        self.assertContains(response, "barcode-scanner.js")
+        self.assertContains(response, "ironstackBarcodeScanner()")
 
 
 class FoodCategoryViewTests(TestCase):
@@ -1339,6 +1509,18 @@ class NutritionDashboardViewTests(TestCase):
         self.assertContains(response, "2209")
         self.assertContains(response, "test reason")
 
+    def test_quick_links_reach_every_nutrition_section(self):
+        response = self.client.get(reverse("nutrition:dashboard"))
+        for url in [
+            reverse("nutrition:diary-day"),
+            reverse("nutrition:diary-add-entry"),
+            reverse("nutrition:food-list"),
+            reverse("nutrition:recipe-list"),
+            reverse("nutrition:diet-plan-list"),
+            reverse("nutrition:calculators-home"),
+        ]:
+            self.assertContains(response, url)
+
 
 class NutritionComputationTests(TestCase):
     def setUp(self):
@@ -1493,6 +1675,12 @@ class DiaryAddEntryViewTests(TestCase):
         self.food = make_food(self.alice)
         self.slot = MealSlot.objects.get(name="Breakfast", owner=None)
 
+    def test_the_camera_barcode_scanner_is_wired_up(self):
+        response = self.client.get(reverse("nutrition:diary-add-entry"))
+        self.assertContains(response, "barcode-scanner.js")
+        self.assertContains(response, "ironstackBarcodeScanner()")
+        self.assertContains(response, "Scan barcode")
+
     def test_reaches_the_add_entry_view_not_a_405(self):
         """Regression: diary/<str:target_date>/ used to be registered
         before diary/add/, so a POST to diary/add/ matched the former
@@ -1626,6 +1814,12 @@ class DiaryDayViewTests(TestCase):
         response = self.client.get(reverse("nutrition:diary-day"))
         self.assertEqual(response.context["date"], timezone.localdate())
 
+    def test_shows_a_date_picker_prefilled_with_the_current_page_date(self):
+        response = self.client.get(
+            reverse("nutrition:diary-day", kwargs={"target_date": "2026-01-01"})
+        )
+        self.assertContains(response, 'type="date" value="2026-01-01"')
+
     def test_an_invalid_date_falls_back_to_today_rather_than_crashing(self):
         response = self.client.get(
             reverse("nutrition:diary-day", kwargs={"target_date": "not-a-date"})
@@ -1671,6 +1865,14 @@ class RecipeViewTests(TestCase):
         recipe = Recipe.objects.create(owner=self.bob, name="Bob's Bowl", servings=1)
         response = self.client.get(reverse("nutrition:recipe-detail", args=[recipe.pk]))
         self.assertEqual(response.status_code, 404)
+
+    def test_the_camera_barcode_scanner_is_wired_up_on_the_ingredient_search_page(self):
+        recipe = Recipe.objects.create(owner=self.alice, name="Bowl", servings=2)
+        response = self.client.get(
+            reverse("nutrition:recipe-ingredient-create", args=[recipe.pk])
+        )
+        self.assertContains(response, "barcode-scanner.js")
+        self.assertContains(response, "ironstackBarcodeScanner()")
 
     def test_adding_and_removing_an_ingredient(self):
         recipe = Recipe.objects.create(owner=self.alice, name="Bowl", servings=2)
@@ -1739,12 +1941,32 @@ class RecipeViewTests(TestCase):
         slot = MealSlot.objects.get(name="Lunch", owner=None)
         response = self.client.post(
             reverse("nutrition:recipe-log", args=[recipe.pk]),
-            {"meal_slot": slot.pk, "quantity": "1"},
+            {
+                "meal_slot": slot.pk, "quantity": "1",
+                "date": timezone.localdate().isoformat(),
+            },
         )
         self.assertEqual(response.status_code, 302)
         entry = DiaryEntry.objects.get(user=self.alice, recipe=recipe)
         self.assertEqual(entry.meal_slot, slot)
         self.assertEqual(entry.date, timezone.localdate())
+
+    def test_a_recipe_can_be_logged_to_a_different_day(self):
+        # Regression: this used to be hardcoded to today with no way
+        # to log a recipe eaten yesterday or planned for tomorrow.
+        recipe = Recipe.objects.create(owner=self.alice, name="Bowl", servings=2)
+        RecipeIngredient.objects.create(
+            recipe=recipe, food=self.chicken, quantity=Decimal("300")
+        )
+        slot = MealSlot.objects.get(name="Lunch", owner=None)
+        yesterday = timezone.localdate() - timedelta(days=1)
+        response = self.client.post(
+            reverse("nutrition:recipe-log", args=[recipe.pk]),
+            {"meal_slot": slot.pk, "quantity": "1", "date": yesterday.isoformat()},
+        )
+        self.assertEqual(response.status_code, 302)
+        entry = DiaryEntry.objects.get(user=self.alice, recipe=recipe)
+        self.assertEqual(entry.date, yesterday)
 
     def test_deleting_a_recipe_that_does_not_belong_to_the_user_is_a_404(self):
         recipe = Recipe.objects.create(owner=self.bob, name="Bob's Bowl", servings=1)
@@ -1959,6 +2181,19 @@ class DietPlanViewTests(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertEqual(meal.items.count(), 2)
         self.assertTrue(meal.items.filter(food=extra_food).exists())
+
+    def test_the_camera_barcode_scanner_is_wired_up_on_the_add_item_page(self):
+        plan = diet_builder.build_diet_plan(
+            self.alice, name="Plan", goal=None, target_calories=800,
+            target_protein_grams=Decimal("1"), target_carbohydrate_grams=Decimal("1"),
+            target_fat_grams=Decimal("1"), meal_slots=[self.breakfast],
+        )
+        meal = plan.meals.first()
+        response = self.client.get(
+            reverse("nutrition:diet-plan-meal-item-add", args=[plan.pk, meal.pk])
+        )
+        self.assertContains(response, "barcode-scanner.js")
+        self.assertContains(response, "ironstackBarcodeScanner()")
 
     def test_deleting_an_item_removes_only_that_item(self):
         plan = diet_builder.build_diet_plan(
@@ -2410,3 +2645,39 @@ class WaterIntakeCalculatorViewTests(TestCase):
         self.client.logout()
         response = self.client.get(reverse("nutrition:calculator-water-intake"))
         self.assertEqual(response.status_code, 302)
+
+
+class DateInputWidgetLocaleFormatTests(TestCase):
+    """Regression, found live: every `type="date"` widget in this app
+    rendered its value in the *active locale's* date format (e.g.
+    Finnish "17.08.2026") rather than the ISO 8601 format
+    (`YYYY-MM-DD`) HTML5 `<input type="date">` requires for its
+    `value` attribute — a browser silently rejects any other format
+    and shows the picker empty instead. `format="%Y-%m-%d"` on the
+    widget itself pins the display format regardless of locale, the
+    same fix already established in apps.activities.forms's own
+    `date` widget. Verified with Finnish active specifically, since
+    the bug is invisible with English active (Django's default
+    locale format already happens to be ISO-like there)."""
+
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+
+    def test_log_recipe_forms_date_field_renders_iso_format_in_finnish(self):
+        with translation_override("fi"):
+            form = LogRecipeForm(user=self.alice)
+            rendered = str(form["date"])
+        self.assertIn(f'value="{timezone.localdate().isoformat()}"', rendered)
+        self.assertNotIn(".", rendered.split('value="')[1].split('"')[0])
+
+    def test_log_diet_plan_forms_date_field_renders_iso_format_in_finnish(self):
+        with translation_override("fi"):
+            form = LogDietPlanForm(initial={"date": date(2026, 3, 7)})
+            rendered = str(form["date"])
+        self.assertIn('value="2026-03-07"', rendered)
+
+    def test_body_step_forms_birth_date_field_renders_iso_format_in_finnish(self):
+        with translation_override("fi"):
+            form = BodyStepForm(user=self.alice, initial={"birth_date": date(1990, 12, 25)})
+            rendered = str(form["birth_date"])
+        self.assertIn('value="1990-12-25"', rendered)

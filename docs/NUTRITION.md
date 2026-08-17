@@ -185,6 +185,42 @@ through red, not this project's own status palette) plus a plain
 "NOVA N" label, wherever a food's identity is shown in a list
 (`templates/nutrition/_nutri_score_badge.html`).
 
+### Admin tools
+
+Two `apps.nutrition.admin.FoodAdmin` bulk actions, both asked for
+directly:
+
+- **Merge selected foods into one…** — the shared library
+  inevitably accumulates near-duplicates (two users each creating
+  their own "Chicken breast", or the same product imported twice
+  under slightly different names). Deleting a duplicate outright
+  would cascade-delete every `DiaryEntry`/`RecipeIngredient`/
+  `DietPlanItem` that ever referenced it via `on_delete=CASCADE` —
+  exactly the kind of silent history loss CLAUDE.md's "workout
+  history must remain historically trustworthy" warns against, just
+  for food data instead of workout data. `apps.nutrition.services.
+  merge_foods(keep, duplicates)` re-points every such reference onto
+  the kept row instead, then deletes the now-unreferenced duplicates
+  — a user's own logged history is never touched, only which `Food`
+  row it points at changes. Which row to keep is always a human
+  decision (an intermediate confirmation page lists every selected
+  food; the admin picks one), never inferred by a heuristic (e.g.
+  "most recently created") that could confidently pick wrong.
+  Django's own default "Delete selected foods" action is left alone
+  for a genuinely bogus row nothing references — its built-in
+  confirmation page already lists every object that would
+  cascade-delete before an admin confirms, real protection this
+  feature doesn't need to duplicate.
+- **Refresh selected foods from OpenFoodFacts** — force-refreshes
+  right now rather than waiting for the normal 14-day staleness gate
+  (`import_or_refresh_food_from_off`'s new `force=True` parameter,
+  used only here). Still an explicit, admin-chosen selection from the
+  changelist, not an unconditional "refresh every OFF food in the
+  database" button reachable with no selection at all — the whole
+  reason this integration was scoped to on-demand lookup in the first
+  place (below) was to avoid exactly that kind of unbounded bulk
+  operation against a third-party API.
+
 ### OpenFoodFacts integration
 
 Requested explicitly, and explicitly scoped to **on-demand lookup, not
@@ -562,6 +598,42 @@ is why `apps.measurements`/`apps.activities`/`apps.records`, all real
 but occasional-use, don't get their own slot). This is a real,
 testable UI change (`BottomNavTests` gets updated alongside it), not a
 casual addition.
+
+### Navigating within nutrition
+
+Deliberately plain "&larr; Back to X" links between pages, the same
+convention `apps.programs`'s own Program → Workout → Prescription
+hierarchy (and `apps.measurements`, `apps.workouts`) already use — no
+persistent sub-nav/tab bar was added for nutrition specifically, since
+that would make this one section *less* consistent with the rest of
+the app rather than more intuitive. The one deliberate structural
+addition is the dashboard's single "Quick links" card reaching every
+nutrition sub-section (Food diary, Foods, Recipes, Diet plans,
+Calculators) in one place — previously split oddly across three
+different cards with no direct link to Foods at all.
+
+### Camera barcode scanning
+
+`static/js/barcode-scanner.js` — the browser's own native
+`BarcodeDetector` API does the decoding, not a vendored library (see
+CLAUDE.md "avoid unnecessary dependencies"; there's nothing to vendor
+here in the first place, unlike this project's existing local-only
+`htmx.min.js`/`alpine.min.js`). Feature-detected
+(`"BarcodeDetector" in window`) so the "Scan barcode" button simply
+doesn't render on a browser that can't decode anything, rather than
+opening a broken camera view — Chromium/Chrome-for-Android (this
+app's primary mobile target) supports it; Firefox and older Safari
+don't. One shared Alpine component (`ironstackBarcodeScanner()`) and
+one reusable template include (`_barcode_scan_button.html`, the same
+`.modal-backdrop`/`.modal-card` overlay `accounts/profile.html`'s
+changelog modal already established) wired into all four food-search
+boxes. A successful scan writes the barcode into the search `<input>`
+and dispatches a synthetic `keyup` event (setting `.value` directly
+fires no DOM event on its own) so the existing `hx-trigger="keyup
+changed delay:400ms"` search box picks it up exactly as if it had
+been typed — no server-side change needed, since barcode-shaped
+queries were already handled specially
+(`apps.nutrition.services._BARCODE_RE`).
 
 ## Calculators
 

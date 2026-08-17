@@ -651,6 +651,27 @@ msgstr "ühiku tüüp"
 msgid "recorded at"
 msgstr "salvestatud"
 
+msgid "Refresh selected foods from OpenFoodFacts"
+msgstr "Värskenda valitud toidud OpenFoodFactsist"
+
+msgid "None of the selected foods were imported from OpenFoodFacts."
+msgstr "Ühtegi valitud toitu ei imporditud OpenFoodFactsist."
+
+msgid "Refreshed %(refreshed)d of %(total)d food(s) from OpenFoodFacts."
+msgstr "Värskendati %(refreshed)d/%(total)d toitu OpenFoodFactsist."
+
+msgid "Merge selected foods into one…"
+msgstr "Ühenda valitud toidud üheks…"
+
+msgid "Select at least two foods to merge."
+msgstr "Vali ühendamiseks vähemalt kaks toitu."
+
+msgid "Merged %(count)d food(s) into “%(name)s”. Every diary entry, recipe ingredient, and diet-plan item that referenced one of them now points at it instead."
+msgstr "Ühendati %(count)d toitu üksuseks “%(name)s”. Iga päeviku kirje, retsepti koostisosa ja toitumisplaani üksus, mis viitas mõnele neist, viitab nüüd sellele."
+
+msgid "Merge foods"
+msgstr "Ühenda toidud"
+
 msgid "a %(job)s job"
 msgstr "%(job)s töö"
 
@@ -741,6 +762,9 @@ msgstr "Toidukord"
 msgid "Servings"
 msgstr "Portsjonid"
 
+msgid "Log for date"
+msgstr "Logi kuupäevale"
+
 msgid "Plan name"
 msgstr "Plaani nimi"
 
@@ -761,9 +785,6 @@ msgstr "Millised toidukorrad?"
 
 msgid "Pick either a food or a recipe, not both or neither."
 msgstr "Vali kas toit või retsept, mitte mõlemad ega mitte kumbki."
-
-msgid "Log for date"
-msgstr "Logi kuupäevale"
 
 msgid "Age (years)"
 msgstr "Vanus (aastates)"
@@ -1445,6 +1466,33 @@ msgstr "Django saidi haldus"
 msgid "Django administration"
 msgstr "Django haldus"
 
+msgid "Pick which of these %(counter)s foods to keep. Every diary entry, recipe ingredient, and diet-plan item currently pointing at one of the others will be repointed at the one you keep — nothing a user has logged is deleted, only which food row it refers to changes. The other foods are then removed."
+msgstr "Vali, milline neist %(counter)s toidust säilitada. Iga päeviku kirje, retsepti koostisosa ja toitumisplaani üksus, mis praegu viitab mõnele teisele, suunatakse ümber sellele, mille säilitad — midagi kasutaja logitust ei kustutata, muutub ainult see, millisele toidureale viidatakse. Teised toidud eemaldatakse seejärel."
+
+msgid "Keep"
+msgstr "Säilita"
+
+msgid "Brand"
+msgstr "Kaubamärk"
+
+msgid "Owner"
+msgstr "Omanik"
+
+msgid "Calories"
+msgstr "Kalorid"
+
+msgid "Serving"
+msgstr "Portsjon"
+
+msgid "OFF id"
+msgstr "OFF ID"
+
+msgid "shared"
+msgstr "jagatud"
+
+msgid "Merge"
+msgstr "Ühenda"
+
 msgid "Date range"
 msgstr "Kuupäevavahemik"
 
@@ -1849,6 +1897,18 @@ msgstr "Mõõtmisi veel pole"
 msgid "No measurement types yet."
 msgstr "Mõõtmise tüüpe pole veel."
 
+msgid "Scan barcode"
+msgstr "Skanni triipkood"
+
+msgid "Scan a barcode"
+msgstr "Skanni triipkood"
+
+msgid "Close"
+msgstr "Sulge"
+
+msgid "Point your camera at a barcode."
+msgstr "Suuna kaamera triipkoodile."
+
 msgid "Your foods"
 msgstr "Sinu toidud"
 
@@ -1972,11 +2032,11 @@ msgstr "Puhkepäev"
 msgid "Today so far"
 msgstr "Tänaseni"
 
-msgid "Calories"
-msgstr "Kalorid"
-
 msgid "Open food diary"
 msgstr "Ava toidupäevik"
+
+msgid "+ Log food now"
+msgstr "+ Logi toit kohe"
 
 msgid "Is your current target working?"
 msgstr "Kas praegune eesmärk toimib?"
@@ -2005,20 +2065,20 @@ msgstr "%(calories)s kcal/päevas"
 msgid "Current goal"
 msgstr "Praegune eesmärk"
 
-msgid "Recipes & diet plans"
-msgstr "Retseptid ja toitumisplaanid"
+msgid "Quick links"
+msgstr "Kiirlingid"
 
-msgid "Manage your recipes or build a full diet plan."
-msgstr "Halda oma retsepte või koosta täielik toitumisplaan."
+msgid "Food diary"
+msgstr "Toidupäevik"
+
+msgid "Foods"
+msgstr "Toidud"
 
 msgid "Recipes"
 msgstr "Retseptid"
 
 msgid "Diet plans"
 msgstr "Toitumisplaanid"
-
-msgid "BMR/TDEE, macros, body fat, and water intake — quick standalone estimates."
-msgstr "BMR/TDEE, makrotoitained, kehurasv ja veetarbimine — kiired, iseseisvad hinnangud."
 
 msgid "Add food"
 msgstr "Lisa toit"
@@ -2029,11 +2089,11 @@ msgstr "nt kanafilee või vöötkoodi number"
 msgid "Back to diary"
 msgstr "Tagasi päeviku juurde"
 
-msgid "Food diary"
-msgstr "Toidupäevik"
-
 msgid "Previous day"
 msgstr "Eelmine päev"
+
+msgid "Jump to date"
+msgstr "Hüppa kuupäevale"
 
 msgid "Next day"
 msgstr "Järgmine päev"
@@ -2152,9 +2212,6 @@ msgstr "Tagasi sirvimise juurde"
 msgid "New food"
 msgstr "Uus toit"
 
-msgid "Foods"
-msgstr "Toidud"
-
 msgid "+ New food"
 msgstr "+ Uus toit"
 
@@ -2229,9 +2286,6 @@ msgstr "Portsjoni kohta (%(servings)s-st)"
 
 msgid "Log to diary"
 msgstr "Logi päevikusse"
-
-msgid "Log today"
-msgstr "Logi täna"
 
 msgid "Back to recipes"
 msgstr "Tagasi retseptide juurde"

@@ -1903,3 +1903,153 @@ already-imported product correctly marked "Jo omissa ruoissasi"
 showing a genuine Nutri-Score E / NOVA 4 badge pulled live from OFF,
 imported it, and confirmed the same badge then appears on the Foods
 list page.
+
+**A general UI/UX pass over the whole nutrition section**, asked for
+directly ("as easy to use and intuitive as possible") rather than any
+specific bug. Deliberately did *not* introduce a new navigation
+pattern for this — every other multi-page section of the app
+(`apps.programs`'s Program → Workout → Prescription hierarchy,
+`apps.measurements`, `apps.workouts`) already uses plain "&larr; Back
+to X" links with no persistent sub-nav bar, so a tab strip just for
+nutrition would have made the section *less* consistent with the rest
+of the app, not more intuitive. Instead:
+
+- The dashboard's link cards were split oddly across three different
+  cards ("Recipes & diet plans", "Calculators", plus a single
+  "Open food diary" button buried inside the totals card) with no
+  direct link to Foods at all. Replaced with one "Quick links" card
+  covering all five sections (Food diary, Foods, Recipes, Diet plans,
+  Calculators) — same `.button-secondary`/flex-wrap row pattern
+  already used everywhere, not a new component. Also added a
+  "+ Log food now" shortcut next to "Open food diary" — `DiaryAddEntryView`
+  already defaults to today with no `date` query param, so this reaches
+  the add-food search box in one tap instead of two.
+- The food diary's Previous/Next day buttons had no way to jump
+  straight to an arbitrary date — added a `<input type="date">`
+  between them (Alpine `@change` navigating via a `{% url %}`-built
+  template with the date substituted in, not a hardcoded URL prefix,
+  so it stays correct if the URL config ever changes), matching this
+  codebase's established `x-data="{}" @event="..."` convention for
+  small one-off interactions rather than introducing a new JS pattern.
+- **A real functional gap, not just polish**: logging a recipe to the
+  diary was hardcoded to *today* with no way to log one eaten
+  yesterday or planned for tomorrow — inconsistent with diet plans,
+  which already had a `date` field on `LogDietPlanForm`. Added the
+  same field to `LogRecipeForm` (defaulting to today, editable), and
+  the button label changed from "Log today" (no longer accurate) to
+  "Log it" (matching the diet plan's own button).
+- **Camera barcode scanning**, asked for directly right after the
+  existing type-the-digits barcode search. Deliberately zero new
+  dependencies: `static/js/barcode-scanner.js` uses the browser's
+  native `BarcodeDetector` API to do the actual decoding, not a
+  vendored JS library (CLAUDE.md "avoid unnecessary dependencies" —
+  and this needs nothing to vendor at all, unlike this project's
+  existing local-only `htmx.min.js`/`alpine.min.js`, since there's no
+  library here to vendor in the first place). `supported` feature-
+  detects `"BarcodeDetector" in window` and hides the "Scan barcode"
+  button entirely on a browser that can't decode anything (Chromium/
+  Chrome-for-Android — this app's primary mobile target per CLAUDE.md's
+  "mobile-first" goal — supports it; Firefox and older Safari don't)
+  rather than opening onto a broken camera view. One reusable include
+  (`_barcode_scan_button.html`) plus the same `.modal-backdrop`/
+  `.modal-card` overlay pattern `accounts/profile.html`'s changelog
+  modal already established (`role="dialog"`, `@click.self="close()"`,
+  `@keydown.escape.window="close()"`, matching transitions) — wired
+  into all four food-search boxes (diary, recipe ingredients,
+  diet-plan meal items, food browse) via the same shared
+  `ironstackBarcodeScanner()` component. On a successful scan, the
+  decoded barcode is written into the search `<input>` and a
+  synthetic `keyup` event is dispatched (`.value =` alone fires no
+  DOM event at all) so the existing `hx-trigger="keyup changed
+  delay:400ms"` search box picks it up exactly as if it had been
+  typed — no server-side change needed, since barcode-shaped queries
+  were already handled specially by `apps.nutrition.services.
+  _BARCODE_RE` (added earlier today).
+
+7 new UI strings translated across fi/sv/ru/it/et (847 total, 0
+fuzzy/untranslated). The camera scanner itself can only be
+live-verified on real camera hardware in a real (HTTPS-serving,
+Chromium-based mobile) browser — outside what a `curl`-driven session
+can exercise — so verification here was: the feature-detection guard
+tested directly in a browser console (`"BarcodeDetector" in window`),
+every other page (button/script-tag presence, modal markup, dialog
+semantics) confirmed via the test suite and a rendered-HTML check,
+and the actual decode path (`detector.detect(video)` → `keyup`
+dispatch → existing HTMX search) reviewed against MDN's documented
+`BarcodeDetector` contract line by line rather than assumed.
+
+**A real, live-only-reproducible bug found by chance while
+live-verifying the recipe-logging date field in Finnish**: every
+`type="date"` widget in `apps/nutrition/forms.py` (`LogRecipeForm.
+date`, `LogDietPlanForm.date`, `BodyStepForm.birth_date`) rendered
+its value in the *active locale's* date format ("17.08.2026" in
+Finnish) instead of the ISO 8601 format
+(`YYYY-MM-DD`) an HTML5 `<input type="date">` requires for its
+`value` attribute — a browser silently rejects any other format and
+shows the picker empty rather than pre-filled with today's date. If a
+user then submitted without touching the (apparently already correct,
+actually blank) date field, the browser would send an empty string
+and the form would fail its own "this field is required" validation —
+a real, not just cosmetic, breakage for exactly the "just hit log"
+flow this session's own `LogRecipeForm`/`LogDietPlanForm` date
+fields exist to make easy. Fixed with `format="%Y-%m-%d"` pinned on
+each widget, exactly the fix `apps.activities.forms`'s own `date`
+widget already had — this bug's fix already existed as a precedent
+elsewhere in the codebase, apps.nutrition's own widgets just hadn't
+followed it. Invisible with English active (Django's default locale
+format happens to already look ISO-ish there), which is presumably
+why none of this session's many earlier English-context checks caught
+it. 3 new regression tests, each explicitly activating Finnish
+(`django.utils.translation.override("fi")`) and asserting the
+rendered `value` attribute stays ISO. Live-verified: both
+`LogRecipeForm` and `LogDietPlanForm` now render `value="2026-08-17"`
+in a live Finnish session, confirmed via `curl` before and after the
+fix.
+
+**Two admin-only Django-admin bulk actions on `Food`, both asked for
+directly.** "Merge selected foods into one…" — the shared library
+inevitably accumulates near-duplicates, and deleting one outright
+would `CASCADE`-delete every `DiaryEntry`/`RecipeIngredient`/
+`DietPlanItem` that ever referenced it, exactly the kind of silent
+history loss CLAUDE.md's "workout history must remain historically
+trustworthy" warns against. `apps.nutrition.services.merge_foods`
+re-points every such reference onto a kept row instead (an
+intermediate confirmation page — new custom admin URL/view/template,
+`templates/admin/nutrition/food/merge.html`, the project's first —
+lists every selected food so a human picks which one, never a
+heuristic), then deletes the now-unreferenced duplicates. "Refresh
+selected foods from OpenFoodFacts" — `import_or_refresh_food_from_
+off` gained a `force=True` parameter bypassing the normal 14-day
+staleness gate, used only by this action; still an explicit,
+admin-chosen selection, not the unconditional bulk re-sync this
+integration was deliberately scoped away from at the start.
+
+- **A real bug in my own translation tooling, not the app**: the
+  merge confirmation page's explanatory paragraph was written as a
+  multi-line `{% blocktrans %}` in the template, and the scratchpad
+  `gen_po.py` script that regenerates every locale's `.po` file
+  writes each `msgid`/`msgstr` as one raw quoted line with no
+  handling for an embedded literal newline — corrupting not just that
+  one entry but, since the script also (over)writes the `en` catalog
+  it reads its own extraction list from, the whole build's source-of-
+  truth file, breaking `compilemessages` for every language with a
+  `syntax error`. Fixed at the source rather than in the tooling
+  (lower-risk under time pressure than debugging PO multi-line
+  string-continuation escaping): rewrote the template's blocktrans as
+  a single line, matching the convention every other translated
+  string in this project already used — regenerated `locale/en` and
+  every other locale from scratch (`makemessages` on a clean slate)
+  to clear the corruption, confirmed `msgfmt --check` passes with 0
+  errors for all six languages.
+- 15 new UI strings translated across fi/sv/ru/it/et (862 total, 0
+  fuzzy/untranslated).
+- Live-verified end to end as a real superuser in Finnish: created
+  two near-duplicate "Kananrinta" foods, selected both, ran "Yhdistä
+  valitut ruoat…", confirmed the intermediate page listed both and
+  the merge left exactly one behind (the other's pk confirmed gone
+  from the database directly). Separately, reset a real previously-
+  imported food's `off_synced_at` to `None` and its name to a stale
+  placeholder, ran "Päivitä valitut ruoat OpenFoodFactsista" against
+  the real (non-mocked) OpenFoodFacts API, and confirmed the name and
+  `off_synced_at` both came back correct — a genuine forced refresh,
+  not a no-op.

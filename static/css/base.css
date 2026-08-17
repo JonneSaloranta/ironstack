@@ -530,6 +530,15 @@ abbr[title]:focus::after {
   font-size: 0.85em;
 }
 
+/* apps.nutrition's camera barcode scanner (static/js/barcode-scanner.js)
+   — a live <video> preview inside the same .modal-card the changelog
+   and other overlays already use. */
+.barcode-scanner-video {
+  width: 100%;
+  border-radius: var(--radius);
+  background: #000;
+}
+
 /* Profile page's staff-only Admin/Backups section — visually set apart
    as a "danger zone" (red border/heading) since everything inside it
    can affect every user on the instance, not just the one looking at
