@@ -852,6 +852,33 @@ msgstr "ml"
 msgid "piece"
 msgstr "tk"
 
+msgid "A — best"
+msgstr "A — parim"
+
+msgid "B"
+msgstr "B"
+
+msgid "C"
+msgstr "C"
+
+msgid "D"
+msgstr "D"
+
+msgid "E — worst"
+msgstr "E — halvim"
+
+msgid "1 — unprocessed or minimally processed"
+msgstr "1 — töötlemata või minimaalselt töödeldud"
+
+msgid "2 — processed culinary ingredients"
+msgstr "2 — töödeldud toiduvalmistuse koostisosad"
+
+msgid "3 — processed food"
+msgstr "3 — töödeldud toit"
+
+msgid "4 — ultra-processed food"
+msgstr "4 — ülitöödeldud toit"
+
 msgid "Stored instead of a raw age, so it never goes stale."
 msgstr "Salvestatud vanuse asemel, et see ei aeguks kunagi."
 
@@ -1825,6 +1852,9 @@ msgstr "Mõõtmise tüüpe pole veel."
 msgid "Your foods"
 msgstr "Sinu toidud"
 
+msgid "Already in your library"
+msgstr "Juba sinu kogus"
+
 msgid "Quantity"
 msgstr "Kogus"
 
@@ -1834,6 +1864,9 @@ msgstr "Lisa"
 msgid "From OpenFoodFacts"
 msgstr "OpenFoodFactsist"
 
+msgid "Import"
+msgstr "Impordi"
+
 msgid "Import & add"
 msgstr "Impordi ja lisa"
 
@@ -1842,6 +1875,12 @@ msgstr "Midagi ei leitud."
 
 msgid "Create a custom food"
 msgstr "Loo kohandatud toit"
+
+msgid "Nutri-Score %(grade)s"
+msgstr "Nutri-Score %(grade)s"
+
+msgid "NOVA — food processing level, 1 (unprocessed) to 4 (ultra-processed)"
+msgstr "NOVA — toidu töötlemisaste, 1 (töötlemata) kuni 4 (ülitöödeldud)"
 
 msgid "Step %(step)s of 5"
 msgstr "Samm %(step)s / 5"
@@ -2092,11 +2131,26 @@ msgstr "Veel pole toitumisplaane."
 msgid "Add item to %(name)s"
 msgstr "Lisa üksus toidukorda %(name)s"
 
-msgid "New food"
-msgstr "Uus toit"
+msgid "Import from OpenFoodFacts"
+msgstr "Impordi OpenFoodFactsist"
+
+msgid "Search or browse by category to add a food to the shared library — anyone on this instance can then find and log it."
+msgstr "Otsi või sirvi kategooriate kaupa, et lisada toit jagatud kogusse — pärast seda saab iga selle serveri kasutaja seda leida ja logida."
+
+msgid "Browse by category"
+msgstr "Sirvi kategooriate kaupa"
 
 msgid "Back to foods"
 msgstr "Tagasi toitude juurde"
+
+msgid "Nothing found in this category right now."
+msgstr "Sellest kategooriast ei leitud praegu midagi."
+
+msgid "Back to browse"
+msgstr "Tagasi sirvimise juurde"
+
+msgid "New food"
+msgstr "Uus toit"
 
 msgid "Foods"
 msgstr "Toidud"

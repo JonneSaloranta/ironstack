@@ -855,6 +855,33 @@ msgstr "мл"
 msgid "piece"
 msgstr "шт"
 
+msgid "A — best"
+msgstr "A — лучший"
+
+msgid "B"
+msgstr "B"
+
+msgid "C"
+msgstr "C"
+
+msgid "D"
+msgstr "D"
+
+msgid "E — worst"
+msgstr "E — худший"
+
+msgid "1 — unprocessed or minimally processed"
+msgstr "1 — необработанные или минимально обработанные"
+
+msgid "2 — processed culinary ingredients"
+msgstr "2 — обработанные кулинарные ингредиенты"
+
+msgid "3 — processed food"
+msgstr "3 — обработанные продукты"
+
+msgid "4 — ultra-processed food"
+msgstr "4 — ультраобработанные продукты"
+
 msgid "Stored instead of a raw age, so it never goes stale."
 msgstr "Сохраняется вместо самого возраста, чтобы данные никогда не устаревали."
 
@@ -1833,6 +1860,9 @@ msgstr "Типов измерения пока нет."
 msgid "Your foods"
 msgstr "Ваши продукты"
 
+msgid "Already in your library"
+msgstr "Уже в вашей библиотеке"
+
 msgid "Quantity"
 msgstr "Количество"
 
@@ -1842,6 +1872,9 @@ msgstr "Добавить"
 msgid "From OpenFoodFacts"
 msgstr "Из OpenFoodFacts"
 
+msgid "Import"
+msgstr "Импортировать"
+
 msgid "Import & add"
 msgstr "Импортировать и добавить"
 
@@ -1850,6 +1883,12 @@ msgstr "Ничего не найдено."
 
 msgid "Create a custom food"
 msgstr "Создать свой продукт"
+
+msgid "Nutri-Score %(grade)s"
+msgstr "Nutri-Score %(grade)s"
+
+msgid "NOVA — food processing level, 1 (unprocessed) to 4 (ultra-processed)"
+msgstr "NOVA — степень обработки продукта, от 1 (необработанный) до 4 (ультраобработанный)"
 
 msgid "Step %(step)s of 5"
 msgstr "Шаг %(step)s из 5"
@@ -2100,11 +2139,26 @@ msgstr "Пока нет планов питания."
 msgid "Add item to %(name)s"
 msgstr "Добавить пункт в %(name)s"
 
-msgid "New food"
-msgstr "Новый продукт"
+msgid "Import from OpenFoodFacts"
+msgstr "Импортировать из OpenFoodFacts"
+
+msgid "Search or browse by category to add a food to the shared library — anyone on this instance can then find and log it."
+msgstr "Ищите или просматривайте по категориям, чтобы добавить продукт в общую библиотеку — после этого любой пользователь этого сервера сможет найти и записать его."
+
+msgid "Browse by category"
+msgstr "Просмотр по категориям"
 
 msgid "Back to foods"
 msgstr "Назад к продуктам"
+
+msgid "Nothing found in this category right now."
+msgstr "В этой категории сейчас ничего не найдено."
+
+msgid "Back to browse"
+msgstr "Назад к просмотру"
+
+msgid "New food"
+msgstr "Новый продукт"
 
 msgid "Foods"
 msgstr "Продукты"

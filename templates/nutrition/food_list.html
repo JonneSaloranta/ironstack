@@ -4,7 +4,10 @@
 {% block content %}
 <div class="top-bar">
   <h1 style="margin:0;">{% trans "Foods" %}</h1>
-  <a class="button-secondary" href="{% url 'nutrition:food-create' %}">{% trans "+ New food" %}</a>
+  <div style="display:flex; flex-wrap:wrap; gap:0.5rem;">
+    <a class="button-secondary" href="{% url 'nutrition:food-browse' %}">{% trans "Import from OpenFoodFacts" %}</a>
+    <a class="button-secondary" href="{% url 'nutrition:food-create' %}">{% trans "+ New food" %}</a>
+  </div>
 </div>
 
 <form class="card" method="get">
@@ -24,7 +27,7 @@
       <tbody>
         {% for food in foods %}
           <tr>
-            <td>{{ food.name }}{% if food.brand %} <span class="text-muted">({{ food.brand }})</span>{% endif %}</td>
+            <td>{{ food.name }}{% if food.brand %} <span class="text-muted">({{ food.brand }})</span>{% endif %}{% include "nutrition/_nutri_score_badge.html" %}</td>
             <td>{{ food.calories }} kcal / {{ food.serving_size }} {{ food.serving_unit }}</td>
           </tr>
         {% endfor %}

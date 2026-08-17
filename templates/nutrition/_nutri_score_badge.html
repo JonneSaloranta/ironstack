@@ -1,0 +1,7 @@
+{% load i18n %}
+{% if food.nutri_score %}
+  <span class="nutri-score nutri-score-{{ food.nutri_score }}" title="{% blocktrans with grade=food.nutri_score|upper %}Nutri-Score {{ grade }}{% endblocktrans %}">{{ food.nutri_score|upper }}</span>
+{% endif %}
+{% if food.nova_group %}
+  <span class="text-muted" title="{% trans "NOVA — food processing level, 1 (unprocessed) to 4 (ultra-processed)" %}">NOVA {{ food.nova_group }}</span>
+{% endif %}

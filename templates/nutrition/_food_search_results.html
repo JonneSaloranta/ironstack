@@ -7,27 +7,39 @@
       {% url 'nutrition:recipe-ingredient-create' recipe_pk as post_url %}
     {% elif mode == "diet-plan-meal" %}
       {% url 'nutrition:diet-plan-meal-item-add' plan_pk meal_pk as post_url %}
+    {% elif mode == "browse" %}
+      {% url 'nutrition:food-import' as post_url %}
     {% endif %}
 
     {% if local %}
       <h3>{% trans "Your foods" %}</h3>
       {% for food in local %}
-        <form class="card card-action-row" method="post" action="{{ post_url }}">
-          {% csrf_token %}
-          <input type="hidden" name="food_id" value="{{ food.pk }}">
-          {% if mode == "diary" %}
-            <input type="hidden" name="meal_slot" value="{{ meal_slot_id }}">
-            <input type="hidden" name="date" value="{{ date }}">
-          {% endif %}
-          <div>
-            <strong>{{ food.name }}</strong>
-            <p class="text-muted">{{ food.calories }} kcal / {{ food.serving_size }} {{ food.serving_unit }}</p>
+        {% if mode == "browse" %}
+          <div class="card card-action-row">
+            <div>
+              <strong>{{ food.name }}</strong>{% include "nutrition/_nutri_score_badge.html" %}
+              <p class="text-muted">{{ food.calories }} kcal / {{ food.serving_size }} {{ food.serving_unit }}</p>
+            </div>
+            <span class="tag-muted">{% trans "Already in your library" %}</span>
           </div>
-          <div style="display:flex; flex-wrap:wrap; gap:0.5rem; align-items:center;">
-            <input type="number" name="quantity" step="0.01" value="{{ food.serving_size }}" style="width:5rem;" aria-label="{% trans "Quantity" %}">
-            <button type="submit">{% trans "Add" %}</button>
-          </div>
-        </form>
+        {% else %}
+          <form class="card card-action-row" method="post" action="{{ post_url }}">
+            {% csrf_token %}
+            <input type="hidden" name="food_id" value="{{ food.pk }}">
+            {% if mode == "diary" %}
+              <input type="hidden" name="meal_slot" value="{{ meal_slot_id }}">
+              <input type="hidden" name="date" value="{{ date }}">
+            {% endif %}
+            <div>
+              <strong>{{ food.name }}</strong>{% include "nutrition/_nutri_score_badge.html" %}
+              <p class="text-muted">{{ food.calories }} kcal / {{ food.serving_size }} {{ food.serving_unit }}</p>
+            </div>
+            <div style="display:flex; flex-wrap:wrap; gap:0.5rem; align-items:center;">
+              <input type="number" name="quantity" step="0.01" value="{{ food.serving_size }}" style="width:5rem;" aria-label="{% trans "Quantity" %}">
+              <button type="submit">{% trans "Add" %}</button>
+            </div>
+          </form>
+        {% endif %}
       {% endfor %}
     {% endif %}
 
@@ -42,13 +54,17 @@
             <input type="hidden" name="date" value="{{ date }}">
           {% endif %}
           <div>
-            <strong>{{ product.name }}</strong>{% if product.brand %} <span class="text-muted">({{ product.brand }})</span>{% endif %}
+            <strong>{{ product.name }}</strong>{% if product.brand %} <span class="text-muted">({{ product.brand }})</span>{% endif %}{% include "nutrition/_nutri_score_badge.html" with food=product %}
             <p class="text-muted">{{ product.calories }} kcal / {{ product.serving_size }} {{ product.serving_unit }}</p>
           </div>
-          <div style="display:flex; flex-wrap:wrap; gap:0.5rem; align-items:center;">
-            <input type="number" name="quantity" step="0.01" value="{{ product.serving_size }}" style="width:5rem;" aria-label="{% trans "Quantity" %}">
-            <button type="submit">{% trans "Import & add" %}</button>
-          </div>
+          {% if mode == "browse" %}
+            <button type="submit" class="button-secondary">{% trans "Import" %}</button>
+          {% else %}
+            <div style="display:flex; flex-wrap:wrap; gap:0.5rem; align-items:center;">
+              <input type="number" name="quantity" step="0.01" value="{{ product.serving_size }}" style="width:5rem;" aria-label="{% trans "Quantity" %}">
+              <button type="submit">{% trans "Import & add" %}</button>
+            </div>
+          {% endif %}
         </form>
       {% endfor %}
     {% endif %}

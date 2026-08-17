@@ -27,6 +27,13 @@ urlpatterns = [
     path("foods/", views.FoodListView.as_view(), name="food-list"),
     path("foods/new/", views.FoodCreateView.as_view(), name="food-create"),
     path("foods/search/", views.FoodSearchResultsView.as_view(), name="food-search"),
+    path("foods/browse/", views.FoodBrowseView.as_view(), name="food-browse"),
+    path(
+        "foods/browse/category/<str:category_id>/",
+        views.FoodCategoryView.as_view(),
+        name="food-category",
+    ),
+    path("foods/import/", views.food_import, name="food-import"),
     path("diary/", views.DiaryDayView.as_view(), name="diary-day"),
     # Must come before "diary/<str:target_date>/" below — Django tries
     # urlpatterns in order, and <str:target_date> matches any segment

@@ -661,6 +661,46 @@ h2 {
   background: var(--color-accent);
 }
 
+/* Nutri-Score — a fixed A-E grade with its own established, publicly
+   defined colors (green through red), not this project's own status
+   palette — showing it in anything but its real colors would make it
+   harder to recognize, not more consistent. See
+   apps.nutrition.models.NutriScoreGrade. */
+.nutri-score {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.4rem;
+  height: 1.4rem;
+  border-radius: 50%;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #fff;
+  margin-left: 0.4rem;
+  vertical-align: middle;
+}
+
+.nutri-score-a {
+  background: #1e8f4e;
+}
+
+.nutri-score-b {
+  background: #6cb33f;
+}
+
+.nutri-score-c {
+  background: #f6c700;
+  color: #1a1a1a;
+}
+
+.nutri-score-d {
+  background: #e67e22;
+}
+
+.nutri-score-e {
+  background: #d0342c;
+}
+
 /* Workout logging */
 /* Wide tables scroll within themselves on narrow screens rather than
    pushing the whole page wider (mobile-first, docs/UI.md). */

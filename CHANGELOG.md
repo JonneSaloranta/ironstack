@@ -36,6 +36,12 @@ lands and remains the authoritative history.
 - Searching for a food by its barcode number now works everywhere the
   food-search box appears (diary, recipe ingredients, diet-plan
   meals).
+- A dedicated "Import from OpenFoodFacts" page (Foods → "Import from
+  OpenFoodFacts") — search or browse by category to add a food to
+  the shared library on its own, not just while logging something.
+- Foods now show a Nutri-Score (A-E) and NOVA (1-4) badge when
+  OpenFoodFacts has graded them — a real, independently-published
+  healthiness/processing-level scale, not one this app invents.
 
 ### Fixed
 - An OpenFoodFacts import-failure message in the food diary that was

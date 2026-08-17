@@ -15,6 +15,7 @@ from django.db.models import Max, Prefetch
 from django.http import HttpResponseNotAllowed
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
+from django.utils.http import url_has_allowed_host_and_scheme
 from django.utils.translation import gettext as _
 from django.views.generic import CreateView, ListView, View
 
@@ -389,7 +390,58 @@ class FoodSearchResultsView(LoginRequiredMixin, View):
         elif mode == "diet-plan-meal":
             context["plan_pk"] = request.GET.get("plan_pk", "")
             context["meal_pk"] = request.GET.get("meal_pk", "")
+        # mode == "browse" needs no extra id — importing to the shared
+        # library isn't scoped to a diary date, a recipe, or a meal.
         return render(request, self.template_name, context)
+
+
+class FoodBrowseView(LoginRequiredMixin, View):
+    """Search-or-browse-by-category, import straight into the shared
+    food library — distinct from FoodSearchResultsView's other three
+    modes in that there's nothing to log a quantity *into* here, just
+    "add this to what everyone on this instance can find." See
+    docs/NUTRITION.md "OpenFoodFacts integration"."""
+
+    def get(self, request):
+        return render(
+            request,
+            "nutrition/food_browse.html",
+            {"categories": services.suggested_categories()},
+        )
+
+
+class FoodCategoryView(LoginRequiredMixin, View):
+    template_name = "nutrition/food_category.html"
+
+    def get(self, request, category_id):
+        return render(
+            request,
+            self.template_name,
+            {
+                "category_id": category_id,
+                "off_results": services.browse_category(category_id),
+            },
+        )
+
+
+@login_required
+def food_import(request):
+    """Imports one OpenFoodFacts product straight into the shared
+    library (owner=None, same as every other OFF import) — the POST
+    target for both the browse search box and a category listing's
+    "Import" buttons. No quantity: this adds the food to the library,
+    it doesn't log anything."""
+    if request.method != "POST":
+        return HttpResponseNotAllowed(["POST"])
+    barcode = request.POST.get("off_barcode", "").strip()
+    if barcode:
+        services.import_or_refresh_food_from_off(barcode)
+    next_url = request.POST.get("next", "")
+    if next_url and url_has_allowed_host_and_scheme(
+        next_url, allowed_hosts={request.get_host()}, require_https=request.is_secure()
+    ):
+        return redirect(next_url)
+    return redirect("nutrition:food-list")
 
 
 def _parse_diary_date(value):

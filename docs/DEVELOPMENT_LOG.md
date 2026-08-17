@@ -1851,3 +1851,55 @@ family this project's other five nav icons were already drawn from,
 not a one-off custom shape. Re-screenshotted at 320px afterward to
 confirm — fills its box cleanly now, no ambiguity. Live-verified the
 new path renders in the actual running app.
+
+**A dedicated "Import from OpenFoodFacts" page, category browsing,
+and a Nutri-Score/NOVA healthiness scale**, asked for directly.
+Previously OFF import only ever happened inline while adding
+something to a diary/recipe/plan — no way to just browse and grow the
+shared food library on its own. Added:
+
+- `FoodBrowseView` (`/nutrition/foods/browse/`) — a search box (a new
+  fourth `mode="browse"` on the already-shared `FoodSearchResultsView`/
+  `_food_search_results.html`) plus a "browse by category" section,
+  and `food_import` (a plain POST, no quantity — this adds to the
+  library, it doesn't log anything) as the one import endpoint both
+  the search box and category pages post to. `next` is validated with
+  `url_has_allowed_host_and_scheme` before ever being used as a
+  redirect target — a POST field a user's own browser controls, but a
+  same-site-only allowlist costs nothing and closes an open-redirect
+  class of bug before it can exist.
+- Category browsing uses OFF's own `/categories.json` (ranked,
+  English-named categories, capped to a curated top N — see
+  `docs/NUTRITION.md`) and `/category/<id>.json`. **Live-verified
+  against the real API that this specific pair of endpoints is
+  currently returning `503` from OFF itself** ("Page temporarily
+  unavailable", no rate-limit headers — confirmed not caused by this
+  session's own request volume, since `get_product`/`search_products`
+  against the *same* OFF host succeeded seconds apart) — an
+  OFF-side condition, not a bug here. `list_categories`/`browse_
+  category` already return `[]` on any failure by design (same
+  "browsing degrades gracefully" reasoning as the rest of the OFF
+  integration), so the category section simply doesn't render rather
+  than erroring — confirmed live. Nothing to fix; will recover on its
+  own once OFF's own service does, since the code path is already
+  correct for that case.
+- **Nutri-Score (A-E) / NOVA (1-4)** — real, independently-published
+  scales (`NutriScoreGrade`/`NovaGroup`, `docs/NUTRITION.md` "Food"),
+  populated only from OFF's own `nutriscore_grade`/`nova_group` on
+  import, never computed by this app for a hand-entered food. Shown
+  as a small colored badge wherever a food's identity is listed
+  (`_nutri_score_badge.html`) — food list, browse search results, and
+  category listings.
+
+18 new tests (216 total for `apps.nutrition`; 2 of the first pass's
+own new tests had bugs of their own — one mocked a bare `Exception`
+where the code specifically catches `requests.RequestException`, one
+had a wrong expected list — both fixed, not the app code), 18 new UI
+strings translated across fi/sv/ru/it/et (844 total, 0 fuzzy/
+untranslated). Live-verified in Finnish against the real OpenFoodFacts
+API end to end: searched "nutella" on the browse page, saw an
+already-imported product correctly marked "Jo omissa ruoissasi"
+(already in your library) alongside a *different* real product
+showing a genuine Nutri-Score E / NOVA 4 badge pulled live from OFF,
+imported it, and confirmed the same badge then appears on the Foods
+list page.

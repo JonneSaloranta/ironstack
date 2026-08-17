@@ -852,6 +852,33 @@ msgstr "ml"
 msgid "piece"
 msgstr "kpl"
 
+msgid "A — best"
+msgstr "A — paras"
+
+msgid "B"
+msgstr "B"
+
+msgid "C"
+msgstr "C"
+
+msgid "D"
+msgstr "D"
+
+msgid "E — worst"
+msgstr "E — huonoin"
+
+msgid "1 — unprocessed or minimally processed"
+msgstr "1 — jalostamaton tai vähän jalostettu"
+
+msgid "2 — processed culinary ingredients"
+msgstr "2 — jalostetut ruoanlaittoon käytettävät ainesosat"
+
+msgid "3 — processed food"
+msgstr "3 — jalostettu ruoka"
+
+msgid "4 — ultra-processed food"
+msgstr "4 — pitkälle jalostettu ruoka"
+
 msgid "Stored instead of a raw age, so it never goes stale."
 msgstr "Tallennettu iän sijaan, jotta tieto ei koskaan vanhene."
 
@@ -1825,6 +1852,9 @@ msgstr "Mittaustyyppejä ei ole vielä."
 msgid "Your foods"
 msgstr "Omat ruokasi"
 
+msgid "Already in your library"
+msgstr "Jo omissa ruoissasi"
+
 msgid "Quantity"
 msgstr "Määrä"
 
@@ -1834,6 +1864,9 @@ msgstr "Lisää"
 msgid "From OpenFoodFacts"
 msgstr "OpenFoodFactsista"
 
+msgid "Import"
+msgstr "Tuo"
+
 msgid "Import & add"
 msgstr "Tuo ja lisää"
 
@@ -1842,6 +1875,12 @@ msgstr "Ei löytynyt mitään."
 
 msgid "Create a custom food"
 msgstr "Luo oma ruoka"
+
+msgid "Nutri-Score %(grade)s"
+msgstr "Nutri-Score %(grade)s"
+
+msgid "NOVA — food processing level, 1 (unprocessed) to 4 (ultra-processed)"
+msgstr "NOVA — ruoan jalostusaste, 1 (jalostamaton) – 4 (pitkälle jalostettu)"
 
 msgid "Step %(step)s of 5"
 msgstr "Vaihe %(step)s / 5"
@@ -2092,11 +2131,26 @@ msgstr "Ei vielä ruokavaliosuunnitelmia."
 msgid "Add item to %(name)s"
 msgstr "Lisää kohde ateriaan %(name)s"
 
-msgid "New food"
-msgstr "Uusi ruoka"
+msgid "Import from OpenFoodFacts"
+msgstr "Tuo OpenFoodFactsista"
+
+msgid "Search or browse by category to add a food to the shared library — anyone on this instance can then find and log it."
+msgstr "Hae tai selaa kategorioittain lisätäksesi ruoan jaettuun kirjastoon — kuka tahansa tämän palvelimen käyttäjä voi sen jälkeen löytää ja kirjata sen."
+
+msgid "Browse by category"
+msgstr "Selaa kategorioittain"
 
 msgid "Back to foods"
 msgstr "Takaisin ruokiin"
+
+msgid "Nothing found in this category right now."
+msgstr "Tästä kategoriasta ei löytynyt tällä hetkellä mitään."
+
+msgid "Back to browse"
+msgstr "Takaisin selaamiseen"
+
+msgid "New food"
+msgstr "Uusi ruoka"
 
 msgid "Foods"
 msgstr "Ruoat"

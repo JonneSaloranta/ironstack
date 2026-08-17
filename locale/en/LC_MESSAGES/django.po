@@ -852,6 +852,33 @@ msgstr "ml"
 msgid "piece"
 msgstr "piece"
 
+msgid "A — best"
+msgstr "A — best"
+
+msgid "B"
+msgstr "B"
+
+msgid "C"
+msgstr "C"
+
+msgid "D"
+msgstr "D"
+
+msgid "E — worst"
+msgstr "E — worst"
+
+msgid "1 — unprocessed or minimally processed"
+msgstr "1 — unprocessed or minimally processed"
+
+msgid "2 — processed culinary ingredients"
+msgstr "2 — processed culinary ingredients"
+
+msgid "3 — processed food"
+msgstr "3 — processed food"
+
+msgid "4 — ultra-processed food"
+msgstr "4 — ultra-processed food"
+
 msgid "Stored instead of a raw age, so it never goes stale."
 msgstr "Stored instead of a raw age, so it never goes stale."
 
@@ -1825,6 +1852,9 @@ msgstr "No measurement types yet."
 msgid "Your foods"
 msgstr "Your foods"
 
+msgid "Already in your library"
+msgstr "Already in your library"
+
 msgid "Quantity"
 msgstr "Quantity"
 
@@ -1834,6 +1864,9 @@ msgstr "Add"
 msgid "From OpenFoodFacts"
 msgstr "From OpenFoodFacts"
 
+msgid "Import"
+msgstr "Import"
+
 msgid "Import & add"
 msgstr "Import & add"
 
@@ -1842,6 +1875,12 @@ msgstr "Nothing found."
 
 msgid "Create a custom food"
 msgstr "Create a custom food"
+
+msgid "Nutri-Score %(grade)s"
+msgstr "Nutri-Score %(grade)s"
+
+msgid "NOVA — food processing level, 1 (unprocessed) to 4 (ultra-processed)"
+msgstr "NOVA — food processing level, 1 (unprocessed) to 4 (ultra-processed)"
 
 msgid "Step %(step)s of 5"
 msgstr "Step %(step)s of 5"
@@ -2092,11 +2131,26 @@ msgstr "No diet plans yet."
 msgid "Add item to %(name)s"
 msgstr "Add item to %(name)s"
 
-msgid "New food"
-msgstr "New food"
+msgid "Import from OpenFoodFacts"
+msgstr "Import from OpenFoodFacts"
+
+msgid "Search or browse by category to add a food to the shared library — anyone on this instance can then find and log it."
+msgstr "Search or browse by category to add a food to the shared library — anyone on this instance can then find and log it."
+
+msgid "Browse by category"
+msgstr "Browse by category"
 
 msgid "Back to foods"
 msgstr "Back to foods"
+
+msgid "Nothing found in this category right now."
+msgstr "Nothing found in this category right now."
+
+msgid "Back to browse"
+msgstr "Back to browse"
+
+msgid "New food"
+msgstr "New food"
 
 msgid "Foods"
 msgstr "Foods"

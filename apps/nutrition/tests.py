@@ -808,6 +808,8 @@ RAW_OFF_PRODUCT = {
     "code": "1234567890123",
     "product_name": "Test Muesli",
     "brands": "Acme, Other Brand",
+    "nutriscore_grade": "c",
+    "nova_group": 3,
     "nutriments": {
         "energy-kcal_100g": 350,
         "proteins_100g": 10.5,
@@ -830,6 +832,14 @@ class ParseProductTests(TestCase):
         self.assertEqual(parsed["calories"], 350)
         self.assertEqual(parsed["protein_grams"], Decimal("10.5"))
         self.assertEqual(parsed["sodium_mg"], 200)
+        self.assertEqual(parsed["nutri_score"], "c")
+        self.assertEqual(parsed["nova_group"], 3)
+
+    def test_an_ungraded_products_score_and_nova_group_are_none_not_a_guess(self):
+        raw = {**RAW_OFF_PRODUCT, "nutriscore_grade": "unknown", "nova_group": None}
+        parsed = openfoodfacts.parse_product(raw)
+        self.assertIsNone(parsed["nutri_score"])
+        self.assertIsNone(parsed["nova_group"])
 
     def test_missing_barcode_returns_none(self):
         raw = {**RAW_OFF_PRODUCT, "code": None}
@@ -968,6 +978,177 @@ class SearchFoodsTests(TestCase):
             services.search_foods(self.alice, "1234")
         search_products.assert_called_once_with("1234")
         get_product.assert_not_called()
+
+
+RAW_OFF_CATEGORIES = {
+    "tags": [
+        {"id": "en:cereals", "name": "Cereals", "products": 5000},
+        {"id": "fr:cereales", "name": "Céréales", "products": 4000},
+        {"id": "en:snacks", "name": "Snacks", "products": 200},
+        {"id": "en:no-name", "products": 100},
+    ]
+}
+
+
+class ListCategoriesTests(TestCase):
+    def test_ranks_by_product_count_and_skips_non_english_or_unnamed_tags(self):
+        with mock.patch("requests.get") as get:
+            get.return_value.json.return_value = RAW_OFF_CATEGORIES
+            get.return_value.raise_for_status.return_value = None
+            categories = openfoodfacts.list_categories(limit=10)
+        # fr:cereales (no "en:" id) and en:no-name (no name) are
+        # skipped; en:cereals and en:snacks both qualify and are
+        # ranked by product count, highest first.
+        self.assertEqual(
+            categories,
+            [
+                {"id": "en:cereals", "name": "Cereals", "products": 5000},
+                {"id": "en:snacks", "name": "Snacks", "products": 200},
+            ],
+        )
+
+    def test_respects_the_limit(self):
+        with mock.patch("requests.get") as get:
+            get.return_value.json.return_value = {
+                "tags": [
+                    {"id": f"en:cat-{i}", "name": f"Cat {i}", "products": 100 - i}
+                    for i in range(10)
+                ]
+            }
+            get.return_value.raise_for_status.return_value = None
+            categories = openfoodfacts.list_categories(limit=3)
+        self.assertEqual(len(categories), 3)
+
+    def test_a_network_failure_returns_an_empty_list_not_a_crash(self):
+        with mock.patch(
+            "requests.get", side_effect=openfoodfacts.requests.RequestException("boom")
+        ):
+            self.assertEqual(openfoodfacts.list_categories(), [])
+
+
+class SuggestedCategoriesTests(TestCase):
+    def test_disabled_integration_returns_an_empty_list(self):
+        settings_row = OpenFoodFactsSettings.load()
+        settings_row.enabled = False
+        settings_row.save()
+        self.assertEqual(services.suggested_categories(), [])
+
+    def test_caches_the_result(self):
+        with mock.patch.object(
+            openfoodfacts, "list_categories", return_value=[{"id": "en:x", "name": "X"}]
+        ) as list_categories:
+            services.suggested_categories()
+            services.suggested_categories()
+        list_categories.assert_called_once()
+
+
+class BrowseCategoryTests(TestCase):
+    def test_returns_parsed_products_not_already_imported_locally(self):
+        with mock.patch.object(
+            openfoodfacts, "search_by_category", return_value=[RAW_OFF_PRODUCT]
+        ):
+            results = services.browse_category("en:cereals")
+        self.assertEqual([r["off_id"] for r in results], ["1234567890123"])
+
+    def test_a_product_already_imported_locally_is_skipped(self):
+        Food.objects.create(
+            owner=None, name="Already imported", serving_size=Decimal("100"),
+            serving_unit=ServingUnit.GRAM, calories=1, protein_grams=Decimal("0"),
+            carbohydrate_grams=Decimal("0"), fat_grams=Decimal("0"),
+            off_id="1234567890123",
+        )
+        with mock.patch.object(
+            openfoodfacts, "search_by_category", return_value=[RAW_OFF_PRODUCT]
+        ):
+            results = services.browse_category("en:cereals")
+        self.assertEqual(results, [])
+
+    def test_disabled_integration_returns_an_empty_list(self):
+        settings_row = OpenFoodFactsSettings.load()
+        settings_row.enabled = False
+        settings_row.save()
+        self.assertEqual(services.browse_category("en:cereals"), [])
+
+
+class FoodBrowseViewTests(TestCase):
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        self.client.login(username="alice", password="s3cret-pass")
+
+    def test_renders_with_categories(self):
+        with mock.patch.object(
+            services, "suggested_categories", return_value=[{"id": "en:x", "name": "X"}]
+        ):
+            response = self.client.get(reverse("nutrition:food-browse"))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "X")
+
+    def test_requires_login(self):
+        self.client.logout()
+        response = self.client.get(reverse("nutrition:food-browse"))
+        self.assertEqual(response.status_code, 302)
+
+
+class FoodCategoryViewTests(TestCase):
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        self.client.login(username="alice", password="s3cret-pass")
+
+    def test_shows_off_results_for_the_category(self):
+        with mock.patch.object(
+            openfoodfacts, "search_by_category", return_value=[RAW_OFF_PRODUCT]
+        ):
+            response = self.client.get(
+                reverse("nutrition:food-category", args=["en:cereals"])
+            )
+        self.assertContains(response, "Test Muesli")
+
+    def test_requires_login(self):
+        self.client.logout()
+        response = self.client.get(reverse("nutrition:food-category", args=["en:cereals"]))
+        self.assertEqual(response.status_code, 302)
+
+
+class FoodImportViewTests(TestCase):
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        self.client.login(username="alice", password="s3cret-pass")
+
+    def test_imports_the_food_and_redirects_to_the_food_list_by_default(self):
+        with mock.patch.object(openfoodfacts, "get_product", return_value=RAW_OFF_PRODUCT):
+            response = self.client.post(
+                reverse("nutrition:food-import"), {"off_barcode": "1234567890123"}
+            )
+        self.assertRedirects(response, reverse("nutrition:food-list"))
+        self.assertTrue(Food.objects.filter(off_id="1234567890123").exists())
+
+    def test_redirects_to_a_safe_next_url_when_given(self):
+        with mock.patch.object(openfoodfacts, "get_product", return_value=RAW_OFF_PRODUCT):
+            response = self.client.post(
+                reverse("nutrition:food-import"),
+                {
+                    "off_barcode": "1234567890123",
+                    "next": reverse("nutrition:food-category", args=["en:cereals"]),
+                },
+            )
+        self.assertRedirects(response, reverse("nutrition:food-category", args=["en:cereals"]))
+
+    def test_an_external_next_url_is_ignored(self):
+        with mock.patch.object(openfoodfacts, "get_product", return_value=RAW_OFF_PRODUCT):
+            response = self.client.post(
+                reverse("nutrition:food-import"),
+                {"off_barcode": "1234567890123", "next": "https://evil.example/"},
+            )
+        self.assertRedirects(response, reverse("nutrition:food-list"))
+
+    def test_requires_post(self):
+        response = self.client.get(reverse("nutrition:food-import"))
+        self.assertEqual(response.status_code, 405)
+
+    def test_requires_login(self):
+        self.client.logout()
+        response = self.client.post(reverse("nutrition:food-import"))
+        self.assertEqual(response.status_code, 302)
 
 
 class OpenFoodFactsSettingsTests(TestCase):

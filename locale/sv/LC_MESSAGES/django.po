@@ -852,6 +852,33 @@ msgstr "ml"
 msgid "piece"
 msgstr "st"
 
+msgid "A — best"
+msgstr "A — bäst"
+
+msgid "B"
+msgstr "B"
+
+msgid "C"
+msgstr "C"
+
+msgid "D"
+msgstr "D"
+
+msgid "E — worst"
+msgstr "E — sämst"
+
+msgid "1 — unprocessed or minimally processed"
+msgstr "1 — obearbetat eller minimalt bearbetat"
+
+msgid "2 — processed culinary ingredients"
+msgstr "2 — bearbetade kulinariska ingredienser"
+
+msgid "3 — processed food"
+msgstr "3 — bearbetad mat"
+
+msgid "4 — ultra-processed food"
+msgstr "4 — ultrabearbetad mat"
+
 msgid "Stored instead of a raw age, so it never goes stale."
 msgstr "Sparas istället för en rå ålder, så att den aldrig blir inaktuell."
 
@@ -1825,6 +1852,9 @@ msgstr "Inga mättyper ännu."
 msgid "Your foods"
 msgstr "Dina livsmedel"
 
+msgid "Already in your library"
+msgstr "Redan i ditt bibliotek"
+
 msgid "Quantity"
 msgstr "Mängd"
 
@@ -1834,6 +1864,9 @@ msgstr "Lägg till"
 msgid "From OpenFoodFacts"
 msgstr "Från OpenFoodFacts"
 
+msgid "Import"
+msgstr "Importera"
+
 msgid "Import & add"
 msgstr "Importera & lägg till"
 
@@ -1842,6 +1875,12 @@ msgstr "Inget hittades."
 
 msgid "Create a custom food"
 msgstr "Skapa ett eget livsmedel"
+
+msgid "Nutri-Score %(grade)s"
+msgstr "Nutri-Score %(grade)s"
+
+msgid "NOVA — food processing level, 1 (unprocessed) to 4 (ultra-processed)"
+msgstr "NOVA — livsmedlets bearbetningsgrad, 1 (obearbetat) till 4 (ultrabearbetat)"
 
 msgid "Step %(step)s of 5"
 msgstr "Steg %(step)s av 5"
@@ -2092,11 +2131,26 @@ msgstr "Inga kostplaner än."
 msgid "Add item to %(name)s"
 msgstr "Lägg till objekt i %(name)s"
 
-msgid "New food"
-msgstr "Nytt livsmedel"
+msgid "Import from OpenFoodFacts"
+msgstr "Importera från OpenFoodFacts"
+
+msgid "Search or browse by category to add a food to the shared library — anyone on this instance can then find and log it."
+msgstr "Sök eller bläddra efter kategori för att lägga till ett livsmedel i det delade biblioteket — vem som helst på denna instans kan sedan hitta och logga det."
+
+msgid "Browse by category"
+msgstr "Bläddra efter kategori"
 
 msgid "Back to foods"
 msgstr "Tillbaka till livsmedel"
+
+msgid "Nothing found in this category right now."
+msgstr "Inget hittades i denna kategori just nu."
+
+msgid "Back to browse"
+msgstr "Tillbaka till bläddring"
+
+msgid "New food"
+msgstr "Nytt livsmedel"
 
 msgid "Foods"
 msgstr "Livsmedel"

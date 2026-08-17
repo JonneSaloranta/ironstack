@@ -152,7 +152,7 @@ owner (nullable FK), name, brand (optional), serving_size, serving_unit,
 calories, protein_grams, carbohydrate_grams, fat_grams,
 fiber_grams / sugar_grams / saturated_fat_grams / sodium_mg (all
 optional/nullable), off_id (nullable, unique), off_synced_at (nullable),
-active
+nutri_score (nullable, A-E), nova_group (nullable, 1-4), active
 ```
 
 `serving_unit` choices: `g`, `ml`, `piece` — precise mass/volume for
@@ -165,6 +165,26 @@ foods imported from OpenFoodFacts (below) get `owner=None` — shared,
 system-visible library rows, the same "system vs. custom" split every
 other owner-nullable model in this app already uses.
 
+**`nutri_score` / `nova_group` — a healthiness scale, asked for
+directly, but not one this app invents.** Nutri-Score (France's public
+health agency's published A-E grade, adopted by OpenFoodFacts and
+several EU retailers) and NOVA (a published 1-4 food-processing-level
+classification) are both real, independently-defined, published
+scales — used here exactly as OFF itself reports them
+(`apps.nutrition.models.NutriScoreGrade`/`NovaGroup`, `nutriscore_
+grade`/`nova_group` on the raw OFF product,
+`apps.nutrition.openfoodfacts.parse_product`). Neither is ever
+computed by this app for a hand-entered `Food` — doing Nutri-Score's
+own formula correctly needs the full published input set (energy,
+sugars, saturated fat, sodium, fibre, protein, fruit/veg/nut content),
+which a manually-entered food doesn't reliably have; a home-grown
+approximation would be worse than no grade at all. Both stay `None`
+for every food this app hasn't imported from OFF. Shown as a small
+colored badge (Nutri-Score, its own real published colors — green
+through red, not this project's own status palette) plus a plain
+"NOVA N" label, wherever a food's identity is shown in a list
+(`templates/nutrition/_nutri_score_badge.html`).
+
 ### OpenFoodFacts integration
 
 Requested explicitly, and explicitly scoped to **on-demand lookup, not
@@ -175,14 +195,29 @@ self-hosted, single/small-household deployment target, and was
 rejected for exactly that reason when discussed directly. Instead:
 
 - `apps/nutrition/openfoodfacts.py` — a thin client
-  (`search_products(query)`, `get_product(barcode)`) against OFF's
-  public read API (`world.openfoodfacts.org`), using `requests` (new
+  (`search_products(query)`, `get_product(barcode)`, `search_by_
+  category(category_id)`, `list_categories()`) against OFF's public
+  read API (`world.openfoodfacts.org`), using `requests` (new
   dependency — no existing project code does outbound HTTP to a JSON
   API, `apps.accounts.twofactor`'s `pyotp`/`qrcode` precedent is the
   closest, and hand-rolling this on `urllib` would just reimplement a
   worse `requests`). Parses a raw OFF product into this app's `Food`
   field shape; a product missing core macros entirely is skipped
   rather than creating a useless empty row.
+- **A dedicated "Import from OpenFoodFacts" page**
+  (`/nutrition/foods/browse/`, `FoodBrowseView`), asked for directly —
+  search or browse by category to add a food straight to the shared
+  library, independent of logging anything to a diary/recipe/plan.
+  Category browsing uses OFF's own `/categories.json` (ranked,
+  English-named categories only — OFF indexes tens of thousands, most
+  tiny/non-English/near-duplicates, so `list_categories` caps to a
+  curated top N by product count rather than dumping all of them on a
+  user) and `/category/<id>.json` (OFF's own category-browse endpoint,
+  not a search.pl query with a category filter bolted on). The
+  category list is cached for a day (`apps.nutrition.services.
+  suggested_categories`) — it barely changes day to day, unlike a
+  single product's own nutrition data, so there's no reason to refetch
+  it on every page load.
 - The food-search flow (`apps.nutrition` diary/recipe/diet-plan-meal
   "add food" — one shared `FoodSearchResultsView`/`_food_search_
   results.html`, parameterized by `mode` for which endpoint each

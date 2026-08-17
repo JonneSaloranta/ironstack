@@ -76,6 +76,67 @@ def get_product(barcode):
     return payload.get("product")
 
 
+# OFF indexes tens of thousands of categories (most tiny, non-English,
+# or near-duplicates of each other) — nowhere near all of them are
+# worth surfacing as a browsable list. Capped to a curated top N by
+# product count in `list_categories` below, not because of an API
+# limit but because a 10,000-item picker isn't a feature.
+CATEGORY_BROWSE_LIMIT = 24
+
+
+def list_categories(*, limit=CATEGORY_BROWSE_LIMIT):
+    """The most-populated OFF categories (id + product count), for a
+    "browse by category" list — not every category OFF has ever seen,
+    just the ones with enough products in them to be worth a whole
+    section. Returns `[]` on any failure; browsing by category is a
+    convenience on top of search, never the only way to find
+    something, so a transient OFF outage here degrades gracefully
+    rather than raising."""
+    try:
+        response = requests.get(
+            f"{API_BASE}/categories.json",
+            headers=REQUEST_HEADERS,
+            timeout=REQUEST_TIMEOUT_SECONDS,
+        )
+        response.raise_for_status()
+        tags = response.json().get("tags", [])
+    except (requests.RequestException, ValueError):
+        return []
+    ranked = sorted(tags, key=lambda tag: tag.get("products", 0), reverse=True)
+    categories = []
+    for tag in ranked:
+        # "en:some-category" — only the ones OFF has an English name
+        # for are usable in an English-first UI; a category whose only
+        # name is in another language would show as a raw id.
+        if not str(tag.get("id", "")).startswith("en:"):
+            continue
+        name = tag.get("name")
+        if not name:
+            continue
+        categories.append({"id": tag["id"], "name": name, "products": tag.get("products", 0)})
+        if len(categories) >= limit:
+            break
+    return categories
+
+
+def search_by_category(category_id, *, page_size=20):
+    """Raw OFF product dicts (same shape as `search_products`) in one
+    category, ranked by OFF's own popularity/completeness ordering —
+    OFF's own category-browse endpoint, not a search.pl query with a
+    category filter bolted on, since OFF has a dedicated one."""
+    try:
+        response = requests.get(
+            f"{API_BASE}/category/{category_id}.json",
+            params={"page_size": page_size},
+            headers=REQUEST_HEADERS,
+            timeout=REQUEST_TIMEOUT_SECONDS,
+        )
+        response.raise_for_status()
+        return response.json().get("products", [])
+    except (requests.RequestException, ValueError) as exc:
+        raise OpenFoodFactsError(str(exc)) from exc
+
+
 def parse_product(raw):
     """Maps a raw OFF product dict onto this app's `Food` field names,
     always as "per 100g/100ml" (OFF's own universal unit) regardless
@@ -117,5 +178,16 @@ def parse_product(raw):
             int(round(float(nutriments["sodium_100g"]) * 1000))
             if nutriments.get("sodium_100g") is not None
             else None
+        ),
+        # Both `None` unless OFF has actually graded this product —
+        # "unknown"/"not-applicable" (OFF's own placeholders for "not
+        # graded") map to None rather than a misleading guess.
+        "nutri_score": (
+            raw.get("nutriscore_grade")
+            if raw.get("nutriscore_grade") in {"a", "b", "c", "d", "e"}
+            else None
+        ),
+        "nova_group": (
+            int(raw["nova_group"]) if raw.get("nova_group") in (1, 2, 3, 4) else None
         ),
     }

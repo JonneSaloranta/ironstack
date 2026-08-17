@@ -852,6 +852,33 @@ msgstr "ml"
 msgid "piece"
 msgstr "pezzo"
 
+msgid "A — best"
+msgstr "A — migliore"
+
+msgid "B"
+msgstr "B"
+
+msgid "C"
+msgstr "C"
+
+msgid "D"
+msgstr "D"
+
+msgid "E — worst"
+msgstr "E — peggiore"
+
+msgid "1 — unprocessed or minimally processed"
+msgstr "1 — non trasformato o minimamente trasformato"
+
+msgid "2 — processed culinary ingredients"
+msgstr "2 — ingredienti culinari trasformati"
+
+msgid "3 — processed food"
+msgstr "3 — alimento trasformato"
+
+msgid "4 — ultra-processed food"
+msgstr "4 — alimento ultra-trasformato"
+
 msgid "Stored instead of a raw age, so it never goes stale."
 msgstr "Memorizzata al posto di un'età grezza, così non diventa mai obsoleta."
 
@@ -1825,6 +1852,9 @@ msgstr "Nessun tipo di misurazione ancora."
 msgid "Your foods"
 msgstr "I tuoi alimenti"
 
+msgid "Already in your library"
+msgstr "Già nella tua libreria"
+
 msgid "Quantity"
 msgstr "Quantità"
 
@@ -1834,6 +1864,9 @@ msgstr "Aggiungi"
 msgid "From OpenFoodFacts"
 msgstr "Da OpenFoodFacts"
 
+msgid "Import"
+msgstr "Importa"
+
 msgid "Import & add"
 msgstr "Importa e aggiungi"
 
@@ -1842,6 +1875,12 @@ msgstr "Nessun risultato."
 
 msgid "Create a custom food"
 msgstr "Crea un alimento personalizzato"
+
+msgid "Nutri-Score %(grade)s"
+msgstr "Nutri-Score %(grade)s"
+
+msgid "NOVA — food processing level, 1 (unprocessed) to 4 (ultra-processed)"
+msgstr "NOVA — livello di trasformazione dell'alimento, da 1 (non trasformato) a 4 (ultra-trasformato)"
 
 msgid "Step %(step)s of 5"
 msgstr "Passo %(step)s di 5"
@@ -2092,11 +2131,26 @@ msgstr "Nessun piano alimentare ancora."
 msgid "Add item to %(name)s"
 msgstr "Aggiungi elemento a %(name)s"
 
-msgid "New food"
-msgstr "Nuovo alimento"
+msgid "Import from OpenFoodFacts"
+msgstr "Importa da OpenFoodFacts"
+
+msgid "Search or browse by category to add a food to the shared library — anyone on this instance can then find and log it."
+msgstr "Cerca o sfoglia per categoria per aggiungere un alimento alla libreria condivisa — chiunque su questa istanza potrà poi trovarlo e registrarlo."
+
+msgid "Browse by category"
+msgstr "Sfoglia per categoria"
 
 msgid "Back to foods"
 msgstr "Torna agli alimenti"
+
+msgid "Nothing found in this category right now."
+msgstr "Al momento non è stato trovato nulla in questa categoria."
+
+msgid "Back to browse"
+msgstr "Torna alla navigazione"
+
+msgid "New food"
+msgstr "Nuovo alimento"
 
 msgid "Foods"
 msgstr "Alimenti"

@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Import from OpenFoodFacts" %} — IronStack{% endblock %}
+{% block content %}
+<div class="top-bar">
+  <h1 style="margin:0;">{% trans "Import from OpenFoodFacts" %}</h1>
+</div>
+
+{% if off_results %}
+  {% for product in off_results %}
+    <form class="card card-action-row" method="post" action="{% url 'nutrition:food-import' %}">
+      {% csrf_token %}
+      <input type="hidden" name="off_barcode" value="{{ product.off_id }}">
+      <input type="hidden" name="next" value="{{ request.path }}">
+      <div>
+        <strong>{{ product.name }}</strong>{% if product.brand %} <span class="text-muted">({{ product.brand }})</span>{% endif %}{% include "nutrition/_nutri_score_badge.html" with food=product %}
+        <p class="text-muted">{{ product.calories }} kcal / {{ product.serving_size }} {{ product.serving_unit }}</p>
+      </div>
+      <button type="submit" class="button-secondary">{% trans "Import" %}</button>
+    </form>
+  {% endfor %}
+{% else %}
+  <div class="card empty-state">
+    <p>{% trans "Nothing found in this category right now." %}</p>
+  </div>
+{% endif %}
+
+<p><a class="button-secondary" href="{% url 'nutrition:food-browse' %}">&larr; {% trans "Back to browse" %}</a></p>
+{% endblock %}

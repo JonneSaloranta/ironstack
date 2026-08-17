@@ -13,6 +13,7 @@ import re
 from dataclasses import dataclass
 from decimal import Decimal
 
+from django.core.cache import cache
 from django.db import transaction
 from django.db.models import Q
 from django.utils import timezone
@@ -206,6 +207,47 @@ def search_foods(user, query):
         except openfoodfacts.OpenFoodFactsError:
             off_results = []
     return local, off_results
+
+
+_CATEGORY_CACHE_KEY = "nutrition:off_categories"
+_CATEGORY_CACHE_SECONDS = 60 * 60 * 24  # a day — OFF's category list barely moves
+
+
+def suggested_categories():
+    """The "browse by category" list — cached for a day so a page
+    every user visits doesn't refetch OFF's category list on every
+    request; the ranking barely changes day to day, unlike a single
+    product's own nutrition data. Returns `[]` (never raises) if the
+    integration is off or OFF is unreachable, same "browsing degrades
+    gracefully" reasoning as `openfoodfacts.list_categories` itself."""
+    if not OpenFoodFactsSettings.load().enabled:
+        return []
+    cached = cache.get(_CATEGORY_CACHE_KEY)
+    if cached is not None:
+        return cached
+    categories = openfoodfacts.list_categories()
+    cache.set(_CATEGORY_CACHE_KEY, categories, _CATEGORY_CACHE_SECONDS)
+    return categories
+
+
+def browse_category(category_id):
+    """Live OFF results for one category, same "skip anything already
+    imported locally" filtering as `search_foods` — browsing and
+    searching both only ever show an OFF product as an *importable*
+    result once, never a duplicate of something already in the user's
+    own library."""
+    if not OpenFoodFactsSettings.load().enabled:
+        return []
+    try:
+        raw_products = openfoodfacts.search_by_category(category_id)
+    except openfoodfacts.OpenFoodFactsError:
+        return []
+    return [
+        parsed
+        for raw in raw_products
+        if (parsed := openfoodfacts.parse_product(raw)) is not None
+        and not Food.objects.filter(off_id=parsed["off_id"]).exists()
+    ]
 
 
 @dataclass(frozen=True)

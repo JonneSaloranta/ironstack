@@ -76,6 +76,38 @@ class ServingUnit(models.TextChoices):
     PIECE = "piece", _("piece")
 
 
+class NutriScoreGrade(models.TextChoices):
+    """Nutri-Score — a published, independently-defined A-E healthiness
+    grade (France's public health agency, adopted by OpenFoodFacts and
+    several EU retailers), not a score this app invents itself. Only
+    ever set from an imported OpenFoodFacts product's own
+    `nutriscore_grade` (apps.nutrition.openfoodfacts.parse_product) —
+    never computed here, since doing that correctly needs the full
+    published formula (energy, sugars, saturated fat, sodium, fibre,
+    protein, fruit/veg/nut content) this app doesn't otherwise track
+    for a user's own hand-entered food. See docs/NUTRITION.md
+    "Nutri-Score / NOVA"."""
+
+    A = "a", _("A — best")
+    B = "b", _("B")
+    C = "c", _("C")
+    D = "d", _("D")
+    E = "e", _("E — worst")
+
+
+class NovaGroup(models.IntegerChoices):
+    """NOVA — a published 1-4 food-processing-level classification
+    (not a nutrition score; a highly processed food can still be
+    "healthy" by other measures, and vice versa), same "imported from
+    OpenFoodFacts, never invented here" reasoning as NutriScoreGrade
+    above."""
+
+    UNPROCESSED = 1, _("1 — unprocessed or minimally processed")
+    PROCESSED_CULINARY = 2, _("2 — processed culinary ingredients")
+    PROCESSED = 3, _("3 — processed food")
+    ULTRA_PROCESSED = 4, _("4 — ultra-processed food")
+
+
 class NutritionProfile(TimeStampedModel):
     """Current physiological/lifestyle facts the energy engine
     (apps.nutrition.energy) needs — one row per user, not historized
@@ -291,6 +323,14 @@ class Food(TimeStampedModel):
     # used, rather than a periodic bulk re-sync.
     off_id = models.CharField(max_length=64, null=True, blank=True, unique=True)
     off_synced_at = models.DateTimeField(null=True, blank=True)
+    # Both null for every hand-entered food — see NutriScoreGrade/
+    # NovaGroup's own docstrings for why neither is ever computed here.
+    nutri_score = models.CharField(
+        max_length=1, choices=NutriScoreGrade.choices, null=True, blank=True
+    )
+    nova_group = models.PositiveSmallIntegerField(
+        choices=NovaGroup.choices, null=True, blank=True
+    )
     active = models.BooleanField(default=True)
 
     class Meta:

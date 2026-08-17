@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Import from OpenFoodFacts" %} — IronStack{% endblock %}
+{% block content %}
+<div class="top-bar">
+  <h1 style="margin:0;">{% trans "Import from OpenFoodFacts" %}</h1>
+</div>
+<p class="text-muted">{% trans "Search or browse by category to add a food to the shared library — anyone on this instance can then find and log it." %}</p>
+
+<div class="card">
+  <div class="field">
+    <label for="id_q">{% trans "Search foods" %}</label>
+    <input type="text" id="id_q" name="q"
+           hx-get="{% url 'nutrition:food-search' %}"
+           hx-trigger="keyup changed delay:400ms"
+           hx-target="#food-search-results"
+           hx-vals='{"mode": "browse"}'
+           hx-swap="outerHTML"
+           autocomplete="off"
+           placeholder="{% trans "e.g. chicken breast, or a barcode number" %}">
+  </div>
+</div>
+
+<div id="food-search-results"></div>
+
+{% if categories %}
+  <h2>{% trans "Browse by category" %}</h2>
+  <div class="card">
+    {% for category in categories %}
+      <a class="button-secondary" style="margin:0.25rem;" href="{% url 'nutrition:food-category' category.id %}">{{ category.name }}</a>
+    {% endfor %}
+  </div>
+{% endif %}
+
+<p><a class="button-secondary" href="{% url 'nutrition:food-list' %}">&larr; {% trans "Back to foods" %}</a></p>
+{% endblock %}

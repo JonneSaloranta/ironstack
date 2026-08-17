@@ -45,8 +45,10 @@ class MealSlotAdmin(admin.ModelAdmin):
 
 @admin.register(Food)
 class FoodAdmin(admin.ModelAdmin):
-    list_display = ["name", "brand", "owner", "calories", "off_id", "active"]
-    list_filter = ["active"]
+    list_display = [
+        "name", "brand", "owner", "calories", "nutri_score", "nova_group", "off_id", "active",
+    ]
+    list_filter = ["active", "nutri_score", "nova_group"]
     search_fields = ["name", "brand", "off_id"]
 
 
