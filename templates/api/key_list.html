@@ -2,11 +2,127 @@
 {% load i18n %}
 {% block title %}{% trans "API keys" %} — IronStack{% endblock %}
 {% block content %}
-<div class="top-bar">
-  <h1 style="margin:0;">{% trans "API keys" %}</h1>
+<div class="top-bar" x-data="{ helpOpen: false }">
+  <h1 style="margin:0; display:flex; align-items:center; gap:0.5rem;">
+    {% trans "API keys" %}
+    <button type="button" class="help-button" @click="helpOpen = true" aria-label="{% trans "API documentation" %}">?</button>
+  </h1>
   {% if remaining_quota > 0 %}
     <a class="button" href="{% url 'api_keys:key-create' %}">{% trans "New" %}</a>
   {% endif %}
+
+  <div class="modal-backdrop" x-show="helpOpen" x-cloak x-transition.opacity.duration.200ms
+       @click.self="helpOpen = false" @keydown.escape.window="helpOpen = false">
+    <div class="modal-card modal-card-wide" role="dialog" aria-modal="true" aria-label="{% trans "API documentation" %}"
+         x-show="helpOpen" x-transition.scale.duration.200ms.origin.bottom>
+      <div class="modal-header">
+        <h2 style="margin:0;">{% trans "Using the API" %}</h2>
+        <button type="button" class="modal-close" @click="helpOpen = false" aria-label="{% trans "Dismiss" %}">&times;</button>
+      </div>
+      <div class="modal-body">
+        <h3>{% trans "Base URL" %}</h3>
+        <p>{% trans "Every endpoint lives under:" %}</p>
+        <pre><code>https://example.com/api/v1/</code></pre>
+
+        <h3>{% trans "Authentication" %}</h3>
+        <p>{% trans "Send your key's secret (shown only once, right after you create it) as a Bearer token on every request:" %}</p>
+        <pre><code>Authorization: Bearer isk_your_secret_here</code></pre>
+
+        <h3>{% trans "Permissions" %}</h3>
+        <p>{% trans "Each key is granted Create/Read/Update/Delete separately per area (exercises, programs, workouts, measurements, activities, nutrition, records, analytics, profile) — set this when you create the key, above. A request outside what the key is granted gets a 403." %}</p>
+
+        <h3>{% trans "Units" %}</h3>
+        <p>{% trans "Always canonical: weight in kilograms, length in meters, energy in kcal — never converted to your own display-unit preference, so a script can rely on one meaning regardless of who's asking." %}</p>
+
+        <h3>{% trans "Example: reading your profile (curl)" %}</h3>
+        <pre><code>curl https://example.com/api/v1/profile/ \
+  -H "Authorization: Bearer isk_your_secret_here"</code></pre>
+
+        <h3>{% trans "Example: creating something (curl)" %}</h3>
+        <p>{% trans "A POST with a JSON body — this adds a food to your library:" %}</p>
+        <pre><code>curl -X POST https://example.com/api/v1/foods/ \
+  -H "Authorization: Bearer isk_your_secret_here" \
+  -H "Content-Type: application/json" \
+  -d '{"name": "Chicken breast", "serving_size": "100",
+       "serving_unit": "g", "calories": 165,
+       "protein_grams": "31", "carbohydrate_grams": "0",
+       "fat_grams": "3.6"}'</code></pre>
+
+        <h3>{% trans "Example: Python" %}</h3>
+        <pre><code>import requests
+
+BASE = "https://example.com/api/v1/"
+headers = {"Authorization": "Bearer isk_your_secret_here"}
+
+# Read
+profile = requests.get(BASE + "profile/", headers=headers).json()
+
+# Write
+requests.post(
+    BASE + "foods/",
+    headers=headers,
+    json={
+        "name": "Chicken breast",
+        "serving_size": "100",
+        "serving_unit": "g",
+        "calories": 165,
+        "protein_grams": "31",
+        "carbohydrate_grams": "0",
+        "fat_grams": "3.6",
+    },
+)</code></pre>
+
+        <p class="field-help">{% trans "List/create endpoints are paginated, 25 per page (?page=2). Deleting something soft-deletes it where the web app does the same (foods, exercises, measurement/activity types); a program or recipe is a real delete, matching its own page." %}</p>
+
+        <h3>{% trans "All endpoints" %}</h3>
+        <div class="table-wrap">
+          <table class="set-table">
+            <thead>
+              <tr><th>{% trans "Area" %}</th><th>{% trans "Endpoints" %}</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>{% trans "Profile" %}</td>
+                <td><code>profile/</code> ({% trans "GET/PATCH, no id" %})</td>
+              </tr>
+              <tr>
+                <td>{% trans "Exercises" %}</td>
+                <td><code>exercises/</code>, <code>exercises/&lt;id&gt;/</code>, <code>muscle-groups/</code> ({% trans "read-only" %}), <code>equipment/</code> ({% trans "read-only" %})</td>
+              </tr>
+              <tr>
+                <td>{% trans "Programs" %}</td>
+                <td><code>programs/</code>, <code>programs/&lt;id&gt;/</code>, <code>workouts/</code>, <code>workouts/&lt;id&gt;/</code>, <code>prescriptions/</code>, <code>prescriptions/&lt;id&gt;/</code></td>
+              </tr>
+              <tr>
+                <td>{% trans "Workouts" %}</td>
+                <td><code>sessions/</code>, <code>sessions/&lt;id&gt;/</code>, <code>performed-exercises/</code> ({% trans "create + read only" %}), <code>sets/</code>, <code>sets/&lt;id&gt;/</code></td>
+              </tr>
+              <tr>
+                <td>{% trans "Measurements" %}</td>
+                <td><code>measurement-types/</code>, <code>measurement-types/&lt;id&gt;/</code>, <code>measurements/</code>, <code>measurements/&lt;id&gt;/</code></td>
+              </tr>
+              <tr>
+                <td>{% trans "Activities" %}</td>
+                <td><code>activity-types/</code>, <code>activity-types/&lt;id&gt;/</code>, <code>activities/</code>, <code>activities/&lt;id&gt;/</code></td>
+              </tr>
+              <tr>
+                <td>{% trans "Nutrition" %}</td>
+                <td><code>foods/</code>, <code>foods/&lt;id&gt;/</code>, <code>meal-slots/</code>, <code>meal-slots/&lt;id&gt;/</code>, <code>recipes/</code>, <code>recipes/&lt;id&gt;/</code>, <code>recipe-ingredients/</code>, <code>recipe-ingredients/&lt;id&gt;/</code>, <code>diary-entries/</code>, <code>diary-entries/&lt;id&gt;/</code>, <code>nutrition-goals/</code>, <code>nutrition-goals/&lt;id&gt;/</code> ({% trans "read-only" %}), <code>nutrition-targets/</code>, <code>nutrition-targets/&lt;id&gt;/</code> ({% trans "read-only" %})</td>
+              </tr>
+              <tr>
+                <td>{% trans "Records" %}</td>
+                <td><code>records/</code>, <code>records/&lt;id&gt;/</code> ({% trans "read-only" %})</td>
+              </tr>
+              <tr>
+                <td>{% trans "Analytics" %}</td>
+                <td><code>analytics/summary/?range=7d|30d|all</code>, <code>analytics/achievements/</code> ({% trans "both read-only" %})</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <p class="text-muted">

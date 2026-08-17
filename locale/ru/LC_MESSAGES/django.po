@@ -270,6 +270,9 @@ msgstr "Рекорды"
 msgid "Analytics"
 msgstr "Аналитика"
 
+msgid "Nutrition"
+msgstr "Питание"
+
 msgid "You've reached your maximum number of API keys."
 msgstr "Вы достигли максимального количества API-ключей."
 
@@ -1572,6 +1575,9 @@ msgstr "API-ключ создан"
 msgid "Copy this key now — you won't be able to see it again."
 msgstr "Скопируйте этот ключ сейчас — вы больше не сможете его увидеть."
 
+msgid "Your new API key"
+msgstr "Ваш новый API-ключ"
+
 msgid "New API key"
 msgstr "Новый API-ключ"
 
@@ -1586,6 +1592,69 @@ msgstr "Создать ключ"
 
 msgid "Back to API keys"
 msgstr "Назад к API-ключам"
+
+msgid "API documentation"
+msgstr "Документация API"
+
+msgid "Using the API"
+msgstr "Использование API"
+
+msgid "Base URL"
+msgstr "Базовый URL"
+
+msgid "Every endpoint lives under:"
+msgstr "Все конечные точки находятся по адресу:"
+
+msgid "Authentication"
+msgstr "Аутентификация"
+
+msgid "Send your key's secret (shown only once, right after you create it) as a Bearer token on every request:"
+msgstr "Отправляйте секрет вашего ключа (показывается только один раз, сразу после создания) как Bearer-токен в каждом запросе:"
+
+msgid "Permissions"
+msgstr "Разрешения"
+
+msgid "Each key is granted Create/Read/Update/Delete separately per area (exercises, programs, workouts, measurements, activities, nutrition, records, analytics, profile) — set this when you create the key, above. A request outside what the key is granted gets a 403."
+msgstr "Для каждого ключа права Создание/Чтение/Обновление/Удаление предоставляются отдельно по каждой области (упражнения, программы, тренировки, измерения, активности, питание, рекорды, аналитика, профиль) — задайте это при создании ключа выше. Запрос за пределами предоставленных прав получит ответ 403."
+
+msgid "Always canonical: weight in kilograms, length in meters, energy in kcal — never converted to your own display-unit preference, so a script can rely on one meaning regardless of who's asking."
+msgstr "Всегда в канонической форме: вес в килограммах, длина в метрах, энергия в ккал — никогда не преобразуется в предпочитаемые вами единицы отображения, поэтому скрипт может полагаться на одно и то же значение независимо от того, кто делает запрос."
+
+msgid "Example: reading your profile (curl)"
+msgstr "Пример: чтение вашего профиля (curl)"
+
+msgid "Example: creating something (curl)"
+msgstr "Пример: создание записи (curl)"
+
+msgid "A POST with a JSON body — this adds a food to your library:"
+msgstr "POST-запрос с телом JSON — это добавляет продукт в вашу библиотеку:"
+
+msgid "Example: Python"
+msgstr "Пример: Python"
+
+msgid "List/create endpoints are paginated, 25 per page (?page=2). Deleting something soft-deletes it where the web app does the same (foods, exercises, measurement/activity types); a program or recipe is a real delete, matching its own page."
+msgstr "Конечные точки списка/создания разбиты на страницы, по 25 на страницу (?page=2). Удаление чего-либо выполняется как мягкое удаление там, где веб-приложение делает то же самое (продукты, упражнения, типы измерений/активностей); программа или рецепт удаляются по-настоящему, как и на их собственной странице."
+
+msgid "All endpoints"
+msgstr "Все конечные точки"
+
+msgid "Area"
+msgstr "Область"
+
+msgid "Endpoints"
+msgstr "Конечные точки"
+
+msgid "GET/PATCH, no id"
+msgstr "GET/PATCH, без id"
+
+msgid "read-only"
+msgstr "только чтение"
+
+msgid "create + read only"
+msgstr "только создание и чтение"
+
+msgid "both read-only"
+msgstr "оба только для чтения"
 
 msgid "You can create %(counter)s more key."
 msgid_plural "You can create %(counter)s more keys."
@@ -1619,9 +1688,6 @@ msgstr "Главное меню"
 
 msgid "Home"
 msgstr "Главная"
-
-msgid "Nutrition"
-msgstr "Питание"
 
 msgid "Workout"
 msgstr "Тренировка"

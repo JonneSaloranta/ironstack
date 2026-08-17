@@ -530,6 +530,64 @@ abbr[title]:focus::after {
   font-size: 0.85em;
 }
 
+/* Multi-line code examples (apps.api's "Using the API" help modal,
+   templates/api/key_list.html) — .modal-body code above is sized for
+   a short inline snippet, not a whole curl/Python block. A wide
+   `<pre>` line (a long curl command, an indented Python dict) must
+   never force the page itself to scroll horizontally — it scrolls
+   inside its own box instead, the same rule every other wide content
+   block in this app already follows. */
+.modal-body pre {
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 0.25rem;
+  padding: 0.75rem;
+  margin: 0 0 0.75rem;
+  overflow-x: auto;
+}
+
+.modal-body pre code {
+  background: none;
+  padding: 0;
+  font-size: 0.8rem;
+  white-space: pre;
+}
+
+/* A small round icon button opening a help/info modal (currently
+   apps.api's "Using the API" docs) — distinct from .modal-close
+   (dismisses a modal already open) and .app-version (opens the
+   changelog modal but reads as a version string, not a button).
+   Full --touch-target hit area even though the visible circle is
+   smaller, matching docs/UI.md "useful touch target sizes". */
+.help-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--touch-target);
+  height: var(--touch-target);
+  border-radius: 50%;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text-muted);
+  font-weight: bold;
+  font-size: 1rem;
+  cursor: pointer;
+  vertical-align: middle;
+}
+
+.help-button:hover,
+.help-button:focus-visible {
+  color: var(--color-text);
+  border-color: var(--color-accent);
+}
+
+/* A roomier .modal-card for content that doesn't fit the default
+   30rem comfortably — code examples specifically, which wrap badly
+   narrower than this. */
+.modal-card-wide {
+  max-width: 40rem;
+}
+
 /* apps.nutrition's camera barcode scanner (static/js/barcode-scanner.js)
    — a live <video> preview inside the same .modal-card the changelog
    and other overlays already use. */

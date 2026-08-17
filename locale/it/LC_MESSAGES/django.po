@@ -267,6 +267,9 @@ msgstr "Record"
 msgid "Analytics"
 msgstr "Analisi"
 
+msgid "Nutrition"
+msgstr "Alimentazione"
+
 msgid "You've reached your maximum number of API keys."
 msgstr "Hai raggiunto il numero massimo di chiavi API."
 
@@ -1567,6 +1570,9 @@ msgstr "Chiave API creata"
 msgid "Copy this key now — you won't be able to see it again."
 msgstr "Copia questa chiave ora — non potrai vederla di nuovo."
 
+msgid "Your new API key"
+msgstr "La tua nuova chiave API"
+
 msgid "New API key"
 msgstr "Nuova chiave API"
 
@@ -1581,6 +1587,69 @@ msgstr "Crea chiave"
 
 msgid "Back to API keys"
 msgstr "Torna alle chiavi API"
+
+msgid "API documentation"
+msgstr "Documentazione API"
+
+msgid "Using the API"
+msgstr "Utilizzo dell'API"
+
+msgid "Base URL"
+msgstr "URL di base"
+
+msgid "Every endpoint lives under:"
+msgstr "Ogni endpoint si trova sotto:"
+
+msgid "Authentication"
+msgstr "Autenticazione"
+
+msgid "Send your key's secret (shown only once, right after you create it) as a Bearer token on every request:"
+msgstr "Invia il segreto della tua chiave (mostrato una sola volta, subito dopo la creazione) come token Bearer in ogni richiesta:"
+
+msgid "Permissions"
+msgstr "Permessi"
+
+msgid "Each key is granted Create/Read/Update/Delete separately per area (exercises, programs, workouts, measurements, activities, nutrition, records, analytics, profile) — set this when you create the key, above. A request outside what the key is granted gets a 403."
+msgstr "Ogni chiave riceve i permessi Crea/Leggi/Aggiorna/Elimina separatamente per ogni area (esercizi, programmi, allenamenti, misurazioni, attività, nutrizione, record, analisi, profilo) — impostali quando crei la chiave qui sopra. Una richiesta al di fuori di ciò che la chiave può fare riceve un errore 403."
+
+msgid "Always canonical: weight in kilograms, length in meters, energy in kcal — never converted to your own display-unit preference, so a script can rely on one meaning regardless of who's asking."
+msgstr "Sempre in forma canonica: peso in chilogrammi, lunghezza in metri, energia in kcal — mai convertiti nella tua unità di visualizzazione preferita, così uno script può fare affidamento su un unico significato indipendentemente da chi lo richiede."
+
+msgid "Example: reading your profile (curl)"
+msgstr "Esempio: lettura del tuo profilo (curl)"
+
+msgid "Example: creating something (curl)"
+msgstr "Esempio: creare qualcosa (curl)"
+
+msgid "A POST with a JSON body — this adds a food to your library:"
+msgstr "Una POST con un corpo JSON — questo aggiunge un alimento alla tua libreria:"
+
+msgid "Example: Python"
+msgstr "Esempio: Python"
+
+msgid "List/create endpoints are paginated, 25 per page (?page=2). Deleting something soft-deletes it where the web app does the same (foods, exercises, measurement/activity types); a program or recipe is a real delete, matching its own page."
+msgstr "Gli endpoint di elenco/creazione sono paginati, 25 per pagina (?page=2). L'eliminazione di qualcosa è un'eliminazione soft dove anche l'app web fa lo stesso (alimenti, esercizi, tipi di misurazione/attività); un programma o una ricetta vengono eliminati realmente, come nella loro stessa pagina."
+
+msgid "All endpoints"
+msgstr "Tutti gli endpoint"
+
+msgid "Area"
+msgstr "Area"
+
+msgid "Endpoints"
+msgstr "Endpoint"
+
+msgid "GET/PATCH, no id"
+msgstr "GET/PATCH, nessun id"
+
+msgid "read-only"
+msgstr "sola lettura"
+
+msgid "create + read only"
+msgstr "solo creazione + lettura"
+
+msgid "both read-only"
+msgstr "entrambi in sola lettura"
 
 msgid "You can create %(counter)s more key."
 msgid_plural "You can create %(counter)s more keys."
@@ -1613,9 +1682,6 @@ msgstr "Navigazione principale"
 
 msgid "Home"
 msgstr "Home"
-
-msgid "Nutrition"
-msgstr "Alimentazione"
 
 msgid "Workout"
 msgstr "Allenamento"

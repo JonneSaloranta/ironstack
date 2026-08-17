@@ -267,6 +267,9 @@ msgstr "Ennätykset"
 msgid "Analytics"
 msgstr "Analytiikka"
 
+msgid "Nutrition"
+msgstr "Ravinto"
+
 msgid "You've reached your maximum number of API keys."
 msgstr "Olet saavuttanut API-avainten enimmäismäärän."
 
@@ -1567,6 +1570,9 @@ msgstr "API-avain luotu"
 msgid "Copy this key now — you won't be able to see it again."
 msgstr "Kopioi tämä avain nyt — et näe sitä enää uudelleen."
 
+msgid "Your new API key"
+msgstr "Uusi API-avaimesi"
+
 msgid "New API key"
 msgstr "Uusi API-avain"
 
@@ -1581,6 +1587,69 @@ msgstr "Luo avain"
 
 msgid "Back to API keys"
 msgstr "Takaisin API-avaimiin"
+
+msgid "API documentation"
+msgstr "API-dokumentaatio"
+
+msgid "Using the API"
+msgstr "API:n käyttäminen"
+
+msgid "Base URL"
+msgstr "Perusosoite"
+
+msgid "Every endpoint lives under:"
+msgstr "Jokainen rajapinta löytyy osoitteesta:"
+
+msgid "Authentication"
+msgstr "Tunnistautuminen"
+
+msgid "Send your key's secret (shown only once, right after you create it) as a Bearer token on every request:"
+msgstr "Lähetä avaimesi salaisuus (näytetään vain kerran, heti luonnin jälkeen) Bearer-tunnuksena jokaisessa pyynnössä:"
+
+msgid "Permissions"
+msgstr "Käyttöoikeudet"
+
+msgid "Each key is granted Create/Read/Update/Delete separately per area (exercises, programs, workouts, measurements, activities, nutrition, records, analytics, profile) — set this when you create the key, above. A request outside what the key is granted gets a 403."
+msgstr "Jokaiselle avaimelle myönnetään Luo/Lue/Päivitä/Poista-oikeudet erikseen kullekin osa-alueelle (liikkeet, ohjelmat, treenit, mittaukset, aktiviteetit, ravinto, ennätykset, analytiikka, profiili) — aseta nämä avainta luodessasi yllä. Pyyntö, joka ylittää avaimen oikeudet, saa vastauksen 403."
+
+msgid "Always canonical: weight in kilograms, length in meters, energy in kcal — never converted to your own display-unit preference, so a script can rely on one meaning regardless of who's asking."
+msgstr "Aina kanonisessa muodossa: paino kilogrammoina, pituus metreinä, energia kilokaloreina — ei koskaan muunnettuna omaan näyttöyksikköasetukseesi, joten skripti voi luottaa yhteen merkitykseen kysyjästä riippumatta."
+
+msgid "Example: reading your profile (curl)"
+msgstr "Esimerkki: profiilisi lukeminen (curl)"
+
+msgid "Example: creating something (curl)"
+msgstr "Esimerkki: jonkin luominen (curl)"
+
+msgid "A POST with a JSON body — this adds a food to your library:"
+msgstr "POST-pyyntö JSON-rungolla — tämä lisää ruoan kirjastoosi:"
+
+msgid "Example: Python"
+msgstr "Esimerkki: Python"
+
+msgid "List/create endpoints are paginated, 25 per page (?page=2). Deleting something soft-deletes it where the web app does the same (foods, exercises, measurement/activity types); a program or recipe is a real delete, matching its own page."
+msgstr "Listaus-/luontirajapinnat on sivutettu, 25 riviä sivulla (?page=2). Jonkin poistaminen on pehmeä poisto samoissa kohdissa kuin verkkosovelluksessakin (ruoat, liikkeet, mittaus-/aktiviteettityypit); ohjelman tai reseptin poisto on todellinen poisto, kuten omalla sivullaankin."
+
+msgid "All endpoints"
+msgstr "Kaikki rajapinnat"
+
+msgid "Area"
+msgstr "Osa-alue"
+
+msgid "Endpoints"
+msgstr "Rajapinnat"
+
+msgid "GET/PATCH, no id"
+msgstr "GET/PATCH, ei id:tä"
+
+msgid "read-only"
+msgstr "vain luku"
+
+msgid "create + read only"
+msgstr "vain luonti + luku"
+
+msgid "both read-only"
+msgstr "molemmat vain luku"
 
 msgid "You can create %(counter)s more key."
 msgid_plural "You can create %(counter)s more keys."
@@ -1613,9 +1682,6 @@ msgstr "Päävalikko"
 
 msgid "Home"
 msgstr "Koti"
-
-msgid "Nutrition"
-msgstr "Ravinto"
 
 msgid "Workout"
 msgstr "Treeni"

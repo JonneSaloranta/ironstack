@@ -127,14 +127,20 @@ Self-service, from the Profile page → "API keys" (`/api/keys/` —
 session-authenticated, ordinary server-rendered pages, not part of the
 API itself):
 
-- **Create** (`/api/keys/new/`): a name plus the 8×4 permission grid
-  described above. The full secret is shown exactly once immediately
-  after — leaving that page (or refreshing it) means it's gone for
-  good; a lost key means revoking it and creating a new one, the same
-  as a lost password.
+- **Create** (`/api/keys/new/`): a name plus one Create/Read/Update/
+  Delete row per context described above (`apps.api.forms.
+  ApiKeyCreateForm` builds this from `ApiContext` itself, so it never
+  needs updating by hand when a context is added). The full secret is
+  shown exactly once immediately after — leaving that page (or
+  refreshing it) means it's gone for good; a lost key means revoking
+  it and creating a new one, the same as a lost password.
 - **List** (`/api/keys/`): every key's name, short identifying prefix
   (e.g. `isk_a1b2c3d4…` — never the full secret), tier, and last-used
-  time.
+  time. A "?" button next to the page heading opens an in-app
+  reference (base URL, the auth header, a curl and a Python example
+  using this deployment's own real host, not a placeholder) —
+  everything on this page condensed for someone who just wants to
+  start calling the API without leaving the app to find this document.
 - **Revoke** (a button on each key's row): permanently deletes it —
   unlike almost everything else in this app, a key is a credential, not
   training history, so there's no soft-delete/audit-trail reason to

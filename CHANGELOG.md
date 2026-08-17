@@ -115,6 +115,8 @@ lands and remains the authoritative history.
   how many recipes are listed.
 - The admin food-merge page's radio buttons, and the API-key-created
   page's key-secret field, had no accessible name for screen readers.
+- The nutrition stats page's daily-calorie chart could show several
+  decimal places (e.g. "361,5500 kcal") instead of a whole number.
 
 ### Added — API
 - A public API context for nutrition (`foods/`, `meal-slots/`,
@@ -124,6 +126,9 @@ lands and remains the authoritative history.
   are read-only, matching how personal records already work in the
   API: both are historized and only ever change through their own
   dedicated service functions, never a raw write. See `docs/API.md`.
+- The API keys page has an in-app "?" documentation button — base URL,
+  auth header, permissions, units, and copy-pasteable curl/Python
+  examples using this deployment's own real address.
 
 ### Development
 - Test coverage measurement (`coverage`) is now part of the dev

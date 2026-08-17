@@ -2029,6 +2029,29 @@ class NutritionStatsViewTests(TestCase):
         response = self.client.get(reverse("nutrition:stats"))
         self.assertEqual(response.status_code, 302)
 
+    def test_chart_calories_are_rounded_to_whole_kcal(self):
+        """Regression, reported live: a quantity/serving-size ratio
+        that doesn't divide evenly (150g of a 100g-serving 241kcal
+        food) produced a calorie figure with several decimal places
+        in the chart tooltip/table (e.g. "361,5500 kcal") — the chart
+        component itself doesn't round, so the raw Decimal has to be
+        quantized before it gets there, the same "no false precision"
+        rule the calorie-adjustment suggestion engine already
+        follows."""
+        food = make_food(
+            self.alice, calories=241, serving_size=Decimal("100"),
+            protein_grams=Decimal("20"), carbohydrate_grams=Decimal("20"),
+            fat_grams=Decimal("10"),
+        )
+        DiaryEntry.objects.create(
+            user=self.alice, date=timezone.localdate(), meal_slot=self.slot,
+            food=food, quantity=Decimal("150"),
+        )
+        response = self.client.get(reverse("nutrition:stats"))
+        today_bar = response.context["calorie_chart"].bars[-1]
+        self.assertEqual(today_bar.value.as_tuple().exponent, 0)
+        self.assertNotContains(response, ",5500")
+
 
 class DiaryEntryEditDeleteViewTests(TestCase):
     def setUp(self):

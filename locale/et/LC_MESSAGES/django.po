@@ -267,6 +267,9 @@ msgstr "Rekordid"
 msgid "Analytics"
 msgstr "Analüütika"
 
+msgid "Nutrition"
+msgstr "Toitumine"
+
 msgid "You've reached your maximum number of API keys."
 msgstr "Oled saavutanud API-võtmete maksimumarvu."
 
@@ -1567,6 +1570,9 @@ msgstr "API-võti loodud"
 msgid "Copy this key now — you won't be able to see it again."
 msgstr "Kopeeri see võti nüüd — sa ei näe seda enam uuesti."
 
+msgid "Your new API key"
+msgstr "Sinu uus API-võti"
+
 msgid "New API key"
 msgstr "Uus API-võti"
 
@@ -1581,6 +1587,69 @@ msgstr "Loo võti"
 
 msgid "Back to API keys"
 msgstr "Tagasi API-võtmete juurde"
+
+msgid "API documentation"
+msgstr "API dokumentatsioon"
+
+msgid "Using the API"
+msgstr "API kasutamine"
+
+msgid "Base URL"
+msgstr "Baas-URL"
+
+msgid "Every endpoint lives under:"
+msgstr "Kõik lõpp-punktid asuvad aadressil:"
+
+msgid "Authentication"
+msgstr "Autentimine"
+
+msgid "Send your key's secret (shown only once, right after you create it) as a Bearer token on every request:"
+msgstr "Saada oma võtme saladus (kuvatakse ainult üks kord, kohe pärast loomist) Beareri märgina igas päringus:"
+
+msgid "Permissions"
+msgstr "Õigused"
+
+msgid "Each key is granted Create/Read/Update/Delete separately per area (exercises, programs, workouts, measurements, activities, nutrition, records, analytics, profile) — set this when you create the key, above. A request outside what the key is granted gets a 403."
+msgstr "Igale võtmele antakse Loo/Loe/Uuenda/Kustuta õigused eraldi iga valdkonna kohta (harjutused, programmid, trennid, mõõtmised, tegevused, toitumine, rekordid, analüütika, profiil) — määra need võtme loomisel ülal. Päring, mis ületab võtmele antud õigusi, saab vastuseks 403."
+
+msgid "Always canonical: weight in kilograms, length in meters, energy in kcal — never converted to your own display-unit preference, so a script can rely on one meaning regardless of who's asking."
+msgstr "Alati kanoonilises vormis: kaal kilogrammides, pikkus meetrites, energia kcal-des — ei teisendata kunagi sinu enda kuvaühiku eelistuseks, nii et skript saab tugineda ühele tähendusele olenemata sellest, kes päringu teeb."
+
+msgid "Example: reading your profile (curl)"
+msgstr "Näide: oma profiili lugemine (curl)"
+
+msgid "Example: creating something (curl)"
+msgstr "Näide: millegi loomine (curl)"
+
+msgid "A POST with a JSON body — this adds a food to your library:"
+msgstr "POST koos JSON-kehaga — see lisab toidu sinu kogusse:"
+
+msgid "Example: Python"
+msgstr "Näide: Python"
+
+msgid "List/create endpoints are paginated, 25 per page (?page=2). Deleting something soft-deletes it where the web app does the same (foods, exercises, measurement/activity types); a program or recipe is a real delete, matching its own page."
+msgstr "Loendi/loomise lõpp-punktid on lehestatud, 25 kirjet lehe kohta (?page=2). Millegi kustutamine on pehme kustutamine seal, kus veebirakendus teeb sama (toidud, harjutused, mõõtmis-/tegevustüübid); programm või retsept kustutatakse päriselt, samamoodi nagu selle enda lehel."
+
+msgid "All endpoints"
+msgstr "Kõik lõpp-punktid"
+
+msgid "Area"
+msgstr "Valdkond"
+
+msgid "Endpoints"
+msgstr "Lõpp-punktid"
+
+msgid "GET/PATCH, no id"
+msgstr "GET/PATCH, id-d pole"
+
+msgid "read-only"
+msgstr "ainult lugemiseks"
+
+msgid "create + read only"
+msgstr "ainult loomine + lugemine"
+
+msgid "both read-only"
+msgstr "mõlemad ainult lugemiseks"
 
 msgid "You can create %(counter)s more key."
 msgid_plural "You can create %(counter)s more keys."
@@ -1613,9 +1682,6 @@ msgstr "Peamenüü"
 
 msgid "Home"
 msgstr "Avaleht"
-
-msgid "Nutrition"
-msgstr "Toitumine"
 
 msgid "Workout"
 msgstr "Trenn"

@@ -267,6 +267,9 @@ msgstr "Records"
 msgid "Analytics"
 msgstr "Analytics"
 
+msgid "Nutrition"
+msgstr "Nutrition"
+
 msgid "You've reached your maximum number of API keys."
 msgstr "You've reached your maximum number of API keys."
 
@@ -1567,6 +1570,9 @@ msgstr "API key created"
 msgid "Copy this key now — you won't be able to see it again."
 msgstr "Copy this key now — you won't be able to see it again."
 
+msgid "Your new API key"
+msgstr "Your new API key"
+
 msgid "New API key"
 msgstr "New API key"
 
@@ -1581,6 +1587,69 @@ msgstr "Create key"
 
 msgid "Back to API keys"
 msgstr "Back to API keys"
+
+msgid "API documentation"
+msgstr "API documentation"
+
+msgid "Using the API"
+msgstr "Using the API"
+
+msgid "Base URL"
+msgstr "Base URL"
+
+msgid "Every endpoint lives under:"
+msgstr "Every endpoint lives under:"
+
+msgid "Authentication"
+msgstr "Authentication"
+
+msgid "Send your key's secret (shown only once, right after you create it) as a Bearer token on every request:"
+msgstr "Send your key's secret (shown only once, right after you create it) as a Bearer token on every request:"
+
+msgid "Permissions"
+msgstr "Permissions"
+
+msgid "Each key is granted Create/Read/Update/Delete separately per area (exercises, programs, workouts, measurements, activities, nutrition, records, analytics, profile) — set this when you create the key, above. A request outside what the key is granted gets a 403."
+msgstr "Each key is granted Create/Read/Update/Delete separately per area (exercises, programs, workouts, measurements, activities, nutrition, records, analytics, profile) — set this when you create the key, above. A request outside what the key is granted gets a 403."
+
+msgid "Always canonical: weight in kilograms, length in meters, energy in kcal — never converted to your own display-unit preference, so a script can rely on one meaning regardless of who's asking."
+msgstr "Always canonical: weight in kilograms, length in meters, energy in kcal — never converted to your own display-unit preference, so a script can rely on one meaning regardless of who's asking."
+
+msgid "Example: reading your profile (curl)"
+msgstr "Example: reading your profile (curl)"
+
+msgid "Example: creating something (curl)"
+msgstr "Example: creating something (curl)"
+
+msgid "A POST with a JSON body — this adds a food to your library:"
+msgstr "A POST with a JSON body — this adds a food to your library:"
+
+msgid "Example: Python"
+msgstr "Example: Python"
+
+msgid "List/create endpoints are paginated, 25 per page (?page=2). Deleting something soft-deletes it where the web app does the same (foods, exercises, measurement/activity types); a program or recipe is a real delete, matching its own page."
+msgstr "List/create endpoints are paginated, 25 per page (?page=2). Deleting something soft-deletes it where the web app does the same (foods, exercises, measurement/activity types); a program or recipe is a real delete, matching its own page."
+
+msgid "All endpoints"
+msgstr "All endpoints"
+
+msgid "Area"
+msgstr "Area"
+
+msgid "Endpoints"
+msgstr "Endpoints"
+
+msgid "GET/PATCH, no id"
+msgstr "GET/PATCH, no id"
+
+msgid "read-only"
+msgstr "read-only"
+
+msgid "create + read only"
+msgstr "create + read only"
+
+msgid "both read-only"
+msgstr "both read-only"
 
 msgid "You can create %(counter)s more key."
 msgid_plural "You can create %(counter)s more keys."
@@ -1613,9 +1682,6 @@ msgstr "Main navigation"
 
 msgid "Home"
 msgstr "Home"
-
-msgid "Nutrition"
-msgstr "Nutrition"
 
 msgid "Workout"
 msgstr "Workout"

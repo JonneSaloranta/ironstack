@@ -2372,3 +2372,57 @@ run); `ruff check` clean across every touched app;
 `makemigrations --check` clean. `coverage run -m pytest` and
 `coverage report` are now a real, repeatable local/CI-ready tool for
 this project going forward, not a one-off measurement.
+
+## Nutrition stats calorie rounding, and in-app API documentation
+
+Two more direct reports, both fixed and shipped in the same push.
+
+**Nutrition stats showing "361,5500 kcal"** — a quantity/serving-size
+ratio that doesn't divide evenly (150g of a 100g-serving food) carried
+several decimal places all the way into the chart's tooltip/table,
+since `apps.core.charts.build_bar_series` doesn't round the values it's
+handed — it never had to before, every existing caller's numbers
+(training volume, weight) already arrived clean. Fixed at the one
+place calorie figures enter the chart (`NutritionStatsView`), rounding
+to whole kcal with `.quantize(Decimal("1"))` — the same "no false
+precision" rule the calorie-adjustment suggestion engine already
+follows for its own numbers, not a new one invented for this. New
+regression test builds the exact same uneven ratio and asserts the
+chart's own value has no fractional part. Live-verified in Finnish:
+before the fix, a chart bar's title read "361,5500 kcal"; after,
+"362 kcal".
+
+**In-app API documentation** — a "?" button next to "API keys" opens a
+modal with everything needed to start calling the API without leaving
+the page: base URL, the auth header, a one-line permissions/units
+summary, and copy-pasteable curl (GET + POST) and Python examples —
+all three using `request.scheme`/`request.get_host()` so they show
+*this* deployment's real address, not a placeholder someone has to
+remember to swap out. Reuses the exact `.modal-backdrop`/`.modal-card`
+overlay pattern already established (profile's changelog modal, the
+barcode scanner) rather than inventing a new one, plus two small
+additions: `.help-button` (a round icon button opening a modal — a new,
+reusable pattern distinct from `.modal-close`/`.app-version`) and
+`.modal-card-wide` (a 40rem variant for content, specifically code
+examples, that wraps badly at the default 30rem). `.modal-body pre`
+scrolls horizontally inside its own box rather than ever forcing the
+page itself to scroll — a long curl command or an indented Python dict
+is exactly the kind of wide content that rule exists for. Found and
+fixed the same accessibility gap this modal could have shipped with
+too: the earlier `key_created.html` `aria-label` fix (`"Your new API
+key"`) had never actually been translated — caught by the same
+`gen_po.py` "missing" report this whole translation batch went through
+regardless, not a separate check.
+
+16 new strings translated across fi/sv/ru/it/et (904 total, 0 fuzzy/
+untranslated) — every heading and explanatory sentence in the modal is
+translated, the curl/Python code itself deliberately isn't (code isn't
+prose). Live-verified end to end in a real Finnish session: the modal
+opened with "API:n käyttäminen"/"Perusosoite"/"Tunnistautuminen"/
+"Käyttöoikeudet"/"Esimerkki: Python" all correctly localized, while the
+`curl -X POST .../foods/` and `import requests` blocks stayed in
+English as intended, and the base URL in every example read the real
+`http://<host>/api/v1/` this session's own request was made against.
+New test asserts the same thing with an explicit `SERVER_NAME`
+override, so a future change can't silently reintroduce a hardcoded
+placeholder host without a test noticing.

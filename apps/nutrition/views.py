@@ -1194,7 +1194,10 @@ class NutritionStatsView(LoginRequiredMixin, View):
             user=request.user, ended_at__isnull=True
         ).first()
         calorie_chart = build_bar_series(
-            [(day.strftime("%b %d"), totals.calories) for day, totals in history]
+            [
+                (day.strftime("%b %d"), totals.calories.quantize(Decimal("1")))
+                for day, totals in history
+            ]
         )
         return render(
             request,

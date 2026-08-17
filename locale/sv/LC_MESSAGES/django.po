@@ -267,6 +267,9 @@ msgstr "Rekord"
 msgid "Analytics"
 msgstr "Analys"
 
+msgid "Nutrition"
+msgstr "Näring"
+
 msgid "You've reached your maximum number of API keys."
 msgstr "Du har nått ditt max antal API-nycklar."
 
@@ -1567,6 +1570,9 @@ msgstr "API-nyckel skapad"
 msgid "Copy this key now — you won't be able to see it again."
 msgstr "Kopiera den här nyckeln nu — du kan inte se den igen."
 
+msgid "Your new API key"
+msgstr "Din nya API-nyckel"
+
 msgid "New API key"
 msgstr "Ny API-nyckel"
 
@@ -1581,6 +1587,69 @@ msgstr "Skapa nyckel"
 
 msgid "Back to API keys"
 msgstr "Tillbaka till API-nycklar"
+
+msgid "API documentation"
+msgstr "API-dokumentation"
+
+msgid "Using the API"
+msgstr "Använda API:et"
+
+msgid "Base URL"
+msgstr "Bas-URL"
+
+msgid "Every endpoint lives under:"
+msgstr "Alla slutpunkter finns under:"
+
+msgid "Authentication"
+msgstr "Autentisering"
+
+msgid "Send your key's secret (shown only once, right after you create it) as a Bearer token on every request:"
+msgstr "Skicka din nyckels hemlighet (visas bara en gång, direkt efter att du skapat den) som en Bearer-token i varje förfrågan:"
+
+msgid "Permissions"
+msgstr "Behörigheter"
+
+msgid "Each key is granted Create/Read/Update/Delete separately per area (exercises, programs, workouts, measurements, activities, nutrition, records, analytics, profile) — set this when you create the key, above. A request outside what the key is granted gets a 403."
+msgstr "Varje nyckel beviljas Skapa/Läs/Uppdatera/Radera separat per område (övningar, program, träningspass, mätningar, aktiviteter, näring, rekord, analys, profil) — ställ in detta när du skapar nyckeln ovan. En förfrågan utanför vad nyckeln beviljats får ett 403-svar."
+
+msgid "Always canonical: weight in kilograms, length in meters, energy in kcal — never converted to your own display-unit preference, so a script can rely on one meaning regardless of who's asking."
+msgstr "Alltid kanoniskt: vikt i kilogram, längd i meter, energi i kcal — konverteras aldrig till din egen visningsenhet, så ett skript kan lita på en betydelse oavsett vem som frågar."
+
+msgid "Example: reading your profile (curl)"
+msgstr "Exempel: läsa din profil (curl)"
+
+msgid "Example: creating something (curl)"
+msgstr "Exempel: skapa något (curl)"
+
+msgid "A POST with a JSON body — this adds a food to your library:"
+msgstr "En POST med en JSON-body — det här lägger till ett livsmedel i ditt bibliotek:"
+
+msgid "Example: Python"
+msgstr "Exempel: Python"
+
+msgid "List/create endpoints are paginated, 25 per page (?page=2). Deleting something soft-deletes it where the web app does the same (foods, exercises, measurement/activity types); a program or recipe is a real delete, matching its own page."
+msgstr "List-/skapa-slutpunkter är sidindelade, 25 per sida (?page=2). Att radera något är en mjuk radering där webbappen gör detsamma (livsmedel, övningar, mät-/aktivitetstyper); ett program eller recept raderas på riktigt, precis som på sin egen sida."
+
+msgid "All endpoints"
+msgstr "Alla slutpunkter"
+
+msgid "Area"
+msgstr "Område"
+
+msgid "Endpoints"
+msgstr "Slutpunkter"
+
+msgid "GET/PATCH, no id"
+msgstr "GET/PATCH, inget id"
+
+msgid "read-only"
+msgstr "endast läsning"
+
+msgid "create + read only"
+msgstr "endast skapa + läsa"
+
+msgid "both read-only"
+msgstr "båda endast läsning"
 
 msgid "You can create %(counter)s more key."
 msgid_plural "You can create %(counter)s more keys."
@@ -1613,9 +1682,6 @@ msgstr "Huvudnavigering"
 
 msgid "Home"
 msgstr "Hem"
-
-msgid "Nutrition"
-msgstr "Näring"
 
 msgid "Workout"
 msgstr "Träning"
