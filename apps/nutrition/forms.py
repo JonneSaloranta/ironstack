@@ -299,3 +299,155 @@ class LogDietPlanForm(forms.Form):
     date = forms.DateField(
         widget=forms.DateInput(attrs={"type": "date"}), label=_("Log for date")
     )
+
+
+class _UnitAwareWeightHeightForm(forms.Form):
+    """Shared height/weight-in-the-user's-display-unit plumbing for the
+    standalone calculators below — same conversion pattern as
+    BodyStepForm above, but pre-fillable from a signed-in user's
+    already-known height/weight (nutrition_profile + latest logged
+    body weight) rather than session state, since these calculators
+    are one-off lookups, not a wizard step being accumulated."""
+
+    def __init__(self, *args, user, **kwargs):
+        self.user = user
+        super().__init__(*args, **kwargs)
+        is_metric = user.unit_system == "metric"
+        if "height_cm" in self.fields:
+            self.fields["height_cm"].label = _("Height (cm)") if is_metric else _("Height (in)")
+            if user.height is not None:
+                display = (
+                    core_units.meters_to_cm(user.height)
+                    if is_metric
+                    else core_units.meters_to_inches(user.height)
+                )
+                self.initial.setdefault("height_cm", display.quantize(Decimal("0.1")))
+        if "weight_kg" in self.fields:
+            self.fields["weight_kg"].label = _("Current weight (%(unit)s)") % {
+                "unit": core_units.weight_unit_label(user.unit_system)
+            }
+
+    def canonical_height_cm(self):
+        value = self.cleaned_data["height_cm"]
+        is_metric = self.user.unit_system == "metric"
+        meters = core_units.cm_to_meters(value) if is_metric else core_units.inches_to_meters(value)
+        return core_units.meters_to_cm(meters)
+
+    def canonical_weight_kg(self):
+        return core_units.display_to_kg(self.cleaned_data["weight_kg"], self.user.unit_system)
+
+
+class BmrTdeeCalculatorForm(_UnitAwareWeightHeightForm):
+    """See apps.nutrition.energy.calculate_bmr/calculate_tdee — this
+    form only collects the inputs those two existing functions need,
+    it does not reimplement the formula."""
+
+    biological_sex = forms.ChoiceField(choices=BiologicalSex.choices, label=_("Biological sex"))
+    age_years = forms.IntegerField(min_value=13, max_value=100, label=_("Age (years)"))
+    height_cm = forms.DecimalField(max_digits=6, decimal_places=1, min_value=Decimal("50"))
+    weight_kg = forms.DecimalField(max_digits=8, decimal_places=2, min_value=Decimal("20"))
+    activity_level = forms.ChoiceField(choices=ActivityLevel.choices, label=_("Activity level"))
+
+    def __init__(self, *args, user, **kwargs):
+        super().__init__(*args, user=user, **kwargs)
+        profile = getattr(user, "nutrition_profile", None)
+        if profile is not None:
+            self.initial.setdefault("biological_sex", profile.biological_sex)
+            self.initial.setdefault("age_years", profile.age_years)
+            self.initial.setdefault("activity_level", profile.activity_level)
+
+
+class MacroCalculatorForm(_UnitAwareWeightHeightForm):
+    """See apps.nutrition.macros.calculate_macros — same "collect the
+    inputs, don't reimplement the math" shape as the form above."""
+
+    weight_kg = forms.DecimalField(max_digits=8, decimal_places=2, min_value=Decimal("20"))
+    daily_calories = forms.IntegerField(min_value=800, max_value=10000, label=_("Daily calories"))
+    goal_type = forms.ChoiceField(choices=GoalType.choices, label=_("Goal"))
+
+    def __init__(self, *args, user, **kwargs):
+        super().__init__(*args, user=user, **kwargs)
+        profile = getattr(user, "nutrition_profile", None)
+        if profile is not None:
+            from .models import NutritionGoal, NutritionTarget
+
+            goal = NutritionGoal.objects.filter(user=user, ended_at__isnull=True).first()
+            if goal is not None:
+                self.initial.setdefault("goal_type", goal.goal_type)
+            target = NutritionTarget.objects.filter(user=user, ended_at__isnull=True).first()
+            if target is not None:
+                self.initial.setdefault("daily_calories", target.daily_calories)
+
+
+class BodyFatCalculatorForm(_UnitAwareWeightHeightForm):
+    """See apps.nutrition.calculators.estimate_body_fat_percent — the
+    U.S. Navy circumference method. `hip_cm` is only required for the
+    female formula; enforced in clean() rather than a fixed
+    `required=True` since which fields are required depends on the
+    other field's value."""
+
+    biological_sex = forms.ChoiceField(choices=BiologicalSex.choices, label=_("Biological sex"))
+    height_cm = forms.DecimalField(max_digits=6, decimal_places=1, min_value=Decimal("50"))
+    neck_cm = forms.DecimalField(
+        max_digits=5, decimal_places=1, min_value=Decimal("10"), label=_("Neck circumference")
+    )
+    waist_cm = forms.DecimalField(
+        max_digits=5, decimal_places=1, min_value=Decimal("30"), label=_("Waist circumference")
+    )
+    hip_cm = forms.DecimalField(
+        max_digits=5,
+        decimal_places=1,
+        min_value=Decimal("30"),
+        required=False,
+        label=_("Hip circumference"),
+    )
+
+    def __init__(self, *args, user, **kwargs):
+        super().__init__(*args, user=user, **kwargs)
+        profile = getattr(user, "nutrition_profile", None)
+        if profile is not None:
+            self.initial.setdefault("biological_sex", profile.biological_sex)
+        for field_name in ("neck_cm", "waist_cm", "hip_cm"):
+            self.fields[field_name].label = (
+                self.fields[field_name].label
+                if self.user.unit_system == "metric"
+                else f"{self.fields[field_name].label} (in)"
+            )
+
+    def clean(self):
+        cleaned = super().clean()
+        if cleaned.get("biological_sex") == BiologicalSex.FEMALE and not cleaned.get("hip_cm"):
+            self.add_error(
+                "hip_cm", _("Hip circumference is required for the women's formula.")
+            )
+        return cleaned
+
+    def canonical_neck_cm(self):
+        return self._canonical_circumference("neck_cm")
+
+    def canonical_waist_cm(self):
+        return self._canonical_circumference("waist_cm")
+
+    def canonical_hip_cm(self):
+        if not self.cleaned_data.get("hip_cm"):
+            return None
+        return self._canonical_circumference("hip_cm")
+
+    def _canonical_circumference(self, field_name):
+        value = self.cleaned_data[field_name]
+        if self.user.unit_system == "metric":
+            return value
+        return core_units.meters_to_cm(core_units.inches_to_meters(value))
+
+
+class WaterIntakeCalculatorForm(_UnitAwareWeightHeightForm):
+    """See apps.nutrition.calculators.estimate_daily_water_liters."""
+
+    weight_kg = forms.DecimalField(max_digits=8, decimal_places=2, min_value=Decimal("20"))
+    activity_level = forms.ChoiceField(choices=ActivityLevel.choices, label=_("Activity level"))
+
+    def __init__(self, *args, user, **kwargs):
+        super().__init__(*args, user=user, **kwargs)
+        profile = getattr(user, "nutrition_profile", None)
+        if profile is not None:
+            self.initial.setdefault("activity_level", profile.activity_level)

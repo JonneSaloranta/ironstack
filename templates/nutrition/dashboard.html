@@ -106,4 +106,12 @@
     <a class="button-secondary" href="{% url 'nutrition:diet-plan-list' %}">{% trans "Diet plans" %}</a>
   </div>
 </div>
+
+<div class="card card-action-row">
+  <div>
+    <strong>{% trans "Calculators" %}</strong>
+    <p class="text-muted">{% trans "BMR/TDEE, macros, body fat, and water intake — quick standalone estimates." %}</p>
+  </div>
+  <a class="button-secondary" href="{% url 'nutrition:calculators-home' %}">{% trans "Open" %}</a>
+</div>
 {% endblock %}

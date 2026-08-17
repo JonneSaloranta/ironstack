@@ -654,6 +654,237 @@ msgstr "тип единицы"
 msgid "recorded at"
 msgstr "записано"
 
+msgid "a %(job)s job"
+msgstr "работа: %(job)s"
+
+msgid "~%(steps)s steps/day"
+msgstr "~%(steps)s шагов/день"
+
+msgid "%(count)s gym sessions a week"
+msgstr "%(count)s тренировок в зале в неделю"
+
+msgid "other regular exercise"
+msgstr "другая регулярная физическая активность"
+
+msgid "Suggested: %(label)s — %(factors)s"
+msgstr "Предложение: %(label)s — %(factors)s"
+
+msgid "Suggested: %(label)s — no activity details given yet"
+msgstr "Предложение: %(label)s — данные об активности пока не указаны"
+
+msgid "Estimated maintenance (TDEE): %(tdee)s kcal/day."
+msgstr "Расчётная норма поддержания (TDEE): %(tdee)s ккал/день."
+
+msgid "Your requested rate was reduced to a safer %(rate)s kg/week (capped at %(fraction)s%% of bodyweight/week)."
+msgstr "Запрошенный темп был снижен до более безопасного значения %(rate)s кг/нед (ограничение %(fraction)s%% веса тела в неделю)."
+
+msgid "Your target rate would need %(raw)s kcal/day, below a safe minimum — capped at %(floor)s kcal/day."
+msgstr "Ваш целевой темп потребовал бы %(raw)s ккал/день, что ниже безопасного минимума — ограничено до %(floor)s ккал/день."
+
+msgid "Target: %(rate)s kg/week → %(calories)s kcal/day."
+msgstr "Цель: %(rate)s кг/нед → %(calories)s ккал/день."
+
+msgid "Biological sex"
+msgstr "Биологический пол"
+
+msgid "Used by the BMR formula (Mifflin-St Jeor) — a physiological input, not a gender-identity question."
+msgstr "Используется в формуле BMR (Миффлина-Сан Жеора) — это физиологический параметр, а не вопрос о гендерной идентичности."
+
+msgid "Date of birth"
+msgstr "Дата рождения"
+
+msgid "Your job"
+msgstr "Ваша работа"
+
+msgid "Average daily steps (if you know it)"
+msgstr "Среднее количество шагов в день (если известно)"
+
+msgid "Gym sessions per week"
+msgstr "Тренировок в зале в неделю"
+
+msgid "Typical session length (minutes)"
+msgstr "Обычная продолжительность тренировки (минуты)"
+
+msgid "Other exercise (minutes/week)"
+msgstr "Другая физическая активность (минут/неделю)"
+
+msgid "Current daily calories, if you already track this"
+msgstr "Текущее суточное потребление калорий, если вы уже его отслеживаете"
+
+msgid "Used only to compare against this app's own estimate, never as an input."
+msgstr "Используется только для сравнения с собственной оценкой приложения, но никогда как входные данные."
+
+msgid "Activity level"
+msgstr "Уровень активности"
+
+msgid "Goal"
+msgstr "Цель"
+
+msgid "Target weight (%(unit)s)"
+msgstr "Целевой вес (%(unit)s)"
+
+msgid "Target rate (kg/week)"
+msgstr "Целевой темп (кг/нед)"
+
+msgid "Negative to lose weight, positive to gain. Pre-filled from your goal below — capped at a safe rate for your bodyweight."
+msgstr "Отрицательное значение для похудения, положительное — для набора веса. Предзаполнено на основе вашей цели ниже — ограничено безопасным темпом для вашего веса."
+
+msgid "All the nutrition values below are for this amount, in the unit chosen next to it — e.g. \"100 g\" if the values are per 100 grams."
+msgstr "Все указанные ниже значения пищевой ценности относятся к этому количеству в выбранной рядом единице — например, «100 г», если значения указаны на 100 граммов."
+
+msgid "Search foods"
+msgstr "Поиск продуктов"
+
+msgid "Pick a food to add."
+msgstr "Выберите продукт для добавления."
+
+msgid "Meal"
+msgstr "Приём пищи"
+
+msgid "Servings"
+msgstr "Порции"
+
+msgid "Plan name"
+msgstr "Название плана"
+
+msgid "Daily calories"
+msgstr "Суточные калории"
+
+msgid "Protein (g)"
+msgstr "Белки (г)"
+
+msgid "Carbohydrates (g)"
+msgstr "Углеводы (г)"
+
+msgid "Fat (g)"
+msgstr "Жиры (г)"
+
+msgid "Which meals?"
+msgstr "Какие приёмы пищи?"
+
+msgid "Pick either a food or a recipe, not both or neither."
+msgstr "Выберите либо продукт, либо рецепт — не оба и не ни один."
+
+msgid "Log for date"
+msgstr "Записать за дату"
+
+msgid "Age (years)"
+msgstr "Возраст (лет)"
+
+msgid "Neck circumference"
+msgstr "Обхват шеи"
+
+msgid "Waist circumference"
+msgstr "Обхват талии"
+
+msgid "Hip circumference"
+msgstr "Обхват бёдер"
+
+msgid "Hip circumference is required for the women's formula."
+msgstr "Для женской формулы требуется обхват бёдер."
+
+msgid "Male"
+msgstr "Мужской"
+
+msgid "Female"
+msgstr "Женский"
+
+msgid "Desk job, mostly sitting"
+msgstr "Офисная работа, в основном сидячая"
+
+msgid "On my feet some of the day"
+msgstr "На ногах часть дня"
+
+msgid "On my feet most of the day"
+msgstr "На ногах большую часть дня"
+
+msgid "Physically demanding / manual labor"
+msgstr "Физически тяжёлая / ручной труд"
+
+msgid "Sedentary"
+msgstr "Малоподвижный"
+
+msgid "Lightly active"
+msgstr "Слегка активный"
+
+msgid "Moderately active"
+msgstr "Умеренно активный"
+
+msgid "Active"
+msgstr "Активный"
+
+msgid "Very active"
+msgstr "Очень активный"
+
+msgid "Fat loss — aggressive"
+msgstr "Снижение жира — агрессивное"
+
+msgid "Fat loss — moderate"
+msgstr "Снижение жира — умеренное"
+
+msgid "Fat loss — conservative"
+msgstr "Снижение жира — консервативное"
+
+msgid "Maintenance"
+msgstr "Поддержание"
+
+msgid "Muscle gain — lean bulk"
+msgstr "Набор мышечной массы — «сухой» набор"
+
+msgid "Muscle gain — moderate bulk"
+msgstr "Набор мышечной массы — умеренный набор"
+
+msgid "Muscle gain — aggressive bulk"
+msgstr "Набор мышечной массы — агрессивный набор"
+
+msgid "Calculated from goal"
+msgstr "Рассчитано на основе цели"
+
+msgid "Set manually"
+msgstr "Установлено вручную"
+
+msgid "Accepted a suggested adjustment"
+msgstr "Принята предложенная корректировка"
+
+msgid "g"
+msgstr "г"
+
+msgid "ml"
+msgstr "мл"
+
+msgid "piece"
+msgstr "шт"
+
+msgid "Stored instead of a raw age, so it never goes stale."
+msgstr "Сохраняется вместо самого возраста, чтобы данные никогда не устаревали."
+
+msgid "If you already track this, tell us — used only to compare against this app's own estimate, never as an input to it."
+msgstr "Если вы уже это отслеживаете, сообщите нам — используется только для сравнения с собственной оценкой приложения, но никогда как входные данные для неё."
+
+msgid "Null for the built-in default meal slots."
+msgstr "Пусто (null) для встроенных стандартных приёмов пищи."
+
+msgid "Log either a food or a recipe, not both or neither."
+msgstr "Запишите либо продукт, либо рецепт — не оба и не ни один."
+
+msgid "Use either a food or a recipe, not both or neither."
+msgstr "Используйте либо продукт, либо рецепт — не оба и не ни один."
+
+msgid "Set a nutrition goal to get adjustment suggestions."
+msgstr "Установите цель по питанию, чтобы получать предложения по корректировке."
+
+msgid "Not enough logged weight yet — keep logging your weight regularly and check back in a couple of weeks."
+msgstr "Пока недостаточно записей веса — продолжайте регулярно записывать вес и проверьте снова через пару недель."
+
+msgid "Target: %(target)s kg/week. Actual trend: %(actual)s kg/week — on track."
+msgstr "Цель: %(target)s кг/нед. Фактический тренд: %(actual)s кг/нед — всё по плану."
+
+msgid "Target: %(target)s kg/week. Actual trend: %(actual)s kg/week over the last %(days)s days. Suggested adjustment: %(delta)+d kcal/day."
+msgstr "Цель: %(target)s кг/нед. Фактический тренд: %(actual)s кг/нед за последние %(days)s дн. Предлагаемая корректировка: %(delta)+d ккал/день."
+
+msgid "That food couldn't be imported — try again."
+msgstr "Не удалось импортировать этот продукт — попробуйте снова."
+
 msgid "Save as a personal template"
 msgstr "Сохранить как личный шаблон"
 
@@ -677,9 +908,6 @@ msgstr "Процентная цель"
 
 msgid "1RM"
 msgstr "1ПМ"
-
-msgid "Target weight (%(unit)s)"
-msgstr "Целевой вес (%(unit)s)"
 
 msgid "Weight increment (%(unit)s)"
 msgstr "Прибавка веса (%(unit)s)"
@@ -800,9 +1028,6 @@ msgstr "На основе RPE/RIR"
 
 msgid "Rep range"
 msgstr "Диапазон повторений"
-
-msgid "Maintenance"
-msgstr "Поддержание"
 
 msgid "Manual"
 msgstr "Ручная"
@@ -1305,6 +1530,9 @@ msgstr "Главное меню"
 msgid "Home"
 msgstr "Главная"
 
+msgid "Nutrition"
+msgstr "Питание"
+
 msgid "Workout"
 msgstr "Тренировка"
 
@@ -1602,6 +1830,381 @@ msgstr "Измерений пока нет"
 msgid "No measurement types yet."
 msgstr "Типов измерения пока нет."
 
+msgid "Your foods"
+msgstr "Ваши продукты"
+
+msgid "Quantity"
+msgstr "Количество"
+
+msgid "Add"
+msgstr "Добавить"
+
+msgid "From OpenFoodFacts"
+msgstr "Из OpenFoodFacts"
+
+msgid "Import & add"
+msgstr "Импортировать и добавить"
+
+msgid "Nothing found."
+msgstr "Ничего не найдено."
+
+msgid "Create a custom food"
+msgstr "Создать свой продукт"
+
+msgid "Step %(step)s of 5"
+msgstr "Шаг %(step)s из 5"
+
+msgid "BMR / TDEE calculator"
+msgstr "Калькулятор BMR/TDEE"
+
+msgid "BMR is roughly what you'd burn lying still all day; TDEE adds your activity on top. Both are estimates (Mifflin-St Jeor)."
+msgstr "BMR — это примерно то, что вы бы сжигали, лёжа неподвижно весь день; TDEE добавляет к этому вашу активность. Оба значения — оценочные (формула Миффлина-Сан Жеора)."
+
+msgid "Calculate"
+msgstr "Рассчитать"
+
+msgid "Result"
+msgstr "Результат"
+
+msgid "BMR (at rest)"
+msgstr "BMR (в покое)"
+
+msgid "TDEE (with activity)"
+msgstr "TDEE (с учётом активности)"
+
+msgid "Back to calculators"
+msgstr "Назад к калькуляторам"
+
+msgid "Body fat calculator"
+msgstr "Калькулятор процента жира"
+
+msgid "The U.S. Navy tape-measure method — just a tape measure, no calipers or bioimpedance scale needed. An estimate, typically within a few percentage points of a DEXA scan."
+msgstr "Метод ВМС США с сантиметровой лентой — нужна только сантиметровая лента, без калипера или весов с биоимпедансом. Оценка, обычно в пределах нескольких процентных пунктов от DEXA-сканирования."
+
+msgid "Couldn't estimate this from those measurements — double-check them (waist should be larger than neck)."
+msgstr "Не удалось рассчитать по этим измерениям — проверьте их (талия должна быть больше шеи)."
+
+msgid "Macro calculator"
+msgstr "Калькулятор макронутриентов"
+
+msgid "Splits a calorie target into protein, carbohydrates, and fat using this app's own default ratios for the goal you pick."
+msgstr "Разбивает целевую калорийность на белки, углеводы и жиры, используя собственные соотношения приложения по умолчанию для выбранной вами цели."
+
+msgid "Protein"
+msgstr "Белки"
+
+msgid "Carbohydrates"
+msgstr "Углеводы"
+
+msgid "Fat"
+msgstr "Жиры"
+
+msgid "This calorie target is low enough that protein and/or fat had to be reduced below their usual defaults to fit."
+msgstr "Эта целевая калорийность настолько низкая, что белки и/или жиры пришлось уменьшить ниже их обычных значений по умолчанию, чтобы уложиться в лимит."
+
+msgid "Water intake calculator"
+msgstr "Калькулятор потребления воды"
+
+msgid "A rough daily fluid target based on bodyweight and activity — real needs vary with climate and sweat rate, so treat this as a starting point."
+msgstr "Приблизительная суточная норма жидкости на основе веса тела и активности — реальная потребность зависит от климата и интенсивности потоотделения, так что считайте это отправной точкой."
+
+msgid "day"
+msgstr "день"
+
+msgid "Calculators"
+msgstr "Калькуляторы"
+
+msgid "Quick, standalone estimates — none of these are saved or change your targets."
+msgstr "Быстрые самостоятельные оценки — ничего из этого не сохраняется и не изменяет ваши цели."
+
+msgid "How many calories your body burns at rest, and in total."
+msgstr "Сколько калорий сжигает ваше тело в покое и в целом."
+
+msgid "Split a calorie target into protein, carbohydrates, and fat."
+msgstr "Разделите целевую калорийность на белки, углеводы и жиры."
+
+msgid "Estimate body fat percentage from a tape measure (U.S. Navy method)."
+msgstr "Оцените процент жира в организме с помощью сантиметровой ленты (метод ВМС США)."
+
+msgid "A rough daily fluid target based on your bodyweight and activity."
+msgstr "Приблизительная суточная норма жидкости на основе вашего веса и активности."
+
+msgid "Back to nutrition"
+msgstr "Назад к питанию"
+
+msgid "Training day"
+msgstr "День тренировки"
+
+msgid "Rest day"
+msgstr "День отдыха"
+
+msgid "Today so far"
+msgstr "Сегодня на данный момент"
+
+msgid "Calories"
+msgstr "Калории"
+
+msgid "Open food diary"
+msgstr "Открыть дневник питания"
+
+msgid "Is your current target working?"
+msgstr "Работает ли ваша текущая цель?"
+
+msgid "High confidence"
+msgstr "Высокая уверенность"
+
+msgid "Medium confidence"
+msgstr "Средняя уверенность"
+
+msgid "Low confidence"
+msgstr "Низкая уверенность"
+
+msgid "Adjust to %(calories)s kcal/day"
+msgstr "Скорректировать до %(calories)s ккал/день"
+
+msgid "Weight trend"
+msgstr "Тренд веса"
+
+msgid "Daily target"
+msgstr "Дневная цель"
+
+msgid "%(calories)s kcal/day"
+msgstr "%(calories)s ккал/день"
+
+msgid "Current goal"
+msgstr "Текущая цель"
+
+msgid "Recipes & diet plans"
+msgstr "Рецепты и планы питания"
+
+msgid "Manage your recipes or build a full diet plan."
+msgstr "Управляйте своими рецептами или составьте полный план питания."
+
+msgid "Recipes"
+msgstr "Рецепты"
+
+msgid "Diet plans"
+msgstr "Планы питания"
+
+msgid "BMR/TDEE, macros, body fat, and water intake — quick standalone estimates."
+msgstr "BMR/TDEE, макронутриенты, процент жира и потребление воды — быстрые самостоятельные оценки."
+
+msgid "Add food"
+msgstr "Добавить продукт"
+
+msgid "e.g. chicken breast"
+msgstr "например, куриная грудка"
+
+msgid "Back to diary"
+msgstr "Назад к дневнику"
+
+msgid "Food diary"
+msgstr "Дневник питания"
+
+msgid "Previous day"
+msgstr "Предыдущий день"
+
+msgid "Next day"
+msgstr "Следующий день"
+
+msgid "Today's nutrition"
+msgstr "Питание за сегодня"
+
+msgid "Remove this entry?"
+msgstr "Удалить эту запись?"
+
+msgid "Nothing logged yet."
+msgstr "Пока ничего не записано."
+
+msgid "+ Add food"
+msgstr "+ Добавить продукт"
+
+msgid "Manage foods"
+msgstr "Управление продуктами"
+
+msgid "Edit entry"
+msgstr "Изменить запись"
+
+msgid "protein"
+msgstr "белки"
+
+msgid "carbs"
+msgstr "углеводы"
+
+msgid "fat"
+msgstr "жиры"
+
+msgid "servings"
+msgstr "порций"
+
+msgid "Swap"
+msgstr "Заменить"
+
+msgid "Nothing suggested yet — add some foods or recipes first."
+msgstr "Пока нет предложений — сначала добавьте продукты или рецепты."
+
+msgid "Log this plan to your diary"
+msgstr "Записать этот план в дневник"
+
+msgid "Log it"
+msgstr "Записать"
+
+msgid "Back to diet plans"
+msgstr "Назад к планам питания"
+
+msgid "Delete this plan?"
+msgstr "Удалить этот план?"
+
+msgid "Delete plan"
+msgstr "Удалить план"
+
+msgid "New diet plan"
+msgstr "Новый план питания"
+
+msgid "Build a diet plan"
+msgstr "Составить план питания"
+
+msgid "We'll suggest one food or recipe per meal from your own library, scaled to fit — you can swap any of them afterward."
+msgstr "Мы предложим один продукт или рецепт на каждый приём пищи из вашей библиотеки, масштабированный по потребности — вы сможете заменить любой из них позже."
+
+msgid "Generate plan"
+msgstr "Сгенерировать план"
+
+msgid "Swap item"
+msgstr "Заменить пункт"
+
+msgid "Back to plan"
+msgstr "Назад к плану"
+
+msgid "+ New plan"
+msgstr "+ Новый план"
+
+msgid "No diet plans yet."
+msgstr "Пока нет планов питания."
+
+msgid "New food"
+msgstr "Новый продукт"
+
+msgid "Back to foods"
+msgstr "Назад к продуктам"
+
+msgid "Foods"
+msgstr "Продукты"
+
+msgid "+ New food"
+msgstr "+ Новый продукт"
+
+msgid "Search"
+msgstr "Поиск"
+
+msgid "No foods yet."
+msgstr "Пока нет продуктов."
+
+msgid "Nutrition setup"
+msgstr "Настройка питания"
+
+msgid "How active are you?"
+msgstr "Насколько вы активны?"
+
+msgid "Everything here is optional — the more you tell us, the better the estimate. We'll suggest an activity level from your answers, not ask you to guess it yourself."
+msgstr "Всё это необязательно — чем больше вы расскажете, тем точнее будет оценка. Мы предложим уровень активности на основе ваших ответов, а не попросим вас угадывать его самостоятельно."
+
+msgid "Continue"
+msgstr "Продолжить"
+
+msgid "Confirm your activity level"
+msgstr "Подтвердите свой уровень активности"
+
+msgid "This is only a suggestion — change it if you know it's wrong."
+msgstr "Это лишь предложение — измените его, если знаете, что оно неверно."
+
+msgid "Let's set up your nutrition"
+msgstr "Давайте настроим ваше питание"
+
+msgid "A few questions about your body — used to estimate how many calories you need."
+msgstr "Несколько вопросов о вашем теле — используются для оценки того, сколько калорий вам нужно."
+
+msgid "Just want a quick number without setting anything up?"
+msgstr "Хотите просто быстро узнать цифру, ничего не настраивая?"
+
+msgid "Try the calculators"
+msgstr "Попробуйте калькуляторы"
+
+msgid "What's your goal?"
+msgstr "Какова ваша цель?"
+
+msgid "See my targets"
+msgstr "Показать мои цели"
+
+msgid "Your estimated targets"
+msgstr "Ваши расчётные цели"
+
+msgid "These are estimates, not exact figures — you'll be able to see how well they're actually working once you've logged some data, and adjust anytime."
+msgstr "Это оценочные, а не точные цифры — вы сможете увидеть, насколько хорошо они работают на самом деле, как только запишете немного данных, и скорректировать их в любой момент."
+
+msgid "Save and start tracking"
+msgstr "Сохранить и начать отслеживание"
+
+msgid "Ingredients"
+msgstr "Ингредиенты"
+
+msgid "Remove this ingredient?"
+msgstr "Удалить этот ингредиент?"
+
+msgid "Remove"
+msgstr "Удалить"
+
+msgid "No ingredients yet."
+msgstr "Пока нет ингредиентов."
+
+msgid "+ Add ingredient"
+msgstr "+ Добавить ингредиент"
+
+msgid "Total"
+msgstr "Всего"
+
+msgid "Per serving (of %(servings)s)"
+msgstr "На порцию (из %(servings)s)"
+
+msgid "Log to diary"
+msgstr "Записать в дневник"
+
+msgid "Log today"
+msgstr "Записать сегодня"
+
+msgid "Back to recipes"
+msgstr "Назад к рецептам"
+
+msgid "Delete this recipe?"
+msgstr "Удалить этот рецепт?"
+
+msgid "Delete recipe"
+msgstr "Удалить рецепт"
+
+msgid "Recipe"
+msgstr "Рецепт"
+
+msgid "Edit recipe"
+msgstr "Изменить рецепт"
+
+msgid "New recipe"
+msgstr "Новый рецепт"
+
+msgid "Add ingredient"
+msgstr "Добавить ингредиент"
+
+msgid "Add ingredient to %(name)s"
+msgstr "Добавить ингредиент в %(name)s"
+
+msgid "Back to recipe"
+msgstr "Назад к рецепту"
+
+msgid "+ New recipe"
+msgstr "+ Новый рецепт"
+
+msgid "No recipes yet."
+msgstr "Пока нет рецептов."
+
 msgid "Add exercise"
 msgstr "Добавить упражнение"
 
@@ -1818,15 +2421,6 @@ msgstr "Подходы ещё не записаны."
 msgid "Suggested: %(weight)s"
 msgstr "Предложено: %(weight)s"
 
-msgid "Low confidence"
-msgstr "Низкая уверенность"
-
-msgid "Medium confidence"
-msgstr "Средняя уверенность"
-
-msgid "High confidence"
-msgstr "Высокая уверенность"
-
 msgid "Log set"
 msgstr "Записать подход"
 
@@ -1844,9 +2438,6 @@ msgstr "Меньше параметров"
 
 msgid "More options (RPE, RIR, notes…)"
 msgstr "Больше параметров (RPE, RIR, заметки…)"
-
-msgid "Add"
-msgstr "Добавить"
 
 msgid "Back to workout"
 msgstr "Назад к тренировке"

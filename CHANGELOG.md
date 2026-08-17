@@ -14,6 +14,26 @@ lands and remains the authoritative history.
 
 ## [Unreleased]
 
+### Added
+- Nutrition & calorie tracking (`apps/nutrition`): a step-by-step
+  onboarding wizard estimating your calorie/macro needs (Mifflin-St
+  Jeor, a suggested-not-self-reported activity level), goal-based
+  targets with built-in safety limits, a food diary backed by an
+  on-demand OpenFoodFacts lookup, recipes, a diet-plan builder, a
+  dashboard with a weight-trend chart, and a dynamic calorie-
+  adjustment suggestion once enough weight history exists. See
+  `docs/NUTRITION.md`.
+- Four standalone nutrition calculators (`/nutrition/calculators/`):
+  BMR/TDEE, macro split, body fat percentage (U.S. Navy method), and
+  daily water intake — quick estimates that don't require completing
+  nutrition onboarding or setting a goal.
+
+### Fixed
+- An OpenFoodFacts import-failure message in the food diary that was
+  never translated.
+- Logging a diet plan to the diary with an invalid date silently did
+  nothing instead of showing the error.
+
 ## [1.2.0] — 2026-08-15
 
 ### Added

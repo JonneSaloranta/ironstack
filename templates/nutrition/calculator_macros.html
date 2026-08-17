@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Macro calculator" %} — IronStack{% endblock %}
+{% block content %}
+<div class="top-bar">
+  <h1 style="margin:0;">{% trans "Macro calculator" %}</h1>
+</div>
+<p class="text-muted">{% trans "Splits a calorie target into protein, carbohydrates, and fat using this app's own default ratios for the goal you pick." %}</p>
+
+<form class="card" method="get">
+  {{ form.non_field_errors }}
+  {% for field in form %}
+    <div class="field">
+      {{ field.label_tag }}
+      {{ field }}
+      {% if field.errors %}<p class="field-error">{{ field.errors|striptags }}</p>{% endif %}
+    </div>
+  {% endfor %}
+  <button type="submit">{% trans "Calculate" %}</button>
+</form>
+
+{% if result %}
+  <div class="card">
+    <strong>{% trans "Result" %}</strong>
+    <table class="set-table">
+      <tbody>
+        <tr><td>{% trans "Protein" %}</td><td>{{ result.protein_grams }} g ({{ result.protein_percent }}%)</td></tr>
+        <tr><td>{% trans "Carbohydrates" %}</td><td>{{ result.carbohydrate_grams }} g ({{ result.carbohydrate_percent }}%)</td></tr>
+        <tr><td>{% trans "Fat" %}</td><td>{{ result.fat_grams }} g ({{ result.fat_percent }}%)</td></tr>
+      </tbody>
+    </table>
+    {% if result.protein_was_reduced or result.fat_was_reduced %}
+      <p class="field-help">{% trans "This calorie target is low enough that protein and/or fat had to be reduced below their usual defaults to fit." %}</p>
+    {% endif %}
+  </div>
+{% endif %}
+
+<p><a class="button-secondary" href="{% url 'nutrition:calculators-home' %}">&larr; {% trans "Back to calculators" %}</a></p>
+{% endblock %}

@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% trans "BMR / TDEE calculator" %} — IronStack{% endblock %}
+{% block content %}
+<div class="top-bar">
+  <h1 style="margin:0;">{% trans "BMR / TDEE calculator" %}</h1>
+</div>
+<p class="text-muted">{% trans "BMR is roughly what you'd burn lying still all day; TDEE adds your activity on top. Both are estimates (Mifflin-St Jeor)." %}</p>
+
+<form class="card" method="get">
+  {{ form.non_field_errors }}
+  {% for field in form %}
+    <div class="field">
+      {{ field.label_tag }}
+      {{ field }}
+      {% if field.errors %}<p class="field-error">{{ field.errors|striptags }}</p>{% endif %}
+    </div>
+  {% endfor %}
+  <button type="submit">{% trans "Calculate" %}</button>
+</form>
+
+{% if result %}
+  <div class="card">
+    <strong>{% trans "Result" %}</strong>
+    <table class="set-table">
+      <tbody>
+        <tr><td>{% trans "BMR (at rest)" %}</td><td>{{ result.bmr }} kcal/day</td></tr>
+        <tr><td>{% trans "TDEE (with activity)" %}</td><td>{{ result.tdee }} kcal/day</td></tr>
+      </tbody>
+    </table>
+  </div>
+{% endif %}
+
+<p><a class="button-secondary" href="{% url 'nutrition:calculators-home' %}">&larr; {% trans "Back to calculators" %}</a></p>
+{% endblock %}

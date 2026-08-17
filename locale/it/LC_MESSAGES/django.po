@@ -651,6 +651,237 @@ msgstr "tipo di unità"
 msgid "recorded at"
 msgstr "registrato il"
 
+msgid "a %(job)s job"
+msgstr "un lavoro %(job)s"
+
+msgid "~%(steps)s steps/day"
+msgstr "~%(steps)s passi/giorno"
+
+msgid "%(count)s gym sessions a week"
+msgstr "%(count)s sessioni in palestra a settimana"
+
+msgid "other regular exercise"
+msgstr "altra attività fisica regolare"
+
+msgid "Suggested: %(label)s — %(factors)s"
+msgstr "Suggerito: %(label)s — %(factors)s"
+
+msgid "Suggested: %(label)s — no activity details given yet"
+msgstr "Suggerito: %(label)s — nessun dettaglio sull'attività ancora fornito"
+
+msgid "Estimated maintenance (TDEE): %(tdee)s kcal/day."
+msgstr "Fabbisogno di mantenimento stimato (TDEE): %(tdee)s kcal/giorno."
+
+msgid "Your requested rate was reduced to a safer %(rate)s kg/week (capped at %(fraction)s%% of bodyweight/week)."
+msgstr "Il ritmo richiesto è stato ridotto a un valore più sicuro di %(rate)s kg/settimana (limitato al %(fraction)s%% del peso corporeo/settimana)."
+
+msgid "Your target rate would need %(raw)s kcal/day, below a safe minimum — capped at %(floor)s kcal/day."
+msgstr "Il tuo ritmo obiettivo richiederebbe %(raw)s kcal/giorno, al di sotto di un minimo sicuro — limitato a %(floor)s kcal/giorno."
+
+msgid "Target: %(rate)s kg/week → %(calories)s kcal/day."
+msgstr "Obiettivo: %(rate)s kg/settimana → %(calories)s kcal/giorno."
+
+msgid "Biological sex"
+msgstr "Sesso biologico"
+
+msgid "Used by the BMR formula (Mifflin-St Jeor) — a physiological input, not a gender-identity question."
+msgstr "Utilizzato dalla formula del BMR (Mifflin-St Jeor) — un dato fisiologico, non una domanda sull'identità di genere."
+
+msgid "Date of birth"
+msgstr "Data di nascita"
+
+msgid "Your job"
+msgstr "Il tuo lavoro"
+
+msgid "Average daily steps (if you know it)"
+msgstr "Passi medi giornalieri (se li conosci)"
+
+msgid "Gym sessions per week"
+msgstr "Sessioni in palestra a settimana"
+
+msgid "Typical session length (minutes)"
+msgstr "Durata tipica della sessione (minuti)"
+
+msgid "Other exercise (minutes/week)"
+msgstr "Altra attività fisica (minuti/settimana)"
+
+msgid "Current daily calories, if you already track this"
+msgstr "Calorie giornaliere attuali, se già le monitori"
+
+msgid "Used only to compare against this app's own estimate, never as an input."
+msgstr "Utilizzato solo per confrontare con la stima dell'app, mai come input."
+
+msgid "Activity level"
+msgstr "Livello di attività"
+
+msgid "Goal"
+msgstr "Obiettivo"
+
+msgid "Target weight (%(unit)s)"
+msgstr "Peso target (%(unit)s)"
+
+msgid "Target rate (kg/week)"
+msgstr "Ritmo obiettivo (kg/settimana)"
+
+msgid "Negative to lose weight, positive to gain. Pre-filled from your goal below — capped at a safe rate for your bodyweight."
+msgstr "Negativo per perdere peso, positivo per aumentarlo. Precompilato in base al tuo obiettivo qui sotto — limitato a un ritmo sicuro per il tuo peso corporeo."
+
+msgid "All the nutrition values below are for this amount, in the unit chosen next to it — e.g. \"100 g\" if the values are per 100 grams."
+msgstr "Tutti i valori nutrizionali sottostanti si riferiscono a questa quantità, nell'unità scelta accanto — ad es. \"100 g\" se i valori sono per 100 grammi."
+
+msgid "Search foods"
+msgstr "Cerca alimenti"
+
+msgid "Pick a food to add."
+msgstr "Scegli un alimento da aggiungere."
+
+msgid "Meal"
+msgstr "Pasto"
+
+msgid "Servings"
+msgstr "Porzioni"
+
+msgid "Plan name"
+msgstr "Nome del piano"
+
+msgid "Daily calories"
+msgstr "Calorie giornaliere"
+
+msgid "Protein (g)"
+msgstr "Proteine (g)"
+
+msgid "Carbohydrates (g)"
+msgstr "Carboidrati (g)"
+
+msgid "Fat (g)"
+msgstr "Grassi (g)"
+
+msgid "Which meals?"
+msgstr "Quali pasti?"
+
+msgid "Pick either a food or a recipe, not both or neither."
+msgstr "Scegli un alimento o una ricetta, non entrambi né nessuno dei due."
+
+msgid "Log for date"
+msgstr "Registra per la data"
+
+msgid "Age (years)"
+msgstr "Età (anni)"
+
+msgid "Neck circumference"
+msgstr "Circonferenza del collo"
+
+msgid "Waist circumference"
+msgstr "Circonferenza vita"
+
+msgid "Hip circumference"
+msgstr "Circonferenza fianchi"
+
+msgid "Hip circumference is required for the women's formula."
+msgstr "La circonferenza dei fianchi è obbligatoria per la formula femminile."
+
+msgid "Male"
+msgstr "Maschio"
+
+msgid "Female"
+msgstr "Femmina"
+
+msgid "Desk job, mostly sitting"
+msgstr "Lavoro d'ufficio, prevalentemente da seduti"
+
+msgid "On my feet some of the day"
+msgstr "In piedi per parte della giornata"
+
+msgid "On my feet most of the day"
+msgstr "In piedi per la maggior parte della giornata"
+
+msgid "Physically demanding / manual labor"
+msgstr "Fisicamente impegnativo / lavoro manuale"
+
+msgid "Sedentary"
+msgstr "Sedentario"
+
+msgid "Lightly active"
+msgstr "Leggermente attivo"
+
+msgid "Moderately active"
+msgstr "Moderatamente attivo"
+
+msgid "Active"
+msgstr "Attivo"
+
+msgid "Very active"
+msgstr "Molto attivo"
+
+msgid "Fat loss — aggressive"
+msgstr "Perdita di grasso — aggressiva"
+
+msgid "Fat loss — moderate"
+msgstr "Perdita di grasso — moderata"
+
+msgid "Fat loss — conservative"
+msgstr "Perdita di grasso — conservativa"
+
+msgid "Maintenance"
+msgstr "Mantenimento"
+
+msgid "Muscle gain — lean bulk"
+msgstr "Aumento muscolare — bulk magro"
+
+msgid "Muscle gain — moderate bulk"
+msgstr "Aumento muscolare — bulk moderato"
+
+msgid "Muscle gain — aggressive bulk"
+msgstr "Aumento muscolare — bulk aggressivo"
+
+msgid "Calculated from goal"
+msgstr "Calcolato dall'obiettivo"
+
+msgid "Set manually"
+msgstr "Impostato manualmente"
+
+msgid "Accepted a suggested adjustment"
+msgstr "Regolazione suggerita accettata"
+
+msgid "g"
+msgstr "g"
+
+msgid "ml"
+msgstr "ml"
+
+msgid "piece"
+msgstr "pezzo"
+
+msgid "Stored instead of a raw age, so it never goes stale."
+msgstr "Memorizzata al posto di un'età grezza, così non diventa mai obsoleta."
+
+msgid "If you already track this, tell us — used only to compare against this app's own estimate, never as an input to it."
+msgstr "Se già lo monitori, faccelo sapere — utilizzato solo per confrontare con la stima dell'app, mai come input per essa."
+
+msgid "Null for the built-in default meal slots."
+msgstr "Nullo per le fasce pasto predefinite integrate."
+
+msgid "Log either a food or a recipe, not both or neither."
+msgstr "Registra un alimento o una ricetta, non entrambi né nessuno dei due."
+
+msgid "Use either a food or a recipe, not both or neither."
+msgstr "Usa un alimento o una ricetta, non entrambi né nessuno dei due."
+
+msgid "Set a nutrition goal to get adjustment suggestions."
+msgstr "Imposta un obiettivo nutrizionale per ricevere suggerimenti di regolazione."
+
+msgid "Not enough logged weight yet — keep logging your weight regularly and check back in a couple of weeks."
+msgstr "Non è stato ancora registrato abbastanza peso — continua a registrare il tuo peso regolarmente e ricontrolla tra un paio di settimane."
+
+msgid "Target: %(target)s kg/week. Actual trend: %(actual)s kg/week — on track."
+msgstr "Obiettivo: %(target)s kg/settimana. Tendenza effettiva: %(actual)s kg/settimana — in linea."
+
+msgid "Target: %(target)s kg/week. Actual trend: %(actual)s kg/week over the last %(days)s days. Suggested adjustment: %(delta)+d kcal/day."
+msgstr "Obiettivo: %(target)s kg/settimana. Tendenza effettiva: %(actual)s kg/settimana negli ultimi %(days)s giorni. Regolazione suggerita: %(delta)+d kcal/giorno."
+
+msgid "That food couldn't be imported — try again."
+msgstr "Non è stato possibile importare questo alimento — riprova."
+
 msgid "Save as a personal template"
 msgstr "Salva come modello personale"
 
@@ -674,9 +905,6 @@ msgstr "Obiettivo percentuale"
 
 msgid "1RM"
 msgstr "1RM"
-
-msgid "Target weight (%(unit)s)"
-msgstr "Peso target (%(unit)s)"
 
 msgid "Weight increment (%(unit)s)"
 msgstr "Incremento del peso (%(unit)s)"
@@ -797,9 +1025,6 @@ msgstr "Basata su RPE/RIR"
 
 msgid "Rep range"
 msgstr "Intervallo di ripetizioni"
-
-msgid "Maintenance"
-msgstr "Mantenimento"
 
 msgid "Manual"
 msgstr "Manuale"
@@ -1300,6 +1525,9 @@ msgstr "Navigazione principale"
 msgid "Home"
 msgstr "Home"
 
+msgid "Nutrition"
+msgstr "Alimentazione"
+
 msgid "Workout"
 msgstr "Allenamento"
 
@@ -1594,6 +1822,381 @@ msgstr "Nessuna lettura ancora"
 msgid "No measurement types yet."
 msgstr "Nessun tipo di misurazione ancora."
 
+msgid "Your foods"
+msgstr "I tuoi alimenti"
+
+msgid "Quantity"
+msgstr "Quantità"
+
+msgid "Add"
+msgstr "Aggiungi"
+
+msgid "From OpenFoodFacts"
+msgstr "Da OpenFoodFacts"
+
+msgid "Import & add"
+msgstr "Importa e aggiungi"
+
+msgid "Nothing found."
+msgstr "Nessun risultato."
+
+msgid "Create a custom food"
+msgstr "Crea un alimento personalizzato"
+
+msgid "Step %(step)s of 5"
+msgstr "Passo %(step)s di 5"
+
+msgid "BMR / TDEE calculator"
+msgstr "Calcolatore BMR/TDEE"
+
+msgid "BMR is roughly what you'd burn lying still all day; TDEE adds your activity on top. Both are estimates (Mifflin-St Jeor)."
+msgstr "Il BMR è approssimativamente quello che bruceresti restando fermo tutto il giorno; il TDEE aggiunge la tua attività. Entrambi sono stime (Mifflin-St Jeor)."
+
+msgid "Calculate"
+msgstr "Calcola"
+
+msgid "Result"
+msgstr "Risultato"
+
+msgid "BMR (at rest)"
+msgstr "BMR (a riposo)"
+
+msgid "TDEE (with activity)"
+msgstr "TDEE (con attività)"
+
+msgid "Back to calculators"
+msgstr "Torna ai calcolatori"
+
+msgid "Body fat calculator"
+msgstr "Calcolatore massa grassa"
+
+msgid "The U.S. Navy tape-measure method — just a tape measure, no calipers or bioimpedance scale needed. An estimate, typically within a few percentage points of a DEXA scan."
+msgstr "Il metodo del nastro metrico della Marina USA — basta un metro da sarta, senza plicometro o bilancia a bioimpedenza. Una stima, tipicamente entro pochi punti percentuali da una scansione DEXA."
+
+msgid "Couldn't estimate this from those measurements — double-check them (waist should be larger than neck)."
+msgstr "Non è stato possibile stimarlo da queste misure — controllale (la vita dovrebbe essere più grande del collo)."
+
+msgid "Macro calculator"
+msgstr "Calcolatore macro"
+
+msgid "Splits a calorie target into protein, carbohydrates, and fat using this app's own default ratios for the goal you pick."
+msgstr "Suddivide un obiettivo calorico in proteine, carboidrati e grassi usando i rapporti predefiniti dell'app per l'obiettivo scelto."
+
+msgid "Protein"
+msgstr "Proteine"
+
+msgid "Carbohydrates"
+msgstr "Carboidrati"
+
+msgid "Fat"
+msgstr "Grassi"
+
+msgid "This calorie target is low enough that protein and/or fat had to be reduced below their usual defaults to fit."
+msgstr "Questo obiettivo calorico è così basso che proteine e/o grassi hanno dovuto essere ridotti sotto i loro valori predefiniti abituali per rientrare."
+
+msgid "Water intake calculator"
+msgstr "Calcolatore assunzione di acqua"
+
+msgid "A rough daily fluid target based on bodyweight and activity — real needs vary with climate and sweat rate, so treat this as a starting point."
+msgstr "Un obiettivo giornaliero approssimativo di liquidi basato su peso corporeo e attività — il fabbisogno reale varia con clima e sudorazione, quindi considera questo un punto di partenza."
+
+msgid "day"
+msgstr "giorno"
+
+msgid "Calculators"
+msgstr "Calcolatori"
+
+msgid "Quick, standalone estimates — none of these are saved or change your targets."
+msgstr "Stime rapide e indipendenti — nessuna di queste viene salvata o modifica i tuoi obiettivi."
+
+msgid "How many calories your body burns at rest, and in total."
+msgstr "Quante calorie brucia il tuo corpo a riposo e in totale."
+
+msgid "Split a calorie target into protein, carbohydrates, and fat."
+msgstr "Suddividi un obiettivo calorico in proteine, carboidrati e grassi."
+
+msgid "Estimate body fat percentage from a tape measure (U.S. Navy method)."
+msgstr "Stima la percentuale di grasso corporeo con un metro da sarta (metodo della Marina USA)."
+
+msgid "A rough daily fluid target based on your bodyweight and activity."
+msgstr "Un obiettivo giornaliero approssimativo di liquidi basato sul tuo peso corporeo e attività."
+
+msgid "Back to nutrition"
+msgstr "Torna all'alimentazione"
+
+msgid "Training day"
+msgstr "Giorno di allenamento"
+
+msgid "Rest day"
+msgstr "Giorno di riposo"
+
+msgid "Today so far"
+msgstr "Finora oggi"
+
+msgid "Calories"
+msgstr "Calorie"
+
+msgid "Open food diary"
+msgstr "Apri il diario alimentare"
+
+msgid "Is your current target working?"
+msgstr "Il tuo obiettivo attuale sta funzionando?"
+
+msgid "High confidence"
+msgstr "Alta affidabilità"
+
+msgid "Medium confidence"
+msgstr "Affidabilità media"
+
+msgid "Low confidence"
+msgstr "Bassa affidabilità"
+
+msgid "Adjust to %(calories)s kcal/day"
+msgstr "Regola a %(calories)s kcal/giorno"
+
+msgid "Weight trend"
+msgstr "Tendenza del peso"
+
+msgid "Daily target"
+msgstr "Obiettivo giornaliero"
+
+msgid "%(calories)s kcal/day"
+msgstr "%(calories)s kcal/giorno"
+
+msgid "Current goal"
+msgstr "Obiettivo attuale"
+
+msgid "Recipes & diet plans"
+msgstr "Ricette e piani alimentari"
+
+msgid "Manage your recipes or build a full diet plan."
+msgstr "Gestisci le tue ricette o crea un piano alimentare completo."
+
+msgid "Recipes"
+msgstr "Ricette"
+
+msgid "Diet plans"
+msgstr "Piani alimentari"
+
+msgid "BMR/TDEE, macros, body fat, and water intake — quick standalone estimates."
+msgstr "BMR/TDEE, macro, massa grassa e assunzione di acqua — stime rapide e indipendenti."
+
+msgid "Add food"
+msgstr "Aggiungi alimento"
+
+msgid "e.g. chicken breast"
+msgstr "es. petto di pollo"
+
+msgid "Back to diary"
+msgstr "Torna al diario"
+
+msgid "Food diary"
+msgstr "Diario alimentare"
+
+msgid "Previous day"
+msgstr "Giorno precedente"
+
+msgid "Next day"
+msgstr "Giorno successivo"
+
+msgid "Today's nutrition"
+msgstr "Alimentazione di oggi"
+
+msgid "Remove this entry?"
+msgstr "Rimuovere questa voce?"
+
+msgid "Nothing logged yet."
+msgstr "Nulla registrato ancora."
+
+msgid "+ Add food"
+msgstr "+ Aggiungi alimento"
+
+msgid "Manage foods"
+msgstr "Gestisci alimenti"
+
+msgid "Edit entry"
+msgstr "Modifica voce"
+
+msgid "protein"
+msgstr "proteine"
+
+msgid "carbs"
+msgstr "carboidrati"
+
+msgid "fat"
+msgstr "grassi"
+
+msgid "servings"
+msgstr "porzioni"
+
+msgid "Swap"
+msgstr "Sostituisci"
+
+msgid "Nothing suggested yet — add some foods or recipes first."
+msgstr "Nessun suggerimento ancora — aggiungi prima alimenti o ricette."
+
+msgid "Log this plan to your diary"
+msgstr "Registra questo piano nel tuo diario"
+
+msgid "Log it"
+msgstr "Registra"
+
+msgid "Back to diet plans"
+msgstr "Torna ai piani alimentari"
+
+msgid "Delete this plan?"
+msgstr "Eliminare questo piano?"
+
+msgid "Delete plan"
+msgstr "Elimina piano"
+
+msgid "New diet plan"
+msgstr "Nuovo piano alimentare"
+
+msgid "Build a diet plan"
+msgstr "Crea un piano alimentare"
+
+msgid "We'll suggest one food or recipe per meal from your own library, scaled to fit — you can swap any of them afterward."
+msgstr "Suggeriremo un alimento o una ricetta per pasto dalla tua libreria, scalato per adattarsi — potrai sostituirli in seguito."
+
+msgid "Generate plan"
+msgstr "Genera piano"
+
+msgid "Swap item"
+msgstr "Sostituisci elemento"
+
+msgid "Back to plan"
+msgstr "Torna al piano"
+
+msgid "+ New plan"
+msgstr "+ Nuovo piano"
+
+msgid "No diet plans yet."
+msgstr "Nessun piano alimentare ancora."
+
+msgid "New food"
+msgstr "Nuovo alimento"
+
+msgid "Back to foods"
+msgstr "Torna agli alimenti"
+
+msgid "Foods"
+msgstr "Alimenti"
+
+msgid "+ New food"
+msgstr "+ Nuovo alimento"
+
+msgid "Search"
+msgstr "Cerca"
+
+msgid "No foods yet."
+msgstr "Nessun alimento ancora."
+
+msgid "Nutrition setup"
+msgstr "Configurazione alimentare"
+
+msgid "How active are you?"
+msgstr "Quanto sei attivo/a?"
+
+msgid "Everything here is optional — the more you tell us, the better the estimate. We'll suggest an activity level from your answers, not ask you to guess it yourself."
+msgstr "Tutto qui è facoltativo — più ci dici, migliore sarà la stima. Suggeriremo un livello di attività in base alle tue risposte, invece di chiederti di indovinarlo tu stesso."
+
+msgid "Continue"
+msgstr "Continua"
+
+msgid "Confirm your activity level"
+msgstr "Conferma il tuo livello di attività"
+
+msgid "This is only a suggestion — change it if you know it's wrong."
+msgstr "Questo è solo un suggerimento — modificalo se sai che è sbagliato."
+
+msgid "Let's set up your nutrition"
+msgstr "Configuriamo la tua alimentazione"
+
+msgid "A few questions about your body — used to estimate how many calories you need."
+msgstr "Alcune domande sul tuo corpo — utilizzate per stimare quante calorie ti servono."
+
+msgid "Just want a quick number without setting anything up?"
+msgstr "Vuoi solo un numero rapido senza configurare nulla?"
+
+msgid "Try the calculators"
+msgstr "Prova i calcolatori"
+
+msgid "What's your goal?"
+msgstr "Qual è il tuo obiettivo?"
+
+msgid "See my targets"
+msgstr "Vedi i miei obiettivi"
+
+msgid "Your estimated targets"
+msgstr "I tuoi obiettivi stimati"
+
+msgid "These are estimates, not exact figures — you'll be able to see how well they're actually working once you've logged some data, and adjust anytime."
+msgstr "Queste sono stime, non cifre esatte — potrai vedere quanto funzionano davvero una volta registrati alcuni dati, e regolarle in qualsiasi momento."
+
+msgid "Save and start tracking"
+msgstr "Salva e inizia a monitorare"
+
+msgid "Ingredients"
+msgstr "Ingredienti"
+
+msgid "Remove this ingredient?"
+msgstr "Rimuovere questo ingrediente?"
+
+msgid "Remove"
+msgstr "Rimuovi"
+
+msgid "No ingredients yet."
+msgstr "Nessun ingrediente ancora."
+
+msgid "+ Add ingredient"
+msgstr "+ Aggiungi ingrediente"
+
+msgid "Total"
+msgstr "Totale"
+
+msgid "Per serving (of %(servings)s)"
+msgstr "Per porzione (su %(servings)s)"
+
+msgid "Log to diary"
+msgstr "Registra nel diario"
+
+msgid "Log today"
+msgstr "Registra oggi"
+
+msgid "Back to recipes"
+msgstr "Torna alle ricette"
+
+msgid "Delete this recipe?"
+msgstr "Eliminare questa ricetta?"
+
+msgid "Delete recipe"
+msgstr "Elimina ricetta"
+
+msgid "Recipe"
+msgstr "Ricetta"
+
+msgid "Edit recipe"
+msgstr "Modifica ricetta"
+
+msgid "New recipe"
+msgstr "Nuova ricetta"
+
+msgid "Add ingredient"
+msgstr "Aggiungi ingrediente"
+
+msgid "Add ingredient to %(name)s"
+msgstr "Aggiungi ingrediente a %(name)s"
+
+msgid "Back to recipe"
+msgstr "Torna alla ricetta"
+
+msgid "+ New recipe"
+msgstr "+ Nuova ricetta"
+
+msgid "No recipes yet."
+msgstr "Nessuna ricetta ancora."
+
 msgid "Add exercise"
 msgstr "Aggiungi esercizio"
 
@@ -1810,15 +2413,6 @@ msgstr "Nessuna serie registrata ancora."
 msgid "Suggested: %(weight)s"
 msgstr "Suggerito: %(weight)s"
 
-msgid "Low confidence"
-msgstr "Bassa affidabilità"
-
-msgid "Medium confidence"
-msgstr "Affidabilità media"
-
-msgid "High confidence"
-msgstr "Alta affidabilità"
-
 msgid "Log set"
 msgstr "Registra serie"
 
@@ -1836,9 +2430,6 @@ msgstr "Meno opzioni"
 
 msgid "More options (RPE, RIR, notes…)"
 msgstr "Altre opzioni (RPE, RIR, note…)"
-
-msgid "Add"
-msgstr "Aggiungi"
 
 msgid "Back to workout"
 msgstr "Torna all'allenamento"

@@ -498,6 +498,43 @@ but occasional-use, don't get their own slot). This is a real,
 testable UI change (`BottomNavTests` gets updated alongside it), not a
 casual addition.
 
+## Calculators
+
+Four standalone, stateless calculators under `/nutrition/calculators/`
+(`apps.nutrition.calculators` + thin wrappers in `views.py`'s
+`_CalculatorView` subclasses): BMR/TDEE, macro split, body fat %
+(U.S. Navy tape-measure method), and daily water intake. Deliberately
+separate from the rest of the app in one important way: **nothing
+here reads or writes a `NutritionProfile`, `NutritionGoal`, or
+`NutritionTarget` row** — a user can get an answer without onboarding,
+without setting a goal, and without logging anything, which is the
+whole point (a quick one-off lookup, not a commitment). The BMR/TDEE
+and macro calculators are thin forms in front of the *existing*
+`energy.calculate_bmr`/`calculate_tdee` and `macros.calculate_macros`
+— not a second implementation of the same math (see CLAUDE.md "do not
+create duplicate abstractions"). Body fat % and water intake are new,
+small pure functions in `apps/nutrition/calculators.py`, same
+no-DB/no-HTTP shape as `energy.py`/`macros.py`.
+
+Each calculator view is a plain `GET` (no side effect, so a GET with a
+query string is the right verb — bookmarkable/shareable, same
+convention already used by `FoodSearchResultsView`), computing and
+showing a result inline on the same page only once the query string
+carries a complete, valid submission; a signed-in user who has already
+completed nutrition onboarding gets the relevant fields (sex, age,
+activity level, current goal/target) pre-filled from their own data,
+but every field stays editable — useful for a "what if" check against
+a hypothetical weight or activity level too, not just today's real
+numbers.
+
+Reachable two ways: a "Calculators" card on the nutrition dashboard,
+and — since a user who hasn't onboarded can't reach the dashboard at
+all (`NutritionDashboardView` redirects straight into the onboarding
+wizard) — a direct link on the onboarding wizard's first step ("Just
+want a quick number without setting anything up?"), so the
+calculators are actually reachable by someone who deliberately doesn't
+want to onboard yet, not just a dead end behind a redirect.
+
 ## Testing strategy
 
 Mirrors `apps/core/tests.py`'s `BMICalculationTests` (pure functions,

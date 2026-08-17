@@ -11,9 +11,11 @@ from decimal import Decimal
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import Prefetch
 from django.http import HttpResponseNotAllowed
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
+from django.utils.translation import gettext as _
 from django.views.generic import CreateView, ListView, View
 
 from apps.measurements.models import BodyMeasurement, MeasurementType
@@ -23,6 +25,8 @@ from .forms import (
     DEFAULT_RATES_JSON_SAFE,
     ActivityInputsForm,
     ActivityLevelConfirmForm,
+    BmrTdeeCalculatorForm,
+    BodyFatCalculatorForm,
     BodyStepForm,
     DiaryAddEntryForm,
     DiaryEntryQuantityForm,
@@ -32,8 +36,10 @@ from .forms import (
     GoalStepForm,
     LogDietPlanForm,
     LogRecipeForm,
+    MacroCalculatorForm,
     RecipeForm,
     RecipeIngredientForm,
+    WaterIntakeCalculatorForm,
 )
 from .models import NutritionProfile, TargetSource
 
@@ -473,7 +479,7 @@ class DiaryAddEntryView(LoginRequiredMixin, View):
         elif form.cleaned_data.get("off_barcode"):
             food = services.import_or_refresh_food_from_off(form.cleaned_data["off_barcode"])
             if food is None:
-                form.add_error(None, "That food couldn't be imported — try again.")
+                form.add_error(None, _("That food couldn't be imported — try again."))
                 return render(
                     request,
                     self.template_name,
@@ -713,27 +719,44 @@ def _owned_diet_plan_or_404(request, pk):
     return get_object_or_404(DietPlan, pk=pk, user=request.user)
 
 
+def _diet_plan_meals_with_nutrition(plan):
+    """The plan's meals/items, each item annotated with its computed
+    `.nutrition` — shared by the detail page and diet_plan_log's own
+    error re-render below, so there's exactly one place this query
+    shape and the food-vs-recipe branch live."""
+    from .models import DietPlanItem
+
+    meals = list(
+        plan.meals.select_related("meal_slot").prefetch_related(
+            Prefetch(
+                "items",
+                queryset=DietPlanItem.objects.select_related("food", "recipe"),
+            )
+        )
+    )
+    for meal in meals:
+        for item in meal.items.all():
+            item.nutrition = (
+                services.scale_nutrition(item.food, item.quantity)
+                if item.food_id
+                else services.recipe_per_serving_nutrition(item.recipe).scaled_by(
+                    item.quantity
+                )
+            )
+    return meals
+
+
 class DietPlanDetailView(LoginRequiredMixin, View):
     template_name = "nutrition/diet_plan_detail.html"
 
     def get(self, request, pk):
         plan = _owned_diet_plan_or_404(request, pk)
-        meals = list(plan.meals.select_related("meal_slot").prefetch_related("items"))
-        for meal in meals:
-            for item in meal.items.all():
-                item.nutrition = (
-                    services.scale_nutrition(item.food, item.quantity)
-                    if item.food_id
-                    else services.recipe_per_serving_nutrition(item.recipe).scaled_by(
-                        item.quantity
-                    )
-                )
         return render(
             request,
             self.template_name,
             {
                 "plan": plan,
-                "meals": meals,
+                "meals": _diet_plan_meals_with_nutrition(plan),
                 "log_form": LogDietPlanForm(initial={"date": timezone.localdate()}),
             },
         )
@@ -770,7 +793,15 @@ def diet_plan_log(request, pk):
         return HttpResponseNotAllowed(["POST"])
     form = LogDietPlanForm(request.POST)
     if not form.is_valid():
-        return redirect("nutrition:diet-plan-detail", pk=plan.pk)
+        # Same pattern as recipe_log below: re-render with the errors
+        # visible rather than silently bouncing back to a page that
+        # looks identical to before the submit, which left the user
+        # with no idea anything went wrong.
+        return render(
+            request,
+            "nutrition/diet_plan_detail.html",
+            {"plan": plan, "meals": _diet_plan_meals_with_nutrition(plan), "log_form": form},
+        )
     diet_builder.apply_diet_plan(plan, form.cleaned_data["date"])
     return redirect("nutrition:diary-day", target_date=form.cleaned_data["date"].isoformat())
 
@@ -788,3 +819,95 @@ def accept_adjustment_suggestion(request):
     if suggestion.action == AdjustmentAction.ADJUST:
         services.apply_adjustment_suggestion(request.user, suggestion)
     return redirect("nutrition:dashboard")
+
+
+class CalculatorsHomeView(LoginRequiredMixin, View):
+    """A small hub linking to the standalone calculators below — see
+    docs/NUTRITION.md "Calculators". None of these need a nutrition
+    profile or an active goal, unlike the rest of this app, so this
+    page (unlike NutritionDashboardView) never redirects into the
+    onboarding wizard."""
+
+    def get(self, request):
+        return render(request, "nutrition/calculators_home.html")
+
+
+class _CalculatorView(LoginRequiredMixin, View):
+    """Shared shape for every calculator below: a GET-only form (no
+    side effect, so a plain GET with query-string input is the right
+    verb — bookmarkable/shareable, same convention as
+    FoodSearchResultsView), computing and showing a result inline on
+    the same page when the query string carries a complete, valid
+    submission."""
+
+    template_name: str
+    form_class: type
+
+    def get(self, request):
+        submitted = bool(request.GET)
+        form = self.form_class(request.GET or None, user=request.user)
+        result = self.compute(form) if submitted and form.is_valid() else None
+        return render(
+            request, self.template_name, {"form": form, "result": result, "submitted": submitted}
+        )
+
+    def compute(self, form):
+        raise NotImplementedError
+
+
+class BmrTdeeCalculatorView(_CalculatorView):
+    template_name = "nutrition/calculator_bmr_tdee.html"
+    form_class = BmrTdeeCalculatorForm
+
+    def compute(self, form):
+        bmr = energy.calculate_bmr(
+            weight_kg=form.canonical_weight_kg(),
+            height_cm=form.canonical_height_cm(),
+            age_years=form.cleaned_data["age_years"],
+            biological_sex=form.cleaned_data["biological_sex"],
+        )
+        tdee = energy.calculate_tdee(bmr, form.cleaned_data["activity_level"])
+        return {"bmr": bmr, "tdee": tdee}
+
+
+class MacroCalculatorView(_CalculatorView):
+    template_name = "nutrition/calculator_macros.html"
+    form_class = MacroCalculatorForm
+
+    def compute(self, form):
+        from . import macros as macros_module
+
+        return macros_module.calculate_macros(
+            weight_kg=form.canonical_weight_kg(),
+            daily_calories=form.cleaned_data["daily_calories"],
+            goal_type=form.cleaned_data["goal_type"],
+        )
+
+
+class BodyFatCalculatorView(_CalculatorView):
+    template_name = "nutrition/calculator_body_fat.html"
+    form_class = BodyFatCalculatorForm
+
+    def compute(self, form):
+        from . import calculators
+
+        return calculators.estimate_body_fat_percent(
+            biological_sex=form.cleaned_data["biological_sex"],
+            height_cm=form.canonical_height_cm(),
+            neck_cm=form.canonical_neck_cm(),
+            waist_cm=form.canonical_waist_cm(),
+            hip_cm=form.canonical_hip_cm(),
+        )
+
+
+class WaterIntakeCalculatorView(_CalculatorView):
+    template_name = "nutrition/calculator_water_intake.html"
+    form_class = WaterIntakeCalculatorForm
+
+    def compute(self, form):
+        from . import calculators
+
+        return calculators.estimate_daily_water_liters(
+            weight_kg=form.canonical_weight_kg(),
+            activity_level=form.cleaned_data["activity_level"],
+        )

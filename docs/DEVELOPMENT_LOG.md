@@ -1569,3 +1569,136 @@ into `master`.
   pushes or failed runs it takes to land a version bump, and it can
   no longer be silently starved by a fix-forward commit whose own
   `before` already carried the bump.
+
+**Nutrition & calorie tracking (`apps/nutrition`) — a whole new
+subsystem** (`docs/NUTRITION.md`): BMR/TDEE estimation (Mifflin-St
+Jeor, chosen over Harris-Benedict/Katch-McArdle — see the module's own
+docstring), a suggested-not-self-reported activity level, goal-based
+calorie/macro targets with two independent safety clamps (a rate cap
+as a fraction of bodyweight, an absolute calorie floor), a food
+diary, recipes, a diet-plan builder, and a weight-trend-based dynamic
+calorie-adjustment engine — all following the same "explainable,
+never a black box, user always has final control" shape already
+established by `apps.progression`. Historized exactly like
+`apps.records.PersonalRecord`: `NutritionGoal`/`NutritionTarget` rows
+are never mutated in place, only superseded (`ended_at` stamped, a new
+row created), enforced at the DB level via a partial unique
+constraint on "at most one open row per user". Built in 8 phased
+commits (models → energy engine → macros → weight-trend engine →
+service layer → onboarding/OpenFoodFacts/dashboard → food diary →
+recipes → diet builder → dashboard/nav), each with its own app-scoped
+test run, full details of every phase's design decisions in
+`docs/NUTRITION.md` itself rather than repeated here.
+
+- **OpenFoodFacts integration, on-demand only.** Asked mid-build
+  whether to bulk-import OFF's dataset (their 14-day-updating
+  mongodb/JSON dump) or fetch on demand — flagged this specifically
+  for a product decision rather than assuming, since bulk import has
+  real self-hosted infrastructure cost (disk/bandwidth/CPU for a
+  multi-GB dataset) that a fetch-on-demand design doesn't. Chosen: no
+  bulk import, fetch only when a user searches (`apps/nutrition/
+  openfoodfacts.py`), staleness-triggered refetch after 14 days, an
+  admin-controlled kill switch (`OpenFoodFactsSettings`) to disable
+  outbound requests entirely. A real (non-mocked) live call to OFF's
+  API returned 403 until a `User-Agent` header was added — their API
+  rejects requests with none.
+- **A real, if narrow, security-shaped bug found via testing, not
+  review**: every plain function-based view added across the whole
+  feature (12 of them — `diary_entry_edit/delete`, `recipe_create/
+  update/delete/ingredient_create/ingredient_delete/log`, `diet_plan_
+  delete/item_edit/log`, `accept_adjustment_suggestion`) had no
+  `@login_required`. Surfaced by a genuine test failure — `Anonymous
+  User` isn't a real Django `Model` instance, so `.filter(user=
+  request.user)` with an anonymous user can't be resolved by the
+  ORM's FK-prep code and raises `TypeError: Field 'id' expected a
+  number but got AnonymousUser` instead of gracefully matching
+  nothing. Fixed for all 12. While tracking this down, confirmed via
+  a live `curl` against the running container that the exact same bug
+  independently pre-exists in `apps.measurements` and `apps.programs`'
+  own equivalent function views (unrelated to this feature, left
+  unfixed as out of scope, flagged here for whoever picks it up).
+- Every `on_delete=PROTECT` on a user-owned line item referencing
+  another of that same user's rows (`NutritionTarget.goal`,
+  `RecipeIngredient.food`, `DiaryEntry.meal_slot/food/recipe`,
+  `DietPlanMeal.meal_slot`, `DietPlanItem.food/recipe`) turned out to
+  break whole-user deletion — Django's deletion collector checks
+  `PROTECT` before it resolves whether the referencing row will also
+  be deleted in the same operation, so deleting a user with any
+  nutrition data referencing their own foods/recipes/meal-slots raised
+  `ProtectedError`. Switched all of them to `CASCADE`, caught via a
+  direct `User.objects.filter(...).delete()` in test cleanup, not
+  code review.
+- 165 new UI strings translated across fi/sv/ru/it/et (790 total at
+  that point, 0 fuzzy/untranslated) for the whole feature: onboarding
+  wizard, food diary, recipes, diet builder, dashboard.
+- 165 tests, all passing, plus the full cross-app suite (826 tests)
+  as the final safety net for the whole feature. Live-verified the
+  complete flow over `curl` with a throwaway Finnish-language account:
+  signup → nutrition onboarding (body → activity → suggested activity
+  level → goal → review, real computed values at every step, e.g.
+  "Tavoite: -0.5 kg/viikko → 1856 kcal/vrk.") → dashboard → food
+  diary → foods → recipes → diet plans, every page rendering correctly
+  in Finnish.
+
+**A bug-hunting and calculators follow-up round**, asked for directly:
+"jatka kalori ja ruoka ominaisuuden kehittämistä ja korjaa bugit tai
+virheet mitä löydät esim UI:sta jne. lisää käyttäjien käyttöön myös
+erilaisia hyödyllisiä laskureita" (continue developing the calorie/
+food feature, fix any bugs found, add useful calculators). A live
+walkthrough of every CRUD flow (food/recipe/diet-plan create, edit,
+delete, log) via the Django test client surfaced three real,
+independent bugs:
+
+- `DiaryAddEntryView.post`'s OFF-import-failure error message
+  ("That food couldn't be imported — try again.") was a bare Python
+  string, never passed through `gettext` — `apps/nutrition/views.py`
+  had no translation import at all despite every other string in the
+  app going through one. Fixed; the string is now translated like
+  everything else.
+- `diet_plan_log` silently redirected back to the plan's own detail
+  page on an invalid form (e.g. a bad date), giving the user zero
+  indication anything had failed — inconsistent with `recipe_log`'s
+  own established pattern of re-rendering the page with the form
+  errors visible. Fixed to match; the shared meals-with-nutrition
+  query (previously duplicated between `DietPlanDetailView.get` and
+  this new error path) was factored into one helper,
+  `_diet_plan_meals_with_nutrition`, picking up a `Prefetch` with
+  `select_related("food", "recipe")` on the way that the original
+  `prefetch_related("items")` was missing (an N+1 on every item's
+  food/recipe lookup).
+- `food_list.html` had a dangling, always-empty third table column
+  (`<th></th>`/`<td></td>`) — dead markup from an action column that
+  was never implemented. Removed.
+
+**Four new standalone calculators** (`/nutrition/calculators/`,
+`apps/nutrition/calculators.py` + `_CalculatorView` subclasses in
+`views.py`): BMR/TDEE and macro split are thin forms in front of the
+*existing* `energy.py`/`macros.py` functions, not a second
+implementation of the same math; body fat % (U.S. Navy tape-measure
+method) and daily water intake are two small new pure functions,
+same no-DB/no-HTTP shape. Deliberately independent of the rest of the
+app — no `NutritionProfile`, goal, or target is read or written by
+any of them, so a user gets an answer without onboarding, without
+setting a goal, and without logging anything, which is the whole
+point. Each view is a plain `GET` with a query string (bookmarkable,
+same convention as `FoodSearchResultsView`'s live search), pre-filling
+from a signed-in user's own profile/goal/target where one exists but
+leaving every field editable. Reachable from a card on the nutrition
+dashboard and — since a user who hasn't onboarded can't reach the
+dashboard at all — a direct link on the onboarding wizard's own first
+step, so they're not a dead end behind a redirect. 24 new tests
+(pure-function monotonicity/edge-case tests for body fat %, exact
+Decimal-arithmetic tests for water intake, view-level tests checking
+each calculator's output matches calling `energy`/`macros` directly,
+unit-conversion round-trips, login-required regressions), 32 new UI
+strings translated across fi/sv/ru/it/et (822 total, 0
+fuzzy/untranslated). Live-verified in Finnish with real numbers
+end to end: a 30-year-old 80kg/180cm moderately-active male's BMR/TDEE
+calculator returned exactly 1780/2759 kcal (hand-verified against the
+Mifflin-St Jeor formula), the macro calculator's 2100kcal fat-loss
+split returned exactly 176.00g protein / 217.75g carbohydrate /
+58.33g fat, the body fat calculator returned 19.8% for a 38cm neck/
+90cm waist/180cm-tall man, and the water calculator returned exactly
+3.1 L/day for an 80kg moderately-active user (2640ml base + 500ml
+activity bonus). `ruff check .`, `makemigrations --check --dry-run`,
+and the full 826-plus-new-tests cross-app suite all pass.

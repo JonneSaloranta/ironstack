@@ -11,6 +11,7 @@ from django.utils import timezone
 
 from apps.measurements.models import BodyMeasurement, MeasurementType
 from apps.nutrition import (
+    calculators,
     diet_builder,
     energy,
     macros,
@@ -1711,6 +1712,19 @@ class DietPlanViewTests(TestCase):
             DiaryEntry.objects.filter(user=self.alice, date=date(2026, 1, 1)).exists()
         )
 
+    def test_an_invalid_date_shows_the_form_error_instead_of_silently_doing_nothing(self):
+        plan = diet_builder.build_diet_plan(
+            self.alice, name="Plan", goal=None, target_calories=800,
+            target_protein_grams=Decimal("1"), target_carbohydrate_grams=Decimal("1"),
+            target_fat_grams=Decimal("1"), meal_slots=[self.breakfast],
+        )
+        response = self.client.post(
+            reverse("nutrition:diet-plan-log", args=[plan.pk]), {"date": "not-a-date"}
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(response.context["log_form"].errors)
+        self.assertFalse(DiaryEntry.objects.filter(user=self.alice).exists())
+
     def test_requires_login(self):
         self.client.logout()
         response = self.client.get(reverse("nutrition:diet-plan-list"))
@@ -1847,4 +1861,259 @@ class AcceptAdjustmentSuggestionViewTests(TestCase):
     def test_requires_login(self):
         self.client.logout()
         response = self.client.post(reverse("nutrition:accept-adjustment-suggestion"))
+        self.assertEqual(response.status_code, 302)
+
+
+class EstimateBodyFatPercentTests(TestCase):
+    def test_a_bigger_waist_relative_to_neck_means_a_higher_estimate(self):
+        lean = calculators.estimate_body_fat_percent(
+            biological_sex=BiologicalSex.MALE,
+            height_cm=Decimal("180"),
+            neck_cm=Decimal("38"),
+            waist_cm=Decimal("80"),
+        )
+        heavier = calculators.estimate_body_fat_percent(
+            biological_sex=BiologicalSex.MALE,
+            height_cm=Decimal("180"),
+            neck_cm=Decimal("38"),
+            waist_cm=Decimal("100"),
+        )
+        self.assertLess(lean, heavier)
+
+    def test_male_result_is_in_a_plausible_range_for_realistic_measurements(self):
+        result = calculators.estimate_body_fat_percent(
+            biological_sex=BiologicalSex.MALE,
+            height_cm=Decimal("180"),
+            neck_cm=Decimal("38"),
+            waist_cm=Decimal("90"),
+        )
+        self.assertTrue(Decimal("10") < result < Decimal("30"))
+
+    def test_female_result_needs_hip_and_is_in_a_plausible_range(self):
+        result = calculators.estimate_body_fat_percent(
+            biological_sex=BiologicalSex.FEMALE,
+            height_cm=Decimal("165"),
+            neck_cm=Decimal("32"),
+            waist_cm=Decimal("75"),
+            hip_cm=Decimal("100"),
+        )
+        self.assertTrue(Decimal("10") < result < Decimal("40"))
+
+    def test_female_without_hip_returns_none_rather_than_crashing(self):
+        result = calculators.estimate_body_fat_percent(
+            biological_sex=BiologicalSex.FEMALE,
+            height_cm=Decimal("165"),
+            neck_cm=Decimal("32"),
+            waist_cm=Decimal("75"),
+        )
+        self.assertIsNone(result)
+
+    def test_a_waist_not_bigger_than_the_neck_returns_none_rather_than_a_nonsense_negative(self):
+        result = calculators.estimate_body_fat_percent(
+            biological_sex=BiologicalSex.MALE,
+            height_cm=Decimal("180"),
+            neck_cm=Decimal("40"),
+            waist_cm=Decimal("35"),
+        )
+        self.assertIsNone(result)
+
+
+class EstimateDailyWaterLitersTests(TestCase):
+    """Plain Decimal arithmetic — exact, hand-derivable expected values."""
+
+    def test_sedentary_80kg_is_exactly_the_base_rate(self):
+        result = calculators.estimate_daily_water_liters(Decimal("80"), ActivityLevel.SEDENTARY)
+        self.assertEqual(result, Decimal("2.6"))  # 80 * 33ml = 2640ml, +0 bonus
+
+    def test_moderate_80kg_adds_the_moderate_bonus(self):
+        result = calculators.estimate_daily_water_liters(Decimal("80"), ActivityLevel.MODERATE)
+        self.assertEqual(result, Decimal("3.1"))  # 2640ml + 500ml = 3140ml
+
+    def test_very_active_80kg_adds_the_largest_bonus(self):
+        result = calculators.estimate_daily_water_liters(
+            Decimal("80"), ActivityLevel.VERY_ACTIVE
+        )
+        self.assertEqual(result, Decimal("3.6"))  # 2640ml + 1000ml = 3640ml
+
+
+class CalculatorsHomeViewTests(TestCase):
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        self.client.login(username="alice", password="s3cret-pass")
+
+    def test_renders_without_a_nutrition_profile(self):
+        # The whole point of the calculators is that they don't require
+        # onboarding — unlike NutritionDashboardView, this must not
+        # redirect an un-onboarded user into the wizard.
+        self.assertFalse(hasattr(self.alice, "nutrition_profile"))
+        response = self.client.get(reverse("nutrition:calculators-home"))
+        self.assertEqual(response.status_code, 200)
+
+    def test_requires_login(self):
+        self.client.logout()
+        response = self.client.get(reverse("nutrition:calculators-home"))
+        self.assertEqual(response.status_code, 302)
+
+
+class BmrTdeeCalculatorViewTests(TestCase):
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        self.client.login(username="alice", password="s3cret-pass")
+
+    def test_blank_get_shows_the_form_with_no_result(self):
+        response = self.client.get(reverse("nutrition:calculator-bmr-tdee"))
+        self.assertEqual(response.status_code, 200)
+        self.assertIsNone(response.context["result"])
+
+    def test_a_complete_submission_matches_calling_energy_directly(self):
+        response = self.client.get(
+            reverse("nutrition:calculator-bmr-tdee"),
+            {
+                "biological_sex": BiologicalSex.MALE,
+                "age_years": 30,
+                "height_cm": "180",
+                "weight_kg": "80",
+                "activity_level": ActivityLevel.MODERATE,
+            },
+        )
+        expected_bmr = energy.calculate_bmr(Decimal("80"), Decimal("180"), 30, BiologicalSex.MALE)
+        expected_tdee = energy.calculate_tdee(expected_bmr, ActivityLevel.MODERATE)
+        self.assertEqual(response.context["result"]["bmr"], expected_bmr)
+        self.assertEqual(response.context["result"]["tdee"], expected_tdee)
+
+    def test_imperial_units_are_converted_before_reaching_the_energy_module(self):
+        self.alice.unit_system = "imperial"
+        self.alice.save(update_fields=["unit_system"])
+        response = self.client.get(
+            reverse("nutrition:calculator-bmr-tdee"),
+            {
+                "biological_sex": BiologicalSex.MALE,
+                "age_years": 30,
+                "height_cm": "70.9",  # ~180cm in inches
+                "weight_kg": "176.4",  # ~80kg in lb
+                "activity_level": ActivityLevel.SEDENTARY,
+            },
+        )
+        # Close to (not exactly equal to, thanks to rounding round-trips)
+        # the metric result for the same real body.
+        expected_bmr = energy.calculate_bmr(Decimal("80"), Decimal("180"), 30, BiologicalSex.MALE)
+        self.assertAlmostEqual(
+            int(response.context["result"]["bmr"]), int(expected_bmr), delta=5
+        )
+
+    def test_invalid_input_shows_errors_instead_of_crashing(self):
+        response = self.client.get(
+            reverse("nutrition:calculator-bmr-tdee"),
+            {
+                "biological_sex": BiologicalSex.MALE,
+                "age_years": "not a number",
+                "height_cm": "180",
+                "weight_kg": "80",
+                "activity_level": ActivityLevel.MODERATE,
+            },
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertIsNone(response.context["result"])
+        self.assertTrue(response.context["form"].errors)
+
+    def test_requires_login(self):
+        self.client.logout()
+        response = self.client.get(reverse("nutrition:calculator-bmr-tdee"))
+        self.assertEqual(response.status_code, 302)
+
+
+class MacroCalculatorViewTests(TestCase):
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        self.client.login(username="alice", password="s3cret-pass")
+
+    def test_a_complete_submission_matches_calling_macros_directly(self):
+        response = self.client.get(
+            reverse("nutrition:calculator-macros"),
+            {
+                "weight_kg": "80",
+                "daily_calories": 2100,
+                "goal_type": GoalType.FAT_LOSS_MODERATE,
+            },
+        )
+        expected = macros.calculate_macros(Decimal("80"), 2100, GoalType.FAT_LOSS_MODERATE)
+        self.assertEqual(response.context["result"].protein_grams, expected.protein_grams)
+        self.assertEqual(response.context["result"].fat_grams, expected.fat_grams)
+        self.assertEqual(
+            response.context["result"].carbohydrate_grams, expected.carbohydrate_grams
+        )
+
+    def test_requires_login(self):
+        self.client.logout()
+        response = self.client.get(reverse("nutrition:calculator-macros"))
+        self.assertEqual(response.status_code, 302)
+
+
+class BodyFatCalculatorViewTests(TestCase):
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        self.client.login(username="alice", password="s3cret-pass")
+
+    def test_a_complete_male_submission_shows_a_result(self):
+        response = self.client.get(
+            reverse("nutrition:calculator-body-fat"),
+            {
+                "biological_sex": BiologicalSex.MALE,
+                "height_cm": "180",
+                "neck_cm": "38",
+                "waist_cm": "90",
+            },
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertIsNotNone(response.context["result"])
+
+    def test_female_without_hip_shows_a_validation_error_not_a_crash(self):
+        response = self.client.get(
+            reverse("nutrition:calculator-body-fat"),
+            {
+                "biological_sex": BiologicalSex.FEMALE,
+                "height_cm": "165",
+                "neck_cm": "32",
+                "waist_cm": "75",
+            },
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertIsNone(response.context["result"])
+        self.assertIn("hip_cm", response.context["form"].errors)
+
+    def test_a_nonsensical_waist_shows_the_empty_state_not_a_crash(self):
+        response = self.client.get(
+            reverse("nutrition:calculator-body-fat"),
+            {
+                "biological_sex": BiologicalSex.MALE,
+                "height_cm": "180",
+                "neck_cm": "40",
+                "waist_cm": "35",
+            },
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertIsNone(response.context["result"])
+
+    def test_requires_login(self):
+        self.client.logout()
+        response = self.client.get(reverse("nutrition:calculator-body-fat"))
+        self.assertEqual(response.status_code, 302)
+
+
+class WaterIntakeCalculatorViewTests(TestCase):
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        self.client.login(username="alice", password="s3cret-pass")
+
+    def test_a_complete_submission_matches_calling_calculators_directly(self):
+        response = self.client.get(
+            reverse("nutrition:calculator-water-intake"),
+            {"weight_kg": "80", "activity_level": ActivityLevel.MODERATE},
+        )
+        expected = calculators.estimate_daily_water_liters(Decimal("80"), ActivityLevel.MODERATE)
+        self.assertEqual(response.context["result"], expected)
+
+    def test_requires_login(self):
+        self.client.logout()
+        response = self.client.get(reverse("nutrition:calculator-water-intake"))
         self.assertEqual(response.status_code, 302)

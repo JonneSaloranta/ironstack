@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Water intake calculator" %} — IronStack{% endblock %}
+{% block content %}
+<div class="top-bar">
+  <h1 style="margin:0;">{% trans "Water intake calculator" %}</h1>
+</div>
+<p class="text-muted">{% trans "A rough daily fluid target based on bodyweight and activity — real needs vary with climate and sweat rate, so treat this as a starting point." %}</p>
+
+<form class="card" method="get">
+  {{ form.non_field_errors }}
+  {% for field in form %}
+    <div class="field">
+      {{ field.label_tag }}
+      {{ field }}
+      {% if field.errors %}<p class="field-error">{{ field.errors|striptags }}</p>{% endif %}
+    </div>
+  {% endfor %}
+  <button type="submit">{% trans "Calculate" %}</button>
+</form>
+
+{% if result %}
+  <div class="card">
+    <strong>{% trans "Result" %}</strong>
+    <p style="font-size:1.5rem; font-weight:bold; margin:0.25rem 0;">{{ result }} L / {% trans "day" %}</p>
+  </div>
+{% endif %}
+
+<p><a class="button-secondary" href="{% url 'nutrition:calculators-home' %}">&larr; {% trans "Back to calculators" %}</a></p>
+{% endblock %}

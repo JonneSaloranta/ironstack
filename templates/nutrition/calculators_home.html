@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Calculators" %} — IronStack{% endblock %}
+{% block content %}
+<div class="top-bar">
+  <h1 style="margin:0;">{% trans "Calculators" %}</h1>
+</div>
+<p class="text-muted">{% trans "Quick, standalone estimates — none of these are saved or change your targets." %}</p>
+
+<div class="card card-action-row">
+  <div>
+    <strong>{% trans "BMR / TDEE calculator" %}</strong>
+    <p class="text-muted">{% trans "How many calories your body burns at rest, and in total." %}</p>
+  </div>
+  <a class="button-secondary" href="{% url 'nutrition:calculator-bmr-tdee' %}">{% trans "Open" %}</a>
+</div>
+
+<div class="card card-action-row">
+  <div>
+    <strong>{% trans "Macro calculator" %}</strong>
+    <p class="text-muted">{% trans "Split a calorie target into protein, carbohydrates, and fat." %}</p>
+  </div>
+  <a class="button-secondary" href="{% url 'nutrition:calculator-macros' %}">{% trans "Open" %}</a>
+</div>
+
+<div class="card card-action-row">
+  <div>
+    <strong>{% trans "Body fat calculator" %}</strong>
+    <p class="text-muted">{% trans "Estimate body fat percentage from a tape measure (U.S. Navy method)." %}</p>
+  </div>
+  <a class="button-secondary" href="{% url 'nutrition:calculator-body-fat' %}">{% trans "Open" %}</a>
+</div>
+
+<div class="card card-action-row">
+  <div>
+    <strong>{% trans "Water intake calculator" %}</strong>
+    <p class="text-muted">{% trans "A rough daily fluid target based on your bodyweight and activity." %}</p>
+  </div>
+  <a class="button-secondary" href="{% url 'nutrition:calculator-water-intake' %}">{% trans "Open" %}</a>
+</div>
+
+<p><a class="button-secondary" href="{% url 'nutrition:dashboard' %}">&larr; {% trans "Back to nutrition" %}</a></p>
+{% endblock %}

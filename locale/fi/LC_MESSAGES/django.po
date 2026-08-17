@@ -651,6 +651,237 @@ msgstr "yksikkötyyppi"
 msgid "recorded at"
 msgstr "kirjattu"
 
+msgid "a %(job)s job"
+msgstr "%(job)s-työ"
+
+msgid "~%(steps)s steps/day"
+msgstr "~%(steps)s askelta/pv"
+
+msgid "%(count)s gym sessions a week"
+msgstr "%(count)s salikäyntiä viikossa"
+
+msgid "other regular exercise"
+msgstr "muuta säännöllistä liikuntaa"
+
+msgid "Suggested: %(label)s — %(factors)s"
+msgstr "Ehdotus: %(label)s — %(factors)s"
+
+msgid "Suggested: %(label)s — no activity details given yet"
+msgstr "Ehdotus: %(label)s — aktiivisuustietoja ei vielä annettu"
+
+msgid "Estimated maintenance (TDEE): %(tdee)s kcal/day."
+msgstr "Arvioitu ylläpitokalorimäärä (TDEE): %(tdee)s kcal/vrk."
+
+msgid "Your requested rate was reduced to a safer %(rate)s kg/week (capped at %(fraction)s%% of bodyweight/week)."
+msgstr "Pyytämääsi tahtia pienennettiin turvallisemmaksi, %(rate)s kg/viikko (rajattu %(fraction)s %% painosta/viikko)."
+
+msgid "Your target rate would need %(raw)s kcal/day, below a safe minimum — capped at %(floor)s kcal/day."
+msgstr "Tavoitetahtisi vaatisi %(raw)s kcal/vrk, mikä alittaa turvallisen minimin — rajattu %(floor)s kcal/vrk:aan."
+
+msgid "Target: %(rate)s kg/week → %(calories)s kcal/day."
+msgstr "Tavoite: %(rate)s kg/viikko → %(calories)s kcal/vrk."
+
+msgid "Biological sex"
+msgstr "Biologinen sukupuoli"
+
+msgid "Used by the BMR formula (Mifflin-St Jeor) — a physiological input, not a gender-identity question."
+msgstr "Käytetään BMR-kaavassa (Mifflin-St Jeor) — fysiologinen tieto, ei sukupuoli-identiteettikysymys."
+
+msgid "Date of birth"
+msgstr "Syntymäaika"
+
+msgid "Your job"
+msgstr "Ammattisi"
+
+msgid "Average daily steps (if you know it)"
+msgstr "Keskimääräiset päivittäiset askeleet (jos tiedossa)"
+
+msgid "Gym sessions per week"
+msgstr "Salikäyntejä viikossa"
+
+msgid "Typical session length (minutes)"
+msgstr "Tyypillinen treenin kesto (minuuttia)"
+
+msgid "Other exercise (minutes/week)"
+msgstr "Muu liikunta (minuuttia/viikko)"
+
+msgid "Current daily calories, if you already track this"
+msgstr "Nykyinen päivittäinen kalorimäärä, jos seuraat sitä jo"
+
+msgid "Used only to compare against this app's own estimate, never as an input."
+msgstr "Käytetään vain vertailuun sovelluksen omaan arvioon, ei koskaan syötteenä."
+
+msgid "Activity level"
+msgstr "Aktiivisuustaso"
+
+msgid "Goal"
+msgstr "Tavoite"
+
+msgid "Target weight (%(unit)s)"
+msgstr "Tavoitepaino (%(unit)s)"
+
+msgid "Target rate (kg/week)"
+msgstr "Tavoitetahti (kg/viikko)"
+
+msgid "Negative to lose weight, positive to gain. Pre-filled from your goal below — capped at a safe rate for your bodyweight."
+msgstr "Negatiivinen laihtuaksesi, positiivinen lihoaksesi. Esitäytetty alla olevan tavoitteesi mukaan — rajattu painollesi turvalliseen tahtiin."
+
+msgid "All the nutrition values below are for this amount, in the unit chosen next to it — e.g. \"100 g\" if the values are per 100 grams."
+msgstr "Kaikki alla olevat ravintoarvot koskevat tätä määrää, sen vieressä valitussa yksikössä — esim. \"100 g\", jos arvot ovat sataa grammaa kohden."
+
+msgid "Search foods"
+msgstr "Hae ruokia"
+
+msgid "Pick a food to add."
+msgstr "Valitse lisättävä ruoka."
+
+msgid "Meal"
+msgstr "Ateria"
+
+msgid "Servings"
+msgstr "Annokset"
+
+msgid "Plan name"
+msgstr "Suunnitelman nimi"
+
+msgid "Daily calories"
+msgstr "Päivittäiset kalorit"
+
+msgid "Protein (g)"
+msgstr "Proteiini (g)"
+
+msgid "Carbohydrates (g)"
+msgstr "Hiilihydraatit (g)"
+
+msgid "Fat (g)"
+msgstr "Rasva (g)"
+
+msgid "Which meals?"
+msgstr "Mitkä ateriat?"
+
+msgid "Pick either a food or a recipe, not both or neither."
+msgstr "Valitse joko ruoka tai resepti, ei molempia eikä kumpaakaan."
+
+msgid "Log for date"
+msgstr "Kirjaa päivälle"
+
+msgid "Age (years)"
+msgstr "Ikä (vuotta)"
+
+msgid "Neck circumference"
+msgstr "Kaulan ympärysmitta"
+
+msgid "Waist circumference"
+msgstr "Vyötärön ympärysmitta"
+
+msgid "Hip circumference"
+msgstr "Lantion ympärysmitta"
+
+msgid "Hip circumference is required for the women's formula."
+msgstr "Lantion ympärysmitta vaaditaan naisten kaavassa."
+
+msgid "Male"
+msgstr "Mies"
+
+msgid "Female"
+msgstr "Nainen"
+
+msgid "Desk job, mostly sitting"
+msgstr "Toimistotyö, enimmäkseen istumista"
+
+msgid "On my feet some of the day"
+msgstr "Jalkeilla osan päivästä"
+
+msgid "On my feet most of the day"
+msgstr "Jalkeilla suurimman osan päivästä"
+
+msgid "Physically demanding / manual labor"
+msgstr "Fyysisesti raskas / ruumiillinen työ"
+
+msgid "Sedentary"
+msgstr "Istuvainen"
+
+msgid "Lightly active"
+msgstr "Kevyesti aktiivinen"
+
+msgid "Moderately active"
+msgstr "Kohtalaisen aktiivinen"
+
+msgid "Active"
+msgstr "Aktiivinen"
+
+msgid "Very active"
+msgstr "Erittäin aktiivinen"
+
+msgid "Fat loss — aggressive"
+msgstr "Rasvanpudotus — aggressiivinen"
+
+msgid "Fat loss — moderate"
+msgstr "Rasvanpudotus — kohtalainen"
+
+msgid "Fat loss — conservative"
+msgstr "Rasvanpudotus — maltillinen"
+
+msgid "Maintenance"
+msgstr "Ylläpito"
+
+msgid "Muscle gain — lean bulk"
+msgstr "Lihasmassan kasvatus — kevyt lihotus"
+
+msgid "Muscle gain — moderate bulk"
+msgstr "Lihasmassan kasvatus — kohtalainen lihotus"
+
+msgid "Muscle gain — aggressive bulk"
+msgstr "Lihasmassan kasvatus — aggressiivinen lihotus"
+
+msgid "Calculated from goal"
+msgstr "Laskettu tavoitteesta"
+
+msgid "Set manually"
+msgstr "Asetettu manuaalisesti"
+
+msgid "Accepted a suggested adjustment"
+msgstr "Hyväksytty ehdotettu säätö"
+
+msgid "g"
+msgstr "g"
+
+msgid "ml"
+msgstr "ml"
+
+msgid "piece"
+msgstr "kpl"
+
+msgid "Stored instead of a raw age, so it never goes stale."
+msgstr "Tallennettu iän sijaan, jotta tieto ei koskaan vanhene."
+
+msgid "If you already track this, tell us — used only to compare against this app's own estimate, never as an input to it."
+msgstr "Jos seuraat tätä jo, kerro meille — käytetään vain vertailuun sovelluksen omaan arvioon, ei koskaan syötteenä."
+
+msgid "Null for the built-in default meal slots."
+msgstr "Tyhjä (null) sisäänrakennetuille oletusaterioille."
+
+msgid "Log either a food or a recipe, not both or neither."
+msgstr "Kirjaa joko ruoka tai resepti, ei molempia eikä kumpaakaan."
+
+msgid "Use either a food or a recipe, not both or neither."
+msgstr "Käytä joko ruokaa tai reseptiä, ei molempia eikä kumpaakaan."
+
+msgid "Set a nutrition goal to get adjustment suggestions."
+msgstr "Aseta ravintotavoite saadaksesi säätöehdotuksia."
+
+msgid "Not enough logged weight yet — keep logging your weight regularly and check back in a couple of weeks."
+msgstr "Painoa ei ole vielä kirjattu tarpeeksi — jatka painon säännöllistä kirjaamista ja tarkista tilanne muutaman viikon kuluttua."
+
+msgid "Target: %(target)s kg/week. Actual trend: %(actual)s kg/week — on track."
+msgstr "Tavoite: %(target)s kg/viikko. Toteutunut trendi: %(actual)s kg/viikko — menossa oikeaan suuntaan."
+
+msgid "Target: %(target)s kg/week. Actual trend: %(actual)s kg/week over the last %(days)s days. Suggested adjustment: %(delta)+d kcal/day."
+msgstr "Tavoite: %(target)s kg/viikko. Toteutunut trendi: %(actual)s kg/viikko viimeisen %(days)s päivän aikana. Ehdotettu säätö: %(delta)+d kcal/vrk."
+
+msgid "That food couldn't be imported — try again."
+msgstr "Tätä ruokaa ei voitu tuoda — yritä uudelleen."
+
 msgid "Save as a personal template"
 msgstr "Tallenna henkilökohtaisena mallina"
 
@@ -674,9 +905,6 @@ msgstr "Prosenttitavoite"
 
 msgid "1RM"
 msgstr "1RM"
-
-msgid "Target weight (%(unit)s)"
-msgstr "Tavoitepaino (%(unit)s)"
 
 msgid "Weight increment (%(unit)s)"
 msgstr "Painon lisäys (%(unit)s)"
@@ -797,9 +1025,6 @@ msgstr "RPE/RIR-pohjainen"
 
 msgid "Rep range"
 msgstr "Toistoväli"
-
-msgid "Maintenance"
-msgstr "Ylläpito"
 
 msgid "Manual"
 msgstr "Manuaalinen"
@@ -1300,6 +1525,9 @@ msgstr "Päävalikko"
 msgid "Home"
 msgstr "Koti"
 
+msgid "Nutrition"
+msgstr "Ravinto"
+
 msgid "Workout"
 msgstr "Treeni"
 
@@ -1594,6 +1822,381 @@ msgstr "Ei mittauksia vielä"
 msgid "No measurement types yet."
 msgstr "Mittaustyyppejä ei ole vielä."
 
+msgid "Your foods"
+msgstr "Omat ruokasi"
+
+msgid "Quantity"
+msgstr "Määrä"
+
+msgid "Add"
+msgstr "Lisää"
+
+msgid "From OpenFoodFacts"
+msgstr "OpenFoodFactsista"
+
+msgid "Import & add"
+msgstr "Tuo ja lisää"
+
+msgid "Nothing found."
+msgstr "Ei löytynyt mitään."
+
+msgid "Create a custom food"
+msgstr "Luo oma ruoka"
+
+msgid "Step %(step)s of 5"
+msgstr "Vaihe %(step)s / 5"
+
+msgid "BMR / TDEE calculator"
+msgstr "BMR/TDEE-laskuri"
+
+msgid "BMR is roughly what you'd burn lying still all day; TDEE adds your activity on top. Both are estimates (Mifflin-St Jeor)."
+msgstr "BMR on suunnilleen se, mitä kuluttaisit maaten paikallaan koko päivän; TDEE lisää päälle aktiivisuutesi. Molemmat ovat arvioita (Mifflin-St Jeor)."
+
+msgid "Calculate"
+msgstr "Laske"
+
+msgid "Result"
+msgstr "Tulos"
+
+msgid "BMR (at rest)"
+msgstr "BMR (levossa)"
+
+msgid "TDEE (with activity)"
+msgstr "TDEE (aktiivisuuden kanssa)"
+
+msgid "Back to calculators"
+msgstr "Takaisin laskureihin"
+
+msgid "Body fat calculator"
+msgstr "Kehon rasvaprosenttilaskuri"
+
+msgid "The U.S. Navy tape-measure method — just a tape measure, no calipers or bioimpedance scale needed. An estimate, typically within a few percentage points of a DEXA scan."
+msgstr "Yhdysvaltain laivaston mittanauhamenetelmä — pelkkä mittanauha riittää, ei tarvita rasvapihtejä tai bioimpedanssivaakaa. Arvio, joka on tyypillisesti muutaman prosenttiyksikön päässä DEXA-mittauksesta."
+
+msgid "Couldn't estimate this from those measurements — double-check them (waist should be larger than neck)."
+msgstr "Tätä ei voitu arvioida näistä mitoista — tarkista ne (vyötärön tulisi olla kaulaa suurempi)."
+
+msgid "Macro calculator"
+msgstr "Makrolaskuri"
+
+msgid "Splits a calorie target into protein, carbohydrates, and fat using this app's own default ratios for the goal you pick."
+msgstr "Jakaa kalotitavoitteen proteiiniin, hiilihydraatteihin ja rasvaan käyttäen sovelluksen omia oletussuhteita valitsemallesi tavoitteelle."
+
+msgid "Protein"
+msgstr "Proteiini"
+
+msgid "Carbohydrates"
+msgstr "Hiilihydraatit"
+
+msgid "Fat"
+msgstr "Rasva"
+
+msgid "This calorie target is low enough that protein and/or fat had to be reduced below their usual defaults to fit."
+msgstr "Tämä kaloritavoite on niin matala, että proteiinia ja/tai rasvaa piti vähentää tavallista pienemmäksi, jotta ne mahtuvat."
+
+msgid "Water intake calculator"
+msgstr "Vedenjuontilaskuri"
+
+msgid "A rough daily fluid target based on bodyweight and activity — real needs vary with climate and sweat rate, so treat this as a starting point."
+msgstr "Karkea päivittäinen nesteytystavoite painon ja aktiivisuuden perusteella — todellinen tarve vaihtelee ilmaston ja hikoilun mukaan, joten pidä tätä lähtökohtana."
+
+msgid "day"
+msgstr "vrk"
+
+msgid "Calculators"
+msgstr "Laskurit"
+
+msgid "Quick, standalone estimates — none of these are saved or change your targets."
+msgstr "Nopeita, itsenäisiä arvioita — mitään näistä ei tallenneta eivätkä ne muuta tavoitteitasi."
+
+msgid "How many calories your body burns at rest, and in total."
+msgstr "Kuinka monta kaloria kehosi kuluttaa levossa ja yhteensä."
+
+msgid "Split a calorie target into protein, carbohydrates, and fat."
+msgstr "Jaa kaloritavoite proteiiniin, hiilihydraatteihin ja rasvaan."
+
+msgid "Estimate body fat percentage from a tape measure (U.S. Navy method)."
+msgstr "Arvioi kehon rasvaprosentti mittanauhalla (Yhdysvaltain laivaston menetelmä)."
+
+msgid "A rough daily fluid target based on your bodyweight and activity."
+msgstr "Karkea päivittäinen nestetavoite painosi ja aktiivisuutesi perusteella."
+
+msgid "Back to nutrition"
+msgstr "Takaisin ravintoon"
+
+msgid "Training day"
+msgstr "Treenipäivä"
+
+msgid "Rest day"
+msgstr "Lepopäivä"
+
+msgid "Today so far"
+msgstr "Tähän mennessä tänään"
+
+msgid "Calories"
+msgstr "Kalorit"
+
+msgid "Open food diary"
+msgstr "Avaa ruokapäiväkirja"
+
+msgid "Is your current target working?"
+msgstr "Toimiiko nykyinen tavoitteesi?"
+
+msgid "High confidence"
+msgstr "Korkea luotettavuus"
+
+msgid "Medium confidence"
+msgstr "Kohtalainen luotettavuus"
+
+msgid "Low confidence"
+msgstr "Matala luotettavuus"
+
+msgid "Adjust to %(calories)s kcal/day"
+msgstr "Säädä %(calories)s kcal:aan/vrk"
+
+msgid "Weight trend"
+msgstr "Painotrendi"
+
+msgid "Daily target"
+msgstr "Päivätavoite"
+
+msgid "%(calories)s kcal/day"
+msgstr "%(calories)s kcal/vrk"
+
+msgid "Current goal"
+msgstr "Nykyinen tavoite"
+
+msgid "Recipes & diet plans"
+msgstr "Reseptit ja ruokavaliosuunnitelmat"
+
+msgid "Manage your recipes or build a full diet plan."
+msgstr "Hallitse reseptejäsi tai rakenna koko ruokavaliosuunnitelma."
+
+msgid "Recipes"
+msgstr "Reseptit"
+
+msgid "Diet plans"
+msgstr "Ruokavaliosuunnitelmat"
+
+msgid "BMR/TDEE, macros, body fat, and water intake — quick standalone estimates."
+msgstr "BMR/TDEE, makrot, rasvaprosentti ja vedenjuonti — nopeita, itsenäisiä arvioita."
+
+msgid "Add food"
+msgstr "Lisää ruoka"
+
+msgid "e.g. chicken breast"
+msgstr "esim. kananrinta"
+
+msgid "Back to diary"
+msgstr "Takaisin päiväkirjaan"
+
+msgid "Food diary"
+msgstr "Ruokapäiväkirja"
+
+msgid "Previous day"
+msgstr "Edellinen päivä"
+
+msgid "Next day"
+msgstr "Seuraava päivä"
+
+msgid "Today's nutrition"
+msgstr "Tämän päivän ravinto"
+
+msgid "Remove this entry?"
+msgstr "Poistetaanko tämä merkintä?"
+
+msgid "Nothing logged yet."
+msgstr "Ei vielä kirjauksia."
+
+msgid "+ Add food"
+msgstr "+ Lisää ruoka"
+
+msgid "Manage foods"
+msgstr "Hallitse ruokia"
+
+msgid "Edit entry"
+msgstr "Muokkaa merkintää"
+
+msgid "protein"
+msgstr "proteiini"
+
+msgid "carbs"
+msgstr "hiilarit"
+
+msgid "fat"
+msgstr "rasva"
+
+msgid "servings"
+msgstr "annosta"
+
+msgid "Swap"
+msgstr "Vaihda"
+
+msgid "Nothing suggested yet — add some foods or recipes first."
+msgstr "Ei vielä ehdotuksia — lisää ensin ruokia tai reseptejä."
+
+msgid "Log this plan to your diary"
+msgstr "Kirjaa tämä suunnitelma päiväkirjaasi"
+
+msgid "Log it"
+msgstr "Kirjaa"
+
+msgid "Back to diet plans"
+msgstr "Takaisin ruokavaliosuunnitelmiin"
+
+msgid "Delete this plan?"
+msgstr "Poistetaanko tämä suunnitelma?"
+
+msgid "Delete plan"
+msgstr "Poista suunnitelma"
+
+msgid "New diet plan"
+msgstr "Uusi ruokavaliosuunnitelma"
+
+msgid "Build a diet plan"
+msgstr "Rakenna ruokavaliosuunnitelma"
+
+msgid "We'll suggest one food or recipe per meal from your own library, scaled to fit — you can swap any of them afterward."
+msgstr "Ehdotamme yhtä ruokaa tai reseptiä per ateria omasta kirjastostasi, skaalattuna sopivaksi — voit vaihtaa minkä tahansa niistä jälkeenpäin."
+
+msgid "Generate plan"
+msgstr "Luo suunnitelma"
+
+msgid "Swap item"
+msgstr "Vaihda kohde"
+
+msgid "Back to plan"
+msgstr "Takaisin suunnitelmaan"
+
+msgid "+ New plan"
+msgstr "+ Uusi suunnitelma"
+
+msgid "No diet plans yet."
+msgstr "Ei vielä ruokavaliosuunnitelmia."
+
+msgid "New food"
+msgstr "Uusi ruoka"
+
+msgid "Back to foods"
+msgstr "Takaisin ruokiin"
+
+msgid "Foods"
+msgstr "Ruoat"
+
+msgid "+ New food"
+msgstr "+ Uusi ruoka"
+
+msgid "Search"
+msgstr "Hae"
+
+msgid "No foods yet."
+msgstr "Ei vielä ruokia."
+
+msgid "Nutrition setup"
+msgstr "Ravinnon käyttöönotto"
+
+msgid "How active are you?"
+msgstr "Kuinka aktiivinen olet?"
+
+msgid "Everything here is optional — the more you tell us, the better the estimate. We'll suggest an activity level from your answers, not ask you to guess it yourself."
+msgstr "Kaikki tässä on vapaaehtoista — mitä enemmän kerrot, sitä tarkempi arvio. Ehdotamme aktiivisuustasoa vastaustesi perusteella emmekä pyydä sinua arvaamaan sitä itse."
+
+msgid "Continue"
+msgstr "Jatka"
+
+msgid "Confirm your activity level"
+msgstr "Vahvista aktiivisuustasosi"
+
+msgid "This is only a suggestion — change it if you know it's wrong."
+msgstr "Tämä on vain ehdotus — muuta sitä, jos tiedät sen olevan väärin."
+
+msgid "Let's set up your nutrition"
+msgstr "Otetaan ravinnonseuranta käyttöön"
+
+msgid "A few questions about your body — used to estimate how many calories you need."
+msgstr "Muutama kysymys kehostasi — käytetään arvioimaan, kuinka paljon tarvitset kaloreita."
+
+msgid "Just want a quick number without setting anything up?"
+msgstr "Haluatko vain nopean luvun ilman mitään käyttöönottoa?"
+
+msgid "Try the calculators"
+msgstr "Kokeile laskureita"
+
+msgid "What's your goal?"
+msgstr "Mikä on tavoitteesi?"
+
+msgid "See my targets"
+msgstr "Näytä tavoitteeni"
+
+msgid "Your estimated targets"
+msgstr "Arvioidut tavoitteesi"
+
+msgid "These are estimates, not exact figures — you'll be able to see how well they're actually working once you've logged some data, and adjust anytime."
+msgstr "Nämä ovat arvioita, ei tarkkoja lukuja — näet, kuinka hyvin ne todella toimivat, kun olet kirjannut dataa, ja voit säätää niitä milloin tahansa."
+
+msgid "Save and start tracking"
+msgstr "Tallenna ja aloita seuranta"
+
+msgid "Ingredients"
+msgstr "Ainesosat"
+
+msgid "Remove this ingredient?"
+msgstr "Poistetaanko tämä ainesosa?"
+
+msgid "Remove"
+msgstr "Poista"
+
+msgid "No ingredients yet."
+msgstr "Ei vielä ainesosia."
+
+msgid "+ Add ingredient"
+msgstr "+ Lisää ainesosa"
+
+msgid "Total"
+msgstr "Yhteensä"
+
+msgid "Per serving (of %(servings)s)"
+msgstr "Per annos (%(servings)s annoksesta)"
+
+msgid "Log to diary"
+msgstr "Kirjaa päiväkirjaan"
+
+msgid "Log today"
+msgstr "Kirjaa tänään"
+
+msgid "Back to recipes"
+msgstr "Takaisin resepteihin"
+
+msgid "Delete this recipe?"
+msgstr "Poistetaanko tämä resepti?"
+
+msgid "Delete recipe"
+msgstr "Poista resepti"
+
+msgid "Recipe"
+msgstr "Resepti"
+
+msgid "Edit recipe"
+msgstr "Muokkaa reseptiä"
+
+msgid "New recipe"
+msgstr "Uusi resepti"
+
+msgid "Add ingredient"
+msgstr "Lisää ainesosa"
+
+msgid "Add ingredient to %(name)s"
+msgstr "Lisää ainesosa reseptiin %(name)s"
+
+msgid "Back to recipe"
+msgstr "Takaisin reseptiin"
+
+msgid "+ New recipe"
+msgstr "+ Uusi resepti"
+
+msgid "No recipes yet."
+msgstr "Ei vielä reseptejä."
+
 msgid "Add exercise"
 msgstr "Lisää liike"
 
@@ -1810,15 +2413,6 @@ msgstr "Sarjoja ei ole vielä kirjattu."
 msgid "Suggested: %(weight)s"
 msgstr "Ehdotus: %(weight)s"
 
-msgid "Low confidence"
-msgstr "Matala luotettavuus"
-
-msgid "Medium confidence"
-msgstr "Kohtalainen luotettavuus"
-
-msgid "High confidence"
-msgstr "Korkea luotettavuus"
-
 msgid "Log set"
 msgstr "Kirjaa sarja"
 
@@ -1836,9 +2430,6 @@ msgstr "Vähemmän valintoja"
 
 msgid "More options (RPE, RIR, notes…)"
 msgstr "Lisää valintoja (RPE, RIR, muistiinpanot…)"
-
-msgid "Add"
-msgstr "Lisää"
 
 msgid "Back to workout"
 msgstr "Takaisin treeniin"

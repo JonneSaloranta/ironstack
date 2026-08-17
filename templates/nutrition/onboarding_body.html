@@ -21,4 +21,9 @@
   {% endfor %}
   <button type="submit">{% trans "Continue" %}</button>
 </form>
+
+<p class="text-muted">
+  {% trans "Just want a quick number without setting anything up?" %}
+  <a href="{% url 'nutrition:calculators-home' %}">{% trans "Try the calculators" %}</a>.
+</p>
 {% endblock %}

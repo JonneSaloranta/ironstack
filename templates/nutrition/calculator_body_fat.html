@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Body fat calculator" %} — IronStack{% endblock %}
+{% block content %}
+<div class="top-bar">
+  <h1 style="margin:0;">{% trans "Body fat calculator" %}</h1>
+</div>
+<p class="text-muted">{% trans "The U.S. Navy tape-measure method — just a tape measure, no calipers or bioimpedance scale needed. An estimate, typically within a few percentage points of a DEXA scan." %}</p>
+
+<form class="card" method="get">
+  {{ form.non_field_errors }}
+  {% for field in form %}
+    <div class="field">
+      {{ field.label_tag }}
+      {{ field }}
+      {% if field.errors %}<p class="field-error">{{ field.errors|striptags }}</p>{% endif %}
+    </div>
+  {% endfor %}
+  <button type="submit">{% trans "Calculate" %}</button>
+</form>
+
+{% if result %}
+  <div class="card">
+    <strong>{% trans "Result" %}</strong>
+    <p style="font-size:1.5rem; font-weight:bold; margin:0.25rem 0;">{{ result }}%</p>
+  </div>
+{% elif submitted and form.is_valid %}
+  <div class="card empty-state">
+    <p>{% trans "Couldn't estimate this from those measurements — double-check them (waist should be larger than neck)." %}</p>
+  </div>
+{% endif %}
+
+<p><a class="button-secondary" href="{% url 'nutrition:calculators-home' %}">&larr; {% trans "Back to calculators" %}</a></p>
+{% endblock %}

@@ -651,6 +651,237 @@ msgstr "enhetstyp"
 msgid "recorded at"
 msgstr "registrerad"
 
+msgid "a %(job)s job"
+msgstr "ett %(job)s-jobb"
+
+msgid "~%(steps)s steps/day"
+msgstr "~%(steps)s steg/dag"
+
+msgid "%(count)s gym sessions a week"
+msgstr "%(count)s gympass i veckan"
+
+msgid "other regular exercise"
+msgstr "annan regelbunden träning"
+
+msgid "Suggested: %(label)s — %(factors)s"
+msgstr "Förslag: %(label)s — %(factors)s"
+
+msgid "Suggested: %(label)s — no activity details given yet"
+msgstr "Förslag: %(label)s — inga aktivitetsuppgifter angivna ännu"
+
+msgid "Estimated maintenance (TDEE): %(tdee)s kcal/day."
+msgstr "Uppskattat underhållsbehov (TDEE): %(tdee)s kcal/dag."
+
+msgid "Your requested rate was reduced to a safer %(rate)s kg/week (capped at %(fraction)s%% of bodyweight/week)."
+msgstr "Din önskade takt sänktes till en säkrare nivå, %(rate)s kg/vecka (begränsad till %(fraction)s %% av kroppsvikten/vecka)."
+
+msgid "Your target rate would need %(raw)s kcal/day, below a safe minimum — capped at %(floor)s kcal/day."
+msgstr "Din måltakt skulle kräva %(raw)s kcal/dag, under en säker miniminivå — begränsad till %(floor)s kcal/dag."
+
+msgid "Target: %(rate)s kg/week → %(calories)s kcal/day."
+msgstr "Mål: %(rate)s kg/vecka → %(calories)s kcal/dag."
+
+msgid "Biological sex"
+msgstr "Biologiskt kön"
+
+msgid "Used by the BMR formula (Mifflin-St Jeor) — a physiological input, not a gender-identity question."
+msgstr "Används i BMR-formeln (Mifflin-St Jeor) — en fysiologisk uppgift, inte en fråga om könsidentitet."
+
+msgid "Date of birth"
+msgstr "Födelsedatum"
+
+msgid "Your job"
+msgstr "Ditt jobb"
+
+msgid "Average daily steps (if you know it)"
+msgstr "Genomsnittligt antal steg per dag (om du vet det)"
+
+msgid "Gym sessions per week"
+msgstr "Gympass per vecka"
+
+msgid "Typical session length (minutes)"
+msgstr "Typisk passlängd (minuter)"
+
+msgid "Other exercise (minutes/week)"
+msgstr "Annan träning (minuter/vecka)"
+
+msgid "Current daily calories, if you already track this"
+msgstr "Nuvarande dagligt kaloriintag, om du redan följer detta"
+
+msgid "Used only to compare against this app's own estimate, never as an input."
+msgstr "Används endast för att jämföra med appens egen uppskattning, aldrig som indata."
+
+msgid "Activity level"
+msgstr "Aktivitetsnivå"
+
+msgid "Goal"
+msgstr "Mål"
+
+msgid "Target weight (%(unit)s)"
+msgstr "Målvikt (%(unit)s)"
+
+msgid "Target rate (kg/week)"
+msgstr "Måltakt (kg/vecka)"
+
+msgid "Negative to lose weight, positive to gain. Pre-filled from your goal below — capped at a safe rate for your bodyweight."
+msgstr "Negativt för att gå ner i vikt, positivt för att gå upp. Förifyllt utifrån ditt mål nedan — begränsat till en säker takt för din kroppsvikt."
+
+msgid "All the nutrition values below are for this amount, in the unit chosen next to it — e.g. \"100 g\" if the values are per 100 grams."
+msgstr "Alla näringsvärden nedan gäller denna mängd, i enheten som valts bredvid den — t.ex. \"100 g\" om värdena är per 100 gram."
+
+msgid "Search foods"
+msgstr "Sök livsmedel"
+
+msgid "Pick a food to add."
+msgstr "Välj ett livsmedel att lägga till."
+
+msgid "Meal"
+msgstr "Måltid"
+
+msgid "Servings"
+msgstr "Portioner"
+
+msgid "Plan name"
+msgstr "Planens namn"
+
+msgid "Daily calories"
+msgstr "Dagliga kalorier"
+
+msgid "Protein (g)"
+msgstr "Protein (g)"
+
+msgid "Carbohydrates (g)"
+msgstr "Kolhydrater (g)"
+
+msgid "Fat (g)"
+msgstr "Fett (g)"
+
+msgid "Which meals?"
+msgstr "Vilka måltider?"
+
+msgid "Pick either a food or a recipe, not both or neither."
+msgstr "Välj antingen ett livsmedel eller ett recept, inte båda eller inget."
+
+msgid "Log for date"
+msgstr "Logga för datum"
+
+msgid "Age (years)"
+msgstr "Ålder (år)"
+
+msgid "Neck circumference"
+msgstr "Halsomkrets"
+
+msgid "Waist circumference"
+msgstr "Midjeomkrets"
+
+msgid "Hip circumference"
+msgstr "Höftomkrets"
+
+msgid "Hip circumference is required for the women's formula."
+msgstr "Höftomkrets krävs för kvinnornas formel."
+
+msgid "Male"
+msgstr "Man"
+
+msgid "Female"
+msgstr "Kvinna"
+
+msgid "Desk job, mostly sitting"
+msgstr "Skrivbordsjobb, mest stillasittande"
+
+msgid "On my feet some of the day"
+msgstr "På benen en del av dagen"
+
+msgid "On my feet most of the day"
+msgstr "På benen större delen av dagen"
+
+msgid "Physically demanding / manual labor"
+msgstr "Fysiskt krävande / kroppsarbete"
+
+msgid "Sedentary"
+msgstr "Stillasittande"
+
+msgid "Lightly active"
+msgstr "Lätt aktiv"
+
+msgid "Moderately active"
+msgstr "Måttligt aktiv"
+
+msgid "Active"
+msgstr "Aktiv"
+
+msgid "Very active"
+msgstr "Mycket aktiv"
+
+msgid "Fat loss — aggressive"
+msgstr "Fettförlust — aggressiv"
+
+msgid "Fat loss — moderate"
+msgstr "Fettförlust — måttlig"
+
+msgid "Fat loss — conservative"
+msgstr "Fettförlust — försiktig"
+
+msgid "Maintenance"
+msgstr "Underhåll"
+
+msgid "Muscle gain — lean bulk"
+msgstr "Muskeltillväxt — mager bulk"
+
+msgid "Muscle gain — moderate bulk"
+msgstr "Muskeltillväxt — måttlig bulk"
+
+msgid "Muscle gain — aggressive bulk"
+msgstr "Muskeltillväxt — aggressiv bulk"
+
+msgid "Calculated from goal"
+msgstr "Beräknat från mål"
+
+msgid "Set manually"
+msgstr "Inställt manuellt"
+
+msgid "Accepted a suggested adjustment"
+msgstr "Accepterade en föreslagen justering"
+
+msgid "g"
+msgstr "g"
+
+msgid "ml"
+msgstr "ml"
+
+msgid "piece"
+msgstr "st"
+
+msgid "Stored instead of a raw age, so it never goes stale."
+msgstr "Sparas istället för en rå ålder, så att den aldrig blir inaktuell."
+
+msgid "If you already track this, tell us — used only to compare against this app's own estimate, never as an input to it."
+msgstr "Om du redan följer detta, berätta för oss — används endast för att jämföra med appens egen uppskattning, aldrig som indata till den."
+
+msgid "Null for the built-in default meal slots."
+msgstr "Null för de inbyggda standardmåltiderna."
+
+msgid "Log either a food or a recipe, not both or neither."
+msgstr "Logga antingen ett livsmedel eller ett recept, inte båda eller inget."
+
+msgid "Use either a food or a recipe, not both or neither."
+msgstr "Använd antingen ett livsmedel eller ett recept, inte båda eller inget."
+
+msgid "Set a nutrition goal to get adjustment suggestions."
+msgstr "Ställ in ett näringsmål för att få justeringsförslag."
+
+msgid "Not enough logged weight yet — keep logging your weight regularly and check back in a couple of weeks."
+msgstr "Inte tillräckligt med loggad vikt än — fortsätt logga din vikt regelbundet och kolla igen om ett par veckor."
+
+msgid "Target: %(target)s kg/week. Actual trend: %(actual)s kg/week — on track."
+msgstr "Mål: %(target)s kg/vecka. Faktisk trend: %(actual)s kg/vecka — på rätt spår."
+
+msgid "Target: %(target)s kg/week. Actual trend: %(actual)s kg/week over the last %(days)s days. Suggested adjustment: %(delta)+d kcal/day."
+msgstr "Mål: %(target)s kg/vecka. Faktisk trend: %(actual)s kg/vecka under de senaste %(days)s dagarna. Föreslagen justering: %(delta)+d kcal/dag."
+
+msgid "That food couldn't be imported — try again."
+msgstr "Det gick inte att importera detta livsmedel — försök igen."
+
 msgid "Save as a personal template"
 msgstr "Spara som personlig mall"
 
@@ -674,9 +905,6 @@ msgstr "Procentmål"
 
 msgid "1RM"
 msgstr "1RM"
-
-msgid "Target weight (%(unit)s)"
-msgstr "Målvikt (%(unit)s)"
 
 msgid "Weight increment (%(unit)s)"
 msgstr "Viktökning (%(unit)s)"
@@ -797,9 +1025,6 @@ msgstr "RPE/RIR-baserad"
 
 msgid "Rep range"
 msgstr "Repetitionsintervall"
-
-msgid "Maintenance"
-msgstr "Underhåll"
 
 msgid "Manual"
 msgstr "Manuell"
@@ -1300,6 +1525,9 @@ msgstr "Huvudnavigering"
 msgid "Home"
 msgstr "Hem"
 
+msgid "Nutrition"
+msgstr "Näring"
+
 msgid "Workout"
 msgstr "Träning"
 
@@ -1594,6 +1822,381 @@ msgstr "Inga mätvärden ännu"
 msgid "No measurement types yet."
 msgstr "Inga mättyper ännu."
 
+msgid "Your foods"
+msgstr "Dina livsmedel"
+
+msgid "Quantity"
+msgstr "Mängd"
+
+msgid "Add"
+msgstr "Lägg till"
+
+msgid "From OpenFoodFacts"
+msgstr "Från OpenFoodFacts"
+
+msgid "Import & add"
+msgstr "Importera & lägg till"
+
+msgid "Nothing found."
+msgstr "Inget hittades."
+
+msgid "Create a custom food"
+msgstr "Skapa ett eget livsmedel"
+
+msgid "Step %(step)s of 5"
+msgstr "Steg %(step)s av 5"
+
+msgid "BMR / TDEE calculator"
+msgstr "BMR/TDEE-kalkylator"
+
+msgid "BMR is roughly what you'd burn lying still all day; TDEE adds your activity on top. Both are estimates (Mifflin-St Jeor)."
+msgstr "BMR är ungefär vad du skulle förbränna om du låg stilla hela dagen; TDEE lägger till din aktivitet ovanpå det. Båda är uppskattningar (Mifflin-St Jeor)."
+
+msgid "Calculate"
+msgstr "Beräkna"
+
+msgid "Result"
+msgstr "Resultat"
+
+msgid "BMR (at rest)"
+msgstr "BMR (i vila)"
+
+msgid "TDEE (with activity)"
+msgstr "TDEE (med aktivitet)"
+
+msgid "Back to calculators"
+msgstr "Tillbaka till kalkylatorer"
+
+msgid "Body fat calculator"
+msgstr "Kroppsfettkalkylator"
+
+msgid "The U.S. Navy tape-measure method — just a tape measure, no calipers or bioimpedance scale needed. An estimate, typically within a few percentage points of a DEXA scan."
+msgstr "Amerikanska flottans måttbandsmetod — bara ett måttband behövs, inga kalipers eller bioimpedansvåg. En uppskattning, vanligtvis inom några procentenheter från en DEXA-mätning."
+
+msgid "Couldn't estimate this from those measurements — double-check them (waist should be larger than neck)."
+msgstr "Kunde inte uppskatta detta utifrån dessa mått — kontrollera dem (midjan bör vara större än halsen)."
+
+msgid "Macro calculator"
+msgstr "Makrokalkylator"
+
+msgid "Splits a calorie target into protein, carbohydrates, and fat using this app's own default ratios for the goal you pick."
+msgstr "Delar upp ett kalorimål i protein, kolhydrater och fett med appens egna standardförhållanden för det mål du väljer."
+
+msgid "Protein"
+msgstr "Protein"
+
+msgid "Carbohydrates"
+msgstr "Kolhydrater"
+
+msgid "Fat"
+msgstr "Fett"
+
+msgid "This calorie target is low enough that protein and/or fat had to be reduced below their usual defaults to fit."
+msgstr "Detta kalorimål är så lågt att protein och/eller fett var tvunget att minskas under sina vanliga standardvärden för att få plats."
+
+msgid "Water intake calculator"
+msgstr "Vätskeintagskalkylator"
+
+msgid "A rough daily fluid target based on bodyweight and activity — real needs vary with climate and sweat rate, so treat this as a starting point."
+msgstr "Ett ungefärligt dagligt vätskemål baserat på kroppsvikt och aktivitet — det verkliga behovet varierar med klimat och svettningsgrad, så se detta som en utgångspunkt."
+
+msgid "day"
+msgstr "dag"
+
+msgid "Calculators"
+msgstr "Kalkylatorer"
+
+msgid "Quick, standalone estimates — none of these are saved or change your targets."
+msgstr "Snabba, fristående uppskattningar — inget av detta sparas eller ändrar dina mål."
+
+msgid "How many calories your body burns at rest, and in total."
+msgstr "Hur många kalorier din kropp förbränner i vila, och totalt."
+
+msgid "Split a calorie target into protein, carbohydrates, and fat."
+msgstr "Dela upp ett kalorimål i protein, kolhydrater och fett."
+
+msgid "Estimate body fat percentage from a tape measure (U.S. Navy method)."
+msgstr "Uppskatta kroppsfettprocent med ett måttband (amerikanska flottans metod)."
+
+msgid "A rough daily fluid target based on your bodyweight and activity."
+msgstr "Ett ungefärligt dagligt vätskemål baserat på din kroppsvikt och aktivitet."
+
+msgid "Back to nutrition"
+msgstr "Tillbaka till näring"
+
+msgid "Training day"
+msgstr "Träningsdag"
+
+msgid "Rest day"
+msgstr "Vilodag"
+
+msgid "Today so far"
+msgstr "Hittills idag"
+
+msgid "Calories"
+msgstr "Kalorier"
+
+msgid "Open food diary"
+msgstr "Öppna matdagbok"
+
+msgid "Is your current target working?"
+msgstr "Fungerar ditt nuvarande mål?"
+
+msgid "High confidence"
+msgstr "Hög tillförlitlighet"
+
+msgid "Medium confidence"
+msgstr "Medelhög tillförlitlighet"
+
+msgid "Low confidence"
+msgstr "Låg tillförlitlighet"
+
+msgid "Adjust to %(calories)s kcal/day"
+msgstr "Justera till %(calories)s kcal/dag"
+
+msgid "Weight trend"
+msgstr "Vikttrend"
+
+msgid "Daily target"
+msgstr "Dagligt mål"
+
+msgid "%(calories)s kcal/day"
+msgstr "%(calories)s kcal/dag"
+
+msgid "Current goal"
+msgstr "Nuvarande mål"
+
+msgid "Recipes & diet plans"
+msgstr "Recept & kostplaner"
+
+msgid "Manage your recipes or build a full diet plan."
+msgstr "Hantera dina recept eller bygg en komplett kostplan."
+
+msgid "Recipes"
+msgstr "Recept"
+
+msgid "Diet plans"
+msgstr "Kostplaner"
+
+msgid "BMR/TDEE, macros, body fat, and water intake — quick standalone estimates."
+msgstr "BMR/TDEE, makron, kroppsfett och vätskeintag — snabba, fristående uppskattningar."
+
+msgid "Add food"
+msgstr "Lägg till livsmedel"
+
+msgid "e.g. chicken breast"
+msgstr "t.ex. kycklingfilé"
+
+msgid "Back to diary"
+msgstr "Tillbaka till dagboken"
+
+msgid "Food diary"
+msgstr "Matdagbok"
+
+msgid "Previous day"
+msgstr "Föregående dag"
+
+msgid "Next day"
+msgstr "Nästa dag"
+
+msgid "Today's nutrition"
+msgstr "Dagens näring"
+
+msgid "Remove this entry?"
+msgstr "Ta bort denna post?"
+
+msgid "Nothing logged yet."
+msgstr "Inget loggat än."
+
+msgid "+ Add food"
+msgstr "+ Lägg till livsmedel"
+
+msgid "Manage foods"
+msgstr "Hantera livsmedel"
+
+msgid "Edit entry"
+msgstr "Redigera post"
+
+msgid "protein"
+msgstr "protein"
+
+msgid "carbs"
+msgstr "kolhydrater"
+
+msgid "fat"
+msgstr "fett"
+
+msgid "servings"
+msgstr "portioner"
+
+msgid "Swap"
+msgstr "Byt"
+
+msgid "Nothing suggested yet — add some foods or recipes first."
+msgstr "Inga förslag än — lägg till livsmedel eller recept först."
+
+msgid "Log this plan to your diary"
+msgstr "Logga denna plan till din dagbok"
+
+msgid "Log it"
+msgstr "Logga"
+
+msgid "Back to diet plans"
+msgstr "Tillbaka till kostplaner"
+
+msgid "Delete this plan?"
+msgstr "Ta bort denna plan?"
+
+msgid "Delete plan"
+msgstr "Ta bort plan"
+
+msgid "New diet plan"
+msgstr "Ny kostplan"
+
+msgid "Build a diet plan"
+msgstr "Bygg en kostplan"
+
+msgid "We'll suggest one food or recipe per meal from your own library, scaled to fit — you can swap any of them afterward."
+msgstr "Vi föreslår ett livsmedel eller recept per måltid från ditt eget bibliotek, skalat för att passa — du kan byta ut vilket som helst av dem efteråt."
+
+msgid "Generate plan"
+msgstr "Generera plan"
+
+msgid "Swap item"
+msgstr "Byt objekt"
+
+msgid "Back to plan"
+msgstr "Tillbaka till plan"
+
+msgid "+ New plan"
+msgstr "+ Ny plan"
+
+msgid "No diet plans yet."
+msgstr "Inga kostplaner än."
+
+msgid "New food"
+msgstr "Nytt livsmedel"
+
+msgid "Back to foods"
+msgstr "Tillbaka till livsmedel"
+
+msgid "Foods"
+msgstr "Livsmedel"
+
+msgid "+ New food"
+msgstr "+ Nytt livsmedel"
+
+msgid "Search"
+msgstr "Sök"
+
+msgid "No foods yet."
+msgstr "Inga livsmedel än."
+
+msgid "Nutrition setup"
+msgstr "Näringsinställning"
+
+msgid "How active are you?"
+msgstr "Hur aktiv är du?"
+
+msgid "Everything here is optional — the more you tell us, the better the estimate. We'll suggest an activity level from your answers, not ask you to guess it yourself."
+msgstr "Allt här är valfritt — ju mer du berättar, desto bättre uppskattning. Vi föreslår en aktivitetsnivå utifrån dina svar, istället för att be dig gissa den själv."
+
+msgid "Continue"
+msgstr "Fortsätt"
+
+msgid "Confirm your activity level"
+msgstr "Bekräfta din aktivitetsnivå"
+
+msgid "This is only a suggestion — change it if you know it's wrong."
+msgstr "Detta är bara ett förslag — ändra det om du vet att det är fel."
+
+msgid "Let's set up your nutrition"
+msgstr "Låt oss ställa in din näring"
+
+msgid "A few questions about your body — used to estimate how many calories you need."
+msgstr "Några frågor om din kropp — används för att uppskatta hur många kalorier du behöver."
+
+msgid "Just want a quick number without setting anything up?"
+msgstr "Vill du bara ha ett snabbt värde utan att ställa in något?"
+
+msgid "Try the calculators"
+msgstr "Prova kalkylatorerna"
+
+msgid "What's your goal?"
+msgstr "Vad är ditt mål?"
+
+msgid "See my targets"
+msgstr "Visa mina mål"
+
+msgid "Your estimated targets"
+msgstr "Dina uppskattade mål"
+
+msgid "These are estimates, not exact figures — you'll be able to see how well they're actually working once you've logged some data, and adjust anytime."
+msgstr "Dessa är uppskattningar, inte exakta siffror — du kommer att kunna se hur väl de faktiskt fungerar när du har loggat lite data, och justera när som helst."
+
+msgid "Save and start tracking"
+msgstr "Spara och börja logga"
+
+msgid "Ingredients"
+msgstr "Ingredienser"
+
+msgid "Remove this ingredient?"
+msgstr "Ta bort denna ingrediens?"
+
+msgid "Remove"
+msgstr "Ta bort"
+
+msgid "No ingredients yet."
+msgstr "Inga ingredienser än."
+
+msgid "+ Add ingredient"
+msgstr "+ Lägg till ingrediens"
+
+msgid "Total"
+msgstr "Totalt"
+
+msgid "Per serving (of %(servings)s)"
+msgstr "Per portion (av %(servings)s)"
+
+msgid "Log to diary"
+msgstr "Logga till dagbok"
+
+msgid "Log today"
+msgstr "Logga idag"
+
+msgid "Back to recipes"
+msgstr "Tillbaka till recept"
+
+msgid "Delete this recipe?"
+msgstr "Ta bort detta recept?"
+
+msgid "Delete recipe"
+msgstr "Ta bort recept"
+
+msgid "Recipe"
+msgstr "Recept"
+
+msgid "Edit recipe"
+msgstr "Redigera recept"
+
+msgid "New recipe"
+msgstr "Nytt recept"
+
+msgid "Add ingredient"
+msgstr "Lägg till ingrediens"
+
+msgid "Add ingredient to %(name)s"
+msgstr "Lägg till ingrediens till %(name)s"
+
+msgid "Back to recipe"
+msgstr "Tillbaka till recept"
+
+msgid "+ New recipe"
+msgstr "+ Nytt recept"
+
+msgid "No recipes yet."
+msgstr "Inga recept än."
+
 msgid "Add exercise"
 msgstr "Lägg till övning"
 
@@ -1810,15 +2413,6 @@ msgstr "Inga set loggade ännu."
 msgid "Suggested: %(weight)s"
 msgstr "Föreslaget: %(weight)s"
 
-msgid "Low confidence"
-msgstr "Låg tillförlitlighet"
-
-msgid "Medium confidence"
-msgstr "Medelhög tillförlitlighet"
-
-msgid "High confidence"
-msgstr "Hög tillförlitlighet"
-
 msgid "Log set"
 msgstr "Logga set"
 
@@ -1836,9 +2430,6 @@ msgstr "Färre alternativ"
 
 msgid "More options (RPE, RIR, notes…)"
 msgstr "Fler alternativ (RPE, RIR, anteckningar…)"
-
-msgid "Add"
-msgstr "Lägg till"
 
 msgid "Back to workout"
 msgstr "Tillbaka till träningspasset"

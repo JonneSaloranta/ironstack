@@ -68,4 +68,23 @@ urlpatterns = [
         views.diet_plan_item_edit,
         name="diet-plan-item-edit",
     ),
+    path("calculators/", views.CalculatorsHomeView.as_view(), name="calculators-home"),
+    path(
+        "calculators/bmr-tdee/",
+        views.BmrTdeeCalculatorView.as_view(),
+        name="calculator-bmr-tdee",
+    ),
+    path(
+        "calculators/macros/", views.MacroCalculatorView.as_view(), name="calculator-macros"
+    ),
+    path(
+        "calculators/body-fat/",
+        views.BodyFatCalculatorView.as_view(),
+        name="calculator-body-fat",
+    ),
+    path(
+        "calculators/water-intake/",
+        views.WaterIntakeCalculatorView.as_view(),
+        name="calculator-water-intake",
+    ),
 ]
