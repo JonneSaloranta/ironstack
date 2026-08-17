@@ -1,14 +1,24 @@
 {% load i18n %}
 <div id="food-search-results">
   {% if query %}
+    {% if mode == "diary" %}
+      {% url 'nutrition:diary-add-entry' as post_url %}
+    {% elif mode == "recipe" %}
+      {% url 'nutrition:recipe-ingredient-create' recipe_pk as post_url %}
+    {% elif mode == "diet-plan-meal" %}
+      {% url 'nutrition:diet-plan-meal-item-add' plan_pk meal_pk as post_url %}
+    {% endif %}
+
     {% if local %}
       <h3>{% trans "Your foods" %}</h3>
       {% for food in local %}
-        <form class="card card-action-row" method="post" action="{% url 'nutrition:diary-add-entry' %}">
+        <form class="card card-action-row" method="post" action="{{ post_url }}">
           {% csrf_token %}
           <input type="hidden" name="food_id" value="{{ food.pk }}">
-          <input type="hidden" name="meal_slot" value="{{ meal_slot_id }}">
-          <input type="hidden" name="date" value="{{ date }}">
+          {% if mode == "diary" %}
+            <input type="hidden" name="meal_slot" value="{{ meal_slot_id }}">
+            <input type="hidden" name="date" value="{{ date }}">
+          {% endif %}
           <div>
             <strong>{{ food.name }}</strong>
             <p class="text-muted">{{ food.calories }} kcal / {{ food.serving_size }} {{ food.serving_unit }}</p>
@@ -24,11 +34,13 @@
     {% if off_results %}
       <h3>{% trans "From OpenFoodFacts" %}</h3>
       {% for product in off_results %}
-        <form class="card card-action-row" method="post" action="{% url 'nutrition:diary-add-entry' %}">
+        <form class="card card-action-row" method="post" action="{{ post_url }}">
           {% csrf_token %}
           <input type="hidden" name="off_barcode" value="{{ product.off_id }}">
-          <input type="hidden" name="meal_slot" value="{{ meal_slot_id }}">
-          <input type="hidden" name="date" value="{{ date }}">
+          {% if mode == "diary" %}
+            <input type="hidden" name="meal_slot" value="{{ meal_slot_id }}">
+            <input type="hidden" name="date" value="{{ date }}">
+          {% endif %}
           <div>
             <strong>{{ product.name }}</strong>{% if product.brand %} <span class="text-muted">({{ product.brand }})</span>{% endif %}
             <p class="text-muted">{{ product.calories }} kcal / {{ product.serving_size }} {{ product.serving_unit }}</p>
@@ -44,7 +56,9 @@
     {% if not local and not off_results %}
       <div class="card empty-state">
         <p>{% trans "Nothing found." %}</p>
-        <p><a class="button-secondary" href="{% url 'nutrition:food-create' %}">{% trans "Create a custom food" %}</a></p>
+        {% if mode == "diary" %}
+          <p><a class="button-secondary" href="{% url 'nutrition:food-create' %}">{% trans "Create a custom food" %}</a></p>
+        {% endif %}
       </div>
     {% endif %}
   {% endif %}

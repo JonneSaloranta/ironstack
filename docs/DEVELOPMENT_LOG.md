@@ -1771,3 +1771,83 @@ Fixed by capping the second offset at `min(1, today.weekday())`
 provably in the same ISO week regardless of which real day the suite
 happens to run on, rather than hand-picking a fixed offset and hoping.
 Verified directly on a real Monday (today), where it now passes.
+
+**Recipes stopped being "just text" — ingredients now pull their
+macros automatically, and diet-plan meals can hold more than one
+item.** Asked directly: "siitä pitäisi saada automaattisesti kaikkien
+ainesosien makrot yms, nyt se on vain tekstinä" (it should
+automatically get all the ingredients' macros, right now it's just
+text). Turned out `docs/NUTRITION.md` had already documented the
+intended design — "the food-search flow (diary/recipe 'add food')" —
+but the actual `recipe_ingredient_create` implementation had drifted
+from it: a bare `<select>` dropdown of `Food` rows the user already
+had to create by hand elsewhere, no search, no OpenFoodFacts. Fixed
+by giving it the exact same search-and-pick UX the food diary already
+has:
+
+- `FoodSearchResultsView`/`_food_search_results.html` generalized
+  with a `mode` parameter (`diary`/`recipe`/`diet-plan-meal`) — one
+  search implementation and one results partial serve all three
+  call sites, branching only on which endpoint each result's "Add"
+  button posts to.
+- `RecipeIngredientSearchForm` replaces the old `RecipeIngredientForm`
+  ModelForm/dropdown; `recipe_ingredient_create` now resolves a
+  `food_id` or imports an `off_barcode` exactly like
+  `DiaryAddEntryView` does, rather than a second copy of that logic.
+- **Meal planning got the same treatment, plus a real capability
+  gap closed**: a diet-plan meal was locked to the single item
+  `diet_builder` originally generated for it — `diet_plan_item_edit`
+  could only *swap* that one item, never add a second. There's no
+  DB constraint stopping a meal from holding more than one
+  `DietPlanItem`; it was purely a missing view/template. Added
+  `diet_plan_meal_item_add` (same search-and-pick form, scoped to a
+  meal instead of a recipe) and `diet_plan_item_delete`, and the
+  detail page now shows each meal's actual running total ("target"
+  vs. "so far") alongside its target, meaningful now that a meal can
+  hold more than one line.
+- **Barcode search, asked for immediately after**: "lisää
+  ruoka-aine hakuun mahdollisuus hakea viivakoodin numeroilla" (add
+  the ability to search by barcode numbers). A query that's nothing
+  but 8-14 digits (`apps.nutrition.services._BARCODE_RE` — covers
+  every format OFF itself indexes: EAN-8/UPC-A/EAN-13/ITF-14) is now
+  matched exactly rather than run through free-text search: locally
+  against `Food.off_id`, and against OpenFoodFacts' own by-barcode
+  endpoint (`get_product`, the same one `import_or_refresh_food_
+  from_off` already used) instead of its free-text search, which is
+  unreliable for a bare digit string. Applies everywhere the new
+  shared search partial is used — diary, recipe ingredients, and
+  diet-plan meal items alike, one implementation. The search box's
+  placeholder text now mentions it.
+
+9 new tests (198 total for `apps.nutrition`), 6 new UI strings
+translated across fi/sv/ru/it/et (826 total, 0 fuzzy/untranslated).
+Live-verified end to end against the real (non-mocked) OpenFoodFacts
+API in a Finnish session: created a recipe, searched "kana" and added
+a locally-created "Kanafilee" ingredient by name (150g → exactly 248
+kcal, matching 165 kcal/100g scaled), then searched a real barcode
+(3017620422003, Nutella) and imported+added it directly (30g → 162
+kcal, matching OFF's own 539 kcal/100g), watching the recipe's total/
+per-serving nutrition update automatically both times with no manual
+entry. Separately built a diet plan and added a second, manually
+chosen item to a meal alongside `diet_builder`'s own auto-generated
+one, confirming both persist independently and the meal's "target"/
+"so far" totals render correctly in Finnish.
+
+**The bottom-nav's Nutrition icon looked partially cut off.** Every
+coordinate in the old hand-drawn fork/knife path checked out
+mathematically within its `0 0 24 24` viewBox (nothing exceeded the
+boundary, so it wasn't literally clipped by SVG overflow rules) —
+but rendered at the real `.nav-icon` size (1.9rem) next to the other
+five icons, screenshotted at a realistic 320px-wide viewport via
+headless Chrome (no way to spot this from reading the path data
+alone), it was visibly smaller and less filled-out than its
+neighbors: a bare two-line "arch" for the fork rather than distinct
+tines, and a curvy, ambiguous knife shape sitting further from the
+viewBox edges than every other icon's own artwork does. Replaced
+with Lucide's own "utensils" icon (a proper 3-tine fork + a
+recognizable knife, both filling their `0 0 24 24` box the same way
+the other five icons do) — same license-compatible outline-icon
+family this project's other five nav icons were already drawn from,
+not a one-off custom shape. Re-screenshotted at 320px afterward to
+confirm — fills its box cleanly now, no ambiguity. Live-verified the
+new path renders in the actual running app.

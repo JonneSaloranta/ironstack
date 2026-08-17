@@ -68,6 +68,16 @@ urlpatterns = [
         views.diet_plan_item_edit,
         name="diet-plan-item-edit",
     ),
+    path(
+        "diet-plans/<int:plan_pk>/items/<int:pk>/delete/",
+        views.diet_plan_item_delete,
+        name="diet-plan-item-delete",
+    ),
+    path(
+        "diet-plans/<int:plan_pk>/meals/<int:meal_pk>/items/new/",
+        views.diet_plan_meal_item_add,
+        name="diet-plan-meal-item-add",
+    ),
     path("calculators/", views.CalculatorsHomeView.as_view(), name="calculators-home"),
     path(
         "calculators/bmr-tdee/",

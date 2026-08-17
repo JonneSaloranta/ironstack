@@ -9,6 +9,7 @@ they belong here rather than in a pure, DB-free module like
 apps.nutrition.energy/macros.
 """
 
+import re
 from dataclasses import dataclass
 from decimal import Decimal
 
@@ -158,25 +159,46 @@ def import_or_refresh_food_from_off(barcode):
     return Food.objects.create(owner=None, **parsed)
 
 
+# EAN-8/UPC-A/EAN-13/ITF-14 cover every barcode format OpenFoodFacts
+# itself indexes products by — a query that's nothing but 8-14 digits
+# is unambiguously a barcode being typed or scanned in, not a food
+# name, so it gets looked up directly rather than run through OFF's
+# free-text search (which is unreliable for raw digit strings).
+_BARCODE_RE = re.compile(r"^\d{8,14}$")
+
+
 def search_foods(user, query):
     """Local foods (the user's own + shared/imported) matching
-    `query`, plus live OpenFoodFacts search results merged in. OFF
-    results aren't imported just for appearing in this list — only
+    `query`, plus live OpenFoodFacts results merged in. A query that
+    looks like a barcode (8-14 digits — see `_BARCODE_RE`) is matched
+    exactly, both locally (`Food.off_id`) and against OFF's own
+    by-barcode lookup (`openfoodfacts.get_product`, the same one
+    `import_or_refresh_food_from_off` uses) rather than OFF's
+    free-text search, which is unreliable for a bare digit string.
+    Anything else is a plain name search. OFF results aren't imported
+    just for appearing in this list — only
     `import_or_refresh_food_from_off` (called once the caller actually
     picks one) ever creates or updates a `Food` row, so a search that
     finds nothing useful leaves no trace."""
+    is_barcode = bool(_BARCODE_RE.match(query.strip()))
+    local_filter = Q(off_id=query.strip()) if is_barcode else Q(name__icontains=query)
     local = list(
         Food.objects.filter(Q(owner=user) | Q(owner__isnull=True), active=True)
-        .filter(name__icontains=query)
+        .filter(local_filter)
         .order_by("name")
     )
     off_results = []
     if OpenFoodFactsSettings.load().enabled:
         try:
+            if is_barcode:
+                raw_products = [openfoodfacts.get_product(query.strip())]
+            else:
+                raw_products = openfoodfacts.search_products(query)
             off_results = [
                 parsed
-                for raw in openfoodfacts.search_products(query)
-                if (parsed := openfoodfacts.parse_product(raw)) is not None
+                for raw in raw_products
+                if raw is not None
+                and (parsed := openfoodfacts.parse_product(raw)) is not None
                 # Skip anything already imported locally — no point
                 # offering to "import" a food that's already there.
                 and not Food.objects.filter(off_id=parsed["off_id"]).exists()

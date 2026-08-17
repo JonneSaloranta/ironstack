@@ -1984,8 +1984,8 @@ msgstr "BMR/TDEE, makrotoitained, kehurasv ja veetarbimine — kiired, iseseisva
 msgid "Add food"
 msgstr "Lisa toit"
 
-msgid "e.g. chicken breast"
-msgstr "nt kanafilee"
+msgid "e.g. chicken breast, or a barcode number"
+msgstr "nt kanafilee või vöötkoodi number"
 
 msgid "Back to diary"
 msgstr "Tagasi päeviku juurde"
@@ -2026,14 +2026,29 @@ msgstr "süsivesikud"
 msgid "fat"
 msgstr "rasv"
 
+msgid "target"
+msgstr "eesmärk"
+
+msgid "so far"
+msgstr "seni"
+
 msgid "servings"
 msgstr "portsjonit"
 
 msgid "Swap"
 msgstr "Vaheta"
 
+msgid "Remove this item?"
+msgstr "Kas eemaldada see üksus?"
+
+msgid "Remove"
+msgstr "Eemalda"
+
 msgid "Nothing suggested yet — add some foods or recipes first."
 msgstr "Veel pole soovitusi — lisa esmalt toite või retsepte."
+
+msgid "+ Add item"
+msgstr "+ Lisa üksus"
 
 msgid "Log this plan to your diary"
 msgstr "Logi see plaan oma päevikusse"
@@ -2073,6 +2088,9 @@ msgstr "+ Uus plaan"
 
 msgid "No diet plans yet."
 msgstr "Veel pole toitumisplaane."
+
+msgid "Add item to %(name)s"
+msgstr "Lisa üksus toidukorda %(name)s"
 
 msgid "New food"
 msgstr "Uus toit"
@@ -2143,9 +2161,6 @@ msgstr "Koostisosad"
 msgid "Remove this ingredient?"
 msgstr "Kas eemaldada see koostisosa?"
 
-msgid "Remove"
-msgstr "Eemalda"
-
 msgid "No ingredients yet."
 msgstr "Veel pole koostisosi."
 
@@ -2181,9 +2196,6 @@ msgstr "Muuda retsepti"
 
 msgid "New recipe"
 msgstr "Uus retsept"
-
-msgid "Add ingredient"
-msgstr "Lisa koostisosa"
 
 msgid "Add ingredient to %(name)s"
 msgstr "Lisa koostisosa retseptile %(name)s"

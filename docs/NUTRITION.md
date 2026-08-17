@@ -183,11 +183,19 @@ rejected for exactly that reason when discussed directly. Instead:
   worse `requests`). Parses a raw OFF product into this app's `Food`
   field shape; a product missing core macros entirely is skipped
   rather than creating a useless empty row.
-- The food-search flow (`apps.nutrition` diary/recipe "add food")
-  searches local `Food` rows first; if OpenFoodFacts lookup is enabled
-  or turns up more, results are shown as an "Import" action that
-  creates (or refreshes) a shared `Food` row with `owner=None`,
-  `off_id` set to OFF's own barcode.
+- The food-search flow (`apps.nutrition` diary/recipe/diet-plan-meal
+  "add food" — one shared `FoodSearchResultsView`/`_food_search_
+  results.html`, parameterized by `mode` for which endpoint each
+  result's "Add" button posts to) searches local `Food` rows first;
+  if OpenFoodFacts lookup is enabled or turns up more, results are
+  shown as an "Import" action that creates (or refreshes) a shared
+  `Food` row with `owner=None`, `off_id` set to OFF's own barcode. A
+  query that's nothing but 8-14 digits (`apps.nutrition.services.
+  _BARCODE_RE`) is treated as a barcode being typed or scanned in
+  rather than a food name — matched exactly, both locally
+  (`Food.off_id`) and against OFF's own by-barcode endpoint
+  (`get_product`), instead of OFF's free-text search, which is
+  unreliable for a raw digit string.
 - **"Update automatically if it changes"** is satisfied by staleness,
   not a background job: any `Food` row with an `off_id` older than
   `OPENFOODFACTS_STALENESS_DAYS` (14, matching the interval
@@ -219,6 +227,16 @@ lives.
 
 A recipe's total nutrition is the sum of its ingredients' scaled
 nutrition; per-serving is that total divided by `servings`.
+
+Adding an ingredient is search-and-pick (`recipe_ingredient_create`,
+`RecipeIngredientSearchForm`), not a bare dropdown of foods the user
+already had to create by hand elsewhere — a recipe's macros come
+entirely from its ingredients' own `Food` rows, so finding or
+importing the right one (local search, OpenFoodFacts, or a barcode)
+has to be at least as easy here as it already is in the food diary.
+Picking an OFF result imports it (`import_or_refresh_food_from_off`)
+the same way the diary does; nothing here re-derives nutrition by
+hand.
 
 ### `DiaryEntry` — one logged item
 
@@ -268,6 +286,18 @@ at "what was I eating during my last cut"). "Log today's plan"
 `DietPlanItem` into a real `DiaryEntry` for the chosen date — the plan
 itself is never mutated by logging it, so it can be reused across many
 days.
+
+A meal isn't locked to the single item `diet_builder` originally
+generated for it — there's no uniqueness constraint on `diet_plan_
+meal` in `DietPlanItem` at the DB level, and `diet_plan_meal_item_add`
+(same search-and-pick UX as a recipe ingredient) lets a user add more
+to a meal, with `diet_plan_item_delete` to remove one again. Swapping
+(`diet_plan_item_edit`) still only ever replaces a single existing
+item in place. This matches `diet_builder`'s own documented scope
+decision (a single best-fit item per meal, not a multi-item knapsack
+solver) without boxing a user in once they're actually planning a
+real day by hand — automation gets them a starting point, no further
+than that.
 
 ## Energy calculation
 

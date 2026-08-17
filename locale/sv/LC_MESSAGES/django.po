@@ -1984,8 +1984,8 @@ msgstr "BMR/TDEE, makron, kroppsfett och vätskeintag — snabba, fristående up
 msgid "Add food"
 msgstr "Lägg till livsmedel"
 
-msgid "e.g. chicken breast"
-msgstr "t.ex. kycklingfilé"
+msgid "e.g. chicken breast, or a barcode number"
+msgstr "t.ex. kycklingfilé eller ett streckkodsnummer"
 
 msgid "Back to diary"
 msgstr "Tillbaka till dagboken"
@@ -2026,14 +2026,29 @@ msgstr "kolhydrater"
 msgid "fat"
 msgstr "fett"
 
+msgid "target"
+msgstr "mål"
+
+msgid "so far"
+msgstr "hittills"
+
 msgid "servings"
 msgstr "portioner"
 
 msgid "Swap"
 msgstr "Byt"
 
+msgid "Remove this item?"
+msgstr "Ta bort detta objekt?"
+
+msgid "Remove"
+msgstr "Ta bort"
+
 msgid "Nothing suggested yet — add some foods or recipes first."
 msgstr "Inga förslag än — lägg till livsmedel eller recept först."
+
+msgid "+ Add item"
+msgstr "+ Lägg till objekt"
 
 msgid "Log this plan to your diary"
 msgstr "Logga denna plan till din dagbok"
@@ -2073,6 +2088,9 @@ msgstr "+ Ny plan"
 
 msgid "No diet plans yet."
 msgstr "Inga kostplaner än."
+
+msgid "Add item to %(name)s"
+msgstr "Lägg till objekt i %(name)s"
 
 msgid "New food"
 msgstr "Nytt livsmedel"
@@ -2143,9 +2161,6 @@ msgstr "Ingredienser"
 msgid "Remove this ingredient?"
 msgstr "Ta bort denna ingrediens?"
 
-msgid "Remove"
-msgstr "Ta bort"
-
 msgid "No ingredients yet."
 msgstr "Inga ingredienser än."
 
@@ -2181,9 +2196,6 @@ msgstr "Redigera recept"
 
 msgid "New recipe"
 msgstr "Nytt recept"
-
-msgid "Add ingredient"
-msgstr "Lägg till ingrediens"
 
 msgid "Add ingredient to %(name)s"
 msgstr "Lägg till ingrediens till %(name)s"

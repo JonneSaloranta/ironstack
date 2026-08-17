@@ -1984,8 +1984,8 @@ msgstr "BMR/TDEE, macros, body fat, and water intake — quick standalone estima
 msgid "Add food"
 msgstr "Add food"
 
-msgid "e.g. chicken breast"
-msgstr "e.g. chicken breast"
+msgid "e.g. chicken breast, or a barcode number"
+msgstr "e.g. chicken breast, or a barcode number"
 
 msgid "Back to diary"
 msgstr "Back to diary"
@@ -2026,14 +2026,29 @@ msgstr "carbs"
 msgid "fat"
 msgstr "fat"
 
+msgid "target"
+msgstr "target"
+
+msgid "so far"
+msgstr "so far"
+
 msgid "servings"
 msgstr "servings"
 
 msgid "Swap"
 msgstr "Swap"
 
+msgid "Remove this item?"
+msgstr "Remove this item?"
+
+msgid "Remove"
+msgstr "Remove"
+
 msgid "Nothing suggested yet — add some foods or recipes first."
 msgstr "Nothing suggested yet — add some foods or recipes first."
+
+msgid "+ Add item"
+msgstr "+ Add item"
 
 msgid "Log this plan to your diary"
 msgstr "Log this plan to your diary"
@@ -2073,6 +2088,9 @@ msgstr "+ New plan"
 
 msgid "No diet plans yet."
 msgstr "No diet plans yet."
+
+msgid "Add item to %(name)s"
+msgstr "Add item to %(name)s"
 
 msgid "New food"
 msgstr "New food"
@@ -2143,9 +2161,6 @@ msgstr "Ingredients"
 msgid "Remove this ingredient?"
 msgstr "Remove this ingredient?"
 
-msgid "Remove"
-msgstr "Remove"
-
 msgid "No ingredients yet."
 msgstr "No ingredients yet."
 
@@ -2181,9 +2196,6 @@ msgstr "Edit recipe"
 
 msgid "New recipe"
 msgstr "New recipe"
-
-msgid "Add ingredient"
-msgstr "Add ingredient"
 
 msgid "Add ingredient to %(name)s"
 msgstr "Add ingredient to %(name)s"

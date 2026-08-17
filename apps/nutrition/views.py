@@ -11,7 +11,7 @@ from decimal import Decimal
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.db.models import Prefetch
+from django.db.models import Max, Prefetch
 from django.http import HttpResponseNotAllowed
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
@@ -32,13 +32,14 @@ from .forms import (
     DiaryEntryQuantityForm,
     DietPlanForm,
     DietPlanItemForm,
+    DietPlanMealItemSearchForm,
     FoodForm,
     GoalStepForm,
     LogDietPlanForm,
     LogRecipeForm,
     MacroCalculatorForm,
     RecipeForm,
-    RecipeIngredientForm,
+    RecipeIngredientSearchForm,
     WaterIntakeCalculatorForm,
 )
 from .models import NutritionProfile, TargetSource
@@ -359,27 +360,36 @@ class FoodCreateView(LoginRequiredMixin, CreateView):
 
 
 class FoodSearchResultsView(LoginRequiredMixin, View):
-    """HTMX partial — local + live OpenFoodFacts results for the
-    add-to-diary search box (apps.nutrition.services.search_foods)."""
+    """HTMX partial — local + live OpenFoodFacts results for every
+    "search for a food and add it" box in the app
+    (apps.nutrition.services.search_foods): the food diary, adding a
+    recipe ingredient, and adding an extra item to a diet plan meal.
+    One search implementation, one results partial — `mode` (plus
+    whatever extra id that mode needs) only changes which hidden
+    fields/POST target the results partial renders, not how the
+    search itself works."""
 
     template_name = "nutrition/_food_search_results.html"
 
     def get(self, request):
         query = request.GET.get("q", "").strip()
-        target_date = request.GET.get("date", "")
-        meal_slot_id = request.GET.get("meal_slot", "")
+        mode = request.GET.get("mode", "diary")
         local, off_results = ([], []) if not query else services.search_foods(request.user, query)
-        return render(
-            request,
-            self.template_name,
-            {
-                "local": local,
-                "off_results": off_results,
-                "date": target_date,
-                "meal_slot_id": meal_slot_id,
-                "query": query,
-            },
-        )
+        context = {
+            "local": local,
+            "off_results": off_results,
+            "query": query,
+            "mode": mode,
+        }
+        if mode == "diary":
+            context["date"] = request.GET.get("date", "")
+            context["meal_slot_id"] = request.GET.get("meal_slot", "")
+        elif mode == "recipe":
+            context["recipe_pk"] = request.GET.get("recipe_pk", "")
+        elif mode == "diet-plan-meal":
+            context["plan_pk"] = request.GET.get("plan_pk", "")
+            context["meal_pk"] = request.GET.get("meal_pk", "")
+        return render(request, self.template_name, context)
 
 
 def _parse_diary_date(value):
@@ -598,16 +608,49 @@ def recipe_delete(request, pk):
 
 @login_required
 def recipe_ingredient_create(request, recipe_pk):
+    """Search-and-pick, same shape as DiaryAddEntryView below — a
+    recipe's macros come entirely from its ingredients' own Food
+    rows, so finding/importing the right one has to be at least as
+    easy here as it already is in the food diary, not a bare dropdown
+    of foods the user already had to create by hand elsewhere."""
+    from .models import Food, RecipeIngredient
+
     recipe = _owned_recipe_or_404(request, recipe_pk)
-    form = RecipeIngredientForm(request.POST or None, user=request.user)
-    if request.method == "POST" and form.is_valid():
-        ingredient = form.save(commit=False)
-        ingredient.recipe = recipe
-        ingredient.save()
-        return redirect("nutrition:recipe-detail", pk=recipe.pk)
-    return render(
-        request, "nutrition/recipe_ingredient_form.html", {"form": form, "recipe": recipe}
+    if request.method != "POST":
+        return render(
+            request, "nutrition/recipe_ingredient_form.html", {"recipe": recipe}
+        )
+
+    form = RecipeIngredientSearchForm(request.POST)
+    if not form.is_valid():
+        return render(
+            request,
+            "nutrition/recipe_ingredient_form.html",
+            {"form": form, "recipe": recipe},
+        )
+
+    food = None
+    if form.cleaned_data.get("food_id"):
+        food = get_object_or_404(
+            Food.objects.filter(active=True), pk=form.cleaned_data["food_id"]
+        )
+    elif form.cleaned_data.get("off_barcode"):
+        food = services.import_or_refresh_food_from_off(form.cleaned_data["off_barcode"])
+        if food is None:
+            form.add_error(None, _("That food couldn't be imported — try again."))
+            return render(
+                request,
+                "nutrition/recipe_ingredient_form.html",
+                {"form": form, "recipe": recipe},
+            )
+
+    next_order = (
+        recipe.ingredients.aggregate(highest=Max("order"))["highest"] or -1
+    ) + 1
+    RecipeIngredient.objects.create(
+        recipe=recipe, food=food, quantity=form.cleaned_data["quantity"], order=next_order
     )
+    return redirect("nutrition:recipe-detail", pk=recipe.pk)
 
 
 @login_required
@@ -743,6 +786,12 @@ def _diet_plan_meals_with_nutrition(plan):
                     item.quantity
                 )
             )
+        # "So far" against the meal's own target — meaningful now that
+        # a meal can hold more than the one item diet_builder
+        # originally generated for it (diet_plan_meal_item_add below).
+        meal.actual_calories = sum(
+            (item.nutrition.calories for item in meal.items.all()), Decimal("0")
+        )
     return meals
 
 
@@ -784,6 +833,65 @@ def diet_plan_item_edit(request, plan_pk, pk):
     return render(
         request, "nutrition/diet_plan_item_form.html", {"form": form, "plan": plan, "item": item}
     )
+
+
+@login_required
+def diet_plan_item_delete(request, plan_pk, pk):
+    from .models import DietPlanItem
+
+    if request.method != "POST":
+        return HttpResponseNotAllowed(["POST"])
+    plan = _owned_diet_plan_or_404(request, plan_pk)
+    item = get_object_or_404(DietPlanItem, pk=pk, diet_plan_meal__diet_plan=plan)
+    item.delete()
+    return redirect("nutrition:diet-plan-detail", pk=plan.pk)
+
+
+@login_required
+def diet_plan_meal_item_add(request, plan_pk, meal_pk):
+    """Search-and-pick, same shape as recipe_ingredient_create above —
+    meal planning shouldn't be locked to whatever single item
+    diet_builder originally generated for a meal (see that module's
+    own "deliberately simple, not a knapsack solver" scope note); a
+    user filling out a real day's plan needs to be able to add more to
+    a meal, not just swap its one item."""
+    from .models import DietPlanMeal, Food
+
+    plan = _owned_diet_plan_or_404(request, plan_pk)
+    meal = get_object_or_404(DietPlanMeal, pk=meal_pk, diet_plan=plan)
+    if request.method != "POST":
+        return render(
+            request,
+            "nutrition/diet_plan_meal_item_form.html",
+            {"plan": plan, "meal": meal},
+        )
+
+    form = DietPlanMealItemSearchForm(request.POST)
+    if not form.is_valid():
+        return render(
+            request,
+            "nutrition/diet_plan_meal_item_form.html",
+            {"form": form, "plan": plan, "meal": meal},
+        )
+
+    food = None
+    if form.cleaned_data.get("food_id"):
+        food = get_object_or_404(
+            Food.objects.filter(active=True), pk=form.cleaned_data["food_id"]
+        )
+    elif form.cleaned_data.get("off_barcode"):
+        food = services.import_or_refresh_food_from_off(form.cleaned_data["off_barcode"])
+        if food is None:
+            form.add_error(None, _("That food couldn't be imported — try again."))
+            return render(
+                request,
+                "nutrition/diet_plan_meal_item_form.html",
+                {"form": form, "plan": plan, "meal": meal},
+            )
+
+    next_order = (meal.items.aggregate(highest=Max("order"))["highest"] or -1) + 1
+    meal.items.create(food=food, quantity=form.cleaned_data["quantity"], order=next_order)
+    return redirect("nutrition:diet-plan-detail", pk=plan.pk)
 
 
 @login_required

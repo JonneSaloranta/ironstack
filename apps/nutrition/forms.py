@@ -201,22 +201,24 @@ class RecipeForm(forms.ModelForm):
         fields = ["name", "servings", "instructions"]
 
 
-class RecipeIngredientForm(forms.ModelForm):
-    def __init__(self, *args, user, **kwargs):
-        from django.db.models import Q
+class RecipeIngredientSearchForm(forms.Form):
+    """Adds one Food (local or freshly imported from OpenFoodFacts) as
+    a recipe ingredient — same shape as DiaryAddEntryForm above, minus
+    the meal_slot/date a diary entry needs but an ingredient doesn't.
+    Search-and-pick rather than a bare dropdown of foods the user
+    already had to create by hand elsewhere: this is the one place a
+    recipe's macros come from, so finding/importing the right food
+    has to be as easy here as it already is in the food diary."""
 
-        from .models import Food
+    food_id = forms.IntegerField(required=False, widget=forms.HiddenInput)
+    off_barcode = forms.CharField(required=False, widget=forms.HiddenInput)
+    quantity = forms.DecimalField(max_digits=8, decimal_places=2, min_value=Decimal("0.01"))
 
-        super().__init__(*args, **kwargs)
-        self.fields["food"].queryset = Food.objects.filter(
-            Q(owner=user) | Q(owner__isnull=True), active=True
-        ).order_by("name")
-
-    class Meta:
-        from .models import RecipeIngredient
-
-        model = RecipeIngredient
-        fields = ["food", "quantity"]
+    def clean(self):
+        cleaned = super().clean()
+        if not cleaned.get("food_id") and not cleaned.get("off_barcode"):
+            raise forms.ValidationError(_("Pick a food to add."))
+        return cleaned
 
 
 class LogRecipeForm(forms.Form):
@@ -293,6 +295,27 @@ class DietPlanItemForm(forms.ModelForm):
 
         model = DietPlanItem
         fields = ["food", "recipe", "quantity"]
+
+
+class DietPlanMealItemSearchForm(forms.Form):
+    """Adds one extra Food (local or freshly imported from
+    OpenFoodFacts) to an already-generated meal — same search-and-pick
+    shape as RecipeIngredientSearchForm/DiaryAddEntryForm above. Meal
+    planning shouldn't be locked to whatever single item the generator
+    originally picked (see apps.nutrition.diet_builder's own
+    documented "deliberately simple, not a knapsack solver" scope
+    note) — a user building out a real day's plan needs to be able to
+    add more to a meal, not just swap its one item."""
+
+    food_id = forms.IntegerField(required=False, widget=forms.HiddenInput)
+    off_barcode = forms.CharField(required=False, widget=forms.HiddenInput)
+    quantity = forms.DecimalField(max_digits=8, decimal_places=2, min_value=Decimal("0.01"))
+
+    def clean(self):
+        cleaned = super().clean()
+        if not cleaned.get("food_id") and not cleaned.get("off_barcode"):
+            raise forms.ValidationError(_("Pick a food to add."))
+        return cleaned
 
 
 class LogDietPlanForm(forms.Form):

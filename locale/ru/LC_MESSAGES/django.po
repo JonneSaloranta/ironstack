@@ -1992,8 +1992,8 @@ msgstr "BMR/TDEE, макронутриенты, процент жира и по�
 msgid "Add food"
 msgstr "Добавить продукт"
 
-msgid "e.g. chicken breast"
-msgstr "например, куриная грудка"
+msgid "e.g. chicken breast, or a barcode number"
+msgstr "например, куриная грудка или номер штрихкода"
 
 msgid "Back to diary"
 msgstr "Назад к дневнику"
@@ -2034,14 +2034,29 @@ msgstr "углеводы"
 msgid "fat"
 msgstr "жиры"
 
+msgid "target"
+msgstr "цель"
+
+msgid "so far"
+msgstr "на данный момент"
+
 msgid "servings"
 msgstr "порций"
 
 msgid "Swap"
 msgstr "Заменить"
 
+msgid "Remove this item?"
+msgstr "Удалить этот пункт?"
+
+msgid "Remove"
+msgstr "Удалить"
+
 msgid "Nothing suggested yet — add some foods or recipes first."
 msgstr "Пока нет предложений — сначала добавьте продукты или рецепты."
+
+msgid "+ Add item"
+msgstr "+ Добавить пункт"
 
 msgid "Log this plan to your diary"
 msgstr "Записать этот план в дневник"
@@ -2081,6 +2096,9 @@ msgstr "+ Новый план"
 
 msgid "No diet plans yet."
 msgstr "Пока нет планов питания."
+
+msgid "Add item to %(name)s"
+msgstr "Добавить пункт в %(name)s"
 
 msgid "New food"
 msgstr "Новый продукт"
@@ -2151,9 +2169,6 @@ msgstr "Ингредиенты"
 msgid "Remove this ingredient?"
 msgstr "Удалить этот ингредиент?"
 
-msgid "Remove"
-msgstr "Удалить"
-
 msgid "No ingredients yet."
 msgstr "Пока нет ингредиентов."
 
@@ -2189,9 +2204,6 @@ msgstr "Изменить рецепт"
 
 msgid "New recipe"
 msgstr "Новый рецепт"
-
-msgid "Add ingredient"
-msgstr "Добавить ингредиент"
 
 msgid "Add ingredient to %(name)s"
 msgstr "Добавить ингредиент в %(name)s"

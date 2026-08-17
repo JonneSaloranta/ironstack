@@ -27,6 +27,7 @@ from .models import (
     BiologicalSex,
     DiaryEntry,
     DietPlan,
+    DietPlanItem,
     DietPlanMeal,
     Food,
     GoalType,
@@ -938,6 +939,36 @@ class SearchFoodsTests(TestCase):
             local, off_results = services.search_foods(self.alice, "anything")
         self.assertEqual(off_results, [])
 
+    def test_a_barcode_like_query_uses_the_by_barcode_lookup_not_free_text_search(self):
+        with mock.patch.object(
+            openfoodfacts, "get_product", return_value=RAW_OFF_PRODUCT
+        ) as get_product, mock.patch.object(openfoodfacts, "search_products") as search_products:
+            local, off_results = services.search_foods(self.alice, "1234567890123")
+        get_product.assert_called_once_with("1234567890123")
+        search_products.assert_not_called()
+        self.assertEqual([r["off_id"] for r in off_results], ["1234567890123"])
+
+    def test_a_barcode_query_also_matches_an_already_imported_local_food_by_off_id(self):
+        make_food(self.alice, name="Muesli I already have", off_id="1234567890123")
+        with mock.patch.object(openfoodfacts, "get_product", return_value=None):
+            local, off_results = services.search_foods(self.alice, "1234567890123")
+        self.assertEqual([f.name for f in local], ["Muesli I already have"])
+
+    def test_a_barcode_query_with_no_off_match_returns_no_off_results_not_a_crash(self):
+        with mock.patch.object(openfoodfacts, "get_product", return_value=None):
+            local, off_results = services.search_foods(self.alice, "99999999999999")
+        self.assertEqual(off_results, [])
+
+    def test_a_short_digit_string_is_treated_as_a_name_search_not_a_barcode(self):
+        # Below the 8-digit floor for any real barcode format — e.g. a
+        # quantity typo or a product code fragment, not a barcode.
+        with mock.patch.object(
+            openfoodfacts, "search_products", return_value=[]
+        ) as search_products, mock.patch.object(openfoodfacts, "get_product") as get_product:
+            services.search_foods(self.alice, "1234")
+        search_products.assert_called_once_with("1234")
+        get_product.assert_not_called()
+
 
 class OpenFoodFactsSettingsTests(TestCase):
     def test_defaults_to_enabled(self):
@@ -1464,7 +1495,7 @@ class RecipeViewTests(TestCase):
         recipe = Recipe.objects.create(owner=self.alice, name="Bowl", servings=2)
         response = self.client.post(
             reverse("nutrition:recipe-ingredient-create", args=[recipe.pk]),
-            {"food": self.chicken.pk, "quantity": "300"},
+            {"food_id": self.chicken.pk, "quantity": "300"},
         )
         self.assertEqual(response.status_code, 302)
         ingredient = RecipeIngredient.objects.get(recipe=recipe)
@@ -1475,6 +1506,39 @@ class RecipeViewTests(TestCase):
         )
         self.assertEqual(response.status_code, 302)
         self.assertFalse(RecipeIngredient.objects.filter(pk=ingredient.pk).exists())
+
+    def test_adding_an_ingredient_from_openfoodfacts_imports_and_links_it(self):
+        recipe = Recipe.objects.create(owner=self.alice, name="Bowl", servings=2)
+        raw_product = {
+            "code": "5901234123457",
+            "product_name": "Test Product",
+            "brands": "Test Brand",
+            "nutriments": {
+                "energy-kcal_100g": 200,
+                "proteins_100g": 10,
+                "carbohydrates_100g": 20,
+                "fat_100g": 5,
+            },
+        }
+        with mock.patch.object(openfoodfacts, "get_product", return_value=raw_product):
+            response = self.client.post(
+                reverse("nutrition:recipe-ingredient-create", args=[recipe.pk]),
+                {"off_barcode": "5901234123457", "quantity": "150"},
+            )
+        self.assertEqual(response.status_code, 302)
+        ingredient = RecipeIngredient.objects.get(recipe=recipe)
+        self.assertEqual(ingredient.food.off_id, "5901234123457")
+        self.assertEqual(ingredient.food.name, "Test Product")
+
+    def test_search_results_partial_posts_to_the_recipe_ingredient_endpoint_in_recipe_mode(self):
+        recipe = Recipe.objects.create(owner=self.alice, name="Bowl", servings=2)
+        response = self.client.get(
+            reverse("nutrition:food-search"),
+            {"q": "Chicken", "mode": "recipe", "recipe_pk": recipe.pk},
+        )
+        self.assertContains(
+            response, reverse("nutrition:recipe-ingredient-create", args=[recipe.pk])
+        )
 
     def test_recipe_detail_shows_correct_totals(self):
         recipe = Recipe.objects.create(owner=self.alice, name="Bowl", servings=2)
@@ -1697,6 +1761,54 @@ class DietPlanViewTests(TestCase):
         self.assertEqual(response.status_code, 302)
         item.refresh_from_db()
         self.assertEqual(item.food, other_food)
+
+    def test_adding_an_extra_item_to_a_meal_does_not_replace_the_generated_one(self):
+        plan = diet_builder.build_diet_plan(
+            self.alice, name="Plan", goal=None, target_calories=800,
+            target_protein_grams=Decimal("1"), target_carbohydrate_grams=Decimal("1"),
+            target_fat_grams=Decimal("1"), meal_slots=[self.breakfast],
+        )
+        meal = plan.meals.first()
+        self.assertEqual(meal.items.count(), 1)
+        extra_food = make_food(self.alice, name="Rice", calories=130)
+        response = self.client.post(
+            reverse("nutrition:diet-plan-meal-item-add", args=[plan.pk, meal.pk]),
+            {"food_id": extra_food.pk, "quantity": "200"},
+        )
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(meal.items.count(), 2)
+        self.assertTrue(meal.items.filter(food=extra_food).exists())
+
+    def test_deleting_an_item_removes_only_that_item(self):
+        plan = diet_builder.build_diet_plan(
+            self.alice, name="Plan", goal=None, target_calories=800,
+            target_protein_grams=Decimal("1"), target_carbohydrate_grams=Decimal("1"),
+            target_fat_grams=Decimal("1"), meal_slots=[self.breakfast],
+        )
+        meal = plan.meals.first()
+        original_item = meal.items.first()
+        extra_food = make_food(self.alice, name="Rice", calories=130)
+        extra_item = meal.items.create(food=extra_food, quantity=Decimal("200"), order=1)
+        response = self.client.post(
+            reverse("nutrition:diet-plan-item-delete", args=[plan.pk, extra_item.pk])
+        )
+        self.assertEqual(response.status_code, 302)
+        self.assertFalse(meal.items.filter(pk=extra_item.pk).exists())
+        self.assertTrue(meal.items.filter(pk=original_item.pk).exists())
+
+    def test_deleting_another_users_item_is_a_404(self):
+        make_food(self.bob, name="Bob's Chicken", calories=165)
+        plan = diet_builder.build_diet_plan(
+            self.bob, name="Bob's plan", goal=None, target_calories=800,
+            target_protein_grams=Decimal("1"), target_carbohydrate_grams=Decimal("1"),
+            target_fat_grams=Decimal("1"), meal_slots=[self.breakfast],
+        )
+        item = plan.meals.first().items.first()
+        response = self.client.post(
+            reverse("nutrition:diet-plan-item-delete", args=[plan.pk, item.pk])
+        )
+        self.assertEqual(response.status_code, 404)
+        self.assertTrue(DietPlanItem.objects.filter(pk=item.pk).exists())
 
     def test_logging_the_plan_creates_diary_entries(self):
         plan = diet_builder.build_diet_plan(

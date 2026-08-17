@@ -27,6 +27,15 @@ lands and remains the authoritative history.
   BMR/TDEE, macro split, body fat percentage (U.S. Navy method), and
   daily water intake — quick estimates that don't require completing
   nutrition onboarding or setting a goal.
+- Adding a recipe ingredient is now search-and-pick (local foods, live
+  OpenFoodFacts results, and barcode-number search) instead of a
+  dropdown of foods you already had to create by hand — macros are
+  pulled in automatically.
+- Diet-plan meals can now hold more than one item — add extras
+  alongside the auto-generated one, and remove any item individually.
+- Searching for a food by its barcode number now works everywhere the
+  food-search box appears (diary, recipe ingredients, diet-plan
+  meals).
 
 ### Fixed
 - An OpenFoodFacts import-failure message in the food diary that was
@@ -35,6 +44,8 @@ lands and remains the authoritative history.
   nothing instead of showing the error.
 - Some button rows in the nutrition UI could run past the right edge
   of the screen on mobile, especially with longer translated text.
+- The Nutrition icon in the bottom navigation looked partially cut
+  off compared to the other icons.
 - Several actions across the training log, body measurements,
   activities, exercises, and programs (starting/completing/deleting a
   workout session, logging a set, editing/deleting a measurement or

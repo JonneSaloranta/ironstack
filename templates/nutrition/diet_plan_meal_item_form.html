@@ -1,9 +1,9 @@
 {% extends "base.html" %}
 {% load i18n %}
-{% block title %}{% blocktrans with name=recipe.name %}Add ingredient to {{ name }}{% endblocktrans %} — IronStack{% endblock %}
+{% block title %}{% blocktrans with name=meal.meal_slot.name %}Add item to {{ name }}{% endblocktrans %} — IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
-  <h1 style="margin:0;">{% blocktrans with name=recipe.name %}Add ingredient to {{ name }}{% endblocktrans %}</h1>
+  <h1 style="margin:0;">{% blocktrans with name=meal.meal_slot.name %}Add item to {{ name }}{% endblocktrans %}</h1>
 </div>
 
 {% if form.non_field_errors %}
@@ -17,7 +17,7 @@
            hx-get="{% url 'nutrition:food-search' %}"
            hx-trigger="keyup changed delay:400ms"
            hx-target="#food-search-results"
-           hx-vals='{"mode": "recipe", "recipe_pk": "{{ recipe.pk }}"}'
+           hx-vals='{"mode": "diet-plan-meal", "plan_pk": "{{ plan.pk }}", "meal_pk": "{{ meal.pk }}"}'
            hx-swap="outerHTML"
            autocomplete="off"
            placeholder="{% trans "e.g. chicken breast, or a barcode number" %}">
@@ -26,5 +26,5 @@
 
 <div id="food-search-results"></div>
 
-<p><a class="button-secondary" href="{% url 'nutrition:recipe-detail' recipe.pk %}">&larr; {% trans "Back to recipe" %}</a></p>
+<p><a class="button-secondary" href="{% url 'nutrition:diet-plan-detail' plan.pk %}">&larr; {% trans "Back to plan" %}</a></p>
 {% endblock %}

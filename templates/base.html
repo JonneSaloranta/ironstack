@@ -65,7 +65,7 @@
       <span class="nav-label">{% trans "Home" %}</span>
     </a>
     <a href="{% url 'nutrition:dashboard' %}" aria-label="{% trans "Nutrition" %}" {% if request.resolver_match.app_name == 'nutrition' %}aria-current="page"{% endif %}>
-      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 2v6a2 2 0 0 0 2 2h0a2 2 0 0 0 2-2V2"/><path d="M8 10v12"/><path d="M17 2c-1.5 0-3 1.5-3 5s1 5 2 5.5V22"/></svg>
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/></svg>
       <span class="nav-label">{% trans "Nutrition" %}</span>
     </a>
     <a href="{% url 'analytics:dashboard' %}" aria-label="{% trans "Progress" %}" {% if request.resolver_match.app_name == 'analytics' %}aria-current="page"{% endif %}>

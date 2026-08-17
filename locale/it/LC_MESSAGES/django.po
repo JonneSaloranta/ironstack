@@ -1984,8 +1984,8 @@ msgstr "BMR/TDEE, macro, massa grassa e assunzione di acqua — stime rapide e i
 msgid "Add food"
 msgstr "Aggiungi alimento"
 
-msgid "e.g. chicken breast"
-msgstr "es. petto di pollo"
+msgid "e.g. chicken breast, or a barcode number"
+msgstr "es. petto di pollo, o un codice a barre"
 
 msgid "Back to diary"
 msgstr "Torna al diario"
@@ -2026,14 +2026,29 @@ msgstr "carboidrati"
 msgid "fat"
 msgstr "grassi"
 
+msgid "target"
+msgstr "obiettivo"
+
+msgid "so far"
+msgstr "finora"
+
 msgid "servings"
 msgstr "porzioni"
 
 msgid "Swap"
 msgstr "Sostituisci"
 
+msgid "Remove this item?"
+msgstr "Rimuovere questo elemento?"
+
+msgid "Remove"
+msgstr "Rimuovi"
+
 msgid "Nothing suggested yet — add some foods or recipes first."
 msgstr "Nessun suggerimento ancora — aggiungi prima alimenti o ricette."
+
+msgid "+ Add item"
+msgstr "+ Aggiungi elemento"
 
 msgid "Log this plan to your diary"
 msgstr "Registra questo piano nel tuo diario"
@@ -2073,6 +2088,9 @@ msgstr "+ Nuovo piano"
 
 msgid "No diet plans yet."
 msgstr "Nessun piano alimentare ancora."
+
+msgid "Add item to %(name)s"
+msgstr "Aggiungi elemento a %(name)s"
 
 msgid "New food"
 msgstr "Nuovo alimento"
@@ -2143,9 +2161,6 @@ msgstr "Ingredienti"
 msgid "Remove this ingredient?"
 msgstr "Rimuovere questo ingrediente?"
 
-msgid "Remove"
-msgstr "Rimuovi"
-
 msgid "No ingredients yet."
 msgstr "Nessun ingrediente ancora."
 
@@ -2181,9 +2196,6 @@ msgstr "Modifica ricetta"
 
 msgid "New recipe"
 msgstr "Nuova ricetta"
-
-msgid "Add ingredient"
-msgstr "Aggiungi ingrediente"
 
 msgid "Add ingredient to %(name)s"
 msgstr "Aggiungi ingrediente a %(name)s"

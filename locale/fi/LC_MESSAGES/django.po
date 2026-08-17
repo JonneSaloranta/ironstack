@@ -1984,8 +1984,8 @@ msgstr "BMR/TDEE, makrot, rasvaprosentti ja vedenjuonti — nopeita, itsenäisi�
 msgid "Add food"
 msgstr "Lisää ruoka"
 
-msgid "e.g. chicken breast"
-msgstr "esim. kananrinta"
+msgid "e.g. chicken breast, or a barcode number"
+msgstr "esim. kananrinta tai viivakoodi"
 
 msgid "Back to diary"
 msgstr "Takaisin päiväkirjaan"
@@ -2026,14 +2026,29 @@ msgstr "hiilarit"
 msgid "fat"
 msgstr "rasva"
 
+msgid "target"
+msgstr "tavoite"
+
+msgid "so far"
+msgstr "tähän mennessä"
+
 msgid "servings"
 msgstr "annosta"
 
 msgid "Swap"
 msgstr "Vaihda"
 
+msgid "Remove this item?"
+msgstr "Poistetaanko tämä kohde?"
+
+msgid "Remove"
+msgstr "Poista"
+
 msgid "Nothing suggested yet — add some foods or recipes first."
 msgstr "Ei vielä ehdotuksia — lisää ensin ruokia tai reseptejä."
+
+msgid "+ Add item"
+msgstr "+ Lisää kohde"
 
 msgid "Log this plan to your diary"
 msgstr "Kirjaa tämä suunnitelma päiväkirjaasi"
@@ -2073,6 +2088,9 @@ msgstr "+ Uusi suunnitelma"
 
 msgid "No diet plans yet."
 msgstr "Ei vielä ruokavaliosuunnitelmia."
+
+msgid "Add item to %(name)s"
+msgstr "Lisää kohde ateriaan %(name)s"
 
 msgid "New food"
 msgstr "Uusi ruoka"
@@ -2143,9 +2161,6 @@ msgstr "Ainesosat"
 msgid "Remove this ingredient?"
 msgstr "Poistetaanko tämä ainesosa?"
 
-msgid "Remove"
-msgstr "Poista"
-
 msgid "No ingredients yet."
 msgstr "Ei vielä ainesosia."
 
@@ -2181,9 +2196,6 @@ msgstr "Muokkaa reseptiä"
 
 msgid "New recipe"
 msgstr "Uusi resepti"
-
-msgid "Add ingredient"
-msgstr "Lisää ainesosa"
 
 msgid "Add ingredient to %(name)s"
 msgstr "Lisää ainesosa reseptiin %(name)s"
