@@ -10,3 +10,27 @@ exclude = [".venv", "migrations"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I"]
+
+[tool.coverage.run]
+# Only this project's own apps — never the interpreter/venv or a
+# vendored dependency's own coverage, which would just dilute the
+# number with code this project doesn't own or test.
+source = ["apps"]
+omit = [
+    "*/migrations/*",
+    "*/tests.py",
+    "*/apps.py",
+]
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = false
+# A branch not literally reachable from this codebase (a defensive
+# guard for a case Django/DRF itself prevents, not one this project's
+# own logic can produce) can be marked `# pragma: no cover` rather
+# than chased with a contrived test — same judgment call every other
+# test in this project already makes about what's worth testing.
+exclude_lines = [
+    "pragma: no cover",
+    "raise NotImplementedError",
+]

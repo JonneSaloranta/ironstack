@@ -15,11 +15,12 @@ CRUD_VERBS = [
 
 
 class ApiKeyCreateForm(forms.Form):
-    """`name` plus one checkbox per (context, CRUD verb) — 8 contexts ×
-    4 verbs, added dynamically in `__init__` rather than hand-written
-    since the context list is a single source of truth
-    (apps.api.models.ApiContext). `permissions()` reshapes the flat
-    checkbox fields back into the
+    """`name` plus one checkbox per (context, CRUD verb) — one row per
+    `ApiContext` member × 4 verbs, added dynamically in `__init__`
+    rather than hand-written since the context list is a single
+    source of truth (apps.api.models.ApiContext) — adding a new
+    context (e.g. `nutrition`) needs no change here at all.
+    `permissions()` reshapes the flat checkbox fields back into the
     `{context: {can_create: bool, ...}}` dict
     apps.api.services.create_api_key/set_permissions expect.
     """

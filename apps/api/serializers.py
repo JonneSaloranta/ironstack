@@ -16,6 +16,15 @@ from rest_framework import serializers
 from apps.activities.models import Activity, ActivityType
 from apps.exercises.models import Equipment, Exercise, MuscleGroup
 from apps.measurements.models import BodyMeasurement, MeasurementType
+from apps.nutrition.models import (
+    DiaryEntry,
+    Food,
+    MealSlot,
+    NutritionGoal,
+    NutritionTarget,
+    Recipe,
+    RecipeIngredient,
+)
 from apps.programs.models import ExercisePrescription, Program, Workout
 from apps.records.models import PersonalRecord
 from apps.workouts.models import ExerciseSet, PerformedExercise, WorkoutSession
@@ -424,3 +433,167 @@ class AchievementSerializer(serializers.Serializer):
     # User.show_name_to_others, so the API field is named for what it
     # actually contains.
     display_name = serializers.CharField()
+
+
+# --------------------------------------------------------------------
+# Nutrition
+# --------------------------------------------------------------------
+
+
+class FoodSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Food
+        fields = [
+            "id",
+            "name",
+            "brand",
+            "serving_size",
+            "serving_unit",
+            "calories",
+            "protein_grams",
+            "carbohydrate_grams",
+            "fat_grams",
+            "fiber_grams",
+            "sugar_grams",
+            "saturated_fat_grams",
+            "sodium_mg",
+            "nutri_score",
+            "nova_group",
+            "off_id",
+            "active",
+            "owner",
+        ]
+        # nutri_score/nova_group/off_id are only ever set by an
+        # OpenFoodFacts import (apps.nutrition.services.import_or_
+        # refresh_food_from_off), never hand-entered — same reasoning
+        # as docs/NUTRITION.md's own "Food" section. Importing a food
+        # by barcode isn't exposed as a create here at all yet; a
+        # client creates a plain hand-entered food the same way the
+        # web form does (see "What's deliberately not here" below).
+        read_only_fields = ["nutri_score", "nova_group", "off_id", "active", "owner"]
+
+
+class MealSlotSerializer(serializers.ModelSerializer):
+    is_custom = serializers.BooleanField(read_only=True)
+
+    class Meta:
+        model = MealSlot
+        fields = ["id", "name", "order", "active", "is_custom", "owner"]
+        read_only_fields = ["active", "owner"]
+
+
+class RecipeIngredientSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = RecipeIngredient
+        fields = ["id", "recipe", "food", "quantity", "order"]
+
+    def validate_recipe(self, value):
+        # Same reasoning as ExercisePrescriptionSerializer.validate_
+        # workout — an ingredient can only be added to a recipe this
+        # user actually owns.
+        request = self.context["request"]
+        if value.owner_id != request.user.id:
+            raise serializers.ValidationError("Not a recipe you own.")
+        return value
+
+    def validate_food(self, value):
+        from django.db.models import Q
+
+        request = self.context["request"]
+        visible = Food.objects.filter(
+            Q(owner=request.user) | Q(owner__isnull=True), active=True
+        )
+        if not visible.filter(pk=value.pk).exists():
+            raise serializers.ValidationError("Not a food you can use.")
+        return value
+
+
+class RecipeSerializer(serializers.ModelSerializer):
+    ingredients = RecipeIngredientSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Recipe
+        fields = ["id", "name", "servings", "instructions", "owner", "ingredients"]
+        read_only_fields = ["owner"]
+
+
+class DiaryEntrySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DiaryEntry
+        fields = ["id", "date", "meal_slot", "food", "recipe", "quantity", "notes", "user"]
+        read_only_fields = ["user"]
+
+    def validate(self, attrs):
+        # Mirrors DiaryEntry.clean() / its own CheckConstraint —
+        # checked here too so a bad request gets a normal 400 with a
+        # clear message instead of a raw IntegrityError 500 from the
+        # database constraint alone.
+        food = attrs.get("food", getattr(self.instance, "food", None))
+        recipe = attrs.get("recipe", getattr(self.instance, "recipe", None))
+        if bool(food) == bool(recipe):
+            raise serializers.ValidationError("Log either a food or a recipe, not both or neither.")
+        return attrs
+
+    def validate_meal_slot(self, value):
+        from apps.nutrition import services as nutrition_services
+
+        request = self.context["request"]
+        if not nutrition_services.visible_meal_slots(request.user).filter(pk=value.pk).exists():
+            raise serializers.ValidationError("Not a meal slot you can log against.")
+        return value
+
+    def validate_food(self, value):
+        from django.db.models import Q
+
+        request = self.context["request"]
+        visible = Food.objects.filter(
+            Q(owner=request.user) | Q(owner__isnull=True), active=True
+        )
+        if not visible.filter(pk=value.pk).exists():
+            raise serializers.ValidationError("Not a food you can log.")
+        return value
+
+    def validate_recipe(self, value):
+        request = self.context["request"]
+        if value.owner_id != request.user.id:
+            raise serializers.ValidationError("Not a recipe you own.")
+        return value
+
+
+# Goals/targets are historized and only ever change through
+# apps.nutrition.services.set_goal/set_target (append a new row,
+# close the old one) — exposed read-only here for exactly the same
+# reason PersonalRecordSerializer is read-only above: a raw PATCH
+# through a generic serializer could silently rewrite history a
+# derived/historized resource must never allow. Setting a goal or
+# target through the API isn't in scope for this pass — see "What's
+# deliberately not here" in docs/API.md.
+class NutritionGoalSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = NutritionGoal
+        fields = [
+            "id",
+            "goal_type",
+            "target_weight",
+            "target_rate_kg_per_week",
+            "started_at",
+            "ended_at",
+            "notes",
+        ]
+
+
+class NutritionTargetSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = NutritionTarget
+        fields = [
+            "id",
+            "goal",
+            "daily_calories",
+            "protein_grams",
+            "carbohydrate_grams",
+            "fat_grams",
+            "source",
+            "reason",
+            "started_at",
+            "ended_at",
+        ]

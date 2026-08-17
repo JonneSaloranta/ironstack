@@ -53,6 +53,7 @@ Every endpoint belongs to exactly one **context**
 | `activities` | Activity types, logged activities |
 | `records` | Personal records (read-only — see below) |
 | `analytics` | Training summaries, achievements (read-only) |
+| `nutrition` | Foods, meal slots, recipes, diary entries, nutrition goals/targets (goals/targets read-only — see below) |
 
 Each API key carries, per context, four independent flags — **Create**,
 **Read**, **Update**, **Delete** — checked fresh on every request
@@ -67,7 +68,14 @@ independent per verb, not a single "allowed" toggle.
 but neither context has a route that verb could ever reach — records
 are derived, never directly writable (see `docs/PR_SYSTEM.md`), and an
 account isn't created/deleted through this API. Granting those flags is
-harmless, just inert.
+harmless, just inert. `nutrition` has the same shape for its two
+historized sub-resources: nutrition goals and targets accept Create/
+Update/Delete flags but have no route to reach them, for the same
+reason `records` doesn't — a goal/target is only ever created or
+superseded through `apps.nutrition.services.set_goal`/`set_target`
+(append a new row, close the old one), and a raw API write could
+silently corrupt that append-only history the way a hand-edited PR
+could. See `docs/NUTRITION.md` "NutritionGoal"/"NutritionTarget".
 
 ## Rate limits and tiers
 
@@ -152,6 +160,7 @@ All under `/api/v1/`. List/create endpoints are paginated (25 per page,
 | activities | `activity-types/`, `activity-types/<id>/`, `activities/`, `activities/<id>/` |
 | records | `records/`, `records/<id>/` (read-only) |
 | analytics | `analytics/summary/?range=7d\|30d\|all` (default 30d), `analytics/achievements/` (both read-only) |
+| nutrition | `foods/`, `foods/<id>/`, `meal-slots/`, `meal-slots/<id>/`, `recipes/`, `recipes/<id>/`, `recipe-ingredients/`, `recipe-ingredients/<id>/`, `diary-entries/`, `diary-entries/<id>/`, `nutrition-goals/`, `nutrition-goals/<id>/` (read-only), `nutrition-targets/`, `nutrition-targets/<id>/` (read-only) |
 
 Every endpoint goes through the exact same domain service functions the
 server-rendered web views already use (`apps/exercises/services.py`,
@@ -175,6 +184,28 @@ deleting a program is a real, permanent delete (it has no `active`
 field, matching its own web view: "Delete this program? This cannot be
 undone.").
 
+Nutrition follows the same shapes: `foods/`/`meal-slots/` are
+soft-deletable, shared-or-own resources exactly like `measurement-
+types/`/`activity-types/` — a food or meal slot with no `owner` is
+visible to (and loggable by) every user but only ever editable by
+whoever created a *custom* one. `recipes/` is a real, permanent delete
+like `programs/` (a recipe has no `active` field either). A
+`diary-entries/` row must have exactly one of `food`/`recipe` set,
+never both or neither — the same `CheckConstraint` the model itself
+enforces, checked again in the serializer so a bad request gets a
+plain `400` with a message instead of a raw database error. A
+`recipe-ingredients/`/`diary-entries/` write is only accepted if the
+`food`/`recipe`/`meal_slot` it points at is one this key's user can
+actually see — the same visibility rule `apps.nutrition.services.
+search_foods`/`visible_meal_slots` already enforce for the web UI,
+re-checked here since a `PrimaryKeyRelatedField` has no ownership
+concept of its own (same pattern `WorkoutSerializer.validate_program`
+and `BodyMeasurementSerializer.validate_measurement_type` already use
+elsewhere in this file). Importing a food from OpenFoodFacts by
+barcode isn't exposed here — a client creates a food the same way the
+web form does, by supplying its own values directly; see "What's
+deliberately not here" below.
+
 ## What's deliberately not here
 
 - **Bulk/batch endpoints.** Every write is one row at a time, matching
@@ -186,6 +217,12 @@ undone.").
   "connect your account to another service" flow, since this is a
   self-hosted, typically single-household instance, not a multi-tenant
   SaaS with external integrators.
+- **Importing a food from OpenFoodFacts by barcode.** The web UI's
+  search-and-import flow (`docs/NUTRITION.md` "OpenFoodFacts
+  integration") isn't mirrored here yet — `POST foods/` creates a
+  plain hand-entered food (matching `FoodForm`), the same shape a
+  user typing their own values in gets. Deliberately deferred rather
+  than half-built alongside everything else in this pass.
 
 None of these are ruled out for later, they just aren't part of this
 first pass — see the phased-implementation principle in `CLAUDE.md`.

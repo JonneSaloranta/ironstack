@@ -636,14 +636,35 @@ class RecipeListView(LoginRequiredMixin, ListView):
         return qs
 
     def get_context_data(self, **kwargs):
+        from decimal import Decimal
+
+        from .models import RecipeIngredient
+
         context = super().get_context_data(**kwargs)
         context["query"] = self.request.GET.get("q", "")
         # Per-serving calories at a glance, without opening each
         # recipe — the same reason food_list.html shows calories
         # directly rather than making every recipe a guess until
-        # opened.
-        for recipe in context["recipes"]:
-            recipe.per_serving = services.recipe_per_serving_nutrition(recipe)
+        # opened. Computed as one bulk query across every listed
+        # recipe's ingredients (not services.recipe_per_serving_
+        # nutrition called once per recipe in a loop, which would be a
+        # real N+1 here — this is a *list* of recipes, unlike that
+        # function's other call sites which each only ever look at one
+        # recipe at a time).
+        recipes = list(context["recipes"])
+        totals_by_recipe = {}
+        ingredients = RecipeIngredient.objects.filter(
+            recipe_id__in=[recipe.pk for recipe in recipes]
+        ).select_related("food")
+        for ingredient in ingredients:
+            totals_by_recipe[ingredient.recipe_id] = totals_by_recipe.get(
+                ingredient.recipe_id, services.ZERO_NUTRITION
+            ) + services.scale_nutrition(ingredient.food, ingredient.quantity)
+        for recipe in recipes:
+            total = totals_by_recipe.get(recipe.pk, services.ZERO_NUTRITION)
+            servings = Decimal(recipe.servings) if recipe.servings else Decimal("1")
+            recipe.per_serving = total.scaled_by(Decimal("1") / servings)
+        context["recipes"] = recipes
         return context
 
 

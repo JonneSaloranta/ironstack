@@ -2238,3 +2238,137 @@ the first food ranked above the second on the diary add-food page
 *and* the recipe-ingredient-add page; confirmed the quantity field
 read `value="180.00"` (period) after the l10n fix, not
 `value="180,00"` (comma) as it did before.
+
+## Whole-app development plan: nutrition API, coverage tooling, accessibility/performance passes
+
+Asked directly for a development plan covering the *whole* application,
+not just nutrition — surveyed every app's model/view/test size,
+`docs/ROADMAP.md` (v1 and v2/nutrition both already complete per their
+own checklists), and confirmed the bug *patterns* found in nutrition
+this session (wrong-target back links, locale-unsafe date/number
+inputs) don't recur elsewhere. Landed on five concrete follow-ups,
+asked to do all of them:
+
+**`coverage` (the pip package) adopted for real, not just requested.**
+Added to `requirements/dev.txt` + a `[tool.coverage.*]` section in
+`pyproject.toml` (source = `apps`, migrations/tests/`apps.py` excluded).
+Needed a container rebuild (`docker compose build web`) since dev
+dependencies are baked into the image at build time, not
+`pip install`-able into the running container directly (confirmed via
+a permission-denied error against `/venv`, owned by a different user
+than the container runs as). `coverage run -m pytest && coverage
+report` gave a real, whole-project number (87%) instead of a guess
+from test-file line counts, and pointed straight at genuine gaps
+`coverage`'s own "Missing" column named by line number rather than
+requiring a manual audit.
+
+**`apps.api` nutrition context — the confirmed gap from the earlier
+plan.** `ApiContext.NUTRITION`, viewsets for `Food`/`MealSlot`
+(`OwnedResourceViewSet`, matching `MeasurementType`/`ActivityType`
+exactly — shared-or-own, soft-delete), `Recipe`/`RecipeIngredient`/
+`DiaryEntry` (plain user-owned `ModelViewSet`s, matching
+`Activity`/`BodyMeasurement`), and read-only `NutritionGoal`/
+`NutritionTarget` (matching `PersonalRecordViewSet`'s own "derived,
+never directly writable" reasoning — a goal/target is only ever
+created or superseded through `services.set_goal`/`set_target`, never
+a raw PATCH). `DiaryEntrySerializer.validate()` re-checks the food-
+xor-recipe `CheckConstraint` so a bad request gets a plain `400`
+instead of a raw `IntegrityError` 500; every FK (`food`, `recipe`,
+`meal_slot`) is re-validated for visibility/ownership the same way
+`WorkoutSerializer.validate_program`/`BodyMeasurementSerializer.
+validate_measurement_type` already do elsewhere in this file — a
+`PrimaryKeyRelatedField` has no ownership concept of its own. Adding
+`ApiContext.NUTRITION` needed a real migration
+(`0003_alter_apikeypermission_context.py`) — Django tracks `choices=`
+in migrations even though it's not DB-enforced — and touched three
+places outside `apps.nutrition` that hardcode the context list/count:
+`apps.api.tests._all_permissions` (context list), two
+`self.assertEqual(api_key.permissions.count(), 8)` assertions
+(switched to `len(ApiContext.choices)` so they can't silently drift
+out of sync with the enum again), and `ApiKeyCreateForm`'s own
+docstring ("8 contexts" → "one row per `ApiContext` member").
+`docs/API.md`'s Contexts/Endpoints tables and "What's deliberately not
+here" updated to match (barcode import via API explicitly deferred,
+not silently missing).
+
+**Accessibility pass** — a targeted regex sweep for hand-rolled
+`<input>`/`<select>`/`<textarea>` missing both an `aria-label` and an
+`id` (the two ways an accessible name reaches a form control outside
+Django's own `field.label_tag` loop, which already handles this
+correctly everywhere it's used) turned up two real, pre-existing gaps,
+neither introduced this session: the admin food-merge page's radio
+buttons had no accessible name distinguishing which food each one
+picked (`templates/admin/nutrition/food/merge.html`), and the
+API-key-created page's read-only secret `<textarea>` had none either
+(`templates/api/key_created.html`) — both fixed with an explicit
+`aria-label`. This session's own new nutrition templates were checked
+against the same sweep and came back clean, for the same reason the
+rest of the app did: consistently reusing established patterns
+(`field.label_tag`, explicit `aria-label` on every hand-rolled control)
+rather than inventing new ones.
+
+**Performance / N+1 audit** — checked every list-shaped view across
+nutrition and analytics for a query inside a loop; found exactly one
+real regression, self-inflicted earlier this session:
+`RecipeListView`'s per-recipe calories/serving used `services.
+recipe_per_serving_nutrition(recipe)` called once per recipe in a
+`for` loop — one extra query per recipe shown, genuinely O(n) for a
+list page (as opposed to `_diet_plan_meals_with_nutrition`'s similar-
+looking loop, which is bounded by one plan's own meal count, not a
+*list* of many plans — a different, acceptable shape, left alone).
+Fixed to one bulk `RecipeIngredient` query across every listed recipe,
+totals tallied in Python. Pinned with `assertNumQueries` — new to this
+codebase (no prior test used it), added because "was this actually
+still N+1" is exactly the kind of regression that silently creeps back
+without a query-count assertion; the real number (5: session, user,
+recipe queryset, ingredient bulk query, and base.html's own
+training-FAB in-progress-session check that runs on every page) needed
+one failing run to discover empirically rather than guessing. The same
+review found `RecipeSerializer`'s nested `ingredients` field would hit
+the identical N+1 through the new API's `recipes/` list endpoint —
+fixed there too (`prefetch_related("ingredients__food")`) — but left
+the *pre-existing*, identically-shaped nesting in
+`ProgramSerializer`/`WorkoutSerializer` (`workouts`/`prescriptions`,
+two levels deep) alone: fixing it wasn't part of what was asked for
+here, and touching a working, already-shipped, already-tested part of
+the API deserves its own dedicated pass, not a drive-by change bundled
+into an unrelated one.
+
+**Dependency/security spot-check** — `pip list --outdated` inside the
+container: nothing outdated, every package (Django 6.1, DRF 3.18,
+psycopg 3.3.4, ...) already current. Dependabot (weekly, already
+configured) is doing its job; nothing to act on beyond confirming that.
+
+**Coverage-gap closing, guided by real data instead of test-file line
+counts.** The `coverage report` line-number gaps led straight to real,
+meaningful holes, all outside nutrition (which already had this
+session's own extensive coverage):
+`apps.programs.views.ProgramDeleteView` had **zero** test coverage —
+not even a GET-confirm-page check, despite deleting a whole program
+being a real, irreversible action; `workout_update`/`workout_delete`/
+`prescription_update`/`prescription_delete`'s actual authenticated
+success paths were *also* completely untested, only ever reached
+through an anonymous-access redirect check that short-circuits before
+the view body ever runs. Same pattern in `apps.workouts`:
+`session_start_freeform`/`session_abandon`/`performed_exercise_add`
+were only ever invoked directly via `services.*` in other tests' own
+setup, never through the real view via an actual POST — the service
+layer itself was already 100% covered, just never the thin view
+wrapper around it (URL routing, ownership scoping, the actual
+redirect target). `apps.exercises.ExerciseUpdateView`'s real edit-and-
+save success path had the identical gap, plus the exercise list's
+`muscle_group` filter query param was never exercised at all. 14 new
+tests added across `apps.programs`/`apps.workouts`/`apps.exercises`
+closing all of these; one of them (`test_muscle_group_filter`) first
+failed on a `MuscleGroup.name` uniqueness collision against the
+seeded exercise library's own "Chest" — fixed by using test-specific
+names instead of picking ones that happened to already exist.
+`apps.activities`' remaining coverage gaps turned out to be only
+wrong-HTTP-verb 405 branches, not missing success-path coverage —
+left alone rather than padded with low-value tests for their own sake.
+
+946+ project tests pass (exact final count pending the closing full
+run); `ruff check` clean across every touched app;
+`makemigrations --check` clean. `coverage run -m pytest` and
+`coverage report` are now a real, repeatable local/CI-ready tool for
+this project going forward, not a one-off measurement.

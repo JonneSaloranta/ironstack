@@ -110,6 +110,24 @@ lands and remains the authoritative history.
   while signed out.
 - A weekly-volume-chart test that intermittently failed whenever the
   calendar date happened to fall on a Monday.
+- The recipe list's calories-per-serving figure ran one extra database
+  query per recipe shown; now a fixed number of queries regardless of
+  how many recipes are listed.
+- The admin food-merge page's radio buttons, and the API-key-created
+  page's key-secret field, had no accessible name for screen readers.
+
+### Added — API
+- A public API context for nutrition (`foods/`, `meal-slots/`,
+  `recipes/`, `recipe-ingredients/`, `diary-entries/`,
+  `nutrition-goals/`, `nutrition-targets/`) — every other part of the
+  app already had one, nutrition was the one exception. Goals/targets
+  are read-only, matching how personal records already work in the
+  API: both are historized and only ever change through their own
+  dedicated service functions, never a raw write. See `docs/API.md`.
+
+### Development
+- Test coverage measurement (`coverage`) is now part of the dev
+  toolchain — `coverage run -m pytest && coverage report`.
 
 ## [1.2.0] — 2026-08-15
 

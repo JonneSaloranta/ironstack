@@ -2188,6 +2188,29 @@ class RecipeViewTests(TestCase):
         response = self.client.get(reverse("nutrition:recipe-list"))
         self.assertContains(response, "248 kcal/serving")
 
+    def test_recipe_list_per_serving_calories_is_not_an_n_plus_1(self):
+        """Regression: per-serving calories used to be computed with
+        one query per recipe in a loop
+        (services.recipe_per_serving_nutrition called per row) — a
+        real N+1 for anyone with more than a couple of recipes. Fixed
+        to one bulk ingredient query for the whole list regardless of
+        how many recipes are shown; this pins the query count so it
+        can't silently regress back to O(n)."""
+        for i in range(5):
+            recipe = Recipe.objects.create(owner=self.alice, name=f"Recipe {i}", servings=1)
+            RecipeIngredient.objects.create(
+                recipe=recipe, food=self.chicken, quantity=Decimal("100")
+            )
+        # Session auth (2) + the recipe queryset + one bulk ingredient
+        # query + base.html's training-FAB in-progress-session check
+        # (context_processors.py, runs on every page) — flat regardless
+        # of recipe count, not one query per recipe. A future unrelated
+        # query added to this view is fine to bump this number a
+        # little; a query count that scales with the number of recipes
+        # is the actual regression to catch.
+        with self.assertNumQueries(5):
+            self.client.get(reverse("nutrition:recipe-list"))
+
     def test_the_back_link_returns_to_the_nutrition_dashboard(self):
         """Regression: this used to link "back" to the food diary
         instead of the dashboard the recipes list is now also directly

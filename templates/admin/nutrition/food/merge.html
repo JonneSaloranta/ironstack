@@ -24,6 +24,7 @@
         <tr>
           <td>
             <input type="radio" name="keep" value="{{ food.pk }}"
+                   aria-label="{{ food.name }}{% if food.brand %} ({{ food.brand }}){% endif %}"
                    {% if forloop.first %}checked{% endif %} required>
           </td>
           <td>{{ food.name }}</td>

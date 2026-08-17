@@ -275,6 +275,23 @@ class ProgramViewPermissionTests(TestCase):
         self.assertEqual(response.status_code, 404)
         self.assertFalse(self.bob_program.workouts.filter(name="Sneaky Workout").exists())
 
+    def test_deleting_a_program_removes_it(self):
+        """ProgramDeleteView had no test coverage at all — not even a
+        confirm-page GET — found via `coverage report`."""
+        program = Program.objects.create(owner=self.alice, name="Delete Me")
+        get_response = self.client.get(reverse("programs:program-delete", args=[program.pk]))
+        self.assertEqual(get_response.status_code, 200)
+        post_response = self.client.post(reverse("programs:program-delete", args=[program.pk]))
+        self.assertRedirects(post_response, reverse("programs:program-list"))
+        self.assertFalse(Program.objects.filter(pk=program.pk).exists())
+
+    def test_cannot_delete_another_users_program(self):
+        response = self.client.post(
+            reverse("programs:program-delete", args=[self.bob_program.pk])
+        )
+        self.assertEqual(response.status_code, 404)
+        self.assertTrue(Program.objects.filter(pk=self.bob_program.pk).exists())
+
     def test_list_annotates_workout_count_correctly(self):
         """Regression coverage for Phase 11's query-count fix: the list
         page annotates workout_count in the queryset instead of calling
@@ -382,6 +399,102 @@ class ProgramCreateEditFlowTests(TestCase):
         self.assertContains(
             response, reverse("programs:workout-delete", args=[program.pk, workout.pk])
         )
+
+    def test_updating_a_workout_bumps_program_version(self):
+        """Regression: workout_update had no test at all beyond the
+        anonymous-access redirect check — the actual authenticated
+        edit-and-save path was untested (found via `coverage run -m
+        pytest && coverage report`, not by inspection)."""
+        program = Program.objects.create(owner=self.alice, name="Original")
+        workout = Workout.objects.create(program=program, name="Day 1", order=0)
+        response = self.client.post(
+            reverse("programs:workout-update", args=[program.pk, workout.pk]),
+            {"name": "Renamed Day", "order": 0},
+        )
+        self.assertRedirects(response, reverse("programs:program-detail", args=[program.pk]))
+        workout.refresh_from_db()
+        program.refresh_from_db()
+        self.assertEqual(workout.name, "Renamed Day")
+        self.assertEqual(program.version, 2)
+
+    def test_deleting_a_workout_removes_it_and_bumps_version(self):
+        """Same gap as above — workout_delete's actual delete was
+        never exercised by an authenticated, owning user."""
+        program = Program.objects.create(owner=self.alice, name="Original")
+        workout = Workout.objects.create(program=program, name="Day 1", order=0)
+        response = self.client.post(
+            reverse("programs:workout-delete", args=[program.pk, workout.pk])
+        )
+        self.assertRedirects(response, reverse("programs:program-detail", args=[program.pk]))
+        self.assertFalse(Workout.objects.filter(pk=workout.pk).exists())
+        program.refresh_from_db()
+        self.assertEqual(program.version, 2)
+
+    def test_workout_delete_requires_post(self):
+        program = Program.objects.create(owner=self.alice, name="Original")
+        workout = Workout.objects.create(program=program, name="Day 1", order=0)
+        response = self.client.get(
+            reverse("programs:workout-delete", args=[program.pk, workout.pk])
+        )
+        self.assertEqual(response.status_code, 405)
+
+    def test_updating_a_prescription_bumps_program_version(self):
+        """Same gap as workout_update above, for prescription_update."""
+        program = Program.objects.create(owner=self.alice, name="Original")
+        workout = Workout.objects.create(program=program, name="Day 1", order=0)
+        exercise = Exercise.objects.create(name="Squat", owner=None)
+        prescription = ExercisePrescription.objects.create(
+            workout=workout, exercise=exercise, order=0, set_count=3,
+            min_reps=8, max_reps=12, progression_method="manual",
+        )
+        response = self.client.post(
+            reverse(
+                "programs:prescription-update", args=[program.pk, workout.pk, prescription.pk]
+            ),
+            {
+                "exercise": exercise.pk, "order": 0, "set_count": 5,
+                "min_reps": 5, "max_reps": 5, "progression_method": "manual",
+            },
+        )
+        self.assertRedirects(response, reverse("programs:program-detail", args=[program.pk]))
+        prescription.refresh_from_db()
+        program.refresh_from_db()
+        self.assertEqual(prescription.set_count, 5)
+        self.assertEqual(program.version, 2)
+
+    def test_deleting_a_prescription_removes_it_and_bumps_version(self):
+        """Same gap as workout_delete above, for prescription_delete."""
+        program = Program.objects.create(owner=self.alice, name="Original")
+        workout = Workout.objects.create(program=program, name="Day 1", order=0)
+        exercise = Exercise.objects.create(name="Squat", owner=None)
+        prescription = ExercisePrescription.objects.create(
+            workout=workout, exercise=exercise, order=0, set_count=3,
+            min_reps=8, max_reps=12, progression_method="manual",
+        )
+        response = self.client.post(
+            reverse(
+                "programs:prescription-delete", args=[program.pk, workout.pk, prescription.pk]
+            )
+        )
+        self.assertRedirects(response, reverse("programs:program-detail", args=[program.pk]))
+        self.assertFalse(ExercisePrescription.objects.filter(pk=prescription.pk).exists())
+        program.refresh_from_db()
+        self.assertEqual(program.version, 2)
+
+    def test_prescription_delete_requires_post(self):
+        program = Program.objects.create(owner=self.alice, name="Original")
+        workout = Workout.objects.create(program=program, name="Day 1", order=0)
+        exercise = Exercise.objects.create(name="Squat", owner=None)
+        prescription = ExercisePrescription.objects.create(
+            workout=workout, exercise=exercise, order=0, set_count=3,
+            min_reps=8, max_reps=12, progression_method="manual",
+        )
+        response = self.client.get(
+            reverse(
+                "programs:prescription-delete", args=[program.pk, workout.pk, prescription.pk]
+            )
+        )
+        self.assertEqual(response.status_code, 405)
 
     def test_adding_a_prescription_limits_exercise_choices_to_visible_exercises(self):
         program = Program.objects.create(owner=self.alice, name="Original")

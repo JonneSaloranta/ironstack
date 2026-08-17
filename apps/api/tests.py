@@ -7,7 +7,7 @@ from apps.exercises.models import Exercise
 from apps.workouts import services as workout_services
 
 from . import crypto, services
-from .models import ApiKey, ApiKeyPermission, ApiSettings, RateLimitTier
+from .models import ApiContext, ApiKey, ApiKeyPermission, ApiSettings, RateLimitTier
 
 User = get_user_model()
 
@@ -24,6 +24,7 @@ def _all_permissions(**overrides):
         "activities",
         "records",
         "analytics",
+        "nutrition",
     ]
     base = {
         context: {"can_create": True, "can_read": True, "can_update": True, "can_delete": True}
@@ -105,7 +106,7 @@ class ApiKeyServiceTests(TestCase):
 
     def test_create_api_key_creates_all_context_permission_rows(self):
         api_key, _secret = _create_key(self.alice)
-        self.assertEqual(api_key.permissions.count(), 8)
+        self.assertEqual(api_key.permissions.count(), len(ApiContext.choices))
 
     def test_permissions_reflect_what_was_requested(self):
         api_key, _secret = _create_key(self.alice, exercises={"can_read": True})
@@ -140,7 +141,7 @@ class ApiKeyServiceTests(TestCase):
     def test_set_permissions_updates_an_existing_key_without_duplicating_rows(self):
         api_key, _secret = _create_key(self.alice)
         services.set_permissions(api_key, {"exercises": {"can_read": True}})
-        self.assertEqual(api_key.permissions.count(), 8)
+        self.assertEqual(api_key.permissions.count(), len(ApiContext.choices))
         self.assertTrue(api_key.permissions.get(context="exercises").can_read)
 
 
@@ -563,3 +564,265 @@ class ApiKeyPermissionModelTests(TestCase):
         api_key, _secret = _create_key(alice)
         with self.assertRaises(IntegrityError), transaction.atomic():
             ApiKeyPermission.objects.create(api_key=api_key, context="exercises")
+
+
+class NutritionEndpointTests(APITestCase):
+    """apps.api.views' Nutrition section — Food/MealSlot follow the
+    same OwnedResourceViewSet shape OwnedResourceViewSetTests already
+    covers generically (via exercises), so this focuses on what's
+    specific to nutrition: the food/recipe XOR on a diary entry, FK
+    ownership validation on recipe ingredients and diary entries, and
+    goals/targets being read-only."""
+
+    def setUp(self):
+        from decimal import Decimal
+
+        from apps.nutrition.models import Food, MealSlot, Recipe, ServingUnit
+
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        self.bob = User.objects.create_user(username="bob", password="s3cret-pass")
+        _api_key, self.raw_secret = _create_key(self.alice)
+        self.food = Food.objects.create(
+            owner=self.alice, name="Chicken", serving_size=Decimal("100"),
+            serving_unit=ServingUnit.GRAM, calories=165, protein_grams=Decimal("31"),
+            carbohydrate_grams=Decimal("0"), fat_grams=Decimal("3.6"),
+        )
+        self.bobs_food = Food.objects.create(
+            owner=self.bob, name="Bob's food", serving_size=Decimal("100"),
+            serving_unit=ServingUnit.GRAM, calories=100, protein_grams=Decimal("1"),
+            carbohydrate_grams=Decimal("1"), fat_grams=Decimal("1"),
+        )
+        self.breakfast = MealSlot.objects.get(name="Breakfast", owner=None)
+        self.recipe = Recipe.objects.create(owner=self.alice, name="Bowl", servings=2)
+        self.bobs_recipe = Recipe.objects.create(owner=self.bob, name="Bob's Bowl", servings=1)
+
+    def _auth(self):
+        return {"HTTP_AUTHORIZATION": f"Bearer {self.raw_secret}"}
+
+    # -- Food --------------------------------------------------------
+
+    def test_creating_a_food(self):
+        response = self.client.post(
+            reverse("api:food-list"),
+            {
+                "name": "Rice", "serving_size": "100", "serving_unit": "g",
+                "calories": 130, "protein_grams": "2.7", "carbohydrate_grams": "28",
+                "fat_grams": "0.3",
+            },
+            format="json", **self._auth(),
+        )
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.data["owner"], self.alice.pk)
+
+    def test_another_users_private_food_is_not_visible(self):
+        response = self.client.get(
+            reverse("api:food-detail", args=[self.bobs_food.pk]), **self._auth()
+        )
+        self.assertEqual(response.status_code, 404)
+
+    def test_a_shared_food_is_visible_but_not_editable(self):
+        from decimal import Decimal
+
+        from apps.nutrition.models import Food, ServingUnit
+
+        shared = Food.objects.create(
+            owner=None, name="Shared food", serving_size=Decimal("100"),
+            serving_unit=ServingUnit.GRAM, calories=50, protein_grams=Decimal("1"),
+            carbohydrate_grams=Decimal("1"), fat_grams=Decimal("1"),
+        )
+        get_response = self.client.get(
+            reverse("api:food-detail", args=[shared.pk]), **self._auth()
+        )
+        self.assertEqual(get_response.status_code, 200)
+        patch_response = self.client.patch(
+            reverse("api:food-detail", args=[shared.pk]), {"name": "Hijacked"},
+            format="json", **self._auth(),
+        )
+        self.assertEqual(patch_response.status_code, 404)
+
+    # -- Recipes / recipe ingredients ---------------------------------
+
+    def test_creating_a_recipe(self):
+        response = self.client.post(
+            reverse("api:recipe-list"), {"name": "New Recipe", "servings": 4},
+            format="json", **self._auth(),
+        )
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.data["owner"], self.alice.pk)
+
+    def test_deleting_a_recipe_actually_removes_it(self):
+        from apps.nutrition.models import Recipe
+
+        response = self.client.delete(
+            reverse("api:recipe-detail", args=[self.recipe.pk]), **self._auth()
+        )
+        self.assertEqual(response.status_code, 204)
+        self.assertFalse(Recipe.objects.filter(pk=self.recipe.pk).exists())
+
+    def test_adding_an_ingredient_to_my_own_recipe(self):
+        response = self.client.post(
+            reverse("api:recipe-ingredient-list"),
+            {"recipe": self.recipe.pk, "food": self.food.pk, "quantity": "150"},
+            format="json", **self._auth(),
+        )
+        self.assertEqual(response.status_code, 201)
+
+    def test_cannot_add_an_ingredient_to_another_users_recipe(self):
+        response = self.client.post(
+            reverse("api:recipe-ingredient-list"),
+            {"recipe": self.bobs_recipe.pk, "food": self.food.pk, "quantity": "150"},
+            format="json", **self._auth(),
+        )
+        self.assertEqual(response.status_code, 400)
+
+    def test_cannot_add_another_users_private_food_as_an_ingredient(self):
+        response = self.client.post(
+            reverse("api:recipe-ingredient-list"),
+            {"recipe": self.recipe.pk, "food": self.bobs_food.pk, "quantity": "150"},
+            format="json", **self._auth(),
+        )
+        self.assertEqual(response.status_code, 400)
+
+    # -- Diary entries -------------------------------------------------
+
+    def test_logging_a_food_to_the_diary(self):
+        response = self.client.post(
+            reverse("api:diary-entry-list"),
+            {
+                "date": "2026-01-01", "meal_slot": self.breakfast.pk,
+                "food": self.food.pk, "quantity": "150",
+            },
+            format="json", **self._auth(),
+        )
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.data["user"], self.alice.pk)
+
+    def test_logging_a_recipe_to_the_diary(self):
+        response = self.client.post(
+            reverse("api:diary-entry-list"),
+            {
+                "date": "2026-01-01", "meal_slot": self.breakfast.pk,
+                "recipe": self.recipe.pk, "quantity": "1",
+            },
+            format="json", **self._auth(),
+        )
+        self.assertEqual(response.status_code, 201)
+
+    def test_logging_both_food_and_recipe_is_rejected(self):
+        response = self.client.post(
+            reverse("api:diary-entry-list"),
+            {
+                "date": "2026-01-01", "meal_slot": self.breakfast.pk,
+                "food": self.food.pk, "recipe": self.recipe.pk, "quantity": "1",
+            },
+            format="json", **self._auth(),
+        )
+        self.assertEqual(response.status_code, 400)
+
+    def test_logging_neither_food_nor_recipe_is_rejected(self):
+        response = self.client.post(
+            reverse("api:diary-entry-list"),
+            {"date": "2026-01-01", "meal_slot": self.breakfast.pk, "quantity": "1"},
+            format="json", **self._auth(),
+        )
+        self.assertEqual(response.status_code, 400)
+
+    def test_cannot_log_another_users_recipe(self):
+        response = self.client.post(
+            reverse("api:diary-entry-list"),
+            {
+                "date": "2026-01-01", "meal_slot": self.breakfast.pk,
+                "recipe": self.bobs_recipe.pk, "quantity": "1",
+            },
+            format="json", **self._auth(),
+        )
+        self.assertEqual(response.status_code, 400)
+
+    def test_another_users_diary_entry_is_not_visible(self):
+        from apps.nutrition.models import DiaryEntry
+
+        bobs_entry = DiaryEntry.objects.create(
+            user=self.bob, date="2026-01-01", meal_slot=self.breakfast,
+            food=self.bobs_food, quantity="100",
+        )
+        response = self.client.get(
+            reverse("api:diary-entry-detail", args=[bobs_entry.pk]), **self._auth()
+        )
+        self.assertEqual(response.status_code, 404)
+
+    # -- Goals/targets: read-only ---------------------------------------
+
+    def test_nutrition_goals_are_read_only(self):
+        from decimal import Decimal
+
+        from apps.nutrition import services as nutrition_services
+
+        goal = nutrition_services.set_goal(
+            self.alice, goal_type="maintenance", target_rate_kg_per_week=Decimal("0")
+        )
+        list_response = self.client.get(reverse("api:nutrition-goal-list"), **self._auth())
+        self.assertEqual(list_response.status_code, 200)
+        post_response = self.client.post(
+            reverse("api:nutrition-goal-list"),
+            {"goal_type": "maintenance", "target_rate_kg_per_week": "0"},
+            format="json", **self._auth(),
+        )
+        self.assertEqual(post_response.status_code, 405)
+        patch_response = self.client.patch(
+            reverse("api:nutrition-goal-detail", args=[goal.pk]),
+            {"notes": "hijacked"}, format="json", **self._auth(),
+        )
+        self.assertEqual(patch_response.status_code, 405)
+
+    def test_nutrition_targets_are_read_only(self):
+        from decimal import Decimal
+
+        from apps.nutrition import macros
+        from apps.nutrition import services as nutrition_services
+
+        goal = nutrition_services.set_goal(
+            self.alice, goal_type="maintenance", target_rate_kg_per_week=Decimal("0")
+        )
+        macro_result = macros.calculate_macros(Decimal("80"), 2000, "maintenance")
+        target = nutrition_services.set_target(
+            self.alice, goal=goal, daily_calories=2000, macro_breakdown=macro_result,
+            source="calculated", reason="test",
+        )
+        list_response = self.client.get(reverse("api:nutrition-target-list"), **self._auth())
+        self.assertEqual(list_response.status_code, 200)
+        delete_response = self.client.delete(
+            reverse("api:nutrition-target-detail", args=[target.pk]), **self._auth()
+        )
+        self.assertEqual(delete_response.status_code, 405)
+
+    def test_another_users_goals_are_not_visible(self):
+        from decimal import Decimal
+
+        from apps.nutrition import services as nutrition_services
+
+        nutrition_services.set_goal(
+            self.bob, goal_type="maintenance", target_rate_kg_per_week=Decimal("0")
+        )
+        response = self.client.get(reverse("api:nutrition-goal-list"), **self._auth())
+        self.assertEqual(response.data["count"], 0)
+
+    # -- Meal slots ------------------------------------------------------
+
+    def test_system_meal_slots_are_visible_but_not_editable(self):
+        get_response = self.client.get(
+            reverse("api:meal-slot-detail", args=[self.breakfast.pk]), **self._auth()
+        )
+        self.assertEqual(get_response.status_code, 200)
+        patch_response = self.client.patch(
+            reverse("api:meal-slot-detail", args=[self.breakfast.pk]),
+            {"name": "Hijacked"}, format="json", **self._auth(),
+        )
+        self.assertEqual(patch_response.status_code, 404)
+
+    def test_creating_a_custom_meal_slot(self):
+        response = self.client.post(
+            reverse("api:meal-slot-list"), {"name": "Midnight snack"},
+            format="json", **self._auth(),
+        )
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.data["owner"], self.alice.pk)

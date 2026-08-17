@@ -186,6 +186,45 @@ class SessionViewPermissionTests(TestCase):
         response = self.client.post(reverse("workouts:session-start", args=[workout.pk]))
         self.assertEqual(response.status_code, 404)
 
+    def test_can_start_a_freeform_session(self):
+        """session_start_freeform's own success path had no test at
+        all — every other test that needed a freeform session created
+        one directly via services.start_session, bypassing the view
+        entirely (found via `coverage report`)."""
+        response = self.client.post(reverse("workouts:session-start-freeform"))
+        session = WorkoutSession.objects.get(user=self.alice, workout__isnull=True)
+        self.assertRedirects(
+            response, reverse("workouts:session-detail", args=[session.pk])
+        )
+        self.assertTrue(session.is_in_progress)
+
+    def test_can_abandon_own_session(self):
+        """Same gap as above, for session_abandon."""
+        session = services.start_session(self.alice, workout=None)
+        response = self.client.post(reverse("workouts:session-abandon", args=[session.pk]))
+        self.assertRedirects(
+            response, reverse("workouts:session-detail", args=[session.pk])
+        )
+        session.refresh_from_db()
+        self.assertEqual(session.status, WorkoutSessionStatus.ABANDONED)
+
+    def test_can_add_a_performed_exercise_to_own_session(self):
+        """Same gap as above, for performed_exercise_add — only ever
+        exercised indirectly via services.add_performed_exercise in
+        other tests' setup, never as a real POST through the view."""
+        session = services.start_session(self.alice, workout=None)
+        exercise = Exercise.objects.create(name="Bench Press", owner=None)
+        response = self.client.post(
+            reverse("workouts:performed-exercise-add", args=[session.pk]),
+            {"exercise": exercise.pk},
+        )
+        self.assertRedirects(
+            response, reverse("workouts:session-detail", args=[session.pk])
+        )
+        self.assertTrue(
+            session.performed_exercises.filter(exercise=exercise).exists()
+        )
+
     def test_can_start_a_session_from_a_system_template_workout(self):
         template = Program.objects.get(name="Full Body A/B/C", owner=None)
         workout = template.workouts.first()

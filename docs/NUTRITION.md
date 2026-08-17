@@ -600,12 +600,16 @@ recomputed (and can change) next time the dashboard is viewed.
   exactly the kind of "asking for the sake of asking" section 3
   explicitly warns against for a user who may not even want nutrition
   tracking yet.
-- **`apps.api`** — a new `ApiContext.NUTRITION` value, one
-  `OwnedResourceViewSet`-based viewset per top-level resource
-  (`Food`, `Recipe`, `DiaryEntry`, `NutritionGoal`, `NutritionTarget`),
+- **`apps.api`** — `ApiContext.NUTRITION`, one viewset per top-level
+  resource (`Food`, `MealSlot`, `Recipe`, `RecipeIngredient`,
+  `DiaryEntry`, plus read-only `NutritionGoal`/`NutritionTarget`),
   serializers always in canonical kcal/grams (never display-converted,
-  matching every other context) — no new architecture, just
-  `apps/nutrition` following `docs/API.md`'s existing contract.
+  matching every other context) — no new architecture, `apps/nutrition`
+  just follows `docs/API.md`'s existing contract. See `docs/API.md`
+  "Contexts and permissions"/"Endpoints" for the full shape; this was
+  a real, honestly-disclosed gap for a while after the rest of this
+  phase shipped (every other context had one, nutrition didn't) before
+  it was closed.
 
 ## Navigation
 
@@ -754,11 +758,6 @@ done:
 10. **Polish** — translations (6 languages, matching this project's
     existing catalog), accessibility pass, full test suite + live
     verification, `docs/DEVELOPMENT_LOG.md` + `CHANGELOG.md` entries.
-    (`apps.api` viewsets for nutrition are not built yet — every other
-    context in `docs/API.md` has one; nutrition doesn't, which is a
-    real gap against this phase's original scope, not a deliberate
-    omission. Left as a follow-up rather than done in a rush alongside
-    everything else in this phase.)
 11. **Daily-use polish: statistics, quick re-log, copying a day** — see
     "Nutrition statistics and quick re-log" below. Added once the rest
     of the app had real day-to-day usage patterns to design against
@@ -766,6 +765,9 @@ done:
     repeat yesterday's logging without re-searching every item, were
     both friction spotted only after the rest of the app was actually
     being used, not gaps visible from the original spec alone).
+12. **`apps.api` nutrition context** — closed a real, honestly-disclosed
+    gap: every other context in `docs/API.md` had a viewset, nutrition
+    didn't. See "Integration with existing apps" → `apps.api` above.
 
 ## Nutrition statistics and quick re-log
 

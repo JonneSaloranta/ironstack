@@ -177,6 +177,26 @@ class ExerciseListViewTests(TestCase):
         names = {e.name for e in response.context["exercises"]}
         self.assertEqual(names, {"Zzyzx Curl"})
 
+    def test_muscle_group_filter(self):
+        from apps.exercises.models import MuscleGroup
+
+        # Names distinct from the seeded library's own muscle groups
+        # (MuscleGroup.name is unique) — "Chest"/"Legs" already exist
+        # from the seed migration.
+        group_a = MuscleGroup.objects.create(name="Test Group Alpha")
+        group_b = MuscleGroup.objects.create(name="Test Group Beta")
+        bench = Exercise.objects.create(name="Zzyzx Bench Press", owner=None)
+        bench.primary_muscle_groups.add(group_a)
+        squat = Exercise.objects.create(name="Zzyzx Squat", owner=None)
+        squat.primary_muscle_groups.add(group_b)
+
+        response = self.client.get(
+            reverse("exercises:exercise-list"), {"muscle_group": group_a.pk}
+        )
+        names = {e.name for e in response.context["exercises"]}
+        self.assertIn("Zzyzx Bench Press", names)
+        self.assertNotIn("Zzyzx Squat", names)
+
     def test_htmx_request_returns_partial_template(self):
         response = self.client.get(
             reverse("exercises:exercise-list"), HTTP_HX_REQUEST="true"
@@ -205,6 +225,24 @@ class ExerciseCreateViewTests(TestCase):
         self.assertRedirects(
             response, reverse("exercises:exercise-detail", args=[exercise.pk])
         )
+
+    def test_updating_my_own_exercise(self):
+        """ExerciseUpdateView's actual success path had no test —
+        ExercisePermissionTests only ever checks the 404-for-another-
+        user's-exercise case (found via `coverage report`)."""
+        exercise = Exercise.objects.create(
+            name="Old Name", owner=self.alice, movement_type="isolation",
+            weight_input_mode="total",
+        )
+        response = self.client.post(
+            reverse("exercises:exercise-update", args=[exercise.pk]),
+            {"name": "New Name", "movement_type": "isolation", "weight_input_mode": "total"},
+        )
+        self.assertRedirects(
+            response, reverse("exercises:exercise-detail", args=[exercise.pk])
+        )
+        exercise.refresh_from_db()
+        self.assertEqual(exercise.name, "New Name")
 
 
 class ExercisePermissionTests(TestCase):

@@ -22,6 +22,15 @@ from apps.exercises import services as exercise_services
 from apps.exercises.models import Equipment, MuscleGroup
 from apps.measurements import services as measurement_services
 from apps.measurements.models import BodyMeasurement
+from apps.nutrition import services as nutrition_services
+from apps.nutrition.models import (
+    DiaryEntry,
+    Food,
+    NutritionGoal,
+    NutritionTarget,
+    Recipe,
+    RecipeIngredient,
+)
 from apps.programs import services as program_services
 from apps.programs.models import ExercisePrescription, Workout
 from apps.records import services as records_services
@@ -35,16 +44,23 @@ from .serializers import (
     ActivitySerializer,
     ActivityTypeSerializer,
     BodyMeasurementSerializer,
+    DiaryEntrySerializer,
     EquipmentSerializer,
     ExercisePrescriptionSerializer,
     ExerciseSerializer,
     ExerciseSetSerializer,
+    FoodSerializer,
+    MealSlotSerializer,
     MeasurementTypeSerializer,
     MuscleGroupSerializer,
+    NutritionGoalSerializer,
+    NutritionTargetSerializer,
     PerformedExerciseSerializer,
     PersonalRecordSerializer,
     ProfileSerializer,
     ProgramSerializer,
+    RecipeIngredientSerializer,
+    RecipeSerializer,
     TrainingSummarySerializer,
     WorkoutSerializer,
     WorkoutSessionSerializer,
@@ -313,3 +329,88 @@ class AchievementsView(APIView):
     def get(self, request):
         highlights = achievement_services.achievement_highlights()
         return Response(AchievementSerializer(highlights, many=True).data)
+
+
+# --------------------------------------------------------------------
+# Nutrition
+# --------------------------------------------------------------------
+
+
+class FoodViewSet(OwnedResourceViewSet):
+    serializer_class = FoodSerializer
+    api_context = ApiContext.NUTRITION
+
+    def visible_queryset(self):
+        from django.db.models import Q
+
+        return Food.objects.filter(Q(owner=self.request.user) | Q(owner__isnull=True))
+
+
+class MealSlotViewSet(OwnedResourceViewSet):
+    serializer_class = MealSlotSerializer
+    api_context = ApiContext.NUTRITION
+
+    def visible_queryset(self):
+        return nutrition_services.visible_meal_slots(self.request.user)
+
+
+class RecipeViewSet(viewsets.ModelViewSet):
+    serializer_class = RecipeSerializer
+    api_context = ApiContext.NUTRITION
+
+    def get_queryset(self):
+        # RecipeSerializer nests every ingredient (with its food) —
+        # prefetched here so listing many recipes stays two queries
+        # total (recipes + ingredients), not one ingredients query per
+        # recipe in the list.
+        return Recipe.objects.filter(owner=self.request.user).prefetch_related(
+            "ingredients__food"
+        )
+
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
+
+
+class RecipeIngredientViewSet(viewsets.ModelViewSet):
+    serializer_class = RecipeIngredientSerializer
+    api_context = ApiContext.NUTRITION
+
+    def get_queryset(self):
+        return RecipeIngredient.objects.filter(recipe__owner=self.request.user)
+
+
+class DiaryEntryViewSet(viewsets.ModelViewSet):
+    serializer_class = DiaryEntrySerializer
+    api_context = ApiContext.NUTRITION
+
+    def get_queryset(self):
+        return DiaryEntry.objects.filter(user=self.request.user)
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+
+class NutritionGoalViewSet(
+    mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet
+):
+    """Read-only — see NutritionGoalSerializer's own docstring for why:
+    a goal is only ever created/superseded through
+    apps.nutrition.services.set_goal, never a raw PATCH."""
+
+    serializer_class = NutritionGoalSerializer
+    api_context = ApiContext.NUTRITION
+
+    def get_queryset(self):
+        return NutritionGoal.objects.filter(user=self.request.user)
+
+
+class NutritionTargetViewSet(
+    mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet
+):
+    """Read-only — same reasoning as NutritionGoalViewSet above."""
+
+    serializer_class = NutritionTargetSerializer
+    api_context = ApiContext.NUTRITION
+
+    def get_queryset(self):
+        return NutritionTarget.objects.filter(user=self.request.user)
