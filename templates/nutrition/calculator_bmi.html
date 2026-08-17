@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% trans "BMI calculator" %} — IronStack{% endblock %}
+{% block content %}
+<div class="top-bar">
+  <h1 style="margin:0;">{% trans "BMI calculator" %}</h1>
+</div>
+{% include "nutrition/_subnav.html" %}
+<p class="text-muted">{% trans "Body mass index — a widely used screening number, not a diagnosis. The Body weight page shows this automatically once you've logged a weight and set a height on your profile; this is the same calculation for a quick one-off check." %}</p>
+
+<form class="card" method="get">
+  {{ form.non_field_errors }}
+  {% for field in form %}
+    <div class="field">
+      {{ field.label_tag }}
+      {{ field }}
+      {% if field.errors %}<p class="field-error">{{ field.errors|striptags }}</p>{% endif %}
+    </div>
+  {% endfor %}
+  <button type="submit">{% trans "Calculate" %}</button>
+</form>
+
+{% if result %}
+  <div class="card">
+    <strong>{% trans "Result" %}</strong>
+    <p style="font-size:1.5rem; font-weight:bold; margin:0.25rem 0;">
+      {{ result.bmi }}{% if result.category %} — {{ result.category.name }}{% endif %}
+    </p>
+  </div>
+
+  <div class="card">
+    <strong>{% trans "Categories" %}</strong>
+    <table class="set-table">
+      <tbody>
+        {% for row in result.rows %}
+          <tr>
+            <td>{{ row.category.name }}</td>
+            <td>
+              {% if row.weight_low or row.weight_high %}
+                {% if row.weight_low and row.weight_high %}
+                  {{ row.weight_low }}–{{ row.weight_high }}
+                {% elif row.weight_high %}
+                  &lt; {{ row.weight_high }}
+                {% else %}
+                  &ge; {{ row.weight_low }}
+                {% endif %}
+              {% else %}
+                {% if row.category.low and row.category.high %}
+                  {{ row.category.low }}–{{ row.category.high }}
+                {% elif row.category.high %}
+                  &lt; {{ row.category.high }}
+                {% else %}
+                  &ge; {{ row.category.low }}
+                {% endif %}
+              {% endif %}
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endif %}
+
+<p><a class="button-secondary" href="{% url 'nutrition:calculators-home' %}">&larr; {% trans "Back to calculators" %}</a></p>
+{% endblock %}

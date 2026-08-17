@@ -675,6 +675,15 @@ msgstr "Yhdistettiin %(count)d ruokaa kohteeseen “%(name)s”. Jokainen ruokap
 msgid "Merge foods"
 msgstr "Yhdistä ruoat"
 
+msgid "Lower risk"
+msgstr "Pienempi riski"
+
+msgid "Moderate risk"
+msgstr "Kohtalainen riski"
+
+msgid "Higher risk"
+msgstr "Suurempi riski"
+
 msgid "a %(job)s job"
 msgstr "%(job)s-työ"
 
@@ -803,6 +812,18 @@ msgstr "Lantion ympärysmitta"
 
 msgid "Hip circumference is required for the women's formula."
 msgstr "Lantion ympärysmitta vaaditaan naisten kaavassa."
+
+msgid "Current weight (kg)"
+msgstr "Nykyinen paino (kg)"
+
+msgid "Target weight (kg)"
+msgstr "Tavoitepaino (kg)"
+
+msgid "Rate (kg/week — negative to lose, positive to gain)"
+msgstr "Nopeus (kg/viikko — negatiivinen laihtumiseen, positiivinen lihomiseen)"
+
+msgid "Rate (%(unit)s/week — negative to lose, positive to gain)"
+msgstr "Nopeus (%(unit)s/viikko — negatiivinen laihtumiseen, positiivinen lihomiseen)"
 
 msgid "Male"
 msgstr "Mies"
@@ -2028,14 +2049,38 @@ msgstr "Nutri-Score %(grade)s"
 msgid "NOVA — food processing level, 1 (unprocessed) to 4 (ultra-processed)"
 msgstr "NOVA — ruoan jalostusaste, 1 (jalostamaton) – 4 (pitkälle jalostettu)"
 
+msgid "Nutrition sections"
+msgstr "Ravinnon osiot"
+
+msgid "Overview"
+msgstr "Yleiskatsaus"
+
+msgid "Diary"
+msgstr "Päiväkirja"
+
+msgid "Foods"
+msgstr "Ruoat"
+
+msgid "Recipes"
+msgstr "Reseptit"
+
+msgid "Diet plans"
+msgstr "Ruokavaliosuunnitelmat"
+
+msgid "Calculators"
+msgstr "Laskurit"
+
+msgid "Statistics"
+msgstr "Tilastot"
+
 msgid "Step %(step)s of 5"
 msgstr "Vaihe %(step)s / 5"
 
-msgid "BMR / TDEE calculator"
-msgstr "BMR/TDEE-laskuri"
+msgid "BMI calculator"
+msgstr "BMI-laskuri"
 
-msgid "BMR is roughly what you'd burn lying still all day; TDEE adds your activity on top. Both are estimates (Mifflin-St Jeor)."
-msgstr "BMR on suunnilleen se, mitä kuluttaisit maaten paikallaan koko päivän; TDEE lisää päälle aktiivisuutesi. Molemmat ovat arvioita (Mifflin-St Jeor)."
+msgid "Body mass index — a widely used screening number, not a diagnosis. The Body weight page shows this automatically once you've logged a weight and set a height on your profile; this is the same calculation for a quick one-off check."
+msgstr "Painoindeksi (BMI) — laajasti käytetty seulontaluku, ei diagnoosi. Kehon paino -sivu näyttää tämän automaattisesti, kun olet kirjannut painon ja asettanut pituuden profiiliisi; tämä on sama laskelma nopeaa kertatarkistusta varten."
 
 msgid "Calculate"
 msgstr "Laske"
@@ -2043,14 +2088,23 @@ msgstr "Laske"
 msgid "Result"
 msgstr "Tulos"
 
+msgid "Categories"
+msgstr "Luokat"
+
+msgid "Back to calculators"
+msgstr "Takaisin laskureihin"
+
+msgid "BMR / TDEE calculator"
+msgstr "BMR/TDEE-laskuri"
+
+msgid "BMR is roughly what you'd burn lying still all day; TDEE adds your activity on top. Both are estimates (Mifflin-St Jeor)."
+msgstr "BMR on suunnilleen se, mitä kuluttaisit maaten paikallaan koko päivän; TDEE lisää päälle aktiivisuutesi. Molemmat ovat arvioita (Mifflin-St Jeor)."
+
 msgid "BMR (at rest)"
 msgstr "BMR (levossa)"
 
 msgid "TDEE (with activity)"
 msgstr "TDEE (aktiivisuuden kanssa)"
-
-msgid "Back to calculators"
-msgstr "Takaisin laskureihin"
 
 msgid "Body fat calculator"
 msgstr "Kehon rasvaprosenttilaskuri"
@@ -2079,6 +2133,27 @@ msgstr "Rasva"
 msgid "This calorie target is low enough that protein and/or fat had to be reduced below their usual defaults to fit."
 msgstr "Tämä kaloritavoite on niin matala, että proteiinia ja/tai rasvaa piti vähentää tavallista pienemmäksi, jotta ne mahtuvat."
 
+msgid "Time to goal weight calculator"
+msgstr "Tavoitepainoon kuluva aika -laskuri"
+
+msgid "At a chosen weekly rate, roughly how long to reach a target weight — a plain projection from the numbers you enter, not a promise."
+msgstr "Valitulla viikkovauhdilla, karkeasti kuinka kauan tavoitepainoon kestää — pelkkä projektio antamistasi luvuista, ei lupaus."
+
+msgid "%(weeks)s weeks"
+msgstr "%(weeks)s viikkoa"
+
+msgid "Around %(date)s, at this rate."
+msgstr "Noin %(date)s, tällä nopeudella."
+
+msgid "That rate doesn't move toward your target — check the sign (negative to lose, positive to gain) matches the direction you actually need to go."
+msgstr "Tämä nopeus ei liiku kohti tavoitettasi — tarkista, että etumerkki (negatiivinen laihtumiseen, positiivinen lihomiseen) vastaa suuntaa johon oikeasti haluat mennä."
+
+msgid "Waist-to-hip ratio calculator"
+msgstr "Vyötärö-lantiosuhde-laskuri"
+
+msgid "Where you carry weight, not just how much — a widely used screening number (WHO), not a diagnosis."
+msgstr "Mihin kannat painoa, ei vain kuinka paljon — laajasti käytetty seulontaluku (WHO), ei diagnoosi."
+
 msgid "Water intake calculator"
 msgstr "Vedenjuontilaskuri"
 
@@ -2087,9 +2162,6 @@ msgstr "Karkea päivittäinen nesteytystavoite painon ja aktiivisuuden perusteel
 
 msgid "day"
 msgstr "vrk"
-
-msgid "Calculators"
-msgstr "Laskurit"
 
 msgid "Quick, standalone estimates — none of these are saved or change your targets."
 msgstr "Nopeita, itsenäisiä arvioita — mitään näistä ei tallenneta eivätkä ne muuta tavoitteitasi."
@@ -2105,6 +2177,15 @@ msgstr "Arvioi kehon rasvaprosentti mittanauhalla (Yhdysvaltain laivaston menete
 
 msgid "A rough daily fluid target based on your bodyweight and activity."
 msgstr "Karkea päivittäinen nestetavoite painosi ja aktiivisuutesi perusteella."
+
+msgid "Body mass index and what it means for your height, without logging a weight first."
+msgstr "Painoindeksi ja mitä se tarkoittaa pituudellesi, ilman että sinun tarvitsee ensin kirjata painoa."
+
+msgid "Where you carry weight, not just how much — a tape measure and one more number."
+msgstr "Mihin kannat painoa, ei vain kuinka paljon — mittanauha ja yksi luku lisää."
+
+msgid "At a chosen weekly rate, roughly how long to reach a target weight."
+msgstr "Valitulla viikkovauhdilla, karkeasti kuinka kauan tavoitepainoon kestää."
 
 msgid "Back to nutrition"
 msgstr "Takaisin ravintoon"
@@ -2151,24 +2232,6 @@ msgstr "%(calories)s kcal/vrk"
 msgid "Current goal"
 msgstr "Nykyinen tavoite"
 
-msgid "Quick links"
-msgstr "Pikalinkit"
-
-msgid "Food diary"
-msgstr "Ruokapäiväkirja"
-
-msgid "Foods"
-msgstr "Ruoat"
-
-msgid "Recipes"
-msgstr "Reseptit"
-
-msgid "Diet plans"
-msgstr "Ruokavaliosuunnitelmat"
-
-msgid "Statistics"
-msgstr "Tilastot"
-
 msgid "Add food"
 msgstr "Lisää ruoka"
 
@@ -2177,6 +2240,9 @@ msgstr "esim. kananrinta tai viivakoodi"
 
 msgid "Back to diary"
 msgstr "Takaisin päiväkirjaan"
+
+msgid "Food diary"
+msgstr "Ruokapäiväkirja"
 
 msgid "Previous day"
 msgstr "Edellinen päivä"

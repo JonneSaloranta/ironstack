@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Time to goal weight calculator" %} — IronStack{% endblock %}
+{% block content %}
+<div class="top-bar">
+  <h1 style="margin:0;">{% trans "Time to goal weight calculator" %}</h1>
+</div>
+{% include "nutrition/_subnav.html" %}
+<p class="text-muted">{% trans "At a chosen weekly rate, roughly how long to reach a target weight — a plain projection from the numbers you enter, not a promise." %}</p>
+
+<form class="card" method="get">
+  {{ form.non_field_errors }}
+  {% for field in form %}
+    <div class="field">
+      {{ field.label_tag }}
+      {{ field }}
+      {% if field.errors %}<p class="field-error">{{ field.errors|striptags }}</p>{% endif %}
+    </div>
+  {% endfor %}
+  <button type="submit">{% trans "Calculate" %}</button>
+</form>
+
+{% if result %}
+  {% if result.weeks is not None %}
+    <div class="card">
+      <strong>{% trans "Result" %}</strong>
+      <p style="font-size:1.5rem; font-weight:bold; margin:0.25rem 0;">
+        {% blocktrans with weeks=result.weeks %}{{ weeks }} weeks{% endblocktrans %}
+      </p>
+      <p class="text-muted">{% blocktrans with date=result.target_date %}Around {{ date }}, at this rate.{% endblocktrans %}</p>
+    </div>
+  {% else %}
+    <div class="card empty-state">
+      <p>{% trans "That rate doesn't move toward your target — check the sign (negative to lose, positive to gain) matches the direction you actually need to go." %}</p>
+    </div>
+  {% endif %}
+{% endif %}
+
+<p><a class="button-secondary" href="{% url 'nutrition:calculators-home' %}">&larr; {% trans "Back to calculators" %}</a></p>
+{% endblock %}

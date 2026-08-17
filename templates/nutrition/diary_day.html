@@ -8,6 +8,7 @@
     <h1 style="margin:0;">{{ date }}</h1>
   </div>
 </div>
+{% include "nutrition/_subnav.html" %}
 
 {% url 'nutrition:diary-day' target_date='__DATE__' as date_url_template %}
 <div style="display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:0.5rem; margin-bottom:1rem;">

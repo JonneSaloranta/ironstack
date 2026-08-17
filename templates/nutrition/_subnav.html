@@ -1,0 +1,29 @@
+{% load i18n %}
+{% comment %}
+Persistent tab bar across every nutrition page — included directly by
+each page's own template, right after its `.top-bar` (heading + the
+border-bottom line under it), not from templates/base.html: it needs
+to render *below* each page's own title, not above every page's
+content generically, which is where a single base.html injection
+point would have to sit. See apps.nutrition.context_processors.
+nutrition_subnav for which tab counts as active on a given page, and
+docs/NUTRITION.md "Navigating within nutrition" for why nutrition
+gets this when nothing else in this app does. Deliberately omitted
+from the onboarding wizard's own templates — its destinations (diary,
+foods, ...) would all just bounce back to onboarding anyway for a
+user who doesn't have a NutritionProfile yet.
+
+Reuses .range-filter's pill styling (templates/analytics/
+_range_filter.html) with one override: horizontal scroll instead of
+wrap (.nutrition-subnav in base.css) — 7 tabs wrapped would eat two
+or three lines of vertical space on every single page, permanently.
+{% endcomment %}
+<nav class="range-filter nutrition-subnav" aria-label="{% trans "Nutrition sections" %}">
+  <a href="{% url 'nutrition:dashboard' %}" {% if nutrition_active_tab == "dashboard" %}aria-current="true"{% endif %}>{% trans "Overview" %}</a>
+  <a href="{% url 'nutrition:diary-day' %}" {% if nutrition_active_tab == "diary" %}aria-current="true"{% endif %}>{% trans "Diary" %}</a>
+  <a href="{% url 'nutrition:food-list' %}" {% if nutrition_active_tab == "foods" %}aria-current="true"{% endif %}>{% trans "Foods" %}</a>
+  <a href="{% url 'nutrition:recipe-list' %}" {% if nutrition_active_tab == "recipes" %}aria-current="true"{% endif %}>{% trans "Recipes" %}</a>
+  <a href="{% url 'nutrition:diet-plan-list' %}" {% if nutrition_active_tab == "diet-plans" %}aria-current="true"{% endif %}>{% trans "Diet plans" %}</a>
+  <a href="{% url 'nutrition:calculators-home' %}" {% if nutrition_active_tab == "calculators" %}aria-current="true"{% endif %}>{% trans "Calculators" %}</a>
+  <a href="{% url 'nutrition:stats' %}" {% if nutrition_active_tab == "stats" %}aria-current="true"{% endif %}>{% trans "Statistics" %}</a>
+</nav>

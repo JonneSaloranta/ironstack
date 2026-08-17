@@ -675,6 +675,15 @@ msgstr "Uniti %(count)d alimenti in “%(name)s”. Ogni voce del diario, ingred
 msgid "Merge foods"
 msgstr "Unisci alimenti"
 
+msgid "Lower risk"
+msgstr "Rischio più basso"
+
+msgid "Moderate risk"
+msgstr "Rischio moderato"
+
+msgid "Higher risk"
+msgstr "Rischio più alto"
+
 msgid "a %(job)s job"
 msgstr "un lavoro %(job)s"
 
@@ -803,6 +812,18 @@ msgstr "Circonferenza fianchi"
 
 msgid "Hip circumference is required for the women's formula."
 msgstr "La circonferenza dei fianchi è obbligatoria per la formula femminile."
+
+msgid "Current weight (kg)"
+msgstr "Peso attuale (kg)"
+
+msgid "Target weight (kg)"
+msgstr "Peso target (kg)"
+
+msgid "Rate (kg/week — negative to lose, positive to gain)"
+msgstr "Ritmo (kg/settimana — negativo per perdere, positivo per aumentare)"
+
+msgid "Rate (%(unit)s/week — negative to lose, positive to gain)"
+msgstr "Ritmo (%(unit)s/settimana — negativo per perdere, positivo per aumentare)"
 
 msgid "Male"
 msgstr "Maschio"
@@ -2028,14 +2049,38 @@ msgstr "Nutri-Score %(grade)s"
 msgid "NOVA — food processing level, 1 (unprocessed) to 4 (ultra-processed)"
 msgstr "NOVA — livello di trasformazione dell'alimento, da 1 (non trasformato) a 4 (ultra-trasformato)"
 
+msgid "Nutrition sections"
+msgstr "Sezioni nutrizione"
+
+msgid "Overview"
+msgstr "Panoramica"
+
+msgid "Diary"
+msgstr "Diario"
+
+msgid "Foods"
+msgstr "Alimenti"
+
+msgid "Recipes"
+msgstr "Ricette"
+
+msgid "Diet plans"
+msgstr "Piani alimentari"
+
+msgid "Calculators"
+msgstr "Calcolatori"
+
+msgid "Statistics"
+msgstr "Statistiche"
+
 msgid "Step %(step)s of 5"
 msgstr "Passo %(step)s di 5"
 
-msgid "BMR / TDEE calculator"
-msgstr "Calcolatore BMR/TDEE"
+msgid "BMI calculator"
+msgstr "Calcolatore BMI"
 
-msgid "BMR is roughly what you'd burn lying still all day; TDEE adds your activity on top. Both are estimates (Mifflin-St Jeor)."
-msgstr "Il BMR è approssimativamente quello che bruceresti restando fermo tutto il giorno; il TDEE aggiunge la tua attività. Entrambi sono stime (Mifflin-St Jeor)."
+msgid "Body mass index — a widely used screening number, not a diagnosis. The Body weight page shows this automatically once you've logged a weight and set a height on your profile; this is the same calculation for a quick one-off check."
+msgstr "Indice di massa corporea — un numero di screening ampiamente utilizzato, non una diagnosi. La pagina del peso corporeo lo mostra automaticamente una volta registrato un peso e impostata un'altezza nel tuo profilo; questo è lo stesso calcolo per un controllo rapido occasionale."
 
 msgid "Calculate"
 msgstr "Calcola"
@@ -2043,14 +2088,23 @@ msgstr "Calcola"
 msgid "Result"
 msgstr "Risultato"
 
+msgid "Categories"
+msgstr "Categorie"
+
+msgid "Back to calculators"
+msgstr "Torna ai calcolatori"
+
+msgid "BMR / TDEE calculator"
+msgstr "Calcolatore BMR/TDEE"
+
+msgid "BMR is roughly what you'd burn lying still all day; TDEE adds your activity on top. Both are estimates (Mifflin-St Jeor)."
+msgstr "Il BMR è approssimativamente quello che bruceresti restando fermo tutto il giorno; il TDEE aggiunge la tua attività. Entrambi sono stime (Mifflin-St Jeor)."
+
 msgid "BMR (at rest)"
 msgstr "BMR (a riposo)"
 
 msgid "TDEE (with activity)"
 msgstr "TDEE (con attività)"
-
-msgid "Back to calculators"
-msgstr "Torna ai calcolatori"
 
 msgid "Body fat calculator"
 msgstr "Calcolatore massa grassa"
@@ -2079,6 +2133,27 @@ msgstr "Grassi"
 msgid "This calorie target is low enough that protein and/or fat had to be reduced below their usual defaults to fit."
 msgstr "Questo obiettivo calorico è così basso che proteine e/o grassi hanno dovuto essere ridotti sotto i loro valori predefiniti abituali per rientrare."
 
+msgid "Time to goal weight calculator"
+msgstr "Calcolatore tempo per il peso obiettivo"
+
+msgid "At a chosen weekly rate, roughly how long to reach a target weight — a plain projection from the numbers you enter, not a promise."
+msgstr "A un ritmo settimanale scelto, all'incirca quanto tempo serve per raggiungere un peso obiettivo — una semplice proiezione dai numeri che inserisci, non una promessa."
+
+msgid "%(weeks)s weeks"
+msgstr "%(weeks)s settimane"
+
+msgid "Around %(date)s, at this rate."
+msgstr "Circa il %(date)s, a questo ritmo."
+
+msgid "That rate doesn't move toward your target — check the sign (negative to lose, positive to gain) matches the direction you actually need to go."
+msgstr "Quel ritmo non si muove verso il tuo obiettivo — controlla che il segno (negativo per perdere, positivo per aumentare) corrisponda alla direzione in cui devi effettivamente andare."
+
+msgid "Waist-to-hip ratio calculator"
+msgstr "Calcolatore rapporto vita-fianchi"
+
+msgid "Where you carry weight, not just how much — a widely used screening number (WHO), not a diagnosis."
+msgstr "Dove porti il peso, non solo quanto — un numero di screening ampiamente utilizzato (OMS), non una diagnosi."
+
 msgid "Water intake calculator"
 msgstr "Calcolatore assunzione di acqua"
 
@@ -2087,9 +2162,6 @@ msgstr "Un obiettivo giornaliero approssimativo di liquidi basato su peso corpor
 
 msgid "day"
 msgstr "giorno"
-
-msgid "Calculators"
-msgstr "Calcolatori"
 
 msgid "Quick, standalone estimates — none of these are saved or change your targets."
 msgstr "Stime rapide e indipendenti — nessuna di queste viene salvata o modifica i tuoi obiettivi."
@@ -2105,6 +2177,15 @@ msgstr "Stima la percentuale di grasso corporeo con un metro da sarta (metodo de
 
 msgid "A rough daily fluid target based on your bodyweight and activity."
 msgstr "Un obiettivo giornaliero approssimativo di liquidi basato sul tuo peso corporeo e attività."
+
+msgid "Body mass index and what it means for your height, without logging a weight first."
+msgstr "Indice di massa corporea e cosa significa per la tua altezza, senza dover prima registrare un peso."
+
+msgid "Where you carry weight, not just how much — a tape measure and one more number."
+msgstr "Dove porti il peso, non solo quanto — un metro da sarta e un altro numero."
+
+msgid "At a chosen weekly rate, roughly how long to reach a target weight."
+msgstr "A un ritmo settimanale scelto, all'incirca quanto tempo serve per raggiungere un peso obiettivo."
 
 msgid "Back to nutrition"
 msgstr "Torna all'alimentazione"
@@ -2151,24 +2232,6 @@ msgstr "%(calories)s kcal/giorno"
 msgid "Current goal"
 msgstr "Obiettivo attuale"
 
-msgid "Quick links"
-msgstr "Collegamenti rapidi"
-
-msgid "Food diary"
-msgstr "Diario alimentare"
-
-msgid "Foods"
-msgstr "Alimenti"
-
-msgid "Recipes"
-msgstr "Ricette"
-
-msgid "Diet plans"
-msgstr "Piani alimentari"
-
-msgid "Statistics"
-msgstr "Statistiche"
-
 msgid "Add food"
 msgstr "Aggiungi alimento"
 
@@ -2177,6 +2240,9 @@ msgstr "es. petto di pollo, o un codice a barre"
 
 msgid "Back to diary"
 msgstr "Torna al diario"
+
+msgid "Food diary"
+msgstr "Diario alimentare"
 
 msgid "Previous day"
 msgstr "Giorno precedente"

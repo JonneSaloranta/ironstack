@@ -675,6 +675,15 @@ msgstr "Slog ihop %(count)d livsmedel till “%(name)s”. Varje dagbokspost, re
 msgid "Merge foods"
 msgstr "Slå ihop livsmedel"
 
+msgid "Lower risk"
+msgstr "Lägre risk"
+
+msgid "Moderate risk"
+msgstr "Måttlig risk"
+
+msgid "Higher risk"
+msgstr "Högre risk"
+
 msgid "a %(job)s job"
 msgstr "ett %(job)s-jobb"
 
@@ -803,6 +812,18 @@ msgstr "Höftomkrets"
 
 msgid "Hip circumference is required for the women's formula."
 msgstr "Höftomkrets krävs för kvinnornas formel."
+
+msgid "Current weight (kg)"
+msgstr "Nuvarande vikt (kg)"
+
+msgid "Target weight (kg)"
+msgstr "Målvikt (kg)"
+
+msgid "Rate (kg/week — negative to lose, positive to gain)"
+msgstr "Takt (kg/vecka — negativt för att gå ner, positivt för att gå upp)"
+
+msgid "Rate (%(unit)s/week — negative to lose, positive to gain)"
+msgstr "Takt (%(unit)s/vecka — negativt för att gå ner, positivt för att gå upp)"
 
 msgid "Male"
 msgstr "Man"
@@ -2028,14 +2049,38 @@ msgstr "Nutri-Score %(grade)s"
 msgid "NOVA — food processing level, 1 (unprocessed) to 4 (ultra-processed)"
 msgstr "NOVA — livsmedlets bearbetningsgrad, 1 (obearbetat) till 4 (ultrabearbetat)"
 
+msgid "Nutrition sections"
+msgstr "Näringsavsnitt"
+
+msgid "Overview"
+msgstr "Översikt"
+
+msgid "Diary"
+msgstr "Dagbok"
+
+msgid "Foods"
+msgstr "Livsmedel"
+
+msgid "Recipes"
+msgstr "Recept"
+
+msgid "Diet plans"
+msgstr "Kostplaner"
+
+msgid "Calculators"
+msgstr "Kalkylatorer"
+
+msgid "Statistics"
+msgstr "Statistik"
+
 msgid "Step %(step)s of 5"
 msgstr "Steg %(step)s av 5"
 
-msgid "BMR / TDEE calculator"
-msgstr "BMR/TDEE-kalkylator"
+msgid "BMI calculator"
+msgstr "BMI-kalkylator"
 
-msgid "BMR is roughly what you'd burn lying still all day; TDEE adds your activity on top. Both are estimates (Mifflin-St Jeor)."
-msgstr "BMR är ungefär vad du skulle förbränna om du låg stilla hela dagen; TDEE lägger till din aktivitet ovanpå det. Båda är uppskattningar (Mifflin-St Jeor)."
+msgid "Body mass index — a widely used screening number, not a diagnosis. The Body weight page shows this automatically once you've logged a weight and set a height on your profile; this is the same calculation for a quick one-off check."
+msgstr "Body mass index — ett allmänt använt screeningtal, inte en diagnos. Sidan Kroppsvikt visar detta automatiskt när du har loggat en vikt och angett en längd i din profil; det här är samma beräkning för en snabb engångskoll."
 
 msgid "Calculate"
 msgstr "Beräkna"
@@ -2043,14 +2088,23 @@ msgstr "Beräkna"
 msgid "Result"
 msgstr "Resultat"
 
+msgid "Categories"
+msgstr "Kategorier"
+
+msgid "Back to calculators"
+msgstr "Tillbaka till kalkylatorer"
+
+msgid "BMR / TDEE calculator"
+msgstr "BMR/TDEE-kalkylator"
+
+msgid "BMR is roughly what you'd burn lying still all day; TDEE adds your activity on top. Both are estimates (Mifflin-St Jeor)."
+msgstr "BMR är ungefär vad du skulle förbränna om du låg stilla hela dagen; TDEE lägger till din aktivitet ovanpå det. Båda är uppskattningar (Mifflin-St Jeor)."
+
 msgid "BMR (at rest)"
 msgstr "BMR (i vila)"
 
 msgid "TDEE (with activity)"
 msgstr "TDEE (med aktivitet)"
-
-msgid "Back to calculators"
-msgstr "Tillbaka till kalkylatorer"
 
 msgid "Body fat calculator"
 msgstr "Kroppsfettkalkylator"
@@ -2079,6 +2133,27 @@ msgstr "Fett"
 msgid "This calorie target is low enough that protein and/or fat had to be reduced below their usual defaults to fit."
 msgstr "Detta kalorimål är så lågt att protein och/eller fett var tvunget att minskas under sina vanliga standardvärden för att få plats."
 
+msgid "Time to goal weight calculator"
+msgstr "Tid till målvikt-kalkylator"
+
+msgid "At a chosen weekly rate, roughly how long to reach a target weight — a plain projection from the numbers you enter, not a promise."
+msgstr "Vid en vald veckotakt, ungefär hur lång tid det tar att nå en målvikt — bara en projektion utifrån de siffror du anger, inget löfte."
+
+msgid "%(weeks)s weeks"
+msgstr "%(weeks)s veckor"
+
+msgid "Around %(date)s, at this rate."
+msgstr "Ungefär %(date)s, i den här takten."
+
+msgid "That rate doesn't move toward your target — check the sign (negative to lose, positive to gain) matches the direction you actually need to go."
+msgstr "Den takten rör sig inte mot ditt mål — kontrollera att tecknet (negativt för att gå ner, positivt för att gå upp) matchar den riktning du faktiskt behöver gå."
+
+msgid "Waist-to-hip ratio calculator"
+msgstr "Midja-höft-kvot-kalkylator"
+
+msgid "Where you carry weight, not just how much — a widely used screening number (WHO), not a diagnosis."
+msgstr "Var du bär vikt, inte bara hur mycket — ett allmänt använt screeningtal (WHO), inte en diagnos."
+
 msgid "Water intake calculator"
 msgstr "Vätskeintagskalkylator"
 
@@ -2087,9 +2162,6 @@ msgstr "Ett ungefärligt dagligt vätskemål baserat på kroppsvikt och aktivite
 
 msgid "day"
 msgstr "dag"
-
-msgid "Calculators"
-msgstr "Kalkylatorer"
 
 msgid "Quick, standalone estimates — none of these are saved or change your targets."
 msgstr "Snabba, fristående uppskattningar — inget av detta sparas eller ändrar dina mål."
@@ -2105,6 +2177,15 @@ msgstr "Uppskatta kroppsfettprocent med ett måttband (amerikanska flottans meto
 
 msgid "A rough daily fluid target based on your bodyweight and activity."
 msgstr "Ett ungefärligt dagligt vätskemål baserat på din kroppsvikt och aktivitet."
+
+msgid "Body mass index and what it means for your height, without logging a weight first."
+msgstr "Body mass index och vad det betyder för din längd, utan att först logga en vikt."
+
+msgid "Where you carry weight, not just how much — a tape measure and one more number."
+msgstr "Var du bär vikt, inte bara hur mycket — ett måttband och en siffra till."
+
+msgid "At a chosen weekly rate, roughly how long to reach a target weight."
+msgstr "Vid en vald veckotakt, ungefär hur lång tid det tar att nå en målvikt."
 
 msgid "Back to nutrition"
 msgstr "Tillbaka till näring"
@@ -2151,24 +2232,6 @@ msgstr "%(calories)s kcal/dag"
 msgid "Current goal"
 msgstr "Nuvarande mål"
 
-msgid "Quick links"
-msgstr "Snabblänkar"
-
-msgid "Food diary"
-msgstr "Matdagbok"
-
-msgid "Foods"
-msgstr "Livsmedel"
-
-msgid "Recipes"
-msgstr "Recept"
-
-msgid "Diet plans"
-msgstr "Kostplaner"
-
-msgid "Statistics"
-msgstr "Statistik"
-
 msgid "Add food"
 msgstr "Lägg till livsmedel"
 
@@ -2177,6 +2240,9 @@ msgstr "t.ex. kycklingfilé eller ett streckkodsnummer"
 
 msgid "Back to diary"
 msgstr "Tillbaka till dagboken"
+
+msgid "Food diary"
+msgstr "Matdagbok"
 
 msgid "Previous day"
 msgstr "Föregående dag"

@@ -115,6 +115,7 @@ TEMPLATES = [
                 "apps.workouts.context_processors.active_workout_session",
                 "apps.core.context_processors.app_version",
                 "apps.accounts.context_processors.onboarding",
+                "apps.nutrition.context_processors.nutrition_subnav",
             ],
         },
     },

@@ -502,3 +502,103 @@ class WaterIntakeCalculatorForm(_UnitAwareWeightHeightForm):
         profile = getattr(user, "nutrition_profile", None)
         if profile is not None:
             self.initial.setdefault("activity_level", profile.activity_level)
+
+
+class BMICalculatorForm(_UnitAwareWeightHeightForm):
+    """See apps.core.bmi.calculate_bmi — a standalone version of the
+    same calculation the Body weight measurement history page already
+    shows once a height is on file (docs/DOMAIN_MODEL.md "User"), for
+    anyone who wants the number without logging a weight first."""
+
+    height_cm = forms.DecimalField(max_digits=6, decimal_places=1, min_value=Decimal("50"))
+    weight_kg = forms.DecimalField(max_digits=8, decimal_places=2, min_value=Decimal("20"))
+
+
+class WaistHipRatioCalculatorForm(_UnitAwareWeightHeightForm):
+    """See apps.nutrition.calculators.calculate_waist_hip_ratio. Same
+    shape as BodyFatCalculatorForm's own circumference fields —
+    entered in the user's display unit, converted to canonical cm for
+    the calculation, same as everywhere else circumferences are
+    logged in this app (docs/DOMAIN_MODEL.md "BodyMeasurement")."""
+
+    biological_sex = forms.ChoiceField(choices=BiologicalSex.choices, label=_("Biological sex"))
+    waist_cm = forms.DecimalField(
+        max_digits=5, decimal_places=1, min_value=Decimal("30"), label=_("Waist circumference")
+    )
+    hip_cm = forms.DecimalField(
+        max_digits=5, decimal_places=1, min_value=Decimal("30"), label=_("Hip circumference")
+    )
+
+    def __init__(self, *args, user, **kwargs):
+        super().__init__(*args, user=user, **kwargs)
+        profile = getattr(user, "nutrition_profile", None)
+        if profile is not None:
+            self.initial.setdefault("biological_sex", profile.biological_sex)
+        for field_name in ("waist_cm", "hip_cm"):
+            self.fields[field_name].label = (
+                self.fields[field_name].label
+                if self.user.unit_system == "metric"
+                else f"{self.fields[field_name].label} (in)"
+            )
+
+    def canonical_waist_cm(self):
+        return self._canonical_circumference("waist_cm")
+
+    def canonical_hip_cm(self):
+        return self._canonical_circumference("hip_cm")
+
+    def _canonical_circumference(self, field_name):
+        value = self.cleaned_data[field_name]
+        if self.user.unit_system == "metric":
+            return value
+        return core_units.meters_to_cm(core_units.inches_to_meters(value))
+
+
+class TimeToGoalCalculatorForm(_UnitAwareWeightHeightForm):
+    """See apps.nutrition.calculators.estimate_weeks_to_goal. A raw
+    signed weekly rate, not a GoalType dropdown like the onboarding
+    goal step uses — this is a flexible what-if tool ("at *this*
+    rate, how long"), not tied to this app's own goal-type rate
+    presets."""
+
+    current_weight_kg = forms.DecimalField(
+        max_digits=8, decimal_places=2, min_value=Decimal("20"), label=_("Current weight (kg)")
+    )
+    target_weight_kg = forms.DecimalField(
+        max_digits=8, decimal_places=2, min_value=Decimal("20"), label=_("Target weight (kg)")
+    )
+    rate_kg_per_week = forms.DecimalField(
+        max_digits=5,
+        decimal_places=3,
+        label=_("Rate (kg/week — negative to lose, positive to gain)"),
+    )
+
+    def __init__(self, *args, user, **kwargs):
+        super().__init__(*args, user=user, **kwargs)
+        is_metric = user.unit_system == "metric"
+        if not is_metric:
+            unit_label = core_units.weight_unit_label(user.unit_system)
+            self.fields["current_weight_kg"].label = _("Current weight (%(unit)s)") % {
+                "unit": unit_label
+            }
+            self.fields["target_weight_kg"].label = _("Target weight (%(unit)s)") % {
+                "unit": unit_label
+            }
+            self.fields["rate_kg_per_week"].label = _(
+                "Rate (%(unit)s/week — negative to lose, positive to gain)"
+            ) % {"unit": unit_label}
+
+    def canonical_current_weight_kg(self):
+        return core_units.display_to_kg(
+            self.cleaned_data["current_weight_kg"], self.user.unit_system
+        )
+
+    def canonical_target_weight_kg(self):
+        return core_units.display_to_kg(
+            self.cleaned_data["target_weight_kg"], self.user.unit_system
+        )
+
+    def canonical_rate_kg_per_week(self):
+        return core_units.display_to_kg(
+            self.cleaned_data["rate_kg_per_week"], self.user.unit_system
+        )

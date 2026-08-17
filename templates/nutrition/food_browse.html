@@ -5,6 +5,7 @@
 <div class="top-bar">
   <h1 style="margin:0;">{% trans "Import from OpenFoodFacts" %}</h1>
 </div>
+{% include "nutrition/_subnav.html" %}
 <p class="text-muted">{% trans "Search or browse by category to add a food to the shared library — anyone on this instance can then find and log it." %}</p>
 
 <div class="card" x-data="ironstackBarcodeScanner()">

@@ -626,34 +626,78 @@ casual addition.
 
 ### Navigating within nutrition
 
-Deliberately plain "&larr; Back to X" links between pages, the same
-convention `apps.programs`'s own Program → Workout → Prescription
-hierarchy (and `apps.measurements`, `apps.workouts`) already use — no
-persistent sub-nav/tab bar was added for nutrition specifically, since
-that would make this one section *less* consistent with the rest of
-the app rather than more intuitive. The one deliberate structural
-addition is the dashboard's single "Quick links" card reaching every
-nutrition sub-section (Food diary, Foods, Recipes, Diet plans,
-Calculators, Statistics) in one place — previously split oddly across
-three different cards with no direct link to Foods at all.
+**A persistent sub-nav (`templates/nutrition/_subnav.html`) — the one
+deliberate exception to this project's "plain back links, no tab bar"
+convention.** Originally built the same way as everywhere else
+(`apps.programs`'s Program → Workout → Prescription hierarchy,
+`apps.measurements`, `apps.workouts`): "&larr; Back to X" links only,
+explicitly reasoned as more consistent than adding a nutrition-only
+tab bar. Reported directly as hard to use once real day-to-day use
+caught up with how much nutrition had actually grown: it has 7
+top-level destinations (dashboard, diary, foods, recipes, diet plans,
+calculators, statistics) — more than any other app here — so reaching
+a sibling section from wherever you actually were meant scrolling
+back to the dashboard's own link list first, every time. No other app
+in this project has enough sibling sections for that problem to exist
+at all, which is exactly why the earlier "stay consistent, no tab bar"
+reasoning doesn't generalize here — it was right for the app sizes it
+was reasoned about, not for one that grew past them.
+
+Implementation: `apps.nutrition.context_processors.nutrition_subnav`
+computes which tab is "active" from `request.resolver_match.url_name`
+(grouped so every diary-related view — add, edit, copy — highlights
+"Diary", not just the bare day view) and is registered globally in
+`TEMPLATES` `context_processors`, the same mechanism `apps.workouts`'s
+training-FAB already uses. `_subnav.html` itself is included directly
+by each nutrition page's own template — right after that page's own
+`.top-bar` (its heading, and the border line under it), not injected
+once from `templates/base.html` — so it visually reads as "this page's
+title, then its section tabs," not a strip of navigation sitting above
+every page's own identity. Concretely this means editing 23 individual
+templates rather than one shared insertion point, the direct
+consequence of nutrition's own pages each rendering their heading
+inside `{% block content %}` rather than a shared header block; still
+the smaller, more predictable change than restructuring every page to
+extend a new intermediate base template just to get one shared
+insertion point. Deliberately excluded from the five onboarding wizard
+templates — none of the sub-nav's destinations are reachable yet for a
+user without a `NutritionProfile`; every one of them would just bounce
+straight back to onboarding.
+
+Styled as `.range-filter`'s existing pill tabs (`templates/analytics/
+_range_filter.html`) with one override — horizontal scroll instead of
+wrap (`.nutrition-subnav`), since 7 tabs wrapped would cost two or
+three lines of vertical space on every single page, permanently,
+which defeats a bar meant to stay out of the way. `position: sticky`
+keeps it reachable without scrolling back up on a long page (the
+dashboard, mainly) — directly answering the original complaint, not
+just relocating it.
+
+The dashboard's old "Quick links" card (the same six destinations,
+minus itself) is gone now that the sub-nav reaches every section from
+every page, not just the dashboard — keeping both would have been
+pure redundancy. "+ Log food now" stays on the dashboard's own "Today
+so far" card: a specific action (jump straight to the add-food form),
+not a navigation destination the sub-nav already covers.
 
 **Every "back" link's target has to match every way a page can
-actually be reached, not just the first one it was built for.**
-Foods/Recipes/Diet plans were originally only ever reached from the
-food diary, so their own "back" link pointed there — reasonable at
-the time. Once the dashboard's "Quick links" card started linking to
-them directly too, that same link became actively wrong for anyone
-arriving that way: pressing "back" took them somewhere they'd never
-been, not back to the dashboard they'd actually come from. Fixed by
-pointing all three at the nutrition dashboard instead (their real,
-common parent once they're reachable two different ways), and the
-food diary itself — also reachable directly from the dashboard
-("Open food diary", "+ Log food now"), not just bottom-nav — gained
-the same "&larr; Back to nutrition" link it was missing entirely.
-General rule going forward: a "back" link's target is "this page's
-logical parent," never "wherever this page happened to be built to
-be reached from first" — those two drift apart exactly when a second
-entry point gets added later, as it did here.
+actually be reached, not just the first one it was built for.** This
+still applies to the plain "&larr; Back to X" links between a page and
+its own logical parent (recipe detail → recipe list, an edit form →
+whatever it edits) — the sub-nav only replaces lateral movement
+between the 7 top-level sections, not that vertical parent/child
+structure. Foods/Recipes/Diet plans were originally only ever reached
+from the food diary, so their own "back" link pointed there —
+reasonable at the time. Once they became reachable directly (first
+via the dashboard's "Quick links", now via the sub-nav from anywhere),
+that same link became actively wrong for anyone arriving that way:
+pressing "back" took them somewhere they'd never been, not back to
+where they'd actually come from. Fixed by pointing all three at the
+nutrition dashboard instead (their real, common parent). General rule
+going forward: a "back" link's target is "this page's logical
+parent," never "wherever this page happened to be built to be reached
+from first" — those two drift apart exactly when a second entry point
+gets added later, as it did here, twice.
 
 ### Camera barcode scanning
 
@@ -680,21 +724,33 @@ queries were already handled specially
 
 ## Calculators
 
-Four standalone, stateless calculators under `/nutrition/calculators/`
+Seven standalone, stateless calculators under `/nutrition/calculators/`
 (`apps.nutrition.calculators` + thin wrappers in `views.py`'s
 `_CalculatorView` subclasses): BMR/TDEE, macro split, body fat %
-(U.S. Navy tape-measure method), and daily water intake. Deliberately
-separate from the rest of the app in one important way: **nothing
-here reads or writes a `NutritionProfile`, `NutritionGoal`, or
-`NutritionTarget` row** — a user can get an answer without onboarding,
-without setting a goal, and without logging anything, which is the
-whole point (a quick one-off lookup, not a commitment). The BMR/TDEE
-and macro calculators are thin forms in front of the *existing*
-`energy.calculate_bmr`/`calculate_tdee` and `macros.calculate_macros`
-— not a second implementation of the same math (see CLAUDE.md "do not
-create duplicate abstractions"). Body fat % and water intake are new,
-small pure functions in `apps/nutrition/calculators.py`, same
-no-DB/no-HTTP shape as `energy.py`/`macros.py`.
+(U.S. Navy tape-measure method), daily water intake, BMI,
+waist-to-hip ratio, and time-to-goal-weight (added on direct request,
+once the first four were already live). Deliberately separate from
+the rest of the app in one important way: **nothing here reads or
+writes a `NutritionProfile`, `NutritionGoal`, or `NutritionTarget`
+row** — a user can get an answer without onboarding, without setting
+a goal, and without logging anything, which is the whole point (a
+quick one-off lookup, not a commitment). The BMR/TDEE and macro
+calculators are thin forms in front of the *existing*
+`energy.calculate_bmr`/`calculate_tdee` and `macros.calculate_macros`;
+the BMI calculator is the same thing for `apps.core.bmi.
+calculate_bmi`/`category_for`/`category_rows` — the exact calculation
+the Body weight measurement history page already shows once a height
+is on file, not a second implementation (see CLAUDE.md "do not create
+duplicate abstractions"). Body fat %, water intake, waist-to-hip
+ratio, and time-to-goal are new, small pure functions in
+`apps/nutrition/calculators.py`, same no-DB/no-HTTP shape as
+`energy.py`/`macros.py`. Waist-to-hip ratio's risk thresholds are
+sex-specific WHO-style cutoffs — a published scale, not invented here,
+the same "real, independently-defined scale" reasoning as Nutri-Score/
+NOVA on `Food`. Time-to-goal deliberately returns only a week count
+from its pure function, not a calendar date — "today" is a
+request-time concern the view already has (`timezone.localdate()`),
+not something a pure calculation should reach for on its own.
 
 Each calculator view is a plain `GET` (no side effect, so a GET with a
 query string is the right verb — bookmarkable/shareable, same

@@ -675,6 +675,15 @@ msgstr "Merged %(count)d food(s) into “%(name)s”. Every diary entry, recipe 
 msgid "Merge foods"
 msgstr "Merge foods"
 
+msgid "Lower risk"
+msgstr "Lower risk"
+
+msgid "Moderate risk"
+msgstr "Moderate risk"
+
+msgid "Higher risk"
+msgstr "Higher risk"
+
 msgid "a %(job)s job"
 msgstr "a %(job)s job"
 
@@ -803,6 +812,18 @@ msgstr "Hip circumference"
 
 msgid "Hip circumference is required for the women's formula."
 msgstr "Hip circumference is required for the women's formula."
+
+msgid "Current weight (kg)"
+msgstr "Current weight (kg)"
+
+msgid "Target weight (kg)"
+msgstr "Target weight (kg)"
+
+msgid "Rate (kg/week — negative to lose, positive to gain)"
+msgstr "Rate (kg/week — negative to lose, positive to gain)"
+
+msgid "Rate (%(unit)s/week — negative to lose, positive to gain)"
+msgstr "Rate (%(unit)s/week — negative to lose, positive to gain)"
 
 msgid "Male"
 msgstr "Male"
@@ -2028,14 +2049,38 @@ msgstr "Nutri-Score %(grade)s"
 msgid "NOVA — food processing level, 1 (unprocessed) to 4 (ultra-processed)"
 msgstr "NOVA — food processing level, 1 (unprocessed) to 4 (ultra-processed)"
 
+msgid "Nutrition sections"
+msgstr "Nutrition sections"
+
+msgid "Overview"
+msgstr "Overview"
+
+msgid "Diary"
+msgstr "Diary"
+
+msgid "Foods"
+msgstr "Foods"
+
+msgid "Recipes"
+msgstr "Recipes"
+
+msgid "Diet plans"
+msgstr "Diet plans"
+
+msgid "Calculators"
+msgstr "Calculators"
+
+msgid "Statistics"
+msgstr "Statistics"
+
 msgid "Step %(step)s of 5"
 msgstr "Step %(step)s of 5"
 
-msgid "BMR / TDEE calculator"
-msgstr "BMR / TDEE calculator"
+msgid "BMI calculator"
+msgstr "BMI calculator"
 
-msgid "BMR is roughly what you'd burn lying still all day; TDEE adds your activity on top. Both are estimates (Mifflin-St Jeor)."
-msgstr "BMR is roughly what you'd burn lying still all day; TDEE adds your activity on top. Both are estimates (Mifflin-St Jeor)."
+msgid "Body mass index — a widely used screening number, not a diagnosis. The Body weight page shows this automatically once you've logged a weight and set a height on your profile; this is the same calculation for a quick one-off check."
+msgstr "Body mass index — a widely used screening number, not a diagnosis. The Body weight page shows this automatically once you've logged a weight and set a height on your profile; this is the same calculation for a quick one-off check."
 
 msgid "Calculate"
 msgstr "Calculate"
@@ -2043,14 +2088,23 @@ msgstr "Calculate"
 msgid "Result"
 msgstr "Result"
 
+msgid "Categories"
+msgstr "Categories"
+
+msgid "Back to calculators"
+msgstr "Back to calculators"
+
+msgid "BMR / TDEE calculator"
+msgstr "BMR / TDEE calculator"
+
+msgid "BMR is roughly what you'd burn lying still all day; TDEE adds your activity on top. Both are estimates (Mifflin-St Jeor)."
+msgstr "BMR is roughly what you'd burn lying still all day; TDEE adds your activity on top. Both are estimates (Mifflin-St Jeor)."
+
 msgid "BMR (at rest)"
 msgstr "BMR (at rest)"
 
 msgid "TDEE (with activity)"
 msgstr "TDEE (with activity)"
-
-msgid "Back to calculators"
-msgstr "Back to calculators"
 
 msgid "Body fat calculator"
 msgstr "Body fat calculator"
@@ -2079,6 +2133,27 @@ msgstr "Fat"
 msgid "This calorie target is low enough that protein and/or fat had to be reduced below their usual defaults to fit."
 msgstr "This calorie target is low enough that protein and/or fat had to be reduced below their usual defaults to fit."
 
+msgid "Time to goal weight calculator"
+msgstr "Time to goal weight calculator"
+
+msgid "At a chosen weekly rate, roughly how long to reach a target weight — a plain projection from the numbers you enter, not a promise."
+msgstr "At a chosen weekly rate, roughly how long to reach a target weight — a plain projection from the numbers you enter, not a promise."
+
+msgid "%(weeks)s weeks"
+msgstr "%(weeks)s weeks"
+
+msgid "Around %(date)s, at this rate."
+msgstr "Around %(date)s, at this rate."
+
+msgid "That rate doesn't move toward your target — check the sign (negative to lose, positive to gain) matches the direction you actually need to go."
+msgstr "That rate doesn't move toward your target — check the sign (negative to lose, positive to gain) matches the direction you actually need to go."
+
+msgid "Waist-to-hip ratio calculator"
+msgstr "Waist-to-hip ratio calculator"
+
+msgid "Where you carry weight, not just how much — a widely used screening number (WHO), not a diagnosis."
+msgstr "Where you carry weight, not just how much — a widely used screening number (WHO), not a diagnosis."
+
 msgid "Water intake calculator"
 msgstr "Water intake calculator"
 
@@ -2087,9 +2162,6 @@ msgstr "A rough daily fluid target based on bodyweight and activity — real nee
 
 msgid "day"
 msgstr "day"
-
-msgid "Calculators"
-msgstr "Calculators"
 
 msgid "Quick, standalone estimates — none of these are saved or change your targets."
 msgstr "Quick, standalone estimates — none of these are saved or change your targets."
@@ -2105,6 +2177,15 @@ msgstr "Estimate body fat percentage from a tape measure (U.S. Navy method)."
 
 msgid "A rough daily fluid target based on your bodyweight and activity."
 msgstr "A rough daily fluid target based on your bodyweight and activity."
+
+msgid "Body mass index and what it means for your height, without logging a weight first."
+msgstr "Body mass index and what it means for your height, without logging a weight first."
+
+msgid "Where you carry weight, not just how much — a tape measure and one more number."
+msgstr "Where you carry weight, not just how much — a tape measure and one more number."
+
+msgid "At a chosen weekly rate, roughly how long to reach a target weight."
+msgstr "At a chosen weekly rate, roughly how long to reach a target weight."
 
 msgid "Back to nutrition"
 msgstr "Back to nutrition"
@@ -2151,24 +2232,6 @@ msgstr "%(calories)s kcal/day"
 msgid "Current goal"
 msgstr "Current goal"
 
-msgid "Quick links"
-msgstr "Quick links"
-
-msgid "Food diary"
-msgstr "Food diary"
-
-msgid "Foods"
-msgstr "Foods"
-
-msgid "Recipes"
-msgstr "Recipes"
-
-msgid "Diet plans"
-msgstr "Diet plans"
-
-msgid "Statistics"
-msgstr "Statistics"
-
 msgid "Add food"
 msgstr "Add food"
 
@@ -2177,6 +2240,9 @@ msgstr "e.g. chicken breast, or a barcode number"
 
 msgid "Back to diary"
 msgstr "Back to diary"
+
+msgid "Food diary"
+msgstr "Food diary"
 
 msgid "Previous day"
 msgstr "Previous day"

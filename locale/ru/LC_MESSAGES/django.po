@@ -678,6 +678,15 @@ msgstr "Объединено %(count)d продуктов в «%(name)s». Ка�
 msgid "Merge foods"
 msgstr "Объединить продукты"
 
+msgid "Lower risk"
+msgstr "Более низкий риск"
+
+msgid "Moderate risk"
+msgstr "Умеренный риск"
+
+msgid "Higher risk"
+msgstr "Более высокий риск"
+
 msgid "a %(job)s job"
 msgstr "работа: %(job)s"
 
@@ -806,6 +815,18 @@ msgstr "Обхват бёдер"
 
 msgid "Hip circumference is required for the women's formula."
 msgstr "Для женской формулы требуется обхват бёдер."
+
+msgid "Current weight (kg)"
+msgstr "Текущий вес (кг)"
+
+msgid "Target weight (kg)"
+msgstr "Целевой вес (кг)"
+
+msgid "Rate (kg/week — negative to lose, positive to gain)"
+msgstr "Темп (кг/неделя — отрицательное значение для похудения, положительное для набора веса)"
+
+msgid "Rate (%(unit)s/week — negative to lose, positive to gain)"
+msgstr "Темп (%(unit)s/неделя — отрицательное значение для похудения, положительное для набора веса)"
 
 msgid "Male"
 msgstr "Мужской"
@@ -2037,14 +2058,38 @@ msgstr "Nutri-Score %(grade)s"
 msgid "NOVA — food processing level, 1 (unprocessed) to 4 (ultra-processed)"
 msgstr "NOVA — степень обработки продукта, от 1 (необработанный) до 4 (ультраобработанный)"
 
+msgid "Nutrition sections"
+msgstr "Разделы питания"
+
+msgid "Overview"
+msgstr "Обзор"
+
+msgid "Diary"
+msgstr "Дневник"
+
+msgid "Foods"
+msgstr "Продукты"
+
+msgid "Recipes"
+msgstr "Рецепты"
+
+msgid "Diet plans"
+msgstr "Планы питания"
+
+msgid "Calculators"
+msgstr "Калькуляторы"
+
+msgid "Statistics"
+msgstr "Статистика"
+
 msgid "Step %(step)s of 5"
 msgstr "Шаг %(step)s из 5"
 
-msgid "BMR / TDEE calculator"
-msgstr "Калькулятор BMR/TDEE"
+msgid "BMI calculator"
+msgstr "Калькулятор ИМТ"
 
-msgid "BMR is roughly what you'd burn lying still all day; TDEE adds your activity on top. Both are estimates (Mifflin-St Jeor)."
-msgstr "BMR — это примерно то, что вы бы сжигали, лёжа неподвижно весь день; TDEE добавляет к этому вашу активность. Оба значения — оценочные (формула Миффлина-Сан Жеора)."
+msgid "Body mass index — a widely used screening number, not a diagnosis. The Body weight page shows this automatically once you've logged a weight and set a height on your profile; this is the same calculation for a quick one-off check."
+msgstr "Индекс массы тела — широко используемый скрининговый показатель, а не диагноз. Страница веса тела показывает его автоматически, если вы записали вес и указали рост в профиле; это тот же расчёт для быстрой разовой проверки."
 
 msgid "Calculate"
 msgstr "Рассчитать"
@@ -2052,14 +2097,23 @@ msgstr "Рассчитать"
 msgid "Result"
 msgstr "Результат"
 
+msgid "Categories"
+msgstr "Категории"
+
+msgid "Back to calculators"
+msgstr "Назад к калькуляторам"
+
+msgid "BMR / TDEE calculator"
+msgstr "Калькулятор BMR/TDEE"
+
+msgid "BMR is roughly what you'd burn lying still all day; TDEE adds your activity on top. Both are estimates (Mifflin-St Jeor)."
+msgstr "BMR — это примерно то, что вы бы сжигали, лёжа неподвижно весь день; TDEE добавляет к этому вашу активность. Оба значения — оценочные (формула Миффлина-Сан Жеора)."
+
 msgid "BMR (at rest)"
 msgstr "BMR (в покое)"
 
 msgid "TDEE (with activity)"
 msgstr "TDEE (с учётом активности)"
-
-msgid "Back to calculators"
-msgstr "Назад к калькуляторам"
 
 msgid "Body fat calculator"
 msgstr "Калькулятор процента жира"
@@ -2088,6 +2142,27 @@ msgstr "Жиры"
 msgid "This calorie target is low enough that protein and/or fat had to be reduced below their usual defaults to fit."
 msgstr "Эта целевая калорийность настолько низкая, что белки и/или жиры пришлось уменьшить ниже их обычных значений по умолчанию, чтобы уложиться в лимит."
 
+msgid "Time to goal weight calculator"
+msgstr "Калькулятор времени до целевого веса"
+
+msgid "At a chosen weekly rate, roughly how long to reach a target weight — a plain projection from the numbers you enter, not a promise."
+msgstr "При выбранном недельном темпе — примерно, сколько времени понадобится для достижения целевого веса. Это лишь прогноз на основе введённых вами цифр, а не обещание."
+
+msgid "%(weeks)s weeks"
+msgstr "%(weeks)s недель"
+
+msgid "Around %(date)s, at this rate."
+msgstr "Примерно %(date)s при таком темпе."
+
+msgid "That rate doesn't move toward your target — check the sign (negative to lose, positive to gain) matches the direction you actually need to go."
+msgstr "Этот темп не приближает вас к цели — проверьте, соответствует ли знак (отрицательный для похудения, положительный для набора веса) направлению, в котором вам действительно нужно двигаться."
+
+msgid "Waist-to-hip ratio calculator"
+msgstr "Калькулятор соотношения талии и бёдер"
+
+msgid "Where you carry weight, not just how much — a widely used screening number (WHO), not a diagnosis."
+msgstr "Где именно вы носите вес, а не только сколько — широко используемый скрининговый показатель (ВОЗ), а не диагноз."
+
 msgid "Water intake calculator"
 msgstr "Калькулятор потребления воды"
 
@@ -2096,9 +2171,6 @@ msgstr "Приблизительная суточная норма жидкос�
 
 msgid "day"
 msgstr "день"
-
-msgid "Calculators"
-msgstr "Калькуляторы"
 
 msgid "Quick, standalone estimates — none of these are saved or change your targets."
 msgstr "Быстрые самостоятельные оценки — ничего из этого не сохраняется и не изменяет ваши цели."
@@ -2114,6 +2186,15 @@ msgstr "Оцените процент жира в организме с помо
 
 msgid "A rough daily fluid target based on your bodyweight and activity."
 msgstr "Приблизительная суточная норма жидкости на основе вашего веса и активности."
+
+msgid "Body mass index and what it means for your height, without logging a weight first."
+msgstr "Индекс массы тела и что он означает для вашего роста — без необходимости сначала записывать вес."
+
+msgid "Where you carry weight, not just how much — a tape measure and one more number."
+msgstr "Где именно вы носите вес, а не только сколько — сантиметровая лента и ещё одно число."
+
+msgid "At a chosen weekly rate, roughly how long to reach a target weight."
+msgstr "При выбранном недельном темпе — примерно, сколько времени понадобится для достижения целевого веса."
 
 msgid "Back to nutrition"
 msgstr "Назад к питанию"
@@ -2160,24 +2241,6 @@ msgstr "%(calories)s ккал/день"
 msgid "Current goal"
 msgstr "Текущая цель"
 
-msgid "Quick links"
-msgstr "Быстрые ссылки"
-
-msgid "Food diary"
-msgstr "Дневник питания"
-
-msgid "Foods"
-msgstr "Продукты"
-
-msgid "Recipes"
-msgstr "Рецепты"
-
-msgid "Diet plans"
-msgstr "Планы питания"
-
-msgid "Statistics"
-msgstr "Статистика"
-
 msgid "Add food"
 msgstr "Добавить продукт"
 
@@ -2186,6 +2249,9 @@ msgstr "например, куриная грудка или номер штри
 
 msgid "Back to diary"
 msgstr "Назад к дневнику"
+
+msgid "Food diary"
+msgstr "Дневник питания"
 
 msgid "Previous day"
 msgstr "Предыдущий день"

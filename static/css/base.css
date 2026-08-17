@@ -1030,6 +1030,33 @@ h2 {
   border-color: var(--color-accent);
 }
 
+/* Nutrition's persistent sub-nav (templates/nutrition/_subnav.html) —
+   reuses .range-filter's pill look above with one deliberate
+   difference: this scrolls horizontally instead of wrapping. 7 tabs
+   wrapped to 2-3 lines would cost real vertical space on every single
+   nutrition page, permanently, which defeats the point of a bar meant
+   to stay out of the way. Sticky under the top app chrome so a long
+   page (the dashboard, mainly) never buries it below a scroll a user
+   has to reverse to reach navigation — the concrete complaint this
+   whole component exists to fix. */
+.nutrition-subnav {
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  position: sticky;
+  /* Sits right under each page's own .top-bar (which itself starts
+     flush at the top of .container) — sticking to the very top of the
+     scroll area, not offset, is correct once scrolled past it. */
+  top: 0;
+  z-index: 40;
+  background: var(--color-bg);
+  padding: 0.5rem 0;
+}
+
+.nutrition-subnav a {
+  flex-shrink: 0;
+}
+
 .stat-row {
   display: flex;
   flex-wrap: wrap;

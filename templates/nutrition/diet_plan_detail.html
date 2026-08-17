@@ -5,6 +5,7 @@
 <div class="top-bar">
   <h1 style="margin:0;">{{ plan.name }}</h1>
 </div>
+{% include "nutrition/_subnav.html" %}
 <p class="text-muted">{{ plan.target_calories }} kcal/day — {{ plan.target_protein_grams|floatformat:0 }}g {% trans "protein" %}, {{ plan.target_carbohydrate_grams|floatformat:0 }}g {% trans "carbs" %}, {{ plan.target_fat_grams|floatformat:0 }}g {% trans "fat" %}</p>
 
 {% for meal in meals %}

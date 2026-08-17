@@ -5,6 +5,7 @@
 <div class="top-bar">
   <h1 style="margin:0;">{% trans "Import from OpenFoodFacts" %}</h1>
 </div>
+{% include "nutrition/_subnav.html" %}
 
 {% if off_results %}
   {% for product in off_results %}

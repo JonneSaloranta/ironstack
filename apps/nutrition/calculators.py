@@ -14,7 +14,10 @@ throughout this app.
 """
 
 import math
+from dataclasses import dataclass
 from decimal import ROUND_HALF_UP, Decimal
+
+from django.utils.translation import gettext_lazy as _
 
 from .models import ActivityLevel, BiologicalSex
 
@@ -104,3 +107,76 @@ def estimate_daily_water_liters(weight_kg: Decimal, activity_level: str) -> Deci
     base_ml = weight_kg * WATER_BASE_ML_PER_KG
     total_ml = base_ml + WATER_ACTIVITY_BONUS_ML[activity_level]
     return (total_ml / Decimal("1000")).quantize(WATER_LITER_PLACES, rounding=ROUND_HALF_UP)
+
+
+WHR_PLACES = Decimal("0.01")
+
+
+def calculate_waist_hip_ratio(waist_cm: Decimal, hip_cm: Decimal) -> Decimal | None:
+    """`None` for a non-positive hip measurement (can't divide by zero,
+    and it's nonsensical anyway) rather than raising."""
+    if waist_cm is None or hip_cm is None or hip_cm <= 0:
+        return None
+    return (waist_cm / hip_cm).quantize(WHR_PLACES, rounding=ROUND_HALF_UP)
+
+
+@dataclass(frozen=True)
+class WHRRiskLevel:
+    name: str
+    low: Decimal | None  # inclusive
+    high: Decimal | None  # exclusive
+
+
+# WHO-style sex-specific thresholds — a widely cited public-health
+# screening cutoff for cardiovascular/metabolic risk associated with
+# where fat is carried, same "published scale, not invented here"
+# reasoning as apps.nutrition.models.NutriScoreGrade. Two separate
+# tables (not one adjusted by a correction factor) since the
+# thresholds themselves, not just typical values, differ by sex.
+WHR_RISK_LEVELS = {
+    BiologicalSex.MALE: [
+        WHRRiskLevel(_("Lower risk"), None, Decimal("0.90")),
+        WHRRiskLevel(_("Moderate risk"), Decimal("0.90"), Decimal("1.0")),
+        WHRRiskLevel(_("Higher risk"), Decimal("1.0"), None),
+    ],
+    BiologicalSex.FEMALE: [
+        WHRRiskLevel(_("Lower risk"), None, Decimal("0.80")),
+        WHRRiskLevel(_("Moderate risk"), Decimal("0.80"), Decimal("0.85")),
+        WHRRiskLevel(_("Higher risk"), Decimal("0.85"), None),
+    ],
+}
+
+
+def whr_risk_level(ratio: Decimal, biological_sex: str) -> WHRRiskLevel | None:
+    for level in WHR_RISK_LEVELS[biological_sex]:
+        if (level.low is None or ratio >= level.low) and (
+            level.high is None or ratio < level.high
+        ):
+            return level
+    return None
+
+
+def estimate_weeks_to_goal(
+    current_weight_kg: Decimal, target_weight_kg: Decimal, rate_kg_per_week: Decimal
+) -> Decimal | None:
+    """How many weeks, at a chosen rate, to go from `current_weight_kg`
+    to `target_weight_kg` — the same signed-rate convention
+    `NutritionGoal.target_rate_kg_per_week` already uses (negative for
+    losing, positive for gaining). `None` when the rate doesn't
+    actually move toward the target (a positive/gaining rate with a
+    lower target, a negative/losing rate with a higher target, or a
+    zero rate with any real gap) rather than a nonsensical negative or
+    infinite week count — the caller shows this as "check your
+    numbers" rather than a silently wrong answer. Already-at-target
+    returns zero, not `None` — that's a real, correct answer, not an
+    error. Deliberately returns only a week count, not a calendar
+    date — "today" is a request-time concern the caller already has
+    (`timezone.localdate()`), not something a pure calculation needs
+    to reach for on its own, the same "no DB/HTTP dependency" rule
+    this whole module follows."""
+    gap = target_weight_kg - current_weight_kg
+    if gap == 0:
+        return Decimal("0")
+    if rate_kg_per_week == 0 or (gap > 0) != (rate_kg_per_week > 0):
+        return None
+    return (gap / rate_kg_per_week).quantize(Decimal("0.1"), rounding=ROUND_HALF_UP)

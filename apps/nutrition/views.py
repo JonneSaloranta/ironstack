@@ -28,6 +28,7 @@ from .forms import (
     DEFAULT_RATES_JSON_SAFE,
     ActivityInputsForm,
     ActivityLevelConfirmForm,
+    BMICalculatorForm,
     BmrTdeeCalculatorForm,
     BodyFatCalculatorForm,
     BodyStepForm,
@@ -44,6 +45,8 @@ from .forms import (
     RecipeForm,
     RecipeIngredientQuantityForm,
     RecipeIngredientSearchForm,
+    TimeToGoalCalculatorForm,
+    WaistHipRatioCalculatorForm,
     WaterIntakeCalculatorForm,
 )
 from .models import NutritionProfile, TargetSource
@@ -1168,6 +1171,64 @@ class WaterIntakeCalculatorView(_CalculatorView):
             weight_kg=form.canonical_weight_kg(),
             activity_level=form.cleaned_data["activity_level"],
         )
+
+
+class BMICalculatorView(_CalculatorView):
+    """Thin wrapper around apps.core.bmi — not a second BMI
+    implementation, the same "quick number without setting anything
+    up" framing as every other calculator here, for the same
+    calculation the Body weight measurement history page already
+    shows once a height is on file."""
+
+    template_name = "nutrition/calculator_bmi.html"
+    form_class = BMICalculatorForm
+
+    def compute(self, form):
+        from apps.core import bmi as core_bmi
+        from apps.core import units as core_units
+
+        height_m = core_units.cm_to_meters(form.canonical_height_cm())
+        weight_kg = form.canonical_weight_kg()
+        value = core_bmi.calculate_bmi(weight_kg, height_m)
+        return {
+            "bmi": value,
+            "category": core_bmi.category_for(value) if value is not None else None,
+            "rows": core_bmi.category_rows(height_m, self.request.user.unit_system),
+        }
+
+
+class WaistHipRatioCalculatorView(_CalculatorView):
+    template_name = "nutrition/calculator_waist_hip_ratio.html"
+    form_class = WaistHipRatioCalculatorForm
+
+    def compute(self, form):
+        from . import calculators
+
+        ratio = calculators.calculate_waist_hip_ratio(
+            waist_cm=form.canonical_waist_cm(), hip_cm=form.canonical_hip_cm()
+        )
+        risk = None
+        if ratio is not None:
+            risk = calculators.whr_risk_level(ratio, form.cleaned_data["biological_sex"])
+        return {"ratio": ratio, "risk": risk}
+
+
+class TimeToGoalCalculatorView(_CalculatorView):
+    template_name = "nutrition/calculator_time_to_goal.html"
+    form_class = TimeToGoalCalculatorForm
+
+    def compute(self, form):
+        from . import calculators
+
+        weeks = calculators.estimate_weeks_to_goal(
+            current_weight_kg=form.canonical_current_weight_kg(),
+            target_weight_kg=form.canonical_target_weight_kg(),
+            rate_kg_per_week=form.canonical_rate_kg_per_week(),
+        )
+        target_date = None
+        if weeks is not None:
+            target_date = timezone.localdate() + timezone.timedelta(days=round(float(weeks) * 7))
+        return {"weeks": weeks, "target_date": target_date}
 
 
 class NutritionStatsView(LoginRequiredMixin, View):

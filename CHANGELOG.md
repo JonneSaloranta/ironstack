@@ -23,10 +23,18 @@ lands and remains the authoritative history.
   dashboard with a weight-trend chart, and a dynamic calorie-
   adjustment suggestion once enough weight history exists. See
   `docs/NUTRITION.md`.
-- Four standalone nutrition calculators (`/nutrition/calculators/`):
-  BMR/TDEE, macro split, body fat percentage (U.S. Navy method), and
-  daily water intake — quick estimates that don't require completing
-  nutrition onboarding or setting a goal.
+- Seven standalone nutrition calculators (`/nutrition/calculators/`):
+  BMR/TDEE, macro split, body fat percentage (U.S. Navy method), daily
+  water intake, BMI, waist-to-hip ratio, and time-to-goal-weight —
+  quick estimates that don't require completing nutrition onboarding
+  or setting a goal.
+- A persistent sub-nav across every nutrition page (dashboard, diary,
+  foods, recipes, diet plans, calculators, statistics), reported as
+  needed once nutrition grew to more top-level sections than any other
+  part of the app — reaching a sibling section no longer means
+  scrolling back to the dashboard first. The dashboard's old "Quick
+  links" card is gone; the sub-nav reaches the same places from
+  everywhere, not just there.
 - Adding a recipe ingredient is now search-and-pick (local foods, live
   OpenFoodFacts results, and barcode-number search) instead of a
   dropdown of foods you already had to create by hand — macros are

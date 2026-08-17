@@ -1,12 +1,12 @@
 {% extends "base.html" %}
 {% load i18n %}
-{% block title %}{% trans "Body fat calculator" %} — IronStack{% endblock %}
+{% block title %}{% trans "Waist-to-hip ratio calculator" %} — IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
-  <h1 style="margin:0;">{% trans "Body fat calculator" %}</h1>
+  <h1 style="margin:0;">{% trans "Waist-to-hip ratio calculator" %}</h1>
 </div>
 {% include "nutrition/_subnav.html" %}
-<p class="text-muted">{% trans "The U.S. Navy tape-measure method — just a tape measure, no calipers or bioimpedance scale needed. An estimate, typically within a few percentage points of a DEXA scan." %}</p>
+<p class="text-muted">{% trans "Where you carry weight, not just how much — a widely used screening number (WHO), not a diagnosis." %}</p>
 
 <form class="card" method="get">
   {{ form.non_field_errors }}
@@ -23,11 +23,9 @@
 {% if result %}
   <div class="card">
     <strong>{% trans "Result" %}</strong>
-    <p style="font-size:1.5rem; font-weight:bold; margin:0.25rem 0;">{{ result }}%</p>
-  </div>
-{% elif submitted and form.is_valid %}
-  <div class="card empty-state">
-    <p>{% trans "Couldn't estimate this from those measurements — double-check them (waist should be larger than neck)." %}</p>
+    <p style="font-size:1.5rem; font-weight:bold; margin:0.25rem 0;">
+      {{ result.ratio }}{% if result.risk %} — {{ result.risk.name }}{% endif %}
+    </p>
   </div>
 {% endif %}
 

@@ -1509,7 +1509,11 @@ class NutritionDashboardViewTests(TestCase):
         self.assertContains(response, "2209")
         self.assertContains(response, "test reason")
 
-    def test_quick_links_reach_every_nutrition_section(self):
+    def test_reaches_every_nutrition_section(self):
+        """The persistent sub-nav (templates/nutrition/_subnav.html,
+        included on every nutrition page via base.html) covers most
+        of these; "+ Log food now" on the dashboard itself covers
+        diary-add-entry, which isn't one of the sub-nav's own tabs."""
         response = self.client.get(reverse("nutrition:dashboard"))
         for url in [
             reverse("nutrition:diary-day"),
@@ -1520,6 +1524,72 @@ class NutritionDashboardViewTests(TestCase):
             reverse("nutrition:calculators-home"),
         ]:
             self.assertContains(response, url)
+
+
+class NutritionSubnavTests(TestCase):
+    """The persistent tab bar (templates/nutrition/_subnav.html,
+    apps.nutrition.context_processors.nutrition_subnav) — reported
+    directly as needed once nutrition grew to more top-level sections
+    than any other app here has, see docs/NUTRITION.md "Navigating
+    within nutrition"."""
+
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        self.client.login(username="alice", password="s3cret-pass")
+        NutritionProfile.objects.create(
+            user=self.alice,
+            biological_sex=BiologicalSex.MALE,
+            birth_date=date(1996, 1, 1),
+            activity_job=ActivityJob.MODERATE,
+            activity_level=ActivityLevel.MODERATE,
+        )
+
+    def test_shown_on_every_nutrition_page(self):
+        for url_name in [
+            "nutrition:dashboard", "nutrition:diary-day", "nutrition:food-list",
+            "nutrition:recipe-list", "nutrition:diet-plan-list",
+            "nutrition:calculators-home", "nutrition:stats",
+        ]:
+            with self.subTest(url_name=url_name):
+                response = self.client.get(reverse(url_name))
+                self.assertContains(response, "nutrition-subnav")
+
+    def test_hidden_outside_nutrition(self):
+        response = self.client.get(reverse("dashboard"))
+        self.assertNotContains(response, "nutrition-subnav")
+
+    def test_hidden_during_onboarding(self):
+        # A not-yet-onboarded user has no NutritionProfile — the
+        # dashboard itself redirects into the wizard, where the
+        # sub-nav's own destinations (diary, foods, recipes, ...)
+        # would all just bounce back here anyway.
+        User.objects.create_user(username="bob", password="s3cret-pass")
+        self.client.logout()
+        self.client.login(username="bob", password="s3cret-pass")
+        response = self.client.get(reverse("nutrition:onboarding-body"))
+        self.assertNotContains(response, "nutrition-subnav")
+
+    def test_the_right_tab_is_marked_current(self):
+        response = self.client.get(reverse("nutrition:recipe-list"))
+        self.assertContains(
+            response,
+            f'href="{reverse("nutrition:recipe-list")}" aria-current="true"',
+        )
+        # Foods' own tab must not *also* be marked current at the same time.
+        self.assertNotContains(
+            response,
+            f'href="{reverse("nutrition:food-list")}" aria-current="true"',
+        )
+
+    def test_diary_related_pages_all_highlight_the_diary_tab(self):
+        """Not just diary-day itself — every view under that umbrella
+        (adding an entry here) should highlight the same tab, per
+        apps.nutrition.context_processors._TAB_URL_NAMES."""
+        response = self.client.get(reverse("nutrition:diary-add-entry"))
+        self.assertContains(
+            response,
+            f'href="{reverse("nutrition:diary-day")}" aria-current="true"',
+        )
 
 
 class NutritionComputationTests(TestCase):
@@ -2936,6 +3006,83 @@ class EstimateDailyWaterLitersTests(TestCase):
         self.assertEqual(result, Decimal("3.6"))  # 2640ml + 1000ml = 3640ml
 
 
+class CalculateWaistHipRatioTests(TestCase):
+    def test_known_value(self):
+        result = calculators.calculate_waist_hip_ratio(Decimal("80"), Decimal("100"))
+        self.assertEqual(result, Decimal("0.80"))
+
+    def test_zero_hip_returns_none_rather_than_dividing_by_zero(self):
+        result = calculators.calculate_waist_hip_ratio(Decimal("80"), Decimal("0"))
+        self.assertIsNone(result)
+
+
+class WhrRiskLevelTests(TestCase):
+    def test_male_thresholds(self):
+        self.assertEqual(
+            calculators.whr_risk_level(Decimal("0.85"), BiologicalSex.MALE).name, "Lower risk"
+        )
+        self.assertEqual(
+            calculators.whr_risk_level(Decimal("0.95"), BiologicalSex.MALE).name,
+            "Moderate risk",
+        )
+        self.assertEqual(
+            calculators.whr_risk_level(Decimal("1.05"), BiologicalSex.MALE).name, "Higher risk"
+        )
+
+    def test_female_thresholds_are_lower_than_male(self):
+        # The same 0.85 ratio is "lower risk" for a man but "higher
+        # risk" for a woman — the whole reason these are two separate
+        # tables, not one shared scale.
+        self.assertEqual(
+            calculators.whr_risk_level(Decimal("0.85"), BiologicalSex.FEMALE).name,
+            "Higher risk",
+        )
+
+
+class EstimateWeeksToGoalTests(TestCase):
+    def test_known_value_losing_weight(self):
+        weeks = calculators.estimate_weeks_to_goal(
+            current_weight_kg=Decimal("90"),
+            target_weight_kg=Decimal("85"),
+            rate_kg_per_week=Decimal("-0.5"),
+        )
+        self.assertEqual(weeks, Decimal("10.0"))
+
+    def test_known_value_gaining_weight(self):
+        weeks = calculators.estimate_weeks_to_goal(
+            current_weight_kg=Decimal("70"),
+            target_weight_kg=Decimal("73"),
+            rate_kg_per_week=Decimal("0.25"),
+        )
+        self.assertEqual(weeks, Decimal("12.0"))
+
+    def test_already_at_target_returns_zero_not_none(self):
+        weeks = calculators.estimate_weeks_to_goal(
+            current_weight_kg=Decimal("80"),
+            target_weight_kg=Decimal("80"),
+            rate_kg_per_week=Decimal("-0.5"),
+        )
+        self.assertEqual(weeks, Decimal("0"))
+
+    def test_rate_moving_the_wrong_direction_returns_none(self):
+        # Wants to lose weight (target below current) but entered a
+        # positive (gaining) rate — this can never reach the target.
+        weeks = calculators.estimate_weeks_to_goal(
+            current_weight_kg=Decimal("90"),
+            target_weight_kg=Decimal("85"),
+            rate_kg_per_week=Decimal("0.5"),
+        )
+        self.assertIsNone(weeks)
+
+    def test_zero_rate_with_a_real_gap_returns_none(self):
+        weeks = calculators.estimate_weeks_to_goal(
+            current_weight_kg=Decimal("90"),
+            target_weight_kg=Decimal("85"),
+            rate_kg_per_week=Decimal("0"),
+        )
+        self.assertIsNone(weeks)
+
+
 class CalculatorsHomeViewTests(TestCase):
     def setUp(self):
         self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
@@ -3116,6 +3263,92 @@ class WaterIntakeCalculatorViewTests(TestCase):
     def test_requires_login(self):
         self.client.logout()
         response = self.client.get(reverse("nutrition:calculator-water-intake"))
+        self.assertEqual(response.status_code, 302)
+
+
+class BMICalculatorViewTests(TestCase):
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        self.client.login(username="alice", password="s3cret-pass")
+
+    def test_a_complete_submission_shows_bmi_and_category(self):
+        response = self.client.get(
+            reverse("nutrition:calculator-bmi"), {"height_cm": "180", "weight_kg": "80"}
+        )
+        self.assertEqual(response.status_code, 200)
+        result = response.context["result"]
+        self.assertEqual(result["bmi"], Decimal("24.7"))
+        self.assertEqual(result["category"].name, "Normal weight")
+
+    def test_category_rows_include_weight_ranges_for_this_height(self):
+        response = self.client.get(
+            reverse("nutrition:calculator-bmi"), {"height_cm": "180", "weight_kg": "80"}
+        )
+        rows = response.context["result"]["rows"]
+        self.assertEqual(len(rows), 4)
+        self.assertTrue(any(row.weight_low is not None for row in rows))
+
+    def test_requires_login(self):
+        self.client.logout()
+        response = self.client.get(reverse("nutrition:calculator-bmi"))
+        self.assertEqual(response.status_code, 302)
+
+
+class WaistHipRatioCalculatorViewTests(TestCase):
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        self.client.login(username="alice", password="s3cret-pass")
+
+    def test_a_complete_submission_shows_ratio_and_risk(self):
+        response = self.client.get(
+            reverse("nutrition:calculator-waist-hip-ratio"),
+            {"biological_sex": BiologicalSex.MALE, "waist_cm": "95", "hip_cm": "100"},
+        )
+        self.assertEqual(response.status_code, 200)
+        result = response.context["result"]
+        self.assertEqual(result["ratio"], Decimal("0.95"))
+        self.assertEqual(result["risk"].name, "Moderate risk")
+
+    def test_requires_login(self):
+        self.client.logout()
+        response = self.client.get(reverse("nutrition:calculator-waist-hip-ratio"))
+        self.assertEqual(response.status_code, 302)
+
+
+class TimeToGoalCalculatorViewTests(TestCase):
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        self.client.login(username="alice", password="s3cret-pass")
+
+    def test_a_complete_submission_shows_weeks_and_a_target_date(self):
+        response = self.client.get(
+            reverse("nutrition:calculator-time-to-goal"),
+            {
+                "current_weight_kg": "90", "target_weight_kg": "85",
+                "rate_kg_per_week": "-0.5",
+            },
+        )
+        self.assertEqual(response.status_code, 200)
+        result = response.context["result"]
+        self.assertEqual(result["weeks"], Decimal("10.0"))
+        self.assertEqual(
+            result["target_date"], timezone.localdate() + timedelta(days=70)
+        )
+
+    def test_a_rate_in_the_wrong_direction_shows_the_empty_state_not_a_crash(self):
+        response = self.client.get(
+            reverse("nutrition:calculator-time-to-goal"),
+            {
+                "current_weight_kg": "90", "target_weight_kg": "85",
+                "rate_kg_per_week": "0.5",
+            },
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertIsNone(response.context["result"]["weeks"])
+
+    def test_requires_login(self):
+        self.client.logout()
+        response = self.client.get(reverse("nutrition:calculator-time-to-goal"))
         self.assertEqual(response.status_code, 302)
 
 

@@ -111,4 +111,15 @@ urlpatterns = [
         views.WaterIntakeCalculatorView.as_view(),
         name="calculator-water-intake",
     ),
+    path("calculators/bmi/", views.BMICalculatorView.as_view(), name="calculator-bmi"),
+    path(
+        "calculators/waist-hip-ratio/",
+        views.WaistHipRatioCalculatorView.as_view(),
+        name="calculator-waist-hip-ratio",
+    ),
+    path(
+        "calculators/time-to-goal/",
+        views.TimeToGoalCalculatorView.as_view(),
+        name="calculator-time-to-goal",
+    ),
 ]

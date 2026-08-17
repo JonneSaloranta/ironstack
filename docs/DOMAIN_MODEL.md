@@ -344,4 +344,39 @@ Types:
 - set volume
 - session volume
 
+## Nutrition
+
+A parallel domain to training, added in v2 (see `docs/ROADMAP.md`) —
+full reasoning for every model and field below lives in
+`docs/NUTRITION.md`, this section is only the terse shape, matching
+every other section on this page.
+
+- `NutritionProfile` — one row per user, the physiological/lifestyle
+  inputs the calorie engine needs (age via `birth_date`, sex, activity
+  job/steps/training load). Not historized — corrected in place, like
+  `User.height`, not preserved like a decision.
+- `NutritionGoal` / `NutritionTarget` — the user's stated intent (a
+  fat-loss/maintenance/muscle-gain goal at a chosen rate) and the
+  derived numeric output (daily calories + macros), both historized
+  the same "append, don't mutate" way as `PR` above — setting a new
+  one closes out whichever was previously open rather than
+  overwriting it.
+- `MealSlot` — named diary categories (Breakfast/Lunch/Dinner/Evening
+  snack seeded, users may add their own) — same system-or-custom
+  pattern as `MeasurementType`/`ActivityType`.
+- `Food` — a trackable food, nutrition values per serving; user-owned
+  or shared (`owner=None`, imported from OpenFoodFacts on demand or
+  hand-entered).
+- `Recipe` / `RecipeIngredient` — a named, reusable combination of
+  `Food` rows a user can log as one unit.
+- `DiaryEntry` — one logged item for one day: exactly one of
+  `food`/`recipe`, a `MealSlot`, a quantity.
+- `DietPlan` / `DietPlanMeal` / `DietPlanItem` — the diet-builder
+  wizard's saved output, snapshotting the targets it was built
+  against; "log today's plan" materializes its items into real
+  `DiaryEntry` rows without mutating the plan itself.
+
+Also exposed through the public API (`apps.api`, `ApiContext.
+NUTRITION`) the same way every other domain here is — see `docs/API.md`.
+
 Do not make PR logic depend on the current program definition.

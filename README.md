@@ -28,8 +28,16 @@ your progress in real charts — all on your own infrastructure.
 - **Body & activity tracking** — measurements (weight, body fat %,
   circumferences, ...) and manually logged activities (runs, rides,
   anything), each with its own trend chart.
+- **Nutrition & calorie tracking** — an explainable calorie/macro
+  estimate, goal-based targets with a dynamic adjustment suggestion
+  once your real weight trend has something to compare against, a
+  food diary backed by on-demand OpenFoodFacts lookup (search, browse
+  by category, or scan a barcode with your camera), recipes with
+  automatic macros, and a guided diet-plan builder. See
+  [`docs/NUTRITION.md`](docs/NUTRITION.md).
 - **Analytics dashboard** — weekly training volume, muscle-group
-  volume, PR history, per-exercise strength trends, custom date ranges.
+  volume, PR history, per-exercise strength trends, custom date
+  ranges, and a 30-day nutrition trend alongside them.
 - **A real API** — per-user API keys with per-resource CRUD
   permissions and admin-tunable rate limits, for anything you want to
   build against your own data. See [`docs/API.md`](docs/API.md).
@@ -98,6 +106,7 @@ given page actually needs.
 | [`docs/PROGRESSION.md`](docs/PROGRESSION.md) | The seven progression methods |
 | [`docs/SMART_SUGGESTIONS.md`](docs/SMART_SUGGESTIONS.md) | How weight suggestions are composed and explained |
 | [`docs/PR_SYSTEM.md`](docs/PR_SYSTEM.md) | The six PR types and how they're detected |
+| [`docs/NUTRITION.md`](docs/NUTRITION.md) | Calorie/macro engine, food diary, recipes, diet plans, OpenFoodFacts integration |
 | [`docs/ANALYTICS.md`](docs/ANALYTICS.md) | Dashboard, charts, date-range filtering |
 | [`docs/API.md`](docs/API.md) | REST API — auth, permissions, rate limits, endpoints |
 | [`docs/UI.md`](docs/UI.md) | UI principles and per-feature implementation notes |

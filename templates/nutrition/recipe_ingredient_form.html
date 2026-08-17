@@ -5,6 +5,7 @@
 <div class="top-bar">
   <h1 style="margin:0;">{% blocktrans with name=recipe.name %}Add ingredient to {{ name }}{% endblocktrans %}</h1>
 </div>
+{% include "nutrition/_subnav.html" %}
 
 {% if form.non_field_errors %}
   <p class="field-error">{{ form.non_field_errors|striptags }}</p>

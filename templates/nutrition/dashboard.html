@@ -10,6 +10,7 @@
     <span class="tag-muted">{% trans "Rest day" %}</span>
   {% endif %}
 </div>
+{% include "nutrition/_subnav.html" %}
 
 <div class="card">
   <strong>{% trans "Today so far" %}</strong>
@@ -96,16 +97,4 @@
     <p>{{ goal.get_goal_type_display }} — {{ goal.target_rate_kg_per_week }} kg/week</p>
   </div>
 {% endif %}
-
-<div class="card">
-  <strong>{% trans "Quick links" %}</strong>
-  <div style="display:flex; flex-wrap:wrap; gap:0.5rem;">
-    <a class="button-secondary" href="{% url 'nutrition:diary-day' %}">{% trans "Food diary" %}</a>
-    <a class="button-secondary" href="{% url 'nutrition:food-list' %}">{% trans "Foods" %}</a>
-    <a class="button-secondary" href="{% url 'nutrition:recipe-list' %}">{% trans "Recipes" %}</a>
-    <a class="button-secondary" href="{% url 'nutrition:diet-plan-list' %}">{% trans "Diet plans" %}</a>
-    <a class="button-secondary" href="{% url 'nutrition:calculators-home' %}">{% trans "Calculators" %}</a>
-    <a class="button-secondary" href="{% url 'nutrition:stats' %}">{% trans "Statistics" %}</a>
-  </div>
-</div>
 {% endblock %}

@@ -6,6 +6,7 @@
   <h1 style="margin:0;">{% trans "Recipes" %}</h1>
   <a class="button-secondary" href="{% url 'nutrition:recipe-create' %}">{% trans "+ New recipe" %}</a>
 </div>
+{% include "nutrition/_subnav.html" %}
 
 <form class="card" method="get">
   <div class="field">

@@ -675,6 +675,15 @@ msgstr "Ühendati %(count)d toitu üksuseks “%(name)s”. Iga päeviku kirje, 
 msgid "Merge foods"
 msgstr "Ühenda toidud"
 
+msgid "Lower risk"
+msgstr "Madalam risk"
+
+msgid "Moderate risk"
+msgstr "Mõõdukas risk"
+
+msgid "Higher risk"
+msgstr "Kõrgem risk"
+
 msgid "a %(job)s job"
 msgstr "%(job)s töö"
 
@@ -803,6 +812,18 @@ msgstr "Puusaümbermõõt"
 
 msgid "Hip circumference is required for the women's formula."
 msgstr "Naiste valemis on vajalik puusaümbermõõt."
+
+msgid "Current weight (kg)"
+msgstr "Praegune kaal (kg)"
+
+msgid "Target weight (kg)"
+msgstr "Sihtkaal (kg)"
+
+msgid "Rate (kg/week — negative to lose, positive to gain)"
+msgstr "Tempo (kg/nädal — negatiivne kaalu langetamiseks, positiivne kaalu tõstmiseks)"
+
+msgid "Rate (%(unit)s/week — negative to lose, positive to gain)"
+msgstr "Tempo (%(unit)s/nädal — negatiivne kaalu langetamiseks, positiivne kaalu tõstmiseks)"
 
 msgid "Male"
 msgstr "Mees"
@@ -2028,14 +2049,38 @@ msgstr "Nutri-Score %(grade)s"
 msgid "NOVA — food processing level, 1 (unprocessed) to 4 (ultra-processed)"
 msgstr "NOVA — toidu töötlemisaste, 1 (töötlemata) kuni 4 (ülitöödeldud)"
 
+msgid "Nutrition sections"
+msgstr "Toitumise jaotised"
+
+msgid "Overview"
+msgstr "Ülevaade"
+
+msgid "Diary"
+msgstr "Päevik"
+
+msgid "Foods"
+msgstr "Toidud"
+
+msgid "Recipes"
+msgstr "Retseptid"
+
+msgid "Diet plans"
+msgstr "Toitumisplaanid"
+
+msgid "Calculators"
+msgstr "Kalkulaatorid"
+
+msgid "Statistics"
+msgstr "Statistika"
+
 msgid "Step %(step)s of 5"
 msgstr "Samm %(step)s / 5"
 
-msgid "BMR / TDEE calculator"
-msgstr "BMR/TDEE kalkulaator"
+msgid "BMI calculator"
+msgstr "KMI kalkulaator"
 
-msgid "BMR is roughly what you'd burn lying still all day; TDEE adds your activity on top. Both are estimates (Mifflin-St Jeor)."
-msgstr "BMR on umbes see, mida kulutaksid terve päeva liikumatult lamades; TDEE lisab sellele su aktiivsuse. Mõlemad on hinnangud (Mifflin-St Jeor)."
+msgid "Body mass index — a widely used screening number, not a diagnosis. The Body weight page shows this automatically once you've logged a weight and set a height on your profile; this is the same calculation for a quick one-off check."
+msgstr "Kehamassiindeks (KMI) — laialdaselt kasutatav sõeluuringu näitaja, mitte diagnoos. Kehakaalu leht näitab seda automaatselt, kui oled loginud kaalu ja määranud oma profiilis pikkuse; see on sama arvutus kiireks ühekordseks kontrolliks."
 
 msgid "Calculate"
 msgstr "Arvuta"
@@ -2043,14 +2088,23 @@ msgstr "Arvuta"
 msgid "Result"
 msgstr "Tulemus"
 
+msgid "Categories"
+msgstr "Kategooriad"
+
+msgid "Back to calculators"
+msgstr "Tagasi kalkulaatorite juurde"
+
+msgid "BMR / TDEE calculator"
+msgstr "BMR/TDEE kalkulaator"
+
+msgid "BMR is roughly what you'd burn lying still all day; TDEE adds your activity on top. Both are estimates (Mifflin-St Jeor)."
+msgstr "BMR on umbes see, mida kulutaksid terve päeva liikumatult lamades; TDEE lisab sellele su aktiivsuse. Mõlemad on hinnangud (Mifflin-St Jeor)."
+
 msgid "BMR (at rest)"
 msgstr "BMR (puhkeolekus)"
 
 msgid "TDEE (with activity)"
 msgstr "TDEE (koos aktiivsusega)"
-
-msgid "Back to calculators"
-msgstr "Tagasi kalkulaatorite juurde"
 
 msgid "Body fat calculator"
 msgstr "Kehurasva kalkulaator"
@@ -2079,6 +2133,27 @@ msgstr "Rasv"
 msgid "This calorie target is low enough that protein and/or fat had to be reduced below their usual defaults to fit."
 msgstr "See kaloreesmärk on nii madal, et valku ja/või rasva tuli vähendada alla tavapäraste vaikeväärtuste, et need ära mahuksid."
 
+msgid "Time to goal weight calculator"
+msgstr "Sihtkaaluni jõudmise aja kalkulaator"
+
+msgid "At a chosen weekly rate, roughly how long to reach a target weight — a plain projection from the numbers you enter, not a promise."
+msgstr "Valitud nädalase tempoga umbes kui kaua kulub sihtkaaluni jõudmiseks — lihtne prognoos sisestatud numbrite põhjal, mitte lubadus."
+
+msgid "%(weeks)s weeks"
+msgstr "%(weeks)s nädalat"
+
+msgid "Around %(date)s, at this rate."
+msgstr "Ligikaudu %(date)s selle tempoga."
+
+msgid "That rate doesn't move toward your target — check the sign (negative to lose, positive to gain) matches the direction you actually need to go."
+msgstr "See tempo ei liigu sinu sihi suunas — kontrolli, et märk (negatiivne kaalu langetamiseks, positiivne kaalu tõstmiseks) vastaks suunale, kuhu tegelikult pead liikuma."
+
+msgid "Waist-to-hip ratio calculator"
+msgstr "Vöökoha ja puusa suhte kalkulaator"
+
+msgid "Where you carry weight, not just how much — a widely used screening number (WHO), not a diagnosis."
+msgstr "Kuhu sa kaalu kannad, mitte ainult kui palju — laialdaselt kasutatav sõeluuringu näitaja (WHO), mitte diagnoos."
+
 msgid "Water intake calculator"
 msgstr "Veetarbimise kalkulaator"
 
@@ -2087,9 +2162,6 @@ msgstr "Ligikaudne päevane vedelikueesmärk kehakaalu ja aktiivsuse põhjal —
 
 msgid "day"
 msgstr "päev"
-
-msgid "Calculators"
-msgstr "Kalkulaatorid"
 
 msgid "Quick, standalone estimates — none of these are saved or change your targets."
 msgstr "Kiired, iseseisvad hinnangud — midagi neist ei salvestata ega muudeta su eesmärke."
@@ -2105,6 +2177,15 @@ msgstr "Hinda kehurasva protsenti mõõdulindiga (USA mereväe meetod)."
 
 msgid "A rough daily fluid target based on your bodyweight and activity."
 msgstr "Ligikaudne päevane vedelikueesmärk sinu kehakaalu ja aktiivsuse põhjal."
+
+msgid "Body mass index and what it means for your height, without logging a weight first."
+msgstr "Kehamassiindeks ja mida see sinu pikkuse jaoks tähendab, ilma et peaksid enne kaalu logima."
+
+msgid "Where you carry weight, not just how much — a tape measure and one more number."
+msgstr "Kuhu sa kaalu kannad, mitte ainult kui palju — mõõdulint ja veel üks number."
+
+msgid "At a chosen weekly rate, roughly how long to reach a target weight."
+msgstr "Valitud nädalase tempoga umbes kui kaua kulub sihtkaaluni jõudmiseks."
 
 msgid "Back to nutrition"
 msgstr "Tagasi toitumise juurde"
@@ -2151,24 +2232,6 @@ msgstr "%(calories)s kcal/päevas"
 msgid "Current goal"
 msgstr "Praegune eesmärk"
 
-msgid "Quick links"
-msgstr "Kiirlingid"
-
-msgid "Food diary"
-msgstr "Toidupäevik"
-
-msgid "Foods"
-msgstr "Toidud"
-
-msgid "Recipes"
-msgstr "Retseptid"
-
-msgid "Diet plans"
-msgstr "Toitumisplaanid"
-
-msgid "Statistics"
-msgstr "Statistika"
-
 msgid "Add food"
 msgstr "Lisa toit"
 
@@ -2177,6 +2240,9 @@ msgstr "nt kanafilee või vöötkoodi number"
 
 msgid "Back to diary"
 msgstr "Tagasi päeviku juurde"
+
+msgid "Food diary"
+msgstr "Toidupäevik"
 
 msgid "Previous day"
 msgstr "Eelmine päev"
