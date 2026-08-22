@@ -1,6 +1,6 @@
 Django>=6.1,<6.2
 psycopg[binary]>=3.3.4,<3.4
-gunicorn>=26.0.0,<27.0
+gunicorn>=26.1.0,<27.0
 # apps.api — a real public API (permission-scoped API keys, rate limits)
 # is enough surface (serialization, per-key permission classes,
 # throttling) that hand-rolling it would just re-invent a worse version
@@ -14,5 +14,5 @@ djangorestframework>=3.18.0,<3.19
 # multi-device-type framework this project doesn't need. qrcode
 # renders the setup QR code server-side (a data: URI embedded directly
 # in the page, no separate image endpoint).
-pyotp>=2.9,<3.0
-qrcode[pil]>=8.0,<9.0
+pyotp>=2.10.0,<3.0
+qrcode[pil]>=8.2,<9.0
