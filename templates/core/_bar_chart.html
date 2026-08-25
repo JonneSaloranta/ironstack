@@ -1,4 +1,4 @@
-{% load i18n %}
+{% load i18n l10n %}
 {% comment %}
 Single-metric bar chart (category comparison), shared across
 apps.analytics. One color for every bar: the x-axis labels already carry
@@ -18,17 +18,30 @@ to reach them either.
 Expects: chart (apps.core.charts.BarSeries), chart_title, unit_label.
 {% endcomment %}
 <div class="chart-card">
+  {% localize off %}
+  {% comment %}
+    Regression: apps.core.charts.build_bar_series' x/y/width/height are
+    Decimals, and Django auto-localizes {{ }} output per the active
+    UI language (User.language) — under "fi"/"sv"/"ru" that's a comma
+    decimal separator ("148,00"), which isn't valid SVG numeric syntax.
+    Browsers silently fail to parse that coordinate, so every bar
+    rendered at zero size — invisible, not just misformatted. These
+    are internal plot coordinates, never shown to the user directly,
+    so {% localize off %} is correct here; bar.value below re-enables
+    it, since that number *is* shown to the user as text.
+  {% endcomment %}
   <svg class="chart-svg" width="{{ chart.width }}" height="{{ chart.height }}"
        viewBox="0 0 {{ chart.width }} {{ chart.height }}" role="img"
        aria-label="{% blocktrans count counter=chart.bars|length with title=chart_title %}{{ title }}, {{ counter }} category{% plural %}{{ title }}, {{ counter }} categories{% endblocktrans %}">
     {% for bar in chart.bars %}
       <rect class="bar-rect" x="{{ bar.x }}" y="{{ bar.y }}" width="{{ bar.width }}" height="{{ bar.height }}" rx="3">
-        <title>{% trans bar.label %}: {{ bar.value }} {{ unit_label }}</title>
+        <title>{% trans bar.label %}: {% localize on %}{{ bar.value }}{% endlocalize %} {{ unit_label }}</title>
       </rect>
       <text class="bar-label" x="{{ bar.label_x }}" y="{{ bar.label_y }}"
             transform="rotate(-40 {{ bar.label_x }} {{ bar.label_y }})">{% trans bar.label %}</text>
     {% endfor %}
   </svg>
+  {% endlocalize %}
   <table class="bar-chart-table">
     <caption class="visually-hidden">{% blocktrans with title=chart_title %}{{ title }} by category{% endblocktrans %}</caption>
     <tbody>

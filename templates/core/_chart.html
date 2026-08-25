@@ -1,4 +1,4 @@
-{% load i18n %}
+{% load i18n l10n %}
 {% comment %}
 Single-series line chart (change-over-time), shared by apps.measurements
 and apps.activities. No legend — one series, so the card heading already
@@ -11,16 +11,30 @@ Expects: chart (apps.core.charts.ChartSeries), chart_title, unit_label.
   <div class="chart-range">
     <span>{{ chart.max_value }} {{ unit_label }}</span>
   </div>
+  {% localize off %}
+  {% comment %}
+    Regression: apps.core.charts.build_chart_series' point.x/point.y are
+    Decimals, and Django auto-localizes {{ }} output per the active UI
+    language (User.language) — under "fi"/"sv"/"ru" that's a comma
+    decimal separator, which isn't valid SVG numeric syntax, so every
+    point rendered at zero size (see templates/core/_bar_chart.html's
+    own comment on the same bug). chart.polyline is spared — it's
+    already a plain Python-formatted string built in charts.py, not a
+    Decimal the template engine reformats — but point.x/point.y here
+    are raw Decimals. point.value below re-enables localization, since
+    that number *is* shown to the user as text.
+  {% endcomment %}
   <svg class="chart-svg" width="{{ chart.width }}" height="{{ chart.height }}"
        viewBox="0 0 {{ chart.width }} {{ chart.height }}" role="img"
        aria-label="{% blocktrans count counter=chart.points|length with title=chart_title %}{{ title }} trend over time, {{ counter }} reading{% plural %}{{ title }} trend over time, {{ counter }} readings{% endblocktrans %}">
     <polyline class="chart-line" points="{{ chart.polyline }}" fill="none" />
     {% for point in chart.points %}
       <circle class="chart-point" cx="{{ point.x }}" cy="{{ point.y }}" r="5">
-        <title>{{ point.date|date:"Y-m-d" }}: {{ point.value }} {{ unit_label }}</title>
+        <title>{{ point.date|date:"Y-m-d" }}: {% localize on %}{{ point.value }}{% endlocalize %} {{ unit_label }}</title>
       </circle>
     {% endfor %}
   </svg>
+  {% endlocalize %}
   <div class="chart-range">
     <span>{{ chart.min_value }} {{ unit_label }}</span>
   </div>
