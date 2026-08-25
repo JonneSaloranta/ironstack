@@ -41,6 +41,13 @@ class SignupView(CreateView):
         if not settings.SIGNUP_ENABLED:
             messages.info(request, _("Registration is currently closed."))
             return redirect("login")
+        # A local-password signup makes no sense once local password
+        # login itself is off (docs/SECURITY.md "Single sign-on
+        # (Authentik / OIDC)") — same reasoning and same direct URL
+        # gate as SIGNUP_ENABLED above, not just hiding the link.
+        if not settings.PASSWORD_LOGIN_ENABLED:
+            messages.info(request, _("Registration is currently closed."))
+            return redirect("login")
         return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
@@ -66,9 +73,23 @@ class RateLimitedLoginView(LoginView):
 
     authentication_form = RateLimitedAuthenticationForm
 
+    def dispatch(self, request, *args, **kwargs):
+        # Blocks the POST channel directly, not just the template's
+        # own `{% if password_login_enabled %}` — see docs/SECURITY.md
+        # "Single sign-on (Authentik / OIDC)". GET still renders
+        # normally (the page itself, minus the password form, still
+        # needs to show the "Log in with Authentik" button and the
+        # site disclaimer).
+        if request.method == "POST" and not settings.PASSWORD_LOGIN_ENABLED:
+            messages.info(request, _("Password login is disabled on this instance."))
+            return redirect("login")
+        return super().dispatch(request, *args, **kwargs)
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["signup_enabled"] = settings.SIGNUP_ENABLED
+        context["password_login_enabled"] = settings.PASSWORD_LOGIN_ENABLED
+        context["authentik_enabled"] = settings.AUTHENTIK_ENABLED
         context["disclaimer_text"] = SiteDisclaimer.load().text
         return context
 
@@ -97,6 +118,15 @@ class RateLimitedPasswordResetView(PasswordResetView):
     that kwarg itself the way AuthenticationForm does)."""
 
     form_class = RateLimitedPasswordResetForm
+
+    def dispatch(self, request, *args, **kwargs):
+        # A password reset is meaningless once local password login
+        # itself is off — same gate and reasoning as SignupView's own
+        # (docs/SECURITY.md "Single sign-on (Authentik / OIDC)").
+        if not settings.PASSWORD_LOGIN_ENABLED:
+            messages.info(request, _("Password login is disabled on this instance."))
+            return redirect("login")
+        return super().dispatch(request, *args, **kwargs)
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()

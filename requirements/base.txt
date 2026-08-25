@@ -16,3 +16,16 @@ djangorestframework>=3.18.0,<3.19
 # in the page, no separate image endpoint).
 pyotp>=2.9,<3.0
 qrcode[pil]>=8.0,<9.0
+# apps.accounts.oidc — optional Authentik/OIDC single sign-on
+# (docs/SECURITY.md "Single sign-on (Authentik / OIDC)"). An
+# OAuth2/OIDC authorization-code flow (state/nonce/PKCE, JWKS
+# signature verification, token exchange) is exactly the kind of
+# security-critical, narrow-purpose code this project already avoids
+# hand-rolling elsewhere (see pyotp above) — mozilla-django-oidc plugs
+# straight into Django's own AUTHENTICATION_BACKENDS/auth.login(),
+# unlike a heavier framework such as django-allauth that would also
+# bring in unrelated social-auth providers this project has no use
+# for. Always installed, but inert unless AUTHENTIK_* env vars are set
+# (settings.AUTHENTIK_ENABLED) — self-hosters who don't run Authentik
+# pay no configuration cost beyond the dependency itself.
+mozilla-django-oidc>=5.0,<6.0

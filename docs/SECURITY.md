@@ -160,6 +160,86 @@ administrator can clear it from Django admin: the `User` list has a
 users, letting them log in with just their password again and,
 if they choose, set 2FA back up from scratch.
 
+## Single sign-on (Authentik / OIDC)
+
+Optional. This app can act as an OpenID Connect Relying Party against
+an externally-run [Authentik](https://goauthentik.io/) instance, via
+`mozilla-django-oidc` (`apps.accounts.oidc`). Nothing about it
+activates unless `AUTHENTIK_URL`, `AUTHENTIK_CLIENT_ID`, and
+`AUTHENTIK_CLIENT_SECRET` are all set (`settings.AUTHENTIK_ENABLED`,
+`.env.example`) — a self-hosted instance that doesn't run Authentik
+pays no cost beyond the dependency itself: no new URLs, no "Log in
+with Authentik" button, `AUTHENTICATION_BACKENDS` stays
+`ModelBackend`-only.
+
+**Setup, on the Authentik side**: create an "OAuth2/OpenID Provider"
+(Applications → Providers), redirect URI
+`<this app's own base URL>/oidc/callback/`, then an Application using
+that provider. `AUTHENTIK_CLIENT_ID`/`AUTHENTIK_CLIENT_SECRET` come
+from the created provider; `AUTHENTIK_APPLICATION_SLUG` must match the
+Application's own slug (Authentik's `issuer_mode="per_provider"`
+default mints a distinct OIDC issuer/JWKS per application, not one
+shared endpoint).
+
+**Alongside local login, not instead of it, by default.** The login
+page shows both a "Log in with Authentik" button and the existing
+username/password form. `DJANGO_PASSWORD_LOGIN_ENABLED=false`
+(`settings.PASSWORD_LOGIN_ENABLED`) closes the local form entirely —
+gated directly in `RateLimitedLoginView`/`SignupView`/
+`RateLimitedPasswordResetView.dispatch`, the same "block the URL
+itself, not just hide the link" approach `DJANGO_SIGNUP_ENABLED`
+already uses, not merely hidden in the template. `/admin/` is
+deliberately never affected by this flag — it's Django's own separate
+login view (`apps.core.admin`), kept as a break-glass path so a
+misconfigured or unreachable Authentik instance can never lock every
+admin out of this app at once.
+
+**Account matching and provisioning**
+(`apps.accounts.oidc.IronStackOIDCAuthenticationBackend`): a user
+authenticating via Authentik is matched to an existing local account
+by email (`mozilla_django_oidc`'s own default
+`filter_users_by_claims`) — so a local-password account and its
+owner's Authentik identity link up automatically the first time they
+use "Log in with Authentik", no separate linking step. If no account
+matches, one is created automatically (username from Authentik's
+`preferred_username` claim, deduplicated with a numeric suffix on
+collision; email and display name from its `email`/`name` claims; an
+unusable local password, same as `User.set_unusable_password()` —
+Django's own `create_user(password=None)` default). Either way, that
+account's `User.is_sso_user` is set `True` — purely informational (a
+note on the profile page), never something that gates access on its
+own.
+
+**Restricting who can actually use it**: having *any* account on the
+Authentik instance is enough to complete "Log in with Authentik" by
+default — a real concern once that Authentik instance also
+authenticates other, unrelated applications (self-hosters commonly run
+one shared Authentik for everything). Two independent layers, meant to
+be used together:
+- **On the Authentik side** (the primary control): Applications → the
+  IronStack application → Policy / Group / User Bindings → bind the
+  Application to a specific group. A user outside that group is
+  rejected by Authentik itself, before this app's callback ever runs.
+- **`AUTHENTIK_REQUIRED_GROUP`** (`settings.AUTHENTIK_REQUIRED_GROUP`,
+  `apps.accounts.oidc.IronStackOIDCAuthenticationBackend.verify_claims`):
+  IronStack's own check against the `groups` claim Authentik's default
+  OpenID `profile` scope mapping sends. Defense in depth, not a
+  substitute for the Authentik-side binding above — it still trusts
+  whatever `groups` the verified id_token/userinfo response says, so
+  it only helps if that claim is actually accurate, but it means
+  access doesn't rest solely on the Authentik-side policy being
+  configured correctly, or at all. Left unset (the default), any
+  Authentik account can log in, same as before this setting existed.
+
+**2FA note**: an SSO login goes straight from Authentik's own callback
+to `django.contrib.auth.login()` — it never touches
+`RateLimitedLoginView`/`TwoFactorVerifyView` at all, so this app's own
+TOTP second factor (above) is bypassed for that login, deliberately:
+Authentik is expected to enforce its own MFA policy upstream instead.
+An account with `totp_enabled=True` that also logs in via Authentik
+still has that TOTP requirement enforced on any *local password*
+login it might still be able to do.
+
 ## Cross-Site Request Forgery (CSRF)
 
 `config.settings.production` derives `CSRF_TRUSTED_ORIGINS` from

@@ -42,7 +42,11 @@
 <div class="card card-action-row">
   <div>
     <strong>{% trans "Change password" %}</strong>
-    <p class="text-muted">{% trans "Update the password you use to sign in." %}</p>
+    {% if user.is_sso_user %}
+      <p class="text-muted">{% trans "Your account is linked to Authentik. Sign-in security (password, 2FA) is managed there." %}</p>
+    {% else %}
+      <p class="text-muted">{% trans "Update the password you use to sign in." %}</p>
+    {% endif %}
   </div>
   <a class="button-secondary" href="{% url 'password_change' %}">{% trans "Open" %}</a>
 </div>
