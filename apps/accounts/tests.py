@@ -1424,11 +1424,29 @@ class OIDCAuthenticationBackendTests(TestCase):
 
     def test_create_user_sets_unusable_password_and_is_sso_user(self):
         user = self.backend.create_user(
-            {"email": "tara@example.com", "preferred_username": "tara", "name": "Tara T"}
+            {"email": "tara@example.com", "preferred_username": "tara", "name": "Tara Tester"}
         )
         self.assertTrue(user.is_sso_user)
-        self.assertEqual(user.first_name, "Tara T")
         self.assertFalse(user.has_usable_password())
+
+    def test_create_user_takes_only_the_first_word_of_authentiks_full_name_claim(self):
+        # Authentik has no first/last name split of its own — its
+        # default OpenID 'profile' scope mapping sends the account's
+        # single full-name field as "name" (docs/SECURITY.md "Single
+        # sign-on (Authentik / OIDC)"). Only the first word should ever
+        # land on first_name, not the whole string.
+        user = self.backend.create_user(
+            {"email": "tara@example.com", "preferred_username": "tara", "name": "Tara Tester"}
+        )
+        self.assertEqual(user.first_name, "Tara")
+
+    def test_update_user_also_takes_only_the_first_word_of_the_name_claim(self):
+        user = User.objects.create_user(
+            username="willa", password="s3cret-pass", email="willa@example.com"
+        )
+        self.backend.update_user(user, {"email": "willa@example.com", "name": "Willa Wonka"})
+        user.refresh_from_db()
+        self.assertEqual(user.first_name, "Willa")
 
     def test_verify_claims_passes_by_default_with_no_required_group(self):
         self.assertTrue(

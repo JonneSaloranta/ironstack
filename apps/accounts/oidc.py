@@ -102,12 +102,15 @@ class IronStackOIDCAuthenticationBackend(OIDCAuthenticationBackend):
         # Authentik has no first/last name distinction of its own —
         # its default OpenID 'profile' scope mapping sends the user's
         # single full-name field as both "name" and "given_name" (see
-        # that mapping's own expression in the Authentik admin UI).
-        # Stored on first_name alone rather than split on whitespace
-        # into first_name/last_name, which would mangle any name that
-        # isn't exactly "First Last" (a middle name, a single-word
-        # name, ...) for no real benefit — nothing in this app treats
-        # last_name as meaningful on its own (see User.public_display_name).
+        # that mapping's own expression in the Authentik admin UI), so
+        # a two-word Authentik name would otherwise land on
+        # first_name whole (e.g. "Jane Doe"). Only the first
+        # whitespace-separated token is kept — this app's own greeting/
+        # display text (apps.core.greetings, User.public_display_name)
+        # is written for a first name, not a full name — the rest is
+        # simply discarded, not moved onto last_name (Authentik has
+        # nothing reliable to put there anyway: this same "name" claim
+        # is the only name data it sends).
         name = claims.get("name") or claims.get("given_name")
         if name:
-            user.first_name = name
+            user.first_name = name.split()[0]

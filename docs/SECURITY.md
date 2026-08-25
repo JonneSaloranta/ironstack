@@ -210,6 +210,20 @@ account's `User.is_sso_user` is set `True` — purely informational (a
 note on the profile page), never something that gates access on its
 own.
 
+**If Authentik runs as a separate Docker stack**: `AUTHENTIK_URL` is
+what the user's *browser* is redirected to, but this app's own
+container makes its own direct server-to-server calls too (token
+exchange, JWKS fetch, userinfo fetch) — and from inside a container,
+`localhost`/a published host port usually doesn't reach a sibling
+Docker stack the way it does from the host itself. `AUTHENTIK_INTERNAL_URL`
+(`.env.example`) overrides just those server-side calls to a
+different, container-reachable address (e.g. Authentik's container
+hostname on a Docker network this app's container has also been
+attached to — `docker network connect`), while `AUTHENTIK_URL` keeps
+driving what the browser is actually sent to. Defaults to
+`AUTHENTIK_URL`; most single-host or non-containerized-Authentik
+deployments never need to set it.
+
 **Restricting who can actually use it**: having *any* account on the
 Authentik instance is enough to complete "Log in with Authentik" by
 default — a real concern once that Authentik instance also

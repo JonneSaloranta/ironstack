@@ -306,6 +306,18 @@ PASSWORD_LOGIN_ENABLED = env_bool("DJANGO_PASSWORD_LOGIN_ENABLED", default=True)
 AUTHENTIK_URL = env("AUTHENTIK_URL", default="")
 AUTHENTIK_CLIENT_ID = env("AUTHENTIK_CLIENT_ID", default="")
 AUTHENTIK_CLIENT_SECRET = env("AUTHENTIK_CLIENT_SECRET", default="")
+# Optional: how *this app's own server* reaches Authentik, if that's a
+# different address than AUTHENTIK_URL (what the user's browser is
+# redirected to). Defaults to AUTHENTIK_URL — most deployments only
+# need one address. Diverges when Authentik runs as a separate Docker
+# stack: the browser needs Authentik's externally published address,
+# but this app's own container usually can't reach that same address
+# from inside its own network namespace ("localhost"/a published port
+# means something different from inside a container than from the
+# host) — pointing this at Authentik's container hostname on a shared
+# Docker network (e.g. "http://authentik-server:9000") solves that
+# without changing what the browser is ever redirected to.
+AUTHENTIK_INTERNAL_URL = env("AUTHENTIK_INTERNAL_URL", default="") or AUTHENTIK_URL
 # Which Authentik "application" slug's own per-application OIDC issuer
 # to use (Authentik's issuer_mode="per_provider" default mints a
 # distinct issuer/JWKS per application at
@@ -335,11 +347,20 @@ if AUTHENTIK_ENABLED:
     # OIDC_OP_JWKS_ENDPOINT below, fetched to verify that signature)
     # rather than the shared client secret HS256 would use.
     OIDC_RP_SIGN_ALGO = "RS256"
-    _authentik_issuer = f"{AUTHENTIK_URL}/application/o/{AUTHENTIK_APPLICATION_SLUG}"
+    # Browser-facing: the user's own browser is redirected here
+    # directly, so this must be whatever address they can actually
+    # reach — always AUTHENTIK_URL.
     OIDC_OP_AUTHORIZATION_ENDPOINT = f"{AUTHENTIK_URL}/application/o/authorize/"
-    OIDC_OP_TOKEN_ENDPOINT = f"{AUTHENTIK_URL}/application/o/token/"
-    OIDC_OP_USER_ENDPOINT = f"{AUTHENTIK_URL}/application/o/userinfo/"
-    OIDC_OP_JWKS_ENDPOINT = f"{_authentik_issuer}/jwks/"
+    # Server-facing: this app's own backend calls these directly
+    # (mozilla_django_oidc.auth.OIDCAuthenticationBackend's token
+    # exchange, JWKS fetch, userinfo fetch) — AUTHENTIK_INTERNAL_URL,
+    # which is just AUTHENTIK_URL again unless overridden above.
+    _authentik_internal_issuer = (
+        f"{AUTHENTIK_INTERNAL_URL}/application/o/{AUTHENTIK_APPLICATION_SLUG}"
+    )
+    OIDC_OP_TOKEN_ENDPOINT = f"{AUTHENTIK_INTERNAL_URL}/application/o/token/"
+    OIDC_OP_USER_ENDPOINT = f"{AUTHENTIK_INTERNAL_URL}/application/o/userinfo/"
+    OIDC_OP_JWKS_ENDPOINT = f"{_authentik_internal_issuer}/jwks/"
     OIDC_RP_SCOPES = "openid email profile"
     # mozilla_django_oidc's own default is "/" — a login rejected by
     # IronStackOIDCAuthenticationBackend.verify_claims (e.g.
