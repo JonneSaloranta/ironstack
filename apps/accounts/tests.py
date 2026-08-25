@@ -1423,7 +1423,17 @@ class AuthentikLoginButtonTests(TestCase):
     "oidc/authenticate/" URL only actually exists on a process that
     was started with real AUTHENTIK_* values set."""
 
+    @override_settings(AUTHENTIK_ENABLED=False)
     def test_button_hidden_by_default(self):
+        # Explicit override rather than relying on the ambient
+        # settings.AUTHENTIK_ENABLED: a dev environment whose own .env
+        # already has real AUTHENTIK_* values set (e.g. to manually
+        # verify the SSO flow against a real Authentik instance) would
+        # otherwise make this test falsely fail there, even though
+        # nothing about the app itself is broken — see this class's own
+        # docstring for why the override here doesn't hit the
+        # "urlpatterns fixed at process startup" problem that stops the
+        # *enabled* case from being tested the same way.
         response = self.client.get(reverse("login"))
         self.assertNotContains(response, "Log in with Authentik")
 
@@ -1506,7 +1516,15 @@ class OIDCAuthenticationBackendTests(TestCase):
         user.refresh_from_db()
         self.assertEqual(user.first_name, "Willa")
 
+    @override_settings(AUTHENTIK_REQUIRED_GROUP="")
     def test_verify_claims_passes_by_default_with_no_required_group(self):
+        # Explicit override rather than relying on the ambient default
+        # (settings.AUTHENTIK_REQUIRED_GROUP default is "" — see
+        # config.settings.base) for the same reason as
+        # AuthentikLoginButtonTests.test_button_hidden_by_default's own
+        # override: a dev environment's .env may already have a real
+        # AUTHENTIK_REQUIRED_GROUP set, which would otherwise leak into
+        # this "no required group" case and fail it.
         self.assertTrue(
             self.backend.verify_claims({"email": "vic@example.com", "groups": []})
         )

@@ -57,7 +57,15 @@ class SignupView(CreateView):
 
     def form_valid(self, form):
         response = super().form_valid(form)
-        login(self.request, self.object)
+        # Explicit `backend=`: form.save() creates `self.object` with a
+        # plain ORM insert, never through authenticate(), so it has no
+        # `.backend` attribute for login() to read. That's normally
+        # fine — login() infers it on its own when exactly one backend
+        # is configured — but breaks the moment Authentik SSO is also
+        # enabled (settings.AUTHENTIK_ENABLED, config.settings.base's
+        # AUTHENTICATION_BACKENDS) and there are two. A local-password
+        # signup is unambiguously a ModelBackend account regardless.
+        login(self.request, self.object, backend="django.contrib.auth.backends.ModelBackend")
         return response
 
 
@@ -214,7 +222,17 @@ class TwoFactorVerifyView(FormView):
     def form_valid(self, form):
         user = self.get_user()
         del self.request.session["pre_2fa_user_id"]
-        login(self.request, user)
+        # Explicit `backend=`: this user was fetched with a plain
+        # User.objects.get() (get_user() above), never through
+        # authenticate(), so it has no `.backend` attribute — same gap,
+        # same fix, and same reasoning as SignupView.form_valid's own
+        # explicit backend= (see that one's comment). The password that
+        # got this session to `pre_2fa_user_id` in the first place was
+        # already checked by RateLimitedLoginView's ModelBackend-only
+        # AuthenticationForm, so this step is unambiguously ModelBackend
+        # too — an SSO login never reaches this 2FA-verify view at all
+        # (see this class's own docstring/"2FA note" in docs/SECURITY.md).
+        login(self.request, user, backend="django.contrib.auth.backends.ModelBackend")
         next_url = self.request.GET.get("next") or settings.LOGIN_REDIRECT_URL
         return redirect(next_url)
 
