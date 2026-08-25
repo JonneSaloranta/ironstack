@@ -1,3 +1,4 @@
+import hashlib
 import re
 from decimal import Decimal
 from urllib.parse import urlparse
@@ -59,6 +60,30 @@ class PublicDisplayNameTests(TestCase):
     def test_show_name_to_others_defaults_to_true(self):
         user = User.objects.create_user(username="alice", password="s3cret-pass")
         self.assertTrue(user.show_name_to_others)
+
+
+class GravatarTests(TestCase):
+    """User.gravatar_url()/show_gravatar — see docs/SECURITY.md
+    "Gravatar profile picture" for why this defaults off unlike this
+    app's other display/privacy toggles: it's the only place a user's
+    browser talks to a server outside this instance."""
+
+    def test_show_gravatar_defaults_to_false(self):
+        user = User.objects.create_user(username="alice", password="s3cret-pass")
+        self.assertFalse(user.show_gravatar)
+
+    def test_gravatar_url_hashes_the_lowercased_trimmed_email(self):
+        user = User.objects.create_user(
+            username="alice", password="s3cret-pass", email=" Alice@Example.com "
+        )
+        expected_hash = hashlib.sha256(b"alice@example.com").hexdigest()
+        self.assertIn(expected_hash, user.gravatar_url())
+
+    def test_gravatar_url_asks_for_a_404_instead_of_a_placeholder(self):
+        user = User.objects.create_user(
+            username="alice", password="s3cret-pass", email="alice@example.com"
+        )
+        self.assertIn("d=404", user.gravatar_url())
 
 
 class LanguagePreferenceTests(TestCase):
@@ -526,6 +551,39 @@ class ProfileViewTests(TestCase):
     def test_show_name_to_others_field_is_on_the_profile_page(self):
         response = self.client.get(reverse("profile"))
         self.assertContains(response, "Show my name to others")
+
+    def test_show_gravatar_field_is_on_the_profile_page(self):
+        response = self.client.get(reverse("profile"))
+        self.assertContains(response, "Show my Gravatar picture")
+
+    def test_gravatar_image_is_not_rendered_by_default(self):
+        response = self.client.get(reverse("profile"))
+        self.assertNotContains(response, "gravatar.com/avatar")
+
+    def test_checking_show_gravatar_turns_it_on_and_renders_the_image(self):
+        self.client.post(
+            reverse("profile"),
+            {
+                "unit_system": "metric",
+                "timezone": "UTC",
+                "show_gravatar": "on",
+                "language": "en",
+            },
+        )
+        self.alice.refresh_from_db()
+        self.assertTrue(self.alice.show_gravatar)
+        response = self.client.get(reverse("profile"))
+        self.assertContains(response, "gravatar.com/avatar")
+
+    def test_unchecking_show_gravatar_turns_it_back_off(self):
+        self.alice.show_gravatar = True
+        self.alice.save()
+        self.client.post(
+            reverse("profile"),
+            {"unit_system": "metric", "timezone": "UTC", "language": "en"},
+        )
+        self.alice.refresh_from_db()
+        self.assertFalse(self.alice.show_gravatar)
 
     def test_admin_link_is_hidden_for_a_regular_user(self):
         response = self.client.get(reverse("profile"))

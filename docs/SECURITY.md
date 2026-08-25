@@ -254,6 +254,35 @@ An account with `totp_enabled=True` that also logs in via Authentik
 still has that TOTP requirement enforced on any *local password*
 login it might still be able to do.
 
+## Gravatar profile picture
+
+`apps.accounts.models.User.show_gravatar` (profile page → preferences)
+shows a user's Gravatar (https://gravatar.com) picture at the top of
+their own profile page, if the email on their account has one. Off by
+default, unlike this app's other display/privacy toggles
+(`show_bmi`/`show_achievements`/`show_name_to_others`): every one of
+those only changes what this instance itself shows, entirely within
+its own infrastructure. This one is the only place in the whole app
+where a user's browser talks to a server this instance doesn't run —
+turning it on means the browser fetches `User.gravatar_url()` directly
+from `gravatar.com` on every profile page load, handing Gravatar (a
+service run by Automattic) this user's IP address and a SHA-256 hash
+of their email. That's a deliberate, narrow exception to CLAUDE.md's
+"runs entirely on the user's own infrastructure" — the user has to opt
+into it explicitly, nothing fetches or displays it on their behalf
+until they do.
+
+`gravatar_url()` requests Gravatar's `d=404` fallback behavior (a 404
+response instead of a generated placeholder image) so the template can
+tell "no Gravatar for this email" apart from "Gravatar is
+unreachable" — either way, the `<img>` just disappears
+(`templates/accounts/profile.html`'s `@error="$el.remove()"`, an
+Alpine directive rather than a native `onerror=` attribute, since the
+latter would be silently blocked by this app's own CSP script-src —
+see below) rather than showing a broken-image icon or Gravatar's own
+default avatar for someone who never actually created a Gravatar
+account.
+
 ## Cross-Site Request Forgery (CSRF)
 
 `config.settings.production` derives `CSRF_TRUSTED_ORIGINS` from
@@ -270,12 +299,18 @@ the request's `Origin`/`Referer` against this list for HTTPS requests.
 `apps.core.middleware.ContentSecurityPolicyMiddleware` sets a CSP
 header on every response, in every environment. `default-src 'self'`
 plus tight per-directive allowances (no external scripts/styles/
-fonts/images beyond `data:` URIs, no framing by another site, no
-plugins, forms can only submit back to this same origin) — see the
-middleware's own docstring for the exact policy string and reasoning.
+fonts/images beyond `data:` URIs and `gravatar.com`, no framing by
+another site, no plugins, forms can only submit back to this same
+origin) — see the middleware's own docstring for the exact policy
+string and reasoning.
 
-Two allowances are worth knowing about, both scoped as narrowly as
+Three allowances are worth knowing about, each scoped as narrowly as
 this stack currently allows:
+- `img-src https://www.gravatar.com` — the one deliberate exception to
+  "no external anything," letting `templates/accounts/profile.html`
+  load a user's Gravatar picture when they've opted into
+  `User.show_gravatar` (off by default). See "Gravatar profile
+  picture" above.
 - `script-src 'unsafe-eval'` — Alpine.js evaluates `x-data`/`x-show`/
   `@click`/... expression strings via `new Function()`, which CSP
   treats as eval. Alpine ships a separate CSP-safe build (a restricted

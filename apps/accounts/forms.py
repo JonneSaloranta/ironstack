@@ -243,6 +243,7 @@ class ProfileForm(forms.ModelForm):
             "show_bmi",
             "show_achievements",
             "show_name_to_others",
+            "show_gravatar",
             "language",
         ]
         labels = {
@@ -255,6 +256,7 @@ class ProfileForm(forms.ModelForm):
             ),
             "show_achievements": _("Share my activity"),
             "show_name_to_others": _("Show my name to others"),
+            "show_gravatar": _("Show my Gravatar picture"),
             "language": _("Language"),
         }
         help_texts = {
@@ -271,6 +273,14 @@ class ProfileForm(forms.ModelForm):
                 "others can see it (the achievements carousel and "
                 "\"Recently active\" list). Turn off to show just your "
                 "username there, like before this setting existed."
+            ),
+            "show_gravatar": _(
+                "Shows your Gravatar (gravatar.com) picture at the top of "
+                "this page, if the email on this account has one. Turning "
+                "this on means your browser loads that image directly "
+                "from gravatar.com — the only place this app talks to a "
+                "server outside your own instance — which then sees your "
+                "email's hash and your IP address."
             ),
         }
 

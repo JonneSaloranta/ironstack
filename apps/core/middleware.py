@@ -24,16 +24,20 @@ class ContentSecurityPolicyMiddleware:
     # than a dedicated class. Removing this would mean auditing and
     # rewriting every one of them, or switching to a nonce-per-request
     # scheme — again out of scope here.
-    # Every other directive is deliberately as tight as 'self' allows:
-    # no external fonts/scripts/images/frames, no plugins, no framing
-    # by another site (redundant with X_FRAME_OPTIONS, kept as
-    # defense-in-depth since browsers that don't honor one may honor
-    # the other), forms can only submit back to this same origin.
+    # img-src additionally allows gravatar.com: apps.accounts.models.
+    # User.gravatar_url, loaded by templates/accounts/profile.html only
+    # when a user has opted into User.show_gravatar (off by default —
+    # see docs/SECURITY.md "Gravatar profile picture"). The only other
+    # directive not locked to 'self': no external fonts/scripts/frames,
+    # no plugins, no framing by another site (redundant with
+    # X_FRAME_OPTIONS, kept as defense-in-depth since browsers that
+    # don't honor one may honor the other), forms can only submit back
+    # to this same origin.
     POLICY = (
         "default-src 'self'; "
         "script-src 'self' 'unsafe-eval'; "
         "style-src 'self' 'unsafe-inline'; "
-        "img-src 'self' data:; "
+        "img-src 'self' data: https://www.gravatar.com; "
         "font-src 'self'; "
         "connect-src 'self'; "
         "frame-ancestors 'none'; "
