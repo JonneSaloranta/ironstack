@@ -3,7 +3,20 @@
 {% block title %}{% trans "Profile" %} — IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
-  <h1 style="margin:0;">{% trans "Profile" %}</h1>
+  <div style="display:flex; align-items:center; gap:0.75rem;">
+    {% if user.show_gravatar %}
+      {% comment %}
+        No Gravatar for this email -> gravatar_url's d=404 makes the
+        request itself fail, so @error (an Alpine directive, not a
+        native onerror= attribute blocked by this app's CSP — see
+        docs/SECURITY.md "Content-Security-Policy") just removes the
+        broken <img> instead of showing a broken-image icon.
+      {% endcomment %}
+      <img src="{{ user.gravatar_url }}" alt="" class="profile-avatar"
+           x-data="{}" @error="$el.remove()">
+    {% endif %}
+    <h1 style="margin:0;">{% trans "Profile" %}</h1>
+  </div>
 </div>
 
 <form class="card" method="post">
@@ -42,7 +55,11 @@
 <div class="card card-action-row">
   <div>
     <strong>{% trans "Change password" %}</strong>
-    <p class="text-muted">{% trans "Update the password you use to sign in." %}</p>
+    {% if user.is_sso_user %}
+      <p class="text-muted">{% trans "Your account is linked to Authentik. Sign-in security (password, 2FA) is managed there." %}</p>
+    {% else %}
+      <p class="text-muted">{% trans "Update the password you use to sign in." %}</p>
+    {% endif %}
   </div>
   <a class="button-secondary" href="{% url 'password_change' %}">{% trans "Open" %}</a>
 </div>

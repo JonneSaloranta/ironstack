@@ -52,6 +52,12 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "rest_framework",
+    # apps.accounts.oidc / AUTHENTIK_* settings below — always
+    # installed (it defines no models/migrations, so there's no cost
+    # to an instance that never configures Authentik), but its
+    # views/backend only ever get exercised once AUTHENTIK_ENABLED is
+    # True. See docs/SECURITY.md "Single sign-on (Authentik / OIDC)".
+    "mozilla_django_oidc",
     # IronStack apps
     "apps.core",
     "apps.accounts",
@@ -147,6 +153,15 @@ AUTH_PASSWORD_VALIDATORS = [
 LOGIN_URL = "login"
 LOGIN_REDIRECT_URL = "dashboard"
 LOGOUT_REDIRECT_URL = "login"
+
+# ModelBackend must stay listed even when Authentik SSO is configured
+# below — it's what django.contrib.auth's own AuthenticationForm (via
+# apps.accounts.forms.RateLimitedAuthenticationForm) authenticates
+# local username/password logins against.
+# apps.accounts.oidc.IronStackOIDCAuthenticationBackend is appended
+# further down, only once AUTHENTIK_ENABLED is actually True — see
+# docs/SECURITY.md "Single sign-on (Authentik / OIDC)".
+AUTHENTICATION_BACKENDS = ["django.contrib.auth.backends.ModelBackend"]
 
 # UI language is a per-user preference (User.language, set on the
 # profile page — apps.accounts.middleware.UserLanguageMiddleware applies
@@ -260,6 +275,106 @@ MANAGERS = ADMINS
 # trusted network. Existing users can keep logging in either way, since
 # only SignupView reads this.
 SIGNUP_ENABLED = env_bool("DJANGO_SIGNUP_ENABLED", default=True)
+
+# Independent of SIGNUP_ENABLED above: this gates the local username/
+# password *login* form itself (apps.accounts.views.RateLimitedLoginView/
+# RateLimitedPasswordResetView/SignupView — see docs/SECURITY.md
+# "Single sign-on (Authentik / OIDC)"), for an operator who wants
+# Authentik as the only way in once every intended user has an SSO-
+# linked account. False also closes signup and password reset, since
+# neither makes sense without a usable local password. Existing
+# accounts with a local password simply can't use it to log in while
+# this is off — nothing about the account itself changes, so setting
+# it back to True restores password login for them exactly as before.
+# /admin/ is deliberately unaffected — it's Django's own separate
+# login view (see apps.core.admin), kept as a break-glass path so a
+# misconfigured Authentik instance can never lock every admin out of
+# this app at once.
+PASSWORD_LOGIN_ENABLED = env_bool("DJANGO_PASSWORD_LOGIN_ENABLED", default=True)
+
+# Authentik single sign-on (docs/SECURITY.md "Single sign-on (Authentik
+# / OIDC)") — an OpenID Connect Relying Party against an
+# externally-run Authentik instance, via mozilla-django-oidc
+# (apps.accounts.oidc). Entirely optional: leave AUTHENTIK_URL unset
+# and none of this activates — no extra INSTALLED_APPS surface beyond
+# the app being present (it defines no models), no new urls.py routes,
+# no "Log in with Authentik" button, AUTHENTICATION_BACKENDS stays
+# ModelBackend-only. AUTHENTIK_URL is this Authentik instance's own
+# base URL (e.g. "https://auth.example.com", no trailing slash);
+# AUTHENTIK_CLIENT_ID/AUTHENTIK_CLIENT_SECRET come from the OAuth2/
+# OpenID provider created for this app in Authentik (Admin interface →
+# Applications → Providers → create "OAuth2/OpenID Provider", redirect
+# URI f"{this app's own base URL}/oidc/callback/").
+AUTHENTIK_URL = env("AUTHENTIK_URL", default="")
+AUTHENTIK_CLIENT_ID = env("AUTHENTIK_CLIENT_ID", default="")
+AUTHENTIK_CLIENT_SECRET = env("AUTHENTIK_CLIENT_SECRET", default="")
+# Optional: how *this app's own server* reaches Authentik, if that's a
+# different address than AUTHENTIK_URL (what the user's browser is
+# redirected to). Defaults to AUTHENTIK_URL — most deployments only
+# need one address. Diverges when Authentik runs as a separate Docker
+# stack: the browser needs Authentik's externally published address,
+# but this app's own container usually can't reach that same address
+# from inside its own network namespace ("localhost"/a published port
+# means something different from inside a container than from the
+# host) — pointing this at Authentik's container hostname on a shared
+# Docker network (e.g. "http://authentik-server:9000") solves that
+# without changing what the browser is ever redirected to.
+AUTHENTIK_INTERNAL_URL = env("AUTHENTIK_INTERNAL_URL", default="") or AUTHENTIK_URL
+# Which Authentik "application" slug's own per-application OIDC issuer
+# to use (Authentik's issuer_mode="per_provider" default mints a
+# distinct issuer/JWKS per application at
+# f"{AUTHENTIK_URL}/application/o/{slug}/..." rather than one shared
+# endpoint) — matches whatever slug the application was actually
+# created with in Authentik, not necessarily "ironstack".
+AUTHENTIK_APPLICATION_SLUG = env("AUTHENTIK_APPLICATION_SLUG", default="ironstack")
+# Optional extra access gate (apps.accounts.oidc.
+# IronStackOIDCAuthenticationBackend.verify_claims) — an Authentik
+# group name a user must belong to for "Log in with Authentik" to
+# actually let them in. Unset (the default) means having *any*
+# Authentik account is enough, which matters on a shared Authentik
+# instance that also authenticates other, unrelated applications.
+# Defense in depth alongside (not instead of) restricting the
+# Application itself in Authentik's own admin UI (Applications →
+# Policy / Group / User Bindings) to the same group.
+AUTHENTIK_REQUIRED_GROUP = env("AUTHENTIK_REQUIRED_GROUP", default="")
+AUTHENTIK_ENABLED = bool(AUTHENTIK_URL and AUTHENTIK_CLIENT_ID and AUTHENTIK_CLIENT_SECRET)
+
+if AUTHENTIK_ENABLED:
+    AUTHENTICATION_BACKENDS.append("apps.accounts.oidc.IronStackOIDCAuthenticationBackend")
+
+    OIDC_RP_CLIENT_ID = AUTHENTIK_CLIENT_ID
+    OIDC_RP_CLIENT_SECRET = AUTHENTIK_CLIENT_SECRET
+    # RS256, not mozilla-django-oidc's own HS256 default — Authentik
+    # signs id_tokens with its own per-provider RSA key (see the
+    # OIDC_OP_JWKS_ENDPOINT below, fetched to verify that signature)
+    # rather than the shared client secret HS256 would use.
+    OIDC_RP_SIGN_ALGO = "RS256"
+    # Browser-facing: the user's own browser is redirected here
+    # directly, so this must be whatever address they can actually
+    # reach — always AUTHENTIK_URL.
+    OIDC_OP_AUTHORIZATION_ENDPOINT = f"{AUTHENTIK_URL}/application/o/authorize/"
+    # Server-facing: this app's own backend calls these directly
+    # (mozilla_django_oidc.auth.OIDCAuthenticationBackend's token
+    # exchange, JWKS fetch, userinfo fetch) — AUTHENTIK_INTERNAL_URL,
+    # which is just AUTHENTIK_URL again unless overridden above.
+    _authentik_internal_issuer = (
+        f"{AUTHENTIK_INTERNAL_URL}/application/o/{AUTHENTIK_APPLICATION_SLUG}"
+    )
+    OIDC_OP_TOKEN_ENDPOINT = f"{AUTHENTIK_INTERNAL_URL}/application/o/token/"
+    OIDC_OP_USER_ENDPOINT = f"{AUTHENTIK_INTERNAL_URL}/application/o/userinfo/"
+    OIDC_OP_JWKS_ENDPOINT = f"{_authentik_internal_issuer}/jwks/"
+    OIDC_RP_SCOPES = "openid email profile"
+    # mozilla_django_oidc's own default is "/" — a login rejected by
+    # IronStackOIDCAuthenticationBackend.verify_claims (e.g.
+    # AUTHENTIK_REQUIRED_GROUP set and the user isn't a member) should
+    # land back on the login page, not the dashboard URL an anonymous
+    # visitor would just get redirected away from again anyway.
+    LOGIN_REDIRECT_URL_FAILURE = "login"
+    # PKCE on top of the authorization-code flow's own state/nonce —
+    # cheap extra protection against an authorization code being
+    # intercepted, and something Authentik supports out of the box
+    # (see the discovery document's code_challenge_methods_supported).
+    OIDC_USE_PKCE = True
 
 # apps.core.management.commands.backup_scheduler — docs/BACKUP.md.
 # UTC hour (0-23) the docker-compose.yml `backup-scheduler` service

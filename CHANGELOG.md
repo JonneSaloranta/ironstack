@@ -142,6 +142,32 @@ lands and remains the authoritative history.
 - Test coverage measurement (`coverage`) is now part of the dev
   toolchain — `coverage run -m pytest && coverage report`.
 
+## [1.3.0] — 2026-08-26
+
+### Added
+- Authentik single sign-on (OIDC) as an optional login method
+  alongside username/password + TOTP, `docs/SECURITY.md` "Single
+  sign-on (Authentik / OIDC)" — matches an Authentik login to an
+  existing local account by email or auto-provisions a new one,
+  entirely opt-in (nothing activates unless `AUTHENTIK_URL`/
+  `AUTHENTIK_CLIENT_ID`/`AUTHENTIK_CLIENT_SECRET` are all set), with
+  an optional `AUTHENTIK_REQUIRED_GROUP` restriction and a
+  `DJANGO_PASSWORD_LOGIN_ENABLED` switch to close local password
+  login once every user has an Authentik-linked account.
+- An opt-in Gravatar profile picture, Profile → "Show my Gravatar
+  picture" (off by default) — see `docs/SECURITY.md` "Gravatar
+  profile picture" for why: it's the only place this app talks to a
+  server outside its own infrastructure.
+
+### Fixed
+- Local-password signup and a 2FA-verified login crashed with a
+  `ValueError` once Authentik SSO was enabled (two authentication
+  backends configured at once).
+- Bar and line charts (Analytics, Progress) rendered invisible for
+  any user with a comma-decimal UI language (Finnish, Swedish,
+  Russian) — Django's locale-aware number formatting broke the
+  underlying SVG coordinate syntax.
+
 ## [1.2.0] — 2026-08-15
 
 ### Added

@@ -1,12 +1,14 @@
+import hashlib
 import re
 from decimal import Decimal
 from urllib.parse import urlparse
 
 from django.contrib import admin
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import AnonymousUser
 from django.core import mail
 from django.core.cache import cache
-from django.test import TestCase, override_settings
+from django.test import RequestFactory, TestCase, override_settings
 from django.urls import reverse
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
@@ -14,6 +16,7 @@ from django.utils.http import urlsafe_base64_encode
 from apps.accounts import twofactor
 from apps.accounts.forms import LOGIN_ATTEMPT_LIMIT, PASSWORD_RESET_ATTEMPT_LIMIT
 from apps.accounts.models import SiteDisclaimer
+from apps.accounts.views import RateLimitedLoginView
 
 User = get_user_model()
 
@@ -57,6 +60,30 @@ class PublicDisplayNameTests(TestCase):
     def test_show_name_to_others_defaults_to_true(self):
         user = User.objects.create_user(username="alice", password="s3cret-pass")
         self.assertTrue(user.show_name_to_others)
+
+
+class GravatarTests(TestCase):
+    """User.gravatar_url()/show_gravatar — see docs/SECURITY.md
+    "Gravatar profile picture" for why this defaults off unlike this
+    app's other display/privacy toggles: it's the only place a user's
+    browser talks to a server outside this instance."""
+
+    def test_show_gravatar_defaults_to_false(self):
+        user = User.objects.create_user(username="alice", password="s3cret-pass")
+        self.assertFalse(user.show_gravatar)
+
+    def test_gravatar_url_hashes_the_lowercased_trimmed_email(self):
+        user = User.objects.create_user(
+            username="alice", password="s3cret-pass", email=" Alice@Example.com "
+        )
+        expected_hash = hashlib.sha256(b"alice@example.com").hexdigest()
+        self.assertIn(expected_hash, user.gravatar_url())
+
+    def test_gravatar_url_asks_for_a_404_instead_of_a_placeholder(self):
+        user = User.objects.create_user(
+            username="alice", password="s3cret-pass", email="alice@example.com"
+        )
+        self.assertIn("d=404", user.gravatar_url())
 
 
 class LanguagePreferenceTests(TestCase):
@@ -524,6 +551,39 @@ class ProfileViewTests(TestCase):
     def test_show_name_to_others_field_is_on_the_profile_page(self):
         response = self.client.get(reverse("profile"))
         self.assertContains(response, "Show my name to others")
+
+    def test_show_gravatar_field_is_on_the_profile_page(self):
+        response = self.client.get(reverse("profile"))
+        self.assertContains(response, "Show my Gravatar picture")
+
+    def test_gravatar_image_is_not_rendered_by_default(self):
+        response = self.client.get(reverse("profile"))
+        self.assertNotContains(response, "gravatar.com/avatar")
+
+    def test_checking_show_gravatar_turns_it_on_and_renders_the_image(self):
+        self.client.post(
+            reverse("profile"),
+            {
+                "unit_system": "metric",
+                "timezone": "UTC",
+                "show_gravatar": "on",
+                "language": "en",
+            },
+        )
+        self.alice.refresh_from_db()
+        self.assertTrue(self.alice.show_gravatar)
+        response = self.client.get(reverse("profile"))
+        self.assertContains(response, "gravatar.com/avatar")
+
+    def test_unchecking_show_gravatar_turns_it_back_off(self):
+        self.alice.show_gravatar = True
+        self.alice.save()
+        self.client.post(
+            reverse("profile"),
+            {"unit_system": "metric", "timezone": "UTC", "language": "en"},
+        )
+        self.alice.refresh_from_db()
+        self.assertFalse(self.alice.show_gravatar)
 
     def test_admin_link_is_hidden_for_a_regular_user(self):
         response = self.client.get(reverse("profile"))
@@ -1300,3 +1360,200 @@ class OnboardingViewTests(TestCase):
         )
         self.assertNotContains(response, "Welcome to IronStack")
         self.assertContains(response, 'id="onboarding-modal-container"')
+
+
+class PasswordLoginGatingTests(TestCase):
+    """docs/SECURITY.md "Single sign-on (Authentik / OIDC)" —
+    DJANGO_PASSWORD_LOGIN_ENABLED. Same "gate the URL/POST itself, not
+    just hide the link" approach as SignupGatingTests above for
+    DJANGO_SIGNUP_ENABLED, applied to local password login/signup/
+    password-reset once Authentik is meant to be the only way in."""
+
+    def test_login_form_shown_by_default(self):
+        response = self.client.get(reverse("login"))
+        self.assertContains(response, 'name="password"')
+
+    @override_settings(PASSWORD_LOGIN_ENABLED=False)
+    def test_login_form_hidden_when_password_login_disabled(self):
+        response = self.client.get(reverse("login"))
+        self.assertNotContains(response, 'name="password"')
+
+    @override_settings(PASSWORD_LOGIN_ENABLED=False)
+    def test_login_post_is_blocked_when_password_login_disabled(self):
+        User.objects.create_user(username="pat", password="s3cret-pass")
+        response = self.client.post(
+            reverse("login"), {"username": "pat", "password": "s3cret-pass"}
+        )
+        self.assertRedirects(response, reverse("login"))
+        self.assertNotIn("_auth_user_id", self.client.session)
+
+    @override_settings(PASSWORD_LOGIN_ENABLED=False, SIGNUP_ENABLED=True)
+    def test_signup_is_blocked_when_password_login_disabled_even_if_signup_enabled(self):
+        response = self.client.get(reverse("signup"), follow=True)
+        self.assertRedirects(response, reverse("login"))
+
+    @override_settings(PASSWORD_LOGIN_ENABLED=False)
+    def test_password_reset_is_blocked_when_password_login_disabled(self):
+        response = self.client.get(reverse("password_reset"), follow=True)
+        self.assertRedirects(response, reverse("login"))
+
+    @override_settings(PASSWORD_LOGIN_ENABLED=False)
+    def test_forgot_password_link_hidden_when_password_login_disabled(self):
+        response = self.client.get(reverse("login"))
+        self.assertNotContains(response, reverse("password_reset"))
+
+    def test_admin_login_is_unaffected_by_password_login_disabled(self):
+        # apps.core.admin's own separate login view — a break-glass
+        # path that must survive a misconfigured/unreachable Authentik
+        # instance (docs/SECURITY.md).
+        with override_settings(PASSWORD_LOGIN_ENABLED=False):
+            response = self.client.get(reverse("admin:login"))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'name="password"')
+
+
+class AuthentikLoginButtonTests(TestCase):
+    """settings.AUTHENTIK_ENABLED is computed once, at process startup,
+    from whether AUTHENTIK_URL/AUTHENTIK_CLIENT_ID/AUTHENTIK_CLIENT_SECRET
+    are set — like config.urls' conditional inclusion of
+    mozilla_django_oidc's own urls, override_settings can flip the
+    template-visible flag for a test but can't retroactively register
+    urlpatterns that were only ever built once at import time. So this
+    only covers the template-visible half (the button itself); the
+    "oidc/authenticate/" URL only actually exists on a process that
+    was started with real AUTHENTIK_* values set."""
+
+    @override_settings(AUTHENTIK_ENABLED=False)
+    def test_button_hidden_by_default(self):
+        # Explicit override rather than relying on the ambient
+        # settings.AUTHENTIK_ENABLED: a dev environment whose own .env
+        # already has real AUTHENTIK_* values set (e.g. to manually
+        # verify the SSO flow against a real Authentik instance) would
+        # otherwise make this test falsely fail there, even though
+        # nothing about the app itself is broken — see this class's own
+        # docstring for why the override here doesn't hit the
+        # "urlpatterns fixed at process startup" problem that stops the
+        # *enabled* case from being tested the same way.
+        response = self.client.get(reverse("login"))
+        self.assertNotContains(response, "Log in with Authentik")
+
+    @override_settings(AUTHENTIK_ENABLED=True)
+    def test_login_view_context_flag_is_set_when_authentik_enabled(self):
+        # Not a full self.client.get(reverse("login")) render: the
+        # template's {% url 'oidc_authentication_init' %} would raise
+        # NoReverseMatch here, since override_settings can flip this
+        # flag but — unlike a real deployment started with real
+        # AUTHENTIK_* values — can't retroactively register the
+        # mozilla_django_oidc urls config.urls only ever included once,
+        # at process-startup import time. So this checks the view's own
+        # context data directly instead of the rendered page.
+        request = RequestFactory().get(reverse("login"))
+        request.user = AnonymousUser()
+        view = RateLimitedLoginView()
+        view.setup(request)
+        self.assertTrue(view.get_context_data()["authentik_enabled"])
+
+
+class OIDCAuthenticationBackendTests(TestCase):
+    """apps.accounts.oidc.IronStackOIDCAuthenticationBackend — unit
+    tests against its own claim-handling methods directly, not the
+    full mozilla_django_oidc.auth.OIDCAuthenticationBackend.authenticate()
+    flow (that would mean mocking the token/userinfo HTTP round-trip
+    to Authentik, which is mozilla-django-oidc's own already-tested
+    responsibility, not this project's)."""
+
+    def setUp(self):
+        from apps.accounts.oidc import IronStackOIDCAuthenticationBackend
+
+        self.backend = IronStackOIDCAuthenticationBackend.__new__(
+            IronStackOIDCAuthenticationBackend
+        )
+        self.backend.UserModel = User
+
+    def test_existing_local_account_is_matched_by_email(self):
+        User.objects.create_user(
+            username="quinn", password="s3cret-pass", email="quinn@example.com"
+        )
+        matched = self.backend.filter_users_by_claims({"email": "quinn@example.com"})
+        self.assertEqual(list(matched), [User.objects.get(username="quinn")])
+
+    def test_get_username_prefers_authentik_preferred_username(self):
+        username = self.backend.get_username(
+            {"email": "riley@example.com", "preferred_username": "riley"}
+        )
+        self.assertEqual(username, "riley")
+
+    def test_get_username_deduplicates_on_collision_with_an_existing_account(self):
+        User.objects.create_user(username="sam", password="s3cret-pass")
+        username = self.backend.get_username(
+            {"email": "sam2@example.com", "preferred_username": "sam"}
+        )
+        self.assertEqual(username, "sam2")
+
+    def test_create_user_sets_unusable_password_and_is_sso_user(self):
+        user = self.backend.create_user(
+            {"email": "tara@example.com", "preferred_username": "tara", "name": "Tara Tester"}
+        )
+        self.assertTrue(user.is_sso_user)
+        self.assertFalse(user.has_usable_password())
+
+    def test_create_user_takes_only_the_first_word_of_authentiks_full_name_claim(self):
+        # Authentik has no first/last name split of its own — its
+        # default OpenID 'profile' scope mapping sends the account's
+        # single full-name field as "name" (docs/SECURITY.md "Single
+        # sign-on (Authentik / OIDC)"). Only the first word should ever
+        # land on first_name, not the whole string.
+        user = self.backend.create_user(
+            {"email": "tara@example.com", "preferred_username": "tara", "name": "Tara Tester"}
+        )
+        self.assertEqual(user.first_name, "Tara")
+
+    def test_update_user_also_takes_only_the_first_word_of_the_name_claim(self):
+        user = User.objects.create_user(
+            username="willa", password="s3cret-pass", email="willa@example.com"
+        )
+        self.backend.update_user(user, {"email": "willa@example.com", "name": "Willa Wonka"})
+        user.refresh_from_db()
+        self.assertEqual(user.first_name, "Willa")
+
+    @override_settings(AUTHENTIK_REQUIRED_GROUP="")
+    def test_verify_claims_passes_by_default_with_no_required_group(self):
+        # Explicit override rather than relying on the ambient default
+        # (settings.AUTHENTIK_REQUIRED_GROUP default is "" — see
+        # config.settings.base) for the same reason as
+        # AuthentikLoginButtonTests.test_button_hidden_by_default's own
+        # override: a dev environment's .env may already have a real
+        # AUTHENTIK_REQUIRED_GROUP set, which would otherwise leak into
+        # this "no required group" case and fail it.
+        self.assertTrue(
+            self.backend.verify_claims({"email": "vic@example.com", "groups": []})
+        )
+
+    @override_settings(AUTHENTIK_REQUIRED_GROUP="ironstack-users")
+    def test_verify_claims_rejects_a_user_missing_the_required_group(self):
+        self.assertFalse(
+            self.backend.verify_claims(
+                {"email": "vic@example.com", "groups": ["some-other-app-users"]}
+            )
+        )
+
+    @override_settings(AUTHENTIK_REQUIRED_GROUP="ironstack-users")
+    def test_verify_claims_passes_a_user_in_the_required_group(self):
+        self.assertTrue(
+            self.backend.verify_claims(
+                {"email": "vic@example.com", "groups": ["ironstack-users", "other"]}
+            )
+        )
+
+    def test_update_user_marks_an_existing_local_account_as_sso_linked(self):
+        user = User.objects.create_user(
+            username="uma", password="s3cret-pass", email="uma@example.com"
+        )
+        self.backend.update_user(user, {"email": "uma@example.com", "name": "Uma"})
+        user.refresh_from_db()
+        self.assertTrue(user.is_sso_user)
+        self.assertEqual(user.first_name, "Uma")
+        # A local password set before ever linking Authentik stays
+        # usable — this account can still log in with it unless/until
+        # DJANGO_PASSWORD_LOGIN_ENABLED is turned off separately.
+        self.assertTrue(user.has_usable_password())

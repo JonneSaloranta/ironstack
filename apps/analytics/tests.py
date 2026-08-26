@@ -1,10 +1,12 @@
+import re
 from datetime import date, timedelta
 from decimal import Decimal
 
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse
-from django.utils import timezone
+from django.utils import timezone, translation
+from django.utils.formats import number_format
 
 from apps.exercises.models import Exercise, MuscleGroup
 from apps.records import services as records_services
@@ -502,6 +504,39 @@ class AnalyticsDashboardViewTests(TestCase):
         response = self.client.get(reverse("analytics:dashboard"))
         self.assertContains(response, 'class="bar-label"')
         self.assertContains(response, ">Test Chest Direct<")
+
+    def test_bar_geometry_stays_period_separated_under_a_comma_decimal_locale(self):
+        """Regression: apps.core.charts.build_bar_series' x/y/width/height
+        are Decimals, and Django auto-localizes {{ }} output per the
+        viewing user's own language (User.language) — under "fi" that's
+        a comma decimal separator ("148,00"), which isn't valid SVG
+        numeric syntax. Browsers silently fail to parse a comma-broken
+        coordinate, so every bar rendered at zero size — invisible, not
+        just misformatted — for any user with a comma-decimal UI
+        language. templates/core/_bar_chart.html wraps the SVG in
+        {% localize off %} to keep these internal plot coordinates
+        locale-independent; bar.value (shown to the user as text, not a
+        coordinate) still renders with the comma this user would expect.
+        """
+        self.alice.language = "fi"
+        self.alice.save(update_fields=["language"])
+        chest = MuscleGroup.objects.create(name="Test Chest Locale")
+        exercise = Exercise.objects.create(name="Test Bench Locale", owner=None)
+        exercise.primary_muscle_groups.set([chest])
+        _log_completed_session(self.alice, exercise, Decimal("80"), [5, 5, 5])
+
+        response = self.client.get(reverse("analytics:dashboard"))
+        content = response.content.decode()
+        for match in re.finditer(r'<rect class="bar-rect"([^>]+)>', content):
+            attrs = match.group(1)
+            for name in ("x", "y", "width", "height"):
+                value = re.search(rf'{name}="([^"]+)"', attrs).group(1)
+                self.assertNotIn(",", value, f"{name}={value!r} is not valid SVG syntax")
+        # The tooltip text itself (not a coordinate) should still render
+        # with the comma decimal separator "fi" expects.
+        bar_value = response.context["muscle_group_chart"].bars[0].value
+        with translation.override("fi"):
+            self.assertIn(f"{number_format(bar_value)} kg", content)
 
 
 class ExerciseAnalyticsViewTests(TestCase):

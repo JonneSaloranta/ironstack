@@ -1,3 +1,5 @@
+import hashlib
+
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.db import models
@@ -99,8 +101,45 @@ class User(AbstractUser):
     # was already using the app before this feature shipped.
     onboarding_completed = models.BooleanField(default=False)
 
+    # apps.accounts.oidc.IronStackOIDCAuthenticationBackend — set True
+    # the first time this account authenticates via Authentik, whether
+    # that's the login that created it or a later one that matched it
+    # to an existing local-password account by email (see that
+    # backend's own docstring). Purely informational (a "linked to
+    # Authentik" note on the profile page, docs/SECURITY.md "Single
+    # sign-on (Authentik / OIDC)") — it never gates anything on its
+    # own, since PASSWORD_LOGIN_ENABLED already controls whether local
+    # password login works at all, independent of any one account's
+    # history.
+    is_sso_user = models.BooleanField(default=False)
+
+    # apps.accounts.forms.ProfileForm / templates/accounts/profile.html —
+    # off by default, unlike every other display/privacy toggle on this
+    # model: turning it on doesn't just change what this instance itself
+    # shows, it makes the *browser* fetch gravatar_url() directly from
+    # gravatar.com on every profile page load, which is the only place
+    # in this app that talks to a server outside the user's own
+    # infrastructure (see docs/SECURITY.md "Gravatar profile picture").
+    # That request hands gravatar.com this user's IP address and a
+    # hash of their email, so it has to be something the user opts into
+    # rather than something this app does for them automatically.
+    show_gravatar = models.BooleanField(default=False)
+
     def __str__(self):
         return self.username
+
+    def gravatar_url(self, size=80):
+        """The Gravatar (https://gravatar.com) picture for this
+        account's email, if one exists — shown on the profile page only
+        when `show_gravatar` is on (see that field's own comment for
+        why it defaults off). `d=404` asks Gravatar to respond 404
+        instead of falling back to a generated placeholder, so the
+        <img> in the template can use `onerror` to just disappear for
+        an email with no Gravatar account, rather than showing
+        Gravatar's own default image for one that was never asked
+        for."""
+        email_hash = hashlib.sha256(self.email.strip().lower().encode("utf-8")).hexdigest()
+        return f"https://www.gravatar.com/avatar/{email_hash}?s={size}&d=404"
 
     def public_display_name(self):
         """What OTHER users see for this user — the achievements

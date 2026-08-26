@@ -396,6 +396,16 @@ class ContentSecurityPolicyTests(TestCase):
         response = self.client.get(reverse("healthcheck"))
         self.assertIn("frame-ancestors 'none'", response["Content-Security-Policy"])
 
+    def test_img_src_allows_gravatar_alongside_self(self):
+        # apps.accounts.models.User.gravatar_url — see docs/SECURITY.md
+        # "Gravatar profile picture" for why this is the one deliberate
+        # external allowance in an otherwise 'self'-only policy.
+        response = self.client.get(reverse("healthcheck"))
+        self.assertIn(
+            "img-src 'self' data: https://www.gravatar.com",
+            response["Content-Security-Policy"],
+        )
+
 
 class HealthcheckTests(TestCase):
     def test_healthcheck_returns_200_without_auth(self):
