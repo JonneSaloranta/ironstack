@@ -14,6 +14,8 @@ lands and remains the authoritative history.
 
 ## [Unreleased]
 
+## [1.3.0] — 2026-08-26
+
 ### Added
 - Authentik single sign-on (OIDC) as an optional login method
   alongside username/password + TOTP, `docs/SECURITY.md` "Single
