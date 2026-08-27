@@ -1775,19 +1775,17 @@ class DashboardCalendarTests(TestCase):
         response = self.client.get(reverse("dashboard"))
         today = timezone.localdate()
         self.assertEqual(response.context["calendar_month"], today.replace(day=1))
-        self.assertIsNone(response.context["calendar_next_month"])
 
     def test_month_param_shows_a_different_month(self):
         response = self.client.get(reverse("dashboard"), {"month": "2020-05"})
         self.assertEqual(response.context["calendar_month"].isoformat(), "2020-05-01")
-        # Not the current month any more, so both directions are open.
         self.assertEqual(response.context["calendar_prev_month"], "2020-04")
         self.assertEqual(response.context["calendar_next_month"], "2020-06")
 
-    def test_a_future_month_is_clamped_to_the_current_one(self):
+    def test_a_future_month_is_browsable_not_clamped(self):
         response = self.client.get(reverse("dashboard"), {"month": "2099-01"})
-        today = timezone.localdate()
-        self.assertEqual(response.context["calendar_month"], today.replace(day=1))
+        self.assertEqual(response.context["calendar_month"].isoformat(), "2099-01-01")
+        self.assertEqual(response.context["calendar_next_month"], "2099-02")
 
     def test_garbage_month_param_falls_back_to_the_current_month(self):
         response = self.client.get(reverse("dashboard"), {"month": "not-a-month"})
@@ -1827,6 +1825,40 @@ class DashboardCalendarTests(TestCase):
         self.assertEqual(len(days), 31)
         first_day = next(d for d in days if d["date"] == "2026-08-01")
         self.assertEqual(first_day["lines"], ["Rest day.", "Nothing logged that day."])
+
+    def test_a_far_future_month_still_renders_without_data(self):
+        """No clamp any more (calendar_prev_month/_next_month's own
+        docstring) — a future month with nothing logged in it yet is
+        still a perfectly valid thing to look at, not an error."""
+        response = self.client.get(reverse("dashboard"), {"month": "2099-06"})
+        self.assertEqual(response.status_code, 200)
+        for week in response.context["calendar_weeks"]:
+            for day in week:
+                if day["in_month"]:
+                    self.assertIsNone(day["status"].training_status)
+
+    def test_an_htmx_request_renders_only_the_calendar_partial(self):
+        """Changing month is an HTMX swap of just this one card
+        (templates/nutrition/_month_calendar.html's own comment) — the
+        response shouldn't re-render (or re-query for) the rest of the
+        dashboard at all."""
+        response = self.client.get(
+            reverse("dashboard"), {"month": "2020-05"}, HTTP_HX_REQUEST="true"
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "nutrition/_month_calendar.html")
+        self.assertTemplateNotUsed(response, "core/dashboard.html")
+        self.assertContains(response, "2020")
+        self.assertNotIn("achievements", response.context)
+
+    def test_month_links_use_htmx_and_carry_a_plain_href_fallback(self):
+        response = self.client.get(reverse("dashboard"))
+        self.assertContains(response, 'id="month-calendar"')
+        self.assertContains(response, 'hx-target="#month-calendar"')
+        self.assertContains(response, 'hx-push-url="true"')
+        # A plain href alongside hx-get, not instead of it — works even
+        # if JS/HTMX never loads at all.
+        self.assertContains(response, "href=\"?month=")
 
 
 class DayDetailLinesTests(TestCase):

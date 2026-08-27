@@ -17,11 +17,30 @@ call to apps.nutrition.services from the "downstream, composes
 several apps" layer that dashboard already is (same reasoning as its
 own recent-PRs/training-summary/body-weight sections, each from a
 different app).
+
+Every month-changing link below is HTMX (hx-get + hx-target="#month-
+calendar" + hx-swap="outerHTML"), not a plain <a href>, so switching
+months swaps just this one card instead of a full-page navigation —
+found needed live: every click used to reload and repaint the entire
+dashboard for a one-card change, visible as a brief flash each time.
+`href` stays set on every link regardless (a normal, working page
+navigation) — HTMX only intercepts the click, so this degrades
+correctly if JS is ever unavailable. `hx-push-url="true"` keeps the
+address bar's own `?month=` in sync either way, so reloading, sharing,
+or using the browser's own back/forward buttons all still land on the
+right month. DashboardView.get_template_names() renders just this
+partial for the HTMX request that results (never the whole dashboard
+again), and outerHTML swaps the whole card including the `x-data`
+below — Alpine only reads `calendar-days-data`'s contents once, at
+`x-data` init, so the *element* has to be replaced wholesale for a new
+month's popover data to ever take effect, not just its inner content.
 {% endcomment %}
 {{ calendar_days_json|json_script:"calendar-days-data" }}
-<div class="card" x-data="ironstackMonthCalendar('calendar-days-data')">
+<div class="card" id="month-calendar" x-data="ironstackMonthCalendar('calendar-days-data')">
   <div class="calendar-header" x-data="{ helpOpen: false }">
-    <a class="button-secondary" href="?month={{ calendar_prev_month }}" aria-label="{% trans "Previous month" %}">&larr;</a>
+    <a class="button-secondary" href="?month={{ calendar_prev_month }}"
+       hx-get="?month={{ calendar_prev_month }}" hx-target="#month-calendar" hx-swap="outerHTML"
+       hx-push-url="true" aria-label="{% trans "Previous month" %}">&larr;</a>
     <strong style="display:flex; align-items:center; gap:0.5rem;">
       {% comment %}
         capfirst: Finnish/Swedish/Estonian month names are lowercase
@@ -34,11 +53,9 @@ different app).
       {{ calendar_month|date:"F Y"|capfirst }}
       <button type="button" class="help-button" @click="helpOpen = true" aria-label="{% trans "How to read this calendar" %}">?</button>
     </strong>
-    {% if calendar_next_month %}
-      <a class="button-secondary" href="?month={{ calendar_next_month }}" aria-label="{% trans "Next month" %}">&rarr;</a>
-    {% else %}
-      <span style="width:var(--touch-target);"></span>
-    {% endif %}
+    <a class="button-secondary" href="?month={{ calendar_next_month }}"
+       hx-get="?month={{ calendar_next_month }}" hx-target="#month-calendar" hx-swap="outerHTML"
+       hx-push-url="true" aria-label="{% trans "Next month" %}">&rarr;</a>
 
     <div class="modal-backdrop" x-show="helpOpen" x-cloak x-transition.opacity.duration.200ms
          @click.self="helpOpen = false" @keydown.escape.window="helpOpen = false">
@@ -119,24 +136,21 @@ different app).
               tapping one used to open a detail popover for a day
               whose own month isn't even the one on screen, which read
               as "broken" rather than "this belongs elsewhere." Jumps
-              to that day's actual month instead. Only the previous
-              month is ever guaranteed reachable — a trailing day from
-              a *next* month beyond the current real one has nothing
-              to show (the future hasn't happened yet), so it stays
-              inert exactly when calendar_next_month itself is hidden.
+              to that day's actual month instead, the same HTMX-swap
+              link as the prev/next arrows above.
             {% endcomment %}
             {% if day.date < calendar_month %}
-              <a class="calendar-day calendar-day-outside" href="?month={{ calendar_prev_month }}">
-                <span class="text-muted">{{ day.date.day }}</span>
-              </a>
-            {% elif calendar_next_month %}
-              <a class="calendar-day calendar-day-outside" href="?month={{ calendar_next_month }}">
+              <a class="calendar-day calendar-day-outside" href="?month={{ calendar_prev_month }}"
+                 hx-get="?month={{ calendar_prev_month }}" hx-target="#month-calendar" hx-swap="outerHTML"
+                 hx-push-url="true">
                 <span class="text-muted">{{ day.date.day }}</span>
               </a>
             {% else %}
-              <div class="calendar-day calendar-day-outside">
+              <a class="calendar-day calendar-day-outside" href="?month={{ calendar_next_month }}"
+                 hx-get="?month={{ calendar_next_month }}" hx-target="#month-calendar" hx-swap="outerHTML"
+                 hx-push-url="true">
                 <span class="text-muted">{{ day.date.day }}</span>
-              </div>
+              </a>
             {% endif %}
           {% else %}
             <button type="button"
