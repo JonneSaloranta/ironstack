@@ -487,10 +487,10 @@ abbr[title]:focus::after {
 }
 
 /* A <button> that reads as plain inline text, not a boxed button — for
-   an action that's secondary to the whole page it's on (opening the
-   privacy notice modal, templates/accounts/_privacy_notice_modal.html)
-   and shouldn't visually compete with the page's own primary
-   button(s). */
+   an action that's secondary to the whole page it's on (expanding one
+   section of templates/accounts/data_export.html's own per-category
+   breakdown) and shouldn't visually compete with the page's own
+   primary button(s). */
 .link-button {
   background: none;
   border: none;
@@ -501,10 +501,12 @@ abbr[title]:focus::after {
   cursor: pointer;
 }
 
-/* A <button>, not just styled text — clicking it opens the changelog
-   modal below, so it needs the usual button resets (no native
-   background/border) on top of looking like the plain muted footer
-   text it always was. */
+/* A <button>, not just styled text — clicking it opens a modal (the
+   changelog below, or templates/accounts/_privacy_notice_modal.html's
+   privacy notice, sharing this exact look on purpose rather than a
+   second near-identical class), so it needs the usual button resets
+   (no native background/border) on top of looking like the plain
+   muted footer text it always was. */
 .app-version {
   display: block;
   width: 100%;

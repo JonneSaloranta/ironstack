@@ -16,7 +16,7 @@ GDPR "data controller" for it, not this project's authors. The notice
 below says so plainly rather than pretending otherwise.
 {% endcomment %}
 <div x-data="{ privacyOpen: false }">
-  <button type="button" class="link-button" @click="privacyOpen = true">{% trans "Privacy notice" %}</button>
+  <button type="button" class="app-version" @click="privacyOpen = true">{% trans "Privacy notice" %}</button>
 
   <div class="modal-backdrop" x-show="privacyOpen" x-cloak x-transition.opacity.duration.200ms
        @click.self="privacyOpen = false" @keydown.escape.window="privacyOpen = false">
