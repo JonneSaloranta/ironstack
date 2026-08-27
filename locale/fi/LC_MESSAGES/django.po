@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: IronStack\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-27 16:17+0000\n"
+"POT-Creation-Date: 2026-08-27 16:47+0000\n"
 "Language: fi\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -246,7 +246,7 @@ msgstr "Tilin tiedot tallennettu."
 msgid "Two-factor authentication is already enabled."
 msgstr "Kaksivaiheinen tunnistautuminen on jo käytössä."
 
-#: apps/accounts/views.py:338
+#: apps/accounts/views.py:340
 msgid "Two-factor authentication turned off."
 msgstr "Kaksivaiheinen tunnistautuminen poistettu käytöstä."
 
@@ -693,7 +693,10 @@ msgid ""
 "Lets search engines crawl and index this instance. Off by default — most "
 "installs are a private, self-hosted app for one household, not a public site "
 "anyone should be searching for."
-msgstr "Sallii hakukoneiden indeksoida tämän asennuksen. Pois päältä oletuksena — useimmat asennukset ovat yksityisiä, itseisännöityjä sovelluksia yhdelle kotitaloudelle, eikä julkinen sivusto jota kenenkään pitäisi etsiä."
+msgstr ""
+"Sallii hakukoneiden indeksoida tämän asennuksen. Pois päältä oletuksena — "
+"useimmat asennukset ovat yksityisiä, itseisännöityjä sovelluksia yhdelle "
+"kotitaloudelle, eikä julkinen sivusto jota kenenkään pitäisi etsiä."
 
 #: apps/core/models.py:163 templates/base.html:107 templates/base.html:109
 msgid "Progress"
@@ -2382,6 +2385,21 @@ msgstr ""
 msgid "Save"
 msgstr "Tallenna"
 
+#: templates/accounts/_two_factor_backup_codes_fragment.html:4
+msgid ""
+"Each one works once, if you ever lose access to your authenticator app. They "
+"won't be shown again — save them somewhere safe now. Your old backup codes "
+"no longer work."
+msgstr ""
+"Jokainen koodi toimii kerran, jos menetät pääsyn "
+"tunnistautumissovellukseesi. Niitä ei näytetä enää uudelleen — tallenna ne "
+"nyt turvalliseen paikkaan. Vanhat varakoodisi eivät enää toimi."
+
+#: templates/accounts/_two_factor_backup_codes_fragment.html:11
+#: templates/api/key_created.html:16
+msgid "Done"
+msgstr "Valmis"
+
 #: templates/accounts/account_details_form.html:3
 #: templates/accounts/account_details_form.html:6
 #: templates/accounts/profile.html:51
@@ -2521,7 +2539,7 @@ msgid "Changelog"
 msgstr "Muutosloki"
 
 #: templates/accounts/profile.html:156 templates/api/key_list.html:20
-#: templates/base.html:92 templates/nutrition/_month_calendar.html:50
+#: templates/base.html:92 templates/nutrition/_month_calendar.html:67
 #: templates/records/_pr_toasts.html:28
 msgid "Dismiss"
 msgstr "Sulje"
@@ -2549,21 +2567,13 @@ msgstr "Kirjaudu sisään"
 msgid "New backup codes"
 msgstr "Uudet varakoodit"
 
-#: templates/accounts/two_factor_backup_codes.html:9
-msgid ""
-"Each one works once, if you ever lose access to your authenticator app. They "
-"won't be shown again — save them somewhere safe now. Your old backup codes "
-"no longer work."
-msgstr ""
-"Jokainen koodi toimii kerran, jos menetät pääsyn "
-"tunnistautumissovellukseesi. Niitä ei näytetä enää uudelleen — tallenna ne "
-"nyt turvalliseen paikkaan. Vanhat varakoodisi eivät enää toimi."
+#: templates/accounts/two_factor_backup_codes.html:11
+msgid "Two-factor authentication is now enabled."
+msgstr "Kaksivaiheinen tunnistautuminen on nyt käytössä."
 
-#: templates/accounts/two_factor_backup_codes.html:16
-#: templates/accounts/two_factor_setup.html:22
-#: templates/api/key_created.html:16
-msgid "Done"
-msgstr "Valmis"
+#: templates/accounts/two_factor_backup_codes.html:30
+msgid "Generating your new backup codes…"
+msgstr "Luodaan uusia varmuuskoodeja…"
 
 #: templates/accounts/two_factor_disable.html:3
 #: templates/accounts/two_factor_disable.html:6
@@ -2581,7 +2591,7 @@ msgstr ""
 "jäljellä olevat varakoodisi."
 
 #: templates/accounts/two_factor_disable.html:23
-#: templates/accounts/two_factor_setup.html:41
+#: templates/accounts/two_factor_setup.html:26
 #: templates/programs/program_confirm_delete.html:16
 msgid "Cancel"
 msgstr "Peruuta"
@@ -2617,24 +2627,7 @@ msgstr "Poistaa tunnistautumissovelluksen ja varakoodit. Vaatii salasanasi."
 msgid "Disable"
 msgstr "Poista käytöstä"
 
-#: templates/accounts/two_factor_setup.html:11
-msgid "Two-factor authentication is now enabled."
-msgstr "Kaksivaiheinen tunnistautuminen on nyt käytössä."
-
-#: templates/accounts/two_factor_setup.html:14
-msgid "Save these backup codes"
-msgstr "Tallenna nämä varakoodit"
-
-#: templates/accounts/two_factor_setup.html:15
-msgid ""
-"Each one works once, if you ever lose access to your authenticator app. They "
-"won't be shown again — save them somewhere safe now."
-msgstr ""
-"Jokainen koodi toimii kerran, jos menetät pääsyn "
-"tunnistautumissovellukseesi. Niitä ei näytetä enää uudelleen — tallenna ne "
-"nyt turvalliseen paikkaan."
-
-#: templates/accounts/two_factor_setup.html:25
+#: templates/accounts/two_factor_setup.html:10
 msgid ""
 "Scan this QR code with an authenticator app (e.g. Google Authenticator, "
 "Authy, or a password manager with built-in support), then enter the 6-digit "
@@ -2644,15 +2637,15 @@ msgstr ""
 "Authenticator, Authy tai salasananhallinta, jossa on sisäänrakennettu tuki), "
 "ja vahvista käyttöönotto syöttämällä sen näyttämä 6-numeroinen koodi."
 
-#: templates/accounts/two_factor_setup.html:26
+#: templates/accounts/two_factor_setup.html:11
 msgid "Two-factor authentication QR code"
 msgstr "Kaksivaiheisen tunnistautumisen QR-koodi"
 
-#: templates/accounts/two_factor_setup.html:27
+#: templates/accounts/two_factor_setup.html:12
 msgid "Can't scan the code? Enter this key manually:"
 msgstr "Etkö voi skannata koodia? Syötä tämä avain käsin:"
 
-#: templates/accounts/two_factor_setup.html:39
+#: templates/accounts/two_factor_setup.html:24
 msgid "Confirm and enable"
 msgstr "Vahvista ja ota käyttöön"
 
@@ -3118,11 +3111,15 @@ msgid ""
 "Self-hosted, mobile-first fitness and activity tracker — workout logging, "
 "progression, nutrition, and body tracking, running entirely on your own "
 "infrastructure."
-msgstr "Itseisännöity, mobiilikeskeinen kuntoilun ja aktiviteettien seurantasovellus — treenien kirjaus, progressio, ravinto ja kehon seuranta, toimien kokonaan omalla infrastruktuurillasi."
+msgstr ""
+"Itseisännöity, mobiilikeskeinen kuntoilun ja aktiviteettien seurantasovellus "
+"— treenien kirjaus, progressio, ravinto ja kehon seuranta, toimien kokonaan "
+"omalla infrastruktuurillasi."
 
 #: templates/base.html:37
 msgid "Self-hosted, mobile-first fitness and activity tracker."
-msgstr "Itseisännöity, mobiilikeskeinen kuntoilun ja aktiviteettien seurantasovellus."
+msgstr ""
+"Itseisännöity, mobiilikeskeinen kuntoilun ja aktiviteettien seurantasovellus."
 
 #: templates/base.html:72
 msgid "Skip to content"
@@ -3688,62 +3685,62 @@ msgstr "Ei löytynyt mitään."
 msgid "Create a custom food"
 msgstr "Luo oma ruoka"
 
-#: templates/nutrition/_month_calendar.html:24
+#: templates/nutrition/_month_calendar.html:43
 msgid "Previous month"
 msgstr "Edellinen kuukausi"
 
-#: templates/nutrition/_month_calendar.html:36
-#: templates/nutrition/_month_calendar.html:46
-#: templates/nutrition/_month_calendar.html:49
+#: templates/nutrition/_month_calendar.html:55
+#: templates/nutrition/_month_calendar.html:63
+#: templates/nutrition/_month_calendar.html:66
 msgid "How to read this calendar"
 msgstr "Miten kalenteria luetaan"
 
-#: templates/nutrition/_month_calendar.html:39
+#: templates/nutrition/_month_calendar.html:59
 msgid "Next month"
 msgstr "Seuraava kuukausi"
 
-#: templates/nutrition/_month_calendar.html:70
+#: templates/nutrition/_month_calendar.html:87
 msgid "New personal record"
 msgstr "Uusi ennätys"
 
-#: templates/nutrition/_month_calendar.html:74
+#: templates/nutrition/_month_calendar.html:91
 msgid "A session was abandoned"
 msgstr "Treeni keskeytettiin"
 
-#: templates/nutrition/_month_calendar.html:78
+#: templates/nutrition/_month_calendar.html:95
 msgid "An ordinary training day"
 msgstr "Tavallinen treenipäivä"
 
-#: templates/nutrition/_month_calendar.html:82
+#: templates/nutrition/_month_calendar.html:99
 #: templates/nutrition/dashboard.html:11
 msgid "Rest day"
 msgstr "Lepopäivä"
 
-#: templates/nutrition/_month_calendar.html:86
+#: templates/nutrition/_month_calendar.html:103
 msgid "Trailing 7-day average calories ran over your target"
 msgstr "Liukuva 7 päivän kalorikeskiarvo ylitti tavoitteesi"
 
-#: templates/nutrition/_month_calendar.html:90
+#: templates/nutrition/_month_calendar.html:107
 msgid "Trailing 7-day average calories ran under your target"
 msgstr "Liukuva 7 päivän kalorikeskiarvo alitti tavoitteesi"
 
-#: templates/nutrition/_month_calendar.html:94
+#: templates/nutrition/_month_calendar.html:111
 msgid "Close to target"
 msgstr "Lähellä tavoitetta"
 
-#: templates/nutrition/_month_calendar.html:98
+#: templates/nutrition/_month_calendar.html:115
 msgid "Drifting from target"
 msgstr "Loittonemassa tavoitteesta"
 
-#: templates/nutrition/_month_calendar.html:102
+#: templates/nutrition/_month_calendar.html:119
 msgid "Well off target"
 msgstr "Kaukana tavoitteesta"
 
-#: templates/nutrition/_month_calendar.html:105
+#: templates/nutrition/_month_calendar.html:122
 msgid "No arrow yet means there isn't enough logged data to judge."
 msgstr "Jos nuolta ei näy, kirjattua dataa ei ole vielä tarpeeksi arvioon."
 
-#: templates/nutrition/_month_calendar.html:106
+#: templates/nutrition/_month_calendar.html:123
 msgid "Tap a day for details."
 msgstr "Napauta päivää nähdäksesi lisätiedot."
 

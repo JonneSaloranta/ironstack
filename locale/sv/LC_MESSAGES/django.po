@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: IronStack\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-27 16:17+0000\n"
+"POT-Creation-Date: 2026-08-27 16:47+0000\n"
 "Language: sv\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -243,7 +243,7 @@ msgstr "Kontouppgifterna har sparats."
 msgid "Two-factor authentication is already enabled."
 msgstr "Tvåfaktorsautentisering är redan aktiverad."
 
-#: apps/accounts/views.py:338
+#: apps/accounts/views.py:340
 msgid "Two-factor authentication turned off."
 msgstr "Tvåfaktorsautentisering avstängd."
 
@@ -689,7 +689,10 @@ msgid ""
 "Lets search engines crawl and index this instance. Off by default — most "
 "installs are a private, self-hosted app for one household, not a public site "
 "anyone should be searching for."
-msgstr "Låter sökmotorer genomsöka och indexera denna instans. Avstängt som standard — de flesta installationer är en privat, självhostad app för ett hushåll, inte en offentlig webbplats som någon borde söka efter."
+msgstr ""
+"Låter sökmotorer genomsöka och indexera denna instans. Avstängt som standard "
+"— de flesta installationer är en privat, självhostad app för ett hushåll, "
+"inte en offentlig webbplats som någon borde söka efter."
 
 #: apps/core/models.py:163 templates/base.html:107 templates/base.html:109
 msgid "Progress"
@@ -2363,6 +2366,21 @@ msgstr ""
 msgid "Save"
 msgstr "Spara"
 
+#: templates/accounts/_two_factor_backup_codes_fragment.html:4
+msgid ""
+"Each one works once, if you ever lose access to your authenticator app. They "
+"won't be shown again — save them somewhere safe now. Your old backup codes "
+"no longer work."
+msgstr ""
+"Varje kod fungerar en gång, om du någonsin förlorar åtkomsten till din "
+"autentiseringsapp. De visas inte igen — spara dem på ett säkert ställe nu. "
+"Dina gamla reservkoder fungerar inte längre."
+
+#: templates/accounts/_two_factor_backup_codes_fragment.html:11
+#: templates/api/key_created.html:16
+msgid "Done"
+msgstr "Klar"
+
 #: templates/accounts/account_details_form.html:3
 #: templates/accounts/account_details_form.html:6
 #: templates/accounts/profile.html:51
@@ -2504,7 +2522,7 @@ msgid "Changelog"
 msgstr "Ändringslogg"
 
 #: templates/accounts/profile.html:156 templates/api/key_list.html:20
-#: templates/base.html:92 templates/nutrition/_month_calendar.html:50
+#: templates/base.html:92 templates/nutrition/_month_calendar.html:67
 #: templates/records/_pr_toasts.html:28
 msgid "Dismiss"
 msgstr "Stäng"
@@ -2532,21 +2550,13 @@ msgstr "Logga in"
 msgid "New backup codes"
 msgstr "Nya reservkoder"
 
-#: templates/accounts/two_factor_backup_codes.html:9
-msgid ""
-"Each one works once, if you ever lose access to your authenticator app. They "
-"won't be shown again — save them somewhere safe now. Your old backup codes "
-"no longer work."
-msgstr ""
-"Varje kod fungerar en gång, om du någonsin förlorar åtkomsten till din "
-"autentiseringsapp. De visas inte igen — spara dem på ett säkert ställe nu. "
-"Dina gamla reservkoder fungerar inte längre."
+#: templates/accounts/two_factor_backup_codes.html:11
+msgid "Two-factor authentication is now enabled."
+msgstr "Tvåfaktorsautentisering är nu aktiverad."
 
-#: templates/accounts/two_factor_backup_codes.html:16
-#: templates/accounts/two_factor_setup.html:22
-#: templates/api/key_created.html:16
-msgid "Done"
-msgstr "Klar"
+#: templates/accounts/two_factor_backup_codes.html:30
+msgid "Generating your new backup codes…"
+msgstr "Genererar dina nya reservkoder…"
 
 #: templates/accounts/two_factor_disable.html:3
 #: templates/accounts/two_factor_disable.html:6
@@ -2564,7 +2574,7 @@ msgstr ""
 "och dina återstående reservkoder."
 
 #: templates/accounts/two_factor_disable.html:23
-#: templates/accounts/two_factor_setup.html:41
+#: templates/accounts/two_factor_setup.html:26
 #: templates/programs/program_confirm_delete.html:16
 msgid "Cancel"
 msgstr "Avbryt"
@@ -2601,23 +2611,7 @@ msgstr "Tar bort din autentiseringsapp och reservkoder. Kräver ditt lösenord."
 msgid "Disable"
 msgstr "Inaktivera"
 
-#: templates/accounts/two_factor_setup.html:11
-msgid "Two-factor authentication is now enabled."
-msgstr "Tvåfaktorsautentisering är nu aktiverad."
-
-#: templates/accounts/two_factor_setup.html:14
-msgid "Save these backup codes"
-msgstr "Spara dessa reservkoder"
-
-#: templates/accounts/two_factor_setup.html:15
-msgid ""
-"Each one works once, if you ever lose access to your authenticator app. They "
-"won't be shown again — save them somewhere safe now."
-msgstr ""
-"Varje kod fungerar en gång, om du någonsin förlorar åtkomsten till din "
-"autentiseringsapp. De visas inte igen — spara dem på ett säkert ställe nu."
-
-#: templates/accounts/two_factor_setup.html:25
+#: templates/accounts/two_factor_setup.html:10
 msgid ""
 "Scan this QR code with an authenticator app (e.g. Google Authenticator, "
 "Authy, or a password manager with built-in support), then enter the 6-digit "
@@ -2627,15 +2621,15 @@ msgstr ""
 "Authy eller en lösenordshanterare med inbyggt stöd), och ange sedan den 6-"
 "siffriga koden den visar för att bekräfta konfigurationen."
 
-#: templates/accounts/two_factor_setup.html:26
+#: templates/accounts/two_factor_setup.html:11
 msgid "Two-factor authentication QR code"
 msgstr "QR-kod för tvåfaktorsautentisering"
 
-#: templates/accounts/two_factor_setup.html:27
+#: templates/accounts/two_factor_setup.html:12
 msgid "Can't scan the code? Enter this key manually:"
 msgstr "Kan du inte skanna koden? Ange denna nyckel manuellt:"
 
-#: templates/accounts/two_factor_setup.html:39
+#: templates/accounts/two_factor_setup.html:24
 msgid "Confirm and enable"
 msgstr "Bekräfta och aktivera"
 
@@ -3102,7 +3096,10 @@ msgid ""
 "Self-hosted, mobile-first fitness and activity tracker — workout logging, "
 "progression, nutrition, and body tracking, running entirely on your own "
 "infrastructure."
-msgstr "Självhostad, mobilanpassad app för träning och aktivitetsspårning — träningsloggning, progression, kost och kroppsspårning, som körs helt på din egen infrastruktur."
+msgstr ""
+"Självhostad, mobilanpassad app för träning och aktivitetsspårning — "
+"träningsloggning, progression, kost och kroppsspårning, som körs helt på din "
+"egen infrastruktur."
 
 #: templates/base.html:37
 msgid "Self-hosted, mobile-first fitness and activity tracker."
@@ -3669,64 +3666,64 @@ msgstr "Inget hittades."
 msgid "Create a custom food"
 msgstr "Skapa ett eget livsmedel"
 
-#: templates/nutrition/_month_calendar.html:24
+#: templates/nutrition/_month_calendar.html:43
 msgid "Previous month"
 msgstr "Föregående månad"
 
-#: templates/nutrition/_month_calendar.html:36
-#: templates/nutrition/_month_calendar.html:46
-#: templates/nutrition/_month_calendar.html:49
+#: templates/nutrition/_month_calendar.html:55
+#: templates/nutrition/_month_calendar.html:63
+#: templates/nutrition/_month_calendar.html:66
 msgid "How to read this calendar"
 msgstr "Så här läser du kalendern"
 
-#: templates/nutrition/_month_calendar.html:39
+#: templates/nutrition/_month_calendar.html:59
 msgid "Next month"
 msgstr "Nästa månad"
 
-#: templates/nutrition/_month_calendar.html:70
+#: templates/nutrition/_month_calendar.html:87
 msgid "New personal record"
 msgstr "Nytt personligt rekord"
 
-#: templates/nutrition/_month_calendar.html:74
+#: templates/nutrition/_month_calendar.html:91
 msgid "A session was abandoned"
 msgstr "Ett pass avbröts"
 
-#: templates/nutrition/_month_calendar.html:78
+#: templates/nutrition/_month_calendar.html:95
 msgid "An ordinary training day"
 msgstr "En vanlig träningsdag"
 
-#: templates/nutrition/_month_calendar.html:82
+#: templates/nutrition/_month_calendar.html:99
 #: templates/nutrition/dashboard.html:11
 msgid "Rest day"
 msgstr "Vilodag"
 
-#: templates/nutrition/_month_calendar.html:86
+#: templates/nutrition/_month_calendar.html:103
 msgid "Trailing 7-day average calories ran over your target"
 msgstr "Det glidande 7-dagarsgenomsnittet av kalorier låg över ditt mål"
 
-#: templates/nutrition/_month_calendar.html:90
+#: templates/nutrition/_month_calendar.html:107
 msgid "Trailing 7-day average calories ran under your target"
 msgstr "Det glidande 7-dagarsgenomsnittet av kalorier låg under ditt mål"
 
-#: templates/nutrition/_month_calendar.html:94
+#: templates/nutrition/_month_calendar.html:111
 msgid "Close to target"
 msgstr "Nära målet"
 
-#: templates/nutrition/_month_calendar.html:98
+#: templates/nutrition/_month_calendar.html:115
 msgid "Drifting from target"
 msgstr "Driver bort från målet"
 
-#: templates/nutrition/_month_calendar.html:102
+#: templates/nutrition/_month_calendar.html:119
 msgid "Well off target"
 msgstr "Långt från målet"
 
-#: templates/nutrition/_month_calendar.html:105
+#: templates/nutrition/_month_calendar.html:122
 msgid "No arrow yet means there isn't enough logged data to judge."
 msgstr ""
 "Ingen pil ännu betyder att det inte finns tillräckligt med loggad data för "
 "att bedöma."
 
-#: templates/nutrition/_month_calendar.html:106
+#: templates/nutrition/_month_calendar.html:123
 msgid "Tap a day for details."
 msgstr "Tryck på en dag för mer information."
 

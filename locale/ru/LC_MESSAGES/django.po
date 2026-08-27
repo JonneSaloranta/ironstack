@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: IronStack\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-27 16:17+0000\n"
+"POT-Creation-Date: 2026-08-27 16:47+0000\n"
 "Language: ru\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -247,7 +247,7 @@ msgstr "Данные аккаунта сохранены."
 msgid "Two-factor authentication is already enabled."
 msgstr "Двухфакторная аутентификация уже включена."
 
-#: apps/accounts/views.py:338
+#: apps/accounts/views.py:340
 msgid "Two-factor authentication turned off."
 msgstr "Двухфакторная аутентификация отключена."
 
@@ -699,7 +699,11 @@ msgid ""
 "Lets search engines crawl and index this instance. Off by default — most "
 "installs are a private, self-hosted app for one household, not a public site "
 "anyone should be searching for."
-msgstr "Разрешает поисковым системам сканировать и индексировать этот экземпляр. По умолчанию выключено — большинство установок это частное, самостоятельно размещённое приложение для одной семьи, а не публичный сайт, который кто-то должен искать."
+msgstr ""
+"Разрешает поисковым системам сканировать и индексировать этот экземпляр. По "
+"умолчанию выключено — большинство установок это частное, самостоятельно "
+"размещённое приложение для одной семьи, а не публичный сайт, который кто-то "
+"должен искать."
 
 #: apps/core/models.py:163 templates/base.html:107 templates/base.html:109
 msgid "Progress"
@@ -2391,6 +2395,21 @@ msgstr ""
 msgid "Save"
 msgstr "Сохранить"
 
+#: templates/accounts/_two_factor_backup_codes_fragment.html:4
+msgid ""
+"Each one works once, if you ever lose access to your authenticator app. They "
+"won't be shown again — save them somewhere safe now. Your old backup codes "
+"no longer work."
+msgstr ""
+"Каждый код работает один раз — на случай, если вы потеряете доступ к "
+"приложению-аутентификатору. Они больше не будут показаны — сохраните их "
+"сейчас в надёжном месте. Старые резервные коды больше не действуют."
+
+#: templates/accounts/_two_factor_backup_codes_fragment.html:11
+#: templates/api/key_created.html:16
+msgid "Done"
+msgstr "Готово"
+
 #: templates/accounts/account_details_form.html:3
 #: templates/accounts/account_details_form.html:6
 #: templates/accounts/profile.html:51
@@ -2522,7 +2541,8 @@ msgstr "Сайт и SEO"
 
 #: templates/accounts/profile.html:133
 msgid "Control whether search engines are allowed to index this instance."
-msgstr "Управляйте тем, разрешено ли поисковым системам индексировать этот экземпляр."
+msgstr ""
+"Управляйте тем, разрешено ли поисковым системам индексировать этот экземпляр."
 
 #: templates/accounts/profile.html:142
 msgid "Log out"
@@ -2538,7 +2558,7 @@ msgid "Changelog"
 msgstr "Список изменений"
 
 #: templates/accounts/profile.html:156 templates/api/key_list.html:20
-#: templates/base.html:92 templates/nutrition/_month_calendar.html:50
+#: templates/base.html:92 templates/nutrition/_month_calendar.html:67
 #: templates/records/_pr_toasts.html:28
 msgid "Dismiss"
 msgstr "Закрыть"
@@ -2566,21 +2586,13 @@ msgstr "Войти"
 msgid "New backup codes"
 msgstr "Новые резервные коды"
 
-#: templates/accounts/two_factor_backup_codes.html:9
-msgid ""
-"Each one works once, if you ever lose access to your authenticator app. They "
-"won't be shown again — save them somewhere safe now. Your old backup codes "
-"no longer work."
-msgstr ""
-"Каждый код работает один раз — на случай, если вы потеряете доступ к "
-"приложению-аутентификатору. Они больше не будут показаны — сохраните их "
-"сейчас в надёжном месте. Старые резервные коды больше не действуют."
+#: templates/accounts/two_factor_backup_codes.html:11
+msgid "Two-factor authentication is now enabled."
+msgstr "Двухфакторная аутентификация теперь включена."
 
-#: templates/accounts/two_factor_backup_codes.html:16
-#: templates/accounts/two_factor_setup.html:22
-#: templates/api/key_created.html:16
-msgid "Done"
-msgstr "Готово"
+#: templates/accounts/two_factor_backup_codes.html:30
+msgid "Generating your new backup codes…"
+msgstr "Создаём новые резервные коды…"
 
 #: templates/accounts/two_factor_disable.html:3
 #: templates/accounts/two_factor_disable.html:6
@@ -2598,7 +2610,7 @@ msgstr ""
 "резервные коды."
 
 #: templates/accounts/two_factor_disable.html:23
-#: templates/accounts/two_factor_setup.html:41
+#: templates/accounts/two_factor_setup.html:26
 #: templates/programs/program_confirm_delete.html:16
 msgid "Cancel"
 msgstr "Отмена"
@@ -2635,24 +2647,7 @@ msgstr "Удаляет аутентификатор и резервные код
 msgid "Disable"
 msgstr "Отключить"
 
-#: templates/accounts/two_factor_setup.html:11
-msgid "Two-factor authentication is now enabled."
-msgstr "Двухфакторная аутентификация теперь включена."
-
-#: templates/accounts/two_factor_setup.html:14
-msgid "Save these backup codes"
-msgstr "Сохраните эти резервные коды"
-
-#: templates/accounts/two_factor_setup.html:15
-msgid ""
-"Each one works once, if you ever lose access to your authenticator app. They "
-"won't be shown again — save them somewhere safe now."
-msgstr ""
-"Каждый код работает один раз — на случай, если вы потеряете доступ к "
-"приложению-аутентификатору. Они больше не будут показаны — сохраните их "
-"сейчас в надёжном месте."
-
-#: templates/accounts/two_factor_setup.html:25
+#: templates/accounts/two_factor_setup.html:10
 msgid ""
 "Scan this QR code with an authenticator app (e.g. Google Authenticator, "
 "Authy, or a password manager with built-in support), then enter the 6-digit "
@@ -2662,15 +2657,15 @@ msgstr ""
 "Authenticator, Authy или менеджере паролей со встроенной поддержкой), затем "
 "введите показанный 6-значный код, чтобы подтвердить настройку."
 
-#: templates/accounts/two_factor_setup.html:26
+#: templates/accounts/two_factor_setup.html:11
 msgid "Two-factor authentication QR code"
 msgstr "QR-код двухфакторной аутентификации"
 
-#: templates/accounts/two_factor_setup.html:27
+#: templates/accounts/two_factor_setup.html:12
 msgid "Can't scan the code? Enter this key manually:"
 msgstr "Не получается отсканировать код? Введите этот ключ вручную:"
 
-#: templates/accounts/two_factor_setup.html:39
+#: templates/accounts/two_factor_setup.html:24
 msgid "Confirm and enable"
 msgstr "Подтвердить и включить"
 
@@ -3139,11 +3134,16 @@ msgid ""
 "Self-hosted, mobile-first fitness and activity tracker — workout logging, "
 "progression, nutrition, and body tracking, running entirely on your own "
 "infrastructure."
-msgstr "Самостоятельно размещённое мобильное приложение для фитнеса и учёта активности — учёт тренировок, прогрессия, питание и учёт тела, полностью работающее на вашей собственной инфраструктуре."
+msgstr ""
+"Самостоятельно размещённое мобильное приложение для фитнеса и учёта "
+"активности — учёт тренировок, прогрессия, питание и учёт тела, полностью "
+"работающее на вашей собственной инфраструктуре."
 
 #: templates/base.html:37
 msgid "Self-hosted, mobile-first fitness and activity tracker."
-msgstr "Самостоятельно размещённое мобильное приложение для фитнеса и учёта активности."
+msgstr ""
+"Самостоятельно размещённое мобильное приложение для фитнеса и учёта "
+"активности."
 
 #: templates/base.html:72
 msgid "Skip to content"
@@ -3711,63 +3711,63 @@ msgstr "Ничего не найдено."
 msgid "Create a custom food"
 msgstr "Создать свой продукт"
 
-#: templates/nutrition/_month_calendar.html:24
+#: templates/nutrition/_month_calendar.html:43
 msgid "Previous month"
 msgstr "Предыдущий месяц"
 
-#: templates/nutrition/_month_calendar.html:36
-#: templates/nutrition/_month_calendar.html:46
-#: templates/nutrition/_month_calendar.html:49
+#: templates/nutrition/_month_calendar.html:55
+#: templates/nutrition/_month_calendar.html:63
+#: templates/nutrition/_month_calendar.html:66
 msgid "How to read this calendar"
 msgstr "Как читать этот календарь"
 
-#: templates/nutrition/_month_calendar.html:39
+#: templates/nutrition/_month_calendar.html:59
 msgid "Next month"
 msgstr "Следующий месяц"
 
-#: templates/nutrition/_month_calendar.html:70
+#: templates/nutrition/_month_calendar.html:87
 msgid "New personal record"
 msgstr "Новый личный рекорд"
 
-#: templates/nutrition/_month_calendar.html:74
+#: templates/nutrition/_month_calendar.html:91
 msgid "A session was abandoned"
 msgstr "Тренировка была прервана"
 
-#: templates/nutrition/_month_calendar.html:78
+#: templates/nutrition/_month_calendar.html:95
 msgid "An ordinary training day"
 msgstr "Обычный тренировочный день"
 
-#: templates/nutrition/_month_calendar.html:82
+#: templates/nutrition/_month_calendar.html:99
 #: templates/nutrition/dashboard.html:11
 msgid "Rest day"
 msgstr "День отдыха"
 
-#: templates/nutrition/_month_calendar.html:86
+#: templates/nutrition/_month_calendar.html:103
 msgid "Trailing 7-day average calories ran over your target"
 msgstr "Скользящее среднее калорий за 7 дней превысило вашу норму"
 
-#: templates/nutrition/_month_calendar.html:90
+#: templates/nutrition/_month_calendar.html:107
 msgid "Trailing 7-day average calories ran under your target"
 msgstr "Скользящее среднее калорий за 7 дней было ниже вашей нормы"
 
-#: templates/nutrition/_month_calendar.html:94
+#: templates/nutrition/_month_calendar.html:111
 msgid "Close to target"
 msgstr "Близко к цели"
 
-#: templates/nutrition/_month_calendar.html:98
+#: templates/nutrition/_month_calendar.html:115
 msgid "Drifting from target"
 msgstr "Отклоняется от цели"
 
-#: templates/nutrition/_month_calendar.html:102
+#: templates/nutrition/_month_calendar.html:119
 msgid "Well off target"
 msgstr "Далеко от цели"
 
-#: templates/nutrition/_month_calendar.html:105
+#: templates/nutrition/_month_calendar.html:122
 msgid "No arrow yet means there isn't enough logged data to judge."
 msgstr ""
 "Если стрелка не отображается, значит пока недостаточно данных для оценки."
 
-#: templates/nutrition/_month_calendar.html:106
+#: templates/nutrition/_month_calendar.html:123
 msgid "Tap a day for details."
 msgstr "Нажмите на день, чтобы увидеть подробности."
 

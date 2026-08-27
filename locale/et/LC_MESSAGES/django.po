@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: IronStack\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-27 16:17+0000\n"
+"POT-Creation-Date: 2026-08-27 16:47+0000\n"
 "Language: et\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -242,7 +242,7 @@ msgstr "Konto andmed on salvestatud."
 msgid "Two-factor authentication is already enabled."
 msgstr "Kaheastmeline autentimine on juba sisse lülitatud."
 
-#: apps/accounts/views.py:338
+#: apps/accounts/views.py:340
 msgid "Two-factor authentication turned off."
 msgstr "Kaheastmeline autentimine välja lülitatud."
 
@@ -689,7 +689,10 @@ msgid ""
 "Lets search engines crawl and index this instance. Off by default — most "
 "installs are a private, self-hosted app for one household, not a public site "
 "anyone should be searching for."
-msgstr "Lubab otsingumootoritel seda paigaldust läbida ja indekseerida. Vaikimisi väljas — enamik paigaldusi on privaatne, iseseisvalt majutatud rakendus ühele leibkonnale, mitte avalik sait, mida keegi peaks otsima."
+msgstr ""
+"Lubab otsingumootoritel seda paigaldust läbida ja indekseerida. Vaikimisi "
+"väljas — enamik paigaldusi on privaatne, iseseisvalt majutatud rakendus "
+"ühele leibkonnale, mitte avalik sait, mida keegi peaks otsima."
 
 #: apps/core/models.py:163 templates/base.html:107 templates/base.html:109
 msgid "Progress"
@@ -2371,6 +2374,21 @@ msgstr ""
 msgid "Save"
 msgstr "Salvesta"
 
+#: templates/accounts/_two_factor_backup_codes_fragment.html:4
+msgid ""
+"Each one works once, if you ever lose access to your authenticator app. They "
+"won't be shown again — save them somewhere safe now. Your old backup codes "
+"no longer work."
+msgstr ""
+"Iga kood töötab üks kord, kui kaotad juurdepääsu oma autentimisrakendusele. "
+"Neid enam uuesti ei näidata — salvesta need nüüd turvalisse kohta. Sinu "
+"vanad varukoodid enam ei kehti."
+
+#: templates/accounts/_two_factor_backup_codes_fragment.html:11
+#: templates/api/key_created.html:16
+msgid "Done"
+msgstr "Valmis"
+
 #: templates/accounts/account_details_form.html:3
 #: templates/accounts/account_details_form.html:6
 #: templates/accounts/profile.html:51
@@ -2510,7 +2528,7 @@ msgid "Changelog"
 msgstr "Muudatuste logi"
 
 #: templates/accounts/profile.html:156 templates/api/key_list.html:20
-#: templates/base.html:92 templates/nutrition/_month_calendar.html:50
+#: templates/base.html:92 templates/nutrition/_month_calendar.html:67
 #: templates/records/_pr_toasts.html:28
 msgid "Dismiss"
 msgstr "Sulge"
@@ -2538,21 +2556,13 @@ msgstr "Logi sisse"
 msgid "New backup codes"
 msgstr "Uued varukoodid"
 
-#: templates/accounts/two_factor_backup_codes.html:9
-msgid ""
-"Each one works once, if you ever lose access to your authenticator app. They "
-"won't be shown again — save them somewhere safe now. Your old backup codes "
-"no longer work."
-msgstr ""
-"Iga kood töötab üks kord, kui kaotad juurdepääsu oma autentimisrakendusele. "
-"Neid enam uuesti ei näidata — salvesta need nüüd turvalisse kohta. Sinu "
-"vanad varukoodid enam ei kehti."
+#: templates/accounts/two_factor_backup_codes.html:11
+msgid "Two-factor authentication is now enabled."
+msgstr "Kaheastmeline autentimine on nüüd sisse lülitatud."
 
-#: templates/accounts/two_factor_backup_codes.html:16
-#: templates/accounts/two_factor_setup.html:22
-#: templates/api/key_created.html:16
-msgid "Done"
-msgstr "Valmis"
+#: templates/accounts/two_factor_backup_codes.html:30
+msgid "Generating your new backup codes…"
+msgstr "Uute varukoodide loomine…"
 
 #: templates/accounts/two_factor_disable.html:3
 #: templates/accounts/two_factor_disable.html:6
@@ -2570,7 +2580,7 @@ msgstr ""
 "allesjäänud varukoodid."
 
 #: templates/accounts/two_factor_disable.html:23
-#: templates/accounts/two_factor_setup.html:41
+#: templates/accounts/two_factor_setup.html:26
 #: templates/programs/program_confirm_delete.html:16
 msgid "Cancel"
 msgstr "Loobu"
@@ -2605,23 +2615,7 @@ msgstr "Eemaldab autentimisrakenduse ja varukoodid. Nõuab sinu parooli."
 msgid "Disable"
 msgstr "Lülita välja"
 
-#: templates/accounts/two_factor_setup.html:11
-msgid "Two-factor authentication is now enabled."
-msgstr "Kaheastmeline autentimine on nüüd sisse lülitatud."
-
-#: templates/accounts/two_factor_setup.html:14
-msgid "Save these backup codes"
-msgstr "Salvesta need varukoodid"
-
-#: templates/accounts/two_factor_setup.html:15
-msgid ""
-"Each one works once, if you ever lose access to your authenticator app. They "
-"won't be shown again — save them somewhere safe now."
-msgstr ""
-"Iga kood töötab üks kord, kui kaotad juurdepääsu oma autentimisrakendusele. "
-"Neid enam uuesti ei näidata — salvesta need nüüd turvalisse kohta."
-
-#: templates/accounts/two_factor_setup.html:25
+#: templates/accounts/two_factor_setup.html:10
 msgid ""
 "Scan this QR code with an authenticator app (e.g. Google Authenticator, "
 "Authy, or a password manager with built-in support), then enter the 6-digit "
@@ -2631,15 +2625,15 @@ msgstr ""
 "või sisseehitatud toega paroolihaldur) ning sisesta seadistuse kinnitamiseks "
 "kuvatav 6-kohaline kood."
 
-#: templates/accounts/two_factor_setup.html:26
+#: templates/accounts/two_factor_setup.html:11
 msgid "Two-factor authentication QR code"
 msgstr "Kaheastmelise autentimise QR-kood"
 
-#: templates/accounts/two_factor_setup.html:27
+#: templates/accounts/two_factor_setup.html:12
 msgid "Can't scan the code? Enter this key manually:"
 msgstr "Ei saa koodi skaneerida? Sisesta see võti käsitsi:"
 
-#: templates/accounts/two_factor_setup.html:39
+#: templates/accounts/two_factor_setup.html:24
 msgid "Confirm and enable"
 msgstr "Kinnita ja lülita sisse"
 
@@ -3102,7 +3096,10 @@ msgid ""
 "Self-hosted, mobile-first fitness and activity tracker — workout logging, "
 "progression, nutrition, and body tracking, running entirely on your own "
 "infrastructure."
-msgstr "Iseseisvalt majutatud, mobiilikeskne treening- ja tegevusjälgija — trennide logimine, progressioon, toitumine ja kehajälgimine, mis töötab täielikult sinu enda infrastruktuuril."
+msgstr ""
+"Iseseisvalt majutatud, mobiilikeskne treening- ja tegevusjälgija — trennide "
+"logimine, progressioon, toitumine ja kehajälgimine, mis töötab täielikult "
+"sinu enda infrastruktuuril."
 
 #: templates/base.html:37
 msgid "Self-hosted, mobile-first fitness and activity tracker."
@@ -3670,62 +3667,62 @@ msgstr "Midagi ei leitud."
 msgid "Create a custom food"
 msgstr "Loo kohandatud toit"
 
-#: templates/nutrition/_month_calendar.html:24
+#: templates/nutrition/_month_calendar.html:43
 msgid "Previous month"
 msgstr "Eelmine kuu"
 
-#: templates/nutrition/_month_calendar.html:36
-#: templates/nutrition/_month_calendar.html:46
-#: templates/nutrition/_month_calendar.html:49
+#: templates/nutrition/_month_calendar.html:55
+#: templates/nutrition/_month_calendar.html:63
+#: templates/nutrition/_month_calendar.html:66
 msgid "How to read this calendar"
 msgstr "Kuidas seda kalendrit lugeda"
 
-#: templates/nutrition/_month_calendar.html:39
+#: templates/nutrition/_month_calendar.html:59
 msgid "Next month"
 msgstr "Järgmine kuu"
 
-#: templates/nutrition/_month_calendar.html:70
+#: templates/nutrition/_month_calendar.html:87
 msgid "New personal record"
 msgstr "Uus isiklik rekord"
 
-#: templates/nutrition/_month_calendar.html:74
+#: templates/nutrition/_month_calendar.html:91
 msgid "A session was abandoned"
 msgstr "Treening katkestati"
 
-#: templates/nutrition/_month_calendar.html:78
+#: templates/nutrition/_month_calendar.html:95
 msgid "An ordinary training day"
 msgstr "Tavaline treeningpäev"
 
-#: templates/nutrition/_month_calendar.html:82
+#: templates/nutrition/_month_calendar.html:99
 #: templates/nutrition/dashboard.html:11
 msgid "Rest day"
 msgstr "Puhkepäev"
 
-#: templates/nutrition/_month_calendar.html:86
+#: templates/nutrition/_month_calendar.html:103
 msgid "Trailing 7-day average calories ran over your target"
 msgstr "7 päeva libisev kaloraaži keskmine ületas sinu eesmärgi"
 
-#: templates/nutrition/_month_calendar.html:90
+#: templates/nutrition/_month_calendar.html:107
 msgid "Trailing 7-day average calories ran under your target"
 msgstr "7 päeva libisev kaloraaži keskmine jäi alla sinu eesmärgi"
 
-#: templates/nutrition/_month_calendar.html:94
+#: templates/nutrition/_month_calendar.html:111
 msgid "Close to target"
 msgstr "Eesmärgile lähedal"
 
-#: templates/nutrition/_month_calendar.html:98
+#: templates/nutrition/_month_calendar.html:115
 msgid "Drifting from target"
 msgstr "Eesmärgist eemaldumas"
 
-#: templates/nutrition/_month_calendar.html:102
+#: templates/nutrition/_month_calendar.html:119
 msgid "Well off target"
 msgstr "Eesmärgist kaugel"
 
-#: templates/nutrition/_month_calendar.html:105
+#: templates/nutrition/_month_calendar.html:122
 msgid "No arrow yet means there isn't enough logged data to judge."
 msgstr "Kui noolt pole, pole veel piisavalt andmeid hindamiseks."
 
-#: templates/nutrition/_month_calendar.html:106
+#: templates/nutrition/_month_calendar.html:123
 msgid "Tap a day for details."
 msgstr "Puuduta päeva, et näha üksikasju."
 
