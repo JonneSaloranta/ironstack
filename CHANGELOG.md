@@ -40,10 +40,16 @@ narrated summary of the same version.
   made before deletion are the one honest exception).
 - Profile → "Download your data" — GDPR Article 20 data portability.
   Browse everything you've logged as a plain page, or download it as
-  a single JSON file or a `.zip` of spreadsheet-ready CSV files.
+  a single JSON file, a `.zip` of spreadsheet-ready CSV files, or
+  that same page as one HTML file to keep or hand to someone else.
 - A privacy notice, shown on the login/signup pages and reachable
   again anytime from Profile — what's collected, why, your rights
   (including the two features above), and what's retained.
+- The first-login onboarding modal now also asks for your timezone
+  (pre-filled, so "Save" never actually requires picking one) —
+  previously only available afterwards, from Profile, meaning every
+  "today"/date-range boundary in the app used UTC by default until a
+  new user happened to find that setting.
 
 ### Fixed
 - Changing month on the front-page calendar reloaded and repainted
@@ -55,6 +61,11 @@ narrated summary of the same version.
   racing a second request that could bounce you away before you ever
   saw the codes the first one had already generated. Now shows a
   loading page immediately and loads the result once it's ready.
+- Profile → "Download your data" left out your last name and several
+  display/privacy settings (height, and whether you show BMI,
+  achievements, your name, or a Gravatar picture to others) — it only
+  ever covered a handful of account fields, not everything on your
+  account that isn't a credential.
 
 ## [1.4.1] — 2026-08-27
 

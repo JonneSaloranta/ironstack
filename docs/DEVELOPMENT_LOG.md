@@ -2927,3 +2927,72 @@ single dict, `api_keys` is already a flat list, everything else is
 the generic serializer's `{"model", "pk", "fields"}` form) into one
 consistent "list of flat dicts" shape the CSV/HTML code can both use
 without caring which section they're looking at.
+
+## Timezone in onboarding, and a missing last name in data export
+
+Two small, unrelated follow-ups surfaced by actually using the
+features above.
+
+**Timezone onboarding** — `User.timezone` and a `ProfileForm` field
+for it already existed, but the one-time onboarding modal shown after
+a new account's first login never asked for it, so every "today"/
+date-range boundary in the app (`apps.accounts.middleware.
+UserTimezoneMiddleware`) silently used UTC until a new user happened
+to find the setting buried in Profile afterwards. `OnboardingForm`
+now has the same `timezone` field as `ProfileForm` — pulled the
+`available_timezones()`-minus-misleading-aliases list out into a
+shared `_timezone_choices()` helper so the two forms can't drift
+apart on which aliases (`localtime`, `Factory`) get excluded. Marked
+required, like the form's existing `unit_system` field, rather than
+optional like the rest of the modal's fields: both are pre-filled
+with the user's current value in `__init__`, so "Save" never actually
+requires a manual choice, and "Not now" skips form validation
+entirely regardless (its own button is `formnovalidate`).
+
+**Data export's missing fields** — `export_account_data`'s `"account"`
+section listed `username`/`first_name`/`email`/`unit_system`/
+`timezone`/`language` but never `last_name`, even though
+`AccountDetailsForm` has let a user set one for a while — an easy
+thing to miss by hand-listing fields once and not revisiting the
+list. Auditing the rest of `User` while fixing it turned up the same
+gap for `height`, `show_bmi`, `show_achievements`,
+`show_name_to_others`, `show_gravatar`, `onboarding_completed`,
+`is_sso_user`, and `totp_enabled` (the boolean flag, not the secret
+itself) — every remaining non-credential field on the model, so a
+user's own export is now a genuinely complete answer to "what do you
+have on me", not just the handful of fields the profile *form* shows
+at once. Covered by a test asserting on specific fields directly
+(and one asserting `password`/`totp_secret` are still never
+included), not just the export's overall shape.
+
+**Downloadable HTML export** — "Download your data" already rendered
+an HTML page to browse online, but the only literal downloads on
+offer were JSON and CSV; asked to add a genuine `?format=html`
+download too, since a file a user can keep or hand to someone else is
+a different thing from a page they can only read while logged into
+this instance. Implementing it surfaced a real bug in the *existing*
+browsable page along the way: its per-section collapse used Alpine
+(`x-data`/`x-show`/`x-cloak`), which depends on this app's own JS
+loading to ever reveal anything — fine for the live page, but a
+downloaded copy opened later with no route back to this instance (or
+just offline) would render every section permanently invisible,
+`x-cloak`'s CSS rule never lifted. Switched to native
+`<details>`/`<summary>` instead — the same pattern this app already
+uses for the changelog modal's per-version sections — so the data
+stays inspectable with zero JS.
+
+The first version of the actual download reused that same fixed page
+outright (`extends "base.html"`), which turned out not to be enough:
+reported back looking badly broken, with enormous icons. The page's
+nav bar has several `<svg class="nav-icon">` elements with no
+width/height of their own — sized entirely by `base.css`, which,
+same as the Alpine problem above, a downloaded file has no guarantee
+of ever loading again, so each icon rendered at its raw, un-styled
+intrinsic SVG size instead. Fixed properly this time by giving the
+download its own dedicated template
+(`templates/accounts/_data_export_standalone.html`) that doesn't
+extend `base.html` at all — no nav, no icons, no external stylesheet
+or script, just a trimmed, self-contained `<style>` block reusing
+`base.css`'s own dark IronStack color palette. The browsable in-app
+page keeps using the normal site chrome; only the actual downloadable
+file needs to survive completely on its own.
