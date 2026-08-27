@@ -405,8 +405,92 @@ Users must not be able to access another user's:
 - activities
 - analytics
 
+## Account deletion (GDPR)
+
+Profile → "Delete account" (`apps.accounts.views.AccountDeleteView`,
+`apps.accounts.services.delete_account`) — self-service exercise of
+GDPR Article 17 ("right to erasure"), the one deliberate exception to
+"prefer preserving historical records" below: erasure only means
+something if it's actually irreversible, so this is a genuine hard
+delete of everything exclusively personal to that account, not a
+soft-delete flag or an anonymized retained copy.
+
+Two different treatments, not one blanket "delete everything the user
+touched":
+
+- **Exclusively personal data is hard-deleted.** Every model that can
+  only ever mean "this specific person's own record" (workout
+  history, personal records, body measurements, the nutrition diary/
+  targets/diet plans, activities, feedback, API keys) already has
+  `on_delete=models.CASCADE` on its FK to `User` — `delete_account`
+  doesn't need to know any of their names, `user.delete()` cascades
+  through all of it in one transaction.
+- **Shared reference content this user happened to create is
+  reassigned, not deleted.** A custom Exercise/Food/Recipe/Program/
+  MealSlot/ActivityType/MeasurementType has `owner` set to this user,
+  but this app's whole shared-instance design means another user may
+  already be actively using it — a workout logged against a custom
+  exercise, a diary entry against a custom food. `delete_account`
+  reassigns `owner` to `None` (the same "shared, built-in default"
+  meaning `owner=None` already has everywhere in this app) *before*
+  deleting the user, rather than delete these outright: Exercise's
+  own usage FK (`apps.workouts.models.PerformedExercise.exercise`) is
+  deliberately `on_delete=models.PROTECT`, so a still-referenced one
+  can never vanish out from under someone still using it, and
+  reassigning first is what lets the CASCADE above proceed without
+  ever touching these rows or erroring out.
+
+An account with no local password (`is_sso_user`, `docs/SECURITY.md`
+"Single sign-on") has nothing to re-enter as a password, so it types
+its own username to confirm instead — the same "prove you meant this"
+strength for an action that can't ask for a password that doesn't
+exist. The instance's last remaining superuser is blocked from
+self-deleting (a clear error, not a silent no-op) — promoting another
+account first is required, so the instance can never end up with no
+one able to reach Django admin at all.
+
+**What this can't reach: existing backup archives**
+(`docs/BACKUP.md`). A backup is a point-in-time snapshot; one made
+before an account deletion still contains that account's data until
+it's rotated out by `BackupSettings.retention_count`, the same as any
+other historical fact captured in it. Disclosed plainly on the
+deletion confirmation page rather than silently ignored — the honest
+alternative to a guarantee this action structurally can't make.
+
+## Data export (GDPR)
+
+Profile → "Download your data" (`apps.accounts.views.DataExportView`,
+`apps.accounts.services.export_account_data`) — self-service exercise
+of GDPR Article 20 ("right to data portability"), the natural
+companion to account deletion above: knowing you *can* get a copy of
+everything first is part of what makes erasure a safe thing to do.
+
+Covers the same set of models account deletion hard-deletes (workout
+history, personal records, measurements, nutrition data, activities,
+feedback, API key metadata) plus this user's own authored shared
+content (a custom exercise/food/recipe/program/meal slot they
+created) — a read of what exists today, not a statement about what
+deletion would do to each of it. Built on Django's own generic model
+serializer rather than a hand-maintained field list per model, so a
+field added to any of these models later is included automatically
+without this feature needing an update to match.
+
+**`ApiKey.key_hash` is the one deliberate field-level exclusion.**
+Every other model is exported with every field via the generic
+serializer above; `ApiKey`'s own export is hand-built instead, listing
+every field except that one explicitly — a key's hash is a
+credential, not data to read back, the same reason a password hash is
+never shown to its own owner either.
+
+Available as a plain HTML page (reusing this app's own templates,
+something to actually read rather than only archive), a single JSON
+file (the same shape a user's own API key could already fetch), or a
+`.zip` of one CSV file per section (opens directly in a spreadsheet)
+— three views of the exact same underlying export, not three
+different exports to keep in sync.
+
 ## Auditability
 
-For important destructive or irreversible operations, consider preserving historical records instead of deleting them.
+For important destructive or irreversible operations, consider preserving historical records instead of deleting them — full account deletion above is the one deliberate exception, since GDPR erasure only means something if it's genuinely irreversible.
 
 Workout history should be treated as durable data.

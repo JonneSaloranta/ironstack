@@ -2796,3 +2796,134 @@ dashboard that didn't change. The old clamp
 (`first_of_requested > first_of_current`) is simply gone; `calendar_
 next_month` is unconditional now, so the template's own dead "no next
 month, render an inert div" branch went with it.
+
+## Self-service account deletion (GDPR Article 17)
+
+Direct request: let a user delete their own account, honoring GDPR,
+while thinking through what genuinely needs to be retained.
+
+The actual answer turned out to be "almost nothing" — this app's own
+existing schema already does most of the hard work. Auditing every
+`ForeignKey(settings.AUTH_USER_MODEL, ...)` across every app found
+every single one already `on_delete=models.CASCADE` — deleting a
+`User` row already cascades through workout history, personal
+records, body measurements, the nutrition diary/targets/diet plans,
+activities, feedback, and API keys, all in one transaction, with
+nothing new needed for any of it.
+
+The real design work was the *other* half: this app is a shared-
+instance, multi-user design (achievements/PRs already surface across
+every user on the instance, foods/exercises/recipes/programs use a
+`Q(owner=user) | Q(owner__isnull=True)` visibility pattern throughout)
+— so a custom `Exercise`/`Food`/`Recipe`/`Program`/`MealSlot`/
+`ActivityType`/`MeasurementType` the deleting user happens to have
+created might already be in active use by someone *else* on the same
+instance. Naively deleting the user and letting `owner`'s own CASCADE
+follow through would have gone one of two ways depending on the
+model: `Exercise`/`MeasurementType`/`ActivityType`'s own *usage* FKs
+(`PerformedExercise.exercise`, `BodyMeasurement.measurement_type`,
+`Activity.activity_type`) are all deliberately `on_delete=PROTECT`,
+so the whole deletion would raise `ProtectedError` and fail outright
+the moment anyone else had ever used that content — a GDPR erasure
+request that can't be fulfilled is the worst possible outcome here.
+`Food`/`Recipe`/`MealSlot`'s own usage FKs are `CASCADE` instead, so
+deleting the user's own `Food` row would have gone the *opposite*
+direction and silently deleted some other user's diary entries too.
+
+`apps.accounts.services.delete_account` fixes both failure modes with
+one step, done *before* `user.delete()`: reassign `owner` to `None` on
+every one of those seven ownable models for rows this user owns — the
+exact same "shared, built-in default" meaning `owner=None` already
+carries everywhere in this app (a template recipe, an OpenFoodFacts-
+imported food, a built-in exercise). Whoever's still using that
+content keeps it, unchanged, just without this user's name attached;
+the CASCADE from `user.delete()` then proceeds cleanly since nothing
+still points at the user through that path. Verified directly, not
+just reasoned about: a test creates a shared custom `Exercise`, logs
+a *second* user's own workout against it, deletes the first user, and
+asserts the second user's `PerformedExercise` still resolves to the
+exact same (now unowned) `Exercise` row — the actual scenario
+`PROTECT` exists to prevent, proven not to fire.
+
+Confirmation is password re-entry (matching `TwoFactorDisableView`'s
+own existing shape for the last "prove you meant this" this app
+already asks for) — except for an Authentik-linked account, which has
+no local password at all (`User.has_usable_password()` is always
+`False` there, set on purpose by `apps.accounts.oidc`); that account
+types its own username instead, for the same strength of confirmation
+an action that can't ask for a password that doesn't exist. One more
+guard, found worth adding while designing this rather than requested
+outright: the instance's last remaining superuser can't delete
+themselves — promoting another account to superuser first is
+required, so a moment of "let me just clean up my test account" can
+never accidentally leave an instance with nobody able to reach Django
+admin at all.
+
+Deliberately disclosed, not glossed over, on the deletion page itself:
+a backup archive made before deletion (`docs/BACKUP.md`) still
+contains the deleted account's data until it's rotated out by this
+instance's own retention setting — a point-in-time snapshot can't
+retroactively un-contain something, and saying so plainly is the
+honest alternative to a guarantee this feature structurally can't
+make.
+
+## A privacy notice, and self-service data export (GDPR Article 20)
+
+Two direct follow-ups to the account-deletion work above, completing
+the same GDPR picture: knowing what's collected and being able to get
+a copy of it are what make erasure a safe, informed thing to decide
+on, not just a delete button.
+
+**Privacy notice** (`templates/accounts/_privacy_notice_modal.html`)
+— a fixed, translated notice, deliberately distinct from `SiteDisclaimer`
+(free-form, operator-authored liability text already shown on the same
+pages): what's collected, why, and a user's rights, framed honestly
+for what this app actually is — self-hosted, open-source software
+where the *operator* of a given instance is the GDPR "data controller"
+for it, not this project's authors. Shown at the point data collection
+actually starts (login/signup) and reachable again anytime from
+Profile, right above the version/changelog button, via the same
+`.modal-backdrop`/`.modal-card` pattern already used there — a small,
+new `.link-button` class (plain inline-text-styled button) was pulled
+out for it rather than reusing `.app-version`'s own, differently-named
+class for what's visually the identical treatment.
+
+One authoring bug found and fixed while writing it: `{% trans "...
+→ \"Delete account\" ..." %}` — a backslash-escaped quote *inside* a
+double-quoted `{% trans %}` string literal — silently truncated the
+extracted msgid at the escaped quote during `makemessages`, even
+though the tag itself renders correctly at runtime. Switching to
+single-quote delimiters (`{% trans '... → "Delete account" ...' %}`,
+which Django template tags accept equally) sidesteps the whole
+problem — no escaping needed for a literal double quote inside a
+single-quoted literal.
+
+**Data export** (`apps.accounts.services.export_account_data`,
+Profile → "Download your data") — the other direction from account
+deletion, and reuses its own reasoning almost exactly: the same set of
+models deletion hard-deletes, plus this user's own authored shared
+content (a custom exercise/food/recipe they created), read rather
+than removed. Built on Django's own generic model serializer
+(`django.core.serializers.serialize("json", queryset)`) instead of a
+hand-maintained per-model field list — every field on every model is
+included automatically, including any added after this function was
+written, at the cost of the export's shape being Django's own
+`{"model", "pk", "fields"}` per row rather than a bespoke schema.
+`ApiKey` is the one deliberate exception, hand-built instead of using
+the generic serializer: `key_hash` is a credential, not data to read
+back, and an explicit field allow-list was judged safer than trusting
+a generic dump to never include it by accident.
+
+One export, three ways to look at it, all from the same underlying
+dict so there's only one thing to keep correct: a plain HTML page
+(collapsible `<details>`-style cards per section, reusing this app's
+own `.set-table`/`.table-wrap` styling already used elsewhere), a
+single JSON file (the same shape a user's own API key could already
+fetch from the public API), and a `.zip` of one CSV file per section
+built with the stdlib's own `csv`/`zipfile` modules — no new
+dependency for either format. A small `_rows_for_section` helper
+normalizes the three different underlying shapes (`account` is a
+single dict, `api_keys` is already a flat list, everything else is
+the generic serializer's `{"model", "pk", "fields"}` form) into one
+consistent "list of flat dicts" shape the CSV/HTML code can both use
+without caring which section they're looking at.

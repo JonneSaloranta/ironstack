@@ -29,6 +29,21 @@ narrated summary of the same version.
   every page.
 - The front-page month calendar can now browse into future months
   too, not just past ones.
+- Profile → "Delete account" — self-service, GDPR Article 17 account
+  deletion. Everything exclusively yours (workout history, personal
+  records, measurements, nutrition data, activities, feedback, API
+  keys) is permanently deleted; a custom exercise/food/recipe/program/
+  measurement/activity type you created is kept (not deleted) if
+  anyone else on this instance is already using it, just no longer
+  credited to your account. See `docs/SECURITY.md` "Account deletion
+  (GDPR)" for exactly what this can and can't reach (backup archives
+  made before deletion are the one honest exception).
+- Profile → "Download your data" — GDPR Article 20 data portability.
+  Browse everything you've logged as a plain page, or download it as
+  a single JSON file or a `.zip` of spreadsheet-ready CSV files.
+- A privacy notice, shown on the login/signup pages and reachable
+  again anytime from Profile — what's collected, why, your rights
+  (including the two features above), and what's retained.
 
 ### Fixed
 - Changing month on the front-page calendar reloaded and repainted
