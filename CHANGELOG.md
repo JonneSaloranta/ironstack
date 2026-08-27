@@ -10,7 +10,11 @@ management command).
 This file exists to answer "what changed between two versions", not to
 duplicate the detailed, ongoing build log — that's
 `docs/DEVELOPMENT_LOG.md`, which is updated with every feature as it
-lands and remains the authoritative history.
+lands and remains the authoritative history. Each GitHub Release's own
+notes are a separate, auto-generated list of every commit since the
+previous release (`docs/ARCHITECTURE.md` "Versioning") — a terse,
+complete audit trail, not a replacement for this file's shorter,
+narrated summary of the same version.
 
 ## [Unreleased]
 

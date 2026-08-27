@@ -144,8 +144,12 @@ jobs:
   # master, gated the same way publish-image is (needs: both
   # lint-and-test and publish-image, so a release only ever points at
   # a commit that's both green and has a real image published for it).
-  # The release notes are CHANGELOG.md's own section for that version —
-  # not duplicated here, just read.
+  # The release notes are auto-generated from the commit log itself —
+  # every commit since the previous release, one line each linking
+  # straight to it, grouped by its Conventional Commits type — not
+  # CHANGELOG.md's own hand-written prose for that version, which stays
+  # the curated, narrated reference (see CHANGELOG.md's own intro) but
+  # no longer feeds this.
   create-release:
     needs: [lint-and-test, publish-image]
     if: github.event_name == 'push' && github.ref == 'refs/heads/master'
@@ -153,7 +157,14 @@ jobs:
     permissions:
       contents: write
     steps:
+      # fetch-depth: 0 — the default shallow (depth-1) clone has no
+      # tags and no history beyond this one commit, and the release-
+      # notes step below needs both: `git describe` to find the
+      # *previous* release's tag, and `git log <that tag>..HEAD` to
+      # list everything shipped since it.
       - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
 
       # Checks whether a release already exists for the *current*
       # VERSION, rather than diffing VERSION against the previous push
@@ -180,7 +191,7 @@ jobs:
             echo "changed=true" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Extract this version's CHANGELOG.md section and create the release
+      - name: Build categorized release notes from the commit log and create the release
         if: steps.version_check.outputs.changed == 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -191,17 +202,57 @@ jobs:
             exit 1
           fi
 
-          notes_file="$(mktemp)"
-          awk -v ver="$version" '
-            $0 ~ "^## \\[" ver "\\]" { found=1; next }
-            found && /^## \[/ { found=0 }
-            found { print }
-          ' CHANGELOG.md | sed -e '/./,$!d' | tac | sed -e '/./,$!d' | tac > "$notes_file"
+          # Every commit since the *previous* release tag (or the
+          # whole history, for this repo's very first release, when no
+          # such tag exists yet) — `git describe` finds it without
+          # this job needing to know or compute what it is itself.
+          prev_tag="$(git describe --tags --abbrev=0 2>/dev/null || true)"
+          range="HEAD"
+          [ -n "$prev_tag" ] && range="${prev_tag}..HEAD"
+          git log "$range" --no-merges --pretty=format:'%h%x09%s' > /tmp/release_commits.tsv
 
-          if [ ! -s "$notes_file" ]; then
-            echo "No CHANGELOG.md section found for $version — using a placeholder body." >&2
-            echo "_No changelog entry found for this version — see the commit history._" > "$notes_file"
-          fi
+          notes_file="$(mktemp)"
+          python3 - "$notes_file" << 'PYEOF'
+          import re
+          import sys
+
+          notes_file = sys.argv[1]
+          # Order is most-to-least interesting to someone skimming a
+          # release, not alphabetical — matches CLAUDE.md's own
+          # "Common types" list. A commit whose subject line isn't
+          # Conventional-Commits-formatted at all (a merge commit's
+          # own default message, a stray typo) falls into "Other"
+          # rather than being silently dropped.
+          titles = {
+              "feat": "✨ Features", "fix": "🐛 Fixes", "perf": "⚡ Performance",
+              "refactor": "♻️ Refactor", "docs": "📝 Documentation", "test": "✅ Tests",
+              "build": "📦 Build", "ci": "👷 CI", "chore": "🔧 Chore",
+              "style": "🎨 Style", "revert": "⏪ Reverts",
+          }
+          order = [*titles, "other"]
+          type_re = re.compile(r"^(" + "|".join(titles) + r")(\([^)]*\))?!?:\s")
+
+          groups = {t: [] for t in order}
+          with open("/tmp/release_commits.tsv", encoding="utf-8") as f:
+              for line in f:
+                  line = line.rstrip("\n")
+                  if not line:
+                      continue
+                  sha, _, subject = line.partition("\t")
+                  match = type_re.match(subject)
+                  groups[match.group(1) if match else "other"].append(
+                      f"- {subject} ({sha})"
+                  )
+
+          sections = [
+              f"### {titles.get(t, '📌 Other')}\n\n" + "\n".join(groups[t])
+              for t in order
+              if groups[t]
+          ]
+          body = "\n\n".join(sections) if sections else "_No commits found for this release._"
+          with open(notes_file, "w", encoding="utf-8") as f:
+              f.write(body + "\n")
+          PYEOF
 
           gh release create "v$version" \
             --repo "${{ github.repository }}" \

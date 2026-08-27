@@ -407,10 +407,25 @@ whether a GitHub Release already exists for the current `VERSION`
 (idempotent across retries, rather than diffing against the previous
 push — see that job's own comment for why), and if not, creates one
 (`vX.Y.Z`, gated the same way `publish-image` is: `lint-and-test` and
-`publish-image` both have to succeed first) with `CHANGELOG.md`'s own
-section for that version as the release notes — read directly, never
-duplicated into the workflow file. No separate `git tag` step; the tag
-is created as part of the release.
+`publish-image` both have to succeed first). No separate `git tag`
+step; the tag is created as part of the release.
+
+The release notes themselves are generated from the commit log, not
+read from `CHANGELOG.md`: every commit since the previous release tag
+(`git describe --tags --abbrev=0`, needing the checkout step's own
+`fetch-depth: 0` — the default shallow clone has no tags at all),
+grouped into a section per Conventional Commits type (features, fixes,
+docs, ...) with a bare emoji + title heading, each commit rendered as
+one line, its subject followed by its short SHA in parentheses — which
+GitHub's own release-notes renderer auto-links to that commit. A
+commit whose subject doesn't parse as a recognized type at all falls
+into a catch-all "Other" section last, rather than being silently
+dropped. `CHANGELOG.md` still exists and is still updated the same way
+(a hand-curated, narrated "what changed and why" per version) — it's
+just no longer this job's source; the commit-log listing and the
+changelog's own prose serve two different readers (a terse, complete,
+per-commit audit trail vs. a shorter, editorialized summary) and
+neither one replaces the other.
 
 ## Static files
 

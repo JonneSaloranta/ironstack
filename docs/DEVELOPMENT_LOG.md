@@ -2608,3 +2608,116 @@ target-present/target-absent branches, run in isolation against the
 time. The full suite (`coverage run -m pytest`) passed throughout,
 confirming none of this stretch's changes broke anything already
 built.
+
+## Two real-deployment bugs: nginx's stale IP cache, and a CDN's stale static files
+
+Both reported live, on an actual production install, right after
+updating to 1.4.0 — neither was in the application code at all.
+
+**nginx serving 502s from a healthy container.** A routine update
+(`docker compose pull && up -d`) recreates the `web` container, which
+gets a new internal Docker-bridge IP; `compose/nginx/nginx.conf`'s
+`proxy_pass http://web:8000` (or the `upstream { server web:8000; }`
+form this project used until now) resolves that hostname exactly once,
+when nginx's own process starts, and caches it for its entire
+lifetime. `web` coming back up healthy on its new IP left nginx
+silently retrying the old, dead one forever — `connect() failed (111:
+Connection refused)` on every request until nginx itself was also
+manually restarted, which re-resolves DNS at its own next startup.
+Fixed with the standard nginx+Docker pattern: `resolver 127.0.0.11
+valid=10s` (Docker's own embedded DNS) plus `proxy_pass` on a `set`
+variable instead of a bare hostname — a bare hostname in `proxy_pass`
+is resolved once, permanently; a variable forces a fresh lookup
+whenever the resolver's own TTL expires. Verified live end-to-end,
+twice: once against the dev stack (`docker compose up -d
+--force-recreate web`, confirmed nginx self-healed via its own access
+log without a manual restart), and once for real on the reporting
+deployment via SSH, where the exact failure signature (`connect()
+failed... upstream: "http://<old-ip>:8000/"`) matched precisely and
+the same self-healing behavior was observed live in nginx's log right
+after the fix was applied.
+
+**A CDN serving an hours-old `base.css`.** The front page's month
+calendar (this file's own earlier entry) rendered completely
+unstyled on the same deployment — no grid, icons and buttons just
+stacked in document flow. Cloudflare, sitting in front of that
+deployment, was still serving a `base.css` two hours old and ~10KB
+smaller (`cf-cache-status: HIT`) — from before the calendar's own CSS
+existed — because nginx sends no `Cache-Control` header for a CDN to
+respect instead of its own default edge-cache TTL for static
+extensions, and the plain, unchanging `/static/css/base.css` URL gives
+it nothing to notice a newer version by. This is the other half of a
+gap this project's own history already named directly (see this file's
+earlier "the charts are missing their bars" entry: "Since static files
+here aren't served at content-hashed URLs (no
+`ManifestStaticFilesStorage`)..." was written about `static/sw.js`'s
+own cache going stale forever, for the exact same underlying reason).
+Closed properly this time: `config.settings.production` now sets
+`STORAGES["staticfiles"]` to Django's built-in
+`ManifestStaticFilesStorage`, so every `{% static %}` URL includes a
+hash of its own content (`base.1d8d72b58ffc.css`) — a real change
+always produces a new URL, so a CDN or browser's cached response for
+the *previous* URL is simply never requested again, no cache
+configuration or manual purge needed anywhere in the chain. Verified
+with a real `collectstatic` run under production settings (173 files,
+0 errors) confirming two things that would otherwise have been silent
+regressions: no static file's `url(...)` references broke across the
+hashing/rewrite pass, and `static/manifest.json`'s hardcoded PWA icon
+paths (plain JSON strings, never routed through `{% static %}`) still
+resolve — `ManifestStaticFilesStorage` keeps the original, unhashed
+filename on disk alongside the hashed one for exactly this reason.
+Deliberately only set in `production.py`: `{% static %}` needs
+`collectstatic`'s manifest file already built, which only production's
+own startup command runs — dev's `runserver` serves straight from
+`STATICFILES_DIRS` and never calls `collectstatic` at all.
+
+Both fixes shipped as a same-day patch release, 1.4.1.
+
+## Release notes: from CHANGELOG.md prose to an auto-generated commit log
+
+A direct, explicit request: Conventional Commits discipline
+("`ci: update ci`", "`fix: fixed something`") should be non-negotiable
+project-wide, and a GitHub Release's own notes should read like a
+per-commit changelog with each entry linking to the commit that made
+it (an existing open-source project's own release notes — grouped
+under an emoji + category heading, e.g. "📈 General Changes", each
+bullet a short description plus a link — was pointed to directly as
+the target shape).
+
+`.github/workflows/ci.yml`'s `create-release` job no longer reads
+`CHANGELOG.md`'s section for the version at all. Instead: `git
+describe --tags --abbrev=0` finds the previous release's tag (needing
+the checkout step's own new `fetch-depth: 0` — the default shallow
+clone has no tags whatsoever), `git log <that tag>..HEAD --no-merges`
+lists every commit since it, and a small embedded Python script sorts
+each one into a section by its Conventional Commits type (✨ Features,
+🐛 Fixes, 📝 Documentation, ..., in a fixed most-to-least-interesting
+order, not alphabetical) — a commit whose subject doesn't parse as one
+of the recognized types falls into a catch-all "Other" section rather
+than being silently dropped. Each line is the commit's own subject
+followed by its short SHA in parentheses, which GitHub's own release-
+notes renderer auto-links to that commit — no explicit markdown link
+syntax needed for that part.
+
+`CHANGELOG.md` itself is untouched by this — still hand-curated,
+still narrated prose explaining *why* something changed, still cut
+from `[Unreleased]` into a version section at release time exactly as
+before. It simply isn't this job's source anymore; a GitHub Release's
+notes and `CHANGELOG.md`'s own entry for the same version now serve
+two different readers on purpose (a complete, terse, per-commit audit
+trail vs. a shorter, editorialized summary), each documented as such
+in the other's own text (`docs/ARCHITECTURE.md` "Versioning",
+`CHANGELOG.md`'s own intro) so neither reads as contradicting or
+duplicating the other.
+
+Tested before ever touching a real release: extracted the exact `run:`
+script Python's own `yaml.safe_load` sees from the committed workflow
+file (not a hand-retyped approximation of it) and ran it verbatim
+against this repo's real tag history (`v1.3.0..v1.4.0`, 28 real
+commits) — confirmed correct categorization, ordering, and SHA
+rendering before it ever ran for real. `CLAUDE.md`'s own "Commit
+messages" section is updated to list the exact same eleven types the
+categorizer recognizes (`feat`, `fix`, `docs`, `refactor`, `test`,
+`chore`, `ci`, `perf`, `build`, `style`, `revert`) — previously it only
+named six of them as "common", which is how a real commit this session
+(`ci: ...`) would have had nothing further to check itself against.
