@@ -16,7 +16,7 @@ previous release (`docs/ARCHITECTURE.md` "Versioning") — a terse,
 complete audit trail, not a replacement for this file's shorter,
 narrated summary of the same version.
 
-## [Unreleased]
+## [1.5.0] — 2026-08-27
 
 ### Added
 - Open Graph/Twitter Card meta tags and a meta description on every
