@@ -573,6 +573,28 @@ def copy_diary_day(user, source_date, target_date):
 STATS_WINDOW_DAYS = 30
 
 
+def _daily_totals_by_date(user, start_date, end_date):
+    """Every day's total nutrition in [start_date, end_date] inclusive,
+    as {date: ScaledNutrition} — only for a day with at least one
+    DiaryEntry; a day with nothing logged simply has no key, left to
+    each caller to decide whether that means `ZERO_NUTRITION` (a
+    30-day chart with no gaps, calorie_history below) or "not enough
+    data to judge" (calendar_month_statuses, which shouldn't call an
+    unlogged day's average "on target" just because 0 happens to be
+    close to nothing)."""
+    from .models import DiaryEntry
+
+    entries = DiaryEntry.objects.filter(
+        user=user, date__gte=start_date, date__lte=end_date
+    ).select_related("food", "recipe")
+    totals_by_date = {}
+    for entry in entries:
+        totals_by_date[entry.date] = totals_by_date.get(
+            entry.date, ZERO_NUTRITION
+        ) + diary_entry_nutrition(entry)
+    return totals_by_date
+
+
 def calorie_history(user, *, days=STATS_WINDOW_DAYS):
     """The last `days` calendar days' totals (today inclusive), oldest
     first, with exactly one entry per day — including days nothing was
@@ -581,19 +603,9 @@ def calorie_history(user, *, days=STATS_WINDOW_DAYS):
     apps.analytics.services.weekly_volume_series uses, so a genuinely
     quiet day shows up as a real dip on the chart rather than a gap
     that silently compresses the timeline."""
-    from .models import DiaryEntry
-
     today = timezone.localdate()
     start = today - timezone.timedelta(days=days - 1)
-    entries = DiaryEntry.objects.filter(
-        user=user, date__gte=start, date__lte=today
-    ).select_related("food", "recipe")
-
-    totals_by_date = {}
-    for entry in entries:
-        totals_by_date[entry.date] = totals_by_date.get(
-            entry.date, ZERO_NUTRITION
-        ) + diary_entry_nutrition(entry)
+    totals_by_date = _daily_totals_by_date(user, start, today)
 
     return [
         (start + timezone.timedelta(days=offset), totals_by_date.get(
@@ -664,3 +676,146 @@ def is_training_day(user, target_date):
     return WorkoutSession.objects.filter(
         user=user, status=WorkoutSessionStatus.COMPLETED, started_at__date=target_date
     ).exists()
+
+
+# How many trailing days' calories calendar_month_statuses averages
+# together for one day's "on track" color — a single day is noisy (a
+# birthday dinner, a sick day with no appetite shouldn't flip a whole
+# day red on its own), the same reasoning
+# apps.nutrition.suggestions.suggest_calorie_adjustment already
+# applies to its own trend line, just calendar-day-count instead of
+# that module's date-range span.
+CALENDAR_CALORIE_TREND_WINDOW_DAYS = 7
+# Fraction of the daily target the trailing average may differ by and
+# still count as "on track"/"drifting" rather than "off track" — wide
+# enough that ordinary day-to-day logging noise doesn't turn green
+# into red, narrow enough that a real, sustained over/under shows up
+# within the window.
+CALENDAR_CALORIE_TREND_GREEN_TOLERANCE = Decimal("0.05")
+CALENDAR_CALORIE_TREND_YELLOW_TOLERANCE = Decimal("0.15")
+
+
+@dataclass(frozen=True)
+class CalendarDayStatus:
+    """One calendar day's at-a-glance status for the front page's
+    month calendar — two independent signals, deliberately never
+    combined into one score:
+
+    `training_status` — `"pr"` if a personal record
+    (apps.records.PersonalRecord) was set that day, `"abandoned"` if a
+    workout session was started and abandoned, `"completed"` for an
+    ordinary completed session with neither, or `None` for a rest day
+    (no session at all). A day with more than one of these takes
+    whichever is most worth noticing: a PR first (the headline event
+    of that day, if it happened at all), then an abandoned session
+    (worth a second look), completed last.
+
+    `calorie_trend`/`calorie_direction` — how the trailing
+    `CALENDAR_CALORIE_TREND_WINDOW_DAYS` days' average calorie intake
+    compares to the currently active target: `calorie_trend` is
+    "green"/"yellow"/"red" for how far off, `calorie_direction` is
+    "over"/"under" for which way. Both are `None` together — not
+    defaulted to some color/direction — for a day with no active
+    target to compare against, or whose own trailing window has no
+    logged calories at all (a brand new user's first week): "no data
+    yet" and "way off target" mean very different things, and a bare
+    color/arrow can't tell them apart."""
+
+    date: object
+    training_status: str | None  # "pr" / "abandoned" / "completed" / None
+    calorie_trend: str | None  # "green" / "yellow" / "red" / None
+    calorie_direction: str | None  # "over" / "under" / None
+    # That day's own actual logged calories — distinct from the
+    # trailing-window average calorie_trend/calorie_direction are
+    # based on, kept here so a UI can show "here's specifically what
+    # you logged this day" (apps.core's day-detail popover) alongside
+    # the smoothed trend. `None` if nothing was logged that day.
+    actual_calories: object
+
+
+def calendar_month_statuses(user, year, month):
+    """One `CalendarDayStatus` per real calendar day in `year`-`month`
+    — the front page's month calendar. Every day is compared against
+    the *current* active target regardless of which target was
+    actually active back then, deliberately: the calendar is a "how
+    are things going" glance, not a historical audit, and the
+    alternative (reconstructing which target was active on every past
+    day) is a lot of complexity for a display that never claims to be
+    anything but a simple approximation — see docs/NUTRITION.md
+    "Safety bounds" for the same simplicity-over-precision call this
+    app already makes for the calorie target itself."""
+    import calendar as calendar_module
+    from datetime import date as date_cls
+    from datetime import timedelta
+
+    from apps.records.models import PersonalRecord
+    from apps.workouts.models import WorkoutSession, WorkoutSessionStatus
+
+    from .models import NutritionTarget
+
+    _, days_in_month = calendar_module.monthrange(year, month)
+    first_day = date_cls(year, month, 1)
+    last_day = date_cls(year, month, days_in_month)
+    window_start = first_day - timedelta(days=CALENDAR_CALORIE_TREND_WINDOW_DAYS - 1)
+
+    totals_by_date = _daily_totals_by_date(user, window_start, last_day)
+    target = NutritionTarget.objects.filter(user=user, ended_at__isnull=True).first()
+
+    def _dates_for(**filters):
+        return set(
+            WorkoutSession.objects.filter(
+                user=user,
+                started_at__date__gte=first_day,
+                started_at__date__lte=last_day,
+                **filters,
+            ).values_list("started_at__date", flat=True)
+        )
+
+    completed_dates = _dates_for(status=WorkoutSessionStatus.COMPLETED)
+    abandoned_dates = _dates_for(status=WorkoutSessionStatus.ABANDONED)
+    pr_dates = set(
+        PersonalRecord.objects.filter(
+            user=user, achieved_at__date__gte=first_day, achieved_at__date__lte=last_day
+        ).values_list("achieved_at__date", flat=True)
+    )
+
+    statuses = []
+    for offset in range(days_in_month):
+        day = first_day + timedelta(days=offset)
+
+        if day in pr_dates:
+            training_status = "pr"
+        elif day in abandoned_dates:
+            training_status = "abandoned"
+        elif day in completed_dates:
+            training_status = "completed"
+        else:
+            training_status = None
+
+        window_days = [day - timedelta(days=n) for n in range(CALENDAR_CALORIE_TREND_WINDOW_DAYS)]
+        logged_calories = [
+            totals_by_date[d].calories for d in window_days if d in totals_by_date
+        ]
+        trend = None
+        direction = None
+        if target is not None and logged_calories:
+            average = sum(logged_calories) / len(logged_calories)
+            deviation = abs(average - target.daily_calories) / target.daily_calories
+            direction = "over" if average >= target.daily_calories else "under"
+            if deviation <= CALENDAR_CALORIE_TREND_GREEN_TOLERANCE:
+                trend = "green"
+            elif deviation <= CALENDAR_CALORIE_TREND_YELLOW_TOLERANCE:
+                trend = "yellow"
+            else:
+                trend = "red"
+
+        statuses.append(
+            CalendarDayStatus(
+                date=day,
+                training_status=training_status,
+                calorie_trend=trend,
+                calorie_direction=direction,
+                actual_calories=totals_by_date[day].calories if day in totals_by_date else None,
+            )
+        )
+    return statuses

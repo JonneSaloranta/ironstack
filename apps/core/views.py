@@ -4,6 +4,8 @@ from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import Http404, HttpResponse
 from django.utils import timezone
+from django.utils.formats import date_format
+from django.utils.translation import gettext as _
 from django.views.generic import TemplateView
 
 from apps.analytics import achievements as achievement_services
@@ -14,8 +16,106 @@ from apps.core import units as core_units
 from apps.measurements import services as measurement_services
 from apps.measurements import units as measurement_units
 from apps.measurements.models import MeasurementType
+from apps.nutrition import services as nutrition_services
+from apps.nutrition.models import NutritionTarget
 from apps.workouts.models import WorkoutSessionStatus
 from apps.workouts.services import sessions_for
+
+
+def _day_detail_lines(status, target_calories):
+    """The two short, plain-language lines a tap on a calendar day
+    reveals (templates/nutrition/_month_calendar.html's popover) — the
+    one place in this calendar actual text appears, since the grid
+    itself is deliberately icon/color-only."""
+    if status.training_status == "pr":
+        training_line = _("Training day — new personal record!")
+    elif status.training_status == "abandoned":
+        training_line = _("Training day — a session was abandoned.")
+    elif status.training_status == "completed":
+        training_line = _("Training day.")
+    else:
+        training_line = _("Rest day.")
+
+    if status.actual_calories is None:
+        calorie_line = _("Nothing logged that day.")
+    elif target_calories is not None:
+        calorie_line = _("%(actual)s / %(target)s kcal logged.") % {
+            "actual": int(status.actual_calories),
+            "target": target_calories,
+        }
+    else:
+        calorie_line = _("%(actual)s kcal logged.") % {"actual": int(status.actual_calories)}
+
+    return [str(training_line), str(calorie_line)]
+
+
+def _month_calendar_context(request, today):
+    """The dashboard's month calendar (templates/nutrition/
+    _month_calendar.html) — one real month at a time, browsable to any
+    earlier one via `?month=YYYY-MM`, never later than the current
+    real month: there's nothing to show for a day that hasn't happened
+    yet. `weeks` is a list of 7-day rows, Monday first (matching
+    apps.programs.Weekday's own numbering elsewhere in this app), each
+    day a dict the template can render without any further lookups.
+    `calendar_days_json` is the same days' data again, shaped for the
+    tap-a-day detail popover (a JS component, not more Django template
+    — see that partial's own comment) via `|json_script`."""
+    import calendar as calendar_module
+    from datetime import date as date_cls
+    from datetime import timedelta
+
+    requested = request.GET.get("month", "")
+    try:
+        year, month = (int(part) for part in requested.split("-", 1))
+        first_of_requested = date_cls(year, month, 1)
+    except (ValueError, TypeError):
+        first_of_requested = date_cls(today.year, today.month, 1)
+    # Never later than the current real month — clamps a hand-edited
+    # future ?month= rather than showing a calendar with no data by
+    # construction.
+    first_of_current = date_cls(today.year, today.month, 1)
+    if first_of_requested > first_of_current:
+        first_of_requested = first_of_current
+    year, month = first_of_requested.year, first_of_requested.month
+
+    target = NutritionTarget.objects.filter(user=request.user, ended_at__isnull=True).first()
+    target_calories = target.daily_calories if target is not None else None
+    all_statuses = nutrition_services.calendar_month_statuses(request.user, year, month)
+    statuses_by_date = {status.date: status for status in all_statuses}
+    calendar_days_json = [
+        {
+            "date": status.date.isoformat(),
+            "heading": date_format(status.date, format="SHORT_DATE_FORMAT", use_l10n=True),
+            "lines": _day_detail_lines(status, target_calories),
+        }
+        for status in all_statuses
+    ]
+
+    weeks = []
+    for week in calendar_module.Calendar(firstweekday=0).monthdatescalendar(year, month):
+        weeks.append(
+            [
+                {
+                    "date": day,
+                    "in_month": day.month == month,
+                    "is_today": day == today,
+                    "status": statuses_by_date.get(day),
+                }
+                for day in week
+            ]
+        )
+
+    prev_month = first_of_requested - timedelta(days=1)
+    next_month = first_of_requested + timedelta(days=32)
+    return {
+        "calendar_month": first_of_requested,
+        "calendar_weeks": weeks,
+        "calendar_days_json": calendar_days_json,
+        "calendar_prev_month": prev_month.strftime("%Y-%m"),
+        "calendar_next_month": (
+            next_month.strftime("%Y-%m") if first_of_requested < first_of_current else None
+        ),
+    }
 
 
 class DashboardView(LoginRequiredMixin, TemplateView):
@@ -36,6 +136,7 @@ class DashboardView(LoginRequiredMixin, TemplateView):
         )
 
         today = timezone.localdate()
+        context.update(_month_calendar_context(self.request, today))
         this_week = dateranges.resolve(None, start=today - timedelta(days=today.weekday()))
         context["week_summary"] = analytics_services.training_summary(user, this_week)
         context["recent_prs"] = analytics_services.pr_history(

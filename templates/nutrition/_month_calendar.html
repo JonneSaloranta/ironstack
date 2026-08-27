@@ -1,0 +1,124 @@
+{% load i18n %}
+{% comment %}
+The month calendar shown on the main dashboard (templates/core/
+dashboard.html) — training/rest days and how the trailing 7-day
+calorie average compares to target, icon/color-only inside each cell
+(the "?" legend explains what they mean instead of spelling it out 31
+times over; tapping a day instead reveals the one place actual text
+appears — a small panel anchored right next to that day, via the
+ironstackMonthCalendar Alpine component in static/js/month-calendar.js
+and each day's pre-translated data in the `|json_script` tag below).
+
+Domain logic lives in apps.nutrition.services.calendar_month_statuses;
+the context this expects (calendar_month/calendar_weeks/
+calendar_days_json/calendar_prev_month/calendar_next_month) is built
+by apps.core.views.DashboardView's own `_month_calendar_context`, one
+call to apps.nutrition.services from the "downstream, composes
+several apps" layer that dashboard already is (same reasoning as its
+own recent-PRs/training-summary/body-weight sections, each from a
+different app).
+{% endcomment %}
+{{ calendar_days_json|json_script:"calendar-days-data" }}
+<div class="card" x-data="ironstackMonthCalendar('calendar-days-data')">
+  <div class="calendar-header" x-data="{ helpOpen: false }">
+    <a class="button-secondary" href="?month={{ calendar_prev_month }}" aria-label="{% trans "Previous month" %}">&larr;</a>
+    <strong style="display:flex; align-items:center; gap:0.5rem;">
+      {{ calendar_month|date:"F Y" }}
+      <button type="button" class="help-button" @click="helpOpen = true" aria-label="{% trans "How to read this calendar" %}">?</button>
+    </strong>
+    {% if calendar_next_month %}
+      <a class="button-secondary" href="?month={{ calendar_next_month }}" aria-label="{% trans "Next month" %}">&rarr;</a>
+    {% else %}
+      <span style="width:var(--touch-target);"></span>
+    {% endif %}
+
+    <div class="modal-backdrop" x-show="helpOpen" x-cloak x-transition.opacity.duration.200ms
+         @click.self="helpOpen = false" @keydown.escape.window="helpOpen = false">
+      <div class="modal-card" role="dialog" aria-modal="true" aria-label="{% trans "How to read this calendar" %}"
+           x-show="helpOpen" x-transition.scale.duration.200ms.origin.bottom>
+        <div class="modal-header">
+          <h2 style="margin:0;">{% trans "How to read this calendar" %}</h2>
+          <button type="button" class="modal-close" @click="helpOpen = false" aria-label="{% trans "Dismiss" %}">&times;</button>
+        </div>
+        <div class="modal-body">
+          <p>{% trans "A barbell icon marks a training day — green for a new personal record, red for an abandoned session, plain for an ordinary one. A moon marks a rest day." %}</p>
+          <p>{% trans "The arrow shows how your trailing 7-day average calories compare to your target: pointing up means over, down means under; green is close, yellow is drifting, red is well off. No arrow yet means there isn't enough logged data to judge." %}</p>
+          <p>{% trans "Tap a day for details." %}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="calendar-grid">
+    {% for day in calendar_weeks.0 %}
+      <div class="text-muted" style="text-align:center;">{{ day.date|date:"D" }}</div>
+    {% endfor %}
+    {% for week in calendar_weeks %}
+      {% for day in week %}
+        <div class="calendar-day-cell">
+          {% if not day.in_month %}
+            {% comment %}
+              A padding day from the adjacent month — found live:
+              tapping one used to open a detail popover for a day
+              whose own month isn't even the one on screen, which read
+              as "broken" rather than "this belongs elsewhere." Jumps
+              to that day's actual month instead. Only the previous
+              month is ever guaranteed reachable — a trailing day from
+              a *next* month beyond the current real one has nothing
+              to show (the future hasn't happened yet), so it stays
+              inert exactly when calendar_next_month itself is hidden.
+            {% endcomment %}
+            {% if day.date < calendar_month %}
+              <a class="calendar-day calendar-day-outside" href="?month={{ calendar_prev_month }}">
+                <span class="text-muted">{{ day.date.day }}</span>
+              </a>
+            {% elif calendar_next_month %}
+              <a class="calendar-day calendar-day-outside" href="?month={{ calendar_next_month }}">
+                <span class="text-muted">{{ day.date.day }}</span>
+              </a>
+            {% else %}
+              <div class="calendar-day calendar-day-outside">
+                <span class="text-muted">{{ day.date.day }}</span>
+              </div>
+            {% endif %}
+          {% else %}
+            <button type="button"
+                    class="calendar-day{% if day.is_today %} calendar-day-today{% endif %}"
+                    @click="toggle('{{ day.date|date:"Y-m-d" }}')"
+                    :aria-expanded="(openDate === '{{ day.date|date:"Y-m-d" }}').toString()">
+              <span class="text-muted">{{ day.date.day }}</span>
+              {% if day.status.training_status == "pr" %}
+                <svg class="calendar-day-icon calendar-day-icon-green" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><line x1="6" y1="12" x2="18" y2="12"/><rect x="2" y="9" width="3" height="6" rx="1"/><rect x="19" y="9" width="3" height="6" rx="1"/><rect x="5" y="7" width="2" height="10" rx="1"/><rect x="17" y="7" width="2" height="10" rx="1"/></svg>
+              {% elif day.status.training_status == "abandoned" %}
+                <svg class="calendar-day-icon calendar-day-icon-red" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><line x1="6" y1="12" x2="18" y2="12"/><rect x="2" y="9" width="3" height="6" rx="1"/><rect x="19" y="9" width="3" height="6" rx="1"/><rect x="5" y="7" width="2" height="10" rx="1"/><rect x="17" y="7" width="2" height="10" rx="1"/></svg>
+              {% elif day.status.training_status == "completed" %}
+                <svg class="calendar-day-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><line x1="6" y1="12" x2="18" y2="12"/><rect x="2" y="9" width="3" height="6" rx="1"/><rect x="19" y="9" width="3" height="6" rx="1"/><rect x="5" y="7" width="2" height="10" rx="1"/><rect x="17" y="7" width="2" height="10" rx="1"/></svg>
+              {% else %}
+                <svg class="calendar-day-icon calendar-day-icon-muted" viewBox="0 0 24 24" fill="currentColor" stroke="none" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+              {% endif %}
+              {% if day.status.calorie_trend %}
+                {% if day.status.calorie_direction == "over" %}
+                  <svg class="calendar-day-icon calendar-day-icon-{{ day.status.calorie_trend }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
+                {% else %}
+                  <svg class="calendar-day-icon calendar-day-icon-{{ day.status.calorie_trend }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
+                {% endif %}
+              {% else %}
+                <span class="calendar-day-icon" aria-hidden="true"></span>
+              {% endif %}
+            </button>
+            <div class="calendar-day-popover{% if forloop.counter0 <= 1 %} calendar-day-popover-start{% elif forloop.counter0 >= 5 %} calendar-day-popover-end{% else %} calendar-day-popover-center{% endif %}"
+                 x-show="openDate === '{{ day.date|date:"Y-m-d" }}'" x-cloak>
+              <template x-if="openDay">
+                <div>
+                  <strong x-text="openDay.heading"></strong>
+                  <template x-for="line in openDay.lines" :key="line">
+                    <p class="text-muted" x-text="line" style="margin:0.25rem 0 0;"></p>
+                  </template>
+                </div>
+              </template>
+            </div>
+          {% endif %}
+        </div>
+      {% endfor %}
+    {% endfor %}
+  </div>
+</div>

@@ -9,6 +9,7 @@
   --color-accent: #5b9dfd;
   --color-danger: #e5636a;
   --color-success: #4fb477;
+  --color-warning: #e0a94f;
   /* Sized for comfortable thumb reach in a mobile browser tab *and* a
      PWA's standalone window (no browser chrome to lean on) — bumped up
      from 3.5rem/1.5rem icons after those felt cramped when installed. */
@@ -1406,4 +1407,130 @@ h2 {
 .train-step-current {
   background: var(--color-accent);
   transform: scale(1.3);
+}
+
+/* Nutrition dashboard's month calendar (templates/nutrition/
+   dashboard.html) — deliberately icon/color-only inside each cell, no
+   text beyond the day number itself (docs/NUTRITION.md/the card's own
+   legend underneath carries the explanation instead), so a month's
+   worth of days stays scannable at a glance rather than turning into
+   31 small paragraphs. */
+.calendar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.25rem;
+}
+
+/* A day cell is a <button> (tap for detail — see the calendar's own
+   template comment), so it starts from the shared `button` rule's
+   solid accent-blue fill/1rem padding/touch-target min-size — none of
+   which belong on a compact grid square, all overridden here. */
+.calendar-day {
+  /* Grid's implicit stretch only reaches its direct children
+     (calendar-day-cell) — this button is one level deeper (to make
+     room for calendar-day-cell's own popover child, see the
+     template), so it needs its own explicit full-size fill rather
+     than the auto/shrink-to-content width a lone <button> defaults
+     to. Regression found live: without this, every day cell shrank
+     to a barely-visible sliver around the date number, with no room
+     left to show any icon at all. */
+  width: 100%;
+  aspect-ratio: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.15rem;
+  min-height: 0;
+  min-width: 0;
+  padding: 0;
+  border-radius: var(--radius);
+  border: 1px solid var(--color-border);
+  background: transparent;
+  font: inherit;
+  font-size: 0.75rem;
+  color: var(--color-text);
+  /* A padding day (calendar-day-outside) is an <a> when its month is
+     reachable — no underline on the bare day number. */
+  text-decoration: none;
+}
+
+/* A padding day from the previous/next month, filling out the grid's
+   first/last week — present so the weekday columns line up, but
+   visually out of the way of the month actually being looked at. */
+.calendar-day-outside {
+  opacity: 0.35;
+}
+
+.calendar-day-today {
+  border-color: var(--color-accent);
+  border-width: 2px;
+}
+
+.calendar-day-icon {
+  width: 14px;
+  height: 14px;
+}
+
+/* Same three-color vocabulary as everywhere else in the app a status
+   needs one (tag-success's own background, PR/streak badges) — never
+   invented fresh just for this calendar. */
+.calendar-day-icon-green {
+  color: var(--color-success);
+}
+
+.calendar-day-icon-yellow {
+  color: var(--color-warning);
+}
+
+.calendar-day-icon-red {
+  color: var(--color-danger);
+}
+
+.calendar-day-icon-muted {
+  color: var(--color-text-muted);
+}
+
+/* Anchors the tap-a-day detail panel to its own cell (calendar-day-
+   popover below) instead of one shared panel always at the bottom of
+   the grid — "opens next to whatever you tapped," found live. */
+.calendar-day-cell {
+  position: relative;
+}
+
+.calendar-day-popover {
+  position: absolute;
+  top: calc(100% + 0.25rem);
+  z-index: 30;
+  width: 12rem;
+  max-width: 70vw;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 0.5rem 0.75rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  font-size: 0.8rem;
+}
+
+/* Columns near the grid's left/right edge anchor to that same edge
+   instead of centering, which would otherwise push the panel half off
+   the card on a narrow phone screen. */
+.calendar-day-popover-start {
+  left: 0;
+}
+
+.calendar-day-popover-center {
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.calendar-day-popover-end {
+  right: 0;
 }

@@ -1571,6 +1571,119 @@ class DashboardWidgetsTests(TestCase):
         self.assertEqual(list(response.context["recent_prs"]), [])
 
 
+class DashboardCalendarTests(TestCase):
+    """The front page's month calendar
+    (apps.core.views._month_calendar_context,
+    apps.nutrition.services.calendar_month_statuses) — see
+    templates/nutrition/_month_calendar.html."""
+
+    def setUp(self):
+        from django.contrib.auth import get_user_model
+
+        self.alice = get_user_model().objects.create_user(
+            username="alice", password="s3cret-pass"
+        )
+        self.client.login(username="alice", password="s3cret-pass")
+
+    def test_shows_the_current_month_by_default(self):
+        response = self.client.get(reverse("dashboard"))
+        today = timezone.localdate()
+        self.assertEqual(response.context["calendar_month"], today.replace(day=1))
+        self.assertIsNone(response.context["calendar_next_month"])
+
+    def test_month_param_shows_a_different_month(self):
+        response = self.client.get(reverse("dashboard"), {"month": "2020-05"})
+        self.assertEqual(response.context["calendar_month"].isoformat(), "2020-05-01")
+        # Not the current month any more, so both directions are open.
+        self.assertEqual(response.context["calendar_prev_month"], "2020-04")
+        self.assertEqual(response.context["calendar_next_month"], "2020-06")
+
+    def test_a_future_month_is_clamped_to_the_current_one(self):
+        response = self.client.get(reverse("dashboard"), {"month": "2099-01"})
+        today = timezone.localdate()
+        self.assertEqual(response.context["calendar_month"], today.replace(day=1))
+
+    def test_garbage_month_param_falls_back_to_the_current_month(self):
+        response = self.client.get(reverse("dashboard"), {"month": "not-a-month"})
+        today = timezone.localdate()
+        self.assertEqual(response.context["calendar_month"], today.replace(day=1))
+
+    def test_calendar_weeks_cover_every_day_of_the_month_monday_first(self):
+        response = self.client.get(reverse("dashboard"), {"month": "2026-08"})
+        weeks = response.context["calendar_weeks"]
+        all_days = [day["date"] for week in weeks for day in week]
+        from datetime import date
+
+        self.assertIn(date(2026, 8, 1), all_days)
+        self.assertIn(date(2026, 8, 31), all_days)
+        # Every week row is a full 7 days, Monday first.
+        self.assertTrue(all(len(week) == 7 for week in weeks))
+        self.assertEqual(weeks[0][0]["date"].weekday(), 0)
+
+    def test_a_training_day_shows_up_in_the_calendar_context(self):
+        from apps.workouts.models import WorkoutSession, WorkoutSessionStatus
+
+        today = timezone.localdate()
+        WorkoutSession.objects.create(
+            user=self.alice, status=WorkoutSessionStatus.COMPLETED,
+            started_at=timezone.now(),
+        )
+        response = self.client.get(reverse("dashboard"))
+        weeks = response.context["calendar_weeks"]
+        todays_cell = next(
+            day for week in weeks for day in week if day["date"] == today
+        )
+        self.assertEqual(todays_cell["status"].training_status, "completed")
+
+    def test_days_json_carries_a_translated_detail_line_per_day(self):
+        response = self.client.get(reverse("dashboard"), {"month": "2026-08"})
+        days = response.context["calendar_days_json"]
+        self.assertEqual(len(days), 31)
+        first_day = next(d for d in days if d["date"] == "2026-08-01")
+        self.assertEqual(first_day["lines"], ["Rest day.", "Nothing logged that day."])
+
+
+class DayDetailLinesTests(TestCase):
+    """apps.core.views._day_detail_lines in isolation — every branch
+    of the two independent lines it builds, without needing a full
+    dashboard request per case (DashboardCalendarTests above already
+    covers the rest-day/nothing-logged combination end to end)."""
+
+    def _status(self, *, training_status=None, actual_calories=None):
+        from datetime import date
+
+        from apps.nutrition.services import CalendarDayStatus
+
+        return CalendarDayStatus(
+            date=date(2026, 1, 1), training_status=training_status,
+            calorie_trend=None, calorie_direction=None, actual_calories=actual_calories,
+        )
+
+    def test_a_personal_record_day(self):
+        from apps.core.views import _day_detail_lines
+
+        lines = _day_detail_lines(self._status(training_status="pr"), None)
+        self.assertEqual(lines[0], "Training day — new personal record!")
+
+    def test_an_abandoned_session_day(self):
+        from apps.core.views import _day_detail_lines
+
+        lines = _day_detail_lines(self._status(training_status="abandoned"), None)
+        self.assertEqual(lines[0], "Training day — a session was abandoned.")
+
+    def test_calories_logged_with_a_target_shows_both_numbers(self):
+        from apps.core.views import _day_detail_lines
+
+        lines = _day_detail_lines(self._status(actual_calories=Decimal("1800")), 2000)
+        self.assertEqual(lines[1], "1800 / 2000 kcal logged.")
+
+    def test_calories_logged_with_no_active_target_shows_just_the_actual(self):
+        from apps.core.views import _day_detail_lines
+
+        lines = _day_detail_lines(self._status(actual_calories=Decimal("1800")), None)
+        self.assertEqual(lines[1], "1800 kcal logged.")
+
+
 class AchievementsCarouselTests(TestCase):
     """The dashboard achievements carousel (apps.analytics.achievements)
     is shared across every user, not scoped to whoever's viewing it —

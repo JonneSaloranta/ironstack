@@ -8,6 +8,8 @@
 
 <p class="dashboard-greeting">{{ greeting }}</p>
 
+{% include "nutrition/_month_calendar.html" %}
+
 {% if achievements %}
   <div class="card achievements-carousel" role="region" aria-label="{% trans "Achievements" %}"
        x-data="ironstackCarousel({{ achievements|length }})" x-init="start()" @mouseenter="stop()" @mouseleave="start()">
@@ -116,4 +118,5 @@
 
 {% block extra_scripts %}
 <script src="{% static 'js/dashboard-carousel.js' %}" defer></script>
+<script src="{% static 'js/month-calendar.js' %}" defer></script>
 {% endblock %}
