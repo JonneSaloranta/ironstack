@@ -588,6 +588,41 @@ class ProfileViewTests(TestCase):
         self.alice.refresh_from_db()
         self.assertFalse(self.alice.show_gravatar)
 
+    def test_allow_friend_requests_and_allow_group_invites_default_to_true(self):
+        self.assertTrue(self.alice.allow_friend_requests)
+        self.assertTrue(self.alice.allow_group_invites)
+
+    def test_unchecking_allow_friend_requests_turns_it_off(self):
+        self.client.post(
+            reverse("profile"),
+            {"unit_system": "metric", "timezone": "UTC", "language": "en"},
+        )
+        self.alice.refresh_from_db()
+        self.assertFalse(self.alice.allow_friend_requests)
+
+    def test_unchecking_allow_group_invites_turns_it_off(self):
+        self.client.post(
+            reverse("profile"),
+            {"unit_system": "metric", "timezone": "UTC", "language": "en"},
+        )
+        self.alice.refresh_from_db()
+        self.assertFalse(self.alice.allow_group_invites)
+
+    def test_checking_allow_friend_requests_and_allow_group_invites_keeps_them_on(self):
+        self.client.post(
+            reverse("profile"),
+            {
+                "unit_system": "metric",
+                "timezone": "UTC",
+                "allow_friend_requests": "on",
+                "allow_group_invites": "on",
+                "language": "en",
+            },
+        )
+        self.alice.refresh_from_db()
+        self.assertTrue(self.alice.allow_friend_requests)
+        self.assertTrue(self.alice.allow_group_invites)
+
     def test_admin_link_is_hidden_for_a_regular_user(self):
         response = self.client.get(reverse("profile"))
         self.assertNotContains(response, reverse("admin:index"))
@@ -620,8 +655,9 @@ class ProfileViewTests(TestCase):
         an explicit .button-secondary as the only link."""
         response = self.client.get(reverse("profile"))
         # Account details, Change password, Two-factor authentication,
-        # API keys, Download your data, Feedback, Delete account.
-        self.assertContains(response, 'class="card card-action-row"', count=7)
+        # Friends & groups, API keys, Download your data, Feedback,
+        # Delete account.
+        self.assertContains(response, 'class="card card-action-row"', count=8)
         self.assertContains(
             response, f'<a class="button-secondary" href="{reverse("account-details")}">'
         )
@@ -638,10 +674,10 @@ class ProfileViewTests(TestCase):
         self.alice.save()
         response = self.client.get(reverse("profile"))
         # Account details, Change password, Two-factor authentication,
-        # API keys, Download your data, Feedback, Delete account +
-        # Admin, Backups, Feedback, Site & SEO (the latter four inside
-        # the staff-only "danger zone").
-        self.assertContains(response, 'class="card card-action-row"', count=11)
+        # Friends & groups, API keys, Download your data, Feedback,
+        # Delete account + Admin, Backups, Feedback, Site & SEO (the
+        # latter four inside the staff-only "danger zone").
+        self.assertContains(response, 'class="card card-action-row"', count=12)
         self.assertContains(
             response, f'<a class="button-secondary" href="{reverse("admin:index")}">'
         )
@@ -1443,6 +1479,47 @@ class DataExportServiceTests(TestCase):
         self.assertNotIn("password", data["account"])
         self.assertNotIn("totp_secret", data["account"])
 
+    def test_includes_friends_and_pending_friend_requests(self):
+        from apps.social import services as social_services
+
+        bob = User.objects.create_user(username="bob", password="s3cret-pass")
+        carol = User.objects.create_user(username="carol", password="s3cret-pass")
+        social_services.send_friend_request(self.alice, bob)
+        social_services.send_friend_request(carol, self.alice)
+
+        data = self.export_account_data(self.alice)
+        self.assertEqual(data["friend_requests_sent"][0]["to"], "bob")
+        self.assertEqual(data["friend_requests_sent"][0]["status"], "pending")
+        self.assertEqual(data["friend_requests_received"][0]["from"], "carol")
+
+    def test_includes_friendships_group_memberships_and_messages(self):
+        from apps.social import services as social_services
+        from apps.social.models import FriendRequest as SocialFriendRequest
+
+        bob = User.objects.create_user(username="bob", password="s3cret-pass")
+        social_services.send_friend_request(self.alice, bob)
+        request = SocialFriendRequest.objects.get(from_user=self.alice, to_user=bob)
+        social_services.accept_friend_request(request, acting_user=bob)
+        social_services.send_direct_message(self.alice, bob, "hello")
+        social_services.send_direct_message(bob, self.alice, "hi back")
+
+        group = social_services.create_group(self.alice, "Lifters")
+        social_services.send_group_message(group, self.alice, "welcome")
+
+        data = self.export_account_data(self.alice)
+        self.assertEqual(data["friends"], [{"username": "bob"}])
+        self.assertEqual(len(data["direct_messages"]), 2)
+        self.assertEqual(data["group_memberships"][0]["group"], "Lifters")
+        self.assertEqual(data["group_messages_sent"][0]["body"], "welcome")
+
+    def test_includes_blocked_users(self):
+        from apps.social import services as social_services
+
+        bob = User.objects.create_user(username="bob", password="s3cret-pass")
+        social_services.block_user(self.alice, bob)
+        data = self.export_account_data(self.alice)
+        self.assertEqual(data["blocked_users"][0]["username"], "bob")
+
     def test_includes_workout_history(self):
         from apps.exercises.models import Exercise
         from apps.workouts import services as workout_services
@@ -1834,6 +1911,38 @@ class OnboardingViewTests(TestCase):
         self.user.save(update_fields=["timezone"])
         response = self.client.get(reverse("dashboard"))
         self.assertContains(response, "Europe/Helsinki")
+
+    def test_allow_friend_requests_and_allow_group_invites_default_to_checked(self):
+        # Both settings default to True on the user itself; the
+        # onboarding checkboxes should start checked to match, not
+        # force a fresh account to opt back in to its own default.
+        response = self.client.get(reverse("dashboard"))
+        self.assertContains(response, 'id="id_allow_friend_requests" checked')
+        self.assertContains(response, 'id="id_allow_group_invites" checked')
+
+    def test_unchecking_allow_friend_requests_and_allow_group_invites_turns_them_off(self):
+        self.client.post(
+            reverse("onboarding"),
+            {"action": "save", "unit_system": "metric", "timezone": "UTC"},
+        )
+        self.user.refresh_from_db()
+        self.assertFalse(self.user.allow_friend_requests)
+        self.assertFalse(self.user.allow_group_invites)
+
+    def test_leaving_them_checked_keeps_the_default_on(self):
+        self.client.post(
+            reverse("onboarding"),
+            {
+                "action": "save",
+                "unit_system": "metric",
+                "timezone": "UTC",
+                "allow_friend_requests": "on",
+                "allow_group_invites": "on",
+            },
+        )
+        self.user.refresh_from_db()
+        self.assertTrue(self.user.allow_friend_requests)
+        self.assertTrue(self.user.allow_group_invites)
 
 
 class PasswordLoginGatingTests(TestCase):
