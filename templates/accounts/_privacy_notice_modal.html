@@ -1,0 +1,46 @@
+{% load i18n %}
+{% comment %}
+A fixed, translated privacy notice (unlike registration/
+_auth_disclaimer.html's SiteDisclaimer, which is free-form operator-
+authored text) — shown from the login/signup pages (at the point data
+collection actually starts) and from the profile page (so it's not a
+one-time thing you can only ever see once, before you had an account
+to look back at it from). Included wherever it's needed rather than
+put in base.html directly: unlike the changelog modal, this has
+nothing to show on every single page, only the couple of places a
+user is likely to actually want it.
+
+IronStack is self-hosted, open-source software, not a company running
+a service — whoever installs and operates a given instance is the
+GDPR "data controller" for it, not this project's authors. The notice
+below says so plainly rather than pretending otherwise.
+{% endcomment %}
+<div x-data="{ privacyOpen: false }">
+  <button type="button" class="link-button" @click="privacyOpen = true">{% trans "Privacy notice" %}</button>
+
+  <div class="modal-backdrop" x-show="privacyOpen" x-cloak x-transition.opacity.duration.200ms
+       @click.self="privacyOpen = false" @keydown.escape.window="privacyOpen = false">
+    <div class="modal-card modal-card-wide" role="dialog" aria-modal="true" aria-label="{% trans "Privacy notice" %}"
+         x-show="privacyOpen" x-transition.scale.duration.200ms.origin.bottom>
+      <div class="modal-header">
+        <h2 style="margin:0;">{% trans "Privacy notice" %}</h2>
+        <button type="button" class="modal-close" @click="privacyOpen = false" aria-label="{% trans "Dismiss" %}">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p>{% trans "IronStack is self-hosted, open-source software — the person or organization running this particular installation (not the software's authors) is who's responsible for the data on it, and who you should contact about any of the below." %}</p>
+        <h3>{% trans "What's collected" %}</h3>
+        <p>{% trans "Your account details (username, and optionally your name and email address), and whatever you choose to log: workout history, body measurements, nutrition and diet data, and other activities. Technical data such as your IP address is used briefly for rate-limiting and security (e.g. blocking repeated failed login attempts), not stored as part of your account." %}</p>
+        <h3>{% trans "Why" %}</h3>
+        <p>{% trans "Solely to provide the tracking features you're using — nothing here is shared with, sold to, or processed by any third party, except the few optional integrations you have to explicitly turn on yourself (e.g. an OpenFoodFacts lookup, a Gravatar picture, Authentik single sign-on)." %}</p>
+        <h3>{% trans "Your rights" %}</h3>
+        <ul>
+          <li>{% trans "Access and rectification — everything you've logged is visible and editable directly in the app." %}</li>
+          <li>{% trans 'Erasure — Profile → "Delete account" permanently deletes your account and everything exclusively tied to it.' %}</li>
+          <li>{% trans 'Portability — the public API (Profile → "API keys") can export your own data in a structured format.' %}</li>
+        </ul>
+        <h3>{% trans "Retention" %}</h3>
+        <p>{% trans "Kept for as long as your account exists. A backup made before you delete anything may still contain it until that backup itself is rotated out — see the account deletion page for details." %}</p>
+      </div>
+    </div>
+  </div>
+</div>

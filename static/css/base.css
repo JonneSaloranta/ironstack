@@ -486,6 +486,21 @@ abbr[title]:focus::after {
   margin: 0 0 1rem;
 }
 
+/* A <button> that reads as plain inline text, not a boxed button — for
+   an action that's secondary to the whole page it's on (opening the
+   privacy notice modal, templates/accounts/_privacy_notice_modal.html)
+   and shouldn't visually compete with the page's own primary
+   button(s). */
+.link-button {
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  color: var(--color-accent);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
 /* A <button>, not just styled text — clicking it opens the changelog
    modal below, so it needs the usual button resets (no native
    background/border) on top of looking like the plain muted footer

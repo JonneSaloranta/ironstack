@@ -1,9 +1,14 @@
+import csv
+import io
+import json
+import zipfile
+
 from django.conf import settings
 from django.contrib import messages
-from django.contrib.auth import get_user_model, login
+from django.contrib.auth import get_user_model, login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView, PasswordResetView
-from django.http import Http404
+from django.http import Http404, HttpResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse, reverse_lazy
 from django.utils.translation import gettext as _
@@ -12,8 +17,10 @@ from django.views.generic import CreateView, FormView, TemplateView, UpdateView,
 from apps.core import changelog as changelog_services
 from apps.core.models import FeedbackSettings
 
+from . import services as account_services
 from . import twofactor
 from .forms import (
+    AccountDeleteForm,
     AccountDetailsForm,
     OnboardingForm,
     ProfileForm,
@@ -339,6 +346,128 @@ class TwoFactorDisableView(LoginRequiredMixin, FormView):
         user.backup_codes.all().delete()
         messages.success(self.request, _("Two-factor authentication turned off."))
         return redirect("profile")
+
+
+class AccountDeleteView(LoginRequiredMixin, FormView):
+    """Profile → "Delete account" — GDPR Article 17 self-service
+    erasure. See apps.accounts.services.delete_account for what's
+    actually hard-deleted vs. reassigned to a shared owner, and
+    apps.accounts.forms.AccountDeleteForm for the password-or-
+    username confirmation step."""
+
+    template_name = "accounts/account_delete.html"
+    form_class = AccountDeleteForm
+    success_url = reverse_lazy("login")
+
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return super().dispatch(request, *args, **kwargs)
+        # The one thing this app won't let a self-service action do:
+        # delete the last remaining superuser and leave the instance
+        # with no one able to reach Django admin at all. An ordinary
+        # (non-superuser) account has no such restriction — any number
+        # of those can freely delete themselves.
+        if request.user.is_superuser:
+            other_superusers = (
+                get_user_model()
+                .objects.filter(is_superuser=True)
+                .exclude(pk=request.user.pk)
+                .exists()
+            )
+            if not other_superusers:
+                messages.error(
+                    request,
+                    _(
+                        "You're the only superuser on this instance — promote another "
+                        "account to superuser first, or this instance would have no one "
+                        "left who can reach Django admin."
+                    ),
+                )
+                return redirect("profile")
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["user"] = self.request.user
+        return kwargs
+
+    def form_valid(self, form):
+        user = self.request.user
+        account_services.delete_account(user)
+        logout(self.request)
+        messages.success(
+            self.request, _("Your account and all its data have been deleted.")
+        )
+        return super().form_valid(form)
+
+
+def _rows_for_section(key, value):
+    """Normalizes one apps.accounts.services.export_account_data
+    section into a flat list of dicts — every field a plain, already-
+    JSON-safe value — for the CSV/HTML views below, which both need
+    the same tabular shape regardless of a section's own underlying
+    representation: `account` is a single dict, `api_keys` is already
+    a flat list of dicts (export_account_data builds those two by
+    hand), and everything else is Django's own generic serializer
+    format (a list of `{"model", "pk", "fields"}` dicts)."""
+    if key == "account":
+        return [value]
+    if key == "api_keys":
+        return value
+    return [{"id": entry["pk"], **entry["fields"]} for entry in value]
+
+
+class DataExportView(LoginRequiredMixin, View):
+    """Profile → "Download your data" — GDPR Article 20 ("right to
+    data portability"). See apps.accounts.services.export_account_data
+    for exactly what's included and why. Three formats from one
+    export, `?format=` picking which: `json` (the complete, structured
+    export, the same shape a user's own API key could already fetch),
+    `csv` (a .zip of one .csv file per section, the practical format
+    for opening in a spreadsheet), and no param at all for a plain
+    HTML page reusing this app's own templates/styling — something to
+    actually read, not just something to archive."""
+
+    template_name = "accounts/data_export.html"
+
+    def get(self, request):
+        fmt = request.GET.get("format")
+        if fmt == "json":
+            return self._json_response(request.user)
+        if fmt == "csv":
+            return self._csv_response(request.user)
+        data = account_services.export_account_data(request.user)
+        sections = {key: _rows_for_section(key, value) for key, value in data.items()}
+        return render(request, self.template_name, {"sections": sections})
+
+    def _json_response(self, user):
+        data = account_services.export_account_data(user)
+        response = HttpResponse(
+            json.dumps(data, indent=2, ensure_ascii=False), content_type="application/json"
+        )
+        response["Content-Disposition"] = (
+            f'attachment; filename="ironstack-{user.username}-data.json"'
+        )
+        return response
+
+    def _csv_response(self, user):
+        data = account_services.export_account_data(user)
+        buffer = io.BytesIO()
+        with zipfile.ZipFile(buffer, "w", zipfile.ZIP_DEFLATED) as archive:
+            for key, value in data.items():
+                rows = _rows_for_section(key, value)
+                if not rows:
+                    continue
+                text_buffer = io.StringIO()
+                writer = csv.DictWriter(text_buffer, fieldnames=list(rows[0].keys()))
+                writer.writeheader()
+                writer.writerows(rows)
+                archive.writestr(f"{key}.csv", text_buffer.getvalue())
+        response = HttpResponse(buffer.getvalue(), content_type="application/zip")
+        response["Content-Disposition"] = (
+            f'attachment; filename="ironstack-{user.username}-data.zip"'
+        )
+        return response
 
 
 class TwoFactorRegenerateBackupCodesView(LoginRequiredMixin, View):

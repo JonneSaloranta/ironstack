@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Delete account" %} — IronStack{% endblock %}
+{% block content %}
+<div class="top-bar">
+  <h1 style="margin:0;">{% trans "Delete account" %}</h1>
+</div>
+
+<div class="card">
+  <p>{% trans "This permanently deletes your account and everything tied to it: your profile, workout history, personal records, body measurements, nutrition diary and targets, diet plans, activities, feedback, and API keys. This can't be undone." %}</p>
+  <p class="text-muted">{% trans "A custom exercise, food, recipe, program, or measurement/activity type you created is kept, not deleted, if anyone else on this instance is already using it — it's just no longer credited to your account." %}</p>
+  <p class="text-muted">{% trans "A backup made before you deleted your account may still contain your data until it's rotated out by this instance's own backup retention setting." %}</p>
+</div>
+
+<form class="card" method="post">
+  {% csrf_token %}
+  {{ form.non_field_errors }}
+  {% if user.has_usable_password %}
+    <div class="field">
+      {{ form.password.label_tag }}
+      {{ form.password }}
+      {% if form.password.errors %}<p class="field-error">{{ form.password.errors|striptags }}</p>{% endif %}
+    </div>
+  {% else %}
+    <p class="field-help">{% trans "Your account is linked to Authentik, so there's no local password to confirm with — type your username instead." %}</p>
+    <div class="field">
+      {{ form.confirm_username.label_tag }}
+      {{ form.confirm_username }}
+      {% if form.confirm_username.errors %}<p class="field-error">{{ form.confirm_username.errors|striptags }}</p>{% endif %}
+    </div>
+  {% endif %}
+  <button type="submit" class="button-danger">{% trans "Permanently delete my account" %}</button>
+</form>
+<p><a class="button-secondary" href="{% url 'profile' %}">&larr; {% trans "Cancel" %}</a></p>
+{% endblock %}

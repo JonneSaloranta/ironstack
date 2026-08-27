@@ -413,6 +413,39 @@ class TwoFactorDisableForm(forms.Form):
         return password
 
 
+class AccountDeleteForm(forms.Form):
+    """Profile → "Delete account" — the strongest confirmation this app
+    asks for anywhere, since it's also the only truly irreversible one
+    (see apps.accounts.services.delete_account). Same password-re-
+    entry shape as TwoFactorDisableForm above for a password-
+    authenticated user; an Authentik-linked account has no local
+    password to check at all (`User.has_usable_password()` is always
+    `False` for one — apps.accounts.oidc sets it unusable on purpose),
+    so that user instead has to type their own username, the same
+    "prove you meant this, not just a stray click" strength for an
+    action that can't ask for a password that doesn't exist."""
+
+    password = forms.CharField(
+        label=_("Password"), widget=forms.PasswordInput, required=False
+    )
+    confirm_username = forms.CharField(
+        label=_("Type your username to confirm"), required=False
+    )
+
+    def __init__(self, *args, user=None, **kwargs):
+        self.user = user
+        super().__init__(*args, **kwargs)
+
+    def clean(self):
+        cleaned = super().clean()
+        if self.user.has_usable_password():
+            if not self.user.check_password(cleaned.get("password", "")):
+                self.add_error("password", _("Incorrect password."))
+        elif cleaned.get("confirm_username", "") != self.user.username:
+            self.add_error("confirm_username", _("Doesn't match your username."))
+        return cleaned
+
+
 class OnboardingForm(forms.Form):
     """apps.accounts.views.OnboardingView / templates/accounts/
     _onboarding_modal.html — the one-time, entirely optional prompt
