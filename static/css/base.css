@@ -543,6 +543,35 @@ abbr[title]:focus::after {
   color: var(--color-text-muted);
 }
 
+/* The changelog modal's per-version sections
+   (apps.core.changelog._render, templates/accounts/profile.html) —
+   native <details>/<summary> instead of Alpine state, since each
+   version is independent of every other one (no shared "only one
+   open" behavior needed) and a screen reader/keyboard user already
+   knows how to operate a native disclosure widget without this app
+   teaching it any ARIA by hand. */
+.modal-body details {
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.modal-body details:last-of-type {
+  border-bottom: none;
+  padding-bottom: 0;
+  margin-bottom: 0;
+}
+
+.modal-body summary {
+  cursor: pointer;
+  font-weight: bold;
+  padding: 0.25rem 0;
+}
+
+.modal-body details[open] summary {
+  margin-bottom: 0.5rem;
+}
+
 .modal-body p {
   color: var(--color-text-muted);
   margin: 0 0 0.75rem;

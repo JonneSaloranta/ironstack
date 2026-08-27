@@ -607,14 +607,52 @@ class ChangelogTests(TestCase):
 
     def test_renders_the_real_changelog_file_without_error(self):
         html = render_changelog_html()
-        self.assertIn("<h3>", html)
+        self.assertIn("<details", html)
         self.assertIn("[1.0.0]", html)
 
     def test_headings(self):
         html = _render("# Title\n\n## [1.1.0] — 2026-01-01\n\n### Added\n- A thing\n")
         self.assertNotIn("Title", html)  # the top-level title is skipped
-        self.assertIn("<h3>[1.1.0] — 2026-01-01</h3>", html)
-        self.assertIn("<h4>Added</h4>", html)
+        self.assertIn("<summary>[1.1.0] — 2026-01-01</summary>", html)
+        self.assertIn("<h4>✨ Added</h4>", html)
+
+    def test_each_version_is_its_own_collapsible_section(self):
+        """Regression: this used to render as one continuous list with
+        no visual break between versions at all."""
+        html = _render(
+            "## [1.2.0] — 2026-02-01\n\n### Added\n- Newer thing\n\n"
+            "## [1.1.0] — 2026-01-01\n\n### Fixed\n- Older thing\n"
+        )
+        self.assertEqual(html.count("<details"), 2)
+        self.assertIn("<summary>[1.2.0] — 2026-02-01</summary>", html)
+        self.assertIn("<summary>[1.1.0] — 2026-01-01</summary>", html)
+
+    def test_only_the_first_non_empty_version_starts_open(self):
+        html = _render(
+            "## [Unreleased]\n\n## [1.2.0] — 2026-02-01\n\n### Added\n- Newer thing\n\n"
+            "## [1.1.0] — 2026-01-01\n\n### Fixed\n- Older thing\n"
+        )
+        self.assertEqual(html.count("<details open"), 1)
+        self.assertIn('<details open><summary>[1.2.0] — 2026-02-01</summary>', html)
+
+    def test_an_empty_version_section_is_skipped_entirely(self):
+        """The normal state of [Unreleased] right after a release cut
+        (CLAUDE.md's own release workflow) — nothing under it yet."""
+        html = _render("## [Unreleased]\n\n## [1.1.0] — 2026-01-01\n\n### Added\n- A thing\n")
+        self.assertNotIn("[Unreleased]", html)
+        self.assertIn("[1.1.0]", html)
+
+    def test_a_recognized_heading_gets_its_matching_emoji(self):
+        html = _render("## [1.1.0] — 2026-01-01\n\n### Fixed\n- A fix\n")
+        self.assertIn("<h4>🐛 Fixed</h4>", html)
+
+    def test_a_suffixed_heading_still_matches_its_plain_counterpart(self):
+        html = _render("## [1.1.0] — 2026-01-01\n\n### Added — API\n- A new endpoint\n")
+        self.assertIn("<h4>✨ Added — API</h4>", html)
+
+    def test_an_unrecognized_heading_gets_the_default_emoji(self):
+        html = _render("## [1.1.0] — 2026-01-01\n\n### Security\n- A hardening change\n")
+        self.assertIn("<h4>📌 Security</h4>", html)
 
     def test_bullets_including_a_soft_wrapped_continuation_line(self):
         html = _render("- First point\n  still the first point\n- Second point\n")
