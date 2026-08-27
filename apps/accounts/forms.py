@@ -61,6 +61,15 @@ TWOFACTOR_ATTEMPT_WINDOW_SECONDS = 5 * 60
 _MISLEADING_TIMEZONE_ALIASES = {"localtime", "Factory"}
 
 
+def _timezone_choices():
+    """Shared by ProfileForm and OnboardingForm below — one filtered
+    list, not two copies that could drift apart on which aliases get
+    excluded."""
+    return sorted(
+        (tz, tz) for tz in available_timezones() if tz not in _MISLEADING_TIMEZONE_ALIASES
+    )
+
+
 class SignupForm(UserCreationForm):
     class Meta(UserCreationForm.Meta):
         model = User
@@ -224,14 +233,7 @@ class ProfileForm(forms.ModelForm):
     shown regardless, unaffected by this toggle.
     """
 
-    timezone = forms.ChoiceField(
-        choices=sorted(
-            (tz, tz)
-            for tz in available_timezones()
-            if tz not in _MISLEADING_TIMEZONE_ALIASES
-        ),
-        label=_("Timezone"),
-    )
+    timezone = forms.ChoiceField(choices=_timezone_choices, label=_("Timezone"))
     height = forms.DecimalField(max_digits=6, decimal_places=1, required=False)
 
     class Meta:
@@ -516,6 +518,25 @@ class OnboardingForm(forms.Form):
             "profile."
         ),
     )
+    # Required (like unit_system above), not required=False like every
+    # other field on this form — but pre-filled with the user's current
+    # value (__init__ below, "UTC" for a brand new account) the same
+    # way unit_system already is, so "Save" never actually needs a
+    # manual choice, and "Not now" skips validation entirely anyway
+    # (its own button is formnovalidate). Matters more than it might
+    # look: apps.accounts.middleware.UserTimezoneMiddleware uses this
+    # for every "today"/date-range boundary in the app, so a user on a
+    # real device far from UTC gets those wrong from their very first
+    # session until they happen to find this in their profile settings
+    # otherwise.
+    timezone = forms.ChoiceField(
+        choices=_timezone_choices,
+        label=_("Timezone"),
+        help_text=_(
+            "Used for \"today\" and date ranges throughout the app. Change this "
+            "anytime from your profile."
+        ),
+    )
 
     def __init__(self, *args, user, **kwargs):
         self.user = user
@@ -523,6 +544,7 @@ class OnboardingForm(forms.Form):
         self.fields["first_name"].initial = user.first_name
         self.fields["email"].initial = user.email
         self.fields["unit_system"].initial = user.unit_system
+        self.fields["timezone"].initial = user.timezone
         unit_label = core_units.weight_unit_label(user.unit_system)
         self.fields["weight"].label = (
             _("Current weight (%(unit)s)") % {"unit": unit_label}
@@ -548,6 +570,7 @@ class OnboardingForm(forms.Form):
         user.first_name = self.cleaned_data["first_name"]
         user.email = self.cleaned_data["email"]
         user.unit_system = self.cleaned_data["unit_system"]
+        user.timezone = self.cleaned_data["timezone"]
 
         height = self.cleaned_data.get("height")
         if height is not None:
@@ -563,6 +586,7 @@ class OnboardingForm(forms.Form):
                 "first_name",
                 "email",
                 "unit_system",
+                "timezone",
                 "height",
                 "onboarding_completed",
             ]
