@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: IronStack\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-26 23:53+0000\n"
+"POT-Creation-Date: 2026-08-27 08:45+0000\n"
 "Language: it\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -734,6 +734,7 @@ msgid "%(actual)s / %(target)s kcal logged."
 msgstr "%(actual)s / %(target)s kcal registrate."
 
 #: apps/core/views.py:47
+#, python-format
 msgid "%(actual)s kcal logged."
 msgstr "%(actual)s kcal registrate."
 
@@ -1483,7 +1484,7 @@ msgstr ""
 "Mescola l'avena nello yogurt, guarnisci con fette di banana e burro di "
 "arachidi."
 
-#: apps/nutrition/i18n_content.py:48
+#: apps/nutrition/i18n_content.py:49
 msgid ""
 "Fry or scramble the eggs, serve on toasted bread with peanut butter and a "
 "drizzle of olive oil."
@@ -1491,14 +1492,14 @@ msgstr ""
 "Friggi o strapazza le uova, servi su pane tostato con burro di arachidi e un "
 "filo d'olio d'oliva."
 
-#: apps/nutrition/i18n_content.py:49
+#: apps/nutrition/i18n_content.py:52
 msgid ""
 "Cook the chicken and rice, toss with olive oil, serve with steamed broccoli."
 msgstr ""
 "Cuoci il pollo e il riso, condisci con olio d'oliva, servi con broccoli al "
 "vapore."
 
-#: apps/nutrition/i18n_content.py:50
+#: apps/nutrition/i18n_content.py:53
 msgid ""
 "Roast the sweet potato, flake in the tuna, drizzle with olive oil and serve "
 "with spinach."
@@ -1506,7 +1507,7 @@ msgstr ""
 "Arrostisci la patata dolce, sfalda sopra il tonno, condisci con olio d'oliva "
 "e servi con spinaci."
 
-#: apps/nutrition/i18n_content.py:51
+#: apps/nutrition/i18n_content.py:54
 msgid ""
 "Pan-sear the salmon, serve over rice with steamed broccoli and a little "
 "olive oil."
@@ -1514,7 +1515,7 @@ msgstr ""
 "Rosola il salmone in padella, servi sopra il riso con broccoli al vapore e "
 "un filo d'olio d'oliva."
 
-#: apps/nutrition/i18n_content.py:52
+#: apps/nutrition/i18n_content.py:55
 msgid ""
 "Roast the chicken and sweet potato together, top with crushed almonds and "
 "olive oil."
@@ -1522,16 +1523,16 @@ msgstr ""
 "Arrostisci insieme pollo e patata dolce, guarnisci con mandorle tritate e "
 "olio d'oliva."
 
-#: apps/nutrition/i18n_content.py:53
+#: apps/nutrition/i18n_content.py:56
 msgid ""
 "Scramble the eggs with the spinach, serve with cottage cheese on the side."
 msgstr "Strapazza le uova con gli spinaci, servi con fiocchi di latte a parte."
 
-#: apps/nutrition/i18n_content.py:54
+#: apps/nutrition/i18n_content.py:57
 msgid "Top the yogurt with sliced banana and a few crushed almonds."
 msgstr "Guarnisci lo yogurt con fette di banana e qualche mandorla tritata."
 
-#: apps/nutrition/i18n_content.py:55
+#: apps/nutrition/i18n_content.py:58
 msgid ""
 "Grill the chicken, steam the broccoli, finish with a light drizzle of olive "
 "oil."
@@ -1539,42 +1540,42 @@ msgstr ""
 "Griglia il pollo, cuoci i broccoli al vapore, termina con un filo leggero "
 "d'olio d'oliva."
 
-#: apps/nutrition/i18n_content.py:56
+#: apps/nutrition/i18n_content.py:59
 msgid "Toss the tuna with the spinach and a small drizzle of olive oil."
 msgstr "Mescola il tonno con gli spinaci e un filo d'olio d'oliva."
 
-#: apps/nutrition/i18n_content.py:57
+#: apps/nutrition/i18n_content.py:60
 msgid "Bake the salmon, serve with steamed broccoli and spinach."
 msgstr "Cuoci il salmone al forno, servi con broccoli al vapore e spinaci."
 
-#: apps/nutrition/i18n_content.py:58
+#: apps/nutrition/i18n_content.py:61
 msgid "Grill the chicken, serve with cottage cheese and wilted spinach."
 msgstr "Griglia il pollo, servi con fiocchi di latte e spinaci appassiti."
 
-#: apps/nutrition/i18n_content.py:59
+#: apps/nutrition/i18n_content.py:62
 msgid "Mix the oats into the yogurt and top with sliced banana."
 msgstr "Mescola l'avena nello yogurt e guarnisci con fette di banana."
 
-#: apps/nutrition/i18n_content.py:60
+#: apps/nutrition/i18n_content.py:63
 msgid ""
 "Fry or scramble the eggs, serve on toasted bread with a little olive oil."
 msgstr ""
 "Friggi o strapazza le uova, servi su pane tostato con un filo d'olio d'oliva."
 
-#: apps/nutrition/i18n_content.py:61
+#: apps/nutrition/i18n_content.py:64
 msgid "Cook the chicken and rice, serve with steamed broccoli and olive oil."
 msgstr "Cuoci il pollo e il riso, servi con broccoli al vapore e olio d'oliva."
 
-#: apps/nutrition/i18n_content.py:62
+#: apps/nutrition/i18n_content.py:65
 msgid "Mix the tuna with the spinach, serve between slices of toasted bread."
 msgstr "Mescola il tonno con gli spinaci, servi tra fette di pane tostato."
 
-#: apps/nutrition/i18n_content.py:63
+#: apps/nutrition/i18n_content.py:66
 msgid "Bake the salmon and sweet potato, serve with wilted spinach."
 msgstr ""
 "Cuoci al forno il salmone e la patata dolce, servi con spinaci appassiti."
 
-#: apps/nutrition/i18n_content.py:64
+#: apps/nutrition/i18n_content.py:67
 msgid ""
 "Roast the chicken with the broccoli and sweet potato, finish with olive oil."
 msgstr ""
@@ -1768,39 +1769,50 @@ msgstr ""
 "settimana negli ultimi %(days)s giorni. Regolazione suggerita: %(delta)+d "
 "kcal/giorno."
 
-#: apps/nutrition/views.py:548
+#: apps/nutrition/views.py:428
+msgid ""
+"Log a body weight measurement before changing your goal — the calorie target "
+"needs your current weight."
+msgstr "Registra una misurazione del peso corporeo prima di cambiare obiettivo — l'obiettivo calorico richiede il tuo peso attuale."
+
+#: apps/nutrition/views.py:465
+#, python-format
+msgid "Goal updated — new target is %(calories)d kcal/day."
+msgstr "Obiettivo aggiornato — il nuovo obiettivo è %(calories)d kcal/giorno."
+
+#: apps/nutrition/views.py:663
 msgid "Pick a date to copy this day to."
 msgstr "Scegli una data in cui copiare questo giorno."
 
-#: apps/nutrition/views.py:553
+#: apps/nutrition/views.py:668
 #, python-format
 msgid "Copied %(count)d entry to %(date)s."
 msgid_plural "Copied %(count)d entries to %(date)s."
 msgstr[0] "Copiata %(count)d voce in %(date)s."
 msgstr[1] "Copiate %(count)d voci in %(date)s."
 
-#: apps/nutrition/views.py:559
+#: apps/nutrition/views.py:674
 msgid "Nothing to copy — that day has no entries."
 msgstr "Niente da copiare — quel giorno non ha voci."
 
-#: apps/nutrition/views.py:603 apps/nutrition/views.py:820
-#: apps/nutrition/views.py:1127
+#: apps/nutrition/views.py:718 apps/nutrition/views.py:935
+#: apps/nutrition/views.py:1244
 msgid "That food couldn't be imported — try again."
 msgstr "Non è stato possibile importare questo alimento — riprova."
 
-#: apps/nutrition/views.py:762
+#: apps/nutrition/views.py:877
 #, python-format
 msgid "\"%(name)s\" created — now add its ingredients below."
 msgstr "\"%(name)s\" creata — aggiungi ora i suoi ingredienti qui sotto."
 
-#: apps/nutrition/views.py:1159
+#: apps/nutrition/views.py:1276
 #, python-format
 msgid "Logged %(count)d item to %(date)s."
 msgid_plural "Logged %(count)d items to %(date)s."
 msgstr[0] "Registrata %(count)d voce in %(date)s."
 msgstr[1] "Registrate %(count)d voci in %(date)s."
 
-#: apps/nutrition/views.py:1170
+#: apps/nutrition/views.py:1287
 msgid "Nothing to log — this plan has no items for that date."
 msgstr "Niente da registrare — questo piano non ha voci per quella data."
 
@@ -3691,10 +3703,10 @@ msgid ""
 "to judge."
 msgstr ""
 "La freccia mostra come la media delle calorie degli ultimi 7 giorni si "
-"confronta con il tuo obiettivo: verso l'alto significa sopra, verso il "
-"basso significa sotto; verde è vicino, giallo si sta allontanando, rosso è "
-"molto lontano. Nessuna freccia ancora significa che non ci sono abbastanza "
-"dati registrati per giudicare."
+"confronta con il tuo obiettivo: verso l'alto significa sopra, verso il basso "
+"significa sotto; verde è vicino, giallo si sta allontanando, rosso è molto "
+"lontano. Nessuna freccia ancora significa che non ci sono abbastanza dati "
+"registrati per giudicare."
 
 #: templates/nutrition/_month_calendar.html:46
 msgid "Tap a day for details."
@@ -4025,7 +4037,7 @@ msgstr ""
 #: templates/nutrition/calculators_home.html:67
 #: templates/nutrition/diary_day.html:88
 #: templates/nutrition/diet_plan_list.html:37
-#: templates/nutrition/food_list.html:44
+#: templates/nutrition/food_list.html:44 templates/nutrition/goal_edit.html:36
 #: templates/nutrition/recipe_list.html:44 templates/nutrition/stats.html:44
 msgid "Back to nutrition"
 msgstr "Torna all'alimentazione"
@@ -4111,6 +4123,11 @@ msgstr "%(calories)s kcal/giorno"
 #: templates/nutrition/dashboard.html:119
 msgid "Current goal"
 msgstr "Obiettivo attuale"
+
+#: templates/nutrition/dashboard.html:121 templates/nutrition/goal_edit.html:3
+#: templates/nutrition/goal_edit.html:6
+msgid "Change goal"
+msgstr "Cambia obiettivo"
 
 #: templates/nutrition/diary_add_entry.html:3
 #: templates/nutrition/diary_add_entry.html:6
@@ -4336,6 +4353,16 @@ msgstr "Cerca"
 #: templates/nutrition/food_list.html:40
 msgid "No foods yet."
 msgstr "Nessun alimento ancora."
+
+#: templates/nutrition/goal_edit.html:11
+msgid ""
+"Changing your goal recalculates your daily calorie and macro target right "
+"away — your old target stays in your history, it isn't overwritten."
+msgstr "Cambiare obiettivo ricalcola subito il tuo obiettivo calorico e dei macronutrienti giornaliero — il vecchio obiettivo resta nella cronologia, non viene sovrascritto."
+
+#: templates/nutrition/goal_edit.html:33
+msgid "Update goal"
+msgstr "Aggiorna obiettivo"
 
 #: templates/nutrition/onboarding_activity.html:3
 #: templates/nutrition/onboarding_activity_level.html:3

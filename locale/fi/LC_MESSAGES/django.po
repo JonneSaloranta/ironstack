@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: IronStack\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-26 23:53+0000\n"
+"POT-Creation-Date: 2026-08-27 08:45+0000\n"
 "Language: fi\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -722,6 +722,7 @@ msgid "%(actual)s / %(target)s kcal logged."
 msgstr "%(actual)s / %(target)s kcal kirjattu."
 
 #: apps/core/views.py:47
+#, python-format
 msgid "%(actual)s kcal logged."
 msgstr "%(actual)s kcal kirjattu."
 
@@ -1470,7 +1471,7 @@ msgstr ""
 "Sekoita kaurahiutaleet jogurttiin, lisää päälle banaaniviipaleita ja "
 "maapähkinävoita."
 
-#: apps/nutrition/i18n_content.py:48
+#: apps/nutrition/i18n_content.py:49
 msgid ""
 "Fry or scramble the eggs, serve on toasted bread with peanut butter and a "
 "drizzle of olive oil."
@@ -1478,14 +1479,14 @@ msgstr ""
 "Paista tai munakoita munat, tarjoa paahtoleivän kanssa maapähkinävoilla ja "
 "tilkalla oliiviöljyä."
 
-#: apps/nutrition/i18n_content.py:49
+#: apps/nutrition/i18n_content.py:52
 msgid ""
 "Cook the chicken and rice, toss with olive oil, serve with steamed broccoli."
 msgstr ""
 "Kypsennä kana ja riisi, sekoita joukkoon oliiviöljyä, tarjoa höyrytetyn "
 "parsakaalin kanssa."
 
-#: apps/nutrition/i18n_content.py:50
+#: apps/nutrition/i18n_content.py:53
 msgid ""
 "Roast the sweet potato, flake in the tuna, drizzle with olive oil and serve "
 "with spinach."
@@ -1493,7 +1494,7 @@ msgstr ""
 "Paahda bataatti, murustele joukkoon tonnikala, lisää tilkka oliiviöljyä ja "
 "tarjoa pinaatin kanssa."
 
-#: apps/nutrition/i18n_content.py:51
+#: apps/nutrition/i18n_content.py:54
 msgid ""
 "Pan-sear the salmon, serve over rice with steamed broccoli and a little "
 "olive oil."
@@ -1501,7 +1502,7 @@ msgstr ""
 "Paista lohi pannulla, tarjoa riisin päällä höyrytetyn parsakaalin ja tilkan "
 "oliiviöljyn kanssa."
 
-#: apps/nutrition/i18n_content.py:52
+#: apps/nutrition/i18n_content.py:55
 msgid ""
 "Roast the chicken and sweet potato together, top with crushed almonds and "
 "olive oil."
@@ -1509,59 +1510,59 @@ msgstr ""
 "Paahda kana ja bataatti yhdessä, lisää päälle murskattuja manteleita ja "
 "oliiviöljyä."
 
-#: apps/nutrition/i18n_content.py:53
+#: apps/nutrition/i18n_content.py:56
 msgid ""
 "Scramble the eggs with the spinach, serve with cottage cheese on the side."
 msgstr "Munakoi munat pinaatin kanssa, tarjoa raejuuston kera."
 
-#: apps/nutrition/i18n_content.py:54
+#: apps/nutrition/i18n_content.py:57
 msgid "Top the yogurt with sliced banana and a few crushed almonds."
 msgstr "Lisää jogurtin päälle banaaniviipaleita ja muutama murskattu manteli."
 
-#: apps/nutrition/i18n_content.py:55
+#: apps/nutrition/i18n_content.py:58
 msgid ""
 "Grill the chicken, steam the broccoli, finish with a light drizzle of olive "
 "oil."
 msgstr ""
 "Grillaa kana, höyrytä parsakaali, viimeistele kevyellä tilkalla oliiviöljyä."
 
-#: apps/nutrition/i18n_content.py:56
+#: apps/nutrition/i18n_content.py:59
 msgid "Toss the tuna with the spinach and a small drizzle of olive oil."
 msgstr "Sekoita tonnikala pinaatin ja pienen tilkan oliiviöljyä kanssa."
 
-#: apps/nutrition/i18n_content.py:57
+#: apps/nutrition/i18n_content.py:60
 msgid "Bake the salmon, serve with steamed broccoli and spinach."
 msgstr "Paista lohi uunissa, tarjoa höyrytetyn parsakaalin ja pinaatin kanssa."
 
-#: apps/nutrition/i18n_content.py:58
+#: apps/nutrition/i18n_content.py:61
 msgid "Grill the chicken, serve with cottage cheese and wilted spinach."
 msgstr "Grillaa kana, tarjoa raejuuston ja haudutetun pinaatin kanssa."
 
-#: apps/nutrition/i18n_content.py:59
+#: apps/nutrition/i18n_content.py:62
 msgid "Mix the oats into the yogurt and top with sliced banana."
 msgstr "Sekoita kaurahiutaleet jogurttiin ja lisää päälle banaaniviipaleita."
 
-#: apps/nutrition/i18n_content.py:60
+#: apps/nutrition/i18n_content.py:63
 msgid ""
 "Fry or scramble the eggs, serve on toasted bread with a little olive oil."
 msgstr ""
 "Paista tai munakoita munat, tarjoa paahtoleivän kanssa tilkalla oliiviöljyä."
 
-#: apps/nutrition/i18n_content.py:61
+#: apps/nutrition/i18n_content.py:64
 msgid "Cook the chicken and rice, serve with steamed broccoli and olive oil."
 msgstr ""
 "Kypsennä kana ja riisi, tarjoa höyrytetyn parsakaalin ja oliiviöljyn kanssa."
 
-#: apps/nutrition/i18n_content.py:62
+#: apps/nutrition/i18n_content.py:65
 msgid "Mix the tuna with the spinach, serve between slices of toasted bread."
 msgstr ""
 "Sekoita tonnikala pinaatin kanssa, tarjoa paahtoleipäviipaleiden välissä."
 
-#: apps/nutrition/i18n_content.py:63
+#: apps/nutrition/i18n_content.py:66
 msgid "Bake the salmon and sweet potato, serve with wilted spinach."
 msgstr "Paista lohi ja bataatti uunissa, tarjoa haudutetun pinaatin kanssa."
 
-#: apps/nutrition/i18n_content.py:64
+#: apps/nutrition/i18n_content.py:67
 msgid ""
 "Roast the chicken with the broccoli and sweet potato, finish with olive oil."
 msgstr "Paahda kana parsakaalin ja bataatin kanssa, viimeistele oliiviöljyllä."
@@ -1752,39 +1753,50 @@ msgstr ""
 "Tavoite: %(target)s kg/viikko. Toteutunut trendi: %(actual)s kg/viikko "
 "viimeisen %(days)s päivän aikana. Ehdotettu säätö: %(delta)+d kcal/vrk."
 
-#: apps/nutrition/views.py:548
+#: apps/nutrition/views.py:428
+msgid ""
+"Log a body weight measurement before changing your goal — the calorie target "
+"needs your current weight."
+msgstr "Kirjaa painomittaus ennen tavoitteen muuttamista — kalorimäärätavoite tarvitsee nykyisen painosi."
+
+#: apps/nutrition/views.py:465
+#, python-format
+msgid "Goal updated — new target is %(calories)d kcal/day."
+msgstr "Tavoite päivitetty — uusi tavoite on %(calories)d kcal/vrk."
+
+#: apps/nutrition/views.py:663
 msgid "Pick a date to copy this day to."
 msgstr "Valitse päivä, jolle tämä päivä kopioidaan."
 
-#: apps/nutrition/views.py:553
+#: apps/nutrition/views.py:668
 #, python-format
 msgid "Copied %(count)d entry to %(date)s."
 msgid_plural "Copied %(count)d entries to %(date)s."
 msgstr[0] "Kopioitiin %(count)d merkintä päivälle %(date)s."
 msgstr[1] "Kopioitiin %(count)d merkintää päivälle %(date)s."
 
-#: apps/nutrition/views.py:559
+#: apps/nutrition/views.py:674
 msgid "Nothing to copy — that day has no entries."
 msgstr "Ei mitään kopioitavaa — kyseiselle päivälle ei ole kirjattu mitään."
 
-#: apps/nutrition/views.py:603 apps/nutrition/views.py:820
-#: apps/nutrition/views.py:1127
+#: apps/nutrition/views.py:718 apps/nutrition/views.py:935
+#: apps/nutrition/views.py:1244
 msgid "That food couldn't be imported — try again."
 msgstr "Tätä ruokaa ei voitu tuoda — yritä uudelleen."
 
-#: apps/nutrition/views.py:762
+#: apps/nutrition/views.py:877
 #, python-format
 msgid "\"%(name)s\" created — now add its ingredients below."
 msgstr "\"%(name)s\" luotu — lisää sen ainesosat alla."
 
-#: apps/nutrition/views.py:1159
+#: apps/nutrition/views.py:1276
 #, python-format
 msgid "Logged %(count)d item to %(date)s."
 msgid_plural "Logged %(count)d items to %(date)s."
 msgstr[0] "Kirjattiin %(count)d kohde päivälle %(date)s."
 msgstr[1] "Kirjattiin %(count)d kohdetta päivälle %(date)s."
 
-#: apps/nutrition/views.py:1170
+#: apps/nutrition/views.py:1287
 msgid "Nothing to log — this plan has no items for that date."
 msgstr ""
 "Ei mitään kirjattavaa — tällä suunnitelmalla ei ole kohteita kyseiselle "
@@ -3996,7 +4008,7 @@ msgstr ""
 #: templates/nutrition/calculators_home.html:67
 #: templates/nutrition/diary_day.html:88
 #: templates/nutrition/diet_plan_list.html:37
-#: templates/nutrition/food_list.html:44
+#: templates/nutrition/food_list.html:44 templates/nutrition/goal_edit.html:36
 #: templates/nutrition/recipe_list.html:44 templates/nutrition/stats.html:44
 msgid "Back to nutrition"
 msgstr "Takaisin ravintoon"
@@ -4082,6 +4094,11 @@ msgstr "%(calories)s kcal/vrk"
 #: templates/nutrition/dashboard.html:119
 msgid "Current goal"
 msgstr "Nykyinen tavoite"
+
+#: templates/nutrition/dashboard.html:121 templates/nutrition/goal_edit.html:3
+#: templates/nutrition/goal_edit.html:6
+msgid "Change goal"
+msgstr "Muuta tavoitetta"
 
 #: templates/nutrition/diary_add_entry.html:3
 #: templates/nutrition/diary_add_entry.html:6
@@ -4306,6 +4323,16 @@ msgstr "Hae"
 #: templates/nutrition/food_list.html:40
 msgid "No foods yet."
 msgstr "Ei vielä ruokia."
+
+#: templates/nutrition/goal_edit.html:11
+msgid ""
+"Changing your goal recalculates your daily calorie and macro target right "
+"away — your old target stays in your history, it isn't overwritten."
+msgstr "Tavoitteen muuttaminen laskee päivittäisen kalori- ja makrotavoitteesi heti uudelleen — vanha tavoitteesi säilyy historiassasi, sitä ei ylikirjoiteta."
+
+#: templates/nutrition/goal_edit.html:33
+msgid "Update goal"
+msgstr "Päivitä tavoite"
 
 #: templates/nutrition/onboarding_activity.html:3
 #: templates/nutrition/onboarding_activity_level.html:3

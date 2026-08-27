@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: IronStack\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-26 23:53+0000\n"
+"POT-Creation-Date: 2026-08-27 08:45+0000\n"
 "Language: ru\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -728,6 +728,7 @@ msgid "%(actual)s / %(target)s kcal logged."
 msgstr "%(actual)s / %(target)s ккал записано."
 
 #: apps/core/views.py:47
+#, python-format
 msgid "%(actual)s kcal logged."
 msgstr "%(actual)s ккал записано."
 
@@ -1479,7 +1480,7 @@ msgstr ""
 "Смешайте овсянку с йогуртом, добавьте сверху ломтики банана и арахисовую "
 "пасту."
 
-#: apps/nutrition/i18n_content.py:48
+#: apps/nutrition/i18n_content.py:49
 msgid ""
 "Fry or scramble the eggs, serve on toasted bread with peanut butter and a "
 "drizzle of olive oil."
@@ -1487,14 +1488,14 @@ msgstr ""
 "Обжарьте или взбейте яйца, подавайте на тосте с арахисовой пастой и каплей "
 "оливкового масла."
 
-#: apps/nutrition/i18n_content.py:49
+#: apps/nutrition/i18n_content.py:52
 msgid ""
 "Cook the chicken and rice, toss with olive oil, serve with steamed broccoli."
 msgstr ""
 "Приготовьте курицу и рис, перемешайте с оливковым маслом, подавайте с "
 "брокколи на пару."
 
-#: apps/nutrition/i18n_content.py:50
+#: apps/nutrition/i18n_content.py:53
 msgid ""
 "Roast the sweet potato, flake in the tuna, drizzle with olive oil and serve "
 "with spinach."
@@ -1502,7 +1503,7 @@ msgstr ""
 "Запеките сладкий картофель, добавьте тунец кусочками, сбрызните оливковым "
 "маслом и подавайте со шпинатом."
 
-#: apps/nutrition/i18n_content.py:51
+#: apps/nutrition/i18n_content.py:54
 msgid ""
 "Pan-sear the salmon, serve over rice with steamed broccoli and a little "
 "olive oil."
@@ -1510,7 +1511,7 @@ msgstr ""
 "Обжарьте лосось на сковороде, подавайте с рисом, брокколи на пару и "
 "небольшим количеством оливкового масла."
 
-#: apps/nutrition/i18n_content.py:52
+#: apps/nutrition/i18n_content.py:55
 msgid ""
 "Roast the chicken and sweet potato together, top with crushed almonds and "
 "olive oil."
@@ -1518,16 +1519,16 @@ msgstr ""
 "Запеките курицу и сладкий картофель вместе, посыпьте измельчённым миндалём и "
 "сбрызните оливковым маслом."
 
-#: apps/nutrition/i18n_content.py:53
+#: apps/nutrition/i18n_content.py:56
 msgid ""
 "Scramble the eggs with the spinach, serve with cottage cheese on the side."
 msgstr "Взбейте яйца со шпинатом, подавайте с творогом отдельно."
 
-#: apps/nutrition/i18n_content.py:54
+#: apps/nutrition/i18n_content.py:57
 msgid "Top the yogurt with sliced banana and a few crushed almonds."
 msgstr "Добавьте в йогурт ломтики банана и немного измельчённого миндаля."
 
-#: apps/nutrition/i18n_content.py:55
+#: apps/nutrition/i18n_content.py:58
 msgid ""
 "Grill the chicken, steam the broccoli, finish with a light drizzle of olive "
 "oil."
@@ -1535,43 +1536,43 @@ msgstr ""
 "Приготовьте курицу на гриле, брокколи на пару, сбрызните небольшим "
 "количеством оливкового масла."
 
-#: apps/nutrition/i18n_content.py:56
+#: apps/nutrition/i18n_content.py:59
 msgid "Toss the tuna with the spinach and a small drizzle of olive oil."
 msgstr "Смешайте тунец со шпинатом и небольшим количеством оливкового масла."
 
-#: apps/nutrition/i18n_content.py:57
+#: apps/nutrition/i18n_content.py:60
 msgid "Bake the salmon, serve with steamed broccoli and spinach."
 msgstr "Запеките лосось, подавайте с брокколи на пару и шпинатом."
 
-#: apps/nutrition/i18n_content.py:58
+#: apps/nutrition/i18n_content.py:61
 msgid "Grill the chicken, serve with cottage cheese and wilted spinach."
 msgstr "Приготовьте курицу на гриле, подавайте с творогом и тушёным шпинатом."
 
-#: apps/nutrition/i18n_content.py:59
+#: apps/nutrition/i18n_content.py:62
 msgid "Mix the oats into the yogurt and top with sliced banana."
 msgstr "Смешайте овсянку с йогуртом и добавьте сверху ломтики банана."
 
-#: apps/nutrition/i18n_content.py:60
+#: apps/nutrition/i18n_content.py:63
 msgid ""
 "Fry or scramble the eggs, serve on toasted bread with a little olive oil."
 msgstr ""
 "Обжарьте или взбейте яйца, подавайте на тосте с небольшим количеством "
 "оливкового масла."
 
-#: apps/nutrition/i18n_content.py:61
+#: apps/nutrition/i18n_content.py:64
 msgid "Cook the chicken and rice, serve with steamed broccoli and olive oil."
 msgstr ""
 "Приготовьте курицу и рис, подавайте с брокколи на пару и оливковым маслом."
 
-#: apps/nutrition/i18n_content.py:62
+#: apps/nutrition/i18n_content.py:65
 msgid "Mix the tuna with the spinach, serve between slices of toasted bread."
 msgstr "Смешайте тунец со шпинатом, подавайте между ломтиками тоста."
 
-#: apps/nutrition/i18n_content.py:63
+#: apps/nutrition/i18n_content.py:66
 msgid "Bake the salmon and sweet potato, serve with wilted spinach."
 msgstr "Запеките лосось и сладкий картофель, подавайте с тушёным шпинатом."
 
-#: apps/nutrition/i18n_content.py:64
+#: apps/nutrition/i18n_content.py:67
 msgid ""
 "Roast the chicken with the broccoli and sweet potato, finish with olive oil."
 msgstr ""
@@ -1765,11 +1766,22 @@ msgstr ""
 "Цель: %(target)s кг/нед. Фактический тренд: %(actual)s кг/нед за последние "
 "%(days)s дн. Предлагаемая корректировка: %(delta)+d ккал/день."
 
-#: apps/nutrition/views.py:548
+#: apps/nutrition/views.py:428
+msgid ""
+"Log a body weight measurement before changing your goal — the calorie target "
+"needs your current weight."
+msgstr "Запишите измерение веса тела перед изменением цели — для расчёта нормы калорий нужен ваш текущий вес."
+
+#: apps/nutrition/views.py:465
+#, python-format
+msgid "Goal updated — new target is %(calories)d kcal/day."
+msgstr "Цель обновлена — новая норма: %(calories)d ккал/день."
+
+#: apps/nutrition/views.py:663
 msgid "Pick a date to copy this day to."
 msgstr "Выберите дату, на которую скопировать этот день."
 
-#: apps/nutrition/views.py:553
+#: apps/nutrition/views.py:668
 #, python-format
 msgid "Copied %(count)d entry to %(date)s."
 msgid_plural "Copied %(count)d entries to %(date)s."
@@ -1777,21 +1789,21 @@ msgstr[0] "Скопирована %(count)d запись на %(date)s."
 msgstr[1] "Скопировано %(count)d записи на %(date)s."
 msgstr[2] "Скопировано %(count)d записей на %(date)s."
 
-#: apps/nutrition/views.py:559
+#: apps/nutrition/views.py:674
 msgid "Nothing to copy — that day has no entries."
 msgstr "Нечего копировать — за этот день нет записей."
 
-#: apps/nutrition/views.py:603 apps/nutrition/views.py:820
-#: apps/nutrition/views.py:1127
+#: apps/nutrition/views.py:718 apps/nutrition/views.py:935
+#: apps/nutrition/views.py:1244
 msgid "That food couldn't be imported — try again."
 msgstr "Не удалось импортировать этот продукт — попробуйте снова."
 
-#: apps/nutrition/views.py:762
+#: apps/nutrition/views.py:877
 #, python-format
 msgid "\"%(name)s\" created — now add its ingredients below."
 msgstr "«%(name)s» создан — добавьте его ингредиенты ниже."
 
-#: apps/nutrition/views.py:1159
+#: apps/nutrition/views.py:1276
 #, python-format
 msgid "Logged %(count)d item to %(date)s."
 msgid_plural "Logged %(count)d items to %(date)s."
@@ -1799,7 +1811,7 @@ msgstr[0] "Записан %(count)d элемент на %(date)s."
 msgstr[1] "Записано %(count)d элемента на %(date)s."
 msgstr[2] "Записано %(count)d элементов на %(date)s."
 
-#: apps/nutrition/views.py:1170
+#: apps/nutrition/views.py:1287
 msgid "Nothing to log — this plan has no items for that date."
 msgstr "Нечего записывать — в этом плане нет пунктов на эту дату."
 
@@ -4024,7 +4036,7 @@ msgstr ""
 #: templates/nutrition/calculators_home.html:67
 #: templates/nutrition/diary_day.html:88
 #: templates/nutrition/diet_plan_list.html:37
-#: templates/nutrition/food_list.html:44
+#: templates/nutrition/food_list.html:44 templates/nutrition/goal_edit.html:36
 #: templates/nutrition/recipe_list.html:44 templates/nutrition/stats.html:44
 msgid "Back to nutrition"
 msgstr "Назад к питанию"
@@ -4110,6 +4122,11 @@ msgstr "%(calories)s ккал/день"
 #: templates/nutrition/dashboard.html:119
 msgid "Current goal"
 msgstr "Текущая цель"
+
+#: templates/nutrition/dashboard.html:121 templates/nutrition/goal_edit.html:3
+#: templates/nutrition/goal_edit.html:6
+msgid "Change goal"
+msgstr "Изменить цель"
 
 #: templates/nutrition/diary_add_entry.html:3
 #: templates/nutrition/diary_add_entry.html:6
@@ -4336,6 +4353,16 @@ msgstr "Поиск"
 #: templates/nutrition/food_list.html:40
 msgid "No foods yet."
 msgstr "Пока нет продуктов."
+
+#: templates/nutrition/goal_edit.html:11
+msgid ""
+"Changing your goal recalculates your daily calorie and macro target right "
+"away — your old target stays in your history, it isn't overwritten."
+msgstr "Изменение цели сразу пересчитывает вашу дневную норму калорий и БЖУ — старая норма остаётся в истории, она не перезаписывается."
+
+#: templates/nutrition/goal_edit.html:33
+msgid "Update goal"
+msgstr "Обновить цель"
 
 #: templates/nutrition/onboarding_activity.html:3
 #: templates/nutrition/onboarding_activity_level.html:3
