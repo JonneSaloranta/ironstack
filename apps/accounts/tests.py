@@ -1410,13 +1410,38 @@ class DataExportServiceTests(TestCase):
 
         self.export_account_data = export_account_data
         self.alice = User.objects.create_user(
-            username="alice", password="s3cret-pass", email="alice@example.com"
+            username="alice",
+            password="s3cret-pass",
+            email="alice@example.com",
+            first_name="Alice",
+            last_name="Anderson",
         )
 
     def test_includes_basic_account_fields(self):
         data = self.export_account_data(self.alice)
         self.assertEqual(data["account"]["username"], "alice")
         self.assertEqual(data["account"]["email"], "alice@example.com")
+        self.assertEqual(data["account"]["first_name"], "Alice")
+        self.assertEqual(data["account"]["last_name"], "Anderson")
+
+    def test_includes_display_and_privacy_settings_too(self):
+        # Not just the handful of fields shown on the profile form —
+        # everything on the user record that isn't a credential (see
+        # export_account_data's own comment on why `password`/
+        # `totp_secret` are the only two exceptions).
+        self.alice.height = Decimal("1.8000")
+        self.alice.show_bmi = False
+        self.alice.show_gravatar = True
+        self.alice.save()
+        data = self.export_account_data(self.alice)
+        self.assertEqual(data["account"]["height_meters"], "1.8000")
+        self.assertIs(data["account"]["show_bmi"], False)
+        self.assertIs(data["account"]["show_gravatar"], True)
+
+    def test_never_includes_the_password_or_totp_secret(self):
+        data = self.export_account_data(self.alice)
+        self.assertNotIn("password", data["account"])
+        self.assertNotIn("totp_secret", data["account"])
 
     def test_includes_workout_history(self):
         from apps.exercises.models import Exercise
@@ -1515,6 +1540,45 @@ class DataExportViewTests(TestCase):
     def test_the_profile_page_links_to_it(self):
         response = self.client.get(reverse("profile"))
         self.assertContains(response, reverse("data-export"))
+
+    def test_html_format_is_a_downloadable_attachment(self):
+        response = self.client.get(reverse("data-export"), {"format": "html"})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response["Content-Type"].split(";")[0], "text/html")
+        self.assertIn("attachment", response["Content-Disposition"])
+        self.assertIn(f"ironstack-{self.alice.username}-data.html", response["Content-Disposition"])
+
+    def test_html_download_contains_the_same_sections_as_the_browsable_page(self):
+        response = self.client.get(reverse("data-export"), {"format": "html"})
+        self.assertContains(response, "account")
+
+    def test_sections_use_native_details_not_javascript_so_a_downloaded_copy_still_works(self):
+        # The whole point of "Download as HTML" is a file that still
+        # shows its data once saved and reopened somewhere this app's
+        # own JS never loads again — see static/css/base.css's own
+        # comment on `.card > summary` for why this is `<details>`,
+        # not Alpine's x-show/x-cloak.
+        response = self.client.get(reverse("data-export"), {"format": "html"})
+        self.assertContains(response, "<details")
+        self.assertNotContains(response, "x-cloak")
+
+    def test_html_download_is_fully_self_contained(self):
+        # A real regression, not a hypothetical one: an earlier version
+        # of this download reused the browsable page's own template
+        # (extends base.html), whose nav-bar <svg class="nav-icon">
+        # elements are sized entirely by base.css — invisible here,
+        # since a downloaded file has no guarantee that stylesheet is
+        # ever reachable again, so every icon rendered at its raw,
+        # enormous intrinsic SVG size instead. The download now uses
+        # its own dedicated template with every style inline and no
+        # nav, icons, or scripts at all.
+        response = self.client.get(reverse("data-export"), {"format": "html"})
+        content = response.content.decode()
+        self.assertIn("<style>", content)
+        self.assertNotIn("stylesheet", content)
+        self.assertNotIn("<script", content)
+        self.assertNotIn("nav-icon", content)
+        self.assertNotIn('class="bottom-nav"', content)
 
 
 class SiteDisclaimerTests(TestCase):
@@ -1640,6 +1704,7 @@ class OnboardingViewTests(TestCase):
                 "first_name": "Quinn",
                 "email": "quinn@example.com",
                 "unit_system": "metric",
+                "timezone": "UTC",
             },
         )
         self.assertEqual(response.status_code, 200)
@@ -1650,7 +1715,7 @@ class OnboardingViewTests(TestCase):
 
     def test_every_field_is_optional_an_entirely_blank_save_still_completes_it(self):
         response = self.client.post(
-            reverse("onboarding"), {"action": "save", "unit_system": "metric"}
+            reverse("onboarding"), {"action": "save", "unit_system": "metric", "timezone": "UTC"}
         )
         self.assertEqual(response.status_code, 200)
         self.user.refresh_from_db()
@@ -1661,7 +1726,7 @@ class OnboardingViewTests(TestCase):
 
         self.client.post(
             reverse("onboarding"),
-            {"action": "save", "unit_system": "metric", "weight": "80.5"},
+            {"action": "save", "unit_system": "metric", "timezone": "UTC", "weight": "80.5"},
         )
         measurement = BodyMeasurement.objects.get(
             user=self.user, measurement_type__name="Body weight"
@@ -1673,7 +1738,7 @@ class OnboardingViewTests(TestCase):
 
         self.client.post(
             reverse("onboarding"),
-            {"action": "save", "unit_system": "imperial", "weight": "220"},
+            {"action": "save", "unit_system": "imperial", "timezone": "UTC", "weight": "220"},
         )
         measurement = BodyMeasurement.objects.get(
             user=self.user, measurement_type__name="Body weight"
@@ -1683,7 +1748,7 @@ class OnboardingViewTests(TestCase):
     def test_a_height_in_cm_is_converted_to_canonical_meters_on_the_user(self):
         self.client.post(
             reverse("onboarding"),
-            {"action": "save", "unit_system": "metric", "height": "180.5"},
+            {"action": "save", "unit_system": "metric", "timezone": "UTC", "height": "180.5"},
         )
         self.user.refresh_from_db()
         self.assertEqual(self.user.height, Decimal("1.8050"))
@@ -1691,26 +1756,32 @@ class OnboardingViewTests(TestCase):
     def test_a_height_in_inches_is_converted_to_canonical_meters_on_the_user(self):
         self.client.post(
             reverse("onboarding"),
-            {"action": "save", "unit_system": "imperial", "height": "70"},
+            {"action": "save", "unit_system": "imperial", "timezone": "UTC", "height": "70"},
         )
         self.user.refresh_from_db()
         self.assertAlmostEqual(float(self.user.height), 1.778, places=3)
 
     def test_leaving_height_blank_leaves_it_unset(self):
-        self.client.post(reverse("onboarding"), {"action": "save", "unit_system": "metric"})
+        self.client.post(
+            reverse("onboarding"),
+            {"action": "save", "unit_system": "metric", "timezone": "UTC"},
+        )
         self.user.refresh_from_db()
         self.assertIsNone(self.user.height)
 
     def test_leaving_weight_blank_creates_no_measurement(self):
         from apps.measurements.models import BodyMeasurement
 
-        self.client.post(reverse("onboarding"), {"action": "save", "unit_system": "metric"})
+        self.client.post(
+            reverse("onboarding"),
+            {"action": "save", "unit_system": "metric", "timezone": "UTC"},
+        )
         self.assertFalse(BodyMeasurement.objects.filter(user=self.user).exists())
 
     def test_an_invalid_email_re_renders_the_modal_with_the_error_and_does_not_complete_it(self):
         response = self.client.post(
             reverse("onboarding"),
-            {"action": "save", "email": "not-an-email", "unit_system": "metric"},
+            {"action": "save", "email": "not-an-email", "unit_system": "metric", "timezone": "UTC"},
         )
         self.assertContains(response, "field-error")
         self.user.refresh_from_db()
@@ -1728,7 +1799,7 @@ class OnboardingViewTests(TestCase):
     def test_skip_after_a_failed_save_does_not_persist_the_invalid_attempt(self):
         self.client.post(
             reverse("onboarding"),
-            {"action": "save", "email": "not-an-email", "unit_system": "metric"},
+            {"action": "save", "email": "not-an-email", "unit_system": "metric", "timezone": "UTC"},
         )
         self.client.post(reverse("onboarding"), {"action": "skip"})
         self.user.refresh_from_db()
@@ -1737,10 +1808,32 @@ class OnboardingViewTests(TestCase):
 
     def test_success_response_no_longer_contains_the_modal(self):
         response = self.client.post(
-            reverse("onboarding"), {"action": "save", "unit_system": "metric"}
+            reverse("onboarding"), {"action": "save", "unit_system": "metric", "timezone": "UTC"}
         )
         self.assertNotContains(response, "Welcome to IronStack")
         self.assertContains(response, 'id="onboarding-modal-container"')
+
+    def test_saving_persists_the_chosen_timezone(self):
+        self.client.post(
+            reverse("onboarding"),
+            {"action": "save", "unit_system": "metric", "timezone": "Europe/Helsinki"},
+        )
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.timezone, "Europe/Helsinki")
+
+    def test_timezone_is_required_a_missing_value_re_renders_with_an_error(self):
+        response = self.client.post(
+            reverse("onboarding"), {"action": "save", "unit_system": "metric"}
+        )
+        self.assertContains(response, "field-error")
+        self.user.refresh_from_db()
+        self.assertFalse(self.user.onboarding_completed)
+
+    def test_the_form_is_pre_filled_with_the_users_current_timezone(self):
+        self.user.timezone = "Europe/Helsinki"
+        self.user.save(update_fields=["timezone"])
+        response = self.client.get(reverse("dashboard"))
+        self.assertContains(response, "Europe/Helsinki")
 
 
 class PasswordLoginGatingTests(TestCase):
