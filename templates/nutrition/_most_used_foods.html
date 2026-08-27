@@ -24,7 +24,13 @@ needs to build its post URL — same contract as _food_search_results.
       {% csrf_token %}
       <input type="hidden" name="food_id" value="{{ usage.food.pk }}">
       {% if mode == "diary" %}
-        <input type="hidden" name="meal_slot" value="{{ usage.meal_slot_id|default:meal_slots.0.pk }}">
+        {% comment %}
+          Follows the page's shared mealSlot (see diary_add_entry.html)
+          instead of a value baked in from this food's own last diary
+          entry — so this always matches whatever the visible "Meal"
+          selector above is showing, the same as the search box below.
+        {% endcomment %}
+        <input type="hidden" name="meal_slot" x-bind:value="mealSlot">
         <input type="hidden" name="date" value="{{ date }}">
       {% endif %}
       <div>

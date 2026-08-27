@@ -54,7 +54,7 @@
     {% for entry in slot.entries %}
       <div class="card-action-row" style="padding:0.5rem 0;">
         <div>
-          <span>{% if entry.food %}{{ entry.food.name }}{% else %}{{ entry.recipe.name }}{% endif %}</span>
+          <span>{% if entry.food %}{{ entry.food.name }}{% else %}{% trans entry.recipe.name %}{% endif %}</span>
           <span class="text-muted">— {{ entry.quantity }} {{ entry.food.serving_unit|default:"servings" }}, {{ entry.nutrition.calories|floatformat:0 }} kcal</span>
         </div>
         <div style="display:flex; flex-wrap:wrap; gap:0.5rem;">

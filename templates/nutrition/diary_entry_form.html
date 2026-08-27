@@ -3,7 +3,7 @@
 {% block title %}{% trans "Edit entry" %} — IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
-  <h1 style="margin:0;">{% if entry.food %}{{ entry.food.name }}{% else %}{{ entry.recipe.name }}{% endif %}</h1>
+  <h1 style="margin:0;">{% if entry.food %}{{ entry.food.name }}{% else %}{% trans entry.recipe.name %}{% endif %}</h1>
 </div>
 {% include "nutrition/_subnav.html" %}
 

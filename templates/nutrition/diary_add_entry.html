@@ -11,39 +11,56 @@
   <p class="field-error">{{ form.non_field_errors|striptags }}</p>
 {% endif %}
 
-{% include "nutrition/_most_used_foods.html" with mode="diary" date=date meal_slots=meal_slots %}
+{% comment %}
+  mealSlot is shared (Alpine) state for the whole page: which meal
+  slot food gets logged to, whether it's added via a "Most used" quick
+  tap below or a fresh search. It used to be split in two — the search
+  box always read the "Meal" select at submit time (via hx-include),
+  but each "Most used" card carried its own hidden meal_slot baked in
+  server-side from that food's last diary entry, completely ignoring
+  whatever the visible "Meal" select was showing. That let a "Most
+  used" tap silently log to a different meal than the one selected on
+  screen. One shared value now drives both, and the selector is shown
+  first since everything below it depends on it.
+{% endcomment %}
+<div x-data="{ mealSlot: '{{ meal_slots.0.pk|default:'' }}' }">
+  <div class="card">
+    <div class="field">
+      <label for="id_meal_slot">{% trans "Meal" %}</label>
+      <select id="id_meal_slot" name="meal_slot" x-model="mealSlot"
+              hx-get="{% url 'nutrition:food-search' %}"
+              hx-trigger="change"
+              hx-target="#food-search-results"
+              hx-include="#id_q"
+              hx-vals='{"date": "{{ date }}"}'
+              hx-swap="outerHTML">
+        {% for slot in meal_slots %}
+          <option value="{{ slot.pk }}">{{ slot.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+  </div>
 
-<div class="card" x-data="ironstackBarcodeScanner()">
-  <div class="field">
-    <label for="id_meal_slot">{% trans "Meal" %}</label>
-    <select id="id_meal_slot" name="meal_slot"
-            hx-get="{% url 'nutrition:food-search' %}"
-            hx-trigger="change"
-            hx-target="#food-search-results"
-            hx-include="#id_q"
-            hx-vals='{"date": "{{ date }}"}'
-            hx-swap="outerHTML">
-      {% for slot in meal_slots %}
-        <option value="{{ slot.pk }}">{{ slot.name }}</option>
-      {% endfor %}
-    </select>
+  {% include "nutrition/_most_used_foods.html" with mode="diary" date=date meal_slots=meal_slots %}
+
+  <div class="card" x-data="ironstackBarcodeScanner()">
+    <div class="field">
+      <label for="id_q">{% trans "Search foods" %}</label>
+      <input type="text" id="id_q" name="q"
+             hx-get="{% url 'nutrition:food-search' %}"
+             hx-trigger="keyup changed delay:400ms"
+             hx-target="#food-search-results"
+             hx-include="#id_meal_slot"
+             hx-vals='{"date": "{{ date }}"}'
+             hx-swap="outerHTML"
+             autocomplete="off"
+             placeholder="{% trans "e.g. chicken breast, or a barcode number" %}">
+    </div>
+    {% include "nutrition/_barcode_scan_button.html" with target_input_id="id_q" %}
   </div>
-  <div class="field">
-    <label for="id_q">{% trans "Search foods" %}</label>
-    <input type="text" id="id_q" name="q"
-           hx-get="{% url 'nutrition:food-search' %}"
-           hx-trigger="keyup changed delay:400ms"
-           hx-target="#food-search-results"
-           hx-include="#id_meal_slot"
-           hx-vals='{"date": "{{ date }}"}'
-           hx-swap="outerHTML"
-           autocomplete="off"
-           placeholder="{% trans "e.g. chicken breast, or a barcode number" %}">
-  </div>
-  {% include "nutrition/_barcode_scan_button.html" with target_input_id="id_q" %}
+
+  <div id="food-search-results"></div>
 </div>
-
-<div id="food-search-results"></div>
 
 <p><a class="button-secondary" href="{% url 'nutrition:diary-day' target_date=date %}">&larr; {% trans "Back to diary" %}</a></p>
 {% endblock %}

@@ -4,10 +4,11 @@
 {% block content %}
 <div class="top-bar">
   <h1 style="margin:0;">{% trans "Nutrition" %}</h1>
+  {% trans "Based on whether you completed a workout today — this doesn't change your calorie target automatically." as day_type_help %}
   {% if is_training_day %}
-    <span class="tag">{% trans "Training day" %}</span>
+    <abbr class="tag" tabindex="0" title="{{ day_type_help }}">{% trans "Training day" %}</abbr>
   {% else %}
-    <span class="tag-muted">{% trans "Rest day" %}</span>
+    <abbr class="tag tag-outline" tabindex="0" title="{{ day_type_help }}">{% trans "Rest day" %}</abbr>
   {% endif %}
 </div>
 {% include "nutrition/_subnav.html" %}

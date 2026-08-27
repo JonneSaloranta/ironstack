@@ -336,6 +336,31 @@ input[type="radio"] {
   color: var(--color-text-muted);
 }
 
+/* A state that's simply "the other one" of a pair — e.g. "Rest day"
+   next to "Training day" — not a lesser/inactive one. `.tag-muted`
+   above is for exactly that latter meaning app-wide (abandoned,
+   inactive, a template rather than a real record) and would wrongly
+   editorialize a rest day as some kind of "off" state instead of a
+   normal, expected half of the pair. Outlined instead of filled, but
+   in the same full-strength text color as everything else on the
+   page — present, not faded. */
+.tag-outline {
+  background: transparent;
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+}
+
+/* `<abbr title>` gets a dotted underline (see the jargon-abbreviation
+   comment below) to hint "more info on hover/focus" in running text —
+   right for "RPE" inline in a sentence, wrong cutting through a pill
+   badge's own label. `.tag`'s pill shape already signals it's
+   interactive/informational on its own; this just keeps the same
+   hover/focus tooltip mechanism without the underline. */
+abbr.tag {
+  text-decoration: none;
+  cursor: help;
+}
+
 /* Jargon abbreviations (RPE, RIR, 1RM, PR, BMI, ...) carry their full
    expansion in `title`, but a plain `title` attribute has no touch
    equivalent — iOS/Android give a touchscreen user no gesture that

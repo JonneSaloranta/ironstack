@@ -6,7 +6,18 @@
   <h1 style="margin:0;">{% trans "Import from OpenFoodFacts" %}</h1>
 </div>
 {% include "nutrition/_subnav.html" %}
-<p class="text-muted">{% trans "Search or browse by category to add a food to the shared library — anyone on this instance can then find and log it." %}</p>
+{% if categories %}
+  <p class="text-muted">{% trans "Search or browse by category to add a food to the shared library — anyone on this instance can then find and log it." %}</p>
+{% else %}
+  {% comment %}
+    services.suggested_categories() returns [] both when
+    OpenFoodFactsSettings is turned off and when OFF itself is
+    unreachable — either way, promising "or browse by category" right
+    above a page with no such section left over from before would be
+    confusing, not just incomplete.
+  {% endcomment %}
+  <p class="text-muted">{% trans "Search to add a food to the shared library — anyone on this instance can then find and log it. Category browsing isn't available right now." %}</p>
+{% endif %}
 
 <div class="card" x-data="ironstackBarcodeScanner()">
   <div class="field">
