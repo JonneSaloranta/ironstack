@@ -635,9 +635,9 @@ class ProfileViewTests(TestCase):
         self.alice.save()
         response = self.client.get(reverse("profile"))
         # Account details, Change password, Two-factor authentication,
-        # API keys, Feedback + Admin, Backups, Feedback (the latter
-        # three inside the staff-only "danger zone").
-        self.assertContains(response, 'class="card card-action-row"', count=8)
+        # API keys, Feedback + Admin, Backups, Feedback, Site & SEO
+        # (the latter four inside the staff-only "danger zone").
+        self.assertContains(response, 'class="card card-action-row"', count=9)
         self.assertContains(
             response, f'<a class="button-secondary" href="{reverse("admin:index")}">'
         )
@@ -958,18 +958,21 @@ class TwoFactorSetupTests(TestCase):
         response = self.client.get(reverse("two-factor-setup"))
         self.assertRedirects(response, reverse("profile"))
 
-    def test_confirming_with_the_correct_code_enables_2fa_and_shows_backup_codes(self):
+    def test_confirming_with_the_correct_code_enables_2fa_and_redirects_to_backup_codes(self):
+        """Backup codes aren't generated in this same request any more
+        — see TwoFactorBackupCodesView's own docstring for why
+        (they're slow enough to need their own loading page instead of
+        this request silently hanging for them)."""
         import pyotp
 
         self.client.get(reverse("two-factor-setup"))  # generates the secret
         self.user.refresh_from_db()
         code = pyotp.TOTP(self.user.totp_secret).now()
         response = self.client.post(reverse("two-factor-setup"), {"code": code})
-        self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "now enabled")
+        self.assertRedirects(response, f"{reverse('two-factor-backup-codes')}?welcome=1")
         self.user.refresh_from_db()
         self.assertTrue(self.user.totp_enabled)
-        self.assertEqual(self.user.backup_codes.count(), twofactor.BACKUP_CODE_COUNT)
+        self.assertEqual(self.user.backup_codes.count(), 0)
 
     def test_confirming_with_the_wrong_code_does_not_enable_2fa(self):
         self.client.get(reverse("two-factor-setup"))
@@ -1130,13 +1133,83 @@ class TwoFactorRegenerateBackupCodesTests(TestCase):
         response = self.client.post(reverse("two-factor-regenerate-backup-codes"))
         self.assertEqual(response.status_code, 404)
 
-    def test_replaces_the_codes_and_shows_the_new_set(self):
+    def test_redirects_to_the_backup_codes_page_without_generating_anything_itself(self):
+        """The actual generation moved to TwoFactorBackupCodesFragment
+        View, loaded via HTMX from the page this redirects to — see
+        that view's own docstring for why."""
         response = self.client.post(reverse("two-factor-regenerate-backup-codes"))
-        self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "New backup codes")
+        self.assertRedirects(response, reverse("two-factor-backup-codes"))
         self.assertEqual(self.user.backup_codes.count(), twofactor.BACKUP_CODE_COUNT)
         for old_code in self.old_codes:
-            self.assertFalse(twofactor.verify_and_consume_backup_code(self.user, old_code))
+            self.assertTrue(twofactor.verify_and_consume_backup_code(self.user, old_code))
+
+
+class TwoFactorBackupCodesViewTests(TestCase):
+    """The loading-state page both TwoFactorSetupView's confirm step
+    and TwoFactorRegenerateBackupCodesView redirect to — see
+    TwoFactorBackupCodesView's own docstring for why generating a
+    fresh set of codes needed a page of its own instead of happening
+    silently inside whichever request landed the user here."""
+
+    def setUp(self):
+        self.user = User.objects.create_user(username="liam", password="s3cret-pass")
+        self.user.totp_secret = twofactor.generate_totp_secret()
+        self.user.totp_enabled = True
+        self.user.save()
+        self.client.login(username="liam", password="s3cret-pass")
+
+    def test_requires_login(self):
+        self.client.logout()
+        response = self.client.get(reverse("two-factor-backup-codes"))
+        self.assertEqual(response.status_code, 302)
+
+    def test_requires_2fa_enabled(self):
+        self.user.totp_enabled = False
+        self.user.save()
+        response = self.client.get(reverse("two-factor-backup-codes"))
+        self.assertEqual(response.status_code, 404)
+
+    def test_renders_a_loading_state_without_generating_anything_yet(self):
+        response = self.client.get(reverse("two-factor-backup-codes"))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "spinner")
+        self.assertEqual(self.user.backup_codes.count(), 0)
+
+    def test_shows_the_welcome_message_only_when_asked_to(self):
+        response = self.client.get(reverse("two-factor-backup-codes"), {"welcome": "1"})
+        self.assertContains(response, "now enabled")
+
+        response = self.client.get(reverse("two-factor-backup-codes"))
+        self.assertNotContains(response, "now enabled")
+
+
+class TwoFactorBackupCodesFragmentViewTests(TestCase):
+    """The HTMX-loaded fragment that actually does the (slow) backup-
+    code generation — see TwoFactorBackupCodesView's own docstring."""
+
+    def setUp(self):
+        self.user = User.objects.create_user(username="liam", password="s3cret-pass")
+        self.user.totp_secret = twofactor.generate_totp_secret()
+        self.user.totp_enabled = True
+        self.user.save()
+        self.client.login(username="liam", password="s3cret-pass")
+
+    def test_requires_login(self):
+        self.client.logout()
+        response = self.client.post(reverse("two-factor-backup-codes-fragment"))
+        self.assertEqual(response.status_code, 302)
+
+    def test_requires_2fa_enabled(self):
+        self.user.totp_enabled = False
+        self.user.save()
+        response = self.client.post(reverse("two-factor-backup-codes-fragment"))
+        self.assertEqual(response.status_code, 404)
+
+    def test_generates_and_shows_a_fresh_set_of_codes(self):
+        response = self.client.post(reverse("two-factor-backup-codes-fragment"))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Done")
+        self.assertEqual(self.user.backup_codes.count(), twofactor.BACKUP_CODE_COUNT)
 
 
 class TwoFactorAdminActionTests(TestCase):

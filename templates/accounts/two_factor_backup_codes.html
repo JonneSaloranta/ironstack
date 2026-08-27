@@ -5,13 +5,29 @@
 <div class="top-bar">
   <h1 style="margin:0;">{% trans "New backup codes" %}</h1>
 </div>
-<div class="card">
-  <p class="text-muted">{% trans "Each one works once, if you ever lose access to your authenticator app. They won't be shown again — save them somewhere safe now. Your old backup codes no longer work." %}</p>
-  <ul>
-    {% for code in backup_codes %}
-      <li><code>{{ code }}</code></li>
-    {% endfor %}
-  </ul>
-</div>
-<p><a class="button" href="{% url 'profile' %}">{% trans "Done" %}</a></p>
+
+{% if just_enabled %}
+  <div class="card">
+    <p>{% trans "Two-factor authentication is now enabled." %}</p>
+  </div>
+{% endif %}
+
+{% comment %}
+  Generating a fresh set of codes hashes each one with Django's own
+  password hasher — deliberately expensive, seconds rather than
+  milliseconds on ordinary hardware (see TwoFactorBackupCodesFragment
+  View's own docstring) — so this form auto-submits itself via HTMX
+  the instant this page loads (hx-trigger="load", no button to click,
+  nothing to double-submit by accident) instead of making a user wait
+  on a blank screen for a normal form POST with no idea whether
+  anything is happening at all.
+{% endcomment %}
+<form id="backup-codes-slot" hx-post="{% url 'two-factor-backup-codes-fragment' %}"
+      hx-trigger="load" hx-target="#backup-codes-slot" hx-swap="outerHTML">
+  {% csrf_token %}
+  <div class="card" style="text-align:center;">
+    <div class="spinner" aria-hidden="true"></div>
+    <p class="text-muted">{% trans "Generating your new backup codes…" %}</p>
+  </div>
+</form>
 {% endblock %}

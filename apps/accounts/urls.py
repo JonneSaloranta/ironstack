@@ -5,6 +5,8 @@ from .views import (
     OnboardingView,
     ProfileView,
     SignupView,
+    TwoFactorBackupCodesFragmentView,
+    TwoFactorBackupCodesView,
     TwoFactorDisableView,
     TwoFactorManageView,
     TwoFactorRegenerateBackupCodesView,
@@ -24,6 +26,16 @@ urlpatterns = [
         "two-factor/backup-codes/regenerate/",
         TwoFactorRegenerateBackupCodesView.as_view(),
         name="two-factor-regenerate-backup-codes",
+    ),
+    path(
+        "two-factor/backup-codes/",
+        TwoFactorBackupCodesView.as_view(),
+        name="two-factor-backup-codes",
+    ),
+    path(
+        "two-factor/backup-codes/generate/",
+        TwoFactorBackupCodesFragmentView.as_view(),
+        name="two-factor-backup-codes-fragment",
     ),
     # Not under login_required — the user isn't authenticated yet at
     # this point (see TwoFactorVerifyView's own docstring). No naming

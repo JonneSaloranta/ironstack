@@ -187,6 +187,40 @@ input[type="radio"] {
   pointer-events: none;
 }
 
+/* A visible "something is happening" spinner for a request slow
+   enough that .htmx-request's own dim-and-disable isn't obvious
+   enough on its own — found needed for backup-code generation
+   (templates/accounts/two_factor_backup_codes.html), which hashes
+   each code with Django's own deliberately-expensive password hasher
+   and can take several real seconds, not the sub-second HTMX
+   round-trips everywhere else in this app that .htmx-request alone
+   already reads as "loading" for. */
+.spinner {
+  display: inline-block;
+  width: 2rem;
+  height: 2rem;
+  border: 3px solid var(--color-border);
+  border-top-color: var(--color-accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* WCAG 2.3.3 "Animation from Interactions" — a spinning circle isn't
+   essential to what it communicates (only its *presence* is; a static
+   ring still says "loading" for anyone who's told their OS they'd
+   rather not see continuous motion). */
+@media (prefers-reduced-motion: reduce) {
+  .spinner {
+    animation: none;
+  }
+}
+
 /* Mobile bottom navigation */
 .bottom-nav {
   position: fixed;

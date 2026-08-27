@@ -300,10 +300,12 @@ class TwoFactorSetupView(LoginRequiredMixin, FormView):
     def form_valid(self, form):
         self.request.user.totp_enabled = True
         self.request.user.save(update_fields=["totp_enabled"])
-        self.backup_codes = twofactor.generate_backup_codes(self.request.user)
-        return self.render_to_response(
-            self.get_context_data(form=form, backup_codes=self.backup_codes, just_enabled=True)
-        )
+        # Backup-code generation is deliberately *not* done here — see
+        # TwoFactorBackupCodesView's own docstring for why (it takes
+        # long enough, on Django's own deliberately-slow password
+        # hasher, to need its own loading state rather than making
+        # this request hang silently for it).
+        return redirect(f"{reverse('two-factor-backup-codes')}?welcome=1")
 
 
 class TwoFactorDisableView(LoginRequiredMixin, FormView):
@@ -346,14 +348,66 @@ class TwoFactorRegenerateBackupCodesView(LoginRequiredMixin, View):
     most other destructive-ish actions here) rather than a password
     re-entry like disabling: unlike turning 2FA off, this can't weaken
     an account's own protection, only invalidate codes that might
-    already be lost anyway."""
+    already be lost anyway.
+
+    Doesn't generate anything itself any more — see
+    TwoFactorBackupCodesView's own docstring for why; this POST is now
+    only the "yes, I meant to click that" confirmation step, and just
+    hands off to the page that actually does the (slow) work."""
+
+    def post(self, request, *args, **kwargs):
+        if not request.user.totp_enabled:
+            raise Http404
+        return redirect("two-factor-backup-codes")
+
+
+class TwoFactorBackupCodesView(LoginRequiredMixin, View):
+    """Replaces this user's backup codes and shows the new ones — the
+    landing page for both TwoFactorSetupView's own confirm step and
+    TwoFactorRegenerateBackupCodesView above, neither of which do the
+    actual generation themselves any more.
+
+    Split into two requests deliberately: `generate_backup_codes`
+    hashes each of `twofactor.BACKUP_CODE_COUNT` codes with Django's
+    own password hasher (deliberately expensive work, the same reason
+    a login attempt itself isn't instant) — on ordinary hardware that
+    measures in *seconds*, not milliseconds, and used to happen
+    silently inside the same request that also rendered this page,
+    which looked exactly like nothing was happening at all. Reported
+    live: a user hit "Regenerate" a second time during that silent
+    wait, which (for the equivalent moment during initial setup) raced
+    against `TwoFactorSetupView.dispatch`'s own already-enabled check
+    and bounced them to their profile with no chance to ever see the
+    codes their first click had already generated.
+
+    Now: this view's own GET renders instantly, with a visible loading
+    state (templates/accounts/two_factor_backup_codes.html) that
+    itself triggers TwoFactorBackupCodesFragmentView below via HTMX on
+    page load — the slow part happens in *that* request instead,
+    swapped into this page once it completes, with no way to
+    double-submit it by accident (nothing to click a second time)."""
+
+    def get(self, request, *args, **kwargs):
+        if not request.user.totp_enabled:
+            raise Http404
+        return render(
+            request,
+            "accounts/two_factor_backup_codes.html",
+            {"just_enabled": request.GET.get("welcome") == "1"},
+        )
+
+
+class TwoFactorBackupCodesFragmentView(LoginRequiredMixin, View):
+    """The actual (slow) backup-code generation — see
+    TwoFactorBackupCodesView's own docstring for why this is split out
+    into its own request, loaded via HTMX rather than inline."""
 
     def post(self, request, *args, **kwargs):
         if not request.user.totp_enabled:
             raise Http404
         codes = twofactor.generate_backup_codes(request.user)
         return render(
-            request, "accounts/two_factor_backup_codes.html", {"backup_codes": codes}
+            request, "accounts/_two_factor_backup_codes_fragment.html", {"backup_codes": codes}
         )
 
 
