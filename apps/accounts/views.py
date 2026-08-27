@@ -10,6 +10,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView, PasswordResetView
 from django.http import Http404, HttpResponse
 from django.shortcuts import redirect, render
+from django.template.loader import render_to_string
 from django.urls import reverse, reverse_lazy
 from django.utils.translation import gettext as _
 from django.views.generic import CreateView, FormView, TemplateView, UpdateView, View
@@ -420,13 +421,16 @@ def _rows_for_section(key, value):
 class DataExportView(LoginRequiredMixin, View):
     """Profile → "Download your data" — GDPR Article 20 ("right to
     data portability"). See apps.accounts.services.export_account_data
-    for exactly what's included and why. Three formats from one
+    for exactly what's included and why. Four ways to get at the same
     export, `?format=` picking which: `json` (the complete, structured
     export, the same shape a user's own API key could already fetch),
     `csv` (a .zip of one .csv file per section, the practical format
-    for opening in a spreadsheet), and no param at all for a plain
-    HTML page reusing this app's own templates/styling — something to
-    actually read, not just something to archive."""
+    for opening in a spreadsheet), `html` (a single downloadable file
+    to keep or hand someone else — see _data_export_standalone.html's
+    own docstring for why that's a dedicated, self-contained template
+    rather than a save of the page below), and no param at all for
+    that same page, reusing this app's normal styling and nav, to
+    read right here without downloading anything."""
 
     template_name = "accounts/data_export.html"
 
@@ -436,9 +440,26 @@ class DataExportView(LoginRequiredMixin, View):
             return self._json_response(request.user)
         if fmt == "csv":
             return self._csv_response(request.user)
-        data = account_services.export_account_data(request.user)
-        sections = {key: _rows_for_section(key, value) for key, value in data.items()}
+        sections = self._sections(request.user)
+        if fmt == "html":
+            return self._html_download_response(request, sections)
         return render(request, self.template_name, {"sections": sections})
+
+    def _sections(self, user):
+        data = account_services.export_account_data(user)
+        return {key: _rows_for_section(key, value) for key, value in data.items()}
+
+    def _html_download_response(self, request, sections):
+        html = render_to_string(
+            "accounts/_data_export_standalone.html",
+            {"sections": sections, "username": request.user.username},
+            request=request,
+        )
+        response = HttpResponse(html, content_type="text/html")
+        response["Content-Disposition"] = (
+            f'attachment; filename="ironstack-{request.user.username}-data.html"'
+        )
+        return response
 
     def _json_response(self, user):
         data = account_services.export_account_data(user)

@@ -1,0 +1,93 @@
+{% load i18n %}<!doctype html>
+{% comment %}
+Used only for "Download as HTML" (apps.accounts.views.DataExportView.
+_html_download_response) — deliberately NOT templates/accounts/
+data_export.html, and deliberately not extending base.html at all.
+That page's nav bar, icons, and layout only look right with base.css
+loaded from this instance's own server; a downloaded copy is meant to
+be kept or handed to someone else with no guarantee it's ever opened
+against this instance again (or even online at all), so every style
+it needs has to travel inside the file itself. A first version reused
+data_export.html directly: its <svg class="nav-icon"> elements have
+no width/height of their own (sized entirely by a CSS class that
+never loaded), rendering at the browser's raw intrinsic SVG size —
+enormous, and the actual bug report that led here. This template
+carries no icons, no nav, no external stylesheet or script at all,
+just a trimmed, self-contained subset of the same dark IronStack
+palette (static/css/base.css's own `:root` custom properties) so it
+still looks like IronStack wherever it's opened.
+{% endcomment %}
+<html lang="{{ LANGUAGE_CODE }}">
+<head>
+  <meta charset="utf-8">
+  <title>IronStack — {% trans "Your data" %}</title>
+  <style>
+    :root {
+      --color-bg: #101317;
+      --color-surface: #181c22;
+      --color-border: #2a2f37;
+      --color-text: #e7eaee;
+      --color-text-muted: #9aa3ad;
+      --radius: 0.5rem;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 1rem;
+      background: var(--color-bg);
+      color: var(--color-text);
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      line-height: 1.4;
+    }
+    .container { max-width: 50rem; margin: 0 auto; }
+    h1 { font-size: 1.3rem; }
+    .text-muted { color: var(--color-text-muted); }
+    .card {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius);
+      padding: 1rem;
+      margin-bottom: 1rem;
+    }
+    details.card summary { cursor: pointer; font-weight: bold; }
+    details.card[open] summary { margin-bottom: 0.5rem; }
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; margin: 0.5rem 0; }
+    th, td {
+      text-align: left;
+      padding: 0.4rem 0.3rem;
+      border-bottom: 1px solid var(--color-border);
+      font-size: 0.85rem;
+      overflow-wrap: break-word;
+      vertical-align: top;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>IronStack — {% trans "Your data" %}</h1>
+    <p class="text-muted">
+      {% blocktrans %}A snapshot of everything in {{ username }}'s IronStack account.{% endblocktrans %}
+    </p>
+    {% for section, rows in sections.items %}
+      {% if rows %}
+        <details class="card">
+          <summary>{{ section }} ({{ rows|length }})</summary>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>{% for key in rows.0.keys %}<th>{{ key }}</th>{% endfor %}</tr>
+              </thead>
+              <tbody>
+                {% for row in rows %}
+                  <tr>{% for value in row.values %}<td>{{ value }}</td>{% endfor %}</tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </details>
+      {% endif %}
+    {% endfor %}
+  </div>
+</body>
+</html>

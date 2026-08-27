@@ -628,6 +628,20 @@ abbr[title]:focus::after {
   margin: 0 0 0.75rem;
 }
 
+/* templates/accounts/data_export.html's per-section cards — native
+   <details>/<summary> for the same reason as the changelog modal
+   above: nothing here needs Alpine's more elaborate state, and a
+   screen reader/keyboard user already knows how to operate a native
+   disclosure widget. ("Download as HTML" is a separate, deliberately
+   self-contained template — templates/accounts/
+   _data_export_standalone.html — with its own inline copy of these
+   same rules, since a downloaded file can't rely on this stylesheet
+   ever loading again either.) */
+.card > summary {
+  cursor: pointer;
+  font-weight: bold;
+}
+
 .modal-body ul {
   margin: 0 0 0.75rem;
   padding-left: 1.25rem;
