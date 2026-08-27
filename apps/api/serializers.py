@@ -583,6 +583,14 @@ class NutritionGoalSerializer(serializers.ModelSerializer):
 
 
 class NutritionTargetSerializer(serializers.ModelSerializer):
+    # NutritionTarget.display_reason under the API's existing "reason"
+    # key — re-rendered in the request's active language when the
+    # structured snapshot is available, same as the dashboard, rather
+    # than exposing the raw model field that can be frozen in whatever
+    # language was active when the row was created. See
+    # NutritionTarget.display_reason's own docstring.
+    reason = serializers.CharField(source="display_reason", read_only=True)
+
     class Meta:
         model = NutritionTarget
         fields = [

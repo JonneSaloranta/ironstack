@@ -1,15 +1,24 @@
 {% extends "base.html" %}
 {% load i18n %}
-{% block title %}{{ recipe.name }} — IronStack{% endblock %}
+{% block title %}{% trans recipe.name %} — IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
-  <h1 style="margin:0;">{{ recipe.name }}</h1>
-  <a class="button-secondary" href="{% url 'nutrition:recipe-update' recipe.pk %}">{% trans "Edit" %}</a>
+  <h1 style="margin:0;">{% trans recipe.name %}</h1>
+  {% if recipe.owner_id == request.user.id %}
+    <a class="button-secondary" href="{% url 'nutrition:recipe-update' recipe.pk %}">{% trans "Edit" %}</a>
+  {% else %}
+    <span class="tag tag-outline">{% trans "Template" %}</span>
+  {% endif %}
 </div>
 {% include "nutrition/_subnav.html" %}
 
+{% if recipe.meal_slot %}
+  <p class="text-muted">{% blocktrans with meal=recipe.meal_slot.name %}Tagged for {{ meal }} — the diet-plan builder only ever suggests this recipe for that meal.{% endblocktrans %}</p>
+{% endif %}
+
 {% if recipe.instructions %}
-  <p class="text-muted">{{ recipe.instructions|linebreaksbr }}</p>
+  {% trans recipe.instructions as translated_instructions %}
+  <p class="text-muted">{{ translated_instructions|linebreaksbr }}</p>
 {% endif %}
 
 <div class="card">
@@ -20,19 +29,23 @@
         <span>{{ ingredient.food.name }}</span>
         <span class="text-muted">— {{ ingredient.quantity }} {{ ingredient.food.serving_unit }}, {{ ingredient.nutrition.calories|floatformat:0 }} kcal</span>
       </div>
-      <div style="display:flex; flex-wrap:wrap; gap:0.5rem;">
-        <a class="button-secondary" href="{% url 'nutrition:recipe-ingredient-edit' recipe.pk ingredient.pk %}">{% trans "Edit" %}</a>
-        <form method="post" action="{% url 'nutrition:recipe-ingredient-delete' recipe.pk ingredient.pk %}"
-              x-data="{}" @submit="if (!confirm('{% trans "Remove this ingredient?" %}')) $event.preventDefault()">
-          {% csrf_token %}
-          <button type="submit" class="button-danger">{% trans "Remove" %}</button>
-        </form>
-      </div>
+      {% if recipe.owner_id == request.user.id %}
+        <div style="display:flex; flex-wrap:wrap; gap:0.5rem;">
+          <a class="button-secondary" href="{% url 'nutrition:recipe-ingredient-edit' recipe.pk ingredient.pk %}">{% trans "Edit" %}</a>
+          <form method="post" action="{% url 'nutrition:recipe-ingredient-delete' recipe.pk ingredient.pk %}"
+                x-data="{}" @submit="if (!confirm('{% trans "Remove this ingredient?" %}')) $event.preventDefault()">
+            {% csrf_token %}
+            <button type="submit" class="button-danger">{% trans "Remove" %}</button>
+          </form>
+        </div>
+      {% endif %}
     </div>
   {% empty %}
     <p class="text-muted">{% trans "No ingredients yet." %}</p>
   {% endfor %}
-  <a class="button-secondary" href="{% url 'nutrition:recipe-ingredient-create' recipe.pk %}">{% trans "+ Add ingredient" %}</a>
+  {% if recipe.owner_id == request.user.id %}
+    <a class="button-secondary" href="{% url 'nutrition:recipe-ingredient-create' recipe.pk %}">{% trans "+ Add ingredient" %}</a>
+  {% endif %}
 </div>
 
 <div class="card">
@@ -81,11 +94,13 @@
 
 <p><a class="button-secondary" href="{% url 'nutrition:recipe-list' %}">&larr; {% trans "Back to recipes" %}</a></p>
 
-<div class="danger-zone">
-  <form method="post" action="{% url 'nutrition:recipe-delete' recipe.pk %}"
-        x-data="{}" @submit="if (!confirm('{% trans "Delete this recipe?" %}')) $event.preventDefault()">
-    {% csrf_token %}
-    <button type="submit" class="button-danger">{% trans "Delete recipe" %}</button>
-  </form>
-</div>
+{% if recipe.owner_id == request.user.id %}
+  <div class="danger-zone">
+    <form method="post" action="{% url 'nutrition:recipe-delete' recipe.pk %}"
+          x-data="{}" @submit="if (!confirm('{% trans "Delete this recipe?" %}')) $event.preventDefault()">
+      {% csrf_token %}
+      <button type="submit" class="button-danger">{% trans "Delete recipe" %}</button>
+    </form>
+  </div>
+{% endif %}
 {% endblock %}

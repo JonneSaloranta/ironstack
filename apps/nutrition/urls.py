@@ -76,6 +76,11 @@ urlpatterns = [
         "diet-plans/<int:pk>/", views.DietPlanDetailView.as_view(), name="diet-plan-detail"
     ),
     path("diet-plans/<int:pk>/delete/", views.diet_plan_delete, name="diet-plan-delete"),
+    path(
+        "diet-plans/<int:pk>/toggle-active/",
+        views.diet_plan_toggle_active,
+        name="diet-plan-toggle-active",
+    ),
     path("diet-plans/<int:pk>/log/", views.diet_plan_log, name="diet-plan-log"),
     path(
         "diet-plans/<int:plan_pk>/items/<int:pk>/edit/",

@@ -19,7 +19,14 @@ from django.db.models import Q
 from django.utils import timezone
 
 from . import energy, macros, openfoodfacts
-from .models import Food, NutritionGoal, NutritionTarget, OpenFoodFactsSettings, TargetSource
+from .models import (
+    DietPlan,
+    Food,
+    NutritionGoal,
+    NutritionTarget,
+    OpenFoodFactsSettings,
+    TargetSource,
+)
 
 # See docs/NUTRITION.md "OpenFoodFacts integration" — the interval a
 # food imported from OFF is trusted before being transparently
@@ -44,12 +51,31 @@ def set_goal(user, *, goal_type, target_rate_kg_per_week, target_weight=None, no
 
 
 @transaction.atomic
-def set_target(user, *, goal, daily_calories, macro_breakdown, source, reason):
+def set_target(user, *, goal, daily_calories, macro_breakdown, source, reason, reason_data=None):
     """Same append/supersede shape as `set_goal`. `macro_breakdown` is
     an `apps.nutrition.macros.MacroBreakdown` — this is the one place
-    its grams get written into a persisted `NutritionTarget` row."""
+    its grams get written into a persisted `NutritionTarget` row.
+    `reason_data` (an `energy.CalorieTargetReasonData`, from
+    `energy.calculate_calorie_target`) is optional — passing it lets
+    `NutritionTarget.display_reason` re-render `reason` in whatever
+    language is active later, instead of it staying frozen in
+    whichever language was active right now. Omitted by
+    `apply_adjustment_suggestion` below, which has no such structured
+    breakdown to snapshot; that path's `reason` stays frozen, same as
+    every target did before this existed."""
     now = timezone.now()
     NutritionTarget.objects.filter(user=user, ended_at__isnull=True).update(ended_at=now)
+    reason_fields = {}
+    if reason_data is not None:
+        reason_fields = dict(
+            tdee=reason_data.tdee,
+            capped_rate_kg_per_week=reason_data.capped_rate,
+            rate_was_capped=reason_data.rate_was_capped,
+            rate_cap_fraction_percent=reason_data.rate_cap_fraction_percent,
+            raw_calories_before_floor=reason_data.raw_calories,
+            calorie_floor=reason_data.floor,
+            floor_was_applied=reason_data.floor_was_applied,
+        )
     return NutritionTarget.objects.create(
         user=user,
         goal=goal,
@@ -59,6 +85,7 @@ def set_target(user, *, goal, daily_calories, macro_breakdown, source, reason):
         fat_grams=macro_breakdown.fat_grams,
         source=source,
         reason=reason,
+        **reason_fields,
     )
 
 
@@ -84,6 +111,29 @@ def calculate_target_for_goal(profile, *, weight_kg, height_cm, goal_type, targe
     )
     macro_result = macros.calculate_macros(weight_kg, calorie_result.daily_calories, goal_type)
     return calorie_result, macro_result
+
+
+@transaction.atomic
+def set_active_diet_plan(user, plan):
+    """Makes `plan` the one active plan for `user`, deactivating
+    whichever other plan (if any) was active before — DietPlan.Meta's
+    own unique constraint guarantees only one ever is; this is the one
+    place that transition actually happens, the same shape as
+    `set_goal`/`set_target` above for their own "only one open row"
+    invariant. `diet_builder.build_diet_plan` does this same
+    deactivate-then-activate step itself when generating a brand new
+    plan; this is for switching to an *existing* one instead."""
+    DietPlan.objects.filter(user=user, is_active=True).exclude(pk=plan.pk).update(is_active=False)
+    plan.is_active = True
+    plan.save(update_fields=["is_active"])
+
+
+def deactivate_diet_plan(plan):
+    """Turns a plan off without making any other plan active — having
+    no active plan at all is a valid state (docs/NUTRITION.md "DietPlan"),
+    unlike a goal or target, which always have exactly one open row."""
+    plan.is_active = False
+    plan.save(update_fields=["is_active"])
 
 
 @transaction.atomic

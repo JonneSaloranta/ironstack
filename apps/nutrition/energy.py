@@ -214,9 +214,69 @@ def calorie_floor(
 
 
 @dataclass(frozen=True)
+class CalorieTargetReasonData:
+    """Every number `render_calorie_target_reason` needs, snapshotted
+    at calculation time — stored on NutritionTarget (see
+    apps.nutrition.models) so a *current* target's explanation can be
+    re-rendered in whichever language is active whenever it's shown,
+    instead of freezing at whatever language happened to be active the
+    moment it was first calculated. Deliberately just the pieces the
+    sentences below actually branch on, not a dump of every local
+    variable calculate_calorie_target touches."""
+
+    tdee: int
+    capped_rate: Decimal
+    rate_was_capped: bool
+    rate_cap_fraction_percent: Decimal
+    raw_calories: int
+    floor: int
+    floor_was_applied: bool
+
+
+def render_calorie_target_reason(data: CalorieTargetReasonData, final_calories: int) -> str:
+    """Builds the human-readable explanation from already-computed
+    numbers, in whatever language is active right now. The one place
+    this sentence gets assembled — called both immediately after
+    `calculate_calorie_target` (e.g. the onboarding review step's
+    preview, before anything is even saved) and again on every later
+    view of a still-current NutritionTarget
+    (NutritionTarget.display_reason), so the wording always matches
+    the viewer's current language rather than whatever was active when
+    the target was first calculated."""
+    parts = [_("Estimated maintenance (TDEE): %(tdee)s kcal/day.") % {"tdee": data.tdee}]
+    if data.rate_was_capped:
+        parts.append(
+            str(
+                _(
+                    "Your requested rate was reduced to a safer %(rate)s kg/week "
+                    "(capped at %(fraction)s%% of bodyweight/week)."
+                )
+            )
+            % {"rate": data.capped_rate, "fraction": data.rate_cap_fraction_percent}
+        )
+    if data.floor_was_applied:
+        parts.append(
+            str(
+                _(
+                    "Your target rate would need %(raw)s kcal/day, below a safe "
+                    "minimum — capped at %(floor)s kcal/day."
+                )
+            )
+            % {"raw": data.raw_calories, "floor": data.floor}
+        )
+    else:
+        parts.append(
+            _("Target: %(rate)s kg/week → %(calories)s kcal/day.")
+            % {"rate": data.capped_rate, "calories": final_calories}
+        )
+    return " ".join(parts)
+
+
+@dataclass(frozen=True)
 class CalorieTargetResult:
     daily_calories: int
     reason: str
+    reason_data: CalorieTargetReasonData
     rate_was_capped: bool
     floor_was_applied: bool
 
@@ -246,46 +306,25 @@ def calculate_calorie_target(
     floor_was_applied = raw_calories < floor
     final_calories = max(raw_calories, floor).quantize(CALORIE_PLACES, rounding=ROUND_HALF_UP)
 
-    parts = [
-        _("Estimated maintenance (TDEE): %(tdee)s kcal/day.") % {"tdee": int(tdee)},
-    ]
-    if rate_was_capped:
-        parts.append(
-            str(
-                _(
-                    "Your requested rate was reduced to a safer %(rate)s kg/week "
-                    "(capped at %(fraction)s%% of bodyweight/week)."
-                )
-            )
-            % {
-                "rate": capped_rate,
-                "fraction": (
-                    MAX_FAT_LOSS_RATE_FRACTION
-                    if goal_type.startswith("fat_loss")
-                    else MAX_MUSCLE_GAIN_RATE_FRACTION
-                )
-                * 100,
-            }
+    reason_data = CalorieTargetReasonData(
+        tdee=int(tdee),
+        capped_rate=capped_rate,
+        rate_was_capped=rate_was_capped,
+        rate_cap_fraction_percent=(
+            MAX_FAT_LOSS_RATE_FRACTION
+            if goal_type.startswith("fat_loss")
+            else MAX_MUSCLE_GAIN_RATE_FRACTION
         )
-    if floor_was_applied:
-        parts.append(
-            str(
-                _(
-                    "Your target rate would need %(raw)s kcal/day, below a safe "
-                    "minimum — capped at %(floor)s kcal/day."
-                )
-            )
-            % {"raw": int(raw_calories), "floor": int(floor)}
-        )
-    else:
-        parts.append(
-            _("Target: %(rate)s kg/week → %(calories)s kcal/day.")
-            % {"rate": capped_rate, "calories": int(final_calories)}
-        )
+        * 100,
+        raw_calories=int(raw_calories),
+        floor=int(floor),
+        floor_was_applied=floor_was_applied,
+    )
 
     return CalorieTargetResult(
         daily_calories=int(final_calories),
-        reason=" ".join(parts),
+        reason=render_calorie_target_reason(reason_data, int(final_calories)),
+        reason_data=reason_data,
         rate_was_capped=rate_was_capped,
         floor_was_applied=floor_was_applied,
     )

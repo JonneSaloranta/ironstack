@@ -4,39 +4,64 @@
 {% block content %}
 <div class="top-bar">
   <h1 style="margin:0;">{{ plan.name }}</h1>
+  <form method="post" action="{% url 'nutrition:diet-plan-toggle-active' plan.pk %}">
+    {% csrf_token %}
+    {% if plan.is_active %}
+      <span class="tag">{% trans "Active" %}</span>
+      <button type="submit" class="button-secondary">{% trans "Deactivate" %}</button>
+    {% else %}
+      <button type="submit" class="button-secondary">{% trans "Activate" %}</button>
+    {% endif %}
+  </form>
 </div>
 {% include "nutrition/_subnav.html" %}
 <p class="text-muted">{{ plan.target_calories }} kcal/day — {{ plan.target_protein_grams|floatformat:0 }}g {% trans "protein" %}, {{ plan.target_carbohydrate_grams|floatformat:0 }}g {% trans "carbs" %}, {{ plan.target_fat_grams|floatformat:0 }}g {% trans "fat" %}</p>
+{% if plan.is_weekly %}
+  <p class="text-muted">{% trans "Varies across the week — same daily calories/macros every day, different meals." %}</p>
+{% endif %}
 
-{% for meal in meals %}
-  <div class="card">
-    <strong>{{ meal.meal_slot.name }}</strong>
-    <span class="text-muted">— {{ meal.target_calories }} kcal {% trans "target" %}, {{ meal.actual_calories|floatformat:0 }} kcal {% trans "so far" %}</span>
-    {% for item in meal.items.all %}
-      <div class="card-action-row" style="padding:0.5rem 0;">
-        <div>
-          <span>{% if item.food %}{{ item.food.name }}{% else %}{{ item.recipe.name }}{% endif %}</span>
-          <span class="text-muted">— {{ item.quantity }} {% if item.food %}{{ item.food.serving_unit }}{% else %}{% trans "servings" %}{% endif %}, {{ item.nutrition.calories|floatformat:0 }} kcal</span>
-        </div>
-        <div style="display:flex; flex-wrap:wrap; gap:0.5rem;">
-          <a class="button-secondary" href="{% url 'nutrition:diet-plan-item-edit' plan.pk item.pk %}">{% trans "Swap" %}</a>
-          <form method="post" action="{% url 'nutrition:diet-plan-item-delete' plan.pk item.pk %}"
-                x-data="{}" @submit="if (!confirm('{% trans "Remove this item?" %}')) $event.preventDefault()">
-            {% csrf_token %}
-            <button type="submit" class="button-danger">{% trans "Remove" %}</button>
-          </form>
-        </div>
+{% comment %}
+  meals is already ordered by weekday (DietPlanMeal.Meta.ordering), so
+  regroup's "consecutive equal values" requirement is satisfied without
+  a separate sort here. weekday_name is None for a one-day plan, so
+  the whole thing collapses to a single unlabeled group — the exact
+  same flat list this looked like before weekly plans existed.
+{% endcomment %}
+{% regroup meals by weekday_name as day_groups %}
+{% for day_group in day_groups %}
+  {% if plan.is_weekly %}
+    {% comment %}
+      Collapsed by default — 7 days' worth of meal cards all open at
+      once was a very long, hard-to-scan page (found live). Each day
+      gets its own independent x-data scope, not one shared open/day
+      map, since nothing here needs more than one open at a time to
+      talk to another.
+    {% endcomment %}
+    <div x-data="{ open: false }">
+      <button type="button" class="button-secondary button-wrap" @click="open = !open" :aria-expanded="open.toString()"
+              style="width:100%; justify-content:flex-start; font-weight:bold;">
+        <span x-show="!open">▾ {{ day_group.grouper }}</span>
+        <span x-show="open" x-cloak>▴ {{ day_group.grouper }}</span>
+      </button>
+      <div x-show="open" x-cloak>
+        {% for meal in day_group.list %}
+          {% include "nutrition/_diet_plan_meal_card.html" with meal=meal plan=plan %}
+        {% endfor %}
       </div>
-    {% empty %}
-      <p class="text-muted">{% trans "Nothing suggested yet — add some foods or recipes first." %}</p>
+    </div>
+  {% else %}
+    {% for meal in day_group.list %}
+      {% include "nutrition/_diet_plan_meal_card.html" with meal=meal plan=plan %}
     {% endfor %}
-    <a class="button-secondary" href="{% url 'nutrition:diet-plan-meal-item-add' plan.pk meal.pk %}">{% trans "+ Add item" %}</a>
-  </div>
+  {% endif %}
 {% endfor %}
 
 <form class="card" method="post" action="{% url 'nutrition:diet-plan-log' plan.pk %}">
   {% csrf_token %}
   <strong>{% trans "Log this plan to your diary" %}</strong>
+  {% if plan.is_weekly %}
+    <p class="field-help">{% trans "Logs whichever day of the week the date below falls on." %}</p>
+  {% endif %}
   {% for field in log_form %}
     <div class="field">
       {{ field.label_tag }}

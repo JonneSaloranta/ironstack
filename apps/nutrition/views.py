@@ -22,6 +22,7 @@ from django.utils.translation import ngettext
 from django.views.generic import CreateView, ListView, View
 
 from apps.measurements.models import BodyMeasurement, MeasurementType
+from apps.programs.models import Weekday as ProgramsWeekday
 
 from . import diet_builder, energy, services
 from .forms import (
@@ -262,10 +263,36 @@ class OnboardingReviewView(_OnboardingStepView):
             macro_breakdown=macro_result,
             source=TargetSource.CALCULATED,
             reason=calorie_result.reason,
+            reason_data=calorie_result.reason_data,
         )
 
         del request.session[_SESSION_KEY]
         return redirect("nutrition:dashboard")
+
+
+def _todays_diet_plan_summary(user, today):
+    """The active DietPlan's own meals for `today` specifically (all
+    of them for a one-day plan, just today's weekday's for a weekly
+    one — DietPlan.is_weekly's own docstring) plus their combined
+    nutrition, for the dashboard's "Today's plan" card. `None` if
+    there's no active plan at all, or a weekly one with nothing built
+    for today's weekday (e.g. a meal slot added after the plan was
+    generated for every *other* day)."""
+    from .models import DietPlan
+
+    plan = DietPlan.objects.filter(user=user, is_active=True).first()
+    if plan is None:
+        return None
+    meals = _diet_plan_meals_with_nutrition(plan)
+    if plan.is_weekly:
+        meals = [meal for meal in meals if meal.weekday == today.weekday()]
+    if not meals:
+        return None
+    total = services.ZERO_NUTRITION
+    for meal in meals:
+        for item in meal.items.all():
+            total = total + item.nutrition
+    return {"plan": plan, "meals": meals, "total": total}
 
 
 class NutritionDashboardView(LoginRequiredMixin, View):
@@ -312,20 +339,18 @@ class NutritionDashboardView(LoginRequiredMixin, View):
             weight_chart = build_chart_series(readings)
         weight_unit_label = core_units.weight_unit_label(request.user.unit_system)
 
-        return render(
-            request,
-            "nutrition/dashboard.html",
-            {
-                "weight_unit_label": weight_unit_label,
-                "goal": goal,
-                "target": target,
-                "totals": totals,
-                "today": today,
-                "is_training_day": services.is_training_day(request.user, today),
-                "weight_chart": weight_chart,
-                "suggestion": suggest_calorie_adjustment(request.user) if goal else None,
-            },
-        )
+        context = {
+            "weight_unit_label": weight_unit_label,
+            "goal": goal,
+            "target": target,
+            "totals": totals,
+            "today": today,
+            "is_training_day": services.is_training_day(request.user, today),
+            "weight_chart": weight_chart,
+            "suggestion": suggest_calorie_adjustment(request.user) if goal else None,
+            "todays_plan": _todays_diet_plan_summary(request.user, today),
+        }
+        return render(request, "nutrition/dashboard.html", context)
 
 
 class FoodListView(LoginRequiredMixin, ListView):
@@ -630,9 +655,17 @@ class RecipeListView(LoginRequiredMixin, ListView):
     context_object_name = "recipes"
 
     def get_queryset(self):
+        from django.db.models import Q
+
         from .models import Recipe
 
-        qs = Recipe.objects.filter(owner=self.request.user).order_by("name")
+        # Same owner-or-shared visibility as everywhere else a shared
+        # Food shows up (e.g. DietPlanItemForm) — a built-in template
+        # recipe (owner=None) is listed for every user, not just its
+        # own list of ones they wrote themselves.
+        qs = Recipe.objects.filter(
+            Q(owner=self.request.user) | Q(owner__isnull=True)
+        ).select_related("meal_slot").order_by("name")
         query = self.request.GET.get("q", "").strip()
         if query:
             qs = qs.filter(name__icontains=query)
@@ -675,7 +708,7 @@ class RecipeDetailView(LoginRequiredMixin, View):
     template_name = "nutrition/recipe_detail.html"
 
     def get(self, request, pk):
-        recipe = _owned_recipe_or_404(request, pk)
+        recipe = _viewable_recipe_or_404(request, pk)
         ingredients = list(recipe.ingredients.select_related("food"))
         for ingredient in ingredients:
             ingredient.nutrition = services.scale_nutrition(ingredient.food, ingredient.quantity)
@@ -693,14 +726,33 @@ class RecipeDetailView(LoginRequiredMixin, View):
 
 
 def _owned_recipe_or_404(request, pk):
+    """For any *mutating* action (edit/delete the recipe itself, or
+    add/edit/remove an ingredient) — a built-in template recipe
+    (owner=None) never matches `owner=request.user`, so this 404s for
+    it exactly as it would for another user's own recipe. That's the
+    whole access control for "shared but read-only": no separate
+    permission check needed, just never routing a write through the
+    read-only helper below."""
     from .models import Recipe
 
     return get_object_or_404(Recipe, pk=pk, owner=request.user)
 
 
+def _viewable_recipe_or_404(request, pk):
+    """For read-only access (the detail page, logging it to your own
+    diary) — a user's own recipe, or a shared, built-in template
+    recipe (owner=None), same visibility as RecipeListView.get_queryset
+    above."""
+    from django.db.models import Q
+
+    from .models import Recipe
+
+    return get_object_or_404(Recipe, Q(owner=request.user) | Q(owner__isnull=True), pk=pk)
+
+
 @login_required
 def recipe_create(request):
-    form = RecipeForm(request.POST or None)
+    form = RecipeForm(request.POST or None, user=request.user)
     if request.method == "POST" and form.is_valid():
         recipe = form.save(commit=False)
         recipe.owner = request.user
@@ -716,7 +768,7 @@ def recipe_create(request):
 @login_required
 def recipe_update(request, pk):
     recipe = _owned_recipe_or_404(request, pk)
-    form = RecipeForm(request.POST or None, instance=recipe)
+    form = RecipeForm(request.POST or None, instance=recipe, user=request.user)
     if request.method == "POST" and form.is_valid():
         form.save()
         return redirect("nutrition:recipe-detail", pk=recipe.pk)
@@ -821,7 +873,9 @@ def recipe_ingredient_delete(request, recipe_pk, pk):
 def recipe_log(request, pk):
     from .models import DiaryEntry
 
-    recipe = _owned_recipe_or_404(request, pk)
+    # Viewable, not owned-only — logging a shared template recipe to
+    # your own diary is exactly what it's there for.
+    recipe = _viewable_recipe_or_404(request, pk)
     if request.method != "POST":
         return HttpResponseNotAllowed(["POST"])
     form = LogRecipeForm(request.POST, user=request.user)
@@ -874,7 +928,16 @@ class DietPlanCreateView(LoginRequiredMixin, View):
         target = NutritionTarget.objects.filter(
             user=request.user, ended_at__isnull=True
         ).first()
-        initial = {"name": "My diet plan"}
+        # Pre-checked, not left for the user to tick one by one — every
+        # other field on this step is already pre-filled from real data
+        # (the active target, or "My diet plan"); leaving a required
+        # multi-select empty by default is the one inconsistent gap,
+        # and "build a plan covering all my meals" is what most people
+        # opening this page actually want. Still fully editable.
+        initial = {
+            "name": "My diet plan",
+            "meal_slots": [slot.pk for slot in services.visible_meal_slots(request.user)],
+        }
         if target is not None:
             initial.update(
                 target_calories=target.daily_calories,
@@ -904,6 +967,7 @@ class DietPlanCreateView(LoginRequiredMixin, View):
             target_carbohydrate_grams=form.cleaned_data["target_carbohydrate_grams"],
             target_fat_grams=form.cleaned_data["target_fat_grams"],
             meal_slots=list(form.cleaned_data["meal_slots"]),
+            is_weekly=form.cleaned_data["is_weekly"],
         )
         return redirect("nutrition:diet-plan-detail", pk=plan.pk)
 
@@ -930,6 +994,15 @@ def _diet_plan_meals_with_nutrition(plan):
         )
     )
     for meal in meals:
+        # Only meaningful for a weekly plan (DietPlan.is_weekly) — None
+        # for a one-day plan's meals, same as their own weekday field.
+        # apps.programs.models.Weekday is the same 0=Monday..6=Sunday
+        # numbering DietPlanMeal.weekday itself uses (Python's own
+        # date.weekday()) — reused rather than a second copy of the
+        # same seven translated day names.
+        meal.weekday_name = (
+            ProgramsWeekday(meal.weekday).label if meal.weekday is not None else None
+        )
         for item in meal.items.all():
             item.nutrition = (
                 services.scale_nutrition(item.food, item.quantity)
@@ -970,6 +1043,25 @@ def diet_plan_delete(request, pk):
     plan = _owned_diet_plan_or_404(request, pk)
     plan.delete()
     return redirect("nutrition:diet-plan-list")
+
+
+@login_required
+def diet_plan_toggle_active(request, pk):
+    """One button, both directions: activates this plan (and
+    deactivates whichever other one was active — only one ever is,
+    services.set_active_diet_plan's own docstring) if it wasn't
+    already, or turns it off entirely if it was."""
+    if request.method != "POST":
+        return HttpResponseNotAllowed(["POST"])
+    plan = _owned_diet_plan_or_404(request, pk)
+    if plan.is_active:
+        services.deactivate_diet_plan(plan)
+    else:
+        services.set_active_diet_plan(request.user, plan)
+    next_url = request.POST.get("next")
+    if next_url:
+        return redirect(next_url)
+    return redirect("nutrition:diet-plan-detail", pk=plan.pk)
 
 
 @login_required
@@ -1062,8 +1154,23 @@ def diet_plan_log(request, pk):
             "nutrition/diet_plan_detail.html",
             {"plan": plan, "meals": _diet_plan_meals_with_nutrition(plan), "log_form": form},
         )
-    diet_builder.apply_diet_plan(plan, form.cleaned_data["date"])
-    return redirect("nutrition:diary-day", target_date=form.cleaned_data["date"].isoformat())
+    target_date = form.cleaned_data["date"]
+    created = diet_builder.apply_diet_plan(plan, target_date)
+    if created:
+        message = ngettext(
+            "Logged %(count)d item to %(date)s.",
+            "Logged %(count)d items to %(date)s.",
+            len(created),
+        ) % {"count": len(created), "date": target_date.isoformat()}
+        messages.success(request, message)
+    else:
+        # Realistic for a weekly plan (DietPlan.is_weekly) whose
+        # target date's weekday has nothing built for it — e.g. a meal
+        # slot added after the plan was generated for every other day.
+        # A one-day plan always has *some* meal, so this was
+        # unreachable before weekly plans existed.
+        messages.info(request, _("Nothing to log — this plan has no items for that date."))
+    return redirect("nutrition:diary-day", target_date=target_date.isoformat())
 
 
 @login_required

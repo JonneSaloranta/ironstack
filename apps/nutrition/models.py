@@ -221,8 +221,34 @@ class NutritionTarget(TimeStampedModel):
     source = models.CharField(max_length=10, choices=TargetSource.choices)
     # Human-readable explanation, same convention as
     # apps.progression.engine.ProgressionResult.reason — every target
-    # can say why it is what it is, never a bare number.
+    # can say why it is what it is, never a bare number. Frozen at
+    # whatever language was active when this row was created — the
+    # structured fields below let `display_reason` re-render this
+    # sentence in the *current* language instead, for any row that has
+    # them; `reason` itself stays as the original, permanent fallback
+    # for a row created before those fields existed.
     reason = models.TextField(blank=True)
+    # Snapshot of apps.nutrition.energy.CalorieTargetReasonData — only
+    # populated for a target created via the "calculated" (onboarding/
+    # goal-change) path, apps.nutrition.energy.calculate_calorie_target.
+    # All null for a target from any other source (e.g. TargetSource.
+    # ADJUSTED, or one created before these fields existed), in which
+    # case `display_reason` falls back to the frozen `reason` text
+    # above. Kept as the individual numbers rather than a pre-joined
+    # sentence specifically so that sentence can be rebuilt in whatever
+    # language is active at display time — the numbers themselves never
+    # change, only the words around them.
+    tdee = models.PositiveIntegerField(null=True, blank=True)
+    capped_rate_kg_per_week = models.DecimalField(
+        max_digits=5, decimal_places=3, null=True, blank=True
+    )
+    rate_was_capped = models.BooleanField(null=True, blank=True)
+    rate_cap_fraction_percent = models.DecimalField(
+        max_digits=4, decimal_places=2, null=True, blank=True
+    )
+    raw_calories_before_floor = models.PositiveIntegerField(null=True, blank=True)
+    calorie_floor = models.PositiveIntegerField(null=True, blank=True)
+    floor_was_applied = models.BooleanField(null=True, blank=True)
     started_at = models.DateTimeField(auto_now_add=True)
     ended_at = models.DateTimeField(null=True, blank=True)
 
@@ -238,6 +264,31 @@ class NutritionTarget(TimeStampedModel):
 
     def __str__(self):
         return f"{self.user.username}: {self.daily_calories} kcal"
+
+    @property
+    def display_reason(self):
+        """`reason`, re-rendered in whichever language is active right
+        now when the structured snapshot is available, instead of
+        whatever language happened to be active when this row was
+        created — see the field comments above and
+        apps.nutrition.energy.render_calorie_target_reason. Falls back
+        to the frozen `reason` text itself when it isn't (a target
+        created before these fields existed, or via a source that
+        doesn't populate them)."""
+        if self.tdee is None:
+            return self.reason
+        from . import energy
+
+        data = energy.CalorieTargetReasonData(
+            tdee=self.tdee,
+            capped_rate=self.capped_rate_kg_per_week,
+            rate_was_capped=bool(self.rate_was_capped),
+            rate_cap_fraction_percent=self.rate_cap_fraction_percent,
+            raw_calories=self.raw_calories_before_floor,
+            floor=self.calorie_floor,
+            floor_was_applied=bool(self.floor_was_applied),
+        )
+        return energy.render_calorie_target_reason(data, self.daily_calories)
 
 
 class MealSlot(models.Model):
@@ -341,12 +392,34 @@ class Food(TimeStampedModel):
 
 
 class Recipe(TimeStampedModel):
+    # Nullable, same owner-or-shared pattern as Food/MealSlot above —
+    # `owner=None` is a built-in template recipe (apps.nutrition.
+    # migrations' seed data, apps.nutrition.i18n_content), visible to
+    # every user but editable by none (views._owned_recipe_or_404's
+    # `owner=request.user` filter never matches a None owner, the same
+    # mechanism that already keeps a shared Food read-only). A user's
+    # own recipe keeps owner=request.user exactly as before.
     owner = models.ForeignKey(
-        settings.AUTH_USER_MODEL, related_name="recipes", on_delete=models.CASCADE
+        settings.AUTH_USER_MODEL,
+        related_name="recipes",
+        null=True,
+        blank=True,
+        on_delete=models.CASCADE,
     )
     name = models.CharField(max_length=200)
     servings = models.PositiveSmallIntegerField(default=1)
     instructions = models.TextField(blank=True)
+    # Optional — which meal this recipe is meant for, e.g. a fried-egg
+    # recipe tagged "Breakfast" so apps.nutrition.diet_builder's
+    # auto-generated plans never put it in a Dinner slot (found live:
+    # a chicken & rice recipe suggested as breakfast, oats & yogurt as
+    # dinner — the calorie-closest-match heuristic had no idea either
+    # recipe was meant for a specific meal). Null means "any meal" —
+    # every recipe before this field existed, and any recipe a user
+    # doesn't bother tagging, stays eligible everywhere it already was.
+    meal_slot = models.ForeignKey(
+        MealSlot, related_name="+", null=True, blank=True, on_delete=models.SET_NULL
+    )
 
     class Meta:
         ordering = ["name"]
@@ -445,9 +518,35 @@ class DietPlan(TimeStampedModel):
     target_carbohydrate_grams = models.DecimalField(max_digits=6, decimal_places=2)
     target_fat_grams = models.DecimalField(max_digits=6, decimal_places=2)
     is_active = models.BooleanField(default=True)
+    # False (the default) is the original one-day plan: the same
+    # `meals` are applied to whatever date apply_diet_plan is given,
+    # every time. True means `meals` spans a full week instead of one
+    # repeating day — see DietPlanMeal.weekday and
+    # apps.nutrition.diet_builder.build_diet_plan's own docstring for
+    # why (variety: a different, still goal-appropriate meal each day
+    # instead of the same one on repeat). `target_calories` and the
+    # macro fields above stay the plan's own *daily average* either
+    # way — a weekly plan's actual days vary around that average
+    # rather than hitting it exactly every single day, the same
+    # flexibility real meal planning needs and docs/NUTRITION.md
+    # "Safety bounds" already extends to the calorie target itself.
+    is_weekly = models.BooleanField(default=False)
 
     class Meta:
         ordering = ["-created_at"]
+        constraints = [
+            # Same "only one open row" shape as NutritionGoal/
+            # NutritionTarget above — apps.nutrition.services.
+            # set_active_diet_plan is the one place that activates a
+            # plan, and it always deactivates whichever one was active
+            # first in the same transaction, but this is the actual
+            # guarantee, not just app-level discipline.
+            models.UniqueConstraint(
+                fields=["user"],
+                condition=models.Q(is_active=True),
+                name="unique_active_diet_plan_per_user",
+            ),
+        ]
 
     def __str__(self):
         return f"{self.user.username}: {self.name}"
@@ -459,9 +558,16 @@ class DietPlanMeal(models.Model):
     meal_slot = models.ForeignKey(MealSlot, related_name="+", on_delete=models.CASCADE)
     target_calories = models.PositiveIntegerField()
     order = models.PositiveSmallIntegerField(default=0)
+    # Null for a one-day DietPlan (diet_plan.is_weekly=False) — this
+    # meal applies regardless of date, exactly as before this field
+    # existed. 0-6 (Python's own date.weekday(): 0=Monday..6=Sunday)
+    # for a weekly plan — apps.nutrition.diet_builder.apply_diet_plan
+    # only materializes the meals whose weekday matches the target
+    # date, so a Monday and a Thursday breakfast can genuinely differ.
+    weekday = models.PositiveSmallIntegerField(null=True, blank=True)
 
     class Meta:
-        ordering = ["order", "id"]
+        ordering = ["weekday", "order", "id"]
 
     def __str__(self):
         return f"{self.diet_plan.name}: {self.meal_slot.name}"

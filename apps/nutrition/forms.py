@@ -113,6 +113,38 @@ class GoalStepForm(forms.Form):
             "capped at a safe rate for your bodyweight."
         )
 
+    def clean(self):
+        # The rate's sign has to agree with the goal it's attached to
+        # — e.g. a "Muscle gain" goal paired with a *negative* rate
+        # (found live: "Muscle gain — lean bulk" at -0.5 kg/week)
+        # would silently ask the calorie engine to cut, not bulk, the
+        # opposite of what the goal itself says. `@change="rate =
+        # rates[goalType]"` on the goal <select> (see its own comment
+        # above) only re-fills `target_rate` when the user actively
+        # changes that dropdown — it never re-validates a rate the
+        # user then edits by hand, or one a browser's form-restore
+        # leaves stale against a since-changed goal selection. This
+        # is the one server-side backstop that catches either case
+        # before it reaches the calorie engine (and the database).
+        cleaned = super().clean()
+        goal_type = cleaned.get("goal_type")
+        rate = cleaned.get("target_rate")
+        if not goal_type or rate is None:
+            return cleaned
+        if goal_type.startswith("fat_loss") and rate >= 0:
+            self.add_error(
+                "target_rate",
+                _("A fat-loss goal needs a negative rate — you're asking to lose weight."),
+            )
+        elif goal_type.startswith("muscle_gain") and rate <= 0:
+            self.add_error(
+                "target_rate",
+                _("A muscle-gain goal needs a positive rate — you're asking to gain weight."),
+            )
+        elif goal_type == GoalType.MAINTENANCE and rate != 0:
+            self.add_error("target_rate", _("A maintenance goal's rate should be 0 kg/week."))
+        return cleaned
+
     def canonical_target_weight_kg(self):
         value = self.cleaned_data.get("target_weight")
         if value is None:
@@ -199,7 +231,20 @@ class RecipeForm(forms.ModelForm):
         from .models import Recipe
 
         model = Recipe
-        fields = ["name", "servings", "instructions"]
+        fields = ["name", "servings", "instructions", "meal_slot"]
+
+    def __init__(self, *args, user, **kwargs):
+        from . import services
+
+        super().__init__(*args, **kwargs)
+        self.fields["meal_slot"].label = _("Meal (optional)")
+        self.fields["meal_slot"].empty_label = _("Any meal")
+        self.fields["meal_slot"].required = False
+        self.fields["meal_slot"].help_text = _(
+            "If set, the diet-plan builder only ever suggests this recipe for that "
+            "meal — leave as \"Any meal\" for a recipe that fits anywhere."
+        )
+        self.fields["meal_slot"].queryset = services.visible_meal_slots(user)
 
 
 class RecipeIngredientQuantityForm(forms.ModelForm):
@@ -248,7 +293,11 @@ class LogRecipeForm(forms.Form):
 
     meal_slot = forms.ModelChoiceField(queryset=None, label=_("Meal"))
     quantity = forms.DecimalField(
-        max_digits=8, decimal_places=2, min_value=Decimal("0.01"), label=_("Servings")
+        max_digits=8,
+        decimal_places=2,
+        min_value=Decimal("0.01"),
+        label=_("Servings"),
+        initial=Decimal("1"),
     )
     date = forms.DateField(
         widget=forms.DateInput(attrs={"type": "date"}, format="%Y-%m-%d"),
@@ -286,6 +335,15 @@ class DietPlanForm(forms.Form):
     meal_slots = forms.ModelMultipleChoiceField(
         queryset=None, widget=forms.CheckboxSelectMultiple, label=_("Which meals?")
     )
+    is_weekly = forms.BooleanField(
+        required=False,
+        label=_("Vary meals across a whole week instead of repeating one day"),
+        help_text=_(
+            "Each day still hits the same daily calories/macros above — only which meal "
+            "fills each slot changes from day to day, so a week's worth of breakfasts "
+            "(for example) aren't all identical."
+        ),
+    )
 
     def __init__(self, *args, user, **kwargs):
         from . import services
@@ -305,7 +363,13 @@ class DietPlanItemForm(forms.ModelForm):
         self.fields["food"].queryset = Food.objects.filter(
             Q(owner=user) | Q(owner__isnull=True), active=True
         ).order_by("name")
-        self.fields["recipe"].queryset = Recipe.objects.filter(owner=user).order_by("name")
+        # Q(owner=user) | Q(owner__isnull=True) — same shared-or-own
+        # visibility as `food` above; this excluded the built-in
+        # template recipes (Recipe.owner's own comment) until found
+        # live as "can't swap to a template recipe."
+        self.fields["recipe"].queryset = Recipe.objects.filter(
+            Q(owner=user) | Q(owner__isnull=True)
+        ).order_by("name")
         self.fields["food"].required = False
         self.fields["recipe"].required = False
 

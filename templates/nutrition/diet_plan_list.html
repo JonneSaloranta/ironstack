@@ -16,7 +16,16 @@
         {% if plan.is_active %}<span class="tag">{% trans "Active" %}</span>{% endif %}
         <p class="text-muted">{{ plan.target_calories }} kcal/day</p>
       </div>
-      <a class="button-secondary" href="{% url 'nutrition:diet-plan-detail' plan.pk %}">{% trans "Open" %}</a>
+      <div style="display:flex; flex-wrap:wrap; gap:0.5rem;">
+        <form method="post" action="{% url 'nutrition:diet-plan-toggle-active' plan.pk %}">
+          {% csrf_token %}
+          <input type="hidden" name="next" value="{% url 'nutrition:diet-plan-list' %}">
+          <button type="submit" class="button-secondary">
+            {% if plan.is_active %}{% trans "Deactivate" %}{% else %}{% trans "Activate" %}{% endif %}
+          </button>
+        </form>
+        <a class="button-secondary" href="{% url 'nutrition:diet-plan-detail' plan.pk %}">{% trans "Open" %}</a>
+      </div>
     </div>
   {% endfor %}
 {% else %}

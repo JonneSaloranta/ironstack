@@ -39,6 +39,28 @@
   <a class="button-secondary" href="{% url 'nutrition:diary-add-entry' %}">{% trans "+ Log food now" %}</a>
 </div>
 
+{% if todays_plan %}
+  <div class="card">
+    <strong>{% trans "Today's plan" %}</strong>
+    <span class="text-muted">— {{ todays_plan.plan.name }}</span>
+    <table class="set-table">
+      <tbody>
+        <tr><td>{% trans "Calories" %}</td><td>{{ todays_plan.total.calories|floatformat:0 }} kcal</td></tr>
+        <tr><td>{% trans "Protein" %}</td><td>{{ todays_plan.total.protein_grams|floatformat:0 }} g</td></tr>
+        <tr><td>{% trans "Carbohydrates" %}</td><td>{{ todays_plan.total.carbohydrate_grams|floatformat:0 }} g</td></tr>
+        <tr><td>{% trans "Fat" %}</td><td>{{ todays_plan.total.fat_grams|floatformat:0 }} g</td></tr>
+      </tbody>
+    </table>
+    {% for meal in todays_plan.meals %}
+      <p class="text-muted">
+        <strong>{{ meal.meal_slot.name }}:</strong>
+        {% for item in meal.items.all %}{% if item.food %}{{ item.food.name }}{% else %}{% trans item.recipe.name %}{% endif %}{% if not forloop.last %}, {% endif %}{% empty %}{% trans "Nothing planned" %}{% endfor %}
+      </p>
+    {% endfor %}
+    <a class="button-secondary" href="{% url 'nutrition:diet-plan-detail' todays_plan.plan.pk %}">{% trans "Open plan" %}</a>
+  </div>
+{% endif %}
+
 {% if suggestion %}
   {% if suggestion.action == "adjust" %}
     <div class="card">
@@ -88,7 +110,7 @@
         <tr><td>{% trans "Fat" %}</td><td>{{ target.fat_grams }} g</td></tr>
       </tbody>
     </table>
-    <p class="field-help">{{ target.reason }}</p>
+    <p class="field-help">{{ target.display_reason }}</p>
   </div>
 {% endif %}
 

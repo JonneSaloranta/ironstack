@@ -20,7 +20,9 @@
   {% for recipe in recipes %}
     <div class="card card-action-row">
       <div>
-        <strong>{{ recipe.name }}</strong>
+        <strong>{% trans recipe.name %}</strong>
+        {% if not recipe.owner_id %}<span class="tag tag-outline">{% trans "Template" %}</span>{% endif %}
+        {% if recipe.meal_slot %}<span class="tag tag-outline">{{ recipe.meal_slot.name }}</span>{% endif %}
         <p class="text-muted">
           {{ recipe.servings }} {% trans "servings" %}
           — {% blocktrans with calories=recipe.per_serving.calories|floatformat:0 %}{{ calories }} kcal/serving{% endblocktrans %}

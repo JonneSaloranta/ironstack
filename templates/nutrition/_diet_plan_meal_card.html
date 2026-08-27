@@ -1,0 +1,33 @@
+{% load i18n %}
+{% comment %}
+One DietPlanMeal's card — shared by diet_plan_detail.html's weekly
+(collapsed-by-day) and one-day (flat) rendering, so there's exactly
+one copy of this markup instead of two kept in sync by hand.
+
+Expects: meal (with .items.all()'s items each already carrying
+.nutrition, and .actual_calories — views._diet_plan_meals_with_nutrition),
+plan.
+{% endcomment %}
+<div class="card">
+  <strong>{{ meal.meal_slot.name }}</strong>
+  <span class="text-muted">— {{ meal.target_calories }} kcal {% trans "target" %}, {{ meal.actual_calories|floatformat:0 }} kcal {% trans "so far" %}</span>
+  {% for item in meal.items.all %}
+    <div class="card-action-row" style="padding:0.5rem 0;">
+      <div>
+        <span>{% if item.food %}{{ item.food.name }}{% else %}{% trans item.recipe.name %}{% endif %}</span>
+        <span class="text-muted">— {{ item.quantity }} {% if item.food %}{{ item.food.serving_unit }}{% else %}{% trans "servings" %}{% endif %}, {{ item.nutrition.calories|floatformat:0 }} kcal</span>
+      </div>
+      <div style="display:flex; flex-wrap:wrap; gap:0.5rem;">
+        <a class="button-secondary" href="{% url 'nutrition:diet-plan-item-edit' plan.pk item.pk %}">{% trans "Swap" %}</a>
+        <form method="post" action="{% url 'nutrition:diet-plan-item-delete' plan.pk item.pk %}"
+              x-data="{}" @submit="if (!confirm('{% trans "Remove this item?" %}')) $event.preventDefault()">
+          {% csrf_token %}
+          <button type="submit" class="button-danger">{% trans "Remove" %}</button>
+        </form>
+      </div>
+    </div>
+  {% empty %}
+    <p class="text-muted">{% trans "Nothing suggested yet — add some foods or recipes first." %}</p>
+  {% endfor %}
+  <a class="button-secondary" href="{% url 'nutrition:diet-plan-meal-item-add' plan.pk meal.pk %}">{% trans "+ Add item" %}</a>
+</div>
