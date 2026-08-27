@@ -14,6 +14,8 @@ lands and remains the authoritative history.
 
 ## [Unreleased]
 
+## [1.4.1] — 2026-08-27
+
 ### Fixed
 - A routine update (README.md "Updating": `docker compose pull && up
   -d`) could leave the site unreachable — `502`/"Connection refused"
