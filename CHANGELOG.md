@@ -14,6 +14,8 @@ lands and remains the authoritative history.
 
 ## [Unreleased]
 
+## [1.4.0] — 2026-08-27
+
 ### Added
 - Nutrition & calorie tracking (`apps/nutrition`): a step-by-step
   onboarding wizard estimating your calorie/macro needs (Mifflin-St
