@@ -126,14 +126,31 @@ def export_account_data(user):
     from apps.workouts.models import ExerciseSet, PerformedExercise, WorkoutSession
 
     return {
+        # Hand-listed rather than run through Django's generic
+        # serializer like everything else below, for the same reason
+        # ApiKey's key_hash is hand-excluded: `User` also carries a
+        # `password` hash and a plaintext `totp_secret`, neither of
+        # which belongs in a user's own export any more than a
+        # credential would. Every other field is included — this is
+        # meant to be a complete answer to "what do you have on me",
+        # not just the handful of fields shown on the profile page.
         "account": {
             "username": user.username,
             "first_name": user.first_name,
+            "last_name": user.last_name,
             "email": user.email,
             "date_joined": user.date_joined.isoformat(),
             "unit_system": user.unit_system,
             "timezone": user.timezone,
             "language": user.language,
+            "height_meters": str(user.height) if user.height is not None else None,
+            "show_bmi": user.show_bmi,
+            "show_achievements": user.show_achievements,
+            "show_name_to_others": user.show_name_to_others,
+            "show_gravatar": user.show_gravatar,
+            "onboarding_completed": user.onboarding_completed,
+            "is_sso_user": user.is_sso_user,
+            "two_factor_enabled": user.totp_enabled,
         },
         "workout_sessions": _dump(WorkoutSession.objects.filter(user=user)),
         "performed_exercises": _dump(PerformedExercise.objects.filter(session__user=user)),
