@@ -2573,19 +2573,30 @@ class RecipeViewTests(TestCase):
         to one bulk ingredient query for the whole list regardless of
         how many recipes are shown; this pins the query count so it
         can't silently regress back to O(n)."""
+        from apps.core.models import SeoSettings
+
         for i in range(5):
             recipe = Recipe.objects.create(owner=self.alice, name=f"Recipe {i}", servings=1)
             RecipeIngredient.objects.create(
                 recipe=recipe, food=self.chicken, quantity=Decimal("100")
             )
+        # Pre-create the singleton apps.core.context_processors.seo
+        # reads on every page — TestCase rolls back each test method's
+        # own writes, so without this, this specific test would always
+        # see get_or_create()'s more expensive "doesn't exist yet"
+        # path (a SELECT plus a SAVEPOINT/INSERT/RELEASE), which real
+        # production traffic only ever pays once, the very first
+        # request this instance ever serves.
+        SeoSettings.objects.create(pk=1)
         # Session auth (2) + the recipe queryset + one bulk ingredient
-        # query + base.html's training-FAB in-progress-session check
-        # (context_processors.py, runs on every page) — flat regardless
-        # of recipe count, not one query per recipe. A future unrelated
+        # query + base.html's training-FAB in-progress-session check +
+        # apps.core.context_processors.seo's own settings lookup (both
+        # context processors, run on every page) — flat regardless of
+        # recipe count, not one query per recipe. A future unrelated
         # query added to this view is fine to bump this number a
         # little; a query count that scales with the number of recipes
         # is the actual regression to catch.
-        with self.assertNumQueries(5):
+        with self.assertNumQueries(6):
             self.client.get(reverse("nutrition:recipe-list"))
 
     def test_the_back_link_returns_to_the_nutrition_dashboard(self):
