@@ -23,12 +23,14 @@ different app).
   <div class="calendar-header" x-data="{ helpOpen: false }">
     <a class="button-secondary" href="?month={{ calendar_prev_month }}" aria-label="{% trans "Previous month" %}">&larr;</a>
     <strong style="display:flex; align-items:center; gap:0.5rem;">
-      {# capfirst: Finnish/Swedish/Estonian month names are lowercase
-         by their own language's own grammar rules ("elokuu", not
-         "Elokuu") — correct in a sentence, but this heads a card the
-         same way "August 2026" would in English, so it's capitalized
-         here regardless of what the active language's own grammar
-         says about a month name appearing mid-sentence. #}
+      {% comment %}
+        capfirst: Finnish/Swedish/Estonian month names are lowercase
+        by their own language's own grammar rules ("elokuu", not
+        "Elokuu") — correct in a sentence, but this heads a card the
+        same way "August 2026" would in English, so it's capitalized
+        here regardless of what the active language's own grammar
+        says about a month name appearing mid-sentence.
+      {% endcomment %}
       {{ calendar_month|date:"F Y"|capfirst }}
       <button type="button" class="help-button" @click="helpOpen = true" aria-label="{% trans "How to read this calendar" %}">?</button>
     </strong>
