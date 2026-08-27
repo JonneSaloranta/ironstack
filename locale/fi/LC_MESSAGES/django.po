@@ -3,2825 +3,5018 @@ msgid ""
 msgstr ""
 "Project-Id-Version: IronStack\n"
 "Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-08-26 23:53+0000\n"
+"Language: fi\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: fi\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
+#: apps/accounts/admin.py:17 templates/accounts/profile.html:71
+#: templates/accounts/two_factor_manage.html:3
+#: templates/accounts/two_factor_manage.html:6
+#: templates/accounts/two_factor_setup.html:3
+#: templates/accounts/two_factor_setup.html:6
 msgid "Two-factor authentication"
 msgstr "Kaksivaiheinen tunnistautuminen"
 
+#: apps/accounts/admin.py:22
 msgid "Disable two-factor authentication for selected users"
 msgstr "Poista kaksivaiheinen tunnistautuminen käytöstä valituilta käyttäjiltä"
 
+#: apps/accounts/forms.py:115
 msgid "Too many failed login attempts. Try again in a few minutes."
-msgstr "Liian monta epäonnistunutta kirjautumisyritystä. Yritä uudelleen muutaman minuutin kuluttua."
+msgstr ""
+"Liian monta epäonnistunutta kirjautumisyritystä. Yritä uudelleen muutaman "
+"minuutin kuluttua."
 
+#: apps/accounts/forms.py:179
 msgid "Too many password reset requests. Try again in a few minutes."
-msgstr "Liian monta salasanan palautuspyyntöä. Yritä uudelleen muutaman minuutin kuluttua."
+msgstr ""
+"Liian monta salasanan palautuspyyntöä. Yritä uudelleen muutaman minuutin "
+"kuluttua."
 
+#: apps/accounts/forms.py:233
 msgid "Timezone"
 msgstr "Aikavyöhyke"
 
+#: apps/accounts/forms.py:250 apps/accounts/forms.py:479
+#: templates/api/key_list.html:34
 msgid "Units"
 msgstr "Yksiköt"
 
+#: apps/accounts/forms.py:253
 msgid "Show"
 msgstr "Näytä"
 
+#: apps/accounts/forms.py:254 templates/core/_bmi_card.html:13
+#: templates/core/_bmi_card.html:29
 msgid "BMI"
 msgstr "BMI"
 
+#: apps/accounts/forms.py:255
 msgid "on the body weight page"
 msgstr "painonseurantasivulla"
 
+#: apps/accounts/forms.py:257
 msgid "Share my activity"
 msgstr "Jaa oma toimintani"
 
+#: apps/accounts/forms.py:258
 msgid "Show my name to others"
 msgstr "Näytä nimeni muille"
 
+#: apps/accounts/forms.py:259
+msgid "Show my Gravatar picture"
+msgstr "Näytä Gravatar-kuvani"
+
+#: apps/accounts/forms.py:260
 msgid "Language"
 msgstr "Kieli"
 
+#: apps/accounts/forms.py:263
 msgid "Turns off the BMI card and its category ranges entirely."
 msgstr "Piilottaa BMI-kortin ja sen luokka-asteikot kokonaan."
 
-msgid "Lets everyone using this instance see your longest streak, workout count, PRs, total weight lifted, and when you last trained, in the dashboard's achievements carousel and \"Recently active\" list. Turn off to keep your own activity private — you'll still see everyone else's."
-msgstr "Antaa kaikkien tämän palvelun käyttäjien nähdä pisimmän putkesi, treenimääräsi, ennätyksesi, nostetun kokonaispainosi ja viimeisimmän treenisi ajankohdan etusivun saavutuskarusellissa ja \"Viimeksi aktiivisena\" -listassa. Poista käytöstä pitääksesi oman toimintasi yksityisenä — näet silti muiden tiedot."
+#: apps/accounts/forms.py:265
+msgid ""
+"Lets everyone using this instance see your longest streak, workout count, "
+"PRs, total weight lifted, and when you last trained, in the dashboard's "
+"achievements carousel and \"Recently active\" list. Turn off to keep your "
+"own activity private — you'll still see everyone else's."
+msgstr ""
+"Antaa kaikkien tämän palvelun käyttäjien nähdä pisimmän putkesi, "
+"treenimääräsi, ennätyksesi, nostetun kokonaispainosi ja viimeisimmän "
+"treenisi ajankohdan etusivun saavutuskarusellissa ja \"Viimeksi "
+"aktiivisena\" -listassa. Poista käytöstä pitääksesi oman toimintasi "
+"yksityisenä — näet silti muiden tiedot."
 
-msgid "Shows your first name next to your username wherever others can see it (the achievements carousel and \"Recently active\" list). Turn off to show just your username there, like before this setting existed."
-msgstr "Näyttää etunimesi käyttäjätunnuksesi vieressä kaikkialla, missä muut voivat sen nähdä (saavutuskaruselli ja \"Viimeksi aktiivisena\" -lista). Poista käytöstä näyttääksesi siellä vain käyttäjätunnuksesi, kuten ennen tämän asetuksen olemassaoloa."
+#: apps/accounts/forms.py:272
+msgid ""
+"Shows your first name next to your username wherever others can see it (the "
+"achievements carousel and \"Recently active\" list). Turn off to show just "
+"your username there, like before this setting existed."
+msgstr ""
+"Näyttää etunimesi käyttäjätunnuksesi vieressä kaikkialla, missä muut voivat "
+"sen nähdä (saavutuskaruselli ja \"Viimeksi aktiivisena\" -lista). Poista "
+"käytöstä näyttääksesi siellä vain käyttäjätunnuksesi, kuten ennen tämän "
+"asetuksen olemassaoloa."
 
+#: apps/accounts/forms.py:278
+msgid ""
+"Shows your Gravatar (gravatar.com) picture at the top of this page, if the "
+"email on this account has one. Turning this on means your browser loads that "
+"image directly from gravatar.com — the only place this app talks to a server "
+"outside your own instance — which then sees your email's hash and your IP "
+"address."
+msgstr ""
+"Näyttää Gravatar-kuvasi (gravatar.com) tämän sivun yläreunassa, jos tämän "
+"tilin sähköpostiosoitteella on sellainen. Käyttöönotto tarkoittaa, että "
+"selaimesi lataa kuvan suoraan osoitteesta gravatar.com — ainoa paikka, jossa "
+"tämä sovellus ottaa yhteyttä oman palvelimesi ulkopuoliseen palvelimeen — "
+"joka näkee tällöin sähköpostiosoitteesi tiivisteen ja IP-osoitteesi."
+
+#: apps/accounts/forms.py:296 apps/accounts/forms.py:500
+#: apps/nutrition/forms.py:39 apps/nutrition/forms.py:432
 msgid "Height (cm)"
 msgstr "Pituus (cm)"
 
+#: apps/accounts/forms.py:296 apps/accounts/forms.py:500
+#: apps/nutrition/forms.py:39 apps/nutrition/forms.py:432
 msgid "Height (in)"
 msgstr "Pituus (in)"
 
+#: apps/accounts/forms.py:337 apps/accounts/forms.py:364
 msgid "Verification code"
 msgstr "Vahvistuskoodi"
 
+#: apps/accounts/forms.py:348
 msgid "Incorrect code — check your authenticator app and try again."
 msgstr "Väärä koodi — tarkista tunnistautumissovelluksesi ja yritä uudelleen."
 
+#: apps/accounts/forms.py:376
 msgid "Too many incorrect codes. Try again in a few minutes."
 msgstr "Liian monta väärää koodia. Yritä uudelleen muutaman minuutin kuluttua."
 
+#: apps/accounts/forms.py:389
 msgid "Incorrect code."
 msgstr "Väärä koodi."
 
+#: apps/accounts/forms.py:403
 msgid "Password"
 msgstr "Salasana"
 
+#: apps/accounts/forms.py:412
 msgid "Incorrect password."
 msgstr "Väärä salasana."
 
+#: apps/accounts/forms.py:436
 msgid "First name"
 msgstr "Etunimi"
 
-msgid "Used to personalize your dashboard greeting, and next to your username wherever your activity is shown to others (if you allow that in your profile)."
-msgstr "Käytetään kojelaudan tervehdyksen personointiin, ja käyttäjänimesi vieressä kaikkialla, missä aktiviteettisi näytetään muille (jos sallit sen profiilissasi)."
+#: apps/accounts/forms.py:438
+msgid ""
+"Used to personalize your dashboard greeting, and next to your username "
+"wherever your activity is shown to others (if you allow that in your "
+"profile)."
+msgstr ""
+"Käytetään kojelaudan tervehdyksen personointiin, ja käyttäjänimesi vieressä "
+"kaikkialla, missä aktiviteettisi näytetään muille (jos sallit sen "
+"profiilissasi)."
 
+#: apps/accounts/forms.py:445
 msgid "Email"
 msgstr "Sähköposti"
 
-msgid "Used only for password-reset emails if you ever get locked out. Never shown to other users."
-msgstr "Käytetään vain salasanan palautusviesteihin, jos jäät joskus lukkoon tilistäsi. Ei näytetä koskaan muille käyttäjille."
+#: apps/accounts/forms.py:447
+msgid ""
+"Used only for password-reset emails if you ever get locked out. Never shown "
+"to other users."
+msgstr ""
+"Käytetään vain salasanan palautusviesteihin, jos jäät joskus lukkoon "
+"tilistäsi. Ei näytetä koskaan muille käyttäjille."
 
-msgid "Logged as your first body-weight entry, so your progress charts have a starting point. Leave blank and log it anytime from the Body weight page instead."
-msgstr "Tallennetaan ensimmäiseksi painomerkinnäksesi, jotta edistymiskaavioillasi on lähtöpiste. Voit myös jättää tämän tyhjäksi ja kirjata painon milloin tahansa Kehon paino -sivulta."
+#: apps/accounts/forms.py:457
+msgid ""
+"Logged as your first body-weight entry, so your progress charts have a "
+"starting point. Leave blank and log it anytime from the Body weight page "
+"instead."
+msgstr ""
+"Tallennetaan ensimmäiseksi painomerkinnäksesi, jotta edistymiskaavioillasi "
+"on lähtöpiste. Voit myös jättää tämän tyhjäksi ja kirjata painon milloin "
+"tahansa Kehon paino -sivulta."
 
-msgid "Used together with a logged body weight to show your BMI. Leave blank to skip this — you can add it anytime from your profile."
-msgstr "Näytetään BMI:si yhdessä kirjatun painon kanssa. Jätä tyhjäksi ohittaaksesi tämän — voit lisätä sen milloin tahansa profiilistasi."
+#: apps/accounts/forms.py:472
+msgid ""
+"Used together with a logged body weight to show your BMI. Leave blank to "
+"skip this — you can add it anytime from your profile."
+msgstr ""
+"Näytetään BMI:si yhdessä kirjatun painon kanssa. Jätä tyhjäksi ohittaaksesi "
+"tämän — voit lisätä sen milloin tahansa profiilistasi."
 
-msgid "Sets whether weights and distances are shown in kg/km or lb/mi throughout the app. Change this anytime from your profile."
-msgstr "Määrittää, näytetäänkö painot ja matkat sovelluksessa yksiköissä kg/km vai lb/mi. Voit muuttaa tätä milloin tahansa profiilistasi."
+#: apps/accounts/forms.py:481
+msgid ""
+"Sets whether weights and distances are shown in kg/km or lb/mi throughout "
+"the app. Change this anytime from your profile."
+msgstr ""
+"Määrittää, näytetäänkö painot ja matkat sovelluksessa yksiköissä kg/km vai "
+"lb/mi. Voit muuttaa tätä milloin tahansa profiilistasi."
 
+#: apps/accounts/forms.py:495 apps/nutrition/forms.py:40
+#: apps/nutrition/forms.py:441 apps/nutrition/forms.py:645
+#, python-format
 msgid "Current weight (%(unit)s)"
 msgstr "Nykyinen paino (%(unit)s)"
 
+#: apps/accounts/forms.py:497
 msgid "Current weight"
 msgstr "Nykyinen paino"
 
+#: apps/accounts/models.py:10
 msgid "Metric (kg, km)"
 msgstr "Metrinen (kg, km)"
 
+#: apps/accounts/models.py:11
 msgid "Imperial (lb, mi)"
 msgstr "Imperiaalinen (lb, mi)"
 
-msgid "Shown as a footer note on the login and signup pages. Leave blank to hide it entirely."
-msgstr "Näytetään alatunnisteessa kirjautumis- ja rekisteröitymissivuilla. Jätä tyhjäksi piilottaaksesi sen kokonaan."
+#: apps/accounts/models.py:208
+msgid ""
+"Shown as a footer note on the login and signup pages. Leave blank to hide it "
+"entirely."
+msgstr ""
+"Näytetään alatunnisteessa kirjautumis- ja rekisteröitymissivuilla. Jätä "
+"tyhjäksi piilottaaksesi sen kokonaan."
 
+#: apps/accounts/views.py:42 apps/accounts/views.py:49
 msgid "Registration is currently closed."
 msgstr "Rekisteröityminen on tällä hetkellä suljettu."
 
+#: apps/accounts/views.py:92 apps/accounts/views.py:135
+msgid "Password login is disabled on this instance."
+msgstr "Salasanalla kirjautuminen on poistettu käytöstä tässä palvelussa."
+
+#: apps/accounts/views.py:168
 msgid "Preferences saved."
 msgstr "Asetukset tallennettu."
 
+#: apps/accounts/views.py:188
 msgid "Account details saved."
 msgstr "Tilin tiedot tallennettu."
 
+#: apps/accounts/views.py:281
 msgid "Two-factor authentication is already enabled."
 msgstr "Kaksivaiheinen tunnistautuminen on jo käytössä."
 
+#: apps/accounts/views.py:338
 msgid "Two-factor authentication turned off."
 msgstr "Kaksivaiheinen tunnistautuminen poistettu käytöstä."
 
+#: apps/activities/forms.py:25
 msgid "Duration (minutes)"
 msgstr "Kesto (minuuttia)"
 
+#: apps/activities/forms.py:57
+#, python-format
 msgid "Distance (%(unit)s)"
 msgstr "Matka (%(unit)s)"
 
+#: apps/activities/i18n_content.py:17
 msgid "Running"
 msgstr "Juoksu"
 
+#: apps/activities/i18n_content.py:18
 msgid "Cycling"
 msgstr "Pyöräily"
 
+#: apps/activities/i18n_content.py:19
 msgid "Swimming"
 msgstr "Uinti"
 
+#: apps/activities/i18n_content.py:20
 msgid "Walking"
 msgstr "Kävely"
 
+#: apps/activities/i18n_content.py:21
 msgid "Hiking"
 msgstr "Vaellus"
 
+#: apps/activities/i18n_content.py:22
 msgid "Rowing"
 msgstr "Soutu"
 
+#: apps/activities/i18n_content.py:23
 msgid "Yoga"
 msgstr "Jooga"
 
+#: apps/activities/i18n_content.py:24 apps/core/models.py:125
 msgid "Other"
 msgstr "Muu"
 
+#: apps/activities/models.py:18 apps/exercises/models.py:69
+#: apps/measurements/models.py:34 apps/programs/models.py:36
+#: apps/programs/models.py:79
 msgid "name"
 msgstr "nimi"
 
+#: apps/activities/models.py:70
 msgid "date"
 msgstr "päivämäärä"
 
+#: apps/activities/models.py:71
 msgid "start time"
 msgstr "aloitusaika"
 
+#: apps/activities/models.py:74
 msgid "distance"
 msgstr "matka"
 
+#: apps/activities/models.py:76
 msgid "calories"
 msgstr "kalorit"
 
+#: apps/activities/models.py:77 apps/measurements/models.py:90
+#: apps/programs/models.py:84 apps/programs/models.py:150
+#: apps/workouts/forms.py:46
 msgid "notes"
 msgstr "muistiinpanot"
 
+#: apps/activities/models.py:81
 msgid "activities"
 msgstr "aktiviteetit"
 
+#: apps/analytics/achievements.py:103
 msgid "Longest streak"
 msgstr "Pisin putki"
 
+#: apps/analytics/achievements.py:104
+#, python-format
 msgid "%(counter)s day"
 msgid_plural "%(counter)s days"
 msgstr[0] "%(counter)s päivä"
 msgstr[1] "%(counter)s päivää"
 
+#: apps/analytics/achievements.py:114
 msgid "Workouts completed"
 msgstr "Treenejä tehty"
 
+#: apps/analytics/achievements.py:115 templates/programs/program_list.html:16
+#: templates/programs/program_list.html:32
+#, python-format
 msgid "%(counter)s workout"
 msgid_plural "%(counter)s workouts"
 msgstr[0] "%(counter)s treeni"
 msgstr[1] "%(counter)s treeniä"
 
+#: apps/analytics/achievements.py:124
 msgid "Personal records"
 msgstr "Ennätyksiä"
 
+#: apps/analytics/achievements.py:125
+#, python-format
 msgid "%(counter)s PR"
 msgid_plural "%(counter)s PRs"
 msgstr[0] "%(counter)s ennätys"
 msgstr[1] "%(counter)s ennätystä"
 
+#: apps/analytics/achievements.py:134
 msgid "Total weight lifted"
 msgstr "Nostettu paino yhteensä"
 
+#: apps/analytics/dateranges.py:14
 msgid "7 days"
 msgstr "7 päivää"
 
+#: apps/analytics/dateranges.py:15
 msgid "30 days"
 msgstr "30 päivää"
 
+#: apps/analytics/dateranges.py:16
 msgid "3 months"
 msgstr "3 kuukautta"
 
+#: apps/analytics/dateranges.py:17
 msgid "6 months"
 msgstr "6 kuukautta"
 
+#: apps/analytics/dateranges.py:18
 msgid "1 year"
 msgstr "1 vuosi"
 
+#: apps/analytics/dateranges.py:19
 msgid "All time"
 msgstr "Koko aika"
 
+#: apps/api/forms.py:10
 msgid "Create"
 msgstr "Luonti"
 
+#: apps/api/forms.py:11
 msgid "Read"
 msgstr "Luku"
 
+#: apps/api/forms.py:12
 msgid "Update"
 msgstr "Muokkaus"
 
+#: apps/api/forms.py:13 templates/activities/activity_history.html:55
+#: templates/core/_backup_row.html:20
+#: templates/measurements/measurement_history.html:46
+#: templates/nutrition/diary_day.html:65
+#: templates/programs/program_confirm_delete.html:14
+#: templates/programs/program_detail.html:44
+#: templates/workouts/_performed_exercise_card.html:29
 msgid "Delete"
 msgstr "Poista"
 
+#: apps/api/forms.py:29 templates/admin/nutrition/food/merge.html:14
+#: templates/nutrition/food_list.html:26
 msgid "Name"
 msgstr "Nimi"
 
+#: apps/api/forms.py:29
 msgid "A label to tell your keys apart."
 msgstr "Nimike, jolla erotat avaimesi toisistaan."
 
+#: apps/api/models.py:24 templates/accounts/profile.html:3
+#: templates/accounts/profile.html:19 templates/api/key_list.html:85
+#: templates/base.html:85 templates/base.html:87
 msgid "Profile"
 msgstr "Profiili"
 
+#: apps/api/models.py:25 templates/api/key_list.html:89
+#: templates/exercises/exercise_list.html:3
+#: templates/exercises/exercise_list.html:6
 msgid "Exercises"
 msgstr "Liikkeet"
 
+#: apps/api/models.py:26 apps/core/models.py:120 templates/api/key_list.html:93
+#: templates/base.html:81 templates/base.html:83
+#: templates/programs/program_list.html:3
+#: templates/programs/program_list.html:6
 msgid "Programs"
 msgstr "Ohjelmat"
 
+#: apps/api/models.py:27 apps/core/models.py:119
+#: templates/analytics/dashboard.html:13 templates/api/key_list.html:97
+#: templates/workouts/session_list.html:6
 msgid "Workouts"
 msgstr "Treenit"
 
+#: apps/api/models.py:28 templates/api/key_list.html:101
 msgid "Measurements"
 msgstr "Mittaukset"
 
+#: apps/api/models.py:29 apps/core/models.py:123
+#: templates/activities/activity_type_list.html:3
+#: templates/activities/activity_type_list.html:6
+#: templates/api/key_list.html:105 templates/core/dashboard.html:115
 msgid "Activities"
 msgstr "Aktiviteetit"
 
+#: apps/api/models.py:30 templates/api/key_list.html:113
 msgid "Records"
 msgstr "Ennätykset"
 
+#: apps/api/models.py:31 templates/analytics/dashboard.html:3
+#: templates/analytics/dashboard.html:6 templates/api/key_list.html:117
 msgid "Analytics"
 msgstr "Analytiikka"
 
+#: apps/api/models.py:32 templates/api/key_list.html:109 templates/base.html:69
+#: templates/base.html:71 templates/nutrition/dashboard.html:3
+#: templates/nutrition/dashboard.html:6
+#: templates/nutrition/recipe_detail.html:52
 msgid "Nutrition"
 msgstr "Ravinto"
 
+#: apps/api/views_web.py:39
 msgid "You've reached your maximum number of API keys."
 msgstr "Olet saavuttanut API-avainten enimmäismäärän."
 
+#: apps/api/views_web.py:89
 msgid "API key revoked."
 msgstr "API-avain peruutettu."
 
+#: apps/core/admin.py:17 templates/accounts/profile.html:105
 msgid "Administration"
 msgstr "Hallinta"
 
+#: apps/core/bmi.py:32
 msgid "Underweight"
 msgstr "Alipainoinen"
 
+#: apps/core/bmi.py:33
 msgid "Normal weight"
 msgstr "Normaalipaino"
 
+#: apps/core/bmi.py:34
 msgid "Overweight"
 msgstr "Ylipainoinen"
 
+#: apps/core/bmi.py:35
 msgid "Obese"
 msgstr "Lihavuus"
 
+#: apps/core/formatting.py:16 templates/programs/program_detail.html:56
+#: templates/workouts/_performed_exercise_card.html:8
 msgid "Rate of Perceived Exertion"
 msgstr "Koettu kuormitustaso"
 
+#: apps/core/formatting.py:17
 msgid "Reps In Reserve"
 msgstr "Jäljellä olevat toistot"
 
+#: apps/core/formatting.py:18 templates/analytics/exercise_analytics.html:19
+#: templates/exercises/exercise_detail.html:49
+#: templates/records/_pr_toasts.html:38
+#: templates/records/exercise_records.html:16
 msgid "One-Rep Max"
 msgstr "Yhden toiston maksimi"
 
+#: apps/core/formatting.py:19 templates/records/_pr_toasts.html:29
 msgid "Personal Record"
 msgstr "Henkilökohtainen ennätys"
 
+#: apps/core/formatting.py:20 templates/analytics/dashboard.html:40
+#: templates/records/_pr_toasts.html:36
+#: templates/records/exercise_records.html:31
 msgid "Rep Max"
 msgstr "Toistomaksimi"
 
+#: apps/core/formatting.py:21 templates/core/_bmi_card.html:13
 msgid "Body Mass Index"
 msgstr "Painoindeksi"
 
+#: apps/core/forms.py:19
 msgid "Automatic daily backups"
 msgstr "Automaattiset päivittäiset varmuuskopiot"
 
+#: apps/core/forms.py:20
 msgid "Backup hour (UTC)"
 msgstr "Varmuuskopioinnin kellonaika (UTC)"
 
+#: apps/core/forms.py:21
 msgid "Keep the most recent"
 msgstr "Säilytä uusimmat"
 
+#: apps/core/forms.py:37
 msgid "Backup file"
 msgstr "Varmuuskopiotiedosto"
 
-msgid "A .tar.gz backup archive previously downloaded from an IronStack instance."
+#: apps/core/forms.py:39
+msgid ""
+"A .tar.gz backup archive previously downloaded from an IronStack instance."
 msgstr "Aiemmin IronStack-asennuksesta ladattu .tar.gz-varmuuskopioarkisto."
 
+#: apps/core/forms.py:46
 msgid "Must be a .tar.gz file."
 msgstr "Tiedoston tulee olla .tar.gz-muodossa."
 
+#: apps/core/forms.py:59
 msgid "Category"
 msgstr "Kategoria"
 
+#: apps/core/forms.py:60
 msgid "Subject"
 msgstr "Aihe"
 
+#: apps/core/forms.py:61
 msgid "Message"
 msgstr "Viesti"
 
+#: apps/core/forms.py:73
 msgid "Accept new feedback"
 msgstr "Ota vastaan uutta palautetta"
 
+#: apps/core/greetings.py:29
+#, python-format
 msgid "Good morning, %(username)s! Time to get after it."
 msgstr "Huomenta, %(username)s! Aika tarttua toimeen."
 
-msgid "Rise and grind, %(username)s — the weights aren't going to lift themselves."
+#: apps/core/greetings.py:30
+#, python-format
+msgid ""
+"Rise and grind, %(username)s — the weights aren't going to lift themselves."
 msgstr "Ylös ja hommiin, %(username)s — painot eivät nosta itse itseään."
 
+#: apps/core/greetings.py:31
+#, python-format
 msgid "Morning, %(username)s. Today's a great day for a new personal record."
 msgstr "Huomenta, %(username)s. Tänään on hyvä päivä uudelle ennätykselle."
 
+#: apps/core/greetings.py:32
+#, python-format
 msgid "Good morning, %(username)s. Coffee first, then conquer the day."
 msgstr "Huomenta, %(username)s. Kahvi ensin, sitten päivä valloitetaan."
 
+#: apps/core/greetings.py:36
+#, python-format
 msgid "Good afternoon, %(username)s! Keep the momentum going."
 msgstr "Hyvää iltapäivää, %(username)s! Pidä vauhti yllä."
 
+#: apps/core/greetings.py:37
+#, python-format
 msgid "Hey %(username)s, halfway through the day and still standing — not bad."
-msgstr "Hei %(username)s, päivästä puolet takana ja yhä pystyssä — ei hassumpaa."
+msgstr ""
+"Hei %(username)s, päivästä puolet takana ja yhä pystyssä — ei hassumpaa."
 
+#: apps/core/greetings.py:38
+#, python-format
 msgid "Afternoon, %(username)s. Perfect time to sneak in a workout."
 msgstr "Iltapäivää, %(username)s. Täydellinen hetki treenille."
 
+#: apps/core/greetings.py:39
+#, python-format
 msgid "Good afternoon, %(username)s. Lunch was earned, apparently."
 msgstr "Hyvää iltapäivää, %(username)s. Lounas oli ilmeisesti ansaittu."
 
+#: apps/core/greetings.py:43
+#, python-format
 msgid "Good evening, %(username)s! One more push before the day's done."
-msgstr "Hyvää iltaa, %(username)s! Vielä yksi ponnistus ennen päivän päättymistä."
+msgstr ""
+"Hyvää iltaa, %(username)s! Vielä yksi ponnistus ennen päivän päättymistä."
 
+#: apps/core/greetings.py:44
+#, python-format
 msgid "Evening, %(username)s. A great time to log today's work."
 msgstr "Iltaa, %(username)s. Hyvä hetki kirjata päivän treeni."
 
+#: apps/core/greetings.py:45
+#, python-format
 msgid "Hey %(username)s, the evening session hits different."
 msgstr "Hei %(username)s, iltatreeni tuntuu aina erilaiselta."
 
-msgid "Good evening, %(username)s — finish the day stronger than you started it."
+#: apps/core/greetings.py:46
+#, python-format
+msgid ""
+"Good evening, %(username)s — finish the day stronger than you started it."
 msgstr "Hyvää iltaa, %(username)s — lopeta päivä vahvempana kuin aloitit sen."
 
+#: apps/core/greetings.py:50
+#, python-format
 msgid "Still up, %(username)s? Respect the hustle."
 msgstr "Vieläkö hereillä, %(username)s? Kunnioitusta sinnikkyydelle."
 
+#: apps/core/greetings.py:51
+#, python-format
 msgid "Good night, %(username)s — recovery is part of the program too."
 msgstr "Hyvää yötä, %(username)s — palautuminen kuuluu myös ohjelmaan."
 
+#: apps/core/greetings.py:52
+#, python-format
 msgid "Burning the midnight oil, %(username)s? Even legends need sleep."
 msgstr "Palatko keskiyön öljyä, %(username)s? Legendatkin tarvitsevat unta."
 
+#: apps/core/greetings.py:53
+#, python-format
 msgid "Late night, %(username)s. Tomorrow's gains start with tonight's rest."
-msgstr "Myöhäinen ilta, %(username)s. Huomisen edistys alkaa tämän yön levosta."
+msgstr ""
+"Myöhäinen ilta, %(username)s. Huomisen edistys alkaa tämän yön levosta."
 
-msgid "Turns the backup-scheduler service's daily backup off without needing to stop or remove that service."
-msgstr "Kytkee varmuuskopiointipalvelun päivittäisen varmuuskopioinnin pois päältä ilman, että kyseistä palvelua tarvitsee pysäyttää tai poistaa."
+#: apps/core/models.py:42
+msgid ""
+"Turns the backup-scheduler service's daily backup off without needing to "
+"stop or remove that service."
+msgstr ""
+"Kytkee varmuuskopiointipalvelun päivittäisen varmuuskopioinnin pois päältä "
+"ilman, että kyseistä palvelua tarvitsee pysäyttää tai poistaa."
 
+#: apps/core/models.py:49
 msgid "What time (UTC) the daily automatic backup runs at."
-msgstr "Mihin kellonaikaan (UTC) päivittäinen automaattinen varmuuskopiointi ajetaan."
+msgstr ""
+"Mihin kellonaikaan (UTC) päivittäinen automaattinen varmuuskopiointi ajetaan."
 
-msgid "How many backups to keep — older ones are deleted automatically after each new one is created. 0 keeps every backup forever."
-msgstr "Kuinka monta varmuuskopiota säilytetään — vanhemmat poistetaan automaattisesti aina uuden luonnin jälkeen. 0 säilyttää kaikki varmuuskopiot ikuisesti."
+#: apps/core/models.py:54
+msgid ""
+"How many backups to keep — older ones are deleted automatically after each "
+"new one is created. 0 keeps every backup forever."
+msgstr ""
+"Kuinka monta varmuuskopiota säilytetään — vanhemmat poistetaan "
+"automaattisesti aina uuden luonnin jälkeen. 0 säilyttää kaikki varmuuskopiot "
+"ikuisesti."
 
-msgid "Lets any signed-in user submit feedback from their profile page. Turning this off only closes new submissions — feedback already on file stays visible to staff."
-msgstr "Antaa minkä tahansa kirjautuneen käyttäjän lähettää palautetta profiilisivultaan. Tämän pois kytkeminen sulkee vain uusien palautteiden lähettämisen — jo lähetetty palaute pysyy henkilökunnan nähtävissä."
+#: apps/core/models.py:88
+msgid ""
+"Lets any signed-in user submit feedback from their profile page. Turning "
+"this off only closes new submissions — feedback already on file stays "
+"visible to staff."
+msgstr ""
+"Antaa minkä tahansa kirjautuneen käyttäjän lähettää palautetta "
+"profiilisivultaan. Tämän pois kytkeminen sulkee vain uusien palautteiden "
+"lähettämisen — jo lähetetty palaute pysyy henkilökunnan nähtävissä."
 
+#: apps/core/models.py:121 templates/base.html:73 templates/base.html:75
 msgid "Progress"
 msgstr "Edistyminen"
 
+#: apps/core/models.py:122
 msgid "Body measurements"
 msgstr "Kehon mittaukset"
 
+#: apps/core/models.py:124
 msgid "Account & profile"
 msgstr "Tili ja profiili"
 
+#: apps/core/views.py:31
+msgid "Training day — new personal record!"
+msgstr "Treenipäivä — uusi ennätys!"
+
+#: apps/core/views.py:33
+msgid "Training day — a session was abandoned."
+msgstr "Treenipäivä — treeni keskeytettiin."
+
+#: apps/core/views.py:35
+msgid "Training day."
+msgstr "Treenipäivä."
+
+#: apps/core/views.py:37
+msgid "Rest day."
+msgstr "Lepopäivä."
+
+#: apps/core/views.py:40
+msgid "Nothing logged that day."
+msgstr "Ei mitään kirjattuna sinä päivänä."
+
+#: apps/core/views.py:42
+#, python-format
+msgid "%(actual)s / %(target)s kcal logged."
+msgstr "%(actual)s / %(target)s kcal kirjattu."
+
+#: apps/core/views.py:47
+msgid "%(actual)s kcal logged."
+msgstr "%(actual)s kcal kirjattu."
+
+#: apps/core/views_backup.py:55
+#, python-format
 msgid "Backup created: %(name)s"
 msgstr "Varmuuskopio luotu: %(name)s"
 
+#: apps/core/views_backup.py:62
 msgid "Backup settings saved."
 msgstr "Varmuuskopioinnin asetukset tallennettu."
 
-msgid "Not a valid IronStack backup archive — expected a .tar.gz containing database.dump, media.tar, and manifest.json."
-msgstr "Ei kelvollinen IronStack-varmuuskopioarkisto — odotettiin .tar.gz-tiedostoa, joka sisältää database.dump-, media.tar- ja manifest.json-tiedostot."
+#: apps/core/views_backup.py:78
+msgid ""
+"Not a valid IronStack backup archive — expected a .tar.gz containing "
+"database.dump, media.tar, and manifest.json."
+msgstr ""
+"Ei kelvollinen IronStack-varmuuskopioarkisto — odotettiin .tar.gz-tiedostoa, "
+"joka sisältää database.dump-, media.tar- ja manifest.json-tiedostot."
 
+#: apps/core/views_backup.py:83
+#, python-format
 msgid "Backup uploaded: %(name)s"
 msgstr "Varmuuskopio ladattu: %(name)s"
 
+#: apps/core/views_backup.py:113
+#, python-format
 msgid "Backup deleted: %(name)s"
 msgstr "Varmuuskopio poistettu: %(name)s"
 
+#: apps/core/views_backup.py:145
+#, python-format
 msgid "Restored from backup: %(name)s"
 msgstr "Palautettu varmuuskopiosta: %(name)s"
 
+#: apps/core/views_feedback.py:29
 msgid "Feedback isn't currently being accepted."
 msgstr "Palautetta ei tällä hetkellä oteta vastaan."
 
+#: apps/core/views_feedback.py:36
 msgid "Thanks for the feedback!"
 msgstr "Kiitos palautteesta!"
 
+#: apps/core/views_feedback.py:57
 msgid "Feedback settings saved."
 msgstr "Palauteasetukset tallennettu."
 
+#: apps/exercises/i18n_content.py:22
 msgid "Ab Wheel Rollout"
 msgstr "Vatsapyörärullaus"
 
+#: apps/exercises/i18n_content.py:23
 msgid "Barbell Back Squat"
 msgstr "Takakyykky tangolla"
 
+#: apps/exercises/i18n_content.py:24
 msgid "Barbell Bench Press"
 msgstr "Penkkipunnerrus tangolla"
 
+#: apps/exercises/i18n_content.py:25
 msgid "Barbell Row"
 msgstr "Kulmasoutu tangolla"
 
+#: apps/exercises/i18n_content.py:26
 msgid "Barbell Shrug"
 msgstr "Hartiakohautus tangolla"
 
+#: apps/exercises/i18n_content.py:27
 msgid "Calf Raise"
 msgstr "Pohjekohotus"
 
+#: apps/exercises/i18n_content.py:28
 msgid "Conventional Deadlift"
 msgstr "Maastaveto"
 
+#: apps/exercises/i18n_content.py:29
 msgid "Dumbbell Bench Press"
 msgstr "Penkkipunnerrus käsipainoilla"
 
+#: apps/exercises/i18n_content.py:30
 msgid "Dumbbell Bicep Curl"
 msgstr "Hauiskääntö käsipainoilla"
 
+#: apps/exercises/i18n_content.py:31
 msgid "Dumbbell Shoulder Press"
 msgstr "Pystypunnerrus käsipainoilla"
 
+#: apps/exercises/i18n_content.py:32
 msgid "Face Pull"
 msgstr "Face pull -veto"
 
+#: apps/exercises/i18n_content.py:33
 msgid "Front Squat"
 msgstr "Etukyykky"
 
+#: apps/exercises/i18n_content.py:34
 msgid "Hammer Curl"
 msgstr "Vasarakääntö"
 
+#: apps/exercises/i18n_content.py:35
 msgid "Hip Thrust"
 msgstr "Lantionnosto"
 
+#: apps/exercises/i18n_content.py:36
 msgid "Incline Barbell Bench Press"
 msgstr "Vinopenkkipunnerrus tangolla"
 
+#: apps/exercises/i18n_content.py:37
 msgid "Lat Pulldown"
 msgstr "Ylätalja"
 
+#: apps/exercises/i18n_content.py:38
 msgid "Lateral Raise"
 msgstr "Sivunosto"
 
+#: apps/exercises/i18n_content.py:39
 msgid "Leg Curl"
 msgstr "Reiden koukistus"
 
+#: apps/exercises/i18n_content.py:40
 msgid "Leg Press"
 msgstr "Jalkaprässi"
 
+#: apps/exercises/i18n_content.py:41
 msgid "Overhead Press"
 msgstr "Pystypunnerrus"
 
+#: apps/exercises/i18n_content.py:42
 msgid "Plank"
 msgstr "Lankku"
 
+#: apps/exercises/i18n_content.py:43
 msgid "Pull-Up"
 msgstr "Leuanveto"
 
+#: apps/exercises/i18n_content.py:44
 msgid "Romanian Deadlift"
 msgstr "Romanialainen maastaveto"
 
+#: apps/exercises/i18n_content.py:45
 msgid "Seated Cable Row"
 msgstr "Istumasoutu taljalla"
 
+#: apps/exercises/i18n_content.py:46
 msgid "Side Plank"
 msgstr "Sivulankku"
 
+#: apps/exercises/i18n_content.py:47
 msgid "Skull Crusher"
 msgstr "Ojentajapunnerrus tangolla"
 
+#: apps/exercises/i18n_content.py:48
 msgid "Straight-Arm Pulldown"
 msgstr "Suorakätinen taljaveto"
 
+#: apps/exercises/i18n_content.py:49
 msgid "Triceps Pushdown"
 msgstr "Ojentajaveto taljalla"
 
+#: apps/exercises/i18n_content.py:54
 msgid "Abs"
 msgstr "Vatsa"
 
+#: apps/exercises/i18n_content.py:55
 msgid "Back"
 msgstr "Selkä"
 
+#: apps/exercises/i18n_content.py:56
 msgid "Biceps"
 msgstr "Hauis"
 
+#: apps/exercises/i18n_content.py:57
 msgid "Calves"
 msgstr "Pohkeet"
 
+#: apps/exercises/i18n_content.py:58 apps/measurements/i18n_content.py:20
 msgid "Chest"
 msgstr "Rinta"
 
+#: apps/exercises/i18n_content.py:59
 msgid "Forearms"
 msgstr "Kyynärvarret"
 
+#: apps/exercises/i18n_content.py:60
 msgid "Glutes"
 msgstr "Pakarat"
 
+#: apps/exercises/i18n_content.py:61
 msgid "Hamstrings"
 msgstr "Takareidet"
 
+#: apps/exercises/i18n_content.py:62
 msgid "Lats"
 msgstr "Leveät selkälihakset"
 
+#: apps/exercises/i18n_content.py:63
 msgid "Obliques"
 msgstr "Vinot vatsalihakset"
 
+#: apps/exercises/i18n_content.py:64
 msgid "Quads"
 msgstr "Etureidet"
 
+#: apps/exercises/i18n_content.py:65
 msgid "Shoulders"
 msgstr "Hartiat"
 
+#: apps/exercises/i18n_content.py:66
 msgid "Traps"
 msgstr "Epäkäslihakset"
 
+#: apps/exercises/i18n_content.py:67
 msgid "Triceps"
 msgstr "Ojentaja"
 
+#: apps/exercises/i18n_content.py:72
 msgid "Barbell"
 msgstr "Tanko"
 
+#: apps/exercises/i18n_content.py:73
 msgid "Bodyweight"
 msgstr "Oma keho"
 
+#: apps/exercises/i18n_content.py:74
 msgid "Cable"
 msgstr "Talja"
 
+#: apps/exercises/i18n_content.py:75
 msgid "Dumbbell"
 msgstr "Käsipaino"
 
+#: apps/exercises/i18n_content.py:76
 msgid "Kettlebell"
 msgstr "Kahvakuula"
 
+#: apps/exercises/i18n_content.py:77
 msgid "Machine"
 msgstr "Laite"
 
+#: apps/exercises/i18n_content.py:78
 msgid "Resistance Band"
 msgstr "Kuminauha"
 
+#: apps/exercises/models.py:33 apps/exercises/models.py:89
 msgid "equipment"
 msgstr "välineet"
 
+#: apps/exercises/models.py:40
 msgid "Compound"
 msgstr "Moninivelliike"
 
+#: apps/exercises/models.py:41
 msgid "Isolation"
 msgstr "Eristävä liike"
 
+#: apps/exercises/models.py:55
 msgid "Total load"
 msgstr "Kokonaispaino"
 
+#: apps/exercises/models.py:56
 msgid "Per hand / dumbbell"
 msgstr "Per käsi / käsipaino"
 
+#: apps/exercises/models.py:70 apps/programs/models.py:37
 msgid "description"
 msgstr "kuvaus"
 
+#: apps/exercises/models.py:75
 msgid "primary muscle groups"
 msgstr "ensisijaiset lihasryhmät"
 
+#: apps/exercises/models.py:81
 msgid "secondary muscle groups"
 msgstr "toissijaiset lihasryhmät"
 
+#: apps/exercises/models.py:95
 msgid "movement type"
 msgstr "liiketyyppi"
 
+#: apps/exercises/models.py:101
 msgid "weight logging"
 msgstr "painon kirjaus"
 
+#: apps/measurements/forms.py:57
+#, python-format
 msgid "Value (%(unit)s)"
 msgstr "Arvo (%(unit)s)"
 
+#: apps/measurements/forms.py:57
+#: templates/measurements/measurement_history.html:35
 msgid "Value"
 msgstr "Arvo"
 
+#: apps/measurements/i18n_content.py:17 templates/core/dashboard.html:72
 msgid "Body weight"
 msgstr "Kehon paino"
 
+#: apps/measurements/i18n_content.py:18
 msgid "Body fat %"
 msgstr "Rasvaprosentti"
 
+#: apps/measurements/i18n_content.py:19
 msgid "Waist"
 msgstr "Vyötärö"
 
+#: apps/measurements/i18n_content.py:21
 msgid "Arm"
 msgstr "Käsivarsi"
 
+#: apps/measurements/i18n_content.py:22
 msgid "Thigh"
 msgstr "Reisi"
 
+#: apps/measurements/i18n_content.py:23
 msgid "Hip"
 msgstr "Lantio"
 
+#: apps/measurements/i18n_content.py:24
 msgid "Neck"
 msgstr "Kaula"
 
+#: apps/measurements/models.py:18 templates/core/_bmi_card.html:31
+#: templates/nutrition/dashboard.html:95
+#: templates/workouts/_performed_exercise_card.html:15
 msgid "Weight"
 msgstr "Paino"
 
+#: apps/measurements/models.py:19
 msgid "Length/circumference"
 msgstr "Pituus/ympärysmitta"
 
+#: apps/measurements/models.py:20
 msgid "Percentage"
 msgstr "Prosentti"
 
+#: apps/measurements/models.py:36
 msgid "unit kind"
 msgstr "yksikkötyyppi"
 
+#: apps/measurements/models.py:88
 msgid "recorded at"
 msgstr "kirjattu"
 
+#: apps/nutrition/admin.py:80
 msgid "Refresh selected foods from OpenFoodFacts"
 msgstr "Päivitä valitut ruoat OpenFoodFactsista"
 
+#: apps/nutrition/admin.py:93
 msgid "None of the selected foods were imported from OpenFoodFacts."
 msgstr "Yksikään valituista ruoista ei ole tuotu OpenFoodFactsista."
 
+#: apps/nutrition/admin.py:105
+#, python-format
 msgid "Refreshed %(refreshed)d of %(total)d food(s) from OpenFoodFacts."
 msgstr "Päivitettiin %(refreshed)d/%(total)d ruokaa OpenFoodFactsista."
 
+#: apps/nutrition/admin.py:109
 msgid "Merge selected foods into one…"
 msgstr "Yhdistä valitut ruoat yhdeksi…"
 
+#: apps/nutrition/admin.py:114 apps/nutrition/admin.py:142
 msgid "Select at least two foods to merge."
 msgstr "Valitse vähintään kaksi ruokaa yhdistettäväksi."
 
-msgid "Merged %(count)d food(s) into “%(name)s”. Every diary entry, recipe ingredient, and diet-plan item that referenced one of them now points at it instead."
-msgstr "Yhdistettiin %(count)d ruokaa kohteeseen “%(name)s”. Jokainen ruokapäiväkirjan merkintä, resepti-ainesosa ja ruokavaliosuunnitelman kohde, joka viittasi johonkin niistä, viittaa nyt tähän."
+#: apps/nutrition/admin.py:155
+#, python-format
+msgid ""
+"Merged %(count)d food(s) into “%(name)s”. Every diary entry, recipe "
+"ingredient, and diet-plan item that referenced one of them now points at it "
+"instead."
+msgstr ""
+"Yhdistettiin %(count)d ruokaa kohteeseen “%(name)s”. Jokainen "
+"ruokapäiväkirjan merkintä, resepti-ainesosa ja ruokavaliosuunnitelman kohde, "
+"joka viittasi johonkin niistä, viittaa nyt tähän."
 
+#: apps/nutrition/admin.py:165
 msgid "Merge foods"
 msgstr "Yhdistä ruoat"
 
+#: apps/nutrition/calculators.py:138 apps/nutrition/calculators.py:143
 msgid "Lower risk"
 msgstr "Pienempi riski"
 
+#: apps/nutrition/calculators.py:139 apps/nutrition/calculators.py:144
 msgid "Moderate risk"
 msgstr "Kohtalainen riski"
 
+#: apps/nutrition/calculators.py:140 apps/nutrition/calculators.py:145
 msgid "Higher risk"
 msgstr "Suurempi riski"
 
+#: apps/nutrition/energy.py:118
+#, python-format
 msgid "a %(job)s job"
 msgstr "%(job)s-työ"
 
+#: apps/nutrition/energy.py:132
+#, python-format
 msgid "~%(steps)s steps/day"
 msgstr "~%(steps)s askelta/pv"
 
+#: apps/nutrition/energy.py:145
+#, python-format
 msgid "%(count)s gym sessions a week"
 msgstr "%(count)s salikäyntiä viikossa"
 
+#: apps/nutrition/energy.py:158
 msgid "other regular exercise"
 msgstr "muuta säännöllistä liikuntaa"
 
+#: apps/nutrition/energy.py:172
+#, python-format
 msgid "Suggested: %(label)s — %(factors)s"
 msgstr "Ehdotus: %(label)s — %(factors)s"
 
+#: apps/nutrition/energy.py:177
+#, python-format
 msgid "Suggested: %(label)s — no activity details given yet"
 msgstr "Ehdotus: %(label)s — aktiivisuustietoja ei vielä annettu"
 
+#: apps/nutrition/energy.py:246
+#, python-format
 msgid "Estimated maintenance (TDEE): %(tdee)s kcal/day."
 msgstr "Arvioitu ylläpitokalorimäärä (TDEE): %(tdee)s kcal/vrk."
 
-msgid "Your requested rate was reduced to a safer %(rate)s kg/week (capped at %(fraction)s%% of bodyweight/week)."
-msgstr "Pyytämääsi tahtia pienennettiin turvallisemmaksi, %(rate)s kg/viikko (rajattu %(fraction)s %% painosta/viikko)."
+#: apps/nutrition/energy.py:251
+#, python-format
+msgid ""
+"Your requested rate was reduced to a safer %(rate)s kg/week (capped at "
+"%(fraction)s%% of bodyweight/week)."
+msgstr ""
+"Pyytämääsi tahtia pienennettiin turvallisemmaksi, %(rate)s kg/viikko "
+"(rajattu %(fraction)s %% painosta/viikko)."
 
-msgid "Your target rate would need %(raw)s kcal/day, below a safe minimum — capped at %(floor)s kcal/day."
-msgstr "Tavoitetahtisi vaatisi %(raw)s kcal/vrk, mikä alittaa turvallisen minimin — rajattu %(floor)s kcal/vrk:aan."
+#: apps/nutrition/energy.py:261
+#, python-format
+msgid ""
+"Your target rate would need %(raw)s kcal/day, below a safe minimum — capped "
+"at %(floor)s kcal/day."
+msgstr ""
+"Tavoitetahtisi vaatisi %(raw)s kcal/vrk, mikä alittaa turvallisen minimin — "
+"rajattu %(floor)s kcal/vrk:aan."
 
+#: apps/nutrition/energy.py:269
+#, python-format
 msgid "Target: %(rate)s kg/week → %(calories)s kcal/day."
 msgstr "Tavoite: %(rate)s kg/viikko → %(calories)s kcal/vrk."
 
+#: apps/nutrition/forms.py:22 apps/nutrition/forms.py:460
+#: apps/nutrition/forms.py:504 apps/nutrition/forms.py:588
 msgid "Biological sex"
 msgstr "Biologinen sukupuoli"
 
-msgid "Used by the BMR formula (Mifflin-St Jeor) — a physiological input, not a gender-identity question."
-msgstr "Käytetään BMR-kaavassa (Mifflin-St Jeor) — fysiologinen tieto, ei sukupuoli-identiteettikysymys."
+#: apps/nutrition/forms.py:24
+msgid ""
+"Used by the BMR formula (Mifflin-St Jeor) — a physiological input, not a "
+"gender-identity question."
+msgstr ""
+"Käytetään BMR-kaavassa (Mifflin-St Jeor) — fysiologinen tieto, ei sukupuoli-"
+"identiteettikysymys."
 
+#: apps/nutrition/forms.py:30
 msgid "Date of birth"
 msgstr "Syntymäaika"
 
+#: apps/nutrition/forms.py:61
 msgid "Your job"
 msgstr "Ammattisi"
 
+#: apps/nutrition/forms.py:63
 msgid "Average daily steps (if you know it)"
 msgstr "Keskimääräiset päivittäiset askeleet (jos tiedossa)"
 
+#: apps/nutrition/forms.py:66
 msgid "Gym sessions per week"
 msgstr "Salikäyntejä viikossa"
 
+#: apps/nutrition/forms.py:69
 msgid "Typical session length (minutes)"
 msgstr "Tyypillinen treenin kesto (minuuttia)"
 
+#: apps/nutrition/forms.py:72
 msgid "Other exercise (minutes/week)"
 msgstr "Muu liikunta (minuuttia/viikko)"
 
+#: apps/nutrition/forms.py:77
 msgid "Current daily calories, if you already track this"
 msgstr "Nykyinen päivittäinen kalorimäärä, jos seuraat sitä jo"
 
-msgid "Used only to compare against this app's own estimate, never as an input."
-msgstr "Käytetään vain vertailuun sovelluksen omaan arvioon, ei koskaan syötteenä."
+#: apps/nutrition/forms.py:78
+msgid ""
+"Used only to compare against this app's own estimate, never as an input."
+msgstr ""
+"Käytetään vain vertailuun sovelluksen omaan arvioon, ei koskaan syötteenä."
 
+#: apps/nutrition/forms.py:83 apps/nutrition/forms.py:464
+#: apps/nutrition/forms.py:562
 msgid "Activity level"
 msgstr "Aktiivisuustaso"
 
+#: apps/nutrition/forms.py:95 apps/nutrition/forms.py:481
 msgid "Goal"
 msgstr "Tavoite"
 
+#: apps/nutrition/forms.py:109 apps/nutrition/forms.py:648
+#: apps/programs/forms.py:99
+#, python-format
 msgid "Target weight (%(unit)s)"
 msgstr "Tavoitepaino (%(unit)s)"
 
+#: apps/nutrition/forms.py:110
 msgid "Target rate (kg/week)"
 msgstr "Tavoitetahti (kg/viikko)"
 
-msgid "Negative to lose weight, positive to gain. Pre-filled from your goal below — capped at a safe rate for your bodyweight."
-msgstr "Negatiivinen laihtuaksesi, positiivinen lihoaksesi. Esitäytetty alla olevan tavoitteesi mukaan — rajattu painollesi turvalliseen tahtiin."
+#: apps/nutrition/forms.py:112
+msgid ""
+"Negative to lose weight, positive to gain. Pre-filled from your goal below — "
+"capped at a safe rate for your bodyweight."
+msgstr ""
+"Negatiivinen laihtuaksesi, positiivinen lihoaksesi. Esitäytetty alla olevan "
+"tavoitteesi mukaan — rajattu painollesi turvalliseen tahtiin."
 
-msgid "All the nutrition values below are for this amount, in the unit chosen next to it — e.g. \"100 g\" if the values are per 100 grams."
-msgstr "Kaikki alla olevat ravintoarvot koskevat tätä määrää, sen vieressä valitussa yksikössä — esim. \"100 g\", jos arvot ovat sataa grammaa kohden."
+#: apps/nutrition/forms.py:137
+msgid "A fat-loss goal needs a negative rate — you're asking to lose weight."
+msgstr ""
+"Rasvanpudotustavoite tarvitsee negatiivisen tahdin — tavoitteenasi on "
+"laihtua."
 
+#: apps/nutrition/forms.py:142
+msgid ""
+"A muscle-gain goal needs a positive rate — you're asking to gain weight."
+msgstr ""
+"Lihasmassan kasvatustavoite tarvitsee positiivisen tahdin — tavoitteenasi on "
+"lihoa."
+
+#: apps/nutrition/forms.py:145
+msgid "A maintenance goal's rate should be 0 kg/week."
+msgstr "Ylläpitotavoitteen tahdin tulisi olla 0 kg/viikko."
+
+#: apps/nutrition/forms.py:186
+msgid ""
+"All the nutrition values below are for this amount, in the unit chosen next "
+"to it — e.g. \"100 g\" if the values are per 100 grams."
+msgstr ""
+"Kaikki alla olevat ravintoarvot koskevat tätä määrää, sen vieressä valitussa "
+"yksikössä — esim. \"100 g\", jos arvot ovat sataa grammaa kohden."
+
+#: apps/nutrition/forms.py:193 templates/nutrition/diary_add_entry.html:48
+#: templates/nutrition/diet_plan_meal_item_form.html:18
+#: templates/nutrition/food_browse.html:25
+#: templates/nutrition/recipe_ingredient_form.html:18
 msgid "Search foods"
 msgstr "Hae ruokia"
 
+#: apps/nutrition/forms.py:217 apps/nutrition/forms.py:281
+#: apps/nutrition/forms.py:408
 msgid "Pick a food to add."
 msgstr "Valitse lisättävä ruoka."
 
+#: apps/nutrition/forms.py:240
+msgid "Meal (optional)"
+msgstr "Ateria (valinnainen)"
+
+#: apps/nutrition/forms.py:241
+msgid "Any meal"
+msgstr "Mikä tahansa ateria"
+
+#: apps/nutrition/forms.py:244
+msgid ""
+"If set, the diet-plan builder only ever suggests this recipe for that meal — "
+"leave as \"Any meal\" for a recipe that fits anywhere."
+msgstr ""
+"Jos asetettu, ruokavaliosuunnitelman rakennin ehdottaa tätä reseptiä "
+"ainoastaan kyseiselle aterialle — jätä \"Mikä tahansa ateria\" -tilaan, jos "
+"resepti sopii mihin tahansa."
+
+#: apps/nutrition/forms.py:294 templates/nutrition/diary_add_entry.html:29
 msgid "Meal"
 msgstr "Ateria"
 
+#: apps/nutrition/forms.py:299
 msgid "Servings"
 msgstr "Annokset"
 
+#: apps/nutrition/forms.py:304 apps/nutrition/forms.py:415
 msgid "Log for date"
 msgstr "Kirjaa päivälle"
 
+#: apps/nutrition/forms.py:324
 msgid "Plan name"
 msgstr "Suunnitelman nimi"
 
+#: apps/nutrition/forms.py:325 apps/nutrition/forms.py:480
+#: templates/nutrition/stats.html:38
 msgid "Daily calories"
 msgstr "Päivittäiset kalorit"
 
+#: apps/nutrition/forms.py:327
 msgid "Protein (g)"
 msgstr "Proteiini (g)"
 
+#: apps/nutrition/forms.py:330
 msgid "Carbohydrates (g)"
 msgstr "Hiilihydraatit (g)"
 
+#: apps/nutrition/forms.py:333
 msgid "Fat (g)"
 msgstr "Rasva (g)"
 
+#: apps/nutrition/forms.py:336
 msgid "Which meals?"
 msgstr "Mitkä ateriat?"
 
+#: apps/nutrition/forms.py:340
+msgid "Vary meals across a whole week instead of repeating one day"
+msgstr "Vaihtele aterioita koko viikon ajalta yhden toistuvan päivän sijaan"
+
+#: apps/nutrition/forms.py:342
+msgid ""
+"Each day still hits the same daily calories/macros above — only which meal "
+"fills each slot changes from day to day, so a week's worth of breakfasts "
+"(for example) aren't all identical."
+msgstr ""
+"Jokainen päivä osuu silti samoihin yllä oleviin päivittäisiin kaloreihin/"
+"makroihin — vain se, mikä ateria täyttää kunkin paikan, vaihtuu päivästä "
+"toiseen, joten esimerkiksi viikon aamiaiset eivät ole kaikki identtisiä."
+
+#: apps/nutrition/forms.py:380
 msgid "Pick either a food or a recipe, not both or neither."
 msgstr "Valitse joko ruoka tai resepti, ei molempia eikä kumpaakaan."
 
+#: apps/nutrition/forms.py:461
 msgid "Age (years)"
 msgstr "Ikä (vuotta)"
 
+#: apps/nutrition/forms.py:507
 msgid "Neck circumference"
 msgstr "Kaulan ympärysmitta"
 
+#: apps/nutrition/forms.py:510 apps/nutrition/forms.py:590
 msgid "Waist circumference"
 msgstr "Vyötärön ympärysmitta"
 
+#: apps/nutrition/forms.py:517 apps/nutrition/forms.py:593
 msgid "Hip circumference"
 msgstr "Lantion ympärysmitta"
 
+#: apps/nutrition/forms.py:536
 msgid "Hip circumference is required for the women's formula."
 msgstr "Lantion ympärysmitta vaaditaan naisten kaavassa."
 
+#: apps/nutrition/forms.py:629
 msgid "Current weight (kg)"
 msgstr "Nykyinen paino (kg)"
 
+#: apps/nutrition/forms.py:632
 msgid "Target weight (kg)"
 msgstr "Tavoitepaino (kg)"
 
+#: apps/nutrition/forms.py:637
 msgid "Rate (kg/week — negative to lose, positive to gain)"
-msgstr "Nopeus (kg/viikko — negatiivinen laihtumiseen, positiivinen lihomiseen)"
+msgstr ""
+"Nopeus (kg/viikko — negatiivinen laihtumiseen, positiivinen lihomiseen)"
 
+#: apps/nutrition/forms.py:652
+#, python-format
 msgid "Rate (%(unit)s/week — negative to lose, positive to gain)"
-msgstr "Nopeus (%(unit)s/viikko — negatiivinen laihtumiseen, positiivinen lihomiseen)"
+msgstr ""
+"Nopeus (%(unit)s/viikko — negatiivinen laihtumiseen, positiivinen lihomiseen)"
 
+#: apps/nutrition/i18n_content.py:25
+msgid "Bulk breakfast — Oats & peanut butter"
+msgstr "Bulkki-aamiainen — kaurapuuro ja maapähkinävoi"
+
+#: apps/nutrition/i18n_content.py:26
+msgid "Bulk breakfast — Eggs on toast"
+msgstr "Bulkki-aamiainen — munat paahtoleivällä"
+
+#: apps/nutrition/i18n_content.py:27
+msgid "Bulk lunch — Chicken & rice bowl"
+msgstr "Bulkki-lounas — kana-riisimalja"
+
+#: apps/nutrition/i18n_content.py:28
+msgid "Bulk lunch — Tuna & sweet potato"
+msgstr "Bulkki-lounas — tonnikala ja bataatti"
+
+#: apps/nutrition/i18n_content.py:29
+msgid "Bulk dinner — Salmon & rice"
+msgstr "Bulkki-päivällinen — lohi ja riisi"
+
+#: apps/nutrition/i18n_content.py:30
+msgid "Bulk dinner — Chicken & sweet potato"
+msgstr "Bulkki-päivällinen — kana ja bataatti"
+
+#: apps/nutrition/i18n_content.py:31
+msgid "Fatburner breakfast — Egg & spinach scramble"
+msgstr "Rasvanpolttaja-aamiainen — muna-pinaattimunakas"
+
+#: apps/nutrition/i18n_content.py:32
+msgid "Fatburner breakfast — Greek yogurt bowl"
+msgstr "Rasvanpolttaja-aamiainen — kreikkalainen jogurttimalja"
+
+#: apps/nutrition/i18n_content.py:33
+msgid "Fatburner lunch — Chicken & broccoli"
+msgstr "Rasvanpolttaja-lounas — kana ja parsakaali"
+
+#: apps/nutrition/i18n_content.py:34
+msgid "Fatburner lunch — Tuna & spinach salad"
+msgstr "Rasvanpolttaja-lounas — tonnikala-pinaattisalaatti"
+
+#: apps/nutrition/i18n_content.py:35
+msgid "Fatburner dinner — Salmon & greens"
+msgstr "Rasvanpolttaja-päivällinen — lohi ja vihannekset"
+
+#: apps/nutrition/i18n_content.py:36
+msgid "Fatburner dinner — Chicken & cottage cheese"
+msgstr "Rasvanpolttaja-päivällinen — kana ja raejuusto"
+
+#: apps/nutrition/i18n_content.py:37
+msgid "Balanced breakfast — Oats & yogurt"
+msgstr "Tasapainoinen aamiainen — kaurapuuro ja jogurtti"
+
+#: apps/nutrition/i18n_content.py:38
+msgid "Balanced breakfast — Eggs on toast"
+msgstr "Tasapainoinen aamiainen — munat paahtoleivällä"
+
+#: apps/nutrition/i18n_content.py:39
+msgid "Balanced lunch — Chicken & rice"
+msgstr "Tasapainoinen lounas — kana ja riisi"
+
+#: apps/nutrition/i18n_content.py:40
+msgid "Balanced lunch — Tuna sandwich"
+msgstr "Tasapainoinen lounas — tonnikalavoileipä"
+
+#: apps/nutrition/i18n_content.py:41
+msgid "Balanced dinner — Salmon & sweet potato"
+msgstr "Tasapainoinen päivällinen — lohi ja bataatti"
+
+#: apps/nutrition/i18n_content.py:42
+msgid "Balanced dinner — Chicken & vegetables"
+msgstr "Tasapainoinen päivällinen — kana ja kasvikset"
+
+#: apps/nutrition/i18n_content.py:47
+msgid "Mix the oats into the yogurt, top with banana slices and peanut butter."
+msgstr ""
+"Sekoita kaurahiutaleet jogurttiin, lisää päälle banaaniviipaleita ja "
+"maapähkinävoita."
+
+#: apps/nutrition/i18n_content.py:48
+msgid ""
+"Fry or scramble the eggs, serve on toasted bread with peanut butter and a "
+"drizzle of olive oil."
+msgstr ""
+"Paista tai munakoita munat, tarjoa paahtoleivän kanssa maapähkinävoilla ja "
+"tilkalla oliiviöljyä."
+
+#: apps/nutrition/i18n_content.py:49
+msgid ""
+"Cook the chicken and rice, toss with olive oil, serve with steamed broccoli."
+msgstr ""
+"Kypsennä kana ja riisi, sekoita joukkoon oliiviöljyä, tarjoa höyrytetyn "
+"parsakaalin kanssa."
+
+#: apps/nutrition/i18n_content.py:50
+msgid ""
+"Roast the sweet potato, flake in the tuna, drizzle with olive oil and serve "
+"with spinach."
+msgstr ""
+"Paahda bataatti, murustele joukkoon tonnikala, lisää tilkka oliiviöljyä ja "
+"tarjoa pinaatin kanssa."
+
+#: apps/nutrition/i18n_content.py:51
+msgid ""
+"Pan-sear the salmon, serve over rice with steamed broccoli and a little "
+"olive oil."
+msgstr ""
+"Paista lohi pannulla, tarjoa riisin päällä höyrytetyn parsakaalin ja tilkan "
+"oliiviöljyn kanssa."
+
+#: apps/nutrition/i18n_content.py:52
+msgid ""
+"Roast the chicken and sweet potato together, top with crushed almonds and "
+"olive oil."
+msgstr ""
+"Paahda kana ja bataatti yhdessä, lisää päälle murskattuja manteleita ja "
+"oliiviöljyä."
+
+#: apps/nutrition/i18n_content.py:53
+msgid ""
+"Scramble the eggs with the spinach, serve with cottage cheese on the side."
+msgstr "Munakoi munat pinaatin kanssa, tarjoa raejuuston kera."
+
+#: apps/nutrition/i18n_content.py:54
+msgid "Top the yogurt with sliced banana and a few crushed almonds."
+msgstr "Lisää jogurtin päälle banaaniviipaleita ja muutama murskattu manteli."
+
+#: apps/nutrition/i18n_content.py:55
+msgid ""
+"Grill the chicken, steam the broccoli, finish with a light drizzle of olive "
+"oil."
+msgstr ""
+"Grillaa kana, höyrytä parsakaali, viimeistele kevyellä tilkalla oliiviöljyä."
+
+#: apps/nutrition/i18n_content.py:56
+msgid "Toss the tuna with the spinach and a small drizzle of olive oil."
+msgstr "Sekoita tonnikala pinaatin ja pienen tilkan oliiviöljyä kanssa."
+
+#: apps/nutrition/i18n_content.py:57
+msgid "Bake the salmon, serve with steamed broccoli and spinach."
+msgstr "Paista lohi uunissa, tarjoa höyrytetyn parsakaalin ja pinaatin kanssa."
+
+#: apps/nutrition/i18n_content.py:58
+msgid "Grill the chicken, serve with cottage cheese and wilted spinach."
+msgstr "Grillaa kana, tarjoa raejuuston ja haudutetun pinaatin kanssa."
+
+#: apps/nutrition/i18n_content.py:59
+msgid "Mix the oats into the yogurt and top with sliced banana."
+msgstr "Sekoita kaurahiutaleet jogurttiin ja lisää päälle banaaniviipaleita."
+
+#: apps/nutrition/i18n_content.py:60
+msgid ""
+"Fry or scramble the eggs, serve on toasted bread with a little olive oil."
+msgstr ""
+"Paista tai munakoita munat, tarjoa paahtoleivän kanssa tilkalla oliiviöljyä."
+
+#: apps/nutrition/i18n_content.py:61
+msgid "Cook the chicken and rice, serve with steamed broccoli and olive oil."
+msgstr ""
+"Kypsennä kana ja riisi, tarjoa höyrytetyn parsakaalin ja oliiviöljyn kanssa."
+
+#: apps/nutrition/i18n_content.py:62
+msgid "Mix the tuna with the spinach, serve between slices of toasted bread."
+msgstr ""
+"Sekoita tonnikala pinaatin kanssa, tarjoa paahtoleipäviipaleiden välissä."
+
+#: apps/nutrition/i18n_content.py:63
+msgid "Bake the salmon and sweet potato, serve with wilted spinach."
+msgstr "Paista lohi ja bataatti uunissa, tarjoa haudutetun pinaatin kanssa."
+
+#: apps/nutrition/i18n_content.py:64
+msgid ""
+"Roast the chicken with the broccoli and sweet potato, finish with olive oil."
+msgstr "Paahda kana parsakaalin ja bataatin kanssa, viimeistele oliiviöljyllä."
+
+#: apps/nutrition/models.py:32
 msgid "Male"
 msgstr "Mies"
 
+#: apps/nutrition/models.py:33
 msgid "Female"
 msgstr "Nainen"
 
+#: apps/nutrition/models.py:37
 msgid "Desk job, mostly sitting"
 msgstr "Toimistotyö, enimmäkseen istumista"
 
+#: apps/nutrition/models.py:38
 msgid "On my feet some of the day"
 msgstr "Jalkeilla osan päivästä"
 
+#: apps/nutrition/models.py:39
 msgid "On my feet most of the day"
 msgstr "Jalkeilla suurimman osan päivästä"
 
+#: apps/nutrition/models.py:40
 msgid "Physically demanding / manual labor"
 msgstr "Fyysisesti raskas / ruumiillinen työ"
 
+#: apps/nutrition/models.py:50
 msgid "Sedentary"
 msgstr "Istuvainen"
 
+#: apps/nutrition/models.py:51
 msgid "Lightly active"
 msgstr "Kevyesti aktiivinen"
 
+#: apps/nutrition/models.py:52
 msgid "Moderately active"
 msgstr "Kohtalaisen aktiivinen"
 
+#: apps/nutrition/models.py:53 templates/nutrition/diet_plan_detail.html:10
+#: templates/nutrition/diet_plan_list.html:16
 msgid "Active"
 msgstr "Aktiivinen"
 
+#: apps/nutrition/models.py:54
 msgid "Very active"
 msgstr "Erittäin aktiivinen"
 
+#: apps/nutrition/models.py:58
 msgid "Fat loss — aggressive"
 msgstr "Rasvanpudotus — aggressiivinen"
 
+#: apps/nutrition/models.py:59
 msgid "Fat loss — moderate"
 msgstr "Rasvanpudotus — kohtalainen"
 
+#: apps/nutrition/models.py:60
 msgid "Fat loss — conservative"
 msgstr "Rasvanpudotus — maltillinen"
 
+#: apps/nutrition/models.py:61 apps/programs/models.py:103
 msgid "Maintenance"
 msgstr "Ylläpito"
 
+#: apps/nutrition/models.py:62
 msgid "Muscle gain — lean bulk"
-msgstr "Lihasmassan kasvatus — kevyt lihotus"
+msgstr "Lihasmassan kasvatus — kevyt bulkki"
 
+#: apps/nutrition/models.py:63
 msgid "Muscle gain — moderate bulk"
-msgstr "Lihasmassan kasvatus — kohtalainen lihotus"
+msgstr "Lihasmassan kasvatus — kohtalainen bulkki"
 
+#: apps/nutrition/models.py:64
 msgid "Muscle gain — aggressive bulk"
-msgstr "Lihasmassan kasvatus — aggressiivinen lihotus"
+msgstr "Lihasmassan kasvatus — aggressiivinen bulkki"
 
+#: apps/nutrition/models.py:68
 msgid "Calculated from goal"
 msgstr "Laskettu tavoitteesta"
 
+#: apps/nutrition/models.py:69
 msgid "Set manually"
 msgstr "Asetettu manuaalisesti"
 
+#: apps/nutrition/models.py:70
 msgid "Accepted a suggested adjustment"
 msgstr "Hyväksytty ehdotettu säätö"
 
+#: apps/nutrition/models.py:74
 msgid "g"
 msgstr "g"
 
+#: apps/nutrition/models.py:75
 msgid "ml"
 msgstr "ml"
 
+#: apps/nutrition/models.py:76
 msgid "piece"
 msgstr "kpl"
 
+#: apps/nutrition/models.py:91
 msgid "A — best"
 msgstr "A — paras"
 
+#: apps/nutrition/models.py:92
 msgid "B"
 msgstr "B"
 
+#: apps/nutrition/models.py:93
 msgid "C"
 msgstr "C"
 
+#: apps/nutrition/models.py:94
 msgid "D"
 msgstr "D"
 
+#: apps/nutrition/models.py:95
 msgid "E — worst"
 msgstr "E — huonoin"
 
+#: apps/nutrition/models.py:105
 msgid "1 — unprocessed or minimally processed"
 msgstr "1 — jalostamaton tai vähän jalostettu"
 
+#: apps/nutrition/models.py:106
 msgid "2 — processed culinary ingredients"
 msgstr "2 — jalostetut ruoanlaittoon käytettävät ainesosat"
 
+#: apps/nutrition/models.py:107
 msgid "3 — processed food"
 msgstr "3 — jalostettu ruoka"
 
+#: apps/nutrition/models.py:108
 msgid "4 — ultra-processed food"
 msgstr "4 — pitkälle jalostettu ruoka"
 
+#: apps/nutrition/models.py:123
 msgid "Stored instead of a raw age, so it never goes stale."
 msgstr "Tallennettu iän sijaan, jotta tieto ei koskaan vanhene."
 
-msgid "If you already track this, tell us — used only to compare against this app's own estimate, never as an input to it."
-msgstr "Jos seuraat tätä jo, kerro meille — käytetään vain vertailuun sovelluksen omaan arvioon, ei koskaan syötteenä."
+#: apps/nutrition/models.py:135
+msgid ""
+"If you already track this, tell us — used only to compare against this app's "
+"own estimate, never as an input to it."
+msgstr ""
+"Jos seuraat tätä jo, kerro meille — käytetään vain vertailuun sovelluksen "
+"omaan arvioon, ei koskaan syötteenä."
 
+#: apps/nutrition/models.py:309
 msgid "Null for the built-in default meal slots."
 msgstr "Tyhjä (null) sisäänrakennetuille oletusaterioille."
 
+#: apps/nutrition/models.py:494
 msgid "Log either a food or a recipe, not both or neither."
 msgstr "Kirjaa joko ruoka tai resepti, ei molempia eikä kumpaakaan."
 
+#: apps/nutrition/models.py:604
 msgid "Use either a food or a recipe, not both or neither."
 msgstr "Käytä joko ruokaa tai reseptiä, ei molempia eikä kumpaakaan."
 
+#: apps/nutrition/suggestions.py:104
 msgid "Set a nutrition goal to get adjustment suggestions."
 msgstr "Aseta ravintotavoite saadaksesi säätöehdotuksia."
 
-msgid "Not enough logged weight yet — keep logging your weight regularly and check back in a couple of weeks."
-msgstr "Painoa ei ole vielä kirjattu tarpeeksi — jatka painon säännöllistä kirjaamista ja tarkista tilanne muutaman viikon kuluttua."
+#: apps/nutrition/suggestions.py:117
+msgid ""
+"Not enough logged weight yet — keep logging your weight regularly and check "
+"back in a couple of weeks."
+msgstr ""
+"Painoa ei ole vielä kirjattu tarpeeksi — jatka painon säännöllistä "
+"kirjaamista ja tarkista tilanne muutaman viikon kuluttua."
 
-msgid "Target: %(target)s kg/week. Actual trend: %(actual)s kg/week — on track."
-msgstr "Tavoite: %(target)s kg/viikko. Toteutunut trendi: %(actual)s kg/viikko — menossa oikeaan suuntaan."
+#: apps/nutrition/suggestions.py:135
+#, python-format
+msgid ""
+"Target: %(target)s kg/week. Actual trend: %(actual)s kg/week — on track."
+msgstr ""
+"Tavoite: %(target)s kg/viikko. Toteutunut trendi: %(actual)s kg/viikko — "
+"menossa oikeaan suuntaan."
 
-msgid "Target: %(target)s kg/week. Actual trend: %(actual)s kg/week over the last %(days)s days. Suggested adjustment: %(delta)+d kcal/day."
-msgstr "Tavoite: %(target)s kg/viikko. Toteutunut trendi: %(actual)s kg/viikko viimeisen %(days)s päivän aikana. Ehdotettu säätö: %(delta)+d kcal/vrk."
+#: apps/nutrition/suggestions.py:150
+#, python-format
+msgid ""
+"Target: %(target)s kg/week. Actual trend: %(actual)s kg/week over the last "
+"%(days)s days. Suggested adjustment: %(delta)+d kcal/day."
+msgstr ""
+"Tavoite: %(target)s kg/viikko. Toteutunut trendi: %(actual)s kg/viikko "
+"viimeisen %(days)s päivän aikana. Ehdotettu säätö: %(delta)+d kcal/vrk."
 
+#: apps/nutrition/views.py:548
 msgid "Pick a date to copy this day to."
 msgstr "Valitse päivä, jolle tämä päivä kopioidaan."
 
+#: apps/nutrition/views.py:553
+#, python-format
 msgid "Copied %(count)d entry to %(date)s."
 msgid_plural "Copied %(count)d entries to %(date)s."
 msgstr[0] "Kopioitiin %(count)d merkintä päivälle %(date)s."
 msgstr[1] "Kopioitiin %(count)d merkintää päivälle %(date)s."
 
+#: apps/nutrition/views.py:559
 msgid "Nothing to copy — that day has no entries."
 msgstr "Ei mitään kopioitavaa — kyseiselle päivälle ei ole kirjattu mitään."
 
+#: apps/nutrition/views.py:603 apps/nutrition/views.py:820
+#: apps/nutrition/views.py:1127
 msgid "That food couldn't be imported — try again."
 msgstr "Tätä ruokaa ei voitu tuoda — yritä uudelleen."
 
+#: apps/nutrition/views.py:762
+#, python-format
 msgid "\"%(name)s\" created — now add its ingredients below."
 msgstr "\"%(name)s\" luotu — lisää sen ainesosat alla."
 
+#: apps/nutrition/views.py:1159
+#, python-format
+msgid "Logged %(count)d item to %(date)s."
+msgid_plural "Logged %(count)d items to %(date)s."
+msgstr[0] "Kirjattiin %(count)d kohde päivälle %(date)s."
+msgstr[1] "Kirjattiin %(count)d kohdetta päivälle %(date)s."
+
+#: apps/nutrition/views.py:1170
+msgid "Nothing to log — this plan has no items for that date."
+msgstr ""
+"Ei mitään kirjattavaa — tällä suunnitelmalla ei ole kohteita kyseiselle "
+"päivälle."
+
+#: apps/programs/forms.py:23
 msgid "Save as a personal template"
 msgstr "Tallenna henkilökohtaisena mallina"
 
-msgid "Templates aren't meant to be run directly — copy them into a new program (from the program page) whenever you start a new cycle, keeping the original untouched."
-msgstr "Malleja ei ole tarkoitettu suoraan käytettäväksi — kopioi ne uudeksi ohjelmaksi (ohjelmasivulta) aina kun aloitat uuden jakson, jolloin alkuperäinen pysyy koskemattomana."
+#: apps/programs/forms.py:27
+msgid ""
+"Templates aren't meant to be run directly — copy them into a new program "
+"(from the program page) whenever you start a new cycle, keeping the original "
+"untouched."
+msgstr ""
+"Malleja ei ole tarkoitettu suoraan käytettäväksi — kopioi ne uudeksi "
+"ohjelmaksi (ohjelmasivulta) aina kun aloitat uuden jakson, jolloin "
+"alkuperäinen pysyy koskemattomana."
 
+#: apps/programs/forms.py:68 apps/workouts/forms.py:72
 msgid "exercise"
 msgstr "liike"
 
+#: apps/programs/forms.py:70 apps/programs/forms.py:73
 msgid "Target"
 msgstr "Tavoite"
 
+#: apps/programs/forms.py:70 apps/workouts/forms.py:42
 msgid "RPE"
 msgstr "RPE"
 
+#: apps/programs/forms.py:73 apps/workouts/forms.py:43
 msgid "RIR"
 msgstr "RIR"
 
+#: apps/programs/forms.py:76
 msgid "Percentage target"
 msgstr "Prosenttitavoite"
 
+#: apps/programs/forms.py:76
 msgid "1RM"
 msgstr "1RM"
 
+#: apps/programs/forms.py:100
+#, python-format
 msgid "Weight increment (%(unit)s)"
 msgstr "Painon lisäys (%(unit)s)"
 
+#: apps/programs/forms.py:137 apps/programs/models.py:160
 msgid "Minimum reps cannot exceed maximum reps."
 msgstr "Vähimmäistoistomäärä ei voi olla suurempi kuin enimmäistoistomäärä."
 
+#: apps/programs/i18n_content.py:17
 msgid "Full Body A/B/C"
 msgstr "Koko kehon A/B/C"
 
+#: apps/programs/i18n_content.py:18
 msgid "Arnold Split (6-Day)"
 msgstr "Arnold-jako (6 päivää)"
 
+#: apps/programs/i18n_content.py:19
 msgid "Push/Pull/Legs"
 msgstr "Työntö/Veto/Jalat"
 
+#: apps/programs/i18n_content.py:20
 msgid "5x5 Strength (A/B)"
 msgstr "5x5-voima (A/B)"
 
+#: apps/programs/i18n_content.py:21
 msgid "Upper/Lower Split (4-Day)"
 msgstr "Ylä/Ala-jako (4 päivää)"
 
+#: apps/programs/i18n_content.py:22
 msgid "German Volume Training"
 msgstr "Saksalainen volyymiharjoittelu"
 
-msgid "A classic three-day full-body template: one squat/press/row day, one deadlift/press/pull day, and one accessory-focused day. Copy it and adjust weights/increments to your own."
-msgstr "Klassinen kolmen päivän koko kehon malli: yksi kyykky/punnerrus/soutu-päivä, yksi maastaveto/punnerrus/veto-päivä ja yksi apuliikkeisiin keskittyvä päivä. Kopioi se ja säädä painot/lisäykset omiksesi."
+#: apps/programs/i18n_content.py:28
+msgid ""
+"A classic three-day full-body template: one squat/press/row day, one "
+"deadlift/press/pull day, and one accessory-focused day. Copy it and adjust "
+"weights/increments to your own."
+msgstr ""
+"Klassinen kolmen päivän koko kehon malli: yksi kyykky/punnerrus/soutu-päivä, "
+"yksi maastaveto/punnerrus/veto-päivä ja yksi apuliikkeisiin keskittyvä "
+"päivä. Kopioi se ja säädä painot/lisäykset omiksesi."
 
-msgid "The classic 6-day bodybuilding split popularized by Arnold Schwarzenegger in the 1970s: chest/back, shoulders/arms, and legs, each trained twice a week. Rotate through all three workouts, then repeat — not tied to fixed calendar days."
-msgstr "Klassinen 6 päivän kehonrakennusjako, jonka teki suosituksi Arnold Schwarzenegger 1970-luvulla: rinta/selkä, hartiat/kädet ja jalat, kukin harjoitettuna kahdesti viikossa. Kierrä kaikki kolme treeniä ja toista — ei sidottu tiettyihin viikonpäiviin."
+#: apps/programs/i18n_content.py:33
+msgid ""
+"The classic 6-day bodybuilding split popularized by Arnold Schwarzenegger in "
+"the 1970s: chest/back, shoulders/arms, and legs, each trained twice a week. "
+"Rotate through all three workouts, then repeat — not tied to fixed calendar "
+"days."
+msgstr ""
+"Klassinen 6 päivän kehonrakennusjako, jonka teki suosituksi Arnold "
+"Schwarzenegger 1970-luvulla: rinta/selkä, hartiat/kädet ja jalat, kukin "
+"harjoitettuna kahdesti viikossa. Kierrä kaikki kolme treeniä ja toista — ei "
+"sidottu tiettyihin viikonpäiviin."
 
-msgid "A widely used 3-day split organized by movement pattern rather than body part: pushing muscles, pulling muscles, then legs. Popular for both strength and bodybuilding goals."
-msgstr "Laajalti käytetty kolmen päivän jako, joka on järjestetty liikemallin, ei kehonosan, mukaan: työntävät lihakset, vetävät lihakset ja jalat. Suosittu sekä voima- että kehonrakennustavoitteisiin."
+#: apps/programs/i18n_content.py:39
+msgid ""
+"A widely used 3-day split organized by movement pattern rather than body "
+"part: pushing muscles, pulling muscles, then legs. Popular for both strength "
+"and bodybuilding goals."
+msgstr ""
+"Laajalti käytetty kolmen päivän jako, joka on järjestetty liikemallin, ei "
+"kehonosan, mukaan: työntävät lihakset, vetävät lihakset ja jalat. Suosittu "
+"sekä voima- että kehonrakennustavoitteisiin."
 
-msgid "A classic beginner barbell strength program: two alternating full-body workouts built around low-rep, high-set compound lifts with linear weight progression each session."
-msgstr "Klassinen aloittelijan tankovoimaohjelma: kaksi vuorottelevaa koko kehon treeniä, jotka rakentuvat vähätoistoisten, monisarjaisten moninivelliikkeiden ympärille lineaarisella painon nousulla joka kerta."
+#: apps/programs/i18n_content.py:44
+msgid ""
+"A classic beginner barbell strength program: two alternating full-body "
+"workouts built around low-rep, high-set compound lifts with linear weight "
+"progression each session."
+msgstr ""
+"Klassinen aloittelijan tankovoimaohjelma: kaksi vuorottelevaa koko kehon "
+"treeniä, jotka rakentuvat vähätoistoisten, monisarjaisten "
+"moninivelliikkeiden ympärille lineaarisella painon nousulla joka kerta."
 
-msgid "A 4-day split alternating upper-body and lower-body sessions twice each per week — a common middle ground between full-body and single-muscle-group routines, popular for balancing strength and volume without training every day."
-msgstr "4 päivän jako, joka vuorottelee ylä- ja alavartalotreenejä kahdesti viikossa kumpaakin — yleinen välimuoto koko kehon ja yksittäisen lihasryhmän ohjelmien välillä, suosittu voiman ja volyymin tasapainottamiseen ilman päivittäistä treeniä."
+#: apps/programs/i18n_content.py:49
+msgid ""
+"A 4-day split alternating upper-body and lower-body sessions twice each per "
+"week — a common middle ground between full-body and single-muscle-group "
+"routines, popular for balancing strength and volume without training every "
+"day."
+msgstr ""
+"4 päivän jako, joka vuorottelee ylä- ja alavartalotreenejä kahdesti viikossa "
+"kumpaakin — yleinen välimuoto koko kehon ja yksittäisen lihasryhmän "
+"ohjelmien välillä, suosittu voiman ja volyymin tasapainottamiseen ilman "
+"päivittäistä treeniä."
 
-msgid "The classic 10x10 high-volume method: one main lift per workout done for ten sets of ten reps at a fixed, moderate weight, paired with a lighter accessory movement. Brutal on paper, simple in practice — built for muscle growth, not 1-rep-max testing."
-msgstr "Klassinen 10x10-korkean volyymin menetelmä: yksi päänostoliike per treeni tehtynä kymmenenä sarjana kymmentä toistoa kiinteällä, kohtuullisella painolla, yhdistettynä kevyempään apuliikkeeseen. Paperilla raaka, käytännössä yksinkertainen — rakennettu lihaskasvuun, ei 1RM-testaukseen."
+#: apps/programs/i18n_content.py:55
+msgid ""
+"The classic 10x10 high-volume method: one main lift per workout done for ten "
+"sets of ten reps at a fixed, moderate weight, paired with a lighter "
+"accessory movement. Brutal on paper, simple in practice — built for muscle "
+"growth, not 1-rep-max testing."
+msgstr ""
+"Klassinen 10x10-korkean volyymin menetelmä: yksi päänostoliike per treeni "
+"tehtynä kymmenenä sarjana kymmentä toistoa kiinteällä, kohtuullisella "
+"painolla, yhdistettynä kevyempään apuliikkeeseen. Paperilla raaka, "
+"käytännössä yksinkertainen — rakennettu lihaskasvuun, ei 1RM-testaukseen."
 
+#: apps/programs/i18n_content.py:67
 msgid "Workout A"
 msgstr "Treeni A"
 
+#: apps/programs/i18n_content.py:68
 msgid "Workout B"
 msgstr "Treeni B"
 
+#: apps/programs/i18n_content.py:69
 msgid "Workout C"
 msgstr "Treeni C"
 
+#: apps/programs/i18n_content.py:70
 msgid "Chest & Back"
 msgstr "Rinta ja selkä"
 
+#: apps/programs/i18n_content.py:71
 msgid "Shoulders & Arms"
 msgstr "Hartiat ja kädet"
 
+#: apps/programs/i18n_content.py:72
 msgid "Legs"
 msgstr "Jalat"
 
+#: apps/programs/i18n_content.py:73
 msgid "Push"
 msgstr "Työntö"
 
+#: apps/programs/i18n_content.py:74
 msgid "Pull"
 msgstr "Veto"
 
+#: apps/programs/i18n_content.py:75
 msgid "Upper A"
 msgstr "Ylävartalo A"
 
+#: apps/programs/i18n_content.py:76
 msgid "Lower A"
 msgstr "Alavartalo A"
 
+#: apps/programs/i18n_content.py:77
 msgid "Upper B"
 msgstr "Ylävartalo B"
 
+#: apps/programs/i18n_content.py:78
 msgid "Lower B"
 msgstr "Alavartalo B"
 
+#: apps/programs/models.py:61
 msgid "Monday"
 msgstr "Maanantai"
 
+#: apps/programs/models.py:62
 msgid "Tuesday"
 msgstr "Tiistai"
 
+#: apps/programs/models.py:63
 msgid "Wednesday"
 msgstr "Keskiviikko"
 
+#: apps/programs/models.py:64
 msgid "Thursday"
 msgstr "Torstai"
 
+#: apps/programs/models.py:65
 msgid "Friday"
 msgstr "Perjantai"
 
+#: apps/programs/models.py:66
 msgid "Saturday"
 msgstr "Lauantai"
 
+#: apps/programs/models.py:67
 msgid "Sunday"
 msgstr "Sunnuntai"
 
+#: apps/programs/models.py:80 apps/programs/models.py:122
 msgid "order"
 msgstr "järjestys"
 
+#: apps/programs/models.py:82
 msgid "scheduled weekday"
 msgstr "ajoitettu viikonpäivä"
 
+#: apps/programs/models.py:98
 msgid "Double progression"
 msgstr "Kaksoisprogressio"
 
+#: apps/programs/models.py:99
 msgid "Linear"
 msgstr "Lineaarinen"
 
+#: apps/programs/models.py:100
 msgid "Percentage based"
 msgstr "Prosenttipohjainen"
 
+#: apps/programs/models.py:101
 msgid "RPE/RIR based"
 msgstr "RPE/RIR-pohjainen"
 
+#: apps/programs/models.py:102
 msgid "Rep range"
 msgstr "Toistoväli"
 
+#: apps/programs/models.py:104 templates/core/_backup_row.html:12
 msgid "Manual"
 msgstr "Manuaalinen"
 
+#: apps/programs/models.py:123
 msgid "set count"
 msgstr "sarjojen määrä"
 
+#: apps/programs/models.py:124
 msgid "minimum reps"
 msgstr "vähimmäistoistot"
 
+#: apps/programs/models.py:125
 msgid "maximum reps"
 msgstr "enimmäistoistot"
 
-msgid "No completed history for this exercise yet — starting at the prescribed target."
-msgstr "Tälle liikkeelle ei vielä ole suoritushistoriaa — aloitetaan ohjelmoidusta tavoitteesta."
+#: apps/progression/engine.py:165
+msgid ""
+"No completed history for this exercise yet — starting at the prescribed "
+"target."
+msgstr ""
+"Tälle liikkeelle ei vielä ole suoritushistoriaa — aloitetaan ohjelmoidusta "
+"tavoitteesta."
 
+#: apps/progression/engine.py:174
 msgid "Manual progression — you control the next weight and target."
-msgstr "Manuaalinen progressio — hallitset itse seuraavan painon ja tavoitteen."
+msgstr ""
+"Manuaalinen progressio — hallitset itse seuraavan painon ja tavoitteen."
 
-msgid "Missed the target %(streak)s sessions in a row at %(weight)s kg — even maintenance loading should come down, to %(deload)s kg."
-msgstr "Tavoite jäi saavuttamatta %(streak)s kertaa peräkkäin painolla %(weight)s kg — jopa ylläpitokuorman pitäisi laskea, %(deload)s kg:aan."
+#: apps/progression/engine.py:192
+#, python-format
+msgid ""
+"Missed the target %(streak)s sessions in a row at %(weight)s kg — even "
+"maintenance loading should come down, to %(deload)s kg."
+msgstr ""
+"Tavoite jäi saavuttamatta %(streak)s kertaa peräkkäin painolla %(weight)s kg "
+"— jopa ylläpitokuorman pitäisi laskea, %(deload)s kg:aan."
 
+#: apps/progression/engine.py:202
 msgid "Maintenance — keeping the same load."
 msgstr "Ylläpito — sama kuorma pysyy."
 
+#: apps/progression/engine.py:220
+#, python-format
 msgid "Hit every rep last session at %(weight)s kg — adding %(increment)s kg."
-msgstr "Kaikki toistot onnistuivat viime kerralla painolla %(weight)s kg — lisätään %(increment)s kg."
+msgstr ""
+"Kaikki toistot onnistuivat viime kerralla painolla %(weight)s kg — lisätään "
+"%(increment)s kg."
 
-msgid "Missed target reps %(streak)s sessions in a row at %(weight)s kg — recommending a deload to %(deload)s kg."
-msgstr "Toistotavoite jäi saavuttamatta %(streak)s kertaa peräkkäin painolla %(weight)s kg — suositellaan keventämistä painoon %(deload)s kg."
+#: apps/progression/engine.py:232
+#, python-format
+msgid ""
+"Missed target reps %(streak)s sessions in a row at %(weight)s kg — "
+"recommending a deload to %(deload)s kg."
+msgstr ""
+"Toistotavoite jäi saavuttamatta %(streak)s kertaa peräkkäin painolla "
+"%(weight)s kg — suositellaan keventämistä painoon %(deload)s kg."
 
-msgid "Missed target reps last session at %(weight)s kg — try the same weight again before increasing."
-msgstr "Toistotavoite jäi saavuttamatta viime kerralla painolla %(weight)s kg — kokeile samaa painoa uudelleen ennen nostoa."
+#: apps/progression/engine.py:243
+#, python-format
+msgid ""
+"Missed target reps last session at %(weight)s kg — try the same weight again "
+"before increasing."
+msgstr ""
+"Toistotavoite jäi saavuttamatta viime kerralla painolla %(weight)s kg — "
+"kokeile samaa painoa uudelleen ennen nostoa."
 
-msgid "Hit the top of your rep range on every set at %(weight)s kg — adding %(increment)s kg and resetting to the bottom of the range."
-msgstr "Toistoväli täyttyi ylärajaan asti joka sarjassa painolla %(weight)s kg — lisätään %(increment)s kg ja palataan välin alarajalle."
+#: apps/progression/engine.py:265
+#, python-format
+msgid ""
+"Hit the top of your rep range on every set at %(weight)s kg — adding "
+"%(increment)s kg and resetting to the bottom of the range."
+msgstr ""
+"Toistoväli täyttyi ylärajaan asti joka sarjassa painolla %(weight)s kg — "
+"lisätään %(increment)s kg ja palataan välin alarajalle."
 
-msgid "Still within your rep range at %(weight)s kg — repeat the same weight and aim for more reps next time."
-msgstr "Yhä toistovälin sisällä painolla %(weight)s kg — toista sama paino ja tavoittele enemmän toistoja ensi kerralla."
+#: apps/progression/engine.py:277
+#, python-format
+msgid ""
+"Still within your rep range at %(weight)s kg — repeat the same weight and "
+"aim for more reps next time."
+msgstr ""
+"Yhä toistovälin sisällä painolla %(weight)s kg — toista sama paino ja "
+"tavoittele enemmän toistoja ensi kerralla."
 
-msgid "Missed the bottom of your rep range %(streak)s sessions in a row at %(weight)s kg — recommending a deload to %(deload)s kg."
-msgstr "Toistovälin alaraja jäi saavuttamatta %(streak)s kertaa peräkkäin painolla %(weight)s kg — suositellaan keventämistä painoon %(deload)s kg."
+#: apps/progression/engine.py:291 apps/progression/engine.py:357
+#, python-format
+msgid ""
+"Missed the bottom of your rep range %(streak)s sessions in a row at "
+"%(weight)s kg — recommending a deload to %(deload)s kg."
+msgstr ""
+"Toistovälin alaraja jäi saavuttamatta %(streak)s kertaa peräkkäin painolla "
+"%(weight)s kg — suositellaan keventämistä painoon %(deload)s kg."
 
-msgid "Missed the bottom of your rep range last session at %(weight)s kg — try the same weight again."
-msgstr "Toistovälin alaraja jäi saavuttamatta viime kerralla painolla %(weight)s kg — kokeile samaa painoa uudelleen."
+#: apps/progression/engine.py:302 apps/progression/engine.py:368
+#, python-format
+msgid ""
+"Missed the bottom of your rep range last session at %(weight)s kg — try the "
+"same weight again."
+msgstr ""
+"Toistovälin alaraja jäi saavuttamatta viime kerralla painolla %(weight)s kg "
+"— kokeile samaa painoa uudelleen."
 
-msgid "Hit the top of your rep range for %(streak)s sessions in a row at %(weight)s kg — adding %(increment)s kg."
-msgstr "Toistovälin yläraja täyttyi %(streak)s kertaa peräkkäin painolla %(weight)s kg — lisätään %(increment)s kg."
+#: apps/progression/engine.py:331
+#, python-format
+msgid ""
+"Hit the top of your rep range for %(streak)s sessions in a row at %(weight)s "
+"kg — adding %(increment)s kg."
+msgstr ""
+"Toistovälin yläraja täyttyi %(streak)s kertaa peräkkäin painolla %(weight)s "
+"kg — lisätään %(increment)s kg."
 
-msgid "Within your rep range at %(weight)s kg — keep working toward the top of the range before increasing."
-msgstr "Toistovälin sisällä painolla %(weight)s kg — jatka kohti välin ylärajaa ennen nostoa."
+#: apps/progression/engine.py:343
+#, python-format
+msgid ""
+"Within your rep range at %(weight)s kg — keep working toward the top of the "
+"range before increasing."
+msgstr ""
+"Toistovälin sisällä painolla %(weight)s kg — jatka kohti välin ylärajaa "
+"ennen nostoa."
 
+#: apps/progression/engine.py:402
 msgid "a manually entered 1RM"
 msgstr "manuaalisesti syötetty 1RM"
 
+#: apps/progression/engine.py:403
 msgid "your latest estimated-1RM PR"
 msgstr "viimeisin arvioitu 1RM-ennätys"
 
+#: apps/progression/engine.py:404
 msgid "a live estimate from your most recent set"
 msgstr "tuore arvio viimeisimmästä sarjasta"
 
+#: apps/progression/engine.py:414
 msgid "No percentage target configured on this prescription."
 msgstr "Tälle ohjelmoinnille ei ole asetettu prosenttitavoitetta."
 
+#: apps/progression/engine.py:423
 msgid "No 1RM available yet — log a set first, or enter your 1RM manually."
-msgstr "1RM:ää ei vielä ole saatavilla — kirjaa ensin sarja tai syötä 1RM manuaalisesti."
+msgstr ""
+"1RM:ää ei vielä ole saatavilla — kirjaa ensin sarja tai syötä 1RM "
+"manuaalisesti."
 
+#: apps/progression/engine.py:431
+#, python-format
 msgid "%(percentage)s%% of %(one_rm)s kg (%(source)s) = %(suggested)s kg."
-msgstr "%(percentage)s%% painosta %(one_rm)s kg (%(source)s) = %(suggested)s kg."
+msgstr ""
+"%(percentage)s%% painosta %(one_rm)s kg (%(source)s) = %(suggested)s kg."
 
-msgid "No RIR logged against a target yet — log sets with RIR to use this method."
-msgstr "RIR:ää ei vielä ole kirjattu tavoitetta vasten — kirjaa sarjoja RIR:llä käyttääksesi tätä menetelmää."
+#: apps/progression/engine.py:461
+msgid ""
+"No RIR logged against a target yet — log sets with RIR to use this method."
+msgstr ""
+"RIR:ää ei vielä ole kirjattu tavoitetta vasten — kirjaa sarjoja RIR:llä "
+"käyttääksesi tätä menetelmää."
 
-msgid "Target RIR %(target)s, actual %(actual)g — more in reserve than planned, adding %(increment)s kg."
-msgstr "Tavoite-RIR %(target)s, toteutunut %(actual)g — enemmän reserviä kuin suunniteltu, lisätään %(increment)s kg."
+#: apps/progression/engine.py:473
+#, python-format
+msgid ""
+"Target RIR %(target)s, actual %(actual)g — more in reserve than planned, "
+"adding %(increment)s kg."
+msgstr ""
+"Tavoite-RIR %(target)s, toteutunut %(actual)g — enemmän reserviä kuin "
+"suunniteltu, lisätään %(increment)s kg."
 
-msgid "Target RIR %(target)s, actual %(actual)g — notably closer to failure than planned, easing back to %(deload)s kg."
-msgstr "Tavoite-RIR %(target)s, toteutunut %(actual)g — huomattavasti lähempänä uupumusta kuin suunniteltu, kevennetään painoon %(deload)s kg."
+#: apps/progression/engine.py:486
+#, python-format
+msgid ""
+"Target RIR %(target)s, actual %(actual)g — notably closer to failure than "
+"planned, easing back to %(deload)s kg."
+msgstr ""
+"Tavoite-RIR %(target)s, toteutunut %(actual)g — huomattavasti lähempänä "
+"uupumusta kuin suunniteltu, kevennetään painoon %(deload)s kg."
 
-msgid "Target RIR %(target)s, actual %(actual)g — close enough to plan, hold the weight."
-msgstr "Tavoite-RIR %(target)s, toteutunut %(actual)g — riittävän lähellä suunnitelmaa, pidetään sama paino."
+#: apps/progression/engine.py:496
+#, python-format
+msgid ""
+"Target RIR %(target)s, actual %(actual)g — close enough to plan, hold the "
+"weight."
+msgstr ""
+"Tavoite-RIR %(target)s, toteutunut %(actual)g — riittävän lähellä "
+"suunnitelmaa, pidetään sama paino."
 
+#: apps/records/models.py:11 templates/records/exercise_records.html:13
 msgid "Max weight"
 msgstr "Maksimipaino"
 
+#: apps/records/models.py:12
 msgid "Rep PR"
 msgstr "Toistoennätys"
 
+#: apps/records/models.py:13
 msgid "Rep-specific PR"
 msgstr "Toistokohtainen ennätys"
 
+#: apps/records/models.py:14 templates/analytics/exercise_analytics.html:20
 msgid "Estimated 1RM"
 msgstr "Arvioitu 1RM"
 
+#: apps/records/models.py:15
 msgid "Set volume"
 msgstr "Sarjan volyymi"
 
+#: apps/records/models.py:16
 msgid "Session volume"
 msgstr "Treenin volyymi"
 
+#: apps/workouts/forms.py:40
 msgid "reps"
 msgstr "toistot"
 
+#: apps/workouts/forms.py:41
 msgid "Target reps"
 msgstr "Tavoitetoistot"
 
+#: apps/workouts/forms.py:44
 msgid "Failed set"
 msgstr "Epäonnistunut sarja"
 
+#: apps/workouts/forms.py:45
 msgid "Warm-up"
 msgstr "Lämmittely"
 
+#: apps/workouts/forms.py:53
+#, python-format
 msgid "Weight (%(unit)s)"
 msgstr "Paino (%(unit)s)"
 
+#: apps/workouts/models.py:12
 msgid "Planned"
 msgstr "Suunniteltu"
 
+#: apps/workouts/models.py:13
 msgid "In progress"
 msgstr "Käynnissä"
 
+#: apps/workouts/models.py:14
 msgid "Completed"
 msgstr "Valmis"
 
+#: apps/workouts/models.py:15
 msgid "Abandoned"
 msgstr "Keskeytetty"
 
+#: apps/workouts/views.py:148 apps/workouts/views.py:345
 msgid "This session is no longer in progress."
 msgstr "Tämä treeni ei ole enää käynnissä."
 
+#: apps/workouts/views.py:327
+#, python-format
 msgid "New PR — %(exercise)s: %(record_type)s %(value)s"
 msgstr "Uusi ennätys — %(exercise)s: %(record_type)s %(value)s"
 
+#: templates/403.html:3
 msgid "Not allowed"
 msgstr "Ei sallittu"
 
+#: templates/403.html:6
 msgid "You don't have permission to do that."
 msgstr "Sinulla ei ole oikeutta tehdä tätä."
 
+#: templates/403.html:7 templates/404.html:7 templates/500.html:53
 msgid "Back to dashboard"
 msgstr "Takaisin kojelaudalle"
 
+#: templates/404.html:3
 msgid "Not found"
 msgstr "Ei löytynyt"
 
+#: templates/404.html:6
 msgid "That page doesn't exist, or you don't have access to it."
 msgstr "Sivua ei ole olemassa, tai sinulla ei ole pääsyä siihen."
 
+#: templates/500.html:6
 msgid "Something went wrong"
 msgstr "Jokin meni pieleen"
 
-msgid "Something went wrong on our end. Your data is safe — try again in a moment."
-msgstr "Jokin meni pieleen meidän puolellamme. Tietosi ovat turvassa — yritä hetken kuluttua uudelleen."
+#: templates/500.html:52
+msgid ""
+"Something went wrong on our end. Your data is safe — try again in a moment."
+msgstr ""
+"Jokin meni pieleen meidän puolellamme. Tietosi ovat turvassa — yritä hetken "
+"kuluttua uudelleen."
 
+#: templates/accounts/_onboarding_modal.html:5
+#: templates/accounts/_onboarding_modal.html:7
 msgid "Welcome to IronStack"
 msgstr "Tervetuloa IronStackiin"
 
+#: templates/accounts/_onboarding_modal.html:9
+#: templates/accounts/_onboarding_modal.html:27
 msgid "Not now"
 msgstr "Ei nyt"
 
-msgid "A few quick details help IronStack work better for you — every field below is optional, and you can always change them later from your profile."
-msgstr "Muutama tieto auttaa IronStackia toimimaan sinulle paremmin — jokainen alla oleva kenttä on valinnainen, ja voit aina muuttaa niitä myöhemmin profiilistasi."
+#: templates/accounts/_onboarding_modal.html:12
+msgid ""
+"A few quick details help IronStack work better for you — every field below "
+"is optional, and you can always change them later from your profile."
+msgstr ""
+"Muutama tieto auttaa IronStackia toimimaan sinulle paremmin — jokainen alla "
+"oleva kenttä on valinnainen, ja voit aina muuttaa niitä myöhemmin "
+"profiilistasi."
 
+#: templates/accounts/_onboarding_modal.html:26
+#: templates/accounts/account_details_form.html:20
+#: templates/activities/activity_form.html:19
+#: templates/activities/activity_type_form.html:19
+#: templates/exercises/exercise_form.html:20
+#: templates/measurements/measurement_form.html:19
+#: templates/measurements/measurement_type_form.html:19
+#: templates/nutrition/diary_entry_form.html:20
+#: templates/nutrition/diet_plan_item_form.html:20
+#: templates/nutrition/food_form.html:21
+#: templates/nutrition/recipe_form.html:20
+#: templates/nutrition/recipe_ingredient_edit_form.html:20
+#: templates/programs/prescription_form.html:19
+#: templates/programs/program_form.html:19
+#: templates/programs/workout_form.html:19
+#: templates/workouts/set_edit_form.html:19
 msgid "Save"
 msgstr "Tallenna"
 
+#: templates/accounts/account_details_form.html:3
+#: templates/accounts/account_details_form.html:6
+#: templates/accounts/profile.html:51
 msgid "Account details"
 msgstr "Tilin tiedot"
 
+#: templates/accounts/account_details_form.html:23
+#: templates/accounts/two_factor_manage.html:35 templates/api/key_list.html:155
+#: templates/core/backup_list.html:88 templates/core/feedback_form.html:25
+#: templates/core/feedback_list.html:58
+#: templates/registration/password_change_done.html:13
+#: templates/registration/password_change_form.html:23
 msgid "Back to profile"
 msgstr "Takaisin profiiliin"
 
+#: templates/accounts/profile.html:46
 msgid "Save preferences"
 msgstr "Tallenna asetukset"
 
+#: templates/accounts/profile.html:52
 msgid "Update your username, name, and email address."
 msgstr "Päivitä käyttäjätunnuksesi, nimesi ja sähköpostiosoitteesi."
 
+#: templates/accounts/profile.html:54 templates/accounts/profile.html:66
+#: templates/accounts/profile.html:90 templates/accounts/profile.html:99
+#: templates/accounts/profile.html:111 templates/accounts/profile.html:119
+#: templates/accounts/profile.html:127
+#: templates/nutrition/calculators_home.html:16
+#: templates/nutrition/calculators_home.html:24
+#: templates/nutrition/calculators_home.html:32
+#: templates/nutrition/calculators_home.html:40
+#: templates/nutrition/calculators_home.html:48
+#: templates/nutrition/calculators_home.html:56
+#: templates/nutrition/calculators_home.html:64
+#: templates/nutrition/diet_plan_list.html:27
+#: templates/nutrition/recipe_list.html:31
 msgid "Open"
 msgstr "Avaa"
 
+#: templates/accounts/profile.html:59
+#: templates/registration/password_change_form.html:3
+#: templates/registration/password_change_form.html:6
+#: templates/registration/password_change_form.html:20
 msgid "Change password"
 msgstr "Vaihda salasana"
 
+#: templates/accounts/profile.html:61
+msgid ""
+"Your account is linked to Authentik. Sign-in security (password, 2FA) is "
+"managed there."
+msgstr ""
+"Tilisi on yhdistetty Authentikiin. Kirjautumisen suojaus (salasana, "
+"kaksivaiheinen tunnistautuminen) hallitaan siellä."
+
+#: templates/accounts/profile.html:63
 msgid "Update the password you use to sign in."
 msgstr "Päivitä salasana, jolla kirjaudut sisään."
 
+#: templates/accounts/profile.html:73
 msgid "Enabled — protecting your account with a second step at login."
 msgstr "Käytössä — suojaa tiliäsi toisella vaiheella kirjautuessa."
 
+#: templates/accounts/profile.html:75
 msgid "Add a second step at login, using an authenticator app."
 msgstr "Lisää toinen vaihe kirjautumiseen tunnistautumissovelluksen avulla."
 
+#: templates/accounts/profile.html:79
 msgid "Manage"
 msgstr "Hallitse"
 
+#: templates/accounts/profile.html:81
 msgid "Set up"
 msgstr "Ota käyttöön"
 
+#: templates/accounts/profile.html:87 templates/api/key_list.html:3
+#: templates/api/key_list.html:7
 msgid "API keys"
 msgstr "API-avaimet"
 
+#: templates/accounts/profile.html:88
 msgid "Manage keys other apps can use to access your data."
 msgstr "Hallitse avaimia, joilla muut sovellukset voivat käyttää tietojasi."
 
+#: templates/accounts/profile.html:96 templates/accounts/profile.html:124
+#: templates/core/feedback_form.html:3 templates/core/feedback_form.html:6
+#: templates/core/feedback_list.html:3 templates/core/feedback_list.html:6
 msgid "Feedback"
 msgstr "Palaute"
 
+#: templates/accounts/profile.html:97
 msgid "Report a bug, request something, or tell us what's confusing."
 msgstr "Ilmoita bugista, ehdota jotain tai kerro, mikä on epäselvää."
 
+#: templates/accounts/profile.html:108
 msgid "Admin"
 msgstr "Hallinta"
 
+#: templates/accounts/profile.html:109
 msgid "Manage tiers, keys, and reference data across the whole instance."
 msgstr "Hallitse tasoja, avaimia ja viitetietoja koko palvelun laajuudelta."
 
+#: templates/accounts/profile.html:116 templates/core/backup_list.html:3
+#: templates/core/backup_list.html:6
 msgid "Backups"
 msgstr "Varmuuskopiot"
 
+#: templates/accounts/profile.html:117
 msgid "Create, download, and restore full backups of this instance."
 msgstr "Luo, lataa ja palauta täydellisiä varmuuskopioita tästä asennuksesta."
 
+#: templates/accounts/profile.html:125
 msgid "Read what users have submitted, and turn submissions on or off."
-msgstr "Lue mitä käyttäjät ovat lähettäneet, ja kytke palautteen lähettäminen päälle tai pois."
+msgstr ""
+"Lue mitä käyttäjät ovat lähettäneet, ja kytke palautteen lähettäminen päälle "
+"tai pois."
 
+#: templates/accounts/profile.html:134
 msgid "Log out"
 msgstr "Kirjaudu ulos"
 
+#: templates/accounts/profile.html:139
+#, python-format
 msgid "IronStack version %(version)s"
 msgstr "IronStack versio %(version)s"
 
+#: templates/accounts/profile.html:144 templates/accounts/profile.html:147
 msgid "Changelog"
 msgstr "Muutosloki"
 
+#: templates/accounts/profile.html:148 templates/api/key_list.html:20
+#: templates/base.html:58 templates/nutrition/_month_calendar.html:41
+#: templates/records/_pr_toasts.html:28
 msgid "Dismiss"
 msgstr "Sulje"
 
+#: templates/accounts/signup.html:3 templates/accounts/signup.html:19
 msgid "Sign up"
 msgstr "Rekisteröidy"
 
+#: templates/accounts/signup.html:6
 msgid "Create your account"
 msgstr "Luo tilisi"
 
+#: templates/accounts/signup.html:21
 msgid "Already have an account?"
 msgstr "Onko sinulla jo tili?"
 
+#: templates/accounts/signup.html:21 templates/registration/login.html:3
+#: templates/registration/login.html:6 templates/registration/login.html:26
+#: templates/registration/password_reset_complete.html:13
 msgid "Log in"
 msgstr "Kirjaudu sisään"
 
+#: templates/accounts/two_factor_backup_codes.html:3
+#: templates/accounts/two_factor_backup_codes.html:6
 msgid "New backup codes"
 msgstr "Uudet varakoodit"
 
-msgid "Each one works once, if you ever lose access to your authenticator app. They won't be shown again — save them somewhere safe now. Your old backup codes no longer work."
-msgstr "Jokainen koodi toimii kerran, jos menetät pääsyn tunnistautumissovellukseesi. Niitä ei näytetä enää uudelleen — tallenna ne nyt turvalliseen paikkaan. Vanhat varakoodisi eivät enää toimi."
+#: templates/accounts/two_factor_backup_codes.html:9
+msgid ""
+"Each one works once, if you ever lose access to your authenticator app. They "
+"won't be shown again — save them somewhere safe now. Your old backup codes "
+"no longer work."
+msgstr ""
+"Jokainen koodi toimii kerran, jos menetät pääsyn "
+"tunnistautumissovellukseesi. Niitä ei näytetä enää uudelleen — tallenna ne "
+"nyt turvalliseen paikkaan. Vanhat varakoodisi eivät enää toimi."
 
+#: templates/accounts/two_factor_backup_codes.html:16
+#: templates/accounts/two_factor_setup.html:22
+#: templates/api/key_created.html:16
 msgid "Done"
 msgstr "Valmis"
 
+#: templates/accounts/two_factor_disable.html:3
+#: templates/accounts/two_factor_disable.html:6
+#: templates/accounts/two_factor_disable.html:21
+#: templates/accounts/two_factor_manage.html:28
 msgid "Disable two-factor authentication"
 msgstr "Poista kaksivaiheinen tunnistautuminen käytöstä"
 
-msgid "Enter your password to confirm. This removes your authenticator and deletes your remaining backup codes."
-msgstr "Vahvista antamalla salasanasi. Tämä poistaa tunnistautumissovelluksesi ja jäljellä olevat varakoodisi."
+#: templates/accounts/two_factor_disable.html:9
+msgid ""
+"Enter your password to confirm. This removes your authenticator and deletes "
+"your remaining backup codes."
+msgstr ""
+"Vahvista antamalla salasanasi. Tämä poistaa tunnistautumissovelluksesi ja "
+"jäljellä olevat varakoodisi."
 
+#: templates/accounts/two_factor_disable.html:23
+#: templates/accounts/two_factor_setup.html:41
+#: templates/programs/program_confirm_delete.html:16
 msgid "Cancel"
 msgstr "Peruuta"
 
+#: templates/accounts/two_factor_manage.html:10
 msgid "Two-factor authentication is enabled on your account."
 msgstr "Kaksivaiheinen tunnistautuminen on käytössä tililläsi."
 
+#: templates/accounts/two_factor_manage.html:15
 msgid "Backup codes"
 msgstr "Varakoodit"
 
-msgid "Replace your current codes with a fresh set. The old ones stop working immediately."
-msgstr "Korvaa nykyiset koodisi uusilla. Vanhat lakkaavat toimimasta välittömästi."
+#: templates/accounts/two_factor_manage.html:16
+msgid ""
+"Replace your current codes with a fresh set. The old ones stop working "
+"immediately."
+msgstr ""
+"Korvaa nykyiset koodisi uusilla. Vanhat lakkaavat toimimasta välittömästi."
 
+#: templates/accounts/two_factor_manage.html:19
 msgid "Replace your backup codes? The old ones will stop working."
 msgstr "Korvataanko varakoodit? Vanhat lakkaavat toimimasta."
 
+#: templates/accounts/two_factor_manage.html:21
 msgid "Regenerate"
 msgstr "Luo uudet"
 
+#: templates/accounts/two_factor_manage.html:29
 msgid "Removes your authenticator and backup codes. Requires your password."
 msgstr "Poistaa tunnistautumissovelluksen ja varakoodit. Vaatii salasanasi."
 
+#: templates/accounts/two_factor_manage.html:31
 msgid "Disable"
 msgstr "Poista käytöstä"
 
+#: templates/accounts/two_factor_setup.html:11
 msgid "Two-factor authentication is now enabled."
 msgstr "Kaksivaiheinen tunnistautuminen on nyt käytössä."
 
+#: templates/accounts/two_factor_setup.html:14
 msgid "Save these backup codes"
 msgstr "Tallenna nämä varakoodit"
 
-msgid "Each one works once, if you ever lose access to your authenticator app. They won't be shown again — save them somewhere safe now."
-msgstr "Jokainen koodi toimii kerran, jos menetät pääsyn tunnistautumissovellukseesi. Niitä ei näytetä enää uudelleen — tallenna ne nyt turvalliseen paikkaan."
+#: templates/accounts/two_factor_setup.html:15
+msgid ""
+"Each one works once, if you ever lose access to your authenticator app. They "
+"won't be shown again — save them somewhere safe now."
+msgstr ""
+"Jokainen koodi toimii kerran, jos menetät pääsyn "
+"tunnistautumissovellukseesi. Niitä ei näytetä enää uudelleen — tallenna ne "
+"nyt turvalliseen paikkaan."
 
-msgid "Scan this QR code with an authenticator app (e.g. Google Authenticator, Authy, or a password manager with built-in support), then enter the 6-digit code it shows to confirm setup."
-msgstr "Skannaa tämä QR-koodi tunnistautumissovelluksella (esim. Google Authenticator, Authy tai salasananhallinta, jossa on sisäänrakennettu tuki), ja vahvista käyttöönotto syöttämällä sen näyttämä 6-numeroinen koodi."
+#: templates/accounts/two_factor_setup.html:25
+msgid ""
+"Scan this QR code with an authenticator app (e.g. Google Authenticator, "
+"Authy, or a password manager with built-in support), then enter the 6-digit "
+"code it shows to confirm setup."
+msgstr ""
+"Skannaa tämä QR-koodi tunnistautumissovelluksella (esim. Google "
+"Authenticator, Authy tai salasananhallinta, jossa on sisäänrakennettu tuki), "
+"ja vahvista käyttöönotto syöttämällä sen näyttämä 6-numeroinen koodi."
 
+#: templates/accounts/two_factor_setup.html:26
 msgid "Two-factor authentication QR code"
 msgstr "Kaksivaiheisen tunnistautumisen QR-koodi"
 
+#: templates/accounts/two_factor_setup.html:27
 msgid "Can't scan the code? Enter this key manually:"
 msgstr "Etkö voi skannata koodia? Syötä tämä avain käsin:"
 
+#: templates/accounts/two_factor_setup.html:39
 msgid "Confirm and enable"
 msgstr "Vahvista ja ota käyttöön"
 
+#: templates/activities/activity_form.html:3
 msgid "Edit activity"
 msgstr "Muokkaa aktiviteettia"
 
+#: templates/activities/activity_form.html:6
+#, python-format
 msgid "Edit %(name)s"
 msgstr "Muokkaa: %(name)s"
 
+#: templates/activities/activity_form.html:22
+#: templates/measurements/measurement_form.html:22
+#: templates/programs/prescription_form.html:30
+#: templates/programs/workout_form.html:30
+#, python-format
 msgid "Back to %(name)s"
 msgstr "Takaisin: %(name)s"
 
+#: templates/activities/activity_history.html:7
+#: templates/exercises/exercise_detail.html:14
+#: templates/measurements/measurement_history.html:7
 msgid "Inactive"
 msgstr "Ei aktiivinen"
 
+#: templates/activities/activity_history.html:13
+#, python-format
 msgid "%(count)s logged · total duration %(total_duration)s"
 msgstr "%(count)s kirjattu · kokonaiskesto %(total_duration)s"
 
+#: templates/activities/activity_history.html:14
+#, python-format
 msgid "total distance %(distance)s %(unit)s"
 msgstr "kokonaismatka %(distance)s %(unit)s"
 
+#: templates/activities/activity_history.html:15
+#, python-format
 msgid "total calories %(calories)s"
 msgstr "kalorit yhteensä %(calories)s"
 
+#: templates/activities/activity_history.html:21
 msgid "Duration trend"
 msgstr "Kesto ajan myötä"
 
+#: templates/activities/activity_history.html:22
+#: templates/activities/activity_history.html:43
 msgid "Duration"
 msgstr "Kesto"
 
+#: templates/activities/activity_history.html:23
 msgid "min"
 msgstr "min"
 
+#: templates/activities/activity_history.html:37
 msgid "Log activity"
 msgstr "Kirjaa aktiviteetti"
 
+#: templates/activities/activity_history.html:43
+#: templates/measurements/measurement_history.html:35
 msgid "Date"
 msgstr "Päivämäärä"
 
+#: templates/activities/activity_history.html:43
 msgid "Distance"
 msgstr "Matka"
 
+#: templates/activities/activity_history.html:52
+#: templates/exercises/exercise_detail.html:8
+#: templates/measurements/measurement_history.html:43
+#: templates/nutrition/diary_day.html:61
+#: templates/nutrition/recipe_detail.html:8
+#: templates/nutrition/recipe_detail.html:34
+#: templates/programs/program_detail.html:8
+#: templates/programs/program_detail.html:41
+#: templates/programs/program_detail.html:58
+#: templates/workouts/_performed_exercise_card.html:24
 msgid "Edit"
 msgstr "Muokkaa"
 
+#: templates/activities/activity_history.html:53
 msgid "Delete this activity?"
 msgstr "Poistetaanko tämä aktiviteetti?"
 
+#: templates/activities/activity_history.html:60
 msgid "No activities logged yet."
 msgstr "Aktiviteetteja ei ole vielä kirjattu."
 
-msgid "Deactivate this activity type? It will no longer appear when logging new activities."
-msgstr "Poistetaanko tämä aktiviteettityyppi käytöstä? Se ei enää näy uusia aktiviteetteja kirjattaessa."
+#: templates/activities/activity_history.html:67
+msgid ""
+"Deactivate this activity type? It will no longer appear when logging new "
+"activities."
+msgstr ""
+"Poistetaanko tämä aktiviteettityyppi käytöstä? Se ei enää näy uusia "
+"aktiviteetteja kirjattaessa."
 
+#: templates/activities/activity_history.html:69
+#: templates/measurements/measurement_history.html:60
 msgid "Deactivate type"
 msgstr "Poista tyyppi käytöstä"
 
+#: templates/activities/activity_history.html:73
+#: templates/activities/activity_type_form.html:22
 msgid "Back to activities"
 msgstr "Takaisin aktiviteetteihin"
 
+#: templates/activities/activity_type_form.html:3
+#: templates/activities/activity_type_form.html:6
 msgid "New activity type"
 msgstr "Uusi aktiviteettityyppi"
 
+#: templates/activities/activity_type_list.html:7
+#: templates/api/key_list.html:11 templates/exercises/exercise_list.html:7
+#: templates/measurements/measurement_type_list.html:7
+#: templates/programs/program_list.html:10
 msgid "New"
 msgstr "Uusi"
 
+#: templates/activities/activity_type_list.html:13
+#: templates/exercises/_exercise_list_results.html:6
+#: templates/measurements/measurement_type_list.html:13
 msgid "Custom"
 msgstr "Oma"
 
+#: templates/activities/activity_type_list.html:16
+#, python-format
 msgid "%(counter)s logged"
 msgid_plural "%(counter)s logged"
 msgstr[0] "%(counter)s kirjattu"
 msgstr[1] "%(counter)s kirjattu"
 
+#: templates/activities/activity_type_list.html:18
 msgid "No activities yet"
 msgstr "Ei aktiviteetteja vielä"
 
+#: templates/activities/activity_type_list.html:24
 msgid "No activity types yet."
 msgstr "Aktiviteettityyppejä ei ole vielä."
 
+#: templates/admin/base_site.html:13
 msgid "Django site admin"
 msgstr "Django-sivuston hallinta"
 
+#: templates/admin/base_site.html:16
 msgid "Django administration"
 msgstr "Django-hallinta"
 
-msgid "Pick which of these %(counter)s foods to keep. Every diary entry, recipe ingredient, and diet-plan item currently pointing at one of the others will be repointed at the one you keep — nothing a user has logged is deleted, only which food row it refers to changes. The other foods are then removed."
-msgstr "Valitse, mikä näistä %(counter)s ruoasta säilytetään. Jokainen ruokapäiväkirjan merkintä, resepti-ainesosa ja ruokavaliosuunnitelman kohde, joka viittaa johonkin muista, kohdistetaan säilytettävään — mitään käyttäjän kirjaamaa ei poisteta, vain se, mihin ruokariviin se viittaa, muuttuu. Muut ruoat poistetaan sen jälkeen."
+#: templates/admin/nutrition/food/merge.html:5
+#, python-format
+msgid ""
+"Pick which of these %(counter)s foods to keep. Every diary entry, recipe "
+"ingredient, and diet-plan item currently pointing at one of the others will "
+"be repointed at the one you keep — nothing a user has logged is deleted, "
+"only which food row it refers to changes. The other foods are then removed."
+msgstr ""
+"Valitse, mikä näistä %(counter)s ruoasta säilytetään. Jokainen "
+"ruokapäiväkirjan merkintä, resepti-ainesosa ja ruokavaliosuunnitelman kohde, "
+"joka viittaa johonkin muista, kohdistetaan säilytettävään — mitään käyttäjän "
+"kirjaamaa ei poisteta, vain se, mihin ruokariviin se viittaa, muuttuu. Muut "
+"ruoat poistetaan sen jälkeen."
 
+#: templates/admin/nutrition/food/merge.html:13
 msgid "Keep"
 msgstr "Säilytä"
 
+#: templates/admin/nutrition/food/merge.html:15
 msgid "Brand"
 msgstr "Merkki"
 
+#: templates/admin/nutrition/food/merge.html:16
 msgid "Owner"
 msgstr "Omistaja"
 
+#: templates/admin/nutrition/food/merge.html:17
+#: templates/nutrition/dashboard.html:21 templates/nutrition/dashboard.html:48
+#: templates/nutrition/diary_day.html:26 templates/nutrition/food_list.html:26
+#: templates/nutrition/recipe_detail.html:58
 msgid "Calories"
 msgstr "Kalorit"
 
+#: templates/admin/nutrition/food/merge.html:18
 msgid "Serving"
 msgstr "Annos"
 
+#: templates/admin/nutrition/food/merge.html:19
 msgid "OFF id"
 msgstr "OFF-tunnus"
 
+#: templates/admin/nutrition/food/merge.html:32
 msgid "shared"
 msgstr "jaettu"
 
+#: templates/admin/nutrition/food/merge.html:41
 msgid "Merge"
 msgstr "Yhdistä"
 
+#: templates/analytics/_range_filter.html:2
 msgid "Date range"
 msgstr "Ajanjakso"
 
+#: templates/analytics/dashboard.html:14
 msgid "Training time"
 msgstr "Treeniaika"
 
+#: templates/analytics/dashboard.html:15
+#: templates/analytics/exercise_analytics.html:14
 msgid "Total volume"
 msgstr "Kokonaisvolyymi"
 
+#: templates/analytics/dashboard.html:19 templates/analytics/dashboard.html:21
 msgid "Weekly training volume"
 msgstr "Viikoittainen treenivolyymi"
 
+#: templates/analytics/dashboard.html:24
 msgid "No completed workouts in this range."
 msgstr "Ei valmiita treenejä tällä ajanjaksolla."
 
+#: templates/analytics/dashboard.html:27 templates/analytics/dashboard.html:29
 msgid "Muscle-group volume"
 msgstr "Lihasryhmien volyymi"
 
+#: templates/analytics/dashboard.html:32
 msgid "No data in this range."
 msgstr "Ei tietoja tällä ajanjaksolla."
 
+#: templates/analytics/dashboard.html:35 templates/core/dashboard.html:80
 msgid "Recent"
 msgstr "Viimeisimmät"
 
+#: templates/analytics/dashboard.html:35 templates/analytics/dashboard.html:45
+#: templates/analytics/exercise_analytics.html:26
+#: templates/core/dashboard.html:80 templates/exercises/exercise_detail.html:43
+#: templates/records/exercise_records.html:11
 msgid "Personal Records"
 msgstr "Henkilökohtaiset ennätykset"
 
+#: templates/analytics/dashboard.html:45
 msgid "No"
 msgstr "Ei"
 
+#: templates/analytics/dashboard.html:45
 msgid "in this range."
 msgstr "tällä ajanjaksolla."
 
+#: templates/analytics/exercise_analytics.html:3
+#, python-format
 msgid "%(name)s analytics"
 msgstr "%(name)s – analytiikka"
 
+#: templates/analytics/exercise_analytics.html:13
 msgid "Sessions"
 msgstr "Treenikerrat"
 
+#: templates/analytics/exercise_analytics.html:19
+#: templates/exercises/exercise_detail.html:49
+#: templates/records/_pr_toasts.html:38
+#: templates/records/exercise_records.html:16
 msgid "Estimated"
 msgstr "Arvioitu"
 
+#: templates/analytics/exercise_analytics.html:19
 msgid "trend"
 msgstr "ajan myötä"
 
+#: templates/analytics/exercise_analytics.html:23
 msgid "Not enough history in this range for a trend line."
 msgstr "Ei tarpeeksi historiaa tällä ajanjaksolla trendiviivaa varten."
 
+#: templates/analytics/exercise_analytics.html:26
 msgid "View current"
 msgstr "Näytä nykyiset"
 
+#: templates/analytics/exercise_analytics.html:27
+#: templates/records/exercise_records.html:47
 msgid "Back to exercise"
 msgstr "Takaisin liikkeeseen"
 
+#: templates/api/key_created.html:3 templates/api/key_created.html:6
 msgid "API key created"
 msgstr "API-avain luotu"
 
+#: templates/api/key_created.html:10
 msgid "Copy this key now — you won't be able to see it again."
 msgstr "Kopioi tämä avain nyt — et näe sitä enää uudelleen."
 
+#: templates/api/key_created.html:13
 msgid "Your new API key"
 msgstr "Uusi API-avaimesi"
 
+#: templates/api/key_form.html:3 templates/api/key_form.html:6
 msgid "New API key"
 msgstr "Uusi API-avain"
 
-msgid "Choose exactly what this key is allowed to do, per resource — leave everything unchecked for a context to block it entirely."
-msgstr "Valitse tarkalleen mitä tämä avain saa tehdä kussakin osiossa — jätä kaikki valitsematta estääksesi osion kokonaan."
+#: templates/api/key_form.html:19
+msgid ""
+"Choose exactly what this key is allowed to do, per resource — leave "
+"everything unchecked for a context to block it entirely."
+msgstr ""
+"Valitse tarkalleen mitä tämä avain saa tehdä kussakin osiossa — jätä kaikki "
+"valitsematta estääksesi osion kokonaan."
 
+#: templates/api/key_form.html:24
 msgid "Context"
 msgstr "Osio"
 
+#: templates/api/key_form.html:39
 msgid "Create key"
 msgstr "Luo avain"
 
+#: templates/api/key_form.html:42
 msgid "Back to API keys"
 msgstr "Takaisin API-avaimiin"
 
+#: templates/api/key_list.html:8 templates/api/key_list.html:16
 msgid "API documentation"
 msgstr "API-dokumentaatio"
 
+#: templates/api/key_list.html:19
 msgid "Using the API"
 msgstr "API:n käyttäminen"
 
+#: templates/api/key_list.html:23
 msgid "Base URL"
 msgstr "Perusosoite"
 
+#: templates/api/key_list.html:24
 msgid "Every endpoint lives under:"
 msgstr "Jokainen rajapinta löytyy osoitteesta:"
 
+#: templates/api/key_list.html:27
 msgid "Authentication"
 msgstr "Tunnistautuminen"
 
-msgid "Send your key's secret (shown only once, right after you create it) as a Bearer token on every request:"
-msgstr "Lähetä avaimesi salaisuus (näytetään vain kerran, heti luonnin jälkeen) Bearer-tunnuksena jokaisessa pyynnössä:"
+#: templates/api/key_list.html:28
+msgid ""
+"Send your key's secret (shown only once, right after you create it) as a "
+"Bearer token on every request:"
+msgstr ""
+"Lähetä avaimesi salaisuus (näytetään vain kerran, heti luonnin jälkeen) "
+"Bearer-tunnuksena jokaisessa pyynnössä:"
 
+#: templates/api/key_list.html:31
 msgid "Permissions"
 msgstr "Käyttöoikeudet"
 
-msgid "Each key is granted Create/Read/Update/Delete separately per area (exercises, programs, workouts, measurements, activities, nutrition, records, analytics, profile) — set this when you create the key, above. A request outside what the key is granted gets a 403."
-msgstr "Jokaiselle avaimelle myönnetään Luo/Lue/Päivitä/Poista-oikeudet erikseen kullekin osa-alueelle (liikkeet, ohjelmat, treenit, mittaukset, aktiviteetit, ravinto, ennätykset, analytiikka, profiili) — aseta nämä avainta luodessasi yllä. Pyyntö, joka ylittää avaimen oikeudet, saa vastauksen 403."
+#: templates/api/key_list.html:32
+msgid ""
+"Each key is granted Create/Read/Update/Delete separately per area "
+"(exercises, programs, workouts, measurements, activities, nutrition, "
+"records, analytics, profile) — set this when you create the key, above. A "
+"request outside what the key is granted gets a 403."
+msgstr ""
+"Jokaiselle avaimelle myönnetään Luo/Lue/Päivitä/Poista-oikeudet erikseen "
+"kullekin osa-alueelle (liikkeet, ohjelmat, treenit, mittaukset, "
+"aktiviteetit, ravinto, ennätykset, analytiikka, profiili) — aseta nämä "
+"avainta luodessasi yllä. Pyyntö, joka ylittää avaimen oikeudet, saa "
+"vastauksen 403."
 
-msgid "Always canonical: weight in kilograms, length in meters, energy in kcal — never converted to your own display-unit preference, so a script can rely on one meaning regardless of who's asking."
-msgstr "Aina kanonisessa muodossa: paino kilogrammoina, pituus metreinä, energia kilokaloreina — ei koskaan muunnettuna omaan näyttöyksikköasetukseesi, joten skripti voi luottaa yhteen merkitykseen kysyjästä riippumatta."
+#: templates/api/key_list.html:35
+msgid ""
+"Always canonical: weight in kilograms, length in meters, energy in kcal — "
+"never converted to your own display-unit preference, so a script can rely on "
+"one meaning regardless of who's asking."
+msgstr ""
+"Aina kanonisessa muodossa: paino kilogrammoina, pituus metreinä, energia "
+"kilokaloreina — ei koskaan muunnettuna omaan näyttöyksikköasetukseesi, joten "
+"skripti voi luottaa yhteen merkitykseen kysyjästä riippumatta."
 
+#: templates/api/key_list.html:37
 msgid "Example: reading your profile (curl)"
 msgstr "Esimerkki: profiilisi lukeminen (curl)"
 
+#: templates/api/key_list.html:41
 msgid "Example: creating something (curl)"
 msgstr "Esimerkki: jonkin luominen (curl)"
 
+#: templates/api/key_list.html:42
 msgid "A POST with a JSON body — this adds a food to your library:"
 msgstr "POST-pyyntö JSON-rungolla — tämä lisää ruoan kirjastoosi:"
 
+#: templates/api/key_list.html:51
 msgid "Example: Python"
 msgstr "Esimerkki: Python"
 
-msgid "List/create endpoints are paginated, 25 per page (?page=2). Deleting something soft-deletes it where the web app does the same (foods, exercises, measurement/activity types); a program or recipe is a real delete, matching its own page."
-msgstr "Listaus-/luontirajapinnat on sivutettu, 25 riviä sivulla (?page=2). Jonkin poistaminen on pehmeä poisto samoissa kohdissa kuin verkkosovelluksessakin (ruoat, liikkeet, mittaus-/aktiviteettityypit); ohjelman tai reseptin poisto on todellinen poisto, kuten omalla sivullaankin."
+#: templates/api/key_list.html:75
+msgid ""
+"List/create endpoints are paginated, 25 per page (?page=2). Deleting "
+"something soft-deletes it where the web app does the same (foods, exercises, "
+"measurement/activity types); a program or recipe is a real delete, matching "
+"its own page."
+msgstr ""
+"Listaus-/luontirajapinnat on sivutettu, 25 riviä sivulla (?page=2). Jonkin "
+"poistaminen on pehmeä poisto samoissa kohdissa kuin verkkosovelluksessakin "
+"(ruoat, liikkeet, mittaus-/aktiviteettityypit); ohjelman tai reseptin poisto "
+"on todellinen poisto, kuten omalla sivullaankin."
 
+#: templates/api/key_list.html:77
 msgid "All endpoints"
 msgstr "Kaikki rajapinnat"
 
+#: templates/api/key_list.html:81
 msgid "Area"
 msgstr "Osa-alue"
 
+#: templates/api/key_list.html:81
 msgid "Endpoints"
 msgstr "Rajapinnat"
 
+#: templates/api/key_list.html:86
 msgid "GET/PATCH, no id"
 msgstr "GET/PATCH, ei id:tä"
 
+#: templates/api/key_list.html:90 templates/api/key_list.html:110
+#: templates/api/key_list.html:114
 msgid "read-only"
 msgstr "vain luku"
 
+#: templates/api/key_list.html:98
 msgid "create + read only"
 msgstr "vain luonti + luku"
 
+#: templates/api/key_list.html:118
 msgid "both read-only"
 msgstr "molemmat vain luku"
 
+#: templates/api/key_list.html:129
+#, python-format
 msgid "You can create %(counter)s more key."
 msgid_plural "You can create %(counter)s more keys."
 msgstr[0] "Voit luoda %(counter)s avaimen lisää."
 msgstr[1] "Voit luoda %(counter)s avainta lisää."
 
+#: templates/api/key_list.html:137
+#, python-format
 msgid "Tier: %(tier)s"
 msgstr "Taso: %(tier)s"
 
+#: templates/api/key_list.html:139
+#, python-format
 msgid "last used %(time)s ago"
 msgstr "viimeksi käytetty %(time)s sitten"
 
+#: templates/api/key_list.html:141
 msgid "never used"
 msgstr "ei koskaan käytetty"
 
+#: templates/api/key_list.html:144
 msgid "Revoke this API key? Anything using it will stop working immediately."
-msgstr "Peruutetaanko tämä API-avain? Kaikki sitä käyttävä lakkaa toimimasta välittömästi."
+msgstr ""
+"Peruutetaanko tämä API-avain? Kaikki sitä käyttävä lakkaa toimimasta "
+"välittömästi."
 
+#: templates/api/key_list.html:146
 msgid "Revoke"
 msgstr "Peruuta"
 
+#: templates/api/key_list.html:151
 msgid "No API keys yet."
 msgstr "Ei vielä API-avaimia."
 
+#: templates/base.html:38
 msgid "Skip to content"
 msgstr "Siirry sisältöön"
 
+#: templates/base.html:64
 msgid "Main navigation"
 msgstr "Päävalikko"
 
+#: templates/base.html:65 templates/base.html:67
 msgid "Home"
 msgstr "Koti"
 
+#: templates/base.html:77 templates/base.html:79
 msgid "Workout"
 msgstr "Treeni"
 
+#: templates/base.html:93
 msgid "Continue training"
 msgstr "Jatka harjoittelua"
 
+#: templates/core/_backup_row.html:8
 msgid "Automatic"
 msgstr "Automaattinen"
 
+#: templates/core/_backup_row.html:10
 msgid "Uploaded"
 msgstr "Ladattu"
 
+#: templates/core/_backup_row.html:15
 msgid "Download"
 msgstr "Lataa"
 
+#: templates/core/_backup_row.html:16
 msgid "Restore"
 msgstr "Palauta"
 
+#: templates/core/_backup_row.html:18
 msgid "Delete this backup? This cannot be undone."
 msgstr "Poistetaanko tämä varmuuskopio? Tätä ei voi perua."
 
+#: templates/core/_bar_chart.html:36
+#, python-format
 msgid "%(title)s, %(counter)s category"
 msgid_plural "%(title)s, %(counter)s categories"
 msgstr[0] "%(title)s, %(counter)s kategoria"
 msgstr[1] "%(title)s, %(counter)s kategoriaa"
 
+#: templates/core/_bar_chart.html:47
+#, python-format
 msgid "%(title)s by category"
 msgstr "%(title)s luokittain"
 
-msgid "Not enough data yet — set your height and log a body weight to see your current BMI here."
-msgstr "Ei vielä tarpeeksi tietoja — aseta pituutesi ja kirjaa painosi nähdäksesi BMI:si täällä."
+#: templates/core/_bmi_card.html:21
+msgid ""
+"Not enough data yet — set your height and log a body weight to see your "
+"current BMI here."
+msgstr ""
+"Ei vielä tarpeeksi tietoja — aseta pituutesi ja kirjaa painosi nähdäksesi "
+"BMI:si täällä."
 
+#: templates/core/_bmi_card.html:25
 msgid "BMI category ranges"
 msgstr "BMI-luokka-asteikot"
 
+#: templates/core/_bmi_card.html:40
+#, python-format
 msgid "below %(high)s"
 msgstr "alle %(high)s"
 
+#: templates/core/_bmi_card.html:41
+#, python-format
 msgid "%(low)s and above"
 msgstr "%(low)s ja yli"
 
+#: templates/core/_bmi_card.html:46
+#, python-format
 msgid "below %(high)s %(unit)s"
 msgstr "alle %(high)s %(unit)s"
 
+#: templates/core/_bmi_card.html:47
+#, python-format
 msgid "%(low)s %(unit)s and above"
 msgstr "%(low)s %(unit)s ja yli"
 
+#: templates/core/_chart.html:30
+#, python-format
 msgid "%(title)s trend over time, %(counter)s reading"
 msgid_plural "%(title)s trend over time, %(counter)s readings"
 msgstr[0] "%(title)s ajan myötä, %(counter)s mittaus"
 msgstr[1] "%(title)s ajan myötä, %(counter)s mittausta"
 
+#: templates/core/backup_list.html:11
 msgid "Create backup"
 msgstr "Luo varmuuskopio"
 
+#: templates/core/backup_list.html:14
 msgid "Upload backup"
 msgstr "Lataa varmuuskopio"
 
-msgid "Restore from a backup file you downloaded earlier, instead of one already listed below."
-msgstr "Palauta aiemmin lataamastasi varmuuskopiotiedostosta, sen sijaan että valitsisit jo alla listatuista."
+#: templates/core/backup_list.html:18
+msgid ""
+"Restore from a backup file you downloaded earlier, instead of one already "
+"listed below."
+msgstr ""
+"Palauta aiemmin lataamastasi varmuuskopiotiedostosta, sen sijaan että "
+"valitsisit jo alla listatuista."
 
+#: templates/core/backup_list.html:28
 msgid "Upload and continue"
 msgstr "Lataa ja jatka"
 
+#: templates/core/backup_list.html:31 templates/core/feedback_list.html:9
 msgid "Settings"
 msgstr "Asetukset"
 
+#: templates/core/backup_list.html:51 templates/core/feedback_list.html:24
 msgid "Save settings"
 msgstr "Tallenna asetukset"
 
+#: templates/core/backup_list.html:54
 msgid "Automatic backups"
 msgstr "Automaattiset varmuuskopiot"
 
+#: templates/core/backup_list.html:61
+#, python-format
 msgid "▾ Show %(counter)s earlier automatic backup"
 msgid_plural "▾ Show %(counter)s earlier automatic backups"
 msgstr[0] "▾ Näytä %(counter)s aiempi automaattinen varmuuskopio"
 msgstr[1] "▾ Näytä %(counter)s aiempaa automaattista varmuuskopiota"
 
+#: templates/core/backup_list.html:62
 msgid "Hide earlier automatic backups"
 msgstr "Piilota aiemmat automaattiset varmuuskopiot"
 
+#: templates/core/backup_list.html:73
 msgid "No automatic backups yet."
 msgstr "Ei vielä automaattisia varmuuskopioita."
 
+#: templates/core/backup_list.html:77
 msgid "Manual & uploaded backups"
 msgstr "Manuaaliset ja ladatut varmuuskopiot"
 
+#: templates/core/backup_list.html:84
 msgid "No manual or uploaded backups yet."
 msgstr "Ei vielä manuaalisia tai ladattuja varmuuskopioita."
 
+#: templates/core/backup_restore_confirm.html:3
+#: templates/core/backup_restore_confirm.html:6
 msgid "Restore backup"
 msgstr "Palauta varmuuskopio"
 
-msgid "This will permanently replace the current database and every file under media/ with the contents of %(name)s. This cannot be undone."
-msgstr "Tämä korvaa pysyvästi nykyisen tietokannan ja jokaisen media/-hakemiston tiedoston varmuuskopion %(name)s sisällöllä. Tätä ei voi perua."
+#: templates/core/backup_restore_confirm.html:11
+#, python-format
+msgid ""
+"This will permanently replace the current database and every file under "
+"media/ with the contents of %(name)s. This cannot be undone."
+msgstr ""
+"Tämä korvaa pysyvästi nykyisen tietokannan ja jokaisen media/-hakemiston "
+"tiedoston varmuuskopion %(name)s sisällöllä. Tätä ei voi perua."
 
-msgid "If in doubt, create a fresh backup of the current state first, then come back here."
-msgstr "Jos olet epävarma, luo ensin tuore varmuuskopio nykytilasta ja palaa sitten tänne."
+#: templates/core/backup_restore_confirm.html:14
+msgid ""
+"If in doubt, create a fresh backup of the current state first, then come "
+"back here."
+msgstr ""
+"Jos olet epävarma, luo ensin tuore varmuuskopio nykytilasta ja palaa sitten "
+"tänne."
 
+#: templates/core/backup_restore_confirm.html:19
 msgid "Backup"
 msgstr "Varmuuskopio"
 
+#: templates/core/backup_restore_confirm.html:21
+#: templates/core/backup_restore_confirm.html:30
 msgid "Version"
 msgstr "Versio"
 
+#: templates/core/backup_restore_confirm.html:22
+#: templates/core/backup_restore_confirm.html:31
 msgid "Git commit"
 msgstr "Git-commit"
 
+#: templates/core/backup_restore_confirm.html:23
 msgid "Created"
 msgstr "Luotu"
 
+#: templates/core/backup_restore_confirm.html:28
 msgid "Running instance"
 msgstr "Käynnissä oleva asennus"
 
-msgid "Really replace the current database and media with this backup? This cannot be undone."
-msgstr "Korvataanko nykyinen tietokanta ja media todella tällä varmuuskopiolla? Tätä ei voi perua."
+#: templates/core/backup_restore_confirm.html:35
+msgid ""
+"Really replace the current database and media with this backup? This cannot "
+"be undone."
+msgstr ""
+"Korvataanko nykyinen tietokanta ja media todella tällä varmuuskopiolla? Tätä "
+"ei voi perua."
 
+#: templates/core/backup_restore_confirm.html:37
 msgid "Restore this backup"
 msgstr "Palauta tämä varmuuskopio"
 
+#: templates/core/backup_restore_confirm.html:40
 msgid "Back to backups"
 msgstr "Takaisin varmuuskopioihin"
 
+#: templates/core/dashboard.html:3
 msgid "Dashboard"
 msgstr "Kojelauta"
 
+#: templates/core/dashboard.html:14
 msgid "Achievements"
 msgstr "Saavutukset"
 
+#: templates/core/dashboard.html:42
+#, python-format
 msgid "Show achievement %(position)s"
 msgstr "Näytä saavutus %(position)s"
 
+#: templates/core/dashboard.html:51
 msgid "Recently active"
 msgstr "Viimeksi aktiivisena"
 
+#: templates/core/dashboard.html:58
 msgid "Training now"
 msgstr "Treenaa juuri nyt"
 
+#: templates/core/dashboard.html:58
+#, python-format
 msgid "%(time)s ago"
 msgstr "%(time)s sitten"
 
+#: templates/core/dashboard.html:69
 msgid "This week's workouts"
 msgstr "Tämän viikon treenit"
 
+#: templates/core/dashboard.html:70
 msgid "This week's volume"
 msgstr "Tämän viikon volyymi"
 
+#: templates/core/dashboard.html:91
 msgid "Continue workout"
 msgstr "Jatka treeniä"
 
+#: templates/core/dashboard.html:93 templates/workouts/session_detail.html:3
+#: templates/workouts/session_detail.html:6
+#: templates/workouts/session_list.html:11
+#: templates/workouts/session_train.html:6
 msgid "Freeform workout"
 msgstr "Vapaamuotoinen treeni"
 
+#: templates/core/dashboard.html:94
+#, python-format
 msgid "started %(started_at)s"
 msgstr "aloitettu %(started_at)s"
 
+#: templates/core/dashboard.html:99
 msgid "No workout in progress."
 msgstr "Ei käynnissä olevaa treeniä."
 
+#: templates/core/dashboard.html:100
 msgid "Start one from a program, or log a freeform workout."
 msgstr "Aloita yksi ohjelmasta tai kirjaa vapaamuotoinen treeni."
 
+#: templates/core/dashboard.html:105
 msgid "Browse exercises"
 msgstr "Selaa liikkeitä"
 
+#: templates/core/dashboard.html:106
 msgid "Explore the exercise library or add your own."
 msgstr "Tutki liikekirjastoa tai lisää oma liikkeesi."
 
+#: templates/core/dashboard.html:110
+#: templates/measurements/measurement_type_list.html:3
+#: templates/measurements/measurement_type_list.html:6
 msgid "Body tracking"
 msgstr "Kehon seuranta"
 
+#: templates/core/dashboard.html:111
 msgid "Log body weight, measurements, and trends."
 msgstr "Kirjaa kehon paino, mitat ja trendit."
 
+#: templates/core/dashboard.html:116
 msgid "Log a run, ride, or any other non-gym activity."
-msgstr "Kirjaa juoksu, pyöräily tai mikä tahansa muu kuntosalin ulkopuolinen aktiviteetti."
+msgstr ""
+"Kirjaa juoksu, pyöräily tai mikä tahansa muu kuntosalin ulkopuolinen "
+"aktiviteetti."
 
-msgid "Bug reports, ideas, anything that's confusing — only visible to the people running this instance."
-msgstr "Bugiraportit, ideat, mikä tahansa epäselvä — näkyy vain tätä asennusta ylläpitäville."
+#: templates/core/feedback_form.html:9
+msgid ""
+"Bug reports, ideas, anything that's confusing — only visible to the people "
+"running this instance."
+msgstr ""
+"Bugiraportit, ideat, mikä tahansa epäselvä — näkyy vain tätä asennusta "
+"ylläpitäville."
 
+#: templates/core/feedback_form.html:22
 msgid "Send feedback"
 msgstr "Lähetä palaute"
 
+#: templates/core/feedback_list.html:27
 msgid "Submissions"
 msgstr "Lähetetyt palautteet"
 
+#: templates/core/feedback_list.html:44
+#: templates/exercises/_exercise_list_results.html:22
+#: templates/workouts/_train_panel.html:13
 msgid "Previous"
 msgstr "Edellinen"
 
+#: templates/core/feedback_list.html:46
+#: templates/exercises/_exercise_list_results.html:24
+#, python-format
 msgid "Page %(number)s of %(total)s"
 msgstr "Sivu %(number)s / %(total)s"
 
+#: templates/core/feedback_list.html:48
+#: templates/exercises/_exercise_list_results.html:26
+#: templates/workouts/_train_panel.html:21
 msgid "Next"
 msgstr "Seuraava"
 
+#: templates/core/feedback_list.html:54
 msgid "No feedback yet."
 msgstr "Ei vielä palautetta."
 
+#: templates/exercises/_exercise_list_results.html:15
 msgid "No exercises match your search."
 msgstr "Haullasi ei löytynyt liikkeitä."
 
+#: templates/exercises/_exercise_list_results.html:20
 msgid "Exercise list pages"
 msgstr "Liikelistan sivut"
 
+#: templates/exercises/exercise_detail.html:19
 msgid "Movement type"
 msgstr "Liiketyyppi"
 
+#: templates/exercises/exercise_detail.html:22
 msgid "Weight logging"
 msgstr "Painon kirjaus"
 
+#: templates/exercises/exercise_detail.html:26
 msgid "Equipment"
 msgstr "Välineet"
 
+#: templates/exercises/exercise_detail.html:31
 msgid "Primary muscles"
 msgstr "Ensisijaiset lihakset"
 
+#: templates/exercises/exercise_detail.html:36
 msgid "Secondary muscles"
 msgstr "Toissijaiset lihakset"
 
+#: templates/exercises/exercise_detail.html:43
 msgid "Your"
 msgstr "Omat"
 
+#: templates/exercises/exercise_detail.html:44
 msgid "Current personal records for this exercise."
 msgstr "Nykyiset henkilökohtaiset ennätykset tälle liikkeelle."
 
+#: templates/exercises/exercise_detail.html:48
 msgid "Strength trend"
 msgstr "Voiman kehitys"
 
+#: templates/exercises/exercise_detail.html:49
 msgid "over time and training volume."
 msgstr "ajan myötä ja treenivolyymi."
 
-msgid "Deactivate this exercise? It will no longer appear when browsing or prescribing."
-msgstr "Poistetaanko tämä liike käytöstä? Se ei enää näy selattaessa tai ohjelmoitaessa."
+#: templates/exercises/exercise_detail.html:53
+msgid ""
+"Deactivate this exercise? It will no longer appear when browsing or "
+"prescribing."
+msgstr ""
+"Poistetaanko tämä liike käytöstä? Se ei enää näy selattaessa tai "
+"ohjelmoitaessa."
 
+#: templates/exercises/exercise_detail.html:55
+#: templates/nutrition/diet_plan_detail.html:11
+#: templates/nutrition/diet_plan_list.html:24
 msgid "Deactivate"
 msgstr "Poista käytöstä"
 
+#: templates/exercises/exercise_detail.html:59
 msgid "Back to exercises"
 msgstr "Takaisin liikkeisiin"
 
+#: templates/exercises/exercise_form.html:3
+#: templates/exercises/exercise_form.html:6
+#: templates/programs/prescription_form.html:3
+#: templates/programs/prescription_form.html:6
 msgid "Edit exercise"
 msgstr "Muokkaa liikettä"
 
+#: templates/exercises/exercise_form.html:3
+#: templates/exercises/exercise_form.html:6
 msgid "New exercise"
 msgstr "Uusi liike"
 
+#: templates/exercises/exercise_list.html:11
 msgid "Search exercises…"
 msgstr "Hae liikkeitä…"
 
+#: templates/exercises/exercise_list.html:11
 msgid "Search exercises"
 msgstr "Hae liikkeitä"
 
+#: templates/exercises/exercise_list.html:12
 msgid "Filter by muscle group"
 msgstr "Suodata lihasryhmän mukaan"
 
+#: templates/exercises/exercise_list.html:13
 msgid "All muscle groups"
 msgstr "Kaikki lihasryhmät"
 
+#: templates/measurements/measurement_form.html:3
 msgid "Edit reading"
 msgstr "Muokkaa mittausta"
 
+#: templates/measurements/measurement_form.html:6
+#, python-format
 msgid "Edit %(name)s reading"
 msgstr "Muokkaa mittausta: %(name)s"
 
+#: templates/measurements/measurement_history.html:15
 msgid "Trend"
 msgstr "Trendi"
 
+#: templates/measurements/measurement_history.html:29
 msgid "Log reading"
 msgstr "Kirjaa mittaus"
 
+#: templates/measurements/measurement_history.html:44
 msgid "Delete this reading?"
 msgstr "Poistetaanko tämä mittaus?"
 
+#: templates/measurements/measurement_history.html:51
 msgid "No readings logged yet."
 msgstr "Mittauksia ei ole vielä kirjattu."
 
-msgid "Deactivate this measurement type? It will no longer appear when logging new readings."
-msgstr "Poistetaanko tämä mittaustyyppi käytöstä? Se ei enää näy uusia mittauksia kirjattaessa."
+#: templates/measurements/measurement_history.html:58
+msgid ""
+"Deactivate this measurement type? It will no longer appear when logging new "
+"readings."
+msgstr ""
+"Poistetaanko tämä mittaustyyppi käytöstä? Se ei enää näy uusia mittauksia "
+"kirjattaessa."
 
+#: templates/measurements/measurement_history.html:64
+#: templates/measurements/measurement_type_form.html:22
 msgid "Back to body tracking"
 msgstr "Takaisin kehon seurantaan"
 
+#: templates/measurements/measurement_type_form.html:3
+#: templates/measurements/measurement_type_form.html:6
 msgid "New measurement type"
 msgstr "Uusi mittaustyyppi"
 
+#: templates/measurements/measurement_type_list.html:16
+#, python-format
 msgid "Latest: %(value)s %(unit)s"
 msgstr "Viimeisin: %(value)s %(unit)s"
 
+#: templates/measurements/measurement_type_list.html:18
 msgid "No readings yet"
 msgstr "Ei mittauksia vielä"
 
+#: templates/measurements/measurement_type_list.html:24
 msgid "No measurement types yet."
 msgstr "Mittaustyyppejä ei ole vielä."
 
+#: templates/nutrition/_barcode_scan_button.html:12
 msgid "Scan barcode"
 msgstr "Skannaa viivakoodi"
 
+#: templates/nutrition/_barcode_scan_button.html:17
+#: templates/nutrition/_barcode_scan_button.html:20
 msgid "Scan a barcode"
 msgstr "Skannaa viivakoodi"
 
+#: templates/nutrition/_barcode_scan_button.html:21
 msgid "Close"
 msgstr "Sulje"
 
+#: templates/nutrition/_barcode_scan_button.html:25
 msgid "Point your camera at a barcode."
 msgstr "Suuntaa kamera viivakoodiin."
 
-msgid "Your foods"
-msgstr "Omat ruokasi"
-
-msgid "Already in your library"
-msgstr "Jo omissa ruoissasi"
-
-msgid "Quantity"
-msgstr "Määrä"
-
-msgid "Add"
-msgstr "Lisää"
-
-msgid "From OpenFoodFacts"
-msgstr "OpenFoodFactsista"
-
-msgid "Import"
-msgstr "Tuo"
-
-msgid "Import & add"
-msgstr "Tuo ja lisää"
-
-msgid "Nothing found."
-msgstr "Ei löytynyt mitään."
-
-msgid "Create a custom food"
-msgstr "Luo oma ruoka"
-
-msgid "Most used"
-msgstr "Eniten käytetyt"
-
-msgid "+ Add"
-msgstr "+ Lisää"
-
-msgid "Nutri-Score %(grade)s"
-msgstr "Nutri-Score %(grade)s"
-
-msgid "NOVA — food processing level, 1 (unprocessed) to 4 (ultra-processed)"
-msgstr "NOVA — ruoan jalostusaste, 1 (jalostamaton) – 4 (pitkälle jalostettu)"
-
-msgid "Nutrition sections"
-msgstr "Ravinnon osiot"
-
-msgid "Overview"
-msgstr "Yleiskatsaus"
-
-msgid "Diary"
-msgstr "Päiväkirja"
-
-msgid "Foods"
-msgstr "Ruoat"
-
-msgid "Recipes"
-msgstr "Reseptit"
-
-msgid "Diet plans"
-msgstr "Ruokavaliosuunnitelmat"
-
-msgid "Calculators"
-msgstr "Laskurit"
-
-msgid "Statistics"
-msgstr "Tilastot"
-
-msgid "Step %(step)s of 5"
-msgstr "Vaihe %(step)s / 5"
-
-msgid "BMI calculator"
-msgstr "BMI-laskuri"
-
-msgid "Body mass index — a widely used screening number, not a diagnosis. The Body weight page shows this automatically once you've logged a weight and set a height on your profile; this is the same calculation for a quick one-off check."
-msgstr "Painoindeksi (BMI) — laajasti käytetty seulontaluku, ei diagnoosi. Kehon paino -sivu näyttää tämän automaattisesti, kun olet kirjannut painon ja asettanut pituuden profiiliisi; tämä on sama laskelma nopeaa kertatarkistusta varten."
-
-msgid "Calculate"
-msgstr "Laske"
-
-msgid "Result"
-msgstr "Tulos"
-
-msgid "Categories"
-msgstr "Luokat"
-
-msgid "Back to calculators"
-msgstr "Takaisin laskureihin"
-
-msgid "BMR / TDEE calculator"
-msgstr "BMR/TDEE-laskuri"
-
-msgid "BMR is roughly what you'd burn lying still all day; TDEE adds your activity on top. Both are estimates (Mifflin-St Jeor)."
-msgstr "BMR on suunnilleen se, mitä kuluttaisit maaten paikallaan koko päivän; TDEE lisää päälle aktiivisuutesi. Molemmat ovat arvioita (Mifflin-St Jeor)."
-
-msgid "BMR (at rest)"
-msgstr "BMR (levossa)"
-
-msgid "TDEE (with activity)"
-msgstr "TDEE (aktiivisuuden kanssa)"
-
-msgid "Body fat calculator"
-msgstr "Kehon rasvaprosenttilaskuri"
-
-msgid "The U.S. Navy tape-measure method — just a tape measure, no calipers or bioimpedance scale needed. An estimate, typically within a few percentage points of a DEXA scan."
-msgstr "Yhdysvaltain laivaston mittanauhamenetelmä — pelkkä mittanauha riittää, ei tarvita rasvapihtejä tai bioimpedanssivaakaa. Arvio, joka on tyypillisesti muutaman prosenttiyksikön päässä DEXA-mittauksesta."
-
-msgid "Couldn't estimate this from those measurements — double-check them (waist should be larger than neck)."
-msgstr "Tätä ei voitu arvioida näistä mitoista — tarkista ne (vyötärön tulisi olla kaulaa suurempi)."
-
-msgid "Macro calculator"
-msgstr "Makrolaskuri"
-
-msgid "Splits a calorie target into protein, carbohydrates, and fat using this app's own default ratios for the goal you pick."
-msgstr "Jakaa kalotitavoitteen proteiiniin, hiilihydraatteihin ja rasvaan käyttäen sovelluksen omia oletussuhteita valitsemallesi tavoitteelle."
-
-msgid "Protein"
-msgstr "Proteiini"
-
-msgid "Carbohydrates"
-msgstr "Hiilihydraatit"
-
-msgid "Fat"
-msgstr "Rasva"
-
-msgid "This calorie target is low enough that protein and/or fat had to be reduced below their usual defaults to fit."
-msgstr "Tämä kaloritavoite on niin matala, että proteiinia ja/tai rasvaa piti vähentää tavallista pienemmäksi, jotta ne mahtuvat."
-
-msgid "Time to goal weight calculator"
-msgstr "Tavoitepainoon kuluva aika -laskuri"
-
-msgid "At a chosen weekly rate, roughly how long to reach a target weight — a plain projection from the numbers you enter, not a promise."
-msgstr "Valitulla viikkovauhdilla, karkeasti kuinka kauan tavoitepainoon kestää — pelkkä projektio antamistasi luvuista, ei lupaus."
-
-msgid "%(weeks)s weeks"
-msgstr "%(weeks)s viikkoa"
-
-msgid "Around %(date)s, at this rate."
-msgstr "Noin %(date)s, tällä nopeudella."
-
-msgid "That rate doesn't move toward your target — check the sign (negative to lose, positive to gain) matches the direction you actually need to go."
-msgstr "Tämä nopeus ei liiku kohti tavoitettasi — tarkista, että etumerkki (negatiivinen laihtumiseen, positiivinen lihomiseen) vastaa suuntaa johon oikeasti haluat mennä."
-
-msgid "Waist-to-hip ratio calculator"
-msgstr "Vyötärö-lantiosuhde-laskuri"
-
-msgid "Where you carry weight, not just how much — a widely used screening number (WHO), not a diagnosis."
-msgstr "Mihin kannat painoa, ei vain kuinka paljon — laajasti käytetty seulontaluku (WHO), ei diagnoosi."
-
-msgid "Water intake calculator"
-msgstr "Vedenjuontilaskuri"
-
-msgid "A rough daily fluid target based on bodyweight and activity — real needs vary with climate and sweat rate, so treat this as a starting point."
-msgstr "Karkea päivittäinen nesteytystavoite painon ja aktiivisuuden perusteella — todellinen tarve vaihtelee ilmaston ja hikoilun mukaan, joten pidä tätä lähtökohtana."
-
-msgid "day"
-msgstr "vrk"
-
-msgid "Quick, standalone estimates — none of these are saved or change your targets."
-msgstr "Nopeita, itsenäisiä arvioita — mitään näistä ei tallenneta eivätkä ne muuta tavoitteitasi."
-
-msgid "How many calories your body burns at rest, and in total."
-msgstr "Kuinka monta kaloria kehosi kuluttaa levossa ja yhteensä."
-
-msgid "Split a calorie target into protein, carbohydrates, and fat."
-msgstr "Jaa kaloritavoite proteiiniin, hiilihydraatteihin ja rasvaan."
-
-msgid "Estimate body fat percentage from a tape measure (U.S. Navy method)."
-msgstr "Arvioi kehon rasvaprosentti mittanauhalla (Yhdysvaltain laivaston menetelmä)."
-
-msgid "A rough daily fluid target based on your bodyweight and activity."
-msgstr "Karkea päivittäinen nestetavoite painosi ja aktiivisuutesi perusteella."
-
-msgid "Body mass index and what it means for your height, without logging a weight first."
-msgstr "Painoindeksi ja mitä se tarkoittaa pituudellesi, ilman että sinun tarvitsee ensin kirjata painoa."
-
-msgid "Where you carry weight, not just how much — a tape measure and one more number."
-msgstr "Mihin kannat painoa, ei vain kuinka paljon — mittanauha ja yksi luku lisää."
-
-msgid "At a chosen weekly rate, roughly how long to reach a target weight."
-msgstr "Valitulla viikkovauhdilla, karkeasti kuinka kauan tavoitepainoon kestää."
-
-msgid "Back to nutrition"
-msgstr "Takaisin ravintoon"
-
-msgid "Training day"
-msgstr "Treenipäivä"
-
-msgid "Rest day"
-msgstr "Lepopäivä"
-
-msgid "Today so far"
-msgstr "Tähän mennessä tänään"
-
-msgid "Open food diary"
-msgstr "Avaa ruokapäiväkirja"
-
-msgid "+ Log food now"
-msgstr "+ Kirjaa ruoka nyt"
-
-msgid "Is your current target working?"
-msgstr "Toimiiko nykyinen tavoitteesi?"
-
-msgid "High confidence"
-msgstr "Korkea luotettavuus"
-
-msgid "Medium confidence"
-msgstr "Kohtalainen luotettavuus"
-
-msgid "Low confidence"
-msgstr "Matala luotettavuus"
-
-msgid "Adjust to %(calories)s kcal/day"
-msgstr "Säädä %(calories)s kcal:aan/vrk"
-
-msgid "Weight trend"
-msgstr "Painotrendi"
-
-msgid "Daily target"
-msgstr "Päivätavoite"
-
-msgid "%(calories)s kcal/day"
-msgstr "%(calories)s kcal/vrk"
-
-msgid "Current goal"
-msgstr "Nykyinen tavoite"
-
-msgid "Add food"
-msgstr "Lisää ruoka"
-
-msgid "e.g. chicken breast, or a barcode number"
-msgstr "esim. kananrinta tai viivakoodi"
-
-msgid "Back to diary"
-msgstr "Takaisin päiväkirjaan"
-
-msgid "Food diary"
-msgstr "Ruokapäiväkirja"
-
-msgid "Previous day"
-msgstr "Edellinen päivä"
-
-msgid "Jump to date"
-msgstr "Siirry päivämäärään"
-
-msgid "Next day"
-msgstr "Seuraava päivä"
-
-msgid "Today's nutrition"
-msgstr "Tämän päivän ravinto"
-
-msgid "Remove this entry?"
-msgstr "Poistetaanko tämä merkintä?"
-
-msgid "Nothing logged yet."
-msgstr "Ei vielä kirjauksia."
-
-msgid "+ Add food"
-msgstr "+ Lisää ruoka"
-
-msgid "Copy this day to another date"
-msgstr "Kopioi tämä päivä toiselle päivälle"
-
-msgid "Copy to date"
-msgstr "Kopioi päivälle"
-
-msgid "Copy"
-msgstr "Kopioi"
-
-msgid "Manage foods"
-msgstr "Hallitse ruokia"
-
-msgid "Edit entry"
-msgstr "Muokkaa merkintää"
-
-msgid "protein"
-msgstr "proteiini"
-
-msgid "carbs"
-msgstr "hiilarit"
-
-msgid "fat"
-msgstr "rasva"
-
+#: templates/nutrition/_diet_plan_meal_card.html:13
 msgid "target"
 msgstr "tavoite"
 
+#: templates/nutrition/_diet_plan_meal_card.html:13
 msgid "so far"
 msgstr "tähän mennessä"
 
+#: templates/nutrition/_diet_plan_meal_card.html:18
+#: templates/nutrition/recipe_list.html:27
 msgid "servings"
 msgstr "annosta"
 
+#: templates/nutrition/_diet_plan_meal_card.html:21
 msgid "Swap"
 msgstr "Vaihda"
 
+#: templates/nutrition/_diet_plan_meal_card.html:23
 msgid "Remove this item?"
 msgstr "Poistetaanko tämä kohde?"
 
+#: templates/nutrition/_diet_plan_meal_card.html:25
+#: templates/nutrition/recipe_detail.html:38
 msgid "Remove"
 msgstr "Poista"
 
+#: templates/nutrition/_diet_plan_meal_card.html:30
 msgid "Nothing suggested yet — add some foods or recipes first."
 msgstr "Ei vielä ehdotuksia — lisää ensin ruokia tai reseptejä."
 
+#: templates/nutrition/_diet_plan_meal_card.html:32
 msgid "+ Add item"
 msgstr "+ Lisää kohde"
 
+#: templates/nutrition/_food_search_results.html:15
+msgid "Your foods"
+msgstr "Omat ruokasi"
+
+#: templates/nutrition/_food_search_results.html:23
+msgid "Already in your library"
+msgstr "Jo omissa ruoissasi"
+
+#: templates/nutrition/_food_search_results.html:38
+#: templates/nutrition/_food_search_results.html:64
+#: templates/nutrition/_most_used_foods.html:42
+msgid "Quantity"
+msgstr "Määrä"
+
+#: templates/nutrition/_food_search_results.html:39
+#: templates/workouts/performed_exercise_form.html:19
+msgid "Add"
+msgstr "Lisää"
+
+#: templates/nutrition/_food_search_results.html:47
+msgid "From OpenFoodFacts"
+msgstr "OpenFoodFactsista"
+
+#: templates/nutrition/_food_search_results.html:61
+#: templates/nutrition/food_category.html:20
+msgid "Import"
+msgstr "Tuo"
+
+#: templates/nutrition/_food_search_results.html:65
+msgid "Import & add"
+msgstr "Tuo ja lisää"
+
+#: templates/nutrition/_food_search_results.html:74
+msgid "Nothing found."
+msgstr "Ei löytynyt mitään."
+
+#: templates/nutrition/_food_search_results.html:76
+msgid "Create a custom food"
+msgstr "Luo oma ruoka"
+
+#: templates/nutrition/_month_calendar.html:24
+msgid "Previous month"
+msgstr "Edellinen kuukausi"
+
+#: templates/nutrition/_month_calendar.html:27
+#: templates/nutrition/_month_calendar.html:37
+#: templates/nutrition/_month_calendar.html:40
+msgid "How to read this calendar"
+msgstr "Miten kalenteria luetaan"
+
+#: templates/nutrition/_month_calendar.html:30
+msgid "Next month"
+msgstr "Seuraava kuukausi"
+
+#: templates/nutrition/_month_calendar.html:44
+msgid ""
+"A barbell icon marks a training day — green for a new personal record, red "
+"for an abandoned session, plain for an ordinary one. A moon marks a rest day."
+msgstr ""
+"Tankokuvake merkitsee treenipäivää — vihreä uudesta ennätyksestä, punainen "
+"keskeytetystä treenistä, tavallinen tavallisesta treenistä. Kuu merkitsee "
+"lepopäivää."
+
+#: templates/nutrition/_month_calendar.html:45
+msgid ""
+"The arrow shows how your trailing 7-day average calories compare to your "
+"target: pointing up means over, down means under; green is close, yellow is "
+"drifting, red is well off. No arrow yet means there isn't enough logged data "
+"to judge."
+msgstr ""
+"Nuoli näyttää, miten viimeisimmän 7 päivän keskimääräiset kalorisi "
+"vertautuvat tavoitteeseesi: ylöspäin tarkoittaa yli, alaspäin tarkoittaa "
+"alle; vihreä on lähellä, keltainen on ajautumassa, punainen on selvästi "
+"pielessä. Ei nuolta vielä tarkoittaa, ettei kirjattua dataa ole tarpeeksi "
+"arvioimiseen."
+
+#: templates/nutrition/_month_calendar.html:46
+msgid "Tap a day for details."
+msgstr "Napauta päivää nähdäksesi lisätiedot."
+
+#: templates/nutrition/_most_used_foods.html:14
+msgid "Most used"
+msgstr "Eniten käytetyt"
+
+#: templates/nutrition/_most_used_foods.html:43
+msgid "+ Add"
+msgstr "+ Lisää"
+
+#: templates/nutrition/_nutri_score_badge.html:3
+#, python-format
+msgid "Nutri-Score %(grade)s"
+msgstr "Nutri-Score %(grade)s"
+
+#: templates/nutrition/_nutri_score_badge.html:6
+msgid "NOVA — food processing level, 1 (unprocessed) to 4 (ultra-processed)"
+msgstr "NOVA — ruoan jalostusaste, 1 (jalostamaton) – 4 (pitkälle jalostettu)"
+
+#: templates/nutrition/_subnav.html:21
+msgid "Nutrition sections"
+msgstr "Ravinnon osiot"
+
+#: templates/nutrition/_subnav.html:22
+msgid "Overview"
+msgstr "Yleiskatsaus"
+
+#: templates/nutrition/_subnav.html:23
+msgid "Diary"
+msgstr "Päiväkirja"
+
+#: templates/nutrition/_subnav.html:24 templates/nutrition/food_list.html:3
+#: templates/nutrition/food_list.html:6
+msgid "Foods"
+msgstr "Ruoat"
+
+#: templates/nutrition/_subnav.html:25 templates/nutrition/recipe_list.html:3
+#: templates/nutrition/recipe_list.html:6
+msgid "Recipes"
+msgstr "Reseptit"
+
+#: templates/nutrition/_subnav.html:26
+#: templates/nutrition/diet_plan_list.html:3
+#: templates/nutrition/diet_plan_list.html:6
+msgid "Diet plans"
+msgstr "Ruokavaliosuunnitelmat"
+
+#: templates/nutrition/_subnav.html:27
+#: templates/nutrition/calculators_home.html:3
+#: templates/nutrition/calculators_home.html:6
+msgid "Calculators"
+msgstr "Laskurit"
+
+#: templates/nutrition/_subnav.html:28 templates/nutrition/stats.html:6
+msgid "Statistics"
+msgstr "Tilastot"
+
+#: templates/nutrition/_wizard_progress.html:2
+#, python-format
+msgid "Step %(step)s of 5"
+msgstr "Vaihe %(step)s / 5"
+
+#: templates/nutrition/calculator_bmi.html:3
+#: templates/nutrition/calculator_bmi.html:6
+#: templates/nutrition/calculators_home.html:45
+msgid "BMI calculator"
+msgstr "BMI-laskuri"
+
+#: templates/nutrition/calculator_bmi.html:9
+msgid ""
+"Body mass index — a widely used screening number, not a diagnosis. The Body "
+"weight page shows this automatically once you've logged a weight and set a "
+"height on your profile; this is the same calculation for a quick one-off "
+"check."
+msgstr ""
+"Painoindeksi (BMI) — laajasti käytetty seulontaluku, ei diagnoosi. Kehon "
+"paino -sivu näyttää tämän automaattisesti, kun olet kirjannut painon ja "
+"asettanut pituuden profiiliisi; tämä on sama laskelma nopeaa "
+"kertatarkistusta varten."
+
+#: templates/nutrition/calculator_bmi.html:20
+#: templates/nutrition/calculator_bmr_tdee.html:20
+#: templates/nutrition/calculator_body_fat.html:20
+#: templates/nutrition/calculator_macros.html:20
+#: templates/nutrition/calculator_time_to_goal.html:20
+#: templates/nutrition/calculator_waist_hip_ratio.html:20
+#: templates/nutrition/calculator_water_intake.html:20
+msgid "Calculate"
+msgstr "Laske"
+
+#: templates/nutrition/calculator_bmi.html:25
+#: templates/nutrition/calculator_bmr_tdee.html:25
+#: templates/nutrition/calculator_body_fat.html:25
+#: templates/nutrition/calculator_macros.html:25
+#: templates/nutrition/calculator_time_to_goal.html:26
+#: templates/nutrition/calculator_waist_hip_ratio.html:25
+#: templates/nutrition/calculator_water_intake.html:25
+msgid "Result"
+msgstr "Tulos"
+
+#: templates/nutrition/calculator_bmi.html:32
+msgid "Categories"
+msgstr "Luokat"
+
+#: templates/nutrition/calculator_bmi.html:64
+#: templates/nutrition/calculator_bmr_tdee.html:35
+#: templates/nutrition/calculator_body_fat.html:34
+#: templates/nutrition/calculator_macros.html:39
+#: templates/nutrition/calculator_time_to_goal.html:39
+#: templates/nutrition/calculator_waist_hip_ratio.html:32
+#: templates/nutrition/calculator_water_intake.html:30
+msgid "Back to calculators"
+msgstr "Takaisin laskureihin"
+
+#: templates/nutrition/calculator_bmr_tdee.html:3
+#: templates/nutrition/calculator_bmr_tdee.html:6
+#: templates/nutrition/calculators_home.html:13
+msgid "BMR / TDEE calculator"
+msgstr "BMR/TDEE-laskuri"
+
+#: templates/nutrition/calculator_bmr_tdee.html:9
+msgid ""
+"BMR is roughly what you'd burn lying still all day; TDEE adds your activity "
+"on top. Both are estimates (Mifflin-St Jeor)."
+msgstr ""
+"BMR on suunnilleen se, mitä kuluttaisit maaten paikallaan koko päivän; TDEE "
+"lisää päälle aktiivisuutesi. Molemmat ovat arvioita (Mifflin-St Jeor)."
+
+#: templates/nutrition/calculator_bmr_tdee.html:28
+msgid "BMR (at rest)"
+msgstr "BMR (levossa)"
+
+#: templates/nutrition/calculator_bmr_tdee.html:29
+msgid "TDEE (with activity)"
+msgstr "TDEE (aktiivisuuden kanssa)"
+
+#: templates/nutrition/calculator_body_fat.html:3
+#: templates/nutrition/calculator_body_fat.html:6
+#: templates/nutrition/calculators_home.html:29
+msgid "Body fat calculator"
+msgstr "Kehon rasvaprosenttilaskuri"
+
+#: templates/nutrition/calculator_body_fat.html:9
+msgid ""
+"The U.S. Navy tape-measure method — just a tape measure, no calipers or "
+"bioimpedance scale needed. An estimate, typically within a few percentage "
+"points of a DEXA scan."
+msgstr ""
+"Yhdysvaltain laivaston mittanauhamenetelmä — pelkkä mittanauha riittää, ei "
+"tarvita rasvapihtejä tai bioimpedanssivaakaa. Arvio, joka on tyypillisesti "
+"muutaman prosenttiyksikön päässä DEXA-mittauksesta."
+
+#: templates/nutrition/calculator_body_fat.html:30
+msgid ""
+"Couldn't estimate this from those measurements — double-check them (waist "
+"should be larger than neck)."
+msgstr ""
+"Tätä ei voitu arvioida näistä mitoista — tarkista ne (vyötärön tulisi olla "
+"kaulaa suurempi)."
+
+#: templates/nutrition/calculator_macros.html:3
+#: templates/nutrition/calculator_macros.html:6
+#: templates/nutrition/calculators_home.html:21
+msgid "Macro calculator"
+msgstr "Makrolaskuri"
+
+#: templates/nutrition/calculator_macros.html:9
+msgid ""
+"Splits a calorie target into protein, carbohydrates, and fat using this "
+"app's own default ratios for the goal you pick."
+msgstr ""
+"Jakaa kalotitavoitteen proteiiniin, hiilihydraatteihin ja rasvaan käyttäen "
+"sovelluksen omia oletussuhteita valitsemallesi tavoitteelle."
+
+#: templates/nutrition/calculator_macros.html:28
+#: templates/nutrition/dashboard.html:25 templates/nutrition/dashboard.html:49
+#: templates/nutrition/dashboard.html:108 templates/nutrition/diary_day.html:36
+#: templates/nutrition/onboarding_review.html:17
+#: templates/nutrition/recipe_detail.html:59
+msgid "Protein"
+msgstr "Proteiini"
+
+#: templates/nutrition/calculator_macros.html:29
+#: templates/nutrition/dashboard.html:29 templates/nutrition/dashboard.html:50
+#: templates/nutrition/dashboard.html:109 templates/nutrition/diary_day.html:40
+#: templates/nutrition/onboarding_review.html:18
+#: templates/nutrition/recipe_detail.html:60
+msgid "Carbohydrates"
+msgstr "Hiilihydraatit"
+
+#: templates/nutrition/calculator_macros.html:30
+#: templates/nutrition/dashboard.html:33 templates/nutrition/dashboard.html:51
+#: templates/nutrition/dashboard.html:110 templates/nutrition/diary_day.html:44
+#: templates/nutrition/onboarding_review.html:19
+#: templates/nutrition/recipe_detail.html:61
+msgid "Fat"
+msgstr "Rasva"
+
+#: templates/nutrition/calculator_macros.html:34
+msgid ""
+"This calorie target is low enough that protein and/or fat had to be reduced "
+"below their usual defaults to fit."
+msgstr ""
+"Tämä kaloritavoite on niin matala, että proteiinia ja/tai rasvaa piti "
+"vähentää tavallista pienemmäksi, jotta ne mahtuvat."
+
+#: templates/nutrition/calculator_time_to_goal.html:3
+#: templates/nutrition/calculator_time_to_goal.html:6
+#: templates/nutrition/calculators_home.html:61
+msgid "Time to goal weight calculator"
+msgstr "Tavoitepainoon kuluva aika -laskuri"
+
+#: templates/nutrition/calculator_time_to_goal.html:9
+msgid ""
+"At a chosen weekly rate, roughly how long to reach a target weight — a plain "
+"projection from the numbers you enter, not a promise."
+msgstr ""
+"Valitulla viikkovauhdilla, karkeasti kuinka kauan tavoitepainoon kestää — "
+"pelkkä projektio antamistasi luvuista, ei lupaus."
+
+#: templates/nutrition/calculator_time_to_goal.html:28
+#, python-format
+msgid "%(weeks)s weeks"
+msgstr "%(weeks)s viikkoa"
+
+#: templates/nutrition/calculator_time_to_goal.html:30
+#, python-format
+msgid "Around %(date)s, at this rate."
+msgstr "Noin %(date)s, tällä nopeudella."
+
+#: templates/nutrition/calculator_time_to_goal.html:34
+msgid ""
+"That rate doesn't move toward your target — check the sign (negative to "
+"lose, positive to gain) matches the direction you actually need to go."
+msgstr ""
+"Tämä nopeus ei liiku kohti tavoitettasi — tarkista, että etumerkki "
+"(negatiivinen laihtumiseen, positiivinen lihomiseen) vastaa suuntaa johon "
+"oikeasti haluat mennä."
+
+#: templates/nutrition/calculator_waist_hip_ratio.html:3
+#: templates/nutrition/calculator_waist_hip_ratio.html:6
+#: templates/nutrition/calculators_home.html:53
+msgid "Waist-to-hip ratio calculator"
+msgstr "Vyötärö-lantiosuhde-laskuri"
+
+#: templates/nutrition/calculator_waist_hip_ratio.html:9
+msgid ""
+"Where you carry weight, not just how much — a widely used screening number "
+"(WHO), not a diagnosis."
+msgstr ""
+"Mihin kannat painoa, ei vain kuinka paljon — laajasti käytetty seulontaluku "
+"(WHO), ei diagnoosi."
+
+#: templates/nutrition/calculator_water_intake.html:3
+#: templates/nutrition/calculator_water_intake.html:6
+#: templates/nutrition/calculators_home.html:37
+msgid "Water intake calculator"
+msgstr "Vedenjuontilaskuri"
+
+#: templates/nutrition/calculator_water_intake.html:9
+msgid ""
+"A rough daily fluid target based on bodyweight and activity — real needs "
+"vary with climate and sweat rate, so treat this as a starting point."
+msgstr ""
+"Karkea päivittäinen nesteytystavoite painon ja aktiivisuuden perusteella — "
+"todellinen tarve vaihtelee ilmaston ja hikoilun mukaan, joten pidä tätä "
+"lähtökohtana."
+
+#: templates/nutrition/calculator_water_intake.html:26
+msgid "day"
+msgstr "vrk"
+
+#: templates/nutrition/calculators_home.html:9
+msgid ""
+"Quick, standalone estimates — none of these are saved or change your targets."
+msgstr ""
+"Nopeita, itsenäisiä arvioita — mitään näistä ei tallenneta eivätkä ne muuta "
+"tavoitteitasi."
+
+#: templates/nutrition/calculators_home.html:14
+msgid "How many calories your body burns at rest, and in total."
+msgstr "Kuinka monta kaloria kehosi kuluttaa levossa ja yhteensä."
+
+#: templates/nutrition/calculators_home.html:22
+msgid "Split a calorie target into protein, carbohydrates, and fat."
+msgstr "Jaa kaloritavoite proteiiniin, hiilihydraatteihin ja rasvaan."
+
+#: templates/nutrition/calculators_home.html:30
+msgid "Estimate body fat percentage from a tape measure (U.S. Navy method)."
+msgstr ""
+"Arvioi kehon rasvaprosentti mittanauhalla (Yhdysvaltain laivaston menetelmä)."
+
+#: templates/nutrition/calculators_home.html:38
+msgid "A rough daily fluid target based on your bodyweight and activity."
+msgstr ""
+"Karkea päivittäinen nestetavoite painosi ja aktiivisuutesi perusteella."
+
+#: templates/nutrition/calculators_home.html:46
+msgid ""
+"Body mass index and what it means for your height, without logging a weight "
+"first."
+msgstr ""
+"Painoindeksi ja mitä se tarkoittaa pituudellesi, ilman että sinun tarvitsee "
+"ensin kirjata painoa."
+
+#: templates/nutrition/calculators_home.html:54
+msgid ""
+"Where you carry weight, not just how much — a tape measure and one more "
+"number."
+msgstr ""
+"Mihin kannat painoa, ei vain kuinka paljon — mittanauha ja yksi luku lisää."
+
+#: templates/nutrition/calculators_home.html:62
+msgid "At a chosen weekly rate, roughly how long to reach a target weight."
+msgstr ""
+"Valitulla viikkovauhdilla, karkeasti kuinka kauan tavoitepainoon kestää."
+
+#: templates/nutrition/calculators_home.html:67
+#: templates/nutrition/diary_day.html:88
+#: templates/nutrition/diet_plan_list.html:37
+#: templates/nutrition/food_list.html:44
+#: templates/nutrition/recipe_list.html:44 templates/nutrition/stats.html:44
+msgid "Back to nutrition"
+msgstr "Takaisin ravintoon"
+
+#: templates/nutrition/dashboard.html:7
+msgid ""
+"Based on whether you completed a workout today — this doesn't change your "
+"calorie target automatically."
+msgstr ""
+"Perustuu siihen, teitkö tänään treenin — tämä ei muuta kalorikohdettasi "
+"automaattisesti."
+
+#: templates/nutrition/dashboard.html:9
+msgid "Training day"
+msgstr "Treenipäivä"
+
+#: templates/nutrition/dashboard.html:11
+msgid "Rest day"
+msgstr "Lepopäivä"
+
+#: templates/nutrition/dashboard.html:17
+msgid "Today so far"
+msgstr "Tähän mennessä tänään"
+
+#: templates/nutrition/dashboard.html:38
+msgid "Open food diary"
+msgstr "Avaa ruokapäiväkirja"
+
+#: templates/nutrition/dashboard.html:39
+msgid "+ Log food now"
+msgstr "+ Kirjaa ruoka nyt"
+
+#: templates/nutrition/dashboard.html:44
+msgid "Today's plan"
+msgstr "Tämän päivän suunnitelma"
+
+#: templates/nutrition/dashboard.html:57
+msgid "Nothing planned"
+msgstr "Ei mitään suunniteltuna"
+
+#: templates/nutrition/dashboard.html:60
+msgid "Open plan"
+msgstr "Avaa suunnitelma"
+
+#: templates/nutrition/dashboard.html:67
+msgid "Is your current target working?"
+msgstr "Toimiiko nykyinen tavoitteesi?"
+
+#: templates/nutrition/dashboard.html:70
+#: templates/workouts/_performed_exercise_card.html:50
+msgid "High confidence"
+msgstr "Korkea luotettavuus"
+
+#: templates/nutrition/dashboard.html:71
+#: templates/workouts/_performed_exercise_card.html:49
+msgid "Medium confidence"
+msgstr "Kohtalainen luotettavuus"
+
+#: templates/nutrition/dashboard.html:72
+#: templates/workouts/_performed_exercise_card.html:48
+msgid "Low confidence"
+msgstr "Matala luotettavuus"
+
+#: templates/nutrition/dashboard.html:77
+#, python-format
+msgid "Adjust to %(calories)s kcal/day"
+msgstr "Säädä %(calories)s kcal:aan/vrk"
+
+#: templates/nutrition/dashboard.html:94
+msgid "Weight trend"
+msgstr "Painotrendi"
+
+#: templates/nutrition/dashboard.html:102
+msgid "Daily target"
+msgstr "Päivätavoite"
+
+#: templates/nutrition/dashboard.html:104
+#: templates/nutrition/onboarding_review.html:13
+#, python-format
+msgid "%(calories)s kcal/day"
+msgstr "%(calories)s kcal/vrk"
+
+#: templates/nutrition/dashboard.html:119
+msgid "Current goal"
+msgstr "Nykyinen tavoite"
+
+#: templates/nutrition/diary_add_entry.html:3
+#: templates/nutrition/diary_add_entry.html:6
+msgid "Add food"
+msgstr "Lisää ruoka"
+
+#: templates/nutrition/diary_add_entry.html:57
+#: templates/nutrition/diet_plan_meal_item_form.html:26
+#: templates/nutrition/food_browse.html:33
+#: templates/nutrition/recipe_ingredient_form.html:26
+msgid "e.g. chicken breast, or a barcode number"
+msgstr "esim. kananrinta tai viivakoodi"
+
+#: templates/nutrition/diary_add_entry.html:65
+#: templates/nutrition/diary_entry_form.html:23
+msgid "Back to diary"
+msgstr "Takaisin päiväkirjaan"
+
+#: templates/nutrition/diary_day.html:3 templates/nutrition/diary_day.html:7
+msgid "Food diary"
+msgstr "Ruokapäiväkirja"
+
+#: templates/nutrition/diary_day.html:15
+msgid "Previous day"
+msgstr "Edellinen päivä"
+
+#: templates/nutrition/diary_day.html:16
+msgid "Jump to date"
+msgstr "Siirry päivämäärään"
+
+#: templates/nutrition/diary_day.html:18
+msgid "Next day"
+msgstr "Seuraava päivä"
+
+#: templates/nutrition/diary_day.html:22
+msgid "Today's nutrition"
+msgstr "Tämän päivän ravinto"
+
+#: templates/nutrition/diary_day.html:63
+msgid "Remove this entry?"
+msgstr "Poistetaanko tämä merkintä?"
+
+#: templates/nutrition/diary_day.html:70
+msgid "Nothing logged yet."
+msgstr "Ei vielä kirjauksia."
+
+#: templates/nutrition/diary_day.html:72
+msgid "+ Add food"
+msgstr "+ Lisää ruoka"
+
+#: templates/nutrition/diary_day.html:77
+msgid "Copy this day to another date"
+msgstr "Kopioi tämä päivä toiselle päivälle"
+
+#: templates/nutrition/diary_day.html:81
+msgid "Copy to date"
+msgstr "Kopioi päivälle"
+
+#: templates/nutrition/diary_day.html:82
+msgid "Copy"
+msgstr "Kopioi"
+
+#: templates/nutrition/diary_day.html:87
+msgid "Manage foods"
+msgstr "Hallitse ruokia"
+
+#: templates/nutrition/diary_entry_form.html:3
+msgid "Edit entry"
+msgstr "Muokkaa merkintää"
+
+#: templates/nutrition/diet_plan_detail.html:13
+#: templates/nutrition/diet_plan_list.html:24
+msgid "Activate"
+msgstr "Ota käyttöön"
+
+#: templates/nutrition/diet_plan_detail.html:18
+msgid "protein"
+msgstr "proteiini"
+
+#: templates/nutrition/diet_plan_detail.html:18
+msgid "carbs"
+msgstr "hiilarit"
+
+#: templates/nutrition/diet_plan_detail.html:18
+msgid "fat"
+msgstr "rasva"
+
+#: templates/nutrition/diet_plan_detail.html:20
+msgid ""
+"Varies across the week — same daily calories/macros every day, different "
+"meals."
+msgstr ""
+"Vaihtelee viikon aikana — samat päivittäiset kalorit/makrot joka päivä, eri "
+"ateriat."
+
+#: templates/nutrition/diet_plan_detail.html:62
 msgid "Log this plan to your diary"
 msgstr "Kirjaa tämä suunnitelma päiväkirjaasi"
 
+#: templates/nutrition/diet_plan_detail.html:64
+msgid "Logs whichever day of the week the date below falls on."
+msgstr "Kirjaa sen viikonpäivän mukaan, johon alla oleva päivämäärä osuu."
+
+#: templates/nutrition/diet_plan_detail.html:72
+#: templates/nutrition/recipe_detail.html:92
 msgid "Log it"
 msgstr "Kirjaa"
 
+#: templates/nutrition/diet_plan_detail.html:75
+#: templates/nutrition/diet_plan_form.html:25
 msgid "Back to diet plans"
 msgstr "Takaisin ruokavaliosuunnitelmiin"
 
+#: templates/nutrition/diet_plan_detail.html:79
 msgid "Delete this plan?"
 msgstr "Poistetaanko tämä suunnitelma?"
 
+#: templates/nutrition/diet_plan_detail.html:81
 msgid "Delete plan"
 msgstr "Poista suunnitelma"
 
+#: templates/nutrition/diet_plan_form.html:3
 msgid "New diet plan"
 msgstr "Uusi ruokavaliosuunnitelma"
 
+#: templates/nutrition/diet_plan_form.html:6
 msgid "Build a diet plan"
 msgstr "Rakenna ruokavaliosuunnitelma"
 
-msgid "We'll suggest one food or recipe per meal from your own library, scaled to fit — you can swap any of them afterward."
-msgstr "Ehdotamme yhtä ruokaa tai reseptiä per ateria omasta kirjastostasi, skaalattuna sopivaksi — voit vaihtaa minkä tahansa niistä jälkeenpäin."
+#: templates/nutrition/diet_plan_form.html:9
+msgid ""
+"We'll suggest one food or recipe per meal from your own library, scaled to "
+"fit — you can swap any of them afterward."
+msgstr ""
+"Ehdotamme yhtä ruokaa tai reseptiä per ateria omasta kirjastostasi, "
+"skaalattuna sopivaksi — voit vaihtaa minkä tahansa niistä jälkeenpäin."
 
+#: templates/nutrition/diet_plan_form.html:22
 msgid "Generate plan"
 msgstr "Luo suunnitelma"
 
+#: templates/nutrition/diet_plan_item_form.html:3
+#: templates/nutrition/diet_plan_item_form.html:6
 msgid "Swap item"
 msgstr "Vaihda kohde"
 
+#: templates/nutrition/diet_plan_item_form.html:23
+#: templates/nutrition/diet_plan_meal_item_form.html:33
 msgid "Back to plan"
 msgstr "Takaisin suunnitelmaan"
 
+#: templates/nutrition/diet_plan_list.html:7
 msgid "+ New plan"
 msgstr "+ Uusi suunnitelma"
 
+#: templates/nutrition/diet_plan_list.html:33
 msgid "No diet plans yet."
 msgstr "Ei vielä ruokavaliosuunnitelmia."
 
+#: templates/nutrition/diet_plan_meal_item_form.html:3
+#: templates/nutrition/diet_plan_meal_item_form.html:6
+#, python-format
 msgid "Add item to %(name)s"
 msgstr "Lisää kohde ateriaan %(name)s"
 
+#: templates/nutrition/food_browse.html:3
+#: templates/nutrition/food_browse.html:6
+#: templates/nutrition/food_category.html:3
+#: templates/nutrition/food_category.html:6
+#: templates/nutrition/food_list.html:8
 msgid "Import from OpenFoodFacts"
 msgstr "Tuo OpenFoodFactsista"
 
-msgid "Search or browse by category to add a food to the shared library — anyone on this instance can then find and log it."
-msgstr "Hae tai selaa kategorioittain lisätäksesi ruoan jaettuun kirjastoon — kuka tahansa tämän palvelimen käyttäjä voi sen jälkeen löytää ja kirjata sen."
+#: templates/nutrition/food_browse.html:10
+msgid ""
+"Search or browse by category to add a food to the shared library — anyone on "
+"this instance can then find and log it."
+msgstr ""
+"Hae tai selaa kategorioittain lisätäksesi ruoan jaettuun kirjastoon — kuka "
+"tahansa tämän palvelimen käyttäjä voi sen jälkeen löytää ja kirjata sen."
 
+#: templates/nutrition/food_browse.html:20
+msgid ""
+"Search to add a food to the shared library — anyone on this instance can "
+"then find and log it. Category browsing isn't available right now."
+msgstr ""
+"Hae lisätäksesi ruoan jaettuun kirjastoon — kuka tahansa tämän palvelimen "
+"käyttäjä voi sen jälkeen löytää ja kirjata sen. Kategorioittain selaaminen "
+"ei ole juuri nyt käytettävissä."
+
+#: templates/nutrition/food_browse.html:41
 msgid "Browse by category"
 msgstr "Selaa kategorioittain"
 
+#: templates/nutrition/food_browse.html:49
+#: templates/nutrition/food_form.html:24
 msgid "Back to foods"
 msgstr "Takaisin ruokiin"
 
+#: templates/nutrition/food_category.html:25
 msgid "Nothing found in this category right now."
 msgstr "Tästä kategoriasta ei löytynyt tällä hetkellä mitään."
 
+#: templates/nutrition/food_category.html:29
 msgid "Back to browse"
 msgstr "Takaisin selaamiseen"
 
+#: templates/nutrition/food_form.html:3 templates/nutrition/food_form.html:6
 msgid "New food"
 msgstr "Uusi ruoka"
 
+#: templates/nutrition/food_list.html:9
 msgid "+ New food"
 msgstr "+ Uusi ruoka"
 
+#: templates/nutrition/food_list.html:16 templates/nutrition/food_list.html:19
+#: templates/nutrition/recipe_list.html:13
+#: templates/nutrition/recipe_list.html:16
 msgid "Search"
 msgstr "Hae"
 
+#: templates/nutrition/food_list.html:40
 msgid "No foods yet."
 msgstr "Ei vielä ruokia."
 
+#: templates/nutrition/onboarding_activity.html:3
+#: templates/nutrition/onboarding_activity_level.html:3
+#: templates/nutrition/onboarding_body.html:3
+#: templates/nutrition/onboarding_goal.html:3
+#: templates/nutrition/onboarding_review.html:3
 msgid "Nutrition setup"
 msgstr "Ravinnon käyttöönotto"
 
+#: templates/nutrition/onboarding_activity.html:6
 msgid "How active are you?"
 msgstr "Kuinka aktiivinen olet?"
 
-msgid "Everything here is optional — the more you tell us, the better the estimate. We'll suggest an activity level from your answers, not ask you to guess it yourself."
-msgstr "Kaikki tässä on vapaaehtoista — mitä enemmän kerrot, sitä tarkempi arvio. Ehdotamme aktiivisuustasoa vastaustesi perusteella emmekä pyydä sinua arvaamaan sitä itse."
+#: templates/nutrition/onboarding_activity.html:9
+msgid ""
+"Everything here is optional — the more you tell us, the better the estimate. "
+"We'll suggest an activity level from your answers, not ask you to guess it "
+"yourself."
+msgstr ""
+"Kaikki tässä on vapaaehtoista — mitä enemmän kerrot, sitä tarkempi arvio. "
+"Ehdotamme aktiivisuustasoa vastaustesi perusteella emmekä pyydä sinua "
+"arvaamaan sitä itse."
 
+#: templates/nutrition/onboarding_activity.html:22
+#: templates/nutrition/onboarding_activity_level.html:26
+#: templates/nutrition/onboarding_body.html:22
 msgid "Continue"
 msgstr "Jatka"
 
+#: templates/nutrition/onboarding_activity_level.html:6
 msgid "Confirm your activity level"
 msgstr "Vahvista aktiivisuustasosi"
 
+#: templates/nutrition/onboarding_activity_level.html:25
 msgid "This is only a suggestion — change it if you know it's wrong."
 msgstr "Tämä on vain ehdotus — muuta sitä, jos tiedät sen olevan väärin."
 
+#: templates/nutrition/onboarding_body.html:6
 msgid "Let's set up your nutrition"
 msgstr "Otetaan ravinnonseuranta käyttöön"
 
-msgid "A few questions about your body — used to estimate how many calories you need."
-msgstr "Muutama kysymys kehostasi — käytetään arvioimaan, kuinka paljon tarvitset kaloreita."
+#: templates/nutrition/onboarding_body.html:9
+msgid ""
+"A few questions about your body — used to estimate how many calories you "
+"need."
+msgstr ""
+"Muutama kysymys kehostasi — käytetään arvioimaan, kuinka paljon tarvitset "
+"kaloreita."
 
+#: templates/nutrition/onboarding_body.html:26
 msgid "Just want a quick number without setting anything up?"
 msgstr "Haluatko vain nopean luvun ilman mitään käyttöönottoa?"
 
+#: templates/nutrition/onboarding_body.html:27
 msgid "Try the calculators"
 msgstr "Kokeile laskureita"
 
+#: templates/nutrition/onboarding_goal.html:6
 msgid "What's your goal?"
 msgstr "Mikä on tavoitteesi?"
 
+#: templates/nutrition/onboarding_goal.html:27
 msgid "See my targets"
 msgstr "Näytä tavoitteeni"
 
+#: templates/nutrition/onboarding_review.html:6
 msgid "Your estimated targets"
 msgstr "Arvioidut tavoitteesi"
 
-msgid "These are estimates, not exact figures — you'll be able to see how well they're actually working once you've logged some data, and adjust anytime."
-msgstr "Nämä ovat arvioita, ei tarkkoja lukuja — näet, kuinka hyvin ne todella toimivat, kun olet kirjannut dataa, ja voit säätää niitä milloin tahansa."
+#: templates/nutrition/onboarding_review.html:24
+msgid ""
+"These are estimates, not exact figures — you'll be able to see how well "
+"they're actually working once you've logged some data, and adjust anytime."
+msgstr ""
+"Nämä ovat arvioita, ei tarkkoja lukuja — näet, kuinka hyvin ne todella "
+"toimivat, kun olet kirjannut dataa, ja voit säätää niitä milloin tahansa."
 
+#: templates/nutrition/onboarding_review.html:28
 msgid "Save and start tracking"
 msgstr "Tallenna ja aloita seuranta"
 
-msgid "Ingredients"
-msgstr "Ainesosat"
-
-msgid "Remove this ingredient?"
-msgstr "Poistetaanko tämä ainesosa?"
-
-msgid "No ingredients yet."
-msgstr "Ei vielä ainesosia."
-
-msgid "+ Add ingredient"
-msgstr "+ Lisää ainesosa"
-
-msgid "Total"
-msgstr "Yhteensä"
-
-msgid "Per serving (of %(servings)s)"
-msgstr "Per annos (%(servings)s annoksesta)"
-
-msgid "Fiber"
-msgstr "Kuitu"
-
-msgid "Sugar"
-msgstr "Sokeri"
-
-msgid "Saturated fat"
-msgstr "Tyydyttynyt rasva"
-
-msgid "Sodium"
-msgstr "Natrium"
-
-msgid "Fiber, sugar, saturated fat, and sodium show here once at least one ingredient has that data (e.g. imported from OpenFoodFacts)."
-msgstr "Kuitu, sokeri, tyydyttynyt rasva ja natrium näkyvät täällä, kun vähintään yhdellä ainesosalla on nämä tiedot (esim. OpenFoodFactsista tuotuna)."
-
-msgid "Log to diary"
-msgstr "Kirjaa päiväkirjaan"
-
-msgid "Back to recipes"
-msgstr "Takaisin resepteihin"
-
-msgid "Delete this recipe?"
-msgstr "Poistetaanko tämä resepti?"
-
-msgid "Delete recipe"
-msgstr "Poista resepti"
-
-msgid "Recipe"
-msgstr "Resepti"
-
-msgid "Edit recipe"
-msgstr "Muokkaa reseptiä"
-
-msgid "New recipe"
-msgstr "Uusi resepti"
-
-msgid "Edit ingredient"
-msgstr "Muokkaa ainesosaa"
-
-msgid "Back to recipe"
-msgstr "Takaisin reseptiin"
-
-msgid "Add ingredient to %(name)s"
-msgstr "Lisää ainesosa reseptiin %(name)s"
-
-msgid "+ New recipe"
-msgstr "+ Uusi resepti"
-
-msgid "%(calories)s kcal/serving"
-msgstr "%(calories)s kcal/annos"
-
-msgid "No recipes match your search."
-msgstr "Hakuehdoilla ei löytynyt reseptejä."
-
-msgid "No recipes yet."
-msgstr "Ei vielä reseptejä."
-
-msgid "Nutrition statistics"
-msgstr "Ravinnon tilastot"
-
-msgid "Days logged"
-msgstr "Kirjattuja päiviä"
-
-msgid "Average calories"
-msgstr "Keskimääräiset kalorit"
-
-msgid "Average protein"
-msgstr "Keskimääräinen proteiini"
-
-msgid "Average carbohydrates"
-msgstr "Keskimääräiset hiilihydraatit"
-
-msgid "Average fat"
-msgstr "Keskimääräinen rasva"
-
-msgid "Averages only count days you actually logged something — a day with nothing logged isn't counted as zero calories."
-msgstr "Keskiarvot lasketaan vain päiviltä, joille kirjasit jotain — päivää, jolle ei ole kirjattu mitään, ei lasketa nolla kaloriksi."
-
-msgid "Daily calories (last 30 days)"
-msgstr "Päivittäiset kalorit (viimeiset 30 päivää)"
-
-msgid "Log a few days in your food diary to see your trend here."
-msgstr "Kirjaa muutama päivä ruokapäiväkirjaasi nähdäksesi trendin täällä."
-
-msgid "Add exercise"
-msgstr "Lisää liike"
-
-msgid "Remove this exercise from the workout?"
-msgstr "Poistetaanko tämä liike treenistä?"
-
-msgid "Remove exercise"
-msgstr "Poista liike"
-
-msgid "Delete program"
-msgstr "Poista ohjelma"
-
-msgid "Delete <strong>%(name)s</strong> and all of its workouts and exercises? This cannot be undone."
-msgstr "Poistetaanko <strong>%(name)s</strong> sekä kaikki sen treenit ja liikkeet? Tätä ei voi perua."
-
-msgid "Built-in template"
-msgstr "Sisäänrakennettu malli"
-
-msgid "My template"
-msgstr "Oma malli"
-
-msgid "Version %(version)s · updated %(updated)s"
-msgstr "Versio %(version)s · päivitetty %(updated)s"
-
-msgid "Copy to a new program"
-msgstr "Kopioi uudeksi ohjelmaksi"
-
-msgid "Delete this workout and its exercises?"
-msgstr "Poistetaanko tämä treeni ja sen liikkeet?"
-
-msgid "No exercises yet."
-msgstr "Ei vielä liikkeitä."
-
-msgid "Start workout"
-msgstr "Aloita treeni"
-
-msgid "No workouts yet."
-msgstr "Ei vielä treenejä."
-
-msgid "Add workout"
-msgstr "Lisää treeni"
-
-msgid "Delete this program? This cannot be undone."
-msgstr "Poistetaanko tämä ohjelma? Tätä ei voi perua."
-
-msgid "Back to programs"
-msgstr "Takaisin ohjelmiin"
-
-msgid "Edit program"
-msgstr "Muokkaa ohjelmaa"
-
-msgid "New program"
-msgstr "Uusi ohjelma"
-
-msgid "My programs"
-msgstr "Omat ohjelmat"
-
+#: templates/nutrition/recipe_detail.html:10
+#: templates/nutrition/recipe_list.html:24
+#: templates/programs/program_list.html:14
 msgid "Template"
 msgstr "Malli"
 
+#: templates/nutrition/recipe_detail.html:16
+#, python-format
+msgid ""
+"Tagged for %(meal)s — the diet-plan builder only ever suggests this recipe "
+"for that meal."
+msgstr ""
+"Merkitty ateriaksi %(meal)s — ruokavaliosuunnitelman rakennin ehdottaa tätä "
+"reseptiä vain kyseiselle aterialle."
+
+#: templates/nutrition/recipe_detail.html:25
+msgid "Ingredients"
+msgstr "Ainesosat"
+
+#: templates/nutrition/recipe_detail.html:36
+msgid "Remove this ingredient?"
+msgstr "Poistetaanko tämä ainesosa?"
+
+#: templates/nutrition/recipe_detail.html:44
+msgid "No ingredients yet."
+msgstr "Ei vielä ainesosia."
+
+#: templates/nutrition/recipe_detail.html:47
+msgid "+ Add ingredient"
+msgstr "+ Lisää ainesosa"
+
+#: templates/nutrition/recipe_detail.html:55
+msgid "Total"
+msgstr "Yhteensä"
+
+#: templates/nutrition/recipe_detail.html:55
+#, python-format
+msgid "Per serving (of %(servings)s)"
+msgstr "Per annos (%(servings)s annoksesta)"
+
+#: templates/nutrition/recipe_detail.html:63
+msgid "Fiber"
+msgstr "Kuitu"
+
+#: templates/nutrition/recipe_detail.html:66
+msgid "Sugar"
+msgstr "Sokeri"
+
+#: templates/nutrition/recipe_detail.html:69
+msgid "Saturated fat"
+msgstr "Tyydyttynyt rasva"
+
+#: templates/nutrition/recipe_detail.html:72
+msgid "Sodium"
+msgstr "Natrium"
+
+#: templates/nutrition/recipe_detail.html:77
+msgid ""
+"Fiber, sugar, saturated fat, and sodium show here once at least one "
+"ingredient has that data (e.g. imported from OpenFoodFacts)."
+msgstr ""
+"Kuitu, sokeri, tyydyttynyt rasva ja natrium näkyvät täällä, kun vähintään "
+"yhdellä ainesosalla on nämä tiedot (esim. OpenFoodFactsista tuotuna)."
+
+#: templates/nutrition/recipe_detail.html:83
+msgid "Log to diary"
+msgstr "Kirjaa päiväkirjaan"
+
+#: templates/nutrition/recipe_detail.html:95
+#: templates/nutrition/recipe_form.html:23
+msgid "Back to recipes"
+msgstr "Takaisin resepteihin"
+
+#: templates/nutrition/recipe_detail.html:100
+msgid "Delete this recipe?"
+msgstr "Poistetaanko tämä resepti?"
+
+#: templates/nutrition/recipe_detail.html:102
+msgid "Delete recipe"
+msgstr "Poista resepti"
+
+#: templates/nutrition/recipe_form.html:3
+msgid "Recipe"
+msgstr "Resepti"
+
+#: templates/nutrition/recipe_form.html:6
+msgid "Edit recipe"
+msgstr "Muokkaa reseptiä"
+
+#: templates/nutrition/recipe_form.html:6
+msgid "New recipe"
+msgstr "Uusi resepti"
+
+#: templates/nutrition/recipe_ingredient_edit_form.html:3
+msgid "Edit ingredient"
+msgstr "Muokkaa ainesosaa"
+
+#: templates/nutrition/recipe_ingredient_edit_form.html:23
+#: templates/nutrition/recipe_ingredient_form.html:33
+msgid "Back to recipe"
+msgstr "Takaisin reseptiin"
+
+#: templates/nutrition/recipe_ingredient_form.html:3
+#: templates/nutrition/recipe_ingredient_form.html:6
+#, python-format
+msgid "Add ingredient to %(name)s"
+msgstr "Lisää ainesosa reseptiin %(name)s"
+
+#: templates/nutrition/recipe_list.html:7
+msgid "+ New recipe"
+msgstr "+ Uusi resepti"
+
+#: templates/nutrition/recipe_list.html:28
+#, python-format
+msgid "%(calories)s kcal/serving"
+msgstr "%(calories)s kcal/annos"
+
+#: templates/nutrition/recipe_list.html:36
+msgid "No recipes match your search."
+msgstr "Hakuehdoilla ei löytynyt reseptejä."
+
+#: templates/nutrition/recipe_list.html:40
+msgid "No recipes yet."
+msgstr "Ei vielä reseptejä."
+
+#: templates/nutrition/stats.html:3
+msgid "Nutrition statistics"
+msgstr "Ravinnon tilastot"
+
+#: templates/nutrition/stats.html:12
+msgid "Days logged"
+msgstr "Kirjattuja päiviä"
+
+#: templates/nutrition/stats.html:13
+msgid "Average calories"
+msgstr "Keskimääräiset kalorit"
+
+#: templates/nutrition/stats.html:19
+msgid "Average protein"
+msgstr "Keskimääräinen proteiini"
+
+#: templates/nutrition/stats.html:23
+msgid "Average carbohydrates"
+msgstr "Keskimääräiset hiilihydraatit"
+
+#: templates/nutrition/stats.html:27
+msgid "Average fat"
+msgstr "Keskimääräinen rasva"
+
+#: templates/nutrition/stats.html:33
+msgid ""
+"Averages only count days you actually logged something — a day with nothing "
+"logged isn't counted as zero calories."
+msgstr ""
+"Keskiarvot lasketaan vain päiviltä, joille kirjasit jotain — päivää, jolle "
+"ei ole kirjattu mitään, ei lasketa nolla kaloriksi."
+
+#: templates/nutrition/stats.html:36
+msgid "Daily calories (last 30 days)"
+msgstr "Päivittäiset kalorit (viimeiset 30 päivää)"
+
+#: templates/nutrition/stats.html:41
+msgid "Log a few days in your food diary to see your trend here."
+msgstr "Kirjaa muutama päivä ruokapäiväkirjaasi nähdäksesi trendin täällä."
+
+#: templates/programs/prescription_form.html:3
+#: templates/programs/prescription_form.html:6
+#: templates/programs/program_detail.html:67
+#: templates/workouts/_train_panel.html:93
+#: templates/workouts/performed_exercise_form.html:3
+#: templates/workouts/performed_exercise_form.html:6
+#: templates/workouts/session_detail.html:24
+msgid "Add exercise"
+msgstr "Lisää liike"
+
+#: templates/programs/prescription_form.html:23
+msgid "Remove this exercise from the workout?"
+msgstr "Poistetaanko tämä liike treenistä?"
+
+#: templates/programs/prescription_form.html:25
+msgid "Remove exercise"
+msgstr "Poista liike"
+
+#: templates/programs/program_confirm_delete.html:3
+#: templates/programs/program_confirm_delete.html:6
+#: templates/programs/program_detail.html:85
+msgid "Delete program"
+msgstr "Poista ohjelma"
+
+#: templates/programs/program_confirm_delete.html:11
+#, python-format
+msgid ""
+"Delete <strong>%(name)s</strong> and all of its workouts and exercises? This "
+"cannot be undone."
+msgstr ""
+"Poistetaanko <strong>%(name)s</strong> sekä kaikki sen treenit ja liikkeet? "
+"Tätä ei voi perua."
+
+#: templates/programs/program_detail.html:14
+msgid "Built-in template"
+msgstr "Sisäänrakennettu malli"
+
+#: templates/programs/program_detail.html:16
+msgid "My template"
+msgstr "Oma malli"
+
+#: templates/programs/program_detail.html:20
+#, python-format
+msgid "Version %(version)s · updated %(updated)s"
+msgstr "Versio %(version)s · päivitetty %(updated)s"
+
+#: templates/programs/program_detail.html:25
+msgid "Copy to a new program"
+msgstr "Kopioi uudeksi ohjelmaksi"
+
+#: templates/programs/program_detail.html:42
+#: templates/programs/workout_form.html:23
+msgid "Delete this workout and its exercises?"
+msgstr "Poistetaanko tämä treeni ja sen liikkeet?"
+
+#: templates/programs/program_detail.html:62
+#: templates/workouts/_train_panel.html:92
+#: templates/workouts/session_detail.html:19
+msgid "No exercises yet."
+msgstr "Ei vielä liikkeitä."
+
+#: templates/programs/program_detail.html:72
+msgid "Start workout"
+msgstr "Aloita treeni"
+
+#: templates/programs/program_detail.html:77
+msgid "No workouts yet."
+msgstr "Ei vielä treenejä."
+
+#: templates/programs/program_detail.html:82
+msgid "Add workout"
+msgstr "Lisää treeni"
+
+#: templates/programs/program_detail.html:83
+msgid "Delete this program? This cannot be undone."
+msgstr "Poistetaanko tämä ohjelma? Tätä ei voi perua."
+
+#: templates/programs/program_detail.html:89
+#: templates/workouts/session_list.html:23
+msgid "Back to programs"
+msgstr "Takaisin ohjelmiin"
+
+#: templates/programs/program_form.html:3
+#: templates/programs/program_form.html:6
+msgid "Edit program"
+msgstr "Muokkaa ohjelmaa"
+
+#: templates/programs/program_form.html:3
+#: templates/programs/program_form.html:6
+msgid "New program"
+msgstr "Uusi ohjelma"
+
+#: templates/programs/program_list.html:9
+msgid "My programs"
+msgstr "Omat ohjelmat"
+
+#: templates/programs/program_list.html:21
 msgid "No programs yet."
 msgstr "Ei vielä ohjelmia."
 
+#: templates/programs/program_list.html:22
 msgid "Create one, or copy a template below to get started."
 msgstr "Luo uusi tai kopioi malli alta aloittaaksesi."
 
+#: templates/programs/program_list.html:26
 msgid "Built-in templates"
 msgstr "Sisäänrakennetut mallit"
 
+#: templates/programs/program_list.html:37
 msgid "Copy to my programs"
 msgstr "Kopioi omiin ohjelmiin"
 
+#: templates/programs/program_list.html:42
 msgid "No built-in templates available."
 msgstr "Sisäänrakennettuja malleja ei ole saatavilla."
 
+#: templates/programs/workout_form.html:3
+#: templates/programs/workout_form.html:6
 msgid "Edit workout"
 msgstr "Muokkaa treeniä"
 
+#: templates/programs/workout_form.html:3
+#: templates/programs/workout_form.html:6
 msgid "New workout"
 msgstr "Uusi treeni"
 
+#: templates/programs/workout_form.html:25
+#: templates/workouts/session_detail.html:38
 msgid "Delete workout"
 msgstr "Poista treeni"
 
+#: templates/records/_pr_toasts.html:29
 msgid "New PR"
 msgstr "Uusi ennätys"
 
+#: templates/records/_pr_toasts.html:32
 msgid "Max weight:"
 msgstr "Maksimipaino:"
 
+#: templates/records/_pr_toasts.html:34
+#, python-format
 msgid "Most reps at %(weight)s:"
 msgstr "Eniten toistoja painolla %(weight)s:"
 
+#: templates/records/_pr_toasts.html:40
 msgid "Set volume:"
 msgstr "Sarjan volyymi:"
 
+#: templates/records/_pr_toasts.html:42
 msgid "Session volume:"
 msgstr "Treenin volyymi:"
 
+#: templates/records/_pr_toasts.html:45
+#, python-format
 msgid "(previous: %(previous)s)"
 msgstr "(edellinen: %(previous)s)"
 
+#: templates/records/exercise_records.html:3
+#, python-format
 msgid "%(name)s records"
 msgstr "%(name)s – ennätykset"
 
+#: templates/records/exercise_records.html:11
 msgid "Current"
 msgstr "Nykyiset"
 
+#: templates/records/exercise_records.html:19
 msgid "Best set volume"
 msgstr "Paras sarjavolyymi"
 
+#: templates/records/exercise_records.html:22
 msgid "Best session volume"
 msgstr "Paras treenivolyymi"
 
+#: templates/records/exercise_records.html:28
 msgid "Rep maxes"
 msgstr "Toistomaksimit"
 
+#: templates/records/exercise_records.html:38
 msgid "Rep records by weight"
 msgstr "Toistoennätykset painoittain"
 
+#: templates/records/exercise_records.html:41
+#, python-format
 msgid "%(weight)s: %(reps)s reps"
 msgstr "%(weight)s: %(reps)s toistoa"
 
+#: templates/registration/login.html:8
+msgid "Log in with Authentik"
+msgstr "Kirjaudu Authentikilla"
+
+#: templates/registration/login.html:11
+msgid "or"
+msgstr "tai"
+
+#: templates/registration/login.html:28
 msgid "Forgot your password?"
 msgstr "Unohtuiko salasana?"
 
+#: templates/registration/login.html:30
 msgid "Don't have an account?"
 msgstr "Eikö sinulla ole vielä tiliä?"
 
+#: templates/registration/login.html:30
 msgid "Create an account"
 msgstr "Luo tili"
 
+#: templates/registration/password_change_done.html:3
+#: templates/registration/password_change_done.html:6
 msgid "Password changed"
 msgstr "Salasana vaihdettu"
 
+#: templates/registration/password_change_done.html:10
 msgid "Your password has been updated."
 msgstr "Salasanasi on päivitetty."
 
+#: templates/registration/password_reset_complete.html:3
+#: templates/registration/password_reset_complete.html:6
 msgid "Password reset"
 msgstr "Salasanan palautus"
 
+#: templates/registration/password_reset_complete.html:10
 msgid "Your password has been set. You can log in now."
 msgstr "Salasanasi on asetettu. Voit kirjautua sisään nyt."
 
+#: templates/registration/password_reset_confirm.html:3
+#: templates/registration/password_reset_confirm.html:6
 msgid "Set a new password"
 msgstr "Aseta uusi salasana"
 
+#: templates/registration/password_reset_confirm.html:21
 msgid "Set new password"
 msgstr "Aseta uusi salasana"
 
-msgid "This password reset link is invalid, possibly because it has already been used or has expired."
-msgstr "Tämä salasanan palautuslinkki ei ole voimassa — se on ehkä jo käytetty tai vanhentunut."
+#: templates/registration/password_reset_confirm.html:25
+msgid ""
+"This password reset link is invalid, possibly because it has already been "
+"used or has expired."
+msgstr ""
+"Tämä salasanan palautuslinkki ei ole voimassa — se on ehkä jo käytetty tai "
+"vanhentunut."
 
+#: templates/registration/password_reset_confirm.html:27
 msgid "Request a new reset link"
 msgstr "Pyydä uusi palautuslinkki"
 
+#: templates/registration/password_reset_done.html:3
+#: templates/registration/password_reset_done.html:6
+#: templates/registration/password_reset_form.html:3
+#: templates/registration/password_reset_form.html:6
 msgid "Reset password"
 msgstr "Palauta salasana"
 
-msgid "If an account exists with that email address, we've sent a link to reset your password."
-msgstr "Jos kyseisellä sähköpostiosoitteella on tili, olemme lähettäneet siihen linkin salasanan palauttamiseksi."
+#: templates/registration/password_reset_done.html:10
+msgid ""
+"If an account exists with that email address, we've sent a link to reset "
+"your password."
+msgstr ""
+"Jos kyseisellä sähköpostiosoitteella on tili, olemme lähettäneet siihen "
+"linkin salasanan palauttamiseksi."
 
+#: templates/registration/password_reset_done.html:13
+#: templates/registration/password_reset_form.html:27
 msgid "Back to login"
 msgstr "Takaisin kirjautumiseen"
 
-msgid "You're receiving this email because you (or someone else) requested a password reset for your account at %(site_name)s."
-msgstr "Saat tämän sähköpostin, koska sinä (tai joku muu) pyysi salasanan palautusta tilillesi palvelussa %(site_name)s."
+#: templates/registration/password_reset_email.html:1
+#, python-format
+msgid ""
+"You're receiving this email because you (or someone else) requested a "
+"password reset for your account at %(site_name)s."
+msgstr ""
+"Saat tämän sähköpostin, koska sinä (tai joku muu) pyysi salasanan palautusta "
+"tilillesi palvelussa %(site_name)s."
 
+#: templates/registration/password_reset_email.html:3
 msgid "Please go to the following page and choose a new password:"
 msgstr "Siirry seuraavalle sivulle ja valitse uusi salasana:"
 
+#: templates/registration/password_reset_email.html:6
+#, python-format
 msgid "Your username, in case you've forgotten: %(username)s"
 msgstr "Käyttäjätunnuksesi, jos olet unohtanut sen: %(username)s"
 
+#: templates/registration/password_reset_email.html:8
 msgid "If you didn't request this, you can safely ignore this email."
 msgstr "Jos et pyytänyt tätä, voit jättää tämän sähköpostin huomiotta."
 
-msgid "Enter your account's email address and we'll send you a link to reset your password."
-msgstr "Anna tilisi sähköpostiosoite, niin lähetämme sinulle linkin salasanan palauttamiseksi."
+#: templates/registration/password_reset_form.html:10
+msgid ""
+"Enter your account's email address and we'll send you a link to reset your "
+"password."
+msgstr ""
+"Anna tilisi sähköpostiosoite, niin lähetämme sinulle linkin salasanan "
+"palauttamiseksi."
 
+#: templates/registration/password_reset_form.html:24
 msgid "Send reset link"
 msgstr "Lähetä palautuslinkki"
 
+#: templates/registration/password_reset_subject.txt:1
+#, python-format
 msgid "Password reset on %(site_name)s"
 msgstr "Salasanan palautus palvelussa %(site_name)s"
 
+#: templates/registration/two_factor_verify.html:3
+#: templates/registration/two_factor_verify.html:5
 msgid "Two-factor verification"
 msgstr "Kaksivaiheinen vahvistus"
 
-msgid "Enter the 6-digit code from your authenticator app, or one of your backup codes."
-msgstr "Syötä tunnistautumissovelluksen 6-numeroinen koodi tai jokin varakoodeistasi."
+#: templates/registration/two_factor_verify.html:6
+msgid ""
+"Enter the 6-digit code from your authenticator app, or one of your backup "
+"codes."
+msgstr ""
+"Syötä tunnistautumissovelluksen 6-numeroinen koodi tai jokin varakoodeistasi."
 
+#: templates/registration/two_factor_verify.html:21
 msgid "Verify"
 msgstr "Vahvista"
 
+#: templates/workouts/_performed_exercise_card.html:6
+#: templates/workouts/_train_panel.html:39
+#, python-format
 msgid "Target: %(count)s × %(min)s-%(max)s"
 msgstr "Tavoite: %(count)s × %(min)s-%(max)s"
 
+#: templates/workouts/_performed_exercise_card.html:15
 msgid "Set"
 msgstr "Sarja"
 
+#: templates/workouts/_performed_exercise_card.html:15
 msgid "Reps"
 msgstr "Toistot"
 
+#: templates/workouts/_performed_exercise_card.html:20
 msgid "W"
 msgstr "L"
 
+#: templates/workouts/_performed_exercise_card.html:22
 msgid "F"
 msgstr "E"
 
+#: templates/workouts/_performed_exercise_card.html:34
 msgid "No sets logged yet."
 msgstr "Sarjoja ei ole vielä kirjattu."
 
+#: templates/workouts/_performed_exercise_card.html:44
+#: templates/workouts/_train_panel.html:54
+#, python-format
 msgid "Suggested: %(weight)s"
 msgstr "Ehdotus: %(weight)s"
 
+#: templates/workouts/_performed_exercise_card.html:68
+#: templates/workouts/_train_panel.html:87
 msgid "Log set"
 msgstr "Kirjaa sarja"
 
+#: templates/workouts/_train_panel.html:18
+#, python-format
 msgid "Exercise %(position)s of %(total)s"
 msgstr "Liike %(position)s / %(total)s"
 
+#: templates/workouts/_train_panel.html:30
 msgid "All exercises done for today."
 msgstr "Kaikki tämän päivän liikkeet tehty."
 
-msgid "This exercise is done — logging another set is still fine if you want one."
+#: templates/workouts/_train_panel.html:62
+msgid ""
+"This exercise is done — logging another set is still fine if you want one."
 msgstr "Tämä liike on tehty — voit silti kirjata lisäsarjan halutessasi."
 
+#: templates/workouts/_train_panel.html:78
 msgid "Fewer options"
 msgstr "Vähemmän valintoja"
 
+#: templates/workouts/_train_panel.html:78
 msgid "More options (RPE, RIR, notes…)"
 msgstr "Lisää valintoja (RPE, RIR, muistiinpanot…)"
 
+#: templates/workouts/performed_exercise_form.html:22
+#: templates/workouts/set_edit_form.html:22
 msgid "Back to workout"
 msgstr "Takaisin treeniin"
 
+#: templates/workouts/session_detail.html:11
+#, python-format
 msgid "Started %(started)s"
 msgstr "Aloitettu %(started)s"
 
+#: templates/workouts/session_detail.html:12
+#, python-format
 msgid "ended %(ended)s"
 msgstr "päättyi %(ended)s"
 
+#: templates/workouts/session_detail.html:28
+#: templates/workouts/session_train.html:46
 msgid "Complete workout"
 msgstr "Merkitse valmiiksi"
 
+#: templates/workouts/session_detail.html:30
+#: templates/workouts/session_train.html:48
 msgid "Abandon this workout? It stays in your history as abandoned."
 msgstr "Keskeytetäänkö tämä treeni? Se jää historiaasi keskeytettynä."
 
+#: templates/workouts/session_detail.html:32
+#: templates/workouts/session_train.html:50
 msgid "Abandon workout"
 msgstr "Keskeytä treeni"
 
+#: templates/workouts/session_detail.html:36
 msgid "Delete this workout? This cannot be undone."
 msgstr "Poistetaanko tämä treeni? Tätä ei voi perua."
 
+#: templates/workouts/session_detail.html:41
 msgid "Back to history"
 msgstr "Takaisin historiaan"
 
+#: templates/workouts/session_list.html:3
 msgid "Workout history"
 msgstr "Treenihistoria"
 
+#: templates/workouts/session_list.html:17
 msgid "No workouts logged yet."
 msgstr "Treenejä ei ole vielä kirjattu."
 
+#: templates/workouts/session_list.html:18
 msgid "Start one below, or pick a workout from one of your programs."
 msgstr "Aloita alta tai valitse treeni jostain ohjelmastasi."
 
+#: templates/workouts/session_list.html:26
 msgid "Start freeform workout"
 msgstr "Aloita vapaamuotoinen treeni"
 
+#: templates/workouts/session_train.html:3
 msgid "Training"
 msgstr "Harjoittelu"
 
+#: templates/workouts/session_train.html:7
 msgid "Full view"
 msgstr "Koko näkymä"
 
+#: templates/workouts/session_train.html:21
 msgid "Rest timer"
 msgstr "Lepoajastin"
 
+#: templates/workouts/session_train.html:23
 msgid "Unmute rest timer sound"
 msgstr "Poista lepoajastimen äänen mykistys"
 
+#: templates/workouts/session_train.html:23
 msgid "Mute rest timer sound"
 msgstr "Mykistä lepoajastimen ääni"
 
+#: templates/workouts/session_train.html:33
 msgid "Skip rest"
 msgstr "Ohita lepo"
 
+#: templates/workouts/set_edit_form.html:3
 msgid "Edit set"
 msgstr "Muokkaa sarjaa"
 
+#: templates/workouts/set_edit_form.html:6
+#, python-format
 msgid "Edit set %(number)s"
 msgstr "Muokkaa sarjaa %(number)s"

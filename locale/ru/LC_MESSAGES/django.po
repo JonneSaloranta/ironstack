@@ -3,2834 +3,5054 @@ msgid ""
 msgstr ""
 "Project-Id-Version: IronStack\n"
 "Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-08-26 23:53+0000\n"
+"Language: ru\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: ru\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 
+#: apps/accounts/admin.py:17 templates/accounts/profile.html:71
+#: templates/accounts/two_factor_manage.html:3
+#: templates/accounts/two_factor_manage.html:6
+#: templates/accounts/two_factor_setup.html:3
+#: templates/accounts/two_factor_setup.html:6
 msgid "Two-factor authentication"
 msgstr "Двухфакторная аутентификация"
 
+#: apps/accounts/admin.py:22
 msgid "Disable two-factor authentication for selected users"
 msgstr "Отключить двухфакторную аутентификацию для выбранных пользователей"
 
+#: apps/accounts/forms.py:115
 msgid "Too many failed login attempts. Try again in a few minutes."
-msgstr "Слишком много неудачных попыток входа. Повторите попытку через несколько минут."
+msgstr ""
+"Слишком много неудачных попыток входа. Повторите попытку через несколько "
+"минут."
 
+#: apps/accounts/forms.py:179
 msgid "Too many password reset requests. Try again in a few minutes."
-msgstr "Слишком много запросов на сброс пароля. Повторите попытку через несколько минут."
+msgstr ""
+"Слишком много запросов на сброс пароля. Повторите попытку через несколько "
+"минут."
 
+#: apps/accounts/forms.py:233
 msgid "Timezone"
 msgstr "Часовой пояс"
 
+#: apps/accounts/forms.py:250 apps/accounts/forms.py:479
+#: templates/api/key_list.html:34
 msgid "Units"
 msgstr "Единицы измерения"
 
+#: apps/accounts/forms.py:253
 msgid "Show"
 msgstr "Показывать"
 
+#: apps/accounts/forms.py:254 templates/core/_bmi_card.html:13
+#: templates/core/_bmi_card.html:29
 msgid "BMI"
 msgstr "ИМТ"
 
+#: apps/accounts/forms.py:255
 msgid "on the body weight page"
 msgstr "на странице веса тела"
 
+#: apps/accounts/forms.py:257
 msgid "Share my activity"
 msgstr "Показывать мою активность"
 
+#: apps/accounts/forms.py:258
 msgid "Show my name to others"
 msgstr "Показывать моё имя другим"
 
+#: apps/accounts/forms.py:259
+msgid "Show my Gravatar picture"
+msgstr "Показывать мою аватарку Gravatar"
+
+#: apps/accounts/forms.py:260
 msgid "Language"
 msgstr "Язык"
 
+#: apps/accounts/forms.py:263
 msgid "Turns off the BMI card and its category ranges entirely."
 msgstr "Полностью отключает карточку ИМТ и диапазоны категорий."
 
-msgid "Lets everyone using this instance see your longest streak, workout count, PRs, total weight lifted, and when you last trained, in the dashboard's achievements carousel and \"Recently active\" list. Turn off to keep your own activity private — you'll still see everyone else's."
-msgstr "Позволяет всем пользователям этого сервера видеть вашу самую длинную серию, количество тренировок, рекорды, общий поднятый вес и время последней тренировки в карусели достижений и списке «Недавняя активность» на панели. Отключите, чтобы скрыть свою активность — вы всё равно будете видеть активность остальных."
+#: apps/accounts/forms.py:265
+msgid ""
+"Lets everyone using this instance see your longest streak, workout count, "
+"PRs, total weight lifted, and when you last trained, in the dashboard's "
+"achievements carousel and \"Recently active\" list. Turn off to keep your "
+"own activity private — you'll still see everyone else's."
+msgstr ""
+"Позволяет всем пользователям этого сервера видеть вашу самую длинную серию, "
+"количество тренировок, рекорды, общий поднятый вес и время последней "
+"тренировки в карусели достижений и списке «Недавняя активность» на панели. "
+"Отключите, чтобы скрыть свою активность — вы всё равно будете видеть "
+"активность остальных."
 
-msgid "Shows your first name next to your username wherever others can see it (the achievements carousel and \"Recently active\" list). Turn off to show just your username there, like before this setting existed."
-msgstr "Показывает ваше имя рядом с именем пользователя везде, где его могут видеть другие (карусель достижений и список «Недавняя активность»). Отключите, чтобы показывать там только имя пользователя, как было до появления этой настройки."
+#: apps/accounts/forms.py:272
+msgid ""
+"Shows your first name next to your username wherever others can see it (the "
+"achievements carousel and \"Recently active\" list). Turn off to show just "
+"your username there, like before this setting existed."
+msgstr ""
+"Показывает ваше имя рядом с именем пользователя везде, где его могут видеть "
+"другие (карусель достижений и список «Недавняя активность»). Отключите, "
+"чтобы показывать там только имя пользователя, как было до появления этой "
+"настройки."
 
+#: apps/accounts/forms.py:278
+msgid ""
+"Shows your Gravatar (gravatar.com) picture at the top of this page, if the "
+"email on this account has one. Turning this on means your browser loads that "
+"image directly from gravatar.com — the only place this app talks to a server "
+"outside your own instance — which then sees your email's hash and your IP "
+"address."
+msgstr ""
+"Показывает вашу аватарку Gravatar (gravatar.com) в верхней части этой "
+"страницы, если для email-адреса этой учётной записи она есть. Включение этой "
+"опции означает, что браузер загрузит изображение напрямую с gravatar.com — "
+"единственное место, где это приложение обращается к серверу за пределами "
+"вашего собственного сервера — который увидит хеш вашего email и ваш IP-адрес."
+
+#: apps/accounts/forms.py:296 apps/accounts/forms.py:500
+#: apps/nutrition/forms.py:39 apps/nutrition/forms.py:432
 msgid "Height (cm)"
 msgstr "Рост (см)"
 
+#: apps/accounts/forms.py:296 apps/accounts/forms.py:500
+#: apps/nutrition/forms.py:39 apps/nutrition/forms.py:432
 msgid "Height (in)"
 msgstr "Рост (дюймы)"
 
+#: apps/accounts/forms.py:337 apps/accounts/forms.py:364
 msgid "Verification code"
 msgstr "Код подтверждения"
 
+#: apps/accounts/forms.py:348
 msgid "Incorrect code — check your authenticator app and try again."
 msgstr "Неверный код — проверьте приложение-аутентификатор и попробуйте снова."
 
+#: apps/accounts/forms.py:376
 msgid "Too many incorrect codes. Try again in a few minutes."
 msgstr "Слишком много неверных кодов. Повторите попытку через несколько минут."
 
+#: apps/accounts/forms.py:389
 msgid "Incorrect code."
 msgstr "Неверный код."
 
+#: apps/accounts/forms.py:403
 msgid "Password"
 msgstr "Пароль"
 
+#: apps/accounts/forms.py:412
 msgid "Incorrect password."
 msgstr "Неверный пароль."
 
+#: apps/accounts/forms.py:436
 msgid "First name"
 msgstr "Имя"
 
-msgid "Used to personalize your dashboard greeting, and next to your username wherever your activity is shown to others (if you allow that in your profile)."
-msgstr "Используется для персонализации приветствия на панели, а также рядом с вашим именем пользователя везде, где ваша активность показывается другим (если вы разрешили это в профиле)."
+#: apps/accounts/forms.py:438
+msgid ""
+"Used to personalize your dashboard greeting, and next to your username "
+"wherever your activity is shown to others (if you allow that in your "
+"profile)."
+msgstr ""
+"Используется для персонализации приветствия на панели, а также рядом с вашим "
+"именем пользователя везде, где ваша активность показывается другим (если вы "
+"разрешили это в профиле)."
 
+#: apps/accounts/forms.py:445
 msgid "Email"
 msgstr "Эл. почта"
 
-msgid "Used only for password-reset emails if you ever get locked out. Never shown to other users."
-msgstr "Используется только для писем сброса пароля, если вы когда-нибудь потеряете доступ. Никогда не показывается другим пользователям."
+#: apps/accounts/forms.py:447
+msgid ""
+"Used only for password-reset emails if you ever get locked out. Never shown "
+"to other users."
+msgstr ""
+"Используется только для писем сброса пароля, если вы когда-нибудь потеряете "
+"доступ. Никогда не показывается другим пользователям."
 
-msgid "Logged as your first body-weight entry, so your progress charts have a starting point. Leave blank and log it anytime from the Body weight page instead."
-msgstr "Записывается как ваша первая запись веса тела, чтобы на графиках прогресса была отправная точка. Можно оставить пустым и добавить вес позже на странице «Вес тела»."
+#: apps/accounts/forms.py:457
+msgid ""
+"Logged as your first body-weight entry, so your progress charts have a "
+"starting point. Leave blank and log it anytime from the Body weight page "
+"instead."
+msgstr ""
+"Записывается как ваша первая запись веса тела, чтобы на графиках прогресса "
+"была отправная точка. Можно оставить пустым и добавить вес позже на странице "
+"«Вес тела»."
 
-msgid "Used together with a logged body weight to show your BMI. Leave blank to skip this — you can add it anytime from your profile."
-msgstr "Используется вместе с записанным весом тела для отображения ИМТ. Оставьте пустым, чтобы пропустить — вы можете добавить это позже в профиле."
+#: apps/accounts/forms.py:472
+msgid ""
+"Used together with a logged body weight to show your BMI. Leave blank to "
+"skip this — you can add it anytime from your profile."
+msgstr ""
+"Используется вместе с записанным весом тела для отображения ИМТ. Оставьте "
+"пустым, чтобы пропустить — вы можете добавить это позже в профиле."
 
-msgid "Sets whether weights and distances are shown in kg/km or lb/mi throughout the app. Change this anytime from your profile."
-msgstr "Определяет, отображаются ли веса и расстояния в приложении в кг/км или в фунтах/милях. Изменить можно в любой момент в профиле."
+#: apps/accounts/forms.py:481
+msgid ""
+"Sets whether weights and distances are shown in kg/km or lb/mi throughout "
+"the app. Change this anytime from your profile."
+msgstr ""
+"Определяет, отображаются ли веса и расстояния в приложении в кг/км или в "
+"фунтах/милях. Изменить можно в любой момент в профиле."
 
+#: apps/accounts/forms.py:495 apps/nutrition/forms.py:40
+#: apps/nutrition/forms.py:441 apps/nutrition/forms.py:645
+#, python-format
 msgid "Current weight (%(unit)s)"
 msgstr "Текущий вес (%(unit)s)"
 
+#: apps/accounts/forms.py:497
 msgid "Current weight"
 msgstr "Текущий вес"
 
+#: apps/accounts/models.py:10
 msgid "Metric (kg, km)"
 msgstr "Метрическая (кг, км)"
 
+#: apps/accounts/models.py:11
 msgid "Imperial (lb, mi)"
 msgstr "Имперская (фунты, мили)"
 
-msgid "Shown as a footer note on the login and signup pages. Leave blank to hide it entirely."
-msgstr "Отображается в подвале на страницах входа и регистрации. Оставьте пустым, чтобы полностью скрыть."
+#: apps/accounts/models.py:208
+msgid ""
+"Shown as a footer note on the login and signup pages. Leave blank to hide it "
+"entirely."
+msgstr ""
+"Отображается в подвале на страницах входа и регистрации. Оставьте пустым, "
+"чтобы полностью скрыть."
 
+#: apps/accounts/views.py:42 apps/accounts/views.py:49
 msgid "Registration is currently closed."
 msgstr "Регистрация сейчас закрыта."
 
+#: apps/accounts/views.py:92 apps/accounts/views.py:135
+msgid "Password login is disabled on this instance."
+msgstr "Вход по паролю отключён на этом сервере."
+
+#: apps/accounts/views.py:168
 msgid "Preferences saved."
 msgstr "Настройки сохранены."
 
+#: apps/accounts/views.py:188
 msgid "Account details saved."
 msgstr "Данные аккаунта сохранены."
 
+#: apps/accounts/views.py:281
 msgid "Two-factor authentication is already enabled."
 msgstr "Двухфакторная аутентификация уже включена."
 
+#: apps/accounts/views.py:338
 msgid "Two-factor authentication turned off."
 msgstr "Двухфакторная аутентификация отключена."
 
+#: apps/activities/forms.py:25
 msgid "Duration (minutes)"
 msgstr "Длительность (минуты)"
 
+#: apps/activities/forms.py:57
+#, python-format
 msgid "Distance (%(unit)s)"
 msgstr "Дистанция (%(unit)s)"
 
+#: apps/activities/i18n_content.py:17
 msgid "Running"
 msgstr "Бег"
 
+#: apps/activities/i18n_content.py:18
 msgid "Cycling"
 msgstr "Велоспорт"
 
+#: apps/activities/i18n_content.py:19
 msgid "Swimming"
 msgstr "Плавание"
 
+#: apps/activities/i18n_content.py:20
 msgid "Walking"
 msgstr "Ходьба"
 
+#: apps/activities/i18n_content.py:21
 msgid "Hiking"
 msgstr "Пеший туризм"
 
+#: apps/activities/i18n_content.py:22
 msgid "Rowing"
 msgstr "Гребля"
 
+#: apps/activities/i18n_content.py:23
 msgid "Yoga"
 msgstr "Йога"
 
+#: apps/activities/i18n_content.py:24 apps/core/models.py:125
 msgid "Other"
 msgstr "Другое"
 
+#: apps/activities/models.py:18 apps/exercises/models.py:69
+#: apps/measurements/models.py:34 apps/programs/models.py:36
+#: apps/programs/models.py:79
 msgid "name"
 msgstr "название"
 
+#: apps/activities/models.py:70
 msgid "date"
 msgstr "дата"
 
+#: apps/activities/models.py:71
 msgid "start time"
 msgstr "время начала"
 
+#: apps/activities/models.py:74
 msgid "distance"
 msgstr "дистанция"
 
+#: apps/activities/models.py:76
 msgid "calories"
 msgstr "калории"
 
+#: apps/activities/models.py:77 apps/measurements/models.py:90
+#: apps/programs/models.py:84 apps/programs/models.py:150
+#: apps/workouts/forms.py:46
 msgid "notes"
 msgstr "заметки"
 
+#: apps/activities/models.py:81
 msgid "activities"
 msgstr "активности"
 
+#: apps/analytics/achievements.py:103
 msgid "Longest streak"
 msgstr "Самая длинная серия"
 
+#: apps/analytics/achievements.py:104
+#, python-format
 msgid "%(counter)s day"
 msgid_plural "%(counter)s days"
 msgstr[0] "%(counter)s день"
 msgstr[1] "%(counter)s дня"
 msgstr[2] "%(counter)s дней"
 
+#: apps/analytics/achievements.py:114
 msgid "Workouts completed"
 msgstr "Тренировок выполнено"
 
+#: apps/analytics/achievements.py:115 templates/programs/program_list.html:16
+#: templates/programs/program_list.html:32
+#, python-format
 msgid "%(counter)s workout"
 msgid_plural "%(counter)s workouts"
 msgstr[0] "%(counter)s тренировка"
 msgstr[1] "%(counter)s тренировки"
 msgstr[2] "%(counter)s тренировок"
 
+#: apps/analytics/achievements.py:124
 msgid "Personal records"
 msgstr "Личных рекордов"
 
+#: apps/analytics/achievements.py:125
+#, python-format
 msgid "%(counter)s PR"
 msgid_plural "%(counter)s PRs"
 msgstr[0] "%(counter)s рекорд"
 msgstr[1] "%(counter)s рекорда"
 msgstr[2] "%(counter)s рекордов"
 
+#: apps/analytics/achievements.py:134
 msgid "Total weight lifted"
 msgstr "Всего поднято веса"
 
+#: apps/analytics/dateranges.py:14
 msgid "7 days"
 msgstr "7 дней"
 
+#: apps/analytics/dateranges.py:15
 msgid "30 days"
 msgstr "30 дней"
 
+#: apps/analytics/dateranges.py:16
 msgid "3 months"
 msgstr "3 месяца"
 
+#: apps/analytics/dateranges.py:17
 msgid "6 months"
 msgstr "6 месяцев"
 
+#: apps/analytics/dateranges.py:18
 msgid "1 year"
 msgstr "1 год"
 
+#: apps/analytics/dateranges.py:19
 msgid "All time"
 msgstr "За всё время"
 
+#: apps/api/forms.py:10
 msgid "Create"
 msgstr "Создание"
 
+#: apps/api/forms.py:11
 msgid "Read"
 msgstr "Чтение"
 
+#: apps/api/forms.py:12
 msgid "Update"
 msgstr "Изменение"
 
+#: apps/api/forms.py:13 templates/activities/activity_history.html:55
+#: templates/core/_backup_row.html:20
+#: templates/measurements/measurement_history.html:46
+#: templates/nutrition/diary_day.html:65
+#: templates/programs/program_confirm_delete.html:14
+#: templates/programs/program_detail.html:44
+#: templates/workouts/_performed_exercise_card.html:29
 msgid "Delete"
 msgstr "Удалить"
 
+#: apps/api/forms.py:29 templates/admin/nutrition/food/merge.html:14
+#: templates/nutrition/food_list.html:26
 msgid "Name"
 msgstr "Название"
 
+#: apps/api/forms.py:29
 msgid "A label to tell your keys apart."
 msgstr "Метка, чтобы отличать ваши ключи друг от друга."
 
+#: apps/api/models.py:24 templates/accounts/profile.html:3
+#: templates/accounts/profile.html:19 templates/api/key_list.html:85
+#: templates/base.html:85 templates/base.html:87
 msgid "Profile"
 msgstr "Профиль"
 
+#: apps/api/models.py:25 templates/api/key_list.html:89
+#: templates/exercises/exercise_list.html:3
+#: templates/exercises/exercise_list.html:6
 msgid "Exercises"
 msgstr "Упражнения"
 
+#: apps/api/models.py:26 apps/core/models.py:120 templates/api/key_list.html:93
+#: templates/base.html:81 templates/base.html:83
+#: templates/programs/program_list.html:3
+#: templates/programs/program_list.html:6
 msgid "Programs"
 msgstr "Программы"
 
+#: apps/api/models.py:27 apps/core/models.py:119
+#: templates/analytics/dashboard.html:13 templates/api/key_list.html:97
+#: templates/workouts/session_list.html:6
 msgid "Workouts"
 msgstr "Тренировки"
 
+#: apps/api/models.py:28 templates/api/key_list.html:101
 msgid "Measurements"
 msgstr "Измерения"
 
+#: apps/api/models.py:29 apps/core/models.py:123
+#: templates/activities/activity_type_list.html:3
+#: templates/activities/activity_type_list.html:6
+#: templates/api/key_list.html:105 templates/core/dashboard.html:115
 msgid "Activities"
 msgstr "Активности"
 
+#: apps/api/models.py:30 templates/api/key_list.html:113
 msgid "Records"
 msgstr "Рекорды"
 
+#: apps/api/models.py:31 templates/analytics/dashboard.html:3
+#: templates/analytics/dashboard.html:6 templates/api/key_list.html:117
 msgid "Analytics"
 msgstr "Аналитика"
 
+#: apps/api/models.py:32 templates/api/key_list.html:109 templates/base.html:69
+#: templates/base.html:71 templates/nutrition/dashboard.html:3
+#: templates/nutrition/dashboard.html:6
+#: templates/nutrition/recipe_detail.html:52
 msgid "Nutrition"
 msgstr "Питание"
 
+#: apps/api/views_web.py:39
 msgid "You've reached your maximum number of API keys."
 msgstr "Вы достигли максимального количества API-ключей."
 
+#: apps/api/views_web.py:89
 msgid "API key revoked."
 msgstr "API-ключ отозван."
 
+#: apps/core/admin.py:17 templates/accounts/profile.html:105
 msgid "Administration"
 msgstr "Администрирование"
 
+#: apps/core/bmi.py:32
 msgid "Underweight"
 msgstr "Недостаточный вес"
 
+#: apps/core/bmi.py:33
 msgid "Normal weight"
 msgstr "Нормальный вес"
 
+#: apps/core/bmi.py:34
 msgid "Overweight"
 msgstr "Избыточный вес"
 
+#: apps/core/bmi.py:35
 msgid "Obese"
 msgstr "Ожирение"
 
+#: apps/core/formatting.py:16 templates/programs/program_detail.html:56
+#: templates/workouts/_performed_exercise_card.html:8
 msgid "Rate of Perceived Exertion"
 msgstr "Субъективная оценка нагрузки"
 
+#: apps/core/formatting.py:17
 msgid "Reps In Reserve"
 msgstr "Повторения в запасе"
 
+#: apps/core/formatting.py:18 templates/analytics/exercise_analytics.html:19
+#: templates/exercises/exercise_detail.html:49
+#: templates/records/_pr_toasts.html:38
+#: templates/records/exercise_records.html:16
 msgid "One-Rep Max"
 msgstr "Максимум на одно повторение"
 
+#: apps/core/formatting.py:19 templates/records/_pr_toasts.html:29
 msgid "Personal Record"
 msgstr "Личный рекорд"
 
+#: apps/core/formatting.py:20 templates/analytics/dashboard.html:40
+#: templates/records/_pr_toasts.html:36
+#: templates/records/exercise_records.html:31
 msgid "Rep Max"
 msgstr "Максимум повторений"
 
+#: apps/core/formatting.py:21 templates/core/_bmi_card.html:13
 msgid "Body Mass Index"
 msgstr "Индекс массы тела"
 
+#: apps/core/forms.py:19
 msgid "Automatic daily backups"
 msgstr "Автоматическое ежедневное резервное копирование"
 
+#: apps/core/forms.py:20
 msgid "Backup hour (UTC)"
 msgstr "Час резервного копирования (UTC)"
 
+#: apps/core/forms.py:21
 msgid "Keep the most recent"
 msgstr "Хранить последние"
 
+#: apps/core/forms.py:37
 msgid "Backup file"
 msgstr "Файл резервной копии"
 
-msgid "A .tar.gz backup archive previously downloaded from an IronStack instance."
+#: apps/core/forms.py:39
+msgid ""
+"A .tar.gz backup archive previously downloaded from an IronStack instance."
 msgstr "Архив резервной копии .tar.gz, ранее скачанный с экземпляра IronStack."
 
+#: apps/core/forms.py:46
 msgid "Must be a .tar.gz file."
 msgstr "Файл должен быть в формате .tar.gz."
 
+#: apps/core/forms.py:59
 msgid "Category"
 msgstr "Категория"
 
+#: apps/core/forms.py:60
 msgid "Subject"
 msgstr "Тема"
 
+#: apps/core/forms.py:61
 msgid "Message"
 msgstr "Сообщение"
 
+#: apps/core/forms.py:73
 msgid "Accept new feedback"
 msgstr "Принимать новые отзывы"
 
+#: apps/core/greetings.py:29
+#, python-format
 msgid "Good morning, %(username)s! Time to get after it."
 msgstr "Доброе утро, %(username)s! Пора действовать."
 
-msgid "Rise and grind, %(username)s — the weights aren't going to lift themselves."
+#: apps/core/greetings.py:30
+#, python-format
+msgid ""
+"Rise and grind, %(username)s — the weights aren't going to lift themselves."
 msgstr "Подъём, %(username)s — штанга сама себя не поднимет."
 
+#: apps/core/greetings.py:31
+#, python-format
 msgid "Morning, %(username)s. Today's a great day for a new personal record."
 msgstr "Доброе утро, %(username)s. Сегодня отличный день для нового рекорда."
 
+#: apps/core/greetings.py:32
+#, python-format
 msgid "Good morning, %(username)s. Coffee first, then conquer the day."
 msgstr "Доброе утро, %(username)s. Сначала кофе, потом покоряем день."
 
+#: apps/core/greetings.py:36
+#, python-format
 msgid "Good afternoon, %(username)s! Keep the momentum going."
 msgstr "Добрый день, %(username)s! Не сбавляй темп."
 
+#: apps/core/greetings.py:37
+#, python-format
 msgid "Hey %(username)s, halfway through the day and still standing — not bad."
-msgstr "Привет, %(username)s, день наполовину позади, а ты всё ещё держишься — неплохо."
+msgstr ""
+"Привет, %(username)s, день наполовину позади, а ты всё ещё держишься — "
+"неплохо."
 
+#: apps/core/greetings.py:38
+#, python-format
 msgid "Afternoon, %(username)s. Perfect time to sneak in a workout."
 msgstr "Добрый день, %(username)s. Отличное время для тренировки."
 
+#: apps/core/greetings.py:39
+#, python-format
 msgid "Good afternoon, %(username)s. Lunch was earned, apparently."
 msgstr "Добрый день, %(username)s. Обед, судя по всему, был заслуженным."
 
+#: apps/core/greetings.py:43
+#, python-format
 msgid "Good evening, %(username)s! One more push before the day's done."
 msgstr "Добрый вечер, %(username)s! Ещё одно усилие перед концом дня."
 
+#: apps/core/greetings.py:44
+#, python-format
 msgid "Evening, %(username)s. A great time to log today's work."
-msgstr "Вечер, %(username)s. Хорошее время, чтобы записать сегодняшнюю тренировку."
+msgstr ""
+"Вечер, %(username)s. Хорошее время, чтобы записать сегодняшнюю тренировку."
 
+#: apps/core/greetings.py:45
+#, python-format
 msgid "Hey %(username)s, the evening session hits different."
 msgstr "Привет, %(username)s, вечерняя тренировка всегда особенная."
 
-msgid "Good evening, %(username)s — finish the day stronger than you started it."
+#: apps/core/greetings.py:46
+#, python-format
+msgid ""
+"Good evening, %(username)s — finish the day stronger than you started it."
 msgstr "Добрый вечер, %(username)s — закончи день сильнее, чем начал."
 
+#: apps/core/greetings.py:50
+#, python-format
 msgid "Still up, %(username)s? Respect the hustle."
 msgstr "Всё ещё не спишь, %(username)s? Уважение за упорство."
 
+#: apps/core/greetings.py:51
+#, python-format
 msgid "Good night, %(username)s — recovery is part of the program too."
 msgstr "Спокойной ночи, %(username)s — восстановление тоже часть программы."
 
+#: apps/core/greetings.py:52
+#, python-format
 msgid "Burning the midnight oil, %(username)s? Even legends need sleep."
 msgstr "Не спишь допоздна, %(username)s? Даже легендам нужен сон."
 
+#: apps/core/greetings.py:53
+#, python-format
 msgid "Late night, %(username)s. Tomorrow's gains start with tonight's rest."
-msgstr "Поздний вечер, %(username)s. Завтрашний прогресс начинается с сегодняшнего отдыха."
+msgstr ""
+"Поздний вечер, %(username)s. Завтрашний прогресс начинается с сегодняшнего "
+"отдыха."
 
-msgid "Turns the backup-scheduler service's daily backup off without needing to stop or remove that service."
-msgstr "Отключает ежедневное резервное копирование службы планировщика без необходимости останавливать или удалять эту службу."
+#: apps/core/models.py:42
+msgid ""
+"Turns the backup-scheduler service's daily backup off without needing to "
+"stop or remove that service."
+msgstr ""
+"Отключает ежедневное резервное копирование службы планировщика без "
+"необходимости останавливать или удалять эту службу."
 
+#: apps/core/models.py:49
 msgid "What time (UTC) the daily automatic backup runs at."
-msgstr "Время (UTC), в которое запускается ежедневное автоматическое резервное копирование."
+msgstr ""
+"Время (UTC), в которое запускается ежедневное автоматическое резервное "
+"копирование."
 
-msgid "How many backups to keep — older ones are deleted automatically after each new one is created. 0 keeps every backup forever."
-msgstr "Сколько резервных копий хранить — более старые удаляются автоматически после создания каждой новой. 0 означает хранить все копии вечно."
+#: apps/core/models.py:54
+msgid ""
+"How many backups to keep — older ones are deleted automatically after each "
+"new one is created. 0 keeps every backup forever."
+msgstr ""
+"Сколько резервных копий хранить — более старые удаляются автоматически после "
+"создания каждой новой. 0 означает хранить все копии вечно."
 
-msgid "Lets any signed-in user submit feedback from their profile page. Turning this off only closes new submissions — feedback already on file stays visible to staff."
-msgstr "Позволяет любому вошедшему пользователю отправлять отзыв со своей страницы профиля. Отключение этой опции закрывает только приём новых сообщений — уже полученные отзывы остаются видны персоналу."
+#: apps/core/models.py:88
+msgid ""
+"Lets any signed-in user submit feedback from their profile page. Turning "
+"this off only closes new submissions — feedback already on file stays "
+"visible to staff."
+msgstr ""
+"Позволяет любому вошедшему пользователю отправлять отзыв со своей страницы "
+"профиля. Отключение этой опции закрывает только приём новых сообщений — уже "
+"полученные отзывы остаются видны персоналу."
 
+#: apps/core/models.py:121 templates/base.html:73 templates/base.html:75
 msgid "Progress"
 msgstr "Прогресс"
 
+#: apps/core/models.py:122
 msgid "Body measurements"
 msgstr "Замеры тела"
 
+#: apps/core/models.py:124
 msgid "Account & profile"
 msgstr "Аккаунт и профиль"
 
+#: apps/core/views.py:31
+msgid "Training day — new personal record!"
+msgstr "Тренировочный день — новый личный рекорд!"
+
+#: apps/core/views.py:33
+msgid "Training day — a session was abandoned."
+msgstr "Тренировочный день — тренировка была прервана."
+
+#: apps/core/views.py:35
+msgid "Training day."
+msgstr "Тренировочный день."
+
+#: apps/core/views.py:37
+msgid "Rest day."
+msgstr "День отдыха."
+
+#: apps/core/views.py:40
+msgid "Nothing logged that day."
+msgstr "В этот день ничего не записано."
+
+#: apps/core/views.py:42
+#, python-format
+msgid "%(actual)s / %(target)s kcal logged."
+msgstr "%(actual)s / %(target)s ккал записано."
+
+#: apps/core/views.py:47
+msgid "%(actual)s kcal logged."
+msgstr "%(actual)s ккал записано."
+
+#: apps/core/views_backup.py:55
+#, python-format
 msgid "Backup created: %(name)s"
 msgstr "Резервная копия создана: %(name)s"
 
+#: apps/core/views_backup.py:62
 msgid "Backup settings saved."
 msgstr "Настройки резервного копирования сохранены."
 
-msgid "Not a valid IronStack backup archive — expected a .tar.gz containing database.dump, media.tar, and manifest.json."
-msgstr "Это не корректный архив резервной копии IronStack — ожидался файл .tar.gz, содержащий database.dump, media.tar и manifest.json."
+#: apps/core/views_backup.py:78
+msgid ""
+"Not a valid IronStack backup archive — expected a .tar.gz containing "
+"database.dump, media.tar, and manifest.json."
+msgstr ""
+"Это не корректный архив резервной копии IronStack — ожидался файл .tar.gz, "
+"содержащий database.dump, media.tar и manifest.json."
 
+#: apps/core/views_backup.py:83
+#, python-format
 msgid "Backup uploaded: %(name)s"
 msgstr "Резервная копия загружена: %(name)s"
 
+#: apps/core/views_backup.py:113
+#, python-format
 msgid "Backup deleted: %(name)s"
 msgstr "Резервная копия удалена: %(name)s"
 
+#: apps/core/views_backup.py:145
+#, python-format
 msgid "Restored from backup: %(name)s"
 msgstr "Восстановлено из резервной копии: %(name)s"
 
+#: apps/core/views_feedback.py:29
 msgid "Feedback isn't currently being accepted."
 msgstr "В настоящее время отзывы не принимаются."
 
+#: apps/core/views_feedback.py:36
 msgid "Thanks for the feedback!"
 msgstr "Спасибо за отзыв!"
 
+#: apps/core/views_feedback.py:57
 msgid "Feedback settings saved."
 msgstr "Настройки отзывов сохранены."
 
+#: apps/exercises/i18n_content.py:22
 msgid "Ab Wheel Rollout"
 msgstr "Ролик для пресса"
 
+#: apps/exercises/i18n_content.py:23
 msgid "Barbell Back Squat"
 msgstr "Приседания со штангой"
 
+#: apps/exercises/i18n_content.py:24
 msgid "Barbell Bench Press"
 msgstr "Жим штанги лёжа"
 
+#: apps/exercises/i18n_content.py:25
 msgid "Barbell Row"
 msgstr "Тяга штанги в наклоне"
 
+#: apps/exercises/i18n_content.py:26
 msgid "Barbell Shrug"
 msgstr "Шраги со штангой"
 
+#: apps/exercises/i18n_content.py:27
 msgid "Calf Raise"
 msgstr "Подъём на носки"
 
+#: apps/exercises/i18n_content.py:28
 msgid "Conventional Deadlift"
 msgstr "Становая тяга"
 
+#: apps/exercises/i18n_content.py:29
 msgid "Dumbbell Bench Press"
 msgstr "Жим гантелей лёжа"
 
+#: apps/exercises/i18n_content.py:30
 msgid "Dumbbell Bicep Curl"
 msgstr "Подъём гантелей на бицепс"
 
+#: apps/exercises/i18n_content.py:31
 msgid "Dumbbell Shoulder Press"
 msgstr "Жим гантелей сидя"
 
+#: apps/exercises/i18n_content.py:32
 msgid "Face Pull"
 msgstr "Тяга к лицу"
 
+#: apps/exercises/i18n_content.py:33
 msgid "Front Squat"
 msgstr "Фронтальные приседания"
 
+#: apps/exercises/i18n_content.py:34
 msgid "Hammer Curl"
 msgstr "Молотковый подъём на бицепс"
 
+#: apps/exercises/i18n_content.py:35
 msgid "Hip Thrust"
 msgstr "Ягодичный мост"
 
+#: apps/exercises/i18n_content.py:36
 msgid "Incline Barbell Bench Press"
 msgstr "Жим штанги на наклонной скамье"
 
+#: apps/exercises/i18n_content.py:37
 msgid "Lat Pulldown"
 msgstr "Тяга верхнего блока"
 
+#: apps/exercises/i18n_content.py:38
 msgid "Lateral Raise"
 msgstr "Разведение гантелей в стороны"
 
+#: apps/exercises/i18n_content.py:39
 msgid "Leg Curl"
 msgstr "Сгибание ног"
 
+#: apps/exercises/i18n_content.py:40
 msgid "Leg Press"
 msgstr "Жим ногами"
 
+#: apps/exercises/i18n_content.py:41
 msgid "Overhead Press"
 msgstr "Жим штанги стоя"
 
+#: apps/exercises/i18n_content.py:42
 msgid "Plank"
 msgstr "Планка"
 
+#: apps/exercises/i18n_content.py:43
 msgid "Pull-Up"
 msgstr "Подтягивания"
 
+#: apps/exercises/i18n_content.py:44
 msgid "Romanian Deadlift"
 msgstr "Румынская тяга"
 
+#: apps/exercises/i18n_content.py:45
 msgid "Seated Cable Row"
 msgstr "Тяга блока сидя"
 
+#: apps/exercises/i18n_content.py:46
 msgid "Side Plank"
 msgstr "Боковая планка"
 
+#: apps/exercises/i18n_content.py:47
 msgid "Skull Crusher"
 msgstr "Французский жим лёжа"
 
+#: apps/exercises/i18n_content.py:48
 msgid "Straight-Arm Pulldown"
 msgstr "Пуловер на прямых руках в блоке"
 
+#: apps/exercises/i18n_content.py:49
 msgid "Triceps Pushdown"
 msgstr "Разгибание рук на блоке"
 
+#: apps/exercises/i18n_content.py:54
 msgid "Abs"
 msgstr "Пресс"
 
+#: apps/exercises/i18n_content.py:55
 msgid "Back"
 msgstr "Спина"
 
+#: apps/exercises/i18n_content.py:56
 msgid "Biceps"
 msgstr "Бицепс"
 
+#: apps/exercises/i18n_content.py:57
 msgid "Calves"
 msgstr "Икры"
 
+#: apps/exercises/i18n_content.py:58 apps/measurements/i18n_content.py:20
 msgid "Chest"
 msgstr "Грудь"
 
+#: apps/exercises/i18n_content.py:59
 msgid "Forearms"
 msgstr "Предплечья"
 
+#: apps/exercises/i18n_content.py:60
 msgid "Glutes"
 msgstr "Ягодицы"
 
+#: apps/exercises/i18n_content.py:61
 msgid "Hamstrings"
 msgstr "Задняя поверхность бедра"
 
+#: apps/exercises/i18n_content.py:62
 msgid "Lats"
 msgstr "Широчайшие"
 
+#: apps/exercises/i18n_content.py:63
 msgid "Obliques"
 msgstr "Косые мышцы"
 
+#: apps/exercises/i18n_content.py:64
 msgid "Quads"
 msgstr "Квадрицепсы"
 
+#: apps/exercises/i18n_content.py:65
 msgid "Shoulders"
 msgstr "Плечи"
 
+#: apps/exercises/i18n_content.py:66
 msgid "Traps"
 msgstr "Трапеции"
 
+#: apps/exercises/i18n_content.py:67
 msgid "Triceps"
 msgstr "Трицепс"
 
+#: apps/exercises/i18n_content.py:72
 msgid "Barbell"
 msgstr "Штанга"
 
+#: apps/exercises/i18n_content.py:73
 msgid "Bodyweight"
 msgstr "Собственный вес"
 
+#: apps/exercises/i18n_content.py:74
 msgid "Cable"
 msgstr "Блок"
 
+#: apps/exercises/i18n_content.py:75
 msgid "Dumbbell"
 msgstr "Гантель"
 
+#: apps/exercises/i18n_content.py:76
 msgid "Kettlebell"
 msgstr "Гиря"
 
+#: apps/exercises/i18n_content.py:77
 msgid "Machine"
 msgstr "Тренажёр"
 
+#: apps/exercises/i18n_content.py:78
 msgid "Resistance Band"
 msgstr "Резиновая лента"
 
+#: apps/exercises/models.py:33 apps/exercises/models.py:89
 msgid "equipment"
 msgstr "оборудование"
 
+#: apps/exercises/models.py:40
 msgid "Compound"
 msgstr "Многосуставное"
 
+#: apps/exercises/models.py:41
 msgid "Isolation"
 msgstr "Изолирующее"
 
+#: apps/exercises/models.py:55
 msgid "Total load"
 msgstr "Общий вес"
 
+#: apps/exercises/models.py:56
 msgid "Per hand / dumbbell"
 msgstr "На руку / гантель"
 
+#: apps/exercises/models.py:70 apps/programs/models.py:37
 msgid "description"
 msgstr "описание"
 
+#: apps/exercises/models.py:75
 msgid "primary muscle groups"
 msgstr "основные группы мышц"
 
+#: apps/exercises/models.py:81
 msgid "secondary muscle groups"
 msgstr "второстепенные группы мышц"
 
+#: apps/exercises/models.py:95
 msgid "movement type"
 msgstr "тип движения"
 
+#: apps/exercises/models.py:101
 msgid "weight logging"
 msgstr "запись веса"
 
+#: apps/measurements/forms.py:57
+#, python-format
 msgid "Value (%(unit)s)"
 msgstr "Значение (%(unit)s)"
 
+#: apps/measurements/forms.py:57
+#: templates/measurements/measurement_history.html:35
 msgid "Value"
 msgstr "Значение"
 
+#: apps/measurements/i18n_content.py:17 templates/core/dashboard.html:72
 msgid "Body weight"
 msgstr "Вес тела"
 
+#: apps/measurements/i18n_content.py:18
 msgid "Body fat %"
 msgstr "Процент жира"
 
+#: apps/measurements/i18n_content.py:19
 msgid "Waist"
 msgstr "Талия"
 
+#: apps/measurements/i18n_content.py:21
 msgid "Arm"
 msgstr "Рука"
 
+#: apps/measurements/i18n_content.py:22
 msgid "Thigh"
 msgstr "Бедро"
 
+#: apps/measurements/i18n_content.py:23
 msgid "Hip"
 msgstr "Бёдра"
 
+#: apps/measurements/i18n_content.py:24
 msgid "Neck"
 msgstr "Шея"
 
+#: apps/measurements/models.py:18 templates/core/_bmi_card.html:31
+#: templates/nutrition/dashboard.html:95
+#: templates/workouts/_performed_exercise_card.html:15
 msgid "Weight"
 msgstr "Вес"
 
+#: apps/measurements/models.py:19
 msgid "Length/circumference"
 msgstr "Длина/обхват"
 
+#: apps/measurements/models.py:20
 msgid "Percentage"
 msgstr "Процент"
 
+#: apps/measurements/models.py:36
 msgid "unit kind"
 msgstr "тип единицы"
 
+#: apps/measurements/models.py:88
 msgid "recorded at"
 msgstr "записано"
 
+#: apps/nutrition/admin.py:80
 msgid "Refresh selected foods from OpenFoodFacts"
 msgstr "Обновить выбранные продукты из OpenFoodFacts"
 
+#: apps/nutrition/admin.py:93
 msgid "None of the selected foods were imported from OpenFoodFacts."
 msgstr "Ни один из выбранных продуктов не был импортирован из OpenFoodFacts."
 
+#: apps/nutrition/admin.py:105
+#, python-format
 msgid "Refreshed %(refreshed)d of %(total)d food(s) from OpenFoodFacts."
 msgstr "Обновлено %(refreshed)d из %(total)d продуктов из OpenFoodFacts."
 
+#: apps/nutrition/admin.py:109
 msgid "Merge selected foods into one…"
 msgstr "Объединить выбранные продукты в один…"
 
+#: apps/nutrition/admin.py:114 apps/nutrition/admin.py:142
 msgid "Select at least two foods to merge."
 msgstr "Выберите не менее двух продуктов для объединения."
 
-msgid "Merged %(count)d food(s) into “%(name)s”. Every diary entry, recipe ingredient, and diet-plan item that referenced one of them now points at it instead."
-msgstr "Объединено %(count)d продуктов в «%(name)s». Каждая запись дневника, ингредиент рецепта и пункт плана питания, ссылавшиеся на один из них, теперь ссылаются на этот."
+#: apps/nutrition/admin.py:155
+#, python-format
+msgid ""
+"Merged %(count)d food(s) into “%(name)s”. Every diary entry, recipe "
+"ingredient, and diet-plan item that referenced one of them now points at it "
+"instead."
+msgstr ""
+"Объединено %(count)d продуктов в «%(name)s». Каждая запись дневника, "
+"ингредиент рецепта и пункт плана питания, ссылавшиеся на один из них, теперь "
+"ссылаются на этот."
 
+#: apps/nutrition/admin.py:165
 msgid "Merge foods"
 msgstr "Объединить продукты"
 
+#: apps/nutrition/calculators.py:138 apps/nutrition/calculators.py:143
 msgid "Lower risk"
 msgstr "Более низкий риск"
 
+#: apps/nutrition/calculators.py:139 apps/nutrition/calculators.py:144
 msgid "Moderate risk"
 msgstr "Умеренный риск"
 
+#: apps/nutrition/calculators.py:140 apps/nutrition/calculators.py:145
 msgid "Higher risk"
 msgstr "Более высокий риск"
 
+#: apps/nutrition/energy.py:118
+#, python-format
 msgid "a %(job)s job"
 msgstr "работа: %(job)s"
 
+#: apps/nutrition/energy.py:132
+#, python-format
 msgid "~%(steps)s steps/day"
 msgstr "~%(steps)s шагов/день"
 
+#: apps/nutrition/energy.py:145
+#, python-format
 msgid "%(count)s gym sessions a week"
 msgstr "%(count)s тренировок в зале в неделю"
 
+#: apps/nutrition/energy.py:158
 msgid "other regular exercise"
 msgstr "другая регулярная физическая активность"
 
+#: apps/nutrition/energy.py:172
+#, python-format
 msgid "Suggested: %(label)s — %(factors)s"
 msgstr "Предложение: %(label)s — %(factors)s"
 
+#: apps/nutrition/energy.py:177
+#, python-format
 msgid "Suggested: %(label)s — no activity details given yet"
 msgstr "Предложение: %(label)s — данные об активности пока не указаны"
 
+#: apps/nutrition/energy.py:246
+#, python-format
 msgid "Estimated maintenance (TDEE): %(tdee)s kcal/day."
 msgstr "Расчётная норма поддержания (TDEE): %(tdee)s ккал/день."
 
-msgid "Your requested rate was reduced to a safer %(rate)s kg/week (capped at %(fraction)s%% of bodyweight/week)."
-msgstr "Запрошенный темп был снижен до более безопасного значения %(rate)s кг/нед (ограничение %(fraction)s%% веса тела в неделю)."
+#: apps/nutrition/energy.py:251
+#, python-format
+msgid ""
+"Your requested rate was reduced to a safer %(rate)s kg/week (capped at "
+"%(fraction)s%% of bodyweight/week)."
+msgstr ""
+"Запрошенный темп был снижен до более безопасного значения %(rate)s кг/нед "
+"(ограничение %(fraction)s%% веса тела в неделю)."
 
-msgid "Your target rate would need %(raw)s kcal/day, below a safe minimum — capped at %(floor)s kcal/day."
-msgstr "Ваш целевой темп потребовал бы %(raw)s ккал/день, что ниже безопасного минимума — ограничено до %(floor)s ккал/день."
+#: apps/nutrition/energy.py:261
+#, python-format
+msgid ""
+"Your target rate would need %(raw)s kcal/day, below a safe minimum — capped "
+"at %(floor)s kcal/day."
+msgstr ""
+"Ваш целевой темп потребовал бы %(raw)s ккал/день, что ниже безопасного "
+"минимума — ограничено до %(floor)s ккал/день."
 
+#: apps/nutrition/energy.py:269
+#, python-format
 msgid "Target: %(rate)s kg/week → %(calories)s kcal/day."
 msgstr "Цель: %(rate)s кг/нед → %(calories)s ккал/день."
 
+#: apps/nutrition/forms.py:22 apps/nutrition/forms.py:460
+#: apps/nutrition/forms.py:504 apps/nutrition/forms.py:588
 msgid "Biological sex"
 msgstr "Биологический пол"
 
-msgid "Used by the BMR formula (Mifflin-St Jeor) — a physiological input, not a gender-identity question."
-msgstr "Используется в формуле BMR (Миффлина-Сан Жеора) — это физиологический параметр, а не вопрос о гендерной идентичности."
+#: apps/nutrition/forms.py:24
+msgid ""
+"Used by the BMR formula (Mifflin-St Jeor) — a physiological input, not a "
+"gender-identity question."
+msgstr ""
+"Используется в формуле BMR (Миффлина-Сан Жеора) — это физиологический "
+"параметр, а не вопрос о гендерной идентичности."
 
+#: apps/nutrition/forms.py:30
 msgid "Date of birth"
 msgstr "Дата рождения"
 
+#: apps/nutrition/forms.py:61
 msgid "Your job"
 msgstr "Ваша работа"
 
+#: apps/nutrition/forms.py:63
 msgid "Average daily steps (if you know it)"
 msgstr "Среднее количество шагов в день (если известно)"
 
+#: apps/nutrition/forms.py:66
 msgid "Gym sessions per week"
 msgstr "Тренировок в зале в неделю"
 
+#: apps/nutrition/forms.py:69
 msgid "Typical session length (minutes)"
 msgstr "Обычная продолжительность тренировки (минуты)"
 
+#: apps/nutrition/forms.py:72
 msgid "Other exercise (minutes/week)"
 msgstr "Другая физическая активность (минут/неделю)"
 
+#: apps/nutrition/forms.py:77
 msgid "Current daily calories, if you already track this"
 msgstr "Текущее суточное потребление калорий, если вы уже его отслеживаете"
 
-msgid "Used only to compare against this app's own estimate, never as an input."
-msgstr "Используется только для сравнения с собственной оценкой приложения, но никогда как входные данные."
+#: apps/nutrition/forms.py:78
+msgid ""
+"Used only to compare against this app's own estimate, never as an input."
+msgstr ""
+"Используется только для сравнения с собственной оценкой приложения, но "
+"никогда как входные данные."
 
+#: apps/nutrition/forms.py:83 apps/nutrition/forms.py:464
+#: apps/nutrition/forms.py:562
 msgid "Activity level"
 msgstr "Уровень активности"
 
+#: apps/nutrition/forms.py:95 apps/nutrition/forms.py:481
 msgid "Goal"
 msgstr "Цель"
 
+#: apps/nutrition/forms.py:109 apps/nutrition/forms.py:648
+#: apps/programs/forms.py:99
+#, python-format
 msgid "Target weight (%(unit)s)"
 msgstr "Целевой вес (%(unit)s)"
 
+#: apps/nutrition/forms.py:110
 msgid "Target rate (kg/week)"
 msgstr "Целевой темп (кг/нед)"
 
-msgid "Negative to lose weight, positive to gain. Pre-filled from your goal below — capped at a safe rate for your bodyweight."
-msgstr "Отрицательное значение для похудения, положительное — для набора веса. Предзаполнено на основе вашей цели ниже — ограничено безопасным темпом для вашего веса."
+#: apps/nutrition/forms.py:112
+msgid ""
+"Negative to lose weight, positive to gain. Pre-filled from your goal below — "
+"capped at a safe rate for your bodyweight."
+msgstr ""
+"Отрицательное значение для похудения, положительное — для набора веса. "
+"Предзаполнено на основе вашей цели ниже — ограничено безопасным темпом для "
+"вашего веса."
 
-msgid "All the nutrition values below are for this amount, in the unit chosen next to it — e.g. \"100 g\" if the values are per 100 grams."
-msgstr "Все указанные ниже значения пищевой ценности относятся к этому количеству в выбранной рядом единице — например, «100 г», если значения указаны на 100 граммов."
+#: apps/nutrition/forms.py:137
+msgid "A fat-loss goal needs a negative rate — you're asking to lose weight."
+msgstr "Цель похудения требует отрицательного темпа — вы хотите похудеть."
 
+#: apps/nutrition/forms.py:142
+msgid ""
+"A muscle-gain goal needs a positive rate — you're asking to gain weight."
+msgstr ""
+"Цель набора мышечной массы требует положительного темпа — вы хотите набрать "
+"вес."
+
+#: apps/nutrition/forms.py:145
+msgid "A maintenance goal's rate should be 0 kg/week."
+msgstr "Темп для цели поддержания веса должен быть 0 кг/неделю."
+
+#: apps/nutrition/forms.py:186
+msgid ""
+"All the nutrition values below are for this amount, in the unit chosen next "
+"to it — e.g. \"100 g\" if the values are per 100 grams."
+msgstr ""
+"Все указанные ниже значения пищевой ценности относятся к этому количеству в "
+"выбранной рядом единице — например, «100 г», если значения указаны на 100 "
+"граммов."
+
+#: apps/nutrition/forms.py:193 templates/nutrition/diary_add_entry.html:48
+#: templates/nutrition/diet_plan_meal_item_form.html:18
+#: templates/nutrition/food_browse.html:25
+#: templates/nutrition/recipe_ingredient_form.html:18
 msgid "Search foods"
 msgstr "Поиск продуктов"
 
+#: apps/nutrition/forms.py:217 apps/nutrition/forms.py:281
+#: apps/nutrition/forms.py:408
 msgid "Pick a food to add."
 msgstr "Выберите продукт для добавления."
 
+#: apps/nutrition/forms.py:240
+msgid "Meal (optional)"
+msgstr "Приём пищи (необязательно)"
+
+#: apps/nutrition/forms.py:241
+msgid "Any meal"
+msgstr "Любой приём пищи"
+
+#: apps/nutrition/forms.py:244
+msgid ""
+"If set, the diet-plan builder only ever suggests this recipe for that meal — "
+"leave as \"Any meal\" for a recipe that fits anywhere."
+msgstr ""
+"Если указано, конструктор плана питания предлагает этот рецепт только для "
+"этого приёма пищи — оставьте «Любой приём пищи», если рецепт подходит для "
+"любого случая."
+
+#: apps/nutrition/forms.py:294 templates/nutrition/diary_add_entry.html:29
 msgid "Meal"
 msgstr "Приём пищи"
 
+#: apps/nutrition/forms.py:299
 msgid "Servings"
 msgstr "Порции"
 
+#: apps/nutrition/forms.py:304 apps/nutrition/forms.py:415
 msgid "Log for date"
 msgstr "Записать за дату"
 
+#: apps/nutrition/forms.py:324
 msgid "Plan name"
 msgstr "Название плана"
 
+#: apps/nutrition/forms.py:325 apps/nutrition/forms.py:480
+#: templates/nutrition/stats.html:38
 msgid "Daily calories"
 msgstr "Суточные калории"
 
+#: apps/nutrition/forms.py:327
 msgid "Protein (g)"
 msgstr "Белки (г)"
 
+#: apps/nutrition/forms.py:330
 msgid "Carbohydrates (g)"
 msgstr "Углеводы (г)"
 
+#: apps/nutrition/forms.py:333
 msgid "Fat (g)"
 msgstr "Жиры (г)"
 
+#: apps/nutrition/forms.py:336
 msgid "Which meals?"
 msgstr "Какие приёмы пищи?"
 
+#: apps/nutrition/forms.py:340
+msgid "Vary meals across a whole week instead of repeating one day"
+msgstr "Разнообразить приёмы пищи на всю неделю вместо повторения одного дня"
+
+#: apps/nutrition/forms.py:342
+msgid ""
+"Each day still hits the same daily calories/macros above — only which meal "
+"fills each slot changes from day to day, so a week's worth of breakfasts "
+"(for example) aren't all identical."
+msgstr ""
+"Каждый день по-прежнему соответствует тем же дневным калориям/макросам, "
+"указанным выше — меняется только то, какой приём пищи заполняет каждый слот, "
+"изо дня в день, поэтому, например, завтраки за неделю не будут одинаковыми."
+
+#: apps/nutrition/forms.py:380
 msgid "Pick either a food or a recipe, not both or neither."
 msgstr "Выберите либо продукт, либо рецепт — не оба и не ни один."
 
+#: apps/nutrition/forms.py:461
 msgid "Age (years)"
 msgstr "Возраст (лет)"
 
+#: apps/nutrition/forms.py:507
 msgid "Neck circumference"
 msgstr "Обхват шеи"
 
+#: apps/nutrition/forms.py:510 apps/nutrition/forms.py:590
 msgid "Waist circumference"
 msgstr "Обхват талии"
 
+#: apps/nutrition/forms.py:517 apps/nutrition/forms.py:593
 msgid "Hip circumference"
 msgstr "Обхват бёдер"
 
+#: apps/nutrition/forms.py:536
 msgid "Hip circumference is required for the women's formula."
 msgstr "Для женской формулы требуется обхват бёдер."
 
+#: apps/nutrition/forms.py:629
 msgid "Current weight (kg)"
 msgstr "Текущий вес (кг)"
 
+#: apps/nutrition/forms.py:632
 msgid "Target weight (kg)"
 msgstr "Целевой вес (кг)"
 
+#: apps/nutrition/forms.py:637
 msgid "Rate (kg/week — negative to lose, positive to gain)"
-msgstr "Темп (кг/неделя — отрицательное значение для похудения, положительное для набора веса)"
+msgstr ""
+"Темп (кг/неделя — отрицательное значение для похудения, положительное для "
+"набора веса)"
 
+#: apps/nutrition/forms.py:652
+#, python-format
 msgid "Rate (%(unit)s/week — negative to lose, positive to gain)"
-msgstr "Темп (%(unit)s/неделя — отрицательное значение для похудения, положительное для набора веса)"
+msgstr ""
+"Темп (%(unit)s/неделя — отрицательное значение для похудения, положительное "
+"для набора веса)"
 
+#: apps/nutrition/i18n_content.py:25
+msgid "Bulk breakfast — Oats & peanut butter"
+msgstr "Завтрак для набора массы — овсянка с арахисовой пастой"
+
+#: apps/nutrition/i18n_content.py:26
+msgid "Bulk breakfast — Eggs on toast"
+msgstr "Завтрак для набора массы — яйца на тосте"
+
+#: apps/nutrition/i18n_content.py:27
+msgid "Bulk lunch — Chicken & rice bowl"
+msgstr "Обед для набора массы — курица с рисом"
+
+#: apps/nutrition/i18n_content.py:28
+msgid "Bulk lunch — Tuna & sweet potato"
+msgstr "Обед для набора массы — тунец со сладким картофелем"
+
+#: apps/nutrition/i18n_content.py:29
+msgid "Bulk dinner — Salmon & rice"
+msgstr "Ужин для набора массы — лосось с рисом"
+
+#: apps/nutrition/i18n_content.py:30
+msgid "Bulk dinner — Chicken & sweet potato"
+msgstr "Ужин для набора массы — курица со сладким картофелем"
+
+#: apps/nutrition/i18n_content.py:31
+msgid "Fatburner breakfast — Egg & spinach scramble"
+msgstr "Завтрак для похудения — яичница со шпинатом"
+
+#: apps/nutrition/i18n_content.py:32
+msgid "Fatburner breakfast — Greek yogurt bowl"
+msgstr "Завтрак для похудения — греческий йогурт с добавками"
+
+#: apps/nutrition/i18n_content.py:33
+msgid "Fatburner lunch — Chicken & broccoli"
+msgstr "Обед для похудения — курица с брокколи"
+
+#: apps/nutrition/i18n_content.py:34
+msgid "Fatburner lunch — Tuna & spinach salad"
+msgstr "Обед для похудения — салат с тунцом и шпинатом"
+
+#: apps/nutrition/i18n_content.py:35
+msgid "Fatburner dinner — Salmon & greens"
+msgstr "Ужин для похудения — лосось с зеленью"
+
+#: apps/nutrition/i18n_content.py:36
+msgid "Fatburner dinner — Chicken & cottage cheese"
+msgstr "Ужин для похудения — курица с творогом"
+
+#: apps/nutrition/i18n_content.py:37
+msgid "Balanced breakfast — Oats & yogurt"
+msgstr "Сбалансированный завтрак — овсянка с йогуртом"
+
+#: apps/nutrition/i18n_content.py:38
+msgid "Balanced breakfast — Eggs on toast"
+msgstr "Сбалансированный завтрак — яйца на тосте"
+
+#: apps/nutrition/i18n_content.py:39
+msgid "Balanced lunch — Chicken & rice"
+msgstr "Сбалансированный обед — курица с рисом"
+
+#: apps/nutrition/i18n_content.py:40
+msgid "Balanced lunch — Tuna sandwich"
+msgstr "Сбалансированный обед — сэндвич с тунцом"
+
+#: apps/nutrition/i18n_content.py:41
+msgid "Balanced dinner — Salmon & sweet potato"
+msgstr "Сбалансированный ужин — лосось со сладким картофелем"
+
+#: apps/nutrition/i18n_content.py:42
+msgid "Balanced dinner — Chicken & vegetables"
+msgstr "Сбалансированный ужин — курица с овощами"
+
+#: apps/nutrition/i18n_content.py:47
+msgid "Mix the oats into the yogurt, top with banana slices and peanut butter."
+msgstr ""
+"Смешайте овсянку с йогуртом, добавьте сверху ломтики банана и арахисовую "
+"пасту."
+
+#: apps/nutrition/i18n_content.py:48
+msgid ""
+"Fry or scramble the eggs, serve on toasted bread with peanut butter and a "
+"drizzle of olive oil."
+msgstr ""
+"Обжарьте или взбейте яйца, подавайте на тосте с арахисовой пастой и каплей "
+"оливкового масла."
+
+#: apps/nutrition/i18n_content.py:49
+msgid ""
+"Cook the chicken and rice, toss with olive oil, serve with steamed broccoli."
+msgstr ""
+"Приготовьте курицу и рис, перемешайте с оливковым маслом, подавайте с "
+"брокколи на пару."
+
+#: apps/nutrition/i18n_content.py:50
+msgid ""
+"Roast the sweet potato, flake in the tuna, drizzle with olive oil and serve "
+"with spinach."
+msgstr ""
+"Запеките сладкий картофель, добавьте тунец кусочками, сбрызните оливковым "
+"маслом и подавайте со шпинатом."
+
+#: apps/nutrition/i18n_content.py:51
+msgid ""
+"Pan-sear the salmon, serve over rice with steamed broccoli and a little "
+"olive oil."
+msgstr ""
+"Обжарьте лосось на сковороде, подавайте с рисом, брокколи на пару и "
+"небольшим количеством оливкового масла."
+
+#: apps/nutrition/i18n_content.py:52
+msgid ""
+"Roast the chicken and sweet potato together, top with crushed almonds and "
+"olive oil."
+msgstr ""
+"Запеките курицу и сладкий картофель вместе, посыпьте измельчённым миндалём и "
+"сбрызните оливковым маслом."
+
+#: apps/nutrition/i18n_content.py:53
+msgid ""
+"Scramble the eggs with the spinach, serve with cottage cheese on the side."
+msgstr "Взбейте яйца со шпинатом, подавайте с творогом отдельно."
+
+#: apps/nutrition/i18n_content.py:54
+msgid "Top the yogurt with sliced banana and a few crushed almonds."
+msgstr "Добавьте в йогурт ломтики банана и немного измельчённого миндаля."
+
+#: apps/nutrition/i18n_content.py:55
+msgid ""
+"Grill the chicken, steam the broccoli, finish with a light drizzle of olive "
+"oil."
+msgstr ""
+"Приготовьте курицу на гриле, брокколи на пару, сбрызните небольшим "
+"количеством оливкового масла."
+
+#: apps/nutrition/i18n_content.py:56
+msgid "Toss the tuna with the spinach and a small drizzle of olive oil."
+msgstr "Смешайте тунец со шпинатом и небольшим количеством оливкового масла."
+
+#: apps/nutrition/i18n_content.py:57
+msgid "Bake the salmon, serve with steamed broccoli and spinach."
+msgstr "Запеките лосось, подавайте с брокколи на пару и шпинатом."
+
+#: apps/nutrition/i18n_content.py:58
+msgid "Grill the chicken, serve with cottage cheese and wilted spinach."
+msgstr "Приготовьте курицу на гриле, подавайте с творогом и тушёным шпинатом."
+
+#: apps/nutrition/i18n_content.py:59
+msgid "Mix the oats into the yogurt and top with sliced banana."
+msgstr "Смешайте овсянку с йогуртом и добавьте сверху ломтики банана."
+
+#: apps/nutrition/i18n_content.py:60
+msgid ""
+"Fry or scramble the eggs, serve on toasted bread with a little olive oil."
+msgstr ""
+"Обжарьте или взбейте яйца, подавайте на тосте с небольшим количеством "
+"оливкового масла."
+
+#: apps/nutrition/i18n_content.py:61
+msgid "Cook the chicken and rice, serve with steamed broccoli and olive oil."
+msgstr ""
+"Приготовьте курицу и рис, подавайте с брокколи на пару и оливковым маслом."
+
+#: apps/nutrition/i18n_content.py:62
+msgid "Mix the tuna with the spinach, serve between slices of toasted bread."
+msgstr "Смешайте тунец со шпинатом, подавайте между ломтиками тоста."
+
+#: apps/nutrition/i18n_content.py:63
+msgid "Bake the salmon and sweet potato, serve with wilted spinach."
+msgstr "Запеките лосось и сладкий картофель, подавайте с тушёным шпинатом."
+
+#: apps/nutrition/i18n_content.py:64
+msgid ""
+"Roast the chicken with the broccoli and sweet potato, finish with olive oil."
+msgstr ""
+"Запеките курицу с брокколи и сладким картофелем, сбрызните оливковым маслом."
+
+#: apps/nutrition/models.py:32
 msgid "Male"
 msgstr "Мужской"
 
+#: apps/nutrition/models.py:33
 msgid "Female"
 msgstr "Женский"
 
+#: apps/nutrition/models.py:37
 msgid "Desk job, mostly sitting"
 msgstr "Офисная работа, в основном сидячая"
 
+#: apps/nutrition/models.py:38
 msgid "On my feet some of the day"
 msgstr "На ногах часть дня"
 
+#: apps/nutrition/models.py:39
 msgid "On my feet most of the day"
 msgstr "На ногах большую часть дня"
 
+#: apps/nutrition/models.py:40
 msgid "Physically demanding / manual labor"
 msgstr "Физически тяжёлая / ручной труд"
 
+#: apps/nutrition/models.py:50
 msgid "Sedentary"
 msgstr "Малоподвижный"
 
+#: apps/nutrition/models.py:51
 msgid "Lightly active"
 msgstr "Слегка активный"
 
+#: apps/nutrition/models.py:52
 msgid "Moderately active"
 msgstr "Умеренно активный"
 
+#: apps/nutrition/models.py:53 templates/nutrition/diet_plan_detail.html:10
+#: templates/nutrition/diet_plan_list.html:16
 msgid "Active"
 msgstr "Активный"
 
+#: apps/nutrition/models.py:54
 msgid "Very active"
 msgstr "Очень активный"
 
+#: apps/nutrition/models.py:58
 msgid "Fat loss — aggressive"
 msgstr "Снижение жира — агрессивное"
 
+#: apps/nutrition/models.py:59
 msgid "Fat loss — moderate"
 msgstr "Снижение жира — умеренное"
 
+#: apps/nutrition/models.py:60
 msgid "Fat loss — conservative"
 msgstr "Снижение жира — консервативное"
 
+#: apps/nutrition/models.py:61 apps/programs/models.py:103
 msgid "Maintenance"
 msgstr "Поддержание"
 
+#: apps/nutrition/models.py:62
 msgid "Muscle gain — lean bulk"
 msgstr "Набор мышечной массы — «сухой» набор"
 
+#: apps/nutrition/models.py:63
 msgid "Muscle gain — moderate bulk"
 msgstr "Набор мышечной массы — умеренный набор"
 
+#: apps/nutrition/models.py:64
 msgid "Muscle gain — aggressive bulk"
 msgstr "Набор мышечной массы — агрессивный набор"
 
+#: apps/nutrition/models.py:68
 msgid "Calculated from goal"
 msgstr "Рассчитано на основе цели"
 
+#: apps/nutrition/models.py:69
 msgid "Set manually"
 msgstr "Установлено вручную"
 
+#: apps/nutrition/models.py:70
 msgid "Accepted a suggested adjustment"
 msgstr "Принята предложенная корректировка"
 
+#: apps/nutrition/models.py:74
 msgid "g"
 msgstr "г"
 
+#: apps/nutrition/models.py:75
 msgid "ml"
 msgstr "мл"
 
+#: apps/nutrition/models.py:76
 msgid "piece"
 msgstr "шт"
 
+#: apps/nutrition/models.py:91
 msgid "A — best"
 msgstr "A — лучший"
 
+#: apps/nutrition/models.py:92
 msgid "B"
 msgstr "B"
 
+#: apps/nutrition/models.py:93
 msgid "C"
 msgstr "C"
 
+#: apps/nutrition/models.py:94
 msgid "D"
 msgstr "D"
 
+#: apps/nutrition/models.py:95
 msgid "E — worst"
 msgstr "E — худший"
 
+#: apps/nutrition/models.py:105
 msgid "1 — unprocessed or minimally processed"
 msgstr "1 — необработанные или минимально обработанные"
 
+#: apps/nutrition/models.py:106
 msgid "2 — processed culinary ingredients"
 msgstr "2 — обработанные кулинарные ингредиенты"
 
+#: apps/nutrition/models.py:107
 msgid "3 — processed food"
 msgstr "3 — обработанные продукты"
 
+#: apps/nutrition/models.py:108
 msgid "4 — ultra-processed food"
 msgstr "4 — ультраобработанные продукты"
 
+#: apps/nutrition/models.py:123
 msgid "Stored instead of a raw age, so it never goes stale."
-msgstr "Сохраняется вместо самого возраста, чтобы данные никогда не устаревали."
+msgstr ""
+"Сохраняется вместо самого возраста, чтобы данные никогда не устаревали."
 
-msgid "If you already track this, tell us — used only to compare against this app's own estimate, never as an input to it."
-msgstr "Если вы уже это отслеживаете, сообщите нам — используется только для сравнения с собственной оценкой приложения, но никогда как входные данные для неё."
+#: apps/nutrition/models.py:135
+msgid ""
+"If you already track this, tell us — used only to compare against this app's "
+"own estimate, never as an input to it."
+msgstr ""
+"Если вы уже это отслеживаете, сообщите нам — используется только для "
+"сравнения с собственной оценкой приложения, но никогда как входные данные "
+"для неё."
 
+#: apps/nutrition/models.py:309
 msgid "Null for the built-in default meal slots."
 msgstr "Пусто (null) для встроенных стандартных приёмов пищи."
 
+#: apps/nutrition/models.py:494
 msgid "Log either a food or a recipe, not both or neither."
 msgstr "Запишите либо продукт, либо рецепт — не оба и не ни один."
 
+#: apps/nutrition/models.py:604
 msgid "Use either a food or a recipe, not both or neither."
 msgstr "Используйте либо продукт, либо рецепт — не оба и не ни один."
 
+#: apps/nutrition/suggestions.py:104
 msgid "Set a nutrition goal to get adjustment suggestions."
-msgstr "Установите цель по питанию, чтобы получать предложения по корректировке."
+msgstr ""
+"Установите цель по питанию, чтобы получать предложения по корректировке."
 
-msgid "Not enough logged weight yet — keep logging your weight regularly and check back in a couple of weeks."
-msgstr "Пока недостаточно записей веса — продолжайте регулярно записывать вес и проверьте снова через пару недель."
+#: apps/nutrition/suggestions.py:117
+msgid ""
+"Not enough logged weight yet — keep logging your weight regularly and check "
+"back in a couple of weeks."
+msgstr ""
+"Пока недостаточно записей веса — продолжайте регулярно записывать вес и "
+"проверьте снова через пару недель."
 
-msgid "Target: %(target)s kg/week. Actual trend: %(actual)s kg/week — on track."
-msgstr "Цель: %(target)s кг/нед. Фактический тренд: %(actual)s кг/нед — всё по плану."
+#: apps/nutrition/suggestions.py:135
+#, python-format
+msgid ""
+"Target: %(target)s kg/week. Actual trend: %(actual)s kg/week — on track."
+msgstr ""
+"Цель: %(target)s кг/нед. Фактический тренд: %(actual)s кг/нед — всё по плану."
 
-msgid "Target: %(target)s kg/week. Actual trend: %(actual)s kg/week over the last %(days)s days. Suggested adjustment: %(delta)+d kcal/day."
-msgstr "Цель: %(target)s кг/нед. Фактический тренд: %(actual)s кг/нед за последние %(days)s дн. Предлагаемая корректировка: %(delta)+d ккал/день."
+#: apps/nutrition/suggestions.py:150
+#, python-format
+msgid ""
+"Target: %(target)s kg/week. Actual trend: %(actual)s kg/week over the last "
+"%(days)s days. Suggested adjustment: %(delta)+d kcal/day."
+msgstr ""
+"Цель: %(target)s кг/нед. Фактический тренд: %(actual)s кг/нед за последние "
+"%(days)s дн. Предлагаемая корректировка: %(delta)+d ккал/день."
 
+#: apps/nutrition/views.py:548
 msgid "Pick a date to copy this day to."
 msgstr "Выберите дату, на которую скопировать этот день."
 
+#: apps/nutrition/views.py:553
+#, python-format
 msgid "Copied %(count)d entry to %(date)s."
 msgid_plural "Copied %(count)d entries to %(date)s."
 msgstr[0] "Скопирована %(count)d запись на %(date)s."
 msgstr[1] "Скопировано %(count)d записи на %(date)s."
 msgstr[2] "Скопировано %(count)d записей на %(date)s."
 
+#: apps/nutrition/views.py:559
 msgid "Nothing to copy — that day has no entries."
 msgstr "Нечего копировать — за этот день нет записей."
 
+#: apps/nutrition/views.py:603 apps/nutrition/views.py:820
+#: apps/nutrition/views.py:1127
 msgid "That food couldn't be imported — try again."
 msgstr "Не удалось импортировать этот продукт — попробуйте снова."
 
+#: apps/nutrition/views.py:762
+#, python-format
 msgid "\"%(name)s\" created — now add its ingredients below."
 msgstr "«%(name)s» создан — добавьте его ингредиенты ниже."
 
+#: apps/nutrition/views.py:1159
+#, python-format
+msgid "Logged %(count)d item to %(date)s."
+msgid_plural "Logged %(count)d items to %(date)s."
+msgstr[0] "Записан %(count)d элемент на %(date)s."
+msgstr[1] "Записано %(count)d элемента на %(date)s."
+msgstr[2] "Записано %(count)d элементов на %(date)s."
+
+#: apps/nutrition/views.py:1170
+msgid "Nothing to log — this plan has no items for that date."
+msgstr "Нечего записывать — в этом плане нет пунктов на эту дату."
+
+#: apps/programs/forms.py:23
 msgid "Save as a personal template"
 msgstr "Сохранить как личный шаблон"
 
-msgid "Templates aren't meant to be run directly — copy them into a new program (from the program page) whenever you start a new cycle, keeping the original untouched."
-msgstr "Шаблоны не предназначены для прямого использования — копируйте их в новую программу (со страницы программы) каждый раз, когда начинаете новый цикл, оставляя оригинал нетронутым."
+#: apps/programs/forms.py:27
+msgid ""
+"Templates aren't meant to be run directly — copy them into a new program "
+"(from the program page) whenever you start a new cycle, keeping the original "
+"untouched."
+msgstr ""
+"Шаблоны не предназначены для прямого использования — копируйте их в новую "
+"программу (со страницы программы) каждый раз, когда начинаете новый цикл, "
+"оставляя оригинал нетронутым."
 
+#: apps/programs/forms.py:68 apps/workouts/forms.py:72
 msgid "exercise"
 msgstr "упражнение"
 
+#: apps/programs/forms.py:70 apps/programs/forms.py:73
 msgid "Target"
 msgstr "Целевой"
 
+#: apps/programs/forms.py:70 apps/workouts/forms.py:42
 msgid "RPE"
 msgstr "RPE"
 
+#: apps/programs/forms.py:73 apps/workouts/forms.py:43
 msgid "RIR"
 msgstr "RIR"
 
+#: apps/programs/forms.py:76
 msgid "Percentage target"
 msgstr "Процентная цель"
 
+#: apps/programs/forms.py:76
 msgid "1RM"
 msgstr "1ПМ"
 
+#: apps/programs/forms.py:100
+#, python-format
 msgid "Weight increment (%(unit)s)"
 msgstr "Прибавка веса (%(unit)s)"
 
+#: apps/programs/forms.py:137 apps/programs/models.py:160
 msgid "Minimum reps cannot exceed maximum reps."
 msgstr "Минимальное количество повторений не может превышать максимальное."
 
+#: apps/programs/i18n_content.py:17
 msgid "Full Body A/B/C"
 msgstr "Всё тело A/B/C"
 
+#: apps/programs/i18n_content.py:18
 msgid "Arnold Split (6-Day)"
 msgstr "Сплит Арнольда (6 дней)"
 
+#: apps/programs/i18n_content.py:19
 msgid "Push/Pull/Legs"
 msgstr "Жим/Тяга/Ноги"
 
+#: apps/programs/i18n_content.py:20
 msgid "5x5 Strength (A/B)"
 msgstr "5×5 Сила (A/B)"
 
+#: apps/programs/i18n_content.py:21
 msgid "Upper/Lower Split (4-Day)"
 msgstr "Верх/Низ (4 дня)"
 
+#: apps/programs/i18n_content.py:22
 msgid "German Volume Training"
 msgstr "Немецкий объёмный тренинг"
 
-msgid "A classic three-day full-body template: one squat/press/row day, one deadlift/press/pull day, and one accessory-focused day. Copy it and adjust weights/increments to your own."
-msgstr "Классический трёхдневный шаблон для всего тела: день приседаний/жима/тяги, день становой/жима/тяги и день вспомогательных упражнений. Скопируйте и настройте веса/прибавки под себя."
+#: apps/programs/i18n_content.py:28
+msgid ""
+"A classic three-day full-body template: one squat/press/row day, one "
+"deadlift/press/pull day, and one accessory-focused day. Copy it and adjust "
+"weights/increments to your own."
+msgstr ""
+"Классический трёхдневный шаблон для всего тела: день приседаний/жима/тяги, "
+"день становой/жима/тяги и день вспомогательных упражнений. Скопируйте и "
+"настройте веса/прибавки под себя."
 
-msgid "The classic 6-day bodybuilding split popularized by Arnold Schwarzenegger in the 1970s: chest/back, shoulders/arms, and legs, each trained twice a week. Rotate through all three workouts, then repeat — not tied to fixed calendar days."
-msgstr "Классический 6-дневный сплит для бодибилдинга, популяризированный Арнольдом Шварценеггером в 1970-х: грудь/спина, плечи/руки и ноги, каждая группа прорабатывается дважды в неделю. Чередуйте все три тренировки и повторяйте — без привязки к дням недели."
+#: apps/programs/i18n_content.py:33
+msgid ""
+"The classic 6-day bodybuilding split popularized by Arnold Schwarzenegger in "
+"the 1970s: chest/back, shoulders/arms, and legs, each trained twice a week. "
+"Rotate through all three workouts, then repeat — not tied to fixed calendar "
+"days."
+msgstr ""
+"Классический 6-дневный сплит для бодибилдинга, популяризированный Арнольдом "
+"Шварценеггером в 1970-х: грудь/спина, плечи/руки и ноги, каждая группа "
+"прорабатывается дважды в неделю. Чередуйте все три тренировки и повторяйте — "
+"без привязки к дням недели."
 
-msgid "A widely used 3-day split organized by movement pattern rather than body part: pushing muscles, pulling muscles, then legs. Popular for both strength and bodybuilding goals."
-msgstr "Широко используемый 3-дневный сплит, организованный по типу движения, а не по группе мышц: толкающие мышцы, тянущие мышцы, затем ноги. Популярен как для силовых, так и для бодибилдинг-целей."
+#: apps/programs/i18n_content.py:39
+msgid ""
+"A widely used 3-day split organized by movement pattern rather than body "
+"part: pushing muscles, pulling muscles, then legs. Popular for both strength "
+"and bodybuilding goals."
+msgstr ""
+"Широко используемый 3-дневный сплит, организованный по типу движения, а не "
+"по группе мышц: толкающие мышцы, тянущие мышцы, затем ноги. Популярен как "
+"для силовых, так и для бодибилдинг-целей."
 
-msgid "A classic beginner barbell strength program: two alternating full-body workouts built around low-rep, high-set compound lifts with linear weight progression each session."
-msgstr "Классическая силовая программа со штангой для новичков: две чередующиеся тренировки на всё тело, построенные вокруг базовых упражнений с малым числом повторений и большим числом подходов, с линейной прогрессией веса на каждой тренировке."
+#: apps/programs/i18n_content.py:44
+msgid ""
+"A classic beginner barbell strength program: two alternating full-body "
+"workouts built around low-rep, high-set compound lifts with linear weight "
+"progression each session."
+msgstr ""
+"Классическая силовая программа со штангой для новичков: две чередующиеся "
+"тренировки на всё тело, построенные вокруг базовых упражнений с малым числом "
+"повторений и большим числом подходов, с линейной прогрессией веса на каждой "
+"тренировке."
 
-msgid "A 4-day split alternating upper-body and lower-body sessions twice each per week — a common middle ground between full-body and single-muscle-group routines, popular for balancing strength and volume without training every day."
-msgstr "4-дневный сплит, чередующий тренировки верха и низа тела дважды в неделю каждую — распространённый компромисс между программами на всё тело и на отдельные группы мышц, популярен для баланса силы и объёма без ежедневных тренировок."
+#: apps/programs/i18n_content.py:49
+msgid ""
+"A 4-day split alternating upper-body and lower-body sessions twice each per "
+"week — a common middle ground between full-body and single-muscle-group "
+"routines, popular for balancing strength and volume without training every "
+"day."
+msgstr ""
+"4-дневный сплит, чередующий тренировки верха и низа тела дважды в неделю "
+"каждую — распространённый компромисс между программами на всё тело и на "
+"отдельные группы мышц, популярен для баланса силы и объёма без ежедневных "
+"тренировок."
 
-msgid "The classic 10x10 high-volume method: one main lift per workout done for ten sets of ten reps at a fixed, moderate weight, paired with a lighter accessory movement. Brutal on paper, simple in practice — built for muscle growth, not 1-rep-max testing."
-msgstr "Классический метод высокого объёма 10×10: одно основное упражнение за тренировку выполняется десятью подходами по десять повторений с фиксированным умеренным весом, в паре с более лёгким вспомогательным движением. На бумаге жестоко, на практике просто — создано для роста мышц, а не для проверки 1ПМ."
+#: apps/programs/i18n_content.py:55
+msgid ""
+"The classic 10x10 high-volume method: one main lift per workout done for ten "
+"sets of ten reps at a fixed, moderate weight, paired with a lighter "
+"accessory movement. Brutal on paper, simple in practice — built for muscle "
+"growth, not 1-rep-max testing."
+msgstr ""
+"Классический метод высокого объёма 10×10: одно основное упражнение за "
+"тренировку выполняется десятью подходами по десять повторений с "
+"фиксированным умеренным весом, в паре с более лёгким вспомогательным "
+"движением. На бумаге жестоко, на практике просто — создано для роста мышц, а "
+"не для проверки 1ПМ."
 
+#: apps/programs/i18n_content.py:67
 msgid "Workout A"
 msgstr "Тренировка A"
 
+#: apps/programs/i18n_content.py:68
 msgid "Workout B"
 msgstr "Тренировка B"
 
+#: apps/programs/i18n_content.py:69
 msgid "Workout C"
 msgstr "Тренировка C"
 
+#: apps/programs/i18n_content.py:70
 msgid "Chest & Back"
 msgstr "Грудь и спина"
 
+#: apps/programs/i18n_content.py:71
 msgid "Shoulders & Arms"
 msgstr "Плечи и руки"
 
+#: apps/programs/i18n_content.py:72
 msgid "Legs"
 msgstr "Ноги"
 
+#: apps/programs/i18n_content.py:73
 msgid "Push"
 msgstr "Жим"
 
+#: apps/programs/i18n_content.py:74
 msgid "Pull"
 msgstr "Тяга"
 
+#: apps/programs/i18n_content.py:75
 msgid "Upper A"
 msgstr "Верх A"
 
+#: apps/programs/i18n_content.py:76
 msgid "Lower A"
 msgstr "Низ A"
 
+#: apps/programs/i18n_content.py:77
 msgid "Upper B"
 msgstr "Верх B"
 
+#: apps/programs/i18n_content.py:78
 msgid "Lower B"
 msgstr "Низ B"
 
+#: apps/programs/models.py:61
 msgid "Monday"
 msgstr "Понедельник"
 
+#: apps/programs/models.py:62
 msgid "Tuesday"
 msgstr "Вторник"
 
+#: apps/programs/models.py:63
 msgid "Wednesday"
 msgstr "Среда"
 
+#: apps/programs/models.py:64
 msgid "Thursday"
 msgstr "Четверг"
 
+#: apps/programs/models.py:65
 msgid "Friday"
 msgstr "Пятница"
 
+#: apps/programs/models.py:66
 msgid "Saturday"
 msgstr "Суббота"
 
+#: apps/programs/models.py:67
 msgid "Sunday"
 msgstr "Воскресенье"
 
+#: apps/programs/models.py:80 apps/programs/models.py:122
 msgid "order"
 msgstr "порядок"
 
+#: apps/programs/models.py:82
 msgid "scheduled weekday"
 msgstr "запланированный день недели"
 
+#: apps/programs/models.py:98
 msgid "Double progression"
 msgstr "Двойная прогрессия"
 
+#: apps/programs/models.py:99
 msgid "Linear"
 msgstr "Линейная"
 
+#: apps/programs/models.py:100
 msgid "Percentage based"
 msgstr "На основе процента"
 
+#: apps/programs/models.py:101
 msgid "RPE/RIR based"
 msgstr "На основе RPE/RIR"
 
+#: apps/programs/models.py:102
 msgid "Rep range"
 msgstr "Диапазон повторений"
 
+#: apps/programs/models.py:104 templates/core/_backup_row.html:12
 msgid "Manual"
 msgstr "Ручная"
 
+#: apps/programs/models.py:123
 msgid "set count"
 msgstr "количество подходов"
 
+#: apps/programs/models.py:124
 msgid "minimum reps"
 msgstr "минимум повторений"
 
+#: apps/programs/models.py:125
 msgid "maximum reps"
 msgstr "максимум повторений"
 
-msgid "No completed history for this exercise yet — starting at the prescribed target."
-msgstr "Пока нет завершённой истории по этому упражнению — начинаем с заданной цели."
+#: apps/progression/engine.py:165
+msgid ""
+"No completed history for this exercise yet — starting at the prescribed "
+"target."
+msgstr ""
+"Пока нет завершённой истории по этому упражнению — начинаем с заданной цели."
 
+#: apps/progression/engine.py:174
 msgid "Manual progression — you control the next weight and target."
 msgstr "Ручная прогрессия — вы сами контролируете следующий вес и цель."
 
-msgid "Missed the target %(streak)s sessions in a row at %(weight)s kg — even maintenance loading should come down, to %(deload)s kg."
-msgstr "Цель не достигнута %(streak)s раз подряд при весе %(weight)s кг — даже поддерживающую нагрузку стоит снизить до %(deload)s кг."
+#: apps/progression/engine.py:192
+#, python-format
+msgid ""
+"Missed the target %(streak)s sessions in a row at %(weight)s kg — even "
+"maintenance loading should come down, to %(deload)s kg."
+msgstr ""
+"Цель не достигнута %(streak)s раз подряд при весе %(weight)s кг — даже "
+"поддерживающую нагрузку стоит снизить до %(deload)s кг."
 
+#: apps/progression/engine.py:202
 msgid "Maintenance — keeping the same load."
 msgstr "Поддержание — сохраняем ту же нагрузку."
 
+#: apps/progression/engine.py:220
+#, python-format
 msgid "Hit every rep last session at %(weight)s kg — adding %(increment)s kg."
-msgstr "Все повторения выполнены в прошлый раз с весом %(weight)s кг — добавляем %(increment)s кг."
+msgstr ""
+"Все повторения выполнены в прошлый раз с весом %(weight)s кг — добавляем "
+"%(increment)s кг."
 
-msgid "Missed target reps %(streak)s sessions in a row at %(weight)s kg — recommending a deload to %(deload)s kg."
-msgstr "Целевые повторения не достигнуты %(streak)s раз подряд при весе %(weight)s кг — рекомендуется снижение до %(deload)s кг."
+#: apps/progression/engine.py:232
+#, python-format
+msgid ""
+"Missed target reps %(streak)s sessions in a row at %(weight)s kg — "
+"recommending a deload to %(deload)s kg."
+msgstr ""
+"Целевые повторения не достигнуты %(streak)s раз подряд при весе %(weight)s "
+"кг — рекомендуется снижение до %(deload)s кг."
 
-msgid "Missed target reps last session at %(weight)s kg — try the same weight again before increasing."
-msgstr "Целевые повторения не достигнуты в прошлый раз при весе %(weight)s кг — попробуйте тот же вес ещё раз перед увеличением."
+#: apps/progression/engine.py:243
+#, python-format
+msgid ""
+"Missed target reps last session at %(weight)s kg — try the same weight again "
+"before increasing."
+msgstr ""
+"Целевые повторения не достигнуты в прошлый раз при весе %(weight)s кг — "
+"попробуйте тот же вес ещё раз перед увеличением."
 
-msgid "Hit the top of your rep range on every set at %(weight)s kg — adding %(increment)s kg and resetting to the bottom of the range."
-msgstr "Достигнут верх диапазона повторений в каждом подходе при весе %(weight)s кг — добавляем %(increment)s кг и возвращаемся к нижней границе диапазона."
+#: apps/progression/engine.py:265
+#, python-format
+msgid ""
+"Hit the top of your rep range on every set at %(weight)s kg — adding "
+"%(increment)s kg and resetting to the bottom of the range."
+msgstr ""
+"Достигнут верх диапазона повторений в каждом подходе при весе %(weight)s кг "
+"— добавляем %(increment)s кг и возвращаемся к нижней границе диапазона."
 
-msgid "Still within your rep range at %(weight)s kg — repeat the same weight and aim for more reps next time."
-msgstr "Всё ещё в пределах диапазона повторений при весе %(weight)s кг — повторите тот же вес и в следующий раз стремитесь к большему числу повторений."
+#: apps/progression/engine.py:277
+#, python-format
+msgid ""
+"Still within your rep range at %(weight)s kg — repeat the same weight and "
+"aim for more reps next time."
+msgstr ""
+"Всё ещё в пределах диапазона повторений при весе %(weight)s кг — повторите "
+"тот же вес и в следующий раз стремитесь к большему числу повторений."
 
-msgid "Missed the bottom of your rep range %(streak)s sessions in a row at %(weight)s kg — recommending a deload to %(deload)s kg."
-msgstr "Нижняя граница диапазона повторений не достигнута %(streak)s раз подряд при весе %(weight)s кг — рекомендуется снижение до %(deload)s кг."
+#: apps/progression/engine.py:291 apps/progression/engine.py:357
+#, python-format
+msgid ""
+"Missed the bottom of your rep range %(streak)s sessions in a row at "
+"%(weight)s kg — recommending a deload to %(deload)s kg."
+msgstr ""
+"Нижняя граница диапазона повторений не достигнута %(streak)s раз подряд при "
+"весе %(weight)s кг — рекомендуется снижение до %(deload)s кг."
 
-msgid "Missed the bottom of your rep range last session at %(weight)s kg — try the same weight again."
-msgstr "Нижняя граница диапазона повторений не достигнута в прошлый раз при весе %(weight)s кг — попробуйте тот же вес ещё раз."
+#: apps/progression/engine.py:302 apps/progression/engine.py:368
+#, python-format
+msgid ""
+"Missed the bottom of your rep range last session at %(weight)s kg — try the "
+"same weight again."
+msgstr ""
+"Нижняя граница диапазона повторений не достигнута в прошлый раз при весе "
+"%(weight)s кг — попробуйте тот же вес ещё раз."
 
-msgid "Hit the top of your rep range for %(streak)s sessions in a row at %(weight)s kg — adding %(increment)s kg."
-msgstr "Верхняя граница диапазона повторений достигнута %(streak)s раз подряд при весе %(weight)s кг — добавляем %(increment)s кг."
+#: apps/progression/engine.py:331
+#, python-format
+msgid ""
+"Hit the top of your rep range for %(streak)s sessions in a row at %(weight)s "
+"kg — adding %(increment)s kg."
+msgstr ""
+"Верхняя граница диапазона повторений достигнута %(streak)s раз подряд при "
+"весе %(weight)s кг — добавляем %(increment)s кг."
 
-msgid "Within your rep range at %(weight)s kg — keep working toward the top of the range before increasing."
-msgstr "В пределах диапазона повторений при весе %(weight)s кг — продолжайте двигаться к верхней границе перед увеличением."
+#: apps/progression/engine.py:343
+#, python-format
+msgid ""
+"Within your rep range at %(weight)s kg — keep working toward the top of the "
+"range before increasing."
+msgstr ""
+"В пределах диапазона повторений при весе %(weight)s кг — продолжайте "
+"двигаться к верхней границе перед увеличением."
 
+#: apps/progression/engine.py:402
 msgid "a manually entered 1RM"
 msgstr "введённый вручную 1ПМ"
 
+#: apps/progression/engine.py:403
 msgid "your latest estimated-1RM PR"
 msgstr "ваш последний рекорд оценённого 1ПМ"
 
+#: apps/progression/engine.py:404
 msgid "a live estimate from your most recent set"
 msgstr "актуальная оценка по последнему подходу"
 
+#: apps/progression/engine.py:414
 msgid "No percentage target configured on this prescription."
 msgstr "Для этого предписания не задана процентная цель."
 
+#: apps/progression/engine.py:423
 msgid "No 1RM available yet — log a set first, or enter your 1RM manually."
 msgstr "1ПМ пока недоступен — сначала запишите подход или введите 1ПМ вручную."
 
+#: apps/progression/engine.py:431
+#, python-format
 msgid "%(percentage)s%% of %(one_rm)s kg (%(source)s) = %(suggested)s kg."
 msgstr "%(percentage)s%% от %(one_rm)s кг (%(source)s) = %(suggested)s кг."
 
-msgid "No RIR logged against a target yet — log sets with RIR to use this method."
-msgstr "RIR ещё не записан относительно цели — записывайте подходы с RIR, чтобы использовать этот метод."
+#: apps/progression/engine.py:461
+msgid ""
+"No RIR logged against a target yet — log sets with RIR to use this method."
+msgstr ""
+"RIR ещё не записан относительно цели — записывайте подходы с RIR, чтобы "
+"использовать этот метод."
 
-msgid "Target RIR %(target)s, actual %(actual)g — more in reserve than planned, adding %(increment)s kg."
-msgstr "Целевой RIR %(target)s, фактический %(actual)g — резерва больше, чем планировалось, добавляем %(increment)s кг."
+#: apps/progression/engine.py:473
+#, python-format
+msgid ""
+"Target RIR %(target)s, actual %(actual)g — more in reserve than planned, "
+"adding %(increment)s kg."
+msgstr ""
+"Целевой RIR %(target)s, фактический %(actual)g — резерва больше, чем "
+"планировалось, добавляем %(increment)s кг."
 
-msgid "Target RIR %(target)s, actual %(actual)g — notably closer to failure than planned, easing back to %(deload)s kg."
-msgstr "Целевой RIR %(target)s, фактический %(actual)g — заметно ближе к отказу, чем планировалось, снижаем до %(deload)s кг."
+#: apps/progression/engine.py:486
+#, python-format
+msgid ""
+"Target RIR %(target)s, actual %(actual)g — notably closer to failure than "
+"planned, easing back to %(deload)s kg."
+msgstr ""
+"Целевой RIR %(target)s, фактический %(actual)g — заметно ближе к отказу, чем "
+"планировалось, снижаем до %(deload)s кг."
 
-msgid "Target RIR %(target)s, actual %(actual)g — close enough to plan, hold the weight."
-msgstr "Целевой RIR %(target)s, фактический %(actual)g — достаточно близко к плану, оставляем вес прежним."
+#: apps/progression/engine.py:496
+#, python-format
+msgid ""
+"Target RIR %(target)s, actual %(actual)g — close enough to plan, hold the "
+"weight."
+msgstr ""
+"Целевой RIR %(target)s, фактический %(actual)g — достаточно близко к плану, "
+"оставляем вес прежним."
 
+#: apps/records/models.py:11 templates/records/exercise_records.html:13
 msgid "Max weight"
 msgstr "Максимальный вес"
 
+#: apps/records/models.py:12
 msgid "Rep PR"
 msgstr "Рекорд по повторениям"
 
+#: apps/records/models.py:13
 msgid "Rep-specific PR"
 msgstr "Рекорд для конкретного числа повторений"
 
+#: apps/records/models.py:14 templates/analytics/exercise_analytics.html:20
 msgid "Estimated 1RM"
 msgstr "Оценённый 1ПМ"
 
+#: apps/records/models.py:15
 msgid "Set volume"
 msgstr "Объём подхода"
 
+#: apps/records/models.py:16
 msgid "Session volume"
 msgstr "Объём тренировки"
 
+#: apps/workouts/forms.py:40
 msgid "reps"
 msgstr "повторения"
 
+#: apps/workouts/forms.py:41
 msgid "Target reps"
 msgstr "Целевые повторения"
 
+#: apps/workouts/forms.py:44
 msgid "Failed set"
 msgstr "Неудачный подход"
 
+#: apps/workouts/forms.py:45
 msgid "Warm-up"
 msgstr "Разминка"
 
+#: apps/workouts/forms.py:53
+#, python-format
 msgid "Weight (%(unit)s)"
 msgstr "Вес (%(unit)s)"
 
+#: apps/workouts/models.py:12
 msgid "Planned"
 msgstr "Запланировано"
 
+#: apps/workouts/models.py:13
 msgid "In progress"
 msgstr "В процессе"
 
+#: apps/workouts/models.py:14
 msgid "Completed"
 msgstr "Завершено"
 
+#: apps/workouts/models.py:15
 msgid "Abandoned"
 msgstr "Отменено"
 
+#: apps/workouts/views.py:148 apps/workouts/views.py:345
 msgid "This session is no longer in progress."
 msgstr "Эта тренировка больше не активна."
 
+#: apps/workouts/views.py:327
+#, python-format
 msgid "New PR — %(exercise)s: %(record_type)s %(value)s"
 msgstr "Новый рекорд — %(exercise)s: %(record_type)s %(value)s"
 
+#: templates/403.html:3
 msgid "Not allowed"
 msgstr "Не разрешено"
 
+#: templates/403.html:6
 msgid "You don't have permission to do that."
 msgstr "У вас нет прав для этого действия."
 
+#: templates/403.html:7 templates/404.html:7 templates/500.html:53
 msgid "Back to dashboard"
 msgstr "Назад на панель"
 
+#: templates/404.html:3
 msgid "Not found"
 msgstr "Не найдено"
 
+#: templates/404.html:6
 msgid "That page doesn't exist, or you don't have access to it."
 msgstr "Такой страницы не существует, или у вас нет к ней доступа."
 
+#: templates/500.html:6
 msgid "Something went wrong"
 msgstr "Что-то пошло не так"
 
-msgid "Something went wrong on our end. Your data is safe — try again in a moment."
-msgstr "Что-то пошло не так на нашей стороне. Ваши данные в безопасности — попробуйте снова через минуту."
+#: templates/500.html:52
+msgid ""
+"Something went wrong on our end. Your data is safe — try again in a moment."
+msgstr ""
+"Что-то пошло не так на нашей стороне. Ваши данные в безопасности — "
+"попробуйте снова через минуту."
 
+#: templates/accounts/_onboarding_modal.html:5
+#: templates/accounts/_onboarding_modal.html:7
 msgid "Welcome to IronStack"
 msgstr "Добро пожаловать в IronStack"
 
+#: templates/accounts/_onboarding_modal.html:9
+#: templates/accounts/_onboarding_modal.html:27
 msgid "Not now"
 msgstr "Не сейчас"
 
-msgid "A few quick details help IronStack work better for you — every field below is optional, and you can always change them later from your profile."
-msgstr "Немного информации поможет IronStack работать для вас лучше — все поля ниже необязательны, и вы всегда можете изменить их позже в профиле."
+#: templates/accounts/_onboarding_modal.html:12
+msgid ""
+"A few quick details help IronStack work better for you — every field below "
+"is optional, and you can always change them later from your profile."
+msgstr ""
+"Немного информации поможет IronStack работать для вас лучше — все поля ниже "
+"необязательны, и вы всегда можете изменить их позже в профиле."
 
+#: templates/accounts/_onboarding_modal.html:26
+#: templates/accounts/account_details_form.html:20
+#: templates/activities/activity_form.html:19
+#: templates/activities/activity_type_form.html:19
+#: templates/exercises/exercise_form.html:20
+#: templates/measurements/measurement_form.html:19
+#: templates/measurements/measurement_type_form.html:19
+#: templates/nutrition/diary_entry_form.html:20
+#: templates/nutrition/diet_plan_item_form.html:20
+#: templates/nutrition/food_form.html:21
+#: templates/nutrition/recipe_form.html:20
+#: templates/nutrition/recipe_ingredient_edit_form.html:20
+#: templates/programs/prescription_form.html:19
+#: templates/programs/program_form.html:19
+#: templates/programs/workout_form.html:19
+#: templates/workouts/set_edit_form.html:19
 msgid "Save"
 msgstr "Сохранить"
 
+#: templates/accounts/account_details_form.html:3
+#: templates/accounts/account_details_form.html:6
+#: templates/accounts/profile.html:51
 msgid "Account details"
 msgstr "Данные аккаунта"
 
+#: templates/accounts/account_details_form.html:23
+#: templates/accounts/two_factor_manage.html:35 templates/api/key_list.html:155
+#: templates/core/backup_list.html:88 templates/core/feedback_form.html:25
+#: templates/core/feedback_list.html:58
+#: templates/registration/password_change_done.html:13
+#: templates/registration/password_change_form.html:23
 msgid "Back to profile"
 msgstr "Назад к профилю"
 
+#: templates/accounts/profile.html:46
 msgid "Save preferences"
 msgstr "Сохранить настройки"
 
+#: templates/accounts/profile.html:52
 msgid "Update your username, name, and email address."
 msgstr "Обновите имя пользователя, имя и адрес электронной почты."
 
+#: templates/accounts/profile.html:54 templates/accounts/profile.html:66
+#: templates/accounts/profile.html:90 templates/accounts/profile.html:99
+#: templates/accounts/profile.html:111 templates/accounts/profile.html:119
+#: templates/accounts/profile.html:127
+#: templates/nutrition/calculators_home.html:16
+#: templates/nutrition/calculators_home.html:24
+#: templates/nutrition/calculators_home.html:32
+#: templates/nutrition/calculators_home.html:40
+#: templates/nutrition/calculators_home.html:48
+#: templates/nutrition/calculators_home.html:56
+#: templates/nutrition/calculators_home.html:64
+#: templates/nutrition/diet_plan_list.html:27
+#: templates/nutrition/recipe_list.html:31
 msgid "Open"
 msgstr "Открыть"
 
+#: templates/accounts/profile.html:59
+#: templates/registration/password_change_form.html:3
+#: templates/registration/password_change_form.html:6
+#: templates/registration/password_change_form.html:20
 msgid "Change password"
 msgstr "Изменить пароль"
 
+#: templates/accounts/profile.html:61
+msgid ""
+"Your account is linked to Authentik. Sign-in security (password, 2FA) is "
+"managed there."
+msgstr ""
+"Ваша учётная запись связана с Authentik. Безопасность входа (пароль, "
+"двухфакторная аутентификация) управляется там."
+
+#: templates/accounts/profile.html:63
 msgid "Update the password you use to sign in."
 msgstr "Обновите пароль, который вы используете для входа."
 
+#: templates/accounts/profile.html:73
 msgid "Enabled — protecting your account with a second step at login."
-msgstr "Включено — защищает вашу учётную запись дополнительным шагом при входе."
+msgstr ""
+"Включено — защищает вашу учётную запись дополнительным шагом при входе."
 
+#: templates/accounts/profile.html:75
 msgid "Add a second step at login, using an authenticator app."
-msgstr "Добавьте дополнительный шаг при входе с помощью приложения-аутентификатора."
+msgstr ""
+"Добавьте дополнительный шаг при входе с помощью приложения-аутентификатора."
 
+#: templates/accounts/profile.html:79
 msgid "Manage"
 msgstr "Управление"
 
+#: templates/accounts/profile.html:81
 msgid "Set up"
 msgstr "Настроить"
 
+#: templates/accounts/profile.html:87 templates/api/key_list.html:3
+#: templates/api/key_list.html:7
 msgid "API keys"
 msgstr "API-ключи"
 
+#: templates/accounts/profile.html:88
 msgid "Manage keys other apps can use to access your data."
-msgstr "Управляйте ключами, с помощью которых другие приложения могут получать доступ к вашим данным."
+msgstr ""
+"Управляйте ключами, с помощью которых другие приложения могут получать "
+"доступ к вашим данным."
 
+#: templates/accounts/profile.html:96 templates/accounts/profile.html:124
+#: templates/core/feedback_form.html:3 templates/core/feedback_form.html:6
+#: templates/core/feedback_list.html:3 templates/core/feedback_list.html:6
 msgid "Feedback"
 msgstr "Обратная связь"
 
+#: templates/accounts/profile.html:97
 msgid "Report a bug, request something, or tell us what's confusing."
-msgstr "Сообщите об ошибке, предложите что-то или расскажите, что показалось непонятным."
+msgstr ""
+"Сообщите об ошибке, предложите что-то или расскажите, что показалось "
+"непонятным."
 
+#: templates/accounts/profile.html:108
 msgid "Admin"
 msgstr "Админ"
 
+#: templates/accounts/profile.html:109
 msgid "Manage tiers, keys, and reference data across the whole instance."
 msgstr "Управляйте уровнями, ключами и справочными данными для всего сервера."
 
+#: templates/accounts/profile.html:116 templates/core/backup_list.html:3
+#: templates/core/backup_list.html:6
 msgid "Backups"
 msgstr "Резервные копии"
 
+#: templates/accounts/profile.html:117
 msgid "Create, download, and restore full backups of this instance."
-msgstr "Создавайте, скачивайте и восстанавливайте полные резервные копии этого экземпляра."
+msgstr ""
+"Создавайте, скачивайте и восстанавливайте полные резервные копии этого "
+"экземпляра."
 
+#: templates/accounts/profile.html:125
 msgid "Read what users have submitted, and turn submissions on or off."
-msgstr "Читайте отзывы пользователей и включайте или отключайте приём новых сообщений."
+msgstr ""
+"Читайте отзывы пользователей и включайте или отключайте приём новых "
+"сообщений."
 
+#: templates/accounts/profile.html:134
 msgid "Log out"
 msgstr "Выйти"
 
+#: templates/accounts/profile.html:139
+#, python-format
 msgid "IronStack version %(version)s"
 msgstr "IronStack версия %(version)s"
 
+#: templates/accounts/profile.html:144 templates/accounts/profile.html:147
 msgid "Changelog"
 msgstr "Список изменений"
 
+#: templates/accounts/profile.html:148 templates/api/key_list.html:20
+#: templates/base.html:58 templates/nutrition/_month_calendar.html:41
+#: templates/records/_pr_toasts.html:28
 msgid "Dismiss"
 msgstr "Закрыть"
 
+#: templates/accounts/signup.html:3 templates/accounts/signup.html:19
 msgid "Sign up"
 msgstr "Зарегистрироваться"
 
+#: templates/accounts/signup.html:6
 msgid "Create your account"
 msgstr "Создайте аккаунт"
 
+#: templates/accounts/signup.html:21
 msgid "Already have an account?"
 msgstr "Уже есть аккаунт?"
 
+#: templates/accounts/signup.html:21 templates/registration/login.html:3
+#: templates/registration/login.html:6 templates/registration/login.html:26
+#: templates/registration/password_reset_complete.html:13
 msgid "Log in"
 msgstr "Войти"
 
+#: templates/accounts/two_factor_backup_codes.html:3
+#: templates/accounts/two_factor_backup_codes.html:6
 msgid "New backup codes"
 msgstr "Новые резервные коды"
 
-msgid "Each one works once, if you ever lose access to your authenticator app. They won't be shown again — save them somewhere safe now. Your old backup codes no longer work."
-msgstr "Каждый код работает один раз — на случай, если вы потеряете доступ к приложению-аутентификатору. Они больше не будут показаны — сохраните их сейчас в надёжном месте. Старые резервные коды больше не действуют."
+#: templates/accounts/two_factor_backup_codes.html:9
+msgid ""
+"Each one works once, if you ever lose access to your authenticator app. They "
+"won't be shown again — save them somewhere safe now. Your old backup codes "
+"no longer work."
+msgstr ""
+"Каждый код работает один раз — на случай, если вы потеряете доступ к "
+"приложению-аутентификатору. Они больше не будут показаны — сохраните их "
+"сейчас в надёжном месте. Старые резервные коды больше не действуют."
 
+#: templates/accounts/two_factor_backup_codes.html:16
+#: templates/accounts/two_factor_setup.html:22
+#: templates/api/key_created.html:16
 msgid "Done"
 msgstr "Готово"
 
+#: templates/accounts/two_factor_disable.html:3
+#: templates/accounts/two_factor_disable.html:6
+#: templates/accounts/two_factor_disable.html:21
+#: templates/accounts/two_factor_manage.html:28
 msgid "Disable two-factor authentication"
 msgstr "Отключить двухфакторную аутентификацию"
 
-msgid "Enter your password to confirm. This removes your authenticator and deletes your remaining backup codes."
-msgstr "Введите пароль для подтверждения. Это удалит ваш аутентификатор и оставшиеся резервные коды."
+#: templates/accounts/two_factor_disable.html:9
+msgid ""
+"Enter your password to confirm. This removes your authenticator and deletes "
+"your remaining backup codes."
+msgstr ""
+"Введите пароль для подтверждения. Это удалит ваш аутентификатор и оставшиеся "
+"резервные коды."
 
+#: templates/accounts/two_factor_disable.html:23
+#: templates/accounts/two_factor_setup.html:41
+#: templates/programs/program_confirm_delete.html:16
 msgid "Cancel"
 msgstr "Отмена"
 
+#: templates/accounts/two_factor_manage.html:10
 msgid "Two-factor authentication is enabled on your account."
 msgstr "На вашей учётной записи включена двухфакторная аутентификация."
 
+#: templates/accounts/two_factor_manage.html:15
 msgid "Backup codes"
 msgstr "Резервные коды"
 
-msgid "Replace your current codes with a fresh set. The old ones stop working immediately."
-msgstr "Замените текущие коды новым набором. Старые коды перестанут действовать немедленно."
+#: templates/accounts/two_factor_manage.html:16
+msgid ""
+"Replace your current codes with a fresh set. The old ones stop working "
+"immediately."
+msgstr ""
+"Замените текущие коды новым набором. Старые коды перестанут действовать "
+"немедленно."
 
+#: templates/accounts/two_factor_manage.html:19
 msgid "Replace your backup codes? The old ones will stop working."
 msgstr "Заменить резервные коды? Старые перестанут работать."
 
+#: templates/accounts/two_factor_manage.html:21
 msgid "Regenerate"
 msgstr "Создать заново"
 
+#: templates/accounts/two_factor_manage.html:29
 msgid "Removes your authenticator and backup codes. Requires your password."
 msgstr "Удаляет аутентификатор и резервные коды. Требуется ваш пароль."
 
+#: templates/accounts/two_factor_manage.html:31
 msgid "Disable"
 msgstr "Отключить"
 
+#: templates/accounts/two_factor_setup.html:11
 msgid "Two-factor authentication is now enabled."
 msgstr "Двухфакторная аутентификация теперь включена."
 
+#: templates/accounts/two_factor_setup.html:14
 msgid "Save these backup codes"
 msgstr "Сохраните эти резервные коды"
 
-msgid "Each one works once, if you ever lose access to your authenticator app. They won't be shown again — save them somewhere safe now."
-msgstr "Каждый код работает один раз — на случай, если вы потеряете доступ к приложению-аутентификатору. Они больше не будут показаны — сохраните их сейчас в надёжном месте."
+#: templates/accounts/two_factor_setup.html:15
+msgid ""
+"Each one works once, if you ever lose access to your authenticator app. They "
+"won't be shown again — save them somewhere safe now."
+msgstr ""
+"Каждый код работает один раз — на случай, если вы потеряете доступ к "
+"приложению-аутентификатору. Они больше не будут показаны — сохраните их "
+"сейчас в надёжном месте."
 
-msgid "Scan this QR code with an authenticator app (e.g. Google Authenticator, Authy, or a password manager with built-in support), then enter the 6-digit code it shows to confirm setup."
-msgstr "Отсканируйте этот QR-код в приложении-аутентификаторе (например, Google Authenticator, Authy или менеджере паролей со встроенной поддержкой), затем введите показанный 6-значный код, чтобы подтвердить настройку."
+#: templates/accounts/two_factor_setup.html:25
+msgid ""
+"Scan this QR code with an authenticator app (e.g. Google Authenticator, "
+"Authy, or a password manager with built-in support), then enter the 6-digit "
+"code it shows to confirm setup."
+msgstr ""
+"Отсканируйте этот QR-код в приложении-аутентификаторе (например, Google "
+"Authenticator, Authy или менеджере паролей со встроенной поддержкой), затем "
+"введите показанный 6-значный код, чтобы подтвердить настройку."
 
+#: templates/accounts/two_factor_setup.html:26
 msgid "Two-factor authentication QR code"
 msgstr "QR-код двухфакторной аутентификации"
 
+#: templates/accounts/two_factor_setup.html:27
 msgid "Can't scan the code? Enter this key manually:"
 msgstr "Не получается отсканировать код? Введите этот ключ вручную:"
 
+#: templates/accounts/two_factor_setup.html:39
 msgid "Confirm and enable"
 msgstr "Подтвердить и включить"
 
+#: templates/activities/activity_form.html:3
 msgid "Edit activity"
 msgstr "Изменить активность"
 
+#: templates/activities/activity_form.html:6
+#, python-format
 msgid "Edit %(name)s"
 msgstr "Изменить %(name)s"
 
+#: templates/activities/activity_form.html:22
+#: templates/measurements/measurement_form.html:22
+#: templates/programs/prescription_form.html:30
+#: templates/programs/workout_form.html:30
+#, python-format
 msgid "Back to %(name)s"
 msgstr "Назад к %(name)s"
 
+#: templates/activities/activity_history.html:7
+#: templates/exercises/exercise_detail.html:14
+#: templates/measurements/measurement_history.html:7
 msgid "Inactive"
 msgstr "Неактивно"
 
+#: templates/activities/activity_history.html:13
+#, python-format
 msgid "%(count)s logged · total duration %(total_duration)s"
 msgstr "записано: %(count)s · общая длительность %(total_duration)s"
 
+#: templates/activities/activity_history.html:14
+#, python-format
 msgid "total distance %(distance)s %(unit)s"
 msgstr "общая дистанция %(distance)s %(unit)s"
 
+#: templates/activities/activity_history.html:15
+#, python-format
 msgid "total calories %(calories)s"
 msgstr "всего калорий %(calories)s"
 
+#: templates/activities/activity_history.html:21
 msgid "Duration trend"
 msgstr "Динамика длительности"
 
+#: templates/activities/activity_history.html:22
+#: templates/activities/activity_history.html:43
 msgid "Duration"
 msgstr "Длительность"
 
+#: templates/activities/activity_history.html:23
 msgid "min"
 msgstr "мин"
 
+#: templates/activities/activity_history.html:37
 msgid "Log activity"
 msgstr "Записать активность"
 
+#: templates/activities/activity_history.html:43
+#: templates/measurements/measurement_history.html:35
 msgid "Date"
 msgstr "Дата"
 
+#: templates/activities/activity_history.html:43
 msgid "Distance"
 msgstr "Дистанция"
 
+#: templates/activities/activity_history.html:52
+#: templates/exercises/exercise_detail.html:8
+#: templates/measurements/measurement_history.html:43
+#: templates/nutrition/diary_day.html:61
+#: templates/nutrition/recipe_detail.html:8
+#: templates/nutrition/recipe_detail.html:34
+#: templates/programs/program_detail.html:8
+#: templates/programs/program_detail.html:41
+#: templates/programs/program_detail.html:58
+#: templates/workouts/_performed_exercise_card.html:24
 msgid "Edit"
 msgstr "Изменить"
 
+#: templates/activities/activity_history.html:53
 msgid "Delete this activity?"
 msgstr "Удалить эту активность?"
 
+#: templates/activities/activity_history.html:60
 msgid "No activities logged yet."
 msgstr "Активности ещё не записаны."
 
-msgid "Deactivate this activity type? It will no longer appear when logging new activities."
-msgstr "Отключить этот тип активности? Он больше не будет отображаться при записи новых активностей."
+#: templates/activities/activity_history.html:67
+msgid ""
+"Deactivate this activity type? It will no longer appear when logging new "
+"activities."
+msgstr ""
+"Отключить этот тип активности? Он больше не будет отображаться при записи "
+"новых активностей."
 
+#: templates/activities/activity_history.html:69
+#: templates/measurements/measurement_history.html:60
 msgid "Deactivate type"
 msgstr "Отключить тип"
 
+#: templates/activities/activity_history.html:73
+#: templates/activities/activity_type_form.html:22
 msgid "Back to activities"
 msgstr "Назад к активностям"
 
+#: templates/activities/activity_type_form.html:3
+#: templates/activities/activity_type_form.html:6
 msgid "New activity type"
 msgstr "Новый тип активности"
 
+#: templates/activities/activity_type_list.html:7
+#: templates/api/key_list.html:11 templates/exercises/exercise_list.html:7
+#: templates/measurements/measurement_type_list.html:7
+#: templates/programs/program_list.html:10
 msgid "New"
 msgstr "Новый"
 
+#: templates/activities/activity_type_list.html:13
+#: templates/exercises/_exercise_list_results.html:6
+#: templates/measurements/measurement_type_list.html:13
 msgid "Custom"
 msgstr "Свой"
 
+#: templates/activities/activity_type_list.html:16
+#, python-format
 msgid "%(counter)s logged"
 msgid_plural "%(counter)s logged"
 msgstr[0] "%(counter)s записана"
 msgstr[1] "%(counter)s записано"
 msgstr[2] "%(counter)s записано"
 
+#: templates/activities/activity_type_list.html:18
 msgid "No activities yet"
 msgstr "Активностей пока нет"
 
+#: templates/activities/activity_type_list.html:24
 msgid "No activity types yet."
 msgstr "Типов активности пока нет."
 
+#: templates/admin/base_site.html:13
 msgid "Django site admin"
 msgstr "Администрирование сайта Django"
 
+#: templates/admin/base_site.html:16
 msgid "Django administration"
 msgstr "Администрирование Django"
 
-msgid "Pick which of these %(counter)s foods to keep. Every diary entry, recipe ingredient, and diet-plan item currently pointing at one of the others will be repointed at the one you keep — nothing a user has logged is deleted, only which food row it refers to changes. The other foods are then removed."
-msgstr "Выберите, какой из этих %(counter)s продуктов оставить. Каждая запись дневника, ингредиент рецепта и пункт плана питания, ссылающиеся сейчас на один из остальных, будут перенаправлены на тот, что вы оставите — ничего из записанного пользователем не удаляется, меняется лишь то, на какую запись продукта идёт ссылка. Остальные продукты будут удалены."
+#: templates/admin/nutrition/food/merge.html:5
+#, python-format
+msgid ""
+"Pick which of these %(counter)s foods to keep. Every diary entry, recipe "
+"ingredient, and diet-plan item currently pointing at one of the others will "
+"be repointed at the one you keep — nothing a user has logged is deleted, "
+"only which food row it refers to changes. The other foods are then removed."
+msgstr ""
+"Выберите, какой из этих %(counter)s продуктов оставить. Каждая запись "
+"дневника, ингредиент рецепта и пункт плана питания, ссылающиеся сейчас на "
+"один из остальных, будут перенаправлены на тот, что вы оставите — ничего из "
+"записанного пользователем не удаляется, меняется лишь то, на какую запись "
+"продукта идёт ссылка. Остальные продукты будут удалены."
 
+#: templates/admin/nutrition/food/merge.html:13
 msgid "Keep"
 msgstr "Оставить"
 
+#: templates/admin/nutrition/food/merge.html:15
 msgid "Brand"
 msgstr "Бренд"
 
+#: templates/admin/nutrition/food/merge.html:16
 msgid "Owner"
 msgstr "Владелец"
 
+#: templates/admin/nutrition/food/merge.html:17
+#: templates/nutrition/dashboard.html:21 templates/nutrition/dashboard.html:48
+#: templates/nutrition/diary_day.html:26 templates/nutrition/food_list.html:26
+#: templates/nutrition/recipe_detail.html:58
 msgid "Calories"
 msgstr "Калории"
 
+#: templates/admin/nutrition/food/merge.html:18
 msgid "Serving"
 msgstr "Порция"
 
+#: templates/admin/nutrition/food/merge.html:19
 msgid "OFF id"
 msgstr "OFF ID"
 
+#: templates/admin/nutrition/food/merge.html:32
 msgid "shared"
 msgstr "общий"
 
+#: templates/admin/nutrition/food/merge.html:41
 msgid "Merge"
 msgstr "Объединить"
 
+#: templates/analytics/_range_filter.html:2
 msgid "Date range"
 msgstr "Диапазон дат"
 
+#: templates/analytics/dashboard.html:14
 msgid "Training time"
 msgstr "Время тренировок"
 
+#: templates/analytics/dashboard.html:15
+#: templates/analytics/exercise_analytics.html:14
 msgid "Total volume"
 msgstr "Общий объём"
 
+#: templates/analytics/dashboard.html:19 templates/analytics/dashboard.html:21
 msgid "Weekly training volume"
 msgstr "Недельный объём тренировок"
 
+#: templates/analytics/dashboard.html:24
 msgid "No completed workouts in this range."
 msgstr "Нет завершённых тренировок за этот период."
 
+#: templates/analytics/dashboard.html:27 templates/analytics/dashboard.html:29
 msgid "Muscle-group volume"
 msgstr "Объём по группам мышц"
 
+#: templates/analytics/dashboard.html:32
 msgid "No data in this range."
 msgstr "Нет данных за этот период."
 
+#: templates/analytics/dashboard.html:35 templates/core/dashboard.html:80
 msgid "Recent"
 msgstr "Недавние"
 
+#: templates/analytics/dashboard.html:35 templates/analytics/dashboard.html:45
+#: templates/analytics/exercise_analytics.html:26
+#: templates/core/dashboard.html:80 templates/exercises/exercise_detail.html:43
+#: templates/records/exercise_records.html:11
 msgid "Personal Records"
 msgstr "Личные рекорды"
 
+#: templates/analytics/dashboard.html:45
 msgid "No"
 msgstr "Нет"
 
+#: templates/analytics/dashboard.html:45
 msgid "in this range."
 msgstr "за этот период."
 
+#: templates/analytics/exercise_analytics.html:3
+#, python-format
 msgid "%(name)s analytics"
 msgstr "Аналитика: %(name)s"
 
+#: templates/analytics/exercise_analytics.html:13
 msgid "Sessions"
 msgstr "Тренировки"
 
+#: templates/analytics/exercise_analytics.html:19
+#: templates/exercises/exercise_detail.html:49
+#: templates/records/_pr_toasts.html:38
+#: templates/records/exercise_records.html:16
 msgid "Estimated"
 msgstr "Оценённый"
 
+#: templates/analytics/exercise_analytics.html:19
 msgid "trend"
 msgstr "динамика"
 
+#: templates/analytics/exercise_analytics.html:23
 msgid "Not enough history in this range for a trend line."
 msgstr "Недостаточно истории за этот период для линии тренда."
 
+#: templates/analytics/exercise_analytics.html:26
 msgid "View current"
 msgstr "Посмотреть текущие"
 
+#: templates/analytics/exercise_analytics.html:27
+#: templates/records/exercise_records.html:47
 msgid "Back to exercise"
 msgstr "Назад к упражнению"
 
+#: templates/api/key_created.html:3 templates/api/key_created.html:6
 msgid "API key created"
 msgstr "API-ключ создан"
 
+#: templates/api/key_created.html:10
 msgid "Copy this key now — you won't be able to see it again."
 msgstr "Скопируйте этот ключ сейчас — вы больше не сможете его увидеть."
 
+#: templates/api/key_created.html:13
 msgid "Your new API key"
 msgstr "Ваш новый API-ключ"
 
+#: templates/api/key_form.html:3 templates/api/key_form.html:6
 msgid "New API key"
 msgstr "Новый API-ключ"
 
-msgid "Choose exactly what this key is allowed to do, per resource — leave everything unchecked for a context to block it entirely."
-msgstr "Выберите точно, что этот ключ может делать в каждом разделе — оставьте всё непомеченным, чтобы полностью заблокировать раздел."
+#: templates/api/key_form.html:19
+msgid ""
+"Choose exactly what this key is allowed to do, per resource — leave "
+"everything unchecked for a context to block it entirely."
+msgstr ""
+"Выберите точно, что этот ключ может делать в каждом разделе — оставьте всё "
+"непомеченным, чтобы полностью заблокировать раздел."
 
+#: templates/api/key_form.html:24
 msgid "Context"
 msgstr "Раздел"
 
+#: templates/api/key_form.html:39
 msgid "Create key"
 msgstr "Создать ключ"
 
+#: templates/api/key_form.html:42
 msgid "Back to API keys"
 msgstr "Назад к API-ключам"
 
+#: templates/api/key_list.html:8 templates/api/key_list.html:16
 msgid "API documentation"
 msgstr "Документация API"
 
+#: templates/api/key_list.html:19
 msgid "Using the API"
 msgstr "Использование API"
 
+#: templates/api/key_list.html:23
 msgid "Base URL"
 msgstr "Базовый URL"
 
+#: templates/api/key_list.html:24
 msgid "Every endpoint lives under:"
 msgstr "Все конечные точки находятся по адресу:"
 
+#: templates/api/key_list.html:27
 msgid "Authentication"
 msgstr "Аутентификация"
 
-msgid "Send your key's secret (shown only once, right after you create it) as a Bearer token on every request:"
-msgstr "Отправляйте секрет вашего ключа (показывается только один раз, сразу после создания) как Bearer-токен в каждом запросе:"
+#: templates/api/key_list.html:28
+msgid ""
+"Send your key's secret (shown only once, right after you create it) as a "
+"Bearer token on every request:"
+msgstr ""
+"Отправляйте секрет вашего ключа (показывается только один раз, сразу после "
+"создания) как Bearer-токен в каждом запросе:"
 
+#: templates/api/key_list.html:31
 msgid "Permissions"
 msgstr "Разрешения"
 
-msgid "Each key is granted Create/Read/Update/Delete separately per area (exercises, programs, workouts, measurements, activities, nutrition, records, analytics, profile) — set this when you create the key, above. A request outside what the key is granted gets a 403."
-msgstr "Для каждого ключа права Создание/Чтение/Обновление/Удаление предоставляются отдельно по каждой области (упражнения, программы, тренировки, измерения, активности, питание, рекорды, аналитика, профиль) — задайте это при создании ключа выше. Запрос за пределами предоставленных прав получит ответ 403."
+#: templates/api/key_list.html:32
+msgid ""
+"Each key is granted Create/Read/Update/Delete separately per area "
+"(exercises, programs, workouts, measurements, activities, nutrition, "
+"records, analytics, profile) — set this when you create the key, above. A "
+"request outside what the key is granted gets a 403."
+msgstr ""
+"Для каждого ключа права Создание/Чтение/Обновление/Удаление предоставляются "
+"отдельно по каждой области (упражнения, программы, тренировки, измерения, "
+"активности, питание, рекорды, аналитика, профиль) — задайте это при создании "
+"ключа выше. Запрос за пределами предоставленных прав получит ответ 403."
 
-msgid "Always canonical: weight in kilograms, length in meters, energy in kcal — never converted to your own display-unit preference, so a script can rely on one meaning regardless of who's asking."
-msgstr "Всегда в канонической форме: вес в килограммах, длина в метрах, энергия в ккал — никогда не преобразуется в предпочитаемые вами единицы отображения, поэтому скрипт может полагаться на одно и то же значение независимо от того, кто делает запрос."
+#: templates/api/key_list.html:35
+msgid ""
+"Always canonical: weight in kilograms, length in meters, energy in kcal — "
+"never converted to your own display-unit preference, so a script can rely on "
+"one meaning regardless of who's asking."
+msgstr ""
+"Всегда в канонической форме: вес в килограммах, длина в метрах, энергия в "
+"ккал — никогда не преобразуется в предпочитаемые вами единицы отображения, "
+"поэтому скрипт может полагаться на одно и то же значение независимо от того, "
+"кто делает запрос."
 
+#: templates/api/key_list.html:37
 msgid "Example: reading your profile (curl)"
 msgstr "Пример: чтение вашего профиля (curl)"
 
+#: templates/api/key_list.html:41
 msgid "Example: creating something (curl)"
 msgstr "Пример: создание записи (curl)"
 
+#: templates/api/key_list.html:42
 msgid "A POST with a JSON body — this adds a food to your library:"
 msgstr "POST-запрос с телом JSON — это добавляет продукт в вашу библиотеку:"
 
+#: templates/api/key_list.html:51
 msgid "Example: Python"
 msgstr "Пример: Python"
 
-msgid "List/create endpoints are paginated, 25 per page (?page=2). Deleting something soft-deletes it where the web app does the same (foods, exercises, measurement/activity types); a program or recipe is a real delete, matching its own page."
-msgstr "Конечные точки списка/создания разбиты на страницы, по 25 на страницу (?page=2). Удаление чего-либо выполняется как мягкое удаление там, где веб-приложение делает то же самое (продукты, упражнения, типы измерений/активностей); программа или рецепт удаляются по-настоящему, как и на их собственной странице."
+#: templates/api/key_list.html:75
+msgid ""
+"List/create endpoints are paginated, 25 per page (?page=2). Deleting "
+"something soft-deletes it where the web app does the same (foods, exercises, "
+"measurement/activity types); a program or recipe is a real delete, matching "
+"its own page."
+msgstr ""
+"Конечные точки списка/создания разбиты на страницы, по 25 на страницу (?"
+"page=2). Удаление чего-либо выполняется как мягкое удаление там, где веб-"
+"приложение делает то же самое (продукты, упражнения, типы измерений/"
+"активностей); программа или рецепт удаляются по-настоящему, как и на их "
+"собственной странице."
 
+#: templates/api/key_list.html:77
 msgid "All endpoints"
 msgstr "Все конечные точки"
 
+#: templates/api/key_list.html:81
 msgid "Area"
 msgstr "Область"
 
+#: templates/api/key_list.html:81
 msgid "Endpoints"
 msgstr "Конечные точки"
 
+#: templates/api/key_list.html:86
 msgid "GET/PATCH, no id"
 msgstr "GET/PATCH, без id"
 
+#: templates/api/key_list.html:90 templates/api/key_list.html:110
+#: templates/api/key_list.html:114
 msgid "read-only"
 msgstr "только чтение"
 
+#: templates/api/key_list.html:98
 msgid "create + read only"
 msgstr "только создание и чтение"
 
+#: templates/api/key_list.html:118
 msgid "both read-only"
 msgstr "оба только для чтения"
 
+#: templates/api/key_list.html:129
+#, python-format
 msgid "You can create %(counter)s more key."
 msgid_plural "You can create %(counter)s more keys."
 msgstr[0] "Вы можете создать ещё %(counter)s ключ."
 msgstr[1] "Вы можете создать ещё %(counter)s ключа."
 msgstr[2] "Вы можете создать ещё %(counter)s ключей."
 
+#: templates/api/key_list.html:137
+#, python-format
 msgid "Tier: %(tier)s"
 msgstr "Уровень: %(tier)s"
 
+#: templates/api/key_list.html:139
+#, python-format
 msgid "last used %(time)s ago"
 msgstr "последнее использование %(time)s назад"
 
+#: templates/api/key_list.html:141
 msgid "never used"
 msgstr "никогда не использовался"
 
+#: templates/api/key_list.html:144
 msgid "Revoke this API key? Anything using it will stop working immediately."
-msgstr "Отозвать этот API-ключ? Всё, что его использует, немедленно перестанет работать."
+msgstr ""
+"Отозвать этот API-ключ? Всё, что его использует, немедленно перестанет "
+"работать."
 
+#: templates/api/key_list.html:146
 msgid "Revoke"
 msgstr "Отозвать"
 
+#: templates/api/key_list.html:151
 msgid "No API keys yet."
 msgstr "Пока нет API-ключей."
 
+#: templates/base.html:38
 msgid "Skip to content"
 msgstr "Перейти к содержимому"
 
+#: templates/base.html:64
 msgid "Main navigation"
 msgstr "Главное меню"
 
+#: templates/base.html:65 templates/base.html:67
 msgid "Home"
 msgstr "Главная"
 
+#: templates/base.html:77 templates/base.html:79
 msgid "Workout"
 msgstr "Тренировка"
 
+#: templates/base.html:93
 msgid "Continue training"
 msgstr "Продолжить тренировку"
 
+#: templates/core/_backup_row.html:8
 msgid "Automatic"
 msgstr "Автоматический"
 
+#: templates/core/_backup_row.html:10
 msgid "Uploaded"
 msgstr "Загружено"
 
+#: templates/core/_backup_row.html:15
 msgid "Download"
 msgstr "Скачать"
 
+#: templates/core/_backup_row.html:16
 msgid "Restore"
 msgstr "Восстановить"
 
+#: templates/core/_backup_row.html:18
 msgid "Delete this backup? This cannot be undone."
 msgstr "Удалить эту резервную копию? Это действие нельзя отменить."
 
+#: templates/core/_bar_chart.html:36
+#, python-format
 msgid "%(title)s, %(counter)s category"
 msgid_plural "%(title)s, %(counter)s categories"
 msgstr[0] "%(title)s, %(counter)s категория"
 msgstr[1] "%(title)s, %(counter)s категории"
 msgstr[2] "%(title)s, %(counter)s категорий"
 
+#: templates/core/_bar_chart.html:47
+#, python-format
 msgid "%(title)s by category"
 msgstr "%(title)s по категориям"
 
-msgid "Not enough data yet — set your height and log a body weight to see your current BMI here."
-msgstr "Пока недостаточно данных — укажите рост и запишите вес тела, чтобы увидеть здесь ваш ИМТ."
+#: templates/core/_bmi_card.html:21
+msgid ""
+"Not enough data yet — set your height and log a body weight to see your "
+"current BMI here."
+msgstr ""
+"Пока недостаточно данных — укажите рост и запишите вес тела, чтобы увидеть "
+"здесь ваш ИМТ."
 
+#: templates/core/_bmi_card.html:25
 msgid "BMI category ranges"
 msgstr "Диапазоны категорий ИМТ"
 
+#: templates/core/_bmi_card.html:40
+#, python-format
 msgid "below %(high)s"
 msgstr "менее %(high)s"
 
+#: templates/core/_bmi_card.html:41
+#, python-format
 msgid "%(low)s and above"
 msgstr "%(low)s и выше"
 
+#: templates/core/_bmi_card.html:46
+#, python-format
 msgid "below %(high)s %(unit)s"
 msgstr "менее %(high)s %(unit)s"
 
+#: templates/core/_bmi_card.html:47
+#, python-format
 msgid "%(low)s %(unit)s and above"
 msgstr "%(low)s %(unit)s и выше"
 
+#: templates/core/_chart.html:30
+#, python-format
 msgid "%(title)s trend over time, %(counter)s reading"
 msgid_plural "%(title)s trend over time, %(counter)s readings"
 msgstr[0] "%(title)s во времени, %(counter)s измерение"
 msgstr[1] "%(title)s во времени, %(counter)s измерения"
 msgstr[2] "%(title)s во времени, %(counter)s измерений"
 
+#: templates/core/backup_list.html:11
 msgid "Create backup"
 msgstr "Создать резервную копию"
 
+#: templates/core/backup_list.html:14
 msgid "Upload backup"
 msgstr "Загрузить резервную копию"
 
-msgid "Restore from a backup file you downloaded earlier, instead of one already listed below."
-msgstr "Восстановите из файла резервной копии, который вы скачали ранее, вместо уже перечисленных ниже."
+#: templates/core/backup_list.html:18
+msgid ""
+"Restore from a backup file you downloaded earlier, instead of one already "
+"listed below."
+msgstr ""
+"Восстановите из файла резервной копии, который вы скачали ранее, вместо уже "
+"перечисленных ниже."
 
+#: templates/core/backup_list.html:28
 msgid "Upload and continue"
 msgstr "Загрузить и продолжить"
 
+#: templates/core/backup_list.html:31 templates/core/feedback_list.html:9
 msgid "Settings"
 msgstr "Настройки"
 
+#: templates/core/backup_list.html:51 templates/core/feedback_list.html:24
 msgid "Save settings"
 msgstr "Сохранить настройки"
 
+#: templates/core/backup_list.html:54
 msgid "Automatic backups"
 msgstr "Автоматические резервные копии"
 
+#: templates/core/backup_list.html:61
+#, python-format
 msgid "▾ Show %(counter)s earlier automatic backup"
 msgid_plural "▾ Show %(counter)s earlier automatic backups"
 msgstr[0] "▾ Показать %(counter)s более раннюю автоматическую резервную копию"
 msgstr[1] "▾ Показать %(counter)s более ранние автоматические резервные копии"
 msgstr[2] "▾ Показать %(counter)s более ранних автоматических резервных копий"
 
+#: templates/core/backup_list.html:62
 msgid "Hide earlier automatic backups"
 msgstr "Скрыть более ранние автоматические резервные копии"
 
+#: templates/core/backup_list.html:73
 msgid "No automatic backups yet."
 msgstr "Пока нет автоматических резервных копий."
 
+#: templates/core/backup_list.html:77
 msgid "Manual & uploaded backups"
 msgstr "Ручные и загруженные резервные копии"
 
+#: templates/core/backup_list.html:84
 msgid "No manual or uploaded backups yet."
 msgstr "Пока нет ручных или загруженных резервных копий."
 
+#: templates/core/backup_restore_confirm.html:3
+#: templates/core/backup_restore_confirm.html:6
 msgid "Restore backup"
 msgstr "Восстановить резервную копию"
 
-msgid "This will permanently replace the current database and every file under media/ with the contents of %(name)s. This cannot be undone."
-msgstr "Это навсегда заменит текущую базу данных и все файлы в media/ содержимым резервной копии %(name)s. Это действие нельзя отменить."
+#: templates/core/backup_restore_confirm.html:11
+#, python-format
+msgid ""
+"This will permanently replace the current database and every file under "
+"media/ with the contents of %(name)s. This cannot be undone."
+msgstr ""
+"Это навсегда заменит текущую базу данных и все файлы в media/ содержимым "
+"резервной копии %(name)s. Это действие нельзя отменить."
 
-msgid "If in doubt, create a fresh backup of the current state first, then come back here."
-msgstr "Если сомневаетесь, сначала создайте новую резервную копию текущего состояния, а затем вернитесь сюда."
+#: templates/core/backup_restore_confirm.html:14
+msgid ""
+"If in doubt, create a fresh backup of the current state first, then come "
+"back here."
+msgstr ""
+"Если сомневаетесь, сначала создайте новую резервную копию текущего "
+"состояния, а затем вернитесь сюда."
 
+#: templates/core/backup_restore_confirm.html:19
 msgid "Backup"
 msgstr "Резервная копия"
 
+#: templates/core/backup_restore_confirm.html:21
+#: templates/core/backup_restore_confirm.html:30
 msgid "Version"
 msgstr "Версия"
 
+#: templates/core/backup_restore_confirm.html:22
+#: templates/core/backup_restore_confirm.html:31
 msgid "Git commit"
 msgstr "Git-коммит"
 
+#: templates/core/backup_restore_confirm.html:23
 msgid "Created"
 msgstr "Создано"
 
+#: templates/core/backup_restore_confirm.html:28
 msgid "Running instance"
 msgstr "Работающий экземпляр"
 
-msgid "Really replace the current database and media with this backup? This cannot be undone."
-msgstr "Действительно заменить текущую базу данных и медиафайлы этой резервной копией? Это действие нельзя отменить."
+#: templates/core/backup_restore_confirm.html:35
+msgid ""
+"Really replace the current database and media with this backup? This cannot "
+"be undone."
+msgstr ""
+"Действительно заменить текущую базу данных и медиафайлы этой резервной "
+"копией? Это действие нельзя отменить."
 
+#: templates/core/backup_restore_confirm.html:37
 msgid "Restore this backup"
 msgstr "Восстановить эту резервную копию"
 
+#: templates/core/backup_restore_confirm.html:40
 msgid "Back to backups"
 msgstr "Назад к резервным копиям"
 
+#: templates/core/dashboard.html:3
 msgid "Dashboard"
 msgstr "Панель управления"
 
+#: templates/core/dashboard.html:14
 msgid "Achievements"
 msgstr "Достижения"
 
+#: templates/core/dashboard.html:42
+#, python-format
 msgid "Show achievement %(position)s"
 msgstr "Показать достижение %(position)s"
 
+#: templates/core/dashboard.html:51
 msgid "Recently active"
 msgstr "Недавняя активность"
 
+#: templates/core/dashboard.html:58
 msgid "Training now"
 msgstr "Тренируется сейчас"
 
+#: templates/core/dashboard.html:58
+#, python-format
 msgid "%(time)s ago"
 msgstr "%(time)s назад"
 
+#: templates/core/dashboard.html:69
 msgid "This week's workouts"
 msgstr "Тренировки на этой неделе"
 
+#: templates/core/dashboard.html:70
 msgid "This week's volume"
 msgstr "Объём за эту неделю"
 
+#: templates/core/dashboard.html:91
 msgid "Continue workout"
 msgstr "Продолжить тренировку"
 
+#: templates/core/dashboard.html:93 templates/workouts/session_detail.html:3
+#: templates/workouts/session_detail.html:6
+#: templates/workouts/session_list.html:11
+#: templates/workouts/session_train.html:6
 msgid "Freeform workout"
 msgstr "Свободная тренировка"
 
+#: templates/core/dashboard.html:94
+#, python-format
 msgid "started %(started_at)s"
 msgstr "начато %(started_at)s"
 
+#: templates/core/dashboard.html:99
 msgid "No workout in progress."
 msgstr "Нет активной тренировки."
 
+#: templates/core/dashboard.html:100
 msgid "Start one from a program, or log a freeform workout."
 msgstr "Начните тренировку по программе или запишите свободную тренировку."
 
+#: templates/core/dashboard.html:105
 msgid "Browse exercises"
 msgstr "Просмотреть упражнения"
 
+#: templates/core/dashboard.html:106
 msgid "Explore the exercise library or add your own."
 msgstr "Изучите библиотеку упражнений или добавьте своё."
 
+#: templates/core/dashboard.html:110
+#: templates/measurements/measurement_type_list.html:3
+#: templates/measurements/measurement_type_list.html:6
 msgid "Body tracking"
 msgstr "Отслеживание тела"
 
+#: templates/core/dashboard.html:111
 msgid "Log body weight, measurements, and trends."
 msgstr "Записывайте вес тела, измерения и тенденции."
 
+#: templates/core/dashboard.html:116
 msgid "Log a run, ride, or any other non-gym activity."
-msgstr "Записывайте пробежку, велопрогулку или любую другую активность вне зала."
+msgstr ""
+"Записывайте пробежку, велопрогулку или любую другую активность вне зала."
 
-msgid "Bug reports, ideas, anything that's confusing — only visible to the people running this instance."
-msgstr "Сообщения об ошибках, идеи, всё, что непонятно — видно только тем, кто администрирует этот экземпляр."
+#: templates/core/feedback_form.html:9
+msgid ""
+"Bug reports, ideas, anything that's confusing — only visible to the people "
+"running this instance."
+msgstr ""
+"Сообщения об ошибках, идеи, всё, что непонятно — видно только тем, кто "
+"администрирует этот экземпляр."
 
+#: templates/core/feedback_form.html:22
 msgid "Send feedback"
 msgstr "Отправить отзыв"
 
+#: templates/core/feedback_list.html:27
 msgid "Submissions"
 msgstr "Отправленные сообщения"
 
+#: templates/core/feedback_list.html:44
+#: templates/exercises/_exercise_list_results.html:22
+#: templates/workouts/_train_panel.html:13
 msgid "Previous"
 msgstr "Назад"
 
+#: templates/core/feedback_list.html:46
+#: templates/exercises/_exercise_list_results.html:24
+#, python-format
 msgid "Page %(number)s of %(total)s"
 msgstr "Страница %(number)s из %(total)s"
 
+#: templates/core/feedback_list.html:48
+#: templates/exercises/_exercise_list_results.html:26
+#: templates/workouts/_train_panel.html:21
 msgid "Next"
 msgstr "Далее"
 
+#: templates/core/feedback_list.html:54
 msgid "No feedback yet."
 msgstr "Пока нет отзывов."
 
+#: templates/exercises/_exercise_list_results.html:15
 msgid "No exercises match your search."
 msgstr "По вашему запросу упражнений не найдено."
 
+#: templates/exercises/_exercise_list_results.html:20
 msgid "Exercise list pages"
 msgstr "Страницы списка упражнений"
 
+#: templates/exercises/exercise_detail.html:19
 msgid "Movement type"
 msgstr "Тип движения"
 
+#: templates/exercises/exercise_detail.html:22
 msgid "Weight logging"
 msgstr "Запись веса"
 
+#: templates/exercises/exercise_detail.html:26
 msgid "Equipment"
 msgstr "Оборудование"
 
+#: templates/exercises/exercise_detail.html:31
 msgid "Primary muscles"
 msgstr "Основные мышцы"
 
+#: templates/exercises/exercise_detail.html:36
 msgid "Secondary muscles"
 msgstr "Второстепенные мышцы"
 
+#: templates/exercises/exercise_detail.html:43
 msgid "Your"
 msgstr "Ваши"
 
+#: templates/exercises/exercise_detail.html:44
 msgid "Current personal records for this exercise."
 msgstr "Текущие личные рекорды для этого упражнения."
 
+#: templates/exercises/exercise_detail.html:48
 msgid "Strength trend"
 msgstr "Динамика силы"
 
+#: templates/exercises/exercise_detail.html:49
 msgid "over time and training volume."
 msgstr "во времени и объём тренировок."
 
-msgid "Deactivate this exercise? It will no longer appear when browsing or prescribing."
-msgstr "Отключить это упражнение? Оно больше не будет отображаться при просмотре или назначении."
+#: templates/exercises/exercise_detail.html:53
+msgid ""
+"Deactivate this exercise? It will no longer appear when browsing or "
+"prescribing."
+msgstr ""
+"Отключить это упражнение? Оно больше не будет отображаться при просмотре или "
+"назначении."
 
+#: templates/exercises/exercise_detail.html:55
+#: templates/nutrition/diet_plan_detail.html:11
+#: templates/nutrition/diet_plan_list.html:24
 msgid "Deactivate"
 msgstr "Отключить"
 
+#: templates/exercises/exercise_detail.html:59
 msgid "Back to exercises"
 msgstr "Назад к упражнениям"
 
+#: templates/exercises/exercise_form.html:3
+#: templates/exercises/exercise_form.html:6
+#: templates/programs/prescription_form.html:3
+#: templates/programs/prescription_form.html:6
 msgid "Edit exercise"
 msgstr "Изменить упражнение"
 
+#: templates/exercises/exercise_form.html:3
+#: templates/exercises/exercise_form.html:6
 msgid "New exercise"
 msgstr "Новое упражнение"
 
+#: templates/exercises/exercise_list.html:11
 msgid "Search exercises…"
 msgstr "Поиск упражнений…"
 
+#: templates/exercises/exercise_list.html:11
 msgid "Search exercises"
 msgstr "Поиск упражнений"
 
+#: templates/exercises/exercise_list.html:12
 msgid "Filter by muscle group"
 msgstr "Фильтр по группе мышц"
 
+#: templates/exercises/exercise_list.html:13
 msgid "All muscle groups"
 msgstr "Все группы мышц"
 
+#: templates/measurements/measurement_form.html:3
 msgid "Edit reading"
 msgstr "Изменить измерение"
 
+#: templates/measurements/measurement_form.html:6
+#, python-format
 msgid "Edit %(name)s reading"
 msgstr "Изменить измерение: %(name)s"
 
+#: templates/measurements/measurement_history.html:15
 msgid "Trend"
 msgstr "Тенденция"
 
+#: templates/measurements/measurement_history.html:29
 msgid "Log reading"
 msgstr "Записать измерение"
 
+#: templates/measurements/measurement_history.html:44
 msgid "Delete this reading?"
 msgstr "Удалить это измерение?"
 
+#: templates/measurements/measurement_history.html:51
 msgid "No readings logged yet."
 msgstr "Измерения ещё не записаны."
 
-msgid "Deactivate this measurement type? It will no longer appear when logging new readings."
-msgstr "Отключить этот тип измерения? Он больше не будет отображаться при записи новых измерений."
+#: templates/measurements/measurement_history.html:58
+msgid ""
+"Deactivate this measurement type? It will no longer appear when logging new "
+"readings."
+msgstr ""
+"Отключить этот тип измерения? Он больше не будет отображаться при записи "
+"новых измерений."
 
+#: templates/measurements/measurement_history.html:64
+#: templates/measurements/measurement_type_form.html:22
 msgid "Back to body tracking"
 msgstr "Назад к отслеживанию тела"
 
+#: templates/measurements/measurement_type_form.html:3
+#: templates/measurements/measurement_type_form.html:6
 msgid "New measurement type"
 msgstr "Новый тип измерения"
 
+#: templates/measurements/measurement_type_list.html:16
+#, python-format
 msgid "Latest: %(value)s %(unit)s"
 msgstr "Последнее: %(value)s %(unit)s"
 
+#: templates/measurements/measurement_type_list.html:18
 msgid "No readings yet"
 msgstr "Измерений пока нет"
 
+#: templates/measurements/measurement_type_list.html:24
 msgid "No measurement types yet."
 msgstr "Типов измерения пока нет."
 
+#: templates/nutrition/_barcode_scan_button.html:12
 msgid "Scan barcode"
 msgstr "Сканировать штрихкод"
 
+#: templates/nutrition/_barcode_scan_button.html:17
+#: templates/nutrition/_barcode_scan_button.html:20
 msgid "Scan a barcode"
 msgstr "Отсканировать штрихкод"
 
+#: templates/nutrition/_barcode_scan_button.html:21
 msgid "Close"
 msgstr "Закрыть"
 
+#: templates/nutrition/_barcode_scan_button.html:25
 msgid "Point your camera at a barcode."
 msgstr "Наведите камеру на штрихкод."
 
-msgid "Your foods"
-msgstr "Ваши продукты"
-
-msgid "Already in your library"
-msgstr "Уже в вашей библиотеке"
-
-msgid "Quantity"
-msgstr "Количество"
-
-msgid "Add"
-msgstr "Добавить"
-
-msgid "From OpenFoodFacts"
-msgstr "Из OpenFoodFacts"
-
-msgid "Import"
-msgstr "Импортировать"
-
-msgid "Import & add"
-msgstr "Импортировать и добавить"
-
-msgid "Nothing found."
-msgstr "Ничего не найдено."
-
-msgid "Create a custom food"
-msgstr "Создать свой продукт"
-
-msgid "Most used"
-msgstr "Часто используемые"
-
-msgid "+ Add"
-msgstr "+ Добавить"
-
-msgid "Nutri-Score %(grade)s"
-msgstr "Nutri-Score %(grade)s"
-
-msgid "NOVA — food processing level, 1 (unprocessed) to 4 (ultra-processed)"
-msgstr "NOVA — степень обработки продукта, от 1 (необработанный) до 4 (ультраобработанный)"
-
-msgid "Nutrition sections"
-msgstr "Разделы питания"
-
-msgid "Overview"
-msgstr "Обзор"
-
-msgid "Diary"
-msgstr "Дневник"
-
-msgid "Foods"
-msgstr "Продукты"
-
-msgid "Recipes"
-msgstr "Рецепты"
-
-msgid "Diet plans"
-msgstr "Планы питания"
-
-msgid "Calculators"
-msgstr "Калькуляторы"
-
-msgid "Statistics"
-msgstr "Статистика"
-
-msgid "Step %(step)s of 5"
-msgstr "Шаг %(step)s из 5"
-
-msgid "BMI calculator"
-msgstr "Калькулятор ИМТ"
-
-msgid "Body mass index — a widely used screening number, not a diagnosis. The Body weight page shows this automatically once you've logged a weight and set a height on your profile; this is the same calculation for a quick one-off check."
-msgstr "Индекс массы тела — широко используемый скрининговый показатель, а не диагноз. Страница веса тела показывает его автоматически, если вы записали вес и указали рост в профиле; это тот же расчёт для быстрой разовой проверки."
-
-msgid "Calculate"
-msgstr "Рассчитать"
-
-msgid "Result"
-msgstr "Результат"
-
-msgid "Categories"
-msgstr "Категории"
-
-msgid "Back to calculators"
-msgstr "Назад к калькуляторам"
-
-msgid "BMR / TDEE calculator"
-msgstr "Калькулятор BMR/TDEE"
-
-msgid "BMR is roughly what you'd burn lying still all day; TDEE adds your activity on top. Both are estimates (Mifflin-St Jeor)."
-msgstr "BMR — это примерно то, что вы бы сжигали, лёжа неподвижно весь день; TDEE добавляет к этому вашу активность. Оба значения — оценочные (формула Миффлина-Сан Жеора)."
-
-msgid "BMR (at rest)"
-msgstr "BMR (в покое)"
-
-msgid "TDEE (with activity)"
-msgstr "TDEE (с учётом активности)"
-
-msgid "Body fat calculator"
-msgstr "Калькулятор процента жира"
-
-msgid "The U.S. Navy tape-measure method — just a tape measure, no calipers or bioimpedance scale needed. An estimate, typically within a few percentage points of a DEXA scan."
-msgstr "Метод ВМС США с сантиметровой лентой — нужна только сантиметровая лента, без калипера или весов с биоимпедансом. Оценка, обычно в пределах нескольких процентных пунктов от DEXA-сканирования."
-
-msgid "Couldn't estimate this from those measurements — double-check them (waist should be larger than neck)."
-msgstr "Не удалось рассчитать по этим измерениям — проверьте их (талия должна быть больше шеи)."
-
-msgid "Macro calculator"
-msgstr "Калькулятор макронутриентов"
-
-msgid "Splits a calorie target into protein, carbohydrates, and fat using this app's own default ratios for the goal you pick."
-msgstr "Разбивает целевую калорийность на белки, углеводы и жиры, используя собственные соотношения приложения по умолчанию для выбранной вами цели."
-
-msgid "Protein"
-msgstr "Белки"
-
-msgid "Carbohydrates"
-msgstr "Углеводы"
-
-msgid "Fat"
-msgstr "Жиры"
-
-msgid "This calorie target is low enough that protein and/or fat had to be reduced below their usual defaults to fit."
-msgstr "Эта целевая калорийность настолько низкая, что белки и/или жиры пришлось уменьшить ниже их обычных значений по умолчанию, чтобы уложиться в лимит."
-
-msgid "Time to goal weight calculator"
-msgstr "Калькулятор времени до целевого веса"
-
-msgid "At a chosen weekly rate, roughly how long to reach a target weight — a plain projection from the numbers you enter, not a promise."
-msgstr "При выбранном недельном темпе — примерно, сколько времени понадобится для достижения целевого веса. Это лишь прогноз на основе введённых вами цифр, а не обещание."
-
-msgid "%(weeks)s weeks"
-msgstr "%(weeks)s недель"
-
-msgid "Around %(date)s, at this rate."
-msgstr "Примерно %(date)s при таком темпе."
-
-msgid "That rate doesn't move toward your target — check the sign (negative to lose, positive to gain) matches the direction you actually need to go."
-msgstr "Этот темп не приближает вас к цели — проверьте, соответствует ли знак (отрицательный для похудения, положительный для набора веса) направлению, в котором вам действительно нужно двигаться."
-
-msgid "Waist-to-hip ratio calculator"
-msgstr "Калькулятор соотношения талии и бёдер"
-
-msgid "Where you carry weight, not just how much — a widely used screening number (WHO), not a diagnosis."
-msgstr "Где именно вы носите вес, а не только сколько — широко используемый скрининговый показатель (ВОЗ), а не диагноз."
-
-msgid "Water intake calculator"
-msgstr "Калькулятор потребления воды"
-
-msgid "A rough daily fluid target based on bodyweight and activity — real needs vary with climate and sweat rate, so treat this as a starting point."
-msgstr "Приблизительная суточная норма жидкости на основе веса тела и активности — реальная потребность зависит от климата и интенсивности потоотделения, так что считайте это отправной точкой."
-
-msgid "day"
-msgstr "день"
-
-msgid "Quick, standalone estimates — none of these are saved or change your targets."
-msgstr "Быстрые самостоятельные оценки — ничего из этого не сохраняется и не изменяет ваши цели."
-
-msgid "How many calories your body burns at rest, and in total."
-msgstr "Сколько калорий сжигает ваше тело в покое и в целом."
-
-msgid "Split a calorie target into protein, carbohydrates, and fat."
-msgstr "Разделите целевую калорийность на белки, углеводы и жиры."
-
-msgid "Estimate body fat percentage from a tape measure (U.S. Navy method)."
-msgstr "Оцените процент жира в организме с помощью сантиметровой ленты (метод ВМС США)."
-
-msgid "A rough daily fluid target based on your bodyweight and activity."
-msgstr "Приблизительная суточная норма жидкости на основе вашего веса и активности."
-
-msgid "Body mass index and what it means for your height, without logging a weight first."
-msgstr "Индекс массы тела и что он означает для вашего роста — без необходимости сначала записывать вес."
-
-msgid "Where you carry weight, not just how much — a tape measure and one more number."
-msgstr "Где именно вы носите вес, а не только сколько — сантиметровая лента и ещё одно число."
-
-msgid "At a chosen weekly rate, roughly how long to reach a target weight."
-msgstr "При выбранном недельном темпе — примерно, сколько времени понадобится для достижения целевого веса."
-
-msgid "Back to nutrition"
-msgstr "Назад к питанию"
-
-msgid "Training day"
-msgstr "День тренировки"
-
-msgid "Rest day"
-msgstr "День отдыха"
-
-msgid "Today so far"
-msgstr "Сегодня на данный момент"
-
-msgid "Open food diary"
-msgstr "Открыть дневник питания"
-
-msgid "+ Log food now"
-msgstr "+ Записать еду сейчас"
-
-msgid "Is your current target working?"
-msgstr "Работает ли ваша текущая цель?"
-
-msgid "High confidence"
-msgstr "Высокая уверенность"
-
-msgid "Medium confidence"
-msgstr "Средняя уверенность"
-
-msgid "Low confidence"
-msgstr "Низкая уверенность"
-
-msgid "Adjust to %(calories)s kcal/day"
-msgstr "Скорректировать до %(calories)s ккал/день"
-
-msgid "Weight trend"
-msgstr "Тренд веса"
-
-msgid "Daily target"
-msgstr "Дневная цель"
-
-msgid "%(calories)s kcal/day"
-msgstr "%(calories)s ккал/день"
-
-msgid "Current goal"
-msgstr "Текущая цель"
-
-msgid "Add food"
-msgstr "Добавить продукт"
-
-msgid "e.g. chicken breast, or a barcode number"
-msgstr "например, куриная грудка или номер штрихкода"
-
-msgid "Back to diary"
-msgstr "Назад к дневнику"
-
-msgid "Food diary"
-msgstr "Дневник питания"
-
-msgid "Previous day"
-msgstr "Предыдущий день"
-
-msgid "Jump to date"
-msgstr "Перейти к дате"
-
-msgid "Next day"
-msgstr "Следующий день"
-
-msgid "Today's nutrition"
-msgstr "Питание за сегодня"
-
-msgid "Remove this entry?"
-msgstr "Удалить эту запись?"
-
-msgid "Nothing logged yet."
-msgstr "Пока ничего не записано."
-
-msgid "+ Add food"
-msgstr "+ Добавить продукт"
-
-msgid "Copy this day to another date"
-msgstr "Скопировать этот день на другую дату"
-
-msgid "Copy to date"
-msgstr "Скопировать на дату"
-
-msgid "Copy"
-msgstr "Копировать"
-
-msgid "Manage foods"
-msgstr "Управление продуктами"
-
-msgid "Edit entry"
-msgstr "Изменить запись"
-
-msgid "protein"
-msgstr "белки"
-
-msgid "carbs"
-msgstr "углеводы"
-
-msgid "fat"
-msgstr "жиры"
-
+#: templates/nutrition/_diet_plan_meal_card.html:13
 msgid "target"
 msgstr "цель"
 
+#: templates/nutrition/_diet_plan_meal_card.html:13
 msgid "so far"
 msgstr "на данный момент"
 
+#: templates/nutrition/_diet_plan_meal_card.html:18
+#: templates/nutrition/recipe_list.html:27
 msgid "servings"
 msgstr "порций"
 
+#: templates/nutrition/_diet_plan_meal_card.html:21
 msgid "Swap"
 msgstr "Заменить"
 
+#: templates/nutrition/_diet_plan_meal_card.html:23
 msgid "Remove this item?"
 msgstr "Удалить этот пункт?"
 
+#: templates/nutrition/_diet_plan_meal_card.html:25
+#: templates/nutrition/recipe_detail.html:38
 msgid "Remove"
 msgstr "Удалить"
 
+#: templates/nutrition/_diet_plan_meal_card.html:30
 msgid "Nothing suggested yet — add some foods or recipes first."
 msgstr "Пока нет предложений — сначала добавьте продукты или рецепты."
 
+#: templates/nutrition/_diet_plan_meal_card.html:32
 msgid "+ Add item"
 msgstr "+ Добавить пункт"
 
+#: templates/nutrition/_food_search_results.html:15
+msgid "Your foods"
+msgstr "Ваши продукты"
+
+#: templates/nutrition/_food_search_results.html:23
+msgid "Already in your library"
+msgstr "Уже в вашей библиотеке"
+
+#: templates/nutrition/_food_search_results.html:38
+#: templates/nutrition/_food_search_results.html:64
+#: templates/nutrition/_most_used_foods.html:42
+msgid "Quantity"
+msgstr "Количество"
+
+#: templates/nutrition/_food_search_results.html:39
+#: templates/workouts/performed_exercise_form.html:19
+msgid "Add"
+msgstr "Добавить"
+
+#: templates/nutrition/_food_search_results.html:47
+msgid "From OpenFoodFacts"
+msgstr "Из OpenFoodFacts"
+
+#: templates/nutrition/_food_search_results.html:61
+#: templates/nutrition/food_category.html:20
+msgid "Import"
+msgstr "Импортировать"
+
+#: templates/nutrition/_food_search_results.html:65
+msgid "Import & add"
+msgstr "Импортировать и добавить"
+
+#: templates/nutrition/_food_search_results.html:74
+msgid "Nothing found."
+msgstr "Ничего не найдено."
+
+#: templates/nutrition/_food_search_results.html:76
+msgid "Create a custom food"
+msgstr "Создать свой продукт"
+
+#: templates/nutrition/_month_calendar.html:24
+msgid "Previous month"
+msgstr "Предыдущий месяц"
+
+#: templates/nutrition/_month_calendar.html:27
+#: templates/nutrition/_month_calendar.html:37
+#: templates/nutrition/_month_calendar.html:40
+msgid "How to read this calendar"
+msgstr "Как читать этот календарь"
+
+#: templates/nutrition/_month_calendar.html:30
+msgid "Next month"
+msgstr "Следующий месяц"
+
+#: templates/nutrition/_month_calendar.html:44
+msgid ""
+"A barbell icon marks a training day — green for a new personal record, red "
+"for an abandoned session, plain for an ordinary one. A moon marks a rest day."
+msgstr ""
+"Значок штанги отмечает тренировочный день — зелёный для нового личного "
+"рекорда, красный для прерванной тренировки, обычный для обычной тренировки. "
+"Луна отмечает день отдыха."
+
+#: templates/nutrition/_month_calendar.html:45
+msgid ""
+"The arrow shows how your trailing 7-day average calories compare to your "
+"target: pointing up means over, down means under; green is close, yellow is "
+"drifting, red is well off. No arrow yet means there isn't enough logged data "
+"to judge."
+msgstr ""
+"Стрелка показывает, насколько ваше среднее потребление калорий за последние "
+"7 дней соответствует цели: вверх значит больше, вниз значит меньше; зелёный "
+"— близко, жёлтый — отклоняется, красный — сильно отличается. Отсутствие "
+"стрелки означает, что пока недостаточно данных для оценки."
+
+#: templates/nutrition/_month_calendar.html:46
+msgid "Tap a day for details."
+msgstr "Нажмите на день, чтобы увидеть подробности."
+
+#: templates/nutrition/_most_used_foods.html:14
+msgid "Most used"
+msgstr "Часто используемые"
+
+#: templates/nutrition/_most_used_foods.html:43
+msgid "+ Add"
+msgstr "+ Добавить"
+
+#: templates/nutrition/_nutri_score_badge.html:3
+#, python-format
+msgid "Nutri-Score %(grade)s"
+msgstr "Nutri-Score %(grade)s"
+
+#: templates/nutrition/_nutri_score_badge.html:6
+msgid "NOVA — food processing level, 1 (unprocessed) to 4 (ultra-processed)"
+msgstr ""
+"NOVA — степень обработки продукта, от 1 (необработанный) до 4 "
+"(ультраобработанный)"
+
+#: templates/nutrition/_subnav.html:21
+msgid "Nutrition sections"
+msgstr "Разделы питания"
+
+#: templates/nutrition/_subnav.html:22
+msgid "Overview"
+msgstr "Обзор"
+
+#: templates/nutrition/_subnav.html:23
+msgid "Diary"
+msgstr "Дневник"
+
+#: templates/nutrition/_subnav.html:24 templates/nutrition/food_list.html:3
+#: templates/nutrition/food_list.html:6
+msgid "Foods"
+msgstr "Продукты"
+
+#: templates/nutrition/_subnav.html:25 templates/nutrition/recipe_list.html:3
+#: templates/nutrition/recipe_list.html:6
+msgid "Recipes"
+msgstr "Рецепты"
+
+#: templates/nutrition/_subnav.html:26
+#: templates/nutrition/diet_plan_list.html:3
+#: templates/nutrition/diet_plan_list.html:6
+msgid "Diet plans"
+msgstr "Планы питания"
+
+#: templates/nutrition/_subnav.html:27
+#: templates/nutrition/calculators_home.html:3
+#: templates/nutrition/calculators_home.html:6
+msgid "Calculators"
+msgstr "Калькуляторы"
+
+#: templates/nutrition/_subnav.html:28 templates/nutrition/stats.html:6
+msgid "Statistics"
+msgstr "Статистика"
+
+#: templates/nutrition/_wizard_progress.html:2
+#, python-format
+msgid "Step %(step)s of 5"
+msgstr "Шаг %(step)s из 5"
+
+#: templates/nutrition/calculator_bmi.html:3
+#: templates/nutrition/calculator_bmi.html:6
+#: templates/nutrition/calculators_home.html:45
+msgid "BMI calculator"
+msgstr "Калькулятор ИМТ"
+
+#: templates/nutrition/calculator_bmi.html:9
+msgid ""
+"Body mass index — a widely used screening number, not a diagnosis. The Body "
+"weight page shows this automatically once you've logged a weight and set a "
+"height on your profile; this is the same calculation for a quick one-off "
+"check."
+msgstr ""
+"Индекс массы тела — широко используемый скрининговый показатель, а не "
+"диагноз. Страница веса тела показывает его автоматически, если вы записали "
+"вес и указали рост в профиле; это тот же расчёт для быстрой разовой проверки."
+
+#: templates/nutrition/calculator_bmi.html:20
+#: templates/nutrition/calculator_bmr_tdee.html:20
+#: templates/nutrition/calculator_body_fat.html:20
+#: templates/nutrition/calculator_macros.html:20
+#: templates/nutrition/calculator_time_to_goal.html:20
+#: templates/nutrition/calculator_waist_hip_ratio.html:20
+#: templates/nutrition/calculator_water_intake.html:20
+msgid "Calculate"
+msgstr "Рассчитать"
+
+#: templates/nutrition/calculator_bmi.html:25
+#: templates/nutrition/calculator_bmr_tdee.html:25
+#: templates/nutrition/calculator_body_fat.html:25
+#: templates/nutrition/calculator_macros.html:25
+#: templates/nutrition/calculator_time_to_goal.html:26
+#: templates/nutrition/calculator_waist_hip_ratio.html:25
+#: templates/nutrition/calculator_water_intake.html:25
+msgid "Result"
+msgstr "Результат"
+
+#: templates/nutrition/calculator_bmi.html:32
+msgid "Categories"
+msgstr "Категории"
+
+#: templates/nutrition/calculator_bmi.html:64
+#: templates/nutrition/calculator_bmr_tdee.html:35
+#: templates/nutrition/calculator_body_fat.html:34
+#: templates/nutrition/calculator_macros.html:39
+#: templates/nutrition/calculator_time_to_goal.html:39
+#: templates/nutrition/calculator_waist_hip_ratio.html:32
+#: templates/nutrition/calculator_water_intake.html:30
+msgid "Back to calculators"
+msgstr "Назад к калькуляторам"
+
+#: templates/nutrition/calculator_bmr_tdee.html:3
+#: templates/nutrition/calculator_bmr_tdee.html:6
+#: templates/nutrition/calculators_home.html:13
+msgid "BMR / TDEE calculator"
+msgstr "Калькулятор BMR/TDEE"
+
+#: templates/nutrition/calculator_bmr_tdee.html:9
+msgid ""
+"BMR is roughly what you'd burn lying still all day; TDEE adds your activity "
+"on top. Both are estimates (Mifflin-St Jeor)."
+msgstr ""
+"BMR — это примерно то, что вы бы сжигали, лёжа неподвижно весь день; TDEE "
+"добавляет к этому вашу активность. Оба значения — оценочные (формула "
+"Миффлина-Сан Жеора)."
+
+#: templates/nutrition/calculator_bmr_tdee.html:28
+msgid "BMR (at rest)"
+msgstr "BMR (в покое)"
+
+#: templates/nutrition/calculator_bmr_tdee.html:29
+msgid "TDEE (with activity)"
+msgstr "TDEE (с учётом активности)"
+
+#: templates/nutrition/calculator_body_fat.html:3
+#: templates/nutrition/calculator_body_fat.html:6
+#: templates/nutrition/calculators_home.html:29
+msgid "Body fat calculator"
+msgstr "Калькулятор процента жира"
+
+#: templates/nutrition/calculator_body_fat.html:9
+msgid ""
+"The U.S. Navy tape-measure method — just a tape measure, no calipers or "
+"bioimpedance scale needed. An estimate, typically within a few percentage "
+"points of a DEXA scan."
+msgstr ""
+"Метод ВМС США с сантиметровой лентой — нужна только сантиметровая лента, без "
+"калипера или весов с биоимпедансом. Оценка, обычно в пределах нескольких "
+"процентных пунктов от DEXA-сканирования."
+
+#: templates/nutrition/calculator_body_fat.html:30
+msgid ""
+"Couldn't estimate this from those measurements — double-check them (waist "
+"should be larger than neck)."
+msgstr ""
+"Не удалось рассчитать по этим измерениям — проверьте их (талия должна быть "
+"больше шеи)."
+
+#: templates/nutrition/calculator_macros.html:3
+#: templates/nutrition/calculator_macros.html:6
+#: templates/nutrition/calculators_home.html:21
+msgid "Macro calculator"
+msgstr "Калькулятор макронутриентов"
+
+#: templates/nutrition/calculator_macros.html:9
+msgid ""
+"Splits a calorie target into protein, carbohydrates, and fat using this "
+"app's own default ratios for the goal you pick."
+msgstr ""
+"Разбивает целевую калорийность на белки, углеводы и жиры, используя "
+"собственные соотношения приложения по умолчанию для выбранной вами цели."
+
+#: templates/nutrition/calculator_macros.html:28
+#: templates/nutrition/dashboard.html:25 templates/nutrition/dashboard.html:49
+#: templates/nutrition/dashboard.html:108 templates/nutrition/diary_day.html:36
+#: templates/nutrition/onboarding_review.html:17
+#: templates/nutrition/recipe_detail.html:59
+msgid "Protein"
+msgstr "Белки"
+
+#: templates/nutrition/calculator_macros.html:29
+#: templates/nutrition/dashboard.html:29 templates/nutrition/dashboard.html:50
+#: templates/nutrition/dashboard.html:109 templates/nutrition/diary_day.html:40
+#: templates/nutrition/onboarding_review.html:18
+#: templates/nutrition/recipe_detail.html:60
+msgid "Carbohydrates"
+msgstr "Углеводы"
+
+#: templates/nutrition/calculator_macros.html:30
+#: templates/nutrition/dashboard.html:33 templates/nutrition/dashboard.html:51
+#: templates/nutrition/dashboard.html:110 templates/nutrition/diary_day.html:44
+#: templates/nutrition/onboarding_review.html:19
+#: templates/nutrition/recipe_detail.html:61
+msgid "Fat"
+msgstr "Жиры"
+
+#: templates/nutrition/calculator_macros.html:34
+msgid ""
+"This calorie target is low enough that protein and/or fat had to be reduced "
+"below their usual defaults to fit."
+msgstr ""
+"Эта целевая калорийность настолько низкая, что белки и/или жиры пришлось "
+"уменьшить ниже их обычных значений по умолчанию, чтобы уложиться в лимит."
+
+#: templates/nutrition/calculator_time_to_goal.html:3
+#: templates/nutrition/calculator_time_to_goal.html:6
+#: templates/nutrition/calculators_home.html:61
+msgid "Time to goal weight calculator"
+msgstr "Калькулятор времени до целевого веса"
+
+#: templates/nutrition/calculator_time_to_goal.html:9
+msgid ""
+"At a chosen weekly rate, roughly how long to reach a target weight — a plain "
+"projection from the numbers you enter, not a promise."
+msgstr ""
+"При выбранном недельном темпе — примерно, сколько времени понадобится для "
+"достижения целевого веса. Это лишь прогноз на основе введённых вами цифр, а "
+"не обещание."
+
+#: templates/nutrition/calculator_time_to_goal.html:28
+#, python-format
+msgid "%(weeks)s weeks"
+msgstr "%(weeks)s недель"
+
+#: templates/nutrition/calculator_time_to_goal.html:30
+#, python-format
+msgid "Around %(date)s, at this rate."
+msgstr "Примерно %(date)s при таком темпе."
+
+#: templates/nutrition/calculator_time_to_goal.html:34
+msgid ""
+"That rate doesn't move toward your target — check the sign (negative to "
+"lose, positive to gain) matches the direction you actually need to go."
+msgstr ""
+"Этот темп не приближает вас к цели — проверьте, соответствует ли знак "
+"(отрицательный для похудения, положительный для набора веса) направлению, в "
+"котором вам действительно нужно двигаться."
+
+#: templates/nutrition/calculator_waist_hip_ratio.html:3
+#: templates/nutrition/calculator_waist_hip_ratio.html:6
+#: templates/nutrition/calculators_home.html:53
+msgid "Waist-to-hip ratio calculator"
+msgstr "Калькулятор соотношения талии и бёдер"
+
+#: templates/nutrition/calculator_waist_hip_ratio.html:9
+msgid ""
+"Where you carry weight, not just how much — a widely used screening number "
+"(WHO), not a diagnosis."
+msgstr ""
+"Где именно вы носите вес, а не только сколько — широко используемый "
+"скрининговый показатель (ВОЗ), а не диагноз."
+
+#: templates/nutrition/calculator_water_intake.html:3
+#: templates/nutrition/calculator_water_intake.html:6
+#: templates/nutrition/calculators_home.html:37
+msgid "Water intake calculator"
+msgstr "Калькулятор потребления воды"
+
+#: templates/nutrition/calculator_water_intake.html:9
+msgid ""
+"A rough daily fluid target based on bodyweight and activity — real needs "
+"vary with climate and sweat rate, so treat this as a starting point."
+msgstr ""
+"Приблизительная суточная норма жидкости на основе веса тела и активности — "
+"реальная потребность зависит от климата и интенсивности потоотделения, так "
+"что считайте это отправной точкой."
+
+#: templates/nutrition/calculator_water_intake.html:26
+msgid "day"
+msgstr "день"
+
+#: templates/nutrition/calculators_home.html:9
+msgid ""
+"Quick, standalone estimates — none of these are saved or change your targets."
+msgstr ""
+"Быстрые самостоятельные оценки — ничего из этого не сохраняется и не "
+"изменяет ваши цели."
+
+#: templates/nutrition/calculators_home.html:14
+msgid "How many calories your body burns at rest, and in total."
+msgstr "Сколько калорий сжигает ваше тело в покое и в целом."
+
+#: templates/nutrition/calculators_home.html:22
+msgid "Split a calorie target into protein, carbohydrates, and fat."
+msgstr "Разделите целевую калорийность на белки, углеводы и жиры."
+
+#: templates/nutrition/calculators_home.html:30
+msgid "Estimate body fat percentage from a tape measure (U.S. Navy method)."
+msgstr ""
+"Оцените процент жира в организме с помощью сантиметровой ленты (метод ВМС "
+"США)."
+
+#: templates/nutrition/calculators_home.html:38
+msgid "A rough daily fluid target based on your bodyweight and activity."
+msgstr ""
+"Приблизительная суточная норма жидкости на основе вашего веса и активности."
+
+#: templates/nutrition/calculators_home.html:46
+msgid ""
+"Body mass index and what it means for your height, without logging a weight "
+"first."
+msgstr ""
+"Индекс массы тела и что он означает для вашего роста — без необходимости "
+"сначала записывать вес."
+
+#: templates/nutrition/calculators_home.html:54
+msgid ""
+"Where you carry weight, not just how much — a tape measure and one more "
+"number."
+msgstr ""
+"Где именно вы носите вес, а не только сколько — сантиметровая лента и ещё "
+"одно число."
+
+#: templates/nutrition/calculators_home.html:62
+msgid "At a chosen weekly rate, roughly how long to reach a target weight."
+msgstr ""
+"При выбранном недельном темпе — примерно, сколько времени понадобится для "
+"достижения целевого веса."
+
+#: templates/nutrition/calculators_home.html:67
+#: templates/nutrition/diary_day.html:88
+#: templates/nutrition/diet_plan_list.html:37
+#: templates/nutrition/food_list.html:44
+#: templates/nutrition/recipe_list.html:44 templates/nutrition/stats.html:44
+msgid "Back to nutrition"
+msgstr "Назад к питанию"
+
+#: templates/nutrition/dashboard.html:7
+msgid ""
+"Based on whether you completed a workout today — this doesn't change your "
+"calorie target automatically."
+msgstr ""
+"Основано на том, тренировались ли вы сегодня — это не меняет ваш план по "
+"калориям автоматически."
+
+#: templates/nutrition/dashboard.html:9
+msgid "Training day"
+msgstr "День тренировки"
+
+#: templates/nutrition/dashboard.html:11
+msgid "Rest day"
+msgstr "День отдыха"
+
+#: templates/nutrition/dashboard.html:17
+msgid "Today so far"
+msgstr "Сегодня на данный момент"
+
+#: templates/nutrition/dashboard.html:38
+msgid "Open food diary"
+msgstr "Открыть дневник питания"
+
+#: templates/nutrition/dashboard.html:39
+msgid "+ Log food now"
+msgstr "+ Записать еду сейчас"
+
+#: templates/nutrition/dashboard.html:44
+msgid "Today's plan"
+msgstr "План на сегодня"
+
+#: templates/nutrition/dashboard.html:57
+msgid "Nothing planned"
+msgstr "Ничего не запланировано"
+
+#: templates/nutrition/dashboard.html:60
+msgid "Open plan"
+msgstr "Открыть план"
+
+#: templates/nutrition/dashboard.html:67
+msgid "Is your current target working?"
+msgstr "Работает ли ваша текущая цель?"
+
+#: templates/nutrition/dashboard.html:70
+#: templates/workouts/_performed_exercise_card.html:50
+msgid "High confidence"
+msgstr "Высокая уверенность"
+
+#: templates/nutrition/dashboard.html:71
+#: templates/workouts/_performed_exercise_card.html:49
+msgid "Medium confidence"
+msgstr "Средняя уверенность"
+
+#: templates/nutrition/dashboard.html:72
+#: templates/workouts/_performed_exercise_card.html:48
+msgid "Low confidence"
+msgstr "Низкая уверенность"
+
+#: templates/nutrition/dashboard.html:77
+#, python-format
+msgid "Adjust to %(calories)s kcal/day"
+msgstr "Скорректировать до %(calories)s ккал/день"
+
+#: templates/nutrition/dashboard.html:94
+msgid "Weight trend"
+msgstr "Тренд веса"
+
+#: templates/nutrition/dashboard.html:102
+msgid "Daily target"
+msgstr "Дневная цель"
+
+#: templates/nutrition/dashboard.html:104
+#: templates/nutrition/onboarding_review.html:13
+#, python-format
+msgid "%(calories)s kcal/day"
+msgstr "%(calories)s ккал/день"
+
+#: templates/nutrition/dashboard.html:119
+msgid "Current goal"
+msgstr "Текущая цель"
+
+#: templates/nutrition/diary_add_entry.html:3
+#: templates/nutrition/diary_add_entry.html:6
+msgid "Add food"
+msgstr "Добавить продукт"
+
+#: templates/nutrition/diary_add_entry.html:57
+#: templates/nutrition/diet_plan_meal_item_form.html:26
+#: templates/nutrition/food_browse.html:33
+#: templates/nutrition/recipe_ingredient_form.html:26
+msgid "e.g. chicken breast, or a barcode number"
+msgstr "например, куриная грудка или номер штрихкода"
+
+#: templates/nutrition/diary_add_entry.html:65
+#: templates/nutrition/diary_entry_form.html:23
+msgid "Back to diary"
+msgstr "Назад к дневнику"
+
+#: templates/nutrition/diary_day.html:3 templates/nutrition/diary_day.html:7
+msgid "Food diary"
+msgstr "Дневник питания"
+
+#: templates/nutrition/diary_day.html:15
+msgid "Previous day"
+msgstr "Предыдущий день"
+
+#: templates/nutrition/diary_day.html:16
+msgid "Jump to date"
+msgstr "Перейти к дате"
+
+#: templates/nutrition/diary_day.html:18
+msgid "Next day"
+msgstr "Следующий день"
+
+#: templates/nutrition/diary_day.html:22
+msgid "Today's nutrition"
+msgstr "Питание за сегодня"
+
+#: templates/nutrition/diary_day.html:63
+msgid "Remove this entry?"
+msgstr "Удалить эту запись?"
+
+#: templates/nutrition/diary_day.html:70
+msgid "Nothing logged yet."
+msgstr "Пока ничего не записано."
+
+#: templates/nutrition/diary_day.html:72
+msgid "+ Add food"
+msgstr "+ Добавить продукт"
+
+#: templates/nutrition/diary_day.html:77
+msgid "Copy this day to another date"
+msgstr "Скопировать этот день на другую дату"
+
+#: templates/nutrition/diary_day.html:81
+msgid "Copy to date"
+msgstr "Скопировать на дату"
+
+#: templates/nutrition/diary_day.html:82
+msgid "Copy"
+msgstr "Копировать"
+
+#: templates/nutrition/diary_day.html:87
+msgid "Manage foods"
+msgstr "Управление продуктами"
+
+#: templates/nutrition/diary_entry_form.html:3
+msgid "Edit entry"
+msgstr "Изменить запись"
+
+#: templates/nutrition/diet_plan_detail.html:13
+#: templates/nutrition/diet_plan_list.html:24
+msgid "Activate"
+msgstr "Включить"
+
+#: templates/nutrition/diet_plan_detail.html:18
+msgid "protein"
+msgstr "белки"
+
+#: templates/nutrition/diet_plan_detail.html:18
+msgid "carbs"
+msgstr "углеводы"
+
+#: templates/nutrition/diet_plan_detail.html:18
+msgid "fat"
+msgstr "жиры"
+
+#: templates/nutrition/diet_plan_detail.html:20
+msgid ""
+"Varies across the week — same daily calories/macros every day, different "
+"meals."
+msgstr ""
+"Меняется в течение недели — одинаковые дневные калории/макросы каждый день, "
+"разные блюда."
+
+#: templates/nutrition/diet_plan_detail.html:62
 msgid "Log this plan to your diary"
 msgstr "Записать этот план в дневник"
 
+#: templates/nutrition/diet_plan_detail.html:64
+msgid "Logs whichever day of the week the date below falls on."
+msgstr "Записывает тот день недели, на который приходится указанная ниже дата."
+
+#: templates/nutrition/diet_plan_detail.html:72
+#: templates/nutrition/recipe_detail.html:92
 msgid "Log it"
 msgstr "Записать"
 
+#: templates/nutrition/diet_plan_detail.html:75
+#: templates/nutrition/diet_plan_form.html:25
 msgid "Back to diet plans"
 msgstr "Назад к планам питания"
 
+#: templates/nutrition/diet_plan_detail.html:79
 msgid "Delete this plan?"
 msgstr "Удалить этот план?"
 
+#: templates/nutrition/diet_plan_detail.html:81
 msgid "Delete plan"
 msgstr "Удалить план"
 
+#: templates/nutrition/diet_plan_form.html:3
 msgid "New diet plan"
 msgstr "Новый план питания"
 
+#: templates/nutrition/diet_plan_form.html:6
 msgid "Build a diet plan"
 msgstr "Составить план питания"
 
-msgid "We'll suggest one food or recipe per meal from your own library, scaled to fit — you can swap any of them afterward."
-msgstr "Мы предложим один продукт или рецепт на каждый приём пищи из вашей библиотеки, масштабированный по потребности — вы сможете заменить любой из них позже."
+#: templates/nutrition/diet_plan_form.html:9
+msgid ""
+"We'll suggest one food or recipe per meal from your own library, scaled to "
+"fit — you can swap any of them afterward."
+msgstr ""
+"Мы предложим один продукт или рецепт на каждый приём пищи из вашей "
+"библиотеки, масштабированный по потребности — вы сможете заменить любой из "
+"них позже."
 
+#: templates/nutrition/diet_plan_form.html:22
 msgid "Generate plan"
 msgstr "Сгенерировать план"
 
+#: templates/nutrition/diet_plan_item_form.html:3
+#: templates/nutrition/diet_plan_item_form.html:6
 msgid "Swap item"
 msgstr "Заменить пункт"
 
+#: templates/nutrition/diet_plan_item_form.html:23
+#: templates/nutrition/diet_plan_meal_item_form.html:33
 msgid "Back to plan"
 msgstr "Назад к плану"
 
+#: templates/nutrition/diet_plan_list.html:7
 msgid "+ New plan"
 msgstr "+ Новый план"
 
+#: templates/nutrition/diet_plan_list.html:33
 msgid "No diet plans yet."
 msgstr "Пока нет планов питания."
 
+#: templates/nutrition/diet_plan_meal_item_form.html:3
+#: templates/nutrition/diet_plan_meal_item_form.html:6
+#, python-format
 msgid "Add item to %(name)s"
 msgstr "Добавить пункт в %(name)s"
 
+#: templates/nutrition/food_browse.html:3
+#: templates/nutrition/food_browse.html:6
+#: templates/nutrition/food_category.html:3
+#: templates/nutrition/food_category.html:6
+#: templates/nutrition/food_list.html:8
 msgid "Import from OpenFoodFacts"
 msgstr "Импортировать из OpenFoodFacts"
 
-msgid "Search or browse by category to add a food to the shared library — anyone on this instance can then find and log it."
-msgstr "Ищите или просматривайте по категориям, чтобы добавить продукт в общую библиотеку — после этого любой пользователь этого сервера сможет найти и записать его."
+#: templates/nutrition/food_browse.html:10
+msgid ""
+"Search or browse by category to add a food to the shared library — anyone on "
+"this instance can then find and log it."
+msgstr ""
+"Ищите или просматривайте по категориям, чтобы добавить продукт в общую "
+"библиотеку — после этого любой пользователь этого сервера сможет найти и "
+"записать его."
 
+#: templates/nutrition/food_browse.html:20
+msgid ""
+"Search to add a food to the shared library — anyone on this instance can "
+"then find and log it. Category browsing isn't available right now."
+msgstr ""
+"Ищите, чтобы добавить продукт в общую библиотеку — после этого любой "
+"пользователь этого сервера сможет найти и записать его. Просмотр по "
+"категориям сейчас недоступен."
+
+#: templates/nutrition/food_browse.html:41
 msgid "Browse by category"
 msgstr "Просмотр по категориям"
 
+#: templates/nutrition/food_browse.html:49
+#: templates/nutrition/food_form.html:24
 msgid "Back to foods"
 msgstr "Назад к продуктам"
 
+#: templates/nutrition/food_category.html:25
 msgid "Nothing found in this category right now."
 msgstr "В этой категории сейчас ничего не найдено."
 
+#: templates/nutrition/food_category.html:29
 msgid "Back to browse"
 msgstr "Назад к просмотру"
 
+#: templates/nutrition/food_form.html:3 templates/nutrition/food_form.html:6
 msgid "New food"
 msgstr "Новый продукт"
 
+#: templates/nutrition/food_list.html:9
 msgid "+ New food"
 msgstr "+ Новый продукт"
 
+#: templates/nutrition/food_list.html:16 templates/nutrition/food_list.html:19
+#: templates/nutrition/recipe_list.html:13
+#: templates/nutrition/recipe_list.html:16
 msgid "Search"
 msgstr "Поиск"
 
+#: templates/nutrition/food_list.html:40
 msgid "No foods yet."
 msgstr "Пока нет продуктов."
 
+#: templates/nutrition/onboarding_activity.html:3
+#: templates/nutrition/onboarding_activity_level.html:3
+#: templates/nutrition/onboarding_body.html:3
+#: templates/nutrition/onboarding_goal.html:3
+#: templates/nutrition/onboarding_review.html:3
 msgid "Nutrition setup"
 msgstr "Настройка питания"
 
+#: templates/nutrition/onboarding_activity.html:6
 msgid "How active are you?"
 msgstr "Насколько вы активны?"
 
-msgid "Everything here is optional — the more you tell us, the better the estimate. We'll suggest an activity level from your answers, not ask you to guess it yourself."
-msgstr "Всё это необязательно — чем больше вы расскажете, тем точнее будет оценка. Мы предложим уровень активности на основе ваших ответов, а не попросим вас угадывать его самостоятельно."
+#: templates/nutrition/onboarding_activity.html:9
+msgid ""
+"Everything here is optional — the more you tell us, the better the estimate. "
+"We'll suggest an activity level from your answers, not ask you to guess it "
+"yourself."
+msgstr ""
+"Всё это необязательно — чем больше вы расскажете, тем точнее будет оценка. "
+"Мы предложим уровень активности на основе ваших ответов, а не попросим вас "
+"угадывать его самостоятельно."
 
+#: templates/nutrition/onboarding_activity.html:22
+#: templates/nutrition/onboarding_activity_level.html:26
+#: templates/nutrition/onboarding_body.html:22
 msgid "Continue"
 msgstr "Продолжить"
 
+#: templates/nutrition/onboarding_activity_level.html:6
 msgid "Confirm your activity level"
 msgstr "Подтвердите свой уровень активности"
 
+#: templates/nutrition/onboarding_activity_level.html:25
 msgid "This is only a suggestion — change it if you know it's wrong."
 msgstr "Это лишь предложение — измените его, если знаете, что оно неверно."
 
+#: templates/nutrition/onboarding_body.html:6
 msgid "Let's set up your nutrition"
 msgstr "Давайте настроим ваше питание"
 
-msgid "A few questions about your body — used to estimate how many calories you need."
-msgstr "Несколько вопросов о вашем теле — используются для оценки того, сколько калорий вам нужно."
+#: templates/nutrition/onboarding_body.html:9
+msgid ""
+"A few questions about your body — used to estimate how many calories you "
+"need."
+msgstr ""
+"Несколько вопросов о вашем теле — используются для оценки того, сколько "
+"калорий вам нужно."
 
+#: templates/nutrition/onboarding_body.html:26
 msgid "Just want a quick number without setting anything up?"
 msgstr "Хотите просто быстро узнать цифру, ничего не настраивая?"
 
+#: templates/nutrition/onboarding_body.html:27
 msgid "Try the calculators"
 msgstr "Попробуйте калькуляторы"
 
+#: templates/nutrition/onboarding_goal.html:6
 msgid "What's your goal?"
 msgstr "Какова ваша цель?"
 
+#: templates/nutrition/onboarding_goal.html:27
 msgid "See my targets"
 msgstr "Показать мои цели"
 
+#: templates/nutrition/onboarding_review.html:6
 msgid "Your estimated targets"
 msgstr "Ваши расчётные цели"
 
-msgid "These are estimates, not exact figures — you'll be able to see how well they're actually working once you've logged some data, and adjust anytime."
-msgstr "Это оценочные, а не точные цифры — вы сможете увидеть, насколько хорошо они работают на самом деле, как только запишете немного данных, и скорректировать их в любой момент."
+#: templates/nutrition/onboarding_review.html:24
+msgid ""
+"These are estimates, not exact figures — you'll be able to see how well "
+"they're actually working once you've logged some data, and adjust anytime."
+msgstr ""
+"Это оценочные, а не точные цифры — вы сможете увидеть, насколько хорошо они "
+"работают на самом деле, как только запишете немного данных, и "
+"скорректировать их в любой момент."
 
+#: templates/nutrition/onboarding_review.html:28
 msgid "Save and start tracking"
 msgstr "Сохранить и начать отслеживание"
 
-msgid "Ingredients"
-msgstr "Ингредиенты"
-
-msgid "Remove this ingredient?"
-msgstr "Удалить этот ингредиент?"
-
-msgid "No ingredients yet."
-msgstr "Пока нет ингредиентов."
-
-msgid "+ Add ingredient"
-msgstr "+ Добавить ингредиент"
-
-msgid "Total"
-msgstr "Всего"
-
-msgid "Per serving (of %(servings)s)"
-msgstr "На порцию (из %(servings)s)"
-
-msgid "Fiber"
-msgstr "Клетчатка"
-
-msgid "Sugar"
-msgstr "Сахар"
-
-msgid "Saturated fat"
-msgstr "Насыщенные жиры"
-
-msgid "Sodium"
-msgstr "Натрий"
-
-msgid "Fiber, sugar, saturated fat, and sodium show here once at least one ingredient has that data (e.g. imported from OpenFoodFacts)."
-msgstr "Клетчатка, сахар, насыщенные жиры и натрий отображаются здесь, если хотя бы один ингредиент содержит эти данные (например, импортирован из OpenFoodFacts)."
-
-msgid "Log to diary"
-msgstr "Записать в дневник"
-
-msgid "Back to recipes"
-msgstr "Назад к рецептам"
-
-msgid "Delete this recipe?"
-msgstr "Удалить этот рецепт?"
-
-msgid "Delete recipe"
-msgstr "Удалить рецепт"
-
-msgid "Recipe"
-msgstr "Рецепт"
-
-msgid "Edit recipe"
-msgstr "Изменить рецепт"
-
-msgid "New recipe"
-msgstr "Новый рецепт"
-
-msgid "Edit ingredient"
-msgstr "Изменить ингредиент"
-
-msgid "Back to recipe"
-msgstr "Назад к рецепту"
-
-msgid "Add ingredient to %(name)s"
-msgstr "Добавить ингредиент в %(name)s"
-
-msgid "+ New recipe"
-msgstr "+ Новый рецепт"
-
-msgid "%(calories)s kcal/serving"
-msgstr "%(calories)s ккал/порция"
-
-msgid "No recipes match your search."
-msgstr "По вашему запросу рецептов не найдено."
-
-msgid "No recipes yet."
-msgstr "Пока нет рецептов."
-
-msgid "Nutrition statistics"
-msgstr "Статистика питания"
-
-msgid "Days logged"
-msgstr "Дней с записями"
-
-msgid "Average calories"
-msgstr "Среднее количество калорий"
-
-msgid "Average protein"
-msgstr "Среднее количество белка"
-
-msgid "Average carbohydrates"
-msgstr "Среднее количество углеводов"
-
-msgid "Average fat"
-msgstr "Среднее количество жиров"
-
-msgid "Averages only count days you actually logged something — a day with nothing logged isn't counted as zero calories."
-msgstr "Средние значения учитывают только те дни, когда вы что-то записали — день без записей не считается днём с нулём калорий."
-
-msgid "Daily calories (last 30 days)"
-msgstr "Калории по дням (последние 30 дней)"
-
-msgid "Log a few days in your food diary to see your trend here."
-msgstr "Ведите записи в дневнике питания несколько дней, чтобы увидеть тенденцию здесь."
-
-msgid "Add exercise"
-msgstr "Добавить упражнение"
-
-msgid "Remove this exercise from the workout?"
-msgstr "Удалить это упражнение из тренировки?"
-
-msgid "Remove exercise"
-msgstr "Удалить упражнение"
-
-msgid "Delete program"
-msgstr "Удалить программу"
-
-msgid "Delete <strong>%(name)s</strong> and all of its workouts and exercises? This cannot be undone."
-msgstr "Удалить <strong>%(name)s</strong> и все его тренировки и упражнения? Это действие необратимо."
-
-msgid "Built-in template"
-msgstr "Встроенный шаблон"
-
-msgid "My template"
-msgstr "Мой шаблон"
-
-msgid "Version %(version)s · updated %(updated)s"
-msgstr "Версия %(version)s · обновлено %(updated)s"
-
-msgid "Copy to a new program"
-msgstr "Копировать в новую программу"
-
-msgid "Delete this workout and its exercises?"
-msgstr "Удалить эту тренировку и её упражнения?"
-
-msgid "No exercises yet."
-msgstr "Упражнений пока нет."
-
-msgid "Start workout"
-msgstr "Начать тренировку"
-
-msgid "No workouts yet."
-msgstr "Тренировок пока нет."
-
-msgid "Add workout"
-msgstr "Добавить тренировку"
-
-msgid "Delete this program? This cannot be undone."
-msgstr "Удалить эту программу? Это действие необратимо."
-
-msgid "Back to programs"
-msgstr "Назад к программам"
-
-msgid "Edit program"
-msgstr "Изменить программу"
-
-msgid "New program"
-msgstr "Новая программа"
-
-msgid "My programs"
-msgstr "Мои программы"
-
+#: templates/nutrition/recipe_detail.html:10
+#: templates/nutrition/recipe_list.html:24
+#: templates/programs/program_list.html:14
 msgid "Template"
 msgstr "Шаблон"
 
+#: templates/nutrition/recipe_detail.html:16
+#, python-format
+msgid ""
+"Tagged for %(meal)s — the diet-plan builder only ever suggests this recipe "
+"for that meal."
+msgstr ""
+"Отмечено для %(meal)s — конструктор плана питания предлагает этот рецепт "
+"только для этого приёма пищи."
+
+#: templates/nutrition/recipe_detail.html:25
+msgid "Ingredients"
+msgstr "Ингредиенты"
+
+#: templates/nutrition/recipe_detail.html:36
+msgid "Remove this ingredient?"
+msgstr "Удалить этот ингредиент?"
+
+#: templates/nutrition/recipe_detail.html:44
+msgid "No ingredients yet."
+msgstr "Пока нет ингредиентов."
+
+#: templates/nutrition/recipe_detail.html:47
+msgid "+ Add ingredient"
+msgstr "+ Добавить ингредиент"
+
+#: templates/nutrition/recipe_detail.html:55
+msgid "Total"
+msgstr "Всего"
+
+#: templates/nutrition/recipe_detail.html:55
+#, python-format
+msgid "Per serving (of %(servings)s)"
+msgstr "На порцию (из %(servings)s)"
+
+#: templates/nutrition/recipe_detail.html:63
+msgid "Fiber"
+msgstr "Клетчатка"
+
+#: templates/nutrition/recipe_detail.html:66
+msgid "Sugar"
+msgstr "Сахар"
+
+#: templates/nutrition/recipe_detail.html:69
+msgid "Saturated fat"
+msgstr "Насыщенные жиры"
+
+#: templates/nutrition/recipe_detail.html:72
+msgid "Sodium"
+msgstr "Натрий"
+
+#: templates/nutrition/recipe_detail.html:77
+msgid ""
+"Fiber, sugar, saturated fat, and sodium show here once at least one "
+"ingredient has that data (e.g. imported from OpenFoodFacts)."
+msgstr ""
+"Клетчатка, сахар, насыщенные жиры и натрий отображаются здесь, если хотя бы "
+"один ингредиент содержит эти данные (например, импортирован из "
+"OpenFoodFacts)."
+
+#: templates/nutrition/recipe_detail.html:83
+msgid "Log to diary"
+msgstr "Записать в дневник"
+
+#: templates/nutrition/recipe_detail.html:95
+#: templates/nutrition/recipe_form.html:23
+msgid "Back to recipes"
+msgstr "Назад к рецептам"
+
+#: templates/nutrition/recipe_detail.html:100
+msgid "Delete this recipe?"
+msgstr "Удалить этот рецепт?"
+
+#: templates/nutrition/recipe_detail.html:102
+msgid "Delete recipe"
+msgstr "Удалить рецепт"
+
+#: templates/nutrition/recipe_form.html:3
+msgid "Recipe"
+msgstr "Рецепт"
+
+#: templates/nutrition/recipe_form.html:6
+msgid "Edit recipe"
+msgstr "Изменить рецепт"
+
+#: templates/nutrition/recipe_form.html:6
+msgid "New recipe"
+msgstr "Новый рецепт"
+
+#: templates/nutrition/recipe_ingredient_edit_form.html:3
+msgid "Edit ingredient"
+msgstr "Изменить ингредиент"
+
+#: templates/nutrition/recipe_ingredient_edit_form.html:23
+#: templates/nutrition/recipe_ingredient_form.html:33
+msgid "Back to recipe"
+msgstr "Назад к рецепту"
+
+#: templates/nutrition/recipe_ingredient_form.html:3
+#: templates/nutrition/recipe_ingredient_form.html:6
+#, python-format
+msgid "Add ingredient to %(name)s"
+msgstr "Добавить ингредиент в %(name)s"
+
+#: templates/nutrition/recipe_list.html:7
+msgid "+ New recipe"
+msgstr "+ Новый рецепт"
+
+#: templates/nutrition/recipe_list.html:28
+#, python-format
+msgid "%(calories)s kcal/serving"
+msgstr "%(calories)s ккал/порция"
+
+#: templates/nutrition/recipe_list.html:36
+msgid "No recipes match your search."
+msgstr "По вашему запросу рецептов не найдено."
+
+#: templates/nutrition/recipe_list.html:40
+msgid "No recipes yet."
+msgstr "Пока нет рецептов."
+
+#: templates/nutrition/stats.html:3
+msgid "Nutrition statistics"
+msgstr "Статистика питания"
+
+#: templates/nutrition/stats.html:12
+msgid "Days logged"
+msgstr "Дней с записями"
+
+#: templates/nutrition/stats.html:13
+msgid "Average calories"
+msgstr "Среднее количество калорий"
+
+#: templates/nutrition/stats.html:19
+msgid "Average protein"
+msgstr "Среднее количество белка"
+
+#: templates/nutrition/stats.html:23
+msgid "Average carbohydrates"
+msgstr "Среднее количество углеводов"
+
+#: templates/nutrition/stats.html:27
+msgid "Average fat"
+msgstr "Среднее количество жиров"
+
+#: templates/nutrition/stats.html:33
+msgid ""
+"Averages only count days you actually logged something — a day with nothing "
+"logged isn't counted as zero calories."
+msgstr ""
+"Средние значения учитывают только те дни, когда вы что-то записали — день "
+"без записей не считается днём с нулём калорий."
+
+#: templates/nutrition/stats.html:36
+msgid "Daily calories (last 30 days)"
+msgstr "Калории по дням (последние 30 дней)"
+
+#: templates/nutrition/stats.html:41
+msgid "Log a few days in your food diary to see your trend here."
+msgstr ""
+"Ведите записи в дневнике питания несколько дней, чтобы увидеть тенденцию "
+"здесь."
+
+#: templates/programs/prescription_form.html:3
+#: templates/programs/prescription_form.html:6
+#: templates/programs/program_detail.html:67
+#: templates/workouts/_train_panel.html:93
+#: templates/workouts/performed_exercise_form.html:3
+#: templates/workouts/performed_exercise_form.html:6
+#: templates/workouts/session_detail.html:24
+msgid "Add exercise"
+msgstr "Добавить упражнение"
+
+#: templates/programs/prescription_form.html:23
+msgid "Remove this exercise from the workout?"
+msgstr "Удалить это упражнение из тренировки?"
+
+#: templates/programs/prescription_form.html:25
+msgid "Remove exercise"
+msgstr "Удалить упражнение"
+
+#: templates/programs/program_confirm_delete.html:3
+#: templates/programs/program_confirm_delete.html:6
+#: templates/programs/program_detail.html:85
+msgid "Delete program"
+msgstr "Удалить программу"
+
+#: templates/programs/program_confirm_delete.html:11
+#, python-format
+msgid ""
+"Delete <strong>%(name)s</strong> and all of its workouts and exercises? This "
+"cannot be undone."
+msgstr ""
+"Удалить <strong>%(name)s</strong> и все его тренировки и упражнения? Это "
+"действие необратимо."
+
+#: templates/programs/program_detail.html:14
+msgid "Built-in template"
+msgstr "Встроенный шаблон"
+
+#: templates/programs/program_detail.html:16
+msgid "My template"
+msgstr "Мой шаблон"
+
+#: templates/programs/program_detail.html:20
+#, python-format
+msgid "Version %(version)s · updated %(updated)s"
+msgstr "Версия %(version)s · обновлено %(updated)s"
+
+#: templates/programs/program_detail.html:25
+msgid "Copy to a new program"
+msgstr "Копировать в новую программу"
+
+#: templates/programs/program_detail.html:42
+#: templates/programs/workout_form.html:23
+msgid "Delete this workout and its exercises?"
+msgstr "Удалить эту тренировку и её упражнения?"
+
+#: templates/programs/program_detail.html:62
+#: templates/workouts/_train_panel.html:92
+#: templates/workouts/session_detail.html:19
+msgid "No exercises yet."
+msgstr "Упражнений пока нет."
+
+#: templates/programs/program_detail.html:72
+msgid "Start workout"
+msgstr "Начать тренировку"
+
+#: templates/programs/program_detail.html:77
+msgid "No workouts yet."
+msgstr "Тренировок пока нет."
+
+#: templates/programs/program_detail.html:82
+msgid "Add workout"
+msgstr "Добавить тренировку"
+
+#: templates/programs/program_detail.html:83
+msgid "Delete this program? This cannot be undone."
+msgstr "Удалить эту программу? Это действие необратимо."
+
+#: templates/programs/program_detail.html:89
+#: templates/workouts/session_list.html:23
+msgid "Back to programs"
+msgstr "Назад к программам"
+
+#: templates/programs/program_form.html:3
+#: templates/programs/program_form.html:6
+msgid "Edit program"
+msgstr "Изменить программу"
+
+#: templates/programs/program_form.html:3
+#: templates/programs/program_form.html:6
+msgid "New program"
+msgstr "Новая программа"
+
+#: templates/programs/program_list.html:9
+msgid "My programs"
+msgstr "Мои программы"
+
+#: templates/programs/program_list.html:21
 msgid "No programs yet."
 msgstr "Программ пока нет."
 
+#: templates/programs/program_list.html:22
 msgid "Create one, or copy a template below to get started."
 msgstr "Создайте программу или скопируйте шаблон ниже, чтобы начать."
 
+#: templates/programs/program_list.html:26
 msgid "Built-in templates"
 msgstr "Встроенные шаблоны"
 
+#: templates/programs/program_list.html:37
 msgid "Copy to my programs"
 msgstr "Копировать в мои программы"
 
+#: templates/programs/program_list.html:42
 msgid "No built-in templates available."
 msgstr "Встроенные шаблоны недоступны."
 
+#: templates/programs/workout_form.html:3
+#: templates/programs/workout_form.html:6
 msgid "Edit workout"
 msgstr "Изменить тренировку"
 
+#: templates/programs/workout_form.html:3
+#: templates/programs/workout_form.html:6
 msgid "New workout"
 msgstr "Новая тренировка"
 
+#: templates/programs/workout_form.html:25
+#: templates/workouts/session_detail.html:38
 msgid "Delete workout"
 msgstr "Удалить тренировку"
 
+#: templates/records/_pr_toasts.html:29
 msgid "New PR"
 msgstr "Новый рекорд"
 
+#: templates/records/_pr_toasts.html:32
 msgid "Max weight:"
 msgstr "Максимальный вес:"
 
+#: templates/records/_pr_toasts.html:34
+#, python-format
 msgid "Most reps at %(weight)s:"
 msgstr "Больше всего повторений с весом %(weight)s:"
 
+#: templates/records/_pr_toasts.html:40
 msgid "Set volume:"
 msgstr "Объём подхода:"
 
+#: templates/records/_pr_toasts.html:42
 msgid "Session volume:"
 msgstr "Объём тренировки:"
 
+#: templates/records/_pr_toasts.html:45
+#, python-format
 msgid "(previous: %(previous)s)"
 msgstr "(предыдущий: %(previous)s)"
 
+#: templates/records/exercise_records.html:3
+#, python-format
 msgid "%(name)s records"
 msgstr "Рекорды: %(name)s"
 
+#: templates/records/exercise_records.html:11
 msgid "Current"
 msgstr "Текущие"
 
+#: templates/records/exercise_records.html:19
 msgid "Best set volume"
 msgstr "Лучший объём подхода"
 
+#: templates/records/exercise_records.html:22
 msgid "Best session volume"
 msgstr "Лучший объём тренировки"
 
+#: templates/records/exercise_records.html:28
 msgid "Rep maxes"
 msgstr "Максимумы по повторениям"
 
+#: templates/records/exercise_records.html:38
 msgid "Rep records by weight"
 msgstr "Рекорды повторений по весу"
 
+#: templates/records/exercise_records.html:41
+#, python-format
 msgid "%(weight)s: %(reps)s reps"
 msgstr "%(weight)s: %(reps)s повторений"
 
+#: templates/registration/login.html:8
+msgid "Log in with Authentik"
+msgstr "Войти через Authentik"
+
+#: templates/registration/login.html:11
+msgid "or"
+msgstr "или"
+
+#: templates/registration/login.html:28
 msgid "Forgot your password?"
 msgstr "Забыли пароль?"
 
+#: templates/registration/login.html:30
 msgid "Don't have an account?"
 msgstr "Нет аккаунта?"
 
+#: templates/registration/login.html:30
 msgid "Create an account"
 msgstr "Создать аккаунт"
 
+#: templates/registration/password_change_done.html:3
+#: templates/registration/password_change_done.html:6
 msgid "Password changed"
 msgstr "Пароль изменён"
 
+#: templates/registration/password_change_done.html:10
 msgid "Your password has been updated."
 msgstr "Ваш пароль обновлён."
 
+#: templates/registration/password_reset_complete.html:3
+#: templates/registration/password_reset_complete.html:6
 msgid "Password reset"
 msgstr "Сброс пароля"
 
+#: templates/registration/password_reset_complete.html:10
 msgid "Your password has been set. You can log in now."
 msgstr "Ваш пароль установлен. Теперь вы можете войти."
 
+#: templates/registration/password_reset_confirm.html:3
+#: templates/registration/password_reset_confirm.html:6
 msgid "Set a new password"
 msgstr "Установите новый пароль"
 
+#: templates/registration/password_reset_confirm.html:21
 msgid "Set new password"
 msgstr "Установить новый пароль"
 
-msgid "This password reset link is invalid, possibly because it has already been used or has expired."
-msgstr "Эта ссылка для сброса пароля недействительна — возможно, она уже использована или истекла."
+#: templates/registration/password_reset_confirm.html:25
+msgid ""
+"This password reset link is invalid, possibly because it has already been "
+"used or has expired."
+msgstr ""
+"Эта ссылка для сброса пароля недействительна — возможно, она уже "
+"использована или истекла."
 
+#: templates/registration/password_reset_confirm.html:27
 msgid "Request a new reset link"
 msgstr "Запросить новую ссылку для сброса"
 
+#: templates/registration/password_reset_done.html:3
+#: templates/registration/password_reset_done.html:6
+#: templates/registration/password_reset_form.html:3
+#: templates/registration/password_reset_form.html:6
 msgid "Reset password"
 msgstr "Сбросить пароль"
 
-msgid "If an account exists with that email address, we've sent a link to reset your password."
-msgstr "Если аккаунт с таким адресом электронной почты существует, мы отправили на него ссылку для сброса пароля."
+#: templates/registration/password_reset_done.html:10
+msgid ""
+"If an account exists with that email address, we've sent a link to reset "
+"your password."
+msgstr ""
+"Если аккаунт с таким адресом электронной почты существует, мы отправили на "
+"него ссылку для сброса пароля."
 
+#: templates/registration/password_reset_done.html:13
+#: templates/registration/password_reset_form.html:27
 msgid "Back to login"
 msgstr "Назад ко входу"
 
-msgid "You're receiving this email because you (or someone else) requested a password reset for your account at %(site_name)s."
-msgstr "Вы получили это письмо, потому что вы (или кто-то другой) запросили сброс пароля для вашего аккаунта на %(site_name)s."
+#: templates/registration/password_reset_email.html:1
+#, python-format
+msgid ""
+"You're receiving this email because you (or someone else) requested a "
+"password reset for your account at %(site_name)s."
+msgstr ""
+"Вы получили это письмо, потому что вы (или кто-то другой) запросили сброс "
+"пароля для вашего аккаунта на %(site_name)s."
 
+#: templates/registration/password_reset_email.html:3
 msgid "Please go to the following page and choose a new password:"
 msgstr "Перейдите на следующую страницу и выберите новый пароль:"
 
+#: templates/registration/password_reset_email.html:6
+#, python-format
 msgid "Your username, in case you've forgotten: %(username)s"
 msgstr "Ваше имя пользователя, если вы его забыли: %(username)s"
 
+#: templates/registration/password_reset_email.html:8
 msgid "If you didn't request this, you can safely ignore this email."
 msgstr "Если вы не отправляли этот запрос, просто проигнорируйте это письмо."
 
-msgid "Enter your account's email address and we'll send you a link to reset your password."
-msgstr "Введите адрес электронной почты вашего аккаунта, и мы отправим вам ссылку для сброса пароля."
+#: templates/registration/password_reset_form.html:10
+msgid ""
+"Enter your account's email address and we'll send you a link to reset your "
+"password."
+msgstr ""
+"Введите адрес электронной почты вашего аккаунта, и мы отправим вам ссылку "
+"для сброса пароля."
 
+#: templates/registration/password_reset_form.html:24
 msgid "Send reset link"
 msgstr "Отправить ссылку для сброса"
 
+#: templates/registration/password_reset_subject.txt:1
+#, python-format
 msgid "Password reset on %(site_name)s"
 msgstr "Сброс пароля на %(site_name)s"
 
+#: templates/registration/two_factor_verify.html:3
+#: templates/registration/two_factor_verify.html:5
 msgid "Two-factor verification"
 msgstr "Двухфакторная проверка"
 
-msgid "Enter the 6-digit code from your authenticator app, or one of your backup codes."
-msgstr "Введите 6-значный код из приложения-аутентификатора или один из резервных кодов."
+#: templates/registration/two_factor_verify.html:6
+msgid ""
+"Enter the 6-digit code from your authenticator app, or one of your backup "
+"codes."
+msgstr ""
+"Введите 6-значный код из приложения-аутентификатора или один из резервных "
+"кодов."
 
+#: templates/registration/two_factor_verify.html:21
 msgid "Verify"
 msgstr "Подтвердить"
 
+#: templates/workouts/_performed_exercise_card.html:6
+#: templates/workouts/_train_panel.html:39
+#, python-format
 msgid "Target: %(count)s × %(min)s-%(max)s"
 msgstr "Цель: %(count)s × %(min)s-%(max)s"
 
+#: templates/workouts/_performed_exercise_card.html:15
 msgid "Set"
 msgstr "Подход"
 
+#: templates/workouts/_performed_exercise_card.html:15
 msgid "Reps"
 msgstr "Повторения"
 
+#: templates/workouts/_performed_exercise_card.html:20
 msgid "W"
 msgstr "Р"
 
+#: templates/workouts/_performed_exercise_card.html:22
 msgid "F"
 msgstr "Н"
 
+#: templates/workouts/_performed_exercise_card.html:34
 msgid "No sets logged yet."
 msgstr "Подходы ещё не записаны."
 
+#: templates/workouts/_performed_exercise_card.html:44
+#: templates/workouts/_train_panel.html:54
+#, python-format
 msgid "Suggested: %(weight)s"
 msgstr "Предложено: %(weight)s"
 
+#: templates/workouts/_performed_exercise_card.html:68
+#: templates/workouts/_train_panel.html:87
 msgid "Log set"
 msgstr "Записать подход"
 
+#: templates/workouts/_train_panel.html:18
+#, python-format
 msgid "Exercise %(position)s of %(total)s"
 msgstr "Упражнение %(position)s из %(total)s"
 
+#: templates/workouts/_train_panel.html:30
 msgid "All exercises done for today."
 msgstr "Все упражнения на сегодня выполнены."
 
-msgid "This exercise is done — logging another set is still fine if you want one."
-msgstr "Это упражнение выполнено — можно записать ещё один подход, если хотите."
+#: templates/workouts/_train_panel.html:62
+msgid ""
+"This exercise is done — logging another set is still fine if you want one."
+msgstr ""
+"Это упражнение выполнено — можно записать ещё один подход, если хотите."
 
+#: templates/workouts/_train_panel.html:78
 msgid "Fewer options"
 msgstr "Меньше параметров"
 
+#: templates/workouts/_train_panel.html:78
 msgid "More options (RPE, RIR, notes…)"
 msgstr "Больше параметров (RPE, RIR, заметки…)"
 
+#: templates/workouts/performed_exercise_form.html:22
+#: templates/workouts/set_edit_form.html:22
 msgid "Back to workout"
 msgstr "Назад к тренировке"
 
+#: templates/workouts/session_detail.html:11
+#, python-format
 msgid "Started %(started)s"
 msgstr "Начато %(started)s"
 
+#: templates/workouts/session_detail.html:12
+#, python-format
 msgid "ended %(ended)s"
 msgstr "завершено %(ended)s"
 
+#: templates/workouts/session_detail.html:28
+#: templates/workouts/session_train.html:46
 msgid "Complete workout"
 msgstr "Завершить тренировку"
 
+#: templates/workouts/session_detail.html:30
+#: templates/workouts/session_train.html:48
 msgid "Abandon this workout? It stays in your history as abandoned."
 msgstr "Прервать эту тренировку? Она останется в истории как отменённая."
 
+#: templates/workouts/session_detail.html:32
+#: templates/workouts/session_train.html:50
 msgid "Abandon workout"
 msgstr "Прервать тренировку"
 
+#: templates/workouts/session_detail.html:36
 msgid "Delete this workout? This cannot be undone."
 msgstr "Удалить эту тренировку? Это действие необратимо."
 
+#: templates/workouts/session_detail.html:41
 msgid "Back to history"
 msgstr "Назад к истории"
 
+#: templates/workouts/session_list.html:3
 msgid "Workout history"
 msgstr "История тренировок"
 
+#: templates/workouts/session_list.html:17
 msgid "No workouts logged yet."
 msgstr "Тренировки ещё не записаны."
 
+#: templates/workouts/session_list.html:18
 msgid "Start one below, or pick a workout from one of your programs."
 msgstr "Начните ниже или выберите тренировку из одной из ваших программ."
 
+#: templates/workouts/session_list.html:26
 msgid "Start freeform workout"
 msgstr "Начать свободную тренировку"
 
+#: templates/workouts/session_train.html:3
 msgid "Training"
 msgstr "Тренировка"
 
+#: templates/workouts/session_train.html:7
 msgid "Full view"
 msgstr "Полный вид"
 
+#: templates/workouts/session_train.html:21
 msgid "Rest timer"
 msgstr "Таймер отдыха"
 
+#: templates/workouts/session_train.html:23
 msgid "Unmute rest timer sound"
 msgstr "Включить звук таймера отдыха"
 
+#: templates/workouts/session_train.html:23
 msgid "Mute rest timer sound"
 msgstr "Отключить звук таймера отдыха"
 
+#: templates/workouts/session_train.html:33
 msgid "Skip rest"
 msgstr "Пропустить отдых"
 
+#: templates/workouts/set_edit_form.html:3
 msgid "Edit set"
 msgstr "Изменить подход"
 
+#: templates/workouts/set_edit_form.html:6
+#, python-format
 msgid "Edit set %(number)s"
 msgstr "Изменить подход %(number)s"
