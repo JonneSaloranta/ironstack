@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: IronStack\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-27 17:35+0000\n"
+"POT-Creation-Date: 2026-08-27 18:32+0000\n"
 "Language: fi\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -22,61 +22,61 @@ msgstr "Kaksivaiheinen tunnistautuminen"
 msgid "Disable two-factor authentication for selected users"
 msgstr "Poista kaksivaiheinen tunnistautuminen käytöstä valituilta käyttäjiltä"
 
-#: apps/accounts/forms.py:115
+#: apps/accounts/forms.py:124
 msgid "Too many failed login attempts. Try again in a few minutes."
 msgstr ""
 "Liian monta epäonnistunutta kirjautumisyritystä. Yritä uudelleen muutaman "
 "minuutin kuluttua."
 
-#: apps/accounts/forms.py:179
+#: apps/accounts/forms.py:188
 msgid "Too many password reset requests. Try again in a few minutes."
 msgstr ""
 "Liian monta salasanan palautuspyyntöä. Yritä uudelleen muutaman minuutin "
 "kuluttua."
 
-#: apps/accounts/forms.py:233
+#: apps/accounts/forms.py:236 apps/accounts/forms.py:534
 msgid "Timezone"
 msgstr "Aikavyöhyke"
 
-#: apps/accounts/forms.py:250 apps/accounts/forms.py:512
+#: apps/accounts/forms.py:252 apps/accounts/forms.py:514
 #: templates/api/key_list.html:34
 msgid "Units"
 msgstr "Yksiköt"
 
-#: apps/accounts/forms.py:253
+#: apps/accounts/forms.py:255
 msgid "Show"
 msgstr "Näytä"
 
-#: apps/accounts/forms.py:254 templates/core/_bmi_card.html:13
+#: apps/accounts/forms.py:256 templates/core/_bmi_card.html:13
 #: templates/core/_bmi_card.html:29
 msgid "BMI"
 msgstr "BMI"
 
-#: apps/accounts/forms.py:255
+#: apps/accounts/forms.py:257
 msgid "on the body weight page"
 msgstr "painonseurantasivulla"
 
-#: apps/accounts/forms.py:257
+#: apps/accounts/forms.py:259
 msgid "Share my activity"
 msgstr "Jaa oma toimintani"
 
-#: apps/accounts/forms.py:258
+#: apps/accounts/forms.py:260
 msgid "Show my name to others"
 msgstr "Näytä nimeni muille"
 
-#: apps/accounts/forms.py:259
+#: apps/accounts/forms.py:261
 msgid "Show my Gravatar picture"
 msgstr "Näytä Gravatar-kuvani"
 
-#: apps/accounts/forms.py:260
+#: apps/accounts/forms.py:262
 msgid "Language"
 msgstr "Kieli"
 
-#: apps/accounts/forms.py:263
+#: apps/accounts/forms.py:265
 msgid "Turns off the BMI card and its category ranges entirely."
 msgstr "Piilottaa BMI-kortin ja sen luokka-asteikot kokonaan."
 
-#: apps/accounts/forms.py:265
+#: apps/accounts/forms.py:267
 msgid ""
 "Lets everyone using this instance see your longest streak, workout count, "
 "PRs, total weight lifted, and when you last trained, in the dashboard's "
@@ -89,7 +89,7 @@ msgstr ""
 "aktiivisena\" -listassa. Poista käytöstä pitääksesi oman toimintasi "
 "yksityisenä — näet silti muiden tiedot."
 
-#: apps/accounts/forms.py:272
+#: apps/accounts/forms.py:274
 msgid ""
 "Shows your first name next to your username wherever others can see it (the "
 "achievements carousel and \"Recently active\" list). Turn off to show just "
@@ -100,7 +100,7 @@ msgstr ""
 "käytöstä näyttääksesi siellä vain käyttäjätunnuksesi, kuten ennen tämän "
 "asetuksen olemassaoloa."
 
-#: apps/accounts/forms.py:278
+#: apps/accounts/forms.py:280
 msgid ""
 "Shows your Gravatar (gravatar.com) picture at the top of this page, if the "
 "email on this account has one. Turning this on means your browser loads that "
@@ -114,53 +114,53 @@ msgstr ""
 "tämä sovellus ottaa yhteyttä oman palvelimesi ulkopuoliseen palvelimeen — "
 "joka näkee tällöin sähköpostiosoitteesi tiivisteen ja IP-osoitteesi."
 
-#: apps/accounts/forms.py:296 apps/accounts/forms.py:533
+#: apps/accounts/forms.py:298 apps/accounts/forms.py:555
 #: apps/nutrition/forms.py:39 apps/nutrition/forms.py:432
 msgid "Height (cm)"
 msgstr "Pituus (cm)"
 
-#: apps/accounts/forms.py:296 apps/accounts/forms.py:533
+#: apps/accounts/forms.py:298 apps/accounts/forms.py:555
 #: apps/nutrition/forms.py:39 apps/nutrition/forms.py:432
 msgid "Height (in)"
 msgstr "Pituus (in)"
 
-#: apps/accounts/forms.py:337 apps/accounts/forms.py:364
+#: apps/accounts/forms.py:339 apps/accounts/forms.py:366
 msgid "Verification code"
 msgstr "Vahvistuskoodi"
 
-#: apps/accounts/forms.py:348
+#: apps/accounts/forms.py:350
 msgid "Incorrect code — check your authenticator app and try again."
 msgstr "Väärä koodi — tarkista tunnistautumissovelluksesi ja yritä uudelleen."
 
-#: apps/accounts/forms.py:376
+#: apps/accounts/forms.py:378
 msgid "Too many incorrect codes. Try again in a few minutes."
 msgstr "Liian monta väärää koodia. Yritä uudelleen muutaman minuutin kuluttua."
 
-#: apps/accounts/forms.py:389
+#: apps/accounts/forms.py:391
 msgid "Incorrect code."
 msgstr "Väärä koodi."
 
-#: apps/accounts/forms.py:403 apps/accounts/forms.py:429
+#: apps/accounts/forms.py:405 apps/accounts/forms.py:431
 msgid "Password"
 msgstr "Salasana"
 
-#: apps/accounts/forms.py:412 apps/accounts/forms.py:443
+#: apps/accounts/forms.py:414 apps/accounts/forms.py:445
 msgid "Incorrect password."
 msgstr "Väärä salasana."
 
-#: apps/accounts/forms.py:432
+#: apps/accounts/forms.py:434
 msgid "Type your username to confirm"
 msgstr "Kirjoita käyttäjätunnuksesi vahvistaaksesi"
 
-#: apps/accounts/forms.py:445
+#: apps/accounts/forms.py:447
 msgid "Doesn't match your username."
 msgstr "Ei täsmää käyttäjätunnukseesi."
 
-#: apps/accounts/forms.py:469
+#: apps/accounts/forms.py:471
 msgid "First name"
 msgstr "Etunimi"
 
-#: apps/accounts/forms.py:471
+#: apps/accounts/forms.py:473
 msgid ""
 "Used to personalize your dashboard greeting, and next to your username "
 "wherever your activity is shown to others (if you allow that in your "
@@ -170,11 +170,11 @@ msgstr ""
 "kaikkialla, missä aktiviteettisi näytetään muille (jos sallit sen "
 "profiilissasi)."
 
-#: apps/accounts/forms.py:478
+#: apps/accounts/forms.py:480
 msgid "Email"
 msgstr "Sähköposti"
 
-#: apps/accounts/forms.py:480
+#: apps/accounts/forms.py:482
 msgid ""
 "Used only for password-reset emails if you ever get locked out. Never shown "
 "to other users."
@@ -182,7 +182,7 @@ msgstr ""
 "Käytetään vain salasanan palautusviesteihin, jos jäät joskus lukkoon "
 "tilistäsi. Ei näytetä koskaan muille käyttäjille."
 
-#: apps/accounts/forms.py:490
+#: apps/accounts/forms.py:492
 msgid ""
 "Logged as your first body-weight entry, so your progress charts have a "
 "starting point. Leave blank and log it anytime from the Body weight page "
@@ -192,7 +192,7 @@ msgstr ""
 "on lähtöpiste. Voit myös jättää tämän tyhjäksi ja kirjata painon milloin "
 "tahansa Kehon paino -sivulta."
 
-#: apps/accounts/forms.py:505
+#: apps/accounts/forms.py:507
 msgid ""
 "Used together with a logged body weight to show your BMI. Leave blank to "
 "skip this — you can add it anytime from your profile."
@@ -200,7 +200,7 @@ msgstr ""
 "Näytetään BMI:si yhdessä kirjatun painon kanssa. Jätä tyhjäksi ohittaaksesi "
 "tämän — voit lisätä sen milloin tahansa profiilistasi."
 
-#: apps/accounts/forms.py:514
+#: apps/accounts/forms.py:516
 msgid ""
 "Sets whether weights and distances are shown in kg/km or lb/mi throughout "
 "the app. Change this anytime from your profile."
@@ -208,13 +208,23 @@ msgstr ""
 "Määrittää, näytetäänkö painot ja matkat sovelluksessa yksiköissä kg/km vai "
 "lb/mi. Voit muuttaa tätä milloin tahansa profiilistasi."
 
-#: apps/accounts/forms.py:528 apps/nutrition/forms.py:40
+#: apps/accounts/forms.py:536
+msgid ""
+"Used for \"today\" and date ranges throughout the app. Change this anytime "
+"from your profile."
+msgstr ""
+"Käytetään sovelluksen kaikkialla \"tänään\"-päivän ja aikavälien "
+"määrittämiseen. Voit muuttaa tätä milloin tahansa profiilistasi.Määrittää, "
+"näytetäänkö painot ja matkat sovelluksessa yksiköissä kg/km vai lb/mi. Voit "
+"muuttaa tätä milloin tahansa profiilistasi."
+
+#: apps/accounts/forms.py:550 apps/nutrition/forms.py:40
 #: apps/nutrition/forms.py:441 apps/nutrition/forms.py:645
 #, python-format
 msgid "Current weight (%(unit)s)"
 msgstr "Nykyinen paino (%(unit)s)"
 
-#: apps/accounts/forms.py:530
+#: apps/accounts/forms.py:552
 msgid "Current weight"
 msgstr "Nykyinen paino"
 
@@ -234,31 +244,31 @@ msgstr ""
 "Näytetään alatunnisteessa kirjautumis- ja rekisteröitymissivuilla. Jätä "
 "tyhjäksi piilottaaksesi sen kokonaan."
 
-#: apps/accounts/views.py:49 apps/accounts/views.py:56
+#: apps/accounts/views.py:50 apps/accounts/views.py:57
 msgid "Registration is currently closed."
 msgstr "Rekisteröityminen on tällä hetkellä suljettu."
 
-#: apps/accounts/views.py:99 apps/accounts/views.py:142
+#: apps/accounts/views.py:100 apps/accounts/views.py:143
 msgid "Password login is disabled on this instance."
 msgstr "Salasanalla kirjautuminen on poistettu käytöstä tässä palvelussa."
 
-#: apps/accounts/views.py:175
+#: apps/accounts/views.py:176
 msgid "Preferences saved."
 msgstr "Asetukset tallennettu."
 
-#: apps/accounts/views.py:195
+#: apps/accounts/views.py:196
 msgid "Account details saved."
 msgstr "Tilin tiedot tallennettu."
 
-#: apps/accounts/views.py:288
+#: apps/accounts/views.py:289
 msgid "Two-factor authentication is already enabled."
 msgstr "Kaksivaiheinen tunnistautuminen on jo käytössä."
 
-#: apps/accounts/views.py:347
+#: apps/accounts/views.py:348
 msgid "Two-factor authentication turned off."
 msgstr "Kaksivaiheinen tunnistautuminen poistettu käytöstä."
 
-#: apps/accounts/views.py:381
+#: apps/accounts/views.py:382
 msgid ""
 "You're the only superuser on this instance — promote another account to "
 "superuser first, or this instance would have no one left who can reach "
@@ -268,7 +278,7 @@ msgstr ""
 "ensin, tai tällä asennuksella ei olisi enää ketään joka pääsee Django-"
 "ylläpitoon."
 
-#: apps/accounts/views.py:399
+#: apps/accounts/views.py:400
 msgid "Your account and all its data have been deleted."
 msgstr "Käyttäjätilisi ja kaikki sen tiedot on poistettu."
 
@@ -2369,6 +2379,16 @@ msgstr ""
 "Jokin meni pieleen meidän puolellamme. Tietosi ovat turvassa — yritä hetken "
 "kuluttua uudelleen."
 
+#: templates/accounts/_data_export_standalone.html:23
+#: templates/accounts/_data_export_standalone.html:68
+msgid "Your data"
+msgstr "Omat tietosi"
+
+#: templates/accounts/_data_export_standalone.html:70
+#, python-format
+msgid "A snapshot of everything in %(username)s's IronStack account."
+msgstr "Tilannekuva käyttäjän %(username)s kaikista IronStack-tiedoista."
+
 #: templates/accounts/_onboarding_modal.html:5
 #: templates/accounts/_onboarding_modal.html:7
 msgid "Welcome to IronStack"
@@ -2586,7 +2606,7 @@ msgid "Account details"
 msgstr "Tilin tiedot"
 
 #: templates/accounts/account_details_form.html:23
-#: templates/accounts/data_export.html:43
+#: templates/accounts/data_export.html:42
 #: templates/accounts/two_factor_manage.html:35 templates/api/key_list.html:155
 #: templates/core/backup_list.html:88 templates/core/feedback_form.html:25
 #: templates/core/feedback_list.html:58 templates/core/seo_settings.html:26
@@ -2603,9 +2623,12 @@ msgstr "Lataa tietosi"
 #: templates/accounts/data_export.html:10
 msgid ""
 "Everything below is exclusively yours — the same data shown as tables here "
-"can be downloaded as a single JSON file, or as a .zip of spreadsheet-ready "
-"CSV files, one per section."
-msgstr "Kaikki alla oleva on yksinomaan sinun — samat taulukoina näkyvät tiedot voidaan ladata yhtenä JSON-tiedostona tai .zip-pakettina taulukkolaskentaan sopivia CSV-tiedostoja, yksi per osio."
+"can be downloaded as a single JSON file, a .zip of spreadsheet-ready CSV "
+"files (one per section), or this very page as a single HTML file."
+msgstr ""
+"Kaikki alla oleva on yksinomaan sinun — samat taulukoina näkyvät tiedot "
+"voidaan ladata yhtenä JSON-tiedostona, .zip-pakettina taulukkolaskentaan "
+"sopivia CSV-tiedostoja (yksi per osio), tai tämä sivu yhtenä HTML-tiedostona."
 
 #: templates/accounts/data_export.html:12
 msgid "Download as JSON"
@@ -2614,6 +2637,10 @@ msgstr "Lataa JSON-muodossa"
 #: templates/accounts/data_export.html:13
 msgid "Download as CSV (.zip)"
 msgstr "Lataa CSV-muodossa (.zip)"
+
+#: templates/accounts/data_export.html:14
+msgid "Download as HTML"
+msgstr "Lataa HTML-muodossa"
 
 #: templates/accounts/profile.html:46
 msgid "Save preferences"
@@ -2685,8 +2712,8 @@ msgid "Manage keys other apps can use to access your data."
 msgstr "Hallitse avaimia, joilla muut sovellukset voivat käyttää tietojasi."
 
 #: templates/accounts/profile.html:96
-msgid "Browse everything you've logged, or download it as JSON or CSV."
-msgstr "Selaa kaikkea kirjaamaasi, tai lataa se JSON- tai CSV-muodossa."
+msgid "Browse everything you've logged, or download it as JSON, CSV, or HTML."
+msgstr "Selaa kaikkea kirjaamaasi, tai lataa se JSON-, CSV- tai HTML-muodossa."
 
 #: templates/accounts/profile.html:104 templates/accounts/profile.html:132
 #: templates/core/feedback_form.html:3 templates/core/feedback_form.html:6

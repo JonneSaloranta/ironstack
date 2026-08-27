@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: IronStack\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-27 17:35+0000\n"
+"POT-Creation-Date: 2026-08-27 18:32+0000\n"
 "Language: et\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -22,60 +22,60 @@ msgstr "Kaheastmeline autentimine"
 msgid "Disable two-factor authentication for selected users"
 msgstr "Lülita kaheastmeline autentimine valitud kasutajatel välja"
 
-#: apps/accounts/forms.py:115
+#: apps/accounts/forms.py:124
 msgid "Too many failed login attempts. Try again in a few minutes."
 msgstr ""
 "Liiga palju ebaõnnestunud sisselogimiskatseid. Proovi mõne minuti pärast "
 "uuesti."
 
-#: apps/accounts/forms.py:179
+#: apps/accounts/forms.py:188
 msgid "Too many password reset requests. Try again in a few minutes."
 msgstr ""
 "Liiga palju parooli lähtestamise päringuid. Proovi mõne minuti pärast uuesti."
 
-#: apps/accounts/forms.py:233
+#: apps/accounts/forms.py:236 apps/accounts/forms.py:534
 msgid "Timezone"
 msgstr "Ajavöönd"
 
-#: apps/accounts/forms.py:250 apps/accounts/forms.py:512
+#: apps/accounts/forms.py:252 apps/accounts/forms.py:514
 #: templates/api/key_list.html:34
 msgid "Units"
 msgstr "Ühikud"
 
-#: apps/accounts/forms.py:253
+#: apps/accounts/forms.py:255
 msgid "Show"
 msgstr "Näita"
 
-#: apps/accounts/forms.py:254 templates/core/_bmi_card.html:13
+#: apps/accounts/forms.py:256 templates/core/_bmi_card.html:13
 #: templates/core/_bmi_card.html:29
 msgid "BMI"
 msgstr "KMI"
 
-#: apps/accounts/forms.py:255
+#: apps/accounts/forms.py:257
 msgid "on the body weight page"
 msgstr "kehakaalu lehel"
 
-#: apps/accounts/forms.py:257
+#: apps/accounts/forms.py:259
 msgid "Share my activity"
 msgstr "Jaga minu tegevust"
 
-#: apps/accounts/forms.py:258
+#: apps/accounts/forms.py:260
 msgid "Show my name to others"
 msgstr "Näita minu nime teistele"
 
-#: apps/accounts/forms.py:259
+#: apps/accounts/forms.py:261
 msgid "Show my Gravatar picture"
 msgstr "Näita minu Gravatari pilti"
 
-#: apps/accounts/forms.py:260
+#: apps/accounts/forms.py:262
 msgid "Language"
 msgstr "Keel"
 
-#: apps/accounts/forms.py:263
+#: apps/accounts/forms.py:265
 msgid "Turns off the BMI card and its category ranges entirely."
 msgstr "Lülitab KMI kaardi ja selle kategooriavahemikud täielikult välja."
 
-#: apps/accounts/forms.py:265
+#: apps/accounts/forms.py:267
 msgid ""
 "Lets everyone using this instance see your longest streak, workout count, "
 "PRs, total weight lifted, and when you last trained, in the dashboard's "
@@ -87,7 +87,7 @@ msgstr ""
 "saavutuste karussellis ja \"Viimati aktiivsed\" nimekirjas. Lülita välja, et "
 "hoida oma tegevus privaatsena — näed siiski teiste tegevust."
 
-#: apps/accounts/forms.py:272
+#: apps/accounts/forms.py:274
 msgid ""
 "Shows your first name next to your username wherever others can see it (the "
 "achievements carousel and \"Recently active\" list). Turn off to show just "
@@ -97,7 +97,7 @@ msgstr ""
 "(saavutuste karussell ja \"Viimati aktiivsed\" nimekiri). Lülita välja, et "
 "näidata seal ainult kasutajanime, nagu enne selle seade olemasolu."
 
-#: apps/accounts/forms.py:278
+#: apps/accounts/forms.py:280
 msgid ""
 "Shows your Gravatar (gravatar.com) picture at the top of this page, if the "
 "email on this account has one. Turning this on means your browser loads that "
@@ -111,53 +111,53 @@ msgstr ""
 "rakendus suhtleb sinu enda serverist väljaspool asuva serveriga — mis näeb "
 "seejärel sinu e-posti aadressi räsi ja IP-aadressi."
 
-#: apps/accounts/forms.py:296 apps/accounts/forms.py:533
+#: apps/accounts/forms.py:298 apps/accounts/forms.py:555
 #: apps/nutrition/forms.py:39 apps/nutrition/forms.py:432
 msgid "Height (cm)"
 msgstr "Pikkus (cm)"
 
-#: apps/accounts/forms.py:296 apps/accounts/forms.py:533
+#: apps/accounts/forms.py:298 apps/accounts/forms.py:555
 #: apps/nutrition/forms.py:39 apps/nutrition/forms.py:432
 msgid "Height (in)"
 msgstr "Pikkus (in)"
 
-#: apps/accounts/forms.py:337 apps/accounts/forms.py:364
+#: apps/accounts/forms.py:339 apps/accounts/forms.py:366
 msgid "Verification code"
 msgstr "Kinnituskood"
 
-#: apps/accounts/forms.py:348
+#: apps/accounts/forms.py:350
 msgid "Incorrect code — check your authenticator app and try again."
 msgstr "Vale kood — kontrolli oma autentimisrakendust ja proovi uuesti."
 
-#: apps/accounts/forms.py:376
+#: apps/accounts/forms.py:378
 msgid "Too many incorrect codes. Try again in a few minutes."
 msgstr "Liiga palju valesid koode. Proovi mõne minuti pärast uuesti."
 
-#: apps/accounts/forms.py:389
+#: apps/accounts/forms.py:391
 msgid "Incorrect code."
 msgstr "Vale kood."
 
-#: apps/accounts/forms.py:403 apps/accounts/forms.py:429
+#: apps/accounts/forms.py:405 apps/accounts/forms.py:431
 msgid "Password"
 msgstr "Parool"
 
-#: apps/accounts/forms.py:412 apps/accounts/forms.py:443
+#: apps/accounts/forms.py:414 apps/accounts/forms.py:445
 msgid "Incorrect password."
 msgstr "Vale parool."
 
-#: apps/accounts/forms.py:432
+#: apps/accounts/forms.py:434
 msgid "Type your username to confirm"
 msgstr "Kinnitamiseks sisesta oma kasutajanimi"
 
-#: apps/accounts/forms.py:445
+#: apps/accounts/forms.py:447
 msgid "Doesn't match your username."
 msgstr "Ei kattu sinu kasutajanimega."
 
-#: apps/accounts/forms.py:469
+#: apps/accounts/forms.py:471
 msgid "First name"
 msgstr "Eesnimi"
 
-#: apps/accounts/forms.py:471
+#: apps/accounts/forms.py:473
 msgid ""
 "Used to personalize your dashboard greeting, and next to your username "
 "wherever your activity is shown to others (if you allow that in your "
@@ -167,11 +167,11 @@ msgstr ""
 "kõrval kõikjal, kus sinu tegevust teistele näidatakse (kui lubad seda oma "
 "profiilis)."
 
-#: apps/accounts/forms.py:478
+#: apps/accounts/forms.py:480
 msgid "Email"
 msgstr "E-post"
 
-#: apps/accounts/forms.py:480
+#: apps/accounts/forms.py:482
 msgid ""
 "Used only for password-reset emails if you ever get locked out. Never shown "
 "to other users."
@@ -179,7 +179,7 @@ msgstr ""
 "Kasutatakse ainult parooli lähtestamise e-kirjade jaoks, kui jääd kunagi "
 "kontost välja. Ei näidata kunagi teistele kasutajatele."
 
-#: apps/accounts/forms.py:490
+#: apps/accounts/forms.py:492
 msgid ""
 "Logged as your first body-weight entry, so your progress charts have a "
 "starting point. Leave blank and log it anytime from the Body weight page "
@@ -188,7 +188,7 @@ msgstr ""
 "Salvestatakse sinu esimese kehakaalu kirjena, et edenemisgraafikutel oleks "
 "lähtepunkt. Jäta tühjaks ja lisa kaal hiljem lehelt \"Kehakaal\"."
 
-#: apps/accounts/forms.py:505
+#: apps/accounts/forms.py:507
 msgid ""
 "Used together with a logged body weight to show your BMI. Leave blank to "
 "skip this — you can add it anytime from your profile."
@@ -196,7 +196,7 @@ msgstr ""
 "Kasutatakse koos salvestatud kehakaaluga sinu KMI näitamiseks. Jäta tühjaks, "
 "et see vahele jätta — saad selle hiljem oma profiilis lisada."
 
-#: apps/accounts/forms.py:514
+#: apps/accounts/forms.py:516
 msgid ""
 "Sets whether weights and distances are shown in kg/km or lb/mi throughout "
 "the app. Change this anytime from your profile."
@@ -204,13 +204,22 @@ msgstr ""
 "Määrab, kas kaalud ja vahemaad kuvatakse rakenduses kg/km või lb/mi "
 "ühikutes. Saad seda igal ajal profiilis muuta."
 
-#: apps/accounts/forms.py:528 apps/nutrition/forms.py:40
+#: apps/accounts/forms.py:536
+msgid ""
+"Used for \"today\" and date ranges throughout the app. Change this anytime "
+"from your profile."
+msgstr ""
+"Kasutatakse rakenduses \"täna\" ja kuupäevavahemike määramiseks. Saad seda "
+"igal ajal oma profiililt muuta.Määrab, kas kaalud ja vahemaad kuvatakse "
+"rakenduses kg/km või lb/mi ühikutes. Saad seda igal ajal profiilis muuta."
+
+#: apps/accounts/forms.py:550 apps/nutrition/forms.py:40
 #: apps/nutrition/forms.py:441 apps/nutrition/forms.py:645
 #, python-format
 msgid "Current weight (%(unit)s)"
 msgstr "Praegune kaal (%(unit)s)"
 
-#: apps/accounts/forms.py:530
+#: apps/accounts/forms.py:552
 msgid "Current weight"
 msgstr "Praegune kaal"
 
@@ -230,31 +239,31 @@ msgstr ""
 "Kuvatakse jaluses sisselogimis- ja registreerumislehel. Jäta tühjaks, et see "
 "täielikult peita."
 
-#: apps/accounts/views.py:49 apps/accounts/views.py:56
+#: apps/accounts/views.py:50 apps/accounts/views.py:57
 msgid "Registration is currently closed."
 msgstr "Registreerumine on hetkel suletud."
 
-#: apps/accounts/views.py:99 apps/accounts/views.py:142
+#: apps/accounts/views.py:100 apps/accounts/views.py:143
 msgid "Password login is disabled on this instance."
 msgstr "Salasõnaga sisselogimine on selles paigalduses välja lülitatud."
 
-#: apps/accounts/views.py:175
+#: apps/accounts/views.py:176
 msgid "Preferences saved."
 msgstr "Eelistused salvestatud."
 
-#: apps/accounts/views.py:195
+#: apps/accounts/views.py:196
 msgid "Account details saved."
 msgstr "Konto andmed on salvestatud."
 
-#: apps/accounts/views.py:288
+#: apps/accounts/views.py:289
 msgid "Two-factor authentication is already enabled."
 msgstr "Kaheastmeline autentimine on juba sisse lülitatud."
 
-#: apps/accounts/views.py:347
+#: apps/accounts/views.py:348
 msgid "Two-factor authentication turned off."
 msgstr "Kaheastmeline autentimine välja lülitatud."
 
-#: apps/accounts/views.py:381
+#: apps/accounts/views.py:382
 msgid ""
 "You're the only superuser on this instance — promote another account to "
 "superuser first, or this instance would have no one left who can reach "
@@ -264,7 +273,7 @@ msgstr ""
 "konto superkasutajaks, muidu ei jääks sellel paigaldusel kedagi, kes pääseks "
 "Django adminliidesesse."
 
-#: apps/accounts/views.py:399
+#: apps/accounts/views.py:400
 msgid "Your account and all its data have been deleted."
 msgstr "Sinu konto ja kõik selle andmed on kustutatud."
 
@@ -2359,6 +2368,16 @@ msgstr ""
 "Meie poolel läks midagi valesti. Sinu andmed on turvalised — proovi hetke "
 "pärast uuesti."
 
+#: templates/accounts/_data_export_standalone.html:23
+#: templates/accounts/_data_export_standalone.html:68
+msgid "Your data"
+msgstr "Sinu andmed"
+
+#: templates/accounts/_data_export_standalone.html:70
+#, python-format
+msgid "A snapshot of everything in %(username)s's IronStack account."
+msgstr "Hetktõmmis kõigest, mis on %(username)s IronStacki kontol."
+
 #: templates/accounts/_onboarding_modal.html:5
 #: templates/accounts/_onboarding_modal.html:7
 msgid "Welcome to IronStack"
@@ -2576,7 +2595,7 @@ msgid "Account details"
 msgstr "Konto andmed"
 
 #: templates/accounts/account_details_form.html:23
-#: templates/accounts/data_export.html:43
+#: templates/accounts/data_export.html:42
 #: templates/accounts/two_factor_manage.html:35 templates/api/key_list.html:155
 #: templates/core/backup_list.html:88 templates/core/feedback_form.html:25
 #: templates/core/feedback_list.html:58 templates/core/seo_settings.html:26
@@ -2593,9 +2612,13 @@ msgstr "Laadi oma andmed alla"
 #: templates/accounts/data_export.html:10
 msgid ""
 "Everything below is exclusively yours — the same data shown as tables here "
-"can be downloaded as a single JSON file, or as a .zip of spreadsheet-ready "
-"CSV files, one per section."
-msgstr "Kõik allolev kuulub ainult sinule — samu andmeid, mis siin tabelitena näidatakse, saab alla laadida ühe JSON-failina või .zip-arhiivina tabelarvutusprogrammiks valmis CSV-failidest, üks fail sektsiooni kohta."
+"can be downloaded as a single JSON file, a .zip of spreadsheet-ready CSV "
+"files (one per section), or this very page as a single HTML file."
+msgstr ""
+"Kõik allolev kuulub ainult sinule — samu andmeid, mis siin tabelitena "
+"näidatakse, saab alla laadida ühe JSON-failina, .zip-arhiivina "
+"tabelarvutusprogrammiks valmis CSV-failidest (üks fail sektsiooni kohta), "
+"või selle sama lehena ühe HTML-failina."
 
 #: templates/accounts/data_export.html:12
 msgid "Download as JSON"
@@ -2604,6 +2627,10 @@ msgstr "Laadi alla JSON-vormingus"
 #: templates/accounts/data_export.html:13
 msgid "Download as CSV (.zip)"
 msgstr "Laadi alla CSV-na (.zip)"
+
+#: templates/accounts/data_export.html:14
+msgid "Download as HTML"
+msgstr "Laadi alla HTML-vormingus"
 
 #: templates/accounts/profile.html:46
 msgid "Save preferences"
@@ -2677,8 +2704,10 @@ msgstr ""
 "ligipääsuks."
 
 #: templates/accounts/profile.html:96
-msgid "Browse everything you've logged, or download it as JSON or CSV."
-msgstr "Sirvi kõike, mida oled logind, või laadi see alla JSON- või CSV-vormingus."
+msgid "Browse everything you've logged, or download it as JSON, CSV, or HTML."
+msgstr ""
+"Sirvi kõike, mida oled logind, või laadi see alla JSON-, CSV- või HTML-"
+"vormingus."
 
 #: templates/accounts/profile.html:104 templates/accounts/profile.html:132
 #: templates/core/feedback_form.html:3 templates/core/feedback_form.html:6

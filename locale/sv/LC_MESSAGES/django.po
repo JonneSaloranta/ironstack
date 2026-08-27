@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: IronStack\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-27 17:35+0000\n"
+"POT-Creation-Date: 2026-08-27 18:32+0000\n"
 "Language: sv\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -22,59 +22,59 @@ msgstr "Tvåfaktorsautentisering"
 msgid "Disable two-factor authentication for selected users"
 msgstr "Inaktivera tvåfaktorsautentisering för valda användare"
 
-#: apps/accounts/forms.py:115
+#: apps/accounts/forms.py:124
 msgid "Too many failed login attempts. Try again in a few minutes."
 msgstr "För många misslyckade inloggningsförsök. Försök igen om några minuter."
 
-#: apps/accounts/forms.py:179
+#: apps/accounts/forms.py:188
 msgid "Too many password reset requests. Try again in a few minutes."
 msgstr ""
 "För många förfrågningar om lösenordsåterställning. Försök igen om några "
 "minuter."
 
-#: apps/accounts/forms.py:233
+#: apps/accounts/forms.py:236 apps/accounts/forms.py:534
 msgid "Timezone"
 msgstr "Tidszon"
 
-#: apps/accounts/forms.py:250 apps/accounts/forms.py:512
+#: apps/accounts/forms.py:252 apps/accounts/forms.py:514
 #: templates/api/key_list.html:34
 msgid "Units"
 msgstr "Enheter"
 
-#: apps/accounts/forms.py:253
+#: apps/accounts/forms.py:255
 msgid "Show"
 msgstr "Visa"
 
-#: apps/accounts/forms.py:254 templates/core/_bmi_card.html:13
+#: apps/accounts/forms.py:256 templates/core/_bmi_card.html:13
 #: templates/core/_bmi_card.html:29
 msgid "BMI"
 msgstr "BMI"
 
-#: apps/accounts/forms.py:255
+#: apps/accounts/forms.py:257
 msgid "on the body weight page"
 msgstr "på sidan för kroppsvikt"
 
-#: apps/accounts/forms.py:257
+#: apps/accounts/forms.py:259
 msgid "Share my activity"
 msgstr "Dela min aktivitet"
 
-#: apps/accounts/forms.py:258
+#: apps/accounts/forms.py:260
 msgid "Show my name to others"
 msgstr "Visa mitt namn för andra"
 
-#: apps/accounts/forms.py:259
+#: apps/accounts/forms.py:261
 msgid "Show my Gravatar picture"
 msgstr "Visa min Gravatar-bild"
 
-#: apps/accounts/forms.py:260
+#: apps/accounts/forms.py:262
 msgid "Language"
 msgstr "Språk"
 
-#: apps/accounts/forms.py:263
+#: apps/accounts/forms.py:265
 msgid "Turns off the BMI card and its category ranges entirely."
 msgstr "Stänger av BMI-kortet och dess kategoriintervall helt."
 
-#: apps/accounts/forms.py:265
+#: apps/accounts/forms.py:267
 msgid ""
 "Lets everyone using this instance see your longest streak, workout count, "
 "PRs, total weight lifted, and when you last trained, in the dashboard's "
@@ -86,7 +86,7 @@ msgstr ""
 "instrumentpanelens prestationskarusell och listan \"Senast aktiva\". Stäng "
 "av för att hålla din egen aktivitet privat — du ser fortfarande allas andras."
 
-#: apps/accounts/forms.py:272
+#: apps/accounts/forms.py:274
 msgid ""
 "Shows your first name next to your username wherever others can see it (the "
 "achievements carousel and \"Recently active\" list). Turn off to show just "
@@ -96,7 +96,7 @@ msgstr ""
 "(prestationskarusellen och listan \"Senast aktiva\"). Stäng av för att bara "
 "visa ditt användarnamn där, som innan den här inställningen fanns."
 
-#: apps/accounts/forms.py:278
+#: apps/accounts/forms.py:280
 msgid ""
 "Shows your Gravatar (gravatar.com) picture at the top of this page, if the "
 "email on this account has one. Turning this on means your browser loads that "
@@ -110,53 +110,53 @@ msgstr ""
 "pratar med en server utanför din egen instans — som då ser hashvärdet för "
 "din e-postadress och din IP-adress."
 
-#: apps/accounts/forms.py:296 apps/accounts/forms.py:533
+#: apps/accounts/forms.py:298 apps/accounts/forms.py:555
 #: apps/nutrition/forms.py:39 apps/nutrition/forms.py:432
 msgid "Height (cm)"
 msgstr "Längd (cm)"
 
-#: apps/accounts/forms.py:296 apps/accounts/forms.py:533
+#: apps/accounts/forms.py:298 apps/accounts/forms.py:555
 #: apps/nutrition/forms.py:39 apps/nutrition/forms.py:432
 msgid "Height (in)"
 msgstr "Längd (in)"
 
-#: apps/accounts/forms.py:337 apps/accounts/forms.py:364
+#: apps/accounts/forms.py:339 apps/accounts/forms.py:366
 msgid "Verification code"
 msgstr "Verifieringskod"
 
-#: apps/accounts/forms.py:348
+#: apps/accounts/forms.py:350
 msgid "Incorrect code — check your authenticator app and try again."
 msgstr "Fel kod — kontrollera din autentiseringsapp och försök igen."
 
-#: apps/accounts/forms.py:376
+#: apps/accounts/forms.py:378
 msgid "Too many incorrect codes. Try again in a few minutes."
 msgstr "För många felaktiga koder. Försök igen om några minuter."
 
-#: apps/accounts/forms.py:389
+#: apps/accounts/forms.py:391
 msgid "Incorrect code."
 msgstr "Fel kod."
 
-#: apps/accounts/forms.py:403 apps/accounts/forms.py:429
+#: apps/accounts/forms.py:405 apps/accounts/forms.py:431
 msgid "Password"
 msgstr "Lösenord"
 
-#: apps/accounts/forms.py:412 apps/accounts/forms.py:443
+#: apps/accounts/forms.py:414 apps/accounts/forms.py:445
 msgid "Incorrect password."
 msgstr "Fel lösenord."
 
-#: apps/accounts/forms.py:432
+#: apps/accounts/forms.py:434
 msgid "Type your username to confirm"
 msgstr "Skriv ditt användarnamn för att bekräfta"
 
-#: apps/accounts/forms.py:445
+#: apps/accounts/forms.py:447
 msgid "Doesn't match your username."
 msgstr "Matchar inte ditt användarnamn."
 
-#: apps/accounts/forms.py:469
+#: apps/accounts/forms.py:471
 msgid "First name"
 msgstr "Förnamn"
 
-#: apps/accounts/forms.py:471
+#: apps/accounts/forms.py:473
 msgid ""
 "Used to personalize your dashboard greeting, and next to your username "
 "wherever your activity is shown to others (if you allow that in your "
@@ -166,11 +166,11 @@ msgstr ""
 "användarnamn där din aktivitet visas för andra (om du tillåter det i din "
 "profil)."
 
-#: apps/accounts/forms.py:478
+#: apps/accounts/forms.py:480
 msgid "Email"
 msgstr "E-post"
 
-#: apps/accounts/forms.py:480
+#: apps/accounts/forms.py:482
 msgid ""
 "Used only for password-reset emails if you ever get locked out. Never shown "
 "to other users."
@@ -178,7 +178,7 @@ msgstr ""
 "Används endast för lösenordsåterställningsmejl om du någonsin blir utelåst. "
 "Visas aldrig för andra användare."
 
-#: apps/accounts/forms.py:490
+#: apps/accounts/forms.py:492
 msgid ""
 "Logged as your first body-weight entry, so your progress charts have a "
 "starting point. Leave blank and log it anytime from the Body weight page "
@@ -188,7 +188,7 @@ msgstr ""
 "startpunkt. Lämna tomt och logga den istället när som helst från sidan "
 "Kroppsvikt."
 
-#: apps/accounts/forms.py:505
+#: apps/accounts/forms.py:507
 msgid ""
 "Used together with a logged body weight to show your BMI. Leave blank to "
 "skip this — you can add it anytime from your profile."
@@ -197,7 +197,7 @@ msgstr ""
 "tomt för att hoppa över detta — du kan lägga till det när som helst från din "
 "profil."
 
-#: apps/accounts/forms.py:514
+#: apps/accounts/forms.py:516
 msgid ""
 "Sets whether weights and distances are shown in kg/km or lb/mi throughout "
 "the app. Change this anytime from your profile."
@@ -205,13 +205,22 @@ msgstr ""
 "Anger om vikter och avstånd visas i kg/km eller lb/mi i hela appen. Ändra "
 "detta när som helst från din profil."
 
-#: apps/accounts/forms.py:528 apps/nutrition/forms.py:40
+#: apps/accounts/forms.py:536
+msgid ""
+"Used for \"today\" and date ranges throughout the app. Change this anytime "
+"from your profile."
+msgstr ""
+"Används för \"idag\" och datumintervall i hela appen. Du kan ändra detta när "
+"som helst från din profil.Anger om vikter och avstånd visas i kg/km eller lb/"
+"mi i hela appen. Ändra detta när som helst från din profil."
+
+#: apps/accounts/forms.py:550 apps/nutrition/forms.py:40
 #: apps/nutrition/forms.py:441 apps/nutrition/forms.py:645
 #, python-format
 msgid "Current weight (%(unit)s)"
 msgstr "Nuvarande vikt (%(unit)s)"
 
-#: apps/accounts/forms.py:530
+#: apps/accounts/forms.py:552
 msgid "Current weight"
 msgstr "Nuvarande vikt"
 
@@ -231,31 +240,31 @@ msgstr ""
 "Visas som en sidfotsnotis på inloggnings- och registreringssidorna. Lämna "
 "tomt för att dölja den helt."
 
-#: apps/accounts/views.py:49 apps/accounts/views.py:56
+#: apps/accounts/views.py:50 apps/accounts/views.py:57
 msgid "Registration is currently closed."
 msgstr "Registrering är för närvarande stängd."
 
-#: apps/accounts/views.py:99 apps/accounts/views.py:142
+#: apps/accounts/views.py:100 apps/accounts/views.py:143
 msgid "Password login is disabled on this instance."
 msgstr "Inloggning med lösenord är inaktiverad för den här instansen."
 
-#: apps/accounts/views.py:175
+#: apps/accounts/views.py:176
 msgid "Preferences saved."
 msgstr "Inställningarna har sparats."
 
-#: apps/accounts/views.py:195
+#: apps/accounts/views.py:196
 msgid "Account details saved."
 msgstr "Kontouppgifterna har sparats."
 
-#: apps/accounts/views.py:288
+#: apps/accounts/views.py:289
 msgid "Two-factor authentication is already enabled."
 msgstr "Tvåfaktorsautentisering är redan aktiverad."
 
-#: apps/accounts/views.py:347
+#: apps/accounts/views.py:348
 msgid "Two-factor authentication turned off."
 msgstr "Tvåfaktorsautentisering avstängd."
 
-#: apps/accounts/views.py:381
+#: apps/accounts/views.py:382
 msgid ""
 "You're the only superuser on this instance — promote another account to "
 "superuser first, or this instance would have no one left who can reach "
@@ -265,7 +274,7 @@ msgstr ""
 "konto till superanvändare först, annars skulle den här instansen inte ha "
 "någon kvar som kan nå Django-administrationen."
 
-#: apps/accounts/views.py:399
+#: apps/accounts/views.py:400
 msgid "Your account and all its data have been deleted."
 msgstr "Ditt konto och alla dess uppgifter har raderats."
 
@@ -2351,6 +2360,16 @@ msgid ""
 msgstr ""
 "Något gick fel på vår sida. Din data är säker — försök igen om en stund."
 
+#: templates/accounts/_data_export_standalone.html:23
+#: templates/accounts/_data_export_standalone.html:68
+msgid "Your data"
+msgstr "Dina uppgifter"
+
+#: templates/accounts/_data_export_standalone.html:70
+#, python-format
+msgid "A snapshot of everything in %(username)s's IronStack account."
+msgstr "En ögonblicksbild av allt i %(username)s IronStack-konto."
+
 #: templates/accounts/_onboarding_modal.html:5
 #: templates/accounts/_onboarding_modal.html:7
 msgid "Welcome to IronStack"
@@ -2566,7 +2585,7 @@ msgid "Account details"
 msgstr "Kontouppgifter"
 
 #: templates/accounts/account_details_form.html:23
-#: templates/accounts/data_export.html:43
+#: templates/accounts/data_export.html:42
 #: templates/accounts/two_factor_manage.html:35 templates/api/key_list.html:155
 #: templates/core/backup_list.html:88 templates/core/feedback_form.html:25
 #: templates/core/feedback_list.html:58 templates/core/seo_settings.html:26
@@ -2583,9 +2602,12 @@ msgstr "Ladda ner dina uppgifter"
 #: templates/accounts/data_export.html:10
 msgid ""
 "Everything below is exclusively yours — the same data shown as tables here "
-"can be downloaded as a single JSON file, or as a .zip of spreadsheet-ready "
-"CSV files, one per section."
-msgstr "Allt nedan tillhör uteslutande dig — samma data som visas som tabeller här kan laddas ner som en enda JSON-fil, eller som en .zip med kalkylbladsklara CSV-filer, en per sektion."
+"can be downloaded as a single JSON file, a .zip of spreadsheet-ready CSV "
+"files (one per section), or this very page as a single HTML file."
+msgstr ""
+"Allt nedan tillhör uteslutande dig — samma data som visas som tabeller här "
+"kan laddas ner som en enda JSON-fil, en .zip med kalkylbladsklara CSV-filer "
+"(en per sektion), eller den här sidan som en enda HTML-fil."
 
 #: templates/accounts/data_export.html:12
 msgid "Download as JSON"
@@ -2594,6 +2616,10 @@ msgstr "Ladda ner som JSON"
 #: templates/accounts/data_export.html:13
 msgid "Download as CSV (.zip)"
 msgstr "Ladda ner som CSV (.zip)"
+
+#: templates/accounts/data_export.html:14
+msgid "Download as HTML"
+msgstr "Ladda ner som HTML"
 
 #: templates/accounts/profile.html:46
 msgid "Save preferences"
@@ -2666,8 +2692,10 @@ msgstr ""
 "Hantera nycklar som andra appar kan använda för att komma åt dina data."
 
 #: templates/accounts/profile.html:96
-msgid "Browse everything you've logged, or download it as JSON or CSV."
-msgstr "Bläddra bland allt du har loggat, eller ladda ner det som JSON eller CSV."
+msgid "Browse everything you've logged, or download it as JSON, CSV, or HTML."
+msgstr ""
+"Bläddra bland allt du har loggat, eller ladda ner det som JSON, CSV eller "
+"HTML."
 
 #: templates/accounts/profile.html:104 templates/accounts/profile.html:132
 #: templates/core/feedback_form.html:3 templates/core/feedback_form.html:6
