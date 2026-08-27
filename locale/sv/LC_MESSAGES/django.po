@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: IronStack\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-27 16:47+0000\n"
+"POT-Creation-Date: 2026-08-27 17:35+0000\n"
 "Language: sv\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -36,7 +36,7 @@ msgstr ""
 msgid "Timezone"
 msgstr "Tidszon"
 
-#: apps/accounts/forms.py:250 apps/accounts/forms.py:479
+#: apps/accounts/forms.py:250 apps/accounts/forms.py:512
 #: templates/api/key_list.html:34
 msgid "Units"
 msgstr "Enheter"
@@ -110,12 +110,12 @@ msgstr ""
 "pratar med en server utanför din egen instans — som då ser hashvärdet för "
 "din e-postadress och din IP-adress."
 
-#: apps/accounts/forms.py:296 apps/accounts/forms.py:500
+#: apps/accounts/forms.py:296 apps/accounts/forms.py:533
 #: apps/nutrition/forms.py:39 apps/nutrition/forms.py:432
 msgid "Height (cm)"
 msgstr "Längd (cm)"
 
-#: apps/accounts/forms.py:296 apps/accounts/forms.py:500
+#: apps/accounts/forms.py:296 apps/accounts/forms.py:533
 #: apps/nutrition/forms.py:39 apps/nutrition/forms.py:432
 msgid "Height (in)"
 msgstr "Längd (in)"
@@ -136,19 +136,27 @@ msgstr "För många felaktiga koder. Försök igen om några minuter."
 msgid "Incorrect code."
 msgstr "Fel kod."
 
-#: apps/accounts/forms.py:403
+#: apps/accounts/forms.py:403 apps/accounts/forms.py:429
 msgid "Password"
 msgstr "Lösenord"
 
-#: apps/accounts/forms.py:412
+#: apps/accounts/forms.py:412 apps/accounts/forms.py:443
 msgid "Incorrect password."
 msgstr "Fel lösenord."
 
-#: apps/accounts/forms.py:436
+#: apps/accounts/forms.py:432
+msgid "Type your username to confirm"
+msgstr "Skriv ditt användarnamn för att bekräfta"
+
+#: apps/accounts/forms.py:445
+msgid "Doesn't match your username."
+msgstr "Matchar inte ditt användarnamn."
+
+#: apps/accounts/forms.py:469
 msgid "First name"
 msgstr "Förnamn"
 
-#: apps/accounts/forms.py:438
+#: apps/accounts/forms.py:471
 msgid ""
 "Used to personalize your dashboard greeting, and next to your username "
 "wherever your activity is shown to others (if you allow that in your "
@@ -158,11 +166,11 @@ msgstr ""
 "användarnamn där din aktivitet visas för andra (om du tillåter det i din "
 "profil)."
 
-#: apps/accounts/forms.py:445
+#: apps/accounts/forms.py:478
 msgid "Email"
 msgstr "E-post"
 
-#: apps/accounts/forms.py:447
+#: apps/accounts/forms.py:480
 msgid ""
 "Used only for password-reset emails if you ever get locked out. Never shown "
 "to other users."
@@ -170,7 +178,7 @@ msgstr ""
 "Används endast för lösenordsåterställningsmejl om du någonsin blir utelåst. "
 "Visas aldrig för andra användare."
 
-#: apps/accounts/forms.py:457
+#: apps/accounts/forms.py:490
 msgid ""
 "Logged as your first body-weight entry, so your progress charts have a "
 "starting point. Leave blank and log it anytime from the Body weight page "
@@ -180,7 +188,7 @@ msgstr ""
 "startpunkt. Lämna tomt och logga den istället när som helst från sidan "
 "Kroppsvikt."
 
-#: apps/accounts/forms.py:472
+#: apps/accounts/forms.py:505
 msgid ""
 "Used together with a logged body weight to show your BMI. Leave blank to "
 "skip this — you can add it anytime from your profile."
@@ -189,7 +197,7 @@ msgstr ""
 "tomt för att hoppa över detta — du kan lägga till det när som helst från din "
 "profil."
 
-#: apps/accounts/forms.py:481
+#: apps/accounts/forms.py:514
 msgid ""
 "Sets whether weights and distances are shown in kg/km or lb/mi throughout "
 "the app. Change this anytime from your profile."
@@ -197,13 +205,13 @@ msgstr ""
 "Anger om vikter och avstånd visas i kg/km eller lb/mi i hela appen. Ändra "
 "detta när som helst från din profil."
 
-#: apps/accounts/forms.py:495 apps/nutrition/forms.py:40
+#: apps/accounts/forms.py:528 apps/nutrition/forms.py:40
 #: apps/nutrition/forms.py:441 apps/nutrition/forms.py:645
 #, python-format
 msgid "Current weight (%(unit)s)"
 msgstr "Nuvarande vikt (%(unit)s)"
 
-#: apps/accounts/forms.py:497
+#: apps/accounts/forms.py:530
 msgid "Current weight"
 msgstr "Nuvarande vikt"
 
@@ -223,29 +231,43 @@ msgstr ""
 "Visas som en sidfotsnotis på inloggnings- och registreringssidorna. Lämna "
 "tomt för att dölja den helt."
 
-#: apps/accounts/views.py:42 apps/accounts/views.py:49
+#: apps/accounts/views.py:49 apps/accounts/views.py:56
 msgid "Registration is currently closed."
 msgstr "Registrering är för närvarande stängd."
 
-#: apps/accounts/views.py:92 apps/accounts/views.py:135
+#: apps/accounts/views.py:99 apps/accounts/views.py:142
 msgid "Password login is disabled on this instance."
 msgstr "Inloggning med lösenord är inaktiverad för den här instansen."
 
-#: apps/accounts/views.py:168
+#: apps/accounts/views.py:175
 msgid "Preferences saved."
 msgstr "Inställningarna har sparats."
 
-#: apps/accounts/views.py:188
+#: apps/accounts/views.py:195
 msgid "Account details saved."
 msgstr "Kontouppgifterna har sparats."
 
-#: apps/accounts/views.py:281
+#: apps/accounts/views.py:288
 msgid "Two-factor authentication is already enabled."
 msgstr "Tvåfaktorsautentisering är redan aktiverad."
 
-#: apps/accounts/views.py:340
+#: apps/accounts/views.py:347
 msgid "Two-factor authentication turned off."
 msgstr "Tvåfaktorsautentisering avstängd."
+
+#: apps/accounts/views.py:381
+msgid ""
+"You're the only superuser on this instance — promote another account to "
+"superuser first, or this instance would have no one left who can reach "
+"Django admin."
+msgstr ""
+"Du är den enda superanvändaren på den här instansen — befordra ett annat "
+"konto till superanvändare först, annars skulle den här instansen inte ha "
+"någon kvar som kan nå Django-administrationen."
+
+#: apps/accounts/views.py:399
+msgid "Your account and all its data have been deleted."
+msgstr "Ditt konto och alla dess uppgifter har raderats."
 
 #: apps/activities/forms.py:25
 msgid "Duration (minutes)"
@@ -473,7 +495,7 @@ msgstr "Du har nått ditt max antal API-nycklar."
 msgid "API key revoked."
 msgstr "API-nyckeln har återkallats."
 
-#: apps/core/admin.py:17 templates/accounts/profile.html:105
+#: apps/core/admin.py:17 templates/accounts/profile.html:113
 msgid "Administration"
 msgstr "Administration"
 
@@ -2366,6 +2388,108 @@ msgstr ""
 msgid "Save"
 msgstr "Spara"
 
+#: templates/accounts/_privacy_notice_modal.html:19
+#: templates/accounts/_privacy_notice_modal.html:23
+#: templates/accounts/_privacy_notice_modal.html:26
+msgid "Privacy notice"
+msgstr "Integritetspolicy"
+
+#: templates/accounts/_privacy_notice_modal.html:27
+#: templates/accounts/profile.html:176 templates/api/key_list.html:20
+#: templates/base.html:92 templates/nutrition/_month_calendar.html:67
+#: templates/records/_pr_toasts.html:28
+msgid "Dismiss"
+msgstr "Stäng"
+
+#: templates/accounts/_privacy_notice_modal.html:30
+msgid ""
+"IronStack is self-hosted, open-source software — the person or organization "
+"running this particular installation (not the software's authors) is who's "
+"responsible for the data on it, and who you should contact about any of the "
+"below."
+msgstr ""
+"IronStack är självhostad programvara med öppen källkod — den person eller "
+"organisation som driver just den här installationen (inte programvarans "
+"upphovspersoner) ansvarar för uppgifterna på den, och är den du bör kontakta "
+"angående något av nedanstående."
+
+#: templates/accounts/_privacy_notice_modal.html:31
+msgid "What's collected"
+msgstr "Vad som samlas in"
+
+#: templates/accounts/_privacy_notice_modal.html:32
+msgid ""
+"Your account details (username, and optionally your name and email address), "
+"and whatever you choose to log: workout history, body measurements, "
+"nutrition and diet data, and other activities. Technical data such as your "
+"IP address is used briefly for rate-limiting and security (e.g. blocking "
+"repeated failed login attempts), not stored as part of your account."
+msgstr ""
+"Dina kontouppgifter (användarnamn, och valfritt ditt namn och din e-"
+"postadress), samt allt du väljer att logga: träningshistorik, kroppsmått, "
+"kost- och dietdata samt andra aktiviteter. Tekniska uppgifter som din IP-"
+"adress används kortvarigt för hastighetsbegränsning och säkerhet (t.ex. att "
+"blockera upprepade misslyckade inloggningsförsök), och sparas inte som en "
+"del av ditt konto."
+
+#: templates/accounts/_privacy_notice_modal.html:33
+msgid "Why"
+msgstr "Varför"
+
+#: templates/accounts/_privacy_notice_modal.html:34
+msgid ""
+"Solely to provide the tracking features you're using — nothing here is "
+"shared with, sold to, or processed by any third party, except the few "
+"optional integrations you have to explicitly turn on yourself (e.g. an "
+"OpenFoodFacts lookup, a Gravatar picture, Authentik single sign-on)."
+msgstr ""
+"Enbart för att tillhandahålla de spårningsfunktioner du använder — inget av "
+"detta delas med, säljs till eller behandlas av någon tredje part, förutom de "
+"få valfria integrationer du själv uttryckligen måste aktivera (t.ex. en "
+"OpenFoodFacts-sökning, en Gravatar-bild, Authentik-inloggning)."
+
+#: templates/accounts/_privacy_notice_modal.html:35
+msgid "Your rights"
+msgstr "Dina rättigheter"
+
+#: templates/accounts/_privacy_notice_modal.html:37
+msgid ""
+"Access and rectification — everything you've logged is visible and editable "
+"directly in the app."
+msgstr ""
+"Åtkomst och rättelse — allt du har loggat är synligt och redigerbart direkt "
+"i appen."
+
+#: templates/accounts/_privacy_notice_modal.html:38
+msgid ""
+"Erasure — Profile → \"Delete account\" permanently deletes your account and "
+"everything exclusively tied to it."
+msgstr ""
+"Radering — Profil → \"Radera konto\" raderar permanent ditt konto och allt "
+"som uteslutande hör till det."
+
+#: templates/accounts/_privacy_notice_modal.html:39
+msgid ""
+"Portability — the public API (Profile → \"API keys\") can export your own "
+"data in a structured format."
+msgstr ""
+"Portabilitet — det publika API:et (Profil → \"API-nycklar\") kan exportera "
+"dina egna uppgifter i ett strukturerat format."
+
+#: templates/accounts/_privacy_notice_modal.html:41
+msgid "Retention"
+msgstr "Lagringstid"
+
+#: templates/accounts/_privacy_notice_modal.html:42
+msgid ""
+"Kept for as long as your account exists. A backup made before you delete "
+"anything may still contain it until that backup itself is rotated out — see "
+"the account deletion page for details."
+msgstr ""
+"Sparas så länge ditt konto finns. En säkerhetskopia som gjorts innan du "
+"raderar något kan fortfarande innehålla det tills säkerhetskopian själv "
+"roteras bort — se sidan för kontoradering för detaljer."
+
 #: templates/accounts/_two_factor_backup_codes_fragment.html:4
 msgid ""
 "Each one works once, if you ever lose access to your authenticator app. They "
@@ -2381,6 +2505,60 @@ msgstr ""
 msgid "Done"
 msgstr "Klar"
 
+#: templates/accounts/account_delete.html:3
+#: templates/accounts/account_delete.html:6 templates/accounts/profile.html:151
+msgid "Delete account"
+msgstr "Radera konto"
+
+#: templates/accounts/account_delete.html:10
+msgid ""
+"This permanently deletes your account and everything tied to it: your "
+"profile, workout history, personal records, body measurements, nutrition "
+"diary and targets, diet plans, activities, feedback, and API keys. This "
+"can't be undone."
+msgstr ""
+"Detta raderar permanent ditt konto och allt kopplat till det: din profil, "
+"träningshistorik, personliga rekord, kroppsmått, kostdagbok och mål, "
+"kostplaner, aktiviteter, feedback och API-nycklar. Detta kan inte ångras."
+
+#: templates/accounts/account_delete.html:11
+msgid ""
+"A custom exercise, food, recipe, program, or measurement/activity type you "
+"created is kept, not deleted, if anyone else on this instance is already "
+"using it — it's just no longer credited to your account."
+msgstr ""
+"En anpassad övning, mat, ett recept, program eller mätnings-/aktivitetstyp "
+"du skapat behålls, raderas inte, om någon annan på den här instansen redan "
+"använder den — den krediteras bara inte längre ditt konto."
+
+#: templates/accounts/account_delete.html:12
+msgid ""
+"A backup made before you deleted your account may still contain your data "
+"until it's rotated out by this instance's own backup retention setting."
+msgstr ""
+"En säkerhetskopia som gjordes innan du raderade ditt konto kan fortfarande "
+"innehålla dina uppgifter tills den roteras bort enligt instansens egen "
+"inställning för säkerhetskopiors lagringstid."
+
+#: templates/accounts/account_delete.html:25
+msgid ""
+"Your account is linked to Authentik, so there's no local password to confirm "
+"with — type your username instead."
+msgstr ""
+"Ditt konto är kopplat till Authentik, så det finns inget lokalt lösenord att "
+"bekräfta med — skriv ditt användarnamn istället."
+
+#: templates/accounts/account_delete.html:32
+msgid "Permanently delete my account"
+msgstr "Radera mitt konto permanent"
+
+#: templates/accounts/account_delete.html:34
+#: templates/accounts/two_factor_disable.html:23
+#: templates/accounts/two_factor_setup.html:26
+#: templates/programs/program_confirm_delete.html:16
+msgid "Cancel"
+msgstr "Avbryt"
+
 #: templates/accounts/account_details_form.html:3
 #: templates/accounts/account_details_form.html:6
 #: templates/accounts/profile.html:51
@@ -2388,6 +2566,7 @@ msgid "Account details"
 msgstr "Kontouppgifter"
 
 #: templates/accounts/account_details_form.html:23
+#: templates/accounts/data_export.html:43
 #: templates/accounts/two_factor_manage.html:35 templates/api/key_list.html:155
 #: templates/core/backup_list.html:88 templates/core/feedback_form.html:25
 #: templates/core/feedback_list.html:58 templates/core/seo_settings.html:26
@@ -2395,6 +2574,26 @@ msgstr "Kontouppgifter"
 #: templates/registration/password_change_form.html:23
 msgid "Back to profile"
 msgstr "Tillbaka till profilen"
+
+#: templates/accounts/data_export.html:3 templates/accounts/data_export.html:6
+#: templates/accounts/profile.html:95
+msgid "Download your data"
+msgstr "Ladda ner dina uppgifter"
+
+#: templates/accounts/data_export.html:10
+msgid ""
+"Everything below is exclusively yours — the same data shown as tables here "
+"can be downloaded as a single JSON file, or as a .zip of spreadsheet-ready "
+"CSV files, one per section."
+msgstr "Allt nedan tillhör uteslutande dig — samma data som visas som tabeller här kan laddas ner som en enda JSON-fil, eller som en .zip med kalkylbladsklara CSV-filer, en per sektion."
+
+#: templates/accounts/data_export.html:12
+msgid "Download as JSON"
+msgstr "Ladda ner som JSON"
+
+#: templates/accounts/data_export.html:13
+msgid "Download as CSV (.zip)"
+msgstr "Ladda ner som CSV (.zip)"
 
 #: templates/accounts/profile.html:46
 msgid "Save preferences"
@@ -2405,9 +2604,10 @@ msgid "Update your username, name, and email address."
 msgstr "Uppdatera ditt användarnamn, namn och e-postadress."
 
 #: templates/accounts/profile.html:54 templates/accounts/profile.html:66
-#: templates/accounts/profile.html:90 templates/accounts/profile.html:99
-#: templates/accounts/profile.html:111 templates/accounts/profile.html:119
+#: templates/accounts/profile.html:90 templates/accounts/profile.html:98
+#: templates/accounts/profile.html:107 templates/accounts/profile.html:119
 #: templates/accounts/profile.html:127 templates/accounts/profile.html:135
+#: templates/accounts/profile.html:143 templates/accounts/profile.html:154
 #: templates/nutrition/calculators_home.html:16
 #: templates/nutrition/calculators_home.html:24
 #: templates/nutrition/calculators_home.html:32
@@ -2465,67 +2665,69 @@ msgid "Manage keys other apps can use to access your data."
 msgstr ""
 "Hantera nycklar som andra appar kan använda för att komma åt dina data."
 
-#: templates/accounts/profile.html:96 templates/accounts/profile.html:124
+#: templates/accounts/profile.html:96
+msgid "Browse everything you've logged, or download it as JSON or CSV."
+msgstr "Bläddra bland allt du har loggat, eller ladda ner det som JSON eller CSV."
+
+#: templates/accounts/profile.html:104 templates/accounts/profile.html:132
 #: templates/core/feedback_form.html:3 templates/core/feedback_form.html:6
 #: templates/core/feedback_list.html:3 templates/core/feedback_list.html:6
 msgid "Feedback"
 msgstr "Feedback"
 
-#: templates/accounts/profile.html:97
+#: templates/accounts/profile.html:105
 msgid "Report a bug, request something, or tell us what's confusing."
 msgstr ""
 "Rapportera en bugg, önska något, eller berätta vad som känns förvirrande."
 
-#: templates/accounts/profile.html:108
+#: templates/accounts/profile.html:116
 msgid "Admin"
 msgstr "Admin"
 
-#: templates/accounts/profile.html:109
+#: templates/accounts/profile.html:117
 msgid "Manage tiers, keys, and reference data across the whole instance."
 msgstr "Hantera nivåer, nycklar och referensdata över hela instansen."
 
-#: templates/accounts/profile.html:116 templates/core/backup_list.html:3
+#: templates/accounts/profile.html:124 templates/core/backup_list.html:3
 #: templates/core/backup_list.html:6
 msgid "Backups"
 msgstr "Säkerhetskopior"
 
-#: templates/accounts/profile.html:117
+#: templates/accounts/profile.html:125
 msgid "Create, download, and restore full backups of this instance."
 msgstr ""
 "Skapa, ladda ner och återställ fullständiga säkerhetskopior av den här "
 "instansen."
 
-#: templates/accounts/profile.html:125
+#: templates/accounts/profile.html:133
 msgid "Read what users have submitted, and turn submissions on or off."
 msgstr "Läs vad användare har skickat in, och slå på eller av inskickning."
 
-#: templates/accounts/profile.html:132 templates/core/seo_settings.html:3
+#: templates/accounts/profile.html:140 templates/core/seo_settings.html:3
 #: templates/core/seo_settings.html:6
 msgid "Site & SEO"
 msgstr "Webbplats och SEO"
 
-#: templates/accounts/profile.html:133
+#: templates/accounts/profile.html:141
 msgid "Control whether search engines are allowed to index this instance."
 msgstr "Styr om sökmotorer får indexera denna instans."
 
-#: templates/accounts/profile.html:142
+#: templates/accounts/profile.html:152
+msgid "Permanently delete your account and everything tied to it."
+msgstr "Radera ditt konto och allt kopplat till det permanent."
+
+#: templates/accounts/profile.html:160
 msgid "Log out"
 msgstr "Logga ut"
 
-#: templates/accounts/profile.html:147
+#: templates/accounts/profile.html:167
 #, python-format
 msgid "IronStack version %(version)s"
 msgstr "IronStack version %(version)s"
 
-#: templates/accounts/profile.html:152 templates/accounts/profile.html:155
+#: templates/accounts/profile.html:172 templates/accounts/profile.html:175
 msgid "Changelog"
 msgstr "Ändringslogg"
-
-#: templates/accounts/profile.html:156 templates/api/key_list.html:20
-#: templates/base.html:92 templates/nutrition/_month_calendar.html:67
-#: templates/records/_pr_toasts.html:28
-msgid "Dismiss"
-msgstr "Stäng"
 
 #: templates/accounts/signup.html:3 templates/accounts/signup.html:19
 msgid "Sign up"
@@ -2572,12 +2774,6 @@ msgid ""
 msgstr ""
 "Ange ditt lösenord för att bekräfta. Detta tar bort din autentiseringsapp "
 "och dina återstående reservkoder."
-
-#: templates/accounts/two_factor_disable.html:23
-#: templates/accounts/two_factor_setup.html:26
-#: templates/programs/program_confirm_delete.html:16
-msgid "Cancel"
-msgstr "Avbryt"
 
 #: templates/accounts/two_factor_manage.html:10
 msgid "Two-factor authentication is enabled on your account."

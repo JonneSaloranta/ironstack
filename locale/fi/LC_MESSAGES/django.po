@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: IronStack\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-27 16:47+0000\n"
+"POT-Creation-Date: 2026-08-27 17:35+0000\n"
 "Language: fi\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -38,7 +38,7 @@ msgstr ""
 msgid "Timezone"
 msgstr "Aikavyöhyke"
 
-#: apps/accounts/forms.py:250 apps/accounts/forms.py:479
+#: apps/accounts/forms.py:250 apps/accounts/forms.py:512
 #: templates/api/key_list.html:34
 msgid "Units"
 msgstr "Yksiköt"
@@ -114,12 +114,12 @@ msgstr ""
 "tämä sovellus ottaa yhteyttä oman palvelimesi ulkopuoliseen palvelimeen — "
 "joka näkee tällöin sähköpostiosoitteesi tiivisteen ja IP-osoitteesi."
 
-#: apps/accounts/forms.py:296 apps/accounts/forms.py:500
+#: apps/accounts/forms.py:296 apps/accounts/forms.py:533
 #: apps/nutrition/forms.py:39 apps/nutrition/forms.py:432
 msgid "Height (cm)"
 msgstr "Pituus (cm)"
 
-#: apps/accounts/forms.py:296 apps/accounts/forms.py:500
+#: apps/accounts/forms.py:296 apps/accounts/forms.py:533
 #: apps/nutrition/forms.py:39 apps/nutrition/forms.py:432
 msgid "Height (in)"
 msgstr "Pituus (in)"
@@ -140,19 +140,27 @@ msgstr "Liian monta väärää koodia. Yritä uudelleen muutaman minuutin kulutt
 msgid "Incorrect code."
 msgstr "Väärä koodi."
 
-#: apps/accounts/forms.py:403
+#: apps/accounts/forms.py:403 apps/accounts/forms.py:429
 msgid "Password"
 msgstr "Salasana"
 
-#: apps/accounts/forms.py:412
+#: apps/accounts/forms.py:412 apps/accounts/forms.py:443
 msgid "Incorrect password."
 msgstr "Väärä salasana."
 
-#: apps/accounts/forms.py:436
+#: apps/accounts/forms.py:432
+msgid "Type your username to confirm"
+msgstr "Kirjoita käyttäjätunnuksesi vahvistaaksesi"
+
+#: apps/accounts/forms.py:445
+msgid "Doesn't match your username."
+msgstr "Ei täsmää käyttäjätunnukseesi."
+
+#: apps/accounts/forms.py:469
 msgid "First name"
 msgstr "Etunimi"
 
-#: apps/accounts/forms.py:438
+#: apps/accounts/forms.py:471
 msgid ""
 "Used to personalize your dashboard greeting, and next to your username "
 "wherever your activity is shown to others (if you allow that in your "
@@ -162,11 +170,11 @@ msgstr ""
 "kaikkialla, missä aktiviteettisi näytetään muille (jos sallit sen "
 "profiilissasi)."
 
-#: apps/accounts/forms.py:445
+#: apps/accounts/forms.py:478
 msgid "Email"
 msgstr "Sähköposti"
 
-#: apps/accounts/forms.py:447
+#: apps/accounts/forms.py:480
 msgid ""
 "Used only for password-reset emails if you ever get locked out. Never shown "
 "to other users."
@@ -174,7 +182,7 @@ msgstr ""
 "Käytetään vain salasanan palautusviesteihin, jos jäät joskus lukkoon "
 "tilistäsi. Ei näytetä koskaan muille käyttäjille."
 
-#: apps/accounts/forms.py:457
+#: apps/accounts/forms.py:490
 msgid ""
 "Logged as your first body-weight entry, so your progress charts have a "
 "starting point. Leave blank and log it anytime from the Body weight page "
@@ -184,7 +192,7 @@ msgstr ""
 "on lähtöpiste. Voit myös jättää tämän tyhjäksi ja kirjata painon milloin "
 "tahansa Kehon paino -sivulta."
 
-#: apps/accounts/forms.py:472
+#: apps/accounts/forms.py:505
 msgid ""
 "Used together with a logged body weight to show your BMI. Leave blank to "
 "skip this — you can add it anytime from your profile."
@@ -192,7 +200,7 @@ msgstr ""
 "Näytetään BMI:si yhdessä kirjatun painon kanssa. Jätä tyhjäksi ohittaaksesi "
 "tämän — voit lisätä sen milloin tahansa profiilistasi."
 
-#: apps/accounts/forms.py:481
+#: apps/accounts/forms.py:514
 msgid ""
 "Sets whether weights and distances are shown in kg/km or lb/mi throughout "
 "the app. Change this anytime from your profile."
@@ -200,13 +208,13 @@ msgstr ""
 "Määrittää, näytetäänkö painot ja matkat sovelluksessa yksiköissä kg/km vai "
 "lb/mi. Voit muuttaa tätä milloin tahansa profiilistasi."
 
-#: apps/accounts/forms.py:495 apps/nutrition/forms.py:40
+#: apps/accounts/forms.py:528 apps/nutrition/forms.py:40
 #: apps/nutrition/forms.py:441 apps/nutrition/forms.py:645
 #, python-format
 msgid "Current weight (%(unit)s)"
 msgstr "Nykyinen paino (%(unit)s)"
 
-#: apps/accounts/forms.py:497
+#: apps/accounts/forms.py:530
 msgid "Current weight"
 msgstr "Nykyinen paino"
 
@@ -226,29 +234,43 @@ msgstr ""
 "Näytetään alatunnisteessa kirjautumis- ja rekisteröitymissivuilla. Jätä "
 "tyhjäksi piilottaaksesi sen kokonaan."
 
-#: apps/accounts/views.py:42 apps/accounts/views.py:49
+#: apps/accounts/views.py:49 apps/accounts/views.py:56
 msgid "Registration is currently closed."
 msgstr "Rekisteröityminen on tällä hetkellä suljettu."
 
-#: apps/accounts/views.py:92 apps/accounts/views.py:135
+#: apps/accounts/views.py:99 apps/accounts/views.py:142
 msgid "Password login is disabled on this instance."
 msgstr "Salasanalla kirjautuminen on poistettu käytöstä tässä palvelussa."
 
-#: apps/accounts/views.py:168
+#: apps/accounts/views.py:175
 msgid "Preferences saved."
 msgstr "Asetukset tallennettu."
 
-#: apps/accounts/views.py:188
+#: apps/accounts/views.py:195
 msgid "Account details saved."
 msgstr "Tilin tiedot tallennettu."
 
-#: apps/accounts/views.py:281
+#: apps/accounts/views.py:288
 msgid "Two-factor authentication is already enabled."
 msgstr "Kaksivaiheinen tunnistautuminen on jo käytössä."
 
-#: apps/accounts/views.py:340
+#: apps/accounts/views.py:347
 msgid "Two-factor authentication turned off."
 msgstr "Kaksivaiheinen tunnistautuminen poistettu käytöstä."
+
+#: apps/accounts/views.py:381
+msgid ""
+"You're the only superuser on this instance — promote another account to "
+"superuser first, or this instance would have no one left who can reach "
+"Django admin."
+msgstr ""
+"Olet tämän asennuksen ainoa pääkäyttäjä — ylennä toinen tili pääkäyttäjäksi "
+"ensin, tai tällä asennuksella ei olisi enää ketään joka pääsee Django-"
+"ylläpitoon."
+
+#: apps/accounts/views.py:399
+msgid "Your account and all its data have been deleted."
+msgstr "Käyttäjätilisi ja kaikki sen tiedot on poistettu."
 
 #: apps/activities/forms.py:25
 msgid "Duration (minutes)"
@@ -476,7 +498,7 @@ msgstr "Olet saavuttanut API-avainten enimmäismäärän."
 msgid "API key revoked."
 msgstr "API-avain peruutettu."
 
-#: apps/core/admin.py:17 templates/accounts/profile.html:105
+#: apps/core/admin.py:17 templates/accounts/profile.html:113
 msgid "Administration"
 msgstr "Hallinta"
 
@@ -2385,6 +2407,108 @@ msgstr ""
 msgid "Save"
 msgstr "Tallenna"
 
+#: templates/accounts/_privacy_notice_modal.html:19
+#: templates/accounts/_privacy_notice_modal.html:23
+#: templates/accounts/_privacy_notice_modal.html:26
+msgid "Privacy notice"
+msgstr "Tietosuojaseloste"
+
+#: templates/accounts/_privacy_notice_modal.html:27
+#: templates/accounts/profile.html:176 templates/api/key_list.html:20
+#: templates/base.html:92 templates/nutrition/_month_calendar.html:67
+#: templates/records/_pr_toasts.html:28
+msgid "Dismiss"
+msgstr "Sulje"
+
+#: templates/accounts/_privacy_notice_modal.html:30
+msgid ""
+"IronStack is self-hosted, open-source software — the person or organization "
+"running this particular installation (not the software's authors) is who's "
+"responsible for the data on it, and who you should contact about any of the "
+"below."
+msgstr ""
+"IronStack on itseisännöity, avoimen lähdekoodin ohjelmisto — tämän tietyn "
+"asennuksen ylläpitäjä (ei ohjelmiston tekijät) vastaa siihen tallennetuista "
+"tiedoista, ja häneen kannattaa olla yhteydessä alla olevissa asioissa."
+
+#: templates/accounts/_privacy_notice_modal.html:31
+msgid "What's collected"
+msgstr "Mitä kerätään"
+
+#: templates/accounts/_privacy_notice_modal.html:32
+msgid ""
+"Your account details (username, and optionally your name and email address), "
+"and whatever you choose to log: workout history, body measurements, "
+"nutrition and diet data, and other activities. Technical data such as your "
+"IP address is used briefly for rate-limiting and security (e.g. blocking "
+"repeated failed login attempts), not stored as part of your account."
+msgstr ""
+"Käyttäjätilisi tiedot (käyttäjätunnus ja halutessasi nimesi ja "
+"sähköpostiosoitteesi) sekä kaikki mitä päätät kirjata: treenihistoria, kehon "
+"mittaukset, ravinto- ja dieettitiedot sekä muut aktiviteetit. Teknisiä "
+"tietoja, kuten IP-osoitettasi, käytetään lyhyesti nopeusrajoitukseen ja "
+"tietoturvaan (esim. toistuvien epäonnistuneiden kirjautumisyritysten "
+"estämiseen) — sitä ei tallenneta osana käyttäjätiliäsi."
+
+#: templates/accounts/_privacy_notice_modal.html:33
+msgid "Why"
+msgstr "Miksi"
+
+#: templates/accounts/_privacy_notice_modal.html:34
+msgid ""
+"Solely to provide the tracking features you're using — nothing here is "
+"shared with, sold to, or processed by any third party, except the few "
+"optional integrations you have to explicitly turn on yourself (e.g. an "
+"OpenFoodFacts lookup, a Gravatar picture, Authentik single sign-on)."
+msgstr ""
+"Ainoastaan tarjotaksemme käyttämiäsi seurantaominaisuuksia — mitään tästä ei "
+"jaeta, myydä tai käsitellä minkään kolmannen osapuolen toimesta, lukuun "
+"ottamatta muutamaa valinnaista integraatiota jotka sinun täytyy itse "
+"erikseen ottaa käyttöön (esim. OpenFoodFacts-haku, Gravatar-kuva, Authentik-"
+"kertakirjautuminen)."
+
+#: templates/accounts/_privacy_notice_modal.html:35
+msgid "Your rights"
+msgstr "Oikeutesi"
+
+#: templates/accounts/_privacy_notice_modal.html:37
+msgid ""
+"Access and rectification — everything you've logged is visible and editable "
+"directly in the app."
+msgstr ""
+"Pääsy ja oikaisu — kaikki kirjaamasi näkyy ja on muokattavissa suoraan "
+"sovelluksessa."
+
+#: templates/accounts/_privacy_notice_modal.html:38
+msgid ""
+"Erasure — Profile → \"Delete account\" permanently deletes your account and "
+"everything exclusively tied to it."
+msgstr ""
+"Poisto-oikeus — Profiili → \"Poista käyttäjätili\" poistaa pysyvästi "
+"käyttäjätilisi ja kaiken siihen yksinomaan liittyvän."
+
+#: templates/accounts/_privacy_notice_modal.html:39
+msgid ""
+"Portability — the public API (Profile → \"API keys\") can export your own "
+"data in a structured format."
+msgstr ""
+"Siirrettävyys — julkinen API (Profiili → \"API-avaimet\") voi viedä omat "
+"tietosi jäsennellyssä muodossa."
+
+#: templates/accounts/_privacy_notice_modal.html:41
+msgid "Retention"
+msgstr "Säilytysaika"
+
+#: templates/accounts/_privacy_notice_modal.html:42
+msgid ""
+"Kept for as long as your account exists. A backup made before you delete "
+"anything may still contain it until that backup itself is rotated out — see "
+"the account deletion page for details."
+msgstr ""
+"Säilytetään niin kauan kuin käyttäjätilisi on olemassa. Ennen poistoa tehty "
+"varmuuskopio voi yhä sisältää tietoja kunnes se poistuu käytöstä — katso "
+"tarkemmat tiedot tilin poistosivulta."
+
 #: templates/accounts/_two_factor_backup_codes_fragment.html:4
 msgid ""
 "Each one works once, if you ever lose access to your authenticator app. They "
@@ -2400,6 +2524,61 @@ msgstr ""
 msgid "Done"
 msgstr "Valmis"
 
+#: templates/accounts/account_delete.html:3
+#: templates/accounts/account_delete.html:6 templates/accounts/profile.html:151
+msgid "Delete account"
+msgstr "Poista käyttäjätili"
+
+#: templates/accounts/account_delete.html:10
+msgid ""
+"This permanently deletes your account and everything tied to it: your "
+"profile, workout history, personal records, body measurements, nutrition "
+"diary and targets, diet plans, activities, feedback, and API keys. This "
+"can't be undone."
+msgstr ""
+"Tämä poistaa pysyvästi käyttäjätilisi ja kaiken siihen liittyvän: "
+"profiilisi, treenihistorian, ennätykset, kehon mittaukset, "
+"ravintopäiväkirjan ja tavoitteet, dieettisuunnitelmat, aktiviteetit, "
+"palautteen ja API-avaimet. Tätä ei voi peruuttaa."
+
+#: templates/accounts/account_delete.html:11
+msgid ""
+"A custom exercise, food, recipe, program, or measurement/activity type you "
+"created is kept, not deleted, if anyone else on this instance is already "
+"using it — it's just no longer credited to your account."
+msgstr ""
+"Luomasi mukautettu liike, ruoka, resepti, ohjelma tai mittaus-/"
+"aktiviteettityyppi säilytetään, ei poisteta, jos joku muu tällä asennuksella "
+"käyttää sitä jo — sitä ei vain enää liitetä käyttäjätiliisi."
+
+#: templates/accounts/account_delete.html:12
+msgid ""
+"A backup made before you deleted your account may still contain your data "
+"until it's rotated out by this instance's own backup retention setting."
+msgstr ""
+"Ennen tilisi poistamista tehty varmuuskopio voi yhä sisältää tietojasi "
+"kunnes se poistuu tämän asennuksen oman varmuuskopioiden säilytysasetuksen "
+"mukaisesti."
+
+#: templates/accounts/account_delete.html:25
+msgid ""
+"Your account is linked to Authentik, so there's no local password to confirm "
+"with — type your username instead."
+msgstr ""
+"Käyttäjätilisi on yhdistetty Authentikiin, joten paikallista salasanaa ei "
+"ole vahvistusta varten — kirjoita sen sijaan käyttäjätunnuksesi."
+
+#: templates/accounts/account_delete.html:32
+msgid "Permanently delete my account"
+msgstr "Poista käyttäjätilini pysyvästi"
+
+#: templates/accounts/account_delete.html:34
+#: templates/accounts/two_factor_disable.html:23
+#: templates/accounts/two_factor_setup.html:26
+#: templates/programs/program_confirm_delete.html:16
+msgid "Cancel"
+msgstr "Peruuta"
+
 #: templates/accounts/account_details_form.html:3
 #: templates/accounts/account_details_form.html:6
 #: templates/accounts/profile.html:51
@@ -2407,6 +2586,7 @@ msgid "Account details"
 msgstr "Tilin tiedot"
 
 #: templates/accounts/account_details_form.html:23
+#: templates/accounts/data_export.html:43
 #: templates/accounts/two_factor_manage.html:35 templates/api/key_list.html:155
 #: templates/core/backup_list.html:88 templates/core/feedback_form.html:25
 #: templates/core/feedback_list.html:58 templates/core/seo_settings.html:26
@@ -2414,6 +2594,26 @@ msgstr "Tilin tiedot"
 #: templates/registration/password_change_form.html:23
 msgid "Back to profile"
 msgstr "Takaisin profiiliin"
+
+#: templates/accounts/data_export.html:3 templates/accounts/data_export.html:6
+#: templates/accounts/profile.html:95
+msgid "Download your data"
+msgstr "Lataa tietosi"
+
+#: templates/accounts/data_export.html:10
+msgid ""
+"Everything below is exclusively yours — the same data shown as tables here "
+"can be downloaded as a single JSON file, or as a .zip of spreadsheet-ready "
+"CSV files, one per section."
+msgstr "Kaikki alla oleva on yksinomaan sinun — samat taulukoina näkyvät tiedot voidaan ladata yhtenä JSON-tiedostona tai .zip-pakettina taulukkolaskentaan sopivia CSV-tiedostoja, yksi per osio."
+
+#: templates/accounts/data_export.html:12
+msgid "Download as JSON"
+msgstr "Lataa JSON-muodossa"
+
+#: templates/accounts/data_export.html:13
+msgid "Download as CSV (.zip)"
+msgstr "Lataa CSV-muodossa (.zip)"
 
 #: templates/accounts/profile.html:46
 msgid "Save preferences"
@@ -2424,9 +2624,10 @@ msgid "Update your username, name, and email address."
 msgstr "Päivitä käyttäjätunnuksesi, nimesi ja sähköpostiosoitteesi."
 
 #: templates/accounts/profile.html:54 templates/accounts/profile.html:66
-#: templates/accounts/profile.html:90 templates/accounts/profile.html:99
-#: templates/accounts/profile.html:111 templates/accounts/profile.html:119
+#: templates/accounts/profile.html:90 templates/accounts/profile.html:98
+#: templates/accounts/profile.html:107 templates/accounts/profile.html:119
 #: templates/accounts/profile.html:127 templates/accounts/profile.html:135
+#: templates/accounts/profile.html:143 templates/accounts/profile.html:154
 #: templates/nutrition/calculators_home.html:16
 #: templates/nutrition/calculators_home.html:24
 #: templates/nutrition/calculators_home.html:32
@@ -2483,66 +2684,68 @@ msgstr "API-avaimet"
 msgid "Manage keys other apps can use to access your data."
 msgstr "Hallitse avaimia, joilla muut sovellukset voivat käyttää tietojasi."
 
-#: templates/accounts/profile.html:96 templates/accounts/profile.html:124
+#: templates/accounts/profile.html:96
+msgid "Browse everything you've logged, or download it as JSON or CSV."
+msgstr "Selaa kaikkea kirjaamaasi, tai lataa se JSON- tai CSV-muodossa."
+
+#: templates/accounts/profile.html:104 templates/accounts/profile.html:132
 #: templates/core/feedback_form.html:3 templates/core/feedback_form.html:6
 #: templates/core/feedback_list.html:3 templates/core/feedback_list.html:6
 msgid "Feedback"
 msgstr "Palaute"
 
-#: templates/accounts/profile.html:97
+#: templates/accounts/profile.html:105
 msgid "Report a bug, request something, or tell us what's confusing."
 msgstr "Ilmoita bugista, ehdota jotain tai kerro, mikä on epäselvää."
 
-#: templates/accounts/profile.html:108
+#: templates/accounts/profile.html:116
 msgid "Admin"
 msgstr "Hallinta"
 
-#: templates/accounts/profile.html:109
+#: templates/accounts/profile.html:117
 msgid "Manage tiers, keys, and reference data across the whole instance."
 msgstr "Hallitse tasoja, avaimia ja viitetietoja koko palvelun laajuudelta."
 
-#: templates/accounts/profile.html:116 templates/core/backup_list.html:3
+#: templates/accounts/profile.html:124 templates/core/backup_list.html:3
 #: templates/core/backup_list.html:6
 msgid "Backups"
 msgstr "Varmuuskopiot"
 
-#: templates/accounts/profile.html:117
+#: templates/accounts/profile.html:125
 msgid "Create, download, and restore full backups of this instance."
 msgstr "Luo, lataa ja palauta täydellisiä varmuuskopioita tästä asennuksesta."
 
-#: templates/accounts/profile.html:125
+#: templates/accounts/profile.html:133
 msgid "Read what users have submitted, and turn submissions on or off."
 msgstr ""
 "Lue mitä käyttäjät ovat lähettäneet, ja kytke palautteen lähettäminen päälle "
 "tai pois."
 
-#: templates/accounts/profile.html:132 templates/core/seo_settings.html:3
+#: templates/accounts/profile.html:140 templates/core/seo_settings.html:3
 #: templates/core/seo_settings.html:6
 msgid "Site & SEO"
 msgstr "Sivusto ja hakukoneoptimointi"
 
-#: templates/accounts/profile.html:133
+#: templates/accounts/profile.html:141
 msgid "Control whether search engines are allowed to index this instance."
 msgstr "Hallitse saavatko hakukoneet indeksoida tämän asennuksen."
 
-#: templates/accounts/profile.html:142
+#: templates/accounts/profile.html:152
+msgid "Permanently delete your account and everything tied to it."
+msgstr "Poista käyttäjätilisi ja kaikki siihen liittyvä pysyvästi."
+
+#: templates/accounts/profile.html:160
 msgid "Log out"
 msgstr "Kirjaudu ulos"
 
-#: templates/accounts/profile.html:147
+#: templates/accounts/profile.html:167
 #, python-format
 msgid "IronStack version %(version)s"
 msgstr "IronStack versio %(version)s"
 
-#: templates/accounts/profile.html:152 templates/accounts/profile.html:155
+#: templates/accounts/profile.html:172 templates/accounts/profile.html:175
 msgid "Changelog"
 msgstr "Muutosloki"
-
-#: templates/accounts/profile.html:156 templates/api/key_list.html:20
-#: templates/base.html:92 templates/nutrition/_month_calendar.html:67
-#: templates/records/_pr_toasts.html:28
-msgid "Dismiss"
-msgstr "Sulje"
 
 #: templates/accounts/signup.html:3 templates/accounts/signup.html:19
 msgid "Sign up"
@@ -2589,12 +2792,6 @@ msgid ""
 msgstr ""
 "Vahvista antamalla salasanasi. Tämä poistaa tunnistautumissovelluksesi ja "
 "jäljellä olevat varakoodisi."
-
-#: templates/accounts/two_factor_disable.html:23
-#: templates/accounts/two_factor_setup.html:26
-#: templates/programs/program_confirm_delete.html:16
-msgid "Cancel"
-msgstr "Peruuta"
 
 #: templates/accounts/two_factor_manage.html:10
 msgid "Two-factor authentication is enabled on your account."
