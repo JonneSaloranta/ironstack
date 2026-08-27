@@ -2590,13 +2590,16 @@ class RecipeViewTests(TestCase):
         SeoSettings.objects.create(pk=1)
         # Session auth (2) + the recipe queryset + one bulk ingredient
         # query + base.html's training-FAB in-progress-session check +
-        # apps.core.context_processors.seo's own settings lookup (both
-        # context processors, run on every page) — flat regardless of
-        # recipe count, not one query per recipe. A future unrelated
+        # apps.core.context_processors.seo's own settings lookup + four
+        # more from apps.social.context_processors.social_badge (one
+        # cheap EXISTS each: pending friend requests, pending group
+        # invites, unread direct messages, unread group messages) —
+        # every context processor here runs on every page regardless
+        # of recipe count, not one query per recipe. A future unrelated
         # query added to this view is fine to bump this number a
         # little; a query count that scales with the number of recipes
         # is the actual regression to catch.
-        with self.assertNumQueries(6):
+        with self.assertNumQueries(10):
             self.client.get(reverse("nutrition:recipe-list"))
 
     def test_the_back_link_returns_to_the_nutrition_dashboard(self):
