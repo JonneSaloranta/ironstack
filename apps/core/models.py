@@ -107,6 +107,48 @@ class FeedbackSettings(models.Model):
         return "Feedback settings"
 
 
+class SeoSettings(models.Model):
+    """Singleton row (always pk=1 — see `load()`) holding the one knob
+    for whether this instance wants search engines to index it at all,
+    adjustable from Profile → Administration → Site & SEO without a
+    redeploy — same pattern as BackupSettings/FeedbackSettings above.
+
+    Defaults to *disallowed*: this app runs entirely on the operator's
+    own infrastructure and holds another person's private health data
+    (CLAUDE.md's own "self-hosted, mobile-first fitness tracker") —
+    the safe-by-default choice is a search engine never indexing it in
+    the first place, not an operator having to remember to opt out
+    the moment they stand up a fresh install. `apps.core.
+    context_processors.seo` reads this into every template's context
+    (the `<meta name="robots">` tag, `robots.txt`'s own body); nothing
+    caches it, so a change here takes effect on the very next request.
+    """
+
+    search_engine_indexing_enabled = models.BooleanField(
+        default=False,
+        help_text=_(
+            "Lets search engines crawl and index this instance. Off by default — most "
+            "installs are a private, self-hosted app for one household, not a public "
+            "site anyone should be searching for."
+        ),
+    )
+
+    def save(self, *args, **kwargs):
+        self.pk = 1
+        super().save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        pass  # singleton — deleting it would just silently recreate defaults on next load()
+
+    @classmethod
+    def load(cls):
+        obj, _created = cls.objects.get_or_create(pk=1)
+        return obj
+
+    def __str__(self):
+        return "SEO settings"
+
+
 class Feedback(TimeStampedModel):
     """A free-text note from a user about the application itself (a bug,
     a request, a "this is confusing" — not fitness data), submitted from

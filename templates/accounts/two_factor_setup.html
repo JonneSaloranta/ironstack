@@ -6,38 +6,22 @@
   <h1 style="margin:0;">{% trans "Two-factor authentication" %}</h1>
 </div>
 
-{% if just_enabled %}
-  <div class="card">
-    <p>{% trans "Two-factor authentication is now enabled." %}</p>
-  </div>
-  <div class="card">
-    <strong>{% trans "Save these backup codes" %}</strong>
-    <p class="text-muted">{% trans "Each one works once, if you ever lose access to your authenticator app. They won't be shown again — save them somewhere safe now." %}</p>
-    <ul>
-      {% for code in backup_codes %}
-        <li><code>{{ code }}</code></li>
-      {% endfor %}
-    </ul>
-  </div>
-  <p><a class="button" href="{% url 'profile' %}">{% trans "Done" %}</a></p>
-{% else %}
-  <div class="card">
-    <p>{% trans "Scan this QR code with an authenticator app (e.g. Google Authenticator, Authy, or a password manager with built-in support), then enter the 6-digit code it shows to confirm setup." %}</p>
-    <img src="{{ qr_code_data_uri }}" alt="{% trans "Two-factor authentication QR code" %}" width="200" height="200">
-    <p class="text-muted">{% trans "Can't scan the code? Enter this key manually:" %} <code>{{ secret }}</code></p>
-  </div>
-  <form class="card" method="post">
-    {% csrf_token %}
-    {{ form.non_field_errors }}
-    {% for field in form %}
-      <div class="field">
-        {{ field.label_tag }}
-        {{ field }}
-        {% if field.errors %}<p class="field-error">{{ field.errors|striptags }}</p>{% endif %}
-      </div>
-    {% endfor %}
-    <button type="submit">{% trans "Confirm and enable" %}</button>
-  </form>
-  <p><a class="button-secondary" href="{% url 'profile' %}">&larr; {% trans "Cancel" %}</a></p>
-{% endif %}
+<div class="card">
+  <p>{% trans "Scan this QR code with an authenticator app (e.g. Google Authenticator, Authy, or a password manager with built-in support), then enter the 6-digit code it shows to confirm setup." %}</p>
+  <img src="{{ qr_code_data_uri }}" alt="{% trans "Two-factor authentication QR code" %}" width="200" height="200">
+  <p class="text-muted">{% trans "Can't scan the code? Enter this key manually:" %} <code>{{ secret }}</code></p>
+</div>
+<form class="card" method="post">
+  {% csrf_token %}
+  {{ form.non_field_errors }}
+  {% for field in form %}
+    <div class="field">
+      {{ field.label_tag }}
+      {{ field }}
+      {% if field.errors %}<p class="field-error">{{ field.errors|striptags }}</p>{% endif %}
+    </div>
+  {% endfor %}
+  <button type="submit">{% trans "Confirm and enable" %}</button>
+</form>
+<p><a class="button-secondary" href="{% url 'profile' %}">&larr; {% trans "Cancel" %}</a></p>
 {% endblock %}

@@ -1,5 +1,8 @@
 import hashlib
+import io
+import json
 import re
+import zipfile
 from decimal import Decimal
 from urllib.parse import urlparse
 
@@ -617,8 +620,8 @@ class ProfileViewTests(TestCase):
         an explicit .button-secondary as the only link."""
         response = self.client.get(reverse("profile"))
         # Account details, Change password, Two-factor authentication,
-        # API keys, Feedback.
-        self.assertContains(response, 'class="card card-action-row"', count=5)
+        # API keys, Download your data, Feedback, Delete account.
+        self.assertContains(response, 'class="card card-action-row"', count=7)
         self.assertContains(
             response, f'<a class="button-secondary" href="{reverse("account-details")}">'
         )
@@ -635,9 +638,10 @@ class ProfileViewTests(TestCase):
         self.alice.save()
         response = self.client.get(reverse("profile"))
         # Account details, Change password, Two-factor authentication,
-        # API keys, Feedback + Admin, Backups, Feedback (the latter
-        # three inside the staff-only "danger zone").
-        self.assertContains(response, 'class="card card-action-row"', count=8)
+        # API keys, Download your data, Feedback, Delete account +
+        # Admin, Backups, Feedback, Site & SEO (the latter four inside
+        # the staff-only "danger zone").
+        self.assertContains(response, 'class="card card-action-row"', count=11)
         self.assertContains(
             response, f'<a class="button-secondary" href="{reverse("admin:index")}">'
         )
@@ -958,18 +962,21 @@ class TwoFactorSetupTests(TestCase):
         response = self.client.get(reverse("two-factor-setup"))
         self.assertRedirects(response, reverse("profile"))
 
-    def test_confirming_with_the_correct_code_enables_2fa_and_shows_backup_codes(self):
+    def test_confirming_with_the_correct_code_enables_2fa_and_redirects_to_backup_codes(self):
+        """Backup codes aren't generated in this same request any more
+        — see TwoFactorBackupCodesView's own docstring for why
+        (they're slow enough to need their own loading page instead of
+        this request silently hanging for them)."""
         import pyotp
 
         self.client.get(reverse("two-factor-setup"))  # generates the secret
         self.user.refresh_from_db()
         code = pyotp.TOTP(self.user.totp_secret).now()
         response = self.client.post(reverse("two-factor-setup"), {"code": code})
-        self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "now enabled")
+        self.assertRedirects(response, f"{reverse('two-factor-backup-codes')}?welcome=1")
         self.user.refresh_from_db()
         self.assertTrue(self.user.totp_enabled)
-        self.assertEqual(self.user.backup_codes.count(), twofactor.BACKUP_CODE_COUNT)
+        self.assertEqual(self.user.backup_codes.count(), 0)
 
     def test_confirming_with_the_wrong_code_does_not_enable_2fa(self):
         self.client.get(reverse("two-factor-setup"))
@@ -1130,13 +1137,83 @@ class TwoFactorRegenerateBackupCodesTests(TestCase):
         response = self.client.post(reverse("two-factor-regenerate-backup-codes"))
         self.assertEqual(response.status_code, 404)
 
-    def test_replaces_the_codes_and_shows_the_new_set(self):
+    def test_redirects_to_the_backup_codes_page_without_generating_anything_itself(self):
+        """The actual generation moved to TwoFactorBackupCodesFragment
+        View, loaded via HTMX from the page this redirects to — see
+        that view's own docstring for why."""
         response = self.client.post(reverse("two-factor-regenerate-backup-codes"))
-        self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "New backup codes")
+        self.assertRedirects(response, reverse("two-factor-backup-codes"))
         self.assertEqual(self.user.backup_codes.count(), twofactor.BACKUP_CODE_COUNT)
         for old_code in self.old_codes:
-            self.assertFalse(twofactor.verify_and_consume_backup_code(self.user, old_code))
+            self.assertTrue(twofactor.verify_and_consume_backup_code(self.user, old_code))
+
+
+class TwoFactorBackupCodesViewTests(TestCase):
+    """The loading-state page both TwoFactorSetupView's confirm step
+    and TwoFactorRegenerateBackupCodesView redirect to — see
+    TwoFactorBackupCodesView's own docstring for why generating a
+    fresh set of codes needed a page of its own instead of happening
+    silently inside whichever request landed the user here."""
+
+    def setUp(self):
+        self.user = User.objects.create_user(username="liam", password="s3cret-pass")
+        self.user.totp_secret = twofactor.generate_totp_secret()
+        self.user.totp_enabled = True
+        self.user.save()
+        self.client.login(username="liam", password="s3cret-pass")
+
+    def test_requires_login(self):
+        self.client.logout()
+        response = self.client.get(reverse("two-factor-backup-codes"))
+        self.assertEqual(response.status_code, 302)
+
+    def test_requires_2fa_enabled(self):
+        self.user.totp_enabled = False
+        self.user.save()
+        response = self.client.get(reverse("two-factor-backup-codes"))
+        self.assertEqual(response.status_code, 404)
+
+    def test_renders_a_loading_state_without_generating_anything_yet(self):
+        response = self.client.get(reverse("two-factor-backup-codes"))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "spinner")
+        self.assertEqual(self.user.backup_codes.count(), 0)
+
+    def test_shows_the_welcome_message_only_when_asked_to(self):
+        response = self.client.get(reverse("two-factor-backup-codes"), {"welcome": "1"})
+        self.assertContains(response, "now enabled")
+
+        response = self.client.get(reverse("two-factor-backup-codes"))
+        self.assertNotContains(response, "now enabled")
+
+
+class TwoFactorBackupCodesFragmentViewTests(TestCase):
+    """The HTMX-loaded fragment that actually does the (slow) backup-
+    code generation — see TwoFactorBackupCodesView's own docstring."""
+
+    def setUp(self):
+        self.user = User.objects.create_user(username="liam", password="s3cret-pass")
+        self.user.totp_secret = twofactor.generate_totp_secret()
+        self.user.totp_enabled = True
+        self.user.save()
+        self.client.login(username="liam", password="s3cret-pass")
+
+    def test_requires_login(self):
+        self.client.logout()
+        response = self.client.post(reverse("two-factor-backup-codes-fragment"))
+        self.assertEqual(response.status_code, 302)
+
+    def test_requires_2fa_enabled(self):
+        self.user.totp_enabled = False
+        self.user.save()
+        response = self.client.post(reverse("two-factor-backup-codes-fragment"))
+        self.assertEqual(response.status_code, 404)
+
+    def test_generates_and_shows_a_fresh_set_of_codes(self):
+        response = self.client.post(reverse("two-factor-backup-codes-fragment"))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Done")
+        self.assertEqual(self.user.backup_codes.count(), twofactor.BACKUP_CODE_COUNT)
 
 
 class TwoFactorAdminActionTests(TestCase):
@@ -1155,6 +1232,353 @@ class TwoFactorAdminActionTests(TestCase):
         self.assertFalse(user.totp_enabled)
         self.assertEqual(user.totp_secret, "")
         self.assertEqual(user.backup_codes.count(), 0)
+
+
+class DeleteAccountServiceTests(TestCase):
+    """apps.accounts.services.delete_account — GDPR Article 17
+    self-service erasure. See that function's own docstring for the
+    two different treatments (hard-delete vs. reassign-to-shared) and
+    why."""
+
+    def setUp(self):
+        from apps.accounts.services import delete_account
+
+        self.delete_account = delete_account
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+
+    def test_deletes_the_user_row_itself(self):
+        self.delete_account(self.alice)
+        self.assertFalse(User.objects.filter(pk=self.alice.pk).exists())
+
+    def test_hard_deletes_exclusively_personal_data(self):
+        from django.utils import timezone
+
+        from apps.exercises.models import Exercise
+        from apps.records.models import PersonalRecord, PRType
+        from apps.workouts import services as workout_services
+
+        session = workout_services.start_session(self.alice, workout=None)
+        workout_services.complete_session(session)
+        exercise = Exercise.objects.create(name="Test Snatch", owner=None)
+        PersonalRecord.objects.create(
+            user=self.alice,
+            exercise=exercise,
+            record_type=PRType.MAX_WEIGHT,
+            value=Decimal("100"),
+            weight=Decimal("100"),
+            reps=1,
+            achieved_at=timezone.now(),
+        )
+        self.delete_account(self.alice)
+        self.assertEqual(PersonalRecord.objects.count(), 0)
+
+    def test_reassigns_a_shared_custom_exercise_instead_of_deleting_it(self):
+        from apps.exercises.models import Exercise
+
+        exercise = Exercise.objects.create(name="Alice's Curl", owner=self.alice)
+        self.delete_account(self.alice)
+        exercise.refresh_from_db()
+        self.assertIsNone(exercise.owner)
+
+    def test_does_not_orphan_or_break_another_users_workout_history(self):
+        """The real reason for the reassign-not-delete behavior:
+        Exercise's own usage FK (apps.workouts.models.
+        PerformedExercise.exercise) is on_delete=PROTECT specifically
+        so a still-referenced Exercise can never vanish out from under
+        someone still using it."""
+        from apps.exercises.models import Exercise
+        from apps.workouts import services as workout_services
+
+        bob = User.objects.create_user(username="bob", password="s3cret-pass")
+        exercise = Exercise.objects.create(name="Shared Curl", owner=self.alice)
+        session = workout_services.start_session(bob, workout=None)
+        performed = workout_services.add_performed_exercise(session, exercise)
+        workout_services.log_set(performed, weight=Decimal("20"), reps=10)
+        workout_services.complete_session(session)
+
+        self.delete_account(self.alice)
+
+        performed.refresh_from_db()
+        self.assertEqual(performed.exercise_id, exercise.pk)
+        self.assertTrue(bob.workout_sessions.exists())
+
+    def test_reassigns_shared_content_across_every_ownable_app(self):
+        from apps.activities.models import ActivityType
+        from apps.measurements.models import MeasurementType
+        from apps.nutrition.models import Food, MealSlot, Recipe
+        from apps.programs.models import Program
+
+        rows = {
+            ActivityType: ActivityType.objects.create(name="Alice's Hobby", owner=self.alice),
+            MeasurementType: MeasurementType.objects.create(
+                name="Alice's Metric", unit_kind="length", owner=self.alice
+            ),
+            Food: Food.objects.create(
+                name="Alice's Food", owner=self.alice, calories=100,
+                protein_grams=Decimal("1"), carbohydrate_grams=Decimal("1"),
+                fat_grams=Decimal("1"), serving_size=Decimal("100"), serving_unit="g",
+            ),
+            MealSlot: MealSlot.objects.create(name="Alice's Meal", owner=self.alice),
+            Recipe: Recipe.objects.create(name="Alice's Recipe", owner=self.alice),
+            Program: Program.objects.create(name="Alice's Program", owner=self.alice),
+        }
+        self.delete_account(self.alice)
+        for model, row in rows.items():
+            row.refresh_from_db()
+            self.assertIsNone(row.owner, f"{model.__name__} still owned after delete_account")
+
+
+class AccountDeleteViewTests(TestCase):
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        self.client.login(username="alice", password="s3cret-pass")
+
+    def test_requires_login(self):
+        self.client.logout()
+        response = self.client.get(reverse("account-delete"))
+        self.assertEqual(response.status_code, 302)
+
+    def test_wrong_password_does_not_delete(self):
+        response = self.client.post(reverse("account-delete"), {"password": "wrong"})
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Incorrect password")
+        self.assertTrue(User.objects.filter(pk=self.alice.pk).exists())
+
+    def test_correct_password_deletes_and_logs_out(self):
+        response = self.client.post(
+            reverse("account-delete"), {"password": "s3cret-pass"}, follow=True
+        )
+        self.assertRedirects(response, reverse("login"))
+        self.assertFalse(User.objects.filter(username="alice").exists())
+        self.assertNotIn("_auth_user_id", self.client.session)
+
+    def test_an_sso_user_confirms_with_their_username_instead_of_a_password(self):
+        self.alice.is_sso_user = True
+        self.alice.set_unusable_password()
+        self.alice.save()
+        # Client.login() itself needs a real password to authenticate
+        # against — force_login bypasses that the same way an actual
+        # Authentik-issued session would (apps.accounts.oidc), not a
+        # username/password form submission at all.
+        self.client.force_login(self.alice)
+
+        wrong = self.client.post(reverse("account-delete"), {"confirm_username": "not-alice"})
+        self.assertEqual(wrong.status_code, 200)
+        self.assertContains(wrong, "Doesn&#x27;t match your username.")
+        self.assertTrue(User.objects.filter(username="alice").exists())
+
+        right = self.client.post(reverse("account-delete"), {"confirm_username": "alice"})
+        self.assertRedirects(right, reverse("login"))
+        self.assertFalse(User.objects.filter(username="alice").exists())
+
+    def test_the_last_superuser_cannot_delete_themselves(self):
+        self.alice.is_superuser = True
+        self.alice.is_staff = True
+        self.alice.save()
+        response = self.client.post(
+            reverse("account-delete"), {"password": "s3cret-pass"}, follow=True
+        )
+        self.assertRedirects(response, reverse("profile"))
+        self.assertTrue(User.objects.filter(username="alice").exists())
+
+    def test_a_superuser_can_delete_themselves_if_another_superuser_remains(self):
+        self.alice.is_superuser = True
+        self.alice.is_staff = True
+        self.alice.save()
+        User.objects.create_superuser(username="bob", password="s3cret-pass")
+        response = self.client.post(
+            reverse("account-delete"), {"password": "s3cret-pass"}, follow=True
+        )
+        self.assertRedirects(response, reverse("login"))
+        self.assertFalse(User.objects.filter(username="alice").exists())
+
+    def test_the_profile_page_links_to_it(self):
+        response = self.client.get(reverse("profile"))
+        self.assertContains(response, reverse("account-delete"))
+
+
+class DataExportServiceTests(TestCase):
+    """apps.accounts.services.export_account_data — GDPR Article 20
+    ("right to data portability"). Mirrors delete_account's own set of
+    "exclusively personal" models, plus this user's own authored
+    shared content (a custom exercise they created, say), since it's
+    a read of what exists today, not a statement about what account
+    deletion would do to each of it."""
+
+    def setUp(self):
+        from apps.accounts.services import export_account_data
+
+        self.export_account_data = export_account_data
+        self.alice = User.objects.create_user(
+            username="alice",
+            password="s3cret-pass",
+            email="alice@example.com",
+            first_name="Alice",
+            last_name="Anderson",
+        )
+
+    def test_includes_basic_account_fields(self):
+        data = self.export_account_data(self.alice)
+        self.assertEqual(data["account"]["username"], "alice")
+        self.assertEqual(data["account"]["email"], "alice@example.com")
+        self.assertEqual(data["account"]["first_name"], "Alice")
+        self.assertEqual(data["account"]["last_name"], "Anderson")
+
+    def test_includes_display_and_privacy_settings_too(self):
+        # Not just the handful of fields shown on the profile form —
+        # everything on the user record that isn't a credential (see
+        # export_account_data's own comment on why `password`/
+        # `totp_secret` are the only two exceptions).
+        self.alice.height = Decimal("1.8000")
+        self.alice.show_bmi = False
+        self.alice.show_gravatar = True
+        self.alice.save()
+        data = self.export_account_data(self.alice)
+        self.assertEqual(data["account"]["height_meters"], "1.8000")
+        self.assertIs(data["account"]["show_bmi"], False)
+        self.assertIs(data["account"]["show_gravatar"], True)
+
+    def test_never_includes_the_password_or_totp_secret(self):
+        data = self.export_account_data(self.alice)
+        self.assertNotIn("password", data["account"])
+        self.assertNotIn("totp_secret", data["account"])
+
+    def test_includes_workout_history(self):
+        from apps.exercises.models import Exercise
+        from apps.workouts import services as workout_services
+
+        exercise = Exercise.objects.create(name="Test Curl", owner=None)
+        session = workout_services.start_session(self.alice, workout=None)
+        performed = workout_services.add_performed_exercise(session, exercise)
+        workout_services.log_set(performed, weight=Decimal("20"), reps=10)
+        workout_services.complete_session(session)
+
+        data = self.export_account_data(self.alice)
+        self.assertEqual(len(data["workout_sessions"]), 1)
+        self.assertEqual(len(data["performed_exercises"]), 1)
+        self.assertEqual(len(data["exercise_sets"]), 1)
+        self.assertEqual(data["exercise_sets"][0]["fields"]["weight"], "20.00")
+
+    def test_includes_a_custom_exercise_this_user_created(self):
+        from apps.exercises.models import Exercise
+
+        Exercise.objects.create(name="Alice's Curl", owner=self.alice)
+        data = self.export_account_data(self.alice)
+        self.assertEqual(len(data["custom_exercises"]), 1)
+
+    def test_never_includes_another_users_data(self):
+        from apps.exercises.models import Exercise
+        from apps.workouts import services as workout_services
+
+        bob = User.objects.create_user(username="bob", password="s3cret-pass")
+        exercise = Exercise.objects.create(name="Test Curl", owner=None)
+        session = workout_services.start_session(bob, workout=None)
+        workout_services.add_performed_exercise(session, exercise)
+
+        data = self.export_account_data(self.alice)
+        self.assertEqual(data["workout_sessions"], [])
+        self.assertEqual(data["performed_exercises"], [])
+
+    def test_api_key_export_never_includes_the_key_hash(self):
+        from apps.api.models import ApiKey, RateLimitTier
+
+        tier = RateLimitTier.objects.create(name="Default")
+        ApiKey.objects.create(
+            user=self.alice, name="My key", key_hash="a" * 64, prefix="abcd1234", tier=tier
+        )
+        data = self.export_account_data(self.alice)
+        self.assertEqual(len(data["api_keys"]), 1)
+        self.assertNotIn("key_hash", data["api_keys"][0])
+        self.assertEqual(data["api_keys"][0]["prefix"], "abcd1234")
+
+    def test_result_is_actually_json_serializable(self):
+        import json
+
+        from apps.exercises.models import Exercise
+        from apps.workouts import services as workout_services
+
+        exercise = Exercise.objects.create(name="Test Curl", owner=None)
+        session = workout_services.start_session(self.alice, workout=None)
+        performed = workout_services.add_performed_exercise(session, exercise)
+        workout_services.log_set(performed, weight=Decimal("20"), reps=10)
+        workout_services.complete_session(session)
+
+        data = self.export_account_data(self.alice)
+        json.dumps(data)  # raises if anything isn't JSON-safe
+
+
+class DataExportViewTests(TestCase):
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        self.client.login(username="alice", password="s3cret-pass")
+
+    def test_requires_login(self):
+        self.client.logout()
+        response = self.client.get(reverse("data-export"))
+        self.assertEqual(response.status_code, 302)
+
+    def test_default_response_is_a_browsable_html_page(self):
+        response = self.client.get(reverse("data-export"))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response["Content-Type"].split(";")[0], "text/html")
+
+    def test_json_format_is_a_downloadable_attachment(self):
+        response = self.client.get(reverse("data-export"), {"format": "json"})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response["Content-Type"], "application/json")
+        self.assertIn("attachment", response["Content-Disposition"])
+        json.loads(response.content)  # a real, parseable JSON body
+
+    def test_csv_format_is_a_downloadable_zip(self):
+        response = self.client.get(reverse("data-export"), {"format": "csv"})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response["Content-Type"], "application/zip")
+        self.assertIn("attachment", response["Content-Disposition"])
+        archive = zipfile.ZipFile(io.BytesIO(response.content))
+        self.assertIn("account.csv", archive.namelist())
+
+    def test_the_profile_page_links_to_it(self):
+        response = self.client.get(reverse("profile"))
+        self.assertContains(response, reverse("data-export"))
+
+    def test_html_format_is_a_downloadable_attachment(self):
+        response = self.client.get(reverse("data-export"), {"format": "html"})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response["Content-Type"].split(";")[0], "text/html")
+        self.assertIn("attachment", response["Content-Disposition"])
+        self.assertIn(f"ironstack-{self.alice.username}-data.html", response["Content-Disposition"])
+
+    def test_html_download_contains_the_same_sections_as_the_browsable_page(self):
+        response = self.client.get(reverse("data-export"), {"format": "html"})
+        self.assertContains(response, "account")
+
+    def test_sections_use_native_details_not_javascript_so_a_downloaded_copy_still_works(self):
+        # The whole point of "Download as HTML" is a file that still
+        # shows its data once saved and reopened somewhere this app's
+        # own JS never loads again — see static/css/base.css's own
+        # comment on `.card > summary` for why this is `<details>`,
+        # not Alpine's x-show/x-cloak.
+        response = self.client.get(reverse("data-export"), {"format": "html"})
+        self.assertContains(response, "<details")
+        self.assertNotContains(response, "x-cloak")
+
+    def test_html_download_is_fully_self_contained(self):
+        # A real regression, not a hypothetical one: an earlier version
+        # of this download reused the browsable page's own template
+        # (extends base.html), whose nav-bar <svg class="nav-icon">
+        # elements are sized entirely by base.css — invisible here,
+        # since a downloaded file has no guarantee that stylesheet is
+        # ever reachable again, so every icon rendered at its raw,
+        # enormous intrinsic SVG size instead. The download now uses
+        # its own dedicated template with every style inline and no
+        # nav, icons, or scripts at all.
+        response = self.client.get(reverse("data-export"), {"format": "html"})
+        content = response.content.decode()
+        self.assertIn("<style>", content)
+        self.assertNotIn("stylesheet", content)
+        self.assertNotIn("<script", content)
+        self.assertNotIn("nav-icon", content)
+        self.assertNotIn('class="bottom-nav"', content)
 
 
 class SiteDisclaimerTests(TestCase):
@@ -1195,6 +1619,27 @@ class SiteDisclaimerTests(TestCase):
         disclaimer.save()
         response = self.client.get(reverse("login"))
         self.assertNotContains(response, "auth-disclaimer")
+
+
+class PrivacyNoticeTests(TestCase):
+    """templates/accounts/_privacy_notice_modal.html — a fixed,
+    translated notice (unlike SiteDisclaimer above, which is free-form
+    operator-authored text), shown at the point data collection starts
+    (login/signup) and reachable again later from the profile page."""
+
+    def test_shown_on_the_login_page(self):
+        response = self.client.get(reverse("login"))
+        self.assertContains(response, "Privacy notice")
+
+    def test_shown_on_the_signup_page(self):
+        response = self.client.get(reverse("signup"))
+        self.assertContains(response, "Privacy notice")
+
+    def test_reachable_again_from_the_profile_page(self):
+        User.objects.create_user(username="alice", password="s3cret-pass")
+        self.client.login(username="alice", password="s3cret-pass")
+        response = self.client.get(reverse("profile"))
+        self.assertContains(response, "Privacy notice")
 
 
 class AuthPageBrandingTests(TestCase):
@@ -1259,6 +1704,7 @@ class OnboardingViewTests(TestCase):
                 "first_name": "Quinn",
                 "email": "quinn@example.com",
                 "unit_system": "metric",
+                "timezone": "UTC",
             },
         )
         self.assertEqual(response.status_code, 200)
@@ -1269,7 +1715,7 @@ class OnboardingViewTests(TestCase):
 
     def test_every_field_is_optional_an_entirely_blank_save_still_completes_it(self):
         response = self.client.post(
-            reverse("onboarding"), {"action": "save", "unit_system": "metric"}
+            reverse("onboarding"), {"action": "save", "unit_system": "metric", "timezone": "UTC"}
         )
         self.assertEqual(response.status_code, 200)
         self.user.refresh_from_db()
@@ -1280,7 +1726,7 @@ class OnboardingViewTests(TestCase):
 
         self.client.post(
             reverse("onboarding"),
-            {"action": "save", "unit_system": "metric", "weight": "80.5"},
+            {"action": "save", "unit_system": "metric", "timezone": "UTC", "weight": "80.5"},
         )
         measurement = BodyMeasurement.objects.get(
             user=self.user, measurement_type__name="Body weight"
@@ -1292,7 +1738,7 @@ class OnboardingViewTests(TestCase):
 
         self.client.post(
             reverse("onboarding"),
-            {"action": "save", "unit_system": "imperial", "weight": "220"},
+            {"action": "save", "unit_system": "imperial", "timezone": "UTC", "weight": "220"},
         )
         measurement = BodyMeasurement.objects.get(
             user=self.user, measurement_type__name="Body weight"
@@ -1302,7 +1748,7 @@ class OnboardingViewTests(TestCase):
     def test_a_height_in_cm_is_converted_to_canonical_meters_on_the_user(self):
         self.client.post(
             reverse("onboarding"),
-            {"action": "save", "unit_system": "metric", "height": "180.5"},
+            {"action": "save", "unit_system": "metric", "timezone": "UTC", "height": "180.5"},
         )
         self.user.refresh_from_db()
         self.assertEqual(self.user.height, Decimal("1.8050"))
@@ -1310,26 +1756,32 @@ class OnboardingViewTests(TestCase):
     def test_a_height_in_inches_is_converted_to_canonical_meters_on_the_user(self):
         self.client.post(
             reverse("onboarding"),
-            {"action": "save", "unit_system": "imperial", "height": "70"},
+            {"action": "save", "unit_system": "imperial", "timezone": "UTC", "height": "70"},
         )
         self.user.refresh_from_db()
         self.assertAlmostEqual(float(self.user.height), 1.778, places=3)
 
     def test_leaving_height_blank_leaves_it_unset(self):
-        self.client.post(reverse("onboarding"), {"action": "save", "unit_system": "metric"})
+        self.client.post(
+            reverse("onboarding"),
+            {"action": "save", "unit_system": "metric", "timezone": "UTC"},
+        )
         self.user.refresh_from_db()
         self.assertIsNone(self.user.height)
 
     def test_leaving_weight_blank_creates_no_measurement(self):
         from apps.measurements.models import BodyMeasurement
 
-        self.client.post(reverse("onboarding"), {"action": "save", "unit_system": "metric"})
+        self.client.post(
+            reverse("onboarding"),
+            {"action": "save", "unit_system": "metric", "timezone": "UTC"},
+        )
         self.assertFalse(BodyMeasurement.objects.filter(user=self.user).exists())
 
     def test_an_invalid_email_re_renders_the_modal_with_the_error_and_does_not_complete_it(self):
         response = self.client.post(
             reverse("onboarding"),
-            {"action": "save", "email": "not-an-email", "unit_system": "metric"},
+            {"action": "save", "email": "not-an-email", "unit_system": "metric", "timezone": "UTC"},
         )
         self.assertContains(response, "field-error")
         self.user.refresh_from_db()
@@ -1347,7 +1799,7 @@ class OnboardingViewTests(TestCase):
     def test_skip_after_a_failed_save_does_not_persist_the_invalid_attempt(self):
         self.client.post(
             reverse("onboarding"),
-            {"action": "save", "email": "not-an-email", "unit_system": "metric"},
+            {"action": "save", "email": "not-an-email", "unit_system": "metric", "timezone": "UTC"},
         )
         self.client.post(reverse("onboarding"), {"action": "skip"})
         self.user.refresh_from_db()
@@ -1356,10 +1808,32 @@ class OnboardingViewTests(TestCase):
 
     def test_success_response_no_longer_contains_the_modal(self):
         response = self.client.post(
-            reverse("onboarding"), {"action": "save", "unit_system": "metric"}
+            reverse("onboarding"), {"action": "save", "unit_system": "metric", "timezone": "UTC"}
         )
         self.assertNotContains(response, "Welcome to IronStack")
         self.assertContains(response, 'id="onboarding-modal-container"')
+
+    def test_saving_persists_the_chosen_timezone(self):
+        self.client.post(
+            reverse("onboarding"),
+            {"action": "save", "unit_system": "metric", "timezone": "Europe/Helsinki"},
+        )
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.timezone, "Europe/Helsinki")
+
+    def test_timezone_is_required_a_missing_value_re_renders_with_an_error(self):
+        response = self.client.post(
+            reverse("onboarding"), {"action": "save", "unit_system": "metric"}
+        )
+        self.assertContains(response, "field-error")
+        self.user.refresh_from_db()
+        self.assertFalse(self.user.onboarding_completed)
+
+    def test_the_form_is_pre_filled_with_the_users_current_timezone(self):
+        self.user.timezone = "Europe/Helsinki"
+        self.user.save(update_fields=["timezone"])
+        response = self.client.get(reverse("dashboard"))
+        self.assertContains(response, "Europe/Helsinki")
 
 
 class PasswordLoginGatingTests(TestCase):

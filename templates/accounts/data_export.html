@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Download your data" %} — IronStack{% endblock %}
+{% block content %}
+<div class="top-bar">
+  <h1 style="margin:0;">{% trans "Download your data" %}</h1>
+</div>
+
+<div class="card">
+  <p class="text-muted">{% trans "Everything below is exclusively yours — the same data shown as tables here can be downloaded as a single JSON file, a .zip of spreadsheet-ready CSV files (one per section), or this very page as a single HTML file." %}</p>
+  <div style="display:flex; flex-wrap:wrap; gap:0.75rem;">
+    <a class="button-secondary" href="?format=json">{% trans "Download as JSON" %}</a>
+    <a class="button-secondary" href="?format=csv">{% trans "Download as CSV (.zip)" %}</a>
+    <a class="button-secondary" href="?format=html">{% trans "Download as HTML" %}</a>
+  </div>
+</div>
+
+{% for section, rows in sections.items %}
+  {% if rows %}
+    <details class="card">
+      <summary>{{ section }} ({{ rows|length }})</summary>
+      <div class="table-wrap">
+        <table class="set-table">
+          <thead>
+            <tr>
+              {% for key in rows.0.keys %}<th>{{ key }}</th>{% endfor %}
+            </tr>
+          </thead>
+          <tbody>
+            {% for row in rows %}
+              <tr>
+                {% for value in row.values %}<td>{{ value }}</td>{% endfor %}
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </details>
+  {% endif %}
+{% endfor %}
+
+<p><a class="button-secondary" href="{% url 'profile' %}">&larr; {% trans "Back to profile" %}</a></p>
+{% endblock %}

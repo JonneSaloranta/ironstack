@@ -1,10 +1,16 @@
+import csv
+import io
+import json
+import zipfile
+
 from django.conf import settings
 from django.contrib import messages
-from django.contrib.auth import get_user_model, login
+from django.contrib.auth import get_user_model, login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView, PasswordResetView
-from django.http import Http404
+from django.http import Http404, HttpResponse
 from django.shortcuts import redirect, render
+from django.template.loader import render_to_string
 from django.urls import reverse, reverse_lazy
 from django.utils.translation import gettext as _
 from django.views.generic import CreateView, FormView, TemplateView, UpdateView, View
@@ -12,8 +18,10 @@ from django.views.generic import CreateView, FormView, TemplateView, UpdateView,
 from apps.core import changelog as changelog_services
 from apps.core.models import FeedbackSettings
 
+from . import services as account_services
 from . import twofactor
 from .forms import (
+    AccountDeleteForm,
     AccountDetailsForm,
     OnboardingForm,
     ProfileForm,
@@ -300,10 +308,12 @@ class TwoFactorSetupView(LoginRequiredMixin, FormView):
     def form_valid(self, form):
         self.request.user.totp_enabled = True
         self.request.user.save(update_fields=["totp_enabled"])
-        self.backup_codes = twofactor.generate_backup_codes(self.request.user)
-        return self.render_to_response(
-            self.get_context_data(form=form, backup_codes=self.backup_codes, just_enabled=True)
-        )
+        # Backup-code generation is deliberately *not* done here — see
+        # TwoFactorBackupCodesView's own docstring for why (it takes
+        # long enough, on Django's own deliberately-slow password
+        # hasher, to need its own loading state rather than making
+        # this request hang silently for it).
+        return redirect(f"{reverse('two-factor-backup-codes')}?welcome=1")
 
 
 class TwoFactorDisableView(LoginRequiredMixin, FormView):
@@ -339,6 +349,148 @@ class TwoFactorDisableView(LoginRequiredMixin, FormView):
         return redirect("profile")
 
 
+class AccountDeleteView(LoginRequiredMixin, FormView):
+    """Profile → "Delete account" — GDPR Article 17 self-service
+    erasure. See apps.accounts.services.delete_account for what's
+    actually hard-deleted vs. reassigned to a shared owner, and
+    apps.accounts.forms.AccountDeleteForm for the password-or-
+    username confirmation step."""
+
+    template_name = "accounts/account_delete.html"
+    form_class = AccountDeleteForm
+    success_url = reverse_lazy("login")
+
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return super().dispatch(request, *args, **kwargs)
+        # The one thing this app won't let a self-service action do:
+        # delete the last remaining superuser and leave the instance
+        # with no one able to reach Django admin at all. An ordinary
+        # (non-superuser) account has no such restriction — any number
+        # of those can freely delete themselves.
+        if request.user.is_superuser:
+            other_superusers = (
+                get_user_model()
+                .objects.filter(is_superuser=True)
+                .exclude(pk=request.user.pk)
+                .exists()
+            )
+            if not other_superusers:
+                messages.error(
+                    request,
+                    _(
+                        "You're the only superuser on this instance — promote another "
+                        "account to superuser first, or this instance would have no one "
+                        "left who can reach Django admin."
+                    ),
+                )
+                return redirect("profile")
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["user"] = self.request.user
+        return kwargs
+
+    def form_valid(self, form):
+        user = self.request.user
+        account_services.delete_account(user)
+        logout(self.request)
+        messages.success(
+            self.request, _("Your account and all its data have been deleted.")
+        )
+        return super().form_valid(form)
+
+
+def _rows_for_section(key, value):
+    """Normalizes one apps.accounts.services.export_account_data
+    section into a flat list of dicts — every field a plain, already-
+    JSON-safe value — for the CSV/HTML views below, which both need
+    the same tabular shape regardless of a section's own underlying
+    representation: `account` is a single dict, `api_keys` is already
+    a flat list of dicts (export_account_data builds those two by
+    hand), and everything else is Django's own generic serializer
+    format (a list of `{"model", "pk", "fields"}` dicts)."""
+    if key == "account":
+        return [value]
+    if key == "api_keys":
+        return value
+    return [{"id": entry["pk"], **entry["fields"]} for entry in value]
+
+
+class DataExportView(LoginRequiredMixin, View):
+    """Profile → "Download your data" — GDPR Article 20 ("right to
+    data portability"). See apps.accounts.services.export_account_data
+    for exactly what's included and why. Four ways to get at the same
+    export, `?format=` picking which: `json` (the complete, structured
+    export, the same shape a user's own API key could already fetch),
+    `csv` (a .zip of one .csv file per section, the practical format
+    for opening in a spreadsheet), `html` (a single downloadable file
+    to keep or hand someone else — see _data_export_standalone.html's
+    own docstring for why that's a dedicated, self-contained template
+    rather than a save of the page below), and no param at all for
+    that same page, reusing this app's normal styling and nav, to
+    read right here without downloading anything."""
+
+    template_name = "accounts/data_export.html"
+
+    def get(self, request):
+        fmt = request.GET.get("format")
+        if fmt == "json":
+            return self._json_response(request.user)
+        if fmt == "csv":
+            return self._csv_response(request.user)
+        sections = self._sections(request.user)
+        if fmt == "html":
+            return self._html_download_response(request, sections)
+        return render(request, self.template_name, {"sections": sections})
+
+    def _sections(self, user):
+        data = account_services.export_account_data(user)
+        return {key: _rows_for_section(key, value) for key, value in data.items()}
+
+    def _html_download_response(self, request, sections):
+        html = render_to_string(
+            "accounts/_data_export_standalone.html",
+            {"sections": sections, "username": request.user.username},
+            request=request,
+        )
+        response = HttpResponse(html, content_type="text/html")
+        response["Content-Disposition"] = (
+            f'attachment; filename="ironstack-{request.user.username}-data.html"'
+        )
+        return response
+
+    def _json_response(self, user):
+        data = account_services.export_account_data(user)
+        response = HttpResponse(
+            json.dumps(data, indent=2, ensure_ascii=False), content_type="application/json"
+        )
+        response["Content-Disposition"] = (
+            f'attachment; filename="ironstack-{user.username}-data.json"'
+        )
+        return response
+
+    def _csv_response(self, user):
+        data = account_services.export_account_data(user)
+        buffer = io.BytesIO()
+        with zipfile.ZipFile(buffer, "w", zipfile.ZIP_DEFLATED) as archive:
+            for key, value in data.items():
+                rows = _rows_for_section(key, value)
+                if not rows:
+                    continue
+                text_buffer = io.StringIO()
+                writer = csv.DictWriter(text_buffer, fieldnames=list(rows[0].keys()))
+                writer.writeheader()
+                writer.writerows(rows)
+                archive.writestr(f"{key}.csv", text_buffer.getvalue())
+        response = HttpResponse(buffer.getvalue(), content_type="application/zip")
+        response["Content-Disposition"] = (
+            f'attachment; filename="ironstack-{user.username}-data.zip"'
+        )
+        return response
+
+
 class TwoFactorRegenerateBackupCodesView(LoginRequiredMixin, View):
     """Replaces every existing backup code with a fresh set — the only
     recovery path if they're ever used up (or lost) without disabling
@@ -346,14 +498,66 @@ class TwoFactorRegenerateBackupCodesView(LoginRequiredMixin, View):
     most other destructive-ish actions here) rather than a password
     re-entry like disabling: unlike turning 2FA off, this can't weaken
     an account's own protection, only invalidate codes that might
-    already be lost anyway."""
+    already be lost anyway.
+
+    Doesn't generate anything itself any more — see
+    TwoFactorBackupCodesView's own docstring for why; this POST is now
+    only the "yes, I meant to click that" confirmation step, and just
+    hands off to the page that actually does the (slow) work."""
+
+    def post(self, request, *args, **kwargs):
+        if not request.user.totp_enabled:
+            raise Http404
+        return redirect("two-factor-backup-codes")
+
+
+class TwoFactorBackupCodesView(LoginRequiredMixin, View):
+    """Replaces this user's backup codes and shows the new ones — the
+    landing page for both TwoFactorSetupView's own confirm step and
+    TwoFactorRegenerateBackupCodesView above, neither of which do the
+    actual generation themselves any more.
+
+    Split into two requests deliberately: `generate_backup_codes`
+    hashes each of `twofactor.BACKUP_CODE_COUNT` codes with Django's
+    own password hasher (deliberately expensive work, the same reason
+    a login attempt itself isn't instant) — on ordinary hardware that
+    measures in *seconds*, not milliseconds, and used to happen
+    silently inside the same request that also rendered this page,
+    which looked exactly like nothing was happening at all. Reported
+    live: a user hit "Regenerate" a second time during that silent
+    wait, which (for the equivalent moment during initial setup) raced
+    against `TwoFactorSetupView.dispatch`'s own already-enabled check
+    and bounced them to their profile with no chance to ever see the
+    codes their first click had already generated.
+
+    Now: this view's own GET renders instantly, with a visible loading
+    state (templates/accounts/two_factor_backup_codes.html) that
+    itself triggers TwoFactorBackupCodesFragmentView below via HTMX on
+    page load — the slow part happens in *that* request instead,
+    swapped into this page once it completes, with no way to
+    double-submit it by accident (nothing to click a second time)."""
+
+    def get(self, request, *args, **kwargs):
+        if not request.user.totp_enabled:
+            raise Http404
+        return render(
+            request,
+            "accounts/two_factor_backup_codes.html",
+            {"just_enabled": request.GET.get("welcome") == "1"},
+        )
+
+
+class TwoFactorBackupCodesFragmentView(LoginRequiredMixin, View):
+    """The actual (slow) backup-code generation — see
+    TwoFactorBackupCodesView's own docstring for why this is split out
+    into its own request, loaded via HTMX rather than inline."""
 
     def post(self, request, *args, **kwargs):
         if not request.user.totp_enabled:
             raise Http404
         codes = twofactor.generate_backup_codes(request.user)
         return render(
-            request, "accounts/two_factor_backup_codes.html", {"backup_codes": codes}
+            request, "accounts/_two_factor_backup_codes_fragment.html", {"backup_codes": codes}
         )
 
 

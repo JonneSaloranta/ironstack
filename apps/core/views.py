@@ -13,6 +13,7 @@ from apps.analytics import dateranges
 from apps.analytics import services as analytics_services
 from apps.core import greetings as greeting_services
 from apps.core import units as core_units
+from apps.core.models import SeoSettings
 from apps.measurements import services as measurement_services
 from apps.measurements import units as measurement_units
 from apps.measurements.models import MeasurementType
@@ -52,14 +53,13 @@ def _day_detail_lines(status, target_calories):
 def _month_calendar_context(request, today):
     """The dashboard's month calendar (templates/nutrition/
     _month_calendar.html) — one real month at a time, browsable to any
-    earlier one via `?month=YYYY-MM`, never later than the current
-    real month: there's nothing to show for a day that hasn't happened
-    yet. `weeks` is a list of 7-day rows, Monday first (matching
-    apps.programs.Weekday's own numbering elsewhere in this app), each
-    day a dict the template can render without any further lookups.
-    `calendar_days_json` is the same days' data again, shaped for the
-    tap-a-day detail popover (a JS component, not more Django template
-    — see that partial's own comment) via `|json_script`."""
+    earlier *or later* one via `?month=YYYY-MM`. `weeks` is a list of
+    7-day rows, Monday first (matching apps.programs.Weekday's own
+    numbering elsewhere in this app), each day a dict the template can
+    render without any further lookups. `calendar_days_json` is the
+    same days' data again, shaped for the tap-a-day detail popover (a
+    JS component, not more Django template — see that partial's own
+    comment) via `|json_script`."""
     import calendar as calendar_module
     from datetime import date as date_cls
     from datetime import timedelta
@@ -70,12 +70,6 @@ def _month_calendar_context(request, today):
         first_of_requested = date_cls(year, month, 1)
     except (ValueError, TypeError):
         first_of_requested = date_cls(today.year, today.month, 1)
-    # Never later than the current real month — clamps a hand-edited
-    # future ?month= rather than showing a calendar with no data by
-    # construction.
-    first_of_current = date_cls(today.year, today.month, 1)
-    if first_of_requested > first_of_current:
-        first_of_requested = first_of_current
     year, month = first_of_requested.year, first_of_requested.month
 
     target = NutritionTarget.objects.filter(user=request.user, ended_at__isnull=True).first()
@@ -112,9 +106,7 @@ def _month_calendar_context(request, today):
         "calendar_weeks": weeks,
         "calendar_days_json": calendar_days_json,
         "calendar_prev_month": prev_month.strftime("%Y-%m"),
-        "calendar_next_month": (
-            next_month.strftime("%Y-%m") if first_of_requested < first_of_current else None
-        ),
+        "calendar_next_month": next_month.strftime("%Y-%m"),
     }
 
 
@@ -127,16 +119,29 @@ class DashboardView(LoginRequiredMixin, TemplateView):
 
     template_name = "core/dashboard.html"
 
+    def get_template_names(self):
+        # Changing month is an HTMX request (templates/nutrition/
+        # _month_calendar.html's own prev/next links and out-of-month
+        # day cells) swapping just that one card, not a full page
+        # navigation — so only that partial needs rendering, not
+        # every other section's own query below (recent PRs, weight,
+        # achievements, ...) none of which changed at all.
+        if self.request.headers.get("HX-Request"):
+            return ["nutrition/_month_calendar.html"]
+        return [self.template_name]
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        today = timezone.localdate()
+        context.update(_month_calendar_context(self.request, today))
+        if self.request.headers.get("HX-Request"):
+            return context
+
         user = self.request.user
         context["greeting"] = greeting_services.random_greeting(user)
         context["in_progress_session"] = (
             sessions_for(user).filter(status=WorkoutSessionStatus.IN_PROGRESS).first()
         )
-
-        today = timezone.localdate()
-        context.update(_month_calendar_context(self.request, today))
         this_week = dateranges.resolve(None, start=today - timedelta(days=today.weekday()))
         context["week_summary"] = analytics_services.training_summary(user, this_week)
         context["recent_prs"] = analytics_services.pr_history(
@@ -199,3 +204,18 @@ def service_worker(request):
 
 def web_manifest(request):
     return _serve_static_root_file("manifest.json", "application/manifest+json")
+
+
+def robots_txt(request):
+    """Generated, not a static file — its whole content depends on
+    apps.core.models.SeoSettings, which an operator can flip from
+    Profile → Administration → Site & SEO without a redeploy. `<meta
+    name="robots">` (base.html, apps.core.context_processors.seo) is
+    the second, more universally-respected half of the same control —
+    robots.txt itself is only ever advisory, a well-behaved crawler's
+    own choice to honor."""
+    if SeoSettings.load().search_engine_indexing_enabled:
+        body = "User-agent: *\nAllow: /\n"
+    else:
+        body = "User-agent: *\nDisallow: /\n"
+    return HttpResponse(body, content_type="text/plain")

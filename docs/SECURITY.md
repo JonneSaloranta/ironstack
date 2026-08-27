@@ -136,6 +136,17 @@ treatment, unlike an API key that's checked on every request where a
 fast hash matters for server load. Each code is single-use
 (`used_at` is stamped the moment one is consumed).
 
+That same deliberately-slow hasher makes generating a fresh set of 10
+codes take several real seconds on ordinary hardware — reported live
+as looking like nothing was happening at all, which led to a user
+re-submitting mid-wait and racing themselves out of ever seeing the
+codes their first click had already generated. Fixed by moving the
+actual generation off the request that first lands a user on the
+result (`apps.accounts.views.TwoFactorBackupCodesView`/
+`TwoFactorBackupCodesFragmentView`): the page renders instantly with a
+visible spinner, then loads the (slow) result via one HTMX request
+with nothing left to click a second time.
+
 The login flow's second step
 (`apps.accounts.views.TwoFactorVerifyView`, reached only via
 `RateLimitedLoginView.form_valid`'s redirect once the password alone
@@ -328,6 +339,25 @@ reintroduce either in a new template — either would simply be silently
 blocked by the browser under this policy, with no server-side error to
 notice it by.
 
+## Search engine indexing
+
+Off by default — `apps.core.models.SeoSettings` (Profile →
+Administration → Site & SEO), a single admin-tunable boolean matching
+the same singleton pattern as `BackupSettings`/`FeedbackSettings`.
+Most installs of this app are a private, self-hosted instance running
+for one household and holding another person's health data, not a
+public site anyone should be finding through a search engine — the
+safe default is a search engine never indexing it at all, not an
+operator having to remember to opt out on a fresh install. Two
+independent, redundant signals carry this, since a crawler only
+respects whichever one it actually checks: `/robots.txt`
+(`apps.core.views.robots_txt`, generated per-request, `Disallow: /`
+when off) and a `<meta name="robots" content="noindex, nofollow">` tag
+on every single page (`templates/base.html`,
+`apps.core.context_processors.seo`). Turning the setting on flips both
+to `Allow: /`/`index, follow` — meaningful only for an operator who
+deliberately wants their own instance publicly discoverable.
+
 ## Dependency updates
 
 `.github/dependabot.yml` opens a weekly, reviewed PR for outdated pip
@@ -375,8 +405,92 @@ Users must not be able to access another user's:
 - activities
 - analytics
 
+## Account deletion (GDPR)
+
+Profile → "Delete account" (`apps.accounts.views.AccountDeleteView`,
+`apps.accounts.services.delete_account`) — self-service exercise of
+GDPR Article 17 ("right to erasure"), the one deliberate exception to
+"prefer preserving historical records" below: erasure only means
+something if it's actually irreversible, so this is a genuine hard
+delete of everything exclusively personal to that account, not a
+soft-delete flag or an anonymized retained copy.
+
+Two different treatments, not one blanket "delete everything the user
+touched":
+
+- **Exclusively personal data is hard-deleted.** Every model that can
+  only ever mean "this specific person's own record" (workout
+  history, personal records, body measurements, the nutrition diary/
+  targets/diet plans, activities, feedback, API keys) already has
+  `on_delete=models.CASCADE` on its FK to `User` — `delete_account`
+  doesn't need to know any of their names, `user.delete()` cascades
+  through all of it in one transaction.
+- **Shared reference content this user happened to create is
+  reassigned, not deleted.** A custom Exercise/Food/Recipe/Program/
+  MealSlot/ActivityType/MeasurementType has `owner` set to this user,
+  but this app's whole shared-instance design means another user may
+  already be actively using it — a workout logged against a custom
+  exercise, a diary entry against a custom food. `delete_account`
+  reassigns `owner` to `None` (the same "shared, built-in default"
+  meaning `owner=None` already has everywhere in this app) *before*
+  deleting the user, rather than delete these outright: Exercise's
+  own usage FK (`apps.workouts.models.PerformedExercise.exercise`) is
+  deliberately `on_delete=models.PROTECT`, so a still-referenced one
+  can never vanish out from under someone still using it, and
+  reassigning first is what lets the CASCADE above proceed without
+  ever touching these rows or erroring out.
+
+An account with no local password (`is_sso_user`, `docs/SECURITY.md`
+"Single sign-on") has nothing to re-enter as a password, so it types
+its own username to confirm instead — the same "prove you meant this"
+strength for an action that can't ask for a password that doesn't
+exist. The instance's last remaining superuser is blocked from
+self-deleting (a clear error, not a silent no-op) — promoting another
+account first is required, so the instance can never end up with no
+one able to reach Django admin at all.
+
+**What this can't reach: existing backup archives**
+(`docs/BACKUP.md`). A backup is a point-in-time snapshot; one made
+before an account deletion still contains that account's data until
+it's rotated out by `BackupSettings.retention_count`, the same as any
+other historical fact captured in it. Disclosed plainly on the
+deletion confirmation page rather than silently ignored — the honest
+alternative to a guarantee this action structurally can't make.
+
+## Data export (GDPR)
+
+Profile → "Download your data" (`apps.accounts.views.DataExportView`,
+`apps.accounts.services.export_account_data`) — self-service exercise
+of GDPR Article 20 ("right to data portability"), the natural
+companion to account deletion above: knowing you *can* get a copy of
+everything first is part of what makes erasure a safe thing to do.
+
+Covers the same set of models account deletion hard-deletes (workout
+history, personal records, measurements, nutrition data, activities,
+feedback, API key metadata) plus this user's own authored shared
+content (a custom exercise/food/recipe/program/meal slot they
+created) — a read of what exists today, not a statement about what
+deletion would do to each of it. Built on Django's own generic model
+serializer rather than a hand-maintained field list per model, so a
+field added to any of these models later is included automatically
+without this feature needing an update to match.
+
+**`ApiKey.key_hash` is the one deliberate field-level exclusion.**
+Every other model is exported with every field via the generic
+serializer above; `ApiKey`'s own export is hand-built instead, listing
+every field except that one explicitly — a key's hash is a
+credential, not data to read back, the same reason a password hash is
+never shown to its own owner either.
+
+Available as a plain HTML page (reusing this app's own templates,
+something to actually read rather than only archive), a single JSON
+file (the same shape a user's own API key could already fetch), or a
+`.zip` of one CSV file per section (opens directly in a spreadsheet)
+— three views of the exact same underlying export, not three
+different exports to keep in sync.
+
 ## Auditability
 
-For important destructive or irreversible operations, consider preserving historical records instead of deleting them.
+For important destructive or irreversible operations, consider preserving historical records instead of deleting them — full account deletion above is the one deliberate exception, since GDPR erasure only means something if it's genuinely irreversible.
 
 Workout history should be treated as durable data.

@@ -10,9 +10,62 @@ management command).
 This file exists to answer "what changed between two versions", not to
 duplicate the detailed, ongoing build log — that's
 `docs/DEVELOPMENT_LOG.md`, which is updated with every feature as it
-lands and remains the authoritative history.
+lands and remains the authoritative history. Each GitHub Release's own
+notes are a separate, auto-generated list of every commit since the
+previous release (`docs/ARCHITECTURE.md` "Versioning") — a terse,
+complete audit trail, not a replacement for this file's shorter,
+narrated summary of the same version.
 
-## [Unreleased]
+## [1.5.0] — 2026-08-27
+
+### Added
+- Open Graph/Twitter Card meta tags and a meta description on every
+  page, for a nicer preview when a link to this instance is shared.
+- A "Site & SEO" admin setting (Profile → Administration), off by
+  default: whether search engines are allowed to index this instance
+  at all — a self-hosted instance holding personal health data
+  shouldn't be publicly indexed unless an operator deliberately opts
+  in. Backed by both `/robots.txt` and a `<meta name="robots">` tag on
+  every page.
+- The front-page month calendar can now browse into future months
+  too, not just past ones.
+- Profile → "Delete account" — self-service, GDPR Article 17 account
+  deletion. Everything exclusively yours (workout history, personal
+  records, measurements, nutrition data, activities, feedback, API
+  keys) is permanently deleted; a custom exercise/food/recipe/program/
+  measurement/activity type you created is kept (not deleted) if
+  anyone else on this instance is already using it, just no longer
+  credited to your account. See `docs/SECURITY.md` "Account deletion
+  (GDPR)" for exactly what this can and can't reach (backup archives
+  made before deletion are the one honest exception).
+- Profile → "Download your data" — GDPR Article 20 data portability.
+  Browse everything you've logged as a plain page, or download it as
+  a single JSON file, a `.zip` of spreadsheet-ready CSV files, or
+  that same page as one HTML file to keep or hand to someone else.
+- A privacy notice, shown on the login/signup pages and reachable
+  again anytime from Profile — what's collected, why, your rights
+  (including the two features above), and what's retained.
+- The first-login onboarding modal now also asks for your timezone
+  (pre-filled, so "Save" never actually requires picking one) —
+  previously only available afterwards, from Profile, meaning every
+  "today"/date-range boundary in the app used UTC by default until a
+  new user happened to find that setting.
+
+### Fixed
+- Changing month on the front-page calendar reloaded and repainted
+  the entire dashboard for a one-card change, visible as a brief
+  flash every time — it now swaps just that card.
+- Generating (or regenerating) two-factor backup codes could take
+  several real seconds with no visible feedback, which could look
+  like nothing had happened and invited clicking again mid-wait —
+  racing a second request that could bounce you away before you ever
+  saw the codes the first one had already generated. Now shows a
+  loading page immediately and loads the result once it's ready.
+- Profile → "Download your data" left out your last name and several
+  display/privacy settings (height, and whether you show BMI,
+  achievements, your name, or a Gravatar picture to others) — it only
+  ever covered a handful of account fields, not everything on your
+  account that isn't a credential.
 
 ## [1.4.1] — 2026-08-27
 

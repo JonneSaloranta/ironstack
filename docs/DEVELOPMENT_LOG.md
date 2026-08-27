@@ -2608,3 +2608,391 @@ target-present/target-absent branches, run in isolation against the
 time. The full suite (`coverage run -m pytest`) passed throughout,
 confirming none of this stretch's changes broke anything already
 built.
+
+## Two real-deployment bugs: nginx's stale IP cache, and a CDN's stale static files
+
+Both reported live, on an actual production install, right after
+updating to 1.4.0 — neither was in the application code at all.
+
+**nginx serving 502s from a healthy container.** A routine update
+(`docker compose pull && up -d`) recreates the `web` container, which
+gets a new internal Docker-bridge IP; `compose/nginx/nginx.conf`'s
+`proxy_pass http://web:8000` (or the `upstream { server web:8000; }`
+form this project used until now) resolves that hostname exactly once,
+when nginx's own process starts, and caches it for its entire
+lifetime. `web` coming back up healthy on its new IP left nginx
+silently retrying the old, dead one forever — `connect() failed (111:
+Connection refused)` on every request until nginx itself was also
+manually restarted, which re-resolves DNS at its own next startup.
+Fixed with the standard nginx+Docker pattern: `resolver 127.0.0.11
+valid=10s` (Docker's own embedded DNS) plus `proxy_pass` on a `set`
+variable instead of a bare hostname — a bare hostname in `proxy_pass`
+is resolved once, permanently; a variable forces a fresh lookup
+whenever the resolver's own TTL expires. Verified live end-to-end,
+twice: once against the dev stack (`docker compose up -d
+--force-recreate web`, confirmed nginx self-healed via its own access
+log without a manual restart), and once for real on the reporting
+deployment via SSH, where the exact failure signature (`connect()
+failed... upstream: "http://<old-ip>:8000/"`) matched precisely and
+the same self-healing behavior was observed live in nginx's log right
+after the fix was applied.
+
+**A CDN serving an hours-old `base.css`.** The front page's month
+calendar (this file's own earlier entry) rendered completely
+unstyled on the same deployment — no grid, icons and buttons just
+stacked in document flow. Cloudflare, sitting in front of that
+deployment, was still serving a `base.css` two hours old and ~10KB
+smaller (`cf-cache-status: HIT`) — from before the calendar's own CSS
+existed — because nginx sends no `Cache-Control` header for a CDN to
+respect instead of its own default edge-cache TTL for static
+extensions, and the plain, unchanging `/static/css/base.css` URL gives
+it nothing to notice a newer version by. This is the other half of a
+gap this project's own history already named directly (see this file's
+earlier "the charts are missing their bars" entry: "Since static files
+here aren't served at content-hashed URLs (no
+`ManifestStaticFilesStorage`)..." was written about `static/sw.js`'s
+own cache going stale forever, for the exact same underlying reason).
+Closed properly this time: `config.settings.production` now sets
+`STORAGES["staticfiles"]` to Django's built-in
+`ManifestStaticFilesStorage`, so every `{% static %}` URL includes a
+hash of its own content (`base.1d8d72b58ffc.css`) — a real change
+always produces a new URL, so a CDN or browser's cached response for
+the *previous* URL is simply never requested again, no cache
+configuration or manual purge needed anywhere in the chain. Verified
+with a real `collectstatic` run under production settings (173 files,
+0 errors) confirming two things that would otherwise have been silent
+regressions: no static file's `url(...)` references broke across the
+hashing/rewrite pass, and `static/manifest.json`'s hardcoded PWA icon
+paths (plain JSON strings, never routed through `{% static %}`) still
+resolve — `ManifestStaticFilesStorage` keeps the original, unhashed
+filename on disk alongside the hashed one for exactly this reason.
+Deliberately only set in `production.py`: `{% static %}` needs
+`collectstatic`'s manifest file already built, which only production's
+own startup command runs — dev's `runserver` serves straight from
+`STATICFILES_DIRS` and never calls `collectstatic` at all.
+
+Both fixes shipped as a same-day patch release, 1.4.1.
+
+## Release notes: from CHANGELOG.md prose to an auto-generated commit log
+
+A direct, explicit request: Conventional Commits discipline
+("`ci: update ci`", "`fix: fixed something`") should be non-negotiable
+project-wide, and a GitHub Release's own notes should read like a
+per-commit changelog with each entry linking to the commit that made
+it (an existing open-source project's own release notes — grouped
+under an emoji + category heading, e.g. "📈 General Changes", each
+bullet a short description plus a link — was pointed to directly as
+the target shape).
+
+`.github/workflows/ci.yml`'s `create-release` job no longer reads
+`CHANGELOG.md`'s section for the version at all. Instead: `git
+describe --tags --abbrev=0` finds the previous release's tag (needing
+the checkout step's own new `fetch-depth: 0` — the default shallow
+clone has no tags whatsoever), `git log <that tag>..HEAD --no-merges`
+lists every commit since it, and a small embedded Python script sorts
+each one into a section by its Conventional Commits type (✨ Features,
+🐛 Fixes, 📝 Documentation, ..., in a fixed most-to-least-interesting
+order, not alphabetical) — a commit whose subject doesn't parse as one
+of the recognized types falls into a catch-all "Other" section rather
+than being silently dropped. Each line is the commit's own subject
+followed by its short SHA in parentheses, which GitHub's own release-
+notes renderer auto-links to that commit — no explicit markdown link
+syntax needed for that part.
+
+`CHANGELOG.md` itself is untouched by this — still hand-curated,
+still narrated prose explaining *why* something changed, still cut
+from `[Unreleased]` into a version section at release time exactly as
+before. It simply isn't this job's source anymore; a GitHub Release's
+notes and `CHANGELOG.md`'s own entry for the same version now serve
+two different readers on purpose (a complete, terse, per-commit audit
+trail vs. a shorter, editorialized summary), each documented as such
+in the other's own text (`docs/ARCHITECTURE.md` "Versioning",
+`CHANGELOG.md`'s own intro) so neither reads as contradicting or
+duplicating the other.
+
+Tested before ever touching a real release: extracted the exact `run:`
+script Python's own `yaml.safe_load` sees from the committed workflow
+file (not a hand-retyped approximation of it) and ran it verbatim
+against this repo's real tag history (`v1.3.0..v1.4.0`, 28 real
+commits) — confirmed correct categorization, ordering, and SHA
+rendering before it ever ran for real. `CLAUDE.md`'s own "Commit
+messages" section is updated to list the exact same eleven types the
+categorizer recognizes (`feat`, `fix`, `docs`, `refactor`, `test`,
+`chore`, `ci`, `perf`, `build`, `style`, `revert`) — previously it only
+named six of them as "common", which is how a real commit this session
+(`ci: ...`) would have had nothing further to check itself against.
+
+## OpenGraph/SEO, a two-factor backup-codes race condition, and an interactive calendar
+
+Three unrelated, directly-requested fixes landed together.
+
+**OpenGraph/SEO + an indexing opt-out.** Every page now carries Open
+Graph/Twitter Card meta tags and a meta description (`templates/
+base.html`, each overridable per page via the usual `{% block %}`
+pattern, though nothing overrides them yet) — mainly seen by a link-
+unfurling bot, not a human browser. Alongside it, a new admin setting
+(`apps.core.models.SeoSettings`, Profile → Administration → Site &
+SEO, the same singleton pattern as `BackupSettings`/`FeedbackSettings`)
+controls whether search engines may index this instance at all —
+**off by default**, on the same reasoning as every other opt-in
+external-facing thing in this app (Gravatar, Authentik): most installs
+are a private, self-hosted instance for one household holding another
+person's health data, not a public site anyone should be finding
+through a search engine. Two independent signals carry the same
+answer, since a crawler only ever respects whichever one it actually
+checks: `/robots.txt` (`apps.core.views.robots_txt`, generated per-
+request) and a `<meta name="robots">` tag read from a new
+`apps.core.context_processors.seo` on every single page.
+
+**The two-factor backup-codes race.** Reported live, precisely
+diagnosed rather than guessed at: generating 10 backup codes hashes
+each one with Django's own password hasher — deliberately expensive
+(the same reason a login attempt itself isn't instant), and measured
+at **~1 second per hash on this project's own dev hardware, ~10
+seconds total** for the whole batch. That whole wait used to happen
+silently inside whichever request also rendered the result page, with
+literally nothing on screen suggesting work was in progress. A user
+who clicked "Regenerate" a second time mid-wait ran into a genuine
+race: for the equivalent moment during initial setup, the second
+request's own `TwoFactorSetupView.dispatch` already saw `totp_enabled
+= True` (set fast, before the slow part) and bounced them to their
+profile with "already enabled" — never having seen the codes their
+first click had already generated. Fixed by splitting the work into
+two requests: `TwoFactorSetupView`/`TwoFactorRegenerateBackupCodes
+View` no longer generate anything themselves, only redirect to a new
+`TwoFactorBackupCodesView`, which renders instantly with a visible
+CSS spinner (`.spinner`, respecting `prefers-reduced-motion`) inside a
+`<form hx-trigger="load">` — HTMX fires that form's own POST to
+`TwoFactorBackupCodesFragmentView` (the only place `generate_backup_
+codes` is still called) the instant the page paints, swapping the
+spinner for the real codes once that finishes. Nothing is left to
+double-click by accident any more — there's no button on the loading
+page at all.
+
+**The front-page calendar, made interactive.** Two direct requests on
+the same feature: switching months used to be a full `<a href=
+"?month=...">` page navigation — reported as "the whole page flashes"
+— and future months were clamped away entirely ("there's nothing to
+show for a day that hasn't happened yet," this project's own earlier
+reasoning, reversed by direct request: an empty future month is still
+a valid thing to look at, not an error). Fixed together: every month-
+changing link (`templates/nutrition/_month_calendar.html`'s prev/next
+arrows and its out-of-month padding-day cells) is now `hx-get` +
+`hx-target="#month-calendar"` + `hx-swap="outerHTML"` +
+`hx-push-url="true"`, alongside a plain `href` doing the exact same
+navigation if HTMX is ever unavailable — a real, working link either
+way, not a JS-only button. `outerHTML`, specifically, because Alpine's
+own `x-data="ironstackMonthCalendar(...)"` only ever reads the
+`calendar-days-data` JSON once, at that element's own init — an
+`innerHTML` swap leaving the same element alive would leave the tap-
+a-day popover silently showing the *previous* month's data forever
+after the first swap. `apps.core.views.DashboardView.get_template_
+names` now renders just `_month_calendar.html` for the resulting
+HTMX request instead of the whole dashboard template, and `get_
+context_data` returns early right after building the calendar's own
+context for that same case — a month click no longer re-queries
+recent PRs, achievements, body weight, or anything else on the
+dashboard that didn't change. The old clamp
+(`first_of_requested > first_of_current`) is simply gone; `calendar_
+next_month` is unconditional now, so the template's own dead "no next
+month, render an inert div" branch went with it.
+
+## Self-service account deletion (GDPR Article 17)
+
+Direct request: let a user delete their own account, honoring GDPR,
+while thinking through what genuinely needs to be retained.
+
+The actual answer turned out to be "almost nothing" — this app's own
+existing schema already does most of the hard work. Auditing every
+`ForeignKey(settings.AUTH_USER_MODEL, ...)` across every app found
+every single one already `on_delete=models.CASCADE` — deleting a
+`User` row already cascades through workout history, personal
+records, body measurements, the nutrition diary/targets/diet plans,
+activities, feedback, and API keys, all in one transaction, with
+nothing new needed for any of it.
+
+The real design work was the *other* half: this app is a shared-
+instance, multi-user design (achievements/PRs already surface across
+every user on the instance, foods/exercises/recipes/programs use a
+`Q(owner=user) | Q(owner__isnull=True)` visibility pattern throughout)
+— so a custom `Exercise`/`Food`/`Recipe`/`Program`/`MealSlot`/
+`ActivityType`/`MeasurementType` the deleting user happens to have
+created might already be in active use by someone *else* on the same
+instance. Naively deleting the user and letting `owner`'s own CASCADE
+follow through would have gone one of two ways depending on the
+model: `Exercise`/`MeasurementType`/`ActivityType`'s own *usage* FKs
+(`PerformedExercise.exercise`, `BodyMeasurement.measurement_type`,
+`Activity.activity_type`) are all deliberately `on_delete=PROTECT`,
+so the whole deletion would raise `ProtectedError` and fail outright
+the moment anyone else had ever used that content — a GDPR erasure
+request that can't be fulfilled is the worst possible outcome here.
+`Food`/`Recipe`/`MealSlot`'s own usage FKs are `CASCADE` instead, so
+deleting the user's own `Food` row would have gone the *opposite*
+direction and silently deleted some other user's diary entries too.
+
+`apps.accounts.services.delete_account` fixes both failure modes with
+one step, done *before* `user.delete()`: reassign `owner` to `None` on
+every one of those seven ownable models for rows this user owns — the
+exact same "shared, built-in default" meaning `owner=None` already
+carries everywhere in this app (a template recipe, an OpenFoodFacts-
+imported food, a built-in exercise). Whoever's still using that
+content keeps it, unchanged, just without this user's name attached;
+the CASCADE from `user.delete()` then proceeds cleanly since nothing
+still points at the user through that path. Verified directly, not
+just reasoned about: a test creates a shared custom `Exercise`, logs
+a *second* user's own workout against it, deletes the first user, and
+asserts the second user's `PerformedExercise` still resolves to the
+exact same (now unowned) `Exercise` row — the actual scenario
+`PROTECT` exists to prevent, proven not to fire.
+
+Confirmation is password re-entry (matching `TwoFactorDisableView`'s
+own existing shape for the last "prove you meant this" this app
+already asks for) — except for an Authentik-linked account, which has
+no local password at all (`User.has_usable_password()` is always
+`False` there, set on purpose by `apps.accounts.oidc`); that account
+types its own username instead, for the same strength of confirmation
+an action that can't ask for a password that doesn't exist. One more
+guard, found worth adding while designing this rather than requested
+outright: the instance's last remaining superuser can't delete
+themselves — promoting another account to superuser first is
+required, so a moment of "let me just clean up my test account" can
+never accidentally leave an instance with nobody able to reach Django
+admin at all.
+
+Deliberately disclosed, not glossed over, on the deletion page itself:
+a backup archive made before deletion (`docs/BACKUP.md`) still
+contains the deleted account's data until it's rotated out by this
+instance's own retention setting — a point-in-time snapshot can't
+retroactively un-contain something, and saying so plainly is the
+honest alternative to a guarantee this feature structurally can't
+make.
+
+## A privacy notice, and self-service data export (GDPR Article 20)
+
+Two direct follow-ups to the account-deletion work above, completing
+the same GDPR picture: knowing what's collected and being able to get
+a copy of it are what make erasure a safe, informed thing to decide
+on, not just a delete button.
+
+**Privacy notice** (`templates/accounts/_privacy_notice_modal.html`)
+— a fixed, translated notice, deliberately distinct from `SiteDisclaimer`
+(free-form, operator-authored liability text already shown on the same
+pages): what's collected, why, and a user's rights, framed honestly
+for what this app actually is — self-hosted, open-source software
+where the *operator* of a given instance is the GDPR "data controller"
+for it, not this project's authors. Shown at the point data collection
+actually starts (login/signup) and reachable again anytime from
+Profile, right above the version/changelog button, via the same
+`.modal-backdrop`/`.modal-card` pattern already used there — a small,
+new `.link-button` class (plain inline-text-styled button) was pulled
+out for it rather than reusing `.app-version`'s own, differently-named
+class for what's visually the identical treatment.
+
+One authoring bug found and fixed while writing it: `{% trans "...
+→ \"Delete account\" ..." %}` — a backslash-escaped quote *inside* a
+double-quoted `{% trans %}` string literal — silently truncated the
+extracted msgid at the escaped quote during `makemessages`, even
+though the tag itself renders correctly at runtime. Switching to
+single-quote delimiters (`{% trans '... → "Delete account" ...' %}`,
+which Django template tags accept equally) sidesteps the whole
+problem — no escaping needed for a literal double quote inside a
+single-quoted literal.
+
+**Data export** (`apps.accounts.services.export_account_data`,
+Profile → "Download your data") — the other direction from account
+deletion, and reuses its own reasoning almost exactly: the same set of
+models deletion hard-deletes, plus this user's own authored shared
+content (a custom exercise/food/recipe they created), read rather
+than removed. Built on Django's own generic model serializer
+(`django.core.serializers.serialize("json", queryset)`) instead of a
+hand-maintained per-model field list — every field on every model is
+included automatically, including any added after this function was
+written, at the cost of the export's shape being Django's own
+`{"model", "pk", "fields"}` per row rather than a bespoke schema.
+`ApiKey` is the one deliberate exception, hand-built instead of using
+the generic serializer: `key_hash` is a credential, not data to read
+back, and an explicit field allow-list was judged safer than trusting
+a generic dump to never include it by accident.
+
+One export, three ways to look at it, all from the same underlying
+dict so there's only one thing to keep correct: a plain HTML page
+(collapsible `<details>`-style cards per section, reusing this app's
+own `.set-table`/`.table-wrap` styling already used elsewhere), a
+single JSON file (the same shape a user's own API key could already
+fetch from the public API), and a `.zip` of one CSV file per section
+built with the stdlib's own `csv`/`zipfile` modules — no new
+dependency for either format. A small `_rows_for_section` helper
+normalizes the three different underlying shapes (`account` is a
+single dict, `api_keys` is already a flat list, everything else is
+the generic serializer's `{"model", "pk", "fields"}` form) into one
+consistent "list of flat dicts" shape the CSV/HTML code can both use
+without caring which section they're looking at.
+
+## Timezone in onboarding, and a missing last name in data export
+
+Two small, unrelated follow-ups surfaced by actually using the
+features above.
+
+**Timezone onboarding** — `User.timezone` and a `ProfileForm` field
+for it already existed, but the one-time onboarding modal shown after
+a new account's first login never asked for it, so every "today"/
+date-range boundary in the app (`apps.accounts.middleware.
+UserTimezoneMiddleware`) silently used UTC until a new user happened
+to find the setting buried in Profile afterwards. `OnboardingForm`
+now has the same `timezone` field as `ProfileForm` — pulled the
+`available_timezones()`-minus-misleading-aliases list out into a
+shared `_timezone_choices()` helper so the two forms can't drift
+apart on which aliases (`localtime`, `Factory`) get excluded. Marked
+required, like the form's existing `unit_system` field, rather than
+optional like the rest of the modal's fields: both are pre-filled
+with the user's current value in `__init__`, so "Save" never actually
+requires a manual choice, and "Not now" skips form validation
+entirely regardless (its own button is `formnovalidate`).
+
+**Data export's missing fields** — `export_account_data`'s `"account"`
+section listed `username`/`first_name`/`email`/`unit_system`/
+`timezone`/`language` but never `last_name`, even though
+`AccountDetailsForm` has let a user set one for a while — an easy
+thing to miss by hand-listing fields once and not revisiting the
+list. Auditing the rest of `User` while fixing it turned up the same
+gap for `height`, `show_bmi`, `show_achievements`,
+`show_name_to_others`, `show_gravatar`, `onboarding_completed`,
+`is_sso_user`, and `totp_enabled` (the boolean flag, not the secret
+itself) — every remaining non-credential field on the model, so a
+user's own export is now a genuinely complete answer to "what do you
+have on me", not just the handful of fields the profile *form* shows
+at once. Covered by a test asserting on specific fields directly
+(and one asserting `password`/`totp_secret` are still never
+included), not just the export's overall shape.
+
+**Downloadable HTML export** — "Download your data" already rendered
+an HTML page to browse online, but the only literal downloads on
+offer were JSON and CSV; asked to add a genuine `?format=html`
+download too, since a file a user can keep or hand to someone else is
+a different thing from a page they can only read while logged into
+this instance. Implementing it surfaced a real bug in the *existing*
+browsable page along the way: its per-section collapse used Alpine
+(`x-data`/`x-show`/`x-cloak`), which depends on this app's own JS
+loading to ever reveal anything — fine for the live page, but a
+downloaded copy opened later with no route back to this instance (or
+just offline) would render every section permanently invisible,
+`x-cloak`'s CSS rule never lifted. Switched to native
+`<details>`/`<summary>` instead — the same pattern this app already
+uses for the changelog modal's per-version sections — so the data
+stays inspectable with zero JS.
+
+The first version of the actual download reused that same fixed page
+outright (`extends "base.html"`), which turned out not to be enough:
+reported back looking badly broken, with enormous icons. The page's
+nav bar has several `<svg class="nav-icon">` elements with no
+width/height of their own — sized entirely by `base.css`, which,
+same as the Alpine problem above, a downloaded file has no guarantee
+of ever loading again, so each icon rendered at its raw, un-styled
+intrinsic SVG size instead. Fixed properly this time by giving the
+download its own dedicated template
+(`templates/accounts/_data_export_standalone.html`) that doesn't
+extend `base.html` at all — no nav, no icons, no external stylesheet
+or script, just a trimmed, self-contained `<style>` block reusing
+`base.css`'s own dark IronStack color palette. The browsable in-app
+page keeps using the normal site chrome; only the actual downloadable
+file needs to survive completely on its own.

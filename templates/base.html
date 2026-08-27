@@ -4,6 +4,38 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>{% block title %}IronStack{% endblock %}</title>
+  {% comment %}
+    seo_indexing_enabled: apps.core.context_processors.seo, backed by
+    apps.core.models.SeoSettings (Profile → Administration → Site &
+    SEO) — off by default, since almost every install of this app is
+    a private, self-hosted instance for one household holding another
+    person's health data, not a public site anyone should be finding
+    through a search engine. robots.txt (apps.core.views.robots_txt)
+    carries the same signal for a well-behaved crawler that checks it
+    first; this tag is the one a crawler is more consistently expected
+    to actually respect even if it never fetches robots.txt at all.
+  {% endcomment %}
+  {% if seo_indexing_enabled %}
+    <meta name="robots" content="index, follow">
+  {% else %}
+    <meta name="robots" content="noindex, nofollow">
+  {% endif %}
+  <meta name="description" content="{% block meta_description %}{% trans "Self-hosted, mobile-first fitness and activity tracker — workout logging, progression, nutrition, and body tracking, running entirely on your own infrastructure." %}{% endblock %}">
+  {% comment %}
+    Open Graph/Twitter Card — mainly seen by a link-unfurling bot
+    (Slack, Discord, iMessage, ...) when someone shares a link to this
+    instance, not by a human browser; every block below can be
+    overridden per page (e.g. login.html's own og:title), but the
+    defaults here are sane for any page that doesn't bother, including
+    ones behind a login redirect a bot would actually land on.
+  {% endcomment %}
+  <meta property="og:site_name" content="IronStack">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="{% block og_title %}IronStack{% endblock %}">
+  <meta property="og:description" content="{% block og_description %}{% trans "Self-hosted, mobile-first fitness and activity tracker." %}{% endblock %}">
+  <meta property="og:image" content="{% block og_image %}{{ request.scheme }}://{{ request.get_host }}{% static 'icons/icon-512.png' %}{% endblock %}">
+  <meta property="og:url" content="{{ request.build_absolute_uri }}">
+  <meta name="twitter:card" content="summary">
   <link rel="stylesheet" href="{% static 'css/base.css' %}">
   <link rel="manifest" href="{% url 'web-manifest' %}">
   <meta name="theme-color" content="#101317">

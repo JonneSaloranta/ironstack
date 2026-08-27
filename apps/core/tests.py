@@ -23,7 +23,7 @@ from apps.core.changelog import _render, render_changelog_html
 from apps.core.charts import build_bar_series, build_chart_series
 from apps.core.context_processors import app_version
 from apps.core.greetings import _GREETINGS_BY_BUCKET, _time_bucket, random_greeting
-from apps.core.models import BackupSettings, Feedback, FeedbackSettings
+from apps.core.models import BackupSettings, Feedback, FeedbackSettings, SeoSettings
 from apps.core.templatetags.core_extras import duration, translate_content
 from apps.core.units import (
     cm_to_meters,
@@ -607,14 +607,52 @@ class ChangelogTests(TestCase):
 
     def test_renders_the_real_changelog_file_without_error(self):
         html = render_changelog_html()
-        self.assertIn("<h3>", html)
+        self.assertIn("<details", html)
         self.assertIn("[1.0.0]", html)
 
     def test_headings(self):
         html = _render("# Title\n\n## [1.1.0] — 2026-01-01\n\n### Added\n- A thing\n")
         self.assertNotIn("Title", html)  # the top-level title is skipped
-        self.assertIn("<h3>[1.1.0] — 2026-01-01</h3>", html)
-        self.assertIn("<h4>Added</h4>", html)
+        self.assertIn("<summary>[1.1.0] — 2026-01-01</summary>", html)
+        self.assertIn("<h4>✨ Added</h4>", html)
+
+    def test_each_version_is_its_own_collapsible_section(self):
+        """Regression: this used to render as one continuous list with
+        no visual break between versions at all."""
+        html = _render(
+            "## [1.2.0] — 2026-02-01\n\n### Added\n- Newer thing\n\n"
+            "## [1.1.0] — 2026-01-01\n\n### Fixed\n- Older thing\n"
+        )
+        self.assertEqual(html.count("<details"), 2)
+        self.assertIn("<summary>[1.2.0] — 2026-02-01</summary>", html)
+        self.assertIn("<summary>[1.1.0] — 2026-01-01</summary>", html)
+
+    def test_only_the_first_non_empty_version_starts_open(self):
+        html = _render(
+            "## [Unreleased]\n\n## [1.2.0] — 2026-02-01\n\n### Added\n- Newer thing\n\n"
+            "## [1.1.0] — 2026-01-01\n\n### Fixed\n- Older thing\n"
+        )
+        self.assertEqual(html.count("<details open"), 1)
+        self.assertIn('<details open><summary>[1.2.0] — 2026-02-01</summary>', html)
+
+    def test_an_empty_version_section_is_skipped_entirely(self):
+        """The normal state of [Unreleased] right after a release cut
+        (CLAUDE.md's own release workflow) — nothing under it yet."""
+        html = _render("## [Unreleased]\n\n## [1.1.0] — 2026-01-01\n\n### Added\n- A thing\n")
+        self.assertNotIn("[Unreleased]", html)
+        self.assertIn("[1.1.0]", html)
+
+    def test_a_recognized_heading_gets_its_matching_emoji(self):
+        html = _render("## [1.1.0] — 2026-01-01\n\n### Fixed\n- A fix\n")
+        self.assertIn("<h4>🐛 Fixed</h4>", html)
+
+    def test_a_suffixed_heading_still_matches_its_plain_counterpart(self):
+        html = _render("## [1.1.0] — 2026-01-01\n\n### Added — API\n- A new endpoint\n")
+        self.assertIn("<h4>✨ Added — API</h4>", html)
+
+    def test_an_unrecognized_heading_gets_the_default_emoji(self):
+        html = _render("## [1.1.0] — 2026-01-01\n\n### Security\n- A hardening change\n")
+        self.assertIn("<h4>📌 Security</h4>", html)
 
     def test_bullets_including_a_soft_wrapped_continuation_line(self):
         html = _render("- First point\n  still the first point\n- Second point\n")
@@ -1410,6 +1448,116 @@ class FeedbackViewTests(TestCase):
         self.assertTrue(FeedbackSettings.load().enabled)  # default untouched
 
 
+class SeoSettingsModelTests(TestCase):
+    """apps.core.models.SeoSettings — same admin-tunable singleton
+    pattern as BackupSettings/FeedbackSettings above, except this one
+    defaults to *off*: most installs of this app are a private,
+    self-hosted instance holding another person's health data, not a
+    public site anyone should be finding through a search engine."""
+
+    def test_load_creates_the_singleton_disabled_by_default(self):
+        self.assertFalse(SeoSettings.load().search_engine_indexing_enabled)
+
+    def test_load_always_returns_the_same_row(self):
+        first = SeoSettings.load()
+        first.search_engine_indexing_enabled = True
+        first.save()
+        second = SeoSettings.load()
+        self.assertEqual(first.pk, second.pk)
+        self.assertTrue(second.search_engine_indexing_enabled)
+
+    def test_save_always_targets_pk_1_even_for_a_fresh_instance(self):
+        settings_row = SeoSettings(search_engine_indexing_enabled=True)
+        settings_row.save()
+        self.assertEqual(settings_row.pk, 1)
+        self.assertEqual(SeoSettings.objects.count(), 1)
+
+    def test_delete_is_a_no_op(self):
+        settings_row = SeoSettings.load()
+        settings_row.delete()
+        self.assertTrue(SeoSettings.objects.filter(pk=1).exists())
+
+
+class SeoSettingsViewTests(TestCase):
+    """Profile → Administration → Site & SEO (staff only)."""
+
+    def setUp(self):
+        User = get_user_model()
+        self.admin = User.objects.create_user(
+            username="admin", password="s3cret-pass", is_staff=True
+        )
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+
+    def test_requires_login(self):
+        response = self.client.get(reverse("seo-settings"))
+        self.assertEqual(response.status_code, 302)
+
+    def test_requires_staff(self):
+        self.client.login(username="alice", password="s3cret-pass")
+        response = self.client.get(reverse("seo-settings"))
+        self.assertEqual(response.status_code, 403)
+
+    def test_posting_enables_indexing(self):
+        self.client.login(username="admin", password="s3cret-pass")
+        response = self.client.post(
+            reverse("seo-settings"), {"search_engine_indexing_enabled": "on"}
+        )
+        self.assertRedirects(response, reverse("seo-settings"))
+        self.assertTrue(SeoSettings.load().search_engine_indexing_enabled)
+
+    def test_posting_with_the_checkbox_omitted_disables_indexing(self):
+        SeoSettings.objects.create(pk=1, search_engine_indexing_enabled=True)
+        self.client.login(username="admin", password="s3cret-pass")
+        self.client.post(reverse("seo-settings"), {})
+        self.assertFalse(SeoSettings.load().search_engine_indexing_enabled)
+
+    def test_the_profile_page_links_to_it_for_staff_only(self):
+        self.client.login(username="admin", password="s3cret-pass")
+        response = self.client.get(reverse("profile"))
+        self.assertContains(response, reverse("seo-settings"))
+
+        self.client.logout()
+        self.client.login(username="alice", password="s3cret-pass")
+        response = self.client.get(reverse("profile"))
+        self.assertNotContains(response, reverse("seo-settings"))
+
+
+class RobotsTxtAndSeoMetaTests(TestCase):
+    """robots.txt (apps.core.views.robots_txt) and base.html's own
+    <meta name="robots">/Open Graph tags — both driven by the same
+    apps.core.models.SeoSettings toggle (apps.core.context_processors.
+    seo), so a crawler that respects either one gets a consistent
+    answer regardless of which it actually checks."""
+
+    def test_robots_txt_disallows_everything_by_default(self):
+        response = self.client.get("/robots.txt")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response["Content-Type"], "text/plain")
+        self.assertIn(b"Disallow: /", response.content)
+
+    def test_robots_txt_allows_everything_once_enabled(self):
+        SeoSettings.objects.create(pk=1, search_engine_indexing_enabled=True)
+        response = self.client.get("/robots.txt")
+        self.assertIn(b"Allow: /", response.content)
+        self.assertNotIn(b"Disallow", response.content)
+
+    def test_meta_robots_tag_is_noindex_by_default(self):
+        response = self.client.get(reverse("login"))
+        self.assertContains(response, '<meta name="robots" content="noindex, nofollow">')
+
+    def test_meta_robots_tag_flips_once_indexing_is_enabled(self):
+        SeoSettings.objects.create(pk=1, search_engine_indexing_enabled=True)
+        response = self.client.get(reverse("login"))
+        self.assertContains(response, '<meta name="robots" content="index, follow">')
+
+    def test_open_graph_tags_are_present(self):
+        response = self.client.get(reverse("login"))
+        self.assertContains(response, '<meta property="og:site_name" content="IronStack">')
+        self.assertContains(response, '<meta property="og:title"')
+        self.assertContains(response, '<meta property="og:image"')
+        self.assertContains(response, '<meta name="description"')
+
+
 class DashboardAccessTests(TestCase):
     def test_dashboard_requires_login(self):
         response = self.client.get(reverse("dashboard"))
@@ -1627,19 +1775,17 @@ class DashboardCalendarTests(TestCase):
         response = self.client.get(reverse("dashboard"))
         today = timezone.localdate()
         self.assertEqual(response.context["calendar_month"], today.replace(day=1))
-        self.assertIsNone(response.context["calendar_next_month"])
 
     def test_month_param_shows_a_different_month(self):
         response = self.client.get(reverse("dashboard"), {"month": "2020-05"})
         self.assertEqual(response.context["calendar_month"].isoformat(), "2020-05-01")
-        # Not the current month any more, so both directions are open.
         self.assertEqual(response.context["calendar_prev_month"], "2020-04")
         self.assertEqual(response.context["calendar_next_month"], "2020-06")
 
-    def test_a_future_month_is_clamped_to_the_current_one(self):
+    def test_a_future_month_is_browsable_not_clamped(self):
         response = self.client.get(reverse("dashboard"), {"month": "2099-01"})
-        today = timezone.localdate()
-        self.assertEqual(response.context["calendar_month"], today.replace(day=1))
+        self.assertEqual(response.context["calendar_month"].isoformat(), "2099-01-01")
+        self.assertEqual(response.context["calendar_next_month"], "2099-02")
 
     def test_garbage_month_param_falls_back_to_the_current_month(self):
         response = self.client.get(reverse("dashboard"), {"month": "not-a-month"})
@@ -1679,6 +1825,40 @@ class DashboardCalendarTests(TestCase):
         self.assertEqual(len(days), 31)
         first_day = next(d for d in days if d["date"] == "2026-08-01")
         self.assertEqual(first_day["lines"], ["Rest day.", "Nothing logged that day."])
+
+    def test_a_far_future_month_still_renders_without_data(self):
+        """No clamp any more (calendar_prev_month/_next_month's own
+        docstring) — a future month with nothing logged in it yet is
+        still a perfectly valid thing to look at, not an error."""
+        response = self.client.get(reverse("dashboard"), {"month": "2099-06"})
+        self.assertEqual(response.status_code, 200)
+        for week in response.context["calendar_weeks"]:
+            for day in week:
+                if day["in_month"]:
+                    self.assertIsNone(day["status"].training_status)
+
+    def test_an_htmx_request_renders_only_the_calendar_partial(self):
+        """Changing month is an HTMX swap of just this one card
+        (templates/nutrition/_month_calendar.html's own comment) — the
+        response shouldn't re-render (or re-query for) the rest of the
+        dashboard at all."""
+        response = self.client.get(
+            reverse("dashboard"), {"month": "2020-05"}, HTTP_HX_REQUEST="true"
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "nutrition/_month_calendar.html")
+        self.assertTemplateNotUsed(response, "core/dashboard.html")
+        self.assertContains(response, "2020")
+        self.assertNotIn("achievements", response.context)
+
+    def test_month_links_use_htmx_and_carry_a_plain_href_fallback(self):
+        response = self.client.get(reverse("dashboard"))
+        self.assertContains(response, 'id="month-calendar"')
+        self.assertContains(response, 'hx-target="#month-calendar"')
+        self.assertContains(response, 'hx-push-url="true"')
+        # A plain href alongside hx-get, not instead of it — works even
+        # if JS/HTMX never loads at all.
+        self.assertContains(response, "href=\"?month=")
 
 
 class DayDetailLinesTests(TestCase):

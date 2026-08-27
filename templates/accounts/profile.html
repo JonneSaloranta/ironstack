@@ -88,6 +88,14 @@
   <a class="button-secondary" href="{% url 'api_keys:key-list' %}">{% trans "Open" %}</a>
 </div>
 
+<div class="card card-action-row">
+  <div>
+    <strong>{% trans "Download your data" %}</strong>
+    <p class="text-muted">{% trans "Browse everything you've logged, or download it as JSON, CSV, or HTML." %}</p>
+  </div>
+  <a class="button-secondary" href="{% url 'data-export' %}">{% trans "Open" %}</a>
+</div>
+
 {% if feedback_enabled %}
   <div class="card card-action-row">
     <div>
@@ -124,13 +132,33 @@
       </div>
       <a class="button-secondary" href="{% url 'feedback-list' %}">{% trans "Open" %}</a>
     </div>
+
+    <div class="card card-action-row">
+      <div>
+        <strong>{% trans "Site & SEO" %}</strong>
+        <p class="text-muted">{% trans "Control whether search engines are allowed to index this instance." %}</p>
+      </div>
+      <a class="button-secondary" href="{% url 'seo-settings' %}">{% trans "Open" %}</a>
+    </div>
   </div>
 {% endif %}
+
+<div class="danger-zone">
+  <div class="card card-action-row">
+    <div>
+      <strong>{% trans "Delete account" %}</strong>
+      <p class="text-muted">{% trans "Permanently delete your account and everything tied to it." %}</p>
+    </div>
+    <a class="button-secondary" href="{% url 'account-delete' %}">{% trans "Open" %}</a>
+  </div>
+</div>
 
 <form method="post" action="{% url 'logout' %}">
   {% csrf_token %}
   <button type="submit" class="button-danger">{% trans "Log out" %}</button>
 </form>
+
+{% include "accounts/_privacy_notice_modal.html" %}
 
 <div x-data="{ open: false }">
   <button type="button" class="app-version" @click="open = true">

@@ -187,6 +187,40 @@ input[type="radio"] {
   pointer-events: none;
 }
 
+/* A visible "something is happening" spinner for a request slow
+   enough that .htmx-request's own dim-and-disable isn't obvious
+   enough on its own — found needed for backup-code generation
+   (templates/accounts/two_factor_backup_codes.html), which hashes
+   each code with Django's own deliberately-expensive password hasher
+   and can take several real seconds, not the sub-second HTMX
+   round-trips everywhere else in this app that .htmx-request alone
+   already reads as "loading" for. */
+.spinner {
+  display: inline-block;
+  width: 2rem;
+  height: 2rem;
+  border: 3px solid var(--color-border);
+  border-top-color: var(--color-accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* WCAG 2.3.3 "Animation from Interactions" — a spinning circle isn't
+   essential to what it communicates (only its *presence* is; a static
+   ring still says "loading" for anyone who's told their OS they'd
+   rather not see continuous motion). */
+@media (prefers-reduced-motion: reduce) {
+  .spinner {
+    animation: none;
+  }
+}
+
 /* Mobile bottom navigation */
 .bottom-nav {
   position: fixed;
@@ -452,10 +486,27 @@ abbr[title]:focus::after {
   margin: 0 0 1rem;
 }
 
-/* A <button>, not just styled text — clicking it opens the changelog
-   modal below, so it needs the usual button resets (no native
-   background/border) on top of looking like the plain muted footer
-   text it always was. */
+/* A <button> that reads as plain inline text, not a boxed button — for
+   an action that's secondary to the whole page it's on (expanding one
+   section of templates/accounts/data_export.html's own per-category
+   breakdown) and shouldn't visually compete with the page's own
+   primary button(s). */
+.link-button {
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  color: var(--color-accent);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+/* A <button>, not just styled text — clicking it opens a modal (the
+   changelog below, or templates/accounts/_privacy_notice_modal.html's
+   privacy notice, sharing this exact look on purpose rather than a
+   second near-identical class), so it needs the usual button resets
+   (no native background/border) on top of looking like the plain
+   muted footer text it always was. */
 .app-version {
   display: block;
   width: 100%;
@@ -543,9 +594,52 @@ abbr[title]:focus::after {
   color: var(--color-text-muted);
 }
 
+/* The changelog modal's per-version sections
+   (apps.core.changelog._render, templates/accounts/profile.html) —
+   native <details>/<summary> instead of Alpine state, since each
+   version is independent of every other one (no shared "only one
+   open" behavior needed) and a screen reader/keyboard user already
+   knows how to operate a native disclosure widget without this app
+   teaching it any ARIA by hand. */
+.modal-body details {
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.modal-body details:last-of-type {
+  border-bottom: none;
+  padding-bottom: 0;
+  margin-bottom: 0;
+}
+
+.modal-body summary {
+  cursor: pointer;
+  font-weight: bold;
+  padding: 0.25rem 0;
+}
+
+.modal-body details[open] summary {
+  margin-bottom: 0.5rem;
+}
+
 .modal-body p {
   color: var(--color-text-muted);
   margin: 0 0 0.75rem;
+}
+
+/* templates/accounts/data_export.html's per-section cards — native
+   <details>/<summary> for the same reason as the changelog modal
+   above: nothing here needs Alpine's more elaborate state, and a
+   screen reader/keyboard user already knows how to operate a native
+   disclosure widget. ("Download as HTML" is a separate, deliberately
+   self-contained template — templates/accounts/
+   _data_export_standalone.html — with its own inline copy of these
+   same rules, since a downloaded file can't rely on this stylesheet
+   ever loading again either.) */
+.card > summary {
+  cursor: pointer;
+  font-weight: bold;
 }
 
 .modal-body ul {
@@ -1533,4 +1627,38 @@ h2 {
 
 .calendar-day-popover-end {
   right: 0;
+}
+
+/* The "?" legend's own list (templates/nutrition/_month_calendar.html)
+   — one row per icon/color actually used in the grid above it, the
+   real <svg> markup reused as-is rather than described in prose a
+   reader had to match back to the pixels themselves. */
+.calendar-legend {
+  list-style: none;
+  margin: 0 0 1rem;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.calendar-legend li {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* A plain color swatch for the trend arrow's *other* dimension (how
+   far off, not which direction) — `background: currentColor` picks up
+   whatever `.calendar-day-icon-green/-yellow/-red` sets `color` to,
+   the same three classes the grid's own icons already use, so this
+   is guaranteed to always match them instead of a second, driftable
+   copy of the same three color values. */
+.calendar-legend-dot {
+  display: inline-block;
+  width: 0.65rem;
+  height: 0.65rem;
+  border-radius: 50%;
+  background: currentColor;
+  flex-shrink: 0;
 }

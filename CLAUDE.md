@@ -102,7 +102,7 @@ Before adding a dependency, check whether Django, HTMX, Alpine.js, or existing p
 
 ## Commit messages
 
-Use Conventional Commits (`<type>[optional scope]: <description>`) for the summary line — e.g. `feat(backups): add admin-only web UI for creating and restoring backups`, `fix(nav): stop Home lighting up alongside Progress`, `docs: update CHANGELOG.md for 1.1.0`. Common types: `feat`, `fix`, `docs`, `refactor`, `test`, `chore`. A longer body explaining the why (matching this project's established style) is still welcome below the summary line.
+Always use Conventional Commits (`<type>[optional scope]: <description>`) for the summary line of every commit — e.g. `feat(backups): add admin-only web UI for creating and restoring backups`, `fix(nav): stop Home lighting up alongside Progress`, `docs: update CHANGELOG.md for 1.1.0`, `ci: pin GitHub Actions to a commit SHA`. Types: `feat`, `fix`, `docs`, `refactor`, `test`, `chore`, `ci`, `perf`, `build`, `style`, `revert` — this exact set, since `.github/workflows/ci.yml`'s `create-release` job groups a release's auto-generated notes by this same type (see `docs/ARCHITECTURE.md` "Versioning"); a commit whose subject doesn't match one of these falls into a catch-all "Other" section there instead of being categorized properly. A longer body explaining the why (matching this project's established style) is still welcome below the summary line.
 
 ## Implementation order
 

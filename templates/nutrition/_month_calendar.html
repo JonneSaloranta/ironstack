@@ -17,20 +17,45 @@ call to apps.nutrition.services from the "downstream, composes
 several apps" layer that dashboard already is (same reasoning as its
 own recent-PRs/training-summary/body-weight sections, each from a
 different app).
+
+Every month-changing link below is HTMX (hx-get + hx-target="#month-
+calendar" + hx-swap="outerHTML"), not a plain <a href>, so switching
+months swaps just this one card instead of a full-page navigation —
+found needed live: every click used to reload and repaint the entire
+dashboard for a one-card change, visible as a brief flash each time.
+`href` stays set on every link regardless (a normal, working page
+navigation) — HTMX only intercepts the click, so this degrades
+correctly if JS is ever unavailable. `hx-push-url="true"` keeps the
+address bar's own `?month=` in sync either way, so reloading, sharing,
+or using the browser's own back/forward buttons all still land on the
+right month. DashboardView.get_template_names() renders just this
+partial for the HTMX request that results (never the whole dashboard
+again), and outerHTML swaps the whole card including the `x-data`
+below — Alpine only reads `calendar-days-data`'s contents once, at
+`x-data` init, so the *element* has to be replaced wholesale for a new
+month's popover data to ever take effect, not just its inner content.
 {% endcomment %}
 {{ calendar_days_json|json_script:"calendar-days-data" }}
-<div class="card" x-data="ironstackMonthCalendar('calendar-days-data')">
+<div class="card" id="month-calendar" x-data="ironstackMonthCalendar('calendar-days-data')">
   <div class="calendar-header" x-data="{ helpOpen: false }">
-    <a class="button-secondary" href="?month={{ calendar_prev_month }}" aria-label="{% trans "Previous month" %}">&larr;</a>
+    <a class="button-secondary" href="?month={{ calendar_prev_month }}"
+       hx-get="?month={{ calendar_prev_month }}" hx-target="#month-calendar" hx-swap="outerHTML"
+       hx-push-url="true" aria-label="{% trans "Previous month" %}">&larr;</a>
     <strong style="display:flex; align-items:center; gap:0.5rem;">
-      {{ calendar_month|date:"F Y" }}
+      {% comment %}
+        capfirst: Finnish/Swedish/Estonian month names are lowercase
+        by their own language's own grammar rules ("elokuu", not
+        "Elokuu") — correct in a sentence, but this heads a card the
+        same way "August 2026" would in English, so it's capitalized
+        here regardless of what the active language's own grammar
+        says about a month name appearing mid-sentence.
+      {% endcomment %}
+      {{ calendar_month|date:"F Y"|capfirst }}
       <button type="button" class="help-button" @click="helpOpen = true" aria-label="{% trans "How to read this calendar" %}">?</button>
     </strong>
-    {% if calendar_next_month %}
-      <a class="button-secondary" href="?month={{ calendar_next_month }}" aria-label="{% trans "Next month" %}">&rarr;</a>
-    {% else %}
-      <span style="width:var(--touch-target);"></span>
-    {% endif %}
+    <a class="button-secondary" href="?month={{ calendar_next_month }}"
+       hx-get="?month={{ calendar_next_month }}" hx-target="#month-calendar" hx-swap="outerHTML"
+       hx-push-url="true" aria-label="{% trans "Next month" %}">&rarr;</a>
 
     <div class="modal-backdrop" x-show="helpOpen" x-cloak x-transition.opacity.duration.200ms
          @click.self="helpOpen = false" @keydown.escape.window="helpOpen = false">
@@ -41,9 +66,59 @@ different app).
           <button type="button" class="modal-close" @click="helpOpen = false" aria-label="{% trans "Dismiss" %}">&times;</button>
         </div>
         <div class="modal-body">
-          <p>{% trans "A barbell icon marks a training day — green for a new personal record, red for an abandoned session, plain for an ordinary one. A moon marks a rest day." %}</p>
-          <p>{% trans "The arrow shows how your trailing 7-day average calories compare to your target: pointing up means over, down means under; green is close, yellow is drifting, red is well off. No arrow yet means there isn't enough logged data to judge." %}</p>
-          <p>{% trans "Tap a day for details." %}</p>
+          {% comment %}
+            Every icon/color shown here is the exact same markup used
+            in the grid itself (same classes, same <svg> paths) —
+            found needed live: describing "green" and "a barbell" in
+            plain prose still left it up to a reader's own imagination
+            to match that description back to the actual pixels on
+            screen, especially for the trend arrow's two independent
+            dimensions (shape = over/under, color = how far off —
+            apps.nutrition.services.CalendarDayStatus's own docstring)
+            shown here as two separate rows rather than one still
+            asking a reader to combine three colors with two shapes
+            themselves.
+          {% endcomment %}
+          <ul class="calendar-legend">
+            <li>
+              <svg class="calendar-day-icon calendar-day-icon-green" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><line x1="6" y1="12" x2="18" y2="12"/><rect x="2" y="9" width="3" height="6" rx="1"/><rect x="19" y="9" width="3" height="6" rx="1"/><rect x="5" y="7" width="2" height="10" rx="1"/><rect x="17" y="7" width="2" height="10" rx="1"/></svg>
+              {% trans "New personal record" %}
+            </li>
+            <li>
+              <svg class="calendar-day-icon calendar-day-icon-red" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><line x1="6" y1="12" x2="18" y2="12"/><rect x="2" y="9" width="3" height="6" rx="1"/><rect x="19" y="9" width="3" height="6" rx="1"/><rect x="5" y="7" width="2" height="10" rx="1"/><rect x="17" y="7" width="2" height="10" rx="1"/></svg>
+              {% trans "A session was abandoned" %}
+            </li>
+            <li>
+              <svg class="calendar-day-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><line x1="6" y1="12" x2="18" y2="12"/><rect x="2" y="9" width="3" height="6" rx="1"/><rect x="19" y="9" width="3" height="6" rx="1"/><rect x="5" y="7" width="2" height="10" rx="1"/><rect x="17" y="7" width="2" height="10" rx="1"/></svg>
+              {% trans "An ordinary training day" %}
+            </li>
+            <li>
+              <svg class="calendar-day-icon calendar-day-icon-muted" viewBox="0 0 24 24" fill="currentColor" stroke="none" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+              {% trans "Rest day" %}
+            </li>
+            <li>
+              <svg class="calendar-day-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
+              {% trans "Trailing 7-day average calories ran over your target" %}
+            </li>
+            <li>
+              <svg class="calendar-day-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
+              {% trans "Trailing 7-day average calories ran under your target" %}
+            </li>
+            <li>
+              <span class="calendar-legend-dot calendar-day-icon-green" aria-hidden="true"></span>
+              {% trans "Close to target" %}
+            </li>
+            <li>
+              <span class="calendar-legend-dot calendar-day-icon-yellow" aria-hidden="true"></span>
+              {% trans "Drifting from target" %}
+            </li>
+            <li>
+              <span class="calendar-legend-dot calendar-day-icon-red" aria-hidden="true"></span>
+              {% trans "Well off target" %}
+            </li>
+          </ul>
+          <p class="text-muted">{% trans "No arrow yet means there isn't enough logged data to judge." %}</p>
+          <p class="text-muted">{% trans "Tap a day for details." %}</p>
         </div>
       </div>
     </div>
@@ -61,24 +136,21 @@ different app).
               tapping one used to open a detail popover for a day
               whose own month isn't even the one on screen, which read
               as "broken" rather than "this belongs elsewhere." Jumps
-              to that day's actual month instead. Only the previous
-              month is ever guaranteed reachable — a trailing day from
-              a *next* month beyond the current real one has nothing
-              to show (the future hasn't happened yet), so it stays
-              inert exactly when calendar_next_month itself is hidden.
+              to that day's actual month instead, the same HTMX-swap
+              link as the prev/next arrows above.
             {% endcomment %}
             {% if day.date < calendar_month %}
-              <a class="calendar-day calendar-day-outside" href="?month={{ calendar_prev_month }}">
-                <span class="text-muted">{{ day.date.day }}</span>
-              </a>
-            {% elif calendar_next_month %}
-              <a class="calendar-day calendar-day-outside" href="?month={{ calendar_next_month }}">
+              <a class="calendar-day calendar-day-outside" href="?month={{ calendar_prev_month }}"
+                 hx-get="?month={{ calendar_prev_month }}" hx-target="#month-calendar" hx-swap="outerHTML"
+                 hx-push-url="true">
                 <span class="text-muted">{{ day.date.day }}</span>
               </a>
             {% else %}
-              <div class="calendar-day calendar-day-outside">
+              <a class="calendar-day calendar-day-outside" href="?month={{ calendar_next_month }}"
+                 hx-get="?month={{ calendar_next_month }}" hx-target="#month-calendar" hx-swap="outerHTML"
+                 hx-push-url="true">
                 <span class="text-muted">{{ day.date.day }}</span>
-              </div>
+              </a>
             {% endif %}
           {% else %}
             <button type="button"
