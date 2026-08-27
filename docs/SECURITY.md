@@ -328,6 +328,25 @@ reintroduce either in a new template — either would simply be silently
 blocked by the browser under this policy, with no server-side error to
 notice it by.
 
+## Search engine indexing
+
+Off by default — `apps.core.models.SeoSettings` (Profile →
+Administration → Site & SEO), a single admin-tunable boolean matching
+the same singleton pattern as `BackupSettings`/`FeedbackSettings`.
+Most installs of this app are a private, self-hosted instance running
+for one household and holding another person's health data, not a
+public site anyone should be finding through a search engine — the
+safe default is a search engine never indexing it at all, not an
+operator having to remember to opt out on a fresh install. Two
+independent, redundant signals carry this, since a crawler only
+respects whichever one it actually checks: `/robots.txt`
+(`apps.core.views.robots_txt`, generated per-request, `Disallow: /`
+when off) and a `<meta name="robots" content="noindex, nofollow">` tag
+on every single page (`templates/base.html`,
+`apps.core.context_processors.seo`). Turning the setting on flips both
+to `Allow: /`/`index, follow` — meaningful only for an operator who
+deliberately wants their own instance publicly discoverable.
+
 ## Dependency updates
 
 `.github/dependabot.yml` opens a weekly, reviewed PR for outdated pip

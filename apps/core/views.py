@@ -13,6 +13,7 @@ from apps.analytics import dateranges
 from apps.analytics import services as analytics_services
 from apps.core import greetings as greeting_services
 from apps.core import units as core_units
+from apps.core.models import SeoSettings
 from apps.measurements import services as measurement_services
 from apps.measurements import units as measurement_units
 from apps.measurements.models import MeasurementType
@@ -199,3 +200,18 @@ def service_worker(request):
 
 def web_manifest(request):
     return _serve_static_root_file("manifest.json", "application/manifest+json")
+
+
+def robots_txt(request):
+    """Generated, not a static file — its whole content depends on
+    apps.core.models.SeoSettings, which an operator can flip from
+    Profile → Administration → Site & SEO without a redeploy. `<meta
+    name="robots">` (base.html, apps.core.context_processors.seo) is
+    the second, more universally-respected half of the same control —
+    robots.txt itself is only ever advisory, a well-behaved crawler's
+    own choice to honor."""
+    if SeoSettings.load().search_engine_indexing_enabled:
+        body = "User-agent: *\nAllow: /\n"
+    else:
+        body = "User-agent: *\nDisallow: /\n"
+    return HttpResponse(body, content_type="text/plain")

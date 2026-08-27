@@ -1,7 +1,7 @@
 from django import forms
 from django.utils.translation import gettext_lazy as _
 
-from .models import BackupSettings, Feedback, FeedbackSettings
+from .models import BackupSettings, Feedback, FeedbackSettings, SeoSettings
 
 
 class BackupSettingsForm(forms.ModelForm):
@@ -71,3 +71,14 @@ class FeedbackSettingsForm(forms.ModelForm):
         model = FeedbackSettings
         fields = ["enabled"]
         labels = {"enabled": _("Accept new feedback")}
+
+
+class SeoSettingsForm(forms.ModelForm):
+    """Profile → Administration → Site & SEO's own settings card — see
+    apps.core.models.SeoSettings for what the toggle actually does
+    once saved."""
+
+    class Meta:
+        model = SeoSettings
+        fields = ["search_engine_indexing_enabled"]
+        labels = {"search_engine_indexing_enabled": _("Allow search engines to index this site")}

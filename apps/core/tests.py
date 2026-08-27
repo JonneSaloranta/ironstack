@@ -23,7 +23,7 @@ from apps.core.changelog import _render, render_changelog_html
 from apps.core.charts import build_bar_series, build_chart_series
 from apps.core.context_processors import app_version
 from apps.core.greetings import _GREETINGS_BY_BUCKET, _time_bucket, random_greeting
-from apps.core.models import BackupSettings, Feedback, FeedbackSettings
+from apps.core.models import BackupSettings, Feedback, FeedbackSettings, SeoSettings
 from apps.core.templatetags.core_extras import duration, translate_content
 from apps.core.units import (
     cm_to_meters,
@@ -1446,6 +1446,116 @@ class FeedbackViewTests(TestCase):
         response = self.client.post(reverse("feedback-list"), {"action": "save_settings"})
         self.assertEqual(response.status_code, 403)
         self.assertTrue(FeedbackSettings.load().enabled)  # default untouched
+
+
+class SeoSettingsModelTests(TestCase):
+    """apps.core.models.SeoSettings — same admin-tunable singleton
+    pattern as BackupSettings/FeedbackSettings above, except this one
+    defaults to *off*: most installs of this app are a private,
+    self-hosted instance holding another person's health data, not a
+    public site anyone should be finding through a search engine."""
+
+    def test_load_creates_the_singleton_disabled_by_default(self):
+        self.assertFalse(SeoSettings.load().search_engine_indexing_enabled)
+
+    def test_load_always_returns_the_same_row(self):
+        first = SeoSettings.load()
+        first.search_engine_indexing_enabled = True
+        first.save()
+        second = SeoSettings.load()
+        self.assertEqual(first.pk, second.pk)
+        self.assertTrue(second.search_engine_indexing_enabled)
+
+    def test_save_always_targets_pk_1_even_for_a_fresh_instance(self):
+        settings_row = SeoSettings(search_engine_indexing_enabled=True)
+        settings_row.save()
+        self.assertEqual(settings_row.pk, 1)
+        self.assertEqual(SeoSettings.objects.count(), 1)
+
+    def test_delete_is_a_no_op(self):
+        settings_row = SeoSettings.load()
+        settings_row.delete()
+        self.assertTrue(SeoSettings.objects.filter(pk=1).exists())
+
+
+class SeoSettingsViewTests(TestCase):
+    """Profile → Administration → Site & SEO (staff only)."""
+
+    def setUp(self):
+        User = get_user_model()
+        self.admin = User.objects.create_user(
+            username="admin", password="s3cret-pass", is_staff=True
+        )
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+
+    def test_requires_login(self):
+        response = self.client.get(reverse("seo-settings"))
+        self.assertEqual(response.status_code, 302)
+
+    def test_requires_staff(self):
+        self.client.login(username="alice", password="s3cret-pass")
+        response = self.client.get(reverse("seo-settings"))
+        self.assertEqual(response.status_code, 403)
+
+    def test_posting_enables_indexing(self):
+        self.client.login(username="admin", password="s3cret-pass")
+        response = self.client.post(
+            reverse("seo-settings"), {"search_engine_indexing_enabled": "on"}
+        )
+        self.assertRedirects(response, reverse("seo-settings"))
+        self.assertTrue(SeoSettings.load().search_engine_indexing_enabled)
+
+    def test_posting_with_the_checkbox_omitted_disables_indexing(self):
+        SeoSettings.objects.create(pk=1, search_engine_indexing_enabled=True)
+        self.client.login(username="admin", password="s3cret-pass")
+        self.client.post(reverse("seo-settings"), {})
+        self.assertFalse(SeoSettings.load().search_engine_indexing_enabled)
+
+    def test_the_profile_page_links_to_it_for_staff_only(self):
+        self.client.login(username="admin", password="s3cret-pass")
+        response = self.client.get(reverse("profile"))
+        self.assertContains(response, reverse("seo-settings"))
+
+        self.client.logout()
+        self.client.login(username="alice", password="s3cret-pass")
+        response = self.client.get(reverse("profile"))
+        self.assertNotContains(response, reverse("seo-settings"))
+
+
+class RobotsTxtAndSeoMetaTests(TestCase):
+    """robots.txt (apps.core.views.robots_txt) and base.html's own
+    <meta name="robots">/Open Graph tags — both driven by the same
+    apps.core.models.SeoSettings toggle (apps.core.context_processors.
+    seo), so a crawler that respects either one gets a consistent
+    answer regardless of which it actually checks."""
+
+    def test_robots_txt_disallows_everything_by_default(self):
+        response = self.client.get("/robots.txt")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response["Content-Type"], "text/plain")
+        self.assertIn(b"Disallow: /", response.content)
+
+    def test_robots_txt_allows_everything_once_enabled(self):
+        SeoSettings.objects.create(pk=1, search_engine_indexing_enabled=True)
+        response = self.client.get("/robots.txt")
+        self.assertIn(b"Allow: /", response.content)
+        self.assertNotIn(b"Disallow", response.content)
+
+    def test_meta_robots_tag_is_noindex_by_default(self):
+        response = self.client.get(reverse("login"))
+        self.assertContains(response, '<meta name="robots" content="noindex, nofollow">')
+
+    def test_meta_robots_tag_flips_once_indexing_is_enabled(self):
+        SeoSettings.objects.create(pk=1, search_engine_indexing_enabled=True)
+        response = self.client.get(reverse("login"))
+        self.assertContains(response, '<meta name="robots" content="index, follow">')
+
+    def test_open_graph_tags_are_present(self):
+        response = self.client.get(reverse("login"))
+        self.assertContains(response, '<meta property="og:site_name" content="IronStack">')
+        self.assertContains(response, '<meta property="og:title"')
+        self.assertContains(response, '<meta property="og:image"')
+        self.assertContains(response, '<meta name="description"')
 
 
 class DashboardAccessTests(TestCase):

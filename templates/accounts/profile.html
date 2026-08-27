@@ -124,6 +124,14 @@
       </div>
       <a class="button-secondary" href="{% url 'feedback-list' %}">{% trans "Open" %}</a>
     </div>
+
+    <div class="card card-action-row">
+      <div>
+        <strong>{% trans "Site & SEO" %}</strong>
+        <p class="text-muted">{% trans "Control whether search engines are allowed to index this instance." %}</p>
+      </div>
+      <a class="button-secondary" href="{% url 'seo-settings' %}">{% trans "Open" %}</a>
+    </div>
   </div>
 {% endif %}
 

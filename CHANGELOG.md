@@ -18,6 +18,16 @@ narrated summary of the same version.
 
 ## [Unreleased]
 
+### Added
+- Open Graph/Twitter Card meta tags and a meta description on every
+  page, for a nicer preview when a link to this instance is shared.
+- A "Site & SEO" admin setting (Profile → Administration), off by
+  default: whether search engines are allowed to index this instance
+  at all — a self-hosted instance holding personal health data
+  shouldn't be publicly indexed unless an operator deliberately opts
+  in. Backed by both `/robots.txt` and a `<meta name="robots">` tag on
+  every page.
+
 ## [1.4.1] — 2026-08-27
 
 ### Fixed
