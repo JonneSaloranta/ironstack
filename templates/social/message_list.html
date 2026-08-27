@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Messages" %} — IronStack{% endblock %}
+{% block content %}
+<div class="top-bar">
+  <h1 style="margin:0;">{% trans "Friends & groups" %}</h1>
+</div>
+
+{% if pending_friend_requests or pending_group_invites %}
+  <div class="card">
+    {% if pending_friend_requests %}
+      <p>
+        {% blocktrans count counter=pending_friend_requests %}You have {{ counter }} friend request waiting.{% plural %}You have {{ counter }} friend requests waiting.{% endblocktrans %}
+        <a href="{% url 'social:friend-list' %}">{% trans "Review" %}</a>
+      </p>
+    {% endif %}
+    {% if pending_group_invites %}
+      <p>
+        {% blocktrans count counter=pending_group_invites %}You have {{ counter }} group invite waiting.{% plural %}You have {{ counter }} group invites waiting.{% endblocktrans %}
+        <a href="{% url 'social:group-list' %}">{% trans "Review" %}</a>
+      </p>
+    {% endif %}
+  </div>
+{% endif %}
+
+<p>
+  <a class="button-secondary" href="{% url 'social:friend-list' %}">{% trans "Friends" %}</a>
+  <a class="button-secondary" href="{% url 'social:group-list' %}">{% trans "Groups" %}</a>
+  <a class="button-secondary" href="{% url 'social:block-list' %}">{% trans "Blocked users" %}</a>
+</p>
+
+<h2>{% trans "Direct messages" %}</h2>
+{% for entry in friend_threads %}
+  <a class="card card-link" href="{% url 'social:message-thread' entry.friend.pk %}">
+    <strong>{{ entry.friend.username }}</strong>
+    {% if entry.unread %}<span class="tag">{% blocktrans count counter=entry.unread %}{{ counter }} unread{% plural %}{{ counter }} unread{% endblocktrans %}</span>{% endif %}
+  </a>
+{% empty %}
+  <div class="card empty-state">
+    <p>{% trans "No friends to message yet." %}</p>
+  </div>
+{% endfor %}
+
+<h2>{% trans "Group chats" %}</h2>
+{% for entry in group_threads %}
+  <a class="card card-link" href="{% url 'social:group-thread' entry.group.pk %}">
+    <strong>{{ entry.group.name }}</strong>
+    {% if entry.unread %}<span class="tag">{% blocktrans count counter=entry.unread %}{{ counter }} unread{% plural %}{{ counter }} unread{% endblocktrans %}</span>{% endif %}
+  </a>
+{% empty %}
+  <div class="card empty-state">
+    <p>{% trans "You're not in any groups yet." %}</p>
+  </div>
+{% endfor %}
+{% endblock %}

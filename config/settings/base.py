@@ -71,6 +71,7 @@ INSTALLED_APPS = [
     "apps.analytics",
     "apps.nutrition",
     "apps.api",
+    "apps.social",
 ]
 
 MIDDLEWARE = [
@@ -123,6 +124,7 @@ TEMPLATES = [
                 "apps.core.context_processors.seo",
                 "apps.accounts.context_processors.onboarding",
                 "apps.nutrition.context_processors.nutrition_subnav",
+                "apps.social.context_processors.social_badge",
             ],
         },
     },

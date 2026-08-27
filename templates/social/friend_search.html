@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Find friends" %} — IronStack{% endblock %}
+{% block content %}
+<div class="top-bar">
+  <h1 style="margin:0;">{% trans "Find friends" %}</h1>
+</div>
+
+<form hx-get="{% url 'social:friend-search' %}" hx-target="#friend-search-results"
+      hx-trigger="input changed delay:300ms from:#id_q" hx-push-url="true">
+  <input type="search" id="id_q" name="q" placeholder="{% trans "Search by username…" %}"
+         value="{{ query }}" aria-label="{% trans "Search by username" %}">
+</form>
+
+<div id="friend-search-results">
+  {% include "social/_friend_search_results.html" %}
+</div>
+
+<p><a class="button-secondary" href="{% url 'social:friend-list' %}">&larr; {% trans "Friends" %}</a></p>
+{% endblock %}

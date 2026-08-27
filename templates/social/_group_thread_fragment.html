@@ -1,0 +1,9 @@
+{% load i18n %}
+{% for message in thread_messages %}
+  <p>
+    <strong>{{ message.sender.username }}:</strong> {{ message.body|linebreaksbr }}
+    <br><span class="text-muted" style="font-size:0.75rem;">{{ message.created_at|date:"Y-m-d H:i" }}</span>
+  </p>
+{% empty %}
+  <p class="text-muted">{% trans "No messages yet — say hello." %}</p>
+{% endfor %}

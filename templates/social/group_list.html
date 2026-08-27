@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Groups" %} — IronStack{% endblock %}
+{% block content %}
+<div class="top-bar">
+  <h1 style="margin:0;">{% trans "Groups" %}</h1>
+  <a class="button" href="{% url 'social:group-create' %}">{% trans "New group" %}</a>
+</div>
+
+{% if incoming_invites %}
+  <h2>{% trans "Group invites" %}</h2>
+  {% for invite in incoming_invites %}
+    <div class="card card-action-row">
+      <div>
+        <strong>{{ invite.group.name }}</strong>
+        <p class="text-muted">{% blocktrans with username=invite.invited_by.username %}Invited by {{ username }}{% endblocktrans %}</p>
+      </div>
+      <div style="display:flex; gap:0.5rem;">
+        <form method="post" action="{% url 'social:group-invite-respond' invite.pk %}">
+          {% csrf_token %}
+          <input type="hidden" name="action" value="accept">
+          <button type="submit">{% trans "Join" %}</button>
+        </form>
+        <form method="post" action="{% url 'social:group-invite-respond' invite.pk %}">
+          {% csrf_token %}
+          <input type="hidden" name="action" value="decline">
+          <button type="submit" class="button-secondary">{% trans "Decline" %}</button>
+        </form>
+      </div>
+    </div>
+  {% endfor %}
+{% endif %}
+
+{% for entry in groups %}
+  <a class="card card-link" href="{% url 'social:group-detail' entry.group.pk %}">
+    <strong>{{ entry.group.name }}</strong>
+    {% if entry.unread %}<span class="tag">{% blocktrans count counter=entry.unread %}{{ counter }} unread{% plural %}{{ counter }} unread{% endblocktrans %}</span>{% endif %}
+    <div class="text-muted">
+      {% blocktrans count counter=entry.member_count %}{{ counter }} member{% plural %}{{ counter }} members{% endblocktrans %}
+      {% if entry.group.description %} · {{ entry.group.description }}{% endif %}
+    </div>
+  </a>
+{% empty %}
+  <div class="card empty-state">
+    <p>{% trans "You're not in any groups yet." %}</p>
+  </div>
+{% endfor %}
+
+<p><a class="button-secondary" href="{% url 'social:message-list' %}">&larr; {% trans "Messages" %}</a></p>
+{% endblock %}

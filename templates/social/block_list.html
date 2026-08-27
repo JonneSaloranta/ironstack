@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Blocked users" %} — IronStack{% endblock %}
+{% block content %}
+<div class="top-bar">
+  <h1 style="margin:0;">{% trans "Blocked users" %}</h1>
+</div>
+
+{% for block in blocks %}
+  <div class="card card-action-row">
+    <div><strong>{{ block.blocked.username }}</strong></div>
+    <form method="post" action="{% url 'social:unblock-user' block.blocked.pk %}">
+      {% csrf_token %}
+      <button type="submit" class="button-secondary">{% trans "Unblock" %}</button>
+    </form>
+  </div>
+{% empty %}
+  <div class="card empty-state">
+    <p>{% trans "You haven't blocked anyone." %}</p>
+  </div>
+{% endfor %}
+
+<p><a class="button-secondary" href="{% url 'social:friend-list' %}">&larr; {% trans "Friends" %}</a></p>
+{% endblock %}

@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{{ other.username }} — IronStack{% endblock %}
+{% block content %}
+<div class="top-bar">
+  <h1 style="margin:0;">{{ other.username }}</h1>
+  <a class="button-secondary" href="{% url 'social:message-list' %}">&larr; {% trans "Messages" %}</a>
+</div>
+
+{% comment %}
+  #thread-messages is a stable element: only its innerHTML is ever
+  swapped (both by its own poll and by the send-form below, which
+  targets it explicitly), so its own hx-trigger="every 4s" never needs
+  to be re-declared inside a swapped-in response the way a one-shot
+  hx-trigger="load" fragment (templates/accounts/
+  two_factor_backup_codes.html) does. The trigger's own
+  [document.visibilityState=='visible'] filter skips polling while
+  this tab is backgrounded — mobile-first (docs/UI.md), no reason to
+  keep spending battery/data on a chat nobody's looking at right now.
+  aria-live="polite" so a screen reader announces a newly-arrived
+  message the same poll tick sighted users see it appear, instead of
+  it only ever being read on the next full page load.
+{% endcomment %}
+<div class="card" id="thread-messages" aria-live="polite"
+     hx-get="{% url 'social:message-thread-fragment' other.pk %}"
+     hx-trigger="load, every 4s [document.visibilityState=='visible']" hx-swap="innerHTML">
+  <div class="spinner" aria-hidden="true"></div>
+</div>
+
+<form class="card" method="post" action="{% url 'social:message-thread-fragment' other.pk %}"
+      hx-post="{% url 'social:message-thread-fragment' other.pk %}"
+      hx-target="#thread-messages" hx-swap="innerHTML" hx-on::after-request="this.reset()">
+  {% csrf_token %}
+  {{ form.non_field_errors }}
+  {% for field in form %}
+    <div class="field">
+      {{ field }}
+      {% if field.errors %}<p class="field-error">{{ field.errors|striptags }}</p>{% endif %}
+    </div>
+  {% endfor %}
+  <button type="submit">{% trans "Send" %}</button>
+</form>
+{% endblock %}
