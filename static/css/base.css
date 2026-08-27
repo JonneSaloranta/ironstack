@@ -1534,3 +1534,37 @@ h2 {
 .calendar-day-popover-end {
   right: 0;
 }
+
+/* The "?" legend's own list (templates/nutrition/_month_calendar.html)
+   — one row per icon/color actually used in the grid above it, the
+   real <svg> markup reused as-is rather than described in prose a
+   reader had to match back to the pixels themselves. */
+.calendar-legend {
+  list-style: none;
+  margin: 0 0 1rem;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.calendar-legend li {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* A plain color swatch for the trend arrow's *other* dimension (how
+   far off, not which direction) — `background: currentColor` picks up
+   whatever `.calendar-day-icon-green/-yellow/-red` sets `color` to,
+   the same three classes the grid's own icons already use, so this
+   is guaranteed to always match them instead of a second, driftable
+   copy of the same three color values. */
+.calendar-legend-dot {
+  display: inline-block;
+  width: 0.65rem;
+  height: 0.65rem;
+  border-radius: 50%;
+  background: currentColor;
+  flex-shrink: 0;
+}

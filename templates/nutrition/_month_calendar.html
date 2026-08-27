@@ -23,7 +23,13 @@ different app).
   <div class="calendar-header" x-data="{ helpOpen: false }">
     <a class="button-secondary" href="?month={{ calendar_prev_month }}" aria-label="{% trans "Previous month" %}">&larr;</a>
     <strong style="display:flex; align-items:center; gap:0.5rem;">
-      {{ calendar_month|date:"F Y" }}
+      {# capfirst: Finnish/Swedish/Estonian month names are lowercase
+         by their own language's own grammar rules ("elokuu", not
+         "Elokuu") — correct in a sentence, but this heads a card the
+         same way "August 2026" would in English, so it's capitalized
+         here regardless of what the active language's own grammar
+         says about a month name appearing mid-sentence. #}
+      {{ calendar_month|date:"F Y"|capfirst }}
       <button type="button" class="help-button" @click="helpOpen = true" aria-label="{% trans "How to read this calendar" %}">?</button>
     </strong>
     {% if calendar_next_month %}
@@ -41,9 +47,59 @@ different app).
           <button type="button" class="modal-close" @click="helpOpen = false" aria-label="{% trans "Dismiss" %}">&times;</button>
         </div>
         <div class="modal-body">
-          <p>{% trans "A barbell icon marks a training day — green for a new personal record, red for an abandoned session, plain for an ordinary one. A moon marks a rest day." %}</p>
-          <p>{% trans "The arrow shows how your trailing 7-day average calories compare to your target: pointing up means over, down means under; green is close, yellow is drifting, red is well off. No arrow yet means there isn't enough logged data to judge." %}</p>
-          <p>{% trans "Tap a day for details." %}</p>
+          {% comment %}
+            Every icon/color shown here is the exact same markup used
+            in the grid itself (same classes, same <svg> paths) —
+            found needed live: describing "green" and "a barbell" in
+            plain prose still left it up to a reader's own imagination
+            to match that description back to the actual pixels on
+            screen, especially for the trend arrow's two independent
+            dimensions (shape = over/under, color = how far off —
+            apps.nutrition.services.CalendarDayStatus's own docstring)
+            shown here as two separate rows rather than one still
+            asking a reader to combine three colors with two shapes
+            themselves.
+          {% endcomment %}
+          <ul class="calendar-legend">
+            <li>
+              <svg class="calendar-day-icon calendar-day-icon-green" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><line x1="6" y1="12" x2="18" y2="12"/><rect x="2" y="9" width="3" height="6" rx="1"/><rect x="19" y="9" width="3" height="6" rx="1"/><rect x="5" y="7" width="2" height="10" rx="1"/><rect x="17" y="7" width="2" height="10" rx="1"/></svg>
+              {% trans "New personal record" %}
+            </li>
+            <li>
+              <svg class="calendar-day-icon calendar-day-icon-red" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><line x1="6" y1="12" x2="18" y2="12"/><rect x="2" y="9" width="3" height="6" rx="1"/><rect x="19" y="9" width="3" height="6" rx="1"/><rect x="5" y="7" width="2" height="10" rx="1"/><rect x="17" y="7" width="2" height="10" rx="1"/></svg>
+              {% trans "A session was abandoned" %}
+            </li>
+            <li>
+              <svg class="calendar-day-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><line x1="6" y1="12" x2="18" y2="12"/><rect x="2" y="9" width="3" height="6" rx="1"/><rect x="19" y="9" width="3" height="6" rx="1"/><rect x="5" y="7" width="2" height="10" rx="1"/><rect x="17" y="7" width="2" height="10" rx="1"/></svg>
+              {% trans "An ordinary training day" %}
+            </li>
+            <li>
+              <svg class="calendar-day-icon calendar-day-icon-muted" viewBox="0 0 24 24" fill="currentColor" stroke="none" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+              {% trans "Rest day" %}
+            </li>
+            <li>
+              <svg class="calendar-day-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
+              {% trans "Trailing 7-day average calories ran over your target" %}
+            </li>
+            <li>
+              <svg class="calendar-day-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
+              {% trans "Trailing 7-day average calories ran under your target" %}
+            </li>
+            <li>
+              <span class="calendar-legend-dot calendar-day-icon-green" aria-hidden="true"></span>
+              {% trans "Close to target" %}
+            </li>
+            <li>
+              <span class="calendar-legend-dot calendar-day-icon-yellow" aria-hidden="true"></span>
+              {% trans "Drifting from target" %}
+            </li>
+            <li>
+              <span class="calendar-legend-dot calendar-day-icon-red" aria-hidden="true"></span>
+              {% trans "Well off target" %}
+            </li>
+          </ul>
+          <p class="text-muted">{% trans "No arrow yet means there isn't enough logged data to judge." %}</p>
+          <p class="text-muted">{% trans "Tap a day for details." %}</p>
         </div>
       </div>
     </div>
