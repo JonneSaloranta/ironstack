@@ -9,6 +9,7 @@ from django.utils.translation import gettext_lazy as _
 
 from apps.core import units as core_units
 from apps.core.formatting import BMI_FULL, abbr_label, lazy_format_html
+from apps.core.request import client_ip
 
 from . import twofactor
 from .models import UnitSystem, User
@@ -76,17 +77,11 @@ class SignupForm(UserCreationForm):
         fields = ("username", "email")
 
 
-def _client_ip(request):
-    """The `X-Real-IP` header `compose/nginx/nginx.conf` sets to
-    `$remote_addr` — nginx overwrites this unconditionally rather than
-    forwarding whatever a client sent, so it can't be spoofed by a
-    request that goes through that proxy. `REMOTE_ADDR` on its own
-    would be nginx's *own* container IP for every proxied request
-    (docker-compose.yml never publishes a port for `web` directly —
-    only `nginx` is reachable from outside), which would make every
-    visitor share one counter. Falls back to REMOTE_ADDR for direct,
-    no-proxy access (e.g. `runserver` in dev)."""
-    return request.META.get("HTTP_X_REAL_IP") or request.META.get("REMOTE_ADDR", "unknown")
+# apps.core.request.client_ip — moved there once apps.social needed
+# the exact same IP-resolution logic for its own invite-code lookup
+# throttle; kept as a module-level alias here rather than rewriting
+# every `_client_ip(...)` call below to a longer import path.
+_client_ip = client_ip
 
 
 class _RateLimitedLoginMixin:
@@ -230,7 +225,10 @@ class ProfileForm(forms.ModelForm):
     privacy setting: whether this user's first name is ever shown
     alongside their username in that same carousel/list
     (`User.public_display_name()`) — the username itself is always
-    shown regardless, unaffected by this toggle.
+    shown regardless, unaffected by this toggle. `allow_friend_requests`/
+    `allow_group_invites` are apps.social's own opt-*out* privacy
+    settings — see their own model field comments for why they default
+    on rather than off, unlike every other toggle on this form.
     """
 
     timezone = forms.ChoiceField(choices=_timezone_choices, label=_("Timezone"))
@@ -246,6 +244,8 @@ class ProfileForm(forms.ModelForm):
             "show_achievements",
             "show_name_to_others",
             "show_gravatar",
+            "allow_friend_requests",
+            "allow_group_invites",
             "language",
         ]
         labels = {
@@ -259,6 +259,8 @@ class ProfileForm(forms.ModelForm):
             "show_achievements": _("Share my activity"),
             "show_name_to_others": _("Show my name to others"),
             "show_gravatar": _("Show my Gravatar picture"),
+            "allow_friend_requests": _("Allow friend requests"),
+            "allow_group_invites": _("Allow group invites"),
             "language": _("Language"),
         }
         help_texts = {
@@ -283,6 +285,16 @@ class ProfileForm(forms.ModelForm):
                 "from gravatar.com — the only place this app talks to a "
                 "server outside your own instance — which then sees your "
                 "email's hash and your IP address."
+            ),
+            "allow_friend_requests": _(
+                "Off stops other users on this instance from sending you a "
+                "friend request at all. Doesn't affect friend requests you "
+                "already have, or friendships you already made."
+            ),
+            "allow_group_invites": _(
+                "Off stops a group member from inviting you to a group "
+                "directly. You can still join any group yourself using its "
+                "invite link, if you have one."
             ),
         }
 
@@ -537,6 +549,28 @@ class OnboardingForm(forms.Form):
             "anytime from your profile."
         ),
     )
+    # apps.social's own opt-*out* privacy settings (see their model
+    # field comments on User) — required=False like every other field
+    # on this form except unit_system/timezone above, since an
+    # unchecked box is itself a complete, valid answer ("no"), not a
+    # missing one the way a blank ChoiceField would be.
+    allow_friend_requests = forms.BooleanField(
+        required=False,
+        label=_("Allow friend requests"),
+        help_text=_(
+            "Lets other users on this instance send you a friend request. "
+            "Change this anytime from your profile."
+        ),
+    )
+    allow_group_invites = forms.BooleanField(
+        required=False,
+        label=_("Allow group invites"),
+        help_text=_(
+            "Lets a group member invite you to a group directly. You can "
+            "always join a group yourself using its invite link either "
+            "way. Change this anytime from your profile."
+        ),
+    )
 
     def __init__(self, *args, user, **kwargs):
         self.user = user
@@ -545,6 +579,8 @@ class OnboardingForm(forms.Form):
         self.fields["email"].initial = user.email
         self.fields["unit_system"].initial = user.unit_system
         self.fields["timezone"].initial = user.timezone
+        self.fields["allow_friend_requests"].initial = user.allow_friend_requests
+        self.fields["allow_group_invites"].initial = user.allow_group_invites
         unit_label = core_units.weight_unit_label(user.unit_system)
         self.fields["weight"].label = (
             _("Current weight (%(unit)s)") % {"unit": unit_label}
@@ -571,6 +607,8 @@ class OnboardingForm(forms.Form):
         user.email = self.cleaned_data["email"]
         user.unit_system = self.cleaned_data["unit_system"]
         user.timezone = self.cleaned_data["timezone"]
+        user.allow_friend_requests = self.cleaned_data["allow_friend_requests"]
+        user.allow_group_invites = self.cleaned_data["allow_group_invites"]
 
         height = self.cleaned_data.get("height")
         if height is not None:
@@ -587,6 +625,8 @@ class OnboardingForm(forms.Form):
                 "email",
                 "unit_system",
                 "timezone",
+                "allow_friend_requests",
+                "allow_group_invites",
                 "height",
                 "onboarding_completed",
             ]
