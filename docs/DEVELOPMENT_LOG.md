@@ -2449,3 +2449,162 @@ address") both happened to already describe the reverted-to behavior
 correctly, having never been rewritten to describe the placeholder in
 between — so no doc text needed correcting this time, just the
 template and its test.
+
+## Template recipes, weekly diet plans, and a front-page month calendar
+
+A long stretch of nutrition work, starting from a UI/UX pass over
+`/nutrition` and ending with a genuinely new feature (the dashboard
+calendar) built on top of it.
+
+**Rest day tag + translation sweep.** The nutrition dashboard's
+"Rest day"/"Training day" indicator was a plain `<span>` with no
+explanation; it's now an `<abbr class="tag">`/`tag-outline` with a
+`title` tooltip (and `tabindex="0"` so it's reachable without a mouse).
+While reviewing every `/nutrition` template for this, a few other gaps
+turned up and got fixed the same way the rest of this project's i18n
+already works: an untranslated import-failure message, and two
+Alpine-bound "most used foods" quick-add forms whose meal-slot value
+could silently drift from the visible selector.
+
+**Template recipes.** Added 18 built-in recipes — six each for a bulk,
+fat-loss, and balanced goal, e.g. "Bulk breakfast — Oats & peanut
+butter", "Fatburner lunch — Chicken & broccoli" — seeded by a data
+migration (`0008_seed_template_recipes.py`) so they exist even on a
+brand-new install, not fetched live at migration time. Their
+ingredients are 16 real `Food` rows built the same way a real
+OpenFoodFacts import would (real barcodes, brand names, macros looked
+up by hand against OFF), because these recipes need to behave exactly
+like anything else in the shared library, not like special-cased
+fixtures. Getting recipes to be "sharable" at all needed
+`Recipe.owner` to become nullable (`0007_alter_recipe_owner.py`) —
+`owner=None` now means "shared template", visible and usable by every
+user, following the same `Q(owner=user) | Q(owner__isnull=True)`
+pattern `MealSlot` already used for its own built-ins. Two places
+still filtered recipes by `owner=user` only and so couldn't see the
+templates at all — `suggest_item_for_calorie_budget` (the diet
+builder) and `DietPlanItemForm`'s swap-an-item field — both fixed to
+the shared-or-own query once found. Recipe names/instructions are
+authored English strings translated the same way `apps.exercises`'s
+and `apps.programs`'s own seeded content already is: a dummy
+`apps.nutrition.i18n_content` module purely so `makemessages` extracts
+them, `{% trans recipe.name %}` doing the real lookup at render time —
+the stored value itself is never translated, since `get_or_create`
+matches against it.
+
+A recipe with no assigned meal used to be suggested for any meal slot
+at all, which produced genuinely odd-looking generated plans (a lunch
+recipe for breakfast). Fixed with a new `Recipe.meal_slot` (nullable
+FK, `0011_recipe_meal_slot.py`) — `suggest_item_for_calorie_budget`
+now prefers candidates tagged for the meal slot it's filling, falling
+back to untagged ones only if that would otherwise leave a meal empty.
+Food is never restricted this way, since a plain food (rice, chicken
+breast) isn't "a breakfast food" the way a whole recipe can be. The 18
+templates themselves are backfilled by a follow-up data migration
+matching "breakfast"/"lunch"/"dinner" in each recipe's own name, so
+that string isn't duplicated a second time as a hardcoded list.
+
+**Weekly diet plans.** `DietPlan` gained `is_weekly`
+(`0009_dietplan_weekly_support.py`) and `DietPlanMeal` gained a
+nullable `weekday` — a weekly plan builds one full day's meals per
+weekday instead of one repeating day, and `apply_diet_plan` only logs
+whichever weekday matches the date it's asked for. The daily
+calorie/macro target is deliberately identical on every weekday of a
+weekly plan; only *which* recipe/food fills a given meal slot varies
+day to day (tracked with two exclusion sets inside `build_diet_plan` —
+one per meal-slot-across-days, so Monday's and Tuesday's breakfasts
+differ, and one per-day-across-slots, reset every weekday, so a single
+day's own breakfast/lunch/dinner aren't the same suggestion three
+times over just because they share a budget). Considered instead
+varying each day's own calorie target to add variety and deliberately
+didn't — a training log this precise shouldn't quietly redistribute a
+user's actual daily energy target for cosmetic food variety, and the
+exclusion-set approach gets the same practical result (a week that
+doesn't repeat) without touching numbers the app is supposed to be
+accurate about. `suggest_item_for_calorie_budget`'s existing exclusion
+logic keyed candidates by `(kind, pk)`; real seed data turned up two
+differently-keyed "Nutella" `Food` rows with the same name, which
+defeated it, so exclusion is now keyed by `(kind, name)` instead.
+
+**Activate/deactivate + today's plan on the dashboard.** Only one
+`DietPlan` can be active per user at a time, now enforced at the
+database level (`0010_dietplan_unique_active_diet_plan_per_user.py`,
+a partial unique constraint — same shape as the existing
+one-open-goal/one-open-target invariant). A new toggle button on the
+diet-plan list and detail pages activates or deactivates a plan
+(`services.set_active_diet_plan`/`deactivate_diet_plan`); the
+nutrition dashboard now shows the active plan's meals and macros for
+today. A weekly plan's detail page shows each weekday collapsed by
+default (an Alpine `x-data="{ open: false }"` per day) rather than
+every meal from every day at once.
+
+**The front-page month calendar.** The biggest single addition: a
+one-month-at-a-time calendar on the actual home page (moved there
+after starting on the nutrition dashboard, once it became clear it's
+a whole-app view, not a nutrition-specific one), browsable to any
+earlier month via `?month=YYYY-MM`, clamped so it can never show a
+future month. Each day shows two independent, icon-only signals —
+never text in the grid itself, by explicit request: a barbell for a
+training day (green for a personal record that day, red for an
+abandoned session, plain otherwise), a moon for a rest day, and an
+up/down arrow for whether the trailing 7-day average calorie intake
+ran over or under the current target, colored green/yellow/red by how
+far off. Domain logic lives in a new
+`apps.nutrition.services.calendar_month_statuses` (a `CalendarDayStatus`
+per day) and `apps.core.views._month_calendar_context`/
+`_day_detail_lines`, which composes it into what the dashboard needs —
+the same "downstream app composes several others" shape the rest of
+the dashboard already uses for its recent-PRs/training-summary/
+body-weight sections.
+
+Tapping a day opens a small panel anchored right next to that day
+(not a page navigation, not a modal, and deliberately not shaped like
+a literal speech bubble) showing the one or two lines of actual text
+this calendar has anywhere — e.g. "Training day — new personal
+record!" / "1800 / 2000 kcal logged." — via a small Alpine component
+(`static/js/month-calendar.js`) reading each day's pre-translated text
+out of a `|json_script` block. The legend explaining the icons lives
+behind a "?" button rather than permanently taking up space under the
+grid, reusing the same modal pattern as the API docs "?" button
+above. Two real regressions turned up and got fixed during this: every
+day's icons went invisible after wrapping each day in an extra `<div>`
+to host the anchored popover, because that `<div>` stopped the
+`<button>` inside it from being a *direct* CSS Grid child, silently
+losing Grid's implicit `justify-items: stretch` (fixed with an
+explicit `width: 100%` on the button); and tapping a padding day from
+the adjacent month used to open a popover for a day that isn't even
+on screen, which read as broken rather than "that day is elsewhere" —
+fixed by making an out-of-month day a link to that day's own month
+instead of a popover trigger (inert, rather than linking to a future
+month that doesn't exist yet, when the adjacent month is a blocked
+next month).
+
+`NutritionTarget.reason` had the same frozen-translation problem
+`apps.nutrition.i18n_content` exists to avoid for recipe names, just
+for computed text instead of seeded content: the "Estimated
+maintenance (TDEE) is..." sentence was rendered once, in whatever
+language was active at calculation time, and stored as a plain string
+— permanently stuck in that language afterwards. Fixed by adding
+structured snapshot fields (`tdee`, `capped_rate_kg_per_week`,
+`rate_was_capped`, and so on, `0006_nutritiontarget_reason_snapshot_fields.py`)
+alongside the old `reason` column, a new pure
+`render_calorie_target_reason` function in `apps.nutrition.energy` as
+the one place that sentence is ever built, and a `display_reason`
+property that calls it fresh on every read when the snapshot fields
+are present, falling back to the old frozen `reason` for targets saved
+before this fix (their underlying numbers were never kept, so they
+can't be rebuilt). The public API's `NutritionTargetSerializer` was
+switched to serve `display_reason` under its existing `reason` key for
+the same reason.
+
+Finished with a coverage pass targeted specifically at this session's
+own new code (not chasing the project's overall percentage): added
+tests for the new `diet-plan-toggle-active` view (activate, deactivate,
+only-one-active enforcement, method/ownership checks), for
+`diet_plan_log`'s new "nothing to log" branch (a weekly plan whose
+target weekday has no meals — unreachable before weekly plans
+existed), and for `_day_detail_lines`'s personal-record/abandoned/
+target-present/target-absent branches, run in isolation against the
+`CalendarDayStatus` dataclass rather than through a full request each
+time. The full suite (`coverage run -m pytest`) passed throughout,
+confirming none of this stretch's changes broke anything already
+built.

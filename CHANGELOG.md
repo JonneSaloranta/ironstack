@@ -84,8 +84,47 @@ lands and remains the authoritative history.
   can be searched by name.
 - A recipe's nutrition breakdown now shows fiber, sugar, saturated
   fat, and sodium too, whenever at least one ingredient has that data.
+- 18 built-in template recipes (six each for bulking, fat loss, and a
+  balanced maintenance goal — e.g. "Bulk breakfast — Oats & peanut
+  butter", "Fatburner lunch — Chicken & broccoli"), seeded into every
+  installation including a brand new one, built from real OpenFoodFacts
+  data and tagged with the meal (breakfast/lunch/dinner) each is meant
+  for. They're shared with every user (not owned by anyone in
+  particular), show up alongside your own recipes everywhere a recipe
+  can be picked, and are what the diet-plan builder now actually
+  suggests from — a lunch recipe is never suggested for breakfast.
+- A diet plan can now span a full week instead of always repeating one
+  day — the diet-plan builder varies which recipe/food fills each meal
+  across the seven days (never the day's own calorie/macro target)
+  so a week's meals aren't identical every day.
+- A diet plan can now be marked active/inactive (Diet plans →
+  Activate/Deactivate) — only one plan is ever active at a time — and
+  the nutrition dashboard shows today's planned meals and macros from
+  whichever plan is currently active. A weekly plan's page shows each
+  weekday collapsed by default; tap one to see its meals.
+- A month calendar on the front page (browsable to earlier months) —
+  a barbell icon for a training day (colored for a personal record or
+  an abandoned session), a moon for a rest day, and an arrow for
+  whether your trailing 7-day average calories ran over or under
+  target, colored by how far off. Icon-only by design; a "?" button
+  explains what they mean, and tapping a day shows a short plain-text
+  summary of it.
 
 ### Fixed
+- The "Rest day"/"Training day" tag on the nutrition dashboard was
+  hard to read and gave no explanation of what it meant; it's now a
+  clearer outlined tag with a tooltip.
+- A calorie target's saved "reason" text (e.g. "Estimated maintenance
+  (TDEE) is..., adjusted for your goal...") was frozen in whatever
+  language was active the moment it was calculated, so it stayed in
+  that language forever afterwards regardless of the site's current
+  language. It's now rebuilt from the underlying numbers every time
+  it's displayed, in the language you're actually viewing it in
+  (older targets saved before this fix keep their original frozen
+  text, since the numbers behind it were never stored).
+- The diet-plan builder, and swapping an item on an existing diet
+  plan, couldn't see or use the template recipes above — only recipes
+  you'd created yourself.
 - The Foods/Recipes/Diet plans pages' "back" link went to the food
   diary instead of the nutrition dashboard, even when you'd arrived
   from the dashboard's own "Quick links" — pressing "back" landed

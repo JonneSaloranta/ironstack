@@ -109,12 +109,30 @@ overwriting a single row.
 
 ```
 user, goal (FK), daily_calories, protein_grams, carbohydrate_grams,
-fat_grams, source, reason, started_at, ended_at (nullable)
+fat_grams, source, reason, started_at, ended_at (nullable),
+tdee, capped_rate_kg_per_week, rate_was_capped, rate_cap_fraction_percent,
+raw_calories_before_floor, calorie_floor, floor_was_applied (all nullable)
 ```
 
 `source` choices: `calculated` (straight from the goal via the energy
 engine), `manual` (user typed a number directly), `adjusted` (the user
 accepted a dynamic-adjustment suggestion — see below).
+
+`reason` is a plain sentence describing how `daily_calories` was
+derived, but it's written once at calculation time and never revisited
+— fine for the number itself (this is a historized snapshot) but wrong
+for translated *text*: a sentence built while French was active must
+not stay in French forever after the user switches to Finnish. The
+`tdee`/`capped_rate_kg_per_week`/etc. fields exist so it doesn't have
+to: they're the numeric snapshot `energy.render_calorie_target_reason`
+needs to rebuild that exact sentence, and `display_reason` (a
+property, not a stored field) calls it fresh on every read, in
+whatever language is active *now*. Every caller that shows a target's
+reason (the dashboard, the public API's `NutritionTargetSerializer`)
+uses `display_reason`, never the raw `reason` column directly. A
+target saved before these fields existed has no snapshot to rebuild
+from — `display_reason` falls back to the old frozen `reason` text for
+those, rather than guessing.
 
 **Deliberately one model, not the example list's separate
 `CalorieTarget`/`MacroTarget`.** Calories and macros are always set as
@@ -284,9 +302,27 @@ rejected for exactly that reason when discussed directly. Instead:
 ### `Recipe` / `RecipeIngredient`
 
 ```
-Recipe: owner, name, servings, instructions (optional)
+Recipe: owner (nullable), name, servings, instructions (optional),
+  meal_slot (nullable FK, SET_NULL)
 RecipeIngredient: recipe (FK), food (FK), quantity, order
 ```
+
+`owner=None` means a shared **template recipe** — visible and usable
+by every user, not just whoever created it, the same
+`Q(owner=user) | Q(owner__isnull=True)` visibility `MealSlot` already
+uses for its own built-ins. The app ships 18 of these out of the box
+(seeded by a data migration so they exist on a fresh install, not
+fetched live), six each for a bulk, fat-loss, and balanced goal, named
+by what they're for (e.g. "Bulk breakfast — Oats & peanut butter"),
+built from real `Food` rows sourced the same way an OpenFoodFacts
+import would be. `meal_slot` is an optional hint for which meal a
+recipe suits — set on all 18 templates, left blank by default on a
+user's own recipes — that `diet_builder.suggest_item_for_calorie_
+budget` prefers when filling a given meal slot, so a lunch recipe
+isn't suggested for breakfast; it falls back to an untagged recipe
+rather than leave a meal with no suggestion at all. `Food` itself is
+never restricted this way — a plain ingredient like rice isn't "a
+breakfast food" the way a whole recipe can be.
 
 `quantity` is in the *same unit* as `food.serving_unit` — nutrition for
 that line is `food`'s per-serving values scaled by
@@ -362,22 +398,37 @@ diverge.
 ```
 DietPlan: user, name, goal (nullable FK), target_calories,
   target_protein_grams, target_carbohydrate_grams, target_fat_grams,
-  created_at, is_active
+  created_at, is_active, is_weekly
 DietPlanMeal: diet_plan (FK), meal_slot (FK, PROTECT), target_calories,
-  order
+  order, weekday (nullable, 0=Monday..6=Sunday)
 DietPlanItem: diet_plan_meal (FK), food (nullable FK) XOR recipe
   (nullable FK), quantity, order
 ```
 
 A plan snapshots the targets it was built against (immutable — a past
 plan stays interpretable even after the user's live targets change).
-`is_active` marks the one plan currently surfaced on the dashboard;
-older plans are kept, not deleted (a user should be able to look back
+`is_active` marks the one plan currently surfaced on the dashboard
+(today's meals/macros) and materialized by "Log today's plan"; a
+`UniqueConstraint(condition=Q(is_active=True))` enforces at the
+database level that at most one plan per user is ever active at once,
+toggled by `services.set_active_diet_plan`/`deactivate_diet_plan` (or
+by `diet_builder.build_diet_plan` itself when generating a new plan).
+Older plans are kept, not deleted (a user should be able to look back
 at "what was I eating during my last cut"). "Log today's plan"
-(section 12/13) is one service call that materializes each
-`DietPlanItem` into a real `DiaryEntry` for the chosen date — the plan
-itself is never mutated by logging it, so it can be reused across many
-days.
+(section 12/13) is one service call (`diet_builder.apply_diet_plan`)
+that materializes each `DietPlanItem` into a real `DiaryEntry` for the
+chosen date — the plan itself is never mutated by logging it, so it
+can be reused across many days.
+
+`is_weekly` plans generate one full day's meals per weekday
+(`DietPlanMeal.weekday` set) instead of a single repeating day —
+`apply_diet_plan` only ever materializes whichever weekday matches the
+target date. The daily calorie/macro target is identical across every
+weekday of the same plan; `diet_builder.build_diet_plan` gets variety
+purely by tracking what it already suggested (per meal slot across
+days, and separately per day across meal slots) and avoiding repeats,
+never by drifting a day's own energy target to manufacture variety —
+this app's numbers stay accurate even when the food choices vary.
 
 A meal isn't locked to the single item `diet_builder` originally
 generated for it — there's no uniqueness constraint on `diet_plan_
