@@ -14,6 +14,16 @@ lands and remains the authoritative history.
 
 ## [Unreleased]
 
+### Fixed
+- A routine update (README.md "Updating": `docker compose pull && up
+  -d`) could leave the site unreachable — `502`/"Connection refused"
+  from nginx — until nginx itself was also manually restarted. nginx
+  resolved the `web` container's hostname to an IP once at its own
+  startup and cached it forever; `web` recreating with a new image got
+  a new internal IP that nginx never noticed. nginx now re-resolves it
+  every 10 seconds via Docker's own embedded DNS, so this self-heals
+  after a routine update instead of needing a manual nginx restart.
+
 ## [1.4.0] — 2026-08-27
 
 ### Added
