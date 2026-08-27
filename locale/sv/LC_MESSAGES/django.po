@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: IronStack\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-27 08:45+0000\n"
+"POT-Creation-Date: 2026-08-27 15:54+0000\n"
 "Language: sv\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1745,7 +1745,9 @@ msgstr ""
 msgid ""
 "Log a body weight measurement before changing your goal — the calorie target "
 "needs your current weight."
-msgstr "Logga en kroppsviktsmätning innan du ändrar ditt mål — kalorimålet behöver din nuvarande vikt."
+msgstr ""
+"Logga en kroppsviktsmätning innan du ändrar ditt mål — kalorimålet behöver "
+"din nuvarande vikt."
 
 #: apps/nutrition/views.py:465
 #, python-format
@@ -2478,7 +2480,7 @@ msgid "Changelog"
 msgstr "Ändringslogg"
 
 #: templates/accounts/profile.html:148 templates/api/key_list.html:20
-#: templates/base.html:58 templates/nutrition/_month_calendar.html:41
+#: templates/base.html:58 templates/nutrition/_month_calendar.html:47
 #: templates/records/_pr_toasts.html:28
 msgid "Dismiss"
 msgstr "Stäng"
@@ -3635,38 +3637,58 @@ msgstr "Skapa ett eget livsmedel"
 msgid "Previous month"
 msgstr "Föregående månad"
 
-#: templates/nutrition/_month_calendar.html:27
-#: templates/nutrition/_month_calendar.html:37
-#: templates/nutrition/_month_calendar.html:40
+#: templates/nutrition/_month_calendar.html:33
+#: templates/nutrition/_month_calendar.html:43
+#: templates/nutrition/_month_calendar.html:46
 msgid "How to read this calendar"
 msgstr "Så här läser du kalendern"
 
-#: templates/nutrition/_month_calendar.html:30
+#: templates/nutrition/_month_calendar.html:36
 msgid "Next month"
 msgstr "Nästa månad"
 
-#: templates/nutrition/_month_calendar.html:44
-msgid ""
-"A barbell icon marks a training day — green for a new personal record, red "
-"for an abandoned session, plain for an ordinary one. A moon marks a rest day."
-msgstr ""
-"En skivstångsikon markerar en träningsdag — grön för ett nytt personbästa, "
-"röd för ett avbrutet pass, vanlig för ett vanligt pass. En måne markerar en "
-"vilodag."
+#: templates/nutrition/_month_calendar.html:67
+msgid "New personal record"
+msgstr "Nytt personligt rekord"
 
-#: templates/nutrition/_month_calendar.html:45
-msgid ""
-"The arrow shows how your trailing 7-day average calories compare to your "
-"target: pointing up means over, down means under; green is close, yellow is "
-"drifting, red is well off. No arrow yet means there isn't enough logged data "
-"to judge."
-msgstr ""
-"Pilen visar hur dina senaste 7 dagars genomsnittliga kalorier jämförs med "
-"ditt mål: uppåt betyder över, nedåt betyder under; grönt är nära, gult "
-"glider iväg, rött är klart avvikande. Ingen pil än betyder att det inte "
-"finns tillräckligt loggad data för att bedöma."
+#: templates/nutrition/_month_calendar.html:71
+msgid "A session was abandoned"
+msgstr "Ett pass avbröts"
 
-#: templates/nutrition/_month_calendar.html:46
+#: templates/nutrition/_month_calendar.html:75
+msgid "An ordinary training day"
+msgstr "En vanlig träningsdag"
+
+#: templates/nutrition/_month_calendar.html:79
+#: templates/nutrition/dashboard.html:11
+msgid "Rest day"
+msgstr "Vilodag"
+
+#: templates/nutrition/_month_calendar.html:83
+msgid "Trailing 7-day average calories ran over your target"
+msgstr "Det glidande 7-dagarsgenomsnittet av kalorier låg över ditt mål"
+
+#: templates/nutrition/_month_calendar.html:87
+msgid "Trailing 7-day average calories ran under your target"
+msgstr "Det glidande 7-dagarsgenomsnittet av kalorier låg under ditt mål"
+
+#: templates/nutrition/_month_calendar.html:91
+msgid "Close to target"
+msgstr "Nära målet"
+
+#: templates/nutrition/_month_calendar.html:95
+msgid "Drifting from target"
+msgstr "Driver bort från målet"
+
+#: templates/nutrition/_month_calendar.html:99
+msgid "Well off target"
+msgstr "Långt från målet"
+
+#: templates/nutrition/_month_calendar.html:102
+msgid "No arrow yet means there isn't enough logged data to judge."
+msgstr "Ingen pil ännu betyder att det inte finns tillräckligt med loggad data för att bedöma."
+
+#: templates/nutrition/_month_calendar.html:103
 msgid "Tap a day for details."
 msgstr "Tryck på en dag för mer information."
 
@@ -4005,10 +4027,6 @@ msgstr ""
 msgid "Training day"
 msgstr "Träningsdag"
 
-#: templates/nutrition/dashboard.html:11
-msgid "Rest day"
-msgstr "Vilodag"
-
 #: templates/nutrition/dashboard.html:17
 msgid "Today so far"
 msgstr "Hittills idag"
@@ -4309,7 +4327,9 @@ msgstr "Inga livsmedel än."
 msgid ""
 "Changing your goal recalculates your daily calorie and macro target right "
 "away — your old target stays in your history, it isn't overwritten."
-msgstr "Att ändra ditt mål räknar genast om ditt dagliga kalori- och makromål — ditt gamla mål finns kvar i din historik, det skrivs inte över."
+msgstr ""
+"Att ändra ditt mål räknar genast om ditt dagliga kalori- och makromål — ditt "
+"gamla mål finns kvar i din historik, det skrivs inte över."
 
 #: templates/nutrition/goal_edit.html:33
 msgid "Update goal"

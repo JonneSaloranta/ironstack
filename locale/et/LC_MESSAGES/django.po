@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: IronStack\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-27 08:45+0000\n"
+"POT-Creation-Date: 2026-08-27 15:54+0000\n"
 "Language: et\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1752,7 +1752,9 @@ msgstr ""
 msgid ""
 "Log a body weight measurement before changing your goal — the calorie target "
 "needs your current weight."
-msgstr "Enne eesmärgi muutmist logi kehakaalu mõõtmine — kalorieesmärk vajab sinu praegust kaalu."
+msgstr ""
+"Enne eesmärgi muutmist logi kehakaalu mõõtmine — kalorieesmärk vajab sinu "
+"praegust kaalu."
 
 #: apps/nutrition/views.py:465
 #, python-format
@@ -2484,7 +2486,7 @@ msgid "Changelog"
 msgstr "Muudatuste logi"
 
 #: templates/accounts/profile.html:148 templates/api/key_list.html:20
-#: templates/base.html:58 templates/nutrition/_month_calendar.html:41
+#: templates/base.html:58 templates/nutrition/_month_calendar.html:47
 #: templates/records/_pr_toasts.html:28
 msgid "Dismiss"
 msgstr "Sulge"
@@ -3636,38 +3638,58 @@ msgstr "Loo kohandatud toit"
 msgid "Previous month"
 msgstr "Eelmine kuu"
 
-#: templates/nutrition/_month_calendar.html:27
-#: templates/nutrition/_month_calendar.html:37
-#: templates/nutrition/_month_calendar.html:40
+#: templates/nutrition/_month_calendar.html:33
+#: templates/nutrition/_month_calendar.html:43
+#: templates/nutrition/_month_calendar.html:46
 msgid "How to read this calendar"
 msgstr "Kuidas seda kalendrit lugeda"
 
-#: templates/nutrition/_month_calendar.html:30
+#: templates/nutrition/_month_calendar.html:36
 msgid "Next month"
 msgstr "Järgmine kuu"
 
-#: templates/nutrition/_month_calendar.html:44
-msgid ""
-"A barbell icon marks a training day — green for a new personal record, red "
-"for an abandoned session, plain for an ordinary one. A moon marks a rest day."
-msgstr ""
-"Kangi ikoon tähistab treeningpäeva — roheline uue isikliku rekordi jaoks, "
-"punane katkestatud treeningu jaoks, tavaline tavalise treeningu jaoks. Kuu "
-"tähistab puhkepäeva."
+#: templates/nutrition/_month_calendar.html:67
+msgid "New personal record"
+msgstr "Uus isiklik rekord"
 
-#: templates/nutrition/_month_calendar.html:45
-msgid ""
-"The arrow shows how your trailing 7-day average calories compare to your "
-"target: pointing up means over, down means under; green is close, yellow is "
-"drifting, red is well off. No arrow yet means there isn't enough logged data "
-"to judge."
-msgstr ""
-"Nool näitab, kuidas sinu viimase 7 päeva keskmine kalorikogus võrdub sinu "
-"eesmärgiga: üles tähendab üle, alla tähendab alla; roheline on lähedal, "
-"kollane triivib, punane on selgelt möödas. Kui noolt veel pole, pole "
-"hindamiseks piisavalt kirjendatud andmeid."
+#: templates/nutrition/_month_calendar.html:71
+msgid "A session was abandoned"
+msgstr "Treening katkestati"
 
-#: templates/nutrition/_month_calendar.html:46
+#: templates/nutrition/_month_calendar.html:75
+msgid "An ordinary training day"
+msgstr "Tavaline treeningpäev"
+
+#: templates/nutrition/_month_calendar.html:79
+#: templates/nutrition/dashboard.html:11
+msgid "Rest day"
+msgstr "Puhkepäev"
+
+#: templates/nutrition/_month_calendar.html:83
+msgid "Trailing 7-day average calories ran over your target"
+msgstr "7 päeva libisev kaloraaži keskmine ületas sinu eesmärgi"
+
+#: templates/nutrition/_month_calendar.html:87
+msgid "Trailing 7-day average calories ran under your target"
+msgstr "7 päeva libisev kaloraaži keskmine jäi alla sinu eesmärgi"
+
+#: templates/nutrition/_month_calendar.html:91
+msgid "Close to target"
+msgstr "Eesmärgile lähedal"
+
+#: templates/nutrition/_month_calendar.html:95
+msgid "Drifting from target"
+msgstr "Eesmärgist eemaldumas"
+
+#: templates/nutrition/_month_calendar.html:99
+msgid "Well off target"
+msgstr "Eesmärgist kaugel"
+
+#: templates/nutrition/_month_calendar.html:102
+msgid "No arrow yet means there isn't enough logged data to judge."
+msgstr "Kui noolt pole, pole veel piisavalt andmeid hindamiseks."
+
+#: templates/nutrition/_month_calendar.html:103
 msgid "Tap a day for details."
 msgstr "Puuduta päeva, et näha üksikasju."
 
@@ -4003,10 +4025,6 @@ msgstr ""
 msgid "Training day"
 msgstr "Trennipäev"
 
-#: templates/nutrition/dashboard.html:11
-msgid "Rest day"
-msgstr "Puhkepäev"
-
 #: templates/nutrition/dashboard.html:17
 msgid "Today so far"
 msgstr "Tänaseni"
@@ -4306,7 +4324,10 @@ msgstr "Veel pole toite."
 msgid ""
 "Changing your goal recalculates your daily calorie and macro target right "
 "away — your old target stays in your history, it isn't overwritten."
-msgstr "Eesmärgi muutmine arvutab kohe uuesti sinu päevase kalori- ja makrotoitainete eesmärgi — vana eesmärk jääb sinu ajalukku, seda ei kirjutata üle."
+msgstr ""
+"Eesmärgi muutmine arvutab kohe uuesti sinu päevase kalori- ja "
+"makrotoitainete eesmärgi — vana eesmärk jääb sinu ajalukku, seda ei "
+"kirjutata üle."
 
 #: templates/nutrition/goal_edit.html:33
 msgid "Update goal"

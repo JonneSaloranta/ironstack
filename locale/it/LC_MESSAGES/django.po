@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: IronStack\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-27 08:45+0000\n"
+"POT-Creation-Date: 2026-08-27 15:54+0000\n"
 "Language: it\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1773,7 +1773,9 @@ msgstr ""
 msgid ""
 "Log a body weight measurement before changing your goal — the calorie target "
 "needs your current weight."
-msgstr "Registra una misurazione del peso corporeo prima di cambiare obiettivo — l'obiettivo calorico richiede il tuo peso attuale."
+msgstr ""
+"Registra una misurazione del peso corporeo prima di cambiare obiettivo — "
+"l'obiettivo calorico richiede il tuo peso attuale."
 
 #: apps/nutrition/views.py:465
 #, python-format
@@ -2510,7 +2512,7 @@ msgid "Changelog"
 msgstr "Registro delle modifiche"
 
 #: templates/accounts/profile.html:148 templates/api/key_list.html:20
-#: templates/base.html:58 templates/nutrition/_month_calendar.html:41
+#: templates/base.html:58 templates/nutrition/_month_calendar.html:47
 #: templates/records/_pr_toasts.html:28
 msgid "Dismiss"
 msgstr "Chiudi"
@@ -3676,39 +3678,58 @@ msgstr "Crea un alimento personalizzato"
 msgid "Previous month"
 msgstr "Mese precedente"
 
-#: templates/nutrition/_month_calendar.html:27
-#: templates/nutrition/_month_calendar.html:37
-#: templates/nutrition/_month_calendar.html:40
+#: templates/nutrition/_month_calendar.html:33
+#: templates/nutrition/_month_calendar.html:43
+#: templates/nutrition/_month_calendar.html:46
 msgid "How to read this calendar"
 msgstr "Come leggere questo calendario"
 
-#: templates/nutrition/_month_calendar.html:30
+#: templates/nutrition/_month_calendar.html:36
 msgid "Next month"
 msgstr "Mese successivo"
 
-#: templates/nutrition/_month_calendar.html:44
-msgid ""
-"A barbell icon marks a training day — green for a new personal record, red "
-"for an abandoned session, plain for an ordinary one. A moon marks a rest day."
-msgstr ""
-"Un'icona a bilanciere indica un giorno di allenamento — verde per un nuovo "
-"record personale, rosso per una sessione abbandonata, normale per una "
-"sessione ordinaria. Una luna indica un giorno di riposo."
+#: templates/nutrition/_month_calendar.html:67
+msgid "New personal record"
+msgstr "Nuovo record personale"
 
-#: templates/nutrition/_month_calendar.html:45
-msgid ""
-"The arrow shows how your trailing 7-day average calories compare to your "
-"target: pointing up means over, down means under; green is close, yellow is "
-"drifting, red is well off. No arrow yet means there isn't enough logged data "
-"to judge."
-msgstr ""
-"La freccia mostra come la media delle calorie degli ultimi 7 giorni si "
-"confronta con il tuo obiettivo: verso l'alto significa sopra, verso il basso "
-"significa sotto; verde è vicino, giallo si sta allontanando, rosso è molto "
-"lontano. Nessuna freccia ancora significa che non ci sono abbastanza dati "
-"registrati per giudicare."
+#: templates/nutrition/_month_calendar.html:71
+msgid "A session was abandoned"
+msgstr "Una sessione è stata abbandonata"
 
-#: templates/nutrition/_month_calendar.html:46
+#: templates/nutrition/_month_calendar.html:75
+msgid "An ordinary training day"
+msgstr "Un normale giorno di allenamento"
+
+#: templates/nutrition/_month_calendar.html:79
+#: templates/nutrition/dashboard.html:11
+msgid "Rest day"
+msgstr "Giorno di riposo"
+
+#: templates/nutrition/_month_calendar.html:83
+msgid "Trailing 7-day average calories ran over your target"
+msgstr "La media mobile delle calorie degli ultimi 7 giorni ha superato il tuo obiettivo"
+
+#: templates/nutrition/_month_calendar.html:87
+msgid "Trailing 7-day average calories ran under your target"
+msgstr "La media mobile delle calorie degli ultimi 7 giorni è stata inferiore al tuo obiettivo"
+
+#: templates/nutrition/_month_calendar.html:91
+msgid "Close to target"
+msgstr "Vicino all'obiettivo"
+
+#: templates/nutrition/_month_calendar.html:95
+msgid "Drifting from target"
+msgstr "In allontanamento dall'obiettivo"
+
+#: templates/nutrition/_month_calendar.html:99
+msgid "Well off target"
+msgstr "Lontano dall'obiettivo"
+
+#: templates/nutrition/_month_calendar.html:102
+msgid "No arrow yet means there isn't enough logged data to judge."
+msgstr "Nessuna freccia significa che non ci sono ancora abbastanza dati registrati per valutare."
+
+#: templates/nutrition/_month_calendar.html:103
 msgid "Tap a day for details."
 msgstr "Tocca un giorno per i dettagli."
 
@@ -4054,10 +4075,6 @@ msgstr ""
 msgid "Training day"
 msgstr "Giorno di allenamento"
 
-#: templates/nutrition/dashboard.html:11
-msgid "Rest day"
-msgstr "Giorno di riposo"
-
 #: templates/nutrition/dashboard.html:17
 msgid "Today so far"
 msgstr "Finora oggi"
@@ -4358,7 +4375,10 @@ msgstr "Nessun alimento ancora."
 msgid ""
 "Changing your goal recalculates your daily calorie and macro target right "
 "away — your old target stays in your history, it isn't overwritten."
-msgstr "Cambiare obiettivo ricalcola subito il tuo obiettivo calorico e dei macronutrienti giornaliero — il vecchio obiettivo resta nella cronologia, non viene sovrascritto."
+msgstr ""
+"Cambiare obiettivo ricalcola subito il tuo obiettivo calorico e dei "
+"macronutrienti giornaliero — il vecchio obiettivo resta nella cronologia, "
+"non viene sovrascritto."
 
 #: templates/nutrition/goal_edit.html:33
 msgid "Update goal"
