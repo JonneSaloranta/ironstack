@@ -1089,6 +1089,11 @@ class RefreshSelectedFromOffAdminActionTests(TestCase):
 class SearchFoodsTests(TestCase):
     def setUp(self):
         self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        # Isolate from apps.nutrition.migrations' seeded template foods
+        # — see SuggestItemForCalorieBudgetTests' own setUp comment.
+        # "chicken" below would otherwise also match e.g. "Chicken
+        # Breast Fillets Skinless".
+        Food.objects.filter(owner__isnull=True).delete()
 
     def test_finds_the_users_own_and_shared_local_foods(self):
         make_food(self.alice, name="Alice's Chicken")
@@ -1849,10 +1854,184 @@ class CalorieHistoryAndStatsTests(TestCase):
         self.assertEqual(summary.average_calories, Decimal("330"))
 
 
+class CalendarMonthStatusesTests(TestCase):
+    """apps.nutrition.services.calendar_month_statuses — the front
+    page's month calendar (apps.core.views.DashboardView)."""
+
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        self.chicken = make_food(self.alice, name="Chicken", calories=100)
+        self.breakfast = MealSlot.objects.get(name="Breakfast", owner=None)
+
+    def _set_target(self, daily_calories):
+        goal = services.set_goal(
+            self.alice, goal_type=GoalType.MAINTENANCE, target_rate_kg_per_week=Decimal("0")
+        )
+        breakdown = macros.calculate_macros(Decimal("80"), daily_calories, GoalType.MAINTENANCE)
+        services.set_target(
+            self.alice, goal=goal, daily_calories=daily_calories, macro_breakdown=breakdown,
+            source=TargetSource.CALCULATED, reason="",
+        )
+
+    def _log_calories(self, day, calories):
+        # self.chicken is 100 kcal/100g, so quantity in grams == kcal —
+        # a convenient 1:1 knob for hitting an exact daily total.
+        DiaryEntry.objects.create(
+            user=self.alice, date=day, meal_slot=self.breakfast,
+            food=self.chicken, quantity=Decimal(calories),
+        )
+
+    def test_returns_one_status_per_real_day_in_the_month(self):
+        statuses = services.calendar_month_statuses(self.alice, 2026, 2)  # Feb 2026: 28 days
+        self.assertEqual(len(statuses), 28)
+        self.assertEqual(statuses[0].date, date(2026, 2, 1))
+        self.assertEqual(statuses[-1].date, date(2026, 2, 28))
+
+    def test_a_leap_february_has_29_days(self):
+        statuses = services.calendar_month_statuses(self.alice, 2028, 2)
+        self.assertEqual(len(statuses), 29)
+
+    def test_marks_a_day_with_a_completed_session_as_completed(self):
+        from apps.workouts.models import WorkoutSession, WorkoutSessionStatus
+
+        day = date(2026, 3, 10)
+        WorkoutSession.objects.create(
+            user=self.alice, status=WorkoutSessionStatus.COMPLETED,
+            started_at=timezone.make_aware(timezone.datetime(2026, 3, 10, 18, 0)),
+        )
+        statuses = {s.date: s for s in services.calendar_month_statuses(self.alice, 2026, 3)}
+        self.assertEqual(statuses[day].training_status, "completed")
+        self.assertIsNone(statuses[date(2026, 3, 11)].training_status)
+
+    def test_an_in_progress_session_does_not_count_as_any_training_status(self):
+        from apps.workouts.models import WorkoutSession, WorkoutSessionStatus
+
+        WorkoutSession.objects.create(
+            user=self.alice, status=WorkoutSessionStatus.IN_PROGRESS,
+            started_at=timezone.make_aware(timezone.datetime(2026, 3, 10, 18, 0)),
+        )
+        statuses = {s.date: s for s in services.calendar_month_statuses(self.alice, 2026, 3)}
+        self.assertIsNone(statuses[date(2026, 3, 10)].training_status)
+
+    def test_an_abandoned_session_is_its_own_status(self):
+        from apps.workouts.models import WorkoutSession, WorkoutSessionStatus
+
+        WorkoutSession.objects.create(
+            user=self.alice, status=WorkoutSessionStatus.ABANDONED,
+            started_at=timezone.make_aware(timezone.datetime(2026, 3, 10, 18, 0)),
+        )
+        statuses = {s.date: s for s in services.calendar_month_statuses(self.alice, 2026, 3)}
+        self.assertEqual(statuses[date(2026, 3, 10)].training_status, "abandoned")
+
+    def test_a_personal_record_takes_priority_over_a_plain_completed_session(self):
+        from apps.exercises.models import Exercise
+        from apps.records.models import PersonalRecord
+        from apps.workouts.models import WorkoutSession, WorkoutSessionStatus
+
+        day = date(2026, 3, 10)
+        WorkoutSession.objects.create(
+            user=self.alice, status=WorkoutSessionStatus.COMPLETED,
+            started_at=timezone.make_aware(timezone.datetime(2026, 3, 10, 18, 0)),
+        )
+        exercise = Exercise.objects.create(name="Test Squat", owner=None)
+        PersonalRecord.objects.create(
+            user=self.alice, exercise=exercise, record_type="max_weight",
+            achieved_at=timezone.make_aware(timezone.datetime(2026, 3, 10, 18, 30)),
+            value=Decimal("100"), weight=Decimal("100"), reps=1,
+        )
+        statuses = {s.date: s for s in services.calendar_month_statuses(self.alice, 2026, 3)}
+        self.assertEqual(statuses[day].training_status, "pr")
+
+    def test_no_active_target_means_no_calorie_trend_at_all(self):
+        self._log_calories(date(2026, 4, 15), 2000)
+        statuses = {s.date: s for s in services.calendar_month_statuses(self.alice, 2026, 4)}
+        self.assertIsNone(statuses[date(2026, 4, 15)].calorie_trend)
+
+    def test_a_day_with_nothing_logged_in_its_trailing_window_has_no_trend(self):
+        self._set_target(2000)
+        statuses = {s.date: s for s in services.calendar_month_statuses(self.alice, 2026, 5)}
+        self.assertIsNone(statuses[date(2026, 5, 20)].calorie_trend)
+
+    def test_a_trailing_average_close_to_target_is_green(self):
+        self._set_target(2000)
+        self._log_calories(date(2026, 6, 10), 2050)  # 2.5% over — within the green band
+        statuses = {s.date: s for s in services.calendar_month_statuses(self.alice, 2026, 6)}
+        self.assertEqual(statuses[date(2026, 6, 10)].calorie_trend, "green")
+
+    def test_a_trailing_average_moderately_off_is_yellow(self):
+        self._set_target(2000)
+        self._log_calories(date(2026, 6, 10), 2200)  # 10% over — outside green, within yellow
+        statuses = {s.date: s for s in services.calendar_month_statuses(self.alice, 2026, 6)}
+        self.assertEqual(statuses[date(2026, 6, 10)].calorie_trend, "yellow")
+
+    def test_a_trailing_average_far_off_is_red(self):
+        self._set_target(2000)
+        self._log_calories(date(2026, 6, 10), 2800)  # 40% over — well past yellow
+        statuses = {s.date: s for s in services.calendar_month_statuses(self.alice, 2026, 6)}
+        self.assertEqual(statuses[date(2026, 6, 10)].calorie_trend, "red")
+
+    def test_being_under_target_can_be_red_too_not_just_over(self):
+        self._set_target(2000)
+        self._log_calories(date(2026, 6, 10), 1000)  # 50% under
+        statuses = {s.date: s for s in services.calendar_month_statuses(self.alice, 2026, 6)}
+        self.assertEqual(statuses[date(2026, 6, 10)].calorie_trend, "red")
+
+    def test_average_only_counts_days_actually_logged_within_the_window(self):
+        self._set_target(2000)
+        # Only one of the seven trailing days has anything logged — the
+        # average must be that single day's own total (2000, "on
+        # target"), not diluted by six unlogged days averaging in as 0
+        # (which would wrongly read as "way under target").
+        self._log_calories(date(2026, 6, 10), 2000)
+        statuses = {s.date: s for s in services.calendar_month_statuses(self.alice, 2026, 6)}
+        self.assertEqual(statuses[date(2026, 6, 10)].calorie_trend, "green")
+
+    def test_a_days_own_trend_is_unaffected_by_logging_outside_its_window(self):
+        self._set_target(2000)
+        self._log_calories(date(2026, 6, 10), 2000)
+        # More than 7 days before the 17th — outside that day's own
+        # trailing window, so it must not be pulled into its average.
+        self._log_calories(date(2026, 6, 1), 6000)
+        statuses = {s.date: s for s in services.calendar_month_statuses(self.alice, 2026, 6)}
+        self.assertIsNone(statuses[date(2026, 6, 17)].calorie_trend)
+
+    def test_direction_is_over_when_the_average_is_above_target(self):
+        self._set_target(2000)
+        self._log_calories(date(2026, 6, 10), 2800)
+        statuses = {s.date: s for s in services.calendar_month_statuses(self.alice, 2026, 6)}
+        self.assertEqual(statuses[date(2026, 6, 10)].calorie_direction, "over")
+
+    def test_direction_is_under_when_the_average_is_below_target(self):
+        self._set_target(2000)
+        self._log_calories(date(2026, 6, 10), 1000)
+        statuses = {s.date: s for s in services.calendar_month_statuses(self.alice, 2026, 6)}
+        self.assertEqual(statuses[date(2026, 6, 10)].calorie_direction, "under")
+
+    def test_direction_is_none_when_there_is_no_trend_at_all(self):
+        statuses = {s.date: s for s in services.calendar_month_statuses(self.alice, 2026, 6)}
+        self.assertIsNone(statuses[date(2026, 6, 10)].calorie_direction)
+
+    def test_actual_calories_is_that_days_own_total_not_the_window_average(self):
+        self._set_target(2000)
+        self._log_calories(date(2026, 6, 9), 500)
+        self._log_calories(date(2026, 6, 10), 1500)
+        statuses = {s.date: s for s in services.calendar_month_statuses(self.alice, 2026, 6)}
+        # The trend for the 10th averages both days (1000), but its own
+        # actual_calories is only what was logged that specific day.
+        self.assertEqual(statuses[date(2026, 6, 10)].actual_calories, Decimal("1500"))
+
+    def test_actual_calories_is_none_for_a_day_with_nothing_logged(self):
+        statuses = {s.date: s for s in services.calendar_month_statuses(self.alice, 2026, 6)}
+        self.assertIsNone(statuses[date(2026, 6, 10)].actual_calories)
+
+
 class FoodListViewTests(TestCase):
     def setUp(self):
         self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
         self.bob = User.objects.create_user(username="bob", password="s3cret-pass")
+        # Isolate from apps.nutrition.migrations' seeded template foods
+        # — see SuggestItemForCalorieBudgetTests' own setUp comment.
+        Food.objects.filter(owner__isnull=True).delete()
         self.client.login(username="alice", password="s3cret-pass")
 
     def test_shows_own_and_shared_foods_but_not_another_users_private_food(self):
@@ -2234,6 +2413,13 @@ class RecipeViewTests(TestCase):
     def setUp(self):
         self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
         self.bob = User.objects.create_user(username="bob", password="s3cret-pass")
+        # Isolate from apps.nutrition.migrations' seeded template
+        # foods/recipes — see SuggestItemForCalorieBudgetTests' own
+        # setUp comment. Several tests below search/list by name and
+        # would otherwise pick up e.g. "Bulk lunch — Chicken & rice
+        # bowl" alongside whatever this class creates itself.
+        Food.objects.filter(owner__isnull=True).delete()
+        Recipe.objects.filter(owner__isnull=True).delete()
         self.chicken = make_food(self.alice, name="Chicken")
         self.rice = make_food(
             self.alice, name="Rice", calories=130, protein_grams=Decimal("2.7"),
@@ -2265,6 +2451,16 @@ class RecipeViewTests(TestCase):
         names = [r.name for r in response.context["recipes"]]
         self.assertIn("Alice's Bowl", names)
         self.assertNotIn("Bob's Bowl", names)
+
+    def test_recipe_list_also_shows_shared_template_recipes(self):
+        """A built-in template recipe (owner=None,
+        apps.nutrition.migrations' seed data) is visible to every
+        user, the same as a shared Food already is — see
+        Recipe.owner's own comment."""
+        Recipe.objects.create(owner=None, name="Shared Template Bowl", servings=1)
+        response = self.client.get(reverse("nutrition:recipe-list"))
+        names = [r.name for r in response.context["recipes"]]
+        self.assertIn("Shared Template Bowl", names)
 
     def test_recipe_list_search_filters_by_name(self):
         Recipe.objects.create(owner=self.alice, name="Chicken Bowl", servings=1)
@@ -2524,6 +2720,14 @@ class SplitCaloriesEvenlyTests(TestCase):
 class SuggestItemForCalorieBudgetTests(TestCase):
     def setUp(self):
         self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        # Isolate from apps.nutrition.migrations' seeded template
+        # foods/recipes (0008_seed_template_recipes) — every test below
+        # builds its own small, deliberately controlled candidate set
+        # to test the "closest match" ranking, which the seed data's
+        # realistic calorie spread would otherwise silently win or
+        # interfere with.
+        Food.objects.filter(owner__isnull=True).delete()
+        Recipe.objects.filter(owner__isnull=True).delete()
 
     def test_no_foods_or_recipes_returns_none(self):
         self.assertIsNone(diet_builder.suggest_item_for_calorie_budget(self.alice, Decimal("500")))
@@ -2557,6 +2761,12 @@ class SuggestItemForCalorieBudgetTests(TestCase):
 class BuildAndApplyDietPlanTests(TestCase):
     def setUp(self):
         self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        # Isolate from apps.nutrition.migrations' seeded template
+        # foods/recipes — see SuggestItemForCalorieBudgetTests' own
+        # setUp comment. MealSlot's own seeded rows are left alone:
+        # every test here explicitly needs a real Breakfast/Lunch slot.
+        Food.objects.filter(owner__isnull=True).delete()
+        Recipe.objects.filter(owner__isnull=True).delete()
         self.chicken = make_food(self.alice, name="Chicken", calories=165)
         self.breakfast = MealSlot.objects.get(name="Breakfast", owner=None)
         self.lunch = MealSlot.objects.get(name="Lunch", owner=None)
@@ -2788,6 +2998,25 @@ class DietPlanViewTests(TestCase):
         self.assertTrue(response.context["log_form"].errors)
         self.assertFalse(DiaryEntry.objects.filter(user=self.alice).exists())
 
+    def test_logging_a_weekly_plans_weekday_with_no_meals_shows_an_info_message_not_an_error(self):
+        """A weekly plan whose target weekday has nothing built for it
+        (diet_plan_log's own comment: unreachable before weekly plans
+        existed) — 'nothing to log' rather than a crash or a silent
+        empty diary."""
+        plan = DietPlan.objects.create(
+            user=self.alice, name="Weekly plan", is_weekly=True, target_calories=800,
+            target_protein_grams=Decimal("1"), target_carbohydrate_grams=Decimal("1"),
+            target_fat_grams=Decimal("1"),
+        )
+        response = self.client.post(
+            reverse("nutrition:diet-plan-log", args=[plan.pk]),
+            {"date": "2026-01-05"},  # a Monday (weekday() == 0)
+            follow=True,
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Nothing to log")
+        self.assertFalse(DiaryEntry.objects.filter(user=self.alice).exists())
+
     def test_requires_login(self):
         self.client.logout()
         response = self.client.get(reverse("nutrition:diet-plan-list"))
@@ -2814,6 +3043,88 @@ class DietPlanViewTests(TestCase):
             self.client.post(reverse("nutrition:diet-plan-log", args=[plan.pk])),
         ]:
             self.assertEqual(response.status_code, 302)
+
+
+class DietPlanToggleActiveViewTests(TestCase):
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        self.bob = User.objects.create_user(username="bob", password="s3cret-pass")
+        self.client.login(username="alice", password="s3cret-pass")
+
+    def _make_plan(self, user, *, is_active):
+        return DietPlan.objects.create(
+            user=user, name="Plan", is_active=is_active, target_calories=800,
+            target_protein_grams=Decimal("1"), target_carbohydrate_grams=Decimal("1"),
+            target_fat_grams=Decimal("1"),
+        )
+
+    def test_activates_an_inactive_plan(self):
+        plan = self._make_plan(self.alice, is_active=False)
+        response = self.client.post(
+            reverse("nutrition:diet-plan-toggle-active", args=[plan.pk])
+        )
+        self.assertEqual(response.status_code, 302)
+        plan.refresh_from_db()
+        self.assertTrue(plan.is_active)
+
+    def test_deactivates_an_active_plan(self):
+        plan = self._make_plan(self.alice, is_active=True)
+        response = self.client.post(
+            reverse("nutrition:diet-plan-toggle-active", args=[plan.pk])
+        )
+        self.assertEqual(response.status_code, 302)
+        plan.refresh_from_db()
+        self.assertFalse(plan.is_active)
+
+    def test_activating_one_plan_deactivates_the_previously_active_one(self):
+        old_active = self._make_plan(self.alice, is_active=True)
+        other = self._make_plan(self.alice, is_active=False)
+        self.client.post(reverse("nutrition:diet-plan-toggle-active", args=[other.pk]))
+        old_active.refresh_from_db()
+        other.refresh_from_db()
+        self.assertFalse(old_active.is_active)
+        self.assertTrue(other.is_active)
+
+    def test_redirects_to_the_next_param_when_given(self):
+        plan = self._make_plan(self.alice, is_active=False)
+        response = self.client.post(
+            reverse("nutrition:diet-plan-toggle-active", args=[plan.pk]),
+            {"next": reverse("nutrition:diet-plan-list")},
+        )
+        self.assertRedirects(response, reverse("nutrition:diet-plan-list"))
+
+    def test_redirects_to_the_plans_own_detail_page_without_a_next_param(self):
+        plan = self._make_plan(self.alice, is_active=False)
+        response = self.client.post(
+            reverse("nutrition:diet-plan-toggle-active", args=[plan.pk])
+        )
+        self.assertRedirects(
+            response, reverse("nutrition:diet-plan-detail", args=[plan.pk])
+        )
+
+    def test_get_is_not_allowed(self):
+        plan = self._make_plan(self.alice, is_active=False)
+        response = self.client.get(
+            reverse("nutrition:diet-plan-toggle-active", args=[plan.pk])
+        )
+        self.assertEqual(response.status_code, 405)
+
+    def test_another_users_plan_is_a_404(self):
+        plan = self._make_plan(self.bob, is_active=False)
+        response = self.client.post(
+            reverse("nutrition:diet-plan-toggle-active", args=[plan.pk])
+        )
+        self.assertEqual(response.status_code, 404)
+        plan.refresh_from_db()
+        self.assertFalse(plan.is_active)
+
+    def test_requires_login(self):
+        plan = self._make_plan(self.alice, is_active=False)
+        self.client.logout()
+        response = self.client.post(
+            reverse("nutrition:diet-plan-toggle-active", args=[plan.pk])
+        )
+        self.assertEqual(response.status_code, 302)
 
 
 class IsTrainingDayTests(TestCase):
