@@ -402,13 +402,51 @@ time to show what's currently running next to what's in the archive.
 See `docs/BACKUP.md` for the full backup/restore workflow.
 
 Bumping `VERSION` and pushing to master is also the entire release
-procedure — `.github/workflows/ci.yml`'s `create-release` job diffs
-`VERSION` against the commit before the push, and if it changed,
-creates a GitHub Release (`vX.Y.Z`, gated the same way `publish-image`
-is: `lint-and-test` and `publish-image` both have to succeed first)
-with `CHANGELOG.md`'s own section for that version as the release
-notes — read directly, never duplicated into the workflow file. No
-separate `git tag` step; the tag is created as part of the release.
+procedure — `.github/workflows/ci.yml`'s `create-release` job checks
+whether a GitHub Release already exists for the current `VERSION`
+(idempotent across retries, rather than diffing against the previous
+push — see that job's own comment for why), and if not, creates one
+(`vX.Y.Z`, gated the same way `publish-image` is: `lint-and-test` and
+`publish-image` both have to succeed first) with `CHANGELOG.md`'s own
+section for that version as the release notes — read directly, never
+duplicated into the workflow file. No separate `git tag` step; the tag
+is created as part of the release.
+
+## Static files
+
+`STATIC_ROOT`/`STATIC_URL` are plain Django defaults in `base.py`,
+served straight off disk by nginx (`compose/nginx/nginx.conf`'s
+`/static/` `alias`) — no `django.contrib.staticfiles`'s own runtime
+serving involved in production. `config.settings.production` adds one
+thing on top: `STORAGES["staticfiles"]` is Django's built-in
+`ManifestStaticFilesStorage`, so every static file's URL includes a
+hash of its own content (`{% static "css/base.css" %}` resolves to
+something like `css/base.1d8d72b58ffc.css`) instead of the plain
+filename. Found necessary live — a CDN in front of a real deployment
+(Cloudflare) kept serving an hours-stale `base.css` well after an
+update that changed it, since nothing about the unchanging plain URL
+told the CDN a new version existed, and nginx wasn't sending any
+`Cache-Control` header of its own for the CDN to fall back to instead
+of its own default TTL for static extensions. A content hash fixes
+this at the root: a real change always produces a new URL, so an old,
+cached response for the *previous* URL is simply never requested
+again — no CDN/browser cache configuration needed to get this right.
+`collectstatic` (part of the `web` service's own startup command,
+`docker-compose.yml`) keeps *both* the hashed and the plain-named copy
+of every file on disk (Django's own `ManifestStaticFilesStorage`
+behavior, not something this project adds) — needed for
+`static/manifest.json`'s PWA icon references, which are plain JSON
+strings the `{% static %}` tag never touches and so always resolve by
+their original, unhashed name regardless.
+
+Only set in `production.py`, not `base.py`: `{% static %}` requires
+`collectstatic` to have already produced its manifest file
+(`staticfiles.json`) before it can resolve anything, and only
+production's own startup command runs that — dev's `runserver` serves
+straight from `STATICFILES_DIRS` via the staticfiles finders and never
+calls `collectstatic` at all, so this would break every single
+`{% static %}` tag in dev ("Missing staticfiles manifest entry") if it
+applied there too.
 
 ## Domain services
 

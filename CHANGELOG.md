@@ -23,6 +23,17 @@ lands and remains the authoritative history.
   a new internal IP that nginx never noticed. nginx now re-resolves it
   every 10 seconds via Docker's own embedded DNS, so this self-heals
   after a routine update instead of needing a manual nginx restart.
+- A CDN in front of a real deployment (Cloudflare) could keep serving
+  a stale, hours-old CSS/JS file well after an update changed it,
+  since the plain filename never changed and nginx sent no cache
+  header telling it otherwise — a page could render badly broken
+  (e.g. the front-page calendar's grid layout collapsing entirely)
+  until the CDN's cache was manually purged. Static files now include
+  a content hash in their URL (Django's `ManifestStaticFilesStorage`),
+  so a real change always gets a new URL instead of colliding with a
+  cached response for the old one — no CDN configuration or manual
+  purge needed after an update. See `docs/ARCHITECTURE.md` "Static
+  files".
 
 ## [1.4.0] — 2026-08-27
 

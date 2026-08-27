@@ -1,5 +1,6 @@
 import io
 import json
+import os
 import tarfile
 from datetime import timedelta
 from decimal import Decimal
@@ -404,6 +405,43 @@ class ContentSecurityPolicyTests(TestCase):
         self.assertIn(
             "img-src 'self' data: https://www.gravatar.com",
             response["Content-Security-Policy"],
+        )
+
+
+class ProductionSettingsTests(TestCase):
+    """config.settings.production — a plain module import with the
+    required env vars stubbed in, not a live server; DB access isn't
+    needed just to check what a settings module assigns."""
+
+    def _import_production_settings(self):
+        import importlib
+        import sys
+
+        required_env = {
+            "DJANGO_ALLOWED_HOSTS": "example.com",
+            "DJANGO_SECRET_KEY": "not-a-real-secret-just-for-this-import-check",
+        }
+        with mock.patch.dict(os.environ, required_env):
+            sys.modules.pop("config.settings.production", None)
+            return importlib.import_module("config.settings.production")
+
+    def test_static_files_get_a_content_hash_in_their_url(self):
+        """Regression: a CDN in front of a real deployment (Cloudflare)
+        kept serving a stale `base.css` for hours after an upgrade that
+        changed it — nothing about the unchanging `/static/css/
+        base.css` URL told it a new version existed. ManifestStatic
+        FilesStorage makes every static file's resolved URL include a
+        hash of its own content, so a real content change always means
+        a new URL, never a stale cache hit on the old one. Deliberately
+        only set here, not in `base.py`/`dev.py` — this needs
+        `collectstatic` to have already produced its manifest file,
+        which only production's own docker-compose command runs before
+        starting gunicorn; dev's `runserver` never calls
+        `collectstatic` at all."""
+        production_settings = self._import_production_settings()
+        self.assertEqual(
+            production_settings.STORAGES["staticfiles"]["BACKEND"],
+            "django.contrib.staticfiles.storage.ManifestStaticFilesStorage",
         )
 
 

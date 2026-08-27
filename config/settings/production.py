@@ -36,3 +36,30 @@ X_FRAME_OPTIONS = "DENY"
 
 # The reverse proxy terminates TLS and forwards this header.
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+
+# Each static file's URL includes a hash of its own content (e.g.
+# base.css -> base.a1b2c3d4.css), so a browser/CDN caching it
+# "forever" is always safe: a new deploy that changes the file's
+# content gets a new URL rather than reusing the old one. Found live
+# — a CDN in front of a real deployment (Cloudflare) was still serving
+# a two-hour-old `base.css` well after a version upgrade that changed
+# it, since nothing about the URL itself signals "this changed" and
+# the CDN's own default cache TTL for static extensions doesn't know
+# to revalidate. Only set here, not in `base.py`: `{% static %}`
+# requires `collectstatic` to have already run and produced its
+# manifest (`staticfiles.json`), which only production's docker-
+# compose command does before starting gunicorn — dev's `runserver`
+# serves straight from STATICFILES_DIRS via the finders and never
+# calls `collectstatic`, so this would break every `{% static %}` tag
+# in dev with "Missing staticfiles manifest entry" if set globally.
+# "default" (media uploads) is spelled out here too, at its own
+# Django-default value — base.py never sets STORAGES at all (Django's
+# own default applies implicitly there), and this dict fully replaces
+# rather than merges with whatever the framework default would have
+# been once set explicitly at all.
+STORAGES = {
+    "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
+    "staticfiles": {
+        "BACKEND": "django.contrib.staticfiles.storage.ManifestStaticFilesStorage",
+    },
+}
