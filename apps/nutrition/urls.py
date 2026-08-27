@@ -6,6 +6,7 @@ app_name = "nutrition"
 
 urlpatterns = [
     path("", views.NutritionDashboardView.as_view(), name="dashboard"),
+    path("goal/", views.GoalUpdateView.as_view(), name="goal-edit"),
     path(
         "adjustment/accept/",
         views.accept_adjustment_suggestion,

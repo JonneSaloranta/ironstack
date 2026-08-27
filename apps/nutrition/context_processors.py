@@ -27,7 +27,7 @@ empty dict cheaply when there's nothing to add).
 # adding an entry, editing one, copying a day) belongs under "diary",
 # not just the bare diary-day view itself.
 _TAB_URL_NAMES = {
-    "dashboard": {"dashboard"},
+    "dashboard": {"dashboard", "goal-edit"},
     "diary": {
         "diary-day",
         "diary-add-entry",

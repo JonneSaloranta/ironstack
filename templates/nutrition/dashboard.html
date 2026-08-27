@@ -118,6 +118,7 @@
   <div class="card">
     <strong>{% trans "Current goal" %}</strong>
     <p>{{ goal.get_goal_type_display }} — {{ goal.target_rate_kg_per_week }} kg/week</p>
+    <a class="button-secondary" href="{% url 'nutrition:goal-edit' %}">{% trans "Change goal" %}</a>
   </div>
 {% endif %}
 {% endblock %}

@@ -105,6 +105,17 @@ requirement (section 19): "August: 2500 kcal, September: 2350 kcal" is
 recoverable by querying goals/targets ordered by `started_at`, never by
 overwriting a single row.
 
+The onboarding wizard's last step is one way into `services.set_goal`/
+`set_target` (`OnboardingReviewView`); `GoalUpdateView` (Nutrition
+dashboard → "Change goal") is the other, for a user who's already
+onboarded and wants a different goal later (a cut finished, a bulk
+starting) — same `GoalStepForm`, same `calculate_target_for_goal` ->
+`set_goal`/`set_target` pipeline, just reading the user's current
+weight from their latest `BodyMeasurement` instead of a value fresh
+off the onboarding body step. It refuses to proceed (a form error, not
+a guess) if no body-weight measurement exists yet, since the calorie
+engine has no other source for the current weight it needs.
+
 ### `NutritionTarget` — the derived, numeric output, historized
 
 ```

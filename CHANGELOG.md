@@ -109,6 +109,10 @@ lands and remains the authoritative history.
   target, colored by how far off. Icon-only by design; a "?" button
   explains what they mean, and tapping a day shows a short plain-text
   summary of it.
+- A "Change goal" button on the nutrition dashboard's "Current goal"
+  card, so a goal set during onboarding isn't stuck there forever —
+  picking a new goal recalculates and saves a fresh calorie/macro
+  target right away, without touching your target/goal history.
 
 ### Fixed
 - The "Rest day"/"Training day" tag on the nutrition dashboard was

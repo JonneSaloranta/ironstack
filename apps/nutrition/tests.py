@@ -1488,6 +1488,94 @@ class OnboardingWizardTests(TestCase):
         self.assertContains(response, "field-error")
 
 
+class GoalUpdateViewTests(TestCase):
+    """Changing a goal after onboarding (apps.nutrition.views.
+    GoalUpdateView) — reuses OnboardingReviewView's own set_goal/
+    set_target pipeline, so most of the "does this compute the right
+    target" behavior is already covered by CalculateTargetForGoalTests
+    and GoalAndTargetServiceTests; these tests focus on what's new:
+    prefill, history (nothing overwritten), and the view's own
+    guards."""
+
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        self.alice.height = Decimal("1.8")
+        self.alice.save(update_fields=["height"])
+        self.client.login(username="alice", password="s3cret-pass")
+        NutritionProfile.objects.create(
+            user=self.alice,
+            biological_sex=BiologicalSex.MALE,
+            birth_date=date(1996, 1, 1),
+            activity_job=ActivityJob.MODERATE,
+            activity_level=ActivityLevel.MODERATE,
+        )
+        self.goal = services.set_goal(
+            self.alice, goal_type=GoalType.FAT_LOSS_MODERATE,
+            target_rate_kg_per_week=Decimal("-0.5"), target_weight=Decimal("74"),
+        )
+        breakdown = macros.calculate_macros(Decimal("80"), 2209, GoalType.FAT_LOSS_MODERATE)
+        services.set_target(
+            self.alice, goal=self.goal, daily_calories=2209, macro_breakdown=breakdown,
+            source=TargetSource.CALCULATED, reason="old reason",
+        )
+        _log_weight(self.alice, 0, 80)
+
+    def test_get_prefills_the_form_from_the_current_goal(self):
+        response = self.client.get(reverse("nutrition:goal-edit"))
+        self.assertContains(response, 'value="74.0000"')
+        self.assertContains(response, 'value="-0.500"')
+
+    def test_updating_the_goal_creates_a_new_goal_and_target_without_deleting_the_old_ones(self):
+        response = self.client.post(
+            reverse("nutrition:goal-edit"),
+            {"goal_type": GoalType.MUSCLE_GAIN_LEAN, "target_weight": "85", "target_rate": "0.25"},
+        )
+        self.assertRedirects(response, reverse("nutrition:dashboard"))
+
+        self.goal.refresh_from_db()
+        self.assertIsNotNone(self.goal.ended_at)
+        new_goal = NutritionGoal.objects.get(user=self.alice, ended_at__isnull=True)
+        self.assertEqual(new_goal.goal_type, GoalType.MUSCLE_GAIN_LEAN)
+        self.assertEqual(new_goal.target_rate_kg_per_week, Decimal("0.25"))
+
+        new_target = NutritionTarget.objects.get(user=self.alice, ended_at__isnull=True)
+        self.assertEqual(new_target.goal_id, new_goal.pk)
+        self.assertNotEqual(new_target.daily_calories, 2209)
+        # The old rows are superseded, never deleted — same history the
+        # dashboard's own "old target stays in your history" copy
+        # (templates/nutrition/goal_edit.html) promises.
+        self.assertEqual(NutritionGoal.objects.filter(user=self.alice).count(), 2)
+        self.assertEqual(NutritionTarget.objects.filter(user=self.alice).count(), 2)
+
+    def test_a_goal_rate_sign_mismatch_shows_the_form_error_and_changes_nothing(self):
+        response = self.client.post(
+            reverse("nutrition:goal-edit"),
+            {"goal_type": GoalType.FAT_LOSS_MODERATE, "target_rate": "0.5"},
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "field-error")
+        self.assertEqual(NutritionGoal.objects.filter(user=self.alice).count(), 1)
+
+    def test_with_no_body_weight_logged_shows_an_error_instead_of_guessing(self):
+        BodyMeasurement.objects.filter(user=self.alice).delete()
+        response = self.client.post(
+            reverse("nutrition:goal-edit"),
+            {"goal_type": GoalType.MAINTENANCE, "target_rate": "0"},
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Log a body weight measurement")
+        self.assertEqual(NutritionGoal.objects.filter(user=self.alice).count(), 1)
+
+    def test_requires_login(self):
+        self.client.logout()
+        response = self.client.get(reverse("nutrition:goal-edit"))
+        self.assertEqual(response.status_code, 302)
+
+    def test_the_dashboard_links_to_it(self):
+        response = self.client.get(reverse("nutrition:dashboard"))
+        self.assertContains(response, reverse("nutrition:goal-edit"))
+
+
 class NutritionDashboardViewTests(TestCase):
     def setUp(self):
         self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
