@@ -136,6 +136,17 @@ treatment, unlike an API key that's checked on every request where a
 fast hash matters for server load. Each code is single-use
 (`used_at` is stamped the moment one is consumed).
 
+That same deliberately-slow hasher makes generating a fresh set of 10
+codes take several real seconds on ordinary hardware — reported live
+as looking like nothing was happening at all, which led to a user
+re-submitting mid-wait and racing themselves out of ever seeing the
+codes their first click had already generated. Fixed by moving the
+actual generation off the request that first lands a user on the
+result (`apps.accounts.views.TwoFactorBackupCodesView`/
+`TwoFactorBackupCodesFragmentView`): the page renders instantly with a
+visible spinner, then loads the (slow) result via one HTMX request
+with nothing left to click a second time.
+
 The login flow's second step
 (`apps.accounts.views.TwoFactorVerifyView`, reached only via
 `RateLimitedLoginView.form_valid`'s redirect once the password alone

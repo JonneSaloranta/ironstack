@@ -2721,3 +2721,78 @@ categorizer recognizes (`feat`, `fix`, `docs`, `refactor`, `test`,
 `chore`, `ci`, `perf`, `build`, `style`, `revert`) — previously it only
 named six of them as "common", which is how a real commit this session
 (`ci: ...`) would have had nothing further to check itself against.
+
+## OpenGraph/SEO, a two-factor backup-codes race condition, and an interactive calendar
+
+Three unrelated, directly-requested fixes landed together.
+
+**OpenGraph/SEO + an indexing opt-out.** Every page now carries Open
+Graph/Twitter Card meta tags and a meta description (`templates/
+base.html`, each overridable per page via the usual `{% block %}`
+pattern, though nothing overrides them yet) — mainly seen by a link-
+unfurling bot, not a human browser. Alongside it, a new admin setting
+(`apps.core.models.SeoSettings`, Profile → Administration → Site &
+SEO, the same singleton pattern as `BackupSettings`/`FeedbackSettings`)
+controls whether search engines may index this instance at all —
+**off by default**, on the same reasoning as every other opt-in
+external-facing thing in this app (Gravatar, Authentik): most installs
+are a private, self-hosted instance for one household holding another
+person's health data, not a public site anyone should be finding
+through a search engine. Two independent signals carry the same
+answer, since a crawler only ever respects whichever one it actually
+checks: `/robots.txt` (`apps.core.views.robots_txt`, generated per-
+request) and a `<meta name="robots">` tag read from a new
+`apps.core.context_processors.seo` on every single page.
+
+**The two-factor backup-codes race.** Reported live, precisely
+diagnosed rather than guessed at: generating 10 backup codes hashes
+each one with Django's own password hasher — deliberately expensive
+(the same reason a login attempt itself isn't instant), and measured
+at **~1 second per hash on this project's own dev hardware, ~10
+seconds total** for the whole batch. That whole wait used to happen
+silently inside whichever request also rendered the result page, with
+literally nothing on screen suggesting work was in progress. A user
+who clicked "Regenerate" a second time mid-wait ran into a genuine
+race: for the equivalent moment during initial setup, the second
+request's own `TwoFactorSetupView.dispatch` already saw `totp_enabled
+= True` (set fast, before the slow part) and bounced them to their
+profile with "already enabled" — never having seen the codes their
+first click had already generated. Fixed by splitting the work into
+two requests: `TwoFactorSetupView`/`TwoFactorRegenerateBackupCodes
+View` no longer generate anything themselves, only redirect to a new
+`TwoFactorBackupCodesView`, which renders instantly with a visible
+CSS spinner (`.spinner`, respecting `prefers-reduced-motion`) inside a
+`<form hx-trigger="load">` — HTMX fires that form's own POST to
+`TwoFactorBackupCodesFragmentView` (the only place `generate_backup_
+codes` is still called) the instant the page paints, swapping the
+spinner for the real codes once that finishes. Nothing is left to
+double-click by accident any more — there's no button on the loading
+page at all.
+
+**The front-page calendar, made interactive.** Two direct requests on
+the same feature: switching months used to be a full `<a href=
+"?month=...">` page navigation — reported as "the whole page flashes"
+— and future months were clamped away entirely ("there's nothing to
+show for a day that hasn't happened yet," this project's own earlier
+reasoning, reversed by direct request: an empty future month is still
+a valid thing to look at, not an error). Fixed together: every month-
+changing link (`templates/nutrition/_month_calendar.html`'s prev/next
+arrows and its out-of-month padding-day cells) is now `hx-get` +
+`hx-target="#month-calendar"` + `hx-swap="outerHTML"` +
+`hx-push-url="true"`, alongside a plain `href` doing the exact same
+navigation if HTMX is ever unavailable — a real, working link either
+way, not a JS-only button. `outerHTML`, specifically, because Alpine's
+own `x-data="ironstackMonthCalendar(...)"` only ever reads the
+`calendar-days-data` JSON once, at that element's own init — an
+`innerHTML` swap leaving the same element alive would leave the tap-
+a-day popover silently showing the *previous* month's data forever
+after the first swap. `apps.core.views.DashboardView.get_template_
+names` now renders just `_month_calendar.html` for the resulting
+HTMX request instead of the whole dashboard template, and `get_
+context_data` returns early right after building the calendar's own
+context for that same case — a month click no longer re-queries
+recent PRs, achievements, body weight, or anything else on the
+dashboard that didn't change. The old clamp
+(`first_of_requested > first_of_current`) is simply gone; `calendar_
+next_month` is unconditional now, so the template's own dead "no next
+month, render an inert div" branch went with it.

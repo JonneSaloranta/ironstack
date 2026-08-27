@@ -27,6 +27,19 @@ narrated summary of the same version.
   shouldn't be publicly indexed unless an operator deliberately opts
   in. Backed by both `/robots.txt` and a `<meta name="robots">` tag on
   every page.
+- The front-page month calendar can now browse into future months
+  too, not just past ones.
+
+### Fixed
+- Changing month on the front-page calendar reloaded and repainted
+  the entire dashboard for a one-card change, visible as a brief
+  flash every time — it now swaps just that card.
+- Generating (or regenerating) two-factor backup codes could take
+  several real seconds with no visible feedback, which could look
+  like nothing had happened and invited clicking again mid-wait —
+  racing a second request that could bounce you away before you ever
+  saw the codes the first one had already generated. Now shows a
+  loading page immediately and loads the result once it's ready.
 
 ## [1.4.1] — 2026-08-27
 
