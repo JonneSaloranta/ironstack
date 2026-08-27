@@ -1,5 +1,8 @@
 import hashlib
+import io
+import json
 import re
+import zipfile
 from decimal import Decimal
 from urllib.parse import urlparse
 
@@ -617,8 +620,8 @@ class ProfileViewTests(TestCase):
         an explicit .button-secondary as the only link."""
         response = self.client.get(reverse("profile"))
         # Account details, Change password, Two-factor authentication,
-        # API keys, Feedback.
-        self.assertContains(response, 'class="card card-action-row"', count=5)
+        # API keys, Download your data, Feedback, Delete account.
+        self.assertContains(response, 'class="card card-action-row"', count=7)
         self.assertContains(
             response, f'<a class="button-secondary" href="{reverse("account-details")}">'
         )
@@ -635,9 +638,10 @@ class ProfileViewTests(TestCase):
         self.alice.save()
         response = self.client.get(reverse("profile"))
         # Account details, Change password, Two-factor authentication,
-        # API keys, Feedback + Admin, Backups, Feedback, Site & SEO
-        # (the latter four inside the staff-only "danger zone").
-        self.assertContains(response, 'class="card card-action-row"', count=9)
+        # API keys, Download your data, Feedback, Delete account +
+        # Admin, Backups, Feedback, Site & SEO (the latter four inside
+        # the staff-only "danger zone").
+        self.assertContains(response, 'class="card card-action-row"', count=11)
         self.assertContains(
             response, f'<a class="button-secondary" href="{reverse("admin:index")}">'
         )
@@ -1230,6 +1234,289 @@ class TwoFactorAdminActionTests(TestCase):
         self.assertEqual(user.backup_codes.count(), 0)
 
 
+class DeleteAccountServiceTests(TestCase):
+    """apps.accounts.services.delete_account — GDPR Article 17
+    self-service erasure. See that function's own docstring for the
+    two different treatments (hard-delete vs. reassign-to-shared) and
+    why."""
+
+    def setUp(self):
+        from apps.accounts.services import delete_account
+
+        self.delete_account = delete_account
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+
+    def test_deletes_the_user_row_itself(self):
+        self.delete_account(self.alice)
+        self.assertFalse(User.objects.filter(pk=self.alice.pk).exists())
+
+    def test_hard_deletes_exclusively_personal_data(self):
+        from django.utils import timezone
+
+        from apps.exercises.models import Exercise
+        from apps.records.models import PersonalRecord, PRType
+        from apps.workouts import services as workout_services
+
+        session = workout_services.start_session(self.alice, workout=None)
+        workout_services.complete_session(session)
+        exercise = Exercise.objects.create(name="Test Snatch", owner=None)
+        PersonalRecord.objects.create(
+            user=self.alice,
+            exercise=exercise,
+            record_type=PRType.MAX_WEIGHT,
+            value=Decimal("100"),
+            weight=Decimal("100"),
+            reps=1,
+            achieved_at=timezone.now(),
+        )
+        self.delete_account(self.alice)
+        self.assertEqual(PersonalRecord.objects.count(), 0)
+
+    def test_reassigns_a_shared_custom_exercise_instead_of_deleting_it(self):
+        from apps.exercises.models import Exercise
+
+        exercise = Exercise.objects.create(name="Alice's Curl", owner=self.alice)
+        self.delete_account(self.alice)
+        exercise.refresh_from_db()
+        self.assertIsNone(exercise.owner)
+
+    def test_does_not_orphan_or_break_another_users_workout_history(self):
+        """The real reason for the reassign-not-delete behavior:
+        Exercise's own usage FK (apps.workouts.models.
+        PerformedExercise.exercise) is on_delete=PROTECT specifically
+        so a still-referenced Exercise can never vanish out from under
+        someone still using it."""
+        from apps.exercises.models import Exercise
+        from apps.workouts import services as workout_services
+
+        bob = User.objects.create_user(username="bob", password="s3cret-pass")
+        exercise = Exercise.objects.create(name="Shared Curl", owner=self.alice)
+        session = workout_services.start_session(bob, workout=None)
+        performed = workout_services.add_performed_exercise(session, exercise)
+        workout_services.log_set(performed, weight=Decimal("20"), reps=10)
+        workout_services.complete_session(session)
+
+        self.delete_account(self.alice)
+
+        performed.refresh_from_db()
+        self.assertEqual(performed.exercise_id, exercise.pk)
+        self.assertTrue(bob.workout_sessions.exists())
+
+    def test_reassigns_shared_content_across_every_ownable_app(self):
+        from apps.activities.models import ActivityType
+        from apps.measurements.models import MeasurementType
+        from apps.nutrition.models import Food, MealSlot, Recipe
+        from apps.programs.models import Program
+
+        rows = {
+            ActivityType: ActivityType.objects.create(name="Alice's Hobby", owner=self.alice),
+            MeasurementType: MeasurementType.objects.create(
+                name="Alice's Metric", unit_kind="length", owner=self.alice
+            ),
+            Food: Food.objects.create(
+                name="Alice's Food", owner=self.alice, calories=100,
+                protein_grams=Decimal("1"), carbohydrate_grams=Decimal("1"),
+                fat_grams=Decimal("1"), serving_size=Decimal("100"), serving_unit="g",
+            ),
+            MealSlot: MealSlot.objects.create(name="Alice's Meal", owner=self.alice),
+            Recipe: Recipe.objects.create(name="Alice's Recipe", owner=self.alice),
+            Program: Program.objects.create(name="Alice's Program", owner=self.alice),
+        }
+        self.delete_account(self.alice)
+        for model, row in rows.items():
+            row.refresh_from_db()
+            self.assertIsNone(row.owner, f"{model.__name__} still owned after delete_account")
+
+
+class AccountDeleteViewTests(TestCase):
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        self.client.login(username="alice", password="s3cret-pass")
+
+    def test_requires_login(self):
+        self.client.logout()
+        response = self.client.get(reverse("account-delete"))
+        self.assertEqual(response.status_code, 302)
+
+    def test_wrong_password_does_not_delete(self):
+        response = self.client.post(reverse("account-delete"), {"password": "wrong"})
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Incorrect password")
+        self.assertTrue(User.objects.filter(pk=self.alice.pk).exists())
+
+    def test_correct_password_deletes_and_logs_out(self):
+        response = self.client.post(
+            reverse("account-delete"), {"password": "s3cret-pass"}, follow=True
+        )
+        self.assertRedirects(response, reverse("login"))
+        self.assertFalse(User.objects.filter(username="alice").exists())
+        self.assertNotIn("_auth_user_id", self.client.session)
+
+    def test_an_sso_user_confirms_with_their_username_instead_of_a_password(self):
+        self.alice.is_sso_user = True
+        self.alice.set_unusable_password()
+        self.alice.save()
+        # Client.login() itself needs a real password to authenticate
+        # against — force_login bypasses that the same way an actual
+        # Authentik-issued session would (apps.accounts.oidc), not a
+        # username/password form submission at all.
+        self.client.force_login(self.alice)
+
+        wrong = self.client.post(reverse("account-delete"), {"confirm_username": "not-alice"})
+        self.assertEqual(wrong.status_code, 200)
+        self.assertContains(wrong, "Doesn&#x27;t match your username.")
+        self.assertTrue(User.objects.filter(username="alice").exists())
+
+        right = self.client.post(reverse("account-delete"), {"confirm_username": "alice"})
+        self.assertRedirects(right, reverse("login"))
+        self.assertFalse(User.objects.filter(username="alice").exists())
+
+    def test_the_last_superuser_cannot_delete_themselves(self):
+        self.alice.is_superuser = True
+        self.alice.is_staff = True
+        self.alice.save()
+        response = self.client.post(
+            reverse("account-delete"), {"password": "s3cret-pass"}, follow=True
+        )
+        self.assertRedirects(response, reverse("profile"))
+        self.assertTrue(User.objects.filter(username="alice").exists())
+
+    def test_a_superuser_can_delete_themselves_if_another_superuser_remains(self):
+        self.alice.is_superuser = True
+        self.alice.is_staff = True
+        self.alice.save()
+        User.objects.create_superuser(username="bob", password="s3cret-pass")
+        response = self.client.post(
+            reverse("account-delete"), {"password": "s3cret-pass"}, follow=True
+        )
+        self.assertRedirects(response, reverse("login"))
+        self.assertFalse(User.objects.filter(username="alice").exists())
+
+    def test_the_profile_page_links_to_it(self):
+        response = self.client.get(reverse("profile"))
+        self.assertContains(response, reverse("account-delete"))
+
+
+class DataExportServiceTests(TestCase):
+    """apps.accounts.services.export_account_data — GDPR Article 20
+    ("right to data portability"). Mirrors delete_account's own set of
+    "exclusively personal" models, plus this user's own authored
+    shared content (a custom exercise they created, say), since it's
+    a read of what exists today, not a statement about what account
+    deletion would do to each of it."""
+
+    def setUp(self):
+        from apps.accounts.services import export_account_data
+
+        self.export_account_data = export_account_data
+        self.alice = User.objects.create_user(
+            username="alice", password="s3cret-pass", email="alice@example.com"
+        )
+
+    def test_includes_basic_account_fields(self):
+        data = self.export_account_data(self.alice)
+        self.assertEqual(data["account"]["username"], "alice")
+        self.assertEqual(data["account"]["email"], "alice@example.com")
+
+    def test_includes_workout_history(self):
+        from apps.exercises.models import Exercise
+        from apps.workouts import services as workout_services
+
+        exercise = Exercise.objects.create(name="Test Curl", owner=None)
+        session = workout_services.start_session(self.alice, workout=None)
+        performed = workout_services.add_performed_exercise(session, exercise)
+        workout_services.log_set(performed, weight=Decimal("20"), reps=10)
+        workout_services.complete_session(session)
+
+        data = self.export_account_data(self.alice)
+        self.assertEqual(len(data["workout_sessions"]), 1)
+        self.assertEqual(len(data["performed_exercises"]), 1)
+        self.assertEqual(len(data["exercise_sets"]), 1)
+        self.assertEqual(data["exercise_sets"][0]["fields"]["weight"], "20.00")
+
+    def test_includes_a_custom_exercise_this_user_created(self):
+        from apps.exercises.models import Exercise
+
+        Exercise.objects.create(name="Alice's Curl", owner=self.alice)
+        data = self.export_account_data(self.alice)
+        self.assertEqual(len(data["custom_exercises"]), 1)
+
+    def test_never_includes_another_users_data(self):
+        from apps.exercises.models import Exercise
+        from apps.workouts import services as workout_services
+
+        bob = User.objects.create_user(username="bob", password="s3cret-pass")
+        exercise = Exercise.objects.create(name="Test Curl", owner=None)
+        session = workout_services.start_session(bob, workout=None)
+        workout_services.add_performed_exercise(session, exercise)
+
+        data = self.export_account_data(self.alice)
+        self.assertEqual(data["workout_sessions"], [])
+        self.assertEqual(data["performed_exercises"], [])
+
+    def test_api_key_export_never_includes_the_key_hash(self):
+        from apps.api.models import ApiKey, RateLimitTier
+
+        tier = RateLimitTier.objects.create(name="Default")
+        ApiKey.objects.create(
+            user=self.alice, name="My key", key_hash="a" * 64, prefix="abcd1234", tier=tier
+        )
+        data = self.export_account_data(self.alice)
+        self.assertEqual(len(data["api_keys"]), 1)
+        self.assertNotIn("key_hash", data["api_keys"][0])
+        self.assertEqual(data["api_keys"][0]["prefix"], "abcd1234")
+
+    def test_result_is_actually_json_serializable(self):
+        import json
+
+        from apps.exercises.models import Exercise
+        from apps.workouts import services as workout_services
+
+        exercise = Exercise.objects.create(name="Test Curl", owner=None)
+        session = workout_services.start_session(self.alice, workout=None)
+        performed = workout_services.add_performed_exercise(session, exercise)
+        workout_services.log_set(performed, weight=Decimal("20"), reps=10)
+        workout_services.complete_session(session)
+
+        data = self.export_account_data(self.alice)
+        json.dumps(data)  # raises if anything isn't JSON-safe
+
+
+class DataExportViewTests(TestCase):
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        self.client.login(username="alice", password="s3cret-pass")
+
+    def test_requires_login(self):
+        self.client.logout()
+        response = self.client.get(reverse("data-export"))
+        self.assertEqual(response.status_code, 302)
+
+    def test_default_response_is_a_browsable_html_page(self):
+        response = self.client.get(reverse("data-export"))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response["Content-Type"].split(";")[0], "text/html")
+
+    def test_json_format_is_a_downloadable_attachment(self):
+        response = self.client.get(reverse("data-export"), {"format": "json"})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response["Content-Type"], "application/json")
+        self.assertIn("attachment", response["Content-Disposition"])
+        json.loads(response.content)  # a real, parseable JSON body
+
+    def test_csv_format_is_a_downloadable_zip(self):
+        response = self.client.get(reverse("data-export"), {"format": "csv"})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response["Content-Type"], "application/zip")
+        self.assertIn("attachment", response["Content-Disposition"])
+        archive = zipfile.ZipFile(io.BytesIO(response.content))
+        self.assertIn("account.csv", archive.namelist())
+
+    def test_the_profile_page_links_to_it(self):
+        response = self.client.get(reverse("profile"))
+        self.assertContains(response, reverse("data-export"))
+
+
 class SiteDisclaimerTests(TestCase):
     def test_load_creates_the_singleton_with_the_default_text(self):
         disclaimer = SiteDisclaimer.load()
@@ -1268,6 +1555,27 @@ class SiteDisclaimerTests(TestCase):
         disclaimer.save()
         response = self.client.get(reverse("login"))
         self.assertNotContains(response, "auth-disclaimer")
+
+
+class PrivacyNoticeTests(TestCase):
+    """templates/accounts/_privacy_notice_modal.html — a fixed,
+    translated notice (unlike SiteDisclaimer above, which is free-form
+    operator-authored text), shown at the point data collection starts
+    (login/signup) and reachable again later from the profile page."""
+
+    def test_shown_on_the_login_page(self):
+        response = self.client.get(reverse("login"))
+        self.assertContains(response, "Privacy notice")
+
+    def test_shown_on_the_signup_page(self):
+        response = self.client.get(reverse("signup"))
+        self.assertContains(response, "Privacy notice")
+
+    def test_reachable_again_from_the_profile_page(self):
+        User.objects.create_user(username="alice", password="s3cret-pass")
+        self.client.login(username="alice", password="s3cret-pass")
+        response = self.client.get(reverse("profile"))
+        self.assertContains(response, "Privacy notice")
 
 
 class AuthPageBrandingTests(TestCase):
