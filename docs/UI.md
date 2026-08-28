@@ -209,6 +209,26 @@ the full session-detail page, reachable via the "Full view" link — kept
 out of training mode deliberately, to keep its one screen to logging
 forward, not fixing mistakes).
 
+### Unread messages
+
+The same "reachable from any page" treatment as `.training-fab` above,
+for a different global state: `.messages-fab` (a chat-bubble icon, no
+pulsing dot — that visual language is specifically "something is
+live/in-progress," which an unread message isn't) appears in the
+bottom-*left* corner of every page whenever the logged-in user has an
+unread direct or group message
+(`apps.social.context_processors.social_badge`'s `has_unread_messages`
+key, registered the same way `active_workout_session` is). Opposite
+corner from `.training-fab` on purpose — the two conditions rarely
+coincide, but when they do, opposite corners need no stacking logic
+between them. Links straight to the message inbox
+(`social:message-list`), which already surfaces both direct and group
+unread state together. See `docs/SOCIAL.md` "Web Push notifications
+and the floating unread-messages button" for the fuller picture,
+including the actual OS-level push notification this button
+complements (not replaces — push covers "the app isn't open," this
+covers "you're in the app somewhere else right now").
+
 ### Dashboard
 Implemented: this week's workouts and volume, recent PRs (last 3), body
 weight, BMI (see below), an achievements carousel (see below), and an

@@ -19,6 +19,8 @@ urlpatterns = [
         name="friend-request-respond",
     ),
     path("friends/<int:user_id>/remove/", views_friends.friend_remove, name="friend-remove"),
+    path("friends/<int:user_id>/mute/", views_friends.mute_friend_view, name="friend-mute"),
+    path("friends/<int:user_id>/unmute/", views_friends.unmute_friend_view, name="friend-unmute"),
     # Blocking
     path("blocked/", views_friends.block_list, name="block-list"),
     path("blocked/<int:user_id>/block/", views_friends.block_user_view, name="block-user"),
@@ -30,6 +32,9 @@ urlpatterns = [
     path("groups/<int:pk>/edit/", views_groups.group_edit, name="group-edit"),
     path("groups/<int:pk>/delete/", views_groups.group_delete, name="group-delete"),
     path("groups/<int:pk>/leave/", views_groups.group_leave, name="group-leave"),
+    path(
+        "groups/<int:pk>/mute/toggle/", views_groups.group_mute_toggle, name="group-mute-toggle"
+    ),
     path(
         "groups/<int:pk>/invite-link/toggle/",
         views_groups.group_invite_toggle,

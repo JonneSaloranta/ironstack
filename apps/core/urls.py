@@ -8,6 +8,7 @@ from .views_backup import (
     BackupRestoreView,
 )
 from .views_feedback import FeedbackCreateView, FeedbackListView
+from .views_push import PushSubscribeView, PushUnsubscribeView
 from .views_seo import SeoSettingsView
 
 urlpatterns = [
@@ -25,4 +26,6 @@ urlpatterns = [
     path("feedback/", FeedbackCreateView.as_view(), name="feedback-create"),
     path("feedback/admin/", FeedbackListView.as_view(), name="feedback-list"),
     path("seo/admin/", SeoSettingsView.as_view(), name="seo-settings"),
+    path("push/subscribe/", PushSubscribeView.as_view(), name="push-subscribe"),
+    path("push/unsubscribe/", PushUnsubscribeView.as_view(), name="push-unsubscribe"),
 ]

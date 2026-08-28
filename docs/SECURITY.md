@@ -267,6 +267,67 @@ An account with `totp_enabled=True` that also logs in via Authentik
 still has that TOTP requirement enforced on any *local password*
 login it might still be able to do.
 
+## Web Push notifications
+
+Optional, same shape as Authentik above: nothing activates unless
+`VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, and `VAPID_ADMIN_EMAIL` are
+all set (`settings.PUSH_ENABLED`, `.env.example`) — a self-hoster who
+doesn't configure it pays no cost beyond the dependency itself: no
+"Notifications" card on the profile page, `apps.core.push.
+send_push_notification` is a no-op.
+
+**Setup**: run `python manage.py generate_vapid_keys` once (inside the
+`web` container — `docker compose exec web python manage.py
+generate_vapid_keys`), paste the two printed lines into `.env`, set
+`VAPID_ADMIN_EMAIL` to any real contact address, restart. Never run it
+again on a live instance — a new keypair invalidates every existing
+`PushSubscription`'s stored key material, silently breaking push for
+every already-subscribed device until each one re-subscribes. Both
+keys are base64url-encoded with no PEM headers, single line each —
+the one format `py_vapid.Vapid.from_string()` correctly auto-detects
+from a plain string (this project's `env()` helper doesn't support
+multi-line values, ruling out PEM), and, for the public key, also
+exactly the raw-uncompressed-point form the browser's `pushManager.
+subscribe({applicationServerKey})` needs client-side. Keep
+`VAPID_PRIVATE_KEY` as secret as any other credential in `.env` —
+anyone holding it can send push notifications impersonating this
+instance to every subscribed device.
+
+**What's stored**: `apps.core.models.PushSubscription` — one row per
+browser/device a user has enabled notifications on (`endpoint`,
+`p256dh_key`, `auth_key`, straight from the browser's own
+`PushSubscription.toJSON()`). Deleted automatically once the push
+service itself reports it's gone (`apps.core.push.
+send_push_notification` catches a `404`/`410` from `pywebpush.
+WebPushException` and removes the row), and via the ordinary
+`User`-cascade on account deletion — no special handling needed there
+beyond that. Excluded from `apps.accounts.services.
+export_account_data` beyond `endpoint`/`created_at` — `p256dh_key`/
+`auth_key` are credential-like (only the push service needs them),
+same reasoning `apps.api.models.ApiKey.key_hash` is excluded there.
+
+**The actual send is synchronous and time-boxed.** `apps.social.
+services.send_direct_message`/`send_group_message` call
+`send_push_notification` right after saving the message, inside the
+same request; there's no task queue in this project. A 5-second
+timeout on the underlying `pywebpush.webpush()` call bounds worst-case
+latency, and every failure mode (a bad response, a network error) is
+caught and logged, never allowed to propagate — a slow or unreachable
+push service must never delay or break the message actually being
+sent. For a large group this means members × devices, each up to 5
+seconds, all before the response goes out; acceptable for this app's
+expected group sizes, a real tradeoff if this instance ever hosts much
+larger groups.
+
+**CSRF, for the one JS-initiated request in this codebase.** Every
+other write here is a real `<form>` with `{% csrf_token %}` or an HTMX
+request (which reads the same token off the DOM automatically);
+`static/js/push-subscribe.js`'s `fetch()` calls to `apps.core.
+views_push` are the first plain JS `POST` in this app, so they read
+the `csrftoken` cookie Django's own CSRF middleware already sets and
+send it back as the `X-CSRFToken` header that same middleware checks
+for — Django's own documented vanilla-JS pattern, not a new mechanism.
+
 ## Gravatar profile picture
 
 `apps.accounts.models.User.show_gravatar` (profile page → preferences)

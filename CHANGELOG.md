@@ -16,6 +16,25 @@ previous release (`docs/ARCHITECTURE.md` "Versioning") — a terse,
 complete audit trail, not a replacement for this file's shorter,
 narrated summary of the same version.
 
+## [1.7.0] — 2026-08-28
+
+### Added
+- Opt-in Web Push notifications (Profile → Notifications) for direct
+  and group messages, delivered even when the app isn't open —
+  entirely optional, no cost unless `VAPID_*` env vars are configured
+  (`docs/SECURITY.md` "Web Push notifications"). A floating
+  unread-messages button now also appears on every page, the same
+  "reachable from anywhere" treatment a workout in progress already
+  gets.
+- Mute a friend or a group (Friends & groups) to stop push
+  notifications from just that one, without disabling notifications
+  entirely — private to you, doesn't affect the friendship, group
+  membership, or the messages themselves.
+- Camera barcode scanning for food search/import now works in every
+  browser with a camera, not just Chromium-based ones — a vendored
+  fallback decoder (ZXing) loads automatically, only for browsers
+  without the native `BarcodeDetector` API.
+
 ## [1.6.0] — 2026-08-28
 
 ### Added

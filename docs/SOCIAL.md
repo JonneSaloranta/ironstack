@@ -198,6 +198,76 @@ choice), re-querying and re-rendering a conversation's *entire*
 history on every 4-second poll forever would only get slower the
 longer two people keep talking.
 
+## Web Push notifications and the floating unread-messages button
+
+v3 originally shipped with "HTMX-polled, no separate notification
+system" as a deliberate scope line — asked for directly afterwards:
+a real, OS-level notification when a message arrives even if the app
+isn't open, plus an always-visible way to see there's something
+unread without opening Friends & groups first. Neither replaces
+polling — polling is still what actually keeps an *open* thread live;
+push only covers "the app isn't open right now."
+
+`send_direct_message`/`send_group_message` (`apps.social.services`)
+call `apps.core.push.send_push_notification` right after creating the
+message — a direct message notifies its one recipient, a group
+message notifies every other member (`GroupMembership.objects.
+filter(group=group).exclude(user=sender)`, looped). See
+`docs/SECURITY.md` "Web Push notifications" for the actual mechanism
+(VAPID, encryption, subscription storage) — that's `apps.core`'s
+concern, not `apps.social`'s; nothing about push itself is
+message-specific, only the two call sites are. A push notification's
+title is always the sender's/group's plain username or name, matching
+every social template's own choice to show a friend by username, never
+`first_name`/`public_display_name()` (that helper is deliberately
+scoped elsewhere, per its own docstring, to the achievements carousel/
+"Recently active" list).
+
+The floating `.messages-fab` button (`templates/base.html`, gated on
+`apps.social.context_processors.social_badge`'s `has_unread_messages`
+key) is the exact same "reachable from any page" treatment
+`.training-fab` already gives a workout in progress — opposite bottom
+corner, so the two never collide. Deliberately narrower than the small
+dot already on the Profile nav icon (`social_badge` itself, which also
+covers pending friend requests/group invites): the floating button is
+specifically about messages, so it only appears for that.
+
+### Muting
+
+Asked for right after push notifications themselves: let a user
+silence push notifications from one specific friend or group, without
+disabling push entirely (that's the existing "Disable notifications on
+this device" button, Profile → Notifications) and without touching the
+friendship, the group membership, or the message itself — muting only
+ever gates the one `apps.core.push.send_push_notification` call, both
+call sites checking it themselves right before calling: the message is
+still created, still visible in the thread, still counted unread.
+
+**A friend mute** (`apps.social.models.MutedFriend`) is a new
+one-directional model, the exact shape `Block` already has — reused
+rather than adding fields to `Friendship`, since muting is the same
+"one user's own private state about another" `Block` already is, never
+symmetric (me muting you doesn't mute you from me). `services.
+mute_friend`/`unmute_friend`/`is_friend_muted` mirror `block_user`/
+`unblock_user`/`is_blocked` one-for-one, minus every side effect
+blocking has (a mute never touches the friendship or declines pending
+requests). `send_direct_message` checks `is_friend_muted(recipient,
+sender)` before calling the push service.
+
+**A group mute** needs no new model at all — `GroupMembership` already
+doubles as "one row per (group, user) holding this user's own
+per-group state" for exactly this reason (`last_read_at`, the
+unread-message read-state, already lives there); `notifications_muted`
+is the same idea for a second kind of per-user-per-group preference.
+`services.set_group_muted`/`is_group_muted` read/write that one field
+via the existing `membership_of` lookup. Any member can mute their own
+notifications for a group they're in — deliberately *not* gated on
+`can_manage_group` (owner/admin), since this is a personal preference,
+not a group-management action; `send_group_message`'s own notify-loop
+(`GroupMembership.objects.filter(group=group).exclude(user=sender)`)
+gets `notifications_muted=False` added to that same queryset, so a
+muted member is simply never in the list pushed to.
+
 **Unread counts are one query, not one query per group.** An earlier
 version of `apps.social.services.unread_group_message_count` looped
 over a user's `GroupMembership` rows in Python, issuing one `.count()`

@@ -3238,3 +3238,153 @@ instead — exactly the pattern already used one field over for
 update, popped from `validated_data` before the default `.save()`
 runs) — rather than inventing a second mechanism for the same "write
 on create, not on update" shape.
+
+## Web Push notifications, a floating unread-messages button, and browser-independent barcode scanning
+
+Two unrelated requests from the same conversation, planned and built
+together since both touched `apps/core`/client JS in similar ways.
+
+**Push notifications.** `apps.social` shipped v3 with "HTMX-polled, no
+separate notification system" as a deliberate line — asked directly
+afterwards for a real, OS-level notification when a message arrives,
+plus a floating always-visible button for unread messages, the same
+treatment `active_workout_session` already gives a workout in
+progress. Landed as `apps.core.push` (generic — `send_push_notification
+(user, title, body, url)`, nothing message-specific about it) rather
+than inside `apps.social`, since push itself isn't a social-only
+concern even though messages are the only trigger today; `apps.social.
+services.send_direct_message`/`send_group_message` call it right after
+saving. `pywebpush` (RFC 8291/8292 VAPID + payload encryption) is a new
+dependency, justified the same "security-critical, narrow-purpose code
+shouldn't be hand-rolled" way `pyotp`/`mozilla-django-oidc` already are
+in `requirements/base.txt`.
+
+Before writing any of it, verified the actual library API directly
+(`pip install`ed it into the running dev container and used
+`inspect.getsource`) rather than trusting secondhand documentation —
+worthwhile: `WebPusher.send()`'s own source shows the request that can
+raise a connection-level failure (DNS failure, refused connection) has
+no try/except of its own inside `pywebpush.webpush()`, so only catching
+its `WebPushException` would have let an unreachable push service's
+raw `requests.exceptions.RequestException` propagate straight out of
+`send_push_notification` — a real bug against this feature's own hard
+requirement ("must never delay or break the actual message being
+sent"), caught by reading the dependency's source instead of by a test
+happening to exercise that exact failure mode. Also actually ran the
+full VAPID key-generation-and-round-trip flow inside the container
+before writing `docs/SECURITY.md`'s setup instructions or the new
+`manage.py generate_vapid_keys` command, rather than writing an
+untested snippet: generate → `Vapid.from_string()` reload → `.sign()`,
+confirmed working end to end, including one genuinely tricky detail —
+`vapid_private_key` passed as a plain string must be base64url with no
+PEM headers (a PEM string only works via `Vapid.from_file()`'s
+`os.path.isfile()` auto-detection, which this project's plain `env()`
+helper — no multi-line value support — can't feed correctly anyway).
+
+Verification didn't stop at mocked unit tests either: generated a real
+VAPID keypair, rebuilt the dev image (`pywebpush` needed to actually be
+installed, not just importable in an ad-hoc `pip install` into the
+running container), and drove the whole flow with Playwright against a
+**persistent** Chrome profile — a plain (non-persistent) Playwright
+context turned out to behave like incognito mode for the Push API
+specifically ("Chrome currently does not support the Push API in
+incognito mode... deliberately no way to feature-detect this"), silently
+failing `pushManager.subscribe()` until switching profile types. Once
+subscribed, called `pywebpush.webpush()` directly against the resulting
+real Google FCM endpoint and got back a genuine `201 Created` — about
+as strong a confirmation of the full VAPID/encryption pipeline as is
+achievable without an actual OS notification center to inspect inside
+a headless container.
+
+One real design fix caught by the project's own established "no
+duplicate queries per page load" standard, not by a test: the floating
+button's own unread-state check was first drafted as a second,
+independent context processor (`apps.social.context_processors.
+has_unread_messages`) alongside the existing `social_badge` — but that
+would have run `has_unread_direct_messages`/`has_unread_group_messages`
+a second time, redundantly, on every single page load for every
+logged-in user, since `social_badge` already computes both as part of
+its own four-way check. Merged into one function computing each
+underlying boolean once and returning both context keys, the same
+"one query, not N" instinct this codebase already applies at a larger
+scale (`unread_group_message_count`'s own fix, earlier this project) —
+just applied here to two *always-run-once* queries rather than a
+count that scales with data.
+
+Also fixed while writing the message-title code: an initial draft used
+`sender.get_short_name()` for a push notification's title, which would
+have shown a first name to the recipient regardless of the sender's own
+`show_name_to_others` privacy setting — every social template already
+shows a friend by plain `.username` only, never a first name (that's
+what `User.public_display_name()` is for, and its own docstring already
+scopes it elsewhere, to the achievements carousel). Caught by checking
+what the existing templates actually do before writing new code, not
+after a privacy complaint.
+
+**Barcode scanning, take two.** `static/js/barcode-scanner.js` already
+existed, deliberately built with zero vendored dependencies — the
+browser's native `BarcodeDetector` API did the decoding, feature-gated
+so the "Scan barcode" button just didn't render where unsupported
+(Firefox, most Safari). Reported live as "the button seems to be
+missing" — confirmed via AskUserQuestion that this was exactly that
+browser-support gap, not a different page entirely, and that a working
+fallback was preferred over a better error message. Vendored ZXing
+(`static/js/zxing.min.js`, Apache-2.0, pinned `0.21.3`) as a fallback
+decoder — same "vendor a real file, never a CDN" precedent
+`htmx.min.js`/`alpine.min.js` already established, deliberately
+reversing the feature's own original "nothing to vendor here" framing
+now that there was a real reason to. Fetched the real bundle just to
+check its size before committing to the approach (354KB minified,
+notably heavier than htmx/alpine's ~45KB each) — loaded lazily, only
+the first time a browser without `BarcodeDetector` actually opens the
+scanner, via a runtime-inserted `<script>` reading its own
+content-hashed URL off a `data-zxing-url` attribute on `<body>` (the
+same handoff `data-service-worker-url` already uses), so a Chrome user
+who never needs the fallback never downloads it. Verified with
+Playwright by stubbing `window.BarcodeDetector` away before any page
+script ran (simulating Firefox/Safari) and using Chrome's fake-camera
+flags — the button rendered, the fallback decoder loaded, and the
+camera modal opened cleanly against a fake video feed with zero console
+errors.
+
+A small dev-environment quirk surfaced while verifying both features
+visually: `nginx`'s `/static/` `alias` serves from a `collectstatic`
+-populated volume, but this project's dev `docker-compose.override.yml`
+command (`runserver`, not the production command) never runs
+`collectstatic` itself — so a newly-added static file 404's through
+`http://localhost` (nginx) even though it 200s through
+`http://localhost:8000` (Django's own dev-mode static serving) until
+`collectstatic` is run by hand once. Not a bug in either feature; just
+something to remember when verifying a new static asset through the
+same URL real users actually hit.
+
+## Per-friend and per-group notification muting
+
+Asked for right after push notifications themselves landed: let a
+user silence push from one specific friend or group, without the
+existing "Disable notifications on this device" button's all-or-
+nothing scope. Both halves reused an existing shape rather than
+inventing one: a friend mute is `apps.social.models.MutedFriend`, the
+exact one-directional model `Block` already is (never symmetric — me
+muting you isn't you muting me), and a group mute is one new
+`GroupMembership.notifications_muted` boolean rather than a second
+model at all, since `GroupMembership` already doubles as "one row per
+(group, user) holding this user's own per-group state" for exactly
+this reason — `last_read_at`, the unread-message read-state, got the
+same treatment when it was added. `send_direct_message`/
+`send_group_message` each gained a one-line check right before their
+existing `send_push_notification` call(s); nothing else about either
+function changed — the message is still created, still visible, still
+counted unread either way, muting only ever gates that one call.
+
+Deliberately not gated on `can_manage_group` (owner/admin) the way
+most of `apps.social`'s other group actions are — muting your own
+notifications is a personal preference any member has, not a
+group-management action, so `group_mute_toggle` only checks
+membership (`_member_or_404`, the same guard `group_leave`/
+`mark_group_read` already use), not role.
+
+Verified live, not just with mocked tests: muted a friend, sent a
+message from them with `apps.core.push.send_push_notification` mocked
+and confirmed it was never called while the message still saved
+normally; unmuted, confirmed the same call resumed.

@@ -269,6 +269,25 @@ def group_leave(request, pk):
     return redirect("social:group-list")
 
 
+@login_required
+def group_mute_toggle(request, pk):
+    """Any member can mute/unmute their own notifications for this
+    group — not gated on can_manage_group, since this is a personal
+    preference, not a group-management action (see
+    services.set_group_muted's own docstring)."""
+    if request.method != "POST":
+        return HttpResponseNotAllowed(["POST"])
+    group = get_object_or_404(Group, pk=pk)
+    _member_or_404(group, request.user)
+    currently_muted = services.is_group_muted(group, request.user)
+    services.set_group_muted(group, request.user, not currently_muted)
+    if currently_muted:
+        messages.success(request, _("Notifications unmuted for this group."))
+    else:
+        messages.success(request, _("Notifications muted for this group."))
+    return redirect("social:group-detail", pk=pk)
+
+
 def group_invite_join(request, code):
     """The /group/invite/<code>/ landing page — deliberately outside
     the social: namespace (config/urls.py registers it directly), and

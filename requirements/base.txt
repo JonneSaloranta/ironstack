@@ -36,3 +36,13 @@ requests>=2.32,<3.0
 # (settings.AUTHENTIK_ENABLED) — self-hosters who don't run Authentik
 # pay no configuration cost beyond the dependency itself.
 mozilla-django-oidc>=5.0,<6.0
+# apps.core.push — Web Push (RFC 8291/8292: VAPID JWT signing +
+# aes128gcm payload encryption) for message notifications
+# (docs/SOCIAL.md). Same "security-critical, narrow-purpose code
+# shouldn't be hand-rolled" reasoning as pyotp/mozilla-django-oidc
+# above — pywebpush (+ its own py_vapid/http_ece dependencies) is the
+# standard, widely-used library for this, not something worth
+# reimplementing. Always installed, but inert unless VAPID_* env vars
+# are set (settings.PUSH_ENABLED) — self-hosters who don't configure
+# push pay no configuration cost beyond the dependency itself.
+pywebpush>=2.4,<3.0
