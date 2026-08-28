@@ -733,6 +733,16 @@ class MessageViewTests(TestCase):
         response = self.client.get(reverse("social:message-thread", args=[self.bob.pk]))
         self.assertEqual(response.status_code, 404)
 
+    def test_message_input_has_an_accessible_label(self):
+        # Regression: the compact chat input had no visible label (by
+        # design — redundant clutter next to a one-line box) but also
+        # no visually-hidden one, leaving it with no accessible name
+        # at all for a screen reader.
+        make_friends(self.alice, self.bob)
+        response = self.client.get(reverse("social:message-thread", args=[self.bob.pk]))
+        self.assertContains(response, 'class="visually-hidden"')
+        self.assertContains(response, f'for="{response.context["form"]["body"].id_for_label}"')
+
     def test_sending_a_direct_message_via_the_fragment_view(self):
         make_friends(self.alice, self.bob)
         response = self.client.post(
@@ -754,6 +764,11 @@ class MessageViewTests(TestCase):
         group = services.create_group(self.bob, "Lifters")
         response = self.client.get(reverse("social:group-thread", args=[group.pk]))
         self.assertEqual(response.status_code, 404)
+
+    def test_group_message_input_has_an_accessible_label(self):
+        group = services.create_group(self.alice, "Lifters")
+        response = self.client.get(reverse("social:group-thread", args=[group.pk]))
+        self.assertContains(response, 'class="visually-hidden"')
 
     def test_sending_a_group_message_via_the_fragment_view(self):
         group = services.create_group(self.alice, "Lifters")
