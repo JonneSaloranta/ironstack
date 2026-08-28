@@ -5,12 +5,29 @@ from anywhere in the app, not just the profile page footer that's the
 only thing rendering it today.
 """
 
+from django.conf import settings
+
 from .models import SeoSettings
 from .version import get_version
 
 
 def app_version(request):
     return {"app_version": get_version()}
+
+
+def push(request):
+    """Whether Web Push is configured on this instance at all
+    (settings.PUSH_ENABLED, docs/SECURITY.md "Web Push notifications")
+    and, if so, the VAPID public key the client needs for
+    `pushManager.subscribe({applicationServerKey})` — read into every
+    template's context so the profile page's "Notifications" card can
+    render (or not) without every view that might reach it passing
+    this through by hand, the same reasoning `seo` above already
+    follows for its own instance-wide setting."""
+    return {
+        "push_enabled": settings.PUSH_ENABLED,
+        "push_vapid_public_key": settings.VAPID_PUBLIC_KEY,
+    }
 
 
 def seo(request):

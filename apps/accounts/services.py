@@ -126,7 +126,7 @@ def export_account_data(user):
     """
     from apps.activities.models import Activity
     from apps.api.models import ApiKey
-    from apps.core.models import Feedback
+    from apps.core.models import Feedback, PushSubscription
     from apps.exercises.models import Exercise
     from apps.measurements.models import BodyMeasurement
     from apps.nutrition.models import (
@@ -262,5 +262,13 @@ def export_account_data(user):
                 "created_at": key.created_at.isoformat(),
             }
             for key in ApiKey.objects.filter(user=user).select_related("tier")
+        ],
+        # p256dh_key/auth_key excluded — credential-like (only the
+        # push service itself needs them, to route/decrypt a payload),
+        # the same reasoning ApiKey.key_hash is excluded above rather
+        # than run through _dump().
+        "push_subscriptions": [
+            {"endpoint": s.endpoint, "created_at": s.created_at.isoformat()}
+            for s in PushSubscription.objects.filter(user=user)
         ],
     }
