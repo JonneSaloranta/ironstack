@@ -3,25 +3,58 @@
 // directly, on top of the existing type-the-digits-in barcode search
 // (apps.nutrition.services._BARCODE_RE).
 //
-// Deliberately zero new dependencies: the browser's own native
-// BarcodeDetector API does the actual decoding, not a vendored JS
-// library — matches CLAUDE.md's "avoid unnecessary dependencies" and
-// this project's existing "only ever vendor a JS file, never load
-// from a CDN" precedent (htmx.min.js/alpine.min.js), by needing
-// nothing to vendor at all. BarcodeDetector isn't universal yet
-// (Chromium-based browsers, most notably Chrome for Android — this
-// app's primary mobile target per CLAUDE.md's "mobile-first" goal —
-// support it; Firefox and older Safari don't) — `supported` below
-// gates the "Scan barcode" button so it simply doesn't appear rather
-// than opening onto a broken camera view on a browser that can't
-// decode anything.
+// Two decoders, tried in order:
+//   1. The browser's own native BarcodeDetector API — zero extra
+//      bytes downloaded, but Chromium-only (Chrome/Android — this
+//      app's primary mobile target — supports it; Firefox and older
+//      Safari don't).
+//   2. ZXing (static/js/zxing.min.js, vendored — same "only ever
+//      vendor a JS file, never load from a CDN" precedent as
+//      htmx.min.js/alpine.min.js) as a fallback for every browser
+//      without BarcodeDetector, so the "Scan barcode" button works
+//      everywhere getUserMedia does instead of silently disappearing
+//      on non-Chromium browsers. Loaded lazily, only the first time a
+//      browser without BarcodeDetector actually opens the scanner —
+//      a Chrome user, who never needs it, never downloads it.
+//
+// `supported` is unconditionally true now (any browser with
+// getUserMedia can plausibly scan) — camera/permission failures are
+// still handled by the existing try/catch in open() either way.
+let zxingLoadPromise = null;
+
+function loadZxing() {
+  if (window.ZXing) return Promise.resolve(window.ZXing);
+  if (!zxingLoadPromise) {
+    zxingLoadPromise = new Promise((resolve, reject) => {
+      const script = document.createElement("script");
+      // Read off a data-* attribute (base.html renders it onto <body>,
+      // the same handoff apps.core.views.service_worker's own
+      // data-service-worker-url already uses) rather than a hardcoded
+      // path — ManifestStaticFilesStorage in production serves this
+      // file at a content-hashed URL, not its plain name.
+      script.src = document.body.dataset.zxingUrl;
+      script.onload = () => resolve(window.ZXing);
+      script.onerror = reject;
+      document.head.appendChild(script);
+    });
+  }
+  return zxingLoadPromise;
+}
+
+// Every format apps.nutrition.services._BARCODE_RE's 8-14 digit range
+// actually covers (EAN-8/UPC-A/UPC-E/EAN-13) — ITF-14 isn't a
+// BarcodeDetector format and rare on retail packaging next to these,
+// no loss keeping both decoders restricted to the same four.
+const BARCODE_FORMATS = ["ean_13", "ean_8", "upc_a", "upc_e"];
+
 function ironstackBarcodeScanner() {
   return {
     active: false,
-    supported: "BarcodeDetector" in window,
+    supported: true,
     error: null,
     stream: null,
     detector: null,
+    usingZxing: false,
     rafId: null,
     targetInputId: null,
 
@@ -29,23 +62,31 @@ function ironstackBarcodeScanner() {
       this.targetInputId = targetInputId;
       this.error = null;
       this.active = true;
+      this.usingZxing = !("BarcodeDetector" in window);
       try {
-        this.detector = new window.BarcodeDetector({
-          // Every format apps.nutrition.services._BARCODE_RE's 8-14
-          // digit range actually covers (EAN-8/UPC-A/UPC-E/EAN-13) —
-          // ITF-14 isn't a BarcodeDetector format, no loss since it's
-          // rare on retail packaging compared to these.
-          formats: ["ean_13", "ean_8", "upc_a", "upc_e"],
-        });
+        if (this.usingZxing) {
+          const ZXing = await loadZxing();
+          const hints = new Map();
+          hints.set(ZXing.DecodeHintType.POSSIBLE_FORMATS, [
+            ZXing.BarcodeFormat.EAN_13,
+            ZXing.BarcodeFormat.EAN_8,
+            ZXing.BarcodeFormat.UPC_A,
+            ZXing.BarcodeFormat.UPC_E,
+          ]);
+          this.detector = new ZXing.BrowserMultiFormatReader(hints);
+        } else {
+          this.detector = new window.BarcodeDetector({ formats: BARCODE_FORMATS });
+        }
         this.stream = await navigator.mediaDevices.getUserMedia({
           video: { facingMode: "environment" },
         });
       } catch (e) {
-        // Camera permission denied, no camera, or getUserMedia itself
+        // Camera permission denied, no camera, getUserMedia itself
         // unavailable (e.g. the page isn't served over HTTPS, which
-        // getUserMedia requires everywhere except localhost) — close
-        // back out to the plain text search rather than leaving a
-        // dead, permanently-loading overlay open.
+        // getUserMedia requires everywhere except localhost), or the
+        // zxing.min.js fetch failed (offline first load) — close back
+        // out to the plain text search rather than leaving a dead,
+        // permanently-loading overlay open.
         this.error = e.message || String(e);
         this.close();
         return;
@@ -54,10 +95,22 @@ function ironstackBarcodeScanner() {
         const video = this.$refs.scannerVideo;
         video.srcObject = this.stream;
         video.play();
-        this.scanLoop(video);
+        if (this.usingZxing) {
+          // decodeFromVideoElement manages its own continuous decode
+          // loop against the already-playing <video> — unlike the
+          // native path below, no manual requestAnimationFrame loop
+          // needed; the callback just fires repeatedly until reset().
+          this.detector.decodeFromVideoElement(video, (result) => {
+            if (result) this.onDetected(result.getText());
+          });
+        } else {
+          this.scanLoop(video);
+        }
       });
     },
 
+    // Native BarcodeDetector path only — ZXing drives its own loop
+    // internally via decodeFromVideoElement above.
     scanLoop(video) {
       if (!this.active) return;
       this.detector
@@ -94,6 +147,9 @@ function ironstackBarcodeScanner() {
       if (this.rafId) {
         cancelAnimationFrame(this.rafId);
         this.rafId = null;
+      }
+      if (this.usingZxing && this.detector) {
+        this.detector.reset();
       }
       if (this.stream) {
         this.stream.getTracks().forEach((track) => track.stop());

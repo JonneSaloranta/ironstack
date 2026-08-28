@@ -771,19 +771,30 @@ gets added later, as it did here, twice.
 ### Camera barcode scanning
 
 `static/js/barcode-scanner.js` — the browser's own native
-`BarcodeDetector` API does the decoding, not a vendored library (see
-CLAUDE.md "avoid unnecessary dependencies"; there's nothing to vendor
-here in the first place, unlike this project's existing local-only
-`htmx.min.js`/`alpine.min.js`). Feature-detected
-(`"BarcodeDetector" in window`) so the "Scan barcode" button simply
-doesn't render on a browser that can't decode anything, rather than
-opening a broken camera view — Chromium/Chrome-for-Android (this
-app's primary mobile target) supports it; Firefox and older Safari
-don't. One shared Alpine component (`ironstackBarcodeScanner()`) and
-one reusable template include (`_barcode_scan_button.html`, the same
-`.modal-backdrop`/`.modal-card` overlay `accounts/profile.html`'s
-changelog modal already established) wired into all four food-search
-boxes. A successful scan writes the barcode into the search `<input>`
+`BarcodeDetector` API decodes when it's available (Chromium/Chrome-for-
+Android — this app's primary mobile target — supports it), with a
+vendored fallback for browsers that don't (Firefox, older Safari):
+`static/js/zxing.min.js` (ZXing, Apache-2.0, pinned at `0.21.3` — the
+same "only ever vendor a JS file, never load from a CDN" precedent as
+`htmx.min.js`/`alpine.min.js`, extended here specifically because
+there was no native-API-only way to cover those browsers, unlike when
+this feature first shipped Chromium-only "since there's nothing to
+vendor" — reversed once the resulting gap was reported live). The
+fallback is loaded lazily, only the first time a browser without
+`BarcodeDetector` actually opens the scanner (`loadZxing()`, a
+runtime-inserted `<script>` reading its own content-hashed URL off a
+`data-zxing-url` attribute on `<body>`, the same handoff
+`data-service-worker-url` already uses) — a Chrome user, who never
+needs it, never downloads its ~330KB. `supported` is unconditionally
+`true` now (any browser with `getUserMedia` can plausibly scan) —
+camera/permission failures, and a failed `zxing.min.js` fetch on a
+first-ever offline load, are both still handled by the scanner's
+existing try/catch, same as before. One shared Alpine component
+(`ironstackBarcodeScanner()`) and one reusable template include
+(`_barcode_scan_button.html`, the same `.modal-backdrop`/`.modal-card`
+overlay `accounts/profile.html`'s changelog modal already established)
+wired into all four food-search boxes. A successful scan — from
+either decoder — writes the barcode into the search `<input>`
 and dispatches a synthetic `keyup` event (setting `.value` directly
 fires no DOM event on its own) so the existing `hx-trigger="keyup
 changed delay:400ms"` search box picks it up exactly as if it had
