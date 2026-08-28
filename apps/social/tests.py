@@ -16,6 +16,7 @@ from .models import (
     GroupMembership,
     GroupMessage,
     GroupRole,
+    MutedFriend,
 )
 
 User = get_user_model()
@@ -163,6 +164,36 @@ class BlockServiceTests(TestCase):
         self.assertEqual(Block.objects.filter(blocker=self.alice, blocked=self.bob).count(), 1)
 
 
+class MuteFriendServiceTests(TestCase):
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        self.bob = User.objects.create_user(username="bob", password="s3cret-pass")
+
+    def test_muting_is_one_directional(self):
+        services.mute_friend(self.alice, self.bob)
+        self.assertTrue(services.is_friend_muted(self.alice, self.bob))
+        self.assertFalse(services.is_friend_muted(self.bob, self.alice))
+
+    def test_unmuting_removes_it(self):
+        services.mute_friend(self.alice, self.bob)
+        services.unmute_friend(self.alice, self.bob)
+        self.assertFalse(services.is_friend_muted(self.alice, self.bob))
+
+    def test_muting_twice_does_not_create_two_rows(self):
+        services.mute_friend(self.alice, self.bob)
+        services.mute_friend(self.alice, self.bob)
+        self.assertEqual(
+            MutedFriend.objects.filter(user=self.alice, muted_user=self.bob).count(), 1
+        )
+
+    def test_muting_does_not_affect_the_friendship_or_messaging(self):
+        make_friends(self.alice, self.bob)
+        services.mute_friend(self.alice, self.bob)
+        self.assertTrue(services.are_friends(self.alice, self.bob))
+        message = services.send_direct_message(self.bob, self.alice, "still works")
+        self.assertEqual(message.body, "still works")
+
+
 class DirectMessageServiceTests(TestCase):
     def setUp(self):
         self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
@@ -221,6 +252,14 @@ class DirectMessageServiceTests(TestCase):
         # (the real function never raises), but even then the message
         # this test just sent is still in the database.
         self.assertEqual(DirectMessage.objects.count(), 1)
+
+    def test_a_muted_sender_does_not_trigger_a_push_but_the_message_still_sends(self):
+        make_friends(self.alice, self.bob)
+        services.mute_friend(self.bob, self.alice)  # bob doesn't want pushes from alice
+        with mock.patch("apps.core.push.send_push_notification") as mock_send:
+            message = services.send_direct_message(self.alice, self.bob, "hi")
+        mock_send.assert_not_called()
+        self.assertEqual(message.body, "hi")
 
 
 class GroupServiceTests(TestCase):
@@ -461,6 +500,15 @@ class GroupMessageServiceTests(TestCase):
         notified = {call.args[0] for call in mock_send.call_args_list}
         self.assertEqual(notified, {self.bob, carol})
 
+    def test_a_muted_member_is_skipped_but_the_message_still_reaches_them(self):
+        services.enable_invite(self.group)
+        services.join_group_by_code(self.bob, self.group.invite_code)
+        services.set_group_muted(self.group, self.bob, True)
+        with mock.patch("apps.core.push.send_push_notification") as mock_send:
+            services.send_group_message(self.group, self.alice, "hi")
+        mock_send.assert_not_called()
+        self.assertEqual(services.unread_group_message_count(self.bob, self.group), 1)
+
     def test_unread_count_uses_last_read_at(self):
         services.enable_invite(self.group)
         services.join_group_by_code(self.bob, self.group.invite_code)
@@ -632,6 +680,15 @@ class FriendViewTests(TestCase):
         self.client.post(reverse("social:unblock-user", args=[self.bob.pk]))
         self.assertFalse(Block.objects.filter(blocker=self.alice, blocked=self.bob).exists())
 
+    def test_muting_and_unmuting_a_friend_via_the_views(self):
+        make_friends(self.alice, self.bob)
+        self.client.post(reverse("social:friend-mute", args=[self.bob.pk]))
+        self.assertTrue(services.is_friend_muted(self.alice, self.bob))
+        response = self.client.get(reverse("social:friend-list"))
+        self.assertIn(self.bob.pk, response.context["muted_friend_ids"])
+        self.client.post(reverse("social:friend-unmute", args=[self.bob.pk]))
+        self.assertFalse(services.is_friend_muted(self.alice, self.bob))
+
 
 class GroupViewTests(TestCase):
     def setUp(self):
@@ -742,6 +799,17 @@ class GroupViewTests(TestCase):
         response = self.client.post(reverse("social:group-delete", args=[group.pk]))
         self.assertRedirects(response, reverse("social:group-list"))
         self.assertFalse(Group.objects.filter(pk=group.pk).exists())
+
+    def test_muting_and_unmuting_a_group_via_the_view_any_member_can_do_it(self):
+        group = services.create_group(self.bob, "Lifters")
+        services.enable_invite(group)
+        services.join_group_by_code(self.alice, group.invite_code)
+        response = self.client.post(reverse("social:group-mute-toggle", args=[group.pk]))
+        self.assertRedirects(response, reverse("social:group-detail", args=[group.pk]))
+        self.assertTrue(services.is_group_muted(group, self.alice))
+        self.assertFalse(services.is_group_muted(group, self.bob))
+        self.client.post(reverse("social:group-mute-toggle", args=[group.pk]))
+        self.assertFalse(services.is_group_muted(group, self.alice))
 
     def test_transfer_ownership_via_the_view(self):
         group = services.create_group(self.alice, "Lifters")
