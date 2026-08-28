@@ -3357,3 +3357,34 @@ command (`runserver`, not the production command) never runs
 `collectstatic` is run by hand once. Not a bug in either feature; just
 something to remember when verifying a new static asset through the
 same URL real users actually hit.
+
+## Per-friend and per-group notification muting
+
+Asked for right after push notifications themselves landed: let a
+user silence push from one specific friend or group, without the
+existing "Disable notifications on this device" button's all-or-
+nothing scope. Both halves reused an existing shape rather than
+inventing one: a friend mute is `apps.social.models.MutedFriend`, the
+exact one-directional model `Block` already is (never symmetric — me
+muting you isn't you muting me), and a group mute is one new
+`GroupMembership.notifications_muted` boolean rather than a second
+model at all, since `GroupMembership` already doubles as "one row per
+(group, user) holding this user's own per-group state" for exactly
+this reason — `last_read_at`, the unread-message read-state, got the
+same treatment when it was added. `send_direct_message`/
+`send_group_message` each gained a one-line check right before their
+existing `send_push_notification` call(s); nothing else about either
+function changed — the message is still created, still visible, still
+counted unread either way, muting only ever gates that one call.
+
+Deliberately not gated on `can_manage_group` (owner/admin) the way
+most of `apps.social`'s other group actions are — muting your own
+notifications is a personal preference any member has, not a
+group-management action, so `group_mute_toggle` only checks
+membership (`_member_or_404`, the same guard `group_leave`/
+`mark_group_read` already use), not role.
+
+Verified live, not just with mocked tests: muted a friend, sent a
+message from them with `apps.core.push.send_push_notification` mocked
+and confirmed it was never called while the message still saved
+normally; unmuted, confirmed the same call resumed.

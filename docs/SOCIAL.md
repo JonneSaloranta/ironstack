@@ -232,6 +232,42 @@ dot already on the Profile nav icon (`social_badge` itself, which also
 covers pending friend requests/group invites): the floating button is
 specifically about messages, so it only appears for that.
 
+### Muting
+
+Asked for right after push notifications themselves: let a user
+silence push notifications from one specific friend or group, without
+disabling push entirely (that's the existing "Disable notifications on
+this device" button, Profile → Notifications) and without touching the
+friendship, the group membership, or the message itself — muting only
+ever gates the one `apps.core.push.send_push_notification` call, both
+call sites checking it themselves right before calling: the message is
+still created, still visible in the thread, still counted unread.
+
+**A friend mute** (`apps.social.models.MutedFriend`) is a new
+one-directional model, the exact shape `Block` already has — reused
+rather than adding fields to `Friendship`, since muting is the same
+"one user's own private state about another" `Block` already is, never
+symmetric (me muting you doesn't mute you from me). `services.
+mute_friend`/`unmute_friend`/`is_friend_muted` mirror `block_user`/
+`unblock_user`/`is_blocked` one-for-one, minus every side effect
+blocking has (a mute never touches the friendship or declines pending
+requests). `send_direct_message` checks `is_friend_muted(recipient,
+sender)` before calling the push service.
+
+**A group mute** needs no new model at all — `GroupMembership` already
+doubles as "one row per (group, user) holding this user's own
+per-group state" for exactly this reason (`last_read_at`, the
+unread-message read-state, already lives there); `notifications_muted`
+is the same idea for a second kind of per-user-per-group preference.
+`services.set_group_muted`/`is_group_muted` read/write that one field
+via the existing `membership_of` lookup. Any member can mute their own
+notifications for a group they're in — deliberately *not* gated on
+`can_manage_group` (owner/admin), since this is a personal preference,
+not a group-management action; `send_group_message`'s own notify-loop
+(`GroupMembership.objects.filter(group=group).exclude(user=sender)`)
+gets `notifications_muted=False` added to that same queryset, so a
+muted member is simply never in the list pushed to.
+
 **Unread counts are one query, not one query per group.** An earlier
 version of `apps.social.services.unread_group_message_count` looped
 over a user's `GroupMembership` rows in Python, issuing one `.count()`
