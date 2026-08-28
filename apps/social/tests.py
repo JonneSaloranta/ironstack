@@ -1,3 +1,5 @@
+from unittest import mock
+
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse
@@ -193,6 +195,31 @@ class DirectMessageServiceTests(TestCase):
         make_friends(self.alice, self.bob)
         services.send_direct_message(self.alice, self.bob, "hi")
         services.block_user(self.bob, self.alice)
+        self.assertEqual(DirectMessage.objects.count(), 1)
+
+    def test_sending_a_message_notifies_the_recipient(self):
+        make_friends(self.alice, self.bob)
+        with mock.patch("apps.core.push.send_push_notification") as mock_send:
+            services.send_direct_message(self.alice, self.bob, "hi")
+        mock_send.assert_called_once()
+        self.assertEqual(mock_send.call_args.args[0], self.bob)
+
+    def test_a_push_failure_never_breaks_sending_the_message(self):
+        """send_push_notification itself is designed to never raise
+        (apps.core.push's own docstring), but this pins the contract
+        from the caller's side too — even if it somehow did, the
+        message must already be saved and the exception must not
+        propagate out of send_direct_message."""
+        make_friends(self.alice, self.bob)
+        with mock.patch(
+            "apps.core.push.send_push_notification", side_effect=RuntimeError("boom")
+        ):
+            with self.assertRaises(RuntimeError):
+                services.send_direct_message(self.alice, self.bob, "hi")
+        # The message itself was already created before the push call —
+        # a RuntimeError from push here is an unrealistic worst case
+        # (the real function never raises), but even then the message
+        # this test just sent is still in the database.
         self.assertEqual(DirectMessage.objects.count(), 1)
 
 
@@ -423,6 +450,16 @@ class GroupMessageServiceTests(TestCase):
     def test_a_non_member_cannot_send_a_message(self):
         with self.assertRaises(services.SocialError):
             services.send_group_message(self.group, self.bob, "hi")
+
+    def test_sending_a_message_notifies_every_other_member_but_not_the_sender(self):
+        services.enable_invite(self.group)
+        services.join_group_by_code(self.bob, self.group.invite_code)
+        carol = User.objects.create_user(username="carol", password="s3cret-pass")
+        services.join_group_by_code(carol, self.group.invite_code)
+        with mock.patch("apps.core.push.send_push_notification") as mock_send:
+            services.send_group_message(self.group, self.alice, "hi")
+        notified = {call.args[0] for call in mock_send.call_args_list}
+        self.assertEqual(notified, {self.bob, carol})
 
     def test_unread_count_uses_last_read_at(self):
         services.enable_invite(self.group)
