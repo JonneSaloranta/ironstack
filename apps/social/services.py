@@ -25,6 +25,7 @@ from .models import (
     GroupMembership,
     GroupMessage,
     GroupRole,
+    MutedFriend,
 )
 
 
@@ -158,26 +159,44 @@ def unblock_user(blocker, blocked):
     Block.objects.filter(blocker=blocker, blocked=blocked).delete()
 
 
+def mute_friend(user, friend):
+    """`user`'s own private preference — doesn't touch the friendship,
+    doesn't need `friend`'s awareness or consent, same as `block_user`
+    above but with none of its side effects (still friends, still able
+    to message each other; only push notifications are affected, see
+    MutedFriend's own docstring)."""
+    MutedFriend.objects.get_or_create(user=user, muted_user=friend)
+
+
+def unmute_friend(user, friend):
+    MutedFriend.objects.filter(user=user, muted_user=friend).delete()
+
+
+def is_friend_muted(user, friend):
+    return MutedFriend.objects.filter(user=user, muted_user=friend).exists()
+
+
 def send_direct_message(sender, recipient, body):
     if is_blocked(sender, recipient):
         raise SocialError(_("You can't message this user."))
     if not are_friends(sender, recipient):
         raise SocialError(_("You can only message friends."))
     message = DirectMessage.objects.create(sender=sender, recipient=recipient, body=body)
-    from django.urls import reverse
+    if not is_friend_muted(recipient, sender):
+        from django.urls import reverse
 
-    from apps.core.push import send_push_notification
+        from apps.core.push import send_push_notification
 
-    # .username, not first_name/public_display_name() — every social
-    # template already shows a friend by username only (see e.g.
-    # templates/social/message_thread.html), never a first name; a
-    # push notification shouldn't be the one place that's different.
-    send_push_notification(
-        recipient,
-        title=sender.username,
-        body=body,
-        url=reverse("social:message-thread", args=[sender.pk]),
-    )
+        # .username, not first_name/public_display_name() — every social
+        # template already shows a friend by username only (see e.g.
+        # templates/social/message_thread.html), never a first name; a
+        # push notification shouldn't be the one place that's different.
+        send_push_notification(
+            recipient,
+            title=sender.username,
+            body=body,
+            url=reverse("social:message-thread", args=[sender.pk]),
+        )
     return message
 
 
@@ -420,15 +439,31 @@ def send_group_message(group, sender, body):
     from apps.core.push import send_push_notification
 
     thread_url = reverse("social:group-thread", args=[group.pk])
-    for member in GroupMembership.objects.filter(group=group).exclude(user=sender).select_related(
-        "user"
-    ):
+    notify_members = (
+        GroupMembership.objects.filter(group=group, notifications_muted=False)
+        .exclude(user=sender)
+        .select_related("user")
+    )
+    for member in notify_members:
         send_push_notification(member.user, title=group.name, body=body, url=thread_url)
     return message
 
 
 def mark_group_read(group, user):
     GroupMembership.objects.filter(group=group, user=user).update(last_read_at=timezone.now())
+
+
+def set_group_muted(group, user, muted):
+    """`user`'s own private push-notification preference for `group`
+    (GroupMembership.notifications_muted's own docstring) — any member
+    can set this for themselves, not just the owner/admin; it's a
+    personal preference, not a group-management action."""
+    GroupMembership.objects.filter(group=group, user=user).update(notifications_muted=muted)
+
+
+def is_group_muted(group, user):
+    membership = membership_of(group, user)
+    return membership is not None and membership.notifications_muted
 
 
 def unread_group_message_count(user, group=None):

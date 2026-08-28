@@ -43,6 +43,17 @@
     <div><strong>{{ friend.username }}</strong></div>
     <div style="display:flex; gap:0.5rem;">
       <a class="button-secondary" href="{% url 'social:message-thread' friend.pk %}">{% trans "Message" %}</a>
+      {% if friend.pk in muted_friend_ids %}
+        <form method="post" action="{% url 'social:friend-unmute' friend.pk %}">
+          {% csrf_token %}
+          <button type="submit" class="button-secondary">{% trans "Unmute" %}</button>
+        </form>
+      {% else %}
+        <form method="post" action="{% url 'social:friend-mute' friend.pk %}">
+          {% csrf_token %}
+          <button type="submit" class="button-secondary">{% trans "Mute" %}</button>
+        </form>
+      {% endif %}
       <form method="post" action="{% url 'social:friend-remove' friend.pk %}"
             x-data="{}" @submit="if (!confirm('{% trans "Remove this friend?" %}')) $event.preventDefault()">
         {% csrf_token %}

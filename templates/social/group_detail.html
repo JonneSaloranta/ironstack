@@ -103,6 +103,17 @@
 {% endfor %}
 
 <p>
+  <form method="post" action="{% url 'social:group-mute-toggle' group.pk %}">
+    {% csrf_token %}
+    {% if membership.notifications_muted %}
+      <button type="submit" class="button-secondary">{% trans "Unmute notifications" %}</button>
+    {% else %}
+      <button type="submit" class="button-secondary">{% trans "Mute notifications" %}</button>
+    {% endif %}
+  </form>
+</p>
+
+<p>
   {% if not is_owner %}
     <form method="post" action="{% url 'social:group-leave' group.pk %}"
           x-data="{}" @submit="if (!confirm('{% trans "Leave this group?" %}')) $event.preventDefault()">
