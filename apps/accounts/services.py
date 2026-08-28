@@ -214,7 +214,7 @@ def export_account_data(user):
         # history through one member's export.
         "friend_requests_sent": [
             {"to": r.to_user.username, "status": r.status, "created_at": r.created_at.isoformat()}
-            for r in FriendRequest.objects.filter(from_user=user)
+            for r in FriendRequest.objects.filter(from_user=user).select_related("to_user")
         ],
         "friend_requests_received": [
             {
@@ -222,12 +222,12 @@ def export_account_data(user):
                 "status": r.status,
                 "created_at": r.created_at.isoformat(),
             }
-            for r in FriendRequest.objects.filter(to_user=user)
+            for r in FriendRequest.objects.filter(to_user=user).select_related("from_user")
         ],
         "friends": [{"username": f.username} for f in social_services.friends_of(user)],
         "blocked_users": [
             {"username": b.blocked.username, "created_at": b.created_at.isoformat()}
-            for b in Block.objects.filter(blocker=user)
+            for b in Block.objects.filter(blocker=user).select_related("blocked")
         ],
         "group_memberships": [
             {
