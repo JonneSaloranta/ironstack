@@ -345,6 +345,37 @@ input[type="radio"] {
   50% { opacity: 0.4; }
 }
 
+/* Unread messages' own floating entry point (base.html, gated on
+   apps.social.context_processors.social_badge's has_unread_messages) —
+   the same "reachable from any page" treatment .training-fab already
+   gets, opposite corner so the two never collide or need stacking math
+   between them (training-fab only shows during an in-progress workout,
+   rarely coinciding anyway). --color-danger, not --color-accent —
+   matches the red .nav-badge dot already used for pending social
+   activity elsewhere in this app, visually distinct from the blue
+   training button. */
+.messages-fab {
+  position: fixed;
+  left: 1rem;
+  bottom: calc(var(--nav-height) + env(safe-area-inset-bottom) + 1rem);
+  z-index: 90;
+  width: 3.5rem;
+  height: 3.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--color-danger);
+  color: #fff;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+  text-decoration: none;
+}
+
+.messages-fab .nav-icon {
+  width: 1.75rem;
+  height: 1.75rem;
+}
+
 .top-bar {
   display: flex;
   flex-wrap: wrap;
@@ -1424,7 +1455,8 @@ h2 {
 
   /* No bottom-nav bar to clear on desktop — the mobile offset would
      otherwise leave a large, pointless gap under the button. */
-  .training-fab {
+  .training-fab,
+  .messages-fab {
     bottom: 1.5rem;
   }
 }

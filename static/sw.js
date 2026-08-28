@@ -77,3 +77,38 @@ self.addEventListener("fetch", (event) => {
     })
   );
 });
+
+// Web Push (apps.core.push, docs/SECURITY.md "Web Push notifications")
+// — the two handlers below are the only place a notification actually
+// gets shown; everything server-side (apps.core.views_push,
+// apps.social.services) only ever sends the encrypted payload this
+// event decodes. Purely additive to the cache-only fetch handler
+// above — a browser with no active PushSubscription simply never
+// fires a "push" event, so this is inert until static/js/push-
+// subscribe.js's subscribe flow actually completes once.
+self.addEventListener("push", (event) => {
+  const data = event.data ? event.data.json() : {};
+  event.waitUntil(
+    self.registration.showNotification(data.title || "IronStack", {
+      body: data.body,
+      icon: "/static/icons/icon-192.png",
+      data: { url: data.url },
+    })
+  );
+});
+
+self.addEventListener("notificationclick", (event) => {
+  event.notification.close();
+  const url = event.notification.data && event.notification.data.url;
+  if (!url) return;
+  event.waitUntil(
+    clients.matchAll({ type: "window" }).then((windowClients) => {
+      // Focus an already-open tab on this same page rather than
+      // opening a duplicate one, if there is one.
+      for (const client of windowClients) {
+        if (client.url === url && "focus" in client) return client.focus();
+      }
+      if (clients.openWindow) return clients.openWindow(url);
+    })
+  );
+});
