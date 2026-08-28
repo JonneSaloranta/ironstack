@@ -9,7 +9,9 @@ CLAUDE.md, business logic belongs in services, and a DRF view is exactly
 as much a "view" as a Django one in that sense.
 """
 
-from rest_framework import generics, mixins, viewsets
+from django.shortcuts import get_object_or_404
+from rest_framework import generics, mixins, status, viewsets
+from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -22,11 +24,16 @@ from apps.exercises import services as exercise_services
 from apps.exercises.models import Equipment, MuscleGroup
 from apps.measurements import services as measurement_services
 from apps.measurements.models import BodyMeasurement
+from apps.nutrition import diet_builder
 from apps.nutrition import services as nutrition_services
 from apps.nutrition.models import (
     DiaryEntry,
+    DietPlan,
+    DietPlanItem,
+    DietPlanMeal,
     Food,
     NutritionGoal,
+    NutritionProfile,
     NutritionTarget,
     Recipe,
     RecipeIngredient,
@@ -45,6 +52,9 @@ from .serializers import (
     ActivityTypeSerializer,
     BodyMeasurementSerializer,
     DiaryEntrySerializer,
+    DietPlanItemSerializer,
+    DietPlanMealSerializer,
+    DietPlanSerializer,
     EquipmentSerializer,
     ExercisePrescriptionSerializer,
     ExerciseSerializer,
@@ -54,6 +64,7 @@ from .serializers import (
     MeasurementTypeSerializer,
     MuscleGroupSerializer,
     NutritionGoalSerializer,
+    NutritionProfileSerializer,
     NutritionTargetSerializer,
     PerformedExerciseSerializer,
     PersonalRecordSerializer,
@@ -414,3 +425,128 @@ class NutritionTargetViewSet(
 
     def get_queryset(self):
         return NutritionTarget.objects.filter(user=self.request.user)
+
+
+class NutritionProfileView(generics.RetrieveUpdateAPIView):
+    """A singleton resource, the same shape as ProfileView above —
+    GET/PATCH always act on the authenticated key's own
+    NutritionProfile. get_object_or_404 rather than a bare attribute
+    lookup: a user who hasn't gone through nutrition onboarding yet
+    has no NutritionProfile row at all, and that's a plain 404, not a
+    500."""
+
+    serializer_class = NutritionProfileSerializer
+    api_context = ApiContext.NUTRITION
+
+    def get_object(self):
+        return get_object_or_404(NutritionProfile, user=self.request.user)
+
+
+class DietPlanViewSet(viewsets.ModelViewSet):
+    """create/activate/deactivate/apply all go through
+    apps.nutrition.diet_builder/services rather than a raw field
+    write — see DietPlanSerializer's own docstring for why."""
+
+    serializer_class = DietPlanSerializer
+    api_context = ApiContext.NUTRITION
+
+    def get_queryset(self):
+        return DietPlan.objects.filter(user=self.request.user).prefetch_related(
+            "meals__meal_slot", "meals__items"
+        )
+
+    def perform_create(self, serializer):
+        data = serializer.validated_data
+        plan = diet_builder.build_diet_plan(
+            self.request.user,
+            name=data["name"],
+            goal=data.get("goal"),
+            target_calories=data["target_calories"],
+            target_protein_grams=data["target_protein_grams"],
+            target_carbohydrate_grams=data["target_carbohydrate_grams"],
+            target_fat_grams=data["target_fat_grams"],
+            meal_slots=data["meal_slots"],
+            is_weekly=data.get("is_weekly", False),
+        )
+        serializer.instance = plan
+
+    # A plan's target_* fields must stay writable input on the
+    # serializer (perform_create passes them straight to
+    # build_diet_plan, and Meta.read_only_fields would strip them from
+    # validated_data on create too, not just update) — so "read-only
+    # after creation" is enforced here instead, by discarding them
+    # before the default ModelSerializer.update() gets a chance to
+    # write them onto the instance.
+    _UPDATE_ONLY_DISCARDED_FIELDS = (
+        "meal_slots",
+        "target_calories",
+        "target_protein_grams",
+        "target_carbohydrate_grams",
+        "target_fat_grams",
+    )
+
+    def perform_update(self, serializer):
+        for field in self._UPDATE_ONLY_DISCARDED_FIELDS:
+            serializer.validated_data.pop(field, None)
+        serializer.save()
+
+    @action(detail=True, methods=["post"])
+    def activate(self, request, pk=None):
+        plan = self.get_object()
+        nutrition_services.set_active_diet_plan(request.user, plan)
+        return Response(self.get_serializer(plan).data)
+
+    @action(detail=True, methods=["post"])
+    def deactivate(self, request, pk=None):
+        plan = self.get_object()
+        nutrition_services.deactivate_diet_plan(plan)
+        return Response(self.get_serializer(plan).data)
+
+    @action(detail=True, methods=["post"])
+    def apply(self, request, pk=None):
+        """Materializes this plan into real DiaryEntry rows for
+        `date` — the one thing an API consumer would otherwise have
+        to reconstruct by hand (fetch every DietPlanItem, POST N
+        diary-entries/ individually)."""
+        from datetime import date as date_cls
+
+        plan = self.get_object()
+        raw_date = request.data.get("date")
+        if not raw_date:
+            return Response(
+                {"date": "This field is required."}, status=status.HTTP_400_BAD_REQUEST
+            )
+        try:
+            target_date = date_cls.fromisoformat(raw_date)
+        except ValueError:
+            return Response(
+                {"date": "Must be in YYYY-MM-DD format."}, status=status.HTTP_400_BAD_REQUEST
+            )
+        entries = diet_builder.apply_diet_plan(plan, target_date)
+        return Response(
+            DiaryEntrySerializer(entries, many=True).data, status=status.HTTP_201_CREATED
+        )
+
+
+class DietPlanMealViewSet(
+    mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet
+):
+    """Read-only — see DietPlanSerializer's own docstring for why."""
+
+    serializer_class = DietPlanMealSerializer
+    api_context = ApiContext.NUTRITION
+
+    def get_queryset(self):
+        return DietPlanMeal.objects.filter(diet_plan__user=self.request.user)
+
+
+class DietPlanItemViewSet(
+    mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet
+):
+    """Read-only — same reasoning as DietPlanMealViewSet above."""
+
+    serializer_class = DietPlanItemSerializer
+    api_context = ApiContext.NUTRITION
+
+    def get_queryset(self):
+        return DietPlanItem.objects.filter(diet_plan_meal__diet_plan__user=self.request.user)

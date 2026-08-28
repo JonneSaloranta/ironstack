@@ -266,6 +266,29 @@ input[type="radio"] {
   height: 1.9rem;
 }
 
+/* apps.social.context_processors.social_badge — a pending friend
+   request/group invite or an unread message, surfaced as a small dot
+   on the existing Profile nav icon rather than a 7th bottom-nav item
+   (already six, and this app is mobile-first — docs/UI.md). Needs its
+   own positioning wrapper (.icon-badge-wrap) since .bottom-nav a centers
+   its icon via justify-content, so an absolutely-positioned child of
+   the <a> itself wouldn't reliably sit at the icon's own corner. */
+.icon-badge-wrap {
+  position: relative;
+  display: inline-flex;
+}
+
+.nav-badge {
+  position: absolute;
+  top: -0.1rem;
+  right: -0.1rem;
+  width: 0.6rem;
+  height: 0.6rem;
+  border-radius: 50%;
+  background: var(--color-danger);
+  border: 2px solid var(--color-surface);
+}
+
 /* Icon-only on mobile — the label stays in the accessibility tree via
    the link's own aria-label, not this (hidden) text, since there's no
    room to show both icon and text at this width. */

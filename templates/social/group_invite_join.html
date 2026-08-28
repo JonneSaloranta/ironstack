@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Join group" %} — IronStack{% endblock %}
+{% block content %}
+<div class="top-bar">
+  <h1 style="margin:0;">{% trans "Join group" %}</h1>
+</div>
+
+{% if not group %}
+  <div class="card empty-state">
+    <p>{% trans "This invite link isn't valid, or is no longer active." %}</p>
+  </div>
+{% elif already_member %}
+  <div class="card">
+    <p>{% blocktrans with name=group.name %}You're already a member of "{{ name }}".{% endblocktrans %}</p>
+    <a class="button-secondary" href="{% url 'social:group-detail' group.pk %}">{% trans "Open group" %}</a>
+  </div>
+{% else %}
+  <div class="card">
+    <strong>{{ group.name }}</strong>
+    {% if group.description %}<p class="text-muted">{{ group.description }}</p>{% endif %}
+    {% if request.user.is_authenticated %}
+      <form method="post">
+        {% csrf_token %}
+        <button type="submit">{% trans "Join group" %}</button>
+      </form>
+    {% else %}
+      <p class="text-muted">{% trans "Log in to join this group." %}</p>
+      <a class="button" href="{% url 'login' %}?next={{ request.path|urlencode }}">{% trans "Log in" %}</a>
+    {% endif %}
+  </div>
+{% endif %}
+{% endblock %}

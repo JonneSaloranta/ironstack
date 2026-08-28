@@ -306,6 +306,18 @@ class ProfileEndpointTests(APITestCase):
         self.alice.refresh_from_db()
         self.assertEqual(self.alice.username, "alice")
 
+    def test_patch_updates_social_privacy_settings(self):
+        response = self.client.patch(
+            reverse("api:profile"),
+            {"allow_friend_requests": False, "allow_group_invites": False},
+            format="json",
+            **self._auth(),
+        )
+        self.assertEqual(response.status_code, 200)
+        self.alice.refresh_from_db()
+        self.assertFalse(self.alice.allow_friend_requests)
+        self.assertFalse(self.alice.allow_group_invites)
+
 
 class WorkoutLoggingEndpointTests(APITestCase):
     """The most important end-to-end path: logging a set via the API
@@ -846,3 +858,234 @@ class NutritionEndpointTests(APITestCase):
         )
         self.assertEqual(response.status_code, 201)
         self.assertEqual(response.data["owner"], self.alice.pk)
+
+
+class NutritionProfileEndpointTests(APITestCase):
+    """A singleton resource, same shape ProfileEndpointTests already
+    covers for /profile/ — GET/PATCH always act on the authenticated
+    key's own NutritionProfile."""
+
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        _api_key, self.raw_secret = _create_key(self.alice)
+
+    def _auth(self):
+        return {"HTTP_AUTHORIZATION": f"Bearer {self.raw_secret}"}
+
+    def test_no_profile_yet_is_a_404_not_a_crash(self):
+        response = self.client.get(reverse("api:nutrition-profile"), **self._auth())
+        self.assertEqual(response.status_code, 404)
+
+    def test_reading_and_updating_my_own_profile(self):
+        from apps.nutrition.models import NutritionProfile
+
+        NutritionProfile.objects.create(
+            user=self.alice, biological_sex="female", birth_date="1990-01-01",
+            activity_job="sedentary", activity_level="light",
+        )
+        get_response = self.client.get(reverse("api:nutrition-profile"), **self._auth())
+        self.assertEqual(get_response.status_code, 200)
+        self.assertEqual(get_response.data["biological_sex"], "female")
+        self.assertIn("age_years", get_response.data)
+
+        patch_response = self.client.patch(
+            reverse("api:nutrition-profile"), {"activity_level": "active"},
+            format="json", **self._auth(),
+        )
+        self.assertEqual(patch_response.status_code, 200)
+        self.assertEqual(patch_response.data["activity_level"], "active")
+
+    def test_another_users_profile_is_not_returned(self):
+        from apps.nutrition.models import NutritionProfile
+
+        bob = User.objects.create_user(username="bob", password="s3cret-pass")
+        NutritionProfile.objects.create(
+            user=bob, biological_sex="male", birth_date="1990-01-01",
+            activity_job="sedentary", activity_level="light",
+        )
+        response = self.client.get(reverse("api:nutrition-profile"), **self._auth())
+        self.assertEqual(response.status_code, 404)
+
+
+class DietPlanEndpointTests(APITestCase):
+    """DietPlan's mutating actions all route through
+    apps.nutrition.diet_builder/services rather than a raw
+    ModelSerializer write — see DietPlanSerializer's own docstring.
+    DietPlanMeal/DietPlanItem are read-only sub-resources."""
+
+    def setUp(self):
+        from decimal import Decimal
+
+        from apps.nutrition.models import Food, MealSlot, ServingUnit
+
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        self.bob = User.objects.create_user(username="bob", password="s3cret-pass")
+        _api_key, self.raw_secret = _create_key(self.alice)
+        Food.objects.create(
+            owner=self.alice, name="Chicken", serving_size=Decimal("100"),
+            serving_unit=ServingUnit.GRAM, calories=165, protein_grams=Decimal("31"),
+            carbohydrate_grams=Decimal("0"), fat_grams=Decimal("3.6"),
+        )
+        self.breakfast = MealSlot.objects.get(name="Breakfast", owner=None)
+        self.lunch = MealSlot.objects.get(name="Lunch", owner=None)
+
+    def _auth(self):
+        return {"HTTP_AUTHORIZATION": f"Bearer {self.raw_secret}"}
+
+    def _create_plan(self, **overrides):
+        payload = {
+            "name": "My plan", "target_calories": 2000,
+            "target_protein_grams": "150", "target_carbohydrate_grams": "200",
+            "target_fat_grams": "60", "meal_slots": [self.breakfast.pk, self.lunch.pk],
+        }
+        payload.update(overrides)
+        return self.client.post(
+            reverse("api:diet-plan-list"), payload, format="json", **self._auth()
+        )
+
+    def test_creating_a_diet_plan_builds_meals_and_items(self):
+        response = self._create_plan()
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(len(response.data["meals"]), 2)
+        self.assertTrue(any(meal["items"] for meal in response.data["meals"]))
+
+    def test_creating_a_second_plan_deactivates_the_first(self):
+        from apps.nutrition.models import DietPlan
+
+        first = self._create_plan().data
+        second = self._create_plan(name="Another plan").data
+        self.assertFalse(DietPlan.objects.get(pk=first["id"]).is_active)
+        self.assertTrue(DietPlan.objects.get(pk=second["id"]).is_active)
+
+    def test_is_active_and_targets_are_read_only(self):
+        plan_id = self._create_plan().data["id"]
+        response = self.client.patch(
+            reverse("api:diet-plan-detail", args=[plan_id]),
+            {"is_active": False, "target_calories": 9999, "name": "Renamed"},
+            format="json", **self._auth(),
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data["name"], "Renamed")
+        self.assertEqual(response.data["target_calories"], 2000)
+        self.assertTrue(response.data["is_active"])
+
+    def test_activate_and_deactivate_actions(self):
+        from apps.nutrition.models import DietPlan
+
+        first_id = self._create_plan().data["id"]
+        second_id = self._create_plan(name="Another plan").data["id"]
+
+        activate_response = self.client.post(
+            reverse("api:diet-plan-activate", args=[first_id]), **self._auth()
+        )
+        self.assertEqual(activate_response.status_code, 200)
+        self.assertTrue(DietPlan.objects.get(pk=first_id).is_active)
+        self.assertFalse(DietPlan.objects.get(pk=second_id).is_active)
+
+        deactivate_response = self.client.post(
+            reverse("api:diet-plan-deactivate", args=[first_id]), **self._auth()
+        )
+        self.assertEqual(deactivate_response.status_code, 200)
+        self.assertFalse(DietPlan.objects.get(pk=first_id).is_active)
+
+    def test_apply_creates_diary_entries(self):
+        from apps.nutrition.models import DiaryEntry
+
+        plan_id = self._create_plan().data["id"]
+        response = self.client.post(
+            reverse("api:diet-plan-apply", args=[plan_id]), {"date": "2026-01-01"},
+            format="json", **self._auth(),
+        )
+        self.assertEqual(response.status_code, 201)
+        self.assertTrue(DiaryEntry.objects.filter(user=self.alice, date="2026-01-01").exists())
+
+    def test_apply_without_a_date_is_rejected(self):
+        plan_id = self._create_plan().data["id"]
+        response = self.client.post(
+            reverse("api:diet-plan-apply", args=[plan_id]), {}, format="json", **self._auth()
+        )
+        self.assertEqual(response.status_code, 400)
+
+    def test_apply_with_a_malformed_date_is_rejected(self):
+        plan_id = self._create_plan().data["id"]
+        response = self.client.post(
+            reverse("api:diet-plan-apply", args=[plan_id]), {"date": "not-a-date"},
+            format="json", **self._auth(),
+        )
+        self.assertEqual(response.status_code, 400)
+
+    def test_deleting_a_diet_plan_cascades_to_meals_and_items(self):
+        from apps.nutrition.models import DietPlanItem, DietPlanMeal
+
+        plan_id = self._create_plan().data["id"]
+        response = self.client.delete(
+            reverse("api:diet-plan-detail", args=[plan_id]), **self._auth()
+        )
+        self.assertEqual(response.status_code, 204)
+        self.assertFalse(DietPlanMeal.objects.filter(diet_plan_id=plan_id).exists())
+        self.assertFalse(DietPlanItem.objects.filter(diet_plan_meal__diet_plan_id=plan_id).exists())
+
+    def test_another_users_plan_is_not_visible(self):
+        from apps.nutrition.diet_builder import build_diet_plan
+
+        bobs_plan = build_diet_plan(
+            self.bob, name="Bob's plan", goal=None, target_calories=2000,
+            target_protein_grams="150", target_carbohydrate_grams="200",
+            target_fat_grams="60", meal_slots=[self.breakfast],
+        )
+        response = self.client.get(
+            reverse("api:diet-plan-detail", args=[bobs_plan.pk]), **self._auth()
+        )
+        self.assertEqual(response.status_code, 404)
+
+    def test_cannot_use_another_users_goal(self):
+        from decimal import Decimal
+
+        from apps.nutrition import services as nutrition_services
+
+        bobs_goal = nutrition_services.set_goal(
+            self.bob, goal_type="maintenance", target_rate_kg_per_week=Decimal("0")
+        )
+        response = self._create_plan(goal=bobs_goal.pk)
+        self.assertEqual(response.status_code, 400)
+
+    def test_diet_plan_meals_and_items_are_read_only(self):
+        plan_data = self._create_plan().data
+        meal_id = plan_data["meals"][0]["id"]
+
+        list_response = self.client.get(reverse("api:diet-plan-meal-list"), **self._auth())
+        self.assertEqual(list_response.status_code, 200)
+        post_response = self.client.post(
+            reverse("api:diet-plan-meal-list"), {}, format="json", **self._auth()
+        )
+        self.assertEqual(post_response.status_code, 405)
+        patch_response = self.client.patch(
+            reverse("api:diet-plan-meal-detail", args=[meal_id]),
+            {"target_calories": 1}, format="json", **self._auth(),
+        )
+        self.assertEqual(patch_response.status_code, 405)
+
+        item_id = plan_data["meals"][0]["items"][0]["id"]
+        item_post_response = self.client.post(
+            reverse("api:diet-plan-item-list"), {}, format="json", **self._auth()
+        )
+        self.assertEqual(item_post_response.status_code, 405)
+        item_patch_response = self.client.patch(
+            reverse("api:diet-plan-item-detail", args=[item_id]),
+            {"quantity": "1"}, format="json", **self._auth(),
+        )
+        self.assertEqual(item_patch_response.status_code, 405)
+
+    def test_another_users_diet_plan_meals_are_not_visible(self):
+        from apps.nutrition.diet_builder import build_diet_plan
+
+        bobs_plan = build_diet_plan(
+            self.bob, name="Bob's plan", goal=None, target_calories=2000,
+            target_protein_grams="150", target_carbohydrate_grams="200",
+            target_fat_grams="60", meal_slots=[self.breakfast],
+        )
+        bobs_meal = bobs_plan.meals.first()
+        response = self.client.get(
+            reverse("api:diet-plan-meal-detail", args=[bobs_meal.pk]), **self._auth()
+        )
+        self.assertEqual(response.status_code, 404)

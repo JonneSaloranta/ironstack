@@ -16,6 +16,30 @@ previous release (`docs/ARCHITECTURE.md` "Versioning") — a terse,
 complete audit trail, not a replacement for this file's shorter,
 narrated summary of the same version.
 
+## [1.6.0] — 2026-08-28
+
+### Added
+- Friends, groups, and messaging (`apps/social`, `docs/SOCIAL.md`):
+  send/accept friend requests, create groups with owner, admin, and
+  member roles, invite someone directly or share a short, unguessable
+  invite link (`/group/invite/<code>/`), message a friend or a group
+  directly, and block another user. Two new opt-out privacy settings
+  (allow friend requests, allow group invites) are asked once during
+  onboarding and editable anytime from Profile. Reachable from a new
+  "Friends & groups" card on the profile page, with a small dot badge
+  on the Profile nav icon whenever something's waiting on you (a
+  request, an invite, an unread message). The two privacy settings are
+  also readable/writable from the public API (`GET`/`PATCH`
+  `/api/v1/profile/`), alongside the other display preferences already
+  exposed there.
+- The public API now covers the two `apps.nutrition` resources that
+  were still missing after the rest of nutrition's API surface
+  shipped: a `nutrition/profile/` singleton (matching `profile/`
+  itself) and full `diet-plans/` support (create/rename/delete,
+  `activate`/`deactivate`/`apply` actions, plus read-only
+  `diet-plan-meals/`/`diet-plan-items/` sub-resources). See
+  `docs/API.md` "Endpoints".
+
 ## [1.5.0] — 2026-08-27
 
 ### Added

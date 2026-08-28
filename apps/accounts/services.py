@@ -8,7 +8,7 @@ apps.
 import json
 
 from django.core import serializers as django_serializers
-from django.db import transaction
+from django.db import models, transaction
 
 
 @transaction.atomic
@@ -52,6 +52,18 @@ def delete_account(user):
        using the content with exactly what they had before, just
        without this user's name on it.
 
+    3. **Groups this user owns are handed off, not orphaned.**
+       apps.social.services.reassign_owned_groups_before_deletion
+       transfers ownership of any group this user owns to its
+       longest-standing admin (or longest-standing member, if it has
+       no admin) before step 1's cascade removes this user's own
+       GroupMembership row — otherwise a group could end up with no
+       member holding OWNER/ADMIN role at all, permanently
+       unmanageable even though other members and message history
+       remain. A group with no other members simply has no successor
+       and is left as-is (harmless — an owner-less, member-less group
+       nobody can act on, but nothing crashes or leaks).
+
     Deliberately **not handled here**: existing backup archives
     (`docs/BACKUP.md`) made before this call still contain this user's
     data until they're rotated out by `BackupSettings.retention_count`
@@ -65,9 +77,12 @@ def delete_account(user):
     from apps.measurements.models import MeasurementType
     from apps.nutrition.models import Food, MealSlot, Recipe
     from apps.programs.models import Program
+    from apps.social.services import reassign_owned_groups_before_deletion
 
     for model in (ActivityType, Exercise, MeasurementType, Food, MealSlot, Recipe, Program):
         model.objects.filter(owner=user).update(owner=None)
+
+    reassign_owned_groups_before_deletion(user)
 
     user.delete()
 
@@ -103,6 +118,11 @@ def export_account_data(user):
     to its own owner either) — handled by hand below instead, listing
     every field except that one explicitly, rather than trust a
     generic dump to never accidentally include it.
+
+    apps.social's sections are hand-built rather than run through the
+    generic serializer too — see their own comment below for why (a
+    relationship's readable shape is "who", not another row's opaque
+    numeric id).
     """
     from apps.activities.models import Activity
     from apps.api.models import ApiKey
@@ -123,6 +143,14 @@ def export_account_data(user):
     )
     from apps.programs.models import Program
     from apps.records.models import PersonalRecord
+    from apps.social import services as social_services
+    from apps.social.models import (
+        Block,
+        DirectMessage,
+        FriendRequest,
+        GroupMembership,
+        GroupMessage,
+    )
     from apps.workouts.models import ExerciseSet, PerformedExercise, WorkoutSession
 
     return {
@@ -171,6 +199,59 @@ def export_account_data(user):
         "custom_meal_slots": _dump(MealSlot.objects.filter(owner=user)),
         "custom_programs": _dump(Program.objects.filter(owner=user)),
         "feedback": _dump(Feedback.objects.filter(user=user)),
+        # apps.social — friend_requests/friendships/blocks are hand-
+        # built rather than run through the generic serializer, since
+        # every one of them is a two-user relationship and the
+        # readable thing to export is "who", not an opaque numeric
+        # from_user_id/to_user_id pointing at a row the export doesn't
+        # otherwise include. direct_messages includes both directions
+        # (a DM inherently belongs to both participants, the same way
+        # a downloaded chat export from any messaging app includes
+        # what the other side sent too) — group_messages deliberately
+        # doesn't do the same for messages other members sent in a
+        # shared group, only this user's own, a narrower and more
+        # clearly-defensible scope than dumping a whole group's
+        # history through one member's export.
+        "friend_requests_sent": [
+            {"to": r.to_user.username, "status": r.status, "created_at": r.created_at.isoformat()}
+            for r in FriendRequest.objects.filter(from_user=user).select_related("to_user")
+        ],
+        "friend_requests_received": [
+            {
+                "from": r.from_user.username,
+                "status": r.status,
+                "created_at": r.created_at.isoformat(),
+            }
+            for r in FriendRequest.objects.filter(to_user=user).select_related("from_user")
+        ],
+        "friends": [{"username": f.username} for f in social_services.friends_of(user)],
+        "blocked_users": [
+            {"username": b.blocked.username, "created_at": b.created_at.isoformat()}
+            for b in Block.objects.filter(blocker=user).select_related("blocked")
+        ],
+        "group_memberships": [
+            {
+                "group": m.group.name,
+                "role": m.role,
+                "joined_at": m.joined_at.isoformat(),
+            }
+            for m in GroupMembership.objects.filter(user=user).select_related("group")
+        ],
+        "direct_messages": [
+            {
+                "with": (m.recipient if m.sender_id == user.pk else m.sender).username,
+                "sent_by_you": m.sender_id == user.pk,
+                "body": m.body,
+                "created_at": m.created_at.isoformat(),
+            }
+            for m in DirectMessage.objects.filter(
+                models.Q(sender=user) | models.Q(recipient=user)
+            ).select_related("sender", "recipient")
+        ],
+        "group_messages_sent": [
+            {"group": m.group.name, "body": m.body, "created_at": m.created_at.isoformat()}
+            for m in GroupMessage.objects.filter(sender=user).select_related("group")
+        ],
         "api_keys": [
             {
                 "name": key.name,

@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{{ group.name }} — IronStack{% endblock %}
+{% block content %}
+<div class="top-bar">
+  <h1 style="margin:0;">{{ group.name }}</h1>
+  <a class="button-secondary" href="{% url 'social:group-detail' group.pk %}">&larr; {% trans "Group" %}</a>
+</div>
+
+{% comment %}
+  See templates/social/message_thread.html's own comment on this same
+  pattern (stable polled element, visibility-gated trigger, aria-live)
+  — identical reasoning here, just for a group thread instead of a DM.
+{% endcomment %}
+<div class="card" id="thread-messages" aria-live="polite"
+     hx-get="{% url 'social:group-thread-fragment' group.pk %}"
+     hx-trigger="load, every 4s [document.visibilityState=='visible']" hx-swap="innerHTML">
+  <div class="spinner" aria-hidden="true"></div>
+</div>
+
+<form class="card" method="post" action="{% url 'social:group-thread-fragment' group.pk %}"
+      hx-post="{% url 'social:group-thread-fragment' group.pk %}"
+      hx-target="#thread-messages" hx-swap="innerHTML" hx-on::after-request="this.reset()">
+  {% csrf_token %}
+  {{ form.non_field_errors }}
+  {% for field in form %}
+    <div class="field">
+      {% comment %}
+        See templates/social/message_thread.html's own comment on
+        this same pattern — visually-hidden, not left off entirely.
+      {% endcomment %}
+      <label for="{{ field.id_for_label }}" class="visually-hidden">{{ field.label }}</label>
+      {{ field }}
+      {% if field.errors %}<p class="field-error">{{ field.errors|striptags }}</p>{% endif %}
+    </div>
+  {% endfor %}
+  <button type="submit">{% trans "Send" %}</button>
+</form>
+{% endblock %}

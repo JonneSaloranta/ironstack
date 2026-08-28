@@ -664,14 +664,21 @@ recomputed (and can change) next time the dashboard is viewed.
   tracking yet.
 - **`apps.api`** — `ApiContext.NUTRITION`, one viewset per top-level
   resource (`Food`, `MealSlot`, `Recipe`, `RecipeIngredient`,
-  `DiaryEntry`, plus read-only `NutritionGoal`/`NutritionTarget`),
-  serializers always in canonical kcal/grams (never display-converted,
-  matching every other context) — no new architecture, `apps/nutrition`
-  just follows `docs/API.md`'s existing contract. See `docs/API.md`
+  `DiaryEntry`, `DietPlan`, plus read-only `NutritionGoal`/
+  `NutritionTarget`/`DietPlanMeal`/`DietPlanItem`, and a writable
+  `NutritionProfile` singleton at `nutrition/profile/`), serializers
+  always in canonical kcal/grams (never display-converted, matching
+  every other context) — no new architecture, `apps/nutrition` just
+  follows `docs/API.md`'s existing contract. `DietPlan` generation/
+  activation/apply route through `apps.nutrition.diet_builder`/
+  `services` rather than raw writes, the same "a raw write could
+  silently corrupt what a domain service guarantees" reasoning
+  `NutritionGoal`/`NutritionTarget` already use. See `docs/API.md`
   "Contexts and permissions"/"Endpoints" for the full shape; this was
   a real, honestly-disclosed gap for a while after the rest of this
-  phase shipped (every other context had one, nutrition didn't) before
-  it was closed.
+  phase shipped (every other context had one, nutrition didn't, and
+  `NutritionProfile`/`DietPlan` themselves were missing even after
+  that first pass) before it was fully closed.
 
 ## Navigation
 

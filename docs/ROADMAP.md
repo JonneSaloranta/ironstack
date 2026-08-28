@@ -62,6 +62,27 @@ hypothetical.
 - full public API support (`ApiContext.NUTRITION`), matching every
   other domain — see `docs/API.md`
 
+## v3 — Friends & groups
+
+**Explicitly requested, complete — see `docs/SOCIAL.md`.** Went
+through the same door nutrition tracking did for v2:
+`docs/PRODUCT_REQUIREMENTS.md`'s "explicitly out of scope for v1"
+listed *social network* and *messaging* — "do not implement unless
+explicitly requested" — until they were.
+
+- friend requests (send/accept/decline), an opt-out privacy setting
+  controlling who can send one
+- blocking another user
+- groups with owner/admin/member roles; a short, unguessable invite
+  link, or a direct invite to a friend (its own opt-out privacy
+  setting)
+- direct messages and group chat, HTMX-polled, no separate
+  notification system
+- a small badge on the Profile nav icon for anything waiting on you
+- the two privacy settings asked once during onboarding, editable
+  anytime from Profile, and exposed on the public API alongside the
+  other display preferences
+
 ## Future possibilities
 
 Architecture may later support:

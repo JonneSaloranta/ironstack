@@ -125,6 +125,27 @@ class User(AbstractUser):
     # rather than something this app does for them automatically.
     show_gravatar = models.BooleanField(default=False)
 
+    # apps.social — opt-*out* (both default True) rather than opt-in,
+    # since neither one exposes anything by itself the way
+    # show_gravatar does: it only gates whether *other* users on this
+    # instance can start something with you (a friend request, a
+    # direct group invite), not whether anything about you becomes
+    # visible. Asked during onboarding (apps.accounts.forms.
+    # OnboardingForm) the same way unit_system/timezone already are,
+    # and editable afterward from Profile (ProfileForm).
+    allow_friend_requests = models.BooleanField(
+        default=True,
+        help_text="Off stops other users on this instance from sending you "
+        "a friend request at all. Doesn't affect friend requests you "
+        "already have, or friendships you already made.",
+    )
+    allow_group_invites = models.BooleanField(
+        default=True,
+        help_text="Off stops a group member from inviting you to a group "
+        "directly. You can still join any group yourself using its invite "
+        "link, if you have one.",
+    )
+
     def __str__(self):
         return self.username
 
