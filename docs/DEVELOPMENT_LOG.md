@@ -2996,3 +2996,76 @@ or script, just a trimmed, self-contained `<style>` block reusing
 `base.css`'s own dark IronStack color palette. The browsable in-app
 page keeps using the normal site chrome; only the actual downloadable
 file needs to survive completely on its own.
+
+## Completing `apps.nutrition`'s public API surface
+
+Asked to keep developing the software generally, with a plan drawn up
+first rather than picking a new speculative feature.
+`docs/ROADMAP.md`'s own "Future possibilities" list (PWA offline sync,
+health-app integrations, native clients, ...) is explicitly marked "do
+not implement these merely because the architecture allows them" —
+none of those were a safe default to start building unprompted.
+`docs/NUTRITION.md`'s "Integration with existing apps" section, on the
+other hand, already documented `apps.api` coverage as "a real,
+honestly-disclosed gap" that had been closed — but checking that claim
+against the actual code turned up two real `apps.nutrition` models
+that had never made it into the API at all: `NutritionProfile` (the
+calorie engine's own physiological inputs) and the diet-plan builder's
+output (`DietPlan`/`DietPlanMeal`/`DietPlanItem`). Every other domain
+in the app had full API coverage; nutrition itself had it for
+everything except these two.
+
+`NutritionProfile` got the simplest treatment: a plain writable
+singleton at `nutrition/profile/`, the same `RetrieveUpdateAPIView`
+shape `profile/` itself already uses for `User` — matching
+`NutritionProfile`'s own model docstring, which already draws the
+line between "an input a user corrects in place" (this) and "a
+decision worth preserving as history" (`NutritionGoal`/
+`NutritionTarget`, both already read-only in the API for that exact
+reason).
+
+`DietPlan` needed more care, because unlike every writable resource
+this API already exposes, its two sensible ways to mutate — generating
+one from scratch, and switching which plan is active — are genuinely
+services, not raw field writes: `apps.nutrition.diet_builder.
+build_diet_plan` computes and creates a whole tree of `DietPlanMeal`/
+`DietPlanItem` rows in one transaction, and
+`apps.nutrition.services.set_active_diet_plan` is the one place
+`DietPlan`'s "exactly one active plan per user" constraint is honored
+correctly. Read `apps.api.views.WorkoutSessionViewSet` before writing
+any of this — it already established the idiom this codebase uses for
+"creation triggers complex business logic": one `ModelViewSet`, one
+serializer, `perform_create`/`perform_update` overridden to call a
+service function instead of the default raw save. (First drafted this
+as a separate create-vs-read serializer pair before checking; the
+simpler, already-proven shape won.) `DietPlanViewSet.perform_create`
+calls `build_diet_plan` with the validated input and points
+`serializer.instance` at what it returns; `activate`/`deactivate`/
+`apply` are `@action`s calling their matching service functions
+directly (`deactivate` wasn't explicitly asked for, but omitting the
+one service function's own natural API counterpart — `activate` without
+its opposite — would have been an odd, asymmetric gap). `DietPlanMeal`/
+`DietPlanItem` are read-only sub-resources, the same shape
+`NutritionGoalViewSet` already uses, for the same reason: unlike a
+recipe's hand-edited ingredient list, a plan's meals/items only ever
+come from the builder's own calorie-splitting algorithm, and a raw
+write to one would silently break the balance the plan was built to
+hit.
+
+One real bug came out of actually running the new tests rather than
+just reading the code back: the first attempt marked `target_calories`
+and the other three target fields `read_only_fields` on
+`DietPlanSerializer`, intending to block only *updates* to them (the
+same reasoning `is_active` already gets). But DRF's `read_only_fields`
+means read-only unconditionally — it strips the field from
+`validated_data` on create too, so `perform_create`'s own
+`data["target_calories"]` immediately `KeyError`ed, caught by the new
+`test_creating_a_diet_plan_builds_meals_and_items` test failing outright
+rather than the intended-but-wrong `test_is_active_and_targets_are_read_only`
+silently passing for the wrong reason. Fixed by leaving the fields
+writable on the serializer and discarding them in `perform_update`
+instead — exactly the pattern already used one field over for
+`meal_slots` (write-only input `perform_create` needs, meaningless on
+update, popped from `validated_data` before the default `.save()`
+runs) — rather than inventing a second mechanism for the same "write
+on create, not on update" shape.
