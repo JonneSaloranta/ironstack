@@ -16,7 +16,7 @@ previous release (`docs/ARCHITECTURE.md` "Versioning") — a terse,
 complete audit trail, not a replacement for this file's shorter,
 narrated summary of the same version.
 
-## [Unreleased]
+## [1.7.0] — 2026-08-28
 
 ### Added
 - Opt-in Web Push notifications (Profile → Notifications) for direct
