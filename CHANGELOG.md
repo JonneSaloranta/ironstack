@@ -16,6 +16,17 @@ previous release (`docs/ARCHITECTURE.md` "Versioning") — a terse,
 complete audit trail, not a replacement for this file's shorter,
 narrated summary of the same version.
 
+## [Unreleased]
+
+### Added
+- The public API now covers the two `apps.nutrition` resources that
+  were still missing after the rest of nutrition's API surface
+  shipped: a `nutrition/profile/` singleton (matching `profile/`
+  itself) and full `diet-plans/` support (create/rename/delete,
+  `activate`/`deactivate`/`apply` actions, plus read-only
+  `diet-plan-meals/`/`diet-plan-items/` sub-resources). See
+  `docs/API.md` "Endpoints".
+
 ## [1.5.0] — 2026-08-27
 
 ### Added

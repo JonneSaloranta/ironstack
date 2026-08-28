@@ -31,9 +31,13 @@ router.register(
 router.register("diary-entries", views.DiaryEntryViewSet, basename="diary-entry")
 router.register("nutrition-goals", views.NutritionGoalViewSet, basename="nutrition-goal")
 router.register("nutrition-targets", views.NutritionTargetViewSet, basename="nutrition-target")
+router.register("diet-plans", views.DietPlanViewSet, basename="diet-plan")
+router.register("diet-plan-meals", views.DietPlanMealViewSet, basename="diet-plan-meal")
+router.register("diet-plan-items", views.DietPlanItemViewSet, basename="diet-plan-item")
 
 urlpatterns = [
     path("profile/", views.ProfileView.as_view(), name="profile"),
+    path("nutrition/profile/", views.NutritionProfileView.as_view(), name="nutrition-profile"),
     path("analytics/summary/", views.TrainingSummaryView.as_view(), name="analytics-summary"),
     path(
         "analytics/achievements/",

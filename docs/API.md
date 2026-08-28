@@ -53,7 +53,7 @@ Every endpoint belongs to exactly one **context**
 | `activities` | Activity types, logged activities |
 | `records` | Personal records (read-only — see below) |
 | `analytics` | Training summaries, achievements (read-only) |
-| `nutrition` | Foods, meal slots, recipes, diary entries, nutrition goals/targets (goals/targets read-only — see below) |
+| `nutrition` | Foods, meal slots, recipes, diary entries, nutrition goals/targets (goals/targets read-only), a nutrition profile, diet plans (generation/activation/apply are service-backed, not raw writes; a plan's meals/items are read-only — see below) |
 
 Each API key carries, per context, four independent flags — **Create**,
 **Read**, **Update**, **Delete** — checked fresh on every request
@@ -75,7 +75,10 @@ reason `records` doesn't — a goal/target is only ever created or
 superseded through `apps.nutrition.services.set_goal`/`set_target`
 (append a new row, close the old one), and a raw API write could
 silently corrupt that append-only history the way a hand-edited PR
-could. See `docs/NUTRITION.md` "NutritionGoal"/"NutritionTarget".
+could. See `docs/NUTRITION.md` "NutritionGoal"/"NutritionTarget". A
+diet plan's meals/items have the same "no route to reach a raw write"
+shape too, for the reason given under "Endpoints" below — only a
+plan's `name` and its service-backed actions are actually writable.
 
 ## Rate limits and tiers
 
@@ -166,7 +169,7 @@ All under `/api/v1/`. List/create endpoints are paginated (25 per page,
 | activities | `activity-types/`, `activity-types/<id>/`, `activities/`, `activities/<id>/` |
 | records | `records/`, `records/<id>/` (read-only) |
 | analytics | `analytics/summary/?range=7d\|30d\|all` (default 30d), `analytics/achievements/` (both read-only) |
-| nutrition | `foods/`, `foods/<id>/`, `meal-slots/`, `meal-slots/<id>/`, `recipes/`, `recipes/<id>/`, `recipe-ingredients/`, `recipe-ingredients/<id>/`, `diary-entries/`, `diary-entries/<id>/`, `nutrition-goals/`, `nutrition-goals/<id>/` (read-only), `nutrition-targets/`, `nutrition-targets/<id>/` (read-only) |
+| nutrition | `foods/`, `foods/<id>/`, `meal-slots/`, `meal-slots/<id>/`, `recipes/`, `recipes/<id>/`, `recipe-ingredients/`, `recipe-ingredients/<id>/`, `diary-entries/`, `diary-entries/<id>/`, `nutrition-goals/`, `nutrition-goals/<id>/` (read-only), `nutrition-targets/`, `nutrition-targets/<id>/` (read-only), `nutrition/profile/` (singleton — no id), `diet-plans/`, `diet-plans/<id>/`, `diet-plans/<id>/activate/`, `diet-plans/<id>/deactivate/`, `diet-plans/<id>/apply/` (all `POST`), `diet-plan-meals/`, `diet-plan-meals/<id>/` (read-only), `diet-plan-items/`, `diet-plan-items/<id>/` (read-only) |
 
 Every endpoint goes through the exact same domain service functions the
 server-rendered web views already use (`apps/exercises/services.py`,
@@ -211,6 +214,40 @@ elsewhere in this file). Importing a food from OpenFoodFacts by
 barcode isn't exposed here — a client creates a food the same way the
 web form does, by supplying its own values directly; see "What's
 deliberately not here" below.
+
+`nutrition/profile/` is a singleton like `profile/` itself — every
+field of `apps.nutrition.models.NutritionProfile` is plainly
+readable/writable, since (unlike a goal or target) these are inputs a
+user corrects in place, not decisions worth preserving as history. A
+user with no profile yet gets a plain `404`, not a `500`.
+
+`diet-plans/` generates through
+`apps.nutrition.diet_builder.build_diet_plan` on `POST` rather than
+accepting a raw row: the request body supplies `name`, `goal`
+(optional — must be one of this key's own user's goals), the four
+`target_*` numbers, `is_weekly` (optional), and `meal_slots` (a list
+of meal slot ids to build around) — the response's nested `meals`
+(each nesting `items`) is whatever the builder actually generated, not
+an echo of the request. `PATCH` only accepts `name`; `is_active` and
+every `target_*` field are read-only, since the "exactly one active
+plan per user" invariant and a plan's snapshotted targets are only
+ever supposed to change through the actions below, never a raw write.
+`activate/`/`deactivate/`/`apply/` (all `POST`, no body except
+`apply/`'s `{"date": "YYYY-MM-DD"}`) call
+`apps.nutrition.services.set_active_diet_plan`/`deactivate_diet_plan`/
+`apps.nutrition.diet_builder.apply_diet_plan` — `apply/` is the one
+genuinely useful action a client would otherwise have to reconstruct
+by hand (fetch every item, `POST` each one to `diary-entries/`
+individually, re-deriving quantities and meal slots the plan already
+knows) and returns the real `DiaryEntry` rows it created. `DELETE`
+cascades to a plan's own meals/items, same as any other delete.
+`diet-plan-meals/`/`diet-plan-items/` exist as their own top-level,
+read-only endpoints too (same double-exposure `recipes/`/
+`recipe-ingredients/` already has) — but unlike a recipe's ingredient
+list, a plan's meals/items only ever come from the builder's own
+calorie-splitting algorithm, so nothing here accepts a write; doing so
+would silently break the calorie/macro balance the plan was built to
+hit.
 
 ## What's deliberately not here
 
