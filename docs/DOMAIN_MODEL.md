@@ -380,3 +380,44 @@ Also exposed through the public API (`apps.api`, `ApiContext.
 NUTRITION`) the same way every other domain here is — see `docs/API.md`.
 
 Do not make PR logic depend on the current program definition.
+
+## Social
+
+Friends, groups, and messaging, added in v3 (see `docs/ROADMAP.md`) —
+full reasoning lives in `docs/SOCIAL.md`, this section is only the
+terse shape.
+
+- `FriendRequest` — one user asking another; `PENDING` →
+  `ACCEPTED`/`DECLINED`.
+- `Friendship` — a confirmed, mutual relationship, created only by
+  accepting a request. Stored once as an ordered `(user_low,
+  user_high)` pair, not twice per direction.
+- `Block` — one user blocking another; checked both directions
+  everywhere it matters (friend requests, messages, direct group
+  invites), regardless of which side initiated it.
+- `Group` / `GroupMembership` — a group has an owner and each member a
+  role (`owner`/`admin`/`member`); `Group.owner` is `SET_NULL`, not
+  `CASCADE` — deleting the account that created a group must not
+  delete the group and its message history with it. `GroupMembership.
+  last_read_at` doubles as that member's own per-group read-state for
+  the unread-message badge.
+- `GroupInvite` — a direct, in-app invite to one specific friend,
+  distinct from the group's own short, unguessable invite link
+  (`Group.invite_code`/`invite_enabled`).
+- `DirectMessage` / `GroupMessage` — text-only, immutable; a shared
+  abstract `BaseMessage` base, not a generic polymorphic
+  `Conversation` model.
+
+Also exposed through the public API (`apps.api`, `ApiContext.PROFILE`
+— only the two privacy settings on `User`, not the models above; see
+`docs/SOCIAL.md` "Moderation" for why the rest stays server-rendered
+only).
+
+Two new fields on `User` itself, both opt-*out* (default `True`)
+rather than opt-in like `show_gravatar`, since neither exposes
+anything about the account by itself — they only gate whether another
+user can start something with it: `allow_friend_requests` (whether
+anyone can send a friend request at all) and `allow_group_invites`
+(whether a group member can invite this account directly — the
+group's own invite link isn't gated by this, since using it is a
+self-initiated join, not something being done *to* the account).
