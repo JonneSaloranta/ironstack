@@ -23,7 +23,14 @@ from apps.core.changelog import _render, render_changelog_html
 from apps.core.charts import build_bar_series, build_chart_series
 from apps.core.context_processors import app_version
 from apps.core.greetings import _GREETINGS_BY_BUCKET, _time_bucket, random_greeting
-from apps.core.models import BackupSettings, Feedback, FeedbackSettings, SeoSettings
+from apps.core.models import (
+    BackupSettings,
+    Feedback,
+    FeedbackSettings,
+    PushSubscription,
+    SeoSettings,
+)
+from apps.core.push import send_push_notification
 from apps.core.templatetags.core_extras import duration, translate_content
 from apps.core.units import (
     cm_to_meters,
@@ -2003,3 +2010,175 @@ class RecentlyActiveListTests(TestCase):
         response = self.client.get(reverse("dashboard"))
         self.assertFalse(response.context["recently_active"])
         self.assertNotContains(response, "recent-activity-list")
+
+
+@override_settings(
+    PUSH_ENABLED=True,
+    VAPID_PUBLIC_KEY="test-public-key",
+    VAPID_PRIVATE_KEY="test-private-key",
+    VAPID_ADMIN_EMAIL="admin@example.com",
+)
+class SendPushNotificationTests(TestCase):
+    """apps.core.push.send_push_notification — must never raise
+    (it's always called synchronously right after the real work it
+    must never delay or break), and must self-heal a subscription the
+    push service itself confirms is gone."""
+
+    def setUp(self):
+        self.alice = get_user_model().objects.create_user(
+            username="alice", password="s3cret-pass"
+        )
+        self.subscription = PushSubscription.objects.create(
+            user=self.alice,
+            endpoint="https://push.example.com/abc",
+            p256dh_key="p256dh-value",
+            auth_key="auth-value",
+        )
+
+    def test_noop_when_push_not_enabled(self):
+        with (
+            override_settings(PUSH_ENABLED=False),
+            mock.patch("apps.core.push.webpush") as mock_webpush,
+        ):
+            send_push_notification(self.alice, "Title", "Body")
+        mock_webpush.assert_not_called()
+
+    def test_noop_for_a_user_with_no_subscriptions(self):
+        bob = get_user_model().objects.create_user(username="bob", password="s3cret-pass")
+        with mock.patch("apps.core.push.webpush") as mock_webpush:
+            send_push_notification(bob, "Title", "Body")
+        mock_webpush.assert_not_called()
+
+    def test_calls_webpush_with_the_right_shape(self):
+        with mock.patch("apps.core.push.webpush") as mock_webpush:
+            send_push_notification(self.alice, "New message", "Hello", url="/social/")
+        mock_webpush.assert_called_once()
+        kwargs = mock_webpush.call_args.kwargs
+        self.assertEqual(
+            kwargs["subscription_info"],
+            {
+                "endpoint": "https://push.example.com/abc",
+                "keys": {"p256dh": "p256dh-value", "auth": "auth-value"},
+            },
+        )
+        payload = json.loads(kwargs["data"])
+        self.assertEqual(payload, {"title": "New message", "body": "Hello", "url": "/social/"})
+        self.assertEqual(kwargs["vapid_private_key"], "test-private-key")
+        self.assertEqual(kwargs["vapid_claims"], {"sub": "mailto:admin@example.com"})
+        self.assertIsNotNone(kwargs["timeout"])
+
+    def test_a_410_response_deletes_the_subscription(self):
+        from pywebpush import WebPushException
+
+        response = mock.Mock(status_code=410)
+        with mock.patch("apps.core.push.webpush", side_effect=WebPushException("gone", response)):
+            send_push_notification(self.alice, "Title", "Body")
+        self.assertFalse(PushSubscription.objects.filter(pk=self.subscription.pk).exists())
+
+    def test_a_404_response_deletes_the_subscription(self):
+        from pywebpush import WebPushException
+
+        response = mock.Mock(status_code=404)
+        with mock.patch("apps.core.push.webpush", side_effect=WebPushException("gone", response)):
+            send_push_notification(self.alice, "Title", "Body")
+        self.assertFalse(PushSubscription.objects.filter(pk=self.subscription.pk).exists())
+
+    def test_a_different_status_does_not_delete_the_subscription_or_raise(self):
+        from pywebpush import WebPushException
+
+        response = mock.Mock(status_code=500)
+        with mock.patch("apps.core.push.webpush", side_effect=WebPushException("failed", response)):
+            send_push_notification(self.alice, "Title", "Body")  # must not raise
+        self.assertTrue(PushSubscription.objects.filter(pk=self.subscription.pk).exists())
+
+    def test_a_connection_error_does_not_raise(self):
+        import requests
+
+        with mock.patch(
+            "apps.core.push.webpush", side_effect=requests.exceptions.ConnectionError("down")
+        ):
+            send_push_notification(self.alice, "Title", "Body")  # must not raise
+        self.assertTrue(PushSubscription.objects.filter(pk=self.subscription.pk).exists())
+
+
+class PushSubscribeViewTests(TestCase):
+    def setUp(self):
+        self.alice = get_user_model().objects.create_user(
+            username="alice", password="s3cret-pass"
+        )
+
+    def _payload(self, endpoint="https://push.example.com/abc"):
+        return json.dumps(
+            {"endpoint": endpoint, "keys": {"p256dh": "p256dh-value", "auth": "auth-value"}}
+        )
+
+    def test_requires_login(self):
+        response = self.client.post(
+            reverse("push-subscribe"), self._payload(), content_type="application/json"
+        )
+        self.assertEqual(response.status_code, 302)
+
+    def test_creates_a_subscription(self):
+        self.client.login(username="alice", password="s3cret-pass")
+        response = self.client.post(
+            reverse("push-subscribe"), self._payload(), content_type="application/json"
+        )
+        self.assertEqual(response.status_code, 200)
+        subscription = PushSubscription.objects.get(user=self.alice)
+        self.assertEqual(subscription.endpoint, "https://push.example.com/abc")
+        self.assertEqual(subscription.p256dh_key, "p256dh-value")
+
+    def test_resubscribing_the_same_endpoint_updates_rather_than_duplicates(self):
+        self.client.login(username="alice", password="s3cret-pass")
+        url = reverse("push-subscribe")
+        self.client.post(url, self._payload(), content_type="application/json")
+        self.client.post(url, self._payload(), content_type="application/json")
+        self.assertEqual(PushSubscription.objects.filter(user=self.alice).count(), 1)
+
+    def test_malformed_body_is_rejected(self):
+        self.client.login(username="alice", password="s3cret-pass")
+        response = self.client.post(
+            reverse("push-subscribe"), "not json", content_type="application/json"
+        )
+        self.assertEqual(response.status_code, 400)
+
+
+class PushUnsubscribeViewTests(TestCase):
+    def setUp(self):
+        self.alice = get_user_model().objects.create_user(
+            username="alice", password="s3cret-pass"
+        )
+        self.bob = get_user_model().objects.create_user(username="bob", password="s3cret-pass")
+        self.subscription = PushSubscription.objects.create(
+            user=self.alice,
+            endpoint="https://push.example.com/abc",
+            p256dh_key="p256dh-value",
+            auth_key="auth-value",
+        )
+
+    def test_requires_login(self):
+        response = self.client.post(
+            reverse("push-unsubscribe"),
+            json.dumps({"endpoint": self.subscription.endpoint}),
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, 302)
+
+    def test_deletes_the_subscription(self):
+        self.client.login(username="alice", password="s3cret-pass")
+        response = self.client.post(
+            reverse("push-unsubscribe"),
+            json.dumps({"endpoint": self.subscription.endpoint}),
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(PushSubscription.objects.filter(pk=self.subscription.pk).exists())
+
+    def test_cannot_delete_another_users_subscription(self):
+        self.client.login(username="bob", password="s3cret-pass")
+        self.client.post(
+            reverse("push-unsubscribe"),
+            json.dumps({"endpoint": self.subscription.endpoint}),
+            content_type="application/json",
+        )
+        self.assertTrue(PushSubscription.objects.filter(pk=self.subscription.pk).exists())

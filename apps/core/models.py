@@ -182,3 +182,28 @@ class Feedback(TimeStampedModel):
 
     def __str__(self):
         return f"{self.get_category_display()}: {self.subject}"
+
+
+class PushSubscription(TimeStampedModel):
+    """One browser/device's Web Push subscription (docs/SECURITY.md
+    "Web Push notifications") — a user can hold several (one per
+    device they've enabled notifications on). `endpoint`/`p256dh_key`/
+    `auth_key` are exactly the three fields the browser's own
+    `PushSubscription.toJSON()` returns; `apps.core.push.
+    send_push_notification` reassembles them into the shape
+    `pywebpush.webpush`'s own `subscription_info` argument expects.
+    Never exported through `apps.accounts.services.export_account_data`
+    beyond `endpoint`/`created_at` — `p256dh_key`/`auth_key` are
+    credential-like (the push service, and only the push service,
+    needs them to route/decrypt a payload), the same reasoning
+    `apps.api.models.ApiKey.key_hash` is excluded there."""
+
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, related_name="push_subscriptions", on_delete=models.CASCADE
+    )
+    endpoint = models.URLField(unique=True, max_length=500)
+    p256dh_key = models.CharField(max_length=255)
+    auth_key = models.CharField(max_length=255)
+
+    def __str__(self):
+        return f"Push subscription: {self.user.username}"

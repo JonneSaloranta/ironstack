@@ -7,7 +7,7 @@ from django.urls import reverse
 from django.utils.translation import gettext as _
 
 from . import services
-from .models import Block, FriendRequest, FriendRequestStatus
+from .models import Block, FriendRequest, FriendRequestStatus, MutedFriend
 
 User = get_user_model()
 
@@ -21,10 +21,18 @@ def friend_list(request):
     outgoing = FriendRequest.objects.filter(
         from_user=request.user, status=FriendRequestStatus.PENDING
     ).select_related("to_user")
+    muted_friend_ids = set(
+        MutedFriend.objects.filter(user=request.user).values_list("muted_user_id", flat=True)
+    )
     return render(
         request,
         "social/friend_list.html",
-        {"friends": friends, "incoming_requests": incoming, "outgoing_requests": outgoing},
+        {
+            "friends": friends,
+            "incoming_requests": incoming,
+            "outgoing_requests": outgoing,
+            "muted_friend_ids": muted_friend_ids,
+        },
     )
 
 
@@ -127,3 +135,23 @@ def unblock_user_view(request, user_id):
     services.unblock_user(request.user, target)
     messages.success(request, _("User unblocked."))
     return redirect("social:block-list")
+
+
+@login_required
+def mute_friend_view(request, user_id):
+    if request.method != "POST":
+        return HttpResponseNotAllowed(["POST"])
+    target = get_object_or_404(User, pk=user_id)
+    services.mute_friend(request.user, target)
+    messages.success(request, _("Notifications muted for this friend."))
+    return redirect("social:friend-list")
+
+
+@login_required
+def unmute_friend_view(request, user_id):
+    if request.method != "POST":
+        return HttpResponseNotAllowed(["POST"])
+    target = get_object_or_404(User, pk=user_id)
+    services.unmute_friend(request.user, target)
+    messages.success(request, _("Notifications unmuted for this friend."))
+    return redirect("social:friend-list")

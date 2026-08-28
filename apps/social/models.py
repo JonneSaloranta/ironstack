@@ -110,6 +110,33 @@ class Block(TimeStampedModel):
         return f"{self.blocker} blocked {self.blocked}"
 
 
+class MutedFriend(TimeStampedModel):
+    """`user` has muted push notifications from `muted_user` — the
+    exact same one-directional shape as `Block` above (me muting you
+    is my own private state, never symmetric: it doesn't mute you from
+    me), reused for that reason rather than adding fields to
+    `Friendship`. Unlike `Block`, muting has no effect on anything but
+    push (docs/SOCIAL.md "Muting") — the friendship, the ability to
+    message, and the message itself all stay exactly as they were;
+    only `apps.core.push.send_push_notification` ever checks this."""
+
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, related_name="muted_friends", on_delete=models.CASCADE
+    )
+    muted_user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, related_name="muted_by", on_delete=models.CASCADE
+    )
+
+    class Meta:
+        ordering = ["-created_at"]
+        constraints = [
+            models.UniqueConstraint(fields=["user", "muted_user"], name="unique_muted_friend")
+        ]
+
+    def __str__(self):
+        return f"{self.user} muted {self.muted_user}"
+
+
 class GroupRole(models.TextChoices):
     OWNER = "owner", _("Owner")
     ADMIN = "admin", _("Admin")
@@ -166,6 +193,14 @@ class GroupMembership(TimeStampedModel):
     every query that touches it. It also gives the right behavior for
     free: a message sent before someone joined a group was never
     "unread" for them, since they weren't there to read it.
+
+    `notifications_muted` is this same "one row per (group, user)"
+    shape put to a second use, the same reasoning `last_read_at`
+    already follows: this user's own private push-notification
+    preference for this one group (docs/SOCIAL.md "Muting"), affecting
+    nothing else — the message is still created, still visible, still
+    counted unread; only `apps.core.push.send_push_notification` skips
+    a member with this set.
     """
 
     group = models.ForeignKey(Group, related_name="memberships", on_delete=models.CASCADE)
@@ -175,6 +210,7 @@ class GroupMembership(TimeStampedModel):
     role = models.CharField(max_length=10, choices=GroupRole.choices, default=GroupRole.MEMBER)
     joined_at = models.DateTimeField(auto_now_add=True)
     last_read_at = models.DateTimeField(default=timezone.now)
+    notifications_muted = models.BooleanField(default=False)
 
     class Meta:
         ordering = ["joined_at"]

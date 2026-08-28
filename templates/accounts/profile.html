@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load i18n %}
+{% load i18n static %}
 {% block title %}{% trans "Profile" %} — IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
@@ -89,6 +89,30 @@
     {% trans "Open" %}{% if social_badge %} <span class="nav-badge" aria-hidden="true" style="position:static; display:inline-block; vertical-align:middle;"></span>{% endif %}
   </a>
 </div>
+
+{% if push_enabled %}
+  <div class="card" x-data="ironstackPushNotifications()" x-cloak>
+    <strong>{% trans "Notifications" %}</strong>
+    <p class="text-muted" x-show="supported">{% trans "Get notified on this device when you receive a message." %}</p>
+    {% comment %}
+      Explains *why* the toggle below is missing rather than just
+      silently having no button at all — the exact "a feature quietly
+      disappears with no explanation" gap already found and fixed for
+      static/js/barcode-scanner.js's own feature-detection, applied
+      here from the start instead of needing a second report.
+    {% endcomment %}
+    <p class="text-muted" x-show="!supported">{% trans "Push notifications aren't supported in this browser." %}</p>
+    <p class="field-error" x-show="error" x-text="error"></p>
+    <button type="button" class="button-secondary" x-show="supported && !subscribed"
+            :disabled="busy" @click="enable()">
+      {% trans "Enable notifications on this device" %}
+    </button>
+    <button type="button" class="button-secondary" x-show="supported && subscribed"
+            :disabled="busy" @click="disable()">
+      {% trans "Disable notifications on this device" %}
+    </button>
+  </div>
+{% endif %}
 
 <div class="card card-action-row">
   <div>
@@ -189,4 +213,9 @@
     </div>
   </div>
 </div>
+{% endblock %}
+{% block extra_scripts %}
+{% if push_enabled %}
+<script src="{% static 'js/push-subscribe.js' %}" defer></script>
+{% endif %}
 {% endblock %}

@@ -122,6 +122,7 @@ TEMPLATES = [
                 "apps.workouts.context_processors.active_workout_session",
                 "apps.core.context_processors.app_version",
                 "apps.core.context_processors.seo",
+                "apps.core.context_processors.push",
                 "apps.accounts.context_processors.onboarding",
                 "apps.nutrition.context_processors.nutrition_subnav",
                 "apps.social.context_processors.social_badge",
@@ -378,6 +379,22 @@ if AUTHENTIK_ENABLED:
     # intercepted, and something Authentik supports out of the box
     # (see the discovery document's code_challenge_methods_supported).
     OIDC_USE_PKCE = True
+
+# apps.core.push — Web Push notifications for messages
+# (docs/SECURITY.md "Web Push notifications"). Entirely optional: leave
+# VAPID_PUBLIC_KEY/VAPID_PRIVATE_KEY unset and PUSH_ENABLED stays
+# False — no "Notifications" card on the profile page, no push ever
+# sent, apps.core.push.send_push_notification becomes a no-op. Both
+# keys are base64url-encoded with no PEM headers, single line each —
+# generate a pair with `manage.py generate_vapid_keys` (run once, keep
+# the private key secret). VAPID_ADMIN_EMAIL is the contact address a
+# push service sees in the VAPID JWT's "sub" claim (RFC 8292) if it
+# ever needs to reach the operator about abuse — any real address
+# works, it's never shown to end users.
+VAPID_PUBLIC_KEY = env("VAPID_PUBLIC_KEY", default="")
+VAPID_PRIVATE_KEY = env("VAPID_PRIVATE_KEY", default="")
+VAPID_ADMIN_EMAIL = env("VAPID_ADMIN_EMAIL", default="")
+PUSH_ENABLED = bool(VAPID_PUBLIC_KEY and VAPID_PRIVATE_KEY and VAPID_ADMIN_EMAIL)
 
 # apps.core.management.commands.backup_scheduler — docs/BACKUP.md.
 # UTC hour (0-23) the docker-compose.yml `backup-scheduler` service
