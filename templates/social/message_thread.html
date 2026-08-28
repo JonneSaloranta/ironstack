@@ -34,11 +34,13 @@
   {{ form.non_field_errors }}
   {% for field in form %}
     <div class="field">
-      {# A visible "Message" label above a compact one-line chat input
-         would be redundant clutter for a sighted user (the whole page
-         is already titled with who/what this thread is), but a
-         screen reader still needs an accessible name for the
-         textarea — visually-hidden, not left off entirely. #}
+      {% comment %}
+        A visible "Message" label above a compact one-line chat input
+        would be redundant clutter for a sighted user (the whole page
+        is already titled with who/what this thread is), but a
+        screen reader still needs an accessible name for the
+        textarea — visually-hidden, not left off entirely.
+      {% endcomment %}
       <label for="{{ field.id_for_label }}" class="visually-hidden">{{ field.label }}</label>
       {{ field }}
       {% if field.errors %}<p class="field-error">{{ field.errors|striptags }}</p>{% endif %}

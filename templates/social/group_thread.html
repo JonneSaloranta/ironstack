@@ -25,8 +25,10 @@
   {{ form.non_field_errors }}
   {% for field in form %}
     <div class="field">
-      {# See templates/social/message_thread.html's own comment on
-         this same pattern — visually-hidden, not left off entirely. #}
+      {% comment %}
+        See templates/social/message_thread.html's own comment on
+        this same pattern — visually-hidden, not left off entirely.
+      {% endcomment %}
       <label for="{{ field.id_for_label }}" class="visually-hidden">{{ field.label }}</label>
       {{ field }}
       {% if field.errors %}<p class="field-error">{{ field.errors|striptags }}</p>{% endif %}

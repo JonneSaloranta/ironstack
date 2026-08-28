@@ -756,6 +756,12 @@ class MessageViewTests(TestCase):
         response = self.client.get(reverse("social:message-thread", args=[self.bob.pk]))
         self.assertContains(response, 'class="visually-hidden"')
         self.assertContains(response, f'for="{response.context["form"]["body"].id_for_label}"')
+        # Regression: the explanatory comment right above this label
+        # was originally written as {# ... #} spanning multiple lines
+        # — Django's {# #} only supports a single line and leaks the
+        # rest literally into the page for anything longer
+        # ({% comment %}...{% endcomment %} is the multi-line form).
+        self.assertNotContains(response, "{#")
 
     def test_sending_a_direct_message_via_the_fragment_view(self):
         make_friends(self.alice, self.bob)
@@ -783,6 +789,7 @@ class MessageViewTests(TestCase):
         group = services.create_group(self.alice, "Lifters")
         response = self.client.get(reverse("social:group-thread", args=[group.pk]))
         self.assertContains(response, 'class="visually-hidden"')
+        self.assertNotContains(response, "{#")
 
     def test_sending_a_group_message_via_the_fragment_view(self):
         group = services.create_group(self.alice, "Lifters")
