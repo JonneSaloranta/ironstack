@@ -3149,3 +3149,19 @@ indication what the link was even for. Caught only because a test was
 finally written for that specific path, not by inspection — the kind
 of gap that's easy to miss precisely because the code that would have
 caught it *looks* like it handles the case correctly.
+
+A third pass, asked to keep going: `services.friends_of` had the same
+missing-`select_related` N+1 shape `unread_group_message_count` did
+before its own fix — reading `Friendship.user_low`/`user_high` without
+it lazily fetches each `User` row on access, one extra query per
+friendship. More exposed than the badge count was, too: `friends_of`
+runs on nearly every social page, not one context processor. Also
+added a visually-hidden `<label>` to the chat message input — the form
+already declared `label=_("Message")`, but neither template ever
+rendered it, leaving the field with no accessible name at all for a
+screen reader (a visible label next to a one-line chat box would just
+be clutter for a sighted user, so visually-hidden rather than shown or
+left off). And exposed the two privacy settings on the public API's
+profile endpoint, alongside the other preferences already there —
+`unit_system`/`show_bmi`/etc. were already readable/writable via
+`GET`/`PATCH /api/v1/profile/`; these two just hadn't caught up yet.

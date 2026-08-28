@@ -233,6 +233,16 @@ elsewhere for an actual number — `.exists()` stops at the first
 matching row instead of counting every one, and the badge only ever
 needed a boolean.
 
+`services.friends_of` had the same N+1 shape for a while, caught in
+the same review pass: it reads `Friendship.user_low`/`user_high` to
+resolve "the other person," but without `select_related` on both, each
+access lazily fetches its own `User` row — one extra query per
+friendship. Worth calling out separately because of how exposed this
+one is: `friends_of` is called from nearly every social page
+(`friend_list`, `message_list`, `group_detail`'s invitable-friends
+list, `friend_search`'s exclusion set), not just one badge on one
+context processor.
+
 ## Moderation
 
 No bespoke reporting/moderation UI — Django admin

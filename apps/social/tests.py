@@ -105,6 +105,20 @@ class FriendRequestServiceTests(TestCase):
         friends = {u.pk for u in services.friends_of(self.alice)}
         self.assertEqual(friends, {self.bob.pk, carol.pk})
 
+    def test_friends_of_is_a_single_query_regardless_of_friend_count(self):
+        # Regression: friends_of() used to read f.user_high/f.user_low
+        # without select_related, firing one extra query per friendship
+        # to lazily fetch each User row — the same N+1 shape
+        # unread_group_message_count had before its own fix, and one
+        # this function is more exposed to, since it's called from
+        # nearly every social page (friend_list, message_list,
+        # group_detail, friend_search).
+        for i in range(5):
+            other = User.objects.create_user(username=f"friend{i}", password="s3cret-pass")
+            make_friends(self.alice, other)
+        with self.assertNumQueries(1):
+            services.friends_of(self.alice)
+
     def test_remove_friend_deletes_the_friendship(self):
         make_friends(self.alice, self.bob)
         services.remove_friend(self.alice, self.bob)

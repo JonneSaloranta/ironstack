@@ -68,10 +68,17 @@ def blocked_either_direction_ids(user):
 def friends_of(user):
     """Every other user `user` is friends with, as a list of User
     objects — resolves Friendship's low/high storage back to "the
-    other person" so callers never have to think about the ordering."""
+    other person" so callers never have to think about the ordering.
+    select_related on both sides: this is called on nearly every
+    social page (friend_list, message_list, group_detail's invitable-
+    friends calc, friend_search's exclusion set), and without it,
+    reading f.user_high/f.user_low below fires one extra query per
+    friendship — the exact N+1 shape apps.social.services.
+    unread_group_message_count had before its own fix."""
     friendships = Friendship.objects.filter(user_low=user) | Friendship.objects.filter(
         user_high=user
     )
+    friendships = friendships.select_related("user_low", "user_high")
     return [f.user_high if f.user_low_id == user.pk else f.user_low for f in friendships]
 
 
