@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{{ group.name }} — IronStack{% endblock %}
+{% block content %}
+<div class="top-bar">
+  <h1 style="margin:0;">{{ group.name }}</h1>
+  {% if can_manage %}
+    <a class="button-secondary" href="{% url 'social:group-edit' group.pk %}">{% trans "Edit" %}</a>
+  {% endif %}
+</div>
+
+{% if group.description %}<p class="text-muted">{{ group.description }}</p>{% endif %}
+
+<p><a class="button" href="{% url 'social:group-thread' group.pk %}">{% trans "Open chat" %}</a></p>
+
+{% if can_manage %}
+  <div class="card">
+    <h2 style="margin-top:0;">{% trans "Invite link" %}</h2>
+    {% if group.invite_enabled %}
+      <p class="text-muted">
+        {{ request.scheme }}://{{ request.get_host }}{% url 'group-invite-join' group.invite_code %}
+      </p>
+      <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+        <form method="post" action="{% url 'social:group-invite-toggle' group.pk %}">
+          {% csrf_token %}
+          <button type="submit" class="button-secondary">{% trans "Disable link" %}</button>
+        </form>
+        <form method="post" action="{% url 'social:group-invite-regenerate' group.pk %}"
+              x-data="{}" @submit="if (!confirm('{% trans "Regenerate the invite link? The old link will stop working." %}')) $event.preventDefault()">
+          {% csrf_token %}
+          <button type="submit" class="button-secondary">{% trans "Regenerate" %}</button>
+        </form>
+      </div>
+    {% else %}
+      <p class="text-muted">{% trans "Anyone with this link can join — off until you turn it on." %}</p>
+      <form method="post" action="{% url 'social:group-invite-toggle' group.pk %}">
+        {% csrf_token %}
+        <button type="submit">{% trans "Enable link" %}</button>
+      </form>
+    {% endif %}
+  </div>
+{% endif %}
+
+{% comment %}
+  Deliberately not gated on can_manage — any member can invite one of
+  their own friends (apps.social.services.invite_to_group), the same
+  as most chat apps let any member add someone they know, unlike the
+  invite *link* above, which only an owner/admin can turn on/off.
+{% endcomment %}
+{% if invite_form.fields.friend.queryset.exists %}
+  <div class="card">
+    <h2 style="margin-top:0;">{% trans "Invite a friend" %}</h2>
+    <form method="post" action="{% url 'social:group-invite-send' group.pk %}">
+      {% csrf_token %}
+      <div class="field">
+        {{ invite_form.friend.label_tag }}
+        {{ invite_form.friend }}
+      </div>
+      <button type="submit">{% trans "Send invite" %}</button>
+    </form>
+  </div>
+{% endif %}
+
+<h2>{% blocktrans with count=members|length %}Members ({{ count }}){% endblocktrans %}</h2>
+{% for member in members %}
+  <div class="card card-action-row">
+    <div>
+      <strong>{{ member.user.username }}</strong>{% if member.user == request.user %} <span class="text-muted">{% trans "(you)" %}</span>{% endif %}
+      {% if member.role == GroupRole.OWNER %}<span class="tag">{% trans "Owner" %}</span>{% endif %}
+      {% if member.role == GroupRole.ADMIN %}<span class="tag tag-muted">{% trans "Admin" %}</span>{% endif %}
+    </div>
+    {% if is_owner and member.user != request.user and member.role != GroupRole.OWNER %}
+      <div style="display:flex; gap:0.5rem;">
+        <form method="post" action="{% url 'social:group-member-role' group.pk member.user.pk %}">
+          {% csrf_token %}
+          {% if member.role == GroupRole.ADMIN %}
+            <input type="hidden" name="role" value="member">
+            <button type="submit" class="button-secondary">{% trans "Remove admin" %}</button>
+          {% else %}
+            <input type="hidden" name="role" value="admin">
+            <button type="submit" class="button-secondary">{% trans "Make admin" %}</button>
+          {% endif %}
+        </form>
+        <form method="post" action="{% url 'social:group-member-remove' group.pk member.user.pk %}"
+              x-data="{}" @submit="if (!confirm('{% trans "Remove this member from the group?" %}')) $event.preventDefault()">
+          {% csrf_token %}
+          <button type="submit" class="button-danger">{% trans "Remove" %}</button>
+        </form>
+        <form method="post" action="{% url 'social:group-transfer-ownership' group.pk member.user.pk %}"
+              x-data="{}" @submit="if (!confirm('{% trans "Transfer ownership of this group? You will become an admin instead." %}')) $event.preventDefault()">
+          {% csrf_token %}
+          <button type="submit" class="button-secondary">{% trans "Make owner" %}</button>
+        </form>
+      </div>
+    {% elif can_manage and member.role == GroupRole.MEMBER and member.user != request.user %}
+      <form method="post" action="{% url 'social:group-member-remove' group.pk member.user.pk %}"
+            x-data="{}" @submit="if (!confirm('{% trans "Remove this member from the group?" %}')) $event.preventDefault()">
+        {% csrf_token %}
+        <button type="submit" class="button-danger">{% trans "Remove" %}</button>
+      </form>
+    {% endif %}
+  </div>
+{% endfor %}
+
+<p>
+  {% if not is_owner %}
+    <form method="post" action="{% url 'social:group-leave' group.pk %}"
+          x-data="{}" @submit="if (!confirm('{% trans "Leave this group?" %}')) $event.preventDefault()">
+      {% csrf_token %}
+      <button type="submit" class="button-danger">{% trans "Leave group" %}</button>
+    </form>
+  {% else %}
+    <form method="post" action="{% url 'social:group-delete' group.pk %}"
+          x-data="{}" @submit="if (!confirm('{% trans "Delete this group? This can't be undone." %}')) $event.preventDefault()">
+      {% csrf_token %}
+      <button type="submit" class="button-danger">{% trans "Delete group" %}</button>
+    </form>
+  {% endif %}
+</p>
+
+<p><a class="button-secondary" href="{% url 'social:group-list' %}">&larr; {% trans "Groups" %}</a></p>
+{% endblock %}

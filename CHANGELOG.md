@@ -19,6 +19,19 @@ narrated summary of the same version.
 ## [Unreleased]
 
 ### Added
+- Friends, groups, and messaging (`apps/social`, `docs/SOCIAL.md`):
+  send/accept friend requests, create groups with owner, admin, and
+  member roles, invite someone directly or share a short, unguessable
+  invite link (`/group/invite/<code>/`), message a friend or a group
+  directly, and block another user. Two new opt-out privacy settings
+  (allow friend requests, allow group invites) are asked once during
+  onboarding and editable anytime from Profile. Reachable from a new
+  "Friends & groups" card on the profile page, with a small dot badge
+  on the Profile nav icon whenever something's waiting on you (a
+  request, an invite, an unread message). The two privacy settings are
+  also readable/writable from the public API (`GET`/`PATCH`
+  `/api/v1/profile/`), alongside the other display preferences already
+  exposed there.
 - The public API now covers the two `apps.nutrition` resources that
   were still missing after the rest of nutrition's API surface
   shipped: a `nutrition/profile/` singleton (matching `profile/`

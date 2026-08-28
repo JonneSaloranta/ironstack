@@ -3,6 +3,7 @@ from django.contrib import admin
 from django.urls import include, path
 
 from apps.accounts.views import RateLimitedLoginView, RateLimitedPasswordResetView
+from apps.social import views_groups as social_views_groups
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -31,6 +32,16 @@ urlpatterns = [
     path("nutrition/", include("apps.nutrition.urls")),
     path("api/v1/", include("apps.api.urls")),
     path("api/keys/", include("apps.api.urls_web")),
+    path("social/", include("apps.social.urls", namespace="social")),
+    # Un-namespaced and outside "social/" deliberately — the shape a
+    # group invite link is shared in, /group/invite/<code>/, matters
+    # more here than staying consistent with this app's other URLs
+    # living under one prefix.
+    path(
+        "group/invite/<str:code>/",
+        social_views_groups.group_invite_join,
+        name="group-invite-join",
+    ),
     path("", include("apps.core.urls")),
 ]
 

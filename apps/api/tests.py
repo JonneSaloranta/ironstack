@@ -306,6 +306,18 @@ class ProfileEndpointTests(APITestCase):
         self.alice.refresh_from_db()
         self.assertEqual(self.alice.username, "alice")
 
+    def test_patch_updates_social_privacy_settings(self):
+        response = self.client.patch(
+            reverse("api:profile"),
+            {"allow_friend_requests": False, "allow_group_invites": False},
+            format="json",
+            **self._auth(),
+        )
+        self.assertEqual(response.status_code, 200)
+        self.alice.refresh_from_db()
+        self.assertFalse(self.alice.allow_friend_requests)
+        self.assertFalse(self.alice.allow_group_invites)
+
 
 class WorkoutLoggingEndpointTests(APITestCase):
     """The most important end-to-end path: logging a set via the API

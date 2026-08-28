@@ -28,6 +28,13 @@ The application must allow a user to:
 22. see whether their actual weight trend matches their goal, and
     receive an explainable, non-forced calorie adjustment suggestion
     when it doesn't (`docs/NUTRITION.md`)
+23. send and respond to friend requests, with an opt-out privacy
+    setting controlling whether other users on this instance can send
+    one at all
+24. create groups, invite others to a group (directly, or via a
+    short, unguessable link), and manage membership/roles
+25. message a friend or a group directly (`docs/SOCIAL.md`)
+26. block another user, and manage friend/group/blocked-user lists
 
 ## Explicitly out of scope for v1
 
@@ -36,16 +43,21 @@ Do not implement unless explicitly requested:
 - Apple Health integration
 - Google Fit integration
 - smartwatch integrations
-- social network
 - public profiles
-- messaging
 - subscriptions
 - advertisements
 
 **Nutrition/calorie tracking was on this list through v1 ("do not
 implement unless explicitly requested") — it was explicitly requested
 for v2, see `docs/NUTRITION.md`, so items 18-22 above are now real
-requirements, not a future possibility.**
+requirements, not a future possibility. Friends/groups/messaging went
+through the same door for v2 as well — see `docs/SOCIAL.md` — so items
+23-26 above are real requirements too; "social network" and
+"messaging" are removed from the list below accordingly.
+"Public profiles" is deliberately still out of scope: apps.social adds
+no browsable profile page for other users, only a username search
+among this instance's own accounts (`docs/SOCIAL.md` "Visual style
+and scope").**
 
 ## UX priorities
 

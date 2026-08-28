@@ -27,6 +27,7 @@ measurements
 activities
 analytics
 core
+social
 ```
 
 `records` (PR engine) was not in CLAUDE.md's original suggested list; it
@@ -96,6 +97,14 @@ Shared utilities and cross-cutting concerns: unit conversion
 date)` readings into SVG-ready coordinates; kept model-agnostic so any
 app plotting a trend, currently `measurements` and `activities`, shares
 one implementation instead of each rolling its own).
+
+### social
+Friend requests/friendships, blocking, user-created groups with a
+short shareable invite link, and direct/group messaging — see
+`docs/SOCIAL.md` for the full domain model and why it's one app
+rather than split by concern. Depends one-directionally on `accounts`
+(the two privacy settings live on `User`, and every relationship here
+is between `User` rows) — `accounts` doesn't know `social` exists.
 
 ## Historical data rule
 

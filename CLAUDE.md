@@ -76,6 +76,7 @@ apps/
     activities/
     analytics/
     core/
+    social/
 ```
 
 The exact structure may evolve if implementation demonstrates a better organization, but avoid putting the entire domain into one giant app.

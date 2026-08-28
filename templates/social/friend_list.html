@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Friends" %} — IronStack{% endblock %}
+{% block content %}
+<div class="top-bar">
+  <h1 style="margin:0;">{% trans "Friends" %}</h1>
+  <a class="button" href="{% url 'social:friend-search' %}">{% trans "Find friends" %}</a>
+</div>
+
+{% if incoming_requests %}
+  <h2>{% trans "Friend requests" %}</h2>
+  {% for request in incoming_requests %}
+    <div class="card card-action-row">
+      <div><strong>{{ request.from_user.username }}</strong></div>
+      <div style="display:flex; gap:0.5rem;">
+        <form method="post" action="{% url 'social:friend-request-respond' request.pk %}">
+          {% csrf_token %}
+          <input type="hidden" name="action" value="accept">
+          <button type="submit">{% trans "Accept" %}</button>
+        </form>
+        <form method="post" action="{% url 'social:friend-request-respond' request.pk %}">
+          {% csrf_token %}
+          <input type="hidden" name="action" value="decline">
+          <button type="submit" class="button-secondary">{% trans "Decline" %}</button>
+        </form>
+      </div>
+    </div>
+  {% endfor %}
+{% endif %}
+
+{% if outgoing_requests %}
+  <h2>{% trans "Sent requests" %}</h2>
+  {% for request in outgoing_requests %}
+    <div class="card">
+      <span class="text-muted">{% blocktrans with username=request.to_user.username %}Waiting on {{ username }}{% endblocktrans %}</span>
+    </div>
+  {% endfor %}
+{% endif %}
+
+<h2>{% trans "Your friends" %}</h2>
+{% for friend in friends %}
+  <div class="card card-action-row">
+    <div><strong>{{ friend.username }}</strong></div>
+    <div style="display:flex; gap:0.5rem;">
+      <a class="button-secondary" href="{% url 'social:message-thread' friend.pk %}">{% trans "Message" %}</a>
+      <form method="post" action="{% url 'social:friend-remove' friend.pk %}"
+            x-data="{}" @submit="if (!confirm('{% trans "Remove this friend?" %}')) $event.preventDefault()">
+        {% csrf_token %}
+        <button type="submit" class="button-danger">{% trans "Remove" %}</button>
+      </form>
+    </div>
+  </div>
+{% empty %}
+  <div class="card empty-state">
+    <p>{% trans "No friends yet." %}</p>
+  </div>
+{% endfor %}
+
+<p>
+  <a class="button-secondary" href="{% url 'social:block-list' %}">{% trans "Blocked users" %}</a>
+  <a class="button-secondary" href="{% url 'social:message-list' %}">&larr; {% trans "Messages" %}</a>
+</p>
+{% endblock %}

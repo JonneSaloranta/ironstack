@@ -86,10 +86,12 @@ further attempts from the same client IP for 15 minutes after 5 failed
 attempts within that window, using the same shared `DatabaseCache`
 `apps.api`'s throttling does. Keyed by client IP (`X-Real-IP`, which
 both `compose/nginx/nginx.conf` and `compose/caddy/Caddyfile` set —
-see `apps.accounts.forms._client_ip`'s own docstring for why plain
+see `apps.core.request.client_ip`'s own docstring for why plain
 `REMOTE_ADDR` doesn't work behind either proxy), not the submitted
 username, so an attacker can't lock a real user out on purpose by
-deliberately failing their login from elsewhere.
+deliberately failing their login from elsewhere. The same helper backs
+`apps.social`'s own invite-code lookup throttle — see "Friends,
+groups, and messaging" below.
 
 The password-reset request view (`django.contrib.auth`'s
 `PasswordResetView`) had the identical gap — nothing stopped it being
@@ -404,6 +406,50 @@ Users must not be able to access another user's:
 - measurements
 - activities
 - analytics
+- friend requests, group memberships, or direct/group messages they
+  aren't a sender/recipient/member of (`apps.social` — every view
+  checks this directly, e.g. `get_object_or_404(Group, ...)` followed
+  by an explicit membership check, a 404 rather than a 403 for a group
+  a user isn't in, the same "don't even confirm it exists" reasoning
+  `docs/API.md` already applies elsewhere)
+
+## Friends, groups, and messaging
+
+See `docs/SOCIAL.md` for the full domain model. Security-relevant
+points collected here for a single place to look:
+
+- **Invite codes** (`apps.social.crypto.generate_invite_code`) are 10
+  characters from a 31-symbol alphabet (excluding visually-ambiguous
+  `0`/`O`/`1`/`I`/`L`), ≈8.2×10¹⁴ possible codes — stored in the clear
+  on `Group.invite_code` (there's nothing to hash it against; it
+  grants access to a group's messages, not an account, so it doesn't
+  need password-equivalent secrecy-at-rest treatment). `/group/invite/
+  <code>/` (`apps.social.views_groups.group_invite_join`) additionally
+  throttles failed lookups to 20 per 15 minutes per client IP
+  (`apps.core.request.client_ip`), the same cheap-second-layer
+  reasoning as the brute-force protection above.
+- The invite link is a GET-then-confirm flow, not an instant join —
+  opening the link only shows the group; joining requires a POST, so a
+  link-preview bot (Slack/Discord/iMessage unfurling a shared link)
+  can't silently consume it.
+- **Blocking** (`apps.social.services.block_user`) stops new friend
+  requests and direct messages/group invites both ways, and removes
+  any existing friendship — but deliberately does not remove either
+  user from a group they already share; that's left to the group's
+  own owner/admin.
+- **The two opt-out privacy settings** (`User.allow_friend_requests`/
+  `allow_group_invites`) only gate whether *another* user can start
+  something with this account — neither exposes any new information
+  about the account itself, which is why both default on rather than
+  off (unlike `User.show_gravatar`, which causes an outbound request
+  to a third party the moment it's turned on).
+- No public profile page exists for any user — the only way to find
+  another account is a username search restricted to this instance's
+  own users, and the only actions available against a found account
+  are friend/invite/message (once friends)/block.
+- Moderation is Django admin only (`apps/social/admin.py`) — an
+  operator can delete an abusive `Group`/message/membership row
+  directly; no bespoke reporting workflow exists.
 
 ## Account deletion (GDPR)
 

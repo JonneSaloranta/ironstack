@@ -2997,6 +2997,175 @@ or script, just a trimmed, self-contained `<style>` block reusing
 page keeps using the normal site chrome; only the actual downloadable
 file needs to survive completely on its own.
 
+## Friends, groups, and messaging (`apps/social`)
+
+A full social layer, requested and designed in one sitting before any
+code was written (see the approved plan for the full design
+reasoning) — `docs/SOCIAL.md` is now the canonical write-up; this
+entry is the shorter "how it actually went" version.
+
+Two existing docs shaped the design more than they blocked it:
+`docs/PRODUCT_REQUIREMENTS.md` had "social network"/"messaging" on its
+"do not implement unless explicitly requested" list — the same door
+nutrition tracking went through for v2 — and `docs/UI.md`'s "feel like
+a practical training tool rather than a social media application"
+ruled out a feed, reactions, gamification, and any browsable public
+profile page. Both docs were updated to reflect the new status quo
+rather than left stale.
+
+**One app, not three.** Friends/blocking, groups, and messaging all
+cross-reference each other constantly (a block has to affect both
+friend requests *and* messages; a group invite checks the same
+privacy flag a direct message does), so `apps/social` holds all of it
+— internally split by concern the way `apps/accounts` already splits
+`views.py`/`views_seo.py`/`views_backup.py`, not by Django app
+boundary.
+
+**Two privacy settings, opt-out not opt-in.** `allow_friend_requests`/
+`allow_group_invites` on `User` both default `True` — unlike
+`show_gravatar` (the one existing privacy toggle that defaults off),
+neither one exposes anything about the account by itself; they only
+gate whether *another* user can start something with it. Asked once
+during onboarding, right after `unit_system`/`timezone`, editable
+anytime from Profile.
+
+**A real gap found while writing the docs, not the code.** Writing up
+`services.leave_group`'s existing "transfer ownership to someone else
+before leaving a group you own" error message for `docs/SOCIAL.md`
+made it obvious there was no way to actually *do* that — no
+`transfer_ownership` function existed at all, so a solo group owner
+was permanently stuck unable to leave their own group. Worse: nothing
+stopped a group's owner from just deleting their whole *account*
+first, which would cascade their `GroupMembership` row away and could
+leave a group with other members still in it holding no `OWNER`/
+`ADMIN` role at all — unmanageable forever, even though the group and
+its message history survived. Fixed with `services.transfer_ownership`
+(owner-only, demotes the old owner to admin rather than removing them)
+plus `services.reassign_owned_groups_before_deletion`, called from
+`apps.accounts.services.delete_account` before the cascade runs: hands
+ownership to the longest-standing admin, or failing that the
+longest-standing member, of every group the departing account owns. A
+group with no other members is simply left as-is — harmless, an
+owner-less group nobody happens to act on, not a crash or a leak.
+
+**Data export completeness, applied to a brand-new domain
+immediately.** The exact same "everything, not just what the profile
+form shows" standard from the last session's data-export fix
+(`last_name` and several `User` fields that had been missed) was
+applied here from the start: friend requests, friendships, group
+memberships, and messages are all part of
+`apps.accounts.services.export_account_data` in the same commit as
+the feature itself, not a follow-up fix discovered later.
+
+**Real-time-ish without WebSockets.** HTMX polling
+(`hx-trigger="load, every 4s"`) on the message thread's own list
+container, consistent with CLAUDE.md's "no SPA framework without a
+strong architectural reason" — this is the first interval-polling
+pattern in the codebase (everything before it was `hx-trigger="load"`,
+a one-shot fire-and-replace, or a debounced live-search input). The
+send-form lives outside the polled container so the poll can't
+clobber text a user is mid-typing, and clears itself after a
+successful send via `hx-on::after-request="this.reset()"`.
+
+## A critical pass over `apps/social`, before it ever shipped
+
+Asked to review the freshly-built social feature critically and fix
+what a real review found, before merging anywhere — not a rubber
+stamp. Found and fixed six real issues, none of them caught by the
+test suite that was already green at the time (each new fix came with
+its own test that would have failed against the old code):
+
+- **The one that mattered most**: `services.unread_group_message_count`
+  looped over a user's groups in Python, one `.count()` query per
+  group. Harmless on its own, except it's also what `apps.social.
+  context_processors.social_badge` calls — unconditionally, on *every
+  page load*, for every logged-in user, site-wide — to decide whether
+  to show a dot on the Profile nav icon. A user in 20 groups was
+  paying 20 extra queries on every request anywhere in the app,
+  forever, whether or not they ever opened Friends & groups. Rewritten
+  as one query (`GroupMessage` joined straight to its sender's
+  `GroupMembership`, comparing `created_at` to that row's own
+  `last_read_at` via `F()`), which also required making
+  `last_read_at` default to "now" at join time instead of nullable —
+  removing a NULL special-case from every query that touches it
+  turned out to be what made the single-query rewrite straightforward
+  at all. Pinned with `assertNumQueries(1)`.
+- **A permission check that only existed in the template.**
+  `services.invite_to_group` never actually verified the inviter and
+  invitee were friends — `group_detail.html`'s dropdown only *offered*
+  friends, but a crafted POST naming any user id on the instance would
+  have gone straight through. Fixed in the service function itself,
+  where a UI restriction belongs if it's meant to be a real rule.
+- **A permission check that was too strict, the opposite mistake, in
+  the same feature.** That same "Invite a friend" form was rendered
+  only inside `{% if can_manage %}` — owner/admin only — even though
+  the service layer (correctly) lets any member invite one of their
+  own friends. A regular member could invite by link but never by the
+  actual "invite a friend" feature the group page seemed to offer
+  them.
+- **Blocking someone didn't stop them showing up in search.** Only
+  actually *sending* them a friend request failed
+  (`services.send_friend_request` already checked `is_blocked`) — the
+  whole point of a block is not needing to see that person at all, so
+  `friend_search` now excludes both directions.
+- **An unbounded poll.** The message-thread fragment re-queried and
+  re-rendered a conversation's *entire* history every 4 seconds,
+  forever — fine at first, guaranteed to get slower the longer two
+  people keep talking. Capped at the most recent 100 messages, no
+  pagination UI added (not asked for).
+- **Two accessibility/mobile-battery gaps caught on a second look at
+  the polling pattern itself**: no `aria-live` region on the polled
+  container (a screen reader would only ever hear a new message on
+  the next full page load, not when it actually arrived), and no
+  `[document.visibilityState=='visible']` guard on the trigger (this
+  is a mobile-first app per `docs/UI.md`; a backgrounded tab has no
+  reason to keep polling).
+
+A second, smaller pass followed the first: two test failures caught
+by the full suite — a `.nav-icon-wrap` CSS class name that
+accidentally contained the literal substring `nav-icon`, the exact
+text `apps.core.tests.BottomNavTests` counts occurrences of (renamed
+to `.icon-badge-wrap`, no functional change, matching the same
+accidental-substring-collision shape as an earlier find-and-replace
+mishap this same session), and `social_badge` adding four flat
+per-page queries the same way `apps.core.context_processors.seo` once
+did — fixed the same way that one was: bump the pinned count, with a
+comment explaining why (and, while there, switched all four checks
+from `.count() > 0` to `.exists()`, cheaper for a plain boolean).
+Also added two small UI touches: a "(you)" marker in the member list,
+and a member count on each group. Writing tests for those two fixes
+surfaced a real bug
+neither the original implementation nor the first review pass had
+caught: `group_invite_join` — the one view in `apps/social`
+deliberately meant to work for a logged-out visitor — had
+`@login_required` on it anyway, the same decorator applied
+consistently to every *other* view in that module without a second
+thought for this one. The view's own anonymous-user branch
+(`already_member = request.user.is_authenticated and ...`) and the
+template's "log in to join" prompt had been dead code the entire
+time — every request from someone not already logged in was bounced
+straight to the login page before the view ever ran, with no
+indication what the link was even for. Caught only because a test was
+finally written for that specific path, not by inspection — the kind
+of gap that's easy to miss precisely because the code that would have
+caught it *looks* like it handles the case correctly.
+
+A third pass, asked to keep going: `services.friends_of` had the same
+missing-`select_related` N+1 shape `unread_group_message_count` did
+before its own fix — reading `Friendship.user_low`/`user_high` without
+it lazily fetches each `User` row on access, one extra query per
+friendship. More exposed than the badge count was, too: `friends_of`
+runs on nearly every social page, not one context processor. Also
+added a visually-hidden `<label>` to the chat message input — the form
+already declared `label=_("Message")`, but neither template ever
+rendered it, leaving the field with no accessible name at all for a
+screen reader (a visible label next to a one-line chat box would just
+be clutter for a sighted user, so visually-hidden rather than shown or
+left off). And exposed the two privacy settings on the public API's
+profile endpoint, alongside the other preferences already there —
+`unit_system`/`show_bmi`/etc. were already readable/writable via
+`GET`/`PATCH /api/v1/profile/`; these two just hadn't caught up yet.
+
 ## Completing `apps.nutrition`'s public API surface
 
 Asked to keep developing the software generally, with a plan drawn up

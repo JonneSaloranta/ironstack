@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: IronStack\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-27 18:32+0000\n"
+"POT-Creation-Date: 2026-08-27 21:57+0000\n"
 "Language: sv\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -22,21 +22,21 @@ msgstr "Tvåfaktorsautentisering"
 msgid "Disable two-factor authentication for selected users"
 msgstr "Inaktivera tvåfaktorsautentisering för valda användare"
 
-#: apps/accounts/forms.py:124
+#: apps/accounts/forms.py:119
 msgid "Too many failed login attempts. Try again in a few minutes."
 msgstr "För många misslyckade inloggningsförsök. Försök igen om några minuter."
 
-#: apps/accounts/forms.py:188
+#: apps/accounts/forms.py:183
 msgid "Too many password reset requests. Try again in a few minutes."
 msgstr ""
 "För många förfrågningar om lösenordsåterställning. Försök igen om några "
 "minuter."
 
-#: apps/accounts/forms.py:236 apps/accounts/forms.py:534
+#: apps/accounts/forms.py:234 apps/accounts/forms.py:546
 msgid "Timezone"
 msgstr "Tidszon"
 
-#: apps/accounts/forms.py:252 apps/accounts/forms.py:514
+#: apps/accounts/forms.py:252 apps/accounts/forms.py:526
 #: templates/api/key_list.html:34
 msgid "Units"
 msgstr "Enheter"
@@ -66,15 +66,23 @@ msgstr "Visa mitt namn för andra"
 msgid "Show my Gravatar picture"
 msgstr "Visa min Gravatar-bild"
 
-#: apps/accounts/forms.py:262
+#: apps/accounts/forms.py:262 apps/accounts/forms.py:559
+msgid "Allow friend requests"
+msgstr "Tillåt vänförfrågningar"
+
+#: apps/accounts/forms.py:263 apps/accounts/forms.py:567
+msgid "Allow group invites"
+msgstr "Tillåt gruppinbjudningar"
+
+#: apps/accounts/forms.py:264
 msgid "Language"
 msgstr "Språk"
 
-#: apps/accounts/forms.py:265
+#: apps/accounts/forms.py:267
 msgid "Turns off the BMI card and its category ranges entirely."
 msgstr "Stänger av BMI-kortet och dess kategoriintervall helt."
 
-#: apps/accounts/forms.py:267
+#: apps/accounts/forms.py:269
 msgid ""
 "Lets everyone using this instance see your longest streak, workout count, "
 "PRs, total weight lifted, and when you last trained, in the dashboard's "
@@ -86,7 +94,7 @@ msgstr ""
 "instrumentpanelens prestationskarusell och listan \"Senast aktiva\". Stäng "
 "av för att hålla din egen aktivitet privat — du ser fortfarande allas andras."
 
-#: apps/accounts/forms.py:274
+#: apps/accounts/forms.py:276
 msgid ""
 "Shows your first name next to your username wherever others can see it (the "
 "achievements carousel and \"Recently active\" list). Turn off to show just "
@@ -96,7 +104,7 @@ msgstr ""
 "(prestationskarusellen och listan \"Senast aktiva\"). Stäng av för att bara "
 "visa ditt användarnamn där, som innan den här inställningen fanns."
 
-#: apps/accounts/forms.py:280
+#: apps/accounts/forms.py:282
 msgid ""
 "Shows your Gravatar (gravatar.com) picture at the top of this page, if the "
 "email on this account has one. Turning this on means your browser loads that "
@@ -110,53 +118,72 @@ msgstr ""
 "pratar med en server utanför din egen instans — som då ser hashvärdet för "
 "din e-postadress och din IP-adress."
 
-#: apps/accounts/forms.py:298 apps/accounts/forms.py:555
+#: apps/accounts/forms.py:290
+msgid ""
+"Off stops other users on this instance from sending you a friend request at "
+"all. Doesn't affect friend requests you already have, or friendships you "
+"already made."
+msgstr ""
+"Av hindrar andra användare på den här instansen från att skicka en "
+"vänförfrågan till dig alls. Påverkar inte vänförfrågningar eller vänskaper "
+"du redan har."
+
+#: apps/accounts/forms.py:295
+msgid ""
+"Off stops a group member from inviting you to a group directly. You can "
+"still join any group yourself using its invite link, if you have one."
+msgstr ""
+"Av hindrar en gruppmedlem från att bjuda in dig till en grupp direkt. Du kan "
+"fortfarande gå med i vilken grupp som helst själv via dess inbjudningslänk, "
+"om du har en."
+
+#: apps/accounts/forms.py:310 apps/accounts/forms.py:591
 #: apps/nutrition/forms.py:39 apps/nutrition/forms.py:432
 msgid "Height (cm)"
 msgstr "Längd (cm)"
 
-#: apps/accounts/forms.py:298 apps/accounts/forms.py:555
+#: apps/accounts/forms.py:310 apps/accounts/forms.py:591
 #: apps/nutrition/forms.py:39 apps/nutrition/forms.py:432
 msgid "Height (in)"
 msgstr "Längd (in)"
 
-#: apps/accounts/forms.py:339 apps/accounts/forms.py:366
+#: apps/accounts/forms.py:351 apps/accounts/forms.py:378
 msgid "Verification code"
 msgstr "Verifieringskod"
 
-#: apps/accounts/forms.py:350
+#: apps/accounts/forms.py:362
 msgid "Incorrect code — check your authenticator app and try again."
 msgstr "Fel kod — kontrollera din autentiseringsapp och försök igen."
 
-#: apps/accounts/forms.py:378
+#: apps/accounts/forms.py:390
 msgid "Too many incorrect codes. Try again in a few minutes."
 msgstr "För många felaktiga koder. Försök igen om några minuter."
 
-#: apps/accounts/forms.py:391
+#: apps/accounts/forms.py:403
 msgid "Incorrect code."
 msgstr "Fel kod."
 
-#: apps/accounts/forms.py:405 apps/accounts/forms.py:431
+#: apps/accounts/forms.py:417 apps/accounts/forms.py:443
 msgid "Password"
 msgstr "Lösenord"
 
-#: apps/accounts/forms.py:414 apps/accounts/forms.py:445
+#: apps/accounts/forms.py:426 apps/accounts/forms.py:457
 msgid "Incorrect password."
 msgstr "Fel lösenord."
 
-#: apps/accounts/forms.py:434
+#: apps/accounts/forms.py:446
 msgid "Type your username to confirm"
 msgstr "Skriv ditt användarnamn för att bekräfta"
 
-#: apps/accounts/forms.py:447
+#: apps/accounts/forms.py:459
 msgid "Doesn't match your username."
 msgstr "Matchar inte ditt användarnamn."
 
-#: apps/accounts/forms.py:471
+#: apps/accounts/forms.py:483
 msgid "First name"
 msgstr "Förnamn"
 
-#: apps/accounts/forms.py:473
+#: apps/accounts/forms.py:485
 msgid ""
 "Used to personalize your dashboard greeting, and next to your username "
 "wherever your activity is shown to others (if you allow that in your "
@@ -166,11 +193,11 @@ msgstr ""
 "användarnamn där din aktivitet visas för andra (om du tillåter det i din "
 "profil)."
 
-#: apps/accounts/forms.py:480
+#: apps/accounts/forms.py:492
 msgid "Email"
 msgstr "E-post"
 
-#: apps/accounts/forms.py:482
+#: apps/accounts/forms.py:494
 msgid ""
 "Used only for password-reset emails if you ever get locked out. Never shown "
 "to other users."
@@ -178,7 +205,7 @@ msgstr ""
 "Används endast för lösenordsåterställningsmejl om du någonsin blir utelåst. "
 "Visas aldrig för andra användare."
 
-#: apps/accounts/forms.py:492
+#: apps/accounts/forms.py:504
 msgid ""
 "Logged as your first body-weight entry, so your progress charts have a "
 "starting point. Leave blank and log it anytime from the Body weight page "
@@ -188,7 +215,7 @@ msgstr ""
 "startpunkt. Lämna tomt och logga den istället när som helst från sidan "
 "Kroppsvikt."
 
-#: apps/accounts/forms.py:507
+#: apps/accounts/forms.py:519
 msgid ""
 "Used together with a logged body weight to show your BMI. Leave blank to "
 "skip this — you can add it anytime from your profile."
@@ -197,7 +224,7 @@ msgstr ""
 "tomt för att hoppa över detta — du kan lägga till det när som helst från din "
 "profil."
 
-#: apps/accounts/forms.py:516
+#: apps/accounts/forms.py:528
 msgid ""
 "Sets whether weights and distances are shown in kg/km or lb/mi throughout "
 "the app. Change this anytime from your profile."
@@ -205,7 +232,7 @@ msgstr ""
 "Anger om vikter och avstånd visas i kg/km eller lb/mi i hela appen. Ändra "
 "detta när som helst från din profil."
 
-#: apps/accounts/forms.py:536
+#: apps/accounts/forms.py:548
 msgid ""
 "Used for \"today\" and date ranges throughout the app. Change this anytime "
 "from your profile."
@@ -214,13 +241,31 @@ msgstr ""
 "som helst från din profil.Anger om vikter och avstånd visas i kg/km eller lb/"
 "mi i hela appen. Ändra detta när som helst från din profil."
 
-#: apps/accounts/forms.py:550 apps/nutrition/forms.py:40
+#: apps/accounts/forms.py:561
+msgid ""
+"Lets other users on this instance send you a friend request. Change this "
+"anytime from your profile."
+msgstr ""
+"Låter andra användare på den här instansen skicka en vänförfrågan till dig. "
+"Du kan ändra detta när som helst från din profil."
+
+#: apps/accounts/forms.py:569
+msgid ""
+"Lets a group member invite you to a group directly. You can always join a "
+"group yourself using its invite link either way. Change this anytime from "
+"your profile."
+msgstr ""
+"Låter en gruppmedlem bjuda in dig till en grupp direkt. Du kan alltid gå med "
+"i en grupp själv via dess inbjudningslänk oavsett. Du kan ändra detta när "
+"som helst från din profil."
+
+#: apps/accounts/forms.py:586 apps/nutrition/forms.py:40
 #: apps/nutrition/forms.py:441 apps/nutrition/forms.py:645
 #, python-format
 msgid "Current weight (%(unit)s)"
 msgstr "Nuvarande vikt (%(unit)s)"
 
-#: apps/accounts/forms.py:552
+#: apps/accounts/forms.py:588
 msgid "Current weight"
 msgstr "Nuvarande vikt"
 
@@ -232,7 +277,7 @@ msgstr "Metriskt (kg, km)"
 msgid "Imperial (lb, mi)"
 msgstr "Brittiskt (lb, mi)"
 
-#: apps/accounts/models.py:208
+#: apps/accounts/models.py:229
 msgid ""
 "Shown as a footer note on the login and signup pages. Leave blank to hide it "
 "entirely."
@@ -435,7 +480,8 @@ msgstr "Uppdatera"
 msgid "Delete"
 msgstr "Ta bort"
 
-#: apps/api/forms.py:29 templates/admin/nutrition/food/merge.html:14
+#: apps/api/forms.py:29 apps/social/forms.py:13
+#: templates/admin/nutrition/food/merge.html:14
 #: templates/nutrition/food_list.html:26
 msgid "Name"
 msgstr "Namn"
@@ -446,7 +492,7 @@ msgstr "En etikett för att skilja dina nycklar åt."
 
 #: apps/api/models.py:24 templates/accounts/profile.html:3
 #: templates/accounts/profile.html:19 templates/api/key_list.html:85
-#: templates/base.html:119 templates/base.html:121
+#: templates/base.html:119 templates/base.html:124
 msgid "Profile"
 msgstr "Profil"
 
@@ -504,7 +550,7 @@ msgstr "Du har nått ditt max antal API-nycklar."
 msgid "API key revoked."
 msgstr "API-nyckeln har återkallats."
 
-#: apps/core/admin.py:17 templates/accounts/profile.html:113
+#: apps/core/admin.py:17 templates/accounts/profile.html:123
 msgid "Administration"
 msgstr "Administration"
 
@@ -589,7 +635,8 @@ msgstr "Kategori"
 msgid "Subject"
 msgstr "Ämne"
 
-#: apps/core/forms.py:61
+#: apps/core/forms.py:61 apps/social/forms.py:25
+#: templates/social/friend_list.html:45
 msgid "Message"
 msgstr "Meddelande"
 
@@ -931,7 +978,7 @@ msgstr "Tricepspress i kabel"
 msgid "Abs"
 msgstr "Mage"
 
-#: apps/exercises/i18n_content.py:55
+#: apps/exercises/i18n_content.py:55 templates/social/group_form.html:23
 msgid "Back"
 msgstr "Rygg"
 
@@ -2284,6 +2331,247 @@ msgstr "Setvolym"
 msgid "Session volume"
 msgstr "Passets volym"
 
+#: apps/social/forms.py:13
+msgid "Description"
+msgstr "Beskrivning"
+
+#: apps/social/forms.py:38
+msgid "Friend"
+msgstr "Vän"
+
+#: apps/social/models.py:20 apps/social/models.py:190
+msgid "Pending"
+msgstr "Väntande"
+
+#: apps/social/models.py:21 apps/social/models.py:191
+msgid "Accepted"
+msgstr "Accepterad"
+
+#: apps/social/models.py:22 apps/social/models.py:192
+msgid "Declined"
+msgstr "Avvisad"
+
+#: apps/social/models.py:114 templates/admin/nutrition/food/merge.html:16
+#: templates/social/group_detail.html:69
+msgid "Owner"
+msgstr "Ägare"
+
+#: apps/social/models.py:115 templates/accounts/profile.html:126
+#: templates/social/group_detail.html:70
+msgid "Admin"
+msgstr "Admin"
+
+#: apps/social/models.py:116
+msgid "Member"
+msgstr "Medlem"
+
+#: apps/social/services.py:81
+msgid "You can't send yourself a friend request."
+msgstr "Du kan inte skicka en vänförfrågan till dig själv."
+
+#: apps/social/services.py:83
+msgid "You can't send a friend request to this user."
+msgstr "Du kan inte skicka en vänförfrågan till den här användaren."
+
+#: apps/social/services.py:85
+msgid "You're already friends."
+msgstr "Ni är redan vänner."
+
+#: apps/social/services.py:87
+msgid "This user isn't accepting friend requests."
+msgstr "Den här användaren tar inte emot vänförfrågningar."
+
+#: apps/social/services.py:90
+msgid "You already sent a friend request to this user."
+msgstr "Du har redan skickat en vänförfrågan till den här användaren."
+
+#: apps/social/services.py:110 apps/social/services.py:123
+msgid "You can't respond to this friend request."
+msgstr "Du kan inte svara på den här vänförfrågan."
+
+#: apps/social/services.py:112 apps/social/services.py:125
+msgid "This friend request has already been answered."
+msgstr "Den här vänförfrågan har redan besvarats."
+
+#: apps/social/services.py:140
+msgid "You can't block yourself."
+msgstr "Du kan inte blockera dig själv."
+
+#: apps/social/services.py:156
+msgid "You can't message this user."
+msgstr "Du kan inte skicka meddelanden till den här användaren."
+
+#: apps/social/services.py:158
+msgid "You can only message friends."
+msgstr "Du kan bara skicka meddelanden till vänner."
+
+#: apps/social/services.py:220 templates/social/group_invite_join.html:11
+msgid "This invite link isn't valid, or is no longer active."
+msgstr "Den här inbjudningslänken är ogiltig eller inte längre aktiv."
+
+#: apps/social/services.py:230 apps/social/services.py:297
+#: apps/social/services.py:385
+msgid "You're not a member of this group."
+msgstr "Du är inte medlem i den här gruppen."
+
+#: apps/social/services.py:232
+msgid "This user is already in the group."
+msgstr "Den här användaren är redan med i gruppen."
+
+#: apps/social/services.py:241
+msgid "You can only invite a friend."
+msgstr "Du kan bara bjuda in en vän."
+
+#: apps/social/services.py:243
+msgid "This user isn't accepting group invites."
+msgstr "Den här användaren tar inte emot gruppinbjudningar."
+
+#: apps/social/services.py:246
+msgid "This user has already been invited."
+msgstr "Den här användaren har redan bjudits in."
+
+#: apps/social/services.py:259 apps/social/services.py:273
+msgid "You can't respond to this invite."
+msgstr "Du kan inte svara på den här inbjudan."
+
+#: apps/social/services.py:261 apps/social/services.py:275
+msgid "This invite has already been answered."
+msgstr "Den här inbjudan har redan besvarats."
+
+#: apps/social/services.py:285
+msgid "You don't have permission to remove members from this group."
+msgstr "Du har inte behörighet att ta bort medlemmar från den här gruppen."
+
+#: apps/social/services.py:288 apps/social/services.py:313
+#: apps/social/services.py:334
+msgid "This user isn't a member of this group."
+msgstr "Den här användaren är inte medlem i den här gruppen."
+
+#: apps/social/services.py:290
+msgid "The group owner can't be removed."
+msgstr "Gruppens ägare kan inte tas bort."
+
+#: apps/social/services.py:300
+msgid "Transfer ownership to someone else before leaving a group you own."
+msgstr "Överför ägarskapet till någon annan innan du lämnar en grupp du äger."
+
+#: apps/social/services.py:308
+msgid "Only the group owner can change member roles."
+msgstr "Endast gruppens ägare kan ändra medlemmars roller."
+
+#: apps/social/services.py:310
+msgid "You can't change your own role."
+msgstr "Du kan inte ändra din egen roll."
+
+#: apps/social/services.py:329
+msgid "Only the group owner can transfer ownership."
+msgstr "Endast gruppens ägare kan överföra ägarskapet."
+
+#: apps/social/services.py:331
+msgid "You're already the owner."
+msgstr "Du är redan ägaren."
+
+#: apps/social/services.py:360
+msgid "Only the group owner can delete the group."
+msgstr "Endast gruppens ägare kan ta bort gruppen."
+
+#: apps/social/views_friends.py:67
+msgid "Friend request sent."
+msgstr "Vänförfrågan skickad."
+
+#: apps/social/views_friends.py:82
+msgid "Friend request accepted."
+msgstr "Vänförfrågan accepterad."
+
+#: apps/social/views_friends.py:85
+msgid "Friend request declined."
+msgstr "Vänförfrågan avvisad."
+
+#: apps/social/views_friends.py:87 apps/social/views_groups.py:206
+msgid "Unknown action."
+msgstr "Okänd åtgärd."
+
+#: apps/social/views_friends.py:99
+msgid "Removed from your friends."
+msgstr "Borttagen från dina vänner."
+
+#: apps/social/views_friends.py:116
+msgid "User blocked."
+msgstr "Användaren blockerad."
+
+#: apps/social/views_friends.py:128
+msgid "User unblocked."
+msgstr "Blockeringen av användaren togs bort."
+
+#: apps/social/views_groups.py:71
+msgid "Group created."
+msgstr "Gruppen skapades."
+
+#: apps/social/views_groups.py:118
+msgid "You don't have permission to edit this group."
+msgstr "Du har inte behörighet att redigera den här gruppen."
+
+#: apps/social/views_groups.py:124
+msgid "Group updated."
+msgstr "Gruppen uppdaterades."
+
+#: apps/social/views_groups.py:138
+msgid "Group deleted."
+msgstr "Gruppen togs bort."
+
+#: apps/social/views_groups.py:151 apps/social/views_groups.py:168
+msgid "You don't have permission to manage this group's invite link."
+msgstr "Du har inte behörighet att hantera den här gruppens inbjudningslänk."
+
+#: apps/social/views_groups.py:155
+msgid "Invite link disabled."
+msgstr "Inbjudningslänken inaktiverades."
+
+#: apps/social/views_groups.py:158
+msgid "Invite link enabled."
+msgstr "Inbjudningslänken aktiverades."
+
+#: apps/social/views_groups.py:171
+msgid "Invite link regenerated — the old link no longer works."
+msgstr ""
+"Inbjudningslänken skapades på nytt — den gamla länken fungerar inte längre."
+
+#: apps/social/views_groups.py:185
+msgid "Invite sent."
+msgstr "Inbjudan skickad."
+
+#: apps/social/views_groups.py:200 apps/social/views_groups.py:297
+msgid "Joined the group."
+msgstr "Gick med i gruppen."
+
+#: apps/social/views_groups.py:204
+msgid "Invite declined."
+msgstr "Inbjudan avvisad."
+
+#: apps/social/views_groups.py:220
+msgid "Member removed."
+msgstr "Medlemmen togs bort."
+
+#: apps/social/views_groups.py:234
+msgid "Unknown role."
+msgstr "Okänd roll."
+
+#: apps/social/views_groups.py:238
+msgid "Role updated."
+msgstr "Rollen uppdaterades."
+
+#: apps/social/views_groups.py:252
+msgid "Ownership transferred."
+msgstr "Ägarskapet överfördes."
+
+#: apps/social/views_groups.py:265
+msgid "Left the group."
+msgstr "Lämnade gruppen."
+
+#: apps/social/views_groups.py:282
+msgid "Too many attempts. Try again in a few minutes."
+msgstr "För många försök. Försök igen om några minuter."
+
 #: apps/workouts/forms.py:40
 msgid "reps"
 msgstr "repetitioner"
@@ -2402,7 +2690,7 @@ msgstr ""
 #: templates/nutrition/recipe_ingredient_edit_form.html:20
 #: templates/programs/prescription_form.html:19
 #: templates/programs/program_form.html:19
-#: templates/programs/workout_form.html:19
+#: templates/programs/workout_form.html:19 templates/social/group_form.html:19
 #: templates/workouts/set_edit_form.html:19
 msgid "Save"
 msgstr "Spara"
@@ -2414,7 +2702,7 @@ msgid "Privacy notice"
 msgstr "Integritetspolicy"
 
 #: templates/accounts/_privacy_notice_modal.html:27
-#: templates/accounts/profile.html:176 templates/api/key_list.html:20
+#: templates/accounts/profile.html:186 templates/api/key_list.html:20
 #: templates/base.html:92 templates/nutrition/_month_calendar.html:67
 #: templates/records/_pr_toasts.html:28
 msgid "Dismiss"
@@ -2525,7 +2813,7 @@ msgid "Done"
 msgstr "Klar"
 
 #: templates/accounts/account_delete.html:3
-#: templates/accounts/account_delete.html:6 templates/accounts/profile.html:151
+#: templates/accounts/account_delete.html:6 templates/accounts/profile.html:161
 msgid "Delete account"
 msgstr "Radera konto"
 
@@ -2595,7 +2883,7 @@ msgid "Back to profile"
 msgstr "Tillbaka till profilen"
 
 #: templates/accounts/data_export.html:3 templates/accounts/data_export.html:6
-#: templates/accounts/profile.html:95
+#: templates/accounts/profile.html:105
 msgid "Download your data"
 msgstr "Ladda ner dina uppgifter"
 
@@ -2630,10 +2918,11 @@ msgid "Update your username, name, and email address."
 msgstr "Uppdatera ditt användarnamn, namn och e-postadress."
 
 #: templates/accounts/profile.html:54 templates/accounts/profile.html:66
-#: templates/accounts/profile.html:90 templates/accounts/profile.html:98
-#: templates/accounts/profile.html:107 templates/accounts/profile.html:119
-#: templates/accounts/profile.html:127 templates/accounts/profile.html:135
-#: templates/accounts/profile.html:143 templates/accounts/profile.html:154
+#: templates/accounts/profile.html:91 templates/accounts/profile.html:100
+#: templates/accounts/profile.html:108 templates/accounts/profile.html:117
+#: templates/accounts/profile.html:129 templates/accounts/profile.html:137
+#: templates/accounts/profile.html:145 templates/accounts/profile.html:153
+#: templates/accounts/profile.html:164
 #: templates/nutrition/calculators_home.html:16
 #: templates/nutrition/calculators_home.html:24
 #: templates/nutrition/calculators_home.html:32
@@ -2681,79 +2970,83 @@ msgstr "Hantera"
 msgid "Set up"
 msgstr "Konfigurera"
 
-#: templates/accounts/profile.html:87 templates/api/key_list.html:3
+#: templates/accounts/profile.html:87 templates/social/message_list.html:6
+msgid "Friends & groups"
+msgstr "Vänner och grupper"
+
+#: templates/accounts/profile.html:88
+msgid "Friends, groups, and messages."
+msgstr "Vänner, grupper och meddelanden."
+
+#: templates/accounts/profile.html:97 templates/api/key_list.html:3
 #: templates/api/key_list.html:7
 msgid "API keys"
 msgstr "API-nycklar"
 
-#: templates/accounts/profile.html:88
+#: templates/accounts/profile.html:98
 msgid "Manage keys other apps can use to access your data."
 msgstr ""
 "Hantera nycklar som andra appar kan använda för att komma åt dina data."
 
-#: templates/accounts/profile.html:96
+#: templates/accounts/profile.html:106
 msgid "Browse everything you've logged, or download it as JSON, CSV, or HTML."
 msgstr ""
 "Bläddra bland allt du har loggat, eller ladda ner det som JSON, CSV eller "
 "HTML."
 
-#: templates/accounts/profile.html:104 templates/accounts/profile.html:132
+#: templates/accounts/profile.html:114 templates/accounts/profile.html:142
 #: templates/core/feedback_form.html:3 templates/core/feedback_form.html:6
 #: templates/core/feedback_list.html:3 templates/core/feedback_list.html:6
 msgid "Feedback"
 msgstr "Feedback"
 
-#: templates/accounts/profile.html:105
+#: templates/accounts/profile.html:115
 msgid "Report a bug, request something, or tell us what's confusing."
 msgstr ""
 "Rapportera en bugg, önska något, eller berätta vad som känns förvirrande."
 
-#: templates/accounts/profile.html:116
-msgid "Admin"
-msgstr "Admin"
-
-#: templates/accounts/profile.html:117
+#: templates/accounts/profile.html:127
 msgid "Manage tiers, keys, and reference data across the whole instance."
 msgstr "Hantera nivåer, nycklar och referensdata över hela instansen."
 
-#: templates/accounts/profile.html:124 templates/core/backup_list.html:3
+#: templates/accounts/profile.html:134 templates/core/backup_list.html:3
 #: templates/core/backup_list.html:6
 msgid "Backups"
 msgstr "Säkerhetskopior"
 
-#: templates/accounts/profile.html:125
+#: templates/accounts/profile.html:135
 msgid "Create, download, and restore full backups of this instance."
 msgstr ""
 "Skapa, ladda ner och återställ fullständiga säkerhetskopior av den här "
 "instansen."
 
-#: templates/accounts/profile.html:133
+#: templates/accounts/profile.html:143
 msgid "Read what users have submitted, and turn submissions on or off."
 msgstr "Läs vad användare har skickat in, och slå på eller av inskickning."
 
-#: templates/accounts/profile.html:140 templates/core/seo_settings.html:3
+#: templates/accounts/profile.html:150 templates/core/seo_settings.html:3
 #: templates/core/seo_settings.html:6
 msgid "Site & SEO"
 msgstr "Webbplats och SEO"
 
-#: templates/accounts/profile.html:141
+#: templates/accounts/profile.html:151
 msgid "Control whether search engines are allowed to index this instance."
 msgstr "Styr om sökmotorer får indexera denna instans."
 
-#: templates/accounts/profile.html:152
+#: templates/accounts/profile.html:162
 msgid "Permanently delete your account and everything tied to it."
 msgstr "Radera ditt konto och allt kopplat till det permanent."
 
-#: templates/accounts/profile.html:160
+#: templates/accounts/profile.html:170
 msgid "Log out"
 msgstr "Logga ut"
 
-#: templates/accounts/profile.html:167
+#: templates/accounts/profile.html:177
 #, python-format
 msgid "IronStack version %(version)s"
 msgstr "IronStack version %(version)s"
 
-#: templates/accounts/profile.html:172 templates/accounts/profile.html:175
+#: templates/accounts/profile.html:182 templates/accounts/profile.html:185
 msgid "Changelog"
 msgstr "Ändringslogg"
 
@@ -2772,6 +3065,7 @@ msgstr "Har du redan ett konto?"
 #: templates/accounts/signup.html:21 templates/registration/login.html:3
 #: templates/registration/login.html:6 templates/registration/login.html:26
 #: templates/registration/password_reset_complete.html:13
+#: templates/social/group_invite_join.html:29
 msgid "Log in"
 msgstr "Logga in"
 
@@ -2824,6 +3118,7 @@ msgid "Replace your backup codes? The old ones will stop working."
 msgstr "Ersätta dina reservkoder? De gamla slutar fungera."
 
 #: templates/accounts/two_factor_manage.html:21
+#: templates/social/group_detail.html:31
 msgid "Regenerate"
 msgstr "Skapa nya"
 
@@ -2930,6 +3225,7 @@ msgstr "Distans"
 #: templates/programs/program_detail.html:8
 #: templates/programs/program_detail.html:41
 #: templates/programs/program_detail.html:58
+#: templates/social/group_detail.html:8
 #: templates/workouts/_performed_exercise_card.html:24
 msgid "Edit"
 msgstr "Redigera"
@@ -3022,10 +3318,6 @@ msgstr "Behåll"
 #: templates/admin/nutrition/food/merge.html:15
 msgid "Brand"
 msgstr "Märke"
-
-#: templates/admin/nutrition/food/merge.html:16
-msgid "Owner"
-msgstr "Ägare"
 
 #: templates/admin/nutrition/food/merge.html:17
 #: templates/nutrition/dashboard.html:21 templates/nutrition/dashboard.html:48
@@ -3345,7 +3637,11 @@ msgstr "Hem"
 msgid "Workout"
 msgstr "Träning"
 
-#: templates/base.html:127
+#: templates/base.html:119
+msgid "Profile — new friend/group activity"
+msgstr "Profil — ny vän-/gruppaktivitet"
+
+#: templates/base.html:130
 msgid "Continue training"
 msgstr "Fortsätt träna"
 
@@ -3839,6 +4135,8 @@ msgstr "Ta bort detta objekt?"
 
 #: templates/nutrition/_diet_plan_meal_card.html:25
 #: templates/nutrition/recipe_detail.html:38
+#: templates/social/friend_list.html:49 templates/social/group_detail.html:87
+#: templates/social/group_detail.html:99
 msgid "Remove"
 msgstr "Ta bort"
 
@@ -5161,6 +5459,270 @@ msgstr ""
 msgid "Verify"
 msgstr "Verifiera"
 
+#: templates/social/_friend_search_results.html:7
+msgid "Add friend"
+msgstr "Lägg till vän"
+
+#: templates/social/_friend_search_results.html:13
+msgid "No users found."
+msgstr "Inga användare hittades."
+
+#: templates/social/_group_thread_fragment.html:8
+#: templates/social/_message_thread_fragment.html:8
+msgid "No messages yet — say hello."
+msgstr "Inga meddelanden ännu — säg hej."
+
+#: templates/social/block_list.html:3 templates/social/block_list.html:6
+#: templates/social/friend_list.html:60 templates/social/message_list.html:29
+msgid "Blocked users"
+msgstr "Blockerade användare"
+
+#: templates/social/block_list.html:14
+msgid "Unblock"
+msgstr "Häv blockering"
+
+#: templates/social/block_list.html:19
+msgid "You haven't blocked anyone."
+msgstr "Du har inte blockerat någon."
+
+#: templates/social/block_list.html:23 templates/social/friend_list.html:3
+#: templates/social/friend_list.html:6 templates/social/friend_search.html:19
+#: templates/social/message_list.html:27
+msgid "Friends"
+msgstr "Vänner"
+
+#: templates/social/friend_list.html:7 templates/social/friend_search.html:3
+#: templates/social/friend_search.html:6
+msgid "Find friends"
+msgstr "Hitta vänner"
+
+#: templates/social/friend_list.html:11
+msgid "Friend requests"
+msgstr "Vänförfrågningar"
+
+#: templates/social/friend_list.html:19
+msgid "Accept"
+msgstr "Acceptera"
+
+#: templates/social/friend_list.html:24 templates/social/group_list.html:27
+msgid "Decline"
+msgstr "Avvisa"
+
+#: templates/social/friend_list.html:32
+msgid "Sent requests"
+msgstr "Skickade förfrågningar"
+
+#: templates/social/friend_list.html:35
+#, python-format
+msgid "Waiting on %(username)s"
+msgstr "Väntar på %(username)s"
+
+#: templates/social/friend_list.html:40
+msgid "Your friends"
+msgstr "Dina vänner"
+
+#: templates/social/friend_list.html:47
+msgid "Remove this friend?"
+msgstr "Ta bort den här vännen?"
+
+#: templates/social/friend_list.html:55
+msgid "No friends yet."
+msgstr "Inga vänner ännu."
+
+#: templates/social/friend_list.html:61 templates/social/group_list.html:49
+#: templates/social/message_list.html:3 templates/social/message_thread.html:7
+msgid "Messages"
+msgstr "Meddelanden"
+
+#: templates/social/friend_search.html:11
+msgid "Search by username…"
+msgstr "Sök på användarnamn…"
+
+#: templates/social/friend_search.html:12
+msgid "Search by username"
+msgstr "Sök på användarnamn"
+
+#: templates/social/group_detail.html:14
+msgid "Open chat"
+msgstr "Öppna chatt"
+
+#: templates/social/group_detail.html:18
+msgid "Invite link"
+msgstr "Inbjudningslänk"
+
+#: templates/social/group_detail.html:26
+msgid "Disable link"
+msgstr "Inaktivera länk"
+
+#: templates/social/group_detail.html:29
+msgid "Regenerate the invite link? The old link will stop working."
+msgstr "Skapa en ny inbjudningslänk? Den gamla länken slutar fungera."
+
+#: templates/social/group_detail.html:35
+msgid "Anyone with this link can join — off until you turn it on."
+msgstr ""
+"Vem som helst med den här länken kan gå med — av tills du aktiverar den."
+
+#: templates/social/group_detail.html:38
+msgid "Enable link"
+msgstr "Aktivera länk"
+
+#: templates/social/group_detail.html:52
+msgid "Invite a friend"
+msgstr "Bjud in en vän"
+
+#: templates/social/group_detail.html:59
+msgid "Send invite"
+msgstr "Skicka inbjudan"
+
+#: templates/social/group_detail.html:64
+msgid "Members (%(count)s)"
+msgstr "Medlemmar (%(count)s)"
+
+#: templates/social/group_detail.html:68
+msgid "(you)"
+msgstr "(du)"
+
+#: templates/social/group_detail.html:78
+msgid "Remove admin"
+msgstr "Ta bort admin"
+
+#: templates/social/group_detail.html:81
+msgid "Make admin"
+msgstr "Gör till admin"
+
+#: templates/social/group_detail.html:85 templates/social/group_detail.html:97
+msgid "Remove this member from the group?"
+msgstr "Ta bort den här medlemmen från gruppen?"
+
+#: templates/social/group_detail.html:90
+msgid "Transfer ownership of this group? You will become an admin instead."
+msgstr "Överför ägarskapet för den här gruppen? Du blir admin istället."
+
+#: templates/social/group_detail.html:92
+msgid "Make owner"
+msgstr "Gör till ägare"
+
+#: templates/social/group_detail.html:108
+msgid "Leave this group?"
+msgstr "Lämna den här gruppen?"
+
+#: templates/social/group_detail.html:110
+msgid "Leave group"
+msgstr "Lämna grupp"
+
+#: templates/social/group_detail.html:114
+msgid "Delete this group? This can't be undone."
+msgstr "Ta bort gruppen? Detta kan inte ångras."
+
+#: templates/social/group_detail.html:116
+msgid "Delete group"
+msgstr "Ta bort grupp"
+
+#: templates/social/group_detail.html:121 templates/social/group_list.html:3
+#: templates/social/group_list.html:6 templates/social/message_list.html:28
+msgid "Groups"
+msgstr "Grupper"
+
+#: templates/social/group_form.html:3 templates/social/group_form.html:6
+msgid "Edit group"
+msgstr "Redigera grupp"
+
+#: templates/social/group_form.html:3 templates/social/group_form.html:6
+#: templates/social/group_list.html:7
+msgid "New group"
+msgstr "Ny grupp"
+
+#: templates/social/group_invite_join.html:3
+#: templates/social/group_invite_join.html:6
+#: templates/social/group_invite_join.html:25
+msgid "Join group"
+msgstr "Gå med i grupp"
+
+#: templates/social/group_invite_join.html:15
+#, python-format
+msgid "You're already a member of \"%(name)s\"."
+msgstr "Du är redan medlem i \"%(name)s\"."
+
+#: templates/social/group_invite_join.html:16
+msgid "Open group"
+msgstr "Öppna grupp"
+
+#: templates/social/group_invite_join.html:28
+msgid "Log in to join this group."
+msgstr "Logga in för att gå med i den här gruppen."
+
+#: templates/social/group_list.html:11
+msgid "Group invites"
+msgstr "Gruppinbjudningar"
+
+#: templates/social/group_list.html:16
+#, python-format
+msgid "Invited by %(username)s"
+msgstr "Inbjuden av %(username)s"
+
+#: templates/social/group_list.html:22
+msgid "Join"
+msgstr "Gå med"
+
+#: templates/social/group_list.html:37 templates/social/message_list.html:36
+#: templates/social/message_list.html:48
+#, python-format
+msgid "%(counter)s unread"
+msgid_plural "%(counter)s unread"
+msgstr[0] "%(counter)s oläst"
+msgstr[1] "%(counter)s olästa"
+
+#: templates/social/group_list.html:39
+#, python-format
+msgid "%(counter)s member"
+msgid_plural "%(counter)s members"
+msgstr[0] "%(counter)s medlem"
+msgstr[1] "%(counter)s medlemmar"
+
+#: templates/social/group_list.html:45 templates/social/message_list.html:52
+msgid "You're not in any groups yet."
+msgstr "Du är inte med i några grupper ännu."
+
+#: templates/social/group_thread.html:7
+msgid "Group"
+msgstr "Grupp"
+
+#: templates/social/group_thread.html:32
+#: templates/social/message_thread.html:41
+msgid "Send"
+msgstr "Skicka"
+
+#: templates/social/message_list.html:13
+#, python-format
+msgid "You have %(counter)s friend request waiting."
+msgid_plural "You have %(counter)s friend requests waiting."
+msgstr[0] "Du har %(counter)s väntande vänförfrågan."
+msgstr[1] "Du har %(counter)s väntande vänförfrågningar."
+
+#: templates/social/message_list.html:14 templates/social/message_list.html:20
+msgid "Review"
+msgstr "Granska"
+
+#: templates/social/message_list.html:19
+#, python-format
+msgid "You have %(counter)s group invite waiting."
+msgid_plural "You have %(counter)s group invites waiting."
+msgstr[0] "Du har %(counter)s väntande gruppinbjudan."
+msgstr[1] "Du har %(counter)s väntande gruppinbjudningar."
+
+#: templates/social/message_list.html:32
+msgid "Direct messages"
+msgstr "Direktmeddelanden"
+
+#: templates/social/message_list.html:40
+msgid "No friends to message yet."
+msgstr "Inga vänner att skicka meddelanden till ännu."
+
+#: templates/social/message_list.html:44
+msgid "Group chats"
+msgstr "Gruppchattar"
+
 #: templates/workouts/_performed_exercise_card.html:6
 #: templates/workouts/_train_panel.html:39
 #, python-format
@@ -5307,3 +5869,9 @@ msgstr "Redigera set"
 #, python-format
 msgid "Edit set %(number)s"
 msgstr "Redigera set %(number)s"
+
+#~ msgid "You can't invite this user."
+#~ msgstr "Du kan inte bjuda in den här användaren."
+
+#~ msgid "Members"
+#~ msgstr "Medlemmar"

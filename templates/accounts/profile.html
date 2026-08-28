@@ -82,6 +82,16 @@
 
 <div class="card card-action-row">
   <div>
+    <strong>{% trans "Friends & groups" %}</strong>
+    <p class="text-muted">{% trans "Friends, groups, and messages." %}</p>
+  </div>
+  <a class="button-secondary" href="{% url 'social:message-list' %}">
+    {% trans "Open" %}{% if social_badge %} <span class="nav-badge" aria-hidden="true" style="position:static; display:inline-block; vertical-align:middle;"></span>{% endif %}
+  </a>
+</div>
+
+<div class="card card-action-row">
+  <div>
     <strong>{% trans "API keys" %}</strong>
     <p class="text-muted">{% trans "Manage keys other apps can use to access your data." %}</p>
   </div>

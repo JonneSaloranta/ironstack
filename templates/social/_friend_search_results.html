@@ -1,0 +1,16 @@
+{% load i18n %}
+{% for user in results %}
+  <div class="card card-action-row">
+    <div><strong>{{ user.username }}</strong></div>
+    <form method="post" action="{% url 'social:friend-request-send' user.pk %}">
+      {% csrf_token %}
+      <button type="submit" class="button-secondary">{% trans "Add friend" %}</button>
+    </form>
+  </div>
+{% empty %}
+  {% if query %}
+    <div class="card empty-state">
+      <p>{% trans "No users found." %}</p>
+    </div>
+  {% endif %}
+{% endfor %}
