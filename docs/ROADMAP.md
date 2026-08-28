@@ -76,8 +76,11 @@ explicitly requested" — until they were.
 - groups with owner/admin/member roles; a short, unguessable invite
   link, or a direct invite to a friend (its own opt-out privacy
   setting)
-- direct messages and group chat, HTMX-polled, no separate
-  notification system
+- direct messages and group chat, HTMX-polled — plus an opt-in Web
+  Push notification when a message arrives, and a floating
+  always-visible unread-messages button on every page (the same
+  treatment training-in-progress already gets), both added on direct
+  request after v3 first shipped without them
 - a small badge on the Profile nav icon for anything waiting on you
 - the two privacy settings asked once during onboarding, editable
   anytime from Profile, and exposed on the public API alongside the
