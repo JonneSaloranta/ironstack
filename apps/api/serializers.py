@@ -47,6 +47,8 @@ class ProfileSerializer(serializers.ModelSerializer):
             "height",
             "show_bmi",
             "show_achievements",
+            "allow_friend_requests",
+            "allow_group_invites",
             "language",
         ]
         read_only_fields = ["username"]

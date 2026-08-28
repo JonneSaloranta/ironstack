@@ -28,7 +28,10 @@ narrated summary of the same version.
   onboarding and editable anytime from Profile. Reachable from a new
   "Friends & groups" card on the profile page, with a small dot badge
   on the Profile nav icon whenever something's waiting on you (a
-  request, an invite, an unread message).
+  request, an invite, an unread message). The two privacy settings are
+  also readable/writable from the public API (`GET`/`PATCH`
+  `/api/v1/profile/`), alongside the other display preferences already
+  exposed there.
 
 ## [1.5.0] — 2026-08-27
 
