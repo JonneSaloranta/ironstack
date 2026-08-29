@@ -3388,3 +3388,39 @@ Verified live, not just with mocked tests: muted a friend, sent a
 message from them with `apps.core.push.send_push_notification` mocked
 and confirmed it was never called while the message still saved
 normally; unmuted, confirmed the same call resumed.
+
+## Install-to-home-screen recommendation
+
+A slim banner (`templates/core/_pwa_install_prompt.html`, pinned above
+the bottom-nav like the training/messages FABs already are) rather than
+a full-screen modal, since it's a suggestion, not something blocking
+the page it's recommending someone install. Only ever rendered for a
+logged-in user, same gating as `.bottom-nav` itself.
+
+Two genuinely different code paths depending on what the browser
+supports, both in `static/js/pwa-install-prompt.js`:
+
+- Chrome/Edge/most Android browsers fire `beforeinstallprompt` ahead of
+  time. `preventDefault()`-ing it and holding onto the event is what
+  lets this banner pick its own moment to show the browser's own
+  native install dialog later, via that same event's `.prompt()` —
+  this is the "use the browser's own install notification" case.
+- iOS Safari never fires that event — there's no programmatic install
+  API on iOS at all, "Add to Home Screen" only exists behind the Share
+  sheet a user opens by hand — so the banner instead shows instructions
+  pointing at it. Deliberately scoped to Safari specifically (not every
+  iOS browser): Chrome/Firefox/Edge on iOS are all WebKit under the
+  hood but don't expose that same Share-sheet action, and their
+  distinct UA tokens (`CriOS`/`FxiOS`/`EdgiOS`) make them easy to tell
+  apart from Safari's own UA. Every other combination (e.g. desktop
+  Firefox) gets no banner at all rather than a guess that might send
+  someone looking for a menu their browser doesn't have.
+
+Three ways to back off, matching what was actually asked for, all
+`localStorage`-backed rather than a `Profile` field — installability,
+and a user's own opinion about it, is a per-browser/per-device thing,
+the same reasoning `static/js/rest-timer.js`'s own `muted` flag
+already follows, not an account-wide setting synced across devices:
+closing the banner (×) and the explicit "Remind me later" button do
+the exact same thing (re-ask in 14 days) — either one means "not now",
+not "never" — while "Don't remind me" opts out permanently.

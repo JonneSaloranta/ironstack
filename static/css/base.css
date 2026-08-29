@@ -1459,6 +1459,10 @@ h2 {
   .messages-fab {
     bottom: 1.5rem;
   }
+
+  .pwa-install-banner {
+    bottom: 0;
+  }
 }
 
 /* Training mode (workouts/session_train.html) */
@@ -1716,4 +1720,89 @@ h2 {
   border-radius: 50%;
   background: currentColor;
   flex-shrink: 0;
+}
+
+/* Install-app recommendation (static/js/pwa-install-prompt.js,
+   templates/core/_pwa_install_prompt.html) — a slim bar pinned just
+   above the bottom-nav, the same "reachable, not blocking" spot
+   .training-fab/.messages-fab already use, rather than a full-screen
+   modal that would cover the very page it's recommending someone
+   install in the first place. */
+.pwa-install-banner {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: calc(var(--nav-height) + env(safe-area-inset-bottom));
+  z-index: 80;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.85rem 2.25rem 0.85rem 0.85rem;
+  background: var(--color-surface);
+  border-top: 1px solid var(--color-border);
+  box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.35);
+}
+
+.pwa-install-icon {
+  border-radius: var(--radius);
+  flex-shrink: 0;
+}
+
+.pwa-install-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.pwa-install-title {
+  margin: 0 0 0.15rem;
+  font-weight: bold;
+}
+
+.pwa-install-text {
+  margin: 0 0 0.6rem;
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+}
+
+.pwa-install-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 1rem;
+}
+
+.pwa-install-actions button {
+  margin-bottom: 0;
+}
+
+/* Styled as plain underlined text rather than a button — a
+   deliberate, easy-to-ignore opt-out sitting next to "Remind me
+   later", the same reasoning .app-version reads as a version string
+   rather than a button even though it also opens a modal (the
+   changelog) on click. */
+.pwa-install-dismiss {
+  background: none;
+  border: none;
+  color: var(--color-text-muted);
+  text-decoration: underline;
+  font-size: 0.85rem;
+  padding: 0;
+  min-height: auto;
+  min-width: auto;
+  cursor: pointer;
+}
+
+.pwa-install-close {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  background: none;
+  border: none;
+  color: var(--color-text-muted);
+  font-size: 1.5rem;
+  line-height: 1;
+  padding: 0.25rem 0.5rem;
+  min-height: auto;
+  min-width: auto;
+  cursor: pointer;
 }

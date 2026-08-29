@@ -525,6 +525,25 @@ class PWATests(TestCase):
         self.assertContains(response, 'src="/static/js/sw-register.js"')
         self.assertContains(response, 'data-service-worker-url="/sw.js"')
 
+    def test_install_prompt_banner_only_renders_for_authenticated_users(self):
+        """templates/core/_pwa_install_prompt.html/static/js/pwa-
+        install-prompt.js — the banner itself decides client-side
+        whether there's anything to actually show (already installed,
+        previously dismissed, ...), but there's no reason to even ship
+        its markup/script on a page an anonymous visitor (e.g. the
+        login page) can reach, same gating as .bottom-nav."""
+        from django.contrib.auth import get_user_model
+
+        get_user_model().objects.create_user(username="alice", password="s3cret-pass")
+
+        anonymous_response = self.client.get(reverse("login"))
+        self.assertNotContains(anonymous_response, "ironstackPwaInstallPrompt")
+
+        self.client.login(username="alice", password="s3cret-pass")
+        authenticated_response = self.client.get(reverse("dashboard"))
+        self.assertContains(authenticated_response, "ironstackPwaInstallPrompt")
+        self.assertContains(authenticated_response, 'src="/static/js/pwa-install-prompt.js"')
+
 
 class VersionTests(TestCase):
     """Single source of truth for the running IronStack version — a

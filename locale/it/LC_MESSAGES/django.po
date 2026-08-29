@@ -5943,6 +5943,30 @@ msgstr "Modifica serie"
 msgid "Edit set %(number)s"
 msgstr "Modifica serie %(number)s"
 
+#: templates/core/_pwa_install_prompt.html:14 templates/core/_pwa_install_prompt.html:17
+msgid "Install IronStack"
+msgstr "Installa IronStack"
+
+#: templates/core/_pwa_install_prompt.html:19
+msgid "Add it to your home screen for quick, full-screen access: tap Share, then \"Add to Home Screen\"."
+msgstr "Aggiungila alla schermata Home per un accesso rapido a schermo intero: tocca Condividi, quindi \"Aggiungi alla schermata Home\"."
+
+#: templates/core/_pwa_install_prompt.html:22
+msgid "Add it to your home screen for quick, full-screen access."
+msgstr "Aggiungila alla schermata Home per un accesso rapido a schermo intero."
+
+#: templates/core/_pwa_install_prompt.html:25
+msgid "Install"
+msgstr "Installa"
+
+#: templates/core/_pwa_install_prompt.html:26
+msgid "Remind me later"
+msgstr "Ricordamelo più tardi"
+
+#: templates/core/_pwa_install_prompt.html:27
+msgid "Don't remind me"
+msgstr "Non ricordarmelo"
+
 #~ msgid "You can't invite this user."
 #~ msgstr "Non puoi invitare questo utente."
 

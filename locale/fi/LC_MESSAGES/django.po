@@ -5887,6 +5887,30 @@ msgstr "Muokkaa sarjaa"
 msgid "Edit set %(number)s"
 msgstr "Muokkaa sarjaa %(number)s"
 
+#: templates/core/_pwa_install_prompt.html:14 templates/core/_pwa_install_prompt.html:17
+msgid "Install IronStack"
+msgstr "Asenna IronStack"
+
+#: templates/core/_pwa_install_prompt.html:19
+msgid "Add it to your home screen for quick, full-screen access: tap Share, then \"Add to Home Screen\"."
+msgstr "Lisää se kotinäytöllesi nopeaa, koko näytön käyttöä varten: napauta Jaa ja sitten \"Lisää Koti-valikkoon\"."
+
+#: templates/core/_pwa_install_prompt.html:22
+msgid "Add it to your home screen for quick, full-screen access."
+msgstr "Lisää se kotinäytöllesi nopeaa, koko näytön käyttöä varten."
+
+#: templates/core/_pwa_install_prompt.html:25
+msgid "Install"
+msgstr "Asenna"
+
+#: templates/core/_pwa_install_prompt.html:26
+msgid "Remind me later"
+msgstr "Muistuta myöhemmin"
+
+#: templates/core/_pwa_install_prompt.html:27
+msgid "Don't remind me"
+msgstr "Älä muistuta"
+
 #~ msgid "You can't invite this user."
 #~ msgstr "Et voi kutsua tätä käyttäjää."
 

@@ -16,6 +16,15 @@ previous release (`docs/ARCHITECTURE.md` "Versioning") — a terse,
 complete audit trail, not a replacement for this file's shorter,
 narrated summary of the same version.
 
+## [1.8.0] — 2026-08-29
+
+### Added
+- Install-to-home-screen recommendation, shown once and dismissible
+  (close, "Remind me later", or "Don't remind me"): uses the browser's
+  own install prompt where one exists (Chrome/Edge/most Android
+  browsers), and falls back to on-screen instructions on iOS Safari,
+  which has no such prompt at all.
+
 ## [1.7.0] — 2026-08-28
 
 ### Added
