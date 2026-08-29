@@ -16,7 +16,7 @@ previous release (`docs/ARCHITECTURE.md` "Versioning") — a terse,
 complete audit trail, not a replacement for this file's shorter,
 narrated summary of the same version.
 
-## [Unreleased]
+## [1.8.0] — 2026-08-29
 
 ### Added
 - Install-to-home-screen recommendation, shown once and dismissible
