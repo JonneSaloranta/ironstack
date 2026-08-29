@@ -1,6 +1,6 @@
 Django>=6.1,<6.2
 psycopg[binary]>=3.3.4,<3.4
-gunicorn>=26.0.0,<27.0
+gunicorn>=26.2.0,<27.0
 # apps.api — a real public API (permission-scoped API keys, rate limits)
 # is enough surface (serialization, per-key permission classes,
 # throttling) that hand-rolling it would just re-invent a worse version
@@ -14,15 +14,15 @@ djangorestframework>=3.18.0,<3.19
 # multi-device-type framework this project doesn't need. qrcode
 # renders the setup QR code server-side (a data: URI embedded directly
 # in the page, no separate image endpoint).
-pyotp>=2.9,<3.0
-qrcode[pil]>=8.0,<9.0
+pyotp>=2.10.0,<3.0
+qrcode[pil]>=8.2,<9.0
 # apps.nutrition.openfoodfacts — on-demand product lookups against
 # OpenFoodFacts' public JSON API (docs/NUTRITION.md "OpenFoodFacts
 # integration"). No existing project code does outbound HTTP to a JSON
 # API; hand-rolling this on urllib would just reimplement a worse,
 # unmaintained version of what requests already does well (timeouts,
 # JSON decoding, connection pooling).
-requests>=2.32,<3.0
+requests>=2.34.2,<3.0
 # apps.accounts.oidc — optional Authentik/OIDC single sign-on
 # (docs/SECURITY.md "Single sign-on (Authentik / OIDC)"). An
 # OAuth2/OIDC authorization-code flow (state/nonce/PKCE, JWKS
@@ -35,7 +35,7 @@ requests>=2.32,<3.0
 # for. Always installed, but inert unless AUTHENTIK_* env vars are set
 # (settings.AUTHENTIK_ENABLED) — self-hosters who don't run Authentik
 # pay no configuration cost beyond the dependency itself.
-mozilla-django-oidc>=5.0,<6.0
+mozilla-django-oidc>=5.0.2,<6.0
 # apps.core.push — Web Push (RFC 8291/8292: VAPID JWT signing +
 # aes128gcm payload encryption) for message notifications
 # (docs/SOCIAL.md). Same "security-critical, narrow-purpose code
