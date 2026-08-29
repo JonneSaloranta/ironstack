@@ -1,0 +1,31 @@
+{% load static i18n %}
+{% comment %}
+Install-to-home-screen recommendation — logic lives in
+static/js/pwa-install-prompt.js (loaded before alpine.min.js in
+templates/base.html, same script-ordering requirement as every other
+Alpine component defined in an external file there). Hidden by
+default (x-cloak) until that script decides whether there's anything
+worth showing at all: already installed, or previously dismissed
+"forever" or within the last static/js/pwa-install-prompt.js's own
+REMIND_LATER_DAYS, and it never appears.
+{% endcomment %}
+<div x-data="ironstackPwaInstallPrompt()" x-show="visible" x-cloak
+     x-transition.opacity.duration.300ms
+     class="pwa-install-banner" role="region" aria-label="{% trans "Install IronStack" %}">
+  <img class="pwa-install-icon" src="{% static 'icons/icon-192.png' %}" alt="" width="40" height="40">
+  <div class="pwa-install-body">
+    <p class="pwa-install-title">{% trans "Install IronStack" %}</p>
+    <p class="pwa-install-text" x-show="mode === 'ios-instructions'">
+      {% blocktrans %}Add it to your home screen for quick, full-screen access: tap Share, then "Add to Home Screen".{% endblocktrans %}
+    </p>
+    <p class="pwa-install-text" x-show="mode === 'native'">
+      {% trans "Add it to your home screen for quick, full-screen access." %}
+    </p>
+    <div class="pwa-install-actions">
+      <button type="button" x-show="mode === 'native'" @click="install()">{% trans "Install" %}</button>
+      <button type="button" class="button-secondary" @click="remindLater()">{% trans "Remind me later" %}</button>
+      <button type="button" class="pwa-install-dismiss" @click="dismissForever()">{% trans "Don't remind me" %}</button>
+    </div>
+  </div>
+  <button type="button" class="pwa-install-close" @click="remindLater()" aria-label="{% trans "Close" %}">&times;</button>
+</div>
