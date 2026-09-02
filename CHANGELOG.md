@@ -16,7 +16,7 @@ previous release (`docs/ARCHITECTURE.md` "Versioning") — a terse,
 complete audit trail, not a replacement for this file's shorter,
 narrated summary of the same version.
 
-## [Unreleased]
+## [1.8.1] — 2026-09-02
 
 ### Fixed
 - Profile → "Download your data" (the plain, non-download page) threw
