@@ -47,14 +47,15 @@ services:
       timeout: 5s
       retries: 5
       start_period: 15s
-    command: >
-      sh -c "python manage.py migrate --noinput &&
-             python manage.py createcachetable &&
-             python manage.py collectstatic --noinput &&
-             python manage.py compilemessages &&
-             python manage.py announce_version_update &&
-             gunicorn config.wsgi:application --bind 0.0.0.0:8000
-             --workers 3 --timeout 30 --access-logfile - --error-logfile -"
+    # migrate/createcachetable/collectstatic/compilemessages/
+    # announce_version_update all used to live here too, chained ahead
+    # of gunicorn with `sh -c "... && gunicorn ..."` — moved into the
+    # image's own docker-entrypoint.sh (docs/ARCHITECTURE.md
+    # "Versioning") so a step added to that sequence ships with every
+    # `docker compose pull`, not just wherever this exact command
+    # string also happens to be hand-copied.
+    command: gunicorn config.wsgi:application --bind 0.0.0.0:8000
+      --workers 3 --timeout 30 --access-logfile - --error-logfile -
 
   # Automatic daily backups (docs/BACKUP.md) — the same image as `web`
   # (build: *web-build reuses its exact build config via a YAML

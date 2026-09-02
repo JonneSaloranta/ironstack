@@ -69,7 +69,9 @@ LABEL org.opencontainers.image.title="IronStack" \
       org.opencontainers.image.revision="$GIT_SHA" \
       org.opencontainers.image.created="$BUILD_DATE"
 
-RUN mkdir -p /app/staticfiles /app/media /app/backups && chown -R django:django /app
+RUN mkdir -p /app/staticfiles /app/media /app/backups && chown -R django:django /app \
+    && chmod +x docker-entrypoint.sh
 USER django
 EXPOSE 8000
+ENTRYPOINT ["./docker-entrypoint.sh"]
 CMD ["gunicorn", "config.wsgi:application", "--bind", "0.0.0.0:8000"]
