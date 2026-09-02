@@ -319,6 +319,23 @@ seconds, all before the response goes out; acceptable for this app's
 expected group sizes, a real tradeoff if this instance ever hosts much
 larger groups.
 
+**A third caller runs at deploy time, not request time.**
+`apps.core.management.commands.announce_version_update` sends every
+subscribed user a "new version is available" notification (linking to
+Profile → the version-number changelog modal, via `?changelog=1` —
+see `apps.accounts.views.ProfileView`), and runs unconditionally as
+part of `docker-compose.yml`'s `web` service startup command, right
+after `migrate`/`collectstatic`/`compilemessages` and before gunicorn
+starts. It's a no-op on every ordinary restart: `apps.core.models.
+AnnouncedVersion` (a singleton row, same pattern as `BackupSettings`)
+records the last `VERSION` actually announced, so this only ever sends
+again once the running `VERSION` genuinely differs from that — a real
+deploy, not a host reboot or `docker compose restart`. Bounded the
+same way as the two callers above (5s/device inside
+`send_push_notification`), just before gunicorn binds rather than
+inside a request, so a slow push service delays container startup
+slightly instead of a page load.
+
 **CSRF, for the one JS-initiated request in this codebase.** Every
 other write here is a real `<form>` with `{% csrf_token %}` or an HTMX
 request (which reads the same token off the DOM automatically);

@@ -5894,6 +5894,15 @@ msgstr "Påminn mig senare"
 msgid "Don't remind me"
 msgstr "Påminn mig inte"
 
+#: apps/core/management/commands/announce_version_update.py:52
+msgid "New IronStack version"
+msgstr "Ny IronStack-version"
+
+#: apps/core/management/commands/announce_version_update.py:53
+#, python-format
+msgid "IronStack %(version)s is now running — tap to see what's new."
+msgstr "IronStack %(version)s körs nu — tryck för att se vad som är nytt."
+
 #~ msgid "You can't invite this user."
 #~ msgstr "Du kan inte bjuda in den här användaren."
 

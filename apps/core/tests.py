@@ -24,6 +24,7 @@ from apps.core.charts import build_bar_series, build_chart_series
 from apps.core.context_processors import app_version
 from apps.core.greetings import _GREETINGS_BY_BUCKET, _time_bucket, random_greeting
 from apps.core.models import (
+    AnnouncedVersion,
     BackupSettings,
     Feedback,
     FeedbackSettings,
@@ -930,6 +931,36 @@ class BackupSettingsModelTests(TestCase):
         settings_row = BackupSettings.load()
         settings_row.delete()
         self.assertTrue(BackupSettings.objects.filter(pk=1).exists())
+
+
+class AnnouncedVersionModelTests(TestCase):
+    """apps.core.models.AnnouncedVersion — same singleton pattern as
+    BackupSettings above, tracking the last VERSION a "new version is
+    available" push notification was actually sent for (apps.core.
+    management.commands.announce_version_update)."""
+
+    def test_load_creates_the_singleton_blank_by_default(self):
+        row = AnnouncedVersion.load()
+        self.assertEqual(row.version, "")
+
+    def test_load_always_returns_the_same_row(self):
+        first = AnnouncedVersion.load()
+        first.version = "1.9.0"
+        first.save()
+        second = AnnouncedVersion.load()
+        self.assertEqual(first.pk, second.pk)
+        self.assertEqual(second.version, "1.9.0")
+
+    def test_save_always_targets_pk_1_even_for_a_fresh_instance(self):
+        row = AnnouncedVersion(version="1.9.0")
+        row.save()
+        self.assertEqual(row.pk, 1)
+        self.assertEqual(AnnouncedVersion.objects.count(), 1)
+
+    def test_delete_is_a_no_op(self):
+        row = AnnouncedVersion.load()
+        row.delete()
+        self.assertTrue(AnnouncedVersion.objects.filter(pk=1).exists())
 
 
 class BackupManagementCommandTests(TestCase):
@@ -2118,6 +2149,81 @@ class SendPushNotificationTests(TestCase):
         ):
             send_push_notification(self.alice, "Title", "Body")  # must not raise
         self.assertTrue(PushSubscription.objects.filter(pk=self.subscription.pk).exists())
+
+
+@override_settings(
+    PUSH_ENABLED=True,
+    VAPID_PUBLIC_KEY="test-public-key",
+    VAPID_PRIVATE_KEY="test-private-key",
+    VAPID_ADMIN_EMAIL="admin@example.com",
+)
+class AnnounceVersionUpdateCommandTests(TestCase):
+    """apps.core.management.commands.announce_version_update — run
+    unconditionally on every `web` container start (docker-compose.yml),
+    must stay a no-op except on a real VERSION bump."""
+
+    def setUp(self):
+        self.alice = get_user_model().objects.create_user(
+            username="alice", password="s3cret-pass"
+        )
+        PushSubscription.objects.create(
+            user=self.alice,
+            endpoint="https://push.example.com/alice",
+            p256dh_key="p256dh-value",
+            auth_key="auth-value",
+        )
+
+    def test_first_ever_run_announces_the_running_version(self):
+        with (
+            mock.patch(
+                "apps.core.management.commands.announce_version_update.get_version",
+                return_value="1.9.0",
+            ),
+            mock.patch("apps.core.push.webpush") as mock_webpush,
+        ):
+            call_command("announce_version_update")
+        mock_webpush.assert_called_once()
+        payload = json.loads(mock_webpush.call_args.kwargs["data"])
+        self.assertIn("1.9.0", payload["body"])
+        self.assertEqual(payload["url"], reverse("profile") + "?changelog=1")
+        self.assertEqual(AnnouncedVersion.load().version, "1.9.0")
+
+    def test_a_second_run_on_the_same_version_sends_nothing(self):
+        AnnouncedVersion.objects.create(version="1.9.0")
+        with (
+            mock.patch(
+                "apps.core.management.commands.announce_version_update.get_version",
+                return_value="1.9.0",
+            ),
+            mock.patch("apps.core.push.webpush") as mock_webpush,
+        ):
+            call_command("announce_version_update")
+        mock_webpush.assert_not_called()
+
+    def test_a_real_version_bump_announces_again(self):
+        AnnouncedVersion.objects.create(version="1.8.1")
+        with (
+            mock.patch(
+                "apps.core.management.commands.announce_version_update.get_version",
+                return_value="1.9.0",
+            ),
+            mock.patch("apps.core.push.webpush") as mock_webpush,
+        ):
+            call_command("announce_version_update")
+        mock_webpush.assert_called_once()
+        self.assertEqual(AnnouncedVersion.load().version, "1.9.0")
+
+    def test_a_user_with_no_subscription_is_never_notified(self):
+        get_user_model().objects.create_user(username="bob", password="s3cret-pass")
+        with (
+            mock.patch(
+                "apps.core.management.commands.announce_version_update.get_version",
+                return_value="1.9.0",
+            ),
+            mock.patch("apps.core.push.webpush") as mock_webpush,
+        ):
+            call_command("announce_version_update")
+        mock_webpush.assert_called_once()  # alice only, never bob
 
 
 class PushSubscribeViewTests(TestCase):

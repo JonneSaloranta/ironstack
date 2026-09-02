@@ -16,6 +16,15 @@ previous release (`docs/ARCHITECTURE.md` "Versioning") — a terse,
 complete audit trail, not a replacement for this file's shorter,
 narrated summary of the same version.
 
+## [1.9.0] — 2026-09-02
+
+### Added
+- A push notification when a new version is deployed — "IronStack
+  X.Y.Z is now running — tap to see what's new" — for anyone
+  subscribed to notifications (Profile → Notifications). Tapping it
+  opens the same changelog you'd already get from tapping the version
+  number on your profile page.
+
 ## [1.8.1] — 2026-09-02
 
 ### Fixed

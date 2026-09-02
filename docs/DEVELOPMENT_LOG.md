@@ -3457,3 +3457,48 @@ future hand-built section added to `export_account_data` can no
 longer silently break this page the same way. Regression test creates
 a `PushSubscription` (the simplest hand-built section to set up) and
 asserts the plain page still returns 200.
+
+## Push notification when a new version is deployed
+
+Every subscribed user now gets a Web Push notification — "IronStack
+X.Y.Z is now running — tap to see what's new" — the moment a new
+version actually reaches production, reusing `apps.core.push.
+send_push_notification` (previously only `apps.social.services`'
+direct/group messages) rather than inventing a second delivery path.
+
+Trigger is deploy time, not a request: `apps.core.management.commands.
+announce_version_update`, added to `docker-compose.yml`'s `web`
+service startup command right after `migrate`/`collectstatic`/
+`compilemessages` and before gunicorn starts — the same place every
+other one-time-per-deploy step already lives. Making this safe to run
+unconditionally on *every* container start (not just "real" deploys)
+needed one thing: a durable record of the last version actually
+announced, so a plain restart on an unchanged `VERSION` (host reboot,
+`docker compose restart`) is a no-op instead of re-notifying every
+subscribed user for nothing. `apps.core.models.AnnouncedVersion` is
+that record — a singleton row, the same `load()`-a-pk=1-row pattern
+`BackupSettings`/`FeedbackSettings` already use — compared against
+`apps.core.version.get_version()` on each run; a match is a no-op, a
+mismatch sends and then updates the row so the *next* restart on that
+same new version is a no-op too.
+
+The notification's own click target needed a real URL to exist first:
+the changelog was previously only reachable as an Alpine `x-show`
+modal on the profile page (opened by clicking the version number),
+with no URL that could ever land someone there already open — a Web
+Push notification can only ever navigate to a URL
+(`static/sw.js`'s `notificationclick` handler), not reach into a
+page's client-side state. `ProfileView` now reads a plain
+`?changelog=1` query param (the same "?welcome=1 opens something on
+load" shape `TwoFactorBackupCodesView` already established) and the
+template's Alpine `x-data` initializes `open` from that instead of
+always `false`, so `/accounts/profile/?changelog=1` — exactly what the
+notification links to — opens the modal immediately on load with no
+extra click needed.
+
+Sent to every user with a push subscription, the same opt-in bar
+`send_direct_message`/`send_group_message` already use (subscribing at
+all, from Profile → Notifications) — deliberately no separate
+"release notes" preference to also opt into, and no mute, since a
+version bump isn't scoped to any one friend or group the way a
+message is.
