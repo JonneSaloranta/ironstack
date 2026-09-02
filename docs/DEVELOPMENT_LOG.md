@@ -3424,3 +3424,36 @@ already follows, not an account-wide setting synced across devices:
 closing the banner (×) and the explicit "Remind me later" button do
 the exact same thing (re-ask in 14 days) — either one means "not now",
 not "never" — while "Don't remind me" opts out permanently.
+
+## Data export 500 for users with a hand-built export section
+
+A production 500 report (`GET /accounts/data-export/`) traced back to
+`DataExportView._sections()`/`_rows_for_section` in
+`apps/accounts/views.py`: it only special-cased `account` and
+`api_keys` as `export_account_data`'s hand-built flat-dict sections,
+treating everything else as Django's generic serializer output and
+reading `entry["pk"]`/`entry["fields"]` off it unconditionally. But
+`export_account_data` (`apps/accounts/services.py`) had grown several
+more hand-built sections since — every `apps.social` section
+(`friend_requests_sent`/`friend_requests_received`/`friends`/
+`blocked_users`/`group_memberships`/`direct_messages`/
+`group_messages_sent`) and `push_subscriptions` — without
+`_rows_for_section` ever being updated to match, so a user with even
+one row in any of those (one friend, one registered push
+subscription) hit a bare `KeyError: 'pk'`.
+
+Confirmed directly against production rather than guessed at: a
+read-only `manage.py shell` session ran `export_account_data()` for
+every user (all succeeded) and then `DataExportView()._sections()` for
+every user, which reproduced the exact `KeyError` for the two accounts
+that had actually hit the page — isolating the bug to the
+view-level row-normalizing step, not the export data itself, before
+writing the fix.
+
+Fixed by having `_rows_for_section` detect the generic-serializer
+shape from the data itself (`"pk"`/`"fields"` present on the first
+row) instead of hardcoding which section keys are hand-built — a
+future hand-built section added to `export_account_data` can no
+longer silently break this page the same way. Regression test creates
+a `PushSubscription` (the simplest hand-built section to set up) and
+asserts the plain page still returns 200.
