@@ -1599,6 +1599,27 @@ class DataExportViewTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response["Content-Type"].split(";")[0], "text/html")
 
+    def test_a_hand_built_section_does_not_500(self):
+        # Regression test: export_account_data hand-builds several
+        # sections (push_subscriptions and every apps.social section)
+        # as flat lists of dicts rather than through Django's generic
+        # serializer, the same way `api_keys` already is. _rows_for_section
+        # used to only know about `account`/`api_keys` as hand-built and
+        # tried to read every other section as {"pk", "fields"} dicts —
+        # a real user with so much as one push subscription or friend
+        # hit a KeyError on "pk" and got a 500 on this page.
+        from apps.core.models import PushSubscription
+
+        PushSubscription.objects.create(
+            user=self.alice,
+            endpoint="https://push.example.com/abc123",
+            p256dh_key="a-key",
+            auth_key="an-auth-key",
+        )
+        response = self.client.get(reverse("data-export"))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "push_subscriptions")
+
     def test_json_format_is_a_downloadable_attachment(self):
         response = self.client.get(reverse("data-export"), {"format": "json"})
         self.assertEqual(response.status_code, 200)

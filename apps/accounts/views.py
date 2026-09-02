@@ -407,13 +407,19 @@ def _rows_for_section(key, value):
     section into a flat list of dicts — every field a plain, already-
     JSON-safe value — for the CSV/HTML views below, which both need
     the same tabular shape regardless of a section's own underlying
-    representation: `account` is a single dict, `api_keys` is already
-    a flat list of dicts (export_account_data builds those two by
-    hand), and everything else is Django's own generic serializer
-    format (a list of `{"model", "pk", "fields"}` dicts)."""
+    representation: `account` is a single dict, and export_account_data
+    hand-builds a growing set of other sections (api_keys,
+    push_subscriptions, and every apps.social section) as flat lists
+    of dicts already, rather than through Django's generic serializer
+    (a list of `{"model", "pk", "fields"}` dicts). Detecting that shape
+    from the data itself — instead of hardcoding which keys are
+    hand-built — means a future hand-built section doesn't silently
+    KeyError here the way api_keys's social-section siblings once did
+    (they were added to export_account_data without this function
+    being told about them)."""
     if key == "account":
         return [value]
-    if key == "api_keys":
+    if not value or "pk" not in value[0] or "fields" not in value[0]:
         return value
     return [{"id": entry["pk"], **entry["fields"]} for entry in value]
 

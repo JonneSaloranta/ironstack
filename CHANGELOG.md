@@ -16,6 +16,16 @@ previous release (`docs/ARCHITECTURE.md` "Versioning") — a terse,
 complete audit trail, not a replacement for this file's shorter,
 narrated summary of the same version.
 
+## [1.8.1] — 2026-09-02
+
+### Fixed
+- Profile → "Download your data" (the plain, non-download page) threw
+  a 500 for any user with so much as one friend, blocked user, group
+  membership, direct/group message, or registered push subscription —
+  a handful of sections the export builds by hand rather than through
+  Django's generic serializer, which the page's own row-normalizing
+  code didn't know about.
+
 ## [1.8.0] — 2026-08-29
 
 ### Added
