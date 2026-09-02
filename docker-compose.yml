@@ -52,6 +52,7 @@ services:
              python manage.py createcachetable &&
              python manage.py collectstatic --noinput &&
              python manage.py compilemessages &&
+             python manage.py announce_version_update &&
              gunicorn config.wsgi:application --bind 0.0.0.0:8000
              --workers 3 --timeout 30 --access-logfile - --error-logfile -"
 

@@ -164,6 +164,13 @@ class ProfileView(LoginRequiredMixin, UpdateView):
         # "Versioning") — cached in apps.core.changelog, so this is a
         # cheap lookup, not a re-parse of CHANGELOG.md on every load.
         context["changelog_html"] = changelog_services.render_changelog_html()
+        # ?changelog=1 opens the same modal straight away — the click
+        # target apps.core.management.commands.announce_version_update's
+        # push notification uses (a Web Push notification can only ever
+        # open a URL, not call into Alpine state directly), same
+        # ?welcome=1-on-load pattern TwoFactorBackupCodesView already
+        # uses for its own "just did the thing that led here" case.
+        context["open_changelog"] = self.request.GET.get("changelog") == "1"
         # Hides the "Feedback" card below when submissions are closed —
         # apps.core.views_feedback.FeedbackCreateView enforces the same
         # setting itself, so this is just avoiding a dead link, not the

@@ -207,3 +207,42 @@ class PushSubscription(TimeStampedModel):
 
     def __str__(self):
         return f"Push subscription: {self.user.username}"
+
+
+class AnnouncedVersion(models.Model):
+    """Singleton row (always pk=1 — see `load()`) recording the last
+    `VERSION` (`apps.core.version.get_version()`) a "new version is
+    available" push notification was actually sent for — see
+    `apps.core.management.commands.announce_version_update`, the one
+    writer of this row, run as part of `docker-compose.yml`'s `web`
+    service startup command on every container start. Comparing
+    against this instead of some other signal (a build timestamp, a
+    git SHA) means the notification fires exactly once per real
+    version bump: a plain container restart on an unchanged `VERSION`
+    (a host reboot, `docker compose restart`) leaves this row's
+    `version` already matching and sends nothing, while a genuine
+    deploy of a new version — the only case where `VERSION` on disk
+    actually differs from what's recorded here — sends exactly once
+    and then updates this row so the *next* restart on that same new
+    version is a no-op too. Blank by default (never seeded with a real
+    version), so the very first deploy after this feature ships
+    behaves like any other version bump: the running `VERSION` differs
+    from this row's blank starting value, so it announces itself
+    immediately rather than needing to be primed by hand first."""
+
+    version = models.CharField(max_length=32, blank=True, default="")
+
+    def save(self, *args, **kwargs):
+        self.pk = 1
+        super().save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        pass  # singleton — deleting it would just silently recreate defaults on next load()
+
+    @classmethod
+    def load(cls):
+        obj, _created = cls.objects.get_or_create(pk=1)
+        return obj
+
+    def __str__(self):
+        return f"Announced version: {self.version or '(none yet)'}"

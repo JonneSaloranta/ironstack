@@ -1,8 +1,9 @@
 """Web Push notifications (docs/SECURITY.md "Web Push notifications")
-— currently triggered only from apps.social.services'
-send_direct_message/send_group_message, but kept generic (any
-user/title/body/url) rather than message-specific, since push itself
-isn't inherently a social-only concern.
+— triggered from apps.social.services' send_direct_message/
+send_group_message and apps.core.management.commands.
+announce_version_update, kept generic (any user/title/body/url)
+rather than message-specific, since push itself isn't inherently a
+social-only concern.
 """
 
 import json
