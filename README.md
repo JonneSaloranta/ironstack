@@ -164,13 +164,16 @@ docker compose -f docker-compose.yml pull
 docker compose -f docker-compose.yml up -d
 ```
 
-No extra manual step needed for a routine update: the `web` service's
-own startup command already runs `migrate`, `collectstatic`, and
-`compilemessages` every time the container starts (`docker-compose.yml`),
-so schema changes, new static assets, and updated translations all
-apply automatically on the new version's first start. Existing data
-(`postgres_data`/`static_data`/`media_data`/`backups_data` volumes)
-isn't touched by recreating the container.
+No extra manual step needed for a routine update: the image's own
+startup sequence (`docker-entrypoint.sh`) already runs `migrate`,
+`collectstatic`, and `compilemessages` every time the `web` container
+starts, so schema changes, new static assets, and updated translations
+all apply automatically on the new version's first start — and, since
+that sequence is baked into the image itself rather than
+`docker-compose.yml`, a future step added to it arrives with the pull
+above too, with no separate file on this server to also keep in sync.
+Existing data (`postgres_data`/`static_data`/`media_data`/
+`backups_data` volumes) isn't touched by recreating the container.
 
 Still worth doing before any update, as routine hygiene rather than
 because the automatic part is untrustworthy: take a fresh backup first

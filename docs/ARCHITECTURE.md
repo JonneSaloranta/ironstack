@@ -230,8 +230,9 @@ ISO 639-1 — not `ee`, which is Ewe).
   every `{% trans %}`/`_()` call into `locale/<lang>/LC_MESSAGES/django.po`;
   `python manage.py compilemessages` builds the `.mo` files gettext
   actually reads at runtime. The latter runs automatically at container
-  startup (`docker-compose.yml`/`docker-compose.override.yml`, right
-  after `migrate`), so only the `.po` sources are committed — `.mo` is
+  startup — production's `docker-entrypoint.sh`, right after
+  `migrate`; dev's own separate, shorter chain in `docker-compose.
+  override.yml` — so only the `.po` sources are committed — `.mo` is
   gitignored, the same "commit the source, generate the artifact"
   split as `static/` vs. `staticfiles/`.
 - `gettext` (the GNU tool, providing `msgfmt`/`msguniq`/`msgmerge`) is a
@@ -436,6 +437,30 @@ changelog's own prose serve two different readers (a terse, complete,
 per-commit audit trail vs. a shorter, editorialized summary) and
 neither one replaces the other.
 
+Every one-time-per-deploy setup step — `migrate`, `createcachetable`,
+`collectstatic`, `compilemessages`, and `apps.core.management.
+commands.announce_version_update` (a push notification to every
+subscribed user once `VERSION` actually changes, gated by `apps.core.
+models.AnnouncedVersion`, a singleton row recording the last version
+actually announced) — runs from `docker-entrypoint.sh`, the image's
+own `ENTRYPOINT`, rather than `docker-compose.yml`'s `command:`. This
+moved there specifically because it used to live in `docker-compose.
+yml` alone: the first time a step (`announce_version_update`, 1.9.0)
+was ever added to that chain, a hand-maintained production copy of
+the compose file silently kept its old, shorter command and never ran
+the new step until noticed and fixed by hand. Baking the sequence into
+the image instead means every step ships with the image itself — a
+plain `docker compose pull && up -d` picks up a new step the same way
+it already picks up any other code change, with no separate file to
+remember to keep in sync. `docker-entrypoint.sh` only runs that
+sequence when `$1` is `gunicorn` (the `web` service's own command) —
+skipped for `backup-scheduler`'s `python manage.py backup_scheduler`,
+`docker-compose.override.yml`'s own separate, shorter dev chain, or an
+operator's own one-off `docker compose run web python manage.py
+shell` — then `exec "$@"` either way, so the container's actual PID 1
+is always the real process (gunicorn, or whatever else), not a
+lingering shell.
+
 ## Static files
 
 `STATIC_ROOT`/`STATIC_URL` are plain Django defaults in `base.py`,
@@ -455,8 +480,8 @@ of its own default TTL for static extensions. A content hash fixes
 this at the root: a real change always produces a new URL, so an old,
 cached response for the *previous* URL is simply never requested
 again — no CDN/browser cache configuration needed to get this right.
-`collectstatic` (part of the `web` service's own startup command,
-`docker-compose.yml`) keeps *both* the hashed and the plain-named copy
+`collectstatic` (part of the `web` service's own startup sequence,
+`docker-entrypoint.sh`) keeps *both* the hashed and the plain-named copy
 of every file on disk (Django's own `ManifestStaticFilesStorage`
 behavior, not something this project adds) — needed for
 `static/manifest.json`'s PWA icon references, which are plain JSON
