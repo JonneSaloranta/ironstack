@@ -398,6 +398,20 @@ class ProfileViewTests(TestCase):
         self.assertEqual(response.context["object"], self.alice)
         self.assertNotEqual(response.context["object"], bob)
 
+    def test_changelog_modal_is_closed_by_default(self):
+        response = self.client.get(reverse("profile"))
+        self.assertFalse(response.context["open_changelog"])
+        self.assertContains(response, "x-data=\"{ open: false }\"")
+
+    def test_changelog_query_param_opens_the_modal(self):
+        # apps.core.management.commands.announce_version_update's push
+        # notification links here — a Web Push notification can only
+        # ever open a URL, so this is how it lands the user straight
+        # in the changelog rather than just the plain profile page.
+        response = self.client.get(reverse("profile"), {"changelog": "1"})
+        self.assertTrue(response.context["open_changelog"])
+        self.assertContains(response, "x-data=\"{ open: true }\"")
+
     def test_updating_unit_system_and_timezone(self):
         response = self.client.post(
             reverse("profile"),
