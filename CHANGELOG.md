@@ -16,7 +16,7 @@ previous release (`docs/ARCHITECTURE.md` "Versioning") — a terse,
 complete audit trail, not a replacement for this file's shorter,
 narrated summary of the same version.
 
-## [Unreleased]
+## [1.9.1] — 2026-09-02
 
 ### Changed
 - Deploy-time setup (database migrations, static files, translations,
