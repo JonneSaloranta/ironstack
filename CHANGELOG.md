@@ -16,6 +16,17 @@ previous release (`docs/ARCHITECTURE.md` "Versioning") — a terse,
 complete audit trail, not a replacement for this file's shorter,
 narrated summary of the same version.
 
+## [Unreleased]
+
+### Changed
+- Deploy-time setup (database migrations, static files, translations,
+  and 1.9.0's new-version notification) now lives inside the Docker
+  image itself (`docker-entrypoint.sh`) instead of `docker-compose.yml`.
+  No effect on how updating works (`docker compose pull && up -d`
+  still does everything) — it just means a self-hoster's own copy of
+  the compose file can no longer fall out of sync with what actually
+  runs on startup.
+
 ## [1.9.0] — 2026-09-02
 
 ### Added

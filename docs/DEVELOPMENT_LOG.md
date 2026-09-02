@@ -3502,3 +3502,58 @@ all, from Profile → Notifications) — deliberately no separate
 "release notes" preference to also opt into, and no mute, since a
 version bump isn't scoped to any one friend or group the way a
 message is.
+
+## Deploy-time setup steps moved from docker-compose.yml into the image
+
+Deploying 1.9.0 above surfaced a real gap: production's own
+`compose.yaml` isn't a git checkout of this repo, it's a
+hand-maintained copy an operator keeps roughly in sync by hand. Adding
+`announce_version_update` to `docker-compose.yml`'s `web` service
+`command:` (a `sh -c "migrate && ... && gunicorn"` chain) meant nothing
+until that same line was also copied into production's own
+`compose.yaml` by hand — the new step silently didn't run there at
+first, caught only because its effect (a push notification) was
+directly observable.
+
+Fix: every one-time-per-deploy step (`migrate`, `createcachetable`,
+`collectstatic`, `compilemessages`, `announce_version_update`) moved
+into a new `docker-entrypoint.sh`, the image's own `ENTRYPOINT`
+(`Dockerfile`), rather than living in whichever compose file happens
+to be running it. `docker-compose.yml`'s `web.command:` shrinks to
+just the plain `gunicorn ...` invocation. The sequence still needs to
+skip running for every *other* command sharing this same image and
+ENTRYPOINT — `backup-scheduler`'s `python manage.py backup_scheduler`,
+`docker-compose.override.yml`'s own separate, shorter dev chain
+(`migrate`/`createcachetable`/`compilemessages` then `runserver`, no
+`collectstatic`/`announce_version_update` — dev doesn't want a real
+push notification firing on every local run), or an operator's own
+`docker compose run web python manage.py shell` — so the script only
+runs it when `$1` is literally `gunicorn`, then `exec "$@"`
+unconditionally either way, keeping the container's actual PID 1 the
+real process rather than a lingering shell.
+
+Verified with a real `docker build` + a from-scratch Postgres, not
+just reasoned about: the `gunicorn` path ran the full sequence
+(migrations, `collectstatic`, `compilemessages`, `announce_version_update`
+— "Announced version 1.9.0 to 0 user(s)." against an empty test
+database) and then gunicorn as PID 1; a `python manage.py check`
+override skipped straight past the setup sequence with no migrations
+attempted first. Added `shellcheck docker-entrypoint.sh` to CI's
+`lint-and-test` job, next to `ruff` — the one shell script in this
+codebase that runs inside a container, previously with no lint
+coverage at all (every other script here, `scripts/backup.sh` and
+friends, runs on the *host*, calling into a container rather than
+running inside one).
+
+This was a deliberate trade-off, not a free win — discussed with the
+user first rather than just done: it trims one specific recurring
+class of manual sync work (a step *added to* the startup sequence),
+at the cost of that sequence being one step less visible to an
+operator reading `compose.yaml` alone (now documented in
+`docs/ARCHITECTURE.md` "Versioning" and this script's own comments
+instead), a slightly slower local edit-test loop for the sequence
+itself (needs an image rebuild, not just a compose edit), and a new,
+lightly-tested (shellcheck only, no Django test coverage) shell script
+where none existed before. Compose-level changes (a new service, port,
+or volume) still need the same hand-sync as always — this only ever
+covered the specific class of change that actually broke tonight.
