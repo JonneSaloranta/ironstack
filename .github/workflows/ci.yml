@@ -76,6 +76,13 @@ jobs:
       - name: Lint (ruff)
         run: ruff check .
 
+      # docker-entrypoint.sh (docs/ARCHITECTURE.md "Versioning") is the
+      # one shell script this project's own test suite can't cover —
+      # shellcheck is the closest equivalent to ruff for it. Already
+      # on every ubuntu-latest runner, no separate install step needed.
+      - name: Lint (shellcheck)
+        run: shellcheck docker-entrypoint.sh
+
       # Catches a model change committed without its migration —
       # docs/ARCHITECTURE.md's own "verify migrations" step, enforced
       # here instead of relying on remembering to run it locally.
