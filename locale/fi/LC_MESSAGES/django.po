@@ -5965,6 +5965,9 @@ msgstr "Iltapala"
 msgid "Still nothing? Make sure the barcode is well lit and fills the frame, or close this and type it into the search box instead."
 msgstr "Eikö vieläkään löydy? Varmista, että viivakoodi on hyvin valaistu ja täyttää kehyksen, tai sulje tämä ja kirjoita se hakukenttään."
 
+msgid "Copied!"
+msgstr "Kopioitu!"
+
 #~ msgid "You can't invite this user."
 #~ msgstr "Et voi kutsua tätä käyttäjää."
 

@@ -6016,6 +6016,9 @@ msgstr "Вечерний перекус"
 msgid "Still nothing? Make sure the barcode is well lit and fills the frame, or close this and type it into the search box instead."
 msgstr "Всё ещё ничего? Убедитесь, что штрихкод хорошо освещён и полностью помещается в кадр, или закройте это окно и введите код в поле поиска вручную."
 
+msgid "Copied!"
+msgstr "Скопировано!"
+
 #~ msgid "You can't invite this user."
 #~ msgstr "Вы не можете пригласить этого пользователя."
 
