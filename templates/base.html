@@ -70,7 +70,27 @@
       data-zxing-url="{% static 'js/zxing.min.js' %}"
       data-vapid-public-key="{{ push_vapid_public_key }}"
       data-push-subscribe-url="{% url 'push-subscribe' %}"
-      data-push-unsubscribe-url="{% url 'push-unsubscribe' %}">
+      data-push-unsubscribe-url="{% url 'push-unsubscribe' %}"
+      {% comment %}
+      static/js/barcode-scanner.js's own human-readable explanation
+      for `!navigator.mediaDevices` — a plain .js file (unlike this
+      template) is never run through Django's template engine, so a
+      translated string it needs has to be handed to it this same
+      data-attribute way, the same reasoning every other server-
+      rendered value that script reads (data-zxing-url above) already
+      follows.
+      {% endcomment %}
+      data-insecure-context-message="{% trans "Camera access needs a secure (https) connection." %}"
+      {% comment %}
+      Reserves clearance at the bottom of the page for whichever FAB
+      (training-fab and/or messages-fab, below) is actually about to
+      render on *this* page — without it, nothing stopped either one
+      from floating directly on top of the last card's own content
+      (concretely: session-train's "Mark complete" button, and the
+      dashboard's "Continue training" card). See body.has-fab in
+      base.css for the padding this class adds.
+      {% endcomment %}
+      class="{% if active_workout_session and request.resolver_match.view_name != 'workouts:session-train' or has_unread_messages %}has-fab{% endif %}">
   <a class="skip-link" href="#main-content">{% trans "Skip to content" %}</a>
   {% comment %}
   Populated two ways: directly below, with any Django `messages`
@@ -118,8 +138,25 @@
       <span class="nav-label">{% trans "Programs" %}</span>
     </a>
     <a href="{% url 'profile' %}" aria-label="{% if social_badge %}{% trans "Profile — new friend/group activity" %}{% else %}{% trans "Profile" %}{% endif %}" {% if request.resolver_match.view_name == 'profile' %}aria-current="page"{% endif %}>
-      <span class="icon-badge-wrap">
-        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>
+      {% comment %}
+      Same show_gravatar/gravatar_url/@error pattern templates/accounts/
+      profile.html's own avatar already uses (that one's own comment
+      explains the `d=404` request-fails-outright behavior a user with
+      no Gravatar image gets) — this is the one other place a user's
+      own picture appears, so it gets the same "assume it loads, fall
+      back to the plain icon if it doesn't" treatment rather than
+      trusting it unconditionally. Both elements need one shared
+      x-data (not one each) for @error on the <img> to actually be
+      able to toggle the <svg> back on.
+      {% endcomment %}
+      <span class="icon-badge-wrap"{% if user.show_gravatar %} x-data="{ gravatarFailed: false }"{% endif %}>
+        {% if user.show_gravatar %}
+          <img src="{{ user.gravatar_url }}" alt="" class="nav-icon nav-icon-avatar"
+               x-show="!gravatarFailed" @error="gravatarFailed = true">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" x-show="gravatarFailed" x-cloak><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>
+        {% else %}
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>
+        {% endif %}
         {% if social_badge %}<span class="nav-badge" aria-hidden="true"></span>{% endif %}
       </span>
       <span class="nav-label">{% trans "Profile" %}</span>
@@ -127,7 +164,16 @@
   </nav>
   {% endif %}
 
-  {% if active_workout_session %}
+  {% comment %}
+  Not shown on the training-fab's own destination page — pointless to
+  float a "continue training" shortcut over the training screen you're
+  already on, and (the real reason this is checked, not just tidiness)
+  it used to sit fixed over this page's own "Mark complete" button
+  with no content-side clearance, since nothing reserved space for a
+  fixed-position element at all — see body.has-fab below for the fix
+  that now applies everywhere else this still floats.
+  {% endcomment %}
+  {% if active_workout_session and request.resolver_match.view_name != 'workouts:session-train' %}
     <a class="training-fab" href="{% url 'workouts:session-train' active_workout_session.pk %}" aria-label="{% trans "Continue training" %}">
       <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><line x1="6" y1="12" x2="18" y2="12"/><rect x="2" y="9" width="3" height="6" rx="1"/><rect x="19" y="9" width="3" height="6" rx="1"/><rect x="5" y="7" width="2" height="10" rx="1"/><rect x="17" y="7" width="2" height="10" rx="1"/></svg>
     </a>

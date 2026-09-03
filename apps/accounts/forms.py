@@ -236,9 +236,16 @@ class ProfileForm(forms.ModelForm):
 
     class Meta:
         model = User
+        # Order matches the visual grouping templates/accounts/profile.html
+        # renders this form's fields in (field-group-label, base.css) —
+        # "language" used to sit last, after every privacy/social toggle,
+        # which put it in the wrong group there once fields started being
+        # grouped instead of just listed top-to-bottom in whatever order
+        # Meta.fields happened to declare them.
         fields = [
             "unit_system",
             "timezone",
+            "language",
             "height",
             "show_bmi",
             "show_achievements",
@@ -246,7 +253,6 @@ class ProfileForm(forms.ModelForm):
             "show_gravatar",
             "allow_friend_requests",
             "allow_group_invites",
-            "language",
         ]
         labels = {
             "unit_system": _("Units"),

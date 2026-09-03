@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load i18n static %}
+{% load i18n static core_extras %}
 {% block title %}{% trans "Add food" %} — IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
@@ -35,7 +35,7 @@
               hx-vals='{"date": "{{ date }}"}'
               hx-swap="outerHTML">
         {% for slot in meal_slots %}
-          <option value="{{ slot.pk }}">{{ slot.name }}</option>
+          <option value="{{ slot.pk }}">{{ slot.name|translate_content }}</option>
         {% endfor %}
       </select>
     </div>

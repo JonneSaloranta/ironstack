@@ -5901,6 +5901,51 @@ msgstr "Uus IronStacki versioon"
 msgid "IronStack %(version)s is now running — tap to see what's new."
 msgstr "IronStack %(version)s töötab nüüd — puuduta, et näha, mis on uut."
 
+msgid "Browse OpenFoodFacts"
+msgstr "Sirvi OpenFoodFactsi"
+
+msgid "Rest over"
+msgstr "Puhkus läbi"
+
+msgid "Time to get back to it."
+msgstr "Aeg jätkata trenni."
+
+msgid "Account"
+msgstr "Konto"
+
+msgid "Contact:"
+msgstr "Kontakt:"
+
+msgid "Preferences"
+msgstr "Eelistused"
+
+msgid "Privacy"
+msgstr "Privaatsus"
+
+msgid "Social"
+msgstr "Sotsiaalne"
+
+msgid "Support"
+msgstr "Tugi"
+
+msgid "Camera access needs a secure (https) connection."
+msgstr "Kaamera kasutamiseks on vaja turvalist (https) ühendust."
+
+msgid "Breakfast"
+msgstr "Hommikusöök"
+
+msgid "Lunch"
+msgstr "Lõunasöök"
+
+msgid "Dinner"
+msgstr "Õhtusöök"
+
+msgid "Evening snack"
+msgstr "Õhtupala"
+
+msgid "Still nothing? Make sure the barcode is well lit and fills the frame, or close this and type it into the search box instead."
+msgstr "Ikka veel ei leia? Veendu, et triipkood on hästi valgustatud ja täidab kaadri, või sulge see ja sisesta kood otsingukasti."
+
 #~ msgid "You can't invite this user."
 #~ msgstr "Sa ei saa seda kasutajat kutsuda."
 

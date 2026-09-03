@@ -4,6 +4,8 @@
 {% block content %}
 <div class="top-bar">
   <h1 style="margin:0;">{{ plan.name }}</h1>
+</div>
+<div class="top-bar-actions">
   <form method="post" action="{% url 'nutrition:diet-plan-toggle-active' plan.pk %}">
     {% csrf_token %}
     {% if plan.is_active %}

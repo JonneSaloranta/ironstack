@@ -4,6 +4,8 @@
 {% block content %}
 <div class="top-bar">
   <h1 style="margin:0;">{% trans "Friends" %}</h1>
+</div>
+<div class="top-bar-actions">
   <a class="button" href="{% url 'social:friend-search' %}">{% trans "Find friends" %}</a>
 </div>
 
@@ -63,7 +65,8 @@
   </div>
 {% empty %}
   <div class="card empty-state">
-    <p>{% trans "No friends yet." %}</p>
+    <p>{% trans "No friends yet — find someone you train with to share progress and message them here." %}</p>
+    <p><a class="button-secondary" href="{% url 'social:friend-search' %}">{% trans "Find friends" %}</a></p>
   </div>
 {% endfor %}
 

@@ -4,6 +4,8 @@
 {% block content %}
 <div class="top-bar">
   <h1 style="margin:0;">{{ group.name }}</h1>
+</div>
+<div class="top-bar-actions">
   <a class="button-secondary" href="{% url 'social:group-detail' group.pk %}">&larr; {% trans "Group" %}</a>
 </div>
 

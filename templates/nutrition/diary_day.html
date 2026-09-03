@@ -1,12 +1,16 @@
 {% extends "base.html" %}
-{% load i18n %}
+{% load i18n core_extras %}
 {% block title %}{% trans "Food diary" %} — IronStack{% endblock %}
 {% block content %}
+{% comment %}
+"Food diary" is the title itself, not the date — asked for directly:
+the date input right below (in the date-navigation row) already shows
+the exact same date, so repeating it as the page's own title added
+nothing a user couldn't already see a few pixels down. Matches every
+other page's .top-bar besides holding only a plain, unchanging title.
+{% endcomment %}
 <div class="top-bar">
-  <div>
-    <p class="text-muted" style="margin:0;">{% trans "Food diary" %}</p>
-    <h1 style="margin:0;">{{ date }}</h1>
-  </div>
+  <h1 style="margin:0;">{% trans "Food diary" %}</h1>
 </div>
 {% include "nutrition/_subnav.html" %}
 
@@ -50,7 +54,7 @@
 
 {% for slot in meal_slots %}
   <div class="card">
-    <strong>{{ slot.name }}</strong>
+    <strong>{{ slot.name|translate_content }}</strong>
     {% for entry in slot.entries %}
       <div class="card-action-row" style="padding:0.5rem 0;">
         <div>

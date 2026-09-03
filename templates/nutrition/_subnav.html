@@ -18,12 +18,36 @@ _range_filter.html) with one override: horizontal scroll instead of
 wrap (.nutrition-subnav in base.css) — 7 tabs wrapped would eat two
 or three lines of vertical space on every single page, permanently.
 {% endcomment %}
-<nav class="range-filter nutrition-subnav" aria-label="{% trans "Nutrition sections" %}">
-  <a href="{% url 'nutrition:dashboard' %}" {% if nutrition_active_tab == "dashboard" %}aria-current="true"{% endif %}>{% trans "Overview" %}</a>
-  <a href="{% url 'nutrition:diary-day' %}" {% if nutrition_active_tab == "diary" %}aria-current="true"{% endif %}>{% trans "Diary" %}</a>
-  <a href="{% url 'nutrition:food-list' %}" {% if nutrition_active_tab == "foods" %}aria-current="true"{% endif %}>{% trans "Foods" %}</a>
-  <a href="{% url 'nutrition:recipe-list' %}" {% if nutrition_active_tab == "recipes" %}aria-current="true"{% endif %}>{% trans "Recipes" %}</a>
-  <a href="{% url 'nutrition:diet-plan-list' %}" {% if nutrition_active_tab == "diet-plans" %}aria-current="true"{% endif %}>{% trans "Diet plans" %}</a>
-  <a href="{% url 'nutrition:calculators-home' %}" {% if nutrition_active_tab == "calculators" %}aria-current="true"{% endif %}>{% trans "Calculators" %}</a>
-  <a href="{% url 'nutrition:stats' %}" {% if nutrition_active_tab == "stats" %}aria-current="true"{% endif %}>{% trans "Statistics" %}</a>
-</nav>
+{% comment %}
+Two regressions found live testing this exact bar:
+
+1. Landing on a tab that isn't one of the first few (Calculators,
+   Statistics — off the right edge of this bar's own horizontal
+   scroll on a phone) left its own highlighted pill invisible,
+   scrolled out of view, with nothing on screen showing which section
+   you were actually in — exactly the "unclear which page you're on"
+   complaint this whole component exists to prevent. x-init scrolls
+   the active tab into view once, on load, the same way opening a
+   link straight to it should have looked all along; nothing to do
+   once a tap on the bar itself changes tabs, since the browser's own
+   navigation re-runs this on the next page anyway.
+2. Nothing on screen hinted there even *were* more tabs to scroll to
+   in the first place — a plain horizontal-scroll container gives no
+   affordance of its own. .nutrition-subnav-fade (base.css) is a
+   fixed right-edge gradient — not scroll-position-aware (that needs
+   JS this is deliberately not reaching for, for a static edge cue),
+   just a constant "there's more this direction" hint, the same
+   pattern most native app tab bars use for the same reason.
+{% endcomment %}
+<div class="nutrition-subnav-wrap">
+  <nav class="range-filter nutrition-subnav" aria-label="{% trans "Nutrition sections" %}"
+       x-data x-init="$el.querySelector('[aria-current]')?.scrollIntoView({ block: 'nearest', inline: 'center' })">
+    <a href="{% url 'nutrition:dashboard' %}" {% if nutrition_active_tab == "dashboard" %}aria-current="true"{% endif %}>{% trans "Overview" %}</a>
+    <a href="{% url 'nutrition:diary-day' %}" {% if nutrition_active_tab == "diary" %}aria-current="true"{% endif %}>{% trans "Diary" %}</a>
+    <a href="{% url 'nutrition:food-list' %}" {% if nutrition_active_tab == "foods" %}aria-current="true"{% endif %}>{% trans "Foods" %}</a>
+    <a href="{% url 'nutrition:recipe-list' %}" {% if nutrition_active_tab == "recipes" %}aria-current="true"{% endif %}>{% trans "Recipes" %}</a>
+    <a href="{% url 'nutrition:diet-plan-list' %}" {% if nutrition_active_tab == "diet-plans" %}aria-current="true"{% endif %}>{% trans "Diet plans" %}</a>
+    <a href="{% url 'nutrition:calculators-home' %}" {% if nutrition_active_tab == "calculators" %}aria-current="true"{% endif %}>{% trans "Calculators" %}</a>
+    <a href="{% url 'nutrition:stats' %}" {% if nutrition_active_tab == "stats" %}aria-current="true"{% endif %}>{% trans "Statistics" %}</a>
+  </nav>
+</div>

@@ -15,6 +15,15 @@ def app_version(request):
     return {"app_version": get_version()}
 
 
+def admin_contact(request):
+    """settings.ADMIN_CONTACT_EMAIL, read into every template's
+    context the same way push()/seo() below already are — see that
+    setting's own comment (config/settings/base.py) for what it's
+    for. Empty string, not missing, when unset — templates can test
+    it directly with {% if admin_contact_email %} either way."""
+    return {"admin_contact_email": settings.ADMIN_CONTACT_EMAIL}
+
+
 def push(request):
     """Whether Web Push is configured on this instance at all
     (settings.PUSH_ENABLED, docs/SECURITY.md "Web Push notifications")

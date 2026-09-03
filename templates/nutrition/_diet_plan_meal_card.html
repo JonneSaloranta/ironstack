@@ -1,4 +1,4 @@
-{% load i18n %}
+{% load i18n core_extras %}
 {% comment %}
 One DietPlanMeal's card — shared by diet_plan_detail.html's weekly
 (collapsed-by-day) and one-day (flat) rendering, so there's exactly
@@ -9,7 +9,7 @@ Expects: meal (with .items.all()'s items each already carrying
 plan.
 {% endcomment %}
 <div class="card">
-  <strong>{{ meal.meal_slot.name }}</strong>
+  <strong>{{ meal.meal_slot.name|translate_content }}</strong>
   <span class="text-muted">— {{ meal.target_calories }} kcal {% trans "target" %}, {{ meal.actual_calories|floatformat:0 }} kcal {% trans "so far" %}</span>
   {% for item in meal.items.all %}
     <div class="card-action-row" style="padding:0.5rem 0;">

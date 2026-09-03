@@ -5971,6 +5971,51 @@ msgstr "Новая версия IronStack"
 msgid "IronStack %(version)s is now running — tap to see what's new."
 msgstr "IronStack %(version)s уже запущен — нажмите, чтобы узнать, что нового."
 
+msgid "Browse OpenFoodFacts"
+msgstr "Просмотреть OpenFoodFacts"
+
+msgid "Rest over"
+msgstr "Отдых окончен"
+
+msgid "Time to get back to it."
+msgstr "Пора продолжать тренировку."
+
+msgid "Account"
+msgstr "Аккаунт"
+
+msgid "Contact:"
+msgstr "Контакт:"
+
+msgid "Preferences"
+msgstr "Настройки"
+
+msgid "Privacy"
+msgstr "Конфиденциальность"
+
+msgid "Social"
+msgstr "Социальное"
+
+msgid "Support"
+msgstr "Поддержка"
+
+msgid "Camera access needs a secure (https) connection."
+msgstr "Для доступа к камере нужно защищённое (https) соединение."
+
+msgid "Breakfast"
+msgstr "Завтрак"
+
+msgid "Lunch"
+msgstr "Обед"
+
+msgid "Dinner"
+msgstr "Ужин"
+
+msgid "Evening snack"
+msgstr "Вечерний перекус"
+
+msgid "Still nothing? Make sure the barcode is well lit and fills the frame, or close this and type it into the search box instead."
+msgstr "Всё ещё ничего? Убедитесь, что штрихкод хорошо освещён и полностью помещается в кадр, или закройте это окно и введите код в поле поиска вручную."
+
 #~ msgid "You can't invite this user."
 #~ msgstr "Вы не можете пригласить этого пользователя."
 

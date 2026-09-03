@@ -22,7 +22,7 @@ class ExerciseListView(LoginRequiredMixin, ListView):
         )
         query = self.request.GET.get("q", "").strip()
         if query:
-            qs = qs.filter(name__icontains=query)
+            qs = services.search(qs, query)
         muscle_group = self.request.GET.get("muscle_group", "").strip()
         if muscle_group:
             qs = qs.filter(primary_muscle_groups__id=muscle_group)

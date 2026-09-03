@@ -11,16 +11,16 @@
   <h3 style="margin-top:0;">{% trans "Current" %} <abbr tabindex="0" title="{% trans "Personal Records" %}">PRs</abbr></h3>
   <dl>
     <dt>{% trans "Max weight" %}</dt>
-    <dd>{% if records.max_weight %}{{ records.max_weight|weight:request.user }}{% else %}—{% endif %}</dd>
+    <dd class="stat-figure">{% if records.max_weight %}{{ records.max_weight|weight:request.user }}{% else %}—{% endif %}</dd>
 
     <dt>{% trans "Estimated" %} <abbr tabindex="0" title="{% trans "One-Rep Max" %}">1RM</abbr></dt>
-    <dd>{% if records.estimated_1rm %}{{ records.estimated_1rm|weight:request.user }}{% else %}—{% endif %}</dd>
+    <dd class="stat-figure">{% if records.estimated_1rm %}{{ records.estimated_1rm|weight:request.user }}{% else %}—{% endif %}</dd>
 
     <dt>{% trans "Best set volume" %}</dt>
-    <dd>{% if records.set_volume %}{{ records.set_volume|weight:request.user }}{% else %}—{% endif %}</dd>
+    <dd class="stat-figure">{% if records.set_volume %}{{ records.set_volume|weight:request.user }}{% else %}—{% endif %}</dd>
 
     <dt>{% trans "Best session volume" %}</dt>
-    <dd>{% if records.session_volume %}{{ records.session_volume|weight:request.user }}{% else %}—{% endif %}</dd>
+    <dd class="stat-figure">{% if records.session_volume %}{{ records.session_volume|weight:request.user }}{% else %}—{% endif %}</dd>
   </dl>
 </div>
 
@@ -28,7 +28,7 @@
   <h3 style="margin-top:0;">{% trans "Rep maxes" %}</h3>
   <ul class="prescription-list">
     {% for rep_count, weight in records.rep_specific_pr.items %}
-      <li>{{ rep_count }}<abbr tabindex="0" title="{% trans "Rep Max" %}">RM</abbr>: {% if weight %}{{ weight|weight:request.user }}{% else %}—{% endif %}</li>
+      <li>{{ rep_count }}<abbr tabindex="0" title="{% trans "Rep Max" %}">RM</abbr>: <span class="stat-figure">{% if weight %}{{ weight|weight:request.user }}{% else %}—{% endif %}</span></li>
     {% endfor %}
   </ul>
 </div>

@@ -47,6 +47,30 @@ function loadZxing() {
 // no loss keeping both decoders restricted to the same four.
 const BARCODE_FORMATS = ["ean_13", "ean_8", "upc_a", "upc_e"];
 
+// Regression: `"BarcodeDetector" in window` alone isn't actually proof
+// the native path works — on Android Chrome, that constructor comes
+// from a separate on-device barcode-detection service (part of Google
+// Play Services) that isn't guaranteed to be installed just because
+// the API surface exists. When it isn't, `new BarcodeDetector()`
+// still succeeds and `.detect()` never throws — it just resolves to
+// an empty array, forever, every single frame — which reads as
+// exactly what got reported: camera visibly on, nothing ever
+// detected, no error shown anywhere. `getSupportedFormats()` is a
+// static method that reflects what's *actually* usable on this
+// device/browser combination right now, unlike the constructor —
+// checked once up front so a device without real support for any of
+// our four formats falls back to the vendored ZXing decoder instead
+// of silently hanging on a detector that will never fire.
+async function nativeDetectorUsable() {
+  if (!("BarcodeDetector" in window)) return false;
+  try {
+    const supported = await window.BarcodeDetector.getSupportedFormats();
+    return BARCODE_FORMATS.some((format) => supported.includes(format));
+  } catch {
+    return false;
+  }
+}
+
 function ironstackBarcodeScanner() {
   return {
     active: false,
@@ -57,12 +81,24 @@ function ironstackBarcodeScanner() {
     usingZxing: false,
     rafId: null,
     targetInputId: null,
+    slowHintTimer: null,
+    slowHint: false,
 
     async open(targetInputId) {
       this.targetInputId = targetInputId;
       this.error = null;
+      this.slowHint = false;
       this.active = true;
-      this.usingZxing = !("BarcodeDetector" in window);
+      this.usingZxing = !(await nativeDetectorUsable());
+      // Not a fix for any specific decode failure — a still-visible
+      // way out if the camera view genuinely never finds a barcode
+      // (a device-specific decoder quirk neither fallback path
+      // catches, bad lighting, a damaged/unusual barcode, ...)
+      // instead of an overlay that looks identical whether it's about
+      // to succeed or never will. Cleared in close() either way.
+      this.slowHintTimer = setTimeout(() => {
+        this.slowHint = true;
+      }, 8000);
       try {
         if (this.usingZxing) {
           const ZXing = await loadZxing();
@@ -87,7 +123,21 @@ function ironstackBarcodeScanner() {
         // zxing.min.js fetch failed (offline first load) — close back
         // out to the plain text search rather than leaving a dead,
         // permanently-loading overlay open.
-        this.error = e.message || String(e);
+        //
+        // `navigator.mediaDevices` itself (not just getUserMedia) is
+        // undefined outside a secure context — accessing
+        // `.getUserMedia` on it then throws a bare engine-level
+        // TypeError ("undefined is not an object (evaluating
+        // 'navigator.mediaDevices.getUserMedia')" in Safari's own
+        // phrasing, found live testing this exact fix over plain
+        // HTTP), which read as this feature being broken rather than
+        // explaining what actually needs to change (visit over https,
+        // or localhost on the same machine).
+        if (!navigator.mediaDevices) {
+          this.error = document.body.dataset.insecureContextMessage;
+        } else {
+          this.error = e.message || String(e);
+        }
         this.close();
         return;
       }
@@ -144,6 +194,10 @@ function ironstackBarcodeScanner() {
 
     close() {
       this.active = false;
+      if (this.slowHintTimer) {
+        clearTimeout(this.slowHintTimer);
+        this.slowHintTimer = null;
+      }
       if (this.rafId) {
         cancelAnimationFrame(this.rafId);
         this.rafId = null;

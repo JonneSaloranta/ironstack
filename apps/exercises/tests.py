@@ -177,6 +177,32 @@ class ExerciseListViewTests(TestCase):
         names = {e.name for e in response.context["exercises"]}
         self.assertEqual(names, {"Zzyzx Curl"})
 
+    def test_search_also_matches_the_translated_name(self):
+        # Regression: exercise names are stored in English ("Barbell
+        # Row") but displayed translated (`|translate_content` —
+        # "Kulmasoutu tangolla" for a Finnish user, its real msgstr in
+        # locale/fi). Searching in the language actually shown on
+        # screen used to find nothing at all, since the old plain
+        # `name__icontains` only ever matched the stored English.
+        #
+        # `translation.override()` alone doesn't reach the view here —
+        # apps.core.middleware overrides LocaleMiddleware's own guess
+        # with the logged-in user's own `language` field partway
+        # through the request, same as a real browser request would
+        # go through, so that's what actually needs setting.
+        self.alice.language = "fi"
+        self.alice.save()
+        response = self.client.get(reverse("exercises:exercise-list"), {"q": "kulmasoutu"})
+        names = {e.name for e in response.context["exercises"]}
+        self.assertIn("Barbell Row", names)
+
+    def test_search_still_matches_english_regardless_of_active_language(self):
+        self.alice.language = "fi"
+        self.alice.save()
+        response = self.client.get(reverse("exercises:exercise-list"), {"q": "Barbell Row"})
+        names = {e.name for e in response.context["exercises"]}
+        self.assertIn("Barbell Row", names)
+
     def test_muscle_group_filter(self):
         from apps.exercises.models import MuscleGroup
 

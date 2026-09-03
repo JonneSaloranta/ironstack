@@ -2469,6 +2469,19 @@ class DiaryDayViewTests(TestCase):
         response = self.client.get(reverse("nutrition:diary-day"))
         self.assertEqual(response.context["date"], timezone.localdate())
 
+    def test_meal_slot_name_renders_translated_for_a_non_english_user(self):
+        # Regression: MealSlot names (Breakfast/Lunch/...) were the one
+        # seeded content name in this app rendered as plain
+        # {{ slot.name }} — no |translate_content, no msgid in
+        # apps.nutrition.i18n_content — so it stayed raw English
+        # regardless of the active UI language, unlike every other
+        # seeded name (exercises, measurement types, ...) elsewhere.
+        self.alice.language = "fi"
+        self.alice.save()
+        response = self.client.get(reverse("nutrition:diary-day"))
+        self.assertContains(response, "Aamiainen")
+        self.assertNotContains(response, ">Breakfast<")
+
     def test_shows_a_date_picker_prefilled_with_the_current_page_date(self):
         response = self.client.get(
             reverse("nutrition:diary-day", kwargs={"target_date": "2026-01-01"})

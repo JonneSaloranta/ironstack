@@ -1,9 +1,11 @@
 {% extends "base.html" %}
-{% load i18n %}
+{% load i18n core_extras %}
 {% block title %}{% trans "Recipes" %} — IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
   <h1 style="margin:0;">{% trans "Recipes" %}</h1>
+</div>
+<div class="top-bar-actions">
   <a class="button-secondary" href="{% url 'nutrition:recipe-create' %}">{% trans "+ New recipe" %}</a>
 </div>
 {% include "nutrition/_subnav.html" %}
@@ -22,7 +24,7 @@
       <div>
         <strong>{% trans recipe.name %}</strong>
         {% if not recipe.owner_id %}<span class="tag tag-outline">{% trans "Template" %}</span>{% endif %}
-        {% if recipe.meal_slot %}<span class="tag tag-outline">{{ recipe.meal_slot.name }}</span>{% endif %}
+        {% if recipe.meal_slot %}<span class="tag tag-outline">{{ recipe.meal_slot.name|translate_content }}</span>{% endif %}
         <p class="text-muted">
           {{ recipe.servings }} {% trans "servings" %}
           — {% blocktrans with calories=recipe.per_serving.calories|floatformat:0 %}{{ calories }} kcal/serving{% endblocktrans %}

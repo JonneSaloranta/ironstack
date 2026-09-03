@@ -21,11 +21,22 @@
 // nav/layout CSS fixes never reaching a user whose phone had cached
 // base.css before any of them shipped. See the fetch handler below.
 
-// Bumped alongside the fetch handler's fix below (v1 -> v2) so every
-// existing installation discards its old cache once on update, rather
-// than only self-healing gradually as each individual asset happens to
-// get re-requested.
-const STATIC_CACHE = "ironstack-static-v2";
+// This used to be a hand-bumped literal ("...-v2", then "...-v3") —
+// replaced with a real content hash instead (apps.core.views.
+// service_worker substitutes this placeholder in at serve time, from
+// apps.core.version.get_static_assets_hash()) after a live, real
+// instance of exactly the risk that comment above already warned
+// about: a browser tab kept open across an entire live-editing
+// session stayed on a stale cached static/js/month-calendar.js
+// through several real in-place rewrites of that exact file, each
+// only fixed by a hard reload discarding the cached copy by hand,
+// because nothing about a hand-bumped version number changes just
+// because someone forgot to bump it. A hash of the actual current
+// file contents can't be forgotten to update — it changes the instant
+// any cached asset genuinely does, dev live-edit or a real deploy
+// alike, every install discarding its entire old cache the same way
+// the v1 -> v2 bump once did by hand.
+const STATIC_CACHE = "ironstack-static-__IRONSTACK_STATIC_CACHE_VERSION__";
 
 self.addEventListener("install", () => {
   self.skipWaiting();

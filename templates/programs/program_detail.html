@@ -4,10 +4,12 @@
 {% block content %}
 <div class="top-bar">
   <h1 style="margin:0;">{% trans program.name %}</h1>
-  {% if can_edit %}
-    <a class="button" href="{% url 'programs:program-update' program.pk %}">{% trans "Edit" %}</a>
-  {% endif %}
 </div>
+{% if can_edit %}
+  <div class="top-bar-actions">
+    <a class="button" href="{% url 'programs:program-update' program.pk %}">{% trans "Edit" %}</a>
+  </div>
+{% endif %}
 
 <div class="card">
   {% if program.is_system_template %}

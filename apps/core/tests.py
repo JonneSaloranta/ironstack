@@ -495,6 +495,24 @@ class PWATests(TestCase):
         content = self.client.get("/sw.js").content.decode()
         self.assertIn('pathname.startsWith("/static/")', content)
 
+    def test_the_cache_version_placeholder_is_substituted_not_left_literal(self):
+        # Regression: this used to be a hand-bumped literal string
+        # ("ironstack-static-v2", then "...-v3") — a browser tab kept
+        # open across an entire live-editing session stayed on a stale
+        # cached static/js/month-calendar.js through several real
+        # in-place rewrites of that file, since nothing about a
+        # forgotten-to-bump version number ever actually changes. Now
+        # a real hash of the current static/css and static/js file
+        # contents (apps.core.version.get_static_assets_hash), filled
+        # in at serve time — this just confirms the substitution
+        # itself actually happens rather than leaving the placeholder
+        # (or, worse, the old literal) sitting in served content.
+        from apps.core.version import get_static_assets_hash
+
+        content = self.client.get("/sw.js").content.decode()
+        self.assertNotIn("__IRONSTACK_STATIC_CACHE_VERSION__", content)
+        self.assertIn(f'"ironstack-static-{get_static_assets_hash()}"', content)
+
     def test_static_assets_use_stale_while_revalidate_not_pure_cache_first(self):
         """Regression: a pure cache-first strategy served a cached
         CSS/JS asset forever once cached even once, never re-checking
@@ -603,6 +621,30 @@ class VersionTests(TestCase):
                     self.assertEqual(get_git_sha(), "abc1234")
         finally:
             get_git_sha.cache_clear()
+
+    def test_get_static_assets_hash_changes_when_a_file_does(self):
+        # apps.core.views.service_worker's own cache-busting signal
+        # (static/sw.js's own comment on why) — deliberately not
+        # lru_cache'd like get_version()/get_git_sha() above, since a
+        # dev container's static/ is bind-mounted and can change
+        # without a restart; this proves that live-edit case directly.
+        from apps.core.version import get_static_assets_hash
+
+        with TemporaryDirectory() as tmp:
+            base = Path(tmp)
+            (base / "static" / "css").mkdir(parents=True)
+            (base / "static" / "js").mkdir(parents=True)
+            (base / "static" / "css" / "base.css").write_text("body { color: red; }")
+            with override_settings(BASE_DIR=base):
+                before = get_static_assets_hash()
+                (base / "static" / "css" / "base.css").write_text("body { color: blue; }")
+                after = get_static_assets_hash()
+        self.assertNotEqual(before, after)
+
+    def test_get_static_assets_hash_is_stable_for_unchanged_files(self):
+        from apps.core.version import get_static_assets_hash
+
+        self.assertEqual(get_static_assets_hash(), get_static_assets_hash())
 
     def test_get_migration_state_reports_the_latest_migration_per_app(self):
         state = get_migration_state()
@@ -1678,6 +1720,26 @@ class BottomNavTests(TestCase):
         response = self.client.get(reverse("login"))
         self.assertNotContains(response, 'class="bottom-nav"')
 
+    def test_profile_icon_is_the_plain_svg_by_default(self):
+        response = self.client.get(reverse("dashboard"))
+        self.assertNotContains(response, "gravatar.com/avatar")
+
+    def test_profile_icon_becomes_the_gravatar_picture_once_enabled(self):
+        # Regression: templates/accounts/profile.html used to be the
+        # only place a user's own Gravatar picture ever appeared — the
+        # bottom-nav Profile icon (every authenticated page, not just
+        # that one) stayed the plain outline silhouette regardless.
+        # Falls back to that same silhouette on a real @error (no
+        # Gravatar registered for this email, gravatar_url's own d=404)
+        # rather than a broken-image icon or an empty nav slot — both
+        # elements share one x-data so @error on the <img> can actually
+        # toggle the fallback <svg> back on.
+        self.alice.show_gravatar = True
+        self.alice.save()
+        response = self.client.get(reverse("dashboard"))
+        self.assertContains(response, "gravatar.com/avatar")
+        self.assertContains(response, "gravatarFailed")
+
     def test_progress_nav_link_points_to_the_analytics_dashboard(self):
         """Regression: "Progress" used to link to Body tracking (measurements),
         not the actual training-volume/PR/strength-trend analytics page —
@@ -1785,6 +1847,20 @@ class DashboardWidgetsTests(TestCase):
                 content.count(url), 1, f"{url_name} ({url}) should appear only once, in the nav"
             )
 
+    def test_actionable_content_comes_before_the_calendar(self):
+        # Regression: the month calendar used to open the page, pushing
+        # "Continue workout"/this week's stats/recent PRs — the things
+        # CLAUDE.md's own "training log first" principle says a user
+        # actually opens this page to check — off the first screen on
+        # a phone. The calendar now renders further down instead
+        # (still not collapsed behind a click — asked for directly, so
+        # it stays easy to reach, just no longer first).
+        response = self.client.get(reverse("dashboard"))
+        content = response.content.decode()
+        self.assertLess(
+            content.index("No workout in progress"), content.index('id="month-calendar"')
+        )
+
     def test_dashboard_has_no_logout_button(self):
         """Regression: the dashboard used to duplicate the logout button
         already available on the profile page."""
@@ -1876,12 +1952,41 @@ class DashboardCalendarTests(TestCase):
         )
         self.assertEqual(todays_cell["status"].training_status, "completed")
 
+    def test_a_pr_day_renders_gold_not_green(self):
+        # Regression: a PR day used to share --color-success with this
+        # same calendar's own unrelated "close to nutrition target"
+        # icon a few cells over — the exact same green meaning two
+        # different things. Gold (calendar-day-icon-gold, base.css)
+        # matches the 🏆 this app already uses for a PR everywhere
+        # else instead.
+        from decimal import Decimal
+
+        from apps.exercises.models import Exercise
+        from apps.records.models import PersonalRecord, PRType
+
+        exercise = Exercise.objects.create(name="Test Snatch", owner=None)
+        PersonalRecord.objects.create(
+            user=self.alice,
+            exercise=exercise,
+            record_type=PRType.MAX_WEIGHT,
+            value=Decimal("100"),
+            weight=Decimal("100"),
+            reps=1,
+            achieved_at=timezone.now(),
+        )
+        response = self.client.get(reverse("dashboard"))
+        self.assertContains(response, "calendar-day-icon-gold")
+
     def test_days_json_carries_a_translated_detail_line_per_day(self):
         response = self.client.get(reverse("dashboard"), {"month": "2026-08"})
         days = response.context["calendar_days_json"]
         self.assertEqual(len(days), 31)
         first_day = next(d for d in days if d["date"] == "2026-08-01")
-        self.assertEqual(first_day["lines"], ["Rest day.", "Nothing logged that day."])
+        # Just the training-status line — no second "nothing logged"
+        # line once there's nothing to actually report (see
+        # DayDetailLinesTests.test_no_calorie_line_at_all_when_nothing_
+        # was_logged below for why).
+        self.assertEqual(first_day["lines"], ["Rest day."])
 
     def test_a_far_future_month_still_renders_without_data(self):
         """No clamp any more (calendar_prev_month/_next_month's own
@@ -1893,6 +1998,51 @@ class DashboardCalendarTests(TestCase):
             for day in week:
                 if day["in_month"]:
                     self.assertIsNone(day["status"].training_status)
+
+    def test_hover_handlers_are_bound_to_the_same_element_css_hover_targets(self):
+        # Regression: @mouseenter/@mouseleave used to live on the
+        # inner <button> (.calendar-day) while base.css's own :hover
+        # reveal targets the outer .calendar-day-cell, which also
+        # contains the popover itself once shown. Moving the mouse off
+        # the button and onto the now-visible popover to actually read
+        # it stayed within the *cell* (CSS kept it visible) but left
+        # the *button's* bounds (its own mouseleave fired, clearing
+        # hoveredDate) — the popover stayed on screen, empty. Asserting
+        # the handler sits on the cell, before its own child button
+        # even opens, is the structural guarantee that stays true.
+        response = self.client.get(reverse("dashboard"))
+        content = response.content.decode()
+        # The first day cell in the grid is often a padding day from
+        # the previous month (no hover handler at all — see this
+        # partial's own comment on day.in_month) — anchoring on the
+        # first real @mouseenter instead of the first .calendar-day-
+        # cell sidesteps that rather than assuming which cell is which.
+        hover_pos = content.index('@mouseenter="hoveredDate')
+        button_marker = '<button type="button"\n                    class="calendar-day'
+        button_pos = content.index(button_marker, hover_pos)
+        self.assertLess(hover_pos, button_pos)
+
+    def test_the_days_data_script_tag_is_inside_the_swapped_card(self):
+        # Regression: this used to render as a sibling *before* the
+        # card instead of inside it. hx-swap="outerHTML" only ever
+        # replaces #month-calendar itself, never anything preceding
+        # it, so a month change left the original script tag orphaned
+        # in the DOM instead of removed — a second one (the new
+        # month's data) landed next to it, and document.getElementById
+        # (static/js/month-calendar.js) always resolves duplicate ids
+        # to whichever comes *first*, i.e. the stale one. Every month
+        # change past the first showed an empty popover on every day,
+        # since the stale data's own dates never matched the new
+        # month's days. Asserting the tag is now a *child* (its
+        # opening `id="month-calendar"` appears before the script
+        # tag's own id in the response) is the structural guarantee
+        # that fix actually holds — a real browser/HTMX round trip
+        # isn't something this test client can exercise directly.
+        response = self.client.get(reverse("dashboard"))
+        content = response.content.decode()
+        self.assertLess(
+            content.index('id="month-calendar"'), content.index('id="calendar-days-data"')
+        )
 
     def test_an_htmx_request_renders_only_the_calendar_partial(self):
         """Changing month is an HTMX swap of just this one card
@@ -1957,6 +2107,20 @@ class DayDetailLinesTests(TestCase):
 
         lines = _day_detail_lines(self._status(actual_calories=Decimal("1800")), None)
         self.assertEqual(lines[1], "1800 kcal logged.")
+
+    def test_no_calorie_line_at_all_when_nothing_was_logged(self):
+        # Regression: this used to always be a second line either way
+        # — "1800 / 2000 kcal logged." when there was something to
+        # report, "Nothing logged that day." when there wasn't. The
+        # training line above already says what the day was (rest or
+        # training), so a line that only ever says "nothing" added no
+        # real information on top of that for every single day with no
+        # diary entries — asked for directly, dropped entirely instead
+        # of reworded.
+        from apps.core.views import _day_detail_lines
+
+        lines = _day_detail_lines(self._status(actual_calories=None), 2000)
+        self.assertEqual(len(lines), 1)
 
 
 class AchievementsCarouselTests(TestCase):

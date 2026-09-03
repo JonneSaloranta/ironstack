@@ -27,7 +27,8 @@ below says so plainly rather than pretending otherwise.
         <button type="button" class="modal-close" @click="privacyOpen = false" aria-label="{% trans "Dismiss" %}">&times;</button>
       </div>
       <div class="modal-body">
-        <p>{% trans "IronStack is self-hosted, open-source software — the person or organization running this particular installation (not the software's authors) is who's responsible for the data on it, and who you should contact about any of the below." %}</p>
+        <p>{% trans "IronStack is self-hosted, open-source software — the person or organization running this particular installation (not the software's authors) is who's responsible for the data on it, and who you should contact about any of the below." %}
+          {% if admin_contact_email %}{% trans "Contact:" %} <a href="mailto:{{ admin_contact_email }}">{{ admin_contact_email }}</a>{% endif %}</p>
         <h3>{% trans "What's collected" %}</h3>
         <p>{% trans "Your account details (username, and optionally your name and email address), and whatever you choose to log: workout history, body measurements, nutrition and diet data, and other activities. Technical data such as your IP address is used briefly for rate-limiting and security (e.g. blocking repeated failed login attempts), not stored as part of your account." %}</p>
         <h3>{% trans "Why" %}</h3>

@@ -4,10 +4,12 @@
 {% block content %}
 <div class="top-bar">
   <h1 style="margin:0;">{{ group.name }}</h1>
-  {% if can_manage %}
-    <a class="button-secondary" href="{% url 'social:group-edit' group.pk %}">{% trans "Edit" %}</a>
-  {% endif %}
 </div>
+{% if can_manage %}
+  <div class="top-bar-actions">
+    <a class="button-secondary" href="{% url 'social:group-edit' group.pk %}">{% trans "Edit" %}</a>
+  </div>
+{% endif %}
 
 {% if group.description %}<p class="text-muted">{{ group.description }}</p>{% endif %}
 

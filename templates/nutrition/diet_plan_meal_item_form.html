@@ -1,9 +1,9 @@
 {% extends "base.html" %}
-{% load i18n static %}
-{% block title %}{% blocktrans with name=meal.meal_slot.name %}Add item to {{ name }}{% endblocktrans %} — IronStack{% endblock %}
+{% load i18n static core_extras %}
+{% block title %}{% blocktrans with name=meal.meal_slot.name|translate_content %}Add item to {{ name }}{% endblocktrans %} — IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
-  <h1 style="margin:0;">{% blocktrans with name=meal.meal_slot.name %}Add item to {{ name }}{% endblocktrans %}</h1>
+  <h1 style="margin:0;">{% blocktrans with name=meal.meal_slot.name|translate_content %}Add item to {{ name }}{% endblocktrans %}</h1>
 </div>
 {% include "nutrition/_subnav.html" %}
 
