@@ -16,6 +16,57 @@ previous release (`docs/ARCHITECTURE.md` "Versioning") — a terse,
 complete audit trail, not a replacement for this file's shorter,
 narrated summary of the same version.
 
+## [Unreleased]
+
+### Added
+- An operator contact address (`DJANGO_ADMIN_CONTACT_EMAIL`), shown in
+  the privacy notice for anyone to reach whoever runs this instance.
+- Rest timer: a system notification when it finishes and the page
+  isn't visible (phone locked, a different app/tab in front) — on top
+  of the beep and the visible countdown reaching 0:00, and only ever
+  for someone who's already turned on notifications.
+- Calendar: hovering a day (desktop) shows its details immediately, no
+  tap needed; tapping outside the calendar closes an open day; a new
+  personal record's own day is gold instead of sharing a color with
+  an unrelated nutrition icon a few cells over.
+- The bottom-nav Profile icon shows your own Gravatar picture, when
+  you've turned that on — previously only shown on the profile page.
+
+### Changed
+- Every page's title bar now holds only the title — action buttons,
+  status tags, and the like moved to their own row right below it,
+  for a consistent look across the whole app.
+- Profile page reorganized into named sections (Account, Social, Your
+  data, Support) instead of one long list, with real toggle switches
+  in place of plain checkboxes.
+- Dashboard: the month calendar moved below what you're actually
+  likely checking (continue a workout, this week's numbers, recent
+  PRs) instead of opening the page and pushing them off-screen — still
+  reachable without a click, just lower.
+- Toast notifications (e.g. "Preferences saved.") appear in the
+  bottom-right corner on desktop instead of spanning the top of the
+  window.
+
+### Fixed
+- Searching exercises (or anything relying on the same seeded-name
+  translation) in a non-English language now actually finds matches —
+  it used to only ever match the stored English name.
+- The 32×32 favicon rendered as an illegible cropped fragment in a
+  real browser tab.
+- Barcode scanning could silently do nothing forever on a device where
+  the camera opened but the browser's native barcode decoder wasn't
+  actually usable — now falls back to the bundled decoder instead.
+- A month change in the calendar could leave a day's popover showing
+  stale data from the previous month, or nothing at all.
+- Meal names (Breakfast, Lunch, ...) were never translated.
+- The nutrition section's own tab bar could leave you on a tab
+  scrolled out of view, with nothing showing which section you were
+  actually in.
+- A stale cached copy of the app's own JavaScript/CSS could keep
+  serving from before an update, sometimes well after installing a
+  new version — the cache now invalidates itself automatically instead
+  of relying on a hand-updated version number.
+
 ## [1.9.1] — 2026-09-02
 
 ### Changed

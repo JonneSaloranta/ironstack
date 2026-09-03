@@ -3557,3 +3557,86 @@ lightly-tested (shellcheck only, no Django test coverage) shell script
 where none existed before. Compose-level changes (a new service, port,
 or volume) still need the same hand-sync as always — this only ever
 covered the specific class of change that actually broke tonight.
+
+## UI/UX review pass
+
+A full UI/UX audit of the running app (real screenshots, both mobile
+and desktop, taken against a real running instance rather than read
+from templates alone), followed by fixing what it found — mostly live,
+iterating against a dev container the whole time, several of these
+found only because something looked wrong once actually clicked
+through rather than reasoned about from the code.
+
+**Exercise search** (apps.exercises.services.search) matched only the
+stored English name, never a search typed in the language the exercise
+name is actually *shown* in — `|translate_content` translates for
+display, but the old plain `.filter(name__icontains=query)` never went
+through that same catalog. Fixed in Python (pull name/pk, check both
+the raw and gettext-translated form) rather than at the database
+level, gettext having no SQL-level equivalent — the exercise library
+this searches is small enough that this is the pragmatic answer
+specifically here, not applied the same way to apps.nutrition's own
+Food/Recipe search (which can hold far more rows, an OpenFoodFacts-
+synced catalog).
+
+**The calendar day-detail popover** got the most iteration of anything
+this pass touched. In order: a stale-data bug (calendar-days-data's
+own json_script tag lived *before* #month-calendar as a sibling rather
+than inside it, so hx-swap="outerHTML" on a month change never removed
+the old one — document.getElementById always resolves the resulting
+duplicate id to whichever comes first, the stale one, so every month
+change past the first showed empty popovers); then hover-to-reveal on
+desktop, which needed its own `hoveredDate` state kept separate from
+click's own `clickedDate` (sharing one meant a mouse hovering a button
+right before clicking it — completely ordinary — made toggle() see the
+day "already open" and immediately close what the click had just
+opened); then a second bug in that same feature, hover handlers bound
+to the inner `<button>` while the CSS `:hover` reveal targeted the
+outer `.calendar-day-cell` (which also contains the popover once
+shown) — moving the mouse off the button onto the now-visible popover
+left the button's own bounds, clearing hoveredDate while CSS kept the
+popover forced on screen, empty. Both handlers now live on the same
+cell CSS keys off. Click-outside-to-close and a PR day's own gold
+color (matching the 🏆 used everywhere else a PR is shown, instead of
+sharing green with an unrelated nutrition-adherence icon a few cells
+over) came alongside.
+
+**Every page's `.top-bar` now holds only its own title.** It used to
+also carry whatever a given page needed — an action button, a status
+tag, a form — with no two pages shaped quite the same way as a result.
+22 templates moved that content into a new `.top-bar-actions` row
+below the title instead. The profile page also stopped being a flat
+stack of 9+ identical cards, reorganized into named groups (Account,
+Social, Your data, Support) with each settings row now the entire card
+as one link (a trailing chevron for the affordance) rather than a
+small button on the right — deliberately reintroducing a shape a much
+earlier session moved *away* from (`.card-action-row`'s own comment
+explains why: a plain full-card link gave no visual sign it was
+clickable at all) — the chevron is what's different this time.
+
+**The service worker's own cache-busting** used to be a hand-bumped
+literal string (`ironstack-static-v2`, then `-v3` once already this
+session) — a live symptom of the exact risk static/sw.js's own
+comments already named: a browser tab kept open through this entire
+session stayed on a stale cached `month-calendar.js` through several
+real rewrites of that file, each only fixed by a hard reload
+discarding the cache by hand. `apps.core.version.
+get_static_assets_hash()` now hashes the actual current bytes of every
+static/css and static/js file, substituted into static/sw.js at serve
+time (apps.core.views.service_worker) — covers a live dev edit and a
+real deploy with the same mechanism, rather than only GIT_SHA (which
+never changes at all across a dev container's lifetime).
+
+Smaller fixes from the same pass: the 32×32 favicon rendered as an
+illegible cropped fragment in a real browser tab (icon.svg's fine
+double-plate detail blurs into a smear at real favicon sizes) — a new,
+deliberately simplified favicon.svg fixes it. The barcode scanner
+could open the camera and never detect anything, silently, forever, on
+a device where `BarcodeDetector` exists in the browser but its actual
+on-device decoding service isn't installed (a real Android/Chrome
+gap) — `getSupportedFormats()` checked once up front now falls back to
+the bundled ZXing decoder there instead of hanging on a detector that
+will never fire. Meal slot names (Breakfast/Lunch/...) were the one
+seeded content name in apps.nutrition never wired up for translation
+at all. The nutrition sub-nav could leave you on a tab scrolled out of
+view with no visible sign which section you were in.
