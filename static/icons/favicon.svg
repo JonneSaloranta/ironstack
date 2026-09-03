@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- Simplified, bolder version of icon.svg (its own root SVG) —
+       that one's dumbbell has two separate plates of different
+       heights per side plus a thin connecting bar, fine detail that
+       reads perfectly fine at the 192/512px sizes it's actually used
+       at, but blurred into an illegible smear once actually rendered
+       down to a real favicon size (32px, and browsers often use it at
+       16px in an actual tab). One solid block per side instead, only
+       slightly thicker relative to the canvas — kept as its own
+       source file (favicon-32.png's own generation, not hand-edited
+       pixels) rather than a one-off raster fix, so it's regenerable
+       if the icon ever needs to change again. -->
+  <rect width="32" height="32" rx="7" fill="#101317"/>
+  <rect x="4" y="11" width="6" height="10" rx="2" fill="#5b9dfd"/>
+  <rect x="22" y="11" width="6" height="10" rx="2" fill="#5b9dfd"/>
+  <rect x="10" y="14.5" width="12" height="3" fill="#5b9dfd"/>
+</svg>
