@@ -121,6 +121,7 @@ TEMPLATES = [
                 "django.template.context_processors.i18n",
                 "apps.workouts.context_processors.active_workout_session",
                 "apps.core.context_processors.app_version",
+                "apps.core.context_processors.admin_contact",
                 "apps.core.context_processors.seo",
                 "apps.core.context_processors.push",
                 "apps.accounts.context_processors.onboarding",
@@ -272,6 +273,21 @@ SERVER_EMAIL = DEFAULT_FROM_EMAIL
 # silence as before this existed.
 ADMINS = env_admins("DJANGO_ADMINS")
 MANAGERS = ADMINS
+
+# A public-facing "who runs this instance, and how do I reach them"
+# address — shown in the privacy notice modal (templates/accounts/
+# _privacy_notice_modal.html, reachable from the login/signup pages
+# and Profile), which already tells a user "the operator, not this
+# project's authors, is who you should contact about any of the
+# below" without ever actually saying how. Deliberately a separate
+# setting from ADMINS above rather than reusing its first address:
+# ADMINS is Django's own uncaught-exception mailing list (ops-facing,
+# potentially several addresses), this is one address meant for a
+# user to read and act on — the same instance could reasonably want
+# crash reports going to one inbox and privacy/data requests to
+# another. Empty by default, so an instance that never sets it just
+# doesn't show a contact address, same silence as ADMINS unset.
+ADMIN_CONTACT_EMAIL = env("DJANGO_ADMIN_CONTACT_EMAIL", default="")
 
 # docs/SECURITY.md — self-hosted instances aren't necessarily meant to
 # accept public registration; set to false once the intended users have
