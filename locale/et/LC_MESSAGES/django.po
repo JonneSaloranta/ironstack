@@ -5901,6 +5901,15 @@ msgstr "Uus IronStacki versioon"
 msgid "IronStack %(version)s is now running — tap to see what's new."
 msgstr "IronStack %(version)s töötab nüüd — puuduta, et näha, mis on uut."
 
+msgid "Browse OpenFoodFacts"
+msgstr "Sirvi OpenFoodFactsi"
+
+msgid "Rest over"
+msgstr "Puhkus läbi"
+
+msgid "Time to get back to it."
+msgstr "Aeg jätkata trenni."
+
 #~ msgid "You can't invite this user."
 #~ msgstr "Sa ei saa seda kasutajat kutsuda."
 
