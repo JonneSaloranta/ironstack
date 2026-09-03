@@ -16,7 +16,7 @@ previous release (`docs/ARCHITECTURE.md` "Versioning") — a terse,
 complete audit trail, not a replacement for this file's shorter,
 narrated summary of the same version.
 
-## [Unreleased]
+## [1.10.0] — 2026-09-03
 
 ### Added
 - An operator contact address (`DJANGO_ADMIN_CONTACT_EMAIL`), shown in
