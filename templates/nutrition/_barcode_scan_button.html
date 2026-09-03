@@ -23,6 +23,7 @@ and a `target_input_id` variable naming the search <input>'s id.
     <div class="modal-body">
       <video x-ref="scannerVideo" playsinline muted class="barcode-scanner-video"></video>
       <p class="text-muted">{% trans "Point your camera at a barcode." %}</p>
+      <p class="text-muted" x-show="slowHint">{% trans "Still nothing? Make sure the barcode is well lit and fills the frame, or close this and type it into the search box instead." %}</p>
       <p class="field-error" x-show="error" x-text="error"></p>
     </div>
   </div>
