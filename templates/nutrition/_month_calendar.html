@@ -34,9 +34,26 @@ again), and outerHTML swaps the whole card including the `x-data`
 below — Alpine only reads `calendar-days-data`'s contents once, at
 `x-data` init, so the *element* has to be replaced wholesale for a new
 month's popover data to ever take effect, not just its inner content.
+
+Regression fixed: `calendar-days-data`'s own `json_script` tag used to
+sit *before* this card as a separate sibling rather than inside it —
+harmless on the very first render, but hx-swap="outerHTML" only ever
+replaces `#month-calendar` itself, never anything before it, so that
+old script tag was never removed on a month change. Its replacement
+(this same partial's own re-render) landed right next to it instead
+of over it, leaving two elements sharing one id — document.
+getElementById (inside ironstackMonthCalendar, static/js/month-
+calendar.js) always returns the *first* one in document order, so
+every month change after the first kept silently reading the
+original month's now-stale data: tapping any day showed an empty
+popover, since that stale data's own `date` strings never matched a
+different month's days at all. Moving the script tag to be this
+card's own child fixes it structurally — swapping the card now always
+takes its data tag down with it, so there's only ever one.
 {% endcomment %}
-{{ calendar_days_json|json_script:"calendar-days-data" }}
-<div class="card" id="month-calendar" x-data="ironstackMonthCalendar('calendar-days-data')">
+<div class="card" id="month-calendar" x-data="ironstackMonthCalendar('calendar-days-data')"
+     @click.outside="close()">
+  {{ calendar_days_json|json_script:"calendar-days-data" }}
   <div class="calendar-header" x-data="{ helpOpen: false }">
     <a class="button-secondary" href="?month={{ calendar_prev_month }}"
        hx-get="?month={{ calendar_prev_month }}" hx-target="#month-calendar" hx-swap="outerHTML"
@@ -81,7 +98,7 @@ month's popover data to ever take effect, not just its inner content.
           {% endcomment %}
           <ul class="calendar-legend">
             <li>
-              <svg class="calendar-day-icon calendar-day-icon-green" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><line x1="6" y1="12" x2="18" y2="12"/><rect x="2" y="9" width="3" height="6" rx="1"/><rect x="19" y="9" width="3" height="6" rx="1"/><rect x="5" y="7" width="2" height="10" rx="1"/><rect x="17" y="7" width="2" height="10" rx="1"/></svg>
+              <svg class="calendar-day-icon calendar-day-icon-gold" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><line x1="6" y1="12" x2="18" y2="12"/><rect x="2" y="9" width="3" height="6" rx="1"/><rect x="19" y="9" width="3" height="6" rx="1"/><rect x="5" y="7" width="2" height="10" rx="1"/><rect x="17" y="7" width="2" height="10" rx="1"/></svg>
               {% trans "New personal record" %}
             </li>
             <li>
@@ -129,7 +146,11 @@ month's popover data to ever take effect, not just its inner content.
     {% endfor %}
     {% for week in calendar_weeks %}
       {% for day in week %}
-        <div class="calendar-day-cell">
+        <div class="calendar-day-cell"
+             {% if day.in_month %}
+             @mouseenter="hoveredDate = '{{ day.date|date:"Y-m-d" }}'"
+             @mouseleave="hoveredDate = null"
+             {% endif %}>
           {% if not day.in_month %}
             {% comment %}
               A padding day from the adjacent month — found live:
@@ -153,13 +174,29 @@ month's popover data to ever take effect, not just its inner content.
               </a>
             {% endif %}
           {% else %}
+            {% comment %}
+            @mouseenter/@mouseleave live on the parent .calendar-day-
+            cell (above), not this button — a real bug found live
+            testing this exact feature: base.css's own `:hover` reveal
+            targets .calendar-day-cell too, which also contains the
+            popover itself once it's shown. Moving the mouse off the
+            button and onto the now-visible popover (to actually read
+            it) stayed within the *cell*, so CSS kept it visible, but
+            it left *this* button's own bounds, firing this button's
+            mouseleave and clearing hoveredDate — the popover was still
+            forced on-screen by CSS, just empty, since <template x-if=
+            "openDay"> had nothing left to render. Binding both to the
+            same element CSS keys off keeps them in agreement: hovering
+            anywhere in the cell, popover included, counts as "still
+            hovering this day" for both.
+            {% endcomment %}
             <button type="button"
                     class="calendar-day{% if day.is_today %} calendar-day-today{% endif %}"
                     @click="toggle('{{ day.date|date:"Y-m-d" }}')"
                     :aria-expanded="(openDate === '{{ day.date|date:"Y-m-d" }}').toString()">
               <span class="text-muted">{{ day.date.day }}</span>
               {% if day.status.training_status == "pr" %}
-                <svg class="calendar-day-icon calendar-day-icon-green" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><line x1="6" y1="12" x2="18" y2="12"/><rect x="2" y="9" width="3" height="6" rx="1"/><rect x="19" y="9" width="3" height="6" rx="1"/><rect x="5" y="7" width="2" height="10" rx="1"/><rect x="17" y="7" width="2" height="10" rx="1"/></svg>
+                <svg class="calendar-day-icon calendar-day-icon-gold" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><line x1="6" y1="12" x2="18" y2="12"/><rect x="2" y="9" width="3" height="6" rx="1"/><rect x="19" y="9" width="3" height="6" rx="1"/><rect x="5" y="7" width="2" height="10" rx="1"/><rect x="17" y="7" width="2" height="10" rx="1"/></svg>
               {% elif day.status.training_status == "abandoned" %}
                 <svg class="calendar-day-icon calendar-day-icon-red" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><line x1="6" y1="12" x2="18" y2="12"/><rect x="2" y="9" width="3" height="6" rx="1"/><rect x="19" y="9" width="3" height="6" rx="1"/><rect x="5" y="7" width="2" height="10" rx="1"/><rect x="17" y="7" width="2" height="10" rx="1"/></svg>
               {% elif day.status.training_status == "completed" %}
@@ -177,7 +214,17 @@ month's popover data to ever take effect, not just its inner content.
                 <span class="calendar-day-icon" aria-hidden="true"></span>
               {% endif %}
             </button>
-            <div class="calendar-day-popover{% if forloop.counter0 <= 1 %} calendar-day-popover-start{% elif forloop.counter0 >= 5 %} calendar-day-popover-end{% else %} calendar-day-popover-center{% endif %}"
+            {% comment %}
+            calendar-day-popover-flip-up (base.css) for the last week
+            row — found live: a popover always opened *below* its own
+            day, which for the bottom row ran past the card's own
+            bottom edge (nothing below the grid to push down and make
+            room for it), and often past the viewport's bottom edge
+            too, cut off/unreadable either way. Opens upward instead,
+            same reasoning calendar-day-popover-start/-end already
+            flip sideways near the grid's left/right edge.
+            {% endcomment %}
+            <div class="calendar-day-popover{% if forloop.counter0 <= 1 %} calendar-day-popover-start{% elif forloop.counter0 >= 5 %} calendar-day-popover-end{% else %} calendar-day-popover-center{% endif %}{% if forloop.parentloop.last %} calendar-day-popover-flip-up{% endif %}"
                  x-show="openDate === '{{ day.date|date:"Y-m-d" }}'" x-cloak>
               <template x-if="openDay">
                 <div>
