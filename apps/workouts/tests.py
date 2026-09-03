@@ -538,6 +538,17 @@ class TrainingModeViewTests(TestCase):
     def test_training_page_shows_the_first_incomplete_exercise(self):
         response = self.client.get(reverse("workouts:session-train", args=[self.session.pk]))
         self.assertEqual(response.context["current"], self.performed)
+
+    def test_rest_timer_carries_its_own_notification_text(self):
+        # static/js/rest-timer.js's own notify() reads these off the
+        # component's root element — a plain .js file can't render
+        # {% trans %} itself, so the translated text has to be handed
+        # to it this same data-attribute way (data-zxing-url,
+        # data-service-worker-url, ... — every other server-rendered
+        # value a script here needs already follows it).
+        response = self.client.get(reverse("workouts:session-train", args=[self.session.pk]))
+        self.assertContains(response, 'data-notify-title="Rest over"')
+        self.assertContains(response, 'data-notify-body="Time to get back to it."')
         self.assertContains(response, "Test Squat")
         self.assertContains(response, "Exercise 1 of 1")
 
@@ -700,6 +711,16 @@ class TrainingFabTests(TestCase):
                     response, reverse("workouts:session-train", args=[session.pk])
                 )
 
+    def test_fab_hidden_on_its_own_destination_page(self):
+        # Regression: this used to render on the training screen too,
+        # a "continue training" shortcut floating over the very page
+        # you're already training on — with no clearance reserved for
+        # it in the page's own bottom padding, it sat directly on top
+        # of that page's "Mark complete" button.
+        session = services.start_session(self.alice, workout=None)
+        response = self.client.get(reverse("workouts:session-train", args=[session.pk]))
+        self.assertNotContains(response, "training-fab")
+
     def test_fab_hidden_once_the_session_is_completed(self):
         session = services.start_session(self.alice, workout=None)
         services.complete_session(session)
@@ -709,3 +730,15 @@ class TrainingFabTests(TestCase):
     def test_fab_hidden_for_anonymous_users(self):
         response = self.client.get(reverse("login"))
         self.assertNotContains(response, "training-fab")
+
+    def test_body_reserves_clearance_while_the_fab_is_showing(self):
+        # Regression: nothing reserved space at the bottom of the page
+        # for the fixed-position FAB at all, so it always ended up
+        # floating directly on top of whatever card happened to be
+        # last — see base.css's body.has-fab for the padding this
+        # class adds.
+        response = self.client.get(reverse("dashboard"))
+        self.assertNotContains(response, "has-fab")
+        services.start_session(self.alice, workout=None)
+        response = self.client.get(reverse("dashboard"))
+        self.assertContains(response, 'class="has-fab"')

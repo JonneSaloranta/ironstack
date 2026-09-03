@@ -89,13 +89,15 @@ function ironstackRestTimer() {
       this.remaining = Math.max(0, this.remaining + delta);
     },
     // Countdown reaching zero on its own — the only path that plays a
-    // sound, distinct from a manual "Skip rest" (stop() below), which
-    // shouldn't beep since the user is the one ending it.
+    // sound (or shows a notification, below), distinct from a manual
+    // "Skip rest" (stop() below), which shouldn't do either since the
+    // user is the one ending it.
     finish() {
       clearInterval(this.intervalId);
       this.running = false;
       this.remaining = 0;
       this.beep();
+      this.notify();
     },
     stop() {
       clearInterval(this.intervalId);
@@ -133,6 +135,34 @@ function ironstackRestTimer() {
         });
       } catch (e) {
         // Silently skip — see comment above.
+      }
+    },
+    // A system notification for whenever the beep alone might not
+    // actually be *noticed* — the phone locked, or a different app/
+    // tab in front, mid-rest. Only when the page genuinely isn't the
+    // thing on screen right now (document.hidden — Page Visibility
+    // API): a visible countdown reaching 0:00 plus the beep above
+    // already says "rest's over" clearly enough while looking
+    // straight at it, so this would just be a redundant second alert.
+    // Never requests permission itself — Notification.permission is
+    // only ever "granted" here if the user already turned on push
+    // notifications elsewhere (Profile -> Notifications), the same
+    // subscribe flow (static/js/push-subscribe.js) that's the one
+    // place this app ever actually asks; firing a *second*,
+    // surprise permission prompt mid-rest, unprompted, would be
+    // exactly the kind of automation taking control away from the
+    // user CLAUDE.md's own product principle rules out.
+    notify() {
+      if (!document.hidden) return;
+      if (!("Notification" in window) || Notification.permission !== "granted") return;
+      try {
+        new Notification(this.$el.dataset.notifyTitle, {
+          body: this.$el.dataset.notifyBody,
+          icon: "/static/icons/icon-192.png",
+          tag: "ironstack-rest-timer",
+        });
+      } catch (e) {
+        // Silently skip — same reasoning as beep()'s own try/catch.
       }
     },
   };
