@@ -13,6 +13,7 @@ from apps.analytics import dateranges
 from apps.analytics import services as analytics_services
 from apps.core import greetings as greeting_services
 from apps.core import units as core_units
+from apps.core import version as version_services
 from apps.core.models import SeoSettings
 from apps.measurements import services as measurement_services
 from apps.measurements import units as measurement_units
@@ -37,9 +38,15 @@ def _day_detail_lines(status, target_calories):
     else:
         training_line = _("Rest day.")
 
+    # No second line at all once there's nothing to report — asked for
+    # directly, choosing this over a more specific "no food logged"
+    # wording: the training line above already says what this day
+    # actually was (rest/training), so a second line that only ever
+    # says "nothing" added no information on top of that, for every
+    # single day with no diary entries.
     if status.actual_calories is None:
-        calorie_line = _("Nothing logged that day.")
-    elif target_calories is not None:
+        return [str(training_line)]
+    if target_calories is not None:
         calorie_line = _("%(actual)s / %(target)s kcal logged.") % {
             "actual": int(status.actual_calories),
             "target": target_calories,
@@ -199,7 +206,39 @@ def _serve_static_root_file(filename, content_type):
 
 
 def service_worker(request):
-    return _serve_static_root_file("sw.js", "application/javascript")
+    """static/sw.js, with its own `STATIC_CACHE` placeholder filled in
+    from `apps.core.version.get_static_assets_hash()` rather than the
+    hand-edited literal string it used to be (`"ironstack-static-v2"`,
+    bumped to `"...-v3"` by hand once already, for the exact same
+    reason this exists now instead of trusting a third manual bump
+    to actually happen the next time it's needed).
+
+    Real bug this fixes: static/sw.js's own stale-while-revalidate
+    fetch handler serves whatever's already cached *immediately*,
+    refetching in the background only for the *next* request — a
+    browser tab kept open through an entire live-editing session (a
+    dev container's `static/` is bind-mounted, no rebuild needed to
+    see a JS/CSS edit) stayed on a stale cached static/js/month-
+    calendar.js through several real in-place rewrites of that exact
+    file, each only fixed by a hard reload discarding the cached copy
+    by hand — nothing about the file's own *name* ever changed to
+    tell the browser a new version existed. Substituting in a hash of
+    the actual current file contents here means `STATIC_CACHE` itself
+    changes the instant any cached asset genuinely does, dev live-edit
+    or a real deploy alike, without anyone needing to remember to bump
+    a version number by hand ever again.
+    """
+    path = settings.BASE_DIR / "static" / "sw.js"
+    try:
+        content = path.read_text()
+    except FileNotFoundError:
+        raise Http404 from None
+    content = content.replace(
+        "__IRONSTACK_STATIC_CACHE_VERSION__", version_services.get_static_assets_hash()
+    )
+    response = HttpResponse(content, content_type="application/javascript")
+    response["Service-Worker-Allowed"] = "/"
+    return response
 
 
 def web_manifest(request):

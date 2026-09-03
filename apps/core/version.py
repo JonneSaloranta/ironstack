@@ -25,11 +25,31 @@ one JSON blob).
   version could theoretically span a migration during development, or
   two different versions could share a migration state). Reflects live
   database state, so unlike the two functions above it is never cached.
+- `get_static_assets_hash()` is apps.core.views.service_worker's own
+  cache-busting signal for static/sw.js's `STATIC_CACHE` name — see
+  that view's own docstring for why `get_git_sha()` alone doesn't
+  cover this: it only ever changes on a real deploy (a build baking in
+  a new commit), but a *dev* container (docker-compose.override.yml)
+  never gets one at all (GIT_SHA stays "unknown" all container-
+  lifetime), which is exactly the case that bit this project once
+  already — a browser tab kept open through an entire live-editing
+  session stayed on a stale cached static/js/month-calendar.js through
+  several real in-place rewrites of that exact file, each only fixed
+  by a hard reload discarding the cached copy by hand. Hashing the
+  actual current bytes of every CSS/JS file the service worker's own
+  fetch handler would cache means the value changes the instant any of
+  them genuinely does, dev live-edit or real deploy alike — the one
+  mechanism covers both instead of needing a separate path for each.
 
-Both `get_version()`/`get_git_sha()` are read once and cached — neither
+`get_version()`/`get_git_sha()` are read once and cached — neither
 file changes without a container restart anyway.
+`get_static_assets_hash()` deliberately isn't: the files it reads can
+change without one (a dev container's `static/` is bind-mounted,
+docker-compose.override.yml), so caching it would reintroduce the
+exact staleness this function exists to prevent.
 """
 
+import hashlib
 from functools import lru_cache
 
 from django.conf import settings
@@ -50,6 +70,17 @@ def get_git_sha():
         return (settings.BASE_DIR / "GIT_SHA").read_text().strip()
     except FileNotFoundError:
         return "unknown"
+
+
+def get_static_assets_hash():
+    digest = hashlib.sha256()
+    for subdir in ("css", "js"):
+        directory = settings.BASE_DIR / "static" / subdir
+        for path in sorted(directory.glob("*")):
+            if path.is_file():
+                digest.update(path.name.encode())
+                digest.update(path.read_bytes())
+    return digest.hexdigest()[:12]
 
 
 def get_migration_state():
