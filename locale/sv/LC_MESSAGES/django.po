@@ -5948,6 +5948,9 @@ msgstr "Kvällsmål"
 msgid "Still nothing? Make sure the barcode is well lit and fills the frame, or close this and type it into the search box instead."
 msgstr "Fortfarande inget? Se till att streckkoden är väl belyst och fyller ramen, eller stäng detta och skriv in det i sökrutan istället."
 
+msgid "Copied!"
+msgstr "Kopierat!"
+
 #~ msgid "You can't invite this user."
 #~ msgstr "Du kan inte bjuda in den här användaren."
 

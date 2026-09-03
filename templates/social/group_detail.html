@@ -19,9 +19,16 @@
   <div class="card">
     <h2 style="margin-top:0;">{% trans "Invite link" %}</h2>
     {% if group.invite_enabled %}
-      <p class="text-muted">
-        {{ request.scheme }}://{{ request.get_host }}{% url 'group-invite-join' group.invite_code %}
-      </p>
+      <div class="invite-link-row" x-data="{ copied: false }">
+        <input type="text" readonly x-ref="inviteLink"
+               value="{{ request.scheme }}://{{ request.get_host }}{% url 'group-invite-join' group.invite_code %}"
+               aria-label="{% trans "Invite link" %}" @click="$el.select()" @focus="$el.select()">
+        <button type="button" class="button-secondary"
+                @click="navigator.clipboard.writeText($refs.inviteLink.value).then(() => { copied = true; setTimeout(() => copied = false, 2000) })">
+          <span x-show="!copied">{% trans "Copy" %}</span>
+          <span x-show="copied" x-cloak>{% trans "Copied!" %}</span>
+        </button>
+      </div>
       <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
         <form method="post" action="{% url 'social:group-invite-toggle' group.pk %}">
           {% csrf_token %}
@@ -104,7 +111,18 @@
   </div>
 {% endfor %}
 
-<p>
+{% comment %}
+  Routine, low-stakes actions grouped together and reachable first;
+  the group's own destructive action (Leave/Delete) is deliberately
+  the last thing on the page instead of sitting directly between two
+  ordinary buttons — regression: it used to sit immediately after
+  Mute/Unmute in its own identically-styled row, with nothing setting
+  it apart from a routine action beyond its own red color. A <div>,
+  not a <p> — a <form> child implicitly closes a <p> per the HTML5
+  parsing spec, which silently dropped the flex layout entirely when
+  this was first written as one.
+{% endcomment %}
+<div style="display:flex; flex-wrap:wrap; gap:0.5rem;">
   <form method="post" action="{% url 'social:group-mute-toggle' group.pk %}">
     {% csrf_token %}
     {% if membership.notifications_muted %}
@@ -113,7 +131,8 @@
       <button type="submit" class="button-secondary">{% trans "Mute notifications" %}</button>
     {% endif %}
   </form>
-</p>
+  <a class="button-secondary" href="{% url 'social:group-list' %}">&larr; {% trans "Groups" %}</a>
+</div>
 
 <p>
   {% if not is_owner %}
@@ -130,6 +149,4 @@
     </form>
   {% endif %}
 </p>
-
-<p><a class="button-secondary" href="{% url 'social:group-list' %}">&larr; {% trans "Groups" %}</a></p>
 {% endblock %}

@@ -719,6 +719,29 @@ class GroupViewTests(TestCase):
         response = self.client.get(reverse("social:group-detail", args=[group.pk]))
         self.assertContains(response, "(you)")
 
+    def test_invite_link_renders_as_a_readonly_input_with_a_copy_button(self):
+        """Regression: the link used to render as plain unbroken text in
+        a <p>, running off the right edge of the screen on mobile
+        instead of wrapping or scrolling within its own box."""
+        group = services.create_group(self.alice, "Lifters")
+        services.enable_invite(group)
+        response = self.client.get(reverse("social:group-detail", args=[group.pk]))
+        self.assertContains(response, f'value="http://testserver/group/invite/{group.invite_code}/"')
+        self.assertContains(response, "invite-link-row")
+        self.assertContains(response, "navigator.clipboard.writeText")
+
+    def test_group_edit_cancel_link_translates_as_navigation_not_the_muscle_group(self):
+        """Regression: the "Cancel and go back" link used the same msgid
+        ("Back") as the exercise muscle group of the same name, so every
+        non-English locale showed this link translated as the body part
+        (e.g. Finnish "Selkä") instead of a navigation action."""
+        group = services.create_group(self.alice, "Lifters")
+        self.alice.language = "fi"
+        self.alice.save()
+        response = self.client.get(reverse("social:group-edit", args=[group.pk]))
+        self.assertContains(response, "Peruuta")  # "Cancel"
+        self.assertNotContains(response, "Selkä")  # the muscle group's translation
+
     def test_group_list_shows_a_member_count(self):
         group = services.create_group(self.alice, "Lifters")
         services.enable_invite(group)

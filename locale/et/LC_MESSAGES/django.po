@@ -5946,6 +5946,9 @@ msgstr "Õhtupala"
 msgid "Still nothing? Make sure the barcode is well lit and fills the frame, or close this and type it into the search box instead."
 msgstr "Ikka veel ei leia? Veendu, et triipkood on hästi valgustatud ja täidab kaadri, või sulge see ja sisesta kood otsingukasti."
 
+msgid "Copied!"
+msgstr "Kopeeritud!"
+
 #~ msgid "You can't invite this user."
 #~ msgstr "Sa ei saa seda kasutajat kutsuda."
 

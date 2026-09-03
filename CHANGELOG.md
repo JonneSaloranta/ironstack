@@ -16,6 +16,23 @@ previous release (`docs/ARCHITECTURE.md` "Versioning") — a terse,
 complete audit trail, not a replacement for this file's shorter,
 narrated summary of the same version.
 
+## [1.10.1] — 2026-09-03
+
+### Changed
+- A group page's routine actions (Mute notifications, back to Groups)
+  are grouped together; Delete/Leave group is now the very last thing
+  on the page instead of sitting directly between two ordinary
+  buttons with nothing setting it apart but its own red color.
+
+### Fixed
+- A group's invite link could run off the right edge of the screen —
+  it's a read-only text field with a Copy button now, instead of a
+  long unbroken line of plain text.
+- The "Cancel" link on the edit-group page showed as "Back", which a
+  non-English locale could only translate as the exercise muscle
+  group of the same name (e.g. Finnish "Selkä", the body part) since
+  both shared the same source string.
+
 ## [1.10.0] — 2026-09-03
 
 ### Added

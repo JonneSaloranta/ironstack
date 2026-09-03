@@ -3640,3 +3640,43 @@ will never fire. Meal slot names (Breakfast/Lunch/...) were the one
 seeded content name in apps.nutrition never wired up for translation
 at all. The nutrition sub-nav could leave you on a tab scrolled out of
 view with no visible sign which section you were in.
+
+## Group invite link overflow, and a mistranslated "Back" link
+
+Two small bugs found live in the running 1.10.0 build. A group's
+invite link rendered as a plain `<p>` of unbroken text — the URL never
+wraps, so it ran off the right edge of the card on a narrow screen
+with no way to see or select the rest of it. Now a read-only
+`<input>` in a flex row next to a Copy button
+(`navigator.clipboard.writeText`, with a 2-second "Copied!" swap in
+the button's own label) — `.invite-link-row input { min-width: 0 }`
+is the actual fix, overriding a flex item's default `min-width: auto`
+that otherwise sizes the input to the URL's full intrinsic width
+regardless of the row's own space.
+
+The edit-group page's "cancel and go back" link read `{% trans "Back"
+%}` — the exact same source string `apps.exercises.i18n_content`
+already uses for the "Back" muscle group, so every non-English locale
+carried that muscle group's translation onto the link instead (Finnish
+"Selkä", the body part, instead of a navigation "back"). One shared
+English word covering two unrelated meanings is a `gettext` msgid
+collision, not a translation error — the fix was to stop colliding:
+the link now reuses the existing "Cancel" string already established
+elsewhere for the same "leave this form without saving" pattern
+(templates/accounts/account_delete.html and others), rather than
+introducing `msgctxt`/`{% trans %}`'s `context` argument for a single
+call site.
+
+Also reorganized the group detail page's bottom actions: Mute/Unmute
+and the back-to-Groups link now sit together in one row instead of
+each alone in its own full-width block, and Delete/Leave group moved
+to be the very last thing on the page — previously it sat directly
+between two routine buttons with nothing but its own red color
+setting it apart. First attempt at grouping Mute+Back wrapped them in
+a `<p style="display:flex">`, which silently did nothing: a `<form>`
+child implicitly closes a `<p>` per the HTML5 parsing spec (`form` is
+one of the elements a `<p>`'s end tag may be omitted before), so the
+two buttons rendered as plain block-level siblings *after* an empty,
+already-closed `<p>` rather than as flex items inside it. Every other
+button-row wrapper in this codebase already uses a `<div>` for exactly
+this reason; this one just hadn't needed a `<form>` inside it before.

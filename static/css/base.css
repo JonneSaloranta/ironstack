@@ -993,6 +993,30 @@ abbr[title]:focus::after {
   border-top: none;
 }
 
+/* Read-only invite link (templates/social/group_detail.html) + its
+   copy button. `min-width: 0` on the input overrides a flex item's
+   default `min-width: auto`, which otherwise sizes it to fit the
+   whole unbroken URL and pushes the button off the right edge on
+   narrow screens instead of letting the input itself shrink/scroll. */
+.invite-link-row {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.invite-link-row input {
+  flex: 1;
+  min-width: 0;
+  margin-bottom: 0;
+  font-family: monospace;
+  font-size: 0.85rem;
+}
+
+.invite-link-row button {
+  margin-bottom: 0;
+  flex-shrink: 0;
+}
+
 .field-error {
   color: var(--color-danger);
   font-size: 0.85rem;
