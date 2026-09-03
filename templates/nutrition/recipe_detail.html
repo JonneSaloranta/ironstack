@@ -1,9 +1,11 @@
 {% extends "base.html" %}
-{% load i18n %}
+{% load i18n core_extras %}
 {% block title %}{% trans recipe.name %} — IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
   <h1 style="margin:0;">{% trans recipe.name %}</h1>
+</div>
+<div class="top-bar-actions">
   {% if recipe.owner_id == request.user.id %}
     <a class="button-secondary" href="{% url 'nutrition:recipe-update' recipe.pk %}">{% trans "Edit" %}</a>
   {% else %}
@@ -13,7 +15,7 @@
 {% include "nutrition/_subnav.html" %}
 
 {% if recipe.meal_slot %}
-  <p class="text-muted">{% blocktrans with meal=recipe.meal_slot.name %}Tagged for {{ meal }} — the diet-plan builder only ever suggests this recipe for that meal.{% endblocktrans %}</p>
+  <p class="text-muted">{% blocktrans with meal=recipe.meal_slot.name|translate_content %}Tagged for {{ meal }} — the diet-plan builder only ever suggests this recipe for that meal.{% endblocktrans %}</p>
 {% endif %}
 
 {% if recipe.instructions %}

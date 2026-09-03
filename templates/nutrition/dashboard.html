@@ -1,9 +1,11 @@
 {% extends "base.html" %}
-{% load i18n %}
+{% load i18n core_extras %}
 {% block title %}{% trans "Nutrition" %} — IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
   <h1 style="margin:0;">{% trans "Nutrition" %}</h1>
+</div>
+<div class="top-bar-actions">
   {% trans "Based on whether you completed a workout today — this doesn't change your calorie target automatically." as day_type_help %}
   {% if is_training_day %}
     <abbr class="tag" tabindex="0" title="{{ day_type_help }}">{% trans "Training day" %}</abbr>
@@ -53,7 +55,7 @@
     </table>
     {% for meal in todays_plan.meals %}
       <p class="text-muted">
-        <strong>{{ meal.meal_slot.name }}:</strong>
+        <strong>{{ meal.meal_slot.name|translate_content }}:</strong>
         {% for item in meal.items.all %}{% if item.food %}{{ item.food.name }}{% else %}{% trans item.recipe.name %}{% endif %}{% if not forloop.last %}, {% endif %}{% empty %}{% trans "Nothing planned" %}{% endfor %}
       </p>
     {% endfor %}
