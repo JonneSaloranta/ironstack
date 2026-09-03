@@ -5912,6 +5912,42 @@ msgstr "Vilan är slut"
 msgid "Time to get back to it."
 msgstr "Dags att fortsätta."
 
+msgid "Account"
+msgstr "Konto"
+
+msgid "Contact:"
+msgstr "Kontakt:"
+
+msgid "Preferences"
+msgstr "Inställningar"
+
+msgid "Privacy"
+msgstr "Integritet"
+
+msgid "Social"
+msgstr "Socialt"
+
+msgid "Support"
+msgstr "Support"
+
+msgid "Camera access needs a secure (https) connection."
+msgstr "Kameraåtkomst kräver en säker (https) anslutning."
+
+msgid "Breakfast"
+msgstr "Frukost"
+
+msgid "Lunch"
+msgstr "Lunch"
+
+msgid "Dinner"
+msgstr "Middag"
+
+msgid "Evening snack"
+msgstr "Kvällsmål"
+
+msgid "Still nothing? Make sure the barcode is well lit and fills the frame, or close this and type it into the search box instead."
+msgstr "Fortfarande inget? Se till att streckkoden är väl belyst och fyller ramen, eller stäng detta och skriv in det i sökrutan istället."
+
 #~ msgid "You can't invite this user."
 #~ msgstr "Du kan inte bjuda in den här användaren."
 

@@ -5929,6 +5929,42 @@ msgstr "Lepo ohi"
 msgid "Time to get back to it."
 msgstr "Aika jatkaa treeniä."
 
+msgid "Account"
+msgstr "Tili"
+
+msgid "Contact:"
+msgstr "Yhteystiedot:"
+
+msgid "Preferences"
+msgstr "Asetukset"
+
+msgid "Privacy"
+msgstr "Yksityisyys"
+
+msgid "Social"
+msgstr "Sosiaalinen"
+
+msgid "Support"
+msgstr "Tuki"
+
+msgid "Camera access needs a secure (https) connection."
+msgstr "Kameran käyttö vaatii suojatun (https) yhteyden."
+
+msgid "Breakfast"
+msgstr "Aamiainen"
+
+msgid "Lunch"
+msgstr "Lounas"
+
+msgid "Dinner"
+msgstr "Päivällinen"
+
+msgid "Evening snack"
+msgstr "Iltapala"
+
+msgid "Still nothing? Make sure the barcode is well lit and fills the frame, or close this and type it into the search box instead."
+msgstr "Eikö vieläkään löydy? Varmista, että viivakoodi on hyvin valaistu ja täyttää kehyksen, tai sulje tämä ja kirjoita se hakukenttään."
+
 #~ msgid "You can't invite this user."
 #~ msgstr "Et voi kutsua tätä käyttäjää."
 

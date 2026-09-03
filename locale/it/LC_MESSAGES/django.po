@@ -5985,6 +5985,42 @@ msgstr "Riposo terminato"
 msgid "Time to get back to it."
 msgstr "È ora di riprendere."
 
+msgid "Account"
+msgstr "Account"
+
+msgid "Contact:"
+msgstr "Contatto:"
+
+msgid "Preferences"
+msgstr "Preferenze"
+
+msgid "Privacy"
+msgstr "Privacy"
+
+msgid "Social"
+msgstr "Social"
+
+msgid "Support"
+msgstr "Assistenza"
+
+msgid "Camera access needs a secure (https) connection."
+msgstr "L'accesso alla fotocamera richiede una connessione sicura (https)."
+
+msgid "Breakfast"
+msgstr "Colazione"
+
+msgid "Lunch"
+msgstr "Pranzo"
+
+msgid "Dinner"
+msgstr "Cena"
+
+msgid "Evening snack"
+msgstr "Spuntino serale"
+
+msgid "Still nothing? Make sure the barcode is well lit and fills the frame, or close this and type it into the search box instead."
+msgstr "Ancora niente? Assicurati che il codice a barre sia ben illuminato e riempia l'inquadratura, oppure chiudi questa finestra e digitalo nella casella di ricerca."
+
 #~ msgid "You can't invite this user."
 #~ msgstr "Non puoi invitare questo utente."
 
