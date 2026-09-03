@@ -10,12 +10,34 @@
   --color-danger: #e5636a;
   --color-success: #4fb477;
   --color-warning: #e0a94f;
+  /* A day's PR icon in the month calendar used to share --color-
+     success with that same calendar's own nutrition-adherence icons
+     (a day close to its calorie target) — the exact same green
+     meaning two different things a few cells apart. A PR is already
+     "gold" everywhere else this app marks one (the achievements
+     carousel's own 🏆), so the calendar's PR day now matches instead
+     of colliding with an unrelated meaning. */
+  --color-gold: #d4af37;
   /* Sized for comfortable thumb reach in a mobile browser tab *and* a
      PWA's standalone window (no browser chrome to lean on) — bumped up
      from 3.5rem/1.5rem icons after those felt cramped when installed. */
   --nav-height: 4.25rem;
   --touch-target: 2.75rem;
   --radius: 0.5rem;
+  /* Every logged/measured number (weight, reps, PR values, volume,
+     dates in a stat context) sets in this instead of the body font —
+     a self-hosted training *log*'s own numbers read as recorded data,
+     not prose, the same way a real logbook or spreadsheet would set
+     them apart from its own labels. Deliberately not a downloaded
+     webfont (this app vendors every third-party asset it ships,
+     static/js/htmx.min.js included, rather than fetching from a CDN
+     at runtime — see docs/SECURITY.md's own "the only external call"
+     framing for Gravatar) — this stack is universally available
+     without one, and tabular-nums (applied alongside it, not baked
+     into the stack) is what actually keeps a column of numbers
+     lining up. */
+  --font-mono: ui-monospace, "SF Mono", "Cascadia Code", "Roboto Mono", Consolas,
+    "Liberation Mono", monospace;
 }
 
 * {
@@ -33,6 +55,35 @@ body {
   color: var(--color-text);
   font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   line-height: 1.4;
+}
+
+/* Page titles (.top-bar h1 — "Liikkeet", "Profiili", ...) previously
+   rendered at the plain browser default: whatever weight/size a bare
+   <h1> gets with no rule of its own at all. Heavy weight + tightened
+   tracking is a deliberate, considered choice rather than that
+   default — a page title should feel stamped, not just "big and
+   bold" the way every unstyled heading on the web already is. */
+h1 {
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+
+/* See --font-mono's own comment (this file's :root) for why. Applied
+   as a class rather than a blanket rule on e.g. <dd> — plenty of
+   non-numeric content (exercise names, dates in prose) also lives in
+   the same structural elements and must stay in the body font. */
+.stat-figure {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Extra clearance for whichever FAB (.training-fab/.messages-fab
+   below) base.html's own `has-fab` check decided will render on this
+   page — same offset math those two already use for their own
+   `bottom`, plus the FAB's own height and a little breathing room, so
+   the last card in .container can never end up underneath one. */
+body.has-fab {
+  padding-bottom: calc(var(--nav-height) + env(safe-area-inset-bottom) + 1rem + 3.5rem + 1rem);
 }
 
 a {
@@ -266,6 +317,22 @@ input[type="radio"] {
   height: 1.9rem;
 }
 
+.nav-icon-avatar {
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid transparent;
+}
+
+/* Every other nav icon shows "you're on this page" via `color:
+   var(--color-accent)` (.bottom-nav a[aria-current="page"] above) —
+   an <svg stroke="currentColor"> picks that straight up, but a plain
+   <img> (the Gravatar picture replacing this one icon) can't recolor
+   itself the same way. A ring around it instead carries the same
+   meaning. */
+.bottom-nav a[aria-current="page"] .nav-icon-avatar {
+  border-color: var(--color-accent);
+}
+
 /* apps.social.context_processors.social_badge — a pending friend
    request/group invite or an unread message, surfaced as a small dot
    on the existing Profile nav icon rather than a 7th bottom-nav item
@@ -387,6 +454,43 @@ input[type="radio"] {
   border-bottom: 1px solid var(--color-border);
 }
 
+/* .top-bar holds a page's own title and nothing else — asked for
+   directly, so every page's own header looks the same regardless of
+   whether that page also happens to need an action button, a status
+   tag, or (templates/nutrition/diary_day.html) day-navigation
+   controls. Those move here instead, in normal flow right below the
+   title instead of squeezed into the same flex row as it — no border
+   of its own (.top-bar's own border-bottom already closes off the
+   header), just enough spacing to read as "this page's own actions",
+   not part of the title bar itself. */
+.top-bar-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin: -0.5rem 0 1rem;
+}
+
+/* Regression found live: templates/nutrition/_subnav.html's tab bar
+   sits right after every nutrition page's own .top-bar, but each
+   page's own title/actions vary a lot in height (a bare "Statistics"
+   title vs. Foods' two wrapped action buttons — measured 78px to
+   182px across the 7 nutrition pages) — landing on one tab then
+   tapping another visibly jumped the whole page up or down as that
+   height changed, since nothing reserved a consistent amount of space
+   for it. `:has()` scopes this to only the top-bars actually
+   followed by that sub-nav (every other page in the app has exactly
+   one destination per top-bar, no sibling tabs to jump between, so
+   this isn't a problem worth reserving space for there). Sized to the
+   common case (a title plus zero or one action), not Foods' own
+   two-button outlier — that one page legitimately has more to show
+   and stays a little taller; the goal is smoothing the other six
+   pages against each other, not forcing every page to an identical
+   height regardless of content. */
+.top-bar:has(+ .nutrition-subnav-wrap) {
+  min-height: 5.5rem;
+}
+
 .top-bar form,
 .top-bar .button,
 .top-bar button {
@@ -499,6 +603,23 @@ abbr[title]:focus::after {
   color: inherit;
 }
 
+/* A list of trackable types (measurements/activities) used to give a
+   type with real history and one that's never been logged the exact
+   same visual weight — "Body weight: 82,00 kg" read no differently
+   from six straight "No readings yet" rows around it. Dimming the
+   untracked ones (rather than boosting the tracked ones) needs only
+   one variant, and reads as "nothing here yet" rather than "broken" —
+   still full contrast on focus/hover, so it's never actually harder
+   to find or use than a tracked one, just quieter until then. */
+.card-untracked {
+  opacity: 0.6;
+}
+
+.card-untracked:hover,
+.card-untracked:focus-visible {
+  opacity: 1;
+}
+
 /* A card whose whole surface used to be the link — easy to miss that
    it was clickable at all, since nothing about a plain card visually
    says "press me". Text stays in a plain, non-link block on the left;
@@ -532,6 +653,45 @@ abbr[title]:focus::after {
 .card-action-row .button-secondary {
   margin-bottom: 0;
   flex-shrink: 0;
+}
+
+/* A settings row (templates/accounts/profile.html) — unlike
+   .card-action-row above, the *entire* card is the link to wherever
+   it leads, not just a button on the right. .card-action-row
+   deliberately avoided that shape once already (see its own comment:
+   a plain card gave no visual sign it was clickable at all) — the
+   trailing chevron here is what's different this time, the one shape
+   web/mobile users already read as "this row navigates" without
+   needing a separate boxed button to prove it. Only ever used for a
+   row that actually *is* a single link to another page — Notifications
+   below stays a plain .card with its own real buttons, since enabling
+   push doesn't navigate anywhere. */
+.settings-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.settings-row > div {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.settings-row-chevron {
+  flex-shrink: 0;
+  color: var(--color-text-muted);
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.settings-row:hover,
+.settings-row:focus-visible {
+  border-color: var(--color-accent);
+}
+
+.settings-row:hover .settings-row-chevron,
+.settings-row:focus-visible .settings-row-chevron {
+  color: var(--color-accent);
 }
 
 .dashboard-greeting {
@@ -811,6 +971,28 @@ abbr[title]:focus::after {
   margin-bottom: 0.75rem;
 }
 
+/* Sub-groups fields *within* one form (templates/accounts/profile.html's
+   preferences form — unit_system/timezone/height/language, then
+   privacy toggles, then social toggles, all still one POST/one submit
+   button) — a page-level `h2` eyebrow would read as heavier than this
+   is: one form's own internal structure, not a new top-level section
+   of the page the way ACCOUNT/SOCIAL below it are. */
+.field-group-label {
+  color: var(--color-text-muted);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  margin: 1.25rem 0 0.5rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--color-border);
+}
+
+.field-group-label:first-child {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: none;
+}
+
 .field-error {
   color: var(--color-danger);
   font-size: 0.85rem;
@@ -835,11 +1017,62 @@ abbr[title]:focus::after {
   margin-bottom: 0;
 }
 
+/* A real sliding toggle switch rather than the browser's own bare
+   checkbox square — every .checkbox-field here (profile preferences,
+   backup/SEO/feedback admin settings, a set's warmup/failure flags)
+   is genuinely a plain on/off setting, never one item in a multi-
+   select list, so the switch metaphor fits every one of them. Still
+   a real <input type="checkbox"> underneath (appearance: none only
+   removes its *default painted appearance*, not its behavior) — a
+   screen reader, keyboard Space-to-toggle, and `:checked` form
+   submission all keep working exactly as before; only the paint job
+   changes. */
 .checkbox-field input[type="checkbox"] {
-  /* The flex `gap` above already spaces it from the label text —
-     the global checkbox margin-right (sized for inline text flow)
-     would otherwise double up. */
+  appearance: none;
   margin: 0;
+  flex-shrink: 0;
+  width: 2.75rem;
+  height: 1.5rem;
+  border-radius: 999px;
+  background: var(--color-border);
+  border: 1px solid var(--color-border);
+  position: relative;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.checkbox-field input[type="checkbox"]::before {
+  content: "";
+  position: absolute;
+  top: 1px;
+  left: 1px;
+  width: 1.2rem;
+  height: 1.2rem;
+  border-radius: 50%;
+  background: var(--color-text);
+  transition: transform 0.15s ease;
+}
+
+.checkbox-field input[type="checkbox"]:checked {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+}
+
+.checkbox-field input[type="checkbox"]:checked::before {
+  background: #fff;
+  transform: translateX(1.25rem);
+}
+
+.checkbox-field input[type="checkbox"]:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .checkbox-field input[type="checkbox"],
+  .checkbox-field input[type="checkbox"]::before {
+    transition: none;
+  }
 }
 
 dl {
@@ -1239,6 +1472,25 @@ h2 {
   flex-shrink: 0;
 }
 
+/* templates/nutrition/_subnav.html's own wrapper — .nutrition-subnav
+   itself is the scrolling element, so this fade has to live on a
+   non-scrolling ancestor to stay pinned to the *bar's* right edge
+   instead of scrolling away with the tabs underneath it. */
+.nutrition-subnav-wrap {
+  position: relative;
+}
+
+.nutrition-subnav-wrap::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 2rem;
+  background: linear-gradient(to right, transparent, var(--color-bg));
+  pointer-events: none;
+}
+
 .stat-row {
   display: flex;
   flex-wrap: wrap;
@@ -1259,6 +1511,8 @@ h2 {
   margin: 0.15rem 0 0;
   font-size: 1.1rem;
   font-weight: 600;
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
 }
 
 /* Achievements carousel (templates/core/dashboard.html) */
@@ -1295,6 +1549,8 @@ h2 {
 .achievement-value {
   display: block;
   font-size: 1.3rem;
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
 }
 
 .achievements-dots {
@@ -1371,13 +1627,31 @@ h2 {
   margin-bottom: 0.5rem;
 }
 
+/* apps.progression's own explainable weight suggestion (CLAUDE.md
+   "provide explainable smart weight suggestions" — one of this app's
+   stated core goals) used to be visually indistinguishable from any
+   other muted card: same near-invisible var(--color-bg) fill as the
+   page behind it. A tinted fill + left accent bar (the same
+   var(--color-success) green already used for a PR badge elsewhere —
+   reused rather than adding a new color to the palette just for this,
+   since "the app noticed something good" is the same idea either
+   way) now makes this the one thing on the training screen that
+   visually says *the app did something for you here*, not just
+   another card. */
 .suggestion-banner {
-  background: var(--color-bg);
-  border: 1px solid var(--color-border);
+  background: rgba(79, 180, 119, 0.1);
+  border: 1px solid rgba(79, 180, 119, 0.35);
+  border-left: 3px solid var(--color-success);
   border-radius: var(--radius);
-  padding: 0.5rem 0.75rem;
+  padding: 0.65rem 0.85rem;
   margin-bottom: 0.5rem;
   font-size: 0.9rem;
+}
+
+.suggestion-banner strong {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 1rem;
 }
 
 /* Mobile: hide every scrollbar track (page itself, the changelog
@@ -1462,6 +1736,28 @@ h2 {
 
   .pwa-install-banner {
     bottom: 0;
+  }
+
+  /* Toasts (.toast-container/.pr-banner) — top-center full-width on
+     mobile makes sense (the one place consistently reachable/visible
+     above the thumb without covering the bottom-nav), asked for
+     directly to move to the bottom-right corner on desktop instead,
+     the conventional desktop toast position rather than a banner
+     spanning the browser window's own full width. `bottom: 6rem`
+     rather than matching .training-fab/.messages-fab's own 1.5rem
+     right above — a PR toast fires exactly while a workout's in
+     progress (the one time that FAB is on screen at all), so sharing
+     its corner risked the two overlapping; 6rem clears the FAB's own
+     3.5rem height plus its 1.5rem offset with room to spare. */
+  .toast-container {
+    top: auto;
+    bottom: 6rem;
+    left: auto;
+    right: 1.5rem;
+    width: 24rem;
+    max-width: calc(100vw - 3rem);
+    align-items: stretch;
+    padding: 0;
   }
 }
 
@@ -1639,6 +1935,10 @@ h2 {
   color: var(--color-success);
 }
 
+.calendar-day-icon-gold {
+  color: var(--color-gold);
+}
+
 .calendar-day-icon-yellow {
   color: var(--color-warning);
 }
@@ -1686,6 +1986,31 @@ h2 {
 
 .calendar-day-popover-end {
   right: 0;
+}
+
+/* Last week row only (templates/nutrition/_month_calendar.html) —
+   opens upward instead of down past the grid's own bottom edge, the
+   same "flip near an edge" reasoning -start/-end above already use
+   for the left/right edges. */
+.calendar-day-popover-flip-up {
+  top: auto;
+  bottom: calc(100% + 0.25rem);
+}
+
+/* Desktop: hovering a day reveals its popover immediately, no click
+   needed — asked for directly, and matches how a mouse-driven user
+   already expects a hover target to behave. Scoped to `hover: hover`
+   (a real mouse/trackpad, not a touchscreen faking a hover on long-
+   press) so this never fights the tap-to-toggle behavior touch relies
+   on instead — those devices keep using Alpine's own `toggle()`/
+   `openDate` untouched. `!important` is load-bearing here: Alpine's
+   `x-show` sets `display: none` as an *inline* style when a day isn't
+   the active `openDate`, which otherwise wins over a plain class-based
+   rule regardless of source order. */
+@media (hover: hover) and (pointer: fine) {
+  .calendar-day-cell:hover .calendar-day-popover {
+    display: block !important;
+  }
 }
 
 /* The "?" legend's own list (templates/nutrition/_month_calendar.html)

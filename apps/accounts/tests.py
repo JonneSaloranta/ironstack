@@ -578,6 +578,11 @@ class ProfileViewTests(TestCase):
         self.assertNotContains(response, "gravatar.com/avatar")
 
     def test_checking_show_gravatar_turns_it_on_and_renders_the_image(self):
+        # The image itself now only ever renders in templates/base.html's
+        # own bottom-nav Profile icon (every authenticated page,
+        # profile included) — this page stopped carrying its own
+        # separate copy of it, redundant once the nav icon already
+        # showed the same picture everywhere.
         self.client.post(
             reverse("profile"),
             {
@@ -662,25 +667,31 @@ class ProfileViewTests(TestCase):
         self.assertContains(response, 'id="pr-toast-container"')
         self.assertContains(response, "pr-banner")
 
-    def test_account_details_password_and_api_key_cards_each_have_their_own_cta_button(self):
-        """Regression: the whole "Change password"/"API keys" card used
-        to be one big <a>, with nothing visually marking it as
-        clickable. Each card is now a plain (non-link) container with
-        an explicit .button-secondary as the only link."""
+    def test_account_details_password_and_api_key_cards_are_each_a_clear_link(self):
+        """Regression, in both directions: the whole "Change password"/
+        "API keys" card used to be one big <a> with no visual sign it
+        was clickable at all, so it became a plain container with a
+        separate .button-secondary as the only link instead — which
+        then meant *tapping the card itself* did nothing, easy to miss
+        the other way. It's the whole card again, but this time with a
+        trailing chevron (.settings-row-chevron, base.css's own
+        .settings-row comment) as the explicit "this row navigates"
+        signal that was missing the first time."""
         response = self.client.get(reverse("profile"))
         # Account details, Change password, Two-factor authentication,
         # Friends & groups, API keys, Download your data, Feedback,
         # Delete account.
-        self.assertContains(response, 'class="card card-action-row"', count=8)
+        self.assertContains(response, 'class="card card-link settings-row"', count=8)
+        self.assertContains(response, "settings-row-chevron", count=8)
         self.assertContains(
-            response, f'<a class="button-secondary" href="{reverse("account-details")}">'
+            response, f'<a class="card card-link settings-row" href="{reverse("account-details")}">'
         )
         self.assertContains(
-            response, f'<a class="button-secondary" href="{reverse("password_change")}">'
+            response, f'<a class="card card-link settings-row" href="{reverse("password_change")}">'
         )
         self.assertContains(
             response,
-            f'<a class="button-secondary" href="{reverse("api_keys:key-list")}">',
+            f'<a class="card card-link settings-row" href="{reverse("api_keys:key-list")}">',
         )
 
     def test_admin_card_also_has_its_own_cta_button_when_shown(self):
@@ -691,9 +702,9 @@ class ProfileViewTests(TestCase):
         # Friends & groups, API keys, Download your data, Feedback,
         # Delete account + Admin, Backups, Feedback, Site & SEO (the
         # latter four inside the staff-only "danger zone").
-        self.assertContains(response, 'class="card card-action-row"', count=12)
+        self.assertContains(response, 'class="card card-link settings-row"', count=12)
         self.assertContains(
-            response, f'<a class="button-secondary" href="{reverse("admin:index")}">'
+            response, f'<a class="card card-link settings-row" href="{reverse("admin:index")}">'
         )
         self.assertContains(response, 'class="danger-zone"')
         self.assertContains(response, reverse("backup-list"))
@@ -914,9 +925,11 @@ class AccountDetailsTests(TestCase):
         password_pos = content.find(reverse("password_change"))
         self.assertNotEqual(account_pos, -1)
         self.assertNotEqual(password_pos, -1)
-        # "Next to" — no other card-action-row between the two.
+        # "Next to" — no other settings-row card opens between the two
+        # (password_pos itself lands inside the *next* card's own
+        # opening tag, hence 1 here rather than 0).
         between = content[account_pos:password_pos]
-        self.assertEqual(between.count("card-action-row"), 1)
+        self.assertEqual(between.count('class="card card-link settings-row"'), 1)
 
 
 class TwoFactorServiceTests(TestCase):
@@ -1752,6 +1765,15 @@ class PrivacyNoticeTests(TestCase):
         self.client.login(username="alice", password="s3cret-pass")
         response = self.client.get(reverse("profile"))
         self.assertContains(response, "Privacy notice")
+
+    def test_no_contact_address_shown_when_unset(self):
+        response = self.client.get(reverse("login"))
+        self.assertNotContains(response, "mailto:")
+
+    @override_settings(ADMIN_CONTACT_EMAIL="admin@example.com")
+    def test_contact_address_shown_once_configured(self):
+        response = self.client.get(reverse("login"))
+        self.assertContains(response, "mailto:admin@example.com")
 
 
 class AuthPageBrandingTests(TestCase):

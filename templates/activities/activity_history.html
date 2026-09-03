@@ -4,8 +4,12 @@
 {% block content %}
 <div class="top-bar">
   <h1 style="margin:0;">{{ activity_type.name|translate_content }}</h1>
-  {% if not activity_type.active %}<span class="tag tag-muted">{% trans "Inactive" %}</span>{% endif %}
 </div>
+{% if not activity_type.active %}
+  <div class="top-bar-actions">
+    <span class="tag tag-muted">{% trans "Inactive" %}</span>
+  </div>
+{% endif %}
 
 {% if summary.count %}
   <div class="card">

@@ -8,7 +8,52 @@
 
 <p class="dashboard-greeting">{{ greeting }}</p>
 
-{% include "nutrition/_month_calendar.html" %}
+{% comment %}
+Training log first (CLAUDE.md's own product principle): what a user
+actually opens this page to check — today's status, this week's
+numbers, the newest PRs — used to render *below* a full 5-week month
+calendar, pushing every one of these off the first screen on a phone.
+Reordered so they're the first thing here; the calendar (a browsing
+tool, not a "check this now" one) moved to the bottom as a collapsed
+disclosure instead — see it further down for why.
+{% endcomment %}
+{% if in_progress_session %}
+  <a class="card card-link" href="{% url 'workouts:session-detail' in_progress_session.pk %}">
+    <strong>{% trans "Continue workout" %}</strong>
+    <p class="text-muted">
+      {% if in_progress_session.workout %}{% trans in_progress_session.workout.name %}{% else %}{% trans "Freeform workout" %}{% endif %}
+      — {% blocktrans with started_at=in_progress_session.started_at|date:"H:i" %}started {{ started_at }}{% endblocktrans %}
+    </p>
+  </a>
+{% else %}
+  <div class="card empty-state">
+    <p>{% trans "No workout in progress." %}</p>
+    <p>{% trans "Start one from a program, or log a freeform workout." %}</p>
+  </div>
+{% endif %}
+
+{% if week_summary.session_count or body_weight is not None %}
+  <div class="card">
+    <dl class="stat-row">
+      <div><dt>{% trans "This week's workouts" %}</dt><dd>{{ week_summary.session_count }}</dd></div>
+      <div><dt>{% trans "This week's volume" %}</dt><dd>{{ week_summary.total_volume }} {{ weight_unit_label }}</dd></div>
+      {% if body_weight is not None %}
+        <div><dt>{% trans "Body weight" %}</dt><dd>{{ body_weight }} {{ body_weight_unit }}</dd></div>
+      {% endif %}
+    </dl>
+  </div>
+{% endif %}
+
+{% if recent_prs %}
+  <div class="card">
+    <strong>{% trans "Recent" %} <abbr tabindex="0" title="{% trans "Personal Records" %}">PRs</abbr></strong>
+    {% for record in recent_prs %}
+      <p class="text-muted" style="margin:0.35rem 0 0;">
+        {% trans record.exercise.name %} — {{ record.get_record_type_display }}: {{ record|pr_value:request.user }}
+      </p>
+    {% endfor %}
+  </div>
+{% endif %}
 
 {% if achievements %}
   <div class="card achievements-carousel" role="region" aria-label="{% trans "Achievements" %}"
@@ -62,44 +107,6 @@
   </div>
 {% endif %}
 
-{% if week_summary.session_count or body_weight is not None %}
-  <div class="card">
-    <dl class="stat-row">
-      <div><dt>{% trans "This week's workouts" %}</dt><dd>{{ week_summary.session_count }}</dd></div>
-      <div><dt>{% trans "This week's volume" %}</dt><dd>{{ week_summary.total_volume }} {{ weight_unit_label }}</dd></div>
-      {% if body_weight is not None %}
-        <div><dt>{% trans "Body weight" %}</dt><dd>{{ body_weight }} {{ body_weight_unit }}</dd></div>
-      {% endif %}
-    </dl>
-  </div>
-{% endif %}
-
-{% if recent_prs %}
-  <div class="card">
-    <strong>{% trans "Recent" %} <abbr tabindex="0" title="{% trans "Personal Records" %}">PRs</abbr></strong>
-    {% for record in recent_prs %}
-      <p class="text-muted" style="margin:0.35rem 0 0;">
-        {% trans record.exercise.name %} — {{ record.get_record_type_display }}: {{ record|pr_value:request.user }}
-      </p>
-    {% endfor %}
-  </div>
-{% endif %}
-
-{% if in_progress_session %}
-  <a class="card card-link" href="{% url 'workouts:session-detail' in_progress_session.pk %}">
-    <strong>{% trans "Continue workout" %}</strong>
-    <p class="text-muted">
-      {% if in_progress_session.workout %}{% trans in_progress_session.workout.name %}{% else %}{% trans "Freeform workout" %}{% endif %}
-      — {% blocktrans with started_at=in_progress_session.started_at|date:"H:i" %}started {{ started_at }}{% endblocktrans %}
-    </p>
-  </a>
-{% else %}
-  <div class="card empty-state">
-    <p>{% trans "No workout in progress." %}</p>
-    <p>{% trans "Start one from a program, or log a freeform workout." %}</p>
-  </div>
-{% endif %}
-
 <a class="card card-link" href="{% url 'exercises:exercise-list' %}">
   <strong>{% trans "Browse exercises" %}</strong>
   <p class="text-muted">{% trans "Explore the exercise library or add your own." %}</p>
@@ -114,6 +121,15 @@
   <strong>{% trans "Activities" %}</strong>
   <p class="text-muted">{% trans "Log a run, ride, or any other non-gym activity." %}</p>
 </a>
+
+{% comment %}
+Moved below the things worth checking on every visit (this file's own
+top comment), but not collapsed behind a click — still visible on
+first load, just further down, and now a good deal shorter (see
+.calendar-day's own comment in base.css) so scrolling this far isn't
+a lot to ask.
+{% endcomment %}
+{% include "nutrition/_month_calendar.html" %}
 {% endblock %}
 
 {% block extra_scripts %}

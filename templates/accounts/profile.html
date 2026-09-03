@@ -2,27 +2,24 @@
 {% load i18n static %}
 {% block title %}{% trans "Profile" %} — IronStack{% endblock %}
 {% block content %}
+{% comment %}
+Gravatar picture removed from here — asked for directly, now that
+templates/base.html's own bottom-nav Profile icon shows the same
+picture (when show_gravatar is on) on every page, this page's own
+copy of it was redundant.
+{% endcomment %}
 <div class="top-bar">
-  <div style="display:flex; align-items:center; gap:0.75rem;">
-    {% if user.show_gravatar %}
-      {% comment %}
-        No Gravatar for this email -> gravatar_url's d=404 makes the
-        request itself fail, so @error (an Alpine directive, not a
-        native onerror= attribute blocked by this app's CSP — see
-        docs/SECURITY.md "Content-Security-Policy") just removes the
-        broken <img> instead of showing a broken-image icon.
-      {% endcomment %}
-      <img src="{{ user.gravatar_url }}" alt="" class="profile-avatar"
-           x-data="{}" @error="$el.remove()">
-    {% endif %}
-    <h1 style="margin:0;">{% trans "Profile" %}</h1>
-  </div>
+  <h1 style="margin:0;">{% trans "Profile" %}</h1>
 </div>
+
+<h2>{% trans "Preferences" %}</h2>
 
 <form class="card" method="post">
   {% csrf_token %}
   {{ form.non_field_errors }}
   {% for field in form %}
+    {% if field.name == "show_bmi" %}<p class="field-group-label">{% trans "Privacy" %}</p>{% endif %}
+    {% if field.name == "allow_friend_requests" %}<p class="field-group-label">{% trans "Social" %}</p>{% endif %}
     <div class="field">
       {% if field.field.widget.input_type == "checkbox" %}
         {% comment %}
@@ -44,15 +41,33 @@
   <button type="submit">{% trans "Save preferences" %}</button>
 </form>
 
-<div class="card card-action-row">
+{% comment %}
+Grouped under a plain <h2> eyebrow per section (the same muted,
+uppercase, uneditorialized label templates/programs/program_list.html's
+"OMAT OHJELMAT"/"SISÄÄNRAKENNETUT MALLIT" already use for exactly this
+— sorting a flat list of cards into named groups) — this used to be
+one undifferentiated stack of nine-plus cards in a row, no structure
+beyond top-to-bottom order.
+
+Every settings-row card is now the *entire* card as one link (.card-
+link, plus a trailing chevron — .settings-row in base.css) rather
+than just a small button on the right — see that class's own comment
+for why a chevron, not just "the whole card is clickable" on its own:
+.card-action-row (still used below for Notifications, which isn't a
+link at all) exists specifically because that shape alone gave no
+visual sign a plain card was pressable.
+{% endcomment %}
+<h2>{% trans "Account" %}</h2>
+
+<a class="card card-link settings-row" href="{% url 'account-details' %}">
   <div>
     <strong>{% trans "Account details" %}</strong>
     <p class="text-muted">{% trans "Update your username, name, and email address." %}</p>
   </div>
-  <a class="button-secondary" href="{% url 'account-details' %}">{% trans "Open" %}</a>
-</div>
+  <svg class="settings-row-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+</a>
 
-<div class="card card-action-row">
+<a class="card card-link settings-row" href="{% url 'password_change' %}">
   <div>
     <strong>{% trans "Change password" %}</strong>
     {% if user.is_sso_user %}
@@ -61,10 +76,10 @@
       <p class="text-muted">{% trans "Update the password you use to sign in." %}</p>
     {% endif %}
   </div>
-  <a class="button-secondary" href="{% url 'password_change' %}">{% trans "Open" %}</a>
-</div>
+  <svg class="settings-row-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+</a>
 
-<div class="card card-action-row">
+<a class="card card-link settings-row" href="{% if user.totp_enabled %}{% url 'two-factor-manage' %}{% else %}{% url 'two-factor-setup' %}{% endif %}">
   <div>
     <strong>{% trans "Two-factor authentication" %}</strong>
     {% if user.totp_enabled %}
@@ -73,22 +88,18 @@
       <p class="text-muted">{% trans "Add a second step at login, using an authenticator app." %}</p>
     {% endif %}
   </div>
-  {% if user.totp_enabled %}
-    <a class="button-secondary" href="{% url 'two-factor-manage' %}">{% trans "Manage" %}</a>
-  {% else %}
-    <a class="button-secondary" href="{% url 'two-factor-setup' %}">{% trans "Set up" %}</a>
-  {% endif %}
-</div>
+  <svg class="settings-row-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+</a>
 
-<div class="card card-action-row">
+<h2>{% trans "Social" %}</h2>
+
+<a class="card card-link settings-row" href="{% url 'social:message-list' %}">
   <div>
-    <strong>{% trans "Friends & groups" %}</strong>
+    <strong>{% trans "Friends & groups" %}{% if social_badge %} <span class="nav-badge" aria-hidden="true" style="position:static; display:inline-block; vertical-align:middle;"></span>{% endif %}</strong>
     <p class="text-muted">{% trans "Friends, groups, and messages." %}</p>
   </div>
-  <a class="button-secondary" href="{% url 'social:message-list' %}">
-    {% trans "Open" %}{% if social_badge %} <span class="nav-badge" aria-hidden="true" style="position:static; display:inline-block; vertical-align:middle;"></span>{% endif %}
-  </a>
-</div>
+  <svg class="settings-row-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+</a>
 
 {% if push_enabled %}
   <div class="card" x-data="ironstackPushNotifications()" x-cloak>
@@ -114,77 +125,81 @@
   </div>
 {% endif %}
 
-<div class="card card-action-row">
+<h2>{% trans "Your data" %}</h2>
+
+<a class="card card-link settings-row" href="{% url 'api_keys:key-list' %}">
   <div>
     <strong>{% trans "API keys" %}</strong>
     <p class="text-muted">{% trans "Manage keys other apps can use to access your data." %}</p>
   </div>
-  <a class="button-secondary" href="{% url 'api_keys:key-list' %}">{% trans "Open" %}</a>
-</div>
+  <svg class="settings-row-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+</a>
 
-<div class="card card-action-row">
+<a class="card card-link settings-row" href="{% url 'data-export' %}">
   <div>
     <strong>{% trans "Download your data" %}</strong>
     <p class="text-muted">{% trans "Browse everything you've logged, or download it as JSON, CSV, or HTML." %}</p>
   </div>
-  <a class="button-secondary" href="{% url 'data-export' %}">{% trans "Open" %}</a>
-</div>
+  <svg class="settings-row-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+</a>
 
 {% if feedback_enabled %}
-  <div class="card card-action-row">
+  <h2>{% trans "Support" %}</h2>
+
+  <a class="card card-link settings-row" href="{% url 'feedback-create' %}">
     <div>
       <strong>{% trans "Feedback" %}</strong>
       <p class="text-muted">{% trans "Report a bug, request something, or tell us what's confusing." %}</p>
     </div>
-    <a class="button-secondary" href="{% url 'feedback-create' %}">{% trans "Open" %}</a>
-  </div>
+    <svg class="settings-row-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+  </a>
 {% endif %}
 
 {% if user.is_staff %}
   <div class="danger-zone">
     <h2>{% trans "Administration" %}</h2>
-    <div class="card card-action-row">
+    <a class="card card-link settings-row" href="{% url 'admin:index' %}">
       <div>
         <strong>{% trans "Admin" %}</strong>
         <p class="text-muted">{% trans "Manage tiers, keys, and reference data across the whole instance." %}</p>
       </div>
-      <a class="button-secondary" href="{% url 'admin:index' %}">{% trans "Open" %}</a>
-    </div>
+      <svg class="settings-row-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+    </a>
 
-    <div class="card card-action-row">
+    <a class="card card-link settings-row" href="{% url 'backup-list' %}">
       <div>
         <strong>{% trans "Backups" %}</strong>
         <p class="text-muted">{% trans "Create, download, and restore full backups of this instance." %}</p>
       </div>
-      <a class="button-secondary" href="{% url 'backup-list' %}">{% trans "Open" %}</a>
-    </div>
+      <svg class="settings-row-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+    </a>
 
-    <div class="card card-action-row">
+    <a class="card card-link settings-row" href="{% url 'feedback-list' %}">
       <div>
         <strong>{% trans "Feedback" %}</strong>
         <p class="text-muted">{% trans "Read what users have submitted, and turn submissions on or off." %}</p>
       </div>
-      <a class="button-secondary" href="{% url 'feedback-list' %}">{% trans "Open" %}</a>
-    </div>
+      <svg class="settings-row-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+    </a>
 
-    <div class="card card-action-row">
+    <a class="card card-link settings-row" href="{% url 'seo-settings' %}">
       <div>
         <strong>{% trans "Site & SEO" %}</strong>
         <p class="text-muted">{% trans "Control whether search engines are allowed to index this instance." %}</p>
       </div>
-      <a class="button-secondary" href="{% url 'seo-settings' %}">{% trans "Open" %}</a>
-    </div>
+      <svg class="settings-row-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+    </a>
   </div>
 {% endif %}
 
 <div class="danger-zone">
-  <div class="card card-action-row">
+  <a class="card card-link settings-row" href="{% url 'account-delete' %}">
     <div>
       <strong>{% trans "Delete account" %}</strong>
       <p class="text-muted">{% trans "Permanently delete your account and everything tied to it." %}</p>
     </div>
-    <a class="button-secondary" href="{% url 'account-delete' %}">{% trans "Open" %}</a>
-  </div>
+    <svg class="settings-row-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+  </a>
 </div>
 
 <form method="post" action="{% url 'logout' %}">

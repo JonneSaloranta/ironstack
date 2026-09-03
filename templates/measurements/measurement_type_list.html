@@ -4,14 +4,22 @@
 {% block content %}
 <div class="top-bar">
   <h1 style="margin:0;">{% trans "Body tracking" %}</h1>
+</div>
+<div class="top-bar-actions">
   <a class="button" href="{% url 'measurements:type-create' %}">{% trans "New" %}</a>
 </div>
 
 {% for measurement_type in measurement_types %}
-  <a class="card card-link" href="{% url 'measurements:history' measurement_type.pk %}">
+  {% comment %}
+  card-untracked dims a type with nothing logged yet — previously
+  identical in every way to one with real history, so "Body weight:
+  82,00 kg" and six straight "No readings yet" rows all carried the
+  same visual weight and none of them stood out from the others.
+  {% endcomment %}
+  <a class="card card-link{% if measurement_type.latest_display is None %} card-untracked{% endif %}" href="{% url 'measurements:history' measurement_type.pk %}">
     <strong>{{ measurement_type.name|translate_content }}</strong>
     {% if measurement_type.is_custom %}<span class="tag">{% trans "Custom" %}</span>{% endif %}
-    <div class="text-muted">
+    <div class="text-muted{% if measurement_type.latest_display is not None %} stat-figure{% endif %}">
       {% if measurement_type.latest_display is not None %}
         {% blocktrans with value=measurement_type.latest_display unit=measurement_type.unit_label %}Latest: {{ value }} {{ unit }}{% endblocktrans %}
       {% else %}

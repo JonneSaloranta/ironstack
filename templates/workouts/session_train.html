@@ -4,6 +4,8 @@
 {% block content %}
 <div class="top-bar">
   <h1 style="margin:0;">{% if session.workout %}{% trans session.workout.name %}{% else %}{% trans "Freeform workout" %}{% endif %}</h1>
+</div>
+<div class="top-bar-actions">
   <a class="button-secondary" href="{% url 'workouts:session-detail' session.pk %}">{% trans "Full view" %}</a>
 </div>
 
@@ -16,7 +18,8 @@ apps.workouts.views.train_set_log sends on a successful log (see that
 view for why a generic htmx:afterRequest listener isn't enough), or
 manually with the presets below.
 {% endcomment %}
-<div class="rest-timer" x-data="ironstackRestTimer()" @rest-timer-start.window="start($event.detail.seconds)">
+<div class="rest-timer" x-data="ironstackRestTimer()" @rest-timer-start.window="start($event.detail.seconds)"
+     data-notify-title="{% trans "Rest over" %}" data-notify-body="{% trans "Time to get back to it." %}">
   <div class="rest-timer-header">
     <span class="text-muted">{% trans "Rest timer" %}</span>
     <button type="button" class="rest-timer-mute" @click="toggleMute()"

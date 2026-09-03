@@ -4,6 +4,8 @@
 {% block content %}
 <div class="top-bar">
   <h1 style="margin:0;">{{ other.username }}</h1>
+</div>
+<div class="top-bar-actions">
   <a class="button-secondary" href="{% url 'social:message-list' %}">&larr; {% trans "Messages" %}</a>
 </div>
 

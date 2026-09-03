@@ -4,10 +4,10 @@
 {% block content %}
 <div class="top-bar">
   <h1 style="margin:0;">{% trans "Foods" %}</h1>
-  <div style="display:flex; flex-wrap:wrap; gap:0.5rem;">
-    <a class="button-secondary" href="{% url 'nutrition:food-browse' %}">{% trans "Import from OpenFoodFacts" %}</a>
-    <a class="button-secondary" href="{% url 'nutrition:food-create' %}">{% trans "+ New food" %}</a>
-  </div>
+</div>
+<div class="top-bar-actions">
+  <a class="button-secondary" href="{% url 'nutrition:food-browse' %}">{% trans "Browse OpenFoodFacts" %}</a>
+  <a class="button-secondary" href="{% url 'nutrition:food-create' %}">{% trans "+ New food" %}</a>
 </div>
 {% include "nutrition/_subnav.html" %}
 

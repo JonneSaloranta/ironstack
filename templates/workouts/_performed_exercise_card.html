@@ -41,7 +41,7 @@
     {% if suggestion %}
       <div class="suggestion-banner">
         {% if suggestion.suggested_weight %}
-          <strong>{% blocktrans with weight=suggestion.suggested_weight|weight:request.user %}Suggested: {{ weight }}{% endblocktrans %}
+          <strong><span aria-hidden="true">💡</span> {% blocktrans with weight=suggestion.suggested_weight|weight:request.user %}Suggested: {{ weight }}{% endblocktrans %}
             {% if suggestion.target_min_reps %}× {{ suggestion.target_min_reps }}{% if suggestion.target_max_reps and suggestion.target_max_reps != suggestion.target_min_reps %}-{{ suggestion.target_max_reps }}{% endif %}{% endif %}
           </strong>
           <span class="tag tag-muted">

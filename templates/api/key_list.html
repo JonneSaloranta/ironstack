@@ -2,14 +2,14 @@
 {% load i18n %}
 {% block title %}{% trans "API keys" %} — IronStack{% endblock %}
 {% block content %}
-<div class="top-bar" x-data="{ helpOpen: false }">
-  <h1 style="margin:0; display:flex; align-items:center; gap:0.5rem;">
-    {% trans "API keys" %}
-    <button type="button" class="help-button" @click="helpOpen = true" aria-label="{% trans "API documentation" %}">?</button>
-  </h1>
+<div class="top-bar">
+  <h1 style="margin:0;">{% trans "API keys" %}</h1>
+</div>
+<div class="top-bar-actions" x-data="{ helpOpen: false }">
   {% if remaining_quota > 0 %}
     <a class="button" href="{% url 'api_keys:key-create' %}">{% trans "New" %}</a>
   {% endif %}
+  <button type="button" class="help-button" style="margin-left:auto;" @click="helpOpen = true" aria-label="{% trans "API documentation" %}">?</button>
 
   <div class="modal-backdrop" x-show="helpOpen" x-cloak x-transition.opacity.duration.200ms
        @click.self="helpOpen = false" @keydown.escape.window="helpOpen = false">
