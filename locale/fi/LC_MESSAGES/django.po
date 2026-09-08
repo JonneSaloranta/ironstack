@@ -5968,6 +5968,10 @@ msgstr "Eikö vieläkään löydy? Varmista, että viivakoodi on hyvin valaistu 
 msgid "Copied!"
 msgstr "Kopioitu!"
 
+#: templates/accounts/profile.html:229
+msgid "Source on GitHub"
+msgstr "Lähdekoodi GitHubissa"
+
 #~ msgid "You can't invite this user."
 #~ msgstr "Et voi kutsua tätä käyttäjää."
 

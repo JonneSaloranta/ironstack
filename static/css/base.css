@@ -42,6 +42,18 @@
 
 * {
   box-sizing: border-box;
+  /* Stops iOS Safari's double-tap-to-zoom gesture site-wide. Deliberately
+     not done via the viewport meta's `user-scalable=no`/`maximum-scale`
+     — that also kills pinch-zoom, which is an accessibility regression
+     for low-vision users. `touch-action: manipulation` only removes the
+     double-tap gesture; pinch-zoom still works.
+     Set on `html` alone this still let iOS Safari double-tap-zoom to
+     fit a block-level element (e.g. .main-content) — Safari resolves
+     the used touch-action per element as its own value intersected
+     with its ancestors', and doesn't reliably treat an unset value on
+     a descendant as "inherit the ancestor's manipulation" the way you'd
+     expect. Setting it on every element via `*` closes that gap. */
+  touch-action: manipulation;
 }
 
 html {
@@ -287,7 +299,16 @@ input[type="radio"] {
      float above everything, nav included) but above ordinary page
      content and its tooltips. */
   z-index: 50;
-  height: var(--nav-height);
+  /* Add the safe area on top of --nav-height rather than eating it out
+     of a fixed --nav-height box (the old `height: var(--nav-height)` +
+     `padding-bottom: env(safe-area-inset-bottom)` combo did that,
+     border-box-shrinking the icon row on phones with a home-indicator
+     inset). Every other consumer of --nav-height (body's own
+     padding-bottom, .training-fab/.messages-fab, the PWA banner) already
+     adds the two together — this keeps the bar consistent with them:
+     the icon row keeps its full height and sits higher, thumb-reachable,
+     while the background still stretches down to cover the inset. */
+  height: calc(var(--nav-height) + env(safe-area-inset-bottom));
   padding-bottom: env(safe-area-inset-bottom);
   display: flex;
   background: var(--color-surface);
@@ -721,6 +742,18 @@ abbr[title]:focus::after {
    second near-identical class), so it needs the usual button resets
    (no native background/border) on top of looking like the plain
    muted footer text it always was. */
+/* Wraps Privacy notice / GitHub link / version string — templates/
+   accounts/profile.html's own comment above that markup explains why
+   these three read as one small-print cluster instead of each
+   .app-version item bringing its own top/bottom margin. */
+.profile-footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  margin: 1.5rem 0 0.5rem;
+}
+
 .app-version {
   display: block;
   width: 100%;
@@ -730,7 +763,7 @@ abbr[title]:focus::after {
   color: var(--color-text-muted);
   font-size: 0.75rem;
   text-align: center;
-  margin: 1.5rem 0 0.5rem;
+  margin: 0;
   padding: 0.5rem;
   cursor: pointer;
   text-decoration: underline;
@@ -741,6 +774,20 @@ abbr[title]:focus::after {
 .app-version:hover,
 .app-version:focus-visible {
   color: var(--color-text);
+}
+
+/* The GitHub link keeps .app-version's own color/size/hover styling
+   (same "small print" weight as Privacy notice and the version
+   string) but needs icon+text laid out side by side, not
+   .app-version's own `display: block` — a plain <a>, no click-to-
+   open-modal behavior, so no `cursor: pointer`/dotted-underline
+   "this is a button" affordance either. */
+.app-version-github {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  text-decoration: none;
 }
 
 .modal-backdrop {
@@ -1009,7 +1056,10 @@ abbr[title]:focus::after {
   min-width: 0;
   margin-bottom: 0;
   font-family: monospace;
-  font-size: 0.85rem;
+  /* No font-size override here on purpose: it inherits the 1rem/16px
+     from the `input, select, textarea { font: inherit }` rule above.
+     Anything smaller than 16px makes iOS Safari auto-zoom into the
+     field on focus. */
 }
 
 .invite-link-row button {

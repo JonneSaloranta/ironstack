@@ -28,11 +28,29 @@ class ContentSecurityPolicyMiddleware:
     # User.gravatar_url, loaded by templates/accounts/profile.html only
     # when a user has opted into User.show_gravatar (off by default —
     # see docs/SECURITY.md "Gravatar profile picture"). The only other
-    # directive not locked to 'self': no external fonts/scripts/frames,
-    # no plugins, no framing by another site (redundant with
+    # directive not locked to 'self': no external fonts/scripts, no
+    # plugins, no framing by another site (redundant with
     # X_FRAME_OPTIONS, kept as defense-in-depth since browsers that
     # don't honor one may honor the other), forms can only submit back
     # to this same origin.
+    # frame-src additionally allows the browser-extension URI schemes:
+    # with no frame-src of its own, that directive falls back to
+    # default-src 'self', which — concretely, not just in theory —
+    # blocks a password manager extension's *own* injected iframe (the
+    # inline autofill-suggestion overlay Bitwarden and similar show on
+    # a field) from ever loading. The browser leaves that iframe stuck
+    # at about:blank (inheriting this page's own origin) instead of
+    # navigating it to its real chrome-extension:/moz-extension: URL,
+    # so the extension's next postMessage() to it — addressed to the
+    # extension's own origin, which is what it expects to be talking to
+    # — throws "target origin ... does not match the recipient window's
+    # origin" and the suggestion silently never appears. Allowing these
+    # two schemes doesn't meaningfully widen the attack surface this
+    # directive defends against (arbitrary third-party *web* content
+    # framing this page's own DOM): an installed extension already has
+    # full access to every page's DOM via its content scripts regardless
+    # of frame-src, so letting it frame itself changes nothing about
+    # what it could already do.
     POLICY = (
         "default-src 'self'; "
         "script-src 'self' 'unsafe-eval'; "
@@ -40,6 +58,7 @@ class ContentSecurityPolicyMiddleware:
         "img-src 'self' data: https://www.gravatar.com; "
         "font-src 'self'; "
         "connect-src 'self'; "
+        "frame-src 'self' chrome-extension: moz-extension: safari-web-extension:; "
         "frame-ancestors 'none'; "
         "base-uri 'self'; "
         "form-action 'self'; "

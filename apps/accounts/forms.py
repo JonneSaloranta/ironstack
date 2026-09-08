@@ -3,7 +3,8 @@ from zoneinfo import available_timezones
 
 from django import forms
 from django.contrib.admin.forms import AdminAuthenticationForm
-from django.contrib.auth.forms import AuthenticationForm, PasswordResetForm, UserCreationForm
+from django.contrib.auth.forms import (AuthenticationForm, PasswordResetForm,
+                                       UserCreationForm)
 from django.core.cache import cache
 from django.utils.translation import gettext_lazy as _
 
@@ -354,7 +355,23 @@ class TwoFactorSetupConfirmForm(forms.Form):
     (shown to them moments earlier), not as a login gate an outside
     attacker could brute-force."""
 
-    code = forms.CharField(label=_("Verification code"), max_length=6)
+    # autocomplete="one-time-code" is the WHATWG-standard token
+    # (https://html.spec.whatwg.org/#autofilling-form-controls) for
+    # exactly this kind of field, the same idea as AccountDetailsForm's
+    # password fields getting one-tap fill from autocomplete=
+    # "current-password"/"new-password". Known trade-off, deliberately
+    # accepted: it didn't get Bitwarden to offer its own inline
+    # autofill-suggestion icon here in practice (that gap looks like a
+    # Bitwarden-side limitation for a standalone code field rather than
+    # anything this attribute controls — its "Autofill" toolbar action
+    # still works regardless), and unlike "off" it doesn't stop the
+    # browser's own plain input-history from re-suggesting stale,
+    # already-expired codes from a dropdown.
+    code = forms.CharField(
+        label=_("Verification code"),
+        max_length=6,
+        widget=forms.TextInput(attrs={"autocomplete": "one-time-code", "inputmode": "numeric"}),
+    )
 
     def __init__(self, *args, user=None, **kwargs):
         self.user = user
@@ -381,7 +398,15 @@ class TwoFactorVerifyForm(forms.Form):
     backup code that happened to be all digits, however unlikely) falls
     back to a backup-code lookup."""
 
-    code = forms.CharField(label=_("Verification code"))
+    # autocomplete="one-time-code" — see TwoFactorSetupConfirmForm's own
+    # `code` field above for the reasoning and trade-off. inputmode=
+    # "numeric" stays despite this field also accepting a hex backup
+    # code — see that same comment's note on why the on-screen-keyboard
+    # cost there is accepted deliberately.
+    code = forms.CharField(
+        label=_("Verification code"),
+        widget=forms.TextInput(attrs={"autocomplete": "one-time-code", "inputmode": "numeric"}),
+    )
 
     def __init__(self, *args, user=None, **kwargs):
         self.user = user

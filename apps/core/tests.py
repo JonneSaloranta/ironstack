@@ -415,6 +415,19 @@ class ContentSecurityPolicyTests(TestCase):
             response["Content-Security-Policy"],
         )
 
+    def test_frame_src_allows_browser_extension_overlays_alongside_self(self):
+        # Regression: with no frame-src of its own, that directive fell
+        # back to default-src 'self' — which silently broke a password
+        # manager extension's own injected iframe (Bitwarden's inline
+        # autofill-suggestion overlay on a field), not just third-party
+        # web content framing this page. See the middleware's own
+        # comment for the exact failure mode this fixes.
+        response = self.client.get(reverse("healthcheck"))
+        self.assertIn(
+            "frame-src 'self' chrome-extension: moz-extension: safari-web-extension:",
+            response["Content-Security-Policy"],
+        )
+
 
 class ProductionSettingsTests(TestCase):
     """config.settings.production — a plain module import with the

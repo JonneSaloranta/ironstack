@@ -175,6 +175,23 @@ above too, with no separate file on this server to also keep in sync.
 Existing data (`postgres_data`/`static_data`/`media_data`/
 `backups_data` volumes) isn't touched by recreating the container.
 
+One exception the two commands above don't cover: a change to
+`compose/nginx/nginx.conf` itself (a real one shipped once — adding
+gzip compression). `nginx`'s `image:` tag never changes on an update,
+and Compose's own recreate check doesn't look inside a bind-mounted
+file's *contents* — only at whether the image or the `docker-
+compose.yml` service definition around it changed — so `up -d` alone
+leaves the `nginx` container running on whatever config it already had
+in memory. Worse than a no-op: `nginx.conf` is mounted as a *single
+file*, and editors/`git` typically replace a file by writing a new
+inode rather than editing the old one in place, which can leave the
+bind mount itself pointing at a now-deleted inode — so even `docker
+compose exec nginx nginx -s reload` (which only re-reads config, not
+the mount) isn't guaranteed to see the new file either. After any
+update that touched `compose/nginx/nginx.conf`, force nginx to pick up
+its current on-disk config by recreating the container outright:
+`docker compose -f docker-compose.yml up -d --force-recreate nginx`.
+
 Still worth doing before any update, as routine hygiene rather than
 because the automatic part is untrustworthy: take a fresh backup first
 (the profile page's admin-only Backups screen, or `./scripts/backup.sh`

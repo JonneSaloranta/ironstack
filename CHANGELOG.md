@@ -16,6 +16,26 @@ previous release (`docs/ARCHITECTURE.md` "Versioning") — a terse,
 complete audit trail, not a replacement for this file's shorter,
 narrated summary of the same version.
 
+## [1.11.0] — 2026-09-08
+
+### Added
+- A GitHub link to the profile page footer, next to the privacy
+  notice and version number.
+
+### Fixed
+- Tapping the group invite-link field, or double-tapping anywhere,
+  zoomed the page in on iOS Safari.
+- The mobile bottom-nav's icons sat cramped and low, crowded against
+  the home-indicator inset on phones that have one.
+- The rest timer lost track of time while the phone's screen was
+  locked, and its "time's up" notification never actually displayed
+  on iOS.
+- The two-factor verification code field offered no autofill hint to
+  password managers.
+- The Content-Security-Policy header blocked a password manager
+  extension's own inline autofill-suggestion overlay from loading.
+- Every page and static asset was served uncompressed by nginx.
+
 ## [1.10.1] — 2026-09-03
 
 ### Changed

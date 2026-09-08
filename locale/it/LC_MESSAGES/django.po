@@ -6024,6 +6024,10 @@ msgstr "Ancora niente? Assicurati che il codice a barre sia ben illuminato e rie
 msgid "Copied!"
 msgstr "Copiato!"
 
+#: templates/accounts/profile.html:229
+msgid "Source on GitHub"
+msgstr "Codice sorgente su GitHub"
+
 #~ msgid "You can't invite this user."
 #~ msgstr "Non puoi invitare questo utente."
 

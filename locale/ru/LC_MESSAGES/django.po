@@ -6019,6 +6019,10 @@ msgstr "Всё ещё ничего? Убедитесь, что штрихкод 
 msgid "Copied!"
 msgstr "Скопировано!"
 
+#: templates/accounts/profile.html:229
+msgid "Source on GitHub"
+msgstr "Исходный код на GitHub"
+
 #~ msgid "You can't invite this user."
 #~ msgstr "Вы не можете пригласить этого пользователя."
 

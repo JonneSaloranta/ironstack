@@ -17,6 +17,18 @@ function ironstackRestTimer() {
     remaining: 0,
     running: false,
     intervalId: null,
+    // Wall-clock deadline the countdown ticks towards, instead of just
+    // decrementing `remaining` by 1 on every setInterval callback. A
+    // locked phone (iOS Safari and most mobile Chrome alike) freezes
+    // JS timers entirely rather than merely slowing them down, so a
+    // decrement-based countdown loses every second the screen was
+    // locked — reopening the app resumed counting down from wherever
+    // it had frozen, showing far more time left than had actually
+    // passed. Deriving `remaining` from `endAt - Date.now()` on every
+    // tick (see tick() below) instead means the very next tick that
+    // does run — even one long-delayed by a locked screen — catches
+    // straight up to how much time has really elapsed.
+    endAt: 0,
     muted: localStorage.getItem(MUTE_STORAGE_KEY) === "true",
     // One AudioContext, created lazily and reused for the rest of the
     // page's life — see init()/unlockAudio() below for why it can't
@@ -41,6 +53,18 @@ function ironstackRestTimer() {
       const unlock = () => this.unlockAudio();
       document.addEventListener("click", unlock, { once: true });
       document.addEventListener("touchstart", unlock, { once: true });
+      // Belt-and-suspenders for the same locked-screen freeze described
+      // at endAt's own comment above: a still-running setInterval isn't
+      // guaranteed to fire its callback the instant the screen unlocks
+      // (mobile browsers resume a backgrounded tab's timers on their
+      // own schedule, not necessarily synchronously with the unlock).
+      // Page Visibility firing "visible" is the reliable signal that
+      // the app is back in front of the user, so re-derive `remaining`
+      // right then rather than waiting for whatever the next natural
+      // tick happens to be.
+      document.addEventListener("visibilitychange", () => {
+        if (!document.hidden && this.running) this.tick();
+      });
     },
     unlockAudio() {
       const AudioContextClass = window.AudioContext || window.webkitAudioContext;
@@ -77,16 +101,24 @@ function ironstackRestTimer() {
       this.unlockAudio();
       clearInterval(this.intervalId);
       this.remaining = seconds;
+      this.endAt = Date.now() + seconds * 1000;
       this.running = true;
-      this.intervalId = setInterval(() => {
-        this.remaining -= 1;
-        if (this.remaining <= 0) {
-          this.finish();
-        }
-      }, 1000);
+      this.intervalId = setInterval(() => this.tick(), 1000);
+    },
+    // Re-derives `remaining` from the wall-clock deadline rather than
+    // trusting that exactly one second passed since the last tick —
+    // see endAt's own comment for why that trust doesn't hold on a
+    // locked phone. Shared by the interval (the normal path) and the
+    // visibilitychange catch-up in init() above.
+    tick() {
+      this.remaining = Math.max(0, Math.round((this.endAt - Date.now()) / 1000));
+      if (this.remaining <= 0) {
+        this.finish();
+      }
     },
     adjust(delta) {
-      this.remaining = Math.max(0, this.remaining + delta);
+      this.endAt += delta * 1000;
+      this.remaining = Math.max(0, Math.round((this.endAt - Date.now()) / 1000));
     },
     // Countdown reaching zero on its own — the only path that plays a
     // sound (or shows a notification, below), distinct from a manual
@@ -155,15 +187,31 @@ function ironstackRestTimer() {
     notify() {
       if (!document.hidden) return;
       if (!("Notification" in window) || Notification.permission !== "granted") return;
-      try {
-        new Notification(this.$el.dataset.notifyTitle, {
-          body: this.$el.dataset.notifyBody,
-          icon: "/static/icons/icon-192.png",
-          tag: "ironstack-rest-timer",
+      if (!("serviceWorker" in navigator)) return;
+      // Regression: `new Notification(...)` — the plain constructor —
+      // is what this used to call directly. That's silently a no-op on
+      // iOS/iPadOS Safari: WebKit only ever displays a notification
+      // triggered through a ServiceWorkerRegistration (either from a
+      // "push" event, as static/sw.js's own handler does, or — this
+      // case — a direct showNotification() call from page script), and
+      // either throws or never renders anything for the bare
+      // constructor. static/js/push-subscribe.js's `enable()` already
+      // registers this same service worker as part of turning push
+      // notifications on in the first place, so it's always present by
+      // the time Notification.permission could ever be "granted" here.
+      navigator.serviceWorker
+        .getRegistration()
+        .then((registration) => {
+          if (!registration) return;
+          return registration.showNotification(this.$el.dataset.notifyTitle, {
+            body: this.$el.dataset.notifyBody,
+            icon: "/static/icons/icon-192.png",
+            tag: "ironstack-rest-timer",
+          });
+        })
+        .catch(() => {
+          // Silently skip — same reasoning as beep()'s own try/catch.
         });
-      } catch (e) {
-        // Silently skip — same reasoning as beep()'s own try/catch.
-      }
     },
   };
 }

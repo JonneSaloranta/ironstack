@@ -3680,3 +3680,123 @@ two buttons rendered as plain block-level siblings *after* an empty,
 already-closed `<p>` rather than as flex items inside it. Every other
 button-row wrapper in this codebase already uses a `<div>` for exactly
 this reason; this one just hadn't needed a `<form>` inside it before.
+
+## A phone-testing pass: mobile Safari quirks, the rest timer, 2FA autofill, CSP, and nginx compression
+
+A batch of fixes found testing the running app on a real iPhone,
+mostly small individually but all in the same "actually try it on the
+device" vein.
+
+**iOS Safari zoom, twice over.** Tapping the group invite-link field
+zoomed the whole page into it — its `font-size` (0.85rem, ~13.6px) was
+under the 16px iOS Safari treats as "small enough to zoom in on
+focus"; dropped the override so it inherits the 16px `font: inherit`
+every other input already gets. Separately, double-tapping *anywhere*
+also zoomed the page — `touch-action: manipulation` turns that
+gesture off without the viewport meta's `user-scalable=no`, which
+would also kill pinch-zoom (an accessibility regression for low-vision
+users). First attempt set it on `html` alone, which still let Safari
+double-tap-zoom to fit a block-level descendant like `.main-content`
+— Safari resolves the *used* touch-action per element as its own
+value intersected with its ancestors', and doesn't reliably treat an
+unset descendant as "inherit the ancestor's manipulation" the way
+you'd expect. Moved it to the universal `*` selector instead.
+
+**Bottom-nav icons crowded against the home-indicator inset.**
+`.bottom-nav`'s own `height: var(--nav-height)` plus `padding-bottom:
+env(safe-area-inset-bottom)` ate the safe-area inset out of a
+fixed-height box instead of adding it — every other consumer of
+`--nav-height` (body's own `padding-bottom`, the training/messages
+FABs) already adds the two together. The mismatch squeezed the icon
+row smaller and pushed it lower on any phone with a home-indicator,
+right where it's hardest to reach with a thumb. Fixed to add instead
+of eat: the icon row keeps its full height and sits higher, while the
+bar's background still stretches down to cover the inset.
+
+**Rest timer went stale across a locked screen, and its "done" alert
+never showed on iOS at all.** It counted down by decrementing
+`remaining` once per `setInterval` tick — a locked phone freezes JS
+timers outright rather than slowing them, so every second the screen
+was locked was simply lost, and unlocking resumed from wherever it
+had frozen rather than where it should actually be. Switched to
+deriving `remaining` from a wall-clock deadline (`endAt - Date.now()`)
+on every tick instead, so the next tick that runs — even one
+long-delayed by the lock — catches straight up; a `visibilitychange`
+listener also re-derives it the instant the page becomes visible
+again, in case the interval never got to fire at all while hidden.
+Separately, the "rest's over" notification called `new
+Notification(...)` directly, which iOS Safari silently never displays
+— WebKit only ever shows a notification triggered through a
+`ServiceWorkerRegistration`, the same `showNotification()`
+`static/sw.js`'s own `push` handler already uses. Switched to that;
+still gated on `document.hidden` and an already-granted permission,
+no new prompt. Even fixed, a genuinely locked screen still won't get a
+live "done" alert — iOS suspends the page's JS almost as soon as it's
+backgrounded, not just once the screen locks, so nothing runs to fire
+the notification in the first place until the phone is unlocked again.
+A reliably-on-time alert through a real lock would need the server
+itself to schedule a Web Push message for the exact moment the rest
+period ends — not built here; this project has no delayed-task
+infrastructure yet (no Celery/cron), so that's a real, deliberately
+deferred architectural addition for later rather than something this
+pass papered over.
+
+**2FA verification code field had no autofill hint at all.** Both
+`TwoFactorSetupConfirmForm` and `TwoFactorVerifyForm`'s `code` field
+rendered as a bare `CharField`, no widget — nothing telling a password
+manager or the OS this wants a one-time code, unlike
+`AccountDetailsForm`'s password fields already getting one-tap fill
+from `autocomplete="current-password"`/`"new-password"`. Added
+`autocomplete="one-time-code"` (the WHATWG-standard token for this)
+plus `inputmode="numeric"` to both. Chasing Bitwarden's own inline
+autofill-*suggestion* icon specifically (as opposed to its manual
+"Autofill" action, which already worked throughout) turned up two
+separate findings along the way, kept apart deliberately: the icon
+never appearing on this field looks like a Bitwarden-side limitation
+for a standalone one-time-code page, not anything this attribute
+controls; and CSP's `frame-src` falling back to `default-src 'self'`
+was independently blocking the extension's own injected overlay
+iframe from loading at all (`about:blank` stuck where
+`chrome-extension:`/`moz-extension:` should have loaded, so the
+extension's own next `postMessage()` to it threw a target-origin
+mismatch) — fixed regardless, since it's a legitimate general
+CSP gap even though it turned out not to be what was blocking the
+inline icon here. One more small fix on the way: an earlier attempt at
+`autocomplete="off"` (trying to also stop the browser's own plain
+input-history from re-suggesting stale, already-expired codes) got
+reverted back to `"one-time-code"` at the user's request — the
+standards-correct token wins over suppressing that side effect.
+
+**nginx was serving every response uncompressed.** Its own gzip
+support defaults to off — `base.css` (60KB), `htmx.min.js` (48KB), and
+`alpine.min.js` (45KB), all loaded on every single page, went out
+uncompressed instead of at roughly a third their size. Turned gzip on.
+Getting the fix to actually take effect surfaced its own gotcha:
+`compose/nginx/nginx.conf` is bind-mounted as a *single file*, and
+Compose's recreate-on-update check only looks at whether the image or
+`docker-compose.yml`'s service definition changed, never at a
+bind-mounted file's contents — so a routine `pull && up -d` silently
+leaves nginx running on its old in-memory config, and even `nginx -s
+reload` isn't guaranteed to see the new content (the mount can end up
+pointing at a deleted inode once the file's replaced, which is how
+most editors and git actually write a change). `up -d --force-recreate
+nginx` is what actually picks it up — confirmed live, documented in
+README.md "Updating".
+
+**Profile page footer.** Privacy notice and the version string were
+two separate buttons each bringing their own `margin: 1.5rem 0
+0.5rem` — margin collapsing between them read as an oversized gap for
+what's really one small-print footer. Wrapped both, plus a new GitHub
+source link placed between them, in one `.profile-footer` flex column
+with a small fixed gap instead.
+
+Also caught mid-session and worth remembering on its own: running
+`manage.py makemessages` across every locale in one pass silently
+wiped several already-translated strings down to empty msgstr (visible
+as `#~`-commented obsolete entries reappearing, or previously-set
+translations for e.g. "Manage"/"Set up"/"No friends yet." going blank)
+— gettext's own fuzzy-matching failed to carry them over once their
+msgid's surrounding context shifted. Reverted that regeneration
+entirely and added the one new string (`msgid "Source on GitHub"`)
+needed for the footer above by hand across all six locale files
+instead, rather than trusting a full regenerate again.
