@@ -395,7 +395,7 @@ another site, no plugins, forms can only submit back to this same
 origin) — see the middleware's own docstring for the exact policy
 string and reasoning.
 
-Three allowances are worth knowing about, each scoped as narrowly as
+Four allowances are worth knowing about, each scoped as narrowly as
 this stack currently allows:
 - `img-src https://www.gravatar.com` — the one deliberate exception to
   "no external anything," letting `templates/accounts/profile.html`
@@ -408,6 +408,19 @@ this stack currently allows:
   expression parser) that would let this be dropped; not adopted here.
 - `style-src 'unsafe-inline'` — a number of templates use plain
   `style="..."` attributes rather than a dedicated class.
+- `frame-src chrome-extension: moz-extension: safari-web-extension:` —
+  with no frame-src of its own, that directive falls back to
+  `default-src 'self'`, which also blocks a password manager
+  extension's *own* injected iframe (the inline autofill-suggestion
+  overlay Bitwarden and similar show on a field, e.g. the TOTP code
+  field on `templates/registration/two_factor_verify.html`) from ever
+  loading — the browser leaves it stuck at `about:blank`, and the
+  extension's next `postMessage()` to it (addressed to the extension's
+  own origin) throws a mismatch error and the suggestion never
+  appears. Allowing these three schemes doesn't meaningfully widen
+  what this directive defends against (arbitrary third-party *web*
+  content framing this page): an installed extension already has full
+  DOM access via its content scripts regardless of frame-src.
 
 Every template's own inline `<script>` block and every native
 `onclick=`/`onsubmit=` attribute were removed as part of adding this
