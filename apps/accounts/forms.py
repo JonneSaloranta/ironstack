@@ -3,8 +3,7 @@ from zoneinfo import available_timezones
 
 from django import forms
 from django.contrib.admin.forms import AdminAuthenticationForm
-from django.contrib.auth.forms import (AuthenticationForm, PasswordResetForm,
-                                       UserCreationForm)
+from django.contrib.auth.forms import AuthenticationForm, PasswordResetForm, UserCreationForm
 from django.core.cache import cache
 from django.utils.translation import gettext_lazy as _
 
