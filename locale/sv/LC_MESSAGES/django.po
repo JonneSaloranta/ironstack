@@ -5951,6 +5951,10 @@ msgstr "Fortfarande inget? Se till att streckkoden är väl belyst och fyller ra
 msgid "Copied!"
 msgstr "Kopierat!"
 
+#: templates/accounts/profile.html:229
+msgid "Source on GitHub"
+msgstr "Källkod på GitHub"
+
 #~ msgid "You can't invite this user."
 #~ msgstr "Du kan inte bjuda in den här användaren."
 

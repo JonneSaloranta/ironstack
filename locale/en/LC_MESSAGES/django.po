@@ -4993,3 +4993,7 @@ msgstr "Remind me later"
 #: templates/core/_pwa_install_prompt.html:27
 msgid "Don't remind me"
 msgstr "Don't remind me"
+
+#: templates/accounts/profile.html:229
+msgid "Source on GitHub"
+msgstr "Source on GitHub"

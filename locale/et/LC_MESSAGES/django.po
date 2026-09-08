@@ -5949,6 +5949,10 @@ msgstr "Ikka veel ei leia? Veendu, et triipkood on hästi valgustatud ja täidab
 msgid "Copied!"
 msgstr "Kopeeritud!"
 
+#: templates/accounts/profile.html:229
+msgid "Source on GitHub"
+msgstr "Lähtekood GitHubis"
+
 #~ msgid "You can't invite this user."
 #~ msgstr "Sa ei saa seda kasutajat kutsuda."
 

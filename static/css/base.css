@@ -742,6 +742,18 @@ abbr[title]:focus::after {
    second near-identical class), so it needs the usual button resets
    (no native background/border) on top of looking like the plain
    muted footer text it always was. */
+/* Wraps Privacy notice / GitHub link / version string — templates/
+   accounts/profile.html's own comment above that markup explains why
+   these three read as one small-print cluster instead of each
+   .app-version item bringing its own top/bottom margin. */
+.profile-footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  margin: 1.5rem 0 0.5rem;
+}
+
 .app-version {
   display: block;
   width: 100%;
@@ -751,7 +763,7 @@ abbr[title]:focus::after {
   color: var(--color-text-muted);
   font-size: 0.75rem;
   text-align: center;
-  margin: 1.5rem 0 0.5rem;
+  margin: 0;
   padding: 0.5rem;
   cursor: pointer;
   text-decoration: underline;
@@ -762,6 +774,20 @@ abbr[title]:focus::after {
 .app-version:hover,
 .app-version:focus-visible {
   color: var(--color-text);
+}
+
+/* The GitHub link keeps .app-version's own color/size/hover styling
+   (same "small print" weight as Privacy notice and the version
+   string) but needs icon+text laid out side by side, not
+   .app-version's own `display: block` — a plain <a>, no click-to-
+   open-modal behavior, so no `cursor: pointer`/dotted-underline
+   "this is a button" affordance either. */
+.app-version-github {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  text-decoration: none;
 }
 
 .modal-backdrop {
