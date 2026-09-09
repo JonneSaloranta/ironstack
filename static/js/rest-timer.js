@@ -199,12 +199,22 @@ function ironstackRestTimer() {
       // registers this same service worker as part of turning push
       // notifications on in the first place, so it's always present by
       // the time Notification.permission could ever be "granted" here.
+      //
+      // Regression: reading this.$el.dataset.* *inside* the .then()
+      // callback below showed a literal "undefined" title/body in the
+      // actual notification — read them here instead, synchronously,
+      // while this is unambiguously still the call finish() just made
+      // on this component's own instance, and pass the plain strings
+      // into the promise chain instead of reaching for `this` again
+      // once it's resumed later as a microtask.
+      const title = this.$el.dataset.notifyTitle || "IronStack";
+      const body = this.$el.dataset.notifyBody || "";
       navigator.serviceWorker
         .getRegistration()
         .then((registration) => {
           if (!registration) return;
-          return registration.showNotification(this.$el.dataset.notifyTitle, {
-            body: this.$el.dataset.notifyBody,
+          return registration.showNotification(title, {
+            body,
             icon: "/static/icons/icon-192.png",
             tag: "ironstack-rest-timer",
           });
