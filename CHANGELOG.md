@@ -16,6 +16,12 @@ previous release (`docs/ARCHITECTURE.md` "Versioning") — a terse,
 complete audit trail, not a replacement for this file's shorter,
 narrated summary of the same version.
 
+## [1.11.1] — 2026-09-09
+
+### Fixed
+- The rest timer's "time's up" notification showed a literal
+  "undefined" instead of its actual title/body text.
+
 ## [1.11.0] — 2026-09-08
 
 ### Added
