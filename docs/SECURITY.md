@@ -117,17 +117,38 @@ shouldn't be hand-rolled, but this app only ever needed exactly the
 RFC 6238 generate/verify pair for a single authenticator per user, not
 `django-otp`'s heavier multi-device/multi-method framework.
 
-**The TOTP secret (`User.totp_secret`) is stored as plain text, not
-encrypted at rest.** This is a deliberate trade-off, not an oversight:
-unlike a password, the server has to be able to read the secret back
-on every login to compute the expected 6-digit code itself — a
-one-way hash (as used for passwords) can't work here. Doing this
-properly would mean field-level encryption with its own separately-
-managed key, which this project has no existing infrastructure for.
-Anyone with read access to the production database (or a downloaded
-backup, see `docs/BACKUP.md`) can therefore reconstruct a user's live
-TOTP codes. Treat database access and backup files with the same care
-as you would the passwords table.
+**The TOTP secret (`User.totp_secret`) can be encrypted at rest**,
+optionally — `TOTP_ENCRYPTION_KEY` (`apps.accounts.models.
+EncryptedTextField`), unset by default. Unlike a password, the server
+still has to be able to read the secret back on every login to compute
+the expected 6-digit code itself, so this can never be a one-way hash
+the way a password is — encryption (reversible, given the key) is the
+strongest this specific field can realistically get, not the
+irreversible protection a password hash gives. What it actually
+defends against: someone who gets read access to the database *alone*
+(a leaked DB credential, a SQL injection, a stolen disk snapshot) but
+not to this instance's own `.env` — without the key sitting alongside
+the encrypted column, the raw ciphertext alone doesn't reconstruct a
+live TOTP code. It does **not** help against a compromise that reaches
+both the database and `.env` at once (the key is right there too) —
+treat that combination, and any downloaded backup made before
+`BACKUP_ENCRYPTION_KEY` was set (`docs/BACKUP.md` "Encryption"), with
+the same care as the passwords table regardless.
+
+**Setup**: `manage.py generate_totp_encryption_key` once, paste the
+printed line into `.env`, restart, then `manage.py
+encrypt_existing_totp_secrets` once to encrypt whatever's already
+stored — turning the key on doesn't retroactively encrypt existing
+rows by itself; only that command (or a user going through 2FA setup
+again) does. A row already in the database that isn't a valid Fernet
+token (written before this feature existed, or before you turned it
+on) is read back as-is rather than corrupted the moment the key is
+configured — see `EncryptedTextField`'s own docstring. Losing this key
+breaks 2FA login for every user who has it enabled, not just backups
+made while it was set — back it up as carefully as `SECRET_KEY`, and
+keep it a separate secret from `BACKUP_ENCRYPTION_KEY`
+(`docs/BACKUP.md` "Encryption") — the two protect against different
+compromises, and rotating one should never force rotating the other.
 
 Backup codes (`TwoFactorBackupCode`, 10 generated at setup and on any
 regeneration) are hashed with Django's own password hasher

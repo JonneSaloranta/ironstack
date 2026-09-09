@@ -50,6 +50,28 @@ your progress in real charts — all on your own infrastructure.
 - **Translated** — English, Finnish, Swedish, Russian, Italian, and
   Estonian, UI chrome and seeded content alike.
 
+## Screenshots
+
+Mobile-first, so this is what it actually looks like day to day —
+the bottom nav and every page below render the same on a real phone.
+
+<table>
+<tr>
+<td width="20%"><img src="docs/screenshots/dashboard.png" alt="Dashboard — this week's stats, recent PRs, and current streak"></td>
+<td width="20%"><img src="docs/screenshots/training.png" alt="Training mode — an explainable smart weight suggestion, one tap to log a set"></td>
+<td width="20%"><img src="docs/screenshots/programs.png" alt="Programs — your own programs plus copyable built-in templates"></td>
+<td width="20%"><img src="docs/screenshots/analytics.png" alt="Analytics — weekly training volume and muscle-group volume charts"></td>
+<td width="20%"><img src="docs/screenshots/session-detail.png" alt="A completed session's full logged history, set by set"></td>
+</tr>
+<tr>
+<td align="center">Dashboard</td>
+<td align="center">Training mode</td>
+<td align="center">Programs</td>
+<td align="center">Analytics</td>
+<td align="center">Session history</td>
+</tr>
+</table>
+
 ## Quick start
 
 ```bash

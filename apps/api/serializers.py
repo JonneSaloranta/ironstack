@@ -149,6 +149,26 @@ class ExercisePrescriptionSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Not a workout you can edit.")
         return value
 
+    def validate_exercise(self, value):
+        # Regression found live: a plain ModelSerializer's
+        # PrimaryKeyRelatedField has no ownership concept of its own
+        # (same reasoning as BodyMeasurementSerializer.
+        # validate_measurement_type's own comment) — without this, a
+        # request could attach *any* exercise id, including someone
+        # else's private custom exercise this user was never meant to
+        # see at all, to their own prescription. The API response
+        # itself only ever echoes back the bare id (this serializer
+        # never nests exercise details), but the web UI trusts that
+        # every prescription it renders already passed this check —
+        # confirmed live, it happily prints a private exercise's name
+        # on the *attacker's own* program page once such a row exists.
+        from apps.exercises import services as exercise_services
+
+        request = self.context["request"]
+        if not exercise_services.visible_to(request.user).filter(pk=value.pk).exists():
+            raise serializers.ValidationError("Not an exercise you can use.")
+        return value
+
 
 class WorkoutSerializer(serializers.ModelSerializer):
     prescriptions = ExercisePrescriptionSerializer(many=True, read_only=True)
@@ -268,6 +288,18 @@ class PerformedExerciseSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Not your workout session.")
         if value.status != WorkoutSessionStatus.IN_PROGRESS:
             raise serializers.ValidationError("This session is no longer in progress.")
+        return value
+
+    def validate_exercise(self, value):
+        # Same regression as ExercisePrescriptionSerializer.validate_
+        # exercise's own comment, same fix — going off-plan mid-session
+        # (apps.workouts.services.add_performed_exercise) is exactly as
+        # exploitable as adding a prescription is.
+        from apps.exercises import services as exercise_services
+
+        request = self.context["request"]
+        if not exercise_services.visible_to(request.user).filter(pk=value.pk).exists():
+            raise serializers.ValidationError("Not an exercise you can use.")
         return value
 
 

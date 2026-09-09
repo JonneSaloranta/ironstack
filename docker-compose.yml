@@ -85,6 +85,29 @@ services:
       - backups_data:/app/backups
     command: python manage.py backup_scheduler
 
+  # The rest timer's server-side "time's up" backstop
+  # (apps.workouts.models.RestTimerNotification's own docstring) —
+  # same shape as backup-scheduler just above (same image, same
+  # build config via the *web-build anchor), running apps.workouts.
+  # management.commands.rest_timer_dispatcher instead. No media/
+  # backups volume needed: this only ever reads/writes the database
+  # and calls out to the push service, unlike backup-scheduler's own
+  # filesystem archiving. A no-op loop (send_push_notification's own
+  # early return) if VAPID_*/PUSH_ENABLED aren't configured — safe to
+  # leave running either way, but comment out or remove entirely if
+  # you'd rather not run the extra container at all.
+  notification-scheduler:
+    image: ghcr.io/jonnesaloranta/ironstack:${IRONSTACK_IMAGE_TAG:-latest}
+    build: *web-build
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      DJANGO_SETTINGS_MODULE: config.settings.production
+    depends_on:
+      db:
+        condition: service_healthy
+    command: python manage.py rest_timer_dispatcher
+
   nginx:
     image: nginx:1.27-alpine
     restart: unless-stopped

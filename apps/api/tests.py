@@ -4,6 +4,7 @@ from django.urls import reverse
 from rest_framework.test import APITestCase
 
 from apps.exercises.models import Exercise
+from apps.programs.models import Program, Workout
 from apps.workouts import services as workout_services
 
 from . import crypto, services
@@ -360,6 +361,24 @@ class WorkoutLoggingEndpointTests(APITestCase):
         records_response = self.client.get(reverse("api:record-list"), **self._auth())
         self.assertGreater(records_response.data["count"], 0)
 
+    def test_cannot_add_a_performed_exercise_referencing_another_users_private_exercise(self):
+        # Regression, found live: PerformedExerciseSerializer's
+        # `exercise` field had no ownership check at all — a bare
+        # PrimaryKeyRelatedField accepts *any* row's id, private
+        # custom exercises very much included, until validate_exercise
+        # was added.
+        bob = User.objects.create_user(username="bob", password="s3cret-pass")
+        bobs_private_exercise = Exercise.objects.create(name="Bob's Secret Lift", owner=bob)
+        session = workout_services.start_session(self.alice, workout=None)
+
+        response = self.client.post(
+            reverse("api:performed-exercise-list"),
+            {"session": session.pk, "exercise": bobs_private_exercise.pk},
+            format="json",
+            **self._auth(),
+        )
+        self.assertEqual(response.status_code, 400)
+
     def test_cannot_log_a_set_on_another_users_performed_exercise(self):
         bob = User.objects.create_user(username="bob", password="s3cret-pass")
         bob_session = workout_services.start_session(bob, workout=None)
@@ -408,6 +427,63 @@ class WorkoutLoggingEndpointTests(APITestCase):
             **self._auth(),
         )
         self.assertEqual(response.status_code, 400)
+
+
+class ExercisePrescriptionOwnershipTests(APITestCase):
+    """Regression, found live going through every endpoint by hand:
+    ExercisePrescriptionSerializer's `exercise` field had no ownership
+    check at all — see its own validate_exercise for the fix and why
+    it matters even though the raw API response never nests the
+    exercise's own details (the web UI trusts this check already
+    happened by the time it renders a prescription it owns)."""
+
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        self.bob = User.objects.create_user(username="bob", password="s3cret-pass")
+        self.bobs_private_exercise = Exercise.objects.create(
+            name="Bob's Secret Lift", owner=self.bob
+        )
+        self.program = Program.objects.create(owner=self.alice, name="Alice Program")
+        self.workout = Workout.objects.create(program=self.program, name="Day 1")
+        _api_key, self.raw_secret = _create_key(self.alice)
+
+    def _auth(self):
+        return {"HTTP_AUTHORIZATION": f"Bearer {self.raw_secret}"}
+
+    def test_cannot_add_a_prescription_referencing_another_users_private_exercise(self):
+        response = self.client.post(
+            reverse("api:prescription-list"),
+            {
+                "workout": self.workout.pk,
+                "exercise": self.bobs_private_exercise.pk,
+                "order": 0,
+                "set_count": 3,
+                "min_reps": 5,
+                "max_reps": 5,
+            },
+            format="json",
+            **self._auth(),
+        )
+        self.assertEqual(response.status_code, 400)
+
+    def test_a_system_exercise_is_still_usable(self):
+        # The fix must not overcorrect into blocking every exercise —
+        # shared, system-seeded ones (owner=None) stay usable by anyone.
+        system_exercise = Exercise.objects.create(name="System Squat", owner=None)
+        response = self.client.post(
+            reverse("api:prescription-list"),
+            {
+                "workout": self.workout.pk,
+                "exercise": system_exercise.pk,
+                "order": 0,
+                "set_count": 3,
+                "min_reps": 5,
+                "max_reps": 5,
+            },
+            format="json",
+            **self._auth(),
+        )
+        self.assertEqual(response.status_code, 201)
 
 
 class OwnedResourceViewSetTests(APITestCase):
@@ -1089,3 +1165,66 @@ class DietPlanEndpointTests(APITestCase):
             reverse("api:diet-plan-meal-detail", args=[bobs_meal.pk]), **self._auth()
         )
         self.assertEqual(response.status_code, 404)
+
+
+class InteractiveDocsTests(TestCase):
+    """apps.api.urls_docs / apps.api.views_docs — docs/API.md
+    "Interactive docs". Session-authenticated (login_required), a
+    deliberately separate credential from the Bearer API keys the
+    documented endpoints themselves need — see urls_docs' own
+    docstring for why."""
+
+    def setUp(self):
+        self.alice = get_user_model().objects.create_user(
+            username="alice", password="s3cret-pass"
+        )
+
+    def test_swagger_ui_requires_login(self):
+        response = self.client.get(reverse("api_docs:swagger-ui"))
+        self.assertEqual(response.status_code, 302)
+
+    def test_schema_requires_login(self):
+        response = self.client.get(reverse("api_docs:schema"))
+        self.assertEqual(response.status_code, 302)
+
+    def test_bootstrap_script_requires_login(self):
+        response = self.client.get(reverse("api_docs:swagger-ui-bootstrap"))
+        self.assertEqual(response.status_code, 302)
+
+    def test_swagger_ui_loads_once_logged_in(self):
+        self.client.login(username="alice", password="s3cret-pass")
+        response = self.client.get(reverse("api_docs:swagger-ui"))
+        self.assertEqual(response.status_code, 200)
+
+    def test_swagger_ui_has_no_inline_script(self):
+        # Regression: drf-spectacular's own default template bootstraps
+        # the UI from an inline <script>...</script> block, silently
+        # blocked by this app's CSP (script-src has no 'unsafe-inline'
+        # — apps.core.middleware.ContentSecurityPolicyMiddleware). See
+        # apps.api.views_docs' own docstring for the same-origin
+        # <script src> it uses instead.
+        self.client.login(username="alice", password="s3cret-pass")
+        response = self.client.get(reverse("api_docs:swagger-ui"))
+        body = response.content.decode()
+        self.assertNotRegex(body, r"<script>\s*\S")
+        self.assertIn(reverse("api_docs:swagger-ui-bootstrap"), body)
+
+    def test_bootstrap_script_is_valid_javascript_response(self):
+        self.client.login(username="alice", password="s3cret-pass")
+        response = self.client.get(reverse("api_docs:swagger-ui-bootstrap"))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response["Content-Type"], "application/javascript")
+        self.assertIn("SwaggerUIBundle", response.content.decode())
+
+    def test_schema_loads_once_logged_in_and_documents_api_key_auth(self):
+        self.client.login(username="alice", password="s3cret-pass")
+        response = self.client.get(reverse("api_docs:schema"))
+        self.assertEqual(response.status_code, 200)
+        body = response.content.decode()
+        # ApiKeyAuthenticationScheme (apps.api.openapi) — what makes
+        # Swagger UI's "Authorize" button understand the `Authorization:
+        # Bearer <key>` scheme apps.api.auth.ApiKeyAuthentication
+        # actually expects, rather than showing every operation as
+        # unauthenticated or guessing wrong.
+        self.assertIn("ApiKeyAuth", body)
+        self.assertIn("bearer", body)

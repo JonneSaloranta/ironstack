@@ -17,9 +17,32 @@ WORKDIR="$(mktemp -d)"
 trap 'rm -rf "$WORKDIR"' EXIT
 tar -xzf "$ARCHIVE" -C "$WORKDIR"
 
-if [ ! -f "$WORKDIR/manifest.json" ] || [ ! -f "$WORKDIR/database.dump" ]; then
+if [ ! -f "$WORKDIR/manifest.json" ] || \
+   { [ ! -f "$WORKDIR/database.dump" ] && [ ! -f "$WORKDIR/database.dump.enc" ]; }; then
   echo "$ARCHIVE doesn't look like an IronStack backup (missing manifest.json/database.dump)." >&2
   exit 1
+fi
+
+# scripts/backup.sh's own comment on BACKUP_ENCRYPTION_KEY explains
+# why this is read from .env directly rather than passed in some
+# other way. Whether decryption is actually needed is detected from
+# the archive's own contents (a .enc member present), not a flag this
+# script has to be told — the same archive this produces either way.
+if [ -f "$WORKDIR/database.dump.enc" ]; then
+  BACKUP_ENCRYPTION_KEY="$(grep -m1 '^BACKUP_ENCRYPTION_KEY=' .env 2>/dev/null | cut -d= -f2- || true)"
+  if [ -z "$BACKUP_ENCRYPTION_KEY" ]; then
+    echo "$ARCHIVE is encrypted, but BACKUP_ENCRYPTION_KEY isn't set in .env." >&2
+    exit 1
+  fi
+  echo "Decrypting..."
+  export BACKUP_ENCRYPTION_KEY
+  if ! openssl enc -d -aes-256-cbc -pbkdf2 -pass env:BACKUP_ENCRYPTION_KEY \
+      -in "$WORKDIR/database.dump.enc" -out "$WORKDIR/database.dump"; then
+    echo "Couldn't decrypt $ARCHIVE — BACKUP_ENCRYPTION_KEY doesn't match the key it was encrypted with." >&2
+    exit 1
+  fi
+  openssl enc -d -aes-256-cbc -pbkdf2 -pass env:BACKUP_ENCRYPTION_KEY \
+    -in "$WORKDIR/media.tar.enc" -out "$WORKDIR/media.tar"
 fi
 
 echo "=== Backup manifest ($ARCHIVE) ==="

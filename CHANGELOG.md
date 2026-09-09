@@ -16,6 +16,26 @@ previous release (`docs/ARCHITECTURE.md` "Versioning") — a terse,
 complete audit trail, not a replacement for this file's shorter,
 narrated summary of the same version.
 
+## [1.12.0] — 2026-09-09
+
+### Added
+- A server-side push notification when the rest timer finishes, for
+  when the client-side one can't fire (the phone backgrounded or
+  locked) — needs Web Push already turned on (Profile → Notifications).
+- Interactive API docs at `/api/docs/` — a Swagger UI generated
+  straight from the real API, with a working "Try it out" against your
+  own API key.
+- Optional backup encryption (`BACKUP_ENCRYPTION_KEY`) — every backup,
+  either mechanism, can now be encrypted at rest.
+- Optional TOTP secret encryption at rest (`TOTP_ENCRYPTION_KEY`).
+- Screenshots on the README.
+
+### Fixed
+- An API key with permission to create programs could attach another
+  user's private custom exercise to their own prescription or
+  performed exercise by id — the exercise ownership check every other
+  write in the API already had.
+
 ## [1.11.1] — 2026-09-09
 
 ### Fixed

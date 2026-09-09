@@ -32,4 +32,10 @@ urlpatterns = [
     ),
     path("sets/<int:pk>/edit/", views.set_edit, name="set-edit"),
     path("sets/<int:pk>/delete/", views.set_delete, name="set-delete"),
+    path(
+        "rest-timer/schedule/",
+        views.RestTimerScheduleView.as_view(),
+        name="rest-timer-schedule",
+    ),
+    path("rest-timer/cancel/", views.RestTimerCancelView.as_view(), name="rest-timer-cancel"),
 ]

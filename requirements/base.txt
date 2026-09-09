@@ -6,6 +6,25 @@ gunicorn>=26.0.0,<27.0
 # throttling) that hand-rolling it would just re-invent a worse version
 # of what this already does well — see docs/API.md.
 djangorestframework>=3.18.0,<3.19
+# apps.api's interactive docs (docs/API.md "Interactive docs") —
+# generates the OpenAPI schema straight from the DRF viewsets/
+# serializers apps.api already has, and serves a Swagger UI with a
+# working "Try it out" against the real API. The de facto standard
+# schema generator for DRF (drf-yasg's successor, actively
+# maintained); hand-writing/maintaining an OpenAPI spec by hand across
+# ~20 registered viewsets would be exactly the kind of "worse-tested
+# version of what a library already does" this project already avoids
+# elsewhere (see djangorestframework's own comment above).
+drf-spectacular>=0.28,<0.29
+# Vendors Swagger UI's own JS/CSS/fonts as ordinary Django static
+# files (SPECTACULAR_SETTINGS["SWAGGER_UI_DIST"] = "SIDECAR" in
+# config.settings.base) instead of drf-spectacular's own CDN-hosted
+# default — this app's CSP has no external script-src/style-src
+# allowance (apps.core.middleware.ContentSecurityPolicyMiddleware,
+# docs/SECURITY.md "Content-Security-Policy") and isn't getting one
+# just for this, so Swagger UI has to be served from 'self' like
+# every other script/style here.
+drf-spectacular-sidecar
 # apps.accounts.twofactor — TOTP (RFC 6238) generation/verification is
 # security-critical, narrow-purpose code that shouldn't be hand-rolled
 # (unlike, say, this project's own Markdown-subset changelog parser or
@@ -46,3 +65,14 @@ mozilla-django-oidc>=5.0,<6.0
 # are set (settings.PUSH_ENABLED) — self-hosters who don't configure
 # push pay no configuration cost beyond the dependency itself.
 pywebpush>=2.4,<3.0
+# apps.core.backups — encrypts a backup's database.dump/media.tar once
+# BACKUP_ENCRYPTION_KEY is set (docs/BACKUP.md "Encryption"); also
+# apps.accounts.models.EncryptedTextField — encrypts User.totp_secret
+# once TOTP_ENCRYPTION_KEY is set (docs/SECURITY.md "Two-factor
+# authentication"). Same "don't hand-roll security-critical crypto"
+# reasoning as pyotp/pywebpush above. Already a transitive dependency
+# of mozilla-django-oidc/pywebpush (both use it for JWT/JWK handling)
+# — pinned directly here now that this app's own code relies on it
+# too, rather than leaving that reliance on an undeclared transitive
+# version.
+cryptography>=43.0,<51.0

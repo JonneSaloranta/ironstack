@@ -52,6 +52,14 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "rest_framework",
+    # apps.api's interactive docs (docs/API.md "Interactive docs") —
+    # provides DEFAULT_SCHEMA_CLASS below plus the schema/Swagger-UI
+    # views apps.api.urls_docs wires in. drf_spectacular_sidecar just
+    # needs to be present for `collectstatic` to pick up its vendored
+    # Swagger UI assets (SPECTACULAR_SETTINGS below) — it defines no
+    # models/views/urls of its own.
+    "drf_spectacular",
+    "drf_spectacular_sidecar",
     # apps.accounts.oidc / AUTHENTIK_* settings below — always
     # installed (it defines no models/migrations, so there's no cost
     # to an instance that never configures Authentik), but its
@@ -238,6 +246,45 @@ REST_FRAMEWORK = {
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
     "PAGE_SIZE": 25,
     "DATETIME_FORMAT": "iso-8601",
+    # drf-spectacular's schema generator, in place of DRF's own much
+    # more limited built-in one — docs/API.md "Interactive docs".
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+}
+
+# drf-spectacular (docs/API.md "Interactive docs"). apps.api.openapi.
+# ApiKeyAuthenticationScheme (registered via its own
+# OpenApiAuthenticationExtension, not a setting here) is what tells
+# Swagger UI's "Authorize" button about apps.api.auth.
+# ApiKeyAuthentication's `Authorization: Bearer <key>` scheme.
+#
+# VERSION reads the same repo-root VERSION file apps.core.version.
+# get_version() does (docs/ARCHITECTURE.md "Versioning") — read
+# directly here rather than importing that function, since this
+# module runs while Django's settings are still being assembled and
+# that function reads settings.BASE_DIR itself once called.
+try:
+    _ironstack_version = (BASE_DIR / "VERSION").read_text().strip()
+except FileNotFoundError:
+    _ironstack_version = "unknown"
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "IronStack API",
+    "DESCRIPTION": (
+        "Machine-to-machine API for this IronStack instance — see docs/API.md "
+        "for the full reference (authentication, contexts/permissions, rate "
+        "limits). Every operation below can be tried directly from this page: "
+        "click \"Authorize\" and paste in one of your own API keys "
+        "(Profile → API keys) to send real requests."
+    ),
+    "VERSION": _ironstack_version,
+    "SERVE_INCLUDE_SCHEMA": False,
+    "SCHEMA_PATH_PREFIX": "/api/v1/",
+    "COMPONENT_SPLIT_REQUEST": True,
+    # requirements/base.txt's own comment on drf-spectacular-sidecar
+    # explains why this app serves Swagger UI from local static files
+    # rather than drf-spectacular's own CDN-hosted default.
+    "SWAGGER_UI_DIST": "SIDECAR",
+    "SWAGGER_UI_FAVICON_HREF": "SIDECAR",
 }
 
 # docs/SECURITY.md "Email" — needed for password reset
@@ -411,6 +458,43 @@ VAPID_PUBLIC_KEY = env("VAPID_PUBLIC_KEY", default="")
 VAPID_PRIVATE_KEY = env("VAPID_PRIVATE_KEY", default="")
 VAPID_ADMIN_EMAIL = env("VAPID_ADMIN_EMAIL", default="")
 PUSH_ENABLED = bool(VAPID_PUBLIC_KEY and VAPID_PRIVATE_KEY and VAPID_ADMIN_EMAIL)
+
+# apps.core.backups — encrypts a backup's database.dump/media.tar
+# (docs/BACKUP.md "Encryption") once set; every backup this instance's
+# web UI or management commands create is plain, unencrypted tar
+# members otherwise, same as before this setting existed. A backup
+# archive holds this whole app's data unfiltered (docs/SECURITY.md
+# "Data isolation" — every user's own data, TOTP secrets included),
+# so anyone who can read one is equivalent to reading the live
+# database directly; this closes that gap for a backup file
+# specifically (a copied-off archive, cloud storage, ...), same
+# reasoning `docs/SECURITY.md`'s own TOTP-secret section already gives
+# for treating a backup with the same care as the passwords table.
+# Generate one with `manage.py generate_backup_encryption_key` (prints
+# a fresh `cryptography.fernet.Fernet` key) — losing it makes every
+# backup made while it was set permanently unrestorable, so treat it
+# with the same care as VAPID_PRIVATE_KEY/SECRET_KEY: back it up
+# somewhere that isn't itself only inside an encrypted backup.
+BACKUP_ENCRYPTION_KEY = env("BACKUP_ENCRYPTION_KEY", default="")
+
+# apps.accounts.models.User.totp_secret (docs/SECURITY.md "Two-factor
+# authentication") — encrypts that one field at rest once set; every
+# other field in this app stays deliberately unencrypted (see that
+# same doc section for why field-level encryption doesn't fit
+# health/analytics data at all). A separate key from
+# BACKUP_ENCRYPTION_KEY above on purpose, despite the shared shape —
+# they protect against different compromises (a downloaded backup vs.
+# the live database) and rotating one should never require also
+# rotating the other. Generate one with `manage.py
+# generate_totp_encryption_key`. Turning this on doesn't retroactively
+# encrypt any secret already in the database by itself — run `manage.py
+# encrypt_existing_totp_secrets` once, after setting this, to re-save
+# every 2FA-enabled user's row (EncryptedTextField's own docstring
+# explains why an ordinary save() is what actually does the work).
+# Losing this key breaks 2FA login for every user who has it enabled,
+# not just backups made while it was set — back it up as carefully as
+# SECRET_KEY.
+TOTP_ENCRYPTION_KEY = env("TOTP_ENCRYPTION_KEY", default="")
 
 # apps.core.management.commands.backup_scheduler — docs/BACKUP.md.
 # UTC hour (0-23) the docker-compose.yml `backup-scheduler` service

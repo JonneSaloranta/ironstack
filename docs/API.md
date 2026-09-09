@@ -64,6 +64,20 @@ nothing else can browse programs but can't touch exercises at all, and
 can't create/edit/delete programs either — permissions are genuinely
 independent per verb, not a single "allowed" toggle.
 
+`analytics/achievements/` is the one endpoint in this whole API that
+isn't scoped to the requesting user's own data — every other endpoint
+(including `analytics/summary/` right above it) only ever returns or
+accepts *your own* rows, `records`/`can_read` and all. Achievements are
+deliberately different, and match `templates/core/dashboard.html`'s own
+achievements carousel exactly: an all-time, shared-across-every-user
+list of highlights, not a personal one — see `docs/UI.md` "Achievements
+carousel" for the full reasoning (a self-hosted instance is typically
+one household or small gym, where seeing a housemate's new streak is
+the point). `User.show_achievements=False` excludes that user's own
+figures from the result entirely, for every caller, themselves
+included — the same opt-out the dashboard itself respects, not
+something this API route bypasses or has its own separate copy of.
+
 `records` and `profile` accept Create/Delete flags for a uniform model,
 but neither context has a route that verb could ever reach — records
 are derived, never directly writable (see `docs/PR_SYSTEM.md`), and an
@@ -153,6 +167,32 @@ API itself):
 A user may have at most `ApiSettings.max_api_keys_per_user` keys at
 once (seeded default: **10**) — also admin-editable at runtime, from
 the `ApiSettings` singleton in Django admin.
+
+## Interactive docs
+
+`/api/docs/` — a Swagger UI, generated straight from the same DRF
+viewsets/serializers `/api/v1/` itself is built from
+([drf-spectacular](https://github.com/tfranzel/drf-spectacular)), so
+it can never drift out of sync with what the API actually does the
+way a hand-written reference could. Every operation can be tried
+directly from the page: click "Authorize", paste in one of your own
+API keys (create one under "Managing keys" above first), and every
+"Try it out" request from then on sends real requests against this
+instance with `Authorization: Bearer <key>` attached automatically.
+
+Session-authenticated (an ordinary logged-in page, like "Managing
+keys" above) — a deliberately separate credential from the API key
+you authorize with inside it. The raw OpenAPI 3 schema itself is at
+`/api/docs/schema/` (also session-gated), for generating a typed
+client or importing into another tool (Postman, Insomnia, ...) instead
+of using the bundled UI.
+
+Served entirely from this instance's own static files
+(`drf-spectacular-sidecar`), not a CDN — works the same on an
+offline/LAN-only deployment as on one with internet access, and needs
+no exception to this app's CSP (`apps.core.middleware.
+ContentSecurityPolicyMiddleware`, docs/SECURITY.md
+"Content-Security-Policy").
 
 ## Endpoints
 

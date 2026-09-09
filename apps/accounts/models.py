@@ -1,5 +1,6 @@
 import hashlib
 
+from cryptography.fernet import Fernet, InvalidToken
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.db import models
@@ -9,6 +10,52 @@ from django.utils.translation import gettext_lazy as _
 class UnitSystem(models.TextChoices):
     METRIC = "metric", _("Metric (kg, km)")
     IMPERIAL = "imperial", _("Imperial (lb, mi)")
+
+
+class EncryptedTextField(models.TextField):
+    """Transparently encrypted at rest with settings.TOTP_ENCRYPTION_KEY
+    (Fernet) once that's configured — see User.totp_secret's own
+    comment for why this one field is the deliberate exception to
+    "this app doesn't field-level-encrypt data" (docs/SECURITY.md
+    "Two-factor authentication"). Every call site reads/writes
+    `user.totp_secret` as a plain string exactly as before this field
+    type existed (`pyotp.TOTP(user.totp_secret)`, `user.totp_secret =
+    twofactor.generate_totp_secret()`, ...) — encryption/decryption
+    happens here, once, rather than at every one of those.
+
+    TextField, not CharField: a Fernet token is a fair bit longer than
+    the ~32-character base32 secret it wraps, comfortably past
+    CharField's max_length=32 the column used before this existed.
+
+    Tolerates a value already in the column that *isn't* a Fernet
+    token — a row written back before TOTP_ENCRYPTION_KEY was ever
+    configured, or before this field type existed at all — by
+    returning it unchanged rather than raising. That also means
+    turning the key on doesn't need its own data migration: the next
+    ordinary save() of a given row (2FA setup, or apps.accounts.
+    management.commands.encrypt_existing_totp_secrets for every row at
+    once) is what actually encrypts it, from then on.
+    """
+
+    def get_prep_value(self, value):
+        value = super().get_prep_value(value)
+        if not value or not settings.TOTP_ENCRYPTION_KEY:
+            return value
+        return Fernet(settings.TOTP_ENCRYPTION_KEY).encrypt(value.encode()).decode()
+
+    def from_db_value(self, value, expression, connection):
+        if not value or not settings.TOTP_ENCRYPTION_KEY:
+            return value
+        try:
+            return Fernet(settings.TOTP_ENCRYPTION_KEY).decrypt(value.encode()).decode()
+        except InvalidToken:
+            # Not a Fernet token at all (a legacy plaintext secret —
+            # see this class's own docstring), or the wrong key. Either
+            # way, surfacing it as the raw stored value here rather
+            # than raising means a wrong key fails obviously and
+            # safely later (an unverifiable TOTP code at login), not
+            # with an opaque exception on every single read of `user`.
+            return value
 
 
 class User(AbstractUser):
@@ -74,20 +121,22 @@ class User(AbstractUser):
     # Two-factor authentication (apps.accounts.twofactor,
     # apps.accounts.views.TwoFactorSetupView/TwoFactorVerifyView) — a
     # single TOTP secret per user, no separate "device" model, since
-    # nothing here needs more than one authenticator at a time. The
-    # secret is stored as plain text, deliberately: the server has to
-    # be able to read it back to compute the expected code on every
-    # login (unlike a password, this can't be one-way hashed), and this
-    # project has no existing field-level-encryption infrastructure to
-    # build that on top of without adding real scope beyond what was
-    # asked — see docs/SECURITY.md "Two-factor authentication" for this
-    # trade-off spelled out plainly rather than silently assumed.
-    # `totp_secret` is set as soon as setup starts (so the QR code
-    # shown mid-setup and the code the user submits to confirm it are
-    # generated from the same value); `totp_enabled` only flips to True
-    # once that confirmation succeeds, so an abandoned, never-confirmed
-    # setup attempt never blocks a future login.
-    totp_secret = models.CharField(max_length=32, blank=True, default="")
+    # nothing here needs more than one authenticator at a time.
+    # Encrypted at rest with settings.TOTP_ENCRYPTION_KEY once that's
+    # configured (EncryptedTextField above) — off by default, same as
+    # BACKUP_ENCRYPTION_KEY, since the server still has to be able to
+    # read the secret back to compute the expected code on every login
+    # (unlike a password, this can't be one-way hashed) regardless of
+    # whether a key is configured; see docs/SECURITY.md "Two-factor
+    # authentication" for the honest limit of what this key protects
+    # against (a database-only compromise, not one that also reaches
+    # this instance's own .env). `totp_secret` is set as soon as setup
+    # starts (so the QR code shown mid-setup and the code the user
+    # submits to confirm it are generated from the same value);
+    # `totp_enabled` only flips to True once that confirmation
+    # succeeds, so an abandoned, never-confirmed setup attempt never
+    # blocks a future login.
+    totp_secret = EncryptedTextField(blank=True, default="")
     totp_enabled = models.BooleanField(default=False)
 
     # apps.accounts.context_processors.onboarding / views.OnboardingView /

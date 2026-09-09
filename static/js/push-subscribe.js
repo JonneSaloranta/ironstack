@@ -4,23 +4,12 @@
 // and only rendered there at all when settings.PUSH_ENABLED is true
 // server-side — apps.core.context_processors.push.
 //
-// The first JS-initiated POST in this codebase — everything else is
-// HTMX or a real <form> with {% csrf_token %} — so CSRF needs
-// handling by hand here: read the csrftoken cookie Django's own CSRF
-// middleware already sets, send it as the X-CSRFToken header its
-// same middleware checks for on an AJAX-style request.
-function getCsrfCookie() {
-  const match = document.cookie.match(/(?:^|;\s*)csrftoken=([^;]*)/);
-  return match ? decodeURIComponent(match[1]) : null;
-}
-
-function postJSON(url, body) {
-  return fetch(url, {
-    method: "POST",
-    headers: { "Content-Type": "application/json", "X-CSRFToken": getCsrfCookie() },
-    body: JSON.stringify(body),
-  });
-}
+// getCsrfCookie()/postJSON() come from static/js/csrf.js, loaded
+// right before this file in templates/accounts/profile.html — this
+// was the first JS-initiated POST in this codebase (everything else
+// is HTMX or a real <form> with {% csrf_token %}), and static/js/
+// rest-timer.js needed the exact same pair later, so they moved out
+// to that shared file rather than each carrying its own copy.
 
 // Standard MDN/web.dev boilerplate: PushManager.subscribe's own
 // applicationServerKey wants a Uint8Array, not the base64url string
