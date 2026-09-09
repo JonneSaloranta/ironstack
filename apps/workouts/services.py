@@ -7,11 +7,19 @@ PerformedExercise rows so later edits to the program can never rewrite
 what this session says happened.
 """
 
+from datetime import timedelta
+
 from django.db import transaction
 from django.db.models import Max
 from django.utils import timezone
 
-from .models import ExerciseSet, PerformedExercise, WorkoutSession, WorkoutSessionStatus
+from .models import (
+    ExerciseSet,
+    PerformedExercise,
+    RestTimerNotification,
+    WorkoutSession,
+    WorkoutSessionStatus,
+)
 
 
 def sessions_for(user):
@@ -133,3 +141,40 @@ def first_incomplete_performed_exercise(performed_exercises):
         if not is_performed_exercise_complete(performed_exercise):
             return performed_exercise
     return None
+
+
+def schedule_rest_timer_notification(user, *, seconds, title, body, url=""):
+    """Replaces (update_or_create, not create) whatever server-side
+    "time's up" notification is already pending for `user` — see
+    RestTimerNotification's own docstring for why there's only ever
+    one row per user. Called from apps.workouts.views whenever the
+    client (static/js/rest-timer.js) starts or adjusts its own
+    countdown, so this row's `fire_at` always tracks the client's own
+    idea of when the rest period actually ends."""
+    RestTimerNotification.objects.update_or_create(
+        user=user,
+        defaults={
+            "fire_at": timezone.now() + timedelta(seconds=seconds),
+            "title": title,
+            "body": body,
+            "url": url,
+        },
+    )
+
+
+def cancel_rest_timer_notification(user):
+    """Called whenever the client itself ends the countdown on its
+    own — naturally finishing (it already showed its own beep/visible
+    countdown/notify(), so a second, server-sent one would just be a
+    redundant duplicate) or "Skip rest". Harmless no-op if there was
+    never a pending row, or the dispatcher already sent and deleted
+    one — apps.workouts.tests covers both."""
+    RestTimerNotification.objects.filter(user=user).delete()
+
+
+def due_rest_timer_notifications():
+    """apps.core.management.commands.rest_timer_dispatcher's own query
+    — every row whose scheduled time has already passed, oldest first
+    so a dispatcher that's fallen behind still sends in the order
+    users actually started resting."""
+    return RestTimerNotification.objects.filter(fire_at__lte=timezone.now()).order_by("fire_at")

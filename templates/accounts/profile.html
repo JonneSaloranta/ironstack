@@ -252,6 +252,7 @@ tucked among the account-management settings above.
 {% endblock %}
 {% block extra_scripts %}
 {% if push_enabled %}
+<script src="{% static 'js/csrf.js' %}" defer></script>
 <script src="{% static 'js/push-subscribe.js' %}" defer></script>
 {% endif %}
 {% endblock %}

@@ -104,6 +104,7 @@ function ironstackRestTimer() {
       this.endAt = Date.now() + seconds * 1000;
       this.running = true;
       this.intervalId = setInterval(() => this.tick(), 1000);
+      this.scheduleServerNotification(seconds);
     },
     // Re-derives `remaining` from the wall-clock deadline rather than
     // trusting that exactly one second passed since the last tick —
@@ -119,6 +120,10 @@ function ironstackRestTimer() {
     adjust(delta) {
       this.endAt += delta * 1000;
       this.remaining = Math.max(0, Math.round((this.endAt - Date.now()) / 1000));
+      // Re-schedule (not cancel-then-schedule): scheduleServerNotification
+      // itself update_or_creates, so this just moves the same pending
+      // row's fire_at to match the countdown's own new deadline.
+      this.scheduleServerNotification(this.remaining);
     },
     // Countdown reaching zero on its own — the only path that plays a
     // sound (or shows a notification, below), distinct from a manual
@@ -130,11 +135,17 @@ function ironstackRestTimer() {
       this.remaining = 0;
       this.beep();
       this.notify();
+      // The client got here on its own, so it's not frozen right now
+      // — cancel the server-side backstop (scheduleServerNotification
+      // below) so a real push doesn't arrive moments later as a
+      // redundant duplicate of the notify() call just above.
+      this.cancelServerNotification();
     },
     stop() {
       clearInterval(this.intervalId);
       this.running = false;
       this.remaining = 0;
+      this.cancelServerNotification();
     },
     toggleMute() {
       this.muted = !this.muted;
@@ -222,6 +233,39 @@ function ironstackRestTimer() {
         .catch(() => {
           // Silently skip — same reasoning as beep()'s own try/catch.
         });
+    },
+    // The reliable backstop for notify() above: that one only ever
+    // fires if this page's own JS is still running when the countdown
+    // reaches zero, which iOS Safari doesn't guarantee once the tab
+    // is merely backgrounded, let alone once the screen locks
+    // (docs/DEVELOPMENT_LOG.md "A phone-testing pass"). Asking the
+    // server (apps.workouts.views.RestTimerScheduleView) to send a
+    // real Web Push at the right moment instead works regardless of
+    // whether this page's JS ever gets to run again before then — the
+    // OS delivers it either way. Same permission gate as notify():
+    // never requests it, only ever runs once the user already opted
+    // in elsewhere (Profile → Notifications), and silently a no-op
+    // otherwise — starting/adjusting a rest period must never *cost*
+    // anything for someone who hasn't turned notifications on.
+    // Fire-and-forget: a failed request here (offline, server hiccup)
+    // must never block or interrupt the countdown itself, which is
+    // exactly why this isn't awaited by start()/adjust() above.
+    scheduleServerNotification(seconds) {
+      if (!("Notification" in window) || Notification.permission !== "granted") return;
+      postJSON(this.$el.dataset.restTimerScheduleUrl, {
+        seconds,
+        title: this.$el.dataset.notifyTitle,
+        body: this.$el.dataset.notifyBody,
+        url: window.location.href,
+      }).catch(() => {
+        // Silently skip — same reasoning as notify()'s own try/catch.
+      });
+    },
+    cancelServerNotification() {
+      if (!("Notification" in window) || Notification.permission !== "granted") return;
+      postJSON(this.$el.dataset.restTimerCancelUrl, {}).catch(() => {
+        // Silently skip — same reasoning as notify()'s own try/catch.
+      });
     },
   };
 }

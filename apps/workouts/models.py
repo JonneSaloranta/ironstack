@@ -130,3 +130,44 @@ class ExerciseSet(TimeStampedModel):
 
     def __str__(self):
         return f"Set {self.set_number}: {self.weight}kg × {self.reps}"
+
+
+class RestTimerNotification(TimeStampedModel):
+    """A server-side backstop for the rest timer's own client-side
+    "time's up" alert (static/js/rest-timer.js's notify()). That one
+    can only fire while the page's JS is actually still running, which
+    iOS Safari doesn't guarantee once the tab is merely backgrounded,
+    let alone once the screen locks (docs/DEVELOPMENT_LOG.md "A
+    phone-testing pass" — the earlier fix already found this and left
+    it as deliberately out of scope). apps.core.management.commands.
+    rest_timer_dispatcher polls for rows due now and sends a real Web
+    Push through them (apps.core.push.send_push_notification) instead
+    — delivered by the OS's own push service, so it reaches the device
+    even if this app's own JS never gets to run at all.
+
+    One row per user (OneToOneField), not a queue: a user only ever
+    rests from one set at a time, so starting a new timer, adjusting
+    one already running, or the client itself completing/skipping it
+    all replace or remove this same row (apps.workouts.services)
+    instead of letting old ones pile up.
+    """
+
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="rest_timer_notification",
+    )
+    fire_at = models.DateTimeField()
+    title = models.CharField(max_length=200)
+    body = models.CharField(max_length=200)
+    # Where tapping the eventual notification should open — the
+    # training page the user was actually resting on
+    # (window.location.href at schedule time), same "open the relevant
+    # page" reasoning apps.social's own message notifications already
+    # follow. Blank rather than required: harmless if ever missing,
+    # static/sw.js's own notificationclick handler already no-ops when
+    # data.url is falsy.
+    url = models.CharField(max_length=500, blank=True)
+
+    def __str__(self):
+        return f"{self.user} @ {self.fire_at}"

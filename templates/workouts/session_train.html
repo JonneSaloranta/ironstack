@@ -19,7 +19,9 @@ view for why a generic htmx:afterRequest listener isn't enough), or
 manually with the presets below.
 {% endcomment %}
 <div class="rest-timer" x-data="ironstackRestTimer()" @rest-timer-start.window="start($event.detail.seconds)"
-     data-notify-title="{% trans "Rest over" %}" data-notify-body="{% trans "Time to get back to it." %}">
+     data-notify-title="{% trans "Rest over" %}" data-notify-body="{% trans "Time to get back to it." %}"
+     data-rest-timer-schedule-url="{% url 'workouts:rest-timer-schedule' %}"
+     data-rest-timer-cancel-url="{% url 'workouts:rest-timer-cancel' %}">
   <div class="rest-timer-header">
     <span class="text-muted">{% trans "Rest timer" %}</span>
     <button type="button" class="rest-timer-mute" @click="toggleMute()"
@@ -55,5 +57,6 @@ manually with the presets below.
 {% endblock %}
 
 {% block extra_scripts %}
+<script src="{% static 'js/csrf.js' %}" defer></script>
 <script src="{% static 'js/rest-timer.js' %}" defer></script>
 {% endblock %}

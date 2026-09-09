@@ -3,9 +3,10 @@ import json
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpResponseNotAllowed
+from django.http import HttpResponseBadRequest, HttpResponseNotAllowed, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.translation import gettext as _
+from django.views import View
 from django.views.generic import DetailView, ListView
 
 from apps.core import units as core_units
@@ -424,3 +425,40 @@ def _render_session_or_card(request, performed_exercise, set_form, new_prs=None,
             },
         )
     return redirect("workouts:session-detail", pk=performed_exercise.session_id)
+
+
+class RestTimerScheduleView(LoginRequiredMixin, View):
+    """Called from static/js/rest-timer.js every time it starts or
+    adjusts its own countdown (never from a template/HX-Trigger — the
+    client is the one place that already knows the countdown's exact
+    remaining seconds regardless of which of its several start paths
+    triggered it: auto-start's HX-Trigger, or a manual 60/90/120s
+    button). JSON in, JSON out, same shape as apps.core.views_push —
+    the caller is client JS via fetch(), not a form submit."""
+
+    def post(self, request):
+        try:
+            data = json.loads(request.body)
+            seconds = int(data["seconds"])
+            title = str(data["title"])[:200]
+            body = str(data["body"])[:200]
+            url = str(data.get("url", ""))[:500]
+        except (json.JSONDecodeError, KeyError, TypeError, ValueError):
+            return HttpResponseBadRequest("Malformed request.")
+        if seconds <= 0:
+            return HttpResponseBadRequest("seconds must be positive.")
+        services.schedule_rest_timer_notification(
+            request.user, seconds=seconds, title=title, body=body, url=url
+        )
+        return JsonResponse({"status": "scheduled"})
+
+
+class RestTimerCancelView(LoginRequiredMixin, View):
+    """The other half of RestTimerScheduleView above — called when the
+    client's own countdown ends on its own (it already showed its own
+    beep/notify(), a server-sent one too would be a redundant
+    duplicate) or the user taps "Skip rest"."""
+
+    def post(self, request):
+        services.cancel_rest_timer_notification(request.user)
+        return JsonResponse({"status": "cancelled"})

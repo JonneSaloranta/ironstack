@@ -1,14 +1,19 @@
+import json
+from datetime import timedelta
 from decimal import Decimal
+from unittest import mock
 
 from django.contrib.auth import get_user_model
+from django.core.management import call_command
 from django.test import TestCase
 from django.urls import reverse
+from django.utils import timezone
 
 from apps.exercises.models import Exercise
 from apps.programs.models import ExercisePrescription, Program, Workout
 
 from . import services
-from .models import PerformedExercise, WorkoutSession, WorkoutSessionStatus
+from .models import PerformedExercise, RestTimerNotification, WorkoutSession, WorkoutSessionStatus
 
 User = get_user_model()
 
@@ -742,3 +747,200 @@ class TrainingFabTests(TestCase):
         services.start_session(self.alice, workout=None)
         response = self.client.get(reverse("dashboard"))
         self.assertContains(response, 'class="has-fab"')
+
+
+class RestTimerNotificationServiceTests(TestCase):
+    """apps.workouts.services' schedule/cancel/due functions — the
+    server-side backstop for the rest timer's own client-side "time's
+    up" alert (RestTimerNotification's own docstring)."""
+
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+
+    def test_schedule_sets_fire_at_seconds_from_now(self):
+        before = timezone.now()
+        services.schedule_rest_timer_notification(
+            self.alice, seconds=90, title="Rest over", body="Go", url="/x/"
+        )
+        notification = RestTimerNotification.objects.get(user=self.alice)
+        self.assertAlmostEqual(
+            (notification.fire_at - before).total_seconds(), 90, delta=2
+        )
+        self.assertEqual(notification.title, "Rest over")
+        self.assertEqual(notification.body, "Go")
+        self.assertEqual(notification.url, "/x/")
+
+    def test_scheduling_again_replaces_the_pending_row_instead_of_stacking(self):
+        # Regression risk this guards against: adjust()/a second "Log
+        # set" auto-start both call schedule_rest_timer_notification
+        # again for the same user — must update the one existing row,
+        # not create a second one a user could get two notifications
+        # from.
+        services.schedule_rest_timer_notification(
+            self.alice, seconds=60, title="First", body="a"
+        )
+        services.schedule_rest_timer_notification(
+            self.alice, seconds=120, title="Second", body="b"
+        )
+        self.assertEqual(RestTimerNotification.objects.filter(user=self.alice).count(), 1)
+        notification = RestTimerNotification.objects.get(user=self.alice)
+        self.assertEqual(notification.title, "Second")
+
+    def test_cancel_deletes_the_pending_row(self):
+        services.schedule_rest_timer_notification(
+            self.alice, seconds=60, title="Rest over", body="Go"
+        )
+        services.cancel_rest_timer_notification(self.alice)
+        self.assertFalse(RestTimerNotification.objects.filter(user=self.alice).exists())
+
+    def test_cancel_with_nothing_pending_is_a_harmless_no_op(self):
+        services.cancel_rest_timer_notification(self.alice)  # must not raise
+        self.assertFalse(RestTimerNotification.objects.filter(user=self.alice).exists())
+
+    def test_due_only_returns_notifications_whose_fire_at_has_passed(self):
+        not_yet = RestTimerNotification.objects.create(
+            user=self.alice,
+            fire_at=timezone.now() + timedelta(minutes=5),
+            title="Later",
+            body="b",
+        )
+        bob = User.objects.create_user(username="bob", password="s3cret-pass")
+        already_due = RestTimerNotification.objects.create(
+            user=bob, fire_at=timezone.now() - timedelta(seconds=5), title="Due", body="b"
+        )
+        due = list(services.due_rest_timer_notifications())
+        self.assertIn(already_due, due)
+        self.assertNotIn(not_yet, due)
+
+
+class RestTimerNotificationViewTests(TestCase):
+    """apps.workouts.views.RestTimerScheduleView/RestTimerCancelView —
+    static/js/rest-timer.js's own JSON POST endpoints."""
+
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        self.client.login(username="alice", password="s3cret-pass")
+
+    def test_schedule_creates_a_pending_notification(self):
+        response = self.client.post(
+            reverse("workouts:rest-timer-schedule"),
+            data=json.dumps({"seconds": 90, "title": "Rest over", "body": "Go", "url": "/x/"}),
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, 200)
+        notification = RestTimerNotification.objects.get(user=self.alice)
+        self.assertEqual(notification.title, "Rest over")
+
+    def test_schedule_rejects_malformed_json(self):
+        response = self.client.post(
+            reverse("workouts:rest-timer-schedule"),
+            data="not json",
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, 400)
+
+    def test_schedule_rejects_non_positive_seconds(self):
+        response = self.client.post(
+            reverse("workouts:rest-timer-schedule"),
+            data=json.dumps({"seconds": 0, "title": "x", "body": "y"}),
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, 400)
+
+    def test_schedule_requires_login(self):
+        self.client.logout()
+        response = self.client.post(
+            reverse("workouts:rest-timer-schedule"),
+            data=json.dumps({"seconds": 60, "title": "x", "body": "y"}),
+            content_type="application/json",
+        )
+        self.assertNotEqual(response.status_code, 200)
+
+    def test_cancel_deletes_the_pending_notification(self):
+        services.schedule_rest_timer_notification(
+            self.alice, seconds=60, title="Rest over", body="Go"
+        )
+        response = self.client.post(reverse("workouts:rest-timer-cancel"))
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(RestTimerNotification.objects.filter(user=self.alice).exists())
+
+    def test_cancel_only_ever_touches_the_requesting_users_own_row(self):
+        bob = User.objects.create_user(username="bob", password="s3cret-pass")
+        services.schedule_rest_timer_notification(bob, seconds=60, title="x", body="y")
+        self.client.post(reverse("workouts:rest-timer-cancel"))
+        self.assertTrue(RestTimerNotification.objects.filter(user=bob).exists())
+
+
+class RestTimerDispatcherCommandTests(TestCase):
+    """apps.workouts.management.commands.rest_timer_dispatcher — the
+    always-running loop apps.core.push.send_push_notification is
+    actually called from for the rest timer's server-side backstop.
+    """
+
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+
+    def _run_one_tick(self):
+        # The command's own handle() is `while True: sleep; ...` —
+        # forever by design (same shape as backup_scheduler). Making
+        # time.sleep()'s second call raise is what turns "forever"
+        # into "exactly one pass through the loop body" for a test:
+        # the first call is the real pre-poll sleep, the second is the
+        # top of the *next* iteration, which never gets to run.
+        with mock.patch(
+            "apps.workouts.management.commands.rest_timer_dispatcher.time.sleep",
+            side_effect=[None, StopIteration],
+        ):
+            with mock.patch(
+                "apps.workouts.management.commands.rest_timer_dispatcher.send_push_notification"
+            ) as mock_send:
+                with self.assertRaises(StopIteration):
+                    call_command("rest_timer_dispatcher")
+        return mock_send
+
+    def test_sends_and_removes_a_due_notification(self):
+        RestTimerNotification.objects.create(
+            user=self.alice,
+            fire_at=timezone.now() - timedelta(seconds=1),
+            title="Rest over",
+            body="Go",
+            url="/x/",
+        )
+        mock_send = self._run_one_tick()
+        mock_send.assert_called_once_with(self.alice, "Rest over", "Go", url="/x/")
+        self.assertFalse(RestTimerNotification.objects.filter(user=self.alice).exists())
+
+    def test_leaves_a_not_yet_due_notification_alone(self):
+        RestTimerNotification.objects.create(
+            user=self.alice,
+            fire_at=timezone.now() + timedelta(minutes=5),
+            title="Rest over",
+            body="Go",
+        )
+        mock_send = self._run_one_tick()
+        mock_send.assert_not_called()
+        self.assertTrue(RestTimerNotification.objects.filter(user=self.alice).exists())
+
+    def test_one_failing_send_does_not_stop_other_rows_from_being_processed(self):
+        bob = User.objects.create_user(username="bob", password="s3cret-pass")
+        RestTimerNotification.objects.create(
+            user=self.alice, fire_at=timezone.now() - timedelta(seconds=1), title="a", body="a"
+        )
+        RestTimerNotification.objects.create(
+            user=bob, fire_at=timezone.now() - timedelta(seconds=1), title="b", body="b"
+        )
+        with mock.patch(
+            "apps.workouts.management.commands.rest_timer_dispatcher.time.sleep",
+            side_effect=[None, StopIteration],
+        ):
+            with mock.patch(
+                "apps.workouts.management.commands.rest_timer_dispatcher.send_push_notification",
+                side_effect=[Exception("push service down"), None],
+            ):
+                with self.assertRaises(StopIteration):
+                    call_command("rest_timer_dispatcher")
+        # Both rows are gone either way — see the command's own
+        # docstring for why a failed send still removes the row
+        # (resending well after fire_at has passed would be pointless).
+        self.assertFalse(RestTimerNotification.objects.filter(user=self.alice).exists())
+        self.assertFalse(RestTimerNotification.objects.filter(user=bob).exists())

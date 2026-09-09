@@ -38,3 +38,12 @@ services:
   backup-scheduler:
     image: ironstack-dev
     profiles: ["manual"]
+
+  # Same reasoning as backup-scheduler just above: off by default so
+  # local dev isn't rebuilding/running a second container nothing
+  # needs on every plain `docker compose up`. Start it explicitly with
+  # `docker compose --profile manual up notification-scheduler` to
+  # test rest-timer push notifications locally.
+  notification-scheduler:
+    image: ironstack-dev
+    profiles: ["manual"]
