@@ -4,6 +4,7 @@ from django.urls import reverse
 from rest_framework.test import APITestCase
 
 from apps.exercises.models import Exercise
+from apps.programs.models import Program, Workout
 from apps.workouts import services as workout_services
 
 from . import crypto, services
@@ -360,6 +361,24 @@ class WorkoutLoggingEndpointTests(APITestCase):
         records_response = self.client.get(reverse("api:record-list"), **self._auth())
         self.assertGreater(records_response.data["count"], 0)
 
+    def test_cannot_add_a_performed_exercise_referencing_another_users_private_exercise(self):
+        # Regression, found live: PerformedExerciseSerializer's
+        # `exercise` field had no ownership check at all — a bare
+        # PrimaryKeyRelatedField accepts *any* row's id, private
+        # custom exercises very much included, until validate_exercise
+        # was added.
+        bob = User.objects.create_user(username="bob", password="s3cret-pass")
+        bobs_private_exercise = Exercise.objects.create(name="Bob's Secret Lift", owner=bob)
+        session = workout_services.start_session(self.alice, workout=None)
+
+        response = self.client.post(
+            reverse("api:performed-exercise-list"),
+            {"session": session.pk, "exercise": bobs_private_exercise.pk},
+            format="json",
+            **self._auth(),
+        )
+        self.assertEqual(response.status_code, 400)
+
     def test_cannot_log_a_set_on_another_users_performed_exercise(self):
         bob = User.objects.create_user(username="bob", password="s3cret-pass")
         bob_session = workout_services.start_session(bob, workout=None)
@@ -408,6 +427,63 @@ class WorkoutLoggingEndpointTests(APITestCase):
             **self._auth(),
         )
         self.assertEqual(response.status_code, 400)
+
+
+class ExercisePrescriptionOwnershipTests(APITestCase):
+    """Regression, found live going through every endpoint by hand:
+    ExercisePrescriptionSerializer's `exercise` field had no ownership
+    check at all — see its own validate_exercise for the fix and why
+    it matters even though the raw API response never nests the
+    exercise's own details (the web UI trusts this check already
+    happened by the time it renders a prescription it owns)."""
+
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        self.bob = User.objects.create_user(username="bob", password="s3cret-pass")
+        self.bobs_private_exercise = Exercise.objects.create(
+            name="Bob's Secret Lift", owner=self.bob
+        )
+        self.program = Program.objects.create(owner=self.alice, name="Alice Program")
+        self.workout = Workout.objects.create(program=self.program, name="Day 1")
+        _api_key, self.raw_secret = _create_key(self.alice)
+
+    def _auth(self):
+        return {"HTTP_AUTHORIZATION": f"Bearer {self.raw_secret}"}
+
+    def test_cannot_add_a_prescription_referencing_another_users_private_exercise(self):
+        response = self.client.post(
+            reverse("api:prescription-list"),
+            {
+                "workout": self.workout.pk,
+                "exercise": self.bobs_private_exercise.pk,
+                "order": 0,
+                "set_count": 3,
+                "min_reps": 5,
+                "max_reps": 5,
+            },
+            format="json",
+            **self._auth(),
+        )
+        self.assertEqual(response.status_code, 400)
+
+    def test_a_system_exercise_is_still_usable(self):
+        # The fix must not overcorrect into blocking every exercise —
+        # shared, system-seeded ones (owner=None) stay usable by anyone.
+        system_exercise = Exercise.objects.create(name="System Squat", owner=None)
+        response = self.client.post(
+            reverse("api:prescription-list"),
+            {
+                "workout": self.workout.pk,
+                "exercise": system_exercise.pk,
+                "order": 0,
+                "set_count": 3,
+                "min_reps": 5,
+                "max_reps": 5,
+            },
+            format="json",
+            **self._auth(),
+        )
+        self.assertEqual(response.status_code, 201)
 
 
 class OwnedResourceViewSetTests(APITestCase):
