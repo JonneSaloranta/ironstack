@@ -6,11 +6,14 @@ import zipfile
 from decimal import Decimal
 from urllib.parse import urlparse
 
+from cryptography.fernet import Fernet
 from django.contrib import admin
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AnonymousUser
 from django.core import mail
 from django.core.cache import cache
+from django.core.management import CommandError, call_command
+from django.db import connection
 from django.test import RequestFactory, TestCase, override_settings
 from django.urls import reverse
 from django.utils.encoding import force_bytes
@@ -1295,6 +1298,81 @@ class TwoFactorAdminActionTests(TestCase):
         self.assertFalse(user.totp_enabled)
         self.assertEqual(user.totp_secret, "")
         self.assertEqual(user.backup_codes.count(), 0)
+
+
+class TotpSecretEncryptionTests(TestCase):
+    """apps.accounts.models.EncryptedTextField — TOTP_ENCRYPTION_KEY
+    (docs/SECURITY.md "Two-factor authentication"). Reads the actual
+    stored column value with a raw cursor, not just round-tripping
+    through the ORM — the whole point of these tests is confirming
+    what's really sitting in the database, which User.objects.get()
+    alone would already transparently decrypt back to the plaintext
+    and hide a bug in."""
+
+    def setUp(self):
+        self.user = User.objects.create_user(username="mona", password="s3cret-pass")
+        self.key = Fernet.generate_key().decode()
+
+    def _raw_stored_value(self):
+        with connection.cursor() as cursor:
+            cursor.execute(
+                "SELECT totp_secret FROM accounts_user WHERE id = %s", [self.user.pk]
+            )
+            return cursor.fetchone()[0]
+
+    def test_stored_as_plaintext_without_a_key(self):
+        self.user.totp_secret = "ABCDEFGHIJKLMNOP"
+        self.user.save()
+        self.assertEqual(self._raw_stored_value(), "ABCDEFGHIJKLMNOP")
+
+    def test_stored_encrypted_once_a_key_is_configured(self):
+        with override_settings(TOTP_ENCRYPTION_KEY=self.key):
+            self.user.totp_secret = "ABCDEFGHIJKLMNOP"
+            self.user.save()
+            self.assertNotEqual(self._raw_stored_value(), "ABCDEFGHIJKLMNOP")
+            # Round-trips back to the original through the ORM, same
+            # as every other call site in this codebase reads it.
+            self.user.refresh_from_db()
+            self.assertEqual(self.user.totp_secret, "ABCDEFGHIJKLMNOP")
+
+    def test_a_legacy_plaintext_secret_still_reads_back_correctly(self):
+        # A row written before TOTP_ENCRYPTION_KEY was ever configured
+        # (or before this field type existed at all) — turning the key
+        # on afterward must not corrupt it on the next read.
+        self.user.totp_secret = "ABCDEFGHIJKLMNOP"
+        self.user.save()
+        with override_settings(TOTP_ENCRYPTION_KEY=self.key):
+            self.user.refresh_from_db()
+            self.assertEqual(self.user.totp_secret, "ABCDEFGHIJKLMNOP")
+
+    def test_the_wrong_key_does_not_raise_or_silently_corrupt_a_login(self):
+        # See EncryptedTextField.from_db_value's own docstring for why
+        # this deliberately doesn't raise — a wrong key should fail an
+        # actual TOTP verification later, not crash every single read
+        # of the user it's on.
+        with override_settings(TOTP_ENCRYPTION_KEY=self.key):
+            self.user.totp_secret = "ABCDEFGHIJKLMNOP"
+            self.user.save()
+        wrong_key = Fernet.generate_key().decode()
+        with override_settings(TOTP_ENCRYPTION_KEY=wrong_key):
+            self.user.refresh_from_db()  # must not raise
+            self.assertNotEqual(self.user.totp_secret, "ABCDEFGHIJKLMNOP")
+
+    def test_encrypt_existing_totp_secrets_command_requires_a_key(self):
+        with self.assertRaises(CommandError):
+            call_command("encrypt_existing_totp_secrets")
+
+    def test_encrypt_existing_totp_secrets_command_encrypts_every_row(self):
+        self.user.totp_secret = "ABCDEFGHIJKLMNOP"
+        self.user.save()
+        other = User.objects.create_user(username="bob", password="s3cret-pass")  # no 2FA set up
+        with override_settings(TOTP_ENCRYPTION_KEY=self.key):
+            call_command("encrypt_existing_totp_secrets")
+            self.assertNotEqual(self._raw_stored_value(), "ABCDEFGHIJKLMNOP")
+            self.user.refresh_from_db()
+            self.assertEqual(self.user.totp_secret, "ABCDEFGHIJKLMNOP")
+        other.refresh_from_db()
+        self.assertEqual(other.totp_secret, "")  # untouched — nothing to encrypt
 
 
 class DeleteAccountServiceTests(TestCase):

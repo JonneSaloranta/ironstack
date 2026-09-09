@@ -66,10 +66,13 @@ mozilla-django-oidc>=5.0,<6.0
 # push pay no configuration cost beyond the dependency itself.
 pywebpush>=2.4,<3.0
 # apps.core.backups — encrypts a backup's database.dump/media.tar once
-# BACKUP_ENCRYPTION_KEY is set (docs/BACKUP.md "Encryption"), same
-# "don't hand-roll security-critical crypto" reasoning as pyotp/
-# pywebpush above. Already a transitive dependency of mozilla-django-
-# oidc/pywebpush (both use it for JWT/JWK handling) — pinned directly
-# here now that apps.core.backups relies on it too, rather than
-# leaving that reliance on an undeclared transitive version.
+# BACKUP_ENCRYPTION_KEY is set (docs/BACKUP.md "Encryption"); also
+# apps.accounts.models.EncryptedTextField — encrypts User.totp_secret
+# once TOTP_ENCRYPTION_KEY is set (docs/SECURITY.md "Two-factor
+# authentication"). Same "don't hand-roll security-critical crypto"
+# reasoning as pyotp/pywebpush above. Already a transitive dependency
+# of mozilla-django-oidc/pywebpush (both use it for JWT/JWK handling)
+# — pinned directly here now that this app's own code relies on it
+# too, rather than leaving that reliance on an undeclared transitive
+# version.
 cryptography>=43.0,<51.0

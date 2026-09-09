@@ -477,6 +477,25 @@ PUSH_ENABLED = bool(VAPID_PUBLIC_KEY and VAPID_PRIVATE_KEY and VAPID_ADMIN_EMAIL
 # somewhere that isn't itself only inside an encrypted backup.
 BACKUP_ENCRYPTION_KEY = env("BACKUP_ENCRYPTION_KEY", default="")
 
+# apps.accounts.models.User.totp_secret (docs/SECURITY.md "Two-factor
+# authentication") — encrypts that one field at rest once set; every
+# other field in this app stays deliberately unencrypted (see that
+# same doc section for why field-level encryption doesn't fit
+# health/analytics data at all). A separate key from
+# BACKUP_ENCRYPTION_KEY above on purpose, despite the shared shape —
+# they protect against different compromises (a downloaded backup vs.
+# the live database) and rotating one should never require also
+# rotating the other. Generate one with `manage.py
+# generate_totp_encryption_key`. Turning this on doesn't retroactively
+# encrypt any secret already in the database by itself — run `manage.py
+# encrypt_existing_totp_secrets` once, after setting this, to re-save
+# every 2FA-enabled user's row (EncryptedTextField's own docstring
+# explains why an ordinary save() is what actually does the work).
+# Losing this key breaks 2FA login for every user who has it enabled,
+# not just backups made while it was set — back it up as carefully as
+# SECRET_KEY.
+TOTP_ENCRYPTION_KEY = env("TOTP_ENCRYPTION_KEY", default="")
+
 # apps.core.management.commands.backup_scheduler — docs/BACKUP.md.
 # UTC hour (0-23) the docker-compose.yml `backup-scheduler` service
 # runs `create_backup` at, once a day.
