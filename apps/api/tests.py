@@ -1089,3 +1089,66 @@ class DietPlanEndpointTests(APITestCase):
             reverse("api:diet-plan-meal-detail", args=[bobs_meal.pk]), **self._auth()
         )
         self.assertEqual(response.status_code, 404)
+
+
+class InteractiveDocsTests(TestCase):
+    """apps.api.urls_docs / apps.api.views_docs — docs/API.md
+    "Interactive docs". Session-authenticated (login_required), a
+    deliberately separate credential from the Bearer API keys the
+    documented endpoints themselves need — see urls_docs' own
+    docstring for why."""
+
+    def setUp(self):
+        self.alice = get_user_model().objects.create_user(
+            username="alice", password="s3cret-pass"
+        )
+
+    def test_swagger_ui_requires_login(self):
+        response = self.client.get(reverse("api_docs:swagger-ui"))
+        self.assertEqual(response.status_code, 302)
+
+    def test_schema_requires_login(self):
+        response = self.client.get(reverse("api_docs:schema"))
+        self.assertEqual(response.status_code, 302)
+
+    def test_bootstrap_script_requires_login(self):
+        response = self.client.get(reverse("api_docs:swagger-ui-bootstrap"))
+        self.assertEqual(response.status_code, 302)
+
+    def test_swagger_ui_loads_once_logged_in(self):
+        self.client.login(username="alice", password="s3cret-pass")
+        response = self.client.get(reverse("api_docs:swagger-ui"))
+        self.assertEqual(response.status_code, 200)
+
+    def test_swagger_ui_has_no_inline_script(self):
+        # Regression: drf-spectacular's own default template bootstraps
+        # the UI from an inline <script>...</script> block, silently
+        # blocked by this app's CSP (script-src has no 'unsafe-inline'
+        # — apps.core.middleware.ContentSecurityPolicyMiddleware). See
+        # apps.api.views_docs' own docstring for the same-origin
+        # <script src> it uses instead.
+        self.client.login(username="alice", password="s3cret-pass")
+        response = self.client.get(reverse("api_docs:swagger-ui"))
+        body = response.content.decode()
+        self.assertNotRegex(body, r"<script>\s*\S")
+        self.assertIn(reverse("api_docs:swagger-ui-bootstrap"), body)
+
+    def test_bootstrap_script_is_valid_javascript_response(self):
+        self.client.login(username="alice", password="s3cret-pass")
+        response = self.client.get(reverse("api_docs:swagger-ui-bootstrap"))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response["Content-Type"], "application/javascript")
+        self.assertIn("SwaggerUIBundle", response.content.decode())
+
+    def test_schema_loads_once_logged_in_and_documents_api_key_auth(self):
+        self.client.login(username="alice", password="s3cret-pass")
+        response = self.client.get(reverse("api_docs:schema"))
+        self.assertEqual(response.status_code, 200)
+        body = response.content.decode()
+        # ApiKeyAuthenticationScheme (apps.api.openapi) — what makes
+        # Swagger UI's "Authorize" button understand the `Authorization:
+        # Bearer <key>` scheme apps.api.auth.ApiKeyAuthentication
+        # actually expects, rather than showing every operation as
+        # unauthenticated or guessing wrong.
+        self.assertIn("ApiKeyAuth", body)
+        self.assertIn("bearer", body)

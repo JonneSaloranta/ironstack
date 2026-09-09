@@ -52,6 +52,14 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "rest_framework",
+    # apps.api's interactive docs (docs/API.md "Interactive docs") —
+    # provides DEFAULT_SCHEMA_CLASS below plus the schema/Swagger-UI
+    # views apps.api.urls_docs wires in. drf_spectacular_sidecar just
+    # needs to be present for `collectstatic` to pick up its vendored
+    # Swagger UI assets (SPECTACULAR_SETTINGS below) — it defines no
+    # models/views/urls of its own.
+    "drf_spectacular",
+    "drf_spectacular_sidecar",
     # apps.accounts.oidc / AUTHENTIK_* settings below — always
     # installed (it defines no models/migrations, so there's no cost
     # to an instance that never configures Authentik), but its
@@ -238,6 +246,45 @@ REST_FRAMEWORK = {
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
     "PAGE_SIZE": 25,
     "DATETIME_FORMAT": "iso-8601",
+    # drf-spectacular's schema generator, in place of DRF's own much
+    # more limited built-in one — docs/API.md "Interactive docs".
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+}
+
+# drf-spectacular (docs/API.md "Interactive docs"). apps.api.openapi.
+# ApiKeyAuthenticationScheme (registered via its own
+# OpenApiAuthenticationExtension, not a setting here) is what tells
+# Swagger UI's "Authorize" button about apps.api.auth.
+# ApiKeyAuthentication's `Authorization: Bearer <key>` scheme.
+#
+# VERSION reads the same repo-root VERSION file apps.core.version.
+# get_version() does (docs/ARCHITECTURE.md "Versioning") — read
+# directly here rather than importing that function, since this
+# module runs while Django's settings are still being assembled and
+# that function reads settings.BASE_DIR itself once called.
+try:
+    _ironstack_version = (BASE_DIR / "VERSION").read_text().strip()
+except FileNotFoundError:
+    _ironstack_version = "unknown"
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "IronStack API",
+    "DESCRIPTION": (
+        "Machine-to-machine API for this IronStack instance — see docs/API.md "
+        "for the full reference (authentication, contexts/permissions, rate "
+        "limits). Every operation below can be tried directly from this page: "
+        "click \"Authorize\" and paste in one of your own API keys "
+        "(Profile → API keys) to send real requests."
+    ),
+    "VERSION": _ironstack_version,
+    "SERVE_INCLUDE_SCHEMA": False,
+    "SCHEMA_PATH_PREFIX": "/api/v1/",
+    "COMPONENT_SPLIT_REQUEST": True,
+    # requirements/base.txt's own comment on drf-spectacular-sidecar
+    # explains why this app serves Swagger UI from local static files
+    # rather than drf-spectacular's own CDN-hosted default.
+    "SWAGGER_UI_DIST": "SIDECAR",
+    "SWAGGER_UI_FAVICON_HREF": "SIDECAR",
 }
 
 # docs/SECURITY.md "Email" — needed for password reset

@@ -10,6 +10,7 @@ as much a "view" as a Django one in that sense.
 """
 
 from django.shortcuts import get_object_or_404
+from drf_spectacular.utils import extend_schema
 from rest_framework import generics, mixins, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -323,6 +324,12 @@ class TrainingSummaryView(APIView):
 
     api_context = ApiContext.ANALYTICS
 
+    # A plain APIView (not GenericAPIView), so it has no serializer_class
+    # attribute for drf-spectacular's schema generator to discover on
+    # its own (docs/API.md "Interactive docs") — without this it drops
+    # the operation from the generated schema/Swagger UI entirely
+    # rather than guessing wrong.
+    @extend_schema(responses=TrainingSummarySerializer)
     def get(self, request):
         date_range = dateranges.resolve(request.query_params.get("range", "30d"))
         summary = analytics_services.training_summary_canonical(request.user, date_range)
@@ -337,6 +344,8 @@ class AchievementsView(APIView):
 
     api_context = ApiContext.ANALYTICS
 
+    # See TrainingSummaryView's own comment above for why this is here.
+    @extend_schema(responses=AchievementSerializer(many=True))
     def get(self, request):
         highlights = achievement_services.achievement_highlights()
         return Response(AchievementSerializer(highlights, many=True).data)

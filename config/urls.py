@@ -32,6 +32,7 @@ urlpatterns = [
     path("nutrition/", include("apps.nutrition.urls")),
     path("api/v1/", include("apps.api.urls")),
     path("api/keys/", include("apps.api.urls_web")),
+    path("api/docs/", include("apps.api.urls_docs")),
     path("social/", include("apps.social.urls", namespace="social")),
     # Un-namespaced and outside "social/" deliberately — the shape a
     # group invite link is shared in, /group/invite/<code>/, matters
