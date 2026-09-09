@@ -215,6 +215,48 @@ UI's own "Create backup" button uses (see "Why two mechanisms" below
 for why `scripts/backup.sh` is a genuinely separate path rather than
 also calling this).
 
+## Encryption
+
+Optional, off by default. `BACKUP_ENCRYPTION_KEY` (`.env`) encrypts
+`database.dump`/`media.tar` — the two members that actually hold this
+instance's data — in every backup either mechanism creates from then
+on; `manifest.json` (version/git commit/timestamp/source) stays plain
+either way, so a backup's own metadata is still readable without the
+key. Nothing else about how backups work changes: same archive shape,
+same list/download/restore flow, `.env` unset means every backup
+stays exactly as it was before this existed.
+
+Why this exists at all: a backup archive holds this whole instance's
+data unfiltered (`docs/SECURITY.md` "Data isolation") — anyone who can
+read one (a copied-off `.tar.gz`, a compromised backup storage
+location, ...) is equivalent to reading the live database directly.
+`docs/SECURITY.md`'s own note on the TOTP secret column ("treat
+database access and backup files with the same care as you would the
+passwords table") already flagged this; this closes the gap for a
+backup file specifically.
+
+**Setup**: run `docker compose exec web python manage.py
+generate_backup_encryption_key` once, paste the printed line into
+`.env`, restart. Both mechanisms read the *same* setting — the web UI/
+management commands (`apps.core.backups`) via
+[`cryptography`](https://cryptography.io)'s Fernet, `scripts/backup.sh`
+via `openssl enc` (reading `.env` directly, since that script's own
+encryption step runs on the host, outside any container) — different
+implementations for the two different runtime contexts, one setting to
+think about either way. **Never rotate this key on a live instance
+without keeping the old one somewhere safe first** — every backup made
+under a key that's since been discarded becomes permanently
+unrestorable, the same "losing it is unrecoverable" shape
+`VAPID_PRIVATE_KEY`/`SECRET_KEY` already have.
+
+Restoring an encrypted backup with no key configured, or the wrong
+one, fails cleanly before touching the live database or media —
+`apps.core.backups.BackupDecryptionError` for the web UI (shown right
+on the restore confirm page, which also warns upfront if the archive
+you're about to restore needs a key this instance doesn't currently
+have), a plain error message and non-zero exit for `scripts/
+restore.sh`.
+
 ## Why two mechanisms
 
 The host script's `docker compose exec db pg_dump ...` (a local Unix

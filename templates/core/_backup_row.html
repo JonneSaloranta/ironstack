@@ -11,6 +11,9 @@
   {% else %}
     <span class="tag tag-muted">{% trans "Manual" %}</span>
   {% endif %}
+  {% if backup.encrypted %}
+    <span class="tag tag-success" title="{% trans "database.dump/media.tar are encrypted with this instance's BACKUP_ENCRYPTION_KEY — restoring needs it." %}">{% trans "Encrypted" %}</span>
+  {% endif %}
   <div class="set-actions" style="margin-top:0.5rem;">
     <a class="button-secondary" href="{% url 'backup-download' backup.name %}">{% trans "Download" %}</a>
     <a class="button button-danger" href="{% url 'backup-restore' backup.name %}">{% trans "Restore" %}</a>

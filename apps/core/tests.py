@@ -8,6 +8,7 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 from unittest import mock
 
+from cryptography.fernet import Fernet
 from django.contrib.auth import get_user_model
 from django.core.exceptions import PermissionDenied
 from django.core.files.uploadedfile import SimpleUploadedFile
@@ -954,6 +955,120 @@ class BackupTests(TestCase):
         self.assertEqual(len(backup_services.list_backups()), 1)
 
 
+class BackupEncryptionTests(TestCase):
+    """apps.core.backups' optional BACKUP_ENCRYPTION_KEY encryption of
+    database.dump/media.tar (docs/BACKUP.md "Encryption",
+    docs/SECURITY.md "Data isolation" — a backup holds this whole
+    instance's data unfiltered). restore_backup() itself is still never
+    called for real here, same reasoning as BackupTests' own docstring
+    — _ensure_members_decrypted is the piece of it these tests exercise
+    directly instead, specifically because it was pulled out of
+    restore_backup() to make that possible without a real database."""
+
+    def setUp(self):
+        self.tmpdir = TemporaryDirectory()
+        self.addCleanup(self.tmpdir.cleanup)
+        patcher = mock.patch.object(backup_services, "BACKUP_DIR", Path(self.tmpdir.name))
+        patcher.start()
+        self.addCleanup(patcher.stop)
+        self.key = Fernet.generate_key().decode()
+
+    def test_create_backup_leaves_members_plain_without_a_key(self):
+        name = backup_services.create_backup()
+        path = backup_services.BACKUP_DIR / name
+        with tarfile.open(path, "r:gz") as tar:
+            names = tar.getnames()
+        self.assertIn("database.dump", names)
+        self.assertIn("media.tar", names)
+        self.assertNotIn("database.dump.enc", names)
+        self.assertFalse(backup_services.read_manifest(name)["encrypted"])
+        self.assertFalse(backup_services.list_backups()[0]["encrypted"])
+
+    def test_create_backup_encrypts_members_when_key_configured(self):
+        with override_settings(BACKUP_ENCRYPTION_KEY=self.key):
+            name = backup_services.create_backup()
+        path = backup_services.BACKUP_DIR / name
+        with tarfile.open(path, "r:gz") as tar:
+            names = tar.getnames()
+        # The encrypted members replace the plain ones outright, not
+        # sit alongside them — a real archive never carries both a
+        # secret's plaintext and its own encrypted copy at once.
+        self.assertIn("database.dump.enc", names)
+        self.assertIn("media.tar.enc", names)
+        self.assertNotIn("database.dump", names)
+        self.assertNotIn("media.tar", names)
+        self.assertIn("manifest.json", names)  # always plain — see backups.py's own comment
+        self.assertTrue(backup_services.read_manifest(name)["encrypted"])
+        self.assertTrue(backup_services.list_backups()[0]["encrypted"])
+
+    def _create_encrypted_backup_and_extract(self, key):
+        with override_settings(BACKUP_ENCRYPTION_KEY=key):
+            name = backup_services.create_backup()
+        path = backup_services.BACKUP_DIR / name
+        tmp = Path(self.tmpdir.name) / "extracted"
+        tmp.mkdir()
+        with tarfile.open(path, "r:gz") as tar:
+            tar.extractall(tmp, filter="data")
+        return tmp
+
+    def test_ensure_members_decrypted_recovers_the_original_bytes(self):
+        tmp = self._create_encrypted_backup_and_extract(self.key)
+        with override_settings(BACKUP_ENCRYPTION_KEY=self.key):
+            backup_services._ensure_members_decrypted(tmp)
+        # media.tar is a real (if empty) tar archive either way —
+        # database.dump is the more informative check, a real pg_dump
+        # of this test's own database, never valid gzip/tar itself, so
+        # a bug leaving it still encrypted would fail *this* assertion
+        # specifically rather than accidentally still parsing as
+        # something.
+        self.assertTrue((tmp / "database.dump").is_file())
+        self.assertGreater((tmp / "database.dump").stat().st_size, 0)
+
+    def test_ensure_members_decrypted_is_a_noop_for_a_plain_backup(self):
+        name = backup_services.create_backup()
+        path = backup_services.BACKUP_DIR / name
+        tmp = Path(self.tmpdir.name) / "extracted"
+        tmp.mkdir()
+        with tarfile.open(path, "r:gz") as tar:
+            tar.extractall(tmp, filter="data")
+        original = (tmp / "database.dump").read_bytes()
+        backup_services._ensure_members_decrypted(tmp)  # must not raise
+        self.assertEqual((tmp / "database.dump").read_bytes(), original)
+
+    def test_ensure_members_decrypted_raises_without_a_key(self):
+        tmp = self._create_encrypted_backup_and_extract(self.key)
+        with override_settings(BACKUP_ENCRYPTION_KEY=""):
+            with self.assertRaises(backup_services.BackupDecryptionError):
+                backup_services._ensure_members_decrypted(tmp)
+
+    def test_ensure_members_decrypted_raises_with_the_wrong_key(self):
+        tmp = self._create_encrypted_backup_and_extract(self.key)
+        wrong_key = Fernet.generate_key().decode()
+        with override_settings(BACKUP_ENCRYPTION_KEY=wrong_key):
+            with self.assertRaises(backup_services.BackupDecryptionError):
+                backup_services._ensure_members_decrypted(tmp)
+
+    def test_save_uploaded_backup_accepts_an_encrypted_archive(self):
+        # Same shape create_backup() itself writes once
+        # BACKUP_ENCRYPTION_KEY is set — built directly here so this
+        # test doesn't depend on a real key being configured.
+        buf = io.BytesIO()
+        with tarfile.open(fileobj=buf, mode="w:gz") as tar:
+            for member_name, content in (
+                ("database.dump.enc", b"fake encrypted dump"),
+                ("media.tar.enc", b"fake encrypted media"),
+                ("manifest.json", json.dumps({"version": "9.9.9", "encrypted": True}).encode()),
+            ):
+                data = io.BytesIO(content)
+                info = tarfile.TarInfo(name=member_name)
+                info.size = len(content)
+                tar.addfile(info, data)
+        buf.seek(0)
+        name = backup_services.save_uploaded_backup(buf)
+        self.assertTrue((backup_services.BACKUP_DIR / name).is_file())
+        self.assertTrue(backup_services.list_backups()[0]["encrypted"])
+
+
 class BackupSettingsModelTests(TestCase):
     """apps.core.models.BackupSettings — same admin-tunable singleton
     pattern as apps.api.models.ApiSettings."""
@@ -1407,6 +1522,36 @@ class BackupViewTests(TestCase):
             response = self.client.post(reverse("backup-restore", args=[name]))
         mock_restore.assert_called_once_with(name)
         self.assertRedirects(response, reverse("profile"))
+
+    def test_posting_restore_shows_a_clean_error_on_a_decryption_failure(self):
+        # Regression risk this guards against: a missing/wrong
+        # BACKUP_ENCRYPTION_KEY used to be indistinguishable from any
+        # other restore_backup() failure — a raw 500 instead of a
+        # message back on the same confirm page (docs/BACKUP.md
+        # "Encryption").
+        self.client.login(username="admin", password="s3cret-pass")
+        name = backup_services.create_backup()
+        with mock.patch.object(
+            backup_services,
+            "restore_backup",
+            side_effect=backup_services.BackupDecryptionError("wrong key"),
+        ):
+            response = self.client.post(reverse("backup-restore", args=[name]))
+        self.assertRedirects(response, reverse("backup-restore", args=[name]))
+
+    def test_restore_confirm_page_warns_when_the_key_is_missing_for_an_encrypted_backup(self):
+        self.client.login(username="admin", password="s3cret-pass")
+        with override_settings(BACKUP_ENCRYPTION_KEY=Fernet.generate_key().decode()):
+            name = backup_services.create_backup()
+        with override_settings(BACKUP_ENCRYPTION_KEY=""):
+            response = self.client.get(reverse("backup-restore", args=[name]))
+        self.assertTrue(response.context["key_missing_for_encrypted_backup"])
+
+    def test_restore_confirm_page_has_no_warning_for_a_plain_backup(self):
+        self.client.login(username="admin", password="s3cret-pass")
+        name = backup_services.create_backup()
+        response = self.client.get(reverse("backup-restore", args=[name]))
+        self.assertFalse(response.context["key_missing_for_encrypted_backup"])
 
 
 class FeedbackSettingsModelTests(TestCase):

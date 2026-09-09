@@ -2,6 +2,7 @@
 apps.core.backups for what actually happens and why restore here
 carries real risk that scripts/restore.sh's version doesn't."""
 
+from django.conf import settings
 from django.contrib import messages
 from django.http import FileResponse, Http404
 from django.shortcuts import redirect
@@ -132,6 +133,15 @@ class BackupRestoreView(StaffRequiredMixin, TemplateView):
         except (backup_services.InvalidBackupName, FileNotFoundError, KeyError):
             raise Http404 from None
         context["name"] = name
+        # Surfaced on the confirm page itself rather than only ever
+        # discovered from the error message a failed POST above
+        # produces — someone about to restore an encrypted backup onto
+        # an instance with no (or the wrong) BACKUP_ENCRYPTION_KEY
+        # configured should find that out before clicking "Restore",
+        # not after.
+        context["key_missing_for_encrypted_backup"] = context[
+            "backup_manifest"
+        ].get("encrypted") and not settings.BACKUP_ENCRYPTION_KEY
         context["running_manifest"] = {
             "version": version_services.get_version(),
             "git_sha": version_services.get_git_sha(),
@@ -141,6 +151,18 @@ class BackupRestoreView(StaffRequiredMixin, TemplateView):
 
     def post(self, request, *args, **kwargs):
         name = kwargs["name"]
-        backup_services.restore_backup(name)
+        try:
+            backup_services.restore_backup(name)
+        except backup_services.BackupDecryptionError as error:
+            # The one restore_backup() failure mode worth a clean
+            # message instead of a raw 500 — a missing/wrong
+            # BACKUP_ENCRYPTION_KEY is a foreseeable, common
+            # misconfiguration (docs/BACKUP.md "Encryption"), unlike
+            # e.g. a corrupted pg_dump, and it's caught before this
+            # function has touched the live database at all (see
+            # restore_backup()'s own docstring), so there's nothing
+            # left half-done to warn about here.
+            messages.error(request, str(error))
+            return redirect(reverse("backup-restore", args=[name]))
         messages.success(request, _("Restored from backup: %(name)s") % {"name": name})
         return redirect(reverse("profile"))

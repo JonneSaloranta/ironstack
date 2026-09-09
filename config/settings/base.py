@@ -459,6 +459,24 @@ VAPID_PRIVATE_KEY = env("VAPID_PRIVATE_KEY", default="")
 VAPID_ADMIN_EMAIL = env("VAPID_ADMIN_EMAIL", default="")
 PUSH_ENABLED = bool(VAPID_PUBLIC_KEY and VAPID_PRIVATE_KEY and VAPID_ADMIN_EMAIL)
 
+# apps.core.backups — encrypts a backup's database.dump/media.tar
+# (docs/BACKUP.md "Encryption") once set; every backup this instance's
+# web UI or management commands create is plain, unencrypted tar
+# members otherwise, same as before this setting existed. A backup
+# archive holds this whole app's data unfiltered (docs/SECURITY.md
+# "Data isolation" — every user's own data, TOTP secrets included),
+# so anyone who can read one is equivalent to reading the live
+# database directly; this closes that gap for a backup file
+# specifically (a copied-off archive, cloud storage, ...), same
+# reasoning `docs/SECURITY.md`'s own TOTP-secret section already gives
+# for treating a backup with the same care as the passwords table.
+# Generate one with `manage.py generate_backup_encryption_key` (prints
+# a fresh `cryptography.fernet.Fernet` key) — losing it makes every
+# backup made while it was set permanently unrestorable, so treat it
+# with the same care as VAPID_PRIVATE_KEY/SECRET_KEY: back it up
+# somewhere that isn't itself only inside an encrypted backup.
+BACKUP_ENCRYPTION_KEY = env("BACKUP_ENCRYPTION_KEY", default="")
+
 # apps.core.management.commands.backup_scheduler — docs/BACKUP.md.
 # UTC hour (0-23) the docker-compose.yml `backup-scheduler` service
 # runs `create_backup` at, once a day.
