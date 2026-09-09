@@ -3800,3 +3800,89 @@ msgid's surrounding context shifted. Reverted that regeneration
 entirely and added the one new string (`msgid "Source on GitHub"`)
 needed for the footer above by hand across all six locale files
 instead, rather than trusting a full regenerate again.
+
+## Rest timer's server-side backstop, interactive API docs, and two rounds of encryption at rest
+
+**Rest timer, taken further.** The earlier phone-testing pass's own
+notify() fix (showNotification() instead of a broken `new
+Notification()`) turned out not to be enough by itself — iOS suspends
+a backgrounded tab's JS almost immediately, well before the screen
+even locks, so the interval driving the countdown often never gets to
+run `finish()` at all while the app isn't in front. The only fix that
+actually reaches a phone in that state is a real Web Push, delivered
+by the OS's own push service regardless of whether this page's JS is
+running. New `RestTimerNotification` (`apps.workouts`) — one row per
+user; `rest-timer.js`'s `start()`/`adjust()` schedule/reschedule it,
+`finish()`/`stop()` cancel it (the client already alerted by then, a
+server-sent one too would be a redundant duplicate); a new
+`rest_timer_dispatcher` management command (`notification-scheduler`
+service, same sleep-and-poll shape as `backup_scheduler` — no task
+queue added) polls every 3s and sends through the existing
+`send_push_notification`. Its own notification content
+(`notify-title`/`notify-body`) previously showed a literal
+"undefined" — found live, right after shipping the fix above: reading
+`this.$el.dataset.*` *inside* the async `.then()` callback rather than
+synchronously before entering the promise chain.
+
+**A second security pass, this time going through every API endpoint
+by hand** (the earlier session had already reviewed every web view for
+the same class of bug). Found one real gap:
+`ExercisePrescriptionSerializer`/`PerformedExerciseSerializer`'s
+`exercise` field had no ownership check at all, unlike every other
+cross-object reference in `apps/api/serializers.py`. Confirmed
+exploitable live — attaching another user's private custom exercise to
+your own prescription by id succeeded, and the row's own Django admin
+`__str__` already printed that exercise's real name. The `analytics/
+achievements/` endpoint showing other users' data turned out to be
+working as intended, not a bug — it mirrors the dashboard's own
+shared, opt-in achievements carousel exactly (`User.show_achievements`)
+— but wasn't documented as the one deliberate exception to "every
+other endpoint is scoped to your own data" until this pass caught that
+gap too.
+
+**Interactive API docs**, added while already deep in `apps/api`:
+`/api/docs/` — a Swagger UI generated straight from the same
+viewsets/serializers `/api/v1/` is built from (drf-spectacular), so it
+can't drift out of sync the way a hand-written reference could.
+Getting it to actually render under this app's CSP took its own fix:
+drf-spectacular's default template bootstraps the UI from an inline
+`<script>` block, silently blocked here (no `unsafe-inline` in
+`script-src`) — `apps.api.views_docs` serves that same bootstrap
+script as a same-origin `<script src>` instead, using a `script_url`
+context hook the upstream template already had but never populated.
+
+**Backup encryption**, prompted by a direct question about what stored
+data was worth encrypting: `BACKUP_ENCRYPTION_KEY`, optional, encrypts
+`database.dump`/`media.tar` in every backup either mechanism creates
+(`apps.core.backups`' own Fernet path, `scripts/backup.sh`'s openssl
+equivalent — one setting governs both). `manifest.json` stays plain
+either way so the list/restore-confirm pages keep working without the
+key. Tested end to end for real against the actual dev stack, host
+scripts included: create → restore round-trips correctly with the
+right key, fails cleanly — before touching the live database — with a
+missing or wrong one. Along the way: `docker compose exec` inherits
+whatever env vars a container had at its own start/last recreation,
+not the current contents of `.env` on disk — a stale
+`BACKUP_ENCRYPTION_KEY` left over from manually testing
+`scripts/restore.sh` (whose own last step recreates `web`) caused a
+batch of otherwise-unrelated test failures until the container was
+recreated again to pick up the real, current `.env`.
+
+**TOTP secret encryption**, the natural follow-up once backup
+encryption's groundwork (the `cryptography` dependency, the Fernet/
+`.env`-key pattern) already existed: `TOTP_ENCRYPTION_KEY`, a
+*separate* key from the backup one on purpose — different compromises,
+rotating one should never force rotating the other. New
+`EncryptedTextField` (`apps.accounts.models`) transparently encrypts/
+decrypts `User.totp_secret`, so every existing call site keeps working
+unchanged; tolerates a value already in the column that isn't a valid
+Fernet token (a legacy plaintext secret, or the wrong key) by returning
+it as-is rather than raising, so a wrong/missing key fails obviously
+later at actual TOTP verification instead of on every read of a user.
+
+**README screenshots**, to close out the session: five real
+screenshots of the running app (dashboard, training mode's smart
+weight suggestion, programs, analytics, a completed session's logged
+history), taken at a phone-width viewport against a throwaway demo
+account seeded with a few weeks of realistic session/PR/measurement
+history for the sake of the screenshots actually showing something.
