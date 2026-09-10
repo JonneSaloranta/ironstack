@@ -16,7 +16,7 @@ previous release (`docs/ARCHITECTURE.md` "Versioning") — a terse,
 complete audit trail, not a replacement for this file's shorter,
 narrated summary of the same version.
 
-## [Unreleased]
+## [1.13.0] — 2026-09-10
 
 ### Added
 - A dashboard card reminding you to log a body measurement once you
