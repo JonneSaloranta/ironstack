@@ -103,6 +103,15 @@ python manage.py migrate
 python manage.py runserver
 ```
 
+A host venv like this one drifts out of sync in ways Docker never does
+— `requirements/dev.txt` grows a package nobody re-installed for, or
+`pg_dump` is missing/the wrong major version (needed for
+`apps.core.backups`' web-UI backups, not just `scripts/backup.sh`).
+Both fail tests in a way that looks like an unrelated regression.
+Run `./scripts/check-dev-env.sh` any time a fresh `pytest` run fails
+tests you didn't touch — it re-syncs installed packages and checks
+`pg_dump` for you, with exact fix commands if either is off.
+
 ## Tech stack
 
 | Layer | Choice |
