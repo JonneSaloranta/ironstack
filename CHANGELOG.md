@@ -16,6 +16,19 @@ previous release (`docs/ARCHITECTURE.md` "Versioning") — a terse,
 complete audit trail, not a replacement for this file's shorter,
 narrated summary of the same version.
 
+## [1.13.0] — 2026-09-10
+
+### Added
+- A dashboard card reminding you to log a body measurement once you
+  haven't logged one (of any type) in 14 days — on by default, with a
+  new Profile → Preferences → Notifications toggle to turn it off.
+- A "Statistics" card on each body measurement's history page: current
+  value, change since your first log, lowest/highest/average, entry
+  count, and how long you've been tracking it.
+- A program's prescribed exercises now link to their exercise detail
+  page, to check the description, equipment, or muscle groups without
+  leaving to search the exercise library.
+
 ## [1.12.0] — 2026-09-09
 
 ### Added

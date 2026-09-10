@@ -400,6 +400,18 @@ class ProgramCreateEditFlowTests(TestCase):
             response, reverse("programs:workout-delete", args=[program.pk, workout.pk])
         )
 
+    def test_prescribed_exercise_name_links_to_the_exercise_detail_page(self):
+        program = Program.objects.create(owner=self.alice, name="Original")
+        workout = Workout.objects.create(program=program, name="Day 1")
+        exercise = Exercise.objects.create(name="Test Program Detail Exercise", owner=self.alice)
+        ExercisePrescription.objects.create(
+            workout=workout, exercise=exercise, set_count=3, min_reps=8, max_reps=12
+        )
+        response = self.client.get(reverse("programs:program-detail", args=[program.pk]))
+        self.assertContains(
+            response, reverse("exercises:exercise-detail", args=[exercise.pk])
+        )
+
     def test_updating_a_workout_bumps_program_version(self):
         """Regression: workout_update had no test at all beyond the
         anonymous-access redirect check — the actual authenticated

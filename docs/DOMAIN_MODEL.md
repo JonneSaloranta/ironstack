@@ -29,6 +29,15 @@ own, but "59.9–81.0 kg" does. `show_bmi` lets a user turn the whole
 card off regardless of whether it's computable — nothing else in the
 app reads either field.
 
+Also carries `body_tracking_reminders_enabled` (default `True`) — gates
+the dashboard's body-tracking reminder card (see `UI.md` "Dashboard"),
+a plain notification preference rather than a privacy or display
+toggle: whether a user is nudged to log a body measurement once
+`apps.measurements.services.days_since_last_measurement` crosses
+`BODY_TRACKING_REMINDER_DAYS`. Off suppresses the card outright,
+regardless of how stale their history actually is — it never affects
+whether they *can* log a reading, only whether they're reminded to.
+
 Also carries `language` — the UI language (one of the six shipped
 locales, see `ARCHITECTURE.md` "Internationalization"), applied by
 `apps.accounts.middleware.UserLanguageMiddleware`. Distinct from
@@ -331,6 +340,14 @@ The 8 seeded system measurement type names are translated for display the
 same way system exercise/program names are — see `ARCHITECTURE.md` →
 "Internationalization", including that section's note on "Body fat %"
 and why `{% trans %}` alone isn't enough for content containing a "%".
+
+`apps.measurements.services.stats_for` summarizes a user's full logged
+history for one type — entry count, current/first value, change since
+the first log, min/max, and average — shown on that type's history page
+once at least 2 readings exist (see `UI.md` "Dashboard", "Statistics").
+The same module's `needs_body_tracking_reminder` decides whether the
+dashboard nudges a user to log a reading at all, gated by `User.
+body_tracking_reminders_enabled` — see that field's own entry above.
 
 ## PR
 

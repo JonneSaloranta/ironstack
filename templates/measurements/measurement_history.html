@@ -15,6 +15,23 @@
   {% include "core/_bmi_card.html" %}
 {% endif %}
 
+{% if stats %}
+  <h2>{% trans "Statistics" %}</h2>
+  <div class="card">
+    <dl class="stat-row">
+      <div><dt>{% trans "Current" %}</dt><dd>{{ stats.latest_value }} {{ unit_label }}</dd></div>
+      <div><dt>{% trans "Change since first log" %}</dt><dd>{% if stats.change_since_first > 0 %}+{% endif %}{{ stats.change_since_first }} {{ unit_label }}</dd></div>
+      <div><dt>{% trans "Lowest" %}</dt><dd>{{ stats.min_value }} {{ unit_label }}</dd></div>
+      <div><dt>{% trans "Highest" %}</dt><dd>{{ stats.max_value }} {{ unit_label }}</dd></div>
+      <div><dt>{% trans "Average" %}</dt><dd>{{ stats.average_value }} {{ unit_label }}</dd></div>
+      <div><dt>{% trans "Entries logged" %}</dt><dd>{{ stats.entry_count }}</dd></div>
+    </dl>
+    <p class="text-muted" style="margin:0.5rem 0 0;">
+      {% blocktrans with date=stats.first_recorded_at|date:"Y-m-d" %}Tracking since {{ date }}.{% endblocktrans %}
+    </p>
+  </div>
+{% endif %}
+
 {% if chart %}
   <h2>{% trans "Trend" %}</h2>
   {% include "core/_chart.html" with chart_title=measurement_type.name|translate_content %}

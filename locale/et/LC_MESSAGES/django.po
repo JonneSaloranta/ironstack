@@ -5953,6 +5953,39 @@ msgstr "Kopeeritud!"
 msgid "Source on GitHub"
 msgstr "Lähtekood GitHubis"
 
+msgid "Notifications"
+msgstr "Teavitused"
+
+msgid "Remind me to log body measurements"
+msgstr "Tuleta mulle meelde kehamõõtude sisestamist"
+
+msgid "Shows a dashboard card nudging you to log a body measurement when you haven't logged one in a while. Turn off to never see that reminder — you can still log a reading any time from Body tracking."
+msgstr "Kuvab armatuurlaual kaardi, mis tuletab meelde kehamõõdu sisestamist, kui sa pole seda mõnda aega teinud. Lülita välja, kui sa ei taha seda meeldetuletust kunagi näha — saad mõõtu ikkagi igal ajal sisestada jaotisest Keha jälgimine."
+
+msgid "Time to log your body measurements?"
+msgstr "Kas on aeg kehamõõdud sisestada?"
+
+msgid "It's been a while since you tracked your weight or measurements — tap here to add a new reading."
+msgstr "Sellest, kui sa oma kaalu või mõõtu viimati sisestasid, on juba veidi aega möödas — puuduta siin, et lisada uus näit."
+
+msgid "Change since first log"
+msgstr "Muutus esimesest kirjest"
+
+msgid "Lowest"
+msgstr "Madalaim"
+
+msgid "Highest"
+msgstr "Kõrgeim"
+
+msgid "Average"
+msgstr "Keskmine"
+
+msgid "Entries logged"
+msgstr "Sisestatud kirjeid"
+
+msgid "Tracking since %(date)s."
+msgstr "Jälgitud alates %(date)s."
+
 #~ msgid "You can't invite this user."
 #~ msgstr "Sa ei saa seda kasutajat kutsuda."
 

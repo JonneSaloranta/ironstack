@@ -6023,6 +6023,39 @@ msgstr "Скопировано!"
 msgid "Source on GitHub"
 msgstr "Исходный код на GitHub"
 
+msgid "Notifications"
+msgstr "Уведомления"
+
+msgid "Remind me to log body measurements"
+msgstr "Напоминать мне вносить замеры тела"
+
+msgid "Shows a dashboard card nudging you to log a body measurement when you haven't logged one in a while. Turn off to never see that reminder — you can still log a reading any time from Body tracking."
+msgstr "Показывает на панели управления карточку с напоминанием внести замер тела, если вы давно этого не делали. Отключите, чтобы больше никогда не видеть это напоминание — вы всё равно сможете внести замер в любое время в разделе «Отслеживание тела»."
+
+msgid "Time to log your body measurements?"
+msgstr "Пора внести замеры тела?"
+
+msgid "It's been a while since you tracked your weight or measurements — tap here to add a new reading."
+msgstr "Вы давно не отмечали свой вес или замеры — нажмите здесь, чтобы добавить новое значение."
+
+msgid "Change since first log"
+msgstr "Изменение с первой записи"
+
+msgid "Lowest"
+msgstr "Минимум"
+
+msgid "Highest"
+msgstr "Максимум"
+
+msgid "Average"
+msgstr "Среднее"
+
+msgid "Entries logged"
+msgstr "Записей внесено"
+
+msgid "Tracking since %(date)s."
+msgstr "Отслеживается с %(date)s."
+
 #~ msgid "You can't invite this user."
 #~ msgstr "Вы не можете пригласить этого пользователя."
 

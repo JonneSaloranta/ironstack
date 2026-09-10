@@ -52,7 +52,7 @@
     <ul class="prescription-list">
       {% for prescription in workout.prescriptions.all %}
         <li>
-          <strong>{% trans prescription.exercise.name %}</strong>
+          <strong><a href="{% url 'exercises:exercise-detail' prescription.exercise.pk %}">{% trans prescription.exercise.name %}</a></strong>
           — {{ prescription.set_count }} × {{ prescription.min_reps }}-{{ prescription.max_reps }}
           {% if prescription.target_weight %} @ {{ prescription.target_weight|weight:request.user }}{% endif %}
           {% if prescription.target_rpe %} @ <abbr tabindex="0" title="{% trans "Rate of Perceived Exertion" %}">RPE</abbr> {{ prescription.target_rpe }}{% endif %}

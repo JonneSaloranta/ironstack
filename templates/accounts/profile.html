@@ -18,6 +18,7 @@ copy of it was redundant.
   {% csrf_token %}
   {{ form.non_field_errors }}
   {% for field in form %}
+    {% if field.name == "body_tracking_reminders_enabled" %}<p class="field-group-label">{% trans "Notifications" %}</p>{% endif %}
     {% if field.name == "show_bmi" %}<p class="field-group-label">{% trans "Privacy" %}</p>{% endif %}
     {% if field.name == "allow_friend_requests" %}<p class="field-group-label">{% trans "Social" %}</p>{% endif %}
     <div class="field">
