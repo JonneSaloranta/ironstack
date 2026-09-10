@@ -7,6 +7,21 @@
   --color-text: #e7eaee;
   --color-text-muted: #9aa3ad;
   --color-accent: #5b9dfd;
+  /* Text/icon color for anything rendered *on top of* a
+     --color-accent background (a button, .skip-link, .training-fab,
+     .tag, the active .range-filter link, ...) — found live by
+     apps/core/test_accessibility.py (axe-core): plain white text on
+     --color-accent is only 2.7:1, well under WCAG AA's 4.5:1 minimum
+     for normal text. --color-accent itself can't just be darkened to
+     fix that: it's also used as plain *text* color against this
+     app's dark page background (nav links, icons, ...), where it
+     already comfortably passes (6.8:1) — darkening it enough to fix
+     the button case would have broken that instead. This app's own
+     near-black page background reused as the "text" side of that pair
+     gives 6.8:1 against --color-accent, comfortably clearing 4.5:1,
+     without touching --color-accent (or anything that already reads
+     correctly against it) at all. */
+  --color-on-accent: var(--color-bg);
   --color-danger: #e5636a;
   --color-success: #4fb477;
   --color-warning: #e0a94f;
@@ -179,7 +194,7 @@ button,
   border-radius: var(--radius);
   border: 1px solid var(--color-border);
   background: var(--color-accent);
-  color: #fff;
+  color: var(--color-on-accent);
   padding: 0.5rem 1rem;
   text-decoration: none;
   cursor: pointer;
@@ -232,7 +247,7 @@ input[type="radio"] {
   left: 0.5rem;
   z-index: 100;
   background: var(--color-accent);
-  color: #fff;
+  color: var(--color-on-accent);
   padding: 0.5rem 1rem;
   border-radius: var(--radius);
   text-decoration: none;
@@ -402,7 +417,7 @@ input[type="radio"] {
   justify-content: center;
   border-radius: 50%;
   background: var(--color-accent);
-  color: #fff;
+  color: var(--color-on-accent);
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
   text-decoration: none;
 }
@@ -541,7 +556,7 @@ input[type="radio"] {
   padding: 0.1rem 0.4rem;
   border-radius: 999px;
   background: var(--color-accent);
-  color: #fff;
+  color: var(--color-on-accent);
   margin-left: 0.4rem;
 }
 
@@ -1515,7 +1530,7 @@ h2 {
 
 .range-filter a[aria-current="true"] {
   background: var(--color-accent);
-  color: #fff;
+  color: var(--color-on-accent);
   border-color: var(--color-accent);
 }
 
