@@ -15,6 +15,19 @@ on:
 permissions:
   contents: read
 
+# Every `uses:` below is pinned to a full commit SHA, not a mutable
+# tag (`@v7`) — a tag can be moved to point at different code after
+# the fact (whether by the action's own maintainer or an attacker who
+# compromises their account), which would silently change what runs
+# here on the next push with no diff in this repo to review. That
+# matters more than usual for publish-image/create-release
+# specifically: both request elevated GITHUB_TOKEN scopes
+# (packages: write / contents: write) an untrusted action version
+# could abuse. The `# vX` comment after each SHA is just a label for
+# humans — `.github/dependabot.yml`'s own `github-actions` ecosystem
+# entry still resolves/bumps these by SHA on every update, same as any
+# other pinned dependency.
+
 jobs:
   lint-and-test:
     runs-on: ubuntu-latest
@@ -47,9 +60,9 @@ jobs:
       POSTGRES_PORT: 5432
 
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
-      - uses: actions/setup-python@v7
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
         with:
           python-version: "3.14"
           cache: pip
@@ -108,7 +121,7 @@ jobs:
       contents: read
       packages: write
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
       - name: Compute image metadata
         id: meta
@@ -120,15 +133,15 @@ jobs:
           # preserves whatever case the repo itself has (JonneSaloranta/ironstack).
           echo "image=ghcr.io/$(echo '${{ github.repository }}' | tr '[:upper:]' '[:lower:]')" >> "$GITHUB_OUTPUT"
 
-      - uses: docker/login-action@v3
+      - uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - uses: docker/setup-buildx-action@v3
+      - uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3
 
-      - uses: docker/build-push-action@v6
+      - uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8 # v6
         with:
           context: .
           push: true
@@ -169,7 +182,7 @@ jobs:
       # notes step below needs both: `git describe` to find the
       # *previous* release's tag, and `git log <that tag>..HEAD` to
       # list everything shipped since it.
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           fetch-depth: 0
 
