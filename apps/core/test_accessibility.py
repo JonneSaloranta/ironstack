@@ -34,9 +34,22 @@ from pathlib import Path
 os.environ.setdefault("DJANGO_ALLOW_ASYNC_UNSAFE", "true")
 
 import pytest
-from django.contrib.auth import get_user_model
-from django.contrib.staticfiles.testing import StaticLiveServerTestCase
-from playwright.sync_api import sync_playwright
+
+# pyproject.toml's `addopts` (`-m "not accessibility"`) only deselects
+# this module's tests *after* collecting them — pytest still has to
+# import the module first to see its marks at all, so a plain `pytest`
+# run with no `requirements/a11y.txt` installed (every environment but
+# the dedicated `accessibility` CI job/`pytest -m accessibility`) would
+# otherwise hard-crash the whole run on this import alone, on a module
+# meant to be silently skipped there. `importorskip` raises a clean
+# Skipped instead, before that import ever runs — found the hard way,
+# from CI: it never surfaced locally, since this session's own venv
+# already had playwright installed by the time this file existed.
+pytest.importorskip("playwright", reason="requirements/a11y.txt not installed")
+
+from django.contrib.auth import get_user_model  # noqa: E402
+from django.contrib.staticfiles.testing import StaticLiveServerTestCase  # noqa: E402
+from playwright.sync_api import sync_playwright  # noqa: E402
 
 User = get_user_model()
 
