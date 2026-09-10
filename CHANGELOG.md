@@ -25,6 +25,9 @@ narrated summary of the same version.
 - A "Statistics" card on each body measurement's history page: current
   value, change since your first log, lowest/highest/average, entry
   count, and how long you've been tracking it.
+- A program's prescribed exercises now link to their exercise detail
+  page, to check the description, equipment, or muscle groups without
+  leaving to search the exercise library.
 
 ## [1.12.0] — 2026-09-09
 

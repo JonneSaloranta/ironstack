@@ -3923,3 +3923,19 @@ unit-agnostic, canonical values only) and the view (converts each
 field to the user's display unit) rather than teaching the service
 about `user.unit_system` directly, the same layering
 `entry.display_value`/`chart_points` on this same page already follow.
+
+## A program's prescribed exercises now link to their own detail page
+
+Small, requested directly: `/programs/<id>` listed each prescribed
+exercise as plain text (`{% trans prescription.exercise.name %}`) —
+checking what it actually is, its equipment, or its muscle groups
+meant leaving the program and searching the exercise library by hand.
+Wrapped the name in a link to `exercises:exercise-detail` instead.
+Safe unconditionally, no extra visibility check needed: a program's
+exercises are only ever visible to a viewer who could already open
+this program at all — either their own program (referencing their own
+or system exercises) or a system template (referencing only system
+exercises) — and `apps.exercises.services.visible_to` grants every one
+of those the same owner-or-system split `apps.programs.services.
+visible_to` already applies to the program itself, so the two can
+never disagree about what a given viewer may see.
