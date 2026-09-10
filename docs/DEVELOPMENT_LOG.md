@@ -3886,3 +3886,40 @@ weight suggestion, programs, analytics, a completed session's logged
 history), taken at a phone-width viewport against a throwaway demo
 account seeded with a few weeks of realistic session/PR/measurement
 history for the sake of the screenshots actually showing something.
+
+## A body-tracking reminder, an off switch for it, and history-page statistics
+
+**The reminder**, requested directly. New `apps.measurements.services.
+needs_body_tracking_reminder`: a dashboard card ("Time to log your
+body measurements?", plain `.card-link` to Body tracking, the same
+shape as the "no workout in progress" card above it) once a user
+hasn't logged *any* body measurement — any type, not just body
+weight — in `BODY_TRACKING_REMINDER_DAYS` (14) days. A never-logged
+user is measured from `date_joined` rather than firing immediately,
+so a brand-new account isn't nudged before it's had that long to log
+a first reading at all. Purely a suggestion per this app's own
+"automation must never take control away from the user" principle —
+never a modal, and it disappears the moment a reading is logged, no
+explicit dismissal needed.
+
+**The off switch**, requested alongside it: `User.
+body_tracking_reminders_enabled` (default `True`), a new Profile →
+Preferences group of its own ("Notifications") between the display
+fields and the privacy toggles — it's neither, so it didn't belong in
+either existing group. Off suppresses the card outright regardless of
+how stale the user's history actually is; it never touches whether
+they *can* log a reading, only whether they're reminded to.
+
+**Statistics**, the third piece requested in the same message: a card
+on the measurement history page (`apps.measurements.services.
+stats_for`), between the BMI card (when shown) and the trend chart —
+current value, change since the first-ever log (signed, `+`/`-`),
+lowest/highest/average across the full history, entry count, and the
+date tracking started. Needs at least 2 readings, the same threshold
+`apps.core.charts.build_chart_series` already uses for the trend line
+right below it — a single entry has no "change" or meaningful average
+to report yet. Kept the existing split between `services.py` (stays
+unit-agnostic, canonical values only) and the view (converts each
+field to the user's display unit) rather than teaching the service
+about `user.unit_system` directly, the same layering
+`entry.display_value`/`chart_points` on this same page already follow.

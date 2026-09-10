@@ -72,6 +72,34 @@ class MeasurementHistoryView(LoginRequiredMixin, DetailView):
         # not canonical storage — same converted values as the table.
         chart_points = [(entry.display_value, entry.recorded_at) for entry in history]
         context["chart"] = services.build_chart_series(chart_points)
+
+        # Statistics card — canonical stats converted to display units
+        # here, the same split every other converted value on this page
+        # already follows (services stays unit-agnostic; the view/
+        # template are the only layers that know about `user`'s
+        # preference).
+        stats = services.stats_for(user, measurement_type)
+        if stats is not None:
+            context["stats"] = {
+                "entry_count": stats.entry_count,
+                "latest_value": units.to_display(
+                    stats.latest_value, measurement_type.unit_kind, user.unit_system
+                ),
+                "change_since_first": units.to_display(
+                    stats.change_since_first, measurement_type.unit_kind, user.unit_system
+                ),
+                "min_value": units.to_display(
+                    stats.min_value, measurement_type.unit_kind, user.unit_system
+                ),
+                "max_value": units.to_display(
+                    stats.max_value, measurement_type.unit_kind, user.unit_system
+                ),
+                "average_value": units.to_display(
+                    stats.average_value, measurement_type.unit_kind, user.unit_system
+                ),
+                "first_recorded_at": stats.first_recorded_at,
+            }
+
         context["form"] = BodyMeasurementForm(user=user, measurement_type=measurement_type)
         context["can_deactivate"] = measurement_type.owner_id == user.id
 

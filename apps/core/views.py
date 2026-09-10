@@ -170,6 +170,10 @@ class DashboardView(LoginRequiredMixin, TemplateView):
                 body_weight_type.unit_kind, user.unit_system
             )
 
+        context["body_tracking_reminder"] = measurement_services.needs_body_tracking_reminder(
+            user
+        )
+
         # Shared across every user on this instance, not scoped to
         # `user` — apps.analytics.achievements.achievement_highlights
         # already excludes anyone with show_achievements=False (a

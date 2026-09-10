@@ -5972,6 +5972,39 @@ msgstr "Kopioitu!"
 msgid "Source on GitHub"
 msgstr "Lähdekoodi GitHubissa"
 
+msgid "Notifications"
+msgstr "Ilmoitukset"
+
+msgid "Remind me to log body measurements"
+msgstr "Muistuta minua kirjaamaan kehon mittaukset"
+
+msgid "Shows a dashboard card nudging you to log a body measurement when you haven't logged one in a while. Turn off to never see that reminder — you can still log a reading any time from Body tracking."
+msgstr "Näyttää koontinäytöllä kortin, joka muistuttaa kirjaamaan kehon mittauksen, kun et ole kirjannut sellaista pitkään aikaan. Poista käytöstä, jos et halua koskaan nähdä tätä muistutusta — voit silti kirjata mittauksen milloin tahansa Kehon seurannasta."
+
+msgid "Time to log your body measurements?"
+msgstr "Aika kirjata kehon mittaukset?"
+
+msgid "It's been a while since you tracked your weight or measurements — tap here to add a new reading."
+msgstr "Siitä on jo aikaa, kun kirjasit painosi tai mittauksesi — napauta tästä lisätäksesi uuden lukeman."
+
+msgid "Change since first log"
+msgstr "Muutos ensimmäisestä kirjauksesta"
+
+msgid "Lowest"
+msgstr "Pienin"
+
+msgid "Highest"
+msgstr "Suurin"
+
+msgid "Average"
+msgstr "Keskiarvo"
+
+msgid "Entries logged"
+msgstr "Kirjauksia"
+
+msgid "Tracking since %(date)s."
+msgstr "Seurattu %(date)s alkaen."
+
 #~ msgid "You can't invite this user."
 #~ msgstr "Et voi kutsua tätä käyttäjää."
 

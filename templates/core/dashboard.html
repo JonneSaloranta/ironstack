@@ -44,6 +44,13 @@ disclosure instead — see it further down for why.
   </div>
 {% endif %}
 
+{% if body_tracking_reminder %}
+  <a class="card card-link" href="{% url 'measurements:type-list' %}">
+    <strong>{% trans "Time to log your body measurements?" %}</strong>
+    <p class="text-muted">{% trans "It's been a while since you tracked your weight or measurements — tap here to add a new reading." %}</p>
+  </a>
+{% endif %}
+
 {% if recent_prs %}
   <div class="card">
     <strong>{% trans "Recent" %} <abbr tabindex="0" title="{% trans "Personal Records" %}">PRs</abbr></strong>

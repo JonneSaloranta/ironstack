@@ -510,6 +510,37 @@ class ProfileViewTests(TestCase):
         self.assertContains(response, "on the body weight page")
         self.assertContains(response, "Turns off the BMI card")
 
+    def test_body_tracking_reminders_enabled_defaults_to_true(self):
+        self.assertTrue(self.alice.body_tracking_reminders_enabled)
+
+    def test_unchecking_body_tracking_reminders_enabled_turns_it_off(self):
+        self.client.post(
+            reverse("profile"),
+            {"unit_system": "metric", "timezone": "UTC", "language": "en"},
+        )
+        self.alice.refresh_from_db()
+        self.assertFalse(self.alice.body_tracking_reminders_enabled)
+
+    def test_checking_body_tracking_reminders_enabled_turns_it_back_on(self):
+        self.alice.body_tracking_reminders_enabled = False
+        self.alice.save()
+        self.client.post(
+            reverse("profile"),
+            {
+                "unit_system": "metric",
+                "timezone": "UTC",
+                "body_tracking_reminders_enabled": "on",
+                "language": "en",
+            },
+        )
+        self.alice.refresh_from_db()
+        self.assertTrue(self.alice.body_tracking_reminders_enabled)
+
+    def test_body_tracking_reminders_enabled_field_is_on_the_profile_page(self):
+        response = self.client.get(reverse("profile"))
+        self.assertContains(response, "Remind me to log body measurements")
+        self.assertContains(response, "Notifications")
+
     def test_show_achievements_defaults_to_true(self):
         self.assertTrue(self.alice.show_achievements)
 

@@ -229,6 +229,11 @@ class ProfileForm(forms.ModelForm):
     `allow_group_invites` are apps.social's own opt-*out* privacy
     settings — see their own model field comments for why they default
     on rather than off, unlike every other toggle on this form.
+    `body_tracking_reminders_enabled` is neither privacy nor social — a
+    plain notification preference for the dashboard's "Time to log your
+    measurements?" card (apps.measurements.services.
+    needs_body_tracking_reminder), its own group between the display
+    fields above and the privacy toggles below.
     """
 
     timezone = forms.ChoiceField(choices=_timezone_choices, label=_("Timezone"))
@@ -247,6 +252,7 @@ class ProfileForm(forms.ModelForm):
             "timezone",
             "language",
             "height",
+            "body_tracking_reminders_enabled",
             "show_bmi",
             "show_achievements",
             "show_name_to_others",
@@ -256,6 +262,7 @@ class ProfileForm(forms.ModelForm):
         ]
         labels = {
             "unit_system": _("Units"),
+            "body_tracking_reminders_enabled": _("Remind me to log body measurements"),
             "show_bmi": lazy_format_html(
                 "{} {} {}",
                 _("Show"),
@@ -270,6 +277,12 @@ class ProfileForm(forms.ModelForm):
             "language": _("Language"),
         }
         help_texts = {
+            "body_tracking_reminders_enabled": _(
+                "Shows a dashboard card nudging you to log a body measurement "
+                "when you haven't logged one in a while. Turn off to never see "
+                "that reminder — you can still log a reading any time from "
+                "Body tracking."
+            ),
             "show_bmi": _("Turns off the BMI card and its category ranges entirely."),
             "show_achievements": _(
                 "Lets everyone using this instance see your longest streak, "

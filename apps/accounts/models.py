@@ -88,6 +88,19 @@ class User(AbstractUser):
         "independent of whether height/weight exist to compute it, so a "
         "user who'd rather not see the figure can turn it off outright.",
     )
+    # apps.measurements.services.needs_body_tracking_reminder / the
+    # dashboard's own "Time to log your measurements?" card — on by
+    # default, the same reasoning show_bmi/show_achievements already
+    # follow for a toggle that only ever adds a passive dashboard card,
+    # never something a user has to actively dismiss. Off stops that
+    # card from ever appearing, full stop — it never blocks logging a
+    # reading directly, only the reminder to do so.
+    body_tracking_reminders_enabled = models.BooleanField(
+        default=True,
+        help_text="Shows a dashboard card nudging you to log a body "
+        "measurement when you haven't logged one in a while. Turn off to "
+        "never see that reminder.",
+    )
     show_achievements = models.BooleanField(
         default=True,
         help_text="A privacy setting, not a display one: the dashboard's "
