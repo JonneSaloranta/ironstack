@@ -16,7 +16,7 @@ previous release (`docs/ARCHITECTURE.md` "Versioning") — a terse,
 complete audit trail, not a replacement for this file's shorter,
 narrated summary of the same version.
 
-## [Unreleased]
+## [1.13.1] — 2026-09-10
 
 ### Fixed
 - White text on the accent color (every primary button, tags, the
