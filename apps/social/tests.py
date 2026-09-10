@@ -689,6 +689,100 @@ class FriendViewTests(TestCase):
         self.client.post(reverse("social:friend-unmute", args=[self.bob.pk]))
         self.assertFalse(services.is_friend_muted(self.alice, self.bob))
 
+    def test_friend_request_send_requires_post(self):
+        response = self.client.get(reverse("social:friend-request-send", args=[self.bob.pk]))
+        self.assertEqual(response.status_code, 405)
+
+    def test_friend_request_send_shows_an_error_for_a_crafted_self_request(self):
+        # friend_list.html never offers yourself as a target, but a
+        # crafted POST naming your own id must still be refused by the
+        # view, not just hidden from the UI — same reasoning as
+        # test_group_invite_send_rejects_a_crafted_non_friend_target.
+        response = self.client.post(
+            reverse("social:friend-request-send", args=[self.alice.pk])
+        )
+        self.assertRedirects(response, reverse("social:friend-list"))
+        self.assertFalse(
+            FriendRequest.objects.filter(from_user=self.alice, to_user=self.alice).exists()
+        )
+
+    def test_friend_request_respond_requires_post(self):
+        services.send_friend_request(self.bob, self.alice)
+        request = FriendRequest.objects.get(from_user=self.bob, to_user=self.alice)
+        response = self.client.get(
+            reverse("social:friend-request-respond", args=[request.pk])
+        )
+        self.assertEqual(response.status_code, 405)
+
+    def test_declining_a_request_via_the_view(self):
+        services.send_friend_request(self.bob, self.alice)
+        request = FriendRequest.objects.get(from_user=self.bob, to_user=self.alice)
+        response = self.client.post(
+            reverse("social:friend-request-respond", args=[request.pk]), {"action": "decline"}
+        )
+        self.assertRedirects(response, reverse("social:friend-list"))
+        request.refresh_from_db()
+        self.assertEqual(request.status, FriendRequestStatus.DECLINED)
+        self.assertFalse(services.are_friends(self.alice, self.bob))
+
+    def test_responding_to_a_request_with_an_unknown_action(self):
+        services.send_friend_request(self.bob, self.alice)
+        request = FriendRequest.objects.get(from_user=self.bob, to_user=self.alice)
+        response = self.client.post(
+            reverse("social:friend-request-respond", args=[request.pk]),
+            {"action": "explode"},
+            follow=True,
+        )
+        self.assertContains(response, "Unknown action.")
+        request.refresh_from_db()
+        self.assertEqual(request.status, FriendRequestStatus.PENDING)
+
+    def test_responding_to_an_already_answered_request_shows_the_services_error(self):
+        services.send_friend_request(self.bob, self.alice)
+        request = FriendRequest.objects.get(from_user=self.bob, to_user=self.alice)
+        services.accept_friend_request(request, acting_user=self.alice)
+        response = self.client.post(
+            reverse("social:friend-request-respond", args=[request.pk]),
+            {"action": "accept"},
+            follow=True,
+        )
+        self.assertContains(response, "already been answered")
+
+    def test_friend_remove_requires_post(self):
+        make_friends(self.alice, self.bob)
+        response = self.client.get(reverse("social:friend-remove", args=[self.bob.pk]))
+        self.assertEqual(response.status_code, 405)
+
+    def test_viewing_the_block_list(self):
+        services.block_user(self.alice, self.bob)
+        response = self.client.get(reverse("social:block-list"))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "bob")
+
+    def test_block_user_requires_post(self):
+        response = self.client.get(reverse("social:block-user", args=[self.bob.pk]))
+        self.assertEqual(response.status_code, 405)
+
+    def test_blocking_yourself_shows_an_error(self):
+        response = self.client.post(reverse("social:block-user", args=[self.alice.pk]))
+        self.assertRedirects(response, reverse("social:block-list"))
+        self.assertFalse(Block.objects.filter(blocker=self.alice, blocked=self.alice).exists())
+
+    def test_unblock_user_requires_post(self):
+        services.block_user(self.alice, self.bob)
+        response = self.client.get(reverse("social:unblock-user", args=[self.bob.pk]))
+        self.assertEqual(response.status_code, 405)
+
+    def test_mute_friend_requires_post(self):
+        make_friends(self.alice, self.bob)
+        response = self.client.get(reverse("social:friend-mute", args=[self.bob.pk]))
+        self.assertEqual(response.status_code, 405)
+
+    def test_unmute_friend_requires_post(self):
+        make_friends(self.alice, self.bob)
+        response = self.client.get(reverse("social:friend-unmute", args=[self.bob.pk]))
+        self.assertEqual(response.status_code, 405)
+
 
 class GroupViewTests(TestCase):
     def setUp(self):
@@ -859,6 +953,306 @@ class GroupViewTests(TestCase):
 
         self.assertFalse(GroupInvite.objects.filter(group=group, invited_user=stranger).exists())
 
+    def test_group_create_get_renders_an_empty_form(self):
+        response = self.client.get(reverse("social:group-create"))
+        self.assertEqual(response.status_code, 200)
+        self.assertIsNone(response.context["group"])
+
+    def test_a_manager_can_successfully_edit_the_group(self):
+        group = services.create_group(self.alice, "Lifters")
+        response = self.client.post(
+            reverse("social:group-edit", args=[group.pk]), {"name": "Renamed", "description": ""}
+        )
+        self.assertRedirects(response, reverse("social:group-detail", args=[group.pk]))
+        group.refresh_from_db()
+        self.assertEqual(group.name, "Renamed")
+
+    def test_group_delete_requires_post(self):
+        group = services.create_group(self.alice, "Lifters")
+        response = self.client.get(reverse("social:group-delete", args=[group.pk]))
+        self.assertEqual(response.status_code, 405)
+
+    def test_a_non_owner_cannot_delete_the_group(self):
+        group = services.create_group(self.bob, "Lifters")
+        services.enable_invite(group)
+        services.join_group_by_code(self.alice, group.invite_code)
+        response = self.client.post(reverse("social:group-delete", args=[group.pk]))
+        self.assertRedirects(response, reverse("social:group-detail", args=[group.pk]))
+        self.assertTrue(Group.objects.filter(pk=group.pk).exists())
+
+    def test_group_invite_toggle_requires_post(self):
+        group = services.create_group(self.alice, "Lifters")
+        response = self.client.get(reverse("social:group-invite-toggle", args=[group.pk]))
+        self.assertEqual(response.status_code, 405)
+
+    def test_a_non_manager_cannot_toggle_the_invite_link(self):
+        group = services.create_group(self.bob, "Lifters")
+        services.enable_invite(group)
+        services.join_group_by_code(self.alice, group.invite_code)
+        response = self.client.post(reverse("social:group-invite-toggle", args=[group.pk]))
+        self.assertRedirects(response, reverse("social:group-detail", args=[group.pk]))
+        group.refresh_from_db()
+        self.assertTrue(group.invite_enabled)
+
+    def test_toggling_the_invite_link_off_again(self):
+        group = services.create_group(self.alice, "Lifters")
+        services.enable_invite(group)
+        self.client.post(reverse("social:group-invite-toggle", args=[group.pk]))
+        group.refresh_from_db()
+        self.assertFalse(group.invite_enabled)
+
+    def test_group_invite_regenerate_requires_post(self):
+        group = services.create_group(self.alice, "Lifters")
+        response = self.client.get(reverse("social:group-invite-regenerate", args=[group.pk]))
+        self.assertEqual(response.status_code, 405)
+
+    def test_a_manager_can_regenerate_the_invite_code(self):
+        group = services.create_group(self.alice, "Lifters")
+        services.enable_invite(group)
+        old_code = group.invite_code
+        response = self.client.post(
+            reverse("social:group-invite-regenerate", args=[group.pk])
+        )
+        self.assertRedirects(response, reverse("social:group-detail", args=[group.pk]))
+        group.refresh_from_db()
+        self.assertNotEqual(group.invite_code, old_code)
+
+    def test_a_non_manager_cannot_regenerate_the_invite_code(self):
+        group = services.create_group(self.bob, "Lifters")
+        services.enable_invite(group)
+        services.join_group_by_code(self.alice, group.invite_code)
+        old_code = group.invite_code
+        self.client.post(reverse("social:group-invite-regenerate", args=[group.pk]))
+        group.refresh_from_db()
+        self.assertEqual(group.invite_code, old_code)
+
+    def test_group_invite_send_requires_post(self):
+        group = services.create_group(self.alice, "Lifters")
+        response = self.client.get(reverse("social:group-invite-send", args=[group.pk]))
+        self.assertEqual(response.status_code, 405)
+
+    def test_group_invite_send_succeeds_for_an_actual_friend(self):
+        group = services.create_group(self.alice, "Lifters")
+        make_friends(self.alice, self.bob)
+        response = self.client.post(
+            reverse("social:group-invite-send", args=[group.pk]), {"friend": self.bob.pk}
+        )
+        self.assertRedirects(response, reverse("social:group-detail", args=[group.pk]))
+        from apps.social.models import GroupInvite
+
+        self.assertTrue(GroupInvite.objects.filter(group=group, invited_user=self.bob).exists())
+
+    def test_group_invite_respond_requires_post(self):
+        group = services.create_group(self.bob, "Lifters")
+        make_friends(self.bob, self.alice)
+        invite = services.invite_to_group(group, invited_by=self.bob, invited_user=self.alice)
+        response = self.client.get(reverse("social:group-invite-respond", args=[invite.pk]))
+        self.assertEqual(response.status_code, 405)
+
+    def test_accepting_a_group_invite_via_the_view(self):
+        group = services.create_group(self.bob, "Lifters")
+        make_friends(self.bob, self.alice)
+        invite = services.invite_to_group(group, invited_by=self.bob, invited_user=self.alice)
+        response = self.client.post(
+            reverse("social:group-invite-respond", args=[invite.pk]), {"action": "accept"}
+        )
+        self.assertRedirects(response, reverse("social:group-detail", args=[group.pk]))
+        self.assertIsNotNone(services.membership_of(group, self.alice))
+
+    def test_declining_a_group_invite_via_the_view(self):
+        group = services.create_group(self.bob, "Lifters")
+        make_friends(self.bob, self.alice)
+        invite = services.invite_to_group(group, invited_by=self.bob, invited_user=self.alice)
+        response = self.client.post(
+            reverse("social:group-invite-respond", args=[invite.pk]), {"action": "decline"}
+        )
+        self.assertRedirects(response, reverse("social:group-list"))
+        self.assertIsNone(services.membership_of(group, self.alice))
+
+    def test_responding_to_a_group_invite_with_an_unknown_action(self):
+        group = services.create_group(self.bob, "Lifters")
+        make_friends(self.bob, self.alice)
+        invite = services.invite_to_group(group, invited_by=self.bob, invited_user=self.alice)
+        response = self.client.post(
+            reverse("social:group-invite-respond", args=[invite.pk]),
+            {"action": "explode"},
+            follow=True,
+        )
+        self.assertContains(response, "Unknown action.")
+
+    def test_responding_to_an_already_answered_group_invite_shows_the_services_error(self):
+        group = services.create_group(self.bob, "Lifters")
+        make_friends(self.bob, self.alice)
+        invite = services.invite_to_group(group, invited_by=self.bob, invited_user=self.alice)
+        services.accept_group_invite(invite, acting_user=self.alice)
+        response = self.client.post(
+            reverse("social:group-invite-respond", args=[invite.pk]),
+            {"action": "accept"},
+            follow=True,
+        )
+        self.assertContains(response, "already been answered")
+
+    def test_group_member_remove_requires_post(self):
+        group = services.create_group(self.alice, "Lifters")
+        services.enable_invite(group)
+        services.join_group_by_code(self.bob, group.invite_code)
+        response = self.client.get(
+            reverse("social:group-member-remove", args=[group.pk, self.bob.pk])
+        )
+        self.assertEqual(response.status_code, 405)
+
+    def test_a_manager_can_remove_a_member(self):
+        group = services.create_group(self.alice, "Lifters")
+        services.enable_invite(group)
+        services.join_group_by_code(self.bob, group.invite_code)
+        response = self.client.post(
+            reverse("social:group-member-remove", args=[group.pk, self.bob.pk])
+        )
+        self.assertRedirects(response, reverse("social:group-detail", args=[group.pk]))
+        self.assertIsNone(services.membership_of(group, self.bob))
+
+    def test_a_regular_member_cannot_remove_another_member(self):
+        group = services.create_group(self.bob, "Lifters")
+        services.enable_invite(group)
+        services.join_group_by_code(self.alice, group.invite_code)
+        carol = User.objects.create_user(username="carol", password="s3cret-pass")
+        services.join_group_by_code(carol, group.invite_code)
+        response = self.client.post(
+            reverse("social:group-member-remove", args=[group.pk, carol.pk]), follow=True
+        )
+        self.assertContains(response, "don&#x27;t have permission")
+        self.assertIsNotNone(services.membership_of(group, carol))
+
+    def test_group_member_role_requires_post(self):
+        group = services.create_group(self.alice, "Lifters")
+        services.enable_invite(group)
+        services.join_group_by_code(self.bob, group.invite_code)
+        response = self.client.get(
+            reverse("social:group-member-role", args=[group.pk, self.bob.pk])
+        )
+        self.assertEqual(response.status_code, 405)
+
+    def test_the_owner_can_promote_a_member_to_admin(self):
+        group = services.create_group(self.alice, "Lifters")
+        services.enable_invite(group)
+        services.join_group_by_code(self.bob, group.invite_code)
+        response = self.client.post(
+            reverse("social:group-member-role", args=[group.pk, self.bob.pk]),
+            {"role": GroupRole.ADMIN},
+        )
+        self.assertRedirects(response, reverse("social:group-detail", args=[group.pk]))
+        self.assertEqual(services.membership_of(group, self.bob).role, GroupRole.ADMIN)
+
+    def test_setting_an_unknown_role_is_rejected_before_reaching_the_service(self):
+        group = services.create_group(self.alice, "Lifters")
+        services.enable_invite(group)
+        services.join_group_by_code(self.bob, group.invite_code)
+        response = self.client.post(
+            reverse("social:group-member-role", args=[group.pk, self.bob.pk]),
+            {"role": "superadmin"},
+            follow=True,
+        )
+        self.assertContains(response, "Unknown role.")
+        self.assertEqual(services.membership_of(group, self.bob).role, GroupRole.MEMBER)
+
+    def test_an_admin_cannot_change_roles_only_the_owner_can(self):
+        group = services.create_group(self.bob, "Lifters")
+        services.enable_invite(group)
+        services.join_group_by_code(self.alice, group.invite_code)
+        services.set_member_role(
+            group, acting_user=self.bob, target_user=self.alice, role=GroupRole.ADMIN
+        )
+        carol = User.objects.create_user(username="carol", password="s3cret-pass")
+        services.join_group_by_code(carol, group.invite_code)
+        # alice is now an admin — still not allowed to change roles,
+        # only the owner (bob) is (services.set_member_role).
+        response = self.client.post(
+            reverse("social:group-member-role", args=[group.pk, carol.pk]),
+            {"role": GroupRole.ADMIN},
+            follow=True,
+        )
+        self.assertContains(response, "Only the group owner")
+        self.assertEqual(services.membership_of(group, carol).role, GroupRole.MEMBER)
+
+    def test_group_transfer_ownership_requires_post(self):
+        group = services.create_group(self.alice, "Lifters")
+        services.enable_invite(group)
+        services.join_group_by_code(self.bob, group.invite_code)
+        response = self.client.get(
+            reverse("social:group-transfer-ownership", args=[group.pk, self.bob.pk])
+        )
+        self.assertEqual(response.status_code, 405)
+
+    def test_a_non_owner_cannot_transfer_ownership(self):
+        group = services.create_group(self.bob, "Lifters")
+        services.enable_invite(group)
+        services.join_group_by_code(self.alice, group.invite_code)
+        carol = User.objects.create_user(username="carol", password="s3cret-pass")
+        services.join_group_by_code(carol, group.invite_code)
+        response = self.client.post(
+            reverse("social:group-transfer-ownership", args=[group.pk, carol.pk]), follow=True
+        )
+        self.assertContains(response, "Only the group owner")
+        self.assertTrue(services.is_group_owner(self.bob, group))
+
+    def test_group_leave_requires_post(self):
+        group = services.create_group(self.bob, "Lifters")
+        services.enable_invite(group)
+        services.join_group_by_code(self.alice, group.invite_code)
+        response = self.client.get(reverse("social:group-leave", args=[group.pk]))
+        self.assertEqual(response.status_code, 405)
+
+    def test_a_regular_member_can_leave_a_group(self):
+        group = services.create_group(self.bob, "Lifters")
+        services.enable_invite(group)
+        services.join_group_by_code(self.alice, group.invite_code)
+        response = self.client.post(reverse("social:group-leave", args=[group.pk]))
+        self.assertRedirects(response, reverse("social:group-list"))
+        self.assertIsNone(services.membership_of(group, self.alice))
+
+    def test_the_owner_cannot_leave_without_transferring_ownership_first(self):
+        group = services.create_group(self.alice, "Lifters")
+        response = self.client.post(reverse("social:group-leave", args=[group.pk]))
+        self.assertRedirects(response, reverse("social:group-detail", args=[group.pk]))
+        self.assertTrue(services.is_group_owner(self.alice, group))
+
+    def test_group_mute_toggle_requires_post(self):
+        group = services.create_group(self.alice, "Lifters")
+        response = self.client.get(reverse("social:group-mute-toggle", args=[group.pk]))
+        self.assertEqual(response.status_code, 405)
+
+    def test_group_invite_join_rate_limits_repeated_bad_lookups(self):
+        from apps.social.views_groups import INVITE_LOOKUP_LIMIT
+
+        for _ in range(INVITE_LOOKUP_LIMIT):
+            self.client.get(reverse("group-invite-join", args=["NOSUCHCODE"]))
+        response = self.client.get(reverse("group-invite-join", args=["NOSUCHCODE"]))
+        self.assertContains(response, "Too many attempts")
+
+    def test_group_invite_join_shows_an_error_if_the_service_call_fails(self):
+        # No black-box way to make services.join_group_by_code itself
+        # raise here: the view already re-checks the exact same
+        # invite_code/invite_enabled condition right before calling it,
+        # so by the time the call happens it can only fail on a genuine
+        # race (the invite getting disabled between those two checks)
+        # — not something a single synchronous test request can
+        # reproduce. Patched directly to exercise the view's own
+        # error-handling branch instead.
+        self.client.login(username="bob", password="s3cret-pass")
+        group = services.create_group(self.alice, "Lifters")
+        services.enable_invite(group)
+        with mock.patch(
+            "apps.social.views_groups.services.join_group_by_code",
+            side_effect=services.SocialError(
+                "This invite link isn't valid, or is no longer active."
+            ),
+        ):
+            response = self.client.post(
+                reverse("group-invite-join", args=[group.invite_code])
+            )
+        self.assertContains(response, "isn&#x27;t valid")
+        self.assertIsNone(services.membership_of(group, self.bob))
+
 
 class MessageViewTests(TestCase):
     def setUp(self):
@@ -940,6 +1334,73 @@ class MessageViewTests(TestCase):
         # chronological order (oldest-of-the-visible-window first).
         self.assertContains(response, "message 104")
         self.assertNotContains(response, "message 0")
+
+    def test_message_list_shows_friends_and_groups(self):
+        make_friends(self.alice, self.bob)
+        group = services.create_group(self.alice, "Lifters")
+        response = self.client.get(reverse("social:message-list"))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual([t["friend"] for t in response.context["friend_threads"]], [self.bob])
+        self.assertEqual([t["group"] for t in response.context["group_threads"]], [group])
+
+    def test_message_thread_fragment_404s_for_a_non_friend(self):
+        response = self.client.get(
+            reverse("social:message-thread-fragment", args=[self.bob.pk])
+        )
+        self.assertEqual(response.status_code, 404)
+
+    def test_message_thread_fragment_does_not_crash_when_the_service_call_fails(self):
+        # block_user always removes the friendship too (services.
+        # block_user calls remove_friend), so are_friends is already
+        # False by the time is_blocked could matter — meaning
+        # send_direct_message's own is_blocked check can't actually be
+        # reached through this view at all; the view's own are_friends
+        # guard (a couple of lines above) always 404s first. Patched
+        # directly to exercise the except branch anyway, the same
+        # reasoning as GroupViewTests'
+        # test_group_invite_join_shows_an_error_if_the_service_call_fails.
+        # The fragment template itself never renders django.contrib.
+        # messages (it's an HTMX-swapped partial, not a full page — see
+        # templates/social/_message_thread_fragment.html), so there's no
+        # error text to assert on here; not crashing and not creating a
+        # message either is the whole of what this branch guarantees.
+        make_friends(self.alice, self.bob)
+        with mock.patch(
+            "apps.social.views_messages.services.send_direct_message",
+            side_effect=services.SocialError("You can't message this user."),
+        ):
+            response = self.client.post(
+                reverse("social:message-thread-fragment", args=[self.bob.pk]), {"body": "hi"}
+            )
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(
+            DirectMessage.objects.filter(sender=self.alice, recipient=self.bob).exists()
+        )
+
+    def test_group_thread_fragment_404s_for_a_non_member(self):
+        group = services.create_group(self.bob, "Lifters")
+        response = self.client.get(reverse("social:group-thread-fragment", args=[group.pk]))
+        self.assertEqual(response.status_code, 404)
+
+    def test_group_thread_fragment_does_not_crash_when_the_service_call_fails(self):
+        # Same reasoning as message_thread_fragment's own version of
+        # this test above: the view's own membership check right above
+        # already guarantees send_group_message's identical check would
+        # pass, so there's no black-box way to reach its SocialError
+        # branch — patched directly instead. _group_thread_fragment.html
+        # doesn't render messages either, same as the direct-message
+        # fragment, so this only asserts the request survives cleanly
+        # and nothing got created.
+        group = services.create_group(self.alice, "Lifters")
+        with mock.patch(
+            "apps.social.views_messages.services.send_group_message",
+            side_effect=services.SocialError("You're not a member of this group."),
+        ):
+            response = self.client.post(
+                reverse("social:group-thread-fragment", args=[group.pk]), {"body": "hi team"}
+            )
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(GroupMessage.objects.filter(group=group, body="hi team").exists())
 
 
 class ReassignOwnedGroupsBeforeDeletionTests(TestCase):
