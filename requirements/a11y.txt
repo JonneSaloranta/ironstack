@@ -1,0 +1,21 @@
+-r dev.txt
+# apps/core/test_accessibility.py — real-browser accessibility checks
+# (axe-core, run against actual rendered pages) for the handful of key
+# pages docs/UI.md's own accessibility requirements cover, on top of
+# the plain HTML assertions the rest of the test suite already makes
+# (visually-hidden labels, aria attributes, etc. — those don't need a
+# browser at all). A genuine DOM/CSS-aware engine like axe-core can't
+# run without something that actually renders a page — Playwright is
+# the standard way to drive one from Python; axe-core itself is
+# injected directly as a script (apps/core/test_accessibility.py), not
+# vendored or pulled in as a separate PyPI wrapper, since a thin
+# `page.add_script_tag()` + `page.evaluate("axe.run()")` call is all a
+# wrapper package would do anyway.
+#
+# Deliberately its own file, not folded into dev.txt: Playwright's own
+# browser binary (`playwright install chromium`, not a pip package) is
+# a real, non-trivial download nobody running the plain test suite
+# should be forced to carry. Only .github/workflows/ci.yml's dedicated
+# `accessibility` job, and anyone locally running
+# `pytest -m accessibility`, need this file at all.
+playwright>=1.62,<2.0

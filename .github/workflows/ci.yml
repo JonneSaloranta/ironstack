@@ -105,6 +105,70 @@ jobs:
       - name: Test
         run: pytest
 
+  # Real-browser accessibility checks (apps/core/test_accessibility.py,
+  # axe-core via Playwright) — a separate job rather than folded into
+  # lint-and-test above: it needs a real Chromium (requirements/a11y.txt,
+  # `playwright install`), a real, non-trivial download nobody running
+  # the plain test suite should be forced to carry, so pyproject.toml's
+  # own `addopts` excludes the `accessibility` marker from a plain
+  # `pytest` run by default — this job is the one place that overrides
+  # that with `-m accessibility` instead. Independent of lint-and-test
+  # (no `needs:`) so a slow browser download/install never delays the
+  # fast, far-more-commonly-broken checks in that job from reporting
+  # back first.
+  accessibility:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: ironstack
+          POSTGRES_USER: ironstack
+          POSTGRES_PASSWORD: ironstack
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U ironstack"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      DJANGO_SECRET_KEY: ci-only-secret-key-not-used-anywhere-real
+      POSTGRES_DB: ironstack
+      POSTGRES_USER: ironstack
+      POSTGRES_PASSWORD: ironstack
+      POSTGRES_HOST: localhost
+      POSTGRES_PORT: 5432
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
+        with:
+          python-version: "3.14"
+          cache: pip
+          cache-dependency-path: |
+            requirements/base.txt
+            requirements/dev.txt
+            requirements/a11y.txt
+
+      - name: Install gettext
+        run: sudo apt-get update && sudo apt-get install -y gettext
+
+      - name: Install Python dependencies
+        run: pip install -r requirements/a11y.txt
+
+      - name: Compile translation catalogs
+        run: python manage.py compilemessages
+
+      - name: Install Chromium
+        run: playwright install --with-deps chromium
+
+      - name: Accessibility tests
+        run: pytest -m accessibility
+
   # Publishes the production image to GitHub Container Registry — only
   # once lint-and-test above has actually passed (needs:), and only
   # for a real push landing on master (if:), never a pull request or
