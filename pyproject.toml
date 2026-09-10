@@ -1,7 +1,16 @@
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE = "config.settings.dev"
 python_files = ["tests.py", "test_*.py", "*_tests.py"]
-addopts = "--reuse-db"
+# Excludes the accessibility marker by default — those tests need a
+# real browser (Playwright + Chromium, requirements/a11y.txt), not
+# installed by requirements/dev.txt and not something every `pytest`
+# run (or every contributor's machine) should be forced to carry. CI's
+# own `accessibility` job (.github/workflows/ci.yml) is the one place
+# that overrides this with `-m accessibility` instead.
+addopts = "--reuse-db -m 'not accessibility'"
+markers = [
+    "accessibility: needs a real browser (Playwright) — see requirements/a11y.txt and apps/core/test_accessibility.py",
+]
 
 [tool.ruff]
 line-length = 100

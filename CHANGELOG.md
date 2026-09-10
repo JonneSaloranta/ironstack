@@ -16,6 +16,14 @@ previous release (`docs/ARCHITECTURE.md` "Versioning") — a terse,
 complete audit trail, not a replacement for this file's shorter,
 narrated summary of the same version.
 
+## [Unreleased]
+
+### Fixed
+- White text on the accent color (every primary button, tags, the
+  skip-to-content link, the active range-filter tab) fell short of
+  WCAG AA's minimum contrast — found by a new automated accessibility
+  check, not visually obvious on its own.
+
 ## [1.13.0] — 2026-09-10
 
 ### Added
