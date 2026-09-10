@@ -231,9 +231,10 @@ covers "you're in the app somewhere else right now").
 
 ### Dashboard
 Implemented: this week's workouts and volume, recent PRs (last 3), body
-weight, BMI (see below), an achievements carousel (see below), and an
-in-progress-workout banner that doubles as "continue/last workout". No
-logout button here — it lives on the Profile page only, not duplicated.
+weight, BMI (see below), an achievements carousel (see below), an
+in-progress-workout banner that doubles as "continue/last workout", and
+a body-tracking reminder card (see below). No logout button here — it
+lives on the Profile page only, not duplicated.
 
 Opens with a varied, time-of-day-aware greeting (`apps.core.greetings`,
 `.dashboard-greeting`, right below the "IronStack" heading) — mixes
@@ -319,6 +320,30 @@ never shows it, since BMI has nothing to say about those.
 without the dashboard's old three-nudge-card chain — a user who hasn't
 logged a body weight yet is, by definition, right there on the page
 that lets them.
+
+**Statistics** (`apps.measurements.services.stats_for`): a card on
+that same measurement history page, between BMI (when shown) and the
+trend chart — current value, change since the first-ever log, lowest/
+highest/average across the full history, entry count, and the date
+tracking started. Needs at least 2 readings to say anything (a single
+entry has no "change" or meaningful average yet), same threshold the
+trend chart already uses. Canonical values, converted to the user's
+display unit the same way the chart/table on this page already are.
+
+**Body-tracking reminder** (`apps.measurements.services.
+needs_body_tracking_reminder`): a plain `.card-link` to Body tracking,
+shown once a user hasn't logged *any* body measurement — any type, not
+just body weight — in `BODY_TRACKING_REMINDER_DAYS` (14) days. A
+never-logged user is measured from `date_joined` instead, so a
+brand-new account isn't nudged before it's even had that long to log
+a first reading. Purely a suggestion, per this app's own "automation
+must never take control away from the user" principle — it's a card
+identical in shape to the "no workout in progress" one above it, never
+a modal or a blocking prompt, and it disappears on its own the moment
+a reading is logged, no explicit dismissal needed. `User.
+body_tracking_reminders_enabled` (Profile → Preferences →
+Notifications, on by default) turns the whole thing off regardless of
+staleness, for a user who'd simply rather not be reminded.
 
 Two items from this doc's original wishlist were deliberately
 not built as dashboard widgets:

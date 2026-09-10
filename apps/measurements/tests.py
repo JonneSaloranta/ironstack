@@ -1,10 +1,12 @@
+from datetime import timedelta
 from decimal import Decimal
 
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse
+from django.utils import timezone
 
-from . import units
+from . import services, units
 from .models import BodyMeasurement, MeasurementType, UnitKind
 
 User = get_user_model()
@@ -449,3 +451,185 @@ class MeasurementTypeContentTranslationTests(TestCase):
         )
         response = self.client.get(reverse("measurements:history", args=[measurement_type.pk]))
         self.assertContains(response, "My Weird Custom Measurement")
+
+
+class BodyTrackingReminderServiceTests(TestCase):
+    """apps.measurements.services.needs_body_tracking_reminder — the
+    dashboard's "Time to log your body measurements?" card."""
+
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        self.body_weight_type = MeasurementType.objects.get(name="Body weight", owner=None)
+
+    def _backdate(self, days):
+        self.alice.date_joined = timezone.now() - timedelta(days=days)
+        self.alice.save(update_fields=["date_joined"])
+
+    def test_no_reminder_for_a_freshly_joined_user_with_no_history(self):
+        self.assertFalse(services.needs_body_tracking_reminder(self.alice))
+
+    def test_reminder_once_a_never_logged_user_has_been_around_long_enough(self):
+        self._backdate(services.BODY_TRACKING_REMINDER_DAYS)
+        self.assertTrue(services.needs_body_tracking_reminder(self.alice))
+
+    def test_no_reminder_right_after_logging_a_reading(self):
+        self._backdate(services.BODY_TRACKING_REMINDER_DAYS)
+        BodyMeasurement.objects.create(
+            user=self.alice, measurement_type=self.body_weight_type, value=Decimal("82.5")
+        )
+        self.assertFalse(services.needs_body_tracking_reminder(self.alice))
+
+    def test_reminder_returns_once_a_logged_reading_goes_stale_too(self):
+        self._backdate(60)
+        BodyMeasurement.objects.create(
+            user=self.alice,
+            measurement_type=self.body_weight_type,
+            value=Decimal("82.5"),
+            recorded_at=timezone.now() - timedelta(days=services.BODY_TRACKING_REMINDER_DAYS),
+        )
+        self.assertTrue(services.needs_body_tracking_reminder(self.alice))
+
+    def test_any_measurement_type_counts_not_just_body_weight(self):
+        self._backdate(services.BODY_TRACKING_REMINDER_DAYS)
+        waist_type = MeasurementType.objects.get(name="Waist", owner=None)
+        BodyMeasurement.objects.create(
+            user=self.alice, measurement_type=waist_type, value=Decimal("80")
+        )
+        self.assertFalse(services.needs_body_tracking_reminder(self.alice))
+
+    def test_disabled_setting_suppresses_the_reminder_regardless_of_staleness(self):
+        self._backdate(services.BODY_TRACKING_REMINDER_DAYS)
+        self.alice.body_tracking_reminders_enabled = False
+        self.alice.save(update_fields=["body_tracking_reminders_enabled"])
+        self.assertFalse(services.needs_body_tracking_reminder(self.alice))
+
+
+class BodyTrackingReminderDashboardTests(TestCase):
+    def setUp(self):
+        self.alice = User.objects.create_user(
+            username="alice", password="s3cret-pass", onboarding_completed=True
+        )
+        self.body_weight_type = MeasurementType.objects.get(name="Body weight", owner=None)
+        self.client.login(username="alice", password="s3cret-pass")
+
+    def test_reminder_card_hidden_for_a_fresh_account(self):
+        response = self.client.get(reverse("dashboard"))
+        self.assertFalse(response.context["body_tracking_reminder"])
+        self.assertNotContains(response, "Time to log your body measurements?")
+
+    def test_reminder_card_shown_once_history_is_stale(self):
+        self.alice.date_joined = timezone.now() - timedelta(
+            days=services.BODY_TRACKING_REMINDER_DAYS
+        )
+        self.alice.save(update_fields=["date_joined"])
+        response = self.client.get(reverse("dashboard"))
+        self.assertTrue(response.context["body_tracking_reminder"])
+        self.assertContains(response, "Time to log your body measurements?")
+
+    def test_reminder_card_respects_the_off_setting(self):
+        self.alice.date_joined = timezone.now() - timedelta(
+            days=services.BODY_TRACKING_REMINDER_DAYS
+        )
+        self.alice.body_tracking_reminders_enabled = False
+        self.alice.save(update_fields=["date_joined", "body_tracking_reminders_enabled"])
+        response = self.client.get(reverse("dashboard"))
+        self.assertFalse(response.context["body_tracking_reminder"])
+        self.assertNotContains(response, "Time to log your body measurements?")
+
+
+class MeasurementStatsServiceTests(TestCase):
+    """apps.measurements.services.stats_for — the history page's
+    "Statistics" card."""
+
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        self.body_weight_type = MeasurementType.objects.get(name="Body weight", owner=None)
+
+    def test_none_for_fewer_than_two_entries(self):
+        self.assertIsNone(services.stats_for(self.alice, self.body_weight_type))
+        BodyMeasurement.objects.create(
+            user=self.alice, measurement_type=self.body_weight_type, value=Decimal("80")
+        )
+        self.assertIsNone(services.stats_for(self.alice, self.body_weight_type))
+
+    def test_stats_cover_the_full_history_in_canonical_units(self):
+        now = timezone.now()
+        BodyMeasurement.objects.create(
+            user=self.alice,
+            measurement_type=self.body_weight_type,
+            value=Decimal("80"),
+            recorded_at=now - timedelta(days=30),
+        )
+        BodyMeasurement.objects.create(
+            user=self.alice,
+            measurement_type=self.body_weight_type,
+            value=Decimal("90"),
+            recorded_at=now - timedelta(days=15),
+        )
+        BodyMeasurement.objects.create(
+            user=self.alice,
+            measurement_type=self.body_weight_type,
+            value=Decimal("82.5"),
+            recorded_at=now,
+        )
+        stats = services.stats_for(self.alice, self.body_weight_type)
+        self.assertEqual(stats.entry_count, 3)
+        self.assertEqual(stats.latest_value, Decimal("82.5"))
+        self.assertEqual(stats.first_value, Decimal("80"))
+        self.assertEqual(stats.change_since_first, Decimal("2.5"))
+        self.assertEqual(stats.min_value, Decimal("80"))
+        self.assertEqual(stats.max_value, Decimal("90"))
+        self.assertEqual(stats.average_value, Decimal("252.5") / Decimal("3"))
+
+    def test_a_weight_loss_produces_a_negative_change(self):
+        now = timezone.now()
+        BodyMeasurement.objects.create(
+            user=self.alice, measurement_type=self.body_weight_type, value=Decimal("90"),
+            recorded_at=now - timedelta(days=10),
+        )
+        BodyMeasurement.objects.create(
+            user=self.alice, measurement_type=self.body_weight_type, value=Decimal("85"),
+            recorded_at=now,
+        )
+        stats = services.stats_for(self.alice, self.body_weight_type)
+        self.assertEqual(stats.change_since_first, Decimal("-5"))
+
+
+class MeasurementStatsPageTests(TestCase):
+    def setUp(self):
+        self.alice = User.objects.create_user(
+            username="alice", password="s3cret-pass", onboarding_completed=True
+        )
+        self.body_weight_type = MeasurementType.objects.get(name="Body weight", owner=None)
+        self.client.login(username="alice", password="s3cret-pass")
+
+    def _history_url(self):
+        return reverse("measurements:history", args=[self.body_weight_type.pk])
+
+    def test_no_statistics_card_with_fewer_than_two_entries(self):
+        BodyMeasurement.objects.create(
+            user=self.alice, measurement_type=self.body_weight_type, value=Decimal("80")
+        )
+        response = self.client.get(self._history_url())
+        self.assertNotIn("stats", response.context)
+        self.assertNotContains(response, "<h2>Statistics</h2>")
+
+    def test_statistics_card_renders_in_the_users_display_unit(self):
+        now = timezone.now()
+        BodyMeasurement.objects.create(
+            user=self.alice,
+            measurement_type=self.body_weight_type,
+            value=Decimal("80"),
+            recorded_at=now - timedelta(days=10),
+        )
+        BodyMeasurement.objects.create(
+            user=self.alice,
+            measurement_type=self.body_weight_type,
+            value=Decimal("82.5"),
+            recorded_at=now,
+        )
+        response = self.client.get(self._history_url())
+        self.assertContains(response, "<h2>Statistics</h2>")
+        self.assertContains(response, "+2.50 kg")
+        self.assertContains(response, "Entries logged")
+        self.assertContains(response, ">2<")
