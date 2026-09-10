@@ -5955,6 +5955,39 @@ msgstr "Kopierat!"
 msgid "Source on GitHub"
 msgstr "Källkod på GitHub"
 
+msgid "Notifications"
+msgstr "Aviseringar"
+
+msgid "Remind me to log body measurements"
+msgstr "Påminn mig om att logga kroppsmått"
+
+msgid "Shows a dashboard card nudging you to log a body measurement when you haven't logged one in a while. Turn off to never see that reminder — you can still log a reading any time from Body tracking."
+msgstr "Visar ett kort på instrumentpanelen som påminner dig om att logga ett kroppsmått när du inte har loggat ett på ett tag. Stäng av för att aldrig se den påminnelsen — du kan fortfarande logga en mätning när som helst från Kroppsspårning."
+
+msgid "Time to log your body measurements?"
+msgstr "Dags att logga dina kroppsmått?"
+
+msgid "It's been a while since you tracked your weight or measurements — tap here to add a new reading."
+msgstr "Det var ett tag sedan du loggade din vikt eller dina mått — tryck här för att lägga till en ny mätning."
+
+msgid "Change since first log"
+msgstr "Förändring sedan första loggningen"
+
+msgid "Lowest"
+msgstr "Lägsta"
+
+msgid "Highest"
+msgstr "Högsta"
+
+msgid "Average"
+msgstr "Genomsnitt"
+
+msgid "Entries logged"
+msgstr "Loggade mätningar"
+
+msgid "Tracking since %(date)s."
+msgstr "Spårat sedan %(date)s."
+
 #~ msgid "You can't invite this user."
 #~ msgstr "Du kan inte bjuda in den här användaren."
 

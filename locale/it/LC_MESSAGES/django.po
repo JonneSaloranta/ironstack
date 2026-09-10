@@ -6028,6 +6028,39 @@ msgstr "Copiato!"
 msgid "Source on GitHub"
 msgstr "Codice sorgente su GitHub"
 
+msgid "Notifications"
+msgstr "Notifiche"
+
+msgid "Remind me to log body measurements"
+msgstr "Ricordami di registrare le misurazioni corporee"
+
+msgid "Shows a dashboard card nudging you to log a body measurement when you haven't logged one in a while. Turn off to never see that reminder — you can still log a reading any time from Body tracking."
+msgstr "Mostra nella dashboard una scheda che ti ricorda di registrare una misurazione corporea quando non ne hai registrata una da un po'. Disattiva per non vedere mai più questo promemoria — potrai comunque registrare una misurazione in qualsiasi momento da Monitoraggio corporeo."
+
+msgid "Time to log your body measurements?"
+msgstr "È ora di registrare le tue misurazioni corporee?"
+
+msgid "It's been a while since you tracked your weight or measurements — tap here to add a new reading."
+msgstr "È passato un po' di tempo dall'ultima registrazione del tuo peso o delle tue misure — tocca qui per aggiungere una nuova rilevazione."
+
+msgid "Change since first log"
+msgstr "Variazione dalla prima registrazione"
+
+msgid "Lowest"
+msgstr "Minimo"
+
+msgid "Highest"
+msgstr "Massimo"
+
+msgid "Average"
+msgstr "Media"
+
+msgid "Entries logged"
+msgstr "Rilevazioni registrate"
+
+msgid "Tracking since %(date)s."
+msgstr "Monitorato dal %(date)s."
+
 #~ msgid "You can't invite this user."
 #~ msgstr "Non puoi invitare questo utente."
 
