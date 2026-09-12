@@ -1,11 +1,11 @@
-Django>=6.1,<6.2
-psycopg[binary]>=3.3.4,<3.4
-gunicorn>=26.0.0,<27.0
+Django>=6.1.1,<6.2
+psycopg[binary]>=3.3.5,<3.4
+gunicorn>=26.2.0,<27.0
 # apps.api — a real public API (permission-scoped API keys, rate limits)
 # is enough surface (serialization, per-key permission classes,
 # throttling) that hand-rolling it would just re-invent a worse version
 # of what this already does well — see docs/API.md.
-djangorestframework>=3.18.0,<3.19
+djangorestframework>=3.18.1,<3.19
 # apps.api's interactive docs (docs/API.md "Interactive docs") —
 # generates the OpenAPI schema straight from the DRF viewsets/
 # serializers apps.api already has, and serves a Swagger UI with a
@@ -15,7 +15,7 @@ djangorestframework>=3.18.0,<3.19
 # ~20 registered viewsets would be exactly the kind of "worse-tested
 # version of what a library already does" this project already avoids
 # elsewhere (see djangorestframework's own comment above).
-drf-spectacular>=0.28,<0.29
+drf-spectacular>=0.30.0,<0.31
 # Vendors Swagger UI's own JS/CSS/fonts as ordinary Django static
 # files (SPECTACULAR_SETTINGS["SWAGGER_UI_DIST"] = "SIDECAR" in
 # config.settings.base) instead of drf-spectacular's own CDN-hosted
@@ -33,15 +33,15 @@ drf-spectacular-sidecar
 # multi-device-type framework this project doesn't need. qrcode
 # renders the setup QR code server-side (a data: URI embedded directly
 # in the page, no separate image endpoint).
-pyotp>=2.9,<3.0
-qrcode[pil]>=8.0,<9.0
+pyotp>=2.10.0,<3.0
+qrcode[pil]>=8.2,<9.0
 # apps.nutrition.openfoodfacts — on-demand product lookups against
 # OpenFoodFacts' public JSON API (docs/NUTRITION.md "OpenFoodFacts
 # integration"). No existing project code does outbound HTTP to a JSON
 # API; hand-rolling this on urllib would just reimplement a worse,
 # unmaintained version of what requests already does well (timeouts,
 # JSON decoding, connection pooling).
-requests>=2.32,<3.0
+requests>=2.34.2,<3.0
 # apps.accounts.oidc — optional Authentik/OIDC single sign-on
 # (docs/SECURITY.md "Single sign-on (Authentik / OIDC)"). An
 # OAuth2/OIDC authorization-code flow (state/nonce/PKCE, JWKS
@@ -54,7 +54,7 @@ requests>=2.32,<3.0
 # for. Always installed, but inert unless AUTHENTIK_* env vars are set
 # (settings.AUTHENTIK_ENABLED) — self-hosters who don't run Authentik
 # pay no configuration cost beyond the dependency itself.
-mozilla-django-oidc>=5.0,<6.0
+mozilla-django-oidc>=5.0.2,<6.0
 # apps.core.push — Web Push (RFC 8291/8292: VAPID JWT signing +
 # aes128gcm payload encryption) for message notifications
 # (docs/SOCIAL.md). Same "security-critical, narrow-purpose code
@@ -64,7 +64,7 @@ mozilla-django-oidc>=5.0,<6.0
 # reimplementing. Always installed, but inert unless VAPID_* env vars
 # are set (settings.PUSH_ENABLED) — self-hosters who don't configure
 # push pay no configuration cost beyond the dependency itself.
-pywebpush>=2.4,<3.0
+pywebpush>=2.5.0,<3.0
 # apps.core.backups — encrypts a backup's database.dump/media.tar once
 # BACKUP_ENCRYPTION_KEY is set (docs/BACKUP.md "Encryption"); also
 # apps.accounts.models.EncryptedTextField — encrypts User.totp_secret
@@ -75,4 +75,4 @@ pywebpush>=2.4,<3.0
 # — pinned directly here now that this app's own code relies on it
 # too, rather than leaving that reliance on an undeclared transitive
 # version.
-cryptography>=43.0,<51.0
+cryptography>=50.0.1,<51.0
