@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import include, path
 
@@ -55,3 +56,11 @@ if settings.AUTHENTIK_ENABLED:
     # path is what AUTHENTIK_CLIENT_ID's redirect URI in Authentik
     # must point at: f"{this app's base URL}/oidc/callback/".
     urlpatterns += [path("oidc/", include("mozilla_django_oidc.urls"))]
+
+if settings.DEBUG:
+    # Production/dev-in-Docker both serve MEDIA_URL from nginx directly
+    # (compose/nginx/nginx.conf's own "/media/" location, reading the
+    # same media_data volume django-web writes to) — this is only for
+    # `manage.py runserver` outside Docker, which has no such reverse
+    # proxy in front of it to serve an uploaded ExerciseImage back out.
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -1082,6 +1082,56 @@ abbr[title]:focus::after {
   flex-shrink: 0;
 }
 
+/* Exercise image gallery (templates/exercises/exercise_detail.html) —
+   stacked full-width figures rather than a row of fixed-size
+   thumbnails: most exercises hold just one photo, and a small,
+   letterboxed 160×160 thumbnail (this rule's own original shape)
+   left most of that box empty padding around a landscape photo
+   instead of actually showing it at a readable size. `height: auto`
+   lets each image keep its own natural aspect ratio — no cropping —
+   while `max-height` only steps in for the unusually tall
+   (portrait-orientation) source photos, at which point `margin: 0
+   auto` keeps the now-narrower-than-full-width image centered rather
+   than stuck to the card's left edge. */
+.exercise-image-gallery {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin: 0.75rem 0;
+}
+
+.exercise-image-gallery figure {
+  margin: 0;
+}
+
+.exercise-image-gallery img {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 420px;
+  object-fit: contain;
+  margin: 0 auto;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+}
+
+.exercise-image-gallery figcaption {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  margin-top: 0.4rem;
+  text-align: center;
+}
+
+/* Small credit line for content sourced from an externally-licensed
+   library — apps.exercises.models.ExerciseImage.attribution/Exercise.
+   instructions_attribution — not just inside the gallery, since
+   written instructions carry their own credit line too. */
+.attribution-note {
+  font-size: 0.7rem;
+  opacity: 0.75;
+}
+
 .field-error {
   color: var(--color-danger);
   font-size: 0.85rem;
