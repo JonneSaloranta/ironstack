@@ -16,6 +16,19 @@ previous release (`docs/ARCHITECTURE.md` "Versioning") — a terse,
 complete audit trail, not a replacement for this file's shorter,
 narrated summary of the same version.
 
+## [Unreleased]
+
+### Fixed
+- The live-training "quick set" panel (weight/reps/RPE/notes) still
+  made an iPhone zoom the whole page in on focus — its compact labels'
+  smaller font-size was inherited by the input/textarea nested inside
+  them, well under the 16px iOS Safari needs to not auto-zoom. Audited
+  every form in the app for the same class of bug and found two more:
+  the group invite-link field and a new API key's textarea both use a
+  monospace font, which browsers apply a separate, smaller default
+  size to unless the page sets one explicitly — even when a normal
+  16px is already being inherited from further up the page.
+
 ## [1.14.0] — 2026-09-13
 
 ### Added

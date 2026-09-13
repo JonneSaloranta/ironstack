@@ -4223,3 +4223,45 @@ alone as genuinely out of scope: the equipment dropdown's own blank
 `BLANK_CHOICE_LABEL` string, translated (or not) by Django's own
 upstream locale files, not this project's `locale/` — not something a
 project-level `.po` edit can fix.
+
+## Auditing every form for iOS Safari's auto-zoom-on-focus
+
+Asked directly: the live-training "quick set" panel still zoomed the
+whole page in on focus on an iPhone, despite this app's own established
+16px rule (`docs/DEVELOPMENT_LOG.md`'s own prior phone-testing pass
+already named this exact threshold). Root cause: `.set-field` (the
+compact weight/reps/RPE/notes label wrapping each input in both
+`_train_panel.html` and `_performed_exercise_card.html`) sets a smaller
+`font-size` meant for its own label text, but `input`/`select`/
+`textarea` all `font: inherit` (this file's own global reset) — with
+no reset back to 16px inside `.set-field`, every field nested in it
+inherited that smaller size too. Asked to then audit literally every
+form in the app for the same class of bug, not just this one instance.
+
+Checked systematically: every `<form class="...">` wrapper in the
+codebase (there are exactly four distinct ones), every CSS selector
+under 1rem/16px cross-referenced against whether any template actually
+nests a real input/select/textarea inside it, and a live Playwright
+sweep of ~20 pages across every app measuring `getComputedStyle(...)
+.fontSize` on every real (non-checkbox, non-hidden) field rather than
+trusting the CSS source alone. Found and fixed one more real instance
+beyond `.set-field`: `.invite-link-row input` (the group invite-link
+field) and `templates/api/key_created.html`'s new-key `<textarea>`
+both use `font-family: monospace` — and both were still computing
+under 16px despite `.invite-link-row input`'s own code comment
+explicitly (and, it turns out, wrongly) claiming inheritance alone was
+enough. The actual cause is a genuine browser quirk, not a CSS
+authoring mistake as such: browsers keep a separate, smaller default
+font-size specifically for the generic `monospace` family (Chrome's
+own "fixed-width font" preference, 13px by default) and re-apply it
+over an *inherited* size the instant an element's own `font-family`
+resolves to that generic keyword — even though a `font-size` set
+directly on that same element (not just inherited) does still win.
+Confirmed by toggling each property live in a real browser via
+Playwright rather than guessing from the CSS alone. Fixed both by
+setting `font-size` explicitly wherever `font-family: monospace`
+appears on a real form control, and corrected the misleading comment.
+No other instance of either bug class found — every other font-size
+in the stylesheet under 16px belongs to genuinely non-input content
+(tags, timestamps, muted captions, ...) that was never wrapping a
+field to begin with.
