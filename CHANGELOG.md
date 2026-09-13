@@ -25,7 +25,7 @@ narrated summary of the same version.
   exercise detail page. A user manages their own custom exercise's
   images from that page; system exercises' images are admin-only. How
   many images a single exercise may hold is capped by a new
-  admin-adjustable setting (`/admin/` → Exercise image settings).
+  admin-adjustable setting (Django admin → Exercise image settings).
 - 27 of the 28 seeded system exercises now ship with an instructional
   image and written step-by-step instructions out of the box, sourced
   from wger.de's own open, CC-BY-SA-licensed exercise database (a
