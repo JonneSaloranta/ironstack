@@ -83,6 +83,8 @@ An exercise represents a movement.
 Fields should support:
 - name
 - description
+- instructions (step-by-step how-to text — distinct from the shorter
+  `description` blurb above)
 - primary muscle groups
 - secondary muscle groups
 - equipment
@@ -91,6 +93,16 @@ Fields should support:
 - system/user ownership where applicable
 
 Users can create custom exercises.
+
+An exercise can also hold a small gallery of `ExerciseImage`s — photos
+or diagrams shown together with `instructions` in the detail page's
+own "Instructions" section, ordered and each with its own optional
+caption. `ExerciseImageSettings` (a singleton, same pattern as
+`apps.core.models.BackupSettings`) caps how many an exercise may hold
+at once, adjustable from `/admin/`. A user manages their own custom
+exercise's images from its detail page; a system exercise's images are
+admin-only, same as every other field on it — see `ExerciseImage`'s
+own docstring for the full reasoning.
 
 An exercise also carries a `weight_input_mode` (e.g. total load vs.
 per-hand/dumbbell) so logging and progression math use a consistent
@@ -123,6 +135,21 @@ exercise would retroactively shift past muscle-group volume charts.
 System exercise (and `MuscleGroup`/`Equipment`) names are translated
 for display — the stored name always stays canonical English — see
 `ARCHITECTURE.md` → "Internationalization" for how.
+
+27 of these 28 also ship with one instructional image and written
+`instructions` each (migrations 0007/0010) — "Side Plank" is the one
+left without either, no suitable freely-licensed match having been
+found for it. Most come from wger.de's own public exercise database
+(an open-source, self-hosted workout tracker, like this project),
+licensed CC-BY-SA and credited via `ExerciseImage.attribution`/
+`Exercise.instructions_attribution` — see those migrations' own
+docstrings, and `apps/exercises/seed_data/exercise_images/
+manifest.json`/`exercise_instructions.json` for the exact source URL/
+author/license behind each one. A handful of the seeded `instructions`
+are this project's own original text instead (left uncredited) —
+written from scratch where wger's own text was too thin to actually
+explain the movement, or described the wrong equipment for how this
+project's seed data configures that exercise.
 
 ## MuscleGroup
 

@@ -4065,3 +4065,161 @@ the course of checking `--color-accent`'s own math — not touched here
 (no page this test suite actually covers currently fails on them), but
 flagged back to the user as a likely-related follow-up rather than
 silently left for a future session to rediscover from scratch.
+
+## Exercise instruction images and a written instructions field
+
+Asked for an image field on exercises for instructions, a cap on how
+many (admin-adjustable), and images added to the already-seeded
+library. The last part needed an actual source: no exercise photos
+existed anywhere in the repo, and downloading arbitrary gym photos off
+the web wasn't something to do without a licensing answer, so asked
+the user directly rather than guessing — they asked for freely-usable
+images to be found rather than a build-the-feature-only or hand-drawn-
+placeholder option.
+
+wger.de (a self-hosted, open-source workout tracker, same "runs on
+your own infrastructure" goal as this project) turned out to be
+exactly the right source: its public API exposes an `exerciseimage`
+endpoint, every entry CC-BY-SA-licensed with an author credited,
+uploaded by that community specifically for reuse in other fitness
+apps. Its own name-search API endpoints didn't actually filter
+server-side (silently ignored `name`/`search` params and returned the
+full unfiltered list every time), so matched all 374 of wger's own
+images against this project's 28 seeded exercise names by pulling the
+full image list plus each one's English `exercise-translation` name
+and fuzzy-matching client-side instead. Got a clean single-image match
+for 27 of 28 — "Side Plank" had nothing suitable, shipped without one
+rather than forcing a bad match. Downloaded, resized outliers (one
+was 2560x1664 and 6.4MB; Pillow already an undeclared transitive
+dependency via `qrcode[pil]`, now pinned directly since this app's own
+code — `ImageField` — relies on it too), and spot-checked every one of
+the 27 against a contact-sheet image before committing to the match,
+catching one bad pick along the way (an "Ab Wheel Rollout" hit that
+resolved to a generic app-icon thumbnail, not an actual exercise
+photo — a second image on that same wger exercise was the real one).
+
+`ExerciseImage` (a gallery, not a single field — ordered, each with an
+optional caption) and a new `ExerciseImageSettings` singleton
+(`max_images_per_exercise`, same singleton pattern as `apps.core.
+models.BackupSettings`) enforce the cap in `ExerciseImage.clean()`,
+reached automatically through `ModelForm._post_clean()` on both the
+admin's inline formset and the new user-facing upload form — one rule,
+not duplicated per entry point. A separate `Exercise.instructions`
+text field was added alongside it mid-session, once asked for — kept
+distinct from the existing `description` (a short blurb of what the
+movement is, not how to perform it) rather than overloading that
+field, and rendered together with the image gallery under one
+"Instructions" heading on the detail page, matching how the two
+answer the same question in different forms.
+
+The image-seeding data migration surfaced a real gap in this
+project's own test isolation: unlike a migration that only writes DB
+rows, one that writes real files under `MEDIA_ROOT` (a first for this
+codebase — no `ImageField`/`FileField` existed anywhere before)
+duplicated all 27 files on disk on every from-scratch test database
+build, since nothing redirected `MEDIA_ROOT` away from the real,
+shared media directory the way individual filesystem-touching tests
+already do via `override_settings`/`TemporaryDirectory` (`apps.core.
+tests`'s own pattern) — a migration runs before any single test's own
+setup gets a chance to apply that. Caught by literally running the
+suite twice and watching `exercise_images/` double in size instead of
+staying put. Fixed at the settings level instead of per-test:
+`config.settings.base` now redirects `MEDIA_ROOT` to a fresh temp
+directory whenever running under `pytest` or `manage.py test`, so this
+can't recur for any future `FileField` either.
+
+Also shipped: `manage.py runserver` outside Docker had no route to
+`MEDIA_URL` at all (production/dev-in-Docker both rely on nginx's own
+`/media/` `alias`, which doesn't exist there) — added `config.urls`'s
+own `DEBUG`-only `static()` fallback, the same thing `STATIC_URL`
+already didn't need since `runserver` serves that straight from
+`STATICFILES_DIRS`. One regression caught by the existing translation
+test suite before it shipped: the new gallery's `alt` text fell back
+to the exercise's raw stored English name instead of running it
+through `{% trans %}` like every other display of that name already
+does — found immediately by `ExerciseContentTranslationTests`, not
+discovered later against a real non-English user.
+
+Also requested during the same session: all bundled seed images
+normalized to plain JPEG (several turned out to actually be PNG/WebP
+despite their own filename's extension — `manifest.json`'s `filename`
+now always ends `.jpg`, while `source_url` keeps each image's real
+original extension for provenance) — and the exercise pages still
+showed no *written* instructions at all, since `Exercise.instructions`
+had only ever been added as an empty field, never actually populated
+for the seeded library. Fixed by pulling the same wger.de exercise
+database's own English `exercise-translation` text for each of the 27
+exercises already carrying an image. Two of wger's own API filter
+query params (`language`, `search`/`name`) turned out to silently do
+nothing server-side — confirmed by fetching with and without them and
+comparing identical result counts — so both the earlier image name-
+matching and this text fetch actually filter by language/name client-
+side in Python instead of trusting the query string. Reviewing all 27
+by hand surfaced two distinct problems worth fixing rather than
+shipping as-is: several entries were unusably thin as actual
+instructions (one exercise's entire "how to" was "To do slowly, tempo
+is 4010"), and two others described the wrong equipment for how this
+project's own seed data configures that exercise (a dumbbell Hip
+Thrust/Face Pull description on what's seeded here as barbell/cable
+respectively) — both classes rewritten from scratch rather than
+shipped as misleading or useless, and left uncredited since it's this
+project's own text, not wger's. `Exercise.instructions_attribution`
+(new field, same reasoning as `ExerciseImage.attribution`) carries the
+credit line for the ones actually kept from wger's own community text.
+
+Asked directly, afterward, to run `makemessages` and verify every
+locale is fully translated. Followed docs/ARCHITECTURE.md's own
+documented workflow (`makemessages` for all six locales, then check
+`msgfmt --statistics` per locale) — but that same doc's own
+"Internationalization" section already records a real prior incident:
+regenerating every locale in one pass previously wiped several
+already-translated strings down to empty via a bad fuzzy-match, caught
+only by a careful diff. Rather than trust that it wouldn't recur, this
+run's own diff was verified programmatically (`polib`, comparing every
+msgid's `msgstr` against the pre-regeneration copy from git) rather
+than eyeballing a multi-thousand-line diff — confirmed zero regressions
+before touching anything further. `makemessages` surfaced 29 new/fuzzy
+msgids — 8 from this session's own new exercise-image/instructions UI,
+the other 21 an unrelated, pre-existing backlog (apps.social's friend/
+group notification muting, Web Push permission prompts, backup
+encryption warnings) that had apparently never been run through
+`makemessages` since those features shipped, silently falling back to
+English this whole time with no test or CI check to catch it. Hand-
+translated all 29 across all five real locales (fi/sv/ru/it/et) rather
+than only the 8 actually asked for, since "everything translated" was
+the literal ask and the gap was now visible either way. Also brought
+`locale/en/LC_MESSAGES/django.po` itself up to parity — it turned out
+1014 entries behind the other five (which were already at 1220),
+every one of its own real entries a pure identity mapping (`msgstr ==
+msgid`, confirmed by checking all 956 already-filled ones before
+assuming this), so the remaining 278 were filled the same mechanical
+way. That pass's own naive fix (blanket-clearing the `fuzzy` flag)
+briefly corrupted the file — four plural entries had been fuzzy-
+matched against a *different* string's plural forms entirely (e.g.
+"%(counter)s unread" inheriting "%(counter)s day"/"...days"), and
+stale `#| msgid_plural` "previous string" comments left on now-
+non-fuzzy singular entries produced a file `msgfmt` outright refused
+to parse. Both fixed properly (correct plural forms restored from each
+entry's own `msgid_plural`; every leftover `#|` comment swept
+project-wide) rather than reverting to hand-editing, and reverified
+with the same before/after `polib` diff plus a clean `msgfmt
+--statistics` (1243/1243 translated, zero fuzzy/untranslated) across
+all six locales afterward.
+
+Manually verifying the fix in the browser (not just trusting the
+statistics) surfaced one more real, pre-existing bug: `ExerciseForm`'s
+muscle-group checkboxes and equipment dropdown rendered in raw English
+even for a Finnish-language user, despite `MuscleGroup`/`Equipment`
+names being seeded, translated content. Cause was the same "gotcha"
+`docs/ARCHITECTURE.md` already documents for exactly this situation —
+`ModelChoiceField`/`ModelMultipleChoiceField` render each option via
+`str(obj)` internally, bypassing `{% trans %}` entirely — but
+`ExerciseForm` had simply never been given the `label_from_instance`
+override `apps.programs.forms.ExercisePrescriptionForm`/`apps.
+workouts.forms.PerformedExerciseAddForm` already use for their own
+exercise pickers. Fixed the same way. One remaining gap found but left
+alone as genuinely out of scope: the equipment dropdown's own blank
+"- Select an option -" placeholder is Django 6.1's own new built-in
+`BLANK_CHOICE_LABEL` string, translated (or not) by Django's own
+upstream locale files, not this project's `locale/` — not something a
+project-level `.po` edit can fix.
