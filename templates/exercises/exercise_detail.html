@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load i18n %}
+{% load i18n core_extras %}
 {% block title %}{% trans exercise.name %} — IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
@@ -40,6 +40,51 @@
     {% endif %}
   </dl>
 </div>
+
+{% if exercise.instructions or exercise.images.all or exercise.owner_id == request.user.id %}
+<div class="card">
+  <h2>{% trans "Instructions" %}</h2>
+  {% if exercise.instructions %}
+    <p>{{ exercise.instructions|translate_content|linebreaksbr }}</p>
+    {% if exercise.instructions_attribution %}<p class="attribution-note">{{ exercise.instructions_attribution }}</p>{% endif %}
+  {% endif %}
+  {% if exercise.images.all %}
+    <div class="exercise-image-gallery">
+      {% for image in exercise.images.all %}
+        <figure>
+          <img src="{{ image.image.url }}" alt="{% if image.caption %}{{ image.caption }}{% else %}{% trans exercise.name %}{% endif %}" loading="lazy">
+          {% if image.caption %}<figcaption>{{ image.caption }}</figcaption>{% endif %}
+          {% if image.attribution %}<figcaption class="attribution-note">{{ image.attribution }}</figcaption>{% endif %}
+          {% if exercise.owner_id == request.user.id %}
+            <form method="post" action="{% url 'exercises:exercise-image-delete' image.pk %}">
+              {% csrf_token %}
+              <button type="submit" class="button-secondary">{% trans "Remove" %}</button>
+            </form>
+          {% endif %}
+        </figure>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  {% if exercise.owner_id == request.user.id %}
+    {% if exercise.images.all|length < max_images_per_exercise %}
+      <form method="post" enctype="multipart/form-data" action="{% url 'exercises:exercise-image-create' exercise.pk %}">
+        {% csrf_token %}
+        {% for field in image_form %}
+          <div class="field">
+            {{ field.label_tag }}
+            {{ field }}
+            {% if field.help_text %}<p class="field-help">{{ field.help_text }}</p>{% endif %}
+          </div>
+        {% endfor %}
+        <button type="submit" class="button-secondary">{% trans "Add image" %}</button>
+      </form>
+    {% else %}
+      <p class="text-muted">{% blocktrans %}This exercise already has the maximum number of images ({{ max_images_per_exercise }}).{% endblocktrans %}</p>
+    {% endif %}
+  {% endif %}
+</div>
+{% endif %}
 
 <a class="card card-link" href="{% url 'records:exercise-records' exercise.pk %}">
   <strong>{% trans "Your" %} <abbr tabindex="0" title="{% trans "Personal Records" %}">PRs</abbr></strong>

@@ -16,6 +16,36 @@ previous release (`docs/ARCHITECTURE.md` "Versioning") — a terse,
 complete audit trail, not a replacement for this file's shorter,
 narrated summary of the same version.
 
+## [1.14.0] — 2026-09-13
+
+### Added
+- Exercises can now hold a small gallery of instructional images, each
+  with an optional caption, plus a dedicated written instructions
+  field — shown together in a new "Instructions" section on the
+  exercise detail page. A user manages their own custom exercise's
+  images from that page; system exercises' images are admin-only. How
+  many images a single exercise may hold is capped by a new
+  admin-adjustable setting (Django admin → Exercise image settings).
+- 27 of the 28 seeded system exercises now ship with an instructional
+  image and written step-by-step instructions out of the box, sourced
+  from wger.de's own open, CC-BY-SA-licensed exercise database (a
+  handful rewritten from scratch where the source text was too thin or
+  named the wrong equipment for how this project seeds that exercise).
+- The public API's exercise endpoint now includes `instructions` and
+  the new instruction images (read-only), matching what the exercise
+  detail page itself shows.
+
+### Fixed
+- All six locales (`en`/`fi`/`sv`/`ru`/`it`/`et`) are fully translated
+  again — `makemessages` had drifted out of sync with a pre-existing
+  backlog from `apps.social`'s friend/group notification muting, Web
+  Push permission prompts, and backup encryption warnings, silently
+  falling back to English with nothing to flag it.
+- The "new/edit exercise" form's muscle group checkboxes and equipment
+  dropdown rendered in English regardless of a user's own language
+  setting — they were never given the `label_from_instance` override
+  every other exercise picker in this app already uses.
+
 ## [1.13.1] — 2026-09-10
 
 ### Fixed

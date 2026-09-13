@@ -1,12 +1,28 @@
+import io
+
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.db import IntegrityError, transaction
 from django.test import TestCase
 from django.urls import reverse
 
-from .models import Equipment, Exercise, MuscleGroup
+from .models import Equipment, Exercise, ExerciseImage, ExerciseImageSettings, MuscleGroup
 from .services import visible_to
 
 User = get_user_model()
+
+
+def _tiny_image(name="test.png"):
+    """A minimal real PNG, not just arbitrary bytes — Django's
+    ImageField (via Pillow) validates that an uploaded file actually
+    decodes as an image, so a fake `b"not-an-image"` upload would fail
+    validation for the wrong reason in every test below."""
+    from PIL import Image
+
+    buffer = io.BytesIO()
+    Image.new("RGB", (10, 10), color="red").save(buffer, format="PNG")
+    return SimpleUploadedFile(name, buffer.getvalue(), content_type="image/png")
 
 
 class ExerciseLibrarySeedTests(TestCase):
@@ -309,3 +325,208 @@ class ExercisePermissionTests(TestCase):
         self.assertRedirects(response, reverse("exercises:exercise-list"))
         self.bob_exercise.refresh_from_db()
         self.assertFalse(self.bob_exercise.active)
+
+
+class ExerciseInstructionsTests(TestCase):
+    """`Exercise.instructions` — the written step-by-step counterpart to
+    `ExerciseImage` (see that field's own docstring for how the two
+    relate), editable the same way `description` already is."""
+
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        self.client.login(username="alice", password="s3cret-pass")
+
+    def test_create_saves_instructions(self):
+        response = self.client.post(
+            reverse("exercises:exercise-create"),
+            {
+                "name": "My New Exercise",
+                "movement_type": "isolation",
+                "weight_input_mode": "total",
+                "instructions": "1. Set up.\n2. Perform the rep.",
+            },
+        )
+        exercise = Exercise.objects.get(name="My New Exercise")
+        self.assertRedirects(
+            response, reverse("exercises:exercise-detail", args=[exercise.pk])
+        )
+        self.assertEqual(exercise.instructions, "1. Set up.\n2. Perform the rep.")
+
+    def test_detail_page_renders_instructions_with_line_breaks(self):
+        exercise = Exercise.objects.create(
+            name="My Move", owner=self.alice, instructions="Step one.\nStep two."
+        )
+        response = self.client.get(reverse("exercises:exercise-detail", args=[exercise.pk]))
+        self.assertContains(response, "Step one.<br>Step two.")
+
+    def test_detail_page_renders_instructions_attribution_when_present(self):
+        exercise = Exercise.objects.create(
+            name="My Move",
+            owner=self.alice,
+            instructions="Step one.",
+            instructions_attribution="Someone — CC-BY-SA, via wger.de",
+        )
+        response = self.client.get(reverse("exercises:exercise-detail", args=[exercise.pk]))
+        self.assertContains(response, "Someone — CC-BY-SA, via wger.de")
+
+    def test_detail_page_omits_the_instructions_card_for_a_bare_system_exercise(self):
+        # No instructions, no images, and not the viewer's own exercise
+        # to manage — nothing left to show, so the whole card (not just
+        # its now-empty contents) is skipped.
+        exercise = Exercise.objects.create(name="Bare System Move", owner=None)
+        response = self.client.get(reverse("exercises:exercise-detail", args=[exercise.pk]))
+        self.assertNotContains(response, ">Instructions<")
+
+
+class ExerciseImageModelTests(TestCase):
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        self.exercise = Exercise.objects.create(name="Alice Move", owner=self.alice)
+        ExerciseImageSettings.load()  # ensure default singleton row (max=5)
+
+    def test_clean_allows_image_under_the_limit(self):
+        image = ExerciseImage(exercise=self.exercise, image=_tiny_image())
+        image.full_clean()  # must not raise
+
+    def test_clean_rejects_image_at_the_limit(self):
+        ExerciseImageSettings.objects.update(max_images_per_exercise=1)
+        ExerciseImage.objects.create(exercise=self.exercise, image=_tiny_image("first.png"))
+        image = ExerciseImage(exercise=self.exercise, image=_tiny_image("second.png"))
+        with self.assertRaises(ValidationError):
+            image.full_clean()
+
+    def test_clean_excludes_the_instance_being_edited_from_its_own_count(self):
+        # Regression: re-saving an already-existing image (e.g. editing
+        # its caption) must not count itself against the limit.
+        ExerciseImageSettings.objects.update(max_images_per_exercise=1)
+        image = ExerciseImage.objects.create(exercise=self.exercise, image=_tiny_image())
+        image.caption = "Updated caption"
+        image.full_clean()  # must not raise
+
+
+class ExerciseImageSettingsTests(TestCase):
+    def test_load_creates_a_singleton_row_with_the_default(self):
+        settings_obj = ExerciseImageSettings.load()
+        self.assertEqual(settings_obj.pk, 1)
+        self.assertEqual(settings_obj.max_images_per_exercise, 5)
+
+    def test_save_always_pins_to_pk_one(self):
+        settings_obj = ExerciseImageSettings(max_images_per_exercise=3)
+        settings_obj.save()
+        self.assertEqual(settings_obj.pk, 1)
+        self.assertEqual(ExerciseImageSettings.objects.count(), 1)
+
+
+class ExerciseImageViewTests(TestCase):
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        self.bob = User.objects.create_user(username="bob", password="s3cret-pass")
+        self.exercise = Exercise.objects.create(name="Alice Move", owner=self.alice)
+        self.client.login(username="alice", password="s3cret-pass")
+        # Ensures the singleton row already exists, so a later test's
+        # own `ExerciseImageSettings.objects.update(...)` (a no-op
+        # against zero rows) actually hits one instead of silently
+        # leaving `max_images_per_exercise` at its unadjusted default.
+        ExerciseImageSettings.load()
+
+    def test_create_adds_an_image_to_own_exercise(self):
+        response = self.client.post(
+            reverse("exercises:exercise-image-create", args=[self.exercise.pk]),
+            {"image": _tiny_image(), "caption": "Step 1"},
+        )
+        self.assertRedirects(
+            response, reverse("exercises:exercise-detail", args=[self.exercise.pk])
+        )
+        self.assertEqual(self.exercise.images.count(), 1)
+        self.assertEqual(self.exercise.images.first().caption, "Step 1")
+
+    def test_cannot_add_an_image_to_another_users_exercise(self):
+        bob_exercise = Exercise.objects.create(name="Bob Move", owner=self.bob)
+        response = self.client.post(
+            reverse("exercises:exercise-image-create", args=[bob_exercise.pk]),
+            {"image": _tiny_image()},
+        )
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(bob_exercise.images.count(), 0)
+
+    def test_get_is_not_allowed(self):
+        response = self.client.get(
+            reverse("exercises:exercise-image-create", args=[self.exercise.pk])
+        )
+        self.assertEqual(response.status_code, 405)
+
+    def test_upload_past_the_limit_is_rejected_without_creating_a_row(self):
+        ExerciseImageSettings.objects.update(max_images_per_exercise=1)
+        ExerciseImage.objects.create(exercise=self.exercise, image=_tiny_image("first.png"))
+        response = self.client.post(
+            reverse("exercises:exercise-image-create", args=[self.exercise.pk]),
+            {"image": _tiny_image("second.png")},
+        )
+        self.assertRedirects(
+            response, reverse("exercises:exercise-detail", args=[self.exercise.pk])
+        )
+        self.assertEqual(self.exercise.images.count(), 1)
+
+    def test_delete_removes_own_image(self):
+        image = ExerciseImage.objects.create(exercise=self.exercise, image=_tiny_image())
+        response = self.client.post(reverse("exercises:exercise-image-delete", args=[image.pk]))
+        self.assertRedirects(
+            response, reverse("exercises:exercise-detail", args=[self.exercise.pk])
+        )
+        self.assertFalse(ExerciseImage.objects.filter(pk=image.pk).exists())
+
+    def test_cannot_delete_another_users_image(self):
+        bob_exercise = Exercise.objects.create(name="Bob Move", owner=self.bob)
+        image = ExerciseImage.objects.create(exercise=bob_exercise, image=_tiny_image())
+        response = self.client.post(reverse("exercises:exercise-image-delete", args=[image.pk]))
+        self.assertEqual(response.status_code, 404)
+        self.assertTrue(ExerciseImage.objects.filter(pk=image.pk).exists())
+
+
+class SeedExerciseImagesTests(TestCase):
+    """Regression coverage for migration 0007_seed_exercise_images —
+    see that migration's own docstring for why "Side Plank" is the one
+    seeded exercise deliberately left without one."""
+
+    def test_most_seeded_system_exercises_have_an_image(self):
+        seeded_with_images = Exercise.objects.filter(owner=None, images__isnull=False).distinct()
+        self.assertGreaterEqual(seeded_with_images.count(), 27)
+
+    def test_side_plank_has_no_good_source_match_and_ships_without_one(self):
+        side_plank = Exercise.objects.get(name="Side Plank", owner=None)
+        self.assertEqual(side_plank.images.count(), 0)
+
+    def test_seeded_images_carry_attribution(self):
+        squat = Exercise.objects.get(name="Barbell Back Squat", owner=None)
+        image = squat.images.first()
+        self.assertIsNotNone(image)
+        self.assertTrue(image.attribution)
+
+
+class SeedExerciseInstructionsTests(TestCase):
+    """Regression coverage for migration 0010_seed_exercise_instructions
+    — see that migration's own docstring for why "Side Plank" is left
+    without instructions too, and why a few of the 27 carry no
+    `instructions_attribution` despite the rest being wger-sourced."""
+
+    def test_most_seeded_system_exercises_have_instructions(self):
+        seeded_with_instructions = Exercise.objects.filter(owner=None).exclude(instructions="")
+        self.assertGreaterEqual(seeded_with_instructions.count(), 27)
+
+    def test_side_plank_has_no_good_source_match_and_ships_without_instructions(self):
+        side_plank = Exercise.objects.get(name="Side Plank", owner=None)
+        self.assertEqual(side_plank.instructions, "")
+
+    def test_a_wger_sourced_exercise_carries_attribution(self):
+        squat = Exercise.objects.get(name="Barbell Back Squat", owner=None)
+        self.assertTrue(squat.instructions)
+        self.assertTrue(squat.instructions_attribution)
+
+    def test_a_rewritten_exercise_carries_no_attribution(self):
+        # Regression: Face Pull's own wger source described a dumbbell
+        # variant, wrong equipment for how this project seeds it
+        # (Cable) — rewritten from scratch, so it must not carry a
+        # credit line for text that isn't actually wger's.
+        face_pull = Exercise.objects.get(name="Face Pull", owner=None)
+        self.assertTrue(face_pull.instructions)
+        self.assertEqual(face_pull.instructions_attribution, "")

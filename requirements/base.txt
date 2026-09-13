@@ -35,6 +35,13 @@ drf-spectacular-sidecar
 # in the page, no separate image endpoint).
 pyotp>=2.9,<3.0
 qrcode[pil]>=8.0,<9.0
+# apps.exercises.models.ExerciseImage — Django's own ImageField needs
+# Pillow to validate/read an uploaded file's dimensions. Already an
+# undeclared transitive dependency via qrcode[pil] above; pinned
+# directly here now that this app's own code relies on it too, same
+# reasoning cryptography is pinned directly further down for the same
+# "don't leave a real dependency undeclared" reason.
+Pillow>=11.0,<13.0
 # apps.nutrition.openfoodfacts — on-demand product lookups against
 # OpenFoodFacts' public JSON API (docs/NUTRITION.md "OpenFoodFacts
 # integration"). No existing project code does outbound HTTP to a JSON
