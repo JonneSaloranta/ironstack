@@ -16,7 +16,7 @@ previous release (`docs/ARCHITECTURE.md` "Versioning") — a terse,
 complete audit trail, not a replacement for this file's shorter,
 narrated summary of the same version.
 
-## [Unreleased]
+## [1.14.0] — 2026-09-13
 
 ### Added
 - Exercises can now hold a small gallery of instructional images, each
@@ -31,6 +31,9 @@ narrated summary of the same version.
   from wger.de's own open, CC-BY-SA-licensed exercise database (a
   handful rewritten from scratch where the source text was too thin or
   named the wrong equipment for how this project seeds that exercise).
+- The public API's exercise endpoint now includes `instructions` and
+  the new instruction images (read-only), matching what the exercise
+  detail page itself shows.
 
 ### Fixed
 - All six locales (`en`/`fi`/`sv`/`ru`/`it`/`et`) are fully translated
