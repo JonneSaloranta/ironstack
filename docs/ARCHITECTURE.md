@@ -497,6 +497,33 @@ calls `collectstatic` at all, so this would break every single
 `{% static %}` tag in dev ("Missing staticfiles manifest entry") if it
 applied there too.
 
+## Media files (user/admin uploads)
+
+`MEDIA_ROOT`/`MEDIA_URL` are plain Django defaults in `base.py`, backed
+by the `media_data` Docker volume (`docker-compose.yml`) and served
+straight off disk by nginx (`compose/nginx/nginx.conf`'s `/media/`
+`alias`), the same split responsibility as static files above — Django
+never serves either directly in production. `apps.exercises.models.
+ExerciseImage.image` is the first real `ImageField` in this codebase
+(Django's `ImageField` needs Pillow, pinned in `requirements/base.txt`
+for exactly this — see that pin's own comment for why it was already
+an undeclared transitive dependency before). `config.urls` adds a
+`django.conf.urls.static.static()` fallback only under `DEBUG`, for
+`manage.py runserver` outside Docker, which has no reverse proxy of
+its own in front of it to serve an upload back out.
+
+A migration that writes real files under `MEDIA_ROOT` (`apps.
+exercises`' own `0007_seed_exercise_images`, seeding the built-in
+exercise library's own images) runs on every from-scratch test
+database build, same as any other data migration — but unlike a
+migration that only writes DB rows, re-running it against the real,
+shared `MEDIA_ROOT` would leave another copy of those files on disk
+after every such run. `base.py` redirects `MEDIA_ROOT` to a fresh
+temporary directory whenever running under `pytest` or `manage.py
+test`, so a test run's own filesystem writes never touch the real
+media directory a developer's `runserver`/production instance
+actually serves from.
+
 ## Domain services
 
 Important services should be independently testable.

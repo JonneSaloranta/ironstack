@@ -269,6 +269,15 @@ and fixed along the way — see
 version-bucketed summary of what changed, see
 [`CHANGELOG.md`](CHANGELOG.md).
 
+## Credits
+
+Most of the seeded exercise library's instructional images come from
+[wger.de](https://wger.de)'s own public exercise database, licensed
+CC-BY-SA 3.0/4.0 — see [`apps/exercises/seed_data/exercise_images/
+manifest.json`](apps/exercises/seed_data/exercise_images/manifest.json)
+for the exact source URL, author, and license per image. A few were
+resized/re-compressed for this project; none were otherwise altered.
+
 ## License
 
 [GNU AGPLv3](LICENSE) — see [`LICENSE`](LICENSE) for the full text.

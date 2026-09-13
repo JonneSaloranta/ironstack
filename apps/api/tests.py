@@ -533,6 +533,59 @@ class OwnedResourceViewSetTests(APITestCase):
         self.assertTrue(Exercise.objects.filter(pk=mine.pk).exists())  # never hard-deleted
 
 
+class ExerciseInstructionsAndImagesFieldsTests(APITestCase):
+    """apps.api.serializers.ExerciseSerializer's own `instructions`/
+    `instructions_attribution`/`images` fields — added alongside the
+    web app's own exercise-images feature (apps.exercises.models.
+    ExerciseImage), so a machine client can read the same instructional
+    content the server-rendered detail page shows."""
+
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        _api_key, self.raw_secret = _create_key(self.alice)
+
+    def _auth(self):
+        return {"HTTP_AUTHORIZATION": f"Bearer {self.raw_secret}"}
+
+    def test_instructions_is_writable(self):
+        mine = Exercise.objects.create(name="My Move", owner=self.alice)
+        response = self.client.patch(
+            reverse("api:exercise-detail", args=[mine.pk]),
+            {"instructions": "Step one.\nStep two."},
+            format="json",
+            **self._auth(),
+        )
+        self.assertEqual(response.status_code, 200)
+        mine.refresh_from_db()
+        self.assertEqual(mine.instructions, "Step one.\nStep two.")
+
+    def test_instructions_attribution_is_read_only(self):
+        mine = Exercise.objects.create(
+            name="My Move", owner=self.alice, instructions_attribution="Someone — CC-BY-SA"
+        )
+        response = self.client.patch(
+            reverse("api:exercise-detail", args=[mine.pk]),
+            {"instructions_attribution": "Hijacked"},
+            format="json",
+            **self._auth(),
+        )
+        self.assertEqual(response.status_code, 200)
+        mine.refresh_from_db()
+        self.assertEqual(mine.instructions_attribution, "Someone — CC-BY-SA")
+
+    def test_images_are_included_read_only(self):
+        from apps.exercises.models import ExerciseImage
+
+        mine = Exercise.objects.create(name="My Move", owner=self.alice)
+        ExerciseImage.objects.create(exercise=mine, caption="Step 1", attribution="Someone")
+        response = self.client.get(
+            reverse("api:exercise-detail", args=[mine.pk]), **self._auth()
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.data["images"]), 1)
+        self.assertEqual(response.data["images"][0]["caption"], "Step 1")
+
+
 class ProgramHardDeleteTests(APITestCase):
     """Program is the one OwnedResourceViewSet with soft_delete=False —
     it has no `active` field and its web view really deletes."""

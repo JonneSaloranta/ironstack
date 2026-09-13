@@ -1,3 +1,4 @@
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseNotAllowed
@@ -6,8 +7,8 @@ from django.urls import reverse_lazy
 from django.views.generic import CreateView, DetailView, ListView, UpdateView
 
 from . import services
-from .forms import ExerciseForm
-from .models import Exercise, MuscleGroup
+from .forms import ExerciseForm, ExerciseImageForm
+from .models import Exercise, ExerciseImage, ExerciseImageSettings, MuscleGroup
 
 
 class ExerciseListView(LoginRequiredMixin, ListView):
@@ -47,7 +48,16 @@ class ExerciseDetailView(LoginRequiredMixin, DetailView):
     context_object_name = "exercise"
 
     def get_queryset(self):
-        return services.visible_to(self.request.user, include_inactive=True)
+        return services.visible_to(self.request.user, include_inactive=True).prefetch_related(
+            "images"
+        )
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["max_images_per_exercise"] = ExerciseImageSettings.load().max_images_per_exercise
+        if self.object.owner_id == self.request.user.id:
+            context["image_form"] = ExerciseImageForm()
+        return context
 
 
 class ExerciseCreateView(LoginRequiredMixin, CreateView):
@@ -85,3 +95,38 @@ def exercise_deactivate(request, pk):
     exercise.active = False
     exercise.save(update_fields=["active"])
     return redirect("exercises:exercise-list")
+
+
+@login_required
+def exercise_image_create(request, pk):
+    """Adds one image to a user's own custom exercise (system exercises'
+    images are admin-only, same as every other edit to them — see
+    ExerciseUpdateView's own docstring). Redirects back to the detail
+    page either way rather than re-rendering a dedicated upload page —
+    there's no separate page to re-render, the upload form lives
+    directly on the exercise detail page next to the gallery it feeds.
+    """
+    if request.method != "POST":
+        return HttpResponseNotAllowed(["POST"])
+    exercise = get_object_or_404(Exercise, pk=pk, owner=request.user)
+    form = ExerciseImageForm(
+        request.POST, request.FILES, instance=ExerciseImage(exercise=exercise)
+    )
+    if form.is_valid():
+        form.save()
+    else:
+        for field_errors in form.errors.values():
+            for error in field_errors:
+                messages.error(request, error)
+    return redirect("exercises:exercise-detail", pk=exercise.pk)
+
+
+@login_required
+def exercise_image_delete(request, pk):
+    if request.method != "POST":
+        return HttpResponseNotAllowed(["POST"])
+    image = get_object_or_404(ExerciseImage, pk=pk, exercise__owner=request.user)
+    exercise_pk = image.exercise_id
+    image.image.delete(save=False)
+    image.delete()
+    return redirect("exercises:exercise-detail", pk=exercise_pk)

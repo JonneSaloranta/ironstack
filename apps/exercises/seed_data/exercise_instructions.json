@@ -1,0 +1,101 @@
+{
+  "Barbell Back Squat": {
+    "instructions": "- The barbell full squat is a compound exercise that targets multiple muscle groups in the lower body, including the quadriceps, hamstrings, and glutes.\n- Proper form is crucial for maximizing results and preventing injuries during the barbell full squat. This includes maintaining a shoulder-width stance, creating whole body tension, controlling your descent, and maintaining proper depth and knee positioning.\n- Assistance moves such as the front squat, goblet squat, split squat, and Bulgarian split squat can help improve your performance in the barbell full squat by targeting specific muscle groups and improving overall technique.\n- To achieve new personal records in your back squat, gradually increase weight over time, vary rep ranges and sets to stimulate muscle growth, and prioritize rest and recovery between training sessions.",
+    "attribution": "fabrice — CC-BY-SA, via wger.de"
+  },
+  "Barbell Bench Press": {
+    "instructions": "Lay down on a bench, the bar should be directly above your eyes, the knees are somewhat angled and the feet are firmly on the floor. Concentrate, breath deeply and grab the bar more than shoulder wide. Bring it slowly down till it briefly touches your chest at the height of your nipples. Push the bar up.\nIf you train with a high weight it is advisable to have a spotter that can help you up if you can't lift the weight on your own.\nWith the width of the grip you can also control which part of the chest is trained more:\n- wide grip: outer chest muscles\n- narrow grip: inner chest muscles and triceps",
+    "attribution": "sistab2 — CC-BY-SA, via wger.de"
+  },
+  "Conventional Deadlift": {
+    "instructions": "Stand firmly, with your feet slightly more than shoulder wide apart. Stand directly behind the bar where it should barely touch your shin, your feet pointing a bit out. Bend down with a straight back, the knees also pointing somewhat out. Grab the bar with a shoulder wide grip, one overhand, one underhand (mixed grip).\nPull the weight up. At the highest point make a slight hollow back and pull the bar back. Hold 1 or 2 seconds that position. Go down, making sure the back is not bent. Once down you can either go back again as soon as the weights touch the floor, or make a pause, depending on the weight.",
+    "attribution": "wger.de — CC-BY-SA"
+  },
+  "Overhead Press": {
+    "instructions": "- Setup: Stand with feet together and grip the bar slightly wider than shoulders.\n- Position: Rest the bar on your upper chest.\n- Press: Brace your core and push the bar straight up until your arms lock out.\n- Finish: Control the bar back down to your chest.",
+    "attribution": "nishant0712 — CC-BY-SA, via wger.de"
+  },
+  "Barbell Row": {
+    "instructions": "- Holding a barbell with a pronated grip (palms facing down), bend your knees slightly and bring your torso forward, by bending at the waist, while keeping the back straight until it is almost parallel to the floor. Tip: Make sure that you keep the head up. The barbell should hang directly in front of you as your arms hang perpendicular to the floor and your torso. This is your starting position.\n- Now, while keeping the torso stationary, breathe out and lift the barbell to you. Keep the elbows close to the body and only use the forearms to hold the weight. At the top contracted position, squeeze the back muscles and hold for a brief pause.\n- Then inhale and slowly lower the barbell back to the starting position.\n- Repeat for the recommended amount of repetitions.",
+    "attribution": "wger.de — CC-BY-SA"
+  },
+  "Pull-Up": {
+    "instructions": "Grab the pull up bar with a wide grip, the body is hanging freely. Keep your chest out and pull yourself up till your chin reaches the bar or it touches your neck, if you want to pull behind you. Go with a slow and controlled movement down, always keeping the chest out.",
+    "attribution": "wger.de — CC-BY-SA"
+  },
+  "Dumbbell Bench Press": {
+    "instructions": "- Setup and Starting Position: Sit at the end of a flat bench with a dumbbell resting vertically against each thigh. Carefully lean back while driving the dumbbells toward your chest with your knees.\n- The “Leg Drive” and Posture: Plant your feet firmly on the floor. Retract your shoulder blades (press them together against the bench) and maintain a slight natural lumbar curve.\n- Starting Position: Push the dumbbells toward the ceiling. Your wrists should be aligned with your elbows. Rotate the dumbbells slightly inward (about 45 degrees) so that your elbows do not splay out too far to the sides, thereby protecting your shoulders.\n- Eccentric Phase (Lowering): Lower the dumbbells in a controlled manner toward the sides of your chest. Your elbows should lower at an angle of about 45–60 degrees relative to your body. Feel the stretch in the lower part of your chest.\n- Concentric Phase (Lift): Push the weight upward in a slight arc (toward the center), without letting the dumbbells collide at the top or fully locking out your elbows to maintain muscle tension. Exhale as you lift.",
+    "attribution": "wger.de — CC-BY-SA"
+  },
+  "Dumbbell Shoulder Press": {
+    "instructions": "Sit on a bench, the back rest should be almost vertical. Take two dumbbells and bring them up to shoulder height, the palms and the elbows point during the whole exercise to the front. Press the weights up, at the highest point they come very near but don't touch. Go slowly down and repeat.",
+    "attribution": "wger.de — CC-BY-SA"
+  },
+  "Dumbbell Bicep Curl": {
+    "instructions": "Hold two dumbbells, the arms are streched, the hands are on your side, the palms face inwards. Bend the arms and bring the weight with a fast movement up. At the same time, rotate your arms by 90 degrees at the very beginning of the movement. At the highest point, rotate a little the weights further outwards. Without a pause, bring them down, slowly.\nDon't allow your body to swing during the exercise, all work is done by the biceps, which are the only mucles that should move (pay attention to the elbows).",
+    "attribution": "wger.de — CC-BY-SA"
+  },
+  "Triceps Pushdown": {
+    "instructions": "Stand facing a cable machine with a straight or angled bar attached to the high pulley. Grip the bar with an overhand grip, elbows tucked in at your sides. Keeping your upper arms still, push the bar down until your arms are fully extended, then let it rise back under control without letting your elbows drift forward."
+  },
+  "Lat Pulldown": {
+    "instructions": "Sit at the lat pulldown machine with your thighs secured under the pad, and grip the bar wider than shoulder-width. Lean back very slightly, then pull the bar down so it passes close to your chin and touches your upper chest, keeping the rest of your body still. Let the bar rise back under control until your arms are fully extended."
+  },
+  "Leg Press": {
+    "instructions": "Sit in the leg press machine with your back flat against the pad and feet shoulder-width apart on the platform. Unlock the safety catches and lower the platform by bending your knees to about a 90° angle, keeping your lower back pressed against the pad. Push through your heels to extend your legs back to the starting position without locking your knees out completely."
+  },
+  "Leg Curl": {
+    "instructions": "Lie face down on the leg curl machine with the pad resting just above your heels and your knees just off the edge of the bench. Curl your legs up by bending your knees, bringing your heels toward your glutes, then lower back down under control without letting the weight stack slam down."
+  },
+  "Calf Raise": {
+    "instructions": "Get onto the calf raises machine, you should able to completely push your calves down. Stand straight, don't make a hollow back and don't bend your legs. Pull yourself up as high as you can. Make a small pause of 1 - 2 seconds and go slowly down.",
+    "attribution": "wger.de — CC-BY-SA"
+  },
+  "Plank": {
+    "instructions": "Get into a position on the floor supporting your weight on your forearms and toes. Arms are bent and directly below the shoulder.\nKeep your body straight at all times and hold this position as long as possible. To increase difficulty an arm or leg can be raised while performing this exercise.",
+    "attribution": "YYCfit / BFad07 — CC-BY-SA, via wger.de"
+  },
+  "Romanian Deadlift": {
+    "instructions": "Stand holding a barbell in front of your thighs with a shoulder-width overhand grip. Keeping your back flat and knees only slightly bent, push your hips back and lower the bar down the front of your legs until you feel a stretch in your hamstrings. Drive your hips forward to return to standing, keeping the bar close to your legs throughout."
+  },
+  "Front Squat": {
+    "instructions": "Rest the bar across the front of your shoulders, elbows raised high to keep it in place, using either a clean grip or crossed arms. Keeping your torso upright, bend your knees and hips to lower into a squat until your thighs are at least parallel to the floor, then drive back up through your heels to standing."
+  },
+  "Incline Barbell Bench Press": {
+    "instructions": "Lie back on an incline bench set to about 30-45°, feet flat on the floor. Grip the bar slightly wider than shoulder-width and unrack it over your upper chest. Lower the bar under control to your upper chest, then press it back up until your arms are fully extended."
+  },
+  "Hip Thrust": {
+    "instructions": "Sit on the floor with your upper back against a bench and a loaded barbell rolled over your hips (use a pad for comfort). Plant your feet flat on the floor, knees bent. Drive through your heels to lift your hips up until your body forms a straight line from shoulders to knees, squeezing your glutes at the top, then lower back down under control."
+  },
+  "Seated Cable Row": {
+    "instructions": "- Take a seat on the machine with your feet planted, a little wider than shoulder width. Drive the heels, and squeeze the glutes. Grab onto the cable handle.\n- Sit up tall with a slight bend through the knees. Tighten up the abs and low back to maintain a perpendicular angle to the floor with your torso.\n- Roll the shoulders back and down. Squeeze them together as you row, thinking about pinching a pencil in between them. As you do this, pull the handle back towards you, landing right above your belly button.\n- Pause here for a moment before returning the handle, still squeezing the shoulder blades. Once you've returned the weight to the stack, then allow the shoulder blades to relax, without pulling the torso forward.\n- Repeat the movement.",
+    "attribution": "Franpol — CC-BY-SA, via wger.de"
+  },
+  "Face Pull": {
+    "instructions": "Attach a rope handle to a cable machine set at upper-chest to head height. Grip the rope with both hands, palms facing each other, and step back to create tension. Pull the rope toward your face, leading with your elbows and flaring them out wide, squeezing your shoulder blades together at the end, then return under control."
+  },
+  "Lateral Raise": {
+    "instructions": "This exercise works the deltoid muscle of the shoulder. The movement starts with the arms straight, and the hands holding weights at the sides or in front of the body. Body is in a slight forward-leaning position with hips and knees bent a little. Arms are kept straight or slightly bent, and raised through an arc of movement in the coronal plane that terminates when the hands are at approximately shoulder height. Weights are lowered to the starting position, completing one rep. When using a cable machine the individual stands with the coronal plane in line with the pulley, which is at or near the ground. The exercise can be completed one shoulder at a time (with the other hand used to stabilize the body against the weight moved), or with both hands simultaneously if two parallel pulleys are available.",
+    "attribution": "wger.de — CC-BY-SA"
+  },
+  "Hammer Curl": {
+    "instructions": "- Start: Hold dumbbells at your sides with palms facing your torso.\n- Curl: Lift the weights toward your shoulders while maintaining the neutral grip (like holding a hammer).\n- Squeeze: Contract the biceps at the top without moving your elbows forward.\n- Lower: Slowly return to the starting position with full control.",
+    "attribution": "wger.de — CC-BY-SA"
+  },
+  "Skull Crusher": {
+    "instructions": "Hold the SZ-bar and lay down on a flat bench in such a way that around 1/4 of your head is over the edge. Stretch your arms with the bar and bend them so that the bar is lowered. Just before it touches your forehead, push it up.\nPay attention to your elbows and arms: only the triceps are doing the work, the rest of the arms should not move.",
+    "attribution": "wger.de — CC-BY-SA"
+  },
+  "Ab Wheel Rollout": {
+    "instructions": "- Starting Position: Kneel on the floor with the ab wheel in front of you.\n- Grip the Wheel: Hold the handles firmly.\n- Roll Out: Slowly roll the wheel forward, extending your body while keeping your core tight.\n- Return: Pull the wheel back towards your knees, maintaining tension in your core.",
+    "attribution": "lhegedus — CC-BY-SA, via wger.de"
+  },
+  "Barbell Shrug": {
+    "instructions": "Take a barbell and stand with a straight body, the arms are hanging freely in front of you. Lift from this position the shoulders as high as you can, but don't bend the arms during the movement. On the highest point, make a short pause of 1 or 2 seconds before returning slowly to the initial position.\nWhen training with a higher weight, make sure that you still do the whole movement!",
+    "attribution": "wger.de — CC-BY-SA"
+  },
+  "Straight-Arm Pulldown": {
+    "instructions": "Keep arms straight but not locked, pulling with your lats, not your shoulders.\nDon’t let your shoulders shrug up during the movement.",
+    "attribution": "barry — CC-BY-SA, via wger.de"
+  }
+}

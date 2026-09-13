@@ -14,7 +14,7 @@ from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
 from apps.activities.models import Activity, ActivityType
-from apps.exercises.models import Equipment, Exercise, MuscleGroup
+from apps.exercises.models import Equipment, Exercise, ExerciseImage, MuscleGroup
 from apps.measurements.models import BodyMeasurement, MeasurementType
 from apps.nutrition.models import (
     DiaryEntry,
@@ -75,8 +75,22 @@ class EquipmentSerializer(serializers.ModelSerializer):
         fields = ["id", "name"]
 
 
+class ExerciseImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ExerciseImage
+        fields = ["id", "image", "caption", "attribution", "order"]
+
+
 class ExerciseSerializer(serializers.ModelSerializer):
     is_custom = serializers.BooleanField(read_only=True)
+    # Read-only, same pattern as e.g. DietPlanMealSerializer.items below —
+    # a client manages its own exercise's gallery through the same
+    # instructions/description fields it already writes, not through this
+    # nested list; there's no apps.api endpoint for creating/deleting a
+    # single ExerciseImage (the web app's own upload flow — apps.
+    # exercises.views.exercise_image_create — handles multipart image
+    # bytes directly, which this JSON API has no equivalent for yet).
+    images = ExerciseImageSerializer(many=True, read_only=True)
 
     class Meta:
         model = Exercise
@@ -84,6 +98,9 @@ class ExerciseSerializer(serializers.ModelSerializer):
             "id",
             "name",
             "description",
+            "instructions",
+            "instructions_attribution",
+            "images",
             "primary_muscle_groups",
             "secondary_muscle_groups",
             "equipment",
@@ -93,7 +110,7 @@ class ExerciseSerializer(serializers.ModelSerializer):
             "is_custom",
             "owner",
         ]
-        read_only_fields = ["active", "owner"]
+        read_only_fields = ["active", "owner", "instructions_attribution"]
 
 
 # --------------------------------------------------------------------

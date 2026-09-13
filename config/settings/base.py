@@ -7,6 +7,8 @@ dependency) — see the small helpers below. Environment-specific settings
 """
 
 import os
+import sys
+import tempfile
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
@@ -203,6 +205,21 @@ STATICFILES_DIRS = [BASE_DIR / "static"]
 
 MEDIA_URL = "media/"
 MEDIA_ROOT = BASE_DIR / "media"
+
+# apps.exercises' seed-image data migration (0007_seed_exercise_images)
+# writes real files under MEDIA_ROOT the first time it runs, same as a
+# real upload would — including into a *test* database's own build,
+# since a migration runs before any individual test's own
+# `override_settings`/`TemporaryDirectory` (apps.core.tests' own
+# pattern for filesystem-touching tests) ever gets a chance to apply.
+# Without this, every from-scratch test database build (`manage.py
+# test`'s own default; `pytest --reuse-db` skips it on a rebuild it
+# doesn't need) would leave another copy of those files sitting in the
+# real, shared MEDIA_ROOT forever — found by running the exercises
+# test suite twice and watching exercise_images/ on disk double in
+# size instead of staying put.
+if "pytest" in sys.modules or (len(sys.argv) > 1 and sys.argv[1] == "test"):
+    MEDIA_ROOT = Path(tempfile.mkdtemp(prefix="ironstack-test-media-"))
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 

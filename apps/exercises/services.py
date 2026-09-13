@@ -9,7 +9,7 @@ decides which exercises a user is allowed to see/use, so later phases
 from django.db.models import Q
 from django.utils.translation import gettext
 
-from .models import Exercise
+from .models import Exercise, ExerciseImage, ExerciseImageSettings
 
 
 def visible_to(user, *, include_inactive=False):
@@ -60,3 +60,22 @@ def search(queryset, query):
         if query_lower in name.lower() or query_lower in gettext(name).lower()
     ]
     return queryset.filter(pk__in=matching_ids)
+
+
+def image_limit_exceeded(exercise, *, exclude_pk=None):
+    """Whether `exercise` already holds `ExerciseImageSettings.
+    max_images_per_exercise` images or more — the one place that
+    counts against the cap, called from both `ExerciseImage.clean()`
+    (so admin/form saves enforce it) and anywhere else that wants to
+    check before offering an upload control at all (e.g. hiding the
+    upload form once an exercise's gallery is already full).
+
+    `exclude_pk` excludes an existing image being re-saved (an edit)
+    from its own count, the same reason `Exercise`'s own uniqueness
+    constraints exclude the row being saved.
+    """
+    qs = ExerciseImage.objects.filter(exercise=exercise)
+    if exclude_pk is not None:
+        qs = qs.exclude(pk=exclude_pk)
+    max_images = ExerciseImageSettings.load().max_images_per_exercise
+    return qs.count() >= max_images

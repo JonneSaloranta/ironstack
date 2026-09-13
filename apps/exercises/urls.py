@@ -14,4 +14,14 @@ urlpatterns = [
         views.exercise_deactivate,
         name="exercise-deactivate",
     ),
+    path(
+        "<int:pk>/images/add/",
+        views.exercise_image_create,
+        name="exercise-image-create",
+    ),
+    path(
+        "images/<int:pk>/delete/",
+        views.exercise_image_delete,
+        name="exercise-image-delete",
+    ),
 ]

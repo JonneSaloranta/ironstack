@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: IronStack\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-27 21:57+0000\n"
+"POT-Creation-Date: 2026-09-13 11:50+0000\n"
 "Language: ru\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -11,7 +11,7 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
 "n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 
-#: apps/accounts/admin.py:17 templates/accounts/profile.html:71
+#: apps/accounts/admin.py:17 templates/accounts/profile.html:86
 #: templates/accounts/two_factor_manage.html:3
 #: templates/accounts/two_factor_manage.html:6
 #: templates/accounts/two_factor_setup.html:3
@@ -35,57 +35,72 @@ msgstr ""
 "Слишком много запросов на сброс пароля. Повторите попытку через несколько "
 "минут."
 
-#: apps/accounts/forms.py:234 apps/accounts/forms.py:546
+#: apps/accounts/forms.py:239 apps/accounts/forms.py:589
 msgid "Timezone"
 msgstr "Часовой пояс"
 
-#: apps/accounts/forms.py:252 apps/accounts/forms.py:526
+#: apps/accounts/forms.py:264 apps/accounts/forms.py:569
 #: templates/api/key_list.html:34
 msgid "Units"
 msgstr "Единицы измерения"
 
-#: apps/accounts/forms.py:255
+#: apps/accounts/forms.py:265
+msgid "Remind me to log body measurements"
+msgstr "Напоминать мне вносить замеры тела"
+
+#: apps/accounts/forms.py:268
 msgid "Show"
 msgstr "Показывать"
 
-#: apps/accounts/forms.py:256 templates/core/_bmi_card.html:13
+#: apps/accounts/forms.py:269 templates/core/_bmi_card.html:13
 #: templates/core/_bmi_card.html:29
 msgid "BMI"
 msgstr "ИМТ"
 
-#: apps/accounts/forms.py:257
+#: apps/accounts/forms.py:270
 msgid "on the body weight page"
 msgstr "на странице веса тела"
 
-#: apps/accounts/forms.py:259
+#: apps/accounts/forms.py:272
 msgid "Share my activity"
 msgstr "Показывать мою активность"
 
-#: apps/accounts/forms.py:260
+#: apps/accounts/forms.py:273
 msgid "Show my name to others"
 msgstr "Показывать моё имя другим"
 
-#: apps/accounts/forms.py:261
+#: apps/accounts/forms.py:274
 msgid "Show my Gravatar picture"
 msgstr "Показывать мою аватарку Gravatar"
 
-#: apps/accounts/forms.py:262 apps/accounts/forms.py:559
+#: apps/accounts/forms.py:275 apps/accounts/forms.py:602
 msgid "Allow friend requests"
 msgstr "Разрешить запросы в друзья"
 
-#: apps/accounts/forms.py:263 apps/accounts/forms.py:567
+#: apps/accounts/forms.py:276 apps/accounts/forms.py:610
 msgid "Allow group invites"
 msgstr "Разрешить приглашения в группы"
 
-#: apps/accounts/forms.py:264
+#: apps/accounts/forms.py:277
 msgid "Language"
 msgstr "Язык"
 
-#: apps/accounts/forms.py:267
+#: apps/accounts/forms.py:281
+msgid ""
+"Shows a dashboard card nudging you to log a body measurement when you "
+"haven't logged one in a while. Turn off to never see that reminder — you can "
+"still log a reading any time from Body tracking."
+msgstr ""
+"Показывает на панели управления карточку с напоминанием внести замер тела, "
+"если вы давно этого не делали. Отключите, чтобы больше никогда не видеть это "
+"напоминание — вы всё равно сможете внести замер в любое время в разделе "
+"«Отслеживание тела»."
+
+#: apps/accounts/forms.py:286
 msgid "Turns off the BMI card and its category ranges entirely."
 msgstr "Полностью отключает карточку ИМТ и диапазоны категорий."
 
-#: apps/accounts/forms.py:269
+#: apps/accounts/forms.py:288
 msgid ""
 "Lets everyone using this instance see your longest streak, workout count, "
 "PRs, total weight lifted, and when you last trained, in the dashboard's "
@@ -98,7 +113,7 @@ msgstr ""
 "Отключите, чтобы скрыть свою активность — вы всё равно будете видеть "
 "активность остальных."
 
-#: apps/accounts/forms.py:276
+#: apps/accounts/forms.py:295
 msgid ""
 "Shows your first name next to your username wherever others can see it (the "
 "achievements carousel and \"Recently active\" list). Turn off to show just "
@@ -109,7 +124,7 @@ msgstr ""
 "чтобы показывать там только имя пользователя, как было до появления этой "
 "настройки."
 
-#: apps/accounts/forms.py:282
+#: apps/accounts/forms.py:301
 msgid ""
 "Shows your Gravatar (gravatar.com) picture at the top of this page, if the "
 "email on this account has one. Turning this on means your browser loads that "
@@ -123,7 +138,7 @@ msgstr ""
 "единственное место, где это приложение обращается к серверу за пределами "
 "вашего собственного сервера — который увидит хеш вашего email и ваш IP-адрес."
 
-#: apps/accounts/forms.py:290
+#: apps/accounts/forms.py:309
 msgid ""
 "Off stops other users on this instance from sending you a friend request at "
 "all. Doesn't affect friend requests you already have, or friendships you "
@@ -133,7 +148,7 @@ msgstr ""
 "отправлять вам запросы в друзья. Не влияет на уже существующие запросы или "
 "дружеские связи."
 
-#: apps/accounts/forms.py:295
+#: apps/accounts/forms.py:314
 msgid ""
 "Off stops a group member from inviting you to a group directly. You can "
 "still join any group yourself using its invite link, if you have one."
@@ -142,53 +157,53 @@ msgstr ""
 "равно можете сами присоединиться к любой группе по её пригласительной "
 "ссылке, если она у вас есть."
 
-#: apps/accounts/forms.py:310 apps/accounts/forms.py:591
+#: apps/accounts/forms.py:329 apps/accounts/forms.py:634
 #: apps/nutrition/forms.py:39 apps/nutrition/forms.py:432
 msgid "Height (cm)"
 msgstr "Рост (см)"
 
-#: apps/accounts/forms.py:310 apps/accounts/forms.py:591
+#: apps/accounts/forms.py:329 apps/accounts/forms.py:634
 #: apps/nutrition/forms.py:39 apps/nutrition/forms.py:432
 msgid "Height (in)"
 msgstr "Рост (дюймы)"
 
-#: apps/accounts/forms.py:351 apps/accounts/forms.py:378
+#: apps/accounts/forms.py:383 apps/accounts/forms.py:419
 msgid "Verification code"
 msgstr "Код подтверждения"
 
-#: apps/accounts/forms.py:362
+#: apps/accounts/forms.py:397
 msgid "Incorrect code — check your authenticator app and try again."
 msgstr "Неверный код — проверьте приложение-аутентификатор и попробуйте снова."
 
-#: apps/accounts/forms.py:390
+#: apps/accounts/forms.py:433
 msgid "Too many incorrect codes. Try again in a few minutes."
 msgstr "Слишком много неверных кодов. Повторите попытку через несколько минут."
 
-#: apps/accounts/forms.py:403
+#: apps/accounts/forms.py:446
 msgid "Incorrect code."
 msgstr "Неверный код."
 
-#: apps/accounts/forms.py:417 apps/accounts/forms.py:443
+#: apps/accounts/forms.py:460 apps/accounts/forms.py:486
 msgid "Password"
 msgstr "Пароль"
 
-#: apps/accounts/forms.py:426 apps/accounts/forms.py:457
+#: apps/accounts/forms.py:469 apps/accounts/forms.py:500
 msgid "Incorrect password."
 msgstr "Неверный пароль."
 
-#: apps/accounts/forms.py:446
+#: apps/accounts/forms.py:489
 msgid "Type your username to confirm"
 msgstr "Введите имя пользователя для подтверждения"
 
-#: apps/accounts/forms.py:459
+#: apps/accounts/forms.py:502
 msgid "Doesn't match your username."
 msgstr "Не совпадает с именем пользователя."
 
-#: apps/accounts/forms.py:483
+#: apps/accounts/forms.py:526
 msgid "First name"
 msgstr "Имя"
 
-#: apps/accounts/forms.py:485
+#: apps/accounts/forms.py:528
 msgid ""
 "Used to personalize your dashboard greeting, and next to your username "
 "wherever your activity is shown to others (if you allow that in your "
@@ -198,11 +213,11 @@ msgstr ""
 "именем пользователя везде, где ваша активность показывается другим (если вы "
 "разрешили это в профиле)."
 
-#: apps/accounts/forms.py:492
+#: apps/accounts/forms.py:535
 msgid "Email"
 msgstr "Эл. почта"
 
-#: apps/accounts/forms.py:494
+#: apps/accounts/forms.py:537
 msgid ""
 "Used only for password-reset emails if you ever get locked out. Never shown "
 "to other users."
@@ -210,7 +225,7 @@ msgstr ""
 "Используется только для писем сброса пароля, если вы когда-нибудь потеряете "
 "доступ. Никогда не показывается другим пользователям."
 
-#: apps/accounts/forms.py:504
+#: apps/accounts/forms.py:547
 msgid ""
 "Logged as your first body-weight entry, so your progress charts have a "
 "starting point. Leave blank and log it anytime from the Body weight page "
@@ -220,7 +235,7 @@ msgstr ""
 "была отправная точка. Можно оставить пустым и добавить вес позже на странице "
 "«Вес тела»."
 
-#: apps/accounts/forms.py:519
+#: apps/accounts/forms.py:562
 msgid ""
 "Used together with a logged body weight to show your BMI. Leave blank to "
 "skip this — you can add it anytime from your profile."
@@ -228,7 +243,7 @@ msgstr ""
 "Используется вместе с записанным весом тела для отображения ИМТ. Оставьте "
 "пустым, чтобы пропустить — вы можете добавить это позже в профиле."
 
-#: apps/accounts/forms.py:528
+#: apps/accounts/forms.py:571
 msgid ""
 "Sets whether weights and distances are shown in kg/km or lb/mi throughout "
 "the app. Change this anytime from your profile."
@@ -236,7 +251,7 @@ msgstr ""
 "Определяет, отображаются ли веса и расстояния в приложении в кг/км или в "
 "фунтах/милях. Изменить можно в любой момент в профиле."
 
-#: apps/accounts/forms.py:548
+#: apps/accounts/forms.py:591
 msgid ""
 "Used for \"today\" and date ranges throughout the app. Change this anytime "
 "from your profile."
@@ -246,7 +261,7 @@ msgstr ""
 "отображаются ли веса и расстояния в приложении в кг/км или в фунтах/милях. "
 "Изменить можно в любой момент в профиле."
 
-#: apps/accounts/forms.py:561
+#: apps/accounts/forms.py:604
 msgid ""
 "Lets other users on this instance send you a friend request. Change this "
 "anytime from your profile."
@@ -254,7 +269,7 @@ msgstr ""
 "Позволяет другим пользователям этого сервера отправлять вам запросы в "
 "друзья. Вы можете изменить это в любое время в своём профиле."
 
-#: apps/accounts/forms.py:569
+#: apps/accounts/forms.py:612
 msgid ""
 "Lets a group member invite you to a group directly. You can always join a "
 "group yourself using its invite link either way. Change this anytime from "
@@ -264,25 +279,25 @@ msgstr ""
 "самостоятельно присоединиться к группе по её пригласительной ссылке в любом "
 "случае. Вы можете изменить это в любое время в своём профиле."
 
-#: apps/accounts/forms.py:586 apps/nutrition/forms.py:40
+#: apps/accounts/forms.py:629 apps/nutrition/forms.py:40
 #: apps/nutrition/forms.py:441 apps/nutrition/forms.py:645
 #, python-format
 msgid "Current weight (%(unit)s)"
 msgstr "Текущий вес (%(unit)s)"
 
-#: apps/accounts/forms.py:588
+#: apps/accounts/forms.py:631
 msgid "Current weight"
 msgstr "Текущий вес"
 
-#: apps/accounts/models.py:10
+#: apps/accounts/models.py:11
 msgid "Metric (kg, km)"
 msgstr "Метрическая (кг, км)"
 
-#: apps/accounts/models.py:11
+#: apps/accounts/models.py:12
 msgid "Imperial (lb, mi)"
 msgstr "Имперская (фунты, мили)"
 
-#: apps/accounts/models.py:229
+#: apps/accounts/models.py:291
 msgid ""
 "Shown as a footer note on the login and signup pages. Leave blank to hide it "
 "entirely."
@@ -298,23 +313,23 @@ msgstr "Регистрация сейчас закрыта."
 msgid "Password login is disabled on this instance."
 msgstr "Вход по паролю отключён на этом сервере."
 
-#: apps/accounts/views.py:176
+#: apps/accounts/views.py:183
 msgid "Preferences saved."
 msgstr "Настройки сохранены."
 
-#: apps/accounts/views.py:196
+#: apps/accounts/views.py:203
 msgid "Account details saved."
 msgstr "Данные аккаунта сохранены."
 
-#: apps/accounts/views.py:289
+#: apps/accounts/views.py:296
 msgid "Two-factor authentication is already enabled."
 msgstr "Двухфакторная аутентификация уже включена."
 
-#: apps/accounts/views.py:348
+#: apps/accounts/views.py:355
 msgid "Two-factor authentication turned off."
 msgstr "Двухфакторная аутентификация отключена."
 
-#: apps/accounts/views.py:382
+#: apps/accounts/views.py:389
 msgid ""
 "You're the only superuser on this instance — promote another account to "
 "superuser first, or this instance would have no one left who can reach "
@@ -324,7 +339,7 @@ msgstr ""
 "учётную запись суперпользователем, иначе в этой системе не останется никого, "
 "кто сможет зайти в Django admin."
 
-#: apps/accounts/views.py:400
+#: apps/accounts/views.py:407
 msgid "Your account and all its data have been deleted."
 msgstr "Ваша учётная запись и все её данные удалены."
 
@@ -369,7 +384,7 @@ msgstr "Йога"
 msgid "Other"
 msgstr "Другое"
 
-#: apps/activities/models.py:18 apps/exercises/models.py:69
+#: apps/activities/models.py:18 apps/exercises/models.py:75
 #: apps/measurements/models.py:34 apps/programs/models.py:36
 #: apps/programs/models.py:79
 msgid "name"
@@ -478,12 +493,12 @@ msgstr "Чтение"
 msgid "Update"
 msgstr "Изменение"
 
-#: apps/api/forms.py:13 templates/activities/activity_history.html:55
-#: templates/core/_backup_row.html:20
-#: templates/measurements/measurement_history.html:46
-#: templates/nutrition/diary_day.html:65
+#: apps/api/forms.py:13 templates/activities/activity_history.html:59
+#: templates/core/_backup_row.html:23
+#: templates/measurements/measurement_history.html:67
+#: templates/nutrition/diary_day.html:69
 #: templates/programs/program_confirm_delete.html:14
-#: templates/programs/program_detail.html:44
+#: templates/programs/program_detail.html:46
 #: templates/workouts/_performed_exercise_card.html:29
 msgid "Delete"
 msgstr "Удалить"
@@ -499,8 +514,8 @@ msgid "A label to tell your keys apart."
 msgstr "Метка, чтобы отличать ваши ключи друг от друга."
 
 #: apps/api/models.py:24 templates/accounts/profile.html:3
-#: templates/accounts/profile.html:19 templates/api/key_list.html:85
-#: templates/base.html:119 templates/base.html:124
+#: templates/accounts/profile.html:12 templates/api/key_list.html:85
+#: templates/base.html:146 templates/base.html:169
 msgid "Profile"
 msgstr "Профиль"
 
@@ -511,7 +526,7 @@ msgid "Exercises"
 msgstr "Упражнения"
 
 #: apps/api/models.py:26 apps/core/models.py:162 templates/api/key_list.html:93
-#: templates/base.html:115 templates/base.html:117
+#: templates/base.html:142 templates/base.html:144
 #: templates/programs/program_list.html:3
 #: templates/programs/program_list.html:6
 msgid "Programs"
@@ -530,7 +545,7 @@ msgstr "Измерения"
 #: apps/api/models.py:29 apps/core/models.py:165
 #: templates/activities/activity_type_list.html:3
 #: templates/activities/activity_type_list.html:6
-#: templates/api/key_list.html:105 templates/core/dashboard.html:115
+#: templates/api/key_list.html:105 templates/core/dashboard.html:129
 msgid "Activities"
 msgstr "Активности"
 
@@ -544,9 +559,9 @@ msgid "Analytics"
 msgstr "Аналитика"
 
 #: apps/api/models.py:32 templates/api/key_list.html:109
-#: templates/base.html:103 templates/base.html:105
+#: templates/base.html:130 templates/base.html:132
 #: templates/nutrition/dashboard.html:3 templates/nutrition/dashboard.html:6
-#: templates/nutrition/recipe_detail.html:52
+#: templates/nutrition/recipe_detail.html:54
 msgid "Nutrition"
 msgstr "Питание"
 
@@ -558,7 +573,7 @@ msgstr "Вы достигли максимального количества AP
 msgid "API key revoked."
 msgstr "API-ключ отозван."
 
-#: apps/core/admin.py:17 templates/accounts/profile.html:123
+#: apps/core/admin.py:17 templates/accounts/profile.html:163
 msgid "Administration"
 msgstr "Администрирование"
 
@@ -578,7 +593,7 @@ msgstr "Избыточный вес"
 msgid "Obese"
 msgstr "Ожирение"
 
-#: apps/core/formatting.py:16 templates/programs/program_detail.html:56
+#: apps/core/formatting.py:16 templates/programs/program_detail.html:58
 #: templates/workouts/_performed_exercise_card.html:8
 msgid "Rate of Perceived Exertion"
 msgstr "Субъективная оценка нагрузки"
@@ -588,7 +603,7 @@ msgid "Reps In Reserve"
 msgstr "Повторения в запасе"
 
 #: apps/core/formatting.py:18 templates/analytics/exercise_analytics.html:19
-#: templates/exercises/exercise_detail.html:49
+#: templates/exercises/exercise_detail.html:96
 #: templates/records/_pr_toasts.html:38
 #: templates/records/exercise_records.html:16
 msgid "One-Rep Max"
@@ -642,7 +657,7 @@ msgid "Subject"
 msgstr "Тема"
 
 #: apps/core/forms.py:61 apps/social/forms.py:25
-#: templates/social/friend_list.html:45
+#: templates/social/friend_list.html:47
 msgid "Message"
 msgstr "Сообщение"
 
@@ -741,6 +756,15 @@ msgstr ""
 "Поздний вечер, %(username)s. Завтрашний прогресс начинается с сегодняшнего "
 "отдыха."
 
+#: apps/core/management/commands/announce_version_update.py:52
+msgid "New IronStack version"
+msgstr "Новая версия IronStack"
+
+#: apps/core/management/commands/announce_version_update.py:53
+#, python-format
+msgid "IronStack %(version)s is now running — tap to see what's new."
+msgstr "IronStack %(version)s уже запущен — нажмите, чтобы узнать, что нового."
+
 #: apps/core/models.py:42
 msgid ""
 "Turns the backup-scheduler service's daily backup off without needing to "
@@ -784,7 +808,7 @@ msgstr ""
 "размещённое приложение для одной семьи, а не публичный сайт, который кто-то "
 "должен искать."
 
-#: apps/core/models.py:163 templates/base.html:107 templates/base.html:109
+#: apps/core/models.py:163 templates/base.html:134 templates/base.html:136
 msgid "Progress"
 msgstr "Прогресс"
 
@@ -796,46 +820,42 @@ msgstr "Замеры тела"
 msgid "Account & profile"
 msgstr "Аккаунт и профиль"
 
-#: apps/core/views.py:32
+#: apps/core/views.py:33
 msgid "Training day — new personal record!"
 msgstr "Тренировочный день — новый личный рекорд!"
 
-#: apps/core/views.py:34
+#: apps/core/views.py:35
 msgid "Training day — a session was abandoned."
 msgstr "Тренировочный день — тренировка была прервана."
 
-#: apps/core/views.py:36
+#: apps/core/views.py:37
 msgid "Training day."
 msgstr "Тренировочный день."
 
-#: apps/core/views.py:38
+#: apps/core/views.py:39
 msgid "Rest day."
 msgstr "День отдыха."
 
-#: apps/core/views.py:41
-msgid "Nothing logged that day."
-msgstr "В этот день ничего не записано."
-
-#: apps/core/views.py:43
+#: apps/core/views.py:50
 #, python-format
 msgid "%(actual)s / %(target)s kcal logged."
 msgstr "%(actual)s / %(target)s ккал записано."
 
-#: apps/core/views.py:48
+#: apps/core/views.py:55
 #, python-format
 msgid "%(actual)s kcal logged."
 msgstr "%(actual)s ккал записано."
 
-#: apps/core/views_backup.py:55
+#: apps/core/views_backup.py:56
 #, python-format
 msgid "Backup created: %(name)s"
 msgstr "Резервная копия создана: %(name)s"
 
-#: apps/core/views_backup.py:62
+#: apps/core/views_backup.py:63
 msgid "Backup settings saved."
 msgstr "Настройки резервного копирования сохранены."
 
-#: apps/core/views_backup.py:78
+#: apps/core/views_backup.py:79
 msgid ""
 "Not a valid IronStack backup archive — expected a .tar.gz containing "
 "database.dump, media.tar, and manifest.json."
@@ -843,17 +863,17 @@ msgstr ""
 "Это не корректный архив резервной копии IronStack — ожидался файл .tar.gz, "
 "содержащий database.dump, media.tar и manifest.json."
 
-#: apps/core/views_backup.py:83
+#: apps/core/views_backup.py:84
 #, python-format
 msgid "Backup uploaded: %(name)s"
 msgstr "Резервная копия загружена: %(name)s"
 
-#: apps/core/views_backup.py:113
+#: apps/core/views_backup.py:114
 #, python-format
 msgid "Backup deleted: %(name)s"
 msgstr "Резервная копия удалена: %(name)s"
 
-#: apps/core/views_backup.py:145
+#: apps/core/views_backup.py:167
 #, python-format
 msgid "Restored from backup: %(name)s"
 msgstr "Восстановлено из резервной копии: %(name)s"
@@ -873,6 +893,10 @@ msgstr "Настройки отзывов сохранены."
 #: apps/core/views_seo.py:27
 msgid "SEO settings saved."
 msgstr "Настройки SEO сохранены."
+
+#: apps/exercises/admin.py:42
+msgid "Preview"
+msgstr "Предпросмотр"
 
 #: apps/exercises/i18n_content.py:22
 msgid "Ab Wheel Rollout"
@@ -990,7 +1014,7 @@ msgstr "Разгибание рук на блоке"
 msgid "Abs"
 msgstr "Пресс"
 
-#: apps/exercises/i18n_content.py:55 templates/social/group_form.html:23
+#: apps/exercises/i18n_content.py:55
 msgid "Back"
 msgstr "Спина"
 
@@ -1070,45 +1094,560 @@ msgstr "Тренажёр"
 msgid "Resistance Band"
 msgstr "Резиновая лента"
 
-#: apps/exercises/models.py:33 apps/exercises/models.py:89
+#: apps/exercises/i18n_content.py:92
+msgid ""
+"- Starting Position: Kneel on the floor with the ab wheel in front of you.\n"
+"- Grip the Wheel: Hold the handles firmly.\n"
+"- Roll Out: Slowly roll the wheel forward, extending your body while keeping "
+"your core tight.\n"
+"- Return: Pull the wheel back towards your knees, maintaining tension in "
+"your core."
+msgstr ""
+"- Исходное положение: встаньте на колени, колесо для пресса перед вами.\n"
+"- Хват: крепко возьмитесь за ручки.\n"
+"- Раскат: медленно катите колесо вперёд, вытягивая тело и удерживая мышцы "
+"кора в напряжении.\n"
+"- Возврат: подтяните колесо обратно к коленям, сохраняя напряжение в корпусе."
+
+#: apps/exercises/i18n_content.py:98
+msgid ""
+"- The barbell full squat is a compound exercise that targets multiple muscle "
+"groups in the lower body, including the quadriceps, hamstrings, and glutes.\n"
+"- Proper form is crucial for maximizing results and preventing injuries "
+"during the barbell full squat. This includes maintaining a shoulder-width "
+"stance, creating whole body tension, controlling your descent, and "
+"maintaining proper depth and knee positioning.\n"
+"- Assistance moves such as the front squat, goblet squat, split squat, and "
+"Bulgarian split squat can help improve your performance in the barbell full "
+"squat by targeting specific muscle groups and improving overall technique.\n"
+"- To achieve new personal records in your back squat, gradually increase "
+"weight over time, vary rep ranges and sets to stimulate muscle growth, and "
+"prioritize rest and recovery between training sessions."
+msgstr ""
+"- Приседания со штангой — это многосуставное упражнение, задействующее "
+"несколько групп мышц нижней части тела, включая квадрицепсы, заднюю "
+"поверхность бедра и ягодицы.\n"
+"- Правильная техника крайне важна для максимальных результатов и "
+"профилактики травм: стойка на ширине плеч, напряжение всего тела, "
+"контролируемое опускание и правильная глубина и положение коленей.\n"
+"- Вспомогательные упражнения, такие как фронтальные приседания, приседания с "
+"гантелью у груди (гоблет-присед), выпады и болгарские сплит-приседания, "
+"помогают улучшить результат в приседаниях со штангой, прорабатывая отдельные "
+"группы мышц и совершенствуя технику.\n"
+"- Чтобы достичь новых личных рекордов в приседе, постепенно увеличивайте "
+"вес, варьируйте диапазоны повторений и количество подходов для стимуляции "
+"роста мышц и уделяйте приоритетное внимание отдыху и восстановлению между "
+"тренировками."
+
+#: apps/exercises/i18n_content.py:111
+msgid ""
+"Lay down on a bench, the bar should be directly above your eyes, the knees "
+"are somewhat angled and the feet are firmly on the floor. Concentrate, "
+"breath deeply and grab the bar more than shoulder wide. Bring it slowly down "
+"till it briefly touches your chest at the height of your nipples. Push the "
+"bar up.\n"
+"If you train with a high weight it is advisable to have a spotter that can "
+"help you up if you can't lift the weight on your own.\n"
+"With the width of the grip you can also control which part of the chest is "
+"trained more:\n"
+"- wide grip: outer chest muscles\n"
+"- narrow grip: inner chest muscles and triceps"
+msgstr ""
+"Лягте на скамью так, чтобы штанга находилась прямо над глазами, колени "
+"слегка согнуты, а стопы твёрдо стоят на полу. Сосредоточьтесь, глубоко "
+"вдохните и возьмитесь за гриф чуть шире плеч. Медленно опустите штангу, пока "
+"она слегка не коснётся груди на уровне сосков. Выжмите штангу обратно "
+"вверх.\n"
+"При работе с большим весом рекомендуется иметь страхующего партнёра, который "
+"поможет поднять штангу, если самостоятельно не получится.\n"
+"Ширина хвата также определяет, какая часть груди нагружается больше:\n"
+"- широкий хват: внешняя часть грудных мышц\n"
+"- узкий хват: внутренняя часть грудных мышц и трицепсы"
+
+#: apps/exercises/i18n_content.py:121
+msgid ""
+"- Holding a barbell with a pronated grip (palms facing down), bend your "
+"knees slightly and bring your torso forward, by bending at the waist, while "
+"keeping the back straight until it is almost parallel to the floor. Tip: "
+"Make sure that you keep the head up. The barbell should hang directly in "
+"front of you as your arms hang perpendicular to the floor and your torso. "
+"This is your starting position.\n"
+"- Now, while keeping the torso stationary, breathe out and lift the barbell "
+"to you. Keep the elbows close to the body and only use the forearms to hold "
+"the weight. At the top contracted position, squeeze the back muscles and "
+"hold for a brief pause.\n"
+"- Then inhale and slowly lower the barbell back to the starting position.\n"
+"- Repeat for the recommended amount of repetitions."
+msgstr ""
+"- Возьмитесь за штангу хватом сверху (ладони вниз), слегка согните колени и "
+"наклоните корпус вперёд в тазобедренном суставе, удерживая спину прямой, "
+"пока корпус не окажется почти параллельно полу. Совет: держите голову "
+"приподнятой. Штанга должна свисать прямо перед вами, руки перпендикулярны "
+"полу и корпусу. Это исходное положение.\n"
+"- Удерживая корпус неподвижным, выдохните и подтяните штангу к себе. Держите "
+"локти близко к телу и поднимайте вес только предплечьями. В верхней точке "
+"сожмите мышцы спины и задержитесь на мгновение.\n"
+"- Затем вдохните и медленно опустите штангу обратно в исходное положение.\n"
+"- Повторите рекомендованное количество повторений."
+
+#: apps/exercises/i18n_content.py:133
+msgid ""
+"Take a barbell and stand with a straight body, the arms are hanging freely "
+"in front of you. Lift from this position the shoulders as high as you can, "
+"but don't bend the arms during the movement. On the highest point, make a "
+"short pause of 1 or 2 seconds before returning slowly to the initial "
+"position.\n"
+"When training with a higher weight, make sure that you still do the whole "
+"movement!"
+msgstr ""
+"Возьмите штангу и встаньте прямо, руки свободно свисают перед вами. Из этого "
+"положения поднимите плечи как можно выше, не сгибая руки во время движения. "
+"В верхней точке сделайте короткую паузу на 1–2 секунды, прежде чем медленно "
+"вернуться в исходное положение.\n"
+"При работе с большим весом обязательно выполняйте движение в полной "
+"амплитуде!"
+
+#: apps/exercises/i18n_content.py:140
+msgid ""
+"Get onto the calf raises machine, you should able to completely push your "
+"calves down. Stand straight, don't make a hollow back and don't bend your "
+"legs. Pull yourself up as high as you can. Make a small pause of 1 - 2 "
+"seconds and go slowly down."
+msgstr ""
+"Встаньте в тренажёр для икроножных мышц так, чтобы можно было полностью "
+"опустить пятки. Стойте прямо, не прогибайте поясницу и не сгибайте ноги. "
+"Поднимитесь на носки как можно выше. Сделайте короткую паузу на 1–2 секунды "
+"и медленно опуститесь обратно."
+
+#: apps/exercises/i18n_content.py:146
+msgid ""
+"Stand firmly, with your feet slightly more than shoulder wide apart. Stand "
+"directly behind the bar where it should barely touch your shin, your feet "
+"pointing a bit out. Bend down with a straight back, the knees also pointing "
+"somewhat out. Grab the bar with a shoulder wide grip, one overhand, one "
+"underhand (mixed grip).\n"
+"Pull the weight up. At the highest point make a slight hollow back and pull "
+"the bar back. Hold 1 or 2 seconds that position. Go down, making sure the "
+"back is not bent. Once down you can either go back again as soon as the "
+"weights touch the floor, or make a pause, depending on the weight."
+msgstr ""
+"Встаньте устойчиво, ноги немного шире плеч. Встаньте вплотную к грифу так, "
+"чтобы он почти касался голеней, носки слегка развёрнуты наружу. Наклонитесь, "
+"сохраняя спину прямой, колени тоже слегка развёрнуты наружу. Возьмитесь за "
+"гриф хватом на ширине плеч — одна рука сверху, другая снизу (разнохват).\n"
+"Поднимите вес вверх. В верхней точке слегка прогнитесь в пояснице и отведите "
+"штангу назад. Задержитесь в этом положении на 1–2 секунды. Опуститесь вниз, "
+"следя за тем, чтобы спина не округлялась. Когда штанга внизу, можно сразу "
+"продолжить следующее повторение, как только блины коснутся пола, либо "
+"сделать паузу — в зависимости от веса."
+
+#: apps/exercises/i18n_content.py:156
+msgid ""
+"- Setup and Starting Position: Sit at the end of a flat bench with a "
+"dumbbell resting vertically against each thigh. Carefully lean back while "
+"driving the dumbbells toward your chest with your knees.\n"
+"- The “Leg Drive” and Posture: Plant your feet firmly on the floor. Retract "
+"your shoulder blades (press them together against the bench) and maintain a "
+"slight natural lumbar curve.\n"
+"- Starting Position: Push the dumbbells toward the ceiling. Your wrists "
+"should be aligned with your elbows. Rotate the dumbbells slightly inward "
+"(about 45 degrees) so that your elbows do not splay out too far to the "
+"sides, thereby protecting your shoulders.\n"
+"- Eccentric Phase (Lowering): Lower the dumbbells in a controlled manner "
+"toward the sides of your chest. Your elbows should lower at an angle of "
+"about 45–60 degrees relative to your body. Feel the stretch in the lower "
+"part of your chest.\n"
+"- Concentric Phase (Lift): Push the weight upward in a slight arc (toward "
+"the center), without letting the dumbbells collide at the top or fully "
+"locking out your elbows to maintain muscle tension. Exhale as you lift."
+msgstr ""
+"- Подготовка и исходное положение: сядьте на край горизонтальной скамьи, "
+"поставив по гантели вертикально на каждое бедро. Аккуратно откиньтесь назад, "
+"помогая гантелям подняться к груди с помощью коленей.\n"
+"- Опора на ноги и осанка: твёрдо поставьте стопы на пол. Сведите лопатки "
+"(прижмите их к скамье) и сохраняйте естественный небольшой прогиб в "
+"пояснице.\n"
+"- Исходное положение: выжмите гантели к потолку. Запястья должны быть на "
+"одной линии с локтями. Слегка разверните гантели внутрь (примерно на 45 "
+"градусов), чтобы локти не расходились слишком широко в стороны — это "
+"защищает плечи.\n"
+"- Эксцентрическая фаза (опускание): опустите гантели подконтрольно к бокам "
+"груди. Локти должны опускаться под углом примерно 45–60 градусов "
+"относительно тела. Почувствуйте растяжение в нижней части груди.\n"
+"- Концентрическая фаза (подъём): выжмите вес вверх по лёгкой дуге (к "
+"центру), не сталкивая гантели вверху и не разгибая локти полностью, чтобы "
+"сохранить напряжение мышц. Выдыхайте во время подъёма."
+
+#: apps/exercises/i18n_content.py:172
+msgid ""
+"Hold two dumbbells, the arms are streched, the hands are on your side, the "
+"palms face inwards. Bend the arms and bring the weight with a fast movement "
+"up. At the same time, rotate your arms by 90 degrees at the very beginning "
+"of the movement. At the highest point, rotate a little the weights further "
+"outwards. Without a pause, bring them down, slowly.\n"
+"Don't allow your body to swing during the exercise, all work is done by the "
+"biceps, which are the only mucles that should move (pay attention to the "
+"elbows)."
+msgstr ""
+"Возьмите две гантели, руки выпрямлены вдоль тела, ладони обращены внутрь. "
+"Согните руки и быстрым движением поднимите гантели вверх. Одновременно "
+"разверните руки на 90 градусов в самом начале движения. В верхней точке "
+"слегка доверните гантели ещё немного наружу. Без паузы медленно опустите их "
+"обратно.\n"
+"Не раскачивайте корпус во время упражнения — всю работу должны выполнять "
+"бицепсы, единственные мышцы, которые должны двигаться (следите за локтями)."
+
+#: apps/exercises/i18n_content.py:181
+msgid ""
+"Sit on a bench, the back rest should be almost vertical. Take two dumbbells "
+"and bring them up to shoulder height, the palms and the elbows point during "
+"the whole exercise to the front. Press the weights up, at the highest point "
+"they come very near but don't touch. Go slowly down and repeat."
+msgstr ""
+"Сядьте на скамью со спинкой, установленной почти вертикально. Возьмите две "
+"гантели и поднимите их до уровня плеч так, чтобы ладони и локти были "
+"направлены вперёд на протяжении всего упражнения. Выжмите гантели вверх; в "
+"верхней точке они почти соприкасаются, но не касаются друг друга. Медленно "
+"опуститесь и повторите."
+
+#: apps/exercises/i18n_content.py:187
+msgid ""
+"Attach a rope handle to a cable machine set at upper-chest to head height. "
+"Grip the rope with both hands, palms facing each other, and step back to "
+"create tension. Pull the rope toward your face, leading with your elbows and "
+"flaring them out wide, squeezing your shoulder blades together at the end, "
+"then return under control."
+msgstr ""
+"Прикрепите канатную рукоять к блочному тренажёру, установленному на высоте "
+"от верхней части груди до головы. Возьмитесь за канат обеими руками, ладони "
+"обращены друг к другу, и отступите назад, создавая натяжение. Потяните канат "
+"к лицу, ведя движение локтями и разводя их широко в стороны, в конце сведите "
+"лопатки вместе, затем подконтрольно вернитесь в исходное положение."
+
+#: apps/exercises/i18n_content.py:194
+msgid ""
+"Rest the bar across the front of your shoulders, elbows raised high to keep "
+"it in place, using either a clean grip or crossed arms. Keeping your torso "
+"upright, bend your knees and hips to lower into a squat until your thighs "
+"are at least parallel to the floor, then drive back up through your heels to "
+"standing."
+msgstr ""
+"Расположите штангу спереди на плечах, локти подняты высоко, чтобы удерживать "
+"её на месте — используйте чистый хват или скрещенные руки. Удерживая корпус "
+"вертикально, согните колени и таз, опускаясь в присед, пока бёдра не "
+"окажутся хотя бы параллельно полу, затем поднимитесь обратно, отталкиваясь "
+"пятками."
+
+#: apps/exercises/i18n_content.py:200
+msgid ""
+"- Start: Hold dumbbells at your sides with palms facing your torso.\n"
+"- Curl: Lift the weights toward your shoulders while maintaining the neutral "
+"grip (like holding a hammer).\n"
+"- Squeeze: Contract the biceps at the top without moving your elbows "
+"forward.\n"
+"- Lower: Slowly return to the starting position with full control."
+msgstr ""
+"- Начало: держите гантели по бокам туловища, ладони обращены к телу.\n"
+"- Подъём: поднимайте гантели к плечам, сохраняя нейтральный хват (как будто "
+"держите молоток).\n"
+"- Сжатие: в верхней точке напрягите бицепсы, не выводя локти вперёд.\n"
+"- Опускание: медленно и подконтрольно вернитесь в исходное положение."
+
+#: apps/exercises/i18n_content.py:207
+msgid ""
+"Sit on the floor with your upper back against a bench and a loaded barbell "
+"rolled over your hips (use a pad for comfort). Plant your feet flat on the "
+"floor, knees bent. Drive through your heels to lift your hips up until your "
+"body forms a straight line from shoulders to knees, squeezing your glutes at "
+"the top, then lower back down under control."
+msgstr ""
+"Сядьте на пол, опираясь верхней частью спины на скамью, а нагруженная штанга "
+"лежит на бёдрах (используйте подкладку для комфорта). Поставьте стопы "
+"полностью на пол, колени согнуты. Отталкиваясь пятками, поднимите таз вверх, "
+"пока тело не образует прямую линию от плеч до колен, сожмите ягодицы в "
+"верхней точке, затем подконтрольно опуститесь обратно."
+
+#: apps/exercises/i18n_content.py:214
+msgid ""
+"Lie back on an incline bench set to about 30-45°, feet flat on the floor. "
+"Grip the bar slightly wider than shoulder-width and unrack it over your "
+"upper chest. Lower the bar under control to your upper chest, then press it "
+"back up until your arms are fully extended."
+msgstr ""
+"Лягте на скамью с наклоном примерно 30–45°, стопы полностью на полу. "
+"Возьмитесь за гриф чуть шире плеч и снимите штангу со стоек над верхней "
+"частью груди. Опустите штангу подконтрольно к верхней части груди, затем "
+"выжмите её обратно вверх, пока руки полностью не выпрямятся."
+
+#: apps/exercises/i18n_content.py:220
+msgid ""
+"Sit at the lat pulldown machine with your thighs secured under the pad, and "
+"grip the bar wider than shoulder-width. Lean back very slightly, then pull "
+"the bar down so it passes close to your chin and touches your upper chest, "
+"keeping the rest of your body still. Let the bar rise back under control "
+"until your arms are fully extended."
+msgstr ""
+"Сядьте в тренажёр для тяги верхнего блока, зафиксировав бёдра под валиками, "
+"и возьмитесь за рукоять шире плеч. Слегка отклонитесь назад, затем потяните "
+"рукоять вниз так, чтобы она прошла близко к подбородку и коснулась верхней "
+"части груди, удерживая остальное тело неподвижным. Дайте рукояти "
+"подконтрольно подняться обратно, пока руки полностью не выпрямятся."
+
+#: apps/exercises/i18n_content.py:227
+msgid ""
+"This exercise works the deltoid muscle of the shoulder. The movement starts "
+"with the arms straight, and the hands holding weights at the sides or in "
+"front of the body. Body is in a slight forward-leaning position with hips "
+"and knees bent a little. Arms are kept straight or slightly bent, and raised "
+"through an arc of movement in the coronal plane that terminates when the "
+"hands are at approximately shoulder height. Weights are lowered to the "
+"starting position, completing one rep. When using a cable machine the "
+"individual stands with the coronal plane in line with the pulley, which is "
+"at or near the ground. The exercise can be completed one shoulder at a time "
+"(with the other hand used to stabilize the body against the weight moved), "
+"or with both hands simultaneously if two parallel pulleys are available."
+msgstr ""
+"Это упражнение прорабатывает дельтовидную мышцу плеча. Движение начинается с "
+"прямых рук, удерживающих вес по бокам или перед телом. Корпус слегка "
+"наклонён вперёд, таз и колени немного согнуты. Руки остаются прямыми или "
+"слегка согнутыми и поднимаются по дугообразной траектории во фронтальной "
+"плоскости, пока кисти не окажутся примерно на уровне плеч. Вес опускается "
+"обратно в исходное положение, завершая одно повторение. При использовании "
+"блочного тренажёра человек стоит так, чтобы фронтальная плоскость совпадала "
+"с линией блока, расположенного на уровне пола или около него. Упражнение "
+"можно выполнять поочерёдно для каждого плеча (свободной рукой стабилизируя "
+"корпус против движущегося веса) либо одновременно двумя руками, если "
+"доступны два параллельных блока."
+
+#: apps/exercises/i18n_content.py:240
+msgid ""
+"Lie face down on the leg curl machine with the pad resting just above your "
+"heels and your knees just off the edge of the bench. Curl your legs up by "
+"bending your knees, bringing your heels toward your glutes, then lower back "
+"down under control without letting the weight stack slam down."
+msgstr ""
+"Лягте лицом вниз в тренажёр для сгибания ног так, чтобы валик находился чуть "
+"выше пяток, а колени слегка выступали за край скамьи. Согните ноги в "
+"коленях, подтягивая пятки к ягодицам, затем подконтрольно опустите обратно, "
+"не позволяя грузовому стеку резко падать."
+
+#: apps/exercises/i18n_content.py:246
+msgid ""
+"Sit in the leg press machine with your back flat against the pad and feet "
+"shoulder-width apart on the platform. Unlock the safety catches and lower "
+"the platform by bending your knees to about a 90° angle, keeping your lower "
+"back pressed against the pad. Push through your heels to extend your legs "
+"back to the starting position without locking your knees out completely."
+msgstr ""
+"Сядьте в тренажёр для жима ногами, плотно прижав спину к спинке, стопы на "
+"платформе на ширине плеч. Разблокируйте предохранители и опустите платформу, "
+"сгибая колени примерно до 90 градусов, удерживая поясницу прижатой к спинке. "
+"Оттолкнитесь пятками, разгибая ноги обратно в исходное положение, не "
+"разгибая колени до конца."
+
+#: apps/exercises/i18n_content.py:253
+msgid ""
+"- Setup: Stand with feet together and grip the bar slightly wider than "
+"shoulders.\n"
+"- Position: Rest the bar on your upper chest.\n"
+"- Press: Brace your core and push the bar straight up until your arms lock "
+"out.\n"
+"- Finish: Control the bar back down to your chest."
+msgstr ""
+"- Подготовка: встаньте, ноги вместе, возьмитесь за гриф чуть шире плеч.\n"
+"- Положение: расположите штангу на верхней части груди.\n"
+"- Жим: напрягите корпус и выжмите штангу строго вверх, пока руки полностью "
+"не выпрямятся.\n"
+"- Завершение: подконтрольно опустите штангу обратно к груди."
+
+#: apps/exercises/i18n_content.py:259
+msgid ""
+"Get into a position on the floor supporting your weight on your forearms and "
+"toes. Arms are bent and directly below the shoulder.\n"
+"Keep your body straight at all times and hold this position as long as "
+"possible. To increase difficulty an arm or leg can be raised while "
+"performing this exercise."
+msgstr ""
+"Примите положение на полу, опираясь весом тела на предплечья и носки стоп. "
+"Руки согнуты и находятся точно под плечами.\n"
+"Держите тело прямым всё время и удерживайте это положение как можно дольше. "
+"Чтобы усложнить упражнение, можно поднять руку или ногу во время его "
+"выполнения."
+
+#: apps/exercises/i18n_content.py:265
+msgid ""
+"Grab the pull up bar with a wide grip, the body is hanging freely. Keep your "
+"chest out and pull yourself up till your chin reaches the bar or it touches "
+"your neck, if you want to pull behind you. Go with a slow and controlled "
+"movement down, always keeping the chest out."
+msgstr ""
+"Возьмитесь за перекладину широким хватом, тело свободно висит. Держите грудь "
+"развёрнутой и подтянитесь так, чтобы подбородок оказался выше перекладины, "
+"либо, если тянете за голову, перекладина коснулась шеи. Опускайтесь медленно "
+"и подконтрольно, всегда удерживая грудь развёрнутой."
+
+#: apps/exercises/i18n_content.py:271
+msgid ""
+"Stand holding a barbell in front of your thighs with a shoulder-width "
+"overhand grip. Keeping your back flat and knees only slightly bent, push "
+"your hips back and lower the bar down the front of your legs until you feel "
+"a stretch in your hamstrings. Drive your hips forward to return to standing, "
+"keeping the bar close to your legs throughout."
+msgstr ""
+"Встаньте, удерживая штангу перед бёдрами хватом сверху на ширине плеч. Держа "
+"спину прямой, а колени лишь слегка согнутыми, отведите таз назад и опустите "
+"штангу вдоль передней поверхности ног, пока не почувствуете растяжение "
+"задней поверхности бедра. Верните таз вперёд, возвращаясь в положение стоя, "
+"удерживая штангу близко к ногам на протяжении всего движения."
+
+#: apps/exercises/i18n_content.py:278
+msgid ""
+"- Take a seat on the machine with your feet planted, a little wider than "
+"shoulder width. Drive the heels, and squeeze the glutes. Grab onto the cable "
+"handle.\n"
+"- Sit up tall with a slight bend through the knees. Tighten up the abs and "
+"low back to maintain a perpendicular angle to the floor with your torso.\n"
+"- Roll the shoulders back and down. Squeeze them together as you row, "
+"thinking about pinching a pencil in between them. As you do this, pull the "
+"handle back towards you, landing right above your belly button.\n"
+"- Pause here for a moment before returning the handle, still squeezing the "
+"shoulder blades. Once you've returned the weight to the stack, then allow "
+"the shoulder blades to relax, without pulling the torso forward.\n"
+"- Repeat the movement."
+msgstr ""
+"- Сядьте в тренажёр, поставив стопы чуть шире плеч. Упритесь пятками и "
+"напрягите ягодицы. Возьмитесь за рукоять троса.\n"
+"- Сядьте прямо, с лёгким сгибом в коленях. Напрягите пресс и поясницу, "
+"удерживая корпус перпендикулярно полу.\n"
+"- Отведите плечи назад и вниз. Сводите лопатки во время тяги, как будто "
+"зажимая карандаш между ними. При этом тяните рукоять к себе, приводя её "
+"точно над пупком.\n"
+"- Задержитесь на мгновение, прежде чем вернуть рукоять, продолжая сводить "
+"лопатки. Когда груз вернётся на стек, расслабьте лопатки, не наклоняя корпус "
+"вперёд.\n"
+"- Повторите движение."
+
+#: apps/exercises/i18n_content.py:290
+msgid ""
+"Hold the SZ-bar and lay down on a flat bench in such a way that around 1/4 "
+"of your head is over the edge. Stretch your arms with the bar and bend them "
+"so that the bar is lowered. Just before it touches your forehead, push it "
+"up.\n"
+"Pay attention to your elbows and arms: only the triceps are doing the work, "
+"the rest of the arms should not move."
+msgstr ""
+"Возьмите EZ-гриф и лягте на горизонтальную скамью так, чтобы примерно "
+"четверть головы находилась за краем скамьи. Выпрямите руки со штангой, затем "
+"согните их, опуская гриф. Прямо перед тем, как он коснётся лба, выжмите его "
+"обратно вверх.\n"
+"Следите за локтями и руками: работать должны только трицепсы, остальная "
+"часть рук должна оставаться неподвижной."
+
+#: apps/exercises/i18n_content.py:297
+msgid ""
+"Keep arms straight but not locked, pulling with your lats, not your "
+"shoulders.\n"
+"Don’t let your shoulders shrug up during the movement."
+msgstr ""
+"Держите руки прямыми, но не заблокированными, и тяните широчайшими мышцами "
+"спины, а не плечами.\n"
+"Не позволяйте плечам подниматься во время движения."
+
+#: apps/exercises/i18n_content.py:301
+msgid ""
+"Stand facing a cable machine with a straight or angled bar attached to the "
+"high pulley. Grip the bar with an overhand grip, elbows tucked in at your "
+"sides. Keeping your upper arms still, push the bar down until your arms are "
+"fully extended, then let it rise back under control without letting your "
+"elbows drift forward."
+msgstr ""
+"Встаньте лицом к блочному тренажёру с прямой или изогнутой рукоятью, "
+"закреплённой на верхнем блоке. Возьмитесь за рукоять хватом сверху, локти "
+"прижаты к бокам. Удерживая плечи неподвижными, толкайте рукоять вниз, пока "
+"руки полностью не выпрямятся, затем дайте ей подконтрольно подняться "
+"обратно, не позволяя локтям смещаться вперёд."
+
+#: apps/exercises/models.py:39 apps/exercises/models.py:111
 msgid "equipment"
 msgstr "оборудование"
 
-#: apps/exercises/models.py:40
+#: apps/exercises/models.py:46
 msgid "Compound"
 msgstr "Многосуставное"
 
-#: apps/exercises/models.py:41
+#: apps/exercises/models.py:47
 msgid "Isolation"
 msgstr "Изолирующее"
 
-#: apps/exercises/models.py:55
+#: apps/exercises/models.py:61
 msgid "Total load"
 msgstr "Общий вес"
 
-#: apps/exercises/models.py:56
+#: apps/exercises/models.py:62
 msgid "Per hand / dumbbell"
 msgstr "На руку / гантель"
 
-#: apps/exercises/models.py:70 apps/programs/models.py:37
+#: apps/exercises/models.py:76 apps/programs/models.py:37
 msgid "description"
 msgstr "описание"
 
-#: apps/exercises/models.py:75
+#: apps/exercises/models.py:84
+msgid "instructions"
+msgstr "инструкции"
+
+#: apps/exercises/models.py:91
+msgid "instructions attribution"
+msgstr "указание источника инструкций"
+
+#: apps/exercises/models.py:97
 msgid "primary muscle groups"
 msgstr "основные группы мышц"
 
-#: apps/exercises/models.py:81
+#: apps/exercises/models.py:103
 msgid "secondary muscle groups"
 msgstr "второстепенные группы мышц"
 
-#: apps/exercises/models.py:95
+#: apps/exercises/models.py:117
 msgid "movement type"
 msgstr "тип движения"
 
-#: apps/exercises/models.py:101
+#: apps/exercises/models.py:123
 msgid "weight logging"
 msgstr "запись веса"
+
+#: apps/exercises/models.py:188
+msgid "image"
+msgstr "изображение"
+
+#: apps/exercises/models.py:189
+msgid "caption"
+msgstr "подпись"
+
+#: apps/exercises/models.py:197
+msgid "attribution"
+msgstr "указание источника"
+
+#: apps/exercises/models.py:198 apps/programs/models.py:80
+#: apps/programs/models.py:122
+msgid "order"
+msgstr "порядок"
+
+#: apps/exercises/models.py:216
+#, python-format
+msgid ""
+"This exercise already has the maximum of %(max)d image(s) allowed. Remove "
+"one before adding another."
+msgstr ""
+"У этого упражнения уже максимально допустимое количество изображений "
+"(%(max)d). Удалите одно, прежде чем добавлять новое."
+
+#: apps/exercises/models.py:238
+msgid ""
+"How many images a single exercise may hold at once. Applies to every "
+"exercise, system and custom alike."
+msgstr ""
+"Сколько изображений может одновременно содержать одно упражнение. "
+"Применяется ко всем упражнениям — как системным, так и пользовательским."
 
 #: apps/measurements/forms.py:57
 #, python-format
@@ -1116,11 +1655,11 @@ msgid "Value (%(unit)s)"
 msgstr "Значение (%(unit)s)"
 
 #: apps/measurements/forms.py:57
-#: templates/measurements/measurement_history.html:35
+#: templates/measurements/measurement_history.html:56
 msgid "Value"
 msgstr "Значение"
 
-#: apps/measurements/i18n_content.py:17 templates/core/dashboard.html:72
+#: apps/measurements/i18n_content.py:17 templates/core/dashboard.html:41
 msgid "Body weight"
 msgstr "Вес тела"
 
@@ -1149,7 +1688,7 @@ msgid "Neck"
 msgstr "Шея"
 
 #: apps/measurements/models.py:18 templates/core/_bmi_card.html:31
-#: templates/nutrition/dashboard.html:95
+#: templates/nutrition/dashboard.html:97
 #: templates/workouts/_performed_exercise_card.html:15
 msgid "Weight"
 msgstr "Вес"
@@ -1500,85 +2039,101 @@ msgstr ""
 "Темп (%(unit)s/неделя — отрицательное значение для похудения, положительное "
 "для набора веса)"
 
-#: apps/nutrition/i18n_content.py:25
+#: apps/nutrition/i18n_content.py:29
+msgid "Breakfast"
+msgstr "Завтрак"
+
+#: apps/nutrition/i18n_content.py:30
+msgid "Lunch"
+msgstr "Обед"
+
+#: apps/nutrition/i18n_content.py:31
+msgid "Dinner"
+msgstr "Ужин"
+
+#: apps/nutrition/i18n_content.py:32
+msgid "Evening snack"
+msgstr "Вечерний перекус"
+
+#: apps/nutrition/i18n_content.py:38
 msgid "Bulk breakfast — Oats & peanut butter"
 msgstr "Завтрак для набора массы — овсянка с арахисовой пастой"
 
-#: apps/nutrition/i18n_content.py:26
+#: apps/nutrition/i18n_content.py:39
 msgid "Bulk breakfast — Eggs on toast"
 msgstr "Завтрак для набора массы — яйца на тосте"
 
-#: apps/nutrition/i18n_content.py:27
+#: apps/nutrition/i18n_content.py:40
 msgid "Bulk lunch — Chicken & rice bowl"
 msgstr "Обед для набора массы — курица с рисом"
 
-#: apps/nutrition/i18n_content.py:28
+#: apps/nutrition/i18n_content.py:41
 msgid "Bulk lunch — Tuna & sweet potato"
 msgstr "Обед для набора массы — тунец со сладким картофелем"
 
-#: apps/nutrition/i18n_content.py:29
+#: apps/nutrition/i18n_content.py:42
 msgid "Bulk dinner — Salmon & rice"
 msgstr "Ужин для набора массы — лосось с рисом"
 
-#: apps/nutrition/i18n_content.py:30
+#: apps/nutrition/i18n_content.py:43
 msgid "Bulk dinner — Chicken & sweet potato"
 msgstr "Ужин для набора массы — курица со сладким картофелем"
 
-#: apps/nutrition/i18n_content.py:31
+#: apps/nutrition/i18n_content.py:44
 msgid "Fatburner breakfast — Egg & spinach scramble"
 msgstr "Завтрак для похудения — яичница со шпинатом"
 
-#: apps/nutrition/i18n_content.py:32
+#: apps/nutrition/i18n_content.py:45
 msgid "Fatburner breakfast — Greek yogurt bowl"
 msgstr "Завтрак для похудения — греческий йогурт с добавками"
 
-#: apps/nutrition/i18n_content.py:33
+#: apps/nutrition/i18n_content.py:46
 msgid "Fatburner lunch — Chicken & broccoli"
 msgstr "Обед для похудения — курица с брокколи"
 
-#: apps/nutrition/i18n_content.py:34
+#: apps/nutrition/i18n_content.py:47
 msgid "Fatburner lunch — Tuna & spinach salad"
 msgstr "Обед для похудения — салат с тунцом и шпинатом"
 
-#: apps/nutrition/i18n_content.py:35
+#: apps/nutrition/i18n_content.py:48
 msgid "Fatburner dinner — Salmon & greens"
 msgstr "Ужин для похудения — лосось с зеленью"
 
-#: apps/nutrition/i18n_content.py:36
+#: apps/nutrition/i18n_content.py:49
 msgid "Fatburner dinner — Chicken & cottage cheese"
 msgstr "Ужин для похудения — курица с творогом"
 
-#: apps/nutrition/i18n_content.py:37
+#: apps/nutrition/i18n_content.py:50
 msgid "Balanced breakfast — Oats & yogurt"
 msgstr "Сбалансированный завтрак — овсянка с йогуртом"
 
-#: apps/nutrition/i18n_content.py:38
+#: apps/nutrition/i18n_content.py:51
 msgid "Balanced breakfast — Eggs on toast"
 msgstr "Сбалансированный завтрак — яйца на тосте"
 
-#: apps/nutrition/i18n_content.py:39
+#: apps/nutrition/i18n_content.py:52
 msgid "Balanced lunch — Chicken & rice"
 msgstr "Сбалансированный обед — курица с рисом"
 
-#: apps/nutrition/i18n_content.py:40
+#: apps/nutrition/i18n_content.py:53
 msgid "Balanced lunch — Tuna sandwich"
 msgstr "Сбалансированный обед — сэндвич с тунцом"
 
-#: apps/nutrition/i18n_content.py:41
+#: apps/nutrition/i18n_content.py:54
 msgid "Balanced dinner — Salmon & sweet potato"
 msgstr "Сбалансированный ужин — лосось со сладким картофелем"
 
-#: apps/nutrition/i18n_content.py:42
+#: apps/nutrition/i18n_content.py:55
 msgid "Balanced dinner — Chicken & vegetables"
 msgstr "Сбалансированный ужин — курица с овощами"
 
-#: apps/nutrition/i18n_content.py:47
+#: apps/nutrition/i18n_content.py:60
 msgid "Mix the oats into the yogurt, top with banana slices and peanut butter."
 msgstr ""
 "Смешайте овсянку с йогуртом, добавьте сверху ломтики банана и арахисовую "
 "пасту."
 
-#: apps/nutrition/i18n_content.py:49
+#: apps/nutrition/i18n_content.py:62
 msgid ""
 "Fry or scramble the eggs, serve on toasted bread with peanut butter and a "
 "drizzle of olive oil."
@@ -1586,14 +2141,14 @@ msgstr ""
 "Обжарьте или взбейте яйца, подавайте на тосте с арахисовой пастой и каплей "
 "оливкового масла."
 
-#: apps/nutrition/i18n_content.py:52
+#: apps/nutrition/i18n_content.py:65
 msgid ""
 "Cook the chicken and rice, toss with olive oil, serve with steamed broccoli."
 msgstr ""
 "Приготовьте курицу и рис, перемешайте с оливковым маслом, подавайте с "
 "брокколи на пару."
 
-#: apps/nutrition/i18n_content.py:53
+#: apps/nutrition/i18n_content.py:66
 msgid ""
 "Roast the sweet potato, flake in the tuna, drizzle with olive oil and serve "
 "with spinach."
@@ -1601,7 +2156,7 @@ msgstr ""
 "Запеките сладкий картофель, добавьте тунец кусочками, сбрызните оливковым "
 "маслом и подавайте со шпинатом."
 
-#: apps/nutrition/i18n_content.py:54
+#: apps/nutrition/i18n_content.py:67
 msgid ""
 "Pan-sear the salmon, serve over rice with steamed broccoli and a little "
 "olive oil."
@@ -1609,7 +2164,7 @@ msgstr ""
 "Обжарьте лосось на сковороде, подавайте с рисом, брокколи на пару и "
 "небольшим количеством оливкового масла."
 
-#: apps/nutrition/i18n_content.py:55
+#: apps/nutrition/i18n_content.py:68
 msgid ""
 "Roast the chicken and sweet potato together, top with crushed almonds and "
 "olive oil."
@@ -1617,16 +2172,16 @@ msgstr ""
 "Запеките курицу и сладкий картофель вместе, посыпьте измельчённым миндалём и "
 "сбрызните оливковым маслом."
 
-#: apps/nutrition/i18n_content.py:56
+#: apps/nutrition/i18n_content.py:69
 msgid ""
 "Scramble the eggs with the spinach, serve with cottage cheese on the side."
 msgstr "Взбейте яйца со шпинатом, подавайте с творогом отдельно."
 
-#: apps/nutrition/i18n_content.py:57
+#: apps/nutrition/i18n_content.py:70
 msgid "Top the yogurt with sliced banana and a few crushed almonds."
 msgstr "Добавьте в йогурт ломтики банана и немного измельчённого миндаля."
 
-#: apps/nutrition/i18n_content.py:58
+#: apps/nutrition/i18n_content.py:71
 msgid ""
 "Grill the chicken, steam the broccoli, finish with a light drizzle of olive "
 "oil."
@@ -1634,43 +2189,43 @@ msgstr ""
 "Приготовьте курицу на гриле, брокколи на пару, сбрызните небольшим "
 "количеством оливкового масла."
 
-#: apps/nutrition/i18n_content.py:59
+#: apps/nutrition/i18n_content.py:72
 msgid "Toss the tuna with the spinach and a small drizzle of olive oil."
 msgstr "Смешайте тунец со шпинатом и небольшим количеством оливкового масла."
 
-#: apps/nutrition/i18n_content.py:60
+#: apps/nutrition/i18n_content.py:73
 msgid "Bake the salmon, serve with steamed broccoli and spinach."
 msgstr "Запеките лосось, подавайте с брокколи на пару и шпинатом."
 
-#: apps/nutrition/i18n_content.py:61
+#: apps/nutrition/i18n_content.py:74
 msgid "Grill the chicken, serve with cottage cheese and wilted spinach."
 msgstr "Приготовьте курицу на гриле, подавайте с творогом и тушёным шпинатом."
 
-#: apps/nutrition/i18n_content.py:62
+#: apps/nutrition/i18n_content.py:75
 msgid "Mix the oats into the yogurt and top with sliced banana."
 msgstr "Смешайте овсянку с йогуртом и добавьте сверху ломтики банана."
 
-#: apps/nutrition/i18n_content.py:63
+#: apps/nutrition/i18n_content.py:76
 msgid ""
 "Fry or scramble the eggs, serve on toasted bread with a little olive oil."
 msgstr ""
 "Обжарьте или взбейте яйца, подавайте на тосте с небольшим количеством "
 "оливкового масла."
 
-#: apps/nutrition/i18n_content.py:64
+#: apps/nutrition/i18n_content.py:77
 msgid "Cook the chicken and rice, serve with steamed broccoli and olive oil."
 msgstr ""
 "Приготовьте курицу и рис, подавайте с брокколи на пару и оливковым маслом."
 
-#: apps/nutrition/i18n_content.py:65
+#: apps/nutrition/i18n_content.py:78
 msgid "Mix the tuna with the spinach, serve between slices of toasted bread."
 msgstr "Смешайте тунец со шпинатом, подавайте между ломтиками тоста."
 
-#: apps/nutrition/i18n_content.py:66
+#: apps/nutrition/i18n_content.py:79
 msgid "Bake the salmon and sweet potato, serve with wilted spinach."
 msgstr "Запеките лосось и сладкий картофель, подавайте с тушёным шпинатом."
 
-#: apps/nutrition/i18n_content.py:67
+#: apps/nutrition/i18n_content.py:80
 msgid ""
 "Roast the chicken with the broccoli and sweet potato, finish with olive oil."
 msgstr ""
@@ -1712,8 +2267,8 @@ msgstr "Слегка активный"
 msgid "Moderately active"
 msgstr "Умеренно активный"
 
-#: apps/nutrition/models.py:53 templates/nutrition/diet_plan_detail.html:10
-#: templates/nutrition/diet_plan_list.html:16
+#: apps/nutrition/models.py:53 templates/nutrition/diet_plan_detail.html:12
+#: templates/nutrition/diet_plan_list.html:18
 msgid "Active"
 msgstr "Активный"
 
@@ -2130,10 +2685,6 @@ msgstr "Суббота"
 msgid "Sunday"
 msgstr "Воскресенье"
 
-#: apps/programs/models.py:80 apps/programs/models.py:122
-msgid "order"
-msgstr "порядок"
-
 #: apps/programs/models.py:82
 msgid "scheduled weekday"
 msgstr "запланированный день недели"
@@ -2368,171 +2919,179 @@ msgstr "Описание"
 msgid "Friend"
 msgstr "Друг"
 
-#: apps/social/models.py:20 apps/social/models.py:190
+#: apps/social/models.py:20 apps/social/models.py:226
 msgid "Pending"
 msgstr "В ожидании"
 
-#: apps/social/models.py:21 apps/social/models.py:191
+#: apps/social/models.py:21 apps/social/models.py:227
 msgid "Accepted"
 msgstr "Принято"
 
-#: apps/social/models.py:22 apps/social/models.py:192
+#: apps/social/models.py:22 apps/social/models.py:228
 msgid "Declined"
 msgstr "Отклонено"
 
-#: apps/social/models.py:114 templates/admin/nutrition/food/merge.html:16
-#: templates/social/group_detail.html:69
+#: apps/social/models.py:141 templates/admin/nutrition/food/merge.html:16
+#: templates/social/group_detail.html:78
 msgid "Owner"
 msgstr "Владелец"
 
-#: apps/social/models.py:115 templates/accounts/profile.html:126
-#: templates/social/group_detail.html:70
+#: apps/social/models.py:142 templates/accounts/profile.html:166
+#: templates/social/group_detail.html:79
 msgid "Admin"
 msgstr "Админ"
 
-#: apps/social/models.py:116
+#: apps/social/models.py:143
 msgid "Member"
 msgstr "Участник"
 
-#: apps/social/services.py:81
+#: apps/social/services.py:89
 msgid "You can't send yourself a friend request."
 msgstr "Вы не можете отправить запрос в друзья самому себе."
 
-#: apps/social/services.py:83
+#: apps/social/services.py:91
 msgid "You can't send a friend request to this user."
 msgstr "Вы не можете отправить этому пользователю запрос в друзья."
 
-#: apps/social/services.py:85
+#: apps/social/services.py:93
 msgid "You're already friends."
 msgstr "Вы уже друзья."
 
-#: apps/social/services.py:87
+#: apps/social/services.py:95
 msgid "This user isn't accepting friend requests."
 msgstr "Этот пользователь не принимает запросы в друзья."
 
-#: apps/social/services.py:90
+#: apps/social/services.py:98
 msgid "You already sent a friend request to this user."
 msgstr "Вы уже отправили этому пользователю запрос в друзья."
 
-#: apps/social/services.py:110 apps/social/services.py:123
+#: apps/social/services.py:118 apps/social/services.py:131
 msgid "You can't respond to this friend request."
 msgstr "Вы не можете ответить на этот запрос в друзья."
 
-#: apps/social/services.py:112 apps/social/services.py:125
+#: apps/social/services.py:120 apps/social/services.py:133
 msgid "This friend request has already been answered."
 msgstr "На этот запрос в друзья уже был дан ответ."
 
-#: apps/social/services.py:140
+#: apps/social/services.py:148
 msgid "You can't block yourself."
 msgstr "Вы не можете заблокировать самого себя."
 
-#: apps/social/services.py:156
+#: apps/social/services.py:181
 msgid "You can't message this user."
 msgstr "Вы не можете написать этому пользователю."
 
-#: apps/social/services.py:158
+#: apps/social/services.py:183
 msgid "You can only message friends."
 msgstr "Вы можете писать только друзьям."
 
-#: apps/social/services.py:220 templates/social/group_invite_join.html:11
+#: apps/social/services.py:270 templates/social/group_invite_join.html:11
 msgid "This invite link isn't valid, or is no longer active."
 msgstr "Эта пригласительная ссылка недействительна или больше не активна."
 
-#: apps/social/services.py:230 apps/social/services.py:297
-#: apps/social/services.py:385
+#: apps/social/services.py:280 apps/social/services.py:347
+#: apps/social/services.py:435
 msgid "You're not a member of this group."
 msgstr "Вы не являетесь участником этой группы."
 
-#: apps/social/services.py:232
+#: apps/social/services.py:282
 msgid "This user is already in the group."
 msgstr "Этот пользователь уже состоит в группе."
 
-#: apps/social/services.py:241
+#: apps/social/services.py:291
 msgid "You can only invite a friend."
 msgstr "Вы можете пригласить только друга."
 
-#: apps/social/services.py:243
+#: apps/social/services.py:293
 msgid "This user isn't accepting group invites."
 msgstr "Этот пользователь не принимает приглашения в группы."
 
-#: apps/social/services.py:246
+#: apps/social/services.py:296
 msgid "This user has already been invited."
 msgstr "Этот пользователь уже приглашён."
 
-#: apps/social/services.py:259 apps/social/services.py:273
+#: apps/social/services.py:309 apps/social/services.py:323
 msgid "You can't respond to this invite."
 msgstr "Вы не можете ответить на это приглашение."
 
-#: apps/social/services.py:261 apps/social/services.py:275
+#: apps/social/services.py:311 apps/social/services.py:325
 msgid "This invite has already been answered."
 msgstr "На это приглашение уже был дан ответ."
 
-#: apps/social/services.py:285
+#: apps/social/services.py:335
 msgid "You don't have permission to remove members from this group."
 msgstr "У вас нет прав на удаление участников из этой группы."
 
-#: apps/social/services.py:288 apps/social/services.py:313
-#: apps/social/services.py:334
+#: apps/social/services.py:338 apps/social/services.py:363
+#: apps/social/services.py:384
 msgid "This user isn't a member of this group."
 msgstr "Этот пользователь не является участником этой группы."
 
-#: apps/social/services.py:290
+#: apps/social/services.py:340
 msgid "The group owner can't be removed."
 msgstr "Владельца группы нельзя удалить."
 
-#: apps/social/services.py:300
+#: apps/social/services.py:350
 msgid "Transfer ownership to someone else before leaving a group you own."
 msgstr ""
 "Прежде чем покинуть группу, которой вы владеете, передайте право владения "
 "кому-то другому."
 
-#: apps/social/services.py:308
+#: apps/social/services.py:358
 msgid "Only the group owner can change member roles."
 msgstr "Только владелец группы может изменять роли участников."
 
-#: apps/social/services.py:310
+#: apps/social/services.py:360
 msgid "You can't change your own role."
 msgstr "Вы не можете изменить свою собственную роль."
 
-#: apps/social/services.py:329
+#: apps/social/services.py:379
 msgid "Only the group owner can transfer ownership."
 msgstr "Только владелец группы может передать право владения."
 
-#: apps/social/services.py:331
+#: apps/social/services.py:381
 msgid "You're already the owner."
 msgstr "Вы уже являетесь владельцем."
 
-#: apps/social/services.py:360
+#: apps/social/services.py:410
 msgid "Only the group owner can delete the group."
 msgstr "Только владелец группы может удалить группу."
 
-#: apps/social/views_friends.py:67
+#: apps/social/views_friends.py:75
 msgid "Friend request sent."
 msgstr "Запрос в друзья отправлен."
 
-#: apps/social/views_friends.py:82
+#: apps/social/views_friends.py:90
 msgid "Friend request accepted."
 msgstr "Запрос в друзья принят."
 
-#: apps/social/views_friends.py:85
+#: apps/social/views_friends.py:93
 msgid "Friend request declined."
 msgstr "Запрос в друзья отклонён."
 
-#: apps/social/views_friends.py:87 apps/social/views_groups.py:206
+#: apps/social/views_friends.py:95 apps/social/views_groups.py:206
 msgid "Unknown action."
 msgstr "Неизвестное действие."
 
-#: apps/social/views_friends.py:99
+#: apps/social/views_friends.py:107
 msgid "Removed from your friends."
 msgstr "Удалён из ваших друзей."
 
-#: apps/social/views_friends.py:116
+#: apps/social/views_friends.py:124
 msgid "User blocked."
 msgstr "Пользователь заблокирован."
 
-#: apps/social/views_friends.py:128
+#: apps/social/views_friends.py:136
 msgid "User unblocked."
 msgstr "Пользователь разблокирован."
+
+#: apps/social/views_friends.py:146
+msgid "Notifications muted for this friend."
+msgstr "Уведомления от этого друга отключены."
+
+#: apps/social/views_friends.py:156
+msgid "Notifications unmuted for this friend."
+msgstr "Уведомления от этого друга снова включены."
 
 #: apps/social/views_groups.py:71
 msgid "Group created."
@@ -2570,7 +3129,7 @@ msgstr "Пригласительная ссылка обновлена — ст�
 msgid "Invite sent."
 msgstr "Приглашение отправлено."
 
-#: apps/social/views_groups.py:200 apps/social/views_groups.py:297
+#: apps/social/views_groups.py:200 apps/social/views_groups.py:324
 msgid "Joined the group."
 msgstr "Вы вступили в группу."
 
@@ -2598,7 +3157,15 @@ msgstr "Право владения передано."
 msgid "Left the group."
 msgstr "Вы покинули группу."
 
-#: apps/social/views_groups.py:282
+#: apps/social/views_groups.py:285
+msgid "Notifications unmuted for this group."
+msgstr "Уведомления для этой группы снова включены."
+
+#: apps/social/views_groups.py:287
+msgid "Notifications muted for this group."
+msgstr "Уведомления для этой группы отключены."
+
+#: apps/social/views_groups.py:309
 msgid "Too many attempts. Try again in a few minutes."
 msgstr "Слишком много попыток. Попробуйте снова через несколько минут."
 
@@ -2639,11 +3206,11 @@ msgstr "Завершено"
 msgid "Abandoned"
 msgstr "Отменено"
 
-#: apps/workouts/views.py:148 apps/workouts/views.py:345
+#: apps/workouts/views.py:149 apps/workouts/views.py:346
 msgid "This session is no longer in progress."
 msgstr "Эта тренировка больше не активна."
 
-#: apps/workouts/views.py:327
+#: apps/workouts/views.py:328
 #, python-format
 msgid "New PR — %(exercise)s: %(record_type)s %(value)s"
 msgstr "Новый рекорд — %(exercise)s: %(record_type)s %(value)s"
@@ -2681,6 +3248,7 @@ msgstr ""
 
 #: templates/accounts/_data_export_standalone.html:23
 #: templates/accounts/_data_export_standalone.html:68
+#: templates/accounts/profile.html:131
 msgid "Your data"
 msgstr "Ваши данные"
 
@@ -2733,8 +3301,8 @@ msgid "Privacy notice"
 msgstr "Уведомление о конфиденциальности"
 
 #: templates/accounts/_privacy_notice_modal.html:27
-#: templates/accounts/profile.html:186 templates/api/key_list.html:20
-#: templates/base.html:92 templates/nutrition/_month_calendar.html:67
+#: templates/accounts/profile.html:246 templates/api/key_list.html:20
+#: templates/base.html:119 templates/nutrition/_month_calendar.html:84
 #: templates/records/_pr_toasts.html:28
 msgid "Dismiss"
 msgstr "Закрыть"
@@ -2752,10 +3320,14 @@ msgstr ""
 "обращаться по любому из нижеперечисленных вопросов."
 
 #: templates/accounts/_privacy_notice_modal.html:31
+msgid "Contact:"
+msgstr "Контакт:"
+
+#: templates/accounts/_privacy_notice_modal.html:32
 msgid "What's collected"
 msgstr "Что собирается"
 
-#: templates/accounts/_privacy_notice_modal.html:32
+#: templates/accounts/_privacy_notice_modal.html:33
 msgid ""
 "Your account details (username, and optionally your name and email address), "
 "and whatever you choose to log: workout history, body measurements, "
@@ -2771,11 +3343,11 @@ msgstr ""
 "для блокировки повторных неудачных попыток входа) и не сохраняются как часть "
 "вашей учётной записи."
 
-#: templates/accounts/_privacy_notice_modal.html:33
+#: templates/accounts/_privacy_notice_modal.html:34
 msgid "Why"
 msgstr "Зачем"
 
-#: templates/accounts/_privacy_notice_modal.html:34
+#: templates/accounts/_privacy_notice_modal.html:35
 msgid ""
 "Solely to provide the tracking features you're using — nothing here is "
 "shared with, sold to, or processed by any third party, except the few "
@@ -2788,11 +3360,11 @@ msgstr ""
 "необязательных интеграций, которые вы должны включить сами (например, поиск "
 "через OpenFoodFacts, изображение Gravatar, единый вход через Authentik)."
 
-#: templates/accounts/_privacy_notice_modal.html:35
+#: templates/accounts/_privacy_notice_modal.html:36
 msgid "Your rights"
 msgstr "Ваши права"
 
-#: templates/accounts/_privacy_notice_modal.html:37
+#: templates/accounts/_privacy_notice_modal.html:38
 msgid ""
 "Access and rectification — everything you've logged is visible and editable "
 "directly in the app."
@@ -2800,7 +3372,7 @@ msgstr ""
 "Доступ и исправление — всё, что вы записали, видно и редактируется прямо в "
 "приложении."
 
-#: templates/accounts/_privacy_notice_modal.html:38
+#: templates/accounts/_privacy_notice_modal.html:39
 msgid ""
 "Erasure — Profile → \"Delete account\" permanently deletes your account and "
 "everything exclusively tied to it."
@@ -2808,7 +3380,7 @@ msgstr ""
 "Удаление — «Профиль → Удалить учётную запись» безвозвратно удаляет вашу "
 "учётную запись и всё, что относится исключительно к ней."
 
-#: templates/accounts/_privacy_notice_modal.html:39
+#: templates/accounts/_privacy_notice_modal.html:40
 msgid ""
 "Portability — the public API (Profile → \"API keys\") can export your own "
 "data in a structured format."
@@ -2816,11 +3388,11 @@ msgstr ""
 "Переносимость — публичный API (Профиль → «API-ключи») может экспортировать "
 "ваши данные в структурированном формате."
 
-#: templates/accounts/_privacy_notice_modal.html:41
+#: templates/accounts/_privacy_notice_modal.html:42
 msgid "Retention"
 msgstr "Срок хранения"
 
-#: templates/accounts/_privacy_notice_modal.html:42
+#: templates/accounts/_privacy_notice_modal.html:43
 msgid ""
 "Kept for as long as your account exists. A backup made before you delete "
 "anything may still contain it until that backup itself is rotated out — see "
@@ -2846,7 +3418,7 @@ msgid "Done"
 msgstr "Готово"
 
 #: templates/accounts/account_delete.html:3
-#: templates/accounts/account_delete.html:6 templates/accounts/profile.html:161
+#: templates/accounts/account_delete.html:6 templates/accounts/profile.html:201
 msgid "Delete account"
 msgstr "Удалить учётную запись"
 
@@ -2896,12 +3468,13 @@ msgstr "Безвозвратно удалить мою учётную запис
 #: templates/accounts/two_factor_disable.html:23
 #: templates/accounts/two_factor_setup.html:26
 #: templates/programs/program_confirm_delete.html:16
+#: templates/social/group_form.html:23
 msgid "Cancel"
 msgstr "Отмена"
 
 #: templates/accounts/account_details_form.html:3
 #: templates/accounts/account_details_form.html:6
-#: templates/accounts/profile.html:51
+#: templates/accounts/profile.html:66
 msgid "Account details"
 msgstr "Данные аккаунта"
 
@@ -2916,7 +3489,7 @@ msgid "Back to profile"
 msgstr "Назад к профилю"
 
 #: templates/accounts/data_export.html:3 templates/accounts/data_export.html:6
-#: templates/accounts/profile.html:105
+#: templates/accounts/profile.html:143
 msgid "Download your data"
 msgstr "Скачать ваши данные"
 
@@ -2943,40 +3516,42 @@ msgstr "Скачать в формате CSV (.zip)"
 msgid "Download as HTML"
 msgstr "Скачать в формате HTML"
 
-#: templates/accounts/profile.html:46
+#: templates/accounts/profile.html:15
+msgid "Preferences"
+msgstr "Настройки"
+
+#: templates/accounts/profile.html:21 templates/accounts/profile.html:108
+msgid "Notifications"
+msgstr "Уведомления"
+
+#: templates/accounts/profile.html:22
+msgid "Privacy"
+msgstr "Конфиденциальность"
+
+#: templates/accounts/profile.html:23 templates/accounts/profile.html:96
+msgid "Social"
+msgstr "Социальное"
+
+#: templates/accounts/profile.html:43
 msgid "Save preferences"
 msgstr "Сохранить настройки"
 
-#: templates/accounts/profile.html:52
+#: templates/accounts/profile.html:62
+msgid "Account"
+msgstr "Аккаунт"
+
+#: templates/accounts/profile.html:67
 msgid "Update your username, name, and email address."
 msgstr "Обновите имя пользователя, имя и адрес электронной почты."
 
-#: templates/accounts/profile.html:54 templates/accounts/profile.html:66
-#: templates/accounts/profile.html:91 templates/accounts/profile.html:100
-#: templates/accounts/profile.html:108 templates/accounts/profile.html:117
-#: templates/accounts/profile.html:129 templates/accounts/profile.html:137
-#: templates/accounts/profile.html:145 templates/accounts/profile.html:153
-#: templates/accounts/profile.html:164
-#: templates/nutrition/calculators_home.html:16
-#: templates/nutrition/calculators_home.html:24
-#: templates/nutrition/calculators_home.html:32
-#: templates/nutrition/calculators_home.html:40
-#: templates/nutrition/calculators_home.html:48
-#: templates/nutrition/calculators_home.html:56
-#: templates/nutrition/calculators_home.html:64
-#: templates/nutrition/diet_plan_list.html:27
-#: templates/nutrition/recipe_list.html:31
-msgid "Open"
-msgstr "Открыть"
-
-#: templates/accounts/profile.html:59
+#: templates/accounts/profile.html:74
 #: templates/registration/password_change_form.html:3
 #: templates/registration/password_change_form.html:6
 #: templates/registration/password_change_form.html:20
 msgid "Change password"
 msgstr "Изменить пароль"
 
-#: templates/accounts/profile.html:61
+#: templates/accounts/profile.html:76
 msgid ""
 "Your account is linked to Authentik. Sign-in security (password, 2FA) is "
 "managed there."
@@ -2984,110 +3559,127 @@ msgstr ""
 "Ваша учётная запись связана с Authentik. Безопасность входа (пароль, "
 "двухфакторная аутентификация) управляется там."
 
-#: templates/accounts/profile.html:63
+#: templates/accounts/profile.html:78
 msgid "Update the password you use to sign in."
 msgstr "Обновите пароль, который вы используете для входа."
 
-#: templates/accounts/profile.html:73
+#: templates/accounts/profile.html:88
 msgid "Enabled — protecting your account with a second step at login."
 msgstr ""
 "Включено — защищает вашу учётную запись дополнительным шагом при входе."
 
-#: templates/accounts/profile.html:75
+#: templates/accounts/profile.html:90
 msgid "Add a second step at login, using an authenticator app."
 msgstr ""
 "Добавьте дополнительный шаг при входе с помощью приложения-аутентификатора."
 
-#: templates/accounts/profile.html:79
-msgid "Manage"
-msgstr "Управление"
-
-#: templates/accounts/profile.html:81
-msgid "Set up"
-msgstr "Настроить"
-
-#: templates/accounts/profile.html:87 templates/social/message_list.html:6
+#: templates/accounts/profile.html:100 templates/social/message_list.html:6
 msgid "Friends & groups"
 msgstr "Друзья и группы"
 
-#: templates/accounts/profile.html:88
+#: templates/accounts/profile.html:101
 msgid "Friends, groups, and messages."
 msgstr "Друзья, группы и сообщения."
 
-#: templates/accounts/profile.html:97 templates/api/key_list.html:3
-#: templates/api/key_list.html:7
+#: templates/accounts/profile.html:109
+msgid "Get notified on this device when you receive a message."
+msgstr ""
+"Получайте уведомление на этом устройстве, когда вам приходит сообщение."
+
+#: templates/accounts/profile.html:118
+msgid "Push notifications aren't supported in this browser."
+msgstr "Push-уведомления не поддерживаются в этом браузере."
+
+#: templates/accounts/profile.html:122
+msgid "Enable notifications on this device"
+msgstr "Включить уведомления на этом устройстве"
+
+#: templates/accounts/profile.html:126
+msgid "Disable notifications on this device"
+msgstr "Отключить уведомления на этом устройстве"
+
+#: templates/accounts/profile.html:135 templates/api/key_list.html:3
+#: templates/api/key_list.html:6
 msgid "API keys"
 msgstr "API-ключи"
 
-#: templates/accounts/profile.html:98
+#: templates/accounts/profile.html:136
 msgid "Manage keys other apps can use to access your data."
 msgstr ""
 "Управляйте ключами, с помощью которых другие приложения могут получать "
 "доступ к вашим данным."
 
-#: templates/accounts/profile.html:106
+#: templates/accounts/profile.html:144
 msgid "Browse everything you've logged, or download it as JSON, CSV, or HTML."
 msgstr ""
 "Просмотрите всё, что вы записали, или скачайте это в формате JSON, CSV или "
 "HTML."
 
-#: templates/accounts/profile.html:114 templates/accounts/profile.html:142
+#: templates/accounts/profile.html:150
+msgid "Support"
+msgstr "Поддержка"
+
+#: templates/accounts/profile.html:154 templates/accounts/profile.html:182
 #: templates/core/feedback_form.html:3 templates/core/feedback_form.html:6
 #: templates/core/feedback_list.html:3 templates/core/feedback_list.html:6
 msgid "Feedback"
 msgstr "Обратная связь"
 
-#: templates/accounts/profile.html:115
+#: templates/accounts/profile.html:155
 msgid "Report a bug, request something, or tell us what's confusing."
 msgstr ""
 "Сообщите об ошибке, предложите что-то или расскажите, что показалось "
 "непонятным."
 
-#: templates/accounts/profile.html:127
+#: templates/accounts/profile.html:167
 msgid "Manage tiers, keys, and reference data across the whole instance."
 msgstr "Управляйте уровнями, ключами и справочными данными для всего сервера."
 
-#: templates/accounts/profile.html:134 templates/core/backup_list.html:3
+#: templates/accounts/profile.html:174 templates/core/backup_list.html:3
 #: templates/core/backup_list.html:6
 msgid "Backups"
 msgstr "Резервные копии"
 
-#: templates/accounts/profile.html:135
+#: templates/accounts/profile.html:175
 msgid "Create, download, and restore full backups of this instance."
 msgstr ""
 "Создавайте, скачивайте и восстанавливайте полные резервные копии этого "
 "экземпляра."
 
-#: templates/accounts/profile.html:143
+#: templates/accounts/profile.html:183
 msgid "Read what users have submitted, and turn submissions on or off."
 msgstr ""
 "Читайте отзывы пользователей и включайте или отключайте приём новых "
 "сообщений."
 
-#: templates/accounts/profile.html:150 templates/core/seo_settings.html:3
+#: templates/accounts/profile.html:190 templates/core/seo_settings.html:3
 #: templates/core/seo_settings.html:6
 msgid "Site & SEO"
 msgstr "Сайт и SEO"
 
-#: templates/accounts/profile.html:151
+#: templates/accounts/profile.html:191
 msgid "Control whether search engines are allowed to index this instance."
 msgstr ""
 "Управляйте тем, разрешено ли поисковым системам индексировать этот экземпляр."
 
-#: templates/accounts/profile.html:162
+#: templates/accounts/profile.html:202
 msgid "Permanently delete your account and everything tied to it."
 msgstr "Безвозвратно удалить вашу учётную запись и всё, что с ней связано."
 
-#: templates/accounts/profile.html:170
+#: templates/accounts/profile.html:210
 msgid "Log out"
 msgstr "Выйти"
 
-#: templates/accounts/profile.html:177
+#: templates/accounts/profile.html:232
+msgid "Source on GitHub"
+msgstr "Исходный код на GitHub"
+
+#: templates/accounts/profile.html:237
 #, python-format
 msgid "IronStack version %(version)s"
 msgstr "IronStack версия %(version)s"
 
-#: templates/accounts/profile.html:182 templates/accounts/profile.html:185
+#: templates/accounts/profile.html:242 templates/accounts/profile.html:245
 msgid "Changelog"
 msgstr "Список изменений"
 
@@ -3159,7 +3751,7 @@ msgid "Replace your backup codes? The old ones will stop working."
 msgstr "Заменить резервные коды? Старые перестанут работать."
 
 #: templates/accounts/two_factor_manage.html:21
-#: templates/social/group_detail.html:31
+#: templates/social/group_detail.html:40
 msgid "Regenerate"
 msgstr "Создать заново"
 
@@ -3210,76 +3802,76 @@ msgstr "Изменить %(name)s"
 msgid "Back to %(name)s"
 msgstr "Назад к %(name)s"
 
-#: templates/activities/activity_history.html:7
-#: templates/exercises/exercise_detail.html:14
-#: templates/measurements/measurement_history.html:7
+#: templates/activities/activity_history.html:10
+#: templates/exercises/exercise_detail.html:16
+#: templates/measurements/measurement_history.html:10
 msgid "Inactive"
 msgstr "Неактивно"
 
-#: templates/activities/activity_history.html:13
+#: templates/activities/activity_history.html:17
 #, python-format
 msgid "%(count)s logged · total duration %(total_duration)s"
 msgstr "записано: %(count)s · общая длительность %(total_duration)s"
 
-#: templates/activities/activity_history.html:14
+#: templates/activities/activity_history.html:18
 #, python-format
 msgid "total distance %(distance)s %(unit)s"
 msgstr "общая дистанция %(distance)s %(unit)s"
 
-#: templates/activities/activity_history.html:15
+#: templates/activities/activity_history.html:19
 #, python-format
 msgid "total calories %(calories)s"
 msgstr "всего калорий %(calories)s"
 
-#: templates/activities/activity_history.html:21
+#: templates/activities/activity_history.html:25
 msgid "Duration trend"
 msgstr "Динамика длительности"
 
-#: templates/activities/activity_history.html:22
-#: templates/activities/activity_history.html:43
+#: templates/activities/activity_history.html:26
+#: templates/activities/activity_history.html:47
 msgid "Duration"
 msgstr "Длительность"
 
-#: templates/activities/activity_history.html:23
+#: templates/activities/activity_history.html:27
 msgid "min"
 msgstr "мин"
 
-#: templates/activities/activity_history.html:37
+#: templates/activities/activity_history.html:41
 msgid "Log activity"
 msgstr "Записать активность"
 
-#: templates/activities/activity_history.html:43
-#: templates/measurements/measurement_history.html:35
+#: templates/activities/activity_history.html:47
+#: templates/measurements/measurement_history.html:56
 msgid "Date"
 msgstr "Дата"
 
-#: templates/activities/activity_history.html:43
+#: templates/activities/activity_history.html:47
 msgid "Distance"
 msgstr "Дистанция"
 
-#: templates/activities/activity_history.html:52
-#: templates/exercises/exercise_detail.html:8
-#: templates/measurements/measurement_history.html:43
-#: templates/nutrition/diary_day.html:61
-#: templates/nutrition/recipe_detail.html:8
-#: templates/nutrition/recipe_detail.html:34
-#: templates/programs/program_detail.html:8
-#: templates/programs/program_detail.html:41
-#: templates/programs/program_detail.html:58
-#: templates/social/group_detail.html:8
+#: templates/activities/activity_history.html:56
+#: templates/exercises/exercise_detail.html:10
+#: templates/measurements/measurement_history.html:64
+#: templates/nutrition/diary_day.html:65
+#: templates/nutrition/recipe_detail.html:10
+#: templates/nutrition/recipe_detail.html:36
+#: templates/programs/program_detail.html:10
+#: templates/programs/program_detail.html:43
+#: templates/programs/program_detail.html:60
+#: templates/social/group_detail.html:10
 #: templates/workouts/_performed_exercise_card.html:24
 msgid "Edit"
 msgstr "Изменить"
 
-#: templates/activities/activity_history.html:53
+#: templates/activities/activity_history.html:57
 msgid "Delete this activity?"
 msgstr "Удалить эту активность?"
 
-#: templates/activities/activity_history.html:60
+#: templates/activities/activity_history.html:64
 msgid "No activities logged yet."
 msgstr "Активности ещё не записаны."
 
-#: templates/activities/activity_history.html:67
+#: templates/activities/activity_history.html:71
 msgid ""
 "Deactivate this activity type? It will no longer appear when logging new "
 "activities."
@@ -3287,12 +3879,12 @@ msgstr ""
 "Отключить этот тип активности? Он больше не будет отображаться при записи "
 "новых активностей."
 
-#: templates/activities/activity_history.html:69
-#: templates/measurements/measurement_history.html:60
+#: templates/activities/activity_history.html:73
+#: templates/measurements/measurement_history.html:81
 msgid "Deactivate type"
 msgstr "Отключить тип"
 
-#: templates/activities/activity_history.html:73
+#: templates/activities/activity_history.html:77
 #: templates/activities/activity_type_form.html:22
 msgid "Back to activities"
 msgstr "Назад к активностям"
@@ -3302,20 +3894,20 @@ msgstr "Назад к активностям"
 msgid "New activity type"
 msgstr "Новый тип активности"
 
-#: templates/activities/activity_type_list.html:7
-#: templates/api/key_list.html:11 templates/exercises/exercise_list.html:7
-#: templates/measurements/measurement_type_list.html:7
+#: templates/activities/activity_type_list.html:9
+#: templates/api/key_list.html:10 templates/exercises/exercise_list.html:9
+#: templates/measurements/measurement_type_list.html:9
 #: templates/programs/program_list.html:10
 msgid "New"
 msgstr "Новый"
 
-#: templates/activities/activity_type_list.html:13
+#: templates/activities/activity_type_list.html:15
 #: templates/exercises/_exercise_list_results.html:6
-#: templates/measurements/measurement_type_list.html:13
+#: templates/measurements/measurement_type_list.html:22
 msgid "Custom"
 msgstr "Свой"
 
-#: templates/activities/activity_type_list.html:16
+#: templates/activities/activity_type_list.html:18
 #, python-format
 msgid "%(counter)s logged"
 msgid_plural "%(counter)s logged"
@@ -3323,11 +3915,11 @@ msgstr[0] "%(counter)s записана"
 msgstr[1] "%(counter)s записано"
 msgstr[2] "%(counter)s записано"
 
-#: templates/activities/activity_type_list.html:18
+#: templates/activities/activity_type_list.html:20
 msgid "No activities yet"
 msgstr "Активностей пока нет"
 
-#: templates/activities/activity_type_list.html:24
+#: templates/activities/activity_type_list.html:26
 msgid "No activity types yet."
 msgstr "Типов активности пока нет."
 
@@ -3362,9 +3954,9 @@ msgid "Brand"
 msgstr "Бренд"
 
 #: templates/admin/nutrition/food/merge.html:17
-#: templates/nutrition/dashboard.html:21 templates/nutrition/dashboard.html:48
-#: templates/nutrition/diary_day.html:26 templates/nutrition/food_list.html:26
-#: templates/nutrition/recipe_detail.html:58
+#: templates/nutrition/dashboard.html:23 templates/nutrition/dashboard.html:50
+#: templates/nutrition/diary_day.html:30 templates/nutrition/food_list.html:26
+#: templates/nutrition/recipe_detail.html:60
 msgid "Calories"
 msgstr "Калории"
 
@@ -3413,18 +4005,19 @@ msgstr "Объём по группам мышц"
 msgid "No data in this range."
 msgstr "Нет данных за этот период."
 
-#: templates/analytics/dashboard.html:35 templates/core/dashboard.html:80
+#: templates/analytics/dashboard.html:35 templates/core/dashboard.html:56
 msgid "Recent"
 msgstr "Недавние"
 
 #: templates/analytics/dashboard.html:35 templates/analytics/dashboard.html:45
 #: templates/analytics/exercise_analytics.html:26
-#: templates/core/dashboard.html:80 templates/exercises/exercise_detail.html:43
+#: templates/core/dashboard.html:56 templates/exercises/exercise_detail.html:90
 #: templates/records/exercise_records.html:11
 msgid "Personal Records"
 msgstr "Личные рекорды"
 
 #: templates/analytics/dashboard.html:45
+#: templates/core/backup_restore_confirm.html:29
 msgid "No"
 msgstr "Нет"
 
@@ -3442,7 +4035,7 @@ msgid "Sessions"
 msgstr "Тренировки"
 
 #: templates/analytics/exercise_analytics.html:19
-#: templates/exercises/exercise_detail.html:49
+#: templates/exercises/exercise_detail.html:96
 #: templates/records/_pr_toasts.html:38
 #: templates/records/exercise_records.html:16
 msgid "Estimated"
@@ -3501,7 +4094,7 @@ msgstr "Создать ключ"
 msgid "Back to API keys"
 msgstr "Назад к API-ключам"
 
-#: templates/api/key_list.html:8 templates/api/key_list.html:16
+#: templates/api/key_list.html:12 templates/api/key_list.html:16
 msgid "API documentation"
 msgstr "Документация API"
 
@@ -3666,29 +4259,37 @@ msgstr ""
 "Самостоятельно размещённое мобильное приложение для фитнеса и учёта "
 "активности."
 
-#: templates/base.html:72
+#: templates/base.html:87
+msgid "Camera access needs a secure (https) connection."
+msgstr "Для доступа к камере нужно защищённое (https) соединение."
+
+#: templates/base.html:99
 msgid "Skip to content"
 msgstr "Перейти к содержимому"
 
-#: templates/base.html:98
+#: templates/base.html:125
 msgid "Main navigation"
 msgstr "Главное меню"
 
-#: templates/base.html:99 templates/base.html:101
+#: templates/base.html:126 templates/base.html:128
 msgid "Home"
 msgstr "Главная"
 
-#: templates/base.html:111 templates/base.html:113
+#: templates/base.html:138 templates/base.html:140
 msgid "Workout"
 msgstr "Тренировка"
 
-#: templates/base.html:119
+#: templates/base.html:146
 msgid "Profile — new friend/group activity"
 msgstr "Профиль — новая активность в друзьях/группах"
 
-#: templates/base.html:130
+#: templates/base.html:185
 msgid "Continue training"
 msgstr "Продолжить тренировку"
+
+#: templates/base.html:191
+msgid "Unread messages"
+msgstr "Непрочитанные сообщения"
 
 #: templates/core/_backup_row.html:8
 msgid "Automatic"
@@ -3699,14 +4300,27 @@ msgid "Uploaded"
 msgstr "Загружено"
 
 #: templates/core/_backup_row.html:15
+msgid ""
+"database.dump/media.tar are encrypted with this instance's "
+"BACKUP_ENCRYPTION_KEY — restoring needs it."
+msgstr ""
+"database.dump/media.tar зашифрованы ключом BACKUP_ENCRYPTION_KEY этого "
+"экземпляра — он понадобится для восстановления."
+
+#: templates/core/_backup_row.html:15
+#: templates/core/backup_restore_confirm.html:29
+msgid "Encrypted"
+msgstr "Зашифровано"
+
+#: templates/core/_backup_row.html:18
 msgid "Download"
 msgstr "Скачать"
 
-#: templates/core/_backup_row.html:16
+#: templates/core/_backup_row.html:19
 msgid "Restore"
 msgstr "Восстановить"
 
-#: templates/core/_backup_row.html:18
+#: templates/core/_backup_row.html:21
 msgid "Delete this backup? This cannot be undone."
 msgstr "Удалить эту резервную копию? Это действие нельзя отменить."
 
@@ -3762,6 +4376,40 @@ msgid_plural "%(title)s trend over time, %(counter)s readings"
 msgstr[0] "%(title)s во времени, %(counter)s измерение"
 msgstr[1] "%(title)s во времени, %(counter)s измерения"
 msgstr[2] "%(title)s во времени, %(counter)s измерений"
+
+#: templates/core/_pwa_install_prompt.html:14
+#: templates/core/_pwa_install_prompt.html:17
+msgid "Install IronStack"
+msgstr "Установить IronStack"
+
+#: templates/core/_pwa_install_prompt.html:19
+msgid ""
+"Add it to your home screen for quick, full-screen access: tap Share, then "
+"\"Add to Home Screen\"."
+msgstr ""
+"Добавьте его на главный экран для быстрого доступа во весь экран: нажмите "
+"«Поделиться», затем «На экран «Домой»»."
+
+#: templates/core/_pwa_install_prompt.html:22
+msgid "Add it to your home screen for quick, full-screen access."
+msgstr "Добавьте его на главный экран для быстрого доступа во весь экран."
+
+#: templates/core/_pwa_install_prompt.html:25
+msgid "Install"
+msgstr "Установить"
+
+#: templates/core/_pwa_install_prompt.html:26
+msgid "Remind me later"
+msgstr "Напомнить позже"
+
+#: templates/core/_pwa_install_prompt.html:27
+msgid "Don't remind me"
+msgstr "Не напоминать"
+
+#: templates/core/_pwa_install_prompt.html:30
+#: templates/nutrition/_barcode_scan_button.html:21
+msgid "Close"
+msgstr "Закрыть"
 
 #: templates/core/backup_list.html:11
 msgid "Create backup"
@@ -3842,29 +4490,45 @@ msgstr ""
 "Если сомневаетесь, сначала создайте новую резервную копию текущего "
 "состояния, а затем вернитесь сюда."
 
-#: templates/core/backup_restore_confirm.html:19
+#: templates/core/backup_restore_confirm.html:18
+msgid ""
+"This backup is encrypted, but this instance has no BACKUP_ENCRYPTION_KEY "
+"configured (or it doesn't match the key this backup was made with) — "
+"restoring will fail. Set the correct key in .env and restart before trying "
+"again."
+msgstr ""
+"Эта резервная копия зашифрована, но для этого экземпляра не настроен "
+"BACKUP_ENCRYPTION_KEY (или он не совпадает с ключом, которым была создана "
+"эта копия) — восстановление завершится ошибкой. Укажите правильный ключ "
+"в .env и перезапустите приложение перед повторной попыткой."
+
+#: templates/core/backup_restore_confirm.html:24
 msgid "Backup"
 msgstr "Резервная копия"
 
-#: templates/core/backup_restore_confirm.html:21
-#: templates/core/backup_restore_confirm.html:30
+#: templates/core/backup_restore_confirm.html:26
+#: templates/core/backup_restore_confirm.html:36
 msgid "Version"
 msgstr "Версия"
 
-#: templates/core/backup_restore_confirm.html:22
-#: templates/core/backup_restore_confirm.html:31
+#: templates/core/backup_restore_confirm.html:27
+#: templates/core/backup_restore_confirm.html:37
 msgid "Git commit"
 msgstr "Git-коммит"
 
-#: templates/core/backup_restore_confirm.html:23
+#: templates/core/backup_restore_confirm.html:28
 msgid "Created"
 msgstr "Создано"
 
-#: templates/core/backup_restore_confirm.html:28
+#: templates/core/backup_restore_confirm.html:29
+msgid "Yes"
+msgstr "Да"
+
+#: templates/core/backup_restore_confirm.html:34
 msgid "Running instance"
 msgstr "Работающий экземпляр"
 
-#: templates/core/backup_restore_confirm.html:35
+#: templates/core/backup_restore_confirm.html:41
 msgid ""
 "Really replace the current database and media with this backup? This cannot "
 "be undone."
@@ -3872,11 +4536,11 @@ msgstr ""
 "Действительно заменить текущую базу данных и медиафайлы этой резервной "
 "копией? Это действие нельзя отменить."
 
-#: templates/core/backup_restore_confirm.html:37
+#: templates/core/backup_restore_confirm.html:43
 msgid "Restore this backup"
 msgstr "Восстановить эту резервную копию"
 
-#: templates/core/backup_restore_confirm.html:40
+#: templates/core/backup_restore_confirm.html:46
 msgid "Back to backups"
 msgstr "Назад к резервным копиям"
 
@@ -3884,79 +4548,91 @@ msgstr "Назад к резервным копиям"
 msgid "Dashboard"
 msgstr "Панель управления"
 
-#: templates/core/dashboard.html:14
-msgid "Achievements"
-msgstr "Достижения"
-
-#: templates/core/dashboard.html:42
-#, python-format
-msgid "Show achievement %(position)s"
-msgstr "Показать достижение %(position)s"
-
-#: templates/core/dashboard.html:51
-msgid "Recently active"
-msgstr "Недавняя активность"
-
-#: templates/core/dashboard.html:58
-msgid "Training now"
-msgstr "Тренируется сейчас"
-
-#: templates/core/dashboard.html:58
-#, python-format
-msgid "%(time)s ago"
-msgstr "%(time)s назад"
-
-#: templates/core/dashboard.html:69
-msgid "This week's workouts"
-msgstr "Тренировки на этой неделе"
-
-#: templates/core/dashboard.html:70
-msgid "This week's volume"
-msgstr "Объём за эту неделю"
-
-#: templates/core/dashboard.html:91
+#: templates/core/dashboard.html:22
 msgid "Continue workout"
 msgstr "Продолжить тренировку"
 
-#: templates/core/dashboard.html:93 templates/workouts/session_detail.html:3
+#: templates/core/dashboard.html:24 templates/workouts/session_detail.html:3
 #: templates/workouts/session_detail.html:6
 #: templates/workouts/session_list.html:11
 #: templates/workouts/session_train.html:6
 msgid "Freeform workout"
 msgstr "Свободная тренировка"
 
-#: templates/core/dashboard.html:94
+#: templates/core/dashboard.html:25
 #, python-format
 msgid "started %(started_at)s"
 msgstr "начато %(started_at)s"
 
-#: templates/core/dashboard.html:99
+#: templates/core/dashboard.html:30
 msgid "No workout in progress."
 msgstr "Нет активной тренировки."
 
-#: templates/core/dashboard.html:100
+#: templates/core/dashboard.html:31
 msgid "Start one from a program, or log a freeform workout."
 msgstr "Начните тренировку по программе или запишите свободную тренировку."
 
-#: templates/core/dashboard.html:105
+#: templates/core/dashboard.html:38
+msgid "This week's workouts"
+msgstr "Тренировки на этой неделе"
+
+#: templates/core/dashboard.html:39
+msgid "This week's volume"
+msgstr "Объём за эту неделю"
+
+#: templates/core/dashboard.html:49
+msgid "Time to log your body measurements?"
+msgstr "Пора внести замеры тела?"
+
+#: templates/core/dashboard.html:50
+msgid ""
+"It's been a while since you tracked your weight or measurements — tap here "
+"to add a new reading."
+msgstr ""
+"Вы давно не отмечали свой вес или замеры — нажмите здесь, чтобы добавить "
+"новое значение."
+
+#: templates/core/dashboard.html:66
+msgid "Achievements"
+msgstr "Достижения"
+
+#: templates/core/dashboard.html:94
+#, python-format
+msgid "Show achievement %(position)s"
+msgstr "Показать достижение %(position)s"
+
+#: templates/core/dashboard.html:103
+msgid "Recently active"
+msgstr "Недавняя активность"
+
+#: templates/core/dashboard.html:110
+msgid "Training now"
+msgstr "Тренируется сейчас"
+
+#: templates/core/dashboard.html:110
+#, python-format
+msgid "%(time)s ago"
+msgstr "%(time)s назад"
+
+#: templates/core/dashboard.html:119
 msgid "Browse exercises"
 msgstr "Просмотреть упражнения"
 
-#: templates/core/dashboard.html:106
+#: templates/core/dashboard.html:120
 msgid "Explore the exercise library or add your own."
 msgstr "Изучите библиотеку упражнений или добавьте своё."
 
-#: templates/core/dashboard.html:110
+#: templates/core/dashboard.html:124
 #: templates/measurements/measurement_type_list.html:3
 #: templates/measurements/measurement_type_list.html:6
 msgid "Body tracking"
 msgstr "Отслеживание тела"
 
-#: templates/core/dashboard.html:111
+#: templates/core/dashboard.html:125
 msgid "Log body weight, measurements, and trends."
 msgstr "Записывайте вес тела, измерения и тенденции."
 
-#: templates/core/dashboard.html:116
+#: templates/core/dashboard.html:130
 msgid "Log a run, ride, or any other non-gym activity."
 msgstr ""
 "Записывайте пробежку, велопрогулку или любую другую активность вне зала."
@@ -4007,43 +4683,68 @@ msgstr "По вашему запросу упражнений не найден�
 msgid "Exercise list pages"
 msgstr "Страницы списка упражнений"
 
-#: templates/exercises/exercise_detail.html:19
+#: templates/exercises/exercise_detail.html:21
 msgid "Movement type"
 msgstr "Тип движения"
 
-#: templates/exercises/exercise_detail.html:22
+#: templates/exercises/exercise_detail.html:24
 msgid "Weight logging"
 msgstr "Запись веса"
 
-#: templates/exercises/exercise_detail.html:26
+#: templates/exercises/exercise_detail.html:28
 msgid "Equipment"
 msgstr "Оборудование"
 
-#: templates/exercises/exercise_detail.html:31
+#: templates/exercises/exercise_detail.html:33
 msgid "Primary muscles"
 msgstr "Основные мышцы"
 
-#: templates/exercises/exercise_detail.html:36
+#: templates/exercises/exercise_detail.html:38
 msgid "Secondary muscles"
 msgstr "Второстепенные мышцы"
 
-#: templates/exercises/exercise_detail.html:43
+#: templates/exercises/exercise_detail.html:46
+msgid "Instructions"
+msgstr "Инструкции"
+
+#: templates/exercises/exercise_detail.html:61
+#: templates/nutrition/_diet_plan_meal_card.html:25
+#: templates/nutrition/recipe_detail.html:40
+#: templates/social/friend_list.html:62 templates/social/group_detail.html:96
+#: templates/social/group_detail.html:108
+msgid "Remove"
+msgstr "Удалить"
+
+#: templates/exercises/exercise_detail.html:80
+msgid "Add image"
+msgstr "Добавить изображение"
+
+#: templates/exercises/exercise_detail.html:83
+#, python-format
+msgid ""
+"This exercise already has the maximum number of images "
+"(%(max_images_per_exercise)s)."
+msgstr ""
+"У этого упражнения уже максимальное количество изображений "
+"(%(max_images_per_exercise)s)."
+
+#: templates/exercises/exercise_detail.html:90
 msgid "Your"
 msgstr "Ваши"
 
-#: templates/exercises/exercise_detail.html:44
+#: templates/exercises/exercise_detail.html:91
 msgid "Current personal records for this exercise."
 msgstr "Текущие личные рекорды для этого упражнения."
 
-#: templates/exercises/exercise_detail.html:48
+#: templates/exercises/exercise_detail.html:95
 msgid "Strength trend"
 msgstr "Динамика силы"
 
-#: templates/exercises/exercise_detail.html:49
+#: templates/exercises/exercise_detail.html:96
 msgid "over time and training volume."
 msgstr "во времени и объём тренировок."
 
-#: templates/exercises/exercise_detail.html:53
+#: templates/exercises/exercise_detail.html:100
 msgid ""
 "Deactivate this exercise? It will no longer appear when browsing or "
 "prescribing."
@@ -4051,13 +4752,13 @@ msgstr ""
 "Отключить это упражнение? Оно больше не будет отображаться при просмотре или "
 "назначении."
 
-#: templates/exercises/exercise_detail.html:55
-#: templates/nutrition/diet_plan_detail.html:11
-#: templates/nutrition/diet_plan_list.html:24
+#: templates/exercises/exercise_detail.html:102
+#: templates/nutrition/diet_plan_detail.html:13
+#: templates/nutrition/diet_plan_list.html:26
 msgid "Deactivate"
 msgstr "Отключить"
 
-#: templates/exercises/exercise_detail.html:59
+#: templates/exercises/exercise_detail.html:106
 msgid "Back to exercises"
 msgstr "Назад к упражнениям"
 
@@ -4073,19 +4774,19 @@ msgstr "Изменить упражнение"
 msgid "New exercise"
 msgstr "Новое упражнение"
 
-#: templates/exercises/exercise_list.html:11
+#: templates/exercises/exercise_list.html:13
 msgid "Search exercises…"
 msgstr "Поиск упражнений…"
 
-#: templates/exercises/exercise_list.html:11
+#: templates/exercises/exercise_list.html:13
 msgid "Search exercises"
 msgstr "Поиск упражнений"
 
-#: templates/exercises/exercise_list.html:12
+#: templates/exercises/exercise_list.html:14
 msgid "Filter by muscle group"
 msgstr "Фильтр по группе мышц"
 
-#: templates/exercises/exercise_list.html:13
+#: templates/exercises/exercise_list.html:15
 msgid "All muscle groups"
 msgstr "Все группы мышц"
 
@@ -4098,23 +4799,58 @@ msgstr "Изменить измерение"
 msgid "Edit %(name)s reading"
 msgstr "Изменить измерение: %(name)s"
 
-#: templates/measurements/measurement_history.html:15
+#: templates/measurements/measurement_history.html:19
+#: templates/nutrition/_subnav.html:51 templates/nutrition/stats.html:6
+msgid "Statistics"
+msgstr "Статистика"
+
+#: templates/measurements/measurement_history.html:22
+#: templates/records/exercise_records.html:11
+msgid "Current"
+msgstr "Текущие"
+
+#: templates/measurements/measurement_history.html:23
+msgid "Change since first log"
+msgstr "Изменение с первой записи"
+
+#: templates/measurements/measurement_history.html:24
+msgid "Lowest"
+msgstr "Минимум"
+
+#: templates/measurements/measurement_history.html:25
+msgid "Highest"
+msgstr "Максимум"
+
+#: templates/measurements/measurement_history.html:26
+msgid "Average"
+msgstr "Среднее"
+
+#: templates/measurements/measurement_history.html:27
+msgid "Entries logged"
+msgstr "Записей внесено"
+
+#: templates/measurements/measurement_history.html:30
+#, python-format
+msgid "Tracking since %(date)s."
+msgstr "Отслеживается с %(date)s."
+
+#: templates/measurements/measurement_history.html:36
 msgid "Trend"
 msgstr "Тенденция"
 
-#: templates/measurements/measurement_history.html:29
+#: templates/measurements/measurement_history.html:50
 msgid "Log reading"
 msgstr "Записать измерение"
 
-#: templates/measurements/measurement_history.html:44
+#: templates/measurements/measurement_history.html:65
 msgid "Delete this reading?"
 msgstr "Удалить это измерение?"
 
-#: templates/measurements/measurement_history.html:51
+#: templates/measurements/measurement_history.html:72
 msgid "No readings logged yet."
 msgstr "Измерения ещё не записаны."
 
-#: templates/measurements/measurement_history.html:58
+#: templates/measurements/measurement_history.html:79
 msgid ""
 "Deactivate this measurement type? It will no longer appear when logging new "
 "readings."
@@ -4122,7 +4858,7 @@ msgstr ""
 "Отключить этот тип измерения? Он больше не будет отображаться при записи "
 "новых измерений."
 
-#: templates/measurements/measurement_history.html:64
+#: templates/measurements/measurement_history.html:85
 #: templates/measurements/measurement_type_form.html:22
 msgid "Back to body tracking"
 msgstr "Назад к отслеживанию тела"
@@ -4132,16 +4868,16 @@ msgstr "Назад к отслеживанию тела"
 msgid "New measurement type"
 msgstr "Новый тип измерения"
 
-#: templates/measurements/measurement_type_list.html:16
+#: templates/measurements/measurement_type_list.html:25
 #, python-format
 msgid "Latest: %(value)s %(unit)s"
 msgstr "Последнее: %(value)s %(unit)s"
 
-#: templates/measurements/measurement_type_list.html:18
+#: templates/measurements/measurement_type_list.html:27
 msgid "No readings yet"
 msgstr "Измерений пока нет"
 
-#: templates/measurements/measurement_type_list.html:24
+#: templates/measurements/measurement_type_list.html:33
 msgid "No measurement types yet."
 msgstr "Типов измерения пока нет."
 
@@ -4154,13 +4890,17 @@ msgstr "Сканировать штрихкод"
 msgid "Scan a barcode"
 msgstr "Отсканировать штрихкод"
 
-#: templates/nutrition/_barcode_scan_button.html:21
-msgid "Close"
-msgstr "Закрыть"
-
 #: templates/nutrition/_barcode_scan_button.html:25
 msgid "Point your camera at a barcode."
 msgstr "Наведите камеру на штрихкод."
+
+#: templates/nutrition/_barcode_scan_button.html:26
+msgid ""
+"Still nothing? Make sure the barcode is well lit and fills the frame, or "
+"close this and type it into the search box instead."
+msgstr ""
+"Всё ещё ничего? Убедитесь, что штрихкод хорошо освещён и полностью "
+"помещается в кадр, или закройте это окно и введите код в поле поиска вручную."
 
 #: templates/nutrition/_diet_plan_meal_card.html:13
 msgid "target"
@@ -4171,7 +4911,7 @@ msgid "so far"
 msgstr "на данный момент"
 
 #: templates/nutrition/_diet_plan_meal_card.html:18
-#: templates/nutrition/recipe_list.html:27
+#: templates/nutrition/recipe_list.html:29
 msgid "servings"
 msgstr "порций"
 
@@ -4182,13 +4922,6 @@ msgstr "Заменить"
 #: templates/nutrition/_diet_plan_meal_card.html:23
 msgid "Remove this item?"
 msgstr "Удалить этот пункт?"
-
-#: templates/nutrition/_diet_plan_meal_card.html:25
-#: templates/nutrition/recipe_detail.html:38
-#: templates/social/friend_list.html:49 templates/social/group_detail.html:87
-#: templates/social/group_detail.html:99
-msgid "Remove"
-msgstr "Удалить"
 
 #: templates/nutrition/_diet_plan_meal_card.html:30
 msgid "Nothing suggested yet — add some foods or recipes first."
@@ -4238,63 +4971,63 @@ msgstr "Ничего не найдено."
 msgid "Create a custom food"
 msgstr "Создать свой продукт"
 
-#: templates/nutrition/_month_calendar.html:43
+#: templates/nutrition/_month_calendar.html:60
 msgid "Previous month"
 msgstr "Предыдущий месяц"
 
-#: templates/nutrition/_month_calendar.html:55
-#: templates/nutrition/_month_calendar.html:63
-#: templates/nutrition/_month_calendar.html:66
+#: templates/nutrition/_month_calendar.html:72
+#: templates/nutrition/_month_calendar.html:80
+#: templates/nutrition/_month_calendar.html:83
 msgid "How to read this calendar"
 msgstr "Как читать этот календарь"
 
-#: templates/nutrition/_month_calendar.html:59
+#: templates/nutrition/_month_calendar.html:76
 msgid "Next month"
 msgstr "Следующий месяц"
 
-#: templates/nutrition/_month_calendar.html:87
+#: templates/nutrition/_month_calendar.html:104
 msgid "New personal record"
 msgstr "Новый личный рекорд"
 
-#: templates/nutrition/_month_calendar.html:91
+#: templates/nutrition/_month_calendar.html:108
 msgid "A session was abandoned"
 msgstr "Тренировка была прервана"
 
-#: templates/nutrition/_month_calendar.html:95
+#: templates/nutrition/_month_calendar.html:112
 msgid "An ordinary training day"
 msgstr "Обычный тренировочный день"
 
-#: templates/nutrition/_month_calendar.html:99
-#: templates/nutrition/dashboard.html:11
+#: templates/nutrition/_month_calendar.html:116
+#: templates/nutrition/dashboard.html:13
 msgid "Rest day"
 msgstr "День отдыха"
 
-#: templates/nutrition/_month_calendar.html:103
+#: templates/nutrition/_month_calendar.html:120
 msgid "Trailing 7-day average calories ran over your target"
 msgstr "Скользящее среднее калорий за 7 дней превысило вашу норму"
 
-#: templates/nutrition/_month_calendar.html:107
+#: templates/nutrition/_month_calendar.html:124
 msgid "Trailing 7-day average calories ran under your target"
 msgstr "Скользящее среднее калорий за 7 дней было ниже вашей нормы"
 
-#: templates/nutrition/_month_calendar.html:111
+#: templates/nutrition/_month_calendar.html:128
 msgid "Close to target"
 msgstr "Близко к цели"
 
-#: templates/nutrition/_month_calendar.html:115
+#: templates/nutrition/_month_calendar.html:132
 msgid "Drifting from target"
 msgstr "Отклоняется от цели"
 
-#: templates/nutrition/_month_calendar.html:119
+#: templates/nutrition/_month_calendar.html:136
 msgid "Well off target"
 msgstr "Далеко от цели"
 
-#: templates/nutrition/_month_calendar.html:122
+#: templates/nutrition/_month_calendar.html:139
 msgid "No arrow yet means there isn't enough logged data to judge."
 msgstr ""
 "Если стрелка не отображается, значит пока недостаточно данных для оценки."
 
-#: templates/nutrition/_month_calendar.html:123
+#: templates/nutrition/_month_calendar.html:140
 msgid "Tap a day for details."
 msgstr "Нажмите на день, чтобы увидеть подробности."
 
@@ -4317,43 +5050,39 @@ msgstr ""
 "NOVA — степень обработки продукта, от 1 (необработанный) до 4 "
 "(ультраобработанный)"
 
-#: templates/nutrition/_subnav.html:21
+#: templates/nutrition/_subnav.html:43
 msgid "Nutrition sections"
 msgstr "Разделы питания"
 
-#: templates/nutrition/_subnav.html:22
+#: templates/nutrition/_subnav.html:45
 msgid "Overview"
 msgstr "Обзор"
 
-#: templates/nutrition/_subnav.html:23
+#: templates/nutrition/_subnav.html:46
 msgid "Diary"
 msgstr "Дневник"
 
-#: templates/nutrition/_subnav.html:24 templates/nutrition/food_list.html:3
+#: templates/nutrition/_subnav.html:47 templates/nutrition/food_list.html:3
 #: templates/nutrition/food_list.html:6
 msgid "Foods"
 msgstr "Продукты"
 
-#: templates/nutrition/_subnav.html:25 templates/nutrition/recipe_list.html:3
+#: templates/nutrition/_subnav.html:48 templates/nutrition/recipe_list.html:3
 #: templates/nutrition/recipe_list.html:6
 msgid "Recipes"
 msgstr "Рецепты"
 
-#: templates/nutrition/_subnav.html:26
+#: templates/nutrition/_subnav.html:49
 #: templates/nutrition/diet_plan_list.html:3
 #: templates/nutrition/diet_plan_list.html:6
 msgid "Diet plans"
 msgstr "Планы питания"
 
-#: templates/nutrition/_subnav.html:27
+#: templates/nutrition/_subnav.html:50
 #: templates/nutrition/calculators_home.html:3
 #: templates/nutrition/calculators_home.html:6
 msgid "Calculators"
 msgstr "Калькуляторы"
-
-#: templates/nutrition/_subnav.html:28 templates/nutrition/stats.html:6
-msgid "Statistics"
-msgstr "Статистика"
 
 #: templates/nutrition/_wizard_progress.html:2
 #, python-format
@@ -4473,26 +5202,26 @@ msgstr ""
 "собственные соотношения приложения по умолчанию для выбранной вами цели."
 
 #: templates/nutrition/calculator_macros.html:28
-#: templates/nutrition/dashboard.html:25 templates/nutrition/dashboard.html:49
-#: templates/nutrition/dashboard.html:108 templates/nutrition/diary_day.html:36
+#: templates/nutrition/dashboard.html:27 templates/nutrition/dashboard.html:51
+#: templates/nutrition/dashboard.html:110 templates/nutrition/diary_day.html:40
 #: templates/nutrition/onboarding_review.html:17
-#: templates/nutrition/recipe_detail.html:59
+#: templates/nutrition/recipe_detail.html:61
 msgid "Protein"
 msgstr "Белки"
 
 #: templates/nutrition/calculator_macros.html:29
-#: templates/nutrition/dashboard.html:29 templates/nutrition/dashboard.html:50
-#: templates/nutrition/dashboard.html:109 templates/nutrition/diary_day.html:40
+#: templates/nutrition/dashboard.html:31 templates/nutrition/dashboard.html:52
+#: templates/nutrition/dashboard.html:111 templates/nutrition/diary_day.html:44
 #: templates/nutrition/onboarding_review.html:18
-#: templates/nutrition/recipe_detail.html:60
+#: templates/nutrition/recipe_detail.html:62
 msgid "Carbohydrates"
 msgstr "Углеводы"
 
 #: templates/nutrition/calculator_macros.html:30
-#: templates/nutrition/dashboard.html:33 templates/nutrition/dashboard.html:51
-#: templates/nutrition/dashboard.html:110 templates/nutrition/diary_day.html:44
+#: templates/nutrition/dashboard.html:35 templates/nutrition/dashboard.html:53
+#: templates/nutrition/dashboard.html:112 templates/nutrition/diary_day.html:48
 #: templates/nutrition/onboarding_review.html:19
-#: templates/nutrition/recipe_detail.html:61
+#: templates/nutrition/recipe_detail.html:63
 msgid "Fat"
 msgstr "Жиры"
 
@@ -4582,6 +5311,18 @@ msgstr ""
 msgid "How many calories your body burns at rest, and in total."
 msgstr "Сколько калорий сжигает ваше тело в покое и в целом."
 
+#: templates/nutrition/calculators_home.html:16
+#: templates/nutrition/calculators_home.html:24
+#: templates/nutrition/calculators_home.html:32
+#: templates/nutrition/calculators_home.html:40
+#: templates/nutrition/calculators_home.html:48
+#: templates/nutrition/calculators_home.html:56
+#: templates/nutrition/calculators_home.html:64
+#: templates/nutrition/diet_plan_list.html:29
+#: templates/nutrition/recipe_list.html:33
+msgid "Open"
+msgstr "Открыть"
+
 #: templates/nutrition/calculators_home.html:22
 msgid "Split a calorie target into protein, carbohydrates, and fat."
 msgstr "Разделите целевую калорийность на белки, углеводы и жиры."
@@ -4620,14 +5361,14 @@ msgstr ""
 "достижения целевого веса."
 
 #: templates/nutrition/calculators_home.html:67
-#: templates/nutrition/diary_day.html:88
-#: templates/nutrition/diet_plan_list.html:37
+#: templates/nutrition/diary_day.html:92
+#: templates/nutrition/diet_plan_list.html:39
 #: templates/nutrition/food_list.html:44 templates/nutrition/goal_edit.html:36
-#: templates/nutrition/recipe_list.html:44 templates/nutrition/stats.html:44
+#: templates/nutrition/recipe_list.html:46 templates/nutrition/stats.html:44
 msgid "Back to nutrition"
 msgstr "Назад к питанию"
 
-#: templates/nutrition/dashboard.html:7
+#: templates/nutrition/dashboard.html:9
 msgid ""
 "Based on whether you completed a workout today — this doesn't change your "
 "calorie target automatically."
@@ -4635,77 +5376,77 @@ msgstr ""
 "Основано на том, тренировались ли вы сегодня — это не меняет ваш план по "
 "калориям автоматически."
 
-#: templates/nutrition/dashboard.html:9
+#: templates/nutrition/dashboard.html:11
 msgid "Training day"
 msgstr "День тренировки"
 
-#: templates/nutrition/dashboard.html:17
+#: templates/nutrition/dashboard.html:19
 msgid "Today so far"
 msgstr "Сегодня на данный момент"
 
-#: templates/nutrition/dashboard.html:38
+#: templates/nutrition/dashboard.html:40
 msgid "Open food diary"
 msgstr "Открыть дневник питания"
 
-#: templates/nutrition/dashboard.html:39
+#: templates/nutrition/dashboard.html:41
 msgid "+ Log food now"
 msgstr "+ Записать еду сейчас"
 
-#: templates/nutrition/dashboard.html:44
+#: templates/nutrition/dashboard.html:46
 msgid "Today's plan"
 msgstr "План на сегодня"
 
-#: templates/nutrition/dashboard.html:57
+#: templates/nutrition/dashboard.html:59
 msgid "Nothing planned"
 msgstr "Ничего не запланировано"
 
-#: templates/nutrition/dashboard.html:60
+#: templates/nutrition/dashboard.html:62
 msgid "Open plan"
 msgstr "Открыть план"
 
-#: templates/nutrition/dashboard.html:67
+#: templates/nutrition/dashboard.html:69
 msgid "Is your current target working?"
 msgstr "Работает ли ваша текущая цель?"
 
-#: templates/nutrition/dashboard.html:70
+#: templates/nutrition/dashboard.html:72
 #: templates/workouts/_performed_exercise_card.html:50
 msgid "High confidence"
 msgstr "Высокая уверенность"
 
-#: templates/nutrition/dashboard.html:71
+#: templates/nutrition/dashboard.html:73
 #: templates/workouts/_performed_exercise_card.html:49
 msgid "Medium confidence"
 msgstr "Средняя уверенность"
 
-#: templates/nutrition/dashboard.html:72
+#: templates/nutrition/dashboard.html:74
 #: templates/workouts/_performed_exercise_card.html:48
 msgid "Low confidence"
 msgstr "Низкая уверенность"
 
-#: templates/nutrition/dashboard.html:77
+#: templates/nutrition/dashboard.html:79
 #, python-format
 msgid "Adjust to %(calories)s kcal/day"
 msgstr "Скорректировать до %(calories)s ккал/день"
 
-#: templates/nutrition/dashboard.html:94
+#: templates/nutrition/dashboard.html:96
 msgid "Weight trend"
 msgstr "Тренд веса"
 
-#: templates/nutrition/dashboard.html:102
+#: templates/nutrition/dashboard.html:104
 msgid "Daily target"
 msgstr "Дневная цель"
 
-#: templates/nutrition/dashboard.html:104
+#: templates/nutrition/dashboard.html:106
 #: templates/nutrition/onboarding_review.html:13
 #, python-format
 msgid "%(calories)s kcal/day"
 msgstr "%(calories)s ккал/день"
 
-#: templates/nutrition/dashboard.html:119
+#: templates/nutrition/dashboard.html:121
 msgid "Current goal"
 msgstr "Текущая цель"
 
-#: templates/nutrition/dashboard.html:121 templates/nutrition/goal_edit.html:3
+#: templates/nutrition/dashboard.html:123 templates/nutrition/goal_edit.html:3
 #: templates/nutrition/goal_edit.html:6
 msgid "Change goal"
 msgstr "Изменить цель"
@@ -4727,51 +5468,51 @@ msgstr "например, куриная грудка или номер штри
 msgid "Back to diary"
 msgstr "Назад к дневнику"
 
-#: templates/nutrition/diary_day.html:3 templates/nutrition/diary_day.html:7
+#: templates/nutrition/diary_day.html:3 templates/nutrition/diary_day.html:13
 msgid "Food diary"
 msgstr "Дневник питания"
 
-#: templates/nutrition/diary_day.html:15
+#: templates/nutrition/diary_day.html:19
 msgid "Previous day"
 msgstr "Предыдущий день"
 
-#: templates/nutrition/diary_day.html:16
+#: templates/nutrition/diary_day.html:20
 msgid "Jump to date"
 msgstr "Перейти к дате"
 
-#: templates/nutrition/diary_day.html:18
+#: templates/nutrition/diary_day.html:22
 msgid "Next day"
 msgstr "Следующий день"
 
-#: templates/nutrition/diary_day.html:22
+#: templates/nutrition/diary_day.html:26
 msgid "Today's nutrition"
 msgstr "Питание за сегодня"
 
-#: templates/nutrition/diary_day.html:63
+#: templates/nutrition/diary_day.html:67
 msgid "Remove this entry?"
 msgstr "Удалить эту запись?"
 
-#: templates/nutrition/diary_day.html:70
+#: templates/nutrition/diary_day.html:74
 msgid "Nothing logged yet."
 msgstr "Пока ничего не записано."
 
-#: templates/nutrition/diary_day.html:72
+#: templates/nutrition/diary_day.html:76
 msgid "+ Add food"
 msgstr "+ Добавить продукт"
 
-#: templates/nutrition/diary_day.html:77
+#: templates/nutrition/diary_day.html:81
 msgid "Copy this day to another date"
 msgstr "Скопировать этот день на другую дату"
 
-#: templates/nutrition/diary_day.html:81
+#: templates/nutrition/diary_day.html:85
 msgid "Copy to date"
 msgstr "Скопировать на дату"
 
-#: templates/nutrition/diary_day.html:82
+#: templates/nutrition/diary_day.html:86 templates/social/group_detail.html:28
 msgid "Copy"
 msgstr "Копировать"
 
-#: templates/nutrition/diary_day.html:87
+#: templates/nutrition/diary_day.html:91
 msgid "Manage foods"
 msgstr "Управление продуктами"
 
@@ -4779,24 +5520,24 @@ msgstr "Управление продуктами"
 msgid "Edit entry"
 msgstr "Изменить запись"
 
-#: templates/nutrition/diet_plan_detail.html:13
-#: templates/nutrition/diet_plan_list.html:24
+#: templates/nutrition/diet_plan_detail.html:15
+#: templates/nutrition/diet_plan_list.html:26
 msgid "Activate"
 msgstr "Включить"
 
-#: templates/nutrition/diet_plan_detail.html:18
+#: templates/nutrition/diet_plan_detail.html:20
 msgid "protein"
 msgstr "белки"
 
-#: templates/nutrition/diet_plan_detail.html:18
+#: templates/nutrition/diet_plan_detail.html:20
 msgid "carbs"
 msgstr "углеводы"
 
-#: templates/nutrition/diet_plan_detail.html:18
+#: templates/nutrition/diet_plan_detail.html:20
 msgid "fat"
 msgstr "жиры"
 
-#: templates/nutrition/diet_plan_detail.html:20
+#: templates/nutrition/diet_plan_detail.html:22
 msgid ""
 "Varies across the week — same daily calories/macros every day, different "
 "meals."
@@ -4804,29 +5545,29 @@ msgstr ""
 "Меняется в течение недели — одинаковые дневные калории/макросы каждый день, "
 "разные блюда."
 
-#: templates/nutrition/diet_plan_detail.html:62
+#: templates/nutrition/diet_plan_detail.html:64
 msgid "Log this plan to your diary"
 msgstr "Записать этот план в дневник"
 
-#: templates/nutrition/diet_plan_detail.html:64
+#: templates/nutrition/diet_plan_detail.html:66
 msgid "Logs whichever day of the week the date below falls on."
 msgstr "Записывает тот день недели, на который приходится указанная ниже дата."
 
-#: templates/nutrition/diet_plan_detail.html:72
-#: templates/nutrition/recipe_detail.html:92
+#: templates/nutrition/diet_plan_detail.html:74
+#: templates/nutrition/recipe_detail.html:94
 msgid "Log it"
 msgstr "Записать"
 
-#: templates/nutrition/diet_plan_detail.html:75
+#: templates/nutrition/diet_plan_detail.html:77
 #: templates/nutrition/diet_plan_form.html:25
 msgid "Back to diet plans"
 msgstr "Назад к планам питания"
 
-#: templates/nutrition/diet_plan_detail.html:79
+#: templates/nutrition/diet_plan_detail.html:81
 msgid "Delete this plan?"
 msgstr "Удалить этот план?"
 
-#: templates/nutrition/diet_plan_detail.html:81
+#: templates/nutrition/diet_plan_detail.html:83
 msgid "Delete plan"
 msgstr "Удалить план"
 
@@ -4861,11 +5602,11 @@ msgstr "Заменить пункт"
 msgid "Back to plan"
 msgstr "Назад к плану"
 
-#: templates/nutrition/diet_plan_list.html:7
+#: templates/nutrition/diet_plan_list.html:9
 msgid "+ New plan"
 msgstr "+ Новый план"
 
-#: templates/nutrition/diet_plan_list.html:33
+#: templates/nutrition/diet_plan_list.html:35
 msgid "No diet plans yet."
 msgstr "Пока нет планов питания."
 
@@ -4879,7 +5620,6 @@ msgstr "Добавить пункт в %(name)s"
 #: templates/nutrition/food_browse.html:6
 #: templates/nutrition/food_category.html:3
 #: templates/nutrition/food_category.html:6
-#: templates/nutrition/food_list.html:8
 msgid "Import from OpenFoodFacts"
 msgstr "Импортировать из OpenFoodFacts"
 
@@ -4923,12 +5663,16 @@ msgid "New food"
 msgstr "Новый продукт"
 
 #: templates/nutrition/food_list.html:9
+msgid "Browse OpenFoodFacts"
+msgstr "Просмотреть OpenFoodFacts"
+
+#: templates/nutrition/food_list.html:10
 msgid "+ New food"
 msgstr "+ Новый продукт"
 
 #: templates/nutrition/food_list.html:16 templates/nutrition/food_list.html:19
-#: templates/nutrition/recipe_list.html:13
-#: templates/nutrition/recipe_list.html:16
+#: templates/nutrition/recipe_list.html:15
+#: templates/nutrition/recipe_list.html:18
 msgid "Search"
 msgstr "Поиск"
 
@@ -5029,13 +5773,13 @@ msgstr ""
 msgid "Save and start tracking"
 msgstr "Сохранить и начать отслеживание"
 
-#: templates/nutrition/recipe_detail.html:10
-#: templates/nutrition/recipe_list.html:24
+#: templates/nutrition/recipe_detail.html:12
+#: templates/nutrition/recipe_list.html:26
 #: templates/programs/program_list.html:14
 msgid "Template"
 msgstr "Шаблон"
 
-#: templates/nutrition/recipe_detail.html:16
+#: templates/nutrition/recipe_detail.html:18
 #, python-format
 msgid ""
 "Tagged for %(meal)s — the diet-plan builder only ever suggests this recipe "
@@ -5044,48 +5788,48 @@ msgstr ""
 "Отмечено для %(meal)s — конструктор плана питания предлагает этот рецепт "
 "только для этого приёма пищи."
 
-#: templates/nutrition/recipe_detail.html:25
+#: templates/nutrition/recipe_detail.html:27
 msgid "Ingredients"
 msgstr "Ингредиенты"
 
-#: templates/nutrition/recipe_detail.html:36
+#: templates/nutrition/recipe_detail.html:38
 msgid "Remove this ingredient?"
 msgstr "Удалить этот ингредиент?"
 
-#: templates/nutrition/recipe_detail.html:44
+#: templates/nutrition/recipe_detail.html:46
 msgid "No ingredients yet."
 msgstr "Пока нет ингредиентов."
 
-#: templates/nutrition/recipe_detail.html:47
+#: templates/nutrition/recipe_detail.html:49
 msgid "+ Add ingredient"
 msgstr "+ Добавить ингредиент"
 
-#: templates/nutrition/recipe_detail.html:55
+#: templates/nutrition/recipe_detail.html:57
 msgid "Total"
 msgstr "Всего"
 
-#: templates/nutrition/recipe_detail.html:55
+#: templates/nutrition/recipe_detail.html:57
 #, python-format
 msgid "Per serving (of %(servings)s)"
 msgstr "На порцию (из %(servings)s)"
 
-#: templates/nutrition/recipe_detail.html:63
+#: templates/nutrition/recipe_detail.html:65
 msgid "Fiber"
 msgstr "Клетчатка"
 
-#: templates/nutrition/recipe_detail.html:66
+#: templates/nutrition/recipe_detail.html:68
 msgid "Sugar"
 msgstr "Сахар"
 
-#: templates/nutrition/recipe_detail.html:69
+#: templates/nutrition/recipe_detail.html:71
 msgid "Saturated fat"
 msgstr "Насыщенные жиры"
 
-#: templates/nutrition/recipe_detail.html:72
+#: templates/nutrition/recipe_detail.html:74
 msgid "Sodium"
 msgstr "Натрий"
 
-#: templates/nutrition/recipe_detail.html:77
+#: templates/nutrition/recipe_detail.html:79
 msgid ""
 "Fiber, sugar, saturated fat, and sodium show here once at least one "
 "ingredient has that data (e.g. imported from OpenFoodFacts)."
@@ -5094,20 +5838,20 @@ msgstr ""
 "один ингредиент содержит эти данные (например, импортирован из "
 "OpenFoodFacts)."
 
-#: templates/nutrition/recipe_detail.html:83
+#: templates/nutrition/recipe_detail.html:85
 msgid "Log to diary"
 msgstr "Записать в дневник"
 
-#: templates/nutrition/recipe_detail.html:95
+#: templates/nutrition/recipe_detail.html:97
 #: templates/nutrition/recipe_form.html:23
 msgid "Back to recipes"
 msgstr "Назад к рецептам"
 
-#: templates/nutrition/recipe_detail.html:100
+#: templates/nutrition/recipe_detail.html:102
 msgid "Delete this recipe?"
 msgstr "Удалить этот рецепт?"
 
-#: templates/nutrition/recipe_detail.html:102
+#: templates/nutrition/recipe_detail.html:104
 msgid "Delete recipe"
 msgstr "Удалить рецепт"
 
@@ -5138,20 +5882,20 @@ msgstr "Назад к рецепту"
 msgid "Add ingredient to %(name)s"
 msgstr "Добавить ингредиент в %(name)s"
 
-#: templates/nutrition/recipe_list.html:7
+#: templates/nutrition/recipe_list.html:9
 msgid "+ New recipe"
 msgstr "+ Новый рецепт"
 
-#: templates/nutrition/recipe_list.html:28
+#: templates/nutrition/recipe_list.html:30
 #, python-format
 msgid "%(calories)s kcal/serving"
 msgstr "%(calories)s ккал/порция"
 
-#: templates/nutrition/recipe_list.html:36
+#: templates/nutrition/recipe_list.html:38
 msgid "No recipes match your search."
 msgstr "По вашему запросу рецептов не найдено."
 
-#: templates/nutrition/recipe_list.html:40
+#: templates/nutrition/recipe_list.html:42
 msgid "No recipes yet."
 msgstr "Пока нет рецептов."
 
@@ -5199,11 +5943,11 @@ msgstr ""
 
 #: templates/programs/prescription_form.html:3
 #: templates/programs/prescription_form.html:6
-#: templates/programs/program_detail.html:67
+#: templates/programs/program_detail.html:69
 #: templates/workouts/_train_panel.html:93
 #: templates/workouts/performed_exercise_form.html:3
 #: templates/workouts/performed_exercise_form.html:6
-#: templates/workouts/session_detail.html:24
+#: templates/workouts/session_detail.html:26
 msgid "Add exercise"
 msgstr "Добавить упражнение"
 
@@ -5217,7 +5961,7 @@ msgstr "Удалить упражнение"
 
 #: templates/programs/program_confirm_delete.html:3
 #: templates/programs/program_confirm_delete.html:6
-#: templates/programs/program_detail.html:85
+#: templates/programs/program_detail.html:87
 msgid "Delete program"
 msgstr "Удалить программу"
 
@@ -5230,51 +5974,51 @@ msgstr ""
 "Удалить <strong>%(name)s</strong> и все его тренировки и упражнения? Это "
 "действие необратимо."
 
-#: templates/programs/program_detail.html:14
+#: templates/programs/program_detail.html:16
 msgid "Built-in template"
 msgstr "Встроенный шаблон"
 
-#: templates/programs/program_detail.html:16
+#: templates/programs/program_detail.html:18
 msgid "My template"
 msgstr "Мой шаблон"
 
-#: templates/programs/program_detail.html:20
+#: templates/programs/program_detail.html:22
 #, python-format
 msgid "Version %(version)s · updated %(updated)s"
 msgstr "Версия %(version)s · обновлено %(updated)s"
 
-#: templates/programs/program_detail.html:25
+#: templates/programs/program_detail.html:27
 msgid "Copy to a new program"
 msgstr "Копировать в новую программу"
 
-#: templates/programs/program_detail.html:42
+#: templates/programs/program_detail.html:44
 #: templates/programs/workout_form.html:23
 msgid "Delete this workout and its exercises?"
 msgstr "Удалить эту тренировку и её упражнения?"
 
-#: templates/programs/program_detail.html:62
+#: templates/programs/program_detail.html:64
 #: templates/workouts/_train_panel.html:92
-#: templates/workouts/session_detail.html:19
+#: templates/workouts/session_detail.html:21
 msgid "No exercises yet."
 msgstr "Упражнений пока нет."
 
-#: templates/programs/program_detail.html:72
+#: templates/programs/program_detail.html:74
 msgid "Start workout"
 msgstr "Начать тренировку"
 
-#: templates/programs/program_detail.html:77
+#: templates/programs/program_detail.html:79
 msgid "No workouts yet."
 msgstr "Тренировок пока нет."
 
-#: templates/programs/program_detail.html:82
+#: templates/programs/program_detail.html:84
 msgid "Add workout"
 msgstr "Добавить тренировку"
 
-#: templates/programs/program_detail.html:83
+#: templates/programs/program_detail.html:85
 msgid "Delete this program? This cannot be undone."
 msgstr "Удалить эту программу? Это действие необратимо."
 
-#: templates/programs/program_detail.html:89
+#: templates/programs/program_detail.html:91
 #: templates/workouts/session_list.html:23
 msgid "Back to programs"
 msgstr "Назад к программам"
@@ -5324,7 +6068,7 @@ msgid "New workout"
 msgstr "Новая тренировка"
 
 #: templates/programs/workout_form.html:25
-#: templates/workouts/session_detail.html:38
+#: templates/workouts/session_detail.html:40
 msgid "Delete workout"
 msgstr "Удалить тренировку"
 
@@ -5358,10 +6102,6 @@ msgstr "(предыдущий: %(previous)s)"
 #, python-format
 msgid "%(name)s records"
 msgstr "Рекорды: %(name)s"
-
-#: templates/records/exercise_records.html:11
-msgid "Current"
-msgstr "Текущие"
 
 #: templates/records/exercise_records.html:19
 msgid "Best set volume"
@@ -5533,7 +6273,7 @@ msgid "No messages yet — say hello."
 msgstr "Пока нет сообщений — скажите привет."
 
 #: templates/social/block_list.html:3 templates/social/block_list.html:6
-#: templates/social/friend_list.html:60 templates/social/message_list.html:29
+#: templates/social/friend_list.html:74 templates/social/message_list.html:29
 msgid "Blocked users"
 msgstr "Заблокированные пользователи"
 
@@ -5551,46 +6291,58 @@ msgstr "Вы никого не заблокировали."
 msgid "Friends"
 msgstr "Друзья"
 
-#: templates/social/friend_list.html:7 templates/social/friend_search.html:3
-#: templates/social/friend_search.html:6
+#: templates/social/friend_list.html:9 templates/social/friend_list.html:69
+#: templates/social/friend_search.html:3 templates/social/friend_search.html:6
 msgid "Find friends"
 msgstr "Найти друзей"
 
-#: templates/social/friend_list.html:11
+#: templates/social/friend_list.html:13
 msgid "Friend requests"
 msgstr "Запросы в друзья"
 
-#: templates/social/friend_list.html:19
+#: templates/social/friend_list.html:21
 msgid "Accept"
 msgstr "Принять"
 
-#: templates/social/friend_list.html:24 templates/social/group_list.html:27
+#: templates/social/friend_list.html:26 templates/social/group_list.html:29
 msgid "Decline"
 msgstr "Отклонить"
 
-#: templates/social/friend_list.html:32
+#: templates/social/friend_list.html:34
 msgid "Sent requests"
 msgstr "Отправленные запросы"
 
-#: templates/social/friend_list.html:35
+#: templates/social/friend_list.html:37
 #, python-format
 msgid "Waiting on %(username)s"
 msgstr "Ожидает ответа от %(username)s"
 
-#: templates/social/friend_list.html:40
+#: templates/social/friend_list.html:42
 msgid "Your friends"
 msgstr "Ваши друзья"
 
-#: templates/social/friend_list.html:47
+#: templates/social/friend_list.html:51
+msgid "Unmute"
+msgstr "Включить"
+
+#: templates/social/friend_list.html:56
+msgid "Mute"
+msgstr "Отключить"
+
+#: templates/social/friend_list.html:60
 msgid "Remove this friend?"
 msgstr "Удалить этого друга?"
 
-#: templates/social/friend_list.html:55
-msgid "No friends yet."
-msgstr "Пока нет друзей."
+#: templates/social/friend_list.html:68
+msgid ""
+"No friends yet — find someone you train with to share progress and message "
+"them here."
+msgstr ""
+"Пока нет друзей — найдите того, с кем вы тренируетесь, чтобы делиться "
+"прогрессом и переписываться здесь."
 
-#: templates/social/friend_list.html:61 templates/social/group_list.html:49
-#: templates/social/message_list.html:3 templates/social/message_thread.html:7
+#: templates/social/friend_list.html:75 templates/social/group_list.html:51
+#: templates/social/message_list.html:3 templates/social/message_thread.html:9
 msgid "Messages"
 msgstr "Сообщения"
 
@@ -5602,98 +6354,111 @@ msgstr "Поиск по имени пользователя…"
 msgid "Search by username"
 msgstr "Поиск по имени пользователя"
 
-#: templates/social/group_detail.html:14
+#: templates/social/group_detail.html:16
 msgid "Open chat"
 msgstr "Открыть чат"
 
-#: templates/social/group_detail.html:18
+#: templates/social/group_detail.html:20 templates/social/group_detail.html:25
 msgid "Invite link"
 msgstr "Пригласительная ссылка"
 
-#: templates/social/group_detail.html:26
+#: templates/social/group_detail.html:29
+msgid "Copied!"
+msgstr "Скопировано!"
+
+#: templates/social/group_detail.html:35
 msgid "Disable link"
 msgstr "Отключить ссылку"
 
-#: templates/social/group_detail.html:29
+#: templates/social/group_detail.html:38
 msgid "Regenerate the invite link? The old link will stop working."
 msgstr ""
 "Создать новую пригласительную ссылку? Старая ссылка перестанет работать."
 
-#: templates/social/group_detail.html:35
+#: templates/social/group_detail.html:44
 msgid "Anyone with this link can join — off until you turn it on."
 msgstr ""
 "Любой, у кого есть эта ссылка, может присоединиться — выключено, пока вы её "
 "не включите."
 
-#: templates/social/group_detail.html:38
+#: templates/social/group_detail.html:47
 msgid "Enable link"
 msgstr "Включить ссылку"
 
-#: templates/social/group_detail.html:52
+#: templates/social/group_detail.html:61
 msgid "Invite a friend"
 msgstr "Пригласить друга"
 
-#: templates/social/group_detail.html:59
+#: templates/social/group_detail.html:68
 msgid "Send invite"
 msgstr "Отправить приглашение"
 
-#: templates/social/group_detail.html:64
+#: templates/social/group_detail.html:73
+#, python-format
 msgid "Members (%(count)s)"
 msgstr "Участники (%(count)s)"
 
-#: templates/social/group_detail.html:68
+#: templates/social/group_detail.html:77
 msgid "(you)"
 msgstr "(вы)"
 
-#: templates/social/group_detail.html:78
+#: templates/social/group_detail.html:87
 msgid "Remove admin"
 msgstr "Снять права администратора"
 
-#: templates/social/group_detail.html:81
+#: templates/social/group_detail.html:90
 msgid "Make admin"
 msgstr "Сделать администратором"
 
-#: templates/social/group_detail.html:85 templates/social/group_detail.html:97
+#: templates/social/group_detail.html:94 templates/social/group_detail.html:106
 msgid "Remove this member from the group?"
 msgstr "Удалить этого участника из группы?"
 
-#: templates/social/group_detail.html:90
+#: templates/social/group_detail.html:99
 msgid "Transfer ownership of this group? You will become an admin instead."
 msgstr ""
 "Передать право владения этой группой? Вместо этого вы станете "
 "администратором."
 
-#: templates/social/group_detail.html:92
+#: templates/social/group_detail.html:101
 msgid "Make owner"
 msgstr "Сделать владельцем"
 
-#: templates/social/group_detail.html:108
-msgid "Leave this group?"
-msgstr "Покинуть эту группу?"
+#: templates/social/group_detail.html:129
+msgid "Unmute notifications"
+msgstr "Включить уведомления"
 
-#: templates/social/group_detail.html:110
-msgid "Leave group"
-msgstr "Покинуть группу"
+#: templates/social/group_detail.html:131
+msgid "Mute notifications"
+msgstr "Отключить уведомления"
 
-#: templates/social/group_detail.html:114
-msgid "Delete this group? This can't be undone."
-msgstr "Удалить группу? Это действие нельзя отменить."
-
-#: templates/social/group_detail.html:116
-msgid "Delete group"
-msgstr "Удалить группу"
-
-#: templates/social/group_detail.html:121 templates/social/group_list.html:3
+#: templates/social/group_detail.html:134 templates/social/group_list.html:3
 #: templates/social/group_list.html:6 templates/social/message_list.html:28
 msgid "Groups"
 msgstr "Группы"
+
+#: templates/social/group_detail.html:140
+msgid "Leave this group?"
+msgstr "Покинуть эту группу?"
+
+#: templates/social/group_detail.html:142
+msgid "Leave group"
+msgstr "Покинуть группу"
+
+#: templates/social/group_detail.html:146
+msgid "Delete this group? This can't be undone."
+msgstr "Удалить группу? Это действие нельзя отменить."
+
+#: templates/social/group_detail.html:148
+msgid "Delete group"
+msgstr "Удалить группу"
 
 #: templates/social/group_form.html:3 templates/social/group_form.html:6
 msgid "Edit group"
 msgstr "Изменить группу"
 
 #: templates/social/group_form.html:3 templates/social/group_form.html:6
-#: templates/social/group_list.html:7
+#: templates/social/group_list.html:9
 msgid "New group"
 msgstr "Новая группа"
 
@@ -5716,20 +6481,20 @@ msgstr "Открыть группу"
 msgid "Log in to join this group."
 msgstr "Войдите, чтобы присоединиться к этой группе."
 
-#: templates/social/group_list.html:11
+#: templates/social/group_list.html:13
 msgid "Group invites"
 msgstr "Приглашения в группы"
 
-#: templates/social/group_list.html:16
+#: templates/social/group_list.html:18
 #, python-format
 msgid "Invited by %(username)s"
 msgstr "Пригласил(а) %(username)s"
 
-#: templates/social/group_list.html:22
+#: templates/social/group_list.html:24
 msgid "Join"
 msgstr "Вступить"
 
-#: templates/social/group_list.html:37 templates/social/message_list.html:36
+#: templates/social/group_list.html:39 templates/social/message_list.html:36
 #: templates/social/message_list.html:48
 #, python-format
 msgid "%(counter)s unread"
@@ -5738,7 +6503,7 @@ msgstr[0] "%(counter)s непрочитанное"
 msgstr[1] "%(counter)s непрочитанных"
 msgstr[2] "%(counter)s непрочитанных"
 
-#: templates/social/group_list.html:39
+#: templates/social/group_list.html:41
 #, python-format
 msgid "%(counter)s member"
 msgid_plural "%(counter)s members"
@@ -5746,16 +6511,16 @@ msgstr[0] "%(counter)s участник"
 msgstr[1] "%(counter)s участника"
 msgstr[2] "%(counter)s участников"
 
-#: templates/social/group_list.html:45 templates/social/message_list.html:52
+#: templates/social/group_list.html:47 templates/social/message_list.html:52
 msgid "You're not in any groups yet."
 msgstr "Вы пока не состоите ни в одной группе."
 
-#: templates/social/group_thread.html:7
+#: templates/social/group_thread.html:9
 msgid "Group"
 msgstr "Группа"
 
-#: templates/social/group_thread.html:32
-#: templates/social/message_thread.html:41
+#: templates/social/group_thread.html:40
+#: templates/social/message_thread.html:52
 msgid "Send"
 msgstr "Отправить"
 
@@ -5856,36 +6621,36 @@ msgstr "Больше параметров (RPE, RIR, заметки…)"
 msgid "Back to workout"
 msgstr "Назад к тренировке"
 
-#: templates/workouts/session_detail.html:11
+#: templates/workouts/session_detail.html:13
 #, python-format
 msgid "Started %(started)s"
 msgstr "Начато %(started)s"
 
-#: templates/workouts/session_detail.html:12
+#: templates/workouts/session_detail.html:14
 #, python-format
 msgid "ended %(ended)s"
 msgstr "завершено %(ended)s"
 
-#: templates/workouts/session_detail.html:28
-#: templates/workouts/session_train.html:46
+#: templates/workouts/session_detail.html:30
+#: templates/workouts/session_train.html:51
 msgid "Complete workout"
 msgstr "Завершить тренировку"
 
-#: templates/workouts/session_detail.html:30
-#: templates/workouts/session_train.html:48
+#: templates/workouts/session_detail.html:32
+#: templates/workouts/session_train.html:53
 msgid "Abandon this workout? It stays in your history as abandoned."
 msgstr "Прервать эту тренировку? Она останется в истории как отменённая."
 
-#: templates/workouts/session_detail.html:32
-#: templates/workouts/session_train.html:50
+#: templates/workouts/session_detail.html:34
+#: templates/workouts/session_train.html:55
 msgid "Abandon workout"
 msgstr "Прервать тренировку"
 
-#: templates/workouts/session_detail.html:36
+#: templates/workouts/session_detail.html:38
 msgid "Delete this workout? This cannot be undone."
 msgstr "Удалить эту тренировку? Это действие необратимо."
 
-#: templates/workouts/session_detail.html:41
+#: templates/workouts/session_detail.html:43
 msgid "Back to history"
 msgstr "Назад к истории"
 
@@ -5909,23 +6674,31 @@ msgstr "Начать свободную тренировку"
 msgid "Training"
 msgstr "Тренировка"
 
-#: templates/workouts/session_train.html:7
+#: templates/workouts/session_train.html:9
 msgid "Full view"
 msgstr "Полный вид"
 
-#: templates/workouts/session_train.html:21
+#: templates/workouts/session_train.html:22
+msgid "Rest over"
+msgstr "Отдых окончен"
+
+#: templates/workouts/session_train.html:22
+msgid "Time to get back to it."
+msgstr "Пора продолжать тренировку."
+
+#: templates/workouts/session_train.html:26
 msgid "Rest timer"
 msgstr "Таймер отдыха"
 
-#: templates/workouts/session_train.html:23
+#: templates/workouts/session_train.html:28
 msgid "Unmute rest timer sound"
 msgstr "Включить звук таймера отдыха"
 
-#: templates/workouts/session_train.html:23
+#: templates/workouts/session_train.html:28
 msgid "Mute rest timer sound"
 msgstr "Отключить звук таймера отдыха"
 
-#: templates/workouts/session_train.html:33
+#: templates/workouts/session_train.html:38
 msgid "Skip rest"
 msgstr "Пропустить отдых"
 
@@ -5937,127 +6710,3 @@ msgstr "Изменить подход"
 #, python-format
 msgid "Edit set %(number)s"
 msgstr "Изменить подход %(number)s"
-
-#: templates/core/_pwa_install_prompt.html:14 templates/core/_pwa_install_prompt.html:17
-msgid "Install IronStack"
-msgstr "Установить IronStack"
-
-#: templates/core/_pwa_install_prompt.html:19
-msgid "Add it to your home screen for quick, full-screen access: tap Share, then \"Add to Home Screen\"."
-msgstr "Добавьте его на главный экран для быстрого доступа во весь экран: нажмите «Поделиться», затем «На экран «Домой»»."
-
-#: templates/core/_pwa_install_prompt.html:22
-msgid "Add it to your home screen for quick, full-screen access."
-msgstr "Добавьте его на главный экран для быстрого доступа во весь экран."
-
-#: templates/core/_pwa_install_prompt.html:25
-msgid "Install"
-msgstr "Установить"
-
-#: templates/core/_pwa_install_prompt.html:26
-msgid "Remind me later"
-msgstr "Напомнить позже"
-
-#: templates/core/_pwa_install_prompt.html:27
-msgid "Don't remind me"
-msgstr "Не напоминать"
-
-#: apps/core/management/commands/announce_version_update.py:52
-msgid "New IronStack version"
-msgstr "Новая версия IronStack"
-
-#: apps/core/management/commands/announce_version_update.py:53
-#, python-format
-msgid "IronStack %(version)s is now running — tap to see what's new."
-msgstr "IronStack %(version)s уже запущен — нажмите, чтобы узнать, что нового."
-
-msgid "Browse OpenFoodFacts"
-msgstr "Просмотреть OpenFoodFacts"
-
-msgid "Rest over"
-msgstr "Отдых окончен"
-
-msgid "Time to get back to it."
-msgstr "Пора продолжать тренировку."
-
-msgid "Account"
-msgstr "Аккаунт"
-
-msgid "Contact:"
-msgstr "Контакт:"
-
-msgid "Preferences"
-msgstr "Настройки"
-
-msgid "Privacy"
-msgstr "Конфиденциальность"
-
-msgid "Social"
-msgstr "Социальное"
-
-msgid "Support"
-msgstr "Поддержка"
-
-msgid "Camera access needs a secure (https) connection."
-msgstr "Для доступа к камере нужно защищённое (https) соединение."
-
-msgid "Breakfast"
-msgstr "Завтрак"
-
-msgid "Lunch"
-msgstr "Обед"
-
-msgid "Dinner"
-msgstr "Ужин"
-
-msgid "Evening snack"
-msgstr "Вечерний перекус"
-
-msgid "Still nothing? Make sure the barcode is well lit and fills the frame, or close this and type it into the search box instead."
-msgstr "Всё ещё ничего? Убедитесь, что штрихкод хорошо освещён и полностью помещается в кадр, или закройте это окно и введите код в поле поиска вручную."
-
-msgid "Copied!"
-msgstr "Скопировано!"
-
-#: templates/accounts/profile.html:229
-msgid "Source on GitHub"
-msgstr "Исходный код на GitHub"
-
-msgid "Notifications"
-msgstr "Уведомления"
-
-msgid "Remind me to log body measurements"
-msgstr "Напоминать мне вносить замеры тела"
-
-msgid "Shows a dashboard card nudging you to log a body measurement when you haven't logged one in a while. Turn off to never see that reminder — you can still log a reading any time from Body tracking."
-msgstr "Показывает на панели управления карточку с напоминанием внести замер тела, если вы давно этого не делали. Отключите, чтобы больше никогда не видеть это напоминание — вы всё равно сможете внести замер в любое время в разделе «Отслеживание тела»."
-
-msgid "Time to log your body measurements?"
-msgstr "Пора внести замеры тела?"
-
-msgid "It's been a while since you tracked your weight or measurements — tap here to add a new reading."
-msgstr "Вы давно не отмечали свой вес или замеры — нажмите здесь, чтобы добавить новое значение."
-
-msgid "Change since first log"
-msgstr "Изменение с первой записи"
-
-msgid "Lowest"
-msgstr "Минимум"
-
-msgid "Highest"
-msgstr "Максимум"
-
-msgid "Average"
-msgstr "Среднее"
-
-msgid "Entries logged"
-msgstr "Записей внесено"
-
-msgid "Tracking since %(date)s."
-msgstr "Отслеживается с %(date)s."
-
-#~ msgid "You can't invite this user."
-#~ msgstr "Вы не можете пригласить этого пользователя."
-
-#~ msgid "Members"
-#~ msgstr "Участники"
