@@ -28,6 +28,10 @@ narrated summary of the same version.
   monospace font, which browsers apply a separate, smaller default
   size to unless the page sets one explicitly — even when a normal
   16px is already being inherited from further up the page.
+- The dashboard's "Recently active" list showed how long ago a
+  session *started*, not how long ago this person actually stopped
+  training — a long session that just finished read as "hours ago"
+  instead of "just now".
 
 ## [1.14.0] — 2026-09-13
 

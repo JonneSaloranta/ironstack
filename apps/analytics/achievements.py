@@ -39,7 +39,13 @@ class Achievement:
 @dataclass(frozen=True)
 class RecentActivity:
     display_name: str
-    last_active_at: datetime  # the latest session's started_at
+    # The latest session's `ended_at` once it's finished (completed or
+    # abandoned) — how long ago training actually *stopped*, not how
+    # long ago it happened to start. Falls back to `started_at` only
+    # while `is_in_progress` is True, since `ended_at` is still null
+    # then and the template shows "Training now" instead of a "time
+    # ago" built from this anyway.
+    last_active_at: datetime
     is_in_progress: bool
     is_recent: bool
 
@@ -181,12 +187,22 @@ def recently_active_users(limit=10):
         latest = WorkoutSession.objects.filter(user=user).order_by("-started_at").first()
         if latest is None:
             continue
+        is_in_progress = latest.status == WorkoutSessionStatus.IN_PROGRESS
+        # A finished session's `ended_at` — not `started_at` — is when
+        # this user was actually last active: a long session that just
+        # wrapped up should read as "just now", not "N hours ago" from
+        # whenever it happened to start. Only an in-progress session
+        # (no `ended_at` yet) falls back to `started_at`, and even then
+        # only to give this dataclass a real datetime to sort/compare
+        # by — the template shows "Training now" instead of a "time
+        # ago" built from it in that case.
+        last_active_at = latest.started_at if is_in_progress else latest.ended_at
         activity.append(
             RecentActivity(
                 display_name=user.public_display_name(),
-                last_active_at=latest.started_at,
-                is_in_progress=latest.status == WorkoutSessionStatus.IN_PROGRESS,
-                is_recent=(now - latest.started_at) <= _RECENT_ACTIVITY_WINDOW,
+                last_active_at=last_active_at,
+                is_in_progress=is_in_progress,
+                is_recent=(now - last_active_at) <= _RECENT_ACTIVITY_WINDOW,
             )
         )
     activity.sort(key=lambda entry: entry.last_active_at, reverse=True)

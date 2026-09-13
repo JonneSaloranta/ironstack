@@ -26,6 +26,15 @@ def _log_completed_session(user, exercise, weight, reps_list, *, days_ago=0):
     for reps in reps_list:
         workout_services.log_set(performed, weight=weight, reps=reps)
     workout_services.complete_session(session)
+    if days_ago:
+        # complete_session() always stamps ended_at with the real "now"
+        # — backdate it too so a session "logged N days ago" actually
+        # looks like one throughout, not just at its own started_at.
+        # Callers that need started_at/ended_at to diverge (e.g. a
+        # session that ran long) set ended_at explicitly afterward
+        # instead of using this shortcut.
+        session.ended_at = timezone.now() - timedelta(days=days_ago)
+        session.save(update_fields=["ended_at"])
     return session
 
 
@@ -401,9 +410,7 @@ class RecentlyActiveUsersTests(TestCase):
 
     def test_most_recently_active_user_comes_first(self):
         bob = User.objects.create_user(username="bob", password="s3cret-pass")
-        older = _log_completed_session(self.alice, self.exercise, Decimal("100"), [5])
-        older.started_at = timezone.now() - timedelta(days=5)
-        older.save(update_fields=["started_at"])
+        _log_completed_session(self.alice, self.exercise, Decimal("100"), [5], days_ago=5)
         _log_completed_session(bob, self.exercise, Decimal("100"), [5])  # just now
 
         display_names = [entry.display_name for entry in achievements.recently_active_users()]
@@ -427,11 +434,23 @@ class RecentlyActiveUsersTests(TestCase):
         self.assertFalse(entry.is_in_progress)
 
     def test_activity_older_than_a_day_is_not_flagged_recent(self):
-        session = _log_completed_session(self.alice, self.exercise, Decimal("100"), [5])
-        session.started_at = timezone.now() - timedelta(days=2)
-        session.save(update_fields=["started_at"])
+        _log_completed_session(self.alice, self.exercise, Decimal("100"), [5], days_ago=2)
         entry = achievements.recently_active_users()[0]
         self.assertFalse(entry.is_recent)
+
+    def test_last_active_at_is_when_the_session_ended_not_when_it_started(self):
+        """Regression: a session that ran long — started days ago,
+        finished just now — used to show as "days ago" on the
+        dashboard, keyed off started_at. It should read as barely any
+        time ago at all, since that's when this user actually stopped
+        training."""
+        session = _log_completed_session(self.alice, self.exercise, Decimal("100"), [5])
+        session.started_at = timezone.now() - timedelta(days=3)
+        session.save(update_fields=["started_at"])  # ended_at stays "just now"
+
+        entry = achievements.recently_active_users()[0]
+        self.assertEqual(entry.last_active_at, session.ended_at)
+        self.assertTrue(entry.is_recent)
 
     def test_a_user_who_opted_out_is_excluded(self):
         self.alice.show_achievements = False
