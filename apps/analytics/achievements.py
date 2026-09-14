@@ -39,12 +39,14 @@ class Achievement:
 @dataclass(frozen=True)
 class RecentActivity:
     display_name: str
-    # The latest session's `ended_at` once it's finished (completed or
-    # abandoned) — how long ago training actually *stopped*, not how
-    # long ago it happened to start. Falls back to `started_at` only
-    # while `is_in_progress` is True, since `ended_at` is still null
-    # then and the template shows "Training now" instead of a "time
-    # ago" built from this anyway.
+    # The latest session's `ended_at` once it has one — how long ago
+    # training actually *stopped*, not how long ago it happened to
+    # start. Falls back to `started_at` whenever `ended_at` isn't set
+    # (an in-progress session always lacks one; see
+    # recently_active_users' own comment for why a finished one
+    # sometimes can too) — while `is_in_progress` is True the template
+    # shows "Training now" instead of a "time ago" built from this
+    # anyway.
     last_active_at: datetime
     is_in_progress: bool
     is_recent: bool
@@ -191,12 +193,16 @@ def recently_active_users(limit=10):
         # A finished session's `ended_at` — not `started_at` — is when
         # this user was actually last active: a long session that just
         # wrapped up should read as "just now", not "N hours ago" from
-        # whenever it happened to start. Only an in-progress session
-        # (no `ended_at` yet) falls back to `started_at`, and even then
-        # only to give this dataclass a real datetime to sort/compare
-        # by — the template shows "Training now" instead of a "time
-        # ago" built from it in that case.
-        last_active_at = latest.started_at if is_in_progress else latest.ended_at
+        # whenever it happened to start. Falls back to `started_at`
+        # whenever `ended_at` isn't set — not just while in progress,
+        # since nothing at the model/DB level actually guarantees
+        # `ended_at` is set for every other status (`complete_session`/
+        # `abandon_session` always set it together with the status,
+        # but a session built directly rather than through one of
+        # those, e.g. in a test, can still have `status=COMPLETED` and
+        # `ended_at=None` — found by CI, not by this file's own tests,
+        # which all go through those service functions).
+        last_active_at = latest.ended_at or latest.started_at
         activity.append(
             RecentActivity(
                 display_name=user.public_display_name(),
