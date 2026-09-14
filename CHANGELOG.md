@@ -18,6 +18,8 @@ narrated summary of the same version.
 
 ## [Unreleased]
 
+## [1.14.1] — 2026-09-14
+
 ### Fixed
 - The live-training "quick set" panel (weight/reps/RPE/notes) still
   made an iPhone zoom the whole page in on focus — its compact labels'
