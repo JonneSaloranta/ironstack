@@ -1071,10 +1071,18 @@ abbr[title]:focus::after {
   min-width: 0;
   margin-bottom: 0;
   font-family: monospace;
-  /* No font-size override here on purpose: it inherits the 1rem/16px
-     from the `input, select, textarea { font: inherit }` rule above.
-     Anything smaller than 16px makes iOS Safari auto-zoom into the
-     field on focus. */
+  /* Explicit, not left to inherit the 1rem/16px from `input, select,
+     textarea { font: inherit }` above like this comment used to claim
+     — turns out relying on inheritance alone doesn't actually work
+     here: browsers keep a separate, smaller default font-size just
+     for the generic "monospace" family (Chrome's own "fixed-width
+     font" setting, 13px by default) and apply it over an *inherited*
+     size the moment `font-family` resolves to that generic keyword,
+     even though the very same value set directly on the element does
+     take priority. Found live: this field was still under the 16px
+     iOS Safari needs to not auto-zoom on focus despite this comment's
+     own prior claim that it already wasn't. */
+  font-size: 1rem;
 }
 
 .invite-link-row button {
@@ -1406,8 +1414,17 @@ h2 {
   flex: 1 1 5rem;
 }
 
-.set-field input {
+/* `.set-field`'s own smaller font-size above is meant for its label
+   text only, but `input`/`select`/`textarea` all `font: inherit` (this
+   file's own global rule) — with no reset here, weight/reps/RPE/notes
+   entry during a workout inherited that same ~12px, well under the
+   16px iOS Safari needs to *not* auto-zoom the whole page in on focus.
+   Found live: kept zooming in on every tap while logging a set. */
+.set-field input,
+.set-field select,
+.set-field textarea {
   margin-bottom: 0;
+  font-size: 1rem;
 }
 
 .set-log-form button {

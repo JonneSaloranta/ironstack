@@ -290,10 +290,12 @@ an ordinary elapsed-time reading. Otherwise each row shows
 `{{ time }} ago` — the magnitude/unit part (`"2 hours"`, `"3 days"`)
 comes from Django's own built-in `timesince` filter, which is already
 translated into every locale this app ships as part of Django core, so
-only the wrapping phrase itself needed a new translatable string. A
-session within the last 24 hours also gets a plain green dot (no pulse)
-as a secondary, at-a-glance freshness cue; older activity gets a plain
-muted dot.
+only the wrapping phrase itself needed a new translatable string. Built
+from the session's `ended_at`, not `started_at` — how long ago this
+user actually *stopped* training, not how long ago a (possibly long)
+session happened to start. A session within the last 24 hours (by that
+same `ended_at`) also gets a plain green dot (no pulse) as a secondary,
+at-a-glance freshness cue; older activity gets a plain muted dot.
 
 Both the carousel and this list show `User.public_display_name()`, not
 a bare `user.username` — "username (First name)" if the user has both

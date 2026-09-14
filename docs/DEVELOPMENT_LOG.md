@@ -4223,3 +4223,124 @@ alone as genuinely out of scope: the equipment dropdown's own blank
 `BLANK_CHOICE_LABEL` string, translated (or not) by Django's own
 upstream locale files, not this project's `locale/` — not something a
 project-level `.po` edit can fix.
+
+## Auditing every form for iOS Safari's auto-zoom-on-focus
+
+Asked directly: the live-training "quick set" panel still zoomed the
+whole page in on focus on an iPhone, despite this app's own established
+16px rule (`docs/DEVELOPMENT_LOG.md`'s own prior phone-testing pass
+already named this exact threshold). Root cause: `.set-field` (the
+compact weight/reps/RPE/notes label wrapping each input in both
+`_train_panel.html` and `_performed_exercise_card.html`) sets a smaller
+`font-size` meant for its own label text, but `input`/`select`/
+`textarea` all `font: inherit` (this file's own global reset) — with
+no reset back to 16px inside `.set-field`, every field nested in it
+inherited that smaller size too. Asked to then audit literally every
+form in the app for the same class of bug, not just this one instance.
+
+Checked systematically: every `<form class="...">` wrapper in the
+codebase (there are exactly four distinct ones), every CSS selector
+under 1rem/16px cross-referenced against whether any template actually
+nests a real input/select/textarea inside it, and a live Playwright
+sweep of ~20 pages across every app measuring `getComputedStyle(...)
+.fontSize` on every real (non-checkbox, non-hidden) field rather than
+trusting the CSS source alone. Found and fixed one more real instance
+beyond `.set-field`: `.invite-link-row input` (the group invite-link
+field) and `templates/api/key_created.html`'s new-key `<textarea>`
+both use `font-family: monospace` — and both were still computing
+under 16px despite `.invite-link-row input`'s own code comment
+explicitly (and, it turns out, wrongly) claiming inheritance alone was
+enough. The actual cause is a genuine browser quirk, not a CSS
+authoring mistake as such: browsers keep a separate, smaller default
+font-size specifically for the generic `monospace` family (Chrome's
+own "fixed-width font" preference, 13px by default) and re-apply it
+over an *inherited* size the instant an element's own `font-family`
+resolves to that generic keyword — even though a `font-size` set
+directly on that same element (not just inherited) does still win.
+Confirmed by toggling each property live in a real browser via
+Playwright rather than guessing from the CSS alone. Fixed both by
+setting `font-size` explicitly wherever `font-family: monospace`
+appears on a real form control, and corrected the misleading comment.
+No other instance of either bug class found — every other font-size
+in the stylesheet under 16px belongs to genuinely non-input content
+(tags, timestamps, muted captions, ...) that was never wrapping a
+field to begin with.
+
+## Auditing every database query's Big-O complexity
+
+Asked directly to review every database query in the app for its
+algorithmic complexity. Read through every `views.py`/`services.py`
+`for` loop across every app checking for a query fired per iteration,
+and every list view's queryset for missing `select_related`/
+`prefetch_related` against what its own template actually accesses per
+row. Turned up mostly a well-optimized codebase — several spots
+already carry their own comments documenting a *prior* N+1 fix
+(`apps.social.services.friends_of`/`unread_group_message_counts_by_group`,
+`apps.programs.views.ProgramListView`, `apps.nutrition.views.
+RecipeListView`) — plus a couple of small, low-priority, already-
+bounded ones left alone (`apps.analytics.achievements.
+recently_active_users` does one query per opted-in user rather than
+one window-function query for all of them; `apps.measurements.views.
+MeasurementTypeListView` does the same per measurement type, unlike
+its sibling `apps.activities.views.ActivityTypeListView`, which
+already avoids exactly this with a `Count` annotation) — both bounded
+by a small, roughly-fixed N (opted-in users / measurement types on a
+self-hosted instance), not worth the added complexity yet per
+docs/ANALYTICS.md's own "start simple, add more once profiling
+demonstrates a need."
+
+One real find, approved to fix immediately: `apps.records.services.
+check_and_record_prs` — the PR-detection entry point, run synchronously
+on *every single set logged*, checking it against `eligible_sets`
+(that user's entire history for that exercise, unbounded — a
+long-time user's favorite lift can accumulate thousands of sets over
+years). Two of its checks, set-volume and session-volume, pulled every
+eligible set's `(weight, reps)` into Python to multiply and compare by
+hand — O(H) row transfer and computation on every set logged, for the
+whole lifetime of that exercise, not just the new set. Rewrote both to
+compute `Max`/`Sum` of `weight*reps` in the database via a shared
+`F()`-expression (`_VOLUME_EXPRESSION`) instead — O(1) round trip
+regardless of history size. A third check (estimated-1RM) stays
+Python-side deliberately, not fixed: `docs/PR_SYSTEM.md` explicitly
+requires the 1RM formula stay swappable behind `OneRepMaxCalculator`,
+which a raw SQL expression can't be without hard-coding each formula's
+own arithmetic into the query — a real design tradeoff, not an
+oversight, so left alone. Verified the rewrite is bit-for-bit identical
+to the old Python computation (compared both against the same decimal-
+weight test data live before trusting it) rather than just checking it
+compiles, and confirmed against `apps.records.tests` — several existing
+tests already exercise cross-session volume comparison in detail
+(`test_a_later_session_with_more/less_volume_...`) and all still pass
+unchanged.
+
+### Live barcode scanner never detecting anything on the ZXing fallback path
+
+Reported as "camera opens, never detects" on a non-Chromium browser
+(the native `BarcodeDetector` path was unaffected — the report was
+first thought to also involve the "Scan barcode" button not rendering
+at all, but that turned out to be a separate, momentary observation;
+the button showed fine, it just never successfully scanned). Root-
+caused with Playwright, feeding a real generated EAN-13 barcode image
+into Chromium's fake camera device (`--use-file-for-fake-video-capture`
+against a `.y4m` built from the barcode PNG via `ffmpeg`) so the test
+exercised actual barcode content, not a synthetic pattern.
+
+Isolated layer by layer: the video element itself played the fake feed
+correctly (`readyState: 4`, not paused, correct dimensions); `window.
+ZXing` loaded correctly; ZXing's own `decodeFromImageElement` decoded
+the identical barcode from a static image with no issues at all. Only
+the live-video path never fired — `static/js/barcode-scanner.js` called
+`detector.decodeFromVideoElement(video, callback)` expecting a
+continuous scan loop with a `(result, err) => {}` callback, mirroring
+the native `BarcodeDetector`-less branch's own loop. But the vendored
+ZXing build's `decodeFromVideoElement(t)` only takes one parameter — a
+single one-shot decode that returns a Promise — and silently ignores
+whatever second argument gets passed to it; nothing was actually wrong
+with the camera, the video feed, or ZXing's decoding itself, the
+callback was simply dead code from the moment this feature was
+written. The continuous variant with real callback support is a
+separate method, `decodeFromVideoElementContinuously(video, callback)`
+— confirmed against the same fake-camera harness that swapping to it
+fixes live decoding end-to-end, including through the real "Scan
+barcode" button and camera modal (not just an isolated ZXing call),
+with the fake barcode value landing correctly in the food-search box.
