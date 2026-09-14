@@ -146,11 +146,19 @@ function ironstackBarcodeScanner() {
         video.srcObject = this.stream;
         video.play();
         if (this.usingZxing) {
-          // decodeFromVideoElement manages its own continuous decode
-          // loop against the already-playing <video> — unlike the
-          // native path below, no manual requestAnimationFrame loop
-          // needed; the callback just fires repeatedly until reset().
-          this.detector.decodeFromVideoElement(video, (result) => {
+          // decodeFromVideoElementContinuously — not decodeFromVideoElement,
+          // which despite its name and despite silently accepting a second
+          // (callback) argument, only ever fires a single one-shot decode
+          // and returns a Promise; whatever's passed as a second parameter
+          // there is simply never invoked. That was this feature's actual
+          // bug: the camera opened and the video played correctly, but the
+          // scan callback was dead code from the start. This continuous
+          // variant manages its own decode loop against the already-playing
+          // <video> — unlike the native path below, no manual
+          // requestAnimationFrame loop needed; the callback fires
+          // repeatedly (with `result` null on frames where nothing
+          // decoded) until reset().
+          this.detector.decodeFromVideoElementContinuously(video, (result) => {
             if (result) this.onDetected(result.getText());
           });
         } else {

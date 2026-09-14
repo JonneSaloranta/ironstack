@@ -32,6 +32,13 @@ narrated summary of the same version.
   session *started*, not how long ago this person actually stopped
   training — a long session that just finished read as "hours ago"
   instead of "just now".
+- Live camera barcode scanning (the "Scan barcode" button next to food
+  search boxes) never actually detected anything on any browser using
+  the vendored ZXing fallback — the camera opened and the video played
+  fine, but the scan callback was hooked up to a one-shot decode
+  method that ignores a callback argument entirely, so it silently
+  never ran. Chrome/Android users with the native BarcodeDetector
+  weren't affected.
 
 ### Performance
 - Personal-record detection (checked on every set you log) no longer

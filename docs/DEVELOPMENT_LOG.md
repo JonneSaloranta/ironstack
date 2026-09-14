@@ -4312,3 +4312,35 @@ compiles, and confirmed against `apps.records.tests` — several existing
 tests already exercise cross-session volume comparison in detail
 (`test_a_later_session_with_more/less_volume_...`) and all still pass
 unchanged.
+
+### Live barcode scanner never detecting anything on the ZXing fallback path
+
+Reported as "camera opens, never detects" on a non-Chromium browser
+(the native `BarcodeDetector` path was unaffected — the report was
+first thought to also involve the "Scan barcode" button not rendering
+at all, but that turned out to be a separate, momentary observation;
+the button showed fine, it just never successfully scanned). Root-
+caused with Playwright, feeding a real generated EAN-13 barcode image
+into Chromium's fake camera device (`--use-file-for-fake-video-capture`
+against a `.y4m` built from the barcode PNG via `ffmpeg`) so the test
+exercised actual barcode content, not a synthetic pattern.
+
+Isolated layer by layer: the video element itself played the fake feed
+correctly (`readyState: 4`, not paused, correct dimensions); `window.
+ZXing` loaded correctly; ZXing's own `decodeFromImageElement` decoded
+the identical barcode from a static image with no issues at all. Only
+the live-video path never fired — `static/js/barcode-scanner.js` called
+`detector.decodeFromVideoElement(video, callback)` expecting a
+continuous scan loop with a `(result, err) => {}` callback, mirroring
+the native `BarcodeDetector`-less branch's own loop. But the vendored
+ZXing build's `decodeFromVideoElement(t)` only takes one parameter — a
+single one-shot decode that returns a Promise — and silently ignores
+whatever second argument gets passed to it; nothing was actually wrong
+with the camera, the video feed, or ZXing's decoding itself, the
+callback was simply dead code from the moment this feature was
+written. The continuous variant with real callback support is a
+separate method, `decodeFromVideoElementContinuously(video, callback)`
+— confirmed against the same fake-camera harness that swapping to it
+fixes live decoding end-to-end, including through the real "Scan
+barcode" button and camera modal (not just an isolated ZXing call),
+with the fake barcode value landing correctly in the food-search box.
