@@ -4265,3 +4265,50 @@ No other instance of either bug class found — every other font-size
 in the stylesheet under 16px belongs to genuinely non-input content
 (tags, timestamps, muted captions, ...) that was never wrapping a
 field to begin with.
+
+## Auditing every database query's Big-O complexity
+
+Asked directly to review every database query in the app for its
+algorithmic complexity. Read through every `views.py`/`services.py`
+`for` loop across every app checking for a query fired per iteration,
+and every list view's queryset for missing `select_related`/
+`prefetch_related` against what its own template actually accesses per
+row. Turned up mostly a well-optimized codebase — several spots
+already carry their own comments documenting a *prior* N+1 fix
+(`apps.social.services.friends_of`/`unread_group_message_counts_by_group`,
+`apps.programs.views.ProgramListView`, `apps.nutrition.views.
+RecipeListView`) — plus a couple of small, low-priority, already-
+bounded ones left alone (`apps.analytics.achievements.
+recently_active_users` does one query per opted-in user rather than
+one window-function query for all of them; `apps.measurements.views.
+MeasurementTypeListView` does the same per measurement type, unlike
+its sibling `apps.activities.views.ActivityTypeListView`, which
+already avoids exactly this with a `Count` annotation) — both bounded
+by a small, roughly-fixed N (opted-in users / measurement types on a
+self-hosted instance), not worth the added complexity yet per
+docs/ANALYTICS.md's own "start simple, add more once profiling
+demonstrates a need."
+
+One real find, approved to fix immediately: `apps.records.services.
+check_and_record_prs` — the PR-detection entry point, run synchronously
+on *every single set logged*, checking it against `eligible_sets`
+(that user's entire history for that exercise, unbounded — a
+long-time user's favorite lift can accumulate thousands of sets over
+years). Two of its checks, set-volume and session-volume, pulled every
+eligible set's `(weight, reps)` into Python to multiply and compare by
+hand — O(H) row transfer and computation on every set logged, for the
+whole lifetime of that exercise, not just the new set. Rewrote both to
+compute `Max`/`Sum` of `weight*reps` in the database via a shared
+`F()`-expression (`_VOLUME_EXPRESSION`) instead — O(1) round trip
+regardless of history size. A third check (estimated-1RM) stays
+Python-side deliberately, not fixed: `docs/PR_SYSTEM.md` explicitly
+requires the 1RM formula stay swappable behind `OneRepMaxCalculator`,
+which a raw SQL expression can't be without hard-coding each formula's
+own arithmetic into the query — a real design tradeoff, not an
+oversight, so left alone. Verified the rewrite is bit-for-bit identical
+to the old Python computation (compared both against the same decimal-
+weight test data live before trusting it) rather than just checking it
+compiles, and confirmed against `apps.records.tests` — several existing
+tests already exercise cross-session volume comparison in detail
+(`test_a_later_session_with_more/less_volume_...`) and all still pass
+unchanged.

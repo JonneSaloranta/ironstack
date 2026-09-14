@@ -33,6 +33,14 @@ narrated summary of the same version.
   training — a long session that just finished read as "hours ago"
   instead of "just now".
 
+### Performance
+- Personal-record detection (checked on every set you log) no longer
+  re-fetches an exercise's entire logged history into Python just to
+  find its highest set/session volume — the database now computes
+  that directly. Only noticeable on an exercise with a long logging
+  history, where it kept every new set's response time growing with
+  that history's size.
+
 ## [1.14.0] — 2026-09-13
 
 ### Added

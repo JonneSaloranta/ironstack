@@ -16,7 +16,7 @@ edits/deletions (which this module never queries) can't affect it.
 
 from decimal import Decimal
 
-from django.db.models import Max
+from django.db.models import DecimalField, ExpressionWrapper, F, Max, Sum
 
 from apps.core import units as core_units
 
@@ -24,6 +24,19 @@ from .models import PersonalRecord, PRType
 from .one_rep_max import OneRepMaxCalculator
 
 REP_MILESTONES = [1, 3, 5, 8, 10, 12]
+
+# weight (max_digits=6, decimal_places=2) * reps (a plain integer) —
+# 12 digits comfortably covers even a whole session's worth of these
+# summed together (_best_session_volume below), well past any
+# realistic single value. Shared so a set's volume is computed the
+# same way whether it's one set (previous_volumes) or summed across a
+# session (_best_session_volume) — both push this into the database
+# rather than fetching every row into Python to multiply by hand,
+# which used to mean re-scanning a whole exercise's history on every
+# single set logged (see this module's own docstring).
+_VOLUME_EXPRESSION = ExpressionWrapper(
+    F("weight") * F("reps"), output_field=DecimalField(max_digits=12, decimal_places=2)
+)
 
 _one_rep_max = OneRepMaxCalculator()
 
@@ -100,15 +113,24 @@ def _session_volume(qs, session_id):
 
 
 def _best_session_volume(qs, exclude_session_id=None):
-    totals = {}
-    values = qs.select_related("performed_exercise")
+    """The highest total volume (sum of weight*reps across every set) any
+    one session has ever hit for this (user, exercise). Grouped and
+    summed in the database (one query, however many sessions of history
+    exist) rather than pulling every eligible set into Python to total
+    by hand — `qs` is `eligible_sets(user, exercise)`, unbounded by
+    date range, so a long-time user's whole history for a favorite
+    exercise (thousands of sets, run again on every single new set
+    logged — see this module's own docstring) used to mean fetching
+    and re-summing all of it here on every set."""
+    values = qs
     if exclude_session_id is not None:
         values = values.exclude(performed_exercise__session_id=exclude_session_id)
-    for exercise_set in values:
-        session_id = exercise_set.performed_exercise.session_id
-        volume = exercise_set.weight * exercise_set.reps
-        totals[session_id] = totals.get(session_id, Decimal("0")) + volume
-    return max(totals.values(), default=None)
+    result = (
+        values.values("performed_exercise__session_id")
+        .annotate(total=Sum(_VOLUME_EXPRESSION))
+        .aggregate(best=Max("total"))
+    )
+    return result["best"]
 
 
 def check_and_record_prs(exercise_set):
@@ -173,11 +195,12 @@ def check_and_record_prs(exercise_set):
         _record(PRType.ESTIMATED_1RM, estimate, previous=previous_best_estimate)
 
     set_volume = exercise_set.weight * exercise_set.reps
-    previous_volumes = [
-        weight * reps
-        for weight, reps in qs.exclude(pk=exercise_set.pk).values_list("weight", "reps")
-    ]
-    previous_best_volume = max(previous_volumes, default=None)
+    # Max(weight*reps) computed in the database rather than pulling
+    # every prior set's (weight, reps) pair into Python to multiply by
+    # hand — same reasoning as _best_session_volume's own docstring.
+    previous_best_volume = qs.exclude(pk=exercise_set.pk).aggregate(
+        best=Max(_VOLUME_EXPRESSION)
+    )["best"]
     if previous_best_volume is None or set_volume > previous_best_volume:
         _record(PRType.SET_VOLUME, set_volume, previous=previous_best_volume)
 
