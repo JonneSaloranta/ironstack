@@ -90,7 +90,11 @@ duplicate those. What it adds:
   muscle-group volume bar chart (a set's full volume counts toward every
   primary muscle group its exercise targets — the simplest defensible
   split, rather than dividing fractionally with no principled basis),
-  and PR history (reuses `apps.records`' immutable achievement log).
+  and PR history (reuses `apps.records`' immutable achievement log,
+  grouped by exercise — `apps.analytics.services.
+  pr_history_grouped_by_exercise` — rather than one card per PR row,
+  since a single session can produce several `record_type` rows for
+  the same exercise).
 - `/analytics/exercises/<pk>/` — per-exercise strength trend: estimated
   1RM over time (one point per session — that session's best estimate,
   not one point per set, so the trend stays readable) plus session

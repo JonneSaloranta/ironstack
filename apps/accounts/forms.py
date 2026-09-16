@@ -204,7 +204,10 @@ class ProfileForm(forms.ModelForm):
     """Display preferences — unit_system/timezone drive unit conversion
     (apps.core.units, apps.measurements.units, apps.activities.units) and
     "today"/date-range boundaries (docs/ARCHITECTURE.md "Units and
-    precision") everywhere else in the app — plus `height`, entered and
+    precision") everywhere else in the app; `theme`/`appearance`
+    (apps.accounts.models.Theme/Appearance) together pick which
+    `[data-theme="..."][data-appearance="..."]` palette
+    templates/base.html renders — plus `height`, entered and
     displayed in the user's preferred unit (cm/inches) the same way
     apps.measurements.forms.BodyMeasurementForm handles a length reading,
     converted to/from canonical meters here. `height` is optional and
@@ -251,6 +254,8 @@ class ProfileForm(forms.ModelForm):
             "unit_system",
             "timezone",
             "language",
+            "theme",
+            "appearance",
             "height",
             "body_tracking_reminders_enabled",
             "show_bmi",
@@ -275,8 +280,18 @@ class ProfileForm(forms.ModelForm):
             "allow_friend_requests": _("Allow friend requests"),
             "allow_group_invites": _("Allow group invites"),
             "language": _("Language"),
+            "theme": _("Theme"),
+            "appearance": _("Appearance"),
         }
         help_texts = {
+            "theme": _(
+                "Which color palette the app uses. Each theme has its own "
+                "dark and light look — pick which one below."
+            ),
+            "appearance": _(
+                "\"Auto\" follows your device's own light/dark setting and "
+                "switches automatically when it changes."
+            ),
             "body_tracking_reminders_enabled": _(
                 "Shows a dashboard card nudging you to log a body measurement "
                 "when you haven't logged one in a while. Turn off to never see "

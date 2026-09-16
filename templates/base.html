@@ -1,5 +1,15 @@
 {% load static i18n %}<!doctype html>
-<html lang="{{ LANGUAGE_CODE }}">
+{% comment %}
+data-theme/data-appearance (apps.accounts.models.Theme/Appearance,
+static/css/base.css) — data-theme names which palette (omitted for
+Theme.DEFAULT, which is what a signed-out visitor gets too, since
+AnonymousUser has no `.theme`); data-appearance picks that palette's
+dark or light half for an explicit choice, and is left off entirely
+for "auto" (same AnonymousUser fallback via the `|default:"auto"`
+below) so a plain `@media (prefers-color-scheme: light)` rule decides
+instead.
+{% endcomment %}
+<html lang="{{ LANGUAGE_CODE }}"{% if user.theme and user.theme != "default" %} data-theme="{{ user.theme }}"{% endif %}{% if user.appearance|default:"auto" != "auto" %} data-appearance="{{ user.appearance }}"{% endif %}>
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -38,7 +48,25 @@
   <meta name="twitter:card" content="summary">
   <link rel="stylesheet" href="{% static 'css/base.css' %}">
   <link rel="manifest" href="{% url 'web-manifest' %}">
-  <meta name="theme-color" content="#101317">
+  {% comment %}
+  Mirrors the data-theme/data-appearance resolution above this
+  document's own <html> tag — browser chrome (address bar, PWA splash)
+  follows the same explicit choice, or the same prefers-color-scheme
+  media queries when "auto" — using theme_color_dark/theme_color_light
+  (apps.core.context_processors.theming) since a <meta> tag can't read
+  a CSS custom property the way the rest of this app's colors resolve.
+  Two meta tags, not one, for "auto": browsers that support per-scheme
+  theme-color (Safari/Chrome) read whichever one's media currently
+  matches; the one that doesn't just gets ignored.
+  {% endcomment %}
+  {% if user.appearance == "light" %}
+    <meta name="theme-color" content="{{ theme_color_light }}">
+  {% elif user.appearance == "dark" %}
+    <meta name="theme-color" content="{{ theme_color_dark }}">
+  {% else %}
+    <meta name="theme-color" content="{{ theme_color_dark }}" media="(prefers-color-scheme: dark)">
+    <meta name="theme-color" content="{{ theme_color_light }}" media="(prefers-color-scheme: light)">
+  {% endif %}
   <link rel="icon" href="{% static 'icons/favicon-32.png' %}">
   <link rel="apple-touch-icon" href="{% static 'icons/apple-touch-icon.png' %}">
   <script src="{% static 'js/htmx.min.js' %}" defer></script>

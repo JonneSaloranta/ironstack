@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: IronStack\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-16 13:29+0000\n"
+"POT-Creation-Date: 2026-09-16 15:15+0000\n"
 "Language: sv\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -32,57 +32,81 @@ msgstr ""
 "För många förfrågningar om lösenordsåterställning. Försök igen om några "
 "minuter."
 
-#: apps/accounts/forms.py:239 apps/accounts/forms.py:589
+#: apps/accounts/forms.py:242 apps/accounts/forms.py:604
 msgid "Timezone"
 msgstr "Tidszon"
 
-#: apps/accounts/forms.py:264 apps/accounts/forms.py:569
+#: apps/accounts/forms.py:269 apps/accounts/forms.py:584
 #: templates/api/key_list.html:34
 msgid "Units"
 msgstr "Enheter"
 
-#: apps/accounts/forms.py:265
+#: apps/accounts/forms.py:270
 msgid "Remind me to log body measurements"
 msgstr "Påminn mig om att logga kroppsmått"
 
-#: apps/accounts/forms.py:268
+#: apps/accounts/forms.py:273
 msgid "Show"
 msgstr "Visa"
 
-#: apps/accounts/forms.py:269 templates/core/_bmi_card.html:13
+#: apps/accounts/forms.py:274 templates/core/_bmi_card.html:13
 #: templates/core/_bmi_card.html:29
 msgid "BMI"
 msgstr "BMI"
 
-#: apps/accounts/forms.py:270
+#: apps/accounts/forms.py:275
 msgid "on the body weight page"
 msgstr "på sidan för kroppsvikt"
 
-#: apps/accounts/forms.py:272
+#: apps/accounts/forms.py:277
 msgid "Share my activity"
 msgstr "Dela min aktivitet"
 
-#: apps/accounts/forms.py:273
+#: apps/accounts/forms.py:278
 msgid "Show my name to others"
 msgstr "Visa mitt namn för andra"
 
-#: apps/accounts/forms.py:274
+#: apps/accounts/forms.py:279
 msgid "Show my Gravatar picture"
 msgstr "Visa min Gravatar-bild"
 
-#: apps/accounts/forms.py:275 apps/accounts/forms.py:602
+#: apps/accounts/forms.py:280 apps/accounts/forms.py:617
 msgid "Allow friend requests"
 msgstr "Tillåt vänförfrågningar"
 
-#: apps/accounts/forms.py:276 apps/accounts/forms.py:610
+#: apps/accounts/forms.py:281 apps/accounts/forms.py:625
 msgid "Allow group invites"
 msgstr "Tillåt gruppinbjudningar"
 
-#: apps/accounts/forms.py:277
+#: apps/accounts/forms.py:282
 msgid "Language"
 msgstr "Språk"
 
-#: apps/accounts/forms.py:281
+#: apps/accounts/forms.py:283
+msgid "Theme"
+msgstr "Tema"
+
+#: apps/accounts/forms.py:284
+msgid "Appearance"
+msgstr "Utseende"
+
+#: apps/accounts/forms.py:288
+msgid ""
+"Which color palette the app uses. Each theme has its own dark and light look "
+"— pick which one below."
+msgstr ""
+"Vilken färgpalett appen använder. Varje tema har sitt eget mörka och ljusa "
+"utseende — välj vilket nedan."
+
+#: apps/accounts/forms.py:292
+msgid ""
+"\"Auto\" follows your device's own light/dark setting and switches "
+"automatically when it changes."
+msgstr ""
+"\"Auto\" följer din enhets egen ljus-/mörkerinställning och byter "
+"automatiskt när den ändras."
+
+#: apps/accounts/forms.py:296
 msgid ""
 "Shows a dashboard card nudging you to log a body measurement when you "
 "haven't logged one in a while. Turn off to never see that reminder — you can "
@@ -93,11 +117,11 @@ msgstr ""
 "den påminnelsen — du kan fortfarande logga en mätning när som helst från "
 "Kroppsspårning."
 
-#: apps/accounts/forms.py:286
+#: apps/accounts/forms.py:301
 msgid "Turns off the BMI card and its category ranges entirely."
 msgstr "Stänger av BMI-kortet och dess kategoriintervall helt."
 
-#: apps/accounts/forms.py:288
+#: apps/accounts/forms.py:303
 msgid ""
 "Lets everyone using this instance see your longest streak, workout count, "
 "PRs, total weight lifted, and when you last trained, in the dashboard's "
@@ -109,7 +133,7 @@ msgstr ""
 "instrumentpanelens prestationskarusell och listan \"Senast aktiva\". Stäng "
 "av för att hålla din egen aktivitet privat — du ser fortfarande allas andras."
 
-#: apps/accounts/forms.py:295
+#: apps/accounts/forms.py:310
 msgid ""
 "Shows your first name next to your username wherever others can see it (the "
 "achievements carousel and \"Recently active\" list). Turn off to show just "
@@ -119,7 +143,7 @@ msgstr ""
 "(prestationskarusellen och listan \"Senast aktiva\"). Stäng av för att bara "
 "visa ditt användarnamn där, som innan den här inställningen fanns."
 
-#: apps/accounts/forms.py:301
+#: apps/accounts/forms.py:316
 msgid ""
 "Shows your Gravatar (gravatar.com) picture at the top of this page, if the "
 "email on this account has one. Turning this on means your browser loads that "
@@ -133,7 +157,7 @@ msgstr ""
 "pratar med en server utanför din egen instans — som då ser hashvärdet för "
 "din e-postadress och din IP-adress."
 
-#: apps/accounts/forms.py:309
+#: apps/accounts/forms.py:324
 msgid ""
 "Off stops other users on this instance from sending you a friend request at "
 "all. Doesn't affect friend requests you already have, or friendships you "
@@ -143,7 +167,7 @@ msgstr ""
 "vänförfrågan till dig alls. Påverkar inte vänförfrågningar eller vänskaper "
 "du redan har."
 
-#: apps/accounts/forms.py:314
+#: apps/accounts/forms.py:329
 msgid ""
 "Off stops a group member from inviting you to a group directly. You can "
 "still join any group yourself using its invite link, if you have one."
@@ -152,53 +176,53 @@ msgstr ""
 "fortfarande gå med i vilken grupp som helst själv via dess inbjudningslänk, "
 "om du har en."
 
-#: apps/accounts/forms.py:329 apps/accounts/forms.py:634
+#: apps/accounts/forms.py:344 apps/accounts/forms.py:649
 #: apps/nutrition/forms.py:39 apps/nutrition/forms.py:432
 msgid "Height (cm)"
 msgstr "Längd (cm)"
 
-#: apps/accounts/forms.py:329 apps/accounts/forms.py:634
+#: apps/accounts/forms.py:344 apps/accounts/forms.py:649
 #: apps/nutrition/forms.py:39 apps/nutrition/forms.py:432
 msgid "Height (in)"
 msgstr "Längd (in)"
 
-#: apps/accounts/forms.py:383 apps/accounts/forms.py:419
+#: apps/accounts/forms.py:398 apps/accounts/forms.py:434
 msgid "Verification code"
 msgstr "Verifieringskod"
 
-#: apps/accounts/forms.py:397
+#: apps/accounts/forms.py:412
 msgid "Incorrect code — check your authenticator app and try again."
 msgstr "Fel kod — kontrollera din autentiseringsapp och försök igen."
 
-#: apps/accounts/forms.py:433
+#: apps/accounts/forms.py:448
 msgid "Too many incorrect codes. Try again in a few minutes."
 msgstr "För många felaktiga koder. Försök igen om några minuter."
 
-#: apps/accounts/forms.py:446
+#: apps/accounts/forms.py:461
 msgid "Incorrect code."
 msgstr "Fel kod."
 
-#: apps/accounts/forms.py:460 apps/accounts/forms.py:486
+#: apps/accounts/forms.py:475 apps/accounts/forms.py:501
 msgid "Password"
 msgstr "Lösenord"
 
-#: apps/accounts/forms.py:469 apps/accounts/forms.py:500
+#: apps/accounts/forms.py:484 apps/accounts/forms.py:515
 msgid "Incorrect password."
 msgstr "Fel lösenord."
 
-#: apps/accounts/forms.py:489
+#: apps/accounts/forms.py:504
 msgid "Type your username to confirm"
 msgstr "Skriv ditt användarnamn för att bekräfta"
 
-#: apps/accounts/forms.py:502
+#: apps/accounts/forms.py:517
 msgid "Doesn't match your username."
 msgstr "Matchar inte ditt användarnamn."
 
-#: apps/accounts/forms.py:526
+#: apps/accounts/forms.py:541
 msgid "First name"
 msgstr "Förnamn"
 
-#: apps/accounts/forms.py:528
+#: apps/accounts/forms.py:543
 msgid ""
 "Used to personalize your dashboard greeting, and next to your username "
 "wherever your activity is shown to others (if you allow that in your "
@@ -208,11 +232,11 @@ msgstr ""
 "användarnamn där din aktivitet visas för andra (om du tillåter det i din "
 "profil)."
 
-#: apps/accounts/forms.py:535
+#: apps/accounts/forms.py:550
 msgid "Email"
 msgstr "E-post"
 
-#: apps/accounts/forms.py:537
+#: apps/accounts/forms.py:552
 msgid ""
 "Used only for password-reset emails if you ever get locked out. Never shown "
 "to other users."
@@ -220,7 +244,7 @@ msgstr ""
 "Används endast för lösenordsåterställningsmejl om du någonsin blir utelåst. "
 "Visas aldrig för andra användare."
 
-#: apps/accounts/forms.py:547
+#: apps/accounts/forms.py:562
 msgid ""
 "Logged as your first body-weight entry, so your progress charts have a "
 "starting point. Leave blank and log it anytime from the Body weight page "
@@ -230,7 +254,7 @@ msgstr ""
 "startpunkt. Lämna tomt och logga den istället när som helst från sidan "
 "Kroppsvikt."
 
-#: apps/accounts/forms.py:562
+#: apps/accounts/forms.py:577
 msgid ""
 "Used together with a logged body weight to show your BMI. Leave blank to "
 "skip this — you can add it anytime from your profile."
@@ -239,7 +263,7 @@ msgstr ""
 "tomt för att hoppa över detta — du kan lägga till det när som helst från din "
 "profil."
 
-#: apps/accounts/forms.py:571
+#: apps/accounts/forms.py:586
 msgid ""
 "Sets whether weights and distances are shown in kg/km or lb/mi throughout "
 "the app. Change this anytime from your profile."
@@ -247,7 +271,7 @@ msgstr ""
 "Anger om vikter och avstånd visas i kg/km eller lb/mi i hela appen. Ändra "
 "detta när som helst från din profil."
 
-#: apps/accounts/forms.py:591
+#: apps/accounts/forms.py:606
 msgid ""
 "Used for \"today\" and date ranges throughout the app. Change this anytime "
 "from your profile."
@@ -256,7 +280,7 @@ msgstr ""
 "som helst från din profil.Anger om vikter och avstånd visas i kg/km eller lb/"
 "mi i hela appen. Ändra detta när som helst från din profil."
 
-#: apps/accounts/forms.py:604
+#: apps/accounts/forms.py:619
 msgid ""
 "Lets other users on this instance send you a friend request. Change this "
 "anytime from your profile."
@@ -264,7 +288,7 @@ msgstr ""
 "Låter andra användare på den här instansen skicka en vänförfrågan till dig. "
 "Du kan ändra detta när som helst från din profil."
 
-#: apps/accounts/forms.py:612
+#: apps/accounts/forms.py:627
 msgid ""
 "Lets a group member invite you to a group directly. You can always join a "
 "group yourself using its invite link either way. Change this anytime from "
@@ -274,13 +298,13 @@ msgstr ""
 "i en grupp själv via dess inbjudningslänk oavsett. Du kan ändra detta när "
 "som helst från din profil."
 
-#: apps/accounts/forms.py:629 apps/nutrition/forms.py:40
+#: apps/accounts/forms.py:644 apps/nutrition/forms.py:40
 #: apps/nutrition/forms.py:441 apps/nutrition/forms.py:645
 #, python-format
 msgid "Current weight (%(unit)s)"
 msgstr "Nuvarande vikt (%(unit)s)"
 
-#: apps/accounts/forms.py:631
+#: apps/accounts/forms.py:646
 msgid "Current weight"
 msgstr "Nuvarande vikt"
 
@@ -292,7 +316,39 @@ msgstr "Metriskt (kg, km)"
 msgid "Imperial (lb, mi)"
 msgstr "Brittiskt (lb, mi)"
 
-#: apps/accounts/models.py:291
+#: apps/accounts/models.py:28
+msgid "Dark"
+msgstr "Mörkt"
+
+#: apps/accounts/models.py:29
+msgid "Light"
+msgstr "Ljust"
+
+#: apps/accounts/models.py:30
+msgid "Auto (match device)"
+msgstr "Auto (följer enheten)"
+
+#: apps/accounts/models.py:45
+msgid "Default"
+msgstr "Standard"
+
+#: apps/accounts/models.py:46
+msgid "Nordic"
+msgstr "Nordic"
+
+#: apps/accounts/models.py:47
+msgid "Vaporwave"
+msgstr "Vaporwave"
+
+#: apps/accounts/models.py:48
+msgid "Earth"
+msgstr "Earth"
+
+#: apps/accounts/models.py:49
+msgid "Zen"
+msgstr "Zen"
+
+#: apps/accounts/models.py:358
 msgid ""
 "Shown as a footer note on the login and signup pages. Leave blank to hide it "
 "entirely."
@@ -508,7 +564,7 @@ msgstr "En etikett för att skilja dina nycklar åt."
 
 #: apps/api/models.py:24 templates/accounts/profile.html:3
 #: templates/accounts/profile.html:12 templates/api/key_list.html:85
-#: templates/base.html:146 templates/base.html:169
+#: templates/base.html:175 templates/base.html:198
 msgid "Profile"
 msgstr "Profil"
 
@@ -519,7 +575,7 @@ msgid "Exercises"
 msgstr "Övningar"
 
 #: apps/api/models.py:26 apps/core/models.py:162 templates/api/key_list.html:93
-#: templates/base.html:142 templates/base.html:144
+#: templates/base.html:171 templates/base.html:173
 #: templates/programs/program_list.html:3
 #: templates/programs/program_list.html:6
 msgid "Programs"
@@ -538,7 +594,7 @@ msgstr "Mätningar"
 #: apps/api/models.py:29 apps/core/models.py:165
 #: templates/activities/activity_type_list.html:3
 #: templates/activities/activity_type_list.html:6
-#: templates/api/key_list.html:105 templates/core/dashboard.html:129
+#: templates/api/key_list.html:105 templates/core/dashboard.html:125
 msgid "Activities"
 msgstr "Aktiviteter"
 
@@ -552,7 +608,7 @@ msgid "Analytics"
 msgstr "Analys"
 
 #: apps/api/models.py:32 templates/api/key_list.html:109
-#: templates/base.html:130 templates/base.html:132
+#: templates/base.html:159 templates/base.html:161
 #: templates/nutrition/dashboard.html:3 templates/nutrition/dashboard.html:6
 #: templates/nutrition/recipe_detail.html:54
 msgid "Nutrition"
@@ -606,7 +662,8 @@ msgstr "Enrepsmax"
 msgid "Personal Record"
 msgstr "Personligt rekord"
 
-#: apps/core/formatting.py:20 templates/analytics/dashboard.html:40
+#: apps/core/formatting.py:20 templates/records/_pr_exercise_group.html:26
+#: templates/records/_pr_exercise_group.html:37
 #: templates/records/_pr_toasts.html:36
 #: templates/records/exercise_records.html:31
 msgid "Rep Max"
@@ -797,7 +854,7 @@ msgstr ""
 "— de flesta installationer är en privat, självhostad app för ett hushåll, "
 "inte en offentlig webbplats som någon borde söka efter."
 
-#: apps/core/models.py:163 templates/base.html:134 templates/base.html:136
+#: apps/core/models.py:163 templates/base.html:163 templates/base.html:165
 msgid "Progress"
 msgstr "Framsteg"
 
@@ -3269,7 +3326,7 @@ msgstr "Integritetspolicy"
 
 #: templates/accounts/_privacy_notice_modal.html:27
 #: templates/accounts/profile.html:246 templates/api/key_list.html:20
-#: templates/base.html:119 templates/nutrition/_month_calendar.html:84
+#: templates/base.html:148 templates/nutrition/_month_calendar.html:84
 #: templates/records/_pr_toasts.html:28
 msgid "Dismiss"
 msgstr "Stäng"
@@ -3960,23 +4017,23 @@ msgstr "Muskelgruppsvolym"
 msgid "No data in this range."
 msgstr "Ingen data i detta intervall."
 
-#: templates/analytics/dashboard.html:35 templates/core/dashboard.html:56
+#: templates/analytics/dashboard.html:35 templates/core/dashboard.html:55
 msgid "Recent"
 msgstr "Senaste"
 
-#: templates/analytics/dashboard.html:35 templates/analytics/dashboard.html:45
+#: templates/analytics/dashboard.html:35 templates/analytics/dashboard.html:39
 #: templates/analytics/exercise_analytics.html:26
-#: templates/core/dashboard.html:56 templates/exercises/exercise_detail.html:90
+#: templates/core/dashboard.html:55 templates/exercises/exercise_detail.html:90
 #: templates/records/exercise_records.html:11
 msgid "Personal Records"
 msgstr "Personliga rekord"
 
-#: templates/analytics/dashboard.html:45
+#: templates/analytics/dashboard.html:39
 #: templates/core/backup_restore_confirm.html:29
 msgid "No"
 msgstr "Inga"
 
-#: templates/analytics/dashboard.html:45
+#: templates/analytics/dashboard.html:39
 msgid "in this range."
 msgstr "i detta intervall."
 
@@ -4197,7 +4254,7 @@ msgstr "Återkalla"
 msgid "No API keys yet."
 msgstr "Inga API-nycklar än."
 
-#: templates/base.html:24
+#: templates/base.html:34
 msgid ""
 "Self-hosted, mobile-first fitness and activity tracker — workout logging, "
 "progression, nutrition, and body tracking, running entirely on your own "
@@ -4207,39 +4264,39 @@ msgstr ""
 "träningsloggning, progression, kost och kroppsspårning, som körs helt på din "
 "egen infrastruktur."
 
-#: templates/base.html:37
+#: templates/base.html:47
 msgid "Self-hosted, mobile-first fitness and activity tracker."
 msgstr "Självhostad, mobilanpassad app för träning och aktivitetsspårning."
 
-#: templates/base.html:87
+#: templates/base.html:116
 msgid "Camera access needs a secure (https) connection."
 msgstr "Kameraåtkomst kräver en säker (https) anslutning."
 
-#: templates/base.html:99
+#: templates/base.html:128
 msgid "Skip to content"
 msgstr "Hoppa till innehåll"
 
-#: templates/base.html:125
+#: templates/base.html:154
 msgid "Main navigation"
 msgstr "Huvudnavigering"
 
-#: templates/base.html:126 templates/base.html:128
+#: templates/base.html:155 templates/base.html:157
 msgid "Home"
 msgstr "Hem"
 
-#: templates/base.html:138 templates/base.html:140
+#: templates/base.html:167 templates/base.html:169
 msgid "Workout"
 msgstr "Träning"
 
-#: templates/base.html:146
+#: templates/base.html:175
 msgid "Profile — new friend/group activity"
 msgstr "Profil — ny vän-/gruppaktivitet"
 
-#: templates/base.html:185
+#: templates/base.html:214
 msgid "Continue training"
 msgstr "Fortsätt träna"
 
-#: templates/base.html:191
+#: templates/base.html:220
 msgid "Unread messages"
 msgstr "Olästa meddelanden"
 
@@ -4541,47 +4598,47 @@ msgstr ""
 "Det var ett tag sedan du loggade din vikt eller dina mått — tryck här för "
 "att lägga till en ny mätning."
 
-#: templates/core/dashboard.html:66
+#: templates/core/dashboard.html:62
 msgid "Achievements"
 msgstr "Prestationer"
 
-#: templates/core/dashboard.html:94
+#: templates/core/dashboard.html:90
 #, python-format
 msgid "Show achievement %(position)s"
 msgstr "Visa prestation %(position)s"
 
-#: templates/core/dashboard.html:103
+#: templates/core/dashboard.html:99
 msgid "Recently active"
 msgstr "Senast aktiva"
 
-#: templates/core/dashboard.html:110
+#: templates/core/dashboard.html:106
 msgid "Training now"
 msgstr "Tränar just nu"
 
-#: templates/core/dashboard.html:110
+#: templates/core/dashboard.html:106
 #, python-format
 msgid "%(time)s ago"
 msgstr "%(time)s sedan"
 
-#: templates/core/dashboard.html:119
+#: templates/core/dashboard.html:115
 msgid "Browse exercises"
 msgstr "Bläddra bland övningar"
 
-#: templates/core/dashboard.html:120
+#: templates/core/dashboard.html:116
 msgid "Explore the exercise library or add your own."
 msgstr "Utforska övningsbiblioteket eller lägg till din egen."
 
-#: templates/core/dashboard.html:124
+#: templates/core/dashboard.html:120
 #: templates/measurements/measurement_type_list.html:3
 #: templates/measurements/measurement_type_list.html:6
 msgid "Body tracking"
 msgstr "Kroppsspårning"
 
-#: templates/core/dashboard.html:125
+#: templates/core/dashboard.html:121
 msgid "Log body weight, measurements, and trends."
 msgstr "Logga kroppsvikt, mått och trender."
 
-#: templates/core/dashboard.html:130
+#: templates/core/dashboard.html:126
 msgid "Log a run, ride, or any other non-gym activity."
 msgstr "Logga en löprunda, cykeltur eller annan aktivitet utanför gymmet."
 
@@ -6009,6 +6066,12 @@ msgstr "Nytt träningspass"
 #: templates/workouts/session_detail.html:40
 msgid "Delete workout"
 msgstr "Ta bort träningspass"
+
+#: templates/records/_pr_exercise_group.html:29
+#: templates/records/_pr_exercise_group.html:40
+#, python-format
+msgid "%(weight)s × %(reps)s"
+msgstr "%(weight)s × %(reps)s"
 
 #: templates/records/_pr_toasts.html:29
 msgid "New PR"

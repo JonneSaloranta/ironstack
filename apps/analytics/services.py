@@ -15,7 +15,7 @@ from decimal import Decimal
 
 from apps.core import units as core_units
 from apps.core.charts import build_bar_series, build_chart_series
-from apps.records.models import PersonalRecord
+from apps.records.models import PersonalRecord, PRType
 from apps.records.one_rep_max import OneRepMaxCalculator
 from apps.workouts.models import ExerciseSet, WorkoutSession, WorkoutSessionStatus
 
@@ -134,6 +134,74 @@ def pr_history(user, date_range, limit=None):
         qs = qs.filter(achieved_at__date__gte=date_range.start)
     qs = qs.filter(achieved_at__date__lte=date_range.end)
     return qs[:limit] if limit else qs
+
+
+@dataclass(frozen=True)
+class ExercisePRGroup:
+    """One exercise's rows from a single `pr_history()` call, still in
+    that call's own most-recent-first order within each list —
+    templates/core/dashboard.html and templates/analytics/dashboard.html's
+    own "Recent PRs" group by exercise rather than rendering one card
+    per row, since `PersonalRecord` logs a separate row per
+    `record_type` (docs/PR_SYSTEM.md), and hitting several types for
+    the same exercise in one session used to read as several
+    near-identical cards rather than one box for that exercise.
+
+    Split into `primary_records` (shown directly on the card) and
+    `secondary_records` (shown only once expanded) rather than one
+    flat list — `_PRIMARY_RECORD_TYPES` below is exactly the set
+    `apps.records.views.ExerciseRecordsView`'s own "Current PRs" `<dl>`
+    already treats as the headline figures (max weight, estimated 1RM,
+    best set/session volume); rep-specific and plain rep PRs are that
+    same page's own separate, secondary "Rep maxes"/"Rep records by
+    weight" sections, reused here as "expand for more" instead."""
+
+    exercise: object
+    primary_records: list
+    secondary_records: list
+
+
+# apps.records.views.ExerciseRecordsView's own "Current PRs" grouping
+# (templates/records/exercise_records.html) — see ExercisePRGroup's
+# own docstring for why the same split applies here.
+_PRIMARY_RECORD_TYPES = frozenset(
+    {PRType.MAX_WEIGHT, PRType.ESTIMATED_1RM, PRType.SET_VOLUME, PRType.SESSION_VOLUME}
+)
+
+
+def pr_history_grouped_by_exercise(user, date_range, limit=None):
+    """`pr_history(user, date_range, limit)`, grouped by exercise and
+    split into `ExercisePRGroup.primary_records`/`secondary_records`
+    afterward — not a second query, and not a reordering: a plain
+    `dict` preserves insertion order, and since the input is already
+    most-recent-first, the first row seen for a given exercise is, by
+    definition, that exercise's own most recent — so the resulting
+    groups come out in exactly the order that exercise's most recent
+    PR would have sorted to on its own, with no separate sort step
+    needed, and each group's own two lists keep that same relative
+    order too.
+
+    An exercise whose only PR(s) in range are secondary-type (e.g. a
+    lone rep-specific PR, no max weight/1RM/volume hit) still needs
+    *something* to show without expanding — a card that's just a name
+    and a chevron reads as broken, not minimal — so a group with no
+    primary records falls back to treating its secondary ones as
+    primary instead."""
+    per_exercise = {}
+    for record in pr_history(user, date_range, limit=limit):
+        exercise, records = per_exercise.setdefault(record.exercise_id, (record.exercise, []))
+        records.append(record)
+
+    groups = []
+    for exercise, records in per_exercise.values():
+        primary = [r for r in records if r.record_type in _PRIMARY_RECORD_TYPES]
+        secondary = [r for r in records if r.record_type not in _PRIMARY_RECORD_TYPES]
+        if not primary:
+            primary, secondary = secondary, primary
+        groups.append(
+            ExercisePRGroup(exercise=exercise, primary_records=primary, secondary_records=secondary)
+        )
+    return groups
 
 
 @dataclass(frozen=True)

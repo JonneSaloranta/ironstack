@@ -11,6 +11,24 @@ from .models import SeoSettings
 from .version import get_version
 
 
+def theming(request):
+    """The signed-in user's chosen `Theme`'s dark/light background
+    colors, for templates/base.html's own `<meta name="theme-color">`
+    — browser chrome (address bar) and the PWA splash screen, neither
+    of which can read a CSS custom property the way the rest of this
+    app's theming does, so the two hex values have to be resolved
+    somewhere in Python instead. A signed-out visitor (AnonymousUser
+    has no `.theme`) gets Theme.DEFAULT's own colors, matching what
+    static/css/base.css's bare `:root` already renders for them with
+    no `data-theme` attribute at all."""
+    from apps.accounts.models import THEME_BG_COLORS, Theme
+
+    user = getattr(request, "user", None)
+    theme = getattr(user, "theme", Theme.DEFAULT) if user else Theme.DEFAULT
+    dark, light = THEME_BG_COLORS.get(theme, THEME_BG_COLORS[Theme.DEFAULT])
+    return {"theme_color_dark": dark, "theme_color_light": light}
+
+
 def app_version(request):
     return {"app_version": get_version()}
 

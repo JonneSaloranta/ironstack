@@ -1,0 +1,46 @@
+{% load i18n core_extras records_extras %}
+{% comment %}
+One exercise's `ExercisePRGroup` (apps.analytics.services), as its own
+`.card` — the same shape as every other card on the dashboard/Analytics
+page, one `<strong>` heading (the exercise name) plus muted detail
+lines, rather than a distinct nested-row widget.
+
+`primary_records` (the headline figures — see ExercisePRGroup's own
+docstring for which types and why) render directly, so a card never
+needs opening just to see what actually matters; `secondary_records`
+render only once expanded, alongside every record's own source-set
+context (weight × reps) and achieved date, which wasn't shown at all
+before this existed. Shared by templates/core/dashboard.html and
+templates/analytics/dashboard.html — both just loop and include this,
+neither supplies its own wrapping card any more.
+{% endcomment %}
+<div class="card" x-data="{ open: false }">
+  <button type="button" class="pr-exercise-group-toggle" @click="open = !open"
+          :aria-expanded="open.toString()">
+    <strong>{% trans group.exercise.name %}</strong>
+    <span class="pr-exercise-group-chevron" aria-hidden="true" x-show="!open">&#9662;</span>
+    <span class="pr-exercise-group-chevron" aria-hidden="true" x-show="open" x-cloak>&#9652;</span>
+  </button>
+  {% for record in group.primary_records %}
+    <p class="text-muted pr-exercise-group-line">
+      {{ record.get_record_type_display }}: {{ record|pr_value:request.user }}{% if record.rep_count %} ({{ record.rep_count }}<abbr tabindex="0" title="{% trans "Rep Max" %}">RM</abbr>){% endif %}
+    </p>
+    <p class="text-muted pr-exercise-group-detail" x-show="open" x-cloak>
+      {% blocktrans with weight=record.weight|weight:request.user reps=record.reps %}{{ weight }} × {{ reps }}{% endblocktrans %}
+      — {{ record.achieved_at|date:"Y-m-d" }}
+    </p>
+  {% endfor %}
+  {% if group.secondary_records %}
+    <div x-show="open" x-cloak>
+      {% for record in group.secondary_records %}
+        <p class="text-muted pr-exercise-group-line">
+          {{ record.get_record_type_display }}: {{ record|pr_value:request.user }}{% if record.rep_count %} ({{ record.rep_count }}<abbr tabindex="0" title="{% trans "Rep Max" %}">RM</abbr>){% endif %}
+        </p>
+        <p class="text-muted pr-exercise-group-detail">
+          {% blocktrans with weight=record.weight|weight:request.user reps=record.reps %}{{ weight }} × {{ reps }}{% endblocktrans %}
+          — {{ record.achieved_at|date:"Y-m-d" }}
+        </p>
+      {% endfor %}
+    </div>
+  {% endif %}
+</div>

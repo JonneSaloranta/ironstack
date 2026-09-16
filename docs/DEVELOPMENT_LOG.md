@@ -4389,3 +4389,198 @@ values directly, then rendered `/nutrition/diary/` through Django's
 test client as a real Finnish-locale user and confirmed all seven
 slot names appear translated in the actual page HTML. Full `apps.
 nutrition`/`apps.api` suite (442 tests) still passes unchanged.
+
+## A theme system: five named palettes, each with a dark and light half
+
+Requested directly: a Profile setting for light/dark/auto, plus a
+proper theme system a user can pick different named themes from,
+starting with the app's own existing look as the default and adding
+"Nordic", "Vaporwave", "Earth", and "Zen".
+
+Two independent `User` fields, not one, once the second request made
+clear a single field couldn't carry both axes: `theme`
+(`apps.accounts.models.Theme` — `default`/`nordic`/`vaporwave`/`earth`/
+`zen`) picks the palette, `appearance` (`Appearance` —
+`dark`/`light`/`auto`) picks that palette's dark or light half. Both
+resolve into `data-theme`/`data-appearance` attributes on
+`templates/base.html`'s `<html>` tag, each omitted for its own "this
+is what happens with nothing set" value (`default`, `auto`) — `auto`
+specifically renders no attribute at all and leans on a plain
+`@media (prefers-color-scheme: light)` rule in `static/css/base.css`,
+so it tracks a live OS-level light/dark change with zero JavaScript
+and no flash-of-wrong-theme on load, since the resolution happens
+server-side in the same response as everything else on the page.
+
+Went through two designs before landing here. First pass shipped
+`ThemePreference` (`dark`/`light`/`auto`) as a single field — reasonable
+for "add a light/dark/auto setting" read on its own, but the very next
+message asking for named themes each with their own dark/light variant
+made a single flat enum unworkable (there's no clean way to fit
+"Nordic, but light" into one dark/light/auto axis without either a
+combinatorial `nordic-light`/`nordic-dark`/... enum or two fields).
+Caught before anything shipped past the local dev database — the
+`0016_user_theme` migration this first pass produced was deleted and
+regenerated as `0016_user_appearance_user_theme` rather than layered
+under a rename migration, since nothing had been pushed yet; the stray
+column and stale `django_migrations` row that left on the already-
+migrated dev database were cleaned up by hand (`ALTER TABLE ... DROP
+COLUMN`, a matching `DELETE FROM django_migrations`) before
+re-migrating cleanly.
+
+Every one of the four new palettes' ~11 `--color-*` custom properties
+(`static/css/base.css`) — both the dark and light half — was contrast-
+checked against WCAG AA's 4.5:1 normal-text minimum before shipping,
+the same rigor `[data-theme="light"]`'s original comment already
+applied to the very first light palette: computed relative luminance
+per the WCAG formula for text/muted/accent/danger/success/warning/gold
+against both `--color-bg` and `--color-surface`, in a throwaway Python
+script, not eyeballed. Several first-pass colors failed on the first
+try (Vaporwave's light half worst of all — pastel enough to look
+right, several pairings well under 3:1) and were darkened until every
+pairing cleared 4.5:1 without losing each theme's identity — Nordic
+cool blue-gray, Vaporwave magenta/cyan-on-purple (and a pastel-lavender
+light half), Earth warm terracotta/brown, Zen muted sage-green.
+
+Each theme is a literal three-block shape in base.css — `[data-theme="X"]`
+(dark, the default the moment that theme is selected, covering both an
+explicit dark choice and "auto" with no light preference),
+`[data-theme="X"][data-appearance="light"]` (explicit light), and the
+same declarations again inside the prefers-color-scheme media query,
+scoped `:not([data-appearance])` (light via "auto") — chosen over any
+shared/mixin approach since this is plain CSS with no preprocessor;
+adding a sixth theme later is one more `Theme` value plus one more
+copy of that same three-block shape, never a schema change. A
+`<meta name="theme-color">` (browser chrome, PWA splash) can't read a
+CSS custom property, so `apps.accounts.models.THEME_BG_COLORS` — a
+plain dict, each theme's dark/light `--color-bg` — backs a new
+`apps.core.context_processors.theming` context processor instead,
+kept in sync with base.css by hand since nothing lets the two share a
+single source.
+
+Verified visually, not just via the contrast script and the unit
+tests added for the two model fields/profile form/base.html rendering:
+drove a real logged-in session through Playwright against the running
+dev container for all eight dark/light combinations of the four new
+themes plus the existing default, screenshotting the food diary each
+time and reading every one back before trusting it. Hit — and this
+time actually caught before believing a screenshot — a silent failure
+mode in that verification loop itself: a retry-on-failure `bash` loop
+around Playwright's own occasionally-flaky `page.screenshot()` call
+copied whichever *stale* screenshot file happened to already exist at
+its fixed output path when every retry attempt failed, rather than
+erroring — so a theme whose screenshot attempts all failed silently
+inherited the previous theme's image under its own filename instead of
+being reported missing. Rewritten to delete the target file before
+each attempt and verify it was actually recreated before copying it
+onward, which is what caught the bug in the first place (a "Nordic
+light" screenshot that was visibly not cool blue-gray).
+
+## "Recent PRs" grouped by exercise, with a per-record expand
+
+Requested: the dashboard/Analytics "Recent PRs" listing should group by
+exercise instead of showing one card per PR, with everything visible
+directly and a tap for more detail. Root cause of the old shape:
+`PersonalRecord` (`apps.records`) logs one immutable row per
+`record_type` hit — max weight, estimated 1RM, set volume, session
+volume, a rep-specific PR per rep count, a plain rep PR — so a single
+good session could produce several rows for the *same* exercise, and
+`apps.analytics.services.pr_history` (a flat, most-recent-first list)
+rendered each one as its own near-identical card. Worst case seen live
+on the Analytics page: fifteen rows, all for one exercise, as fifteen
+cards.
+
+Added `pr_history_grouped_by_exercise` alongside the existing
+`pr_history` (kept as-is — still used directly by one existing test and
+by nothing that needs pre-grouped data) rather than changing what
+`pr_history` returns: groups the same rows via a plain dict keyed by
+`exercise_id`, relying on dict insertion order rather than a second
+sort — since the input is already most-recent-first, the first row
+seen for a given exercise is, by construction, that exercise's own
+most recent, so the resulting group order falls out for free. `limit`
+still caps the underlying row count, not the group count, deliberately:
+capping groups would mean querying differently depending on how many
+distinct exercises happen to be in the results, and "the N most recent
+PR *events*, however many exercises that touches" is the more honest
+reading of "recent" than "the N most recently active exercises."
+
+One new partial, `templates/records/_pr_exercise_group.html`, shared by
+`templates/core/dashboard.html` (several stacked inside its existing
+single wrapping card, a `.prescription-list`-style border-top divider
+between them) and `templates/analytics/dashboard.html` (one top-level
+`.card` per group, wrapping the same include) — written card-agnostic
+on purpose so both call sites could keep their own existing rhythm
+(one card total vs. one card per item) instead of forcing a single
+shared shape on both. Each record type still renders directly, as
+before ("all the info in the box" — asked for explicitly); an Alpine
+`x-data="{ open: false }"` toggle (the exact `@click`/`:aria-expanded`/
+`x-show` shape `templates/nutrition/diet_plan_detail.html`'s day-group
+disclosure already established) reveals, per record, its source set's
+weight × reps and achieved date — context the model's own docstring
+already called out as the right thing to show ("Bench Press — 100 kg
+× 5") but that nothing rendering `pr_history` actually did until now.
+
+Deliberately left out of the expanded detail: `PersonalRecord`'s
+`.previous_value` — read from `apps.records.services.format_previous_value`,
+already used by the "New PR" toast (`templates/records/_pr_toasts.html`)
+— because that attribute is transient, set only at the moment
+`apps.records.services.check_and_record_prs` creates a fresh row, and
+never persisted. A row re-fetched later from the database the way
+`pr_history` does (the entire point of a "recent PRs" *listing*, as
+opposed to the toast that fires once right after logging) simply
+doesn't carry it — checked before wiring it up, rather than shipping a
+"previous:" line that would silently never render anything.
+
+Verified with three new service tests (grouping several record types
+for one exercise into one group; group order following each exercise's
+own most recent record, not creation order or alphabetical; `limit`
+capping rows rather than groups) plus a template regression test
+asserting an exercise with three record types renders its name exactly
+once — the previous shape would have rendered it three times. All
+pass, alongside the full existing `apps.analytics`/`apps.core` suites
+unchanged. Confirmed visually too: real dashboard and Analytics pages
+in a running dev container, both collapsed and expanded, including the
+15-record/one-exercise worst case that motivated this in the first
+place.
+
+Two follow-up requests refined this further, both acted on the same
+day. First: each exercise's box didn't actually look like the rest of
+the app — the dashboard nested several of them, each a full-width
+flex row with its own bold heading, inside one shared wrapping
+"Recent PRs" card, which read as a distinct new widget rather than
+"a card like the other cards." Fixed by giving `_pr_exercise_group.html`
+its own `.card` per exercise (matching what the Analytics page already
+did) on both pages, and swapping the dashboard's wrapping `<strong>`
+label for the same muted, uppercase `<h2>` eyebrow the Analytics page
+and `templates/programs/program_list.html` already use ahead of a list
+of cards — one heading shape for "a label above several cards,"
+instead of two.
+
+Second: even collapsed, a card still showed *every* record type hit
+in range directly — fine for one or two, but an exercise with a good
+session could rack up a max weight, an estimated 1RM, both volumes,
+and five separate rep-specific PRs, all listed with nothing collapsed.
+Asked to show only the "most important" ones on the card face. Rather
+than invent a new ranking, reused a distinction the app already draws:
+`apps.records.views.ExerciseRecordsView`'s "Current PRs" page groups
+max weight/estimated 1RM/best set volume/best session volume into one
+primary `<dl>`, with rep-specific and plain rep PRs broken out into
+their own separate, secondary sections below. `ExercisePRGroup` now
+carries `primary_records`/`secondary_records` split on exactly that
+same `PRType` boundary (`_PRIMARY_RECORD_TYPES`) instead of one flat
+list — the four headline types render directly as before; rep-specific/
+rep PRs move behind the expand toggle entirely, not just their
+weight×reps/date detail. One edge case the split introduces on its
+own: an exercise whose only hit in range is a secondary type (say, a
+single rep-specific PR, no max weight or volume that day) would
+otherwise collapse to a card with nothing but a name and a chevron —
+handled by falling back to treating that exercise's secondary records
+as primary when there are no real primary ones, so a card is never
+emptier than "at least one figure showing."
+
+Two more service tests cover the split itself (rep-specific/rep PRs
+sorted into `secondary_records`; an exercise with no primary-type hit
+falling back to showing its secondary ones directly) — all pass,
+alongside the rest of `apps.analytics`/`apps.core` (74 tests). Verified
+visually again with the same real dashboard/Analytics pages: a card
+now shows exactly its headline figures collapsed, with every
+rep-specific PR staying hidden until expanded.
