@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: IronStack\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-13 11:50+0000\n"
+"POT-Creation-Date: 2026-09-16 13:29+0000\n"
 "Language: it\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -381,6 +381,7 @@ msgid "Yoga"
 msgstr "Yoga"
 
 #: apps/activities/i18n_content.py:24 apps/core/models.py:167
+#: apps/nutrition/i18n_content.py:36
 msgid "Other"
 msgstr "Altro"
 
@@ -416,22 +417,22 @@ msgstr "note"
 msgid "activities"
 msgstr "attività"
 
-#: apps/analytics/achievements.py:103
+#: apps/analytics/achievements.py:111
 msgid "Longest streak"
 msgstr "Serie più lunga"
 
-#: apps/analytics/achievements.py:104
+#: apps/analytics/achievements.py:112
 #, python-format
 msgid "%(counter)s day"
 msgid_plural "%(counter)s days"
 msgstr[0] "%(counter)s giorno"
 msgstr[1] "%(counter)s giorni"
 
-#: apps/analytics/achievements.py:114
+#: apps/analytics/achievements.py:122
 msgid "Workouts completed"
 msgstr "Allenamenti completati"
 
-#: apps/analytics/achievements.py:115 templates/programs/program_list.html:16
+#: apps/analytics/achievements.py:123 templates/programs/program_list.html:16
 #: templates/programs/program_list.html:32
 #, python-format
 msgid "%(counter)s workout"
@@ -439,18 +440,18 @@ msgid_plural "%(counter)s workouts"
 msgstr[0] "%(counter)s allenamento"
 msgstr[1] "%(counter)s allenamenti"
 
-#: apps/analytics/achievements.py:124
+#: apps/analytics/achievements.py:132
 msgid "Personal records"
 msgstr "Record personali"
 
-#: apps/analytics/achievements.py:125
+#: apps/analytics/achievements.py:133
 #, python-format
 msgid "%(counter)s PR"
 msgid_plural "%(counter)s PRs"
 msgstr[0] "%(counter)s record"
 msgstr[1] "%(counter)s record"
 
-#: apps/analytics/achievements.py:134
+#: apps/analytics/achievements.py:142
 msgid "Total weight lifted"
 msgstr "Peso totale sollevato"
 
@@ -2071,101 +2072,109 @@ msgid "Rate (%(unit)s/week — negative to lose, positive to gain)"
 msgstr ""
 "Ritmo (%(unit)s/settimana — negativo per perdere, positivo per aumentare)"
 
-#: apps/nutrition/i18n_content.py:29
+#: apps/nutrition/i18n_content.py:30
 msgid "Breakfast"
 msgstr "Colazione"
 
-#: apps/nutrition/i18n_content.py:30
+#: apps/nutrition/i18n_content.py:31
+msgid "Morning snack"
+msgstr "Spuntino del mattino"
+
+#: apps/nutrition/i18n_content.py:32
 msgid "Lunch"
 msgstr "Pranzo"
 
-#: apps/nutrition/i18n_content.py:31
+#: apps/nutrition/i18n_content.py:33
+msgid "Afternoon snack"
+msgstr "Spuntino del pomeriggio"
+
+#: apps/nutrition/i18n_content.py:34
 msgid "Dinner"
 msgstr "Cena"
 
-#: apps/nutrition/i18n_content.py:32
+#: apps/nutrition/i18n_content.py:35
 msgid "Evening snack"
 msgstr "Spuntino serale"
 
-#: apps/nutrition/i18n_content.py:38
+#: apps/nutrition/i18n_content.py:42
 msgid "Bulk breakfast — Oats & peanut butter"
 msgstr "Colazione bulk — avena e burro di arachidi"
 
-#: apps/nutrition/i18n_content.py:39
+#: apps/nutrition/i18n_content.py:43
 msgid "Bulk breakfast — Eggs on toast"
 msgstr "Colazione bulk — uova su toast"
 
-#: apps/nutrition/i18n_content.py:40
+#: apps/nutrition/i18n_content.py:44
 msgid "Bulk lunch — Chicken & rice bowl"
 msgstr "Pranzo bulk — bowl di pollo e riso"
 
-#: apps/nutrition/i18n_content.py:41
+#: apps/nutrition/i18n_content.py:45
 msgid "Bulk lunch — Tuna & sweet potato"
 msgstr "Pranzo bulk — tonno e patata dolce"
 
-#: apps/nutrition/i18n_content.py:42
+#: apps/nutrition/i18n_content.py:46
 msgid "Bulk dinner — Salmon & rice"
 msgstr "Cena bulk — salmone e riso"
 
-#: apps/nutrition/i18n_content.py:43
+#: apps/nutrition/i18n_content.py:47
 msgid "Bulk dinner — Chicken & sweet potato"
 msgstr "Cena bulk — pollo e patata dolce"
 
-#: apps/nutrition/i18n_content.py:44
+#: apps/nutrition/i18n_content.py:48
 msgid "Fatburner breakfast — Egg & spinach scramble"
 msgstr "Colazione brucia grassi — uova strapazzate con spinaci"
 
-#: apps/nutrition/i18n_content.py:45
+#: apps/nutrition/i18n_content.py:49
 msgid "Fatburner breakfast — Greek yogurt bowl"
 msgstr "Colazione brucia grassi — bowl di yogurt greco"
 
-#: apps/nutrition/i18n_content.py:46
+#: apps/nutrition/i18n_content.py:50
 msgid "Fatburner lunch — Chicken & broccoli"
 msgstr "Pranzo brucia grassi — pollo e broccoli"
 
-#: apps/nutrition/i18n_content.py:47
+#: apps/nutrition/i18n_content.py:51
 msgid "Fatburner lunch — Tuna & spinach salad"
 msgstr "Pranzo brucia grassi — insalata di tonno e spinaci"
 
-#: apps/nutrition/i18n_content.py:48
+#: apps/nutrition/i18n_content.py:52
 msgid "Fatburner dinner — Salmon & greens"
 msgstr "Cena brucia grassi — salmone e verdure"
 
-#: apps/nutrition/i18n_content.py:49
+#: apps/nutrition/i18n_content.py:53
 msgid "Fatburner dinner — Chicken & cottage cheese"
 msgstr "Cena brucia grassi — pollo e fiocchi di latte"
 
-#: apps/nutrition/i18n_content.py:50
+#: apps/nutrition/i18n_content.py:54
 msgid "Balanced breakfast — Oats & yogurt"
 msgstr "Colazione bilanciata — avena e yogurt"
 
-#: apps/nutrition/i18n_content.py:51
+#: apps/nutrition/i18n_content.py:55
 msgid "Balanced breakfast — Eggs on toast"
 msgstr "Colazione bilanciata — uova su toast"
 
-#: apps/nutrition/i18n_content.py:52
+#: apps/nutrition/i18n_content.py:56
 msgid "Balanced lunch — Chicken & rice"
 msgstr "Pranzo bilanciato — pollo e riso"
 
-#: apps/nutrition/i18n_content.py:53
+#: apps/nutrition/i18n_content.py:57
 msgid "Balanced lunch — Tuna sandwich"
 msgstr "Pranzo bilanciato — panino al tonno"
 
-#: apps/nutrition/i18n_content.py:54
+#: apps/nutrition/i18n_content.py:58
 msgid "Balanced dinner — Salmon & sweet potato"
 msgstr "Cena bilanciata — salmone e patata dolce"
 
-#: apps/nutrition/i18n_content.py:55
+#: apps/nutrition/i18n_content.py:59
 msgid "Balanced dinner — Chicken & vegetables"
 msgstr "Cena bilanciata — pollo e verdure"
 
-#: apps/nutrition/i18n_content.py:60
+#: apps/nutrition/i18n_content.py:64
 msgid "Mix the oats into the yogurt, top with banana slices and peanut butter."
 msgstr ""
 "Mescola l'avena nello yogurt, guarnisci con fette di banana e burro di "
 "arachidi."
 
-#: apps/nutrition/i18n_content.py:62
+#: apps/nutrition/i18n_content.py:66
 msgid ""
 "Fry or scramble the eggs, serve on toasted bread with peanut butter and a "
 "drizzle of olive oil."
@@ -2173,14 +2182,14 @@ msgstr ""
 "Friggi o strapazza le uova, servi su pane tostato con burro di arachidi e un "
 "filo d'olio d'oliva."
 
-#: apps/nutrition/i18n_content.py:65
+#: apps/nutrition/i18n_content.py:69
 msgid ""
 "Cook the chicken and rice, toss with olive oil, serve with steamed broccoli."
 msgstr ""
 "Cuoci il pollo e il riso, condisci con olio d'oliva, servi con broccoli al "
 "vapore."
 
-#: apps/nutrition/i18n_content.py:66
+#: apps/nutrition/i18n_content.py:70
 msgid ""
 "Roast the sweet potato, flake in the tuna, drizzle with olive oil and serve "
 "with spinach."
@@ -2188,7 +2197,7 @@ msgstr ""
 "Arrostisci la patata dolce, sfalda sopra il tonno, condisci con olio d'oliva "
 "e servi con spinaci."
 
-#: apps/nutrition/i18n_content.py:67
+#: apps/nutrition/i18n_content.py:71
 msgid ""
 "Pan-sear the salmon, serve over rice with steamed broccoli and a little "
 "olive oil."
@@ -2196,7 +2205,7 @@ msgstr ""
 "Rosola il salmone in padella, servi sopra il riso con broccoli al vapore e "
 "un filo d'olio d'oliva."
 
-#: apps/nutrition/i18n_content.py:68
+#: apps/nutrition/i18n_content.py:72
 msgid ""
 "Roast the chicken and sweet potato together, top with crushed almonds and "
 "olive oil."
@@ -2204,16 +2213,16 @@ msgstr ""
 "Arrostisci insieme pollo e patata dolce, guarnisci con mandorle tritate e "
 "olio d'oliva."
 
-#: apps/nutrition/i18n_content.py:69
+#: apps/nutrition/i18n_content.py:73
 msgid ""
 "Scramble the eggs with the spinach, serve with cottage cheese on the side."
 msgstr "Strapazza le uova con gli spinaci, servi con fiocchi di latte a parte."
 
-#: apps/nutrition/i18n_content.py:70
+#: apps/nutrition/i18n_content.py:74
 msgid "Top the yogurt with sliced banana and a few crushed almonds."
 msgstr "Guarnisci lo yogurt con fette di banana e qualche mandorla tritata."
 
-#: apps/nutrition/i18n_content.py:71
+#: apps/nutrition/i18n_content.py:75
 msgid ""
 "Grill the chicken, steam the broccoli, finish with a light drizzle of olive "
 "oil."
@@ -2221,42 +2230,42 @@ msgstr ""
 "Griglia il pollo, cuoci i broccoli al vapore, termina con un filo leggero "
 "d'olio d'oliva."
 
-#: apps/nutrition/i18n_content.py:72
+#: apps/nutrition/i18n_content.py:76
 msgid "Toss the tuna with the spinach and a small drizzle of olive oil."
 msgstr "Mescola il tonno con gli spinaci e un filo d'olio d'oliva."
 
-#: apps/nutrition/i18n_content.py:73
+#: apps/nutrition/i18n_content.py:77
 msgid "Bake the salmon, serve with steamed broccoli and spinach."
 msgstr "Cuoci il salmone al forno, servi con broccoli al vapore e spinaci."
 
-#: apps/nutrition/i18n_content.py:74
+#: apps/nutrition/i18n_content.py:78
 msgid "Grill the chicken, serve with cottage cheese and wilted spinach."
 msgstr "Griglia il pollo, servi con fiocchi di latte e spinaci appassiti."
 
-#: apps/nutrition/i18n_content.py:75
+#: apps/nutrition/i18n_content.py:79
 msgid "Mix the oats into the yogurt and top with sliced banana."
 msgstr "Mescola l'avena nello yogurt e guarnisci con fette di banana."
 
-#: apps/nutrition/i18n_content.py:76
+#: apps/nutrition/i18n_content.py:80
 msgid ""
 "Fry or scramble the eggs, serve on toasted bread with a little olive oil."
 msgstr ""
 "Friggi o strapazza le uova, servi su pane tostato con un filo d'olio d'oliva."
 
-#: apps/nutrition/i18n_content.py:77
+#: apps/nutrition/i18n_content.py:81
 msgid "Cook the chicken and rice, serve with steamed broccoli and olive oil."
 msgstr "Cuoci il pollo e il riso, servi con broccoli al vapore e olio d'oliva."
 
-#: apps/nutrition/i18n_content.py:78
+#: apps/nutrition/i18n_content.py:82
 msgid "Mix the tuna with the spinach, serve between slices of toasted bread."
 msgstr "Mescola il tonno con gli spinaci, servi tra fette di pane tostato."
 
-#: apps/nutrition/i18n_content.py:79
+#: apps/nutrition/i18n_content.py:83
 msgid "Bake the salmon and sweet potato, serve with wilted spinach."
 msgstr ""
 "Cuoci al forno il salmone e la patata dolce, servi con spinaci appassiti."
 
-#: apps/nutrition/i18n_content.py:80
+#: apps/nutrition/i18n_content.py:84
 msgid ""
 "Roast the chicken with the broccoli and sweet potato, finish with olive oil."
 msgstr ""

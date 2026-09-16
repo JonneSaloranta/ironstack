@@ -167,12 +167,15 @@ name, order, owner (nullable FK), active
 ```
 
 Exactly `apps.measurements.MeasurementType`'s pattern reused verbatim:
-`owner=None` rows are system-seeded defaults (Breakfast, Lunch, Dinner,
-Evening snack — a migration data seed, same shape as measurement types'
-0002 seed), a user can add their own (`owner=user`), soft-deactivate
-(`active=False`) rather than hard-delete so historical diary entries
-stay attached to a real row. Satisfies section 9 exactly: sensible
-defaults, user can rename/add.
+`owner=None` rows are system-seeded defaults — Breakfast, Morning
+snack, Lunch, Afternoon snack, Dinner, Evening snack, Other, in that
+`order` — a migration data seed (0002_seed_meal_slots, extended by
+0013_add_more_default_meal_slots to add a snack slot between each
+pair of main meals plus a catch-all "Other" for anything that doesn't
+fit), same shape as measurement types' 0002 seed. A user can add their
+own (`owner=user`) and soft-deactivate (`active=False`) rather than
+hard-delete so historical diary entries stay attached to a real row.
+Satisfies section 9 exactly: sensible defaults, user can rename/add.
 
 ### `Food`
 

@@ -19,7 +19,8 @@ docstring) — only this app's own authored copy is.
 
 from django.utils.translation import gettext_lazy as _
 
-# Default meal slots (apps.nutrition.migrations.0002_seed_meal_slots) —
+# Default meal slots (apps.nutrition.migrations.0002_seed_meal_slots,
+# apps.nutrition.migrations.0013_add_more_default_meal_slots) —
 # missing from this file until now, the one seeded-content name in
 # this app that was never actually wired up for translation: every
 # {{ slot.name }}/{{ meal.meal_slot.name }} in templates/nutrition
@@ -27,9 +28,12 @@ from django.utils.translation import gettext_lazy as _
 # since there was no msgid for it to look up in the first place.
 MEAL_SLOT_NAMES = [
     _("Breakfast"),
+    _("Morning snack"),
     _("Lunch"),
+    _("Afternoon snack"),
     _("Dinner"),
     _("Evening snack"),
+    _("Other"),
 ]
 
 # Template recipe names (apps.nutrition.migrations' seed data) — the

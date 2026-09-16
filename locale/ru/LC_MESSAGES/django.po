@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: IronStack\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-13 11:50+0000\n"
+"POT-Creation-Date: 2026-09-16 13:29+0000\n"
 "Language: ru\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -381,6 +381,7 @@ msgid "Yoga"
 msgstr "Йога"
 
 #: apps/activities/i18n_content.py:24 apps/core/models.py:167
+#: apps/nutrition/i18n_content.py:36
 msgid "Other"
 msgstr "Другое"
 
@@ -416,11 +417,11 @@ msgstr "заметки"
 msgid "activities"
 msgstr "активности"
 
-#: apps/analytics/achievements.py:103
+#: apps/analytics/achievements.py:111
 msgid "Longest streak"
 msgstr "Самая длинная серия"
 
-#: apps/analytics/achievements.py:104
+#: apps/analytics/achievements.py:112
 #, python-format
 msgid "%(counter)s day"
 msgid_plural "%(counter)s days"
@@ -428,11 +429,11 @@ msgstr[0] "%(counter)s день"
 msgstr[1] "%(counter)s дня"
 msgstr[2] "%(counter)s дней"
 
-#: apps/analytics/achievements.py:114
+#: apps/analytics/achievements.py:122
 msgid "Workouts completed"
 msgstr "Тренировок выполнено"
 
-#: apps/analytics/achievements.py:115 templates/programs/program_list.html:16
+#: apps/analytics/achievements.py:123 templates/programs/program_list.html:16
 #: templates/programs/program_list.html:32
 #, python-format
 msgid "%(counter)s workout"
@@ -441,11 +442,11 @@ msgstr[0] "%(counter)s тренировка"
 msgstr[1] "%(counter)s тренировки"
 msgstr[2] "%(counter)s тренировок"
 
-#: apps/analytics/achievements.py:124
+#: apps/analytics/achievements.py:132
 msgid "Personal records"
 msgstr "Личных рекордов"
 
-#: apps/analytics/achievements.py:125
+#: apps/analytics/achievements.py:133
 #, python-format
 msgid "%(counter)s PR"
 msgid_plural "%(counter)s PRs"
@@ -453,7 +454,7 @@ msgstr[0] "%(counter)s рекорд"
 msgstr[1] "%(counter)s рекорда"
 msgstr[2] "%(counter)s рекордов"
 
-#: apps/analytics/achievements.py:134
+#: apps/analytics/achievements.py:142
 msgid "Total weight lifted"
 msgstr "Всего поднято веса"
 
@@ -2039,101 +2040,109 @@ msgstr ""
 "Темп (%(unit)s/неделя — отрицательное значение для похудения, положительное "
 "для набора веса)"
 
-#: apps/nutrition/i18n_content.py:29
+#: apps/nutrition/i18n_content.py:30
 msgid "Breakfast"
 msgstr "Завтрак"
 
-#: apps/nutrition/i18n_content.py:30
+#: apps/nutrition/i18n_content.py:31
+msgid "Morning snack"
+msgstr "Утренний перекус"
+
+#: apps/nutrition/i18n_content.py:32
 msgid "Lunch"
 msgstr "Обед"
 
-#: apps/nutrition/i18n_content.py:31
+#: apps/nutrition/i18n_content.py:33
+msgid "Afternoon snack"
+msgstr "Дневной перекус"
+
+#: apps/nutrition/i18n_content.py:34
 msgid "Dinner"
 msgstr "Ужин"
 
-#: apps/nutrition/i18n_content.py:32
+#: apps/nutrition/i18n_content.py:35
 msgid "Evening snack"
 msgstr "Вечерний перекус"
 
-#: apps/nutrition/i18n_content.py:38
+#: apps/nutrition/i18n_content.py:42
 msgid "Bulk breakfast — Oats & peanut butter"
 msgstr "Завтрак для набора массы — овсянка с арахисовой пастой"
 
-#: apps/nutrition/i18n_content.py:39
+#: apps/nutrition/i18n_content.py:43
 msgid "Bulk breakfast — Eggs on toast"
 msgstr "Завтрак для набора массы — яйца на тосте"
 
-#: apps/nutrition/i18n_content.py:40
+#: apps/nutrition/i18n_content.py:44
 msgid "Bulk lunch — Chicken & rice bowl"
 msgstr "Обед для набора массы — курица с рисом"
 
-#: apps/nutrition/i18n_content.py:41
+#: apps/nutrition/i18n_content.py:45
 msgid "Bulk lunch — Tuna & sweet potato"
 msgstr "Обед для набора массы — тунец со сладким картофелем"
 
-#: apps/nutrition/i18n_content.py:42
+#: apps/nutrition/i18n_content.py:46
 msgid "Bulk dinner — Salmon & rice"
 msgstr "Ужин для набора массы — лосось с рисом"
 
-#: apps/nutrition/i18n_content.py:43
+#: apps/nutrition/i18n_content.py:47
 msgid "Bulk dinner — Chicken & sweet potato"
 msgstr "Ужин для набора массы — курица со сладким картофелем"
 
-#: apps/nutrition/i18n_content.py:44
+#: apps/nutrition/i18n_content.py:48
 msgid "Fatburner breakfast — Egg & spinach scramble"
 msgstr "Завтрак для похудения — яичница со шпинатом"
 
-#: apps/nutrition/i18n_content.py:45
+#: apps/nutrition/i18n_content.py:49
 msgid "Fatburner breakfast — Greek yogurt bowl"
 msgstr "Завтрак для похудения — греческий йогурт с добавками"
 
-#: apps/nutrition/i18n_content.py:46
+#: apps/nutrition/i18n_content.py:50
 msgid "Fatburner lunch — Chicken & broccoli"
 msgstr "Обед для похудения — курица с брокколи"
 
-#: apps/nutrition/i18n_content.py:47
+#: apps/nutrition/i18n_content.py:51
 msgid "Fatburner lunch — Tuna & spinach salad"
 msgstr "Обед для похудения — салат с тунцом и шпинатом"
 
-#: apps/nutrition/i18n_content.py:48
+#: apps/nutrition/i18n_content.py:52
 msgid "Fatburner dinner — Salmon & greens"
 msgstr "Ужин для похудения — лосось с зеленью"
 
-#: apps/nutrition/i18n_content.py:49
+#: apps/nutrition/i18n_content.py:53
 msgid "Fatburner dinner — Chicken & cottage cheese"
 msgstr "Ужин для похудения — курица с творогом"
 
-#: apps/nutrition/i18n_content.py:50
+#: apps/nutrition/i18n_content.py:54
 msgid "Balanced breakfast — Oats & yogurt"
 msgstr "Сбалансированный завтрак — овсянка с йогуртом"
 
-#: apps/nutrition/i18n_content.py:51
+#: apps/nutrition/i18n_content.py:55
 msgid "Balanced breakfast — Eggs on toast"
 msgstr "Сбалансированный завтрак — яйца на тосте"
 
-#: apps/nutrition/i18n_content.py:52
+#: apps/nutrition/i18n_content.py:56
 msgid "Balanced lunch — Chicken & rice"
 msgstr "Сбалансированный обед — курица с рисом"
 
-#: apps/nutrition/i18n_content.py:53
+#: apps/nutrition/i18n_content.py:57
 msgid "Balanced lunch — Tuna sandwich"
 msgstr "Сбалансированный обед — сэндвич с тунцом"
 
-#: apps/nutrition/i18n_content.py:54
+#: apps/nutrition/i18n_content.py:58
 msgid "Balanced dinner — Salmon & sweet potato"
 msgstr "Сбалансированный ужин — лосось со сладким картофелем"
 
-#: apps/nutrition/i18n_content.py:55
+#: apps/nutrition/i18n_content.py:59
 msgid "Balanced dinner — Chicken & vegetables"
 msgstr "Сбалансированный ужин — курица с овощами"
 
-#: apps/nutrition/i18n_content.py:60
+#: apps/nutrition/i18n_content.py:64
 msgid "Mix the oats into the yogurt, top with banana slices and peanut butter."
 msgstr ""
 "Смешайте овсянку с йогуртом, добавьте сверху ломтики банана и арахисовую "
 "пасту."
 
-#: apps/nutrition/i18n_content.py:62
+#: apps/nutrition/i18n_content.py:66
 msgid ""
 "Fry or scramble the eggs, serve on toasted bread with peanut butter and a "
 "drizzle of olive oil."
@@ -2141,14 +2150,14 @@ msgstr ""
 "Обжарьте или взбейте яйца, подавайте на тосте с арахисовой пастой и каплей "
 "оливкового масла."
 
-#: apps/nutrition/i18n_content.py:65
+#: apps/nutrition/i18n_content.py:69
 msgid ""
 "Cook the chicken and rice, toss with olive oil, serve with steamed broccoli."
 msgstr ""
 "Приготовьте курицу и рис, перемешайте с оливковым маслом, подавайте с "
 "брокколи на пару."
 
-#: apps/nutrition/i18n_content.py:66
+#: apps/nutrition/i18n_content.py:70
 msgid ""
 "Roast the sweet potato, flake in the tuna, drizzle with olive oil and serve "
 "with spinach."
@@ -2156,7 +2165,7 @@ msgstr ""
 "Запеките сладкий картофель, добавьте тунец кусочками, сбрызните оливковым "
 "маслом и подавайте со шпинатом."
 
-#: apps/nutrition/i18n_content.py:67
+#: apps/nutrition/i18n_content.py:71
 msgid ""
 "Pan-sear the salmon, serve over rice with steamed broccoli and a little "
 "olive oil."
@@ -2164,7 +2173,7 @@ msgstr ""
 "Обжарьте лосось на сковороде, подавайте с рисом, брокколи на пару и "
 "небольшим количеством оливкового масла."
 
-#: apps/nutrition/i18n_content.py:68
+#: apps/nutrition/i18n_content.py:72
 msgid ""
 "Roast the chicken and sweet potato together, top with crushed almonds and "
 "olive oil."
@@ -2172,16 +2181,16 @@ msgstr ""
 "Запеките курицу и сладкий картофель вместе, посыпьте измельчённым миндалём и "
 "сбрызните оливковым маслом."
 
-#: apps/nutrition/i18n_content.py:69
+#: apps/nutrition/i18n_content.py:73
 msgid ""
 "Scramble the eggs with the spinach, serve with cottage cheese on the side."
 msgstr "Взбейте яйца со шпинатом, подавайте с творогом отдельно."
 
-#: apps/nutrition/i18n_content.py:70
+#: apps/nutrition/i18n_content.py:74
 msgid "Top the yogurt with sliced banana and a few crushed almonds."
 msgstr "Добавьте в йогурт ломтики банана и немного измельчённого миндаля."
 
-#: apps/nutrition/i18n_content.py:71
+#: apps/nutrition/i18n_content.py:75
 msgid ""
 "Grill the chicken, steam the broccoli, finish with a light drizzle of olive "
 "oil."
@@ -2189,43 +2198,43 @@ msgstr ""
 "Приготовьте курицу на гриле, брокколи на пару, сбрызните небольшим "
 "количеством оливкового масла."
 
-#: apps/nutrition/i18n_content.py:72
+#: apps/nutrition/i18n_content.py:76
 msgid "Toss the tuna with the spinach and a small drizzle of olive oil."
 msgstr "Смешайте тунец со шпинатом и небольшим количеством оливкового масла."
 
-#: apps/nutrition/i18n_content.py:73
+#: apps/nutrition/i18n_content.py:77
 msgid "Bake the salmon, serve with steamed broccoli and spinach."
 msgstr "Запеките лосось, подавайте с брокколи на пару и шпинатом."
 
-#: apps/nutrition/i18n_content.py:74
+#: apps/nutrition/i18n_content.py:78
 msgid "Grill the chicken, serve with cottage cheese and wilted spinach."
 msgstr "Приготовьте курицу на гриле, подавайте с творогом и тушёным шпинатом."
 
-#: apps/nutrition/i18n_content.py:75
+#: apps/nutrition/i18n_content.py:79
 msgid "Mix the oats into the yogurt and top with sliced banana."
 msgstr "Смешайте овсянку с йогуртом и добавьте сверху ломтики банана."
 
-#: apps/nutrition/i18n_content.py:76
+#: apps/nutrition/i18n_content.py:80
 msgid ""
 "Fry or scramble the eggs, serve on toasted bread with a little olive oil."
 msgstr ""
 "Обжарьте или взбейте яйца, подавайте на тосте с небольшим количеством "
 "оливкового масла."
 
-#: apps/nutrition/i18n_content.py:77
+#: apps/nutrition/i18n_content.py:81
 msgid "Cook the chicken and rice, serve with steamed broccoli and olive oil."
 msgstr ""
 "Приготовьте курицу и рис, подавайте с брокколи на пару и оливковым маслом."
 
-#: apps/nutrition/i18n_content.py:78
+#: apps/nutrition/i18n_content.py:82
 msgid "Mix the tuna with the spinach, serve between slices of toasted bread."
 msgstr "Смешайте тунец со шпинатом, подавайте между ломтиками тоста."
 
-#: apps/nutrition/i18n_content.py:79
+#: apps/nutrition/i18n_content.py:83
 msgid "Bake the salmon and sweet potato, serve with wilted spinach."
 msgstr "Запеките лосось и сладкий картофель, подавайте с тушёным шпинатом."
 
-#: apps/nutrition/i18n_content.py:80
+#: apps/nutrition/i18n_content.py:84
 msgid ""
 "Roast the chicken with the broccoli and sweet potato, finish with olive oil."
 msgstr ""

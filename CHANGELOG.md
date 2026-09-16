@@ -18,6 +18,11 @@ narrated summary of the same version.
 
 ## [Unreleased]
 
+### Added
+- The food diary now offers a morning snack (between breakfast and
+  lunch) and an afternoon snack (between lunch and dinner), plus an
+  "Other" category for food that doesn't fit any named meal.
+
 ## [1.14.1] — 2026-09-14
 
 ### Fixed

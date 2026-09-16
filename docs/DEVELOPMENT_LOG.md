@@ -4344,3 +4344,48 @@ separate method, `decodeFromVideoElementContinuously(video, callback)`
 fixes live decoding end-to-end, including through the real "Scan
 barcode" button and camera modal (not just an isolated ZXing call),
 with the fake barcode value landing correctly in the food-search box.
+
+## A snack slot between each main meal, and a catch-all "Other" for the food diary
+
+Requested: the food diary's meal slots should offer a snack between
+breakfast and lunch and between lunch and dinner, not just after
+dinner, and a place to log food that doesn't fit any named meal at
+all. `MealSlot` (`apps.nutrition.models`) already supports exactly
+this shape — `owner=None` system rows plus a per-user `order` a
+migration seeds once (`0002_seed_meal_slots`) and a diary form/page
+just lists dynamically (`services.visible_meal_slots`, the
+`{% for slot in meal_slots %}` loop in `templates/nutrition/
+diary_day.html`) — so this was a seed-data change, not a schema or
+view change. `0013_add_more_default_meal_slots` reorders the four
+original system slots and inserts "Morning snack" (order 1, between
+Breakfast and Lunch), "Afternoon snack" (order 3, between Lunch and
+Dinner), and "Other" (order 6, after Evening snack) via `update_or_
+create` keyed on `(name, owner=None)`, so it's safe to run against an
+install that already has the original four seeded. `DiaryEntry.
+meal_slot` was already a required FK with no null option — every
+entry has always had to pick *some* slot — so "Other" just gives that
+existing requirement an honest option for food that isn't really a
+breakfast/lunch/dinner/snack, rather than forcing it into the nearest
+approximate meal.
+
+Extended `apps.nutrition.i18n_content.MEAL_SLOT_NAMES` with the three
+new names (see "Internationalization" in `docs/ARCHITECTURE.md` for
+why seeded content needs its own `gettext_lazy` list — `makemessages`
+can't discover a runtime `{{ slot.name }}` on its own) and re-ran
+`makemessages` for all six locales. "Other" already existed verbatim
+as a msgid from `apps.activities.i18n_content`/`apps.core.models`, so
+every locale picked up an existing human translation for free; only
+"Morning snack"/"Afternoon snack" needed a real translation pass —
+`msgmerge`'s fuzzy match had guessed "Evening snack"'s translation for
+both, which would have shipped wrong if left unreviewed, exactly the
+failure mode `docs/ARCHITECTURE.md`'s i18n workflow section warns
+about. Verified with `msgfmt --statistics` on all six catalogs (1272/
+1272 translated, zero fuzzy) before compiling.
+
+Verified end to end rather than trusting the migration and translation
+edits alone: applied `0013` against the running dev database (not just
+a fresh test database) and confirmed the resulting `order`/`name`
+values directly, then rendered `/nutrition/diary/` through Django's
+test client as a real Finnish-locale user and confirmed all seven
+slot names appear translated in the actual page HTML. Full `apps.
+nutrition`/`apps.api` suite (442 tests) still passes unchanged.
