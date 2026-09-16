@@ -44,6 +44,16 @@ locales, see `ARCHITECTURE.md` "Internationalization"), applied by
 `unit_system`/`timezone`: it changes what language the interface reads
 in, not what units or "today" mean.
 
+Also carries `theme` and `appearance` — two independent display
+preferences (`UI.md` "Theming") resolved into `templates/base.html`'s
+`<html>` tag rather than applied via middleware, since nothing else in
+the app ever reads either value. `theme` (`apps.accounts.models.Theme`)
+picks a named color palette (`default`, `nordic`, `vaporwave`, `earth`,
+`zen`); `appearance` (`apps.accounts.models.Appearance`) picks that
+palette's dark, light, or device-following ("auto") half. Both default
+to this app's one pre-existing look, `default`/`dark`, so an existing
+install's appearance never changes on upgrade.
+
 Also carries `show_achievements` — unlike every other boolean toggle on
 this model, this is a *privacy* setting rather than a personal display
 preference: the dashboard's achievements carousel and "Recently active"

@@ -53,6 +53,269 @@
      lining up. */
   --font-mono: ui-monospace, "SF Mono", "Cascadia Code", "Roboto Mono", Consolas,
     "Liberation Mono", monospace;
+  /* Tells the browser itself (not just this stylesheet) which palette
+     is active, so native, non-CSS-able chrome — the <input type="date">
+     calendar popup, scrollbars, form-control default styling — matches
+     the page around it instead of defaulting to light regardless of
+     what --color-bg says. */
+  color-scheme: dark;
+}
+
+/* Theming (apps.accounts.models.Theme/Appearance, docs/UI.md "Theming")
+   — every rule below this point already reads color through the
+   --color-* custom properties above rather than a literal value (the
+   handful of genuinely fixed colors — a modal backdrop, the barcode
+   scanner's placeholder video background, the nutri-score/NOVA badge
+   scale — are deliberately theme-independent and left alone), so each
+   theme below is just another set of values for the same properties,
+   not a parallel stylesheet.
+
+   Two independent axes, both resolved by templates/base.html into
+   attributes on <html>: `data-theme` picks the palette (absent for
+   Theme.DEFAULT, which is what the bare :root above already is —
+   no attribute needed for it); `data-appearance` picks that palette's
+   dark or light half for an explicit Appearance.DARK/LIGHT choice,
+   and is left off entirely for Appearance.AUTO, so the @media block
+   below each theme's explicit one is what a device that itself
+   prefers light resolves to instead — scoped to `:not([data-appearance])`
+   so it never fights an explicit choice. Every non-default theme
+   needs an *explicit dark* block too (unlike Theme.DEFAULT, which
+   gets dark for free from :root): `[data-theme="nordic"]` alone,
+   with no --color-* redeclaration for light, so it applies whenever
+   Nordic is selected regardless of data-appearance (covering explicit
+   dark, and auto with no light preference) until one of the two
+   light rules below it overrides it.
+
+   Each theme's three blocks are a literal duplicate of the same
+   ~11 declarations (plain CSS has no mixin to share them through)
+   rather than one block doing double duty — keep new themes in this
+   same three-block shape, and keep apps.accounts.models.
+   THEME_BG_COLORS (templates/base.html's <meta name="theme-color">,
+   which can't reference a custom property) in sync with each theme's
+   own --color-bg by hand. */
+
+[data-theme="nordic"] {
+  --color-bg: #1a1e24;
+  --color-surface: #232830;
+  --color-border: #333a44;
+  --color-text: #e5e9ef;
+  --color-text-muted: #99a3b0;
+  --color-accent: #7fb0e0;
+  --color-on-accent: #1a1e24;
+  --color-danger: #e06c6c;
+  --color-success: #6fbf9a;
+  --color-warning: #d9a760;
+  --color-gold: #c9a24b;
+  color-scheme: dark;
+}
+
+[data-theme="nordic"][data-appearance="light"] {
+  --color-bg: #eef1f5;
+  --color-surface: #ffffff;
+  --color-border: #d7dee6;
+  --color-text: #1c2128;
+  --color-text-muted: #5b6672;
+  --color-accent: #2f6fa8;
+  --color-on-accent: #ffffff;
+  --color-danger: #b8433a;
+  --color-success: #1c7350;
+  --color-warning: #93650c;
+  --color-gold: #7d6520;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: light) {
+  [data-theme="nordic"]:not([data-appearance]) {
+    --color-bg: #eef1f5;
+    --color-surface: #ffffff;
+    --color-border: #d7dee6;
+    --color-text: #1c2128;
+    --color-text-muted: #5b6672;
+    --color-accent: #2f6fa8;
+    --color-on-accent: #ffffff;
+    --color-danger: #b8433a;
+    --color-success: #1c7350;
+    --color-warning: #93650c;
+    --color-gold: #7d6520;
+    color-scheme: light;
+  }
+}
+
+[data-theme="vaporwave"] {
+  --color-bg: #1a1035;
+  --color-surface: #241247;
+  --color-border: #3d2266;
+  --color-text: #f2e9ff;
+  --color-text-muted: #b79ddb;
+  --color-accent: #ff6ec7;
+  --color-on-accent: #1a1035;
+  --color-danger: #ff5477;
+  --color-success: #4ee6c8;
+  --color-warning: #ffd76e;
+  --color-gold: #f5b942;
+  color-scheme: dark;
+}
+
+[data-theme="vaporwave"][data-appearance="light"] {
+  --color-bg: #f5eeff;
+  --color-surface: #ffffff;
+  --color-border: #e3d3f7;
+  --color-text: #2c1750;
+  --color-text-muted: #6b4f95;
+  --color-accent: #9c1f9e;
+  --color-on-accent: #ffffff;
+  --color-danger: #b81f4f;
+  --color-success: #0d7a63;
+  --color-warning: #8f5c06;
+  --color-gold: #7d5c06;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: light) {
+  [data-theme="vaporwave"]:not([data-appearance]) {
+    --color-bg: #f5eeff;
+    --color-surface: #ffffff;
+    --color-border: #e3d3f7;
+    --color-text: #2c1750;
+    --color-text-muted: #6b4f95;
+    --color-accent: #9c1f9e;
+    --color-on-accent: #ffffff;
+    --color-danger: #b81f4f;
+    --color-success: #0d7a63;
+    --color-warning: #8f5c06;
+    --color-gold: #7d5c06;
+    color-scheme: light;
+  }
+}
+
+[data-theme="earth"] {
+  --color-bg: #211812;
+  --color-surface: #2b1f17;
+  --color-border: #40301f;
+  --color-text: #ecdfd0;
+  --color-text-muted: #b3987e;
+  --color-accent: #d98c4a;
+  --color-on-accent: #211812;
+  --color-danger: #d9695a;
+  --color-success: #7ba05b;
+  --color-warning: #d9a84a;
+  --color-gold: #c9962e;
+  color-scheme: dark;
+}
+
+[data-theme="earth"][data-appearance="light"] {
+  --color-bg: #f6efe6;
+  --color-surface: #fffaf3;
+  --color-border: #e0d0ba;
+  --color-text: #2b1f14;
+  --color-text-muted: #6b5a47;
+  --color-accent: #8c4a1f;
+  --color-on-accent: #ffffff;
+  --color-danger: #a8402e;
+  --color-success: #3d6b2e;
+  --color-warning: #8a5a0c;
+  --color-gold: #7d5a1a;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: light) {
+  [data-theme="earth"]:not([data-appearance]) {
+    --color-bg: #f6efe6;
+    --color-surface: #fffaf3;
+    --color-border: #e0d0ba;
+    --color-text: #2b1f14;
+    --color-text-muted: #6b5a47;
+    --color-accent: #8c4a1f;
+    --color-on-accent: #ffffff;
+    --color-danger: #a8402e;
+    --color-success: #3d6b2e;
+    --color-warning: #8a5a0c;
+    --color-gold: #7d5a1a;
+    color-scheme: light;
+  }
+}
+
+[data-theme="zen"] {
+  --color-bg: #14201c;
+  --color-surface: #1c2b25;
+  --color-border: #2c3f37;
+  --color-text: #e3ece7;
+  --color-text-muted: #93a89e;
+  --color-accent: #7fb896;
+  --color-on-accent: #14201c;
+  --color-danger: #d9776f;
+  --color-success: #5fae94;
+  --color-warning: #c9a463;
+  --color-gold: #b89a55;
+  color-scheme: dark;
+}
+
+[data-theme="zen"][data-appearance="light"] {
+  --color-bg: #f3f1ea;
+  --color-surface: #fbfaf6;
+  --color-border: #ddd8c9;
+  --color-text: #23291f;
+  --color-text-muted: #5a6350;
+  --color-accent: #2f5f47;
+  --color-on-accent: #ffffff;
+  --color-danger: #a8453c;
+  --color-success: #2f7a52;
+  --color-warning: #8a6510;
+  --color-gold: #7d6a24;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: light) {
+  [data-theme="zen"]:not([data-appearance]) {
+    --color-bg: #f3f1ea;
+    --color-surface: #fbfaf6;
+    --color-border: #ddd8c9;
+    --color-text: #23291f;
+    --color-text-muted: #5a6350;
+    --color-accent: #2f5f47;
+    --color-on-accent: #ffffff;
+    --color-danger: #a8453c;
+    --color-success: #2f7a52;
+    --color-warning: #8a6510;
+    --color-gold: #7d6a24;
+    color-scheme: light;
+  }
+}
+
+/* Theme.DEFAULT's light half — :root above is already its dark half,
+   unconditionally, so this only needs the explicit-light and
+   auto-with-light-preference cases, both scoped to :not([data-theme])
+   so they never apply once a named theme is active. */
+[data-appearance="light"]:not([data-theme]) {
+  --color-bg: #f2f3f5;
+  --color-surface: #ffffff;
+  --color-border: #d7dbe0;
+  --color-text: #14171a;
+  --color-text-muted: #5b6570;
+  --color-accent: #2563eb;
+  --color-on-accent: #ffffff;
+  --color-danger: #c0311d;
+  --color-success: #187a41;
+  --color-warning: #8f6208;
+  --color-gold: #7d5a14;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: light) {
+  html:not([data-theme]):not([data-appearance]) {
+    --color-bg: #f2f3f5;
+    --color-surface: #ffffff;
+    --color-border: #d7dbe0;
+    --color-text: #14171a;
+    --color-text-muted: #5b6570;
+    --color-accent: #2563eb;
+    --color-on-accent: #ffffff;
+    --color-danger: #c0311d;
+    --color-success: #187a41;
+    --color-warning: #8f6208;
+    --color-gold: #7d5a14;
+    color-scheme: light;
+  }
 }
 
 * {
@@ -1274,6 +1537,40 @@ dd {
   border-top: 0;
 }
 
+/* One exercise's grouped PRs (templates/records/_pr_exercise_group.html)
+   — a plain .card, same as every other card on the dashboard/Analytics
+   page; only the toggle button and its expand-only detail rows below
+   need their own rules. */
+.pr-exercise-group-toggle {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  min-height: var(--touch-target);
+  margin-bottom: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.pr-exercise-group-chevron {
+  color: var(--color-text-muted);
+  flex-shrink: 0;
+}
+
+.pr-exercise-group-line {
+  margin: 0.35rem 0 0;
+}
+
+.pr-exercise-group-detail {
+  margin: 0.15rem 0 0 0.75rem;
+  font-size: 0.8rem;
+}
+
 h2 {
   font-size: 1rem;
   color: var(--color-text-muted);
@@ -1956,6 +2253,40 @@ h2 {
   align-items: center;
   gap: 0.5rem;
   flex-wrap: wrap;
+}
+
+/* Food diary's day navigation (templates/nutrition/diary_day.html) —
+   "Previous day"/date/"Next day" kept on one row even at the
+   ~360-430px mobile baseline. A "Previous day"/"Next day" text label
+   next to the arrow made the two buttons together wider than the row
+   itself, forcing the date input down to nothing (illegible) or all
+   three onto separate lines; the arrow alone stays a full touch
+   target (accessible name still "Previous day"/"Next day" via
+   aria-label) and leaves the date input enough room to stay legible. */
+.diary-date-nav {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.diary-date-nav .button-secondary {
+  flex-shrink: 0;
+  padding: 0.5rem;
+  justify-content: center;
+}
+
+.diary-date-nav input[type="date"] {
+  flex: 1 1 auto;
+  min-width: 0;
+  /* Every input carries a 0.75rem bottom margin by default (the
+     generic `input, select, textarea` rule above, meant for stacked
+     form fields) — inside a flex row, `align-items: center` centers
+     each item's full margin box, so that margin alone pushed the
+     date visibly above the buttons flanking it even though all three
+     sat on the same line. */
+  margin-bottom: 0;
 }
 
 .rest-timer-row .button-secondary {

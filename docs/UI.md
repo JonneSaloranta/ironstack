@@ -103,6 +103,62 @@ The interface should feel like a practical training tool rather than a social me
 
 Avoid unnecessary visual clutter, excessive animations, and tiny controls.
 
+## Theming
+
+Two independent per-user preferences, both set from Profile → Preferences
+(`apps.accounts.forms.ProfileForm`) and both resolved server-side into
+`templates/base.html`'s `<html>` tag — no client-side theme switching,
+no flash of the wrong theme on load:
+
+- `theme` (`apps.accounts.models.Theme`) — which named color palette:
+  `default` (this app's original, only-ever look), `nordic`, `vaporwave`,
+  `earth`, `zen`. Renders as `data-theme="..."` on `<html>`, omitted
+  entirely for `default` (the bare `:root` in `static/css/base.css` is
+  already that palette).
+- `appearance` (`apps.accounts.models.Appearance`) — `dark`, `light`, or
+  `auto`. Every theme ships both a dark and a light half; this picks
+  between them. Renders as `data-appearance="..."` on `<html>`, omitted
+  entirely for `auto`, which instead lets a plain CSS
+  `@media (prefers-color-scheme: light)` rule decide — no JavaScript
+  involved, so it also tracks a live OS-level change with no reload.
+
+Both default to this app's one pre-existing look (`Theme.DEFAULT`,
+`Appearance.DARK`) so an existing install's appearance never changes on
+upgrade, and a signed-out visitor (login/signup) gets the same default
+theme with `auto` appearance.
+
+`static/css/base.css` implements every theme purely through the
+`--color-*` custom properties declared once on `:root` — `--color-bg`,
+`--color-surface`, `--color-border`, `--color-text`,
+`--color-text-muted`, `--color-accent`, `--color-on-accent`,
+`--color-danger`, `--color-success`, `--color-warning`, `--color-gold`.
+Every rule in the stylesheet reads color through one of these rather
+than a literal value (a handful of genuinely fixed colors — a modal
+backdrop, the barcode scanner's placeholder video background, the
+nutri-score/NOVA badge scale — are deliberately theme-independent and
+left alone), so a theme is just another set of values for the same
+properties, not a parallel stylesheet. Each theme is three CSS blocks —
+`[data-theme="X"]` (that theme's dark half, the default whenever it's
+selected), `[data-theme="X"][data-appearance="light"]` (explicit
+light), and the same declarations again inside
+`@media (prefers-color-scheme: light) { [data-theme="X"]:not([data-appearance]) { ... } }`
+(light via `auto`) — adding a new theme later means adding one more
+named value to `Theme` plus one more set of these three blocks, never a
+schema change or a rewrite of existing rules.
+
+Contrast-checked against WCAG AA (4.5:1 for normal text) for every
+text/background pairing when each palette was designed — verify the
+same for any future theme (`apps/core/test_accessibility.py`'s axe-core
+suite catches real regressions here, though it only ever runs against
+whichever theme is active at the time).
+
+A `<meta name="theme-color">` browser-chrome/PWA-splash tag can't read
+a CSS custom property, so `apps.accounts.models.THEME_BG_COLORS` (a
+plain dict of each theme's dark/light `--color-bg`, read by
+`apps.core.context_processors.theming`) is kept in sync with
+base.css's own values by hand — there's no single source both read
+from.
+
 ## Implementation
 
 ### Workout logging

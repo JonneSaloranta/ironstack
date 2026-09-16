@@ -105,7 +105,14 @@ class LanguagePreferenceTests(TestCase):
 
     def test_setting_language_on_profile_persists_it(self):
         self.client.post(
-            reverse("profile"), {"unit_system": "metric", "timezone": "UTC", "language": "fi"}
+            reverse("profile"),
+            {
+                "unit_system": "metric",
+                "timezone": "UTC",
+                "language": "fi",
+                "theme": "default",
+                "appearance": "dark",
+            },
         )
         self.alice.refresh_from_db()
         self.assertEqual(self.alice.language, "fi")
@@ -125,6 +132,92 @@ class LanguagePreferenceTests(TestCase):
         self.alice.save()
         response = self.client.get(reverse("profile"))
         self.assertContains(response, "Aikavyöhyke")  # "Timezone" label
+
+
+class ThemePreferenceTests(TestCase):
+    """apps.accounts.models.Theme/Appearance / templates/base.html's own
+    `data-theme`/`data-appearance` attributes and `theme-color` meta
+    tags — two independent display preferences, same shape as language
+    above, but resolved into the initial server-rendered HTML rather
+    than applied via middleware, since they only ever affect markup
+    this same response already produces."""
+
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        self.client.login(username="alice", password="s3cret-pass")
+
+    def test_theme_defaults_to_default_palette(self):
+        self.assertEqual(self.alice.theme, "default")
+
+    def test_appearance_defaults_to_dark(self):
+        self.assertEqual(self.alice.appearance, "dark")
+
+    def test_setting_theme_and_appearance_on_profile_persists_them(self):
+        self.client.post(
+            reverse("profile"),
+            {
+                "unit_system": "metric",
+                "timezone": "UTC",
+                "language": "en",
+                "theme": "nordic",
+                "appearance": "light",
+            },
+        )
+        self.alice.refresh_from_db()
+        self.assertEqual(self.alice.theme, "nordic")
+        self.assertEqual(self.alice.appearance, "light")
+
+    def test_default_theme_omits_data_theme_attribute(self):
+        # The app's original, only-ever palette before this setting
+        # existed — rendering with no data-theme attribute at all is
+        # what static/css/base.css's bare :root already covers.
+        response = self.client.get(reverse("dashboard"))
+        self.assertContains(response, '<html lang="en" data-appearance="dark">')
+
+    def test_named_theme_sets_data_theme_attribute(self):
+        self.alice.theme = "vaporwave"
+        self.alice.save()
+        response = self.client.get(reverse("dashboard"))
+        self.assertContains(response, 'data-theme="vaporwave"')
+
+    def test_light_appearance_sets_data_appearance_attribute_and_theme_color(self):
+        self.alice.appearance = "light"
+        self.alice.save()
+        response = self.client.get(reverse("dashboard"))
+        self.assertContains(response, '<html lang="en" data-appearance="light">')
+        self.assertContains(response, '<meta name="theme-color" content="#f2f3f5">')
+
+    def test_dark_appearance_sets_theme_color(self):
+        # Already the default, but set explicitly — a user picking
+        # "Dark" from the dropdown should render identically to one
+        # who never touched the setting at all.
+        self.alice.appearance = "dark"
+        self.alice.save()
+        response = self.client.get(reverse("dashboard"))
+        self.assertContains(response, '<meta name="theme-color" content="#101317">')
+
+    def test_named_theme_with_light_appearance_uses_that_themes_own_color(self):
+        self.alice.theme = "earth"
+        self.alice.appearance = "light"
+        self.alice.save()
+        response = self.client.get(reverse("dashboard"))
+        self.assertContains(response, 'data-theme="earth" data-appearance="light">')
+        self.assertContains(response, '<meta name="theme-color" content="#f6efe6">')
+
+    def test_auto_appearance_omits_data_appearance_attribute(self):
+        self.alice.appearance = "auto"
+        self.alice.save()
+        response = self.client.get(reverse("dashboard"))
+        self.assertContains(response, '<html lang="en">')
+        self.assertContains(response, 'media="(prefers-color-scheme: dark)"')
+        self.assertContains(response, 'media="(prefers-color-scheme: light)"')
+
+    def test_signed_out_visitor_gets_default_theme_and_auto_appearance(self):
+        self.client.logout()
+        response = self.client.get(reverse("login"))
+        self.assertContains(response, '<html lang="en">')
+        self.assertContains(response, 'media="(prefers-color-scheme: dark)"')
+        self.assertContains(response, 'media="(prefers-color-scheme: light)"')
 
 
 class TimezonePreferenceTests(TestCase):
@@ -163,7 +256,13 @@ class TimezonePreferenceTests(TestCase):
     def test_setting_timezone_on_profile_persists_and_takes_effect_immediately(self):
         self.client.post(
             reverse("profile"),
-            {"unit_system": "metric", "timezone": "Pacific/Kiritimati", "language": "en"},
+            {
+                "unit_system": "metric",
+                "timezone": "Pacific/Kiritimati",
+                "language": "en",
+                "theme": "default",
+                "appearance": "dark",
+            },
         )
         self.alice.refresh_from_db()
         self.assertEqual(self.alice.timezone, "Pacific/Kiritimati")
@@ -418,7 +517,13 @@ class ProfileViewTests(TestCase):
     def test_updating_unit_system_and_timezone(self):
         response = self.client.post(
             reverse("profile"),
-            {"unit_system": "imperial", "timezone": "America/New_York", "language": "en"},
+            {
+                "unit_system": "imperial",
+                "timezone": "America/New_York",
+                "language": "en",
+                "theme": "default",
+                "appearance": "dark",
+            },
         )
         self.assertRedirects(response, reverse("profile"))
         self.alice.refresh_from_db()
@@ -428,7 +533,13 @@ class ProfileViewTests(TestCase):
     def test_invalid_timezone_is_rejected(self):
         response = self.client.post(
             reverse("profile"),
-            {"unit_system": "metric", "timezone": "Not/A_Real_Zone", "language": "en"},
+            {
+                "unit_system": "metric",
+                "timezone": "Not/A_Real_Zone",
+                "language": "en",
+                "theme": "default",
+                "appearance": "dark",
+            },
         )
         self.assertEqual(response.status_code, 200)  # re-rendered with errors
         self.alice.refresh_from_db()
@@ -439,7 +550,14 @@ class ProfileViewTests(TestCase):
 
         self.client.post(
             reverse("profile"),
-            {"unit_system": "metric", "timezone": "UTC", "height": "180", "language": "en"},
+            {
+                "unit_system": "metric",
+                "timezone": "UTC",
+                "height": "180",
+                "language": "en",
+                "theme": "default",
+                "appearance": "dark",
+            },
         )
         self.alice.refresh_from_db()
         self.assertEqual(self.alice.height, Decimal("1.8000"))
@@ -451,7 +569,14 @@ class ProfileViewTests(TestCase):
         self.alice.save()
         self.client.post(
             reverse("profile"),
-            {"unit_system": "imperial", "timezone": "UTC", "height": "70", "language": "en"},
+            {
+                "unit_system": "imperial",
+                "timezone": "UTC",
+                "height": "70",
+                "language": "en",
+                "theme": "default",
+                "appearance": "dark",
+            },
         )
         self.alice.refresh_from_db()
         self.assertEqual(self.alice.height, Decimal("1.7780"))
@@ -472,7 +597,14 @@ class ProfileViewTests(TestCase):
         self.alice.save()
         self.client.post(
             reverse("profile"),
-            {"unit_system": "metric", "timezone": "UTC", "height": "", "language": "en"},
+            {
+                "unit_system": "metric",
+                "timezone": "UTC",
+                "height": "",
+                "language": "en",
+                "theme": "default",
+                "appearance": "dark",
+            },
         )
         self.alice.refresh_from_db()
         self.assertIsNone(self.alice.height)
@@ -484,7 +616,13 @@ class ProfileViewTests(TestCase):
         # An unchecked checkbox simply isn't sent in the POST body.
         self.client.post(
             reverse("profile"),
-            {"unit_system": "metric", "timezone": "UTC", "language": "en"},
+            {
+                "unit_system": "metric",
+                "timezone": "UTC",
+                "language": "en",
+                "theme": "default",
+                "appearance": "dark",
+            },
         )
         self.alice.refresh_from_db()
         self.assertFalse(self.alice.show_bmi)
@@ -494,7 +632,14 @@ class ProfileViewTests(TestCase):
         self.alice.save()
         self.client.post(
             reverse("profile"),
-            {"unit_system": "metric", "timezone": "UTC", "show_bmi": "on", "language": "en"},
+            {
+                "unit_system": "metric",
+                "timezone": "UTC",
+                "show_bmi": "on",
+                "language": "en",
+                "theme": "default",
+                "appearance": "dark",
+            },
         )
         self.alice.refresh_from_db()
         self.assertTrue(self.alice.show_bmi)
@@ -516,7 +661,13 @@ class ProfileViewTests(TestCase):
     def test_unchecking_body_tracking_reminders_enabled_turns_it_off(self):
         self.client.post(
             reverse("profile"),
-            {"unit_system": "metric", "timezone": "UTC", "language": "en"},
+            {
+                "unit_system": "metric",
+                "timezone": "UTC",
+                "language": "en",
+                "theme": "default",
+                "appearance": "dark",
+            },
         )
         self.alice.refresh_from_db()
         self.assertFalse(self.alice.body_tracking_reminders_enabled)
@@ -531,6 +682,7 @@ class ProfileViewTests(TestCase):
                 "timezone": "UTC",
                 "body_tracking_reminders_enabled": "on",
                 "language": "en",
+                "theme": "default", "appearance": "dark",
             },
         )
         self.alice.refresh_from_db()
@@ -548,7 +700,13 @@ class ProfileViewTests(TestCase):
         # An unchecked checkbox simply isn't sent in the POST body.
         self.client.post(
             reverse("profile"),
-            {"unit_system": "metric", "timezone": "UTC", "language": "en"},
+            {
+                "unit_system": "metric",
+                "timezone": "UTC",
+                "language": "en",
+                "theme": "default",
+                "appearance": "dark",
+            },
         )
         self.alice.refresh_from_db()
         self.assertFalse(self.alice.show_achievements)
@@ -563,6 +721,7 @@ class ProfileViewTests(TestCase):
                 "timezone": "UTC",
                 "show_achievements": "on",
                 "language": "en",
+                "theme": "default", "appearance": "dark",
             },
         )
         self.alice.refresh_from_db()
@@ -579,7 +738,13 @@ class ProfileViewTests(TestCase):
     def test_unchecking_show_name_to_others_turns_it_off(self):
         self.client.post(
             reverse("profile"),
-            {"unit_system": "metric", "timezone": "UTC", "language": "en"},
+            {
+                "unit_system": "metric",
+                "timezone": "UTC",
+                "language": "en",
+                "theme": "default",
+                "appearance": "dark",
+            },
         )
         self.alice.refresh_from_db()
         self.assertFalse(self.alice.show_name_to_others)
@@ -594,6 +759,7 @@ class ProfileViewTests(TestCase):
                 "timezone": "UTC",
                 "show_name_to_others": "on",
                 "language": "en",
+                "theme": "default", "appearance": "dark",
             },
         )
         self.alice.refresh_from_db()
@@ -624,6 +790,7 @@ class ProfileViewTests(TestCase):
                 "timezone": "UTC",
                 "show_gravatar": "on",
                 "language": "en",
+                "theme": "default", "appearance": "dark",
             },
         )
         self.alice.refresh_from_db()
@@ -636,7 +803,13 @@ class ProfileViewTests(TestCase):
         self.alice.save()
         self.client.post(
             reverse("profile"),
-            {"unit_system": "metric", "timezone": "UTC", "language": "en"},
+            {
+                "unit_system": "metric",
+                "timezone": "UTC",
+                "language": "en",
+                "theme": "default",
+                "appearance": "dark",
+            },
         )
         self.alice.refresh_from_db()
         self.assertFalse(self.alice.show_gravatar)
@@ -648,7 +821,13 @@ class ProfileViewTests(TestCase):
     def test_unchecking_allow_friend_requests_turns_it_off(self):
         self.client.post(
             reverse("profile"),
-            {"unit_system": "metric", "timezone": "UTC", "language": "en"},
+            {
+                "unit_system": "metric",
+                "timezone": "UTC",
+                "language": "en",
+                "theme": "default",
+                "appearance": "dark",
+            },
         )
         self.alice.refresh_from_db()
         self.assertFalse(self.alice.allow_friend_requests)
@@ -656,7 +835,13 @@ class ProfileViewTests(TestCase):
     def test_unchecking_allow_group_invites_turns_it_off(self):
         self.client.post(
             reverse("profile"),
-            {"unit_system": "metric", "timezone": "UTC", "language": "en"},
+            {
+                "unit_system": "metric",
+                "timezone": "UTC",
+                "language": "en",
+                "theme": "default",
+                "appearance": "dark",
+            },
         )
         self.alice.refresh_from_db()
         self.assertFalse(self.alice.allow_group_invites)
@@ -670,6 +855,7 @@ class ProfileViewTests(TestCase):
                 "allow_friend_requests": "on",
                 "allow_group_invites": "on",
                 "language": "en",
+                "theme": "default", "appearance": "dark",
             },
         )
         self.alice.refresh_from_db()
@@ -694,7 +880,13 @@ class ProfileViewTests(TestCase):
         notice) uses."""
         response = self.client.post(
             reverse("profile"),
-            {"unit_system": "metric", "timezone": "UTC", "language": "en"},
+            {
+                "unit_system": "metric",
+                "timezone": "UTC",
+                "language": "en",
+                "theme": "default",
+                "appearance": "dark",
+            },
             follow=True,
         )
         self.assertContains(response, "Preferences saved.")

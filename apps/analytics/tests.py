@@ -208,6 +208,98 @@ class PrHistoryServiceTests(TestCase):
         self.assertEqual(recent[0].value, Decimal("100"))
 
 
+class PrHistoryGroupedByExerciseServiceTests(TestCase):
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        self.squat = Exercise.objects.create(name="Test Squat", owner=None)
+        self.bench = Exercise.objects.create(name="Test Bench", owner=None)
+
+    def _pr(self, exercise, record_type, value, achieved_at):
+        return PersonalRecord.objects.create(
+            user=self.alice,
+            exercise=exercise,
+            record_type=record_type,
+            value=value,
+            weight=value,
+            reps=1,
+            achieved_at=achieved_at,
+        )
+
+    def test_several_record_types_for_one_exercise_become_one_group(self):
+        now = timezone.now()
+        self._pr(self.squat, PRType.MAX_WEIGHT, Decimal("100"), now)
+        self._pr(self.squat, PRType.ESTIMATED_1RM, Decimal("110"), now - timedelta(minutes=1))
+        self._pr(self.squat, PRType.SET_VOLUME, Decimal("500"), now - timedelta(minutes=2))
+
+        groups = services.pr_history_grouped_by_exercise(self.alice, dateranges.resolve("7d"))
+
+        self.assertEqual(len(groups), 1)
+        self.assertEqual(groups[0].exercise, self.squat)
+        # All three are "headline" types (max weight/1RM/volume) — none
+        # relegated to secondary.
+        self.assertEqual(len(groups[0].primary_records), 3)
+        self.assertEqual(groups[0].secondary_records, [])
+
+    def test_rep_specific_and_rep_prs_are_secondary(self):
+        now = timezone.now()
+        self._pr(self.squat, PRType.MAX_WEIGHT, Decimal("100"), now)
+        self._pr(self.squat, PRType.REP_SPECIFIC_PR, Decimal("90"), now - timedelta(minutes=1))
+        self._pr(self.squat, PRType.REP_PR, Decimal("12"), now - timedelta(minutes=2))
+
+        groups = services.pr_history_grouped_by_exercise(self.alice, dateranges.resolve("7d"))
+
+        self.assertEqual(len(groups[0].primary_records), 1)
+        self.assertEqual(groups[0].primary_records[0].record_type, PRType.MAX_WEIGHT)
+        self.assertEqual(
+            {r.record_type for r in groups[0].secondary_records},
+            {PRType.REP_SPECIFIC_PR, PRType.REP_PR},
+        )
+
+    def test_an_exercise_with_only_secondary_types_falls_back_to_showing_them_directly(self):
+        # No max weight/1RM/volume hit in range for this exercise — a
+        # card with nothing but a name and a chevron would look broken,
+        # so its one secondary-type record is promoted to primary.
+        now = timezone.now()
+        self._pr(self.squat, PRType.REP_SPECIFIC_PR, Decimal("90"), now)
+
+        groups = services.pr_history_grouped_by_exercise(self.alice, dateranges.resolve("7d"))
+
+        self.assertEqual(len(groups[0].primary_records), 1)
+        self.assertEqual(groups[0].primary_records[0].record_type, PRType.REP_SPECIFIC_PR)
+        self.assertEqual(groups[0].secondary_records, [])
+
+    def test_groups_are_ordered_by_each_exercises_own_most_recent_record(self):
+        now = timezone.now()
+        # Bench's most recent PR is newer than squat's, even though
+        # squat has an even older second record — group order should
+        # follow the newest record per exercise, not creation order.
+        self._pr(self.squat, PRType.MAX_WEIGHT, Decimal("100"), now - timedelta(hours=2))
+        self._pr(self.bench, PRType.MAX_WEIGHT, Decimal("80"), now - timedelta(hours=1))
+        self._pr(self.squat, PRType.SET_VOLUME, Decimal("500"), now - timedelta(hours=3))
+
+        groups = services.pr_history_grouped_by_exercise(self.alice, dateranges.resolve("7d"))
+
+        self.assertEqual([g.exercise for g in groups], [self.bench, self.squat])
+
+    def test_limit_applies_to_underlying_records_not_to_groups(self):
+        now = timezone.now()
+        self._pr(self.squat, PRType.MAX_WEIGHT, Decimal("100"), now)
+        self._pr(self.bench, PRType.MAX_WEIGHT, Decimal("80"), now - timedelta(hours=1))
+
+        # Only the single most recent record is fetched — bench's PR
+        # falls outside that and its group never appears at all.
+        groups = services.pr_history_grouped_by_exercise(
+            self.alice, dateranges.resolve("7d"), limit=1
+        )
+
+        self.assertEqual(len(groups), 1)
+        self.assertEqual(groups[0].exercise, self.squat)
+
+    def test_no_records_returns_no_groups(self):
+        groups = services.pr_history_grouped_by_exercise(self.alice, dateranges.resolve("7d"))
+        self.assertEqual(groups, [])
+
+
 class ExerciseAnalyticsServiceTests(TestCase):
     def setUp(self):
         self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
@@ -556,6 +648,34 @@ class AnalyticsDashboardViewTests(TestCase):
         bar_value = response.context["muscle_group_chart"].bars[0].value
         with translation.override("fi"):
             self.assertIn(f"{number_format(bar_value)} kg", content)
+
+    def test_recent_prs_renders_one_box_per_exercise_not_per_record_type(self):
+        """Regression: several record_types hit for the same exercise
+        used to render as several near-identical cards — one per
+        PersonalRecord row — instead of one grouped box per exercise."""
+        exercise = Exercise.objects.create(name="Test Deadlift Group", owner=None)
+        now = timezone.now()
+        for record_type, value in [
+            (PRType.MAX_WEIGHT, Decimal("100")),
+            (PRType.ESTIMATED_1RM, Decimal("110")),
+            (PRType.SET_VOLUME, Decimal("500")),
+        ]:
+            PersonalRecord.objects.create(
+                user=self.alice,
+                exercise=exercise,
+                record_type=record_type,
+                value=value,
+                weight=value,
+                reps=1,
+                achieved_at=now,
+            )
+
+        response = self.client.get(reverse("analytics:dashboard"))
+        content = response.content.decode()
+        self.assertEqual(content.count(">Test Deadlift Group<"), 1)
+        self.assertContains(response, "pr-exercise-group-toggle")
+        self.assertContains(response, "Set volume:")
+        self.assertContains(response, "Estimated")
 
 
 class ExerciseAnalyticsViewTests(TestCase):

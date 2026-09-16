@@ -151,7 +151,7 @@ class DashboardView(LoginRequiredMixin, TemplateView):
         )
         this_week = dateranges.resolve(None, start=today - timedelta(days=today.weekday()))
         context["week_summary"] = analytics_services.training_summary(user, this_week)
-        context["recent_prs"] = analytics_services.pr_history(
+        context["recent_prs"] = analytics_services.pr_history_grouped_by_exercise(
             user, dateranges.resolve("30d"), limit=3
         )
         context["weight_unit_label"] = core_units.weight_unit_label(user.unit_system)

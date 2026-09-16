@@ -12,6 +12,60 @@ class UnitSystem(models.TextChoices):
     IMPERIAL = "imperial", _("Imperial (lb, mi)")
 
 
+class Appearance(models.TextChoices):
+    """Light/dark mode — independent of, and layered on top of, which
+    named `Theme` (below) is active: every `Theme` ships both a DARK
+    and a LIGHT palette, and this is what picks between them.
+    `templates/base.html` renders it as `data-appearance="dark"`/
+    `"light"` on `<html>` for an explicit choice; `AUTO` omits that
+    attribute entirely and instead lets a plain
+    `prefers-color-scheme` CSS media query decide, so it tracks the
+    device's own setting live with no JS involved (`docs/UI.md`
+    "Theming"). `DARK` stays the default — the app only ever had a
+    dark UI before this setting existed, so an existing install's look
+    never changes on upgrade."""
+
+    DARK = "dark", _("Dark")
+    LIGHT = "light", _("Light")
+    AUTO = "auto", _("Auto (match device)")
+
+
+class Theme(models.TextChoices):
+    """Which named palette of CSS custom-property overrides
+    (`static/css/base.css` — `[data-theme="..."]`) is active; `Appearance`
+    above then picks that palette's dark or light half. `DEFAULT` is
+    the app's own original, only-ever palette (`:root` in base.css,
+    unconditionally — no `data-theme` attribute needed for it) and
+    stays the default choice so an existing install's look never
+    changes on upgrade. Adding another named theme later is just
+    another value here plus one more `[data-theme="..."]` pair of
+    blocks in base.css (`docs/UI.md` "Theming") — never a schema
+    change, and never something existing accounts are opted into."""
+
+    DEFAULT = "default", _("Default")
+    NORDIC = "nordic", _("Nordic")
+    VAPORWAVE = "vaporwave", _("Vaporwave")
+    EARTH = "earth", _("Earth")
+    ZEN = "zen", _("Zen")
+
+
+# Each theme's --color-bg, dark and light — apps.core.context_processors.
+# theming reads this to pick templates/base.html's <meta name="theme-color">
+# (browser chrome/PWA splash), which can't reference a CSS custom
+# property the way the rest of the app's colors do. Keep in sync with
+# the matching `[data-theme="..."]` block in static/css/base.css by
+# hand — there's no single source both read from, the same trade-off
+# apps.core.formatting's jargon-abbreviation helpers accept for their
+# own hand-kept-in-sync English expansions.
+THEME_BG_COLORS = {
+    Theme.DEFAULT: ("#101317", "#f2f3f5"),
+    Theme.NORDIC: ("#1a1e24", "#eef1f5"),
+    Theme.VAPORWAVE: ("#1a1035", "#f5eeff"),
+    Theme.EARTH: ("#211812", "#f6efe6"),
+    Theme.ZEN: ("#14201c", "#f3f1ea"),
+}
+
+
 class EncryptedTextField(models.TextField):
     """Transparently encrypted at rest with settings.TOTP_ENCRYPTION_KEY
     (Fernet) once that's configured — see User.totp_secret's own
@@ -129,6 +183,19 @@ class User(AbstractUser):
     # whatever LocaleMiddleware would otherwise guess.
     language = models.CharField(
         max_length=10, choices=settings.LANGUAGES, default=settings.LANGUAGE_CODE.split("-")[0]
+    )
+
+    # apps.accounts.forms.ProfileForm / templates/base.html's own
+    # `data-theme`/`data-appearance` attributes — two independent
+    # display preferences, same shape as unit_system/language above,
+    # not privacy or notification ones. `theme` picks the palette,
+    # `appearance` picks that palette's dark or light half (see each
+    # choices class's own docstring for why both default to this app's
+    # one and only pre-existing look, DEFAULT/DARK, rather than
+    # something new every existing account would be opted into).
+    theme = models.CharField(max_length=20, choices=Theme.choices, default=Theme.DEFAULT)
+    appearance = models.CharField(
+        max_length=10, choices=Appearance.choices, default=Appearance.DARK
     )
 
     # Two-factor authentication (apps.accounts.twofactor,

@@ -66,7 +66,18 @@ class MealSlotSeedTests(TestCase):
         names = list(
             MealSlot.objects.filter(owner=None).order_by("order").values_list("name", flat=True)
         )
-        self.assertEqual(names, ["Breakfast", "Lunch", "Dinner", "Evening snack"])
+        self.assertEqual(
+            names,
+            [
+                "Breakfast",
+                "Morning snack",
+                "Lunch",
+                "Afternoon snack",
+                "Dinner",
+                "Evening snack",
+                "Other",
+            ],
+        )
 
     def test_a_user_can_create_their_own_meal_slot_with_the_same_name_as_another_users(self):
         alice = User.objects.create_user(username="alice", password="s3cret-pass")

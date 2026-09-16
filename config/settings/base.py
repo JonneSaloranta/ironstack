@@ -134,6 +134,7 @@ TEMPLATES = [
                 "apps.core.context_processors.admin_contact",
                 "apps.core.context_processors.seo",
                 "apps.core.context_processors.push",
+                "apps.core.context_processors.theming",
                 "apps.accounts.context_processors.onboarding",
                 "apps.nutrition.context_processors.nutrition_subnav",
                 "apps.social.context_processors.social_badge",

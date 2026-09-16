@@ -54,6 +54,8 @@ class ProfileSerializer(serializers.ModelSerializer):
             "allow_friend_requests",
             "allow_group_invites",
             "language",
+            "theme",
+            "appearance",
         ]
         read_only_fields = ["username"]
 

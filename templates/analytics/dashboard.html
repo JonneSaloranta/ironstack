@@ -33,14 +33,8 @@
 {% endif %}
 
 <h2>{% trans "Recent" %} <abbr tabindex="0" title="{% trans "Personal Records" %}">PRs</abbr></h2>
-{% for record in recent_prs %}
-  <div class="card">
-    <strong>{% trans record.exercise.name %}</strong>
-    <div class="text-muted">
-      {{ record.get_record_type_display }}: {{ record|pr_value:request.user }}{% if record.rep_count %} ({{ record.rep_count }}<abbr tabindex="0" title="{% trans "Rep Max" %}">RM</abbr>){% endif %}
-      — {{ record.achieved_at|date:"Y-m-d" }}
-    </div>
-  </div>
+{% for group in recent_prs %}
+  {% include "records/_pr_exercise_group.html" with group=group %}
 {% empty %}
   <div class="card empty-state"><p>{% trans "No" %} <abbr tabindex="0" title="{% trans "Personal Records" %}">PRs</abbr> {% trans "in this range." %}</p></div>
 {% endfor %}
