@@ -1958,6 +1958,40 @@ h2 {
   flex-wrap: wrap;
 }
 
+/* Food diary's day navigation (templates/nutrition/diary_day.html) —
+   "Previous day"/date/"Next day" kept on one row even at the
+   ~360-430px mobile baseline. A "Previous day"/"Next day" text label
+   next to the arrow made the two buttons together wider than the row
+   itself, forcing the date input down to nothing (illegible) or all
+   three onto separate lines; the arrow alone stays a full touch
+   target (accessible name still "Previous day"/"Next day" via
+   aria-label) and leaves the date input enough room to stay legible. */
+.diary-date-nav {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.diary-date-nav .button-secondary {
+  flex-shrink: 0;
+  padding: 0.5rem;
+  justify-content: center;
+}
+
+.diary-date-nav input[type="date"] {
+  flex: 1 1 auto;
+  min-width: 0;
+  /* Every input carries a 0.75rem bottom margin by default (the
+     generic `input, select, textarea` rule above, meant for stacked
+     form fields) — inside a flex row, `align-items: center` centers
+     each item's full margin box, so that margin alone pushed the
+     date visibly above the buttons flanking it even though all three
+     sat on the same line. */
+  margin-bottom: 0;
+}
+
 .rest-timer-row .button-secondary {
   margin-bottom: 0;
   min-height: 2.25rem;
