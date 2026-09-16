@@ -18,6 +18,8 @@ narrated summary of the same version.
 
 ## [Unreleased]
 
+## [1.15.0] — 2026-09-16
+
 ### Added
 - The food diary now offers a morning snack (between breakfast and
   lunch) and an afternoon snack (between lunch and dinner), plus an
@@ -33,6 +35,10 @@ narrated summary of the same version.
   volume) visible by default — tap an exercise to reveal any
   rep-specific/rep PRs plus each record's source set (weight × reps)
   and date.
+
+### Fixed
+- The food diary's "Previous day"/date/"Next day" row no longer wraps
+  onto three separate lines on a phone-width screen.
 
 ## [1.14.1] — 2026-09-14
 
