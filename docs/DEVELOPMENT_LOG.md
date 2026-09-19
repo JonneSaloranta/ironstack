@@ -5034,3 +5034,23 @@ reason to skip a real optimization in actual browsers.
 Verified against Nutella's real barcode again: OFF really does return
 both `image_front_url` and `image_front_thumb_url` as genuinely
 different files at genuinely different sizes, not the same URL twice.
+
+## The profile's API help modal had gone stale
+
+Asked directly to "update the API page texts" — turned out to be a
+real drift, not a wording nitpick: `templates/api/key_list.html`'s
+"Using the API" modal (the "?" button on Profile → API keys) lists
+every context's endpoints in a table, and its Nutrition row was
+missing `nutrition/profile/` and the whole `diet-plans/`/`diet-plan-
+meals/`/`diet-plan-items/` family — all of them real, already-live
+endpoints (`apps/api/urls.py`, matching `docs/API.md`'s own accurate
+"Endpoints" table) that an API key could already call, just with no
+mention of them anywhere a user browsing this in-app reference would
+actually see. `docs/API.md` itself was never out of sync; only the
+in-app copy was.
+
+`test_the_api_documentation_lists_every_context_and_its_endpoints`
+(`apps/api/tests.py`) already existed as exactly the right regression
+guard for this, but was never extended when those endpoints shipped —
+extended it to assert the four missing endpoints too, so this can't
+silently drift again the same way.

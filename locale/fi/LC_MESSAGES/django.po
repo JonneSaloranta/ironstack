@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: IronStack\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-19 01:37+0000\n"
+"POT-Creation-Date: 2026-09-19 12:45+0000\n"
 "Language: fi\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -2459,11 +2459,11 @@ msgstr ""
 msgid "Null for the built-in default meal slots."
 msgstr "Tyhjä (null) sisäänrakennetuille oletusaterioille."
 
-#: apps/nutrition/models.py:545
+#: apps/nutrition/models.py:556
 msgid "Log either a food or a recipe, not both or neither."
 msgstr "Kirjaa joko ruoka tai resepti, ei molempia eikä kumpaakaan."
 
-#: apps/nutrition/models.py:655
+#: apps/nutrition/models.py:666
 msgid "Use either a food or a recipe, not both or neither."
 msgstr "Käytä joko ruokaa tai reseptiä, ei molempia eikä kumpaakaan."
 
@@ -4258,7 +4258,7 @@ msgstr "Osa-alue"
 msgid "Endpoints"
 msgstr "Rajapinnat"
 
-#: templates/api/key_list.html:86
+#: templates/api/key_list.html:86 templates/api/key_list.html:110
 msgid "GET/PATCH, no id"
 msgstr "GET/PATCH, ei id:tä"
 
@@ -4270,6 +4270,10 @@ msgstr "vain luku"
 #: templates/api/key_list.html:98
 msgid "create + read only"
 msgstr "vain luonti + luku"
+
+#: templates/api/key_list.html:110
+msgid "all POST"
+msgstr "kaikki POST"
 
 #: templates/api/key_list.html:118
 msgid "both read-only"
@@ -4719,7 +4723,7 @@ msgstr "Lähetetyt palautteet"
 
 #: templates/core/feedback_list.html:44
 #: templates/exercises/_exercise_list_results.html:22
-#: templates/nutrition/_food_list_results.html:46
+#: templates/nutrition/_food_list_results.html:65
 #: templates/nutrition/recipe_list.html:39
 #: templates/nutrition/recipe_list.html:76
 #: templates/workouts/_train_panel.html:13
@@ -4728,7 +4732,7 @@ msgstr "Edellinen"
 
 #: templates/core/feedback_list.html:46
 #: templates/exercises/_exercise_list_results.html:24
-#: templates/nutrition/_food_list_results.html:48
+#: templates/nutrition/_food_list_results.html:67
 #: templates/nutrition/recipe_list.html:41
 #: templates/nutrition/recipe_list.html:78
 #, python-format
@@ -4737,7 +4741,7 @@ msgstr "Sivu %(number)s / %(total)s"
 
 #: templates/core/feedback_list.html:48
 #: templates/exercises/_exercise_list_results.html:26
-#: templates/nutrition/_food_list_results.html:50
+#: templates/nutrition/_food_list_results.html:69
 #: templates/nutrition/recipe_list.html:43
 #: templates/nutrition/recipe_list.html:80
 #: templates/workouts/_train_panel.html:21
@@ -5046,11 +5050,11 @@ msgstr ""
 "Jäljellä: %(calories)s kcal, %(protein)sg proteiinia, %(carbs)sg "
 "hiilihydraatteja, %(fat)sg rasvaa"
 
-#: templates/nutrition/_food_list_results.html:38
+#: templates/nutrition/_food_list_results.html:48
 msgid "No foods match your filters."
 msgstr "Yksikään ruoka ei vastaa suodattimia."
 
-#: templates/nutrition/_food_list_results.html:44
+#: templates/nutrition/_food_list_results.html:63
 msgid "Food list pages"
 msgstr "Ruokalistan sivut"
 

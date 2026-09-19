@@ -630,12 +630,18 @@ class ApiKeyManagementViewTests(TestCase):
         self.assertContains(response, "import requests")
 
     def test_the_api_documentation_lists_every_context_and_its_endpoints(self):
+        """Regression: nutrition/profile/ and the diet-plans/diet-plan-
+        meals/diet-plan-items/ endpoints (apps/api/urls.py) went live
+        without this in-app help table ever being updated to mention
+        them — real endpoints an API key could already call, with no
+        documentation of them anywhere a user would actually look."""
         response = self.client.get(reverse("api_keys:key-list"))
         for endpoint in [
             "profile/", "exercises/", "programs/", "sessions/",
             "measurement-types/", "activity-types/", "foods/",
             "recipe-ingredients/", "diary-entries/", "nutrition-goals/",
-            "records/", "analytics/summary/",
+            "records/", "analytics/summary/", "nutrition/profile/",
+            "diet-plans/", "diet-plan-meals/", "diet-plan-items/",
         ]:
             self.assertContains(response, f"<code>{endpoint}")
 

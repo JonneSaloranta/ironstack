@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: IronStack\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-19 01:37+0000\n"
+"POT-Creation-Date: 2026-09-19 12:45+0000\n"
 "Language: ru\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -2472,11 +2472,11 @@ msgstr ""
 msgid "Null for the built-in default meal slots."
 msgstr "Пусто (null) для встроенных стандартных приёмов пищи."
 
-#: apps/nutrition/models.py:545
+#: apps/nutrition/models.py:556
 msgid "Log either a food or a recipe, not both or neither."
 msgstr "Запишите либо продукт, либо рецепт — не оба и не ни один."
 
-#: apps/nutrition/models.py:655
+#: apps/nutrition/models.py:666
 msgid "Use either a food or a recipe, not both or neither."
 msgstr "Используйте либо продукт, либо рецепт — не оба и не ни один."
 
@@ -4284,7 +4284,7 @@ msgstr "Область"
 msgid "Endpoints"
 msgstr "Конечные точки"
 
-#: templates/api/key_list.html:86
+#: templates/api/key_list.html:86 templates/api/key_list.html:110
 msgid "GET/PATCH, no id"
 msgstr "GET/PATCH, без id"
 
@@ -4296,6 +4296,10 @@ msgstr "только чтение"
 #: templates/api/key_list.html:98
 msgid "create + read only"
 msgstr "только создание и чтение"
+
+#: templates/api/key_list.html:110
+msgid "all POST"
+msgstr "все POST"
 
 #: templates/api/key_list.html:118
 msgid "both read-only"
@@ -4749,7 +4753,7 @@ msgstr "Отправленные сообщения"
 
 #: templates/core/feedback_list.html:44
 #: templates/exercises/_exercise_list_results.html:22
-#: templates/nutrition/_food_list_results.html:46
+#: templates/nutrition/_food_list_results.html:65
 #: templates/nutrition/recipe_list.html:39
 #: templates/nutrition/recipe_list.html:76
 #: templates/workouts/_train_panel.html:13
@@ -4758,7 +4762,7 @@ msgstr "Назад"
 
 #: templates/core/feedback_list.html:46
 #: templates/exercises/_exercise_list_results.html:24
-#: templates/nutrition/_food_list_results.html:48
+#: templates/nutrition/_food_list_results.html:67
 #: templates/nutrition/recipe_list.html:41
 #: templates/nutrition/recipe_list.html:78
 #, python-format
@@ -4767,7 +4771,7 @@ msgstr "Страница %(number)s из %(total)s"
 
 #: templates/core/feedback_list.html:48
 #: templates/exercises/_exercise_list_results.html:26
-#: templates/nutrition/_food_list_results.html:50
+#: templates/nutrition/_food_list_results.html:69
 #: templates/nutrition/recipe_list.html:43
 #: templates/nutrition/recipe_list.html:80
 #: templates/workouts/_train_panel.html:21
@@ -5077,11 +5081,11 @@ msgstr ""
 "Осталось: %(calories)s ккал, %(protein)sг белка, %(carbs)sг углеводов, "
 "%(fat)sг жира"
 
-#: templates/nutrition/_food_list_results.html:38
+#: templates/nutrition/_food_list_results.html:48
 msgid "No foods match your filters."
 msgstr "Нет продуктов, соответствующих фильтрам."
 
-#: templates/nutrition/_food_list_results.html:44
+#: templates/nutrition/_food_list_results.html:63
 msgid "Food list pages"
 msgstr "Страницы списка продуктов"
 

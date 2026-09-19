@@ -26,6 +26,9 @@ narrated summary of the same version.
 - Clicking Previous/Next on the "All foods" list now keeps your place
   at the pagination buttons instead of jumping back to the top of the
   page.
+- The API keys page's "Using the API" documentation now lists the
+  nutrition profile and diet plan endpoints — live for a while, but
+  missing from this in-app reference.
 
 ### Performance
 - Food list thumbnails now load OpenFoodFacts' own smaller,

@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: IronStack\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-19 01:37+0000\n"
+"POT-Creation-Date: 2026-09-19 12:45+0000\n"
 "Language: it\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -2502,11 +2502,11 @@ msgstr ""
 msgid "Null for the built-in default meal slots."
 msgstr "Nullo per le fasce pasto predefinite integrate."
 
-#: apps/nutrition/models.py:545
+#: apps/nutrition/models.py:556
 msgid "Log either a food or a recipe, not both or neither."
 msgstr "Registra un alimento o una ricetta, non entrambi né nessuno dei due."
 
-#: apps/nutrition/models.py:655
+#: apps/nutrition/models.py:666
 msgid "Use either a food or a recipe, not both or neither."
 msgstr "Usa un alimento o una ricetta, non entrambi né nessuno dei due."
 
@@ -4318,7 +4318,7 @@ msgstr "Area"
 msgid "Endpoints"
 msgstr "Endpoint"
 
-#: templates/api/key_list.html:86
+#: templates/api/key_list.html:86 templates/api/key_list.html:110
 msgid "GET/PATCH, no id"
 msgstr "GET/PATCH, nessun id"
 
@@ -4330,6 +4330,10 @@ msgstr "sola lettura"
 #: templates/api/key_list.html:98
 msgid "create + read only"
 msgstr "solo creazione + lettura"
+
+#: templates/api/key_list.html:110
+msgid "all POST"
+msgstr "tutti POST"
 
 #: templates/api/key_list.html:118
 msgid "both read-only"
@@ -4779,7 +4783,7 @@ msgstr "Invii"
 
 #: templates/core/feedback_list.html:44
 #: templates/exercises/_exercise_list_results.html:22
-#: templates/nutrition/_food_list_results.html:46
+#: templates/nutrition/_food_list_results.html:65
 #: templates/nutrition/recipe_list.html:39
 #: templates/nutrition/recipe_list.html:76
 #: templates/workouts/_train_panel.html:13
@@ -4788,7 +4792,7 @@ msgstr "Precedente"
 
 #: templates/core/feedback_list.html:46
 #: templates/exercises/_exercise_list_results.html:24
-#: templates/nutrition/_food_list_results.html:48
+#: templates/nutrition/_food_list_results.html:67
 #: templates/nutrition/recipe_list.html:41
 #: templates/nutrition/recipe_list.html:78
 #, python-format
@@ -4797,7 +4801,7 @@ msgstr "Pagina %(number)s di %(total)s"
 
 #: templates/core/feedback_list.html:48
 #: templates/exercises/_exercise_list_results.html:26
-#: templates/nutrition/_food_list_results.html:50
+#: templates/nutrition/_food_list_results.html:69
 #: templates/nutrition/recipe_list.html:43
 #: templates/nutrition/recipe_list.html:80
 #: templates/workouts/_train_panel.html:21
@@ -5108,11 +5112,11 @@ msgstr ""
 "Rimanente: %(calories)s kcal, %(protein)sg proteine, %(carbs)sg carboidrati, "
 "%(fat)sg grassi"
 
-#: templates/nutrition/_food_list_results.html:38
+#: templates/nutrition/_food_list_results.html:48
 msgid "No foods match your filters."
 msgstr "Nessun alimento corrisponde ai filtri."
 
-#: templates/nutrition/_food_list_results.html:44
+#: templates/nutrition/_food_list_results.html:63
 msgid "Food list pages"
 msgstr "Pagine dell'elenco alimenti"
 
