@@ -4996,3 +4996,41 @@ days out has no trend/direction despite its own trailing window
 reaching back to today's now-logged entry. Full `CalendarMonthStatusesTests`
 class (20 tests, all pre-existing calorie-trend assertions use dates
 safely in the past relative to any real test run) passes alongside it.
+
+## Foods page: keep pagination's scroll position, and a smaller thumbnail from OFF
+
+Two more requests, same session.
+
+**Pagination scroll jump.** Same bug already fixed on the Recipes
+page's own two paginated sections, reported separately for
+`_food_list_results.html`: clicking Previous/Next is a plain
+full-page navigation, and a normal page load resets scroll to the top
+regardless of where the click happened. Same fix — `id="food-list-
+pagination"` on the `<nav>`, `#food-list-pagination` appended to both
+Previous/Next hrefs, reusing `.pagination`'s own `scroll-margin-top`
+already added for the Recipes page.
+
+**Smaller list thumbnails.** Asked directly: what could speed up food
+image loading? Checked OpenFoodFacts' real product payload for a live
+barcode rather than guessing — alongside `image_front_url` (400px,
+what `Food.image_url` already stores), OFF also returns
+`image_front_thumb_url`, its own separately-hosted 100px variant of
+the exact same photo. `Food.image_thumb_url` stores it (new field,
+same blank-for-hand-entered pattern as every other OFF-only column,
+populated by `apps.nutrition.openfoodfacts.parse_product` the same
+way `image_url` already is — and so already covered by the existing
+"Refresh selected foods from OpenFoodFacts" admin action and the
+admin change form both, with zero extra code, since both apply to
+whichever fields the model actually has). `_food_list_results.html`'s
+`.food-thumb` now loads `image_thumb_url` first, falling back to
+`image_url` for a food imported before this field existed and not yet
+refreshed; `FoodDetailView`'s own larger photo keeps using `image_url`
+unchanged, since a 100px thumb blown up there would look blurry.
+Also restored `loading="lazy"` on the list thumbnail, removed earlier
+this session only because it never triggered in headless Chromium
+during a Playwright check — a real test-tooling limitation, not a
+reason to skip a real optimization in actual browsers.
+
+Verified against Nutella's real barcode again: OFF really does return
+both `image_front_url` and `image_front_thumb_url` as genuinely
+different files at genuinely different sizes, not the same URL twice.

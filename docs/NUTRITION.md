@@ -185,20 +185,29 @@ calories, protein_grams, carbohydrate_grams, fat_grams,
 fiber_grams / sugar_grams / saturated_fat_grams / sodium_mg (all
 optional/nullable), off_id (nullable, unique), off_synced_at (nullable),
 nutri_score (nullable, A-E), nova_group (nullable, 1-4),
-image_url (blank), categories (blank), active
+image_url (blank), image_thumb_url (blank), categories (blank), active
 ```
 
-`image_url`/`categories` are both blank for every hand-entered food,
-same as `nutri_score`/`nova_group` — only ever populated by an OFF
-import (`apps.nutrition.openfoodfacts.parse_product`). `image_url` is
-OFF's own hosted "front of pack" photo (`image_front_url`), linked
-directly rather than downloaded and re-stored locally — OFF operates
-its own image CDN for exactly this, and mirroring it would mean a
-Pillow resize pipeline, a media-storage growth story, and a second
-staleness concern for a field that's purely decorative (identifying a
-food at a glance, `FoodListView`'s own list thumbnail and
-`FoodDetailView`'s larger photo) and never read by any nutrition
-calculation. Since a browser has to load it directly from
+`image_url`/`image_thumb_url`/`categories` are all blank for every
+hand-entered food, same as `nutri_score`/`nova_group` — only ever
+populated by an OFF import (`apps.nutrition.openfoodfacts.
+parse_product`). `image_url` is OFF's own hosted "front of pack"
+photo (`image_front_url`), linked directly rather than downloaded and
+re-stored locally — OFF operates its own image CDN for exactly this,
+and mirroring it would mean a Pillow resize pipeline, a media-storage
+growth story, and a second staleness concern for a field that's
+purely decorative (identifying a food at a glance) and never read by
+any nutrition calculation. `image_thumb_url` is a *separate* smaller
+photo OFF already generates and hosts (`image_front_thumb_url`,
+100px) — not a resize of `image_url` done by this app, asked for
+directly to cut real bytes transferred on `FoodListView`'s own list
+thumbnail (`_food_list_results.html`, `object-fit: cover`), which
+falls back to `image_url` when `image_thumb_url` is blank (a food
+imported before this field existed, not yet refreshed). `image_url`
+itself stays reserved for `FoodDetailView`'s larger photo
+(`object-fit: contain`, so a label's own text/branding isn't cropped
+off), where a 100px thumb would look blurry blown up. Since a browser
+has to load either directly from
 `images.openfoodfacts.org`, that origin is explicitly allowed in
 `apps.core.middleware.ContentSecurityPolicyMiddleware`'s `img-src`
 (docs/SECURITY.md "Content-Security-Policy") — otherwise CSP silently

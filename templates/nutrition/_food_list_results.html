@@ -20,8 +20,17 @@ already does.
         {% for food in foods %}
           <tr>
             <td>
-              {% if food.image_url %}
-                <img class="food-thumb" src="{{ food.image_url }}" alt="">
+              {% if food.image_thumb_url or food.image_url %}
+                {% comment %}
+                  image_thumb_url first — OFF's own smaller
+                  pre-generated variant, cutting real bytes
+                  transferred for this list versus image_url's larger
+                  detail-page version. Falls back to image_url for a
+                  food imported before this field existed and not yet
+                  refreshed from OFF (still better than no photo at
+                  all here).
+                {% endcomment %}
+                <img class="food-thumb" src="{{ food.image_thumb_url|default:food.image_url }}" alt="" loading="lazy">
               {% else %}
                 <div class="food-thumb food-thumb-placeholder" aria-hidden="true"></div>
               {% endif %}
@@ -41,13 +50,21 @@ already does.
 
 {% if is_paginated %}
   {% url 'nutrition:food-list' as food_list_url %}
-  <nav class="pagination" aria-label="{% trans "Food list pages" %}">
+  {% comment %}
+    #food-list-pagination on both links — asked for directly: clicking
+    Previous/Next is a plain full-page navigation (see this template's
+    own docstring above), and a normal page load otherwise always
+    scrolls to the top of the page regardless of where the click
+    happened, undoing the very scroll position paging was meant to
+    preserve. Same fix as recipe_list.html's own pagination.
+  {% endcomment %}
+  <nav class="pagination" id="food-list-pagination" aria-label="{% trans "Food list pages" %}">
     {% if page_obj.has_previous %}
-      <a class="button-secondary" href="{{ food_list_url }}?page={{ page_obj.previous_page_number }}&q={{ query }}&category={{ selected_category }}&sort={{ selected_sort }}&dir={{ selected_dir }}">{% trans "Previous" %}</a>
+      <a class="button-secondary" href="{{ food_list_url }}?page={{ page_obj.previous_page_number }}&q={{ query }}&category={{ selected_category }}&sort={{ selected_sort }}&dir={{ selected_dir }}#food-list-pagination">{% trans "Previous" %}</a>
     {% endif %}
     <span>{% blocktrans with number=page_obj.number total=page_obj.paginator.num_pages %}Page {{ number }} of {{ total }}{% endblocktrans %}</span>
     {% if page_obj.has_next %}
-      <a class="button-secondary" href="{{ food_list_url }}?page={{ page_obj.next_page_number }}&q={{ query }}&category={{ selected_category }}&sort={{ selected_sort }}&dir={{ selected_dir }}">{% trans "Next" %}</a>
+      <a class="button-secondary" href="{{ food_list_url }}?page={{ page_obj.next_page_number }}&q={{ query }}&category={{ selected_category }}&sort={{ selected_sort }}&dir={{ selected_dir }}#food-list-pagination">{% trans "Next" %}</a>
     {% endif %}
   </nav>
 {% endif %}

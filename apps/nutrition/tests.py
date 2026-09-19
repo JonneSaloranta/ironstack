@@ -826,6 +826,7 @@ RAW_OFF_PRODUCT = {
     "nutriscore_grade": "c",
     "nova_group": 3,
     "image_front_url": "https://images.openfoodfacts.org/test-muesli-front.jpg",
+    "image_front_thumb_url": "https://images.openfoodfacts.org/test-muesli-front.100.jpg",
     "categories": "Breakfasts, Cereals, Muesli",
     "quantity": "500 g",
     "ingredients_text": "Oats, sugar, dried fruit.",
@@ -858,6 +859,10 @@ class ParseProductTests(TestCase):
         self.assertEqual(
             parsed["image_url"], "https://images.openfoodfacts.org/test-muesli-front.jpg"
         )
+        self.assertEqual(
+            parsed["image_thumb_url"],
+            "https://images.openfoodfacts.org/test-muesli-front.100.jpg",
+        )
         self.assertEqual(parsed["categories"], "Breakfasts, Cereals, Muesli")
         self.assertEqual(parsed["quantity"], "500 g")
         self.assertEqual(parsed["ingredients_text"], "Oats, sugar, dried fruit.")
@@ -867,12 +872,14 @@ class ParseProductTests(TestCase):
     def test_missing_image_and_categories_are_blank_not_missing_keys(self):
         raw = {**RAW_OFF_PRODUCT}
         keys = (
-            "image_front_url", "categories", "quantity", "ingredients_text", "labels", "allergens",
+            "image_front_url", "image_front_thumb_url", "categories", "quantity",
+            "ingredients_text", "labels", "allergens",
         )
         for key in keys:
             del raw[key]
         parsed = openfoodfacts.parse_product(raw)
         self.assertEqual(parsed["image_url"], "")
+        self.assertEqual(parsed["image_thumb_url"], "")
         self.assertEqual(parsed["categories"], "")
         self.assertEqual(parsed["quantity"], "")
         self.assertEqual(parsed["ingredients_text"], "")
@@ -923,6 +930,10 @@ class ImportOrRefreshFoodFromOffTests(TestCase):
         self.assertIsNotNone(food.off_synced_at)
         self.assertEqual(
             food.image_url, "https://images.openfoodfacts.org/test-muesli-front.jpg"
+        )
+        self.assertEqual(
+            food.image_thumb_url,
+            "https://images.openfoodfacts.org/test-muesli-front.100.jpg",
         )
         self.assertEqual(food.categories, "Breakfasts, Cereals, Muesli")
         self.assertEqual(food.quantity, "500 g")
@@ -2492,6 +2503,37 @@ class FoodListViewTests(TestCase):
         response = self.client.get(reverse("nutrition:food-list"))
         self.assertEqual(len(response.context["foods"]), 20)
         self.assertTrue(response.context["is_paginated"])
+
+    def test_pagination_links_carry_a_same_page_anchor(self):
+        """Regression: Previous/Next were plain full-page links with
+        no #anchor, so clicking one reset scroll to the very top of
+        the page instead of staying at the pagination controls the
+        user just clicked."""
+        for i in range(25):
+            make_food(self.alice, name=f"Food {i:02d}")
+        response = self.client.get(reverse("nutrition:food-list"))
+        self.assertContains(response, "page=2&q=")
+        self.assertContains(response, "#food-list-pagination")
+
+    def test_list_thumbnail_prefers_the_smaller_off_thumb_over_the_full_size_photo(self):
+        make_food(
+            self.alice, name="Muesli",
+            image_url="https://images.openfoodfacts.org/muesli.400.jpg",
+            image_thumb_url="https://images.openfoodfacts.org/muesli.100.jpg",
+        )
+        response = self.client.get(reverse("nutrition:food-list"))
+        self.assertContains(response, "muesli.100.jpg")
+        self.assertNotContains(response, "muesli.400.jpg")
+
+    def test_list_thumbnail_falls_back_to_the_full_size_photo_with_no_thumb_cached(self):
+        """A food imported before image_thumb_url existed, not yet
+        refreshed from OFF — still shows a photo rather than nothing."""
+        make_food(
+            self.alice, name="Muesli",
+            image_url="https://images.openfoodfacts.org/muesli.400.jpg", image_thumb_url="",
+        )
+        response = self.client.get(reverse("nutrition:food-list"))
+        self.assertContains(response, "muesli.400.jpg")
 
     def test_an_htmx_request_renders_only_the_results_partial(self):
         make_food(self.alice, name="Chicken breast")

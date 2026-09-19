@@ -23,6 +23,14 @@ narrated summary of the same version.
   future days — its trailing 7-day average could still pull in
   already-logged past days even though the future day itself has
   nothing logged.
+- Clicking Previous/Next on the "All foods" list now keeps your place
+  at the pagination buttons instead of jumping back to the top of the
+  page.
+
+### Performance
+- Food list thumbnails now load OpenFoodFacts' own smaller,
+  pre-generated photo instead of the larger one used on a food's own
+  page, cutting how much needs to download while browsing the list.
 
 ## [1.16.0] — 2026-09-19
 
