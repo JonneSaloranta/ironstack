@@ -18,6 +18,8 @@ narrated summary of the same version.
 
 ## [Unreleased]
 
+## [1.17.0] — 2026-09-19
+
 ### Added
 - Every meal card in the food diary (except "Other") now has a "Save
   as recipe" button, turning everything logged there into a new,
