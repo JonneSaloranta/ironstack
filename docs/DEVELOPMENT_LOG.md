@@ -4584,3 +4584,391 @@ alongside the rest of `apps.analytics`/`apps.core` (74 tests). Verified
 visually again with the same real dashboard/Analytics pages: a card
 now shows exactly its headline figures collapsed, with every
 rep-specific PR staying hidden until expanded.
+
+## Food diary: wrong meal preselected on "+ Add food", plus a Food detail page
+
+Reported: tapping "+ Add food" under one meal (Dinner, say) landed on
+the add-food page with a *different* meal (Breakfast) preselected —
+described as having repeatedly logged food to the wrong meal because
+of it. Root-caused to two independent gaps that only mattered
+together: `templates/nutrition/diary_day.html`'s per-meal "+ Add food"
+link only ever passed `?date=`, never which meal card it was on;
+separately, `DiaryAddEntryView.get()`/`.post()`'s invalid-form
+re-render never read or forwarded a `meal_slot` value at all, so
+`diary_add_entry.html`'s shared Alpine `mealSlot` state
+(`x-data="{ mealSlot: '{{ meal_slots.0.pk }}' }"`) had nothing to
+initialize from besides always the first meal slot in `order` —
+Breakfast. Fixed by threading a `selected_meal_slot` value through
+both the link (`&meal_slot={{ slot.pk }}`) and the view (read from
+`request.GET`/`request.POST` as appropriate, falling back to the
+first slot only when truly nothing was specified — e.g. arriving from
+somewhere that isn't a specific meal card). Covered by four new tests:
+the query param preselecting the right meal, no param falling back to
+the first slot, an invalid-form resubmit preserving whatever was
+actually submitted rather than resetting, and the diary page's own
+link carrying the right `meal_slot` per card.
+
+Same session, two follow-up requests:
+
+**Reorder "Add food."** Search/barcode scan sat below "Most used" on
+`diary_add_entry.html` (unlike its two sibling reuse sites — the same
+`_most_used_foods.html`/search partials also back
+`recipe_ingredient_form.html`/`diet_plan_meal_item_form.html`, which
+keep "Most used" first). Asked to put search above it here
+specifically — search/barcode is the more frequent path on this one
+page. Simple reorder, no logic change; updated
+`_most_used_foods.html`'s own comment to describe the (now
+per-page-different) ordering honestly instead of asserting one
+universal shape.
+
+**Every food/recipe name should link somewhere.** Broader ask:
+wherever a food or recipe's name is shown, it should be tappable
+through to that item's own page — called out specifically that "Most
+used" cards on the add-food page were plain text with nowhere to go.
+Recipes already had this (`RecipeDetailView`); `Food` had no detail
+view *at all* — only a list, a create form, and search/import, no way
+to open a single food and see its own nutrition facts. Added
+`FoodDetailView` (`/nutrition/foods/<pk>/`, read-only — `Food` has no
+update view yet either, so this only ever needed the same
+`Q(owner=request.user) | Q(owner__isnull=True)` visibility
+`FoodListView`/`_viewable_recipe_or_404` already establish, not an
+edit permission story) and a `food_detail.html` modeled directly on
+`recipe_detail.html`'s own nutrition-facts table. Then linked every
+plain-text food/recipe name found across the app to it:
+`food_list.html`, `_most_used_foods.html`, `_food_search_results.html`
+(only its already-imported "local" results — an OpenFoodFacts result
+not yet imported has no `Food` row and nothing to link to),
+`recipe_detail.html`'s own ingredient list, `_diet_plan_meal_card.html`,
+`diary_day.html`, `diary_entry_form.html`'s and
+`recipe_ingredient_edit_form.html`'s own `<h1>`, and the nutrition
+dashboard's "today's diet plan" preview — eight spots in total.
+`recipe_list.html` was left alone: it already has a working "Open"
+button per recipe, so nothing there was actually broken.
+
+Verified with new `FoodDetailView` tests (shows the food's own
+figures; a shared food is viewable; another user's private food and
+an inactive food both 404 the same way `FoodListView` already filters
+them out; requires login) plus two link-presence regression tests
+(`food_list.html`, "most used") — all pass, alongside the full
+`apps.nutrition` suite (351 tests) unchanged. Confirmed visually in a
+running dev container: the add-food page for a specific meal now
+preselects that meal, search sits above "most used," a most-used
+food's name is a real link, and opening it shows brand, Nutri-Score/
+NOVA badge, and the full nutrition table.
+
+## Double-tap-to-zoom on a food/recipe link, and the Foods page catching up
+
+Reported: double-tapping a food name on the Foods page zoomed the
+page in on iOS Safari — this app already has a site-wide fix for
+exactly that class of bug (`touch-action: manipulation` on a
+universal `*` selector, base.css's own comment explains why it has to
+be that broad), so the regression had to be something specific to the
+food-name links just added. Confirmed via computed styles
+(`getComputedStyle` on the link and every ancestor, through a real
+Chromium instance) that `touch-action: manipulation` genuinely was
+already in effect everywhere — so the `*` rule wasn't the gap.
+Root cause instead: these links were plain default `display: inline`,
+unlike every other tappable link already in the app
+(`.button-secondary` is `inline-flex`, `.card-link` is `block`) —
+WebKit doesn't reliably honor `touch-action` on a plain non-replaced
+inline element, a long-standing engine quirk the touch-action spec
+itself doesn't carve out. Fixed with a new `.inline-item-link` class
+(`display: inline-block`, no visual change since neither width nor
+height is set) applied to all nine of the food/recipe-name links
+added in the previous entry.
+
+Two more requests landed the same session, both about the Foods page
+specifically:
+
+**Barcode search there too.** Its own search box was still the plain
+type-and-submit `<form>` from before this app grew live HTMX search
++ barcode scanning everywhere else. Swapped for the identical
+box `food_browse.html` already uses (`mode=browse` against the same
+`FoodSearchResultsView`) — `apps.nutrition.services.search_foods`
+already handles a barcode-shaped query specially, so no server-side
+change was needed, only wiring the existing pieces together on one
+more page. Covered by a `test_the_camera_barcode_scanner_is_wired_up`
+test mirroring the one already covering `diary_add_entry.html`.
+
+**Every food/recipe name should link somewhere.** The same "make it
+tappable" principle applied to eight more spots found across the app
+— `food_list.html`, `_most_used_foods.html`, `_food_search_results.html`
+(only its already-imported "local" results — nothing to link to for
+an OpenFoodFacts result not yet imported), `recipe_detail.html`'s own
+ingredient list, `_diet_plan_meal_card.html`, `diary_day.html`,
+`diary_entry_form.html`'s and `recipe_ingredient_edit_form.html`'s
+own `<h1>`, and the nutrition dashboard's "today's diet plan"
+preview. `recipe_list.html` was left alone — it already has a working
+"Open" button per recipe, so nothing there was actually broken.
+
+## Foods page: pagination, OFF photos/categories, and combinable filters
+
+Three more requests, same page, same session:
+
+**Pagination.** `FoodListView` already had `paginate_by` set (50,
+now 20 per the request) but the template never actually rendered any
+pagination controls — a page beyond the first was silently
+unreachable. Added the exact `is_paginated`/`page_obj` nav
+`_exercise_list_results.html` already uses.
+
+**Photos and categories from OpenFoodFacts.** Two new `Food` fields,
+both blank for every hand-entered food (same as `nutri_score`/
+`nova_group`): `image_url` — OFF's own `image_front_url`, linked
+directly rather than downloaded and re-hosted locally, since OFF
+already operates an image CDN for exactly this and mirroring it would
+mean a Pillow resize pipeline, a media-storage growth story, and a
+second staleness concern for a field that's purely decorative; and
+`categories`, OFF's raw comma-separated `categories` string verbatim.
+Both just added to `openfoodfacts.parse_product`'s returned dict —
+`services.import_or_refresh_food_from_off` already applies every key
+in that dict generically, so no change was needed there at all.
+Displayed as a `.food-thumb` (`object-fit: cover`, small and fixed-
+size — the actual "optimize the image to fit the view" ask, done via
+CSS sizing rather than a server-side resize pipeline) in the list and
+a larger `.food-detail-image` (`object-fit: contain`, so a label's
+own text/branding — often the very thing that makes a food
+recognizable — never gets cropped off) on the detail page.
+
+Caught late, via a Playwright check of the actual rendered `<img>`
+(`naturalWidth`/`complete`) rather than trusting a screenshot alone:
+the image never loaded in a real browser at all, screenshot or not.
+Root cause: `apps.core.middleware.ContentSecurityPolicyMiddleware`'s
+`img-src` only ever allowed `'self'` plus `gravatar.com` — a CSP
+violation blocks silently, no visible error, so nothing about a
+broken-looking screenshot pointed at it directly. Added
+`images.openfoodfacts.org` to `img-src`, the same deliberate,
+narrowly-scoped exception gravatar.com already is. Second, smaller
+finding from the same live check: `loading="lazy"` on the thumbnail
+never triggered a load in headless Chromium even after scrolling the
+element into view and waiting — removed rather than chased further,
+since the actual performance case for lazy-loading a paginated list
+of twenty ~40px thumbnails is marginal at best.
+
+**Combinable filters/sort.** Name (`q`), category (`category`,
+`__icontains` against the raw string), and a sort
+(`name`/`created`/`category`/`calories`) with direction (`asc`/`desc`)
+— every one an independent querystring parameter that plain `AND`-
+filters and a single `order_by` combine, so any subset can be active
+at once and the whole state stays bookmarkable. `apps.nutrition.
+services.distinct_food_categories` (a Python-side split/dedupe over
+each visible food's raw `categories` string — not a query the
+database could serve directly, since the column is free text, not a
+normalized taxonomy) backs the category dropdown's own options. Filter
+form live-updates via HTMX exactly the way `apps.exercises.views.
+ExerciseListView`/`exercise_list.html` already do it
+(`get_template_names` swapping to a bare results partial for the HTMX
+request, `hx-push-url="true"`) — the identical shape, reused rather
+than invented a second time; even renamed that shared row's CSS class
+from `.exercise-filters` to the now-accurate `.filter-row` while
+touching it, since Foods was no longer the odd one out borrowing an
+exercise-specific name.
+
+35 new/changed tests across service-level sorting/filtering, the
+image/categories OFF-parsing round trip, the CSP allowance, and the
+HTMX partial-rendering branch — all pass, alongside the full
+`apps.nutrition`/`apps.core` suites. Verified end-to-end against a
+real OpenFoodFacts barcode (Nutella, `3017620422003`) rather than a
+synthetic fixture for the final visual check: real photo, real
+Nutri-Score/NOVA grade, real (if occasionally messy — one product's
+own OFF data mixed locale-prefixed and clean category names) category
+list, all rendering correctly once the CSP fix landed.
+
+## A food's own page grows a "Product information" card, and a typical price from Open Prices
+
+Two more requests against `FoodDetailView`, in the same session as the
+one above.
+
+**Product information.** Four more `Food` fields, same blank-for-
+every-hand-entered-food pattern as `image_url`/`categories`:
+`quantity` (OFF's own free-text pack size, e.g. "400 g" — not the same
+figure as `serving_size`, which is always per-100g/ml regardless of
+real package size, so this is pure "how much is in the package"
+context, never used in any nutrition math), `ingredients_text`,
+`labels`, and `allergens` (all OFF's own strings verbatim, including
+OFF's own occasional locale-tag prefixing like `en:gluten` — shown as
+OFF provides it rather than second-guessed). All four just added to
+`openfoodfacts.parse_product`'s returned dict, same as `image_url`/
+`categories` before them — no other code needed to change to pick them
+up. `food_detail.html` shows them in a "Product information" card,
+conditionally rendered only when at least one of them (or a price,
+below) has something to show.
+
+**Prices, and a real gap in the initial ask.** Asked for directly —
+"add prices from OFF, shown on the food page, in recipes, in the food
+diary" — but OFF's own core product API turned out to have **no price
+field at all**, confirmed live against several real barcodes before
+writing a line of code. Checked with the user directly rather than
+building a feature against a field that doesn't exist: pricing lives
+in a distinct OpenFoodFacts project, Open Prices
+(`prices.openfoodfacts.org`), which the user chose to integrate.
+
+Open Prices has no single canonical price for a product either — every
+report is one shopper's submission, tied to one store, one day, in
+whatever currency that store trades in, and a popular product can
+easily have reports spanning half a dozen currencies. `apps.nutrition.
+open_prices.summarize_prices` turns a barcode's most recent 20 reports
+into one figure: group by currency, keep whichever currency has the
+most reports in that sample (the one most representative of wherever
+this product is actually bought), and take that currency's *median*
+price — not a mean, since a single misread report (a shopper
+submitting a receipt total instead of a unit price, say) would skew an
+average far more than a median. `Food.price_amount`/`price_currency`/
+`price_sample_count`/`price_synced_at` cache that summary on the row,
+the same shape `off_synced_at` already established, refreshed lazily
+(`services.refresh_food_price`) rather than on a schedule — and gated
+on the same `OpenFoodFactsSettings.enabled` switch OFF's own client
+already uses, since Open Prices is run by the same organization and an
+operator turning off outbound requests clearly means both.
+
+Refresh is triggered only by viewing `FoodDetailView` — the diary and
+a recipe's ingredient list just display whatever's already cached, no
+extra lookup per appearance. `OPEN_PRICES_STALENESS_DAYS` is 7, half
+`OPENFOODFACTS_STALENESS_DAYS`'s 14: a product's nutrition facts
+barely change once published, but what it costs in a shop does, far
+more often. Shown as plain `amount currency` text (e.g. "3.21 EUR")
+everywhere a price is cached — deliberately not a currency symbol,
+since a symbol table would have to guess a locale for every ISO code
+Open Prices might return and would sometimes guess wrong, where the
+code itself never is. Mirrored the existing "Refresh selected foods
+from OpenFoodFacts" admin action with a "Refresh selected foods'
+prices from Open Prices" one, same force-refresh-a-selection shape.
+
+Verified live against Nutella's real barcode again
+(`3017620422003`) — Open Prices returned over a hundred real price
+reports across several currencies, and the summarized figure matched
+manually eyeballing the raw response. Full `apps.nutrition` suite
+(including new coverage for `open_prices.py`, `refresh_food_price`,
+the new admin action, and the price line rendering in all three
+places it now appears) passes alongside `apps.core`.
+
+## Diet plans: start from scratch, a "how much is left" totals widget, and finishing the search-reorder fix
+
+Three more requests in the same session.
+
+**Two more "add food" pages had the search-below-"Most used" bug.**
+The food diary's own add-food page got this fix earlier, but
+`recipe_ingredient_form.html` and `diet_plan_meal_item_form.html` —
+the exact same search-then-most-used layout, used for a recipe's
+ingredients and a diet plan meal's items — still had search rendering
+last. Moved both, same as the diary page.
+
+**Starting a diet plan from scratch.** `DietPlanCreateView` always
+forced `diet_builder.build_diet_plan`'s auto-suggestion into every
+meal, with no way to skip it short of deleting each suggested item by
+hand afterward. Added `DietPlanForm.start_from_scratch` (unchecked by
+default — existing behavior unchanged unless a user opts in) and
+`build_diet_plan(..., auto_fill=False)`: identical `DietPlan`/
+`DietPlanMeal` rows, same calorie/macro targets and per-meal shares,
+just skips `suggest_item_for_calorie_budget` entirely so every meal
+starts empty, ready for `diet_plan_meal_item_add`.
+
+**A "how much is left" totals widget**, for the same page shown right
+after creating (or opening) a plan — a small, collapsible box fixed
+to the bottom-right corner, showing that day's calories/macros so far
+against the plan's own target and how much of each is still left.
+Building it needed restructuring how the detail page groups meals by
+day: swapped Django's own `{% regroup %}` templatetag for a new
+`apps.nutrition.views._diet_plan_day_groups` (using `itertools.
+groupby`, since `meals` is already ordered by weekday) specifically
+because `{% regroup %}` has no way to attach extra per-group data —
+each group now carries its own totals-so-far and remaining-vs-target
+alongside the same `.grouper`/`.list` shape `{% regroup %}` already
+produced, so the template's own loop barely changed. `DietPlanItem`
+totals had only ever been tracked as a bare `calories` integer
+(`meal.actual_calories`) before this; extended to a full
+`ScaledNutrition` (`meal.nutrition_total`) so protein/carbs/fat could
+be summed the same way calories already were.
+
+Two real bugs found only by actually looking at the rendered page,
+not by reading the template:
+
+- **Expanded by default, it covered the very button it was meant to
+  help with.** First version defaulted the widget open; on a
+  phone-sized viewport, its fixed bottom-right position sat directly
+  on top of whichever meal card's "+ Add item" button happened to be
+  underneath it — a small floating box that blocks the thing it's
+  floating over isn't actually small. Now starts minimized (just the
+  toggle pill, sized to its own label rather than a fixed width so
+  the collapsed state stays genuinely compact), expanding only on tap.
+- **The expanded table overflowed in Finnish.** A first version used
+  three table columns (label / so far·target / left). Verified via
+  Playwright against a Finnish-language user: "Hiilihydraatit"
+  (carbohydrates) alone didn't fit its column's share of the widget's
+  14rem width, and the table visibly overflowed the box's own edge —
+  `scrollWidth` (249px) exceeding `clientWidth` (222px) confirmed it
+  wasn't just a screenshot artifact. Redesigned to two columns
+  (reusing `diary_day.html`'s own already-proven "so far / target"
+  row shape) with "left" moved to one wrapping text line below the
+  table instead of a rigid column — flowing text wraps cleanly in a
+  narrow box where a clipped table header doesn't. Re-verified with
+  the same Finnish user afterward: `scrollWidth` equals `clientWidth`,
+  no overflow.
+
+**A contribute-data prompt**, for any food with an `off_id` — this app
+only ever consumes OFF/Open Prices data, and every lookup it makes
+benefits from someone eventually fixing a wrong grade or submitting a
+price report upstream. Two links built straight from the food's own
+barcode: OFF's `cgi/product.pl?type=edit&code=<barcode>` edit form,
+and Open Prices' own `app/products/<barcode>` page. Both checked live
+against a real barcode before writing the template — a wrong
+contribute link would be worse than no prompt at all.
+
+New/changed test coverage across all four pieces (search ordering on
+both remaining pages, `build_diet_plan(auto_fill=False)`, the totals
+widget's day-grouping and its numbers, the contribute-link markup)
+passes alongside the full existing `apps.nutrition` suite.
+
+## A missing-photo fallback link, and reworking the Recipes page into two paginated sections
+
+Two more requests, same session.
+
+**No photo yet → link to OFF instead of nothing.** `food_detail.html`
+showed nothing at all above the Nutrition card for an OFF-imported
+food OFF itself has no photo for — now falls back to a plain link to
+that product's own OFF page (`world.openfoodfacts.org/product/
+<barcode>`, OFF's own canonical product URL, distinct from the
+`cgi/product.pl?type=edit` edit-form link the contribute prompt below
+already used) whenever `food.off_id` is set but `image_url` is blank.
+A hand-entered food (no `off_id`) still shows neither.
+
+**Recipes page: your recipes and template recipes, separately
+paginated.** `RecipeListView` used to be a single `ListView` over one
+combined, unpaginated, alphabetically-sorted queryset mixing a user's
+own recipes with every built-in template recipe — asked to split
+these into "Your recipes" (most recent first — this is the list
+someone actively adds to, so a just-created recipe is the one they're
+most likely looking for) above "Template recipes" in its own box
+(alphabetical — a fixed, shared reference list, browsed rather than
+added to), each paginated independently (5/page for your own, 10/page
+for templates — small enough that the current ~18-strong built-in
+library actually spans more than one page, unlike the 20/page first
+tried, which happened to be larger than the whole library and so
+never showed any pagination controls at all). Rebuilt as a plain
+`View`: Django's `ListView` pagination machinery only ever handles one
+`object_list`/`page_obj` pair, and this page now needs two independent
+`Paginator`s that don't reset each other's page when one changes —
+`?mine_page=`/`?template_page=` are separate querystring params, each
+preserved across the other section's own Previous/Next links.
+
+**Pagination no longer resets scroll to the top of the page.** Found
+directly: clicking Previous/Next is a plain full-page navigation (no
+HTMX here), and a normal page load always scrolls to the top
+regardless of where the click happened — annoying on a page where the
+pagination controls sit well below the fold. Each `<nav class=
+"pagination">` now carries its own `id`, and its own Previous/Next
+links append that same `#anchor` — the browser's native fragment
+scroll lands directly back on the control just clicked, no JS needed.
+Needed one CSS companion, `scroll-margin-top` on `.pagination`, so the
+landing spot isn't tucked directly under `.nutrition-subnav`'s own
+`position: sticky; top: 0` bar; verified with Playwright
+(`window.scrollY` non-zero, the nav's own bounding-rect top sitting
+just below the sticky bar rather than at the very top of the
+viewport) rather than trusting the CSS property alone to behave as
+expected.
+
+Also fixed along the way: the "your recipes" vs. "template recipes"
+split made the per-serving-calories query-count regression test's own
+expected number stale — two independent `Paginator`s each issue their
+own `COUNT` query, a fixed +2 over the single unpaginated fetch the
+test was written against, not a scaling N+1 (updated the pinned
+number and its comment rather than loosening the assertion).

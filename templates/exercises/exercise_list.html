@@ -9,7 +9,7 @@
   <a class="button" href="{% url 'exercises:exercise-create' %}">{% trans "New" %}</a>
 </div>
 
-<form class="exercise-filters" hx-get="{% url 'exercises:exercise-list' %}" hx-target="#exercise-results" hx-trigger="input changed delay:300ms from:#id_q, change from:#id_muscle_group" hx-push-url="true">
+<form class="filter-row" hx-get="{% url 'exercises:exercise-list' %}" hx-target="#exercise-results" hx-trigger="input changed delay:300ms from:#id_q, change from:#id_muscle_group" hx-push-url="true">
   <input type="search" id="id_q" name="q" placeholder="{% trans "Search exercises…" %}" value="{{ query }}" aria-label="{% trans "Search exercises" %}">
   <select id="id_muscle_group" name="muscle_group" aria-label="{% trans "Filter by muscle group" %}">
     <option value="">{% trans "All muscle groups" %}</option>

@@ -382,6 +382,57 @@ class Food(TimeStampedModel):
     nova_group = models.PositiveSmallIntegerField(
         choices=NovaGroup.choices, null=True, blank=True
     )
+    # Both blank for every hand-entered food, same as nutri_score/
+    # nova_group above — neither is something this app generates on
+    # its own, only ever imported. `image_url` is OFF's own hosted
+    # "front of pack" photo (`image_front_url` — already a modest,
+    # web-sized product photo, not the raw uploaded original), linked
+    # directly rather than downloaded and re-stored: OFF operates its
+    # own image CDN precisely for this, and mirroring it ourselves
+    # would mean a Pillow resize pipeline, a media-storage growth
+    # story, and a second staleness concern, for a field that's purely
+    # decorative (identifying a food at a glance) and never read by
+    # any nutrition calculation. `categories` is OFF's own
+    # comma-separated `categories` string (e.g. "Meats, Poultry,
+    # Chicken") verbatim, plain display text — not the taxonomy
+    # `apps.nutrition.openfoodfacts.list_categories` browses by ID,
+    # which is a live-queried OFF concept with no need to ever land in
+    # this column.
+    image_url = models.URLField(max_length=500, blank=True)
+    categories = models.TextField(blank=True)
+    # More OFF product info, asked for directly alongside the two
+    # above — same blank-for-hand-entered pattern, same reasoning:
+    # verbatim display text from OFF, nothing this app computes or
+    # normalizes. `quantity` is OFF's own free-text pack size (e.g.
+    # "400 g" — often *not* the same figure as `serving_size`, which
+    # is always per-100g/ml regardless of the real package size; this
+    # is purely "how much is in the package" context, never used in
+    # any nutrition math). `ingredients_text` and `labels`/`allergens`
+    # are OFF's own `ingredients_text`/`labels`/`allergens` strings
+    # verbatim — the latter two share `categories`' own caveat that
+    # OFF's data is sometimes locale-tag-prefixed ("en:milk") rather
+    # than a clean display name, shown as OFF provides it regardless.
+    quantity = models.CharField(max_length=100, blank=True)
+    ingredients_text = models.TextField(blank=True)
+    labels = models.TextField(blank=True)
+    allergens = models.TextField(blank=True)
+    # Sourced from Open Prices (prices.openfoodfacts.org), a distinct
+    # project from OFF's own core product API above — that API has no
+    # price field at all. Null/blank for every food with no `off_id`
+    # (nothing to look a price up by) and for any OFF-imported food
+    # whose price hasn't been looked up yet. `price_amount` is the
+    # median of `price_sample_count` recent shopper-submitted reports
+    # in whichever currency has the most reports for this product
+    # (apps.nutrition.open_prices.summarize_prices) — never "the"
+    # price, since Open Prices has no single canonical one, just the
+    # most representative figure available. Refreshed lazily on a
+    # shorter staleness window than off_synced_at
+    # (apps.nutrition.services.OPEN_PRICES_STALENESS_DAYS): real-world
+    # prices move faster than a product's nutrition facts do.
+    price_amount = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
+    price_currency = models.CharField(max_length=3, blank=True)
+    price_sample_count = models.PositiveIntegerField(default=0)
+    price_synced_at = models.DateTimeField(null=True, blank=True)
     active = models.BooleanField(default=True)
 
     class Meta:

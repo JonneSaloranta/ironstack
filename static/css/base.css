@@ -380,6 +380,24 @@ a {
   color: var(--color-accent);
 }
 
+/* A food/recipe name rendered as a link to its own detail page (the
+   diary, "most used", search results, a recipe's own ingredient
+   list, ...) — plain default `display: inline` like any other link
+   in running text, except here it sat inside a dense table cell/row
+   next to little else worth double-tapping, and got double-tapped
+   often enough to matter. `touch-action: manipulation` (the `*` rule
+   above) stops iOS Safari's double-tap-to-zoom on a *block* or
+   *inline-block* element reliably, but WebKit doesn't consistently
+   honor it on a plain non-replaced `inline` element — a long-standing
+   engine quirk, not something the touch-action spec itself carves out
+   — so these still zoomed the page in on a double-tap despite the
+   site-wide rule. `inline-block` keeps the same in-flow text
+   appearance (no width/height set) while giving WebKit an actual box
+   to apply touch-action to. */
+.inline-item-link {
+  display: inline-block;
+}
+
 .container {
   width: 100%;
   max-width: 30rem;
@@ -742,6 +760,55 @@ input[type="radio"] {
   height: 1.75rem;
 }
 
+/* Diet plan totals widget
+   (templates/nutrition/_diet_plan_totals_widget.html) — a small
+   corner summary of a diet plan's calorie/macro totals-so-far and
+   how much is left, asked for directly. Same fixed-to-viewport,
+   "reachable, not blocking" corner .training-fab/.messages-fab
+   already use, offset further up rather than sharing their exact
+   spot — .training-fab in particular can be showing at the same time
+   (a workout in progress while a diet plan page is also open) and is
+   a circular button this card-shaped widget would otherwise sit
+   right on top of. */
+.diet-plan-totals-widget {
+  position: fixed;
+  right: 1rem;
+  bottom: calc(var(--nav-height) + env(safe-area-inset-bottom) + 5.5rem);
+  z-index: 85;
+  /* Auto-width while minimized — just big enough for the toggle
+     button's own label, not the widest a food name/target number
+     could ever make it. Regression: a fixed 14rem width even while
+     minimized still covered a meal card's "+ Add item" button behind
+     it on a phone-sized viewport, which defeated the point of calling
+     it a small, collapsible box in the first place. */
+  width: auto;
+  max-width: calc(100vw - 2rem);
+  margin: 0;
+  padding: 0.6rem 0.75rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
+}
+
+.diet-plan-totals-widget-expanded {
+  width: 14rem;
+}
+
+.diet-plan-totals-widget table {
+  margin-top: 0.5rem;
+}
+
+.diet-plan-totals-toggle {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  background: none;
+  border: none;
+  padding: 0;
+  font-weight: bold;
+  color: inherit;
+  cursor: pointer;
+}
+
 .top-bar {
   display: flex;
   flex-wrap: wrap;
@@ -805,6 +872,59 @@ input[type="radio"] {
   border-radius: 50%;
   object-fit: cover;
   border: 1px solid var(--color-border);
+}
+
+/* A food's OFF-hosted photo (Food.image_url — its own comment
+   explains why this links to OFF's CDN rather than downloading and
+   re-storing/resizing the file locally) — `object-fit: cover` at a
+   small, fixed size is what actually does the "optimize the image to
+   fit the view" asked for: whatever aspect ratio/resolution OFF's own
+   photo happens to be, it always renders as the same small, cropped
+   square here, so a row of foods reads as a uniform, scannable list
+   rather than one with wildly different-shaped thumbnails. The
+   placeholder (a hand-entered food, or an OFF import from before this
+   field existed, has no photo) is a plain muted square — keeps the
+   name column's own alignment identical whether or not a given row
+   has a photo, rather than that column silently shifting narrower
+   for rows with a blank first cell. */
+.food-thumb {
+  display: block;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius);
+  object-fit: cover;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+}
+
+.food-thumb-placeholder {
+  background: var(--color-border);
+}
+
+/* The same photo, shown large on Food's own detail page — `contain`,
+   not `cover`, here: a food label often carries the exact information
+   (brand, flavor, size) that makes it recognizable, and cropping that
+   off to fill a fixed box the way the small list thumbnail does would
+   undermine the one thing this image is for. */
+.food-detail-image {
+  display: block;
+  width: 100%;
+  /* Smaller than a first pass (220px) — asked for directly after
+     seeing it on a desktop screen: this app's own .container caps
+     every page at 30rem (480px) wide regardless of viewport, mobile
+     or desktop alike, so the fixed pixel size here is what actually
+     controlled how "big" this looked either way, not the device. A
+     non-square product photo (most of them) also doesn't fill this
+     box at all under object-fit: contain — the box itself reading as
+     oversized was as much about the letterboxed empty space around a
+     small photo as the photo's own size. */
+  max-width: 160px;
+  max-height: 160px;
+  object-fit: contain;
+  margin: 0 auto 0.75rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
 }
 
 /* Exercises: list, filters, detail */
@@ -890,10 +1010,36 @@ abbr[title]:focus::after {
   z-index: 20;
 }
 
-.exercise-filters {
+/* A live-search-plus-dropdown-filters row (exercise_list.html,
+   nutrition/food_list.html's own "All foods" filters) — generically
+   named since both reuse this identical shape rather than each
+   carrying its own copy. flex-wrap because food_list.html's own use
+   has four controls (name/category/sort/direction) instead of
+   exercise_list.html's two, which no longer fits one row at the
+   ~360-430px mobile baseline. */
+.filter-row {
   display: flex;
+  flex-wrap: wrap;
   gap: 0.5rem;
   margin-bottom: 1rem;
+}
+
+/* Smaller than the generic input/select default (var(--touch-target),
+   the same 2.75rem every ordinary form field uses) — asked for
+   directly once food_list.html grew from two filters to four. `flex:
+   1 1 160px` is what actually makes "smaller" visible rather than
+   just shorter: each control only claims the width it needs down to
+   160px before wrapping, instead of the generic `width: 100%` every
+   input/select gets by default, which forced these into one full-
+   width control per row regardless of how few characters they hold. */
+.filter-row input,
+.filter-row select {
+  width: auto;
+  flex: 1 1 160px;
+  min-height: 2.25rem;
+  margin-bottom: 0;
+  padding: 0.35rem 0.6rem;
+  font-size: 0.9rem;
 }
 
 .card-link {
@@ -1290,6 +1436,16 @@ abbr[title]:focus::after {
   align-items: center;
   color: var(--color-text-muted);
   font-size: 0.85rem;
+  /* Previous/Next links that carry a same-page #anchor (e.g.
+     recipe_list.html's two independently-paginated sections) land the
+     browser's native anchor-scroll right here instead of back at the
+     top of the page — asked for directly, since a full page reload
+     otherwise always resets scroll to the top regardless of where the
+     click happened. scroll-margin-top leaves room for
+     .nutrition-subnav's own `position: sticky; top: 0`, which would
+     otherwise sit on top of (rather than above) this element once
+     scrolled flush against the viewport's own top edge. */
+  scroll-margin-top: 3.5rem;
 }
 
 .field {

@@ -1,0 +1,61 @@
+{% load i18n %}
+{% comment %}
+Expects: plan, day_group (one entry from
+apps.nutrition.views._diet_plan_day_groups — .totals is a
+ScaledNutrition, .remaining_calories/_protein_grams/
+_carbohydrate_grams/_fat_grams are plan.target_* minus that). A small,
+collapsible corner summary of how much of the plan's daily target its
+meals add up to so far, and how much is left — asked for directly.
+Starts minimized (just the toggle button) rather than expanded:
+found live that the expanded table, fixed to the bottom-right corner,
+is wide enough on a phone-sized viewport to cover the "+ Add item"
+button of whichever meal card happens to sit behind it — a small
+floating box that already covers what it's meant to help with isn't
+actually small. Expand/minimize state lives in Alpine's own
+per-widget data rather than being persisted, since re-collapsing it
+on the next page load costs nothing.
+
+Two columns, not three — a first version had a separate "Left" table
+column alongside "So far," which overflowed the widget's own narrow
+fixed width in several languages (found live in Finnish:
+"Hiilihydraatit" alone is wider than this box's whole first-column
+budget). "So far / target" reuses diary_day.html's own already-proven
+two-column "X / Y unit" row shape (`services.daily_totals`); "left"
+moves to one wrapping text line below the table instead of a third
+column, since flowing text can wrap onto a second line in a narrow
+box without looking broken the way a clipped table header does.
+{% endcomment %}
+<div class="card diet-plan-totals-widget" x-data="{ minimized: true }"
+     :class="{ 'diet-plan-totals-widget-expanded': !minimized }">
+  <button type="button" class="diet-plan-totals-toggle" @click="minimized = !minimized"
+          :aria-expanded="(!minimized).toString()">
+    <span>{% trans "Totals" %}</span>
+    <span x-show="minimized">&#9662;</span>
+    <span x-show="!minimized" x-cloak>&#9652;</span>
+  </button>
+  <div x-show="!minimized" x-cloak>
+    <table class="set-table">
+      <tbody>
+        <tr>
+          <td>{% trans "Calories" %}</td>
+          <td>{{ day_group.totals.calories|floatformat:0 }} / {{ plan.target_calories }}</td>
+        </tr>
+        <tr>
+          <td>{% trans "Protein" %}</td>
+          <td>{{ day_group.totals.protein_grams|floatformat:0 }} / {{ plan.target_protein_grams|floatformat:0 }} g</td>
+        </tr>
+        <tr>
+          <td>{% trans "Carbohydrates" %}</td>
+          <td>{{ day_group.totals.carbohydrate_grams|floatformat:0 }} / {{ plan.target_carbohydrate_grams|floatformat:0 }} g</td>
+        </tr>
+        <tr>
+          <td>{% trans "Fat" %}</td>
+          <td>{{ day_group.totals.fat_grams|floatformat:0 }} / {{ plan.target_fat_grams|floatformat:0 }} g</td>
+        </tr>
+      </tbody>
+    </table>
+    <p class="text-muted diet-plan-totals-left">
+      {% blocktrans with calories=day_group.remaining_calories|floatformat:0 protein=day_group.remaining_protein_grams|floatformat:0 carbs=day_group.remaining_carbohydrate_grams|floatformat:0 fat=day_group.remaining_fat_grams|floatformat:0 %}Left: {{ calories }} kcal, {{ protein }}g protein, {{ carbs }}g carbs, {{ fat }}g fat{% endblocktrans %}
+    </p>
+  </div>
+</div>

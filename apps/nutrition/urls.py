@@ -27,6 +27,7 @@ urlpatterns = [
     path("onboarding/review/", views.OnboardingReviewView.as_view(), name="onboarding-review"),
     path("foods/", views.FoodListView.as_view(), name="food-list"),
     path("foods/new/", views.FoodCreateView.as_view(), name="food-create"),
+    path("foods/<int:pk>/", views.FoodDetailView.as_view(), name="food-detail"),
     path("foods/search/", views.FoodSearchResultsView.as_view(), name="food-search"),
     path("foods/browse/", views.FoodBrowseView.as_view(), name="food-browse"),
     path(

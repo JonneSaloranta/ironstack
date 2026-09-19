@@ -1,10 +1,14 @@
 {% load i18n l10n %}
 {% comment %}
-Quick-add panel shown above the search box wherever a food can be
+Quick-add panel shown alongside the search box wherever a food can be
 added — the user's top N most-used foods (apps.nutrition.services.
-most_used_foods), one tap instead of a fresh search every time.
-Mode-parameterized the same way _food_search_results.html is, since
-this shows up in the same three places that partial does.
+most_used_foods), one tap instead of a fresh search every time. Below
+the search box on templates/nutrition/diary_add_entry.html (asked for
+directly — search/barcode scan is the more frequent path there, so it
+comes first), above it on recipe_ingredient_form.html/
+diet_plan_meal_item_form.html. Mode-parameterized the same way
+_food_search_results.html is, since this shows up in the same three
+places that partial does.
 
 Expects: most_used (list of FoodUsage), mode ("diary"/"recipe"/
 "diet-plan-meal"), plus whichever of date/recipe/plan/meal that mode
@@ -34,7 +38,7 @@ needs to build its post URL — same contract as _food_search_results.
         <input type="hidden" name="date" value="{{ date }}">
       {% endif %}
       <div>
-        <strong>{{ usage.food.name }}</strong>
+        <strong><a class="inline-item-link" href="{% url 'nutrition:food-detail' usage.food.pk %}">{{ usage.food.name }}</a></strong>
         <p class="text-muted">{{ usage.quantity }} {{ usage.food.serving_unit }}</p>
       </div>
       <div style="display:flex; flex-wrap:wrap; gap:0.5rem; align-items:center;">

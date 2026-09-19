@@ -18,6 +18,55 @@ narrated summary of the same version.
 
 ## [Unreleased]
 
+## [1.16.0] — 2026-09-19
+
+### Added
+- Every food now has its own nutrition-facts page — tap its name
+  anywhere it appears (the diary, a recipe's ingredients, "most
+  used", search results, a diet plan's meal preview) to open it.
+- Foods imported from OpenFoodFacts now show a photo (in the food
+  list and on the food's own page) and their OFF categories — makes a
+  food much easier to recognize at a glance.
+- The "All foods" list is now paginated (20 per page) and can be
+  filtered by name/category and sorted by name, date added, category,
+  or calories (ascending or descending) — all combinable at once.
+- A food's own page now shows its product information from
+  OpenFoodFacts (package size, categories, labels, allergens,
+  ingredients) when available.
+- Foods imported from OpenFoodFacts now show a typical price, sourced
+  from Open Prices — on the food's own page, next to a recipe
+  ingredient's calories, and next to a diary entry's calories.
+- A food imported from OpenFoodFacts now shows a prompt to edit it on
+  OpenFoodFacts or add a price on Open Prices, linked straight to
+  that product.
+- Diet plans can now be started from scratch (every meal left empty
+  for you to fill in) instead of always auto-generating suggestions.
+- The diet plan page now has a small, collapsible "Totals" box
+  showing how much of the day's calorie/macro target is covered so
+  far and how much is left.
+- If a food imported from OpenFoodFacts has no photo yet, its own
+  page now links to that product's page on OpenFoodFacts instead of
+  showing nothing.
+
+### Changed
+- On the "Add food" page, the recipe ingredient page, and the diet
+  plan item page, search/barcode scan now comes above "Most used"
+  instead of below it.
+- Double-tapping a food or recipe name no longer zooms the page in on
+  iOS Safari.
+- The Recipes page now lists your own recipes (most recent first,
+  paginated 5 per page) separately from the built-in template
+  recipes (in their own box, paginated too).
+- Clicking Previous/Next on a paginated list (currently the Recipes
+  page) now keeps your place at the pagination buttons instead of
+  jumping back to the top of the page.
+
+### Fixed
+- Tapping "+ Add food" under a specific meal (e.g. Dinner) no longer
+  lands on the add-food page with a different meal (Breakfast)
+  preselected — food logged there went to the wrong meal until you
+  noticed and switched it by hand.
+
 ## [1.15.0] — 2026-09-16
 
 ### Added

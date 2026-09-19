@@ -1,0 +1,53 @@
+{% load i18n %}
+{% comment %}
+FoodListView's own results — swapped in place by its filter form's
+hx-get (templates/nutrition/food_list.html), the same "one view, two
+templates" split apps.exercises.views.ExerciseListView/
+_exercise_list_results.html already use. Pagination links below are
+plain page loads, not hx-get — HTMX has no `hx-boost` anywhere in this
+app, so clicking one is a normal full-page navigation that re-renders
+this same page from scratch with every filter still baked into the
+querystring, exactly like _exercise_list_results.html's own pagination
+already does.
+{% endcomment %}
+{% if foods %}
+  <div class="table-wrap">
+    <table class="set-table">
+      <thead>
+        <tr><th></th><th>{% trans "Name" %}</th><th>{% trans "Calories" %}</th></tr>
+      </thead>
+      <tbody>
+        {% for food in foods %}
+          <tr>
+            <td>
+              {% if food.image_url %}
+                <img class="food-thumb" src="{{ food.image_url }}" alt="">
+              {% else %}
+                <div class="food-thumb food-thumb-placeholder" aria-hidden="true"></div>
+              {% endif %}
+            </td>
+            <td><a class="inline-item-link" href="{% url 'nutrition:food-detail' food.pk %}">{{ food.name }}</a>{% if food.brand %} <span class="text-muted">({{ food.brand }})</span>{% endif %}{% include "nutrition/_nutri_score_badge.html" %}</td>
+            <td>{{ food.calories }} kcal / {{ food.serving_size }} {{ food.serving_unit }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% else %}
+  <div class="card empty-state">
+    <p>{% trans "No foods match your filters." %}</p>
+  </div>
+{% endif %}
+
+{% if is_paginated %}
+  {% url 'nutrition:food-list' as food_list_url %}
+  <nav class="pagination" aria-label="{% trans "Food list pages" %}">
+    {% if page_obj.has_previous %}
+      <a class="button-secondary" href="{{ food_list_url }}?page={{ page_obj.previous_page_number }}&q={{ query }}&category={{ selected_category }}&sort={{ selected_sort }}&dir={{ selected_dir }}">{% trans "Previous" %}</a>
+    {% endif %}
+    <span>{% blocktrans with number=page_obj.number total=page_obj.paginator.num_pages %}Page {{ number }} of {{ total }}{% endblocktrans %}</span>
+    {% if page_obj.has_next %}
+      <a class="button-secondary" href="{{ food_list_url }}?page={{ page_obj.next_page_number }}&q={{ query }}&category={{ selected_category }}&sort={{ selected_sort }}&dir={{ selected_dir }}">{% trans "Next" %}</a>
+    {% endif %}
+  </nav>
+{% endif %}

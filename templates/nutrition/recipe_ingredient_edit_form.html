@@ -3,7 +3,7 @@
 {% block title %}{% trans "Edit ingredient" %} — IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
-  <h1 style="margin:0;">{{ ingredient.food.name }}</h1>
+  <h1 style="margin:0;"><a class="inline-item-link" href="{% url 'nutrition:food-detail' ingredient.food.pk %}">{{ ingredient.food.name }}</a></h1>
 </div>
 {% include "nutrition/_subnav.html" %}
 

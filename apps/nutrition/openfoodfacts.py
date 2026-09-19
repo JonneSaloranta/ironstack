@@ -190,4 +190,17 @@ def parse_product(raw):
         "nova_group": (
             int(raw["nova_group"]) if raw.get("nova_group") in (1, 2, 3, 4) else None
         ),
+        # `image_front_url` — OFF's own already-sized "front of pack"
+        # photo, not `image_url` (their largest/raw upload) — see
+        # Food.image_url's own comment for why this is linked rather
+        # than downloaded. Empty string, not None, when OFF has no
+        # photo for this product: both URLField(blank=True) and the
+        # `{% if food.image_url %}` template check treat "" as
+        # "nothing to show" identically to a genuinely missing key.
+        "image_url": raw.get("image_front_url") or raw.get("image_url") or "",
+        "categories": raw.get("categories") or "",
+        "quantity": raw.get("quantity") or "",
+        "ingredients_text": raw.get("ingredients_text") or "",
+        "labels": raw.get("labels") or "",
+        "allergens": raw.get("allergens") or "",
     }

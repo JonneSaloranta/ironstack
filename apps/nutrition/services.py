@@ -18,7 +18,7 @@ from django.db import transaction
 from django.db.models import Q
 from django.utils import timezone
 
-from . import energy, macros, openfoodfacts
+from . import energy, macros, open_prices, openfoodfacts
 from .models import (
     DietPlan,
     Food,
@@ -32,6 +32,12 @@ from .models import (
 # food imported from OFF is trusted before being transparently
 # re-fetched on next use, instead of a periodic bulk re-sync.
 OPENFOODFACTS_STALENESS_DAYS = 14
+
+# See docs/NUTRITION.md "Open Prices integration" — shorter than
+# OPENFOODFACTS_STALENESS_DAYS above: a product's nutrition facts
+# barely change once published, but what it actually costs in a shop
+# does, far more often.
+OPEN_PRICES_STALENESS_DAYS = 7
 
 
 @transaction.atomic
@@ -217,6 +223,54 @@ def import_or_refresh_food_from_off(barcode, *, force=False):
     return Food.objects.create(owner=None, **parsed)
 
 
+def _price_is_stale(food):
+    if food.price_synced_at is None:
+        return True
+    return (timezone.now() - food.price_synced_at).days >= OPEN_PRICES_STALENESS_DAYS
+
+
+def refresh_food_price(food, *, force=False):
+    """Refreshes `food`'s cached `price_amount`/`price_currency`/
+    `price_sample_count` from Open Prices if they've gone stale — see
+    docs/NUTRITION.md "Open Prices integration": lazy, on-demand
+    refresh on next use (`FoodDetailView`), the same shape
+    `import_or_refresh_food_from_off` above already uses for nutrition
+    data, gated on the same `OpenFoodFactsSettings.enabled` switch
+    (Open Prices is run by the same organization as OFF's core API,
+    and an operator turning off outbound OFF-ecosystem requests means
+    both, not just one). A no-op for any food with no `off_id` — there
+    is no barcode to look a price up by for a hand-entered food.
+
+    `force=True` skips the staleness check and always re-fetches —
+    used only by `apps.nutrition.admin.FoodAdmin`'s "Refresh selected
+    foods' prices from Open Prices" action, an explicit admin-chosen
+    selection, never a scheduled or unconditional bulk re-sync."""
+    if food.off_id is None or not OpenFoodFactsSettings.load().enabled:
+        return food
+    if not force and not _price_is_stale(food):
+        return food
+
+    try:
+        raw_prices = open_prices.get_prices_for_barcode(food.off_id)
+    except open_prices.OpenPricesError:
+        # A flaky third-party API must never break viewing a food
+        # that already has a (merely stale) cached price to fall back on.
+        return food
+
+    summary = open_prices.summarize_prices(raw_prices)
+    food.price_synced_at = timezone.now()
+    if summary is None:
+        food.price_amount = None
+        food.price_currency = ""
+        food.price_sample_count = 0
+    else:
+        food.price_amount = summary["amount"]
+        food.price_currency = summary["currency"]
+        food.price_sample_count = summary["sample_count"]
+    food.save()
+    return food
+
+
 @transaction.atomic
 def merge_foods(keep, duplicates):
     """The admin-only "these are actually the same food" cleanup tool
@@ -290,6 +344,40 @@ def search_foods(user, query):
         except openfoodfacts.OpenFoodFactsError:
             off_results = []
     return local, off_results
+
+
+def distinct_food_categories(user):
+    """Every distinct category name across the foods visible to `user`
+    (their own plus shared/imported) — for `FoodListView`'s own
+    "filter by category" dropdown. `Food.categories` is OFF's raw,
+    free-text, comma-separated string (see that field's own comment
+    for why — it's display text, not a normalized taxonomy), so this
+    is a plain Python split/dedupe over each row's value rather than
+    a query the database could serve directly; nothing else in this
+    app needs a distinct-categories list often enough to justify
+    normalizing the column just for this. Unrelated to
+    `suggested_categories`/`browse_category` below, which browse
+    OFF's own live category *IDs* for importing something new, not
+    this instance's already-imported foods."""
+    raw_values = (
+        Food.objects.filter(Q(owner=user) | Q(owner__isnull=True), active=True)
+        .exclude(categories="")
+        .values_list("categories", flat=True)
+    )
+    names = set()
+    for raw in raw_values:
+        for name in raw.split(","):
+            name = name.strip()
+            if name:
+                names.add(name)
+    # key=str.lower, not a bare sort — OFF's own category casing is
+    # inconsistent (a plain "Cereals" alongside a locale-prefixed
+    # "en:Confectionary based spreads"), and Python's default string
+    # sort is case-sensitive (every uppercase letter sorts before
+    # every lowercase one), so a bare `sorted(names)` reads as "not
+    # actually alphabetical" the moment two categories differ only in
+    # case.
+    return sorted(names, key=str.lower)
 
 
 _CATEGORY_CACHE_KEY = "nutrition:off_categories"
