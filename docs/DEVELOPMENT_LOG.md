@@ -5138,3 +5138,30 @@ default, disappears immediately after unchecking the profile toggle
 and saving, and `/nutrition/foods/` still returns a real 200 with the
 toggle off; separately, a brand-new account's onboarding modal shows
 the checkbox pre-checked with the label "Track nutrition".
+
+## The iOS app icon's dumbbell was missing its handle
+
+Reported directly: the iOS home-screen icon (added-to-home-screen PWA)
+showed a dumbbell with no visible bar connecting its two ends.
+
+`static/icons/icon.svg`'s handle was a stroked `<line>` (round
+linecap, to look like a rounded bar) rather than a filled shape — and
+whichever tool had originally rasterized it down to the actual shipped
+PNGs (`apple-touch-icon.png` 180×180, `icon-192.png`, `icon-512.png`)
+rendered that particular element wrong, near-invisible against the
+dark background, even though a real browser engine (checked with
+Playwright/Chromium) renders the same SVG's line correctly. The bug
+was baked into the committed PNGs themselves, not something a live
+page load could ever trigger — `favicon.svg` (a separate, deliberately
+simplified 32×32 design from an earlier fix, see this log's own
+"32×32 favicon" entry above) was never affected, since it already
+built its own bar from a plain `<rect>`, not a stroked line.
+
+Fixed by replacing the `<line>` with an equivalent filled `<rect>`
+(`x="140" y="239" width="232" height="34" rx="17"` — same span, same
+fully-rounded pill ends a round linecap would have given it), then
+regenerating all three PNGs from the corrected source. Verified each
+rendered size directly (`apple-touch-icon.png`/`icon-192.png`/
+`icon-512.png` all show a continuous, clearly-connected handle now) —
+no template or manifest change needed, since both only ever referenced
+these files by name.

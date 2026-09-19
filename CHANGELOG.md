@@ -18,6 +18,11 @@ narrated summary of the same version.
 
 ## [Unreleased]
 
+### Fixed
+- The iOS home-screen app icon's dumbbell now shows a connected
+  handle bar — it rendered as nearly invisible on the actual shipped
+  icon sizes, even though it looked fine in a regular browser.
+
 ## [1.17.0] — 2026-09-19
 
 ### Added
