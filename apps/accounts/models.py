@@ -314,9 +314,10 @@ class User(AbstractUser):
 
     def public_display_name(self):
         """What OTHER users see for this user — the achievements
-        carousel and "Recently active" list (apps.analytics.achievements),
-        currently the only places one user's identity is ever shown to
-        another. Username plus first name if `show_name_to_others` is on
+        carousel, "Recently active" list, and member profile page
+        (apps.analytics.achievements/views), the only places one
+        user's identity is ever shown to another. Username plus first
+        name if `show_name_to_others` is on
         and a first name is actually set; the bare username otherwise.
         Distinct from this user's own dashboard greeting
         (apps.core.greetings), which always uses their first name

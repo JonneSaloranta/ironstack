@@ -34,11 +34,18 @@ class Achievement:
     label: str
     value: str
     display_name: str
+    # The real, stable username — `display_name` alone isn't safe to
+    # build a URL from (it can carry a first name too, see
+    # User.public_display_name), and is meant purely for reading, not
+    # matching a row. Used by templates/core/dashboard.html to link
+    # each achievement to that user's own profile (MemberProfileView).
+    username: str
 
 
 @dataclass(frozen=True)
 class RecentActivity:
     display_name: str
+    username: str
     # The latest session's `ended_at` once it has one — how long ago
     # training actually *stopped*, not how long ago it happened to
     # start. Falls back to `started_at` whenever `ended_at` isn't set
@@ -80,9 +87,13 @@ def longest_workout_streak_days(user):
     return longest
 
 
-def _highlights_for(user):
+def highlights_for(user):
     """The up-to-4 highlight cards for a single user — `[]` if they have
-    no completed workouts yet (nothing to celebrate)."""
+    no completed workouts yet (nothing to celebrate). Public (no
+    leading underscore): used both by `achievement_highlights` below
+    (every opted-in user's highlights, for the dashboard carousel) and
+    directly by `apps.analytics.views.MemberProfileView` for one
+    specific user's own profile page."""
     total_workouts = WorkoutSession.objects.filter(
         user=user, status=WorkoutSessionStatus.COMPLETED
     ).count()
@@ -112,6 +123,7 @@ def _highlights_for(user):
             value=ngettext("%(counter)s day", "%(counter)s days", streak_days)
             % {"counter": streak_days},
             display_name=display_name,
+            username=user.username,
         ),
         Achievement(
             icon="workouts",
@@ -123,6 +135,7 @@ def _highlights_for(user):
             value=ngettext("%(counter)s workout", "%(counter)s workouts", total_workouts)
             % {"counter": total_workouts},
             display_name=display_name,
+            username=user.username,
         ),
     ]
     if total_prs:
@@ -133,6 +146,7 @@ def _highlights_for(user):
                 value=ngettext("%(counter)s PR", "%(counter)s PRs", total_prs)
                 % {"counter": total_prs},
                 display_name=display_name,
+                username=user.username,
             )
         )
     if total_volume_kg:
@@ -145,6 +159,7 @@ def _highlights_for(user):
                     f"{core_units.weight_unit_label(unit_system)}"
                 ),
                 display_name=display_name,
+                username=user.username,
             )
         )
     return highlights
@@ -163,7 +178,7 @@ def achievement_highlights():
     User = get_user_model()
     highlights = []
     for user in User.objects.filter(show_achievements=True).order_by("username"):
-        highlights.extend(_highlights_for(user))
+        highlights.extend(highlights_for(user))
     return highlights
 
 
@@ -206,6 +221,7 @@ def recently_active_users(limit=10):
         activity.append(
             RecentActivity(
                 display_name=user.public_display_name(),
+                username=user.username,
                 last_active_at=last_active_at,
                 is_in_progress=is_in_progress,
                 is_recent=(now - last_active_at) <= _RECENT_ACTIVITY_WINDOW,

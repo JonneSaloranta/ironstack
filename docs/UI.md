@@ -362,6 +362,24 @@ top of `show_achievements`: that one decides whether a user's data
 appears here *at all*; this one only decides whether their first name
 is part of it once it does.
 
+**Member profile page** (`apps.analytics.views.MemberProfileView`,
+`/analytics/members/<username>/`, asked for directly): every name in
+the achievements carousel and "Recently active" list links here now —
+a dedicated page for one user showing the same `achievements.
+highlights_for` cards, their recent PRs grouped by exercise (the exact
+`records/_pr_exercise_group.html` partial the Analytics dashboard's own
+"Recent PRs" already uses, formatted in *the viewer's* own unit
+preference regardless of whose PRs they are), and how long they've
+been a member (`User.date_joined`). Deliberately nothing about food,
+calories, or logged body weight — only the same workout/PR/streak
+scope the carousel already has. Gated by the exact same
+`User.show_achievements` opt-out, not a second, separate privacy
+setting for what would otherwise be the same decision twice; a user
+can always view their own profile regardless of this setting (it hides
+a profile from others, not from its own owner). No view, url, or
+permission check anywhere else in the app changed — this is a new,
+additive page, not a new restriction on anything that already existed.
+
 **BMI**: lives on the "Body weight" measurement history page
 (`apps.measurements.MeasurementHistoryView`, `templates/measurements/
 measurement_history.html`) — not the dashboard or Profile, where it

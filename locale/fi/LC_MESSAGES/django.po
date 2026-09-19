@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: IronStack\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-19 15:34+0000\n"
+"POT-Creation-Date: 2026-09-19 17:17+0000\n"
 "Language: fi\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -110,7 +110,11 @@ msgid ""
 "dashboard. Turn off to hide it if you don't want to track nutrition — "
 "existing nutrition data is never deleted, and its pages stay reachable "
 "directly by a link."
-msgstr "Näyttää ravinnon (ruokapäiväkirja, reseptit, ruokavaliosuunnitelmat) valikossa ja etusivulla. Poista käytöstä, jos et halua seurata ravintoa — olemassa olevaa ravintodataa ei koskaan poisteta, ja sen sivut ovat yhä käytettävissä suoran linkin kautta."
+msgstr ""
+"Näyttää ravinnon (ruokapäiväkirja, reseptit, ruokavaliosuunnitelmat) "
+"valikossa ja etusivulla. Poista käytöstä, jos et halua seurata ravintoa — "
+"olemassa olevaa ravintodataa ei koskaan poisteta, ja sen sivut ovat yhä "
+"käytettävissä suoran linkin kautta."
 
 #: apps/accounts/forms.py:306
 msgid ""
@@ -320,7 +324,11 @@ msgid ""
 "dashboard. Leave unchecked if you don't want to track nutrition — you can "
 "turn it on or off anytime from your profile, and nothing is ever deleted "
 "either way."
-msgstr "Näyttää ravinnon (ruokapäiväkirja, reseptit, ruokavaliosuunnitelmat) valikossa ja etusivulla. Jätä valitsematta, jos et halua seurata ravintoa — voit ottaa sen käyttöön tai pois käytöstä milloin tahansa profiilistasi, eikä mitään koskaan poisteta kummassakaan tapauksessa."
+msgstr ""
+"Näyttää ravinnon (ruokapäiväkirja, reseptit, ruokavaliosuunnitelmat) "
+"valikossa ja etusivulla. Jätä valitsematta, jos et halua seurata ravintoa — "
+"voit ottaa sen käyttöön tai pois käytöstä milloin tahansa profiilistasi, "
+"eikä mitään koskaan poisteta kummassakaan tapauksessa."
 
 #: apps/accounts/forms.py:669 apps/nutrition/forms.py:40
 #: apps/nutrition/forms.py:449 apps/nutrition/forms.py:653
@@ -372,7 +380,7 @@ msgstr "Earth"
 msgid "Zen"
 msgstr "Zen"
 
-#: apps/accounts/models.py:379
+#: apps/accounts/models.py:380
 msgid ""
 "Shown as a footer note on the login and signup pages. Leave blank to hide it "
 "entirely."
@@ -492,22 +500,22 @@ msgstr "muistiinpanot"
 msgid "activities"
 msgstr "aktiviteetit"
 
-#: apps/analytics/achievements.py:111
+#: apps/analytics/achievements.py:122
 msgid "Longest streak"
 msgstr "Pisin putki"
 
-#: apps/analytics/achievements.py:112
+#: apps/analytics/achievements.py:123
 #, python-format
 msgid "%(counter)s day"
 msgid_plural "%(counter)s days"
 msgstr[0] "%(counter)s päivä"
 msgstr[1] "%(counter)s päivää"
 
-#: apps/analytics/achievements.py:122
+#: apps/analytics/achievements.py:134
 msgid "Workouts completed"
 msgstr "Treenejä tehty"
 
-#: apps/analytics/achievements.py:123 templates/programs/program_list.html:16
+#: apps/analytics/achievements.py:135 templates/programs/program_list.html:16
 #: templates/programs/program_list.html:32
 #, python-format
 msgid "%(counter)s workout"
@@ -515,18 +523,18 @@ msgid_plural "%(counter)s workouts"
 msgstr[0] "%(counter)s treeni"
 msgstr[1] "%(counter)s treeniä"
 
-#: apps/analytics/achievements.py:132
+#: apps/analytics/achievements.py:145
 msgid "Personal records"
 msgstr "Ennätyksiä"
 
-#: apps/analytics/achievements.py:133
+#: apps/analytics/achievements.py:146
 #, python-format
 msgid "%(counter)s PR"
 msgid_plural "%(counter)s PRs"
 msgstr[0] "%(counter)s ennätys"
 msgstr[1] "%(counter)s ennätystä"
 
-#: apps/analytics/achievements.py:142
+#: apps/analytics/achievements.py:156
 msgid "Total weight lifted"
 msgstr "Nostettu paino yhteensä"
 
@@ -4109,18 +4117,22 @@ msgstr "Lihasryhmien volyymi"
 msgid "No data in this range."
 msgstr "Ei tietoja tällä ajanjaksolla."
 
-#: templates/analytics/dashboard.html:35 templates/core/dashboard.html:55
+#: templates/analytics/dashboard.html:35
+#: templates/analytics/member_profile.html:25 templates/core/dashboard.html:55
 msgid "Recent"
 msgstr "Viimeisimmät"
 
 #: templates/analytics/dashboard.html:35 templates/analytics/dashboard.html:39
 #: templates/analytics/exercise_analytics.html:26
-#: templates/core/dashboard.html:55 templates/exercises/exercise_detail.html:90
+#: templates/analytics/member_profile.html:25
+#: templates/analytics/member_profile.html:29 templates/core/dashboard.html:55
+#: templates/exercises/exercise_detail.html:90
 #: templates/records/exercise_records.html:11
 msgid "Personal Records"
 msgstr "Henkilökohtaiset ennätykset"
 
 #: templates/analytics/dashboard.html:39
+#: templates/analytics/member_profile.html:29
 #: templates/core/backup_restore_confirm.html:29
 msgid "No"
 msgstr "Ei"
@@ -4161,6 +4173,23 @@ msgstr "Näytä nykyiset"
 #: templates/records/exercise_records.html:47
 msgid "Back to exercise"
 msgstr "Takaisin liikkeeseen"
+
+#: templates/analytics/member_profile.html:8
+#, python-format
+msgid "Member since %(date)s"
+msgstr "Jäsen %(date)s alkaen"
+
+#: templates/analytics/member_profile.html:22
+msgid "No completed workouts yet."
+msgstr "Ei vielä suoritettuja treenejä."
+
+#: templates/analytics/member_profile.html:29
+msgid "yet."
+msgstr "vielä."
+
+#: templates/analytics/member_profile.html:32
+msgid "Back to home"
+msgstr "Takaisin etusivulle"
 
 #: templates/api/key_created.html:3 templates/api/key_created.html:6
 msgid "API key created"

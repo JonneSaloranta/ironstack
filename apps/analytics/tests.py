@@ -397,6 +397,18 @@ class AchievementsTests(TestCase):
         highlights = achievements.achievement_highlights()
         self.assertTrue(all(h.display_name == "alice" for h in highlights))
 
+    def test_each_highlight_also_carries_the_real_username(self):
+        """Distinct from display_name (which can carry a first name
+        too) — apps.analytics.views.MemberProfileView's own link needs
+        the real, stable username to build a URL from."""
+        self.alice.first_name = "Alice"
+        self.alice.show_name_to_others = True
+        self.alice.save()
+        _log_completed_session(self.alice, self.exercise, Decimal("100"), [5])
+        highlights = achievements.achievement_highlights()
+        self.assertTrue(all(h.display_name == "alice (Alice)" for h in highlights))
+        self.assertTrue(all(h.username == "alice" for h in highlights))
+
     def test_workout_count_reflects_only_completed_sessions(self):
         _log_completed_session(self.alice, self.exercise, Decimal("100"), [5])
         workout_services.start_session(self.alice, workout=None)  # left in progress
@@ -500,6 +512,11 @@ class RecentlyActiveUsersTests(TestCase):
         display_names = [entry.display_name for entry in achievements.recently_active_users()]
         self.assertEqual(display_names, ["alice"])
 
+    def test_each_entry_also_carries_the_real_username(self):
+        workout_services.start_session(self.alice, workout=None)
+        usernames = [entry.username for entry in achievements.recently_active_users()]
+        self.assertEqual(usernames, ["alice"])
+
     def test_most_recently_active_user_comes_first(self):
         bob = User.objects.create_user(username="bob", password="s3cret-pass")
         _log_completed_session(self.alice, self.exercise, Decimal("100"), [5], days_ago=5)
@@ -555,6 +572,97 @@ class RecentlyActiveUsersTests(TestCase):
             user = User.objects.create_user(username=f"lifter{i}", password="s3cret-pass")
             _log_completed_session(user, self.exercise, Decimal("100"), [5])
         self.assertEqual(len(achievements.recently_active_users(limit=2)), 2)
+
+
+class MemberProfileViewTests(TestCase):
+    """apps.analytics.views.MemberProfileView — another user's public
+    fitness profile, asked for directly. Gated by the same
+    User.show_achievements opt-out the achievements carousel/"Recently
+    active" list already use, not a second, separate setting."""
+
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        self.bob = User.objects.create_user(username="bob", password="s3cret-pass")
+        self.exercise = Exercise.objects.create(name="Test Squat", owner=None)
+        self.client.login(username="alice", password="s3cret-pass")
+
+    def test_requires_login(self):
+        self.client.logout()
+        response = self.client.get(reverse("analytics:member-profile", args=[self.bob.username]))
+        self.assertEqual(response.status_code, 302)
+
+    def test_shows_an_opted_in_users_profile(self):
+        response = self.client.get(reverse("analytics:member-profile", args=[self.bob.username]))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "bob")
+
+    def test_an_opted_out_users_profile_404s_for_someone_else(self):
+        self.bob.show_achievements = False
+        self.bob.save()
+        response = self.client.get(reverse("analytics:member-profile", args=[self.bob.username]))
+        self.assertEqual(response.status_code, 404)
+
+    def test_a_user_can_always_view_their_own_profile_even_opted_out(self):
+        self.alice.show_achievements = False
+        self.alice.save()
+        response = self.client.get(
+            reverse("analytics:member-profile", args=[self.alice.username])
+        )
+        self.assertEqual(response.status_code, 200)
+
+    def test_a_nonexistent_username_404s(self):
+        response = self.client.get(reverse("analytics:member-profile", args=["ghost"]))
+        self.assertEqual(response.status_code, 404)
+
+    def test_shows_member_since_date(self):
+        response = self.client.get(reverse("analytics:member-profile", args=[self.bob.username]))
+        self.assertContains(response, self.bob.date_joined.date().isoformat())
+
+    def test_shows_highlights_for_a_user_with_completed_workouts(self):
+        _log_completed_session(self.bob, self.exercise, Decimal("100"), [5])
+        response = self.client.get(reverse("analytics:member-profile", args=[self.bob.username]))
+        self.assertContains(response, "Longest streak")
+
+    def test_shows_an_empty_state_for_a_user_with_no_workouts(self):
+        response = self.client.get(reverse("analytics:member-profile", args=[self.bob.username]))
+        self.assertContains(response, "No completed workouts yet.")
+
+    def test_shows_recent_prs(self):
+        session = workout_services.start_session(self.bob, workout=None)
+        performed = workout_services.add_performed_exercise(session, self.exercise)
+        logged_set = workout_services.log_set(performed, weight=Decimal("100"), reps=5)
+        records_services.check_and_record_prs(logged_set)
+        workout_services.complete_session(session)
+        response = self.client.get(reverse("analytics:member-profile", args=[self.bob.username]))
+        self.assertContains(response, "Test Squat")
+
+    def test_shows_no_nutrition_or_body_weight_data(self):
+        """Asked for directly: only workout/PR/streak figures, nothing
+        about food, calories, or logged body weight. Scoped to this
+        page's own content, past its <h1> — base.html's shared chrome
+        mentions "nutrition" twice already, on every single
+        authenticated page regardless of this one's own content: once
+        in the site-wide SEO <meta name="description">, and once for
+        the bottom-nav's own "Nutrition" tab."""
+        response = self.client.get(reverse("analytics:member-profile", args=[self.bob.username]))
+        content = response.content.decode().lower()
+        content_block = content.split(">bob</h1>", 1)[-1]
+        for forbidden in ("calorie", "nutrition", "body weight", "kcal"):
+            self.assertNotIn(forbidden, content_block)
+
+    def test_achievements_carousel_links_to_the_member_profile(self):
+        _log_completed_session(self.bob, self.exercise, Decimal("100"), [5])
+        response = self.client.get(reverse("dashboard"))
+        self.assertContains(
+            response, reverse("analytics:member-profile", args=[self.bob.username])
+        )
+
+    def test_recently_active_list_links_to_the_member_profile(self):
+        workout_services.start_session(self.bob, workout=None)
+        response = self.client.get(reverse("dashboard"))
+        self.assertContains(
+            response, reverse("analytics:member-profile", args=[self.bob.username])
+        )
 
 
 class AnalyticsDashboardViewTests(TestCase):

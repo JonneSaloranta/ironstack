@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: IronStack\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-19 15:34+0000\n"
+"POT-Creation-Date: 2026-09-19 17:17+0000\n"
 "Language: ru\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -111,7 +111,11 @@ msgid ""
 "dashboard. Turn off to hide it if you don't want to track nutrition — "
 "existing nutrition data is never deleted, and its pages stay reachable "
 "directly by a link."
-msgstr "Показывает питание (дневник питания, рецепты, планы питания) в навигации и на панели. Отключите, чтобы скрыть его, если не хотите отслеживать питание — существующие данные о питании никогда не удаляются, а его страницы остаются доступными напрямую по ссылке."
+msgstr ""
+"Показывает питание (дневник питания, рецепты, планы питания) в навигации и "
+"на панели. Отключите, чтобы скрыть его, если не хотите отслеживать питание — "
+"существующие данные о питании никогда не удаляются, а его страницы остаются "
+"доступными напрямую по ссылке."
 
 #: apps/accounts/forms.py:306
 msgid ""
@@ -321,7 +325,11 @@ msgid ""
 "dashboard. Leave unchecked if you don't want to track nutrition — you can "
 "turn it on or off anytime from your profile, and nothing is ever deleted "
 "either way."
-msgstr "Показывает питание (дневник питания, рецепты, планы питания) в навигации и на панели. Оставьте не отмеченным, если не хотите отслеживать питание — вы можете включить или отключить это в любое время в своём профиле, и в любом случае ничего не удаляется."
+msgstr ""
+"Показывает питание (дневник питания, рецепты, планы питания) в навигации и "
+"на панели. Оставьте не отмеченным, если не хотите отслеживать питание — вы "
+"можете включить или отключить это в любое время в своём профиле, и в любом "
+"случае ничего не удаляется."
 
 #: apps/accounts/forms.py:669 apps/nutrition/forms.py:40
 #: apps/nutrition/forms.py:449 apps/nutrition/forms.py:653
@@ -373,7 +381,7 @@ msgstr "Earth"
 msgid "Zen"
 msgstr "Zen"
 
-#: apps/accounts/models.py:379
+#: apps/accounts/models.py:380
 msgid ""
 "Shown as a footer note on the login and signup pages. Leave blank to hide it "
 "entirely."
@@ -493,11 +501,11 @@ msgstr "заметки"
 msgid "activities"
 msgstr "активности"
 
-#: apps/analytics/achievements.py:111
+#: apps/analytics/achievements.py:122
 msgid "Longest streak"
 msgstr "Самая длинная серия"
 
-#: apps/analytics/achievements.py:112
+#: apps/analytics/achievements.py:123
 #, python-format
 msgid "%(counter)s day"
 msgid_plural "%(counter)s days"
@@ -505,11 +513,11 @@ msgstr[0] "%(counter)s день"
 msgstr[1] "%(counter)s дня"
 msgstr[2] "%(counter)s дней"
 
-#: apps/analytics/achievements.py:122
+#: apps/analytics/achievements.py:134
 msgid "Workouts completed"
 msgstr "Тренировок выполнено"
 
-#: apps/analytics/achievements.py:123 templates/programs/program_list.html:16
+#: apps/analytics/achievements.py:135 templates/programs/program_list.html:16
 #: templates/programs/program_list.html:32
 #, python-format
 msgid "%(counter)s workout"
@@ -518,11 +526,11 @@ msgstr[0] "%(counter)s тренировка"
 msgstr[1] "%(counter)s тренировки"
 msgstr[2] "%(counter)s тренировок"
 
-#: apps/analytics/achievements.py:132
+#: apps/analytics/achievements.py:145
 msgid "Personal records"
 msgstr "Личных рекордов"
 
-#: apps/analytics/achievements.py:133
+#: apps/analytics/achievements.py:146
 #, python-format
 msgid "%(counter)s PR"
 msgid_plural "%(counter)s PRs"
@@ -530,7 +538,7 @@ msgstr[0] "%(counter)s рекорд"
 msgstr[1] "%(counter)s рекорда"
 msgstr[2] "%(counter)s рекордов"
 
-#: apps/analytics/achievements.py:142
+#: apps/analytics/achievements.py:156
 msgid "Total weight lifted"
 msgstr "Всего поднято веса"
 
@@ -4133,18 +4141,22 @@ msgstr "Объём по группам мышц"
 msgid "No data in this range."
 msgstr "Нет данных за этот период."
 
-#: templates/analytics/dashboard.html:35 templates/core/dashboard.html:55
+#: templates/analytics/dashboard.html:35
+#: templates/analytics/member_profile.html:25 templates/core/dashboard.html:55
 msgid "Recent"
 msgstr "Недавние"
 
 #: templates/analytics/dashboard.html:35 templates/analytics/dashboard.html:39
 #: templates/analytics/exercise_analytics.html:26
-#: templates/core/dashboard.html:55 templates/exercises/exercise_detail.html:90
+#: templates/analytics/member_profile.html:25
+#: templates/analytics/member_profile.html:29 templates/core/dashboard.html:55
+#: templates/exercises/exercise_detail.html:90
 #: templates/records/exercise_records.html:11
 msgid "Personal Records"
 msgstr "Личные рекорды"
 
 #: templates/analytics/dashboard.html:39
+#: templates/analytics/member_profile.html:29
 #: templates/core/backup_restore_confirm.html:29
 msgid "No"
 msgstr "Нет"
@@ -4185,6 +4197,23 @@ msgstr "Посмотреть текущие"
 #: templates/records/exercise_records.html:47
 msgid "Back to exercise"
 msgstr "Назад к упражнению"
+
+#: templates/analytics/member_profile.html:8
+#, python-format
+msgid "Member since %(date)s"
+msgstr "Участник с %(date)s"
+
+#: templates/analytics/member_profile.html:22
+msgid "No completed workouts yet."
+msgstr "Пока нет завершённых тренировок."
+
+#: templates/analytics/member_profile.html:29
+msgid "yet."
+msgstr "пока."
+
+#: templates/analytics/member_profile.html:32
+msgid "Back to home"
+msgstr "Назад на главную"
 
 #: templates/api/key_created.html:3 templates/api/key_created.html:6
 msgid "API key created"

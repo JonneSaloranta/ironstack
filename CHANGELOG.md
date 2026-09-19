@@ -18,6 +18,15 @@ narrated summary of the same version.
 
 ## [Unreleased]
 
+### Added
+- Every name in the dashboard's achievements carousel and "Recently
+  active" list now links to that person's own profile page — recent
+  PRs, streak, workout count, total weight lifted, and how long
+  they've been a member. Nothing about food, calories, or body
+  weight. Turn off "Share my activity" in Profile → Preferences →
+  Privacy to keep others from viewing yours (you can still always
+  view it yourself).
+
 ### Fixed
 - The iOS home-screen app icon's dumbbell now shows a connected
   handle bar — it rendered as nearly invisible on the actual shipped

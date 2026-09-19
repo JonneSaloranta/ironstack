@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: IronStack\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-19 15:34+0000\n"
+"POT-Creation-Date: 2026-09-19 17:17+0000\n"
 "Language: sv\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -108,7 +108,11 @@ msgid ""
 "dashboard. Turn off to hide it if you don't want to track nutrition — "
 "existing nutrition data is never deleted, and its pages stay reachable "
 "directly by a link."
-msgstr "Visar kost (matdagbok, recept, kostplaner) i navigeringen och på instrumentpanelen. Stäng av för att dölja den om du inte vill spåra kost — befintlig kostdata raderas aldrig, och dess sidor går fortfarande att nå direkt via en länk."
+msgstr ""
+"Visar kost (matdagbok, recept, kostplaner) i navigeringen och på "
+"instrumentpanelen. Stäng av för att dölja den om du inte vill spåra kost — "
+"befintlig kostdata raderas aldrig, och dess sidor går fortfarande att nå "
+"direkt via en länk."
 
 #: apps/accounts/forms.py:306
 msgid ""
@@ -316,7 +320,11 @@ msgid ""
 "dashboard. Leave unchecked if you don't want to track nutrition — you can "
 "turn it on or off anytime from your profile, and nothing is ever deleted "
 "either way."
-msgstr "Visar kost (matdagbok, recept, kostplaner) i navigeringen och på instrumentpanelen. Lämna omarkerad om du inte vill spåra kost — du kan slå på eller av det när som helst från din profil, och inget raderas någonsin i vilket fall som helst."
+msgstr ""
+"Visar kost (matdagbok, recept, kostplaner) i navigeringen och på "
+"instrumentpanelen. Lämna omarkerad om du inte vill spåra kost — du kan slå "
+"på eller av det när som helst från din profil, och inget raderas någonsin i "
+"vilket fall som helst."
 
 #: apps/accounts/forms.py:669 apps/nutrition/forms.py:40
 #: apps/nutrition/forms.py:449 apps/nutrition/forms.py:653
@@ -368,7 +376,7 @@ msgstr "Earth"
 msgid "Zen"
 msgstr "Zen"
 
-#: apps/accounts/models.py:379
+#: apps/accounts/models.py:380
 msgid ""
 "Shown as a footer note on the login and signup pages. Leave blank to hide it "
 "entirely."
@@ -488,22 +496,22 @@ msgstr "anteckningar"
 msgid "activities"
 msgstr "aktiviteter"
 
-#: apps/analytics/achievements.py:111
+#: apps/analytics/achievements.py:122
 msgid "Longest streak"
 msgstr "Längsta sviten"
 
-#: apps/analytics/achievements.py:112
+#: apps/analytics/achievements.py:123
 #, python-format
 msgid "%(counter)s day"
 msgid_plural "%(counter)s days"
 msgstr[0] "%(counter)s dag"
 msgstr[1] "%(counter)s dagar"
 
-#: apps/analytics/achievements.py:122
+#: apps/analytics/achievements.py:134
 msgid "Workouts completed"
 msgstr "Träningspass genomförda"
 
-#: apps/analytics/achievements.py:123 templates/programs/program_list.html:16
+#: apps/analytics/achievements.py:135 templates/programs/program_list.html:16
 #: templates/programs/program_list.html:32
 #, python-format
 msgid "%(counter)s workout"
@@ -511,18 +519,18 @@ msgid_plural "%(counter)s workouts"
 msgstr[0] "%(counter)s träningspass"
 msgstr[1] "%(counter)s träningspass"
 
-#: apps/analytics/achievements.py:132
+#: apps/analytics/achievements.py:145
 msgid "Personal records"
 msgstr "Personliga rekord"
 
-#: apps/analytics/achievements.py:133
+#: apps/analytics/achievements.py:146
 #, python-format
 msgid "%(counter)s PR"
 msgid_plural "%(counter)s PRs"
 msgstr[0] "%(counter)s PR"
 msgstr[1] "%(counter)s PR"
 
-#: apps/analytics/achievements.py:142
+#: apps/analytics/achievements.py:156
 msgid "Total weight lifted"
 msgstr "Total lyft vikt"
 
@@ -4079,18 +4087,22 @@ msgstr "Muskelgruppsvolym"
 msgid "No data in this range."
 msgstr "Ingen data i detta intervall."
 
-#: templates/analytics/dashboard.html:35 templates/core/dashboard.html:55
+#: templates/analytics/dashboard.html:35
+#: templates/analytics/member_profile.html:25 templates/core/dashboard.html:55
 msgid "Recent"
 msgstr "Senaste"
 
 #: templates/analytics/dashboard.html:35 templates/analytics/dashboard.html:39
 #: templates/analytics/exercise_analytics.html:26
-#: templates/core/dashboard.html:55 templates/exercises/exercise_detail.html:90
+#: templates/analytics/member_profile.html:25
+#: templates/analytics/member_profile.html:29 templates/core/dashboard.html:55
+#: templates/exercises/exercise_detail.html:90
 #: templates/records/exercise_records.html:11
 msgid "Personal Records"
 msgstr "Personliga rekord"
 
 #: templates/analytics/dashboard.html:39
+#: templates/analytics/member_profile.html:29
 #: templates/core/backup_restore_confirm.html:29
 msgid "No"
 msgstr "Inga"
@@ -4131,6 +4143,23 @@ msgstr "Visa aktuella"
 #: templates/records/exercise_records.html:47
 msgid "Back to exercise"
 msgstr "Tillbaka till övningen"
+
+#: templates/analytics/member_profile.html:8
+#, python-format
+msgid "Member since %(date)s"
+msgstr "Medlem sedan %(date)s"
+
+#: templates/analytics/member_profile.html:22
+msgid "No completed workouts yet."
+msgstr "Inga slutförda träningspass än."
+
+#: templates/analytics/member_profile.html:29
+msgid "yet."
+msgstr "än."
+
+#: templates/analytics/member_profile.html:32
+msgid "Back to home"
+msgstr "Tillbaka till hem"
 
 #: templates/api/key_created.html:3 templates/api/key_created.html:6
 msgid "API key created"

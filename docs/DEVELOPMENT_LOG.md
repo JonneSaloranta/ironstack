@@ -5165,3 +5165,64 @@ rendered size directly (`apple-touch-icon.png`/`icon-192.png`/
 `icon-512.png` all show a continuous, clearly-connected handle now) —
 no template or manifest change needed, since both only ever referenced
 these files by name.
+
+## A public member profile page, reusing show_achievements as its own opt-out
+
+Asked for directly: a per-user "profile" page other users on the
+instance can view — recent PRs, streak, workout count, total weight
+lifted, and how long they've been a member — with an opt-out toggle on
+the Profile page. Explicitly nothing about food, calories, or logged
+body weight, and existing data was never in question either way.
+
+Before writing any code: this is almost exactly what
+`apps.analytics.achievements`/`User.show_achievements` already do for
+the dashboard's achievements carousel and "Recently active" list — "a
+privacy setting... whether *this* user's own data... is included in
+what everyone sees" (that field's own docstring, written long before
+this request). Rather than adding a second, separate "let others view
+my profile" field for the same underlying decision, this new page
+reuses `show_achievements` outright — one settings-page toggle
+("Share my activity"), one meaning, three places it now applies
+instead of two.
+
+`apps.analytics.achievements._highlights_for` — previously a private
+helper `achievement_highlights()` called once per opted-in user to
+build the shared carousel — is now public (`highlights_for`, no
+leading underscore) and called directly by the new
+`MemberProfileView` for one specific user's own page, rather than
+duplicating that computation. `Achievement`/`RecentActivity` both grew
+a `username` field alongside their existing `display_name` — the
+latter can carry a decorated "username (First name)" string
+(`User.public_display_name()`), which was never safe to build a URL
+out of; the former is the real, stable identifier the new page's link
+needs.
+
+`MemberProfileView` (`/analytics/members/<username>/`) gets a
+`get_object_or_404(User, username=username)` first, *then* checks
+`show_achievements` itself (`if not member.show_achievements and
+member != request.user: raise Http404`) rather than folding the flag
+into the queryset filter — the point being that a user can always view
+their *own* profile regardless of this setting (it hides your profile
+from others, not from yourself), which a queryset-level filter
+couldn't express without duplicating the "is this me" check anyway.
+Recent PRs reuse `services.pr_history_grouped_by_exercise` and the
+existing `records/_pr_exercise_group.html` partial verbatim — that
+partial already formats weights in *the viewer's* own unit preference
+via `request.user` (not the profile owner's), so no change was needed
+there to make someone else's PRs display correctly in your own units.
+
+Every place a user's name already appeared to other users — the
+achievements carousel, the "Recently active" list — now links it to
+this new page; nowhere else changed, since (checked directly, again)
+`templates/base.html`'s nutrition nav tab aside, `templates/core/
+dashboard.html` is the only place one user's identity was ever shown
+to another to begin with.
+
+Verified live: an opted-in user's profile is reachable and shows real
+data; an opted-out user's profile 404s for anyone else but still opens
+normally for themselves; the carousel and "Recently active" list both
+link through correctly. A dedicated test asserts the rendered page
+contains no mention of calories/nutrition/body weight, scoped past the
+page's own `<h1>` to avoid tripping on `base.html`'s own shared
+chrome (the site-wide SEO description and the nutrition nav tab both
+say "nutrition" on every single page, regardless of this one).
