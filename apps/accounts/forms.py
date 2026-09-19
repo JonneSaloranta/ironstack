@@ -232,9 +232,14 @@ class ProfileForm(forms.ModelForm):
     `allow_group_invites` are apps.social's own opt-*out* privacy
     settings — see their own model field comments for why they default
     on rather than off, unlike every other toggle on this form.
-    `body_tracking_reminders_enabled` is neither privacy nor social — a
-    plain notification preference for the dashboard's "Time to log your
-    measurements?" card (apps.measurements.services.
+    `nutrition_enabled` is neither privacy nor social either — asked
+    during onboarding the same way allow_friend_requests/
+    allow_group_invites are, it only hides nutrition from navigation
+    (templates/base.html's bottom-nav tab) for a user who doesn't want
+    to track it; a direct link into nutrition still works and no
+    nutrition data is ever touched. `body_tracking_reminders_enabled`
+    is a plain notification preference for the dashboard's "Time to
+    log your measurements?" card (apps.measurements.services.
     needs_body_tracking_reminder), its own group between the display
     fields above and the privacy toggles below.
     """
@@ -257,6 +262,7 @@ class ProfileForm(forms.ModelForm):
             "theme",
             "appearance",
             "height",
+            "nutrition_enabled",
             "body_tracking_reminders_enabled",
             "show_bmi",
             "show_achievements",
@@ -267,6 +273,7 @@ class ProfileForm(forms.ModelForm):
         ]
         labels = {
             "unit_system": _("Units"),
+            "nutrition_enabled": _("Track nutrition"),
             "body_tracking_reminders_enabled": _("Remind me to log body measurements"),
             "show_bmi": lazy_format_html(
                 "{} {} {}",
@@ -287,6 +294,13 @@ class ProfileForm(forms.ModelForm):
             "theme": _(
                 "Which color palette the app uses. Each theme has its own "
                 "dark and light look — pick which one below."
+            ),
+            "nutrition_enabled": _(
+                "Shows nutrition (food diary, recipes, diet plans) in "
+                "navigation and on the dashboard. Turn off to hide it if you "
+                "don't want to track nutrition — existing nutrition data is "
+                "never deleted, and its pages stay reachable directly by a "
+                "link."
             ),
             "appearance": _(
                 "\"Auto\" follows your device's own light/dark setting and "
@@ -629,6 +643,16 @@ class OnboardingForm(forms.Form):
             "way. Change this anytime from your profile."
         ),
     )
+    nutrition_enabled = forms.BooleanField(
+        required=False,
+        label=_("Track nutrition"),
+        help_text=_(
+            "Shows nutrition (food diary, recipes, diet plans) in "
+            "navigation and on the dashboard. Leave unchecked if you don't "
+            "want to track nutrition — you can turn it on or off anytime "
+            "from your profile, and nothing is ever deleted either way."
+        ),
+    )
 
     def __init__(self, *args, user, **kwargs):
         self.user = user
@@ -639,6 +663,7 @@ class OnboardingForm(forms.Form):
         self.fields["timezone"].initial = user.timezone
         self.fields["allow_friend_requests"].initial = user.allow_friend_requests
         self.fields["allow_group_invites"].initial = user.allow_group_invites
+        self.fields["nutrition_enabled"].initial = user.nutrition_enabled
         unit_label = core_units.weight_unit_label(user.unit_system)
         self.fields["weight"].label = (
             _("Current weight (%(unit)s)") % {"unit": unit_label}
@@ -667,6 +692,7 @@ class OnboardingForm(forms.Form):
         user.timezone = self.cleaned_data["timezone"]
         user.allow_friend_requests = self.cleaned_data["allow_friend_requests"]
         user.allow_group_invites = self.cleaned_data["allow_group_invites"]
+        user.nutrition_enabled = self.cleaned_data["nutrition_enabled"]
 
         height = self.cleaned_data.get("height")
         if height is not None:
@@ -685,6 +711,7 @@ class OnboardingForm(forms.Form):
                 "timezone",
                 "allow_friend_requests",
                 "allow_group_invites",
+                "nutrition_enabled",
                 "height",
                 "onboarding_completed",
             ]

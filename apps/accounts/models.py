@@ -155,6 +155,27 @@ class User(AbstractUser):
         "measurement when you haven't logged one in a while. Turn off to "
         "never see that reminder.",
     )
+    # Asked for directly: not everyone using this instance wants to
+    # track nutrition at all. On by default (matching allow_friend_
+    # requests/allow_group_invites below — an existing, core feature
+    # area stays on unless a user actively turns it off, rather than
+    # every current user losing access the moment this field's
+    # migration runs) — the actual gate lives entirely in navigation
+    # (templates/base.html's bottom-nav Nutrition tab, hidden when
+    # this is off), never in apps.nutrition's own views/urls: a direct
+    # link or bookmark into nutrition still works either way, and no
+    # nutrition data is ever touched by this toggle — turning it off
+    # only hides the door, not what's behind it. Asked during
+    # onboarding (apps.accounts.forms.OnboardingForm) the same way
+    # allow_friend_requests/allow_group_invites already are, and
+    # editable afterward from Profile (ProfileForm).
+    nutrition_enabled = models.BooleanField(
+        default=True,
+        help_text="Shows nutrition (food diary, recipes, diet plans) in "
+        "navigation and on the dashboard. Turn off to hide it if you don't "
+        "want to track nutrition — existing nutrition data is never "
+        "deleted, and its pages stay reachable directly by a link.",
+    )
     show_achievements = models.BooleanField(
         default=True,
         help_text="A privacy setting, not a display one: the dashboard's "

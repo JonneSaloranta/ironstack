@@ -4972,3 +4972,169 @@ expected number stale — two independent `Paginator`s each issue their
 own `COUNT` query, a fixed +2 over the single unpaginated fetch the
 test was written against, not a scaling N+1 (updated the pinned
 number and its comment rather than loosening the assertion).
+
+## The calendar's calorie trend arrow showing up on future days
+
+Reported directly: the dashboard month calendar's calorie trend arrow
+(`apps.nutrition.services.calendar_month_statuses`) appeared on days
+in the future — before they could possibly have anything logged.
+
+Root cause: each day's trend is the average of its own trailing
+`CALENDAR_CALORIE_TREND_WINDOW_DAYS` (7) days, looking *backward* from
+that day. For a future day, that backward-looking window still
+reaches across today and other already-logged recent days — so
+`logged_calories` came out non-empty (and a trend got computed and
+shown) purely because *earlier* days in the window had something
+logged, never because the future day itself did. Fixed with one
+extra condition, `day <= today`, gating trend computation entirely for
+any day beyond today — a day that hasn't happened yet has no
+meaningful "how's it going" to show regardless of what its window
+average happens to compute to.
+
+New regression test logs today's calories, then asserts a day three
+days out has no trend/direction despite its own trailing window
+reaching back to today's now-logged entry. Full `CalendarMonthStatusesTests`
+class (20 tests, all pre-existing calorie-trend assertions use dates
+safely in the past relative to any real test run) passes alongside it.
+
+## Foods page: keep pagination's scroll position, and a smaller thumbnail from OFF
+
+Two more requests, same session.
+
+**Pagination scroll jump.** Same bug already fixed on the Recipes
+page's own two paginated sections, reported separately for
+`_food_list_results.html`: clicking Previous/Next is a plain
+full-page navigation, and a normal page load resets scroll to the top
+regardless of where the click happened. Same fix — `id="food-list-
+pagination"` on the `<nav>`, `#food-list-pagination` appended to both
+Previous/Next hrefs, reusing `.pagination`'s own `scroll-margin-top`
+already added for the Recipes page.
+
+**Smaller list thumbnails.** Asked directly: what could speed up food
+image loading? Checked OpenFoodFacts' real product payload for a live
+barcode rather than guessing — alongside `image_front_url` (400px,
+what `Food.image_url` already stores), OFF also returns
+`image_front_thumb_url`, its own separately-hosted 100px variant of
+the exact same photo. `Food.image_thumb_url` stores it (new field,
+same blank-for-hand-entered pattern as every other OFF-only column,
+populated by `apps.nutrition.openfoodfacts.parse_product` the same
+way `image_url` already is — and so already covered by the existing
+"Refresh selected foods from OpenFoodFacts" admin action and the
+admin change form both, with zero extra code, since both apply to
+whichever fields the model actually has). `_food_list_results.html`'s
+`.food-thumb` now loads `image_thumb_url` first, falling back to
+`image_url` for a food imported before this field existed and not yet
+refreshed; `FoodDetailView`'s own larger photo keeps using `image_url`
+unchanged, since a 100px thumb blown up there would look blurry.
+Also restored `loading="lazy"` on the list thumbnail, removed earlier
+this session only because it never triggered in headless Chromium
+during a Playwright check — a real test-tooling limitation, not a
+reason to skip a real optimization in actual browsers.
+
+Verified against Nutella's real barcode again: OFF really does return
+both `image_front_url` and `image_front_thumb_url` as genuinely
+different files at genuinely different sizes, not the same URL twice.
+
+## The profile's API help modal had gone stale
+
+Asked directly to "update the API page texts" — turned out to be a
+real drift, not a wording nitpick: `templates/api/key_list.html`'s
+"Using the API" modal (the "?" button on Profile → API keys) lists
+every context's endpoints in a table, and its Nutrition row was
+missing `nutrition/profile/` and the whole `diet-plans/`/`diet-plan-
+meals/`/`diet-plan-items/` family — all of them real, already-live
+endpoints (`apps/api/urls.py`, matching `docs/API.md`'s own accurate
+"Endpoints" table) that an API key could already call, just with no
+mention of them anywhere a user browsing this in-app reference would
+actually see. `docs/API.md` itself was never out of sync; only the
+in-app copy was.
+
+`test_the_api_documentation_lists_every_context_and_its_endpoints`
+(`apps/api/tests.py`) already existed as exactly the right regression
+guard for this, but was never extended when those endpoints shipped —
+extended it to assert the four missing endpoints too, so this can't
+silently drift again the same way.
+
+## "Save as recipe" from the food diary, and the diary's own scroll-jump bug
+
+Two more requests, same session.
+
+**Save as recipe.** Asked for directly, for every meal card on
+`diary_day.html` except the system "Other" catch-all: a button that
+turns everything logged in that meal, on that day, into a new,
+reusable `Recipe`, at the exact quantities actually eaten. Docs/
+NUTRITION.md's own `DiaryEntry` section already made the underlying
+point — a group of `DiaryEntry` rows sharing one `(date, meal_slot)`
+*is* conceptually a recipe's own ingredient list, just computed live
+rather than saved — so `services.create_recipe_from_diary_meal` is a
+small function: gather that meal's food-type entries, create one
+`Recipe` (`servings=1`, `meal_slot` carried over from the entries'
+own meal slot) and one `RecipeIngredient` per entry at its logged
+quantity. A recipe-type entry logged for the same meal is skipped
+rather than flattened into its own ingredients — `RecipeIngredient.
+food` is required and can never point at another `Recipe`, and
+re-deriving that here risked double-counting anything also logged as
+a plain food the same meal, for a case (re-saving an
+already-a-recipe meal as *another* recipe) rare enough not to justify
+it. The button itself is hidden for an empty meal and for "Other"
+specifically (a dumping ground for food that doesn't fit a named
+meal, not a coherent combination worth saving) — matched by name
+(`slot.name != "Other"`) against the seeded system slot, same as
+every other place this app already special-cases stored English
+content rather than the per-language displayed label.
+
+**The diary's own scroll-jump bug**, reported directly: adding,
+editing, removing, or logging a recipe to any meal always redirected
+to the bare `diary-day` URL, landing the browser at the top of the
+page regardless of which meal card was actually being worked in — the
+exact same class of bug already fixed for the Recipes and Foods
+pages' own pagination, just via a full-page redirect instead of a
+Previous/Next link. New `_diary_day_redirect(target_date,
+meal_slot_pk=None)` helper appends a `#meal-slot-<pk>` fragment when
+a specific meal is known, used by the add/edit/delete flows and by
+`recipe_log` (logging a recipe from its own detail page); `diary_day_
+copy` and `diet_plan_log` are left alone since both operate across
+every meal at once, with no single relevant slot to anchor back to.
+Each meal card on `diary_day.html` now carries `id="meal-slot-<pk>"`,
+plus the same `scroll-margin-top` treatment (`[id^="meal-slot-"]`)
+already added for `.pagination`, so the landing spot clears
+`.nutrition-subnav`'s own sticky bar. Verified with Playwright:
+editing an entry's quantity lands the browser back on the diary with
+`#meal-slot-<pk>` in the URL and a non-zero `window.scrollY`, not
+reset to the top.
+
+## Making nutrition tracking optional
+
+Asked for directly: not everyone using an instance wants to track
+nutrition, and it shouldn't be forced on them. New `User.
+nutrition_enabled` (default `True` — see docs/DOMAIN_MODEL.md's own
+entry for why), asked during onboarding
+(`apps.accounts.forms.OnboardingForm`, same shape as `allow_friend_
+requests`/`allow_group_invites` — pre-checked, `required=False`, so
+skipping the whole prompt or leaving it checked both keep the
+default) and editable anytime from Profile → Preferences, in a new
+"Features" group of its own (not Notifications, Privacy, or Social —
+none of those fit).
+
+Deliberately a **navigation-only** toggle, nowhere near
+`apps.nutrition` itself: `templates/base.html`'s bottom-nav Nutrition
+tab is the *only* place outside the nutrition app that links into it
+(checked directly — grepped every template for `{% url 'nutrition:`
+outside `templates/nutrition/`), so hiding it there when the field is
+off is the entire feature. No view, url, or permission check anywhere
+in `apps.nutrition` was touched — a direct link or bookmark into
+nutrition works identically whether this is on or off, exactly as
+asked ("still allow browsing there via a link"), and no nutrition
+data is ever read, written, or deleted by this toggle either way.
+The home dashboard's own calorie-trend calendar
+(`nutrition/_month_calendar.html`, included directly from `core/
+dashboard.html`) was deliberately left alone too — it's a data
+display, not a link, and in practice shows nothing for a user who
+never set up nutrition anyway (`calorie_trend` stays `None` with no
+active `NutritionTarget`).
+
+Verified live with Playwright end to end: the nav tab is visible by
+default, disappears immediately after unchecking the profile toggle
+and saving, and `/nutrition/foods/` still returns a real 200 with the
+toggle off; separately, a brand-new account's onboarding modal shows
+the checkbox pre-checked with the label "Track nutrition".

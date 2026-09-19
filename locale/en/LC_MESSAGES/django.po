@@ -3,14 +3,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: IronStack\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-19 01:37+0000\n"
+"POT-Creation-Date: 2026-09-19 15:34+0000\n"
 "Language: en\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: apps/accounts/admin.py:17 templates/accounts/profile.html:86
+#: apps/accounts/admin.py:17 templates/accounts/profile.html:87
 #: templates/accounts/two_factor_manage.html:3
 #: templates/accounts/two_factor_manage.html:6
 #: templates/accounts/two_factor_setup.html:3
@@ -30,65 +30,69 @@ msgstr "Too many failed login attempts. Try again in a few minutes."
 msgid "Too many password reset requests. Try again in a few minutes."
 msgstr "Too many password reset requests. Try again in a few minutes."
 
-#: apps/accounts/forms.py:242 apps/accounts/forms.py:604
+#: apps/accounts/forms.py:247 apps/accounts/forms.py:618
 msgid "Timezone"
 msgstr "Timezone"
 
-#: apps/accounts/forms.py:269 apps/accounts/forms.py:584
+#: apps/accounts/forms.py:275 apps/accounts/forms.py:598
 #: templates/api/key_list.html:34
 msgid "Units"
 msgstr "Units"
 
-#: apps/accounts/forms.py:270
+#: apps/accounts/forms.py:276 apps/accounts/forms.py:648
+msgid "Track nutrition"
+msgstr "Track nutrition"
+
+#: apps/accounts/forms.py:277
 msgid "Remind me to log body measurements"
 msgstr "Remind me to log body measurements"
 
-#: apps/accounts/forms.py:273
+#: apps/accounts/forms.py:280
 msgid "Show"
 msgstr "Show"
 
-#: apps/accounts/forms.py:274 templates/core/_bmi_card.html:13
+#: apps/accounts/forms.py:281 templates/core/_bmi_card.html:13
 #: templates/core/_bmi_card.html:29
 msgid "BMI"
 msgstr "BMI"
 
-#: apps/accounts/forms.py:275
+#: apps/accounts/forms.py:282
 msgid "on the body weight page"
 msgstr "on the body weight page"
 
-#: apps/accounts/forms.py:277
+#: apps/accounts/forms.py:284
 msgid "Share my activity"
 msgstr "Share my activity"
 
-#: apps/accounts/forms.py:278
+#: apps/accounts/forms.py:285
 msgid "Show my name to others"
 msgstr "Show my name to others"
 
-#: apps/accounts/forms.py:279
+#: apps/accounts/forms.py:286
 msgid "Show my Gravatar picture"
 msgstr "Show my Gravatar picture"
 
-#: apps/accounts/forms.py:280 apps/accounts/forms.py:617
+#: apps/accounts/forms.py:287 apps/accounts/forms.py:631
 msgid "Allow friend requests"
 msgstr "Allow friend requests"
 
-#: apps/accounts/forms.py:281 apps/accounts/forms.py:625
+#: apps/accounts/forms.py:288 apps/accounts/forms.py:639
 msgid "Allow group invites"
 msgstr "Allow group invites"
 
-#: apps/accounts/forms.py:282
+#: apps/accounts/forms.py:289
 msgid "Language"
 msgstr "Language"
 
-#: apps/accounts/forms.py:283
+#: apps/accounts/forms.py:290
 msgid "Theme"
 msgstr "Theme"
 
-#: apps/accounts/forms.py:284
+#: apps/accounts/forms.py:291
 msgid "Appearance"
 msgstr "Appearance"
 
-#: apps/accounts/forms.py:288
+#: apps/accounts/forms.py:295
 msgid ""
 "Which color palette the app uses. Each theme has its own dark and light look "
 "— pick which one below."
@@ -96,66 +100,74 @@ msgstr ""
 "Which color palette the app uses. Each theme has its own dark and light look "
 "— pick which one below."
 
-#: apps/accounts/forms.py:292
+#: apps/accounts/forms.py:299
+msgid ""
+"Shows nutrition (food diary, recipes, diet plans) in navigation and on the "
+"dashboard. Turn off to hide it if you don't want to track nutrition — "
+"existing nutrition data is never deleted, and its pages stay reachable "
+"directly by a link."
+msgstr "Shows nutrition (food diary, recipes, diet plans) in navigation and on the dashboard. Turn off to hide it if you don't want to track nutrition — existing nutrition data is never deleted, and its pages stay reachable directly by a link."
+
+#: apps/accounts/forms.py:306
 msgid ""
 "\"Auto\" follows your device's own light/dark setting and switches "
 "automatically when it changes."
 msgstr ""
 "\"Auto\" follows your device's own light/dark setting and switches "
 "automatically when it changes."
-
-#: apps/accounts/forms.py:296
-msgid ""
-"Shows a dashboard card nudging you to log a body measurement when you "
-"haven't logged one in a while. Turn off to never see that reminder — you can "
-"still log a reading any time from Body tracking."
-msgstr ""
-"Shows a dashboard card nudging you to log a body measurement when you "
-"haven't logged one in a while. Turn off to never see that reminder — you can "
-"still log a reading any time from Body tracking."
-
-#: apps/accounts/forms.py:301
-msgid "Turns off the BMI card and its category ranges entirely."
-msgstr "Turns off the BMI card and its category ranges entirely."
-
-#: apps/accounts/forms.py:303
-msgid ""
-"Lets everyone using this instance see your longest streak, workout count, "
-"PRs, total weight lifted, and when you last trained, in the dashboard's "
-"achievements carousel and \"Recently active\" list. Turn off to keep your "
-"own activity private — you'll still see everyone else's."
-msgstr ""
-"Lets everyone using this instance see your longest streak, workout count, "
-"PRs, total weight lifted, and when you last trained, in the dashboard's "
-"achievements carousel and \"Recently active\" list. Turn off to keep your "
-"own activity private — you'll still see everyone else's."
 
 #: apps/accounts/forms.py:310
 msgid ""
-"Shows your first name next to your username wherever others can see it (the "
-"achievements carousel and \"Recently active\" list). Turn off to show just "
-"your username there, like before this setting existed."
+"Shows a dashboard card nudging you to log a body measurement when you "
+"haven't logged one in a while. Turn off to never see that reminder — you can "
+"still log a reading any time from Body tracking."
 msgstr ""
-"Shows your first name next to your username wherever others can see it (the "
-"achievements carousel and \"Recently active\" list). Turn off to show just "
-"your username there, like before this setting existed."
+"Shows a dashboard card nudging you to log a body measurement when you "
+"haven't logged one in a while. Turn off to never see that reminder — you can "
+"still log a reading any time from Body tracking."
 
-#: apps/accounts/forms.py:316
+#: apps/accounts/forms.py:315
+msgid "Turns off the BMI card and its category ranges entirely."
+msgstr "Turns off the BMI card and its category ranges entirely."
+
+#: apps/accounts/forms.py:317
 msgid ""
-"Shows your Gravatar (gravatar.com) picture at the top of this page, if the "
-"email on this account has one. Turning this on means your browser loads that "
-"image directly from gravatar.com — the only place this app talks to a server "
-"outside your own instance — which then sees your email's hash and your IP "
-"address."
+"Lets everyone using this instance see your longest streak, workout count, "
+"PRs, total weight lifted, and when you last trained, in the dashboard's "
+"achievements carousel and \"Recently active\" list. Turn off to keep your "
+"own activity private — you'll still see everyone else's."
 msgstr ""
-"Shows your Gravatar (gravatar.com) picture at the top of this page, if the "
-"email on this account has one. Turning this on means your browser loads that "
-"image directly from gravatar.com — the only place this app talks to a server "
-"outside your own instance — which then sees your email's hash and your IP "
-"address."
+"Lets everyone using this instance see your longest streak, workout count, "
+"PRs, total weight lifted, and when you last trained, in the dashboard's "
+"achievements carousel and \"Recently active\" list. Turn off to keep your "
+"own activity private — you'll still see everyone else's."
 
 #: apps/accounts/forms.py:324
 msgid ""
+"Shows your first name next to your username wherever others can see it (the "
+"achievements carousel and \"Recently active\" list). Turn off to show just "
+"your username there, like before this setting existed."
+msgstr ""
+"Shows your first name next to your username wherever others can see it (the "
+"achievements carousel and \"Recently active\" list). Turn off to show just "
+"your username there, like before this setting existed."
+
+#: apps/accounts/forms.py:330
+msgid ""
+"Shows your Gravatar (gravatar.com) picture at the top of this page, if the "
+"email on this account has one. Turning this on means your browser loads that "
+"image directly from gravatar.com — the only place this app talks to a server "
+"outside your own instance — which then sees your email's hash and your IP "
+"address."
+msgstr ""
+"Shows your Gravatar (gravatar.com) picture at the top of this page, if the "
+"email on this account has one. Turning this on means your browser loads that "
+"image directly from gravatar.com — the only place this app talks to a server "
+"outside your own instance — which then sees your email's hash and your IP "
+"address."
+
+#: apps/accounts/forms.py:338
+msgid ""
 "Off stops other users on this instance from sending you a friend request at "
 "all. Doesn't affect friend requests you already have, or friendships you "
 "already made."
@@ -164,7 +176,7 @@ msgstr ""
 "all. Doesn't affect friend requests you already have, or friendships you "
 "already made."
 
-#: apps/accounts/forms.py:329
+#: apps/accounts/forms.py:343
 msgid ""
 "Off stops a group member from inviting you to a group directly. You can "
 "still join any group yourself using its invite link, if you have one."
@@ -172,53 +184,53 @@ msgstr ""
 "Off stops a group member from inviting you to a group directly. You can "
 "still join any group yourself using its invite link, if you have one."
 
-#: apps/accounts/forms.py:344 apps/accounts/forms.py:649
+#: apps/accounts/forms.py:358 apps/accounts/forms.py:674
 #: apps/nutrition/forms.py:39 apps/nutrition/forms.py:440
 msgid "Height (cm)"
 msgstr "Height (cm)"
 
-#: apps/accounts/forms.py:344 apps/accounts/forms.py:649
+#: apps/accounts/forms.py:358 apps/accounts/forms.py:674
 #: apps/nutrition/forms.py:39 apps/nutrition/forms.py:440
 msgid "Height (in)"
 msgstr "Height (in)"
 
-#: apps/accounts/forms.py:398 apps/accounts/forms.py:434
+#: apps/accounts/forms.py:412 apps/accounts/forms.py:448
 msgid "Verification code"
 msgstr "Verification code"
 
-#: apps/accounts/forms.py:412
+#: apps/accounts/forms.py:426
 msgid "Incorrect code — check your authenticator app and try again."
 msgstr "Incorrect code — check your authenticator app and try again."
 
-#: apps/accounts/forms.py:448
+#: apps/accounts/forms.py:462
 msgid "Too many incorrect codes. Try again in a few minutes."
 msgstr "Too many incorrect codes. Try again in a few minutes."
 
-#: apps/accounts/forms.py:461
+#: apps/accounts/forms.py:475
 msgid "Incorrect code."
 msgstr "Incorrect code."
 
-#: apps/accounts/forms.py:475 apps/accounts/forms.py:501
+#: apps/accounts/forms.py:489 apps/accounts/forms.py:515
 msgid "Password"
 msgstr "Password"
 
-#: apps/accounts/forms.py:484 apps/accounts/forms.py:515
+#: apps/accounts/forms.py:498 apps/accounts/forms.py:529
 msgid "Incorrect password."
 msgstr "Incorrect password."
 
-#: apps/accounts/forms.py:504
+#: apps/accounts/forms.py:518
 msgid "Type your username to confirm"
 msgstr "Type your username to confirm"
 
-#: apps/accounts/forms.py:517
+#: apps/accounts/forms.py:531
 msgid "Doesn't match your username."
 msgstr "Doesn't match your username."
 
-#: apps/accounts/forms.py:541
+#: apps/accounts/forms.py:555
 msgid "First name"
 msgstr "First name"
 
-#: apps/accounts/forms.py:543
+#: apps/accounts/forms.py:557
 msgid ""
 "Used to personalize your dashboard greeting, and next to your username "
 "wherever your activity is shown to others (if you allow that in your "
@@ -228,11 +240,11 @@ msgstr ""
 "wherever your activity is shown to others (if you allow that in your "
 "profile)."
 
-#: apps/accounts/forms.py:550
+#: apps/accounts/forms.py:564
 msgid "Email"
 msgstr "Email"
 
-#: apps/accounts/forms.py:552
+#: apps/accounts/forms.py:566
 msgid ""
 "Used only for password-reset emails if you ever get locked out. Never shown "
 "to other users."
@@ -240,7 +252,7 @@ msgstr ""
 "Used only for password-reset emails if you ever get locked out. Never shown "
 "to other users."
 
-#: apps/accounts/forms.py:562
+#: apps/accounts/forms.py:576
 msgid ""
 "Logged as your first body-weight entry, so your progress charts have a "
 "starting point. Leave blank and log it anytime from the Body weight page "
@@ -250,7 +262,7 @@ msgstr ""
 "starting point. Leave blank and log it anytime from the Body weight page "
 "instead."
 
-#: apps/accounts/forms.py:577
+#: apps/accounts/forms.py:591
 msgid ""
 "Used together with a logged body weight to show your BMI. Leave blank to "
 "skip this — you can add it anytime from your profile."
@@ -258,7 +270,7 @@ msgstr ""
 "Used together with a logged body weight to show your BMI. Leave blank to "
 "skip this — you can add it anytime from your profile."
 
-#: apps/accounts/forms.py:586
+#: apps/accounts/forms.py:600
 msgid ""
 "Sets whether weights and distances are shown in kg/km or lb/mi throughout "
 "the app. Change this anytime from your profile."
@@ -266,7 +278,7 @@ msgstr ""
 "Sets whether weights and distances are shown in kg/km or lb/mi throughout "
 "the app. Change this anytime from your profile."
 
-#: apps/accounts/forms.py:606
+#: apps/accounts/forms.py:620
 msgid ""
 "Used for \"today\" and date ranges throughout the app. Change this anytime "
 "from your profile."
@@ -274,7 +286,7 @@ msgstr ""
 "Used for \"today\" and date ranges throughout the app. Change this anytime "
 "from your profile."
 
-#: apps/accounts/forms.py:619
+#: apps/accounts/forms.py:633
 msgid ""
 "Lets other users on this instance send you a friend request. Change this "
 "anytime from your profile."
@@ -282,7 +294,7 @@ msgstr ""
 "Lets other users on this instance send you a friend request. Change this "
 "anytime from your profile."
 
-#: apps/accounts/forms.py:627
+#: apps/accounts/forms.py:641
 msgid ""
 "Lets a group member invite you to a group directly. You can always join a "
 "group yourself using its invite link either way. Change this anytime from "
@@ -292,13 +304,21 @@ msgstr ""
 "group yourself using its invite link either way. Change this anytime from "
 "your profile."
 
-#: apps/accounts/forms.py:644 apps/nutrition/forms.py:40
+#: apps/accounts/forms.py:650
+msgid ""
+"Shows nutrition (food diary, recipes, diet plans) in navigation and on the "
+"dashboard. Leave unchecked if you don't want to track nutrition — you can "
+"turn it on or off anytime from your profile, and nothing is ever deleted "
+"either way."
+msgstr "Shows nutrition (food diary, recipes, diet plans) in navigation and on the dashboard. Leave unchecked if you don't want to track nutrition — you can turn it on or off anytime from your profile, and nothing is ever deleted either way."
+
+#: apps/accounts/forms.py:669 apps/nutrition/forms.py:40
 #: apps/nutrition/forms.py:449 apps/nutrition/forms.py:653
 #, python-format
 msgid "Current weight (%(unit)s)"
 msgstr "Current weight (%(unit)s)"
 
-#: apps/accounts/forms.py:646
+#: apps/accounts/forms.py:671
 msgid "Current weight"
 msgstr "Current weight"
 
@@ -342,7 +362,7 @@ msgstr "Earth"
 msgid "Zen"
 msgstr "Zen"
 
-#: apps/accounts/models.py:358
+#: apps/accounts/models.py:379
 msgid ""
 "Shown as a footer note on the login and signup pages. Leave blank to hide it "
 "entirely."
@@ -559,7 +579,7 @@ msgstr "A label to tell your keys apart."
 
 #: apps/api/models.py:24 templates/accounts/profile.html:3
 #: templates/accounts/profile.html:12 templates/api/key_list.html:85
-#: templates/base.html:175 templates/base.html:198
+#: templates/base.html:177 templates/base.html:200
 msgid "Profile"
 msgstr "Profile"
 
@@ -570,7 +590,7 @@ msgid "Exercises"
 msgstr "Exercises"
 
 #: apps/api/models.py:26 apps/core/models.py:162 templates/api/key_list.html:93
-#: templates/base.html:171 templates/base.html:173
+#: templates/base.html:173 templates/base.html:175
 #: templates/programs/program_list.html:3
 #: templates/programs/program_list.html:6
 msgid "Programs"
@@ -603,7 +623,7 @@ msgid "Analytics"
 msgstr "Analytics"
 
 #: apps/api/models.py:32 templates/api/key_list.html:109
-#: templates/base.html:159 templates/base.html:161
+#: templates/base.html:160 templates/base.html:162
 #: templates/nutrition/dashboard.html:3 templates/nutrition/dashboard.html:6
 #: templates/nutrition/food_detail.html:21
 #: templates/nutrition/recipe_detail.html:54
@@ -618,7 +638,7 @@ msgstr "You've reached your maximum number of API keys."
 msgid "API key revoked."
 msgstr "API key revoked."
 
-#: apps/core/admin.py:17 templates/accounts/profile.html:163
+#: apps/core/admin.py:17 templates/accounts/profile.html:164
 msgid "Administration"
 msgstr "Administration"
 
@@ -850,7 +870,7 @@ msgstr ""
 "installs are a private, self-hosted app for one household, not a public site "
 "anyone should be searching for."
 
-#: apps/core/models.py:163 templates/base.html:163 templates/base.html:165
+#: apps/core/models.py:163 templates/base.html:165 templates/base.html:167
 msgid "Progress"
 msgstr "Progress"
 
@@ -2447,11 +2467,11 @@ msgstr ""
 msgid "Null for the built-in default meal slots."
 msgstr "Null for the built-in default meal slots."
 
-#: apps/nutrition/models.py:545
+#: apps/nutrition/models.py:556
 msgid "Log either a food or a recipe, not both or neither."
 msgstr "Log either a food or a recipe, not both or neither."
 
-#: apps/nutrition/models.py:655
+#: apps/nutrition/models.py:666
 msgid "Use either a food or a recipe, not both or neither."
 msgstr "Use either a food or a recipe, not both or neither."
 
@@ -2496,39 +2516,48 @@ msgstr ""
 msgid "Goal updated — new target is %(calories)d kcal/day."
 msgstr "Goal updated — new target is %(calories)d kcal/day."
 
-#: apps/nutrition/views.py:731
+#: apps/nutrition/views.py:746
 msgid "Pick a date to copy this day to."
 msgstr "Pick a date to copy this day to."
 
-#: apps/nutrition/views.py:736
+#: apps/nutrition/views.py:751
 #, python-format
 msgid "Copied %(count)d entry to %(date)s."
 msgid_plural "Copied %(count)d entries to %(date)s."
 msgstr[0] "Copied %(count)d entry to %(date)s."
 msgstr[1] "Copied %(count)d entries to %(date)s."
 
-#: apps/nutrition/views.py:742
+#: apps/nutrition/views.py:757
 msgid "Nothing to copy — that day has no entries."
 msgstr "Nothing to copy — that day has no entries."
 
-#: apps/nutrition/views.py:788 apps/nutrition/views.py:1037
-#: apps/nutrition/views.py:1394
+#: apps/nutrition/views.py:803 apps/nutrition/views.py:1071
+#: apps/nutrition/views.py:1428
 msgid "That food couldn't be imported — try again."
 msgstr "That food couldn't be imported — try again."
 
-#: apps/nutrition/views.py:979
+#: apps/nutrition/views.py:867
+msgid "Nothing logged for this meal yet to save as a recipe."
+msgstr "Nothing logged for this meal yet to save as a recipe."
+
+#: apps/nutrition/views.py:869
+#, python-format
+msgid "Saved “%(name)s” as a new recipe."
+msgstr "Saved “%(name)s” as a new recipe."
+
+#: apps/nutrition/views.py:1013
 #, python-format
 msgid "\"%(name)s\" created — now add its ingredients below."
 msgstr "\"%(name)s\" created — now add its ingredients below."
 
-#: apps/nutrition/views.py:1431
+#: apps/nutrition/views.py:1465
 #, python-format
 msgid "Logged %(count)d item to %(date)s."
 msgid_plural "Logged %(count)d items to %(date)s."
 msgstr[0] "Logged %(count)d item to %(date)s."
 msgstr[1] "Logged %(count)d items to %(date)s."
 
-#: apps/nutrition/views.py:1442
+#: apps/nutrition/views.py:1476
 msgid "Nothing to log — this plan has no items for that date."
 msgstr "Nothing to log — this plan has no items for that date."
 
@@ -2994,7 +3023,7 @@ msgstr "Declined"
 msgid "Owner"
 msgstr "Owner"
 
-#: apps/social/models.py:142 templates/accounts/profile.html:166
+#: apps/social/models.py:142 templates/accounts/profile.html:167
 #: templates/social/group_detail.html:79
 msgid "Admin"
 msgstr "Admin"
@@ -3303,7 +3332,7 @@ msgstr ""
 
 #: templates/accounts/_data_export_standalone.html:23
 #: templates/accounts/_data_export_standalone.html:68
-#: templates/accounts/profile.html:131
+#: templates/accounts/profile.html:132
 msgid "Your data"
 msgstr "Your data"
 
@@ -3356,7 +3385,7 @@ msgid "Privacy notice"
 msgstr "Privacy notice"
 
 #: templates/accounts/_privacy_notice_modal.html:27
-#: templates/accounts/profile.html:246 templates/api/key_list.html:20
+#: templates/accounts/profile.html:247 templates/api/key_list.html:20
 #: templates/base.html:148 templates/nutrition/_month_calendar.html:84
 #: templates/records/_pr_toasts.html:28
 msgid "Dismiss"
@@ -3470,7 +3499,7 @@ msgid "Done"
 msgstr "Done"
 
 #: templates/accounts/account_delete.html:3
-#: templates/accounts/account_delete.html:6 templates/accounts/profile.html:201
+#: templates/accounts/account_delete.html:6 templates/accounts/profile.html:202
 msgid "Delete account"
 msgstr "Delete account"
 
@@ -3526,7 +3555,7 @@ msgstr "Cancel"
 
 #: templates/accounts/account_details_form.html:3
 #: templates/accounts/account_details_form.html:6
-#: templates/accounts/profile.html:66
+#: templates/accounts/profile.html:67
 msgid "Account details"
 msgstr "Account details"
 
@@ -3541,7 +3570,7 @@ msgid "Back to profile"
 msgstr "Back to profile"
 
 #: templates/accounts/data_export.html:3 templates/accounts/data_export.html:6
-#: templates/accounts/profile.html:143
+#: templates/accounts/profile.html:144
 msgid "Download your data"
 msgstr "Download your data"
 
@@ -3571,38 +3600,42 @@ msgstr "Download as HTML"
 msgid "Preferences"
 msgstr "Preferences"
 
-#: templates/accounts/profile.html:21 templates/accounts/profile.html:108
+#: templates/accounts/profile.html:21
+msgid "Features"
+msgstr "Features"
+
+#: templates/accounts/profile.html:22 templates/accounts/profile.html:109
 msgid "Notifications"
 msgstr "Notifications"
 
-#: templates/accounts/profile.html:22
+#: templates/accounts/profile.html:23
 msgid "Privacy"
 msgstr "Privacy"
 
-#: templates/accounts/profile.html:23 templates/accounts/profile.html:96
+#: templates/accounts/profile.html:24 templates/accounts/profile.html:97
 msgid "Social"
 msgstr "Social"
 
-#: templates/accounts/profile.html:43
+#: templates/accounts/profile.html:44
 msgid "Save preferences"
 msgstr "Save preferences"
 
-#: templates/accounts/profile.html:62
+#: templates/accounts/profile.html:63
 msgid "Account"
 msgstr "Account"
 
-#: templates/accounts/profile.html:67
+#: templates/accounts/profile.html:68
 msgid "Update your username, name, and email address."
 msgstr "Update your username, name, and email address."
 
-#: templates/accounts/profile.html:74
+#: templates/accounts/profile.html:75
 #: templates/registration/password_change_form.html:3
 #: templates/registration/password_change_form.html:6
 #: templates/registration/password_change_form.html:20
 msgid "Change password"
 msgstr "Change password"
 
-#: templates/accounts/profile.html:76
+#: templates/accounts/profile.html:77
 msgid ""
 "Your account is linked to Authentik. Sign-in security (password, 2FA) is "
 "managed there."
@@ -3610,113 +3643,113 @@ msgstr ""
 "Your account is linked to Authentik. Sign-in security (password, 2FA) is "
 "managed there."
 
-#: templates/accounts/profile.html:78
+#: templates/accounts/profile.html:79
 msgid "Update the password you use to sign in."
 msgstr "Update the password you use to sign in."
 
-#: templates/accounts/profile.html:88
+#: templates/accounts/profile.html:89
 msgid "Enabled — protecting your account with a second step at login."
 msgstr "Enabled — protecting your account with a second step at login."
 
-#: templates/accounts/profile.html:90
+#: templates/accounts/profile.html:91
 msgid "Add a second step at login, using an authenticator app."
 msgstr "Add a second step at login, using an authenticator app."
 
-#: templates/accounts/profile.html:100 templates/social/message_list.html:6
+#: templates/accounts/profile.html:101 templates/social/message_list.html:6
 msgid "Friends & groups"
 msgstr "Friends & groups"
 
-#: templates/accounts/profile.html:101
+#: templates/accounts/profile.html:102
 msgid "Friends, groups, and messages."
 msgstr "Friends, groups, and messages."
 
-#: templates/accounts/profile.html:109
+#: templates/accounts/profile.html:110
 msgid "Get notified on this device when you receive a message."
 msgstr "Get notified on this device when you receive a message."
 
-#: templates/accounts/profile.html:118
+#: templates/accounts/profile.html:119
 msgid "Push notifications aren't supported in this browser."
 msgstr "Push notifications aren't supported in this browser."
 
-#: templates/accounts/profile.html:122
+#: templates/accounts/profile.html:123
 msgid "Enable notifications on this device"
 msgstr "Enable notifications on this device"
 
-#: templates/accounts/profile.html:126
+#: templates/accounts/profile.html:127
 msgid "Disable notifications on this device"
 msgstr "Disable notifications on this device"
 
-#: templates/accounts/profile.html:135 templates/api/key_list.html:3
+#: templates/accounts/profile.html:136 templates/api/key_list.html:3
 #: templates/api/key_list.html:6
 msgid "API keys"
 msgstr "API keys"
 
-#: templates/accounts/profile.html:136
+#: templates/accounts/profile.html:137
 msgid "Manage keys other apps can use to access your data."
 msgstr "Manage keys other apps can use to access your data."
 
-#: templates/accounts/profile.html:144
+#: templates/accounts/profile.html:145
 msgid "Browse everything you've logged, or download it as JSON, CSV, or HTML."
 msgstr "Browse everything you've logged, or download it as JSON, CSV, or HTML."
 
-#: templates/accounts/profile.html:150
+#: templates/accounts/profile.html:151
 msgid "Support"
 msgstr "Support"
 
-#: templates/accounts/profile.html:154 templates/accounts/profile.html:182
+#: templates/accounts/profile.html:155 templates/accounts/profile.html:183
 #: templates/core/feedback_form.html:3 templates/core/feedback_form.html:6
 #: templates/core/feedback_list.html:3 templates/core/feedback_list.html:6
 msgid "Feedback"
 msgstr "Feedback"
 
-#: templates/accounts/profile.html:155
+#: templates/accounts/profile.html:156
 msgid "Report a bug, request something, or tell us what's confusing."
 msgstr "Report a bug, request something, or tell us what's confusing."
 
-#: templates/accounts/profile.html:167
+#: templates/accounts/profile.html:168
 msgid "Manage tiers, keys, and reference data across the whole instance."
 msgstr "Manage tiers, keys, and reference data across the whole instance."
 
-#: templates/accounts/profile.html:174 templates/core/backup_list.html:3
+#: templates/accounts/profile.html:175 templates/core/backup_list.html:3
 #: templates/core/backup_list.html:6
 msgid "Backups"
 msgstr "Backups"
 
-#: templates/accounts/profile.html:175
+#: templates/accounts/profile.html:176
 msgid "Create, download, and restore full backups of this instance."
 msgstr "Create, download, and restore full backups of this instance."
 
-#: templates/accounts/profile.html:183
+#: templates/accounts/profile.html:184
 msgid "Read what users have submitted, and turn submissions on or off."
 msgstr "Read what users have submitted, and turn submissions on or off."
 
-#: templates/accounts/profile.html:190 templates/core/seo_settings.html:3
+#: templates/accounts/profile.html:191 templates/core/seo_settings.html:3
 #: templates/core/seo_settings.html:6
 msgid "Site & SEO"
 msgstr "Site & SEO"
 
-#: templates/accounts/profile.html:191
+#: templates/accounts/profile.html:192
 msgid "Control whether search engines are allowed to index this instance."
 msgstr "Control whether search engines are allowed to index this instance."
 
-#: templates/accounts/profile.html:202
+#: templates/accounts/profile.html:203
 msgid "Permanently delete your account and everything tied to it."
 msgstr "Permanently delete your account and everything tied to it."
 
-#: templates/accounts/profile.html:210
+#: templates/accounts/profile.html:211
 msgid "Log out"
 msgstr "Log out"
 
-#: templates/accounts/profile.html:232
+#: templates/accounts/profile.html:233
 msgid "Source on GitHub"
 msgstr "Source on GitHub"
 
-#: templates/accounts/profile.html:237
+#: templates/accounts/profile.html:238
 #, python-format
 msgid "IronStack version %(version)s"
 msgstr "IronStack version %(version)s"
 
-#: templates/accounts/profile.html:242 templates/accounts/profile.html:245
+#: templates/accounts/profile.html:243 templates/accounts/profile.html:246
 msgid "Changelog"
 msgstr "Changelog"
 
@@ -4227,7 +4260,7 @@ msgstr "Area"
 msgid "Endpoints"
 msgstr "Endpoints"
 
-#: templates/api/key_list.html:86
+#: templates/api/key_list.html:86 templates/api/key_list.html:110
 msgid "GET/PATCH, no id"
 msgstr "GET/PATCH, no id"
 
@@ -4239,6 +4272,10 @@ msgstr "read-only"
 #: templates/api/key_list.html:98
 msgid "create + read only"
 msgstr "create + read only"
+
+#: templates/api/key_list.html:110
+msgid "all POST"
+msgstr "all POST"
 
 #: templates/api/key_list.html:118
 msgid "both read-only"
@@ -4307,19 +4344,19 @@ msgstr "Main navigation"
 msgid "Home"
 msgstr "Home"
 
-#: templates/base.html:167 templates/base.html:169
+#: templates/base.html:169 templates/base.html:171
 msgid "Workout"
 msgstr "Workout"
 
-#: templates/base.html:175
+#: templates/base.html:177
 msgid "Profile — new friend/group activity"
 msgstr "Profile — new friend/group activity"
 
-#: templates/base.html:214
+#: templates/base.html:216
 msgid "Continue training"
 msgstr "Continue training"
 
-#: templates/base.html:220
+#: templates/base.html:222
 msgid "Unread messages"
 msgstr "Unread messages"
 
@@ -4683,7 +4720,7 @@ msgstr "Submissions"
 
 #: templates/core/feedback_list.html:44
 #: templates/exercises/_exercise_list_results.html:22
-#: templates/nutrition/_food_list_results.html:46
+#: templates/nutrition/_food_list_results.html:65
 #: templates/nutrition/recipe_list.html:39
 #: templates/nutrition/recipe_list.html:76
 #: templates/workouts/_train_panel.html:13
@@ -4692,7 +4729,7 @@ msgstr "Previous"
 
 #: templates/core/feedback_list.html:46
 #: templates/exercises/_exercise_list_results.html:24
-#: templates/nutrition/_food_list_results.html:48
+#: templates/nutrition/_food_list_results.html:67
 #: templates/nutrition/recipe_list.html:41
 #: templates/nutrition/recipe_list.html:78
 #, python-format
@@ -4701,7 +4738,7 @@ msgstr "Page %(number)s of %(total)s"
 
 #: templates/core/feedback_list.html:48
 #: templates/exercises/_exercise_list_results.html:26
-#: templates/nutrition/_food_list_results.html:50
+#: templates/nutrition/_food_list_results.html:69
 #: templates/nutrition/recipe_list.html:43
 #: templates/nutrition/recipe_list.html:80
 #: templates/workouts/_train_panel.html:21
@@ -5010,11 +5047,11 @@ msgid ""
 msgstr ""
 "Left: %(calories)s kcal, %(protein)sg protein, %(carbs)sg carbs, %(fat)sg fat"
 
-#: templates/nutrition/_food_list_results.html:38
+#: templates/nutrition/_food_list_results.html:48
 msgid "No foods match your filters."
 msgstr "No foods match your filters."
 
-#: templates/nutrition/_food_list_results.html:44
+#: templates/nutrition/_food_list_results.html:63
 msgid "Food list pages"
 msgstr "Food list pages"
 
@@ -5414,7 +5451,7 @@ msgid "At a chosen weekly rate, roughly how long to reach a target weight."
 msgstr "At a chosen weekly rate, roughly how long to reach a target weight."
 
 #: templates/nutrition/calculators_home.html:67
-#: templates/nutrition/diary_day.html:92
+#: templates/nutrition/diary_day.html:100
 #: templates/nutrition/diet_plan_list.html:39
 #: templates/nutrition/food_list.html:88 templates/nutrition/goal_edit.html:36
 #: templates/nutrition/recipe_list.html:89 templates/nutrition/stats.html:44
@@ -5550,23 +5587,27 @@ msgstr "Remove this entry?"
 msgid "Nothing logged yet."
 msgstr "Nothing logged yet."
 
-#: templates/nutrition/diary_day.html:76
+#: templates/nutrition/diary_day.html:77
 msgid "+ Add food"
 msgstr "+ Add food"
 
 #: templates/nutrition/diary_day.html:81
+msgid "Save as recipe"
+msgstr "Save as recipe"
+
+#: templates/nutrition/diary_day.html:89
 msgid "Copy this day to another date"
 msgstr "Copy this day to another date"
 
-#: templates/nutrition/diary_day.html:85
+#: templates/nutrition/diary_day.html:93
 msgid "Copy to date"
 msgstr "Copy to date"
 
-#: templates/nutrition/diary_day.html:86 templates/social/group_detail.html:28
+#: templates/nutrition/diary_day.html:94 templates/social/group_detail.html:28
 msgid "Copy"
 msgstr "Copy"
 
-#: templates/nutrition/diary_day.html:91
+#: templates/nutrition/diary_day.html:99
 msgid "Manage foods"
 msgstr "Manage foods"
 

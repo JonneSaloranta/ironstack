@@ -18,6 +18,38 @@ narrated summary of the same version.
 
 ## [Unreleased]
 
+## [1.17.0] — 2026-09-19
+
+### Added
+- Every meal card in the food diary (except "Other") now has a "Save
+  as recipe" button, turning everything logged there into a new,
+  reusable recipe at the exact amounts eaten.
+- Nutrition tracking can now be turned off — asked about during your
+  first login, and switchable anytime from Profile → Preferences →
+  Features. Off hides nutrition from navigation and the dashboard;
+  your existing nutrition data is never deleted, and its pages stay
+  reachable directly by a link either way.
+
+### Fixed
+- The dashboard calendar's calorie trend arrow no longer shows up on
+  future days — its trailing 7-day average could still pull in
+  already-logged past days even though the future day itself has
+  nothing logged.
+- Clicking Previous/Next on the "All foods" list now keeps your place
+  at the pagination buttons instead of jumping back to the top of the
+  page.
+- The API keys page's "Using the API" documentation now lists the
+  nutrition profile and diet plan endpoints — live for a while, but
+  missing from this in-app reference.
+- Adding, editing, removing, or logging a food/recipe to a meal in the
+  food diary now returns you to that meal's own card instead of
+  jumping to the top of the page.
+
+### Performance
+- Food list thumbnails now load OpenFoodFacts' own smaller,
+  pre-generated photo instead of the larger one used on a food's own
+  page, cutting how much needs to download while browsing the list.
+
 ## [1.16.0] — 2026-09-19
 
 ### Added

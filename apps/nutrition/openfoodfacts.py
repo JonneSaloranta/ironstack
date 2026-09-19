@@ -198,6 +198,10 @@ def parse_product(raw):
         # `{% if food.image_url %}` template check treat "" as
         # "nothing to show" identically to a genuinely missing key.
         "image_url": raw.get("image_front_url") or raw.get("image_url") or "",
+        # OFF's own smaller pre-generated variant — see Food.
+        # image_thumb_url's own comment for why this is a separate
+        # stored field rather than a resize of image_url.
+        "image_thumb_url": raw.get("image_front_thumb_url") or raw.get("image_thumb_url") or "",
         "categories": raw.get("categories") or "",
         "quantity": raw.get("quantity") or "",
         "ingredients_text": raw.get("ingredients_text") or "",

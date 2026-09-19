@@ -185,20 +185,29 @@ calories, protein_grams, carbohydrate_grams, fat_grams,
 fiber_grams / sugar_grams / saturated_fat_grams / sodium_mg (all
 optional/nullable), off_id (nullable, unique), off_synced_at (nullable),
 nutri_score (nullable, A-E), nova_group (nullable, 1-4),
-image_url (blank), categories (blank), active
+image_url (blank), image_thumb_url (blank), categories (blank), active
 ```
 
-`image_url`/`categories` are both blank for every hand-entered food,
-same as `nutri_score`/`nova_group` — only ever populated by an OFF
-import (`apps.nutrition.openfoodfacts.parse_product`). `image_url` is
-OFF's own hosted "front of pack" photo (`image_front_url`), linked
-directly rather than downloaded and re-stored locally — OFF operates
-its own image CDN for exactly this, and mirroring it would mean a
-Pillow resize pipeline, a media-storage growth story, and a second
-staleness concern for a field that's purely decorative (identifying a
-food at a glance, `FoodListView`'s own list thumbnail and
-`FoodDetailView`'s larger photo) and never read by any nutrition
-calculation. Since a browser has to load it directly from
+`image_url`/`image_thumb_url`/`categories` are all blank for every
+hand-entered food, same as `nutri_score`/`nova_group` — only ever
+populated by an OFF import (`apps.nutrition.openfoodfacts.
+parse_product`). `image_url` is OFF's own hosted "front of pack"
+photo (`image_front_url`), linked directly rather than downloaded and
+re-stored locally — OFF operates its own image CDN for exactly this,
+and mirroring it would mean a Pillow resize pipeline, a media-storage
+growth story, and a second staleness concern for a field that's
+purely decorative (identifying a food at a glance) and never read by
+any nutrition calculation. `image_thumb_url` is a *separate* smaller
+photo OFF already generates and hosts (`image_front_thumb_url`,
+100px) — not a resize of `image_url` done by this app, asked for
+directly to cut real bytes transferred on `FoodListView`'s own list
+thumbnail (`_food_list_results.html`, `object-fit: cover`), which
+falls back to `image_url` when `image_thumb_url` is blank (a food
+imported before this field existed, not yet refreshed). `image_url`
+itself stays reserved for `FoodDetailView`'s larger photo
+(`object-fit: contain`, so a label's own text/branding isn't cropped
+off), where a 100px thumb would look blurry blown up. Since a browser
+has to load either directly from
 `images.openfoodfacts.org`, that origin is explicitly allowed in
 `apps.core.middleware.ContentSecurityPolicyMiddleware`'s `img-src`
 (docs/SECURITY.md "Content-Security-Policy") — otherwise CSP silently
@@ -538,6 +547,26 @@ the case where a user wants to log the same combination repeatedly
 (section 9's own example, "Chicken Rice Bowl," is a `Recipe`). Two
 models for the same idea would just be two places the same bug could
 diverge.
+
+**"Save as recipe"** (`diary_meal_save_as_recipe`,
+`services.create_recipe_from_diary_meal`) turns exactly that
+live-computed group — one `(date, meal_slot)`'s worth of `DiaryEntry`
+rows — into a real, saved `Recipe`, asked for directly ("I eat this
+same breakfast most days"). Only food-type entries become
+`RecipeIngredient` rows, at the exact quantities logged; a recipe-type
+entry for the same meal is skipped rather than flattened into its own
+ingredients (`RecipeIngredient.food` is required — it can never point
+at another `Recipe`), since re-deriving that risks double-counting
+anything also logged as a plain food the same meal, for a case rare
+enough not to justify the complexity. The new recipe's `servings` is
+always 1 (this is exactly what was eaten, not a batch to divide) and
+its `meal_slot` carries over from the diary entries' own meal slot —
+a recipe built from what was actually eaten at breakfast is,
+definitionally, a breakfast recipe. Shown as a button on every meal
+card on `diary_day.html` except the system "Other" catch-all (asked
+for directly — "Other" is a dumping ground for food that doesn't fit
+a named meal, not a coherent combination worth saving), and only when
+that meal has something logged.
 
 ### `DietPlan` / `DietPlanMeal` / `DietPlanItem` — the diet-builder's saved output
 

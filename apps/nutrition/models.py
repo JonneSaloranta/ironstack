@@ -399,6 +399,17 @@ class Food(TimeStampedModel):
     # which is a live-queried OFF concept with no need to ever land in
     # this column.
     image_url = models.URLField(max_length=500, blank=True)
+    # OFF's own pre-generated 100px "thumb" variant of the same photo
+    # (`image_front_thumb_url`) — a separate, smaller file OFF already
+    # hosts, not a resize of `image_url` done by this app. Used for
+    # the small `.food-thumb` in a food list (`_food_list_results.html`)
+    # instead of `image_url`'s own 400px version, cutting real bytes
+    # transferred for the common "browsing a list" case; `image_url`
+    # (bigger, `object-fit: contain` so a label's own text/branding
+    # isn't cropped off) stays for the larger detail-page photo, where
+    # a 100px thumb would look blurry blown up. Blank wherever
+    # `image_url` is blank — no photo means no thumb either.
+    image_thumb_url = models.URLField(max_length=500, blank=True)
     categories = models.TextField(blank=True)
     # More OFF product info, asked for directly alongside the two
     # above — same blank-for-hand-entered pattern, same reasoning:

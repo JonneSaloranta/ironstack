@@ -38,6 +38,17 @@ toggle: whether a user is nudged to log a body measurement once
 regardless of how stale their history actually is — it never affects
 whether they *can* log a reading, only whether they're reminded to.
 
+`nutrition_enabled` (default `True`) is a navigation-only toggle, not a
+feature gate: off hides `templates/base.html`'s bottom-nav Nutrition
+tab (the only place outside `apps.nutrition` itself that links into
+it), asked for directly for a user who doesn't want to track nutrition
+at all. Nothing in `apps.nutrition`'s own views/urls checks this
+field — a direct link or bookmark into nutrition works identically
+either way, and no nutrition data is ever touched by flipping it.
+Asked during onboarding (`apps.accounts.forms.OnboardingForm`) the
+same way `allow_friend_requests`/`allow_group_invites` are, and
+editable afterward from Profile → Preferences → Features.
+
 Also carries `language` — the UI language (one of the six shipped
 locales, see `ARCHITECTURE.md` "Internationalization"), applied by
 `apps.accounts.middleware.UserLanguageMiddleware`. Distinct from
