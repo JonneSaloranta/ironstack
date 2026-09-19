@@ -267,7 +267,7 @@ every filter forward in the URL already, same as
 
 ### Admin tools
 
-Two `apps.nutrition.admin.FoodAdmin` bulk actions, both asked for
+Three `apps.nutrition.admin.FoodAdmin` bulk actions, all asked for
 directly:
 
 - **Merge selected foods into one…** — the shared library
@@ -300,6 +300,11 @@ directly:
   reason this integration was scoped to on-demand lookup in the first
   place (below) was to avoid exactly that kind of unbounded bulk
   operation against a third-party API.
+- **Refresh selected foods' prices from Open Prices** — the same
+  shape as the action above, for the separate Open Prices integration
+  ("Open Prices integration" below) instead of OFF's core product
+  API: force-refreshes right now rather than waiting for the normal
+  7-day staleness gate.
 
 ### OpenFoodFacts integration
 
@@ -361,6 +366,79 @@ rejected for exactly that reason when discussed directly. Instead:
   call a third-party service from their own server), same reasoning as
   `DJANGO_SIGNUP_ENABLED`/optional `DJANGO_EMAIL_HOST`.
 
+### Open Prices integration
+
+Prices were requested directly, and it turned out OFF's own core
+product API (above) has **no price field at all** — a separate
+OpenFoodFacts project, Open Prices (`prices.openfoodfacts.org`), is
+where crowdsourced pricing actually lives, and it has no single
+canonical "the price" for a product: every report is one shopper's
+submission, tied to one store, one day, in whatever currency that
+store trades in. A popular product can easily have reports in half a
+dozen currencies. This integration is scoped the same way the
+OpenFoodFacts one is — **on-demand lookup, never a bulk import** —
+plus one more step specific to a dataset with no canonical value:
+turning many per-store reports into one representative figure.
+
+- `apps/nutrition/open_prices.py` — a thin client
+  (`get_prices_for_barcode(barcode)`) against Open Prices' public read
+  API, and `summarize_prices(raw_prices)`, which groups a barcode's
+  most recent reports (`PRICE_SAMPLE_SIZE`, 20) by currency, keeps
+  whichever currency has the most reports in that sample (the most
+  representative one for wherever this product is actually reported
+  from), and returns that currency's median price plus how many
+  reports it's based on. Never an average — a handful of outlier or
+  misread reports (a shopper submitting a receipt total instead of a
+  unit price, say) would otherwise skew a mean far more than a
+  median.
+- `Food.price_amount` / `price_currency` / `price_sample_count` /
+  `price_synced_at` cache that summary on the row itself, the same
+  shape `off_synced_at` already uses — refreshed lazily
+  (`apps.nutrition.services.refresh_food_price`) rather than on a
+  schedule, gated on the same `OpenFoodFactsSettings.enabled` switch
+  OFF's own client uses (Open Prices is run by the same organization;
+  an operator turning off outbound requests to one clearly means both,
+  not just OFF's core API). All four stay unset for any food with no
+  `off_id` — there's no barcode to look a price up by for a
+  hand-entered food — and for any OFF-imported food whose price
+  hasn't been looked up yet.
+- **Refreshed on next view of `FoodDetailView`**, not on every diary/
+  recipe/diet-plan appearance — the same "look at it enough to want
+  detail, that's when it's worth a network round-trip" trigger point
+  `import_or_refresh_food_from_off` uses for barcode entry. The diary,
+  a recipe's ingredient list, and everywhere else a food's price is
+  shown (below) just display whatever's already cached on the row,
+  no extra lookup — a price is more volatile than a nutrition fact,
+  which is exactly why `OPEN_PRICES_STALENESS_DAYS` (7) is much
+  shorter than `OPENFOODFACTS_STALENESS_DAYS` (14), not because it's
+  fetched any more eagerly.
+- Shown wherever a food's price is cached: `FoodDetailView`'s own
+  "Product information" card ("Typical price: 3.21 EUR (median of 3
+  recent Open Prices reports)"), inline next to a recipe ingredient's
+  calories, and inline next to a diary entry's calories — plain
+  `amount currency` text (e.g. "3.21 EUR"), deliberately not a
+  currency symbol: a symbol table would have to guess a locale for
+  every ISO currency code Open Prices might return, and would
+  sometimes guess wrong, where the code itself is always unambiguous.
+- `apps.nutrition.admin.FoodAdmin`'s "Refresh selected foods' prices
+  from Open Prices" bulk action — the same shape as "Refresh selected
+  foods from OpenFoodFacts" above, force-refreshing an explicit
+  admin-chosen selection immediately rather than waiting on the
+  7-day staleness gate.
+- **A contribute-data prompt on `FoodDetailView`**, for any food with
+  an `off_id` — asked for directly: this app is a pure consumer of
+  both OFF's and Open Prices' data, and every barcode lookup it makes
+  benefits from someone, at some point, actually fixing a wrong
+  Nutri-Score or submitting a price report upstream. Two plain links,
+  built straight from the food's own barcode (no lookup, no extra
+  request needed): OFF's own `cgi/product.pl?type=edit&code=<barcode>`
+  edit form, and Open Prices' `app/products/<barcode>` page, where its
+  own web app lets a user add a price report for that exact product.
+  Both verified live (a real barcode against each URL) rather than
+  guessed, since a wrong contribute link would be worse than no
+  prompt at all. Absent entirely for a hand-entered food — there's no
+  upstream OFF/Open Prices product to contribute to.
+
 ### `Recipe` / `RecipeIngredient`
 
 ```
@@ -421,7 +499,13 @@ calories directly, the same reason `food_list.html` shows a food's
 own calories rather than making every entry a guess until opened, and
 supports a `?q=` name search once a user has more than a handful of
 recipes — the same `name__icontains` pattern `FoodListView` already
-uses. The recipe detail page's nutrition table shows fiber, sugar,
+uses, applied separately to each of two independently-paginated
+sections: "Your recipes" (`?mine_page=`, 5/page, most recent first)
+above "Template recipes" in its own box (`?template_page=`, 10/page,
+alphabetical) — a plain `View` rather than a `ListView`, since
+`ListView`'s own pagination only ever handles one `object_list`/
+`page_obj` pair and this page needs two that don't reset each other.
+The recipe detail page's nutrition table shows fiber, sugar,
 saturated fat, and sodium too whenever at least one ingredient
 carries that data (typically an OpenFoodFacts import, which usually
 has it; a hand-entered `Food` usually doesn't) — the same optional,
@@ -503,6 +587,58 @@ decision (a single best-fit item per meal, not a multi-item knapsack
 solver) without boxing a user in once they're actually planning a
 real day by hand — automation gets them a starting point, no further
 than that.
+
+**Starting a plan from scratch.** `DietPlanCreateView`'s form always
+used to force `diet_builder.build_diet_plan`'s auto-suggestion into
+every meal, with no way to opt out short of deleting each suggested
+item by hand afterward — asked for directly. `DietPlanForm.
+start_from_scratch` (unchecked by default, so the existing
+auto-generated behavior is still what plain "Create plan" does) maps
+to `build_diet_plan(..., auto_fill=False)`: the exact same `DietPlan`/
+`DietPlanMeal` rows, same calorie/macro targets, same per-meal calorie
+shares, just without ever calling `suggest_item_for_calorie_budget` —
+every meal starts with zero items, ready for `diet_plan_meal_item_add`
+to fill in by hand. Nothing downstream (applying the plan, swapping/
+adding items) treats a meal emptied this way any differently than one
+`build_diet_plan` itself happened to leave empty (no suggestion
+available in the user's library yet).
+
+**The "how much is left" totals widget**
+(`templates/nutrition/_diet_plan_totals_widget.html`), asked for
+directly for the detail page shown while building/filling a plan — a
+small, collapsible box fixed to the bottom-right corner (same
+"reachable, not blocking" spot `.training-fab`/`.messages-fab` use,
+offset further up so a workout-in-progress FAB and this widget don't
+land on top of each other), showing that day's totals-so-far against
+`plan.target_calories`/macros and how much of each is still left.
+Starts minimized (just the toggle pill) rather than expanded — an
+earlier version defaulted to expanded and, on a phone-sized viewport,
+covered the very "+ Add item" button of the meal card behind it, which
+defeated the point of calling it a small floating box. `apps.nutrition
+.views._diet_plan_day_groups` computes one entry per distinct day in
+the plan (matching `DietPlanMeal`'s own weekday ordering, so
+`itertools.groupby` needs no extra sort) — for a one-day plan that's
+exactly one entry, so the widget needs no separate weekly/non-weekly
+code path, only the template deciding *where* to render whichever
+group is currently relevant (each weekday's own collapsible section
+for a weekly plan, the one implicit section otherwise). Replaces
+Django's own `{% regroup %}` templatetag, which has no way to attach
+this per-group total onto its own output. The table itself is two
+columns ("so far / target" per macro, `services.daily_totals`'s own
+row shape), not three — a first version added a separate "left"
+column, which overflowed the widget's own narrow fixed width in
+several languages (found live in Finnish, where "Hiilihydraatit"
+alone doesn't fit that column's share of a 14rem-wide box); "left"
+is now one wrapping text line below the table instead, since flowing
+text can wrap onto a second line without looking broken the way a
+clipped table header does.
+
+**Search before "Most used."** `diet_plan_meal_item_form.html` and
+`recipe_ingredient_form.html` both used to render their search/
+barcode box *below* the "Most used" quick-add list — the same
+ordering bug already fixed on the food diary's own add-food page
+(`diary_add_entry.html`), just not carried over to these other two
+"add a food" pages at the time. All three now put search first.
 
 ## Energy calculation
 

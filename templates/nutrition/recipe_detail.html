@@ -29,7 +29,7 @@
     <div class="card-action-row" style="padding:0.5rem 0;">
       <div>
         <span><a class="inline-item-link" href="{% url 'nutrition:food-detail' ingredient.food.pk %}">{{ ingredient.food.name }}</a></span>
-        <span class="text-muted">— {{ ingredient.quantity }} {{ ingredient.food.serving_unit }}, {{ ingredient.nutrition.calories|floatformat:0 }} kcal</span>
+        <span class="text-muted">— {{ ingredient.quantity }} {{ ingredient.food.serving_unit }}, {{ ingredient.nutrition.calories|floatformat:0 }} kcal{% if ingredient.food.price_amount %} · {{ ingredient.food.price_amount }} {{ ingredient.food.price_currency }}{% endif %}</span>
       </div>
       {% if recipe.owner_id == request.user.id %}
         <div style="display:flex; flex-wrap:wrap; gap:0.5rem;">

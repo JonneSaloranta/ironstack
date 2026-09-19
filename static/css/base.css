@@ -760,6 +760,55 @@ input[type="radio"] {
   height: 1.75rem;
 }
 
+/* Diet plan totals widget
+   (templates/nutrition/_diet_plan_totals_widget.html) — a small
+   corner summary of a diet plan's calorie/macro totals-so-far and
+   how much is left, asked for directly. Same fixed-to-viewport,
+   "reachable, not blocking" corner .training-fab/.messages-fab
+   already use, offset further up rather than sharing their exact
+   spot — .training-fab in particular can be showing at the same time
+   (a workout in progress while a diet plan page is also open) and is
+   a circular button this card-shaped widget would otherwise sit
+   right on top of. */
+.diet-plan-totals-widget {
+  position: fixed;
+  right: 1rem;
+  bottom: calc(var(--nav-height) + env(safe-area-inset-bottom) + 5.5rem);
+  z-index: 85;
+  /* Auto-width while minimized — just big enough for the toggle
+     button's own label, not the widest a food name/target number
+     could ever make it. Regression: a fixed 14rem width even while
+     minimized still covered a meal card's "+ Add item" button behind
+     it on a phone-sized viewport, which defeated the point of calling
+     it a small, collapsible box in the first place. */
+  width: auto;
+  max-width: calc(100vw - 2rem);
+  margin: 0;
+  padding: 0.6rem 0.75rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
+}
+
+.diet-plan-totals-widget-expanded {
+  width: 14rem;
+}
+
+.diet-plan-totals-widget table {
+  margin-top: 0.5rem;
+}
+
+.diet-plan-totals-toggle {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  background: none;
+  border: none;
+  padding: 0;
+  font-weight: bold;
+  color: inherit;
+  cursor: pointer;
+}
+
 .top-bar {
   display: flex;
   flex-wrap: wrap;
@@ -1387,6 +1436,16 @@ abbr[title]:focus::after {
   align-items: center;
   color: var(--color-text-muted);
   font-size: 0.85rem;
+  /* Previous/Next links that carry a same-page #anchor (e.g.
+     recipe_list.html's two independently-paginated sections) land the
+     browser's native anchor-scroll right here instead of back at the
+     top of the page — asked for directly, since a full page reload
+     otherwise always resets scroll to the top regardless of where the
+     click happened. scroll-margin-top leaves room for
+     .nutrition-subnav's own `position: sticky; top: 0`, which would
+     otherwise sit on top of (rather than above) this element once
+     scrolled flush against the viewport's own top edge. */
+  scroll-margin-top: 3.5rem;
 }
 
 .field {

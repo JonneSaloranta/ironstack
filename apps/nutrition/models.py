@@ -416,6 +416,23 @@ class Food(TimeStampedModel):
     ingredients_text = models.TextField(blank=True)
     labels = models.TextField(blank=True)
     allergens = models.TextField(blank=True)
+    # Sourced from Open Prices (prices.openfoodfacts.org), a distinct
+    # project from OFF's own core product API above — that API has no
+    # price field at all. Null/blank for every food with no `off_id`
+    # (nothing to look a price up by) and for any OFF-imported food
+    # whose price hasn't been looked up yet. `price_amount` is the
+    # median of `price_sample_count` recent shopper-submitted reports
+    # in whichever currency has the most reports for this product
+    # (apps.nutrition.open_prices.summarize_prices) — never "the"
+    # price, since Open Prices has no single canonical one, just the
+    # most representative figure available. Refreshed lazily on a
+    # shorter staleness window than off_synced_at
+    # (apps.nutrition.services.OPEN_PRICES_STALENESS_DAYS): real-world
+    # prices move faster than a product's nutrition facts do.
+    price_amount = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
+    price_currency = models.CharField(max_length=3, blank=True)
+    price_sample_count = models.PositiveIntegerField(default=0)
+    price_synced_at = models.DateTimeField(null=True, blank=True)
     active = models.BooleanField(default=True)
 
     class Meta:

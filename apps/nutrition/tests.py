@@ -16,6 +16,7 @@ from apps.nutrition import (
     diet_builder,
     energy,
     macros,
+    open_prices,
     openfoodfacts,
     services,
     suggestions,
@@ -43,6 +44,7 @@ from .models import (
     ServingUnit,
     TargetSource,
 )
+from .views import RecipeListView
 
 User = get_user_model()
 
@@ -984,6 +986,149 @@ class ImportOrRefreshFoodFromOffTests(TestCase):
         self.assertIsNone(result)
 
 
+RAW_OPEN_PRICES_ITEMS = [
+    {"price": 3.21, "currency": "EUR", "date": "2024-06-01"},
+    {"price": 3.25, "currency": "EUR", "date": "2024-05-20"},
+    {"price": 3.10, "currency": "EUR", "date": "2024-05-01"},
+    {"price": 3.99, "currency": "USD", "date": "2024-04-15"},
+]
+
+
+class GetPricesForBarcodeTests(TestCase):
+    def test_returns_the_raw_items_list(self):
+        with mock.patch("requests.get") as get:
+            get.return_value.json.return_value = {"items": RAW_OPEN_PRICES_ITEMS}
+            get.return_value.raise_for_status.return_value = None
+            items = open_prices.get_prices_for_barcode("1234567890123")
+        self.assertEqual(items, RAW_OPEN_PRICES_ITEMS)
+
+    def test_no_items_key_returns_an_empty_list(self):
+        with mock.patch("requests.get") as get:
+            get.return_value.json.return_value = {}
+            get.return_value.raise_for_status.return_value = None
+            self.assertEqual(open_prices.get_prices_for_barcode("1234567890123"), [])
+
+    def test_a_network_failure_raises_open_prices_error(self):
+        with mock.patch(
+            "requests.get", side_effect=open_prices.requests.RequestException("boom")
+        ):
+            with self.assertRaises(open_prices.OpenPricesError):
+                open_prices.get_prices_for_barcode("1234567890123")
+
+
+class SummarizePricesTests(TestCase):
+    def test_empty_list_returns_none(self):
+        self.assertIsNone(open_prices.summarize_prices([]))
+
+    def test_picks_the_currency_with_the_most_reports_and_its_median(self):
+        summary = open_prices.summarize_prices(RAW_OPEN_PRICES_ITEMS)
+        # Three EUR reports outnumber the single USD one, so EUR wins;
+        # the median of 3.10/3.21/3.25 is 3.21.
+        self.assertEqual(summary, {
+            "amount": Decimal("3.21"), "currency": "EUR", "sample_count": 3,
+        })
+
+    def test_entries_missing_a_price_or_currency_are_ignored(self):
+        raw = [
+            {"price": 3.00, "currency": "EUR"},
+            {"price": None, "currency": "EUR"},
+            {"price": 3.50, "currency": None},
+        ]
+        summary = open_prices.summarize_prices(raw)
+        self.assertEqual(summary, {
+            "amount": Decimal("3.00"), "currency": "EUR", "sample_count": 1,
+        })
+
+    def test_all_entries_unusable_returns_none(self):
+        raw = [{"price": None, "currency": "EUR"}, {"price": 3.0, "currency": None}]
+        self.assertIsNone(open_prices.summarize_prices(raw))
+
+
+class RefreshFoodPriceServiceTests(TestCase):
+    """apps.nutrition.services.refresh_food_price — the same lazy,
+    on-demand staleness shape as import_or_refresh_food_from_off
+    above, for Open Prices instead of OFF's core product API."""
+
+    def setUp(self):
+        OpenFoodFactsSettings.objects.all().delete()
+
+    def test_a_food_with_no_off_id_is_left_untouched_without_a_network_call(self):
+        food = make_food(None, name="Homemade soup")
+        with mock.patch.object(open_prices, "get_prices_for_barcode") as mocked:
+            result = services.refresh_food_price(food)
+        mocked.assert_not_called()
+        self.assertIsNone(result.price_amount)
+
+    def test_a_stale_food_is_refreshed(self):
+        food = make_food(None, name="Muesli", off_id="1234567890123")
+        with mock.patch.object(
+            open_prices, "get_prices_for_barcode", return_value=RAW_OPEN_PRICES_ITEMS
+        ) as mocked:
+            result = services.refresh_food_price(food)
+        mocked.assert_called_once_with("1234567890123")
+        self.assertEqual(result.price_amount, Decimal("3.21"))
+        self.assertEqual(result.price_currency, "EUR")
+        self.assertEqual(result.price_sample_count, 3)
+        self.assertIsNotNone(result.price_synced_at)
+
+    def test_a_fresh_food_is_returned_without_a_network_call(self):
+        food = make_food(None, name="Muesli", off_id="1234567890123")
+        with mock.patch.object(
+            open_prices, "get_prices_for_barcode", return_value=RAW_OPEN_PRICES_ITEMS
+        ):
+            services.refresh_food_price(food)
+        with mock.patch.object(open_prices, "get_prices_for_barcode") as mocked:
+            services.refresh_food_price(food)
+        mocked.assert_not_called()
+
+    def test_force_refreshes_a_fresh_food_anyway(self):
+        food = make_food(None, name="Muesli", off_id="1234567890123")
+        with mock.patch.object(
+            open_prices, "get_prices_for_barcode", return_value=RAW_OPEN_PRICES_ITEMS
+        ):
+            services.refresh_food_price(food)
+        first_synced_at = food.price_synced_at
+        with mock.patch.object(
+            open_prices, "get_prices_for_barcode", return_value=RAW_OPEN_PRICES_ITEMS
+        ) as mocked:
+            result = services.refresh_food_price(food, force=True)
+        mocked.assert_called_once_with("1234567890123")
+        self.assertGreater(result.price_synced_at, first_synced_at)
+
+    def test_disabled_settings_leaves_the_food_untouched_without_a_network_call(self):
+        OpenFoodFactsSettings.objects.create(pk=1, enabled=False)
+        food = make_food(None, name="Muesli", off_id="1234567890123")
+        with mock.patch.object(open_prices, "get_prices_for_barcode") as mocked:
+            result = services.refresh_food_price(food)
+        mocked.assert_not_called()
+        self.assertIsNone(result.price_amount)
+
+    def test_a_network_error_falls_back_to_the_existing_cached_price(self):
+        food = make_food(
+            None, name="Muesli", off_id="1234567890123",
+            price_amount=Decimal("3.00"), price_currency="EUR", price_sample_count=5,
+            price_synced_at=timezone.now() - timedelta(days=20),
+        )
+        with mock.patch.object(
+            open_prices, "get_prices_for_barcode",
+            side_effect=open_prices.OpenPricesError("boom"),
+        ):
+            result = services.refresh_food_price(food)
+        self.assertEqual(result.price_amount, Decimal("3.00"))
+
+    def test_no_reports_found_clears_a_previously_cached_price(self):
+        food = make_food(
+            None, name="Muesli", off_id="1234567890123",
+            price_amount=Decimal("3.00"), price_currency="EUR", price_sample_count=5,
+            price_synced_at=timezone.now() - timedelta(days=20),
+        )
+        with mock.patch.object(open_prices, "get_prices_for_barcode", return_value=[]):
+            result = services.refresh_food_price(food)
+        self.assertIsNone(result.price_amount)
+        self.assertEqual(result.price_currency, "")
+        self.assertEqual(result.price_sample_count, 0)
+
+
 class MergeFoodsTests(TestCase):
     """apps.nutrition.services.merge_foods — the admin-only duplicate
     cleanup tool. The core guarantee under test: nothing a user
@@ -1126,6 +1271,44 @@ class RefreshSelectedFromOffAdminActionTests(TestCase):
             response = self.client.post(
                 reverse("admin:nutrition_food_changelist"),
                 {"action": "refresh_selected_from_off", "_selected_action": [custom_food.pk]},
+                follow=True,
+            )
+        mocked.assert_not_called()
+        self.assertContains(
+            response, "None of the selected foods were imported from OpenFoodFacts."
+        )
+
+
+class RefreshSelectedPricesAdminActionTests(TestCase):
+    def setUp(self):
+        self.admin_user = User.objects.create_superuser(
+            username="admin", password="s3cret-pass", email="admin@example.com"
+        )
+        self.client.login(username="admin", password="s3cret-pass")
+
+    def test_refreshes_only_the_off_imported_foods_in_the_selection(self):
+        off_food = make_food(None, name="Muesli", off_id="1234567890123")
+        custom_food = make_food(None, name="Homemade soup")
+        with mock.patch.object(
+            open_prices, "get_prices_for_barcode", return_value=RAW_OPEN_PRICES_ITEMS
+        ) as mocked:
+            response = self.client.post(
+                reverse("admin:nutrition_food_changelist"),
+                {
+                    "action": "refresh_selected_prices",
+                    "_selected_action": [off_food.pk, custom_food.pk],
+                },
+                follow=True,
+            )
+        mocked.assert_called_once_with("1234567890123")
+        self.assertContains(response, "Refreshed 1 of 1 food price(s) from Open Prices.")
+
+    def test_none_selected_have_an_off_id_shows_a_warning_and_makes_no_calls(self):
+        custom_food = make_food(None, name="Homemade soup")
+        with mock.patch.object(open_prices, "get_prices_for_barcode") as mocked:
+            response = self.client.post(
+                reverse("admin:nutrition_food_changelist"),
+                {"action": "refresh_selected_prices", "_selected_action": [custom_food.pk]},
                 follow=True,
             )
         mocked.assert_not_called()
@@ -2388,6 +2571,67 @@ class FoodDetailViewTests(TestCase):
         response = self.client.get(reverse("nutrition:food-detail", args=[food.pk]))
         self.assertEqual(response.status_code, 302)
 
+    def test_an_off_imported_food_links_to_contribute_data_upstream(self):
+        food = make_food(None, name="Muesli", off_id="1234567890123")
+        response = self.client.get(reverse("nutrition:food-detail", args=[food.pk]))
+        self.assertContains(
+            response,
+            "https://world.openfoodfacts.org/cgi/product.pl?type=edit&code=1234567890123",
+        )
+        self.assertContains(
+            response, "https://prices.openfoodfacts.org/app/products/1234567890123"
+        )
+
+    def test_a_hand_entered_food_has_no_contribute_links(self):
+        food = make_food(self.alice, name="Homemade soup")
+        response = self.client.get(reverse("nutrition:food-detail", args=[food.pk]))
+        self.assertNotContains(response, "openfoodfacts.org/cgi/product.pl")
+        self.assertNotContains(response, "prices.openfoodfacts.org")
+
+    def test_an_off_food_with_no_photo_links_to_its_off_product_page(self):
+        food = make_food(None, name="Muesli", off_id="1234567890123", image_url="")
+        response = self.client.get(reverse("nutrition:food-detail", args=[food.pk]))
+        self.assertContains(
+            response, "https://world.openfoodfacts.org/product/1234567890123"
+        )
+
+    def test_an_off_food_with_a_photo_has_no_missing_photo_link(self):
+        food = make_food(
+            None, name="Muesli", off_id="1234567890123",
+            image_url="https://images.openfoodfacts.org/muesli.jpg",
+        )
+        response = self.client.get(reverse("nutrition:food-detail", args=[food.pk]))
+        self.assertNotContains(
+            response, "https://world.openfoodfacts.org/product/1234567890123"
+        )
+
+    def test_a_hand_entered_food_with_no_photo_has_no_off_product_link(self):
+        food = make_food(self.alice, name="Homemade soup")
+        response = self.client.get(reverse("nutrition:food-detail", args=[food.pk]))
+        self.assertNotContains(response, "world.openfoodfacts.org/product")
+
+    def test_shows_the_cached_price_when_present(self):
+        food = make_food(
+            None, name="Muesli", off_id="1234567890123",
+            price_amount=Decimal("3.21"), price_currency="EUR", price_sample_count=3,
+            price_synced_at=timezone.now(),
+        )
+        response = self.client.get(reverse("nutrition:food-detail", args=[food.pk]))
+        self.assertContains(response, "3.21")
+        self.assertContains(response, "EUR")
+        self.assertContains(response, "median of 3 recent Open Prices reports")
+
+    def test_viewing_an_off_food_triggers_a_stale_price_refresh(self):
+        food = make_food(None, name="Muesli", off_id="1234567890123")
+        with mock.patch.object(
+            open_prices, "get_prices_for_barcode", return_value=RAW_OPEN_PRICES_ITEMS
+        ) as mocked:
+            response = self.client.get(reverse("nutrition:food-detail", args=[food.pk]))
+        mocked.assert_called_once_with("1234567890123")
+        self.assertContains(response, "3.21")
+        food.refresh_from_db()
+        self.assertEqual(food.price_amount, Decimal("3.21"))
+
 
 class FoodCreateViewTests(TestCase):
     def setUp(self):
@@ -2737,6 +2981,20 @@ class DiaryDayViewTests(TestCase):
         )
         self.assertEqual(len(breakfast_context.entries), 1)
 
+    def test_an_entrys_cached_price_shows_next_to_its_calories(self):
+        food = make_food(
+            self.alice, price_amount=Decimal("3.21"), price_currency="EUR",
+        )
+        breakfast = MealSlot.objects.get(name="Breakfast", owner=None)
+        DiaryEntry.objects.create(
+            user=self.alice, date=date(2026, 1, 1), meal_slot=breakfast,
+            food=food, quantity=Decimal("100"),
+        )
+        response = self.client.get(
+            reverse("nutrition:diary-day", kwargs={"target_date": "2026-01-01"})
+        )
+        self.assertContains(response, "3.21 EUR")
+
     def test_each_meal_cards_add_food_link_carries_its_own_meal_slot(self):
         """Regression: every meal card's "+ Add food" link pointed at
         the exact same URL (?date= only) regardless of which meal it
@@ -2828,30 +3086,76 @@ class RecipeViewTests(TestCase):
         )
         self.assertContains(response, "add its ingredients")
 
-    def test_recipe_list_only_shows_the_owners_own_recipes(self):
+    def test_recipe_list_your_recipes_shows_only_the_owners_own(self):
         Recipe.objects.create(owner=self.alice, name="Alice's Bowl", servings=1)
         Recipe.objects.create(owner=self.bob, name="Bob's Bowl", servings=1)
         response = self.client.get(reverse("nutrition:recipe-list"))
-        names = [r.name for r in response.context["recipes"]]
+        names = [r.name for r in response.context["my_page"].object_list]
         self.assertIn("Alice's Bowl", names)
         self.assertNotIn("Bob's Bowl", names)
 
-    def test_recipe_list_also_shows_shared_template_recipes(self):
+    def test_recipe_list_template_recipes_are_shown_separately(self):
         """A built-in template recipe (owner=None,
         apps.nutrition.migrations' seed data) is visible to every
         user, the same as a shared Food already is — see
-        Recipe.owner's own comment."""
+        Recipe.owner's own comment — but listed in its own "Template
+        recipes" section/page, not mixed into "Your recipes"."""
         Recipe.objects.create(owner=None, name="Shared Template Bowl", servings=1)
         response = self.client.get(reverse("nutrition:recipe-list"))
-        names = [r.name for r in response.context["recipes"]]
-        self.assertIn("Shared Template Bowl", names)
+        my_names = [r.name for r in response.context["my_page"].object_list]
+        template_names = [r.name for r in response.context["template_page"].object_list]
+        self.assertNotIn("Shared Template Bowl", my_names)
+        self.assertIn("Shared Template Bowl", template_names)
 
-    def test_recipe_list_search_filters_by_name(self):
+    def test_recipe_list_search_filters_both_sections_by_name(self):
         Recipe.objects.create(owner=self.alice, name="Chicken Bowl", servings=1)
         Recipe.objects.create(owner=self.alice, name="Rice Salad", servings=1)
+        Recipe.objects.create(owner=None, name="Chicken Template", servings=1)
+        Recipe.objects.create(owner=None, name="Rice Template", servings=1)
         response = self.client.get(reverse("nutrition:recipe-list"), {"q": "chicken"})
-        names = [r.name for r in response.context["recipes"]]
-        self.assertEqual(names, ["Chicken Bowl"])
+        my_names = [r.name for r in response.context["my_page"].object_list]
+        template_names = [r.name for r in response.context["template_page"].object_list]
+        self.assertEqual(my_names, ["Chicken Bowl"])
+        self.assertEqual(template_names, ["Chicken Template"])
+
+    def test_recipe_list_your_recipes_paginates_five_per_page_most_recent_first(self):
+        for i in range(7):
+            Recipe.objects.create(owner=self.alice, name=f"Recipe {i}", servings=1)
+        response = self.client.get(reverse("nutrition:recipe-list"))
+        page_one_names = [r.name for r in response.context["my_page"].object_list]
+        self.assertEqual(
+            page_one_names, ["Recipe 6", "Recipe 5", "Recipe 4", "Recipe 3", "Recipe 2"],
+        )
+        response = self.client.get(reverse("nutrition:recipe-list"), {"mine_page": "2"})
+        page_two_names = [r.name for r in response.context["my_page"].object_list]
+        self.assertEqual(page_two_names, ["Recipe 1", "Recipe 0"])
+
+    def test_pagination_links_carry_a_same_page_anchor(self):
+        """Regression: Previous/Next were plain full-page links with
+        no #anchor, so clicking one reset scroll to the very top of
+        the page instead of staying at the pagination controls the
+        user just clicked."""
+        for i in range(7):
+            Recipe.objects.create(owner=self.alice, name=f"Recipe {i}", servings=1)
+        response = self.client.get(reverse("nutrition:recipe-list"))
+        self.assertContains(response, "mine_page=2&template_page=1#my-recipes-pagination")
+
+    def test_recipe_list_template_recipes_paginate_independently_of_your_recipes(self):
+        Recipe.objects.filter(owner__isnull=True).delete()
+        for i in range(3):
+            Recipe.objects.create(owner=self.alice, name=f"Mine {i}", servings=1)
+        page_size = RecipeListView.template_recipes_page_size
+        total_templates = page_size + 5
+        for i in range(total_templates):
+            Recipe.objects.create(owner=None, name=f"Template {i:02d}", servings=1)
+        response = self.client.get(
+            reverse("nutrition:recipe-list"), {"mine_page": "1", "template_page": "2"}
+        )
+        # my_page is unaffected by template_page's own page number.
+        my_names = [r.name for r in response.context["my_page"].object_list]
+        self.assertEqual(len(my_names), 3)
+        template_names = [r.name for r in response.context["template_page"].object_list]
+        self.assertEqual(len(template_names), 5)
 
     def test_recipe_list_shows_calories_per_serving(self):
         recipe = Recipe.objects.create(owner=self.alice, name="Bowl", servings=2)
@@ -2884,18 +3188,25 @@ class RecipeViewTests(TestCase):
         # production traffic only ever pays once, the very first
         # request this instance ever serves.
         SeoSettings.objects.create(pk=1)
-        # Session auth (2) + the recipe queryset + one bulk ingredient
-        # query + base.html's training-FAB in-progress-session check +
-        # apps.core.context_processors.seo's own settings lookup + four
-        # more from apps.social.context_processors.social_badge (one
-        # cheap EXISTS each: pending friend requests, pending group
-        # invites, unread direct messages, unread group messages) —
-        # every context processor here runs on every page regardless
-        # of recipe count, not one query per recipe. A future unrelated
-        # query added to this view is fine to bump this number a
-        # little; a query count that scales with the number of recipes
-        # is the actual regression to catch.
-        with self.assertNumQueries(10):
+        # Session auth (2) + one COUNT and one SELECT per independent
+        # Paginator ("your recipes"/"template recipes" — RecipeListView
+        # docstring) + one bulk ingredient query + base.html's
+        # training-FAB in-progress-session check + apps.core.
+        # context_processors.seo's own settings lookup + four more
+        # from apps.social.context_processors.social_badge (one cheap
+        # EXISTS each: pending friend requests, pending group invites,
+        # unread direct messages, unread group messages) — every
+        # context processor here runs on every page regardless of
+        # recipe count, not one query per recipe. This test's own
+        # setUp clears every template recipe, so the template
+        # Paginator's own SELECT never actually reaches the database
+        # (Django recognizes an empty `[0:0]` slice and skips the
+        # query entirely) — only its COUNT does, hence 2 fixed queries
+        # for pagination rather than 4. A future unrelated query added
+        # to this view is fine to bump this number a little; a query
+        # count that scales with the number of recipes is the actual
+        # regression to catch.
+        with self.assertNumQueries(12):
             self.client.get(reverse("nutrition:recipe-list"))
 
     def test_the_back_link_returns_to_the_nutrition_dashboard(self):
@@ -2909,6 +3220,17 @@ class RecipeViewTests(TestCase):
         recipe = Recipe.objects.create(owner=self.bob, name="Bob's Bowl", servings=1)
         response = self.client.get(reverse("nutrition:recipe-detail", args=[recipe.pk]))
         self.assertEqual(response.status_code, 404)
+
+    def test_an_ingredients_cached_price_shows_next_to_its_calories(self):
+        self.chicken.price_amount = Decimal("3.21")
+        self.chicken.price_currency = "EUR"
+        self.chicken.save()
+        recipe = Recipe.objects.create(owner=self.alice, name="Bowl", servings=2)
+        RecipeIngredient.objects.create(
+            recipe=recipe, food=self.chicken, quantity=Decimal("100")
+        )
+        response = self.client.get(reverse("nutrition:recipe-detail", args=[recipe.pk]))
+        self.assertContains(response, "3.21 EUR")
 
     def test_the_camera_barcode_scanner_is_wired_up_on_the_ingredient_search_page(self):
         recipe = Recipe.objects.create(owner=self.alice, name="Bowl", servings=2)
@@ -2929,6 +3251,21 @@ class RecipeViewTests(TestCase):
         )
         self.assertContains(response, "Most used")
         self.assertContains(response, self.chicken.name)
+
+    def test_search_comes_before_most_used_foods(self):
+        """Regression: the search/barcode box used to render below
+        "Most used", the same ordering bug already fixed on the food
+        diary's own add-food page — moved above it here too."""
+        other_recipe = Recipe.objects.create(owner=self.alice, name="Other", servings=1)
+        RecipeIngredient.objects.create(
+            recipe=other_recipe, food=self.chicken, quantity=Decimal("100")
+        )
+        recipe = Recipe.objects.create(owner=self.alice, name="Bowl", servings=2)
+        response = self.client.get(
+            reverse("nutrition:recipe-ingredient-create", args=[recipe.pk])
+        )
+        html = response.content.decode()
+        self.assertLess(html.index("Search foods"), html.index("Most used"))
 
     def test_adding_and_removing_an_ingredient(self):
         recipe = Recipe.objects.create(owner=self.alice, name="Bowl", servings=2)
@@ -3185,6 +3522,21 @@ class BuildAndApplyDietPlanTests(TestCase):
             self.assertEqual(meal.items.count(), 1)
         self.assertEqual(sum(m.target_calories for m in plan.meals.all()), 1600)
 
+    def test_auto_fill_false_creates_the_same_meals_with_zero_items(self):
+        """"Start from scratch" — asked for directly: a plan should be
+        creatable with no auto-generated suggestion in it at all,
+        ready for the user to fill in themselves."""
+        plan = diet_builder.build_diet_plan(
+            self.alice, name="Scratch plan", goal=None, target_calories=1600,
+            target_protein_grams=Decimal("120"), target_carbohydrate_grams=Decimal("150"),
+            target_fat_grams=Decimal("40"), meal_slots=[self.breakfast, self.lunch],
+            auto_fill=False,
+        )
+        self.assertEqual(plan.meals.count(), 2)
+        for meal in plan.meals.all():
+            self.assertEqual(meal.items.count(), 0)
+        self.assertEqual(sum(m.target_calories for m in plan.meals.all()), 1600)
+
     def test_building_a_new_plan_deactivates_the_previous_one(self):
         first = diet_builder.build_diet_plan(
             self.alice, name="First", goal=None, target_calories=1600,
@@ -3265,6 +3617,21 @@ class DietPlanViewTests(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertTrue(DietPlan.objects.filter(user=self.alice, name="My plan").exists())
 
+    def test_posting_with_start_from_scratch_creates_a_plan_with_no_items(self):
+        response = self.client.post(
+            reverse("nutrition:diet-plan-create"),
+            {
+                "name": "Scratch plan", "target_calories": "1600",
+                "target_protein_grams": "120", "target_carbohydrate_grams": "150",
+                "target_fat_grams": "40", "meal_slots": [self.breakfast.pk],
+                "start_from_scratch": "on",
+            },
+        )
+        self.assertEqual(response.status_code, 302)
+        plan = DietPlan.objects.get(user=self.alice, name="Scratch plan")
+        self.assertEqual(plan.meals.count(), 1)
+        self.assertEqual(plan.meals.first().items.count(), 0)
+
     def test_another_users_plan_is_a_404(self):
         plan = DietPlan.objects.create(
             user=self.bob, name="Bob's plan", target_calories=2000,
@@ -3337,6 +3704,27 @@ class DietPlanViewTests(TestCase):
         )
         self.assertContains(response, "Most used")
         self.assertContains(response, "Rice")
+
+    def test_search_comes_before_most_used_foods(self):
+        """Regression: same ordering bug already fixed on the food
+        diary's own add-food page and the recipe ingredient page —
+        search/barcode used to render below "Most used" here too."""
+        rice = make_food(self.alice, name="Rice", calories=130)
+        DiaryEntry.objects.create(
+            user=self.alice, date=date(2026, 1, 1), meal_slot=self.breakfast,
+            food=rice, quantity=Decimal("100"),
+        )
+        plan = diet_builder.build_diet_plan(
+            self.alice, name="Plan", goal=None, target_calories=800,
+            target_protein_grams=Decimal("1"), target_carbohydrate_grams=Decimal("1"),
+            target_fat_grams=Decimal("1"), meal_slots=[self.breakfast],
+        )
+        meal = plan.meals.first()
+        response = self.client.get(
+            reverse("nutrition:diet-plan-meal-item-add", args=[plan.pk, meal.pk])
+        )
+        html = response.content.decode()
+        self.assertLess(html.index("Search foods"), html.index("Most used"))
 
     def test_deleting_an_item_removes_only_that_item(self):
         plan = diet_builder.build_diet_plan(
@@ -3441,6 +3829,38 @@ class DietPlanViewTests(TestCase):
             self.client.post(reverse("nutrition:diet-plan-log", args=[plan.pk])),
         ]:
             self.assertEqual(response.status_code, 302)
+
+    def test_totals_widget_shows_so_far_and_left_against_the_plans_target(self):
+        plan = diet_builder.build_diet_plan(
+            self.alice, name="Plan", goal=None, target_calories=2000,
+            target_protein_grams=Decimal("150"), target_carbohydrate_grams=Decimal("200"),
+            target_fat_grams=Decimal("60"), meal_slots=[self.breakfast],
+            auto_fill=False,
+        )
+        meal = plan.meals.first()
+        meal.items.create(food=self.chicken, quantity=Decimal("100"), order=0)
+        response = self.client.get(reverse("nutrition:diet-plan-detail", args=[plan.pk]))
+        self.assertContains(response, "Totals")
+        # self.chicken is 165 kcal/100g (make_food's own default) — so
+        # far 165 of a 2000 target leaves 1835.
+        self.assertContains(response, "165 / 2000")
+        self.assertContains(response, "1835")
+
+    def test_totals_widget_appears_once_per_weekday_for_a_weekly_plan(self):
+        plan = diet_builder.build_diet_plan(
+            self.alice, name="Weekly plan", goal=None, target_calories=2000,
+            target_protein_grams=Decimal("150"), target_carbohydrate_grams=Decimal("200"),
+            target_fat_grams=Decimal("60"), meal_slots=[self.breakfast],
+            is_weekly=True, auto_fill=False,
+        )
+        response = self.client.get(reverse("nutrition:diet-plan-detail", args=[plan.pk]))
+        # count() on the bare class name would also match each
+        # widget's own conditional "diet-plan-totals-widget-expanded"
+        # modifier class in its :class="..." binding — anchor on the
+        # exact opening-tag class attribute instead.
+        self.assertEqual(
+            response.content.decode().count('class="card diet-plan-totals-widget"'), 7
+        )
 
 
 class DietPlanToggleActiveViewTests(TestCase):

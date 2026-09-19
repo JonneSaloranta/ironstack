@@ -18,7 +18,7 @@ from django.db import transaction
 from django.db.models import Q
 from django.utils import timezone
 
-from . import energy, macros, openfoodfacts
+from . import energy, macros, open_prices, openfoodfacts
 from .models import (
     DietPlan,
     Food,
@@ -32,6 +32,12 @@ from .models import (
 # food imported from OFF is trusted before being transparently
 # re-fetched on next use, instead of a periodic bulk re-sync.
 OPENFOODFACTS_STALENESS_DAYS = 14
+
+# See docs/NUTRITION.md "Open Prices integration" — shorter than
+# OPENFOODFACTS_STALENESS_DAYS above: a product's nutrition facts
+# barely change once published, but what it actually costs in a shop
+# does, far more often.
+OPEN_PRICES_STALENESS_DAYS = 7
 
 
 @transaction.atomic
@@ -215,6 +221,54 @@ def import_or_refresh_food_from_off(barcode, *, force=False):
         existing.save()
         return existing
     return Food.objects.create(owner=None, **parsed)
+
+
+def _price_is_stale(food):
+    if food.price_synced_at is None:
+        return True
+    return (timezone.now() - food.price_synced_at).days >= OPEN_PRICES_STALENESS_DAYS
+
+
+def refresh_food_price(food, *, force=False):
+    """Refreshes `food`'s cached `price_amount`/`price_currency`/
+    `price_sample_count` from Open Prices if they've gone stale — see
+    docs/NUTRITION.md "Open Prices integration": lazy, on-demand
+    refresh on next use (`FoodDetailView`), the same shape
+    `import_or_refresh_food_from_off` above already uses for nutrition
+    data, gated on the same `OpenFoodFactsSettings.enabled` switch
+    (Open Prices is run by the same organization as OFF's core API,
+    and an operator turning off outbound OFF-ecosystem requests means
+    both, not just one). A no-op for any food with no `off_id` — there
+    is no barcode to look a price up by for a hand-entered food.
+
+    `force=True` skips the staleness check and always re-fetches —
+    used only by `apps.nutrition.admin.FoodAdmin`'s "Refresh selected
+    foods' prices from Open Prices" action, an explicit admin-chosen
+    selection, never a scheduled or unconditional bulk re-sync."""
+    if food.off_id is None or not OpenFoodFactsSettings.load().enabled:
+        return food
+    if not force and not _price_is_stale(food):
+        return food
+
+    try:
+        raw_prices = open_prices.get_prices_for_barcode(food.off_id)
+    except open_prices.OpenPricesError:
+        # A flaky third-party API must never break viewing a food
+        # that already has a (merely stale) cached price to fall back on.
+        return food
+
+    summary = open_prices.summarize_prices(raw_prices)
+    food.price_synced_at = timezone.now()
+    if summary is None:
+        food.price_amount = None
+        food.price_currency = ""
+        food.price_sample_count = 0
+    else:
+        food.price_amount = summary["amount"]
+        food.price_currency = summary["currency"]
+        food.price_sample_count = summary["sample_count"]
+    food.save()
+    return food
 
 
 @transaction.atomic

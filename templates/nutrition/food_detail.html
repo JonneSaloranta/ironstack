@@ -10,6 +10,11 @@
 
 {% if food.image_url %}
   <img class="food-detail-image" src="{{ food.image_url }}" alt="">
+{% elif food.off_id %}
+  <p class="text-muted">
+    {% trans "No photo for this product yet." %}
+    <a href="https://world.openfoodfacts.org/product/{{ food.off_id }}" target="_blank" rel="noopener noreferrer">{% trans "View it on OpenFoodFacts" %}</a>
+  </p>
 {% endif %}
 
 <div class="card">
@@ -38,11 +43,20 @@
   </table>
 </div>
 
-{% if food.quantity or food.ingredients_text or food.labels or food.allergens or food.categories %}
+{% if food.quantity or food.ingredients_text or food.labels or food.allergens or food.categories or food.price_amount %}
   <div class="card">
     <strong>{% trans "Product information" %}</strong>
     <table class="set-table">
       <tbody>
+        {% if food.price_amount %}
+          <tr>
+            <td>{% trans "Typical price" %}</td>
+            <td>
+              {{ food.price_amount }} {{ food.price_currency }}
+              <span class="text-muted">{% blocktrans with reports=food.price_sample_count %}(median of {{ reports }} recent Open Prices reports){% endblocktrans %}</span>
+            </td>
+          </tr>
+        {% endif %}
         {% if food.quantity %}
           <tr><td>{% trans "Package size" %}</td><td>{{ food.quantity }}</td></tr>
         {% endif %}
@@ -61,6 +75,15 @@
       <p class="text-muted"><strong>{% trans "Ingredients" %}:</strong> {{ food.ingredients_text }}</p>
     {% endif %}
   </div>
+{% endif %}
+
+{% if food.off_id %}
+  <p class="text-muted">
+    {% trans "Spotted something wrong, or want to help other users?" %}
+    <a href="https://world.openfoodfacts.org/cgi/product.pl?type=edit&code={{ food.off_id }}" target="_blank" rel="noopener noreferrer">{% trans "Edit this product on OpenFoodFacts" %}</a>
+    {% trans "or" %}
+    <a href="https://prices.openfoodfacts.org/app/products/{{ food.off_id }}" target="_blank" rel="noopener noreferrer">{% trans "add a price on Open Prices" %}</a>.
+  </p>
 {% endif %}
 
 <p><a class="button-secondary" href="{% url 'nutrition:food-list' %}">&larr; {% trans "Back to foods" %}</a></p>

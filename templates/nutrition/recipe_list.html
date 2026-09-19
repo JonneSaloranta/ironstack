@@ -18,12 +18,12 @@
   <button type="submit">{% trans "Search" %}</button>
 </form>
 
-{% if recipes %}
-  {% for recipe in recipes %}
+<h2>{% trans "Your recipes" %}</h2>
+{% if my_page.object_list %}
+  {% for recipe in my_page %}
     <div class="card card-action-row">
       <div>
         <strong>{% trans recipe.name %}</strong>
-        {% if not recipe.owner_id %}<span class="tag tag-outline">{% trans "Template" %}</span>{% endif %}
         {% if recipe.meal_slot %}<span class="tag tag-outline">{{ recipe.meal_slot.name|translate_content }}</span>{% endif %}
         <p class="text-muted">
           {{ recipe.servings }} {% trans "servings" %}
@@ -33,6 +33,17 @@
       <a class="button-secondary" href="{% url 'nutrition:recipe-detail' recipe.pk %}">{% trans "Open" %}</a>
     </div>
   {% endfor %}
+  {% if my_page.paginator.num_pages > 1 %}
+    <nav class="pagination" id="my-recipes-pagination" aria-label="{% trans "Your recipes pages" %}">
+      {% if my_page.has_previous %}
+        <a class="button-secondary" href="?q={{ query }}&mine_page={{ my_page.previous_page_number }}&template_page={{ template_page.number }}#my-recipes-pagination">{% trans "Previous" %}</a>
+      {% endif %}
+      <span>{% blocktrans with number=my_page.number total=my_page.paginator.num_pages %}Page {{ number }} of {{ total }}{% endblocktrans %}</span>
+      {% if my_page.has_next %}
+        <a class="button-secondary" href="?q={{ query }}&mine_page={{ my_page.next_page_number }}&template_page={{ template_page.number }}#my-recipes-pagination">{% trans "Next" %}</a>
+      {% endif %}
+    </nav>
+  {% endif %}
 {% elif query %}
   <div class="card empty-state">
     <p>{% trans "No recipes match your search." %}</p>
@@ -42,6 +53,38 @@
     <p>{% trans "No recipes yet." %}</p>
   </div>
 {% endif %}
+
+<h2>{% trans "Template recipes" %}</h2>
+<div class="card">
+  {% if template_page.object_list %}
+    {% for recipe in template_page %}
+      <div class="card-action-row" style="padding:0.5rem 0;">
+        <div>
+          <strong>{% trans recipe.name %}</strong>
+          {% if recipe.meal_slot %}<span class="tag tag-outline">{{ recipe.meal_slot.name|translate_content }}</span>{% endif %}
+          <p class="text-muted">
+            {{ recipe.servings }} {% trans "servings" %}
+            — {% blocktrans with calories=recipe.per_serving.calories|floatformat:0 %}{{ calories }} kcal/serving{% endblocktrans %}
+          </p>
+        </div>
+        <a class="button-secondary" href="{% url 'nutrition:recipe-detail' recipe.pk %}">{% trans "Open" %}</a>
+      </div>
+    {% endfor %}
+    {% if template_page.paginator.num_pages > 1 %}
+      <nav class="pagination" id="template-recipes-pagination" aria-label="{% trans "Template recipe pages" %}">
+        {% if template_page.has_previous %}
+          <a class="button-secondary" href="?q={{ query }}&template_page={{ template_page.previous_page_number }}&mine_page={{ my_page.number }}#template-recipes-pagination">{% trans "Previous" %}</a>
+        {% endif %}
+        <span>{% blocktrans with number=template_page.number total=template_page.paginator.num_pages %}Page {{ number }} of {{ total }}{% endblocktrans %}</span>
+        {% if template_page.has_next %}
+          <a class="button-secondary" href="?q={{ query }}&template_page={{ template_page.next_page_number }}&mine_page={{ my_page.number }}#template-recipes-pagination">{% trans "Next" %}</a>
+        {% endif %}
+      </nav>
+    {% endif %}
+  {% else %}
+    <p class="text-muted">{% trans "No template recipes match your search." %}</p>
+  {% endif %}
+</div>
 
 <p><a class="button-secondary" href="{% url 'nutrition:dashboard' %}">&larr; {% trans "Back to nutrition" %}</a></p>
 {% endblock %}

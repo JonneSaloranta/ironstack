@@ -68,14 +68,20 @@ class FoodAdmin(admin.ModelAdmin):
     14-day staleness gate to trigger on next use. Still an explicit,
     admin-chosen selection, not the unconditional bulk re-sync this
     integration was deliberately scoped away from in the first place
-    (docs/NUTRITION.md "OpenFoodFacts integration")."""
+    (docs/NUTRITION.md "OpenFoodFacts integration").
+
+    `refresh_selected_prices` — the same shape, for Open Prices
+    (docs/NUTRITION.md "Open Prices integration") instead of OFF's
+    core product API: force-refreshes selected foods' cached
+    `price_amount`/`price_currency` immediately rather than waiting
+    for the normal 7-day staleness gate."""
 
     list_display = [
         "name", "brand", "owner", "calories", "nutri_score", "nova_group", "off_id", "active",
     ]
     list_filter = ["active", "nutri_score", "nova_group"]
     search_fields = ["name", "brand", "off_id"]
-    actions = ["merge_selected_foods", "refresh_selected_from_off"]
+    actions = ["merge_selected_foods", "refresh_selected_from_off", "refresh_selected_prices"]
 
     @admin.action(description=_("Refresh selected foods from OpenFoodFacts"))
     def refresh_selected_from_off(self, request, queryset):
@@ -103,6 +109,34 @@ class FoodAdmin(admin.ModelAdmin):
         self.message_user(
             request,
             _("Refreshed %(refreshed)d of %(total)d food(s) from OpenFoodFacts.")
+            % {"refreshed": refreshed, "total": len(off_foods)},
+        )
+
+    @admin.action(description=_("Refresh selected foods' prices from Open Prices"))
+    def refresh_selected_prices(self, request, queryset):
+        # force=True bypasses the normal 7-day staleness gate
+        # (docs/NUTRITION.md "Open Prices integration") — an explicit
+        # admin request for these specific rows right now, not the
+        # unconditional bulk re-sync this integration was deliberately
+        # scoped away from, same reasoning as refresh_selected_from_off
+        # above.
+        off_foods = list(queryset.exclude(off_id__isnull=True).exclude(off_id=""))
+        if not off_foods:
+            self.message_user(
+                request,
+                _("None of the selected foods were imported from OpenFoodFacts."),
+                level=messages.WARNING,
+            )
+            return
+        refreshed = 0
+        for food in off_foods:
+            previous_synced_at = food.price_synced_at
+            result = services.refresh_food_price(food, force=True)
+            if result.price_synced_at != previous_synced_at:
+                refreshed += 1
+        self.message_user(
+            request,
+            _("Refreshed %(refreshed)d of %(total)d food price(s) from Open Prices.")
             % {"refreshed": refreshed, "total": len(off_foods)},
         )
 

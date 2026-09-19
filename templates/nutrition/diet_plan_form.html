@@ -6,7 +6,7 @@
   <h1 style="margin:0;">{% trans "Build a diet plan" %}</h1>
 </div>
 {% include "nutrition/_subnav.html" %}
-<p class="text-muted">{% trans "We'll suggest one food or recipe per meal from your own library, scaled to fit — you can swap any of them afterward." %}</p>
+<p class="text-muted">{% trans "We'll suggest one food or recipe per meal from your own library, scaled to fit — you can swap any of them afterward. Or start from scratch below to skip the suggestions and build it entirely yourself." %}</p>
 
 <form class="card" method="post">
   {% csrf_token %}
@@ -19,7 +19,7 @@
       {% if field.errors %}<p class="field-error">{{ field.errors|striptags }}</p>{% endif %}
     </div>
   {% endfor %}
-  <button type="submit">{% trans "Generate plan" %}</button>
+  <button type="submit">{% trans "Create plan" %}</button>
 </form>
 
 <p><a class="button-secondary" href="{% url 'nutrition:diet-plan-list' %}">&larr; {% trans "Back to diet plans" %}</a></p>

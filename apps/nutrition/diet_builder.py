@@ -137,6 +137,7 @@ def build_diet_plan(
     target_fat_grams,
     meal_slots,
     is_weekly=False,
+    auto_fill=True,
 ):
     """Creates a new active DietPlan (deactivating any previous one —
     old plans are kept, not deleted, docs/NUTRITION.md "DietPlan"),
@@ -145,6 +146,18 @@ def build_diet_plan(
     with no suggestion available (nothing in the user's library yet)
     is still created, just with zero items — the user fills it in
     manually rather than the whole plan failing to generate.
+
+    `auto_fill=False` ("start from scratch," asked for directly —
+    every plan used to force an auto-generated suggestion into each
+    meal with nothing letting a user who just wants an empty
+    day/week to fill in themselves skip that) creates the exact same
+    `DietPlan`/`DietPlanMeal` rows — same calorie/macro targets, same
+    per-meal calorie shares — but never calls
+    `suggest_item_for_calorie_budget` at all, so every meal starts
+    with zero items. Nothing else about the plan (applying it,
+    swapping/adding items afterward) treats an empty meal any
+    differently than one an auto-fill suggestion happened to leave
+    empty already.
 
     `is_weekly=False` (the default) generates exactly one day's worth
     of meals, applied to whatever date apply_diet_plan is later given
@@ -195,6 +208,8 @@ def build_diet_plan(
                 order=order,
                 weekday=weekday,
             )
+            if not auto_fill:
+                continue
             suggestion = suggest_item_for_calorie_budget(
                 user,
                 Decimal(share),

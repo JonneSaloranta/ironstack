@@ -344,6 +344,14 @@ class DietPlanForm(forms.Form):
             "(for example) aren't all identical."
         ),
     )
+    start_from_scratch = forms.BooleanField(
+        required=False,
+        label=_("Start from scratch — leave every meal empty"),
+        help_text=_(
+            "Skips the automatic suggestions above and just creates each meal ready for "
+            "you to fill in yourself, on the plan's own page afterward."
+        ),
+    )
 
     def __init__(self, *args, user, **kwargs):
         from . import services

@@ -23,13 +23,15 @@
 {% endif %}
 
 {% comment %}
-  meals is already ordered by weekday (DietPlanMeal.Meta.ordering), so
-  regroup's "consecutive equal values" requirement is satisfied without
-  a separate sort here. weekday_name is None for a one-day plan, so
-  the whole thing collapses to a single unlabeled group — the exact
-  same flat list this looked like before weekly plans existed.
+  day_groups (apps.nutrition.views._diet_plan_day_groups) is already
+  ordered by weekday (DietPlanMeal.Meta.ordering) — each entry shaped
+  like Django's own {% regroup %} output (.grouper/.list) plus that
+  day's own totals-so-far/remaining-vs-target, which {% regroup %}
+  itself has no way to carry. weekday_name (.grouper) is None for a
+  one-day plan, so the whole thing collapses to a single unlabeled
+  group — the exact same flat list this looked like before weekly
+  plans existed.
 {% endcomment %}
-{% regroup meals by weekday_name as day_groups %}
 {% for day_group in day_groups %}
   {% if plan.is_weekly %}
     {% comment %}
@@ -49,12 +51,14 @@
         {% for meal in day_group.list %}
           {% include "nutrition/_diet_plan_meal_card.html" with meal=meal plan=plan %}
         {% endfor %}
+        {% include "nutrition/_diet_plan_totals_widget.html" with plan=plan day_group=day_group %}
       </div>
     </div>
   {% else %}
     {% for meal in day_group.list %}
       {% include "nutrition/_diet_plan_meal_card.html" with meal=meal plan=plan %}
     {% endfor %}
+    {% include "nutrition/_diet_plan_totals_widget.html" with plan=plan day_group=day_group %}
   {% endif %}
 {% endfor %}
 

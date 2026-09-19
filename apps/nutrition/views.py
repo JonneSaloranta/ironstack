@@ -6,6 +6,7 @@ as plain strings since the session is JSON-serialized) and committed
 atomically only on the last step's POST.
 """
 
+import itertools
 from datetime import date
 from decimal import Decimal
 
@@ -555,6 +556,7 @@ class FoodDetailView(LoginRequiredMixin, View):
 
     def get(self, request, pk):
         food = _viewable_food_or_404(request, pk)
+        food = services.refresh_food_price(food)
         return render(request, self.template_name, {"food": food})
 
 
@@ -834,58 +836,89 @@ def diary_entry_delete(request, pk):
     return redirect("nutrition:diary-day", target_date=target_date.isoformat())
 
 
-class RecipeListView(LoginRequiredMixin, ListView):
-    template_name = "nutrition/recipe_list.html"
-    context_object_name = "recipes"
+def _annotate_recipes_with_per_serving(recipes):
+    """Per-serving calories at a glance, without opening each recipe —
+    the same reason food_list.html shows calories directly rather
+    than making every recipe a guess until opened. Computed as one
+    bulk query across every listed recipe's ingredients (not
+    services.recipe_per_serving_nutrition called once per recipe in a
+    loop, which would be a real N+1 here — this is a *list* of
+    recipes, unlike that function's other call sites which each only
+    ever look at one recipe at a time). Mutates each recipe in place
+    (sets `.per_serving`) rather than returning a parallel structure,
+    since every caller immediately renders the same recipe objects."""
+    from decimal import Decimal
 
-    def get_queryset(self):
-        from django.db.models import Q
+    from .models import RecipeIngredient
+
+    totals_by_recipe = {}
+    ingredients = RecipeIngredient.objects.filter(
+        recipe_id__in=[recipe.pk for recipe in recipes]
+    ).select_related("food")
+    for ingredient in ingredients:
+        totals_by_recipe[ingredient.recipe_id] = totals_by_recipe.get(
+            ingredient.recipe_id, services.ZERO_NUTRITION
+        ) + services.scale_nutrition(ingredient.food, ingredient.quantity)
+    for recipe in recipes:
+        total = totals_by_recipe.get(recipe.pk, services.ZERO_NUTRITION)
+        servings = Decimal(recipe.servings) if recipe.servings else Decimal("1")
+        recipe.per_serving = total.scaled_by(Decimal("1") / servings)
+
+
+class RecipeListView(LoginRequiredMixin, View):
+    """Two independent, separately-paginated lists on one page, asked
+    for directly: a user's own recipes (most recent first — this is
+    the list someone actively adds to, so what they just created is
+    what they're most likely looking for) above the built-in template
+    recipes (alphabetical — a fixed, shared reference list, browsed
+    rather than added to), each in its own section so paginating one
+    never resets the other's page. A plain View rather than ListView
+    since ListView's pagination machinery only ever handles one
+    object_list/page_obj pair."""
+
+    template_name = "nutrition/recipe_list.html"
+    my_recipes_page_size = 5
+    # Smaller than FoodListView's own 20/page — the built-in template
+    # library is currently ~18 recipes, so 20/page would never
+    # actually show a second page at all, making "paginated" true in
+    # code but invisible in practice.
+    template_recipes_page_size = 10
+
+    def get(self, request):
+        from django.core.paginator import Paginator
 
         from .models import Recipe
 
-        # Same owner-or-shared visibility as everywhere else a shared
-        # Food shows up (e.g. DietPlanItemForm) — a built-in template
-        # recipe (owner=None) is listed for every user, not just its
-        # own list of ones they wrote themselves.
-        qs = Recipe.objects.filter(
-            Q(owner=self.request.user) | Q(owner__isnull=True)
-        ).select_related("meal_slot").order_by("name")
-        query = self.request.GET.get("q", "").strip()
+        query = request.GET.get("q", "").strip()
+
+        my_recipes_qs = Recipe.objects.filter(owner=request.user).select_related(
+            "meal_slot"
+        ).order_by("-created_at")
+        template_recipes_qs = Recipe.objects.filter(owner__isnull=True).select_related(
+            "meal_slot"
+        ).order_by("name")
         if query:
-            qs = qs.filter(name__icontains=query)
-        return qs
+            my_recipes_qs = my_recipes_qs.filter(name__icontains=query)
+            template_recipes_qs = template_recipes_qs.filter(name__icontains=query)
 
-    def get_context_data(self, **kwargs):
-        from decimal import Decimal
+        my_page = Paginator(my_recipes_qs, self.my_recipes_page_size).get_page(
+            request.GET.get("mine_page")
+        )
+        template_page = Paginator(
+            template_recipes_qs, self.template_recipes_page_size
+        ).get_page(request.GET.get("template_page"))
 
-        from .models import RecipeIngredient
+        _annotate_recipes_with_per_serving(list(my_page) + list(template_page))
 
-        context = super().get_context_data(**kwargs)
-        context["query"] = self.request.GET.get("q", "")
-        # Per-serving calories at a glance, without opening each
-        # recipe — the same reason food_list.html shows calories
-        # directly rather than making every recipe a guess until
-        # opened. Computed as one bulk query across every listed
-        # recipe's ingredients (not services.recipe_per_serving_
-        # nutrition called once per recipe in a loop, which would be a
-        # real N+1 here — this is a *list* of recipes, unlike that
-        # function's other call sites which each only ever look at one
-        # recipe at a time).
-        recipes = list(context["recipes"])
-        totals_by_recipe = {}
-        ingredients = RecipeIngredient.objects.filter(
-            recipe_id__in=[recipe.pk for recipe in recipes]
-        ).select_related("food")
-        for ingredient in ingredients:
-            totals_by_recipe[ingredient.recipe_id] = totals_by_recipe.get(
-                ingredient.recipe_id, services.ZERO_NUTRITION
-            ) + services.scale_nutrition(ingredient.food, ingredient.quantity)
-        for recipe in recipes:
-            total = totals_by_recipe.get(recipe.pk, services.ZERO_NUTRITION)
-            servings = Decimal(recipe.servings) if recipe.servings else Decimal("1")
-            recipe.per_serving = total.scaled_by(Decimal("1") / servings)
-        context["recipes"] = recipes
-        return context
+        return render(
+            request,
+            self.template_name,
+            {
+                "query": query,
+                "my_page": my_page,
+                "template_page": template_page,
+            },
+        )
 
 
 class RecipeDetailView(LoginRequiredMixin, View):
@@ -1099,10 +1132,14 @@ class DietPlanListView(LoginRequiredMixin, ListView):
 class DietPlanCreateView(LoginRequiredMixin, View):
     """Step 1 (and only step — see docs/NUTRITION.md "Diet builder
     wizard") of the diet builder: one form, pre-filled from the active
-    target, generates the whole plan on submit. Review/swap happens on
-    the plan's own detail page afterward, not as further wizard steps —
-    unlike onboarding, there's nothing here that depends on an earlier
-    answer to render the next question."""
+    target, generates the whole plan on submit — or, with "start from
+    scratch" ticked, creates the same empty meal structure with no
+    auto-generated suggestions in it, asked for directly by a user who
+    wants to build a plan entirely by hand rather than swap out
+    whatever `diet_builder.build_diet_plan` guessed. Review/swap/add
+    happens on the plan's own detail page afterward either way, not as
+    further wizard steps — unlike onboarding, there's nothing here
+    that depends on an earlier answer to render the next question."""
 
     template_name = "nutrition/diet_plan_form.html"
 
@@ -1152,6 +1189,7 @@ class DietPlanCreateView(LoginRequiredMixin, View):
             target_fat_grams=form.cleaned_data["target_fat_grams"],
             meal_slots=list(form.cleaned_data["meal_slots"]),
             is_weekly=form.cleaned_data["is_weekly"],
+            auto_fill=not form.cleaned_data["start_from_scratch"],
         )
         return redirect("nutrition:diet-plan-detail", pk=plan.pk)
 
@@ -1198,10 +1236,52 @@ def _diet_plan_meals_with_nutrition(plan):
         # "So far" against the meal's own target — meaningful now that
         # a meal can hold more than the one item diet_builder
         # originally generated for it (diet_plan_meal_item_add below).
-        meal.actual_calories = sum(
-            (item.nutrition.calories for item in meal.items.all()), Decimal("0")
+        # nutrition_total is the full ScaledNutrition (not just
+        # calories) — _diet_plan_day_groups below sums these further,
+        # per day, for the plan-wide "how much is left" widget.
+        meal.nutrition_total = sum(
+            (item.nutrition for item in meal.items.all()), services.ZERO_NUTRITION
         )
+        meal.actual_calories = meal.nutrition_total.calories
     return meals
+
+
+def _diet_plan_day_groups(plan, meals):
+    """One entry per distinct day in `meals` (already ordered by
+    weekday — DietPlanMeal.Meta.ordering — so `itertools.groupby`'s
+    "consecutive equal values" requirement is satisfied without a
+    separate sort), each carrying that day's own totals-so-far and
+    how much of the plan's daily target is still left. Replaces
+    Django's `{% regroup %}` templatetag, which has no way to attach
+    extra per-group data like this on its own — every group still
+    comes out shaped as `.grouper`/`.list`, so the detail template's
+    loop barely had to change.
+
+    For a one-day plan, `meals` has exactly one distinct
+    `weekday_name` (`None`), so this produces exactly one group — the
+    "how much is left" widget (`_diet_plan_totals_widget.html`) needs
+    no separate code path for weekly vs. one-day plans, only the
+    template deciding *where* to render whichever group is currently
+    relevant (each weekday's own collapsible section for a weekly
+    plan, the one implicit section otherwise)."""
+    groups = []
+    for weekday_name, day_meals in itertools.groupby(meals, key=lambda meal: meal.weekday_name):
+        day_meals = list(day_meals)
+        totals = sum(
+            (meal.nutrition_total for meal in day_meals), services.ZERO_NUTRITION
+        )
+        groups.append({
+            "grouper": weekday_name,
+            "list": day_meals,
+            "totals": totals,
+            "remaining_calories": plan.target_calories - totals.calories,
+            "remaining_protein_grams": plan.target_protein_grams - totals.protein_grams,
+            "remaining_carbohydrate_grams": (
+                plan.target_carbohydrate_grams - totals.carbohydrate_grams
+            ),
+            "remaining_fat_grams": plan.target_fat_grams - totals.fat_grams,
+        })
+    return groups
 
 
 class DietPlanDetailView(LoginRequiredMixin, View):
@@ -1209,12 +1289,13 @@ class DietPlanDetailView(LoginRequiredMixin, View):
 
     def get(self, request, pk):
         plan = _owned_diet_plan_or_404(request, pk)
+        meals = _diet_plan_meals_with_nutrition(plan)
         return render(
             request,
             self.template_name,
             {
                 "plan": plan,
-                "meals": _diet_plan_meals_with_nutrition(plan),
+                "day_groups": _diet_plan_day_groups(plan, meals),
                 "log_form": LogDietPlanForm(initial={"date": timezone.localdate()}),
             },
         )
@@ -1333,10 +1414,15 @@ def diet_plan_log(request, pk):
         # visible rather than silently bouncing back to a page that
         # looks identical to before the submit, which left the user
         # with no idea anything went wrong.
+        meals = _diet_plan_meals_with_nutrition(plan)
         return render(
             request,
             "nutrition/diet_plan_detail.html",
-            {"plan": plan, "meals": _diet_plan_meals_with_nutrition(plan), "log_form": form},
+            {
+                "plan": plan,
+                "day_groups": _diet_plan_day_groups(plan, meals),
+                "log_form": form,
+            },
         )
     target_date = form.cleaned_data["date"]
     created = diet_builder.apply_diet_plan(plan, target_date)

@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: IronStack\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-18 21:22+0000\n"
+"POT-Creation-Date: 2026-09-19 01:37+0000\n"
 "Language: sv\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -177,12 +177,12 @@ msgstr ""
 "om du har en."
 
 #: apps/accounts/forms.py:344 apps/accounts/forms.py:649
-#: apps/nutrition/forms.py:39 apps/nutrition/forms.py:432
+#: apps/nutrition/forms.py:39 apps/nutrition/forms.py:440
 msgid "Height (cm)"
 msgstr "Längd (cm)"
 
 #: apps/accounts/forms.py:344 apps/accounts/forms.py:649
-#: apps/nutrition/forms.py:39 apps/nutrition/forms.py:432
+#: apps/nutrition/forms.py:39 apps/nutrition/forms.py:440
 msgid "Height (in)"
 msgstr "Längd (in)"
 
@@ -299,7 +299,7 @@ msgstr ""
 "som helst från din profil."
 
 #: apps/accounts/forms.py:644 apps/nutrition/forms.py:40
-#: apps/nutrition/forms.py:441 apps/nutrition/forms.py:645
+#: apps/nutrition/forms.py:449 apps/nutrition/forms.py:653
 #, python-format
 msgid "Current weight (%(unit)s)"
 msgstr "Nuvarande vikt (%(unit)s)"
@@ -611,7 +611,7 @@ msgstr "Analys"
 #: apps/api/models.py:32 templates/api/key_list.html:109
 #: templates/base.html:159 templates/base.html:161
 #: templates/nutrition/dashboard.html:3 templates/nutrition/dashboard.html:6
-#: templates/nutrition/food_detail.html:16
+#: templates/nutrition/food_detail.html:21
 #: templates/nutrition/recipe_detail.html:54
 msgid "Nutrition"
 msgstr "Näring"
@@ -1746,28 +1746,38 @@ msgstr "enhetstyp"
 msgid "recorded at"
 msgstr "registrerad"
 
-#: apps/nutrition/admin.py:80
+#: apps/nutrition/admin.py:86
 msgid "Refresh selected foods from OpenFoodFacts"
 msgstr "Uppdatera valda livsmedel från OpenFoodFacts"
 
-#: apps/nutrition/admin.py:93
+#: apps/nutrition/admin.py:99 apps/nutrition/admin.py:127
 msgid "None of the selected foods were imported from OpenFoodFacts."
 msgstr "Inget av de valda livsmedlen importerades från OpenFoodFacts."
 
-#: apps/nutrition/admin.py:105
+#: apps/nutrition/admin.py:111
 #, python-format
 msgid "Refreshed %(refreshed)d of %(total)d food(s) from OpenFoodFacts."
 msgstr "Uppdaterade %(refreshed)d av %(total)d livsmedel från OpenFoodFacts."
 
-#: apps/nutrition/admin.py:109
+#: apps/nutrition/admin.py:115
+msgid "Refresh selected foods' prices from Open Prices"
+msgstr "Uppdatera priser för valda livsmedel från Open Prices"
+
+#: apps/nutrition/admin.py:139
+#, python-format
+msgid "Refreshed %(refreshed)d of %(total)d food price(s) from Open Prices."
+msgstr ""
+"Uppdaterade priser för %(refreshed)d av %(total)d livsmedel från Open Prices."
+
+#: apps/nutrition/admin.py:143
 msgid "Merge selected foods into one…"
 msgstr "Slå ihop valda livsmedel till ett…"
 
-#: apps/nutrition/admin.py:114 apps/nutrition/admin.py:142
+#: apps/nutrition/admin.py:148 apps/nutrition/admin.py:176
 msgid "Select at least two foods to merge."
 msgstr "Välj minst två livsmedel att slå ihop."
 
-#: apps/nutrition/admin.py:155
+#: apps/nutrition/admin.py:189
 #, python-format
 msgid ""
 "Merged %(count)d food(s) into “%(name)s”. Every diary entry, recipe "
@@ -1778,7 +1788,7 @@ msgstr ""
 "receptingrediens och kostplansobjekt som tidigare pekade på något av dem "
 "pekar nu på detta istället."
 
-#: apps/nutrition/admin.py:165
+#: apps/nutrition/admin.py:199
 msgid "Merge foods"
 msgstr "Slå ihop livsmedel"
 
@@ -1851,8 +1861,8 @@ msgstr ""
 msgid "Target: %(rate)s kg/week → %(calories)s kcal/day."
 msgstr "Mål: %(rate)s kg/vecka → %(calories)s kcal/dag."
 
-#: apps/nutrition/forms.py:22 apps/nutrition/forms.py:460
-#: apps/nutrition/forms.py:504 apps/nutrition/forms.py:588
+#: apps/nutrition/forms.py:22 apps/nutrition/forms.py:468
+#: apps/nutrition/forms.py:512 apps/nutrition/forms.py:596
 msgid "Biological sex"
 msgstr "Biologiskt kön"
 
@@ -1899,16 +1909,16 @@ msgstr ""
 "Används endast för att jämföra med appens egen uppskattning, aldrig som "
 "indata."
 
-#: apps/nutrition/forms.py:83 apps/nutrition/forms.py:464
-#: apps/nutrition/forms.py:562
+#: apps/nutrition/forms.py:83 apps/nutrition/forms.py:472
+#: apps/nutrition/forms.py:570
 msgid "Activity level"
 msgstr "Aktivitetsnivå"
 
-#: apps/nutrition/forms.py:95 apps/nutrition/forms.py:481
+#: apps/nutrition/forms.py:95 apps/nutrition/forms.py:489
 msgid "Goal"
 msgstr "Mål"
 
-#: apps/nutrition/forms.py:109 apps/nutrition/forms.py:648
+#: apps/nutrition/forms.py:109 apps/nutrition/forms.py:656
 #: apps/programs/forms.py:99
 #, python-format
 msgid "Target weight (%(unit)s)"
@@ -1949,15 +1959,15 @@ msgstr ""
 "— t.ex. \"100 g\" om värdena är per 100 gram."
 
 #: apps/nutrition/forms.py:193 templates/nutrition/diary_add_entry.html:55
-#: templates/nutrition/diet_plan_meal_item_form.html:18
+#: templates/nutrition/diet_plan_meal_item_form.html:16
 #: templates/nutrition/food_browse.html:25
 #: templates/nutrition/food_list.html:24
-#: templates/nutrition/recipe_ingredient_form.html:18
+#: templates/nutrition/recipe_ingredient_form.html:16
 msgid "Search foods"
 msgstr "Sök livsmedel"
 
 #: apps/nutrition/forms.py:217 apps/nutrition/forms.py:281
-#: apps/nutrition/forms.py:408
+#: apps/nutrition/forms.py:416
 msgid "Pick a food to add."
 msgstr "Välj ett livsmedel att lägga till."
 
@@ -1986,7 +1996,7 @@ msgstr "Måltid"
 msgid "Servings"
 msgstr "Portioner"
 
-#: apps/nutrition/forms.py:304 apps/nutrition/forms.py:415
+#: apps/nutrition/forms.py:304 apps/nutrition/forms.py:423
 msgid "Log for date"
 msgstr "Logga för datum"
 
@@ -1994,7 +2004,7 @@ msgstr "Logga för datum"
 msgid "Plan name"
 msgstr "Planens namn"
 
-#: apps/nutrition/forms.py:325 apps/nutrition/forms.py:480
+#: apps/nutrition/forms.py:325 apps/nutrition/forms.py:488
 #: templates/nutrition/stats.html:38
 msgid "Daily calories"
 msgstr "Dagliga kalorier"
@@ -2029,43 +2039,55 @@ msgstr ""
 "måltid som fyller varje plats varierar från dag till dag, så till exempel en "
 "veckas frukostar inte alla är identiska."
 
-#: apps/nutrition/forms.py:380
+#: apps/nutrition/forms.py:349
+msgid "Start from scratch — leave every meal empty"
+msgstr "Börja om från början — lämna varje måltid tom"
+
+#: apps/nutrition/forms.py:351
+msgid ""
+"Skips the automatic suggestions above and just creates each meal ready for "
+"you to fill in yourself, on the plan's own page afterward."
+msgstr ""
+"Hoppar över de automatiska förslagen ovan och skapar bara varje måltid redo "
+"för dig att fylla i själv, på planens egen sida efteråt."
+
+#: apps/nutrition/forms.py:388
 msgid "Pick either a food or a recipe, not both or neither."
 msgstr "Välj antingen ett livsmedel eller ett recept, inte båda eller inget."
 
-#: apps/nutrition/forms.py:461
+#: apps/nutrition/forms.py:469
 msgid "Age (years)"
 msgstr "Ålder (år)"
 
-#: apps/nutrition/forms.py:507
+#: apps/nutrition/forms.py:515
 msgid "Neck circumference"
 msgstr "Halsomkrets"
 
-#: apps/nutrition/forms.py:510 apps/nutrition/forms.py:590
+#: apps/nutrition/forms.py:518 apps/nutrition/forms.py:598
 msgid "Waist circumference"
 msgstr "Midjeomkrets"
 
-#: apps/nutrition/forms.py:517 apps/nutrition/forms.py:593
+#: apps/nutrition/forms.py:525 apps/nutrition/forms.py:601
 msgid "Hip circumference"
 msgstr "Höftomkrets"
 
-#: apps/nutrition/forms.py:536
+#: apps/nutrition/forms.py:544
 msgid "Hip circumference is required for the women's formula."
 msgstr "Höftomkrets krävs för kvinnornas formel."
 
-#: apps/nutrition/forms.py:629
+#: apps/nutrition/forms.py:637
 msgid "Current weight (kg)"
 msgstr "Nuvarande vikt (kg)"
 
-#: apps/nutrition/forms.py:632
+#: apps/nutrition/forms.py:640
 msgid "Target weight (kg)"
 msgstr "Målvikt (kg)"
 
-#: apps/nutrition/forms.py:637
+#: apps/nutrition/forms.py:645
 msgid "Rate (kg/week — negative to lose, positive to gain)"
 msgstr "Takt (kg/vecka — negativt för att gå ner, positivt för att gå upp)"
 
-#: apps/nutrition/forms.py:652
+#: apps/nutrition/forms.py:660
 #, python-format
 msgid "Rate (%(unit)s/week — negative to lose, positive to gain)"
 msgstr ""
@@ -2414,11 +2436,11 @@ msgstr ""
 msgid "Null for the built-in default meal slots."
 msgstr "Null för de inbyggda standardmåltiderna."
 
-#: apps/nutrition/models.py:528
+#: apps/nutrition/models.py:545
 msgid "Log either a food or a recipe, not both or neither."
 msgstr "Logga antingen ett livsmedel eller ett recept, inte båda eller inget."
 
-#: apps/nutrition/models.py:638
+#: apps/nutrition/models.py:655
 msgid "Use either a food or a recipe, not both or neither."
 msgstr "Använd antingen ett livsmedel eller ett recept, inte båda eller inget."
 
@@ -2450,7 +2472,7 @@ msgstr ""
 "Mål: %(target)s kg/vecka. Faktisk trend: %(actual)s kg/vecka under de "
 "senaste %(days)s dagarna. Föreslagen justering: %(delta)+d kcal/dag."
 
-#: apps/nutrition/views.py:428
+#: apps/nutrition/views.py:429
 msgid ""
 "Log a body weight measurement before changing your goal — the calorie target "
 "needs your current weight."
@@ -2458,44 +2480,44 @@ msgstr ""
 "Logga en kroppsviktsmätning innan du ändrar ditt mål — kalorimålet behöver "
 "din nuvarande vikt."
 
-#: apps/nutrition/views.py:465
+#: apps/nutrition/views.py:466
 #, python-format
 msgid "Goal updated — new target is %(calories)d kcal/day."
 msgstr "Mål uppdaterat — nytt mål är %(calories)d kcal/dag."
 
-#: apps/nutrition/views.py:729
+#: apps/nutrition/views.py:731
 msgid "Pick a date to copy this day to."
 msgstr "Välj ett datum att kopiera denna dag till."
 
-#: apps/nutrition/views.py:734
+#: apps/nutrition/views.py:736
 #, python-format
 msgid "Copied %(count)d entry to %(date)s."
 msgid_plural "Copied %(count)d entries to %(date)s."
 msgstr[0] "Kopierade %(count)d post till %(date)s."
 msgstr[1] "Kopierade %(count)d poster till %(date)s."
 
-#: apps/nutrition/views.py:740
+#: apps/nutrition/views.py:742
 msgid "Nothing to copy — that day has no entries."
 msgstr "Inget att kopiera — den dagen har inga poster."
 
-#: apps/nutrition/views.py:786 apps/nutrition/views.py:1004
-#: apps/nutrition/views.py:1313
+#: apps/nutrition/views.py:788 apps/nutrition/views.py:1037
+#: apps/nutrition/views.py:1394
 msgid "That food couldn't be imported — try again."
 msgstr "Det gick inte att importera detta livsmedel — försök igen."
 
-#: apps/nutrition/views.py:946
+#: apps/nutrition/views.py:979
 #, python-format
 msgid "\"%(name)s\" created — now add its ingredients below."
 msgstr "\"%(name)s\" skapad — lägg till dess ingredienser nedan."
 
-#: apps/nutrition/views.py:1345
+#: apps/nutrition/views.py:1431
 #, python-format
 msgid "Logged %(count)d item to %(date)s."
 msgid_plural "Logged %(count)d items to %(date)s."
 msgstr[0] "Loggade %(count)d post till %(date)s."
 msgstr[1] "Loggade %(count)d poster till %(date)s."
 
-#: apps/nutrition/views.py:1356
+#: apps/nutrition/views.py:1442
 msgid "Nothing to log — this plan has no items for that date."
 msgstr "Inget att logga — den här planen har inga poster för det datumet."
 
@@ -3969,10 +3991,11 @@ msgid "Brand"
 msgstr "Märke"
 
 #: templates/admin/nutrition/food/merge.html:17
+#: templates/nutrition/_diet_plan_totals_widget.html:40
 #: templates/nutrition/_food_list_results.html:17
 #: templates/nutrition/dashboard.html:23 templates/nutrition/dashboard.html:50
 #: templates/nutrition/diary_day.html:30
-#: templates/nutrition/food_detail.html:21
+#: templates/nutrition/food_detail.html:26
 #: templates/nutrition/food_list.html:76
 #: templates/nutrition/recipe_detail.html:60
 msgid "Calories"
@@ -4667,6 +4690,8 @@ msgstr "Inskickade"
 #: templates/core/feedback_list.html:44
 #: templates/exercises/_exercise_list_results.html:22
 #: templates/nutrition/_food_list_results.html:46
+#: templates/nutrition/recipe_list.html:39
+#: templates/nutrition/recipe_list.html:76
 #: templates/workouts/_train_panel.html:13
 msgid "Previous"
 msgstr "Föregående"
@@ -4674,6 +4699,8 @@ msgstr "Föregående"
 #: templates/core/feedback_list.html:46
 #: templates/exercises/_exercise_list_results.html:24
 #: templates/nutrition/_food_list_results.html:48
+#: templates/nutrition/recipe_list.html:41
+#: templates/nutrition/recipe_list.html:78
 #, python-format
 msgid "Page %(number)s of %(total)s"
 msgstr "Sida %(number)s av %(total)s"
@@ -4681,6 +4708,8 @@ msgstr "Sida %(number)s av %(total)s"
 #: templates/core/feedback_list.html:48
 #: templates/exercises/_exercise_list_results.html:26
 #: templates/nutrition/_food_list_results.html:50
+#: templates/nutrition/recipe_list.html:43
+#: templates/nutrition/recipe_list.html:80
 #: templates/workouts/_train_panel.html:21
 msgid "Next"
 msgstr "Nästa"
@@ -4925,6 +4954,7 @@ msgstr "hittills"
 
 #: templates/nutrition/_diet_plan_meal_card.html:18
 #: templates/nutrition/recipe_list.html:29
+#: templates/nutrition/recipe_list.html:66
 msgid "servings"
 msgstr "portioner"
 
@@ -4943,6 +4973,48 @@ msgstr "Inga förslag än — lägg till livsmedel eller recept först."
 #: templates/nutrition/_diet_plan_meal_card.html:32
 msgid "+ Add item"
 msgstr "+ Lägg till objekt"
+
+#: templates/nutrition/_diet_plan_totals_widget.html:32
+msgid "Totals"
+msgstr "Totalt"
+
+#: templates/nutrition/_diet_plan_totals_widget.html:44
+#: templates/nutrition/calculator_macros.html:28
+#: templates/nutrition/dashboard.html:27 templates/nutrition/dashboard.html:51
+#: templates/nutrition/dashboard.html:110 templates/nutrition/diary_day.html:40
+#: templates/nutrition/food_detail.html:27
+#: templates/nutrition/onboarding_review.html:17
+#: templates/nutrition/recipe_detail.html:61
+msgid "Protein"
+msgstr "Protein"
+
+#: templates/nutrition/_diet_plan_totals_widget.html:48
+#: templates/nutrition/calculator_macros.html:29
+#: templates/nutrition/dashboard.html:31 templates/nutrition/dashboard.html:52
+#: templates/nutrition/dashboard.html:111 templates/nutrition/diary_day.html:44
+#: templates/nutrition/food_detail.html:28
+#: templates/nutrition/onboarding_review.html:18
+#: templates/nutrition/recipe_detail.html:62
+msgid "Carbohydrates"
+msgstr "Kolhydrater"
+
+#: templates/nutrition/_diet_plan_totals_widget.html:52
+#: templates/nutrition/calculator_macros.html:30
+#: templates/nutrition/dashboard.html:35 templates/nutrition/dashboard.html:53
+#: templates/nutrition/dashboard.html:112 templates/nutrition/diary_day.html:48
+#: templates/nutrition/food_detail.html:29
+#: templates/nutrition/onboarding_review.html:19
+#: templates/nutrition/recipe_detail.html:63
+msgid "Fat"
+msgstr "Fett"
+
+#: templates/nutrition/_diet_plan_totals_widget.html:58
+#, python-format
+msgid ""
+"Left: %(calories)s kcal, %(protein)sg protein, %(carbs)sg carbs, %(fat)sg fat"
+msgstr ""
+"Kvar: %(calories)s kcal, %(protein)sg protein, %(carbs)sg kolhydrater, "
+"%(fat)sg fett"
 
 #: templates/nutrition/_food_list_results.html:38
 msgid "No foods match your filters."
@@ -5148,7 +5220,7 @@ msgid "Result"
 msgstr "Resultat"
 
 #: templates/nutrition/calculator_bmi.html:32
-#: templates/nutrition/food_detail.html:50
+#: templates/nutrition/food_detail.html:64
 msgid "Categories"
 msgstr "Kategorier"
 
@@ -5222,33 +5294,6 @@ msgid ""
 msgstr ""
 "Delar upp ett kalorimål i protein, kolhydrater och fett med appens egna "
 "standardförhållanden för det mål du väljer."
-
-#: templates/nutrition/calculator_macros.html:28
-#: templates/nutrition/dashboard.html:27 templates/nutrition/dashboard.html:51
-#: templates/nutrition/dashboard.html:110 templates/nutrition/diary_day.html:40
-#: templates/nutrition/food_detail.html:22
-#: templates/nutrition/onboarding_review.html:17
-#: templates/nutrition/recipe_detail.html:61
-msgid "Protein"
-msgstr "Protein"
-
-#: templates/nutrition/calculator_macros.html:29
-#: templates/nutrition/dashboard.html:31 templates/nutrition/dashboard.html:52
-#: templates/nutrition/dashboard.html:111 templates/nutrition/diary_day.html:44
-#: templates/nutrition/food_detail.html:23
-#: templates/nutrition/onboarding_review.html:18
-#: templates/nutrition/recipe_detail.html:62
-msgid "Carbohydrates"
-msgstr "Kolhydrater"
-
-#: templates/nutrition/calculator_macros.html:30
-#: templates/nutrition/dashboard.html:35 templates/nutrition/dashboard.html:53
-#: templates/nutrition/dashboard.html:112 templates/nutrition/diary_day.html:48
-#: templates/nutrition/food_detail.html:24
-#: templates/nutrition/onboarding_review.html:19
-#: templates/nutrition/recipe_detail.html:63
-msgid "Fat"
-msgstr "Fett"
 
 #: templates/nutrition/calculator_macros.html:34
 msgid ""
@@ -5344,6 +5389,7 @@ msgstr "Hur många kalorier din kropp förbränner i vila, och totalt."
 #: templates/nutrition/calculators_home.html:64
 #: templates/nutrition/diet_plan_list.html:29
 #: templates/nutrition/recipe_list.html:33
+#: templates/nutrition/recipe_list.html:70
 msgid "Open"
 msgstr "Öppna"
 
@@ -5384,7 +5430,7 @@ msgstr "Vid en vald veckotakt, ungefär hur lång tid det tar att nå en målvik
 #: templates/nutrition/diary_day.html:92
 #: templates/nutrition/diet_plan_list.html:39
 #: templates/nutrition/food_list.html:88 templates/nutrition/goal_edit.html:36
-#: templates/nutrition/recipe_list.html:46 templates/nutrition/stats.html:44
+#: templates/nutrition/recipe_list.html:89 templates/nutrition/stats.html:44
 msgid "Back to nutrition"
 msgstr "Tillbaka till näring"
 
@@ -5477,10 +5523,10 @@ msgid "Add food"
 msgstr "Lägg till livsmedel"
 
 #: templates/nutrition/diary_add_entry.html:64
-#: templates/nutrition/diet_plan_meal_item_form.html:26
+#: templates/nutrition/diet_plan_meal_item_form.html:24
 #: templates/nutrition/food_browse.html:33
 #: templates/nutrition/food_list.html:32
-#: templates/nutrition/recipe_ingredient_form.html:26
+#: templates/nutrition/recipe_ingredient_form.html:24
 msgid "e.g. chicken breast, or a barcode number"
 msgstr "t.ex. kycklingfilé eller ett streckkodsnummer"
 
@@ -5566,29 +5612,29 @@ msgstr ""
 "Varierar under veckan — samma dagliga kalorier/makron varje dag, olika "
 "måltider."
 
-#: templates/nutrition/diet_plan_detail.html:64
+#: templates/nutrition/diet_plan_detail.html:68
 msgid "Log this plan to your diary"
 msgstr "Logga denna plan till din dagbok"
 
-#: templates/nutrition/diet_plan_detail.html:66
+#: templates/nutrition/diet_plan_detail.html:70
 msgid "Logs whichever day of the week the date below falls on."
 msgstr "Loggar den veckodag som datumet nedan infaller på."
 
-#: templates/nutrition/diet_plan_detail.html:74
+#: templates/nutrition/diet_plan_detail.html:78
 #: templates/nutrition/recipe_detail.html:94
 msgid "Log it"
 msgstr "Logga"
 
-#: templates/nutrition/diet_plan_detail.html:77
+#: templates/nutrition/diet_plan_detail.html:81
 #: templates/nutrition/diet_plan_form.html:25
 msgid "Back to diet plans"
 msgstr "Tillbaka till kostplaner"
 
-#: templates/nutrition/diet_plan_detail.html:81
+#: templates/nutrition/diet_plan_detail.html:85
 msgid "Delete this plan?"
 msgstr "Ta bort denna plan?"
 
-#: templates/nutrition/diet_plan_detail.html:83
+#: templates/nutrition/diet_plan_detail.html:87
 msgid "Delete plan"
 msgstr "Ta bort plan"
 
@@ -5603,14 +5649,17 @@ msgstr "Bygg en kostplan"
 #: templates/nutrition/diet_plan_form.html:9
 msgid ""
 "We'll suggest one food or recipe per meal from your own library, scaled to "
-"fit — you can swap any of them afterward."
+"fit — you can swap any of them afterward. Or start from scratch below to "
+"skip the suggestions and build it entirely yourself."
 msgstr ""
-"Vi föreslår ett livsmedel eller recept per måltid från ditt eget bibliotek, "
-"skalat för att passa — du kan byta ut vilket som helst av dem efteråt."
+"Vi föreslår en livsmedel eller ett recept per måltid från ditt eget "
+"bibliotek, skalat för att passa — du kan byta ut vilket som helst av dem "
+"efteråt. Eller börja om från början nedan för att hoppa över förslagen och "
+"bygga det helt själv."
 
 #: templates/nutrition/diet_plan_form.html:22
-msgid "Generate plan"
-msgstr "Generera plan"
+msgid "Create plan"
+msgstr "Skapa plan"
 
 #: templates/nutrition/diet_plan_item_form.html:3
 #: templates/nutrition/diet_plan_item_form.html:6
@@ -5666,7 +5715,7 @@ msgid "Browse by category"
 msgstr "Bläddra efter kategori"
 
 #: templates/nutrition/food_browse.html:49
-#: templates/nutrition/food_detail.html:66
+#: templates/nutrition/food_detail.html:89
 #: templates/nutrition/food_form.html:24
 msgid "Back to foods"
 msgstr "Tillbaka till livsmedel"
@@ -5679,51 +5728,84 @@ msgstr "Inget hittades i denna kategori just nu."
 msgid "Back to browse"
 msgstr "Tillbaka till bläddring"
 
-#: templates/nutrition/food_detail.html:17
+#: templates/nutrition/food_detail.html:15
+msgid "No photo for this product yet."
+msgstr "Ingen bild för denna produkt ännu."
+
+#: templates/nutrition/food_detail.html:16
+msgid "View it on OpenFoodFacts"
+msgstr "Visa den på OpenFoodFacts"
+
+#: templates/nutrition/food_detail.html:22
 #, python-format
 msgid "Per %(size)s %(unit)s"
 msgstr "Per %(size)s %(unit)s"
 
-#: templates/nutrition/food_detail.html:26
+#: templates/nutrition/food_detail.html:31
 #: templates/nutrition/recipe_detail.html:65
 msgid "Fiber"
 msgstr "Fiber"
 
-#: templates/nutrition/food_detail.html:29
+#: templates/nutrition/food_detail.html:34
 #: templates/nutrition/recipe_detail.html:68
 msgid "Sugar"
 msgstr "Socker"
 
-#: templates/nutrition/food_detail.html:32
+#: templates/nutrition/food_detail.html:37
 #: templates/nutrition/recipe_detail.html:71
 msgid "Saturated fat"
 msgstr "Mättat fett"
 
-#: templates/nutrition/food_detail.html:35
+#: templates/nutrition/food_detail.html:40
 #: templates/nutrition/recipe_detail.html:74
 msgid "Sodium"
 msgstr "Natrium"
 
-#: templates/nutrition/food_detail.html:43
+#: templates/nutrition/food_detail.html:48
 msgid "Product information"
 msgstr "Produktinformation"
 
-#: templates/nutrition/food_detail.html:47
+#: templates/nutrition/food_detail.html:53
+msgid "Typical price"
+msgstr "Typiskt pris"
+
+#: templates/nutrition/food_detail.html:56
+#, python-format
+msgid "(median of %(reports)s recent Open Prices reports)"
+msgstr "(median av %(reports)s senaste Open Prices-rapporter)"
+
+#: templates/nutrition/food_detail.html:61
 msgid "Package size"
 msgstr "Förpackningsstorlek"
 
-#: templates/nutrition/food_detail.html:53
+#: templates/nutrition/food_detail.html:67
 msgid "Labels"
 msgstr "Märkningar"
 
-#: templates/nutrition/food_detail.html:56
+#: templates/nutrition/food_detail.html:70
 msgid "Allergens"
 msgstr "Allergener"
 
-#: templates/nutrition/food_detail.html:61
+#: templates/nutrition/food_detail.html:75
 #: templates/nutrition/recipe_detail.html:27
 msgid "Ingredients"
 msgstr "Ingredienser"
+
+#: templates/nutrition/food_detail.html:82
+msgid "Spotted something wrong, or want to help other users?"
+msgstr "Upptäckte du något som är fel, eller vill du hjälpa andra användare?"
+
+#: templates/nutrition/food_detail.html:83
+msgid "Edit this product on OpenFoodFacts"
+msgstr "Redigera denna produkt på OpenFoodFacts"
+
+#: templates/nutrition/food_detail.html:84 templates/registration/login.html:11
+msgid "or"
+msgstr "eller"
+
+#: templates/nutrition/food_detail.html:85
+msgid "add a price on Open Prices"
+msgstr "lägg till ett pris på Open Prices"
 
 #: templates/nutrition/food_form.html:3 templates/nutrition/food_form.html:6
 msgid "New food"
@@ -5871,7 +5953,6 @@ msgid "Save and start tracking"
 msgstr "Spara och börja logga"
 
 #: templates/nutrition/recipe_detail.html:12
-#: templates/nutrition/recipe_list.html:26
 #: templates/programs/program_list.html:14
 msgid "Template"
 msgstr "Mall"
@@ -5967,18 +6048,39 @@ msgstr "+ Nytt recept"
 msgid "Search"
 msgstr "Sök"
 
+#: templates/nutrition/recipe_list.html:21
+msgid "Your recipes"
+msgstr "Dina recept"
+
 #: templates/nutrition/recipe_list.html:30
+#: templates/nutrition/recipe_list.html:67
 #, python-format
 msgid "%(calories)s kcal/serving"
 msgstr "%(calories)s kcal/portion"
 
-#: templates/nutrition/recipe_list.html:38
+#: templates/nutrition/recipe_list.html:37
+msgid "Your recipes pages"
+msgstr "Sidor för dina recept"
+
+#: templates/nutrition/recipe_list.html:49
 msgid "No recipes match your search."
 msgstr "Inga recept matchar din sökning."
 
-#: templates/nutrition/recipe_list.html:42
+#: templates/nutrition/recipe_list.html:53
 msgid "No recipes yet."
 msgstr "Inga recept än."
+
+#: templates/nutrition/recipe_list.html:57
+msgid "Template recipes"
+msgstr "Mallrecept"
+
+#: templates/nutrition/recipe_list.html:74
+msgid "Template recipe pages"
+msgstr "Sidor för mallrecept"
+
+#: templates/nutrition/recipe_list.html:85
+msgid "No template recipes match your search."
+msgstr "Inga mallrecept matchar din sökning."
 
 #: templates/nutrition/stats.html:3
 msgid "Nutrition statistics"
@@ -6212,10 +6314,6 @@ msgstr "%(weight)s: %(reps)s repetitioner"
 #: templates/registration/login.html:8
 msgid "Log in with Authentik"
 msgstr "Logga in med Authentik"
-
-#: templates/registration/login.html:11
-msgid "or"
-msgstr "eller"
 
 #: templates/registration/login.html:28
 msgid "Forgot your password?"
