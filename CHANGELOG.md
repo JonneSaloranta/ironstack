@@ -18,6 +18,11 @@ narrated summary of the same version.
 
 ## [Unreleased]
 
+### Added
+- Every meal card in the food diary (except "Other") now has a "Save
+  as recipe" button, turning everything logged there into a new,
+  reusable recipe at the exact amounts eaten.
+
 ### Fixed
 - The dashboard calendar's calorie trend arrow no longer shows up on
   future days — its trailing 7-day average could still pull in
@@ -29,6 +34,9 @@ narrated summary of the same version.
 - The API keys page's "Using the API" documentation now lists the
   nutrition profile and diet plan endpoints — live for a while, but
   missing from this in-app reference.
+- Adding, editing, removing, or logging a food/recipe to a meal in the
+  food diary now returns you to that meal's own card instead of
+  jumping to the top of the page.
 
 ### Performance
 - Food list thumbnails now load OpenFoodFacts' own smaller,

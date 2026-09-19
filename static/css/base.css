@@ -1448,6 +1448,15 @@ abbr[title]:focus::after {
   scroll-margin-top: 3.5rem;
 }
 
+/* diary_day.html's own meal-slot cards (id="meal-slot-<pk>") — same
+   #anchor-landing-spot fix as .pagination above, for redirects back
+   from adding/editing/removing an entry or saving a meal as a recipe,
+   so the page lands back at the meal that was actually being worked
+   on instead of the very top of the diary. */
+[id^="meal-slot-"] {
+  scroll-margin-top: 3.5rem;
+}
+
 .field {
   margin-bottom: 0.75rem;
 }

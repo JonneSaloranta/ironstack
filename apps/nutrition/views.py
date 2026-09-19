@@ -667,6 +667,21 @@ def _parse_diary_date(value):
         return timezone.localdate()
 
 
+def _diary_day_redirect(target_date, meal_slot_pk=None):
+    """Redirects back to one day's diary — with a `#meal-slot-<pk>`
+    fragment when a specific meal slot is given, asked for directly:
+    adding/editing/removing an entry used to always redirect to the
+    bare diary-day URL, which lands the browser at the very top of the
+    page regardless of which meal card the user was actually working
+    in, undoing their own scroll position on every single edit."""
+    from django.urls import reverse
+
+    url = reverse("nutrition:diary-day", kwargs={"target_date": target_date.isoformat()})
+    if meal_slot_pk is not None:
+        url = f"{url}#meal-slot-{meal_slot_pk}"
+    return redirect(url)
+
+
 class DiaryDayView(LoginRequiredMixin, View):
     """The food diary for one day, grouped by meal slot — spec section
     8: add/edit/remove a food, see calories and macros, see how much
@@ -797,14 +812,15 @@ class DiaryAddEntryView(LoginRequiredMixin, View):
                     },
                 )
 
+        meal_slot = form.cleaned_data["meal_slot"]
         DiaryEntry.objects.create(
             user=request.user,
             date=target_date,
-            meal_slot=form.cleaned_data["meal_slot"],
+            meal_slot=meal_slot,
             food=food,
             quantity=form.cleaned_data["quantity"],
         )
-        return redirect("nutrition:diary-day", target_date=target_date.isoformat())
+        return _diary_day_redirect(target_date, meal_slot.pk)
 
 
 def _owned_diary_entry_or_404(request, pk):
@@ -820,7 +836,7 @@ def diary_entry_edit(request, pk):
         form = DiaryEntryQuantityForm(request.POST, instance=entry)
         if form.is_valid():
             form.save()
-            return redirect("nutrition:diary-day", target_date=entry.date.isoformat())
+            return _diary_day_redirect(entry.date, entry.meal_slot_id)
     else:
         form = DiaryEntryQuantityForm(instance=entry)
     return render(request, "nutrition/diary_entry_form.html", {"form": form, "entry": entry})
@@ -832,8 +848,26 @@ def diary_entry_delete(request, pk):
         return HttpResponseNotAllowed(["POST"])
     entry = _owned_diary_entry_or_404(request, pk)
     target_date = entry.date
+    meal_slot_id = entry.meal_slot_id
     entry.delete()
-    return redirect("nutrition:diary-day", target_date=target_date.isoformat())
+    return _diary_day_redirect(target_date, meal_slot_id)
+
+
+@login_required
+def diary_meal_save_as_recipe(request, target_date, meal_slot_pk):
+    """"Save this meal as a recipe" (diary_day.html) — asked for
+    directly, for whichever meal slot the button was tapped under.
+    POST-only, same convention as every other diary mutation here."""
+    if request.method != "POST":
+        return HttpResponseNotAllowed(["POST"])
+    target_date = _parse_diary_date(target_date)
+    meal_slot = get_object_or_404(services.visible_meal_slots(request.user), pk=meal_slot_pk)
+    recipe = services.create_recipe_from_diary_meal(request.user, target_date, meal_slot)
+    if recipe is None:
+        messages.info(request, _("Nothing logged for this meal yet to save as a recipe."))
+        return _diary_day_redirect(target_date, meal_slot.pk)
+    messages.success(request, _("Saved “%(name)s” as a new recipe.") % {"name": recipe.name})
+    return redirect("nutrition:recipe-detail", pk=recipe.pk)
 
 
 def _annotate_recipes_with_per_serving(recipes):
@@ -1116,7 +1150,7 @@ def recipe_log(request, pk):
         recipe=recipe,
         quantity=form.cleaned_data["quantity"],
     )
-    return redirect("nutrition:diary-day", target_date=entry.date.isoformat())
+    return _diary_day_redirect(entry.date, entry.meal_slot_id)
 
 
 class DietPlanListView(LoginRequiredMixin, ListView):

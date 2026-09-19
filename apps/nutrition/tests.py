@@ -2768,7 +2768,19 @@ class DiaryAddEntryViewTests(TestCase):
         entry = DiaryEntry.objects.get(user=self.alice)
         self.assertEqual(entry.food, self.food)
         self.assertEqual(entry.quantity, Decimal("150"))
-        self.assertEqual(entry.date, date(2026, 1, 1))
+
+    def test_adding_redirects_back_to_the_chosen_meal_slot(self):
+        """Regression: this always redirected to the bare diary-day
+        URL, landing the browser at the top of the page regardless of
+        which meal the food was actually just added to."""
+        response = self.client.post(
+            reverse("nutrition:diary-add-entry"),
+            {
+                "food_id": self.food.pk, "meal_slot": self.slot.pk,
+                "quantity": "150", "date": "2026-01-01",
+            },
+        )
+        self.assertEqual(response.url, f"/nutrition/diary/2026-01-01/#meal-slot-{self.slot.pk}")
 
     def test_adding_an_off_result_imports_and_logs_it(self):
         with mock.patch.object(openfoodfacts, "get_product", return_value=RAW_OFF_PRODUCT):
@@ -2988,12 +3000,28 @@ class DiaryEntryEditDeleteViewTests(TestCase):
         self.entry.refresh_from_db()
         self.assertEqual(self.entry.quantity, Decimal("200"))
 
+    def test_editing_redirects_back_to_the_entrys_own_meal_slot(self):
+        """Regression: this always redirected to the bare diary-day
+        URL, landing the browser at the top of the page regardless of
+        which meal card the entry actually belonged to."""
+        response = self.client.post(
+            reverse("nutrition:diary-entry-edit", args=[self.entry.pk]),
+            {"quantity": "200", "notes": ""},
+        )
+        self.assertEqual(response.url, f"/nutrition/diary/2026-01-01/#meal-slot-{self.slot.pk}")
+
     def test_deleting_removes_the_entry(self):
         response = self.client.post(
             reverse("nutrition:diary-entry-delete", args=[self.entry.pk])
         )
         self.assertEqual(response.status_code, 302)
         self.assertFalse(DiaryEntry.objects.filter(pk=self.entry.pk).exists())
+
+    def test_deleting_redirects_back_to_the_entrys_own_meal_slot(self):
+        response = self.client.post(
+            reverse("nutrition:diary-entry-delete", args=[self.entry.pk])
+        )
+        self.assertEqual(response.url, f"/nutrition/diary/2026-01-01/#meal-slot-{self.slot.pk}")
 
     def test_another_users_entry_is_a_404_not_a_403(self):
         self.client.logout()
@@ -3110,6 +3138,197 @@ class DiaryDayViewTests(TestCase):
         section already has."""
         response = self.client.get(reverse("nutrition:diary-day"))
         self.assertContains(response, "Back to nutrition")
+
+    def test_each_meal_card_has_its_own_anchor_id(self):
+        dinner = MealSlot.objects.get(name="Dinner", owner=None)
+        response = self.client.get(reverse("nutrition:diary-day"))
+        self.assertContains(response, f'id="meal-slot-{dinner.pk}"')
+
+    def test_save_as_recipe_button_shown_for_a_meal_with_entries(self):
+        food = make_food(self.alice)
+        breakfast = MealSlot.objects.get(name="Breakfast", owner=None)
+        DiaryEntry.objects.create(
+            user=self.alice, date=date(2026, 1, 1), meal_slot=breakfast,
+            food=food, quantity=Decimal("100"),
+        )
+        response = self.client.get(
+            reverse("nutrition:diary-day", kwargs={"target_date": "2026-01-01"})
+        )
+        self.assertContains(
+            response,
+            reverse("nutrition:diary-meal-save-as-recipe", args=["2026-01-01", breakfast.pk]),
+        )
+
+    def test_save_as_recipe_button_hidden_for_an_empty_meal(self):
+        breakfast = MealSlot.objects.get(name="Breakfast", owner=None)
+        response = self.client.get(
+            reverse("nutrition:diary-day", kwargs={"target_date": "2026-01-01"})
+        )
+        self.assertNotContains(
+            response,
+            reverse("nutrition:diary-meal-save-as-recipe", args=["2026-01-01", breakfast.pk]),
+        )
+
+    def test_save_as_recipe_button_hidden_for_the_other_slot(self):
+        food = make_food(self.alice)
+        other = MealSlot.objects.get(name="Other", owner=None)
+        DiaryEntry.objects.create(
+            user=self.alice, date=date(2026, 1, 1), meal_slot=other,
+            food=food, quantity=Decimal("100"),
+        )
+        response = self.client.get(
+            reverse("nutrition:diary-day", kwargs={"target_date": "2026-01-01"})
+        )
+        self.assertNotContains(
+            response,
+            reverse("nutrition:diary-meal-save-as-recipe", args=["2026-01-01", other.pk]),
+        )
+
+
+class CreateRecipeFromDiaryMealServiceTests(TestCase):
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        self.breakfast = MealSlot.objects.get(name="Breakfast", owner=None)
+        self.oats = make_food(
+            self.alice, name="Oats", calories=380, protein_grams=Decimal("13"),
+            carbohydrate_grams=Decimal("67"), fat_grams=Decimal("7"),
+        )
+        self.milk = make_food(
+            self.alice, name="Milk", calories=42, protein_grams=Decimal("3.4"),
+            carbohydrate_grams=Decimal("5"), fat_grams=Decimal("1"),
+        )
+
+    def test_creates_a_recipe_with_one_ingredient_per_logged_food(self):
+        DiaryEntry.objects.create(
+            user=self.alice, date=date(2026, 1, 1), meal_slot=self.breakfast,
+            food=self.oats, quantity=Decimal("50"),
+        )
+        DiaryEntry.objects.create(
+            user=self.alice, date=date(2026, 1, 1), meal_slot=self.breakfast,
+            food=self.milk, quantity=Decimal("200"),
+        )
+        recipe = services.create_recipe_from_diary_meal(
+            self.alice, date(2026, 1, 1), self.breakfast
+        )
+        self.assertEqual(recipe.owner, self.alice)
+        self.assertEqual(recipe.servings, 1)
+        self.assertEqual(recipe.meal_slot, self.breakfast)
+        ingredients = {i.food: i.quantity for i in recipe.ingredients.all()}
+        self.assertEqual(ingredients, {self.oats: Decimal("50"), self.milk: Decimal("200")})
+
+    def test_name_includes_the_translated_meal_and_the_date(self):
+        DiaryEntry.objects.create(
+            user=self.alice, date=date(2026, 1, 1), meal_slot=self.breakfast,
+            food=self.oats, quantity=Decimal("50"),
+        )
+        recipe = services.create_recipe_from_diary_meal(
+            self.alice, date(2026, 1, 1), self.breakfast
+        )
+        self.assertEqual(recipe.name, "Breakfast — 2026-01-01")
+
+    def test_returns_none_for_a_meal_with_nothing_logged(self):
+        result = services.create_recipe_from_diary_meal(
+            self.alice, date(2026, 1, 1), self.breakfast
+        )
+        self.assertIsNone(result)
+
+    def test_a_recipe_type_entry_is_skipped_not_flattened(self):
+        other_recipe = Recipe.objects.create(owner=self.alice, name="Porridge", servings=1)
+        RecipeIngredient.objects.create(
+            recipe=other_recipe, food=self.oats, quantity=Decimal("40"),
+        )
+        DiaryEntry.objects.create(
+            user=self.alice, date=date(2026, 1, 1), meal_slot=self.breakfast,
+            recipe=other_recipe, quantity=Decimal("1"),
+        )
+        result = services.create_recipe_from_diary_meal(
+            self.alice, date(2026, 1, 1), self.breakfast
+        )
+        self.assertIsNone(result)
+
+    def test_only_the_given_meal_slots_entries_are_included(self):
+        lunch = MealSlot.objects.get(name="Lunch", owner=None)
+        DiaryEntry.objects.create(
+            user=self.alice, date=date(2026, 1, 1), meal_slot=self.breakfast,
+            food=self.oats, quantity=Decimal("50"),
+        )
+        DiaryEntry.objects.create(
+            user=self.alice, date=date(2026, 1, 1), meal_slot=lunch,
+            food=self.milk, quantity=Decimal("200"),
+        )
+        recipe = services.create_recipe_from_diary_meal(
+            self.alice, date(2026, 1, 1), self.breakfast
+        )
+        self.assertEqual(recipe.ingredients.count(), 1)
+        self.assertEqual(recipe.ingredients.first().food, self.oats)
+
+
+class DiaryMealSaveAsRecipeViewTests(TestCase):
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        self.client.login(username="alice", password="s3cret-pass")
+        self.breakfast = MealSlot.objects.get(name="Breakfast", owner=None)
+        self.food = make_food(self.alice, name="Oats")
+        DiaryEntry.objects.create(
+            user=self.alice, date=date(2026, 1, 1), meal_slot=self.breakfast,
+            food=self.food, quantity=Decimal("50"),
+        )
+
+    def test_posting_creates_a_recipe_and_redirects_to_it(self):
+        response = self.client.post(
+            reverse(
+                "nutrition:diary-meal-save-as-recipe", args=["2026-01-01", self.breakfast.pk]
+            )
+        )
+        recipe = Recipe.objects.get(owner=self.alice)
+        self.assertRedirects(response, reverse("nutrition:recipe-detail", args=[recipe.pk]))
+
+    def test_an_empty_meal_bounces_back_with_a_message_not_an_empty_recipe(self):
+        empty_slot = MealSlot.objects.get(name="Lunch", owner=None)
+        response = self.client.post(
+            reverse(
+                "nutrition:diary-meal-save-as-recipe", args=["2026-01-01", empty_slot.pk]
+            ),
+            follow=True,
+        )
+        self.assertContains(response, "Nothing logged for this meal")
+        self.assertFalse(Recipe.objects.filter(owner=self.alice).exists())
+
+    def test_requires_post(self):
+        response = self.client.get(
+            reverse(
+                "nutrition:diary-meal-save-as-recipe", args=["2026-01-01", self.breakfast.pk]
+            )
+        )
+        self.assertEqual(response.status_code, 405)
+
+    def test_requires_login(self):
+        self.client.logout()
+        response = self.client.post(
+            reverse(
+                "nutrition:diary-meal-save-as-recipe", args=["2026-01-01", self.breakfast.pk]
+            )
+        )
+        self.assertEqual(response.status_code, 302)
+
+    def test_another_users_meal_slot_id_still_works_since_meal_slots_are_shared(self):
+        """System meal slots (owner=None) are visible to every user —
+        this isn't an ownership check to begin with, only the diary
+        entries themselves are scoped by user (the query in
+        create_recipe_from_diary_meal filters on `user=`)."""
+        bob = User.objects.create_user(username="bob", password="s3cret-pass")
+        self.client.logout()
+        self.client.login(username="bob", password="s3cret-pass")
+        response = self.client.post(
+            reverse(
+                "nutrition:diary-meal-save-as-recipe", args=["2026-01-01", self.breakfast.pk]
+            ),
+            follow=True,
+        )
+        # Bob has nothing logged for this meal himself, even though
+        # Alice does — never leaks Alice's entries into Bob's recipe.
+        self.assertContains(response, "Nothing logged for this meal")
+        self.assertFalse(Recipe.objects.filter(owner=bob).exists())
 
 
 class RecipeViewTests(TestCase):
@@ -3458,6 +3677,8 @@ class RecipeViewTests(TestCase):
         self.assertEqual(response.status_code, 302)
         entry = DiaryEntry.objects.get(user=self.alice, recipe=recipe)
         self.assertEqual(entry.meal_slot, slot)
+        today = timezone.localdate().isoformat()
+        self.assertEqual(response.url, f"/nutrition/diary/{today}/#meal-slot-{slot.pk}")
         self.assertEqual(entry.date, timezone.localdate())
 
     def test_a_recipe_can_be_logged_to_a_different_day(self):

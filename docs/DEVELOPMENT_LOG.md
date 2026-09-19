@@ -5054,3 +5054,51 @@ in-app copy was.
 guard for this, but was never extended when those endpoints shipped —
 extended it to assert the four missing endpoints too, so this can't
 silently drift again the same way.
+
+## "Save as recipe" from the food diary, and the diary's own scroll-jump bug
+
+Two more requests, same session.
+
+**Save as recipe.** Asked for directly, for every meal card on
+`diary_day.html` except the system "Other" catch-all: a button that
+turns everything logged in that meal, on that day, into a new,
+reusable `Recipe`, at the exact quantities actually eaten. Docs/
+NUTRITION.md's own `DiaryEntry` section already made the underlying
+point — a group of `DiaryEntry` rows sharing one `(date, meal_slot)`
+*is* conceptually a recipe's own ingredient list, just computed live
+rather than saved — so `services.create_recipe_from_diary_meal` is a
+small function: gather that meal's food-type entries, create one
+`Recipe` (`servings=1`, `meal_slot` carried over from the entries'
+own meal slot) and one `RecipeIngredient` per entry at its logged
+quantity. A recipe-type entry logged for the same meal is skipped
+rather than flattened into its own ingredients — `RecipeIngredient.
+food` is required and can never point at another `Recipe`, and
+re-deriving that here risked double-counting anything also logged as
+a plain food the same meal, for a case (re-saving an
+already-a-recipe meal as *another* recipe) rare enough not to justify
+it. The button itself is hidden for an empty meal and for "Other"
+specifically (a dumping ground for food that doesn't fit a named
+meal, not a coherent combination worth saving) — matched by name
+(`slot.name != "Other"`) against the seeded system slot, same as
+every other place this app already special-cases stored English
+content rather than the per-language displayed label.
+
+**The diary's own scroll-jump bug**, reported directly: adding,
+editing, removing, or logging a recipe to any meal always redirected
+to the bare `diary-day` URL, landing the browser at the top of the
+page regardless of which meal card was actually being worked in — the
+exact same class of bug already fixed for the Recipes and Foods
+pages' own pagination, just via a full-page redirect instead of a
+Previous/Next link. New `_diary_day_redirect(target_date,
+meal_slot_pk=None)` helper appends a `#meal-slot-<pk>` fragment when
+a specific meal is known, used by the add/edit/delete flows and by
+`recipe_log` (logging a recipe from its own detail page); `diary_day_
+copy` and `diet_plan_log` are left alone since both operate across
+every meal at once, with no single relevant slot to anchor back to.
+Each meal card on `diary_day.html` now carries `id="meal-slot-<pk>"`,
+plus the same `scroll-margin-top` treatment (`[id^="meal-slot-"]`)
+already added for `.pagination`, so the landing spot clears
+`.nutrition-subnav`'s own sticky bar. Verified with Playwright:
+editing an entry's quantity lands the browser back on the diary with
+`#meal-slot-<pk>` in the URL and a non-zero `window.scrollY`, not
+reset to the top.

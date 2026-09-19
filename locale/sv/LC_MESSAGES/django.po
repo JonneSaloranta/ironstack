@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: IronStack\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-19 12:45+0000\n"
+"POT-Creation-Date: 2026-09-19 14:54+0000\n"
 "Language: sv\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -2485,39 +2485,48 @@ msgstr ""
 msgid "Goal updated — new target is %(calories)d kcal/day."
 msgstr "Mål uppdaterat — nytt mål är %(calories)d kcal/dag."
 
-#: apps/nutrition/views.py:731
+#: apps/nutrition/views.py:746
 msgid "Pick a date to copy this day to."
 msgstr "Välj ett datum att kopiera denna dag till."
 
-#: apps/nutrition/views.py:736
+#: apps/nutrition/views.py:751
 #, python-format
 msgid "Copied %(count)d entry to %(date)s."
 msgid_plural "Copied %(count)d entries to %(date)s."
 msgstr[0] "Kopierade %(count)d post till %(date)s."
 msgstr[1] "Kopierade %(count)d poster till %(date)s."
 
-#: apps/nutrition/views.py:742
+#: apps/nutrition/views.py:757
 msgid "Nothing to copy — that day has no entries."
 msgstr "Inget att kopiera — den dagen har inga poster."
 
-#: apps/nutrition/views.py:788 apps/nutrition/views.py:1037
-#: apps/nutrition/views.py:1394
+#: apps/nutrition/views.py:803 apps/nutrition/views.py:1071
+#: apps/nutrition/views.py:1428
 msgid "That food couldn't be imported — try again."
 msgstr "Det gick inte att importera detta livsmedel — försök igen."
 
-#: apps/nutrition/views.py:979
+#: apps/nutrition/views.py:867
+msgid "Nothing logged for this meal yet to save as a recipe."
+msgstr "Inget har loggats för den här måltiden än att spara som recept."
+
+#: apps/nutrition/views.py:869
+#, python-format
+msgid "Saved “%(name)s” as a new recipe."
+msgstr "Sparade ”%(name)s” som ett nytt recept."
+
+#: apps/nutrition/views.py:1013
 #, python-format
 msgid "\"%(name)s\" created — now add its ingredients below."
 msgstr "\"%(name)s\" skapad — lägg till dess ingredienser nedan."
 
-#: apps/nutrition/views.py:1431
+#: apps/nutrition/views.py:1465
 #, python-format
 msgid "Logged %(count)d item to %(date)s."
 msgid_plural "Logged %(count)d items to %(date)s."
 msgstr[0] "Loggade %(count)d post till %(date)s."
 msgstr[1] "Loggade %(count)d poster till %(date)s."
 
-#: apps/nutrition/views.py:1442
+#: apps/nutrition/views.py:1476
 msgid "Nothing to log — this plan has no items for that date."
 msgstr "Inget att logga — den här planen har inga poster för det datumet."
 
@@ -5431,7 +5440,7 @@ msgid "At a chosen weekly rate, roughly how long to reach a target weight."
 msgstr "Vid en vald veckotakt, ungefär hur lång tid det tar att nå en målvikt."
 
 #: templates/nutrition/calculators_home.html:67
-#: templates/nutrition/diary_day.html:92
+#: templates/nutrition/diary_day.html:100
 #: templates/nutrition/diet_plan_list.html:39
 #: templates/nutrition/food_list.html:88 templates/nutrition/goal_edit.html:36
 #: templates/nutrition/recipe_list.html:89 templates/nutrition/stats.html:44
@@ -5567,23 +5576,27 @@ msgstr "Ta bort denna post?"
 msgid "Nothing logged yet."
 msgstr "Inget loggat än."
 
-#: templates/nutrition/diary_day.html:76
+#: templates/nutrition/diary_day.html:77
 msgid "+ Add food"
 msgstr "+ Lägg till livsmedel"
 
 #: templates/nutrition/diary_day.html:81
+msgid "Save as recipe"
+msgstr "Spara som recept"
+
+#: templates/nutrition/diary_day.html:89
 msgid "Copy this day to another date"
 msgstr "Kopiera denna dag till ett annat datum"
 
-#: templates/nutrition/diary_day.html:85
+#: templates/nutrition/diary_day.html:93
 msgid "Copy to date"
 msgstr "Kopiera till datum"
 
-#: templates/nutrition/diary_day.html:86 templates/social/group_detail.html:28
+#: templates/nutrition/diary_day.html:94 templates/social/group_detail.html:28
 msgid "Copy"
 msgstr "Kopiera"
 
-#: templates/nutrition/diary_day.html:91
+#: templates/nutrition/diary_day.html:99
 msgid "Manage foods"
 msgstr "Hantera livsmedel"
 

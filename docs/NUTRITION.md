@@ -548,6 +548,26 @@ the case where a user wants to log the same combination repeatedly
 models for the same idea would just be two places the same bug could
 diverge.
 
+**"Save as recipe"** (`diary_meal_save_as_recipe`,
+`services.create_recipe_from_diary_meal`) turns exactly that
+live-computed group — one `(date, meal_slot)`'s worth of `DiaryEntry`
+rows — into a real, saved `Recipe`, asked for directly ("I eat this
+same breakfast most days"). Only food-type entries become
+`RecipeIngredient` rows, at the exact quantities logged; a recipe-type
+entry for the same meal is skipped rather than flattened into its own
+ingredients (`RecipeIngredient.food` is required — it can never point
+at another `Recipe`), since re-deriving that risks double-counting
+anything also logged as a plain food the same meal, for a case rare
+enough not to justify the complexity. The new recipe's `servings` is
+always 1 (this is exactly what was eaten, not a batch to divide) and
+its `meal_slot` carries over from the diary entries' own meal slot —
+a recipe built from what was actually eaten at breakfast is,
+definitionally, a breakfast recipe. Shown as a button on every meal
+card on `diary_day.html` except the system "Other" catch-all (asked
+for directly — "Other" is a dumping ground for food that doesn't fit
+a named meal, not a coherent combination worth saving), and only when
+that meal has something logged.
+
 ### `DietPlan` / `DietPlanMeal` / `DietPlanItem` — the diet-builder's saved output
 
 ```

@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: IronStack\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-19 12:45+0000\n"
+"POT-Creation-Date: 2026-09-19 14:54+0000\n"
 "Language: ru\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -2522,11 +2522,11 @@ msgstr ""
 msgid "Goal updated — new target is %(calories)d kcal/day."
 msgstr "Цель обновлена — новая норма: %(calories)d ккал/день."
 
-#: apps/nutrition/views.py:731
+#: apps/nutrition/views.py:746
 msgid "Pick a date to copy this day to."
 msgstr "Выберите дату, на которую скопировать этот день."
 
-#: apps/nutrition/views.py:736
+#: apps/nutrition/views.py:751
 #, python-format
 msgid "Copied %(count)d entry to %(date)s."
 msgid_plural "Copied %(count)d entries to %(date)s."
@@ -2534,21 +2534,30 @@ msgstr[0] "Скопирована %(count)d запись на %(date)s."
 msgstr[1] "Скопировано %(count)d записи на %(date)s."
 msgstr[2] "Скопировано %(count)d записей на %(date)s."
 
-#: apps/nutrition/views.py:742
+#: apps/nutrition/views.py:757
 msgid "Nothing to copy — that day has no entries."
 msgstr "Нечего копировать — за этот день нет записей."
 
-#: apps/nutrition/views.py:788 apps/nutrition/views.py:1037
-#: apps/nutrition/views.py:1394
+#: apps/nutrition/views.py:803 apps/nutrition/views.py:1071
+#: apps/nutrition/views.py:1428
 msgid "That food couldn't be imported — try again."
 msgstr "Не удалось импортировать этот продукт — попробуйте снова."
 
-#: apps/nutrition/views.py:979
+#: apps/nutrition/views.py:867
+msgid "Nothing logged for this meal yet to save as a recipe."
+msgstr "Для этого приёма пищи пока ничего не записано, чтобы сохранить как рецепт."
+
+#: apps/nutrition/views.py:869
+#, python-format
+msgid "Saved “%(name)s” as a new recipe."
+msgstr "Сохранён «%(name)s» как новый рецепт."
+
+#: apps/nutrition/views.py:1013
 #, python-format
 msgid "\"%(name)s\" created — now add its ingredients below."
 msgstr "«%(name)s» создан — добавьте его ингредиенты ниже."
 
-#: apps/nutrition/views.py:1431
+#: apps/nutrition/views.py:1465
 #, python-format
 msgid "Logged %(count)d item to %(date)s."
 msgid_plural "Logged %(count)d items to %(date)s."
@@ -2556,7 +2565,7 @@ msgstr[0] "Записан %(count)d элемент на %(date)s."
 msgstr[1] "Записано %(count)d элемента на %(date)s."
 msgstr[2] "Записано %(count)d элементов на %(date)s."
 
-#: apps/nutrition/views.py:1442
+#: apps/nutrition/views.py:1476
 msgid "Nothing to log — this plan has no items for that date."
 msgstr "Нечего записывать — в этом плане нет пунктов на эту дату."
 
@@ -5497,7 +5506,7 @@ msgstr ""
 "достижения целевого веса."
 
 #: templates/nutrition/calculators_home.html:67
-#: templates/nutrition/diary_day.html:92
+#: templates/nutrition/diary_day.html:100
 #: templates/nutrition/diet_plan_list.html:39
 #: templates/nutrition/food_list.html:88 templates/nutrition/goal_edit.html:36
 #: templates/nutrition/recipe_list.html:89 templates/nutrition/stats.html:44
@@ -5633,23 +5642,27 @@ msgstr "Удалить эту запись?"
 msgid "Nothing logged yet."
 msgstr "Пока ничего не записано."
 
-#: templates/nutrition/diary_day.html:76
+#: templates/nutrition/diary_day.html:77
 msgid "+ Add food"
 msgstr "+ Добавить продукт"
 
 #: templates/nutrition/diary_day.html:81
+msgid "Save as recipe"
+msgstr "Сохранить как рецепт"
+
+#: templates/nutrition/diary_day.html:89
 msgid "Copy this day to another date"
 msgstr "Скопировать этот день на другую дату"
 
-#: templates/nutrition/diary_day.html:85
+#: templates/nutrition/diary_day.html:93
 msgid "Copy to date"
 msgstr "Скопировать на дату"
 
-#: templates/nutrition/diary_day.html:86 templates/social/group_detail.html:28
+#: templates/nutrition/diary_day.html:94 templates/social/group_detail.html:28
 msgid "Copy"
 msgstr "Копировать"
 
-#: templates/nutrition/diary_day.html:91
+#: templates/nutrition/diary_day.html:99
 msgid "Manage foods"
 msgstr "Управление продуктами"
 

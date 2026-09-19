@@ -540,6 +540,53 @@ def daily_totals(user, target_date) -> ScaledNutrition:
     return total
 
 
+def create_recipe_from_diary_meal(user, target_date, meal_slot):
+    """Turns everything logged in one meal slot on one date into a
+    new, reusable `Recipe` — asked for directly ("I eat this same
+    breakfast most days, let me save it instead of re-adding each
+    food by hand"). Only food-type `DiaryEntry` rows become
+    `RecipeIngredient` rows: a `RecipeIngredient` always points at a
+    `Food`, never another `Recipe` (that model's own shape), so a
+    recipe-type entry logged for the same meal is skipped rather than
+    flattened into its own ingredients — re-deriving that here risks
+    double-counting anything also logged as a plain food the same
+    meal, for a case (re-saving an already-a-recipe meal as *another*
+    recipe) that's rare enough not to justify the complexity. Returns
+    `None` if there's nothing food-based to save (an empty meal, or
+    one logged purely via existing recipes) rather than creating a
+    useless empty recipe.
+
+    `servings=1` — this is exactly the amount actually eaten, not a
+    batch meant to be divided. `meal_slot` carries over onto the new
+    recipe unchanged, the same hint `diet_builder.suggest_item_for_
+    calorie_budget` already uses to avoid suggesting a breakfast
+    recipe for dinner — a recipe built from what was eaten at
+    breakfast is, definitionally, a breakfast recipe."""
+    from django.utils.translation import gettext
+
+    from .models import DiaryEntry, Recipe, RecipeIngredient
+
+    entries = list(
+        DiaryEntry.objects.filter(
+            user=user, date=target_date, meal_slot=meal_slot, food__isnull=False
+        ).select_related("food").order_by("created_at")
+    )
+    if not entries:
+        return None
+
+    recipe = Recipe.objects.create(
+        owner=user,
+        name=f"{gettext(meal_slot.name)} — {target_date.isoformat()}",
+        servings=1,
+        meal_slot=meal_slot,
+    )
+    RecipeIngredient.objects.bulk_create(
+        RecipeIngredient(recipe=recipe, food=entry.food, quantity=entry.quantity, order=order)
+        for order, entry in enumerate(entries)
+    )
+    return recipe
+
+
 def visible_meal_slots(user):
     """System defaults + this user's own, active only — same
     system-or-custom visibility rule as apps.measurements.services.

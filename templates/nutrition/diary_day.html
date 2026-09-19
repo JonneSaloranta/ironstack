@@ -53,7 +53,7 @@ other page's .top-bar besides holding only a plain, unchanging title.
 </div>
 
 {% for slot in meal_slots %}
-  <div class="card">
+  <div class="card" id="meal-slot-{{ slot.pk }}">
     <strong>{{ slot.name|translate_content }}</strong>
     {% for entry in slot.entries %}
       <div class="card-action-row" style="padding:0.5rem 0;">
@@ -73,7 +73,15 @@ other page's .top-bar besides holding only a plain, unchanging title.
     {% empty %}
       <p class="text-muted">{% trans "Nothing logged yet." %}</p>
     {% endfor %}
-    <a class="button-secondary" href="{% url 'nutrition:diary-add-entry' %}?date={{ date|date:'Y-m-d' }}&meal_slot={{ slot.pk }}">{% trans "+ Add food" %}</a>
+    <div style="display:flex; flex-wrap:wrap; gap:0.5rem;">
+      <a class="button-secondary" href="{% url 'nutrition:diary-add-entry' %}?date={{ date|date:'Y-m-d' }}&meal_slot={{ slot.pk }}">{% trans "+ Add food" %}</a>
+      {% if slot.name != "Other" and slot.entries %}
+        <form method="post" action="{% url 'nutrition:diary-meal-save-as-recipe' date.isoformat slot.pk %}">
+          {% csrf_token %}
+          <button type="submit" class="button-secondary">{% trans "Save as recipe" %}</button>
+        </form>
+      {% endif %}
+    </div>
   </div>
 {% endfor %}
 
