@@ -2314,6 +2314,25 @@ class CalendarMonthStatusesTests(TestCase):
         statuses = {s.date: s for s in services.calendar_month_statuses(self.alice, 2026, 6)}
         self.assertIsNone(statuses[date(2026, 6, 17)].calorie_trend)
 
+    def test_a_future_day_has_no_trend_even_though_its_window_reaches_into_the_past(self):
+        """Regression: a future day's own trailing window still reaches
+        back across today and other already-logged days, so its
+        average came out non-empty even though nothing has (or could
+        have) been logged for the future day itself — the trend arrow
+        showed up on days that hadn't happened yet."""
+        self._set_target(2000)
+        today = timezone.localdate()
+        self._log_calories(today, 2000)
+        future_day = today + timedelta(days=3)
+        statuses = {
+            s.date: s
+            for s in services.calendar_month_statuses(
+                self.alice, future_day.year, future_day.month
+            )
+        }
+        self.assertIsNone(statuses[future_day].calorie_trend)
+        self.assertIsNone(statuses[future_day].calorie_direction)
+
     def test_direction_is_over_when_the_average_is_above_target(self):
         self._set_target(2000)
         self._log_calories(date(2026, 6, 10), 2800)

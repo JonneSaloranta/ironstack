@@ -867,6 +867,7 @@ def calendar_month_statuses(user, year, month):
         ).values_list("achieved_at__date", flat=True)
     )
 
+    today = timezone.localdate()
     statuses = []
     for offset in range(days_in_month):
         day = first_day + timedelta(days=offset)
@@ -886,7 +887,12 @@ def calendar_month_statuses(user, year, month):
         ]
         trend = None
         direction = None
-        if target is not None and logged_calories:
+        # A future day's own trailing window still reaches back across
+        # today and other already-logged days, so `logged_calories`
+        # here can be non-empty even though nothing has (or could
+        # have) been logged for the future day itself — regression:
+        # the trend arrow showed up on days that hadn't happened yet.
+        if target is not None and logged_calories and day <= today:
             average = sum(logged_calories) / len(logged_calories)
             deviation = abs(average - target.daily_calories) / target.daily_calories
             direction = "over" if average >= target.daily_calories else "under"

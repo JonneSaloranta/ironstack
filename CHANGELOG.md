@@ -18,6 +18,12 @@ narrated summary of the same version.
 
 ## [Unreleased]
 
+### Fixed
+- The dashboard calendar's calorie trend arrow no longer shows up on
+  future days — its trailing 7-day average could still pull in
+  already-logged past days even though the future day itself has
+  nothing logged.
+
 ## [1.16.0] — 2026-09-19
 
 ### Added

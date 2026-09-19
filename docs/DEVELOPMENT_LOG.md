@@ -4972,3 +4972,27 @@ expected number stale — two independent `Paginator`s each issue their
 own `COUNT` query, a fixed +2 over the single unpaginated fetch the
 test was written against, not a scaling N+1 (updated the pinned
 number and its comment rather than loosening the assertion).
+
+## The calendar's calorie trend arrow showing up on future days
+
+Reported directly: the dashboard month calendar's calorie trend arrow
+(`apps.nutrition.services.calendar_month_statuses`) appeared on days
+in the future — before they could possibly have anything logged.
+
+Root cause: each day's trend is the average of its own trailing
+`CALENDAR_CALORIE_TREND_WINDOW_DAYS` (7) days, looking *backward* from
+that day. For a future day, that backward-looking window still
+reaches across today and other already-logged recent days — so
+`logged_calories` came out non-empty (and a trend got computed and
+shown) purely because *earlier* days in the window had something
+logged, never because the future day itself did. Fixed with one
+extra condition, `day <= today`, gating trend computation entirely for
+any day beyond today — a day that hasn't happened yet has no
+meaningful "how's it going" to show regardless of what its window
+average happens to compute to.
+
+New regression test logs today's calories, then asserts a day three
+days out has no trend/direction despite its own trailing window
+reaching back to today's now-logged entry. Full `CalendarMonthStatusesTests`
+class (20 tests, all pre-existing calorie-trend assertions use dates
+safely in the past relative to any real test run) passes alongside it.
