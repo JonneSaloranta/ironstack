@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load i18n %}
+{% load i18n static %}
 {% block title %}{% trans "Foods" %} — IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
@@ -11,35 +11,81 @@
 </div>
 {% include "nutrition/_subnav.html" %}
 
-<form class="card" method="get">
+{% comment %}
+  Same search box as templates/nutrition/food_browse.html — live
+  keyup search plus a barcode scanner, not the plain type-and-submit
+  <form> this page used to have. Only the search *input* changed;
+  the plain, unfiltered "all your foods" table below is untouched —
+  this box's own results render into #food-search-results instead of
+  reloading the page.
+{% endcomment %}
+<div class="card" x-data="ironstackBarcodeScanner()">
   <div class="field">
-    <label for="id_q">{% trans "Search" %}</label>
-    <input type="text" name="q" id="id_q" value="{{ query }}">
+    <label for="id_q">{% trans "Search foods" %}</label>
+    <input type="text" id="id_q" name="q"
+           hx-get="{% url 'nutrition:food-search' %}"
+           hx-trigger="keyup changed delay:400ms"
+           hx-target="#food-search-results"
+           hx-vals='{"mode": "browse"}'
+           hx-swap="outerHTML"
+           autocomplete="off"
+           placeholder="{% trans "e.g. chicken breast, or a barcode number" %}">
   </div>
-  <button type="submit">{% trans "Search" %}</button>
+  {% include "nutrition/_barcode_scan_button.html" with target_input_id="id_q" %}
+</div>
+
+<div id="food-search-results"></div>
+
+<h2>{% trans "All foods" %}</h2>
+{% comment %}
+  Filters/sort combine (AND) with each other and with pagination —
+  every input here lives in the querystring (hx-push-url="true"), the
+  same "the URL is the whole filter state" shape
+  templates/exercises/exercise_list.html already uses, so a paginated,
+  filtered, sorted view stays bookmarkable/shareable and survives a
+  refresh. Live keyup/change updates swap only #food-list-results
+  (FoodListView.get_template_names' HTMX branch); no hidden state
+  anywhere else has to be kept in sync with it.
+{% endcomment %}
+<form class="filter-row" hx-get="{% url 'nutrition:food-list' %}" hx-target="#food-list-results"
+      hx-trigger="input changed delay:300ms from:#id_food_q, input changed delay:300ms from:#id_category, change from:#id_sort, change from:#id_dir"
+      hx-push-url="true">
+  <input type="search" id="id_food_q" name="q" placeholder="{% trans "Filter by name…" %}" value="{{ query }}" aria-label="{% trans "Filter by name" %}">
+  {% comment %}
+    A <select> forced picking an exact category from a (potentially
+    long — OFF's own categories are numerous and inconsistently
+    cased/named) dropdown list. An `<input list>` + `<datalist>` keeps
+    the same distinct_food_categories options as suggestions but lets
+    typing filter/narrow them natively — no JS, and the value it
+    submits is still plain text, matching the `__icontains` match
+    FoodListView.get_queryset already does against `category`.
+  {% endcomment %}
+  <input type="search" id="id_category" name="category" list="id_category_options"
+         placeholder="{% trans "All categories" %}" value="{{ selected_category }}"
+         aria-label="{% trans "Filter by category" %}">
+  <datalist id="id_category_options">
+    {% for category in categories %}
+      <option value="{{ category }}">
+    {% endfor %}
+  </datalist>
+  <select id="id_sort" name="sort" aria-label="{% trans "Sort by" %}">
+    <option value="name" {% if selected_sort == "name" %}selected{% endif %}>{% trans "Name" %}</option>
+    <option value="created" {% if selected_sort == "created" %}selected{% endif %}>{% trans "Date added" %}</option>
+    <option value="category" {% if selected_sort == "category" %}selected{% endif %}>{% trans "Category" %}</option>
+    <option value="calories" {% if selected_sort == "calories" %}selected{% endif %}>{% trans "Calories" %}</option>
+  </select>
+  <select id="id_dir" name="dir" aria-label="{% trans "Sort direction" %}">
+    <option value="asc" {% if selected_dir == "asc" %}selected{% endif %}>{% trans "Ascending" %}</option>
+    <option value="desc" {% if selected_dir == "desc" %}selected{% endif %}>{% trans "Descending" %}</option>
+  </select>
 </form>
 
-{% if foods %}
-  <div class="table-wrap">
-    <table class="set-table">
-      <thead>
-        <tr><th>{% trans "Name" %}</th><th>{% trans "Calories" %}</th></tr>
-      </thead>
-      <tbody>
-        {% for food in foods %}
-          <tr>
-            <td>{{ food.name }}{% if food.brand %} <span class="text-muted">({{ food.brand }})</span>{% endif %}{% include "nutrition/_nutri_score_badge.html" %}</td>
-            <td>{{ food.calories }} kcal / {{ food.serving_size }} {{ food.serving_unit }}</td>
-          </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
-{% else %}
-  <div class="card empty-state">
-    <p>{% trans "No foods yet." %}</p>
-  </div>
-{% endif %}
+<div id="food-list-results">
+  {% include "nutrition/_food_list_results.html" %}
+</div>
 
 <p><a class="button-secondary" href="{% url 'nutrition:dashboard' %}">&larr; {% trans "Back to nutrition" %}</a></p>
+{% endblock %}
+{% block extra_scripts %}
+<script src="{% static 'js/barcode-scanner.js' %}" defer></script>
 {% endblock %}

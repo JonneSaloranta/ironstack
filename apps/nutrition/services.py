@@ -292,6 +292,40 @@ def search_foods(user, query):
     return local, off_results
 
 
+def distinct_food_categories(user):
+    """Every distinct category name across the foods visible to `user`
+    (their own plus shared/imported) — for `FoodListView`'s own
+    "filter by category" dropdown. `Food.categories` is OFF's raw,
+    free-text, comma-separated string (see that field's own comment
+    for why — it's display text, not a normalized taxonomy), so this
+    is a plain Python split/dedupe over each row's value rather than
+    a query the database could serve directly; nothing else in this
+    app needs a distinct-categories list often enough to justify
+    normalizing the column just for this. Unrelated to
+    `suggested_categories`/`browse_category` below, which browse
+    OFF's own live category *IDs* for importing something new, not
+    this instance's already-imported foods."""
+    raw_values = (
+        Food.objects.filter(Q(owner=user) | Q(owner__isnull=True), active=True)
+        .exclude(categories="")
+        .values_list("categories", flat=True)
+    )
+    names = set()
+    for raw in raw_values:
+        for name in raw.split(","):
+            name = name.strip()
+            if name:
+                names.add(name)
+    # key=str.lower, not a bare sort — OFF's own category casing is
+    # inconsistent (a plain "Cereals" alongside a locale-prefixed
+    # "en:Confectionary based spreads"), and Python's default string
+    # sort is case-sensitive (every uppercase letter sorts before
+    # every lowercase one), so a bare `sorted(names)` reads as "not
+    # actually alphabetical" the moment two categories differ only in
+    # case.
+    return sorted(names, key=str.lower)
+
+
 _CATEGORY_CACHE_KEY = "nutrition:off_categories"
 _CATEGORY_CACHE_SECONDS = 60 * 60 * 24  # a day — OFF's category list barely moves
 

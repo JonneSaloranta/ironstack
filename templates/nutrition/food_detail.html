@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{{ food.name }} — IronStack{% endblock %}
+{% block content %}
+<div class="top-bar">
+  <h1 style="margin:0;">{{ food.name }}</h1>
+</div>
+{% if food.brand %}<p class="text-muted">{{ food.brand }}</p>{% endif %}
+{% include "nutrition/_subnav.html" %}
+
+{% if food.image_url %}
+  <img class="food-detail-image" src="{{ food.image_url }}" alt="">
+{% endif %}
+
+<div class="card">
+  <strong>{% trans "Nutrition" %}</strong>
+  <p class="text-muted">{% blocktrans with size=food.serving_size unit=food.serving_unit %}Per {{ size }} {{ unit }}{% endblocktrans %}</p>
+  {% include "nutrition/_nutri_score_badge.html" %}
+  <table class="set-table">
+    <tbody>
+      <tr><td>{% trans "Calories" %}</td><td>{{ food.calories }} kcal</td></tr>
+      <tr><td>{% trans "Protein" %}</td><td>{{ food.protein_grams }} g</td></tr>
+      <tr><td>{% trans "Carbohydrates" %}</td><td>{{ food.carbohydrate_grams }} g</td></tr>
+      <tr><td>{% trans "Fat" %}</td><td>{{ food.fat_grams }} g</td></tr>
+      {% if food.fiber_grams is not None %}
+        <tr><td>{% trans "Fiber" %}</td><td>{{ food.fiber_grams }} g</td></tr>
+      {% endif %}
+      {% if food.sugar_grams is not None %}
+        <tr><td>{% trans "Sugar" %}</td><td>{{ food.sugar_grams }} g</td></tr>
+      {% endif %}
+      {% if food.saturated_fat_grams is not None %}
+        <tr><td>{% trans "Saturated fat" %}</td><td>{{ food.saturated_fat_grams }} g</td></tr>
+      {% endif %}
+      {% if food.sodium_mg is not None %}
+        <tr><td>{% trans "Sodium" %}</td><td>{{ food.sodium_mg }} mg</td></tr>
+      {% endif %}
+    </tbody>
+  </table>
+</div>
+
+{% if food.quantity or food.ingredients_text or food.labels or food.allergens or food.categories %}
+  <div class="card">
+    <strong>{% trans "Product information" %}</strong>
+    <table class="set-table">
+      <tbody>
+        {% if food.quantity %}
+          <tr><td>{% trans "Package size" %}</td><td>{{ food.quantity }}</td></tr>
+        {% endif %}
+        {% if food.categories %}
+          <tr><td>{% trans "Categories" %}</td><td>{{ food.categories }}</td></tr>
+        {% endif %}
+        {% if food.labels %}
+          <tr><td>{% trans "Labels" %}</td><td>{{ food.labels }}</td></tr>
+        {% endif %}
+        {% if food.allergens %}
+          <tr><td>{% trans "Allergens" %}</td><td>{{ food.allergens }}</td></tr>
+        {% endif %}
+      </tbody>
+    </table>
+    {% if food.ingredients_text %}
+      <p class="text-muted"><strong>{% trans "Ingredients" %}:</strong> {{ food.ingredients_text }}</p>
+    {% endif %}
+  </div>
+{% endif %}
+
+<p><a class="button-secondary" href="{% url 'nutrition:food-list' %}">&larr; {% trans "Back to foods" %}</a></p>
+{% endblock %}

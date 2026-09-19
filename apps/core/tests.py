@@ -406,13 +406,15 @@ class ContentSecurityPolicyTests(TestCase):
         response = self.client.get(reverse("healthcheck"))
         self.assertIn("frame-ancestors 'none'", response["Content-Security-Policy"])
 
-    def test_img_src_allows_gravatar_alongside_self(self):
-        # apps.accounts.models.User.gravatar_url — see docs/SECURITY.md
-        # "Gravatar profile picture" for why this is the one deliberate
-        # external allowance in an otherwise 'self'-only policy.
+    def test_img_src_allows_gravatar_and_openfoodfacts_images_alongside_self(self):
+        # apps.accounts.models.User.gravatar_url and
+        # apps.nutrition.models.Food.image_url — see docs/SECURITY.md
+        # "Gravatar profile picture"/"OpenFoodFacts integration" for
+        # why these are the two deliberate external allowances in an
+        # otherwise 'self'-only policy.
         response = self.client.get(reverse("healthcheck"))
         self.assertIn(
-            "img-src 'self' data: https://www.gravatar.com",
+            "img-src 'self' data: https://www.gravatar.com https://images.openfoodfacts.org",
             response["Content-Security-Policy"],
         )
 

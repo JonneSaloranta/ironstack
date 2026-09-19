@@ -469,27 +469,93 @@ class GoalUpdateView(LoginRequiredMixin, View):
 
 
 class FoodListView(LoginRequiredMixin, ListView):
+    """`get_template_names` swaps to the bare results partial for an
+    HTMX request — the exact same "one view, two templates" shape
+    `apps.exercises.views.ExerciseListView` already uses for its own
+    filter form, reused here rather than inventing a second way to do
+    the same thing."""
+
     template_name = "nutrition/food_list.html"
     context_object_name = "foods"
-    paginate_by = 50
+    paginate_by = 20
+
+    # Query param -> ordering field. "name" is also the default and
+    # the tiebreaker for every other sort (see get_queryset) so two
+    # foods sharing a sort value — the same category, the same
+    # calorie count — still land in a stable, predictable order
+    # instead of whatever order Postgres happens to return them in.
+    SORT_FIELDS = {
+        "name": "name",
+        "created": "created_at",
+        "category": "categories",
+        "calories": "calories",
+    }
 
     def get_queryset(self):
         from django.db.models import Q
 
         from .models import Food
 
-        qs = Food.objects.filter(
-            Q(owner=self.request.user) | Q(owner__isnull=True), active=True
-        ).order_by("name")
+        qs = Food.objects.filter(Q(owner=self.request.user) | Q(owner__isnull=True), active=True)
         query = self.request.GET.get("q", "").strip()
         if query:
             qs = qs.filter(name__icontains=query)
-        return qs
+        category = self.request.GET.get("category", "").strip()
+        if category:
+            qs = qs.filter(categories__icontains=category)
+
+        sort = self.request.GET.get("sort", "name")
+        field = self.SORT_FIELDS.get(sort, "name")
+        if self.request.GET.get("dir") == "desc":
+            field = f"-{field}"
+        return qs.order_by(field) if sort == "name" else qs.order_by(field, "name")
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["query"] = self.request.GET.get("q", "")
+        context["categories"] = services.distinct_food_categories(self.request.user)
+        context["selected_category"] = self.request.GET.get("category", "")
+        context["selected_sort"] = self.request.GET.get("sort", "name")
+        context["selected_dir"] = self.request.GET.get("dir", "asc")
         return context
+
+    def get_template_names(self):
+        if self.request.headers.get("HX-Request"):
+            return ["nutrition/_food_list_results.html"]
+        return [self.template_name]
+
+
+def _viewable_food_or_404(request, pk):
+    """Read-only access to one food — a user's own food, or a shared
+    one (owner=None: hand-entered by another user made visible to
+    everyone, or imported from OpenFoodFacts), same visibility as
+    FoodListView.get_queryset above and the exact
+    _viewable_recipe_or_404 pattern below reuses for Recipe. There is
+    no equivalent _owned_food_or_404 / food-update view yet — Food has
+    no edit page at all today, only creation — so unlike Recipe this
+    helper backs every food view that exists, not just the read-only
+    ones."""
+    from django.db.models import Q
+
+    from .models import Food
+
+    return get_object_or_404(
+        Food, Q(owner=request.user) | Q(owner__isnull=True), pk=pk, active=True
+    )
+
+
+class FoodDetailView(LoginRequiredMixin, View):
+    """One food's own nutrition facts — asked for directly: every
+    other place a food's name appears (the diary, a recipe's
+    ingredient list, "most used", search results, ...) used to show
+    plain text with nowhere to tap through to, unlike a recipe, which
+    already had this page."""
+
+    template_name = "nutrition/food_detail.html"
+
+    def get(self, request, pk):
+        food = _viewable_food_or_404(request, pk)
+        return render(request, self.template_name, {"food": food})
 
 
 class FoodCreateView(LoginRequiredMixin, CreateView):
@@ -687,6 +753,7 @@ class DiaryAddEntryView(LoginRequiredMixin, View):
                 "date": target_date or timezone.localdate().isoformat(),
                 "meal_slots": services.visible_meal_slots(request.user),
                 "most_used": services.most_used_foods(request.user),
+                "selected_meal_slot": request.GET.get("meal_slot", ""),
             },
         )
 
@@ -704,6 +771,7 @@ class DiaryAddEntryView(LoginRequiredMixin, View):
                     "date": target_date.isoformat(),
                     "meal_slots": services.visible_meal_slots(request.user),
                     "most_used": services.most_used_foods(request.user),
+                    "selected_meal_slot": request.POST.get("meal_slot", ""),
                 },
             )
 
@@ -723,6 +791,7 @@ class DiaryAddEntryView(LoginRequiredMixin, View):
                         "form": form,
                         "date": target_date.isoformat(),
                         "meal_slots": services.visible_meal_slots(request.user),
+                        "selected_meal_slot": request.POST.get("meal_slot", ""),
                     },
                 )
 

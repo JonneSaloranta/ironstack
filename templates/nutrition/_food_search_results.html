@@ -17,7 +17,7 @@
         {% if mode == "browse" %}
           <div class="card card-action-row">
             <div>
-              <strong>{{ food.name }}</strong>{% include "nutrition/_nutri_score_badge.html" %}
+              <strong><a class="inline-item-link" href="{% url 'nutrition:food-detail' food.pk %}">{{ food.name }}</a></strong>{% include "nutrition/_nutri_score_badge.html" %}
               <p class="text-muted">{{ food.calories }} kcal / {{ food.serving_size }} {{ food.serving_unit }}</p>
             </div>
             <span class="tag-muted">{% trans "Already in your library" %}</span>
@@ -31,7 +31,7 @@
               <input type="hidden" name="date" value="{{ date }}">
             {% endif %}
             <div>
-              <strong>{{ food.name }}</strong>{% include "nutrition/_nutri_score_badge.html" %}
+              <strong><a class="inline-item-link" href="{% url 'nutrition:food-detail' food.pk %}">{{ food.name }}</a></strong>{% include "nutrition/_nutri_score_badge.html" %}
               <p class="text-muted">{{ food.calories }} kcal / {{ food.serving_size }} {{ food.serving_unit }}</p>
             </div>
             <div style="display:flex; flex-wrap:wrap; gap:0.5rem; align-items:center;">

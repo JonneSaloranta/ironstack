@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: IronStack\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-16 15:15+0000\n"
+"POT-Creation-Date: 2026-09-18 21:22+0000\n"
 "Language: fi\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -558,7 +558,8 @@ msgstr "Poista"
 
 #: apps/api/forms.py:29 apps/social/forms.py:13
 #: templates/admin/nutrition/food/merge.html:14
-#: templates/nutrition/food_list.html:26
+#: templates/nutrition/_food_list_results.html:17
+#: templates/nutrition/food_list.html:73
 msgid "Name"
 msgstr "Nimi"
 
@@ -614,6 +615,7 @@ msgstr "Analytiikka"
 #: apps/api/models.py:32 templates/api/key_list.html:109
 #: templates/base.html:159 templates/base.html:161
 #: templates/nutrition/dashboard.html:3 templates/nutrition/dashboard.html:6
+#: templates/nutrition/food_detail.html:16
 #: templates/nutrition/recipe_detail.html:54
 msgid "Nutrition"
 msgstr "Ravinto"
@@ -702,7 +704,7 @@ msgstr "Aiemmin IronStack-asennuksesta ladattu .tar.gz-varmuuskopioarkisto."
 msgid "Must be a .tar.gz file."
 msgstr "Tiedoston tulee olla .tar.gz-muodossa."
 
-#: apps/core/forms.py:59
+#: apps/core/forms.py:59 templates/nutrition/food_list.html:75
 msgid "Category"
 msgstr "Kategoria"
 
@@ -1965,9 +1967,10 @@ msgstr ""
 "Kaikki alla olevat ravintoarvot koskevat tätä määrää, sen vieressä valitussa "
 "yksikössä — esim. \"100 g\", jos arvot ovat sataa grammaa kohden."
 
-#: apps/nutrition/forms.py:193 templates/nutrition/diary_add_entry.html:48
+#: apps/nutrition/forms.py:193 templates/nutrition/diary_add_entry.html:55
 #: templates/nutrition/diet_plan_meal_item_form.html:18
 #: templates/nutrition/food_browse.html:25
+#: templates/nutrition/food_list.html:24
 #: templates/nutrition/recipe_ingredient_form.html:18
 msgid "Search foods"
 msgstr "Hae ruokia"
@@ -1994,7 +1997,7 @@ msgstr ""
 "ainoastaan kyseiselle aterialle — jätä \"Mikä tahansa ateria\" -tilaan, jos "
 "resepti sopii mihin tahansa."
 
-#: apps/nutrition/forms.py:294 templates/nutrition/diary_add_entry.html:29
+#: apps/nutrition/forms.py:294 templates/nutrition/diary_add_entry.html:38
 msgid "Meal"
 msgstr "Ateria"
 
@@ -2435,11 +2438,11 @@ msgstr ""
 msgid "Null for the built-in default meal slots."
 msgstr "Tyhjä (null) sisäänrakennetuille oletusaterioille."
 
-#: apps/nutrition/models.py:494
+#: apps/nutrition/models.py:528
 msgid "Log either a food or a recipe, not both or neither."
 msgstr "Kirjaa joko ruoka tai resepti, ei molempia eikä kumpaakaan."
 
-#: apps/nutrition/models.py:604
+#: apps/nutrition/models.py:638
 msgid "Use either a food or a recipe, not both or neither."
 msgstr "Käytä joko ruokaa tai reseptiä, ei molempia eikä kumpaakaan."
 
@@ -2485,39 +2488,39 @@ msgstr ""
 msgid "Goal updated — new target is %(calories)d kcal/day."
 msgstr "Tavoite päivitetty — uusi tavoite on %(calories)d kcal/vrk."
 
-#: apps/nutrition/views.py:663
+#: apps/nutrition/views.py:729
 msgid "Pick a date to copy this day to."
 msgstr "Valitse päivä, jolle tämä päivä kopioidaan."
 
-#: apps/nutrition/views.py:668
+#: apps/nutrition/views.py:734
 #, python-format
 msgid "Copied %(count)d entry to %(date)s."
 msgid_plural "Copied %(count)d entries to %(date)s."
 msgstr[0] "Kopioitiin %(count)d merkintä päivälle %(date)s."
 msgstr[1] "Kopioitiin %(count)d merkintää päivälle %(date)s."
 
-#: apps/nutrition/views.py:674
+#: apps/nutrition/views.py:740
 msgid "Nothing to copy — that day has no entries."
 msgstr "Ei mitään kopioitavaa — kyseiselle päivälle ei ole kirjattu mitään."
 
-#: apps/nutrition/views.py:718 apps/nutrition/views.py:935
-#: apps/nutrition/views.py:1244
+#: apps/nutrition/views.py:786 apps/nutrition/views.py:1004
+#: apps/nutrition/views.py:1313
 msgid "That food couldn't be imported — try again."
 msgstr "Tätä ruokaa ei voitu tuoda — yritä uudelleen."
 
-#: apps/nutrition/views.py:877
+#: apps/nutrition/views.py:946
 #, python-format
 msgid "\"%(name)s\" created — now add its ingredients below."
 msgstr "\"%(name)s\" luotu — lisää sen ainesosat alla."
 
-#: apps/nutrition/views.py:1276
+#: apps/nutrition/views.py:1345
 #, python-format
 msgid "Logged %(count)d item to %(date)s."
 msgid_plural "Logged %(count)d items to %(date)s."
 msgstr[0] "Kirjattiin %(count)d kohde päivälle %(date)s."
 msgstr[1] "Kirjattiin %(count)d kohdetta päivälle %(date)s."
 
-#: apps/nutrition/views.py:1287
+#: apps/nutrition/views.py:1356
 msgid "Nothing to log — this plan has no items for that date."
 msgstr ""
 "Ei mitään kirjattavaa — tällä suunnitelmalla ei ole kohteita kyseiselle "
@@ -3995,8 +3998,11 @@ msgid "Brand"
 msgstr "Merkki"
 
 #: templates/admin/nutrition/food/merge.html:17
+#: templates/nutrition/_food_list_results.html:17
 #: templates/nutrition/dashboard.html:23 templates/nutrition/dashboard.html:50
-#: templates/nutrition/diary_day.html:30 templates/nutrition/food_list.html:26
+#: templates/nutrition/diary_day.html:30
+#: templates/nutrition/food_detail.html:21
+#: templates/nutrition/food_list.html:76
 #: templates/nutrition/recipe_detail.html:60
 msgid "Calories"
 msgstr "Kalorit"
@@ -4691,18 +4697,21 @@ msgstr "Lähetetyt palautteet"
 
 #: templates/core/feedback_list.html:44
 #: templates/exercises/_exercise_list_results.html:22
+#: templates/nutrition/_food_list_results.html:46
 #: templates/workouts/_train_panel.html:13
 msgid "Previous"
 msgstr "Edellinen"
 
 #: templates/core/feedback_list.html:46
 #: templates/exercises/_exercise_list_results.html:24
+#: templates/nutrition/_food_list_results.html:48
 #, python-format
 msgid "Page %(number)s of %(total)s"
 msgstr "Sivu %(number)s / %(total)s"
 
 #: templates/core/feedback_list.html:48
 #: templates/exercises/_exercise_list_results.html:26
+#: templates/nutrition/_food_list_results.html:50
 #: templates/workouts/_train_panel.html:21
 msgid "Next"
 msgstr "Seuraava"
@@ -4966,6 +4975,14 @@ msgstr "Ei vielä ehdotuksia — lisää ensin ruokia tai reseptejä."
 msgid "+ Add item"
 msgstr "+ Lisää kohde"
 
+#: templates/nutrition/_food_list_results.html:38
+msgid "No foods match your filters."
+msgstr "Yksikään ruoka ei vastaa suodattimia."
+
+#: templates/nutrition/_food_list_results.html:44
+msgid "Food list pages"
+msgstr "Ruokalistan sivut"
+
 #: templates/nutrition/_food_search_results.html:15
 msgid "Your foods"
 msgstr "Omat ruokasi"
@@ -4976,7 +4993,7 @@ msgstr "Jo omissa ruoissasi"
 
 #: templates/nutrition/_food_search_results.html:38
 #: templates/nutrition/_food_search_results.html:64
-#: templates/nutrition/_most_used_foods.html:42
+#: templates/nutrition/_most_used_foods.html:46
 msgid "Quantity"
 msgstr "Määrä"
 
@@ -5065,11 +5082,11 @@ msgstr "Jos nuolta ei näy, kirjattua dataa ei ole vielä tarpeeksi arvioon."
 msgid "Tap a day for details."
 msgstr "Napauta päivää nähdäksesi lisätiedot."
 
-#: templates/nutrition/_most_used_foods.html:14
+#: templates/nutrition/_most_used_foods.html:18
 msgid "Most used"
 msgstr "Eniten käytetyt"
 
-#: templates/nutrition/_most_used_foods.html:43
+#: templates/nutrition/_most_used_foods.html:47
 msgid "+ Add"
 msgstr "+ Lisää"
 
@@ -5160,6 +5177,7 @@ msgid "Result"
 msgstr "Tulos"
 
 #: templates/nutrition/calculator_bmi.html:32
+#: templates/nutrition/food_detail.html:50
 msgid "Categories"
 msgstr "Luokat"
 
@@ -5236,6 +5254,7 @@ msgstr ""
 #: templates/nutrition/calculator_macros.html:28
 #: templates/nutrition/dashboard.html:27 templates/nutrition/dashboard.html:51
 #: templates/nutrition/dashboard.html:110 templates/nutrition/diary_day.html:40
+#: templates/nutrition/food_detail.html:22
 #: templates/nutrition/onboarding_review.html:17
 #: templates/nutrition/recipe_detail.html:61
 msgid "Protein"
@@ -5244,6 +5263,7 @@ msgstr "Proteiini"
 #: templates/nutrition/calculator_macros.html:29
 #: templates/nutrition/dashboard.html:31 templates/nutrition/dashboard.html:52
 #: templates/nutrition/dashboard.html:111 templates/nutrition/diary_day.html:44
+#: templates/nutrition/food_detail.html:23
 #: templates/nutrition/onboarding_review.html:18
 #: templates/nutrition/recipe_detail.html:62
 msgid "Carbohydrates"
@@ -5252,6 +5272,7 @@ msgstr "Hiilihydraatit"
 #: templates/nutrition/calculator_macros.html:30
 #: templates/nutrition/dashboard.html:35 templates/nutrition/dashboard.html:53
 #: templates/nutrition/dashboard.html:112 templates/nutrition/diary_day.html:48
+#: templates/nutrition/food_detail.html:24
 #: templates/nutrition/onboarding_review.html:19
 #: templates/nutrition/recipe_detail.html:63
 msgid "Fat"
@@ -5391,7 +5412,7 @@ msgstr ""
 #: templates/nutrition/calculators_home.html:67
 #: templates/nutrition/diary_day.html:92
 #: templates/nutrition/diet_plan_list.html:39
-#: templates/nutrition/food_list.html:44 templates/nutrition/goal_edit.html:36
+#: templates/nutrition/food_list.html:88 templates/nutrition/goal_edit.html:36
 #: templates/nutrition/recipe_list.html:46 templates/nutrition/stats.html:44
 msgid "Back to nutrition"
 msgstr "Takaisin ravintoon"
@@ -5484,14 +5505,15 @@ msgstr "Muuta tavoitetta"
 msgid "Add food"
 msgstr "Lisää ruoka"
 
-#: templates/nutrition/diary_add_entry.html:57
+#: templates/nutrition/diary_add_entry.html:64
 #: templates/nutrition/diet_plan_meal_item_form.html:26
 #: templates/nutrition/food_browse.html:33
+#: templates/nutrition/food_list.html:32
 #: templates/nutrition/recipe_ingredient_form.html:26
 msgid "e.g. chicken breast, or a barcode number"
 msgstr "esim. kananrinta tai viivakoodi"
 
-#: templates/nutrition/diary_add_entry.html:65
+#: templates/nutrition/diary_add_entry.html:74
 #: templates/nutrition/diary_entry_form.html:23
 msgid "Back to diary"
 msgstr "Takaisin päiväkirjaan"
@@ -5672,6 +5694,7 @@ msgid "Browse by category"
 msgstr "Selaa kategorioittain"
 
 #: templates/nutrition/food_browse.html:49
+#: templates/nutrition/food_detail.html:66
 #: templates/nutrition/food_form.html:24
 msgid "Back to foods"
 msgstr "Takaisin ruokiin"
@@ -5683,6 +5706,52 @@ msgstr "Tästä kategoriasta ei löytynyt tällä hetkellä mitään."
 #: templates/nutrition/food_category.html:29
 msgid "Back to browse"
 msgstr "Takaisin selaamiseen"
+
+#: templates/nutrition/food_detail.html:17
+#, python-format
+msgid "Per %(size)s %(unit)s"
+msgstr "%(size)s %(unit)s kohti"
+
+#: templates/nutrition/food_detail.html:26
+#: templates/nutrition/recipe_detail.html:65
+msgid "Fiber"
+msgstr "Kuitu"
+
+#: templates/nutrition/food_detail.html:29
+#: templates/nutrition/recipe_detail.html:68
+msgid "Sugar"
+msgstr "Sokeri"
+
+#: templates/nutrition/food_detail.html:32
+#: templates/nutrition/recipe_detail.html:71
+msgid "Saturated fat"
+msgstr "Tyydyttynyt rasva"
+
+#: templates/nutrition/food_detail.html:35
+#: templates/nutrition/recipe_detail.html:74
+msgid "Sodium"
+msgstr "Natrium"
+
+#: templates/nutrition/food_detail.html:43
+msgid "Product information"
+msgstr "Tuotetiedot"
+
+#: templates/nutrition/food_detail.html:47
+msgid "Package size"
+msgstr "Pakkauskoko"
+
+#: templates/nutrition/food_detail.html:53
+msgid "Labels"
+msgstr "Merkinnät"
+
+#: templates/nutrition/food_detail.html:56
+msgid "Allergens"
+msgstr "Allergeenit"
+
+#: templates/nutrition/food_detail.html:61
+#: templates/nutrition/recipe_detail.html:27
+msgid "Ingredients"
+msgstr "Ainesosat"
 
 #: templates/nutrition/food_form.html:3 templates/nutrition/food_form.html:6
 msgid "New food"
@@ -5696,15 +5765,45 @@ msgstr "Selaa OpenFoodFactsia"
 msgid "+ New food"
 msgstr "+ Uusi ruoka"
 
-#: templates/nutrition/food_list.html:16 templates/nutrition/food_list.html:19
-#: templates/nutrition/recipe_list.html:15
-#: templates/nutrition/recipe_list.html:18
-msgid "Search"
-msgstr "Hae"
+#: templates/nutrition/food_list.html:39
+msgid "All foods"
+msgstr "Kaikki ruoat"
 
-#: templates/nutrition/food_list.html:40
-msgid "No foods yet."
-msgstr "Ei vielä ruokia."
+#: templates/nutrition/food_list.html:53
+msgid "Filter by name…"
+msgstr "Suodata nimellä…"
+
+#: templates/nutrition/food_list.html:53
+msgid "Filter by name"
+msgstr "Suodata nimellä"
+
+#: templates/nutrition/food_list.html:65
+msgid "All categories"
+msgstr "Kaikki kategoriat"
+
+#: templates/nutrition/food_list.html:66
+msgid "Filter by category"
+msgstr "Suodata kategorian mukaan"
+
+#: templates/nutrition/food_list.html:72
+msgid "Sort by"
+msgstr "Järjestä"
+
+#: templates/nutrition/food_list.html:74
+msgid "Date added"
+msgstr "Lisätty"
+
+#: templates/nutrition/food_list.html:78
+msgid "Sort direction"
+msgstr "Järjestyssuunta"
+
+#: templates/nutrition/food_list.html:79
+msgid "Ascending"
+msgstr "Nouseva"
+
+#: templates/nutrition/food_list.html:80
+msgid "Descending"
+msgstr "Laskeva"
 
 #: templates/nutrition/goal_edit.html:11
 msgid ""
@@ -5813,10 +5912,6 @@ msgstr ""
 "Merkitty ateriaksi %(meal)s — ruokavaliosuunnitelman rakennin ehdottaa tätä "
 "reseptiä vain kyseiselle aterialle."
 
-#: templates/nutrition/recipe_detail.html:27
-msgid "Ingredients"
-msgstr "Ainesosat"
-
 #: templates/nutrition/recipe_detail.html:38
 msgid "Remove this ingredient?"
 msgstr "Poistetaanko tämä ainesosa?"
@@ -5837,22 +5932,6 @@ msgstr "Yhteensä"
 #, python-format
 msgid "Per serving (of %(servings)s)"
 msgstr "Per annos (%(servings)s annoksesta)"
-
-#: templates/nutrition/recipe_detail.html:65
-msgid "Fiber"
-msgstr "Kuitu"
-
-#: templates/nutrition/recipe_detail.html:68
-msgid "Sugar"
-msgstr "Sokeri"
-
-#: templates/nutrition/recipe_detail.html:71
-msgid "Saturated fat"
-msgstr "Tyydyttynyt rasva"
-
-#: templates/nutrition/recipe_detail.html:74
-msgid "Sodium"
-msgstr "Natrium"
 
 #: templates/nutrition/recipe_detail.html:79
 msgid ""
@@ -5909,6 +5988,11 @@ msgstr "Lisää ainesosa reseptiin %(name)s"
 #: templates/nutrition/recipe_list.html:9
 msgid "+ New recipe"
 msgstr "+ Uusi resepti"
+
+#: templates/nutrition/recipe_list.html:15
+#: templates/nutrition/recipe_list.html:18
+msgid "Search"
+msgstr "Hae"
 
 #: templates/nutrition/recipe_list.html:30
 #, python-format

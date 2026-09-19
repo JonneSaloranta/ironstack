@@ -411,18 +411,26 @@ the request's `Origin`/`Referer` against this list for HTTPS requests.
 `apps.core.middleware.ContentSecurityPolicyMiddleware` sets a CSP
 header on every response, in every environment. `default-src 'self'`
 plus tight per-directive allowances (no external scripts/styles/
-fonts/images beyond `data:` URIs and `gravatar.com`, no framing by
-another site, no plugins, forms can only submit back to this same
-origin) — see the middleware's own docstring for the exact policy
-string and reasoning.
+fonts/images beyond `data:` URIs, `gravatar.com`, and
+`images.openfoodfacts.org`, no framing by another site, no plugins,
+forms can only submit back to this same origin) — see the
+middleware's own docstring for the exact policy string and reasoning.
 
-Four allowances are worth knowing about, each scoped as narrowly as
+Five allowances are worth knowing about, each scoped as narrowly as
 this stack currently allows:
 - `img-src https://www.gravatar.com` — the one deliberate exception to
   "no external anything," letting `templates/accounts/profile.html`
   load a user's Gravatar picture when they've opted into
   `User.show_gravatar` (off by default). See "Gravatar profile
   picture" above.
+- `img-src https://images.openfoodfacts.org` — `apps.nutrition.models.
+  Food.image_url` links directly to OFF's own image CDN rather than
+  downloading and re-hosting the file locally (see that field's own
+  comment for why); without this, every browser actually rendering
+  one silently drops it — a CSP violation shows no visible error, so
+  this was found by checking the policy against the new field, not
+  from a broken-looking page. See "OpenFoodFacts integration" in
+  `docs/NUTRITION.md`.
 - `script-src 'unsafe-eval'` — Alpine.js evaluates `x-data`/`x-show`/
   `@click`/... expression strings via `new Function()`, which CSP
   treats as eval. Alpine ships a separate CSP-safe build (a restricted

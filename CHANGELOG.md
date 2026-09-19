@@ -18,6 +18,29 @@ narrated summary of the same version.
 
 ## [Unreleased]
 
+### Added
+- Every food now has its own nutrition-facts page — tap its name
+  anywhere it appears (the diary, a recipe's ingredients, "most
+  used", search results, a diet plan's meal preview) to open it.
+- Foods imported from OpenFoodFacts now show a photo (in the food
+  list and on the food's own page) and their OFF categories — makes a
+  food much easier to recognize at a glance.
+- The "All foods" list is now paginated (20 per page) and can be
+  filtered by name/category and sorted by name, date added, category,
+  or calories (ascending or descending) — all combinable at once.
+
+### Changed
+- On the "Add food" page, search/barcode scan now comes above "Most
+  used" instead of below it.
+- Double-tapping a food or recipe name no longer zooms the page in on
+  iOS Safari.
+
+### Fixed
+- Tapping "+ Add food" under a specific meal (e.g. Dinner) no longer
+  lands on the add-food page with a different meal (Breakfast)
+  preselected — food logged there went to the wrong meal until you
+  noticed and switched it by hand.
+
 ## [1.15.0] — 2026-09-16
 
 ### Added

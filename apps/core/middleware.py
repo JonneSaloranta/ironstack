@@ -27,7 +27,15 @@ class ContentSecurityPolicyMiddleware:
     # img-src additionally allows gravatar.com: apps.accounts.models.
     # User.gravatar_url, loaded by templates/accounts/profile.html only
     # when a user has opted into User.show_gravatar (off by default —
-    # see docs/SECURITY.md "Gravatar profile picture"). The only other
+    # see docs/SECURITY.md "Gravatar profile picture") — and
+    # images.openfoodfacts.org: apps.nutrition.models.Food.image_url,
+    # linked directly to OFF's own image CDN rather than downloaded
+    # and re-hosted (see that field's own comment for why), so every
+    # browser actually rendering one needs this origin allowed the
+    # same way gravatar's is. Found live: without this, the image
+    # simply never loads — CSP blocks it silently, no visible error,
+    # so the gap wasn't obvious from a screenshot alone, only from
+    # checking this policy against the new field. The only other
     # directive not locked to 'self': no external fonts/scripts, no
     # plugins, no framing by another site (redundant with
     # X_FRAME_OPTIONS, kept as defense-in-depth since browsers that
@@ -55,7 +63,7 @@ class ContentSecurityPolicyMiddleware:
         "default-src 'self'; "
         "script-src 'self' 'unsafe-eval'; "
         "style-src 'self' 'unsafe-inline'; "
-        "img-src 'self' data: https://www.gravatar.com; "
+        "img-src 'self' data: https://www.gravatar.com https://images.openfoodfacts.org; "
         "font-src 'self'; "
         "connect-src 'self'; "
         "frame-src 'self' chrome-extension: moz-extension: safari-web-extension:; "

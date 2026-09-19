@@ -22,8 +22,17 @@
   used" tap silently log to a different meal than the one selected on
   screen. One shared value now drives both, and the selector is shown
   first since everything below it depends on it.
+
+  Initialized from `selected_meal_slot` (the meal card's own "+ Add
+  food" link on templates/nutrition/diary_day.html passes ?meal_slot=,
+  and DiaryAddEntryView.post's invalid-form re-render passes back
+  whatever was actually submitted) rather than always the first slot
+  in the list — regression: tapping "+ Add food" under Dinner still
+  landed on this page with Breakfast preselected, since nothing here
+  ever looked at which meal the link came from, and a food logged
+  without noticing that went to the wrong meal.
 {% endcomment %}
-<div x-data="{ mealSlot: '{{ meal_slots.0.pk|default:'' }}' }">
+<div x-data="{ mealSlot: '{{ selected_meal_slot|default:meal_slots.0.pk|default:'' }}' }">
   <div class="card">
     <div class="field">
       <label for="id_meal_slot">{% trans "Meal" %}</label>
@@ -40,8 +49,6 @@
       </select>
     </div>
   </div>
-
-  {% include "nutrition/_most_used_foods.html" with mode="diary" date=date meal_slots=meal_slots %}
 
   <div class="card" x-data="ironstackBarcodeScanner()">
     <div class="field">
@@ -60,6 +67,8 @@
   </div>
 
   <div id="food-search-results"></div>
+
+  {% include "nutrition/_most_used_foods.html" with mode="diary" date=date meal_slots=meal_slots %}
 </div>
 
 <p><a class="button-secondary" href="{% url 'nutrition:diary-day' target_date=date %}">&larr; {% trans "Back to diary" %}</a></p>

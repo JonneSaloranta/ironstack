@@ -4584,3 +4584,191 @@ alongside the rest of `apps.analytics`/`apps.core` (74 tests). Verified
 visually again with the same real dashboard/Analytics pages: a card
 now shows exactly its headline figures collapsed, with every
 rep-specific PR staying hidden until expanded.
+
+## Food diary: wrong meal preselected on "+ Add food", plus a Food detail page
+
+Reported: tapping "+ Add food" under one meal (Dinner, say) landed on
+the add-food page with a *different* meal (Breakfast) preselected —
+described as having repeatedly logged food to the wrong meal because
+of it. Root-caused to two independent gaps that only mattered
+together: `templates/nutrition/diary_day.html`'s per-meal "+ Add food"
+link only ever passed `?date=`, never which meal card it was on;
+separately, `DiaryAddEntryView.get()`/`.post()`'s invalid-form
+re-render never read or forwarded a `meal_slot` value at all, so
+`diary_add_entry.html`'s shared Alpine `mealSlot` state
+(`x-data="{ mealSlot: '{{ meal_slots.0.pk }}' }"`) had nothing to
+initialize from besides always the first meal slot in `order` —
+Breakfast. Fixed by threading a `selected_meal_slot` value through
+both the link (`&meal_slot={{ slot.pk }}`) and the view (read from
+`request.GET`/`request.POST` as appropriate, falling back to the
+first slot only when truly nothing was specified — e.g. arriving from
+somewhere that isn't a specific meal card). Covered by four new tests:
+the query param preselecting the right meal, no param falling back to
+the first slot, an invalid-form resubmit preserving whatever was
+actually submitted rather than resetting, and the diary page's own
+link carrying the right `meal_slot` per card.
+
+Same session, two follow-up requests:
+
+**Reorder "Add food."** Search/barcode scan sat below "Most used" on
+`diary_add_entry.html` (unlike its two sibling reuse sites — the same
+`_most_used_foods.html`/search partials also back
+`recipe_ingredient_form.html`/`diet_plan_meal_item_form.html`, which
+keep "Most used" first). Asked to put search above it here
+specifically — search/barcode is the more frequent path on this one
+page. Simple reorder, no logic change; updated
+`_most_used_foods.html`'s own comment to describe the (now
+per-page-different) ordering honestly instead of asserting one
+universal shape.
+
+**Every food/recipe name should link somewhere.** Broader ask:
+wherever a food or recipe's name is shown, it should be tappable
+through to that item's own page — called out specifically that "Most
+used" cards on the add-food page were plain text with nowhere to go.
+Recipes already had this (`RecipeDetailView`); `Food` had no detail
+view *at all* — only a list, a create form, and search/import, no way
+to open a single food and see its own nutrition facts. Added
+`FoodDetailView` (`/nutrition/foods/<pk>/`, read-only — `Food` has no
+update view yet either, so this only ever needed the same
+`Q(owner=request.user) | Q(owner__isnull=True)` visibility
+`FoodListView`/`_viewable_recipe_or_404` already establish, not an
+edit permission story) and a `food_detail.html` modeled directly on
+`recipe_detail.html`'s own nutrition-facts table. Then linked every
+plain-text food/recipe name found across the app to it:
+`food_list.html`, `_most_used_foods.html`, `_food_search_results.html`
+(only its already-imported "local" results — an OpenFoodFacts result
+not yet imported has no `Food` row and nothing to link to),
+`recipe_detail.html`'s own ingredient list, `_diet_plan_meal_card.html`,
+`diary_day.html`, `diary_entry_form.html`'s and
+`recipe_ingredient_edit_form.html`'s own `<h1>`, and the nutrition
+dashboard's "today's diet plan" preview — eight spots in total.
+`recipe_list.html` was left alone: it already has a working "Open"
+button per recipe, so nothing there was actually broken.
+
+Verified with new `FoodDetailView` tests (shows the food's own
+figures; a shared food is viewable; another user's private food and
+an inactive food both 404 the same way `FoodListView` already filters
+them out; requires login) plus two link-presence regression tests
+(`food_list.html`, "most used") — all pass, alongside the full
+`apps.nutrition` suite (351 tests) unchanged. Confirmed visually in a
+running dev container: the add-food page for a specific meal now
+preselects that meal, search sits above "most used," a most-used
+food's name is a real link, and opening it shows brand, Nutri-Score/
+NOVA badge, and the full nutrition table.
+
+## Double-tap-to-zoom on a food/recipe link, and the Foods page catching up
+
+Reported: double-tapping a food name on the Foods page zoomed the
+page in on iOS Safari — this app already has a site-wide fix for
+exactly that class of bug (`touch-action: manipulation` on a
+universal `*` selector, base.css's own comment explains why it has to
+be that broad), so the regression had to be something specific to the
+food-name links just added. Confirmed via computed styles
+(`getComputedStyle` on the link and every ancestor, through a real
+Chromium instance) that `touch-action: manipulation` genuinely was
+already in effect everywhere — so the `*` rule wasn't the gap.
+Root cause instead: these links were plain default `display: inline`,
+unlike every other tappable link already in the app
+(`.button-secondary` is `inline-flex`, `.card-link` is `block`) —
+WebKit doesn't reliably honor `touch-action` on a plain non-replaced
+inline element, a long-standing engine quirk the touch-action spec
+itself doesn't carve out. Fixed with a new `.inline-item-link` class
+(`display: inline-block`, no visual change since neither width nor
+height is set) applied to all nine of the food/recipe-name links
+added in the previous entry.
+
+Two more requests landed the same session, both about the Foods page
+specifically:
+
+**Barcode search there too.** Its own search box was still the plain
+type-and-submit `<form>` from before this app grew live HTMX search
++ barcode scanning everywhere else. Swapped for the identical
+box `food_browse.html` already uses (`mode=browse` against the same
+`FoodSearchResultsView`) — `apps.nutrition.services.search_foods`
+already handles a barcode-shaped query specially, so no server-side
+change was needed, only wiring the existing pieces together on one
+more page. Covered by a `test_the_camera_barcode_scanner_is_wired_up`
+test mirroring the one already covering `diary_add_entry.html`.
+
+**Every food/recipe name should link somewhere.** The same "make it
+tappable" principle applied to eight more spots found across the app
+— `food_list.html`, `_most_used_foods.html`, `_food_search_results.html`
+(only its already-imported "local" results — nothing to link to for
+an OpenFoodFacts result not yet imported), `recipe_detail.html`'s own
+ingredient list, `_diet_plan_meal_card.html`, `diary_day.html`,
+`diary_entry_form.html`'s and `recipe_ingredient_edit_form.html`'s
+own `<h1>`, and the nutrition dashboard's "today's diet plan"
+preview. `recipe_list.html` was left alone — it already has a working
+"Open" button per recipe, so nothing there was actually broken.
+
+## Foods page: pagination, OFF photos/categories, and combinable filters
+
+Three more requests, same page, same session:
+
+**Pagination.** `FoodListView` already had `paginate_by` set (50,
+now 20 per the request) but the template never actually rendered any
+pagination controls — a page beyond the first was silently
+unreachable. Added the exact `is_paginated`/`page_obj` nav
+`_exercise_list_results.html` already uses.
+
+**Photos and categories from OpenFoodFacts.** Two new `Food` fields,
+both blank for every hand-entered food (same as `nutri_score`/
+`nova_group`): `image_url` — OFF's own `image_front_url`, linked
+directly rather than downloaded and re-hosted locally, since OFF
+already operates an image CDN for exactly this and mirroring it would
+mean a Pillow resize pipeline, a media-storage growth story, and a
+second staleness concern for a field that's purely decorative; and
+`categories`, OFF's raw comma-separated `categories` string verbatim.
+Both just added to `openfoodfacts.parse_product`'s returned dict —
+`services.import_or_refresh_food_from_off` already applies every key
+in that dict generically, so no change was needed there at all.
+Displayed as a `.food-thumb` (`object-fit: cover`, small and fixed-
+size — the actual "optimize the image to fit the view" ask, done via
+CSS sizing rather than a server-side resize pipeline) in the list and
+a larger `.food-detail-image` (`object-fit: contain`, so a label's
+own text/branding — often the very thing that makes a food
+recognizable — never gets cropped off) on the detail page.
+
+Caught late, via a Playwright check of the actual rendered `<img>`
+(`naturalWidth`/`complete`) rather than trusting a screenshot alone:
+the image never loaded in a real browser at all, screenshot or not.
+Root cause: `apps.core.middleware.ContentSecurityPolicyMiddleware`'s
+`img-src` only ever allowed `'self'` plus `gravatar.com` — a CSP
+violation blocks silently, no visible error, so nothing about a
+broken-looking screenshot pointed at it directly. Added
+`images.openfoodfacts.org` to `img-src`, the same deliberate,
+narrowly-scoped exception gravatar.com already is. Second, smaller
+finding from the same live check: `loading="lazy"` on the thumbnail
+never triggered a load in headless Chromium even after scrolling the
+element into view and waiting — removed rather than chased further,
+since the actual performance case for lazy-loading a paginated list
+of twenty ~40px thumbnails is marginal at best.
+
+**Combinable filters/sort.** Name (`q`), category (`category`,
+`__icontains` against the raw string), and a sort
+(`name`/`created`/`category`/`calories`) with direction (`asc`/`desc`)
+— every one an independent querystring parameter that plain `AND`-
+filters and a single `order_by` combine, so any subset can be active
+at once and the whole state stays bookmarkable. `apps.nutrition.
+services.distinct_food_categories` (a Python-side split/dedupe over
+each visible food's raw `categories` string — not a query the
+database could serve directly, since the column is free text, not a
+normalized taxonomy) backs the category dropdown's own options. Filter
+form live-updates via HTMX exactly the way `apps.exercises.views.
+ExerciseListView`/`exercise_list.html` already do it
+(`get_template_names` swapping to a bare results partial for the HTMX
+request, `hx-push-url="true"`) — the identical shape, reused rather
+than invented a second time; even renamed that shared row's CSS class
+from `.exercise-filters` to the now-accurate `.filter-row` while
+touching it, since Foods was no longer the odd one out borrowing an
+exercise-specific name.
+
+35 new/changed tests across service-level sorting/filtering, the
+image/categories OFF-parsing round trip, the CSP allowance, and the
+HTMX partial-rendering branch — all pass, alongside the full
+`apps.nutrition`/`apps.core` suites. Verified end-to-end against a
+real OpenFoodFacts barcode (Nutella, `3017620422003`) rather than a
+synthetic fixture for the final visual check: real photo, real
+Nutri-Score/NOVA grade, real (if occasionally messy — one product's
+own OFF data mixed locale-prefixed and clean category names) category
+list, all rendering correctly once the CSP fix landed.

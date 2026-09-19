@@ -184,8 +184,29 @@ owner (nullable FK), name, brand (optional), serving_size, serving_unit,
 calories, protein_grams, carbohydrate_grams, fat_grams,
 fiber_grams / sugar_grams / saturated_fat_grams / sodium_mg (all
 optional/nullable), off_id (nullable, unique), off_synced_at (nullable),
-nutri_score (nullable, A-E), nova_group (nullable, 1-4), active
+nutri_score (nullable, A-E), nova_group (nullable, 1-4),
+image_url (blank), categories (blank), active
 ```
+
+`image_url`/`categories` are both blank for every hand-entered food,
+same as `nutri_score`/`nova_group` — only ever populated by an OFF
+import (`apps.nutrition.openfoodfacts.parse_product`). `image_url` is
+OFF's own hosted "front of pack" photo (`image_front_url`), linked
+directly rather than downloaded and re-stored locally — OFF operates
+its own image CDN for exactly this, and mirroring it would mean a
+Pillow resize pipeline, a media-storage growth story, and a second
+staleness concern for a field that's purely decorative (identifying a
+food at a glance, `FoodListView`'s own list thumbnail and
+`FoodDetailView`'s larger photo) and never read by any nutrition
+calculation. Since a browser has to load it directly from
+`images.openfoodfacts.org`, that origin is explicitly allowed in
+`apps.core.middleware.ContentSecurityPolicyMiddleware`'s `img-src`
+(docs/SECURITY.md "Content-Security-Policy") — otherwise CSP silently
+blocks it with no visible error. `categories` is OFF's own raw,
+comma-separated `categories` string verbatim (plain display text, not
+a normalized taxonomy) — `apps.nutrition.services.
+distinct_food_categories` splits/dedupes it across a user's visible
+foods for `FoodListView`'s own category filter dropdown.
 
 `serving_unit` choices: `g`, `ml`, `piece` — precise mass/volume for
 most foods, a count unit for things like "1 egg" where a gram weight
@@ -216,6 +237,33 @@ colored badge (Nutri-Score, its own real published colors — green
 through red, not this project's own status palette) plus a plain
 "NOVA N" label, wherever a food's identity is shown in a list
 (`templates/nutrition/_nutri_score_badge.html`).
+
+`FoodDetailView` (`/nutrition/foods/<pk>/`) is a plain, read-only
+nutrition-facts page — same `Q(owner=request.user) | Q(owner__isnull=True)`
+visibility as `FoodListView`, no edit form (`Food` has no update view
+at all yet, only creation). Every place a food's name is shown —
+the diary, a recipe's own ingredient list, "most used", search
+results, a diet plan's meal preview — links there, the same way a
+recipe's name already linked to `RecipeDetailView`.
+
+`FoodListView` ("All foods" on `/nutrition/foods/`) paginates at 20
+and supports a name filter (`q`), a category filter (`category`,
+matched with `__icontains` against the raw `categories` string), and
+a sort (`sort`: `name`/`created`/`category`/`calories`) with a
+direction (`dir`: `asc`/`desc`) — every one of these combines with
+every other via plain `AND` filtering plus one `order_by`, and all of
+them live in the querystring rather than session/hidden state, so a
+filtered-and-sorted view stays bookmarkable and survives a refresh.
+The filter form live-updates via HTMX (`hx-push-url="true"`,
+`get_template_names` swapping to a bare `_food_list_results.html` for
+the HTMX request) — the exact same "one view, two templates" shape
+`apps.exercises.views.ExerciseListView`/`exercise_list.html` already
+use for their own filter row, reused here rather than inventing a
+second way to do the same thing. Pagination links themselves are
+plain page loads, not `hx-get`, since this app sets no `hx-boost`
+anywhere — clicking one is a normal full-page navigation carrying
+every filter forward in the URL already, same as
+`_exercise_list_results.html`'s own pagination.
 
 ### Admin tools
 

@@ -823,6 +823,12 @@ RAW_OFF_PRODUCT = {
     "brands": "Acme, Other Brand",
     "nutriscore_grade": "c",
     "nova_group": 3,
+    "image_front_url": "https://images.openfoodfacts.org/test-muesli-front.jpg",
+    "categories": "Breakfasts, Cereals, Muesli",
+    "quantity": "500 g",
+    "ingredients_text": "Oats, sugar, dried fruit.",
+    "labels": "Organic, Vegan",
+    "allergens": "en:gluten",
     "nutriments": {
         "energy-kcal_100g": 350,
         "proteins_100g": 10.5,
@@ -847,6 +853,29 @@ class ParseProductTests(TestCase):
         self.assertEqual(parsed["sodium_mg"], 200)
         self.assertEqual(parsed["nutri_score"], "c")
         self.assertEqual(parsed["nova_group"], 3)
+        self.assertEqual(
+            parsed["image_url"], "https://images.openfoodfacts.org/test-muesli-front.jpg"
+        )
+        self.assertEqual(parsed["categories"], "Breakfasts, Cereals, Muesli")
+        self.assertEqual(parsed["quantity"], "500 g")
+        self.assertEqual(parsed["ingredients_text"], "Oats, sugar, dried fruit.")
+        self.assertEqual(parsed["labels"], "Organic, Vegan")
+        self.assertEqual(parsed["allergens"], "en:gluten")
+
+    def test_missing_image_and_categories_are_blank_not_missing_keys(self):
+        raw = {**RAW_OFF_PRODUCT}
+        keys = (
+            "image_front_url", "categories", "quantity", "ingredients_text", "labels", "allergens",
+        )
+        for key in keys:
+            del raw[key]
+        parsed = openfoodfacts.parse_product(raw)
+        self.assertEqual(parsed["image_url"], "")
+        self.assertEqual(parsed["categories"], "")
+        self.assertEqual(parsed["quantity"], "")
+        self.assertEqual(parsed["ingredients_text"], "")
+        self.assertEqual(parsed["labels"], "")
+        self.assertEqual(parsed["allergens"], "")
 
     def test_an_ungraded_products_score_and_nova_group_are_none_not_a_guess(self):
         raw = {**RAW_OFF_PRODUCT, "nutriscore_grade": "unknown", "nova_group": None}
@@ -890,6 +919,14 @@ class ImportOrRefreshFoodFromOffTests(TestCase):
         self.assertIsNone(food.owner)
         self.assertEqual(food.off_id, "1234567890123")
         self.assertIsNotNone(food.off_synced_at)
+        self.assertEqual(
+            food.image_url, "https://images.openfoodfacts.org/test-muesli-front.jpg"
+        )
+        self.assertEqual(food.categories, "Breakfasts, Cereals, Muesli")
+        self.assertEqual(food.quantity, "500 g")
+        self.assertEqual(food.ingredients_text, "Oats, sugar, dried fruit.")
+        self.assertEqual(food.labels, "Organic, Vegan")
+        self.assertEqual(food.allergens, "en:gluten")
 
     def test_a_fresh_existing_food_is_returned_without_a_network_call(self):
         with mock.patch.object(openfoodfacts, "get_product", return_value=RAW_OFF_PRODUCT):
@@ -2124,6 +2161,40 @@ class CalendarMonthStatusesTests(TestCase):
         self.assertIsNone(statuses[date(2026, 6, 10)].actual_calories)
 
 
+class DistinctFoodCategoriesServiceTests(TestCase):
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        self.bob = User.objects.create_user(username="bob", password="s3cret-pass")
+        Food.objects.filter(owner__isnull=True).delete()
+
+    def test_splits_and_dedupes_across_foods(self):
+        make_food(self.alice, name="Chicken breast", categories="Meats, Poultry")
+        make_food(self.alice, name="Turkey", categories="Meats, Poultry, Turkey")
+        result = services.distinct_food_categories(self.alice)
+        self.assertEqual(result, ["Meats", "Poultry", "Turkey"])
+
+    def test_ignores_foods_with_no_categories(self):
+        make_food(self.alice, name="Hand-entered food")
+        result = services.distinct_food_categories(self.alice)
+        self.assertEqual(result, [])
+
+    def test_only_includes_own_and_shared_foods(self):
+        make_food(self.bob, name="Bob's food", categories="Bob's category")
+        result = services.distinct_food_categories(self.alice)
+        self.assertEqual(result, [])
+
+    def test_sort_is_case_insensitive(self):
+        """Regression: OFF's own category casing is inconsistent (a
+        plain "Cereals" alongside a locale-prefixed "en:Confectionary
+        ..."), and a bare sorted() is case-sensitive — every uppercase
+        letter sorts before every lowercase one — so "Zebra" landed
+        before "apple" instead of after it."""
+        make_food(self.alice, name="Food A", categories="Zebra")
+        make_food(self.alice, name="Food B", categories="apple")
+        result = services.distinct_food_categories(self.alice)
+        self.assertEqual(result, ["apple", "Zebra"])
+
+
 class FoodListViewTests(TestCase):
     def setUp(self):
         self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
@@ -2150,6 +2221,82 @@ class FoodListViewTests(TestCase):
         names = [f.name for f in response.context["foods"]]
         self.assertEqual(names, ["Chicken breast"])
 
+    def test_category_filters_by_a_substring_match(self):
+        make_food(self.alice, name="Chicken breast", categories="Meats, Poultry")
+        make_food(self.alice, name="Rice", categories="Grains")
+        response = self.client.get(reverse("nutrition:food-list"), {"category": "Poultry"})
+        names = [f.name for f in response.context["foods"]]
+        self.assertEqual(names, ["Chicken breast"])
+
+    def test_default_sort_is_alphabetical_by_name(self):
+        make_food(self.alice, name="Rice")
+        make_food(self.alice, name="Apple")
+        response = self.client.get(reverse("nutrition:food-list"))
+        names = [f.name for f in response.context["foods"]]
+        self.assertEqual(names, ["Apple", "Rice"])
+
+    def test_sort_by_calories_ascending(self):
+        make_food(self.alice, name="High cal", calories=500)
+        make_food(self.alice, name="Low cal", calories=50)
+        response = self.client.get(
+            reverse("nutrition:food-list"), {"sort": "calories", "dir": "asc"}
+        )
+        names = [f.name for f in response.context["foods"]]
+        self.assertEqual(names, ["Low cal", "High cal"])
+
+    def test_sort_by_calories_descending(self):
+        make_food(self.alice, name="High cal", calories=500)
+        make_food(self.alice, name="Low cal", calories=50)
+        response = self.client.get(
+            reverse("nutrition:food-list"), {"sort": "calories", "dir": "desc"}
+        )
+        names = [f.name for f in response.context["foods"]]
+        self.assertEqual(names, ["High cal", "Low cal"])
+
+    def test_sort_by_date_added(self):
+        first = make_food(self.alice, name="First")
+        make_food(self.alice, name="Second")
+        Food.objects.filter(pk=first.pk).update(
+            created_at=timezone.now() - timedelta(days=1)
+        )
+        response = self.client.get(reverse("nutrition:food-list"), {"sort": "created"})
+        names = [f.name for f in response.context["foods"]]
+        self.assertEqual(names, ["First", "Second"])
+
+    def test_category_and_name_filters_combine(self):
+        make_food(self.alice, name="Chicken breast", categories="Meats, Poultry")
+        make_food(self.alice, name="Chicken soup", categories="Meals")
+        response = self.client.get(
+            reverse("nutrition:food-list"), {"q": "chicken", "category": "Poultry"}
+        )
+        names = [f.name for f in response.context["foods"]]
+        self.assertEqual(names, ["Chicken breast"])
+
+    def test_category_filter_is_a_searchable_text_input_not_a_select(self):
+        """Regression: a plain <select> forced picking an exact
+        category from what can be a long, inconsistently-cased OFF
+        category list — a <datalist>-backed text input keeps the same
+        options as suggestions but lets typing narrow them, with no
+        change to the __icontains match the backend already does."""
+        make_food(self.alice, name="Chicken breast", categories="Meats, Poultry")
+        response = self.client.get(reverse("nutrition:food-list"))
+        self.assertContains(response, 'list="id_category_options"')
+        self.assertContains(response, '<option value="Meats">')
+        self.assertContains(response, '<option value="Poultry">')
+
+    def test_pagination_shows_20_per_page(self):
+        for i in range(25):
+            make_food(self.alice, name=f"Food {i:02d}")
+        response = self.client.get(reverse("nutrition:food-list"))
+        self.assertEqual(len(response.context["foods"]), 20)
+        self.assertTrue(response.context["is_paginated"])
+
+    def test_an_htmx_request_renders_only_the_results_partial(self):
+        make_food(self.alice, name="Chicken breast")
+        response = self.client.get(reverse("nutrition:food-list"), HTTP_HX_REQUEST="true")
+        self.assertNotContains(response, "Browse OpenFoodFacts")
+        self.assertContains(response, "Chicken breast")
+
     def test_requires_login(self):
         self.client.logout()
         response = self.client.get(reverse("nutrition:food-list"))
@@ -2163,6 +2310,83 @@ class FoodListViewTests(TestCase):
         user never came from."""
         response = self.client.get(reverse("nutrition:food-list"))
         self.assertContains(response, "Back to nutrition")
+
+    def test_a_foods_name_links_to_its_own_detail_page(self):
+        food = make_food(self.alice, name="Alice's food")
+        response = self.client.get(reverse("nutrition:food-list"))
+        self.assertContains(response, reverse("nutrition:food-detail", args=[food.pk]))
+
+    def test_the_camera_barcode_scanner_is_wired_up(self):
+        """Regression: this page's own search used to be a plain
+        type-and-submit <form>, unlike every other "search for a food"
+        box in the app — no live search, and no way to scan a
+        barcode."""
+        response = self.client.get(reverse("nutrition:food-list"))
+        self.assertContains(response, "barcode-scanner.js")
+        self.assertContains(response, "ironstackBarcodeScanner()")
+        self.assertContains(response, "Scan barcode")
+
+
+class FoodDetailViewTests(TestCase):
+    """apps.nutrition.views.FoodDetailView — asked for directly: every
+    other place a food's name appeared (the diary, a recipe's own
+    ingredient list, "most used", search results, ...) was plain text
+    with nowhere to tap through to, unlike a recipe, which already had
+    its own detail page."""
+
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        self.bob = User.objects.create_user(username="bob", password="s3cret-pass")
+        self.client.login(username="alice", password="s3cret-pass")
+
+    def test_shows_the_foods_own_nutrition_facts(self):
+        food = make_food(
+            self.alice, name="Chicken breast", calories=165,
+            protein_grams=Decimal("31"), carbohydrate_grams=Decimal("0"),
+            fat_grams=Decimal("3.6"),
+        )
+        response = self.client.get(reverse("nutrition:food-detail", args=[food.pk]))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Chicken breast")
+        self.assertContains(response, "165")
+
+    def test_a_shared_food_is_viewable(self):
+        food = make_food(None, name="Shared food")
+        response = self.client.get(reverse("nutrition:food-detail", args=[food.pk]))
+        self.assertEqual(response.status_code, 200)
+
+    def test_shows_off_product_information_when_present(self):
+        food = make_food(
+            self.alice, name="Muesli", quantity="500 g",
+            ingredients_text="Oats, sugar, dried fruit.",
+            labels="Organic, Vegan", allergens="en:gluten",
+        )
+        response = self.client.get(reverse("nutrition:food-detail", args=[food.pk]))
+        self.assertContains(response, "500 g")
+        self.assertContains(response, "Oats, sugar, dried fruit.")
+        self.assertContains(response, "Organic, Vegan")
+        self.assertContains(response, "en:gluten")
+
+    def test_no_product_information_card_when_nothing_to_show(self):
+        food = make_food(self.alice, name="Hand-entered food")
+        response = self.client.get(reverse("nutrition:food-detail", args=[food.pk]))
+        self.assertNotContains(response, "Product information")
+
+    def test_another_users_private_food_404s(self):
+        food = make_food(self.bob, name="Bob's private food")
+        response = self.client.get(reverse("nutrition:food-detail", args=[food.pk]))
+        self.assertEqual(response.status_code, 404)
+
+    def test_an_inactive_food_404s(self):
+        food = make_food(self.alice, name="Retired food", active=False)
+        response = self.client.get(reverse("nutrition:food-detail", args=[food.pk]))
+        self.assertEqual(response.status_code, 404)
+
+    def test_requires_login(self):
+        food = make_food(self.alice)
+        self.client.logout()
+        response = self.client.get(reverse("nutrition:food-detail", args=[food.pk]))
+        self.assertEqual(response.status_code, 302)
 
 
 class FoodCreateViewTests(TestCase):
@@ -2262,6 +2486,32 @@ class DiaryAddEntryViewTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "field-error")
 
+    def test_meal_slot_query_param_preselects_that_meal(self):
+        """Regression: templates/nutrition/diary_day.html's per-meal
+        "+ Add food" link used to only pass ?date=, never which meal
+        card it was on, so this page always preselected the first meal
+        slot (Breakfast) regardless of which one was actually tapped —
+        a food added under Dinner silently landed under Breakfast
+        unless the user noticed and switched it by hand."""
+        dinner = MealSlot.objects.get(name="Dinner", owner=None)
+        response = self.client.get(
+            reverse("nutrition:diary-add-entry"), {"meal_slot": dinner.pk}
+        )
+        self.assertContains(response, f"mealSlot: '{dinner.pk}'")
+
+    def test_no_meal_slot_query_param_falls_back_to_the_first_meal_slot(self):
+        breakfast = MealSlot.objects.get(name="Breakfast", owner=None)
+        response = self.client.get(reverse("nutrition:diary-add-entry"))
+        self.assertContains(response, f"mealSlot: '{breakfast.pk}'")
+
+    def test_invalid_form_resubmit_preserves_the_originally_selected_meal(self):
+        dinner = MealSlot.objects.get(name="Dinner", owner=None)
+        response = self.client.post(
+            reverse("nutrition:diary-add-entry"),
+            {"meal_slot": dinner.pk, "quantity": "150", "date": "2026-01-01"},
+        )
+        self.assertContains(response, f"mealSlot: '{dinner.pk}'")
+
     def test_requires_login(self):
         self.client.logout()
         response = self.client.get(reverse("nutrition:diary-add-entry"))
@@ -2275,6 +2525,17 @@ class DiaryAddEntryViewTests(TestCase):
         response = self.client.get(reverse("nutrition:diary-add-entry"))
         self.assertContains(response, "Most used")
         self.assertContains(response, self.food.name)
+
+    def test_a_most_used_foods_name_links_to_its_own_detail_page(self):
+        """Regression: a "Most used" card's food name was plain text
+        with no way to open the food itself, unlike everywhere a
+        recipe's name appears."""
+        DiaryEntry.objects.create(
+            user=self.alice, date=date(2026, 1, 1), meal_slot=self.slot,
+            food=self.food, quantity=Decimal("150"),
+        )
+        response = self.client.get(reverse("nutrition:diary-add-entry"))
+        self.assertContains(response, reverse("nutrition:food-detail", args=[self.food.pk]))
 
     def test_no_most_used_section_for_a_brand_new_user(self):
         response = self.client.get(reverse("nutrition:diary-add-entry"))
@@ -2475,6 +2736,17 @@ class DiaryDayViewTests(TestCase):
             s for s in response.context["meal_slots"] if s.pk == breakfast.pk
         )
         self.assertEqual(len(breakfast_context.entries), 1)
+
+    def test_each_meal_cards_add_food_link_carries_its_own_meal_slot(self):
+        """Regression: every meal card's "+ Add food" link pointed at
+        the exact same URL (?date= only) regardless of which meal it
+        was on, so the add-food page had no way to know which one was
+        actually tapped and always preselected the first meal slot."""
+        dinner = MealSlot.objects.get(name="Dinner", owner=None)
+        response = self.client.get(
+            reverse("nutrition:diary-day", kwargs={"target_date": "2026-01-01"})
+        )
+        self.assertContains(response, f"meal_slot={dinner.pk}")
 
     def test_defaults_to_today_with_no_date_given(self):
         response = self.client.get(reverse("nutrition:diary-day"))
