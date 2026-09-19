@@ -18,6 +18,8 @@ narrated summary of the same version.
 
 ## [Unreleased]
 
+## [1.16.0] — 2026-09-19
+
 ### Added
 - Every food now has its own nutrition-facts page — tap its name
   anywhere it appears (the diary, a recipe's ingredients, "most
