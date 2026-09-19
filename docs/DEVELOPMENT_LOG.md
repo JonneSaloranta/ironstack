@@ -5102,3 +5102,39 @@ already added for `.pagination`, so the landing spot clears
 editing an entry's quantity lands the browser back on the diary with
 `#meal-slot-<pk>` in the URL and a non-zero `window.scrollY`, not
 reset to the top.
+
+## Making nutrition tracking optional
+
+Asked for directly: not everyone using an instance wants to track
+nutrition, and it shouldn't be forced on them. New `User.
+nutrition_enabled` (default `True` — see docs/DOMAIN_MODEL.md's own
+entry for why), asked during onboarding
+(`apps.accounts.forms.OnboardingForm`, same shape as `allow_friend_
+requests`/`allow_group_invites` — pre-checked, `required=False`, so
+skipping the whole prompt or leaving it checked both keep the
+default) and editable anytime from Profile → Preferences, in a new
+"Features" group of its own (not Notifications, Privacy, or Social —
+none of those fit).
+
+Deliberately a **navigation-only** toggle, nowhere near
+`apps.nutrition` itself: `templates/base.html`'s bottom-nav Nutrition
+tab is the *only* place outside the nutrition app that links into it
+(checked directly — grepped every template for `{% url 'nutrition:`
+outside `templates/nutrition/`), so hiding it there when the field is
+off is the entire feature. No view, url, or permission check anywhere
+in `apps.nutrition` was touched — a direct link or bookmark into
+nutrition works identically whether this is on or off, exactly as
+asked ("still allow browsing there via a link"), and no nutrition
+data is ever read, written, or deleted by this toggle either way.
+The home dashboard's own calorie-trend calendar
+(`nutrition/_month_calendar.html`, included directly from `core/
+dashboard.html`) was deliberately left alone too — it's a data
+display, not a link, and in practice shows nothing for a user who
+never set up nutrition anyway (`calorie_trend` stays `None` with no
+active `NutritionTarget`).
+
+Verified live with Playwright end to end: the nav tab is visible by
+default, disappears immediately after unchecking the profile toggle
+and saving, and `/nutrition/foods/` still returns a real 200 with the
+toggle off; separately, a brand-new account's onboarding modal shows
+the checkbox pre-checked with the label "Track nutrition".

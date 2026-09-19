@@ -22,6 +22,11 @@ narrated summary of the same version.
 - Every meal card in the food diary (except "Other") now has a "Save
   as recipe" button, turning everything logged there into a new,
   reusable recipe at the exact amounts eaten.
+- Nutrition tracking can now be turned off — asked about during your
+  first login, and switchable anytime from Profile → Preferences →
+  Features. Off hides nutrition from navigation and the dashboard;
+  your existing nutrition data is never deleted, and its pages stay
+  reachable directly by a link either way.
 
 ### Fixed
 - The dashboard calendar's calorie trend arrow no longer shows up on

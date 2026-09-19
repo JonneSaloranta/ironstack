@@ -862,6 +862,63 @@ class ProfileViewTests(TestCase):
         self.assertTrue(self.alice.allow_friend_requests)
         self.assertTrue(self.alice.allow_group_invites)
 
+    def test_nutrition_enabled_defaults_to_true(self):
+        self.assertTrue(self.alice.nutrition_enabled)
+
+    def test_unchecking_nutrition_enabled_turns_it_off(self):
+        self.client.post(
+            reverse("profile"),
+            {
+                "unit_system": "metric",
+                "timezone": "UTC",
+                "language": "en",
+                "theme": "default",
+                "appearance": "dark",
+            },
+        )
+        self.alice.refresh_from_db()
+        self.assertFalse(self.alice.nutrition_enabled)
+
+    def test_checking_nutrition_enabled_keeps_it_on(self):
+        self.client.post(
+            reverse("profile"),
+            {
+                "unit_system": "metric",
+                "timezone": "UTC",
+                "nutrition_enabled": "on",
+                "language": "en",
+                "theme": "default", "appearance": "dark",
+            },
+        )
+        self.alice.refresh_from_db()
+        self.assertTrue(self.alice.nutrition_enabled)
+
+    def test_disabling_nutrition_deletes_no_nutrition_data(self):
+        """Asked for directly: turning this off must never touch a
+        user's existing nutrition data, only whether it's linked to
+        from navigation."""
+        from datetime import date
+
+        from apps.nutrition.models import DiaryEntry, MealSlot
+        from apps.nutrition.tests import make_food
+
+        food = make_food(self.alice, name="Chicken")
+        breakfast = MealSlot.objects.get(name="Breakfast", owner=None)
+        DiaryEntry.objects.create(
+            user=self.alice, date=date(2026, 1, 1), meal_slot=breakfast,
+            food=food, quantity=Decimal("100"),
+        )
+        self.client.post(
+            reverse("profile"),
+            {
+                "unit_system": "metric", "timezone": "UTC",
+                "language": "en", "theme": "default", "appearance": "dark",
+            },
+        )
+        self.alice.refresh_from_db()
+        self.assertFalse(self.alice.nutrition_enabled)
+        self.assertTrue(DiaryEntry.objects.filter(user=self.alice, food=food).exists())
+
     def test_admin_link_is_hidden_for_a_regular_user(self):
         response = self.client.get(reverse("profile"))
         self.assertNotContains(response, reverse("admin:index"))
@@ -2301,6 +2358,69 @@ class OnboardingViewTests(TestCase):
         self.user.refresh_from_db()
         self.assertTrue(self.user.allow_friend_requests)
         self.assertTrue(self.user.allow_group_invites)
+
+    def test_nutrition_enabled_defaults_to_checked(self):
+        response = self.client.get(reverse("dashboard"))
+        self.assertContains(response, 'id="id_nutrition_enabled" checked')
+
+    def test_unchecking_nutrition_enabled_turns_it_off(self):
+        self.client.post(
+            reverse("onboarding"),
+            {"action": "save", "unit_system": "metric", "timezone": "UTC"},
+        )
+        self.user.refresh_from_db()
+        self.assertFalse(self.user.nutrition_enabled)
+
+    def test_leaving_nutrition_enabled_checked_keeps_it_on(self):
+        self.client.post(
+            reverse("onboarding"),
+            {
+                "action": "save",
+                "unit_system": "metric",
+                "timezone": "UTC",
+                "nutrition_enabled": "on",
+            },
+        )
+        self.user.refresh_from_db()
+        self.assertTrue(self.user.nutrition_enabled)
+
+    def test_skipping_onboarding_leaves_nutrition_enabled_at_its_default(self):
+        self.client.post(reverse("onboarding"), {"action": "skip"})
+        self.user.refresh_from_db()
+        self.assertTrue(self.user.nutrition_enabled)
+
+
+class NutritionNavVisibilityTests(TestCase):
+    """User.nutrition_enabled — asked for directly: not everyone using
+    this instance wants to track nutrition. Only navigation is gated;
+    nutrition's own views/urls have no idea this setting exists, so a
+    direct link keeps working regardless, and no nutrition data is
+    ever touched by it either way."""
+
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        self.client.login(username="alice", password="s3cret-pass")
+
+    def test_nutrition_tab_shown_by_default(self):
+        response = self.client.get(reverse("dashboard"))
+        self.assertContains(response, 'aria-label="Nutrition"')
+
+    def test_nutrition_tab_hidden_when_disabled(self):
+        self.alice.nutrition_enabled = False
+        self.alice.save(update_fields=["nutrition_enabled"])
+        response = self.client.get(reverse("dashboard"))
+        self.assertNotContains(response, 'aria-label="Nutrition"')
+
+    def test_nutrition_pages_stay_reachable_directly_when_disabled(self):
+        # nutrition:food-list rather than nutrition:dashboard — the
+        # dashboard itself redirects a not-yet-onboarded user (no
+        # NutritionProfile) to the nutrition onboarding wizard
+        # regardless of this setting, which isn't what this test is
+        # about.
+        self.alice.nutrition_enabled = False
+        self.alice.save(update_fields=["nutrition_enabled"])
+        response = self.client.get(reverse("nutrition:food-list"))
+        self.assertEqual(response.status_code, 200)
 
 
 class PasswordLoginGatingTests(TestCase):
