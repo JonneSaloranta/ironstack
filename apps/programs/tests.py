@@ -1,11 +1,15 @@
+import json
 from decimal import Decimal
 
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase
 from django.urls import reverse
 
-from apps.exercises.models import Exercise
+from apps.core import data_exchange
+from apps.core.data_exchange import ImportValidationError
+from apps.exercises.models import Equipment, Exercise, MuscleGroup
 
 from . import services
 from .models import ExercisePrescription, Program, Workout
@@ -206,6 +210,132 @@ class CopyProgramServiceTests(TestCase):
 
         template.refresh_from_db()
         self.assertEqual(template.workouts.count(), original_workout_count)
+
+
+class ExportImportProgramServiceTests(TestCase):
+    """apps.programs.services.export_program/import_program — see
+    apps.core.data_exchange's own module docstring for the whole
+    export/import feature these two are one half of."""
+
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        self.bob = User.objects.create_user(username="bob", password="s3cret-pass")
+        self.system_exercise = Exercise.objects.filter(owner__isnull=True).first()
+
+    def _round_trip(self, program):
+        payload = services.export_program(program)
+        # A real json.dumps/loads round trip, not just a Python dict
+        # passed straight through — catches anything that isn't
+        # actually JSON-serializable (e.g. a stray Decimal/model
+        # instance left in the payload by mistake).
+        raw = json.dumps(data_exchange.build_envelope("program", payload))
+        parsed_payload, _app_version = data_exchange.parse_envelope(raw, expected_kind="program")
+        return services.import_program(self.bob, parsed_payload)
+
+    def test_exporting_then_importing_recreates_the_program_for_the_new_owner(self):
+        program = Program.objects.create(
+            owner=self.alice, name="Push Pull Legs", description="A 3-day split"
+        )
+        workout = Workout.objects.create(program=program, name="Push Day", order=0)
+        ExercisePrescription.objects.create(
+            workout=workout, exercise=self.system_exercise, order=0,
+            set_count=4, min_reps=6, max_reps=10, target_weight=Decimal("60.5"),
+        )
+
+        imported = self._round_trip(program)
+
+        self.assertEqual(imported.owner, self.bob)
+        self.assertEqual(imported.name, "Push Pull Legs")
+        self.assertEqual(imported.description, "A 3-day split")
+        self.assertFalse(imported.is_template)
+        self.assertNotEqual(imported.pk, program.pk)
+        imported_workout = imported.workouts.get()
+        self.assertEqual(imported_workout.name, "Push Day")
+        imported_prescription = imported_workout.prescriptions.get()
+        self.assertEqual(imported_prescription.exercise, self.system_exercise)
+        self.assertEqual(imported_prescription.set_count, 4)
+        self.assertEqual(imported_prescription.target_weight, Decimal("60.50"))
+
+    def test_a_system_exercise_is_matched_by_name_not_duplicated(self):
+        program = Program.objects.create(owner=self.alice, name="P")
+        workout = Workout.objects.create(program=program, name="W")
+        ExercisePrescription.objects.create(workout=workout, exercise=self.system_exercise)
+
+        before_count = Exercise.objects.filter(owner__isnull=True).count()
+        imported = self._round_trip(program)
+        after_count = Exercise.objects.filter(owner__isnull=True).count()
+
+        self.assertEqual(before_count, after_count)
+        self.assertEqual(
+            imported.workouts.get().prescriptions.get().exercise, self.system_exercise
+        )
+
+    def test_a_custom_exercise_is_recreated_for_the_importing_user(self):
+        equipment = Equipment.objects.first()
+        muscle_group = MuscleGroup.objects.first()
+        custom_exercise = Exercise.objects.create(
+            owner=self.alice, name="Alice's Special Curl", description="desc",
+            instructions="steps", equipment=equipment,
+        )
+        custom_exercise.primary_muscle_groups.add(muscle_group)
+        program = Program.objects.create(owner=self.alice, name="P")
+        workout = Workout.objects.create(program=program, name="W")
+        ExercisePrescription.objects.create(workout=workout, exercise=custom_exercise)
+
+        imported = self._round_trip(program)
+
+        new_exercise = imported.workouts.get().prescriptions.get().exercise
+        self.assertEqual(new_exercise.owner, self.bob)
+        self.assertNotEqual(new_exercise.pk, custom_exercise.pk)
+        self.assertEqual(new_exercise.name, "Alice's Special Curl")
+        self.assertEqual(new_exercise.description, "desc")
+        self.assertEqual(new_exercise.equipment, equipment)
+        self.assertIn(muscle_group, new_exercise.primary_muscle_groups.all())
+
+    def test_reimporting_the_same_custom_exercise_does_not_duplicate_it(self):
+        custom_exercise = Exercise.objects.create(owner=self.alice, name="Alice's Curl")
+        program = Program.objects.create(owner=self.alice, name="P")
+        workout = Workout.objects.create(program=program, name="W")
+        ExercisePrescription.objects.create(workout=workout, exercise=custom_exercise)
+
+        self._round_trip(program)
+        self._round_trip(program)
+
+        self.assertEqual(Exercise.objects.filter(owner=self.bob, name="Alice's Curl").count(), 1)
+
+    def test_missing_exercise_name_raises_a_validation_error(self):
+        with self.assertRaises(ImportValidationError):
+            services.import_program(
+                self.bob,
+                {
+                    "name": "P",
+                    "workouts": [
+                        {"name": "W", "prescriptions": [{"exercise": {"is_system": True}}]}
+                    ],
+                },
+            )
+
+    def test_a_failed_import_leaves_no_partial_program_behind(self):
+        """The whole point of wrapping import_program in one
+        transaction — a bad prescription partway through must not
+        leave an orphaned Program/Workout with nothing in it."""
+        payload = {
+            "name": "Doomed Program",
+            "workouts": [
+                {"name": "Good Workout", "prescriptions": []},
+                {
+                    "name": "Bad Workout",
+                    "prescriptions": [{"exercise": {"is_system": True}}],
+                },
+            ],
+        }
+        with self.assertRaises(ImportValidationError):
+            services.import_program(self.bob, payload)
+        self.assertFalse(Program.objects.filter(name="Doomed Program").exists())
+
+    def test_missing_program_name_raises_a_validation_error(self):
+        with self.assertRaises(ImportValidationError):
+            services.import_program(self.bob, {"workouts": []})
 
 
 class ProgramViewPermissionTests(TestCase):
@@ -588,3 +718,84 @@ class ProgramCopyViewTests(TestCase):
         self.assertEqual(new_program.workouts.count(), 1)
         # The original template is untouched.
         self.assertTrue(Program.objects.get(pk=my_template.pk).is_template)
+
+
+class ProgramExportImportViewTests(TestCase):
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        self.bob = User.objects.create_user(username="bob", password="s3cret-pass")
+        self.system_exercise = Exercise.objects.filter(owner__isnull=True).first()
+        self.program = Program.objects.create(owner=self.alice, name="Alice's Program")
+        workout = Workout.objects.create(program=self.program, name="Day 1")
+        ExercisePrescription.objects.create(workout=workout, exercise=self.system_exercise)
+
+    def _export_bytes(self, user, program):
+        client = self.client_class()
+        client.login(username=user.username, password="s3cret-pass")
+        response = client.get(reverse("programs:program-export", args=[program.pk]))
+        return response
+
+    def test_export_requires_login(self):
+        response = self.client.get(reverse("programs:program-export", args=[self.program.pk]))
+        self.assertEqual(response.status_code, 302)
+
+    def test_export_is_downloadable_valid_json(self):
+        response = self._export_bytes(self.alice, self.program)
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(response["Content-Disposition"].startswith("attachment;"))
+        data = json.loads(response.content)
+        self.assertEqual(data["ironstack_export"]["kind"], "program")
+        self.assertEqual(data["program"]["name"], "Alice's Program")
+
+    def test_cannot_export_another_users_private_program(self):
+        response = self._export_bytes(self.bob, self.program)
+        self.assertEqual(response.status_code, 404)
+
+    def test_import_requires_login(self):
+        response = self.client.get(reverse("programs:program-import"))
+        self.assertEqual(response.status_code, 302)
+
+    def test_import_form_shown_on_get(self):
+        self.client.login(username="bob", password="s3cret-pass")
+        response = self.client.get(reverse("programs:program-import"))
+        self.assertContains(response, "export_file")
+
+    def test_uploading_a_valid_export_creates_a_program_and_redirects(self):
+        export_response = self._export_bytes(self.alice, self.program)
+        self.client.login(username="bob", password="s3cret-pass")
+        upload = SimpleUploadedFile(
+            "export.json", export_response.content, content_type="application/json"
+        )
+        response = self.client.post(
+            reverse("programs:program-import"), {"export_file": upload}, follow=True
+        )
+        self.assertContains(response, "Imported")
+        self.assertTrue(
+            Program.objects.filter(owner=self.bob, name="Alice's Program").exists()
+        )
+
+    def test_uploading_a_non_json_extension_is_rejected(self):
+        self.client.login(username="bob", password="s3cret-pass")
+        upload = SimpleUploadedFile("export.txt", b"{}", content_type="text/plain")
+        response = self.client.post(reverse("programs:program-import"), {"export_file": upload})
+        self.assertContains(response, "Must be a .json file.")
+
+    def test_uploading_garbage_json_is_rejected_cleanly(self):
+        self.client.login(username="bob", password="s3cret-pass")
+        upload = SimpleUploadedFile(
+            "export.json", b"not actually json", content_type="application/json"
+        )
+        response = self.client.post(reverse("programs:program-import"), {"export_file": upload})
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "valid JSON")
+        self.assertFalse(Program.objects.filter(owner=self.bob).exists())
+
+    def test_uploading_a_recipe_export_is_rejected_as_the_wrong_kind(self):
+        self.client.login(username="bob", password="s3cret-pass")
+        wrong_kind = json.dumps(data_exchange.build_envelope("recipe", {"name": "Not a program"}))
+        upload = SimpleUploadedFile(
+            "export.json", wrong_kind.encode(), content_type="application/json"
+        )
+        response = self.client.post(reverse("programs:program-import"), {"export_file": upload})
+        self.assertContains(response, "not a")
+        self.assertFalse(Program.objects.filter(owner=self.bob).exists())

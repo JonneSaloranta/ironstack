@@ -47,6 +47,30 @@ class BackupUploadForm(forms.Form):
         return archive
 
 
+class ExportImportUploadForm(forms.Form):
+    """A previously-exported program or recipe (apps.core.
+    data_exchange) — a `.json` file someone downloaded from their own
+    account, this instance or a different one entirely, and wants to
+    import into theirs. Shared by apps.programs' and apps.nutrition's
+    own import views rather than two near-identical copies of the same
+    one-field form. Only a basic filename-shape check here, the same
+    division of labor BackupUploadForm above already uses: real
+    validation happens once apps.core.data_exchange.parse_envelope and
+    each app's own import_* function actually read the file's
+    contents, from the view that calls them."""
+
+    export_file = forms.FileField(
+        label=_("Export file"),
+        help_text=_("A .json file previously exported from IronStack."),
+    )
+
+    def clean_export_file(self):
+        export_file = self.cleaned_data["export_file"]
+        if not export_file.name.endswith(".json"):
+            raise forms.ValidationError(_("Must be a .json file."))
+        return export_file
+
+
 class FeedbackForm(forms.ModelForm):
     """Profile → Feedback — the form any signed-in user fills in
     themselves; `user` is set from the request in the view, not exposed

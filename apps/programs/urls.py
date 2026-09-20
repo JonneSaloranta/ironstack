@@ -11,6 +11,8 @@ urlpatterns = [
     path("<int:pk>/edit/", views.ProgramUpdateView.as_view(), name="program-update"),
     path("<int:pk>/delete/", views.ProgramDeleteView.as_view(), name="program-delete"),
     path("<int:pk>/copy/", views.program_copy, name="program-copy"),
+    path("<int:pk>/export/", views.program_export, name="program-export"),
+    path("import/", views.program_import, name="program-import"),
     path(
         "<int:program_pk>/workouts/new/",
         views.workout_create,

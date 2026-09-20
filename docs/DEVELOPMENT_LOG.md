@@ -5226,3 +5226,135 @@ contains no mention of calories/nutrition/body weight, scoped past the
 page's own `<h1>` to avoid tripping on `base.html`'s own shared
 chrome (the site-wide SEO description and the nutrition nav tab both
 say "nutrition" on every single page, regardless of this one).
+
+## Export/import for gym programs and nutrition recipes
+
+Asked for directly: let a user download one of their own gym programs
+or nutrition recipes as a file, and hand it to someone else — a
+different account, or a completely different self-hosted IronStack
+instance — to import back in, with every related object (exercises,
+meal slots, foods) reconstructed along the way rather than left
+dangling. Also asked for: the file should carry the exporting
+instance's software version, for an at-a-glance "this might be from an
+incompatible build" signal; and the whole thing should be built so
+that a bad or incompatible file can never corrupt data or crash the
+app, only fail cleanly.
+
+Plain JSON, not the newer TOON (Token-Oriented Object Notation)
+format — considered directly, since the user asked. TOON's entire
+value proposition is reducing token counts for LLM context windows;
+it has no bearing on a file two IronStack instances (or two humans)
+hand back and forth, and the only Python package for it on PyPI
+(`toon-format`) was a single v0.1.0 release. JSON needs no new
+dependency, is already this project's convention everywhere else
+(the REST API, backups), and stays human-inspectable if someone opens
+the file directly. Decided with the user before writing any code.
+
+The new shared module, `apps.core.data_exchange`, is deliberately not
+built on the REST API's own `ModelSerializer`s
+(`apps.api.serializers`) — those reference related rows by primary
+key, which means nothing once a file crosses into a different
+database. Everything in an export is instead keyed by a *natural*
+identifier that's guaranteed to mean the same thing on both the
+exporting and importing side: a system `Exercise` or `MealSlot` by its
+own name (already globally unique among system rows via each model's
+own `unique_system_*_name` constraint), and a food originally imported
+from OpenFoodFacts by its barcode (`Food.off_id`) rather than its own
+database row.
+
+`build_envelope`/`parse_envelope` wrap every export in a small shared
+envelope — `schema_version` (this wire format's own version, `1` right
+now), `kind` (`"program"` or `"recipe"`), `app_version`
+(`apps.core.version.get_version()`, informational only — never
+compared automatically, since the app's own version number alone
+can't reliably say whether this module's dict shape changed between
+two releases), and `exported_at`. `parse_envelope` only ever rejects a
+`schema_version` *greater* than what the running build understands;
+anything equal or lower stays readable forever. The module's own
+docstring now spells out the forward-compatibility policy this
+implies: a field that only ever gets *added* never needs a bump, since
+every `import_*` function reads fields with `payload.get(key,
+default)` and a file exported before a field existed just gets the
+same default a brand new payload would; only an actual rename,
+repurposing, or restructuring needs `schema_version` bumped, with a
+small upgrade shim added to the top of the relevant `import_*`
+function to normalize an old file's shape before the rest of the
+function runs. No such shim exists yet, deliberately — there is no
+`schema_version` 2 to migrate from, and writing one now for a
+hypothetical future shape would be speculative code with nothing real
+to test it against.
+
+`apps.programs.services.export_program`/`import_program` and
+`apps.nutrition.services.export_recipe`/`import_recipe` are the two
+kind-specific halves. Exporting a program walks every workout and
+prescription, and for each prescription's exercise emits either
+`{"name", "is_system": True}` (system exercises, matched back by name
+on import — `apps.programs.services.copy_program`'s existing
+"deep-copy for a new owner" function directly informed exactly which
+fields a prescription/exercise export needs) or a full payload
+(description, instructions, movement type, weight-input mode,
+equipment, primary/secondary muscle groups, all by name) for a custom
+exercise, recreated fresh under the importing user on import — or
+reused as-is if that user already has a custom exercise with the same
+name from an earlier import, so re-importing the same file twice
+doesn't pile up duplicates. `is_template`/`owner` are never part of
+the export; those are properties of the *importing* account, not the
+program.
+
+Recipe import resolves each ingredient's food the same way: an
+OFF-sourced food is looked up again live, by barcode, via the existing
+`import_or_refresh_food_from_off` — so importing on a different
+instance re-fetches current OFF data rather than trusting a
+potentially stale snapshot — falling back to an embedded snapshot only
+if that live lookup fails (network down, barcode delisted from OFF
+since export). A hand-entered food is matched by `(owner, name,
+calories)` against the importing user's existing foods before a new
+row is created, for the same "reimporting doesn't duplicate" reason as
+custom exercises. A recipe's meal slot is resolved the same way system
+exercises are — matched by name against system `MealSlot`s first, a
+custom one recreated for the importer otherwise, and left `None` if
+the export never had one.
+
+Both `import_program` and `import_recipe` run inside
+`@transaction.atomic` and raise the shared `ImportValidationError`
+(also raised by `parse_envelope` itself) for anything malformed inside
+the kind-specific payload — a missing program/recipe name, a
+prescription or ingredient missing its exercise/food name, missing
+required nutrition data, an unparseable quantity. The importing view
+(`apps.programs.views.program_import`/`apps.nutrition.views.
+recipe_import`) is the only place that ever catches
+`ImportValidationError`, turning it into a plain form error — nothing
+here can reach the user as a raw 500, since an uploaded file is
+exactly the kind of untrusted input that must never be able to take
+the request down with it. A test for each app
+(`test_a_failed_import_leaves_no_partial_program_behind`/`..._recipe_
+behind`) confirms directly that a mid-import failure leaves zero trace
+in the database — nothing partially written, satisfying "should
+always work or at least not break anything" as an actual guarantee,
+not just an intention.
+
+The upload form, `apps.core.forms.ExportImportUploadForm`, is shared
+by both apps' import views rather than duplicated — one `FileField`, a
+`clean_export_file` that only checks the `.json` extension, following
+the same division of labor `BackupUploadForm` (right above it in the
+same file) already uses: real validation happens once
+`parse_envelope` and each app's own `import_*` actually read the
+file's contents, not in the form. Export views build a `JsonResponse`
+with `Content-Disposition: attachment` (the same pattern
+`BackupDownloadView` uses for backups, adapted from `FileResponse`
+since an export is generated in memory rather than read off disk), and
+name the downloaded file from the program/recipe's own slugified name.
+
+Verified with real cross-account round-trips in a shell before writing
+any formal test — including one against the live OpenFoodFacts API
+using Nutella's real barcode (`3017620422003`), confirming a re-import
+on a "different" account resolves back to the same shared `Food` row
+rather than creating a duplicate. 45 automated tests followed: 10 for
+`apps.core.data_exchange` itself (envelope round-trip, every rejection
+path), 16 for programs (service-level round-trip/dedup/custom-exercise
+recreation/atomic rollback, plus view-level auth/ownership/form
+handling), and 19 for recipes (the same shape, plus the OFF
+live-refetch path with `import_or_refresh_food_from_off` mocked to
+assert it's actually called with the right barcode, and a case
+confirming a shared/template recipe with no owner is still exportable
+by anyone).

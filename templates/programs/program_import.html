@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Import program" %} — IronStack{% endblock %}
+{% block content %}
+<div class="top-bar">
+  <h1 style="margin:0;">{% trans "Import program" %}</h1>
+</div>
+
+<form class="card" method="post" enctype="multipart/form-data">
+  {% csrf_token %}
+  <p class="text-muted">{% trans "Upload a program someone exported — from this instance, or a completely different IronStack instance. Any custom exercises it uses are recreated for you; a name matching one of this instance's own system exercises is reused as-is." %}</p>
+  {{ form.non_field_errors }}
+  {% for field in form %}
+    <div class="field">
+      {{ field.label_tag }}
+      {{ field }}
+      {% if field.help_text %}<p class="field-help">{{ field.help_text }}</p>{% endif %}
+      {% if field.errors %}<p class="field-error">{{ field.errors|striptags }}</p>{% endif %}
+    </div>
+  {% endfor %}
+  <button type="submit">{% trans "Import" %}</button>
+</form>
+
+<p><a class="button-secondary" href="{% url 'programs:program-list' %}">&larr; {% trans "Back to programs" %}</a></p>
+{% endblock %}
