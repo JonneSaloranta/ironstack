@@ -1,9 +1,9 @@
 {% extends "base.html" %}
 {% load i18n core_extras records_extras %}
-{% block title %}{% trans "Analytics" %} — IronStack{% endblock %}
+{% block title %}{% trans "Progress" %} — IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
-  <h1 style="margin:0;">{% trans "Analytics" %}</h1>
+  <h1>{% trans "Progress" %}</h1>
 </div>
 
 {% include "analytics/_range_filter.html" %}
@@ -16,12 +16,30 @@
   </dl>
 </div>
 
+{% if trained_exercises %}
+  <form method="get" action="" class="card" x-data
+        @change="if ($event.target.value) window.location = $event.target.value">
+    <label for="exercise-trend-picker">{% trans "Strength trend for an exercise" %}</label>
+    <select id="exercise-trend-picker">
+      <option value="">{% trans "Choose an exercise…" %}</option>
+      {% for exercise in trained_exercises %}
+        <option value="{% url 'analytics:exercise' exercise.pk %}">{% trans exercise.name %}</option>
+      {% endfor %}
+    </select>
+    <noscript><p class="text-muted">{% trans "Open an exercise from the library to see its trend." %}</p></noscript>
+  </form>
+{% endif %}
+
 <h2>{% trans "Weekly training volume" %}</h2>
 {% if weekly_volume_chart %}
   {% trans "Weekly training volume" as weekly_volume_title %}
   {% include "core/_bar_chart.html" with chart=weekly_volume_chart chart_title=weekly_volume_title unit_label=weight_unit_label %}
 {% else %}
-  <div class="card empty-state"><p>{% trans "No completed workouts in this range." %}</p></div>
+  {% trans "No completed workouts in this range." as empty_msg %}
+  {% trans "Finish a workout, or widen the date range above." as empty_hint %}
+  {% url 'workouts:session-list' as history_url %}
+  {% trans "Go to workouts" as history_label %}
+  {% include "core/_empty_state.html" with message=empty_msg hint=empty_hint cta_url=history_url cta_label=history_label %}
 {% endif %}
 
 <h2>{% trans "Muscle-group volume" %}</h2>

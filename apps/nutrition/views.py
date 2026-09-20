@@ -727,6 +727,7 @@ class DiaryDayView(LoginRequiredMixin, View):
             self.template_name,
             {
                 "date": target_date,
+                "is_today": target_date == timezone.localdate(),
                 "previous_date": target_date - timezone.timedelta(days=1),
                 "next_date": target_date + timezone.timedelta(days=1),
                 "meal_slots": meal_slots,

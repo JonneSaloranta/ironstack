@@ -3,24 +3,19 @@
 {% block title %}{% trans "Import recipe" %} — IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
-  <h1 style="margin:0;">{% trans "Import recipe" %}</h1>
+  <h1 class="no-margin">{% trans "Import recipe" %}</h1>
 </div>
 {% include "nutrition/_subnav.html" %}
 
 <form class="card" method="post" enctype="multipart/form-data">
   {% csrf_token %}
   <p class="text-muted">{% trans "Upload a recipe someone exported — from this instance, or a completely different IronStack instance. A food originally imported from OpenFoodFacts is looked up again by its own barcode; anything else is recreated as your own food." %}</p>
-  {{ form.non_field_errors }}
+  {% include "core/_form_errors.html" %}
   {% for field in form %}
-    <div class="field">
-      {{ field.label_tag }}
-      {{ field }}
-      {% if field.help_text %}<p class="field-help">{{ field.help_text }}</p>{% endif %}
-      {% if field.errors %}<p class="field-error">{{ field.errors|striptags }}</p>{% endif %}
-    </div>
+    {% include "core/_field.html" with field=field %}
   {% endfor %}
   <button type="submit">{% trans "Import" %}</button>
 </form>
 
-<p><a class="button-secondary" href="{% url 'nutrition:recipe-list' %}">&larr; {% trans "Back to recipes" %}</a></p>
+<p><a class="button-link" href="{% url 'nutrition:recipe-list' %}">&larr; {% trans "Back to recipes" %}</a></p>
 {% endblock %}

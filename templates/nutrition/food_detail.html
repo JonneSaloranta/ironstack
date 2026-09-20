@@ -3,7 +3,7 @@
 {% block title %}{{ food.name }} — IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
-  <h1 style="margin:0;">{{ food.name }}</h1>
+  <h1 class="no-margin">{{ food.name }}</h1>
 </div>
 {% if food.brand %}<p class="text-muted">{{ food.brand }}</p>{% endif %}
 {% include "nutrition/_subnav.html" %}
@@ -21,7 +21,7 @@
   <strong>{% trans "Nutrition" %}</strong>
   <p class="text-muted">{% blocktrans with size=food.serving_size unit=food.serving_unit %}Per {{ size }} {{ unit }}{% endblocktrans %}</p>
   {% include "nutrition/_nutri_score_badge.html" %}
-  <table class="set-table">
+  <div class="table-wrap"><table class="set-table">
     <tbody>
       <tr><td>{% trans "Calories" %}</td><td>{{ food.calories }} kcal</td></tr>
       <tr><td>{% trans "Protein" %}</td><td>{{ food.protein_grams }} g</td></tr>
@@ -40,13 +40,13 @@
         <tr><td>{% trans "Sodium" %}</td><td>{{ food.sodium_mg }} mg</td></tr>
       {% endif %}
     </tbody>
-  </table>
+  </table></div>
 </div>
 
 {% if food.quantity or food.ingredients_text or food.labels or food.allergens or food.categories or food.price_amount %}
   <div class="card">
     <strong>{% trans "Product information" %}</strong>
-    <table class="set-table">
+    <div class="table-wrap"><table class="set-table">
       <tbody>
         {% if food.price_amount %}
           <tr>
@@ -70,7 +70,7 @@
           <tr><td>{% trans "Allergens" %}</td><td>{{ food.allergens }}</td></tr>
         {% endif %}
       </tbody>
-    </table>
+    </table></div>
     {% if food.ingredients_text %}
       <p class="text-muted"><strong>{% trans "Ingredients" %}:</strong> {{ food.ingredients_text }}</p>
     {% endif %}
@@ -86,5 +86,5 @@
   </p>
 {% endif %}
 
-<p><a class="button-secondary" href="{% url 'nutrition:food-list' %}">&larr; {% trans "Back to foods" %}</a></p>
+<p><a class="button-link" href="{% url 'nutrition:food-list' %}">&larr; {% trans "Back to foods" %}</a></p>
 {% endblock %}

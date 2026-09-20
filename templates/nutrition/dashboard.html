@@ -3,7 +3,7 @@
 {% block title %}{% trans "Nutrition" %} — IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
-  <h1 style="margin:0;">{% trans "Nutrition" %}</h1>
+  <h1 class="no-margin">{% trans "Nutrition" %}</h1>
 </div>
 <div class="top-bar-actions">
   {% trans "Based on whether you completed a workout today — this doesn't change your calorie target automatically." as day_type_help %}
@@ -17,7 +17,14 @@
 
 <div class="card">
   <strong>{% trans "Today so far" %}</strong>
-  <table class="set-table">
+  {% if target and target.daily_calories %}
+    <div class="progress-bar{% if totals.calories > target.daily_calories %} is-over{% endif %}" role="progressbar"
+         aria-label="{% trans "Calories eaten today, as a share of your daily target" %}"
+         aria-valuemin="0" aria-valuemax="{{ target.daily_calories }}" aria-valuenow="{{ totals.calories|floatformat:0 }}">
+      <span style="width: {% widthratio totals.calories target.daily_calories 100 %}%;"></span>
+    </div>
+  {% endif %}
+  <div class="table-wrap"><table class="set-table">
     <tbody>
       <tr>
         <td>{% trans "Calories" %}</td>
@@ -36,23 +43,23 @@
         <td>{{ totals.fat_grams|floatformat:0 }}{% if target %} / {{ target.fat_grams|floatformat:0 }}{% endif %} g</td>
       </tr>
     </tbody>
-  </table>
+  </table></div>
+  <a class="button" href="{% url 'nutrition:diary-add-entry' %}">{% trans "+ Log food now" %}</a>
   <a class="button-secondary" href="{% url 'nutrition:diary-day' %}">{% trans "Open food diary" %}</a>
-  <a class="button-secondary" href="{% url 'nutrition:diary-add-entry' %}">{% trans "+ Log food now" %}</a>
 </div>
 
 {% if todays_plan %}
   <div class="card">
     <strong>{% trans "Today's plan" %}</strong>
     <span class="text-muted">— {{ todays_plan.plan.name }}</span>
-    <table class="set-table">
+    <div class="table-wrap"><table class="set-table">
       <tbody>
         <tr><td>{% trans "Calories" %}</td><td>{{ todays_plan.total.calories|floatformat:0 }} kcal</td></tr>
         <tr><td>{% trans "Protein" %}</td><td>{{ todays_plan.total.protein_grams|floatformat:0 }} g</td></tr>
         <tr><td>{% trans "Carbohydrates" %}</td><td>{{ todays_plan.total.carbohydrate_grams|floatformat:0 }} g</td></tr>
         <tr><td>{% trans "Fat" %}</td><td>{{ todays_plan.total.fat_grams|floatformat:0 }} g</td></tr>
       </tbody>
-    </table>
+    </table></div>
     {% for meal in todays_plan.meals %}
       <p class="text-muted">
         <strong>{{ meal.meal_slot.name|translate_content }}:</strong>
@@ -102,16 +109,16 @@
 {% if target %}
   <div class="card">
     <strong>{% trans "Daily target" %}</strong>
-    <p style="font-size:1.5rem; font-weight:bold; margin:0.25rem 0;">
+    <p class="stat-value">
       {% blocktrans with calories=target.daily_calories %}{{ calories }} kcal/day{% endblocktrans %}
     </p>
-    <table class="set-table">
+    <div class="table-wrap"><table class="set-table">
       <tbody>
         <tr><td>{% trans "Protein" %}</td><td>{{ target.protein_grams }} g</td></tr>
         <tr><td>{% trans "Carbohydrates" %}</td><td>{{ target.carbohydrate_grams }} g</td></tr>
         <tr><td>{% trans "Fat" %}</td><td>{{ target.fat_grams }} g</td></tr>
       </tbody>
-    </table>
+    </table></div>
     <p class="field-help">{{ target.display_reason }}</p>
   </div>
 {% endif %}

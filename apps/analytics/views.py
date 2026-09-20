@@ -36,6 +36,7 @@ class AnalyticsDashboardView(LoginRequiredMixin, TemplateView):
         context["muscle_group_chart"] = services.muscle_group_volume_series(user, date_range)
         context["recent_prs"] = services.pr_history_grouped_by_exercise(user, date_range, limit=15)
         context["weight_unit_label"] = core_units.weight_unit_label(user.unit_system)
+        context["trained_exercises"] = services.trained_exercises(user)
         return context
 
 

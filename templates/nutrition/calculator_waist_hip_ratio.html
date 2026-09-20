@@ -3,19 +3,15 @@
 {% block title %}{% trans "Waist-to-hip ratio calculator" %} — IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
-  <h1 style="margin:0;">{% trans "Waist-to-hip ratio calculator" %}</h1>
+  <h1 class="no-margin">{% trans "Waist-to-hip ratio calculator" %}</h1>
 </div>
 {% include "nutrition/_subnav.html" %}
 <p class="text-muted">{% trans "Where you carry weight, not just how much — a widely used screening number (WHO), not a diagnosis." %}</p>
 
 <form class="card" method="get">
-  {{ form.non_field_errors }}
+  {% include "core/_form_errors.html" %}
   {% for field in form %}
-    <div class="field">
-      {{ field.label_tag }}
-      {{ field }}
-      {% if field.errors %}<p class="field-error">{{ field.errors|striptags }}</p>{% endif %}
-    </div>
+    {% include "core/_field.html" with field=field %}
   {% endfor %}
   <button type="submit">{% trans "Calculate" %}</button>
 </form>
@@ -23,11 +19,11 @@
 {% if result %}
   <div class="card">
     <strong>{% trans "Result" %}</strong>
-    <p style="font-size:1.5rem; font-weight:bold; margin:0.25rem 0;">
+    <p class="stat-value">
       {{ result.ratio }}{% if result.risk %} — {{ result.risk.name }}{% endif %}
     </p>
   </div>
 {% endif %}
 
-<p><a class="button-secondary" href="{% url 'nutrition:calculators-home' %}">&larr; {% trans "Back to calculators" %}</a></p>
+<p><a class="button-link" href="{% url 'nutrition:calculators-home' %}">&larr; {% trans "Back to calculators" %}</a></p>
 {% endblock %}

@@ -3,7 +3,7 @@
 {% block title %}{{ plan.name }} — IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
-  <h1 style="margin:0;">{{ plan.name }}</h1>
+  <h1 class="no-margin">{{ plan.name }}</h1>
 </div>
 <div class="top-bar-actions">
   <form method="post" action="{% url 'nutrition:diet-plan-toggle-active' plan.pk %}">
@@ -86,11 +86,11 @@
   <button type="submit">{% trans "Log it" %}</button>
 </form>
 
-<p><a class="button-secondary" href="{% url 'nutrition:diet-plan-list' %}">&larr; {% trans "Back to diet plans" %}</a></p>
+<p><a class="button-link" href="{% url 'nutrition:diet-plan-list' %}">&larr; {% trans "Back to diet plans" %}</a></p>
 
 <div class="danger-zone">
   <form method="post" action="{% url 'nutrition:diet-plan-delete' plan.pk %}"
-        x-data="{}" @submit="if (!confirm('{% trans "Delete this plan?" %}')) $event.preventDefault()">
+        data-confirm="{% filter force_escape %}{% trans "Delete this plan?" %}{% endfilter %}">
     {% csrf_token %}
     <button type="submit" class="button-danger">{% trans "Delete plan" %}</button>
   </form>

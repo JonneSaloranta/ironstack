@@ -3,7 +3,7 @@
 {% block title %}{% trans "Recipes" %} — IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
-  <h1 style="margin:0;">{% trans "Recipes" %}</h1>
+  <h1 class="no-margin">{% trans "Recipes" %}</h1>
 </div>
 <div class="top-bar-actions">
   <a class="button-secondary" href="{% url 'nutrition:recipe-create' %}">{% trans "+ New recipe" %}</a>
@@ -87,5 +87,5 @@
   {% endif %}
 </div>
 
-<p><a class="button-secondary" href="{% url 'nutrition:dashboard' %}">&larr; {% trans "Back to nutrition" %}</a></p>
+<p><a class="button-link" href="{% url 'nutrition:dashboard' %}">&larr; {% trans "Back to nutrition" %}</a></p>
 {% endblock %}

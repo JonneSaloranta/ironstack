@@ -203,7 +203,12 @@ class DiaryAddEntryForm(forms.Form):
     food_id = forms.IntegerField(required=False, widget=forms.HiddenInput)
     off_barcode = forms.CharField(required=False, widget=forms.HiddenInput)
     meal_slot = forms.ModelChoiceField(queryset=None)
-    quantity = forms.DecimalField(max_digits=8, decimal_places=2, min_value=Decimal("0.01"))
+    quantity = forms.DecimalField(
+        max_digits=8,
+        decimal_places=2,
+        min_value=Decimal("0.01"),
+        widget=forms.NumberInput(attrs={"inputmode": "decimal", "autocomplete": "off"}),
+    )
 
     def __init__(self, *args, user, **kwargs):
         from . import services
@@ -273,7 +278,12 @@ class RecipeIngredientSearchForm(forms.Form):
 
     food_id = forms.IntegerField(required=False, widget=forms.HiddenInput)
     off_barcode = forms.CharField(required=False, widget=forms.HiddenInput)
-    quantity = forms.DecimalField(max_digits=8, decimal_places=2, min_value=Decimal("0.01"))
+    quantity = forms.DecimalField(
+        max_digits=8,
+        decimal_places=2,
+        min_value=Decimal("0.01"),
+        widget=forms.NumberInput(attrs={"inputmode": "decimal", "autocomplete": "off"}),
+    )
 
     def clean(self):
         cleaned = super().clean()
@@ -408,7 +418,12 @@ class DietPlanMealItemSearchForm(forms.Form):
 
     food_id = forms.IntegerField(required=False, widget=forms.HiddenInput)
     off_barcode = forms.CharField(required=False, widget=forms.HiddenInput)
-    quantity = forms.DecimalField(max_digits=8, decimal_places=2, min_value=Decimal("0.01"))
+    quantity = forms.DecimalField(
+        max_digits=8,
+        decimal_places=2,
+        min_value=Decimal("0.01"),
+        widget=forms.NumberInput(attrs={"inputmode": "decimal", "autocomplete": "off"}),
+    )
 
     def clean(self):
         cleaned = super().clean()

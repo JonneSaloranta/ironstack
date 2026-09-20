@@ -17,10 +17,10 @@ plan.
         <span>{% if item.food %}<a class="inline-item-link" href="{% url 'nutrition:food-detail' item.food.pk %}">{{ item.food.name }}</a>{% else %}<a class="inline-item-link" href="{% url 'nutrition:recipe-detail' item.recipe.pk %}">{% trans item.recipe.name %}</a>{% endif %}</span>
         <span class="text-muted">— {{ item.quantity }} {% if item.food %}{{ item.food.serving_unit }}{% else %}{% trans "servings" %}{% endif %}, {{ item.nutrition.calories|floatformat:0 }} kcal</span>
       </div>
-      <div style="display:flex; flex-wrap:wrap; gap:0.5rem;">
+      <div class="row">
         <a class="button-secondary" href="{% url 'nutrition:diet-plan-item-edit' plan.pk item.pk %}">{% trans "Swap" %}</a>
         <form method="post" action="{% url 'nutrition:diet-plan-item-delete' plan.pk item.pk %}"
-              x-data="{}" @submit="if (!confirm('{% trans "Remove this item?" %}')) $event.preventDefault()">
+              data-confirm="{% filter force_escape %}{% trans "Remove this item?" %}{% endfilter %}">
           {% csrf_token %}
           <button type="submit" class="button-danger">{% trans "Remove" %}</button>
         </form>

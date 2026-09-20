@@ -10,7 +10,7 @@ nothing a user couldn't already see a few pixels down. Matches every
 other page's .top-bar besides holding only a plain, unchanging title.
 {% endcomment %}
 <div class="top-bar">
-  <h1 style="margin:0;">{% trans "Food diary" %}</h1>
+  <h1 class="no-margin">{% trans "Food diary" %}</h1>
 </div>
 {% include "nutrition/_subnav.html" %}
 
@@ -23,8 +23,8 @@ other page's .top-bar besides holding only a plain, unchanging title.
 </div>
 
 <div class="card">
-  <strong>{% trans "Today's nutrition" %}</strong>
-  <table class="set-table">
+  <strong>{% if is_today %}{% trans "Today's nutrition" %}{% else %}{% trans "Nutrition for this day" %}{% endif %}</strong>
+  <div class="table-wrap"><table class="set-table">
     <tbody>
       <tr>
         <td>{% trans "Calories" %}</td>
@@ -49,7 +49,7 @@ other page's .top-bar besides holding only a plain, unchanging title.
         <td>{{ totals.fat_grams|floatformat:0 }}{% if target %} / {{ target.fat_grams|floatformat:0 }}{% endif %} g</td>
       </tr>
     </tbody>
-  </table>
+  </table></div>
 </div>
 
 {% for slot in meal_slots %}
@@ -61,10 +61,10 @@ other page's .top-bar besides holding only a plain, unchanging title.
           <span>{% if entry.food %}<a class="inline-item-link" href="{% url 'nutrition:food-detail' entry.food.pk %}">{{ entry.food.name }}</a>{% else %}<a class="inline-item-link" href="{% url 'nutrition:recipe-detail' entry.recipe.pk %}">{% trans entry.recipe.name %}</a>{% endif %}</span>
           <span class="text-muted">— {{ entry.quantity }} {{ entry.food.serving_unit|default:"servings" }}, {{ entry.nutrition.calories|floatformat:0 }} kcal{% if entry.food.price_amount %} · {{ entry.food.price_amount }} {{ entry.food.price_currency }}{% endif %}</span>
         </div>
-        <div style="display:flex; flex-wrap:wrap; gap:0.5rem;">
+        <div class="row">
           <a class="button-secondary" href="{% url 'nutrition:diary-entry-edit' entry.pk %}">{% trans "Edit" %}</a>
           <form method="post" action="{% url 'nutrition:diary-entry-delete' entry.pk %}"
-                x-data="{}" @submit="if (!confirm('{% trans "Remove this entry?" %}')) $event.preventDefault()">
+                data-confirm="{% filter force_escape %}{% trans "Remove this entry?" %}{% endfilter %}">
             {% csrf_token %}
             <button type="submit" class="button-danger">{% trans "Delete" %}</button>
           </form>
@@ -73,7 +73,7 @@ other page's .top-bar besides holding only a plain, unchanging title.
     {% empty %}
       <p class="text-muted">{% trans "Nothing logged yet." %}</p>
     {% endfor %}
-    <div style="display:flex; flex-wrap:wrap; gap:0.5rem;">
+    <div class="row">
       <a class="button-secondary" href="{% url 'nutrition:diary-add-entry' %}?date={{ date|date:'Y-m-d' }}&meal_slot={{ slot.pk }}">{% trans "+ Add food" %}</a>
       {% if slot.name != "Other" and slot.entries %}
         <form method="post" action="{% url 'nutrition:diary-meal-save-as-recipe' date.isoformat slot.pk %}">
@@ -95,8 +95,8 @@ other page's .top-bar besides holding only a plain, unchanging title.
   </form>
 </div>
 
-<p style="display:flex; flex-wrap:wrap; gap:0.5rem;">
+<p class="row">
   <a class="button-secondary" href="{% url 'nutrition:food-list' %}">{% trans "Manage foods" %}</a>
-  <a class="button-secondary" href="{% url 'nutrition:dashboard' %}">&larr; {% trans "Back to nutrition" %}</a>
+  <a class="button-link" href="{% url 'nutrition:dashboard' %}">&larr; {% trans "Back to nutrition" %}</a>
 </p>
 {% endblock %}

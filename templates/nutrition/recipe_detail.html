@@ -3,7 +3,7 @@
 {% block title %}{% trans recipe.name %} — IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
-  <h1 style="margin:0;">{% trans recipe.name %}</h1>
+  <h1 class="no-margin">{% trans recipe.name %}</h1>
 </div>
 <div class="top-bar-actions">
   {% if recipe.owner_id == request.user.id %}
@@ -33,10 +33,10 @@
         <span class="text-muted">— {{ ingredient.quantity }} {{ ingredient.food.serving_unit }}, {{ ingredient.nutrition.calories|floatformat:0 }} kcal{% if ingredient.food.price_amount %} · {{ ingredient.food.price_amount }} {{ ingredient.food.price_currency }}{% endif %}</span>
       </div>
       {% if recipe.owner_id == request.user.id %}
-        <div style="display:flex; flex-wrap:wrap; gap:0.5rem;">
+        <div class="row">
           <a class="button-secondary" href="{% url 'nutrition:recipe-ingredient-edit' recipe.pk ingredient.pk %}">{% trans "Edit" %}</a>
           <form method="post" action="{% url 'nutrition:recipe-ingredient-delete' recipe.pk ingredient.pk %}"
-                x-data="{}" @submit="if (!confirm('{% trans "Remove this ingredient?" %}')) $event.preventDefault()">
+                data-confirm="{% filter force_escape %}{% trans "Remove this ingredient?" %}{% endfilter %}">
             {% csrf_token %}
             <button type="submit" class="button-danger">{% trans "Remove" %}</button>
           </form>
@@ -53,9 +53,9 @@
 
 <div class="card">
   <strong>{% trans "Nutrition" %}</strong>
-  <table class="set-table">
+  <div class="table-wrap"><table class="set-table">
     <thead>
-      <tr><th></th><th>{% trans "Total" %}</th><th>{% blocktrans with servings=recipe.servings %}Per serving (of {{ servings }}){% endblocktrans %}</th></tr>
+      <tr><th scope="col"></th><th scope="col">{% trans "Total" %}</th><th scope="col">{% blocktrans with servings=recipe.servings %}Per serving (of {{ servings }}){% endblocktrans %}</th></tr>
     </thead>
     <tbody>
       <tr><td>{% trans "Calories" %}</td><td>{{ total.calories|floatformat:0 }}</td><td>{{ per_serving.calories|floatformat:0 }}</td></tr>
@@ -75,7 +75,7 @@
         <tr><td>{% trans "Sodium" %}</td><td>{{ total.sodium_mg|floatformat:0 }} mg</td><td>{{ per_serving.sodium_mg|floatformat:0 }} mg</td></tr>
       {% endif %}
     </tbody>
-  </table>
+  </table></div>
   {% if total.fiber_grams is None and total.sugar_grams is None and total.saturated_fat_grams is None and total.sodium_mg is None %}
     <p class="field-help">{% trans "Fiber, sugar, saturated fat, and sodium show here once at least one ingredient has that data (e.g. imported from OpenFoodFacts)." %}</p>
   {% endif %}
@@ -86,21 +86,17 @@
   <strong>{% trans "Log to diary" %}</strong>
   {{ log_form.non_field_errors }}
   {% for field in log_form %}
-    <div class="field">
-      {{ field.label_tag }}
-      {{ field }}
-      {% if field.errors %}<p class="field-error">{{ field.errors|striptags }}</p>{% endif %}
-    </div>
+    {% include "core/_field.html" with field=field %}
   {% endfor %}
   <button type="submit">{% trans "Log it" %}</button>
 </form>
 
-<p><a class="button-secondary" href="{% url 'nutrition:recipe-list' %}">&larr; {% trans "Back to recipes" %}</a></p>
+<p><a class="button-link" href="{% url 'nutrition:recipe-list' %}">&larr; {% trans "Back to recipes" %}</a></p>
 
 {% if recipe.owner_id == request.user.id %}
   <div class="danger-zone">
     <form method="post" action="{% url 'nutrition:recipe-delete' recipe.pk %}"
-          x-data="{}" @submit="if (!confirm('{% trans "Delete this recipe?" %}')) $event.preventDefault()">
+          data-confirm="{% filter force_escape %}{% trans "Delete this recipe?" %}{% endfilter %}">
       {% csrf_token %}
       <button type="submit" class="button-danger">{% trans "Delete recipe" %}</button>
     </form>

@@ -3,7 +3,7 @@
 {% block title %}{% trans exercise.name as exercise_display_name_for_title %}{% blocktrans with name=exercise_display_name_for_title %}{{ name }} analytics{% endblocktrans %} — IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
-  <h1 style="margin:0;">{% trans exercise.name %}</h1>
+  <h1 class="no-margin">{% trans exercise.name %}</h1>
 </div>
 
 {% include "analytics/_range_filter.html" %}
@@ -24,5 +24,5 @@
 {% endif %}
 
 <p><a class="button-secondary" href="{% url 'records:exercise-records' exercise.pk %}">{% trans "View current" %} <abbr tabindex="0" title="{% trans "Personal Records" %}">PRs</abbr></a></p>
-<p><a class="button-secondary" href="{% url 'exercises:exercise-detail' exercise.pk %}">&larr; {% trans "Back to exercise" %}</a></p>
+<p><a class="button-link" href="{% url 'exercises:exercise-detail' exercise.pk %}">&larr; {% trans "Back to exercise" %}</a></p>
 {% endblock %}

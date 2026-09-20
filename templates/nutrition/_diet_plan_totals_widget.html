@@ -34,7 +34,7 @@ box without looking broken the way a clipped table header does.
     <span x-show="!minimized" x-cloak>&#9652;</span>
   </button>
   <div x-show="!minimized" x-cloak>
-    <table class="set-table">
+    <div class="table-wrap"><table class="set-table">
       <tbody>
         <tr>
           <td>{% trans "Calories" %}</td>
@@ -53,7 +53,7 @@ box without looking broken the way a clipped table header does.
           <td>{{ day_group.totals.fat_grams|floatformat:0 }} / {{ plan.target_fat_grams|floatformat:0 }} g</td>
         </tr>
       </tbody>
-    </table>
+    </table></div>
     <p class="text-muted diet-plan-totals-left">
       {% blocktrans with calories=day_group.remaining_calories|floatformat:0 protein=day_group.remaining_protein_grams|floatformat:0 carbs=day_group.remaining_carbohydrate_grams|floatformat:0 fat=day_group.remaining_fat_grams|floatformat:0 %}Left: {{ calories }} kcal, {{ protein }}g protein, {{ carbs }}g carbs, {{ fat }}g fat{% endblocktrans %}
     </p>

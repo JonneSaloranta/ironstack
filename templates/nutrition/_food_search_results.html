@@ -34,7 +34,7 @@
               <strong><a class="inline-item-link" href="{% url 'nutrition:food-detail' food.pk %}">{{ food.name }}</a></strong>{% include "nutrition/_nutri_score_badge.html" %}
               <p class="text-muted">{{ food.calories }} kcal / {{ food.serving_size }} {{ food.serving_unit }}</p>
             </div>
-            <div style="display:flex; flex-wrap:wrap; gap:0.5rem; align-items:center;">
+            <div class="row">
               <input type="number" name="quantity" step="0.01" value="{{ food.serving_size|unlocalize }}" style="width:5rem;" aria-label="{% trans "Quantity" %}">
               <button type="submit">{% trans "Add" %}</button>
             </div>
@@ -60,7 +60,7 @@
           {% if mode == "browse" %}
             <button type="submit" class="button-secondary">{% trans "Import" %}</button>
           {% else %}
-            <div style="display:flex; flex-wrap:wrap; gap:0.5rem; align-items:center;">
+            <div class="row">
               <input type="number" name="quantity" step="0.01" value="{{ product.serving_size|unlocalize }}" style="width:5rem;" aria-label="{% trans "Quantity" %}">
               <button type="submit">{% trans "Import & add" %}</button>
             </div>

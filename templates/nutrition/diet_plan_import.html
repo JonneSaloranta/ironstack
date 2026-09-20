@@ -3,24 +3,19 @@
 {% block title %}{% trans "Import diet plan" %} — IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
-  <h1 style="margin:0;">{% trans "Import diet plan" %}</h1>
+  <h1 class="no-margin">{% trans "Import diet plan" %}</h1>
 </div>
 {% include "nutrition/_subnav.html" %}
 
 <form class="card" method="post" enctype="multipart/form-data">
   {% csrf_token %}
   <p class="text-muted">{% trans "Upload a diet plan someone exported — from this instance, or a completely different IronStack instance. Foods and recipes it uses are matched against your own existing ones where possible, rather than duplicated; anything missing is recreated for you. Imported inactive, so it never replaces whatever plan you're currently following." %}</p>
-  {{ form.non_field_errors }}
+  {% include "core/_form_errors.html" %}
   {% for field in form %}
-    <div class="field">
-      {{ field.label_tag }}
-      {{ field }}
-      {% if field.help_text %}<p class="field-help">{{ field.help_text }}</p>{% endif %}
-      {% if field.errors %}<p class="field-error">{{ field.errors|striptags }}</p>{% endif %}
-    </div>
+    {% include "core/_field.html" with field=field %}
   {% endfor %}
   <button type="submit">{% trans "Import" %}</button>
 </form>
 
-<p><a class="button-secondary" href="{% url 'nutrition:diet-plan-list' %}">&larr; {% trans "Back to diet plans" %}</a></p>
+<p><a class="button-link" href="{% url 'nutrition:diet-plan-list' %}">&larr; {% trans "Back to diet plans" %}</a></p>
 {% endblock %}

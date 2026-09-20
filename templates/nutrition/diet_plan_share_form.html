@@ -3,12 +3,12 @@
 {% block title %}{% trans "Share" %} {{ plan.name }} — IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
-  <h1 style="margin:0;">{% trans "Share" %} “{{ plan.name }}”</h1>
+  <h1 class="no-margin">{% trans "Share" %} “{{ plan.name }}”</h1>
 </div>
 
 <form class="card" method="post">
   {% csrf_token %}
-  {{ form.non_field_errors }}
+  {% include "core/_form_errors.html" %}
   <div class="field">
     {{ form.clients.label_tag }}
     {{ form.clients }}
@@ -21,5 +21,5 @@
   <button type="submit">{% trans "Save" %}</button>
 </form>
 
-<p><a class="button-secondary" href="{% url 'nutrition:diet-plan-detail' plan.pk %}">&larr; {% trans "Back to plan" %}</a></p>
+<p><a class="button-link" href="{% url 'nutrition:diet-plan-detail' plan.pk %}">&larr; {% trans "Back to plan" %}</a></p>
 {% endblock %}

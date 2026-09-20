@@ -6,7 +6,7 @@
     {% if plan.has_coach_update %}<span class="text-muted">{% trans "Coach update available" %}</span>{% endif %}
     <p class="text-muted">{{ plan.target_calories }} kcal/day</p>
   </div>
-  <div style="display:flex; flex-wrap:wrap; gap:0.5rem;">
+  <div class="row">
     <form method="post" action="{% url 'nutrition:diet-plan-toggle-active' plan.pk %}">
       {% csrf_token %}
       <input type="hidden" name="next" value="{% url 'nutrition:diet-plan-list' %}">
