@@ -12,7 +12,7 @@
   <div class="table-wrap">
   <table class="set-table">
     <thead>
-      <tr><th>{% trans "Set" %}</th><th>{% trans "Weight" %}</th><th>{% trans "Reps" %}</th><th></th></tr>
+      <tr><th scope="col">{% trans "Set" %}</th><th scope="col">{% trans "Weight" %}</th><th scope="col">{% trans "Reps" %}</th><th scope="col"></th></tr>
     </thead>
     <tbody>
       {% for s in pe.sets.all %}
@@ -22,8 +22,10 @@
           <td>{{ s.reps }}{% if s.is_failure %} <span class="tag tag-muted">{% trans "F" %}</span>{% endif %}</td>
           <td class="set-actions">
             <a class="button-secondary" href="{% url 'workouts:set-edit' s.pk %}">{% trans "Edit" %}</a>
+            {% trans "Delete this set?" as delete_set_prompt %}
             <form method="post" action="{% url 'workouts:set-delete' s.pk %}"
                   hx-post="{% url 'workouts:set-delete' s.pk %}"
+                  hx-confirm="{{ delete_set_prompt }}"
                   hx-target="#performed-exercise-{{ pe.id }}" hx-swap="outerHTML">
               {% csrf_token %}
               <button type="submit" class="button-danger">{% trans "Delete" %}</button>
@@ -56,9 +58,10 @@
     {% endif %}
     <form class="set-log-form" method="post" action="{% url 'workouts:set-log' pe.id %}"
           hx-post="{% url 'workouts:set-log' pe.id %}"
-          hx-target="#performed-exercise-{{ pe.id }}" hx-swap="outerHTML">
+          hx-target="#performed-exercise-{{ pe.id }}" hx-swap="outerHTML"
+          hx-disabled-elt="find button[type=submit]">
       {% csrf_token %}
-      {{ set_form.non_field_errors }}
+      {% include "workouts/_set_form_errors.html" %}
       {% for field in set_form %}
         <label class="set-field">
           {{ field.label }}

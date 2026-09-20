@@ -3,7 +3,7 @@
 {% block title %}{% trans "Training" %} — IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
-  <h1 style="margin:0;">{% if session.workout %}{% trans session.workout.name %}{% else %}{% trans "Freeform workout" %}{% endif %}</h1>
+  <h1 class="no-margin">{% if session.workout %}{% trans session.workout.name %}{% else %}{% trans "Freeform workout" %}{% endif %}</h1>
 </div>
 <div class="top-bar-actions">
   <a class="button-secondary" href="{% url 'workouts:session-detail' session.pk %}">{% trans "Full view" %}</a>
@@ -50,7 +50,7 @@ manually with the presets below.
   {% csrf_token %}
   <button type="submit">{% trans "Complete workout" %}</button>
 </form>
-<form method="post" action="{% url 'workouts:session-abandon' session.pk %}" x-data="{}" @submit="if (!confirm('{% trans "Abandon this workout? It stays in your history as abandoned." %}')) $event.preventDefault()">
+<form method="post" action="{% url 'workouts:session-abandon' session.pk %}" data-confirm="{% filter force_escape %}{% trans "Abandon this workout? It stays in your history as abandoned." %}{% endfilter %}">
   {% csrf_token %}
   <button type="submit" class="button-danger">{% trans "Abandon workout" %}</button>
 </form>

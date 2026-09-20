@@ -49,6 +49,15 @@ class ExerciseSetForm(forms.ModelForm):
     def __init__(self, *args, user=None, **kwargs):
         self.user = user
         super().__init__(*args, **kwargs)
+        # Numeric-keypad hints for the phone: a bare type=number gives the
+        # full keyboard on some Android builds. `decimal` for weight (it
+        # takes a fractional), `numeric` for whole-number reps.
+        self.fields["weight"].widget.attrs.update(
+            {"inputmode": "decimal", "enterkeyhint": "next", "autocomplete": "off"}
+        )
+        self.fields["reps"].widget.attrs.update(
+            {"inputmode": "numeric", "enterkeyhint": "done", "autocomplete": "off"}
+        )
         unit_system = getattr(user, "unit_system", "metric")
         self.fields["weight"].label = _("Weight (%(unit)s)") % {
             "unit": core_units.weight_unit_label(unit_system)

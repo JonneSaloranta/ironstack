@@ -606,6 +606,20 @@ class TrainingModeViewTests(TestCase):
         self.assertEqual(self.performed.sets.count(), 0)
         self.assertTrue(response.context["set_form"].errors)
 
+    def test_a_validation_error_is_shown_to_the_user_in_an_alert(self):
+        response = self.client.post(
+            reverse("workouts:train-set-log", args=[self.performed.pk]),
+            {"weight": "", "reps": ""},
+            HTTP_HX_REQUEST="true",
+        )
+        self.assertContains(response, 'role="alert"')
+        self.assertContains(response, "This field is required.")
+
+    def test_set_inputs_ask_for_a_numeric_keypad(self):
+        response = self.client.get(reverse("workouts:session-train", args=[self.session.pk]))
+        self.assertContains(response, 'inputmode="decimal"')
+        self.assertContains(response, 'inputmode="numeric"')
+
     def test_a_successful_log_sets_the_rest_timer_hx_trigger_header(self):
         response = self.client.post(
             reverse("workouts:train-set-log", args=[self.performed.pk]),
