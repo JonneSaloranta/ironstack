@@ -46,7 +46,7 @@ manually with the presets below.
 
 {% include "workouts/_train_panel.html" %}
 
-<form method="post" action="{% url 'workouts:session-complete' session.pk %}">
+<form method="post" action="{% url 'workouts:session-complete' session.pk %}"{% if not all_done %} data-confirm="{% filter force_escape %}{% trans "Complete this workout? Some exercises still have sets left to log." %}{% endfilter %}"{% endif %}>
   {% csrf_token %}
   <button type="submit">{% trans "Complete workout" %}</button>
 </form>

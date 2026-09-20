@@ -9,7 +9,7 @@
 
 <div class="card">
   <p class="text-muted">{{ calorie_result.reason }}</p>
-  <p style="font-size:2rem; font-weight:bold; margin:0.5rem 0;">
+  <p class="stat-value-lg">
     {% blocktrans with calories=calorie_result.daily_calories %}{{ calories }} kcal/day{% endblocktrans %}
   </p>
   <div class="table-wrap"><table class="set-table">

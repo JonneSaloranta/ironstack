@@ -9,12 +9,7 @@
 <form class="card" method="post">
   {% csrf_token %}
   {% include "core/_form_errors.html" %}
-  <div class="field">
-    {{ form.clients.label_tag }}
-    {{ form.clients }}
-    {% if form.clients.help_text %}<p class="field-help">{{ form.clients.help_text }}</p>{% endif %}
-    {% if form.clients.errors %}<p class="field-error">{{ form.clients.errors|striptags }}</p>{% endif %}
-  </div>
+  {% include "core/_field.html" with field=form.clients %}
   {% if not form.clients.field.queryset.exists %}
     <p class="text-muted">{% trans "You don't have any active coaching clients yet." %}</p>
   {% endif %}

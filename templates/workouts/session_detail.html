@@ -2,6 +2,9 @@
 {% load i18n core_extras %}
 {% block title %}{% if session.workout %}{% trans session.workout.name %}{% else %}{% trans "Freeform workout" %}{% endif %} — IronStack{% endblock %}
 {% block content %}
+{% url 'workouts:session-list' as c1u %}{% trans "Workouts" as c1l %}
+{% trans "Freeform workout" as freeform_label %}
+{% include "core/_breadcrumbs.html" with c1_url=c1u c1_label=c1l current=session.workout.name|default:freeform_label %}
 <div class="top-bar">
   <h1 class="no-margin">{% if session.workout %}{% trans session.workout.name %}{% else %}{% trans "Freeform workout" %}{% endif %}</h1>
 </div>
@@ -13,6 +16,7 @@
   {% blocktrans with started=session.started_at|date:"Y-m-d H:i" %}Started {{ started }}{% endblocktrans %}
   {% if session.ended_at %} · {% blocktrans with ended=session.ended_at|date:"Y-m-d H:i" %}ended {{ ended }}{% endblocktrans %}{% endif %}
   {% if session.duration %} · {{ session.duration|duration }}{% endif %}
+  {% if summary.set_count %} · {% blocktrans count n=summary.set_count %}{{ n }} set{% plural %}{{ n }} sets{% endblocktrans %} · {{ summary.volume|weight:request.user }}{% endif %}
 </p>
 
 {% for pe in session.performed_exercises.all %}

@@ -2,6 +2,9 @@
 {% load i18n core_extras %}
 {% block title %}{% trans recipe.name %} — IronStack{% endblock %}
 {% block content %}
+{% url 'nutrition:dashboard' as c1u %}{% trans "Nutrition" as c1l %}
+{% url 'nutrition:recipe-list' as c2u %}{% trans "Recipes" as c2l %}
+{% include "core/_breadcrumbs.html" with c1_url=c1u c1_label=c1l c2_url=c2u c2_label=c2l current=recipe.name %}
 <div class="top-bar">
   <h1 class="no-margin">{% trans recipe.name %}</h1>
 </div>
@@ -27,7 +30,7 @@
 <div class="card">
   <strong>{% trans "Ingredients" %}</strong>
   {% for ingredient in ingredients %}
-    <div class="card-action-row" style="padding:0.5rem 0;">
+    <div class="card-action-row py-2">
       <div>
         <span><a class="inline-item-link" href="{% url 'nutrition:food-detail' ingredient.food.pk %}">{{ ingredient.food.name }}</a></span>
         <span class="text-muted">— {{ ingredient.quantity }} {{ ingredient.food.serving_unit }}, {{ ingredient.nutrition.calories|floatformat:0 }} kcal{% if ingredient.food.price_amount %} · {{ ingredient.food.price_amount }} {{ ingredient.food.price_currency }}{% endif %}</span>
@@ -47,7 +50,7 @@
     <p class="text-muted">{% trans "No ingredients yet." %}</p>
   {% endfor %}
   {% if recipe.owner_id == request.user.id %}
-    <a class="button-secondary" href="{% url 'nutrition:recipe-ingredient-create' recipe.pk %}">{% trans "+ Add ingredient" %}</a>
+    <a class="button-secondary" href="{% url 'nutrition:recipe-ingredient-create' recipe.pk %}">{% trans "Add ingredient" %}</a>
   {% endif %}
 </div>
 
@@ -88,7 +91,7 @@
   {% for field in log_form %}
     {% include "core/_field.html" with field=field %}
   {% endfor %}
-  <button type="submit">{% trans "Log it" %}</button>
+  <button type="submit">{% trans "Log to diary" %}</button>
 </form>
 
 <p><a class="button-link" href="{% url 'nutrition:recipe-list' %}">&larr; {% trans "Back to recipes" %}</a></p>

@@ -14,7 +14,7 @@
   {% if backup.encrypted %}
     <span class="tag tag-success" title="{% trans "database.dump/media.tar are encrypted with this instance's BACKUP_ENCRYPTION_KEY — restoring needs it." %}">{% trans "Encrypted" %}</span>
   {% endif %}
-  <div class="set-actions" style="margin-top:0.5rem;">
+  <div class="set-actions mt-2">
     <a class="button-secondary" href="{% url 'backup-download' backup.name %}">{% trans "Download" %}</a>
     <a class="button button-danger" href="{% url 'backup-restore' backup.name %}">{% trans "Restore" %}</a>
     <form method="post" action="{% url 'backup-delete' backup.name %}" data-confirm="{% filter force_escape %}{% trans "Delete this backup? This cannot be undone." %}{% endfilter %}">

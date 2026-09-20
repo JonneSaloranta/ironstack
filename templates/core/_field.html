@@ -6,11 +6,17 @@ aria-describedby / aria-invalid (set by the core_extras `field_a11y`
 filter), so a screen reader reads the error when the field is focused.
 Every error is listed, not just the first. (No role=alert here: the form's
 _form_errors.html summary announces on submit; these are read on focus.)
+A checkbox renders with its box beside the label (.checkbox-field) rather
+than stacked under a block label meant for text inputs.
 {% endcomment %}
 {% load core_extras %}
 <div class="field">
-  {{ field.label_tag }}
-  {{ field|field_a11y }}
+  {% if field.field.widget.input_type == "checkbox" %}
+    <label class="checkbox-field" for="{{ field.id_for_label }}">{{ field|field_a11y }} {{ field.label }}</label>
+  {% else %}
+    {{ field.label_tag }}
+    {{ field|field_a11y }}
+  {% endif %}
   {% if field.help_text %}<p class="field-help" id="{{ field.auto_id }}_help">{{ field.help_text|safe }}</p>{% endif %}
   {% for error in field.errors %}
     <p class="field-error" id="{{ field.auto_id }}_error{% if not forloop.first %}_{{ forloop.counter }}{% endif %}">{{ error }}</p>

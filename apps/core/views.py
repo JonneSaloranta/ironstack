@@ -1,3 +1,4 @@
+import json
 from datetime import timedelta
 
 from django.conf import settings
@@ -158,6 +159,7 @@ class DashboardView(LoginRequiredMixin, TemplateView):
 
         body_weight_type = MeasurementType.objects.filter(name="Body weight", owner=None).first()
         if body_weight_type:
+            context["body_weight_type_pk"] = body_weight_type.pk
             latest = measurement_services.latest_for(user, body_weight_type)
             context["body_weight"] = (
                 measurement_units.to_display(
@@ -246,7 +248,28 @@ def service_worker(request):
 
 
 def web_manifest(request):
-    return _serve_static_root_file("manifest.json", "application/manifest+json")
+    """The static manifest, with `theme_color`/`background_color` swapped for
+    the signed-in user's own theme (browsers send cookies for it because
+    base.html links it with crossorigin="use-credentials"), so an installed
+    app's splash screen and title bar match the theme instead of always
+    showing the default one. Anyone else gets the file exactly as shipped."""
+    response = _serve_static_root_file("manifest.json", "application/manifest+json")
+    user = getattr(request, "user", None)
+    if user is None or not user.is_authenticated:
+        return response
+    from apps.accounts.models import THEME_BG_COLORS, Theme
+
+    try:
+        manifest = json.loads(response.content)
+    except ValueError:
+        return response
+    dark, light = THEME_BG_COLORS.get(user.theme, THEME_BG_COLORS[Theme.DEFAULT])
+    color = light if getattr(user, "appearance", "") == "light" else dark
+    manifest["theme_color"] = color
+    manifest["background_color"] = color
+    return HttpResponse(
+        json.dumps(manifest), content_type="application/manifest+json"
+    )
 
 
 def robots_txt(request):

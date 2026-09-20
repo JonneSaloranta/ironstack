@@ -35,6 +35,11 @@ Expects: chart (apps.core.charts.ChartSeries), chart_title, unit_label.
     {% endfor %}
   </svg>
   {% endlocalize %}
+  {% comment %}X axis: the first and last reading's date, so the line has a time span, not just a shape.{% endcomment %}
+  <div class="chart-x">
+    <span>{{ chart.points.0.date|date:"Y-m-d" }}</span>
+    {% with last=chart.points|last %}<span>{{ last.date|date:"Y-m-d" }}</span>{% endwith %}
+  </div>
   <div class="chart-range">
     <span>{{ chart.min_value }} {{ unit_label }}</span>
   </div>

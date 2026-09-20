@@ -9,12 +9,7 @@
 <form class="card" method="post">
   {% csrf_token %}
   {% include "core/_form_errors.html" %}
-  <div class="field">
-    {{ form.name.label_tag }}
-    {{ form.name }}
-    {% if form.name.help_text %}<p class="field-help">{{ form.name.help_text }}</p>{% endif %}
-    {% if form.name.errors %}<p class="field-error">{{ form.name.errors|striptags }}</p>{% endif %}
-  </div>
+  {% include "core/_field.html" with field=form.name %}
 
   <p class="text-muted">{% trans "Choose exactly what this key is allowed to do, per resource — leave everything unchecked for a context to block it entirely." %}</p>
   <div class="table-wrap">

@@ -38,8 +38,8 @@ class Theme(models.TextChoices):
     unconditionally — no `data-theme` attribute needed for it) and
     stays the default choice so an existing install's look never
     changes on upgrade. Adding another named theme later is just
-    another value here plus one more `[data-theme="..."]` pair of
-    blocks in base.css (`docs/UI.md` "Theming") — never a schema
+    another value here plus one more `[data-theme="..."]` block of
+    `light-dark()` declarations in base.css (`docs/UI.md` "Theming") — never a schema
     change, and never something existing accounts are opted into."""
 
     DEFAULT = "default", _("Default")

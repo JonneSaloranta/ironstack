@@ -2,6 +2,8 @@
 {% load i18n core_extras %}
 {% block title %}{{ measurement_type.name|translate_content }} — IronStack{% endblock %}
 {% block content %}
+{% url 'measurements:type-list' as c1u %}{% trans "Body tracking" as c1l %}
+{% include "core/_breadcrumbs.html" with c1_url=c1u c1_label=c1l current=measurement_type.name %}
 <div class="top-bar">
   <h1 class="no-margin">{{ measurement_type.name|translate_content }}</h1>
 </div>
@@ -26,7 +28,7 @@
       <div><dt>{% trans "Average" %}</dt><dd>{{ stats.average_value }} {{ unit_label }}</dd></div>
       <div><dt>{% trans "Entries logged" %}</dt><dd>{{ stats.entry_count }}</dd></div>
     </dl>
-    <p class="text-muted" style="margin:0.5rem 0 0;">
+    <p class="text-muted mt-2">
       {% blocktrans with date=stats.first_recorded_at|date:"Y-m-d" %}Tracking since {{ date }}.{% endblocktrans %}
     </p>
   </div>

@@ -7,7 +7,7 @@
 </div>
 <div class="top-bar-actions">
   <a class="button-secondary" href="{% url 'nutrition:food-browse' %}">{% trans "Browse OpenFoodFacts" %}</a>
-  <a class="button-secondary" href="{% url 'nutrition:food-create' %}">{% trans "+ New food" %}</a>
+  <a class="button-secondary" href="{% url 'nutrition:food-create' %}">{% trans "New food" %}</a>
 </div>
 {% include "nutrition/_subnav.html" %}
 
@@ -19,12 +19,13 @@
   this box's own results render into #food-search-results instead of
   reloading the page.
 {% endcomment %}
+<h2>{% trans "Find a new food" %}</h2>
 <div class="card" x-data="ironstackBarcodeScanner()">
   <div class="field">
     <label for="id_q">{% trans "Search foods" %}</label>
     <input type="text" id="id_q" name="q"
            hx-get="{% url 'nutrition:food-search' %}"
-           hx-trigger="keyup changed delay:400ms"
+           hx-indicator="#search-indicator" hx-trigger="keyup changed delay:400ms"
            hx-target="#food-search-results"
            hx-vals='{"mode": "browse"}'
            hx-swap="outerHTML"
@@ -34,6 +35,7 @@
   {% include "nutrition/_barcode_scan_button.html" with target_input_id="id_q" %}
 </div>
 
+{% include "core/_search_indicator.html" %}
 <div id="food-search-results"></div>
 
 <h2>{% trans "All foods" %}</h2>
@@ -48,7 +50,7 @@
   anywhere else has to be kept in sync with it.
 {% endcomment %}
 <form class="filter-row" hx-get="{% url 'nutrition:food-list' %}" hx-target="#food-list-results"
-      hx-trigger="input changed delay:300ms from:#id_food_q, input changed delay:300ms from:#id_category, change from:#id_sort, change from:#id_dir"
+      hx-indicator="#search-indicator" hx-trigger="input changed delay:300ms from:#id_food_q, input changed delay:300ms from:#id_category, change from:#id_sort, change from:#id_dir"
       hx-push-url="true">
   <input type="search" id="id_food_q" name="q" placeholder="{% trans "Filter by name…" %}" value="{{ query }}" aria-label="{% trans "Filter by name" %}">
   {% comment %}

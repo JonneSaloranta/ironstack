@@ -6,7 +6,7 @@
   <h1 class="no-margin">{% trans "Recipes" %}</h1>
 </div>
 <div class="top-bar-actions">
-  <a class="button-secondary" href="{% url 'nutrition:recipe-create' %}">{% trans "+ New recipe" %}</a>
+  <a class="button-secondary" href="{% url 'nutrition:recipe-create' %}">{% trans "New recipe" %}</a>
   <a class="button-secondary" href="{% url 'nutrition:recipe-import' %}">{% trans "Import" %}</a>
 </div>
 {% include "nutrition/_subnav.html" %}
@@ -59,7 +59,7 @@
 <div class="card">
   {% if template_page.object_list %}
     {% for recipe in template_page %}
-      <div class="card-action-row" style="padding:0.5rem 0;">
+      <div class="card-action-row py-2">
         <div>
           <strong>{% trans recipe.name %}</strong>
           {% if recipe.meal_slot %}<span class="tag tag-outline">{{ recipe.meal_slot.name|translate_content }}</span>{% endif %}

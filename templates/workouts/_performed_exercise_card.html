@@ -1,6 +1,6 @@
 {% load i18n core_extras %}
 <div id="performed-exercise-{{ pe.id }}" class="card">
-  <h3 style="margin:0 0 0.25rem;">{% trans pe.exercise.name %}</h3>
+  <h2 class="card-title">{% trans pe.exercise.name %}</h2>
   {% if pe.set_count %}
     <p class="text-muted">
       {% blocktrans with count=pe.set_count min=pe.min_reps max=pe.max_reps %}Target: {{ count }} × {{ min }}-{{ max }}{% endblocktrans %}

@@ -12,7 +12,7 @@ plan.
   <strong>{{ meal.meal_slot.name|translate_content }}</strong>
   <span class="text-muted">— {{ meal.target_calories }} kcal {% trans "target" %}, {{ meal.actual_calories|floatformat:0 }} kcal {% trans "so far" %}</span>
   {% for item in meal.items.all %}
-    <div class="card-action-row" style="padding:0.5rem 0;">
+    <div class="card-action-row py-2">
       <div>
         <span>{% if item.food %}<a class="inline-item-link" href="{% url 'nutrition:food-detail' item.food.pk %}">{{ item.food.name }}</a>{% else %}<a class="inline-item-link" href="{% url 'nutrition:recipe-detail' item.recipe.pk %}">{% trans item.recipe.name %}</a>{% endif %}</span>
         <span class="text-muted">— {{ item.quantity }} {% if item.food %}{{ item.food.serving_unit }}{% else %}{% trans "servings" %}{% endif %}, {{ item.nutrition.calories|floatformat:0 }} kcal</span>
@@ -29,5 +29,5 @@ plan.
   {% empty %}
     <p class="text-muted">{% trans "Nothing suggested yet — add some foods or recipes first." %}</p>
   {% endfor %}
-  <a class="button-secondary" href="{% url 'nutrition:diet-plan-meal-item-add' plan.pk meal.pk %}">{% trans "+ Add item" %}</a>
+  <a class="button-secondary" href="{% url 'nutrition:diet-plan-meal-item-add' plan.pk meal.pk %}">{% trans "Add item" %}</a>
 </div>

@@ -18,6 +18,35 @@ narrated summary of the same version.
 
 ## [Unreleased]
 
+## [1.20.0] — 2026-09-21
+
+### Added
+- Breadcrumbs on detail pages (programs, exercises, recipes, diet plans,
+  foods, workouts, body tracking, activities) so it's clear where you are;
+  a loading bar while live searches run; calorie *and* macro progress bars
+  on the nutrition overview; first/last dates under line charts; a
+  "Log body weight" shortcut on the dashboard; set count and volume on a
+  workout's page; confidence level and per-set edit links in training mode.
+- The web-app manifest now follows your theme (splash screen and title bar)
+  and ships maskable icons, so the installed icon isn't cropped on Android.
+
+### Changed
+- Profile preferences are collapsed by default (they open on their own if
+  a save fails), so Account, Social and Coaching are no longer buried
+  under twenty fields. Backups shows the backup list first, with a
+  "Creating backup…" state, and Delete is styled as destructive.
+- One consistent vocabulary: no "+" on buttons, "Log to diary" everywhere,
+  "Add workout", "Back to dashboard"; the food page separates "Find a new
+  food" from filtering your own list. "Start freeform workout" now sits at
+  the end of the Workouts page instead of under its heading.
+- Every form now renders through the shared field template (labels,
+  checkboxes, help text and errors linked for screen readers); card headings
+  no longer skip heading levels; touch screens get full-size row buttons.
+- Themes are one block each (`light-dark()`) instead of three copies — no
+  colour changes; design tokens replace hard-coded z-indexes, shadows and
+  font sizes; the last repeated inline styles became utility classes;
+  Complete workout asks first when exercises still have sets left.
+
 ## [1.19.0] — 2026-09-20
 
 ### Added

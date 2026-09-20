@@ -137,14 +137,15 @@ than a literal value (a handful of genuinely fixed colors — a modal
 backdrop, the barcode scanner's placeholder video background, the
 nutri-score/NOVA badge scale — are deliberately theme-independent and
 left alone), so a theme is just another set of values for the same
-properties, not a parallel stylesheet. Each theme is three CSS blocks —
-`[data-theme="X"]` (that theme's dark half, the default whenever it's
-selected), `[data-theme="X"][data-appearance="light"]` (explicit
-light), and the same declarations again inside
-`@media (prefers-color-scheme: light) { [data-theme="X"]:not([data-appearance]) { ... } }`
-(light via `auto`) — adding a new theme later means adding one more
-named value to `Theme` plus one more set of these three blocks, never a
-schema change or a rewrite of existing rules.
+properties, not a parallel stylesheet. Each theme is one CSS block,
+`[data-theme="X"] { --color-bg: light-dark(<light>, <dark>); ... }`:
+which half applies is the used `color-scheme` — `light dark` on `:root`
+follows the device's preference (`auto`), and `:root[data-appearance="light"]`
+/ `"dark"` pin it. (This replaced three hand-copied blocks per theme; a
+script compared every theme × appearance × OS preference before and after
+and found no colour changed.) Adding a new theme means adding one more
+named value to `Theme` plus one block of `light-dark()` declarations, never
+a schema change or a rewrite of existing rules.
 
 Contrast-checked against WCAG AA (4.5:1 for normal text) for every
 text/background pairing when each palette was designed — verify the
@@ -537,6 +538,15 @@ Works regardless of status (in-progress, completed, or abandoned) —
 distinct from `abandon`, which keeps the session in history marked
 abandoned rather than removing it.
 
+### Wording glossary
+"New X" creates a top-level thing (New program, New recipe, New group); "Add X"
+puts something into a container (Add exercise, Add workout, Add ingredient,
+Add food); "Delete" destroys a record the user made; "Remove" detaches an item
+from a container (a diary entry, a recipe ingredient, a friend); "Deactivate"
+retires library items that history still points at (exercise, activity type,
+measurement type). Buttons carry no "+" prefix. The page a nav tab opens uses
+the tab's name (Progress, not Analytics).
+
 ### UI/UX audit pass (supersedes parts of "Navigational buttons")
 A static audit (templates + `base.css`) led to these standing conventions:
 
@@ -565,6 +575,20 @@ A static audit (templates + `base.css`) led to these standing conventions:
   `--radius-sm/lg`, `--shadow-*`, `--z-*`; `.row`, `.stack`, `.no-margin`,
   `.text-danger`, `.stat-value`, `.flex-full`. Prefer these to new inline styles.
 - **Desktop** container widens to 64rem at 1024px.
+- **Breadcrumbs** (`core/_breadcrumbs.html`) orient on pages two levels deep;
+  the page's bottom "Back to X" link stays as the quick way out. Card headings
+  that used to skip from `<h1>` to `<h3>` are `<h2 class="card-title">`.
+- **Icons** live in `core/_icon.html` (add an `elif` per icon); the chevron in
+  `core/_chevron.html`. **Live searches** point `hx-indicator` at
+  `core/_search_indicator.html`.
+- **Manifest** is served per user: `theme_color`/`background_color` follow the
+  signed-in user's theme, and it ships maskable icons.
+- **Profile preferences** are a collapsed `<details>` (open when the form has
+  errors) so the navigation rows aren't buried under ~20 fields.
+- **Browser tests**: `apps/core/test_ui_behaviour.py` (marker `accessibility`)
+  drives the confirm dialog, modal focus trap, HTMX error toast and set-log
+  errors in a real Chromium, and runs axe on more pages and on every theme in
+  light and dark.
 
 ### Navigational buttons
 Every "Back to X" link (program/exercise/workout/measurement/activity/

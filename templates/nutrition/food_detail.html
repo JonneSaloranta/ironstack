@@ -2,6 +2,9 @@
 {% load i18n %}
 {% block title %}{{ food.name }} — IronStack{% endblock %}
 {% block content %}
+{% url 'nutrition:dashboard' as c1u %}{% trans "Nutrition" as c1l %}
+{% url 'nutrition:food-list' as c2u %}{% trans "Foods" as c2l %}
+{% include "core/_breadcrumbs.html" with c1_url=c1u c1_label=c1l c2_url=c2u c2_label=c2l current=food.name %}
 <div class="top-bar">
   <h1 class="no-margin">{{ food.name }}</h1>
 </div>

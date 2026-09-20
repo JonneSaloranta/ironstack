@@ -29,7 +29,7 @@ disclosure instead — see it further down for why.
   <div class="card empty-state">
     <p>{% trans "No workout in progress." %}</p>
     <p>{% trans "Start one from a program, or log a freeform workout." %}</p>
-    <div class="row" style="justify-content:center;">
+    <div class="row justify-center">
       <form method="post" action="{% url 'workouts:session-start-freeform' %}">
         {% csrf_token %}
         <button type="submit" class="button">{% trans "Start freeform workout" %}</button>
@@ -48,6 +48,11 @@ disclosure instead — see it further down for why.
       {% endif %}
     </dl>
   </div>
+{% endif %}
+
+{% if body_weight_type_pk %}
+  {% comment %}One tap to the body-weight page (its log form is right there) instead of Body tracking → type list → type.{% endcomment %}
+  <p><a class="button-link" href="{% url 'measurements:history' body_weight_type_pk %}">{% trans "Log body weight" %}</a></p>
 {% endif %}
 
 {% if body_tracking_reminder %}

@@ -42,8 +42,8 @@ needs to build its post URL — same contract as _food_search_results.
         <p class="text-muted">{{ usage.quantity }} {{ usage.food.serving_unit }}</p>
       </div>
       <div class="row">
-        <input type="number" name="quantity" step="0.01" value="{{ usage.quantity|unlocalize }}" style="width:5rem;" aria-label="{% trans "Quantity" %}">
-        <button type="submit" class="button-secondary">{% trans "+ Add" %}</button>
+        <input class="qty-input" type="number" name="quantity" step="0.01" value="{{ usage.quantity|unlocalize }}" aria-label="{% trans "Quantity" %}">
+        <button type="submit" class="button-secondary">{% trans "Add" %}</button>
       </div>
     </form>
   {% endfor %}

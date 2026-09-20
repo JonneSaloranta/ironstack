@@ -25,7 +25,7 @@
 <form id="backup-codes-slot" hx-post="{% url 'two-factor-backup-codes-fragment' %}"
       hx-trigger="load" hx-target="#backup-codes-slot" hx-swap="outerHTML">
   {% csrf_token %}
-  <div class="card" style="text-align:center;">
+  <div class="card text-center">
     <div class="spinner" aria-hidden="true"></div>
     <p class="text-muted">{% trans "Generating your new backup codes…" %}</p>
   </div>

@@ -142,3 +142,94 @@ class AnalyticsPickerTests(TestCase):
         response = self.client.get(reverse("analytics:dashboard"))
         self.assertContains(response, "Trained Lift")
         self.assertNotContains(response, "Never Done")
+
+
+class SecondPassTests(TestCase):
+    """The second half of the audit: breadcrumbs, summaries, manifest, and the
+    server-rendered bits of the remaining fixes."""
+
+    def setUp(self):
+        self.user = User.objects.create_user("alice", password="s3cret-pass")
+        self.client.login(username="alice", password="s3cret-pass")
+
+    def test_a_detail_page_renders_a_breadcrumb_trail(self):
+        from apps.programs.models import Program
+
+        program = Program.objects.create(owner=self.user, name="Plan")
+        response = self.client.get(reverse("programs:program-detail", args=[program.pk]))
+        self.assertContains(response, 'aria-label="Breadcrumb"')
+        self.assertContains(response, f'href="{reverse("programs:program-list")}"')
+
+    def test_session_summary_totals_sets_and_volume(self):
+        from apps.exercises.models import Exercise
+
+        session = workout_services.start_session(self.user, workout=None)
+        performed = workout_services.add_performed_exercise(
+            session, Exercise.objects.create(name="Row", owner=None)
+        )
+        workout_services.log_set(performed, weight=Decimal("100"), reps=5)
+        workout_services.log_set(performed, weight=Decimal("50"), reps=10)
+        summary = workout_services.session_summary(session)
+        self.assertEqual(summary["set_count"], 2)
+        self.assertEqual(summary["volume"], Decimal("1000"))
+        response = self.client.get(reverse("workouts:session-detail", args=[session.pk]))
+        self.assertContains(response, "2 sets")
+
+    def test_the_manifest_follows_the_signed_in_users_theme_and_has_a_maskable_icon(self):
+        import json
+
+        from apps.accounts.models import THEME_BG_COLORS, Theme
+
+        self.user.theme = Theme.NORDIC
+        self.user.save()
+        manifest = json.loads(self.client.get("/manifest.json").content)
+        self.assertEqual(manifest["theme_color"], THEME_BG_COLORS[Theme.NORDIC][0])
+        self.assertTrue(any(i.get("purpose") == "maskable" for i in manifest["icons"]))
+        self.assertNotIn("orientation", manifest)
+
+    def test_the_manifest_is_unchanged_for_an_anonymous_visitor(self):
+        import json
+
+        self.client.logout()
+        manifest = json.loads(self.client.get("/manifest.json").content)
+        self.assertEqual(manifest["theme_color"], "#101317")
+
+    def test_live_searches_show_a_loading_bar(self):
+        response = self.client.get(reverse("exercises:exercise-list"))
+        self.assertContains(response, 'id="search-indicator"')
+        self.assertContains(response, 'hx-indicator="#search-indicator"')
+
+    def test_profile_preferences_are_collapsed_until_they_have_errors(self):
+        response = self.client.get(reverse("profile"))
+        self.assertContains(response, '<details class="preferences" >')
+
+    def test_dashboard_offers_a_body_weight_shortcut(self):
+        MeasurementType.objects.get_or_create(
+            name="Body weight", owner=None, defaults={"unit_kind": UnitKind.WEIGHT}
+        )
+        response = self.client.get(reverse("dashboard"))
+        self.assertContains(response, "Log body weight")
+
+    def test_checkboxes_render_beside_their_label_through_the_field_partial(self):
+        response = self.client.get(reverse("profile"))
+        self.assertContains(response, 'class="checkbox-field"')
+
+    def test_measurement_history_paginates_but_keeps_the_full_chart(self):
+        from django.utils import timezone
+
+        from apps.measurements.models import BodyMeasurement
+
+        mtype = MeasurementType.objects.create(
+            name="Calf", owner=self.user, unit_kind=UnitKind.LENGTH
+        )
+        for i in range(30):
+            BodyMeasurement.objects.create(
+                user=self.user,
+                measurement_type=mtype,
+                value=Decimal("30") + i,
+                recorded_at=timezone.now() - timezone.timedelta(days=i),
+            )
+        response = self.client.get(reverse("measurements:history", args=[mtype.pk]))
+        self.assertEqual(len(response.context["page_obj"]), 25)
+        self.assertEqual(len(response.context["history"]), 30)
+        self.assertContains(response, 'class="chart-x"')

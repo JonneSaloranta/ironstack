@@ -10,14 +10,14 @@ apps.core.bmi.CategoryRow), weight_unit_label, and optionally
 bmi / bmi_category.
 {% endcomment %}
 <div class="card">
-  <h3 style="margin-top:0;"><abbr tabindex="0" title="{% trans "Body Mass Index" %}">{% trans "BMI" %}</abbr></h3>
+  <h2 class="card-title"><abbr tabindex="0" title="{% trans "Body Mass Index" %}">{% trans "BMI" %}</abbr></h2>
   {% if bmi %}
-    <p style="margin:0 0 0.75rem;">
-      <strong style="font-size:1.5rem;">{{ bmi }}</strong>
+    <p class="mb-3">
+      <strong class="text-xl">{{ bmi }}</strong>
       <span class="tag tag-accent">{{ bmi_category.name }}</span>
     </p>
   {% else %}
-    <p class="text-muted" style="margin:0 0 0.75rem;">
+    <p class="text-muted mb-3">
       {% trans "Not enough data yet — set your height and log a body weight to see your current BMI here." %}
     </p>
   {% endif %}

@@ -8,6 +8,7 @@ what this session says happened.
 """
 
 from datetime import timedelta
+from decimal import Decimal
 
 from django.db import transaction
 from django.db.models import Max
@@ -178,3 +179,16 @@ def due_rest_timer_notifications():
     so a dispatcher that's fallen behind still sends in the order
     users actually started resting."""
     return RestTimerNotification.objects.filter(fire_at__lte=timezone.now()).order_by("fire_at")
+
+
+def session_summary(session):
+    """Set count and total volume (canonical kg) for one session, computed
+    from the already-prefetched performed_exercises/sets so the detail page
+    can show a summary without another query or any template arithmetic."""
+    set_count = 0
+    volume = Decimal("0")
+    for performed in session.performed_exercises.all():
+        for exercise_set in performed.sets.all():
+            set_count += 1
+            volume += exercise_set.weight * exercise_set.reps
+    return {"set_count": set_count, "volume": volume}

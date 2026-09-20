@@ -58,7 +58,7 @@ takes its data tag down with it, so there's only ever one.
     <a class="button-link" href="?month={{ calendar_prev_month }}"
        hx-get="?month={{ calendar_prev_month }}" hx-target="#month-calendar" hx-swap="outerHTML"
        hx-push-url="true" aria-label="{% trans "Previous month" %}">&larr;</a>
-    <strong style="display:flex; align-items:center; gap:0.5rem;">
+    <strong class="row-center">
       {% comment %}
         capfirst: Finnish/Swedish/Estonian month names are lowercase
         by their own language's own grammar rules ("elokuu", not
@@ -142,7 +142,7 @@ takes its data tag down with it, so there's only ever one.
   </div>
   <div class="calendar-grid">
     {% for day in calendar_weeks.0 %}
-      <div class="text-muted" style="text-align:center;">{{ day.date|date:"D" }}</div>
+      <div class="text-muted text-center">{{ day.date|date:"D" }}</div>
     {% endfor %}
     {% for week in calendar_weeks %}
       {% for day in week %}
@@ -230,7 +230,7 @@ takes its data tag down with it, so there's only ever one.
                 <div>
                   <strong x-text="openDay.heading"></strong>
                   <template x-for="line in openDay.lines" :key="line">
-                    <p class="text-muted" x-text="line" style="margin:0.25rem 0 0;"></p>
+                    <p class="text-muted mt-1" x-text="line"></p>
                   </template>
                 </div>
               </template>

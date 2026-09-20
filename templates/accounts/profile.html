@@ -12,7 +12,13 @@ copy of it was redundant.
   <h1 class="no-margin">{% trans "Profile" %}</h1>
 </div>
 
-<h2>{% trans "Preferences" %}</h2>
+{% comment %}
+Collapsed by default: this ~20-field form used to sit above every navigation
+row on the page, so reaching Account/Social/Coaching meant scrolling past it.
+Opens itself when the form has errors so a failed save is never hidden.
+{% endcomment %}
+<details class="preferences" {% if form.errors %}open{% endif %}>
+<summary><h2 class="no-margin">{% trans "Preferences" %}</h2></summary>
 
 <form class="card" method="post" x-data="{ isPt: {{ form.is_personal_trainer.value|yesno:'true,false' }} }">
   {% csrf_token %}
@@ -23,26 +29,13 @@ copy of it was redundant.
     {% if field.name == "show_bmi" %}<p class="field-group-label">{% trans "Privacy" %}</p>{% endif %}
     {% if field.name == "allow_friend_requests" %}<p class="field-group-label">{% trans "Social" %}</p>{% endif %}
     {% if field.name == "is_personal_trainer" %}<p class="field-group-label">{% trans "Coaching" %}</p>{% endif %}
-    <div class="field"{% if field.name == "accepting_new_clients" %} x-show="isPt"{% endif %}>
-      {% if field.field.widget.input_type == "checkbox" %}
-        {% comment %}
-          A checkbox reads better with the box directly beside its own
-          label than stacked under a block label meant for text inputs.
-        {% endcomment %}
-        <label class="checkbox-field">
-          {{ field }}
-          {{ field.label }}
-        </label>
-      {% else %}
-        {{ field.label_tag }}
-        {{ field }}
-      {% endif %}
-      {% if field.help_text %}<p class="field-help">{{ field.help_text }}</p>{% endif %}
-      {% if field.errors %}<p class="field-error">{{ field.errors|striptags }}</p>{% endif %}
+    <div{% if field.name == "accepting_new_clients" %} x-show="isPt"{% endif %}>
+      {% include "core/_field.html" with field=field %}
     </div>
   {% endfor %}
   <button type="submit">{% trans "Save preferences" %}</button>
 </form>
+</details>
 
 {% comment %}
 Grouped under a plain <h2> eyebrow per section (the same muted,
