@@ -2,6 +2,9 @@
 {% load i18n %}
 {% block title %}{{ plan.name }} — IronStack{% endblock %}
 {% block content %}
+{% url 'nutrition:dashboard' as c1u %}{% trans "Nutrition" as c1l %}
+{% url 'nutrition:diet-plan-list' as c2u %}{% trans "Diet plans" as c2l %}
+{% include "core/_breadcrumbs.html" with c1_url=c1u c1_label=c1l c2_url=c2u c2_label=c2l current=plan.name %}
 <div class="top-bar">
   <h1 class="no-margin">{{ plan.name }}</h1>
 </div>
@@ -51,8 +54,8 @@
       talk to another.
     {% endcomment %}
     <div x-data="{ open: false }">
-      <button type="button" class="button-secondary button-wrap" @click="open = !open" :aria-expanded="open.toString()"
-              style="width:100%; justify-content:flex-start; font-weight:bold;">
+      <button type="button" class="button-secondary button-wrap header-button" @click="open = !open" :aria-expanded="open.toString()"
+             >
         <span x-show="!open">▾ {{ day_group.grouper }}</span>
         <span x-show="open" x-cloak>▴ {{ day_group.grouper }}</span>
       </button>
@@ -78,12 +81,9 @@
     <p class="field-help">{% trans "Logs whichever day of the week the date below falls on." %}</p>
   {% endif %}
   {% for field in log_form %}
-    <div class="field">
-      {{ field.label_tag }}
-      {{ field }}
-    </div>
+    {% include "core/_field.html" with field=field %}
   {% endfor %}
-  <button type="submit">{% trans "Log it" %}</button>
+  <button type="submit">{% trans "Log to diary" %}</button>
 </form>
 
 <p><a class="button-link" href="{% url 'nutrition:diet-plan-list' %}">&larr; {% trans "Back to diet plans" %}</a></p>

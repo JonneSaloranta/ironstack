@@ -16,7 +16,7 @@
     <label for="id_q">{% trans "Search foods" %}</label>
     <input type="text" id="id_q" name="q"
            hx-get="{% url 'nutrition:food-search' %}"
-           hx-trigger="keyup changed delay:400ms"
+           hx-indicator="#search-indicator" hx-trigger="keyup changed delay:400ms"
            hx-target="#food-search-results"
            hx-vals='{"mode": "diet-plan-meal", "plan_pk": "{{ plan.pk }}", "meal_pk": "{{ meal.pk }}"}'
            hx-swap="outerHTML"
@@ -26,6 +26,7 @@
   {% include "nutrition/_barcode_scan_button.html" with target_input_id="id_q" %}
 </div>
 
+{% include "core/_search_indicator.html" %}
 <div id="food-search-results"></div>
 
 {% include "nutrition/_most_used_foods.html" with mode="diet-plan-meal" plan=plan meal=meal %}

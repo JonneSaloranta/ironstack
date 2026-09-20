@@ -24,7 +24,7 @@
     <label for="id_q">{% trans "Search foods" %}</label>
     <input type="text" id="id_q" name="q"
            hx-get="{% url 'nutrition:food-search' %}"
-           hx-trigger="keyup changed delay:400ms"
+           hx-indicator="#search-indicator" hx-trigger="keyup changed delay:400ms"
            hx-target="#food-search-results"
            hx-vals='{"mode": "browse"}'
            hx-swap="outerHTML"
@@ -34,13 +34,14 @@
   {% include "nutrition/_barcode_scan_button.html" with target_input_id="id_q" %}
 </div>
 
+{% include "core/_search_indicator.html" %}
 <div id="food-search-results"></div>
 
 {% if categories %}
   <h2>{% trans "Browse by category" %}</h2>
   <div class="card">
     {% for category in categories %}
-      <a class="button-secondary" style="margin:0.25rem;" href="{% url 'nutrition:food-category' category.id %}">{{ category.name }}</a>
+      <a class="button-secondary m-1" href="{% url 'nutrition:food-category' category.id %}">{{ category.name }}</a>
     {% endfor %}
   </div>
 {% endif %}

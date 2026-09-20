@@ -32,19 +32,22 @@
       </tr>
       <tr>
         <td>{% trans "Protein" %}</td>
-        <td>{{ totals.protein_grams|floatformat:0 }}{% if target %} / {{ target.protein_grams|floatformat:0 }}{% endif %} g</td>
+        <td>{{ totals.protein_grams|floatformat:0 }}{% if target %} / {{ target.protein_grams|floatformat:0 }}{% endif %} g
+          {% if target and target.protein_grams %}<div class="progress-bar{% if totals.protein_grams > target.protein_grams %} is-over{% endif %}" role="progressbar" aria-label="{% trans "Protein" %}" aria-valuemin="0" aria-valuemax="{{ target.protein_grams|floatformat:0 }}" aria-valuenow="{{ totals.protein_grams|floatformat:0 }}"><span style="width: {% widthratio totals.protein_grams target.protein_grams 100 %}%;"></span></div>{% endif %}</td>
       </tr>
       <tr>
         <td>{% trans "Carbohydrates" %}</td>
-        <td>{{ totals.carbohydrate_grams|floatformat:0 }}{% if target %} / {{ target.carbohydrate_grams|floatformat:0 }}{% endif %} g</td>
+        <td>{{ totals.carbohydrate_grams|floatformat:0 }}{% if target %} / {{ target.carbohydrate_grams|floatformat:0 }}{% endif %} g
+          {% if target and target.carbohydrate_grams %}<div class="progress-bar{% if totals.carbohydrate_grams > target.carbohydrate_grams %} is-over{% endif %}" role="progressbar" aria-label="{% trans "Carbohydrates" %}" aria-valuemin="0" aria-valuemax="{{ target.carbohydrate_grams|floatformat:0 }}" aria-valuenow="{{ totals.carbohydrate_grams|floatformat:0 }}"><span style="width: {% widthratio totals.carbohydrate_grams target.carbohydrate_grams 100 %}%;"></span></div>{% endif %}</td>
       </tr>
       <tr>
         <td>{% trans "Fat" %}</td>
-        <td>{{ totals.fat_grams|floatformat:0 }}{% if target %} / {{ target.fat_grams|floatformat:0 }}{% endif %} g</td>
+        <td>{{ totals.fat_grams|floatformat:0 }}{% if target %} / {{ target.fat_grams|floatformat:0 }}{% endif %} g
+          {% if target and target.fat_grams %}<div class="progress-bar{% if totals.fat_grams > target.fat_grams %} is-over{% endif %}" role="progressbar" aria-label="{% trans "Fat" %}" aria-valuemin="0" aria-valuemax="{{ target.fat_grams|floatformat:0 }}" aria-valuenow="{{ totals.fat_grams|floatformat:0 }}"><span style="width: {% widthratio totals.fat_grams target.fat_grams 100 %}%;"></span></div>{% endif %}</td>
       </tr>
     </tbody>
   </table></div>
-  <a class="button" href="{% url 'nutrition:diary-add-entry' %}">{% trans "+ Log food now" %}</a>
+  <a class="button" href="{% url 'nutrition:diary-add-entry' %}">{% trans "Log food now" %}</a>
   <a class="button-secondary" href="{% url 'nutrition:diary-day' %}">{% trans "Open food diary" %}</a>
 </div>
 
