@@ -18,6 +18,8 @@ narrated summary of the same version.
 
 ## [Unreleased]
 
+## [1.18.0] — 2026-09-20
+
 ### Added
 - Export any of your own gym programs, nutrition recipes, or diet
   plans as a `.json` file, and import one back in — from your own
