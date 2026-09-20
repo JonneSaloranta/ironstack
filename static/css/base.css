@@ -1,12 +1,12 @@
 /* IronStack base styles — mobile-first, ~360-430px baseline, then desktop. */
 
 :root {
-  --color-bg: #101317;
-  --color-surface: #181c22;
-  --color-border: #2a2f37;
-  --color-text: #e7eaee;
-  --color-text-muted: #9aa3ad;
-  --color-accent: #5b9dfd;
+  --color-bg: light-dark(#f2f3f5, #101317);
+  --color-surface: light-dark(#ffffff, #181c22);
+  --color-border: light-dark(#d7dbe0, #2a2f37);
+  --color-text: light-dark(#14171a, #e7eaee);
+  --color-text-muted: light-dark(#5b6570, #9aa3ad);
+  --color-accent: light-dark(#2563eb, #5b9dfd);
   /* Text/icon color for anything rendered *on top of* a
      --color-accent background (a button, .skip-link, .training-fab,
      .tag, the active .range-filter link, ...) — found live by
@@ -21,10 +21,10 @@
      gives 6.8:1 against --color-accent, comfortably clearing 4.5:1,
      without touching --color-accent (or anything that already reads
      correctly against it) at all. */
-  --color-on-accent: var(--color-bg);
-  --color-danger: #e5636a;
-  --color-success: #4fb477;
-  --color-warning: #e0a94f;
+  --color-on-accent: light-dark(#ffffff, var(--color-bg));
+  --color-danger: light-dark(#c0311d, #e5636a);
+  --color-success: light-dark(#187a41, #4fb477);
+  --color-warning: light-dark(#8f6208, #e0a94f);
   /* A day's PR icon in the month calendar used to share --color-
      success with that same calendar's own nutrition-adherence icons
      (a day close to its calorie target) — the exact same green
@@ -32,7 +32,7 @@
      "gold" everywhere else this app marks one (the achievements
      carousel's own 🏆), so the calendar's PR day now matches instead
      of colliding with an unrelated meaning. */
-  --color-gold: #d4af37;
+  --color-gold: light-dark(#7d5a14, #d4af37);
   /* Sized for comfortable thumb reach in a mobile browser tab *and* a
      PWA's standalone window (no browser chrome to lean on) — bumped up
      from 3.5rem/1.5rem icons after those felt cramped when installed. */
@@ -58,7 +58,7 @@
      calendar popup, scrollbars, form-control default styling — matches
      the page around it instead of defaulting to light regardless of
      what --color-bg says. */
-  color-scheme: dark;
+  color-scheme: light dark;
 }
 
 /* Theming (apps.accounts.models.Theme/Appearance, docs/UI.md "Theming")
@@ -72,250 +72,82 @@
 
    Two independent axes, both resolved by templates/base.html into
    attributes on <html>: `data-theme` picks the palette (absent for
-   Theme.DEFAULT, which is what the bare :root above already is —
-   no attribute needed for it); `data-appearance` picks that palette's
-   dark or light half for an explicit Appearance.DARK/LIGHT choice,
-   and is left off entirely for Appearance.AUTO, so the @media block
-   below each theme's explicit one is what a device that itself
-   prefers light resolves to instead — scoped to `:not([data-appearance])`
-   so it never fights an explicit choice. Every non-default theme
-   needs an *explicit dark* block too (unlike Theme.DEFAULT, which
-   gets dark for free from :root): `[data-theme="nordic"]` alone,
-   with no --color-* redeclaration for light, so it applies whenever
-   Nordic is selected regardless of data-appearance (covering explicit
-   dark, and auto with no light preference) until one of the two
-   light rules below it overrides it.
+   Theme.DEFAULT, which is the bare :root above — no attribute needed);
+   `data-appearance` picks dark or light explicitly, and is left off for
+   Appearance.AUTO.
 
-   Each theme's three blocks are a literal duplicate of the same
-   ~11 declarations (plain CSS has no mixin to share them through)
-   rather than one block doing double duty — keep new themes in this
-   same three-block shape, and keep apps.accounts.models.
-   THEME_BG_COLORS (templates/base.html's <meta name="theme-color">,
-   which can't reference a custom property) in sync with each theme's
-   own --color-bg by hand. */
+   Each color is declared once as `light-dark(<light>, <dark>)`. Which half
+   applies is the used `color-scheme`: `light dark` (:root) follows the
+   device's own preference — that is AUTO — and an explicit choice pins it
+   with the two [data-appearance] rules right below. This replaced three
+   hand-copied blocks per theme (dark / explicit light / @media light), so
+   a new theme is one block. Keep apps.accounts.models.THEME_BG_COLORS
+   (templates/base.html's <meta name="theme-color">, which can't reference a
+   custom property) in sync with each theme's own dark and light --color-bg
+   by hand. */
 
-[data-theme="nordic"] {
-  --color-bg: #1a1e24;
-  --color-surface: #232830;
-  --color-border: #333a44;
-  --color-text: #e5e9ef;
-  --color-text-muted: #99a3b0;
-  --color-accent: #7fb0e0;
-  --color-on-accent: #1a1e24;
-  --color-danger: #e06c6c;
-  --color-success: #6fbf9a;
-  --color-warning: #d9a760;
-  --color-gold: #c9a24b;
-  color-scheme: dark;
-}
-
-[data-theme="nordic"][data-appearance="light"] {
-  --color-bg: #eef1f5;
-  --color-surface: #ffffff;
-  --color-border: #d7dee6;
-  --color-text: #1c2128;
-  --color-text-muted: #5b6672;
-  --color-accent: #2f6fa8;
-  --color-on-accent: #ffffff;
-  --color-danger: #b8433a;
-  --color-success: #1c7350;
-  --color-warning: #93650c;
-  --color-gold: #7d6520;
+:root[data-appearance="light"] {
   color-scheme: light;
 }
 
-@media (prefers-color-scheme: light) {
-  [data-theme="nordic"]:not([data-appearance]) {
-    --color-bg: #eef1f5;
-    --color-surface: #ffffff;
-    --color-border: #d7dee6;
-    --color-text: #1c2128;
-    --color-text-muted: #5b6672;
-    --color-accent: #2f6fa8;
-    --color-on-accent: #ffffff;
-    --color-danger: #b8433a;
-    --color-success: #1c7350;
-    --color-warning: #93650c;
-    --color-gold: #7d6520;
-    color-scheme: light;
-  }
+:root[data-appearance="dark"] {
+  color-scheme: dark;
+}
+
+[data-theme="nordic"] {
+  --color-bg: light-dark(#eef1f5, #1a1e24);
+  --color-surface: light-dark(#ffffff, #232830);
+  --color-border: light-dark(#d7dee6, #333a44);
+  --color-text: light-dark(#1c2128, #e5e9ef);
+  --color-text-muted: light-dark(#5b6672, #99a3b0);
+  --color-accent: light-dark(#2f6fa8, #7fb0e0);
+  --color-on-accent: light-dark(#ffffff, #1a1e24);
+  --color-danger: light-dark(#b8433a, #e06c6c);
+  --color-success: light-dark(#1c7350, #6fbf9a);
+  --color-warning: light-dark(#93650c, #d9a760);
+  --color-gold: light-dark(#7d6520, #c9a24b);
 }
 
 [data-theme="vaporwave"] {
-  --color-bg: #1a1035;
-  --color-surface: #241247;
-  --color-border: #3d2266;
-  --color-text: #f2e9ff;
-  --color-text-muted: #b79ddb;
-  --color-accent: #ff6ec7;
-  --color-on-accent: #1a1035;
-  --color-danger: #ff5477;
-  --color-success: #4ee6c8;
-  --color-warning: #ffd76e;
-  --color-gold: #f5b942;
-  color-scheme: dark;
-}
-
-[data-theme="vaporwave"][data-appearance="light"] {
-  --color-bg: #f5eeff;
-  --color-surface: #ffffff;
-  --color-border: #e3d3f7;
-  --color-text: #2c1750;
-  --color-text-muted: #6b4f95;
-  --color-accent: #9c1f9e;
-  --color-on-accent: #ffffff;
-  --color-danger: #b81f4f;
-  --color-success: #0d7a63;
-  --color-warning: #8f5c06;
-  --color-gold: #7d5c06;
-  color-scheme: light;
-}
-
-@media (prefers-color-scheme: light) {
-  [data-theme="vaporwave"]:not([data-appearance]) {
-    --color-bg: #f5eeff;
-    --color-surface: #ffffff;
-    --color-border: #e3d3f7;
-    --color-text: #2c1750;
-    --color-text-muted: #6b4f95;
-    --color-accent: #9c1f9e;
-    --color-on-accent: #ffffff;
-    --color-danger: #b81f4f;
-    --color-success: #0d7a63;
-    --color-warning: #8f5c06;
-    --color-gold: #7d5c06;
-    color-scheme: light;
-  }
+  --color-bg: light-dark(#f5eeff, #1a1035);
+  --color-surface: light-dark(#ffffff, #241247);
+  --color-border: light-dark(#e3d3f7, #3d2266);
+  --color-text: light-dark(#2c1750, #f2e9ff);
+  --color-text-muted: light-dark(#6b4f95, #b79ddb);
+  --color-accent: light-dark(#9c1f9e, #ff6ec7);
+  --color-on-accent: light-dark(#ffffff, #1a1035);
+  --color-danger: light-dark(#b81f4f, #ff5477);
+  --color-success: light-dark(#0d7a63, #4ee6c8);
+  --color-warning: light-dark(#8f5c06, #ffd76e);
+  --color-gold: light-dark(#7d5c06, #f5b942);
 }
 
 [data-theme="earth"] {
-  --color-bg: #211812;
-  --color-surface: #2b1f17;
-  --color-border: #40301f;
-  --color-text: #ecdfd0;
-  --color-text-muted: #b3987e;
-  --color-accent: #d98c4a;
-  --color-on-accent: #211812;
-  --color-danger: #d9695a;
-  --color-success: #7ba05b;
-  --color-warning: #d9a84a;
-  --color-gold: #c9962e;
-  color-scheme: dark;
-}
-
-[data-theme="earth"][data-appearance="light"] {
-  --color-bg: #f6efe6;
-  --color-surface: #fffaf3;
-  --color-border: #e0d0ba;
-  --color-text: #2b1f14;
-  --color-text-muted: #6b5a47;
-  --color-accent: #8c4a1f;
-  --color-on-accent: #ffffff;
-  --color-danger: #a8402e;
-  --color-success: #3d6b2e;
-  --color-warning: #8a5a0c;
-  --color-gold: #7d5a1a;
-  color-scheme: light;
-}
-
-@media (prefers-color-scheme: light) {
-  [data-theme="earth"]:not([data-appearance]) {
-    --color-bg: #f6efe6;
-    --color-surface: #fffaf3;
-    --color-border: #e0d0ba;
-    --color-text: #2b1f14;
-    --color-text-muted: #6b5a47;
-    --color-accent: #8c4a1f;
-    --color-on-accent: #ffffff;
-    --color-danger: #a8402e;
-    --color-success: #3d6b2e;
-    --color-warning: #8a5a0c;
-    --color-gold: #7d5a1a;
-    color-scheme: light;
-  }
+  --color-bg: light-dark(#f6efe6, #211812);
+  --color-surface: light-dark(#fffaf3, #2b1f17);
+  --color-border: light-dark(#e0d0ba, #40301f);
+  --color-text: light-dark(#2b1f14, #ecdfd0);
+  --color-text-muted: light-dark(#6b5a47, #b3987e);
+  --color-accent: light-dark(#8c4a1f, #d98c4a);
+  --color-on-accent: light-dark(#ffffff, #211812);
+  --color-danger: light-dark(#a8402e, #d9695a);
+  --color-success: light-dark(#3d6b2e, #7ba05b);
+  --color-warning: light-dark(#8a5a0c, #d9a84a);
+  --color-gold: light-dark(#7d5a1a, #c9962e);
 }
 
 [data-theme="zen"] {
-  --color-bg: #14201c;
-  --color-surface: #1c2b25;
-  --color-border: #2c3f37;
-  --color-text: #e3ece7;
-  --color-text-muted: #93a89e;
-  --color-accent: #7fb896;
-  --color-on-accent: #14201c;
-  --color-danger: #d9776f;
-  --color-success: #5fae94;
-  --color-warning: #c9a463;
-  --color-gold: #b89a55;
-  color-scheme: dark;
-}
-
-[data-theme="zen"][data-appearance="light"] {
-  --color-bg: #f3f1ea;
-  --color-surface: #fbfaf6;
-  --color-border: #ddd8c9;
-  --color-text: #23291f;
-  --color-text-muted: #5a6350;
-  --color-accent: #2f5f47;
-  --color-on-accent: #ffffff;
-  --color-danger: #a8453c;
-  --color-success: #2f7a52;
-  --color-warning: #8a6510;
-  --color-gold: #7d6a24;
-  color-scheme: light;
-}
-
-@media (prefers-color-scheme: light) {
-  [data-theme="zen"]:not([data-appearance]) {
-    --color-bg: #f3f1ea;
-    --color-surface: #fbfaf6;
-    --color-border: #ddd8c9;
-    --color-text: #23291f;
-    --color-text-muted: #5a6350;
-    --color-accent: #2f5f47;
-    --color-on-accent: #ffffff;
-    --color-danger: #a8453c;
-    --color-success: #2f7a52;
-    --color-warning: #8a6510;
-    --color-gold: #7d6a24;
-    color-scheme: light;
-  }
-}
-
-/* Theme.DEFAULT's light half — :root above is already its dark half,
-   unconditionally, so this only needs the explicit-light and
-   auto-with-light-preference cases, both scoped to :not([data-theme])
-   so they never apply once a named theme is active. */
-[data-appearance="light"]:not([data-theme]) {
-  --color-bg: #f2f3f5;
-  --color-surface: #ffffff;
-  --color-border: #d7dbe0;
-  --color-text: #14171a;
-  --color-text-muted: #5b6570;
-  --color-accent: #2563eb;
-  --color-on-accent: #ffffff;
-  --color-danger: #c0311d;
-  --color-success: #187a41;
-  --color-warning: #8f6208;
-  --color-gold: #7d5a14;
-  color-scheme: light;
-}
-
-@media (prefers-color-scheme: light) {
-  html:not([data-theme]):not([data-appearance]) {
-    --color-bg: #f2f3f5;
-    --color-surface: #ffffff;
-    --color-border: #d7dbe0;
-    --color-text: #14171a;
-    --color-text-muted: #5b6570;
-    --color-accent: #2563eb;
-    --color-on-accent: #ffffff;
-    --color-danger: #c0311d;
-    --color-success: #187a41;
-    --color-warning: #8f6208;
-    --color-gold: #7d5a14;
-    color-scheme: light;
-  }
+  --color-bg: light-dark(#f3f1ea, #14201c);
+  --color-surface: light-dark(#fbfaf6, #1c2b25);
+  --color-border: light-dark(#ddd8c9, #2c3f37);
+  --color-text: light-dark(#23291f, #e3ece7);
+  --color-text-muted: light-dark(#5a6350, #93a89e);
+  --color-accent: light-dark(#2f5f47, #7fb896);
+  --color-on-accent: light-dark(#ffffff, #14201c);
+  --color-danger: light-dark(#a8453c, #d9776f);
+  --color-success: light-dark(#2f7a52, #5fae94);
+  --color-warning: light-dark(#8a6510, #c9a463);
+  --color-gold: light-dark(#7d6a24, #b89a55);
 }
 
 * {
@@ -435,7 +267,7 @@ a {
 }
 
 .auth-brand span {
-  font-size: 1.5rem;
+  font-size: var(--text-xl);
   font-weight: bold;
 }
 
@@ -447,7 +279,7 @@ a {
   margin-top: 2rem;
   padding-top: 1rem;
   border-top: 1px solid var(--color-border);
-  font-size: 0.8rem;
+  font-size: var(--text-sm);
 }
 
 button,
@@ -526,7 +358,7 @@ input[type="radio"] {
   position: absolute;
   top: -3rem;
   left: 0.5rem;
-  z-index: 100;
+  z-index: var(--z-skip);
   background: var(--color-accent);
   color: var(--color-on-accent);
   padding: 0.5rem 1rem;
@@ -594,7 +426,7 @@ input[type="radio"] {
      floating training button/PR toasts (they're deliberately meant to
      float above everything, nav included) but above ordinary page
      content and its tooltips. */
-  z-index: 50;
+  z-index: var(--z-nav);
   /* Add the safe area on top of --nav-height rather than eating it out
      of a fixed --nav-height box (the old `height: var(--nav-height)` +
      `padding-bottom: env(safe-area-inset-bottom)` combo did that,
@@ -622,7 +454,7 @@ input[type="radio"] {
   padding-top: 0.65rem;
   color: var(--color-text-muted);
   text-decoration: none;
-  font-size: 0.8rem;
+  font-size: var(--text-sm);
 }
 
 .bottom-nav a[aria-current="page"] {
@@ -690,7 +522,7 @@ input[type="radio"] {
   position: fixed;
   right: 1rem;
   bottom: calc(var(--nav-height) + env(safe-area-inset-bottom) + 1rem);
-  z-index: 90;
+  z-index: var(--z-fab);
   width: 3.5rem;
   height: 3.5rem;
   display: flex;
@@ -699,7 +531,7 @@ input[type="radio"] {
   border-radius: 50%;
   background: var(--color-accent);
   color: var(--color-on-accent);
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+  box-shadow: var(--shadow-fab);
   text-decoration: none;
 }
 
@@ -742,7 +574,7 @@ input[type="radio"] {
   position: fixed;
   left: 1rem;
   bottom: calc(var(--nav-height) + env(safe-area-inset-bottom) + 1rem);
-  z-index: 90;
+  z-index: var(--z-fab);
   width: 3.5rem;
   height: 3.5rem;
   display: flex;
@@ -750,8 +582,8 @@ input[type="radio"] {
   justify-content: center;
   border-radius: 50%;
   background: var(--color-danger);
-  color: #fff;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+  color: var(--color-on-accent);
+  box-shadow: var(--shadow-fab);
   text-decoration: none;
 }
 
@@ -774,7 +606,7 @@ input[type="radio"] {
   position: fixed;
   right: 1rem;
   bottom: calc(var(--nav-height) + env(safe-area-inset-bottom) + 5.5rem);
-  z-index: 85;
+  z-index: var(--z-fab-secondary);
   /* Auto-width while minimized — just big enough for the toggle
      button's own label, not the widest a food name/target number
      could ever make it. Regression: a fixed 14rem width even while
@@ -785,7 +617,7 @@ input[type="radio"] {
   max-width: calc(100vw - 2rem);
   margin: 0;
   padding: 0.6rem 0.75rem;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
+  box-shadow: var(--shadow-sm);
 }
 
 .diet-plan-totals-widget-expanded {
@@ -930,12 +762,12 @@ input[type="radio"] {
 /* Exercises: list, filters, detail */
 .text-muted {
   color: var(--color-text-muted);
-  font-size: 0.85rem;
+  font-size: var(--text-sm);
 }
 
 .tag {
   display: inline-block;
-  font-size: 0.7rem;
+  font-size: var(--text-xs);
   padding: 0.1rem 0.4rem;
   border-radius: 999px;
   background: var(--color-accent);
@@ -1004,10 +836,10 @@ abbr[title]:focus::after {
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
   color: var(--color-text);
-  font-size: 0.75rem;
+  font-size: var(--text-xs);
   font-weight: normal;
   white-space: nowrap;
-  z-index: 20;
+  z-index: var(--z-raised);
 }
 
 /* A live-search-plus-dropdown-filters row (exercise_list.html,
@@ -1039,7 +871,7 @@ abbr[title]:focus::after {
   min-height: 2.25rem;
   margin-bottom: 0;
   padding: 0.35rem 0.6rem;
-  font-size: 0.9rem;
+  font-size: var(--text-sm);
 }
 
 .card-link {
@@ -1185,7 +1017,7 @@ abbr[title]:focus::after {
   border: none;
   font: inherit;
   color: var(--color-text-muted);
-  font-size: 0.75rem;
+  font-size: var(--text-xs);
   text-align: center;
   margin: 0;
   padding: 0.5rem;
@@ -1217,7 +1049,7 @@ abbr[title]:focus::after {
 .modal-backdrop {
   position: fixed;
   inset: 0;
-  z-index: 300;
+  z-index: var(--z-modal);
   background: rgba(0, 0, 0, 0.6);
   display: flex;
   align-items: center;
@@ -1251,7 +1083,7 @@ abbr[title]:focus::after {
   background: none;
   border: none;
   color: var(--color-text);
-  font-size: 1.5rem;
+  font-size: var(--text-xl);
   line-height: 1;
   padding: 0.25rem 0.5rem;
   cursor: pointer;
@@ -1273,7 +1105,7 @@ abbr[title]:focus::after {
 
 .modal-body h4 {
   margin: 0.75rem 0 0.25rem;
-  font-size: 0.8rem;
+  font-size: var(--text-sm);
   text-transform: uppercase;
   letter-spacing: 0.03em;
   color: var(--color-text-muted);
@@ -1362,7 +1194,7 @@ abbr[title]:focus::after {
 .modal-body pre code {
   background: none;
   padding: 0;
-  font-size: 0.8rem;
+  font-size: var(--text-sm);
   white-space: pre;
 }
 
@@ -1435,7 +1267,7 @@ abbr[title]:focus::after {
   justify-content: space-between;
   align-items: center;
   color: var(--color-text-muted);
-  font-size: 0.85rem;
+  font-size: var(--text-sm);
   /* Previous/Next links that carry a same-page #anchor (e.g.
      recipe_list.html's two independently-paginated sections) land the
      browser's native anchor-scroll right here instead of back at the
@@ -1469,7 +1301,7 @@ abbr[title]:focus::after {
    of the page the way ACCOUNT/SOCIAL below it are. */
 .field-group-label {
   color: var(--color-text-muted);
-  font-size: 0.7rem;
+  font-size: var(--text-xs);
   text-transform: uppercase;
   letter-spacing: 0.03em;
   margin: 1.25rem 0 0.5rem;
@@ -1553,7 +1385,7 @@ abbr[title]:focus::after {
 }
 
 .exercise-image-gallery figcaption {
-  font-size: 0.8rem;
+  font-size: var(--text-sm);
   color: var(--color-text-muted);
   margin-top: 0.4rem;
   text-align: center;
@@ -1564,19 +1396,19 @@ abbr[title]:focus::after {
    instructions_attribution — not just inside the gallery, since
    written instructions carry their own credit line too. */
 .attribution-note {
-  font-size: 0.7rem;
+  font-size: var(--text-xs);
   opacity: 0.75;
 }
 
 .field-error {
   color: var(--color-danger);
-  font-size: 0.85rem;
+  font-size: var(--text-sm);
   margin: -0.5rem 0 0.75rem;
 }
 
 .field-help {
   color: var(--color-text-muted);
-  font-size: 0.8rem;
+  font-size: var(--text-sm);
   margin: 0.25rem 0 0;
 }
 
@@ -1656,7 +1488,7 @@ dl {
 
 dt {
   color: var(--color-text-muted);
-  font-size: 0.8rem;
+  font-size: var(--text-sm);
   margin-top: 0.75rem;
 }
 
@@ -1733,7 +1565,7 @@ dd {
 
 .pr-exercise-group-detail {
   margin: 0.15rem 0 0 0.75rem;
-  font-size: 0.8rem;
+  font-size: var(--text-sm);
 }
 
 h2 {
@@ -1764,7 +1596,7 @@ h2 {
   width: 1.4rem;
   height: 1.4rem;
   border-radius: 50%;
-  font-size: 0.75rem;
+  font-size: var(--text-xs);
   font-weight: 700;
   color: #fff;
   margin-left: 0.4rem;
@@ -1810,7 +1642,7 @@ h2 {
   text-align: left;
   padding: 0.4rem 0.3rem;
   border-bottom: 1px solid var(--color-border);
-  font-size: 0.9rem;
+  font-size: var(--text-sm);
   /* A long, unbroken word/value (a filename, a translated string with
      no natural break point at this column's width, ...) must wrap
      rather than force the whole table — and via .table-wrap's own
@@ -1844,7 +1676,7 @@ h2 {
   min-width: auto;
   margin-bottom: 0;
   padding: 0.25rem 0.5rem;
-  font-size: 0.8rem;
+  font-size: var(--text-sm);
 }
 
 /* A button's own inline-flex box (.button, above) sizes to fit its
@@ -1871,7 +1703,7 @@ h2 {
 .set-field {
   display: flex;
   flex-direction: column;
-  font-size: 0.75rem;
+  font-size: var(--text-xs);
   color: var(--color-text-muted);
   flex: 1 1 5rem;
 }
@@ -1901,7 +1733,7 @@ h2 {
   top: env(safe-area-inset-top);
   left: 0;
   right: 0;
-  z-index: 200;
+  z-index: var(--z-toast);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1922,8 +1754,8 @@ h2 {
   color: #fff;
   border-radius: var(--radius);
   padding: 0.5rem 2rem 0.5rem 0.75rem;
-  font-size: 0.9rem;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+  font-size: var(--text-sm);
+  box-shadow: var(--shadow-md);
 }
 
 .pr-banner .text-muted {
@@ -1983,7 +1815,7 @@ h2 {
 .chart-range {
   display: flex;
   justify-content: flex-end;
-  font-size: 0.75rem;
+  font-size: var(--text-xs);
   color: var(--color-text-muted);
 }
 
@@ -1992,7 +1824,7 @@ h2 {
 }
 
 .bar-label {
-  font-size: 9px;
+  font-size: var(--text-xs);
   fill: var(--color-text-muted);
   text-anchor: end;
 }
@@ -2001,7 +1833,7 @@ h2 {
   width: 100%;
   border-collapse: collapse;
   margin-top: 0.5rem;
-  font-size: 0.85rem;
+  font-size: var(--text-sm);
 }
 
 .bar-chart-table th,
@@ -2054,7 +1886,7 @@ h2 {
   border: 1px solid var(--color-border);
   color: var(--color-text-muted);
   text-decoration: none;
-  font-size: 0.85rem;
+  font-size: var(--text-sm);
 }
 
 .range-filter a[aria-current="true"] {
@@ -2081,7 +1913,7 @@ h2 {
      flush at the top of .container) — sticking to the very top of the
      scroll area, not offset, is correct once scrolled past it. */
   top: 0;
-  z-index: 40;
+  z-index: var(--z-subnav);
   background: var(--color-bg);
   padding: 0.5rem 0;
 }
@@ -2122,7 +1954,7 @@ h2 {
 
 .stat-row dt {
   color: var(--color-text-muted);
-  font-size: 0.75rem;
+  font-size: var(--text-xs);
 }
 
 .stat-row dd {
@@ -2235,7 +2067,7 @@ h2 {
 }
 
 .recent-activity-time {
-  font-size: 0.8rem;
+  font-size: var(--text-sm);
 }
 
 .train-set-history {
@@ -2257,13 +2089,13 @@ h2 {
    visually says *the app did something for you here*, not just
    another card. */
 .suggestion-banner {
-  background: rgba(79, 180, 119, 0.1);
-  border: 1px solid rgba(79, 180, 119, 0.35);
+  background: color-mix(in srgb, var(--color-success) 10%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-success) 35%, transparent);
   border-left: 3px solid var(--color-success);
   border-radius: var(--radius);
   padding: 0.65rem 0.85rem;
   margin-bottom: 0.5rem;
-  font-size: 0.9rem;
+  font-size: var(--text-sm);
 }
 
 .suggestion-banner strong {
@@ -2310,7 +2142,7 @@ h2 {
   .bottom-nav {
     position: sticky;
     top: 0;
-    z-index: 50;
+    z-index: var(--z-nav);
     height: auto;
     min-height: var(--nav-height);
     justify-content: center;
@@ -2461,7 +2293,7 @@ h2 {
 }
 
 .rest-timer-display {
-  font-size: 1.5rem;
+  font-size: var(--text-xl);
   font-variant-numeric: tabular-nums;
   min-width: 3.5rem;
 }
@@ -2556,7 +2388,7 @@ h2 {
   border: 1px solid var(--color-border);
   background: transparent;
   font: inherit;
-  font-size: 0.75rem;
+  font-size: var(--text-xs);
   color: var(--color-text);
   /* A padding day (calendar-day-outside) is an <a> when its month is
      reachable — no underline on the bare day number. */
@@ -2613,15 +2445,15 @@ h2 {
 .calendar-day-popover {
   position: absolute;
   top: calc(100% + 0.25rem);
-  z-index: 30;
+  z-index: var(--z-popover);
   width: 12rem;
   max-width: 70vw;
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
   padding: 0.5rem 0.75rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-  font-size: 0.8rem;
+  box-shadow: var(--shadow-popover);
+  font-size: var(--text-sm);
 }
 
 /* Columns near the grid's left/right edge anchor to that same edge
@@ -2710,14 +2542,14 @@ h2 {
   left: 0;
   right: 0;
   bottom: calc(var(--nav-height) + env(safe-area-inset-bottom));
-  z-index: 80;
+  z-index: var(--z-overlay);
   display: flex;
   align-items: flex-start;
   gap: 0.75rem;
   padding: 0.85rem 2.25rem 0.85rem 0.85rem;
   background: var(--color-surface);
   border-top: 1px solid var(--color-border);
-  box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.35);
+  box-shadow: var(--shadow-nav);
 }
 
 .pwa-install-icon {
@@ -2738,7 +2570,7 @@ h2 {
 .pwa-install-text {
   margin: 0 0 0.6rem;
   color: var(--color-text-muted);
-  font-size: 0.9rem;
+  font-size: var(--text-sm);
 }
 
 .pwa-install-actions {
@@ -2762,7 +2594,7 @@ h2 {
   border: none;
   color: var(--color-text-muted);
   text-decoration: underline;
-  font-size: 0.85rem;
+  font-size: var(--text-sm);
   padding: 0;
   min-height: auto;
   min-width: auto;
@@ -2776,7 +2608,7 @@ h2 {
   background: none;
   border: none;
   color: var(--color-text-muted);
-  font-size: 1.5rem;
+  font-size: var(--text-xl);
   line-height: 1;
   padding: 0.25rem 0.5rem;
   min-height: auto;
@@ -2808,9 +2640,19 @@ h2 {
   --radius-lg: 0.75rem;
   --shadow-sm: 0 2px 10px rgba(0, 0, 0, 0.25);
   --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.35);
+  --z-raised: 20;
+  --z-popover: 30;
+  --z-subnav: 40;
   --z-nav: 50;
+  --z-overlay: 80;
+  --z-fab-secondary: 85;
+  --z-fab: 90;
+  --z-skip: 100;
   --z-toast: 200;
   --z-modal: 300;
+  --shadow-fab: 0 2px 10px rgba(0, 0, 0, 0.4);
+  --shadow-popover: 0 4px 12px rgba(0, 0, 0, 0.4);
+  --shadow-nav: 0 -2px 12px rgba(0, 0, 0, 0.35);
   --color-info: var(--color-accent);
   /* Brightness shifts rather than a second hand-picked color per theme, so
      hover/active follow whichever of the 5 themes (and light/dark) is on. */
@@ -3145,4 +2987,123 @@ abbr[title]:focus-visible {
 
 .confirm-dialog-actions button {
   margin-bottom: 0;
+}
+
+/* Profile: collapsible preferences form. */
+details.preferences {
+  margin-bottom: var(--space-4);
+}
+
+details.preferences > summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: var(--touch-target);
+  cursor: pointer;
+  list-style: none;
+}
+
+details.preferences > summary::-webkit-details-marker {
+  display: none;
+}
+
+details.preferences > summary::after {
+  content: "▾";
+  color: var(--color-text-muted);
+}
+
+details.preferences[open] > summary::after {
+  content: "▴";
+}
+
+/* Loading bar for live searches (core/_search_indicator.html). */
+.search-indicator {
+  height: 0.25rem;
+  margin: 0 0 var(--space-3);
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    var(--color-border) 25%,
+    var(--color-accent) 50%,
+    var(--color-border) 75%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.2s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .search-indicator {
+    animation: none;
+    background: var(--color-accent);
+  }
+}
+
+/* Line chart x axis: first and last reading's date under the plot. */
+.chart-x {
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+}
+
+/* A card's own heading. These were <h3>s that skipped straight from the
+   page's <h1>; as <h2> they keep the card-title look rather than the muted,
+   uppercase section-label look plain h2s have (see `h2`, above). */
+h2.card-title {
+  font-size: 1.15rem;
+  color: var(--color-text);
+  text-transform: none;
+  letter-spacing: 0;
+  margin: 0 0 var(--space-2);
+}
+
+/* More utilities, replacing the last repeated inline style="" attributes. */
+.row-center { display: flex; align-items: center; gap: var(--space-2); }
+.row-3 { display: flex; flex-wrap: wrap; gap: var(--space-3); }
+.mt-0 { margin-top: 0; }
+.mt-1 { margin-top: var(--space-1); }
+.mt-2 { margin-top: var(--space-2); }
+.mt-4 { margin-top: var(--space-4); }
+.m-1 { margin: var(--space-1); }
+.mb-1 { margin: 0 0 var(--space-1); }
+.mb-3 { margin: 0 0 var(--space-3); }
+.ml-auto { margin-left: auto; }
+.py-2 { padding: var(--space-2) 0; }
+.p-0 { padding: 0; }
+.text-xs { font-size: var(--text-xs); }
+.text-xl { font-size: var(--text-xl); }
+.text-center { text-align: center; }
+.justify-center { justify-content: center; }
+.invisible { visibility: hidden; }
+.qty-input { width: 5rem; }
+.wrap-pre { overflow-x: auto; white-space: pre-wrap; }
+.mono-text { font-family: var(--font-mono); font-size: var(--text-base); }
+.stat-value-lg { font-size: 2rem; font-weight: bold; margin: var(--space-2) 0; }
+.error-block { flex: 1 1 100%; margin: 0; }
+.field-subgroup { flex: 1 1 100%; display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.header-button { width: 100%; justify-content: flex-start; font-weight: bold; }
+.no-border { padding: 0; border: 0; }
+.row-top { display: flex; flex-wrap: wrap; gap: var(--space-2); align-items: center; margin-top: var(--space-2); }
+.row-actions { display: flex; gap: var(--space-3); margin-top: var(--space-4); }
+
+/* Touch screens get the full 44px target on the compact row buttons too;
+   mouse users keep the denser rows. */
+@media (pointer: coarse) {
+  .set-actions button,
+  .set-actions .button-secondary,
+  .modal-close,
+  .pr-toast-close {
+    min-height: var(--touch-target);
+    min-width: var(--touch-target);
+  }
+}
+
+/* Tablet widths: the desktop top bar shows icon + label for up to six items,
+   which at 1.5rem of side padding each overflowed the page at 768px. */
+@media (min-width: 768px) and (max-width: 1023.98px) {
+  .bottom-nav a {
+    padding: 0.75rem 0.75rem;
+    gap: 0.4rem;
+    font-size: var(--text-sm);
+  }
 }

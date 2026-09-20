@@ -557,7 +557,10 @@ class PWATests(TestCase):
         get_user_model().objects.create_user(username="alice", password="s3cret-pass")
         self.client.login(username="alice", password="s3cret-pass")
         response = self.client.get(reverse("dashboard"))
-        self.assertContains(response, '<link rel="manifest" href="/manifest.json">')
+        self.assertContains(
+            response,
+            '<link rel="manifest" href="/manifest.json" crossorigin="use-credentials">',
+        )
         self.assertContains(response, 'src="/static/js/sw-register.js"')
         self.assertContains(response, 'data-service-worker-url="/sw.js"')
 

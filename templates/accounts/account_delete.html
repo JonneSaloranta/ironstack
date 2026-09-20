@@ -16,18 +16,10 @@
   {% csrf_token %}
   {% include "core/_form_errors.html" %}
   {% if user.has_usable_password %}
-    <div class="field">
-      {{ form.password.label_tag }}
-      {{ form.password }}
-      {% if form.password.errors %}<p class="field-error">{{ form.password.errors|striptags }}</p>{% endif %}
-    </div>
+    {% include "core/_field.html" with field=form.password %}
   {% else %}
     <p class="field-help">{% trans "Your account is linked to Authentik, so there's no local password to confirm with — type your username instead." %}</p>
-    <div class="field">
-      {{ form.confirm_username.label_tag }}
-      {{ form.confirm_username }}
-      {% if form.confirm_username.errors %}<p class="field-error">{{ form.confirm_username.errors|striptags }}</p>{% endif %}
-    </div>
+    {% include "core/_field.html" with field=form.confirm_username %}
   {% endif %}
   <button type="submit" class="button-danger">{% trans "Permanently delete my account" %}</button>
 </form>

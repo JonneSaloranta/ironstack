@@ -9,7 +9,7 @@
   {% if remaining_quota > 0 %}
     <a class="button" href="{% url 'api_keys:key-create' %}">{% trans "New" %}</a>
   {% endif %}
-  <button type="button" class="help-button" style="margin-left:auto;" @click="helpOpen = true" aria-label="{% trans "API documentation" %}">?</button>
+  <button type="button" class="help-button ml-auto" @click="helpOpen = true" aria-label="{% trans "API documentation" %}">?</button>
 
   <div class="modal-backdrop" x-show="helpOpen" x-cloak x-transition.opacity.duration.200ms
        @click.self="helpOpen = false" @keydown.escape.window="helpOpen = false">

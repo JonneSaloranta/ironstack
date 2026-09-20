@@ -13,41 +13,6 @@
   <p class="text-muted" x-show="busy" x-cloak role="status">{% trans "This can take a minute — please keep this page open." %}</p>
 </form>
 
-<h2>{% trans "Upload backup" %}</h2>
-<form class="card" method="post" enctype="multipart/form-data">
-  {% csrf_token %}
-  <input type="hidden" name="action" value="upload_backup">
-  <p class="text-muted">{% trans "Restore from a backup file you downloaded earlier, instead of one already listed below." %}</p>
-  {% include "core/_form_errors.html" with form=upload_form %}
-  {% for field in upload_form %}
-    {% include "core/_field.html" with field=field %}
-  {% endfor %}
-  <button type="submit">{% trans "Upload and continue" %}</button>
-</form>
-
-<h2>{% trans "Settings" %}</h2>
-<form class="card" method="post">
-  {% csrf_token %}
-  <input type="hidden" name="action" value="save_settings">
-  {% include "core/_form_errors.html" with form=settings_form %}
-  {% for field in settings_form %}
-    <div class="field">
-      {% if field.field.widget.input_type == "checkbox" %}
-        <label class="checkbox-field">
-          {{ field }}
-          {{ field.label }}
-        </label>
-      {% else %}
-        {{ field.label_tag }}
-        {{ field }}
-      {% endif %}
-      {% if field.help_text %}<p class="field-help">{{ field.help_text }}</p>{% endif %}
-      {% if field.errors %}<p class="field-error">{{ field.errors|striptags }}</p>{% endif %}
-    </div>
-  {% endfor %}
-  <button type="submit">{% trans "Save settings" %}</button>
-</form>
-
 <h2>{% trans "Automatic backups" %}</h2>
 {% if newest_scheduled %}
   <div x-data="{ showOlderAuto: false }">
@@ -81,6 +46,29 @@
     <p>{% trans "No manual or uploaded backups yet." %}</p>
   </div>
 {% endif %}
+
+<h2>{% trans "Upload backup" %}</h2>
+<form class="card" method="post" enctype="multipart/form-data">
+  {% csrf_token %}
+  <input type="hidden" name="action" value="upload_backup">
+  <p class="text-muted">{% trans "Restore from a backup file you downloaded earlier, instead of one already listed below." %}</p>
+  {% include "core/_form_errors.html" with form=upload_form %}
+  {% for field in upload_form %}
+    {% include "core/_field.html" with field=field %}
+  {% endfor %}
+  <button type="submit">{% trans "Upload and continue" %}</button>
+</form>
+
+<h2>{% trans "Settings" %}</h2>
+<form class="card" method="post">
+  {% csrf_token %}
+  <input type="hidden" name="action" value="save_settings">
+  {% include "core/_form_errors.html" with form=settings_form %}
+  {% for field in settings_form %}
+    {% include "core/_field.html" with field=field %}
+  {% endfor %}
+  <button type="submit">{% trans "Save settings" %}</button>
+</form>
 
 <p><a class="button-link" href="{% url 'profile' %}">&larr; {% trans "Back to profile" %}</a></p>
 {% endblock %}

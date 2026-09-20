@@ -17,7 +17,7 @@
 
 {% if can_manage %}
   <div class="card">
-    <h2 style="margin-top:0;">{% trans "Invite link" %}</h2>
+    <h2 class="mt-0">{% trans "Invite link" %}</h2>
     {% if group.invite_enabled %}
       <div class="invite-link-row" x-data="{ copied: false }">
         <input type="text" readonly x-ref="inviteLink"
@@ -29,7 +29,7 @@
           <span x-show="copied" x-cloak>{% trans "Copied!" %}</span>
         </button>
       </div>
-      <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+      <div class="row">
         <form method="post" action="{% url 'social:group-invite-toggle' group.pk %}">
           {% csrf_token %}
           <button type="submit" class="button-secondary">{% trans "Disable link" %}</button>
@@ -58,13 +58,10 @@
 {% endcomment %}
 {% if invite_form.fields.friend.queryset.exists %}
   <div class="card">
-    <h2 style="margin-top:0;">{% trans "Invite a friend" %}</h2>
+    <h2 class="mt-0">{% trans "Invite a friend" %}</h2>
     <form method="post" action="{% url 'social:group-invite-send' group.pk %}">
       {% csrf_token %}
-      <div class="field">
-        {{ invite_form.friend.label_tag }}
-        {{ invite_form.friend }}
-      </div>
+      {% include "core/_field.html" with field=invite_form.friend %}
       <button type="submit">{% trans "Send invite" %}</button>
     </form>
   </div>

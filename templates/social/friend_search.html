@@ -7,11 +7,12 @@
 </div>
 
 <form hx-get="{% url 'social:friend-search' %}" hx-target="#friend-search-results"
-      hx-trigger="input changed delay:300ms from:#id_q" hx-push-url="true">
+      hx-indicator="#search-indicator" hx-trigger="input changed delay:300ms from:#id_q" hx-push-url="true">
   <input type="search" id="id_q" name="q" placeholder="{% trans "Search by username…" %}"
          value="{{ query }}" aria-label="{% trans "Search by username" %}">
 </form>
 
+{% include "core/_search_indicator.html" %}
 <div id="friend-search-results">
   {% include "social/_friend_search_results.html" %}
 </div>

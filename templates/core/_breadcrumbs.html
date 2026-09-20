@@ -1,0 +1,15 @@
+{% comment %}
+Where-am-I trail for pages two levels deep. Usage:
+{% include "core/_breadcrumbs.html" with c1_url=... c1_label=... c2_url=... c2_label=... current=... %}
+c2_* is optional (a third level). `current` is the page's own name, shown
+unlinked with aria-current. The page's bottom "Back to X" link stays: a
+breadcrumb orients, that link is the quick way out.
+{% endcomment %}
+{% load i18n core_extras %}
+<nav aria-label="{% trans "Breadcrumb" %}">
+  <ol class="breadcrumbs">
+    <li><a href="{{ c1_url }}">{{ c1_label }}</a></li>
+    {% if c2_url %}<li><a href="{{ c2_url }}">{{ c2_label }}</a></li>{% endif %}
+    <li aria-current="page">{{ current|translate_content }}</li>
+  </ol>
+</nav>
