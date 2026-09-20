@@ -18,6 +18,8 @@ narrated summary of the same version.
 
 ## [Unreleased]
 
+## [1.20.0] — 2026-09-21
+
 ### Added
 - Breadcrumbs on detail pages (programs, exercises, recipes, diet plans,
   foods, workouts, body tracking, activities) so it's clear where you are;
