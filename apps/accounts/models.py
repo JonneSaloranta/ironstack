@@ -296,6 +296,32 @@ class User(AbstractUser):
         "link, if you have one.",
     )
 
+    # apps.coaching — a wholly new capability, unrelated to is_staff/
+    # is_superuser. Off by default, unlike allow_friend_requests/
+    # allow_group_invites above: those opt *out* of an existing
+    # capability every account already has, while becoming a personal
+    # trainer is a brand new one nobody has until they actively turn it
+    # on. The only thing this actually gates is apps.coaching.services.
+    # send_coaching_request (a client can only request a user who has
+    # this on) — turning it off later never ends a coaching relationship
+    # already in progress.
+    is_personal_trainer = models.BooleanField(
+        default=False,
+        help_text="Lets you build gym programs and diet plans other "
+        "users can request you coach them on. Turning this off doesn't "
+        "end any coaching relationship you already have.",
+    )
+    # Only meaningful once is_personal_trainer is on. On by default —
+    # same "the capability starts open" reasoning allow_friend_requests
+    # follows — so a brand new PT is immediately requestable rather
+    # than invisible until they remember to flip a second switch.
+    accepting_new_clients = models.BooleanField(
+        default=True,
+        help_text="Off stops new coaching requests from reaching you. "
+        "Existing coaching relationships, and any request you already "
+        "received, are unaffected.",
+    )
+
     def __str__(self):
         return self.username
 

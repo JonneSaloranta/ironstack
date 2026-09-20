@@ -3,6 +3,7 @@ import json
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import Count, F, Sum
 from django.http import HttpResponseBadRequest, HttpResponseNotAllowed, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.translation import gettext as _
@@ -35,9 +36,26 @@ REST_SECONDS = 90
 class WorkoutSessionListView(LoginRequiredMixin, ListView):
     template_name = "workouts/session_list.html"
     context_object_name = "sessions"
+    paginate_by = 20
 
     def get_queryset(self):
-        return services.sessions_for(self.request.user).select_related("workout", "program")
+        # Annotated here (one query) rather than computed per card in the
+        # template, so each history card can show set count and volume
+        # without an N+1 and without the template doing any arithmetic.
+        return (
+            services.sessions_for(self.request.user)
+            .select_related("workout", "program")
+            .annotate(
+                exercise_count=Count("performed_exercises", distinct=True),
+                set_count=Count("performed_exercises__sets", distinct=True),
+                total_volume=Sum(
+                    F("performed_exercises__sets__weight") * F("performed_exercises__sets__reps")
+                ),
+            )
+            # Explicit: a GROUP BY annotation drops the model's default
+            # Meta.ordering, and unordered pagination can repeat or skip rows.
+            .order_by("-started_at", "-pk")
+        )
 
 
 class WorkoutSessionDetailView(LoginRequiredMixin, DetailView):

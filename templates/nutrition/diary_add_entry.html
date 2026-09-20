@@ -3,7 +3,7 @@
 {% block title %}{% trans "Add food" %} — IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
-  <h1 style="margin:0;">{% trans "Add food" %}</h1>
+  <h1 class="no-margin">{% trans "Add food" %}</h1>
 </div>
 {% include "nutrition/_subnav.html" %}
 
@@ -71,7 +71,7 @@
   {% include "nutrition/_most_used_foods.html" with mode="diary" date=date meal_slots=meal_slots %}
 </div>
 
-<p><a class="button-secondary" href="{% url 'nutrition:diary-day' target_date=date %}">&larr; {% trans "Back to diary" %}</a></p>
+<p><a class="button-link" href="{% url 'nutrition:diary-day' target_date=date %}">&larr; {% trans "Back to diary" %}</a></p>
 {% endblock %}
 {% block extra_scripts %}
 <script src="{% static 'js/barcode-scanner.js' %}" defer></script>

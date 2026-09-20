@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% load i18n core_extras %}
+{% block title %}{{ display_name }} — IronStack{% endblock %}
+{% block content %}
+<div class="top-bar">
+  <h1 class="no-margin">{{ display_name }}</h1>
+</div>
+<p class="text-muted">{% blocktrans with date=relationship.created_at|date:"Y-m-d" %}Coaching since {{ date }}{% endblocktrans %}</p>
+
+{% if highlights %}
+  <div class="card">
+    <dl class="stat-row">
+      {% for achievement in highlights %}
+        <div>
+          <dt>{{ achievement.label }}</dt>
+          <dd>{{ achievement.value }}</dd>
+        </div>
+      {% endfor %}
+    </dl>
+  </div>
+{% endif %}
+
+<h2>{% trans "Training" %}</h2>
+<div class="card">
+  <dl class="stat-row">
+    <div><dt>{% trans "Workouts" %}</dt><dd>{{ training_summary.session_count }}</dd></div>
+    <div><dt>{% trans "Training time" %}</dt><dd>{{ training_summary.total_duration|duration }}</dd></div>
+    <div><dt>{% trans "Total volume" %}</dt><dd>{{ total_volume_display }} {{ weight_unit_label }}</dd></div>
+  </dl>
+  <p class="text-muted">{% trans "Last 30 days." %}</p>
+</div>
+
+<h2>{% trans "Recent" %} <abbr tabindex="0" title="{% trans "Personal Records" %}">PRs</abbr></h2>
+{% for group in recent_prs %}
+  {% include "records/_pr_exercise_group.html" with group=group %}
+{% empty %}
+  <div class="card empty-state"><p>{% trans "No" %} <abbr tabindex="0" title="{% trans "Personal Records" %}">PRs</abbr> {% trans "yet." %}</p></div>
+{% endfor %}
+
+<h2>{% trans "Body measurements" %}</h2>
+{% for entry in measurements %}
+  <div class="card card-action-row">
+    <div><strong>{{ entry.type.name }}</strong></div>
+    <div>
+      {% if entry.latest_display is not None %}
+        {{ entry.latest_display }} {{ entry.unit_label }}
+        {% if entry.stats %}
+          <span class="text-muted">({% if entry.stats.change_since_first > 0 %}+{% endif %}{{ entry.stats.change_since_first }} {{ entry.unit_label }})</span>
+        {% endif %}
+      {% else %}
+        <span class="text-muted">{% trans "No readings yet." %}</span>
+      {% endif %}
+    </div>
+  </div>
+{% endfor %}
+
+<h2>{% trans "Assigned plans" %}</h2>
+{% for entry in assigned_programs %}
+  <div class="card card-action-row">
+    <div>
+      <strong>{{ entry.program.name }}</strong>
+      <p class="text-muted">
+        {% if entry.last_session %}
+          {% blocktrans with date=entry.last_session.started_at|date:"Y-m-d" %}Last logged {{ date }}{% endblocktrans %}
+        {% else %}
+          {% trans "Not logged yet." %}
+        {% endif %}
+      </p>
+    </div>
+  </div>
+{% empty %}
+  <div class="card empty-state"><p>{% trans "This client hasn't imported any of your shared programs yet." %}</p></div>
+{% endfor %}
+
+<p><a class="button-link" href="{% url 'coaching:client-list' %}">&larr; {% trans "Back to clients" %}</a></p>
+{% endblock %}

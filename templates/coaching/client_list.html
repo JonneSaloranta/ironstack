@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% trans "My clients" %} — IronStack{% endblock %}
+{% block content %}
+<div class="top-bar">
+  <h1 class="no-margin">{% trans "My clients" %}</h1>
+</div>
+
+{% if incoming_requests %}
+  <h2>{% trans "Coaching requests" %}</h2>
+  {% for coaching_request in incoming_requests %}
+    <div class="card card-action-row">
+      <div><strong>{{ coaching_request.coachee.username }}</strong></div>
+      <div class="row">
+        <form method="post" action="{% url 'coaching:request-respond' coaching_request.pk %}">
+          {% csrf_token %}
+          <input type="hidden" name="action" value="accept">
+          <button type="submit">{% trans "Accept" %}</button>
+        </form>
+        <form method="post" action="{% url 'coaching:request-respond' coaching_request.pk %}">
+          {% csrf_token %}
+          <input type="hidden" name="action" value="decline">
+          <button type="submit" class="button-secondary">{% trans "Decline" %}</button>
+        </form>
+      </div>
+    </div>
+  {% endfor %}
+{% endif %}
+
+<h2>{% trans "Your clients" %}</h2>
+{% for relationship in coaching_relationships %}
+  <div class="card card-action-row">
+    <div><strong>{{ relationship.coachee.username }}</strong></div>
+    <div class="row">
+      <a class="button-secondary" href="{% url 'coaching:client-detail' relationship.coachee.username %}">{% trans "View" %}</a>
+      <form method="post" action="{% url 'coaching:relationship-end' relationship.pk %}"
+            data-confirm="{% filter force_escape %}{% trans "End this coaching relationship?" %}{% endfilter %}">
+        {% csrf_token %}
+        <button type="submit" class="button-danger">{% trans "End" %}</button>
+      </form>
+    </div>
+  </div>
+{% empty %}
+  <div class="card empty-state">
+    <p>{% trans "No clients yet — accept a coaching request above once someone sends you one." %}</p>
+  </div>
+{% endfor %}
+
+<p><a class="button-link" href="{% url 'profile' %}">&larr; {% trans "Back to profile" %}</a></p>
+{% endblock %}

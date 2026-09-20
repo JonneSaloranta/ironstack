@@ -3,7 +3,7 @@
 {% block title %}{% trans "Delete account" %} — IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
-  <h1 style="margin:0;">{% trans "Delete account" %}</h1>
+  <h1 class="no-margin">{% trans "Delete account" %}</h1>
 </div>
 
 <div class="card">
@@ -14,7 +14,7 @@
 
 <form class="card" method="post">
   {% csrf_token %}
-  {{ form.non_field_errors }}
+  {% include "core/_form_errors.html" %}
   {% if user.has_usable_password %}
     <div class="field">
       {{ form.password.label_tag }}
@@ -31,5 +31,5 @@
   {% endif %}
   <button type="submit" class="button-danger">{% trans "Permanently delete my account" %}</button>
 </form>
-<p><a class="button-secondary" href="{% url 'profile' %}">&larr; {% trans "Cancel" %}</a></p>
+<p><a class="button-link" href="{% url 'profile' %}">&larr; {% trans "Cancel" %}</a></p>
 {% endblock %}

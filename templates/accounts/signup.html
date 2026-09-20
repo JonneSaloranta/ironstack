@@ -6,19 +6,13 @@
 <h1>{% trans "Create your account" %}</h1>
 <form method="post" novalidate>
   {% csrf_token %}
+  {% include "core/_form_errors.html" %}
   {% for field in form %}
-    <div>
-      <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-      {{ field }}
-      {% if field.help_text %}<p class="empty-state" style="padding: 0;">{{ field.help_text }}</p>{% endif %}
-      {% for error in field.errors %}
-        <p role="alert" style="color: var(--color-danger);">{{ error }}</p>
-      {% endfor %}
-    </div>
+    {% include "core/_field.html" with field=field %}
   {% endfor %}
   <button type="submit">{% trans "Sign up" %}</button>
 </form>
-<p class="text-muted">{% trans "Already have an account?" %} <a class="button-secondary" href="{% url 'login' %}">{% trans "Log in" %}</a></p>
+<p class="text-muted">{% trans "Already have an account?" %} <a class="button-link" href="{% url 'login' %}">{% trans "Log in" %}</a></p>
 {% include "registration/_auth_disclaimer.html" %}
 {% include "accounts/_privacy_notice_modal.html" %}
 {% endblock %}

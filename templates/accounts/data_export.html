@@ -3,7 +3,7 @@
 {% block title %}{% trans "Download your data" %} — IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
-  <h1 style="margin:0;">{% trans "Download your data" %}</h1>
+  <h1 class="no-margin">{% trans "Download your data" %}</h1>
 </div>
 
 <div class="card">
@@ -23,7 +23,7 @@
         <table class="set-table">
           <thead>
             <tr>
-              {% for key in rows.0.keys %}<th>{{ key }}</th>{% endfor %}
+              {% for key in rows.0.keys %}<th scope="col">{{ key }}</th>{% endfor %}
             </tr>
           </thead>
           <tbody>
@@ -39,5 +39,5 @@
   {% endif %}
 {% endfor %}
 
-<p><a class="button-secondary" href="{% url 'profile' %}">&larr; {% trans "Back to profile" %}</a></p>
+<p><a class="button-link" href="{% url 'profile' %}">&larr; {% trans "Back to profile" %}</a></p>
 {% endblock %}

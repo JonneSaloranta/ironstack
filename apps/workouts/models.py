@@ -53,6 +53,15 @@ class WorkoutSession(TimeStampedModel):
         return f"{label} — {self.started_at:%Y-%m-%d}"
 
     @property
+    def duration(self):
+        """Wall-clock length of a finished session, or None while it's
+        still in progress. Derived, never stored, so it can't drift from
+        started_at/ended_at."""
+        if self.ended_at is None:
+            return None
+        return self.ended_at - self.started_at
+
+    @property
     def is_in_progress(self):
         return self.status == WorkoutSessionStatus.IN_PROGRESS
 

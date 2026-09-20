@@ -55,7 +55,7 @@ takes its data tag down with it, so there's only ever one.
      @click.outside="close()">
   {{ calendar_days_json|json_script:"calendar-days-data" }}
   <div class="calendar-header" x-data="{ helpOpen: false }">
-    <a class="button-secondary" href="?month={{ calendar_prev_month }}"
+    <a class="button-link" href="?month={{ calendar_prev_month }}"
        hx-get="?month={{ calendar_prev_month }}" hx-target="#month-calendar" hx-swap="outerHTML"
        hx-push-url="true" aria-label="{% trans "Previous month" %}">&larr;</a>
     <strong style="display:flex; align-items:center; gap:0.5rem;">
@@ -79,7 +79,7 @@ takes its data tag down with it, so there's only ever one.
       <div class="modal-card" role="dialog" aria-modal="true" aria-label="{% trans "How to read this calendar" %}"
            x-show="helpOpen" x-transition.scale.duration.200ms.origin.bottom>
         <div class="modal-header">
-          <h2 style="margin:0;">{% trans "How to read this calendar" %}</h2>
+          <h2 class="no-margin">{% trans "How to read this calendar" %}</h2>
           <button type="button" class="modal-close" @click="helpOpen = false" aria-label="{% trans "Dismiss" %}">&times;</button>
         </div>
         <div class="modal-body">

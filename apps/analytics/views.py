@@ -36,6 +36,7 @@ class AnalyticsDashboardView(LoginRequiredMixin, TemplateView):
         context["muscle_group_chart"] = services.muscle_group_volume_series(user, date_range)
         context["recent_prs"] = services.pr_history_grouped_by_exercise(user, date_range, limit=15)
         context["weight_unit_label"] = core_units.weight_unit_label(user.unit_system)
+        context["trained_exercises"] = services.trained_exercises(user)
         return context
 
 
@@ -67,6 +68,23 @@ class MemberProfileView(LoginRequiredMixin, View):
         recent_prs = services.pr_history_grouped_by_exercise(
             member, dateranges.resolve("all"), limit=10
         )
+        # A PT's own profile is the surface a prospective client
+        # requests coaching from — apps.coaching has no separate
+        # "browse trainers" page, since a coaching relationship is
+        # only ever proposed by a coachee who already knows who
+        # they're asking (same discovery model apps.social's own
+        # friend_search already gives friend requests).
+        active_coaching = None
+        pending_coaching_request = False
+        if member.is_personal_trainer and member != request.user:
+            from apps.coaching import services as coaching_services
+            from apps.coaching.models import CoachingRequest, CoachingRequestStatus
+
+            active_coaching = coaching_services.get_active_relationship(member, request.user)
+            if active_coaching is None:
+                pending_coaching_request = CoachingRequest.objects.filter(
+                    coach=member, coachee=request.user, status=CoachingRequestStatus.PENDING
+                ).exists()
         return render(
             request,
             self.template_name,
@@ -75,6 +93,8 @@ class MemberProfileView(LoginRequiredMixin, View):
                 "display_name": member.public_display_name(),
                 "highlights": achievements.highlights_for(member),
                 "recent_prs": recent_prs,
+                "active_coaching": active_coaching,
+                "pending_coaching_request": pending_coaching_request,
             },
         )
 

@@ -3,7 +3,7 @@
 {% block title %}{{ activity_type.name|translate_content }} — IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
-  <h1 style="margin:0;">{{ activity_type.name|translate_content }}</h1>
+  <h1 class="no-margin">{{ activity_type.name|translate_content }}</h1>
 </div>
 {% if not activity_type.active %}
   <div class="top-bar-actions">
@@ -30,13 +30,9 @@
 
 <form class="card" method="post" action="{% url 'activities:log' activity_type.pk %}">
   {% csrf_token %}
-  {{ form.non_field_errors }}
+  {% include "core/_form_errors.html" %}
   {% for field in form %}
-    <div class="field">
-      {{ field.label_tag }}
-      {{ field }}
-      {% if field.errors %}<p class="field-error">{{ field.errors|striptags }}</p>{% endif %}
-    </div>
+    {% include "core/_field.html" with field=field %}
   {% endfor %}
   <button type="submit">{% trans "Log activity" %}</button>
 </form>
@@ -44,17 +40,17 @@
 <div class="table-wrap">
 <table class="set-table">
   <thead>
-    <tr><th>{% trans "Date" %}</th><th>{% trans "Duration" %}</th><th>{% trans "Distance" %}</th><th></th></tr>
+    <tr><th scope="col">{% trans "Date" %}</th><th scope="col">{% trans "Duration" %}</th><th scope="col">{% trans "Distance" %}</th><th scope="col"></th></tr>
   </thead>
   <tbody>
-    {% for entry in history %}
+    {% for entry in page_obj %}
       <tr>
         <td>{{ entry.date|date:"Y-m-d" }}{% if entry.start_time %} {{ entry.start_time|time:"H:i" }}{% endif %}</td>
         <td>{{ entry.duration|duration }}</td>
         <td>{% if entry.display_distance is not None %}{{ entry.display_distance }} {{ distance_label }}{% else %}—{% endif %}</td>
         <td class="set-actions">
           <a class="button-secondary" href="{% url 'activities:entry-edit' entry.pk %}">{% trans "Edit" %}</a>
-          <form method="post" action="{% url 'activities:entry-delete' entry.pk %}" x-data="{}" @submit="if (!confirm('{% trans "Delete this activity?" %}')) $event.preventDefault()">
+          <form method="post" action="{% url 'activities:entry-delete' entry.pk %}" data-confirm="{% filter force_escape %}{% trans "Delete this activity?" %}{% endfilter %}">
             {% csrf_token %}
             <button type="submit" class="button-danger">{% trans "Delete" %}</button>
           </form>
@@ -66,13 +62,14 @@
   </tbody>
 </table>
 </div>
+{% include "core/_pagination.html" %}
 
 {% if can_deactivate and activity_type.active %}
-  <form method="post" action="{% url 'activities:type-deactivate' activity_type.pk %}" x-data="{}" @submit="if (!confirm('{% trans "Deactivate this activity type? It will no longer appear when logging new activities." %}')) $event.preventDefault()">
+  <form method="post" action="{% url 'activities:type-deactivate' activity_type.pk %}" data-confirm="{% filter force_escape %}{% trans "Deactivate this activity type? It will no longer appear when logging new activities." %}{% endfilter %}">
     {% csrf_token %}
     <button type="submit" class="button-danger">{% trans "Deactivate type" %}</button>
   </form>
 {% endif %}
 
-<p><a class="button-secondary" href="{% url 'activities:type-list' %}">&larr; {% trans "Back to activities" %}</a></p>
+<p><a class="button-link" href="{% url 'activities:type-list' %}">&larr; {% trans "Back to activities" %}</a></p>
 {% endblock %}

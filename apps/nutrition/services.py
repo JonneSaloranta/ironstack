@@ -475,6 +475,20 @@ def import_recipe(user, payload):
     return recipe
 
 
+def diet_plans_visible_to(user):
+    """Diet plans a user may view/import: their own + any diet plan
+    specifically shared with them by one of their currently active
+    coaches (apps.coaching) — same "checked both ways" reasoning as
+    apps.programs.services.visible_to's own extension, but with no
+    "system template" branch: unlike Program, DietPlan has no
+    owner=None concept at all."""
+    from apps.coaching.services import active_coach_ids_for
+
+    return DietPlan.objects.filter(
+        Q(user=user) | Q(shared_with_clients=user, user_id__in=active_coach_ids_for(user))
+    )
+
+
 def export_diet_plan(plan):
     """A `DietPlan` (with its meals/items), as a plain dict ready for
     `apps.core.data_exchange.build_envelope`. Each item nests a full
@@ -546,6 +560,57 @@ def _resolve_recipe(user, data):
     return import_recipe(user, data)
 
 
+def _populate_diet_plan(plan, payload):
+    """Builds `plan`'s meals/items from an `export_diet_plan`-shaped
+    `payload`, resolving each meal's slot and each item's food/recipe
+    by natural key exactly as `import_diet_plan` (below) always has.
+    Shared with `apps.coaching.services.apply_diet_plan_update`, which
+    calls this against an *existing* plan whose meals were just
+    cleared, the same "clear and rebuild" shape `apps.programs.
+    services._replace_program_contents` uses for a program."""
+    from .models import DietPlanItem, DietPlanMeal
+
+    for meal_data in payload.get("meals") or []:
+        meal_slot = _resolve_meal_slot(plan.user, meal_data.get("meal_slot"))
+        if meal_slot is None:
+            raise ImportValidationError("A diet plan meal is missing its meal slot.")
+        meal_target_calories = meal_data.get("target_calories")
+        if not isinstance(meal_target_calories, int):
+            raise ImportValidationError(
+                "A diet plan meal is missing its target calories."
+            )
+        meal = DietPlanMeal.objects.create(
+            diet_plan=plan,
+            meal_slot=meal_slot,
+            target_calories=meal_target_calories,
+            order=meal_data.get("order", 0),
+            weekday=meal_data.get("weekday"),
+        )
+        items = []
+        for order, item_data in enumerate(meal_data.get("items") or []):
+            food_data = item_data.get("food")
+            recipe_data = item_data.get("recipe")
+            if bool(food_data) == bool(recipe_data):
+                raise ImportValidationError(
+                    "A diet plan item must reference exactly one of a food or a recipe."
+                )
+            food = _resolve_food(plan.user, food_data) if food_data else None
+            recipe = _resolve_recipe(plan.user, recipe_data) if recipe_data else None
+            quantity = _decimal_or_none(item_data.get("quantity"))
+            if quantity is None:
+                raise ImportValidationError("A diet plan item has an invalid quantity.")
+            items.append(
+                DietPlanItem(
+                    diet_plan_meal=meal,
+                    food=food,
+                    recipe=recipe,
+                    quantity=quantity,
+                    order=item_data.get("order", order),
+                )
+            )
+        DietPlanItem.objects.bulk_create(items)
+
+
 @transaction.atomic
 def import_diet_plan(user, payload):
     """The inverse of `export_diet_plan` — creates a brand new
@@ -560,8 +625,6 @@ def import_diet_plan(user, payload):
     through rolls back everything already written for this import,
     including any recipe a diet plan item's own `_resolve_recipe` had
     to create along the way."""
-    from .models import DietPlanItem, DietPlanMeal
-
     name = payload.get("name")
     if not name:
         raise ImportValidationError("Missing diet plan name.")
@@ -588,45 +651,7 @@ def import_diet_plan(user, payload):
         is_active=False,
         is_weekly=bool(payload.get("is_weekly", False)),
     )
-    for meal_data in payload.get("meals") or []:
-        meal_slot = _resolve_meal_slot(user, meal_data.get("meal_slot"))
-        if meal_slot is None:
-            raise ImportValidationError("A diet plan meal is missing its meal slot.")
-        meal_target_calories = meal_data.get("target_calories")
-        if not isinstance(meal_target_calories, int):
-            raise ImportValidationError(
-                "A diet plan meal is missing its target calories."
-            )
-        meal = DietPlanMeal.objects.create(
-            diet_plan=plan,
-            meal_slot=meal_slot,
-            target_calories=meal_target_calories,
-            order=meal_data.get("order", 0),
-            weekday=meal_data.get("weekday"),
-        )
-        items = []
-        for order, item_data in enumerate(meal_data.get("items") or []):
-            food_data = item_data.get("food")
-            recipe_data = item_data.get("recipe")
-            if bool(food_data) == bool(recipe_data):
-                raise ImportValidationError(
-                    "A diet plan item must reference exactly one of a food or a recipe."
-                )
-            food = _resolve_food(user, food_data) if food_data else None
-            recipe = _resolve_recipe(user, recipe_data) if recipe_data else None
-            quantity = _decimal_or_none(item_data.get("quantity"))
-            if quantity is None:
-                raise ImportValidationError("A diet plan item has an invalid quantity.")
-            items.append(
-                DietPlanItem(
-                    diet_plan_meal=meal,
-                    food=food,
-                    recipe=recipe,
-                    quantity=quantity,
-                    order=item_data.get("order", order),
-                )
-            )
-        DietPlanItem.objects.bulk_create(items)
+    _populate_diet_plan(plan, payload)
     return plan
 
 

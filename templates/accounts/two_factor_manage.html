@@ -3,7 +3,7 @@
 {% block title %}{% trans "Two-factor authentication" %} — IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
-  <h1 style="margin:0;">{% trans "Two-factor authentication" %}</h1>
+  <h1 class="no-margin">{% trans "Two-factor authentication" %}</h1>
 </div>
 
 <div class="card">
@@ -15,8 +15,7 @@
     <strong>{% trans "Backup codes" %}</strong>
     <p class="text-muted">{% trans "Replace your current codes with a fresh set. The old ones stop working immediately." %}</p>
   </div>
-  <form method="post" action="{% url 'two-factor-regenerate-backup-codes' %}" x-data="{}"
-        @submit="if (!confirm('{% trans "Replace your backup codes? The old ones will stop working." %}')) $event.preventDefault()">
+  <form method="post" action="{% url 'two-factor-regenerate-backup-codes' %}" data-confirm="{% filter force_escape %}{% trans "Replace your backup codes? The old ones will stop working." %}{% endfilter %}">
     {% csrf_token %}
     <button type="submit" class="button-secondary">{% trans "Regenerate" %}</button>
   </form>
@@ -32,5 +31,5 @@
   </div>
 </div>
 
-<p><a class="button-secondary" href="{% url 'profile' %}">&larr; {% trans "Back to profile" %}</a></p>
+<p><a class="button-link" href="{% url 'profile' %}">&larr; {% trans "Back to profile" %}</a></p>
 {% endblock %}

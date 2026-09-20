@@ -3,7 +3,7 @@
 {% block title %}{% trans "Import from OpenFoodFacts" %} — IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
-  <h1 style="margin:0;">{% trans "Import from OpenFoodFacts" %}</h1>
+  <h1 class="no-margin">{% trans "Import from OpenFoodFacts" %}</h1>
 </div>
 {% include "nutrition/_subnav.html" %}
 {% if categories %}
@@ -45,7 +45,7 @@
   </div>
 {% endif %}
 
-<p><a class="button-secondary" href="{% url 'nutrition:food-list' %}">&larr; {% trans "Back to foods" %}</a></p>
+<p><a class="button-link" href="{% url 'nutrition:food-list' %}">&larr; {% trans "Back to foods" %}</a></p>
 {% endblock %}
 {% block extra_scripts %}
 <script src="{% static 'js/barcode-scanner.js' %}" defer></script>

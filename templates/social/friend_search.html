@@ -3,7 +3,7 @@
 {% block title %}{% trans "Find friends" %} — IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
-  <h1 style="margin:0;">{% trans "Find friends" %}</h1>
+  <h1 class="no-margin">{% trans "Find friends" %}</h1>
 </div>
 
 <form hx-get="{% url 'social:friend-search' %}" hx-target="#friend-search-results"
@@ -16,5 +16,5 @@
   {% include "social/_friend_search_results.html" %}
 </div>
 
-<p><a class="button-secondary" href="{% url 'social:friend-list' %}">&larr; {% trans "Friends" %}</a></p>
+<p><a class="button-link" href="{% url 'social:friend-list' %}">&larr; {% trans "Friends" %}</a></p>
 {% endblock %}

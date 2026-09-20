@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Coach update" %} — IronStack{% endblock %}
+{% block content %}
+<div class="top-bar">
+  <h1 class="no-margin">{% trans "Your coach updated this diet plan" %}</h1>
+</div>
+<p class="text-muted">{{ plan.name }}</p>
+
+<div class="card">
+  <pre style="overflow-x:auto; white-space:pre-wrap;">{{ diff }}</pre>
+</div>
+
+<p class="text-muted">{% trans "Applying replaces this plan's meals and items with your coach's current version. Any changes you made to your own copy since importing it will be lost." %}</p>
+
+<form method="post" action="{% url 'coaching:diet-plan-update-apply' plan.pk %}">
+  {% csrf_token %}
+  <button type="submit">{% trans "Apply update" %}</button>
+  <a class="button-secondary" href="{% url 'nutrition:diet-plan-detail' plan.pk %}">{% trans "Skip for now" %}</a>
+</form>
+{% endblock %}

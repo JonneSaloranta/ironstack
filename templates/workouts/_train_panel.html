@@ -64,9 +64,10 @@
 
     <form class="set-log-form" x-data="{more:false}" method="post" action="{% url 'workouts:train-set-log' current.id %}"
           hx-post="{% url 'workouts:train-set-log' current.id %}"
-          hx-target="#train-panel" hx-swap="outerHTML">
+          hx-target="#train-panel" hx-swap="outerHTML"
+          hx-disabled-elt="find button[type=submit]">
       {% csrf_token %}
-      {{ set_form.non_field_errors }}
+      {% include "workouts/_set_form_errors.html" %}
       <label class="set-field">
         {{ set_form.weight.label }}
         {{ set_form.weight }}
@@ -75,14 +76,14 @@
         {{ set_form.reps.label }}
         {{ set_form.reps }}
       </label>
-      <button type="button" class="button-secondary" style="flex:1 1 100%;" @click="more = !more" x-text="more ? '{% trans "Fewer options" %}' : '{% trans "More options (RPE, RIR, notes…)" %}'"></button>
+      <button type="button" class="button-secondary flex-full" @click="more = !more" x-text="more ? '{% trans "Fewer options" %}' : '{% trans "More options (RPE, RIR, notes…)" %}'"></button>
       <div x-show="more" x-cloak style="flex:1 1 100%; display:flex; flex-wrap:wrap; gap:0.5rem;">
         <label class="set-field">{{ set_form.target_reps.label }} {{ set_form.target_reps }}</label>
         <label class="set-field">{{ set_form.rpe.label }} {{ set_form.rpe }}</label>
         <label class="set-field">{{ set_form.rir.label }} {{ set_form.rir }}</label>
-        <label class="checkbox-field" style="flex:1 1 100%;">{{ set_form.is_warmup }} {{ set_form.is_warmup.label }}</label>
-        <label class="checkbox-field" style="flex:1 1 100%;">{{ set_form.is_failure }} {{ set_form.is_failure.label }}</label>
-        <label class="set-field" style="flex:1 1 100%;">{{ set_form.notes.label }} {{ set_form.notes }}</label>
+        <label class="checkbox-field flex-full">{{ set_form.is_warmup }} {{ set_form.is_warmup.label }}</label>
+        <label class="checkbox-field flex-full">{{ set_form.is_failure }} {{ set_form.is_failure.label }}</label>
+        <label class="set-field flex-full">{{ set_form.notes.label }} {{ set_form.notes }}</label>
       </div>
       <button type="submit">{% trans "Log set" %}</button>
     </form>

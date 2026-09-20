@@ -3,7 +3,7 @@
 {% block title %}{% trans "Calculators" %} — IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
-  <h1 style="margin:0;">{% trans "Calculators" %}</h1>
+  <h1 class="no-margin">{% trans "Calculators" %}</h1>
 </div>
 {% include "nutrition/_subnav.html" %}
 <p class="text-muted">{% trans "Quick, standalone estimates — none of these are saved or change your targets." %}</p>
@@ -64,5 +64,5 @@
   <a class="button-secondary" href="{% url 'nutrition:calculator-time-to-goal' %}">{% trans "Open" %}</a>
 </div>
 
-<p><a class="button-secondary" href="{% url 'nutrition:dashboard' %}">&larr; {% trans "Back to nutrition" %}</a></p>
+<p><a class="button-link" href="{% url 'nutrition:dashboard' %}">&larr; {% trans "Back to nutrition" %}</a></p>
 {% endblock %}

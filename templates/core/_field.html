@@ -1,0 +1,18 @@
+{% comment %}
+One form field: label, control, help text, and *linked* errors.
+Usage: {% include "core/_field.html" with field=form.name %}
+The error <p> gets an id and the control is pointed at it via
+aria-describedby / aria-invalid (set by the core_extras `field_a11y`
+filter), so a screen reader reads the error when the field is focused.
+Every error is listed, not just the first. (No role=alert here: the form's
+_form_errors.html summary announces on submit; these are read on focus.)
+{% endcomment %}
+{% load core_extras %}
+<div class="field">
+  {{ field.label_tag }}
+  {{ field|field_a11y }}
+  {% if field.help_text %}<p class="field-help" id="{{ field.auto_id }}_help">{{ field.help_text|safe }}</p>{% endif %}
+  {% for error in field.errors %}
+    <p class="field-error" id="{{ field.auto_id }}_error{% if not forloop.first %}_{{ forloop.counter }}{% endif %}">{{ error }}</p>
+  {% endfor %}
+</div>

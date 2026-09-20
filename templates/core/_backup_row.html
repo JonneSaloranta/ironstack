@@ -17,10 +17,9 @@
   <div class="set-actions" style="margin-top:0.5rem;">
     <a class="button-secondary" href="{% url 'backup-download' backup.name %}">{% trans "Download" %}</a>
     <a class="button button-danger" href="{% url 'backup-restore' backup.name %}">{% trans "Restore" %}</a>
-    <form method="post" action="{% url 'backup-delete' backup.name %}" x-data="{}"
-          @submit="if (!confirm('{% trans "Delete this backup? This cannot be undone." %}')) $event.preventDefault()">
+    <form method="post" action="{% url 'backup-delete' backup.name %}" data-confirm="{% filter force_escape %}{% trans "Delete this backup? This cannot be undone." %}{% endfilter %}">
       {% csrf_token %}
-      <button type="submit" class="button-secondary">{% trans "Delete" %}</button>
+      <button type="submit" class="button-danger">{% trans "Delete" %}</button>
     </form>
   </div>
 </div>

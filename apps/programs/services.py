@@ -16,8 +16,23 @@ from .models import ExercisePrescription, Program, Workout
 
 
 def visible_to(user):
-    """Programs a user may view/use: their own + system templates."""
-    return Program.objects.filter(Q(owner=user) | Q(owner__isnull=True))
+    """Programs a user may view/use: their own + system templates +
+    any program a currently active coach of theirs has specifically
+    shared with them (apps.coaching) — checked both ways: `user` must
+    actually be in that program's own `shared_with_clients`, *and*
+    still be an active client of its owner (a stale M2M row from a
+    since-ended relationship grants nothing on its own). Local import
+    inside the function, not at module level, so apps.programs and
+    apps.coaching never form an import-time cycle (apps.coaching.
+    services already imports this module directly, to delegate the
+    actual copy)."""
+    from apps.coaching.services import active_coach_ids_for
+
+    return Program.objects.filter(
+        Q(owner=user)
+        | Q(owner__isnull=True)
+        | Q(shared_with_clients=user, owner_id__in=active_coach_ids_for(user))
+    )
 
 
 def editable_by(user):
@@ -28,20 +43,23 @@ def editable_by(user):
     return Program.objects.filter(owner=user)
 
 
-@transaction.atomic
-def copy_program(source: Program, owner) -> Program:
-    """Deep-copy a program (workouts + prescriptions) into a new program
-    owned by `owner`, ready to edit/schedule independently of the source.
-    """
-    copy = Program.objects.create(
-        owner=owner,
-        name=source.name,
-        description=source.description,
-        is_template=False,
-    )
+def _replace_program_contents(target: Program, source: Program):
+    """Deletes every Workout/ExercisePrescription `target` currently
+    has (if any) and rebuilds them from `source`'s current shape —
+    the shared core of both copy_program (against a brand-new, empty
+    `target`) and apps.coaching.services.apply_program_update (against
+    an existing client copy, replacing its content with the coach's
+    current version). Safe against WorkoutSession history either way:
+    WorkoutSession.workout/PerformedExercise.prescription are both
+    SET_NULL, informational-only backlinks — see apps/workouts/
+    models.py's own "snapshot-on-start" docstrings — so deleting rows
+    this freely already is exactly what apps.programs.views.
+    workout_delete/prescription_delete do today for a user editing
+    their own program."""
+    target.workouts.all().delete()
     for workout in source.workouts.order_by("order", "id"):
         workout_copy = Workout.objects.create(
-            program=copy,
+            program=target,
             name=workout.name,
             order=workout.order,
             scheduled_weekday=workout.scheduled_weekday,
@@ -66,6 +84,20 @@ def copy_program(source: Program, owner) -> Program:
             for prescription in workout.prescriptions.order_by("order", "id")
         ]
         ExercisePrescription.objects.bulk_create(prescriptions)
+
+
+@transaction.atomic
+def copy_program(source: Program, owner) -> Program:
+    """Deep-copy a program (workouts + prescriptions) into a new program
+    owned by `owner`, ready to edit/schedule independently of the source.
+    """
+    copy = Program.objects.create(
+        owner=owner,
+        name=source.name,
+        description=source.description,
+        is_template=False,
+    )
+    _replace_program_contents(copy, source)
     return copy
 
 

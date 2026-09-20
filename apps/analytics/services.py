@@ -247,3 +247,15 @@ def exercise_one_rm_trend(user, exercise, date_range):
 
     readings = [(_weight_display(value, user), date) for date, value in best_per_session.items()]
     return build_chart_series(readings)
+
+
+def trained_exercises(user):
+    """Every exercise `user` has logged at least one set for, alphabetical —
+    the picker on the Analytics page, so a strength trend is one tap away
+    instead of reachable only by first finding the exercise in the library."""
+    from apps.exercises.models import Exercise
+
+    logged = ExerciseSet.objects.filter(performed_exercise__session__user=user).values(
+        "performed_exercise__exercise"
+    )
+    return Exercise.objects.filter(pk__in=logged).order_by("name")

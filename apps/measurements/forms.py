@@ -28,7 +28,11 @@ class BodyMeasurementForm(forms.ModelForm):
     ones.
     """
 
-    value = forms.DecimalField(max_digits=8, decimal_places=2)
+    value = forms.DecimalField(
+        max_digits=8,
+        decimal_places=2,
+        widget=forms.NumberInput(attrs={"inputmode": "decimal", "autocomplete": "off"}),
+    )
     recorded_at = forms.DateTimeField(
         widget=forms.DateTimeInput(attrs={"type": "datetime-local"}, format="%Y-%m-%dT%H:%M"),
         # Accept the picker's "T"-separated value and the plain

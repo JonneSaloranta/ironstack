@@ -92,6 +92,11 @@ urlpatterns = [
         views.diet_plan_toggle_active,
         name="diet-plan-toggle-active",
     ),
+    path(
+        "diet-plans/<int:pk>/share/",
+        views.diet_plan_share,
+        name="diet-plan-share",
+    ),
     path("diet-plans/<int:pk>/log/", views.diet_plan_log, name="diet-plan-log"),
     path(
         "diet-plans/<int:plan_pk>/items/<int:pk>/edit/",

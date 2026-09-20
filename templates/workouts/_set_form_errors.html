@@ -1,0 +1,12 @@
+{% comment %}
+Every validation error on the set-log form, not just non_field_errors —
+a missing weight or invalid reps used to re-render the panel with
+nothing visibly wrong. role="alert" so a screen reader announces it
+when the HTMX swap lands.
+{% endcomment %}
+{% if set_form.errors %}
+  <div class="field-error" role="alert" style="flex:1 1 100%; margin:0;">
+    {% for error in set_form.non_field_errors %}<div>{{ error }}</div>{% endfor %}
+    {% for field in set_form %}{% for error in field.errors %}<div>{{ field.label|striptags }}: {{ error }}</div>{% endfor %}{% endfor %}
+  </div>
+{% endif %}

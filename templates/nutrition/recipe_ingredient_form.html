@@ -3,7 +3,7 @@
 {% block title %}{% blocktrans with name=recipe.name %}Add ingredient to {{ name }}{% endblocktrans %} — IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
-  <h1 style="margin:0;">{% blocktrans with name=recipe.name %}Add ingredient to {{ name }}{% endblocktrans %}</h1>
+  <h1 class="no-margin">{% blocktrans with name=recipe.name %}Add ingredient to {{ name }}{% endblocktrans %}</h1>
 </div>
 {% include "nutrition/_subnav.html" %}
 
@@ -30,7 +30,7 @@
 
 {% include "nutrition/_most_used_foods.html" with mode="recipe" recipe=recipe %}
 
-<p><a class="button-secondary" href="{% url 'nutrition:recipe-detail' recipe.pk %}">&larr; {% trans "Back to recipe" %}</a></p>
+<p><a class="button-link" href="{% url 'nutrition:recipe-detail' recipe.pk %}">&larr; {% trans "Back to recipe" %}</a></p>
 {% endblock %}
 {% block extra_scripts %}
 <script src="{% static 'js/barcode-scanner.js' %}" defer></script>

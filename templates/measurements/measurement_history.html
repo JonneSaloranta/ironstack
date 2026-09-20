@@ -3,7 +3,7 @@
 {% block title %}{{ measurement_type.name|translate_content }} — IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
-  <h1 style="margin:0;">{{ measurement_type.name|translate_content }}</h1>
+  <h1 class="no-margin">{{ measurement_type.name|translate_content }}</h1>
 </div>
 {% if not measurement_type.active %}
   <div class="top-bar-actions">
@@ -39,13 +39,9 @@
 
 <form class="card" method="post" action="{% url 'measurements:log' measurement_type.pk %}">
   {% csrf_token %}
-  {{ form.non_field_errors }}
+  {% include "core/_form_errors.html" %}
   {% for field in form %}
-    <div class="field">
-      {{ field.label_tag }}
-      {{ field }}
-      {% if field.errors %}<p class="field-error">{{ field.errors|striptags }}</p>{% endif %}
-    </div>
+    {% include "core/_field.html" with field=field %}
   {% endfor %}
   <button type="submit">{% trans "Log reading" %}</button>
 </form>
@@ -53,16 +49,16 @@
 <div class="table-wrap">
 <table class="set-table">
   <thead>
-    <tr><th>{% trans "Date" %}</th><th>{% trans "Value" %}</th><th></th></tr>
+    <tr><th scope="col">{% trans "Date" %}</th><th scope="col">{% trans "Value" %}</th><th scope="col"></th></tr>
   </thead>
   <tbody>
-    {% for entry in history %}
+    {% for entry in page_obj %}
       <tr>
         <td>{{ entry.recorded_at|date:"Y-m-d H:i" }}</td>
         <td>{{ entry.display_value }} {{ unit_label }}</td>
         <td class="set-actions">
           <a class="button-secondary" href="{% url 'measurements:entry-edit' entry.pk %}">{% trans "Edit" %}</a>
-          <form method="post" action="{% url 'measurements:entry-delete' entry.pk %}" x-data="{}" @submit="if (!confirm('{% trans "Delete this reading?" %}')) $event.preventDefault()">
+          <form method="post" action="{% url 'measurements:entry-delete' entry.pk %}" data-confirm="{% filter force_escape %}{% trans "Delete this reading?" %}{% endfilter %}">
             {% csrf_token %}
             <button type="submit" class="button-danger">{% trans "Delete" %}</button>
           </form>
@@ -74,13 +70,14 @@
   </tbody>
 </table>
 </div>
+{% include "core/_pagination.html" %}
 
 {% if can_deactivate and measurement_type.active %}
-  <form method="post" action="{% url 'measurements:type-deactivate' measurement_type.pk %}" x-data="{}" @submit="if (!confirm('{% trans "Deactivate this measurement type? It will no longer appear when logging new readings." %}')) $event.preventDefault()">
+  <form method="post" action="{% url 'measurements:type-deactivate' measurement_type.pk %}" data-confirm="{% filter force_escape %}{% trans "Deactivate this measurement type? It will no longer appear when logging new readings." %}{% endfilter %}">
     {% csrf_token %}
     <button type="submit" class="button-danger">{% trans "Deactivate type" %}</button>
   </form>
 {% endif %}
 
-<p><a class="button-secondary" href="{% url 'measurements:type-list' %}">&larr; {% trans "Back to body tracking" %}</a></p>
+<p><a class="button-link" href="{% url 'measurements:type-list' %}">&larr; {% trans "Back to body tracking" %}</a></p>
 {% endblock %}

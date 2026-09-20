@@ -3,12 +3,12 @@
 {% block title %}{% if object %}{% trans "Edit exercise" %}{% else %}{% trans "New exercise" %}{% endif %} — IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
-  <h1 style="margin:0;">{% if object %}{% trans "Edit exercise" %}{% else %}{% trans "New exercise" %}{% endif %}</h1>
+  <h1 class="no-margin">{% if object %}{% trans "Edit exercise" %}{% else %}{% trans "New exercise" %}{% endif %}</h1>
 </div>
 
 <form class="card" method="post">
   {% csrf_token %}
-  {{ form.non_field_errors }}
+  {% include "core/_form_errors.html" %}
   {% for field in form %}
     <div class="field">
       {{ field.label_tag }}

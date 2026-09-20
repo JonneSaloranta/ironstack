@@ -9,20 +9,21 @@ picture (when show_gravatar is on) on every page, this page's own
 copy of it was redundant.
 {% endcomment %}
 <div class="top-bar">
-  <h1 style="margin:0;">{% trans "Profile" %}</h1>
+  <h1 class="no-margin">{% trans "Profile" %}</h1>
 </div>
 
 <h2>{% trans "Preferences" %}</h2>
 
-<form class="card" method="post">
+<form class="card" method="post" x-data="{ isPt: {{ form.is_personal_trainer.value|yesno:'true,false' }} }">
   {% csrf_token %}
-  {{ form.non_field_errors }}
+  {% include "core/_form_errors.html" %}
   {% for field in form %}
     {% if field.name == "nutrition_enabled" %}<p class="field-group-label">{% trans "Features" %}</p>{% endif %}
     {% if field.name == "body_tracking_reminders_enabled" %}<p class="field-group-label">{% trans "Notifications" %}</p>{% endif %}
     {% if field.name == "show_bmi" %}<p class="field-group-label">{% trans "Privacy" %}</p>{% endif %}
     {% if field.name == "allow_friend_requests" %}<p class="field-group-label">{% trans "Social" %}</p>{% endif %}
-    <div class="field">
+    {% if field.name == "is_personal_trainer" %}<p class="field-group-label">{% trans "Coaching" %}</p>{% endif %}
+    <div class="field"{% if field.name == "accepting_new_clients" %} x-show="isPt"{% endif %}>
       {% if field.field.widget.input_type == "checkbox" %}
         {% comment %}
           A checkbox reads better with the box directly beside its own
@@ -66,7 +67,7 @@ visual sign a plain card was pressable.
     <strong>{% trans "Account details" %}</strong>
     <p class="text-muted">{% trans "Update your username, name, and email address." %}</p>
   </div>
-  <svg class="settings-row-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+  {% include "core/_chevron.html" %}
 </a>
 
 <a class="card card-link settings-row" href="{% url 'password_change' %}">
@@ -78,7 +79,7 @@ visual sign a plain card was pressable.
       <p class="text-muted">{% trans "Update the password you use to sign in." %}</p>
     {% endif %}
   </div>
-  <svg class="settings-row-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+  {% include "core/_chevron.html" %}
 </a>
 
 <a class="card card-link settings-row" href="{% if user.totp_enabled %}{% url 'two-factor-manage' %}{% else %}{% url 'two-factor-setup' %}{% endif %}">
@@ -90,17 +91,37 @@ visual sign a plain card was pressable.
       <p class="text-muted">{% trans "Add a second step at login, using an authenticator app." %}</p>
     {% endif %}
   </div>
-  <svg class="settings-row-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+  {% include "core/_chevron.html" %}
 </a>
 
 <h2>{% trans "Social" %}</h2>
 
 <a class="card card-link settings-row" href="{% url 'social:message-list' %}">
   <div>
-    <strong>{% trans "Friends & groups" %}{% if social_badge %} <span class="nav-badge" aria-hidden="true" style="position:static; display:inline-block; vertical-align:middle;"></span>{% endif %}</strong>
+    <strong>{% trans "Friends & groups" %}{% if social_badge %} <span class="nav-badge badge-inline" aria-hidden="true"></span>{% endif %}</strong>
     <p class="text-muted">{% trans "Friends, groups, and messages." %}</p>
   </div>
-  <svg class="settings-row-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+  {% include "core/_chevron.html" %}
+</a>
+
+<h2>{% trans "Coaching" %}</h2>
+
+{% if user.is_personal_trainer %}
+<a class="card card-link settings-row" href="{% url 'coaching:client-list' %}">
+  <div>
+    <strong>{% trans "My clients" %}{% if coaching_badge %} <span class="nav-badge badge-inline" aria-hidden="true"></span>{% endif %}</strong>
+    <p class="text-muted">{% trans "People you coach, and coaching requests waiting for you." %}</p>
+  </div>
+  {% include "core/_chevron.html" %}
+</a>
+{% endif %}
+
+<a class="card card-link settings-row" href="{% url 'coaching:my-coaches' %}">
+  <div>
+    <strong>{% trans "My coaches" %}</strong>
+    <p class="text-muted">{% trans "Personal trainers coaching you, and your own pending requests." %}</p>
+  </div>
+  {% include "core/_chevron.html" %}
 </a>
 
 {% if push_enabled %}
@@ -134,7 +155,7 @@ visual sign a plain card was pressable.
     <strong>{% trans "API keys" %}</strong>
     <p class="text-muted">{% trans "Manage keys other apps can use to access your data." %}</p>
   </div>
-  <svg class="settings-row-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+  {% include "core/_chevron.html" %}
 </a>
 
 <a class="card card-link settings-row" href="{% url 'data-export' %}">
@@ -142,7 +163,7 @@ visual sign a plain card was pressable.
     <strong>{% trans "Download your data" %}</strong>
     <p class="text-muted">{% trans "Browse everything you've logged, or download it as JSON, CSV, or HTML." %}</p>
   </div>
-  <svg class="settings-row-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+  {% include "core/_chevron.html" %}
 </a>
 
 {% if feedback_enabled %}
@@ -153,7 +174,7 @@ visual sign a plain card was pressable.
       <strong>{% trans "Feedback" %}</strong>
       <p class="text-muted">{% trans "Report a bug, request something, or tell us what's confusing." %}</p>
     </div>
-    <svg class="settings-row-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+    {% include "core/_chevron.html" %}
   </a>
 {% endif %}
 
@@ -165,7 +186,7 @@ visual sign a plain card was pressable.
         <strong>{% trans "Admin" %}</strong>
         <p class="text-muted">{% trans "Manage tiers, keys, and reference data across the whole instance." %}</p>
       </div>
-      <svg class="settings-row-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+      {% include "core/_chevron.html" %}
     </a>
 
     <a class="card card-link settings-row" href="{% url 'backup-list' %}">
@@ -173,7 +194,7 @@ visual sign a plain card was pressable.
         <strong>{% trans "Backups" %}</strong>
         <p class="text-muted">{% trans "Create, download, and restore full backups of this instance." %}</p>
       </div>
-      <svg class="settings-row-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+      {% include "core/_chevron.html" %}
     </a>
 
     <a class="card card-link settings-row" href="{% url 'feedback-list' %}">
@@ -181,7 +202,7 @@ visual sign a plain card was pressable.
         <strong>{% trans "Feedback" %}</strong>
         <p class="text-muted">{% trans "Read what users have submitted, and turn submissions on or off." %}</p>
       </div>
-      <svg class="settings-row-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+      {% include "core/_chevron.html" %}
     </a>
 
     <a class="card card-link settings-row" href="{% url 'seo-settings' %}">
@@ -189,7 +210,7 @@ visual sign a plain card was pressable.
         <strong>{% trans "Site & SEO" %}</strong>
         <p class="text-muted">{% trans "Control whether search engines are allowed to index this instance." %}</p>
       </div>
-      <svg class="settings-row-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+      {% include "core/_chevron.html" %}
     </a>
   </div>
 {% endif %}
@@ -200,13 +221,13 @@ visual sign a plain card was pressable.
       <strong>{% trans "Delete account" %}</strong>
       <p class="text-muted">{% trans "Permanently delete your account and everything tied to it." %}</p>
     </div>
-    <svg class="settings-row-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+    {% include "core/_chevron.html" %}
   </a>
 </div>
 
 <form method="post" action="{% url 'logout' %}">
   {% csrf_token %}
-  <button type="submit" class="button-danger">{% trans "Log out" %}</button>
+  <button type="submit" class="button-secondary">{% trans "Log out" %}</button>
 </form>
 
 {% comment %}
@@ -241,7 +262,7 @@ tucked among the account-management settings above.
       <div class="modal-card" role="dialog" aria-modal="true" aria-label="{% trans "Changelog" %}"
            x-show="open" x-transition.scale.duration.200ms.origin.bottom>
         <div class="modal-header">
-          <h2 style="margin:0;">{% trans "Changelog" %}</h2>
+          <h2 class="no-margin">{% trans "Changelog" %}</h2>
           <button type="button" class="modal-close" @click="open = false" aria-label="{% trans "Dismiss" %}">&times;</button>
         </div>
         <div class="modal-body">

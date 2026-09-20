@@ -241,7 +241,11 @@ class ProfileForm(forms.ModelForm):
     is a plain notification preference for the dashboard's "Time to
     log your measurements?" card (apps.measurements.services.
     needs_body_tracking_reminder), its own group between the display
-    fields above and the privacy toggles below.
+    fields above and the privacy toggles below. `is_personal_trainer`/
+    `accepting_new_clients` (apps.coaching) are their own final group —
+    unlike everything above, `is_personal_trainer` defaults off (a new
+    capability, not an existing one being opted out of), and
+    `accepting_new_clients` only matters once it's on.
     """
 
     timezone = forms.ChoiceField(choices=_timezone_choices, label=_("Timezone"))
@@ -270,6 +274,8 @@ class ProfileForm(forms.ModelForm):
             "show_gravatar",
             "allow_friend_requests",
             "allow_group_invites",
+            "is_personal_trainer",
+            "accepting_new_clients",
         ]
         labels = {
             "unit_system": _("Units"),
@@ -286,6 +292,8 @@ class ProfileForm(forms.ModelForm):
             "show_gravatar": _("Show my Gravatar picture"),
             "allow_friend_requests": _("Allow friend requests"),
             "allow_group_invites": _("Allow group invites"),
+            "is_personal_trainer": _("I'm a personal trainer / coach"),
+            "accepting_new_clients": _("Accepting new coaching requests"),
             "language": _("Language"),
             "theme": _("Theme"),
             "appearance": _("Appearance"),
@@ -343,6 +351,26 @@ class ProfileForm(forms.ModelForm):
                 "Off stops a group member from inviting you to a group "
                 "directly. You can still join any group yourself using its "
                 "invite link, if you have one."
+            ),
+            "is_personal_trainer": _(
+                "Lets you build gym programs and diet plans other users "
+                "can request you coach them on. Turning this off doesn't "
+                "end any coaching relationship you already have."
+            ),
+            "accepting_new_clients": _(
+                "Off stops new coaching requests from reaching you. "
+                "Existing coaching relationships, and any request you "
+                "already received, are unaffected."
+            ),
+        }
+        # is_personal_trainer's own checkbox toggles accepting_new_clients'
+        # visibility client-side (templates/accounts/profile.html's form-
+        # level x-data="{ isPt: ... }") — the only field on this form
+        # another field's visibility depends on, so a plain widget attr
+        # here rather than a whole new templating mechanism.
+        widgets = {
+            "is_personal_trainer": forms.CheckboxInput(
+                attrs={"@change": "isPt = $event.target.checked"}
             ),
         }
 

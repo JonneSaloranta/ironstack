@@ -34,6 +34,41 @@ class ProgramListView(LoginRequiredMixin, ListView):
         context["templates"] = Program.objects.filter(
             owner__isnull=True, is_template=True
         ).annotate(workout_count=Count("workouts"))
+        # A plain per-object Python attribute, not a queryset
+        # annotation — apps.coaching.services.program_update_available
+        # is one cheap int compare per coach-imported program, and this
+        # list is always just one user's own programs (never hundreds,
+        # unlike the workout_count above where an N+1 actually
+        # mattered), so a small extra query per imported program here
+        # is not worth a bespoke ORM expression to avoid.
+        from apps.coaching.services import program_update_available
+
+        for program in context["programs"]:
+            program.has_coach_update = (
+                program.imported_from_id is not None and program_update_available(program)
+            )
+        # Split the same flat queryset into the groups
+        # templates/programs/program_list.html actually renders —
+        # asked for directly: a coach-imported program is visually
+        # distinct from a program the user built themselves, which is
+        # itself distinct from their own saved templates. A program
+        # imported from a coach sorts there regardless of is_template
+        # (checked first) — that combination shouldn't happen in
+        # practice, but if it ever did, "where did this come from" is
+        # more useful here than "is it a template".
+        context["coach_programs"] = [
+            program for program in context["programs"] if program.imported_from_id is not None
+        ]
+        context["own_templates"] = [
+            program
+            for program in context["programs"]
+            if program.imported_from_id is None and program.is_template
+        ]
+        context["own_programs"] = [
+            program
+            for program in context["programs"]
+            if program.imported_from_id is None and not program.is_template
+        ]
         return context
 
 
@@ -57,9 +92,16 @@ class ProgramCreateView(LoginRequiredMixin, CreateView):
     form_class = ProgramForm
     template_name = "programs/program_form.html"
 
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["user"] = self.request.user
+        return kwargs
+
     def form_valid(self, form):
         form.instance.owner = self.request.user
-        return super().form_valid(form)
+        response = super().form_valid(form)
+        messages.success(self.request, _("Program created."))
+        return response
 
     def get_success_url(self):
         return reverse("programs:program-detail", args=[self.object.pk])
@@ -70,12 +112,18 @@ class ProgramUpdateView(LoginRequiredMixin, UpdateView):
     form_class = ProgramForm
     template_name = "programs/program_form.html"
 
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["user"] = self.request.user
+        return kwargs
+
     def get_queryset(self):
         return services.editable_by(self.request.user)
 
     def form_valid(self, form):
         response = super().form_valid(form)
         self.object.bump_version()
+        messages.success(self.request, _("Program saved."))
         return response
 
     def get_success_url(self):
@@ -88,6 +136,11 @@ class ProgramDeleteView(LoginRequiredMixin, DeleteView):
 
     def get_queryset(self):
         return services.editable_by(self.request.user)
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        messages.success(self.request, _("Program deleted."))
+        return response
 
     def get_success_url(self):
         return reverse("programs:program-list")
@@ -170,6 +223,7 @@ def workout_create(request, program_pk):
         workout.program = program
         workout.save()
         program.bump_version()
+        messages.success(request, _("Workout added."))
         return redirect("programs:program-detail", pk=program.pk)
     return _render_program_form(
         request, "programs/workout_form.html", {"form": form, "program": program}
@@ -184,6 +238,7 @@ def workout_update(request, program_pk, pk):
     if request.method == "POST" and form.is_valid():
         form.save()
         program.bump_version()
+        messages.success(request, _("Workout saved."))
         return redirect("programs:program-detail", pk=program.pk)
     return _render_program_form(
         request, "programs/workout_form.html", {"form": form, "program": program}
@@ -198,6 +253,7 @@ def workout_delete(request, program_pk, pk):
     workout = get_object_or_404(Workout, pk=pk, program=program)
     workout.delete()
     program.bump_version()
+    messages.success(request, _("Workout deleted."))
     return redirect("programs:program-detail", pk=program.pk)
 
 
@@ -211,6 +267,7 @@ def prescription_create(request, program_pk, workout_pk):
         prescription.workout = workout
         prescription.save()
         program.bump_version()
+        messages.success(request, _("Exercise added."))
         return redirect("programs:program-detail", pk=program.pk)
     return _render_program_form(
         request,
@@ -230,6 +287,7 @@ def prescription_update(request, program_pk, workout_pk, pk):
     if request.method == "POST" and form.is_valid():
         form.save()
         program.bump_version()
+        messages.success(request, _("Exercise saved."))
         return redirect("programs:program-detail", pk=program.pk)
     return _render_program_form(
         request,
@@ -247,6 +305,7 @@ def prescription_delete(request, program_pk, workout_pk, pk):
     prescription = get_object_or_404(ExercisePrescription, pk=pk, workout=workout)
     prescription.delete()
     program.bump_version()
+    messages.success(request, _("Exercise removed."))
     return redirect("programs:program-detail", pk=program.pk)
 
 

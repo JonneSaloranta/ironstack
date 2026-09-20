@@ -1,9 +1,9 @@
 {% extends "base.html" %}
-{% load i18n %}
+{% load i18n core_extras %}
 {% block title %}{% if session.workout %}{% trans session.workout.name %}{% else %}{% trans "Freeform workout" %}{% endif %} — IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
-  <h1 style="margin:0;">{% if session.workout %}{% trans session.workout.name %}{% else %}{% trans "Freeform workout" %}{% endif %}</h1>
+  <h1 class="no-margin">{% if session.workout %}{% trans session.workout.name %}{% else %}{% trans "Freeform workout" %}{% endif %}</h1>
 </div>
 <div class="top-bar-actions">
   <span class="tag {% if session.status == 'completed' %}tag-success{% elif session.status == 'abandoned' %}tag-muted{% endif %}">{{ session.get_status_display }}</span>
@@ -12,6 +12,7 @@
 <p class="text-muted">
   {% blocktrans with started=session.started_at|date:"Y-m-d H:i" %}Started {{ started }}{% endblocktrans %}
   {% if session.ended_at %} · {% blocktrans with ended=session.ended_at|date:"Y-m-d H:i" %}ended {{ ended }}{% endblocktrans %}{% endif %}
+  {% if session.duration %} · {{ session.duration|duration }}{% endif %}
 </p>
 
 {% for pe in session.performed_exercises.all %}
@@ -29,16 +30,16 @@
     {% csrf_token %}
     <button type="submit">{% trans "Complete workout" %}</button>
   </form>
-  <form method="post" action="{% url 'workouts:session-abandon' session.pk %}" x-data="{}" @submit="if (!confirm('{% trans "Abandon this workout? It stays in your history as abandoned." %}')) $event.preventDefault()">
+  <form method="post" action="{% url 'workouts:session-abandon' session.pk %}" data-confirm="{% filter force_escape %}{% trans "Abandon this workout? It stays in your history as abandoned." %}{% endfilter %}">
     {% csrf_token %}
     <button type="submit" class="button-danger">{% trans "Abandon workout" %}</button>
   </form>
 {% endif %}
 
-<form method="post" action="{% url 'workouts:session-delete' session.pk %}" x-data="{}" @submit="if (!confirm('{% trans "Delete this workout? This cannot be undone." %}')) $event.preventDefault()">
+<form method="post" action="{% url 'workouts:session-delete' session.pk %}" data-confirm="{% filter force_escape %}{% trans "Delete this workout? This cannot be undone." %}{% endfilter %}">
   {% csrf_token %}
   <button type="submit" class="button-danger">{% trans "Delete workout" %}</button>
 </form>
 
-<p><a class="button-secondary" href="{% url 'workouts:session-list' %}">&larr; {% trans "Back to history" %}</a></p>
+<p><a class="button-link" href="{% url 'workouts:session-list' %}">&larr; {% trans "Back to history" %}</a></p>
 {% endblock %}

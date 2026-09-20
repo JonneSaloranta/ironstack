@@ -18,6 +18,54 @@ narrated summary of the same version.
 
 ## [Unreleased]
 
+## [1.19.0] — 2026-09-20
+
+### Added
+- Personal trainer coaching: turn on "I'm a personal trainer / coach"
+  in Profile → Preferences to let other users request coaching from
+  you (never the other way around) — toggle "Accepting new coaching
+  requests" off anytime to stop new requests without affecting
+  clients you already have. A trainer can share any gym program or
+  diet plan with specific clients they choose, letting each one
+  import their own independent copy with one click — no file to
+  download and re-upload. When a trainer later updates a shared plan,
+  an imported copy shows "Coach update available", with a
+  plain-language preview of exactly what changed before choosing to
+  apply it or keep your own version. Accepting a coaching request is
+  the only consent needed — from then on your coach can see your
+  training history, PRs, and body-weight data on their own "My
+  clients" page, until either of you ends the relationship. Programs
+  and diet plans imported from a coach now show in their own "From my
+  coach" group on your programs/diet plans page, separate from your
+  own.
+
+### Changed
+- UI/UX audit pass. Logging a set now shows what was wrong with the
+  weight or reps you entered (it used to re-render silently), numeric
+  fields open a numeric keypad, and a failed request (server error,
+  dropped connection) shows an error message instead of doing nothing.
+- Destructive actions now share one accessible confirmation dialog
+  (keyboard-trapped, Escape-cancellable) instead of the browser's
+  built-in one; deleting a single set and removing an exercise image
+  now ask first. Fixes the "Delete this group?" confirm, whose
+  apostrophe could break the prompt.
+- Saving, deleting and logging on programs, exercises, measurements
+  and activities now shows a confirmation message; errors stay on
+  screen until dismissed and other messages pause while hovered.
+- Workout history is paginated and each entry shows exercise count,
+  sets, volume and duration; measurement and activity history tables
+  are paginated too. The dashboard offers a "Start freeform workout"
+  button when nothing is in progress, and Progress gains a per-exercise
+  strength-trend picker.
+- Form fields link their errors to the input for screen readers, with
+  a summary at the top of a form; "Back"/"Cancel" links are styled as
+  links so they no longer look like primary actions. Modals now move
+  focus in, trap Tab and restore focus on close.
+- Buttons gain hover/active/disabled states, a wider desktop layout,
+  design tokens and utility classes (replacing most inline styles),
+  and tables get a scroll hint on phones. The manifest no longer
+  locks the installed app to portrait.
+
 ## [1.18.0] — 2026-09-20
 
 ### Added

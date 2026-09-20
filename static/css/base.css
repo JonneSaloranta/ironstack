@@ -2783,3 +2783,366 @@ h2 {
   min-width: auto;
   cursor: pointer;
 }
+
+/* ==========================================================================
+   UI/UX audit pass — design-system foundation.
+   Appended (not woven into the rules above) so this whole layer can be
+   read, and later folded into the sections it refines, in one place.
+   ========================================================================== */
+
+:root {
+  /* Scales for what used to be one-off literals. New CSS should reach for
+     these rather than another 0.8rem / 0.85rem / 0.9rem near-duplicate. */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.25rem;
+  --text-xl: 1.5rem;
+  --radius-sm: 0.25rem;
+  --radius-lg: 0.75rem;
+  --shadow-sm: 0 2px 10px rgba(0, 0, 0, 0.25);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.35);
+  --z-nav: 50;
+  --z-toast: 200;
+  --z-modal: 300;
+  --color-info: var(--color-accent);
+  /* Brightness shifts rather than a second hand-picked color per theme, so
+     hover/active follow whichever of the 5 themes (and light/dark) is on. */
+  --hover-filter: brightness(1.1);
+  --active-filter: brightness(0.92);
+}
+
+/* --- Buttons: states + one clear hierarchy -------------------------------
+   primary   .button / bare <button>   the one action a screen wants
+   secondary .button-secondary         other actions
+   danger    .button-danger            destructive
+   link      .button-link              "Back", "Cancel" — navigation, not an action */
+button:hover:not(:disabled),
+.button:hover,
+.button-secondary:hover {
+  filter: var(--hover-filter);
+}
+
+button:active:not(:disabled),
+.button:active,
+.button-secondary:active {
+  filter: var(--active-filter);
+}
+
+button:disabled,
+.button[aria-disabled="true"] {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.button-danger {
+  color: var(--color-on-accent);
+}
+
+.button-secondary.button-danger,
+.button-secondary.button-danger:hover {
+  background: transparent;
+  color: var(--color-danger);
+  border-color: var(--color-danger);
+}
+
+.button-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--touch-target);
+  padding: 0.5rem 0.25rem;
+  margin-bottom: 0.5rem;
+  border: none;
+  background: transparent;
+  color: var(--color-accent);
+  /* Underlined by default: this is also used inline inside a sentence
+     ("Already have an account? Log in"), where color alone isn't enough
+     to tell a link from body text (axe: link-in-text-block). */
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  cursor: pointer;
+}
+
+.button-link:hover {
+  text-decoration-thickness: 2px;
+}
+
+/* --- Utilities: replace the most-repeated inline style="" attributes ---- */
+.top-bar h1,
+.no-margin {
+  margin: 0;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  align-items: center;
+}
+
+.stack > * + * {
+  margin-top: var(--space-2);
+}
+
+.text-danger {
+  color: var(--color-danger);
+}
+
+.stat-value {
+  font-size: var(--text-xl);
+  font-weight: bold;
+  margin: var(--space-1) 0;
+}
+
+.flex-full {
+  flex: 1 1 100%;
+}
+
+.badge-inline {
+  position: static;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+/* --- Alerts / toasts: real variants ----------------------------------- */
+.pr-banner {
+  color: var(--color-on-accent);
+  box-shadow: var(--shadow-md);
+}
+
+.pr-banner .text-muted {
+  color: inherit;
+  opacity: 0.8;
+}
+
+.pr-banner-info {
+  background: var(--color-info);
+}
+
+.pr-banner-warning {
+  background: var(--color-warning);
+}
+
+.pr-banner-error {
+  color: var(--color-on-accent);
+}
+
+.pr-toast-close {
+  color: inherit;
+  min-height: 2rem;
+  min-width: 2rem;
+}
+
+/* Inline, in-page alert (form-level errors, notices) — not a toast. */
+.alert {
+  border: 1px solid var(--color-border);
+  border-left-width: 4px;
+  border-radius: var(--radius);
+  padding: var(--space-3) var(--space-4);
+  margin-bottom: var(--space-4);
+  background: var(--color-surface);
+}
+
+.alert-error {
+  border-left-color: var(--color-danger);
+}
+
+.alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.alert-info {
+  border-left-color: var(--color-info);
+}
+
+.alert-success {
+  border-left-color: var(--color-success);
+}
+
+.alert ul,
+ul.errorlist {
+  margin: 0;
+  padding-left: 1.25rem;
+}
+
+ul.errorlist {
+  color: var(--color-danger);
+  list-style: none;
+  padding-left: 0;
+  margin-bottom: var(--space-3);
+}
+
+input[aria-invalid="true"],
+select[aria-invalid="true"],
+textarea[aria-invalid="true"] {
+  border-color: var(--color-danger);
+}
+
+/* --- Touch targets & a11y ------------------------------------------------ */
+.modal-close {
+  min-height: var(--touch-target);
+  min-width: var(--touch-target);
+}
+
+.set-actions button,
+.set-actions .button-secondary {
+  min-height: 2rem;
+  min-width: 2rem;
+}
+
+abbr[title]:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .training-fab,
+  .training-fab *,
+  .recent-activity-dot-live,
+  button,
+  .button,
+  .button-secondary {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* --- Loading ------------------------------------------------------------- */
+.htmx-indicator {
+  opacity: 0;
+  transition: opacity 150ms ease-in;
+}
+
+.htmx-request .htmx-indicator,
+.htmx-request.htmx-indicator {
+  opacity: 1;
+}
+
+.skeleton {
+  display: block;
+  min-height: 1rem;
+  border-radius: var(--radius-sm);
+  background: linear-gradient(
+    90deg,
+    var(--color-surface) 25%,
+    var(--color-border) 50%,
+    var(--color-surface) 75%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.4s ease-in-out infinite;
+}
+
+@keyframes skeleton-shimmer {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton {
+    animation: none;
+  }
+}
+
+/* --- Data views ------------------------------------------------------------ */
+/* A horizontally scrollable table on a phone must *look* scrollable — the
+   scrollbar-hiding rule above removes the usual cue, so fade the right edge. */
+.table-wrap {
+  background:
+    linear-gradient(to right, var(--color-surface), transparent) left center / 1.5rem 100% no-repeat local,
+    linear-gradient(to left, var(--color-surface), transparent) right center / 1.5rem 100% no-repeat local;
+}
+
+.progress-bar {
+  height: 0.5rem;
+  border-radius: 999px;
+  background: var(--color-border);
+  overflow: hidden;
+}
+
+.progress-bar > span {
+  display: block;
+  height: 100%;
+  background: var(--color-accent);
+}
+
+.progress-bar.is-over > span {
+  background: var(--color-warning);
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin: var(--space-4) 0;
+}
+
+.breadcrumbs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  padding: 0;
+  margin: 0 0 var(--space-3);
+  list-style: none;
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+.breadcrumbs li + li::before {
+  content: "/";
+  margin-right: var(--space-2);
+}
+
+.breadcrumbs a {
+  color: var(--color-accent);
+}
+
+.form-error-summary:focus {
+  outline: 2px solid var(--color-danger);
+}
+
+/* --- Desktop: use the width -------------------------------------------- */
+@media (min-width: 1024px) {
+  .container {
+    max-width: 64rem;
+  }
+}
+
+/* Shared confirmation dialog (static/js/confirm-dialog.js). */
+.confirm-dialog {
+  max-width: min(26rem, calc(100vw - 2rem));
+  padding: var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  color: var(--color-text);
+  box-shadow: var(--shadow-md);
+}
+
+.confirm-dialog::backdrop {
+  background: rgba(0, 0, 0, 0.6);
+}
+
+.confirm-dialog p {
+  margin-top: 0;
+}
+
+.confirm-dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-2);
+}
+
+.confirm-dialog-actions button {
+  margin-bottom: 0;
+}

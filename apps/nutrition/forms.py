@@ -203,7 +203,12 @@ class DiaryAddEntryForm(forms.Form):
     food_id = forms.IntegerField(required=False, widget=forms.HiddenInput)
     off_barcode = forms.CharField(required=False, widget=forms.HiddenInput)
     meal_slot = forms.ModelChoiceField(queryset=None)
-    quantity = forms.DecimalField(max_digits=8, decimal_places=2, min_value=Decimal("0.01"))
+    quantity = forms.DecimalField(
+        max_digits=8,
+        decimal_places=2,
+        min_value=Decimal("0.01"),
+        widget=forms.NumberInput(attrs={"inputmode": "decimal", "autocomplete": "off"}),
+    )
 
     def __init__(self, *args, user, **kwargs):
         from . import services
@@ -273,7 +278,12 @@ class RecipeIngredientSearchForm(forms.Form):
 
     food_id = forms.IntegerField(required=False, widget=forms.HiddenInput)
     off_barcode = forms.CharField(required=False, widget=forms.HiddenInput)
-    quantity = forms.DecimalField(max_digits=8, decimal_places=2, min_value=Decimal("0.01"))
+    quantity = forms.DecimalField(
+        max_digits=8,
+        decimal_places=2,
+        min_value=Decimal("0.01"),
+        widget=forms.NumberInput(attrs={"inputmode": "decimal", "autocomplete": "off"}),
+    )
 
     def clean(self):
         cleaned = super().clean()
@@ -408,7 +418,12 @@ class DietPlanMealItemSearchForm(forms.Form):
 
     food_id = forms.IntegerField(required=False, widget=forms.HiddenInput)
     off_barcode = forms.CharField(required=False, widget=forms.HiddenInput)
-    quantity = forms.DecimalField(max_digits=8, decimal_places=2, min_value=Decimal("0.01"))
+    quantity = forms.DecimalField(
+        max_digits=8,
+        decimal_places=2,
+        min_value=Decimal("0.01"),
+        widget=forms.NumberInput(attrs={"inputmode": "decimal", "autocomplete": "off"}),
+    )
 
     def clean(self):
         cleaned = super().clean()
@@ -673,4 +688,27 @@ class TimeToGoalCalculatorForm(_UnitAwareWeightHeightForm):
     def canonical_rate_kg_per_week(self):
         return core_units.display_to_kg(
             self.cleaned_data["rate_kg_per_week"], self.user.unit_system
+        )
+
+
+class DietPlanShareForm(forms.Form):
+    """apps.coaching — DietPlan has no general "edit its own fields"
+    form the way Program does (ProgramForm), so this one-field form is
+    the entire UI for a PT choosing which of their *currently active*
+    clients (queryset narrowed in __init__, same reasoning as
+    ProgramForm.shared_with_clients's own narrowed queryset) can see
+    and import a specific diet plan."""
+
+    clients = forms.ModelMultipleChoiceField(
+        queryset=None, widget=forms.CheckboxSelectMultiple, required=False,
+        label=_("Share with these clients"),
+    )
+
+    def __init__(self, *args, coach, **kwargs):
+        super().__init__(*args, **kwargs)
+        from django.contrib.auth import get_user_model
+
+        User = get_user_model()
+        self.fields["clients"].queryset = User.objects.filter(
+            coaches__coach=coach, coaches__ended_at__isnull=True
         )

@@ -3,18 +3,18 @@
 {% block title %}{% trans "Programs" %} — IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
-  <h1 style="margin:0;">{% trans "Programs" %}</h1>
+  <h1 class="no-margin">{% trans "Programs" %}</h1>
 </div>
-
-<h2>{% trans "My programs" %}</h2>
-<p style="display:flex; flex-wrap:wrap; gap:0.5rem;">
+<p class="row">
   <a class="button" href="{% url 'programs:program-create' %}">{% trans "New" %}</a>
   <a class="button-secondary" href="{% url 'programs:program-import' %}">{% trans "Import" %}</a>
 </p>
-{% for program in programs %}
+
+<h2>{% trans "My programs" %}</h2>
+{% for program in own_programs %}
   <a class="card card-link" href="{% url 'programs:program-detail' program.pk %}">
     <strong>{% trans program.name %}</strong>
-    {% if program.is_template %}<span class="tag tag-muted">{% trans "Template" %}</span>{% endif %}
+    {% if program.has_coach_update %}<span class="nav-badge badge-inline" aria-hidden="true"></span> <span class="text-muted">{% trans "Coach update available" %}</span>{% endif %}
     <div class="text-muted">
       {% blocktrans count counter=program.workout_count %}{{ counter }} workout{% plural %}{{ counter }} workouts{% endblocktrans %}
     </div>
@@ -25,6 +25,32 @@
     <p>{% trans "Create one, or copy a template below to get started." %}</p>
   </div>
 {% endfor %}
+
+{% if coach_programs %}
+  <h2>{% trans "From my coach" %}</h2>
+  {% for program in coach_programs %}
+    <a class="card card-link" href="{% url 'programs:program-detail' program.pk %}">
+      <strong>{% trans program.name %}</strong>
+      {% if program.has_coach_update %}<span class="nav-badge badge-inline" aria-hidden="true"></span> <span class="text-muted">{% trans "Coach update available" %}</span>{% endif %}
+      <div class="text-muted">
+        {% blocktrans count counter=program.workout_count %}{{ counter }} workout{% plural %}{{ counter }} workouts{% endblocktrans %}
+      </div>
+    </a>
+  {% endfor %}
+{% endif %}
+
+{% if own_templates %}
+  <h2>{% trans "My templates" %}</h2>
+  {% for program in own_templates %}
+    <a class="card card-link" href="{% url 'programs:program-detail' program.pk %}">
+      <strong>{% trans program.name %}</strong>
+      <span class="tag tag-muted">{% trans "Template" %}</span>
+      <div class="text-muted">
+        {% blocktrans count counter=program.workout_count %}{{ counter }} workout{% plural %}{{ counter }} workouts{% endblocktrans %}
+      </div>
+    </a>
+  {% endfor %}
+{% endif %}
 
 <h2>{% trans "Built-in templates" %}</h2>
 {% for template in templates %}

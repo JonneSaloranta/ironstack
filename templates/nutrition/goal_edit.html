@@ -3,7 +3,7 @@
 {% block title %}{% trans "Change goal" %} — IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
-  <h1 style="margin:0;">{% trans "Change goal" %}</h1>
+  <h1 class="no-margin">{% trans "Change goal" %}</h1>
 </div>
 {% include "nutrition/_subnav.html" %}
 
@@ -23,15 +23,10 @@
     <p class="field-error">{{ form.non_field_errors|striptags }}</p>
   {% endif %}
   {% for field in form %}
-    <div class="field">
-      {{ field.label_tag }}
-      {{ field }}
-      {% if field.help_text %}<p class="field-help">{{ field.help_text }}</p>{% endif %}
-      {% if field.errors %}<p class="field-error">{{ field.errors|striptags }}</p>{% endif %}
-    </div>
+    {% include "core/_field.html" with field=field %}
   {% endfor %}
   <button type="submit">{% trans "Update goal" %}</button>
 </form>
 
-<p><a class="button-secondary" href="{% url 'nutrition:dashboard' %}">&larr; {% trans "Back to nutrition" %}</a></p>
+<p><a class="button-link" href="{% url 'nutrition:dashboard' %}">&larr; {% trans "Back to nutrition" %}</a></p>
 {% endblock %}

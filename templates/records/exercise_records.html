@@ -4,7 +4,7 @@
 {% block content %}
 {% trans exercise.name as exercise_display_name %}
 <div class="top-bar">
-  <h1 style="margin:0;">{{ exercise_display_name }}</h1>
+  <h1 class="no-margin">{{ exercise_display_name }}</h1>
 </div>
 
 <div class="card">
@@ -44,5 +44,5 @@
   </div>
 {% endif %}
 
-<p><a class="button-secondary" href="{% url 'exercises:exercise-detail' exercise.pk %}">&larr; {% trans "Back to exercise" %}</a></p>
+<p><a class="button-link" href="{% url 'exercises:exercise-detail' exercise.pk %}">&larr; {% trans "Back to exercise" %}</a></p>
 {% endblock %}

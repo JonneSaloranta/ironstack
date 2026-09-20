@@ -3,12 +3,12 @@
 {% block title %}{% trans "New API key" %} — IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
-  <h1 style="margin:0;">{% trans "New API key" %}</h1>
+  <h1 class="no-margin">{% trans "New API key" %}</h1>
 </div>
 
 <form class="card" method="post">
   {% csrf_token %}
-  {{ form.non_field_errors }}
+  {% include "core/_form_errors.html" %}
   <div class="field">
     {{ form.name.label_tag }}
     {{ form.name }}
@@ -39,5 +39,5 @@
   <button type="submit">{% trans "Create key" %}</button>
 </form>
 
-<p><a class="button-secondary" href="{% url 'api_keys:key-list' %}">&larr; {% trans "Back to API keys" %}</a></p>
+<p><a class="button-link" href="{% url 'api_keys:key-list' %}">&larr; {% trans "Back to API keys" %}</a></p>
 {% endblock %}

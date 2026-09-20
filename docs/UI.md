@@ -537,6 +537,35 @@ Works regardless of status (in-progress, completed, or abandoned) —
 distinct from `abandon`, which keeps the session in history marked
 abandoned rather than removing it.
 
+### UI/UX audit pass (supersedes parts of "Navigational buttons")
+A static audit (templates + `base.css`) led to these standing conventions:
+
+- **Back/Cancel are `.button-link`**, not `.button-secondary`: still a full
+  `--touch-target` hit area (min-height 2.75rem) but rendered as an accent
+  link, so navigation no longer looks like the page's actions. Icon-only
+  arrows (previous/next day, previous/next exercise) stay `.button-secondary`.
+- **Button hierarchy**: `.button` / bare `<button>` primary, `.button-secondary`
+  other actions, `.button-danger` destructive only (Log out is neutral).
+  Hover/active/disabled states use a `filter` so they follow every theme.
+- **Confirmations**: any destructive `<form>` sets `data-confirm="..."` (wrap
+  the text in `{% filter force_escape %}`); `hx-confirm` works too.
+  `static/js/confirm-dialog.js` shows one `<dialog>` (focus trap, Escape,
+  focus return). Don't hand-write `confirm()` in Alpine expressions.
+- **Modals** (`.modal-backdrop`) get focus-in, Tab trap and focus return from
+  `static/js/modal-a11y.js` without per-modal wiring.
+- **Forms**: render fields with `core/_field.html` (label, help, errors linked
+  through `aria-describedby`/`aria-invalid` by the `field_a11y` filter) and put
+  `core/_form_errors.html` at the top. Empty lists use `core/_empty_state.html`;
+  paginated lists use `core/_pagination.html` (`url_replace` keeps filters).
+- **Feedback**: create/update/delete views call `messages.success`. Errors
+  render as `role="alert"` and don't auto-dismiss; other levels dismiss after
+  6 s unless hovered/focused. `static/js/htmx-errors.js` turns failed HTMX
+  requests into an error toast.
+- **Tokens/utilities** (end of `base.css`): `--space-*`, `--text-*`,
+  `--radius-sm/lg`, `--shadow-*`, `--z-*`; `.row`, `.stack`, `.no-margin`,
+  `.text-danger`, `.stat-value`, `.flex-full`. Prefer these to new inline styles.
+- **Desktop** container widens to 64rem at 1024px.
+
 ### Navigational buttons
 Every "Back to X" link (program/exercise/workout/measurement/activity/
 records pages, every create/edit form, and the error pages) is styled as

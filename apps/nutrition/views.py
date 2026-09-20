@@ -727,6 +727,7 @@ class DiaryDayView(LoginRequiredMixin, View):
             self.template_name,
             {
                 "date": target_date,
+                "is_today": target_date == timezone.localdate(),
                 "previous_date": target_date - timezone.timedelta(days=1),
                 "next_date": target_date + timezone.timedelta(days=1),
                 "meal_slots": meal_slots,
@@ -1218,6 +1219,29 @@ class DietPlanListView(LoginRequiredMixin, ListView):
 
         return DietPlan.objects.filter(user=self.request.user).order_by("-created_at")
 
+    def get_context_data(self, **kwargs):
+        # See apps.programs.views.ProgramListView's own identical
+        # comment — a plain per-object attribute, not a queryset
+        # annotation, for the same "small list, cheap per-row check"
+        # reasoning.
+        context = super().get_context_data(**kwargs)
+        from apps.coaching.services import diet_plan_update_available
+
+        for plan in context["plans"]:
+            plan.has_coach_update = (
+                plan.imported_from_id is not None and diet_plan_update_available(plan)
+            )
+        # Same grouping apps.programs.views.ProgramListView splits its
+        # own flat list into — asked for directly, mirrored here minus
+        # the template groups, since DietPlan has no template concept.
+        context["coach_plans"] = [
+            plan for plan in context["plans"] if plan.imported_from_id is not None
+        ]
+        context["own_plans"] = [
+            plan for plan in context["plans"] if plan.imported_from_id is None
+        ]
+        return context
+
 
 class DietPlanCreateView(LoginRequiredMixin, View):
     """Step 1 (and only step — see docs/NUTRITION.md "Diet builder
@@ -1474,6 +1498,33 @@ def diet_plan_toggle_active(request, pk):
 
 
 @login_required
+def diet_plan_share(request, pk):
+    """apps.coaching — only a personal trainer can share a diet plan
+    at all (same gate ProgramForm's own shared_with_clients field
+    applies); which of their *currently active* clients it's shared
+    with is picked here, one plan at a time, the diet-plan-side
+    equivalent of ProgramForm's own field since DietPlan has no
+    general "edit its own fields" form to attach it to."""
+    from .forms import DietPlanShareForm
+
+    plan = _owned_diet_plan_or_404(request, pk)
+    if not request.user.is_personal_trainer:
+        messages.error(request, _("Only a personal trainer can share a diet plan."))
+        return redirect("nutrition:diet-plan-detail", pk=plan.pk)
+
+    if request.method == "POST":
+        form = DietPlanShareForm(request.POST, coach=request.user)
+        if form.is_valid():
+            plan.shared_with_clients.set(form.cleaned_data["clients"])
+            return redirect("nutrition:diet-plan-detail", pk=plan.pk)
+    else:
+        form = DietPlanShareForm(
+            coach=request.user, initial={"clients": plan.shared_with_clients.all()}
+        )
+    return render(request, "nutrition/diet_plan_share_form.html", {"form": form, "plan": plan})
+
+
+@login_required
 def diet_plan_item_edit(request, plan_pk, pk):
     from .models import DietPlanItem
 
@@ -1482,6 +1533,7 @@ def diet_plan_item_edit(request, plan_pk, pk):
     form = DietPlanItemForm(request.POST or None, instance=item, user=request.user)
     if request.method == "POST" and form.is_valid():
         form.save()
+        plan.bump_version()
         return redirect("nutrition:diet-plan-detail", pk=plan.pk)
     return render(
         request, "nutrition/diet_plan_item_form.html", {"form": form, "plan": plan, "item": item}
@@ -1497,6 +1549,7 @@ def diet_plan_item_delete(request, plan_pk, pk):
     plan = _owned_diet_plan_or_404(request, plan_pk)
     item = get_object_or_404(DietPlanItem, pk=pk, diet_plan_meal__diet_plan=plan)
     item.delete()
+    plan.bump_version()
     return redirect("nutrition:diet-plan-detail", pk=plan.pk)
 
 
@@ -1544,6 +1597,7 @@ def diet_plan_meal_item_add(request, plan_pk, meal_pk):
 
     next_order = (meal.items.aggregate(highest=Max("order"))["highest"] or -1) + 1
     meal.items.create(food=food, quantity=form.cleaned_data["quantity"], order=next_order)
+    plan.bump_version()
     return redirect("nutrition:diet-plan-detail", pk=plan.pk)
 
 

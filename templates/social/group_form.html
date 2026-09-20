@@ -3,23 +3,19 @@
 {% block title %}{% if group %}{% trans "Edit group" %}{% else %}{% trans "New group" %}{% endif %} — IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
-  <h1 style="margin:0;">{% if group %}{% trans "Edit group" %}{% else %}{% trans "New group" %}{% endif %}</h1>
+  <h1 class="no-margin">{% if group %}{% trans "Edit group" %}{% else %}{% trans "New group" %}{% endif %}</h1>
 </div>
 
 <form class="card" method="post">
   {% csrf_token %}
-  {{ form.non_field_errors }}
+  {% include "core/_form_errors.html" %}
   {% for field in form %}
-    <div class="field">
-      {{ field.label_tag }}
-      {{ field }}
-      {% if field.errors %}<p class="field-error">{{ field.errors|striptags }}</p>{% endif %}
-    </div>
+    {% include "core/_field.html" with field=field %}
   {% endfor %}
   <button type="submit">{% trans "Save" %}</button>
 </form>
 
 <p>
-  <a class="button-secondary" href="{% if group %}{% url 'social:group-detail' group.pk %}{% else %}{% url 'social:group-list' %}{% endif %}">&larr; {% trans "Cancel" %}</a>
+  <a class="button-link" href="{% if group %}{% url 'social:group-detail' group.pk %}{% else %}{% url 'social:group-list' %}{% endif %}">&larr; {% trans "Cancel" %}</a>
 </p>
 {% endblock %}
