@@ -1290,6 +1290,60 @@ def _owned_diet_plan_or_404(request, pk):
     return get_object_or_404(DietPlan, pk=pk, user=request.user)
 
 
+@login_required
+def diet_plan_export(request, pk):
+    """Downloads one of this user's own diet plans as a plain,
+    human-readable `.json` file — see apps.core.data_exchange's own
+    module docstring for the whole export/import feature this is one
+    third of, alongside programs and recipes."""
+    plan = _owned_diet_plan_or_404(request, pk)
+    envelope = build_envelope("diet_plan", services.export_diet_plan(plan))
+    response = JsonResponse(envelope, json_dumps_params={"indent": 2, "ensure_ascii": False})
+    filename = f"ironstack-diet-plan-{slugify(plan.name) or plan.pk}.json"
+    response["Content-Disposition"] = f'attachment; filename="{filename}"'
+    return response
+
+
+@login_required
+def diet_plan_import(request):
+    """The other half — uploads a previously-exported diet plan and
+    recreates it as a new, inactive plan owned by the current user.
+    `apps.nutrition.services.import_diet_plan` runs the whole thing
+    inside one transaction, resolving each meal's slot and each item's
+    food/recipe the same way a standalone recipe import already
+    does — see that function's own docstring for why it never comes in
+    already active."""
+    if request.method != "POST":
+        return render(
+            request, "nutrition/diet_plan_import.html", {"form": ExportImportUploadForm()}
+        )
+
+    form = ExportImportUploadForm(request.POST, request.FILES)
+    if not form.is_valid():
+        return render(request, "nutrition/diet_plan_import.html", {"form": form})
+
+    try:
+        payload, exported_app_version = parse_envelope(
+            form.cleaned_data["export_file"].read(), expected_kind="diet_plan"
+        )
+        plan = services.import_diet_plan(request.user, payload)
+    except ImportValidationError as exc:
+        form.add_error("export_file", str(exc))
+        return render(request, "nutrition/diet_plan_import.html", {"form": form})
+
+    messages.success(request, _("Imported “%(name)s”.") % {"name": plan.name})
+    if exported_app_version != version_info.get_version():
+        messages.info(
+            request,
+            _(
+                "This file was exported from IronStack %(version)s — worth "
+                "double-checking the import if something looks off."
+            )
+            % {"version": exported_app_version},
+        )
+    return redirect("nutrition:diet-plan-detail", pk=plan.pk)
+
+
 def _diet_plan_meals_with_nutrition(plan):
     """The plan's meals/items, each item annotated with its computed
     `.nutrition` — shared by the detail page and diet_plan_log's own

@@ -81,9 +81,11 @@ urlpatterns = [
     ),
     path("diet-plans/", views.DietPlanListView.as_view(), name="diet-plan-list"),
     path("diet-plans/new/", views.DietPlanCreateView.as_view(), name="diet-plan-create"),
+    path("diet-plans/import/", views.diet_plan_import, name="diet-plan-import"),
     path(
         "diet-plans/<int:pk>/", views.DietPlanDetailView.as_view(), name="diet-plan-detail"
     ),
+    path("diet-plans/<int:pk>/export/", views.diet_plan_export, name="diet-plan-export"),
     path("diet-plans/<int:pk>/delete/", views.diet_plan_delete, name="diet-plan-delete"),
     path(
         "diet-plans/<int:pk>/toggle-active/",

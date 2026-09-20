@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: IronStack\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-20 11:54+0000\n"
+"POT-Creation-Date: 2026-09-20 12:46+0000\n"
 "Language: it\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -690,7 +690,9 @@ msgstr "Il file non sembra un'esportazione di IronStack."
 msgid ""
 "This file was exported by a newer version of IronStack that this instance "
 "doesn't know how to read yet."
-msgstr "Questo file è stato esportato da una versione più recente di IronStack che questa istanza non sa ancora leggere."
+msgstr ""
+"Questo file è stato esportato da una versione più recente di IronStack che "
+"questa istanza non sa ancora leggere."
 
 #: apps/core/data_exchange.py:122
 #, python-format
@@ -2454,7 +2456,7 @@ msgid "Moderately active"
 msgstr "Moderatamente attivo"
 
 #: apps/nutrition/models.py:53 templates/nutrition/diet_plan_detail.html:12
-#: templates/nutrition/diet_plan_list.html:18
+#: templates/nutrition/diet_plan_list.html:19
 msgid "Active"
 msgstr "Attivo"
 
@@ -2634,7 +2636,7 @@ msgid "Nothing to copy — that day has no entries."
 msgstr "Niente da copiare — quel giorno non ha voci."
 
 #: apps/nutrition/views.py:807 apps/nutrition/views.py:1127
-#: apps/nutrition/views.py:1484
+#: apps/nutrition/views.py:1538
 msgid "That food couldn't be imported — try again."
 msgstr "Non è stato possibile importare questo alimento — riprova."
 
@@ -2653,26 +2655,30 @@ msgstr "Salvato “%(name)s” come nuova ricetta."
 msgid "\"%(name)s\" created — now add its ingredients below."
 msgstr "\"%(name)s\" creata — aggiungi ora i suoi ingredienti qui sotto."
 
-#: apps/nutrition/views.py:1062 apps/programs/views.py:147
+#: apps/nutrition/views.py:1062 apps/nutrition/views.py:1334
+#: apps/programs/views.py:147
 #, python-format
 msgid "Imported “%(name)s”."
 msgstr "Importato “%(name)s”."
 
-#: apps/nutrition/views.py:1067 apps/programs/views.py:152
+#: apps/nutrition/views.py:1067 apps/nutrition/views.py:1339
+#: apps/programs/views.py:152
 #, python-format
 msgid ""
 "This file was exported from IronStack %(version)s — worth double-checking "
 "the import if something looks off."
-msgstr "Questo file è stato esportato da IronStack %(version)s — vale la pena ricontrollare l'importazione se qualcosa non torna."
+msgstr ""
+"Questo file è stato esportato da IronStack %(version)s — vale la pena "
+"ricontrollare l'importazione se qualcosa non torna."
 
-#: apps/nutrition/views.py:1521
+#: apps/nutrition/views.py:1575
 #, python-format
 msgid "Logged %(count)d item to %(date)s."
 msgid_plural "Logged %(count)d items to %(date)s."
 msgstr[0] "Registrata %(count)d voce in %(date)s."
 msgstr[1] "Registrate %(count)d voci in %(date)s."
 
-#: apps/nutrition/views.py:1532
+#: apps/nutrition/views.py:1586
 msgid "Nothing to log — this plan has no items for that date."
 msgstr "Niente da registrare — questo piano non ha voci per quella data."
 
@@ -5002,7 +5008,7 @@ msgstr ""
 
 #: templates/exercises/exercise_detail.html:102
 #: templates/nutrition/diet_plan_detail.html:13
-#: templates/nutrition/diet_plan_list.html:26
+#: templates/nutrition/diet_plan_list.html:27
 msgid "Deactivate"
 msgstr "Disattiva"
 
@@ -5255,6 +5261,8 @@ msgid "From OpenFoodFacts"
 msgstr "Da OpenFoodFacts"
 
 #: templates/nutrition/_food_search_results.html:61
+#: templates/nutrition/diet_plan_import.html:22
+#: templates/nutrition/diet_plan_list.html:10
 #: templates/nutrition/food_category.html:20
 #: templates/nutrition/recipe_import.html:22
 #: templates/nutrition/recipe_list.html:10
@@ -5605,7 +5613,7 @@ msgstr "Quante calorie brucia il tuo corpo a riposo e in totale."
 #: templates/nutrition/calculators_home.html:48
 #: templates/nutrition/calculators_home.html:56
 #: templates/nutrition/calculators_home.html:64
-#: templates/nutrition/diet_plan_list.html:29
+#: templates/nutrition/diet_plan_list.html:30
 #: templates/nutrition/recipe_list.html:34
 #: templates/nutrition/recipe_list.html:71
 msgid "Open"
@@ -5650,7 +5658,7 @@ msgstr ""
 
 #: templates/nutrition/calculators_home.html:67
 #: templates/nutrition/diary_day.html:100
-#: templates/nutrition/diet_plan_list.html:39
+#: templates/nutrition/diet_plan_list.html:40
 #: templates/nutrition/food_list.html:88 templates/nutrition/goal_edit.html:36
 #: templates/nutrition/recipe_list.html:90 templates/nutrition/stats.html:44
 msgid "Back to nutrition"
@@ -5814,23 +5822,29 @@ msgid "Edit entry"
 msgstr "Modifica voce"
 
 #: templates/nutrition/diet_plan_detail.html:15
-#: templates/nutrition/diet_plan_list.html:26
+#: templates/nutrition/diet_plan_list.html:27
 msgid "Activate"
 msgstr "Attiva"
 
-#: templates/nutrition/diet_plan_detail.html:20
+#: templates/nutrition/diet_plan_detail.html:18
+#: templates/nutrition/recipe_detail.html:14
+#: templates/programs/program_detail.html:12
+msgid "Export"
+msgstr "Esporta"
+
+#: templates/nutrition/diet_plan_detail.html:21
 msgid "protein"
 msgstr "proteine"
 
-#: templates/nutrition/diet_plan_detail.html:20
+#: templates/nutrition/diet_plan_detail.html:21
 msgid "carbs"
 msgstr "carboidrati"
 
-#: templates/nutrition/diet_plan_detail.html:20
+#: templates/nutrition/diet_plan_detail.html:21
 msgid "fat"
 msgstr "grassi"
 
-#: templates/nutrition/diet_plan_detail.html:22
+#: templates/nutrition/diet_plan_detail.html:23
 msgid ""
 "Varies across the week — same daily calories/macros every day, different "
 "meals."
@@ -5838,30 +5852,31 @@ msgstr ""
 "Varia durante la settimana — stesse calorie/macro giornaliere ogni giorno, "
 "pasti diversi."
 
-#: templates/nutrition/diet_plan_detail.html:68
+#: templates/nutrition/diet_plan_detail.html:69
 msgid "Log this plan to your diary"
 msgstr "Registra questo piano nel tuo diario"
 
-#: templates/nutrition/diet_plan_detail.html:70
+#: templates/nutrition/diet_plan_detail.html:71
 msgid "Logs whichever day of the week the date below falls on."
 msgstr ""
 "Registra qualunque giorno della settimana corrisponda alla data qui sotto."
 
-#: templates/nutrition/diet_plan_detail.html:78
+#: templates/nutrition/diet_plan_detail.html:79
 #: templates/nutrition/recipe_detail.html:95
 msgid "Log it"
 msgstr "Registra"
 
-#: templates/nutrition/diet_plan_detail.html:81
+#: templates/nutrition/diet_plan_detail.html:82
 #: templates/nutrition/diet_plan_form.html:25
+#: templates/nutrition/diet_plan_import.html:25
 msgid "Back to diet plans"
 msgstr "Torna ai piani alimentari"
 
-#: templates/nutrition/diet_plan_detail.html:85
+#: templates/nutrition/diet_plan_detail.html:86
 msgid "Delete this plan?"
 msgstr "Eliminare questo piano?"
 
-#: templates/nutrition/diet_plan_detail.html:87
+#: templates/nutrition/diet_plan_detail.html:88
 msgid "Delete plan"
 msgstr "Elimina piano"
 
@@ -5887,6 +5902,20 @@ msgstr ""
 msgid "Create plan"
 msgstr "Crea piano"
 
+#: templates/nutrition/diet_plan_import.html:3
+#: templates/nutrition/diet_plan_import.html:6
+msgid "Import diet plan"
+msgstr "Importa piano alimentare"
+
+#: templates/nutrition/diet_plan_import.html:12
+msgid ""
+"Upload a diet plan someone exported — from this instance, or a completely "
+"different IronStack instance. Foods and recipes it uses are matched against "
+"your own existing ones where possible, rather than duplicated; anything "
+"missing is recreated for you. Imported inactive, so it never replaces "
+"whatever plan you're currently following."
+msgstr "Carica un piano alimentare che qualcuno ha esportato — da questa istanza o da un'istanza IronStack completamente diversa. Gli alimenti e le ricette che utilizza vengono associati, quando possibile, ai tuoi esistenti invece di essere duplicati; ciò che manca viene ricreato per te. Importato inattivo, così non sostituisce mai il piano che stai attualmente seguendo."
+
 #: templates/nutrition/diet_plan_item_form.html:3
 #: templates/nutrition/diet_plan_item_form.html:6
 msgid "Swap item"
@@ -5901,7 +5930,7 @@ msgstr "Torna al piano"
 msgid "+ New plan"
 msgstr "+ Nuovo piano"
 
-#: templates/nutrition/diet_plan_list.html:35
+#: templates/nutrition/diet_plan_list.html:36
 msgid "No diet plans yet."
 msgstr "Nessun piano alimentare ancora."
 
@@ -6182,11 +6211,6 @@ msgstr "Salva e inizia a monitorare"
 msgid "Template"
 msgstr "Modello"
 
-#: templates/nutrition/recipe_detail.html:14
-#: templates/programs/program_detail.html:12
-msgid "Export"
-msgstr "Esporta"
-
 #: templates/nutrition/recipe_detail.html:19
 #, python-format
 msgid ""
@@ -6266,7 +6290,11 @@ msgid ""
 "different IronStack instance. A food originally imported from OpenFoodFacts "
 "is looked up again by its own barcode; anything else is recreated as your "
 "own food."
-msgstr "Carica una ricetta che qualcuno ha esportato — da questa istanza o da un'istanza IronStack completamente diversa. Un alimento originariamente importato da OpenFoodFacts viene ricercato di nuovo tramite il proprio codice a barre; il resto viene ricreato come tuo alimento."
+msgstr ""
+"Carica una ricetta che qualcuno ha esportato — da questa istanza o da "
+"un'istanza IronStack completamente diversa. Un alimento originariamente "
+"importato da OpenFoodFacts viene ricercato di nuovo tramite il proprio "
+"codice a barre; il resto viene ricreato come tuo alimento."
 
 #: templates/nutrition/recipe_ingredient_edit_form.html:3
 msgid "Edit ingredient"
@@ -6472,7 +6500,11 @@ msgid ""
 "different IronStack instance. Any custom exercises it uses are recreated for "
 "you; a name matching one of this instance's own system exercises is reused "
 "as-is."
-msgstr "Carica un programma che qualcuno ha esportato — da questa istanza o da un'istanza IronStack completamente diversa. Gli esercizi personalizzati che utilizza vengono ricreati per te; un nome che corrisponde a un esercizio di sistema di questa istanza viene riutilizzato così com'è."
+msgstr ""
+"Carica un programma che qualcuno ha esportato — da questa istanza o da "
+"un'istanza IronStack completamente diversa. Gli esercizi personalizzati che "
+"utilizza vengono ricreati per te; un nome che corrisponde a un esercizio di "
+"sistema di questa istanza viene riutilizzato così com'è."
 
 #: templates/programs/program_list.html:9
 msgid "My programs"

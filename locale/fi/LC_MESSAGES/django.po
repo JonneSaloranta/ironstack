@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: IronStack\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-20 11:54+0000\n"
+"POT-Creation-Date: 2026-09-20 12:46+0000\n"
 "Language: fi\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -689,7 +689,9 @@ msgstr "Tiedosto ei näytä IronStackin viennille."
 msgid ""
 "This file was exported by a newer version of IronStack that this instance "
 "doesn't know how to read yet."
-msgstr "Tämä tiedosto on viety uudemmalla IronStack-versiolla, jota tämä asennus ei vielä osaa lukea."
+msgstr ""
+"Tämä tiedosto on viety uudemmalla IronStack-versiolla, jota tämä asennus ei "
+"vielä osaa lukea."
 
 #: apps/core/data_exchange.py:122
 #, python-format
@@ -2411,7 +2413,7 @@ msgid "Moderately active"
 msgstr "Kohtalaisen aktiivinen"
 
 #: apps/nutrition/models.py:53 templates/nutrition/diet_plan_detail.html:12
-#: templates/nutrition/diet_plan_list.html:18
+#: templates/nutrition/diet_plan_list.html:19
 msgid "Active"
 msgstr "Aktiivinen"
 
@@ -2589,7 +2591,7 @@ msgid "Nothing to copy — that day has no entries."
 msgstr "Ei mitään kopioitavaa — kyseiselle päivälle ei ole kirjattu mitään."
 
 #: apps/nutrition/views.py:807 apps/nutrition/views.py:1127
-#: apps/nutrition/views.py:1484
+#: apps/nutrition/views.py:1538
 msgid "That food couldn't be imported — try again."
 msgstr "Tätä ruokaa ei voitu tuoda — yritä uudelleen."
 
@@ -2609,26 +2611,30 @@ msgstr "Tallennettiin ”%(name)s” uutena reseptinä."
 msgid "\"%(name)s\" created — now add its ingredients below."
 msgstr "\"%(name)s\" luotu — lisää sen ainesosat alla."
 
-#: apps/nutrition/views.py:1062 apps/programs/views.py:147
+#: apps/nutrition/views.py:1062 apps/nutrition/views.py:1334
+#: apps/programs/views.py:147
 #, python-format
 msgid "Imported “%(name)s”."
 msgstr "Tuotiin ”%(name)s”."
 
-#: apps/nutrition/views.py:1067 apps/programs/views.py:152
+#: apps/nutrition/views.py:1067 apps/nutrition/views.py:1339
+#: apps/programs/views.py:152
 #, python-format
 msgid ""
 "This file was exported from IronStack %(version)s — worth double-checking "
 "the import if something looks off."
-msgstr "Tämä tiedosto on viety IronStack %(version)s -versiosta — kannattaa tarkistaa tuonti, jos jokin näyttää oudolta."
+msgstr ""
+"Tämä tiedosto on viety IronStack %(version)s -versiosta — kannattaa "
+"tarkistaa tuonti, jos jokin näyttää oudolta."
 
-#: apps/nutrition/views.py:1521
+#: apps/nutrition/views.py:1575
 #, python-format
 msgid "Logged %(count)d item to %(date)s."
 msgid_plural "Logged %(count)d items to %(date)s."
 msgstr[0] "Kirjattiin %(count)d kohde päivälle %(date)s."
 msgstr[1] "Kirjattiin %(count)d kohdetta päivälle %(date)s."
 
-#: apps/nutrition/views.py:1532
+#: apps/nutrition/views.py:1586
 msgid "Nothing to log — this plan has no items for that date."
 msgstr ""
 "Ei mitään kirjattavaa — tällä suunnitelmalla ei ole kohteita kyseiselle "
@@ -4942,7 +4948,7 @@ msgstr ""
 
 #: templates/exercises/exercise_detail.html:102
 #: templates/nutrition/diet_plan_detail.html:13
-#: templates/nutrition/diet_plan_list.html:26
+#: templates/nutrition/diet_plan_list.html:27
 msgid "Deactivate"
 msgstr "Poista käytöstä"
 
@@ -5194,6 +5200,8 @@ msgid "From OpenFoodFacts"
 msgstr "OpenFoodFactsista"
 
 #: templates/nutrition/_food_search_results.html:61
+#: templates/nutrition/diet_plan_import.html:22
+#: templates/nutrition/diet_plan_list.html:10
 #: templates/nutrition/food_category.html:20
 #: templates/nutrition/recipe_import.html:22
 #: templates/nutrition/recipe_list.html:10
@@ -5534,7 +5542,7 @@ msgstr "Kuinka monta kaloria kehosi kuluttaa levossa ja yhteensä."
 #: templates/nutrition/calculators_home.html:48
 #: templates/nutrition/calculators_home.html:56
 #: templates/nutrition/calculators_home.html:64
-#: templates/nutrition/diet_plan_list.html:29
+#: templates/nutrition/diet_plan_list.html:30
 #: templates/nutrition/recipe_list.html:34
 #: templates/nutrition/recipe_list.html:71
 msgid "Open"
@@ -5576,7 +5584,7 @@ msgstr ""
 
 #: templates/nutrition/calculators_home.html:67
 #: templates/nutrition/diary_day.html:100
-#: templates/nutrition/diet_plan_list.html:39
+#: templates/nutrition/diet_plan_list.html:40
 #: templates/nutrition/food_list.html:88 templates/nutrition/goal_edit.html:36
 #: templates/nutrition/recipe_list.html:90 templates/nutrition/stats.html:44
 msgid "Back to nutrition"
@@ -5740,23 +5748,29 @@ msgid "Edit entry"
 msgstr "Muokkaa merkintää"
 
 #: templates/nutrition/diet_plan_detail.html:15
-#: templates/nutrition/diet_plan_list.html:26
+#: templates/nutrition/diet_plan_list.html:27
 msgid "Activate"
 msgstr "Ota käyttöön"
 
-#: templates/nutrition/diet_plan_detail.html:20
+#: templates/nutrition/diet_plan_detail.html:18
+#: templates/nutrition/recipe_detail.html:14
+#: templates/programs/program_detail.html:12
+msgid "Export"
+msgstr "Vie"
+
+#: templates/nutrition/diet_plan_detail.html:21
 msgid "protein"
 msgstr "proteiini"
 
-#: templates/nutrition/diet_plan_detail.html:20
+#: templates/nutrition/diet_plan_detail.html:21
 msgid "carbs"
 msgstr "hiilarit"
 
-#: templates/nutrition/diet_plan_detail.html:20
+#: templates/nutrition/diet_plan_detail.html:21
 msgid "fat"
 msgstr "rasva"
 
-#: templates/nutrition/diet_plan_detail.html:22
+#: templates/nutrition/diet_plan_detail.html:23
 msgid ""
 "Varies across the week — same daily calories/macros every day, different "
 "meals."
@@ -5764,29 +5778,30 @@ msgstr ""
 "Vaihtelee viikon aikana — samat päivittäiset kalorit/makrot joka päivä, eri "
 "ateriat."
 
-#: templates/nutrition/diet_plan_detail.html:68
+#: templates/nutrition/diet_plan_detail.html:69
 msgid "Log this plan to your diary"
 msgstr "Kirjaa tämä suunnitelma päiväkirjaasi"
 
-#: templates/nutrition/diet_plan_detail.html:70
+#: templates/nutrition/diet_plan_detail.html:71
 msgid "Logs whichever day of the week the date below falls on."
 msgstr "Kirjaa sen viikonpäivän mukaan, johon alla oleva päivämäärä osuu."
 
-#: templates/nutrition/diet_plan_detail.html:78
+#: templates/nutrition/diet_plan_detail.html:79
 #: templates/nutrition/recipe_detail.html:95
 msgid "Log it"
 msgstr "Kirjaa"
 
-#: templates/nutrition/diet_plan_detail.html:81
+#: templates/nutrition/diet_plan_detail.html:82
 #: templates/nutrition/diet_plan_form.html:25
+#: templates/nutrition/diet_plan_import.html:25
 msgid "Back to diet plans"
 msgstr "Takaisin ruokavaliosuunnitelmiin"
 
-#: templates/nutrition/diet_plan_detail.html:85
+#: templates/nutrition/diet_plan_detail.html:86
 msgid "Delete this plan?"
 msgstr "Poistetaanko tämä suunnitelma?"
 
-#: templates/nutrition/diet_plan_detail.html:87
+#: templates/nutrition/diet_plan_detail.html:88
 msgid "Delete plan"
 msgstr "Poista suunnitelma"
 
@@ -5812,6 +5827,20 @@ msgstr ""
 msgid "Create plan"
 msgstr "Luo suunnitelma"
 
+#: templates/nutrition/diet_plan_import.html:3
+#: templates/nutrition/diet_plan_import.html:6
+msgid "Import diet plan"
+msgstr "Tuo ruokavaliosuunnitelma"
+
+#: templates/nutrition/diet_plan_import.html:12
+msgid ""
+"Upload a diet plan someone exported — from this instance, or a completely "
+"different IronStack instance. Foods and recipes it uses are matched against "
+"your own existing ones where possible, rather than duplicated; anything "
+"missing is recreated for you. Imported inactive, so it never replaces "
+"whatever plan you're currently following."
+msgstr "Lataa jonkun viemä ruokavaliosuunnitelma — tästä asennuksesta tai täysin toisesta IronStack-asennuksesta. Sen käyttämät ruoat ja reseptit yhdistetään mahdollisuuksien mukaan omiin olemassa oleviin, ei monisteta; puuttuvat luodaan uudelleen sinulle. Tuodaan pois päältä, jotta se ei koskaan korvaa nykyisin seuraamaasi suunnitelmaa."
+
 #: templates/nutrition/diet_plan_item_form.html:3
 #: templates/nutrition/diet_plan_item_form.html:6
 msgid "Swap item"
@@ -5826,7 +5855,7 @@ msgstr "Takaisin suunnitelmaan"
 msgid "+ New plan"
 msgstr "+ Uusi suunnitelma"
 
-#: templates/nutrition/diet_plan_list.html:35
+#: templates/nutrition/diet_plan_list.html:36
 msgid "No diet plans yet."
 msgstr "Ei vielä ruokavaliosuunnitelmia."
 
@@ -6106,11 +6135,6 @@ msgstr "Tallenna ja aloita seuranta"
 msgid "Template"
 msgstr "Malli"
 
-#: templates/nutrition/recipe_detail.html:14
-#: templates/programs/program_detail.html:12
-msgid "Export"
-msgstr "Vie"
-
 #: templates/nutrition/recipe_detail.html:19
 #, python-format
 msgid ""
@@ -6190,7 +6214,10 @@ msgid ""
 "different IronStack instance. A food originally imported from OpenFoodFacts "
 "is looked up again by its own barcode; anything else is recreated as your "
 "own food."
-msgstr "Lataa jonkun viemä resepti — tästä asennuksesta tai täysin toisesta IronStack-asennuksesta. Alun perin OpenFoodFactsista tuotu ruoka haetaan uudelleen sen omalla viivakoodilla; muu luodaan uudelleen omaksi ruoaksesi."
+msgstr ""
+"Lataa jonkun viemä resepti — tästä asennuksesta tai täysin toisesta "
+"IronStack-asennuksesta. Alun perin OpenFoodFactsista tuotu ruoka haetaan "
+"uudelleen sen omalla viivakoodilla; muu luodaan uudelleen omaksi ruoaksesi."
 
 #: templates/nutrition/recipe_ingredient_edit_form.html:3
 msgid "Edit ingredient"
@@ -6394,7 +6421,11 @@ msgid ""
 "different IronStack instance. Any custom exercises it uses are recreated for "
 "you; a name matching one of this instance's own system exercises is reused "
 "as-is."
-msgstr "Lataa jonkun viemä ohjelma — tästä asennuksesta tai täysin toisesta IronStack-asennuksesta. Sen käyttämät omat liikkeet luodaan uudelleen sinulle; tämän asennuksen omaa vakioliikettä vastaava nimi käytetään sellaisenaan."
+msgstr ""
+"Lataa jonkun viemä ohjelma — tästä asennuksesta tai täysin toisesta "
+"IronStack-asennuksesta. Sen käyttämät omat liikkeet luodaan uudelleen "
+"sinulle; tämän asennuksen omaa vakioliikettä vastaava nimi käytetään "
+"sellaisenaan."
 
 #: templates/programs/program_list.html:9
 msgid "My programs"

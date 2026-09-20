@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: IronStack\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-20 11:54+0000\n"
+"POT-Creation-Date: 2026-09-20 12:46+0000\n"
 "Language: sv\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -685,7 +685,9 @@ msgstr "Filen ser inte ut som en IronStack-export."
 msgid ""
 "This file was exported by a newer version of IronStack that this instance "
 "doesn't know how to read yet."
-msgstr "Den här filen exporterades av en nyare version av IronStack som den här instansen ännu inte vet hur den ska läsa."
+msgstr ""
+"Den här filen exporterades av en nyare version av IronStack som den här "
+"instansen ännu inte vet hur den ska läsa."
 
 #: apps/core/data_exchange.py:122
 #, python-format
@@ -2388,7 +2390,7 @@ msgid "Moderately active"
 msgstr "Måttligt aktiv"
 
 #: apps/nutrition/models.py:53 templates/nutrition/diet_plan_detail.html:12
-#: templates/nutrition/diet_plan_list.html:18
+#: templates/nutrition/diet_plan_list.html:19
 msgid "Active"
 msgstr "Aktiv"
 
@@ -2565,7 +2567,7 @@ msgid "Nothing to copy — that day has no entries."
 msgstr "Inget att kopiera — den dagen har inga poster."
 
 #: apps/nutrition/views.py:807 apps/nutrition/views.py:1127
-#: apps/nutrition/views.py:1484
+#: apps/nutrition/views.py:1538
 msgid "That food couldn't be imported — try again."
 msgstr "Det gick inte att importera detta livsmedel — försök igen."
 
@@ -2583,26 +2585,30 @@ msgstr "Sparade ”%(name)s” som ett nytt recept."
 msgid "\"%(name)s\" created — now add its ingredients below."
 msgstr "\"%(name)s\" skapad — lägg till dess ingredienser nedan."
 
-#: apps/nutrition/views.py:1062 apps/programs/views.py:147
+#: apps/nutrition/views.py:1062 apps/nutrition/views.py:1334
+#: apps/programs/views.py:147
 #, python-format
 msgid "Imported “%(name)s”."
 msgstr "Importerade ”%(name)s”."
 
-#: apps/nutrition/views.py:1067 apps/programs/views.py:152
+#: apps/nutrition/views.py:1067 apps/nutrition/views.py:1339
+#: apps/programs/views.py:152
 #, python-format
 msgid ""
 "This file was exported from IronStack %(version)s — worth double-checking "
 "the import if something looks off."
-msgstr "Den här filen exporterades från IronStack %(version)s — värt att dubbelkolla importen om något ser fel ut."
+msgstr ""
+"Den här filen exporterades från IronStack %(version)s — värt att dubbelkolla "
+"importen om något ser fel ut."
 
-#: apps/nutrition/views.py:1521
+#: apps/nutrition/views.py:1575
 #, python-format
 msgid "Logged %(count)d item to %(date)s."
 msgid_plural "Logged %(count)d items to %(date)s."
 msgstr[0] "Loggade %(count)d post till %(date)s."
 msgstr[1] "Loggade %(count)d poster till %(date)s."
 
-#: apps/nutrition/views.py:1532
+#: apps/nutrition/views.py:1586
 msgid "Nothing to log — this plan has no items for that date."
 msgstr "Inget att logga — den här planen har inga poster för det datumet."
 
@@ -4911,7 +4917,7 @@ msgstr ""
 
 #: templates/exercises/exercise_detail.html:102
 #: templates/nutrition/diet_plan_detail.html:13
-#: templates/nutrition/diet_plan_list.html:26
+#: templates/nutrition/diet_plan_list.html:27
 msgid "Deactivate"
 msgstr "Inaktivera"
 
@@ -5162,6 +5168,8 @@ msgid "From OpenFoodFacts"
 msgstr "Från OpenFoodFacts"
 
 #: templates/nutrition/_food_search_results.html:61
+#: templates/nutrition/diet_plan_import.html:22
+#: templates/nutrition/diet_plan_list.html:10
 #: templates/nutrition/food_category.html:20
 #: templates/nutrition/recipe_import.html:22
 #: templates/nutrition/recipe_list.html:10
@@ -5505,7 +5513,7 @@ msgstr "Hur många kalorier din kropp förbränner i vila, och totalt."
 #: templates/nutrition/calculators_home.html:48
 #: templates/nutrition/calculators_home.html:56
 #: templates/nutrition/calculators_home.html:64
-#: templates/nutrition/diet_plan_list.html:29
+#: templates/nutrition/diet_plan_list.html:30
 #: templates/nutrition/recipe_list.html:34
 #: templates/nutrition/recipe_list.html:71
 msgid "Open"
@@ -5546,7 +5554,7 @@ msgstr "Vid en vald veckotakt, ungefär hur lång tid det tar att nå en målvik
 
 #: templates/nutrition/calculators_home.html:67
 #: templates/nutrition/diary_day.html:100
-#: templates/nutrition/diet_plan_list.html:39
+#: templates/nutrition/diet_plan_list.html:40
 #: templates/nutrition/food_list.html:88 templates/nutrition/goal_edit.html:36
 #: templates/nutrition/recipe_list.html:90 templates/nutrition/stats.html:44
 msgid "Back to nutrition"
@@ -5710,23 +5718,29 @@ msgid "Edit entry"
 msgstr "Redigera post"
 
 #: templates/nutrition/diet_plan_detail.html:15
-#: templates/nutrition/diet_plan_list.html:26
+#: templates/nutrition/diet_plan_list.html:27
 msgid "Activate"
 msgstr "Aktivera"
 
-#: templates/nutrition/diet_plan_detail.html:20
+#: templates/nutrition/diet_plan_detail.html:18
+#: templates/nutrition/recipe_detail.html:14
+#: templates/programs/program_detail.html:12
+msgid "Export"
+msgstr "Exportera"
+
+#: templates/nutrition/diet_plan_detail.html:21
 msgid "protein"
 msgstr "protein"
 
-#: templates/nutrition/diet_plan_detail.html:20
+#: templates/nutrition/diet_plan_detail.html:21
 msgid "carbs"
 msgstr "kolhydrater"
 
-#: templates/nutrition/diet_plan_detail.html:20
+#: templates/nutrition/diet_plan_detail.html:21
 msgid "fat"
 msgstr "fett"
 
-#: templates/nutrition/diet_plan_detail.html:22
+#: templates/nutrition/diet_plan_detail.html:23
 msgid ""
 "Varies across the week — same daily calories/macros every day, different "
 "meals."
@@ -5734,29 +5748,30 @@ msgstr ""
 "Varierar under veckan — samma dagliga kalorier/makron varje dag, olika "
 "måltider."
 
-#: templates/nutrition/diet_plan_detail.html:68
+#: templates/nutrition/diet_plan_detail.html:69
 msgid "Log this plan to your diary"
 msgstr "Logga denna plan till din dagbok"
 
-#: templates/nutrition/diet_plan_detail.html:70
+#: templates/nutrition/diet_plan_detail.html:71
 msgid "Logs whichever day of the week the date below falls on."
 msgstr "Loggar den veckodag som datumet nedan infaller på."
 
-#: templates/nutrition/diet_plan_detail.html:78
+#: templates/nutrition/diet_plan_detail.html:79
 #: templates/nutrition/recipe_detail.html:95
 msgid "Log it"
 msgstr "Logga"
 
-#: templates/nutrition/diet_plan_detail.html:81
+#: templates/nutrition/diet_plan_detail.html:82
 #: templates/nutrition/diet_plan_form.html:25
+#: templates/nutrition/diet_plan_import.html:25
 msgid "Back to diet plans"
 msgstr "Tillbaka till kostplaner"
 
-#: templates/nutrition/diet_plan_detail.html:85
+#: templates/nutrition/diet_plan_detail.html:86
 msgid "Delete this plan?"
 msgstr "Ta bort denna plan?"
 
-#: templates/nutrition/diet_plan_detail.html:87
+#: templates/nutrition/diet_plan_detail.html:88
 msgid "Delete plan"
 msgstr "Ta bort plan"
 
@@ -5783,6 +5798,20 @@ msgstr ""
 msgid "Create plan"
 msgstr "Skapa plan"
 
+#: templates/nutrition/diet_plan_import.html:3
+#: templates/nutrition/diet_plan_import.html:6
+msgid "Import diet plan"
+msgstr "Importera kostplan"
+
+#: templates/nutrition/diet_plan_import.html:12
+msgid ""
+"Upload a diet plan someone exported — from this instance, or a completely "
+"different IronStack instance. Foods and recipes it uses are matched against "
+"your own existing ones where possible, rather than duplicated; anything "
+"missing is recreated for you. Imported inactive, so it never replaces "
+"whatever plan you're currently following."
+msgstr "Ladda upp en kostplan som någon exporterat — från den här instansen, eller en helt annan IronStack-instans. Livsmedel och recept den använder matchas mot dina egna befintliga där det går, i stället för att dubbleras; allt som saknas återskapas åt dig. Importeras inaktiv, så den ersätter aldrig den plan du för närvarande följer."
+
 #: templates/nutrition/diet_plan_item_form.html:3
 #: templates/nutrition/diet_plan_item_form.html:6
 msgid "Swap item"
@@ -5797,7 +5826,7 @@ msgstr "Tillbaka till plan"
 msgid "+ New plan"
 msgstr "+ Ny plan"
 
-#: templates/nutrition/diet_plan_list.html:35
+#: templates/nutrition/diet_plan_list.html:36
 msgid "No diet plans yet."
 msgstr "Inga kostplaner än."
 
@@ -6079,11 +6108,6 @@ msgstr "Spara och börja logga"
 msgid "Template"
 msgstr "Mall"
 
-#: templates/nutrition/recipe_detail.html:14
-#: templates/programs/program_detail.html:12
-msgid "Export"
-msgstr "Exportera"
-
 #: templates/nutrition/recipe_detail.html:19
 #, python-format
 msgid ""
@@ -6163,7 +6187,11 @@ msgid ""
 "different IronStack instance. A food originally imported from OpenFoodFacts "
 "is looked up again by its own barcode; anything else is recreated as your "
 "own food."
-msgstr "Ladda upp ett recept som någon exporterat — från den här instansen, eller en helt annan IronStack-instans. Ett livsmedel som ursprungligen importerades från OpenFoodFacts slås upp igen med sin egen streckkod; allt annat återskapas som ditt eget livsmedel."
+msgstr ""
+"Ladda upp ett recept som någon exporterat — från den här instansen, eller en "
+"helt annan IronStack-instans. Ett livsmedel som ursprungligen importerades "
+"från OpenFoodFacts slås upp igen med sin egen streckkod; allt annat "
+"återskapas som ditt eget livsmedel."
 
 #: templates/nutrition/recipe_ingredient_edit_form.html:3
 msgid "Edit ingredient"
@@ -6367,7 +6395,11 @@ msgid ""
 "different IronStack instance. Any custom exercises it uses are recreated for "
 "you; a name matching one of this instance's own system exercises is reused "
 "as-is."
-msgstr "Ladda upp ett program som någon exporterat — från den här instansen, eller en helt annan IronStack-instans. Egna övningar det använder återskapas åt dig; ett namn som matchar en av den här instansens egna systemövningar återanvänds som det är."
+msgstr ""
+"Ladda upp ett program som någon exporterat — från den här instansen, eller "
+"en helt annan IronStack-instans. Egna övningar det använder återskapas åt "
+"dig; ett namn som matchar en av den här instansens egna systemövningar "
+"återanvänds som det är."
 
 #: templates/programs/program_list.html:9
 msgid "My programs"

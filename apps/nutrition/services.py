@@ -475,6 +475,161 @@ def import_recipe(user, payload):
     return recipe
 
 
+def export_diet_plan(plan):
+    """A `DietPlan` (with its meals/items), as a plain dict ready for
+    `apps.core.data_exchange.build_envelope`. Each item nests a full
+    `_food_export_payload`/`export_recipe` rather than a bare name —
+    unlike a recipe's own ingredients, a diet plan item can point at
+    either a `Food` or a `Recipe`, and a recipe embedded here needs
+    its own ingredients re-resolvable too, so it gets the exact same
+    self-contained payload a standalone recipe export would.
+
+    `goal` is deliberately not exported at all: it's this specific
+    user's own historized statement of intent (`NutritionGoal`), not
+    something that means anything reattached to a different account —
+    `target_calories`/the macro targets below already carry the
+    numbers that actually matter, snapshotted the same way they are on
+    the plan itself. `import_diet_plan` always creates a plan with
+    `goal=None`, exactly as if a user had built one from scratch
+    without linking it to a goal."""
+    return {
+        "name": plan.name,
+        "target_calories": plan.target_calories,
+        "target_protein_grams": str(plan.target_protein_grams),
+        "target_carbohydrate_grams": str(plan.target_carbohydrate_grams),
+        "target_fat_grams": str(plan.target_fat_grams),
+        "is_weekly": plan.is_weekly,
+        "meals": [
+            {
+                "meal_slot": meal.meal_slot.name,
+                "target_calories": meal.target_calories,
+                "order": meal.order,
+                "weekday": meal.weekday,
+                "items": [
+                    {
+                        "quantity": str(item.quantity),
+                        "order": item.order,
+                        "food": _food_export_payload(item.food) if item.food_id else None,
+                        "recipe": export_recipe(item.recipe) if item.recipe_id else None,
+                    }
+                    for item in meal.items.select_related("food", "recipe").order_by(
+                        "order", "id"
+                    )
+                ],
+            }
+            for meal in plan.meals.select_related("meal_slot").order_by(
+                "weekday", "order", "id"
+            )
+        ],
+    }
+
+
+def _resolve_recipe(user, data):
+    """The recipe half of a diet plan item's `_resolve_food`/
+    `_resolve_meal_slot`-shaped counterpart. Matched by name first —
+    against this user's own recipes and this instance's shared/
+    template ones (`owner=None`, see `Recipe.owner`'s own docstring) —
+    so re-importing the same file twice reuses the same recipe instead
+    of piling up duplicates; a genuinely new one is created by simply
+    delegating to `import_recipe` (safe to call from inside
+    `import_diet_plan`'s own `@transaction.atomic`: Django nests them
+    as a savepoint, so a failure anywhere in the rest of the diet plan
+    still rolls the recipe back out too)."""
+    from .models import Recipe
+
+    name = data.get("name")
+    if not name:
+        raise ImportValidationError("A diet plan item is missing its recipe name.")
+    existing = Recipe.objects.filter(name=name, owner__in=[user, None]).first()
+    if existing is not None:
+        return existing
+    return import_recipe(user, data)
+
+
+@transaction.atomic
+def import_diet_plan(user, payload):
+    """The inverse of `export_diet_plan` — creates a brand new
+    `DietPlan` owned by `user`, never active on creation regardless of
+    whether the exported plan was (`set_active_diet_plan` is the only
+    place allowed to flip that on, and doing it automatically here
+    would silently deactivate whatever plan `user` already has
+    running) — same "import lands inert, the user decides what to do
+    with it next" behavior `apps.programs.services.import_program`
+    already gives a program (`is_template` never carried over either).
+    Wrapped in one transaction: any `ImportValidationError` partway
+    through rolls back everything already written for this import,
+    including any recipe a diet plan item's own `_resolve_recipe` had
+    to create along the way."""
+    from .models import DietPlanItem, DietPlanMeal
+
+    name = payload.get("name")
+    if not name:
+        raise ImportValidationError("Missing diet plan name.")
+    target_calories = payload.get("target_calories")
+    protein = _decimal_or_none(payload.get("target_protein_grams"))
+    carbohydrate = _decimal_or_none(payload.get("target_carbohydrate_grams"))
+    fat = _decimal_or_none(payload.get("target_fat_grams"))
+    if (
+        not isinstance(target_calories, int)
+        or protein is None
+        or carbohydrate is None
+        or fat is None
+    ):
+        raise ImportValidationError("Missing or invalid diet plan targets.")
+
+    plan = DietPlan.objects.create(
+        user=user,
+        name=name,
+        goal=None,
+        target_calories=target_calories,
+        target_protein_grams=protein,
+        target_carbohydrate_grams=carbohydrate,
+        target_fat_grams=fat,
+        is_active=False,
+        is_weekly=bool(payload.get("is_weekly", False)),
+    )
+    for meal_data in payload.get("meals") or []:
+        meal_slot = _resolve_meal_slot(user, meal_data.get("meal_slot"))
+        if meal_slot is None:
+            raise ImportValidationError("A diet plan meal is missing its meal slot.")
+        meal_target_calories = meal_data.get("target_calories")
+        if not isinstance(meal_target_calories, int):
+            raise ImportValidationError(
+                "A diet plan meal is missing its target calories."
+            )
+        meal = DietPlanMeal.objects.create(
+            diet_plan=plan,
+            meal_slot=meal_slot,
+            target_calories=meal_target_calories,
+            order=meal_data.get("order", 0),
+            weekday=meal_data.get("weekday"),
+        )
+        items = []
+        for order, item_data in enumerate(meal_data.get("items") or []):
+            food_data = item_data.get("food")
+            recipe_data = item_data.get("recipe")
+            if bool(food_data) == bool(recipe_data):
+                raise ImportValidationError(
+                    "A diet plan item must reference exactly one of a food or a recipe."
+                )
+            food = _resolve_food(user, food_data) if food_data else None
+            recipe = _resolve_recipe(user, recipe_data) if recipe_data else None
+            quantity = _decimal_or_none(item_data.get("quantity"))
+            if quantity is None:
+                raise ImportValidationError("A diet plan item has an invalid quantity.")
+            items.append(
+                DietPlanItem(
+                    diet_plan_meal=meal,
+                    food=food,
+                    recipe=recipe,
+                    quantity=quantity,
+                    order=item_data.get("order", order),
+                )
+            )
+        DietPlanItem.objects.bulk_create(items)
+    return plan
+
+
 @transaction.atomic
 def merge_foods(keep, duplicates):
     """The admin-only "these are actually the same food" cleanup tool

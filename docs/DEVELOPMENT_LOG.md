@@ -5358,3 +5358,70 @@ live-refetch path with `import_or_refresh_food_from_off` mocked to
 assert it's actually called with the right barcode, and a case
 confirming a shared/template recipe with no owner is still exportable
 by anyone).
+
+### Extending export/import to diet plans
+
+Asked for directly, right after the above shipped: the same export/
+import treatment for `DietPlan`, the diet builder's own saved output —
+and asked for explicitly alongside it, a guarantee that importing a
+diet plan or a gym program never creates a duplicate food or exercise
+that already exists on the importing side.
+
+That guarantee, it turned out, already existed for gym programs and
+recipe ingredients before this request — `apps.programs.services.
+_resolve_exercise` already matches a system exercise by name first,
+then the importing user's own custom one, before ever creating
+anything new; `apps.nutrition.services._resolve_food` already matches
+an OFF-sourced ingredient to the same shared `Food` row by barcode,
+and a hand-entered one to the user's own existing food by `(name,
+calories)`, for the same reason. `export_diet_plan`/`import_diet_plan`
+(`apps.nutrition.services`) reuse both of those functions verbatim for
+each `DietPlanItem`'s own food, rather than duplicating the matching
+logic a third time.
+
+A `DietPlanItem` is new territory those two functions didn't cover
+though: it points at either a `Food` *or* a `Recipe` (`DietPlanItem`'s
+own `diet_plan_item_exactly_one_of_food_or_recipe` check constraint),
+never both. Its export embeds a full `export_recipe` payload for a
+recipe item — not just a name — since a recipe brought along this way
+needs its own ingredients resolvable too, the exact same self-
+contained shape a standalone recipe export already has. The new
+`_resolve_recipe` gives this its own "match first" step: an existing
+recipe with the same name, owned by the importing user or shared
+(`owner=None` — see `Recipe.owner`'s own docstring for what a `None`
+owner already means), is reused outright; only a genuinely new name
+calls `import_recipe` to build one — which is safe to call from inside
+`import_diet_plan`'s own `@transaction.atomic`, since Django nests
+atomic blocks as savepoints, so a failure anywhere later in the same
+diet plan import still rolls that freshly-created recipe back out too.
+
+`DietPlan.goal` (a `NutritionGoal` FK) is deliberately never part of
+the export at all, unlike almost everything else here — it's this
+specific user's own historized statement of intent, dated and
+personal, not something a different account's import could ever
+meaningfully reattach to. `target_calories` and the three macro target
+fields already carry the actual numbers a plan is built around,
+snapshotted on the plan itself exactly as before; `import_diet_plan`
+always creates a plan with `goal=None`, the same as building one from
+scratch without linking a goal.
+
+The imported plan is also always created with `is_active=False`,
+regardless of whether the exported one was active — `set_active_diet_
+plan` is the only place ever allowed to flip that flag on, specifically
+because doing it would deactivate whatever plan the importing user
+already has running (`unique_active_diet_plan_per_user`'s own
+one-active-plan-at-a-time constraint), and an import silently doing
+that to someone's current plan is exactly the kind of surprise this
+whole feature's "should never break anything" goal rules out. Same
+"lands inert, the user decides what to do with it next" behavior
+`import_program`'s own `is_template` already gets.
+
+21 more automated tests: 14 for the service layer (round-trip
+recreation, `goal`/active-state handling above, system meal slot
+matched not duplicated, weekday preserved for a weekly plan, an
+embedded recipe item recreated with its own ingredients, re-importing
+matching an existing recipe/food/OFF-food instead of duplicating any
+of them, and the validation-error/atomic-rollback paths — missing
+name/targets/meal slot, an item with both or neither of food/recipe),
+7 for the views (the same auth/ownership/upload shape as programs and
+recipes before it).
