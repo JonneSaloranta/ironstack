@@ -15,6 +15,7 @@
       <button type="submit" class="button-secondary">{% trans "Activate" %}</button>
     {% endif %}
   </form>
+  <a class="button-secondary" href="{% url 'nutrition:diet-plan-export' plan.pk %}">{% trans "Export" %}</a>
 </div>
 {% include "nutrition/_subnav.html" %}
 <p class="text-muted">{{ plan.target_calories }} kcal/day — {{ plan.target_protein_grams|floatformat:0 }}g {% trans "protein" %}, {{ plan.target_carbohydrate_grams|floatformat:0 }}g {% trans "carbs" %}, {{ plan.target_fat_grams|floatformat:0 }}g {% trans "fat" %}</p>

@@ -5138,3 +5138,290 @@ default, disappears immediately after unchecking the profile toggle
 and saving, and `/nutrition/foods/` still returns a real 200 with the
 toggle off; separately, a brand-new account's onboarding modal shows
 the checkbox pre-checked with the label "Track nutrition".
+
+## The iOS app icon's dumbbell was missing its handle
+
+Reported directly: the iOS home-screen icon (added-to-home-screen PWA)
+showed a dumbbell with no visible bar connecting its two ends.
+
+`static/icons/icon.svg`'s handle was a stroked `<line>` (round
+linecap, to look like a rounded bar) rather than a filled shape — and
+whichever tool had originally rasterized it down to the actual shipped
+PNGs (`apple-touch-icon.png` 180×180, `icon-192.png`, `icon-512.png`)
+rendered that particular element wrong, near-invisible against the
+dark background, even though a real browser engine (checked with
+Playwright/Chromium) renders the same SVG's line correctly. The bug
+was baked into the committed PNGs themselves, not something a live
+page load could ever trigger — `favicon.svg` (a separate, deliberately
+simplified 32×32 design from an earlier fix, see this log's own
+"32×32 favicon" entry above) was never affected, since it already
+built its own bar from a plain `<rect>`, not a stroked line.
+
+Fixed by replacing the `<line>` with an equivalent filled `<rect>`
+(`x="140" y="239" width="232" height="34" rx="17"` — same span, same
+fully-rounded pill ends a round linecap would have given it), then
+regenerating all three PNGs from the corrected source. Verified each
+rendered size directly (`apple-touch-icon.png`/`icon-192.png`/
+`icon-512.png` all show a continuous, clearly-connected handle now) —
+no template or manifest change needed, since both only ever referenced
+these files by name.
+
+## A public member profile page, reusing show_achievements as its own opt-out
+
+Asked for directly: a per-user "profile" page other users on the
+instance can view — recent PRs, streak, workout count, total weight
+lifted, and how long they've been a member — with an opt-out toggle on
+the Profile page. Explicitly nothing about food, calories, or logged
+body weight, and existing data was never in question either way.
+
+Before writing any code: this is almost exactly what
+`apps.analytics.achievements`/`User.show_achievements` already do for
+the dashboard's achievements carousel and "Recently active" list — "a
+privacy setting... whether *this* user's own data... is included in
+what everyone sees" (that field's own docstring, written long before
+this request). Rather than adding a second, separate "let others view
+my profile" field for the same underlying decision, this new page
+reuses `show_achievements` outright — one settings-page toggle
+("Share my activity"), one meaning, three places it now applies
+instead of two.
+
+`apps.analytics.achievements._highlights_for` — previously a private
+helper `achievement_highlights()` called once per opted-in user to
+build the shared carousel — is now public (`highlights_for`, no
+leading underscore) and called directly by the new
+`MemberProfileView` for one specific user's own page, rather than
+duplicating that computation. `Achievement`/`RecentActivity` both grew
+a `username` field alongside their existing `display_name` — the
+latter can carry a decorated "username (First name)" string
+(`User.public_display_name()`), which was never safe to build a URL
+out of; the former is the real, stable identifier the new page's link
+needs.
+
+`MemberProfileView` (`/analytics/members/<username>/`) gets a
+`get_object_or_404(User, username=username)` first, *then* checks
+`show_achievements` itself (`if not member.show_achievements and
+member != request.user: raise Http404`) rather than folding the flag
+into the queryset filter — the point being that a user can always view
+their *own* profile regardless of this setting (it hides your profile
+from others, not from yourself), which a queryset-level filter
+couldn't express without duplicating the "is this me" check anyway.
+Recent PRs reuse `services.pr_history_grouped_by_exercise` and the
+existing `records/_pr_exercise_group.html` partial verbatim — that
+partial already formats weights in *the viewer's* own unit preference
+via `request.user` (not the profile owner's), so no change was needed
+there to make someone else's PRs display correctly in your own units.
+
+Every place a user's name already appeared to other users — the
+achievements carousel, the "Recently active" list — now links it to
+this new page; nowhere else changed, since (checked directly, again)
+`templates/base.html`'s nutrition nav tab aside, `templates/core/
+dashboard.html` is the only place one user's identity was ever shown
+to another to begin with.
+
+Verified live: an opted-in user's profile is reachable and shows real
+data; an opted-out user's profile 404s for anyone else but still opens
+normally for themselves; the carousel and "Recently active" list both
+link through correctly. A dedicated test asserts the rendered page
+contains no mention of calories/nutrition/body weight, scoped past the
+page's own `<h1>` to avoid tripping on `base.html`'s own shared
+chrome (the site-wide SEO description and the nutrition nav tab both
+say "nutrition" on every single page, regardless of this one).
+
+## Export/import for gym programs and nutrition recipes
+
+Asked for directly: let a user download one of their own gym programs
+or nutrition recipes as a file, and hand it to someone else — a
+different account, or a completely different self-hosted IronStack
+instance — to import back in, with every related object (exercises,
+meal slots, foods) reconstructed along the way rather than left
+dangling. Also asked for: the file should carry the exporting
+instance's software version, for an at-a-glance "this might be from an
+incompatible build" signal; and the whole thing should be built so
+that a bad or incompatible file can never corrupt data or crash the
+app, only fail cleanly.
+
+Plain JSON, not the newer TOON (Token-Oriented Object Notation)
+format — considered directly, since the user asked. TOON's entire
+value proposition is reducing token counts for LLM context windows;
+it has no bearing on a file two IronStack instances (or two humans)
+hand back and forth, and the only Python package for it on PyPI
+(`toon-format`) was a single v0.1.0 release. JSON needs no new
+dependency, is already this project's convention everywhere else
+(the REST API, backups), and stays human-inspectable if someone opens
+the file directly. Decided with the user before writing any code.
+
+The new shared module, `apps.core.data_exchange`, is deliberately not
+built on the REST API's own `ModelSerializer`s
+(`apps.api.serializers`) — those reference related rows by primary
+key, which means nothing once a file crosses into a different
+database. Everything in an export is instead keyed by a *natural*
+identifier that's guaranteed to mean the same thing on both the
+exporting and importing side: a system `Exercise` or `MealSlot` by its
+own name (already globally unique among system rows via each model's
+own `unique_system_*_name` constraint), and a food originally imported
+from OpenFoodFacts by its barcode (`Food.off_id`) rather than its own
+database row.
+
+`build_envelope`/`parse_envelope` wrap every export in a small shared
+envelope — `schema_version` (this wire format's own version, `1` right
+now), `kind` (`"program"` or `"recipe"`), `app_version`
+(`apps.core.version.get_version()`, informational only — never
+compared automatically, since the app's own version number alone
+can't reliably say whether this module's dict shape changed between
+two releases), and `exported_at`. `parse_envelope` only ever rejects a
+`schema_version` *greater* than what the running build understands;
+anything equal or lower stays readable forever. The module's own
+docstring now spells out the forward-compatibility policy this
+implies: a field that only ever gets *added* never needs a bump, since
+every `import_*` function reads fields with `payload.get(key,
+default)` and a file exported before a field existed just gets the
+same default a brand new payload would; only an actual rename,
+repurposing, or restructuring needs `schema_version` bumped, with a
+small upgrade shim added to the top of the relevant `import_*`
+function to normalize an old file's shape before the rest of the
+function runs. No such shim exists yet, deliberately — there is no
+`schema_version` 2 to migrate from, and writing one now for a
+hypothetical future shape would be speculative code with nothing real
+to test it against.
+
+`apps.programs.services.export_program`/`import_program` and
+`apps.nutrition.services.export_recipe`/`import_recipe` are the two
+kind-specific halves. Exporting a program walks every workout and
+prescription, and for each prescription's exercise emits either
+`{"name", "is_system": True}` (system exercises, matched back by name
+on import — `apps.programs.services.copy_program`'s existing
+"deep-copy for a new owner" function directly informed exactly which
+fields a prescription/exercise export needs) or a full payload
+(description, instructions, movement type, weight-input mode,
+equipment, primary/secondary muscle groups, all by name) for a custom
+exercise, recreated fresh under the importing user on import — or
+reused as-is if that user already has a custom exercise with the same
+name from an earlier import, so re-importing the same file twice
+doesn't pile up duplicates. `is_template`/`owner` are never part of
+the export; those are properties of the *importing* account, not the
+program.
+
+Recipe import resolves each ingredient's food the same way: an
+OFF-sourced food is looked up again live, by barcode, via the existing
+`import_or_refresh_food_from_off` — so importing on a different
+instance re-fetches current OFF data rather than trusting a
+potentially stale snapshot — falling back to an embedded snapshot only
+if that live lookup fails (network down, barcode delisted from OFF
+since export). A hand-entered food is matched by `(owner, name,
+calories)` against the importing user's existing foods before a new
+row is created, for the same "reimporting doesn't duplicate" reason as
+custom exercises. A recipe's meal slot is resolved the same way system
+exercises are — matched by name against system `MealSlot`s first, a
+custom one recreated for the importer otherwise, and left `None` if
+the export never had one.
+
+Both `import_program` and `import_recipe` run inside
+`@transaction.atomic` and raise the shared `ImportValidationError`
+(also raised by `parse_envelope` itself) for anything malformed inside
+the kind-specific payload — a missing program/recipe name, a
+prescription or ingredient missing its exercise/food name, missing
+required nutrition data, an unparseable quantity. The importing view
+(`apps.programs.views.program_import`/`apps.nutrition.views.
+recipe_import`) is the only place that ever catches
+`ImportValidationError`, turning it into a plain form error — nothing
+here can reach the user as a raw 500, since an uploaded file is
+exactly the kind of untrusted input that must never be able to take
+the request down with it. A test for each app
+(`test_a_failed_import_leaves_no_partial_program_behind`/`..._recipe_
+behind`) confirms directly that a mid-import failure leaves zero trace
+in the database — nothing partially written, satisfying "should
+always work or at least not break anything" as an actual guarantee,
+not just an intention.
+
+The upload form, `apps.core.forms.ExportImportUploadForm`, is shared
+by both apps' import views rather than duplicated — one `FileField`, a
+`clean_export_file` that only checks the `.json` extension, following
+the same division of labor `BackupUploadForm` (right above it in the
+same file) already uses: real validation happens once
+`parse_envelope` and each app's own `import_*` actually read the
+file's contents, not in the form. Export views build a `JsonResponse`
+with `Content-Disposition: attachment` (the same pattern
+`BackupDownloadView` uses for backups, adapted from `FileResponse`
+since an export is generated in memory rather than read off disk), and
+name the downloaded file from the program/recipe's own slugified name.
+
+Verified with real cross-account round-trips in a shell before writing
+any formal test — including one against the live OpenFoodFacts API
+using Nutella's real barcode (`3017620422003`), confirming a re-import
+on a "different" account resolves back to the same shared `Food` row
+rather than creating a duplicate. 45 automated tests followed: 10 for
+`apps.core.data_exchange` itself (envelope round-trip, every rejection
+path), 16 for programs (service-level round-trip/dedup/custom-exercise
+recreation/atomic rollback, plus view-level auth/ownership/form
+handling), and 19 for recipes (the same shape, plus the OFF
+live-refetch path with `import_or_refresh_food_from_off` mocked to
+assert it's actually called with the right barcode, and a case
+confirming a shared/template recipe with no owner is still exportable
+by anyone).
+
+### Extending export/import to diet plans
+
+Asked for directly, right after the above shipped: the same export/
+import treatment for `DietPlan`, the diet builder's own saved output —
+and asked for explicitly alongside it, a guarantee that importing a
+diet plan or a gym program never creates a duplicate food or exercise
+that already exists on the importing side.
+
+That guarantee, it turned out, already existed for gym programs and
+recipe ingredients before this request — `apps.programs.services.
+_resolve_exercise` already matches a system exercise by name first,
+then the importing user's own custom one, before ever creating
+anything new; `apps.nutrition.services._resolve_food` already matches
+an OFF-sourced ingredient to the same shared `Food` row by barcode,
+and a hand-entered one to the user's own existing food by `(name,
+calories)`, for the same reason. `export_diet_plan`/`import_diet_plan`
+(`apps.nutrition.services`) reuse both of those functions verbatim for
+each `DietPlanItem`'s own food, rather than duplicating the matching
+logic a third time.
+
+A `DietPlanItem` is new territory those two functions didn't cover
+though: it points at either a `Food` *or* a `Recipe` (`DietPlanItem`'s
+own `diet_plan_item_exactly_one_of_food_or_recipe` check constraint),
+never both. Its export embeds a full `export_recipe` payload for a
+recipe item — not just a name — since a recipe brought along this way
+needs its own ingredients resolvable too, the exact same self-
+contained shape a standalone recipe export already has. The new
+`_resolve_recipe` gives this its own "match first" step: an existing
+recipe with the same name, owned by the importing user or shared
+(`owner=None` — see `Recipe.owner`'s own docstring for what a `None`
+owner already means), is reused outright; only a genuinely new name
+calls `import_recipe` to build one — which is safe to call from inside
+`import_diet_plan`'s own `@transaction.atomic`, since Django nests
+atomic blocks as savepoints, so a failure anywhere later in the same
+diet plan import still rolls that freshly-created recipe back out too.
+
+`DietPlan.goal` (a `NutritionGoal` FK) is deliberately never part of
+the export at all, unlike almost everything else here — it's this
+specific user's own historized statement of intent, dated and
+personal, not something a different account's import could ever
+meaningfully reattach to. `target_calories` and the three macro target
+fields already carry the actual numbers a plan is built around,
+snapshotted on the plan itself exactly as before; `import_diet_plan`
+always creates a plan with `goal=None`, the same as building one from
+scratch without linking a goal.
+
+The imported plan is also always created with `is_active=False`,
+regardless of whether the exported one was active — `set_active_diet_
+plan` is the only place ever allowed to flip that flag on, specifically
+because doing it would deactivate whatever plan the importing user
+already has running (`unique_active_diet_plan_per_user`'s own
+one-active-plan-at-a-time constraint), and an import silently doing
+that to someone's current plan is exactly the kind of surprise this
+whole feature's "should never break anything" goal rules out. Same
+"lands inert, the user decides what to do with it next" behavior
+`import_program`'s own `is_template` already gets.
+
+21 more automated tests: 14 for the service layer (round-trip
+recreation, `goal`/active-state handling above, system meal slot
+matched not duplicated, weekday preserved for a weekly plan, an
+embedded recipe item recreated with its own ingredients, re-importing
+matching an existing recipe/food/OFF-food instead of duplicating any
+of them, and the validation-error/atomic-rollback paths — missing
+name/targets/meal slot, an item with both or neither of food/recipe),
+7 for the views (the same auth/ownership/upload shape as programs and
+recipes before it).

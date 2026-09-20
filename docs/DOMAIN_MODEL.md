@@ -67,15 +67,16 @@ install's appearance never changes on upgrade.
 
 Also carries `show_achievements` — unlike every other boolean toggle on
 this model, this is a *privacy* setting rather than a personal display
-preference: the dashboard's achievements carousel and "Recently active"
-list (`apps.analytics.achievements`, `UI.md` "Achievements carousel" /
-"Recently active" list) are both shared across every user on the
-instance, so this controls whether *this* user's own data — longest
-streak/workout count/PRs/total weight lifted, and when they last
-started a workout — is included in what everyone sees, not whether they
-personally see either widget — turning it off doesn't hide them from
-their owner, it hides the owner's own data from everyone, themselves
-included.
+preference: the dashboard's achievements carousel, "Recently active"
+list, and member profile page (`apps.analytics.achievements`/`views`,
+`UI.md` "Achievements carousel" / "Recently active" list / "Member
+profile page") all share across every user on the instance, so this
+controls whether *this* user's own data — longest streak/workout
+count/PRs/total weight lifted, and when they last started a workout —
+is included in what everyone sees, not whether they personally see any
+of the three — turning it off doesn't hide them from their owner (who
+can always reach their own profile page regardless), it hides the
+owner's own data from everyone else.
 
 `show_name_to_others` is a second, more granular privacy setting on
 top of `show_achievements`: whether this user's first name is ever

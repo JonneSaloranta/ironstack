@@ -5,11 +5,12 @@
 <div class="top-bar">
   <h1 style="margin:0;">{% trans program.name %}</h1>
 </div>
-{% if can_edit %}
-  <div class="top-bar-actions">
+<div class="top-bar-actions">
+  {% if can_edit %}
     <a class="button" href="{% url 'programs:program-update' program.pk %}">{% trans "Edit" %}</a>
-  </div>
-{% endif %}
+  {% endif %}
+  <a class="button-secondary" href="{% url 'programs:program-export' program.pk %}">{% trans "Export" %}</a>
+</div>
 
 <div class="card">
   {% if program.is_system_template %}

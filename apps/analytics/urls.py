@@ -11,4 +11,9 @@ urlpatterns = [
         views.ExerciseAnalyticsView.as_view(),
         name="exercise",
     ),
+    path(
+        "members/<str:username>/",
+        views.MemberProfileView.as_view(),
+        name="member-profile",
+    ),
 ]

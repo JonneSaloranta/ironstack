@@ -7,7 +7,10 @@
 </div>
 
 <h2>{% trans "My programs" %}</h2>
-<p><a class="button" href="{% url 'programs:program-create' %}">{% trans "New" %}</a></p>
+<p style="display:flex; flex-wrap:wrap; gap:0.5rem;">
+  <a class="button" href="{% url 'programs:program-create' %}">{% trans "New" %}</a>
+  <a class="button-secondary" href="{% url 'programs:program-import' %}">{% trans "Import" %}</a>
+</p>
 {% for program in programs %}
   <a class="card card-link" href="{% url 'programs:program-detail' program.pk %}">
     <strong>{% trans program.name %}</strong>

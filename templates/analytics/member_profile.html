@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{{ display_name }} — IronStack{% endblock %}
+{% block content %}
+<div class="top-bar">
+  <h1 style="margin:0;">{{ display_name }}</h1>
+</div>
+<p class="text-muted">{% blocktrans with date=member.date_joined|date:"Y-m-d" %}Member since {{ date }}{% endblocktrans %}</p>
+
+{% if highlights %}
+  <div class="card">
+    <dl class="stat-row">
+      {% for achievement in highlights %}
+        <div>
+          <dt>{{ achievement.label }}</dt>
+          <dd>{{ achievement.value }}</dd>
+        </div>
+      {% endfor %}
+    </dl>
+  </div>
+{% else %}
+  <div class="card empty-state"><p>{% trans "No completed workouts yet." %}</p></div>
+{% endif %}
+
+<h2>{% trans "Recent" %} <abbr tabindex="0" title="{% trans "Personal Records" %}">PRs</abbr></h2>
+{% for group in recent_prs %}
+  {% include "records/_pr_exercise_group.html" with group=group %}
+{% empty %}
+  <div class="card empty-state"><p>{% trans "No" %} <abbr tabindex="0" title="{% trans "Personal Records" %}">PRs</abbr> {% trans "yet." %}</p></div>
+{% endfor %}
+
+<p><a class="button-secondary" href="{% url 'dashboard' %}">&larr; {% trans "Back to home" %}</a></p>
+{% endblock %}

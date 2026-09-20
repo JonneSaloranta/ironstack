@@ -18,6 +18,34 @@ narrated summary of the same version.
 
 ## [Unreleased]
 
+## [1.18.0] — 2026-09-20
+
+### Added
+- Export any of your own gym programs, nutrition recipes, or diet
+  plans as a `.json` file, and import one back in — from your own
+  account, from someone else's, or from a completely different
+  self-hosted IronStack instance. Custom exercises, custom meal slots,
+  and foods originally imported from OpenFoodFacts are all
+  reconstructed automatically (an OFF-sourced food is looked up again
+  live by its own barcode) and matched against your own existing ones
+  first rather than duplicated; an import that fails partway never
+  leaves anything behind. A diet plan always imports inactive, so it
+  never silently replaces whatever plan you're currently following.
+  The file also carries the exporting instance's app version, shown
+  as an informational note if it differs from yours.
+- Every name in the dashboard's achievements carousel and "Recently
+  active" list now links to that person's own profile page — recent
+  PRs, streak, workout count, total weight lifted, and how long
+  they've been a member. Nothing about food, calories, or body
+  weight. Turn off "Share my activity" in Profile → Preferences →
+  Privacy to keep others from viewing yours (you can still always
+  view it yourself).
+
+### Fixed
+- The iOS home-screen app icon's dumbbell now shows a connected
+  handle bar — it rendered as nearly invisible on the actual shipped
+  icon sizes, even though it looked fine in a regular browser.
+
 ## [1.17.0] — 2026-09-19
 
 ### Added

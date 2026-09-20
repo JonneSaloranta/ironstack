@@ -19,6 +19,7 @@ from django.utils import timezone, translation
 from django.views.defaults import permission_denied, server_error
 
 from apps.core import backups as backup_services
+from apps.core import data_exchange, version
 from apps.core.bmi import BMI_CATEGORIES, calculate_bmi, category_for, category_rows
 from apps.core.changelog import _render, render_changelog_html
 from apps.core.charts import build_bar_series, build_chart_series
@@ -2631,3 +2632,103 @@ class PushUnsubscribeViewTests(TestCase):
             content_type="application/json",
         )
         self.assertTrue(PushSubscription.objects.filter(pk=self.subscription.pk).exists())
+
+
+class DataExchangeTests(TestCase):
+    """apps.core.data_exchange — the shared "export this, import it
+    somewhere else" envelope apps.programs/apps.nutrition build their
+    own program/recipe export-import features on top of. Per-kind
+    round-trip behavior (does a program/recipe actually come back out
+    correctly) lives in each of those apps' own tests; this file only
+    covers the envelope itself."""
+
+    def test_build_envelope_round_trips_through_json(self):
+        envelope = data_exchange.build_envelope("program", {"name": "Test"})
+        raw = json.dumps(envelope)
+        payload, app_version = data_exchange.parse_envelope(raw, expected_kind="program")
+        self.assertEqual(payload, {"name": "Test"})
+        self.assertEqual(app_version, version.get_version())
+
+    def test_build_envelope_includes_the_current_schema_and_app_version(self):
+        envelope = data_exchange.build_envelope("recipe", {})
+        meta = envelope["ironstack_export"]
+        self.assertEqual(meta["schema_version"], data_exchange.SCHEMA_VERSION)
+        self.assertEqual(meta["kind"], "recipe")
+        self.assertEqual(meta["app_version"], version.get_version())
+        self.assertIn("exported_at", meta)
+
+    def test_parse_envelope_rejects_invalid_json(self):
+        with self.assertRaises(data_exchange.ImportValidationError):
+            data_exchange.parse_envelope("not json at all", expected_kind="program")
+
+    def test_parse_envelope_rejects_a_plain_json_value_thats_not_an_object(self):
+        with self.assertRaises(data_exchange.ImportValidationError):
+            data_exchange.parse_envelope("[1, 2, 3]", expected_kind="program")
+
+    def test_parse_envelope_rejects_missing_envelope_key(self):
+        with self.assertRaises(data_exchange.ImportValidationError):
+            data_exchange.parse_envelope(json.dumps({"program": {}}), expected_kind="program")
+
+    def test_parse_envelope_rejects_a_schema_version_newer_than_this_build_knows(self):
+        raw = json.dumps(
+            {
+                "ironstack_export": {
+                    "schema_version": data_exchange.SCHEMA_VERSION + 1,
+                    "kind": "program",
+                    "app_version": "99.0.0",
+                },
+                "program": {},
+            }
+        )
+        with self.assertRaises(data_exchange.ImportValidationError):
+            data_exchange.parse_envelope(raw, expected_kind="program")
+
+    def test_parse_envelope_accepts_an_older_schema_version(self):
+        """A schema_version <= the current one always stays readable —
+        only something *newer* than this build understands is
+        rejected."""
+        raw = json.dumps(
+            {
+                "ironstack_export": {
+                    "schema_version": data_exchange.SCHEMA_VERSION,
+                    "kind": "program",
+                    "app_version": "0.1.0",
+                },
+                "program": {"name": "Old"},
+            }
+        )
+        payload, app_version = data_exchange.parse_envelope(raw, expected_kind="program")
+        self.assertEqual(payload, {"name": "Old"})
+        self.assertEqual(app_version, "0.1.0")
+
+    def test_parse_envelope_rejects_the_wrong_kind(self):
+        raw = json.dumps(data_exchange.build_envelope("recipe", {}))
+        with self.assertRaises(data_exchange.ImportValidationError):
+            data_exchange.parse_envelope(raw, expected_kind="program")
+
+    def test_parse_envelope_rejects_a_kind_payload_thats_not_an_object(self):
+        raw = json.dumps(
+            {
+                "ironstack_export": {
+                    "schema_version": data_exchange.SCHEMA_VERSION,
+                    "kind": "program",
+                    "app_version": "1.0.0",
+                },
+                "program": ["not", "a", "dict"],
+            }
+        )
+        with self.assertRaises(data_exchange.ImportValidationError):
+            data_exchange.parse_envelope(raw, expected_kind="program")
+
+    def test_parse_envelope_defaults_app_version_to_unknown_when_absent(self):
+        raw = json.dumps(
+            {
+                "ironstack_export": {
+                    "schema_version": data_exchange.SCHEMA_VERSION,
+                    "kind": "program",
+                },
+                "program": {},
+            }
+        )
+        _payload, app_version = data_exchange.parse_envelope(raw, expected_kind="program")
+        self.assertEqual(app_version, "unknown")

@@ -1,15 +1,19 @@
+import json
 from datetime import date, timedelta
 from decimal import Decimal
 from unittest import mock
 
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.db import IntegrityError, transaction
 from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import override as translation_override
 
+from apps.core import data_exchange
+from apps.core.data_exchange import ImportValidationError
 from apps.measurements.models import BodyMeasurement, MeasurementType
 from apps.nutrition import (
     calculators,
@@ -1138,6 +1142,368 @@ class RefreshFoodPriceServiceTests(TestCase):
         self.assertIsNone(result.price_amount)
         self.assertEqual(result.price_currency, "")
         self.assertEqual(result.price_sample_count, 0)
+
+
+class ExportImportRecipeServiceTests(TestCase):
+    """apps.nutrition.services.export_recipe/import_recipe — see
+    apps.core.data_exchange's own module docstring for the whole
+    export/import feature these two are one half of."""
+
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        self.bob = User.objects.create_user(username="bob", password="s3cret-pass")
+
+    def _round_trip(self, recipe):
+        payload = services.export_recipe(recipe)
+        raw = json.dumps(data_exchange.build_envelope("recipe", payload))
+        parsed_payload, _app_version = data_exchange.parse_envelope(raw, expected_kind="recipe")
+        return services.import_recipe(self.bob, parsed_payload)
+
+    def test_exporting_then_importing_recreates_the_recipe_for_the_new_owner(self):
+        food = make_food(self.alice, name="Oats")
+        breakfast = MealSlot.objects.get(name="Breakfast", owner=None)
+        recipe = Recipe.objects.create(
+            owner=self.alice, name="Porridge", servings=2,
+            instructions="Cook it.", meal_slot=breakfast,
+        )
+        RecipeIngredient.objects.create(recipe=recipe, food=food, quantity=Decimal("80"))
+
+        imported = self._round_trip(recipe)
+
+        self.assertEqual(imported.owner, self.bob)
+        self.assertEqual(imported.name, "Porridge")
+        self.assertEqual(imported.servings, 2)
+        self.assertEqual(imported.instructions, "Cook it.")
+        self.assertEqual(imported.meal_slot, breakfast)
+        self.assertNotEqual(imported.pk, recipe.pk)
+        ingredient = imported.ingredients.get()
+        self.assertEqual(ingredient.food.name, "Oats")
+        self.assertEqual(ingredient.food.owner, self.bob)
+        self.assertEqual(ingredient.quantity, Decimal("80"))
+
+    def test_a_system_meal_slot_is_matched_by_name_not_duplicated(self):
+        breakfast = MealSlot.objects.get(name="Breakfast", owner=None)
+        recipe = Recipe.objects.create(owner=self.alice, name="R", meal_slot=breakfast)
+        before_count = MealSlot.objects.filter(owner__isnull=True).count()
+
+        imported = self._round_trip(recipe)
+
+        after_count = MealSlot.objects.filter(owner__isnull=True).count()
+        self.assertEqual(before_count, after_count)
+        self.assertEqual(imported.meal_slot, breakfast)
+
+    def test_a_custom_meal_slot_is_recreated_for_the_importing_user(self):
+        custom_slot = MealSlot.objects.create(owner=self.alice, name="Second Breakfast")
+        recipe = Recipe.objects.create(owner=self.alice, name="R", meal_slot=custom_slot)
+
+        imported = self._round_trip(recipe)
+
+        self.assertEqual(imported.meal_slot.owner, self.bob)
+        self.assertEqual(imported.meal_slot.name, "Second Breakfast")
+        self.assertNotEqual(imported.meal_slot_id, custom_slot.pk)
+
+    def test_no_meal_slot_stays_none(self):
+        recipe = Recipe.objects.create(owner=self.alice, name="R", meal_slot=None)
+        imported = self._round_trip(recipe)
+        self.assertIsNone(imported.meal_slot)
+
+    def test_an_off_ingredient_is_re_fetched_live_by_barcode(self):
+        off_food = make_food(None, name="Nutella", off_id="3017620422003")
+        recipe = Recipe.objects.create(owner=self.alice, name="R")
+        RecipeIngredient.objects.create(recipe=recipe, food=off_food, quantity=Decimal("15"))
+
+        with mock.patch.object(
+            services, "import_or_refresh_food_from_off", return_value=off_food
+        ) as mocked:
+            imported = self._round_trip(recipe)
+
+        mocked.assert_called_once_with("3017620422003")
+        ingredient = imported.ingredients.get()
+        self.assertEqual(ingredient.food, off_food)
+        self.assertIsNone(ingredient.food.owner)
+
+    def test_off_lookup_failure_falls_back_to_the_embedded_snapshot(self):
+        off_food = make_food(
+            self.alice, name="Discontinued Snack", off_id="0000000000001",
+            calories=250, protein_grams=Decimal("5"), carbohydrate_grams=Decimal("30"),
+            fat_grams=Decimal("10"),
+        )
+        recipe = Recipe.objects.create(owner=self.alice, name="R")
+        RecipeIngredient.objects.create(recipe=recipe, food=off_food, quantity=Decimal("40"))
+
+        with mock.patch.object(services, "import_or_refresh_food_from_off", return_value=None):
+            imported = self._round_trip(recipe)
+
+        ingredient = imported.ingredients.get()
+        self.assertEqual(ingredient.food.name, "Discontinued Snack")
+        self.assertEqual(ingredient.food.owner, self.bob)
+        self.assertEqual(ingredient.food.calories, 250)
+
+    def test_reimporting_the_same_hand_entered_food_does_not_duplicate_it(self):
+        food = make_food(self.alice, name="Homemade Bread", calories=200)
+        recipe = Recipe.objects.create(owner=self.alice, name="R")
+        RecipeIngredient.objects.create(recipe=recipe, food=food, quantity=Decimal("50"))
+
+        self._round_trip(recipe)
+        self._round_trip(recipe)
+
+        self.assertEqual(
+            Food.objects.filter(owner=self.bob, name="Homemade Bread").count(), 1
+        )
+
+    def test_missing_food_name_raises_a_validation_error(self):
+        with self.assertRaises(ImportValidationError):
+            services.import_recipe(
+                self.bob,
+                {"name": "R", "ingredients": [{"quantity": "10", "food": {}}]},
+            )
+
+    def test_missing_required_nutrition_data_raises_a_validation_error(self):
+        with self.assertRaises(ImportValidationError):
+            services.import_recipe(
+                self.bob,
+                {
+                    "name": "R",
+                    "ingredients": [
+                        {"quantity": "10", "food": {"name": "Mystery Food"}}
+                    ],
+                },
+            )
+
+    def test_a_failed_import_leaves_no_partial_recipe_behind(self):
+        payload = {
+            "name": "Doomed Recipe",
+            "ingredients": [{"quantity": "10", "food": {}}],
+        }
+        with self.assertRaises(ImportValidationError):
+            services.import_recipe(self.bob, payload)
+        self.assertFalse(Recipe.objects.filter(name="Doomed Recipe").exists())
+
+    def test_missing_recipe_name_raises_a_validation_error(self):
+        with self.assertRaises(ImportValidationError):
+            services.import_recipe(self.bob, {"ingredients": []})
+
+
+class ExportImportDietPlanServiceTests(TestCase):
+    """apps.nutrition.services.export_diet_plan/import_diet_plan — see
+    apps.core.data_exchange's own module docstring for the whole
+    export/import feature these two are one third of, alongside
+    recipes and (apps.programs.services) gym programs."""
+
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        self.bob = User.objects.create_user(username="bob", password="s3cret-pass")
+        self.breakfast = MealSlot.objects.get(name="Breakfast", owner=None)
+
+    def _plan(self, **kwargs):
+        defaults = {
+            "user": self.alice,
+            "name": "Cut Plan",
+            "target_calories": 2000,
+            "target_protein_grams": Decimal("150"),
+            "target_carbohydrate_grams": Decimal("200"),
+            "target_fat_grams": Decimal("60"),
+        }
+        defaults.update(kwargs)
+        return DietPlan.objects.create(**defaults)
+
+    def _round_trip(self, plan):
+        payload = services.export_diet_plan(plan)
+        raw = json.dumps(data_exchange.build_envelope("diet_plan", payload))
+        parsed_payload, _app_version = data_exchange.parse_envelope(
+            raw, expected_kind="diet_plan"
+        )
+        return services.import_diet_plan(self.bob, parsed_payload)
+
+    def test_exporting_then_importing_recreates_the_plan_for_the_new_owner(self):
+        food = make_food(self.alice, name="Oats")
+        plan = self._plan()
+        meal = DietPlanMeal.objects.create(
+            diet_plan=plan, meal_slot=self.breakfast, target_calories=500
+        )
+        DietPlanItem.objects.create(diet_plan_meal=meal, food=food, quantity=Decimal("100"))
+
+        imported = self._round_trip(plan)
+
+        self.assertEqual(imported.user, self.bob)
+        self.assertEqual(imported.name, "Cut Plan")
+        self.assertEqual(imported.target_calories, 2000)
+        self.assertEqual(imported.target_protein_grams, Decimal("150"))
+        self.assertEqual(imported.target_carbohydrate_grams, Decimal("200"))
+        self.assertEqual(imported.target_fat_grams, Decimal("60"))
+        self.assertFalse(imported.is_weekly)
+        self.assertIsNone(imported.goal)
+        self.assertFalse(imported.is_active)
+        self.assertNotEqual(imported.pk, plan.pk)
+        imported_meal = imported.meals.get()
+        self.assertEqual(imported_meal.meal_slot, self.breakfast)
+        self.assertEqual(imported_meal.target_calories, 500)
+        item = imported_meal.items.get()
+        self.assertEqual(item.food.name, "Oats")
+        self.assertEqual(item.food.owner, self.bob)
+        self.assertEqual(item.quantity, Decimal("100"))
+
+    def test_imported_plan_is_never_active_even_if_the_source_was(self):
+        plan = self._plan(is_active=True)
+        imported = self._round_trip(plan)
+        self.assertFalse(imported.is_active)
+
+    def test_a_system_meal_slot_is_matched_by_name_not_duplicated(self):
+        plan = self._plan()
+        DietPlanMeal.objects.create(
+            diet_plan=plan, meal_slot=self.breakfast, target_calories=500
+        )
+        before_count = MealSlot.objects.filter(owner__isnull=True).count()
+
+        imported = self._round_trip(plan)
+
+        after_count = MealSlot.objects.filter(owner__isnull=True).count()
+        self.assertEqual(before_count, after_count)
+        self.assertEqual(imported.meals.get().meal_slot, self.breakfast)
+
+    def test_weekday_is_preserved_for_a_weekly_plan(self):
+        plan = self._plan(is_weekly=True)
+        DietPlanMeal.objects.create(
+            diet_plan=plan, meal_slot=self.breakfast, target_calories=500, weekday=2
+        )
+
+        imported = self._round_trip(plan)
+
+        self.assertTrue(imported.is_weekly)
+        self.assertEqual(imported.meals.get().weekday, 2)
+
+    def test_an_embedded_recipe_item_is_recreated_with_its_own_ingredients(self):
+        food = make_food(self.alice, name="Oats")
+        recipe = Recipe.objects.create(owner=self.alice, name="Porridge")
+        RecipeIngredient.objects.create(recipe=recipe, food=food, quantity=Decimal("80"))
+        plan = self._plan()
+        meal = DietPlanMeal.objects.create(
+            diet_plan=plan, meal_slot=self.breakfast, target_calories=500
+        )
+        DietPlanItem.objects.create(diet_plan_meal=meal, recipe=recipe, quantity=Decimal("1"))
+
+        imported = self._round_trip(plan)
+
+        item = imported.meals.get().items.get()
+        self.assertIsNotNone(item.recipe)
+        self.assertEqual(item.recipe.owner, self.bob)
+        self.assertEqual(item.recipe.name, "Porridge")
+        self.assertEqual(item.recipe.ingredients.get().food.name, "Oats")
+
+    def test_reimporting_matches_an_existing_recipe_by_name_instead_of_duplicating(self):
+        food = make_food(self.alice, name="Oats")
+        recipe = Recipe.objects.create(owner=self.alice, name="Porridge")
+        RecipeIngredient.objects.create(recipe=recipe, food=food, quantity=Decimal("80"))
+        plan = self._plan()
+        meal = DietPlanMeal.objects.create(
+            diet_plan=plan, meal_slot=self.breakfast, target_calories=500
+        )
+        DietPlanItem.objects.create(diet_plan_meal=meal, recipe=recipe, quantity=Decimal("1"))
+
+        self._round_trip(plan)
+        self._round_trip(plan)
+
+        self.assertEqual(Recipe.objects.filter(owner=self.bob, name="Porridge").count(), 1)
+
+    def test_reimporting_the_same_hand_entered_food_does_not_duplicate_it(self):
+        food = make_food(self.alice, name="Homemade Bread", calories=200)
+        plan = self._plan()
+        meal = DietPlanMeal.objects.create(
+            diet_plan=plan, meal_slot=self.breakfast, target_calories=500
+        )
+        DietPlanItem.objects.create(diet_plan_meal=meal, food=food, quantity=Decimal("50"))
+
+        self._round_trip(plan)
+        self._round_trip(plan)
+
+        self.assertEqual(
+            Food.objects.filter(owner=self.bob, name="Homemade Bread").count(), 1
+        )
+
+    def test_reimporting_an_off_ingredient_resolves_to_the_same_shared_food(self):
+        off_food = make_food(None, name="Nutella", off_id="3017620422003")
+        plan = self._plan()
+        meal = DietPlanMeal.objects.create(
+            diet_plan=plan, meal_slot=self.breakfast, target_calories=500
+        )
+        DietPlanItem.objects.create(diet_plan_meal=meal, food=off_food, quantity=Decimal("15"))
+
+        with mock.patch.object(
+            services, "import_or_refresh_food_from_off", return_value=off_food
+        ) as mocked:
+            imported = self._round_trip(plan)
+
+        mocked.assert_called_once_with("3017620422003")
+        item = imported.meals.get().items.get()
+        self.assertEqual(item.food, off_food)
+
+    def test_missing_plan_name_raises_a_validation_error(self):
+        with self.assertRaises(ImportValidationError):
+            services.import_diet_plan(
+                self.bob,
+                {
+                    "target_calories": 2000, "target_protein_grams": "1",
+                    "target_carbohydrate_grams": "1", "target_fat_grams": "1",
+                },
+            )
+
+    def test_missing_targets_raises_a_validation_error(self):
+        with self.assertRaises(ImportValidationError):
+            services.import_diet_plan(self.bob, {"name": "P"})
+
+    def test_missing_meal_slot_raises_a_validation_error(self):
+        with self.assertRaises(ImportValidationError):
+            services.import_diet_plan(
+                self.bob,
+                {
+                    "name": "P", "target_calories": 2000, "target_protein_grams": "1",
+                    "target_carbohydrate_grams": "1", "target_fat_grams": "1",
+                    "meals": [{"target_calories": 500, "items": []}],
+                },
+            )
+
+    def test_item_with_both_food_and_recipe_raises_a_validation_error(self):
+        with self.assertRaises(ImportValidationError):
+            services.import_diet_plan(
+                self.bob,
+                {
+                    "name": "P", "target_calories": 2000, "target_protein_grams": "1",
+                    "target_carbohydrate_grams": "1", "target_fat_grams": "1",
+                    "meals": [{
+                        "meal_slot": self.breakfast.name, "target_calories": 500,
+                        "items": [
+                            {"quantity": "1", "food": {"name": "X"}, "recipe": {"name": "Y"}}
+                        ],
+                    }],
+                },
+            )
+
+    def test_item_with_neither_food_nor_recipe_raises_a_validation_error(self):
+        with self.assertRaises(ImportValidationError):
+            services.import_diet_plan(
+                self.bob,
+                {
+                    "name": "P", "target_calories": 2000, "target_protein_grams": "1",
+                    "target_carbohydrate_grams": "1", "target_fat_grams": "1",
+                    "meals": [{
+                        "meal_slot": self.breakfast.name, "target_calories": 500,
+                        "items": [{"quantity": "1"}],
+                    }],
+                },
+            )
+
+    def test_a_failed_import_leaves_no_partial_plan_behind(self):
+        payload = {
+            "name": "Doomed Plan", "target_calories": 2000, "target_protein_grams": "1",
+            "target_carbohydrate_grams": "1", "target_fat_grams": "1",
+            "meals": [{
+                "meal_slot": self.breakfast.name, "target_calories": 500,
+                "items": [{"quantity": "1"}],
+            }],
+        }
+        with self.assertRaises(ImportValidationError):
+            services.import_diet_plan(self.bob, payload)
+        self.assertFalse(DietPlan.objects.filter(name="Doomed Plan").exists())
 
 
 class MergeFoodsTests(TestCase):
@@ -3329,6 +3695,149 @@ class DiaryMealSaveAsRecipeViewTests(TestCase):
         # Alice does — never leaks Alice's entries into Bob's recipe.
         self.assertContains(response, "Nothing logged for this meal")
         self.assertFalse(Recipe.objects.filter(owner=bob).exists())
+
+
+class RecipeExportImportViewTests(TestCase):
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        self.bob = User.objects.create_user(username="bob", password="s3cret-pass")
+        self.food = make_food(self.alice, name="Oats")
+        self.recipe = Recipe.objects.create(owner=self.alice, name="Alice's Porridge")
+        RecipeIngredient.objects.create(
+            recipe=self.recipe, food=self.food, quantity=Decimal("80")
+        )
+
+    def _export_response(self, user, recipe):
+        client = self.client_class()
+        client.login(username=user.username, password="s3cret-pass")
+        return client.get(reverse("nutrition:recipe-export", args=[recipe.pk]))
+
+    def test_export_requires_login(self):
+        response = self.client.get(reverse("nutrition:recipe-export", args=[self.recipe.pk]))
+        self.assertEqual(response.status_code, 302)
+
+    def test_export_is_downloadable_valid_json(self):
+        response = self._export_response(self.alice, self.recipe)
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(response["Content-Disposition"].startswith("attachment;"))
+        data = json.loads(response.content)
+        self.assertEqual(data["ironstack_export"]["kind"], "recipe")
+        self.assertEqual(data["recipe"]["name"], "Alice's Porridge")
+
+    def test_a_shared_template_recipe_is_still_exportable(self):
+        template_food = make_food(None, name="Shared Food")
+        template = Recipe.objects.create(owner=None, name="Shared Template")
+        RecipeIngredient.objects.create(recipe=template, food=template_food, quantity=Decimal("1"))
+        response = self._export_response(self.bob, template)
+        self.assertEqual(response.status_code, 200)
+
+    def test_cannot_export_another_users_private_recipe(self):
+        response = self._export_response(self.bob, self.recipe)
+        self.assertEqual(response.status_code, 404)
+
+    def test_import_requires_login(self):
+        response = self.client.get(reverse("nutrition:recipe-import"))
+        self.assertEqual(response.status_code, 302)
+
+    def test_uploading_a_valid_export_creates_a_recipe_and_redirects(self):
+        export_response = self._export_response(self.alice, self.recipe)
+        self.client.login(username="bob", password="s3cret-pass")
+        upload = SimpleUploadedFile(
+            "export.json", export_response.content, content_type="application/json"
+        )
+        response = self.client.post(
+            reverse("nutrition:recipe-import"), {"export_file": upload}, follow=True
+        )
+        self.assertContains(response, "Imported")
+        self.assertTrue(
+            Recipe.objects.filter(owner=self.bob, name="Alice's Porridge").exists()
+        )
+
+    def test_uploading_a_non_json_extension_is_rejected(self):
+        self.client.login(username="bob", password="s3cret-pass")
+        upload = SimpleUploadedFile("export.txt", b"{}", content_type="text/plain")
+        response = self.client.post(reverse("nutrition:recipe-import"), {"export_file": upload})
+        self.assertContains(response, "Must be a .json file.")
+
+    def test_uploading_a_program_export_is_rejected_as_the_wrong_kind(self):
+        self.client.login(username="bob", password="s3cret-pass")
+        wrong_kind = json.dumps(data_exchange.build_envelope("program", {"name": "Not a recipe"}))
+        upload = SimpleUploadedFile(
+            "export.json", wrong_kind.encode(), content_type="application/json"
+        )
+        response = self.client.post(reverse("nutrition:recipe-import"), {"export_file": upload})
+        self.assertContains(response, "not a")
+        self.assertFalse(Recipe.objects.filter(owner=self.bob).exists())
+
+
+class DietPlanExportImportViewTests(TestCase):
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        self.bob = User.objects.create_user(username="bob", password="s3cret-pass")
+        self.food = make_food(self.alice, name="Oats")
+        self.breakfast = MealSlot.objects.get(name="Breakfast", owner=None)
+        self.plan = DietPlan.objects.create(
+            user=self.alice, name="Alice's Plan", target_calories=2000,
+            target_protein_grams=Decimal("150"), target_carbohydrate_grams=Decimal("200"),
+            target_fat_grams=Decimal("60"),
+        )
+        meal = DietPlanMeal.objects.create(
+            diet_plan=self.plan, meal_slot=self.breakfast, target_calories=500
+        )
+        DietPlanItem.objects.create(diet_plan_meal=meal, food=self.food, quantity=Decimal("100"))
+
+    def _export_response(self, user, plan):
+        client = self.client_class()
+        client.login(username=user.username, password="s3cret-pass")
+        return client.get(reverse("nutrition:diet-plan-export", args=[plan.pk]))
+
+    def test_export_requires_login(self):
+        response = self.client.get(reverse("nutrition:diet-plan-export", args=[self.plan.pk]))
+        self.assertEqual(response.status_code, 302)
+
+    def test_export_is_downloadable_valid_json(self):
+        response = self._export_response(self.alice, self.plan)
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(response["Content-Disposition"].startswith("attachment;"))
+        data = json.loads(response.content)
+        self.assertEqual(data["ironstack_export"]["kind"], "diet_plan")
+        self.assertEqual(data["diet_plan"]["name"], "Alice's Plan")
+
+    def test_cannot_export_another_users_plan(self):
+        response = self._export_response(self.bob, self.plan)
+        self.assertEqual(response.status_code, 404)
+
+    def test_import_requires_login(self):
+        response = self.client.get(reverse("nutrition:diet-plan-import"))
+        self.assertEqual(response.status_code, 302)
+
+    def test_uploading_a_valid_export_creates_a_plan_and_redirects(self):
+        export_response = self._export_response(self.alice, self.plan)
+        self.client.login(username="bob", password="s3cret-pass")
+        upload = SimpleUploadedFile(
+            "export.json", export_response.content, content_type="application/json"
+        )
+        response = self.client.post(
+            reverse("nutrition:diet-plan-import"), {"export_file": upload}, follow=True
+        )
+        self.assertContains(response, "Imported")
+        self.assertTrue(DietPlan.objects.filter(user=self.bob, name="Alice's Plan").exists())
+
+    def test_uploading_a_non_json_extension_is_rejected(self):
+        self.client.login(username="bob", password="s3cret-pass")
+        upload = SimpleUploadedFile("export.txt", b"{}", content_type="text/plain")
+        response = self.client.post(reverse("nutrition:diet-plan-import"), {"export_file": upload})
+        self.assertContains(response, "Must be a .json file.")
+
+    def test_uploading_a_recipe_export_is_rejected_as_the_wrong_kind(self):
+        self.client.login(username="bob", password="s3cret-pass")
+        wrong_kind = json.dumps(data_exchange.build_envelope("recipe", {"name": "Not a diet plan"}))
+        upload = SimpleUploadedFile(
+            "export.json", wrong_kind.encode(), content_type="application/json"
+        )
+        response = self.client.post(reverse("nutrition:diet-plan-import"), {"export_file": upload})
+        self.assertContains(response, "not a")
+        self.assertFalse(DietPlan.objects.filter(user=self.bob).exists())
 
 
 class RecipeViewTests(TestCase):

@@ -58,10 +58,12 @@ urlpatterns = [
     path("stats/", views.NutritionStatsView.as_view(), name="stats"),
     path("recipes/", views.RecipeListView.as_view(), name="recipe-list"),
     path("recipes/new/", views.recipe_create, name="recipe-create"),
+    path("recipes/import/", views.recipe_import, name="recipe-import"),
     path("recipes/<int:pk>/", views.RecipeDetailView.as_view(), name="recipe-detail"),
     path("recipes/<int:pk>/edit/", views.recipe_update, name="recipe-update"),
     path("recipes/<int:pk>/delete/", views.recipe_delete, name="recipe-delete"),
     path("recipes/<int:pk>/log/", views.recipe_log, name="recipe-log"),
+    path("recipes/<int:pk>/export/", views.recipe_export, name="recipe-export"),
     path(
         "recipes/<int:recipe_pk>/ingredients/new/",
         views.recipe_ingredient_create,
@@ -79,9 +81,11 @@ urlpatterns = [
     ),
     path("diet-plans/", views.DietPlanListView.as_view(), name="diet-plan-list"),
     path("diet-plans/new/", views.DietPlanCreateView.as_view(), name="diet-plan-create"),
+    path("diet-plans/import/", views.diet_plan_import, name="diet-plan-import"),
     path(
         "diet-plans/<int:pk>/", views.DietPlanDetailView.as_view(), name="diet-plan-detail"
     ),
+    path("diet-plans/<int:pk>/export/", views.diet_plan_export, name="diet-plan-export"),
     path("diet-plans/<int:pk>/delete/", views.diet_plan_delete, name="diet-plan-delete"),
     path(
         "diet-plans/<int:pk>/toggle-active/",
