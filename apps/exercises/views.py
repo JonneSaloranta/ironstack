@@ -4,6 +4,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseNotAllowed
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
+from django.utils.translation import gettext as _
 from django.views.generic import CreateView, DetailView, ListView, UpdateView
 
 from . import services
@@ -67,7 +68,9 @@ class ExerciseCreateView(LoginRequiredMixin, CreateView):
 
     def form_valid(self, form):
         form.instance.owner = self.request.user
-        return super().form_valid(form)
+        response = super().form_valid(form)
+        messages.success(self.request, _("Exercise created."))
+        return response
 
     def get_success_url(self):
         return reverse_lazy("exercises:exercise-detail", args=[self.object.pk])
@@ -83,6 +86,11 @@ class ExerciseUpdateView(LoginRequiredMixin, UpdateView):
         # exercises are managed via the admin, not user-facing views.
         return Exercise.objects.filter(owner=self.request.user)
 
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        messages.success(self.request, _("Exercise updated."))
+        return response
+
     def get_success_url(self):
         return reverse_lazy("exercises:exercise-detail", args=[self.object.pk])
 
@@ -94,6 +102,7 @@ def exercise_deactivate(request, pk):
     exercise = get_object_or_404(Exercise, pk=pk, owner=request.user)
     exercise.active = False
     exercise.save(update_fields=["active"])
+    messages.success(request, _("Exercise deactivated."))
     return redirect("exercises:exercise-list")
 
 
@@ -114,6 +123,7 @@ def exercise_image_create(request, pk):
     )
     if form.is_valid():
         form.save()
+        messages.success(request, _("Image added."))
     else:
         for field_errors in form.errors.values():
             for error in field_errors:
@@ -129,4 +139,5 @@ def exercise_image_delete(request, pk):
     exercise_pk = image.exercise_id
     image.image.delete(save=False)
     image.delete()
+    messages.success(request, _("Image removed."))
     return redirect("exercises:exercise-detail", pk=exercise_pk)

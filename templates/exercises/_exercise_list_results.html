@@ -11,19 +11,9 @@
     </div>
   </a>
 {% empty %}
-  <div class="card empty-state">
-    <p>{% trans "No exercises match your search." %}</p>
-  </div>
+  {% trans "No exercises match your search." as empty_msg %}
+  {% trans "Try a different search term or clear the muscle group filter." as empty_hint %}
+  {% include "core/_empty_state.html" with message=empty_msg hint=empty_hint %}
 {% endfor %}
 
-{% if is_paginated %}
-  <nav class="pagination" aria-label="{% trans "Exercise list pages" %}">
-    {% if page_obj.has_previous %}
-      <a class="button-secondary" href="?page={{ page_obj.previous_page_number }}&q={{ query }}&muscle_group={{ selected_muscle_group }}">{% trans "Previous" %}</a>
-    {% endif %}
-    <span>{% blocktrans with number=page_obj.number total=page_obj.paginator.num_pages %}Page {{ number }} of {{ total }}{% endblocktrans %}</span>
-    {% if page_obj.has_next %}
-      <a class="button-secondary" href="?page={{ page_obj.next_page_number }}&q={{ query }}&muscle_group={{ selected_muscle_group }}">{% trans "Next" %}</a>
-    {% endif %}
-  </nav>
-{% endif %}
+{% include "core/_pagination.html" %}

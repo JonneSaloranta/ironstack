@@ -3,21 +3,17 @@
 {% block title %}{% trans "New measurement type" %} — IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
-  <h1 style="margin:0;">{% trans "New measurement type" %}</h1>
+  <h1 class="no-margin">{% trans "New measurement type" %}</h1>
 </div>
 
 <form class="card" method="post">
   {% csrf_token %}
-  {{ form.non_field_errors }}
+  {% include "core/_form_errors.html" %}
   {% for field in form %}
-    <div class="field">
-      {{ field.label_tag }}
-      {{ field }}
-      {% if field.errors %}<p class="field-error">{{ field.errors|striptags }}</p>{% endif %}
-    </div>
+    {% include "core/_field.html" with field=field %}
   {% endfor %}
   <button type="submit">{% trans "Save" %}</button>
 </form>
 
-<p><a class="button-secondary" href="{% url 'measurements:type-list' %}">&larr; {% trans "Back to body tracking" %}</a></p>
+<p><a class="button-link" href="{% url 'measurements:type-list' %}">&larr; {% trans "Back to body tracking" %}</a></p>
 {% endblock %}

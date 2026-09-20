@@ -3,9 +3,9 @@
 {% block title %}{% trans "Programs" %} — IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
-  <h1 style="margin:0;">{% trans "Programs" %}</h1>
+  <h1 class="no-margin">{% trans "Programs" %}</h1>
 </div>
-<p style="display:flex; flex-wrap:wrap; gap:0.5rem;">
+<p class="row">
   <a class="button" href="{% url 'programs:program-create' %}">{% trans "New" %}</a>
   <a class="button-secondary" href="{% url 'programs:program-import' %}">{% trans "Import" %}</a>
 </p>
@@ -14,7 +14,7 @@
 {% for program in own_programs %}
   <a class="card card-link" href="{% url 'programs:program-detail' program.pk %}">
     <strong>{% trans program.name %}</strong>
-    {% if program.has_coach_update %}<span class="nav-badge" aria-hidden="true" style="position:static; display:inline-block; vertical-align:middle;"></span> <span class="text-muted">{% trans "Coach update available" %}</span>{% endif %}
+    {% if program.has_coach_update %}<span class="nav-badge badge-inline" aria-hidden="true"></span> <span class="text-muted">{% trans "Coach update available" %}</span>{% endif %}
     <div class="text-muted">
       {% blocktrans count counter=program.workout_count %}{{ counter }} workout{% plural %}{{ counter }} workouts{% endblocktrans %}
     </div>
@@ -31,7 +31,7 @@
   {% for program in coach_programs %}
     <a class="card card-link" href="{% url 'programs:program-detail' program.pk %}">
       <strong>{% trans program.name %}</strong>
-      {% if program.has_coach_update %}<span class="nav-badge" aria-hidden="true" style="position:static; display:inline-block; vertical-align:middle;"></span> <span class="text-muted">{% trans "Coach update available" %}</span>{% endif %}
+      {% if program.has_coach_update %}<span class="nav-badge badge-inline" aria-hidden="true"></span> <span class="text-muted">{% trans "Coach update available" %}</span>{% endif %}
       <div class="text-muted">
         {% blocktrans count counter=program.workout_count %}{{ counter }} workout{% plural %}{{ counter }} workouts{% endblocktrans %}
       </div>

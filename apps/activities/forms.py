@@ -22,8 +22,17 @@ class ActivityForm(forms.ModelForm):
     pattern as apps.measurements.forms.BodyMeasurementForm.
     """
 
-    duration_minutes = forms.IntegerField(min_value=1, label=_("Duration (minutes)"))
-    distance = forms.DecimalField(max_digits=8, decimal_places=2, required=False)
+    duration_minutes = forms.IntegerField(
+        min_value=1,
+        label=_("Duration (minutes)"),
+        widget=forms.NumberInput(attrs={"inputmode": "numeric", "autocomplete": "off"}),
+    )
+    distance = forms.DecimalField(
+        max_digits=8,
+        decimal_places=2,
+        required=False,
+        widget=forms.NumberInput(attrs={"inputmode": "decimal", "autocomplete": "off"}),
+    )
 
     class Meta:
         model = Activity

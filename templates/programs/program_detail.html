@@ -3,7 +3,7 @@
 {% block title %}{% trans program.name %} — IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
-  <h1 style="margin:0;">{% trans program.name %}</h1>
+  <h1 class="no-margin">{% trans program.name %}</h1>
 </div>
 <div class="top-bar-actions">
   {% if can_edit %}
@@ -36,7 +36,7 @@
 {% for workout in program.workouts.all %}
   <div class="card">
     <div class="top-bar" style="padding:0; border:0;">
-      <h3 style="margin:0;">
+      <h3 class="no-margin">
         {% trans workout.name %}
         {% if workout.scheduled_weekday is not None %}
           <span class="tag tag-muted">{{ workout.get_scheduled_weekday_display }}</span>
@@ -45,7 +45,7 @@
       {% if can_edit %}
         <span class="set-actions">
           <a class="button-secondary" href="{% url 'programs:workout-update' program.pk workout.pk %}">{% trans "Edit" %}</a>
-          <form method="post" action="{% url 'programs:workout-delete' program.pk workout.pk %}" x-data="{}" @submit="if (!confirm('{% trans "Delete this workout and its exercises?" %}')) $event.preventDefault()">
+          <form method="post" action="{% url 'programs:workout-delete' program.pk workout.pk %}" data-confirm="{% filter force_escape %}{% trans "Delete this workout and its exercises?" %}{% endfilter %}">
             {% csrf_token %}
             <button type="submit" class="button-danger">{% trans "Delete" %}</button>
           </form>
@@ -86,11 +86,11 @@
 
 {% if can_edit %}
   <a class="button" href="{% url 'programs:workout-create' program.pk %}">{% trans "Add workout" %}</a>
-  <form method="post" action="{% url 'programs:program-delete' program.pk %}" x-data="{}" @submit="if (!confirm('{% trans "Delete this program? This cannot be undone." %}')) $event.preventDefault()">
+  <form method="post" action="{% url 'programs:program-delete' program.pk %}" data-confirm="{% filter force_escape %}{% trans "Delete this program? This cannot be undone." %}{% endfilter %}">
     {% csrf_token %}
     <button type="submit" class="button-danger">{% trans "Delete program" %}</button>
   </form>
 {% endif %}
 
-<p><a class="button-secondary" href="{% url 'programs:program-list' %}">&larr; {% trans "Back to programs" %}</a></p>
+<p><a class="button-link" href="{% url 'programs:program-list' %}">&larr; {% trans "Back to programs" %}</a></p>
 {% endblock %}

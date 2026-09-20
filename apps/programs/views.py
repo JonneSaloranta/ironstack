@@ -99,7 +99,9 @@ class ProgramCreateView(LoginRequiredMixin, CreateView):
 
     def form_valid(self, form):
         form.instance.owner = self.request.user
-        return super().form_valid(form)
+        response = super().form_valid(form)
+        messages.success(self.request, _("Program created."))
+        return response
 
     def get_success_url(self):
         return reverse("programs:program-detail", args=[self.object.pk])
@@ -121,6 +123,7 @@ class ProgramUpdateView(LoginRequiredMixin, UpdateView):
     def form_valid(self, form):
         response = super().form_valid(form)
         self.object.bump_version()
+        messages.success(self.request, _("Program saved."))
         return response
 
     def get_success_url(self):
@@ -133,6 +136,11 @@ class ProgramDeleteView(LoginRequiredMixin, DeleteView):
 
     def get_queryset(self):
         return services.editable_by(self.request.user)
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        messages.success(self.request, _("Program deleted."))
+        return response
 
     def get_success_url(self):
         return reverse("programs:program-list")
@@ -215,6 +223,7 @@ def workout_create(request, program_pk):
         workout.program = program
         workout.save()
         program.bump_version()
+        messages.success(request, _("Workout added."))
         return redirect("programs:program-detail", pk=program.pk)
     return _render_program_form(
         request, "programs/workout_form.html", {"form": form, "program": program}
@@ -229,6 +238,7 @@ def workout_update(request, program_pk, pk):
     if request.method == "POST" and form.is_valid():
         form.save()
         program.bump_version()
+        messages.success(request, _("Workout saved."))
         return redirect("programs:program-detail", pk=program.pk)
     return _render_program_form(
         request, "programs/workout_form.html", {"form": form, "program": program}
@@ -243,6 +253,7 @@ def workout_delete(request, program_pk, pk):
     workout = get_object_or_404(Workout, pk=pk, program=program)
     workout.delete()
     program.bump_version()
+    messages.success(request, _("Workout deleted."))
     return redirect("programs:program-detail", pk=program.pk)
 
 
@@ -256,6 +267,7 @@ def prescription_create(request, program_pk, workout_pk):
         prescription.workout = workout
         prescription.save()
         program.bump_version()
+        messages.success(request, _("Exercise added."))
         return redirect("programs:program-detail", pk=program.pk)
     return _render_program_form(
         request,
@@ -275,6 +287,7 @@ def prescription_update(request, program_pk, workout_pk, pk):
     if request.method == "POST" and form.is_valid():
         form.save()
         program.bump_version()
+        messages.success(request, _("Exercise saved."))
         return redirect("programs:program-detail", pk=program.pk)
     return _render_program_form(
         request,
@@ -292,6 +305,7 @@ def prescription_delete(request, program_pk, workout_pk, pk):
     prescription = get_object_or_404(ExercisePrescription, pk=pk, workout=workout)
     prescription.delete()
     program.bump_version()
+    messages.success(request, _("Exercise removed."))
     return redirect("programs:program-detail", pk=program.pk)
 
 

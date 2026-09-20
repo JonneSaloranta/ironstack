@@ -3,7 +3,7 @@
 {% block title %}{% trans "Delete program" %} — IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
-  <h1 style="margin:0;">{% trans "Delete program" %}</h1>
+  <h1 class="no-margin">{% trans "Delete program" %}</h1>
 </div>
 
 <div class="card">
@@ -13,6 +13,6 @@
     {% csrf_token %}
     <button type="submit" class="button-danger">{% trans "Delete" %}</button>
   </form>
-  <p><a class="button-secondary" href="{% url 'programs:program-detail' program.pk %}">{% trans "Cancel" %}</a></p>
+  <p><a class="button-link" href="{% url 'programs:program-detail' program.pk %}">{% trans "Cancel" %}</a></p>
 </div>
 {% endblock %}

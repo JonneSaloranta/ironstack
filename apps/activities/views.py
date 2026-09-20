@@ -1,12 +1,17 @@
 import dataclasses
 
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Count, Q
 from django.http import HttpResponseNotAllowed
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
+from django.utils.translation import gettext as _
 from django.views.generic import CreateView, DetailView, ListView
+
+from apps.core.formatting import form_error_text
+from apps.core.pagination import paginate_list
 
 from . import services, units
 from .forms import ActivityForm, ActivityTypeForm
@@ -37,7 +42,9 @@ class ActivityTypeCreateView(LoginRequiredMixin, CreateView):
 
     def form_valid(self, form):
         form.instance.owner = self.request.user
-        return super().form_valid(form)
+        response = super().form_valid(form)
+        messages.success(self.request, _("Activity type created."))
+        return response
 
     def get_success_url(self):
         return reverse("activities:history", args=[self.object.pk])
@@ -58,6 +65,7 @@ class ActivityHistoryView(LoginRequiredMixin, DetailView):
         distance_label = units.distance_unit_label(user.unit_system)
         for entry in history:
             entry.display_distance = units.distance_to_display(entry.distance, user.unit_system)
+        context["page_obj"] = paginate_list(self.request, history)
         context["history"] = history
         # summarize() totals canonical meters (it doesn't know about
         # display units) — convert the one distance-shaped field before
@@ -86,6 +94,11 @@ def activity_log(request, type_pk):
     form = ActivityForm(request.POST, user=request.user, activity_type=activity_type)
     if form.is_valid():
         form.save()
+        messages.success(request, _("Activity logged."))
+    else:
+        # The log form lives on the history page, so an invalid POST used to
+        # redirect back with no sign anything was wrong.
+        messages.error(request, _("That could not be saved: %(errors)s") % {"errors": form_error_text(form)})
     return redirect("activities:history", pk=activity_type.pk)
 
 
@@ -102,6 +115,7 @@ def activity_edit(request, pk):
         )
         if form.is_valid():
             form.save()
+            messages.success(request, _("Activity updated."))
             return redirect("activities:history", pk=activity.activity_type_id)
     else:
         form = ActivityForm(
@@ -121,6 +135,7 @@ def activity_delete(request, pk):
     activity = _owned_activity_or_404(request, pk)
     type_pk = activity.activity_type_id
     activity.delete()
+    messages.success(request, _("Activity deleted."))
     return redirect("activities:history", pk=type_pk)
 
 
@@ -131,4 +146,5 @@ def activity_type_deactivate(request, pk):
     activity_type = get_object_or_404(ActivityType, pk=pk, owner=request.user)
     activity_type.active = False
     activity_type.save(update_fields=["active"])
+    messages.success(request, _("Activity type deactivated."))
     return redirect("activities:type-list")

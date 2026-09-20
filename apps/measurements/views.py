@@ -1,12 +1,16 @@
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseNotAllowed
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
+from django.utils.translation import gettext as _
 from django.views.generic import CreateView, DetailView, ListView
 
 from apps.core import bmi as bmi_services
 from apps.core import units as core_units
+from apps.core.formatting import form_error_text
+from apps.core.pagination import paginate_list
 
 from . import services, units
 from .forms import BodyMeasurementForm, MeasurementTypeForm
@@ -43,7 +47,9 @@ class MeasurementTypeCreateView(LoginRequiredMixin, CreateView):
 
     def form_valid(self, form):
         form.instance.owner = self.request.user
-        return super().form_valid(form)
+        response = super().form_valid(form)
+        messages.success(self.request, _("Measurement type created."))
+        return response
 
     def get_success_url(self):
         return reverse("measurements:history", args=[self.object.pk])
@@ -66,6 +72,7 @@ class MeasurementHistoryView(LoginRequiredMixin, DetailView):
             entry.display_value = units.to_display(
                 entry.value, measurement_type.unit_kind, user.unit_system
             )
+        context["page_obj"] = paginate_list(self.request, history)
         context["history"] = history
         context["unit_label"] = unit_label
         # The chart plots display units (what the user actually reads),
@@ -137,6 +144,9 @@ def measurement_log(request, type_pk):
     )
     if form.is_valid():
         form.save()
+        messages.success(request, _("Reading logged."))
+    else:
+        messages.error(request, _("That could not be saved: %(errors)s") % {"errors": form_error_text(form)})
     return redirect("measurements:history", pk=measurement_type.pk)
 
 
@@ -156,6 +166,7 @@ def measurement_edit(request, pk):
         )
         if form.is_valid():
             form.save()
+            messages.success(request, _("Reading updated."))
             return redirect("measurements:history", pk=measurement.measurement_type_id)
     else:
         form = BodyMeasurementForm(
@@ -175,6 +186,7 @@ def measurement_delete(request, pk):
     measurement = _owned_measurement_or_404(request, pk)
     type_pk = measurement.measurement_type_id
     measurement.delete()
+    messages.success(request, _("Reading deleted."))
     return redirect("measurements:history", pk=type_pk)
 
 
