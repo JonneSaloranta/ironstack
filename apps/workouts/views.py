@@ -72,6 +72,7 @@ class WorkoutSessionDetailView(LoginRequiredMixin, DetailView):
         # Attached per-row rather than passed as a separate dict so the
         # template can do `pe.set_form` — Django template dict lookups
         # can't take a variable key (`dict.pe.id` won't resolve `pe.id`).
+        context["summary"] = services.session_summary(self.object)
         for performed_exercise in self.object.performed_exercises.all():
             performed_exercise.set_form, performed_exercise.suggestion = _build_set_form(
                 self.request.user, performed_exercise, session=self.object

@@ -4,12 +4,6 @@
 {% block content %}
 <div class="top-bar">
   <h1>{% trans "Workouts" %}</h1>
-  <div class="top-bar-actions">
-    <form method="post" action="{% url 'workouts:session-start-freeform' %}">
-      {% csrf_token %}
-      <button type="submit" class="button">{% trans "Start freeform workout" %}</button>
-    </form>
-  </div>
 </div>
 
 {% for session in sessions %}
@@ -29,11 +23,16 @@
   </a>
 {% empty %}
   {% trans "No workouts logged yet." as empty_msg %}
-  {% trans "Start a freeform workout with the button above, or pick a workout from one of your programs." as empty_hint %}
+  {% trans "Start a freeform workout with the button below, or pick a workout from one of your programs." as empty_hint %}
   {% url 'programs:program-list' as programs_url %}
   {% trans "Browse programs" as programs_label %}
   {% include "core/_empty_state.html" with message=empty_msg hint=empty_hint cta_url=programs_url cta_label=programs_label %}
 {% endfor %}
 
 {% include "core/_pagination.html" %}
+
+<form method="post" action="{% url 'workouts:session-start-freeform' %}">
+  {% csrf_token %}
+  <button type="submit" class="button">{% trans "Start freeform workout" %}</button>
+</form>
 {% endblock %}

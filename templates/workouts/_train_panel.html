@@ -12,7 +12,7 @@
     {% if prev_pe %}
       <a class="button-secondary" href="?pe={{ prev_pe.id }}" hx-get="?pe={{ prev_pe.id }}" hx-select="#train-panel" hx-target="#train-panel" hx-swap="outerHTML" aria-label="{% trans "Previous" %}">&larr;</a>
     {% else %}
-      <span class="button-secondary" style="visibility:hidden;" aria-hidden="true">&larr;</span>
+      <span class="button-secondary invisible" aria-hidden="true">&larr;</span>
     {% endif %}
     <span class="text-muted">
       {% if current %}{% blocktrans with position=index|add:1 total=total %}Exercise {{ position }} of {{ total }}{% endblocktrans %}{% endif %}
@@ -20,7 +20,7 @@
     {% if next_pe %}
       <a class="button-secondary" href="?pe={{ next_pe.id }}" hx-get="?pe={{ next_pe.id }}" hx-select="#train-panel" hx-target="#train-panel" hx-swap="outerHTML" aria-label="{% trans "Next" %}">&rarr;</a>
     {% else %}
-      <span class="button-secondary" style="visibility:hidden;" aria-hidden="true">&rarr;</span>
+      <span class="button-secondary invisible" aria-hidden="true">&rarr;</span>
     {% endif %}
   </div>
 {% endif %}
@@ -33,7 +33,7 @@
 
 {% if current %}
   <div class="card">
-    <h2 style="margin:0 0 0.25rem;">{% trans current.exercise.name %}</h2>
+    <h2 class="mb-1">{% trans current.exercise.name %}</h2>
     {% if current.set_count %}
       <p class="text-muted">
         {% blocktrans with count=current.set_count min=current.min_reps max=current.max_reps %}Target: {{ count }} × {{ min }}-{{ max }}{% endblocktrans %}
@@ -44,7 +44,7 @@
     {% if current.sets.all %}
       <div class="train-set-history">
         {% for s in current.sets.all %}
-          <span class="tag">{{ s.set_number }}: {{ s.weight|weight:request.user }} × {{ s.reps }}</span>
+          <a class="tag" href="{% url 'workouts:set-edit' s.pk %}" title="{% trans "Edit this set" %}">{{ s.set_number }}: {{ s.weight|weight:request.user }} × {{ s.reps }}</a>
         {% endfor %}
       </div>
     {% endif %}
@@ -54,6 +54,12 @@
         <strong><span aria-hidden="true">💡</span> {% blocktrans with weight=suggestion.suggested_weight|weight:request.user %}Suggested: {{ weight }}{% endblocktrans %}
           {% if suggestion.target_min_reps %}× {{ suggestion.target_min_reps }}{% if suggestion.target_max_reps and suggestion.target_max_reps != suggestion.target_min_reps %}-{{ suggestion.target_max_reps }}{% endif %}{% endif %}
         </strong>
+        <span class="tag tag-muted">
+          {% if suggestion.confidence == "low" %}{% trans "Low confidence" %}
+          {% elif suggestion.confidence == "medium" %}{% trans "Medium confidence" %}
+          {% elif suggestion.confidence == "high" %}{% trans "High confidence" %}
+          {% endif %}
+        </span>
         <div class="text-muted">{{ suggestion.reason }}</div>
       </div>
     {% endif %}
@@ -77,7 +83,7 @@
         {{ set_form.reps }}
       </label>
       <button type="button" class="button-secondary flex-full" @click="more = !more" x-text="more ? '{% trans "Fewer options" %}' : '{% trans "More options (RPE, RIR, notes…)" %}'"></button>
-      <div x-show="more" x-cloak style="flex:1 1 100%; display:flex; flex-wrap:wrap; gap:0.5rem;">
+      <div class="field-subgroup" x-show="more" x-cloak>
         <label class="set-field">{{ set_form.target_reps.label }} {{ set_form.target_reps }}</label>
         <label class="set-field">{{ set_form.rpe.label }} {{ set_form.rpe }}</label>
         <label class="set-field">{{ set_form.rir.label }} {{ set_form.rir }}</label>
