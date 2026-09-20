@@ -14,7 +14,7 @@ copy of it was redundant.
 
 <h2>{% trans "Preferences" %}</h2>
 
-<form class="card" method="post">
+<form class="card" method="post" x-data="{ isPt: {{ form.is_personal_trainer.value|yesno:'true,false' }} }">
   {% csrf_token %}
   {{ form.non_field_errors }}
   {% for field in form %}
@@ -22,7 +22,8 @@ copy of it was redundant.
     {% if field.name == "body_tracking_reminders_enabled" %}<p class="field-group-label">{% trans "Notifications" %}</p>{% endif %}
     {% if field.name == "show_bmi" %}<p class="field-group-label">{% trans "Privacy" %}</p>{% endif %}
     {% if field.name == "allow_friend_requests" %}<p class="field-group-label">{% trans "Social" %}</p>{% endif %}
-    <div class="field">
+    {% if field.name == "is_personal_trainer" %}<p class="field-group-label">{% trans "Coaching" %}</p>{% endif %}
+    <div class="field"{% if field.name == "accepting_new_clients" %} x-show="isPt"{% endif %}>
       {% if field.field.widget.input_type == "checkbox" %}
         {% comment %}
           A checkbox reads better with the box directly beside its own
@@ -99,6 +100,26 @@ visual sign a plain card was pressable.
   <div>
     <strong>{% trans "Friends & groups" %}{% if social_badge %} <span class="nav-badge" aria-hidden="true" style="position:static; display:inline-block; vertical-align:middle;"></span>{% endif %}</strong>
     <p class="text-muted">{% trans "Friends, groups, and messages." %}</p>
+  </div>
+  <svg class="settings-row-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+</a>
+
+<h2>{% trans "Coaching" %}</h2>
+
+{% if user.is_personal_trainer %}
+<a class="card card-link settings-row" href="{% url 'coaching:client-list' %}">
+  <div>
+    <strong>{% trans "My clients" %}{% if coaching_badge %} <span class="nav-badge" aria-hidden="true" style="position:static; display:inline-block; vertical-align:middle;"></span>{% endif %}</strong>
+    <p class="text-muted">{% trans "People you coach, and coaching requests waiting for you." %}</p>
+  </div>
+  <svg class="settings-row-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+</a>
+{% endif %}
+
+<a class="card card-link settings-row" href="{% url 'coaching:my-coaches' %}">
+  <div>
+    <strong>{% trans "My coaches" %}</strong>
+    <p class="text-muted">{% trans "Personal trainers coaching you, and your own pending requests." %}</p>
   </div>
   <svg class="settings-row-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
 </a>

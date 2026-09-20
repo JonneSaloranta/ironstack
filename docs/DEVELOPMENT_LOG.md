@@ -5425,3 +5425,240 @@ of them, and the validation-error/atomic-rollback paths — missing
 name/targets/meal slot, an item with both or neither of food/recipe),
 7 for the views (the same auth/ownership/upload shape as programs and
 recipes before it).
+
+## Personal-trainer coaching
+
+Asked for directly: let a user declare themselves a personal trainer
+from Profile settings, have other users *request* coaching from them
+(never the reverse), build gym programs and diet plans their accepted
+clients can import with as little friction as possible, and view a
+client's training/body-weight data once they've accepted. Planned in
+full first (three parallel research passes plus a dedicated design
+pass) before any code, since this touches five existing apps at once
+and has a real historical-integrity constraint riding on it.
+
+A new `apps.coaching` app owns the relationship itself:
+`CoachingRequest` (`coach`/`coachee`, PENDING/ACCEPTED/DECLINED,
+unique per pair, kept forever as an audit trail) and
+`CoachingRelationship` (the accepted pairing, soft-ended via
+`ended_at` rather than deleted — asked for directly, so both sides
+keep the historical fact they were once coach/client — with a partial
+unique constraint blocking only a second *simultaneously active* row
+for the same pair). Deliberately not modeled on
+`apps.social.Friendship`'s symmetric `user_low`/`user_high` shape —
+`apps.social.services.py`'s own `FriendRequest`/`Friendship`/
+`send_friend_request`/`accept_friend_request` were still the direct
+template for everything else (plain functions raising a translated
+`CoachingError` a view catches and flashes, `@transaction.atomic` on
+every multi-step mutation, `get_or_create`-shaped idempotency on
+accept) — coach and coachee are never interchangeable, so both models
+here use plain, always-meaningful fields instead. A client may have
+several different active coaches at once (asked for directly, e.g. a
+separate nutrition coach and strength coach) — nothing enforces
+exclusivity, only "not the same coach twice."
+
+`User.is_personal_trainer` (default off — a brand new capability,
+unlike `allow_friend_requests`/`allow_group_invites`'s own opt-*out*
+of an existing one) and `accepting_new_clients` (default on, same
+"capability starts open" reasoning) slot into `ProfileForm` as a new
+"Coaching" group, with `accepting_new_clients` hidden via a small
+Alpine `x-show` until `is_personal_trainer` is checked — the one field
+on this form whose visibility depends on another, so a plain
+`CheckboxInput` widget attribute or (`@change="isPt = ...")` rather
+than a new templating mechanism for what's otherwise still one plain
+`{% for field in form %}` loop.
+
+**Sharing and importing.** `Program`/`DietPlan` each grew four fields:
+`shared_with_clients` — a many-to-many to specific `User`s, not a
+blanket boolean (asked for directly, after an initial pass that shared
+a plan with *every* current client at once turned out not to be what
+was wanted: a coach needs to assign a program to one client without
+automatically exposing it to every other client too), empty by
+default so a trainer's own drafts stay private until specific clients
+are deliberately picked — `imported_from` (a `SET_NULL` self-FK —
+deleting the source, or its owner's whole account, can never break an
+already-independent client copy, it just permanently stops offering
+updates), and `coach_snapshot`/`coach_snapshot_version` (a JSON
+payload plus the source's `version` at snapshot time, together the
+entire "is there an update, and if so what changed" mechanism below).
+`DietPlan` also gained its own `version`/`bump_version()` — `Program`
+already had this exact display-only counter (`docs/ARCHITECTURE.md`
+"Historical integrity mechanism: snapshot-on-start" — its own
+docstring already anticipated "tell a user this program changed since
+you started using it," almost word for word what this feature
+needed), bumped now from the three existing structural mutators
+(`diet_plan_item_edit`/`diet_plan_item_delete`/
+`diet_plan_meal_item_add`) that change a plan's meals/items after
+creation.
+
+`ProgramForm` renders `shared_with_clients` as a `CheckboxSelectMultiple`
+(popped from the form entirely for anyone who isn't a personal
+trainer), its queryset narrowed in `__init__` to only this trainer's
+own currently active clients (`User.objects.filter(coaches__coach=
+user, coaches__ended_at__isnull=True)`, `coaches` being
+`CoachingRelationship.coachee`'s own `related_name`) — never every
+user on the instance. `DietPlan` has no general "edit its own fields"
+form to attach an equivalent field to, so it gets one dedicated view
+instead, `apps.nutrition.views.diet_plan_share` (backed by a new
+one-field `DietPlanShareForm`, same narrowed-queryset reasoning),
+reachable from the plan's own detail page.
+
+`apps.programs.services.visible_to` and a brand-new
+`apps.nutrition.services.diet_plans_visible_to` both grew a third `Q`
+branch, checked both ways on purpose: a program/diet plan is also
+visible if the viewing user is actually a member of its own
+`shared_with_clients` *and* still a currently active coaching client
+of its owner (`apps.coaching.services.active_coach_ids_for`) — a
+stale M2M membership left over from a since-ended relationship grants
+nothing on its own. Imported via `apps.coaching.services.
+import_program_from_coach`/`import_diet_plan_from_coach`, which
+re-check both of those same two conditions before ever copying
+anything, then delegate the actual copy to each app's own existing
+machinery rather than duplicating it:
+`apps.programs.services.copy_program` unchanged in behavior (its own
+"recreate every Workout + bulk_create its ExercisePrescriptions" loop
+extracted into `_replace_program_contents(target, source)` so the
+update-apply flow below can reuse it against an *existing* program,
+not just a fresh empty one), and for diet plans, simply
+`import_diet_plan(coachee, export_diet_plan(source))` — this
+session's own recent export/import feature turned out to be exactly
+the right shape for an in-app, same-database hand-off too, once its
+inner meal/item-building loop was pulled out into `_populate_diet_plan`
+for the same "reuse against an existing plan" reason.
+
+**"Your coach updated this."** Explicitly not a live-synced link
+(asked for directly: importing gives an independent, editable copy,
+full stop) — but also explicitly not silent forever, and explicitly
+not a redo of the file-based export/import's download-then-upload
+friction. `program_update_available`/`diet_plan_update_available` are
+a single cheap integer compare (`imported_from.version` vs the
+copy's own `coach_snapshot_version`) — safe to call once per row on a
+plain list page, which is exactly where a small "Coach update
+available" badge now shows (`apps.programs.views.ProgramListView`/
+`apps.nutrition.views.DietPlanListView`, a plain per-object Python
+attribute rather than a queryset annotation, since these lists are
+always just one user's own small set of programs/plans, not hundreds).
+`program_update_diff`/`diet_plan_update_diff` reuse `export_program`/
+`export_diet_plan` a second time — diffing two pretty-printed,
+key-sorted JSON blobs with plain `difflib.unified_diff` rather than
+writing a bespoke structural differ, since this session's own export
+functions already turn either model into exactly the shape a diff
+needs. `apply_program_update`/`apply_diet_plan_update` delete and
+rebuild the copy's `Workout`/`ExercisePrescription` (or `DietPlanMeal`/
+`DietPlanItem`) rows from the coach's current shape, refresh the
+snapshot, and bump the copy's own version — explicitly discarding
+anything the client changed on their own copy since import, which is
+inherent to "apply the coach's current version" and exactly what the
+diff preview is for showing first; there's no separate "skip" action
+to implement, since not applying an update already leaves everything
+exactly as it was.
+
+Verified directly against CLAUDE.md's own non-negotiable rule
+("workout history must remain historically trustworthy") before
+writing a single line of the update-apply flow: read `apps/workouts/
+models.py` and confirmed `WorkoutSession.program`/`.workout` and
+`PerformedExercise.prescription` are all `SET_NULL`, purely
+informational backlinks, with `PerformedExercise` snapshotting every
+set/rep/weight target onto itself at session-start and never
+re-reading `prescription` afterward — explicitly documented there as
+"snapshot-on-start," the exact mechanism `apps.programs.views.
+workout_delete`/`prescription_delete` already rely on for a user
+freely editing their own program today. Deleting and recreating a
+program's structure during an applied update is therefore not a new
+risk, just the same already-proven-safe operation running
+programmatically — confirmed live in a throwaway shell session (a
+real `WorkoutSession`/`PerformedExercise`/`ExerciseSet` logged before
+an update, still fully intact and still showing its original logged
+weight, immediately after applying it) before it was written up as
+`ProgramUpdateFlowTests.test_existing_workout_history_survives_an_
+applied_update`, the single most important assertion in this entire
+feature.
+
+**Discovery and analytics.** No new "browse trainers" page — a
+coaching request is proposed from a PT's own existing profile page
+(`apps.analytics.views.MemberProfileView`, at `/analytics/members/
+<username>/`), which already exists for viewing anyone's public
+achievements; it now also shows a "Request coaching" button (or
+"already coaching you" / "request pending" / "not accepting clients"
+depending on state) whenever the viewed user `is_personal_trainer`.
+The new `apps.coaching.views_analytics.ClientDetailView` is
+deliberately **not** gated by `User.show_achievements` the way
+`MemberProfileView` itself is — accepting a coaching request is,
+per this feature's own explicit product decision, the entire consent
+to share training/PR/body-weight data with that one specific coach,
+so that separate, unrelated privacy toggle plays no part here
+(verified with a dedicated test, `ClientAnalyticsAccessTests.
+test_show_achievements_off_does_not_block_the_coach`). It reuses,
+completely unmodified, `apps.analytics.achievements.highlights_for`,
+`apps.analytics.services.training_summary_canonical`/
+`pr_history_grouped_by_exercise`, and `apps.measurements.services.
+visible_to`/`latest_for`/`stats_for` for every measurement type —
+manually converting to the *coach's* own unit system for display
+(`apps.core.units.kg_to_display`/`apps.measurements.units.
+to_display`), not the client's, the same "viewer's own units, not the
+profile owner's" precedent this session's own `MemberProfileView`
+reuse of the PR partial already established for weights.
+
+**Sharing a specific program/plan, not every client at once.** The
+first working version of `shared_with_clients` was a plain boolean —
+sharing meant "visible to every currently active client." Corrected
+immediately once flagged: a coach needs to hand one client a specific
+program without automatically exposing it to every other client too.
+`shared_with_clients` became a `ManyToManyField` to specific `User`s
+instead — `ProgramForm` renders it as a `CheckboxSelectMultiple`
+(popped from the form entirely for anyone who isn't a personal
+trainer), its queryset narrowed in `__init__` to only this trainer's
+own currently active clients; `DietPlan` has no general "edit its own
+fields" form to attach an equivalent field to, so it gets one small
+dedicated view instead (`apps.nutrition.views.diet_plan_share`, backed
+by a new `DietPlanShareForm`, same narrowed-queryset reasoning),
+reachable from the plan's own detail page. `visible_to`/
+`diet_plans_visible_to`'s own `Q` branch checks both conditions on
+purpose — the viewing user must actually be a member of that specific
+program/plan's `shared_with_clients`, *and* still be a currently
+active coaching client of its owner, so a stale M2M membership left
+over from an ended relationship grants nothing on its own. Migrated
+as two small steps rather than one — the field had already been
+applied as a boolean once; converting it in place (`RemoveField` +
+`AddField`) rather than deleting and regenerating the original
+migration kept the dev database's already-applied history intact
+without a destructive reset.
+
+**Grouped program/diet-plan lists.** Asked for directly, once
+coach-imported content started showing up mixed into a user's own
+list with no visual distinction: `ProgramListView`/`DietPlanListView`
+each now split their own flat queryset into named groups in
+`get_context_data` (a plain per-object Python partition, not several
+separate queries) — "My programs" / "From my coach" / "My templates" /
+"Built-in templates" for programs (a coach-imported program sorts by
+`imported_from_id` first, ahead of `is_template`, since that
+combination shouldn't happen in practice but "where did this come
+from" is more useful than "is it a template" if it ever did), and
+"My diet plans" / "From my coach" for diet plans, which have no
+template concept to begin with. `templates/nutrition/_diet_plan_card.
+html` is a new small partial factoring out the identical per-plan card
+markup both diet-plan groups render, rather than duplicating it.
+
+61 automated tests in `apps.coaching.tests` alone (request/relationship
+lifecycle and every guard — self-request, not-a-PT, not-accepting,
+duplicate-pending, already-active, only-the-coach-can-accept,
+already-answered, only-part-of-the-relationship-can-end-it,
+ending-twice; visibility/import for both programs and diet plans —
+unshared, no-relationship, success-and-independent, blocked-after-
+ending, and directly proving the per-client scoping this feature was
+revised for: sharing with one client never exposes the same program/
+plan to a second, otherwise-identical active client; the full
+update-available/diff/apply round trip for both, including the
+workout-history-safety regression above and a parallel `DiaryEntry`-
+untouched check for diet plans; client-analytics access control;
+`ProgramForm`/`DietPlanShareForm`'s own queryset scoped to only a
+trainer's active clients, and hidden entirely for a non-trainer; both
+list views' own grouping; every mutating view's POST-only guard and
+success/error flash message; the badge context processor), plus full
+regression across `apps.accounts`/`apps.programs`/`apps.nutrition`/
+`apps.workouts`/`apps.analytics`/`apps.measurements`/`apps.social` to
+catch any collateral effect of extending `visible_to`, adding fields
+to two long-lived models, and inserting `bump_version()` calls into
+three existing views — including two pre-existing `apps.accounts`
+tests whose exact `settings-row` element counts needed updating for
+the two new "My clients"/"My coaches" rows on the Profile page.

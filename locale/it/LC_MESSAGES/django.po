@@ -3,14 +3,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: IronStack\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-20 12:46+0000\n"
+"POT-Creation-Date: 2026-09-20 17:20+0000\n"
 "Language: it\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: apps/accounts/admin.py:17 templates/accounts/profile.html:87
+#: apps/accounts/admin.py:17 templates/accounts/profile.html:88
 #: templates/accounts/two_factor_manage.html:3
 #: templates/accounts/two_factor_manage.html:6
 #: templates/accounts/two_factor_setup.html:3
@@ -32,69 +32,77 @@ msgstr ""
 "Troppe richieste di reimpostazione della password. Riprova tra qualche "
 "minuto."
 
-#: apps/accounts/forms.py:247 apps/accounts/forms.py:618
+#: apps/accounts/forms.py:251 apps/accounts/forms.py:646
 msgid "Timezone"
 msgstr "Fuso orario"
 
-#: apps/accounts/forms.py:275 apps/accounts/forms.py:598
+#: apps/accounts/forms.py:281 apps/accounts/forms.py:626
 #: templates/api/key_list.html:34
 msgid "Units"
 msgstr "Unità"
 
-#: apps/accounts/forms.py:276 apps/accounts/forms.py:648
+#: apps/accounts/forms.py:282 apps/accounts/forms.py:676
 msgid "Track nutrition"
 msgstr "Traccia la nutrizione"
 
-#: apps/accounts/forms.py:277
+#: apps/accounts/forms.py:283
 msgid "Remind me to log body measurements"
 msgstr "Ricordami di registrare le misurazioni corporee"
 
-#: apps/accounts/forms.py:280
+#: apps/accounts/forms.py:286
 msgid "Show"
 msgstr "Mostra"
 
-#: apps/accounts/forms.py:281 templates/core/_bmi_card.html:13
+#: apps/accounts/forms.py:287 templates/core/_bmi_card.html:13
 #: templates/core/_bmi_card.html:29
 msgid "BMI"
 msgstr "BMI"
 
-#: apps/accounts/forms.py:282
+#: apps/accounts/forms.py:288
 msgid "on the body weight page"
 msgstr "nella pagina del peso corporeo"
 
-#: apps/accounts/forms.py:284
+#: apps/accounts/forms.py:290
 msgid "Share my activity"
 msgstr "Condividi la mia attività"
 
-#: apps/accounts/forms.py:285
+#: apps/accounts/forms.py:291
 msgid "Show my name to others"
 msgstr "Mostra il mio nome agli altri"
 
-#: apps/accounts/forms.py:286
+#: apps/accounts/forms.py:292
 msgid "Show my Gravatar picture"
 msgstr "Mostra la mia immagine Gravatar"
 
-#: apps/accounts/forms.py:287 apps/accounts/forms.py:631
+#: apps/accounts/forms.py:293 apps/accounts/forms.py:659
 msgid "Allow friend requests"
 msgstr "Consenti richieste di amicizia"
 
-#: apps/accounts/forms.py:288 apps/accounts/forms.py:639
+#: apps/accounts/forms.py:294 apps/accounts/forms.py:667
 msgid "Allow group invites"
 msgstr "Consenti inviti ai gruppi"
 
-#: apps/accounts/forms.py:289
+#: apps/accounts/forms.py:295
+msgid "I'm a personal trainer / coach"
+msgstr "Sono un personal trainer / coach"
+
+#: apps/accounts/forms.py:296
+msgid "Accepting new coaching requests"
+msgstr "Accetto nuove richieste di coaching"
+
+#: apps/accounts/forms.py:297
 msgid "Language"
 msgstr "Lingua"
 
-#: apps/accounts/forms.py:290
+#: apps/accounts/forms.py:298
 msgid "Theme"
 msgstr "Tema"
 
-#: apps/accounts/forms.py:291
+#: apps/accounts/forms.py:299
 msgid "Appearance"
 msgstr "Aspetto"
 
-#: apps/accounts/forms.py:295
+#: apps/accounts/forms.py:303
 msgid ""
 "Which color palette the app uses. Each theme has its own dark and light look "
 "— pick which one below."
@@ -102,7 +110,7 @@ msgstr ""
 "Quale tavolozza di colori usa l'app. Ogni tema ha il proprio aspetto scuro e "
 "chiaro — scegli quale qui sotto."
 
-#: apps/accounts/forms.py:299
+#: apps/accounts/forms.py:307
 msgid ""
 "Shows nutrition (food diary, recipes, diet plans) in navigation and on the "
 "dashboard. Turn off to hide it if you don't want to track nutrition — "
@@ -114,7 +122,7 @@ msgstr ""
 "tracciare la nutrizione — i dati nutrizionali esistenti non vengono mai "
 "eliminati e le sue pagine restano raggiungibili direttamente tramite un link."
 
-#: apps/accounts/forms.py:306
+#: apps/accounts/forms.py:314
 msgid ""
 "\"Auto\" follows your device's own light/dark setting and switches "
 "automatically when it changes."
@@ -122,7 +130,7 @@ msgstr ""
 "\"Automatico\" segue l'impostazione chiaro/scuro del tuo dispositivo e "
 "cambia automaticamente quando questa cambia."
 
-#: apps/accounts/forms.py:310
+#: apps/accounts/forms.py:318
 msgid ""
 "Shows a dashboard card nudging you to log a body measurement when you "
 "haven't logged one in a while. Turn off to never see that reminder — you can "
@@ -133,12 +141,12 @@ msgstr ""
 "per non vedere mai più questo promemoria — potrai comunque registrare una "
 "misurazione in qualsiasi momento da Monitoraggio corporeo."
 
-#: apps/accounts/forms.py:315
+#: apps/accounts/forms.py:323
 msgid "Turns off the BMI card and its category ranges entirely."
 msgstr ""
 "Disattiva completamente la scheda BMI e i suoi intervalli di categoria."
 
-#: apps/accounts/forms.py:317
+#: apps/accounts/forms.py:325
 msgid ""
 "Lets everyone using this instance see your longest streak, workout count, "
 "PRs, total weight lifted, and when you last trained, in the dashboard's "
@@ -151,7 +159,7 @@ msgstr ""
 "di recente\" della dashboard. Disattiva per tenere privata la tua attività — "
 "vedrai comunque quella degli altri."
 
-#: apps/accounts/forms.py:324
+#: apps/accounts/forms.py:332
 msgid ""
 "Shows your first name next to your username wherever others can see it (the "
 "achievements carousel and \"Recently active\" list). Turn off to show just "
@@ -162,7 +170,7 @@ msgstr ""
 "Disattiva per mostrare lì solo il tuo nome utente, come prima che questa "
 "impostazione esistesse."
 
-#: apps/accounts/forms.py:330
+#: apps/accounts/forms.py:338
 msgid ""
 "Shows your Gravatar (gravatar.com) picture at the top of this page, if the "
 "email on this account has one. Turning this on means your browser loads that "
@@ -176,7 +184,7 @@ msgstr ""
 "questa applicazione comunica con un server esterno alla tua istanza — che "
 "vedrà quindi l'hash della tua email e il tuo indirizzo IP."
 
-#: apps/accounts/forms.py:338
+#: apps/accounts/forms.py:346
 msgid ""
 "Off stops other users on this instance from sending you a friend request at "
 "all. Doesn't affect friend requests you already have, or friendships you "
@@ -186,7 +194,7 @@ msgstr ""
 "richiesta di amicizia. Non influisce sulle richieste o amicizie già "
 "esistenti."
 
-#: apps/accounts/forms.py:343
+#: apps/accounts/forms.py:351
 msgid ""
 "Off stops a group member from inviting you to a group directly. You can "
 "still join any group yourself using its invite link, if you have one."
@@ -195,53 +203,66 @@ msgstr ""
 "comunque unirti a qualsiasi gruppo tu stesso usando il suo link di invito, "
 "se ne hai uno."
 
-#: apps/accounts/forms.py:358 apps/accounts/forms.py:674
+#: apps/accounts/forms.py:356
+msgid ""
+"Lets you build gym programs and diet plans other users can request you coach "
+"them on. Turning this off doesn't end any coaching relationship you already "
+"have."
+msgstr "Ti permette di creare programmi in palestra e piani alimentari che altri utenti possono chiederti di seguire come coach. Disattivarlo non termina le relazioni di coaching già esistenti."
+
+#: apps/accounts/forms.py:361
+msgid ""
+"Off stops new coaching requests from reaching you. Existing coaching "
+"relationships, and any request you already received, are unaffected."
+msgstr "Se disattivato, le nuove richieste di coaching non ti raggiungeranno più. Le relazioni di coaching esistenti e le richieste già ricevute non sono interessate."
+
+#: apps/accounts/forms.py:386 apps/accounts/forms.py:702
 #: apps/nutrition/forms.py:39 apps/nutrition/forms.py:440
 msgid "Height (cm)"
 msgstr "Altezza (cm)"
 
-#: apps/accounts/forms.py:358 apps/accounts/forms.py:674
+#: apps/accounts/forms.py:386 apps/accounts/forms.py:702
 #: apps/nutrition/forms.py:39 apps/nutrition/forms.py:440
 msgid "Height (in)"
 msgstr "Altezza (in)"
 
-#: apps/accounts/forms.py:412 apps/accounts/forms.py:448
+#: apps/accounts/forms.py:440 apps/accounts/forms.py:476
 msgid "Verification code"
 msgstr "Codice di verifica"
 
-#: apps/accounts/forms.py:426
+#: apps/accounts/forms.py:454
 msgid "Incorrect code — check your authenticator app and try again."
 msgstr "Codice errato — controlla la tua app di autenticazione e riprova."
 
-#: apps/accounts/forms.py:462
+#: apps/accounts/forms.py:490
 msgid "Too many incorrect codes. Try again in a few minutes."
 msgstr "Troppi codici errati. Riprova tra qualche minuto."
 
-#: apps/accounts/forms.py:475
+#: apps/accounts/forms.py:503
 msgid "Incorrect code."
 msgstr "Codice errato."
 
-#: apps/accounts/forms.py:489 apps/accounts/forms.py:515
+#: apps/accounts/forms.py:517 apps/accounts/forms.py:543
 msgid "Password"
 msgstr "Password"
 
-#: apps/accounts/forms.py:498 apps/accounts/forms.py:529
+#: apps/accounts/forms.py:526 apps/accounts/forms.py:557
 msgid "Incorrect password."
 msgstr "Password errata."
 
-#: apps/accounts/forms.py:518
+#: apps/accounts/forms.py:546
 msgid "Type your username to confirm"
 msgstr "Digita il tuo nome utente per confermare"
 
-#: apps/accounts/forms.py:531
+#: apps/accounts/forms.py:559
 msgid "Doesn't match your username."
 msgstr "Non corrisponde al tuo nome utente."
 
-#: apps/accounts/forms.py:555
+#: apps/accounts/forms.py:583
 msgid "First name"
 msgstr "Nome"
 
-#: apps/accounts/forms.py:557
+#: apps/accounts/forms.py:585
 msgid ""
 "Used to personalize your dashboard greeting, and next to your username "
 "wherever your activity is shown to others (if you allow that in your "
@@ -251,11 +272,11 @@ msgstr ""
 "nome utente ovunque la tua attività sia mostrata ad altri (se lo consenti "
 "nel tuo profilo)."
 
-#: apps/accounts/forms.py:564
+#: apps/accounts/forms.py:592
 msgid "Email"
 msgstr "Email"
 
-#: apps/accounts/forms.py:566
+#: apps/accounts/forms.py:594
 msgid ""
 "Used only for password-reset emails if you ever get locked out. Never shown "
 "to other users."
@@ -264,7 +285,7 @@ msgstr ""
 "rimanessi bloccato fuori dall'account. Non viene mai mostrata ad altri "
 "utenti."
 
-#: apps/accounts/forms.py:576
+#: apps/accounts/forms.py:604
 msgid ""
 "Logged as your first body-weight entry, so your progress charts have a "
 "starting point. Leave blank and log it anytime from the Body weight page "
@@ -274,7 +295,7 @@ msgstr ""
 "grafici di progresso hanno un punto di partenza. Lascia vuoto e registralo "
 "quando vuoi dalla pagina Peso corporeo."
 
-#: apps/accounts/forms.py:591
+#: apps/accounts/forms.py:619
 msgid ""
 "Used together with a logged body weight to show your BMI. Leave blank to "
 "skip this — you can add it anytime from your profile."
@@ -283,7 +304,7 @@ msgstr ""
 "vuoto per saltare questo passaggio — puoi aggiungerlo quando vuoi dal tuo "
 "profilo."
 
-#: apps/accounts/forms.py:600
+#: apps/accounts/forms.py:628
 msgid ""
 "Sets whether weights and distances are shown in kg/km or lb/mi throughout "
 "the app. Change this anytime from your profile."
@@ -291,7 +312,7 @@ msgstr ""
 "Imposta se pesi e distanze vengono mostrati in kg/km o lb/mi in tutta l'app. "
 "Modificalo quando vuoi dal tuo profilo."
 
-#: apps/accounts/forms.py:620
+#: apps/accounts/forms.py:648
 msgid ""
 "Used for \"today\" and date ranges throughout the app. Change this anytime "
 "from your profile."
@@ -301,7 +322,7 @@ msgstr ""
 "vengono mostrati in kg/km o lb/mi in tutta l'app. Modificalo quando vuoi dal "
 "tuo profilo."
 
-#: apps/accounts/forms.py:633
+#: apps/accounts/forms.py:661
 msgid ""
 "Lets other users on this instance send you a friend request. Change this "
 "anytime from your profile."
@@ -309,7 +330,7 @@ msgstr ""
 "Permette ad altri utenti di questa istanza di inviarti una richiesta di "
 "amicizia. Puoi modificarlo in qualsiasi momento dal tuo profilo."
 
-#: apps/accounts/forms.py:641
+#: apps/accounts/forms.py:669
 msgid ""
 "Lets a group member invite you to a group directly. You can always join a "
 "group yourself using its invite link either way. Change this anytime from "
@@ -319,7 +340,7 @@ msgstr ""
 "sempre unirti a un gruppo tu stesso usando il suo link di invito. Puoi "
 "modificarlo in qualsiasi momento dal tuo profilo."
 
-#: apps/accounts/forms.py:650
+#: apps/accounts/forms.py:678
 msgid ""
 "Shows nutrition (food diary, recipes, diet plans) in navigation and on the "
 "dashboard. Leave unchecked if you don't want to track nutrition — you can "
@@ -331,13 +352,13 @@ msgstr ""
 "nutrizione — puoi attivarla o disattivarla in qualsiasi momento dal tuo "
 "profilo, e in ogni caso nulla viene mai eliminato."
 
-#: apps/accounts/forms.py:669 apps/nutrition/forms.py:40
+#: apps/accounts/forms.py:697 apps/nutrition/forms.py:40
 #: apps/nutrition/forms.py:449 apps/nutrition/forms.py:653
 #, python-format
 msgid "Current weight (%(unit)s)"
 msgstr "Peso attuale (%(unit)s)"
 
-#: apps/accounts/forms.py:671
+#: apps/accounts/forms.py:699
 msgid "Current weight"
 msgstr "Peso attuale"
 
@@ -381,7 +402,7 @@ msgstr "Earth"
 msgid "Zen"
 msgstr "Zen"
 
-#: apps/accounts/models.py:380
+#: apps/accounts/models.py:406
 msgid ""
 "Shown as a footer note on the login and signup pages. Leave blank to hide it "
 "entirely."
@@ -471,7 +492,7 @@ msgstr "Altro"
 
 #: apps/activities/models.py:18 apps/exercises/models.py:75
 #: apps/measurements/models.py:34 apps/programs/models.py:36
-#: apps/programs/models.py:79
+#: apps/programs/models.py:118
 msgid "name"
 msgstr "nome"
 
@@ -492,7 +513,7 @@ msgid "calories"
 msgstr "calorie"
 
 #: apps/activities/models.py:77 apps/measurements/models.py:90
-#: apps/programs/models.py:84 apps/programs/models.py:150
+#: apps/programs/models.py:123 apps/programs/models.py:189
 #: apps/workouts/forms.py:46
 msgid "notes"
 msgstr "note"
@@ -517,7 +538,9 @@ msgid "Workouts completed"
 msgstr "Allenamenti completati"
 
 #: apps/analytics/achievements.py:135 templates/programs/program_list.html:19
-#: templates/programs/program_list.html:35
+#: templates/programs/program_list.html:36
+#: templates/programs/program_list.html:49
+#: templates/programs/program_list.html:61
 #, python-format
 msgid "%(counter)s workout"
 msgid_plural "%(counter)s workouts"
@@ -580,7 +603,7 @@ msgstr "Modifica"
 #: templates/measurements/measurement_history.html:67
 #: templates/nutrition/diary_day.html:69
 #: templates/programs/program_confirm_delete.html:14
-#: templates/programs/program_detail.html:47
+#: templates/programs/program_detail.html:50
 #: templates/workouts/_performed_exercise_card.html:29
 msgid "Delete"
 msgstr "Elimina"
@@ -617,6 +640,7 @@ msgstr "Programmi"
 
 #: apps/api/models.py:27 apps/core/models.py:161
 #: templates/analytics/dashboard.html:13 templates/api/key_list.html:97
+#: templates/coaching/client_detail.html:26
 #: templates/workouts/session_list.html:6
 msgid "Workouts"
 msgstr "Allenamenti"
@@ -657,7 +681,142 @@ msgstr "Hai raggiunto il numero massimo di chiavi API."
 msgid "API key revoked."
 msgstr "Chiave API revocata."
 
-#: apps/core/admin.py:17 templates/accounts/profile.html:164
+#: apps/coaching/models.py:23 apps/social/models.py:20
+#: apps/social/models.py:226
+msgid "Pending"
+msgstr "In attesa"
+
+#: apps/coaching/models.py:24 apps/social/models.py:21
+#: apps/social/models.py:227
+msgid "Accepted"
+msgstr "Accettata"
+
+#: apps/coaching/models.py:25 apps/social/models.py:22
+#: apps/social/models.py:228
+msgid "Declined"
+msgstr "Rifiutata"
+
+#: apps/coaching/services.py:72
+msgid "You can't request yourself as a coach."
+msgstr "Non puoi richiedere te stesso come allenatore."
+
+#: apps/coaching/services.py:74
+msgid "This user isn't a personal trainer."
+msgstr "Questo utente non è un personal trainer."
+
+#: apps/coaching/services.py:76
+msgid "This coach isn't accepting new clients right now."
+msgstr "Questo allenatore non sta accettando nuovi clienti in questo momento."
+
+#: apps/coaching/services.py:78
+msgid "This person is already coaching you."
+msgstr "Questa persona ti sta già allenando."
+
+#: apps/coaching/services.py:81
+msgid "You already sent a coaching request to this trainer."
+msgstr "Hai già inviato una richiesta di coaching a questo trainer."
+
+#: apps/coaching/services.py:93 apps/coaching/services.py:114
+msgid "You can't respond to this coaching request."
+msgstr "Non puoi rispondere a questa richiesta di coaching."
+
+#: apps/coaching/services.py:95 apps/coaching/services.py:116
+msgid "This coaching request has already been answered."
+msgstr "A questa richiesta di coaching è già stata data una risposta."
+
+#: apps/coaching/services.py:125
+msgid "You're not part of this coaching relationship."
+msgstr "Non fai parte di questa relazione di coaching."
+
+#: apps/coaching/services.py:127
+msgid "This coaching relationship has already ended."
+msgstr "Questa relazione di coaching è già terminata."
+
+#: apps/coaching/services.py:154
+msgid "This program hasn't been shared with you."
+msgstr "Questo programma non è stato condiviso con te."
+
+#: apps/coaching/services.py:156
+msgid "You're not an active client of this program's coach."
+msgstr "Non sei un cliente attivo dell'allenatore di questo programma."
+
+#: apps/coaching/services.py:173
+msgid "This diet plan hasn't been shared with you."
+msgstr "Questo piano alimentare non è stato condiviso con te."
+
+#: apps/coaching/services.py:175
+msgid "You're not an active client of this diet plan's coach."
+msgstr "Non sei un cliente attivo dell'allenatore di questo piano alimentare."
+
+#: apps/coaching/services.py:197
+msgid "your current copy"
+msgstr "la tua copia attuale"
+
+#: apps/coaching/services.py:198
+msgid "coach's update"
+msgstr "l'aggiornamento del coach"
+
+#: apps/coaching/services.py:239
+msgid "You can't update this program."
+msgstr "Non puoi aggiornare questo programma."
+
+#: apps/coaching/services.py:242
+msgid "This program's coach source is no longer available."
+msgstr "L'origine del coach di questo programma non è più disponibile."
+
+#: apps/coaching/services.py:273
+msgid "You can't update this diet plan."
+msgstr "Non puoi aggiornare questo piano alimentare."
+
+#: apps/coaching/services.py:276
+msgid "This diet plan's coach source is no longer available."
+msgstr "L'origine del coach di questo piano alimentare non è più disponibile."
+
+#: apps/coaching/views_plans.py:59 apps/coaching/views_plans.py:73
+#: apps/nutrition/views.py:1062 apps/nutrition/views.py:1357
+#: apps/programs/views.py:192
+#, python-format
+msgid "Imported “%(name)s”."
+msgstr "Importato “%(name)s”."
+
+#: apps/coaching/views_plans.py:84
+msgid "This program is already up to date."
+msgstr "Questo programma è già aggiornato."
+
+#: apps/coaching/views_plans.py:99
+msgid "Program updated from your coach's latest version."
+msgstr "Programma aggiornato all'ultima versione del tuo coach."
+
+#: apps/coaching/views_plans.py:109
+msgid "This diet plan is already up to date."
+msgstr "Questo piano alimentare è già aggiornato."
+
+#: apps/coaching/views_plans.py:124
+msgid "Diet plan updated from your coach's latest version."
+msgstr "Piano alimentare aggiornato all'ultima versione del tuo coach."
+
+#: apps/coaching/views_requests.py:39
+msgid "Coaching request sent."
+msgstr "Richiesta di coaching inviata."
+
+#: apps/coaching/views_requests.py:54
+msgid "Coaching request accepted."
+msgstr "Richiesta di coaching accettata."
+
+#: apps/coaching/views_requests.py:57
+msgid "Coaching request declined."
+msgstr "Richiesta di coaching rifiutata."
+
+#: apps/coaching/views_requests.py:59 apps/social/views_friends.py:95
+#: apps/social/views_groups.py:206
+msgid "Unknown action."
+msgstr "Azione sconosciuta."
+
+#: apps/coaching/views_requests.py:78
+msgid "Coaching relationship ended."
+msgstr "Relazione di coaching terminata."
+
+#: apps/core/admin.py:17 templates/accounts/profile.html:185
 msgid "Administration"
 msgstr "Amministrazione"
 
@@ -703,7 +862,7 @@ msgstr "Questo file è un'esportazione di tipo “%(kind)s”, non “%(expected
 msgid "unknown"
 msgstr "sconosciuto"
 
-#: apps/core/formatting.py:16 templates/programs/program_detail.html:59
+#: apps/core/formatting.py:16 templates/programs/program_detail.html:62
 #: templates/workouts/_performed_exercise_card.html:8
 msgid "Rate of Perceived Exertion"
 msgstr "Percezione dello sforzo"
@@ -944,7 +1103,7 @@ msgstr ""
 msgid "Progress"
 msgstr "Progressi"
 
-#: apps/core/models.py:164
+#: apps/core/models.py:164 templates/coaching/client_detail.html:40
 msgid "Body measurements"
 msgstr "Misure corporee"
 
@@ -1787,8 +1946,8 @@ msgstr "didascalia"
 msgid "attribution"
 msgstr "attribuzione"
 
-#: apps/exercises/models.py:198 apps/programs/models.py:80
-#: apps/programs/models.py:122
+#: apps/exercises/models.py:198 apps/programs/models.py:119
+#: apps/programs/models.py:161
 msgid "order"
 msgstr "ordine"
 
@@ -2040,7 +2199,7 @@ msgid "Goal"
 msgstr "Obiettivo"
 
 #: apps/nutrition/forms.py:109 apps/nutrition/forms.py:656
-#: apps/programs/forms.py:99
+#: apps/programs/forms.py:133
 #, python-format
 msgid "Target weight (%(unit)s)"
 msgstr "Peso target (%(unit)s)"
@@ -2219,6 +2378,10 @@ msgstr "Ritmo (kg/settimana — negativo per perdere, positivo per aumentare)"
 msgid "Rate (%(unit)s/week — negative to lose, positive to gain)"
 msgstr ""
 "Ritmo (%(unit)s/settimana — negativo per perdere, positivo per aumentare)"
+
+#: apps/nutrition/forms.py:689 apps/programs/forms.py:37
+msgid "Share with these clients"
+msgstr "Condividi con questi clienti"
 
 #: apps/nutrition/i18n_content.py:30
 msgid "Breakfast"
@@ -2455,8 +2618,8 @@ msgstr "Leggermente attivo"
 msgid "Moderately active"
 msgstr "Moderatamente attivo"
 
-#: apps/nutrition/models.py:53 templates/nutrition/diet_plan_detail.html:12
-#: templates/nutrition/diet_plan_list.html:19
+#: apps/nutrition/models.py:53 templates/nutrition/_diet_plan_card.html:5
+#: templates/nutrition/diet_plan_detail.html:12
 msgid "Active"
 msgstr "Attivo"
 
@@ -2476,7 +2639,7 @@ msgstr "Perdita di grasso — moderata"
 msgid "Fat loss — conservative"
 msgstr "Perdita di grasso — conservativa"
 
-#: apps/nutrition/models.py:61 apps/programs/models.py:103
+#: apps/nutrition/models.py:61 apps/programs/models.py:142
 msgid "Maintenance"
 msgstr "Mantenimento"
 
@@ -2572,7 +2735,7 @@ msgstr "Nullo per le fasce pasto predefinite integrate."
 msgid "Log either a food or a recipe, not both or neither."
 msgstr "Registra un alimento o una ricetta, non entrambi né nessuno dei due."
 
-#: apps/nutrition/models.py:666
+#: apps/nutrition/models.py:695
 msgid "Use either a food or a recipe, not both or neither."
 msgstr "Usa un alimento o una ricetta, non entrambi né nessuno dei due."
 
@@ -2636,7 +2799,7 @@ msgid "Nothing to copy — that day has no entries."
 msgstr "Niente da copiare — quel giorno non ha voci."
 
 #: apps/nutrition/views.py:807 apps/nutrition/views.py:1127
-#: apps/nutrition/views.py:1538
+#: apps/nutrition/views.py:1590
 msgid "That food couldn't be imported — try again."
 msgstr "Non è stato possibile importare questo alimento — riprova."
 
@@ -2655,14 +2818,8 @@ msgstr "Salvato “%(name)s” come nuova ricetta."
 msgid "\"%(name)s\" created — now add its ingredients below."
 msgstr "\"%(name)s\" creata — aggiungi ora i suoi ingredienti qui sotto."
 
-#: apps/nutrition/views.py:1062 apps/nutrition/views.py:1334
-#: apps/programs/views.py:147
-#, python-format
-msgid "Imported “%(name)s”."
-msgstr "Importato “%(name)s”."
-
-#: apps/nutrition/views.py:1067 apps/nutrition/views.py:1339
-#: apps/programs/views.py:152
+#: apps/nutrition/views.py:1067 apps/nutrition/views.py:1362
+#: apps/programs/views.py:197
 #, python-format
 msgid ""
 "This file was exported from IronStack %(version)s — worth double-checking "
@@ -2671,22 +2828,26 @@ msgstr ""
 "Questo file è stato esportato da IronStack %(version)s — vale la pena "
 "ricontrollare l'importazione se qualcosa non torna."
 
-#: apps/nutrition/views.py:1575
+#: apps/nutrition/views.py:1511
+msgid "Only a personal trainer can share a diet plan."
+msgstr "Solo un personal trainer può condividere un piano alimentare."
+
+#: apps/nutrition/views.py:1628
 #, python-format
 msgid "Logged %(count)d item to %(date)s."
 msgid_plural "Logged %(count)d items to %(date)s."
 msgstr[0] "Registrata %(count)d voce in %(date)s."
 msgstr[1] "Registrate %(count)d voci in %(date)s."
 
-#: apps/nutrition/views.py:1586
+#: apps/nutrition/views.py:1639
 msgid "Nothing to log — this plan has no items for that date."
 msgstr "Niente da registrare — questo piano non ha voci per quella data."
 
-#: apps/programs/forms.py:23
+#: apps/programs/forms.py:36
 msgid "Save as a personal template"
 msgstr "Salva come modello personale"
 
-#: apps/programs/forms.py:27
+#: apps/programs/forms.py:41
 msgid ""
 "Templates aren't meant to be run directly — copy them into a new program "
 "(from the program page) whenever you start a new cycle, keeping the original "
@@ -2696,36 +2857,42 @@ msgstr ""
 "nuovo programma (dalla pagina del programma) ogni volta che inizi un nuovo "
 "ciclo, lasciando intatto l'originale."
 
-#: apps/programs/forms.py:68 apps/workouts/forms.py:72
+#: apps/programs/forms.py:46
+msgid ""
+"Lets the clients checked below see and import their own copy of this "
+"program. Leave everyone unchecked to keep it private."
+msgstr "Consente ai clienti selezionati qui sotto di vedere e importare la propria copia di questo programma. Non selezionare nessuno per mantenerlo privato."
+
+#: apps/programs/forms.py:102 apps/workouts/forms.py:72
 msgid "exercise"
 msgstr "esercizio"
 
-#: apps/programs/forms.py:70 apps/programs/forms.py:73
+#: apps/programs/forms.py:104 apps/programs/forms.py:107
 msgid "Target"
 msgstr "Target"
 
-#: apps/programs/forms.py:70 apps/workouts/forms.py:42
+#: apps/programs/forms.py:104 apps/workouts/forms.py:42
 msgid "RPE"
 msgstr "RPE"
 
-#: apps/programs/forms.py:73 apps/workouts/forms.py:43
+#: apps/programs/forms.py:107 apps/workouts/forms.py:43
 msgid "RIR"
 msgstr "RIR"
 
-#: apps/programs/forms.py:76
+#: apps/programs/forms.py:110
 msgid "Percentage target"
 msgstr "Obiettivo percentuale"
 
-#: apps/programs/forms.py:76
+#: apps/programs/forms.py:110
 msgid "1RM"
 msgstr "1RM"
 
-#: apps/programs/forms.py:100
+#: apps/programs/forms.py:134
 #, python-format
 msgid "Weight increment (%(unit)s)"
 msgstr "Incremento del peso (%(unit)s)"
 
-#: apps/programs/forms.py:137 apps/programs/models.py:160
+#: apps/programs/forms.py:171 apps/programs/models.py:199
 msgid "Minimum reps cannot exceed maximum reps."
 msgstr "Le ripetizioni minime non possono superare quelle massime."
 
@@ -2869,71 +3036,71 @@ msgstr "Alto B"
 msgid "Lower B"
 msgstr "Basso B"
 
-#: apps/programs/models.py:61
+#: apps/programs/models.py:100
 msgid "Monday"
 msgstr "Lunedì"
 
-#: apps/programs/models.py:62
+#: apps/programs/models.py:101
 msgid "Tuesday"
 msgstr "Martedì"
 
-#: apps/programs/models.py:63
+#: apps/programs/models.py:102
 msgid "Wednesday"
 msgstr "Mercoledì"
 
-#: apps/programs/models.py:64
+#: apps/programs/models.py:103
 msgid "Thursday"
 msgstr "Giovedì"
 
-#: apps/programs/models.py:65
+#: apps/programs/models.py:104
 msgid "Friday"
 msgstr "Venerdì"
 
-#: apps/programs/models.py:66
+#: apps/programs/models.py:105
 msgid "Saturday"
 msgstr "Sabato"
 
-#: apps/programs/models.py:67
+#: apps/programs/models.py:106
 msgid "Sunday"
 msgstr "Domenica"
 
-#: apps/programs/models.py:82
+#: apps/programs/models.py:121
 msgid "scheduled weekday"
 msgstr "giorno della settimana programmato"
 
-#: apps/programs/models.py:98
+#: apps/programs/models.py:137
 msgid "Double progression"
 msgstr "Doppia progressione"
 
-#: apps/programs/models.py:99
+#: apps/programs/models.py:138
 msgid "Linear"
 msgstr "Lineare"
 
-#: apps/programs/models.py:100
+#: apps/programs/models.py:139
 msgid "Percentage based"
 msgstr "Basata sulla percentuale"
 
-#: apps/programs/models.py:101
+#: apps/programs/models.py:140
 msgid "RPE/RIR based"
 msgstr "Basata su RPE/RIR"
 
-#: apps/programs/models.py:102
+#: apps/programs/models.py:141
 msgid "Rep range"
 msgstr "Intervallo di ripetizioni"
 
-#: apps/programs/models.py:104 templates/core/_backup_row.html:12
+#: apps/programs/models.py:143 templates/core/_backup_row.html:12
 msgid "Manual"
 msgstr "Manuale"
 
-#: apps/programs/models.py:123
+#: apps/programs/models.py:162
 msgid "set count"
 msgstr "numero di serie"
 
-#: apps/programs/models.py:124
+#: apps/programs/models.py:163
 msgid "minimum reps"
 msgstr "ripetizioni minime"
 
-#: apps/programs/models.py:125
+#: apps/programs/models.py:164
 msgid "maximum reps"
 msgstr "ripetizioni massime"
 
@@ -3135,24 +3302,12 @@ msgstr "Descrizione"
 msgid "Friend"
 msgstr "Amico"
 
-#: apps/social/models.py:20 apps/social/models.py:226
-msgid "Pending"
-msgstr "In attesa"
-
-#: apps/social/models.py:21 apps/social/models.py:227
-msgid "Accepted"
-msgstr "Accettata"
-
-#: apps/social/models.py:22 apps/social/models.py:228
-msgid "Declined"
-msgstr "Rifiutata"
-
 #: apps/social/models.py:141 templates/admin/nutrition/food/merge.html:16
 #: templates/social/group_detail.html:78
 msgid "Owner"
 msgstr "Proprietario"
 
-#: apps/social/models.py:142 templates/accounts/profile.html:167
+#: apps/social/models.py:142 templates/accounts/profile.html:188
 #: templates/social/group_detail.html:79
 msgid "Admin"
 msgstr "Admin"
@@ -3284,10 +3439,6 @@ msgstr "Richiesta di amicizia accettata."
 #: apps/social/views_friends.py:93
 msgid "Friend request declined."
 msgstr "Richiesta di amicizia rifiutata."
-
-#: apps/social/views_friends.py:95 apps/social/views_groups.py:206
-msgid "Unknown action."
-msgstr "Azione sconosciuta."
 
 #: apps/social/views_friends.py:107
 msgid "Removed from your friends."
@@ -3464,7 +3615,7 @@ msgstr ""
 
 #: templates/accounts/_data_export_standalone.html:23
 #: templates/accounts/_data_export_standalone.html:68
-#: templates/accounts/profile.html:132
+#: templates/accounts/profile.html:153
 msgid "Your data"
 msgstr "I tuoi dati"
 
@@ -3503,11 +3654,12 @@ msgstr ""
 #: templates/measurements/measurement_type_form.html:19
 #: templates/nutrition/diary_entry_form.html:20
 #: templates/nutrition/diet_plan_item_form.html:20
+#: templates/nutrition/diet_plan_share_form.html:21
 #: templates/nutrition/food_form.html:21
 #: templates/nutrition/recipe_form.html:20
 #: templates/nutrition/recipe_ingredient_edit_form.html:20
 #: templates/programs/prescription_form.html:19
-#: templates/programs/program_form.html:19
+#: templates/programs/program_form.html:22
 #: templates/programs/workout_form.html:19 templates/social/group_form.html:19
 #: templates/workouts/set_edit_form.html:19
 msgid "Save"
@@ -3520,7 +3672,7 @@ msgid "Privacy notice"
 msgstr "Informativa sulla privacy"
 
 #: templates/accounts/_privacy_notice_modal.html:27
-#: templates/accounts/profile.html:247 templates/api/key_list.html:20
+#: templates/accounts/profile.html:268 templates/api/key_list.html:20
 #: templates/base.html:148 templates/nutrition/_month_calendar.html:84
 #: templates/records/_pr_toasts.html:28
 msgid "Dismiss"
@@ -3637,7 +3789,7 @@ msgid "Done"
 msgstr "Fatto"
 
 #: templates/accounts/account_delete.html:3
-#: templates/accounts/account_delete.html:6 templates/accounts/profile.html:202
+#: templates/accounts/account_delete.html:6 templates/accounts/profile.html:223
 msgid "Delete account"
 msgstr "Elimina account"
 
@@ -3696,13 +3848,14 @@ msgstr "Annulla"
 
 #: templates/accounts/account_details_form.html:3
 #: templates/accounts/account_details_form.html:6
-#: templates/accounts/profile.html:67
+#: templates/accounts/profile.html:68
 msgid "Account details"
 msgstr "Dettagli account"
 
 #: templates/accounts/account_details_form.html:23
 #: templates/accounts/data_export.html:42
 #: templates/accounts/two_factor_manage.html:35 templates/api/key_list.html:155
+#: templates/coaching/client_list.html:49 templates/coaching/my_coaches.html:37
 #: templates/core/backup_list.html:88 templates/core/feedback_form.html:25
 #: templates/core/feedback_list.html:58 templates/core/seo_settings.html:26
 #: templates/registration/password_change_done.html:13
@@ -3711,7 +3864,7 @@ msgid "Back to profile"
 msgstr "Torna al profilo"
 
 #: templates/accounts/data_export.html:3 templates/accounts/data_export.html:6
-#: templates/accounts/profile.html:144
+#: templates/accounts/profile.html:165
 msgid "Download your data"
 msgstr "Scarica i tuoi dati"
 
@@ -3746,7 +3899,7 @@ msgstr "Preferenze"
 msgid "Features"
 msgstr "Funzionalità"
 
-#: templates/accounts/profile.html:22 templates/accounts/profile.html:109
+#: templates/accounts/profile.html:22 templates/accounts/profile.html:130
 msgid "Notifications"
 msgstr "Notifiche"
 
@@ -3754,30 +3907,34 @@ msgstr "Notifiche"
 msgid "Privacy"
 msgstr "Privacy"
 
-#: templates/accounts/profile.html:24 templates/accounts/profile.html:97
+#: templates/accounts/profile.html:24 templates/accounts/profile.html:98
 msgid "Social"
 msgstr "Social"
 
-#: templates/accounts/profile.html:44
+#: templates/accounts/profile.html:25 templates/accounts/profile.html:108
+msgid "Coaching"
+msgstr "Coaching"
+
+#: templates/accounts/profile.html:45
 msgid "Save preferences"
 msgstr "Salva preferenze"
 
-#: templates/accounts/profile.html:63
+#: templates/accounts/profile.html:64
 msgid "Account"
 msgstr "Account"
 
-#: templates/accounts/profile.html:68
+#: templates/accounts/profile.html:69
 msgid "Update your username, name, and email address."
 msgstr "Aggiorna il tuo nome utente, nome ed e-mail."
 
-#: templates/accounts/profile.html:75
+#: templates/accounts/profile.html:76
 #: templates/registration/password_change_form.html:3
 #: templates/registration/password_change_form.html:6
 #: templates/registration/password_change_form.html:20
 msgid "Change password"
 msgstr "Cambia password"
 
-#: templates/accounts/profile.html:77
+#: templates/accounts/profile.html:78
 msgid ""
 "Your account is linked to Authentik. Sign-in security (password, 2FA) is "
 "managed there."
@@ -3785,117 +3942,135 @@ msgstr ""
 "Il tuo account è collegato ad Authentik. La sicurezza di accesso (password, "
 "2FA) viene gestita lì."
 
-#: templates/accounts/profile.html:79
+#: templates/accounts/profile.html:80
 msgid "Update the password you use to sign in."
 msgstr "Aggiorna la password che usi per accedere."
 
-#: templates/accounts/profile.html:89
+#: templates/accounts/profile.html:90
 msgid "Enabled — protecting your account with a second step at login."
 msgstr "Attiva — protegge il tuo account con un secondo passaggio all'accesso."
 
-#: templates/accounts/profile.html:91
+#: templates/accounts/profile.html:92
 msgid "Add a second step at login, using an authenticator app."
 msgstr ""
 "Aggiungi un secondo passaggio all'accesso tramite un'app di autenticazione."
 
-#: templates/accounts/profile.html:101 templates/social/message_list.html:6
+#: templates/accounts/profile.html:102 templates/social/message_list.html:6
 msgid "Friends & groups"
 msgstr "Amici e gruppi"
 
-#: templates/accounts/profile.html:102
+#: templates/accounts/profile.html:103
 msgid "Friends, groups, and messages."
 msgstr "Amici, gruppi e messaggi."
 
-#: templates/accounts/profile.html:110
+#: templates/accounts/profile.html:113 templates/coaching/client_list.html:3
+#: templates/coaching/client_list.html:6
+msgid "My clients"
+msgstr "I miei clienti"
+
+#: templates/accounts/profile.html:114
+msgid "People you coach, and coaching requests waiting for you."
+msgstr "Le persone che alleni e le richieste di coaching in attesa."
+
+#: templates/accounts/profile.html:122 templates/coaching/my_coaches.html:3
+#: templates/coaching/my_coaches.html:6
+msgid "My coaches"
+msgstr "I miei coach"
+
+#: templates/accounts/profile.html:123
+msgid "Personal trainers coaching you, and your own pending requests."
+msgstr "I personal trainer che ti allenano e le tue richieste in attesa."
+
+#: templates/accounts/profile.html:131
 msgid "Get notified on this device when you receive a message."
 msgstr "Ricevi una notifica su questo dispositivo quando ricevi un messaggio."
 
-#: templates/accounts/profile.html:119
+#: templates/accounts/profile.html:140
 msgid "Push notifications aren't supported in this browser."
 msgstr "Le notifiche push non sono supportate in questo browser."
 
-#: templates/accounts/profile.html:123
+#: templates/accounts/profile.html:144
 msgid "Enable notifications on this device"
 msgstr "Attiva le notifiche su questo dispositivo"
 
-#: templates/accounts/profile.html:127
+#: templates/accounts/profile.html:148
 msgid "Disable notifications on this device"
 msgstr "Disattiva le notifiche su questo dispositivo"
 
-#: templates/accounts/profile.html:136 templates/api/key_list.html:3
+#: templates/accounts/profile.html:157 templates/api/key_list.html:3
 #: templates/api/key_list.html:6
 msgid "API keys"
 msgstr "Chiavi API"
 
-#: templates/accounts/profile.html:137
+#: templates/accounts/profile.html:158
 msgid "Manage keys other apps can use to access your data."
 msgstr ""
 "Gestisci le chiavi che altre app possono usare per accedere ai tuoi dati."
 
-#: templates/accounts/profile.html:145
+#: templates/accounts/profile.html:166
 msgid "Browse everything you've logged, or download it as JSON, CSV, or HTML."
 msgstr ""
 "Sfoglia tutto ciò che hai registrato, oppure scaricalo come JSON, CSV o HTML."
 
-#: templates/accounts/profile.html:151
+#: templates/accounts/profile.html:172
 msgid "Support"
 msgstr "Assistenza"
 
-#: templates/accounts/profile.html:155 templates/accounts/profile.html:183
+#: templates/accounts/profile.html:176 templates/accounts/profile.html:204
 #: templates/core/feedback_form.html:3 templates/core/feedback_form.html:6
 #: templates/core/feedback_list.html:3 templates/core/feedback_list.html:6
 msgid "Feedback"
 msgstr "Feedback"
 
-#: templates/accounts/profile.html:156
+#: templates/accounts/profile.html:177
 msgid "Report a bug, request something, or tell us what's confusing."
 msgstr "Segnala un bug, proponi qualcosa o dicci cosa non è chiaro."
 
-#: templates/accounts/profile.html:168
+#: templates/accounts/profile.html:189
 msgid "Manage tiers, keys, and reference data across the whole instance."
 msgstr "Gestisci livelli, chiavi e dati di riferimento per l'intera istanza."
 
-#: templates/accounts/profile.html:175 templates/core/backup_list.html:3
+#: templates/accounts/profile.html:196 templates/core/backup_list.html:3
 #: templates/core/backup_list.html:6
 msgid "Backups"
 msgstr "Backup"
 
-#: templates/accounts/profile.html:176
+#: templates/accounts/profile.html:197
 msgid "Create, download, and restore full backups of this instance."
 msgstr "Crea, scarica e ripristina backup completi di questa istanza."
 
-#: templates/accounts/profile.html:184
+#: templates/accounts/profile.html:205
 msgid "Read what users have submitted, and turn submissions on or off."
 msgstr "Leggi cosa hanno inviato gli utenti e attiva o disattiva l'invio."
 
-#: templates/accounts/profile.html:191 templates/core/seo_settings.html:3
+#: templates/accounts/profile.html:212 templates/core/seo_settings.html:3
 #: templates/core/seo_settings.html:6
 msgid "Site & SEO"
 msgstr "Sito e SEO"
 
-#: templates/accounts/profile.html:192
+#: templates/accounts/profile.html:213
 msgid "Control whether search engines are allowed to index this instance."
 msgstr ""
 "Controlla se ai motori di ricerca è consentito indicizzare questa istanza."
 
-#: templates/accounts/profile.html:203
+#: templates/accounts/profile.html:224
 msgid "Permanently delete your account and everything tied to it."
 msgstr "Elimina definitivamente il tuo account e tutto ciò che vi è collegato."
 
-#: templates/accounts/profile.html:211
+#: templates/accounts/profile.html:232
 msgid "Log out"
 msgstr "Esci"
 
-#: templates/accounts/profile.html:233
+#: templates/accounts/profile.html:254
 msgid "Source on GitHub"
 msgstr "Codice sorgente su GitHub"
 
-#: templates/accounts/profile.html:238
+#: templates/accounts/profile.html:259
 #, python-format
 msgid "IronStack version %(version)s"
 msgstr "IronStack versione %(version)s"
 
-#: templates/accounts/profile.html:243 templates/accounts/profile.html:246
+#: templates/accounts/profile.html:264 templates/accounts/profile.html:267
 msgid "Changelog"
 msgstr "Registro delle modifiche"
 
@@ -4076,8 +4251,8 @@ msgstr "Distanza"
 #: templates/nutrition/recipe_detail.html:10
 #: templates/nutrition/recipe_detail.html:37
 #: templates/programs/program_detail.html:10
-#: templates/programs/program_detail.html:44
-#: templates/programs/program_detail.html:61
+#: templates/programs/program_detail.html:47
+#: templates/programs/program_detail.html:64
 #: templates/social/group_detail.html:10
 #: templates/workouts/_performed_exercise_card.html:24
 msgid "Edit"
@@ -4117,7 +4292,7 @@ msgstr "Nuovo tipo di attività"
 #: templates/activities/activity_type_list.html:9
 #: templates/api/key_list.html:10 templates/exercises/exercise_list.html:9
 #: templates/measurements/measurement_type_list.html:9
-#: templates/programs/program_list.html:11
+#: templates/programs/program_list.html:9
 msgid "New"
 msgstr "Nuovo"
 
@@ -4204,11 +4379,13 @@ msgid "Date range"
 msgstr "Intervallo di date"
 
 #: templates/analytics/dashboard.html:14
+#: templates/coaching/client_detail.html:27
 msgid "Training time"
 msgstr "Tempo di allenamento"
 
 #: templates/analytics/dashboard.html:15
 #: templates/analytics/exercise_analytics.html:14
+#: templates/coaching/client_detail.html:28
 msgid "Total volume"
 msgstr "Volume totale"
 
@@ -4229,21 +4406,25 @@ msgid "No data in this range."
 msgstr "Nessun dato in questo intervallo."
 
 #: templates/analytics/dashboard.html:35
-#: templates/analytics/member_profile.html:25 templates/core/dashboard.html:55
+#: templates/analytics/member_profile.html:42
+#: templates/coaching/client_detail.html:33 templates/core/dashboard.html:55
 msgid "Recent"
 msgstr "Recenti"
 
 #: templates/analytics/dashboard.html:35 templates/analytics/dashboard.html:39
 #: templates/analytics/exercise_analytics.html:26
-#: templates/analytics/member_profile.html:25
-#: templates/analytics/member_profile.html:29 templates/core/dashboard.html:55
+#: templates/analytics/member_profile.html:42
+#: templates/analytics/member_profile.html:46
+#: templates/coaching/client_detail.html:33
+#: templates/coaching/client_detail.html:37 templates/core/dashboard.html:55
 #: templates/exercises/exercise_detail.html:90
 #: templates/records/exercise_records.html:11
 msgid "Personal Records"
 msgstr "Record personali"
 
 #: templates/analytics/dashboard.html:39
-#: templates/analytics/member_profile.html:29
+#: templates/analytics/member_profile.html:46
+#: templates/coaching/client_detail.html:37
 #: templates/core/backup_restore_confirm.html:29
 msgid "No"
 msgstr "Nessun"
@@ -4290,15 +4471,32 @@ msgstr "Torna all'esercizio"
 msgid "Member since %(date)s"
 msgstr "Membro dal %(date)s"
 
+#: templates/analytics/member_profile.html:13
+msgid "This person is coaching you."
+msgstr "Questa persona ti sta allenando."
+
+#: templates/analytics/member_profile.html:15
+msgid "Coaching request sent — waiting for a response."
+msgstr "Richiesta di coaching inviata — in attesa di risposta."
+
+#: templates/analytics/member_profile.html:19
+msgid "Request coaching"
+msgstr "Richiedi coaching"
+
 #: templates/analytics/member_profile.html:22
+msgid "Not accepting new coaching clients right now."
+msgstr "Non sta accettando nuovi clienti di coaching in questo momento."
+
+#: templates/analytics/member_profile.html:39
 msgid "No completed workouts yet."
 msgstr "Nessun allenamento completato ancora."
 
-#: templates/analytics/member_profile.html:29
+#: templates/analytics/member_profile.html:46
+#: templates/coaching/client_detail.html:37
 msgid "yet."
 msgstr "ancora."
 
-#: templates/analytics/member_profile.html:32
+#: templates/analytics/member_profile.html:49
 msgid "Back to home"
 msgstr "Torna alla home"
 
@@ -4537,6 +4735,191 @@ msgstr "Continua l'allenamento"
 #: templates/base.html:222
 msgid "Unread messages"
 msgstr "Messaggi non letti"
+
+#: templates/coaching/client_detail.html:8
+#, python-format
+msgid "Coaching since %(date)s"
+msgstr "In coaching da %(date)s"
+
+#: templates/coaching/client_detail.html:23
+#: templates/workouts/session_train.html:3
+msgid "Training"
+msgstr "Allenamento"
+
+#: templates/coaching/client_detail.html:30
+msgid "Last 30 days."
+msgstr "Ultimi 30 giorni."
+
+#: templates/coaching/client_detail.html:51
+msgid "No readings yet."
+msgstr "Nessuna misurazione ancora."
+
+#: templates/coaching/client_detail.html:57
+msgid "Assigned plans"
+msgstr "Piani assegnati"
+
+#: templates/coaching/client_detail.html:64
+#, python-format
+msgid "Last logged %(date)s"
+msgstr "Ultimo registrato il %(date)s"
+
+#: templates/coaching/client_detail.html:66
+msgid "Not logged yet."
+msgstr "Non ancora registrato."
+
+#: templates/coaching/client_detail.html:72
+msgid "This client hasn't imported any of your shared programs yet."
+msgstr "Questo cliente non ha ancora importato nessuno dei tuoi programmi condivisi."
+
+#: templates/coaching/client_detail.html:75
+msgid "Back to clients"
+msgstr "Torna ai clienti"
+
+#: templates/coaching/client_list.html:10
+msgid "Coaching requests"
+msgstr "Richieste di coaching"
+
+#: templates/coaching/client_list.html:18 templates/social/friend_list.html:21
+msgid "Accept"
+msgstr "Accetta"
+
+#: templates/coaching/client_list.html:23 templates/social/friend_list.html:26
+#: templates/social/group_list.html:29
+msgid "Decline"
+msgstr "Rifiuta"
+
+#: templates/coaching/client_list.html:30
+msgid "Your clients"
+msgstr "I tuoi clienti"
+
+#: templates/coaching/client_list.html:35
+msgid "View"
+msgstr "Visualizza"
+
+#: templates/coaching/client_list.html:37 templates/coaching/my_coaches.html:25
+msgid "End this coaching relationship?"
+msgstr "Terminare questa relazione di coaching?"
+
+#: templates/coaching/client_list.html:39 templates/coaching/my_coaches.html:27
+msgid "End"
+msgstr "Termina"
+
+#: templates/coaching/client_list.html:45
+msgid ""
+"No clients yet — accept a coaching request above once someone sends you one."
+msgstr "Nessun cliente ancora — accetta una richiesta di coaching qui sopra quando qualcuno te la invia."
+
+#: templates/coaching/diet_plan_update_diff.html:3
+#: templates/coaching/program_update_diff.html:3
+msgid "Coach update"
+msgstr "Aggiornamento del coach"
+
+#: templates/coaching/diet_plan_update_diff.html:6
+msgid "Your coach updated this diet plan"
+msgstr "Il tuo coach ha aggiornato questo piano alimentare"
+
+#: templates/coaching/diet_plan_update_diff.html:14
+msgid ""
+"Applying replaces this plan's meals and items with your coach's current "
+"version. Any changes you made to your own copy since importing it will be "
+"lost."
+msgstr "L'applicazione sostituisce i pasti e gli elementi di questo piano con la versione attuale del tuo coach. Qualsiasi modifica apportata alla tua copia dopo l'importazione andrà persa."
+
+#: templates/coaching/diet_plan_update_diff.html:18
+#: templates/coaching/program_update_diff.html:18
+msgid "Apply update"
+msgstr "Applica l'aggiornamento"
+
+#: templates/coaching/diet_plan_update_diff.html:19
+#: templates/coaching/program_update_diff.html:19
+msgid "Skip for now"
+msgstr "Salta per ora"
+
+#: templates/coaching/my_coaches.html:10 templates/social/friend_list.html:34
+msgid "Sent requests"
+msgstr "Richieste inviate"
+
+#: templates/coaching/my_coaches.html:13 templates/social/friend_list.html:37
+#, python-format
+msgid "Waiting on %(username)s"
+msgstr "In attesa di %(username)s"
+
+#: templates/coaching/my_coaches.html:18
+msgid "Coaching you"
+msgstr "Ti sta allenando"
+
+#: templates/coaching/my_coaches.html:23
+msgid "Plans"
+msgstr "Piani"
+
+#: templates/coaching/my_coaches.html:33
+msgid ""
+"No one is coaching you yet — a personal trainer's own profile page has a "
+"“Request coaching” button."
+msgstr "Nessuno ti sta ancora allenando — la pagina del profilo di un personal trainer ha un pulsante “Richiedi coaching”."
+
+#: templates/coaching/program_update_diff.html:6
+msgid "Your coach updated this program"
+msgstr "Il tuo coach ha aggiornato questo programma"
+
+#: templates/coaching/program_update_diff.html:14
+msgid ""
+"Applying replaces this program's workouts and exercises with your coach's "
+"current version. Any changes you made to your own copy since importing it "
+"will be lost."
+msgstr "L'applicazione sostituisce gli allenamenti e gli esercizi di questo programma con la versione attuale del tuo coach. Qualsiasi modifica apportata alla tua copia dopo l'importazione andrà persa."
+
+#: templates/coaching/shared_plan_list.html:3
+#: templates/coaching/shared_plan_list.html:6
+msgid "Plans from my coaches"
+msgstr "Piani dai miei coach"
+
+#: templates/coaching/shared_plan_list.html:9
+msgid "Gym programs"
+msgstr "Programmi in palestra"
+
+#: templates/coaching/shared_plan_list.html:14
+#: templates/coaching/shared_plan_list.html:34
+#, python-format
+msgid "From %(coach)s"
+msgstr "Da %(coach)s"
+
+#: templates/coaching/shared_plan_list.html:17
+#: templates/coaching/shared_plan_list.html:37
+msgid "Imported"
+msgstr "Importato"
+
+#: templates/coaching/shared_plan_list.html:21
+#: templates/coaching/shared_plan_list.html:41
+#: templates/nutrition/_food_search_results.html:61
+#: templates/nutrition/diet_plan_import.html:22
+#: templates/nutrition/diet_plan_list.html:10
+#: templates/nutrition/food_category.html:20
+#: templates/nutrition/recipe_import.html:22
+#: templates/nutrition/recipe_list.html:10
+#: templates/programs/program_import.html:21
+#: templates/programs/program_list.html:10
+msgid "Import"
+msgstr "Importa"
+
+#: templates/coaching/shared_plan_list.html:26
+msgid "No shared programs yet."
+msgstr "Nessun programma condiviso ancora."
+
+#: templates/coaching/shared_plan_list.html:29
+#: templates/nutrition/_subnav.html:49
+#: templates/nutrition/diet_plan_list.html:3
+#: templates/nutrition/diet_plan_list.html:6
+msgid "Diet plans"
+msgstr "Piani alimentari"
+
+#: templates/coaching/shared_plan_list.html:46
+msgid "No shared diet plans yet."
+msgstr "Nessun piano alimentare condiviso ancora."
+
+#: templates/coaching/shared_plan_list.html:49
+msgid "Back to my coaches"
+msgstr "Torna ai miei coach"
 
 #: templates/core/_backup_row.html:8
 msgid "Automatic"
@@ -5007,8 +5390,8 @@ msgstr ""
 "prescrizione."
 
 #: templates/exercises/exercise_detail.html:102
+#: templates/nutrition/_diet_plan_card.html:14
 #: templates/nutrition/diet_plan_detail.html:13
-#: templates/nutrition/diet_plan_list.html:27
 msgid "Deactivate"
 msgstr "Disattiva"
 
@@ -5157,6 +5540,30 @@ msgstr ""
 "l'inquadratura, oppure chiudi questa finestra e digitalo nella casella di "
 "ricerca."
 
+#: templates/nutrition/_diet_plan_card.html:6
+#: templates/programs/program_list.html:17
+#: templates/programs/program_list.html:34
+msgid "Coach update available"
+msgstr "Aggiornamento del coach disponibile"
+
+#: templates/nutrition/_diet_plan_card.html:14
+#: templates/nutrition/diet_plan_detail.html:15
+msgid "Activate"
+msgstr "Attiva"
+
+#: templates/nutrition/_diet_plan_card.html:17
+#: templates/nutrition/calculators_home.html:16
+#: templates/nutrition/calculators_home.html:24
+#: templates/nutrition/calculators_home.html:32
+#: templates/nutrition/calculators_home.html:40
+#: templates/nutrition/calculators_home.html:48
+#: templates/nutrition/calculators_home.html:56
+#: templates/nutrition/calculators_home.html:64
+#: templates/nutrition/recipe_list.html:34
+#: templates/nutrition/recipe_list.html:71
+msgid "Open"
+msgstr "Apri"
+
 #: templates/nutrition/_diet_plan_meal_card.html:13
 msgid "target"
 msgstr "obiettivo"
@@ -5259,17 +5666,6 @@ msgstr "Aggiungi"
 #: templates/nutrition/_food_search_results.html:47
 msgid "From OpenFoodFacts"
 msgstr "Da OpenFoodFacts"
-
-#: templates/nutrition/_food_search_results.html:61
-#: templates/nutrition/diet_plan_import.html:22
-#: templates/nutrition/diet_plan_list.html:10
-#: templates/nutrition/food_category.html:20
-#: templates/nutrition/recipe_import.html:22
-#: templates/nutrition/recipe_list.html:10
-#: templates/programs/program_import.html:21
-#: templates/programs/program_list.html:12
-msgid "Import"
-msgstr "Importa"
 
 #: templates/nutrition/_food_search_results.html:65
 msgid "Import & add"
@@ -5388,12 +5784,6 @@ msgstr "Alimenti"
 #: templates/nutrition/recipe_list.html:6
 msgid "Recipes"
 msgstr "Ricette"
-
-#: templates/nutrition/_subnav.html:49
-#: templates/nutrition/diet_plan_list.html:3
-#: templates/nutrition/diet_plan_list.html:6
-msgid "Diet plans"
-msgstr "Piani alimentari"
 
 #: templates/nutrition/_subnav.html:50
 #: templates/nutrition/calculators_home.html:3
@@ -5606,19 +5996,6 @@ msgstr ""
 msgid "How many calories your body burns at rest, and in total."
 msgstr "Quante calorie brucia il tuo corpo a riposo e in totale."
 
-#: templates/nutrition/calculators_home.html:16
-#: templates/nutrition/calculators_home.html:24
-#: templates/nutrition/calculators_home.html:32
-#: templates/nutrition/calculators_home.html:40
-#: templates/nutrition/calculators_home.html:48
-#: templates/nutrition/calculators_home.html:56
-#: templates/nutrition/calculators_home.html:64
-#: templates/nutrition/diet_plan_list.html:30
-#: templates/nutrition/recipe_list.html:34
-#: templates/nutrition/recipe_list.html:71
-msgid "Open"
-msgstr "Apri"
-
 #: templates/nutrition/calculators_home.html:22
 msgid "Split a calorie target into protein, carbohydrates, and fat."
 msgstr "Suddividi un obiettivo calorico in proteine, carboidrati e grassi."
@@ -5658,7 +6035,7 @@ msgstr ""
 
 #: templates/nutrition/calculators_home.html:67
 #: templates/nutrition/diary_day.html:100
-#: templates/nutrition/diet_plan_list.html:40
+#: templates/nutrition/diet_plan_list.html:30
 #: templates/nutrition/food_list.html:88 templates/nutrition/goal_edit.html:36
 #: templates/nutrition/recipe_list.html:90 templates/nutrition/stats.html:44
 msgid "Back to nutrition"
@@ -5821,11 +6198,6 @@ msgstr "Gestisci alimenti"
 msgid "Edit entry"
 msgstr "Modifica voce"
 
-#: templates/nutrition/diet_plan_detail.html:15
-#: templates/nutrition/diet_plan_list.html:27
-msgid "Activate"
-msgstr "Attiva"
-
 #: templates/nutrition/diet_plan_detail.html:18
 #: templates/nutrition/recipe_detail.html:14
 #: templates/programs/program_detail.html:12
@@ -5833,18 +6205,33 @@ msgid "Export"
 msgstr "Esporta"
 
 #: templates/nutrition/diet_plan_detail.html:21
+msgid "Sharing"
+msgstr "In condivisione"
+
+#: templates/nutrition/diet_plan_detail.html:21
+#: templates/nutrition/diet_plan_share_form.html:3
+#: templates/nutrition/diet_plan_share_form.html:6
+msgid "Share"
+msgstr "Condividi"
+
+#: templates/nutrition/diet_plan_detail.html:25
+#: templates/programs/program_detail.html:14
+msgid "Check for coach update"
+msgstr "Controlla aggiornamento del coach"
+
+#: templates/nutrition/diet_plan_detail.html:29
 msgid "protein"
 msgstr "proteine"
 
-#: templates/nutrition/diet_plan_detail.html:21
+#: templates/nutrition/diet_plan_detail.html:29
 msgid "carbs"
 msgstr "carboidrati"
 
-#: templates/nutrition/diet_plan_detail.html:21
+#: templates/nutrition/diet_plan_detail.html:29
 msgid "fat"
 msgstr "grassi"
 
-#: templates/nutrition/diet_plan_detail.html:23
+#: templates/nutrition/diet_plan_detail.html:31
 msgid ""
 "Varies across the week — same daily calories/macros every day, different "
 "meals."
@@ -5852,31 +6239,31 @@ msgstr ""
 "Varia durante la settimana — stesse calorie/macro giornaliere ogni giorno, "
 "pasti diversi."
 
-#: templates/nutrition/diet_plan_detail.html:69
+#: templates/nutrition/diet_plan_detail.html:77
 msgid "Log this plan to your diary"
 msgstr "Registra questo piano nel tuo diario"
 
-#: templates/nutrition/diet_plan_detail.html:71
+#: templates/nutrition/diet_plan_detail.html:79
 msgid "Logs whichever day of the week the date below falls on."
 msgstr ""
 "Registra qualunque giorno della settimana corrisponda alla data qui sotto."
 
-#: templates/nutrition/diet_plan_detail.html:79
+#: templates/nutrition/diet_plan_detail.html:87
 #: templates/nutrition/recipe_detail.html:95
 msgid "Log it"
 msgstr "Registra"
 
-#: templates/nutrition/diet_plan_detail.html:82
+#: templates/nutrition/diet_plan_detail.html:90
 #: templates/nutrition/diet_plan_form.html:25
 #: templates/nutrition/diet_plan_import.html:25
 msgid "Back to diet plans"
 msgstr "Torna ai piani alimentari"
 
-#: templates/nutrition/diet_plan_detail.html:86
+#: templates/nutrition/diet_plan_detail.html:94
 msgid "Delete this plan?"
 msgstr "Eliminare questo piano?"
 
-#: templates/nutrition/diet_plan_detail.html:88
+#: templates/nutrition/diet_plan_detail.html:96
 msgid "Delete plan"
 msgstr "Elimina piano"
 
@@ -5914,7 +6301,12 @@ msgid ""
 "your own existing ones where possible, rather than duplicated; anything "
 "missing is recreated for you. Imported inactive, so it never replaces "
 "whatever plan you're currently following."
-msgstr "Carica un piano alimentare che qualcuno ha esportato — da questa istanza o da un'istanza IronStack completamente diversa. Gli alimenti e le ricette che utilizza vengono associati, quando possibile, ai tuoi esistenti invece di essere duplicati; ciò che manca viene ricreato per te. Importato inattivo, così non sostituisce mai il piano che stai attualmente seguendo."
+msgstr ""
+"Carica un piano alimentare che qualcuno ha esportato — da questa istanza o "
+"da un'istanza IronStack completamente diversa. Gli alimenti e le ricette che "
+"utilizza vengono associati, quando possibile, ai tuoi esistenti invece di "
+"essere duplicati; ciò che manca viene ricreato per te. Importato inattivo, "
+"così non sostituisce mai il piano che stai attualmente seguendo."
 
 #: templates/nutrition/diet_plan_item_form.html:3
 #: templates/nutrition/diet_plan_item_form.html:6
@@ -5923,6 +6315,7 @@ msgstr "Sostituisci elemento"
 
 #: templates/nutrition/diet_plan_item_form.html:23
 #: templates/nutrition/diet_plan_meal_item_form.html:33
+#: templates/nutrition/diet_plan_share_form.html:24
 msgid "Back to plan"
 msgstr "Torna al piano"
 
@@ -5930,15 +6323,29 @@ msgstr "Torna al piano"
 msgid "+ New plan"
 msgstr "+ Nuovo piano"
 
-#: templates/nutrition/diet_plan_list.html:36
+#: templates/nutrition/diet_plan_list.html:14
+msgid "My diet plans"
+msgstr "I miei piani alimentari"
+
+#: templates/nutrition/diet_plan_list.html:19
 msgid "No diet plans yet."
 msgstr "Nessun piano alimentare ancora."
+
+#: templates/nutrition/diet_plan_list.html:24
+#: templates/programs/program_list.html:30
+msgid "From my coach"
+msgstr "Dal mio coach"
 
 #: templates/nutrition/diet_plan_meal_item_form.html:3
 #: templates/nutrition/diet_plan_meal_item_form.html:6
 #, python-format
 msgid "Add item to %(name)s"
 msgstr "Aggiungi elemento a %(name)s"
+
+#: templates/nutrition/diet_plan_share_form.html:19
+#: templates/programs/program_form.html:17
+msgid "You don't have any active coaching clients yet."
+msgstr "Non hai ancora clienti di coaching attivi."
 
 #: templates/nutrition/food_browse.html:3
 #: templates/nutrition/food_browse.html:6
@@ -6207,7 +6614,7 @@ msgid "Save and start tracking"
 msgstr "Salva e inizia a monitorare"
 
 #: templates/nutrition/recipe_detail.html:12
-#: templates/programs/program_list.html:17
+#: templates/programs/program_list.html:47
 msgid "Template"
 msgstr "Modello"
 
@@ -6398,7 +6805,7 @@ msgstr ""
 
 #: templates/programs/prescription_form.html:3
 #: templates/programs/prescription_form.html:6
-#: templates/programs/program_detail.html:70
+#: templates/programs/program_detail.html:73
 #: templates/workouts/_train_panel.html:93
 #: templates/workouts/performed_exercise_form.html:3
 #: templates/workouts/performed_exercise_form.html:6
@@ -6416,7 +6823,7 @@ msgstr "Rimuovi esercizio"
 
 #: templates/programs/program_confirm_delete.html:3
 #: templates/programs/program_confirm_delete.html:6
-#: templates/programs/program_detail.html:88
+#: templates/programs/program_detail.html:91
 msgid "Delete program"
 msgstr "Elimina programma"
 
@@ -6429,51 +6836,51 @@ msgstr ""
 "Eliminare <strong>%(name)s</strong> e tutti i suoi allenamenti ed esercizi? "
 "Questa azione non può essere annullata."
 
-#: templates/programs/program_detail.html:17
+#: templates/programs/program_detail.html:20
 msgid "Built-in template"
 msgstr "Modello integrato"
 
-#: templates/programs/program_detail.html:19
+#: templates/programs/program_detail.html:22
 msgid "My template"
 msgstr "Il mio modello"
 
-#: templates/programs/program_detail.html:23
+#: templates/programs/program_detail.html:26
 #, python-format
 msgid "Version %(version)s · updated %(updated)s"
 msgstr "Versione %(version)s · aggiornato il %(updated)s"
 
-#: templates/programs/program_detail.html:28
+#: templates/programs/program_detail.html:31
 msgid "Copy to a new program"
 msgstr "Copia in un nuovo programma"
 
-#: templates/programs/program_detail.html:45
+#: templates/programs/program_detail.html:48
 #: templates/programs/workout_form.html:23
 msgid "Delete this workout and its exercises?"
 msgstr "Eliminare questo allenamento e i suoi esercizi?"
 
-#: templates/programs/program_detail.html:65
+#: templates/programs/program_detail.html:68
 #: templates/workouts/_train_panel.html:92
 #: templates/workouts/session_detail.html:21
 msgid "No exercises yet."
 msgstr "Nessun esercizio ancora."
 
-#: templates/programs/program_detail.html:75
+#: templates/programs/program_detail.html:78
 msgid "Start workout"
 msgstr "Inizia allenamento"
 
-#: templates/programs/program_detail.html:80
+#: templates/programs/program_detail.html:83
 msgid "No workouts yet."
 msgstr "Nessun allenamento ancora."
 
-#: templates/programs/program_detail.html:85
+#: templates/programs/program_detail.html:88
 msgid "Add workout"
 msgstr "Aggiungi allenamento"
 
-#: templates/programs/program_detail.html:86
+#: templates/programs/program_detail.html:89
 msgid "Delete this program? This cannot be undone."
 msgstr "Eliminare questo programma? Questa azione non può essere annullata."
 
-#: templates/programs/program_detail.html:92
+#: templates/programs/program_detail.html:95
 #: templates/programs/program_import.html:24
 #: templates/workouts/session_list.html:23
 msgid "Back to programs"
@@ -6506,7 +6913,7 @@ msgstr ""
 "utilizza vengono ricreati per te; un nome che corrisponde a un esercizio di "
 "sistema di questa istanza viene riutilizzato così com'è."
 
-#: templates/programs/program_list.html:9
+#: templates/programs/program_list.html:13
 msgid "My programs"
 msgstr "I miei programmi"
 
@@ -6518,15 +6925,19 @@ msgstr "Nessun programma ancora."
 msgid "Create one, or copy a template below to get started."
 msgstr "Creane uno, oppure copia un modello qui sotto per iniziare."
 
-#: templates/programs/program_list.html:29
+#: templates/programs/program_list.html:43
+msgid "My templates"
+msgstr "I miei modelli"
+
+#: templates/programs/program_list.html:55
 msgid "Built-in templates"
 msgstr "Modelli integrati"
 
-#: templates/programs/program_list.html:40
+#: templates/programs/program_list.html:66
 msgid "Copy to my programs"
 msgstr "Copia nei miei programmi"
 
-#: templates/programs/program_list.html:45
+#: templates/programs/program_list.html:71
 msgid "No built-in templates available."
 msgstr "Nessun modello integrato disponibile."
 
@@ -6775,23 +7186,6 @@ msgstr "Trova amici"
 #: templates/social/friend_list.html:13
 msgid "Friend requests"
 msgstr "Richieste di amicizia"
-
-#: templates/social/friend_list.html:21
-msgid "Accept"
-msgstr "Accetta"
-
-#: templates/social/friend_list.html:26 templates/social/group_list.html:29
-msgid "Decline"
-msgstr "Rifiuta"
-
-#: templates/social/friend_list.html:34
-msgid "Sent requests"
-msgstr "Richieste inviate"
-
-#: templates/social/friend_list.html:37
-#, python-format
-msgid "Waiting on %(username)s"
-msgstr "In attesa di %(username)s"
 
 #: templates/social/friend_list.html:42
 msgid "Your friends"
@@ -7143,10 +7537,6 @@ msgstr ""
 #: templates/workouts/session_list.html:26
 msgid "Start freeform workout"
 msgstr "Inizia allenamento libero"
-
-#: templates/workouts/session_train.html:3
-msgid "Training"
-msgstr "Allenamento"
 
 #: templates/workouts/session_train.html:9
 msgid "Full view"

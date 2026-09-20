@@ -11,30 +11,20 @@
 </div>
 {% include "nutrition/_subnav.html" %}
 
-{% if plans %}
-  {% for plan in plans %}
-    <div class="card card-action-row">
-      <div>
-        <strong>{{ plan.name }}</strong>
-        {% if plan.is_active %}<span class="tag">{% trans "Active" %}</span>{% endif %}
-        <p class="text-muted">{{ plan.target_calories }} kcal/day</p>
-      </div>
-      <div style="display:flex; flex-wrap:wrap; gap:0.5rem;">
-        <form method="post" action="{% url 'nutrition:diet-plan-toggle-active' plan.pk %}">
-          {% csrf_token %}
-          <input type="hidden" name="next" value="{% url 'nutrition:diet-plan-list' %}">
-          <button type="submit" class="button-secondary">
-            {% if plan.is_active %}{% trans "Deactivate" %}{% else %}{% trans "Activate" %}{% endif %}
-          </button>
-        </form>
-        <a class="button-secondary" href="{% url 'nutrition:diet-plan-detail' plan.pk %}">{% trans "Open" %}</a>
-      </div>
-    </div>
-  {% endfor %}
-{% else %}
+<h2>{% trans "My diet plans" %}</h2>
+{% for plan in own_plans %}
+  {% include "nutrition/_diet_plan_card.html" with plan=plan %}
+{% empty %}
   <div class="card empty-state">
     <p>{% trans "No diet plans yet." %}</p>
   </div>
+{% endfor %}
+
+{% if coach_plans %}
+  <h2>{% trans "From my coach" %}</h2>
+  {% for plan in coach_plans %}
+    {% include "nutrition/_diet_plan_card.html" with plan=plan %}
+  {% endfor %}
 {% endif %}
 
 <p><a class="button-secondary" href="{% url 'nutrition:dashboard' %}">&larr; {% trans "Back to nutrition" %}</a></p>

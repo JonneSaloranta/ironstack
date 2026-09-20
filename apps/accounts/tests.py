@@ -962,10 +962,11 @@ class ProfileViewTests(TestCase):
         signal that was missing the first time."""
         response = self.client.get(reverse("profile"))
         # Account details, Change password, Two-factor authentication,
-        # Friends & groups, API keys, Download your data, Feedback,
-        # Delete account.
-        self.assertContains(response, 'class="card card-link settings-row"', count=8)
-        self.assertContains(response, "settings-row-chevron", count=8)
+        # Friends & groups, My coaches, API keys, Download your data,
+        # Feedback, Delete account. ("My clients" is skipped — alice
+        # isn't a personal trainer.)
+        self.assertContains(response, 'class="card card-link settings-row"', count=9)
+        self.assertContains(response, "settings-row-chevron", count=9)
         self.assertContains(
             response, f'<a class="card card-link settings-row" href="{reverse("account-details")}">'
         )
@@ -982,10 +983,10 @@ class ProfileViewTests(TestCase):
         self.alice.save()
         response = self.client.get(reverse("profile"))
         # Account details, Change password, Two-factor authentication,
-        # Friends & groups, API keys, Download your data, Feedback,
-        # Delete account + Admin, Backups, Feedback, Site & SEO (the
-        # latter four inside the staff-only "danger zone").
-        self.assertContains(response, 'class="card card-link settings-row"', count=12)
+        # Friends & groups, My coaches, API keys, Download your data,
+        # Feedback, Delete account + Admin, Backups, Feedback, Site &
+        # SEO (the latter four inside the staff-only "danger zone").
+        self.assertContains(response, 'class="card card-link settings-row"', count=13)
         self.assertContains(
             response, f'<a class="card card-link settings-row" href="{reverse("admin:index")}">'
         )

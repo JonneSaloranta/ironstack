@@ -16,6 +16,14 @@
     {% endif %}
   </form>
   <a class="button-secondary" href="{% url 'nutrition:diet-plan-export' plan.pk %}">{% trans "Export" %}</a>
+  {% if user.is_personal_trainer %}
+    <a class="button-secondary" href="{% url 'nutrition:diet-plan-share' plan.pk %}">
+      {% if plan.shared_with_clients.all %}{% trans "Sharing" %}{% else %}{% trans "Share" %}{% endif %}
+    </a>
+  {% endif %}
+  {% if plan.imported_from_id %}
+    <a class="button-secondary" href="{% url 'coaching:diet-plan-update-preview' plan.pk %}">{% trans "Check for coach update" %}</a>
+  {% endif %}
 </div>
 {% include "nutrition/_subnav.html" %}
 <p class="text-muted">{{ plan.target_calories }} kcal/day — {{ plan.target_protein_grams|floatformat:0 }}g {% trans "protein" %}, {{ plan.target_carbohydrate_grams|floatformat:0 }}g {% trans "carbs" %}, {{ plan.target_fat_grams|floatformat:0 }}g {% trans "fat" %}</p>

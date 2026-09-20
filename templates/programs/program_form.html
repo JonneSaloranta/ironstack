@@ -13,6 +13,9 @@
     <div class="field">
       {{ field.label_tag }}
       {{ field }}
+      {% if field.name == "shared_with_clients" and not field.field.queryset.exists %}
+        <p class="text-muted">{% trans "You don't have any active coaching clients yet." %}</p>
+      {% endif %}
       {% if field.errors %}<p class="field-error">{{ field.errors|striptags }}</p>{% endif %}
     </div>
   {% endfor %}

@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Share" %} {{ plan.name }} — IronStack{% endblock %}
+{% block content %}
+<div class="top-bar">
+  <h1 style="margin:0;">{% trans "Share" %} “{{ plan.name }}”</h1>
+</div>
+
+<form class="card" method="post">
+  {% csrf_token %}
+  {{ form.non_field_errors }}
+  <div class="field">
+    {{ form.clients.label_tag }}
+    {{ form.clients }}
+    {% if form.clients.help_text %}<p class="field-help">{{ form.clients.help_text }}</p>{% endif %}
+    {% if form.clients.errors %}<p class="field-error">{{ form.clients.errors|striptags }}</p>{% endif %}
+  </div>
+  {% if not form.clients.field.queryset.exists %}
+    <p class="text-muted">{% trans "You don't have any active coaching clients yet." %}</p>
+  {% endif %}
+  <button type="submit">{% trans "Save" %}</button>
+</form>
+
+<p><a class="button-secondary" href="{% url 'nutrition:diet-plan-detail' plan.pk %}">&larr; {% trans "Back to plan" %}</a></p>
+{% endblock %}

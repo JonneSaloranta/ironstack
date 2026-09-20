@@ -1,4 +1,5 @@
 from django import forms
+from django.contrib.auth import get_user_model
 from django.utils.translation import gettext as _gettext
 from django.utils.translation import gettext_lazy as _
 
@@ -14,13 +15,26 @@ from apps.exercises.services import visible_to as exercises_visible_to
 
 from .models import ExercisePrescription, Program, Workout
 
+User = get_user_model()
+
 
 class ProgramForm(forms.ModelForm):
+    """`shared_with_clients` (apps.coaching) only makes sense for a
+    personal trainer — popped from the form entirely for anyone else,
+    rather than shown-but-inert, so a plain user never sees a
+    multi-select that couldn't do anything for their account. Its
+    queryset is narrowed to this PT's own *currently active* clients
+    (apps.coaching.services.clients_of) — asked for directly: a coach
+    assigns a program to specific clients, not to every client at
+    once, so the field itself must only ever offer real choices, never
+    every user on the instance."""
+
     class Meta:
         model = Program
-        fields = ["name", "description", "is_template"]
+        fields = ["name", "description", "is_template", "shared_with_clients"]
         labels = {
             "is_template": _("Save as a personal template"),
+            "shared_with_clients": _("Share with these clients"),
         }
         help_texts = {
             "is_template": _(
@@ -28,7 +42,27 @@ class ProgramForm(forms.ModelForm):
                 "new program (from the program page) whenever you start a new cycle, "
                 "keeping the original untouched."
             ),
+            "shared_with_clients": _(
+                "Lets the clients checked below see and import their own copy of "
+                "this program. Leave everyone unchecked to keep it private."
+            ),
         }
+        widgets = {
+            "shared_with_clients": forms.CheckboxSelectMultiple,
+        }
+
+    def __init__(self, *args, user=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        if user is None or not user.is_personal_trainer:
+            del self.fields["shared_with_clients"]
+        else:
+            # User.coaches is CoachingRelationship.coachee's own
+            # related_name — the reverse side of "who does this PT
+            # currently coach" without a second round-trip through
+            # apps.coaching.services.clients_of's own User objects.
+            self.fields["shared_with_clients"].queryset = User.objects.filter(
+                coaches__coach=user, coaches__ended_at__isnull=True
+            )
 
 
 class WorkoutForm(forms.ModelForm):

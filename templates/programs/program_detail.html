@@ -10,6 +10,9 @@
     <a class="button" href="{% url 'programs:program-update' program.pk %}">{% trans "Edit" %}</a>
   {% endif %}
   <a class="button-secondary" href="{% url 'programs:program-export' program.pk %}">{% trans "Export" %}</a>
+  {% if program.imported_from_id %}
+    <a class="button-secondary" href="{% url 'coaching:program-update-preview' program.pk %}">{% trans "Check for coach update" %}</a>
+  {% endif %}
 </div>
 
 <div class="card">

@@ -3,14 +3,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: IronStack\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-20 12:46+0000\n"
+"POT-Creation-Date: 2026-09-20 17:20+0000\n"
 "Language: fi\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: apps/accounts/admin.py:17 templates/accounts/profile.html:87
+#: apps/accounts/admin.py:17 templates/accounts/profile.html:88
 #: templates/accounts/two_factor_manage.html:3
 #: templates/accounts/two_factor_manage.html:6
 #: templates/accounts/two_factor_setup.html:3
@@ -34,69 +34,77 @@ msgstr ""
 "Liian monta salasanan palautuspyyntöä. Yritä uudelleen muutaman minuutin "
 "kuluttua."
 
-#: apps/accounts/forms.py:247 apps/accounts/forms.py:618
+#: apps/accounts/forms.py:251 apps/accounts/forms.py:646
 msgid "Timezone"
 msgstr "Aikavyöhyke"
 
-#: apps/accounts/forms.py:275 apps/accounts/forms.py:598
+#: apps/accounts/forms.py:281 apps/accounts/forms.py:626
 #: templates/api/key_list.html:34
 msgid "Units"
 msgstr "Yksiköt"
 
-#: apps/accounts/forms.py:276 apps/accounts/forms.py:648
+#: apps/accounts/forms.py:282 apps/accounts/forms.py:676
 msgid "Track nutrition"
 msgstr "Seuraa ravintoa"
 
-#: apps/accounts/forms.py:277
+#: apps/accounts/forms.py:283
 msgid "Remind me to log body measurements"
 msgstr "Muistuta minua kirjaamaan kehon mittaukset"
 
-#: apps/accounts/forms.py:280
+#: apps/accounts/forms.py:286
 msgid "Show"
 msgstr "Näytä"
 
-#: apps/accounts/forms.py:281 templates/core/_bmi_card.html:13
+#: apps/accounts/forms.py:287 templates/core/_bmi_card.html:13
 #: templates/core/_bmi_card.html:29
 msgid "BMI"
 msgstr "BMI"
 
-#: apps/accounts/forms.py:282
+#: apps/accounts/forms.py:288
 msgid "on the body weight page"
 msgstr "painonseurantasivulla"
 
-#: apps/accounts/forms.py:284
+#: apps/accounts/forms.py:290
 msgid "Share my activity"
 msgstr "Jaa oma toimintani"
 
-#: apps/accounts/forms.py:285
+#: apps/accounts/forms.py:291
 msgid "Show my name to others"
 msgstr "Näytä nimeni muille"
 
-#: apps/accounts/forms.py:286
+#: apps/accounts/forms.py:292
 msgid "Show my Gravatar picture"
 msgstr "Näytä Gravatar-kuvani"
 
-#: apps/accounts/forms.py:287 apps/accounts/forms.py:631
+#: apps/accounts/forms.py:293 apps/accounts/forms.py:659
 msgid "Allow friend requests"
 msgstr "Salli kaveripyynnöt"
 
-#: apps/accounts/forms.py:288 apps/accounts/forms.py:639
+#: apps/accounts/forms.py:294 apps/accounts/forms.py:667
 msgid "Allow group invites"
 msgstr "Salli ryhmäkutsut"
 
-#: apps/accounts/forms.py:289
+#: apps/accounts/forms.py:295
+msgid "I'm a personal trainer / coach"
+msgstr "Olen personal trainer / valmentaja"
+
+#: apps/accounts/forms.py:296
+msgid "Accepting new coaching requests"
+msgstr "Otan vastaan uusia valmennuspyyntöjä"
+
+#: apps/accounts/forms.py:297
 msgid "Language"
 msgstr "Kieli"
 
-#: apps/accounts/forms.py:290
+#: apps/accounts/forms.py:298
 msgid "Theme"
 msgstr "Teema"
 
-#: apps/accounts/forms.py:291
+#: apps/accounts/forms.py:299
 msgid "Appearance"
 msgstr "Ulkoasu"
 
-#: apps/accounts/forms.py:295
+#: apps/accounts/forms.py:303
 msgid ""
 "Which color palette the app uses. Each theme has its own dark and light look "
 "— pick which one below."
@@ -104,7 +112,7 @@ msgstr ""
 "Mikä väripaletti sovelluksessa on käytössä. Jokaisella teemalla on oma tumma "
 "ja vaalea ulkoasunsa — valitse alta kumpi."
 
-#: apps/accounts/forms.py:299
+#: apps/accounts/forms.py:307
 msgid ""
 "Shows nutrition (food diary, recipes, diet plans) in navigation and on the "
 "dashboard. Turn off to hide it if you don't want to track nutrition — "
@@ -116,7 +124,7 @@ msgstr ""
 "olemassa olevaa ravintodataa ei koskaan poisteta, ja sen sivut ovat yhä "
 "käytettävissä suoran linkin kautta."
 
-#: apps/accounts/forms.py:306
+#: apps/accounts/forms.py:314
 msgid ""
 "\"Auto\" follows your device's own light/dark setting and switches "
 "automatically when it changes."
@@ -124,7 +132,7 @@ msgstr ""
 "\"Automaattinen\" seuraa laitteesi omaa vaalea/tumma-asetusta ja vaihtuu "
 "automaattisesti, kun se muuttuu."
 
-#: apps/accounts/forms.py:310
+#: apps/accounts/forms.py:318
 msgid ""
 "Shows a dashboard card nudging you to log a body measurement when you "
 "haven't logged one in a while. Turn off to never see that reminder — you can "
@@ -135,11 +143,11 @@ msgstr ""
 "koskaan nähdä tätä muistutusta — voit silti kirjata mittauksen milloin "
 "tahansa Kehon seurannasta."
 
-#: apps/accounts/forms.py:315
+#: apps/accounts/forms.py:323
 msgid "Turns off the BMI card and its category ranges entirely."
 msgstr "Piilottaa BMI-kortin ja sen luokka-asteikot kokonaan."
 
-#: apps/accounts/forms.py:317
+#: apps/accounts/forms.py:325
 msgid ""
 "Lets everyone using this instance see your longest streak, workout count, "
 "PRs, total weight lifted, and when you last trained, in the dashboard's "
@@ -152,7 +160,7 @@ msgstr ""
 "aktiivisena\" -listassa. Poista käytöstä pitääksesi oman toimintasi "
 "yksityisenä — näet silti muiden tiedot."
 
-#: apps/accounts/forms.py:324
+#: apps/accounts/forms.py:332
 msgid ""
 "Shows your first name next to your username wherever others can see it (the "
 "achievements carousel and \"Recently active\" list). Turn off to show just "
@@ -163,7 +171,7 @@ msgstr ""
 "käytöstä näyttääksesi siellä vain käyttäjätunnuksesi, kuten ennen tämän "
 "asetuksen olemassaoloa."
 
-#: apps/accounts/forms.py:330
+#: apps/accounts/forms.py:338
 msgid ""
 "Shows your Gravatar (gravatar.com) picture at the top of this page, if the "
 "email on this account has one. Turning this on means your browser loads that "
@@ -177,7 +185,7 @@ msgstr ""
 "tämä sovellus ottaa yhteyttä oman palvelimesi ulkopuoliseen palvelimeen — "
 "joka näkee tällöin sähköpostiosoitteesi tiivisteen ja IP-osoitteesi."
 
-#: apps/accounts/forms.py:338
+#: apps/accounts/forms.py:346
 msgid ""
 "Off stops other users on this instance from sending you a friend request at "
 "all. Doesn't affect friend requests you already have, or friendships you "
@@ -187,7 +195,7 @@ msgstr ""
 "kaveripyyntöä lainkaan. Ei vaikuta jo olemassa oleviin kaveripyyntöihin tai "
 "kaveruuksiin."
 
-#: apps/accounts/forms.py:343
+#: apps/accounts/forms.py:351
 msgid ""
 "Off stops a group member from inviting you to a group directly. You can "
 "still join any group yourself using its invite link, if you have one."
@@ -196,53 +204,66 @@ msgstr ""
 "silti liittyä mihin tahansa ryhmään itse sen liittymislinkin kautta, jos "
 "sinulla on sellainen."
 
-#: apps/accounts/forms.py:358 apps/accounts/forms.py:674
+#: apps/accounts/forms.py:356
+msgid ""
+"Lets you build gym programs and diet plans other users can request you coach "
+"them on. Turning this off doesn't end any coaching relationship you already "
+"have."
+msgstr "Antaa sinun rakentaa kuntosaliohjelmia ja ruokavaliosuunnitelmia, joihin muut käyttäjät voivat pyytää valmennustasi. Tämän pois kytkeminen ei päätä olemassa olevia valmennussuhteitasi."
+
+#: apps/accounts/forms.py:361
+msgid ""
+"Off stops new coaching requests from reaching you. Existing coaching "
+"relationships, and any request you already received, are unaffected."
+msgstr "Pois päältä estää uusien valmennuspyyntöjen saapumisen sinulle. Olemassa olevat valmennussuhteet ja jo saamasi pyynnöt eivät muutu."
+
+#: apps/accounts/forms.py:386 apps/accounts/forms.py:702
 #: apps/nutrition/forms.py:39 apps/nutrition/forms.py:440
 msgid "Height (cm)"
 msgstr "Pituus (cm)"
 
-#: apps/accounts/forms.py:358 apps/accounts/forms.py:674
+#: apps/accounts/forms.py:386 apps/accounts/forms.py:702
 #: apps/nutrition/forms.py:39 apps/nutrition/forms.py:440
 msgid "Height (in)"
 msgstr "Pituus (in)"
 
-#: apps/accounts/forms.py:412 apps/accounts/forms.py:448
+#: apps/accounts/forms.py:440 apps/accounts/forms.py:476
 msgid "Verification code"
 msgstr "Vahvistuskoodi"
 
-#: apps/accounts/forms.py:426
+#: apps/accounts/forms.py:454
 msgid "Incorrect code — check your authenticator app and try again."
 msgstr "Väärä koodi — tarkista tunnistautumissovelluksesi ja yritä uudelleen."
 
-#: apps/accounts/forms.py:462
+#: apps/accounts/forms.py:490
 msgid "Too many incorrect codes. Try again in a few minutes."
 msgstr "Liian monta väärää koodia. Yritä uudelleen muutaman minuutin kuluttua."
 
-#: apps/accounts/forms.py:475
+#: apps/accounts/forms.py:503
 msgid "Incorrect code."
 msgstr "Väärä koodi."
 
-#: apps/accounts/forms.py:489 apps/accounts/forms.py:515
+#: apps/accounts/forms.py:517 apps/accounts/forms.py:543
 msgid "Password"
 msgstr "Salasana"
 
-#: apps/accounts/forms.py:498 apps/accounts/forms.py:529
+#: apps/accounts/forms.py:526 apps/accounts/forms.py:557
 msgid "Incorrect password."
 msgstr "Väärä salasana."
 
-#: apps/accounts/forms.py:518
+#: apps/accounts/forms.py:546
 msgid "Type your username to confirm"
 msgstr "Kirjoita käyttäjätunnuksesi vahvistaaksesi"
 
-#: apps/accounts/forms.py:531
+#: apps/accounts/forms.py:559
 msgid "Doesn't match your username."
 msgstr "Ei täsmää käyttäjätunnukseesi."
 
-#: apps/accounts/forms.py:555
+#: apps/accounts/forms.py:583
 msgid "First name"
 msgstr "Etunimi"
 
-#: apps/accounts/forms.py:557
+#: apps/accounts/forms.py:585
 msgid ""
 "Used to personalize your dashboard greeting, and next to your username "
 "wherever your activity is shown to others (if you allow that in your "
@@ -252,11 +273,11 @@ msgstr ""
 "kaikkialla, missä aktiviteettisi näytetään muille (jos sallit sen "
 "profiilissasi)."
 
-#: apps/accounts/forms.py:564
+#: apps/accounts/forms.py:592
 msgid "Email"
 msgstr "Sähköposti"
 
-#: apps/accounts/forms.py:566
+#: apps/accounts/forms.py:594
 msgid ""
 "Used only for password-reset emails if you ever get locked out. Never shown "
 "to other users."
@@ -264,7 +285,7 @@ msgstr ""
 "Käytetään vain salasanan palautusviesteihin, jos jäät joskus lukkoon "
 "tilistäsi. Ei näytetä koskaan muille käyttäjille."
 
-#: apps/accounts/forms.py:576
+#: apps/accounts/forms.py:604
 msgid ""
 "Logged as your first body-weight entry, so your progress charts have a "
 "starting point. Leave blank and log it anytime from the Body weight page "
@@ -274,7 +295,7 @@ msgstr ""
 "on lähtöpiste. Voit myös jättää tämän tyhjäksi ja kirjata painon milloin "
 "tahansa Kehon paino -sivulta."
 
-#: apps/accounts/forms.py:591
+#: apps/accounts/forms.py:619
 msgid ""
 "Used together with a logged body weight to show your BMI. Leave blank to "
 "skip this — you can add it anytime from your profile."
@@ -282,7 +303,7 @@ msgstr ""
 "Näytetään BMI:si yhdessä kirjatun painon kanssa. Jätä tyhjäksi ohittaaksesi "
 "tämän — voit lisätä sen milloin tahansa profiilistasi."
 
-#: apps/accounts/forms.py:600
+#: apps/accounts/forms.py:628
 msgid ""
 "Sets whether weights and distances are shown in kg/km or lb/mi throughout "
 "the app. Change this anytime from your profile."
@@ -290,7 +311,7 @@ msgstr ""
 "Määrittää, näytetäänkö painot ja matkat sovelluksessa yksiköissä kg/km vai "
 "lb/mi. Voit muuttaa tätä milloin tahansa profiilistasi."
 
-#: apps/accounts/forms.py:620
+#: apps/accounts/forms.py:648
 msgid ""
 "Used for \"today\" and date ranges throughout the app. Change this anytime "
 "from your profile."
@@ -300,7 +321,7 @@ msgstr ""
 "näytetäänkö painot ja matkat sovelluksessa yksiköissä kg/km vai lb/mi. Voit "
 "muuttaa tätä milloin tahansa profiilistasi."
 
-#: apps/accounts/forms.py:633
+#: apps/accounts/forms.py:661
 msgid ""
 "Lets other users on this instance send you a friend request. Change this "
 "anytime from your profile."
@@ -308,7 +329,7 @@ msgstr ""
 "Sallii muiden tämän instanssin käyttäjien lähettää sinulle kaveripyynnön. "
 "Voit muuttaa tätä milloin tahansa profiilistasi."
 
-#: apps/accounts/forms.py:641
+#: apps/accounts/forms.py:669
 msgid ""
 "Lets a group member invite you to a group directly. You can always join a "
 "group yourself using its invite link either way. Change this anytime from "
@@ -318,7 +339,7 @@ msgstr ""
 "ryhmään itse sen liittymislinkin kautta joka tapauksessa. Voit muuttaa tätä "
 "milloin tahansa profiilistasi."
 
-#: apps/accounts/forms.py:650
+#: apps/accounts/forms.py:678
 msgid ""
 "Shows nutrition (food diary, recipes, diet plans) in navigation and on the "
 "dashboard. Leave unchecked if you don't want to track nutrition — you can "
@@ -330,13 +351,13 @@ msgstr ""
 "voit ottaa sen käyttöön tai pois käytöstä milloin tahansa profiilistasi, "
 "eikä mitään koskaan poisteta kummassakaan tapauksessa."
 
-#: apps/accounts/forms.py:669 apps/nutrition/forms.py:40
+#: apps/accounts/forms.py:697 apps/nutrition/forms.py:40
 #: apps/nutrition/forms.py:449 apps/nutrition/forms.py:653
 #, python-format
 msgid "Current weight (%(unit)s)"
 msgstr "Nykyinen paino (%(unit)s)"
 
-#: apps/accounts/forms.py:671
+#: apps/accounts/forms.py:699
 msgid "Current weight"
 msgstr "Nykyinen paino"
 
@@ -380,7 +401,7 @@ msgstr "Earth"
 msgid "Zen"
 msgstr "Zen"
 
-#: apps/accounts/models.py:380
+#: apps/accounts/models.py:406
 msgid ""
 "Shown as a footer note on the login and signup pages. Leave blank to hide it "
 "entirely."
@@ -470,7 +491,7 @@ msgstr "Muu"
 
 #: apps/activities/models.py:18 apps/exercises/models.py:75
 #: apps/measurements/models.py:34 apps/programs/models.py:36
-#: apps/programs/models.py:79
+#: apps/programs/models.py:118
 msgid "name"
 msgstr "nimi"
 
@@ -491,7 +512,7 @@ msgid "calories"
 msgstr "kalorit"
 
 #: apps/activities/models.py:77 apps/measurements/models.py:90
-#: apps/programs/models.py:84 apps/programs/models.py:150
+#: apps/programs/models.py:123 apps/programs/models.py:189
 #: apps/workouts/forms.py:46
 msgid "notes"
 msgstr "muistiinpanot"
@@ -516,7 +537,9 @@ msgid "Workouts completed"
 msgstr "Treenejä tehty"
 
 #: apps/analytics/achievements.py:135 templates/programs/program_list.html:19
-#: templates/programs/program_list.html:35
+#: templates/programs/program_list.html:36
+#: templates/programs/program_list.html:49
+#: templates/programs/program_list.html:61
 #, python-format
 msgid "%(counter)s workout"
 msgid_plural "%(counter)s workouts"
@@ -579,7 +602,7 @@ msgstr "Muokkaus"
 #: templates/measurements/measurement_history.html:67
 #: templates/nutrition/diary_day.html:69
 #: templates/programs/program_confirm_delete.html:14
-#: templates/programs/program_detail.html:47
+#: templates/programs/program_detail.html:50
 #: templates/workouts/_performed_exercise_card.html:29
 msgid "Delete"
 msgstr "Poista"
@@ -616,6 +639,7 @@ msgstr "Ohjelmat"
 
 #: apps/api/models.py:27 apps/core/models.py:161
 #: templates/analytics/dashboard.html:13 templates/api/key_list.html:97
+#: templates/coaching/client_detail.html:26
 #: templates/workouts/session_list.html:6
 msgid "Workouts"
 msgstr "Treenit"
@@ -656,7 +680,142 @@ msgstr "Olet saavuttanut API-avainten enimmäismäärän."
 msgid "API key revoked."
 msgstr "API-avain peruutettu."
 
-#: apps/core/admin.py:17 templates/accounts/profile.html:164
+#: apps/coaching/models.py:23 apps/social/models.py:20
+#: apps/social/models.py:226
+msgid "Pending"
+msgstr "Odottaa"
+
+#: apps/coaching/models.py:24 apps/social/models.py:21
+#: apps/social/models.py:227
+msgid "Accepted"
+msgstr "Hyväksytty"
+
+#: apps/coaching/models.py:25 apps/social/models.py:22
+#: apps/social/models.py:228
+msgid "Declined"
+msgstr "Hylätty"
+
+#: apps/coaching/services.py:72
+msgid "You can't request yourself as a coach."
+msgstr "Et voi pyytää itseäsi valmentajaksesi."
+
+#: apps/coaching/services.py:74
+msgid "This user isn't a personal trainer."
+msgstr "Tämä käyttäjä ei ole personal trainer."
+
+#: apps/coaching/services.py:76
+msgid "This coach isn't accepting new clients right now."
+msgstr "Tämä valmentaja ei ota vastaan uusia asiakkaita juuri nyt."
+
+#: apps/coaching/services.py:78
+msgid "This person is already coaching you."
+msgstr "Tämä henkilö valmentaa sinua jo."
+
+#: apps/coaching/services.py:81
+msgid "You already sent a coaching request to this trainer."
+msgstr "Olet jo lähettänyt valmennuspyynnön tälle valmentajalle."
+
+#: apps/coaching/services.py:93 apps/coaching/services.py:114
+msgid "You can't respond to this coaching request."
+msgstr "Et voi vastata tähän valmennuspyyntöön."
+
+#: apps/coaching/services.py:95 apps/coaching/services.py:116
+msgid "This coaching request has already been answered."
+msgstr "Tähän valmennuspyyntöön on jo vastattu."
+
+#: apps/coaching/services.py:125
+msgid "You're not part of this coaching relationship."
+msgstr "Et ole osa tätä valmennussuhdetta."
+
+#: apps/coaching/services.py:127
+msgid "This coaching relationship has already ended."
+msgstr "Tämä valmennussuhde on jo päättynyt."
+
+#: apps/coaching/services.py:154
+msgid "This program hasn't been shared with you."
+msgstr "Tätä ohjelmaa ei ole jaettu sinulle."
+
+#: apps/coaching/services.py:156
+msgid "You're not an active client of this program's coach."
+msgstr "Et ole tämän ohjelman valmentajan aktiivinen asiakas."
+
+#: apps/coaching/services.py:173
+msgid "This diet plan hasn't been shared with you."
+msgstr "Tätä ruokavaliosuunnitelmaa ei ole jaettu sinulle."
+
+#: apps/coaching/services.py:175
+msgid "You're not an active client of this diet plan's coach."
+msgstr "Et ole tämän ruokavaliosuunnitelman valmentajan aktiivinen asiakas."
+
+#: apps/coaching/services.py:197
+msgid "your current copy"
+msgstr "nykyinen kopiosi"
+
+#: apps/coaching/services.py:198
+msgid "coach's update"
+msgstr "valmentajan päivitys"
+
+#: apps/coaching/services.py:239
+msgid "You can't update this program."
+msgstr "Et voi päivittää tätä ohjelmaa."
+
+#: apps/coaching/services.py:242
+msgid "This program's coach source is no longer available."
+msgstr "Tämän ohjelman valmentajan alkuperäinen versio ei ole enää käytettävissä."
+
+#: apps/coaching/services.py:273
+msgid "You can't update this diet plan."
+msgstr "Et voi päivittää tätä ruokavaliosuunnitelmaa."
+
+#: apps/coaching/services.py:276
+msgid "This diet plan's coach source is no longer available."
+msgstr "Tämän ruokavaliosuunnitelman valmentajan alkuperäinen versio ei ole enää käytettävissä."
+
+#: apps/coaching/views_plans.py:59 apps/coaching/views_plans.py:73
+#: apps/nutrition/views.py:1062 apps/nutrition/views.py:1357
+#: apps/programs/views.py:192
+#, python-format
+msgid "Imported “%(name)s”."
+msgstr "Tuotiin ”%(name)s”."
+
+#: apps/coaching/views_plans.py:84
+msgid "This program is already up to date."
+msgstr "Tämä ohjelma on jo ajan tasalla."
+
+#: apps/coaching/views_plans.py:99
+msgid "Program updated from your coach's latest version."
+msgstr "Ohjelma päivitetty valmentajasi viimeisimmästä versiosta."
+
+#: apps/coaching/views_plans.py:109
+msgid "This diet plan is already up to date."
+msgstr "Tämä ruokavaliosuunnitelma on jo ajan tasalla."
+
+#: apps/coaching/views_plans.py:124
+msgid "Diet plan updated from your coach's latest version."
+msgstr "Ruokavaliosuunnitelma päivitetty valmentajasi viimeisimmästä versiosta."
+
+#: apps/coaching/views_requests.py:39
+msgid "Coaching request sent."
+msgstr "Valmennuspyyntö lähetetty."
+
+#: apps/coaching/views_requests.py:54
+msgid "Coaching request accepted."
+msgstr "Valmennuspyyntö hyväksytty."
+
+#: apps/coaching/views_requests.py:57
+msgid "Coaching request declined."
+msgstr "Valmennuspyyntö hylätty."
+
+#: apps/coaching/views_requests.py:59 apps/social/views_friends.py:95
+#: apps/social/views_groups.py:206
+msgid "Unknown action."
+msgstr "Tuntematon toiminto."
+
+#: apps/coaching/views_requests.py:78
+msgid "Coaching relationship ended."
+msgstr "Valmennussuhde päättyi."
+
+#: apps/core/admin.py:17 templates/accounts/profile.html:185
 msgid "Administration"
 msgstr "Hallinta"
 
@@ -702,7 +861,7 @@ msgstr "Tämä tiedosto on ”%(kind)s”-vienti, ei ”%(expected)s”."
 msgid "unknown"
 msgstr "tuntematon"
 
-#: apps/core/formatting.py:16 templates/programs/program_detail.html:59
+#: apps/core/formatting.py:16 templates/programs/program_detail.html:62
 #: templates/workouts/_performed_exercise_card.html:8
 msgid "Rate of Perceived Exertion"
 msgstr "Koettu kuormitustaso"
@@ -931,7 +1090,7 @@ msgstr ""
 msgid "Progress"
 msgstr "Edistyminen"
 
-#: apps/core/models.py:164
+#: apps/core/models.py:164 templates/coaching/client_detail.html:40
 msgid "Body measurements"
 msgstr "Kehon mittaukset"
 
@@ -1747,8 +1906,8 @@ msgstr "kuvateksti"
 msgid "attribution"
 msgstr "lähdemerkintä"
 
-#: apps/exercises/models.py:198 apps/programs/models.py:80
-#: apps/programs/models.py:122
+#: apps/exercises/models.py:198 apps/programs/models.py:119
+#: apps/programs/models.py:161
 msgid "order"
 msgstr "järjestys"
 
@@ -2000,7 +2159,7 @@ msgid "Goal"
 msgstr "Tavoite"
 
 #: apps/nutrition/forms.py:109 apps/nutrition/forms.py:656
-#: apps/programs/forms.py:99
+#: apps/programs/forms.py:133
 #, python-format
 msgid "Target weight (%(unit)s)"
 msgstr "Tavoitepaino (%(unit)s)"
@@ -2177,6 +2336,10 @@ msgstr ""
 msgid "Rate (%(unit)s/week — negative to lose, positive to gain)"
 msgstr ""
 "Nopeus (%(unit)s/viikko — negatiivinen laihtumiseen, positiivinen lihomiseen)"
+
+#: apps/nutrition/forms.py:689 apps/programs/forms.py:37
+msgid "Share with these clients"
+msgstr "Jaa näille asiakkaille"
 
 #: apps/nutrition/i18n_content.py:30
 msgid "Breakfast"
@@ -2412,8 +2575,8 @@ msgstr "Kevyesti aktiivinen"
 msgid "Moderately active"
 msgstr "Kohtalaisen aktiivinen"
 
-#: apps/nutrition/models.py:53 templates/nutrition/diet_plan_detail.html:12
-#: templates/nutrition/diet_plan_list.html:19
+#: apps/nutrition/models.py:53 templates/nutrition/_diet_plan_card.html:5
+#: templates/nutrition/diet_plan_detail.html:12
 msgid "Active"
 msgstr "Aktiivinen"
 
@@ -2433,7 +2596,7 @@ msgstr "Rasvanpudotus — kohtalainen"
 msgid "Fat loss — conservative"
 msgstr "Rasvanpudotus — maltillinen"
 
-#: apps/nutrition/models.py:61 apps/programs/models.py:103
+#: apps/nutrition/models.py:61 apps/programs/models.py:142
 msgid "Maintenance"
 msgstr "Ylläpito"
 
@@ -2529,7 +2692,7 @@ msgstr "Tyhjä (null) sisäänrakennetuille oletusaterioille."
 msgid "Log either a food or a recipe, not both or neither."
 msgstr "Kirjaa joko ruoka tai resepti, ei molempia eikä kumpaakaan."
 
-#: apps/nutrition/models.py:666
+#: apps/nutrition/models.py:695
 msgid "Use either a food or a recipe, not both or neither."
 msgstr "Käytä joko ruokaa tai reseptiä, ei molempia eikä kumpaakaan."
 
@@ -2591,7 +2754,7 @@ msgid "Nothing to copy — that day has no entries."
 msgstr "Ei mitään kopioitavaa — kyseiselle päivälle ei ole kirjattu mitään."
 
 #: apps/nutrition/views.py:807 apps/nutrition/views.py:1127
-#: apps/nutrition/views.py:1538
+#: apps/nutrition/views.py:1590
 msgid "That food couldn't be imported — try again."
 msgstr "Tätä ruokaa ei voitu tuoda — yritä uudelleen."
 
@@ -2611,14 +2774,8 @@ msgstr "Tallennettiin ”%(name)s” uutena reseptinä."
 msgid "\"%(name)s\" created — now add its ingredients below."
 msgstr "\"%(name)s\" luotu — lisää sen ainesosat alla."
 
-#: apps/nutrition/views.py:1062 apps/nutrition/views.py:1334
-#: apps/programs/views.py:147
-#, python-format
-msgid "Imported “%(name)s”."
-msgstr "Tuotiin ”%(name)s”."
-
-#: apps/nutrition/views.py:1067 apps/nutrition/views.py:1339
-#: apps/programs/views.py:152
+#: apps/nutrition/views.py:1067 apps/nutrition/views.py:1362
+#: apps/programs/views.py:197
 #, python-format
 msgid ""
 "This file was exported from IronStack %(version)s — worth double-checking "
@@ -2627,24 +2784,28 @@ msgstr ""
 "Tämä tiedosto on viety IronStack %(version)s -versiosta — kannattaa "
 "tarkistaa tuonti, jos jokin näyttää oudolta."
 
-#: apps/nutrition/views.py:1575
+#: apps/nutrition/views.py:1511
+msgid "Only a personal trainer can share a diet plan."
+msgstr "Vain personal trainer voi jakaa ruokavaliosuunnitelman."
+
+#: apps/nutrition/views.py:1628
 #, python-format
 msgid "Logged %(count)d item to %(date)s."
 msgid_plural "Logged %(count)d items to %(date)s."
 msgstr[0] "Kirjattiin %(count)d kohde päivälle %(date)s."
 msgstr[1] "Kirjattiin %(count)d kohdetta päivälle %(date)s."
 
-#: apps/nutrition/views.py:1586
+#: apps/nutrition/views.py:1639
 msgid "Nothing to log — this plan has no items for that date."
 msgstr ""
 "Ei mitään kirjattavaa — tällä suunnitelmalla ei ole kohteita kyseiselle "
 "päivälle."
 
-#: apps/programs/forms.py:23
+#: apps/programs/forms.py:36
 msgid "Save as a personal template"
 msgstr "Tallenna henkilökohtaisena mallina"
 
-#: apps/programs/forms.py:27
+#: apps/programs/forms.py:41
 msgid ""
 "Templates aren't meant to be run directly — copy them into a new program "
 "(from the program page) whenever you start a new cycle, keeping the original "
@@ -2654,36 +2815,42 @@ msgstr ""
 "ohjelmaksi (ohjelmasivulta) aina kun aloitat uuden jakson, jolloin "
 "alkuperäinen pysyy koskemattomana."
 
-#: apps/programs/forms.py:68 apps/workouts/forms.py:72
+#: apps/programs/forms.py:46
+msgid ""
+"Lets the clients checked below see and import their own copy of this "
+"program. Leave everyone unchecked to keep it private."
+msgstr "Antaa alla valituille asiakkaille mahdollisuuden nähdä ja tuoda oman kopionsa tästä ohjelmasta. Jätä kaikki valitsematta, jos haluat pitää sen yksityisenä."
+
+#: apps/programs/forms.py:102 apps/workouts/forms.py:72
 msgid "exercise"
 msgstr "liike"
 
-#: apps/programs/forms.py:70 apps/programs/forms.py:73
+#: apps/programs/forms.py:104 apps/programs/forms.py:107
 msgid "Target"
 msgstr "Tavoite"
 
-#: apps/programs/forms.py:70 apps/workouts/forms.py:42
+#: apps/programs/forms.py:104 apps/workouts/forms.py:42
 msgid "RPE"
 msgstr "RPE"
 
-#: apps/programs/forms.py:73 apps/workouts/forms.py:43
+#: apps/programs/forms.py:107 apps/workouts/forms.py:43
 msgid "RIR"
 msgstr "RIR"
 
-#: apps/programs/forms.py:76
+#: apps/programs/forms.py:110
 msgid "Percentage target"
 msgstr "Prosenttitavoite"
 
-#: apps/programs/forms.py:76
+#: apps/programs/forms.py:110
 msgid "1RM"
 msgstr "1RM"
 
-#: apps/programs/forms.py:100
+#: apps/programs/forms.py:134
 #, python-format
 msgid "Weight increment (%(unit)s)"
 msgstr "Painon lisäys (%(unit)s)"
 
-#: apps/programs/forms.py:137 apps/programs/models.py:160
+#: apps/programs/forms.py:171 apps/programs/models.py:199
 msgid "Minimum reps cannot exceed maximum reps."
 msgstr "Vähimmäistoistomäärä ei voi olla suurempi kuin enimmäistoistomäärä."
 
@@ -2825,71 +2992,71 @@ msgstr "Ylävartalo B"
 msgid "Lower B"
 msgstr "Alavartalo B"
 
-#: apps/programs/models.py:61
+#: apps/programs/models.py:100
 msgid "Monday"
 msgstr "Maanantai"
 
-#: apps/programs/models.py:62
+#: apps/programs/models.py:101
 msgid "Tuesday"
 msgstr "Tiistai"
 
-#: apps/programs/models.py:63
+#: apps/programs/models.py:102
 msgid "Wednesday"
 msgstr "Keskiviikko"
 
-#: apps/programs/models.py:64
+#: apps/programs/models.py:103
 msgid "Thursday"
 msgstr "Torstai"
 
-#: apps/programs/models.py:65
+#: apps/programs/models.py:104
 msgid "Friday"
 msgstr "Perjantai"
 
-#: apps/programs/models.py:66
+#: apps/programs/models.py:105
 msgid "Saturday"
 msgstr "Lauantai"
 
-#: apps/programs/models.py:67
+#: apps/programs/models.py:106
 msgid "Sunday"
 msgstr "Sunnuntai"
 
-#: apps/programs/models.py:82
+#: apps/programs/models.py:121
 msgid "scheduled weekday"
 msgstr "ajoitettu viikonpäivä"
 
-#: apps/programs/models.py:98
+#: apps/programs/models.py:137
 msgid "Double progression"
 msgstr "Kaksoisprogressio"
 
-#: apps/programs/models.py:99
+#: apps/programs/models.py:138
 msgid "Linear"
 msgstr "Lineaarinen"
 
-#: apps/programs/models.py:100
+#: apps/programs/models.py:139
 msgid "Percentage based"
 msgstr "Prosenttipohjainen"
 
-#: apps/programs/models.py:101
+#: apps/programs/models.py:140
 msgid "RPE/RIR based"
 msgstr "RPE/RIR-pohjainen"
 
-#: apps/programs/models.py:102
+#: apps/programs/models.py:141
 msgid "Rep range"
 msgstr "Toistoväli"
 
-#: apps/programs/models.py:104 templates/core/_backup_row.html:12
+#: apps/programs/models.py:143 templates/core/_backup_row.html:12
 msgid "Manual"
 msgstr "Manuaalinen"
 
-#: apps/programs/models.py:123
+#: apps/programs/models.py:162
 msgid "set count"
 msgstr "sarjojen määrä"
 
-#: apps/programs/models.py:124
+#: apps/programs/models.py:163
 msgid "minimum reps"
 msgstr "vähimmäistoistot"
 
-#: apps/programs/models.py:125
+#: apps/programs/models.py:164
 msgid "maximum reps"
 msgstr "enimmäistoistot"
 
@@ -3092,24 +3259,12 @@ msgstr "Kuvaus"
 msgid "Friend"
 msgstr "Kaveri"
 
-#: apps/social/models.py:20 apps/social/models.py:226
-msgid "Pending"
-msgstr "Odottaa"
-
-#: apps/social/models.py:21 apps/social/models.py:227
-msgid "Accepted"
-msgstr "Hyväksytty"
-
-#: apps/social/models.py:22 apps/social/models.py:228
-msgid "Declined"
-msgstr "Hylätty"
-
 #: apps/social/models.py:141 templates/admin/nutrition/food/merge.html:16
 #: templates/social/group_detail.html:78
 msgid "Owner"
 msgstr "Omistaja"
 
-#: apps/social/models.py:142 templates/accounts/profile.html:167
+#: apps/social/models.py:142 templates/accounts/profile.html:188
 #: templates/social/group_detail.html:79
 msgid "Admin"
 msgstr "Hallinta"
@@ -3241,10 +3396,6 @@ msgstr "Kaveripyyntö hyväksytty."
 #: apps/social/views_friends.py:93
 msgid "Friend request declined."
 msgstr "Kaveripyyntö hylätty."
-
-#: apps/social/views_friends.py:95 apps/social/views_groups.py:206
-msgid "Unknown action."
-msgstr "Tuntematon toiminto."
 
 #: apps/social/views_friends.py:107
 msgid "Removed from your friends."
@@ -3421,7 +3572,7 @@ msgstr ""
 
 #: templates/accounts/_data_export_standalone.html:23
 #: templates/accounts/_data_export_standalone.html:68
-#: templates/accounts/profile.html:132
+#: templates/accounts/profile.html:153
 msgid "Your data"
 msgstr "Omat tietosi"
 
@@ -3458,11 +3609,12 @@ msgstr ""
 #: templates/measurements/measurement_type_form.html:19
 #: templates/nutrition/diary_entry_form.html:20
 #: templates/nutrition/diet_plan_item_form.html:20
+#: templates/nutrition/diet_plan_share_form.html:21
 #: templates/nutrition/food_form.html:21
 #: templates/nutrition/recipe_form.html:20
 #: templates/nutrition/recipe_ingredient_edit_form.html:20
 #: templates/programs/prescription_form.html:19
-#: templates/programs/program_form.html:19
+#: templates/programs/program_form.html:22
 #: templates/programs/workout_form.html:19 templates/social/group_form.html:19
 #: templates/workouts/set_edit_form.html:19
 msgid "Save"
@@ -3475,7 +3627,7 @@ msgid "Privacy notice"
 msgstr "Tietosuojaseloste"
 
 #: templates/accounts/_privacy_notice_modal.html:27
-#: templates/accounts/profile.html:247 templates/api/key_list.html:20
+#: templates/accounts/profile.html:268 templates/api/key_list.html:20
 #: templates/base.html:148 templates/nutrition/_month_calendar.html:84
 #: templates/records/_pr_toasts.html:28
 msgid "Dismiss"
@@ -3590,7 +3742,7 @@ msgid "Done"
 msgstr "Valmis"
 
 #: templates/accounts/account_delete.html:3
-#: templates/accounts/account_delete.html:6 templates/accounts/profile.html:202
+#: templates/accounts/account_delete.html:6 templates/accounts/profile.html:223
 msgid "Delete account"
 msgstr "Poista käyttäjätili"
 
@@ -3647,13 +3799,14 @@ msgstr "Peruuta"
 
 #: templates/accounts/account_details_form.html:3
 #: templates/accounts/account_details_form.html:6
-#: templates/accounts/profile.html:67
+#: templates/accounts/profile.html:68
 msgid "Account details"
 msgstr "Tilin tiedot"
 
 #: templates/accounts/account_details_form.html:23
 #: templates/accounts/data_export.html:42
 #: templates/accounts/two_factor_manage.html:35 templates/api/key_list.html:155
+#: templates/coaching/client_list.html:49 templates/coaching/my_coaches.html:37
 #: templates/core/backup_list.html:88 templates/core/feedback_form.html:25
 #: templates/core/feedback_list.html:58 templates/core/seo_settings.html:26
 #: templates/registration/password_change_done.html:13
@@ -3662,7 +3815,7 @@ msgid "Back to profile"
 msgstr "Takaisin profiiliin"
 
 #: templates/accounts/data_export.html:3 templates/accounts/data_export.html:6
-#: templates/accounts/profile.html:144
+#: templates/accounts/profile.html:165
 msgid "Download your data"
 msgstr "Lataa tietosi"
 
@@ -3696,7 +3849,7 @@ msgstr "Asetukset"
 msgid "Features"
 msgstr "Ominaisuudet"
 
-#: templates/accounts/profile.html:22 templates/accounts/profile.html:109
+#: templates/accounts/profile.html:22 templates/accounts/profile.html:130
 msgid "Notifications"
 msgstr "Ilmoitukset"
 
@@ -3704,30 +3857,34 @@ msgstr "Ilmoitukset"
 msgid "Privacy"
 msgstr "Yksityisyys"
 
-#: templates/accounts/profile.html:24 templates/accounts/profile.html:97
+#: templates/accounts/profile.html:24 templates/accounts/profile.html:98
 msgid "Social"
 msgstr "Sosiaalinen"
 
-#: templates/accounts/profile.html:44
+#: templates/accounts/profile.html:25 templates/accounts/profile.html:108
+msgid "Coaching"
+msgstr "Valmennus"
+
+#: templates/accounts/profile.html:45
 msgid "Save preferences"
 msgstr "Tallenna asetukset"
 
-#: templates/accounts/profile.html:63
+#: templates/accounts/profile.html:64
 msgid "Account"
 msgstr "Tili"
 
-#: templates/accounts/profile.html:68
+#: templates/accounts/profile.html:69
 msgid "Update your username, name, and email address."
 msgstr "Päivitä käyttäjätunnuksesi, nimesi ja sähköpostiosoitteesi."
 
-#: templates/accounts/profile.html:75
+#: templates/accounts/profile.html:76
 #: templates/registration/password_change_form.html:3
 #: templates/registration/password_change_form.html:6
 #: templates/registration/password_change_form.html:20
 msgid "Change password"
 msgstr "Vaihda salasana"
 
-#: templates/accounts/profile.html:77
+#: templates/accounts/profile.html:78
 msgid ""
 "Your account is linked to Authentik. Sign-in security (password, 2FA) is "
 "managed there."
@@ -3735,115 +3892,133 @@ msgstr ""
 "Tilisi on yhdistetty Authentikiin. Kirjautumisen suojaus (salasana, "
 "kaksivaiheinen tunnistautuminen) hallitaan siellä."
 
-#: templates/accounts/profile.html:79
+#: templates/accounts/profile.html:80
 msgid "Update the password you use to sign in."
 msgstr "Päivitä salasana, jolla kirjaudut sisään."
 
-#: templates/accounts/profile.html:89
+#: templates/accounts/profile.html:90
 msgid "Enabled — protecting your account with a second step at login."
 msgstr "Käytössä — suojaa tiliäsi toisella vaiheella kirjautuessa."
 
-#: templates/accounts/profile.html:91
+#: templates/accounts/profile.html:92
 msgid "Add a second step at login, using an authenticator app."
 msgstr "Lisää toinen vaihe kirjautumiseen tunnistautumissovelluksen avulla."
 
-#: templates/accounts/profile.html:101 templates/social/message_list.html:6
+#: templates/accounts/profile.html:102 templates/social/message_list.html:6
 msgid "Friends & groups"
 msgstr "Kaverit ja ryhmät"
 
-#: templates/accounts/profile.html:102
+#: templates/accounts/profile.html:103
 msgid "Friends, groups, and messages."
 msgstr "Kaverit, ryhmät ja viestit."
 
-#: templates/accounts/profile.html:110
+#: templates/accounts/profile.html:113 templates/coaching/client_list.html:3
+#: templates/coaching/client_list.html:6
+msgid "My clients"
+msgstr "Asiakkaani"
+
+#: templates/accounts/profile.html:114
+msgid "People you coach, and coaching requests waiting for you."
+msgstr "Ihmiset, joita valmennat, ja sinua odottavat valmennuspyynnöt."
+
+#: templates/accounts/profile.html:122 templates/coaching/my_coaches.html:3
+#: templates/coaching/my_coaches.html:6
+msgid "My coaches"
+msgstr "Valmentajani"
+
+#: templates/accounts/profile.html:123
+msgid "Personal trainers coaching you, and your own pending requests."
+msgstr "Personal trainerit, jotka valmentavat sinua, ja omat odottavat pyyntösi."
+
+#: templates/accounts/profile.html:131
 msgid "Get notified on this device when you receive a message."
 msgstr "Saat ilmoituksen tälle laitteelle, kun saat viestin."
 
-#: templates/accounts/profile.html:119
+#: templates/accounts/profile.html:140
 msgid "Push notifications aren't supported in this browser."
 msgstr "Push-ilmoitukset eivät ole tuettuja tässä selaimessa."
 
-#: templates/accounts/profile.html:123
+#: templates/accounts/profile.html:144
 msgid "Enable notifications on this device"
 msgstr "Ota ilmoitukset käyttöön tällä laitteella"
 
-#: templates/accounts/profile.html:127
+#: templates/accounts/profile.html:148
 msgid "Disable notifications on this device"
 msgstr "Poista ilmoitukset käytöstä tällä laitteella"
 
-#: templates/accounts/profile.html:136 templates/api/key_list.html:3
+#: templates/accounts/profile.html:157 templates/api/key_list.html:3
 #: templates/api/key_list.html:6
 msgid "API keys"
 msgstr "API-avaimet"
 
-#: templates/accounts/profile.html:137
+#: templates/accounts/profile.html:158
 msgid "Manage keys other apps can use to access your data."
 msgstr "Hallitse avaimia, joilla muut sovellukset voivat käyttää tietojasi."
 
-#: templates/accounts/profile.html:145
+#: templates/accounts/profile.html:166
 msgid "Browse everything you've logged, or download it as JSON, CSV, or HTML."
 msgstr "Selaa kaikkea kirjaamaasi, tai lataa se JSON-, CSV- tai HTML-muodossa."
 
-#: templates/accounts/profile.html:151
+#: templates/accounts/profile.html:172
 msgid "Support"
 msgstr "Tuki"
 
-#: templates/accounts/profile.html:155 templates/accounts/profile.html:183
+#: templates/accounts/profile.html:176 templates/accounts/profile.html:204
 #: templates/core/feedback_form.html:3 templates/core/feedback_form.html:6
 #: templates/core/feedback_list.html:3 templates/core/feedback_list.html:6
 msgid "Feedback"
 msgstr "Palaute"
 
-#: templates/accounts/profile.html:156
+#: templates/accounts/profile.html:177
 msgid "Report a bug, request something, or tell us what's confusing."
 msgstr "Ilmoita bugista, ehdota jotain tai kerro, mikä on epäselvää."
 
-#: templates/accounts/profile.html:168
+#: templates/accounts/profile.html:189
 msgid "Manage tiers, keys, and reference data across the whole instance."
 msgstr "Hallitse tasoja, avaimia ja viitetietoja koko palvelun laajuudelta."
 
-#: templates/accounts/profile.html:175 templates/core/backup_list.html:3
+#: templates/accounts/profile.html:196 templates/core/backup_list.html:3
 #: templates/core/backup_list.html:6
 msgid "Backups"
 msgstr "Varmuuskopiot"
 
-#: templates/accounts/profile.html:176
+#: templates/accounts/profile.html:197
 msgid "Create, download, and restore full backups of this instance."
 msgstr "Luo, lataa ja palauta täydellisiä varmuuskopioita tästä asennuksesta."
 
-#: templates/accounts/profile.html:184
+#: templates/accounts/profile.html:205
 msgid "Read what users have submitted, and turn submissions on or off."
 msgstr ""
 "Lue mitä käyttäjät ovat lähettäneet, ja kytke palautteen lähettäminen päälle "
 "tai pois."
 
-#: templates/accounts/profile.html:191 templates/core/seo_settings.html:3
+#: templates/accounts/profile.html:212 templates/core/seo_settings.html:3
 #: templates/core/seo_settings.html:6
 msgid "Site & SEO"
 msgstr "Sivusto ja hakukoneoptimointi"
 
-#: templates/accounts/profile.html:192
+#: templates/accounts/profile.html:213
 msgid "Control whether search engines are allowed to index this instance."
 msgstr "Hallitse saavatko hakukoneet indeksoida tämän asennuksen."
 
-#: templates/accounts/profile.html:203
+#: templates/accounts/profile.html:224
 msgid "Permanently delete your account and everything tied to it."
 msgstr "Poista käyttäjätilisi ja kaikki siihen liittyvä pysyvästi."
 
-#: templates/accounts/profile.html:211
+#: templates/accounts/profile.html:232
 msgid "Log out"
 msgstr "Kirjaudu ulos"
 
-#: templates/accounts/profile.html:233
+#: templates/accounts/profile.html:254
 msgid "Source on GitHub"
 msgstr "Lähdekoodi GitHubissa"
 
-#: templates/accounts/profile.html:238
+#: templates/accounts/profile.html:259
 #, python-format
 msgid "IronStack version %(version)s"
 msgstr "IronStack versio %(version)s"
 
-#: templates/accounts/profile.html:243 templates/accounts/profile.html:246
+#: templates/accounts/profile.html:264 templates/accounts/profile.html:267
 msgid "Changelog"
 msgstr "Muutosloki"
 
@@ -4019,8 +4194,8 @@ msgstr "Matka"
 #: templates/nutrition/recipe_detail.html:10
 #: templates/nutrition/recipe_detail.html:37
 #: templates/programs/program_detail.html:10
-#: templates/programs/program_detail.html:44
-#: templates/programs/program_detail.html:61
+#: templates/programs/program_detail.html:47
+#: templates/programs/program_detail.html:64
 #: templates/social/group_detail.html:10
 #: templates/workouts/_performed_exercise_card.html:24
 msgid "Edit"
@@ -4060,7 +4235,7 @@ msgstr "Uusi aktiviteettityyppi"
 #: templates/activities/activity_type_list.html:9
 #: templates/api/key_list.html:10 templates/exercises/exercise_list.html:9
 #: templates/measurements/measurement_type_list.html:9
-#: templates/programs/program_list.html:11
+#: templates/programs/program_list.html:9
 msgid "New"
 msgstr "Uusi"
 
@@ -4147,11 +4322,13 @@ msgid "Date range"
 msgstr "Ajanjakso"
 
 #: templates/analytics/dashboard.html:14
+#: templates/coaching/client_detail.html:27
 msgid "Training time"
 msgstr "Treeniaika"
 
 #: templates/analytics/dashboard.html:15
 #: templates/analytics/exercise_analytics.html:14
+#: templates/coaching/client_detail.html:28
 msgid "Total volume"
 msgstr "Kokonaisvolyymi"
 
@@ -4172,21 +4349,25 @@ msgid "No data in this range."
 msgstr "Ei tietoja tällä ajanjaksolla."
 
 #: templates/analytics/dashboard.html:35
-#: templates/analytics/member_profile.html:25 templates/core/dashboard.html:55
+#: templates/analytics/member_profile.html:42
+#: templates/coaching/client_detail.html:33 templates/core/dashboard.html:55
 msgid "Recent"
 msgstr "Viimeisimmät"
 
 #: templates/analytics/dashboard.html:35 templates/analytics/dashboard.html:39
 #: templates/analytics/exercise_analytics.html:26
-#: templates/analytics/member_profile.html:25
-#: templates/analytics/member_profile.html:29 templates/core/dashboard.html:55
+#: templates/analytics/member_profile.html:42
+#: templates/analytics/member_profile.html:46
+#: templates/coaching/client_detail.html:33
+#: templates/coaching/client_detail.html:37 templates/core/dashboard.html:55
 #: templates/exercises/exercise_detail.html:90
 #: templates/records/exercise_records.html:11
 msgid "Personal Records"
 msgstr "Henkilökohtaiset ennätykset"
 
 #: templates/analytics/dashboard.html:39
-#: templates/analytics/member_profile.html:29
+#: templates/analytics/member_profile.html:46
+#: templates/coaching/client_detail.html:37
 #: templates/core/backup_restore_confirm.html:29
 msgid "No"
 msgstr "Ei"
@@ -4233,15 +4414,32 @@ msgstr "Takaisin liikkeeseen"
 msgid "Member since %(date)s"
 msgstr "Jäsen %(date)s alkaen"
 
+#: templates/analytics/member_profile.html:13
+msgid "This person is coaching you."
+msgstr "Tämä henkilö valmentaa sinua."
+
+#: templates/analytics/member_profile.html:15
+msgid "Coaching request sent — waiting for a response."
+msgstr "Valmennuspyyntö lähetetty — odottaa vastausta."
+
+#: templates/analytics/member_profile.html:19
+msgid "Request coaching"
+msgstr "Pyydä valmennusta"
+
 #: templates/analytics/member_profile.html:22
+msgid "Not accepting new coaching clients right now."
+msgstr "Ei ota vastaan uusia valmennettavia juuri nyt."
+
+#: templates/analytics/member_profile.html:39
 msgid "No completed workouts yet."
 msgstr "Ei vielä suoritettuja treenejä."
 
-#: templates/analytics/member_profile.html:29
+#: templates/analytics/member_profile.html:46
+#: templates/coaching/client_detail.html:37
 msgid "yet."
 msgstr "vielä."
 
-#: templates/analytics/member_profile.html:32
+#: templates/analytics/member_profile.html:49
 msgid "Back to home"
 msgstr "Takaisin etusivulle"
 
@@ -4478,6 +4676,191 @@ msgstr "Jatka harjoittelua"
 #: templates/base.html:222
 msgid "Unread messages"
 msgstr "Lukemattomat viestit"
+
+#: templates/coaching/client_detail.html:8
+#, python-format
+msgid "Coaching since %(date)s"
+msgstr "Valmennettavana %(date)s alkaen"
+
+#: templates/coaching/client_detail.html:23
+#: templates/workouts/session_train.html:3
+msgid "Training"
+msgstr "Harjoittelu"
+
+#: templates/coaching/client_detail.html:30
+msgid "Last 30 days."
+msgstr "Viimeiset 30 päivää."
+
+#: templates/coaching/client_detail.html:51
+msgid "No readings yet."
+msgstr "Ei lukemia vielä."
+
+#: templates/coaching/client_detail.html:57
+msgid "Assigned plans"
+msgstr "Osoitetut suunnitelmat"
+
+#: templates/coaching/client_detail.html:64
+#, python-format
+msgid "Last logged %(date)s"
+msgstr "Viimeksi kirjattu %(date)s"
+
+#: templates/coaching/client_detail.html:66
+msgid "Not logged yet."
+msgstr "Ei kirjattu vielä."
+
+#: templates/coaching/client_detail.html:72
+msgid "This client hasn't imported any of your shared programs yet."
+msgstr "Tämä asiakas ei ole tuonut yhtään jaetuista ohjelmistasi vielä."
+
+#: templates/coaching/client_detail.html:75
+msgid "Back to clients"
+msgstr "Takaisin asiakkaisiin"
+
+#: templates/coaching/client_list.html:10
+msgid "Coaching requests"
+msgstr "Valmennuspyynnöt"
+
+#: templates/coaching/client_list.html:18 templates/social/friend_list.html:21
+msgid "Accept"
+msgstr "Hyväksy"
+
+#: templates/coaching/client_list.html:23 templates/social/friend_list.html:26
+#: templates/social/group_list.html:29
+msgid "Decline"
+msgstr "Hylkää"
+
+#: templates/coaching/client_list.html:30
+msgid "Your clients"
+msgstr "Asiakkaasi"
+
+#: templates/coaching/client_list.html:35
+msgid "View"
+msgstr "Näytä"
+
+#: templates/coaching/client_list.html:37 templates/coaching/my_coaches.html:25
+msgid "End this coaching relationship?"
+msgstr "Päätetäänkö tämä valmennussuhde?"
+
+#: templates/coaching/client_list.html:39 templates/coaching/my_coaches.html:27
+msgid "End"
+msgstr "Päätä"
+
+#: templates/coaching/client_list.html:45
+msgid ""
+"No clients yet — accept a coaching request above once someone sends you one."
+msgstr "Ei asiakkaita vielä — hyväksy valmennuspyyntö yllä, kun joku lähettää sinulle sellaisen."
+
+#: templates/coaching/diet_plan_update_diff.html:3
+#: templates/coaching/program_update_diff.html:3
+msgid "Coach update"
+msgstr "Valmentajan päivitys"
+
+#: templates/coaching/diet_plan_update_diff.html:6
+msgid "Your coach updated this diet plan"
+msgstr "Valmentajasi päivitti tätä ruokavaliosuunnitelmaa"
+
+#: templates/coaching/diet_plan_update_diff.html:14
+msgid ""
+"Applying replaces this plan's meals and items with your coach's current "
+"version. Any changes you made to your own copy since importing it will be "
+"lost."
+msgstr "Käyttöönotto korvaa tämän suunnitelman ateriat ja kohteet valmentajasi nykyisellä versiolla. Kaikki muutokset, jotka olet tehnyt omaan kopioosi tuonnin jälkeen, menetetään."
+
+#: templates/coaching/diet_plan_update_diff.html:18
+#: templates/coaching/program_update_diff.html:18
+msgid "Apply update"
+msgstr "Ota päivitys käyttöön"
+
+#: templates/coaching/diet_plan_update_diff.html:19
+#: templates/coaching/program_update_diff.html:19
+msgid "Skip for now"
+msgstr "Ohita toistaiseksi"
+
+#: templates/coaching/my_coaches.html:10 templates/social/friend_list.html:34
+msgid "Sent requests"
+msgstr "Lähetetyt pyynnöt"
+
+#: templates/coaching/my_coaches.html:13 templates/social/friend_list.html:37
+#, python-format
+msgid "Waiting on %(username)s"
+msgstr "Odottaa käyttäjää %(username)s"
+
+#: templates/coaching/my_coaches.html:18
+msgid "Coaching you"
+msgstr "Valmentaa sinua"
+
+#: templates/coaching/my_coaches.html:23
+msgid "Plans"
+msgstr "Suunnitelmat"
+
+#: templates/coaching/my_coaches.html:33
+msgid ""
+"No one is coaching you yet — a personal trainer's own profile page has a "
+"“Request coaching” button."
+msgstr "Kukaan ei valmenna sinua vielä — personal trainerin omalla profiilisivulla on ”Pyydä valmennusta”-painike."
+
+#: templates/coaching/program_update_diff.html:6
+msgid "Your coach updated this program"
+msgstr "Valmentajasi päivitti tätä ohjelmaa"
+
+#: templates/coaching/program_update_diff.html:14
+msgid ""
+"Applying replaces this program's workouts and exercises with your coach's "
+"current version. Any changes you made to your own copy since importing it "
+"will be lost."
+msgstr "Käyttöönotto korvaa tämän ohjelman treenit ja liikkeet valmentajasi nykyisellä versiolla. Kaikki muutokset, jotka olet tehnyt omaan kopioosi tuonnin jälkeen, menetetään."
+
+#: templates/coaching/shared_plan_list.html:3
+#: templates/coaching/shared_plan_list.html:6
+msgid "Plans from my coaches"
+msgstr "Valmentajieni suunnitelmat"
+
+#: templates/coaching/shared_plan_list.html:9
+msgid "Gym programs"
+msgstr "Kuntosaliohjelmat"
+
+#: templates/coaching/shared_plan_list.html:14
+#: templates/coaching/shared_plan_list.html:34
+#, python-format
+msgid "From %(coach)s"
+msgstr "Käyttäjältä %(coach)s"
+
+#: templates/coaching/shared_plan_list.html:17
+#: templates/coaching/shared_plan_list.html:37
+msgid "Imported"
+msgstr "Tuotu"
+
+#: templates/coaching/shared_plan_list.html:21
+#: templates/coaching/shared_plan_list.html:41
+#: templates/nutrition/_food_search_results.html:61
+#: templates/nutrition/diet_plan_import.html:22
+#: templates/nutrition/diet_plan_list.html:10
+#: templates/nutrition/food_category.html:20
+#: templates/nutrition/recipe_import.html:22
+#: templates/nutrition/recipe_list.html:10
+#: templates/programs/program_import.html:21
+#: templates/programs/program_list.html:10
+msgid "Import"
+msgstr "Tuo"
+
+#: templates/coaching/shared_plan_list.html:26
+msgid "No shared programs yet."
+msgstr "Ei jaettuja ohjelmia vielä."
+
+#: templates/coaching/shared_plan_list.html:29
+#: templates/nutrition/_subnav.html:49
+#: templates/nutrition/diet_plan_list.html:3
+#: templates/nutrition/diet_plan_list.html:6
+msgid "Diet plans"
+msgstr "Ruokavaliosuunnitelmat"
+
+#: templates/coaching/shared_plan_list.html:46
+msgid "No shared diet plans yet."
+msgstr "Ei jaettuja ruokavaliosuunnitelmia vielä."
+
+#: templates/coaching/shared_plan_list.html:49
+msgid "Back to my coaches"
+msgstr "Takaisin valmentajiini"
 
 #: templates/core/_backup_row.html:8
 msgid "Automatic"
@@ -4947,8 +5330,8 @@ msgstr ""
 "ohjelmoitaessa."
 
 #: templates/exercises/exercise_detail.html:102
+#: templates/nutrition/_diet_plan_card.html:14
 #: templates/nutrition/diet_plan_detail.html:13
-#: templates/nutrition/diet_plan_list.html:27
 msgid "Deactivate"
 msgstr "Poista käytöstä"
 
@@ -5096,6 +5479,30 @@ msgstr ""
 "Eikö vieläkään löydy? Varmista, että viivakoodi on hyvin valaistu ja täyttää "
 "kehyksen, tai sulje tämä ja kirjoita se hakukenttään."
 
+#: templates/nutrition/_diet_plan_card.html:6
+#: templates/programs/program_list.html:17
+#: templates/programs/program_list.html:34
+msgid "Coach update available"
+msgstr "Valmentajan päivitys saatavilla"
+
+#: templates/nutrition/_diet_plan_card.html:14
+#: templates/nutrition/diet_plan_detail.html:15
+msgid "Activate"
+msgstr "Ota käyttöön"
+
+#: templates/nutrition/_diet_plan_card.html:17
+#: templates/nutrition/calculators_home.html:16
+#: templates/nutrition/calculators_home.html:24
+#: templates/nutrition/calculators_home.html:32
+#: templates/nutrition/calculators_home.html:40
+#: templates/nutrition/calculators_home.html:48
+#: templates/nutrition/calculators_home.html:56
+#: templates/nutrition/calculators_home.html:64
+#: templates/nutrition/recipe_list.html:34
+#: templates/nutrition/recipe_list.html:71
+msgid "Open"
+msgstr "Avaa"
+
 #: templates/nutrition/_diet_plan_meal_card.html:13
 msgid "target"
 msgstr "tavoite"
@@ -5198,17 +5605,6 @@ msgstr "Lisää"
 #: templates/nutrition/_food_search_results.html:47
 msgid "From OpenFoodFacts"
 msgstr "OpenFoodFactsista"
-
-#: templates/nutrition/_food_search_results.html:61
-#: templates/nutrition/diet_plan_import.html:22
-#: templates/nutrition/diet_plan_list.html:10
-#: templates/nutrition/food_category.html:20
-#: templates/nutrition/recipe_import.html:22
-#: templates/nutrition/recipe_list.html:10
-#: templates/programs/program_import.html:21
-#: templates/programs/program_list.html:12
-msgid "Import"
-msgstr "Tuo"
 
 #: templates/nutrition/_food_search_results.html:65
 msgid "Import & add"
@@ -5319,12 +5715,6 @@ msgstr "Ruoat"
 #: templates/nutrition/recipe_list.html:6
 msgid "Recipes"
 msgstr "Reseptit"
-
-#: templates/nutrition/_subnav.html:49
-#: templates/nutrition/diet_plan_list.html:3
-#: templates/nutrition/diet_plan_list.html:6
-msgid "Diet plans"
-msgstr "Ruokavaliosuunnitelmat"
 
 #: templates/nutrition/_subnav.html:50
 #: templates/nutrition/calculators_home.html:3
@@ -5535,19 +5925,6 @@ msgstr ""
 msgid "How many calories your body burns at rest, and in total."
 msgstr "Kuinka monta kaloria kehosi kuluttaa levossa ja yhteensä."
 
-#: templates/nutrition/calculators_home.html:16
-#: templates/nutrition/calculators_home.html:24
-#: templates/nutrition/calculators_home.html:32
-#: templates/nutrition/calculators_home.html:40
-#: templates/nutrition/calculators_home.html:48
-#: templates/nutrition/calculators_home.html:56
-#: templates/nutrition/calculators_home.html:64
-#: templates/nutrition/diet_plan_list.html:30
-#: templates/nutrition/recipe_list.html:34
-#: templates/nutrition/recipe_list.html:71
-msgid "Open"
-msgstr "Avaa"
-
 #: templates/nutrition/calculators_home.html:22
 msgid "Split a calorie target into protein, carbohydrates, and fat."
 msgstr "Jaa kaloritavoite proteiiniin, hiilihydraatteihin ja rasvaan."
@@ -5584,7 +5961,7 @@ msgstr ""
 
 #: templates/nutrition/calculators_home.html:67
 #: templates/nutrition/diary_day.html:100
-#: templates/nutrition/diet_plan_list.html:40
+#: templates/nutrition/diet_plan_list.html:30
 #: templates/nutrition/food_list.html:88 templates/nutrition/goal_edit.html:36
 #: templates/nutrition/recipe_list.html:90 templates/nutrition/stats.html:44
 msgid "Back to nutrition"
@@ -5747,11 +6124,6 @@ msgstr "Hallitse ruokia"
 msgid "Edit entry"
 msgstr "Muokkaa merkintää"
 
-#: templates/nutrition/diet_plan_detail.html:15
-#: templates/nutrition/diet_plan_list.html:27
-msgid "Activate"
-msgstr "Ota käyttöön"
-
 #: templates/nutrition/diet_plan_detail.html:18
 #: templates/nutrition/recipe_detail.html:14
 #: templates/programs/program_detail.html:12
@@ -5759,18 +6131,33 @@ msgid "Export"
 msgstr "Vie"
 
 #: templates/nutrition/diet_plan_detail.html:21
+msgid "Sharing"
+msgstr "Jaossa"
+
+#: templates/nutrition/diet_plan_detail.html:21
+#: templates/nutrition/diet_plan_share_form.html:3
+#: templates/nutrition/diet_plan_share_form.html:6
+msgid "Share"
+msgstr "Jaa"
+
+#: templates/nutrition/diet_plan_detail.html:25
+#: templates/programs/program_detail.html:14
+msgid "Check for coach update"
+msgstr "Tarkista valmentajan päivitys"
+
+#: templates/nutrition/diet_plan_detail.html:29
 msgid "protein"
 msgstr "proteiini"
 
-#: templates/nutrition/diet_plan_detail.html:21
+#: templates/nutrition/diet_plan_detail.html:29
 msgid "carbs"
 msgstr "hiilarit"
 
-#: templates/nutrition/diet_plan_detail.html:21
+#: templates/nutrition/diet_plan_detail.html:29
 msgid "fat"
 msgstr "rasva"
 
-#: templates/nutrition/diet_plan_detail.html:23
+#: templates/nutrition/diet_plan_detail.html:31
 msgid ""
 "Varies across the week — same daily calories/macros every day, different "
 "meals."
@@ -5778,30 +6165,30 @@ msgstr ""
 "Vaihtelee viikon aikana — samat päivittäiset kalorit/makrot joka päivä, eri "
 "ateriat."
 
-#: templates/nutrition/diet_plan_detail.html:69
+#: templates/nutrition/diet_plan_detail.html:77
 msgid "Log this plan to your diary"
 msgstr "Kirjaa tämä suunnitelma päiväkirjaasi"
 
-#: templates/nutrition/diet_plan_detail.html:71
+#: templates/nutrition/diet_plan_detail.html:79
 msgid "Logs whichever day of the week the date below falls on."
 msgstr "Kirjaa sen viikonpäivän mukaan, johon alla oleva päivämäärä osuu."
 
-#: templates/nutrition/diet_plan_detail.html:79
+#: templates/nutrition/diet_plan_detail.html:87
 #: templates/nutrition/recipe_detail.html:95
 msgid "Log it"
 msgstr "Kirjaa"
 
-#: templates/nutrition/diet_plan_detail.html:82
+#: templates/nutrition/diet_plan_detail.html:90
 #: templates/nutrition/diet_plan_form.html:25
 #: templates/nutrition/diet_plan_import.html:25
 msgid "Back to diet plans"
 msgstr "Takaisin ruokavaliosuunnitelmiin"
 
-#: templates/nutrition/diet_plan_detail.html:86
+#: templates/nutrition/diet_plan_detail.html:94
 msgid "Delete this plan?"
 msgstr "Poistetaanko tämä suunnitelma?"
 
-#: templates/nutrition/diet_plan_detail.html:88
+#: templates/nutrition/diet_plan_detail.html:96
 msgid "Delete plan"
 msgstr "Poista suunnitelma"
 
@@ -5839,7 +6226,12 @@ msgid ""
 "your own existing ones where possible, rather than duplicated; anything "
 "missing is recreated for you. Imported inactive, so it never replaces "
 "whatever plan you're currently following."
-msgstr "Lataa jonkun viemä ruokavaliosuunnitelma — tästä asennuksesta tai täysin toisesta IronStack-asennuksesta. Sen käyttämät ruoat ja reseptit yhdistetään mahdollisuuksien mukaan omiin olemassa oleviin, ei monisteta; puuttuvat luodaan uudelleen sinulle. Tuodaan pois päältä, jotta se ei koskaan korvaa nykyisin seuraamaasi suunnitelmaa."
+msgstr ""
+"Lataa jonkun viemä ruokavaliosuunnitelma — tästä asennuksesta tai täysin "
+"toisesta IronStack-asennuksesta. Sen käyttämät ruoat ja reseptit yhdistetään "
+"mahdollisuuksien mukaan omiin olemassa oleviin, ei monisteta; puuttuvat "
+"luodaan uudelleen sinulle. Tuodaan pois päältä, jotta se ei koskaan korvaa "
+"nykyisin seuraamaasi suunnitelmaa."
 
 #: templates/nutrition/diet_plan_item_form.html:3
 #: templates/nutrition/diet_plan_item_form.html:6
@@ -5848,6 +6240,7 @@ msgstr "Vaihda kohde"
 
 #: templates/nutrition/diet_plan_item_form.html:23
 #: templates/nutrition/diet_plan_meal_item_form.html:33
+#: templates/nutrition/diet_plan_share_form.html:24
 msgid "Back to plan"
 msgstr "Takaisin suunnitelmaan"
 
@@ -5855,15 +6248,29 @@ msgstr "Takaisin suunnitelmaan"
 msgid "+ New plan"
 msgstr "+ Uusi suunnitelma"
 
-#: templates/nutrition/diet_plan_list.html:36
+#: templates/nutrition/diet_plan_list.html:14
+msgid "My diet plans"
+msgstr "Omat ruokavaliosuunnitelmani"
+
+#: templates/nutrition/diet_plan_list.html:19
 msgid "No diet plans yet."
 msgstr "Ei vielä ruokavaliosuunnitelmia."
+
+#: templates/nutrition/diet_plan_list.html:24
+#: templates/programs/program_list.html:30
+msgid "From my coach"
+msgstr "Valmentajaltani"
 
 #: templates/nutrition/diet_plan_meal_item_form.html:3
 #: templates/nutrition/diet_plan_meal_item_form.html:6
 #, python-format
 msgid "Add item to %(name)s"
 msgstr "Lisää kohde ateriaan %(name)s"
+
+#: templates/nutrition/diet_plan_share_form.html:19
+#: templates/programs/program_form.html:17
+msgid "You don't have any active coaching clients yet."
+msgstr "Sinulla ei ole vielä aktiivisia valmennettavia."
 
 #: templates/nutrition/food_browse.html:3
 #: templates/nutrition/food_browse.html:6
@@ -6131,7 +6538,7 @@ msgid "Save and start tracking"
 msgstr "Tallenna ja aloita seuranta"
 
 #: templates/nutrition/recipe_detail.html:12
-#: templates/programs/program_list.html:17
+#: templates/programs/program_list.html:47
 msgid "Template"
 msgstr "Malli"
 
@@ -6319,7 +6726,7 @@ msgstr "Kirjaa muutama päivä ruokapäiväkirjaasi nähdäksesi trendin tääll
 
 #: templates/programs/prescription_form.html:3
 #: templates/programs/prescription_form.html:6
-#: templates/programs/program_detail.html:70
+#: templates/programs/program_detail.html:73
 #: templates/workouts/_train_panel.html:93
 #: templates/workouts/performed_exercise_form.html:3
 #: templates/workouts/performed_exercise_form.html:6
@@ -6337,7 +6744,7 @@ msgstr "Poista liike"
 
 #: templates/programs/program_confirm_delete.html:3
 #: templates/programs/program_confirm_delete.html:6
-#: templates/programs/program_detail.html:88
+#: templates/programs/program_detail.html:91
 msgid "Delete program"
 msgstr "Poista ohjelma"
 
@@ -6350,51 +6757,51 @@ msgstr ""
 "Poistetaanko <strong>%(name)s</strong> sekä kaikki sen treenit ja liikkeet? "
 "Tätä ei voi perua."
 
-#: templates/programs/program_detail.html:17
+#: templates/programs/program_detail.html:20
 msgid "Built-in template"
 msgstr "Sisäänrakennettu malli"
 
-#: templates/programs/program_detail.html:19
+#: templates/programs/program_detail.html:22
 msgid "My template"
 msgstr "Oma malli"
 
-#: templates/programs/program_detail.html:23
+#: templates/programs/program_detail.html:26
 #, python-format
 msgid "Version %(version)s · updated %(updated)s"
 msgstr "Versio %(version)s · päivitetty %(updated)s"
 
-#: templates/programs/program_detail.html:28
+#: templates/programs/program_detail.html:31
 msgid "Copy to a new program"
 msgstr "Kopioi uudeksi ohjelmaksi"
 
-#: templates/programs/program_detail.html:45
+#: templates/programs/program_detail.html:48
 #: templates/programs/workout_form.html:23
 msgid "Delete this workout and its exercises?"
 msgstr "Poistetaanko tämä treeni ja sen liikkeet?"
 
-#: templates/programs/program_detail.html:65
+#: templates/programs/program_detail.html:68
 #: templates/workouts/_train_panel.html:92
 #: templates/workouts/session_detail.html:21
 msgid "No exercises yet."
 msgstr "Ei vielä liikkeitä."
 
-#: templates/programs/program_detail.html:75
+#: templates/programs/program_detail.html:78
 msgid "Start workout"
 msgstr "Aloita treeni"
 
-#: templates/programs/program_detail.html:80
+#: templates/programs/program_detail.html:83
 msgid "No workouts yet."
 msgstr "Ei vielä treenejä."
 
-#: templates/programs/program_detail.html:85
+#: templates/programs/program_detail.html:88
 msgid "Add workout"
 msgstr "Lisää treeni"
 
-#: templates/programs/program_detail.html:86
+#: templates/programs/program_detail.html:89
 msgid "Delete this program? This cannot be undone."
 msgstr "Poistetaanko tämä ohjelma? Tätä ei voi perua."
 
-#: templates/programs/program_detail.html:92
+#: templates/programs/program_detail.html:95
 #: templates/programs/program_import.html:24
 #: templates/workouts/session_list.html:23
 msgid "Back to programs"
@@ -6427,7 +6834,7 @@ msgstr ""
 "sinulle; tämän asennuksen omaa vakioliikettä vastaava nimi käytetään "
 "sellaisenaan."
 
-#: templates/programs/program_list.html:9
+#: templates/programs/program_list.html:13
 msgid "My programs"
 msgstr "Omat ohjelmat"
 
@@ -6439,15 +6846,19 @@ msgstr "Ei vielä ohjelmia."
 msgid "Create one, or copy a template below to get started."
 msgstr "Luo uusi tai kopioi malli alta aloittaaksesi."
 
-#: templates/programs/program_list.html:29
+#: templates/programs/program_list.html:43
+msgid "My templates"
+msgstr "Omat mallini"
+
+#: templates/programs/program_list.html:55
 msgid "Built-in templates"
 msgstr "Sisäänrakennetut mallit"
 
-#: templates/programs/program_list.html:40
+#: templates/programs/program_list.html:66
 msgid "Copy to my programs"
 msgstr "Kopioi omiin ohjelmiin"
 
-#: templates/programs/program_list.html:45
+#: templates/programs/program_list.html:71
 msgid "No built-in templates available."
 msgstr "Sisäänrakennettuja malleja ei ole saatavilla."
 
@@ -6694,23 +7105,6 @@ msgstr "Etsi kavereita"
 #: templates/social/friend_list.html:13
 msgid "Friend requests"
 msgstr "Kaveripyynnöt"
-
-#: templates/social/friend_list.html:21
-msgid "Accept"
-msgstr "Hyväksy"
-
-#: templates/social/friend_list.html:26 templates/social/group_list.html:29
-msgid "Decline"
-msgstr "Hylkää"
-
-#: templates/social/friend_list.html:34
-msgid "Sent requests"
-msgstr "Lähetetyt pyynnöt"
-
-#: templates/social/friend_list.html:37
-#, python-format
-msgid "Waiting on %(username)s"
-msgstr "Odottaa käyttäjää %(username)s"
 
 #: templates/social/friend_list.html:42
 msgid "Your friends"
@@ -7057,10 +7451,6 @@ msgstr "Aloita alta tai valitse treeni jostain ohjelmastasi."
 #: templates/workouts/session_list.html:26
 msgid "Start freeform workout"
 msgstr "Aloita vapaamuotoinen treeni"
-
-#: templates/workouts/session_train.html:3
-msgid "Training"
-msgstr "Harjoittelu"
 
 #: templates/workouts/session_train.html:9
 msgid "Full view"

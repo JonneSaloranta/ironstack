@@ -41,6 +41,45 @@ class Program(TimeStampedModel):
     )
     version = models.PositiveIntegerField(default=1)
 
+    # apps.coaching — empty by default so a personal trainer can keep a
+    # program as a private draft; sharing is a separate, deliberate
+    # action from just owning one. A many-to-many, not a boolean:
+    # asked for directly — a coach assigns a program to specific
+    # clients, not to every current client at once. Visible/importable
+    # only to a user actually in this set *and* currently an active
+    # coaching client of this program's owner (apps.programs.services.
+    # visible_to's own extended Q filter, apps.coaching.services.
+    # import_program_from_coach's own explicit re-check) — being added
+    # here never bypasses that relationship check on its own.
+    shared_with_clients = models.ManyToManyField(
+        settings.AUTH_USER_MODEL, blank=True, related_name="shared_programs"
+    )
+    # The coach's program this was imported from, if any — set only by
+    # apps.coaching.services.import_program_from_coach, never by the
+    # plain apps.programs.services.copy_program a user runs on their
+    # own/a system template. SET_NULL (not PROTECT/CASCADE): deleting
+    # the source program, or its owner's whole account, must never
+    # break this independent copy — it just permanently stops being
+    # able to offer coach updates (apps.coaching.services.
+    # program_update_available already treats a null imported_from as
+    # "no update possible").
+    imported_from = models.ForeignKey(
+        "self", null=True, blank=True, on_delete=models.SET_NULL, related_name="imported_copies"
+    )
+    # export_program() payload of imported_from as of the last import
+    # or applied coach update (apps.coaching.services.
+    # apply_program_update) — diffed against imported_from's *current*
+    # export to preview an update, never against this copy's own live
+    # state, which the client may have edited independently since.
+    coach_snapshot = models.JSONField(null=True, blank=True, default=None)
+    # imported_from.version at the time coach_snapshot was captured — a
+    # cheap integer compare (apps.coaching.services.
+    # program_update_available) against imported_from.version's
+    # *current* value for whether an update exists at all, so listing a
+    # client's programs never has to run export_program()/diff on every
+    # row just to show an "update available" badge.
+    coach_snapshot_version = models.PositiveIntegerField(null=True, blank=True)
+
     class Meta:
         ordering = ["name"]
 

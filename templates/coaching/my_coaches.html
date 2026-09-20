@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% trans "My coaches" %} — IronStack{% endblock %}
+{% block content %}
+<div class="top-bar">
+  <h1 style="margin:0;">{% trans "My coaches" %}</h1>
+</div>
+
+{% if outgoing_requests %}
+  <h2>{% trans "Sent requests" %}</h2>
+  {% for coaching_request in outgoing_requests %}
+    <div class="card">
+      <span class="text-muted">{% blocktrans with username=coaching_request.coach.username %}Waiting on {{ username }}{% endblocktrans %}</span>
+    </div>
+  {% endfor %}
+{% endif %}
+
+<h2>{% trans "Coaching you" %}</h2>
+{% for relationship in coaching_relationships %}
+  <div class="card card-action-row">
+    <div><strong>{{ relationship.coach.username }}</strong></div>
+    <div style="display:flex; gap:0.5rem;">
+      <a class="button-secondary" href="{% url 'coaching:shared-plan-list' %}">{% trans "Plans" %}</a>
+      <form method="post" action="{% url 'coaching:relationship-end' relationship.pk %}"
+            x-data="{}" @submit="if (!confirm('{% trans "End this coaching relationship?" %}')) $event.preventDefault()">
+        {% csrf_token %}
+        <button type="submit" class="button-danger">{% trans "End" %}</button>
+      </form>
+    </div>
+  </div>
+{% empty %}
+  <div class="card empty-state">
+    <p>{% trans "No one is coaching you yet — a personal trainer's own profile page has a “Request coaching” button." %}</p>
+  </div>
+{% endfor %}
+
+<p><a class="button-secondary" href="{% url 'profile' %}">&larr; {% trans "Back to profile" %}</a></p>
+{% endblock %}

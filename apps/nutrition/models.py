@@ -594,6 +594,29 @@ class DietPlan(TimeStampedModel):
     # "Safety bounds" already extends to the calorie target itself.
     is_weekly = models.BooleanField(default=False)
 
+    # Display-only counter, same role as apps.programs.models.Program's
+    # own version/bump_version — bumped by every structural edit
+    # (apps.nutrition.views.diet_plan_item_edit/diet_plan_item_delete/
+    # diet_plan_meal_item_add) so apps.coaching.services.
+    # diet_plan_update_available can tell "this coach's plan changed
+    # since a client imported it" with a cheap integer compare instead
+    # of diffing on every page render.
+    version = models.PositiveIntegerField(default=1)
+
+    # apps.coaching — same four-field shape as apps.programs.models.
+    # Program's own coaching fields; see that model's comments for the
+    # full reasoning (empty/private draft by default, a many-to-many
+    # to specific clients rather than a blanket boolean, SET_NULL
+    # self-FK, snapshot-for-diffing, cheap version compare).
+    shared_with_clients = models.ManyToManyField(
+        settings.AUTH_USER_MODEL, blank=True, related_name="shared_diet_plans"
+    )
+    imported_from = models.ForeignKey(
+        "self", null=True, blank=True, on_delete=models.SET_NULL, related_name="imported_copies"
+    )
+    coach_snapshot = models.JSONField(null=True, blank=True, default=None)
+    coach_snapshot_version = models.PositiveIntegerField(null=True, blank=True)
+
     class Meta:
         ordering = ["-created_at"]
         constraints = [
@@ -612,6 +635,12 @@ class DietPlan(TimeStampedModel):
 
     def __str__(self):
         return f"{self.user.username}: {self.name}"
+
+    def bump_version(self):
+        """Record that the plan's meals/items changed (display-only) —
+        see apps.programs.models.Program's own bump_version."""
+        self.version += 1
+        self.save(update_fields=["version", "updated_at"])
 
 
 class DietPlanMeal(models.Model):

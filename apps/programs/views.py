@@ -34,6 +34,41 @@ class ProgramListView(LoginRequiredMixin, ListView):
         context["templates"] = Program.objects.filter(
             owner__isnull=True, is_template=True
         ).annotate(workout_count=Count("workouts"))
+        # A plain per-object Python attribute, not a queryset
+        # annotation — apps.coaching.services.program_update_available
+        # is one cheap int compare per coach-imported program, and this
+        # list is always just one user's own programs (never hundreds,
+        # unlike the workout_count above where an N+1 actually
+        # mattered), so a small extra query per imported program here
+        # is not worth a bespoke ORM expression to avoid.
+        from apps.coaching.services import program_update_available
+
+        for program in context["programs"]:
+            program.has_coach_update = (
+                program.imported_from_id is not None and program_update_available(program)
+            )
+        # Split the same flat queryset into the groups
+        # templates/programs/program_list.html actually renders —
+        # asked for directly: a coach-imported program is visually
+        # distinct from a program the user built themselves, which is
+        # itself distinct from their own saved templates. A program
+        # imported from a coach sorts there regardless of is_template
+        # (checked first) — that combination shouldn't happen in
+        # practice, but if it ever did, "where did this come from" is
+        # more useful here than "is it a template".
+        context["coach_programs"] = [
+            program for program in context["programs"] if program.imported_from_id is not None
+        ]
+        context["own_templates"] = [
+            program
+            for program in context["programs"]
+            if program.imported_from_id is None and program.is_template
+        ]
+        context["own_programs"] = [
+            program
+            for program in context["programs"]
+            if program.imported_from_id is None and not program.is_template
+        ]
         return context
 
 
@@ -57,6 +92,11 @@ class ProgramCreateView(LoginRequiredMixin, CreateView):
     form_class = ProgramForm
     template_name = "programs/program_form.html"
 
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["user"] = self.request.user
+        return kwargs
+
     def form_valid(self, form):
         form.instance.owner = self.request.user
         return super().form_valid(form)
@@ -69,6 +109,11 @@ class ProgramUpdateView(LoginRequiredMixin, UpdateView):
     model = Program
     form_class = ProgramForm
     template_name = "programs/program_form.html"
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["user"] = self.request.user
+        return kwargs
 
     def get_queryset(self):
         return services.editable_by(self.request.user)

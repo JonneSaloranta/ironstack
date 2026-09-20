@@ -7,6 +7,23 @@
 </div>
 <p class="text-muted">{% blocktrans with date=member.date_joined|date:"Y-m-d" %}Member since {{ date }}{% endblocktrans %}</p>
 
+{% if member.is_personal_trainer and member != request.user %}
+  <div class="card">
+    {% if active_coaching %}
+      <p>{% trans "This person is coaching you." %}</p>
+    {% elif pending_coaching_request %}
+      <p class="text-muted">{% trans "Coaching request sent — waiting for a response." %}</p>
+    {% elif member.accepting_new_clients %}
+      <form method="post" action="{% url 'coaching:request-send' member.pk %}">
+        {% csrf_token %}
+        <button type="submit">{% trans "Request coaching" %}</button>
+      </form>
+    {% else %}
+      <p class="text-muted">{% trans "Not accepting new coaching clients right now." %}</p>
+    {% endif %}
+  </div>
+{% endif %}
+
 {% if highlights %}
   <div class="card">
     <dl class="stat-row">

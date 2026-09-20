@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Plans from my coaches" %} — IronStack{% endblock %}
+{% block content %}
+<div class="top-bar">
+  <h1 style="margin:0;">{% trans "Plans from my coaches" %}</h1>
+</div>
+
+<h2>{% trans "Gym programs" %}</h2>
+{% for program in programs %}
+  <div class="card card-action-row">
+    <div>
+      <strong>{{ program.name }}</strong>
+      <p class="text-muted">{% blocktrans with coach=program.owner.username %}From {{ coach }}{% endblocktrans %}</p>
+    </div>
+    {% if program.pk in imported_program_ids %}
+      <span class="tag">{% trans "Imported" %}</span>
+    {% else %}
+      <form method="post" action="{% url 'coaching:program-import' program.pk %}">
+        {% csrf_token %}
+        <button type="submit">{% trans "Import" %}</button>
+      </form>
+    {% endif %}
+  </div>
+{% empty %}
+  <div class="card empty-state"><p>{% trans "No shared programs yet." %}</p></div>
+{% endfor %}
+
+<h2>{% trans "Diet plans" %}</h2>
+{% for plan in diet_plans %}
+  <div class="card card-action-row">
+    <div>
+      <strong>{{ plan.name }}</strong>
+      <p class="text-muted">{% blocktrans with coach=plan.user.username %}From {{ coach }}{% endblocktrans %}</p>
+    </div>
+    {% if plan.pk in imported_diet_plan_ids %}
+      <span class="tag">{% trans "Imported" %}</span>
+    {% else %}
+      <form method="post" action="{% url 'coaching:diet-plan-import' plan.pk %}">
+        {% csrf_token %}
+        <button type="submit">{% trans "Import" %}</button>
+      </form>
+    {% endif %}
+  </div>
+{% empty %}
+  <div class="card empty-state"><p>{% trans "No shared diet plans yet." %}</p></div>
+{% endfor %}
+
+<p><a class="button-secondary" href="{% url 'coaching:my-coaches' %}">&larr; {% trans "Back to my coaches" %}</a></p>
+{% endblock %}

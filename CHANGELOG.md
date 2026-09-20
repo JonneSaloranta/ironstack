@@ -18,6 +18,25 @@ narrated summary of the same version.
 
 ## [Unreleased]
 
+### Added
+- Personal trainer coaching: turn on "I'm a personal trainer / coach"
+  in Profile → Preferences to let other users request coaching from
+  you (never the other way around) — toggle "Accepting new coaching
+  requests" off anytime to stop new requests without affecting
+  clients you already have. A trainer can share any gym program or
+  diet plan with specific clients they choose, letting each one
+  import their own independent copy with one click — no file to
+  download and re-upload. When a trainer later updates a shared plan,
+  an imported copy shows "Coach update available", with a
+  plain-language preview of exactly what changed before choosing to
+  apply it or keep your own version. Accepting a coaching request is
+  the only consent needed — from then on your coach can see your
+  training history, PRs, and body-weight data on their own "My
+  clients" page, until either of you ends the relationship. Programs
+  and diet plans imported from a coach now show in their own "From my
+  coach" group on your programs/diet plans page, separate from your
+  own.
+
 ## [1.18.0] — 2026-09-20
 
 ### Added
