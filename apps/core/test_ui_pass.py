@@ -66,7 +66,9 @@ class FeedbackTests(TestCase):
         return [str(m) for m in get_messages(response.wsgi_request)]
 
     def test_an_invalid_measurement_log_now_explains_itself(self):
-        mtype = MeasurementType.objects.create(name="Calf", owner=self.user, unit_kind=UnitKind.LENGTH)
+        mtype = MeasurementType.objects.create(
+            name="Calf", owner=self.user, unit_kind=UnitKind.LENGTH
+        )
         response = self.client.post(reverse("measurements:log", args=[mtype.pk]), {"value": "abc"})
         self.assertEqual(response.status_code, 302)
         self.assertTrue(any("could not be saved" in m for m in self._messages(response)))

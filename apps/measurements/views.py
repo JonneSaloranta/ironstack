@@ -146,7 +146,10 @@ def measurement_log(request, type_pk):
         form.save()
         messages.success(request, _("Reading logged."))
     else:
-        messages.error(request, _("That could not be saved: %(errors)s") % {"errors": form_error_text(form)})
+        messages.error(
+            request,
+            _("That could not be saved: %(errors)s") % {"errors": form_error_text(form)},
+        )
     return redirect("measurements:history", pk=measurement_type.pk)
 
 

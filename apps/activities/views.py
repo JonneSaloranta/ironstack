@@ -98,7 +98,10 @@ def activity_log(request, type_pk):
     else:
         # The log form lives on the history page, so an invalid POST used to
         # redirect back with no sign anything was wrong.
-        messages.error(request, _("That could not be saved: %(errors)s") % {"errors": form_error_text(form)})
+        messages.error(
+            request,
+            _("That could not be saved: %(errors)s") % {"errors": form_error_text(form)},
+        )
     return redirect("activities:history", pk=activity_type.pk)
 
 
