@@ -10,12 +10,7 @@
   {% csrf_token %}
   {% include "core/_form_errors.html" %}
   {% for field in form %}
-    <div class="field">
-      {{ field.label_tag }}
-      {{ field }}
-      {% if field.errors %}<p class="field-error">{{ field.errors|striptags }}</p>{% endif %}
-      {% if field.help_text %}<p class="text-muted">{{ field.help_text }}</p>{% endif %}
-    </div>
+    {% include "core/_field.html" with field=field %}
   {% endfor %}
   <button type="submit">{% trans "Save" %}</button>
 </form>

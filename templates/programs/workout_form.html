@@ -1,9 +1,9 @@
 {% extends "base.html" %}
 {% load i18n %}
-{% block title %}{% if form.instance.pk %}{% trans "Edit workout" %}{% else %}{% trans "New workout" %}{% endif %} — IronStack{% endblock %}
+{% block title %}{% if form.instance.pk %}{% trans "Edit workout" %}{% else %}{% trans "Add workout" %}{% endif %} — IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
-  <h1 class="no-margin">{% if form.instance.pk %}{% trans "Edit workout" %}{% else %}{% trans "New workout" %}{% endif %}</h1>
+  <h1 class="no-margin">{% if form.instance.pk %}{% trans "Edit workout" %}{% else %}{% trans "Add workout" %}{% endif %}</h1>
 </div>
 
 <form class="card" method="post">

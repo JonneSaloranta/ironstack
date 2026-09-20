@@ -2,6 +2,8 @@
 {% load i18n core_extras %}
 {% block title %}{% trans program.name %} — IronStack{% endblock %}
 {% block content %}
+{% url 'programs:program-list' as c1u %}{% trans "Programs" as c1l %}
+{% include "core/_breadcrumbs.html" with c1_url=c1u c1_label=c1l current=program.name %}
 <div class="top-bar">
   <h1 class="no-margin">{% trans program.name %}</h1>
 </div>
@@ -35,13 +37,13 @@
 
 {% for workout in program.workouts.all %}
   <div class="card">
-    <div class="top-bar" style="padding:0; border:0;">
-      <h3 class="no-margin">
+    <div class="top-bar no-border">
+      <h2 class="card-title">
         {% trans workout.name %}
         {% if workout.scheduled_weekday is not None %}
           <span class="tag tag-muted">{{ workout.get_scheduled_weekday_display }}</span>
         {% endif %}
-      </h3>
+      </h2>
       {% if can_edit %}
         <span class="set-actions">
           <a class="button-secondary" href="{% url 'programs:workout-update' program.pk workout.pk %}">{% trans "Edit" %}</a>

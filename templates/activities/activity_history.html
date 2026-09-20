@@ -2,6 +2,8 @@
 {% load i18n core_extras %}
 {% block title %}{{ activity_type.name|translate_content }} — IronStack{% endblock %}
 {% block content %}
+{% url 'activities:type-list' as c1u %}{% trans "Activities" as c1l %}
+{% include "core/_breadcrumbs.html" with c1_url=c1u c1_label=c1l current=activity_type.name %}
 <div class="top-bar">
   <h1 class="no-margin">{{ activity_type.name|translate_content }}</h1>
 </div>
