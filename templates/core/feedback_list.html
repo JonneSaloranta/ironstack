@@ -3,7 +3,7 @@
 {% block title %}{% trans "Feedback" %} — IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
-  <h1 style="margin:0;">{% trans "Feedback" %}</h1>
+  <h1 class="no-margin">{% trans "Feedback" %}</h1>
 </div>
 
 <h2>{% trans "Settings" %}</h2>
@@ -55,5 +55,5 @@
   </div>
 {% endif %}
 
-<p><a class="button-secondary" href="{% url 'profile' %}">&larr; {% trans "Back to profile" %}</a></p>
+<p><a class="button-link" href="{% url 'profile' %}">&larr; {% trans "Back to profile" %}</a></p>
 {% endblock %}

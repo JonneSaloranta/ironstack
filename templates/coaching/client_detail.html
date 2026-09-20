@@ -3,7 +3,7 @@
 {% block title %}{{ display_name }} — IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
-  <h1 style="margin:0;">{{ display_name }}</h1>
+  <h1 class="no-margin">{{ display_name }}</h1>
 </div>
 <p class="text-muted">{% blocktrans with date=relationship.created_at|date:"Y-m-d" %}Coaching since {{ date }}{% endblocktrans %}</p>
 
@@ -72,5 +72,5 @@
   <div class="card empty-state"><p>{% trans "This client hasn't imported any of your shared programs yet." %}</p></div>
 {% endfor %}
 
-<p><a class="button-secondary" href="{% url 'coaching:client-list' %}">&larr; {% trans "Back to clients" %}</a></p>
+<p><a class="button-link" href="{% url 'coaching:client-list' %}">&larr; {% trans "Back to clients" %}</a></p>
 {% endblock %}

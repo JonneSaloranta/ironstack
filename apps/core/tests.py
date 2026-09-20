@@ -2004,8 +2004,13 @@ class DashboardWidgetsTests(TestCase):
         content = response.content.decode()
         for url_name in ["workouts:session-list", "programs:program-list", "analytics:dashboard"]:
             url = reverse(url_name)
+            # Count links (href="..."), not the bare substring: a form action
+            # like /workouts/start-freeform/ legitimately contains "/workouts/"
+            # without being a second link to the workout list.
             self.assertEqual(
-                content.count(url), 1, f"{url_name} ({url}) should appear only once, in the nav"
+                content.count(f'href="{url}"'),
+                1,
+                f"{url_name} ({url}) should appear only once, in the nav",
             )
 
     def test_actionable_content_comes_before_the_calendar(self):

@@ -3,12 +3,14 @@
 {% block title %}{% trans "Backups" %} — IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
-  <h1 style="margin:0;">{% trans "Backups" %}</h1>
+  <h1 class="no-margin">{% trans "Backups" %}</h1>
 </div>
 
-<form method="post">
+<form method="post" x-data="{busy: false}" @submit="busy = true">
   {% csrf_token %}
-  <button type="submit" name="action" value="create_backup">{% trans "Create backup" %}</button>
+  {% comment %}A backup can take a while on a large database; without this the button gave no sign anything was happening. The action value still submits because the button isn't disabled until after the submit event fires.{% endcomment %}
+  <button type="submit" name="action" value="create_backup" :aria-disabled="busy" x-text="busy ? '{% trans "Creating backup…" %}' : '{% trans "Create backup" %}'">{% trans "Create backup" %}</button>
+  <p class="text-muted" x-show="busy" x-cloak role="status">{% trans "This can take a minute — please keep this page open." %}</p>
 </form>
 
 <h2>{% trans "Upload backup" %}</h2>
@@ -16,14 +18,9 @@
   {% csrf_token %}
   <input type="hidden" name="action" value="upload_backup">
   <p class="text-muted">{% trans "Restore from a backup file you downloaded earlier, instead of one already listed below." %}</p>
-  {{ upload_form.non_field_errors }}
+  {% include "core/_form_errors.html" with form=upload_form %}
   {% for field in upload_form %}
-    <div class="field">
-      {{ field.label_tag }}
-      {{ field }}
-      {% if field.help_text %}<p class="field-help">{{ field.help_text }}</p>{% endif %}
-      {% if field.errors %}<p class="field-error">{{ field.errors|striptags }}</p>{% endif %}
-    </div>
+    {% include "core/_field.html" with field=field %}
   {% endfor %}
   <button type="submit">{% trans "Upload and continue" %}</button>
 </form>
@@ -32,7 +29,7 @@
 <form class="card" method="post">
   {% csrf_token %}
   <input type="hidden" name="action" value="save_settings">
-  {{ settings_form.non_field_errors }}
+  {% include "core/_form_errors.html" with form=settings_form %}
   {% for field in settings_form %}
     <div class="field">
       {% if field.field.widget.input_type == "checkbox" %}
@@ -85,5 +82,5 @@
   </div>
 {% endif %}
 
-<p><a class="button-secondary" href="{% url 'profile' %}">&larr; {% trans "Back to profile" %}</a></p>
+<p><a class="button-link" href="{% url 'profile' %}">&larr; {% trans "Back to profile" %}</a></p>
 {% endblock %}

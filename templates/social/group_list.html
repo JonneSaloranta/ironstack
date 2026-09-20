@@ -3,7 +3,7 @@
 {% block title %}{% trans "Groups" %} — IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
-  <h1 style="margin:0;">{% trans "Groups" %}</h1>
+  <h1 class="no-margin">{% trans "Groups" %}</h1>
 </div>
 <div class="top-bar-actions">
   <a class="button" href="{% url 'social:group-create' %}">{% trans "New group" %}</a>
@@ -17,7 +17,7 @@
         <strong>{{ invite.group.name }}</strong>
         <p class="text-muted">{% blocktrans with username=invite.invited_by.username %}Invited by {{ username }}{% endblocktrans %}</p>
       </div>
-      <div style="display:flex; gap:0.5rem;">
+      <div class="row">
         <form method="post" action="{% url 'social:group-invite-respond' invite.pk %}">
           {% csrf_token %}
           <input type="hidden" name="action" value="accept">
@@ -48,5 +48,5 @@
   </div>
 {% endfor %}
 
-<p><a class="button-secondary" href="{% url 'social:message-list' %}">&larr; {% trans "Messages" %}</a></p>
+<p><a class="button-link" href="{% url 'social:message-list' %}">&larr; {% trans "Messages" %}</a></p>
 {% endblock %}

@@ -1,0 +1,10 @@
+{% comment %}
+Empty list/page: what's empty, why, and what to do next.
+Usage: {% include "core/_empty_state.html" with message=_("No X yet.") hint=... cta_url=... cta_label=... %}
+`message` is required; `hint`, `cta_url` + `cta_label` are optional.
+{% endcomment %}
+<div class="card empty-state">
+  <p>{{ message }}</p>
+  {% if hint %}<p class="text-muted">{{ hint }}</p>{% endif %}
+  {% if cta_url %}<a class="button" href="{{ cta_url }}">{{ cta_label }}</a>{% endif %}
+</div>

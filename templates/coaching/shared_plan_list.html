@@ -3,7 +3,7 @@
 {% block title %}{% trans "Plans from my coaches" %} — IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
-  <h1 style="margin:0;">{% trans "Plans from my coaches" %}</h1>
+  <h1 class="no-margin">{% trans "Plans from my coaches" %}</h1>
 </div>
 
 <h2>{% trans "Gym programs" %}</h2>
@@ -46,5 +46,5 @@
   <div class="card empty-state"><p>{% trans "No shared diet plans yet." %}</p></div>
 {% endfor %}
 
-<p><a class="button-secondary" href="{% url 'coaching:my-coaches' %}">&larr; {% trans "Back to my coaches" %}</a></p>
+<p><a class="button-link" href="{% url 'coaching:my-coaches' %}">&larr; {% trans "Back to my coaches" %}</a></p>
 {% endblock %}

@@ -3,10 +3,10 @@
 {% block title %}{{ group.name }} — IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
-  <h1 style="margin:0;">{{ group.name }}</h1>
+  <h1 class="no-margin">{{ group.name }}</h1>
 </div>
 <div class="top-bar-actions">
-  <a class="button-secondary" href="{% url 'social:group-detail' group.pk %}">&larr; {% trans "Group" %}</a>
+  <a class="button-link" href="{% url 'social:group-detail' group.pk %}">&larr; {% trans "Group" %}</a>
 </div>
 
 {% comment %}
@@ -24,7 +24,7 @@
       hx-post="{% url 'social:group-thread-fragment' group.pk %}"
       hx-target="#thread-messages" hx-swap="innerHTML" hx-on::after-request="this.reset()">
   {% csrf_token %}
-  {{ form.non_field_errors }}
+  {% include "core/_form_errors.html" %}
   {% for field in form %}
     <div class="field">
       {% comment %}

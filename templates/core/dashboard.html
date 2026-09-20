@@ -3,7 +3,7 @@
 {% block title %}{% trans "Dashboard" %} — IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
-  <h1 style="margin:0;">IronStack</h1>
+  <h1>{% trans "Dashboard" %}</h1>
 </div>
 
 <p class="dashboard-greeting">{{ greeting }}</p>
@@ -29,6 +29,12 @@ disclosure instead — see it further down for why.
   <div class="card empty-state">
     <p>{% trans "No workout in progress." %}</p>
     <p>{% trans "Start one from a program, or log a freeform workout." %}</p>
+    <div class="row" style="justify-content:center;">
+      <form method="post" action="{% url 'workouts:session-start-freeform' %}">
+        {% csrf_token %}
+        <button type="submit" class="button">{% trans "Start freeform workout" %}</button>
+      </form>
+    </div>
   </div>
 {% endif %}
 

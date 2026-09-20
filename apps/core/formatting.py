@@ -51,3 +51,16 @@ abbr_label = lazy(lambda abbreviation, expansion: format_html(
 #: together with surrounding plain text into one field label (e.g.
 #: "Target <abbr>RPE</abbr>") without forcing early evaluation.
 lazy_format_html = lazy(format_html, SafeString)
+
+
+def form_error_text(form):
+    """All of a form's validation errors as one readable line — for a view
+    that has to surface them through the messages framework (a redirect
+    back to a page that doesn't re-render the bound form) instead of
+    letting the template show them beside the fields."""
+    parts = []
+    for field_name, errors in form.errors.items():
+        label = form.fields[field_name].label if field_name in form.fields else ""
+        for error in errors:
+            parts.append(f"{label}: {error}" if label else str(error))
+    return " ".join(parts)

@@ -90,11 +90,18 @@ instead.
   once it was moved below alpine.min.js in document order.
   {% endcomment %}
   {% block extra_scripts %}{% endblock %}
+  <script src="{% static 'js/htmx-errors.js' %}" defer></script>
+  <script src="{% static 'js/confirm-dialog.js' %}" defer></script>
+  <script src="{% static 'js/modal-a11y.js' %}" defer></script>
   <script src="{% static 'js/pwa-install-prompt.js' %}" defer></script>
   <script src="{% static 'js/alpine.min.js' %}" defer></script>
   <script src="{% static 'js/sw-register.js' %}" defer></script>
 </head>
-<body data-service-worker-url="{% url 'service-worker' %}"
+<body data-confirm-ok="{% trans "Confirm" %}"
+      data-confirm-cancel="{% trans "Cancel" %}"
+      data-htmx-error-server="{% trans "Something went wrong — that change was not saved. Please try again." %}"
+      data-htmx-error-network="{% trans "Could not reach the server — check your connection. That change was not saved." %}"
+      data-service-worker-url="{% url 'service-worker' %}"
       data-zxing-url="{% static 'js/zxing.min.js' %}"
       data-vapid-public-key="{{ push_vapid_public_key }}"
       data-push-subscribe-url="{% url 'push-subscribe' %}"
@@ -133,11 +140,16 @@ instead.
   triggered it, and survives whatever the triggering card's own hx-swap
   does to that card's own DOM subtree.
   {% endcomment %}
-  <div id="pr-toast-container" class="toast-container" aria-live="polite">
+  <div id="pr-toast-container" class="toast-container" aria-live="polite" aria-atomic="false">
     {% for message in messages %}
-      <div class="pr-banner {% if message.tags == 'error' %}pr-banner-error{% endif %}" role="status"
-           x-data="{show: true}" x-show="show" x-transition.opacity.duration.300ms
-           x-init="setTimeout(() => show = false, 6000)">
+      {% comment %}Errors stay until dismissed (a 6s auto-dismiss can vanish before a
+      screen-reader user or slow reader gets to it) and announce assertively; other
+      levels dismiss after 6s, paused while hovered or focused.{% endcomment %}
+      <div class="pr-banner{% if message.level_tag == 'error' %} pr-banner-error{% elif message.level_tag == 'warning' %} pr-banner-warning{% elif message.level_tag == 'info' or message.level_tag == 'debug' %} pr-banner-info{% endif %}"
+           role="{% if message.level_tag == 'error' %}alert{% else %}status{% endif %}"
+           x-data="{show: true, hover: false, timer: null}" x-show="show" x-transition.opacity.duration.300ms
+           @mouseenter="hover = true" @mouseleave="hover = false" @focusin="hover = true" @focusout="hover = false"
+           {% if message.level_tag != 'error' %}x-init="timer = setInterval(() => { if (!hover) { show = false; clearInterval(timer) } }, 6000)"{% endif %}>
         <button type="button" class="pr-toast-close" @click="show = false" aria-label="{% trans "Dismiss" %}">&times;</button>
         {{ message }}
       </div>
@@ -155,19 +167,19 @@ instead.
       <span class="nav-label">{% trans "Nutrition" %}</span>
     </a>
     {% endif %}
-    <a href="{% url 'analytics:dashboard' %}" aria-label="{% trans "Progress" %}" {% if request.resolver_match.app_name == 'analytics' %}aria-current="page"{% endif %}>
+    <a href="{% url 'analytics:dashboard' %}" aria-label="{% trans "Progress" %}" {% if request.resolver_match.app_name == 'analytics' or request.resolver_match.app_name == 'measurements' or request.resolver_match.app_name == 'records' %}aria-current="page"{% endif %}>
       <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 17 9 11 13 15 21 6"/><polyline points="15 6 21 6 21 12"/></svg>
       <span class="nav-label">{% trans "Progress" %}</span>
     </a>
-    <a href="{% url 'workouts:session-list' %}" aria-label="{% trans "Workout" %}" {% if request.resolver_match.app_name == 'workouts' %}aria-current="page"{% endif %}>
+    <a href="{% url 'workouts:session-list' %}" aria-label="{% trans "Workout" %}" {% if request.resolver_match.app_name == 'workouts' or request.resolver_match.app_name == 'activities' %}aria-current="page"{% endif %}>
       <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><line x1="6" y1="12" x2="18" y2="12"/><rect x="2" y="9" width="3" height="6" rx="1"/><rect x="19" y="9" width="3" height="6" rx="1"/><rect x="5" y="7" width="2" height="10" rx="1"/><rect x="17" y="7" width="2" height="10" rx="1"/></svg>
       <span class="nav-label">{% trans "Workout" %}</span>
     </a>
-    <a href="{% url 'programs:program-list' %}" aria-label="{% trans "Programs" %}" {% if request.resolver_match.app_name == 'programs' %}aria-current="page"{% endif %}>
+    <a href="{% url 'programs:program-list' %}" aria-label="{% trans "Programs" %}" {% if request.resolver_match.app_name == 'programs' or request.resolver_match.app_name == 'exercises' %}aria-current="page"{% endif %}>
       <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v1"/><line x1="8" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="16" y2="14"/><line x1="8" y1="18" x2="13" y2="18"/></svg>
       <span class="nav-label">{% trans "Programs" %}</span>
     </a>
-    <a href="{% url 'profile' %}" aria-label="{% if social_badge %}{% trans "Profile — new friend/group activity" %}{% else %}{% trans "Profile" %}{% endif %}" {% if request.resolver_match.view_name == 'profile' %}aria-current="page"{% endif %}>
+    <a href="{% url 'profile' %}" aria-label="{% if social_badge %}{% trans "Profile — new friend/group activity" %}{% else %}{% trans "Profile" %}{% endif %}" {% if request.resolver_match.view_name == 'profile' or request.resolver_match.app_name == 'social' or request.resolver_match.app_name == 'coaching' or request.resolver_match.app_name == 'api' %}aria-current="page"{% endif %}>
       {% comment %}
       Same show_gravatar/gravatar_url/@error pattern templates/accounts/
       profile.html's own avatar already uses (that one's own comment

@@ -3,10 +3,10 @@
 {% block title %}{{ other.username }} — IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
-  <h1 style="margin:0;">{{ other.username }}</h1>
+  <h1 class="no-margin">{{ other.username }}</h1>
 </div>
 <div class="top-bar-actions">
-  <a class="button-secondary" href="{% url 'social:message-list' %}">&larr; {% trans "Messages" %}</a>
+  <a class="button-link" href="{% url 'social:message-list' %}">&larr; {% trans "Messages" %}</a>
 </div>
 
 {% comment %}
@@ -33,7 +33,7 @@
       hx-post="{% url 'social:message-thread-fragment' other.pk %}"
       hx-target="#thread-messages" hx-swap="innerHTML" hx-on::after-request="this.reset()">
   {% csrf_token %}
-  {{ form.non_field_errors }}
+  {% include "core/_form_errors.html" %}
   {% for field in form %}
     <div class="field">
       {% comment %}

@@ -3,7 +3,7 @@
 {% block title %}{% trans "Friends" %} — IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
-  <h1 style="margin:0;">{% trans "Friends" %}</h1>
+  <h1 class="no-margin">{% trans "Friends" %}</h1>
 </div>
 <div class="top-bar-actions">
   <a class="button" href="{% url 'social:friend-search' %}">{% trans "Find friends" %}</a>
@@ -14,7 +14,7 @@
   {% for request in incoming_requests %}
     <div class="card card-action-row">
       <div><strong>{{ request.from_user.username }}</strong></div>
-      <div style="display:flex; gap:0.5rem;">
+      <div class="row">
         <form method="post" action="{% url 'social:friend-request-respond' request.pk %}">
           {% csrf_token %}
           <input type="hidden" name="action" value="accept">
@@ -43,7 +43,7 @@
 {% for friend in friends %}
   <div class="card card-action-row">
     <div><strong>{{ friend.username }}</strong></div>
-    <div style="display:flex; gap:0.5rem;">
+    <div class="row">
       <a class="button-secondary" href="{% url 'social:message-thread' friend.pk %}">{% trans "Message" %}</a>
       {% if friend.pk in muted_friend_ids %}
         <form method="post" action="{% url 'social:friend-unmute' friend.pk %}">
@@ -57,7 +57,7 @@
         </form>
       {% endif %}
       <form method="post" action="{% url 'social:friend-remove' friend.pk %}"
-            x-data="{}" @submit="if (!confirm('{% trans "Remove this friend?" %}')) $event.preventDefault()">
+            data-confirm="{% filter force_escape %}{% trans "Remove this friend?" %}{% endfilter %}">
         {% csrf_token %}
         <button type="submit" class="button-danger">{% trans "Remove" %}</button>
       </form>
@@ -72,6 +72,6 @@
 
 <p>
   <a class="button-secondary" href="{% url 'social:block-list' %}">{% trans "Blocked users" %}</a>
-  <a class="button-secondary" href="{% url 'social:message-list' %}">&larr; {% trans "Messages" %}</a>
+  <a class="button-link" href="{% url 'social:message-list' %}">&larr; {% trans "Messages" %}</a>
 </p>
 {% endblock %}

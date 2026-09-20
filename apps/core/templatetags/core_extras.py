@@ -75,3 +75,36 @@ def weight(value, user):
     unit_system = getattr(user, "unit_system", "metric")
     display = core_units.kg_to_display(value, unit_system)
     return f"{display} {core_units.weight_unit_label(unit_system)}"
+
+
+@register.simple_tag
+def url_replace(request, **kwargs):
+    """Current query string with `kwargs` overridden — what a pager needs
+    to change `page` while keeping search/filter/sort params, url-encoded
+    and without emitting empty parameters the way hand-built
+    `?page=N&q={{ query }}` links did."""
+    params = request.GET.copy()
+    for key, value in kwargs.items():
+        params[key] = value
+    for key in [k for k, v in params.items() if v == ""]:
+        del params[key]
+    return params.urlencode()
+
+
+@register.filter
+def field_a11y(bound_field):
+    """Render a bound form field with `aria-describedby` pointing at its
+    help/error paragraphs (ids used by templates/core/_field.html) and
+    `aria-invalid` when it has errors, so assistive tech announces the
+    error when the control is focused."""
+    described = []
+    if bound_field.help_text:
+        described.append(f"{bound_field.auto_id}_help")
+    if bound_field.errors:
+        described.append(f"{bound_field.auto_id}_error")
+    attrs = {}
+    if described:
+        attrs["aria-describedby"] = " ".join(described)
+    if bound_field.errors:
+        attrs["aria-invalid"] = "true"
+    return bound_field.as_widget(attrs=attrs)

@@ -3,7 +3,7 @@
 {% block title %}{% trans "Restore backup" %} — IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
-  <h1 style="margin:0;">{% trans "Restore backup" %}</h1>
+  <h1 class="no-margin">{% trans "Restore backup" %}</h1>
 </div>
 
 <div class="card">
@@ -38,10 +38,10 @@
   </dl>
 </div>
 
-<form method="post" x-data="{}" @submit="if (!confirm('{% trans "Really replace the current database and media with this backup? This cannot be undone." %}')) $event.preventDefault()">
+<form method="post" data-confirm="{% filter force_escape %}{% trans "Really replace the current database and media with this backup? This cannot be undone." %}{% endfilter %}">
   {% csrf_token %}
   <button type="submit" class="button-danger">{% trans "Restore this backup" %}</button>
 </form>
 
-<p><a class="button-secondary" href="{% url 'backup-list' %}">&larr; {% trans "Back to backups" %}</a></p>
+<p><a class="button-link" href="{% url 'backup-list' %}">&larr; {% trans "Back to backups" %}</a></p>
 {% endblock %}
