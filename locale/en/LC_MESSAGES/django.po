@@ -3,14 +3,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: IronStack\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-20 18:23+0000\n"
+"POT-Creation-Date: 2026-09-20 21:11+0000\n"
 "Language: en\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: apps/accounts/admin.py:17 templates/accounts/profile.html:88
+#: apps/accounts/admin.py:17 templates/accounts/profile.html:80
 #: templates/accounts/two_factor_manage.html:3
 #: templates/accounts/two_factor_manage.html:6
 #: templates/accounts/two_factor_setup.html:3
@@ -524,19 +524,19 @@ msgstr "Activity type created."
 msgid "Activity logged."
 msgstr "Activity logged."
 
-#: apps/activities/views.py:101 apps/measurements/views.py:149
+#: apps/activities/views.py:103 apps/measurements/views.py:151
 msgid "That could not be saved: %(errors)s"
 msgstr "That could not be saved: %(errors)s"
 
-#: apps/activities/views.py:118
+#: apps/activities/views.py:121
 msgid "Activity updated."
 msgstr "Activity updated."
 
-#: apps/activities/views.py:138
+#: apps/activities/views.py:141
 msgid "Activity deleted."
 msgstr "Activity deleted."
 
-#: apps/activities/views.py:149
+#: apps/activities/views.py:152
 msgid "Activity type deactivated."
 msgstr "Activity type deactivated."
 
@@ -616,12 +616,12 @@ msgstr "Read"
 msgid "Update"
 msgstr "Update"
 
-#: apps/api/forms.py:13 templates/activities/activity_history.html:55
+#: apps/api/forms.py:13 templates/activities/activity_history.html:57
 #: templates/core/_backup_row.html:22
-#: templates/measurements/measurement_history.html:63
+#: templates/measurements/measurement_history.html:65
 #: templates/nutrition/diary_day.html:69
 #: templates/programs/program_confirm_delete.html:14
-#: templates/programs/program_detail.html:50
+#: templates/programs/program_detail.html:52
 #: templates/workouts/_performed_exercise_card.html:31
 msgid "Delete"
 msgstr "Delete"
@@ -629,7 +629,7 @@ msgstr "Delete"
 #: apps/api/forms.py:29 apps/social/forms.py:13
 #: templates/admin/nutrition/food/merge.html:14
 #: templates/nutrition/_food_list_results.html:17
-#: templates/nutrition/food_list.html:73
+#: templates/nutrition/food_list.html:75
 msgid "Name"
 msgstr "Name"
 
@@ -644,6 +644,7 @@ msgid "Profile"
 msgstr "Profile"
 
 #: apps/api/models.py:25 templates/api/key_list.html:89
+#: templates/exercises/exercise_detail.html:5
 #: templates/exercises/exercise_list.html:3
 #: templates/exercises/exercise_list.html:6
 msgid "Exercises"
@@ -651,6 +652,7 @@ msgstr "Exercises"
 
 #: apps/api/models.py:26 apps/core/models.py:162 templates/api/key_list.html:93
 #: templates/base.html:186 templates/base.html:188
+#: templates/programs/program_detail.html:5
 #: templates/programs/program_list.html:3
 #: templates/programs/program_list.html:6
 msgid "Programs"
@@ -659,6 +661,7 @@ msgstr "Programs"
 #: apps/api/models.py:27 apps/core/models.py:161
 #: templates/analytics/dashboard.html:13 templates/api/key_list.html:97
 #: templates/coaching/client_detail.html:26
+#: templates/workouts/session_detail.html:5
 #: templates/workouts/session_list.html:6
 msgid "Workouts"
 msgstr "Workouts"
@@ -668,9 +671,10 @@ msgid "Measurements"
 msgstr "Measurements"
 
 #: apps/api/models.py:29 apps/core/models.py:165
+#: templates/activities/activity_history.html:5
 #: templates/activities/activity_type_list.html:3
 #: templates/activities/activity_type_list.html:6
-#: templates/api/key_list.html:105 templates/core/dashboard.html:132
+#: templates/api/key_list.html:105 templates/core/dashboard.html:137
 msgid "Activities"
 msgstr "Activities"
 
@@ -685,8 +689,11 @@ msgstr "Analytics"
 #: apps/api/models.py:32 templates/api/key_list.html:109
 #: templates/base.html:173 templates/base.html:175
 #: templates/nutrition/dashboard.html:3 templates/nutrition/dashboard.html:6
-#: templates/nutrition/food_detail.html:21
-#: templates/nutrition/recipe_detail.html:55
+#: templates/nutrition/diet_plan_detail.html:5
+#: templates/nutrition/food_detail.html:5
+#: templates/nutrition/food_detail.html:24
+#: templates/nutrition/recipe_detail.html:5
+#: templates/nutrition/recipe_detail.html:58
 msgid "Nutrition"
 msgstr "Nutrition"
 
@@ -833,7 +840,7 @@ msgstr "Unknown action."
 msgid "Coaching relationship ended."
 msgstr "Coaching relationship ended."
 
-#: apps/core/admin.py:17 templates/accounts/profile.html:185
+#: apps/core/admin.py:17 templates/accounts/profile.html:177
 msgid "Administration"
 msgstr "Administration"
 
@@ -879,7 +886,7 @@ msgstr "That file is a “%(kind)s” export, not a “%(expected)s”."
 msgid "unknown"
 msgstr "unknown"
 
-#: apps/core/formatting.py:16 templates/programs/program_detail.html:62
+#: apps/core/formatting.py:16 templates/programs/program_detail.html:64
 #: templates/workouts/_performed_exercise_card.html:8
 msgid "Rate of Perceived Exertion"
 msgstr "Rate of Perceived Exertion"
@@ -889,7 +896,7 @@ msgid "Reps In Reserve"
 msgstr "Reps In Reserve"
 
 #: apps/core/formatting.py:18 templates/analytics/exercise_analytics.html:19
-#: templates/exercises/exercise_detail.html:96
+#: templates/exercises/exercise_detail.html:94
 #: templates/records/_pr_toasts.html:38
 #: templates/records/exercise_records.html:16
 msgid "One-Rep Max"
@@ -948,7 +955,7 @@ msgstr "A .json file previously exported from IronStack."
 msgid "Must be a .json file."
 msgstr "Must be a .json file."
 
-#: apps/core/forms.py:83 templates/nutrition/food_list.html:75
+#: apps/core/forms.py:83 templates/nutrition/food_list.html:77
 msgid "Category"
 msgstr "Category"
 
@@ -1117,28 +1124,28 @@ msgstr "Body measurements"
 msgid "Account & profile"
 msgstr "Account & profile"
 
-#: apps/core/views.py:33
+#: apps/core/views.py:34
 msgid "Training day — new personal record!"
 msgstr "Training day — new personal record!"
 
-#: apps/core/views.py:35
+#: apps/core/views.py:36
 msgid "Training day — a session was abandoned."
 msgstr "Training day — a session was abandoned."
 
-#: apps/core/views.py:37
+#: apps/core/views.py:38
 msgid "Training day."
 msgstr "Training day."
 
-#: apps/core/views.py:39
+#: apps/core/views.py:40
 msgid "Rest day."
 msgstr "Rest day."
 
-#: apps/core/views.py:50
+#: apps/core/views.py:51
 #, python-format
 msgid "%(actual)s / %(target)s kcal logged."
 msgstr "%(actual)s / %(target)s kcal logged."
 
-#: apps/core/views.py:55
+#: apps/core/views.py:56
 #, python-format
 msgid "%(actual)s kcal logged."
 msgstr "%(actual)s kcal logged."
@@ -1979,11 +1986,11 @@ msgid "Value (%(unit)s)"
 msgstr "Value (%(unit)s)"
 
 #: apps/measurements/forms.py:61
-#: templates/measurements/measurement_history.html:52
+#: templates/measurements/measurement_history.html:54
 msgid "Value"
 msgstr "Value"
 
-#: apps/measurements/i18n_content.py:17 templates/core/dashboard.html:48
+#: apps/measurements/i18n_content.py:17 templates/core/dashboard.html:47
 msgid "Body weight"
 msgstr "Body weight"
 
@@ -2012,7 +2019,7 @@ msgid "Neck"
 msgstr "Neck"
 
 #: apps/measurements/models.py:18 templates/core/_bmi_card.html:31
-#: templates/nutrition/dashboard.html:104
+#: templates/nutrition/dashboard.html:107
 #: templates/workouts/_performed_exercise_card.html:15
 msgid "Weight"
 msgstr "Weight"
@@ -2041,11 +2048,11 @@ msgstr "Measurement type created."
 msgid "Reading logged."
 msgstr "Reading logged."
 
-#: apps/measurements/views.py:169
+#: apps/measurements/views.py:172
 msgid "Reading updated."
 msgstr "Reading updated."
 
-#: apps/measurements/views.py:189
+#: apps/measurements/views.py:192
 msgid "Reading deleted."
 msgstr "Reading deleted."
 
@@ -2262,7 +2269,7 @@ msgstr ""
 #: apps/nutrition/forms.py:193 templates/nutrition/diary_add_entry.html:55
 #: templates/nutrition/diet_plan_meal_item_form.html:16
 #: templates/nutrition/food_browse.html:25
-#: templates/nutrition/food_list.html:24
+#: templates/nutrition/food_list.html:25
 #: templates/nutrition/recipe_ingredient_form.html:16
 msgid "Search foods"
 msgstr "Search foods"
@@ -2630,7 +2637,7 @@ msgid "Moderately active"
 msgstr "Moderately active"
 
 #: apps/nutrition/models.py:53 templates/nutrition/_diet_plan_card.html:5
-#: templates/nutrition/diet_plan_detail.html:12
+#: templates/nutrition/diet_plan_detail.html:15
 msgid "Active"
 msgstr "Active"
 
@@ -3340,12 +3347,12 @@ msgid "Friend"
 msgstr "Friend"
 
 #: apps/social/models.py:141 templates/admin/nutrition/food/merge.html:16
-#: templates/social/group_detail.html:78
+#: templates/social/group_detail.html:75
 msgid "Owner"
 msgstr "Owner"
 
-#: apps/social/models.py:142 templates/accounts/profile.html:188
-#: templates/social/group_detail.html:79
+#: apps/social/models.py:142 templates/accounts/profile.html:180
+#: templates/social/group_detail.html:76
 msgid "Admin"
 msgstr "Admin"
 
@@ -3608,11 +3615,11 @@ msgstr "Completed"
 msgid "Abandoned"
 msgstr "Abandoned"
 
-#: apps/workouts/views.py:164 apps/workouts/views.py:361
+#: apps/workouts/views.py:168 apps/workouts/views.py:365
 msgid "This session is no longer in progress."
 msgstr "This session is no longer in progress."
 
-#: apps/workouts/views.py:343
+#: apps/workouts/views.py:347
 #, python-format
 msgid "New PR — %(exercise)s: %(record_type)s %(value)s"
 msgstr "New PR — %(exercise)s: %(record_type)s %(value)s"
@@ -3626,6 +3633,7 @@ msgid "You don't have permission to do that."
 msgstr "You don't have permission to do that."
 
 #: templates/403.html:8 templates/404.html:8 templates/500.html:53
+#: templates/analytics/member_profile.html:49
 msgid "Back to dashboard"
 msgstr "Back to dashboard"
 
@@ -3653,7 +3661,7 @@ msgstr ""
 
 #: templates/accounts/_data_export_standalone.html:23
 #: templates/accounts/_data_export_standalone.html:68
-#: templates/accounts/profile.html:153
+#: templates/accounts/profile.html:145
 msgid "Your data"
 msgstr "Your data"
 
@@ -3684,12 +3692,12 @@ msgstr ""
 #: templates/accounts/account_details_form.html:15
 #: templates/activities/activity_form.html:15
 #: templates/activities/activity_type_form.html:15
-#: templates/exercises/exercise_form.html:20
+#: templates/exercises/exercise_form.html:15
 #: templates/measurements/measurement_form.html:15
 #: templates/measurements/measurement_type_form.html:15
 #: templates/nutrition/diary_entry_form.html:16
 #: templates/nutrition/diet_plan_item_form.html:16
-#: templates/nutrition/diet_plan_share_form.html:21
+#: templates/nutrition/diet_plan_share_form.html:16
 #: templates/nutrition/food_form.html:16
 #: templates/nutrition/recipe_form.html:16
 #: templates/nutrition/recipe_ingredient_edit_form.html:16
@@ -3707,7 +3715,7 @@ msgid "Privacy notice"
 msgstr "Privacy notice"
 
 #: templates/accounts/_privacy_notice_modal.html:27
-#: templates/accounts/profile.html:268 templates/api/key_list.html:20
+#: templates/accounts/profile.html:260 templates/api/key_list.html:20
 #: templates/base.html:161 templates/nutrition/_month_calendar.html:84
 #: templates/records/_pr_toasts.html:28
 msgid "Dismiss"
@@ -3821,7 +3829,7 @@ msgid "Done"
 msgstr "Done"
 
 #: templates/accounts/account_delete.html:3
-#: templates/accounts/account_delete.html:6 templates/accounts/profile.html:223
+#: templates/accounts/account_delete.html:6 templates/accounts/profile.html:215
 msgid "Delete account"
 msgstr "Delete account"
 
@@ -3855,7 +3863,7 @@ msgstr ""
 "A backup made before you deleted your account may still contain your data "
 "until it's rotated out by this instance's own backup retention setting."
 
-#: templates/accounts/account_delete.html:25
+#: templates/accounts/account_delete.html:21
 msgid ""
 "Your account is linked to Authentik, so there's no local password to confirm "
 "with — type your username instead."
@@ -3863,11 +3871,11 @@ msgstr ""
 "Your account is linked to Authentik, so there's no local password to confirm "
 "with — type your username instead."
 
-#: templates/accounts/account_delete.html:32
+#: templates/accounts/account_delete.html:24
 msgid "Permanently delete my account"
 msgstr "Permanently delete my account"
 
-#: templates/accounts/account_delete.html:34
+#: templates/accounts/account_delete.html:26
 #: templates/accounts/two_factor_disable.html:19
 #: templates/accounts/two_factor_setup.html:22 templates/base.html:105
 #: templates/programs/program_confirm_delete.html:16
@@ -3877,7 +3885,7 @@ msgstr "Cancel"
 
 #: templates/accounts/account_details_form.html:3
 #: templates/accounts/account_details_form.html:6
-#: templates/accounts/profile.html:68
+#: templates/accounts/profile.html:60
 msgid "Account details"
 msgstr "Account details"
 
@@ -3885,15 +3893,15 @@ msgstr "Account details"
 #: templates/accounts/data_export.html:42
 #: templates/accounts/two_factor_manage.html:34 templates/api/key_list.html:155
 #: templates/coaching/client_list.html:49 templates/coaching/my_coaches.html:37
-#: templates/core/backup_list.html:86 templates/core/feedback_form.html:20
-#: templates/core/feedback_list.html:58 templates/core/seo_settings.html:26
+#: templates/core/backup_list.html:74 templates/core/feedback_form.html:20
+#: templates/core/feedback_list.html:50 templates/core/seo_settings.html:18
 #: templates/registration/password_change_done.html:13
-#: templates/registration/password_change_form.html:23
+#: templates/registration/password_change_form.html:18
 msgid "Back to profile"
 msgstr "Back to profile"
 
 #: templates/accounts/data_export.html:3 templates/accounts/data_export.html:6
-#: templates/accounts/profile.html:165
+#: templates/accounts/profile.html:157
 msgid "Download your data"
 msgstr "Download your data"
 
@@ -3919,50 +3927,50 @@ msgstr "Download as CSV (.zip)"
 msgid "Download as HTML"
 msgstr "Download as HTML"
 
-#: templates/accounts/profile.html:15
+#: templates/accounts/profile.html:21
 msgid "Preferences"
 msgstr "Preferences"
 
-#: templates/accounts/profile.html:21
+#: templates/accounts/profile.html:27
 msgid "Features"
 msgstr "Features"
 
-#: templates/accounts/profile.html:22 templates/accounts/profile.html:130
+#: templates/accounts/profile.html:28 templates/accounts/profile.html:122
 msgid "Notifications"
 msgstr "Notifications"
 
-#: templates/accounts/profile.html:23
+#: templates/accounts/profile.html:29
 msgid "Privacy"
 msgstr "Privacy"
 
-#: templates/accounts/profile.html:24 templates/accounts/profile.html:98
+#: templates/accounts/profile.html:30 templates/accounts/profile.html:90
 msgid "Social"
 msgstr "Social"
 
-#: templates/accounts/profile.html:25 templates/accounts/profile.html:108
+#: templates/accounts/profile.html:31 templates/accounts/profile.html:100
 msgid "Coaching"
 msgstr "Coaching"
 
-#: templates/accounts/profile.html:45
+#: templates/accounts/profile.html:36
 msgid "Save preferences"
 msgstr "Save preferences"
 
-#: templates/accounts/profile.html:64
+#: templates/accounts/profile.html:56
 msgid "Account"
 msgstr "Account"
 
-#: templates/accounts/profile.html:69
+#: templates/accounts/profile.html:61
 msgid "Update your username, name, and email address."
 msgstr "Update your username, name, and email address."
 
-#: templates/accounts/profile.html:76
+#: templates/accounts/profile.html:68
 #: templates/registration/password_change_form.html:3
 #: templates/registration/password_change_form.html:6
-#: templates/registration/password_change_form.html:20
+#: templates/registration/password_change_form.html:15
 msgid "Change password"
 msgstr "Change password"
 
-#: templates/accounts/profile.html:78
+#: templates/accounts/profile.html:70
 msgid ""
 "Your account is linked to Authentik. Sign-in security (password, 2FA) is "
 "managed there."
@@ -3970,135 +3978,135 @@ msgstr ""
 "Your account is linked to Authentik. Sign-in security (password, 2FA) is "
 "managed there."
 
-#: templates/accounts/profile.html:80
+#: templates/accounts/profile.html:72
 msgid "Update the password you use to sign in."
 msgstr "Update the password you use to sign in."
 
-#: templates/accounts/profile.html:90
+#: templates/accounts/profile.html:82
 msgid "Enabled — protecting your account with a second step at login."
 msgstr "Enabled — protecting your account with a second step at login."
 
-#: templates/accounts/profile.html:92
+#: templates/accounts/profile.html:84
 msgid "Add a second step at login, using an authenticator app."
 msgstr "Add a second step at login, using an authenticator app."
 
-#: templates/accounts/profile.html:102 templates/social/message_list.html:6
+#: templates/accounts/profile.html:94 templates/social/message_list.html:6
 msgid "Friends & groups"
 msgstr "Friends & groups"
 
-#: templates/accounts/profile.html:103
+#: templates/accounts/profile.html:95
 msgid "Friends, groups, and messages."
 msgstr "Friends, groups, and messages."
 
-#: templates/accounts/profile.html:113 templates/coaching/client_list.html:3
+#: templates/accounts/profile.html:105 templates/coaching/client_list.html:3
 #: templates/coaching/client_list.html:6
 msgid "My clients"
 msgstr "My clients"
 
-#: templates/accounts/profile.html:114
+#: templates/accounts/profile.html:106
 msgid "People you coach, and coaching requests waiting for you."
 msgstr "People you coach, and coaching requests waiting for you."
 
-#: templates/accounts/profile.html:122 templates/coaching/my_coaches.html:3
+#: templates/accounts/profile.html:114 templates/coaching/my_coaches.html:3
 #: templates/coaching/my_coaches.html:6
 msgid "My coaches"
 msgstr "My coaches"
 
-#: templates/accounts/profile.html:123
+#: templates/accounts/profile.html:115
 msgid "Personal trainers coaching you, and your own pending requests."
 msgstr "Personal trainers coaching you, and your own pending requests."
 
-#: templates/accounts/profile.html:131
+#: templates/accounts/profile.html:123
 msgid "Get notified on this device when you receive a message."
 msgstr "Get notified on this device when you receive a message."
 
-#: templates/accounts/profile.html:140
+#: templates/accounts/profile.html:132
 msgid "Push notifications aren't supported in this browser."
 msgstr "Push notifications aren't supported in this browser."
 
-#: templates/accounts/profile.html:144
+#: templates/accounts/profile.html:136
 msgid "Enable notifications on this device"
 msgstr "Enable notifications on this device"
 
-#: templates/accounts/profile.html:148
+#: templates/accounts/profile.html:140
 msgid "Disable notifications on this device"
 msgstr "Disable notifications on this device"
 
-#: templates/accounts/profile.html:157 templates/api/key_list.html:3
+#: templates/accounts/profile.html:149 templates/api/key_list.html:3
 #: templates/api/key_list.html:6
 msgid "API keys"
 msgstr "API keys"
 
-#: templates/accounts/profile.html:158
+#: templates/accounts/profile.html:150
 msgid "Manage keys other apps can use to access your data."
 msgstr "Manage keys other apps can use to access your data."
 
-#: templates/accounts/profile.html:166
+#: templates/accounts/profile.html:158
 msgid "Browse everything you've logged, or download it as JSON, CSV, or HTML."
 msgstr "Browse everything you've logged, or download it as JSON, CSV, or HTML."
 
-#: templates/accounts/profile.html:172
+#: templates/accounts/profile.html:164
 msgid "Support"
 msgstr "Support"
 
-#: templates/accounts/profile.html:176 templates/accounts/profile.html:204
+#: templates/accounts/profile.html:168 templates/accounts/profile.html:196
 #: templates/core/feedback_form.html:3 templates/core/feedback_form.html:6
 #: templates/core/feedback_list.html:3 templates/core/feedback_list.html:6
 msgid "Feedback"
 msgstr "Feedback"
 
-#: templates/accounts/profile.html:177
+#: templates/accounts/profile.html:169
 msgid "Report a bug, request something, or tell us what's confusing."
 msgstr "Report a bug, request something, or tell us what's confusing."
 
-#: templates/accounts/profile.html:189
+#: templates/accounts/profile.html:181
 msgid "Manage tiers, keys, and reference data across the whole instance."
 msgstr "Manage tiers, keys, and reference data across the whole instance."
 
-#: templates/accounts/profile.html:196 templates/core/backup_list.html:3
+#: templates/accounts/profile.html:188 templates/core/backup_list.html:3
 #: templates/core/backup_list.html:6
 msgid "Backups"
 msgstr "Backups"
 
-#: templates/accounts/profile.html:197
+#: templates/accounts/profile.html:189
 msgid "Create, download, and restore full backups of this instance."
 msgstr "Create, download, and restore full backups of this instance."
 
-#: templates/accounts/profile.html:205
+#: templates/accounts/profile.html:197
 msgid "Read what users have submitted, and turn submissions on or off."
 msgstr "Read what users have submitted, and turn submissions on or off."
 
-#: templates/accounts/profile.html:212 templates/core/seo_settings.html:3
+#: templates/accounts/profile.html:204 templates/core/seo_settings.html:3
 #: templates/core/seo_settings.html:6
 msgid "Site & SEO"
 msgstr "Site & SEO"
 
-#: templates/accounts/profile.html:213
+#: templates/accounts/profile.html:205
 msgid "Control whether search engines are allowed to index this instance."
 msgstr "Control whether search engines are allowed to index this instance."
 
-#: templates/accounts/profile.html:224
+#: templates/accounts/profile.html:216
 msgid "Permanently delete your account and everything tied to it."
 msgstr "Permanently delete your account and everything tied to it."
 
-#: templates/accounts/profile.html:232
+#: templates/accounts/profile.html:224
 msgid "Log out"
 msgstr "Log out"
 
-#: templates/accounts/profile.html:254
+#: templates/accounts/profile.html:246
 msgid "Source on GitHub"
 msgstr "Source on GitHub"
 
-#: templates/accounts/profile.html:259
+#: templates/accounts/profile.html:251
 #, python-format
 msgid "IronStack version %(version)s"
 msgstr "IronStack version %(version)s"
 
-#: templates/accounts/profile.html:264 templates/accounts/profile.html:267
+#: templates/accounts/profile.html:256 templates/accounts/profile.html:259
 msgid "Changelog"
 msgstr "Changelog"
 
-#: templates/accounts/signup.html:3 templates/accounts/signup.html:15
+#: templates/accounts/signup.html:3 templates/accounts/signup.html:13
 msgid "Sign up"
 msgstr "Sign up"
 
@@ -4106,11 +4114,11 @@ msgstr "Sign up"
 msgid "Create your account"
 msgstr "Create your account"
 
-#: templates/accounts/signup.html:17
+#: templates/accounts/signup.html:15
 msgid "Already have an account?"
 msgstr "Already have an account?"
 
-#: templates/accounts/signup.html:17 templates/registration/login.html:3
+#: templates/accounts/signup.html:15 templates/registration/login.html:3
 #: templates/registration/login.html:6 templates/registration/login.html:18
 #: templates/registration/password_reset_complete.html:13
 #: templates/social/group_invite_join.html:29
@@ -4217,76 +4225,76 @@ msgstr "Edit %(name)s"
 msgid "Back to %(name)s"
 msgstr "Back to %(name)s"
 
-#: templates/activities/activity_history.html:10
-#: templates/exercises/exercise_detail.html:16
-#: templates/measurements/measurement_history.html:10
+#: templates/activities/activity_history.html:12
+#: templates/exercises/exercise_detail.html:18
+#: templates/measurements/measurement_history.html:12
 msgid "Inactive"
 msgstr "Inactive"
 
-#: templates/activities/activity_history.html:17
+#: templates/activities/activity_history.html:19
 #, python-format
 msgid "%(count)s logged · total duration %(total_duration)s"
 msgstr "%(count)s logged · total duration %(total_duration)s"
 
-#: templates/activities/activity_history.html:18
+#: templates/activities/activity_history.html:20
 #, python-format
 msgid "total distance %(distance)s %(unit)s"
 msgstr "total distance %(distance)s %(unit)s"
 
-#: templates/activities/activity_history.html:19
+#: templates/activities/activity_history.html:21
 #, python-format
 msgid "total calories %(calories)s"
 msgstr "total calories %(calories)s"
 
-#: templates/activities/activity_history.html:25
+#: templates/activities/activity_history.html:27
 msgid "Duration trend"
 msgstr "Duration trend"
 
-#: templates/activities/activity_history.html:26
-#: templates/activities/activity_history.html:43
+#: templates/activities/activity_history.html:28
+#: templates/activities/activity_history.html:45
 msgid "Duration"
 msgstr "Duration"
 
-#: templates/activities/activity_history.html:27
+#: templates/activities/activity_history.html:29
 msgid "min"
 msgstr "min"
 
-#: templates/activities/activity_history.html:37
+#: templates/activities/activity_history.html:39
 msgid "Log activity"
 msgstr "Log activity"
 
-#: templates/activities/activity_history.html:43
-#: templates/measurements/measurement_history.html:52
+#: templates/activities/activity_history.html:45
+#: templates/measurements/measurement_history.html:54
 msgid "Date"
 msgstr "Date"
 
-#: templates/activities/activity_history.html:43
+#: templates/activities/activity_history.html:45
 msgid "Distance"
 msgstr "Distance"
 
-#: templates/activities/activity_history.html:52
-#: templates/exercises/exercise_detail.html:10
-#: templates/measurements/measurement_history.html:60
+#: templates/activities/activity_history.html:54
+#: templates/exercises/exercise_detail.html:12
+#: templates/measurements/measurement_history.html:62
 #: templates/nutrition/diary_day.html:65
-#: templates/nutrition/recipe_detail.html:10
-#: templates/nutrition/recipe_detail.html:37
-#: templates/programs/program_detail.html:10
-#: templates/programs/program_detail.html:47
-#: templates/programs/program_detail.html:64
+#: templates/nutrition/recipe_detail.html:13
+#: templates/nutrition/recipe_detail.html:40
+#: templates/programs/program_detail.html:12
+#: templates/programs/program_detail.html:49
+#: templates/programs/program_detail.html:66
 #: templates/social/group_detail.html:10
 #: templates/workouts/_performed_exercise_card.html:24
 msgid "Edit"
 msgstr "Edit"
 
-#: templates/activities/activity_history.html:53
+#: templates/activities/activity_history.html:55
 msgid "Delete this activity?"
 msgstr "Delete this activity?"
 
-#: templates/activities/activity_history.html:60
+#: templates/activities/activity_history.html:62
 msgid "No activities logged yet."
 msgstr "No activities logged yet."
 
-#: templates/activities/activity_history.html:68
+#: templates/activities/activity_history.html:70
 msgid ""
 "Deactivate this activity type? It will no longer appear when logging new "
 "activities."
@@ -4294,12 +4302,12 @@ msgstr ""
 "Deactivate this activity type? It will no longer appear when logging new "
 "activities."
 
-#: templates/activities/activity_history.html:70
-#: templates/measurements/measurement_history.html:78
+#: templates/activities/activity_history.html:72
+#: templates/measurements/measurement_history.html:80
 msgid "Deactivate type"
 msgstr "Deactivate type"
 
-#: templates/activities/activity_history.html:74
+#: templates/activities/activity_history.html:76
 #: templates/activities/activity_type_form.html:18
 msgid "Back to activities"
 msgstr "Back to activities"
@@ -4369,11 +4377,11 @@ msgstr "Brand"
 #: templates/admin/nutrition/food/merge.html:17
 #: templates/nutrition/_diet_plan_totals_widget.html:40
 #: templates/nutrition/_food_list_results.html:17
-#: templates/nutrition/dashboard.html:30 templates/nutrition/dashboard.html:57
+#: templates/nutrition/dashboard.html:30 templates/nutrition/dashboard.html:60
 #: templates/nutrition/diary_day.html:30
-#: templates/nutrition/food_detail.html:26
-#: templates/nutrition/food_list.html:76
-#: templates/nutrition/recipe_detail.html:61
+#: templates/nutrition/food_detail.html:29
+#: templates/nutrition/food_list.html:78
+#: templates/nutrition/recipe_detail.html:64
 msgid "Calories"
 msgstr "Calories"
 
@@ -4446,7 +4454,7 @@ msgstr "No data in this range."
 
 #: templates/analytics/dashboard.html:53
 #: templates/analytics/member_profile.html:42
-#: templates/coaching/client_detail.html:33 templates/core/dashboard.html:62
+#: templates/coaching/client_detail.html:33 templates/core/dashboard.html:67
 msgid "Recent"
 msgstr "Recent"
 
@@ -4455,8 +4463,8 @@ msgstr "Recent"
 #: templates/analytics/member_profile.html:42
 #: templates/analytics/member_profile.html:46
 #: templates/coaching/client_detail.html:33
-#: templates/coaching/client_detail.html:37 templates/core/dashboard.html:62
-#: templates/exercises/exercise_detail.html:90
+#: templates/coaching/client_detail.html:37 templates/core/dashboard.html:67
+#: templates/exercises/exercise_detail.html:88
 #: templates/records/exercise_records.html:11
 msgid "Personal Records"
 msgstr "Personal Records"
@@ -4482,7 +4490,7 @@ msgid "Sessions"
 msgstr "Sessions"
 
 #: templates/analytics/exercise_analytics.html:19
-#: templates/exercises/exercise_detail.html:96
+#: templates/exercises/exercise_detail.html:94
 #: templates/records/_pr_toasts.html:38
 #: templates/records/exercise_records.html:16
 msgid "Estimated"
@@ -4535,10 +4543,6 @@ msgstr "No completed workouts yet."
 msgid "yet."
 msgstr "yet."
 
-#: templates/analytics/member_profile.html:49
-msgid "Back to home"
-msgstr "Back to home"
-
 #: templates/api/key_created.html:3 templates/api/key_created.html:6
 msgid "API key created"
 msgstr "API key created"
@@ -4555,7 +4559,7 @@ msgstr "Your new API key"
 msgid "New API key"
 msgstr "New API key"
 
-#: templates/api/key_form.html:19
+#: templates/api/key_form.html:14
 msgid ""
 "Choose exactly what this key is allowed to do, per resource — leave "
 "everything unchecked for a context to block it entirely."
@@ -4563,15 +4567,15 @@ msgstr ""
 "Choose exactly what this key is allowed to do, per resource — leave "
 "everything unchecked for a context to block it entirely."
 
-#: templates/api/key_form.html:24
+#: templates/api/key_form.html:19
 msgid "Context"
 msgstr "Context"
 
-#: templates/api/key_form.html:39
+#: templates/api/key_form.html:34
 msgid "Create key"
 msgstr "Create key"
 
-#: templates/api/key_form.html:42
+#: templates/api/key_form.html:37
 msgid "Back to API keys"
 msgstr "Back to API keys"
 
@@ -4964,6 +4968,7 @@ msgstr "No shared programs yet."
 
 #: templates/coaching/shared_plan_list.html:29
 #: templates/nutrition/_subnav.html:49
+#: templates/nutrition/diet_plan_detail.html:6
 #: templates/nutrition/diet_plan_list.html:3
 #: templates/nutrition/diet_plan_list.html:6
 msgid "Diet plans"
@@ -5054,6 +5059,10 @@ msgstr "below %(high)s %(unit)s"
 msgid "%(low)s %(unit)s and above"
 msgstr "%(low)s %(unit)s and above"
 
+#: templates/core/_breadcrumbs.html:9
+msgid "Breadcrumb"
+msgstr "Breadcrumb"
+
 #: templates/core/_chart.html:30
 #, python-format
 msgid "%(title)s trend over time, %(counter)s reading"
@@ -5069,7 +5078,7 @@ msgstr "Please fix the following:"
 msgid "Pagination"
 msgstr "Pagination"
 
-#: templates/core/_pagination.html:11 templates/core/feedback_list.html:44
+#: templates/core/_pagination.html:11 templates/core/feedback_list.html:36
 #: templates/nutrition/_food_list_results.html:65
 #: templates/nutrition/recipe_list.html:40
 #: templates/nutrition/recipe_list.html:77
@@ -5081,7 +5090,7 @@ msgstr "Previous"
 msgid "Page %(n)s of %(total)s"
 msgstr "Page %(n)s of %(total)s"
 
-#: templates/core/_pagination.html:15 templates/core/feedback_list.html:48
+#: templates/core/_pagination.html:15 templates/core/feedback_list.html:40
 #: templates/nutrition/_food_list_results.html:69
 #: templates/nutrition/recipe_list.html:44
 #: templates/nutrition/recipe_list.html:81
@@ -5136,10 +5145,37 @@ msgid "This can take a minute — please keep this page open."
 msgstr "This can take a minute — please keep this page open."
 
 #: templates/core/backup_list.html:17
+msgid "Automatic backups"
+msgstr "Automatic backups"
+
+#: templates/core/backup_list.html:24
+#, python-format
+msgid "▾ Show %(counter)s earlier automatic backup"
+msgid_plural "▾ Show %(counter)s earlier automatic backups"
+msgstr[0] "▾ Show %(counter)s earlier automatic backup"
+msgstr[1] "▾ Show %(counter)s earlier automatic backups"
+
+#: templates/core/backup_list.html:25
+msgid "Hide earlier automatic backups"
+msgstr "Hide earlier automatic backups"
+
+#: templates/core/backup_list.html:36
+msgid "No automatic backups yet."
+msgstr "No automatic backups yet."
+
+#: templates/core/backup_list.html:40
+msgid "Manual & uploaded backups"
+msgstr "Manual & uploaded backups"
+
+#: templates/core/backup_list.html:47
+msgid "No manual or uploaded backups yet."
+msgstr "No manual or uploaded backups yet."
+
+#: templates/core/backup_list.html:51
 msgid "Upload backup"
 msgstr "Upload backup"
 
-#: templates/core/backup_list.html:21
+#: templates/core/backup_list.html:55
 msgid ""
 "Restore from a backup file you downloaded earlier, instead of one already "
 "listed below."
@@ -5147,45 +5183,18 @@ msgstr ""
 "Restore from a backup file you downloaded earlier, instead of one already "
 "listed below."
 
-#: templates/core/backup_list.html:26
+#: templates/core/backup_list.html:60
 msgid "Upload and continue"
 msgstr "Upload and continue"
 
-#: templates/core/backup_list.html:29 templates/core/feedback_list.html:9
+#: templates/core/backup_list.html:63 templates/core/feedback_list.html:9
 msgid "Settings"
 msgstr "Settings"
 
-#: templates/core/backup_list.html:49 templates/core/feedback_list.html:24
-#: templates/core/seo_settings.html:23
+#: templates/core/backup_list.html:71 templates/core/feedback_list.html:16
+#: templates/core/seo_settings.html:15
 msgid "Save settings"
 msgstr "Save settings"
-
-#: templates/core/backup_list.html:52
-msgid "Automatic backups"
-msgstr "Automatic backups"
-
-#: templates/core/backup_list.html:59
-#, python-format
-msgid "▾ Show %(counter)s earlier automatic backup"
-msgid_plural "▾ Show %(counter)s earlier automatic backups"
-msgstr[0] "▾ Show %(counter)s earlier automatic backup"
-msgstr[1] "▾ Show %(counter)s earlier automatic backups"
-
-#: templates/core/backup_list.html:60
-msgid "Hide earlier automatic backups"
-msgstr "Hide earlier automatic backups"
-
-#: templates/core/backup_list.html:71
-msgid "No automatic backups yet."
-msgstr "No automatic backups yet."
-
-#: templates/core/backup_list.html:75
-msgid "Manual & uploaded backups"
-msgstr "Manual & uploaded backups"
-
-#: templates/core/backup_list.html:82
-msgid "No manual or uploaded backups yet."
-msgstr "No manual or uploaded backups yet."
 
 #: templates/core/backup_restore_confirm.html:3
 #: templates/core/backup_restore_confirm.html:6
@@ -5273,7 +5282,8 @@ msgstr "Continue workout"
 
 #: templates/core/dashboard.html:24 templates/workouts/session_detail.html:3
 #: templates/workouts/session_detail.html:6
-#: templates/workouts/session_list.html:18
+#: templates/workouts/session_detail.html:9
+#: templates/workouts/session_list.html:12
 #: templates/workouts/session_train.html:6
 msgid "Freeform workout"
 msgstr "Freeform workout"
@@ -5291,27 +5301,27 @@ msgstr "No workout in progress."
 msgid "Start one from a program, or log a freeform workout."
 msgstr "Start one from a program, or log a freeform workout."
 
-#: templates/core/dashboard.html:35 templates/workouts/session_list.html:10
+#: templates/core/dashboard.html:35 templates/workouts/session_list.html:36
 msgid "Start freeform workout"
 msgstr "Start freeform workout"
 
-#: templates/core/dashboard.html:37
-msgid "Choose a program"
-msgstr "Choose a program"
-
-#: templates/core/dashboard.html:45
+#: templates/core/dashboard.html:44
 msgid "This week's workouts"
 msgstr "This week's workouts"
 
-#: templates/core/dashboard.html:46
+#: templates/core/dashboard.html:45
 msgid "This week's volume"
 msgstr "This week's volume"
 
 #: templates/core/dashboard.html:56
+msgid "Log body weight"
+msgstr "Log body weight"
+
+#: templates/core/dashboard.html:61
 msgid "Time to log your body measurements?"
 msgstr "Time to log your body measurements?"
 
-#: templates/core/dashboard.html:57
+#: templates/core/dashboard.html:62
 msgid ""
 "It's been a while since you tracked your weight or measurements — tap here "
 "to add a new reading."
@@ -5319,47 +5329,48 @@ msgstr ""
 "It's been a while since you tracked your weight or measurements — tap here "
 "to add a new reading."
 
-#: templates/core/dashboard.html:69
+#: templates/core/dashboard.html:74
 msgid "Achievements"
 msgstr "Achievements"
 
-#: templates/core/dashboard.html:97
+#: templates/core/dashboard.html:102
 #, python-format
 msgid "Show achievement %(position)s"
 msgstr "Show achievement %(position)s"
 
-#: templates/core/dashboard.html:106
+#: templates/core/dashboard.html:111
 msgid "Recently active"
 msgstr "Recently active"
 
-#: templates/core/dashboard.html:113
+#: templates/core/dashboard.html:118
 msgid "Training now"
 msgstr "Training now"
 
-#: templates/core/dashboard.html:113
+#: templates/core/dashboard.html:118
 #, python-format
 msgid "%(time)s ago"
 msgstr "%(time)s ago"
 
-#: templates/core/dashboard.html:122
+#: templates/core/dashboard.html:127
 msgid "Browse exercises"
 msgstr "Browse exercises"
 
-#: templates/core/dashboard.html:123
+#: templates/core/dashboard.html:128
 msgid "Explore the exercise library or add your own."
 msgstr "Explore the exercise library or add your own."
 
-#: templates/core/dashboard.html:127
+#: templates/core/dashboard.html:132
+#: templates/measurements/measurement_history.html:5
 #: templates/measurements/measurement_type_list.html:3
 #: templates/measurements/measurement_type_list.html:6
 msgid "Body tracking"
 msgstr "Body tracking"
 
-#: templates/core/dashboard.html:128
+#: templates/core/dashboard.html:133
 msgid "Log body weight, measurements, and trends."
 msgstr "Log body weight, measurements, and trends."
 
-#: templates/core/dashboard.html:133
+#: templates/core/dashboard.html:138
 msgid "Log a run, ride, or any other non-gym activity."
 msgstr "Log a run, ride, or any other non-gym activity."
 
@@ -5375,11 +5386,11 @@ msgstr ""
 msgid "Send feedback"
 msgstr "Send feedback"
 
-#: templates/core/feedback_list.html:27
+#: templates/core/feedback_list.html:19
 msgid "Submissions"
 msgstr "Submissions"
 
-#: templates/core/feedback_list.html:46
+#: templates/core/feedback_list.html:38
 #: templates/nutrition/_food_list_results.html:67
 #: templates/nutrition/recipe_list.html:42
 #: templates/nutrition/recipe_list.html:79
@@ -5387,7 +5398,7 @@ msgstr "Submissions"
 msgid "Page %(number)s of %(total)s"
 msgstr "Page %(number)s of %(total)s"
 
-#: templates/core/feedback_list.html:54
+#: templates/core/feedback_list.html:46
 msgid "No feedback yet."
 msgstr "No feedback yet."
 
@@ -5399,47 +5410,47 @@ msgstr "No exercises match your search."
 msgid "Try a different search term or clear the muscle group filter."
 msgstr "Try a different search term or clear the muscle group filter."
 
-#: templates/exercises/exercise_detail.html:21
+#: templates/exercises/exercise_detail.html:23
 msgid "Movement type"
 msgstr "Movement type"
 
-#: templates/exercises/exercise_detail.html:24
+#: templates/exercises/exercise_detail.html:26
 msgid "Weight logging"
 msgstr "Weight logging"
 
-#: templates/exercises/exercise_detail.html:28
+#: templates/exercises/exercise_detail.html:30
 msgid "Equipment"
 msgstr "Equipment"
 
-#: templates/exercises/exercise_detail.html:33
+#: templates/exercises/exercise_detail.html:35
 msgid "Primary muscles"
 msgstr "Primary muscles"
 
-#: templates/exercises/exercise_detail.html:38
+#: templates/exercises/exercise_detail.html:40
 msgid "Secondary muscles"
 msgstr "Secondary muscles"
 
-#: templates/exercises/exercise_detail.html:46
+#: templates/exercises/exercise_detail.html:48
 msgid "Instructions"
 msgstr "Instructions"
 
-#: templates/exercises/exercise_detail.html:59
+#: templates/exercises/exercise_detail.html:61
 msgid "Remove this image?"
 msgstr "Remove this image?"
 
-#: templates/exercises/exercise_detail.html:61
+#: templates/exercises/exercise_detail.html:63
 #: templates/nutrition/_diet_plan_meal_card.html:25
-#: templates/nutrition/recipe_detail.html:41
-#: templates/social/friend_list.html:62 templates/social/group_detail.html:96
-#: templates/social/group_detail.html:108
+#: templates/nutrition/recipe_detail.html:44
+#: templates/social/friend_list.html:62 templates/social/group_detail.html:93
+#: templates/social/group_detail.html:105
 msgid "Remove"
 msgstr "Remove"
 
-#: templates/exercises/exercise_detail.html:80
+#: templates/exercises/exercise_detail.html:78
 msgid "Add image"
 msgstr "Add image"
 
-#: templates/exercises/exercise_detail.html:83
+#: templates/exercises/exercise_detail.html:81
 #, python-format
 msgid ""
 "This exercise already has the maximum number of images "
@@ -5448,23 +5459,23 @@ msgstr ""
 "This exercise already has the maximum number of images "
 "(%(max_images_per_exercise)s)."
 
-#: templates/exercises/exercise_detail.html:90
+#: templates/exercises/exercise_detail.html:88
 msgid "Your"
 msgstr "Your"
 
-#: templates/exercises/exercise_detail.html:91
+#: templates/exercises/exercise_detail.html:89
 msgid "Current personal records for this exercise."
 msgstr "Current personal records for this exercise."
 
-#: templates/exercises/exercise_detail.html:95
+#: templates/exercises/exercise_detail.html:93
 msgid "Strength trend"
 msgstr "Strength trend"
 
-#: templates/exercises/exercise_detail.html:96
+#: templates/exercises/exercise_detail.html:94
 msgid "over time and training volume."
 msgstr "over time and training volume."
 
-#: templates/exercises/exercise_detail.html:100
+#: templates/exercises/exercise_detail.html:98
 msgid ""
 "Deactivate this exercise? It will no longer appear when browsing or "
 "prescribing."
@@ -5472,13 +5483,13 @@ msgstr ""
 "Deactivate this exercise? It will no longer appear when browsing or "
 "prescribing."
 
-#: templates/exercises/exercise_detail.html:102
+#: templates/exercises/exercise_detail.html:100
 #: templates/nutrition/_diet_plan_card.html:14
-#: templates/nutrition/diet_plan_detail.html:13
+#: templates/nutrition/diet_plan_detail.html:16
 msgid "Deactivate"
 msgstr "Deactivate"
 
-#: templates/exercises/exercise_detail.html:106
+#: templates/exercises/exercise_detail.html:104
 msgid "Back to exercises"
 msgstr "Back to exercises"
 
@@ -5519,58 +5530,58 @@ msgstr "Edit reading"
 msgid "Edit %(name)s reading"
 msgstr "Edit %(name)s reading"
 
-#: templates/measurements/measurement_history.html:19
+#: templates/measurements/measurement_history.html:21
 #: templates/nutrition/_subnav.html:51 templates/nutrition/stats.html:6
 msgid "Statistics"
 msgstr "Statistics"
 
-#: templates/measurements/measurement_history.html:22
+#: templates/measurements/measurement_history.html:24
 #: templates/records/exercise_records.html:11
 msgid "Current"
 msgstr "Current"
 
-#: templates/measurements/measurement_history.html:23
+#: templates/measurements/measurement_history.html:25
 msgid "Change since first log"
 msgstr "Change since first log"
 
-#: templates/measurements/measurement_history.html:24
+#: templates/measurements/measurement_history.html:26
 msgid "Lowest"
 msgstr "Lowest"
 
-#: templates/measurements/measurement_history.html:25
+#: templates/measurements/measurement_history.html:27
 msgid "Highest"
 msgstr "Highest"
 
-#: templates/measurements/measurement_history.html:26
+#: templates/measurements/measurement_history.html:28
 msgid "Average"
 msgstr "Average"
 
-#: templates/measurements/measurement_history.html:27
+#: templates/measurements/measurement_history.html:29
 msgid "Entries logged"
 msgstr "Entries logged"
 
-#: templates/measurements/measurement_history.html:30
+#: templates/measurements/measurement_history.html:32
 #, python-format
 msgid "Tracking since %(date)s."
 msgstr "Tracking since %(date)s."
 
-#: templates/measurements/measurement_history.html:36
+#: templates/measurements/measurement_history.html:38
 msgid "Trend"
 msgstr "Trend"
 
-#: templates/measurements/measurement_history.html:46
+#: templates/measurements/measurement_history.html:48
 msgid "Log reading"
 msgstr "Log reading"
 
-#: templates/measurements/measurement_history.html:61
+#: templates/measurements/measurement_history.html:63
 msgid "Delete this reading?"
 msgstr "Delete this reading?"
 
-#: templates/measurements/measurement_history.html:68
+#: templates/measurements/measurement_history.html:70
 msgid "No readings logged yet."
 msgstr "No readings logged yet."
 
-#: templates/measurements/measurement_history.html:76
+#: templates/measurements/measurement_history.html:78
 msgid ""
 "Deactivate this measurement type? It will no longer appear when logging new "
 "readings."
@@ -5578,7 +5589,7 @@ msgstr ""
 "Deactivate this measurement type? It will no longer appear when logging new "
 "readings."
 
-#: templates/measurements/measurement_history.html:82
+#: templates/measurements/measurement_history.html:84
 #: templates/measurements/measurement_type_form.html:18
 msgid "Back to body tracking"
 msgstr "Back to body tracking"
@@ -5629,7 +5640,7 @@ msgid "Coach update available"
 msgstr "Coach update available"
 
 #: templates/nutrition/_diet_plan_card.html:14
-#: templates/nutrition/diet_plan_detail.html:15
+#: templates/nutrition/diet_plan_detail.html:18
 msgid "Activate"
 msgstr "Activate"
 
@@ -5673,8 +5684,8 @@ msgid "Nothing suggested yet — add some foods or recipes first."
 msgstr "Nothing suggested yet — add some foods or recipes first."
 
 #: templates/nutrition/_diet_plan_meal_card.html:32
-msgid "+ Add item"
-msgstr "+ Add item"
+msgid "Add item"
+msgstr "Add item"
 
 #: templates/nutrition/_diet_plan_totals_widget.html:32
 msgid "Totals"
@@ -5682,31 +5693,34 @@ msgstr "Totals"
 
 #: templates/nutrition/_diet_plan_totals_widget.html:44
 #: templates/nutrition/calculator_macros.html:24
-#: templates/nutrition/dashboard.html:34 templates/nutrition/dashboard.html:58
-#: templates/nutrition/dashboard.html:117 templates/nutrition/diary_day.html:40
-#: templates/nutrition/food_detail.html:27
+#: templates/nutrition/dashboard.html:34 templates/nutrition/dashboard.html:36
+#: templates/nutrition/dashboard.html:61 templates/nutrition/dashboard.html:120
+#: templates/nutrition/diary_day.html:40
+#: templates/nutrition/food_detail.html:30
 #: templates/nutrition/onboarding_review.html:17
-#: templates/nutrition/recipe_detail.html:62
+#: templates/nutrition/recipe_detail.html:65
 msgid "Protein"
 msgstr "Protein"
 
 #: templates/nutrition/_diet_plan_totals_widget.html:48
 #: templates/nutrition/calculator_macros.html:25
-#: templates/nutrition/dashboard.html:38 templates/nutrition/dashboard.html:59
-#: templates/nutrition/dashboard.html:118 templates/nutrition/diary_day.html:44
-#: templates/nutrition/food_detail.html:28
+#: templates/nutrition/dashboard.html:39 templates/nutrition/dashboard.html:41
+#: templates/nutrition/dashboard.html:62 templates/nutrition/dashboard.html:121
+#: templates/nutrition/diary_day.html:44
+#: templates/nutrition/food_detail.html:31
 #: templates/nutrition/onboarding_review.html:18
-#: templates/nutrition/recipe_detail.html:63
+#: templates/nutrition/recipe_detail.html:66
 msgid "Carbohydrates"
 msgstr "Carbohydrates"
 
 #: templates/nutrition/_diet_plan_totals_widget.html:52
 #: templates/nutrition/calculator_macros.html:26
-#: templates/nutrition/dashboard.html:42 templates/nutrition/dashboard.html:60
-#: templates/nutrition/dashboard.html:119 templates/nutrition/diary_day.html:48
-#: templates/nutrition/food_detail.html:29
+#: templates/nutrition/dashboard.html:44 templates/nutrition/dashboard.html:46
+#: templates/nutrition/dashboard.html:63 templates/nutrition/dashboard.html:122
+#: templates/nutrition/diary_day.html:48
+#: templates/nutrition/food_detail.html:32
 #: templates/nutrition/onboarding_review.html:19
-#: templates/nutrition/recipe_detail.html:64
+#: templates/nutrition/recipe_detail.html:67
 msgid "Fat"
 msgstr "Fat"
 
@@ -5740,6 +5754,7 @@ msgid "Quantity"
 msgstr "Quantity"
 
 #: templates/nutrition/_food_search_results.html:39
+#: templates/nutrition/_most_used_foods.html:47
 #: templates/workouts/performed_exercise_form.html:15
 msgid "Add"
 msgstr "Add"
@@ -5823,10 +5838,6 @@ msgstr "Tap a day for details."
 msgid "Most used"
 msgstr "Most used"
 
-#: templates/nutrition/_most_used_foods.html:47
-msgid "+ Add"
-msgstr "+ Add"
-
 #: templates/nutrition/_nutri_score_badge.html:3
 #, python-format
 msgid "Nutri-Score %(grade)s"
@@ -5848,12 +5859,13 @@ msgstr "Overview"
 msgid "Diary"
 msgstr "Diary"
 
-#: templates/nutrition/_subnav.html:47 templates/nutrition/food_list.html:3
-#: templates/nutrition/food_list.html:6
+#: templates/nutrition/_subnav.html:47 templates/nutrition/food_detail.html:6
+#: templates/nutrition/food_list.html:3 templates/nutrition/food_list.html:6
 msgid "Foods"
 msgstr "Foods"
 
-#: templates/nutrition/_subnav.html:48 templates/nutrition/recipe_list.html:3
+#: templates/nutrition/_subnav.html:48 templates/nutrition/recipe_detail.html:6
+#: templates/nutrition/recipe_list.html:3
 #: templates/nutrition/recipe_list.html:6
 msgid "Recipes"
 msgstr "Recipes"
@@ -5908,7 +5920,7 @@ msgid "Result"
 msgstr "Result"
 
 #: templates/nutrition/calculator_bmi.html:28
-#: templates/nutrition/food_detail.html:64
+#: templates/nutrition/food_detail.html:67
 msgid "Categories"
 msgstr "Categories"
 
@@ -6099,7 +6111,7 @@ msgstr "At a chosen weekly rate, roughly how long to reach a target weight."
 #: templates/nutrition/calculators_home.html:67
 #: templates/nutrition/diary_day.html:100
 #: templates/nutrition/diet_plan_list.html:30
-#: templates/nutrition/food_list.html:88 templates/nutrition/goal_edit.html:31
+#: templates/nutrition/food_list.html:90 templates/nutrition/goal_edit.html:31
 #: templates/nutrition/recipe_list.html:90 templates/nutrition/stats.html:44
 msgid "Back to nutrition"
 msgstr "Back to nutrition"
@@ -6124,87 +6136,91 @@ msgstr "Today so far"
 msgid "Calories eaten today, as a share of your daily target"
 msgstr "Calories eaten today, as a share of your daily target"
 
-#: templates/nutrition/dashboard.html:47
-msgid "+ Log food now"
-msgstr "+ Log food now"
+#: templates/nutrition/dashboard.html:50
+msgid "Log food now"
+msgstr "Log food now"
 
-#: templates/nutrition/dashboard.html:48
+#: templates/nutrition/dashboard.html:51
 msgid "Open food diary"
 msgstr "Open food diary"
 
-#: templates/nutrition/dashboard.html:53
+#: templates/nutrition/dashboard.html:56
 msgid "Today's plan"
 msgstr "Today's plan"
 
-#: templates/nutrition/dashboard.html:66
+#: templates/nutrition/dashboard.html:69
 msgid "Nothing planned"
 msgstr "Nothing planned"
 
-#: templates/nutrition/dashboard.html:69
+#: templates/nutrition/dashboard.html:72
 msgid "Open plan"
 msgstr "Open plan"
 
-#: templates/nutrition/dashboard.html:76
+#: templates/nutrition/dashboard.html:79
 msgid "Is your current target working?"
 msgstr "Is your current target working?"
 
-#: templates/nutrition/dashboard.html:79
+#: templates/nutrition/dashboard.html:82
 #: templates/workouts/_performed_exercise_card.html:52
+#: templates/workouts/_train_panel.html:60
 msgid "High confidence"
 msgstr "High confidence"
 
-#: templates/nutrition/dashboard.html:80
+#: templates/nutrition/dashboard.html:83
 #: templates/workouts/_performed_exercise_card.html:51
+#: templates/workouts/_train_panel.html:59
 msgid "Medium confidence"
 msgstr "Medium confidence"
 
-#: templates/nutrition/dashboard.html:81
+#: templates/nutrition/dashboard.html:84
 #: templates/workouts/_performed_exercise_card.html:50
+#: templates/workouts/_train_panel.html:58
 msgid "Low confidence"
 msgstr "Low confidence"
 
-#: templates/nutrition/dashboard.html:86
+#: templates/nutrition/dashboard.html:89
 #, python-format
 msgid "Adjust to %(calories)s kcal/day"
 msgstr "Adjust to %(calories)s kcal/day"
 
-#: templates/nutrition/dashboard.html:103
+#: templates/nutrition/dashboard.html:106
 msgid "Weight trend"
 msgstr "Weight trend"
 
-#: templates/nutrition/dashboard.html:111
+#: templates/nutrition/dashboard.html:114
 msgid "Daily target"
 msgstr "Daily target"
 
-#: templates/nutrition/dashboard.html:113
+#: templates/nutrition/dashboard.html:116
 #: templates/nutrition/onboarding_review.html:13
 #, python-format
 msgid "%(calories)s kcal/day"
 msgstr "%(calories)s kcal/day"
 
-#: templates/nutrition/dashboard.html:128
+#: templates/nutrition/dashboard.html:131
 msgid "Current goal"
 msgstr "Current goal"
 
-#: templates/nutrition/dashboard.html:130 templates/nutrition/goal_edit.html:3
+#: templates/nutrition/dashboard.html:133 templates/nutrition/goal_edit.html:3
 #: templates/nutrition/goal_edit.html:6
 msgid "Change goal"
 msgstr "Change goal"
 
 #: templates/nutrition/diary_add_entry.html:3
 #: templates/nutrition/diary_add_entry.html:6
+#: templates/nutrition/diary_day.html:77
 msgid "Add food"
 msgstr "Add food"
 
 #: templates/nutrition/diary_add_entry.html:64
 #: templates/nutrition/diet_plan_meal_item_form.html:24
 #: templates/nutrition/food_browse.html:33
-#: templates/nutrition/food_list.html:32
+#: templates/nutrition/food_list.html:33
 #: templates/nutrition/recipe_ingredient_form.html:24
 msgid "e.g. chicken breast, or a barcode number"
 msgstr "e.g. chicken breast, or a barcode number"
 
-#: templates/nutrition/diary_add_entry.html:74
+#: templates/nutrition/diary_add_entry.html:75
 #: templates/nutrition/diary_entry_form.html:19
 msgid "Back to diary"
 msgstr "Back to diary"
@@ -6241,10 +6257,6 @@ msgstr "Remove this entry?"
 msgid "Nothing logged yet."
 msgstr "Nothing logged yet."
 
-#: templates/nutrition/diary_day.html:77
-msgid "+ Add food"
-msgstr "+ Add food"
-
 #: templates/nutrition/diary_day.html:81
 msgid "Save as recipe"
 msgstr "Save as recipe"
@@ -6269,40 +6281,40 @@ msgstr "Manage foods"
 msgid "Edit entry"
 msgstr "Edit entry"
 
-#: templates/nutrition/diet_plan_detail.html:18
-#: templates/nutrition/recipe_detail.html:14
-#: templates/programs/program_detail.html:12
+#: templates/nutrition/diet_plan_detail.html:21
+#: templates/nutrition/recipe_detail.html:17
+#: templates/programs/program_detail.html:14
 msgid "Export"
 msgstr "Export"
 
-#: templates/nutrition/diet_plan_detail.html:21
+#: templates/nutrition/diet_plan_detail.html:24
 msgid "Sharing"
 msgstr "Sharing"
 
-#: templates/nutrition/diet_plan_detail.html:21
+#: templates/nutrition/diet_plan_detail.html:24
 #: templates/nutrition/diet_plan_share_form.html:3
 #: templates/nutrition/diet_plan_share_form.html:6
 msgid "Share"
 msgstr "Share"
 
-#: templates/nutrition/diet_plan_detail.html:25
-#: templates/programs/program_detail.html:14
+#: templates/nutrition/diet_plan_detail.html:28
+#: templates/programs/program_detail.html:16
 msgid "Check for coach update"
 msgstr "Check for coach update"
 
-#: templates/nutrition/diet_plan_detail.html:29
+#: templates/nutrition/diet_plan_detail.html:32
 msgid "protein"
 msgstr "protein"
 
-#: templates/nutrition/diet_plan_detail.html:29
+#: templates/nutrition/diet_plan_detail.html:32
 msgid "carbs"
 msgstr "carbs"
 
-#: templates/nutrition/diet_plan_detail.html:29
+#: templates/nutrition/diet_plan_detail.html:32
 msgid "fat"
 msgstr "fat"
 
-#: templates/nutrition/diet_plan_detail.html:31
+#: templates/nutrition/diet_plan_detail.html:34
 msgid ""
 "Varies across the week — same daily calories/macros every day, different "
 "meals."
@@ -6310,18 +6322,19 @@ msgstr ""
 "Varies across the week — same daily calories/macros every day, different "
 "meals."
 
-#: templates/nutrition/diet_plan_detail.html:77
+#: templates/nutrition/diet_plan_detail.html:80
 msgid "Log this plan to your diary"
 msgstr "Log this plan to your diary"
 
-#: templates/nutrition/diet_plan_detail.html:79
+#: templates/nutrition/diet_plan_detail.html:82
 msgid "Logs whichever day of the week the date below falls on."
 msgstr "Logs whichever day of the week the date below falls on."
 
 #: templates/nutrition/diet_plan_detail.html:87
-#: templates/nutrition/recipe_detail.html:91
-msgid "Log it"
-msgstr "Log it"
+#: templates/nutrition/recipe_detail.html:89
+#: templates/nutrition/recipe_detail.html:94
+msgid "Log to diary"
+msgstr "Log to diary"
 
 #: templates/nutrition/diet_plan_detail.html:90
 #: templates/nutrition/diet_plan_form.html:20
@@ -6384,14 +6397,14 @@ msgid "Swap item"
 msgstr "Swap item"
 
 #: templates/nutrition/diet_plan_item_form.html:19
-#: templates/nutrition/diet_plan_meal_item_form.html:33
-#: templates/nutrition/diet_plan_share_form.html:24
+#: templates/nutrition/diet_plan_meal_item_form.html:34
+#: templates/nutrition/diet_plan_share_form.html:19
 msgid "Back to plan"
 msgstr "Back to plan"
 
 #: templates/nutrition/diet_plan_list.html:9
-msgid "+ New plan"
-msgstr "+ New plan"
+msgid "New plan"
+msgstr "New plan"
 
 #: templates/nutrition/diet_plan_list.html:14
 msgid "My diet plans"
@@ -6412,7 +6425,7 @@ msgstr "From my coach"
 msgid "Add item to %(name)s"
 msgstr "Add item to %(name)s"
 
-#: templates/nutrition/diet_plan_share_form.html:19
+#: templates/nutrition/diet_plan_share_form.html:14
 #: templates/programs/program_form.html:15
 msgid "You don't have any active coaching clients yet."
 msgstr "You don't have any active coaching clients yet."
@@ -6440,12 +6453,12 @@ msgstr ""
 "Search to add a food to the shared library — anyone on this instance can "
 "then find and log it. Category browsing isn't available right now."
 
-#: templates/nutrition/food_browse.html:41
+#: templates/nutrition/food_browse.html:42
 msgid "Browse by category"
 msgstr "Browse by category"
 
-#: templates/nutrition/food_browse.html:49
-#: templates/nutrition/food_detail.html:89
+#: templates/nutrition/food_browse.html:50
+#: templates/nutrition/food_detail.html:92
 #: templates/nutrition/food_form.html:19
 msgid "Back to foods"
 msgstr "Back to foods"
@@ -6458,86 +6471,87 @@ msgstr "Nothing found in this category right now."
 msgid "Back to browse"
 msgstr "Back to browse"
 
-#: templates/nutrition/food_detail.html:15
+#: templates/nutrition/food_detail.html:18
 msgid "No photo for this product yet."
 msgstr "No photo for this product yet."
 
-#: templates/nutrition/food_detail.html:16
+#: templates/nutrition/food_detail.html:19
 msgid "View it on OpenFoodFacts"
 msgstr "View it on OpenFoodFacts"
 
-#: templates/nutrition/food_detail.html:22
+#: templates/nutrition/food_detail.html:25
 #, python-format
 msgid "Per %(size)s %(unit)s"
 msgstr "Per %(size)s %(unit)s"
 
-#: templates/nutrition/food_detail.html:31
-#: templates/nutrition/recipe_detail.html:66
+#: templates/nutrition/food_detail.html:34
+#: templates/nutrition/recipe_detail.html:69
 msgid "Fiber"
 msgstr "Fiber"
 
-#: templates/nutrition/food_detail.html:34
-#: templates/nutrition/recipe_detail.html:69
+#: templates/nutrition/food_detail.html:37
+#: templates/nutrition/recipe_detail.html:72
 msgid "Sugar"
 msgstr "Sugar"
 
-#: templates/nutrition/food_detail.html:37
-#: templates/nutrition/recipe_detail.html:72
+#: templates/nutrition/food_detail.html:40
+#: templates/nutrition/recipe_detail.html:75
 msgid "Saturated fat"
 msgstr "Saturated fat"
 
-#: templates/nutrition/food_detail.html:40
-#: templates/nutrition/recipe_detail.html:75
+#: templates/nutrition/food_detail.html:43
+#: templates/nutrition/recipe_detail.html:78
 msgid "Sodium"
 msgstr "Sodium"
 
-#: templates/nutrition/food_detail.html:48
+#: templates/nutrition/food_detail.html:51
 msgid "Product information"
 msgstr "Product information"
 
-#: templates/nutrition/food_detail.html:53
+#: templates/nutrition/food_detail.html:56
 msgid "Typical price"
 msgstr "Typical price"
 
-#: templates/nutrition/food_detail.html:56
+#: templates/nutrition/food_detail.html:59
 #, python-format
 msgid "(median of %(reports)s recent Open Prices reports)"
 msgstr "(median of %(reports)s recent Open Prices reports)"
 
-#: templates/nutrition/food_detail.html:61
+#: templates/nutrition/food_detail.html:64
 msgid "Package size"
 msgstr "Package size"
 
-#: templates/nutrition/food_detail.html:67
+#: templates/nutrition/food_detail.html:70
 msgid "Labels"
 msgstr "Labels"
 
-#: templates/nutrition/food_detail.html:70
+#: templates/nutrition/food_detail.html:73
 msgid "Allergens"
 msgstr "Allergens"
 
-#: templates/nutrition/food_detail.html:75
-#: templates/nutrition/recipe_detail.html:28
+#: templates/nutrition/food_detail.html:78
+#: templates/nutrition/recipe_detail.html:31
 msgid "Ingredients"
 msgstr "Ingredients"
 
-#: templates/nutrition/food_detail.html:82
+#: templates/nutrition/food_detail.html:85
 msgid "Spotted something wrong, or want to help other users?"
 msgstr "Spotted something wrong, or want to help other users?"
 
-#: templates/nutrition/food_detail.html:83
+#: templates/nutrition/food_detail.html:86
 msgid "Edit this product on OpenFoodFacts"
 msgstr "Edit this product on OpenFoodFacts"
 
-#: templates/nutrition/food_detail.html:84 templates/registration/login.html:11
+#: templates/nutrition/food_detail.html:87 templates/registration/login.html:11
 msgid "or"
 msgstr "or"
 
-#: templates/nutrition/food_detail.html:85
+#: templates/nutrition/food_detail.html:88
 msgid "add a price on Open Prices"
 msgstr "add a price on Open Prices"
 
 #: templates/nutrition/food_form.html:3 templates/nutrition/food_form.html:6
+#: templates/nutrition/food_list.html:10
 msgid "New food"
 msgstr "New food"
 
@@ -6545,47 +6559,47 @@ msgstr "New food"
 msgid "Browse OpenFoodFacts"
 msgstr "Browse OpenFoodFacts"
 
-#: templates/nutrition/food_list.html:10
-msgid "+ New food"
-msgstr "+ New food"
+#: templates/nutrition/food_list.html:22
+msgid "Find a new food"
+msgstr "Find a new food"
 
-#: templates/nutrition/food_list.html:39
+#: templates/nutrition/food_list.html:41
 msgid "All foods"
 msgstr "All foods"
 
-#: templates/nutrition/food_list.html:53
+#: templates/nutrition/food_list.html:55
 msgid "Filter by name…"
 msgstr "Filter by name…"
 
-#: templates/nutrition/food_list.html:53
+#: templates/nutrition/food_list.html:55
 msgid "Filter by name"
 msgstr "Filter by name"
 
-#: templates/nutrition/food_list.html:65
+#: templates/nutrition/food_list.html:67
 msgid "All categories"
 msgstr "All categories"
 
-#: templates/nutrition/food_list.html:66
+#: templates/nutrition/food_list.html:68
 msgid "Filter by category"
 msgstr "Filter by category"
 
-#: templates/nutrition/food_list.html:72
+#: templates/nutrition/food_list.html:74
 msgid "Sort by"
 msgstr "Sort by"
 
-#: templates/nutrition/food_list.html:74
+#: templates/nutrition/food_list.html:76
 msgid "Date added"
 msgstr "Date added"
 
-#: templates/nutrition/food_list.html:78
+#: templates/nutrition/food_list.html:80
 msgid "Sort direction"
 msgstr "Sort direction"
 
-#: templates/nutrition/food_list.html:79
+#: templates/nutrition/food_list.html:81
 msgid "Ascending"
 msgstr "Ascending"
 
-#: templates/nutrition/food_list.html:80
+#: templates/nutrition/food_list.html:82
 msgid "Descending"
 msgstr "Descending"
 
@@ -6681,12 +6695,12 @@ msgstr ""
 msgid "Save and start tracking"
 msgstr "Save and start tracking"
 
-#: templates/nutrition/recipe_detail.html:12
+#: templates/nutrition/recipe_detail.html:15
 #: templates/programs/program_list.html:47
 msgid "Template"
 msgstr "Template"
 
-#: templates/nutrition/recipe_detail.html:19
+#: templates/nutrition/recipe_detail.html:22
 #, python-format
 msgid ""
 "Tagged for %(meal)s — the diet-plan builder only ever suggests this recipe "
@@ -6695,28 +6709,28 @@ msgstr ""
 "Tagged for %(meal)s — the diet-plan builder only ever suggests this recipe "
 "for that meal."
 
-#: templates/nutrition/recipe_detail.html:39
+#: templates/nutrition/recipe_detail.html:42
 msgid "Remove this ingredient?"
 msgstr "Remove this ingredient?"
 
-#: templates/nutrition/recipe_detail.html:47
+#: templates/nutrition/recipe_detail.html:50
 msgid "No ingredients yet."
 msgstr "No ingredients yet."
 
-#: templates/nutrition/recipe_detail.html:50
-msgid "+ Add ingredient"
-msgstr "+ Add ingredient"
+#: templates/nutrition/recipe_detail.html:53
+msgid "Add ingredient"
+msgstr "Add ingredient"
 
-#: templates/nutrition/recipe_detail.html:58
+#: templates/nutrition/recipe_detail.html:61
 msgid "Total"
 msgstr "Total"
 
-#: templates/nutrition/recipe_detail.html:58
+#: templates/nutrition/recipe_detail.html:61
 #, python-format
 msgid "Per serving (of %(servings)s)"
 msgstr "Per serving (of %(servings)s)"
 
-#: templates/nutrition/recipe_detail.html:80
+#: templates/nutrition/recipe_detail.html:83
 msgid ""
 "Fiber, sugar, saturated fat, and sodium show here once at least one "
 "ingredient has that data (e.g. imported from OpenFoodFacts)."
@@ -6724,21 +6738,17 @@ msgstr ""
 "Fiber, sugar, saturated fat, and sodium show here once at least one "
 "ingredient has that data (e.g. imported from OpenFoodFacts)."
 
-#: templates/nutrition/recipe_detail.html:86
-msgid "Log to diary"
-msgstr "Log to diary"
-
-#: templates/nutrition/recipe_detail.html:94
+#: templates/nutrition/recipe_detail.html:97
 #: templates/nutrition/recipe_form.html:19
 #: templates/nutrition/recipe_import.html:20
 msgid "Back to recipes"
 msgstr "Back to recipes"
 
-#: templates/nutrition/recipe_detail.html:99
+#: templates/nutrition/recipe_detail.html:102
 msgid "Delete this recipe?"
 msgstr "Delete this recipe?"
 
-#: templates/nutrition/recipe_detail.html:101
+#: templates/nutrition/recipe_detail.html:104
 msgid "Delete recipe"
 msgstr "Delete recipe"
 
@@ -6751,6 +6761,7 @@ msgid "Edit recipe"
 msgstr "Edit recipe"
 
 #: templates/nutrition/recipe_form.html:6
+#: templates/nutrition/recipe_list.html:9
 msgid "New recipe"
 msgstr "New recipe"
 
@@ -6776,7 +6787,7 @@ msgid "Edit ingredient"
 msgstr "Edit ingredient"
 
 #: templates/nutrition/recipe_ingredient_edit_form.html:19
-#: templates/nutrition/recipe_ingredient_form.html:33
+#: templates/nutrition/recipe_ingredient_form.html:34
 msgid "Back to recipe"
 msgstr "Back to recipe"
 
@@ -6785,10 +6796,6 @@ msgstr "Back to recipe"
 #, python-format
 msgid "Add ingredient to %(name)s"
 msgstr "Add ingredient to %(name)s"
-
-#: templates/nutrition/recipe_list.html:9
-msgid "+ New recipe"
-msgstr "+ New recipe"
 
 #: templates/nutrition/recipe_list.html:16
 #: templates/nutrition/recipe_list.html:19
@@ -6871,11 +6878,11 @@ msgstr "Log a few days in your food diary to see your trend here."
 
 #: templates/programs/prescription_form.html:3
 #: templates/programs/prescription_form.html:6
-#: templates/programs/program_detail.html:73
-#: templates/workouts/_train_panel.html:94
+#: templates/programs/program_detail.html:75
+#: templates/workouts/_train_panel.html:100
 #: templates/workouts/performed_exercise_form.html:3
 #: templates/workouts/performed_exercise_form.html:6
-#: templates/workouts/session_detail.html:27
+#: templates/workouts/session_detail.html:31
 msgid "Add exercise"
 msgstr "Add exercise"
 
@@ -6889,7 +6896,7 @@ msgstr "Remove exercise"
 
 #: templates/programs/program_confirm_delete.html:3
 #: templates/programs/program_confirm_delete.html:6
-#: templates/programs/program_detail.html:91
+#: templates/programs/program_detail.html:93
 msgid "Delete program"
 msgstr "Delete program"
 
@@ -6902,51 +6909,53 @@ msgstr ""
 "Delete <strong>%(name)s</strong> and all of its workouts and exercises? This "
 "cannot be undone."
 
-#: templates/programs/program_detail.html:20
+#: templates/programs/program_detail.html:22
 msgid "Built-in template"
 msgstr "Built-in template"
 
-#: templates/programs/program_detail.html:22
+#: templates/programs/program_detail.html:24
 msgid "My template"
 msgstr "My template"
 
-#: templates/programs/program_detail.html:26
+#: templates/programs/program_detail.html:28
 #, python-format
 msgid "Version %(version)s · updated %(updated)s"
 msgstr "Version %(version)s · updated %(updated)s"
 
-#: templates/programs/program_detail.html:31
+#: templates/programs/program_detail.html:33
 msgid "Copy to a new program"
 msgstr "Copy to a new program"
 
-#: templates/programs/program_detail.html:48
+#: templates/programs/program_detail.html:50
 #: templates/programs/workout_form.html:19
 msgid "Delete this workout and its exercises?"
 msgstr "Delete this workout and its exercises?"
 
-#: templates/programs/program_detail.html:68
-#: templates/workouts/_train_panel.html:93
-#: templates/workouts/session_detail.html:22
+#: templates/programs/program_detail.html:70
+#: templates/workouts/_train_panel.html:99
+#: templates/workouts/session_detail.html:26
 msgid "No exercises yet."
 msgstr "No exercises yet."
 
-#: templates/programs/program_detail.html:78
+#: templates/programs/program_detail.html:80
 msgid "Start workout"
 msgstr "Start workout"
 
-#: templates/programs/program_detail.html:83
+#: templates/programs/program_detail.html:85
 msgid "No workouts yet."
 msgstr "No workouts yet."
 
-#: templates/programs/program_detail.html:88
+#: templates/programs/program_detail.html:90
+#: templates/programs/workout_form.html:3
+#: templates/programs/workout_form.html:6
 msgid "Add workout"
 msgstr "Add workout"
 
-#: templates/programs/program_detail.html:89
+#: templates/programs/program_detail.html:91
 msgid "Delete this program? This cannot be undone."
 msgstr "Delete this program? This cannot be undone."
 
-#: templates/programs/program_detail.html:95
+#: templates/programs/program_detail.html:97
 #: templates/programs/program_import.html:19
 msgid "Back to programs"
 msgstr "Back to programs"
@@ -7011,13 +7020,8 @@ msgstr "No built-in templates available."
 msgid "Edit workout"
 msgstr "Edit workout"
 
-#: templates/programs/workout_form.html:3
-#: templates/programs/workout_form.html:6
-msgid "New workout"
-msgstr "New workout"
-
 #: templates/programs/workout_form.html:21
-#: templates/workouts/session_detail.html:41
+#: templates/workouts/session_detail.html:45
 msgid "Delete workout"
 msgstr "Delete workout"
 
@@ -7118,11 +7122,11 @@ msgstr "Your password has been set. You can log in now."
 msgid "Set a new password"
 msgstr "Set a new password"
 
-#: templates/registration/password_reset_confirm.html:21
+#: templates/registration/password_reset_confirm.html:16
 msgid "Set new password"
 msgstr "Set new password"
 
-#: templates/registration/password_reset_confirm.html:25
+#: templates/registration/password_reset_confirm.html:20
 msgid ""
 "This password reset link is invalid, possibly because it has already been "
 "used or has expired."
@@ -7130,7 +7134,7 @@ msgstr ""
 "This password reset link is invalid, possibly because it has already been "
 "used or has expired."
 
-#: templates/registration/password_reset_confirm.html:27
+#: templates/registration/password_reset_confirm.html:22
 msgid "Request a new reset link"
 msgstr "Request a new reset link"
 
@@ -7237,7 +7241,7 @@ msgid "You haven't blocked anyone."
 msgstr "You haven't blocked anyone."
 
 #: templates/social/block_list.html:23 templates/social/friend_list.html:3
-#: templates/social/friend_list.html:6 templates/social/friend_search.html:19
+#: templates/social/friend_list.html:6 templates/social/friend_search.html:20
 #: templates/social/message_list.html:27
 msgid "Friends"
 msgstr "Friends"
@@ -7320,65 +7324,65 @@ msgstr "Enable link"
 msgid "Invite a friend"
 msgstr "Invite a friend"
 
-#: templates/social/group_detail.html:68
+#: templates/social/group_detail.html:65
 msgid "Send invite"
 msgstr "Send invite"
 
-#: templates/social/group_detail.html:73
+#: templates/social/group_detail.html:70
 #, python-format
 msgid "Members (%(count)s)"
 msgstr "Members (%(count)s)"
 
-#: templates/social/group_detail.html:77
+#: templates/social/group_detail.html:74
 msgid "(you)"
 msgstr "(you)"
 
-#: templates/social/group_detail.html:87
+#: templates/social/group_detail.html:84
 msgid "Remove admin"
 msgstr "Remove admin"
 
-#: templates/social/group_detail.html:90
+#: templates/social/group_detail.html:87
 msgid "Make admin"
 msgstr "Make admin"
 
-#: templates/social/group_detail.html:94 templates/social/group_detail.html:106
+#: templates/social/group_detail.html:91 templates/social/group_detail.html:103
 msgid "Remove this member from the group?"
 msgstr "Remove this member from the group?"
 
-#: templates/social/group_detail.html:99
+#: templates/social/group_detail.html:96
 msgid "Transfer ownership of this group? You will become an admin instead."
 msgstr "Transfer ownership of this group? You will become an admin instead."
 
-#: templates/social/group_detail.html:101
+#: templates/social/group_detail.html:98
 msgid "Make owner"
 msgstr "Make owner"
 
-#: templates/social/group_detail.html:129
+#: templates/social/group_detail.html:126
 msgid "Unmute notifications"
 msgstr "Unmute notifications"
 
-#: templates/social/group_detail.html:131
+#: templates/social/group_detail.html:128
 msgid "Mute notifications"
 msgstr "Mute notifications"
 
-#: templates/social/group_detail.html:134 templates/social/group_list.html:3
+#: templates/social/group_detail.html:131 templates/social/group_list.html:3
 #: templates/social/group_list.html:6 templates/social/message_list.html:28
 msgid "Groups"
 msgstr "Groups"
 
-#: templates/social/group_detail.html:140
+#: templates/social/group_detail.html:137
 msgid "Leave this group?"
 msgstr "Leave this group?"
 
-#: templates/social/group_detail.html:142
+#: templates/social/group_detail.html:139
 msgid "Leave group"
 msgstr "Leave group"
 
-#: templates/social/group_detail.html:146
+#: templates/social/group_detail.html:143
 msgid "Delete this group? This can't be undone."
 msgstr "Delete this group? This can't be undone."
 
-#: templates/social/group_detail.html:148
+#: templates/social/group_detail.html:145
 msgid "Delete group"
 msgstr "Delete group"
 
@@ -7518,7 +7522,7 @@ msgid "Suggested: %(weight)s"
 msgstr "Suggested: %(weight)s"
 
 #: templates/workouts/_performed_exercise_card.html:71
-#: templates/workouts/_train_panel.html:88
+#: templates/workouts/_train_panel.html:94
 msgid "Log set"
 msgstr "Log set"
 
@@ -7531,17 +7535,21 @@ msgstr "Exercise %(position)s of %(total)s"
 msgid "All exercises done for today."
 msgstr "All exercises done for today."
 
-#: templates/workouts/_train_panel.html:62
+#: templates/workouts/_train_panel.html:47
+msgid "Edit this set"
+msgstr "Edit this set"
+
+#: templates/workouts/_train_panel.html:68
 msgid ""
 "This exercise is done — logging another set is still fine if you want one."
 msgstr ""
 "This exercise is done — logging another set is still fine if you want one."
 
-#: templates/workouts/_train_panel.html:79
+#: templates/workouts/_train_panel.html:85
 msgid "Fewer options"
 msgstr "Fewer options"
 
-#: templates/workouts/_train_panel.html:79
+#: templates/workouts/_train_panel.html:85
 msgid "More options (RPE, RIR, notes…)"
 msgstr "More options (RPE, RIR, notes…)"
 
@@ -7550,36 +7558,42 @@ msgstr "More options (RPE, RIR, notes…)"
 msgid "Back to workout"
 msgstr "Back to workout"
 
-#: templates/workouts/session_detail.html:13
+#: templates/workouts/session_detail.html:16
 #, python-format
 msgid "Started %(started)s"
 msgstr "Started %(started)s"
 
-#: templates/workouts/session_detail.html:14
+#: templates/workouts/session_detail.html:17
 #, python-format
 msgid "ended %(ended)s"
 msgstr "ended %(ended)s"
 
-#: templates/workouts/session_detail.html:31
+#: templates/workouts/session_detail.html:19
+msgid "%(n)s set"
+msgid_plural "%(n)s sets"
+msgstr[0] "%(n)s set"
+msgstr[1] "%(n)s sets"
+
+#: templates/workouts/session_detail.html:35
 #: templates/workouts/session_train.html:51
 msgid "Complete workout"
 msgstr "Complete workout"
 
-#: templates/workouts/session_detail.html:33
+#: templates/workouts/session_detail.html:37
 #: templates/workouts/session_train.html:53
 msgid "Abandon this workout? It stays in your history as abandoned."
 msgstr "Abandon this workout? It stays in your history as abandoned."
 
-#: templates/workouts/session_detail.html:35
+#: templates/workouts/session_detail.html:39
 #: templates/workouts/session_train.html:55
 msgid "Abandon workout"
 msgstr "Abandon workout"
 
-#: templates/workouts/session_detail.html:39
+#: templates/workouts/session_detail.html:43
 msgid "Delete this workout? This cannot be undone."
 msgstr "Delete this workout? This cannot be undone."
 
-#: templates/workouts/session_detail.html:44
+#: templates/workouts/session_detail.html:48
 msgid "Back to history"
 msgstr "Back to history"
 
@@ -7587,23 +7601,23 @@ msgstr "Back to history"
 msgid "Workout history"
 msgstr "Workout history"
 
-#: templates/workouts/session_list.html:23
+#: templates/workouts/session_list.html:17
 msgid "%(n)s exercise · %(sets)s sets"
 msgid_plural "%(n)s exercises · %(sets)s sets"
 msgstr[0] "%(n)s exercise · %(sets)s sets"
 msgstr[1] "%(n)s exercises · %(sets)s sets"
 
-#: templates/workouts/session_list.html:31
+#: templates/workouts/session_list.html:25
 msgid "No workouts logged yet."
 msgstr "No workouts logged yet."
 
-#: templates/workouts/session_list.html:32
+#: templates/workouts/session_list.html:26
 msgid ""
-"Start a freeform workout with the button above, or pick a workout from one "
+"Start a freeform workout with the button below, or pick a workout from one "
 "of your programs."
-msgstr "Start a freeform workout with the button above, or pick a workout from one of your programs."
+msgstr "Start a freeform workout with the button below, or pick a workout from one of your programs."
 
-#: templates/workouts/session_list.html:34
+#: templates/workouts/session_list.html:28
 msgid "Browse programs"
 msgstr "Browse programs"
 
@@ -7635,6 +7649,10 @@ msgstr "Mute rest timer sound"
 msgid "Skip rest"
 msgstr "Skip rest"
 
+#: templates/workouts/session_train.html:49
+msgid "Complete this workout? Some exercises still have sets left to log."
+msgstr "Complete this workout? Some exercises still have sets left to log."
+
 #: templates/workouts/set_edit_form.html:3
 msgid "Edit set"
 msgstr "Edit set"
@@ -7643,3 +7661,24 @@ msgstr "Edit set"
 #, python-format
 msgid "Edit set %(number)s"
 msgstr "Edit set %(number)s"
+
+#~ msgid "Back to home"
+#~ msgstr "Back to home"
+
+#~ msgid "Choose a program"
+#~ msgstr "Choose a program"
+
+#~ msgid "+ Add"
+#~ msgstr "+ Add"
+
+#~ msgid "+ Add food"
+#~ msgstr "+ Add food"
+
+#~ msgid "Log it"
+#~ msgstr "Log it"
+
+#~ msgid "+ New recipe"
+#~ msgstr "+ New recipe"
+
+#~ msgid "New workout"
+#~ msgstr "New workout"

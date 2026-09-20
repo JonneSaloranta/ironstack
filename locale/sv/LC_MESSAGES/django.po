@@ -3,14 +3,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: IronStack\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-20 18:23+0000\n"
+"POT-Creation-Date: 2026-09-20 21:11+0000\n"
 "Language: sv\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: apps/accounts/admin.py:17 templates/accounts/profile.html:88
+#: apps/accounts/admin.py:17 templates/accounts/profile.html:80
 #: templates/accounts/two_factor_manage.html:3
 #: templates/accounts/two_factor_manage.html:6
 #: templates/accounts/two_factor_setup.html:3
@@ -530,19 +530,19 @@ msgstr "Aktivitetstyp skapad."
 msgid "Activity logged."
 msgstr "Aktivitet loggad."
 
-#: apps/activities/views.py:101 apps/measurements/views.py:149
+#: apps/activities/views.py:103 apps/measurements/views.py:151
 msgid "That could not be saved: %(errors)s"
 msgstr "Det gick inte att spara: %(errors)s"
 
-#: apps/activities/views.py:118
+#: apps/activities/views.py:121
 msgid "Activity updated."
 msgstr "Aktiviteten uppdaterad."
 
-#: apps/activities/views.py:138
+#: apps/activities/views.py:141
 msgid "Activity deleted."
 msgstr "Aktiviteten borttagen."
 
-#: apps/activities/views.py:149
+#: apps/activities/views.py:152
 msgid "Activity type deactivated."
 msgstr "Aktivitetstypen inaktiverad."
 
@@ -622,12 +622,12 @@ msgstr "Läsa"
 msgid "Update"
 msgstr "Uppdatera"
 
-#: apps/api/forms.py:13 templates/activities/activity_history.html:55
+#: apps/api/forms.py:13 templates/activities/activity_history.html:57
 #: templates/core/_backup_row.html:22
-#: templates/measurements/measurement_history.html:63
+#: templates/measurements/measurement_history.html:65
 #: templates/nutrition/diary_day.html:69
 #: templates/programs/program_confirm_delete.html:14
-#: templates/programs/program_detail.html:50
+#: templates/programs/program_detail.html:52
 #: templates/workouts/_performed_exercise_card.html:31
 msgid "Delete"
 msgstr "Ta bort"
@@ -635,7 +635,7 @@ msgstr "Ta bort"
 #: apps/api/forms.py:29 apps/social/forms.py:13
 #: templates/admin/nutrition/food/merge.html:14
 #: templates/nutrition/_food_list_results.html:17
-#: templates/nutrition/food_list.html:73
+#: templates/nutrition/food_list.html:75
 msgid "Name"
 msgstr "Namn"
 
@@ -650,6 +650,7 @@ msgid "Profile"
 msgstr "Profil"
 
 #: apps/api/models.py:25 templates/api/key_list.html:89
+#: templates/exercises/exercise_detail.html:5
 #: templates/exercises/exercise_list.html:3
 #: templates/exercises/exercise_list.html:6
 msgid "Exercises"
@@ -657,6 +658,7 @@ msgstr "Övningar"
 
 #: apps/api/models.py:26 apps/core/models.py:162 templates/api/key_list.html:93
 #: templates/base.html:186 templates/base.html:188
+#: templates/programs/program_detail.html:5
 #: templates/programs/program_list.html:3
 #: templates/programs/program_list.html:6
 msgid "Programs"
@@ -665,6 +667,7 @@ msgstr "Program"
 #: apps/api/models.py:27 apps/core/models.py:161
 #: templates/analytics/dashboard.html:13 templates/api/key_list.html:97
 #: templates/coaching/client_detail.html:26
+#: templates/workouts/session_detail.html:5
 #: templates/workouts/session_list.html:6
 msgid "Workouts"
 msgstr "Träningspass"
@@ -674,9 +677,10 @@ msgid "Measurements"
 msgstr "Mätningar"
 
 #: apps/api/models.py:29 apps/core/models.py:165
+#: templates/activities/activity_history.html:5
 #: templates/activities/activity_type_list.html:3
 #: templates/activities/activity_type_list.html:6
-#: templates/api/key_list.html:105 templates/core/dashboard.html:132
+#: templates/api/key_list.html:105 templates/core/dashboard.html:137
 msgid "Activities"
 msgstr "Aktiviteter"
 
@@ -691,8 +695,11 @@ msgstr "Analys"
 #: apps/api/models.py:32 templates/api/key_list.html:109
 #: templates/base.html:173 templates/base.html:175
 #: templates/nutrition/dashboard.html:3 templates/nutrition/dashboard.html:6
-#: templates/nutrition/food_detail.html:21
-#: templates/nutrition/recipe_detail.html:55
+#: templates/nutrition/diet_plan_detail.html:5
+#: templates/nutrition/food_detail.html:5
+#: templates/nutrition/food_detail.html:24
+#: templates/nutrition/recipe_detail.html:5
+#: templates/nutrition/recipe_detail.html:58
 msgid "Nutrition"
 msgstr "Näring"
 
@@ -841,7 +848,7 @@ msgstr "Okänd åtgärd."
 msgid "Coaching relationship ended."
 msgstr "Coachningsförhållandet avslutat."
 
-#: apps/core/admin.py:17 templates/accounts/profile.html:185
+#: apps/core/admin.py:17 templates/accounts/profile.html:177
 msgid "Administration"
 msgstr "Administration"
 
@@ -887,7 +894,7 @@ msgstr "Den filen är en ”%(kind)s”-export, inte en ”%(expected)s”."
 msgid "unknown"
 msgstr "okänd"
 
-#: apps/core/formatting.py:16 templates/programs/program_detail.html:62
+#: apps/core/formatting.py:16 templates/programs/program_detail.html:64
 #: templates/workouts/_performed_exercise_card.html:8
 msgid "Rate of Perceived Exertion"
 msgstr "Upplevd ansträngningsgrad"
@@ -897,7 +904,7 @@ msgid "Reps In Reserve"
 msgstr "Repetitioner i reserv"
 
 #: apps/core/formatting.py:18 templates/analytics/exercise_analytics.html:19
-#: templates/exercises/exercise_detail.html:96
+#: templates/exercises/exercise_detail.html:94
 #: templates/records/_pr_toasts.html:38
 #: templates/records/exercise_records.html:16
 msgid "One-Rep Max"
@@ -957,7 +964,7 @@ msgstr "En .json-fil som tidigare exporterats från IronStack."
 msgid "Must be a .json file."
 msgstr "Måste vara en .json-fil."
 
-#: apps/core/forms.py:83 templates/nutrition/food_list.html:75
+#: apps/core/forms.py:83 templates/nutrition/food_list.html:77
 msgid "Category"
 msgstr "Kategori"
 
@@ -1125,28 +1132,28 @@ msgstr "Kroppsmått"
 msgid "Account & profile"
 msgstr "Konto och profil"
 
-#: apps/core/views.py:33
+#: apps/core/views.py:34
 msgid "Training day — new personal record!"
 msgstr "Träningsdag — nytt personbästa!"
 
-#: apps/core/views.py:35
+#: apps/core/views.py:36
 msgid "Training day — a session was abandoned."
 msgstr "Träningsdag — ett pass avbröts."
 
-#: apps/core/views.py:37
+#: apps/core/views.py:38
 msgid "Training day."
 msgstr "Träningsdag."
 
-#: apps/core/views.py:39
+#: apps/core/views.py:40
 msgid "Rest day."
 msgstr "Vilodag."
 
-#: apps/core/views.py:50
+#: apps/core/views.py:51
 #, python-format
 msgid "%(actual)s / %(target)s kcal logged."
 msgstr "%(actual)s / %(target)s kcal loggat."
 
-#: apps/core/views.py:55
+#: apps/core/views.py:56
 #, python-format
 msgid "%(actual)s kcal logged."
 msgstr "%(actual)s kcal loggat."
@@ -1969,11 +1976,11 @@ msgid "Value (%(unit)s)"
 msgstr "Värde (%(unit)s)"
 
 #: apps/measurements/forms.py:61
-#: templates/measurements/measurement_history.html:52
+#: templates/measurements/measurement_history.html:54
 msgid "Value"
 msgstr "Värde"
 
-#: apps/measurements/i18n_content.py:17 templates/core/dashboard.html:48
+#: apps/measurements/i18n_content.py:17 templates/core/dashboard.html:47
 msgid "Body weight"
 msgstr "Kroppsvikt"
 
@@ -2002,7 +2009,7 @@ msgid "Neck"
 msgstr "Hals"
 
 #: apps/measurements/models.py:18 templates/core/_bmi_card.html:31
-#: templates/nutrition/dashboard.html:104
+#: templates/nutrition/dashboard.html:107
 #: templates/workouts/_performed_exercise_card.html:15
 msgid "Weight"
 msgstr "Vikt"
@@ -2031,11 +2038,11 @@ msgstr "Mättyp skapad."
 msgid "Reading logged."
 msgstr "Mätvärde loggat."
 
-#: apps/measurements/views.py:169
+#: apps/measurements/views.py:172
 msgid "Reading updated."
 msgstr "Mätvärdet uppdaterat."
 
-#: apps/measurements/views.py:189
+#: apps/measurements/views.py:192
 msgid "Reading deleted."
 msgstr "Mätvärdet borttaget."
 
@@ -2254,7 +2261,7 @@ msgstr ""
 #: apps/nutrition/forms.py:193 templates/nutrition/diary_add_entry.html:55
 #: templates/nutrition/diet_plan_meal_item_form.html:16
 #: templates/nutrition/food_browse.html:25
-#: templates/nutrition/food_list.html:24
+#: templates/nutrition/food_list.html:25
 #: templates/nutrition/recipe_ingredient_form.html:16
 msgid "Search foods"
 msgstr "Sök livsmedel"
@@ -2621,7 +2628,7 @@ msgid "Moderately active"
 msgstr "Måttligt aktiv"
 
 #: apps/nutrition/models.py:53 templates/nutrition/_diet_plan_card.html:5
-#: templates/nutrition/diet_plan_detail.html:12
+#: templates/nutrition/diet_plan_detail.html:15
 msgid "Active"
 msgstr "Aktiv"
 
@@ -3335,12 +3342,12 @@ msgid "Friend"
 msgstr "Vän"
 
 #: apps/social/models.py:141 templates/admin/nutrition/food/merge.html:16
-#: templates/social/group_detail.html:78
+#: templates/social/group_detail.html:75
 msgid "Owner"
 msgstr "Ägare"
 
-#: apps/social/models.py:142 templates/accounts/profile.html:188
-#: templates/social/group_detail.html:79
+#: apps/social/models.py:142 templates/accounts/profile.html:180
+#: templates/social/group_detail.html:76
 msgid "Admin"
 msgstr "Admin"
 
@@ -3604,11 +3611,11 @@ msgstr "Slutfört"
 msgid "Abandoned"
 msgstr "Avbrutet"
 
-#: apps/workouts/views.py:164 apps/workouts/views.py:361
+#: apps/workouts/views.py:168 apps/workouts/views.py:365
 msgid "This session is no longer in progress."
 msgstr "Detta pass pågår inte längre."
 
-#: apps/workouts/views.py:343
+#: apps/workouts/views.py:347
 #, python-format
 msgid "New PR — %(exercise)s: %(record_type)s %(value)s"
 msgstr "Nytt PR — %(exercise)s: %(record_type)s %(value)s"
@@ -3622,6 +3629,7 @@ msgid "You don't have permission to do that."
 msgstr "Du har inte behörighet att göra det."
 
 #: templates/403.html:8 templates/404.html:8 templates/500.html:53
+#: templates/analytics/member_profile.html:49
 msgid "Back to dashboard"
 msgstr "Tillbaka till instrumentpanelen"
 
@@ -3649,7 +3657,7 @@ msgstr ""
 
 #: templates/accounts/_data_export_standalone.html:23
 #: templates/accounts/_data_export_standalone.html:68
-#: templates/accounts/profile.html:153
+#: templates/accounts/profile.html:145
 msgid "Your data"
 msgstr "Dina uppgifter"
 
@@ -3680,12 +3688,12 @@ msgstr ""
 #: templates/accounts/account_details_form.html:15
 #: templates/activities/activity_form.html:15
 #: templates/activities/activity_type_form.html:15
-#: templates/exercises/exercise_form.html:20
+#: templates/exercises/exercise_form.html:15
 #: templates/measurements/measurement_form.html:15
 #: templates/measurements/measurement_type_form.html:15
 #: templates/nutrition/diary_entry_form.html:16
 #: templates/nutrition/diet_plan_item_form.html:16
-#: templates/nutrition/diet_plan_share_form.html:21
+#: templates/nutrition/diet_plan_share_form.html:16
 #: templates/nutrition/food_form.html:16
 #: templates/nutrition/recipe_form.html:16
 #: templates/nutrition/recipe_ingredient_edit_form.html:16
@@ -3703,7 +3711,7 @@ msgid "Privacy notice"
 msgstr "Integritetspolicy"
 
 #: templates/accounts/_privacy_notice_modal.html:27
-#: templates/accounts/profile.html:268 templates/api/key_list.html:20
+#: templates/accounts/profile.html:260 templates/api/key_list.html:20
 #: templates/base.html:161 templates/nutrition/_month_calendar.html:84
 #: templates/records/_pr_toasts.html:28
 msgid "Dismiss"
@@ -3818,7 +3826,7 @@ msgid "Done"
 msgstr "Klar"
 
 #: templates/accounts/account_delete.html:3
-#: templates/accounts/account_delete.html:6 templates/accounts/profile.html:223
+#: templates/accounts/account_delete.html:6 templates/accounts/profile.html:215
 msgid "Delete account"
 msgstr "Radera konto"
 
@@ -3852,7 +3860,7 @@ msgstr ""
 "innehålla dina uppgifter tills den roteras bort enligt instansens egen "
 "inställning för säkerhetskopiors lagringstid."
 
-#: templates/accounts/account_delete.html:25
+#: templates/accounts/account_delete.html:21
 msgid ""
 "Your account is linked to Authentik, so there's no local password to confirm "
 "with — type your username instead."
@@ -3860,11 +3868,11 @@ msgstr ""
 "Ditt konto är kopplat till Authentik, så det finns inget lokalt lösenord att "
 "bekräfta med — skriv ditt användarnamn istället."
 
-#: templates/accounts/account_delete.html:32
+#: templates/accounts/account_delete.html:24
 msgid "Permanently delete my account"
 msgstr "Radera mitt konto permanent"
 
-#: templates/accounts/account_delete.html:34
+#: templates/accounts/account_delete.html:26
 #: templates/accounts/two_factor_disable.html:19
 #: templates/accounts/two_factor_setup.html:22 templates/base.html:105
 #: templates/programs/program_confirm_delete.html:16
@@ -3874,7 +3882,7 @@ msgstr "Avbryt"
 
 #: templates/accounts/account_details_form.html:3
 #: templates/accounts/account_details_form.html:6
-#: templates/accounts/profile.html:68
+#: templates/accounts/profile.html:60
 msgid "Account details"
 msgstr "Kontouppgifter"
 
@@ -3882,15 +3890,15 @@ msgstr "Kontouppgifter"
 #: templates/accounts/data_export.html:42
 #: templates/accounts/two_factor_manage.html:34 templates/api/key_list.html:155
 #: templates/coaching/client_list.html:49 templates/coaching/my_coaches.html:37
-#: templates/core/backup_list.html:86 templates/core/feedback_form.html:20
-#: templates/core/feedback_list.html:58 templates/core/seo_settings.html:26
+#: templates/core/backup_list.html:74 templates/core/feedback_form.html:20
+#: templates/core/feedback_list.html:50 templates/core/seo_settings.html:18
 #: templates/registration/password_change_done.html:13
-#: templates/registration/password_change_form.html:23
+#: templates/registration/password_change_form.html:18
 msgid "Back to profile"
 msgstr "Tillbaka till profilen"
 
 #: templates/accounts/data_export.html:3 templates/accounts/data_export.html:6
-#: templates/accounts/profile.html:165
+#: templates/accounts/profile.html:157
 msgid "Download your data"
 msgstr "Ladda ner dina uppgifter"
 
@@ -3916,50 +3924,50 @@ msgstr "Ladda ner som CSV (.zip)"
 msgid "Download as HTML"
 msgstr "Ladda ner som HTML"
 
-#: templates/accounts/profile.html:15
+#: templates/accounts/profile.html:21
 msgid "Preferences"
 msgstr "Inställningar"
 
-#: templates/accounts/profile.html:21
+#: templates/accounts/profile.html:27
 msgid "Features"
 msgstr "Funktioner"
 
-#: templates/accounts/profile.html:22 templates/accounts/profile.html:130
+#: templates/accounts/profile.html:28 templates/accounts/profile.html:122
 msgid "Notifications"
 msgstr "Aviseringar"
 
-#: templates/accounts/profile.html:23
+#: templates/accounts/profile.html:29
 msgid "Privacy"
 msgstr "Integritet"
 
-#: templates/accounts/profile.html:24 templates/accounts/profile.html:98
+#: templates/accounts/profile.html:30 templates/accounts/profile.html:90
 msgid "Social"
 msgstr "Socialt"
 
-#: templates/accounts/profile.html:25 templates/accounts/profile.html:108
+#: templates/accounts/profile.html:31 templates/accounts/profile.html:100
 msgid "Coaching"
 msgstr "Coachning"
 
-#: templates/accounts/profile.html:45
+#: templates/accounts/profile.html:36
 msgid "Save preferences"
 msgstr "Spara inställningar"
 
-#: templates/accounts/profile.html:64
+#: templates/accounts/profile.html:56
 msgid "Account"
 msgstr "Konto"
 
-#: templates/accounts/profile.html:69
+#: templates/accounts/profile.html:61
 msgid "Update your username, name, and email address."
 msgstr "Uppdatera ditt användarnamn, namn och e-postadress."
 
-#: templates/accounts/profile.html:76
+#: templates/accounts/profile.html:68
 #: templates/registration/password_change_form.html:3
 #: templates/registration/password_change_form.html:6
-#: templates/registration/password_change_form.html:20
+#: templates/registration/password_change_form.html:15
 msgid "Change password"
 msgstr "Byt lösenord"
 
-#: templates/accounts/profile.html:78
+#: templates/accounts/profile.html:70
 msgid ""
 "Your account is linked to Authentik. Sign-in security (password, 2FA) is "
 "managed there."
@@ -3967,142 +3975,142 @@ msgstr ""
 "Ditt konto är kopplat till Authentik. Inloggningssäkerheten (lösenord, "
 "tvåfaktorsautentisering) hanteras där."
 
-#: templates/accounts/profile.html:80
+#: templates/accounts/profile.html:72
 msgid "Update the password you use to sign in."
 msgstr "Uppdatera lösenordet du använder för att logga in."
 
-#: templates/accounts/profile.html:90
+#: templates/accounts/profile.html:82
 msgid "Enabled — protecting your account with a second step at login."
 msgstr "Aktiverad — skyddar ditt konto med ett andra steg vid inloggning."
 
-#: templates/accounts/profile.html:92
+#: templates/accounts/profile.html:84
 msgid "Add a second step at login, using an authenticator app."
 msgstr "Lägg till ett andra steg vid inloggning med en autentiseringsapp."
 
-#: templates/accounts/profile.html:102 templates/social/message_list.html:6
+#: templates/accounts/profile.html:94 templates/social/message_list.html:6
 msgid "Friends & groups"
 msgstr "Vänner och grupper"
 
-#: templates/accounts/profile.html:103
+#: templates/accounts/profile.html:95
 msgid "Friends, groups, and messages."
 msgstr "Vänner, grupper och meddelanden."
 
-#: templates/accounts/profile.html:113 templates/coaching/client_list.html:3
+#: templates/accounts/profile.html:105 templates/coaching/client_list.html:3
 #: templates/coaching/client_list.html:6
 msgid "My clients"
 msgstr "Mina klienter"
 
-#: templates/accounts/profile.html:114
+#: templates/accounts/profile.html:106
 msgid "People you coach, and coaching requests waiting for you."
 msgstr "Personer du coachar, och coachningsförfrågningar som väntar på dig."
 
-#: templates/accounts/profile.html:122 templates/coaching/my_coaches.html:3
+#: templates/accounts/profile.html:114 templates/coaching/my_coaches.html:3
 #: templates/coaching/my_coaches.html:6
 msgid "My coaches"
 msgstr "Mina coacher"
 
-#: templates/accounts/profile.html:123
+#: templates/accounts/profile.html:115
 msgid "Personal trainers coaching you, and your own pending requests."
 msgstr ""
 "Personliga tränare som coachar dig, och dina egna väntande förfrågningar."
 
-#: templates/accounts/profile.html:131
+#: templates/accounts/profile.html:123
 msgid "Get notified on this device when you receive a message."
 msgstr "Få en avisering på den här enheten när du får ett meddelande."
 
-#: templates/accounts/profile.html:140
+#: templates/accounts/profile.html:132
 msgid "Push notifications aren't supported in this browser."
 msgstr "Push-aviseringar stöds inte i den här webbläsaren."
 
-#: templates/accounts/profile.html:144
+#: templates/accounts/profile.html:136
 msgid "Enable notifications on this device"
 msgstr "Aktivera aviseringar på den här enheten"
 
-#: templates/accounts/profile.html:148
+#: templates/accounts/profile.html:140
 msgid "Disable notifications on this device"
 msgstr "Inaktivera aviseringar på den här enheten"
 
-#: templates/accounts/profile.html:157 templates/api/key_list.html:3
+#: templates/accounts/profile.html:149 templates/api/key_list.html:3
 #: templates/api/key_list.html:6
 msgid "API keys"
 msgstr "API-nycklar"
 
-#: templates/accounts/profile.html:158
+#: templates/accounts/profile.html:150
 msgid "Manage keys other apps can use to access your data."
 msgstr ""
 "Hantera nycklar som andra appar kan använda för att komma åt dina data."
 
-#: templates/accounts/profile.html:166
+#: templates/accounts/profile.html:158
 msgid "Browse everything you've logged, or download it as JSON, CSV, or HTML."
 msgstr ""
 "Bläddra bland allt du har loggat, eller ladda ner det som JSON, CSV eller "
 "HTML."
 
-#: templates/accounts/profile.html:172
+#: templates/accounts/profile.html:164
 msgid "Support"
 msgstr "Support"
 
-#: templates/accounts/profile.html:176 templates/accounts/profile.html:204
+#: templates/accounts/profile.html:168 templates/accounts/profile.html:196
 #: templates/core/feedback_form.html:3 templates/core/feedback_form.html:6
 #: templates/core/feedback_list.html:3 templates/core/feedback_list.html:6
 msgid "Feedback"
 msgstr "Feedback"
 
-#: templates/accounts/profile.html:177
+#: templates/accounts/profile.html:169
 msgid "Report a bug, request something, or tell us what's confusing."
 msgstr ""
 "Rapportera en bugg, önska något, eller berätta vad som känns förvirrande."
 
-#: templates/accounts/profile.html:189
+#: templates/accounts/profile.html:181
 msgid "Manage tiers, keys, and reference data across the whole instance."
 msgstr "Hantera nivåer, nycklar och referensdata över hela instansen."
 
-#: templates/accounts/profile.html:196 templates/core/backup_list.html:3
+#: templates/accounts/profile.html:188 templates/core/backup_list.html:3
 #: templates/core/backup_list.html:6
 msgid "Backups"
 msgstr "Säkerhetskopior"
 
-#: templates/accounts/profile.html:197
+#: templates/accounts/profile.html:189
 msgid "Create, download, and restore full backups of this instance."
 msgstr ""
 "Skapa, ladda ner och återställ fullständiga säkerhetskopior av den här "
 "instansen."
 
-#: templates/accounts/profile.html:205
+#: templates/accounts/profile.html:197
 msgid "Read what users have submitted, and turn submissions on or off."
 msgstr "Läs vad användare har skickat in, och slå på eller av inskickning."
 
-#: templates/accounts/profile.html:212 templates/core/seo_settings.html:3
+#: templates/accounts/profile.html:204 templates/core/seo_settings.html:3
 #: templates/core/seo_settings.html:6
 msgid "Site & SEO"
 msgstr "Webbplats och SEO"
 
-#: templates/accounts/profile.html:213
+#: templates/accounts/profile.html:205
 msgid "Control whether search engines are allowed to index this instance."
 msgstr "Styr om sökmotorer får indexera denna instans."
 
-#: templates/accounts/profile.html:224
+#: templates/accounts/profile.html:216
 msgid "Permanently delete your account and everything tied to it."
 msgstr "Radera ditt konto och allt kopplat till det permanent."
 
-#: templates/accounts/profile.html:232
+#: templates/accounts/profile.html:224
 msgid "Log out"
 msgstr "Logga ut"
 
-#: templates/accounts/profile.html:254
+#: templates/accounts/profile.html:246
 msgid "Source on GitHub"
 msgstr "Källkod på GitHub"
 
-#: templates/accounts/profile.html:259
+#: templates/accounts/profile.html:251
 #, python-format
 msgid "IronStack version %(version)s"
 msgstr "IronStack version %(version)s"
 
-#: templates/accounts/profile.html:264 templates/accounts/profile.html:267
+#: templates/accounts/profile.html:256 templates/accounts/profile.html:259
 msgid "Changelog"
 msgstr "Ändringslogg"
 
-#: templates/accounts/signup.html:3 templates/accounts/signup.html:15
+#: templates/accounts/signup.html:3 templates/accounts/signup.html:13
 msgid "Sign up"
 msgstr "Registrera dig"
 
@@ -4110,11 +4118,11 @@ msgstr "Registrera dig"
 msgid "Create your account"
 msgstr "Skapa ditt konto"
 
-#: templates/accounts/signup.html:17
+#: templates/accounts/signup.html:15
 msgid "Already have an account?"
 msgstr "Har du redan ett konto?"
 
-#: templates/accounts/signup.html:17 templates/registration/login.html:3
+#: templates/accounts/signup.html:15 templates/registration/login.html:3
 #: templates/registration/login.html:6 templates/registration/login.html:18
 #: templates/registration/password_reset_complete.html:13
 #: templates/social/group_invite_join.html:29
@@ -4221,76 +4229,76 @@ msgstr "Redigera %(name)s"
 msgid "Back to %(name)s"
 msgstr "Tillbaka till %(name)s"
 
-#: templates/activities/activity_history.html:10
-#: templates/exercises/exercise_detail.html:16
-#: templates/measurements/measurement_history.html:10
+#: templates/activities/activity_history.html:12
+#: templates/exercises/exercise_detail.html:18
+#: templates/measurements/measurement_history.html:12
 msgid "Inactive"
 msgstr "Inaktiv"
 
-#: templates/activities/activity_history.html:17
+#: templates/activities/activity_history.html:19
 #, python-format
 msgid "%(count)s logged · total duration %(total_duration)s"
 msgstr "%(count)s loggade · total varaktighet %(total_duration)s"
 
-#: templates/activities/activity_history.html:18
+#: templates/activities/activity_history.html:20
 #, python-format
 msgid "total distance %(distance)s %(unit)s"
 msgstr "total distans %(distance)s %(unit)s"
 
-#: templates/activities/activity_history.html:19
+#: templates/activities/activity_history.html:21
 #, python-format
 msgid "total calories %(calories)s"
 msgstr "totalt kalorier %(calories)s"
 
-#: templates/activities/activity_history.html:25
+#: templates/activities/activity_history.html:27
 msgid "Duration trend"
 msgstr "Varaktighetstrend"
 
-#: templates/activities/activity_history.html:26
-#: templates/activities/activity_history.html:43
+#: templates/activities/activity_history.html:28
+#: templates/activities/activity_history.html:45
 msgid "Duration"
 msgstr "Varaktighet"
 
-#: templates/activities/activity_history.html:27
+#: templates/activities/activity_history.html:29
 msgid "min"
 msgstr "min"
 
-#: templates/activities/activity_history.html:37
+#: templates/activities/activity_history.html:39
 msgid "Log activity"
 msgstr "Logga aktivitet"
 
-#: templates/activities/activity_history.html:43
-#: templates/measurements/measurement_history.html:52
+#: templates/activities/activity_history.html:45
+#: templates/measurements/measurement_history.html:54
 msgid "Date"
 msgstr "Datum"
 
-#: templates/activities/activity_history.html:43
+#: templates/activities/activity_history.html:45
 msgid "Distance"
 msgstr "Distans"
 
-#: templates/activities/activity_history.html:52
-#: templates/exercises/exercise_detail.html:10
-#: templates/measurements/measurement_history.html:60
+#: templates/activities/activity_history.html:54
+#: templates/exercises/exercise_detail.html:12
+#: templates/measurements/measurement_history.html:62
 #: templates/nutrition/diary_day.html:65
-#: templates/nutrition/recipe_detail.html:10
-#: templates/nutrition/recipe_detail.html:37
-#: templates/programs/program_detail.html:10
-#: templates/programs/program_detail.html:47
-#: templates/programs/program_detail.html:64
+#: templates/nutrition/recipe_detail.html:13
+#: templates/nutrition/recipe_detail.html:40
+#: templates/programs/program_detail.html:12
+#: templates/programs/program_detail.html:49
+#: templates/programs/program_detail.html:66
 #: templates/social/group_detail.html:10
 #: templates/workouts/_performed_exercise_card.html:24
 msgid "Edit"
 msgstr "Redigera"
 
-#: templates/activities/activity_history.html:53
+#: templates/activities/activity_history.html:55
 msgid "Delete this activity?"
 msgstr "Ta bort denna aktivitet?"
 
-#: templates/activities/activity_history.html:60
+#: templates/activities/activity_history.html:62
 msgid "No activities logged yet."
 msgstr "Inga aktiviteter loggade ännu."
 
-#: templates/activities/activity_history.html:68
+#: templates/activities/activity_history.html:70
 msgid ""
 "Deactivate this activity type? It will no longer appear when logging new "
 "activities."
@@ -4298,12 +4306,12 @@ msgstr ""
 "Inaktivera denna aktivitetstyp? Den visas inte längre när du loggar nya "
 "aktiviteter."
 
-#: templates/activities/activity_history.html:70
-#: templates/measurements/measurement_history.html:78
+#: templates/activities/activity_history.html:72
+#: templates/measurements/measurement_history.html:80
 msgid "Deactivate type"
 msgstr "Inaktivera typ"
 
-#: templates/activities/activity_history.html:74
+#: templates/activities/activity_history.html:76
 #: templates/activities/activity_type_form.html:18
 msgid "Back to activities"
 msgstr "Tillbaka till aktiviteter"
@@ -4374,11 +4382,11 @@ msgstr "Märke"
 #: templates/admin/nutrition/food/merge.html:17
 #: templates/nutrition/_diet_plan_totals_widget.html:40
 #: templates/nutrition/_food_list_results.html:17
-#: templates/nutrition/dashboard.html:30 templates/nutrition/dashboard.html:57
+#: templates/nutrition/dashboard.html:30 templates/nutrition/dashboard.html:60
 #: templates/nutrition/diary_day.html:30
-#: templates/nutrition/food_detail.html:26
-#: templates/nutrition/food_list.html:76
-#: templates/nutrition/recipe_detail.html:61
+#: templates/nutrition/food_detail.html:29
+#: templates/nutrition/food_list.html:78
+#: templates/nutrition/recipe_detail.html:64
 msgid "Calories"
 msgstr "Kalorier"
 
@@ -4451,7 +4459,7 @@ msgstr "Ingen data i detta intervall."
 
 #: templates/analytics/dashboard.html:53
 #: templates/analytics/member_profile.html:42
-#: templates/coaching/client_detail.html:33 templates/core/dashboard.html:62
+#: templates/coaching/client_detail.html:33 templates/core/dashboard.html:67
 msgid "Recent"
 msgstr "Senaste"
 
@@ -4460,8 +4468,8 @@ msgstr "Senaste"
 #: templates/analytics/member_profile.html:42
 #: templates/analytics/member_profile.html:46
 #: templates/coaching/client_detail.html:33
-#: templates/coaching/client_detail.html:37 templates/core/dashboard.html:62
-#: templates/exercises/exercise_detail.html:90
+#: templates/coaching/client_detail.html:37 templates/core/dashboard.html:67
+#: templates/exercises/exercise_detail.html:88
 #: templates/records/exercise_records.html:11
 msgid "Personal Records"
 msgstr "Personliga rekord"
@@ -4487,7 +4495,7 @@ msgid "Sessions"
 msgstr "Pass"
 
 #: templates/analytics/exercise_analytics.html:19
-#: templates/exercises/exercise_detail.html:96
+#: templates/exercises/exercise_detail.html:94
 #: templates/records/_pr_toasts.html:38
 #: templates/records/exercise_records.html:16
 msgid "Estimated"
@@ -4540,10 +4548,6 @@ msgstr "Inga slutförda träningspass än."
 msgid "yet."
 msgstr "än."
 
-#: templates/analytics/member_profile.html:49
-msgid "Back to home"
-msgstr "Tillbaka till hem"
-
 #: templates/api/key_created.html:3 templates/api/key_created.html:6
 msgid "API key created"
 msgstr "API-nyckel skapad"
@@ -4560,7 +4564,7 @@ msgstr "Din nya API-nyckel"
 msgid "New API key"
 msgstr "Ny API-nyckel"
 
-#: templates/api/key_form.html:19
+#: templates/api/key_form.html:14
 msgid ""
 "Choose exactly what this key is allowed to do, per resource — leave "
 "everything unchecked for a context to block it entirely."
@@ -4568,15 +4572,15 @@ msgstr ""
 "Välj exakt vad den här nyckeln får göra, per resurs — lämna allt omarkerat "
 "för att blockera en resurs helt."
 
-#: templates/api/key_form.html:24
+#: templates/api/key_form.html:19
 msgid "Context"
 msgstr "Kontext"
 
-#: templates/api/key_form.html:39
+#: templates/api/key_form.html:34
 msgid "Create key"
 msgstr "Skapa nyckel"
 
-#: templates/api/key_form.html:42
+#: templates/api/key_form.html:37
 msgid "Back to API keys"
 msgstr "Tillbaka till API-nycklar"
 
@@ -4974,6 +4978,7 @@ msgstr "Inga delade program än."
 
 #: templates/coaching/shared_plan_list.html:29
 #: templates/nutrition/_subnav.html:49
+#: templates/nutrition/diet_plan_detail.html:6
 #: templates/nutrition/diet_plan_list.html:3
 #: templates/nutrition/diet_plan_list.html:6
 msgid "Diet plans"
@@ -5064,6 +5069,10 @@ msgstr "under %(high)s %(unit)s"
 msgid "%(low)s %(unit)s and above"
 msgstr "%(low)s %(unit)s och över"
 
+#: templates/core/_breadcrumbs.html:9
+msgid "Breadcrumb"
+msgstr "Sökväg"
+
 #: templates/core/_chart.html:30
 #, python-format
 msgid "%(title)s trend over time, %(counter)s reading"
@@ -5079,7 +5088,7 @@ msgstr "Åtgärda följande:"
 msgid "Pagination"
 msgstr "Sidnumrering"
 
-#: templates/core/_pagination.html:11 templates/core/feedback_list.html:44
+#: templates/core/_pagination.html:11 templates/core/feedback_list.html:36
 #: templates/nutrition/_food_list_results.html:65
 #: templates/nutrition/recipe_list.html:40
 #: templates/nutrition/recipe_list.html:77
@@ -5091,7 +5100,7 @@ msgstr "Föregående"
 msgid "Page %(n)s of %(total)s"
 msgstr "Sida %(n)s av %(total)s"
 
-#: templates/core/_pagination.html:15 templates/core/feedback_list.html:48
+#: templates/core/_pagination.html:15 templates/core/feedback_list.html:40
 #: templates/nutrition/_food_list_results.html:69
 #: templates/nutrition/recipe_list.html:44
 #: templates/nutrition/recipe_list.html:81
@@ -5146,10 +5155,37 @@ msgid "This can take a minute — please keep this page open."
 msgstr "Detta kan ta en minut — låt sidan vara öppen."
 
 #: templates/core/backup_list.html:17
+msgid "Automatic backups"
+msgstr "Automatiska säkerhetskopior"
+
+#: templates/core/backup_list.html:24
+#, python-format
+msgid "▾ Show %(counter)s earlier automatic backup"
+msgid_plural "▾ Show %(counter)s earlier automatic backups"
+msgstr[0] "▾ Visa %(counter)s tidigare automatisk säkerhetskopia"
+msgstr[1] "▾ Visa %(counter)s tidigare automatiska säkerhetskopior"
+
+#: templates/core/backup_list.html:25
+msgid "Hide earlier automatic backups"
+msgstr "Dölj tidigare automatiska säkerhetskopior"
+
+#: templates/core/backup_list.html:36
+msgid "No automatic backups yet."
+msgstr "Inga automatiska säkerhetskopior ännu."
+
+#: templates/core/backup_list.html:40
+msgid "Manual & uploaded backups"
+msgstr "Manuella och uppladdade säkerhetskopior"
+
+#: templates/core/backup_list.html:47
+msgid "No manual or uploaded backups yet."
+msgstr "Inga manuella eller uppladdade säkerhetskopior ännu."
+
+#: templates/core/backup_list.html:51
 msgid "Upload backup"
 msgstr "Ladda upp säkerhetskopia"
 
-#: templates/core/backup_list.html:21
+#: templates/core/backup_list.html:55
 msgid ""
 "Restore from a backup file you downloaded earlier, instead of one already "
 "listed below."
@@ -5157,45 +5193,18 @@ msgstr ""
 "Återställ från en säkerhetskopia du laddade ner tidigare, istället för en "
 "som redan listas nedan."
 
-#: templates/core/backup_list.html:26
+#: templates/core/backup_list.html:60
 msgid "Upload and continue"
 msgstr "Ladda upp och fortsätt"
 
-#: templates/core/backup_list.html:29 templates/core/feedback_list.html:9
+#: templates/core/backup_list.html:63 templates/core/feedback_list.html:9
 msgid "Settings"
 msgstr "Inställningar"
 
-#: templates/core/backup_list.html:49 templates/core/feedback_list.html:24
-#: templates/core/seo_settings.html:23
+#: templates/core/backup_list.html:71 templates/core/feedback_list.html:16
+#: templates/core/seo_settings.html:15
 msgid "Save settings"
 msgstr "Spara inställningar"
-
-#: templates/core/backup_list.html:52
-msgid "Automatic backups"
-msgstr "Automatiska säkerhetskopior"
-
-#: templates/core/backup_list.html:59
-#, python-format
-msgid "▾ Show %(counter)s earlier automatic backup"
-msgid_plural "▾ Show %(counter)s earlier automatic backups"
-msgstr[0] "▾ Visa %(counter)s tidigare automatisk säkerhetskopia"
-msgstr[1] "▾ Visa %(counter)s tidigare automatiska säkerhetskopior"
-
-#: templates/core/backup_list.html:60
-msgid "Hide earlier automatic backups"
-msgstr "Dölj tidigare automatiska säkerhetskopior"
-
-#: templates/core/backup_list.html:71
-msgid "No automatic backups yet."
-msgstr "Inga automatiska säkerhetskopior ännu."
-
-#: templates/core/backup_list.html:75
-msgid "Manual & uploaded backups"
-msgstr "Manuella och uppladdade säkerhetskopior"
-
-#: templates/core/backup_list.html:82
-msgid "No manual or uploaded backups yet."
-msgstr "Inga manuella eller uppladdade säkerhetskopior ännu."
 
 #: templates/core/backup_restore_confirm.html:3
 #: templates/core/backup_restore_confirm.html:6
@@ -5283,7 +5292,8 @@ msgstr "Fortsätt träningspass"
 
 #: templates/core/dashboard.html:24 templates/workouts/session_detail.html:3
 #: templates/workouts/session_detail.html:6
-#: templates/workouts/session_list.html:18
+#: templates/workouts/session_detail.html:9
+#: templates/workouts/session_list.html:12
 #: templates/workouts/session_train.html:6
 msgid "Freeform workout"
 msgstr "Fritt träningspass"
@@ -5301,27 +5311,27 @@ msgstr "Inget pågående träningspass."
 msgid "Start one from a program, or log a freeform workout."
 msgstr "Starta ett från ett program, eller logga ett fritt träningspass."
 
-#: templates/core/dashboard.html:35 templates/workouts/session_list.html:10
+#: templates/core/dashboard.html:35 templates/workouts/session_list.html:36
 msgid "Start freeform workout"
 msgstr "Starta fritt träningspass"
 
-#: templates/core/dashboard.html:37
-msgid "Choose a program"
-msgstr "Välj ett program"
-
-#: templates/core/dashboard.html:45
+#: templates/core/dashboard.html:44
 msgid "This week's workouts"
 msgstr "Denna veckas pass"
 
-#: templates/core/dashboard.html:46
+#: templates/core/dashboard.html:45
 msgid "This week's volume"
 msgstr "Denna veckas volym"
 
 #: templates/core/dashboard.html:56
+msgid "Log body weight"
+msgstr "Logga kroppsvikt"
+
+#: templates/core/dashboard.html:61
 msgid "Time to log your body measurements?"
 msgstr "Dags att logga dina kroppsmått?"
 
-#: templates/core/dashboard.html:57
+#: templates/core/dashboard.html:62
 msgid ""
 "It's been a while since you tracked your weight or measurements — tap here "
 "to add a new reading."
@@ -5329,47 +5339,48 @@ msgstr ""
 "Det var ett tag sedan du loggade din vikt eller dina mått — tryck här för "
 "att lägga till en ny mätning."
 
-#: templates/core/dashboard.html:69
+#: templates/core/dashboard.html:74
 msgid "Achievements"
 msgstr "Prestationer"
 
-#: templates/core/dashboard.html:97
+#: templates/core/dashboard.html:102
 #, python-format
 msgid "Show achievement %(position)s"
 msgstr "Visa prestation %(position)s"
 
-#: templates/core/dashboard.html:106
+#: templates/core/dashboard.html:111
 msgid "Recently active"
 msgstr "Senast aktiva"
 
-#: templates/core/dashboard.html:113
+#: templates/core/dashboard.html:118
 msgid "Training now"
 msgstr "Tränar just nu"
 
-#: templates/core/dashboard.html:113
+#: templates/core/dashboard.html:118
 #, python-format
 msgid "%(time)s ago"
 msgstr "%(time)s sedan"
 
-#: templates/core/dashboard.html:122
+#: templates/core/dashboard.html:127
 msgid "Browse exercises"
 msgstr "Bläddra bland övningar"
 
-#: templates/core/dashboard.html:123
+#: templates/core/dashboard.html:128
 msgid "Explore the exercise library or add your own."
 msgstr "Utforska övningsbiblioteket eller lägg till din egen."
 
-#: templates/core/dashboard.html:127
+#: templates/core/dashboard.html:132
+#: templates/measurements/measurement_history.html:5
 #: templates/measurements/measurement_type_list.html:3
 #: templates/measurements/measurement_type_list.html:6
 msgid "Body tracking"
 msgstr "Kroppsspårning"
 
-#: templates/core/dashboard.html:128
+#: templates/core/dashboard.html:133
 msgid "Log body weight, measurements, and trends."
 msgstr "Logga kroppsvikt, mått och trender."
 
-#: templates/core/dashboard.html:133
+#: templates/core/dashboard.html:138
 msgid "Log a run, ride, or any other non-gym activity."
 msgstr "Logga en löprunda, cykeltur eller annan aktivitet utanför gymmet."
 
@@ -5385,11 +5396,11 @@ msgstr ""
 msgid "Send feedback"
 msgstr "Skicka feedback"
 
-#: templates/core/feedback_list.html:27
+#: templates/core/feedback_list.html:19
 msgid "Submissions"
 msgstr "Inskickade"
 
-#: templates/core/feedback_list.html:46
+#: templates/core/feedback_list.html:38
 #: templates/nutrition/_food_list_results.html:67
 #: templates/nutrition/recipe_list.html:42
 #: templates/nutrition/recipe_list.html:79
@@ -5397,7 +5408,7 @@ msgstr "Inskickade"
 msgid "Page %(number)s of %(total)s"
 msgstr "Sida %(number)s av %(total)s"
 
-#: templates/core/feedback_list.html:54
+#: templates/core/feedback_list.html:46
 msgid "No feedback yet."
 msgstr "Ingen feedback ännu."
 
@@ -5409,47 +5420,47 @@ msgstr "Inga övningar matchar din sökning."
 msgid "Try a different search term or clear the muscle group filter."
 msgstr "Prova ett annat sökord eller rensa muskelgruppsfiltret."
 
-#: templates/exercises/exercise_detail.html:21
+#: templates/exercises/exercise_detail.html:23
 msgid "Movement type"
 msgstr "Rörelsetyp"
 
-#: templates/exercises/exercise_detail.html:24
+#: templates/exercises/exercise_detail.html:26
 msgid "Weight logging"
 msgstr "Viktloggning"
 
-#: templates/exercises/exercise_detail.html:28
+#: templates/exercises/exercise_detail.html:30
 msgid "Equipment"
 msgstr "Utrustning"
 
-#: templates/exercises/exercise_detail.html:33
+#: templates/exercises/exercise_detail.html:35
 msgid "Primary muscles"
 msgstr "Primära muskler"
 
-#: templates/exercises/exercise_detail.html:38
+#: templates/exercises/exercise_detail.html:40
 msgid "Secondary muscles"
 msgstr "Sekundära muskler"
 
-#: templates/exercises/exercise_detail.html:46
+#: templates/exercises/exercise_detail.html:48
 msgid "Instructions"
 msgstr "Instruktioner"
 
-#: templates/exercises/exercise_detail.html:59
+#: templates/exercises/exercise_detail.html:61
 msgid "Remove this image?"
 msgstr "Ta bort den här bilden?"
 
-#: templates/exercises/exercise_detail.html:61
+#: templates/exercises/exercise_detail.html:63
 #: templates/nutrition/_diet_plan_meal_card.html:25
-#: templates/nutrition/recipe_detail.html:41
-#: templates/social/friend_list.html:62 templates/social/group_detail.html:96
-#: templates/social/group_detail.html:108
+#: templates/nutrition/recipe_detail.html:44
+#: templates/social/friend_list.html:62 templates/social/group_detail.html:93
+#: templates/social/group_detail.html:105
 msgid "Remove"
 msgstr "Ta bort"
 
-#: templates/exercises/exercise_detail.html:80
+#: templates/exercises/exercise_detail.html:78
 msgid "Add image"
 msgstr "Lägg till bild"
 
-#: templates/exercises/exercise_detail.html:83
+#: templates/exercises/exercise_detail.html:81
 #, python-format
 msgid ""
 "This exercise already has the maximum number of images "
@@ -5458,23 +5469,23 @@ msgstr ""
 "Denna övning har redan det maximala antalet bilder "
 "(%(max_images_per_exercise)s)."
 
-#: templates/exercises/exercise_detail.html:90
+#: templates/exercises/exercise_detail.html:88
 msgid "Your"
 msgstr "Dina"
 
-#: templates/exercises/exercise_detail.html:91
+#: templates/exercises/exercise_detail.html:89
 msgid "Current personal records for this exercise."
 msgstr "Aktuella personliga rekord för denna övning."
 
-#: templates/exercises/exercise_detail.html:95
+#: templates/exercises/exercise_detail.html:93
 msgid "Strength trend"
 msgstr "Styrketrend"
 
-#: templates/exercises/exercise_detail.html:96
+#: templates/exercises/exercise_detail.html:94
 msgid "over time and training volume."
 msgstr "över tid och träningsvolym."
 
-#: templates/exercises/exercise_detail.html:100
+#: templates/exercises/exercise_detail.html:98
 msgid ""
 "Deactivate this exercise? It will no longer appear when browsing or "
 "prescribing."
@@ -5482,13 +5493,13 @@ msgstr ""
 "Inaktivera denna övning? Den visas inte längre vid bläddring eller "
 "föreskrivning."
 
-#: templates/exercises/exercise_detail.html:102
+#: templates/exercises/exercise_detail.html:100
 #: templates/nutrition/_diet_plan_card.html:14
-#: templates/nutrition/diet_plan_detail.html:13
+#: templates/nutrition/diet_plan_detail.html:16
 msgid "Deactivate"
 msgstr "Inaktivera"
 
-#: templates/exercises/exercise_detail.html:106
+#: templates/exercises/exercise_detail.html:104
 msgid "Back to exercises"
 msgstr "Tillbaka till övningar"
 
@@ -5529,65 +5540,65 @@ msgstr "Redigera mätvärde"
 msgid "Edit %(name)s reading"
 msgstr "Redigera %(name)s-mätvärde"
 
-#: templates/measurements/measurement_history.html:19
+#: templates/measurements/measurement_history.html:21
 #: templates/nutrition/_subnav.html:51 templates/nutrition/stats.html:6
 msgid "Statistics"
 msgstr "Statistik"
 
-#: templates/measurements/measurement_history.html:22
+#: templates/measurements/measurement_history.html:24
 #: templates/records/exercise_records.html:11
 msgid "Current"
 msgstr "Aktuella"
 
-#: templates/measurements/measurement_history.html:23
+#: templates/measurements/measurement_history.html:25
 msgid "Change since first log"
 msgstr "Förändring sedan första loggningen"
 
-#: templates/measurements/measurement_history.html:24
+#: templates/measurements/measurement_history.html:26
 msgid "Lowest"
 msgstr "Lägsta"
 
-#: templates/measurements/measurement_history.html:25
+#: templates/measurements/measurement_history.html:27
 msgid "Highest"
 msgstr "Högsta"
 
-#: templates/measurements/measurement_history.html:26
+#: templates/measurements/measurement_history.html:28
 msgid "Average"
 msgstr "Genomsnitt"
 
-#: templates/measurements/measurement_history.html:27
+#: templates/measurements/measurement_history.html:29
 msgid "Entries logged"
 msgstr "Loggade mätningar"
 
-#: templates/measurements/measurement_history.html:30
+#: templates/measurements/measurement_history.html:32
 #, python-format
 msgid "Tracking since %(date)s."
 msgstr "Spårat sedan %(date)s."
 
-#: templates/measurements/measurement_history.html:36
+#: templates/measurements/measurement_history.html:38
 msgid "Trend"
 msgstr "Trend"
 
-#: templates/measurements/measurement_history.html:46
+#: templates/measurements/measurement_history.html:48
 msgid "Log reading"
 msgstr "Logga mätvärde"
 
-#: templates/measurements/measurement_history.html:61
+#: templates/measurements/measurement_history.html:63
 msgid "Delete this reading?"
 msgstr "Ta bort detta mätvärde?"
 
-#: templates/measurements/measurement_history.html:68
+#: templates/measurements/measurement_history.html:70
 msgid "No readings logged yet."
 msgstr "Inga mätvärden loggade ännu."
 
-#: templates/measurements/measurement_history.html:76
+#: templates/measurements/measurement_history.html:78
 msgid ""
 "Deactivate this measurement type? It will no longer appear when logging new "
 "readings."
 msgstr ""
 "Inaktivera denna mättyp? Den visas inte längre när du loggar nya mätvärden."
 
-#: templates/measurements/measurement_history.html:82
+#: templates/measurements/measurement_history.html:84
 #: templates/measurements/measurement_type_form.html:18
 msgid "Back to body tracking"
 msgstr "Tillbaka till kroppsspårning"
@@ -5638,7 +5649,7 @@ msgid "Coach update available"
 msgstr "Coach-uppdatering tillgänglig"
 
 #: templates/nutrition/_diet_plan_card.html:14
-#: templates/nutrition/diet_plan_detail.html:15
+#: templates/nutrition/diet_plan_detail.html:18
 msgid "Activate"
 msgstr "Aktivera"
 
@@ -5682,8 +5693,8 @@ msgid "Nothing suggested yet — add some foods or recipes first."
 msgstr "Inga förslag än — lägg till livsmedel eller recept först."
 
 #: templates/nutrition/_diet_plan_meal_card.html:32
-msgid "+ Add item"
-msgstr "+ Lägg till objekt"
+msgid "Add item"
+msgstr "Lägg till objekt"
 
 #: templates/nutrition/_diet_plan_totals_widget.html:32
 msgid "Totals"
@@ -5691,31 +5702,34 @@ msgstr "Totalt"
 
 #: templates/nutrition/_diet_plan_totals_widget.html:44
 #: templates/nutrition/calculator_macros.html:24
-#: templates/nutrition/dashboard.html:34 templates/nutrition/dashboard.html:58
-#: templates/nutrition/dashboard.html:117 templates/nutrition/diary_day.html:40
-#: templates/nutrition/food_detail.html:27
+#: templates/nutrition/dashboard.html:34 templates/nutrition/dashboard.html:36
+#: templates/nutrition/dashboard.html:61 templates/nutrition/dashboard.html:120
+#: templates/nutrition/diary_day.html:40
+#: templates/nutrition/food_detail.html:30
 #: templates/nutrition/onboarding_review.html:17
-#: templates/nutrition/recipe_detail.html:62
+#: templates/nutrition/recipe_detail.html:65
 msgid "Protein"
 msgstr "Protein"
 
 #: templates/nutrition/_diet_plan_totals_widget.html:48
 #: templates/nutrition/calculator_macros.html:25
-#: templates/nutrition/dashboard.html:38 templates/nutrition/dashboard.html:59
-#: templates/nutrition/dashboard.html:118 templates/nutrition/diary_day.html:44
-#: templates/nutrition/food_detail.html:28
+#: templates/nutrition/dashboard.html:39 templates/nutrition/dashboard.html:41
+#: templates/nutrition/dashboard.html:62 templates/nutrition/dashboard.html:121
+#: templates/nutrition/diary_day.html:44
+#: templates/nutrition/food_detail.html:31
 #: templates/nutrition/onboarding_review.html:18
-#: templates/nutrition/recipe_detail.html:63
+#: templates/nutrition/recipe_detail.html:66
 msgid "Carbohydrates"
 msgstr "Kolhydrater"
 
 #: templates/nutrition/_diet_plan_totals_widget.html:52
 #: templates/nutrition/calculator_macros.html:26
-#: templates/nutrition/dashboard.html:42 templates/nutrition/dashboard.html:60
-#: templates/nutrition/dashboard.html:119 templates/nutrition/diary_day.html:48
-#: templates/nutrition/food_detail.html:29
+#: templates/nutrition/dashboard.html:44 templates/nutrition/dashboard.html:46
+#: templates/nutrition/dashboard.html:63 templates/nutrition/dashboard.html:122
+#: templates/nutrition/diary_day.html:48
+#: templates/nutrition/food_detail.html:32
 #: templates/nutrition/onboarding_review.html:19
-#: templates/nutrition/recipe_detail.html:64
+#: templates/nutrition/recipe_detail.html:67
 msgid "Fat"
 msgstr "Fett"
 
@@ -5750,6 +5764,7 @@ msgid "Quantity"
 msgstr "Mängd"
 
 #: templates/nutrition/_food_search_results.html:39
+#: templates/nutrition/_most_used_foods.html:47
 #: templates/workouts/performed_exercise_form.html:15
 msgid "Add"
 msgstr "Lägg till"
@@ -5835,10 +5850,6 @@ msgstr "Tryck på en dag för mer information."
 msgid "Most used"
 msgstr "Mest använda"
 
-#: templates/nutrition/_most_used_foods.html:47
-msgid "+ Add"
-msgstr "+ Lägg till"
-
 #: templates/nutrition/_nutri_score_badge.html:3
 #, python-format
 msgid "Nutri-Score %(grade)s"
@@ -5861,12 +5872,13 @@ msgstr "Översikt"
 msgid "Diary"
 msgstr "Dagbok"
 
-#: templates/nutrition/_subnav.html:47 templates/nutrition/food_list.html:3
-#: templates/nutrition/food_list.html:6
+#: templates/nutrition/_subnav.html:47 templates/nutrition/food_detail.html:6
+#: templates/nutrition/food_list.html:3 templates/nutrition/food_list.html:6
 msgid "Foods"
 msgstr "Livsmedel"
 
-#: templates/nutrition/_subnav.html:48 templates/nutrition/recipe_list.html:3
+#: templates/nutrition/_subnav.html:48 templates/nutrition/recipe_detail.html:6
+#: templates/nutrition/recipe_list.html:3
 #: templates/nutrition/recipe_list.html:6
 msgid "Recipes"
 msgstr "Recept"
@@ -5920,7 +5932,7 @@ msgid "Result"
 msgstr "Resultat"
 
 #: templates/nutrition/calculator_bmi.html:28
-#: templates/nutrition/food_detail.html:64
+#: templates/nutrition/food_detail.html:67
 msgid "Categories"
 msgstr "Kategorier"
 
@@ -6116,7 +6128,7 @@ msgstr "Vid en vald veckotakt, ungefär hur lång tid det tar att nå en målvik
 #: templates/nutrition/calculators_home.html:67
 #: templates/nutrition/diary_day.html:100
 #: templates/nutrition/diet_plan_list.html:30
-#: templates/nutrition/food_list.html:88 templates/nutrition/goal_edit.html:31
+#: templates/nutrition/food_list.html:90 templates/nutrition/goal_edit.html:31
 #: templates/nutrition/recipe_list.html:90 templates/nutrition/stats.html:44
 msgid "Back to nutrition"
 msgstr "Tillbaka till näring"
@@ -6141,87 +6153,91 @@ msgstr "Hittills idag"
 msgid "Calories eaten today, as a share of your daily target"
 msgstr "Dagens intagna kalorier som andel av ditt dagsmål"
 
-#: templates/nutrition/dashboard.html:47
-msgid "+ Log food now"
-msgstr "+ Logga mat nu"
+#: templates/nutrition/dashboard.html:50
+msgid "Log food now"
+msgstr "Logga mat nu"
 
-#: templates/nutrition/dashboard.html:48
+#: templates/nutrition/dashboard.html:51
 msgid "Open food diary"
 msgstr "Öppna matdagbok"
 
-#: templates/nutrition/dashboard.html:53
+#: templates/nutrition/dashboard.html:56
 msgid "Today's plan"
 msgstr "Dagens plan"
 
-#: templates/nutrition/dashboard.html:66
+#: templates/nutrition/dashboard.html:69
 msgid "Nothing planned"
 msgstr "Inget planerat"
 
-#: templates/nutrition/dashboard.html:69
+#: templates/nutrition/dashboard.html:72
 msgid "Open plan"
 msgstr "Öppna plan"
 
-#: templates/nutrition/dashboard.html:76
+#: templates/nutrition/dashboard.html:79
 msgid "Is your current target working?"
 msgstr "Fungerar ditt nuvarande mål?"
 
-#: templates/nutrition/dashboard.html:79
+#: templates/nutrition/dashboard.html:82
 #: templates/workouts/_performed_exercise_card.html:52
+#: templates/workouts/_train_panel.html:60
 msgid "High confidence"
 msgstr "Hög tillförlitlighet"
 
-#: templates/nutrition/dashboard.html:80
+#: templates/nutrition/dashboard.html:83
 #: templates/workouts/_performed_exercise_card.html:51
+#: templates/workouts/_train_panel.html:59
 msgid "Medium confidence"
 msgstr "Medelhög tillförlitlighet"
 
-#: templates/nutrition/dashboard.html:81
+#: templates/nutrition/dashboard.html:84
 #: templates/workouts/_performed_exercise_card.html:50
+#: templates/workouts/_train_panel.html:58
 msgid "Low confidence"
 msgstr "Låg tillförlitlighet"
 
-#: templates/nutrition/dashboard.html:86
+#: templates/nutrition/dashboard.html:89
 #, python-format
 msgid "Adjust to %(calories)s kcal/day"
 msgstr "Justera till %(calories)s kcal/dag"
 
-#: templates/nutrition/dashboard.html:103
+#: templates/nutrition/dashboard.html:106
 msgid "Weight trend"
 msgstr "Vikttrend"
 
-#: templates/nutrition/dashboard.html:111
+#: templates/nutrition/dashboard.html:114
 msgid "Daily target"
 msgstr "Dagligt mål"
 
-#: templates/nutrition/dashboard.html:113
+#: templates/nutrition/dashboard.html:116
 #: templates/nutrition/onboarding_review.html:13
 #, python-format
 msgid "%(calories)s kcal/day"
 msgstr "%(calories)s kcal/dag"
 
-#: templates/nutrition/dashboard.html:128
+#: templates/nutrition/dashboard.html:131
 msgid "Current goal"
 msgstr "Nuvarande mål"
 
-#: templates/nutrition/dashboard.html:130 templates/nutrition/goal_edit.html:3
+#: templates/nutrition/dashboard.html:133 templates/nutrition/goal_edit.html:3
 #: templates/nutrition/goal_edit.html:6
 msgid "Change goal"
 msgstr "Ändra mål"
 
 #: templates/nutrition/diary_add_entry.html:3
 #: templates/nutrition/diary_add_entry.html:6
+#: templates/nutrition/diary_day.html:77
 msgid "Add food"
 msgstr "Lägg till livsmedel"
 
 #: templates/nutrition/diary_add_entry.html:64
 #: templates/nutrition/diet_plan_meal_item_form.html:24
 #: templates/nutrition/food_browse.html:33
-#: templates/nutrition/food_list.html:32
+#: templates/nutrition/food_list.html:33
 #: templates/nutrition/recipe_ingredient_form.html:24
 msgid "e.g. chicken breast, or a barcode number"
 msgstr "t.ex. kycklingfilé eller ett streckkodsnummer"
 
-#: templates/nutrition/diary_add_entry.html:74
+#: templates/nutrition/diary_add_entry.html:75
 #: templates/nutrition/diary_entry_form.html:19
 msgid "Back to diary"
 msgstr "Tillbaka till dagboken"
@@ -6258,10 +6274,6 @@ msgstr "Ta bort denna post?"
 msgid "Nothing logged yet."
 msgstr "Inget loggat än."
 
-#: templates/nutrition/diary_day.html:77
-msgid "+ Add food"
-msgstr "+ Lägg till livsmedel"
-
 #: templates/nutrition/diary_day.html:81
 msgid "Save as recipe"
 msgstr "Spara som recept"
@@ -6286,40 +6298,40 @@ msgstr "Hantera livsmedel"
 msgid "Edit entry"
 msgstr "Redigera post"
 
-#: templates/nutrition/diet_plan_detail.html:18
-#: templates/nutrition/recipe_detail.html:14
-#: templates/programs/program_detail.html:12
+#: templates/nutrition/diet_plan_detail.html:21
+#: templates/nutrition/recipe_detail.html:17
+#: templates/programs/program_detail.html:14
 msgid "Export"
 msgstr "Exportera"
 
-#: templates/nutrition/diet_plan_detail.html:21
+#: templates/nutrition/diet_plan_detail.html:24
 msgid "Sharing"
 msgstr "Delas"
 
-#: templates/nutrition/diet_plan_detail.html:21
+#: templates/nutrition/diet_plan_detail.html:24
 #: templates/nutrition/diet_plan_share_form.html:3
 #: templates/nutrition/diet_plan_share_form.html:6
 msgid "Share"
 msgstr "Dela"
 
-#: templates/nutrition/diet_plan_detail.html:25
-#: templates/programs/program_detail.html:14
+#: templates/nutrition/diet_plan_detail.html:28
+#: templates/programs/program_detail.html:16
 msgid "Check for coach update"
 msgstr "Sök efter coach-uppdatering"
 
-#: templates/nutrition/diet_plan_detail.html:29
+#: templates/nutrition/diet_plan_detail.html:32
 msgid "protein"
 msgstr "protein"
 
-#: templates/nutrition/diet_plan_detail.html:29
+#: templates/nutrition/diet_plan_detail.html:32
 msgid "carbs"
 msgstr "kolhydrater"
 
-#: templates/nutrition/diet_plan_detail.html:29
+#: templates/nutrition/diet_plan_detail.html:32
 msgid "fat"
 msgstr "fett"
 
-#: templates/nutrition/diet_plan_detail.html:31
+#: templates/nutrition/diet_plan_detail.html:34
 msgid ""
 "Varies across the week — same daily calories/macros every day, different "
 "meals."
@@ -6327,18 +6339,19 @@ msgstr ""
 "Varierar under veckan — samma dagliga kalorier/makron varje dag, olika "
 "måltider."
 
-#: templates/nutrition/diet_plan_detail.html:77
+#: templates/nutrition/diet_plan_detail.html:80
 msgid "Log this plan to your diary"
 msgstr "Logga denna plan till din dagbok"
 
-#: templates/nutrition/diet_plan_detail.html:79
+#: templates/nutrition/diet_plan_detail.html:82
 msgid "Logs whichever day of the week the date below falls on."
 msgstr "Loggar den veckodag som datumet nedan infaller på."
 
 #: templates/nutrition/diet_plan_detail.html:87
-#: templates/nutrition/recipe_detail.html:91
-msgid "Log it"
-msgstr "Logga"
+#: templates/nutrition/recipe_detail.html:89
+#: templates/nutrition/recipe_detail.html:94
+msgid "Log to diary"
+msgstr "Logga till dagbok"
 
 #: templates/nutrition/diet_plan_detail.html:90
 #: templates/nutrition/diet_plan_form.html:20
@@ -6402,14 +6415,14 @@ msgid "Swap item"
 msgstr "Byt objekt"
 
 #: templates/nutrition/diet_plan_item_form.html:19
-#: templates/nutrition/diet_plan_meal_item_form.html:33
-#: templates/nutrition/diet_plan_share_form.html:24
+#: templates/nutrition/diet_plan_meal_item_form.html:34
+#: templates/nutrition/diet_plan_share_form.html:19
 msgid "Back to plan"
 msgstr "Tillbaka till plan"
 
 #: templates/nutrition/diet_plan_list.html:9
-msgid "+ New plan"
-msgstr "+ Ny plan"
+msgid "New plan"
+msgstr "Ny plan"
 
 #: templates/nutrition/diet_plan_list.html:14
 msgid "My diet plans"
@@ -6430,7 +6443,7 @@ msgstr "Från min coach"
 msgid "Add item to %(name)s"
 msgstr "Lägg till objekt i %(name)s"
 
-#: templates/nutrition/diet_plan_share_form.html:19
+#: templates/nutrition/diet_plan_share_form.html:14
 #: templates/programs/program_form.html:15
 msgid "You don't have any active coaching clients yet."
 msgstr "Du har inga aktiva coachningsklienter än."
@@ -6460,12 +6473,12 @@ msgstr ""
 "helst på den här instansen kan sedan hitta och logga det. Kategorisökning är "
 "inte tillgänglig just nu."
 
-#: templates/nutrition/food_browse.html:41
+#: templates/nutrition/food_browse.html:42
 msgid "Browse by category"
 msgstr "Bläddra efter kategori"
 
-#: templates/nutrition/food_browse.html:49
-#: templates/nutrition/food_detail.html:89
+#: templates/nutrition/food_browse.html:50
+#: templates/nutrition/food_detail.html:92
 #: templates/nutrition/food_form.html:19
 msgid "Back to foods"
 msgstr "Tillbaka till livsmedel"
@@ -6478,86 +6491,87 @@ msgstr "Inget hittades i denna kategori just nu."
 msgid "Back to browse"
 msgstr "Tillbaka till bläddring"
 
-#: templates/nutrition/food_detail.html:15
+#: templates/nutrition/food_detail.html:18
 msgid "No photo for this product yet."
 msgstr "Ingen bild för denna produkt ännu."
 
-#: templates/nutrition/food_detail.html:16
+#: templates/nutrition/food_detail.html:19
 msgid "View it on OpenFoodFacts"
 msgstr "Visa den på OpenFoodFacts"
 
-#: templates/nutrition/food_detail.html:22
+#: templates/nutrition/food_detail.html:25
 #, python-format
 msgid "Per %(size)s %(unit)s"
 msgstr "Per %(size)s %(unit)s"
 
-#: templates/nutrition/food_detail.html:31
-#: templates/nutrition/recipe_detail.html:66
+#: templates/nutrition/food_detail.html:34
+#: templates/nutrition/recipe_detail.html:69
 msgid "Fiber"
 msgstr "Fiber"
 
-#: templates/nutrition/food_detail.html:34
-#: templates/nutrition/recipe_detail.html:69
+#: templates/nutrition/food_detail.html:37
+#: templates/nutrition/recipe_detail.html:72
 msgid "Sugar"
 msgstr "Socker"
 
-#: templates/nutrition/food_detail.html:37
-#: templates/nutrition/recipe_detail.html:72
+#: templates/nutrition/food_detail.html:40
+#: templates/nutrition/recipe_detail.html:75
 msgid "Saturated fat"
 msgstr "Mättat fett"
 
-#: templates/nutrition/food_detail.html:40
-#: templates/nutrition/recipe_detail.html:75
+#: templates/nutrition/food_detail.html:43
+#: templates/nutrition/recipe_detail.html:78
 msgid "Sodium"
 msgstr "Natrium"
 
-#: templates/nutrition/food_detail.html:48
+#: templates/nutrition/food_detail.html:51
 msgid "Product information"
 msgstr "Produktinformation"
 
-#: templates/nutrition/food_detail.html:53
+#: templates/nutrition/food_detail.html:56
 msgid "Typical price"
 msgstr "Typiskt pris"
 
-#: templates/nutrition/food_detail.html:56
+#: templates/nutrition/food_detail.html:59
 #, python-format
 msgid "(median of %(reports)s recent Open Prices reports)"
 msgstr "(median av %(reports)s senaste Open Prices-rapporter)"
 
-#: templates/nutrition/food_detail.html:61
+#: templates/nutrition/food_detail.html:64
 msgid "Package size"
 msgstr "Förpackningsstorlek"
 
-#: templates/nutrition/food_detail.html:67
+#: templates/nutrition/food_detail.html:70
 msgid "Labels"
 msgstr "Märkningar"
 
-#: templates/nutrition/food_detail.html:70
+#: templates/nutrition/food_detail.html:73
 msgid "Allergens"
 msgstr "Allergener"
 
-#: templates/nutrition/food_detail.html:75
-#: templates/nutrition/recipe_detail.html:28
+#: templates/nutrition/food_detail.html:78
+#: templates/nutrition/recipe_detail.html:31
 msgid "Ingredients"
 msgstr "Ingredienser"
 
-#: templates/nutrition/food_detail.html:82
+#: templates/nutrition/food_detail.html:85
 msgid "Spotted something wrong, or want to help other users?"
 msgstr "Upptäckte du något som är fel, eller vill du hjälpa andra användare?"
 
-#: templates/nutrition/food_detail.html:83
+#: templates/nutrition/food_detail.html:86
 msgid "Edit this product on OpenFoodFacts"
 msgstr "Redigera denna produkt på OpenFoodFacts"
 
-#: templates/nutrition/food_detail.html:84 templates/registration/login.html:11
+#: templates/nutrition/food_detail.html:87 templates/registration/login.html:11
 msgid "or"
 msgstr "eller"
 
-#: templates/nutrition/food_detail.html:85
+#: templates/nutrition/food_detail.html:88
 msgid "add a price on Open Prices"
 msgstr "lägg till ett pris på Open Prices"
 
 #: templates/nutrition/food_form.html:3 templates/nutrition/food_form.html:6
+#: templates/nutrition/food_list.html:10
 msgid "New food"
 msgstr "Nytt livsmedel"
 
@@ -6565,47 +6579,47 @@ msgstr "Nytt livsmedel"
 msgid "Browse OpenFoodFacts"
 msgstr "Bläddra i OpenFoodFacts"
 
-#: templates/nutrition/food_list.html:10
-msgid "+ New food"
-msgstr "+ Nytt livsmedel"
+#: templates/nutrition/food_list.html:22
+msgid "Find a new food"
+msgstr "Hitta ett nytt livsmedel"
 
-#: templates/nutrition/food_list.html:39
+#: templates/nutrition/food_list.html:41
 msgid "All foods"
 msgstr "Alla livsmedel"
 
-#: templates/nutrition/food_list.html:53
+#: templates/nutrition/food_list.html:55
 msgid "Filter by name…"
 msgstr "Filtrera efter namn…"
 
-#: templates/nutrition/food_list.html:53
+#: templates/nutrition/food_list.html:55
 msgid "Filter by name"
 msgstr "Filtrera efter namn"
 
-#: templates/nutrition/food_list.html:65
+#: templates/nutrition/food_list.html:67
 msgid "All categories"
 msgstr "Alla kategorier"
 
-#: templates/nutrition/food_list.html:66
+#: templates/nutrition/food_list.html:68
 msgid "Filter by category"
 msgstr "Filtrera efter kategori"
 
-#: templates/nutrition/food_list.html:72
+#: templates/nutrition/food_list.html:74
 msgid "Sort by"
 msgstr "Sortera efter"
 
-#: templates/nutrition/food_list.html:74
+#: templates/nutrition/food_list.html:76
 msgid "Date added"
 msgstr "Tillagd"
 
-#: templates/nutrition/food_list.html:78
+#: templates/nutrition/food_list.html:80
 msgid "Sort direction"
 msgstr "Sorteringsordning"
 
-#: templates/nutrition/food_list.html:79
+#: templates/nutrition/food_list.html:81
 msgid "Ascending"
 msgstr "Stigande"
 
-#: templates/nutrition/food_list.html:80
+#: templates/nutrition/food_list.html:82
 msgid "Descending"
 msgstr "Fallande"
 
@@ -6702,12 +6716,12 @@ msgstr ""
 msgid "Save and start tracking"
 msgstr "Spara och börja logga"
 
-#: templates/nutrition/recipe_detail.html:12
+#: templates/nutrition/recipe_detail.html:15
 #: templates/programs/program_list.html:47
 msgid "Template"
 msgstr "Mall"
 
-#: templates/nutrition/recipe_detail.html:19
+#: templates/nutrition/recipe_detail.html:22
 #, python-format
 msgid ""
 "Tagged for %(meal)s — the diet-plan builder only ever suggests this recipe "
@@ -6716,28 +6730,28 @@ msgstr ""
 "Märkt för %(meal)s — kostplansbyggaren föreslår det här receptet bara för "
 "den måltiden."
 
-#: templates/nutrition/recipe_detail.html:39
+#: templates/nutrition/recipe_detail.html:42
 msgid "Remove this ingredient?"
 msgstr "Ta bort denna ingrediens?"
 
-#: templates/nutrition/recipe_detail.html:47
+#: templates/nutrition/recipe_detail.html:50
 msgid "No ingredients yet."
 msgstr "Inga ingredienser än."
 
-#: templates/nutrition/recipe_detail.html:50
-msgid "+ Add ingredient"
-msgstr "+ Lägg till ingrediens"
+#: templates/nutrition/recipe_detail.html:53
+msgid "Add ingredient"
+msgstr "Lägg till ingrediens"
 
-#: templates/nutrition/recipe_detail.html:58
+#: templates/nutrition/recipe_detail.html:61
 msgid "Total"
 msgstr "Totalt"
 
-#: templates/nutrition/recipe_detail.html:58
+#: templates/nutrition/recipe_detail.html:61
 #, python-format
 msgid "Per serving (of %(servings)s)"
 msgstr "Per portion (av %(servings)s)"
 
-#: templates/nutrition/recipe_detail.html:80
+#: templates/nutrition/recipe_detail.html:83
 msgid ""
 "Fiber, sugar, saturated fat, and sodium show here once at least one "
 "ingredient has that data (e.g. imported from OpenFoodFacts)."
@@ -6745,21 +6759,17 @@ msgstr ""
 "Fiber, socker, mättat fett och natrium visas här när minst en ingrediens har "
 "den informationen (t.ex. importerad från OpenFoodFacts)."
 
-#: templates/nutrition/recipe_detail.html:86
-msgid "Log to diary"
-msgstr "Logga till dagbok"
-
-#: templates/nutrition/recipe_detail.html:94
+#: templates/nutrition/recipe_detail.html:97
 #: templates/nutrition/recipe_form.html:19
 #: templates/nutrition/recipe_import.html:20
 msgid "Back to recipes"
 msgstr "Tillbaka till recept"
 
-#: templates/nutrition/recipe_detail.html:99
+#: templates/nutrition/recipe_detail.html:102
 msgid "Delete this recipe?"
 msgstr "Ta bort detta recept?"
 
-#: templates/nutrition/recipe_detail.html:101
+#: templates/nutrition/recipe_detail.html:104
 msgid "Delete recipe"
 msgstr "Ta bort recept"
 
@@ -6772,6 +6782,7 @@ msgid "Edit recipe"
 msgstr "Redigera recept"
 
 #: templates/nutrition/recipe_form.html:6
+#: templates/nutrition/recipe_list.html:9
 msgid "New recipe"
 msgstr "Nytt recept"
 
@@ -6797,7 +6808,7 @@ msgid "Edit ingredient"
 msgstr "Redigera ingrediens"
 
 #: templates/nutrition/recipe_ingredient_edit_form.html:19
-#: templates/nutrition/recipe_ingredient_form.html:33
+#: templates/nutrition/recipe_ingredient_form.html:34
 msgid "Back to recipe"
 msgstr "Tillbaka till recept"
 
@@ -6806,10 +6817,6 @@ msgstr "Tillbaka till recept"
 #, python-format
 msgid "Add ingredient to %(name)s"
 msgstr "Lägg till ingrediens till %(name)s"
-
-#: templates/nutrition/recipe_list.html:9
-msgid "+ New recipe"
-msgstr "+ Nytt recept"
 
 #: templates/nutrition/recipe_list.html:16
 #: templates/nutrition/recipe_list.html:19
@@ -6892,11 +6899,11 @@ msgstr "Logga några dagar i din matdagbok för att se din trend här."
 
 #: templates/programs/prescription_form.html:3
 #: templates/programs/prescription_form.html:6
-#: templates/programs/program_detail.html:73
-#: templates/workouts/_train_panel.html:94
+#: templates/programs/program_detail.html:75
+#: templates/workouts/_train_panel.html:100
 #: templates/workouts/performed_exercise_form.html:3
 #: templates/workouts/performed_exercise_form.html:6
-#: templates/workouts/session_detail.html:27
+#: templates/workouts/session_detail.html:31
 msgid "Add exercise"
 msgstr "Lägg till övning"
 
@@ -6910,7 +6917,7 @@ msgstr "Ta bort övning"
 
 #: templates/programs/program_confirm_delete.html:3
 #: templates/programs/program_confirm_delete.html:6
-#: templates/programs/program_detail.html:91
+#: templates/programs/program_detail.html:93
 msgid "Delete program"
 msgstr "Ta bort program"
 
@@ -6923,51 +6930,53 @@ msgstr ""
 "Ta bort <strong>%(name)s</strong> och alla dess träningspass och övningar? "
 "Detta kan inte ångras."
 
-#: templates/programs/program_detail.html:20
+#: templates/programs/program_detail.html:22
 msgid "Built-in template"
 msgstr "Inbyggd mall"
 
-#: templates/programs/program_detail.html:22
+#: templates/programs/program_detail.html:24
 msgid "My template"
 msgstr "Min mall"
 
-#: templates/programs/program_detail.html:26
+#: templates/programs/program_detail.html:28
 #, python-format
 msgid "Version %(version)s · updated %(updated)s"
 msgstr "Version %(version)s · uppdaterad %(updated)s"
 
-#: templates/programs/program_detail.html:31
+#: templates/programs/program_detail.html:33
 msgid "Copy to a new program"
 msgstr "Kopiera till nytt program"
 
-#: templates/programs/program_detail.html:48
+#: templates/programs/program_detail.html:50
 #: templates/programs/workout_form.html:19
 msgid "Delete this workout and its exercises?"
 msgstr "Ta bort detta träningspass och dess övningar?"
 
-#: templates/programs/program_detail.html:68
-#: templates/workouts/_train_panel.html:93
-#: templates/workouts/session_detail.html:22
+#: templates/programs/program_detail.html:70
+#: templates/workouts/_train_panel.html:99
+#: templates/workouts/session_detail.html:26
 msgid "No exercises yet."
 msgstr "Inga övningar ännu."
 
-#: templates/programs/program_detail.html:78
+#: templates/programs/program_detail.html:80
 msgid "Start workout"
 msgstr "Starta träningspass"
 
-#: templates/programs/program_detail.html:83
+#: templates/programs/program_detail.html:85
 msgid "No workouts yet."
 msgstr "Inga träningspass ännu."
 
-#: templates/programs/program_detail.html:88
+#: templates/programs/program_detail.html:90
+#: templates/programs/workout_form.html:3
+#: templates/programs/workout_form.html:6
 msgid "Add workout"
 msgstr "Lägg till träningspass"
 
-#: templates/programs/program_detail.html:89
+#: templates/programs/program_detail.html:91
 msgid "Delete this program? This cannot be undone."
 msgstr "Ta bort detta program? Detta kan inte ångras."
 
-#: templates/programs/program_detail.html:95
+#: templates/programs/program_detail.html:97
 #: templates/programs/program_import.html:19
 msgid "Back to programs"
 msgstr "Tillbaka till program"
@@ -7032,13 +7041,8 @@ msgstr "Inga inbyggda mallar tillgängliga."
 msgid "Edit workout"
 msgstr "Redigera träningspass"
 
-#: templates/programs/workout_form.html:3
-#: templates/programs/workout_form.html:6
-msgid "New workout"
-msgstr "Nytt träningspass"
-
 #: templates/programs/workout_form.html:21
-#: templates/workouts/session_detail.html:41
+#: templates/workouts/session_detail.html:45
 msgid "Delete workout"
 msgstr "Ta bort träningspass"
 
@@ -7139,11 +7143,11 @@ msgstr "Ditt lösenord har angetts. Du kan logga in nu."
 msgid "Set a new password"
 msgstr "Ange ett nytt lösenord"
 
-#: templates/registration/password_reset_confirm.html:21
+#: templates/registration/password_reset_confirm.html:16
 msgid "Set new password"
 msgstr "Ange nytt lösenord"
 
-#: templates/registration/password_reset_confirm.html:25
+#: templates/registration/password_reset_confirm.html:20
 msgid ""
 "This password reset link is invalid, possibly because it has already been "
 "used or has expired."
@@ -7151,7 +7155,7 @@ msgstr ""
 "Den här länken för lösenordsåterställning är ogiltig, kanske för att den "
 "redan har använts eller har gått ut."
 
-#: templates/registration/password_reset_confirm.html:27
+#: templates/registration/password_reset_confirm.html:22
 msgid "Request a new reset link"
 msgstr "Begär en ny återställningslänk"
 
@@ -7257,7 +7261,7 @@ msgid "You haven't blocked anyone."
 msgstr "Du har inte blockerat någon."
 
 #: templates/social/block_list.html:23 templates/social/friend_list.html:3
-#: templates/social/friend_list.html:6 templates/social/friend_search.html:19
+#: templates/social/friend_list.html:6 templates/social/friend_search.html:20
 #: templates/social/message_list.html:27
 msgid "Friends"
 msgstr "Vänner"
@@ -7341,65 +7345,65 @@ msgstr "Aktivera länk"
 msgid "Invite a friend"
 msgstr "Bjud in en vän"
 
-#: templates/social/group_detail.html:68
+#: templates/social/group_detail.html:65
 msgid "Send invite"
 msgstr "Skicka inbjudan"
 
-#: templates/social/group_detail.html:73
+#: templates/social/group_detail.html:70
 #, python-format
 msgid "Members (%(count)s)"
 msgstr "Medlemmar (%(count)s)"
 
-#: templates/social/group_detail.html:77
+#: templates/social/group_detail.html:74
 msgid "(you)"
 msgstr "(du)"
 
-#: templates/social/group_detail.html:87
+#: templates/social/group_detail.html:84
 msgid "Remove admin"
 msgstr "Ta bort admin"
 
-#: templates/social/group_detail.html:90
+#: templates/social/group_detail.html:87
 msgid "Make admin"
 msgstr "Gör till admin"
 
-#: templates/social/group_detail.html:94 templates/social/group_detail.html:106
+#: templates/social/group_detail.html:91 templates/social/group_detail.html:103
 msgid "Remove this member from the group?"
 msgstr "Ta bort den här medlemmen från gruppen?"
 
-#: templates/social/group_detail.html:99
+#: templates/social/group_detail.html:96
 msgid "Transfer ownership of this group? You will become an admin instead."
 msgstr "Överför ägarskapet för den här gruppen? Du blir admin istället."
 
-#: templates/social/group_detail.html:101
+#: templates/social/group_detail.html:98
 msgid "Make owner"
 msgstr "Gör till ägare"
 
-#: templates/social/group_detail.html:129
+#: templates/social/group_detail.html:126
 msgid "Unmute notifications"
 msgstr "Sluta tysta aviseringar"
 
-#: templates/social/group_detail.html:131
+#: templates/social/group_detail.html:128
 msgid "Mute notifications"
 msgstr "Tysta aviseringar"
 
-#: templates/social/group_detail.html:134 templates/social/group_list.html:3
+#: templates/social/group_detail.html:131 templates/social/group_list.html:3
 #: templates/social/group_list.html:6 templates/social/message_list.html:28
 msgid "Groups"
 msgstr "Grupper"
 
-#: templates/social/group_detail.html:140
+#: templates/social/group_detail.html:137
 msgid "Leave this group?"
 msgstr "Lämna den här gruppen?"
 
-#: templates/social/group_detail.html:142
+#: templates/social/group_detail.html:139
 msgid "Leave group"
 msgstr "Lämna grupp"
 
-#: templates/social/group_detail.html:146
+#: templates/social/group_detail.html:143
 msgid "Delete this group? This can't be undone."
 msgstr "Ta bort gruppen? Detta kan inte ångras."
 
-#: templates/social/group_detail.html:148
+#: templates/social/group_detail.html:145
 msgid "Delete group"
 msgstr "Ta bort grupp"
 
@@ -7539,7 +7543,7 @@ msgid "Suggested: %(weight)s"
 msgstr "Föreslaget: %(weight)s"
 
 #: templates/workouts/_performed_exercise_card.html:71
-#: templates/workouts/_train_panel.html:88
+#: templates/workouts/_train_panel.html:94
 msgid "Log set"
 msgstr "Logga set"
 
@@ -7552,16 +7556,20 @@ msgstr "Övning %(position)s av %(total)s"
 msgid "All exercises done for today."
 msgstr "Alla dagens övningar klara."
 
-#: templates/workouts/_train_panel.html:62
+#: templates/workouts/_train_panel.html:47
+msgid "Edit this set"
+msgstr "Redigera den här serien"
+
+#: templates/workouts/_train_panel.html:68
 msgid ""
 "This exercise is done — logging another set is still fine if you want one."
 msgstr "Den här övningen är klar — du kan ändå logga ett extra set om du vill."
 
-#: templates/workouts/_train_panel.html:79
+#: templates/workouts/_train_panel.html:85
 msgid "Fewer options"
 msgstr "Färre alternativ"
 
-#: templates/workouts/_train_panel.html:79
+#: templates/workouts/_train_panel.html:85
 msgid "More options (RPE, RIR, notes…)"
 msgstr "Fler alternativ (RPE, RIR, anteckningar…)"
 
@@ -7570,36 +7578,42 @@ msgstr "Fler alternativ (RPE, RIR, anteckningar…)"
 msgid "Back to workout"
 msgstr "Tillbaka till träningspasset"
 
-#: templates/workouts/session_detail.html:13
+#: templates/workouts/session_detail.html:16
 #, python-format
 msgid "Started %(started)s"
 msgstr "Startade %(started)s"
 
-#: templates/workouts/session_detail.html:14
+#: templates/workouts/session_detail.html:17
 #, python-format
 msgid "ended %(ended)s"
 msgstr "avslutades %(ended)s"
 
-#: templates/workouts/session_detail.html:31
+#: templates/workouts/session_detail.html:19
+msgid "%(n)s set"
+msgid_plural "%(n)s sets"
+msgstr[0] "%(n)s set"
+msgstr[1] "%(n)s set"
+
+#: templates/workouts/session_detail.html:35
 #: templates/workouts/session_train.html:51
 msgid "Complete workout"
 msgstr "Slutför träningspass"
 
-#: templates/workouts/session_detail.html:33
+#: templates/workouts/session_detail.html:37
 #: templates/workouts/session_train.html:53
 msgid "Abandon this workout? It stays in your history as abandoned."
 msgstr "Avbryt detta träningspass? Det finns kvar i din historik som avbrutet."
 
-#: templates/workouts/session_detail.html:35
+#: templates/workouts/session_detail.html:39
 #: templates/workouts/session_train.html:55
 msgid "Abandon workout"
 msgstr "Avbryt träningspass"
 
-#: templates/workouts/session_detail.html:39
+#: templates/workouts/session_detail.html:43
 msgid "Delete this workout? This cannot be undone."
 msgstr "Ta bort detta träningspass? Detta kan inte ångras."
 
-#: templates/workouts/session_detail.html:44
+#: templates/workouts/session_detail.html:48
 msgid "Back to history"
 msgstr "Tillbaka till historik"
 
@@ -7607,23 +7621,23 @@ msgstr "Tillbaka till historik"
 msgid "Workout history"
 msgstr "Träningshistorik"
 
-#: templates/workouts/session_list.html:23
+#: templates/workouts/session_list.html:17
 msgid "%(n)s exercise · %(sets)s sets"
 msgid_plural "%(n)s exercises · %(sets)s sets"
 msgstr[0] "%(n)s övning · %(sets)s set"
 msgstr[1] "%(n)s övningar · %(sets)s set"
 
-#: templates/workouts/session_list.html:31
+#: templates/workouts/session_list.html:25
 msgid "No workouts logged yet."
 msgstr "Inga träningspass loggade ännu."
 
-#: templates/workouts/session_list.html:32
+#: templates/workouts/session_list.html:26
 msgid ""
-"Start a freeform workout with the button above, or pick a workout from one "
+"Start a freeform workout with the button below, or pick a workout from one "
 "of your programs."
-msgstr "Starta ett fritt träningspass med knappen ovan eller välj ett pass från ett av dina program."
+msgstr "Starta ett fritt träningspass med knappen nedan eller välj ett pass från ett av dina program."
 
-#: templates/workouts/session_list.html:34
+#: templates/workouts/session_list.html:28
 msgid "Browse programs"
 msgstr "Bläddra bland program"
 
@@ -7655,6 +7669,10 @@ msgstr "Stäng av ljud för vilotimer"
 msgid "Skip rest"
 msgstr "Hoppa över vila"
 
+#: templates/workouts/session_train.html:49
+msgid "Complete this workout? Some exercises still have sets left to log."
+msgstr "Slutföra passet? Vissa övningar har fortfarande set kvar att logga."
+
 #: templates/workouts/set_edit_form.html:3
 msgid "Edit set"
 msgstr "Redigera set"
@@ -7663,3 +7681,24 @@ msgstr "Redigera set"
 #, python-format
 msgid "Edit set %(number)s"
 msgstr "Redigera set %(number)s"
+
+#~ msgid "Back to home"
+#~ msgstr "Tillbaka till hem"
+
+#~ msgid "Choose a program"
+#~ msgstr "Välj ett program"
+
+#~ msgid "+ Add"
+#~ msgstr "+ Lägg till"
+
+#~ msgid "+ Add food"
+#~ msgstr "+ Lägg till livsmedel"
+
+#~ msgid "Log it"
+#~ msgstr "Logga"
+
+#~ msgid "+ New recipe"
+#~ msgstr "+ Nytt recept"
+
+#~ msgid "New workout"
+#~ msgstr "Nytt träningspass"
