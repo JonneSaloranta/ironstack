@@ -5662,3 +5662,26 @@ to two long-lived models, and inserting `bump_version()` calls into
 three existing views — including two pre-existing `apps.accounts`
 tests whose exact `settings-row` element counts needed updating for
 the two new "My clients"/"My coaches" rows on the Profile page.
+
+## Open Food Facts usage-guideline compliance
+
+Audited the integration against OFF's published rules
+(<https://world.openfoodfacts.org/data> and the API docs) and fixed
+every gap: text search moved from the deprecated `/cgi/search.pl` to
+Search-a-licious; all requests (incl. Open Prices) now go through
+`apps/nutrition/off_http.py`, which sends an operator-contact
+User-Agent, enforces 8 searches / 12 reads a minute (under OFF's 10 /
+15) with a cache-backed counter shared across workers, and backs off
+for 5 minutes after a 429/5xx/network failure. The per-keystroke online
+search became an explicit "Search Open Food Facts" button (barcodes,
+being scans, still auto-lookup); search responses are cached 24 h; the
+category list is static; ODbL/CC BY-SA attribution was added wherever
+OFF data or photos show; the admin refresh actions are capped to the
+read budget. Verified live against production OFF (search shape, v2
+lookup incl. the unknown-barcode 200/`status: 0` case, all 20 curated
+category ids); OFF's staging server timed out (>30 s) during the
+session, so the staging basic-auth path is unit-tested only. Real
+findings along the way: Search-a-licious returns `brands` as a list and
+often only `energy-kj_100g` (now converted to kcal), and expects a bare
+language code (`en`, not `en-us`).
+

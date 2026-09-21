@@ -12,17 +12,12 @@ own docstring for why.
 from decimal import Decimal
 from statistics import median
 
-import requests
-
-from apps.core.version import get_version
+from . import off_http
 
 API_BASE = "https://prices.openfoodfacts.org/api/v1"
-REQUEST_TIMEOUT_SECONDS = 10
-# Same header Open Prices' own usage policy asks for as OFF's core API
-# (apps.nutrition.openfoodfacts.USER_AGENT) — a distinct project, but
-# run by the same organization with the same expectations.
-USER_AGENT = f"IronStack/{get_version()} (self-hosted fitness tracker)"
-REQUEST_HEADERS = {"User-Agent": USER_AGENT}
+# Requests go through apps.nutrition.off_http: same identifying
+# User-Agent and per-minute budget as OFF's core API — a distinct
+# project, but run by the same organization with the same expectations.
 
 # How many of the most recent price reports to pull per product —
 # enough to smooth over a handful of outlier or misread entries
@@ -44,19 +39,17 @@ def get_prices_for_barcode(barcode, *, size=PRICE_SAMPLE_SIZE):
     over the years is summarized from current reports, not old ones.
     """
     try:
-        response = requests.get(
+        response = off_http.get(
             f"{API_BASE}/prices",
+            bucket="read",
             params={
                 "product_code": barcode,
                 "order_by": "-date",
                 "size": size,
             },
-            headers=REQUEST_HEADERS,
-            timeout=REQUEST_TIMEOUT_SECONDS,
         )
-        response.raise_for_status()
         return response.json().get("items", [])
-    except (requests.RequestException, ValueError) as exc:
+    except (off_http.OffRequestError, ValueError) as exc:
         raise OpenPricesError(str(exc)) from exc
 
 

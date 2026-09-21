@@ -593,10 +593,17 @@ class FoodSearchResultsView(LoginRequiredMixin, View):
     def get(self, request):
         query = request.GET.get("q", "").strip()
         mode = request.GET.get("mode", "diary")
-        local, off_results = ([], []) if not query else services.search_foods(request.user, query)
+        online = request.GET.get("online") == "1"
+        local, off_results, off_status = (
+            ([], [], "")
+            if not query
+            else services.search_foods(request.user, query, online=online)
+        )
         context = {
             "local": local,
             "off_results": off_results,
+            "off_status": off_status,
+            "online_requested": online,
             "query": query,
             "mode": mode,
         }

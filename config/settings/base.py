@@ -245,6 +245,14 @@ CACHES = {
     }
 }
 
+# Open Food Facts (apps.nutrition.off_http). The contact goes in the
+# User-Agent OFF's usage policy requires ("AppName/Version (contact)");
+# the admin-editable OpenFoodFactsSettings.contact_email overrides it.
+# The base URLs can point at OFF's staging server, world.openfoodfacts.net.
+OFF_CONTACT_EMAIL = env("OFF_CONTACT_EMAIL", default="")
+OFF_API_BASE = env("OFF_API_BASE", default="https://world.openfoodfacts.org")
+OFF_SEARCH_BASE = env("OFF_SEARCH_BASE", default="https://search.openfoodfacts.org")
+
 # apps.api — see docs/API.md. Authentication/permission/throttling are
 # all API-key-driven (apps.api.auth/permissions/throttling), never
 # session/cookie auth — this is a machine-to-machine API, not a second

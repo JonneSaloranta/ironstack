@@ -90,4 +90,5 @@
 {% endif %}
 
 <p><a class="button-link" href="{% url 'nutrition:food-list' %}">&larr; {% trans "Back to foods" %}</a></p>
+{% if food.off_id %}{% include "nutrition/_off_attribution.html" %}{% endif %}
 {% endblock %}

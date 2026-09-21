@@ -13,10 +13,10 @@ import re
 from dataclasses import dataclass
 from decimal import Decimal, InvalidOperation
 
-from django.core.cache import cache
 from django.db import transaction
 from django.db.models import Q
 from django.utils import timezone
+from django.utils.translation import get_language
 
 from apps.core.data_exchange import ImportValidationError
 
@@ -689,19 +689,28 @@ def merge_foods(keep, duplicates):
 _BARCODE_RE = re.compile(r"^\d{8,14}$")
 
 
-def search_foods(user, query):
+def search_foods(user, query, *, online=False):
     """Local foods (the user's own + shared/imported) matching
-    `query`, plus live OpenFoodFacts results merged in. A query that
-    looks like a barcode (8-14 digits — see `_BARCODE_RE`) is matched
-    exactly, both locally (`Food.off_id`) and against OFF's own
-    by-barcode lookup (`openfoodfacts.get_product`, the same one
-    `import_or_refresh_food_from_off` uses) rather than OFF's
-    free-text search, which is unreliable for a bare digit string.
-    Anything else is a plain name search. OFF results aren't imported
-    just for appearing in this list — only
-    `import_or_refresh_food_from_off` (called once the caller actually
-    picks one) ever creates or updates a `Food` row, so a search that
-    finds nothing useful leaves no trace."""
+    `query`, plus Open Food Facts results when they're warranted.
+    Returns `(local, off_results, off_status)`.
+
+    OFF's usage rules allow only 10 searches a minute per IP and want
+    one API call per real user action (docs/NUTRITION.md
+    "OpenFoodFacts integration"), so a text query only reaches OFF
+    when the caller passes `online=True` — the user pressing "Search
+    Open Food Facts", not merely typing. A query that looks like a
+    barcode (8-14 digits — see `_BARCODE_RE`) is different: it's a
+    scan, exactly what the by-barcode lookup is for, so it always
+    goes online, matched exactly against `Food.off_id` locally and
+    OFF's own by-barcode lookup rather than free-text search, which
+    is unreliable for a bare digit string.
+
+    `off_status` is "available" (OFF not consulted yet — the UI offers
+    a button), "ok", "disabled", "busy"
+    (our own rate budget is spent or OFF recently failed) or "error".
+    OFF results aren't imported just for appearing in this list —
+    only `import_or_refresh_food_from_off` (called once the caller
+    actually picks one) ever creates or updates a `Food` row."""
     is_barcode = bool(_BARCODE_RE.match(query.strip()))
     local_filter = Q(off_id=query.strip()) if is_barcode else Q(name__icontains=query)
     local = list(
@@ -709,25 +718,31 @@ def search_foods(user, query):
         .filter(local_filter)
         .order_by("name")
     )
-    off_results = []
-    if OpenFoodFactsSettings.load().enabled:
-        try:
-            if is_barcode:
-                raw_products = [openfoodfacts.get_product(query.strip())]
-            else:
-                raw_products = openfoodfacts.search_products(query)
-            off_results = [
-                parsed
-                for raw in raw_products
-                if raw is not None
-                and (parsed := openfoodfacts.parse_product(raw)) is not None
-                # Skip anything already imported locally — no point
-                # offering to "import" a food that's already there.
-                and not Food.objects.filter(off_id=parsed["off_id"]).exists()
-            ]
-        except openfoodfacts.OpenFoodFactsError:
-            off_results = []
-    return local, off_results
+    if not OpenFoodFactsSettings.load().enabled:
+        return local, [], "disabled"
+    if not (online or is_barcode):
+        return local, [], "available"
+    try:
+        if is_barcode:
+            raw_products = [openfoodfacts.get_product(query.strip())]
+        else:
+            raw_products = openfoodfacts.search_products(
+                query, language=(get_language() or "en").split("-")[0]
+            )
+    except openfoodfacts.OpenFoodFactsRateLimited:
+        return local, [], "busy"
+    except openfoodfacts.OpenFoodFactsError:
+        return local, [], "error"
+    off_results = [
+        parsed
+        for raw in raw_products
+        if raw is not None
+        and (parsed := openfoodfacts.parse_product(raw)) is not None
+        # Skip anything already imported locally — no point
+        # offering to "import" a food that's already there.
+        and not Food.objects.filter(off_id=parsed["off_id"]).exists()
+    ]
+    return local, off_results, "ok"
 
 
 def distinct_food_categories(user):
@@ -764,25 +779,14 @@ def distinct_food_categories(user):
     return sorted(names, key=str.lower)
 
 
-_CATEGORY_CACHE_KEY = "nutrition:off_categories"
-_CATEGORY_CACHE_SECONDS = 60 * 60 * 24  # a day — OFF's category list barely moves
-
-
 def suggested_categories():
-    """The "browse by category" list — cached for a day so a page
-    every user visits doesn't refetch OFF's category list on every
-    request; the ranking barely changes day to day, unlike a single
-    product's own nutrition data. Returns `[]` (never raises) if the
-    integration is off or OFF is unreachable, same "browsing degrades
-    gracefully" reasoning as `openfoodfacts.list_categories` itself."""
+    """The "browse by category" list — a static curated list
+    (`openfoodfacts.list_categories`), so no request and nothing to
+    cache. Returns `[]` if the integration is off, so the browse page
+    doesn't promise categories it couldn't then load."""
     if not OpenFoodFactsSettings.load().enabled:
         return []
-    cached = cache.get(_CATEGORY_CACHE_KEY)
-    if cached is not None:
-        return cached
-    categories = openfoodfacts.list_categories()
-    cache.set(_CATEGORY_CACHE_KEY, categories, _CATEGORY_CACHE_SECONDS)
-    return categories
+    return openfoodfacts.list_categories()
 
 
 def browse_category(category_id):
