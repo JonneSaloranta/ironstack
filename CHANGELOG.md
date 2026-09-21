@@ -18,6 +18,29 @@ narrated summary of the same version.
 
 ## [Unreleased]
 
+## [1.21.0] — 2026-09-21
+
+### Changed
+- Open Food Facts integration now follows OFF's API guidelines: text
+  search uses Search-a-licious instead of the deprecated `/cgi/search.pl`;
+  online search runs when you press "Search Open Food Facts" instead of on
+  every keystroke (barcodes still look up automatically); requests stay
+  under OFF's 10 searches / 15 reads per minute limits with a shared
+  budget, a failure cooldown and 24-hour search caching; the category
+  browse list is a static curated list.
+- Requests identify the instance operator in the User-Agent
+  (`OFF_CONTACT_EMAIL` or the new admin "contact email" setting).
+- The admin "refresh selected foods" actions now handle at most 12 foods
+  per run (Open Food Facts' read limit) and say how many were left.
+
+### Added
+- Open Food Facts / ODbL / CC BY-SA attribution on online search results,
+  browse, category and food detail pages.
+- `OFF_API_BASE` / `OFF_SEARCH_BASE` settings to point at Open Food
+  Facts' staging server (its public basic-auth login is sent for
+  `*.openfoodfacts.net`).
+- Translations for the new strings in all six languages.
+
 ## [1.20.0] — 2026-09-21
 
 ### Added
