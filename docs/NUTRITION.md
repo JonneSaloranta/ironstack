@@ -327,7 +327,10 @@ rejected for exactly that reason when discussed directly. Instead:
 - `apps/nutrition/openfoodfacts.py` — a thin client
   (`search_products(query)`, `get_product(barcode)`, `search_by_
   category(category_id)`, `list_categories()`) against OFF's public
-  read API (`world.openfoodfacts.org`), using `requests` (new
+  read APIs — the v2 product API (`world.openfoodfacts.org`) for
+  barcode lookups and **Search-a-licious** (`search.openfoodfacts.org`)
+  for text search and category browsing (OFF deprecated
+  `/cgi/search.pl`) — using `requests` (new
   dependency — no existing project code does outbound HTTP to a JSON
   API, `apps.accounts.twofactor`'s `pyotp`/`qrcode` precedent is the
   closest, and hand-rolling this on `urllib` would just reimplement a
@@ -338,16 +341,11 @@ rejected for exactly that reason when discussed directly. Instead:
   (`/nutrition/foods/browse/`, `FoodBrowseView`), asked for directly —
   search or browse by category to add a food straight to the shared
   library, independent of logging anything to a diary/recipe/plan.
-  Category browsing uses OFF's own `/categories.json` (ranked,
-  English-named categories only — OFF indexes tens of thousands, most
-  tiny/non-English/near-duplicates, so `list_categories` caps to a
-  curated top N by product count rather than dumping all of them on a
-  user) and `/category/<id>.json` (OFF's own category-browse endpoint,
-  not a search.pl query with a category filter bolted on). The
-  category list is cached for a day (`apps.nutrition.services.
-  suggested_categories`) — it barely changes day to day, unlike a
-  single product's own nutrition data, so there's no reason to refetch
-  it on every page load.
+  Category browsing shows a short static, curated list of food groups
+  (`openfoodfacts.BROWSE_CATEGORIES` — OFF indexes tens of thousands
+  of categories and `/categories.json` is a multi-megabyte download,
+  so it costs no request at all) and lists a category's products with
+  a Search-a-licious `categories_tags:"<id>"` query.
 - The food-search flow (`apps.nutrition` diary/recipe/diet-plan-meal
   "add food" — one shared `FoodSearchResultsView`/`_food_search_
   results.html`, parameterized by `mode` for which endpoint each
@@ -374,6 +372,42 @@ rejected for exactly that reason when discussed directly. Instead:
   requests entirely (no internet egress, or a simple preference not to
   call a third-party service from their own server), same reasoning as
   `DJANGO_SIGNUP_ENABLED`/optional `DJANGO_EMAIL_HOST`.
+
+#### Following OFF's usage rules
+
+Everything here follows OFF's published guidelines
+(<https://world.openfoodfacts.org/data>,
+<https://openfoodfacts.github.io/openfoodfacts-server/api/>):
+
+- **Identification.** Every request (including Open Prices) goes
+  through `apps/nutrition/off_http.py` and carries
+  `User-Agent: IronStack/<version> (<contact>)`. The contact is the
+  instance operator's own address: `OpenFoodFactsSettings.contact_email`
+  (admin), else the `OFF_CONTACT_EMAIL` env var. It is never hardcoded.
+- **Rate limits.** OFF allows 10 searches and 15 product reads per
+  minute per IP. `off_http` enforces 8 and 12 with a fixed one-minute
+  window counter in Django's cache (`DatabaseCache`, shared across
+  gunicorn workers); when spent it raises `OffRateLimited` without
+  sending anything and the UI says online search is busy. A 429, a 5xx
+  or a network failure starts a 5-minute cooldown so an outage or ban
+  isn't hammered on every page view.
+- **One API call per real user action.** Typing in a search box only
+  searches the local library. Online text search runs when the user
+  presses "Search Open Food Facts for …"; a barcode-shaped query (a
+  scan) still looks up automatically. Search responses are cached for
+  24 hours per query.
+- **Attribution.** OFF's data is ODbL (contents DbCL) and photos are
+  CC BY-SA, which require crediting OFF with a link wherever the data
+  or images are shown: `templates/nutrition/_off_attribution.html`
+  appears on online search results, browse, category and food detail
+  pages.
+- **Bulk data.** OFF asks that bulk needs use its CSV/JSONL/Parquet
+  dumps, not the API. This app has no bulk sync; if one is ever added
+  it must use the dumps. Admin "refresh selected" actions are paced by
+  the same read budget (large selections are partly skipped and can be
+  re-run a minute later).
+- **Staging.** `OFF_API_BASE` / `OFF_SEARCH_BASE` point the client at
+  `world.openfoodfacts.net` for testing.
 
 ### Open Prices integration
 

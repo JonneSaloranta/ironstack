@@ -708,6 +708,10 @@ class OpenFoodFactsSettings(models.Model):
     "OpenFoodFacts integration"."""
 
     enabled = models.BooleanField(default=True)
+    # Open Food Facts asks every client to identify itself with a way to
+    # reach its operator (User-Agent "AppName/Version (contact)").
+    # Blank falls back to the OFF_CONTACT_EMAIL setting, then to none.
+    contact_email = models.EmailField(blank=True)
 
     def save(self, *args, **kwargs):
         self.pk = 1

@@ -8,133 +8,174 @@ API, and a parser mapping their product shape onto this app's own
 parsed result actually becomes (or updates) a `Food` row.
 """
 
+import hashlib
 from decimal import Decimal
 
-import requests
+from django.conf import settings
+from django.core.cache import cache
+from django.utils.translation import gettext_lazy as _
 
-from apps.core.version import get_version
+from . import off_http
+from .off_http import OffRateLimited, OffRequestError  # noqa: F401 (re-exported)
 
-API_BASE = "https://world.openfoodfacts.org"
-REQUEST_TIMEOUT_SECONDS = 10
-# OpenFoodFacts' API rejects requests with no/generic User-Agent (a
-# bare "python-requests/x.y" gets a 403) — their own documented usage
-# policy asks for an app name, version, and a way to reach the
-# operator. Discovered live: a mocked-request test wouldn't have
-# caught this at all, since the mock never touches this header.
-USER_AGENT = f"IronStack/{get_version()} (self-hosted fitness tracker)"
-REQUEST_HEADERS = {"User-Agent": USER_AGENT}
+# Overridable (settings.OFF_API_BASE / OFF_SEARCH_BASE) so dev and tests
+# can point at OFF's staging server, world.openfoodfacts.net.
+API_BASE = getattr(settings, "OFF_API_BASE", "https://world.openfoodfacts.org")
+SEARCH_BASE = getattr(settings, "OFF_SEARCH_BASE", "https://search.openfoodfacts.org")
 # kcal per 100g/100ml is OFF's own universal unit for every product,
 # regardless of that product's real-world serving size — matches this
 # app's own "per serving_size of serving_unit" Food shape directly
 # when serving_size=100.
 PER_100_SERVING_SIZE = Decimal("100")
 
+# Only what `parse_product` reads — Search-a-licious and the v2 product
+# API both return just these, keeping responses small.
+PRODUCT_FIELDS = (
+    "code,product_name,generic_name,brands,nutriments,nutriscore_grade,"
+    "nova_group,image_front_url,image_front_thumb_url,image_url,"
+    "image_thumb_url,categories,quantity,ingredients_text,labels,"
+    "allergens,product_quantity_unit"
+)
+SEARCH_PAGE_SIZE = 20
+# A repeated search costs nothing: OFF asks that one API call map to
+# one real user action, and its search budget is only 10/minute per IP.
+SEARCH_CACHE_SECONDS = 60 * 60 * 24
 
-class OpenFoodFactsError(Exception):
+
+class OpenFoodFactsError(off_http.OffRequestError):
     """Raised for a network/parse failure — never for "no results,"
     which is a normal, silently-empty outcome, not an error."""
 
 
-def search_products(query, *, page_size=20):
+class OpenFoodFactsRateLimited(OpenFoodFactsError, off_http.OffRateLimited):
+    """No request was sent: our own OFF budget is spent, or OFF
+    failed moments ago (apps.nutrition.off_http)."""
+
+
+def _get_json(url, *, bucket, params=None):
+    try:
+        return off_http.get(url, bucket=bucket, params=params).json()
+    except off_http.OffRateLimited as exc:
+        raise OpenFoodFactsRateLimited(str(exc)) from exc
+    except off_http.OffRequestError as exc:
+        raise OpenFoodFactsError(str(exc)) from exc
+    except ValueError as exc:
+        raise OpenFoodFactsError(str(exc)) from exc
+
+
+def _search(q, *, page_size, language="en"):
+    """One Search-a-licious query (OFF's supported full-text search —
+    the old /cgi/search.pl is deprecated). Cached per query."""
+    key = "nutrition:off_search:" + hashlib.sha256(
+        f"{language}|{page_size}|{q}".encode()
+    ).hexdigest()
+    cached = cache.get(key)
+    if cached is not None:
+        return cached
+    payload = _get_json(
+        f"{SEARCH_BASE}/search",
+        bucket="search",
+        params={
+            "q": q,
+            "page_size": page_size,
+            "langs": language,
+            "fields": PRODUCT_FIELDS,
+        },
+    )
+    hits = payload.get("hits", [])
+    cache.set(key, hits, SEARCH_CACHE_SECONDS)
+    return hits
+
+
+def search_products(query, *, page_size=SEARCH_PAGE_SIZE, language="en"):
     """Free-text search — returns a list of raw OFF product dicts
     (unparsed; call `parse_product` on each to get this app's shape).
     """
-    try:
-        response = requests.get(
-            f"{API_BASE}/cgi/search.pl",
-            params={
-                "search_terms": query,
-                "search_simple": 1,
-                "action": "process",
-                "json": 1,
-                "page_size": page_size,
-            },
-            headers=REQUEST_HEADERS,
-            timeout=REQUEST_TIMEOUT_SECONDS,
-        )
-        response.raise_for_status()
-        return response.json().get("products", [])
-    except (requests.RequestException, ValueError) as exc:
-        raise OpenFoodFactsError(str(exc)) from exc
+    return _search(query, page_size=page_size, language=language)
 
 
 def get_product(barcode):
     """A single raw OFF product dict by barcode, or `None` if OFF has
     no such product (a normal outcome, not an error)."""
     try:
-        response = requests.get(
+        response = off_http.get(
             f"{API_BASE}/api/v2/product/{barcode}.json",
-            headers=REQUEST_HEADERS,
-            timeout=REQUEST_TIMEOUT_SECONDS,
+            bucket="read",
+            params={"fields": PRODUCT_FIELDS},
         )
-        response.raise_for_status()
+    except off_http.OffRateLimited as exc:
+        raise OpenFoodFactsRateLimited(str(exc)) from exc
+    except off_http.OffRequestError as exc:
+        # OFF answers 404 (with status 0) for an unknown barcode.
+        if getattr(getattr(exc.__cause__, "response", None), "status_code", None) == 404:
+            return None
+        raise OpenFoodFactsError(str(exc)) from exc
+    try:
         payload = response.json()
-    except (requests.RequestException, ValueError) as exc:
+    except ValueError as exc:
         raise OpenFoodFactsError(str(exc)) from exc
     if payload.get("status") != 1:
         return None
     return payload.get("product")
 
 
-# OFF indexes tens of thousands of categories (most tiny, non-English,
-# or near-duplicates of each other) — nowhere near all of them are
-# worth surfacing as a browsable list. Capped to a curated top N by
-# product count in `list_categories` below, not because of an API
-# limit but because a 10,000-item picker isn't a feature.
-CATEGORY_BROWSE_LIMIT = 24
+# A short curated list rather than OFF's /categories.json (tens of
+# thousands of tags, a multi-megabyte download nobody needs): the
+# handful of top-level food groups worth a "browse" shortcut. IDs are
+# OFF's own canonical category tags.
+BROWSE_CATEGORIES = [
+    ("en:breakfast-cereals", _("Breakfast cereals")),
+    ("en:breads", _("Breads")),
+    ("en:dairies", _("Dairy")),
+    ("en:cheeses", _("Cheeses")),
+    ("en:yogurts", _("Yogurts")),
+    ("en:meats", _("Meats")),
+    ("en:fishes", _("Fish")),
+    ("en:eggs", _("Eggs")),
+    ("en:fruits", _("Fruits")),
+    ("en:vegetables", _("Vegetables")),
+    ("en:legumes", _("Legumes")),
+    ("en:nuts", _("Nuts")),
+    ("en:pastas", _("Pasta")),
+    ("en:rices", _("Rice")),
+    ("en:snacks", _("Snacks")),
+    ("en:chocolates", _("Chocolate")),
+    ("en:biscuits", _("Biscuits")),
+    ("en:plant-based-milk-alternatives", _("Plant-based milks")),
+    ("en:beverages", _("Beverages")),
+    ("en:protein-bars", _("Protein bars")),
+]
 
 
-def list_categories(*, limit=CATEGORY_BROWSE_LIMIT):
-    """The most-populated OFF categories (id + product count), for a
-    "browse by category" list — not every category OFF has ever seen,
-    just the ones with enough products in them to be worth a whole
-    section. Returns `[]` on any failure; browsing by category is a
-    convenience on top of search, never the only way to find
-    something, so a transient OFF outage here degrades gracefully
-    rather than raising."""
-    try:
-        response = requests.get(
-            f"{API_BASE}/categories.json",
-            headers=REQUEST_HEADERS,
-            timeout=REQUEST_TIMEOUT_SECONDS,
-        )
-        response.raise_for_status()
-        tags = response.json().get("tags", [])
-    except (requests.RequestException, ValueError):
+def list_categories():
+    """The curated browse-by-category shortcuts (id + name) — static,
+    so it costs no OFF request and can't fail."""
+    return [{"id": cid, "name": name} for cid, name in BROWSE_CATEGORIES]
+
+
+def search_by_category(category_id, *, page_size=SEARCH_PAGE_SIZE):
+    """Raw OFF product dicts in one category, via Search-a-licious
+    (`categories_tags` filter)."""
+    if not category_id.replace(":", "").replace("-", "").isalnum():
         return []
-    ranked = sorted(tags, key=lambda tag: tag.get("products", 0), reverse=True)
-    categories = []
-    for tag in ranked:
-        # "en:some-category" — only the ones OFF has an English name
-        # for are usable in an English-first UI; a category whose only
-        # name is in another language would show as a raw id.
-        if not str(tag.get("id", "")).startswith("en:"):
-            continue
-        name = tag.get("name")
-        if not name:
-            continue
-        categories.append({"id": tag["id"], "name": name, "products": tag.get("products", 0)})
-        if len(categories) >= limit:
-            break
-    return categories
+    return _search(
+        f'categories_tags:"{category_id}"', page_size=page_size
+    )
 
 
-def search_by_category(category_id, *, page_size=20):
-    """Raw OFF product dicts (same shape as `search_products`) in one
-    category, ranked by OFF's own popularity/completeness ordering —
-    OFF's own category-browse endpoint, not a search.pl query with a
-    category filter bolted on, since OFF has a dedicated one."""
-    try:
-        response = requests.get(
-            f"{API_BASE}/category/{category_id}.json",
-            params={"page_size": page_size},
-            headers=REQUEST_HEADERS,
-            timeout=REQUEST_TIMEOUT_SECONDS,
-        )
-        response.raise_for_status()
-        return response.json().get("products", [])
-    except (requests.RequestException, ValueError) as exc:
-        raise OpenFoodFactsError(str(exc)) from exc
+def _text(value):
+    """Text field that may arrive as a list (Search-a-licious)."""
+    if isinstance(value, (list, tuple)):
+        return ",".join(str(v) for v in value)
+    return value or ""
+
+
+def _first_brand(brands):
+    """`brands` is a comma-separated string from the v2 product API but
+    a list from Search-a-licious."""
+    if isinstance(brands, (list, tuple)):
+        return str(brands[0]).strip() if brands else ""
+    return (brands or "").split(",")[0].strip()
 
 
 def parse_product(raw):
@@ -147,6 +188,10 @@ def parse_product(raw):
     barcode = raw.get("code")
     nutriments = raw.get("nutriments") or {}
     calories = nutriments.get("energy-kcal_100g")
+    if calories is None and nutriments.get("energy-kj_100g") is not None:
+        # Many products (Search-a-licious returns them as-is) only
+        # carry kJ; 1 kcal = 4.184 kJ.
+        calories = float(nutriments["energy-kj_100g"]) / 4.184
     protein = nutriments.get("proteins_100g")
     carbohydrate = nutriments.get("carbohydrates_100g")
     fat = nutriments.get("fat_100g")
@@ -164,7 +209,7 @@ def parse_product(raw):
     return {
         "off_id": barcode,
         "name": name,
-        "brand": (raw.get("brands") or "").split(",")[0].strip(),
+        "brand": _first_brand(raw.get("brands")),
         "serving_size": PER_100_SERVING_SIZE,
         "serving_unit": "ml" if raw.get("product_quantity_unit") == "ml" else "g",
         "calories": int(round(float(calories))),
@@ -202,9 +247,9 @@ def parse_product(raw):
         # image_thumb_url's own comment for why this is a separate
         # stored field rather than a resize of image_url.
         "image_thumb_url": raw.get("image_front_thumb_url") or raw.get("image_thumb_url") or "",
-        "categories": raw.get("categories") or "",
-        "quantity": raw.get("quantity") or "",
-        "ingredients_text": raw.get("ingredients_text") or "",
-        "labels": raw.get("labels") or "",
-        "allergens": raw.get("allergens") or "",
+        "categories": _text(raw.get("categories")),
+        "quantity": _text(raw.get("quantity")),
+        "ingredients_text": _text(raw.get("ingredients_text")),
+        "labels": _text(raw.get("labels")),
+        "allergens": _text(raw.get("allergens")),
     }

@@ -1025,7 +1025,7 @@ class GetPricesForBarcodeTests(TestCase):
 
     def test_a_network_failure_raises_open_prices_error(self):
         with mock.patch(
-            "requests.get", side_effect=open_prices.requests.RequestException("boom")
+            "requests.get", side_effect=openfoodfacts.off_http.requests.RequestException("boom")
         ):
             with self.assertRaises(open_prices.OpenPricesError):
                 open_prices.get_prices_for_barcode("1234567890123")
@@ -1642,6 +1642,28 @@ class RefreshSelectedFromOffAdminActionTests(TestCase):
         mocked.assert_called_once_with("1234567890123")
         self.assertContains(response, "Refreshed 1 of 1 food(s) from OpenFoodFacts.")
 
+    def test_a_large_selection_is_capped_to_the_read_budget_and_the_rest_reported(self):
+        limit = openfoodfacts.off_http.READ_LIMIT_PER_MINUTE
+        foods = [
+            make_food(None, name=f"Food {i}", off_id=f"{1000000000000 + i}")
+            for i in range(limit + 3)
+        ]
+        with mock.patch.object(
+            openfoodfacts,
+            "get_product",
+            side_effect=lambda barcode: {**RAW_OFF_PRODUCT, "code": barcode},
+        ) as mocked:
+            response = self.client.post(
+                reverse("admin:nutrition_food_changelist"),
+                {
+                    "action": "refresh_selected_from_off",
+                    "_selected_action": [f.pk for f in foods],
+                },
+                follow=True,
+            )
+        self.assertEqual(mocked.call_count, limit)
+        self.assertContains(response, "3 more food(s) were left for later")
+
     def test_none_selected_have_an_off_id_shows_a_warning_and_makes_no_calls(self):
         custom_food = make_food(None, name="Homemade soup")
         with mock.patch.object(openfoodfacts, "get_product") as mocked:
@@ -1708,7 +1730,7 @@ class SearchFoodsTests(TestCase):
         make_food(None, name="Shared Rice")
         make_food(None, name="Unrelated Broccoli")
         with mock.patch.object(openfoodfacts, "search_products", return_value=[]):
-            local, off_results = services.search_foods(self.alice, "chicken")
+            local, off_results, _status = services.search_foods(self.alice, "chicken", online=True)
         self.assertEqual([f.name for f in local], ["Alice's Chicken"])
 
     def test_off_results_already_imported_locally_are_not_repeated(self):
@@ -1717,21 +1739,23 @@ class SearchFoodsTests(TestCase):
         with mock.patch.object(
             openfoodfacts, "search_products", return_value=[RAW_OFF_PRODUCT]
         ):
-            local, off_results = services.search_foods(self.alice, "muesli")
+            local, off_results, _status = services.search_foods(self.alice, "muesli", online=True)
         self.assertEqual(off_results, [])
 
     def test_an_off_error_yields_an_empty_off_result_list_not_a_crash(self):
         with mock.patch.object(
             openfoodfacts, "search_products", side_effect=openfoodfacts.OpenFoodFactsError("x")
         ):
-            local, off_results = services.search_foods(self.alice, "anything")
+            local, off_results, _status = services.search_foods(self.alice, "anything", online=True)
         self.assertEqual(off_results, [])
 
     def test_a_barcode_like_query_uses_the_by_barcode_lookup_not_free_text_search(self):
         with mock.patch.object(
             openfoodfacts, "get_product", return_value=RAW_OFF_PRODUCT
         ) as get_product, mock.patch.object(openfoodfacts, "search_products") as search_products:
-            local, off_results = services.search_foods(self.alice, "1234567890123")
+            local, off_results, _status = services.search_foods(
+                self.alice, "1234567890123", online=True
+            )
         get_product.assert_called_once_with("1234567890123")
         search_products.assert_not_called()
         self.assertEqual([r["off_id"] for r in off_results], ["1234567890123"])
@@ -1739,12 +1763,16 @@ class SearchFoodsTests(TestCase):
     def test_a_barcode_query_also_matches_an_already_imported_local_food_by_off_id(self):
         make_food(self.alice, name="Muesli I already have", off_id="1234567890123")
         with mock.patch.object(openfoodfacts, "get_product", return_value=None):
-            local, off_results = services.search_foods(self.alice, "1234567890123")
+            local, off_results, _status = services.search_foods(
+                self.alice, "1234567890123", online=True
+            )
         self.assertEqual([f.name for f in local], ["Muesli I already have"])
 
     def test_a_barcode_query_with_no_off_match_returns_no_off_results_not_a_crash(self):
         with mock.patch.object(openfoodfacts, "get_product", return_value=None):
-            local, off_results = services.search_foods(self.alice, "99999999999999")
+            local, off_results, _status = services.search_foods(
+                self.alice, "99999999999999", online=True
+            )
         self.assertEqual(off_results, [])
 
     def test_a_short_digit_string_is_treated_as_a_name_search_not_a_barcode(self):
@@ -1753,55 +1781,18 @@ class SearchFoodsTests(TestCase):
         with mock.patch.object(
             openfoodfacts, "search_products", return_value=[]
         ) as search_products, mock.patch.object(openfoodfacts, "get_product") as get_product:
-            services.search_foods(self.alice, "1234")
-        search_products.assert_called_once_with("1234")
+            services.search_foods(self.alice, "1234", online=True)
+        search_products.assert_called_once_with("1234", language="en")
         get_product.assert_not_called()
 
 
-RAW_OFF_CATEGORIES = {
-    "tags": [
-        {"id": "en:cereals", "name": "Cereals", "products": 5000},
-        {"id": "fr:cereales", "name": "Céréales", "products": 4000},
-        {"id": "en:snacks", "name": "Snacks", "products": 200},
-        {"id": "en:no-name", "products": 100},
-    ]
-}
-
-
 class ListCategoriesTests(TestCase):
-    def test_ranks_by_product_count_and_skips_non_english_or_unnamed_tags(self):
+    def test_is_a_static_curated_list_that_needs_no_request(self):
         with mock.patch("requests.get") as get:
-            get.return_value.json.return_value = RAW_OFF_CATEGORIES
-            get.return_value.raise_for_status.return_value = None
-            categories = openfoodfacts.list_categories(limit=10)
-        # fr:cereales (no "en:" id) and en:no-name (no name) are
-        # skipped; en:cereals and en:snacks both qualify and are
-        # ranked by product count, highest first.
-        self.assertEqual(
-            categories,
-            [
-                {"id": "en:cereals", "name": "Cereals", "products": 5000},
-                {"id": "en:snacks", "name": "Snacks", "products": 200},
-            ],
-        )
-
-    def test_respects_the_limit(self):
-        with mock.patch("requests.get") as get:
-            get.return_value.json.return_value = {
-                "tags": [
-                    {"id": f"en:cat-{i}", "name": f"Cat {i}", "products": 100 - i}
-                    for i in range(10)
-                ]
-            }
-            get.return_value.raise_for_status.return_value = None
-            categories = openfoodfacts.list_categories(limit=3)
-        self.assertEqual(len(categories), 3)
-
-    def test_a_network_failure_returns_an_empty_list_not_a_crash(self):
-        with mock.patch(
-            "requests.get", side_effect=openfoodfacts.requests.RequestException("boom")
-        ):
-            self.assertEqual(openfoodfacts.list_categories(), [])
+            categories = openfoodfacts.list_categories()
+        get.assert_not_called()
+        self.assertTrue(categories)
+        self.assertTrue(all(c["id"].startswith("en:") and c["name"] for c in categories))
 
 
 class SuggestedCategoriesTests(TestCase):
@@ -1811,13 +1802,8 @@ class SuggestedCategoriesTests(TestCase):
         settings_row.save()
         self.assertEqual(services.suggested_categories(), [])
 
-    def test_caches_the_result(self):
-        with mock.patch.object(
-            openfoodfacts, "list_categories", return_value=[{"id": "en:x", "name": "X"}]
-        ) as list_categories:
-            services.suggested_categories()
-            services.suggested_categories()
-        list_categories.assert_called_once()
+    def test_enabled_integration_returns_the_curated_list(self):
+        self.assertEqual(services.suggested_categories(), openfoodfacts.list_categories())
 
 
 class BrowseCategoryTests(TestCase):
@@ -5356,3 +5342,213 @@ class NumberInputLocaleFormatTests(TestCase):
         response = self.client.get(reverse("nutrition:diary-add-entry"))
         self.assertContains(response, 'value="150.50"')
         self.assertNotContains(response, 'value="150,50"')
+
+
+def _fake_response(payload, status=200):
+    response = mock.Mock()
+    response.status_code = status
+    response.json.return_value = payload
+    if status >= 400:
+        error = openfoodfacts.off_http.requests.HTTPError(str(status))
+        error.response = response
+        response.raise_for_status.side_effect = error
+    else:
+        response.raise_for_status.return_value = None
+    return response
+
+
+class OffHttpTests(TestCase):
+    """apps.nutrition.off_http — OFF's usage rules: an identifying
+    User-Agent with a contact, and at most 10 searches / 15 reads a
+    minute per IP (docs/NUTRITION.md "OpenFoodFacts integration")."""
+
+    def setUp(self):
+        from django.core.cache import cache
+
+        cache.clear()
+
+    def test_the_user_agent_names_the_app_version_and_the_operators_contact(self):
+        row = OpenFoodFactsSettings.load()
+        row.contact_email = "ops@example.com"
+        row.save()
+        with mock.patch("requests.get", return_value=_fake_response({})) as get:
+            openfoodfacts.off_http.get("https://x.test", bucket="read")
+        agent = get.call_args.kwargs["headers"]["User-Agent"]
+        self.assertTrue(agent.startswith("IronStack/"))
+        self.assertIn("(ops@example.com)", agent)
+
+    def test_the_user_agent_falls_back_to_the_setting_then_a_generic_note(self):
+        with self.settings(OFF_CONTACT_EMAIL="env@example.com"):
+            self.assertIn("(env@example.com)", openfoodfacts.off_http.user_agent())
+        with self.settings(OFF_CONTACT_EMAIL=""):
+            self.assertIn("(self-hosted fitness tracker)", openfoodfacts.off_http.user_agent())
+
+    def test_searches_stop_at_the_per_minute_budget_without_sending_a_request(self):
+        limit = openfoodfacts.off_http.SEARCH_LIMIT_PER_MINUTE
+        with mock.patch("requests.get", return_value=_fake_response({})) as get:
+            for _ in range(limit):
+                openfoodfacts.off_http.get("https://x.test", bucket="search")
+            with self.assertRaises(openfoodfacts.off_http.OffRateLimited):
+                openfoodfacts.off_http.get("https://x.test", bucket="search")
+        self.assertEqual(get.call_count, limit)
+
+    def test_search_and_read_budgets_are_independent(self):
+        limit = openfoodfacts.off_http.SEARCH_LIMIT_PER_MINUTE
+        with mock.patch("requests.get", return_value=_fake_response({})):
+            for _ in range(limit):
+                openfoodfacts.off_http.get("https://x.test", bucket="search")
+            openfoodfacts.off_http.get("https://x.test", bucket="read")  # no raise
+
+    def test_staging_requests_carry_offs_public_basic_auth_and_production_ones_do_not(self):
+        with mock.patch("requests.get", return_value=_fake_response({})) as get:
+            openfoodfacts.off_http.get("https://world.openfoodfacts.net/x", bucket="read")
+            openfoodfacts.off_http.get("https://world.openfoodfacts.org/x", bucket="read")
+        self.assertEqual(get.call_args_list[0].kwargs["auth"], ("off", "off"))
+        self.assertIsNone(get.call_args_list[1].kwargs["auth"])
+
+    def test_our_budgets_sit_below_offs_published_limits(self):
+        self.assertLess(openfoodfacts.off_http.SEARCH_LIMIT_PER_MINUTE, 10)
+        self.assertLess(openfoodfacts.off_http.READ_LIMIT_PER_MINUTE, 15)
+
+    def test_a_429_backs_off_instead_of_retrying_on_the_next_call(self):
+        with mock.patch("requests.get", return_value=_fake_response({}, status=429)) as get:
+            with self.assertRaises(openfoodfacts.off_http.OffRequestError):
+                openfoodfacts.off_http.get("https://x.test", bucket="read")
+            with self.assertRaises(openfoodfacts.off_http.OffRateLimited):
+                openfoodfacts.off_http.get("https://x.test", bucket="read")
+        self.assertEqual(get.call_count, 1)
+
+
+class OpenFoodFactsSearchClientTests(TestCase):
+    def setUp(self):
+        from django.core.cache import cache
+
+        cache.clear()
+
+    def test_text_search_uses_search_a_licious_not_the_deprecated_cgi_endpoint(self):
+        with mock.patch("requests.get", return_value=_fake_response({"hits": []})) as get:
+            openfoodfacts.search_products("oat milk")
+        url = get.call_args.args[0]
+        self.assertTrue(url.endswith("/search"))
+        self.assertNotIn("cgi/search.pl", url)
+        self.assertEqual(get.call_args.kwargs["params"]["q"], "oat milk")
+
+    def test_a_repeated_search_is_served_from_the_cache(self):
+        with mock.patch(
+            "requests.get", return_value=_fake_response({"hits": [{"code": "1"}]})
+        ) as get:
+            first = openfoodfacts.search_products("oat milk")
+            second = openfoodfacts.search_products("oat milk")
+        self.assertEqual(first, second)
+        self.assertEqual(get.call_count, 1)
+
+    def test_an_unknown_barcode_404_is_none_not_an_error(self):
+        with mock.patch("requests.get", return_value=_fake_response({"status": 0}, status=404)):
+            self.assertIsNone(openfoodfacts.get_product("00000000"))
+
+    def test_category_browse_queries_by_category_tag(self):
+        with mock.patch("requests.get", return_value=_fake_response({"hits": []})) as get:
+            openfoodfacts.search_by_category("en:cereals")
+        self.assertEqual(get.call_args.kwargs["params"]["q"], 'categories_tags:"en:cereals"')
+
+    def test_category_ids_with_query_syntax_characters_are_refused(self):
+        with mock.patch("requests.get") as get:
+            self.assertEqual(openfoodfacts.search_by_category('x" OR a:"b'), [])
+        get.assert_not_called()
+
+    def test_parse_product_reads_a_search_a_licious_hit(self):
+        hit = {
+            "code": "9421903594204",
+            "product_name": "Boring Oat Milk",
+            "brands": ["Boring Oat Milk"],
+            "nutriments": {
+                "carbohydrates_100g": 6.7,
+                "energy-kj_100g": 190,
+                "fat_100g": 1.7,
+                "proteins_100g": 0.8,
+            },
+            "categories": "en:Beverages",
+        }
+        parsed = openfoodfacts.parse_product(hit)
+        self.assertEqual(parsed["brand"], "Boring Oat Milk")
+        self.assertEqual(parsed["calories"], 45)  # 190 kJ / 4.184
+
+
+class SearchFoodsOnlineGatingTests(TestCase):
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        self.client.login(username="alice", password="s3cret-pass")
+
+    def test_typing_a_text_query_makes_no_off_request(self):
+        with mock.patch.object(openfoodfacts, "search_products") as search:
+            local, off_results, status = services.search_foods(self.alice, "muesli")
+        search.assert_not_called()
+        self.assertEqual((off_results, status), ([], "available"))
+
+    def test_pressing_the_button_queries_off(self):
+        with mock.patch.object(
+            openfoodfacts, "search_products", return_value=[RAW_OFF_PRODUCT]
+        ) as search:
+            _local, off_results, status = services.search_foods(
+                self.alice, "muesli", online=True
+            )
+        search.assert_called_once()
+        self.assertEqual(status, "ok")
+        self.assertEqual(len(off_results), 1)
+
+    def test_a_barcode_looks_up_automatically_with_exactly_one_request(self):
+        with mock.patch.object(
+            openfoodfacts, "get_product", return_value=RAW_OFF_PRODUCT
+        ) as get_product:
+            services.search_foods(self.alice, "1234567890123")
+        get_product.assert_called_once_with("1234567890123")
+
+    def test_a_spent_budget_reports_busy_and_keeps_local_results(self):
+        make_food(self.alice, name="Muesli mine")
+        with mock.patch.object(
+            openfoodfacts,
+            "search_products",
+            side_effect=openfoodfacts.OpenFoodFactsRateLimited("spent"),
+        ):
+            local, off_results, status = services.search_foods(
+                self.alice, "muesli", online=True
+            )
+        self.assertEqual(status, "busy")
+        self.assertEqual([f.name for f in local], ["Muesli mine"])
+
+    def test_a_disabled_integration_never_reaches_off(self):
+        row = OpenFoodFactsSettings.load()
+        row.enabled = False
+        row.save()
+        with mock.patch.object(openfoodfacts, "get_product") as get_product:
+            _l, _o, status = services.search_foods(self.alice, "1234567890123")
+        get_product.assert_not_called()
+        self.assertEqual(status, "disabled")
+
+    def test_the_view_offers_an_online_button_and_typing_does_not_call_off(self):
+        with mock.patch.object(openfoodfacts, "search_products") as search:
+            response = self.client.get(reverse("nutrition:food-search"), {"q": "muesli"})
+        search.assert_not_called()
+        self.assertContains(response, "online=1")
+        self.assertContains(response, "Search Open Food Facts")
+
+    def test_online_results_show_the_open_food_facts_attribution(self):
+        with mock.patch.object(
+            openfoodfacts, "search_products", return_value=[RAW_OFF_PRODUCT]
+        ):
+            response = self.client.get(
+                reverse("nutrition:food-search"), {"q": "muesli", "online": "1"}
+            )
+        self.assertContains(response, "https://world.openfoodfacts.org")
+        self.assertContains(response, "Open Database License")
+
+    def test_the_busy_message_is_shown_when_rate_limited(self):
+        with mock.patch.object(
+            openfoodfacts,
+            "search_products",
+            side_effect=openfoodfacts.OpenFoodFactsRateLimited("spent"),
+        ):
+            response = self.client.get(
+                reverse("nutrition:food-search"), {"q": "muesli", "online": "1"}
+            )
+        self.assertContains(response, "busy right now")

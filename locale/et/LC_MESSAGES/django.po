@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: IronStack\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-20 21:11+0000\n"
+"POT-Creation-Date: 2026-09-21 16:10+0000\n"
 "Language: et\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -528,6 +528,7 @@ msgid "Activity logged."
 msgstr "Tegevus salvestatud."
 
 #: apps/activities/views.py:103 apps/measurements/views.py:151
+#, python-format
 msgid "That could not be saved: %(errors)s"
 msgstr "Salvestamine ebaõnnestus: %(errors)s"
 
@@ -800,7 +801,7 @@ msgid "This diet plan's coach source is no longer available."
 msgstr "Selle toitumiskava treeneri algallikas pole enam saadaval."
 
 #: apps/coaching/views_plans.py:59 apps/coaching/views_plans.py:73
-#: apps/nutrition/views.py:1063 apps/nutrition/views.py:1358
+#: apps/nutrition/views.py:1070 apps/nutrition/views.py:1365
 #: apps/programs/views.py:200
 #, python-format
 msgid "Imported “%(name)s”."
@@ -2045,33 +2046,33 @@ msgstr "Mõõtmine kustutatud."
 msgid "Refresh selected foods from OpenFoodFacts"
 msgstr "Värskenda valitud toidud OpenFoodFactsist"
 
-#: apps/nutrition/admin.py:99 apps/nutrition/admin.py:127
+#: apps/nutrition/admin.py:99 apps/nutrition/admin.py:129
 msgid "None of the selected foods were imported from OpenFoodFacts."
 msgstr "Ühtegi valitud toitu ei imporditud OpenFoodFactsist."
 
-#: apps/nutrition/admin.py:111
+#: apps/nutrition/admin.py:112
 #, python-format
 msgid "Refreshed %(refreshed)d of %(total)d food(s) from OpenFoodFacts."
 msgstr "Värskendati %(refreshed)d/%(total)d toitu OpenFoodFactsist."
 
-#: apps/nutrition/admin.py:115
+#: apps/nutrition/admin.py:117
 msgid "Refresh selected foods' prices from Open Prices"
 msgstr "Värskenda valitud toitude hinnad Open Pricesist"
 
-#: apps/nutrition/admin.py:139
+#: apps/nutrition/admin.py:142
 #, python-format
 msgid "Refreshed %(refreshed)d of %(total)d food price(s) from Open Prices."
 msgstr "Värskendati %(refreshed)d/%(total)d toidu hinda Open Pricesist."
 
-#: apps/nutrition/admin.py:143
+#: apps/nutrition/admin.py:147
 msgid "Merge selected foods into one…"
 msgstr "Ühenda valitud toidud üheks…"
 
-#: apps/nutrition/admin.py:148 apps/nutrition/admin.py:176
+#: apps/nutrition/admin.py:152 apps/nutrition/admin.py:180
 msgid "Select at least two foods to merge."
 msgstr "Vali ühendamiseks vähemalt kaks toitu."
 
-#: apps/nutrition/admin.py:189
+#: apps/nutrition/admin.py:193
 #, python-format
 msgid ""
 "Merged %(count)d food(s) into “%(name)s”. Every diary entry, recipe "
@@ -2082,9 +2083,16 @@ msgstr ""
 "koostisosa ja toitumisplaani üksus, mis viitas mõnele neist, viitab nüüd "
 "sellele."
 
-#: apps/nutrition/admin.py:199
+#: apps/nutrition/admin.py:203
 msgid "Merge foods"
 msgstr "Ühenda toidud"
+
+#: apps/nutrition/admin.py:226
+#, python-format
+msgid ""
+"%(count)d more food(s) were left for later to stay within Open Food Facts' "
+"rate limit — run this action again in a minute."
+msgstr "%(count)d toitu jäeti hiljemaks, et püsida Open Food Factsi päringupiirangu piires — käivita toiming minuti pärast uuesti."
 
 #: apps/nutrition/calculators.py:138 apps/nutrition/calculators.py:143
 msgid "Lower risk"
@@ -2748,6 +2756,86 @@ msgstr "Logi kas toit või retsept, mitte mõlemad ega mitte kumbki."
 msgid "Use either a food or a recipe, not both or neither."
 msgstr "Kasuta kas toitu või retsepti, mitte mõlemat ega mitte kumbagi."
 
+#: apps/nutrition/openfoodfacts.py:127
+msgid "Breakfast cereals"
+msgstr "Hommikusöögihelbed"
+
+#: apps/nutrition/openfoodfacts.py:128
+msgid "Breads"
+msgstr "Leivad"
+
+#: apps/nutrition/openfoodfacts.py:129
+msgid "Dairy"
+msgstr "Piimatooted"
+
+#: apps/nutrition/openfoodfacts.py:130
+msgid "Cheeses"
+msgstr "Juustud"
+
+#: apps/nutrition/openfoodfacts.py:131
+msgid "Yogurts"
+msgstr "Jogurtid"
+
+#: apps/nutrition/openfoodfacts.py:132
+msgid "Meats"
+msgstr "Liha"
+
+#: apps/nutrition/openfoodfacts.py:133
+msgid "Fish"
+msgstr "Kala"
+
+#: apps/nutrition/openfoodfacts.py:134
+msgid "Eggs"
+msgstr "Munad"
+
+#: apps/nutrition/openfoodfacts.py:135
+msgid "Fruits"
+msgstr "Puuviljad"
+
+#: apps/nutrition/openfoodfacts.py:136
+msgid "Vegetables"
+msgstr "Köögiviljad"
+
+#: apps/nutrition/openfoodfacts.py:137
+msgid "Legumes"
+msgstr "Kaunviljad"
+
+#: apps/nutrition/openfoodfacts.py:138
+msgid "Nuts"
+msgstr "Pähklid"
+
+#: apps/nutrition/openfoodfacts.py:139
+msgid "Pasta"
+msgstr "Pasta"
+
+#: apps/nutrition/openfoodfacts.py:140
+msgid "Rice"
+msgstr "Riis"
+
+#: apps/nutrition/openfoodfacts.py:141
+msgid "Snacks"
+msgstr "Suupisted"
+
+#: apps/nutrition/openfoodfacts.py:142
+msgid "Chocolate"
+msgstr "Šokolaad"
+
+#: apps/nutrition/openfoodfacts.py:143
+msgid "Biscuits"
+msgstr "Küpsised"
+
+#: apps/nutrition/openfoodfacts.py:144
+msgid "Plant-based milks"
+msgstr "Taimsed piimaasendajad"
+
+#: apps/nutrition/openfoodfacts.py:145
+msgid "Beverages"
+msgstr "Joogid"
+
+#: apps/nutrition/openfoodfacts.py:146
+msgid "Protein bars"
+msgstr "Proteiinibatoonid"
+
 #: apps/nutrition/suggestions.py:104
 msgid "Set a nutrition goal to get adjustment suggestions."
 msgstr "Sea toitumiseesmärk, et saada kohandamissoovitusi."
@@ -2790,42 +2878,42 @@ msgstr ""
 msgid "Goal updated — new target is %(calories)d kcal/day."
 msgstr "Eesmärk uuendatud — uus eesmärk on %(calories)d kcal/päevas."
 
-#: apps/nutrition/views.py:751
+#: apps/nutrition/views.py:758
 msgid "Pick a date to copy this day to."
 msgstr "Vali kuupäev, kuhu see päev kopeerida."
 
-#: apps/nutrition/views.py:756
+#: apps/nutrition/views.py:763
 #, python-format
 msgid "Copied %(count)d entry to %(date)s."
 msgid_plural "Copied %(count)d entries to %(date)s."
 msgstr[0] "Kopeeriti %(count)d kirje kuupäevale %(date)s."
 msgstr[1] "Kopeeriti %(count)d kirjet kuupäevale %(date)s."
 
-#: apps/nutrition/views.py:762
+#: apps/nutrition/views.py:769
 msgid "Nothing to copy — that day has no entries."
 msgstr "Pole midagi kopeerida — sellel päeval pole kirjeid."
 
-#: apps/nutrition/views.py:808 apps/nutrition/views.py:1128
-#: apps/nutrition/views.py:1591
+#: apps/nutrition/views.py:815 apps/nutrition/views.py:1135
+#: apps/nutrition/views.py:1598
 msgid "That food couldn't be imported — try again."
 msgstr "Seda toitu ei õnnestunud importida — proovi uuesti."
 
-#: apps/nutrition/views.py:872
+#: apps/nutrition/views.py:879
 msgid "Nothing logged for this meal yet to save as a recipe."
 msgstr ""
 "Sellele toidukorrale pole veel midagi märgitud retseptina salvestamiseks."
 
-#: apps/nutrition/views.py:874
+#: apps/nutrition/views.py:881
 #, python-format
 msgid "Saved “%(name)s” as a new recipe."
 msgstr "Salvestati „%(name)s” uue retseptina."
 
-#: apps/nutrition/views.py:1018
+#: apps/nutrition/views.py:1025
 #, python-format
 msgid "\"%(name)s\" created — now add its ingredients below."
 msgstr "\"%(name)s\" loodud — lisa selle koostisosad allpool."
 
-#: apps/nutrition/views.py:1068 apps/nutrition/views.py:1363
+#: apps/nutrition/views.py:1075 apps/nutrition/views.py:1370
 #: apps/programs/views.py:205
 #, python-format
 msgid ""
@@ -2835,18 +2923,18 @@ msgstr ""
 "See fail eksporditi IronStack %(version)s versioonist — tasub importi üle "
 "kontrollida, kui midagi tundub valesti."
 
-#: apps/nutrition/views.py:1512
+#: apps/nutrition/views.py:1519
 msgid "Only a personal trainer can share a diet plan."
 msgstr "Toitumiskava saab jagada ainult personaaltreener."
 
-#: apps/nutrition/views.py:1629
+#: apps/nutrition/views.py:1636
 #, python-format
 msgid "Logged %(count)d item to %(date)s."
 msgid_plural "Logged %(count)d items to %(date)s."
 msgstr[0] "Logiti %(count)d kirje kuupäevale %(date)s."
 msgstr[1] "Logiti %(count)d kirjet kuupäevale %(date)s."
 
-#: apps/nutrition/views.py:1640
+#: apps/nutrition/views.py:1647
 msgid "Nothing to log — this plan has no items for that date."
 msgstr "Pole midagi logida — sellel plaanil pole selle kuupäeva jaoks kirjeid."
 
@@ -4760,7 +4848,8 @@ msgstr "Midagi läks valesti — muudatust ei salvestatud. Proovi uuesti."
 msgid ""
 "Could not reach the server — check your connection. That change was not "
 "saved."
-msgstr "Serveriga ei saadud ühendust — kontrolli ühendust. Muudatust ei salvestatud."
+msgstr ""
+"Serveriga ei saadud ühendust — kontrolli ühendust. Muudatust ei salvestatud."
 
 #: templates/base.html:123
 msgid "Camera access needs a secure (https) connection."
@@ -5095,6 +5184,7 @@ msgid "Previous"
 msgstr "Eelmine"
 
 #: templates/core/_pagination.html:13
+#, python-format
 msgid "Page %(n)s of %(total)s"
 msgstr "Leht %(n)s / %(total)s"
 
@@ -5777,12 +5867,29 @@ msgid "Import & add"
 msgstr "Impordi ja lisa"
 
 #: templates/nutrition/_food_search_results.html:74
+msgid "Nothing found in your library."
+msgstr "Sinu kogust ei leitud midagi."
+
+#: templates/nutrition/_food_search_results.html:74
 msgid "Nothing found."
 msgstr "Midagi ei leitud."
 
 #: templates/nutrition/_food_search_results.html:76
 msgid "Create a custom food"
 msgstr "Loo kohandatud toit"
+
+#: templates/nutrition/_food_search_results.html:82
+msgid "Online search is busy right now — please try again in a minute."
+msgstr "Veebiotsing on praegu hõivatud — proovi minuti pärast uuesti."
+
+#: templates/nutrition/_food_search_results.html:84
+msgid "Open Food Facts couldn't be reached right now."
+msgstr "Open Food Factsiga ei õnnestu praegu ühendust saada."
+
+#: templates/nutrition/_food_search_results.html:91
+#, python-format
+msgid "Search Open Food Facts for \"%(query)s\""
+msgstr "Otsi Open Food Factsist: \"%(query)s\""
 
 #: templates/nutrition/_month_calendar.html:60
 msgid "Previous month"
@@ -5855,6 +5962,17 @@ msgstr "Nutri-Score %(grade)s"
 #: templates/nutrition/_nutri_score_badge.html:6
 msgid "NOVA — food processing level, 1 (unprocessed) to 4 (ultra-processed)"
 msgstr "NOVA — toidu töötlemisaste, 1 (töötlemata) kuni 4 (ülitöödeldud)"
+
+#: templates/nutrition/_off_attribution.html:4
+msgid ""
+"Food data and product photos come from <a href=\"https://"
+"world.openfoodfacts.org\" target=\"_blank\" rel=\"noopener noreferrer\">Open "
+"Food Facts</a>, a collaborative database, under the <a href=\"https://"
+"opendatacommons.org/licenses/odbl/1-0/\" target=\"_blank\" rel=\"noopener "
+"noreferrer\">Open Database License</a>; photos are <a href=\"https://"
+"creativecommons.org/licenses/by-sa/3.0/\" target=\"_blank\" rel=\"noopener "
+"noreferrer\">CC BY-SA</a>."
+msgstr "Toidu andmed ja tootefotod pärinevad koostööl põhinevast andmebaasist <a href=\"https://world.openfoodfacts.org\" target=\"_blank\" rel=\"noopener noreferrer\">Open Food Facts</a> (<a href=\"https://opendatacommons.org/licenses/odbl/1-0/\" target=\"_blank\" rel=\"noopener noreferrer\">Open Database License</a>); fotod on <a href=\"https://creativecommons.org/licenses/by-sa/3.0/\" target=\"_blank\" rel=\"noopener noreferrer\">CC BY-SA</a>."
 
 #: templates/nutrition/_subnav.html:43
 msgid "Nutrition sections"
@@ -6479,7 +6597,7 @@ msgstr "Tagasi toitude juurde"
 msgid "Nothing found in this category right now."
 msgstr "Sellest kategooriast ei leitud praegu midagi."
 
-#: templates/nutrition/food_category.html:29
+#: templates/nutrition/food_category.html:31
 msgid "Back to browse"
 msgstr "Tagasi sirvimise juurde"
 
@@ -7583,6 +7701,7 @@ msgid "ended %(ended)s"
 msgstr "lõppes %(ended)s"
 
 #: templates/workouts/session_detail.html:19
+#, python-format
 msgid "%(n)s set"
 msgid_plural "%(n)s sets"
 msgstr[0] "%(n)s seeria"
@@ -7616,6 +7735,7 @@ msgid "Workout history"
 msgstr "Trennide ajalugu"
 
 #: templates/workouts/session_list.html:17
+#, python-format
 msgid "%(n)s exercise · %(sets)s sets"
 msgid_plural "%(n)s exercises · %(sets)s sets"
 msgstr[0] "%(n)s harjutus · %(sets)s seeriat"
@@ -7629,7 +7749,9 @@ msgstr "Trenne pole veel logitud."
 msgid ""
 "Start a freeform workout with the button below, or pick a workout from one "
 "of your programs."
-msgstr "Alusta vaba treening allolevaga nupuga või vali treening ühest oma programmist."
+msgstr ""
+"Alusta vaba treening allolevaga nupuga või vali treening ühest oma "
+"programmist."
 
 #: templates/workouts/session_list.html:28
 msgid "Browse programs"

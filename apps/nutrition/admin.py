@@ -3,7 +3,7 @@ from django.shortcuts import redirect, render
 from django.urls import path, reverse
 from django.utils.translation import gettext_lazy as _
 
-from . import services
+from . import off_http, services
 from .models import (
     DiaryEntry,
     DietPlan,
@@ -100,6 +100,7 @@ class FoodAdmin(admin.ModelAdmin):
                 level=messages.WARNING,
             )
             return
+        off_foods, deferred = _within_off_budget(off_foods)
         refreshed = 0
         for food in off_foods:
             previous_synced_at = food.off_synced_at
@@ -111,6 +112,7 @@ class FoodAdmin(admin.ModelAdmin):
             _("Refreshed %(refreshed)d of %(total)d food(s) from OpenFoodFacts.")
             % {"refreshed": refreshed, "total": len(off_foods)},
         )
+        _warn_deferred(self, request, deferred)
 
     @admin.action(description=_("Refresh selected foods' prices from Open Prices"))
     def refresh_selected_prices(self, request, queryset):
@@ -128,6 +130,7 @@ class FoodAdmin(admin.ModelAdmin):
                 level=messages.WARNING,
             )
             return
+        off_foods, deferred = _within_off_budget(off_foods)
         refreshed = 0
         for food in off_foods:
             previous_synced_at = food.price_synced_at
@@ -139,6 +142,7 @@ class FoodAdmin(admin.ModelAdmin):
             _("Refreshed %(refreshed)d of %(total)d food price(s) from Open Prices.")
             % {"refreshed": refreshed, "total": len(off_foods)},
         )
+        _warn_deferred(self, request, deferred)
 
     @admin.action(description=_("Merge selected foods into one…"))
     def merge_selected_foods(self, request, queryset):
@@ -204,12 +208,35 @@ class FoodAdmin(admin.ModelAdmin):
         return render(request, "admin/nutrition/food/merge.html", context)
 
 
+def _within_off_budget(foods):
+    """Split a selection into what one run may refresh and the rest.
+    Open Food Facts allows 15 product reads a minute per IP, so a run
+    handles at most `off_http.READ_LIMIT_PER_MINUTE` foods (see
+    docs/NUTRITION.md "OpenFoodFacts integration") and reports the
+    remainder instead of silently skipping it."""
+    limit = off_http.READ_LIMIT_PER_MINUTE
+    return foods[:limit], len(foods[limit:])
+
+
+def _warn_deferred(model_admin, request, deferred):
+    if deferred:
+        model_admin.message_user(
+            request,
+            _(
+                "%(count)d more food(s) were left for later to stay within Open Food "
+                "Facts' rate limit — run this action again in a minute."
+            )
+            % {"count": deferred},
+            level=messages.WARNING,
+        )
+
+
 @admin.register(OpenFoodFactsSettings)
 class OpenFoodFactsSettingsAdmin(admin.ModelAdmin):
     """Singleton — same pattern as apps.core.admin's
     BackupSettingsAdmin/FeedbackSettingsAdmin."""
 
-    list_display = ["__str__", "enabled"]
+    list_display = ["__str__", "enabled", "contact_email"]
 
     def has_add_permission(self, request):
         return not OpenFoodFactsSettings.objects.exists()

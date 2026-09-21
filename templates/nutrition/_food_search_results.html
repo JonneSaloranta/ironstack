@@ -69,13 +69,30 @@
       {% endfor %}
     {% endif %}
 
-    {% if not local and not off_results %}
+    {% if not local and not off_results and off_status != "busy" and off_status != "error" %}
       <div class="card empty-state">
-        <p>{% trans "Nothing found." %}</p>
+        <p>{% if off_status == "available" %}{% trans "Nothing found in your library." %}{% else %}{% trans "Nothing found." %}{% endif %}</p>
         {% if mode == "diary" %}
           <p><a class="button-secondary" href="{% url 'nutrition:food-create' %}">{% trans "Create a custom food" %}</a></p>
         {% endif %}
       </div>
     {% endif %}
+
+    {% if off_status == "busy" %}
+      <p class="text-muted" role="status">{% trans "Online search is busy right now — please try again in a minute." %}</p>
+    {% elif off_status == "error" %}
+      <p class="text-muted" role="status">{% trans "Open Food Facts couldn't be reached right now." %}</p>
+    {% elif off_status == "available" %}
+      <p>
+        <button type="button" class="button-secondary"
+                hx-get="{% url 'nutrition:food-search' %}?q={{ query|urlencode }}&amp;mode={{ mode|urlencode }}&amp;online=1{% if date %}&amp;date={{ date|urlencode }}{% endif %}{% if meal_slot_id %}&amp;meal_slot={{ meal_slot_id|urlencode }}{% endif %}{% if recipe_pk %}&amp;recipe_pk={{ recipe_pk|urlencode }}{% endif %}{% if plan_pk %}&amp;plan_pk={{ plan_pk|urlencode }}{% endif %}{% if meal_pk %}&amp;meal_pk={{ meal_pk|urlencode }}{% endif %}"
+                hx-target="#food-search-results" hx-swap="outerHTML"
+                hx-indicator="#search-indicator">
+          {% blocktrans with query=query %}Search Open Food Facts for "{{ query }}"{% endblocktrans %}
+        </button>
+      </p>
+    {% endif %}
+
+    {% if off_status == "ok" %}{% include "nutrition/_off_attribution.html" %}{% endif %}
   {% endif %}
 </div>
