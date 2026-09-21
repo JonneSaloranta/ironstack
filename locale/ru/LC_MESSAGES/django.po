@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: IronStack\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-20 21:11+0000\n"
+"POT-Creation-Date: 2026-09-21 16:10+0000\n"
 "Language: ru\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -536,6 +536,7 @@ msgid "Activity logged."
 msgstr "Активность записана."
 
 #: apps/activities/views.py:103 apps/measurements/views.py:151
+#, python-format
 msgid "That could not be saved: %(errors)s"
 msgstr "Не удалось сохранить: %(errors)s"
 
@@ -812,7 +813,7 @@ msgid "This diet plan's coach source is no longer available."
 msgstr "Исходный план питания тренера больше недоступен."
 
 #: apps/coaching/views_plans.py:59 apps/coaching/views_plans.py:73
-#: apps/nutrition/views.py:1063 apps/nutrition/views.py:1358
+#: apps/nutrition/views.py:1070 apps/nutrition/views.py:1365
 #: apps/programs/views.py:200
 #, python-format
 msgid "Imported “%(name)s”."
@@ -2072,33 +2073,33 @@ msgstr "Измерение удалено."
 msgid "Refresh selected foods from OpenFoodFacts"
 msgstr "Обновить выбранные продукты из OpenFoodFacts"
 
-#: apps/nutrition/admin.py:99 apps/nutrition/admin.py:127
+#: apps/nutrition/admin.py:99 apps/nutrition/admin.py:129
 msgid "None of the selected foods were imported from OpenFoodFacts."
 msgstr "Ни один из выбранных продуктов не был импортирован из OpenFoodFacts."
 
-#: apps/nutrition/admin.py:111
+#: apps/nutrition/admin.py:112
 #, python-format
 msgid "Refreshed %(refreshed)d of %(total)d food(s) from OpenFoodFacts."
 msgstr "Обновлено %(refreshed)d из %(total)d продуктов из OpenFoodFacts."
 
-#: apps/nutrition/admin.py:115
+#: apps/nutrition/admin.py:117
 msgid "Refresh selected foods' prices from Open Prices"
 msgstr "Обновить цены выбранных продуктов из Open Prices"
 
-#: apps/nutrition/admin.py:139
+#: apps/nutrition/admin.py:142
 #, python-format
 msgid "Refreshed %(refreshed)d of %(total)d food price(s) from Open Prices."
 msgstr "Обновлены цены %(refreshed)d из %(total)d продуктов из Open Prices."
 
-#: apps/nutrition/admin.py:143
+#: apps/nutrition/admin.py:147
 msgid "Merge selected foods into one…"
 msgstr "Объединить выбранные продукты в один…"
 
-#: apps/nutrition/admin.py:148 apps/nutrition/admin.py:176
+#: apps/nutrition/admin.py:152 apps/nutrition/admin.py:180
 msgid "Select at least two foods to merge."
 msgstr "Выберите не менее двух продуктов для объединения."
 
-#: apps/nutrition/admin.py:189
+#: apps/nutrition/admin.py:193
 #, python-format
 msgid ""
 "Merged %(count)d food(s) into “%(name)s”. Every diary entry, recipe "
@@ -2109,9 +2110,16 @@ msgstr ""
 "ингредиент рецепта и пункт плана питания, ссылавшиеся на один из них, теперь "
 "ссылаются на этот."
 
-#: apps/nutrition/admin.py:199
+#: apps/nutrition/admin.py:203
 msgid "Merge foods"
 msgstr "Объединить продукты"
+
+#: apps/nutrition/admin.py:226
+#, python-format
+msgid ""
+"%(count)d more food(s) were left for later to stay within Open Food Facts' "
+"rate limit — run this action again in a minute."
+msgstr "Ещё %(count)d продуктов отложено из-за ограничения частоты запросов Open Food Facts — запустите действие снова через минуту."
 
 #: apps/nutrition/calculators.py:138 apps/nutrition/calculators.py:143
 msgid "Lower risk"
@@ -2783,6 +2791,86 @@ msgstr "Запишите либо продукт, либо рецепт — не
 msgid "Use either a food or a recipe, not both or neither."
 msgstr "Используйте либо продукт, либо рецепт — не оба и не ни один."
 
+#: apps/nutrition/openfoodfacts.py:127
+msgid "Breakfast cereals"
+msgstr "Хлопья для завтрака"
+
+#: apps/nutrition/openfoodfacts.py:128
+msgid "Breads"
+msgstr "Хлеб"
+
+#: apps/nutrition/openfoodfacts.py:129
+msgid "Dairy"
+msgstr "Молочные продукты"
+
+#: apps/nutrition/openfoodfacts.py:130
+msgid "Cheeses"
+msgstr "Сыры"
+
+#: apps/nutrition/openfoodfacts.py:131
+msgid "Yogurts"
+msgstr "Йогурты"
+
+#: apps/nutrition/openfoodfacts.py:132
+msgid "Meats"
+msgstr "Мясо"
+
+#: apps/nutrition/openfoodfacts.py:133
+msgid "Fish"
+msgstr "Рыба"
+
+#: apps/nutrition/openfoodfacts.py:134
+msgid "Eggs"
+msgstr "Яйца"
+
+#: apps/nutrition/openfoodfacts.py:135
+msgid "Fruits"
+msgstr "Фрукты"
+
+#: apps/nutrition/openfoodfacts.py:136
+msgid "Vegetables"
+msgstr "Овощи"
+
+#: apps/nutrition/openfoodfacts.py:137
+msgid "Legumes"
+msgstr "Бобовые"
+
+#: apps/nutrition/openfoodfacts.py:138
+msgid "Nuts"
+msgstr "Орехи"
+
+#: apps/nutrition/openfoodfacts.py:139
+msgid "Pasta"
+msgstr "Паста"
+
+#: apps/nutrition/openfoodfacts.py:140
+msgid "Rice"
+msgstr "Рис"
+
+#: apps/nutrition/openfoodfacts.py:141
+msgid "Snacks"
+msgstr "Снеки"
+
+#: apps/nutrition/openfoodfacts.py:142
+msgid "Chocolate"
+msgstr "Шоколад"
+
+#: apps/nutrition/openfoodfacts.py:143
+msgid "Biscuits"
+msgstr "Печенье"
+
+#: apps/nutrition/openfoodfacts.py:144
+msgid "Plant-based milks"
+msgstr "Растительное молоко"
+
+#: apps/nutrition/openfoodfacts.py:145
+msgid "Beverages"
+msgstr "Напитки"
+
+#: apps/nutrition/openfoodfacts.py:146
+msgid "Protein bars"
+msgstr "Протеиновые батончики"
+
 #: apps/nutrition/suggestions.py:104
 msgid "Set a nutrition goal to get adjustment suggestions."
 msgstr ""
@@ -2825,11 +2913,11 @@ msgstr ""
 msgid "Goal updated — new target is %(calories)d kcal/day."
 msgstr "Цель обновлена — новая норма: %(calories)d ккал/день."
 
-#: apps/nutrition/views.py:751
+#: apps/nutrition/views.py:758
 msgid "Pick a date to copy this day to."
 msgstr "Выберите дату, на которую скопировать этот день."
 
-#: apps/nutrition/views.py:756
+#: apps/nutrition/views.py:763
 #, python-format
 msgid "Copied %(count)d entry to %(date)s."
 msgid_plural "Copied %(count)d entries to %(date)s."
@@ -2837,31 +2925,31 @@ msgstr[0] "Скопирована %(count)d запись на %(date)s."
 msgstr[1] "Скопировано %(count)d записи на %(date)s."
 msgstr[2] "Скопировано %(count)d записей на %(date)s."
 
-#: apps/nutrition/views.py:762
+#: apps/nutrition/views.py:769
 msgid "Nothing to copy — that day has no entries."
 msgstr "Нечего копировать — за этот день нет записей."
 
-#: apps/nutrition/views.py:808 apps/nutrition/views.py:1128
-#: apps/nutrition/views.py:1591
+#: apps/nutrition/views.py:815 apps/nutrition/views.py:1135
+#: apps/nutrition/views.py:1598
 msgid "That food couldn't be imported — try again."
 msgstr "Не удалось импортировать этот продукт — попробуйте снова."
 
-#: apps/nutrition/views.py:872
+#: apps/nutrition/views.py:879
 msgid "Nothing logged for this meal yet to save as a recipe."
 msgstr ""
 "Для этого приёма пищи пока ничего не записано, чтобы сохранить как рецепт."
 
-#: apps/nutrition/views.py:874
+#: apps/nutrition/views.py:881
 #, python-format
 msgid "Saved “%(name)s” as a new recipe."
 msgstr "Сохранён «%(name)s» как новый рецепт."
 
-#: apps/nutrition/views.py:1018
+#: apps/nutrition/views.py:1025
 #, python-format
 msgid "\"%(name)s\" created — now add its ingredients below."
 msgstr "«%(name)s» создан — добавьте его ингредиенты ниже."
 
-#: apps/nutrition/views.py:1068 apps/nutrition/views.py:1363
+#: apps/nutrition/views.py:1075 apps/nutrition/views.py:1370
 #: apps/programs/views.py:205
 #, python-format
 msgid ""
@@ -2871,11 +2959,11 @@ msgstr ""
 "Этот файл был экспортирован из IronStack %(version)s — стоит перепроверить "
 "импорт, если что-то выглядит не так."
 
-#: apps/nutrition/views.py:1512
+#: apps/nutrition/views.py:1519
 msgid "Only a personal trainer can share a diet plan."
 msgstr "Только персональный тренер может поделиться планом питания."
 
-#: apps/nutrition/views.py:1629
+#: apps/nutrition/views.py:1636
 #, python-format
 msgid "Logged %(count)d item to %(date)s."
 msgid_plural "Logged %(count)d items to %(date)s."
@@ -2883,7 +2971,7 @@ msgstr[0] "Записан %(count)d элемент на %(date)s."
 msgstr[1] "Записано %(count)d элемента на %(date)s."
 msgstr[2] "Записано %(count)d элементов на %(date)s."
 
-#: apps/nutrition/views.py:1640
+#: apps/nutrition/views.py:1647
 msgid "Nothing to log — this plan has no items for that date."
 msgstr "Нечего записывать — в этом плане нет пунктов на эту дату."
 
@@ -4820,7 +4908,9 @@ msgstr "Что-то пошло не так — изменение не сохр�
 msgid ""
 "Could not reach the server — check your connection. That change was not "
 "saved."
-msgstr "Не удалось связаться с сервером — проверьте соединение. Изменение не сохранено."
+msgstr ""
+"Не удалось связаться с сервером — проверьте соединение. Изменение не "
+"сохранено."
 
 #: templates/base.html:123
 msgid "Camera access needs a secure (https) connection."
@@ -5155,6 +5245,7 @@ msgid "Previous"
 msgstr "Назад"
 
 #: templates/core/_pagination.html:13
+#, python-format
 msgid "Page %(n)s of %(total)s"
 msgstr "Страница %(n)s из %(total)s"
 
@@ -5839,12 +5930,29 @@ msgid "Import & add"
 msgstr "Импортировать и добавить"
 
 #: templates/nutrition/_food_search_results.html:74
+msgid "Nothing found in your library."
+msgstr "В вашей библиотеке ничего не найдено."
+
+#: templates/nutrition/_food_search_results.html:74
 msgid "Nothing found."
 msgstr "Ничего не найдено."
 
 #: templates/nutrition/_food_search_results.html:76
 msgid "Create a custom food"
 msgstr "Создать свой продукт"
+
+#: templates/nutrition/_food_search_results.html:82
+msgid "Online search is busy right now — please try again in a minute."
+msgstr "Онлайн-поиск сейчас перегружен — повторите попытку через минуту."
+
+#: templates/nutrition/_food_search_results.html:84
+msgid "Open Food Facts couldn't be reached right now."
+msgstr "Сейчас не удаётся связаться с Open Food Facts."
+
+#: templates/nutrition/_food_search_results.html:91
+#, python-format
+msgid "Search Open Food Facts for \"%(query)s\""
+msgstr "Искать «%(query)s» в Open Food Facts"
 
 #: templates/nutrition/_month_calendar.html:60
 msgid "Previous month"
@@ -5920,6 +6028,17 @@ msgid "NOVA — food processing level, 1 (unprocessed) to 4 (ultra-processed)"
 msgstr ""
 "NOVA — степень обработки продукта, от 1 (необработанный) до 4 "
 "(ультраобработанный)"
+
+#: templates/nutrition/_off_attribution.html:4
+msgid ""
+"Food data and product photos come from <a href=\"https://"
+"world.openfoodfacts.org\" target=\"_blank\" rel=\"noopener noreferrer\">Open "
+"Food Facts</a>, a collaborative database, under the <a href=\"https://"
+"opendatacommons.org/licenses/odbl/1-0/\" target=\"_blank\" rel=\"noopener "
+"noreferrer\">Open Database License</a>; photos are <a href=\"https://"
+"creativecommons.org/licenses/by-sa/3.0/\" target=\"_blank\" rel=\"noopener "
+"noreferrer\">CC BY-SA</a>."
+msgstr "Данные о продуктах и фотографии взяты из совместной базы <a href=\"https://world.openfoodfacts.org\" target=\"_blank\" rel=\"noopener noreferrer\">Open Food Facts</a> по лицензии <a href=\"https://opendatacommons.org/licenses/odbl/1-0/\" target=\"_blank\" rel=\"noopener noreferrer\">Open Database License</a>; фотографии — <a href=\"https://creativecommons.org/licenses/by-sa/3.0/\" target=\"_blank\" rel=\"noopener noreferrer\">CC BY-SA</a>."
 
 #: templates/nutrition/_subnav.html:43
 msgid "Nutrition sections"
@@ -6553,7 +6672,7 @@ msgstr "Назад к продуктам"
 msgid "Nothing found in this category right now."
 msgstr "В этой категории сейчас ничего не найдено."
 
-#: templates/nutrition/food_category.html:29
+#: templates/nutrition/food_category.html:31
 msgid "Back to browse"
 msgstr "Назад к просмотру"
 
@@ -7668,6 +7787,7 @@ msgid "ended %(ended)s"
 msgstr "завершено %(ended)s"
 
 #: templates/workouts/session_detail.html:19
+#, python-format
 msgid "%(n)s set"
 msgid_plural "%(n)s sets"
 msgstr[0] "%(n)s подход"
@@ -7702,6 +7822,7 @@ msgid "Workout history"
 msgstr "История тренировок"
 
 #: templates/workouts/session_list.html:17
+#, python-format
 msgid "%(n)s exercise · %(sets)s sets"
 msgid_plural "%(n)s exercises · %(sets)s sets"
 msgstr[0] "%(n)s упражнение · %(sets)s подходов"
@@ -7716,7 +7837,9 @@ msgstr "Тренировки ещё не записаны."
 msgid ""
 "Start a freeform workout with the button below, or pick a workout from one "
 "of your programs."
-msgstr "Начните свободную тренировку кнопкой ниже или выберите тренировку из одной из своих программ."
+msgstr ""
+"Начните свободную тренировку кнопкой ниже или выберите тренировку из одной "
+"из своих программ."
 
 #: templates/workouts/session_list.html:28
 msgid "Browse programs"
@@ -7752,7 +7875,8 @@ msgstr "Пропустить отдых"
 
 #: templates/workouts/session_train.html:49
 msgid "Complete this workout? Some exercises still have sets left to log."
-msgstr "Завершить тренировку? В некоторых упражнениях остались неотмеченные подходы."
+msgstr ""
+"Завершить тренировку? В некоторых упражнениях остались неотмеченные подходы."
 
 #: templates/workouts/set_edit_form.html:3
 msgid "Edit set"
