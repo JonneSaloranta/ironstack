@@ -1753,7 +1753,9 @@ class SearchFoodsTests(TestCase):
         with mock.patch.object(
             openfoodfacts, "get_product", return_value=RAW_OFF_PRODUCT
         ) as get_product, mock.patch.object(openfoodfacts, "search_products") as search_products:
-            local, off_results, _status = services.search_foods(self.alice, "1234567890123", online=True)
+            local, off_results, _status = services.search_foods(
+                self.alice, "1234567890123", online=True
+            )
         get_product.assert_called_once_with("1234567890123")
         search_products.assert_not_called()
         self.assertEqual([r["off_id"] for r in off_results], ["1234567890123"])
@@ -1761,12 +1763,16 @@ class SearchFoodsTests(TestCase):
     def test_a_barcode_query_also_matches_an_already_imported_local_food_by_off_id(self):
         make_food(self.alice, name="Muesli I already have", off_id="1234567890123")
         with mock.patch.object(openfoodfacts, "get_product", return_value=None):
-            local, off_results, _status = services.search_foods(self.alice, "1234567890123", online=True)
+            local, off_results, _status = services.search_foods(
+                self.alice, "1234567890123", online=True
+            )
         self.assertEqual([f.name for f in local], ["Muesli I already have"])
 
     def test_a_barcode_query_with_no_off_match_returns_no_off_results_not_a_crash(self):
         with mock.patch.object(openfoodfacts, "get_product", return_value=None):
-            local, off_results, _status = services.search_foods(self.alice, "99999999999999", online=True)
+            local, off_results, _status = services.search_foods(
+                self.alice, "99999999999999", online=True
+            )
         self.assertEqual(off_results, [])
 
     def test_a_short_digit_string_is_treated_as_a_name_search_not_a_barcode(self):
