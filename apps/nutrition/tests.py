@@ -3592,6 +3592,29 @@ class DiaryDayViewTests(TestCase):
         self.assertEqual(breakfast_context.totals.fat_grams, Decimal("5"))
         self.assertContains(response, "200 kcal")
 
+    def test_each_entry_shows_its_own_macros_for_the_logged_quantity(self):
+        """Asked for directly: the meal header only showed the whole
+        meal's macros, not each food's own. 150 g of a 100 g-serving
+        food scales every macro by 1.5."""
+        breakfast = MealSlot.objects.get(name="Breakfast", owner=None)
+        oats = make_food(
+            self.alice, name="Oats", calories=380,
+            protein_grams=Decimal("13"), carbohydrate_grams=Decimal("60"),
+            fat_grams=Decimal("7"),
+        )
+        DiaryEntry.objects.create(
+            user=self.alice, date=date(2026, 1, 1), meal_slot=breakfast,
+            food=oats, quantity=Decimal("150"),
+        )
+        response = self.client.get(
+            reverse("nutrition:diary-day", kwargs={"target_date": "2026-01-01"})
+        )
+        self.assertContains(
+            response,
+            '<div class="diary-entry-macros">P 19.5g · C 90g · F 10.5g</div>',
+            html=True,
+        )
+
     def test_meal_card_shows_no_subtotal_when_nothing_logged(self):
         breakfast = MealSlot.objects.get(name="Breakfast", owner=None)
         response = self.client.get(

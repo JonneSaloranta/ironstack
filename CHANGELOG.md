@@ -37,8 +37,13 @@ narrated summary of the same version.
   account deletion.
 
 - Feedback categories for Nutrition and Stretching.
+- The food diary shows each logged food's own protein/carb/fat for the
+  quantity logged, under its calories.
 
 ### Fixed
+- Food diary macro letters no longer reuse unrelated translations
+  (Finnish showed fat as "E"); they now read P/H/R in Finnish and
+  have their own translations in every language.
 - Deleting an account no longer fails when one of your own exercises,
   activity types, measurement types or meal slots has the same name as
   a built-in one (or as one left behind by another deleted account) —

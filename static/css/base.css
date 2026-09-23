@@ -1413,6 +1413,13 @@ abbr[title]:focus::after {
   margin: 0.25rem 0 0;
 }
 
+/* One food diary entry's own protein/carb/fat line
+   (templates/nutrition/diary_day.html), under its name and kcal. */
+.diary-entry-macros {
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+
 /* Checkbox + its own label side by side, box first — the block-level
    `label` rule above (meant for text/select inputs) would otherwise
    stack the label above a lone checkbox, which reads badly for a
