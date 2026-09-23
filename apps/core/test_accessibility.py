@@ -193,3 +193,33 @@ class AccessibilityTests(StaticLiveServerTestCase):
         self._log_in()
         self.page.goto(f"{self.live_server_url}/exercises/")
         _assert_no_serious_violations(self, self.page, "Exercise list")
+
+    def test_stretching_overview(self):
+        self._log_in()
+        self.page.goto(f"{self.live_server_url}/stretching/")
+        _assert_no_serious_violations(self, self.page, "Stretching overview")
+
+    def test_stretch_library(self):
+        self._log_in()
+        self.page.goto(f"{self.live_server_url}/stretching/library/")
+        _assert_no_serious_violations(self, self.page, "Stretch library")
+
+    def test_guided_stretching_session(self):
+        from apps.stretching import services as stretching_services
+        from apps.stretching.models import Stretch, StretchRoutine
+
+        # Created here rather than using the seeded routines: a live-
+        # server test case flushes migration seed data between tests.
+        stretch = Stretch.objects.create(
+            name="Test Stretch", per_side=True, instructions="- Hold it.\n- Breathe."
+        )
+        routine = StretchRoutine.objects.create(name="Test Routine", owner=self.alice)
+        stretching_services.add_routine_item(routine, stretch)
+        session = stretching_services.start_session(self.alice, routine=routine)
+        self._log_in()
+        self.page.goto(f"{self.live_server_url}/stretching/sessions/{session.pk}/play/")
+        _assert_no_serious_violations(self, self.page, "Guided stretching session (before start)")
+        self.page.click("text=Start timer")
+        self.page.wait_for_timeout(500)
+        _assert_no_serious_violations(self, self.page, "Guided stretching session (running)")
+

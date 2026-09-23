@@ -49,6 +49,11 @@ Asked during onboarding (`apps.accounts.forms.OnboardingForm`) the
 same way `allow_friend_requests`/`allow_group_invites` are, and
 editable afterward from Profile → Preferences → Features.
 
+`stretching_enabled` (default `True`) is the same navigation-only toggle
+for `apps.stretching`: off hides its bottom-nav tab, the dashboard's
+stretching card and calendar dot, and the cool-down suggestion on a
+finished workout. Stretching pages and data are untouched either way.
+
 Also carries `language` — the UI language (one of the six shipped
 locales, see `ARCHITECTURE.md` "Internationalization"), applied by
 `apps.accounts.middleware.UserLanguageMiddleware`. Distinct from
@@ -409,6 +414,23 @@ Types:
 - estimated 1RM
 - set volume
 - session volume
+
+## Stretching
+
+Full reasoning lives in `docs/STRETCHING.md`; the terse shape:
+
+- `Stretch` — a library stretch (static/dynamic, per-side, default
+  hold, instructions, `MuscleGroup`s). System-or-custom and soft-deleted,
+  like `ActivityType`.
+- `StretchRoutine` / `RoutineItem` — an editable, ordered list of
+  stretches with hold/sets/rest per item.
+- `StretchSession` — one guided or quick-logged session; at most one
+  in progress per user; optional `after_workout` link to the
+  `WorkoutSession` it cooled down from.
+- `PerformedStretch` — the per-stretch snapshot taken at session start
+  (name, hold, sets, rest, sides) plus what was actually done. Same
+  snapshot-on-start rule as `PerformedExercise`: later routine edits
+  never change a past session.
 
 ## Nutrition
 

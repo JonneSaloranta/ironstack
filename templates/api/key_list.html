@@ -29,7 +29,7 @@
         <pre><code>Authorization: Bearer isk_your_secret_here</code></pre>
 
         <h3>{% trans "Permissions" %}</h3>
-        <p>{% trans "Each key is granted Create/Read/Update/Delete separately per area (exercises, programs, workouts, measurements, activities, nutrition, records, analytics, profile) — set this when you create the key, above. A request outside what the key is granted gets a 403." %}</p>
+        <p>{% trans "Each key is granted Create/Read/Update/Delete separately per area (exercises, programs, workouts, measurements, activities, nutrition, stretching, records, analytics, profile) — set this when you create the key, above. A request outside what the key is granted gets a 403." %}</p>
 
         <h3>{% trans "Units" %}</h3>
         <p>{% trans "Always canonical: weight in kilograms, length in meters, energy in kcal — never converted to your own display-unit preference, so a script can rely on one meaning regardless of who's asking." %}</p>
@@ -108,6 +108,10 @@ requests.post(
               <tr>
                 <td>{% trans "Nutrition" %}</td>
                 <td><code>foods/</code>, <code>foods/&lt;id&gt;/</code>, <code>meal-slots/</code>, <code>meal-slots/&lt;id&gt;/</code>, <code>recipes/</code>, <code>recipes/&lt;id&gt;/</code>, <code>recipe-ingredients/</code>, <code>recipe-ingredients/&lt;id&gt;/</code>, <code>diary-entries/</code>, <code>diary-entries/&lt;id&gt;/</code>, <code>nutrition-goals/</code>, <code>nutrition-goals/&lt;id&gt;/</code> ({% trans "read-only" %}), <code>nutrition-targets/</code>, <code>nutrition-targets/&lt;id&gt;/</code> ({% trans "read-only" %}), <code>nutrition/profile/</code> ({% trans "GET/PATCH, no id" %}), <code>diet-plans/</code>, <code>diet-plans/&lt;id&gt;/</code>, <code>diet-plans/&lt;id&gt;/activate/</code>, <code>diet-plans/&lt;id&gt;/deactivate/</code>, <code>diet-plans/&lt;id&gt;/apply/</code> ({% trans "all POST" %}), <code>diet-plan-meals/</code>, <code>diet-plan-meals/&lt;id&gt;/</code> ({% trans "read-only" %}), <code>diet-plan-items/</code>, <code>diet-plan-items/&lt;id&gt;/</code> ({% trans "read-only" %})</td>
+              </tr>
+              <tr>
+                <td>{% trans "Stretching" %}</td>
+                <td><code>stretches/</code>, <code>stretches/&lt;id&gt;/</code>, <code>stretch-routines/</code>, <code>stretch-routines/&lt;id&gt;/</code>, <code>stretch-routine-items/</code>, <code>stretch-routine-items/&lt;id&gt;/</code>, <code>stretch-sessions/</code>, <code>stretch-sessions/&lt;id&gt;/</code></td>
               </tr>
               <tr>
                 <td>{% trans "Records" %}</td>

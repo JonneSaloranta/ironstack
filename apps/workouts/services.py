@@ -83,9 +83,10 @@ def add_performed_exercise(session, exercise):
     """Add an exercise to an in-progress session with no prescription
     behind it — used for freeform sessions and for going off-plan mid
     workout (the user always keeps the option to deviate)."""
-    next_order = (
-        session.performed_exercises.aggregate(highest=Max("order"))["highest"] or -1
-    ) + 1
+    # Not `(highest or -1) + 1`: a highest order of 0 is falsy, which
+    # used to give the second added exercise order 0 as well.
+    highest = session.performed_exercises.aggregate(highest=Max("order"))["highest"]
+    next_order = 0 if highest is None else highest + 1
     return PerformedExercise.objects.create(
         session=session, exercise=exercise, order=next_order
     )

@@ -1,0 +1,30 @@
+{% load i18n core_extras stretching_extras %}
+{% if show %}
+  {% if done %}
+    <a class="card card-link" href="{% url 'stretching:session-detail' done.pk %}">
+      <strong>{% trans "Cool-down" %}</strong>
+      <span class="tag {% if done.status == 'completed' %}tag-success{% endif %}">{{ done.get_status_display }}</span>
+      <p class="text-muted">{{ done.name|default:_("Stretching")|translate_content }}</p>
+    </a>
+  {% else %}
+    <div class="card">
+      <strong>{% trans "Cool down with a stretch?" %}</strong>
+      <p class="text-muted">
+        {% if suggestion.routine %}
+          {{ suggestion.routine.name|translate_content }}
+        {% else %}
+          {% for stretch in suggestion.stretches %}{{ stretch.name|translate_content }}{% if not forloop.last %}, {% endif %}{% endfor %}
+        {% endif %}
+        · ≈ {{ seconds|clock }}
+      </p>
+      <p class="field-help">
+        {% trans "Picked for the muscles you trained:" %}
+        {% for mg in suggestion.muscle_groups %}{% trans mg.name %}{% if not forloop.last %}, {% endif %}{% endfor %}
+      </p>
+      <form method="post" action="{% url 'stretching:session-start-cooldown' workout_session.pk %}">
+        {% csrf_token %}
+        <button type="submit">{% trans "Start cool-down" %}</button>
+      </form>
+    </div>
+  {% endif %}
+{% endif %}

@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% if stretch %}{% trans "Edit stretch" %}{% else %}{% trans "New stretch" %}{% endif %} — IronStack{% endblock %}
+{% block content %}
+<div class="top-bar">
+  <h1 class="no-margin">{% if stretch %}{% trans "Edit stretch" %}{% else %}{% trans "New stretch" %}{% endif %}</h1>
+</div>
+
+<form class="card" method="post">
+  {% csrf_token %}
+  {% include "core/_form_errors.html" %}
+  {% for field in form %}
+    {% include "core/_field.html" with field=field %}
+  {% endfor %}
+  <button type="submit">{% trans "Save" %}</button>
+</form>
+
+<p><a class="button-link" href="{% if stretch %}{% url 'stretching:stretch-detail' stretch.pk %}{% else %}{% url 'stretching:stretch-list' %}{% endif %}">&larr; {% trans "Back" %}</a></p>
+{% endblock %}

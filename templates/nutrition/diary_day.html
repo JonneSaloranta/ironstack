@@ -54,12 +54,24 @@ other page's .top-bar besides holding only a plain, unchanging title.
 
 {% for slot in meal_slots %}
   <div class="card" id="meal-slot-{{ slot.pk }}">
-    <strong>{{ slot.name|translate_content }}</strong>
+    <div class="card-action-row">
+      <strong>{{ slot.name|translate_content }}</strong>
+      {% if slot.entries %}
+        <span class="text-muted">{{ slot.totals.calories|floatformat:0 }} kcal · {% trans "P" context "macro" %} {{ slot.totals.protein_grams|floatformat:0 }}g · {% trans "C" context "macro" %} {{ slot.totals.carbohydrate_grams|floatformat:0 }}g · {% trans "F" context "macro" %} {{ slot.totals.fat_grams|floatformat:0 }}g</span>
+      {% endif %}
+    </div>
     {% for entry in slot.entries %}
       <div class="card-action-row py-2">
         <div>
           <span>{% if entry.food %}<a class="inline-item-link" href="{% url 'nutrition:food-detail' entry.food.pk %}">{{ entry.food.name }}</a>{% else %}<a class="inline-item-link" href="{% url 'nutrition:recipe-detail' entry.recipe.pk %}">{% trans entry.recipe.name %}</a>{% endif %}</span>
-          <span class="text-muted">— {{ entry.quantity }} {{ entry.food.serving_unit|default:"servings" }}, {{ entry.nutrition.calories|floatformat:0 }} kcal{% if entry.food.price_amount %} · {{ entry.food.price_amount }} {{ entry.food.price_currency }}{% endif %}</span>
+          <span class="text-muted">— {{ entry.quantity }} {{ entry.food.serving_unit|default:"servings" }}, {{ entry.nutrition.calories|floatformat:0 }} kcal{% if entry.food.price_amount %} · {% if entry.food.quantity %}{{ entry.food.quantity }}/{% endif %}{{ entry.food.price_amount }} {{ entry.food.price_currency }}{% endif %}</span>
+          {% comment %}
+          This entry's own macros for the quantity actually logged
+          (services.diary_entry_nutrition, already scaled) — the meal
+          header above only shows the whole meal's sum. floatformat:"-1"
+          keeps small amounts (a teaspoon of oil) from rounding to 0g.
+          {% endcomment %}
+          <div class="diary-entry-macros">{% trans "P" context "macro" %} {{ entry.nutrition.protein_grams|floatformat:"-1" }}g · {% trans "C" context "macro" %} {{ entry.nutrition.carbohydrate_grams|floatformat:"-1" }}g · {% trans "F" context "macro" %} {{ entry.nutrition.fat_grams|floatformat:"-1" }}g</div>
         </div>
         <div class="row">
           <a class="button-secondary" href="{% url 'nutrition:diary-entry-edit' entry.pk %}">{% trans "Edit" %}</a>

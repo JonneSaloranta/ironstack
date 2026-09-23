@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% load i18n core_extras stretching_extras %}
+{% block title %}{% trans "Stretches" %} — IronStack{% endblock %}
+{% block content %}
+<div class="top-bar">
+  <h1 class="no-margin">{% trans "Stretches" %}</h1>
+</div>
+<div class="top-bar-actions">
+  <a class="button" href="{% url 'stretching:stretch-create' %}">{% trans "New" %}</a>
+</div>
+{% include "stretching/_subnav.html" with active="library" %}
+
+<form class="filter-row" method="get" x-data @change="$el.requestSubmit()">
+  <select name="muscle_group" aria-label="{% trans "Filter by muscle group" %}">
+    <option value="">{% trans "All muscle groups" %}</option>
+    {% for mg in muscle_groups %}
+      <option value="{{ mg.id }}" {% if selected_muscle_group == mg.id|stringformat:"s" %}selected{% endif %}>{% trans mg.name %}</option>
+    {% endfor %}
+  </select>
+  <select name="kind" aria-label="{% trans "Filter by type" %}">
+    <option value="">{% trans "All types" %}</option>
+    {% for value, label in kinds %}
+      <option value="{{ value }}" {% if selected_kind == value %}selected{% endif %}>{{ label }}</option>
+    {% endfor %}
+  </select>
+  <noscript><button type="submit">{% trans "Filter" %}</button></noscript>
+</form>
+
+{% for stretch in stretches %}
+  <a class="card card-link" href="{% url 'stretching:stretch-detail' stretch.pk %}">
+    <strong>{{ stretch.name|translate_content }}</strong>
+    {% if stretch.is_custom %}<span class="tag">{% trans "Custom" %}</span>{% endif %}
+    <div class="text-muted">
+      {{ stretch.get_kind_display }} · {{ stretch.default_hold_seconds|clock }}{% if stretch.per_side %} {% trans "per side" %}{% endif %}
+      {% if stretch.muscle_groups.all %} · {% for mg in stretch.muscle_groups.all %}{% trans mg.name %}{% if not forloop.last %}, {% endif %}{% endfor %}{% endif %}
+    </div>
+  </a>
+{% empty %}
+  {% trans "No stretches match." as message %}
+  {% include "core/_empty_state.html" with message=message %}
+{% endfor %}
+{% endblock %}

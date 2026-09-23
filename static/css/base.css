@@ -484,8 +484,9 @@ input[type="radio"] {
 
 /* apps.social.context_processors.social_badge — a pending friend
    request/group invite or an unread message, surfaced as a small dot
-   on the existing Profile nav icon rather than a 7th bottom-nav item
-   (already six, and this app is mobile-first — docs/UI.md). Needs its
+   on the existing Profile nav icon rather than yet another bottom-nav
+   item (up to seven with nutrition and stretching both on, and this
+   app is mobile-first — docs/UI.md). Needs its
    own positioning wrapper (.icon-badge-wrap) since .bottom-nav a centers
    its icon via justify-content, so an absolutely-positioned child of
    the <a> itself wouldn't reliably sit at the icon's own corner. */
@@ -1410,6 +1411,13 @@ abbr[title]:focus::after {
   color: var(--color-text-muted);
   font-size: var(--text-sm);
   margin: 0.25rem 0 0;
+}
+
+/* One food diary entry's own protein/carb/fat line
+   (templates/nutrition/diary_day.html), under its name and kcal. */
+.diary-entry-macros {
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
 }
 
 /* Checkbox + its own label side by side, box first — the block-level
@@ -2407,6 +2415,27 @@ h2 {
   border-width: 2px;
 }
 
+/* A day with a finished stretching session (apps.stretching) — a small
+   corner dot rather than a third stacked icon, which wouldn't fit a
+   phone-width day cell alongside the training and calorie icons. */
+.calendar-day {
+  position: relative;
+}
+
+.calendar-day-stretch-dot,
+.calendar-legend-dot.calendar-day-stretch-legend {
+  background: var(--color-accent);
+}
+
+.calendar-day-stretch-dot {
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
 .calendar-day-icon {
   width: 14px;
   height: 14px;
@@ -3106,4 +3135,62 @@ h2.card-title {
     gap: 0.4rem;
     font-size: var(--text-sm);
   }
+}
+
+/* Stretching (templates/stretching/) — a routine's or session's
+   ordered stretch list is a plain list of cards, numbered by the
+   card order itself rather than list markers. */
+.stretch-item-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.stretch-item-list .set-actions {
+  margin-top: 0.5rem;
+}
+
+/* The guided session player (session_play.html) — the clock is the one
+   thing that has to be readable from a mat a metre or two away, hence
+   the oversized digits. */
+.stretch-player-name {
+  margin: 0 0 0.25rem;
+  font-size: var(--text-xl);
+  font-weight: bold;
+}
+
+.stretch-player-phase {
+  margin: 0;
+  color: var(--color-text-muted);
+}
+
+.stretch-player-clock {
+  font-size: 3.5rem;
+  font-weight: bold;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.1;
+  margin: 0.5rem 0;
+}
+
+.stretch-player-progress {
+  height: 0.5rem;
+  border-radius: var(--radius);
+  background: var(--color-border);
+  overflow: hidden;
+  margin-bottom: 0.75rem;
+}
+
+.stretch-player-progress span {
+  display: block;
+  height: 100%;
+  background: var(--color-accent);
+  transition: width 0.25s linear;
+}
+
+.stretch-player .rest-timer-row {
+  margin-bottom: 0.5rem;
+}
+
+.stretch-player-instructions {
+  margin-top: 0.75rem;
 }

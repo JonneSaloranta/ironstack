@@ -21,6 +21,7 @@ from apps.measurements import units as measurement_units
 from apps.measurements.models import MeasurementType
 from apps.nutrition import services as nutrition_services
 from apps.nutrition.models import NutritionTarget
+from apps.stretching import services as stretching_services
 from apps.workouts.models import WorkoutSessionStatus
 from apps.workouts.services import sessions_for
 
@@ -58,6 +59,12 @@ def _day_detail_lines(status, target_calories):
     return [str(training_line), str(calorie_line)]
 
 
+def _stretch_detail_lines(minutes):
+    if minutes is None:
+        return []
+    return [str(_("Stretched %(minutes)s min.") % {"minutes": minutes})]
+
+
 def _month_calendar_context(request, today):
     """The dashboard's month calendar (templates/nutrition/
     _month_calendar.html) — one real month at a time, browsable to any
@@ -84,11 +91,19 @@ def _month_calendar_context(request, today):
     target_calories = target.daily_calories if target is not None else None
     all_statuses = nutrition_services.calendar_month_statuses(request.user, year, month)
     statuses_by_date = {status.date: status for status in all_statuses}
+    # Stretching days get their own small marker (and popover line) —
+    # only for users who haven't turned stretching off.
+    stretch_minutes = (
+        stretching_services.calendar_minutes(request.user, year, month)
+        if request.user.stretching_enabled
+        else {}
+    )
     calendar_days_json = [
         {
             "date": status.date.isoformat(),
             "heading": date_format(status.date, format="SHORT_DATE_FORMAT", use_l10n=True),
-            "lines": _day_detail_lines(status, target_calories),
+            "lines": _day_detail_lines(status, target_calories)
+            + _stretch_detail_lines(stretch_minutes.get(status.date)),
         }
         for status in all_statuses
     ]
@@ -102,6 +117,7 @@ def _month_calendar_context(request, today):
                     "in_month": day.month == month,
                     "is_today": day == today,
                     "status": statuses_by_date.get(day),
+                    "stretch_minutes": stretch_minutes.get(day),
                 }
                 for day in week
             ]
@@ -113,6 +129,7 @@ def _month_calendar_context(request, today):
         "calendar_month": first_of_requested,
         "calendar_weeks": weeks,
         "calendar_days_json": calendar_days_json,
+        "calendar_shows_stretching": request.user.stretching_enabled,
         "calendar_prev_month": prev_month.strftime("%Y-%m"),
         "calendar_next_month": next_month.strftime("%Y-%m"),
     }

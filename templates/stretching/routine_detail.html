@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% load i18n core_extras stretching_extras %}
+{% block title %}{{ routine.name|translate_content }} — IronStack{% endblock %}
+{% block content %}
+{% url 'stretching:routine-list' as c1u %}{% trans "Routines" as c1l %}
+{% include "core/_breadcrumbs.html" with c1_url=c1u c1_label=c1l current=routine.name %}
+<div class="top-bar">
+  <h1 class="no-margin">{{ routine.name|translate_content }}</h1>
+</div>
+<div class="top-bar-actions">
+  {% if can_edit %}
+    <a class="button-secondary" href="{% url 'stretching:routine-update' routine.pk %}">{% trans "Edit" %}</a>
+  {% endif %}
+  <form method="post" action="{% url 'stretching:routine-copy' routine.pk %}">
+    {% csrf_token %}
+    <button type="submit" class="button-secondary">{% if can_edit %}{% trans "Duplicate" %}{% else %}{% trans "Copy to edit" %}{% endif %}</button>
+  </form>
+</div>
+
+<div class="card">
+  {% if not routine.is_custom %}<span class="tag tag-muted">{% trans "Built-in routine" %}</span>{% endif %}
+  {% if not routine.active %}<span class="tag tag-muted">{% trans "Inactive" %}</span>{% endif %}
+  {% if routine.description %}<p>{{ routine.description|translate_content }}</p>{% endif %}
+  <p class="text-muted">
+    {% blocktrans count counter=items|length %}{{ counter }} stretch{% plural %}{{ counter }} stretches{% endblocktrans %}
+    · {% blocktrans with time=planned_seconds|clock %}about {{ time }}{% endblocktrans %}
+  </p>
+  {% if items and routine.active %}
+    <form method="post" action="{% url 'stretching:session-start' routine.pk %}">
+      {% csrf_token %}
+      <button type="submit">{% trans "Start routine" %}</button>
+    </form>
+  {% endif %}
+</div>
+
+<ol class="stretch-item-list">
+  {% for item in items %}
+    <li class="card" id="item-{{ item.pk }}">
+      <strong><a href="{% url 'stretching:stretch-detail' item.stretch.pk %}">{{ item.stretch.name|translate_content }}</a></strong>
+      <div class="text-muted">
+        {% if item.sets > 1 %}{{ item.sets }} × {% endif %}{{ item.hold_seconds|clock }}{% if item.stretch.per_side %} {% trans "per side" %}{% endif %}
+        {% if item.rest_seconds %} · {% blocktrans with rest=item.rest_seconds %}rest {{ rest }} s{% endblocktrans %}{% endif %}
+      </div>
+      {% if can_edit %}
+        <div class="set-actions">
+          <form method="post" action="{% url 'stretching:routine-item-move' routine.pk item.pk %}">
+            {% csrf_token %}<input type="hidden" name="direction" value="up">
+            <button type="submit" class="button-secondary" aria-label="{% trans "Move up" %}" {% if forloop.first %}disabled{% endif %}>↑</button>
+          </form>
+          <form method="post" action="{% url 'stretching:routine-item-move' routine.pk item.pk %}">
+            {% csrf_token %}<input type="hidden" name="direction" value="down">
+            <button type="submit" class="button-secondary" aria-label="{% trans "Move down" %}" {% if forloop.last %}disabled{% endif %}>↓</button>
+          </form>
+          <a class="button-secondary" href="{% url 'stretching:routine-item-update' routine.pk item.pk %}">{% trans "Edit" %}</a>
+          <form method="post" action="{% url 'stretching:routine-item-delete' routine.pk item.pk %}">
+            {% csrf_token %}
+            <button type="submit" class="button-danger">{% trans "Remove" %}</button>
+          </form>
+        </div>
+      {% endif %}
+    </li>
+  {% empty %}
+    <li class="card empty-state"><p>{% trans "No stretches in this routine yet." %}</p></li>
+  {% endfor %}
+</ol>
+
+{% if can_edit %}
+  <h2>{% trans "Add a stretch" %}</h2>
+  <form class="card" method="post" action="{% url 'stretching:routine-item-add' routine.pk %}">
+    {% csrf_token %}
+    {% for field in add_form %}
+      {% include "core/_field.html" with field=field %}
+    {% endfor %}
+    <p class="field-help">{% trans "Leave the hold empty to use the stretch's own default." %}</p>
+    <button type="submit">{% trans "Add" %}</button>
+  </form>
+
+  {% if routine.active %}
+    <form method="post" action="{% url 'stretching:routine-deactivate' routine.pk %}" data-confirm="{% filter force_escape %}{% trans "Remove this routine? Past sessions stay in your history." %}{% endfilter %}">
+      {% csrf_token %}
+      <button type="submit" class="button-danger">{% trans "Remove routine" %}</button>
+    </form>
+  {% endif %}
+{% endif %}
+
+<p><a class="button-link" href="{% url 'stretching:routine-list' %}">&larr; {% trans "Back to routines" %}</a></p>
+{% endblock %}

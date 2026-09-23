@@ -167,6 +167,12 @@ instead.
       <span class="nav-label">{% trans "Nutrition" %}</span>
     </a>
     {% endif %}
+    {% if request.user.stretching_enabled %}
+    <a href="{% url 'stretching:home' %}" aria-label="{% trans "Stretching" %}" {% if request.resolver_match.app_name == 'stretching' %}aria-current="page"{% endif %}>
+      {% include "core/_icon.html" with name="stretching" %}
+      <span class="nav-label">{% trans "Stretching" %}</span>
+    </a>
+    {% endif %}
     <a href="{% url 'analytics:dashboard' %}" aria-label="{% trans "Progress" %}" {% if request.resolver_match.app_name == 'analytics' or request.resolver_match.app_name == 'measurements' or request.resolver_match.app_name == 'records' %}aria-current="page"{% endif %}>
       {% include "core/_icon.html" with name="progress" %}
       <span class="nav-label">{% trans "Progress" %}</span>

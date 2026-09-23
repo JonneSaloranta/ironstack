@@ -80,6 +80,7 @@ INSTALLED_APPS = [
     "apps.activities",
     "apps.analytics",
     "apps.nutrition",
+    "apps.stretching",
     "apps.api",
     "apps.social",
     "apps.coaching",

@@ -723,6 +723,9 @@ class DiaryDayView(LoginRequiredMixin, View):
             entries_by_slot_id.setdefault(entry.meal_slot_id, []).append(entry)
         for slot in meal_slots:
             slot.entries = entries_by_slot_id.get(slot.pk, [])
+            slot.totals = services.ZERO_NUTRITION
+            for entry in slot.entries:
+                slot.totals = slot.totals + entry.nutrition
 
         totals = services.daily_totals(request.user, target_date)
         target = NutritionTarget.objects.filter(
@@ -1602,7 +1605,8 @@ def diet_plan_meal_item_add(request, plan_pk, meal_pk):
                 {"form": form, "plan": plan, "meal": meal},
             )
 
-    next_order = (meal.items.aggregate(highest=Max("order"))["highest"] or -1) + 1
+    highest = meal.items.aggregate(highest=Max("order"))["highest"]
+    next_order = 0 if highest is None else highest + 1
     meal.items.create(food=food, quantity=form.cleaned_data["quantity"], order=next_order)
     plan.bump_version()
     return redirect("nutrition:diet-plan-detail", pk=plan.pk)

@@ -3436,6 +3436,41 @@ class DiaryDayViewTests(TestCase):
         )
         self.assertContains(response, "3.21 EUR")
 
+    def test_an_entrys_package_size_shows_next_to_its_price(self):
+        """Asked for directly: the price alone ("3.21 EUR") doesn't say
+        what it's the price of, so a food's OFF-sourced pack size
+        (`Food.quantity`, e.g. "400 g") renders right before it —
+        "400 g/3.21 EUR"."""
+        food = make_food(
+            self.alice, price_amount=Decimal("3.21"), price_currency="EUR",
+            quantity="400 g",
+        )
+        breakfast = MealSlot.objects.get(name="Breakfast", owner=None)
+        DiaryEntry.objects.create(
+            user=self.alice, date=date(2026, 1, 1), meal_slot=breakfast,
+            food=food, quantity=Decimal("100"),
+        )
+        response = self.client.get(
+            reverse("nutrition:diary-day", kwargs={"target_date": "2026-01-01"})
+        )
+        self.assertContains(response, "400 g/3.21 EUR")
+
+    def test_no_package_size_shown_when_food_has_none(self):
+        food = make_food(
+            self.alice, price_amount=Decimal("3.21"), price_currency="EUR",
+        )
+        self.assertEqual(food.quantity, "")
+        breakfast = MealSlot.objects.get(name="Breakfast", owner=None)
+        DiaryEntry.objects.create(
+            user=self.alice, date=date(2026, 1, 1), meal_slot=breakfast,
+            food=food, quantity=Decimal("100"),
+        )
+        response = self.client.get(
+            reverse("nutrition:diary-day", kwargs={"target_date": "2026-01-01"})
+        )
+        self.assertContains(response, "3.21 EUR")
+        self.assertNotContains(response, "/3.21 EUR")
+
     def test_each_meal_cards_add_food_link_carries_its_own_meal_slot(self):
         """Regression: every meal card's "+ Add food" link pointed at
         the exact same URL (?date= only) regardless of which meal it
@@ -3520,6 +3555,75 @@ class DiaryDayViewTests(TestCase):
             response,
             reverse("nutrition:diary-meal-save-as-recipe", args=["2026-01-01", breakfast.pk]),
         )
+
+    def test_meal_card_shows_its_own_calorie_and_macro_subtotal(self):
+        """Asked for directly: a meal card only ever showed each logged
+        food's own calories, never a running total for the meal itself
+        — so following "how much did I eat for breakfast" meant adding
+        each line up by hand."""
+        breakfast = MealSlot.objects.get(name="Breakfast", owner=None)
+        oats = make_food(
+            self.alice, name="Oats", calories=150,
+            protein_grams=Decimal("5"), carbohydrate_grams=Decimal("27"),
+            fat_grams=Decimal("3"),
+        )
+        milk = make_food(
+            self.alice, name="Milk", calories=50,
+            protein_grams=Decimal("3"), carbohydrate_grams=Decimal("5"),
+            fat_grams=Decimal("2"),
+        )
+        DiaryEntry.objects.create(
+            user=self.alice, date=date(2026, 1, 1), meal_slot=breakfast,
+            food=oats, quantity=Decimal("100"),
+        )
+        DiaryEntry.objects.create(
+            user=self.alice, date=date(2026, 1, 1), meal_slot=breakfast,
+            food=milk, quantity=Decimal("100"),
+        )
+        response = self.client.get(
+            reverse("nutrition:diary-day", kwargs={"target_date": "2026-01-01"})
+        )
+        breakfast_context = next(
+            s for s in response.context["meal_slots"] if s.pk == breakfast.pk
+        )
+        self.assertEqual(breakfast_context.totals.calories, Decimal("200"))
+        self.assertEqual(breakfast_context.totals.protein_grams, Decimal("8"))
+        self.assertEqual(breakfast_context.totals.carbohydrate_grams, Decimal("32"))
+        self.assertEqual(breakfast_context.totals.fat_grams, Decimal("5"))
+        self.assertContains(response, "200 kcal")
+
+    def test_each_entry_shows_its_own_macros_for_the_logged_quantity(self):
+        """Asked for directly: the meal header only showed the whole
+        meal's macros, not each food's own. 150 g of a 100 g-serving
+        food scales every macro by 1.5."""
+        breakfast = MealSlot.objects.get(name="Breakfast", owner=None)
+        oats = make_food(
+            self.alice, name="Oats", calories=380,
+            protein_grams=Decimal("13"), carbohydrate_grams=Decimal("60"),
+            fat_grams=Decimal("7"),
+        )
+        DiaryEntry.objects.create(
+            user=self.alice, date=date(2026, 1, 1), meal_slot=breakfast,
+            food=oats, quantity=Decimal("150"),
+        )
+        response = self.client.get(
+            reverse("nutrition:diary-day", kwargs={"target_date": "2026-01-01"})
+        )
+        self.assertContains(
+            response,
+            '<div class="diary-entry-macros">P 19.5g · C 90g · F 10.5g</div>',
+            html=True,
+        )
+
+    def test_meal_card_shows_no_subtotal_when_nothing_logged(self):
+        breakfast = MealSlot.objects.get(name="Breakfast", owner=None)
+        response = self.client.get(
+            reverse("nutrition:diary-day", kwargs={"target_date": "2026-01-01"})
+        )
+        breakfast_context = next(
+            s for s in response.context["meal_slots"] if s.pk == breakfast.pk
+        )
+        self.assertEqual(breakfast_context.totals, services.ZERO_NUTRITION)
 
     def test_save_as_recipe_button_hidden_for_the_other_slot(self):
         food = make_food(self.alice)
@@ -4450,6 +4554,10 @@ class DietPlanViewTests(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertEqual(meal.items.count(), 2)
         self.assertTrue(meal.items.filter(food=extra_food).exists())
+        # Regression: `(highest or -1) + 1` gave the added item the same
+        # order (0) as the generated one whenever that was the highest.
+        orders = list(meal.items.values_list("order", flat=True))
+        self.assertEqual(len(set(orders)), 2, orders)
 
     def test_the_camera_barcode_scanner_is_wired_up_on_the_add_item_page(self):
         plan = diet_builder.build_diet_plan(

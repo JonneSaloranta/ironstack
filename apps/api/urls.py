@@ -34,6 +34,10 @@ router.register("nutrition-targets", views.NutritionTargetViewSet, basename="nut
 router.register("diet-plans", views.DietPlanViewSet, basename="diet-plan")
 router.register("diet-plan-meals", views.DietPlanMealViewSet, basename="diet-plan-meal")
 router.register("diet-plan-items", views.DietPlanItemViewSet, basename="diet-plan-item")
+router.register("stretches", views.StretchViewSet, basename="stretch")
+router.register("stretch-routines", views.StretchRoutineViewSet, basename="stretch-routine")
+router.register("stretch-routine-items", views.RoutineItemViewSet, basename="stretch-routine-item")
+router.register("stretch-sessions", views.StretchSessionViewSet, basename="stretch-session")
 
 urlpatterns = [
     path("profile/", views.ProfileView.as_view(), name="profile"),

@@ -163,6 +163,8 @@ class Feedback(TimeStampedModel):
         PROGRESS = "progress", _("Progress")
         MEASUREMENTS = "measurements", _("Body measurements")
         ACTIVITIES = "activities", _("Activities")
+        NUTRITION = "nutrition", _("Nutrition")
+        STRETCHING = "stretching", _("Stretching")
         ACCOUNT = "account", _("Account & profile")
         OTHER = "other", _("Other")
 

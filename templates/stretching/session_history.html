@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% load i18n core_extras %}
+{% block title %}{% trans "Stretching history" %} — IronStack{% endblock %}
+{% block content %}
+<div class="top-bar">
+  <h1 class="no-margin">{% trans "History" context "stretching" %}</h1>
+</div>
+<div class="top-bar-actions">
+  <a class="button" href="{% url 'stretching:quick-log' %}">{% trans "Log stretching" %}</a>
+</div>
+{% include "stretching/_subnav.html" with active="history" %}
+
+{% for session in page_obj %}
+  <a class="card card-link" href="{% url 'stretching:session-detail' session.pk %}">
+    <strong>{{ session.name|default:_("Stretching")|translate_content }}</strong>
+    {% if session.status == "abandoned" %}<span class="tag tag-muted">{{ session.get_status_display }}</span>{% endif %}
+    <div class="text-muted">{{ session.date|date:"SHORT_DATE_FORMAT" }}{% if session.duration %} · {{ session.duration|duration }}{% endif %}</div>
+  </a>
+{% empty %}
+  {% url 'stretching:quick-log' as cta_url %}{% trans "No stretching sessions yet." as message %}{% trans "Start a routine, or log one you did without the timer." as hint %}{% trans "Log stretching" as cta_label %}
+  {% include "core/_empty_state.html" with message=message hint=hint cta_url=cta_url cta_label=cta_label %}
+{% endfor %}
+{% include "core/_pagination.html" %}
+{% endblock %}

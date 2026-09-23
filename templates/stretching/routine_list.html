@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Stretching routines" %} — IronStack{% endblock %}
+{% block content %}
+<div class="top-bar">
+  <h1 class="no-margin">{% trans "Routines" %}</h1>
+</div>
+<div class="top-bar-actions">
+  <a class="button" href="{% url 'stretching:routine-create' %}">{% trans "New" %}</a>
+</div>
+{% include "stretching/_subnav.html" with active="routines" %}
+
+{% for routine in routines %}
+  {% include "stretching/_routine_card.html" %}
+{% empty %}
+  {% trans "No routines yet." as message %}
+  {% include "core/_empty_state.html" with message=message %}
+{% endfor %}
+{% endblock %}

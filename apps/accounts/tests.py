@@ -1672,6 +1672,33 @@ class DeleteAccountServiceTests(TestCase):
         self.delete_account(self.alice)
         self.assertFalse(User.objects.filter(pk=self.alice.pk).exists())
 
+    def test_custom_row_named_like_a_built_in_one_is_renamed_not_a_crash(self):
+        # Regression: reassigning to owner=None hit the unique name among
+        # shared rows and raised IntegrityError, blocking the deletion.
+        from apps.activities.models import ActivityType
+
+        mine = ActivityType.objects.create(name="Running", owner=self.alice)
+        self.delete_account(self.alice)
+        mine.refresh_from_db()
+        self.assertIsNone(mine.owner)
+        self.assertEqual(mine.name, "Running (2)")
+
+    def test_two_deleted_users_with_the_same_custom_name(self):
+        from apps.exercises.models import Exercise
+
+        bob = User.objects.create_user(username="bob", password="s3cret-pass")
+        Exercise.objects.create(name="Zercher Squat", owner=self.alice)
+        Exercise.objects.create(name="Zercher Squat", owner=bob)
+        self.delete_account(self.alice)
+        self.delete_account(bob)
+        self.assertEqual(
+            set(Exercise.objects.filter(name__startswith="Zercher").values_list("name", flat=True)),
+            {"Zercher Squat", "Zercher Squat (2)"},
+        )
+        self.assertNotIn(
+            "bob", " ".join(Exercise.objects.values_list("name", flat=True))
+        )
+
     def test_hard_deletes_exclusively_personal_data(self):
         from django.utils import timezone
 
@@ -2390,6 +2417,16 @@ class OnboardingViewTests(TestCase):
         self.user.refresh_from_db()
         self.assertTrue(self.user.nutrition_enabled)
 
+    def test_stretching_enabled_defaults_to_checked_and_can_be_turned_off(self):
+        response = self.client.get(reverse("dashboard"))
+        self.assertContains(response, 'id="id_stretching_enabled" checked')
+        self.client.post(
+            reverse("onboarding"),
+            {"action": "save", "unit_system": "metric", "timezone": "UTC"},
+        )
+        self.user.refresh_from_db()
+        self.assertFalse(self.user.stretching_enabled)
+
 
 class NutritionNavVisibilityTests(TestCase):
     """User.nutrition_enabled — asked for directly: not everyone using
@@ -2423,6 +2460,34 @@ class NutritionNavVisibilityTests(TestCase):
         response = self.client.get(reverse("nutrition:food-list"))
         self.assertEqual(response.status_code, 200)
 
+
+class StretchingEnabledTests(TestCase):
+    """User.stretching_enabled — the same "only hides the door" toggle
+    as nutrition_enabled, for apps.stretching."""
+
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        self.client.login(username="alice", password="s3cret-pass")
+
+    def test_stretching_tab_shown_by_default(self):
+        self.assertTrue(self.alice.stretching_enabled)
+        response = self.client.get(reverse("dashboard"))
+        self.assertContains(response, 'aria-label="Stretching"')
+
+    def test_stretching_tab_hidden_when_disabled(self):
+        self.alice.stretching_enabled = False
+        self.alice.save(update_fields=["stretching_enabled"])
+        response = self.client.get(reverse("dashboard"))
+        self.assertNotContains(response, 'aria-label="Stretching"')
+
+    def test_stretching_pages_stay_reachable_directly_when_disabled(self):
+        self.alice.stretching_enabled = False
+        self.alice.save(update_fields=["stretching_enabled"])
+        self.assertEqual(self.client.get(reverse("stretching:home")).status_code, 200)
+
+    def test_profile_form_offers_the_toggle(self):
+        response = self.client.get(reverse("profile"))
+        self.assertContains(response, 'id="id_stretching_enabled"')
 
 class PasswordLoginGatingTests(TestCase):
     """docs/SECURITY.md "Single sign-on (Authentik / OIDC)" —

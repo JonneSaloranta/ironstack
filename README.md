@@ -138,6 +138,7 @@ given page actually needs.
 | [`docs/SMART_SUGGESTIONS.md`](docs/SMART_SUGGESTIONS.md) | How weight suggestions are composed and explained |
 | [`docs/PR_SYSTEM.md`](docs/PR_SYSTEM.md) | The six PR types and how they're detected |
 | [`docs/NUTRITION.md`](docs/NUTRITION.md) | Calorie/macro engine, food diary, recipes, diet plans, OpenFoodFacts integration |
+| [`docs/STRETCHING.md`](docs/STRETCHING.md) | Stretch library, routines, guided sessions, cool-down suggestions |
 | [`docs/ANALYTICS.md`](docs/ANALYTICS.md) | Dashboard, charts, date-range filtering |
 | [`docs/API.md`](docs/API.md) | REST API — auth, permissions, rate limits, endpoints |
 | [`docs/UI.md`](docs/UI.md) | UI principles and per-feature implementation notes |

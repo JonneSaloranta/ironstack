@@ -1,0 +1,14 @@
+{% load i18n %}
+{% comment %}
+Tab bar across the stretching section — same .range-filter pill
+styling templates/nutrition/_subnav.html uses. Only four tabs, so it
+fits without nutrition's horizontal-scroll treatment, and the active
+tab is passed in by each page's own include (`with active="..."`)
+rather than computed by a context processor.
+{% endcomment %}
+<nav class="range-filter" aria-label="{% trans "Stretching sections" %}">
+  <a href="{% url 'stretching:home' %}" {% if active == "home" %}aria-current="true"{% endif %}>{% trans "Overview" %}</a>
+  <a href="{% url 'stretching:routine-list' %}" {% if active == "routines" %}aria-current="true"{% endif %}>{% trans "Routines" %}</a>
+  <a href="{% url 'stretching:stretch-list' %}" {% if active == "library" %}aria-current="true"{% endif %}>{% trans "Stretches" %}</a>
+  <a href="{% url 'stretching:session-history' %}" {% if active == "history" %}aria-current="true"{% endif %}>{% trans "History" context "stretching" %}</a>
+</nav>

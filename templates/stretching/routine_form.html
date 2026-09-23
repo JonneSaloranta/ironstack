@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% if routine %}{% trans "Edit routine" %}{% else %}{% trans "New routine" %}{% endif %} — IronStack{% endblock %}
+{% block content %}
+<div class="top-bar">
+  <h1 class="no-margin">{% if routine %}{% trans "Edit routine" %}{% else %}{% trans "New routine" %}{% endif %}</h1>
+</div>
+
+<form class="card" method="post">
+  {% csrf_token %}
+  {% include "core/_form_errors.html" %}
+  {% for field in form %}
+    {% include "core/_field.html" with field=field %}
+  {% endfor %}
+  <button type="submit">{% trans "Save" %}</button>
+</form>
+
+<p><a class="button-link" href="{% if routine %}{% url 'stretching:routine-detail' routine.pk %}{% else %}{% url 'stretching:routine-list' %}{% endif %}">&larr; {% trans "Back" %}</a></p>
+{% endblock %}

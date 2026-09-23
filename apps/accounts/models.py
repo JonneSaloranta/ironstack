@@ -176,6 +176,15 @@ class User(AbstractUser):
         "want to track nutrition — existing nutrition data is never "
         "deleted, and its pages stay reachable directly by a link.",
     )
+    # Same "only hides the door" toggle as nutrition_enabled above, for
+    # apps.stretching — its bottom-nav tab and the post-workout
+    # cool-down suggestion.
+    stretching_enabled = models.BooleanField(
+        default=True,
+        help_text="Shows stretching (routines, guided sessions) in navigation "
+        "and suggests a cool-down after a workout. Turn off to hide it — "
+        "existing stretching data is never deleted.",
+    )
     show_achievements = models.BooleanField(
         default=True,
         help_text="A privacy setting, not a display one: the dashboard's "

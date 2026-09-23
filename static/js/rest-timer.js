@@ -1,9 +1,7 @@
 // Training mode's rest timer — plain client-side countdown, no server
 // round-trip needed while it runs. The countdown itself is driven
-// entirely by `remaining`. `muted` persists in localStorage (not a
-// server-side user preference — it's a device/browser setting, same
-// reasoning as e.g. a browser's own volume control) so it survives
-// across page loads without needing a model field or round trip.
+// entirely by `remaining`. Sound (and the mute switch) comes from the
+// shared static/js/timer-audio.js, which must load before this file.
 //
 // Extracted out of templates/workouts/session_train.html into its own
 // file so it can be loaded via <script src>, not inline — see
@@ -29,30 +27,16 @@ function ironstackRestTimer() {
     // does run — even one long-delayed by a locked screen — catches
     // straight up to how much time has really elapsed.
     endAt: 0,
-    muted: localStorage.getItem(MUTE_STORAGE_KEY) === "true",
-    // One AudioContext, created lazily and reused for the rest of the
-    // page's life — see init()/unlockAudio() below for why it can't
-    // just be created fresh inside beep() (that was the original,
-    // broken approach: silent on iOS Safari every time).
-    audioCtx: null,
+    audio: createTimerAudio(MUTE_STORAGE_KEY),
+    get muted() {
+      return this.audio.muted;
+    },
     // Alpine calls init() automatically once this component mounts —
     // no separate x-init="" needed on the element.
     init() {
-      // Regression: the countdown usually finishes and calls beep()
-      // from a setInterval callback, and often auto-*starts* from an
-      // HX-Trigger event handled well after the "Log set" tap that
-      // caused it — neither is a synchronous user gesture as far as
-      // the browser's audio-unlock tracking is concerned. iOS Safari
-      // (and other WebKit browsers) refuse to ever produce sound from
-      // an AudioContext that was never created/resumed *inside* one,
-      // so a context built fresh at beep()-time there is silently
-      // useless. Unlocking on the very first tap/touch anywhere on
-      // the page instead guarantees it happens before any rest period
-      // could ever finish, since reaching this page at all means the
-      // user just tapped something (at minimum "Log set").
-      const unlock = () => this.unlockAudio();
-      document.addEventListener("click", unlock, { once: true });
-      document.addEventListener("touchstart", unlock, { once: true });
+      // See timer-audio.js's listenForUnlock() for why this has to
+      // happen on the page's very first tap, not when a rest starts.
+      this.audio.listenForUnlock();
       // Belt-and-suspenders for the same locked-screen freeze described
       // at endAt's own comment above: a still-running setInterval isn't
       // guaranteed to fire its callback the instant the screen unlocks
@@ -66,31 +50,6 @@ function ironstackRestTimer() {
         if (!document.hidden && this.running) this.tick();
       });
     },
-    unlockAudio() {
-      const AudioContextClass = window.AudioContext || window.webkitAudioContext;
-      if (!AudioContextClass) return;
-      if (!this.audioCtx) {
-        this.audioCtx = new AudioContextClass();
-        try {
-          // A near-silent (zero-gain) blip scheduled synchronously
-          // inside this gesture handler is what actually unlocks
-          // playback on iOS Safari — calling resume() alone isn't
-          // reliably enough there, only here for belt-and-suspenders.
-          const unlockOsc = this.audioCtx.createOscillator();
-          const unlockGain = this.audioCtx.createGain();
-          unlockGain.gain.value = 0;
-          unlockOsc.connect(unlockGain);
-          unlockGain.connect(this.audioCtx.destination);
-          unlockOsc.start(0);
-          unlockOsc.stop(this.audioCtx.currentTime + 0.01);
-        } catch (e) {
-          // Fine — beep() still tries resume() again before playing.
-        }
-      }
-      if (this.audioCtx.state === "suspended") {
-        this.audioCtx.resume();
-      }
-    },
     get formatted() {
       const total = Math.max(0, this.remaining);
       const m = Math.floor(total / 60);
@@ -98,7 +57,7 @@ function ironstackRestTimer() {
       return m + ":" + String(s).padStart(2, "0");
     },
     start(seconds) {
-      this.unlockAudio();
+      this.audio.unlock();
       clearInterval(this.intervalId);
       this.remaining = seconds;
       this.endAt = Date.now() + seconds * 1000;
@@ -148,37 +107,10 @@ function ironstackRestTimer() {
       this.cancelServerNotification();
     },
     toggleMute() {
-      this.muted = !this.muted;
-      localStorage.setItem(MUTE_STORAGE_KEY, this.muted);
+      this.audio.toggleMute();
     },
     beep() {
-      if (this.muted || !this.audioCtx) return;
-      // Web Audio API — a synthesized two-tone chime, so no audio
-      // asset needs shipping/loading for one short beep. Wrapped in
-      // try/catch: a browser that doesn't support Web Audio at all
-      // just gets the (still very visible) countdown reaching zero,
-      // nothing more.
-      try {
-        if (this.audioCtx.state === "suspended") {
-          this.audioCtx.resume();
-        }
-        const ctx = this.audioCtx;
-        [880, 1320].forEach((freq, i) => {
-          const osc = ctx.createOscillator();
-          const gain = ctx.createGain();
-          osc.connect(gain);
-          gain.connect(ctx.destination);
-          osc.frequency.value = freq;
-          const startAt = ctx.currentTime + i * 0.18;
-          gain.gain.setValueAtTime(0.001, startAt);
-          gain.gain.exponentialRampToValueAtTime(0.25, startAt + 0.02);
-          gain.gain.exponentialRampToValueAtTime(0.001, startAt + 0.35);
-          osc.start(startAt);
-          osc.stop(startAt + 0.35);
-        });
-      } catch (e) {
-        // Silently skip — see comment above.
-      }
+      this.audio.beep();
     },
     // A system notification for whenever the beep alone might not
     // actually be *noticed* — the phone locked, or a different app/
