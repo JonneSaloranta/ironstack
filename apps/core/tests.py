@@ -1642,6 +1642,12 @@ class FeedbackViewTests(TestCase):
         self.assertEqual(feedback.category, Feedback.Category.PROGRESS)
         self.assertEqual(feedback.subject, "Chart is confusing")
 
+    def test_nutrition_and_stretching_are_feedback_categories(self):
+        self.client.login(username="alice", password="s3cret-pass")
+        response = self.client.get(reverse("feedback-create"))
+        self.assertContains(response, 'value="nutrition"')
+        self.assertContains(response, 'value="stretching"')
+
     def test_create_view_is_gated_by_feedback_settings(self):
         settings_row = FeedbackSettings.load()
         settings_row.enabled = False
