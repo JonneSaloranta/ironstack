@@ -723,6 +723,9 @@ class DiaryDayView(LoginRequiredMixin, View):
             entries_by_slot_id.setdefault(entry.meal_slot_id, []).append(entry)
         for slot in meal_slots:
             slot.entries = entries_by_slot_id.get(slot.pk, [])
+            slot.totals = services.ZERO_NUTRITION
+            for entry in slot.entries:
+                slot.totals = slot.totals + entry.nutrition
 
         totals = services.daily_totals(request.user, target_date)
         target = NutritionTarget.objects.filter(
