@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% load i18n core_extras stretching_extras %}
+{% block title %}{{ session.name|default:_("Stretching")|translate_content }} — IronStack{% endblock %}
+{% block content %}
+{% url 'stretching:session-history' as c1u %}{% trans "History" as c1l %}{% trans "Stretching" as fallback_name %}
+{% include "core/_breadcrumbs.html" with c1_url=c1u c1_label=c1l current=session.name|default:fallback_name %}
+<div class="top-bar">
+  <h1 class="no-margin">{{ session.name|default:fallback_name|translate_content }}</h1>
+</div>
+{% if session.status == "completed" %}
+  <div class="top-bar-actions">
+    <a class="button-secondary" href="{% url 'stretching:session-edit' session.pk %}">{% trans "Edit" %}</a>
+  </div>
+{% endif %}
+
+<div class="card">
+  <span class="tag {% if session.status == 'completed' %}tag-success{% else %}tag-muted{% endif %}">{{ session.get_status_display }}</span>
+  <dl class="stat-row">
+    <div><dt>{% trans "Date" %}</dt><dd>{{ session.date|date:"SHORT_DATE_FORMAT" }}</dd></div>
+    {% if session.duration %}<div><dt>{% trans "Duration" %}</dt><dd>{{ session.duration|duration }}</dd></div>{% endif %}
+  </dl>
+  {% if session.after_workout_id %}
+    <p class="text-muted"><a href="{% url 'workouts:session-detail' session.after_workout_id %}">{% trans "Cool-down after a workout" %}</a></p>
+  {% endif %}
+  {% if session.notes %}<p>{{ session.notes|linebreaksbr }}</p>{% endif %}
+</div>
+
+{% if performed %}
+  <div class="table-wrap">
+  <table class="set-table">
+    <thead>
+      <tr><th scope="col">{% trans "Stretch" %}</th><th scope="col">{% trans "Planned" %}</th><th scope="col">{% trans "Held" %}</th></tr>
+    </thead>
+    <tbody>
+      {% for item in performed %}
+        <tr>
+          <td>{{ item.stretch_name|translate_content }}</td>
+          <td>{% if item.sets > 1 %}{{ item.sets }} × {% endif %}{{ item.target_hold_seconds|clock }}{% if item.per_side %} {% trans "per side" %}{% endif %}</td>
+          <td>
+            {% if item.status == "done" %}{% if item.actual_seconds is not None %}{{ item.actual_seconds|clock }}{% else %}{% trans "Done" %}{% endif %}
+            {% elif item.status == "skipped" %}<span class="text-muted">{% trans "Skipped" %}</span>
+            {% else %}<span class="text-muted">—</span>{% endif %}
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  </div>
+{% endif %}
+
+<form method="post" action="{% url 'stretching:session-delete' session.pk %}" data-confirm="{% filter force_escape %}{% trans "Delete this session?" %}{% endfilter %}">
+  {% csrf_token %}
+  <button type="submit" class="button-danger">{% trans "Delete" %}</button>
+</form>
+
+<p><a class="button-link" href="{% url 'stretching:session-history' %}">&larr; {% trans "Back to history" %}</a></p>
+{% endblock %}

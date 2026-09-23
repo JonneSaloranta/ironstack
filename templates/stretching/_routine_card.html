@@ -1,0 +1,15 @@
+{% load i18n core_extras stretching_extras %}
+<div class="card">
+  <a href="{% url 'stretching:routine-detail' routine.pk %}"><strong>{{ routine.name|translate_content }}</strong></a>
+  {% if routine.is_custom %}<span class="tag">{% trans "Custom" %}</span>{% endif %}
+  <p class="text-muted">
+    {% with count=routine.items.all|length %}{% blocktrans count counter=count %}{{ counter }} stretch{% plural %}{{ counter }} stretches{% endblocktrans %}{% endwith %}
+    · ≈ {{ routine.planned_seconds|clock }}
+  </p>
+  {% if routine.items.all %}
+    <form method="post" action="{% url 'stretching:session-start' routine.pk %}">
+      {% csrf_token %}
+      <button type="submit">{% trans "Start" %}</button>
+    </form>
+  {% endif %}
+</div>

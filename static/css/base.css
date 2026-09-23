@@ -3107,3 +3107,59 @@ h2.card-title {
     font-size: var(--text-sm);
   }
 }
+
+/* Stretching (templates/stretching/) — a routine's or session's
+   ordered stretch list is a plain list of cards, numbered by the
+   card order itself rather than list markers. */
+.stretch-item-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.stretch-item-list .set-actions {
+  margin-top: 0.5rem;
+}
+
+/* The guided session player (session_play.html) — the clock is the one
+   thing that has to be readable from a mat a metre or two away, hence
+   the oversized digits. */
+.stretch-player-name {
+  margin: 0 0 0.25rem;
+}
+
+.stretch-player-phase {
+  margin: 0;
+  color: var(--color-text-muted);
+}
+
+.stretch-player-clock {
+  font-size: 3.5rem;
+  font-weight: bold;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.1;
+  margin: 0.5rem 0;
+}
+
+.stretch-player-progress {
+  height: 0.5rem;
+  border-radius: var(--radius);
+  background: var(--color-border);
+  overflow: hidden;
+  margin-bottom: 0.75rem;
+}
+
+.stretch-player-progress span {
+  display: block;
+  height: 100%;
+  background: var(--color-accent);
+  transition: width 0.25s linear;
+}
+
+.stretch-player .rest-timer-row {
+  margin-bottom: 0.5rem;
+}
+
+.stretch-player-instructions {
+  margin-top: 0.75rem;
+}

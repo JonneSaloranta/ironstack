@@ -32,6 +32,8 @@ from .models import (
 )
 
 AD_HOC_REST_SECONDS = 10
+# Time to get into position before each stretch's first hold.
+PREPARE_SECONDS = 5
 MAX_SUGGESTED_STRETCHES = 6
 # A system routine has to cover at least this share of the workout's
 # muscle groups to be suggested as-is; below that, a tailored list built
@@ -257,9 +259,10 @@ def quick_log(user, *, date, duration, routine=None, name="", notes=""):
 
 def timer_steps(session):
     """The guided timer's playlist for a session's still-pending
-    stretches: one "hold" step per set × side, with a "rest" step between
-    consecutive holds wherever the stretch has rest configured. Built
-    here (not in the JS) so the sequencing rules are tested in Python;
+    stretches: a short "prepare" step to get into position, then one
+    "hold" step per set × side, with a "rest" step between consecutive
+    holds wherever the stretch has rest configured. Built here (not in
+    the JS) so the sequencing rules are tested in Python;
     static/js/stretch-timer.js just plays it."""
     steps = []
     pending = list(session.performed_stretches.filter(status=PerformedStretchStatus.PENDING))
@@ -270,6 +273,17 @@ def timer_steps(session):
             for set_number in range(1, performed.sets + 1)
             for side in sides
         ]
+        steps.append(
+            {
+                "kind": "prepare",
+                "performed": performed.pk,
+                "seconds": PREPARE_SECONDS,
+                "set": 1,
+                "sets": performed.sets,
+                "side": sides[0],
+                "last_of_stretch": False,
+            }
+        )
         for index, (set_number, side) in enumerate(holds):
             is_last_hold = index == len(holds) - 1
             steps.append(

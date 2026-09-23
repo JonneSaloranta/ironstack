@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% load i18n core_extras %}
+{% block title %}{% trans "Stretching" %} — IronStack{% endblock %}
+{% block content %}
+<div class="top-bar">
+  <h1 class="no-margin">{% trans "Stretching" %}</h1>
+</div>
+<div class="top-bar-actions">
+  <a class="button-secondary" href="{% url 'stretching:quick-log' %}">{% trans "Log stretching" %}</a>
+</div>
+{% include "stretching/_subnav.html" with active="home" %}
+
+{% if active_session %}
+  <a class="card card-link" href="{% url 'stretching:session-play' active_session.pk %}">
+    <strong>{% trans "Continue stretching" %}</strong>
+    <p class="text-muted">{{ active_session.name|default:_("Stretching")|translate_content }} — {% blocktrans with started_at=active_session.started_at|date:"H:i" %}started {{ started_at }}{% endblocktrans %}</p>
+  </a>
+{% endif %}
+
+<div class="card">
+  <dl class="stat-row">
+    <div><dt>{% trans "Streak" %}</dt><dd>{% blocktrans count counter=summary.streak_days %}{{ counter }} day{% plural %}{{ counter }} days{% endblocktrans %}</dd></div>
+    <div><dt>{% trans "Last 7 days" %}</dt><dd>{{ summary.last_7_days_count }} · {{ summary.last_7_days_duration|duration }}</dd></div>
+    <div><dt>{% trans "All time" %}</dt><dd>{{ summary.count }} · {{ summary.total_duration|duration }}</dd></div>
+  </dl>
+</div>
+
+<h2>{% trans "Start a routine" %}</h2>
+{% for routine in routines %}
+  {% include "stretching/_routine_card.html" %}
+{% empty %}
+  {% url 'stretching:routine-create' as cta_url %}{% trans "No routines yet." as message %}{% trans "New routine" as cta_label %}
+  {% include "core/_empty_state.html" with message=message cta_url=cta_url cta_label=cta_label %}
+{% endfor %}
+
+<h2>{% trans "Minutes per week" %}</h2>
+{% if summary.count %}
+  {% trans "Stretching minutes per week" as chart_title %}{% trans "min" as unit_label %}
+  {% include "core/_bar_chart.html" with chart=weekly_chart chart_title=chart_title unit_label=unit_label %}
+{% else %}
+  <div class="card empty-state"><p>{% trans "Finish or log a stretching session to see your weekly minutes here." %}</p></div>
+{% endif %}
+
+{% if recent_sessions %}
+  <h2>{% trans "Recent sessions" %}</h2>
+  {% for session in recent_sessions %}
+    <a class="card card-link" href="{% url 'stretching:session-detail' session.pk %}">
+      <strong>{{ session.name|default:_("Stretching")|translate_content }}</strong>
+      <div class="text-muted">{{ session.date|date:"SHORT_DATE_FORMAT" }} · {{ session.duration|duration }}</div>
+    </a>
+  {% endfor %}
+{% endif %}
+{% endblock %}

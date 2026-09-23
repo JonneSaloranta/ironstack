@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% load i18n core_extras stretching_extras %}
+{% block title %}{{ stretch.name|translate_content }} — IronStack{% endblock %}
+{% block content %}
+{% url 'stretching:stretch-list' as c1u %}{% trans "Stretches" as c1l %}
+{% include "core/_breadcrumbs.html" with c1_url=c1u c1_label=c1l current=stretch.name %}
+<div class="top-bar">
+  <h1 class="no-margin">{{ stretch.name|translate_content }}</h1>
+</div>
+{% if can_edit %}
+  <div class="top-bar-actions">
+    <a class="button-secondary" href="{% url 'stretching:stretch-update' stretch.pk %}">{% trans "Edit" %}</a>
+  </div>
+{% endif %}
+
+<div class="card">
+  {% if stretch.is_custom %}<span class="tag">{% trans "Custom" %}</span>{% endif %}
+  {% if not stretch.active %}<span class="tag tag-muted">{% trans "Inactive" %}</span>{% endif %}
+  <dl class="stat-row">
+    <div><dt>{% trans "Type" %}</dt><dd>{{ stretch.get_kind_display }}</dd></div>
+    <div><dt>{% trans "Default hold" %}</dt><dd>{{ stretch.default_hold_seconds|clock }}{% if stretch.per_side %} {% trans "per side" %}{% endif %}</dd></div>
+  </dl>
+  {% if stretch.muscle_groups.all %}
+    <p class="text-muted">{% for mg in stretch.muscle_groups.all %}{% trans mg.name %}{% if not forloop.last %}, {% endif %}{% endfor %}</p>
+  {% endif %}
+</div>
+
+{% if stretch.instructions %}
+  <div class="card">
+    <h2 class="card-title">{% trans "How to do it" %}</h2>
+    <p>{{ stretch.instructions|translate_content|linebreaksbr }}</p>
+  </div>
+{% endif %}
+
+{% if can_edit and stretch.active %}
+  <form method="post" action="{% url 'stretching:stretch-deactivate' stretch.pk %}" data-confirm="{% filter force_escape %}{% trans "Remove this stretch from your library? Routines and past sessions that use it keep working." %}{% endfilter %}">
+    {% csrf_token %}
+    <button type="submit" class="button-danger">{% trans "Remove stretch" %}</button>
+  </form>
+{% endif %}
+
+<p><a class="button-link" href="{% url 'stretching:stretch-list' %}">&larr; {% trans "Back to stretches" %}</a></p>
+{% endblock %}

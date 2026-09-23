@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+{% load i18n static core_extras stretching_extras %}
+{% block title %}{{ session.name|default:_("Stretching")|translate_content }} — IronStack{% endblock %}
+{% block content %}
+<div class="top-bar">
+  <h1 class="no-margin">{{ session.name|default:_("Stretching")|translate_content }}</h1>
+</div>
+
+{{ timer_steps|json_script:"stretch-timer-steps" }}
+{% comment %}
+The guided player — static/js/stretch-timer.js plays the step list
+apps.stretching.services.timer_steps() built (the json_script above).
+Every label it shows comes from a data-* attribute here, so all the
+text stays in Django's translation catalog rather than in the JS.
+{% endcomment %}
+<div class="card stretch-player" x-data="ironstackStretchTimer()"
+     data-mark-url="{% url 'stretching:performed-mark' session.pk 0 %}"
+     data-label-prepare="{% trans "Get ready" %}"
+     data-label-hold="{% trans "Hold" %}"
+     data-label-rest="{% trans "Rest" %}"
+     data-label-left="{% trans "Left side" %}"
+     data-label-right="{% trans "Right side" %}"
+     data-label-set="{% trans "set {set}/{sets}" %}">
+  <div class="rest-timer-header">
+    <span class="text-muted">{% trans "Guided session" %}</span>
+    <button type="button" class="rest-timer-mute" @click="audio.toggleMute()"
+            :aria-label="audio.muted ? '{% trans "Unmute timer sound" %}' : '{% trans "Mute timer sound" %}'"
+            :aria-pressed="audio.muted">
+      <svg x-show="!audio.muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="4 8 8 8 12 4 12 20 8 16 4 16 4 8"/><path d="M16 8a5 5 0 0 1 0 8"/><path d="M19 5a9 9 0 0 1 0 14"/></svg>
+      <svg x-show="audio.muted" x-cloak viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="4 8 8 8 12 4 12 20 8 16 4 16 4 8"/><line x1="16" y1="8" x2="22" y2="14"/><line x1="22" y1="8" x2="16" y2="14"/></svg>
+    </button>
+  </div>
+
+  <div x-show="!started && !finished">
+    <p>{% blocktrans count counter=pending_count %}{{ counter }} stretch to go.{% plural %}{{ counter }} stretches to go.{% endblocktrans %}</p>
+    <button type="button" @click="start()" {% if not pending_count %}disabled{% endif %}>{% trans "Start timer" %}</button>
+  </div>
+
+  <div x-show="started && !finished" x-cloak>
+    {% for item in performed %}{% if item.status == "pending" %}
+      <div x-show="currentPerformed === {{ item.pk }}">
+        <h2 class="stretch-player-name">{{ item.stretch_name|translate_content }}</h2>
+      </div>
+    {% endif %}{% endfor %}
+    <p class="stretch-player-phase" x-text="phaseLabel" aria-live="polite"></p>
+    <div class="stretch-player-clock" x-text="formatted" role="timer" :class="current && current.kind !== 'hold' && 'text-muted'"></div>
+    <div class="stretch-player-progress" aria-hidden="true"><span :style="'width: ' + progress + '%'"></span></div>
+    <div class="rest-timer-row">
+      <button type="button" class="button-secondary" @click="adjust(-10)">−10s</button>
+      <button type="button" class="button-secondary" x-show="running" @click="pause()">{% trans "Pause" %}</button>
+      <button type="button" class="button-secondary" x-show="!running" @click="resume()">{% trans "Resume" %}</button>
+      <button type="button" class="button-secondary" @click="adjust(10)">+10s</button>
+    </div>
+    <div class="rest-timer-row">
+      <button type="button" class="button-secondary" @click="skipStep()">{% trans "Next step" %}</button>
+      <button type="button" class="button-secondary" @click="skipStretch()">{% trans "Skip stretch" %}</button>
+    </div>
+    {% for item in performed %}{% if item.status == "pending" %}
+      <div x-show="currentPerformed === {{ item.pk }}">
+        {% if item.stretch.instructions %}<p class="stretch-player-instructions">{{ item.stretch.instructions|translate_content|linebreaksbr }}</p>{% endif %}
+      </div>
+      <p class="text-muted" x-show="nextPerformed === {{ item.pk }}">{% trans "Next up:" %} {{ item.stretch_name|translate_content }}</p>
+    {% endif %}{% endfor %}
+  </div>
+
+  <div x-show="finished" x-cloak>
+    <p><strong>{% trans "All stretches done — nice work." %}</strong></p>
+  </div>
+</div>
+
+<h2>{% trans "Stretches" %}</h2>
+<ol class="stretch-item-list">
+  {% for item in performed %}
+    <li class="card" x-data="{ status: '{{ item.status }}' }"
+        @stretch-status.window="if ($event.detail.pk === {{ item.pk }}) status = $event.detail.status">
+      <strong>{{ item.stretch_name|translate_content }}</strong>
+      <span class="tag tag-success" x-show="status === 'done'" {% if item.status != "done" %}x-cloak{% endif %}>{% trans "Done" %}</span>
+      <span class="tag tag-muted" x-show="status === 'skipped'" {% if item.status != "skipped" %}x-cloak{% endif %}>{% trans "Skipped" %}</span>
+      <div class="text-muted">
+        {% if item.sets > 1 %}{{ item.sets }} × {% endif %}{{ item.target_hold_seconds|clock }}{% if item.per_side %} {% trans "per side" %}{% endif %}
+      </div>
+      <div class="set-actions" x-show="status === 'pending'" {% if item.status != "pending" %}x-cloak{% endif %}>
+        <form method="post" action="{% url 'stretching:performed-mark' session.pk item.pk %}">
+          {% csrf_token %}<input type="hidden" name="action" value="done">
+          <button type="submit" class="button-secondary">{% trans "Done" %}</button>
+        </form>
+        <form method="post" action="{% url 'stretching:performed-mark' session.pk item.pk %}">
+          {% csrf_token %}<input type="hidden" name="action" value="skip">
+          <button type="submit" class="button-secondary">{% trans "Skip" %}</button>
+        </form>
+      </div>
+    </li>
+  {% endfor %}
+</ol>
+
+<form method="post" action="{% url 'stretching:session-complete' session.pk %}">
+  {% csrf_token %}
+  <button type="submit">{% trans "Finish session" %}</button>
+</form>
+<form method="post" action="{% url 'stretching:session-abandon' session.pk %}" data-confirm="{% filter force_escape %}{% trans "Abandon this session? It stays in your history as abandoned." %}{% endfilter %}">
+  {% csrf_token %}
+  <button type="submit" class="button-danger">{% trans "Abandon session" %}</button>
+</form>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{% static 'js/csrf.js' %}" defer></script>
+<script src="{% static 'js/timer-audio.js' %}" defer></script>
+<script src="{% static 'js/stretch-timer.js' %}" defer></script>
+{% endblock %}

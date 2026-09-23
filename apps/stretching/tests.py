@@ -264,17 +264,24 @@ class TimerStepsTests(TestCase):
         steps = services.timer_steps(services.start_session(self.alice, routine=self.routine))
         self.assertEqual(
             [(step["kind"], step["side"], step["seconds"]) for step in steps],
-            [("hold", "left", 30), ("rest", "left", 5), ("hold", "right", 30)],
+            [
+                ("prepare", "left", services.PREPARE_SECONDS),
+                ("hold", "left", 30),
+                ("rest", "left", 5),
+                ("hold", "right", 30),
+            ],
         )
-        self.assertEqual([step["last_of_stretch"] for step in steps], [False, False, True])
+        self.assertEqual(
+            [step["last_of_stretch"] for step in steps], [False, False, False, True]
+        )
 
     def test_no_rest_step_when_rest_is_zero(self):
         services.add_routine_item(
             self.routine, Stretch.objects.get(name="Cat-Cow"), sets=2, rest_seconds=0
         )
         steps = services.timer_steps(services.start_session(self.alice, routine=self.routine))
-        self.assertEqual([step["kind"] for step in steps], ["hold", "hold"])
-        self.assertEqual([step["set"] for step in steps], [1, 2])
+        self.assertEqual([step["kind"] for step in steps], ["prepare", "hold", "hold"])
+        self.assertEqual([step["set"] for step in steps], [1, 1, 2])
 
     def test_finished_stretches_are_left_out(self):
         services.add_routine_item(self.routine, Stretch.objects.get(name="Cat-Cow"))
