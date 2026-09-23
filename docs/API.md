@@ -54,6 +54,7 @@ Every endpoint belongs to exactly one **context**
 | `records` | Personal records (read-only — see below) |
 | `analytics` | Training summaries, achievements (read-only) |
 | `nutrition` | Foods, meal slots, recipes, diary entries, nutrition goals/targets (goals/targets read-only), a nutrition profile, diet plans (generation/activation/apply are service-backed, not raw writes; a plan's meals/items are read-only — see below) |
+| `stretching` | Stretches, stretch routines and their items, stretching sessions (creating one is a quick log) |
 
 Each API key carries, per context, four independent flags — **Create**,
 **Read**, **Update**, **Delete** — checked fresh on every request
@@ -210,6 +211,7 @@ All under `/api/v1/`. List/create endpoints are paginated (25 per page,
 | records | `records/`, `records/<id>/` (read-only) |
 | analytics | `analytics/summary/?range=7d\|30d\|all` (default 30d), `analytics/achievements/` (both read-only) |
 | nutrition | `foods/`, `foods/<id>/`, `meal-slots/`, `meal-slots/<id>/`, `recipes/`, `recipes/<id>/`, `recipe-ingredients/`, `recipe-ingredients/<id>/`, `diary-entries/`, `diary-entries/<id>/`, `nutrition-goals/`, `nutrition-goals/<id>/` (read-only), `nutrition-targets/`, `nutrition-targets/<id>/` (read-only), `nutrition/profile/` (singleton — no id), `diet-plans/`, `diet-plans/<id>/`, `diet-plans/<id>/activate/`, `diet-plans/<id>/deactivate/`, `diet-plans/<id>/apply/` (all `POST`), `diet-plan-meals/`, `diet-plan-meals/<id>/` (read-only), `diet-plan-items/`, `diet-plan-items/<id>/` (read-only) |
+| stretching | `stretches/`, `stretches/<id>/`, `stretch-routines/`, `stretch-routines/<id>/` (items nested read-only), `stretch-routine-items/`, `stretch-routine-items/<id>/` (own routines only), `stretch-sessions/`, `stretch-sessions/<id>/` (create = quick log with `duration`; name/routine/status and the per-stretch snapshot are read-only) |
 
 Every endpoint goes through the exact same domain service functions the
 server-rendered web views already use (`apps/exercises/services.py`,

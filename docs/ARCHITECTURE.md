@@ -26,6 +26,8 @@ progression
 measurements
 activities
 analytics
+nutrition
+stretching
 core
 social
 ```
@@ -78,6 +80,13 @@ Body weight, body fat, circumferences, custom measurements.
 
 ### activities
 Manually logged non-gym activities.
+
+### stretching
+Stretch library, stretching routines, guided sessions with a timer, and
+their history — see `docs/STRETCHING.md`. Depends one-directionally on
+`exercises` (`Stretch.muscle_groups` reuses `MuscleGroup`) and `workouts`
+(post-workout cool-down suggestions); neither knows `stretching` exists
+— the workout page reaches it only through an inclusion tag.
 
 ### analytics
 Aggregations, trends, dashboards, chart data. No models — every query is

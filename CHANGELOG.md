@@ -18,6 +18,28 @@ narrated summary of the same version.
 
 ## [Unreleased]
 
+### Added
+- Stretching: a new section with 32 built-in stretches (with
+  instructions and target muscles), four ready-made routines, your own
+  stretches and routines, and a guided session player — get-ready, hold
+  and rest countdowns per side and set, chimes and vibration, a screen
+  wake lock, pause/±10 s/skip, and progress that survives a reload.
+  Sessions can also be logged afterwards with just a duration; the
+  overview shows your streak, recent sessions and minutes per week.
+- After a finished workout, a card suggests a cool-down routine matched
+  to the muscles you trained (never started automatically).
+- Stretching days show as a dot on the dashboard calendar.
+- "Track stretching" preference (profile and onboarding) to hide the
+  stretching tab and suggestions.
+- REST API: `stretches/`, `stretch-routines/`, `stretch-routine-items/`
+  and `stretch-sessions/` under a new "Stretching" key permission area.
+- Stretching data is included in "Download your data" and removed on
+  account deletion.
+
+### Changed
+- The workout rest timer's sound handling moved into a shared
+  `timer-audio.js` used by both timers (no behaviour change).
+
 ## [1.21.0] — 2026-09-21
 
 ### Changed

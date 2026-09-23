@@ -501,7 +501,11 @@ oversized nav items. Keeping the same row direction at every width
 sidesteps that failure mode entirely rather than patching around it.
 
 ### Mobile navigation
-Order: Home, Progress, Workout, Programs, Profile. Icon-only on mobile
+Order: Home, Progress, Workout, Programs, Profile — plus Nutrition and
+Stretching right after Home for users who haven't turned them off
+(`User.nutrition_enabled`/`stretching_enabled`), up to seven items.
+Seven icon-only slots still leave each one ~51px wide at a 360px
+viewport, above the 44px minimum touch target. Icon-only on mobile
 (inline SVGs, `.nav-icon`) — no room for both icon and label at
 360–430px — with the label visually hidden (`.nav-label { display:
 none }`) rather than removed: the accessible name comes from each

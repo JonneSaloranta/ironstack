@@ -5685,3 +5685,31 @@ findings along the way: Search-a-licious returns `brands` as a list and
 often only `energy-kj_100g` (now converted to kcal), and expects a bare
 language code (`en`, not `en-us`).
 
+## Stretching app
+
+Added `apps.stretching` alongside activities and nutrition — see
+`docs/STRETCHING.md`. Scope was agreed up front: routines + a guided
+session player (not just duration logging), a seeded library of its
+own (not time-based `Exercise` rows, which would have reached into
+workout logging), a nav tab + `stretching_enabled` toggle, a
+post-workout cool-down suggestion, a dashboard calendar marker, API and
+GDPR coverage, and a browser-only timer (sound + vibration, no server
+push). Sessions snapshot their routine at start, the same rule as
+workouts. The timer's step sequencing is built and tested in Python
+(`services.timer_steps`); the JS only plays it. The rest timer's iOS
+audio-unlock code moved to a shared `static/js/timer-audio.js`.
+
+Real findings along the way: `RoutineItem.stretch` is `PROTECT`, which
+would have made account deletion fail for anyone with a custom stretch
+in their own routine — `delete_account` now deletes the (private)
+routines first. A cool-down match initially preferred the dynamic
+"Morning Mobility" routine for leg day (it was shorter and touched the
+same muscles); coverage now counts static stretches only. A finished
+session under 30 s rounded to 0 minutes and lost its calendar dot;
+days now count at least 1 minute. The existing `"History"` msgid is
+translated "Muokkaushistoria" (edit history) in Finnish, so the
+stretching tab uses its own `context "stretching"`. Checked live on a
+390px viewport with Playwright: overview, routine, library, player
+(prepare → hold, skip, reload resumes at the next pending stretch),
+finish, dashboard calendar dot/popover, and the workout cool-down card.
+
