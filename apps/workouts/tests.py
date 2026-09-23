@@ -958,3 +958,21 @@ class RestTimerDispatcherCommandTests(TestCase):
         # (resending well after fire_at has passed would be pointless).
         self.assertFalse(RestTimerNotification.objects.filter(user=self.alice).exists())
         self.assertFalse(RestTimerNotification.objects.filter(user=bob).exists())
+
+
+class AddPerformedExerciseOrderTests(TestCase):
+    def test_each_added_exercise_gets_the_next_order(self):
+        # Regression: `(highest or -1) + 1` treated a highest order of 0
+        # as "none yet", so the second exercise got order 0 as well.
+        from django.contrib.auth import get_user_model
+
+        user = get_user_model().objects.create_user(username="alice", password="s3cret-pass")
+        session = services.start_session(user, workout=None)
+        orders = [
+            services.add_performed_exercise(
+                session, Exercise.objects.create(name=f"Move {i}", owner=None)
+            ).order
+            for i in range(3)
+        ]
+        self.assertEqual(orders, [0, 1, 2])
+

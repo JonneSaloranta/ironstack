@@ -1605,7 +1605,8 @@ def diet_plan_meal_item_add(request, plan_pk, meal_pk):
                 {"form": form, "plan": plan, "meal": meal},
             )
 
-    next_order = (meal.items.aggregate(highest=Max("order"))["highest"] or -1) + 1
+    highest = meal.items.aggregate(highest=Max("order"))["highest"]
+    next_order = 0 if highest is None else highest + 1
     meal.items.create(food=food, quantity=form.cleaned_data["quantity"], order=next_order)
     plan.bump_version()
     return redirect("nutrition:diet-plan-detail", pk=plan.pk)

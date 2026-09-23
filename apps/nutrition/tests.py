@@ -4531,6 +4531,10 @@ class DietPlanViewTests(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertEqual(meal.items.count(), 2)
         self.assertTrue(meal.items.filter(food=extra_food).exists())
+        # Regression: `(highest or -1) + 1` gave the added item the same
+        # order (0) as the generated one whenever that was the highest.
+        orders = list(meal.items.values_list("order", flat=True))
+        self.assertEqual(len(set(orders)), 2, orders)
 
     def test_the_camera_barcode_scanner_is_wired_up_on_the_add_item_page(self):
         plan = diet_builder.build_diet_plan(
