@@ -50,7 +50,10 @@ def delete_account(user):
        template recipes, an OpenFoodFacts-imported Food) — which lets
        step 1's CASCADE proceed untouched and leaves anyone still
        using the content with exactly what they had before, just
-       without this user's name on it.
+       without this user's name on it. Where a name is unique among
+       shared rows (ActivityType/Exercise/MeasurementType/MealSlot),
+       a clash with an existing shared row is resolved by renaming
+       the released one "Name (2)" — see `_release_to_shared`.
 
     3. **Groups this user owns are handed off, not orphaned.**
        apps.social.services.reassign_owned_groups_before_deletion
@@ -90,14 +93,37 @@ def delete_account(user):
     from apps.social.services import reassign_owned_groups_before_deletion
     from apps.stretching.models import StretchRoutine
 
-    for model in (ActivityType, Exercise, MeasurementType, Food, MealSlot, Recipe, Program):
+    for model in (Food, Recipe, Program):
         model.objects.filter(owner=user).update(owner=None)
+    # These four have a unique name among shared (owner=None) rows, so a
+    # plain bulk update failed with an IntegrityError whenever the user's
+    # own row shared a name with a built-in one or with another deleted
+    # user's already-shared row.
+    for model in (ActivityType, Exercise, MeasurementType, MealSlot):
+        _release_to_shared(model, user)
 
     StretchRoutine.objects.filter(owner=user).delete()
 
     reassign_owned_groups_before_deletion(user)
 
     user.delete()
+
+
+def _release_to_shared(model, user):
+    """Reassign `user`'s own rows of `model` to `owner=None`, renaming
+    any whose name is already taken among shared rows to "Name (2)",
+    "Name (3)", ... — never to anything containing the deleted user's
+    username, which would defeat the point of erasure."""
+    max_length = model._meta.get_field("name").max_length
+    for obj in model.objects.filter(owner=user):
+        name, suffix = obj.name, 2
+        while model.objects.filter(owner__isnull=True, name=name).exists():
+            tail = f" ({suffix})"
+            name = obj.name[: max_length - len(tail)] + tail
+            suffix += 1
+        obj.name = name
+        obj.owner = None
+        obj.save(update_fields=["name", "owner"])
 
 
 def _dump(queryset):

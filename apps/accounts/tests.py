@@ -1672,6 +1672,33 @@ class DeleteAccountServiceTests(TestCase):
         self.delete_account(self.alice)
         self.assertFalse(User.objects.filter(pk=self.alice.pk).exists())
 
+    def test_custom_row_named_like_a_built_in_one_is_renamed_not_a_crash(self):
+        # Regression: reassigning to owner=None hit the unique name among
+        # shared rows and raised IntegrityError, blocking the deletion.
+        from apps.activities.models import ActivityType
+
+        mine = ActivityType.objects.create(name="Running", owner=self.alice)
+        self.delete_account(self.alice)
+        mine.refresh_from_db()
+        self.assertIsNone(mine.owner)
+        self.assertEqual(mine.name, "Running (2)")
+
+    def test_two_deleted_users_with_the_same_custom_name(self):
+        from apps.exercises.models import Exercise
+
+        bob = User.objects.create_user(username="bob", password="s3cret-pass")
+        Exercise.objects.create(name="Zercher Squat", owner=self.alice)
+        Exercise.objects.create(name="Zercher Squat", owner=bob)
+        self.delete_account(self.alice)
+        self.delete_account(bob)
+        self.assertEqual(
+            set(Exercise.objects.filter(name__startswith="Zercher").values_list("name", flat=True)),
+            {"Zercher Squat", "Zercher Squat (2)"},
+        )
+        self.assertNotIn(
+            "bob", " ".join(Exercise.objects.values_list("name", flat=True))
+        )
+
     def test_hard_deletes_exclusively_personal_data(self):
         from django.utils import timezone
 
