@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: IronStack\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-23 14:38+0000\n"
+"POT-Creation-Date: 2026-09-23 18:30+0000\n"
 "Language: et\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -505,7 +505,7 @@ msgstr "Sõudmine"
 msgid "Yoga"
 msgstr "Jooga"
 
-#: apps/activities/i18n_content.py:24 apps/core/models.py:167
+#: apps/activities/i18n_content.py:24 apps/core/models.py:169
 #: apps/nutrition/i18n_content.py:36
 msgid "Other"
 msgstr "Muu"
@@ -647,7 +647,7 @@ msgstr "Muutmine"
 #: apps/api/forms.py:13 templates/activities/activity_history.html:57
 #: templates/core/_backup_row.html:22
 #: templates/measurements/measurement_history.html:65
-#: templates/nutrition/diary_day.html:74
+#: templates/nutrition/diary_day.html:82
 #: templates/programs/program_confirm_delete.html:14
 #: templates/programs/program_detail.html:52
 #: templates/stretching/session_detail.html:53
@@ -715,9 +715,10 @@ msgstr "Rekordid"
 msgid "Analytics"
 msgstr "Analüütika"
 
-#: apps/api/models.py:32 templates/api/key_list.html:109
-#: templates/base.html:173 templates/base.html:175
-#: templates/nutrition/dashboard.html:3 templates/nutrition/dashboard.html:6
+#: apps/api/models.py:32 apps/core/models.py:166
+#: templates/api/key_list.html:109 templates/base.html:173
+#: templates/base.html:175 templates/nutrition/dashboard.html:3
+#: templates/nutrition/dashboard.html:6
 #: templates/nutrition/diet_plan_detail.html:5
 #: templates/nutrition/food_detail.html:5
 #: templates/nutrition/food_detail.html:24
@@ -726,7 +727,7 @@ msgstr "Analüütika"
 msgid "Nutrition"
 msgstr "Toitumine"
 
-#: apps/api/models.py:33 apps/stretching/models.py:209
+#: apps/api/models.py:33 apps/core/models.py:167 apps/stretching/models.py:209
 #: templates/api/key_list.html:113 templates/base.html:179
 #: templates/base.html:181 templates/core/dashboard.html:143
 #: templates/stretching/_cooldown_card.html:7 templates/stretching/home.html:3
@@ -1163,7 +1164,7 @@ msgstr "Edenemine"
 msgid "Body measurements"
 msgstr "Kehamõõdud"
 
-#: apps/core/models.py:166
+#: apps/core/models.py:168
 msgid "Account & profile"
 msgstr "Konto ja profiil"
 
@@ -2622,7 +2623,7 @@ msgstr "A — parim"
 msgid "B"
 msgstr "B"
 
-#: apps/nutrition/models.py:93 templates/nutrition/diary_day.html:60
+#: apps/nutrition/models.py:93
 msgid "C"
 msgstr "C"
 
@@ -2845,14 +2846,14 @@ msgstr ""
 msgid "Only a personal trainer can share a diet plan."
 msgstr "Toitumiskava saab jagada ainult personaaltreener."
 
-#: apps/nutrition/views.py:1639
+#: apps/nutrition/views.py:1640
 #, python-format
 msgid "Logged %(count)d item to %(date)s."
 msgid_plural "Logged %(count)d items to %(date)s."
 msgstr[0] "Logiti %(count)d kirje kuupäevale %(date)s."
 msgstr[1] "Logiti %(count)d kirjet kuupäevale %(date)s."
 
-#: apps/nutrition/views.py:1650
+#: apps/nutrition/views.py:1651
 msgid "Nothing to log — this plan has no items for that date."
 msgstr "Pole midagi logida — sellel plaanil pole selle kuupäeva jaoks kirjeid."
 
@@ -4991,7 +4992,7 @@ msgstr "Vahemaa"
 #: templates/activities/activity_history.html:54
 #: templates/exercises/exercise_detail.html:12
 #: templates/measurements/measurement_history.html:62
-#: templates/nutrition/diary_day.html:70
+#: templates/nutrition/diary_day.html:78
 #: templates/nutrition/recipe_detail.html:13
 #: templates/nutrition/recipe_detail.html:40
 #: templates/programs/program_detail.html:12
@@ -6888,7 +6889,7 @@ msgid "At a chosen weekly rate, roughly how long to reach a target weight."
 msgstr "Valitud nädalase tempoga umbes kui kaua kulub sihtkaaluni jõudmiseks."
 
 #: templates/nutrition/calculators_home.html:67
-#: templates/nutrition/diary_day.html:105
+#: templates/nutrition/diary_day.html:113
 #: templates/nutrition/diet_plan_list.html:30
 #: templates/nutrition/food_list.html:90 templates/nutrition/goal_edit.html:31
 #: templates/nutrition/recipe_list.html:90 templates/nutrition/stats.html:44
@@ -6987,7 +6988,7 @@ msgstr "Muuda eesmärki"
 
 #: templates/nutrition/diary_add_entry.html:3
 #: templates/nutrition/diary_add_entry.html:6
-#: templates/nutrition/diary_day.html:82
+#: templates/nutrition/diary_day.html:90
 msgid "Add food"
 msgstr "Lisa toit"
 
@@ -7028,40 +7029,46 @@ msgstr "Tänane toitumine"
 msgid "Nutrition for this day"
 msgstr "Selle päeva toitumine"
 
-#: templates/nutrition/diary_day.html:60
+#: templates/nutrition/diary_day.html:60 templates/nutrition/diary_day.html:75
+msgctxt "macro"
 msgid "P"
 msgstr "V"
 
-#: templates/nutrition/diary_day.html:60
-#: templates/workouts/_performed_exercise_card.html:22
-msgid "F"
-msgstr "E"
+#: templates/nutrition/diary_day.html:60 templates/nutrition/diary_day.html:75
+msgctxt "macro"
+msgid "C"
+msgstr "S"
 
-#: templates/nutrition/diary_day.html:72
+#: templates/nutrition/diary_day.html:60 templates/nutrition/diary_day.html:75
+msgctxt "macro"
+msgid "F"
+msgstr "R"
+
+#: templates/nutrition/diary_day.html:80
 msgid "Remove this entry?"
 msgstr "Kas eemaldada see kirje?"
 
-#: templates/nutrition/diary_day.html:79
+#: templates/nutrition/diary_day.html:87
 msgid "Nothing logged yet."
 msgstr "Veel pole midagi logitud."
 
-#: templates/nutrition/diary_day.html:86
+#: templates/nutrition/diary_day.html:94
 msgid "Save as recipe"
 msgstr "Salvesta retseptina"
 
-#: templates/nutrition/diary_day.html:94
+#: templates/nutrition/diary_day.html:102
 msgid "Copy this day to another date"
 msgstr "Kopeeri see päev teisele kuupäevale"
 
-#: templates/nutrition/diary_day.html:98
+#: templates/nutrition/diary_day.html:106
 msgid "Copy to date"
 msgstr "Kopeeri kuupäevale"
 
-#: templates/nutrition/diary_day.html:99 templates/social/group_detail.html:28
+#: templates/nutrition/diary_day.html:107 templates/social/group_detail.html:28
 msgid "Copy"
 msgstr "Kopeeri"
 
-#: templates/nutrition/diary_day.html:104
+#: templates/nutrition/diary_day.html:112
 msgid "Manage foods"
 msgstr "Halda toite"
 
@@ -8652,6 +8659,10 @@ msgstr "Kordused"
 #: templates/workouts/_performed_exercise_card.html:20
 msgid "W"
 msgstr "S"
+
+#: templates/workouts/_performed_exercise_card.html:22
+msgid "F"
+msgstr "E"
 
 #: templates/workouts/_performed_exercise_card.html:25
 msgid "Delete this set?"

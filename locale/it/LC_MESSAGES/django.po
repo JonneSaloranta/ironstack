@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: IronStack\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-23 14:38+0000\n"
+"POT-Creation-Date: 2026-09-23 18:30+0000\n"
 "Language: it\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -515,7 +515,7 @@ msgstr "Canottaggio"
 msgid "Yoga"
 msgstr "Yoga"
 
-#: apps/activities/i18n_content.py:24 apps/core/models.py:167
+#: apps/activities/i18n_content.py:24 apps/core/models.py:169
 #: apps/nutrition/i18n_content.py:36
 msgid "Other"
 msgstr "Altro"
@@ -657,7 +657,7 @@ msgstr "Modifica"
 #: apps/api/forms.py:13 templates/activities/activity_history.html:57
 #: templates/core/_backup_row.html:22
 #: templates/measurements/measurement_history.html:65
-#: templates/nutrition/diary_day.html:74
+#: templates/nutrition/diary_day.html:82
 #: templates/programs/program_confirm_delete.html:14
 #: templates/programs/program_detail.html:52
 #: templates/stretching/session_detail.html:53
@@ -725,9 +725,10 @@ msgstr "Record"
 msgid "Analytics"
 msgstr "Analisi"
 
-#: apps/api/models.py:32 templates/api/key_list.html:109
-#: templates/base.html:173 templates/base.html:175
-#: templates/nutrition/dashboard.html:3 templates/nutrition/dashboard.html:6
+#: apps/api/models.py:32 apps/core/models.py:166
+#: templates/api/key_list.html:109 templates/base.html:173
+#: templates/base.html:175 templates/nutrition/dashboard.html:3
+#: templates/nutrition/dashboard.html:6
 #: templates/nutrition/diet_plan_detail.html:5
 #: templates/nutrition/food_detail.html:5
 #: templates/nutrition/food_detail.html:24
@@ -736,7 +737,7 @@ msgstr "Analisi"
 msgid "Nutrition"
 msgstr "Alimentazione"
 
-#: apps/api/models.py:33 apps/stretching/models.py:209
+#: apps/api/models.py:33 apps/core/models.py:167 apps/stretching/models.py:209
 #: templates/api/key_list.html:113 templates/base.html:179
 #: templates/base.html:181 templates/core/dashboard.html:143
 #: templates/stretching/_cooldown_card.html:7 templates/stretching/home.html:3
@@ -1184,7 +1185,7 @@ msgstr "Progressi"
 msgid "Body measurements"
 msgstr "Misure corporee"
 
-#: apps/core/models.py:166
+#: apps/core/models.py:168
 msgid "Account & profile"
 msgstr "Account e profilo"
 
@@ -2658,7 +2659,7 @@ msgstr "A — migliore"
 msgid "B"
 msgstr "B"
 
-#: apps/nutrition/models.py:93 templates/nutrition/diary_day.html:60
+#: apps/nutrition/models.py:93
 msgid "C"
 msgstr "C"
 
@@ -2883,14 +2884,14 @@ msgstr ""
 msgid "Only a personal trainer can share a diet plan."
 msgstr "Solo un personal trainer può condividere un piano alimentare."
 
-#: apps/nutrition/views.py:1639
+#: apps/nutrition/views.py:1640
 #, python-format
 msgid "Logged %(count)d item to %(date)s."
 msgid_plural "Logged %(count)d items to %(date)s."
 msgstr[0] "Registrata %(count)d voce in %(date)s."
 msgstr[1] "Registrate %(count)d voci in %(date)s."
 
-#: apps/nutrition/views.py:1650
+#: apps/nutrition/views.py:1651
 msgid "Nothing to log — this plan has no items for that date."
 msgstr "Niente da registrare — questo piano non ha voci per quella data."
 
@@ -5047,7 +5048,7 @@ msgstr "Distanza"
 #: templates/activities/activity_history.html:54
 #: templates/exercises/exercise_detail.html:12
 #: templates/measurements/measurement_history.html:62
-#: templates/nutrition/diary_day.html:70
+#: templates/nutrition/diary_day.html:78
 #: templates/nutrition/recipe_detail.html:13
 #: templates/nutrition/recipe_detail.html:40
 #: templates/programs/program_detail.html:12
@@ -6972,7 +6973,7 @@ msgstr ""
 " un peso obiettivo."
 
 #: templates/nutrition/calculators_home.html:67
-#: templates/nutrition/diary_day.html:105
+#: templates/nutrition/diary_day.html:113
 #: templates/nutrition/diet_plan_list.html:30
 #: templates/nutrition/food_list.html:90 templates/nutrition/goal_edit.html:31
 #: templates/nutrition/recipe_list.html:90 templates/nutrition/stats.html:44
@@ -7071,7 +7072,7 @@ msgstr "Cambia obiettivo"
 
 #: templates/nutrition/diary_add_entry.html:3
 #: templates/nutrition/diary_add_entry.html:6
-#: templates/nutrition/diary_day.html:82
+#: templates/nutrition/diary_day.html:90
 msgid "Add food"
 msgstr "Aggiungi alimento"
 
@@ -7112,40 +7113,46 @@ msgstr "Alimentazione di oggi"
 msgid "Nutrition for this day"
 msgstr "Alimentazione di questo giorno"
 
-#: templates/nutrition/diary_day.html:60
+#: templates/nutrition/diary_day.html:60 templates/nutrition/diary_day.html:75
+msgctxt "macro"
 msgid "P"
 msgstr "P"
 
-#: templates/nutrition/diary_day.html:60
-#: templates/workouts/_performed_exercise_card.html:22
-msgid "F"
-msgstr "F"
+#: templates/nutrition/diary_day.html:60 templates/nutrition/diary_day.html:75
+msgctxt "macro"
+msgid "C"
+msgstr "C"
 
-#: templates/nutrition/diary_day.html:72
+#: templates/nutrition/diary_day.html:60 templates/nutrition/diary_day.html:75
+msgctxt "macro"
+msgid "F"
+msgstr "G"
+
+#: templates/nutrition/diary_day.html:80
 msgid "Remove this entry?"
 msgstr "Rimuovere questa voce?"
 
-#: templates/nutrition/diary_day.html:79
+#: templates/nutrition/diary_day.html:87
 msgid "Nothing logged yet."
 msgstr "Nulla registrato ancora."
 
-#: templates/nutrition/diary_day.html:86
+#: templates/nutrition/diary_day.html:94
 msgid "Save as recipe"
 msgstr "Salva come ricetta"
 
-#: templates/nutrition/diary_day.html:94
+#: templates/nutrition/diary_day.html:102
 msgid "Copy this day to another date"
 msgstr "Copia questo giorno in un'altra data"
 
-#: templates/nutrition/diary_day.html:98
+#: templates/nutrition/diary_day.html:106
 msgid "Copy to date"
 msgstr "Copia alla data"
 
-#: templates/nutrition/diary_day.html:99 templates/social/group_detail.html:28
+#: templates/nutrition/diary_day.html:107 templates/social/group_detail.html:28
 msgid "Copy"
 msgstr "Copia"
 
-#: templates/nutrition/diary_day.html:104
+#: templates/nutrition/diary_day.html:112
 msgid "Manage foods"
 msgstr "Gestisci alimenti"
 
@@ -8746,6 +8753,10 @@ msgstr "Ripetizioni"
 #: templates/workouts/_performed_exercise_card.html:20
 msgid "W"
 msgstr "R"
+
+#: templates/workouts/_performed_exercise_card.html:22
+msgid "F"
+msgstr "F"
 
 #: templates/workouts/_performed_exercise_card.html:25
 msgid "Delete this set?"
