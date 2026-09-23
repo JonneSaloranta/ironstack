@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load i18n core_extras %}
+{% load i18n core_extras stretching_extras %}
 {% block title %}{% if session.workout %}{% trans session.workout.name %}{% else %}{% trans "Freeform workout" %}{% endif %} — IronStack{% endblock %}
 {% block content %}
 {% url 'workouts:session-list' as c1u %}{% trans "Workouts" as c1l %}
@@ -18,6 +18,8 @@
   {% if session.duration %} · {{ session.duration|duration }}{% endif %}
   {% if summary.set_count %} · {% blocktrans count n=summary.set_count %}{{ n }} set{% plural %}{{ n }} sets{% endblocktrans %} · {{ summary.volume|weight:request.user }}{% endif %}
 </p>
+
+{% cooldown_card session %}
 
 {% for pe in session.performed_exercises.all %}
   {% include "workouts/_performed_exercise_card.html" with pe=pe set_form=pe.set_form suggestion=pe.suggestion %}

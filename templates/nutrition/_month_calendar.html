@@ -121,6 +121,12 @@ takes its data tag down with it, so there's only ever one.
               <svg class="calendar-day-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
               {% trans "Trailing 7-day average calories ran under your target" %}
             </li>
+            {% if calendar_shows_stretching %}
+            <li>
+              <span class="calendar-legend-dot calendar-day-stretch-legend" aria-hidden="true"></span>
+              {% trans "Stretched that day (corner dot)" %}
+            </li>
+            {% endif %}
             <li>
               <span class="calendar-legend-dot calendar-day-icon-green" aria-hidden="true"></span>
               {% trans "Close to target" %}
@@ -195,6 +201,7 @@ takes its data tag down with it, so there's only ever one.
                     @click="toggle('{{ day.date|date:"Y-m-d" }}')"
                     :aria-expanded="(openDate === '{{ day.date|date:"Y-m-d" }}').toString()">
               <span class="text-muted">{{ day.date.day }}</span>
+              {% if day.stretch_minutes %}<span class="calendar-day-stretch-dot" aria-hidden="true"></span>{% endif %}
               {% if day.status.training_status == "pr" %}
                 <svg class="calendar-day-icon calendar-day-icon-gold" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><line x1="6" y1="12" x2="18" y2="12"/><rect x="2" y="9" width="3" height="6" rx="1"/><rect x="19" y="9" width="3" height="6" rx="1"/><rect x="5" y="7" width="2" height="10" rx="1"/><rect x="17" y="7" width="2" height="10" rx="1"/></svg>
               {% elif day.status.training_status == "abandoned" %}

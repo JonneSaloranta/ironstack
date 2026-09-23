@@ -319,3 +319,49 @@ class QuickLogViewTests(StretchingViewTestCase):
         )
         self.assertEqual(response.status_code, 200)
         self.assertFalse(StretchSession.objects.exists())
+
+
+class CooldownCardTests(StretchingViewTestCase):
+    """The suggestion card on a finished workout's own page
+    (stretching_extras.cooldown_card)."""
+
+    def _completed_workout(self, *names):
+        workout = workout_services.start_session(self.alice)
+        for name in names:
+            workout_services.add_performed_exercise(workout, Exercise.objects.get(name=name))
+        return workout_services.complete_session(workout)
+
+    def _page(self, workout):
+        return self.client.get(reverse("workouts:session-detail", args=[workout.pk]))
+
+    def test_card_suggests_a_cooldown_after_a_finished_workout(self):
+        workout = self._completed_workout("Barbell Back Squat", "Leg Curl")
+        response = self._page(workout)
+        self.assertContains(response, "Cool down with a stretch?")
+        self.assertContains(response, "Lower Body Cool-Down")
+        self.assertContains(
+            response, reverse("stretching:session-start-cooldown", args=[workout.pk])
+        )
+
+    def test_no_card_while_the_workout_is_still_in_progress(self):
+        workout = workout_services.start_session(self.alice)
+        workout_services.add_performed_exercise(
+            workout, Exercise.objects.get(name="Barbell Back Squat")
+        )
+        self.assertNotContains(self._page(workout), "Cool down with a stretch?")
+
+    def test_no_card_when_stretching_is_turned_off(self):
+        self.alice.stretching_enabled = False
+        self.alice.save(update_fields=["stretching_enabled"])
+        workout = self._completed_workout("Barbell Back Squat")
+        self.assertNotContains(self._page(workout), "Cool down with a stretch?")
+
+    def test_card_links_to_the_cooldown_once_done(self):
+        workout = self._completed_workout("Barbell Back Squat")
+        session = services.start_session(
+            self.alice, routine=self.system_routine, after_workout=workout
+        )
+        services.complete_session(session)
+        response = self._page(workout)
+        self.assertNotContains(response, "Cool down with a stretch?")
+        self.assertContains(response, reverse("stretching:session-detail", args=[session.pk]))

@@ -1851,14 +1851,16 @@ class AdminThemeTests(TestCase):
 
 
 class BottomNavTests(TestCase):
-    """Mobile nav: Home, Nutrition, Progress, Workout, Programs, Profile
-    in that order, icon-only on mobile — each link's accessible name
-    comes from aria-label since the text label is visually hidden at
-    that width (re-shown alongside the icon on desktop). "Nutrition"
-    is the 6th item, added alongside apps.nutrition
-    (docs/NUTRITION.md "Navigation") — a daily-use surface like
-    Workout, not an occasional one like Measurements/Activities/
-    Records, which don't get their own nav slot."""
+    """Mobile nav: Home, Nutrition, Stretching, Progress, Workout,
+    Programs, Profile in that order, icon-only on mobile — each link's
+    accessible name comes from aria-label since the text label is
+    visually hidden at that width (re-shown alongside the icon on
+    desktop). "Nutrition" and "Stretching" were added alongside their
+    apps (docs/NUTRITION.md "Navigation", docs/STRETCHING.md) —
+    daily-use surfaces like Workout, not occasional ones like
+    Measurements/Activities/Records, which don't get their own nav
+    slot. Both can be hidden per user (User.nutrition_enabled /
+    stretching_enabled)."""
 
     def setUp(self):
         from django.contrib.auth import get_user_model
@@ -1871,13 +1873,14 @@ class BottomNavTests(TestCase):
         response = self.client.get(reverse("dashboard"))
         content = response.content.decode()
         positions = [content.find(f'aria-label="{label}"') for label in
-                     ["Home", "Nutrition", "Progress", "Workout", "Programs", "Profile"]]
+                     ["Home", "Nutrition", "Stretching", "Progress", "Workout", "Programs",
+                      "Profile"]]
         self.assertTrue(all(p != -1 for p in positions), positions)
         self.assertEqual(positions, sorted(positions))
 
     def test_every_nav_link_has_an_icon(self):
         response = self.client.get(reverse("dashboard"))
-        self.assertContains(response, "nav-icon", count=6)
+        self.assertContains(response, "nav-icon", count=7)
 
     def test_nav_hidden_for_anonymous_users(self):
         self.client.logout()
@@ -2120,6 +2123,40 @@ class DashboardCalendarTests(TestCase):
             day for week in weeks for day in week if day["date"] == today
         )
         self.assertEqual(todays_cell["status"].training_status, "completed")
+
+    def test_a_stretching_day_gets_a_marker_and_a_popover_line(self):
+        from datetime import date, timedelta
+
+        from apps.stretching import services as stretching_services
+
+        stretching_services.quick_log(
+            self.alice, date=date(2026, 8, 5), duration=timedelta(minutes=12)
+        )
+        response = self.client.get(reverse("dashboard"), {"month": "2026-08"})
+        cell = next(
+            day for week in response.context["calendar_weeks"] for day in week
+            if day["date"] == date(2026, 8, 5)
+        )
+        self.assertEqual(cell["stretch_minutes"], 12)
+        self.assertContains(response, "calendar-day-stretch-dot")
+        day_json = next(
+            day for day in response.context["calendar_days_json"]
+            if day["date"] == "2026-08-05"
+        )
+        self.assertIn("Stretched 12 min.", day_json["lines"])
+
+    def test_no_stretching_marker_when_stretching_is_turned_off(self):
+        from datetime import date, timedelta
+
+        from apps.stretching import services as stretching_services
+
+        stretching_services.quick_log(
+            self.alice, date=date(2026, 8, 5), duration=timedelta(minutes=12)
+        )
+        self.alice.stretching_enabled = False
+        self.alice.save(update_fields=["stretching_enabled"])
+        response = self.client.get(reverse("dashboard"), {"month": "2026-08"})
+        self.assertNotContains(response, "calendar-day-stretch-dot")
 
     def test_a_pr_day_renders_gold_not_green(self):
         # Regression: a PR day used to share --color-success with this

@@ -31,6 +31,13 @@ from apps.nutrition.models import (
 )
 from apps.programs.models import ExercisePrescription, Program, Workout
 from apps.records.models import PersonalRecord
+from apps.stretching.models import (
+    PerformedStretch,
+    RoutineItem,
+    Stretch,
+    StretchRoutine,
+    StretchSession,
+)
 from apps.workouts.models import ExerciseSet, PerformedExercise, WorkoutSession
 
 User = get_user_model()
@@ -765,4 +772,119 @@ class DietPlanSerializer(serializers.ModelSerializer):
         request = self.context["request"]
         if value is not None and value.user_id != request.user.id:
             raise serializers.ValidationError("Not your own goal.")
+        return value
+
+
+# --------------------------------------------------------------------
+# Stretching
+# --------------------------------------------------------------------
+
+
+class StretchSerializer(serializers.ModelSerializer):
+    is_custom = serializers.BooleanField(read_only=True)
+
+    class Meta:
+        model = Stretch
+        fields = [
+            "id",
+            "name",
+            "kind",
+            "per_side",
+            "default_hold_seconds",
+            "muscle_groups",
+            "instructions",
+            "active",
+            "is_custom",
+            "owner",
+        ]
+        read_only_fields = ["active", "owner"]
+
+
+class RoutineItemSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = RoutineItem
+        fields = ["id", "routine", "stretch", "order", "hold_seconds", "sets", "rest_seconds"]
+
+    def validate_routine(self, value):
+        # Same reasoning as RecipeIngredientSerializer.validate_recipe —
+        # only a routine this user owns can be edited.
+        if value.owner_id != self.context["request"].user.id:
+            raise serializers.ValidationError("Not a routine you own.")
+        return value
+
+    def validate_stretch(self, value):
+        from apps.stretching import services as stretching_services
+
+        if not stretching_services.visible_stretches(self.context["request"].user).filter(
+            pk=value.pk
+        ).exists():
+            raise serializers.ValidationError("Not a stretch you can use.")
+        return value
+
+
+class StretchRoutineSerializer(serializers.ModelSerializer):
+    items = RoutineItemSerializer(many=True, read_only=True)
+    is_custom = serializers.BooleanField(read_only=True)
+
+    class Meta:
+        model = StretchRoutine
+        fields = ["id", "name", "description", "items", "active", "is_custom", "owner"]
+        read_only_fields = ["active", "owner"]
+
+
+class PerformedStretchSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PerformedStretch
+        fields = [
+            "id",
+            "stretch",
+            "stretch_name",
+            "order",
+            "per_side",
+            "target_hold_seconds",
+            "sets",
+            "rest_seconds",
+            "status",
+            "actual_seconds",
+        ]
+
+
+class StretchSessionSerializer(serializers.ModelSerializer):
+    """Creating one through the API is a quick log — a finished session
+    with a duration (services.quick_log); guided sessions only come from
+    the web player. Everything snapshotted at start (name, routine,
+    per-stretch plan) is read-only afterwards, same as the web edit
+    form: date, duration and notes stay editable."""
+
+    performed_stretches = PerformedStretchSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = StretchSession
+        fields = [
+            "id",
+            "name",
+            "routine",
+            "after_workout",
+            "status",
+            "date",
+            "started_at",
+            "completed_at",
+            "duration",
+            "notes",
+            "performed_stretches",
+        ]
+        read_only_fields = ["name", "after_workout", "status", "started_at", "completed_at"]
+        extra_kwargs = {"duration": {"required": True, "allow_null": False}}
+
+    def validate_routine(self, value):
+        from apps.stretching import services as stretching_services
+
+        if value is None:
+            return value
+        if self.instance is not None and value != self.instance.routine:
+            raise serializers.ValidationError("A logged session's routine can't be changed.")
+        if not stretching_services.visible_routines(self.context["request"].user).filter(
+            pk=value.pk
+        ).exists():
+            raise serializers.ValidationError("Not a routine you can use.")
         return value

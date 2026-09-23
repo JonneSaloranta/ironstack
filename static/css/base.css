@@ -484,8 +484,9 @@ input[type="radio"] {
 
 /* apps.social.context_processors.social_badge — a pending friend
    request/group invite or an unread message, surfaced as a small dot
-   on the existing Profile nav icon rather than a 7th bottom-nav item
-   (already six, and this app is mobile-first — docs/UI.md). Needs its
+   on the existing Profile nav icon rather than yet another bottom-nav
+   item (up to seven with nutrition and stretching both on, and this
+   app is mobile-first — docs/UI.md). Needs its
    own positioning wrapper (.icon-badge-wrap) since .bottom-nav a centers
    its icon via justify-content, so an absolutely-positioned child of
    the <a> itself wouldn't reliably sit at the icon's own corner. */
@@ -2405,6 +2406,27 @@ h2 {
 .calendar-day-today {
   border-color: var(--color-accent);
   border-width: 2px;
+}
+
+/* A day with a finished stretching session (apps.stretching) — a small
+   corner dot rather than a third stacked icon, which wouldn't fit a
+   phone-width day cell alongside the training and calorie icons. */
+.calendar-day {
+  position: relative;
+}
+
+.calendar-day-stretch-dot,
+.calendar-legend-dot.calendar-day-stretch-legend {
+  background: var(--color-accent);
+}
+
+.calendar-day-stretch-dot {
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
 }
 
 .calendar-day-icon {

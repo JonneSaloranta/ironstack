@@ -10,6 +10,7 @@ as much a "view" as a Django one in that sense.
 """
 
 from django.shortcuts import get_object_or_404
+from django.utils import timezone
 from drf_spectacular.utils import extend_schema
 from rest_framework import generics, mixins, status, viewsets
 from rest_framework.decorators import action
@@ -43,6 +44,8 @@ from apps.programs import services as program_services
 from apps.programs.models import ExercisePrescription, Workout
 from apps.records import services as records_services
 from apps.records.models import PersonalRecord
+from apps.stretching import services as stretching_services
+from apps.stretching.models import RoutineItem
 from apps.workouts import services as workout_services
 from apps.workouts.models import ExerciseSet, PerformedExercise
 
@@ -73,6 +76,10 @@ from .serializers import (
     ProgramSerializer,
     RecipeIngredientSerializer,
     RecipeSerializer,
+    RoutineItemSerializer,
+    StretchRoutineSerializer,
+    StretchSerializer,
+    StretchSessionSerializer,
     TrainingSummarySerializer,
     WorkoutSerializer,
     WorkoutSessionSerializer,
@@ -559,3 +566,54 @@ class DietPlanItemViewSet(
 
     def get_queryset(self):
         return DietPlanItem.objects.filter(diet_plan_meal__diet_plan__user=self.request.user)
+
+
+# --------------------------------------------------------------------
+# Stretching
+# --------------------------------------------------------------------
+
+
+class StretchViewSet(OwnedResourceViewSet):
+    serializer_class = StretchSerializer
+    api_context = ApiContext.STRETCHING
+
+    def visible_queryset(self):
+        return stretching_services.visible_stretches(self.request.user).prefetch_related(
+            "muscle_groups"
+        )
+
+
+class StretchRoutineViewSet(OwnedResourceViewSet):
+    serializer_class = StretchRoutineSerializer
+    api_context = ApiContext.STRETCHING
+
+    def visible_queryset(self):
+        return stretching_services.visible_routines(self.request.user).prefetch_related("items")
+
+
+class RoutineItemViewSet(viewsets.ModelViewSet):
+    serializer_class = RoutineItemSerializer
+    api_context = ApiContext.STRETCHING
+
+    def get_queryset(self):
+        return RoutineItem.objects.filter(routine__owner=self.request.user)
+
+
+class StretchSessionViewSet(viewsets.ModelViewSet):
+    serializer_class = StretchSessionSerializer
+    api_context = ApiContext.STRETCHING
+
+    def get_queryset(self):
+        return stretching_services.sessions_for(self.request.user).prefetch_related(
+            "performed_stretches"
+        )
+
+    def perform_create(self, serializer):
+        data = serializer.validated_data
+        serializer.instance = stretching_services.quick_log(
+            self.request.user,
+            date=data.get("date") or timezone.localdate(),
+            duration=data["duration"],
+            routine=data.get("routine"),
+            notes=data.get("notes", ""),
+        )

@@ -381,3 +381,36 @@ class StatsTests(TestCase):
         self.assertEqual(
             services.calendar_minutes(self.alice, 2026, 9), {date(2026, 9, 5): 15}
         )
+
+
+class AccountDataTests(TestCase):
+    """GDPR export/erasure (apps.accounts.services) cover stretching."""
+
+    def setUp(self):
+        self.alice = make_user()
+        self.stretch = Stretch.objects.create(name="Lizard", owner=self.alice)
+        self.routine = StretchRoutine.objects.create(name="Mine", owner=self.alice)
+        services.add_routine_item(self.routine, self.stretch)
+        session = services.start_session(self.alice, routine=self.routine)
+        services.complete_session(session)
+
+    def test_export_includes_stretching(self):
+        from apps.accounts.services import export_account_data
+
+        data = export_account_data(self.alice)
+        self.assertEqual(len(data["stretch_sessions"]), 1)
+        self.assertEqual(len(data["performed_stretches"]), 1)
+        self.assertEqual(len(data["custom_stretches"]), 1)
+        self.assertEqual(len(data["custom_stretch_routines"]), 1)
+        self.assertEqual(len(data["custom_stretch_routine_items"]), 1)
+
+    def test_delete_account_removes_private_stretching_content(self):
+        # Regression guard: RoutineItem.stretch is PROTECT, so a custom
+        # stretch used in the user's own routine must not block deletion.
+        from apps.accounts.services import delete_account
+
+        delete_account(self.alice)
+        self.assertFalse(Stretch.objects.filter(name="Lizard").exists())
+        self.assertFalse(StretchRoutine.objects.filter(name="Mine").exists())
+        self.assertFalse(StretchSession.objects.exists())
+        self.assertTrue(Stretch.objects.filter(owner=None).exists())

@@ -64,6 +64,16 @@ def delete_account(user):
        and is left as-is (harmless — an owner-less, member-less group
        nobody can act on, but nothing crashes or leaks).
 
+    4. **Stretching content is private, so it's deleted, not
+       reassigned.** Unlike the shared reference content in step 2, a
+       custom Stretch/StretchRoutine is only ever visible to its own
+       owner (apps.stretching.services.visible_stretches/
+       visible_routines), so nobody else can be relying on it. The
+       user's routines are deleted first: RoutineItem.stretch is
+       `on_delete=PROTECT`, which would otherwise block step 1's
+       cascade from removing a custom stretch the user's own routine
+       still uses.
+
     Deliberately **not handled here**: existing backup archives
     (`docs/BACKUP.md`) made before this call still contain this user's
     data until they're rotated out by `BackupSettings.retention_count`
@@ -78,9 +88,12 @@ def delete_account(user):
     from apps.nutrition.models import Food, MealSlot, Recipe
     from apps.programs.models import Program
     from apps.social.services import reassign_owned_groups_before_deletion
+    from apps.stretching.models import StretchRoutine
 
     for model in (ActivityType, Exercise, MeasurementType, Food, MealSlot, Recipe, Program):
         model.objects.filter(owner=user).update(owner=None)
+
+    StretchRoutine.objects.filter(owner=user).delete()
 
     reassign_owned_groups_before_deletion(user)
 
@@ -151,6 +164,13 @@ def export_account_data(user):
         GroupMembership,
         GroupMessage,
     )
+    from apps.stretching.models import (
+        PerformedStretch,
+        RoutineItem,
+        Stretch,
+        StretchRoutine,
+        StretchSession,
+    )
     from apps.workouts.models import ExerciseSet, PerformedExercise, WorkoutSession
 
     return {
@@ -193,6 +213,11 @@ def export_account_data(user):
         "diet_plans": _dump(DietPlan.objects.filter(user=user)),
         "diet_plan_meals": _dump(DietPlanMeal.objects.filter(diet_plan__user=user)),
         "diet_plan_items": _dump(DietPlanItem.objects.filter(diet_plan_meal__diet_plan__user=user)),
+        "stretch_sessions": _dump(StretchSession.objects.filter(user=user)),
+        "performed_stretches": _dump(PerformedStretch.objects.filter(session__user=user)),
+        "custom_stretches": _dump(Stretch.objects.filter(owner=user)),
+        "custom_stretch_routines": _dump(StretchRoutine.objects.filter(owner=user)),
+        "custom_stretch_routine_items": _dump(RoutineItem.objects.filter(routine__owner=user)),
         "custom_exercises": _dump(Exercise.objects.filter(owner=user)),
         "custom_foods": _dump(Food.objects.filter(owner=user)),
         "custom_recipes": _dump(Recipe.objects.filter(owner=user)),

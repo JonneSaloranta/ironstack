@@ -26,6 +26,7 @@ def _all_permissions(**overrides):
         "records",
         "analytics",
         "nutrition",
+        "stretching",
     ]
     base = {
         context: {"can_create": True, "can_read": True, "can_update": True, "can_delete": True}
@@ -642,6 +643,8 @@ class ApiKeyManagementViewTests(TestCase):
             "recipe-ingredients/", "diary-entries/", "nutrition-goals/",
             "records/", "analytics/summary/", "nutrition/profile/",
             "diet-plans/", "diet-plan-meals/", "diet-plan-items/",
+            "stretches/", "stretch-routines/", "stretch-routine-items/",
+            "stretch-sessions/",
         ]:
             self.assertContains(response, f"<code>{endpoint}")
 
@@ -1287,3 +1290,101 @@ class InteractiveDocsTests(TestCase):
         # unauthenticated or guessing wrong.
         self.assertIn("ApiKeyAuth", body)
         self.assertIn("bearer", body)
+
+
+class StretchingEndpointTests(APITestCase):
+    def setUp(self):
+        from apps.stretching.models import Stretch, StretchRoutine
+
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        self.bob = User.objects.create_user(username="bob", password="s3cret-pass")
+        _api_key, self.raw_secret = _create_key(self.alice)
+        self.quad = Stretch.objects.get(name="Standing Quad Stretch")
+        self.system_routine = StretchRoutine.objects.get(name="Lower Body Cool-Down")
+        self.bobs_routine = StretchRoutine.objects.create(owner=self.bob, name="Bob's")
+
+    def _auth(self):
+        return {"HTTP_AUTHORIZATION": f"Bearer {self.raw_secret}"}
+
+    def test_lists_system_stretches_and_routines_with_items(self):
+        stretches = self.client.get(reverse("api:stretch-list"), **self._auth())
+        self.assertEqual(stretches.status_code, 200)
+        routine = self.client.get(
+            reverse("api:stretch-routine-detail", args=[self.system_routine.pk]), **self._auth()
+        )
+        self.assertEqual(len(routine.data["items"]), self.system_routine.items.count())
+
+    def test_system_routine_is_read_only(self):
+        response = self.client.patch(
+            reverse("api:stretch-routine-detail", args=[self.system_routine.pk]),
+            {"name": "Hijacked"}, format="json", **self._auth(),
+        )
+        self.assertEqual(response.status_code, 404)
+
+    def test_another_users_routine_is_invisible(self):
+        response = self.client.get(
+            reverse("api:stretch-routine-detail", args=[self.bobs_routine.pk]), **self._auth()
+        )
+        self.assertEqual(response.status_code, 404)
+
+    def test_create_own_routine_and_add_an_item(self):
+        routine = self.client.post(
+            reverse("api:stretch-routine-list"), {"name": "Evening"},
+            format="json", **self._auth(),
+        )
+        self.assertEqual(routine.status_code, 201)
+        item = self.client.post(
+            reverse("api:stretch-routine-item-list"),
+            {"routine": routine.data["id"], "stretch": self.quad.pk, "hold_seconds": 45},
+            format="json", **self._auth(),
+        )
+        self.assertEqual(item.status_code, 201)
+
+    def test_cannot_add_an_item_to_someone_elses_routine(self):
+        response = self.client.post(
+            reverse("api:stretch-routine-item-list"),
+            {"routine": self.bobs_routine.pk, "stretch": self.quad.pk, "hold_seconds": 45},
+            format="json", **self._auth(),
+        )
+        self.assertEqual(response.status_code, 400)
+
+    def test_creating_a_session_is_a_quick_log(self):
+        response = self.client.post(
+            reverse("api:stretch-session-list"),
+            {"date": "2026-09-01", "duration": "00:15:00", "routine": self.system_routine.pk},
+            format="json", **self._auth(),
+        )
+        self.assertEqual(response.status_code, 201, response.data)
+        self.assertEqual(response.data["status"], "completed")
+        self.assertEqual(response.data["name"], "Lower Body Cool-Down")
+
+    def test_session_routine_must_be_visible(self):
+        response = self.client.post(
+            reverse("api:stretch-session-list"),
+            {"date": "2026-09-01", "duration": "00:15:00", "routine": self.bobs_routine.pk},
+            format="json", **self._auth(),
+        )
+        self.assertEqual(response.status_code, 400)
+
+    def test_sessions_are_scoped_to_the_key_owner(self):
+        from datetime import date, timedelta
+
+        from apps.stretching import services as stretching_services
+
+        stretching_services.quick_log(
+            self.bob, date=date(2026, 9, 1), duration=timedelta(minutes=5)
+        )
+        response = self.client.get(reverse("api:stretch-session-list"), **self._auth())
+        self.assertEqual(response.data["count"], 0)
+
+    def test_key_without_stretching_permission_gets_403(self):
+        _key, secret = _create_key(
+            self.alice,
+            stretching={
+                "can_create": False, "can_read": False, "can_update": False, "can_delete": False,
+            },
+        )
+        response = self.client.get(
+            reverse("api:stretch-list"), HTTP_AUTHORIZATION=f"Bearer {secret}"
+        )
+        self.assertEqual(response.status_code, 403)

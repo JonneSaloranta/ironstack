@@ -136,6 +136,13 @@ disclosure instead — see it further down for why.
   <p class="text-muted">{% trans "Log a run, ride, or any other non-gym activity." %}</p>
 </a>
 
+{% if request.user.stretching_enabled %}
+<a class="card card-link" href="{% url 'stretching:home' %}">
+  <strong>{% trans "Stretching" %}</strong>
+  <p class="text-muted">{% trans "Follow a guided stretching routine or log one." %}</p>
+</a>
+{% endif %}
+
 {% comment %}
 Moved below the things worth checking on every visit (this file's own
 top comment), but not collapsed behind a click — still visible on
