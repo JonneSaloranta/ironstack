@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: IronStack\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-21 16:10+0000\n"
+"POT-Creation-Date: 2026-09-23 14:38+0000\n"
 "Language: et\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -33,77 +33,81 @@ msgid "Too many password reset requests. Try again in a few minutes."
 msgstr ""
 "Liiga palju parooli lähtestamise päringuid. Proovi mõne minuti pärast uuesti."
 
-#: apps/accounts/forms.py:251 apps/accounts/forms.py:646
+#: apps/accounts/forms.py:253 apps/accounts/forms.py:655
 msgid "Timezone"
 msgstr "Ajavöönd"
 
-#: apps/accounts/forms.py:281 apps/accounts/forms.py:626
+#: apps/accounts/forms.py:284 apps/accounts/forms.py:635
 #: templates/api/key_list.html:34
 msgid "Units"
 msgstr "Ühikud"
 
-#: apps/accounts/forms.py:282 apps/accounts/forms.py:676
+#: apps/accounts/forms.py:285 apps/accounts/forms.py:685
 msgid "Track nutrition"
 msgstr "Jälgi toitumist"
 
-#: apps/accounts/forms.py:283
+#: apps/accounts/forms.py:286 apps/accounts/forms.py:695
+msgid "Track stretching"
+msgstr "Jälgi venitamist"
+
+#: apps/accounts/forms.py:287
 msgid "Remind me to log body measurements"
 msgstr "Tuleta mulle meelde kehamõõtude sisestamist"
 
-#: apps/accounts/forms.py:286
+#: apps/accounts/forms.py:290
 msgid "Show"
 msgstr "Näita"
 
-#: apps/accounts/forms.py:287 templates/core/_bmi_card.html:13
+#: apps/accounts/forms.py:291 templates/core/_bmi_card.html:13
 #: templates/core/_bmi_card.html:29
 msgid "BMI"
 msgstr "KMI"
 
-#: apps/accounts/forms.py:288
+#: apps/accounts/forms.py:292
 msgid "on the body weight page"
 msgstr "kehakaalu lehel"
 
-#: apps/accounts/forms.py:290
+#: apps/accounts/forms.py:294
 msgid "Share my activity"
 msgstr "Jaga minu tegevust"
 
-#: apps/accounts/forms.py:291
+#: apps/accounts/forms.py:295
 msgid "Show my name to others"
 msgstr "Näita minu nime teistele"
 
-#: apps/accounts/forms.py:292
+#: apps/accounts/forms.py:296
 msgid "Show my Gravatar picture"
 msgstr "Näita minu Gravatari pilti"
 
-#: apps/accounts/forms.py:293 apps/accounts/forms.py:659
+#: apps/accounts/forms.py:297 apps/accounts/forms.py:668
 msgid "Allow friend requests"
 msgstr "Luba sõbrakutsed"
 
-#: apps/accounts/forms.py:294 apps/accounts/forms.py:667
+#: apps/accounts/forms.py:298 apps/accounts/forms.py:676
 msgid "Allow group invites"
 msgstr "Luba grupikutsed"
 
-#: apps/accounts/forms.py:295
+#: apps/accounts/forms.py:299
 msgid "I'm a personal trainer / coach"
 msgstr "Olen personaaltreener / juhendaja"
 
-#: apps/accounts/forms.py:296
+#: apps/accounts/forms.py:300
 msgid "Accepting new coaching requests"
 msgstr "Võtan vastu uusi juhendamistaotlusi"
 
-#: apps/accounts/forms.py:297
+#: apps/accounts/forms.py:301
 msgid "Language"
 msgstr "Keel"
 
-#: apps/accounts/forms.py:298
+#: apps/accounts/forms.py:302
 msgid "Theme"
 msgstr "Teema"
 
-#: apps/accounts/forms.py:299
+#: apps/accounts/forms.py:303
 msgid "Appearance"
 msgstr "Välimus"
 
-#: apps/accounts/forms.py:303
+#: apps/accounts/forms.py:307
 msgid ""
 "Which color palette the app uses. Each theme has its own dark and light look "
 "— pick which one below."
@@ -111,7 +115,7 @@ msgstr ""
 "Milline värvipalett rakenduses kasutusel on. Igal teemal on oma tume ja hele "
 "välimus — vali alt, kumb."
 
-#: apps/accounts/forms.py:307
+#: apps/accounts/forms.py:311
 msgid ""
 "Shows nutrition (food diary, recipes, diet plans) in navigation and on the "
 "dashboard. Turn off to hide it if you don't want to track nutrition — "
@@ -123,7 +127,17 @@ msgstr ""
 "toitumisandmeid ei kustutata kunagi ja nende lehed on ikka otse lingi kaudu "
 "avatavad."
 
-#: apps/accounts/forms.py:314
+#: apps/accounts/forms.py:318
+msgid ""
+"Shows stretching (routines, guided sessions) in navigation and suggests a "
+"cool-down after a workout. Turn off to hide it — existing stretching data is "
+"never deleted."
+msgstr ""
+"Näitab venitamist (rutiinid, juhendatud sessioonid) navigeerimises ja "
+"soovitab pärast treeningut lõdvestust. Lülita välja, et see peita — "
+"olemasolevaid venitamisandmeid ei kustutata kunagi."
+
+#: apps/accounts/forms.py:323
 msgid ""
 "\"Auto\" follows your device's own light/dark setting and switches "
 "automatically when it changes."
@@ -131,34 +145,34 @@ msgstr ""
 "\"Automaatne\" järgib sinu seadme enda heleda/tumeda seadistust ja vahetub "
 "automaatselt, kui see muutub."
 
-#: apps/accounts/forms.py:318
+#: apps/accounts/forms.py:327
 msgid ""
-"Shows a dashboard card nudging you to log a body measurement when you "
-"haven't logged one in a while. Turn off to never see that reminder — you can "
-"still log a reading any time from Body tracking."
+"Shows a dashboard card nudging you to log a body measurement when you haven't"
+" logged one in a while. Turn off to never see that reminder — you can still "
+"log a reading any time from Body tracking."
 msgstr ""
 "Kuvab armatuurlaual kaardi, mis tuletab meelde kehamõõdu sisestamist, kui sa "
-"pole seda mõnda aega teinud. Lülita välja, kui sa ei taha seda "
-"meeldetuletust kunagi näha — saad mõõtu ikkagi igal ajal sisestada jaotisest "
-"Keha jälgimine."
+"pole seda mõnda aega teinud. Lülita välja, kui sa ei taha seda meeldetuletust"
+" kunagi näha — saad mõõtu ikkagi igal ajal sisestada jaotisest Keha "
+"jälgimine."
 
-#: apps/accounts/forms.py:323
+#: apps/accounts/forms.py:332
 msgid "Turns off the BMI card and its category ranges entirely."
 msgstr "Lülitab KMI kaardi ja selle kategooriavahemikud täielikult välja."
 
-#: apps/accounts/forms.py:325
+#: apps/accounts/forms.py:334
 msgid ""
 "Lets everyone using this instance see your longest streak, workout count, "
 "PRs, total weight lifted, and when you last trained, in the dashboard's "
-"achievements carousel and \"Recently active\" list. Turn off to keep your "
-"own activity private — you'll still see everyone else's."
+"achievements carousel and \"Recently active\" list. Turn off to keep your own"
+" activity private — you'll still see everyone else's."
 msgstr ""
 "Lubab kõigil selle teenuse kasutajatel näha sinu pikimat seeriat, trennide "
-"arvu, rekordeid, tõstetud kogukaalu ja viimase trenni aega töölaua "
-"saavutuste karussellis ja \"Viimati aktiivsed\" nimekirjas. Lülita välja, et "
-"hoida oma tegevus privaatsena — näed siiski teiste tegevust."
+"arvu, rekordeid, tõstetud kogukaalu ja viimase trenni aega töölaua saavutuste"
+" karussellis ja \"Viimati aktiivsed\" nimekirjas. Lülita välja, et hoida oma "
+"tegevus privaatsena — näed siiski teiste tegevust."
 
-#: apps/accounts/forms.py:332
+#: apps/accounts/forms.py:341
 msgid ""
 "Shows your first name next to your username wherever others can see it (the "
 "achievements carousel and \"Recently active\" list). Turn off to show just "
@@ -168,7 +182,7 @@ msgstr ""
 "(saavutuste karussell ja \"Viimati aktiivsed\" nimekiri). Lülita välja, et "
 "näidata seal ainult kasutajanime, nagu enne selle seade olemasolu."
 
-#: apps/accounts/forms.py:338
+#: apps/accounts/forms.py:347
 msgid ""
 "Shows your Gravatar (gravatar.com) picture at the top of this page, if the "
 "email on this account has one. Turning this on means your browser loads that "
@@ -176,31 +190,30 @@ msgid ""
 "outside your own instance — which then sees your email's hash and your IP "
 "address."
 msgstr ""
-"Kuvab sinu Gravatari pildi (gravatar.com) selle lehe ülaosas, kui selle "
-"konto e-posti aadressiga on selline seotud. Selle sisselülitamine tähendab, "
-"et brauser laadib pildi otse aadressilt gravatar.com — ainus koht, kus see "
+"Kuvab sinu Gravatari pildi (gravatar.com) selle lehe ülaosas, kui selle konto"
+" e-posti aadressiga on selline seotud. Selle sisselülitamine tähendab, et "
+"brauser laadib pildi otse aadressilt gravatar.com — ainus koht, kus see "
 "rakendus suhtleb sinu enda serverist väljaspool asuva serveriga — mis näeb "
 "seejärel sinu e-posti aadressi räsi ja IP-aadressi."
 
-#: apps/accounts/forms.py:346
+#: apps/accounts/forms.py:355
 msgid ""
 "Off stops other users on this instance from sending you a friend request at "
 "all. Doesn't affect friend requests you already have, or friendships you "
 "already made."
 msgstr ""
-"Väljalülitatuna ei saa teised selle serveri kasutajad sulle üldse "
-"sõbrakutset saata. Ei mõjuta juba olemasolevaid sõbrakutseid ega "
-"sõprussuhteid."
+"Väljalülitatuna ei saa teised selle serveri kasutajad sulle üldse sõbrakutset"
+" saata. Ei mõjuta juba olemasolevaid sõbrakutseid ega sõprussuhteid."
 
-#: apps/accounts/forms.py:351
+#: apps/accounts/forms.py:360
 msgid ""
-"Off stops a group member from inviting you to a group directly. You can "
-"still join any group yourself using its invite link, if you have one."
+"Off stops a group member from inviting you to a group directly. You can still"
+" join any group yourself using its invite link, if you have one."
 msgstr ""
 "Väljalülitatuna ei saa grupi liige sind otse gruppi kutsuda. Saad siiski ise "
 "liituda mis tahes grupiga selle kutselingi kaudu, kui sul see on."
 
-#: apps/accounts/forms.py:356
+#: apps/accounts/forms.py:365
 msgid ""
 "Lets you build gym programs and diet plans other users can request you coach "
 "them on. Turning this off doesn't end any coaching relationship you already "
@@ -210,7 +223,7 @@ msgstr ""
 "kasutajad saavad sinult taotleda. Selle väljalülitamine ei lõpeta juba "
 "olemasolevaid juhendamissuhteid."
 
-#: apps/accounts/forms.py:361
+#: apps/accounts/forms.py:370
 msgid ""
 "Off stops new coaching requests from reaching you. Existing coaching "
 "relationships, and any request you already received, are unaffected."
@@ -218,53 +231,53 @@ msgstr ""
 "Väljas olles ei jõua uued juhendamistaotlused sinuni. Olemasolevad "
 "juhendamissuhted ja juba saadud taotlused ei muutu."
 
-#: apps/accounts/forms.py:386 apps/accounts/forms.py:702
+#: apps/accounts/forms.py:395 apps/accounts/forms.py:721
 #: apps/nutrition/forms.py:39 apps/nutrition/forms.py:455
 msgid "Height (cm)"
 msgstr "Pikkus (cm)"
 
-#: apps/accounts/forms.py:386 apps/accounts/forms.py:702
+#: apps/accounts/forms.py:395 apps/accounts/forms.py:721
 #: apps/nutrition/forms.py:39 apps/nutrition/forms.py:455
 msgid "Height (in)"
 msgstr "Pikkus (in)"
 
-#: apps/accounts/forms.py:440 apps/accounts/forms.py:476
+#: apps/accounts/forms.py:449 apps/accounts/forms.py:485
 msgid "Verification code"
 msgstr "Kinnituskood"
 
-#: apps/accounts/forms.py:454
+#: apps/accounts/forms.py:463
 msgid "Incorrect code — check your authenticator app and try again."
 msgstr "Vale kood — kontrolli oma autentimisrakendust ja proovi uuesti."
 
-#: apps/accounts/forms.py:490
+#: apps/accounts/forms.py:499
 msgid "Too many incorrect codes. Try again in a few minutes."
 msgstr "Liiga palju valesid koode. Proovi mõne minuti pärast uuesti."
 
-#: apps/accounts/forms.py:503
+#: apps/accounts/forms.py:512
 msgid "Incorrect code."
 msgstr "Vale kood."
 
-#: apps/accounts/forms.py:517 apps/accounts/forms.py:543
+#: apps/accounts/forms.py:526 apps/accounts/forms.py:552
 msgid "Password"
 msgstr "Parool"
 
-#: apps/accounts/forms.py:526 apps/accounts/forms.py:557
+#: apps/accounts/forms.py:535 apps/accounts/forms.py:566
 msgid "Incorrect password."
 msgstr "Vale parool."
 
-#: apps/accounts/forms.py:546
+#: apps/accounts/forms.py:555
 msgid "Type your username to confirm"
 msgstr "Kinnitamiseks sisesta oma kasutajanimi"
 
-#: apps/accounts/forms.py:559
+#: apps/accounts/forms.py:568
 msgid "Doesn't match your username."
 msgstr "Ei kattu sinu kasutajanimega."
 
-#: apps/accounts/forms.py:583
+#: apps/accounts/forms.py:592
 msgid "First name"
 msgstr "Eesnimi"
 
-#: apps/accounts/forms.py:585
+#: apps/accounts/forms.py:594
 msgid ""
 "Used to personalize your dashboard greeting, and next to your username "
 "wherever your activity is shown to others (if you allow that in your "
@@ -274,11 +287,11 @@ msgstr ""
 "kõrval kõikjal, kus sinu tegevust teistele näidatakse (kui lubad seda oma "
 "profiilis)."
 
-#: apps/accounts/forms.py:592
+#: apps/accounts/forms.py:601
 msgid "Email"
 msgstr "E-post"
 
-#: apps/accounts/forms.py:594
+#: apps/accounts/forms.py:603
 msgid ""
 "Used only for password-reset emails if you ever get locked out. Never shown "
 "to other users."
@@ -286,7 +299,7 @@ msgstr ""
 "Kasutatakse ainult parooli lähtestamise e-kirjade jaoks, kui jääd kunagi "
 "kontost välja. Ei näidata kunagi teistele kasutajatele."
 
-#: apps/accounts/forms.py:604
+#: apps/accounts/forms.py:613
 msgid ""
 "Logged as your first body-weight entry, so your progress charts have a "
 "starting point. Leave blank and log it anytime from the Body weight page "
@@ -295,23 +308,23 @@ msgstr ""
 "Salvestatakse sinu esimese kehakaalu kirjena, et edenemisgraafikutel oleks "
 "lähtepunkt. Jäta tühjaks ja lisa kaal hiljem lehelt \"Kehakaal\"."
 
-#: apps/accounts/forms.py:619
+#: apps/accounts/forms.py:628
 msgid ""
-"Used together with a logged body weight to show your BMI. Leave blank to "
-"skip this — you can add it anytime from your profile."
+"Used together with a logged body weight to show your BMI. Leave blank to skip"
+" this — you can add it anytime from your profile."
 msgstr ""
 "Kasutatakse koos salvestatud kehakaaluga sinu KMI näitamiseks. Jäta tühjaks, "
 "et see vahele jätta — saad selle hiljem oma profiilis lisada."
 
-#: apps/accounts/forms.py:628
+#: apps/accounts/forms.py:637
 msgid ""
-"Sets whether weights and distances are shown in kg/km or lb/mi throughout "
-"the app. Change this anytime from your profile."
+"Sets whether weights and distances are shown in kg/km or lb/mi throughout the"
+" app. Change this anytime from your profile."
 msgstr ""
-"Määrab, kas kaalud ja vahemaad kuvatakse rakenduses kg/km või lb/mi "
-"ühikutes. Saad seda igal ajal profiilis muuta."
+"Määrab, kas kaalud ja vahemaad kuvatakse rakenduses kg/km või lb/mi ühikutes."
+" Saad seda igal ajal profiilis muuta."
 
-#: apps/accounts/forms.py:648
+#: apps/accounts/forms.py:657
 msgid ""
 "Used for \"today\" and date ranges throughout the app. Change this anytime "
 "from your profile."
@@ -320,7 +333,7 @@ msgstr ""
 "igal ajal oma profiililt muuta.Määrab, kas kaalud ja vahemaad kuvatakse "
 "rakenduses kg/km või lb/mi ühikutes. Saad seda igal ajal profiilis muuta."
 
-#: apps/accounts/forms.py:661
+#: apps/accounts/forms.py:670
 msgid ""
 "Lets other users on this instance send you a friend request. Change this "
 "anytime from your profile."
@@ -328,7 +341,7 @@ msgstr ""
 "Lubab teistel selle serveri kasutajatel saata sulle sõbrakutse. Saad seda "
 "igal ajal oma profiililt muuta."
 
-#: apps/accounts/forms.py:669
+#: apps/accounts/forms.py:678
 msgid ""
 "Lets a group member invite you to a group directly. You can always join a "
 "group yourself using its invite link either way. Change this anytime from "
@@ -337,7 +350,7 @@ msgstr ""
 "Lubab grupi liikmel sind otse gruppi kutsuda. Saad alati ise grupiga liituda "
 "selle kutselingi kaudu, igal juhul. Saad seda igal ajal oma profiililt muuta."
 
-#: apps/accounts/forms.py:678
+#: apps/accounts/forms.py:687
 msgid ""
 "Shows nutrition (food diary, recipes, diet plans) in navigation and on the "
 "dashboard. Leave unchecked if you don't want to track nutrition — you can "
@@ -346,16 +359,26 @@ msgid ""
 msgstr ""
 "Näitab toitumist (toidupäevik, retseptid, toitumiskavad) navigatsioonis ja "
 "töölaual. Jäta märkimata, kui sa ei taha toitumist jälgida — saad selle igal "
-"ajal oma profiililt sisse või välja lülitada, ja midagi ei kustutata "
-"kummalgi juhul."
+"ajal oma profiililt sisse või välja lülitada, ja midagi ei kustutata kummalgi"
+" juhul."
 
-#: apps/accounts/forms.py:697 apps/nutrition/forms.py:40
+#: apps/accounts/forms.py:697
+msgid ""
+"Shows stretching routines and guided sessions in navigation, and suggests a "
+"cool-down after a workout. You can turn it on or off anytime from your "
+"profile."
+msgstr ""
+"Näitab venitusrutiine ja juhendatud sessioone navigeerimises ning soovitab "
+"pärast treeningut lõdvestust. Saad selle igal ajal oma profiilis sisse või "
+"välja lülitada."
+
+#: apps/accounts/forms.py:716 apps/nutrition/forms.py:40
 #: apps/nutrition/forms.py:464 apps/nutrition/forms.py:668
 #, python-format
 msgid "Current weight (%(unit)s)"
 msgstr "Praegune kaal (%(unit)s)"
 
-#: apps/accounts/forms.py:699
+#: apps/accounts/forms.py:718
 msgid "Current weight"
 msgstr "Praegune kaal"
 
@@ -399,7 +422,7 @@ msgstr "Earth"
 msgid "Zen"
 msgstr "Zen"
 
-#: apps/accounts/models.py:406
+#: apps/accounts/models.py:415
 msgid ""
 "Shown as a footer note on the login and signup pages. Leave blank to hide it "
 "entirely."
@@ -434,8 +457,8 @@ msgstr "Kaheastmeline autentimine välja lülitatud."
 #: apps/accounts/views.py:389
 msgid ""
 "You're the only superuser on this instance — promote another account to "
-"superuser first, or this instance would have no one left who can reach "
-"Django admin."
+"superuser first, or this instance would have no one left who can reach Django"
+" admin."
 msgstr ""
 "Oled selle paigalduse ainus superkasutaja — ülenda kõigepealt mõni teine "
 "konto superkasutajaks, muidu ei jääks sellel paigaldusel kedagi, kes pääseks "
@@ -445,7 +468,7 @@ msgstr ""
 msgid "Your account and all its data have been deleted."
 msgstr "Sinu konto ja kõik selle andmed on kustutatud."
 
-#: apps/activities/forms.py:27
+#: apps/activities/forms.py:27 apps/stretching/forms.py:126
 msgid "Duration (minutes)"
 msgstr "Kestus (minutit)"
 
@@ -489,11 +512,12 @@ msgstr "Muu"
 
 #: apps/activities/models.py:18 apps/exercises/models.py:75
 #: apps/measurements/models.py:34 apps/programs/models.py:36
-#: apps/programs/models.py:118
+#: apps/programs/models.py:118 apps/stretching/models.py:32
+#: apps/stretching/models.py:96 apps/stretching/models.py:183
 msgid "name"
 msgstr "nimi"
 
-#: apps/activities/models.py:70
+#: apps/activities/models.py:70 apps/stretching/models.py:190
 msgid "date"
 msgstr "kuupäev"
 
@@ -511,7 +535,7 @@ msgstr "kalorid"
 
 #: apps/activities/models.py:77 apps/measurements/models.py:90
 #: apps/programs/models.py:123 apps/programs/models.py:189
-#: apps/workouts/forms.py:46
+#: apps/stretching/models.py:196 apps/workouts/forms.py:46
 msgid "notes"
 msgstr "märkmed"
 
@@ -548,7 +572,7 @@ msgstr "Tegevuse tüüp deaktiveeritud."
 msgid "Longest streak"
 msgstr "Pikim seeria"
 
-#: apps/analytics/achievements.py:123
+#: apps/analytics/achievements.py:123 templates/stretching/home.html:22
 #, python-format
 msgid "%(counter)s day"
 msgid_plural "%(counter)s days"
@@ -604,7 +628,7 @@ msgstr "6 kuud"
 msgid "1 year"
 msgstr "1 aasta"
 
-#: apps/analytics/dateranges.py:19
+#: apps/analytics/dateranges.py:19 templates/stretching/home.html:24
 msgid "All time"
 msgstr "Kogu aeg"
 
@@ -623,9 +647,10 @@ msgstr "Muutmine"
 #: apps/api/forms.py:13 templates/activities/activity_history.html:57
 #: templates/core/_backup_row.html:22
 #: templates/measurements/measurement_history.html:65
-#: templates/nutrition/diary_day.html:69
+#: templates/nutrition/diary_day.html:74
 #: templates/programs/program_confirm_delete.html:14
 #: templates/programs/program_detail.html:52
+#: templates/stretching/session_detail.html:53
 #: templates/workouts/_performed_exercise_card.html:31
 msgid "Delete"
 msgstr "Kustuta"
@@ -643,7 +668,7 @@ msgstr "Silt, mille abil eristada oma võtmeid."
 
 #: apps/api/models.py:24 templates/accounts/profile.html:3
 #: templates/accounts/profile.html:12 templates/api/key_list.html:85
-#: templates/base.html:190 templates/base.html:213
+#: templates/base.html:196 templates/base.html:219
 msgid "Profile"
 msgstr "Profiil"
 
@@ -655,7 +680,7 @@ msgid "Exercises"
 msgstr "Harjutused"
 
 #: apps/api/models.py:26 apps/core/models.py:162 templates/api/key_list.html:93
-#: templates/base.html:186 templates/base.html:188
+#: templates/base.html:192 templates/base.html:194
 #: templates/programs/program_detail.html:5
 #: templates/programs/program_list.html:3
 #: templates/programs/program_list.html:6
@@ -682,11 +707,11 @@ msgstr "Mõõtmised"
 msgid "Activities"
 msgstr "Tegevused"
 
-#: apps/api/models.py:30 templates/api/key_list.html:113
+#: apps/api/models.py:30 templates/api/key_list.html:117
 msgid "Records"
 msgstr "Rekordid"
 
-#: apps/api/models.py:31 templates/api/key_list.html:117
+#: apps/api/models.py:31 templates/api/key_list.html:121
 msgid "Analytics"
 msgstr "Analüütika"
 
@@ -701,6 +726,19 @@ msgstr "Analüütika"
 msgid "Nutrition"
 msgstr "Toitumine"
 
+#: apps/api/models.py:33 apps/stretching/models.py:209
+#: templates/api/key_list.html:113 templates/base.html:179
+#: templates/base.html:181 templates/core/dashboard.html:143
+#: templates/stretching/_cooldown_card.html:7 templates/stretching/home.html:3
+#: templates/stretching/home.html:6 templates/stretching/home.html:16
+#: templates/stretching/home.html:48 templates/stretching/session_detail.html:3
+#: templates/stretching/session_detail.html:5
+#: templates/stretching/session_history.html:15
+#: templates/stretching/session_play.html:3
+#: templates/stretching/session_play.html:6
+msgid "Stretching"
+msgstr "Venitamine"
+
 #: apps/api/views_web.py:39
 msgid "You've reached your maximum number of API keys."
 msgstr "Oled saavutanud API-võtmete maksimumarvu."
@@ -710,7 +748,7 @@ msgid "API key revoked."
 msgstr "API-võti tühistatud."
 
 #: apps/coaching/models.py:23 apps/social/models.py:20
-#: apps/social/models.py:226
+#: apps/social/models.py:226 apps/stretching/models.py:213
 msgid "Pending"
 msgstr "Ootel"
 
@@ -801,7 +839,7 @@ msgid "This diet plan's coach source is no longer available."
 msgstr "Selle toitumiskava treeneri algallikas pole enam saadaval."
 
 #: apps/coaching/views_plans.py:59 apps/coaching/views_plans.py:73
-#: apps/nutrition/views.py:1070 apps/nutrition/views.py:1365
+#: apps/nutrition/views.py:1073 apps/nutrition/views.py:1368
 #: apps/programs/views.py:200
 #, python-format
 msgid "Imported “%(name)s”."
@@ -1077,8 +1115,8 @@ msgstr "IronStack %(version)s töötab nüüd — puuduta, et näha, mis on uut.
 
 #: apps/core/models.py:42
 msgid ""
-"Turns the backup-scheduler service's daily backup off without needing to "
-"stop or remove that service."
+"Turns the backup-scheduler service's daily backup off without needing to stop"
+" or remove that service."
 msgstr ""
 "Lülitab varunduse ajastaja teenuse igapäevase varunduse välja ilma, et seda "
 "teenust oleks vaja peatada või eemaldada."
@@ -1097,9 +1135,9 @@ msgstr ""
 
 #: apps/core/models.py:88
 msgid ""
-"Lets any signed-in user submit feedback from their profile page. Turning "
-"this off only closes new submissions — feedback already on file stays "
-"visible to staff."
+"Lets any signed-in user submit feedback from their profile page. Turning this"
+" off only closes new submissions — feedback already on file stays visible to "
+"staff."
 msgstr ""
 "Võimaldab igal sisselogitud kasutajal saata tagasisidet oma profiililehelt. "
 "Selle väljalülitamine sulgeb ainult uute tagasisidete saatmise — juba "
@@ -1112,12 +1150,12 @@ msgid ""
 "anyone should be searching for."
 msgstr ""
 "Lubab otsingumootoritel seda paigaldust läbida ja indekseerida. Vaikimisi "
-"väljas — enamik paigaldusi on privaatne, iseseisvalt majutatud rakendus "
-"ühele leibkonnale, mitte avalik sait, mida keegi peaks otsima."
+"väljas — enamik paigaldusi on privaatne, iseseisvalt majutatud rakendus ühele"
+" leibkonnale, mitte avalik sait, mida keegi peaks otsima."
 
 #: apps/core/models.py:163 templates/analytics/dashboard.html:3
-#: templates/analytics/dashboard.html:6 templates/base.html:178
-#: templates/base.html:180
+#: templates/analytics/dashboard.html:6 templates/base.html:184
+#: templates/base.html:186
 msgid "Progress"
 msgstr "Edenemine"
 
@@ -1129,31 +1167,36 @@ msgstr "Kehamõõdud"
 msgid "Account & profile"
 msgstr "Konto ja profiil"
 
-#: apps/core/views.py:34
+#: apps/core/views.py:35
 msgid "Training day — new personal record!"
 msgstr "Treeningpäev — uus isiklik rekord!"
 
-#: apps/core/views.py:36
+#: apps/core/views.py:37
 msgid "Training day — a session was abandoned."
 msgstr "Treeningpäev — treening katkestati."
 
-#: apps/core/views.py:38
+#: apps/core/views.py:39
 msgid "Training day."
 msgstr "Treeningpäev."
 
-#: apps/core/views.py:40
+#: apps/core/views.py:41
 msgid "Rest day."
 msgstr "Puhkepäev."
 
-#: apps/core/views.py:51
+#: apps/core/views.py:52
 #, python-format
 msgid "%(actual)s / %(target)s kcal logged."
 msgstr "%(actual)s / %(target)s kcal logitud."
 
-#: apps/core/views.py:56
+#: apps/core/views.py:57
 #, python-format
 msgid "%(actual)s kcal logged."
 msgstr "%(actual)s kcal logitud."
+
+#: apps/core/views.py:65
+#, python-format
+msgid "Stretched %(minutes)s min."
+msgstr "Venitamist %(minutes)s min."
 
 #: apps/core/views_backup.py:56
 #, python-format
@@ -1323,7 +1366,9 @@ msgstr "Trombiteosa surumine trossiga"
 msgid "Abs"
 msgstr "Kõhulihased"
 
-#: apps/exercises/i18n_content.py:55
+#: apps/exercises/i18n_content.py:55 templates/stretching/routine_form.html:18
+#: templates/stretching/session_form.html:18
+#: templates/stretching/stretch_form.html:18
 msgid "Back"
 msgstr "Selg"
 
@@ -1407,108 +1452,58 @@ msgstr "Vastupanulint"
 msgid ""
 "- Starting Position: Kneel on the floor with the ab wheel in front of you.\n"
 "- Grip the Wheel: Hold the handles firmly.\n"
-"- Roll Out: Slowly roll the wheel forward, extending your body while keeping "
-"your core tight.\n"
-"- Return: Pull the wheel back towards your knees, maintaining tension in "
-"your core."
+"- Roll Out: Slowly roll the wheel forward, extending your body while keeping your core tight.\n"
+"- Return: Pull the wheel back towards your knees, maintaining tension in your core."
 msgstr ""
 "- Alguspositsioon: laskuge põlvili, kõhuratas enda ees.\n"
 "- Haare: hoidke käepidemetest kindlalt kinni.\n"
-"- Rullimine ette: rullige ratast aeglaselt ettepoole, sirutades keha ja "
-"hoides kõhulihased pinges.\n"
-"- Tagasitulek: tõmmake ratas tagasi põlvede juurde, säilitades pinge "
-"kehatuumikus."
+"- Rullimine ette: rullige ratast aeglaselt ettepoole, sirutades keha ja hoides kõhulihased pinges.\n"
+"- Tagasitulek: tõmmake ratas tagasi põlvede juurde, säilitades pinge kehatuumikus."
 
 #: apps/exercises/i18n_content.py:98
 msgid ""
-"- The barbell full squat is a compound exercise that targets multiple muscle "
-"groups in the lower body, including the quadriceps, hamstrings, and glutes.\n"
-"- Proper form is crucial for maximizing results and preventing injuries "
-"during the barbell full squat. This includes maintaining a shoulder-width "
-"stance, creating whole body tension, controlling your descent, and "
-"maintaining proper depth and knee positioning.\n"
-"- Assistance moves such as the front squat, goblet squat, split squat, and "
-"Bulgarian split squat can help improve your performance in the barbell full "
-"squat by targeting specific muscle groups and improving overall technique.\n"
-"- To achieve new personal records in your back squat, gradually increase "
-"weight over time, vary rep ranges and sets to stimulate muscle growth, and "
-"prioritize rest and recovery between training sessions."
+"- The barbell full squat is a compound exercise that targets multiple muscle groups in the lower body, including the quadriceps, hamstrings, and glutes.\n"
+"- Proper form is crucial for maximizing results and preventing injuries during the barbell full squat. This includes maintaining a shoulder-width stance, creating whole body tension, controlling your descent, and maintaining proper depth and knee positioning.\n"
+"- Assistance moves such as the front squat, goblet squat, split squat, and Bulgarian split squat can help improve your performance in the barbell full squat by targeting specific muscle groups and improving overall technique.\n"
+"- To achieve new personal records in your back squat, gradually increase weight over time, vary rep ranges and sets to stimulate muscle growth, and prioritize rest and recovery between training sessions."
 msgstr ""
-"- Kangiga täiskükk on liitharjutus, mis koormab mitut alakeha lihasgruppi, "
-"sealhulgas reie esikülge, reie tagakülge ja tuharaid.\n"
-"- Õige tehnika on ülioluline tulemuste maksimeerimiseks ja vigastuste "
-"vältimiseks. See tähendab õlgade laiust jalgade asendit, kogu keha pinget, "
-"kontrollitud laskumist ning õiget sügavust ja põlvede asendit.\n"
-"- Abiharjutused nagu esikükk, goblet-kükk, sammkükk ja bulgaaria sammkükk "
-"aitavad parandada sooritust täiskükis, koormates konkreetseid lihasgruppe ja "
-"arendades üldist tehnikat.\n"
-"- Uute isiklike rekordite saavutamiseks täiskükis suurenda koormust järk-"
-"järgult, varieeri kordusvahemikke ja seeriaid lihaskasvu stimuleerimiseks "
-"ning sea prioriteediks puhkus ja taastumine treeningute vahel."
+"- Kangiga täiskükk on liitharjutus, mis koormab mitut alakeha lihasgruppi, sealhulgas reie esikülge, reie tagakülge ja tuharaid.\n"
+"- Õige tehnika on ülioluline tulemuste maksimeerimiseks ja vigastuste vältimiseks. See tähendab õlgade laiust jalgade asendit, kogu keha pinget, kontrollitud laskumist ning õiget sügavust ja põlvede asendit.\n"
+"- Abiharjutused nagu esikükk, goblet-kükk, sammkükk ja bulgaaria sammkükk aitavad parandada sooritust täiskükis, koormates konkreetseid lihasgruppe ja arendades üldist tehnikat.\n"
+"- Uute isiklike rekordite saavutamiseks täiskükis suurenda koormust järk-järgult, varieeri kordusvahemikke ja seeriaid lihaskasvu stimuleerimiseks ning sea prioriteediks puhkus ja taastumine treeningute vahel."
 
 #: apps/exercises/i18n_content.py:111
 msgid ""
-"Lay down on a bench, the bar should be directly above your eyes, the knees "
-"are somewhat angled and the feet are firmly on the floor. Concentrate, "
-"breath deeply and grab the bar more than shoulder wide. Bring it slowly down "
-"till it briefly touches your chest at the height of your nipples. Push the "
-"bar up.\n"
-"If you train with a high weight it is advisable to have a spotter that can "
-"help you up if you can't lift the weight on your own.\n"
-"With the width of the grip you can also control which part of the chest is "
-"trained more:\n"
+"Lay down on a bench, the bar should be directly above your eyes, the knees are somewhat angled and the feet are firmly on the floor. Concentrate, breath deeply and grab the bar more than shoulder wide. Bring it slowly down till it briefly touches your chest at the height of your nipples. Push the bar up.\n"
+"If you train with a high weight it is advisable to have a spotter that can help you up if you can't lift the weight on your own.\n"
+"With the width of the grip you can also control which part of the chest is trained more:\n"
 "- wide grip: outer chest muscles\n"
 "- narrow grip: inner chest muscles and triceps"
 msgstr ""
-"Heida selili pingile nii, et kang oleks otse silmade kohal, põlved kergelt "
-"kõverdatud ja jalad kindlalt vastu maad. Keskendu, hinga sügavalt ja haara "
-"kangist õlgadest laiema haardega. Lase kang aeglaselt alla, kuni see "
-"puudutab hetkeks rindkeret nibude kõrgusel. Suru kang uuesti üles.\n"
-"Kui treenid suurte raskustega, on soovitatav kasutada abistajat, kes aitab "
-"kangi üles, kui sa ise hakkama ei saa.\n"
+"Heida selili pingile nii, et kang oleks otse silmade kohal, põlved kergelt kõverdatud ja jalad kindlalt vastu maad. Keskendu, hinga sügavalt ja haara kangist õlgadest laiema haardega. Lase kang aeglaselt alla, kuni see puudutab hetkeks rindkeret nibude kõrgusel. Suru kang uuesti üles.\n"
+"Kui treenid suurte raskustega, on soovitatav kasutada abistajat, kes aitab kangi üles, kui sa ise hakkama ei saa.\n"
 "Haarde laiusega saad mõjutada, milline rindkere osa saab rohkem koormust:\n"
 "- lai haare: rindkere välimised lihased\n"
 "- kitsas haare: rindkere sisemised lihased ja triitseps"
 
 #: apps/exercises/i18n_content.py:121
 msgid ""
-"- Holding a barbell with a pronated grip (palms facing down), bend your "
-"knees slightly and bring your torso forward, by bending at the waist, while "
-"keeping the back straight until it is almost parallel to the floor. Tip: "
-"Make sure that you keep the head up. The barbell should hang directly in "
-"front of you as your arms hang perpendicular to the floor and your torso. "
-"This is your starting position.\n"
-"- Now, while keeping the torso stationary, breathe out and lift the barbell "
-"to you. Keep the elbows close to the body and only use the forearms to hold "
-"the weight. At the top contracted position, squeeze the back muscles and "
-"hold for a brief pause.\n"
+"- Holding a barbell with a pronated grip (palms facing down), bend your knees slightly and bring your torso forward, by bending at the waist, while keeping the back straight until it is almost parallel to the floor. Tip: Make sure that you keep the head up. The barbell should hang directly in front of you as your arms hang perpendicular to the floor and your torso. This is your starting position.\n"
+"- Now, while keeping the torso stationary, breathe out and lift the barbell to you. Keep the elbows close to the body and only use the forearms to hold the weight. At the top contracted position, squeeze the back muscles and hold for a brief pause.\n"
 "- Then inhale and slowly lower the barbell back to the starting position.\n"
 "- Repeat for the recommended amount of repetitions."
 msgstr ""
-"- Haara kangist pealthaardega (peopesad allapoole), painuta põlvi kergelt ja "
-"kalluta ülakeha puusast ettepoole, hoides selja sirge, kuni ülakeha on "
-"peaaegu põrandaga paralleelne. Vihje: hoia pea üleval. Kang peaks rippuma "
-"otse su ees, käed põranda ja ülakehaga risti. See on su alguspositsioon.\n"
-"- Hoides ülakeha paigal, hinga välja ja tõmba kang enda poole. Hoia "
-"küünarnukid keha lähedal ja kasuta raskuse hoidmiseks vaid küünarvarsi. "
-"Ülemises kokkutõmbunud asendis pigista seljalihaseid ja pea lühike paus.\n"
+"- Haara kangist pealthaardega (peopesad allapoole), painuta põlvi kergelt ja kalluta ülakeha puusast ettepoole, hoides selja sirge, kuni ülakeha on peaaegu põrandaga paralleelne. Vihje: hoia pea üleval. Kang peaks rippuma otse su ees, käed põranda ja ülakehaga risti. See on su alguspositsioon.\n"
+"- Hoides ülakeha paigal, hinga välja ja tõmba kang enda poole. Hoia küünarnukid keha lähedal ja kasuta raskuse hoidmiseks vaid küünarvarsi. Ülemises kokkutõmbunud asendis pigista seljalihaseid ja pea lühike paus.\n"
 "- Seejärel hinga sisse ja lase kang aeglaselt tagasi alguspositsiooni.\n"
 "- Korda soovitatud kordusi."
 
 #: apps/exercises/i18n_content.py:133
 msgid ""
-"Take a barbell and stand with a straight body, the arms are hanging freely "
-"in front of you. Lift from this position the shoulders as high as you can, "
-"but don't bend the arms during the movement. On the highest point, make a "
-"short pause of 1 or 2 seconds before returning slowly to the initial "
-"position.\n"
-"When training with a higher weight, make sure that you still do the whole "
-"movement!"
+"Take a barbell and stand with a straight body, the arms are hanging freely in front of you. Lift from this position the shoulders as high as you can, but don't bend the arms during the movement. On the highest point, make a short pause of 1 or 2 seconds before returning slowly to the initial position.\n"
+"When training with a higher weight, make sure that you still do the whole movement!"
 msgstr ""
-"Võta kang kätte ja seisa sirge kehaga, käed vabalt ees rippumas. Sellest "
-"asendist tõsta õlgu nii kõrgele kui suudad, painutamata käsi liigutuse ajal. "
-"Kõige kõrgemas punktis pea lühike, 1–2-sekundiline paus, enne kui lased end "
-"aeglaselt tagasi alguspositsiooni.\n"
+"Võta kang kätte ja seisa sirge kehaga, käed vabalt ees rippumas. Sellest asendist tõsta õlgu nii kõrgele kui suudad, painutamata käsi liigutuse ajal. Kõige kõrgemas punktis pea lühike, 1–2-sekundiline paus, enne kui lased end aeglaselt tagasi alguspositsiooni.\n"
 "Kui treenid suurema raskusega, tee liigutus siiski täies ulatuses!"
 
 #: apps/exercises/i18n_content.py:140
@@ -1525,78 +1520,33 @@ msgstr ""
 
 #: apps/exercises/i18n_content.py:146
 msgid ""
-"Stand firmly, with your feet slightly more than shoulder wide apart. Stand "
-"directly behind the bar where it should barely touch your shin, your feet "
-"pointing a bit out. Bend down with a straight back, the knees also pointing "
-"somewhat out. Grab the bar with a shoulder wide grip, one overhand, one "
-"underhand (mixed grip).\n"
-"Pull the weight up. At the highest point make a slight hollow back and pull "
-"the bar back. Hold 1 or 2 seconds that position. Go down, making sure the "
-"back is not bent. Once down you can either go back again as soon as the "
-"weights touch the floor, or make a pause, depending on the weight."
+"Stand firmly, with your feet slightly more than shoulder wide apart. Stand directly behind the bar where it should barely touch your shin, your feet pointing a bit out. Bend down with a straight back, the knees also pointing somewhat out. Grab the bar with a shoulder wide grip, one overhand, one underhand (mixed grip).\n"
+"Pull the weight up. At the highest point make a slight hollow back and pull the bar back. Hold 1 or 2 seconds that position. Go down, making sure the back is not bent. Once down you can either go back again as soon as the weights touch the floor, or make a pause, depending on the weight."
 msgstr ""
-"Seisa kindlalt, jalad õlgadest veidi laiemal. Seisa otse kangi taga nii, et "
-"see puudutaks kergelt sääri, varbad veidi väljapoole. Painuta ette sirge "
-"seljaga, ka põlved veidi väljapoole. Haara kangist õlgade laiuselt haardelt, "
-"üks käsi pealt- ja teine altpoolt (segahaare).\n"
-"Tõsta raskus üles. Kõige kõrgemas punktis nõgusta selga kergelt ja tõmba "
-"kang taha. Hoia seda asendit 1–2 sekundit. Lase alla, jälgides et selg ei "
-"kõverdu. Kui kang on all, võid kohe jätkata järgmise kordusega, kui raskused "
-"puudutavad põrandat, või pidada pausi olenevalt raskusest."
+"Seisa kindlalt, jalad õlgadest veidi laiemal. Seisa otse kangi taga nii, et see puudutaks kergelt sääri, varbad veidi väljapoole. Painuta ette sirge seljaga, ka põlved veidi väljapoole. Haara kangist õlgade laiuselt haardelt, üks käsi pealt- ja teine altpoolt (segahaare).\n"
+"Tõsta raskus üles. Kõige kõrgemas punktis nõgusta selga kergelt ja tõmba kang taha. Hoia seda asendit 1–2 sekundit. Lase alla, jälgides et selg ei kõverdu. Kui kang on all, võid kohe jätkata järgmise kordusega, kui raskused puudutavad põrandat, või pidada pausi olenevalt raskusest."
 
 #: apps/exercises/i18n_content.py:156
 msgid ""
-"- Setup and Starting Position: Sit at the end of a flat bench with a "
-"dumbbell resting vertically against each thigh. Carefully lean back while "
-"driving the dumbbells toward your chest with your knees.\n"
-"- The “Leg Drive” and Posture: Plant your feet firmly on the floor. Retract "
-"your shoulder blades (press them together against the bench) and maintain a "
-"slight natural lumbar curve.\n"
-"- Starting Position: Push the dumbbells toward the ceiling. Your wrists "
-"should be aligned with your elbows. Rotate the dumbbells slightly inward "
-"(about 45 degrees) so that your elbows do not splay out too far to the "
-"sides, thereby protecting your shoulders.\n"
-"- Eccentric Phase (Lowering): Lower the dumbbells in a controlled manner "
-"toward the sides of your chest. Your elbows should lower at an angle of "
-"about 45–60 degrees relative to your body. Feel the stretch in the lower "
-"part of your chest.\n"
-"- Concentric Phase (Lift): Push the weight upward in a slight arc (toward "
-"the center), without letting the dumbbells collide at the top or fully "
-"locking out your elbows to maintain muscle tension. Exhale as you lift."
+"- Setup and Starting Position: Sit at the end of a flat bench with a dumbbell resting vertically against each thigh. Carefully lean back while driving the dumbbells toward your chest with your knees.\n"
+"- The “Leg Drive” and Posture: Plant your feet firmly on the floor. Retract your shoulder blades (press them together against the bench) and maintain a slight natural lumbar curve.\n"
+"- Starting Position: Push the dumbbells toward the ceiling. Your wrists should be aligned with your elbows. Rotate the dumbbells slightly inward (about 45 degrees) so that your elbows do not splay out too far to the sides, thereby protecting your shoulders.\n"
+"- Eccentric Phase (Lowering): Lower the dumbbells in a controlled manner toward the sides of your chest. Your elbows should lower at an angle of about 45–60 degrees relative to your body. Feel the stretch in the lower part of your chest.\n"
+"- Concentric Phase (Lift): Push the weight upward in a slight arc (toward the center), without letting the dumbbells collide at the top or fully locking out your elbows to maintain muscle tension. Exhale as you lift."
 msgstr ""
-"- Ettevalmistus ja alguspositsioon: istu tasase pingi otsas, hantel "
-"püstiselt kummalgi reiel. Kalluta end ettevaatlikult tahapoole, aidates "
-"samal ajal põlvedega hantleid rindkere suunas.\n"
-"- Jalgade tugi ja rühiasend: aseta jalad kindlalt vastu põrandat. Tõmba "
-"abaluud kokku (surudes need vastu pinki) ja säilita kerge loomulik "
-"nimmenõgusus.\n"
-"- Alguspositsioon: suru hantlid lae poole. Randmed peaksid olema "
-"küünarnukkidega samal joonel. Pööra hantleid veidi sissepoole (umbes 45 "
-"kraadi), et küünarnukid ei läheks liiga laiali, kaitstes nii õlgu.\n"
-"- Ekstsentriline faas (laskumine): lase hantlid kontrollitult rindkere "
-"külgede poole. Küünarnukid peaksid laskuma umbes 45–60-kraadise nurga all "
-"keha suhtes. Tunneta venitust rindkere alumises osas.\n"
-"- Kontsentriline faas (tõuge): suru raskus üles kerges kaares (keskjoone "
-"suunas), laskmata hantlitel üleval kokku puutuda ega sirutades küünarnukke "
-"lõpuni, et säilitada lihaspinge. Hinga tõuke ajal välja."
+"- Ettevalmistus ja alguspositsioon: istu tasase pingi otsas, hantel püstiselt kummalgi reiel. Kalluta end ettevaatlikult tahapoole, aidates samal ajal põlvedega hantleid rindkere suunas.\n"
+"- Jalgade tugi ja rühiasend: aseta jalad kindlalt vastu põrandat. Tõmba abaluud kokku (surudes need vastu pinki) ja säilita kerge loomulik nimmenõgusus.\n"
+"- Alguspositsioon: suru hantlid lae poole. Randmed peaksid olema küünarnukkidega samal joonel. Pööra hantleid veidi sissepoole (umbes 45 kraadi), et küünarnukid ei läheks liiga laiali, kaitstes nii õlgu.\n"
+"- Ekstsentriline faas (laskumine): lase hantlid kontrollitult rindkere külgede poole. Küünarnukid peaksid laskuma umbes 45–60-kraadise nurga all keha suhtes. Tunneta venitust rindkere alumises osas.\n"
+"- Kontsentriline faas (tõuge): suru raskus üles kerges kaares (keskjoone suunas), laskmata hantlitel üleval kokku puutuda ega sirutades küünarnukke lõpuni, et säilitada lihaspinge. Hinga tõuke ajal välja."
 
 #: apps/exercises/i18n_content.py:172
 msgid ""
-"Hold two dumbbells, the arms are streched, the hands are on your side, the "
-"palms face inwards. Bend the arms and bring the weight with a fast movement "
-"up. At the same time, rotate your arms by 90 degrees at the very beginning "
-"of the movement. At the highest point, rotate a little the weights further "
-"outwards. Without a pause, bring them down, slowly.\n"
-"Don't allow your body to swing during the exercise, all work is done by the "
-"biceps, which are the only mucles that should move (pay attention to the "
-"elbows)."
+"Hold two dumbbells, the arms are streched, the hands are on your side, the palms face inwards. Bend the arms and bring the weight with a fast movement up. At the same time, rotate your arms by 90 degrees at the very beginning of the movement. At the highest point, rotate a little the weights further outwards. Without a pause, bring them down, slowly.\n"
+"Don't allow your body to swing during the exercise, all work is done by the biceps, which are the only mucles that should move (pay attention to the elbows)."
 msgstr ""
-"Hoia kahte hantlit, käed sirged keha kõrval, peopesad sissepoole. Painuta "
-"käsi ja too raskused kiire liigutusega üles. Samal ajal pööra käsi liigutuse "
-"alguses 90 kraadi. Kõige kõrgemas punktis pööra raskusi veidi veel "
-"väljapoole. Lase need ilma pausita aeglaselt tagasi alla.\n"
-"Ära lase kehal liigutuse ajal kõikuda — kogu töö peab tegema biitseps, mis "
-"on ainus lihas, mis peaks liikuma (jälgi küünarnukke)."
+"Hoia kahte hantlit, käed sirged keha kõrval, peopesad sissepoole. Painuta käsi ja too raskused kiire liigutusega üles. Samal ajal pööra käsi liigutuse alguses 90 kraadi. Kõige kõrgemas punktis pööra raskusi veidi veel väljapoole. Lase need ilma pausita aeglaselt tagasi alla.\n"
+"Ära lase kehal liigutuse ajal kõikuda — kogu töö peab tegema biitseps, mis on ainus lihas, mis peaks liikuma (jälgi küünarnukke)."
 
 #: apps/exercises/i18n_content.py:181
 msgid ""
@@ -1621,15 +1571,15 @@ msgstr ""
 "Kinnita köiekäepide trossimasinasse, mis on seatud rindkere ülaosa kuni pea "
 "kõrgusele. Haara köiest mõlema käega, peopesad üksteise poole, ja astu "
 "tahapoole, et tekitada pinget. Tõmba köis näo poole, juhtides liigutust "
-"küünarnukkidega ja lastes need laialt lahku, pigista lõpus abaluud kokku "
-"ning liigu seejärel kontrollitult tagasi."
+"küünarnukkidega ja lastes need laialt lahku, pigista lõpus abaluud kokku ning"
+" liigu seejärel kontrollitult tagasi."
 
 #: apps/exercises/i18n_content.py:194
 msgid ""
 "Rest the bar across the front of your shoulders, elbows raised high to keep "
 "it in place, using either a clean grip or crossed arms. Keeping your torso "
-"upright, bend your knees and hips to lower into a squat until your thighs "
-"are at least parallel to the floor, then drive back up through your heels to "
+"upright, bend your knees and hips to lower into a squat until your thighs are"
+" at least parallel to the floor, then drive back up through your heels to "
 "standing."
 msgstr ""
 "Aseta kang õlgade esiküljele, küünarnukid kõrgel, et hoida seda paigal, "
@@ -1640,15 +1590,12 @@ msgstr ""
 #: apps/exercises/i18n_content.py:200
 msgid ""
 "- Start: Hold dumbbells at your sides with palms facing your torso.\n"
-"- Curl: Lift the weights toward your shoulders while maintaining the neutral "
-"grip (like holding a hammer).\n"
-"- Squeeze: Contract the biceps at the top without moving your elbows "
-"forward.\n"
+"- Curl: Lift the weights toward your shoulders while maintaining the neutral grip (like holding a hammer).\n"
+"- Squeeze: Contract the biceps at the top without moving your elbows forward.\n"
 "- Lower: Slowly return to the starting position with full control."
 msgstr ""
 "- Algus: hoia hantleid keha kõrval, peopesad keha poole.\n"
-"- Painutus: tõsta raskused õlgade poole, säilitades neutraalse haarde (nagu "
-"hoiaksid haamrit).\n"
+"- Painutus: tõsta raskused õlgade poole, säilitades neutraalse haarde (nagu hoiaksid haamrit).\n"
 "- Pinguta: pinguta ülal biitsepsit, liigutamata küünarnukke ettepoole.\n"
 "- Laskumine: naase aeglaselt ja kontrollitult alguspositsiooni."
 
@@ -1662,16 +1609,16 @@ msgid ""
 msgstr ""
 "Istu põrandale, ülaselg vastu pinki ja koormatud kang puusade peal (kasuta "
 "mugavuse huvides polstrit). Aseta jalad täielikult vastu põrandat, põlved "
-"kõverdatud. Suru kandadest ja tõsta puusad üles, kuni keha moodustab "
-"õlgadest põlvedeni sirge joone, pigista üleval tuharaid kokku ja laskeudu "
-"siis kontrollitult tagasi."
+"kõverdatud. Suru kandadest ja tõsta puusad üles, kuni keha moodustab õlgadest"
+" põlvedeni sirge joone, pigista üleval tuharaid kokku ja laskeudu siis "
+"kontrollitult tagasi."
 
 #: apps/exercises/i18n_content.py:214
 msgid ""
 "Lie back on an incline bench set to about 30-45°, feet flat on the floor. "
-"Grip the bar slightly wider than shoulder-width and unrack it over your "
-"upper chest. Lower the bar under control to your upper chest, then press it "
-"back up until your arms are fully extended."
+"Grip the bar slightly wider than shoulder-width and unrack it over your upper"
+" chest. Lower the bar under control to your upper chest, then press it back "
+"up until your arms are fully extended."
 msgstr ""
 "Heida selili tõusva kaldenurgaga (umbes 30–45°) pingile, jalad täielikult "
 "vastu põrandat. Haara kangist õlgadest veidi laiema haardega ja tõsta see "
@@ -1696,26 +1643,25 @@ msgstr ""
 msgid ""
 "This exercise works the deltoid muscle of the shoulder. The movement starts "
 "with the arms straight, and the hands holding weights at the sides or in "
-"front of the body. Body is in a slight forward-leaning position with hips "
-"and knees bent a little. Arms are kept straight or slightly bent, and raised "
+"front of the body. Body is in a slight forward-leaning position with hips and"
+" knees bent a little. Arms are kept straight or slightly bent, and raised "
 "through an arc of movement in the coronal plane that terminates when the "
 "hands are at approximately shoulder height. Weights are lowered to the "
 "starting position, completing one rep. When using a cable machine the "
-"individual stands with the coronal plane in line with the pulley, which is "
-"at or near the ground. The exercise can be completed one shoulder at a time "
-"(with the other hand used to stabilize the body against the weight moved), "
-"or with both hands simultaneously if two parallel pulleys are available."
+"individual stands with the coronal plane in line with the pulley, which is at"
+" or near the ground. The exercise can be completed one shoulder at a time "
+"(with the other hand used to stabilize the body against the weight moved), or"
+" with both hands simultaneously if two parallel pulleys are available."
 msgstr ""
-"See harjutus treenib õla deltalihast. Liigutus algab sirgete kätega, "
-"raskused käes keha kõrval või ees. Keha on kergelt ettepoole kallutatud, "
-"puusad ja põlved veidi kõverdatud. Käed hoitakse sirgena või kergelt "
-"kõverdatuna ning tõstetakse kaarjas liigutuses frontaaltasapinnas, kuni käed "
-"jõuavad umbes õlgade kõrgusele. Raskused lastakse tagasi alguspositsiooni, "
-"lõpetades ühe korduse. Trossimasinat kasutades seistakse nii, et "
-"frontaaltasapind on plokiga ühel joonel, mis asub põranda lähedal. Harjutust "
-"võib teha ühe õlaga korraga (teise käega keha stabiliseerides liikuva "
-"raskuse vastu) või mõlema käega korraga, kui saadaval on kaks paralleelset "
-"plokki."
+"See harjutus treenib õla deltalihast. Liigutus algab sirgete kätega, raskused"
+" käes keha kõrval või ees. Keha on kergelt ettepoole kallutatud, puusad ja "
+"põlved veidi kõverdatud. Käed hoitakse sirgena või kergelt kõverdatuna ning "
+"tõstetakse kaarjas liigutuses frontaaltasapinnas, kuni käed jõuavad umbes "
+"õlgade kõrgusele. Raskused lastakse tagasi alguspositsiooni, lõpetades ühe "
+"korduse. Trossimasinat kasutades seistakse nii, et frontaaltasapind on "
+"plokiga ühel joonel, mis asub põranda lähedal. Harjutust võib teha ühe õlaga "
+"korraga (teise käega keha stabiliseerides liikuva raskuse vastu) või mõlema "
+"käega korraga, kui saadaval on kaks paralleelset plokki."
 
 #: apps/exercises/i18n_content.py:240
 msgid ""
@@ -1732,45 +1678,36 @@ msgstr ""
 #: apps/exercises/i18n_content.py:246
 msgid ""
 "Sit in the leg press machine with your back flat against the pad and feet "
-"shoulder-width apart on the platform. Unlock the safety catches and lower "
-"the platform by bending your knees to about a 90° angle, keeping your lower "
-"back pressed against the pad. Push through your heels to extend your legs "
-"back to the starting position without locking your knees out completely."
+"shoulder-width apart on the platform. Unlock the safety catches and lower the"
+" platform by bending your knees to about a 90° angle, keeping your lower back"
+" pressed against the pad. Push through your heels to extend your legs back to"
+" the starting position without locking your knees out completely."
 msgstr ""
-"Istu jalgade surumise masinasse, selg tasaselt vastu polstrit ja jalad "
-"õlgade laiuselt platvormil. Vabasta turvalukud ja lase platvorm alla, "
-"painutades põlvi umbes 90-kraadise nurga alla, hoides alaselja vastu "
-"polstrit surutuna. Suru kandadest, sirutades jalad tagasi alguspositsiooni, "
-"sirutamata põlvi lõpuni välja."
+"Istu jalgade surumise masinasse, selg tasaselt vastu polstrit ja jalad õlgade"
+" laiuselt platvormil. Vabasta turvalukud ja lase platvorm alla, painutades "
+"põlvi umbes 90-kraadise nurga alla, hoides alaselja vastu polstrit surutuna. "
+"Suru kandadest, sirutades jalad tagasi alguspositsiooni, sirutamata põlvi "
+"lõpuni välja."
 
 #: apps/exercises/i18n_content.py:253
 msgid ""
-"- Setup: Stand with feet together and grip the bar slightly wider than "
-"shoulders.\n"
+"- Setup: Stand with feet together and grip the bar slightly wider than shoulders.\n"
 "- Position: Rest the bar on your upper chest.\n"
-"- Press: Brace your core and push the bar straight up until your arms lock "
-"out.\n"
+"- Press: Brace your core and push the bar straight up until your arms lock out.\n"
 "- Finish: Control the bar back down to your chest."
 msgstr ""
-"- Ettevalmistus: seisa jalad koos ja haara kangist õlgadest veidi laiema "
-"haardega.\n"
+"- Ettevalmistus: seisa jalad koos ja haara kangist õlgadest veidi laiema haardega.\n"
 "- Asend: aseta kang rindkere ülaossa.\n"
-"- Surumine: pinguta kehatuumik ja suru kang otse üles, kuni käed on täiesti "
-"sirged.\n"
+"- Surumine: pinguta kehatuumik ja suru kang otse üles, kuni käed on täiesti sirged.\n"
 "- Lõpetus: too kang kontrollitult tagasi rinnale."
 
 #: apps/exercises/i18n_content.py:259
 msgid ""
-"Get into a position on the floor supporting your weight on your forearms and "
-"toes. Arms are bent and directly below the shoulder.\n"
-"Keep your body straight at all times and hold this position as long as "
-"possible. To increase difficulty an arm or leg can be raised while "
-"performing this exercise."
+"Get into a position on the floor supporting your weight on your forearms and toes. Arms are bent and directly below the shoulder.\n"
+"Keep your body straight at all times and hold this position as long as possible. To increase difficulty an arm or leg can be raised while performing this exercise."
 msgstr ""
-"Võta põrandal asend, kus toetad oma keharaskust küünarvartele ja varvastele. "
-"Käed on kõverdatud ja otse õlgade all.\n"
-"Hoia keha kogu aeg sirge ja säilita see asend nii kaua kui võimalik. "
-"Raskusastme suurendamiseks võib harjutuse ajal tõsta ühe käe või jala."
+"Võta põrandal asend, kus toetad oma keharaskust küünarvartele ja varvastele. Käed on kõverdatud ja otse õlgade all.\n"
+"Hoia keha kogu aeg sirge ja säilita see asend nii kaua kui võimalik. Raskusastme suurendamiseks võib harjutuse ajal tõsta ühe käe või jala."
 
 #: apps/exercises/i18n_content.py:265
 msgid ""
@@ -1787,67 +1724,45 @@ msgstr ""
 #: apps/exercises/i18n_content.py:271
 msgid ""
 "Stand holding a barbell in front of your thighs with a shoulder-width "
-"overhand grip. Keeping your back flat and knees only slightly bent, push "
-"your hips back and lower the bar down the front of your legs until you feel "
-"a stretch in your hamstrings. Drive your hips forward to return to standing, "
+"overhand grip. Keeping your back flat and knees only slightly bent, push your"
+" hips back and lower the bar down the front of your legs until you feel a "
+"stretch in your hamstrings. Drive your hips forward to return to standing, "
 "keeping the bar close to your legs throughout."
 msgstr ""
 "Seisa, hoides kangi reite ees õlgade laiuselt pealthaardega. Hoides selja "
-"sirge ja põlved vaid kergelt kõverdatud, lükka puusad taha ja lase kang "
-"mööda jalgade esikülge alla, kuni tunned venitust reie tagaküljel. Suru "
-"puusad ette, et naasta püstiasendisse, hoides kangi kogu liigutuse vältel "
-"jalgadele lähedal."
+"sirge ja põlved vaid kergelt kõverdatud, lükka puusad taha ja lase kang mööda"
+" jalgade esikülge alla, kuni tunned venitust reie tagaküljel. Suru puusad "
+"ette, et naasta püstiasendisse, hoides kangi kogu liigutuse vältel jalgadele "
+"lähedal."
 
 #: apps/exercises/i18n_content.py:278
 msgid ""
-"- Take a seat on the machine with your feet planted, a little wider than "
-"shoulder width. Drive the heels, and squeeze the glutes. Grab onto the cable "
-"handle.\n"
-"- Sit up tall with a slight bend through the knees. Tighten up the abs and "
-"low back to maintain a perpendicular angle to the floor with your torso.\n"
-"- Roll the shoulders back and down. Squeeze them together as you row, "
-"thinking about pinching a pencil in between them. As you do this, pull the "
-"handle back towards you, landing right above your belly button.\n"
-"- Pause here for a moment before returning the handle, still squeezing the "
-"shoulder blades. Once you've returned the weight to the stack, then allow "
-"the shoulder blades to relax, without pulling the torso forward.\n"
+"- Take a seat on the machine with your feet planted, a little wider than shoulder width. Drive the heels, and squeeze the glutes. Grab onto the cable handle.\n"
+"- Sit up tall with a slight bend through the knees. Tighten up the abs and low back to maintain a perpendicular angle to the floor with your torso.\n"
+"- Roll the shoulders back and down. Squeeze them together as you row, thinking about pinching a pencil in between them. As you do this, pull the handle back towards you, landing right above your belly button.\n"
+"- Pause here for a moment before returning the handle, still squeezing the shoulder blades. Once you've returned the weight to the stack, then allow the shoulder blades to relax, without pulling the torso forward.\n"
 "- Repeat the movement."
 msgstr ""
-"- Istu masinasse, jalad õlgadest veidi laiemal. Suru kandadest ja pinguta "
-"tuharaid. Haara trossikäepidemest.\n"
-"- Istu sirge seljaga, põlved kergelt kõverdatud. Pinguta kõhulihased ja "
-"alaselg, et hoida ülakeha põrandaga risti.\n"
-"- Vii õlad taha ja alla. Suru need tõmbamise ajal kokku, justkui pigistaksid "
-"pliiatsit abaluude vahel. Samal ajal tõmba käepide enda poole, nii et see "
-"jõuab otse naba kohale.\n"
-"- Pea hetkeks paus enne käepideme tagasi laskmist, hoides abaluid ikka koos. "
-"Kui raskus on tagasi virnas, lase abaluudel lõdvestuda, ilma et ülakeha ette "
-"kalluks.\n"
+"- Istu masinasse, jalad õlgadest veidi laiemal. Suru kandadest ja pinguta tuharaid. Haara trossikäepidemest.\n"
+"- Istu sirge seljaga, põlved kergelt kõverdatud. Pinguta kõhulihased ja alaselg, et hoida ülakeha põrandaga risti.\n"
+"- Vii õlad taha ja alla. Suru need tõmbamise ajal kokku, justkui pigistaksid pliiatsit abaluude vahel. Samal ajal tõmba käepide enda poole, nii et see jõuab otse naba kohale.\n"
+"- Pea hetkeks paus enne käepideme tagasi laskmist, hoides abaluid ikka koos. Kui raskus on tagasi virnas, lase abaluudel lõdvestuda, ilma et ülakeha ette kalluks.\n"
 "- Korda liigutust."
 
 #: apps/exercises/i18n_content.py:290
 msgid ""
-"Hold the SZ-bar and lay down on a flat bench in such a way that around 1/4 "
-"of your head is over the edge. Stretch your arms with the bar and bend them "
-"so that the bar is lowered. Just before it touches your forehead, push it "
-"up.\n"
-"Pay attention to your elbows and arms: only the triceps are doing the work, "
-"the rest of the arms should not move."
+"Hold the SZ-bar and lay down on a flat bench in such a way that around 1/4 of your head is over the edge. Stretch your arms with the bar and bend them so that the bar is lowered. Just before it touches your forehead, push it up.\n"
+"Pay attention to your elbows and arms: only the triceps are doing the work, the rest of the arms should not move."
 msgstr ""
-"Võta SZ-kang kätte ja heida selili tasasele pingile nii, et umbes veerand "
-"peast jääks serva taha. Siruta käed kangiga sirgeks ja painuta neid, et kang "
-"alla lasta. Vahetult enne, kui see laupa puudutab, suru see tagasi üles.\n"
-"Pööra tähelepanu küünarnukkidele ja kätele: tööd peaks tegema ainult "
-"triitseps, ülejäänud käsi ei tohiks liikuda."
+"Võta SZ-kang kätte ja heida selili tasasele pingile nii, et umbes veerand peast jääks serva taha. Siruta käed kangiga sirgeks ja painuta neid, et kang alla lasta. Vahetult enne, kui see laupa puudutab, suru see tagasi üles.\n"
+"Pööra tähelepanu küünarnukkidele ja kätele: tööd peaks tegema ainult triitseps, ülejäänud käsi ei tohiks liikuda."
 
 #: apps/exercises/i18n_content.py:297
 msgid ""
-"Keep arms straight but not locked, pulling with your lats, not your "
-"shoulders.\n"
+"Keep arms straight but not locked, pulling with your lats, not your shoulders.\n"
 "Don’t let your shoulders shrug up during the movement."
 msgstr ""
-"Hoia käed sirged, kuid mitte lukustatud, ja tõmba selja laiade lihastega, "
-"mitte õlgadega.\n"
+"Hoia käed sirged, kuid mitte lukustatud, ja tõmba selja laiade lihastega, mitte õlgadega.\n"
 "Ära lase õlgadel liigutuse ajal üles kerkida."
 
 #: apps/exercises/i18n_content.py:301
@@ -1858,11 +1773,11 @@ msgid ""
 "fully extended, then let it rise back under control without letting your "
 "elbows drift forward."
 msgstr ""
-"Seisa näoga trossimasina poole, mille ülemise ploki külge on kinnitatud "
-"sirge või nurgeline kang. Haara kangist pealthaardega, küünarnukid külgede "
-"vastas. Hoides õlavarred paigal, suru kang alla, kuni käed on täiesti "
-"sirged, seejärel lase sel kontrollitult tagasi tõusta, laskmata "
-"küünarnukkidel ettepoole liikuda."
+"Seisa näoga trossimasina poole, mille ülemise ploki külge on kinnitatud sirge"
+" või nurgeline kang. Haara kangist pealthaardega, küünarnukid külgede vastas."
+" Hoides õlavarred paigal, suru kang alla, kuni käed on täiesti sirged, "
+"seejärel lase sel kontrollitult tagasi tõusta, laskmata küünarnukkidel "
+"ettepoole liikuda."
 
 #: apps/exercises/models.py:39 apps/exercises/models.py:111
 msgid "equipment"
@@ -1885,10 +1800,11 @@ msgid "Per hand / dumbbell"
 msgstr "Käe kohta / hantel"
 
 #: apps/exercises/models.py:76 apps/programs/models.py:37
+#: apps/stretching/models.py:97
 msgid "description"
 msgstr "kirjeldus"
 
-#: apps/exercises/models.py:84
+#: apps/exercises/models.py:84 apps/stretching/models.py:48
 msgid "instructions"
 msgstr "juhised"
 
@@ -1932,8 +1848,8 @@ msgstr "järjekord"
 #: apps/exercises/models.py:216
 #, python-format
 msgid ""
-"This exercise already has the maximum of %(max)d image(s) allowed. Remove "
-"one before adding another."
+"This exercise already has the maximum of %(max)d image(s) allowed. Remove one"
+" before adding another."
 msgstr ""
 "Sellel harjutusel on juba lubatud maksimaalne arv pilte (%(max)d). Enne uue "
 "lisamist eemalda üks."
@@ -2092,7 +2008,9 @@ msgstr "Ühenda toidud"
 msgid ""
 "%(count)d more food(s) were left for later to stay within Open Food Facts' "
 "rate limit — run this action again in a minute."
-msgstr "%(count)d toitu jäeti hiljemaks, et püsida Open Food Factsi päringupiirangu piires — käivita toiming minuti pärast uuesti."
+msgstr ""
+"%(count)d toitu jäeti hiljemaks, et püsida Open Food Factsi päringupiirangu "
+"piires — käivita toiming minuti pärast uuesti."
 
 #: apps/nutrition/calculators.py:138 apps/nutrition/calculators.py:143
 msgid "Lower risk"
@@ -2260,8 +2178,8 @@ msgid ""
 "All the nutrition values below are for this amount, in the unit chosen next "
 "to it — e.g. \"100 g\" if the values are per 100 grams."
 msgstr ""
-"Kõik allolevad toitainete väärtused kehtivad selle koguse kohta, selle "
-"kõrval valitud ühikus — nt \"100 g\", kui väärtused on 100 grammi kohta."
+"Kõik allolevad toitainete väärtused kehtivad selle koguse kohta, selle kõrval"
+" valitud ühikus — nt \"100 g\", kui väärtused on 100 grammi kohta."
 
 #: apps/nutrition/forms.py:193 templates/nutrition/diary_add_entry.html:55
 #: templates/nutrition/diet_plan_meal_item_form.html:16
@@ -2337,13 +2255,13 @@ msgstr "Varieeri toidukordi kogu nädala lõikes ühe korduva päeva asemel"
 #: apps/nutrition/forms.py:352
 msgid ""
 "Each day still hits the same daily calories/macros above — only which meal "
-"fills each slot changes from day to day, so a week's worth of breakfasts "
-"(for example) aren't all identical."
+"fills each slot changes from day to day, so a week's worth of breakfasts (for"
+" example) aren't all identical."
 msgstr ""
-"Iga päev vastab siiski samadele ülalpool toodud päevastele kaloritele/"
-"makrotoitainetele — muutub ainult see, milline toidukord iga kohta täidab, "
-"päevast päeva, nii et näiteks terve nädala hommikusöögid ei ole kõik "
-"identsed."
+"Iga päev vastab siiski samadele ülalpool toodud päevastele "
+"kaloritele/makrotoitainetele — muutub ainult see, milline toidukord iga kohta"
+" täidab, päevast päeva, nii et näiteks terve nädala hommikusöögid ei ole kõik"
+" identsed."
 
 #: apps/nutrition/forms.py:359
 msgid "Start from scratch — leave every meal empty"
@@ -2531,8 +2449,8 @@ msgstr ""
 
 #: apps/nutrition/i18n_content.py:71
 msgid ""
-"Pan-sear the salmon, serve over rice with steamed broccoli and a little "
-"olive oil."
+"Pan-sear the salmon, serve over rice with steamed broccoli and a little olive"
+" oil."
 msgstr ""
 "Prae lõhe pannil, serveeri riisi peal koos aurutatud brokoli ja pisut "
 "oliiviõliga."
@@ -2704,7 +2622,7 @@ msgstr "A — parim"
 msgid "B"
 msgstr "B"
 
-#: apps/nutrition/models.py:93
+#: apps/nutrition/models.py:93 templates/nutrition/diary_day.html:60
 msgid "C"
 msgstr "C"
 
@@ -2845,8 +2763,8 @@ msgid ""
 "Not enough logged weight yet — keep logging your weight regularly and check "
 "back in a couple of weeks."
 msgstr ""
-"Kaalu pole veel piisavalt logitud — jätka kaalu regulaarset logimist ja "
-"vaata uuesti paari nädala pärast."
+"Kaalu pole veel piisavalt logitud — jätka kaalu regulaarset logimist ja vaata"
+" uuesti paari nädala pärast."
 
 #: apps/nutrition/suggestions.py:135
 #, python-format
@@ -2878,63 +2796,63 @@ msgstr ""
 msgid "Goal updated — new target is %(calories)d kcal/day."
 msgstr "Eesmärk uuendatud — uus eesmärk on %(calories)d kcal/päevas."
 
-#: apps/nutrition/views.py:758
+#: apps/nutrition/views.py:761
 msgid "Pick a date to copy this day to."
 msgstr "Vali kuupäev, kuhu see päev kopeerida."
 
-#: apps/nutrition/views.py:763
+#: apps/nutrition/views.py:766
 #, python-format
 msgid "Copied %(count)d entry to %(date)s."
 msgid_plural "Copied %(count)d entries to %(date)s."
 msgstr[0] "Kopeeriti %(count)d kirje kuupäevale %(date)s."
 msgstr[1] "Kopeeriti %(count)d kirjet kuupäevale %(date)s."
 
-#: apps/nutrition/views.py:769
+#: apps/nutrition/views.py:772
 msgid "Nothing to copy — that day has no entries."
 msgstr "Pole midagi kopeerida — sellel päeval pole kirjeid."
 
-#: apps/nutrition/views.py:815 apps/nutrition/views.py:1135
-#: apps/nutrition/views.py:1598
+#: apps/nutrition/views.py:818 apps/nutrition/views.py:1138
+#: apps/nutrition/views.py:1601
 msgid "That food couldn't be imported — try again."
 msgstr "Seda toitu ei õnnestunud importida — proovi uuesti."
 
-#: apps/nutrition/views.py:879
+#: apps/nutrition/views.py:882
 msgid "Nothing logged for this meal yet to save as a recipe."
 msgstr ""
 "Sellele toidukorrale pole veel midagi märgitud retseptina salvestamiseks."
 
-#: apps/nutrition/views.py:881
+#: apps/nutrition/views.py:884
 #, python-format
 msgid "Saved “%(name)s” as a new recipe."
 msgstr "Salvestati „%(name)s” uue retseptina."
 
-#: apps/nutrition/views.py:1025
+#: apps/nutrition/views.py:1028
 #, python-format
 msgid "\"%(name)s\" created — now add its ingredients below."
 msgstr "\"%(name)s\" loodud — lisa selle koostisosad allpool."
 
-#: apps/nutrition/views.py:1075 apps/nutrition/views.py:1370
+#: apps/nutrition/views.py:1078 apps/nutrition/views.py:1373
 #: apps/programs/views.py:205
 #, python-format
 msgid ""
-"This file was exported from IronStack %(version)s — worth double-checking "
-"the import if something looks off."
+"This file was exported from IronStack %(version)s — worth double-checking the"
+" import if something looks off."
 msgstr ""
 "See fail eksporditi IronStack %(version)s versioonist — tasub importi üle "
 "kontrollida, kui midagi tundub valesti."
 
-#: apps/nutrition/views.py:1519
+#: apps/nutrition/views.py:1522
 msgid "Only a personal trainer can share a diet plan."
 msgstr "Toitumiskava saab jagada ainult personaaltreener."
 
-#: apps/nutrition/views.py:1636
+#: apps/nutrition/views.py:1639
 #, python-format
 msgid "Logged %(count)d item to %(date)s."
 msgid_plural "Logged %(count)d items to %(date)s."
 msgstr[0] "Logiti %(count)d kirje kuupäevale %(date)s."
 msgstr[1] "Logiti %(count)d kirjet kuupäevale %(date)s."
 
-#: apps/nutrition/views.py:1647
+#: apps/nutrition/views.py:1650
 msgid "Nothing to log — this plan has no items for that date."
 msgstr "Pole midagi logida — sellel plaanil pole selle kuupäeva jaoks kirjeid."
 
@@ -2954,8 +2872,8 @@ msgstr ""
 
 #: apps/programs/forms.py:46
 msgid ""
-"Lets the clients checked below see and import their own copy of this "
-"program. Leave everyone unchecked to keep it private."
+"Lets the clients checked below see and import their own copy of this program."
+" Leave everyone unchecked to keep it private."
 msgstr ""
 "Lubab allpool märgitud klientidel näha ja importida oma koopia sellest "
 "programmist. Jäta kõik märkimata, et hoida see privaatsena."
@@ -3024,8 +2942,8 @@ msgid ""
 "weights/increments to your own."
 msgstr ""
 "Klassikaline kolmepäevane terve keha mall: kükk/surumine/sõudmine päev, "
-"tõmme/surumine/tõmme päev ning abiharjutustele keskenduv päev. Kopeeri see "
-"ja kohanda kaalusid/lisandusi enda järgi."
+"tõmme/surumine/tõmme päev ning abiharjutustele keskenduv päev. Kopeeri see ja"
+" kohanda kaalusid/lisandusi enda järgi."
 
 #: apps/programs/i18n_content.py:33
 msgid ""
@@ -3073,9 +2991,9 @@ msgstr ""
 #: apps/programs/i18n_content.py:55
 msgid ""
 "The classic 10x10 high-volume method: one main lift per workout done for ten "
-"sets of ten reps at a fixed, moderate weight, paired with a lighter "
-"accessory movement. Brutal on paper, simple in practice — built for muscle "
-"growth, not 1-rep-max testing."
+"sets of ten reps at a fixed, moderate weight, paired with a lighter accessory"
+" movement. Brutal on paper, simple in practice — built for muscle growth, not"
+" 1-rep-max testing."
 msgstr ""
 "Klassikaline 10x10 suure mahu meetod: üks põhiharjutus trenni kohta, tehtud "
 "kümne seeriaga kümme kordust fikseeritud mõõduka kaaluga, koos kergema "
@@ -3272,8 +3190,8 @@ msgid ""
 "Missed target reps %(streak)s sessions in a row at %(weight)s kg — "
 "recommending a deload to %(deload)s kg."
 msgstr ""
-"Korduste sihtmärk jäi saavutamata %(streak)s korda järjest kaaluga "
-"%(weight)s kg — soovitatav on kergendada kaaluni %(deload)s kg."
+"Korduste sihtmärk jäi saavutamata %(streak)s korda järjest kaaluga %(weight)s"
+" kg — soovitatav on kergendada kaaluni %(deload)s kg."
 
 #: apps/progression/engine.py:243
 #, python-format
@@ -3290,14 +3208,14 @@ msgid ""
 "Hit the top of your rep range on every set at %(weight)s kg — adding "
 "%(increment)s kg and resetting to the bottom of the range."
 msgstr ""
-"Korduste vahemiku ülempiir täitus igas seerias kaaluga %(weight)s kg — "
-"lisame %(increment)s kg ja naaseme vahemiku alampiirile."
+"Korduste vahemiku ülempiir täitus igas seerias kaaluga %(weight)s kg — lisame"
+" %(increment)s kg ja naaseme vahemiku alampiirile."
 
 #: apps/progression/engine.py:277
 #, python-format
 msgid ""
-"Still within your rep range at %(weight)s kg — repeat the same weight and "
-"aim for more reps next time."
+"Still within your rep range at %(weight)s kg — repeat the same weight and aim"
+" for more reps next time."
 msgstr ""
 "Endiselt korduste vahemikus kaaluga %(weight)s kg — korda sama kaalu ja "
 "püüdle järgmisel korral rohkemate korduste poole."
@@ -3317,8 +3235,8 @@ msgid ""
 "Missed the bottom of your rep range last session at %(weight)s kg — try the "
 "same weight again."
 msgstr ""
-"Korduste vahemiku alampiir jäi saavutamata viimasel korral kaaluga "
-"%(weight)s kg — proovi sama kaalu uuesti."
+"Korduste vahemiku alampiir jäi saavutamata viimasel korral kaaluga %(weight)s"
+" kg — proovi sama kaalu uuesti."
 
 #: apps/progression/engine.py:331
 #, python-format
@@ -3326,8 +3244,8 @@ msgid ""
 "Hit the top of your rep range for %(streak)s sessions in a row at %(weight)s "
 "kg — adding %(increment)s kg."
 msgstr ""
-"Korduste vahemiku ülempiir täitus %(streak)s korda järjest kaaluga "
-"%(weight)s kg — lisame %(increment)s kg."
+"Korduste vahemiku ülempiir täitus %(streak)s korda järjest kaaluga %(weight)s"
+" kg — lisame %(increment)s kg."
 
 #: apps/progression/engine.py:343
 #, python-format
@@ -3665,6 +3583,718 @@ msgstr "Selle grupi teavitused on vaigistatud."
 msgid "Too many attempts. Try again in a few minutes."
 msgstr "Liiga palju katseid. Proovi uuesti mõne minuti pärast."
 
+#: apps/stretching/forms.py:34
+msgid "You already have one with this name."
+msgstr "Sul on juba sama nimega üks olemas."
+
+#: apps/stretching/forms.py:86
+msgid "Hold (seconds)"
+msgstr "Hoidmine (sekundit)"
+
+#: apps/stretching/forms.py:115
+msgid "This field is required."
+msgstr "See väli on kohustuslik."
+
+#: apps/stretching/forms.py:137
+msgid "Routine"
+msgstr "Rutiin"
+
+#: apps/stretching/i18n_content.py:21
+msgid "Standing Quad Stretch"
+msgstr "Reie esiosa venitus seistes"
+
+#: apps/stretching/i18n_content.py:22
+msgid "Kneeling Hip Flexor Stretch"
+msgstr "Puusapainutajate venitus põlvitades"
+
+#: apps/stretching/i18n_content.py:23
+msgid "Couch Stretch"
+msgstr "Diivanivenitus"
+
+#: apps/stretching/i18n_content.py:24
+msgid "Standing Hamstring Stretch"
+msgstr "Reie tagaosa venitus seistes"
+
+#: apps/stretching/i18n_content.py:25
+msgid "Lying Hamstring Stretch"
+msgstr "Reie tagaosa venitus lamades"
+
+#: apps/stretching/i18n_content.py:26
+msgid "Seated Forward Fold"
+msgstr "Ettepainutus istudes"
+
+#: apps/stretching/i18n_content.py:27
+msgid "Wide-Leg Forward Fold"
+msgstr "Ettepainutus harkisjalu"
+
+#: apps/stretching/i18n_content.py:28
+msgid "Figure-Four Stretch"
+msgstr "Nelja-venitus"
+
+#: apps/stretching/i18n_content.py:29
+msgid "Pigeon Pose"
+msgstr "Tuvi poos"
+
+#: apps/stretching/i18n_content.py:30
+msgid "Knee-to-Chest Stretch"
+msgstr "Põlv rinnale"
+
+#: apps/stretching/i18n_content.py:31
+msgid "Wall Calf Stretch"
+msgstr "Sääre venitus vastu seina"
+
+#: apps/stretching/i18n_content.py:32
+msgid "Deep Squat Hold"
+msgstr "Sügavas kükis hoidmine"
+
+#: apps/stretching/i18n_content.py:33
+msgid "Downward Dog"
+msgstr "Allavaatav koer"
+
+#: apps/stretching/i18n_content.py:34
+msgid "Doorway Chest Stretch"
+msgstr "Rinna venitus ukseavas"
+
+#: apps/stretching/i18n_content.py:35
+msgid "Cross-Body Shoulder Stretch"
+msgstr "Õla venitus üle keha"
+
+#: apps/stretching/i18n_content.py:36
+msgid "Overhead Triceps Stretch"
+msgstr "Triitsepsi venitus pea kohal"
+
+#: apps/stretching/i18n_content.py:37
+msgid "Biceps Wall Stretch"
+msgstr "Biitsepsi venitus vastu seina"
+
+#: apps/stretching/i18n_content.py:38
+msgid "Child's Pose"
+msgstr "Lapse poos"
+
+#: apps/stretching/i18n_content.py:39
+msgid "Standing Side Bend"
+msgstr "Külgpainutus seistes"
+
+#: apps/stretching/i18n_content.py:40
+msgid "Thread the Needle"
+msgstr "Nõela niidistamine"
+
+#: apps/stretching/i18n_content.py:41
+msgid "Cobra Stretch"
+msgstr "Kobra"
+
+#: apps/stretching/i18n_content.py:42
+msgid "Supine Spinal Twist"
+msgstr "Selja keerd selili"
+
+#: apps/stretching/i18n_content.py:43
+msgid "Upper Back Stretch"
+msgstr "Ülaselja venitus"
+
+#: apps/stretching/i18n_content.py:44
+msgid "Neck Side Stretch"
+msgstr "Kaela külgvenitus"
+
+#: apps/stretching/i18n_content.py:45
+msgid "Wrist Flexor Stretch"
+msgstr "Randme painutajate venitus"
+
+#: apps/stretching/i18n_content.py:46
+msgid "Wrist Extensor Stretch"
+msgstr "Randme sirutajate venitus"
+
+#: apps/stretching/i18n_content.py:47
+msgid "Cat-Cow"
+msgstr "Kass-lehm"
+
+#: apps/stretching/i18n_content.py:48
+msgid "Arm Circles"
+msgstr "Käte ringid"
+
+#: apps/stretching/i18n_content.py:49
+msgid "Hip Circles"
+msgstr "Puusaringid"
+
+#: apps/stretching/i18n_content.py:50
+msgid "Torso Rotations"
+msgstr "Ülakeha pöörded"
+
+#: apps/stretching/i18n_content.py:51
+msgid "Leg Swings"
+msgstr "Jalahood"
+
+#: apps/stretching/i18n_content.py:52
+msgid "World's Greatest Stretch"
+msgstr "Maailma parim venitus"
+
+#: apps/stretching/i18n_content.py:57
+msgid "Lower Body Cool-Down"
+msgstr "Lõdvestus: alakeha"
+
+#: apps/stretching/i18n_content.py:58
+msgid "Five static stretches for the legs and hips after a lower-body workout."
+msgstr ""
+"Viis staatilist venitust jalgadele ja puusadele pärast alakeha treeningut."
+
+#: apps/stretching/i18n_content.py:59
+msgid "Upper Body Cool-Down"
+msgstr "Lõdvestus: ülakeha"
+
+#: apps/stretching/i18n_content.py:60
+msgid "Chest, shoulders, arms and neck after an upper-body workout."
+msgstr "Rind, õlad, käed ja kael pärast ülakeha treeningut."
+
+#: apps/stretching/i18n_content.py:61
+msgid "Full Body Stretch"
+msgstr "Kogu keha venitus"
+
+#: apps/stretching/i18n_content.py:62
+msgid "About ten minutes of static stretching from head to toe."
+msgstr "Umbes kümme minutit staatilist venitust pealaest jalatallani."
+
+#: apps/stretching/i18n_content.py:63
+msgid "Morning Mobility"
+msgstr "Hommikune liikuvus"
+
+#: apps/stretching/i18n_content.py:64
+msgid "Gentle dynamic movements to wake the body up, or as a warm-up."
+msgstr "Rahulikud dünaamilised liigutused keha äratamiseks või soojenduseks."
+
+#: apps/stretching/i18n_content.py:71
+msgid ""
+"- Stand tall and hold onto a wall or chair for balance.\n"
+"- Bend one knee and grab that ankle behind you.\n"
+"- Pull the heel gently towards your glutes, keeping the knees together and the hips pushed slightly forward.\n"
+"- Hold, then switch sides."
+msgstr ""
+"- Seisa sirgelt ja hoia tasakaalu saamiseks seinast või toolist kinni.\n"
+"- Painuta üks põlv ja haara selja taga selle pahkluust.\n"
+"- Tõmba kanda õrnalt tuharate poole, hoides põlved koos ja puusad veidi ettepoole lükatud.\n"
+"- Hoia, seejärel vaheta pooli."
+
+#: apps/stretching/i18n_content.py:78
+msgid ""
+"- Kneel on one knee with the other foot flat on the floor in front of you.\n"
+"- Tuck the pelvis under and squeeze the glute of the kneeling leg.\n"
+"- Shift your hips forward until you feel a stretch at the front of the hip.\n"
+"- Keep the torso upright; hold, then switch sides."
+msgstr ""
+"- Laskuge ühele põlvele, teine jalg täistallaga põrandal su ees.\n"
+"- Kalluta vaagen alla ja pinguta põlvitava jala tuharat.\n"
+"- Lükka puusad ettepoole, kuni tunned venitust puusa esiosas.\n"
+"- Hoia ülakeha püsti; hoia, seejärel vaheta pooli."
+
+#: apps/stretching/i18n_content.py:84
+msgid ""
+"- Kneel with your back to a wall or couch and slide one shin up against it.\n"
+"- Step the other foot forward into a lunge.\n"
+"- Slowly raise your torso upright while squeezing the glute of the back leg.\n"
+"- Hold, then switch sides."
+msgstr ""
+"- Laskuge põlvili, selg seina või diivani poole, ja libista üks säär vastu seda üles.\n"
+"- Astu teise jalaga ette väljaasteasendisse.\n"
+"- Tõsta ülakeha aeglaselt püsti, pingutades samal ajal tagumise jala tuharat.\n"
+"- Hoia, seejärel vaheta pooli."
+
+#: apps/stretching/i18n_content.py:90
+msgid ""
+"- Place one heel on a low step or bench with the leg straight.\n"
+"- Keep your back flat and hinge forward from the hips.\n"
+"- Stop when you feel a stretch along the back of the thigh.\n"
+"- Hold, then switch sides."
+msgstr ""
+"- Aseta üks kand madalale astmele või pingile, jalg sirge.\n"
+"- Hoia selg sirge ja kallu puusadest ettepoole.\n"
+"- Peatu, kui tunned venitust reie tagaküljel.\n"
+"- Hoia, seejärel vaheta pooli."
+
+#: apps/stretching/i18n_content.py:96
+msgid ""
+"- Lie on your back with both legs extended.\n"
+"- Raise one leg, holding behind the thigh or calf (or use a towel around the foot).\n"
+"- Keep the knee as straight as is comfortable and pull the leg gently towards you.\n"
+"- Hold, then switch sides."
+msgstr ""
+"- Lama selili, mõlemad jalad sirged.\n"
+"- Tõsta üks jalg üles, hoides reie või sääre tagant (või kasuta rätikut ümber labajala).\n"
+"- Hoia põlv nii sirge, kui on mugav, ja tõmba jalga õrnalt enda poole.\n"
+"- Hoia, seejärel vaheta pooli."
+
+#: apps/stretching/i18n_content.py:102
+msgid ""
+"- Sit with both legs straight out in front of you.\n"
+"- Lengthen your spine, then hinge forward from the hips.\n"
+"- Reach towards your feet without forcing it.\n"
+"- Breathe slowly and relax a little deeper on each exhale."
+msgstr ""
+"- Istu, mõlemad jalad sirgelt sinu ees.\n"
+"- Pikenda selgroogu ja kallu seejärel puusadest ettepoole.\n"
+"- Siruta käed jalgade poole ilma sundimata.\n"
+"- Hinga rahulikult ja lõdvestu iga väljahingamisega veidi sügavamale."
+
+#: apps/stretching/i18n_content.py:108
+msgid ""
+"- Stand with your feet wide apart and toes pointing forward.\n"
+"- Hinge forward from the hips with a flat back.\n"
+"- Let your hands rest on the floor or your shins.\n"
+"- Relax your head and neck, and come up slowly."
+msgstr ""
+"- Seisa jalad laialt harkis, varbad ettepoole.\n"
+"- Kallu sirge seljaga puusadest ettepoole.\n"
+"- Lase kätel puhata põrandal või säärtel.\n"
+"- Lõdvesta pea ja kael ning tõuse aeglaselt üles."
+
+#: apps/stretching/i18n_content.py:114
+msgid ""
+"- Lie on your back with both knees bent.\n"
+"- Cross one ankle over the opposite knee.\n"
+"- Pull the lower leg towards your chest by holding behind the thigh.\n"
+"- Hold, then switch sides."
+msgstr ""
+"- Lama selili, mõlemad põlved kõverdatud.\n"
+"- Aseta üks pahkluu vastaspõlvele.\n"
+"- Tõmba alumist jalga rinna poole, hoides reie tagant.\n"
+"- Hoia, seejärel vaheta pooli."
+
+#: apps/stretching/i18n_content.py:120
+msgid ""
+"- From hands and knees, bring one knee forward behind the same wrist.\n"
+"- Extend the other leg straight back.\n"
+"- Square your hips and lower your torso over the front leg as far as is comfortable.\n"
+"- Hold, then switch sides."
+msgstr ""
+"- Neljakäpukil asendist too üks põlv ette sama poole randme taha.\n"
+"- Siruta teine jalg sirgelt taha.\n"
+"- Joonda puusad ja langeta ülakeha eesmise jala kohale nii kaugele, kui on mugav.\n"
+"- Hoia, seejärel vaheta pooli."
+
+#: apps/stretching/i18n_content.py:126
+msgid ""
+"- Lie on your back with both legs extended.\n"
+"- Pull one knee towards your chest with both hands.\n"
+"- Keep the other leg relaxed on the floor.\n"
+"- Hold, then switch sides."
+msgstr ""
+"- Lama selili, mõlemad jalad sirged.\n"
+"- Tõmba üht põlve mõlema käega rinna poole.\n"
+"- Hoia teine jalg lõdvalt põrandal.\n"
+"- Hoia, seejärel vaheta pooli."
+
+#: apps/stretching/i18n_content.py:132
+msgid ""
+"- Stand facing a wall with your hands on it.\n"
+"- Step one foot back, keeping that leg straight and the heel on the floor.\n"
+"- Lean into the wall until you feel a stretch in the calf.\n"
+"- Hold, then switch sides."
+msgstr ""
+"- Seisa näoga seina poole, käed vastu seina.\n"
+"- Astu üks jalg taha, hoides seda sirgena ja kanda põrandal.\n"
+"- Kallu vastu seina, kuni tunned venitust säärelihases.\n"
+"- Hoia, seejärel vaheta pooli."
+
+#: apps/stretching/i18n_content.py:138
+msgid ""
+"- Stand with your feet a little wider than hip-width.\n"
+"- Sit down into the deepest squat you can hold with your heels on the floor.\n"
+"- Use your elbows to gently press the knees outwards.\n"
+"- Keep your chest up and breathe."
+msgstr ""
+"- Seisa jalad veidi puusadest laiemalt.\n"
+"- Laskuge nii sügavasse kükki, kui suudad hoida kannad põrandal.\n"
+"- Suru küünarnukkidega põlvi õrnalt väljapoole.\n"
+"- Hoia rind üleval ja hinga."
+
+#: apps/stretching/i18n_content.py:144
+msgid ""
+"- Start on hands and knees, then lift your hips up and back.\n"
+"- Straighten your arms and legs as far as is comfortable to form an inverted V.\n"
+"- Press your heels towards the floor and your chest towards your thighs.\n"
+"- Keep breathing slowly."
+msgstr ""
+"- Alusta neljakäpukil ja tõsta seejärel puusad üles ja taha.\n"
+"- Siruta käed ja jalad nii palju, kui on mugav, nii et keha moodustab tagurpidi V-tähe.\n"
+"- Suru kandu põranda ja rinda reite poole.\n"
+"- Jätka rahulikku hingamist."
+
+#: apps/stretching/i18n_content.py:150
+msgid ""
+"- Stand in a doorway and place your forearms on the frame at shoulder height.\n"
+"- Step one foot forward.\n"
+"- Lean gently forward until you feel a stretch across the chest.\n"
+"- Keep your shoulders down and away from your ears."
+msgstr ""
+"- Seisa ukseavas ja aseta käsivarred õlgade kõrgusel vastu piitu.\n"
+"- Astu üks jalg ette.\n"
+"- Kallu õrnalt ettepoole, kuni tunned venitust üle rinna.\n"
+"- Hoia õlad all ja kõrvadest eemal."
+
+#: apps/stretching/i18n_content.py:156
+msgid ""
+"- Bring one arm straight across your chest.\n"
+"- Use the other hand to press it gently towards your body, above the elbow.\n"
+"- Keep the shoulder down and relaxed.\n"
+"- Hold, then switch sides."
+msgstr ""
+"- Too üks käsi sirgelt üle rinna.\n"
+"- Suru teise käega seda õrnalt keha poole, küünarnukist ülevalt.\n"
+"- Hoia õlg all ja lõdvana.\n"
+"- Hoia, seejärel vaheta pooli."
+
+#: apps/stretching/i18n_content.py:162
+msgid ""
+"- Raise one arm overhead and bend the elbow so the hand drops behind your head.\n"
+"- Use the other hand to gently push the elbow down and back.\n"
+"- Keep your head up and your ribs down.\n"
+"- Hold, then switch sides."
+msgstr ""
+"- Tõsta üks käsi pea kohale ja painuta küünarnukki nii, et käsi langeb pea taha.\n"
+"- Suru teise käega küünarnukki õrnalt alla ja taha.\n"
+"- Hoia pea püsti ja roided all.\n"
+"- Hoia, seejärel vaheta pooli."
+
+#: apps/stretching/i18n_content.py:168
+msgid ""
+"- Stand side-on to a wall and place your palm on it slightly behind you, arm straight at shoulder height.\n"
+"- Slowly turn your body away from the wall.\n"
+"- Stop when you feel a stretch along the front of the arm.\n"
+"- Hold, then switch sides."
+msgstr ""
+"- Seisa küljega seina poole ja aseta peopesa seinale veidi enda taha, käsi sirge õla kõrgusel.\n"
+"- Pööra keha aeglaselt seinast eemale.\n"
+"- Peatu, kui tunned venitust käsivarre esiküljel.\n"
+"- Hoia, seejärel vaheta pooli."
+
+#: apps/stretching/i18n_content.py:175
+msgid ""
+"- Kneel and sit back on your heels with the knees apart.\n"
+"- Walk your hands forward and lower your chest towards the floor.\n"
+"- Reach your arms long and let your forehead rest down.\n"
+"- Breathe into your back."
+msgstr ""
+"- Laskuge põlvili ja istu kandadele, põlved lahus.\n"
+"- Kõnni kätega ette ja langeta rind põranda poole.\n"
+"- Siruta käed pikalt ja lase otsmikul toetuda.\n"
+"- Hinga selga."
+
+#: apps/stretching/i18n_content.py:181
+msgid ""
+"- Stand with your feet hip-width apart.\n"
+"- Raise one arm overhead.\n"
+"- Lean to the opposite side, reaching up and over without twisting.\n"
+"- Hold, then switch sides."
+msgstr ""
+"- Seisa jalad puusade laiuselt.\n"
+"- Tõsta üks käsi pea kohale.\n"
+"- Kallu vastasküljele, sirutudes üles ja üle ilma keeramata.\n"
+"- Hoia, seejärel vaheta pooli."
+
+#: apps/stretching/i18n_content.py:187
+msgid ""
+"- Start on hands and knees.\n"
+"- Slide one arm under your body towards the opposite side, palm up.\n"
+"- Lower that shoulder and the side of your head towards the floor.\n"
+"- Hold, then switch sides."
+msgstr ""
+"- Alusta neljakäpukil.\n"
+"- Libista üks käsi keha alt vastaspoolele, peopesa üles.\n"
+"- Langeta see õlg ja pea külg põranda poole.\n"
+"- Hoia, seejärel vaheta pooli."
+
+#: apps/stretching/i18n_content.py:193
+msgid ""
+"- Lie face down with your hands under your shoulders.\n"
+"- Press up slowly, lifting your chest while the hips stay on the floor.\n"
+"- Keep your shoulders away from your ears.\n"
+"- Only go as high as your lower back is comfortable."
+msgstr ""
+"- Lama kõhuli, käed õlgade all.\n"
+"- Suru end aeglaselt üles, tõstes rinda, samal ajal kui puusad jäävad põrandale.\n"
+"- Hoia õlad kõrvadest eemal.\n"
+"- Tõuse ainult nii kõrgele, kui alaseljale mugav on."
+
+#: apps/stretching/i18n_content.py:199
+msgid ""
+"- Lie on your back with your arms out to the sides.\n"
+"- Bend one knee and let it fall across your body to the opposite side.\n"
+"- Keep both shoulders on the floor and turn your head the other way.\n"
+"- Hold, then switch sides."
+msgstr ""
+"- Lama selili, käed külgedele sirutatud.\n"
+"- Painuta üks põlv ja lase sel langeda üle keha vastaspoolele.\n"
+"- Hoia mõlemad õlad põrandal ja pööra pea teisele poole.\n"
+"- Hoia, seejärel vaheta pooli."
+
+#: apps/stretching/i18n_content.py:205
+msgid ""
+"- Clasp your hands in front of you at shoulder height.\n"
+"- Round your upper back and push your hands away.\n"
+"- Let your head drop gently between your arms.\n"
+"- Feel the stretch between your shoulder blades."
+msgstr ""
+"- Põimi käed enda ees õlgade kõrgusel kokku.\n"
+"- Ümarda ülaselg ja lükka käed eemale.\n"
+"- Lase peal õrnalt käte vahele vajuda.\n"
+"- Tunneta venitust abaluude vahel."
+
+#: apps/stretching/i18n_content.py:211
+msgid ""
+"- Sit or stand tall with your shoulders relaxed.\n"
+"- Tilt your ear towards one shoulder.\n"
+"- Optionally rest the hand on that side gently on your head, without pulling.\n"
+"- Hold, then switch sides."
+msgstr ""
+"- Istu või seisa sirgelt, õlad lõdvad.\n"
+"- Kalluta kõrva ühe õla poole.\n"
+"- Soovi korral aseta sama poole käsi õrnalt pähe, ilma tõmbamata.\n"
+"- Hoia, seejärel vaheta pooli."
+
+#: apps/stretching/i18n_content.py:217
+msgid ""
+"- Extend one arm straight in front of you, palm up.\n"
+"- Use the other hand to gently pull the fingers down and back.\n"
+"- Keep the elbow straight.\n"
+"- Hold, then switch sides."
+msgstr ""
+"- Siruta üks käsi sirgelt ette, peopesa üles.\n"
+"- Tõmba teise käega sõrmi õrnalt alla ja taha.\n"
+"- Hoia küünarnukk sirge.\n"
+"- Hoia, seejärel vaheta pooli."
+
+#: apps/stretching/i18n_content.py:223
+msgid ""
+"- Extend one arm straight in front of you, palm down.\n"
+"- Use the other hand to gently bend the wrist down towards you.\n"
+"- Keep the elbow straight.\n"
+"- Hold, then switch sides."
+msgstr ""
+"- Siruta üks käsi sirgelt ette, peopesa alla.\n"
+"- Painuta teise käega randet õrnalt alla enda poole.\n"
+"- Hoia küünarnukk sirge.\n"
+"- Hoia, seejärel vaheta pooli."
+
+#: apps/stretching/i18n_content.py:229
+msgid ""
+"- Start on hands and knees.\n"
+"- Inhale as you drop your belly and lift your chest and tailbone.\n"
+"- Exhale as you round your back and tuck your chin.\n"
+"- Move slowly with your breath."
+msgstr ""
+"- Alusta neljakäpukil.\n"
+"- Hinga sisse, langeta kõht ning tõsta rind ja sabakont.\n"
+"- Hinga välja, ümarda selg ja too lõug rinnale.\n"
+"- Liigu aeglaselt koos hingamisega."
+
+#: apps/stretching/i18n_content.py:235
+msgid ""
+"- Stand tall with your arms out to the sides.\n"
+"- Draw small circles, gradually making them bigger.\n"
+"- Switch direction halfway through.\n"
+"- Keep the movement smooth and controlled."
+msgstr ""
+"- Seisa sirgelt, käed külgedele sirutatud.\n"
+"- Tee väikesi ringe ja suurenda neid järk-järgult.\n"
+"- Vaheta poole peal suunda.\n"
+"- Hoia liigutus sujuv ja kontrollitud."
+
+#: apps/stretching/i18n_content.py:241
+msgid ""
+"- Stand with your hands on your hips and feet hip-width apart.\n"
+"- Draw big, slow circles with your hips.\n"
+"- Switch direction halfway through.\n"
+"- Keep your upper body still."
+msgstr ""
+"- Seisa, käed puusadel ja jalad puusade laiuselt.\n"
+"- Tee puusadega suuri aeglasi ringe.\n"
+"- Vaheta poole peal suunda.\n"
+"- Hoia ülakeha paigal."
+
+#: apps/stretching/i18n_content.py:247
+msgid ""
+"- Stand with your feet shoulder-width apart and arms relaxed.\n"
+"- Rotate your upper body from side to side, letting the arms swing.\n"
+"- Keep your hips facing forward.\n"
+"- Gradually increase the range of motion."
+msgstr ""
+"- Seisa jalad õlgade laiuselt ja käed lõdvalt.\n"
+"- Pööra ülakeha küljelt küljele, lastes kätel kaasa kõikuda.\n"
+"- Hoia puusad ettepoole suunatud.\n"
+"- Suurenda liikumisulatust järk-järgult."
+
+#: apps/stretching/i18n_content.py:253
+msgid ""
+"- Stand side-on to a wall and hold it for balance.\n"
+"- Swing the outside leg forward and back in a controlled arc.\n"
+"- Let the range grow gradually with each swing.\n"
+"- Then switch sides."
+msgstr ""
+"- Seisa küljega seina poole ja hoia tasakaalu saamiseks sellest kinni.\n"
+"- Hoogsuta välimist jalga kontrollitud kaarega ette ja taha.\n"
+"- Lase ulatusel iga hooga järk-järgult kasvada.\n"
+"- Seejärel vaheta pooli."
+
+#: apps/stretching/i18n_content.py:259
+msgid ""
+"- Step into a long lunge and place both hands on the floor inside the front foot.\n"
+"- Drop the inside elbow towards the front ankle.\n"
+"- Rotate and reach that same arm up towards the ceiling.\n"
+"- Return and repeat slowly, then switch sides."
+msgstr ""
+"- Astu pikka väljaastesse ja aseta mõlemad käed põrandale eesmise jala sisse.\n"
+"- Langeta sisemine küünarnukk eesmise pahkluu poole.\n"
+"- Pööra ja siruta sama käsi lae poole.\n"
+"- Naase ja korda aeglaselt, seejärel vaheta pooli."
+
+#: apps/stretching/models.py:16
+msgid "Static"
+msgstr "Staatiline"
+
+#: apps/stretching/models.py:17
+msgid "Dynamic"
+msgstr "Dünaamiline"
+
+#: apps/stretching/models.py:46
+msgid "type"
+msgstr "tüüp"
+
+#: apps/stretching/models.py:53
+msgid "muscle groups"
+msgstr "lihasrühmad"
+
+#: apps/stretching/models.py:58
+msgid "default hold (seconds)"
+msgstr "vaikimisi hoidmine (sekundit)"
+
+#: apps/stretching/models.py:62
+msgid "one side at a time"
+msgstr "üks pool korraga"
+
+#: apps/stretching/models.py:63
+msgid "Held once for the left side and once for the right."
+msgstr "Hoitakse üks kord vasakule ja üks kord paremale poolele."
+
+#: apps/stretching/models.py:68
+msgid "stretches"
+msgstr "venitused"
+
+#: apps/stretching/models.py:138
+msgid "hold (seconds)"
+msgstr "hoidmine (sekundit)"
+
+#: apps/stretching/models.py:143
+msgid "sets"
+msgstr "seeriad"
+
+#: apps/stretching/models.py:148
+msgid "rest between holds (seconds)"
+msgstr "puhkus hoidmiste vahel (sekundit)"
+
+#: apps/stretching/models.py:159 apps/workouts/models.py:13
+msgid "In progress"
+msgstr "Pooleli"
+
+#: apps/stretching/models.py:160 apps/workouts/models.py:14
+msgid "Completed"
+msgstr "Lõpetatud"
+
+#: apps/stretching/models.py:161 apps/workouts/models.py:15
+msgid "Abandoned"
+msgstr "Katkestatud"
+
+#: apps/stretching/models.py:195
+msgid "duration"
+msgstr "kestus"
+
+#: apps/stretching/models.py:214
+#: templates/accounts/_two_factor_backup_codes_fragment.html:11
+#: templates/api/key_created.html:16
+#: templates/stretching/session_detail.html:40
+#: templates/stretching/session_play.html:77
+#: templates/stretching/session_play.html:85
+msgid "Done"
+msgstr "Valmis"
+
+#: apps/stretching/models.py:215 templates/stretching/session_detail.html:41
+#: templates/stretching/session_play.html:78
+msgid "Skipped"
+msgstr "Vahele jäetud"
+
+#: apps/stretching/services.py:141
+#, python-format
+msgid "%(name)s (copy)"
+msgstr "%(name)s (koopia)"
+
+#: apps/stretching/views.py:92
+msgid "Routine created. Now add some stretches."
+msgstr "Rutiin loodud. Lisa nüüd venitusi."
+
+#: apps/stretching/views.py:128
+msgid "Routine saved."
+msgstr "Rutiin salvestatud."
+
+#: apps/stretching/views.py:140
+msgid "Routine removed."
+msgstr "Rutiin eemaldatud."
+
+#: apps/stretching/views.py:149
+msgid "Copied — this one is yours to edit."
+msgstr "Kopeeritud — seda saad vabalt muuta."
+
+#: apps/stretching/views.py:166
+msgid "Stretch added."
+msgstr "Venitus lisatud."
+
+#: apps/stretching/views.py:179 apps/stretching/views.py:261
+msgid "Stretch saved."
+msgstr "Venitus salvestatud."
+
+#: apps/stretching/views.py:194
+msgid "Stretch removed."
+msgstr "Venitus eemaldatud."
+
+#: apps/stretching/views.py:250
+msgid "Stretch created."
+msgstr "Venitus loodud."
+
+#: apps/stretching/views.py:273
+msgid "Stretch removed from your library."
+msgstr "Venitus eemaldati sinu kogust."
+
+#: apps/stretching/views.py:288
+msgid "You already have a stretching session in progress."
+msgstr "Sul on juba venitussessioon pooleli."
+
+#: apps/stretching/views.py:299
+msgid "This routine has no stretches yet."
+msgstr "Selles rutiinis pole veel venitusi."
+
+#: apps/stretching/views.py:319
+msgid "No cool-down stretches match this workout."
+msgstr "Sellele treeningule ei sobi ükski lõdvestusvenitus."
+
+#: apps/stretching/views.py:326 templates/stretching/_cooldown_card.html:5
+msgid "Cool-down"
+msgstr "Lõdvestus"
+
+#: apps/stretching/views.py:384
+msgid "Nicely done — stretching session saved."
+msgstr "Tubli — venitussessioon salvestatud."
+
+#: apps/stretching/views.py:394
+msgid "Session abandoned."
+msgstr "Sessioon katkestatud."
+
+#: apps/stretching/views.py:430
+msgid "Stretching logged."
+msgstr "Venitamine kirja pandud."
+
+#: apps/stretching/views.py:441
+msgid "Session updated."
+msgstr "Sessioon uuendatud."
+
+#: apps/stretching/views.py:454
+msgid "Session deleted."
+msgstr "Sessioon kustutatud."
+
 #: apps/workouts/forms.py:40
 msgid "reps"
 msgstr "kordused"
@@ -3686,21 +4316,9 @@ msgstr "Soojendus"
 msgid "Weight (%(unit)s)"
 msgstr "Kaal (%(unit)s)"
 
-#: apps/workouts/models.py:12
+#: apps/workouts/models.py:12 templates/stretching/session_detail.html:32
 msgid "Planned"
 msgstr "Planeeritud"
-
-#: apps/workouts/models.py:13
-msgid "In progress"
-msgstr "Pooleli"
-
-#: apps/workouts/models.py:14
-msgid "Completed"
-msgstr "Lõpetatud"
-
-#: apps/workouts/models.py:15
-msgid "Abandoned"
-msgstr "Katkestatud"
 
 #: apps/workouts/views.py:168 apps/workouts/views.py:365
 msgid "This session is no longer in progress."
@@ -3770,8 +4388,8 @@ msgstr "Mitte praegu"
 
 #: templates/accounts/_onboarding_modal.html:12
 msgid ""
-"A few quick details help IronStack work better for you — every field below "
-"is optional, and you can always change them later from your profile."
+"A few quick details help IronStack work better for you — every field below is"
+" optional, and you can always change them later from your profile."
 msgstr ""
 "Mõned kiired andmed aitavad IronStackil sinu jaoks paremini toimida — iga "
 "allolev väli on valikuline ja saad neid hiljem alati oma profiilis muuta."
@@ -3792,6 +4410,10 @@ msgstr ""
 #: templates/programs/prescription_form.html:15
 #: templates/programs/program_form.html:18
 #: templates/programs/workout_form.html:15 templates/social/group_form.html:15
+#: templates/stretching/routine_form.html:15
+#: templates/stretching/routine_item_form.html:15
+#: templates/stretching/session_form.html:15
+#: templates/stretching/stretch_form.html:15
 #: templates/workouts/set_edit_form.html:15
 msgid "Save"
 msgstr "Salvesta"
@@ -3832,17 +4454,17 @@ msgstr "Mida kogutakse"
 #: templates/accounts/_privacy_notice_modal.html:33
 msgid ""
 "Your account details (username, and optionally your name and email address), "
-"and whatever you choose to log: workout history, body measurements, "
-"nutrition and diet data, and other activities. Technical data such as your "
-"IP address is used briefly for rate-limiting and security (e.g. blocking "
-"repeated failed login attempts), not stored as part of your account."
+"and whatever you choose to log: workout history, body measurements, nutrition"
+" and diet data, and other activities. Technical data such as your IP address "
+"is used briefly for rate-limiting and security (e.g. blocking repeated failed"
+" login attempts), not stored as part of your account."
 msgstr ""
-"Sinu konto andmed (kasutajanimi ja soovi korral sinu nimi ja e-posti "
-"aadress) ning kõik, mida otsustad logida: treeningajalugu, kehamõõdud, "
-"toitumis- ja dieediandmed ning muud tegevused. Tehnilisi andmeid, näiteks "
-"sinu IP-aadressi, kasutatakse lühiajaliselt kiiruse piiramiseks ja "
-"turvalisuseks (nt korduvate ebaõnnestunud sisselogimiskatsete "
-"blokeerimiseks) ning neid ei salvestata sinu konto osana."
+"Sinu konto andmed (kasutajanimi ja soovi korral sinu nimi ja e-posti aadress)"
+" ning kõik, mida otsustad logida: treeningajalugu, kehamõõdud, toitumis- ja "
+"dieediandmed ning muud tegevused. Tehnilisi andmeid, näiteks sinu IP-"
+"aadressi, kasutatakse lühiajaliselt kiiruse piiramiseks ja turvalisuseks (nt "
+"korduvate ebaõnnestunud sisselogimiskatsete blokeerimiseks) ning neid ei "
+"salvestata sinu konto osana."
 
 #: templates/accounts/_privacy_notice_modal.html:34
 msgid "Why"
@@ -3850,10 +4472,10 @@ msgstr "Miks"
 
 #: templates/accounts/_privacy_notice_modal.html:35
 msgid ""
-"Solely to provide the tracking features you're using — nothing here is "
-"shared with, sold to, or processed by any third party, except the few "
-"optional integrations you have to explicitly turn on yourself (e.g. an "
-"OpenFoodFacts lookup, a Gravatar picture, Authentik single sign-on)."
+"Solely to provide the tracking features you're using — nothing here is shared"
+" with, sold to, or processed by any third party, except the few optional "
+"integrations you have to explicitly turn on yourself (e.g. an OpenFoodFacts "
+"lookup, a Gravatar picture, Authentik single sign-on)."
 msgstr ""
 "Ainult selleks, et pakkuda jälgimisfunktsioone, mida kasutad — mitte midagi "
 "sellest ei jagata, müüda ega töödelda ühegi kolmanda osapoole poolt, välja "
@@ -3886,8 +4508,8 @@ msgid ""
 "Portability — the public API (Profile → \"API keys\") can export your own "
 "data in a structured format."
 msgstr ""
-"Ülekantavus — avalik API (Profiil → \"API võtmed\") saab eksportida sinu "
-"enda andmed struktureeritud kujul."
+"Ülekantavus — avalik API (Profiil → \"API võtmed\") saab eksportida sinu enda"
+" andmed struktureeritud kujul."
 
 #: templates/accounts/_privacy_notice_modal.html:42
 msgid "Retention"
@@ -3906,17 +4528,12 @@ msgstr ""
 #: templates/accounts/_two_factor_backup_codes_fragment.html:4
 msgid ""
 "Each one works once, if you ever lose access to your authenticator app. They "
-"won't be shown again — save them somewhere safe now. Your old backup codes "
-"no longer work."
+"won't be shown again — save them somewhere safe now. Your old backup codes no"
+" longer work."
 msgstr ""
 "Iga kood töötab üks kord, kui kaotad juurdepääsu oma autentimisrakendusele. "
-"Neid enam uuesti ei näidata — salvesta need nüüd turvalisse kohta. Sinu "
-"vanad varukoodid enam ei kehti."
-
-#: templates/accounts/_two_factor_backup_codes_fragment.html:11
-#: templates/api/key_created.html:16
-msgid "Done"
-msgstr "Valmis"
+"Neid enam uuesti ei näidata — salvesta need nüüd turvalisse kohta. Sinu vanad"
+" varukoodid enam ei kehti."
 
 #: templates/accounts/account_delete.html:3
 #: templates/accounts/account_delete.html:6 templates/accounts/profile.html:215
@@ -3927,13 +4544,12 @@ msgstr "Kustuta konto"
 msgid ""
 "This permanently deletes your account and everything tied to it: your "
 "profile, workout history, personal records, body measurements, nutrition "
-"diary and targets, diet plans, activities, feedback, and API keys. This "
-"can't be undone."
+"diary and targets, diet plans, activities, feedback, and API keys. This can't"
+" be undone."
 msgstr ""
 "See kustutab jäädavalt sinu konto ja kõik sellega seotu: profiili, "
-"treeningajaloo, isiklikud rekordid, kehamõõdud, toitumispäeviku ja "
-"eesmärgid, dieedikavad, tegevused, tagasiside ja API-võtmed. Seda ei saa "
-"tagasi võtta."
+"treeningajaloo, isiklikud rekordid, kehamõõdud, toitumispäeviku ja eesmärgid,"
+" dieedikavad, tegevused, tagasiside ja API-võtmed. Seda ei saa tagasi võtta."
 
 #: templates/accounts/account_delete.html:11
 msgid ""
@@ -3941,9 +4557,10 @@ msgid ""
 "created is kept, not deleted, if anyone else on this instance is already "
 "using it — it's just no longer credited to your account."
 msgstr ""
-"Sinu loodud kohandatud harjutus, toit, retsept, programm või mõõtmis-/"
-"tegevustüüp säilitatakse, mitte ei kustutata, kui keegi teine sellel "
-"paigaldusel seda juba kasutab — see lihtsalt ei ole enam sinu kontoga seotud."
+"Sinu loodud kohandatud harjutus, toit, retsept, programm või "
+"mõõtmis-/tegevustüüp säilitatakse, mitte ei kustutata, kui keegi teine sellel"
+" paigaldusel seda juba kasutab — see lihtsalt ei ole enam sinu kontoga "
+"seotud."
 
 #: templates/accounts/account_delete.html:12
 msgid ""
@@ -3982,7 +4599,7 @@ msgstr "Konto andmed"
 
 #: templates/accounts/account_details_form.html:18
 #: templates/accounts/data_export.html:42
-#: templates/accounts/two_factor_manage.html:34 templates/api/key_list.html:155
+#: templates/accounts/two_factor_manage.html:34 templates/api/key_list.html:159
 #: templates/coaching/client_list.html:49 templates/coaching/my_coaches.html:37
 #: templates/core/backup_list.html:74 templates/core/feedback_form.html:20
 #: templates/core/feedback_list.html:50 templates/core/seo_settings.html:18
@@ -4004,8 +4621,8 @@ msgid ""
 msgstr ""
 "Kõik allolev kuulub ainult sinule — samu andmeid, mis siin tabelitena "
 "näidatakse, saab alla laadida ühe JSON-failina, .zip-arhiivina "
-"tabelarvutusprogrammiks valmis CSV-failidest (üks fail sektsiooni kohta), "
-"või selle sama lehena ühe HTML-failina."
+"tabelarvutusprogrammiks valmis CSV-failidest (üks fail sektsiooni kohta), või"
+" selle sama lehena ühe HTML-failina."
 
 #: templates/accounts/data_export.html:12
 msgid "Download as JSON"
@@ -4322,6 +4939,8 @@ msgstr "Tagasi: %(name)s"
 #: templates/activities/activity_history.html:12
 #: templates/exercises/exercise_detail.html:18
 #: templates/measurements/measurement_history.html:12
+#: templates/stretching/routine_detail.html:22
+#: templates/stretching/stretch_detail.html:18
 msgid "Inactive"
 msgstr "Mitteaktiivne"
 
@@ -4346,10 +4965,12 @@ msgstr "Kestuse trend"
 
 #: templates/activities/activity_history.html:28
 #: templates/activities/activity_history.html:45
+#: templates/stretching/session_detail.html:20
 msgid "Duration"
 msgstr "Kestus"
 
 #: templates/activities/activity_history.html:29
+#: templates/stretching/home.html:38
 msgid "min"
 msgstr "min"
 
@@ -4359,6 +4980,7 @@ msgstr "Logi tegevus"
 
 #: templates/activities/activity_history.html:45
 #: templates/measurements/measurement_history.html:54
+#: templates/stretching/session_detail.html:19
 msgid "Date"
 msgstr "Kuupäev"
 
@@ -4369,13 +4991,17 @@ msgstr "Vahemaa"
 #: templates/activities/activity_history.html:54
 #: templates/exercises/exercise_detail.html:12
 #: templates/measurements/measurement_history.html:62
-#: templates/nutrition/diary_day.html:65
+#: templates/nutrition/diary_day.html:70
 #: templates/nutrition/recipe_detail.html:13
 #: templates/nutrition/recipe_detail.html:40
 #: templates/programs/program_detail.html:12
 #: templates/programs/program_detail.html:49
 #: templates/programs/program_detail.html:66
 #: templates/social/group_detail.html:10
+#: templates/stretching/routine_detail.html:12
+#: templates/stretching/routine_detail.html:54
+#: templates/stretching/session_detail.html:12
+#: templates/stretching/stretch_detail.html:12
 #: templates/workouts/_performed_exercise_card.html:24
 msgid "Edit"
 msgstr "Muuda"
@@ -4415,12 +5041,17 @@ msgstr "Uus tegevuse tüüp"
 #: templates/api/key_list.html:10 templates/exercises/exercise_list.html:9
 #: templates/measurements/measurement_type_list.html:9
 #: templates/programs/program_list.html:9
+#: templates/stretching/routine_list.html:9
+#: templates/stretching/stretch_list.html:9
 msgid "New"
 msgstr "Uus"
 
 #: templates/activities/activity_type_list.html:15
 #: templates/exercises/_exercise_list_results.html:6
 #: templates/measurements/measurement_type_list.html:22
+#: templates/stretching/_routine_card.html:4
+#: templates/stretching/stretch_detail.html:17
+#: templates/stretching/stretch_list.html:32
 msgid "Custom"
 msgstr "Kohandatud"
 
@@ -4452,8 +5083,8 @@ msgstr "Django haldus"
 msgid ""
 "Pick which of these %(counter)s foods to keep. Every diary entry, recipe "
 "ingredient, and diet-plan item currently pointing at one of the others will "
-"be repointed at the one you keep — nothing a user has logged is deleted, "
-"only which food row it refers to changes. The other foods are then removed."
+"be repointed at the one you keep — nothing a user has logged is deleted, only"
+" which food row it refers to changes. The other foods are then removed."
 msgstr ""
 "Vali, milline neist %(counter)s toidust säilitada. Iga päeviku kirje, "
 "retsepti koostisosa ja toitumisplaani üksus, mis praegu viitab mõnele "
@@ -4659,8 +5290,8 @@ msgid ""
 "Choose exactly what this key is allowed to do, per resource — leave "
 "everything unchecked for a context to block it entirely."
 msgstr ""
-"Vali täpselt, mida see võti tohib igas kontekstis teha — jäta kõik "
-"märkimata, et kontekst täielikult blokeerida."
+"Vali täpselt, mida see võti tohib igas kontekstis teha — jäta kõik märkimata,"
+" et kontekst täielikult blokeerida."
 
 #: templates/api/key_form.html:19
 msgid "Context"
@@ -4708,15 +5339,15 @@ msgstr "Õigused"
 
 #: templates/api/key_list.html:32
 msgid ""
-"Each key is granted Create/Read/Update/Delete separately per area "
-"(exercises, programs, workouts, measurements, activities, nutrition, "
+"Each key is granted Create/Read/Update/Delete separately per area (exercises,"
+" programs, workouts, measurements, activities, nutrition, stretching, "
 "records, analytics, profile) — set this when you create the key, above. A "
 "request outside what the key is granted gets a 403."
 msgstr ""
 "Igale võtmele antakse Loo/Loe/Uuenda/Kustuta õigused eraldi iga valdkonna "
 "kohta (harjutused, programmid, trennid, mõõtmised, tegevused, toitumine, "
-"rekordid, analüütika, profiil) — määra need võtme loomisel ülal. Päring, mis "
-"ületab võtmele antud õigusi, saab vastuseks 403."
+"venitamine, rekordid, analüütika, profiil) — määra need võtme loomisel ülal. "
+"Päring, mis ületab võtmele antud õigusi, saab vastuseks 403."
 
 #: templates/api/key_list.html:35
 msgid ""
@@ -4773,7 +5404,7 @@ msgid "GET/PATCH, no id"
 msgstr "GET/PATCH, id-d pole"
 
 #: templates/api/key_list.html:90 templates/api/key_list.html:110
-#: templates/api/key_list.html:114
+#: templates/api/key_list.html:118
 msgid "read-only"
 msgstr "ainult lugemiseks"
 
@@ -4785,40 +5416,40 @@ msgstr "ainult loomine + lugemine"
 msgid "all POST"
 msgstr "kõik POST"
 
-#: templates/api/key_list.html:118
+#: templates/api/key_list.html:122
 msgid "both read-only"
 msgstr "mõlemad ainult lugemiseks"
 
-#: templates/api/key_list.html:129
+#: templates/api/key_list.html:133
 #, python-format
 msgid "You can create %(counter)s more key."
 msgid_plural "You can create %(counter)s more keys."
 msgstr[0] "Saad luua veel %(counter)s võtme."
 msgstr[1] "Saad luua veel %(counter)s võtit."
 
-#: templates/api/key_list.html:137
+#: templates/api/key_list.html:141
 #, python-format
 msgid "Tier: %(tier)s"
 msgstr "Tase: %(tier)s"
 
-#: templates/api/key_list.html:139
+#: templates/api/key_list.html:143
 #, python-format
 msgid "last used %(time)s ago"
 msgstr "viimati kasutatud %(time)s tagasi"
 
-#: templates/api/key_list.html:141
+#: templates/api/key_list.html:145
 msgid "never used"
 msgstr "pole kunagi kasutatud"
 
-#: templates/api/key_list.html:144
+#: templates/api/key_list.html:148
 msgid "Revoke this API key? Anything using it will stop working immediately."
 msgstr "Tühistada see API-võti? Kõik, mis seda kasutab, lakkab kohe töötamast."
 
-#: templates/api/key_list.html:146
+#: templates/api/key_list.html:150
 msgid "Revoke"
 msgstr "Tühista"
 
-#: templates/api/key_list.html:151
+#: templates/api/key_list.html:155
 msgid "No API keys yet."
 msgstr "Veel pole API-võtmeid."
 
@@ -4867,19 +5498,19 @@ msgstr "Peamenüü"
 msgid "Home"
 msgstr "Avaleht"
 
-#: templates/base.html:182 templates/base.html:184
+#: templates/base.html:188 templates/base.html:190
 msgid "Workout"
 msgstr "Trenn"
 
-#: templates/base.html:190
+#: templates/base.html:196
 msgid "Profile — new friend/group activity"
 msgstr "Profiil — uus sõbra-/grupitegevus"
 
-#: templates/base.html:229
+#: templates/base.html:235
 msgid "Continue training"
 msgstr "Jätka trenni"
 
-#: templates/base.html:235
+#: templates/base.html:241
 msgid "Unread messages"
 msgstr "Lugemata sõnumid"
 
@@ -5310,8 +5941,8 @@ msgstr ""
 
 #: templates/core/backup_restore_confirm.html:14
 msgid ""
-"If in doubt, create a fresh backup of the current state first, then come "
-"back here."
+"If in doubt, create a fresh backup of the current state first, then come back"
+" here."
 msgstr ""
 "Kui oled ebakindel, loo kõigepealt värske varukoopia praegusest olekust ja "
 "tule seejärel tagasi."
@@ -5386,7 +6017,7 @@ msgstr "Jätka trenni"
 msgid "Freeform workout"
 msgstr "Vabavormis trenn"
 
-#: templates/core/dashboard.html:25
+#: templates/core/dashboard.html:25 templates/stretching/home.html:16
 #, python-format
 msgid "started %(started_at)s"
 msgstr "alustatud %(started_at)s"
@@ -5421,8 +6052,8 @@ msgstr "Kas on aeg kehamõõdud sisestada?"
 
 #: templates/core/dashboard.html:62
 msgid ""
-"It's been a while since you tracked your weight or measurements — tap here "
-"to add a new reading."
+"It's been a while since you tracked your weight or measurements — tap here to"
+" add a new reading."
 msgstr ""
 "Sellest, kui sa oma kaalu või mõõtu viimati sisestasid, on juba veidi aega "
 "möödas — puuduta siin, et lisada uus näit."
@@ -5471,6 +6102,10 @@ msgstr "Logi kehakaal, mõõdud ja trendid."
 #: templates/core/dashboard.html:138
 msgid "Log a run, ride, or any other non-gym activity."
 msgstr "Logi jooks, rattasõit või mis tahes muu tegevus väljaspool jõusaali."
+
+#: templates/core/dashboard.html:144
+msgid "Follow a guided stretching routine or log one."
+msgstr "Tee juhendatud venitusrutiin või pane venitamine kirja."
 
 #: templates/core/feedback_form.html:9
 msgid ""
@@ -5541,6 +6176,7 @@ msgstr "Kas eemaldada see pilt?"
 #: templates/nutrition/recipe_detail.html:44
 #: templates/social/friend_list.html:62 templates/social/group_detail.html:93
 #: templates/social/group_detail.html:105
+#: templates/stretching/routine_detail.html:57
 msgid "Remove"
 msgstr "Eemalda"
 
@@ -5612,10 +6248,12 @@ msgid "Search exercises"
 msgstr "Otsi harjutusi"
 
 #: templates/exercises/exercise_list.html:14
+#: templates/stretching/stretch_list.html:14
 msgid "Filter by muscle group"
 msgstr "Filtreeri lihasgrupi järgi"
 
 #: templates/exercises/exercise_list.html:15
+#: templates/stretching/stretch_list.html:15
 msgid "All muscle groups"
 msgstr "Kõik lihasgrupid"
 
@@ -5854,6 +6492,7 @@ msgstr "Kogus"
 
 #: templates/nutrition/_food_search_results.html:39
 #: templates/nutrition/_most_used_foods.html:47
+#: templates/stretching/routine_detail.html:75
 #: templates/workouts/performed_exercise_form.html:15
 msgid "Add"
 msgstr "Lisa"
@@ -5930,23 +6569,27 @@ msgstr "7 päeva libisev kaloraaži keskmine ületas sinu eesmärgi"
 msgid "Trailing 7-day average calories ran under your target"
 msgstr "7 päeva libisev kaloraaži keskmine jäi alla sinu eesmärgi"
 
-#: templates/nutrition/_month_calendar.html:128
+#: templates/nutrition/_month_calendar.html:129
+msgid "Stretched that day (corner dot)"
+msgstr "Sel päeval venitati (nurgatäpp)"
+
+#: templates/nutrition/_month_calendar.html:134
 msgid "Close to target"
 msgstr "Eesmärgile lähedal"
 
-#: templates/nutrition/_month_calendar.html:132
+#: templates/nutrition/_month_calendar.html:138
 msgid "Drifting from target"
 msgstr "Eesmärgist eemaldumas"
 
-#: templates/nutrition/_month_calendar.html:136
+#: templates/nutrition/_month_calendar.html:142
 msgid "Well off target"
 msgstr "Eesmärgist kaugel"
 
-#: templates/nutrition/_month_calendar.html:139
+#: templates/nutrition/_month_calendar.html:145
 msgid "No arrow yet means there isn't enough logged data to judge."
 msgstr "Kui noolt pole, pole veel piisavalt andmeid hindamiseks."
 
-#: templates/nutrition/_month_calendar.html:140
+#: templates/nutrition/_month_calendar.html:146
 msgid "Tap a day for details."
 msgstr "Puuduta päeva, et näha üksikasju."
 
@@ -5965,20 +6608,27 @@ msgstr "NOVA — toidu töötlemisaste, 1 (töötlemata) kuni 4 (ülitöödeldud
 
 #: templates/nutrition/_off_attribution.html:4
 msgid ""
-"Food data and product photos come from <a href=\"https://"
-"world.openfoodfacts.org\" target=\"_blank\" rel=\"noopener noreferrer\">Open "
-"Food Facts</a>, a collaborative database, under the <a href=\"https://"
-"opendatacommons.org/licenses/odbl/1-0/\" target=\"_blank\" rel=\"noopener "
-"noreferrer\">Open Database License</a>; photos are <a href=\"https://"
-"creativecommons.org/licenses/by-sa/3.0/\" target=\"_blank\" rel=\"noopener "
-"noreferrer\">CC BY-SA</a>."
-msgstr "Toidu andmed ja tootefotod pärinevad koostööl põhinevast andmebaasist <a href=\"https://world.openfoodfacts.org\" target=\"_blank\" rel=\"noopener noreferrer\">Open Food Facts</a> (<a href=\"https://opendatacommons.org/licenses/odbl/1-0/\" target=\"_blank\" rel=\"noopener noreferrer\">Open Database License</a>); fotod on <a href=\"https://creativecommons.org/licenses/by-sa/3.0/\" target=\"_blank\" rel=\"noopener noreferrer\">CC BY-SA</a>."
+"Food data and product photos come from <a "
+"href=\"https://world.openfoodfacts.org\" target=\"_blank\" rel=\"noopener "
+"noreferrer\">Open Food Facts</a>, a collaborative database, under the <a "
+"href=\"https://opendatacommons.org/licenses/odbl/1-0/\" target=\"_blank\" "
+"rel=\"noopener noreferrer\">Open Database License</a>; photos are <a "
+"href=\"https://creativecommons.org/licenses/by-sa/3.0/\" target=\"_blank\" "
+"rel=\"noopener noreferrer\">CC BY-SA</a>."
+msgstr ""
+"Toidu andmed ja tootefotod pärinevad koostööl põhinevast andmebaasist <a "
+"href=\"https://world.openfoodfacts.org\" target=\"_blank\" rel=\"noopener "
+"noreferrer\">Open Food Facts</a> (<a "
+"href=\"https://opendatacommons.org/licenses/odbl/1-0/\" target=\"_blank\" "
+"rel=\"noopener noreferrer\">Open Database License</a>); fotod on <a "
+"href=\"https://creativecommons.org/licenses/by-sa/3.0/\" target=\"_blank\" "
+"rel=\"noopener noreferrer\">CC BY-SA</a>."
 
 #: templates/nutrition/_subnav.html:43
 msgid "Nutrition sections"
 msgstr "Toitumise jaotised"
 
-#: templates/nutrition/_subnav.html:45
+#: templates/nutrition/_subnav.html:45 templates/stretching/_subnav.html:10
 msgid "Overview"
 msgstr "Ülevaade"
 
@@ -6072,8 +6722,8 @@ msgid ""
 "BMR is roughly what you'd burn lying still all day; TDEE adds your activity "
 "on top. Both are estimates (Mifflin-St Jeor)."
 msgstr ""
-"BMR on umbes see, mida kulutaksid terve päeva liikumatult lamades; TDEE "
-"lisab sellele su aktiivsuse. Mõlemad on hinnangud (Mifflin-St Jeor)."
+"BMR on umbes see, mida kulutaksid terve päeva liikumatult lamades; TDEE lisab"
+" sellele su aktiivsuse. Mõlemad on hinnangud (Mifflin-St Jeor)."
 
 #: templates/nutrition/calculator_bmr_tdee.html:24
 msgid "BMR (at rest)"
@@ -6115,8 +6765,8 @@ msgstr "Makrotoitainete kalkulaator"
 
 #: templates/nutrition/calculator_macros.html:9
 msgid ""
-"Splits a calorie target into protein, carbohydrates, and fat using this "
-"app's own default ratios for the goal you pick."
+"Splits a calorie target into protein, carbohydrates, and fat using this app's"
+" own default ratios for the goal you pick."
 msgstr ""
 "Jaotab kaloreesmärgi valguks, süsivesikuteks ja rasvaks, kasutades rakenduse "
 "enda vaikeproportsioone valitud eesmärgi jaoks."
@@ -6140,8 +6790,8 @@ msgid ""
 "At a chosen weekly rate, roughly how long to reach a target weight — a plain "
 "projection from the numbers you enter, not a promise."
 msgstr ""
-"Valitud nädalase tempoga umbes kui kaua kulub sihtkaaluni jõudmiseks — "
-"lihtne prognoos sisestatud numbrite põhjal, mitte lubadus."
+"Valitud nädalase tempoga umbes kui kaua kulub sihtkaaluni jõudmiseks — lihtne"
+" prognoos sisestatud numbrite põhjal, mitte lubadus."
 
 #: templates/nutrition/calculator_time_to_goal.html:24
 #, python-format
@@ -6155,8 +6805,8 @@ msgstr "Ligikaudu %(date)s selle tempoga."
 
 #: templates/nutrition/calculator_time_to_goal.html:30
 msgid ""
-"That rate doesn't move toward your target — check the sign (negative to "
-"lose, positive to gain) matches the direction you actually need to go."
+"That rate doesn't move toward your target — check the sign (negative to lose,"
+" positive to gain) matches the direction you actually need to go."
 msgstr ""
 "See tempo ei liigu sinu sihi suunas — kontrolli, et märk (negatiivne kaalu "
 "langetamiseks, positiivne kaalu tõstmiseks) vastaks suunale, kuhu tegelikult "
@@ -6184,8 +6834,8 @@ msgstr "Veetarbimise kalkulaator"
 
 #: templates/nutrition/calculator_water_intake.html:9
 msgid ""
-"A rough daily fluid target based on bodyweight and activity — real needs "
-"vary with climate and sweat rate, so treat this as a starting point."
+"A rough daily fluid target based on bodyweight and activity — real needs vary"
+" with climate and sweat rate, so treat this as a starting point."
 msgstr ""
 "Ligikaudne päevane vedelikueesmärk kehakaalu ja aktiivsuse põhjal — tegelik "
 "vajadus varieerub kliima ja higistamise järgi, seega võta seda lähtepunktina."
@@ -6223,8 +6873,8 @@ msgid ""
 "Body mass index and what it means for your height, without logging a weight "
 "first."
 msgstr ""
-"Kehamassiindeks ja mida see sinu pikkuse jaoks tähendab, ilma et peaksid "
-"enne kaalu logima."
+"Kehamassiindeks ja mida see sinu pikkuse jaoks tähendab, ilma et peaksid enne"
+" kaalu logima."
 
 #: templates/nutrition/calculators_home.html:54
 msgid ""
@@ -6238,7 +6888,7 @@ msgid "At a chosen weekly rate, roughly how long to reach a target weight."
 msgstr "Valitud nädalase tempoga umbes kui kaua kulub sihtkaaluni jõudmiseks."
 
 #: templates/nutrition/calculators_home.html:67
-#: templates/nutrition/diary_day.html:100
+#: templates/nutrition/diary_day.html:105
 #: templates/nutrition/diet_plan_list.html:30
 #: templates/nutrition/food_list.html:90 templates/nutrition/goal_edit.html:31
 #: templates/nutrition/recipe_list.html:90 templates/nutrition/stats.html:44
@@ -6337,7 +6987,7 @@ msgstr "Muuda eesmärki"
 
 #: templates/nutrition/diary_add_entry.html:3
 #: templates/nutrition/diary_add_entry.html:6
-#: templates/nutrition/diary_day.html:77
+#: templates/nutrition/diary_day.html:82
 msgid "Add food"
 msgstr "Lisa toit"
 
@@ -6378,31 +7028,40 @@ msgstr "Tänane toitumine"
 msgid "Nutrition for this day"
 msgstr "Selle päeva toitumine"
 
-#: templates/nutrition/diary_day.html:67
+#: templates/nutrition/diary_day.html:60
+msgid "P"
+msgstr "V"
+
+#: templates/nutrition/diary_day.html:60
+#: templates/workouts/_performed_exercise_card.html:22
+msgid "F"
+msgstr "E"
+
+#: templates/nutrition/diary_day.html:72
 msgid "Remove this entry?"
 msgstr "Kas eemaldada see kirje?"
 
-#: templates/nutrition/diary_day.html:74
+#: templates/nutrition/diary_day.html:79
 msgid "Nothing logged yet."
 msgstr "Veel pole midagi logitud."
 
-#: templates/nutrition/diary_day.html:81
+#: templates/nutrition/diary_day.html:86
 msgid "Save as recipe"
 msgstr "Salvesta retseptina"
 
-#: templates/nutrition/diary_day.html:89
+#: templates/nutrition/diary_day.html:94
 msgid "Copy this day to another date"
 msgstr "Kopeeri see päev teisele kuupäevale"
 
-#: templates/nutrition/diary_day.html:93
+#: templates/nutrition/diary_day.html:98
 msgid "Copy to date"
 msgstr "Kopeeri kuupäevale"
 
-#: templates/nutrition/diary_day.html:94 templates/social/group_detail.html:28
+#: templates/nutrition/diary_day.html:99 templates/social/group_detail.html:28
 msgid "Copy"
 msgstr "Kopeeri"
 
-#: templates/nutrition/diary_day.html:99
+#: templates/nutrition/diary_day.html:104
 msgid "Manage foods"
 msgstr "Halda toite"
 
@@ -6490,8 +7149,8 @@ msgstr "Koosta toitumisplaan"
 #: templates/nutrition/diet_plan_form.html:9
 msgid ""
 "We'll suggest one food or recipe per meal from your own library, scaled to "
-"fit — you can swap any of them afterward. Or start from scratch below to "
-"skip the suggestions and build it entirely yourself."
+"fit — you can swap any of them afterward. Or start from scratch below to skip"
+" the suggestions and build it entirely yourself."
 msgstr ""
 "Soovitame igale toidukorrale ühte toitu või retsepti sinu enda kogust, "
 "sobivaks skaleerituna — võid neid hiljem vahetada. Või alusta tühjalt "
@@ -6514,11 +7173,11 @@ msgid ""
 "missing is recreated for you. Imported inactive, so it never replaces "
 "whatever plan you're currently following."
 msgstr ""
-"Laadi üles kellegi eksporditud toitumiskava — sellest eksemplarist või "
-"hoopis teisest IronStacki eksemplarist. Selle kasutatavad toidud ja "
-"retseptid sobitatakse võimalusel sinu enda olemasolevatega, mitte ei "
-"dubleerita; puuduvad luuakse sulle uuesti. Imporditakse mitteaktiivsena, nii "
-"et see ei asenda kunagi kava, mida praegu järgid."
+"Laadi üles kellegi eksporditud toitumiskava — sellest eksemplarist või hoopis"
+" teisest IronStacki eksemplarist. Selle kasutatavad toidud ja retseptid "
+"sobitatakse võimalusel sinu enda olemasolevatega, mitte ei dubleerita; "
+"puuduvad luuakse sulle uuesti. Imporditakse mitteaktiivsena, nii et see ei "
+"asenda kunagi kava, mida praegu järgid."
 
 #: templates/nutrition/diet_plan_item_form.html:3
 #: templates/nutrition/diet_plan_item_form.html:6
@@ -6576,8 +7235,8 @@ msgstr ""
 
 #: templates/nutrition/food_browse.html:20
 msgid ""
-"Search to add a food to the shared library — anyone on this instance can "
-"then find and log it. Category browsing isn't available right now."
+"Search to add a food to the shared library — anyone on this instance can then"
+" find and log it. Category browsing isn't available right now."
 msgstr ""
 "Otsi, et lisada toit jagatud kogusse — pärast seda saab iga selle serveri "
 "kasutaja seda leida ja logida. Kategooriate kaupa sirvimine pole praegu "
@@ -6738,9 +7397,8 @@ msgid ""
 "Changing your goal recalculates your daily calorie and macro target right "
 "away — your old target stays in your history, it isn't overwritten."
 msgstr ""
-"Eesmärgi muutmine arvutab kohe uuesti sinu päevase kalori- ja "
-"makrotoitainete eesmärgi — vana eesmärk jääb sinu ajalukku, seda ei "
-"kirjutata üle."
+"Eesmärgi muutmine arvutab kohe uuesti sinu päevase kalori- ja makrotoitainete"
+" eesmärgi — vana eesmärk jääb sinu ajalukku, seda ei kirjutata üle."
 
 #: templates/nutrition/goal_edit.html:28
 msgid "Update goal"
@@ -6905,13 +7563,13 @@ msgstr "Impordi retsept"
 msgid ""
 "Upload a recipe someone exported — from this instance, or a completely "
 "different IronStack instance. A food originally imported from OpenFoodFacts "
-"is looked up again by its own barcode; anything else is recreated as your "
-"own food."
+"is looked up again by its own barcode; anything else is recreated as your own"
+" food."
 msgstr ""
 "Laadi üles kellegi eksporditud retsept — sellest eksemplarist või hoopis "
 "teisest IronStacki eksemplarist. Algselt OpenFoodFactsist imporditud toit "
-"otsitakse uuesti üles oma triipkoodi järgi; kõik muu luuakse uuesti sinu "
-"enda toiduna."
+"otsitakse uuesti üles oma triipkoodi järgi; kõik muu luuakse uuesti sinu enda"
+" toiduna."
 
 #: templates/nutrition/recipe_ingredient_edit_form.html:3
 msgid "Edit ingredient"
@@ -7013,7 +7671,7 @@ msgstr "Logi mõni päev oma toidupäevikusse, et näha siin oma trendi."
 #: templates/workouts/_train_panel.html:100
 #: templates/workouts/performed_exercise_form.html:3
 #: templates/workouts/performed_exercise_form.html:6
-#: templates/workouts/session_detail.html:31
+#: templates/workouts/session_detail.html:33
 msgid "Add exercise"
 msgstr "Lisa harjutus"
 
@@ -7064,7 +7722,7 @@ msgstr "Kustutada see trenn ja selle harjutused?"
 
 #: templates/programs/program_detail.html:70
 #: templates/workouts/_train_panel.html:99
-#: templates/workouts/session_detail.html:26
+#: templates/workouts/session_detail.html:28
 msgid "No exercises yet."
 msgstr "Harjutusi pole veel."
 
@@ -7152,7 +7810,7 @@ msgid "Edit workout"
 msgstr "Muuda trenni"
 
 #: templates/programs/workout_form.html:21
-#: templates/workouts/session_detail.html:45
+#: templates/workouts/session_detail.html:47
 msgid "Delete workout"
 msgstr "Kustuta trenn"
 
@@ -7278,8 +7936,8 @@ msgstr "Lähtesta parool"
 
 #: templates/registration/password_reset_done.html:10
 msgid ""
-"If an account exists with that email address, we've sent a link to reset "
-"your password."
+"If an account exists with that email address, we've sent a link to reset your"
+" password."
 msgstr ""
 "Kui selle e-posti aadressiga konto on olemas, oleme saatnud sellele lingi "
 "parooli lähtestamiseks."
@@ -7295,8 +7953,8 @@ msgid ""
 "You're receiving this email because you (or someone else) requested a "
 "password reset for your account at %(site_name)s."
 msgstr ""
-"Saad selle kirja, kuna sina (või keegi teine) taotles oma %(site_name)s "
-"konto parooli lähtestamist."
+"Saad selle kirja, kuna sina (või keegi teine) taotles oma %(site_name)s konto"
+" parooli lähtestamist."
 
 #: templates/registration/password_reset_email.html:3
 msgid "Please go to the following page and choose a new password:"
@@ -7406,8 +8064,8 @@ msgid ""
 "No friends yet — find someone you train with to share progress and message "
 "them here."
 msgstr ""
-"Sõpru pole veel — leia keegi, kellega koos trenni teed, et jagada edusamme "
-"ja temaga siin sõnumeid vahetada."
+"Sõpru pole veel — leia keegi, kellega koos trenni teed, et jagada edusamme ja"
+" temaga siin sõnumeid vahetada."
 
 #: templates/social/friend_list.html:75 templates/social/group_list.html:51
 #: templates/social/message_list.html:3 templates/social/message_thread.html:9
@@ -7617,6 +8275,366 @@ msgstr "Sõpru, kellele sõnumeid saata, veel pole."
 msgid "Group chats"
 msgstr "Grupivestlused"
 
+#: templates/stretching/_cooldown_card.html:11
+msgid "Cool down with a stretch?"
+msgstr "Kas lõdvestud venitusega?"
+
+#: templates/stretching/_cooldown_card.html:21
+msgid "Picked for the muscles you trained:"
+msgstr "Valitud treenitud lihaste järgi:"
+
+#: templates/stretching/_cooldown_card.html:26
+msgid "Start cool-down"
+msgstr "Alusta lõdvestust"
+
+#: templates/stretching/_routine_card.html:6
+#: templates/stretching/routine_detail.html:25
+#, python-format
+msgid "%(counter)s stretch"
+msgid_plural "%(counter)s stretches"
+msgstr[0] "%(counter)s venitus"
+msgstr[1] "%(counter)s venitust"
+
+#: templates/stretching/_routine_card.html:12
+msgid "Start"
+msgstr "Alusta"
+
+#: templates/stretching/_subnav.html:9
+msgid "Stretching sections"
+msgstr "Venitamise jaotised"
+
+#: templates/stretching/_subnav.html:11
+#: templates/stretching/routine_detail.html:5
+#: templates/stretching/routine_list.html:6
+msgid "Routines"
+msgstr "Rutiinid"
+
+#: templates/stretching/_subnav.html:12
+#: templates/stretching/session_play.html:71
+#: templates/stretching/stretch_detail.html:5
+#: templates/stretching/stretch_list.html:3
+#: templates/stretching/stretch_list.html:6
+msgid "Stretches"
+msgstr "Venitused"
+
+#: templates/stretching/_subnav.html:13
+#: templates/stretching/session_detail.html:5
+#: templates/stretching/session_history.html:6
+msgctxt "stretching"
+msgid "History"
+msgstr "Ajalugu"
+
+#: templates/stretching/home.html:9 templates/stretching/session_form.html:3
+#: templates/stretching/session_form.html:6
+#: templates/stretching/session_history.html:9
+#: templates/stretching/session_history.html:20
+msgid "Log stretching"
+msgstr "Pane venitamine kirja"
+
+#: templates/stretching/home.html:15
+msgid "Continue stretching"
+msgstr "Jätka venitamist"
+
+#: templates/stretching/home.html:22
+msgid "Streak"
+msgstr "Järjestikused päevad"
+
+#: templates/stretching/home.html:23
+msgid "Last 7 days"
+msgstr "Viimased 7 päeva"
+
+#: templates/stretching/home.html:28
+msgid "Start a routine"
+msgstr "Alusta rutiini"
+
+#: templates/stretching/home.html:32 templates/stretching/routine_list.html:16
+msgid "No routines yet."
+msgstr "Rutiine veel pole."
+
+#: templates/stretching/home.html:32 templates/stretching/routine_form.html:3
+#: templates/stretching/routine_form.html:6
+msgid "New routine"
+msgstr "Uus rutiin"
+
+#: templates/stretching/home.html:36
+msgid "Minutes per week"
+msgstr "Minutid nädalas"
+
+#: templates/stretching/home.html:38
+msgid "Stretching minutes per week"
+msgstr "Venitusminutid nädalas"
+
+#: templates/stretching/home.html:41
+msgid "Finish or log a stretching session to see your weekly minutes here."
+msgstr ""
+"Lõpeta või pane kirja venitussessioon, et näha siin oma nädala minuteid."
+
+#: templates/stretching/home.html:45
+msgid "Recent sessions"
+msgstr "Viimased sessioonid"
+
+#: templates/stretching/routine_detail.html:16
+msgid "Duplicate"
+msgstr "Tee koopia"
+
+#: templates/stretching/routine_detail.html:16
+msgid "Copy to edit"
+msgstr "Kopeeri muutmiseks"
+
+#: templates/stretching/routine_detail.html:21
+msgid "Built-in routine"
+msgstr "Sisseehitatud rutiin"
+
+#: templates/stretching/routine_detail.html:26
+#, python-format
+msgid "about %(time)s"
+msgstr "umbes %(time)s"
+
+#: templates/stretching/routine_detail.html:31
+msgid "Start routine"
+msgstr "Alusta rutiini"
+
+#: templates/stretching/routine_detail.html:41
+#: templates/stretching/session_detail.html:38
+#: templates/stretching/session_play.html:80
+#: templates/stretching/stretch_detail.html:21
+#: templates/stretching/stretch_list.html:34
+msgid "per side"
+msgstr "poole kohta"
+
+#: templates/stretching/routine_detail.html:42
+#, python-format
+msgid "rest %(rest)s s"
+msgstr "puhkus %(rest)s s"
+
+#: templates/stretching/routine_detail.html:48
+msgid "Move up"
+msgstr "Liiguta üles"
+
+#: templates/stretching/routine_detail.html:52
+msgid "Move down"
+msgstr "Liiguta alla"
+
+#: templates/stretching/routine_detail.html:63
+msgid "No stretches in this routine yet."
+msgstr "Selles rutiinis pole veel venitusi."
+
+#: templates/stretching/routine_detail.html:68
+#: templates/stretching/routine_item_form.html:3
+#: templates/stretching/routine_item_form.html:6
+msgid "Add a stretch"
+msgstr "Lisa venitus"
+
+#: templates/stretching/routine_detail.html:74
+msgid "Leave the hold empty to use the stretch's own default."
+msgstr "Jäta hoidmine tühjaks, et kasutada venituse vaikeväärtust."
+
+#: templates/stretching/routine_detail.html:79
+msgid "Remove this routine? Past sessions stay in your history."
+msgstr "Kas eemaldada see rutiin? Varasemad sessioonid jäävad sinu ajalukku."
+
+#: templates/stretching/routine_detail.html:81
+msgid "Remove routine"
+msgstr "Eemalda rutiin"
+
+#: templates/stretching/routine_detail.html:86
+msgid "Back to routines"
+msgstr "Tagasi rutiinide juurde"
+
+#: templates/stretching/routine_form.html:3
+#: templates/stretching/routine_form.html:6
+msgid "Edit routine"
+msgstr "Muuda rutiini"
+
+#: templates/stretching/routine_item_form.html:3
+#: templates/stretching/stretch_form.html:3
+#: templates/stretching/stretch_form.html:6
+msgid "Edit stretch"
+msgstr "Muuda venitust"
+
+#: templates/stretching/routine_item_form.html:18
+msgid "Back to routine"
+msgstr "Tagasi rutiini juurde"
+
+#: templates/stretching/routine_list.html:3
+msgid "Stretching routines"
+msgstr "Venitusrutiinid"
+
+#: templates/stretching/session_detail.html:23
+msgid "Cool-down after a workout"
+msgstr "Lõdvestus pärast treeningut"
+
+#: templates/stretching/session_detail.html:32
+msgid "Stretch"
+msgstr "Venitus"
+
+#: templates/stretching/session_detail.html:32
+msgid "Held"
+msgstr "Hoitud"
+
+#: templates/stretching/session_detail.html:51
+msgid "Delete this session?"
+msgstr "Kas kustutada see sessioon?"
+
+#: templates/stretching/session_detail.html:56
+#: templates/workouts/session_detail.html:50
+msgid "Back to history"
+msgstr "Tagasi ajaloo juurde"
+
+#: templates/stretching/session_form.html:3
+#: templates/stretching/session_form.html:6
+msgid "Edit session"
+msgstr "Muuda sessiooni"
+
+#: templates/stretching/session_history.html:3
+msgid "Stretching history"
+msgstr "Venitamise ajalugu"
+
+#: templates/stretching/session_history.html:20
+msgid "No stretching sessions yet."
+msgstr "Venitussessioone veel pole."
+
+#: templates/stretching/session_history.html:20
+msgid "Start a routine, or log one you did without the timer."
+msgstr "Alusta rutiini või pane kirja venitamine, mille tegid ilma taimerita."
+
+#: templates/stretching/session_play.html:18
+msgid "Get ready"
+msgstr "Valmistu"
+
+#: templates/stretching/session_play.html:19
+msgid "Hold"
+msgstr "Hoia"
+
+#: templates/stretching/session_play.html:20
+msgid "Rest"
+msgstr "Puhkus"
+
+#: templates/stretching/session_play.html:21
+msgid "Left side"
+msgstr "Vasak pool"
+
+#: templates/stretching/session_play.html:22
+msgid "Right side"
+msgstr "Parem pool"
+
+#: templates/stretching/session_play.html:23
+#, python-brace-format
+msgid "set {set}/{sets}"
+msgstr "seeria {set}/{sets}"
+
+#: templates/stretching/session_play.html:25
+msgid "Guided session"
+msgstr "Juhendatud sessioon"
+
+#: templates/stretching/session_play.html:27
+msgid "Unmute timer sound"
+msgstr "Lülita taimeri heli sisse"
+
+#: templates/stretching/session_play.html:27
+msgid "Mute timer sound"
+msgstr "Vaigista taimeri heli"
+
+#: templates/stretching/session_play.html:35
+#, python-format
+msgid "%(counter)s stretch to go."
+msgid_plural "%(counter)s stretches to go."
+msgstr[0] "%(counter)s venitus jäänud."
+msgstr[1] "%(counter)s venitust jäänud."
+
+#: templates/stretching/session_play.html:36
+msgid "Start timer"
+msgstr "Käivita taimer"
+
+#: templates/stretching/session_play.html:50
+msgid "Pause"
+msgstr "Paus"
+
+#: templates/stretching/session_play.html:51
+msgid "Resume"
+msgstr "Jätka"
+
+#: templates/stretching/session_play.html:55
+msgid "Next step"
+msgstr "Järgmine samm"
+
+#: templates/stretching/session_play.html:56
+msgid "Skip stretch"
+msgstr "Jäta venitus vahele"
+
+#: templates/stretching/session_play.html:62
+msgid "Next up:"
+msgstr "Järgmisena:"
+
+#: templates/stretching/session_play.html:67
+msgid "All stretches done — nice work."
+msgstr "Kõik venitused tehtud — tubli töö."
+
+#: templates/stretching/session_play.html:89
+msgid "Skip"
+msgstr "Jäta vahele"
+
+#: templates/stretching/session_play.html:98
+msgid "Finish session"
+msgstr "Lõpeta sessioon"
+
+#: templates/stretching/session_play.html:100
+msgid "Abandon this session? It stays in your history as abandoned."
+msgstr "Kas katkestada see sessioon? See jääb sinu ajalukku katkestatuna."
+
+#: templates/stretching/session_play.html:102
+msgid "Abandon session"
+msgstr "Katkesta sessioon"
+
+#: templates/stretching/stretch_detail.html:20
+msgid "Type"
+msgstr "Tüüp"
+
+#: templates/stretching/stretch_detail.html:21
+msgid "Default hold"
+msgstr "Vaikimisi hoidmine"
+
+#: templates/stretching/stretch_detail.html:30
+msgid "How to do it"
+msgstr "Kuidas teha"
+
+#: templates/stretching/stretch_detail.html:36
+msgid ""
+"Remove this stretch from your library? Routines and past sessions that use it"
+" keep working."
+msgstr ""
+"Kas eemaldada see venitus oma kogust? Seda kasutavad rutiinid ja varasemad "
+"sessioonid töötavad edasi."
+
+#: templates/stretching/stretch_detail.html:38
+msgid "Remove stretch"
+msgstr "Eemalda venitus"
+
+#: templates/stretching/stretch_detail.html:42
+msgid "Back to stretches"
+msgstr "Tagasi venituste juurde"
+
+#: templates/stretching/stretch_form.html:3
+#: templates/stretching/stretch_form.html:6
+msgid "New stretch"
+msgstr "Uus venitus"
+
+#: templates/stretching/stretch_list.html:20
+msgid "Filter by type"
+msgstr "Filtreeri tüübi järgi"
+
+#: templates/stretching/stretch_list.html:21
+msgid "All types"
+msgstr "Kõik tüübid"
+
+#: templates/stretching/stretch_list.html:26
+msgid "Filter"
+msgstr "Filtreeri"
+
+#: templates/stretching/stretch_list.html:39
+msgid "No stretches match."
+msgstr "Ühtegi sobivat venitust pole."
+
 #: templates/workouts/_performed_exercise_card.html:6
 #: templates/workouts/_train_panel.html:39
 #, python-format
@@ -7634,10 +8652,6 @@ msgstr "Kordused"
 #: templates/workouts/_performed_exercise_card.html:20
 msgid "W"
 msgstr "S"
-
-#: templates/workouts/_performed_exercise_card.html:22
-msgid "F"
-msgstr "E"
 
 #: templates/workouts/_performed_exercise_card.html:25
 msgid "Delete this set?"
@@ -7707,28 +8721,24 @@ msgid_plural "%(n)s sets"
 msgstr[0] "%(n)s seeria"
 msgstr[1] "%(n)s seeriat"
 
-#: templates/workouts/session_detail.html:35
+#: templates/workouts/session_detail.html:37
 #: templates/workouts/session_train.html:51
 msgid "Complete workout"
 msgstr "Lõpeta trenn"
 
-#: templates/workouts/session_detail.html:37
+#: templates/workouts/session_detail.html:39
 #: templates/workouts/session_train.html:53
 msgid "Abandon this workout? It stays in your history as abandoned."
 msgstr "Kas katkestada see trenn? See jääb sinu ajalukku katkestatuna."
 
-#: templates/workouts/session_detail.html:39
+#: templates/workouts/session_detail.html:41
 #: templates/workouts/session_train.html:55
 msgid "Abandon workout"
 msgstr "Katkesta trenn"
 
-#: templates/workouts/session_detail.html:43
+#: templates/workouts/session_detail.html:45
 msgid "Delete this workout? This cannot be undone."
 msgstr "Kustutada see trenn? Seda ei saa tagasi võtta."
-
-#: templates/workouts/session_detail.html:48
-msgid "Back to history"
-msgstr "Tagasi ajaloo juurde"
 
 #: templates/workouts/session_list.html:3
 msgid "Workout history"
@@ -7747,8 +8757,8 @@ msgstr "Trenne pole veel logitud."
 
 #: templates/workouts/session_list.html:26
 msgid ""
-"Start a freeform workout with the button below, or pick a workout from one "
-"of your programs."
+"Start a freeform workout with the button below, or pick a workout from one of"
+" your programs."
 msgstr ""
 "Alusta vaba treening allolevaga nupuga või vali treening ühest oma "
 "programmist."
@@ -7815,6 +8825,3 @@ msgstr "Muuda seeriat %(number)s"
 
 #~ msgid "+ New recipe"
 #~ msgstr "+ Uus retsept"
-
-#~ msgid "New workout"
-#~ msgstr "Uus trenn"

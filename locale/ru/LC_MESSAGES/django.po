@@ -3,13 +3,12 @@ msgid ""
 msgstr ""
 "Project-Id-Version: IronStack\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-21 16:10+0000\n"
+"POT-Creation-Date: 2026-09-23 14:38+0000\n"
 "Language: ru\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
-"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 
 #: apps/accounts/admin.py:17 templates/accounts/profile.html:80
 #: templates/accounts/two_factor_manage.html:3
@@ -35,77 +34,81 @@ msgstr ""
 "Слишком много запросов на сброс пароля. Повторите попытку через несколько "
 "минут."
 
-#: apps/accounts/forms.py:251 apps/accounts/forms.py:646
+#: apps/accounts/forms.py:253 apps/accounts/forms.py:655
 msgid "Timezone"
 msgstr "Часовой пояс"
 
-#: apps/accounts/forms.py:281 apps/accounts/forms.py:626
+#: apps/accounts/forms.py:284 apps/accounts/forms.py:635
 #: templates/api/key_list.html:34
 msgid "Units"
 msgstr "Единицы измерения"
 
-#: apps/accounts/forms.py:282 apps/accounts/forms.py:676
+#: apps/accounts/forms.py:285 apps/accounts/forms.py:685
 msgid "Track nutrition"
 msgstr "Отслеживать питание"
 
-#: apps/accounts/forms.py:283
+#: apps/accounts/forms.py:286 apps/accounts/forms.py:695
+msgid "Track stretching"
+msgstr "Отслеживать растяжку"
+
+#: apps/accounts/forms.py:287
 msgid "Remind me to log body measurements"
 msgstr "Напоминать мне вносить замеры тела"
 
-#: apps/accounts/forms.py:286
+#: apps/accounts/forms.py:290
 msgid "Show"
 msgstr "Показывать"
 
-#: apps/accounts/forms.py:287 templates/core/_bmi_card.html:13
+#: apps/accounts/forms.py:291 templates/core/_bmi_card.html:13
 #: templates/core/_bmi_card.html:29
 msgid "BMI"
 msgstr "ИМТ"
 
-#: apps/accounts/forms.py:288
+#: apps/accounts/forms.py:292
 msgid "on the body weight page"
 msgstr "на странице веса тела"
 
-#: apps/accounts/forms.py:290
+#: apps/accounts/forms.py:294
 msgid "Share my activity"
 msgstr "Показывать мою активность"
 
-#: apps/accounts/forms.py:291
+#: apps/accounts/forms.py:295
 msgid "Show my name to others"
 msgstr "Показывать моё имя другим"
 
-#: apps/accounts/forms.py:292
+#: apps/accounts/forms.py:296
 msgid "Show my Gravatar picture"
 msgstr "Показывать мою аватарку Gravatar"
 
-#: apps/accounts/forms.py:293 apps/accounts/forms.py:659
+#: apps/accounts/forms.py:297 apps/accounts/forms.py:668
 msgid "Allow friend requests"
 msgstr "Разрешить запросы в друзья"
 
-#: apps/accounts/forms.py:294 apps/accounts/forms.py:667
+#: apps/accounts/forms.py:298 apps/accounts/forms.py:676
 msgid "Allow group invites"
 msgstr "Разрешить приглашения в группы"
 
-#: apps/accounts/forms.py:295
+#: apps/accounts/forms.py:299
 msgid "I'm a personal trainer / coach"
 msgstr "Я персональный тренер / коуч"
 
-#: apps/accounts/forms.py:296
+#: apps/accounts/forms.py:300
 msgid "Accepting new coaching requests"
 msgstr "Принимаю новые запросы на тренировки"
 
-#: apps/accounts/forms.py:297
+#: apps/accounts/forms.py:301
 msgid "Language"
 msgstr "Язык"
 
-#: apps/accounts/forms.py:298
+#: apps/accounts/forms.py:302
 msgid "Theme"
 msgstr "Тема"
 
-#: apps/accounts/forms.py:299
+#: apps/accounts/forms.py:303
 msgid "Appearance"
 msgstr "Оформление"
 
-#: apps/accounts/forms.py:303
+#: apps/accounts/forms.py:307
 msgid ""
 "Which color palette the app uses. Each theme has its own dark and light look "
 "— pick which one below."
@@ -113,19 +116,29 @@ msgstr ""
 "Какую цветовую палитру использует приложение. У каждой темы есть свой тёмный "
 "и светлый вид — выберите нужный ниже."
 
-#: apps/accounts/forms.py:307
+#: apps/accounts/forms.py:311
 msgid ""
 "Shows nutrition (food diary, recipes, diet plans) in navigation and on the "
 "dashboard. Turn off to hide it if you don't want to track nutrition — "
 "existing nutrition data is never deleted, and its pages stay reachable "
 "directly by a link."
 msgstr ""
-"Показывает питание (дневник питания, рецепты, планы питания) в навигации и "
-"на панели. Отключите, чтобы скрыть его, если не хотите отслеживать питание — "
+"Показывает питание (дневник питания, рецепты, планы питания) в навигации и на"
+" панели. Отключите, чтобы скрыть его, если не хотите отслеживать питание — "
 "существующие данные о питании никогда не удаляются, а его страницы остаются "
 "доступными напрямую по ссылке."
 
-#: apps/accounts/forms.py:314
+#: apps/accounts/forms.py:318
+msgid ""
+"Shows stretching (routines, guided sessions) in navigation and suggests a "
+"cool-down after a workout. Turn off to hide it — existing stretching data is "
+"never deleted."
+msgstr ""
+"Показывает растяжку (комплексы, сессии с подсказками) в навигации и "
+"предлагает заминку после тренировки. Отключите, чтобы скрыть — существующие "
+"данные о растяжке никогда не удаляются."
+
+#: apps/accounts/forms.py:323
 msgid ""
 "\"Auto\" follows your device's own light/dark setting and switches "
 "automatically when it changes."
@@ -133,27 +146,27 @@ msgstr ""
 "«Автоматически» следует настройке светлой/тёмной темы вашего устройства и "
 "переключается автоматически при её изменении."
 
-#: apps/accounts/forms.py:318
+#: apps/accounts/forms.py:327
 msgid ""
-"Shows a dashboard card nudging you to log a body measurement when you "
-"haven't logged one in a while. Turn off to never see that reminder — you can "
-"still log a reading any time from Body tracking."
+"Shows a dashboard card nudging you to log a body measurement when you haven't"
+" logged one in a while. Turn off to never see that reminder — you can still "
+"log a reading any time from Body tracking."
 msgstr ""
 "Показывает на панели управления карточку с напоминанием внести замер тела, "
 "если вы давно этого не делали. Отключите, чтобы больше никогда не видеть это "
 "напоминание — вы всё равно сможете внести замер в любое время в разделе "
 "«Отслеживание тела»."
 
-#: apps/accounts/forms.py:323
+#: apps/accounts/forms.py:332
 msgid "Turns off the BMI card and its category ranges entirely."
 msgstr "Полностью отключает карточку ИМТ и диапазоны категорий."
 
-#: apps/accounts/forms.py:325
+#: apps/accounts/forms.py:334
 msgid ""
 "Lets everyone using this instance see your longest streak, workout count, "
 "PRs, total weight lifted, and when you last trained, in the dashboard's "
-"achievements carousel and \"Recently active\" list. Turn off to keep your "
-"own activity private — you'll still see everyone else's."
+"achievements carousel and \"Recently active\" list. Turn off to keep your own"
+" activity private — you'll still see everyone else's."
 msgstr ""
 "Позволяет всем пользователям этого сервера видеть вашу самую длинную серию, "
 "количество тренировок, рекорды, общий поднятый вес и время последней "
@@ -161,18 +174,18 @@ msgstr ""
 "Отключите, чтобы скрыть свою активность — вы всё равно будете видеть "
 "активность остальных."
 
-#: apps/accounts/forms.py:332
+#: apps/accounts/forms.py:341
 msgid ""
 "Shows your first name next to your username wherever others can see it (the "
 "achievements carousel and \"Recently active\" list). Turn off to show just "
 "your username there, like before this setting existed."
 msgstr ""
 "Показывает ваше имя рядом с именем пользователя везде, где его могут видеть "
-"другие (карусель достижений и список «Недавняя активность»). Отключите, "
-"чтобы показывать там только имя пользователя, как было до появления этой "
+"другие (карусель достижений и список «Недавняя активность»). Отключите, чтобы"
+" показывать там только имя пользователя, как было до появления этой "
 "настройки."
 
-#: apps/accounts/forms.py:338
+#: apps/accounts/forms.py:347
 msgid ""
 "Shows your Gravatar (gravatar.com) picture at the top of this page, if the "
 "email on this account has one. Turning this on means your browser loads that "
@@ -186,26 +199,26 @@ msgstr ""
 "единственное место, где это приложение обращается к серверу за пределами "
 "вашего собственного сервера — который увидит хеш вашего email и ваш IP-адрес."
 
-#: apps/accounts/forms.py:346
+#: apps/accounts/forms.py:355
 msgid ""
 "Off stops other users on this instance from sending you a friend request at "
 "all. Doesn't affect friend requests you already have, or friendships you "
 "already made."
 msgstr ""
-"Если выключено, другие пользователи этого сервера вообще не смогут "
-"отправлять вам запросы в друзья. Не влияет на уже существующие запросы или "
-"дружеские связи."
+"Если выключено, другие пользователи этого сервера вообще не смогут отправлять"
+" вам запросы в друзья. Не влияет на уже существующие запросы или дружеские "
+"связи."
 
-#: apps/accounts/forms.py:351
+#: apps/accounts/forms.py:360
 msgid ""
-"Off stops a group member from inviting you to a group directly. You can "
-"still join any group yourself using its invite link, if you have one."
+"Off stops a group member from inviting you to a group directly. You can still"
+" join any group yourself using its invite link, if you have one."
 msgstr ""
 "Если выключено, участник группы не сможет пригласить вас напрямую. Вы всё "
-"равно можете сами присоединиться к любой группе по её пригласительной "
-"ссылке, если она у вас есть."
+"равно можете сами присоединиться к любой группе по её пригласительной ссылке,"
+" если она у вас есть."
 
-#: apps/accounts/forms.py:356
+#: apps/accounts/forms.py:365
 msgid ""
 "Lets you build gym programs and diet plans other users can request you coach "
 "them on. Turning this off doesn't end any coaching relationship you already "
@@ -215,7 +228,7 @@ msgstr ""
 "пользователи могут попросить вас быть тренером. Отключение этой функции не "
 "завершает уже существующие тренерские отношения."
 
-#: apps/accounts/forms.py:361
+#: apps/accounts/forms.py:370
 msgid ""
 "Off stops new coaching requests from reaching you. Existing coaching "
 "relationships, and any request you already received, are unaffected."
@@ -223,53 +236,53 @@ msgstr ""
 "Если отключено, новые запросы на тренировки не будут приходить. Существующие "
 "тренерские отношения и уже полученные запросы не изменятся."
 
-#: apps/accounts/forms.py:386 apps/accounts/forms.py:702
+#: apps/accounts/forms.py:395 apps/accounts/forms.py:721
 #: apps/nutrition/forms.py:39 apps/nutrition/forms.py:455
 msgid "Height (cm)"
 msgstr "Рост (см)"
 
-#: apps/accounts/forms.py:386 apps/accounts/forms.py:702
+#: apps/accounts/forms.py:395 apps/accounts/forms.py:721
 #: apps/nutrition/forms.py:39 apps/nutrition/forms.py:455
 msgid "Height (in)"
 msgstr "Рост (дюймы)"
 
-#: apps/accounts/forms.py:440 apps/accounts/forms.py:476
+#: apps/accounts/forms.py:449 apps/accounts/forms.py:485
 msgid "Verification code"
 msgstr "Код подтверждения"
 
-#: apps/accounts/forms.py:454
+#: apps/accounts/forms.py:463
 msgid "Incorrect code — check your authenticator app and try again."
 msgstr "Неверный код — проверьте приложение-аутентификатор и попробуйте снова."
 
-#: apps/accounts/forms.py:490
+#: apps/accounts/forms.py:499
 msgid "Too many incorrect codes. Try again in a few minutes."
 msgstr "Слишком много неверных кодов. Повторите попытку через несколько минут."
 
-#: apps/accounts/forms.py:503
+#: apps/accounts/forms.py:512
 msgid "Incorrect code."
 msgstr "Неверный код."
 
-#: apps/accounts/forms.py:517 apps/accounts/forms.py:543
+#: apps/accounts/forms.py:526 apps/accounts/forms.py:552
 msgid "Password"
 msgstr "Пароль"
 
-#: apps/accounts/forms.py:526 apps/accounts/forms.py:557
+#: apps/accounts/forms.py:535 apps/accounts/forms.py:566
 msgid "Incorrect password."
 msgstr "Неверный пароль."
 
-#: apps/accounts/forms.py:546
+#: apps/accounts/forms.py:555
 msgid "Type your username to confirm"
 msgstr "Введите имя пользователя для подтверждения"
 
-#: apps/accounts/forms.py:559
+#: apps/accounts/forms.py:568
 msgid "Doesn't match your username."
 msgstr "Не совпадает с именем пользователя."
 
-#: apps/accounts/forms.py:583
+#: apps/accounts/forms.py:592
 msgid "First name"
 msgstr "Имя"
 
-#: apps/accounts/forms.py:585
+#: apps/accounts/forms.py:594
 msgid ""
 "Used to personalize your dashboard greeting, and next to your username "
 "wherever your activity is shown to others (if you allow that in your "
@@ -279,11 +292,11 @@ msgstr ""
 "именем пользователя везде, где ваша активность показывается другим (если вы "
 "разрешили это в профиле)."
 
-#: apps/accounts/forms.py:592
+#: apps/accounts/forms.py:601
 msgid "Email"
 msgstr "Эл. почта"
 
-#: apps/accounts/forms.py:594
+#: apps/accounts/forms.py:603
 msgid ""
 "Used only for password-reset emails if you ever get locked out. Never shown "
 "to other users."
@@ -291,7 +304,7 @@ msgstr ""
 "Используется только для писем сброса пароля, если вы когда-нибудь потеряете "
 "доступ. Никогда не показывается другим пользователям."
 
-#: apps/accounts/forms.py:604
+#: apps/accounts/forms.py:613
 msgid ""
 "Logged as your first body-weight entry, so your progress charts have a "
 "starting point. Leave blank and log it anytime from the Body weight page "
@@ -301,41 +314,41 @@ msgstr ""
 "была отправная точка. Можно оставить пустым и добавить вес позже на странице "
 "«Вес тела»."
 
-#: apps/accounts/forms.py:619
+#: apps/accounts/forms.py:628
 msgid ""
-"Used together with a logged body weight to show your BMI. Leave blank to "
-"skip this — you can add it anytime from your profile."
+"Used together with a logged body weight to show your BMI. Leave blank to skip"
+" this — you can add it anytime from your profile."
 msgstr ""
 "Используется вместе с записанным весом тела для отображения ИМТ. Оставьте "
 "пустым, чтобы пропустить — вы можете добавить это позже в профиле."
 
-#: apps/accounts/forms.py:628
+#: apps/accounts/forms.py:637
 msgid ""
-"Sets whether weights and distances are shown in kg/km or lb/mi throughout "
-"the app. Change this anytime from your profile."
+"Sets whether weights and distances are shown in kg/km or lb/mi throughout the"
+" app. Change this anytime from your profile."
 msgstr ""
 "Определяет, отображаются ли веса и расстояния в приложении в кг/км или в "
 "фунтах/милях. Изменить можно в любой момент в профиле."
 
-#: apps/accounts/forms.py:648
+#: apps/accounts/forms.py:657
 msgid ""
 "Used for \"today\" and date ranges throughout the app. Change this anytime "
 "from your profile."
 msgstr ""
-"Используется для определения \"сегодня\" и диапазонов дат во всём "
-"приложении. Вы можете изменить это в любое время в своём профиле.Определяет, "
+"Используется для определения \"сегодня\" и диапазонов дат во всём приложении."
+" Вы можете изменить это в любое время в своём профиле.Определяет, "
 "отображаются ли веса и расстояния в приложении в кг/км или в фунтах/милях. "
 "Изменить можно в любой момент в профиле."
 
-#: apps/accounts/forms.py:661
+#: apps/accounts/forms.py:670
 msgid ""
 "Lets other users on this instance send you a friend request. Change this "
 "anytime from your profile."
 msgstr ""
-"Позволяет другим пользователям этого сервера отправлять вам запросы в "
-"друзья. Вы можете изменить это в любое время в своём профиле."
+"Позволяет другим пользователям этого сервера отправлять вам запросы в друзья."
+" Вы можете изменить это в любое время в своём профиле."
 
-#: apps/accounts/forms.py:669
+#: apps/accounts/forms.py:678
 msgid ""
 "Lets a group member invite you to a group directly. You can always join a "
 "group yourself using its invite link either way. Change this anytime from "
@@ -345,25 +358,35 @@ msgstr ""
 "самостоятельно присоединиться к группе по её пригласительной ссылке в любом "
 "случае. Вы можете изменить это в любое время в своём профиле."
 
-#: apps/accounts/forms.py:678
+#: apps/accounts/forms.py:687
 msgid ""
 "Shows nutrition (food diary, recipes, diet plans) in navigation and on the "
 "dashboard. Leave unchecked if you don't want to track nutrition — you can "
 "turn it on or off anytime from your profile, and nothing is ever deleted "
 "either way."
 msgstr ""
-"Показывает питание (дневник питания, рецепты, планы питания) в навигации и "
-"на панели. Оставьте не отмеченным, если не хотите отслеживать питание — вы "
+"Показывает питание (дневник питания, рецепты, планы питания) в навигации и на"
+" панели. Оставьте не отмеченным, если не хотите отслеживать питание — вы "
 "можете включить или отключить это в любое время в своём профиле, и в любом "
 "случае ничего не удаляется."
 
-#: apps/accounts/forms.py:697 apps/nutrition/forms.py:40
+#: apps/accounts/forms.py:697
+msgid ""
+"Shows stretching routines and guided sessions in navigation, and suggests a "
+"cool-down after a workout. You can turn it on or off anytime from your "
+"profile."
+msgstr ""
+"Показывает комплексы растяжки и сессии с подсказками в навигации и предлагает"
+" заминку после тренировки. Можно включить или выключить в любое время в "
+"профиле."
+
+#: apps/accounts/forms.py:716 apps/nutrition/forms.py:40
 #: apps/nutrition/forms.py:464 apps/nutrition/forms.py:668
 #, python-format
 msgid "Current weight (%(unit)s)"
 msgstr "Текущий вес (%(unit)s)"
 
-#: apps/accounts/forms.py:699
+#: apps/accounts/forms.py:718
 msgid "Current weight"
 msgstr "Текущий вес"
 
@@ -407,7 +430,7 @@ msgstr "Earth"
 msgid "Zen"
 msgstr "Zen"
 
-#: apps/accounts/models.py:406
+#: apps/accounts/models.py:415
 msgid ""
 "Shown as a footer note on the login and signup pages. Leave blank to hide it "
 "entirely."
@@ -442,8 +465,8 @@ msgstr "Двухфакторная аутентификация отключен
 #: apps/accounts/views.py:389
 msgid ""
 "You're the only superuser on this instance — promote another account to "
-"superuser first, or this instance would have no one left who can reach "
-"Django admin."
+"superuser first, or this instance would have no one left who can reach Django"
+" admin."
 msgstr ""
 "Вы единственный суперпользователь в этой системе — сначала назначьте другую "
 "учётную запись суперпользователем, иначе в этой системе не останется никого, "
@@ -453,7 +476,7 @@ msgstr ""
 msgid "Your account and all its data have been deleted."
 msgstr "Ваша учётная запись и все её данные удалены."
 
-#: apps/activities/forms.py:27
+#: apps/activities/forms.py:27 apps/stretching/forms.py:126
 msgid "Duration (minutes)"
 msgstr "Длительность (минуты)"
 
@@ -497,11 +520,12 @@ msgstr "Другое"
 
 #: apps/activities/models.py:18 apps/exercises/models.py:75
 #: apps/measurements/models.py:34 apps/programs/models.py:36
-#: apps/programs/models.py:118
+#: apps/programs/models.py:118 apps/stretching/models.py:32
+#: apps/stretching/models.py:96 apps/stretching/models.py:183
 msgid "name"
 msgstr "название"
 
-#: apps/activities/models.py:70
+#: apps/activities/models.py:70 apps/stretching/models.py:190
 msgid "date"
 msgstr "дата"
 
@@ -519,7 +543,7 @@ msgstr "калории"
 
 #: apps/activities/models.py:77 apps/measurements/models.py:90
 #: apps/programs/models.py:123 apps/programs/models.py:189
-#: apps/workouts/forms.py:46
+#: apps/stretching/models.py:196 apps/workouts/forms.py:46
 msgid "notes"
 msgstr "заметки"
 
@@ -556,7 +580,7 @@ msgstr "Тип активности деактивирован."
 msgid "Longest streak"
 msgstr "Самая длинная серия"
 
-#: apps/analytics/achievements.py:123
+#: apps/analytics/achievements.py:123 templates/stretching/home.html:22
 #, python-format
 msgid "%(counter)s day"
 msgid_plural "%(counter)s days"
@@ -615,7 +639,7 @@ msgstr "6 месяцев"
 msgid "1 year"
 msgstr "1 год"
 
-#: apps/analytics/dateranges.py:19
+#: apps/analytics/dateranges.py:19 templates/stretching/home.html:24
 msgid "All time"
 msgstr "За всё время"
 
@@ -634,9 +658,10 @@ msgstr "Изменение"
 #: apps/api/forms.py:13 templates/activities/activity_history.html:57
 #: templates/core/_backup_row.html:22
 #: templates/measurements/measurement_history.html:65
-#: templates/nutrition/diary_day.html:69
+#: templates/nutrition/diary_day.html:74
 #: templates/programs/program_confirm_delete.html:14
 #: templates/programs/program_detail.html:52
+#: templates/stretching/session_detail.html:53
 #: templates/workouts/_performed_exercise_card.html:31
 msgid "Delete"
 msgstr "Удалить"
@@ -654,7 +679,7 @@ msgstr "Метка, чтобы отличать ваши ключи друг о�
 
 #: apps/api/models.py:24 templates/accounts/profile.html:3
 #: templates/accounts/profile.html:12 templates/api/key_list.html:85
-#: templates/base.html:190 templates/base.html:213
+#: templates/base.html:196 templates/base.html:219
 msgid "Profile"
 msgstr "Профиль"
 
@@ -666,7 +691,7 @@ msgid "Exercises"
 msgstr "Упражнения"
 
 #: apps/api/models.py:26 apps/core/models.py:162 templates/api/key_list.html:93
-#: templates/base.html:186 templates/base.html:188
+#: templates/base.html:192 templates/base.html:194
 #: templates/programs/program_detail.html:5
 #: templates/programs/program_list.html:3
 #: templates/programs/program_list.html:6
@@ -693,11 +718,11 @@ msgstr "Измерения"
 msgid "Activities"
 msgstr "Активности"
 
-#: apps/api/models.py:30 templates/api/key_list.html:113
+#: apps/api/models.py:30 templates/api/key_list.html:117
 msgid "Records"
 msgstr "Рекорды"
 
-#: apps/api/models.py:31 templates/api/key_list.html:117
+#: apps/api/models.py:31 templates/api/key_list.html:121
 msgid "Analytics"
 msgstr "Аналитика"
 
@@ -712,6 +737,19 @@ msgstr "Аналитика"
 msgid "Nutrition"
 msgstr "Питание"
 
+#: apps/api/models.py:33 apps/stretching/models.py:209
+#: templates/api/key_list.html:113 templates/base.html:179
+#: templates/base.html:181 templates/core/dashboard.html:143
+#: templates/stretching/_cooldown_card.html:7 templates/stretching/home.html:3
+#: templates/stretching/home.html:6 templates/stretching/home.html:16
+#: templates/stretching/home.html:48 templates/stretching/session_detail.html:3
+#: templates/stretching/session_detail.html:5
+#: templates/stretching/session_history.html:15
+#: templates/stretching/session_play.html:3
+#: templates/stretching/session_play.html:6
+msgid "Stretching"
+msgstr "Растяжка"
+
 #: apps/api/views_web.py:39
 msgid "You've reached your maximum number of API keys."
 msgstr "Вы достигли максимального количества API-ключей."
@@ -721,7 +759,7 @@ msgid "API key revoked."
 msgstr "API-ключ отозван."
 
 #: apps/coaching/models.py:23 apps/social/models.py:20
-#: apps/social/models.py:226
+#: apps/social/models.py:226 apps/stretching/models.py:213
 msgid "Pending"
 msgstr "В ожидании"
 
@@ -813,7 +851,7 @@ msgid "This diet plan's coach source is no longer available."
 msgstr "Исходный план питания тренера больше недоступен."
 
 #: apps/coaching/views_plans.py:59 apps/coaching/views_plans.py:73
-#: apps/nutrition/views.py:1070 apps/nutrition/views.py:1365
+#: apps/nutrition/views.py:1073 apps/nutrition/views.py:1368
 #: apps/programs/views.py:200
 #, python-format
 msgid "Imported “%(name)s”."
@@ -1089,8 +1127,8 @@ msgstr "IronStack %(version)s уже запущен — нажмите, чтоб
 
 #: apps/core/models.py:42
 msgid ""
-"Turns the backup-scheduler service's daily backup off without needing to "
-"stop or remove that service."
+"Turns the backup-scheduler service's daily backup off without needing to stop"
+" or remove that service."
 msgstr ""
 "Отключает ежедневное резервное копирование службы планировщика без "
 "необходимости останавливать или удалять эту службу."
@@ -1111,9 +1149,9 @@ msgstr ""
 
 #: apps/core/models.py:88
 msgid ""
-"Lets any signed-in user submit feedback from their profile page. Turning "
-"this off only closes new submissions — feedback already on file stays "
-"visible to staff."
+"Lets any signed-in user submit feedback from their profile page. Turning this"
+" off only closes new submissions — feedback already on file stays visible to "
+"staff."
 msgstr ""
 "Позволяет любому вошедшему пользователю отправлять отзыв со своей страницы "
 "профиля. Отключение этой опции закрывает только приём новых сообщений — уже "
@@ -1131,8 +1169,8 @@ msgstr ""
 "должен искать."
 
 #: apps/core/models.py:163 templates/analytics/dashboard.html:3
-#: templates/analytics/dashboard.html:6 templates/base.html:178
-#: templates/base.html:180
+#: templates/analytics/dashboard.html:6 templates/base.html:184
+#: templates/base.html:186
 msgid "Progress"
 msgstr "Прогресс"
 
@@ -1144,31 +1182,36 @@ msgstr "Замеры тела"
 msgid "Account & profile"
 msgstr "Аккаунт и профиль"
 
-#: apps/core/views.py:34
+#: apps/core/views.py:35
 msgid "Training day — new personal record!"
 msgstr "Тренировочный день — новый личный рекорд!"
 
-#: apps/core/views.py:36
+#: apps/core/views.py:37
 msgid "Training day — a session was abandoned."
 msgstr "Тренировочный день — тренировка была прервана."
 
-#: apps/core/views.py:38
+#: apps/core/views.py:39
 msgid "Training day."
 msgstr "Тренировочный день."
 
-#: apps/core/views.py:40
+#: apps/core/views.py:41
 msgid "Rest day."
 msgstr "День отдыха."
 
-#: apps/core/views.py:51
+#: apps/core/views.py:52
 #, python-format
 msgid "%(actual)s / %(target)s kcal logged."
 msgstr "%(actual)s / %(target)s ккал записано."
 
-#: apps/core/views.py:56
+#: apps/core/views.py:57
 #, python-format
 msgid "%(actual)s kcal logged."
 msgstr "%(actual)s ккал записано."
+
+#: apps/core/views.py:65
+#, python-format
+msgid "Stretched %(minutes)s min."
+msgstr "Растяжка: %(minutes)s мин."
 
 #: apps/core/views_backup.py:56
 #, python-format
@@ -1338,7 +1381,9 @@ msgstr "Разгибание рук на блоке"
 msgid "Abs"
 msgstr "Пресс"
 
-#: apps/exercises/i18n_content.py:55
+#: apps/exercises/i18n_content.py:55 templates/stretching/routine_form.html:18
+#: templates/stretching/session_form.html:18
+#: templates/stretching/stretch_form.html:18
 msgid "Back"
 msgstr "Спина"
 
@@ -1422,114 +1467,59 @@ msgstr "Резиновая лента"
 msgid ""
 "- Starting Position: Kneel on the floor with the ab wheel in front of you.\n"
 "- Grip the Wheel: Hold the handles firmly.\n"
-"- Roll Out: Slowly roll the wheel forward, extending your body while keeping "
-"your core tight.\n"
-"- Return: Pull the wheel back towards your knees, maintaining tension in "
-"your core."
+"- Roll Out: Slowly roll the wheel forward, extending your body while keeping your core tight.\n"
+"- Return: Pull the wheel back towards your knees, maintaining tension in your core."
 msgstr ""
 "- Исходное положение: встаньте на колени, колесо для пресса перед вами.\n"
 "- Хват: крепко возьмитесь за ручки.\n"
-"- Раскат: медленно катите колесо вперёд, вытягивая тело и удерживая мышцы "
-"кора в напряжении.\n"
+"- Раскат: медленно катите колесо вперёд, вытягивая тело и удерживая мышцы кора в напряжении.\n"
 "- Возврат: подтяните колесо обратно к коленям, сохраняя напряжение в корпусе."
 
 #: apps/exercises/i18n_content.py:98
 msgid ""
-"- The barbell full squat is a compound exercise that targets multiple muscle "
-"groups in the lower body, including the quadriceps, hamstrings, and glutes.\n"
-"- Proper form is crucial for maximizing results and preventing injuries "
-"during the barbell full squat. This includes maintaining a shoulder-width "
-"stance, creating whole body tension, controlling your descent, and "
-"maintaining proper depth and knee positioning.\n"
-"- Assistance moves such as the front squat, goblet squat, split squat, and "
-"Bulgarian split squat can help improve your performance in the barbell full "
-"squat by targeting specific muscle groups and improving overall technique.\n"
-"- To achieve new personal records in your back squat, gradually increase "
-"weight over time, vary rep ranges and sets to stimulate muscle growth, and "
-"prioritize rest and recovery between training sessions."
+"- The barbell full squat is a compound exercise that targets multiple muscle groups in the lower body, including the quadriceps, hamstrings, and glutes.\n"
+"- Proper form is crucial for maximizing results and preventing injuries during the barbell full squat. This includes maintaining a shoulder-width stance, creating whole body tension, controlling your descent, and maintaining proper depth and knee positioning.\n"
+"- Assistance moves such as the front squat, goblet squat, split squat, and Bulgarian split squat can help improve your performance in the barbell full squat by targeting specific muscle groups and improving overall technique.\n"
+"- To achieve new personal records in your back squat, gradually increase weight over time, vary rep ranges and sets to stimulate muscle growth, and prioritize rest and recovery between training sessions."
 msgstr ""
-"- Приседания со штангой — это многосуставное упражнение, задействующее "
-"несколько групп мышц нижней части тела, включая квадрицепсы, заднюю "
-"поверхность бедра и ягодицы.\n"
-"- Правильная техника крайне важна для максимальных результатов и "
-"профилактики травм: стойка на ширине плеч, напряжение всего тела, "
-"контролируемое опускание и правильная глубина и положение коленей.\n"
-"- Вспомогательные упражнения, такие как фронтальные приседания, приседания с "
-"гантелью у груди (гоблет-присед), выпады и болгарские сплит-приседания, "
-"помогают улучшить результат в приседаниях со штангой, прорабатывая отдельные "
-"группы мышц и совершенствуя технику.\n"
-"- Чтобы достичь новых личных рекордов в приседе, постепенно увеличивайте "
-"вес, варьируйте диапазоны повторений и количество подходов для стимуляции "
-"роста мышц и уделяйте приоритетное внимание отдыху и восстановлению между "
-"тренировками."
+"- Приседания со штангой — это многосуставное упражнение, задействующее несколько групп мышц нижней части тела, включая квадрицепсы, заднюю поверхность бедра и ягодицы.\n"
+"- Правильная техника крайне важна для максимальных результатов и профилактики травм: стойка на ширине плеч, напряжение всего тела, контролируемое опускание и правильная глубина и положение коленей.\n"
+"- Вспомогательные упражнения, такие как фронтальные приседания, приседания с гантелью у груди (гоблет-присед), выпады и болгарские сплит-приседания, помогают улучшить результат в приседаниях со штангой, прорабатывая отдельные группы мышц и совершенствуя технику.\n"
+"- Чтобы достичь новых личных рекордов в приседе, постепенно увеличивайте вес, варьируйте диапазоны повторений и количество подходов для стимуляции роста мышц и уделяйте приоритетное внимание отдыху и восстановлению между тренировками."
 
 #: apps/exercises/i18n_content.py:111
 msgid ""
-"Lay down on a bench, the bar should be directly above your eyes, the knees "
-"are somewhat angled and the feet are firmly on the floor. Concentrate, "
-"breath deeply and grab the bar more than shoulder wide. Bring it slowly down "
-"till it briefly touches your chest at the height of your nipples. Push the "
-"bar up.\n"
-"If you train with a high weight it is advisable to have a spotter that can "
-"help you up if you can't lift the weight on your own.\n"
-"With the width of the grip you can also control which part of the chest is "
-"trained more:\n"
+"Lay down on a bench, the bar should be directly above your eyes, the knees are somewhat angled and the feet are firmly on the floor. Concentrate, breath deeply and grab the bar more than shoulder wide. Bring it slowly down till it briefly touches your chest at the height of your nipples. Push the bar up.\n"
+"If you train with a high weight it is advisable to have a spotter that can help you up if you can't lift the weight on your own.\n"
+"With the width of the grip you can also control which part of the chest is trained more:\n"
 "- wide grip: outer chest muscles\n"
 "- narrow grip: inner chest muscles and triceps"
 msgstr ""
-"Лягте на скамью так, чтобы штанга находилась прямо над глазами, колени "
-"слегка согнуты, а стопы твёрдо стоят на полу. Сосредоточьтесь, глубоко "
-"вдохните и возьмитесь за гриф чуть шире плеч. Медленно опустите штангу, пока "
-"она слегка не коснётся груди на уровне сосков. Выжмите штангу обратно "
-"вверх.\n"
-"При работе с большим весом рекомендуется иметь страхующего партнёра, который "
-"поможет поднять штангу, если самостоятельно не получится.\n"
+"Лягте на скамью так, чтобы штанга находилась прямо над глазами, колени слегка согнуты, а стопы твёрдо стоят на полу. Сосредоточьтесь, глубоко вдохните и возьмитесь за гриф чуть шире плеч. Медленно опустите штангу, пока она слегка не коснётся груди на уровне сосков. Выжмите штангу обратно вверх.\n"
+"При работе с большим весом рекомендуется иметь страхующего партнёра, который поможет поднять штангу, если самостоятельно не получится.\n"
 "Ширина хвата также определяет, какая часть груди нагружается больше:\n"
 "- широкий хват: внешняя часть грудных мышц\n"
 "- узкий хват: внутренняя часть грудных мышц и трицепсы"
 
 #: apps/exercises/i18n_content.py:121
 msgid ""
-"- Holding a barbell with a pronated grip (palms facing down), bend your "
-"knees slightly and bring your torso forward, by bending at the waist, while "
-"keeping the back straight until it is almost parallel to the floor. Tip: "
-"Make sure that you keep the head up. The barbell should hang directly in "
-"front of you as your arms hang perpendicular to the floor and your torso. "
-"This is your starting position.\n"
-"- Now, while keeping the torso stationary, breathe out and lift the barbell "
-"to you. Keep the elbows close to the body and only use the forearms to hold "
-"the weight. At the top contracted position, squeeze the back muscles and "
-"hold for a brief pause.\n"
+"- Holding a barbell with a pronated grip (palms facing down), bend your knees slightly and bring your torso forward, by bending at the waist, while keeping the back straight until it is almost parallel to the floor. Tip: Make sure that you keep the head up. The barbell should hang directly in front of you as your arms hang perpendicular to the floor and your torso. This is your starting position.\n"
+"- Now, while keeping the torso stationary, breathe out and lift the barbell to you. Keep the elbows close to the body and only use the forearms to hold the weight. At the top contracted position, squeeze the back muscles and hold for a brief pause.\n"
 "- Then inhale and slowly lower the barbell back to the starting position.\n"
 "- Repeat for the recommended amount of repetitions."
 msgstr ""
-"- Возьмитесь за штангу хватом сверху (ладони вниз), слегка согните колени и "
-"наклоните корпус вперёд в тазобедренном суставе, удерживая спину прямой, "
-"пока корпус не окажется почти параллельно полу. Совет: держите голову "
-"приподнятой. Штанга должна свисать прямо перед вами, руки перпендикулярны "
-"полу и корпусу. Это исходное положение.\n"
-"- Удерживая корпус неподвижным, выдохните и подтяните штангу к себе. Держите "
-"локти близко к телу и поднимайте вес только предплечьями. В верхней точке "
-"сожмите мышцы спины и задержитесь на мгновение.\n"
+"- Возьмитесь за штангу хватом сверху (ладони вниз), слегка согните колени и наклоните корпус вперёд в тазобедренном суставе, удерживая спину прямой, пока корпус не окажется почти параллельно полу. Совет: держите голову приподнятой. Штанга должна свисать прямо перед вами, руки перпендикулярны полу и корпусу. Это исходное положение.\n"
+"- Удерживая корпус неподвижным, выдохните и подтяните штангу к себе. Держите локти близко к телу и поднимайте вес только предплечьями. В верхней точке сожмите мышцы спины и задержитесь на мгновение.\n"
 "- Затем вдохните и медленно опустите штангу обратно в исходное положение.\n"
 "- Повторите рекомендованное количество повторений."
 
 #: apps/exercises/i18n_content.py:133
 msgid ""
-"Take a barbell and stand with a straight body, the arms are hanging freely "
-"in front of you. Lift from this position the shoulders as high as you can, "
-"but don't bend the arms during the movement. On the highest point, make a "
-"short pause of 1 or 2 seconds before returning slowly to the initial "
-"position.\n"
-"When training with a higher weight, make sure that you still do the whole "
-"movement!"
+"Take a barbell and stand with a straight body, the arms are hanging freely in front of you. Lift from this position the shoulders as high as you can, but don't bend the arms during the movement. On the highest point, make a short pause of 1 or 2 seconds before returning slowly to the initial position.\n"
+"When training with a higher weight, make sure that you still do the whole movement!"
 msgstr ""
-"Возьмите штангу и встаньте прямо, руки свободно свисают перед вами. Из этого "
-"положения поднимите плечи как можно выше, не сгибая руки во время движения. "
-"В верхней точке сделайте короткую паузу на 1–2 секунды, прежде чем медленно "
-"вернуться в исходное положение.\n"
-"При работе с большим весом обязательно выполняйте движение в полной "
-"амплитуде!"
+"Возьмите штангу и встаньте прямо, руки свободно свисают перед вами. Из этого положения поднимите плечи как можно выше, не сгибая руки во время движения. В верхней точке сделайте короткую паузу на 1–2 секунды, прежде чем медленно вернуться в исходное положение.\n"
+"При работе с большим весом обязательно выполняйте движение в полной амплитуде!"
 
 #: apps/exercises/i18n_content.py:140
 msgid ""
@@ -1540,86 +1530,38 @@ msgid ""
 msgstr ""
 "Встаньте в тренажёр для икроножных мышц так, чтобы можно было полностью "
 "опустить пятки. Стойте прямо, не прогибайте поясницу и не сгибайте ноги. "
-"Поднимитесь на носки как можно выше. Сделайте короткую паузу на 1–2 секунды "
-"и медленно опуститесь обратно."
+"Поднимитесь на носки как можно выше. Сделайте короткую паузу на 1–2 секунды и"
+" медленно опуститесь обратно."
 
 #: apps/exercises/i18n_content.py:146
 msgid ""
-"Stand firmly, with your feet slightly more than shoulder wide apart. Stand "
-"directly behind the bar where it should barely touch your shin, your feet "
-"pointing a bit out. Bend down with a straight back, the knees also pointing "
-"somewhat out. Grab the bar with a shoulder wide grip, one overhand, one "
-"underhand (mixed grip).\n"
-"Pull the weight up. At the highest point make a slight hollow back and pull "
-"the bar back. Hold 1 or 2 seconds that position. Go down, making sure the "
-"back is not bent. Once down you can either go back again as soon as the "
-"weights touch the floor, or make a pause, depending on the weight."
+"Stand firmly, with your feet slightly more than shoulder wide apart. Stand directly behind the bar where it should barely touch your shin, your feet pointing a bit out. Bend down with a straight back, the knees also pointing somewhat out. Grab the bar with a shoulder wide grip, one overhand, one underhand (mixed grip).\n"
+"Pull the weight up. At the highest point make a slight hollow back and pull the bar back. Hold 1 or 2 seconds that position. Go down, making sure the back is not bent. Once down you can either go back again as soon as the weights touch the floor, or make a pause, depending on the weight."
 msgstr ""
-"Встаньте устойчиво, ноги немного шире плеч. Встаньте вплотную к грифу так, "
-"чтобы он почти касался голеней, носки слегка развёрнуты наружу. Наклонитесь, "
-"сохраняя спину прямой, колени тоже слегка развёрнуты наружу. Возьмитесь за "
-"гриф хватом на ширине плеч — одна рука сверху, другая снизу (разнохват).\n"
-"Поднимите вес вверх. В верхней точке слегка прогнитесь в пояснице и отведите "
-"штангу назад. Задержитесь в этом положении на 1–2 секунды. Опуститесь вниз, "
-"следя за тем, чтобы спина не округлялась. Когда штанга внизу, можно сразу "
-"продолжить следующее повторение, как только блины коснутся пола, либо "
-"сделать паузу — в зависимости от веса."
+"Встаньте устойчиво, ноги немного шире плеч. Встаньте вплотную к грифу так, чтобы он почти касался голеней, носки слегка развёрнуты наружу. Наклонитесь, сохраняя спину прямой, колени тоже слегка развёрнуты наружу. Возьмитесь за гриф хватом на ширине плеч — одна рука сверху, другая снизу (разнохват).\n"
+"Поднимите вес вверх. В верхней точке слегка прогнитесь в пояснице и отведите штангу назад. Задержитесь в этом положении на 1–2 секунды. Опуститесь вниз, следя за тем, чтобы спина не округлялась. Когда штанга внизу, можно сразу продолжить следующее повторение, как только блины коснутся пола, либо сделать паузу — в зависимости от веса."
 
 #: apps/exercises/i18n_content.py:156
 msgid ""
-"- Setup and Starting Position: Sit at the end of a flat bench with a "
-"dumbbell resting vertically against each thigh. Carefully lean back while "
-"driving the dumbbells toward your chest with your knees.\n"
-"- The “Leg Drive” and Posture: Plant your feet firmly on the floor. Retract "
-"your shoulder blades (press them together against the bench) and maintain a "
-"slight natural lumbar curve.\n"
-"- Starting Position: Push the dumbbells toward the ceiling. Your wrists "
-"should be aligned with your elbows. Rotate the dumbbells slightly inward "
-"(about 45 degrees) so that your elbows do not splay out too far to the "
-"sides, thereby protecting your shoulders.\n"
-"- Eccentric Phase (Lowering): Lower the dumbbells in a controlled manner "
-"toward the sides of your chest. Your elbows should lower at an angle of "
-"about 45–60 degrees relative to your body. Feel the stretch in the lower "
-"part of your chest.\n"
-"- Concentric Phase (Lift): Push the weight upward in a slight arc (toward "
-"the center), without letting the dumbbells collide at the top or fully "
-"locking out your elbows to maintain muscle tension. Exhale as you lift."
+"- Setup and Starting Position: Sit at the end of a flat bench with a dumbbell resting vertically against each thigh. Carefully lean back while driving the dumbbells toward your chest with your knees.\n"
+"- The “Leg Drive” and Posture: Plant your feet firmly on the floor. Retract your shoulder blades (press them together against the bench) and maintain a slight natural lumbar curve.\n"
+"- Starting Position: Push the dumbbells toward the ceiling. Your wrists should be aligned with your elbows. Rotate the dumbbells slightly inward (about 45 degrees) so that your elbows do not splay out too far to the sides, thereby protecting your shoulders.\n"
+"- Eccentric Phase (Lowering): Lower the dumbbells in a controlled manner toward the sides of your chest. Your elbows should lower at an angle of about 45–60 degrees relative to your body. Feel the stretch in the lower part of your chest.\n"
+"- Concentric Phase (Lift): Push the weight upward in a slight arc (toward the center), without letting the dumbbells collide at the top or fully locking out your elbows to maintain muscle tension. Exhale as you lift."
 msgstr ""
-"- Подготовка и исходное положение: сядьте на край горизонтальной скамьи, "
-"поставив по гантели вертикально на каждое бедро. Аккуратно откиньтесь назад, "
-"помогая гантелям подняться к груди с помощью коленей.\n"
-"- Опора на ноги и осанка: твёрдо поставьте стопы на пол. Сведите лопатки "
-"(прижмите их к скамье) и сохраняйте естественный небольшой прогиб в "
-"пояснице.\n"
-"- Исходное положение: выжмите гантели к потолку. Запястья должны быть на "
-"одной линии с локтями. Слегка разверните гантели внутрь (примерно на 45 "
-"градусов), чтобы локти не расходились слишком широко в стороны — это "
-"защищает плечи.\n"
-"- Эксцентрическая фаза (опускание): опустите гантели подконтрольно к бокам "
-"груди. Локти должны опускаться под углом примерно 45–60 градусов "
-"относительно тела. Почувствуйте растяжение в нижней части груди.\n"
-"- Концентрическая фаза (подъём): выжмите вес вверх по лёгкой дуге (к "
-"центру), не сталкивая гантели вверху и не разгибая локти полностью, чтобы "
-"сохранить напряжение мышц. Выдыхайте во время подъёма."
+"- Подготовка и исходное положение: сядьте на край горизонтальной скамьи, поставив по гантели вертикально на каждое бедро. Аккуратно откиньтесь назад, помогая гантелям подняться к груди с помощью коленей.\n"
+"- Опора на ноги и осанка: твёрдо поставьте стопы на пол. Сведите лопатки (прижмите их к скамье) и сохраняйте естественный небольшой прогиб в пояснице.\n"
+"- Исходное положение: выжмите гантели к потолку. Запястья должны быть на одной линии с локтями. Слегка разверните гантели внутрь (примерно на 45 градусов), чтобы локти не расходились слишком широко в стороны — это защищает плечи.\n"
+"- Эксцентрическая фаза (опускание): опустите гантели подконтрольно к бокам груди. Локти должны опускаться под углом примерно 45–60 градусов относительно тела. Почувствуйте растяжение в нижней части груди.\n"
+"- Концентрическая фаза (подъём): выжмите вес вверх по лёгкой дуге (к центру), не сталкивая гантели вверху и не разгибая локти полностью, чтобы сохранить напряжение мышц. Выдыхайте во время подъёма."
 
 #: apps/exercises/i18n_content.py:172
 msgid ""
-"Hold two dumbbells, the arms are streched, the hands are on your side, the "
-"palms face inwards. Bend the arms and bring the weight with a fast movement "
-"up. At the same time, rotate your arms by 90 degrees at the very beginning "
-"of the movement. At the highest point, rotate a little the weights further "
-"outwards. Without a pause, bring them down, slowly.\n"
-"Don't allow your body to swing during the exercise, all work is done by the "
-"biceps, which are the only mucles that should move (pay attention to the "
-"elbows)."
+"Hold two dumbbells, the arms are streched, the hands are on your side, the palms face inwards. Bend the arms and bring the weight with a fast movement up. At the same time, rotate your arms by 90 degrees at the very beginning of the movement. At the highest point, rotate a little the weights further outwards. Without a pause, bring them down, slowly.\n"
+"Don't allow your body to swing during the exercise, all work is done by the biceps, which are the only mucles that should move (pay attention to the elbows)."
 msgstr ""
-"Возьмите две гантели, руки выпрямлены вдоль тела, ладони обращены внутрь. "
-"Согните руки и быстрым движением поднимите гантели вверх. Одновременно "
-"разверните руки на 90 градусов в самом начале движения. В верхней точке "
-"слегка доверните гантели ещё немного наружу. Без паузы медленно опустите их "
-"обратно.\n"
-"Не раскачивайте корпус во время упражнения — всю работу должны выполнять "
-"бицепсы, единственные мышцы, которые должны двигаться (следите за локтями)."
+"Возьмите две гантели, руки выпрямлены вдоль тела, ладони обращены внутрь. Согните руки и быстрым движением поднимите гантели вверх. Одновременно разверните руки на 90 градусов в самом начале движения. В верхней точке слегка доверните гантели ещё немного наружу. Без паузы медленно опустите их обратно.\n"
+"Не раскачивайте корпус во время упражнения — всю работу должны выполнять бицепсы, единственные мышцы, которые должны двигаться (следите за локтями)."
 
 #: apps/exercises/i18n_content.py:181
 msgid ""
@@ -1642,8 +1584,8 @@ msgid ""
 "flaring them out wide, squeezing your shoulder blades together at the end, "
 "then return under control."
 msgstr ""
-"Прикрепите канатную рукоять к блочному тренажёру, установленному на высоте "
-"от верхней части груди до головы. Возьмитесь за канат обеими руками, ладони "
+"Прикрепите канатную рукоять к блочному тренажёру, установленному на высоте от"
+" верхней части груди до головы. Возьмитесь за канат обеими руками, ладони "
 "обращены друг к другу, и отступите назад, создавая натяжение. Потяните канат "
 "к лицу, ведя движение локтями и разводя их широко в стороны, в конце сведите "
 "лопатки вместе, затем подконтрольно вернитесь в исходное положение."
@@ -1652,28 +1594,24 @@ msgstr ""
 msgid ""
 "Rest the bar across the front of your shoulders, elbows raised high to keep "
 "it in place, using either a clean grip or crossed arms. Keeping your torso "
-"upright, bend your knees and hips to lower into a squat until your thighs "
-"are at least parallel to the floor, then drive back up through your heels to "
+"upright, bend your knees and hips to lower into a squat until your thighs are"
+" at least parallel to the floor, then drive back up through your heels to "
 "standing."
 msgstr ""
 "Расположите штангу спереди на плечах, локти подняты высоко, чтобы удерживать "
 "её на месте — используйте чистый хват или скрещенные руки. Удерживая корпус "
-"вертикально, согните колени и таз, опускаясь в присед, пока бёдра не "
-"окажутся хотя бы параллельно полу, затем поднимитесь обратно, отталкиваясь "
-"пятками."
+"вертикально, согните колени и таз, опускаясь в присед, пока бёдра не окажутся"
+" хотя бы параллельно полу, затем поднимитесь обратно, отталкиваясь пятками."
 
 #: apps/exercises/i18n_content.py:200
 msgid ""
 "- Start: Hold dumbbells at your sides with palms facing your torso.\n"
-"- Curl: Lift the weights toward your shoulders while maintaining the neutral "
-"grip (like holding a hammer).\n"
-"- Squeeze: Contract the biceps at the top without moving your elbows "
-"forward.\n"
+"- Curl: Lift the weights toward your shoulders while maintaining the neutral grip (like holding a hammer).\n"
+"- Squeeze: Contract the biceps at the top without moving your elbows forward.\n"
 "- Lower: Slowly return to the starting position with full control."
 msgstr ""
 "- Начало: держите гантели по бокам туловища, ладони обращены к телу.\n"
-"- Подъём: поднимайте гантели к плечам, сохраняя нейтральный хват (как будто "
-"держите молоток).\n"
+"- Подъём: поднимайте гантели к плечам, сохраняя нейтральный хват (как будто держите молоток).\n"
 "- Сжатие: в верхней точке напрягите бицепсы, не выводя локти вперёд.\n"
 "- Опускание: медленно и подконтрольно вернитесь в исходное положение."
 
@@ -1694,9 +1632,9 @@ msgstr ""
 #: apps/exercises/i18n_content.py:214
 msgid ""
 "Lie back on an incline bench set to about 30-45°, feet flat on the floor. "
-"Grip the bar slightly wider than shoulder-width and unrack it over your "
-"upper chest. Lower the bar under control to your upper chest, then press it "
-"back up until your arms are fully extended."
+"Grip the bar slightly wider than shoulder-width and unrack it over your upper"
+" chest. Lower the bar under control to your upper chest, then press it back "
+"up until your arms are fully extended."
 msgstr ""
 "Лягте на скамью с наклоном примерно 30–45°, стопы полностью на полу. "
 "Возьмитесь за гриф чуть шире плеч и снимите штангу со стоек над верхней "
@@ -1711,8 +1649,8 @@ msgid ""
 "keeping the rest of your body still. Let the bar rise back under control "
 "until your arms are fully extended."
 msgstr ""
-"Сядьте в тренажёр для тяги верхнего блока, зафиксировав бёдра под валиками, "
-"и возьмитесь за рукоять шире плеч. Слегка отклонитесь назад, затем потяните "
+"Сядьте в тренажёр для тяги верхнего блока, зафиксировав бёдра под валиками, и"
+" возьмитесь за рукоять шире плеч. Слегка отклонитесь назад, затем потяните "
 "рукоять вниз так, чтобы она прошла близко к подбородку и коснулась верхней "
 "части груди, удерживая остальное тело неподвижным. Дайте рукояти "
 "подконтрольно подняться обратно, пока руки полностью не выпрямятся."
@@ -1721,27 +1659,27 @@ msgstr ""
 msgid ""
 "This exercise works the deltoid muscle of the shoulder. The movement starts "
 "with the arms straight, and the hands holding weights at the sides or in "
-"front of the body. Body is in a slight forward-leaning position with hips "
-"and knees bent a little. Arms are kept straight or slightly bent, and raised "
+"front of the body. Body is in a slight forward-leaning position with hips and"
+" knees bent a little. Arms are kept straight or slightly bent, and raised "
 "through an arc of movement in the coronal plane that terminates when the "
 "hands are at approximately shoulder height. Weights are lowered to the "
 "starting position, completing one rep. When using a cable machine the "
-"individual stands with the coronal plane in line with the pulley, which is "
-"at or near the ground. The exercise can be completed one shoulder at a time "
-"(with the other hand used to stabilize the body against the weight moved), "
-"or with both hands simultaneously if two parallel pulleys are available."
+"individual stands with the coronal plane in line with the pulley, which is at"
+" or near the ground. The exercise can be completed one shoulder at a time "
+"(with the other hand used to stabilize the body against the weight moved), or"
+" with both hands simultaneously if two parallel pulleys are available."
 msgstr ""
 "Это упражнение прорабатывает дельтовидную мышцу плеча. Движение начинается с "
-"прямых рук, удерживающих вес по бокам или перед телом. Корпус слегка "
-"наклонён вперёд, таз и колени немного согнуты. Руки остаются прямыми или "
-"слегка согнутыми и поднимаются по дугообразной траектории во фронтальной "
-"плоскости, пока кисти не окажутся примерно на уровне плеч. Вес опускается "
-"обратно в исходное положение, завершая одно повторение. При использовании "
-"блочного тренажёра человек стоит так, чтобы фронтальная плоскость совпадала "
-"с линией блока, расположенного на уровне пола или около него. Упражнение "
-"можно выполнять поочерёдно для каждого плеча (свободной рукой стабилизируя "
-"корпус против движущегося веса) либо одновременно двумя руками, если "
-"доступны два параллельных блока."
+"прямых рук, удерживающих вес по бокам или перед телом. Корпус слегка наклонён"
+" вперёд, таз и колени немного согнуты. Руки остаются прямыми или слегка "
+"согнутыми и поднимаются по дугообразной траектории во фронтальной плоскости, "
+"пока кисти не окажутся примерно на уровне плеч. Вес опускается обратно в "
+"исходное положение, завершая одно повторение. При использовании блочного "
+"тренажёра человек стоит так, чтобы фронтальная плоскость совпадала с линией "
+"блока, расположенного на уровне пола или около него. Упражнение можно "
+"выполнять поочерёдно для каждого плеча (свободной рукой стабилизируя корпус "
+"против движущегося веса) либо одновременно двумя руками, если доступны два "
+"параллельных блока."
 
 #: apps/exercises/i18n_content.py:240
 msgid ""
@@ -1751,52 +1689,43 @@ msgid ""
 "down under control without letting the weight stack slam down."
 msgstr ""
 "Лягте лицом вниз в тренажёр для сгибания ног так, чтобы валик находился чуть "
-"выше пяток, а колени слегка выступали за край скамьи. Согните ноги в "
-"коленях, подтягивая пятки к ягодицам, затем подконтрольно опустите обратно, "
-"не позволяя грузовому стеку резко падать."
+"выше пяток, а колени слегка выступали за край скамьи. Согните ноги в коленях,"
+" подтягивая пятки к ягодицам, затем подконтрольно опустите обратно, не "
+"позволяя грузовому стеку резко падать."
 
 #: apps/exercises/i18n_content.py:246
 msgid ""
 "Sit in the leg press machine with your back flat against the pad and feet "
-"shoulder-width apart on the platform. Unlock the safety catches and lower "
-"the platform by bending your knees to about a 90° angle, keeping your lower "
-"back pressed against the pad. Push through your heels to extend your legs "
-"back to the starting position without locking your knees out completely."
+"shoulder-width apart on the platform. Unlock the safety catches and lower the"
+" platform by bending your knees to about a 90° angle, keeping your lower back"
+" pressed against the pad. Push through your heels to extend your legs back to"
+" the starting position without locking your knees out completely."
 msgstr ""
 "Сядьте в тренажёр для жима ногами, плотно прижав спину к спинке, стопы на "
 "платформе на ширине плеч. Разблокируйте предохранители и опустите платформу, "
 "сгибая колени примерно до 90 градусов, удерживая поясницу прижатой к спинке. "
-"Оттолкнитесь пятками, разгибая ноги обратно в исходное положение, не "
-"разгибая колени до конца."
+"Оттолкнитесь пятками, разгибая ноги обратно в исходное положение, не разгибая"
+" колени до конца."
 
 #: apps/exercises/i18n_content.py:253
 msgid ""
-"- Setup: Stand with feet together and grip the bar slightly wider than "
-"shoulders.\n"
+"- Setup: Stand with feet together and grip the bar slightly wider than shoulders.\n"
 "- Position: Rest the bar on your upper chest.\n"
-"- Press: Brace your core and push the bar straight up until your arms lock "
-"out.\n"
+"- Press: Brace your core and push the bar straight up until your arms lock out.\n"
 "- Finish: Control the bar back down to your chest."
 msgstr ""
 "- Подготовка: встаньте, ноги вместе, возьмитесь за гриф чуть шире плеч.\n"
 "- Положение: расположите штангу на верхней части груди.\n"
-"- Жим: напрягите корпус и выжмите штангу строго вверх, пока руки полностью "
-"не выпрямятся.\n"
+"- Жим: напрягите корпус и выжмите штангу строго вверх, пока руки полностью не выпрямятся.\n"
 "- Завершение: подконтрольно опустите штангу обратно к груди."
 
 #: apps/exercises/i18n_content.py:259
 msgid ""
-"Get into a position on the floor supporting your weight on your forearms and "
-"toes. Arms are bent and directly below the shoulder.\n"
-"Keep your body straight at all times and hold this position as long as "
-"possible. To increase difficulty an arm or leg can be raised while "
-"performing this exercise."
+"Get into a position on the floor supporting your weight on your forearms and toes. Arms are bent and directly below the shoulder.\n"
+"Keep your body straight at all times and hold this position as long as possible. To increase difficulty an arm or leg can be raised while performing this exercise."
 msgstr ""
-"Примите положение на полу, опираясь весом тела на предплечья и носки стоп. "
-"Руки согнуты и находятся точно под плечами.\n"
-"Держите тело прямым всё время и удерживайте это положение как можно дольше. "
-"Чтобы усложнить упражнение, можно поднять руку или ногу во время его "
-"выполнения."
+"Примите положение на полу, опираясь весом тела на предплечья и носки стоп. Руки согнуты и находятся точно под плечами.\n"
+"Держите тело прямым всё время и удерживайте это положение как можно дольше. Чтобы усложнить упражнение, можно поднять руку или ногу во время его выполнения."
 
 #: apps/exercises/i18n_content.py:265
 msgid ""
@@ -1813,68 +1742,45 @@ msgstr ""
 #: apps/exercises/i18n_content.py:271
 msgid ""
 "Stand holding a barbell in front of your thighs with a shoulder-width "
-"overhand grip. Keeping your back flat and knees only slightly bent, push "
-"your hips back and lower the bar down the front of your legs until you feel "
-"a stretch in your hamstrings. Drive your hips forward to return to standing, "
+"overhand grip. Keeping your back flat and knees only slightly bent, push your"
+" hips back and lower the bar down the front of your legs until you feel a "
+"stretch in your hamstrings. Drive your hips forward to return to standing, "
 "keeping the bar close to your legs throughout."
 msgstr ""
 "Встаньте, удерживая штангу перед бёдрами хватом сверху на ширине плеч. Держа "
 "спину прямой, а колени лишь слегка согнутыми, отведите таз назад и опустите "
-"штангу вдоль передней поверхности ног, пока не почувствуете растяжение "
-"задней поверхности бедра. Верните таз вперёд, возвращаясь в положение стоя, "
+"штангу вдоль передней поверхности ног, пока не почувствуете растяжение задней"
+" поверхности бедра. Верните таз вперёд, возвращаясь в положение стоя, "
 "удерживая штангу близко к ногам на протяжении всего движения."
 
 #: apps/exercises/i18n_content.py:278
 msgid ""
-"- Take a seat on the machine with your feet planted, a little wider than "
-"shoulder width. Drive the heels, and squeeze the glutes. Grab onto the cable "
-"handle.\n"
-"- Sit up tall with a slight bend through the knees. Tighten up the abs and "
-"low back to maintain a perpendicular angle to the floor with your torso.\n"
-"- Roll the shoulders back and down. Squeeze them together as you row, "
-"thinking about pinching a pencil in between them. As you do this, pull the "
-"handle back towards you, landing right above your belly button.\n"
-"- Pause here for a moment before returning the handle, still squeezing the "
-"shoulder blades. Once you've returned the weight to the stack, then allow "
-"the shoulder blades to relax, without pulling the torso forward.\n"
+"- Take a seat on the machine with your feet planted, a little wider than shoulder width. Drive the heels, and squeeze the glutes. Grab onto the cable handle.\n"
+"- Sit up tall with a slight bend through the knees. Tighten up the abs and low back to maintain a perpendicular angle to the floor with your torso.\n"
+"- Roll the shoulders back and down. Squeeze them together as you row, thinking about pinching a pencil in between them. As you do this, pull the handle back towards you, landing right above your belly button.\n"
+"- Pause here for a moment before returning the handle, still squeezing the shoulder blades. Once you've returned the weight to the stack, then allow the shoulder blades to relax, without pulling the torso forward.\n"
 "- Repeat the movement."
 msgstr ""
-"- Сядьте в тренажёр, поставив стопы чуть шире плеч. Упритесь пятками и "
-"напрягите ягодицы. Возьмитесь за рукоять троса.\n"
-"- Сядьте прямо, с лёгким сгибом в коленях. Напрягите пресс и поясницу, "
-"удерживая корпус перпендикулярно полу.\n"
-"- Отведите плечи назад и вниз. Сводите лопатки во время тяги, как будто "
-"зажимая карандаш между ними. При этом тяните рукоять к себе, приводя её "
-"точно над пупком.\n"
-"- Задержитесь на мгновение, прежде чем вернуть рукоять, продолжая сводить "
-"лопатки. Когда груз вернётся на стек, расслабьте лопатки, не наклоняя корпус "
-"вперёд.\n"
+"- Сядьте в тренажёр, поставив стопы чуть шире плеч. Упритесь пятками и напрягите ягодицы. Возьмитесь за рукоять троса.\n"
+"- Сядьте прямо, с лёгким сгибом в коленях. Напрягите пресс и поясницу, удерживая корпус перпендикулярно полу.\n"
+"- Отведите плечи назад и вниз. Сводите лопатки во время тяги, как будто зажимая карандаш между ними. При этом тяните рукоять к себе, приводя её точно над пупком.\n"
+"- Задержитесь на мгновение, прежде чем вернуть рукоять, продолжая сводить лопатки. Когда груз вернётся на стек, расслабьте лопатки, не наклоняя корпус вперёд.\n"
 "- Повторите движение."
 
 #: apps/exercises/i18n_content.py:290
 msgid ""
-"Hold the SZ-bar and lay down on a flat bench in such a way that around 1/4 "
-"of your head is over the edge. Stretch your arms with the bar and bend them "
-"so that the bar is lowered. Just before it touches your forehead, push it "
-"up.\n"
-"Pay attention to your elbows and arms: only the triceps are doing the work, "
-"the rest of the arms should not move."
+"Hold the SZ-bar and lay down on a flat bench in such a way that around 1/4 of your head is over the edge. Stretch your arms with the bar and bend them so that the bar is lowered. Just before it touches your forehead, push it up.\n"
+"Pay attention to your elbows and arms: only the triceps are doing the work, the rest of the arms should not move."
 msgstr ""
-"Возьмите EZ-гриф и лягте на горизонтальную скамью так, чтобы примерно "
-"четверть головы находилась за краем скамьи. Выпрямите руки со штангой, затем "
-"согните их, опуская гриф. Прямо перед тем, как он коснётся лба, выжмите его "
-"обратно вверх.\n"
-"Следите за локтями и руками: работать должны только трицепсы, остальная "
-"часть рук должна оставаться неподвижной."
+"Возьмите EZ-гриф и лягте на горизонтальную скамью так, чтобы примерно четверть головы находилась за краем скамьи. Выпрямите руки со штангой, затем согните их, опуская гриф. Прямо перед тем, как он коснётся лба, выжмите его обратно вверх.\n"
+"Следите за локтями и руками: работать должны только трицепсы, остальная часть рук должна оставаться неподвижной."
 
 #: apps/exercises/i18n_content.py:297
 msgid ""
-"Keep arms straight but not locked, pulling with your lats, not your "
-"shoulders.\n"
+"Keep arms straight but not locked, pulling with your lats, not your shoulders.\n"
 "Don’t let your shoulders shrug up during the movement."
 msgstr ""
-"Держите руки прямыми, но не заблокированными, и тяните широчайшими мышцами "
-"спины, а не плечами.\n"
+"Держите руки прямыми, но не заблокированными, и тяните широчайшими мышцами спины, а не плечами.\n"
 "Не позволяйте плечам подниматься во время движения."
 
 #: apps/exercises/i18n_content.py:301
@@ -1888,8 +1794,8 @@ msgstr ""
 "Встаньте лицом к блочному тренажёру с прямой или изогнутой рукоятью, "
 "закреплённой на верхнем блоке. Возьмитесь за рукоять хватом сверху, локти "
 "прижаты к бокам. Удерживая плечи неподвижными, толкайте рукоять вниз, пока "
-"руки полностью не выпрямятся, затем дайте ей подконтрольно подняться "
-"обратно, не позволяя локтям смещаться вперёд."
+"руки полностью не выпрямятся, затем дайте ей подконтрольно подняться обратно,"
+" не позволяя локтям смещаться вперёд."
 
 #: apps/exercises/models.py:39 apps/exercises/models.py:111
 msgid "equipment"
@@ -1912,10 +1818,11 @@ msgid "Per hand / dumbbell"
 msgstr "На руку / гантель"
 
 #: apps/exercises/models.py:76 apps/programs/models.py:37
+#: apps/stretching/models.py:97
 msgid "description"
 msgstr "описание"
 
-#: apps/exercises/models.py:84
+#: apps/exercises/models.py:84 apps/stretching/models.py:48
 msgid "instructions"
 msgstr "инструкции"
 
@@ -1959,8 +1866,8 @@ msgstr "порядок"
 #: apps/exercises/models.py:216
 #, python-format
 msgid ""
-"This exercise already has the maximum of %(max)d image(s) allowed. Remove "
-"one before adding another."
+"This exercise already has the maximum of %(max)d image(s) allowed. Remove one"
+" before adding another."
 msgstr ""
 "У этого упражнения уже максимально допустимое количество изображений "
 "(%(max)d). Удалите одно, прежде чем добавлять новое."
@@ -1970,8 +1877,8 @@ msgid ""
 "How many images a single exercise may hold at once. Applies to every "
 "exercise, system and custom alike."
 msgstr ""
-"Сколько изображений может одновременно содержать одно упражнение. "
-"Применяется ко всем упражнениям — как системным, так и пользовательским."
+"Сколько изображений может одновременно содержать одно упражнение. Применяется"
+" ко всем упражнениям — как системным, так и пользовательским."
 
 #: apps/exercises/views.py:72
 msgid "Exercise created."
@@ -2119,7 +2026,9 @@ msgstr "Объединить продукты"
 msgid ""
 "%(count)d more food(s) were left for later to stay within Open Food Facts' "
 "rate limit — run this action again in a minute."
-msgstr "Ещё %(count)d продуктов отложено из-за ограничения частоты запросов Open Food Facts — запустите действие снова через минуту."
+msgstr ""
+"Ещё %(count)d продуктов отложено из-за ограничения частоты запросов Open Food"
+" Facts — запустите действие снова через минуту."
 
 #: apps/nutrition/calculators.py:138 apps/nutrition/calculators.py:143
 msgid "Lower risk"
@@ -2364,8 +2273,8 @@ msgstr "Разнообразить приёмы пищи на всю недел�
 #: apps/nutrition/forms.py:352
 msgid ""
 "Each day still hits the same daily calories/macros above — only which meal "
-"fills each slot changes from day to day, so a week's worth of breakfasts "
-"(for example) aren't all identical."
+"fills each slot changes from day to day, so a week's worth of breakfasts (for"
+" example) aren't all identical."
 msgstr ""
 "Каждый день по-прежнему соответствует тем же дневным калориям/макросам, "
 "указанным выше — меняется только то, какой приём пищи заполняет каждый слот, "
@@ -2380,8 +2289,8 @@ msgid ""
 "Skips the automatic suggestions above and just creates each meal ready for "
 "you to fill in yourself, on the plan's own page afterward."
 msgstr ""
-"Пропускает автоматические предложения выше и просто создаёт каждый приём "
-"пищи готовым для самостоятельного заполнения позже, на странице плана."
+"Пропускает автоматические предложения выше и просто создаёт каждый приём пищи"
+" готовым для самостоятельного заполнения позже, на странице плана."
 
 #: apps/nutrition/forms.py:398
 msgid "Pick either a food or a recipe, not both or neither."
@@ -2559,11 +2468,11 @@ msgstr ""
 
 #: apps/nutrition/i18n_content.py:71
 msgid ""
-"Pan-sear the salmon, serve over rice with steamed broccoli and a little "
-"olive oil."
+"Pan-sear the salmon, serve over rice with steamed broccoli and a little olive"
+" oil."
 msgstr ""
-"Обжарьте лосось на сковороде, подавайте с рисом, брокколи на пару и "
-"небольшим количеством оливкового масла."
+"Обжарьте лосось на сковороде, подавайте с рисом, брокколи на пару и небольшим"
+" количеством оливкового масла."
 
 #: apps/nutrition/i18n_content.py:72
 msgid ""
@@ -2737,7 +2646,7 @@ msgstr "A — лучший"
 msgid "B"
 msgstr "B"
 
-#: apps/nutrition/models.py:93
+#: apps/nutrition/models.py:93 templates/nutrition/diary_day.html:60
 msgid "C"
 msgstr "C"
 
@@ -2776,8 +2685,8 @@ msgid ""
 "own estimate, never as an input to it."
 msgstr ""
 "Если вы уже это отслеживаете, сообщите нам — используется только для "
-"сравнения с собственной оценкой приложения, но никогда как входные данные "
-"для неё."
+"сравнения с собственной оценкой приложения, но никогда как входные данные для"
+" неё."
 
 #: apps/nutrition/models.py:309
 msgid "Null for the built-in default meal slots."
@@ -2913,11 +2822,11 @@ msgstr ""
 msgid "Goal updated — new target is %(calories)d kcal/day."
 msgstr "Цель обновлена — новая норма: %(calories)d ккал/день."
 
-#: apps/nutrition/views.py:758
+#: apps/nutrition/views.py:761
 msgid "Pick a date to copy this day to."
 msgstr "Выберите дату, на которую скопировать этот день."
 
-#: apps/nutrition/views.py:763
+#: apps/nutrition/views.py:766
 #, python-format
 msgid "Copied %(count)d entry to %(date)s."
 msgid_plural "Copied %(count)d entries to %(date)s."
@@ -2925,45 +2834,45 @@ msgstr[0] "Скопирована %(count)d запись на %(date)s."
 msgstr[1] "Скопировано %(count)d записи на %(date)s."
 msgstr[2] "Скопировано %(count)d записей на %(date)s."
 
-#: apps/nutrition/views.py:769
+#: apps/nutrition/views.py:772
 msgid "Nothing to copy — that day has no entries."
 msgstr "Нечего копировать — за этот день нет записей."
 
-#: apps/nutrition/views.py:815 apps/nutrition/views.py:1135
-#: apps/nutrition/views.py:1598
+#: apps/nutrition/views.py:818 apps/nutrition/views.py:1138
+#: apps/nutrition/views.py:1601
 msgid "That food couldn't be imported — try again."
 msgstr "Не удалось импортировать этот продукт — попробуйте снова."
 
-#: apps/nutrition/views.py:879
+#: apps/nutrition/views.py:882
 msgid "Nothing logged for this meal yet to save as a recipe."
 msgstr ""
 "Для этого приёма пищи пока ничего не записано, чтобы сохранить как рецепт."
 
-#: apps/nutrition/views.py:881
+#: apps/nutrition/views.py:884
 #, python-format
 msgid "Saved “%(name)s” as a new recipe."
 msgstr "Сохранён «%(name)s» как новый рецепт."
 
-#: apps/nutrition/views.py:1025
+#: apps/nutrition/views.py:1028
 #, python-format
 msgid "\"%(name)s\" created — now add its ingredients below."
 msgstr "«%(name)s» создан — добавьте его ингредиенты ниже."
 
-#: apps/nutrition/views.py:1075 apps/nutrition/views.py:1370
+#: apps/nutrition/views.py:1078 apps/nutrition/views.py:1373
 #: apps/programs/views.py:205
 #, python-format
 msgid ""
-"This file was exported from IronStack %(version)s — worth double-checking "
-"the import if something looks off."
+"This file was exported from IronStack %(version)s — worth double-checking the"
+" import if something looks off."
 msgstr ""
 "Этот файл был экспортирован из IronStack %(version)s — стоит перепроверить "
 "импорт, если что-то выглядит не так."
 
-#: apps/nutrition/views.py:1519
+#: apps/nutrition/views.py:1522
 msgid "Only a personal trainer can share a diet plan."
 msgstr "Только персональный тренер может поделиться планом питания."
 
-#: apps/nutrition/views.py:1636
+#: apps/nutrition/views.py:1639
 #, python-format
 msgid "Logged %(count)d item to %(date)s."
 msgid_plural "Logged %(count)d items to %(date)s."
@@ -2971,7 +2880,7 @@ msgstr[0] "Записан %(count)d элемент на %(date)s."
 msgstr[1] "Записано %(count)d элемента на %(date)s."
 msgstr[2] "Записано %(count)d элементов на %(date)s."
 
-#: apps/nutrition/views.py:1647
+#: apps/nutrition/views.py:1650
 msgid "Nothing to log — this plan has no items for that date."
 msgstr "Нечего записывать — в этом плане нет пунктов на эту дату."
 
@@ -2991,8 +2900,8 @@ msgstr ""
 
 #: apps/programs/forms.py:46
 msgid ""
-"Lets the clients checked below see and import their own copy of this "
-"program. Leave everyone unchecked to keep it private."
+"Lets the clients checked below see and import their own copy of this program."
+" Leave everyone unchecked to keep it private."
 msgstr ""
 "Позволяет отмеченным ниже клиентам увидеть и импортировать собственную копию "
 "этой программы. Не отмечайте никого, чтобы оставить её приватной."
@@ -3082,9 +2991,9 @@ msgid ""
 "part: pushing muscles, pulling muscles, then legs. Popular for both strength "
 "and bodybuilding goals."
 msgstr ""
-"Широко используемый 3-дневный сплит, организованный по типу движения, а не "
-"по группе мышц: толкающие мышцы, тянущие мышцы, затем ноги. Популярен как "
-"для силовых, так и для бодибилдинг-целей."
+"Широко используемый 3-дневный сплит, организованный по типу движения, а не по"
+" группе мышц: толкающие мышцы, тянущие мышцы, затем ноги. Популярен как для "
+"силовых, так и для бодибилдинг-целей."
 
 #: apps/programs/i18n_content.py:44
 msgid ""
@@ -3112,15 +3021,14 @@ msgstr ""
 #: apps/programs/i18n_content.py:55
 msgid ""
 "The classic 10x10 high-volume method: one main lift per workout done for ten "
-"sets of ten reps at a fixed, moderate weight, paired with a lighter "
-"accessory movement. Brutal on paper, simple in practice — built for muscle "
-"growth, not 1-rep-max testing."
+"sets of ten reps at a fixed, moderate weight, paired with a lighter accessory"
+" movement. Brutal on paper, simple in practice — built for muscle growth, not"
+" 1-rep-max testing."
 msgstr ""
 "Классический метод высокого объёма 10×10: одно основное упражнение за "
-"тренировку выполняется десятью подходами по десять повторений с "
-"фиксированным умеренным весом, в паре с более лёгким вспомогательным "
-"движением. На бумаге жестоко, на практике просто — создано для роста мышц, а "
-"не для проверки 1ПМ."
+"тренировку выполняется десятью подходами по десять повторений с фиксированным"
+" умеренным весом, в паре с более лёгким вспомогательным движением. На бумаге "
+"жестоко, на практике просто — создано для роста мышц, а не для проверки 1ПМ."
 
 #: apps/programs/i18n_content.py:67
 msgid "Workout A"
@@ -3311,8 +3219,8 @@ msgid ""
 "Missed target reps %(streak)s sessions in a row at %(weight)s kg — "
 "recommending a deload to %(deload)s kg."
 msgstr ""
-"Целевые повторения не достигнуты %(streak)s раз подряд при весе %(weight)s "
-"кг — рекомендуется снижение до %(deload)s кг."
+"Целевые повторения не достигнуты %(streak)s раз подряд при весе %(weight)s кг"
+" — рекомендуется снижение до %(deload)s кг."
 
 #: apps/progression/engine.py:243
 #, python-format
@@ -3329,14 +3237,14 @@ msgid ""
 "Hit the top of your rep range on every set at %(weight)s kg — adding "
 "%(increment)s kg and resetting to the bottom of the range."
 msgstr ""
-"Достигнут верх диапазона повторений в каждом подходе при весе %(weight)s кг "
-"— добавляем %(increment)s кг и возвращаемся к нижней границе диапазона."
+"Достигнут верх диапазона повторений в каждом подходе при весе %(weight)s кг —"
+" добавляем %(increment)s кг и возвращаемся к нижней границе диапазона."
 
 #: apps/progression/engine.py:277
 #, python-format
 msgid ""
-"Still within your rep range at %(weight)s kg — repeat the same weight and "
-"aim for more reps next time."
+"Still within your rep range at %(weight)s kg — repeat the same weight and aim"
+" for more reps next time."
 msgstr ""
 "Всё ещё в пределах диапазона повторений при весе %(weight)s кг — повторите "
 "тот же вес и в следующий раз стремитесь к большему числу повторений."
@@ -3702,6 +3610,719 @@ msgstr "Уведомления для этой группы отключены."
 msgid "Too many attempts. Try again in a few minutes."
 msgstr "Слишком много попыток. Попробуйте снова через несколько минут."
 
+#: apps/stretching/forms.py:34
+msgid "You already have one with this name."
+msgstr "У вас уже есть элемент с таким названием."
+
+#: apps/stretching/forms.py:86
+msgid "Hold (seconds)"
+msgstr "Удержание (секунды)"
+
+#: apps/stretching/forms.py:115
+msgid "This field is required."
+msgstr "Обязательное поле."
+
+#: apps/stretching/forms.py:137
+msgid "Routine"
+msgstr "Комплекс"
+
+#: apps/stretching/i18n_content.py:21
+msgid "Standing Quad Stretch"
+msgstr "Растяжка квадрицепса стоя"
+
+#: apps/stretching/i18n_content.py:22
+msgid "Kneeling Hip Flexor Stretch"
+msgstr "Растяжка сгибателей бедра на колене"
+
+#: apps/stretching/i18n_content.py:23
+msgid "Couch Stretch"
+msgstr "Растяжка у дивана"
+
+#: apps/stretching/i18n_content.py:24
+msgid "Standing Hamstring Stretch"
+msgstr "Растяжка задней поверхности бедра стоя"
+
+#: apps/stretching/i18n_content.py:25
+msgid "Lying Hamstring Stretch"
+msgstr "Растяжка задней поверхности бедра лёжа"
+
+#: apps/stretching/i18n_content.py:26
+msgid "Seated Forward Fold"
+msgstr "Наклон вперёд сидя"
+
+#: apps/stretching/i18n_content.py:27
+msgid "Wide-Leg Forward Fold"
+msgstr "Наклон вперёд, ноги широко"
+
+#: apps/stretching/i18n_content.py:28
+msgid "Figure-Four Stretch"
+msgstr "Растяжка «четвёрка»"
+
+#: apps/stretching/i18n_content.py:29
+msgid "Pigeon Pose"
+msgstr "Поза голубя"
+
+#: apps/stretching/i18n_content.py:30
+msgid "Knee-to-Chest Stretch"
+msgstr "Колено к груди"
+
+#: apps/stretching/i18n_content.py:31
+msgid "Wall Calf Stretch"
+msgstr "Растяжка икр у стены"
+
+#: apps/stretching/i18n_content.py:32
+msgid "Deep Squat Hold"
+msgstr "Удержание в глубоком приседе"
+
+#: apps/stretching/i18n_content.py:33
+msgid "Downward Dog"
+msgstr "Собака мордой вниз"
+
+#: apps/stretching/i18n_content.py:34
+msgid "Doorway Chest Stretch"
+msgstr "Растяжка груди в дверном проёме"
+
+#: apps/stretching/i18n_content.py:35
+msgid "Cross-Body Shoulder Stretch"
+msgstr "Растяжка плеча поперёк корпуса"
+
+#: apps/stretching/i18n_content.py:36
+msgid "Overhead Triceps Stretch"
+msgstr "Растяжка трицепса за головой"
+
+#: apps/stretching/i18n_content.py:37
+msgid "Biceps Wall Stretch"
+msgstr "Растяжка бицепса у стены"
+
+#: apps/stretching/i18n_content.py:38
+msgid "Child's Pose"
+msgstr "Поза ребёнка"
+
+#: apps/stretching/i18n_content.py:39
+msgid "Standing Side Bend"
+msgstr "Боковой наклон стоя"
+
+#: apps/stretching/i18n_content.py:40
+msgid "Thread the Needle"
+msgstr "Нитка в иголку"
+
+#: apps/stretching/i18n_content.py:41
+msgid "Cobra Stretch"
+msgstr "Поза кобры"
+
+#: apps/stretching/i18n_content.py:42
+msgid "Supine Spinal Twist"
+msgstr "Скручивание лёжа на спине"
+
+#: apps/stretching/i18n_content.py:43
+msgid "Upper Back Stretch"
+msgstr "Растяжка верхней части спины"
+
+#: apps/stretching/i18n_content.py:44
+msgid "Neck Side Stretch"
+msgstr "Боковая растяжка шеи"
+
+#: apps/stretching/i18n_content.py:45
+msgid "Wrist Flexor Stretch"
+msgstr "Растяжка сгибателей запястья"
+
+#: apps/stretching/i18n_content.py:46
+msgid "Wrist Extensor Stretch"
+msgstr "Растяжка разгибателей запястья"
+
+#: apps/stretching/i18n_content.py:47
+msgid "Cat-Cow"
+msgstr "Кошка-корова"
+
+#: apps/stretching/i18n_content.py:48
+msgid "Arm Circles"
+msgstr "Круги руками"
+
+#: apps/stretching/i18n_content.py:49
+msgid "Hip Circles"
+msgstr "Круги тазом"
+
+#: apps/stretching/i18n_content.py:50
+msgid "Torso Rotations"
+msgstr "Повороты корпуса"
+
+#: apps/stretching/i18n_content.py:51
+msgid "Leg Swings"
+msgstr "Махи ногами"
+
+#: apps/stretching/i18n_content.py:52
+msgid "World's Greatest Stretch"
+msgstr "Лучшая растяжка в мире"
+
+#: apps/stretching/i18n_content.py:57
+msgid "Lower Body Cool-Down"
+msgstr "Заминка: низ тела"
+
+#: apps/stretching/i18n_content.py:58
+msgid "Five static stretches for the legs and hips after a lower-body workout."
+msgstr ""
+"Пять статических упражнений для ног и бёдер после тренировки нижней части "
+"тела."
+
+#: apps/stretching/i18n_content.py:59
+msgid "Upper Body Cool-Down"
+msgstr "Заминка: верх тела"
+
+#: apps/stretching/i18n_content.py:60
+msgid "Chest, shoulders, arms and neck after an upper-body workout."
+msgstr "Грудь, плечи, руки и шея после тренировки верхней части тела."
+
+#: apps/stretching/i18n_content.py:61
+msgid "Full Body Stretch"
+msgstr "Растяжка всего тела"
+
+#: apps/stretching/i18n_content.py:62
+msgid "About ten minutes of static stretching from head to toe."
+msgstr "Около десяти минут статической растяжки с головы до ног."
+
+#: apps/stretching/i18n_content.py:63
+msgid "Morning Mobility"
+msgstr "Утренняя мобильность"
+
+#: apps/stretching/i18n_content.py:64
+msgid "Gentle dynamic movements to wake the body up, or as a warm-up."
+msgstr "Мягкие динамические движения, чтобы разбудить тело, или как разминка."
+
+#: apps/stretching/i18n_content.py:71
+msgid ""
+"- Stand tall and hold onto a wall or chair for balance.\n"
+"- Bend one knee and grab that ankle behind you.\n"
+"- Pull the heel gently towards your glutes, keeping the knees together and the hips pushed slightly forward.\n"
+"- Hold, then switch sides."
+msgstr ""
+"- Встаньте прямо и держитесь за стену или стул для равновесия.\n"
+"- Согните одно колено и возьмитесь за голеностоп за спиной.\n"
+"- Мягко тяните пятку к ягодицам, держа колени вместе и слегка подав таз вперёд.\n"
+"- Удерживайте, затем смените сторону."
+
+#: apps/stretching/i18n_content.py:78
+msgid ""
+"- Kneel on one knee with the other foot flat on the floor in front of you.\n"
+"- Tuck the pelvis under and squeeze the glute of the kneeling leg.\n"
+"- Shift your hips forward until you feel a stretch at the front of the hip.\n"
+"- Keep the torso upright; hold, then switch sides."
+msgstr ""
+"- Встаньте на одно колено, другая стопа полностью на полу перед вами.\n"
+"- Подкрутите таз и напрягите ягодицу ноги, стоящей на колене.\n"
+"- Смещайте таз вперёд, пока не почувствуете растяжение в передней части бедра.\n"
+"- Держите корпус прямо; удерживайте, затем смените сторону."
+
+#: apps/stretching/i18n_content.py:84
+msgid ""
+"- Kneel with your back to a wall or couch and slide one shin up against it.\n"
+"- Step the other foot forward into a lunge.\n"
+"- Slowly raise your torso upright while squeezing the glute of the back leg.\n"
+"- Hold, then switch sides."
+msgstr ""
+"- Встаньте на колени спиной к стене или дивану и поставьте одну голень вертикально к ней.\n"
+"- Выставьте другую ногу вперёд в выпад.\n"
+"- Медленно выпрямите корпус, напрягая ягодицу задней ноги.\n"
+"- Удерживайте, затем смените сторону."
+
+#: apps/stretching/i18n_content.py:90
+msgid ""
+"- Place one heel on a low step or bench with the leg straight.\n"
+"- Keep your back flat and hinge forward from the hips.\n"
+"- Stop when you feel a stretch along the back of the thigh.\n"
+"- Hold, then switch sides."
+msgstr ""
+"- Поставьте пятку на низкую ступеньку или скамью, нога прямая.\n"
+"- Держите спину ровной и наклоняйтесь вперёд от тазобедренных суставов.\n"
+"- Остановитесь, когда почувствуете растяжение по задней поверхности бедра.\n"
+"- Удерживайте, затем смените сторону."
+
+#: apps/stretching/i18n_content.py:96
+msgid ""
+"- Lie on your back with both legs extended.\n"
+"- Raise one leg, holding behind the thigh or calf (or use a towel around the foot).\n"
+"- Keep the knee as straight as is comfortable and pull the leg gently towards you.\n"
+"- Hold, then switch sides."
+msgstr ""
+"- Лягте на спину, обе ноги выпрямлены.\n"
+"- Поднимите одну ногу, держась за заднюю поверхность бедра или голени (или используйте полотенце вокруг стопы).\n"
+"- Держите колено настолько прямым, насколько комфортно, и мягко тяните ногу к себе.\n"
+"- Удерживайте, затем смените сторону."
+
+#: apps/stretching/i18n_content.py:102
+msgid ""
+"- Sit with both legs straight out in front of you.\n"
+"- Lengthen your spine, then hinge forward from the hips.\n"
+"- Reach towards your feet without forcing it.\n"
+"- Breathe slowly and relax a little deeper on each exhale."
+msgstr ""
+"- Сядьте, вытянув обе ноги перед собой.\n"
+"- Вытяните позвоночник, затем наклонитесь вперёд от тазобедренных суставов.\n"
+"- Тянитесь к стопам, не форсируя.\n"
+"- Дышите медленно и с каждым выдохом расслабляйтесь чуть глубже."
+
+#: apps/stretching/i18n_content.py:108
+msgid ""
+"- Stand with your feet wide apart and toes pointing forward.\n"
+"- Hinge forward from the hips with a flat back.\n"
+"- Let your hands rest on the floor or your shins.\n"
+"- Relax your head and neck, and come up slowly."
+msgstr ""
+"- Встаньте, широко расставив ноги, носки направлены вперёд.\n"
+"- Наклонитесь вперёд от тазобедренных суставов с ровной спиной.\n"
+"- Положите руки на пол или на голени.\n"
+"- Расслабьте голову и шею и поднимайтесь медленно."
+
+#: apps/stretching/i18n_content.py:114
+msgid ""
+"- Lie on your back with both knees bent.\n"
+"- Cross one ankle over the opposite knee.\n"
+"- Pull the lower leg towards your chest by holding behind the thigh.\n"
+"- Hold, then switch sides."
+msgstr ""
+"- Лягте на спину, обе ноги согнуты в коленях.\n"
+"- Положите голеностоп одной ноги на колено другой.\n"
+"- Подтяните нижнюю ногу к груди, взявшись за заднюю поверхность бедра.\n"
+"- Удерживайте, затем смените сторону."
+
+#: apps/stretching/i18n_content.py:120
+msgid ""
+"- From hands and knees, bring one knee forward behind the same wrist.\n"
+"- Extend the other leg straight back.\n"
+"- Square your hips and lower your torso over the front leg as far as is comfortable.\n"
+"- Hold, then switch sides."
+msgstr ""
+"- Из положения на четвереньках выведите одно колено вперёд за запястье той же стороны.\n"
+"- Вытяните другую ногу прямо назад.\n"
+"- Выровняйте таз и опустите корпус к передней ноге настолько, насколько комфортно.\n"
+"- Удерживайте, затем смените сторону."
+
+#: apps/stretching/i18n_content.py:126
+msgid ""
+"- Lie on your back with both legs extended.\n"
+"- Pull one knee towards your chest with both hands.\n"
+"- Keep the other leg relaxed on the floor.\n"
+"- Hold, then switch sides."
+msgstr ""
+"- Лягте на спину, обе ноги выпрямлены.\n"
+"- Подтяните одно колено к груди обеими руками.\n"
+"- Другая нога расслаблена на полу.\n"
+"- Удерживайте, затем смените сторону."
+
+#: apps/stretching/i18n_content.py:132
+msgid ""
+"- Stand facing a wall with your hands on it.\n"
+"- Step one foot back, keeping that leg straight and the heel on the floor.\n"
+"- Lean into the wall until you feel a stretch in the calf.\n"
+"- Hold, then switch sides."
+msgstr ""
+"- Встаньте лицом к стене, упираясь в неё руками.\n"
+"- Отставьте одну ногу назад, держа её прямой, а пятку на полу.\n"
+"- Наклонитесь к стене, пока не почувствуете растяжение в икре.\n"
+"- Удерживайте, затем смените сторону."
+
+#: apps/stretching/i18n_content.py:138
+msgid ""
+"- Stand with your feet a little wider than hip-width.\n"
+"- Sit down into the deepest squat you can hold with your heels on the floor.\n"
+"- Use your elbows to gently press the knees outwards.\n"
+"- Keep your chest up and breathe."
+msgstr ""
+"- Встаньте, поставив стопы чуть шире таза.\n"
+"- Опуститесь в самый глубокий присед, который можете удерживать с пятками на полу.\n"
+"- Мягко разводите колени локтями наружу.\n"
+"- Держите грудь поднятой и дышите."
+
+#: apps/stretching/i18n_content.py:144
+msgid ""
+"- Start on hands and knees, then lift your hips up and back.\n"
+"- Straighten your arms and legs as far as is comfortable to form an inverted V.\n"
+"- Press your heels towards the floor and your chest towards your thighs.\n"
+"- Keep breathing slowly."
+msgstr ""
+"- Встаньте на четвереньки, затем поднимите таз вверх и назад.\n"
+"- Выпрямите руки и ноги, насколько комфортно, чтобы тело образовало перевёрнутую букву V.\n"
+"- Тяните пятки к полу, а грудь к бёдрам.\n"
+"- Продолжайте медленно дышать."
+
+#: apps/stretching/i18n_content.py:150
+msgid ""
+"- Stand in a doorway and place your forearms on the frame at shoulder height.\n"
+"- Step one foot forward.\n"
+"- Lean gently forward until you feel a stretch across the chest.\n"
+"- Keep your shoulders down and away from your ears."
+msgstr ""
+"- Встаньте в дверном проёме и поставьте предплечья на косяк на уровне плеч.\n"
+"- Сделайте шаг одной ногой вперёд.\n"
+"- Мягко подайтесь вперёд, пока не почувствуете растяжение в груди.\n"
+"- Держите плечи опущенными, подальше от ушей."
+
+#: apps/stretching/i18n_content.py:156
+msgid ""
+"- Bring one arm straight across your chest.\n"
+"- Use the other hand to press it gently towards your body, above the elbow.\n"
+"- Keep the shoulder down and relaxed.\n"
+"- Hold, then switch sides."
+msgstr ""
+"- Проведите одну прямую руку поперёк груди.\n"
+"- Другой рукой мягко прижмите её к телу выше локтя.\n"
+"- Плечо опущено и расслаблено.\n"
+"- Удерживайте, затем смените сторону."
+
+#: apps/stretching/i18n_content.py:162
+msgid ""
+"- Raise one arm overhead and bend the elbow so the hand drops behind your head.\n"
+"- Use the other hand to gently push the elbow down and back.\n"
+"- Keep your head up and your ribs down.\n"
+"- Hold, then switch sides."
+msgstr ""
+"- Поднимите одну руку над головой и согните локоть, чтобы кисть опустилась за голову.\n"
+"- Другой рукой мягко давите на локоть вниз и назад.\n"
+"- Держите голову прямо, а рёбра опущенными.\n"
+"- Удерживайте, затем смените сторону."
+
+#: apps/stretching/i18n_content.py:168
+msgid ""
+"- Stand side-on to a wall and place your palm on it slightly behind you, arm straight at shoulder height.\n"
+"- Slowly turn your body away from the wall.\n"
+"- Stop when you feel a stretch along the front of the arm.\n"
+"- Hold, then switch sides."
+msgstr ""
+"- Встаньте боком к стене и положите ладонь на неё чуть позади себя, рука прямая на уровне плеча.\n"
+"- Медленно поворачивайте корпус от стены.\n"
+"- Остановитесь, когда почувствуете растяжение по передней поверхности руки.\n"
+"- Удерживайте, затем смените сторону."
+
+#: apps/stretching/i18n_content.py:175
+msgid ""
+"- Kneel and sit back on your heels with the knees apart.\n"
+"- Walk your hands forward and lower your chest towards the floor.\n"
+"- Reach your arms long and let your forehead rest down.\n"
+"- Breathe into your back."
+msgstr ""
+"- Встаньте на колени и сядьте на пятки, колени врозь.\n"
+"- Переставляйте руки вперёд и опускайте грудь к полу.\n"
+"- Вытяните руки и опустите лоб вниз.\n"
+"- Дышите «в спину»."
+
+#: apps/stretching/i18n_content.py:181
+msgid ""
+"- Stand with your feet hip-width apart.\n"
+"- Raise one arm overhead.\n"
+"- Lean to the opposite side, reaching up and over without twisting.\n"
+"- Hold, then switch sides."
+msgstr ""
+"- Встаньте, стопы на ширине таза.\n"
+"- Поднимите одну руку над головой.\n"
+"- Наклонитесь в противоположную сторону, тянясь вверх и через сторону без скручивания.\n"
+"- Удерживайте, затем смените сторону."
+
+#: apps/stretching/i18n_content.py:187
+msgid ""
+"- Start on hands and knees.\n"
+"- Slide one arm under your body towards the opposite side, palm up.\n"
+"- Lower that shoulder and the side of your head towards the floor.\n"
+"- Hold, then switch sides."
+msgstr ""
+"- Встаньте на четвереньки.\n"
+"- Проведите одну руку под корпусом в противоположную сторону ладонью вверх.\n"
+"- Опустите это плечо и висок к полу.\n"
+"- Удерживайте, затем смените сторону."
+
+#: apps/stretching/i18n_content.py:193
+msgid ""
+"- Lie face down with your hands under your shoulders.\n"
+"- Press up slowly, lifting your chest while the hips stay on the floor.\n"
+"- Keep your shoulders away from your ears.\n"
+"- Only go as high as your lower back is comfortable."
+msgstr ""
+"- Лягте на живот, ладони под плечами.\n"
+"- Медленно отжимайтесь вверх, поднимая грудь, таз остаётся на полу.\n"
+"- Держите плечи подальше от ушей.\n"
+"- Поднимайтесь только настолько, насколько комфортно пояснице."
+
+#: apps/stretching/i18n_content.py:199
+msgid ""
+"- Lie on your back with your arms out to the sides.\n"
+"- Bend one knee and let it fall across your body to the opposite side.\n"
+"- Keep both shoulders on the floor and turn your head the other way.\n"
+"- Hold, then switch sides."
+msgstr ""
+"- Лягте на спину, руки в стороны.\n"
+"- Согните одно колено и опустите его через корпус в противоположную сторону.\n"
+"- Оба плеча на полу, голову поверните в другую сторону.\n"
+"- Удерживайте, затем смените сторону."
+
+#: apps/stretching/i18n_content.py:205
+msgid ""
+"- Clasp your hands in front of you at shoulder height.\n"
+"- Round your upper back and push your hands away.\n"
+"- Let your head drop gently between your arms.\n"
+"- Feel the stretch between your shoulder blades."
+msgstr ""
+"- Сцепите руки перед собой на уровне плеч.\n"
+"- Округлите верхнюю часть спины и отталкивайте руки от себя.\n"
+"- Мягко опустите голову между руками.\n"
+"- Почувствуйте растяжение между лопатками."
+
+#: apps/stretching/i18n_content.py:211
+msgid ""
+"- Sit or stand tall with your shoulders relaxed.\n"
+"- Tilt your ear towards one shoulder.\n"
+"- Optionally rest the hand on that side gently on your head, without pulling.\n"
+"- Hold, then switch sides."
+msgstr ""
+"- Сядьте или встаньте прямо, плечи расслаблены.\n"
+"- Наклоните ухо к одному плечу.\n"
+"- При желании мягко положите руку этой стороны на голову, не натягивая.\n"
+"- Удерживайте, затем смените сторону."
+
+#: apps/stretching/i18n_content.py:217
+msgid ""
+"- Extend one arm straight in front of you, palm up.\n"
+"- Use the other hand to gently pull the fingers down and back.\n"
+"- Keep the elbow straight.\n"
+"- Hold, then switch sides."
+msgstr ""
+"- Вытяните одну руку прямо перед собой ладонью вверх.\n"
+"- Другой рукой мягко тяните пальцы вниз и на себя.\n"
+"- Локоть прямой.\n"
+"- Удерживайте, затем смените сторону."
+
+#: apps/stretching/i18n_content.py:223
+msgid ""
+"- Extend one arm straight in front of you, palm down.\n"
+"- Use the other hand to gently bend the wrist down towards you.\n"
+"- Keep the elbow straight.\n"
+"- Hold, then switch sides."
+msgstr ""
+"- Вытяните одну руку прямо перед собой ладонью вниз.\n"
+"- Другой рукой мягко сгибайте запястье вниз, к себе.\n"
+"- Локоть прямой.\n"
+"- Удерживайте, затем смените сторону."
+
+#: apps/stretching/i18n_content.py:229
+msgid ""
+"- Start on hands and knees.\n"
+"- Inhale as you drop your belly and lift your chest and tailbone.\n"
+"- Exhale as you round your back and tuck your chin.\n"
+"- Move slowly with your breath."
+msgstr ""
+"- Встаньте на четвереньки.\n"
+"- На вдохе опустите живот, поднимите грудь и копчик.\n"
+"- На выдохе округлите спину и прижмите подбородок.\n"
+"- Двигайтесь медленно в такт дыханию."
+
+#: apps/stretching/i18n_content.py:235
+msgid ""
+"- Stand tall with your arms out to the sides.\n"
+"- Draw small circles, gradually making them bigger.\n"
+"- Switch direction halfway through.\n"
+"- Keep the movement smooth and controlled."
+msgstr ""
+"- Встаньте прямо, руки в стороны.\n"
+"- Делайте маленькие круги, постепенно увеличивая их.\n"
+"- На середине смените направление.\n"
+"- Двигайтесь плавно и подконтрольно."
+
+#: apps/stretching/i18n_content.py:241
+msgid ""
+"- Stand with your hands on your hips and feet hip-width apart.\n"
+"- Draw big, slow circles with your hips.\n"
+"- Switch direction halfway through.\n"
+"- Keep your upper body still."
+msgstr ""
+"- Встаньте, руки на поясе, стопы на ширине таза.\n"
+"- Делайте тазом большие медленные круги.\n"
+"- На середине смените направление.\n"
+"- Верхняя часть тела неподвижна."
+
+#: apps/stretching/i18n_content.py:247
+msgid ""
+"- Stand with your feet shoulder-width apart and arms relaxed.\n"
+"- Rotate your upper body from side to side, letting the arms swing.\n"
+"- Keep your hips facing forward.\n"
+"- Gradually increase the range of motion."
+msgstr ""
+"- Встаньте, стопы на ширине плеч, руки расслаблены.\n"
+"- Поворачивайте корпус из стороны в сторону, позволяя рукам свободно раскачиваться.\n"
+"- Таз направлен вперёд.\n"
+"- Постепенно увеличивайте амплитуду."
+
+#: apps/stretching/i18n_content.py:253
+msgid ""
+"- Stand side-on to a wall and hold it for balance.\n"
+"- Swing the outside leg forward and back in a controlled arc.\n"
+"- Let the range grow gradually with each swing.\n"
+"- Then switch sides."
+msgstr ""
+"- Встаньте боком к стене и держитесь за неё для равновесия.\n"
+"- Махайте дальней от стены ногой вперёд и назад по контролируемой дуге.\n"
+"- С каждым махом постепенно увеличивайте амплитуду.\n"
+"- Затем смените сторону."
+
+#: apps/stretching/i18n_content.py:259
+msgid ""
+"- Step into a long lunge and place both hands on the floor inside the front foot.\n"
+"- Drop the inside elbow towards the front ankle.\n"
+"- Rotate and reach that same arm up towards the ceiling.\n"
+"- Return and repeat slowly, then switch sides."
+msgstr ""
+"- Сделайте длинный выпад и поставьте обе руки на пол с внутренней стороны передней стопы.\n"
+"- Опустите внутренний локоть к голеностопу передней ноги.\n"
+"- Повернитесь и потянитесь этой же рукой к потолку.\n"
+"- Вернитесь и медленно повторите, затем смените сторону."
+
+#: apps/stretching/models.py:16
+msgid "Static"
+msgstr "Статическая"
+
+#: apps/stretching/models.py:17
+msgid "Dynamic"
+msgstr "Динамическая"
+
+#: apps/stretching/models.py:46
+msgid "type"
+msgstr "тип"
+
+#: apps/stretching/models.py:53
+msgid "muscle groups"
+msgstr "группы мышц"
+
+#: apps/stretching/models.py:58
+msgid "default hold (seconds)"
+msgstr "удержание по умолчанию (секунды)"
+
+#: apps/stretching/models.py:62
+msgid "one side at a time"
+msgstr "по одной стороне"
+
+#: apps/stretching/models.py:63
+msgid "Held once for the left side and once for the right."
+msgstr "Удерживается один раз для левой стороны и один раз для правой."
+
+#: apps/stretching/models.py:68
+msgid "stretches"
+msgstr "упражнения на растяжку"
+
+#: apps/stretching/models.py:138
+msgid "hold (seconds)"
+msgstr "удержание (секунды)"
+
+#: apps/stretching/models.py:143
+msgid "sets"
+msgstr "подходы"
+
+#: apps/stretching/models.py:148
+msgid "rest between holds (seconds)"
+msgstr "отдых между удержаниями (секунды)"
+
+#: apps/stretching/models.py:159 apps/workouts/models.py:13
+msgid "In progress"
+msgstr "В процессе"
+
+#: apps/stretching/models.py:160 apps/workouts/models.py:14
+msgid "Completed"
+msgstr "Завершено"
+
+#: apps/stretching/models.py:161 apps/workouts/models.py:15
+msgid "Abandoned"
+msgstr "Отменено"
+
+#: apps/stretching/models.py:195
+msgid "duration"
+msgstr "длительность"
+
+#: apps/stretching/models.py:214
+#: templates/accounts/_two_factor_backup_codes_fragment.html:11
+#: templates/api/key_created.html:16
+#: templates/stretching/session_detail.html:40
+#: templates/stretching/session_play.html:77
+#: templates/stretching/session_play.html:85
+msgid "Done"
+msgstr "Готово"
+
+#: apps/stretching/models.py:215 templates/stretching/session_detail.html:41
+#: templates/stretching/session_play.html:78
+msgid "Skipped"
+msgstr "Пропущено"
+
+#: apps/stretching/services.py:141
+#, python-format
+msgid "%(name)s (copy)"
+msgstr "%(name)s (копия)"
+
+#: apps/stretching/views.py:92
+msgid "Routine created. Now add some stretches."
+msgstr "Комплекс создан. Теперь добавьте упражнения."
+
+#: apps/stretching/views.py:128
+msgid "Routine saved."
+msgstr "Комплекс сохранён."
+
+#: apps/stretching/views.py:140
+msgid "Routine removed."
+msgstr "Комплекс удалён."
+
+#: apps/stretching/views.py:149
+msgid "Copied — this one is yours to edit."
+msgstr "Скопировано — эту копию можно редактировать."
+
+#: apps/stretching/views.py:166
+msgid "Stretch added."
+msgstr "Упражнение добавлено."
+
+#: apps/stretching/views.py:179 apps/stretching/views.py:261
+msgid "Stretch saved."
+msgstr "Упражнение сохранено."
+
+#: apps/stretching/views.py:194
+msgid "Stretch removed."
+msgstr "Упражнение удалено."
+
+#: apps/stretching/views.py:250
+msgid "Stretch created."
+msgstr "Упражнение создано."
+
+#: apps/stretching/views.py:273
+msgid "Stretch removed from your library."
+msgstr "Упражнение удалено из вашей библиотеки."
+
+#: apps/stretching/views.py:288
+msgid "You already have a stretching session in progress."
+msgstr "У вас уже идёт сессия растяжки."
+
+#: apps/stretching/views.py:299
+msgid "This routine has no stretches yet."
+msgstr "В этом комплексе пока нет упражнений."
+
+#: apps/stretching/views.py:319
+msgid "No cool-down stretches match this workout."
+msgstr "Для этой тренировки не нашлось подходящих упражнений для заминки."
+
+#: apps/stretching/views.py:326 templates/stretching/_cooldown_card.html:5
+msgid "Cool-down"
+msgstr "Заминка"
+
+#: apps/stretching/views.py:384
+msgid "Nicely done — stretching session saved."
+msgstr "Отлично — сессия растяжки сохранена."
+
+#: apps/stretching/views.py:394
+msgid "Session abandoned."
+msgstr "Сессия прервана."
+
+#: apps/stretching/views.py:430
+msgid "Stretching logged."
+msgstr "Растяжка записана."
+
+#: apps/stretching/views.py:441
+msgid "Session updated."
+msgstr "Сессия обновлена."
+
+#: apps/stretching/views.py:454
+msgid "Session deleted."
+msgstr "Сессия удалена."
+
 #: apps/workouts/forms.py:40
 msgid "reps"
 msgstr "повторения"
@@ -3723,21 +4344,9 @@ msgstr "Разминка"
 msgid "Weight (%(unit)s)"
 msgstr "Вес (%(unit)s)"
 
-#: apps/workouts/models.py:12
+#: apps/workouts/models.py:12 templates/stretching/session_detail.html:32
 msgid "Planned"
 msgstr "Запланировано"
-
-#: apps/workouts/models.py:13
-msgid "In progress"
-msgstr "В процессе"
-
-#: apps/workouts/models.py:14
-msgid "Completed"
-msgstr "Завершено"
-
-#: apps/workouts/models.py:15
-msgid "Abandoned"
-msgstr "Отменено"
 
 #: apps/workouts/views.py:168 apps/workouts/views.py:365
 msgid "This session is no longer in progress."
@@ -3781,8 +4390,8 @@ msgstr "Что-то пошло не так"
 msgid ""
 "Something went wrong on our end. Your data is safe — try again in a moment."
 msgstr ""
-"Что-то пошло не так на нашей стороне. Ваши данные в безопасности — "
-"попробуйте снова через минуту."
+"Что-то пошло не так на нашей стороне. Ваши данные в безопасности — попробуйте"
+" снова через минуту."
 
 #: templates/accounts/_data_export_standalone.html:23
 #: templates/accounts/_data_export_standalone.html:68
@@ -3807,8 +4416,8 @@ msgstr "Не сейчас"
 
 #: templates/accounts/_onboarding_modal.html:12
 msgid ""
-"A few quick details help IronStack work better for you — every field below "
-"is optional, and you can always change them later from your profile."
+"A few quick details help IronStack work better for you — every field below is"
+" optional, and you can always change them later from your profile."
 msgstr ""
 "Немного информации поможет IronStack работать для вас лучше — все поля ниже "
 "необязательны, и вы всегда можете изменить их позже в профиле."
@@ -3829,6 +4438,10 @@ msgstr ""
 #: templates/programs/prescription_form.html:15
 #: templates/programs/program_form.html:18
 #: templates/programs/workout_form.html:15 templates/social/group_form.html:15
+#: templates/stretching/routine_form.html:15
+#: templates/stretching/routine_item_form.html:15
+#: templates/stretching/session_form.html:15
+#: templates/stretching/stretch_form.html:15
 #: templates/workouts/set_edit_form.html:15
 msgid "Save"
 msgstr "Сохранить"
@@ -3853,10 +4466,10 @@ msgid ""
 "responsible for the data on it, and who you should contact about any of the "
 "below."
 msgstr ""
-"IronStack — это самостоятельно размещаемое программное обеспечение с "
-"открытым исходным кодом. За данные в этой конкретной установке отвечает тот, "
-"кто её эксплуатирует (а не авторы программы), и именно к нему следует "
-"обращаться по любому из нижеперечисленных вопросов."
+"IronStack — это самостоятельно размещаемое программное обеспечение с открытым"
+" исходным кодом. За данные в этой конкретной установке отвечает тот, кто её "
+"эксплуатирует (а не авторы программы), и именно к нему следует обращаться по "
+"любому из нижеперечисленных вопросов."
 
 #: templates/accounts/_privacy_notice_modal.html:31
 msgid "Contact:"
@@ -3869,18 +4482,18 @@ msgstr "Что собирается"
 #: templates/accounts/_privacy_notice_modal.html:33
 msgid ""
 "Your account details (username, and optionally your name and email address), "
-"and whatever you choose to log: workout history, body measurements, "
-"nutrition and diet data, and other activities. Technical data such as your "
-"IP address is used briefly for rate-limiting and security (e.g. blocking "
-"repeated failed login attempts), not stored as part of your account."
+"and whatever you choose to log: workout history, body measurements, nutrition"
+" and diet data, and other activities. Technical data such as your IP address "
+"is used briefly for rate-limiting and security (e.g. blocking repeated failed"
+" login attempts), not stored as part of your account."
 msgstr ""
-"Данные вашей учётной записи (имя пользователя и, по желанию, ваше имя и "
-"адрес электронной почты), а также всё, что вы решите записывать: история "
-"тренировок, замеры тела, данные о питании и диете, а также другие "
-"активности. Технические данные, такие как ваш IP-адрес, используются "
-"кратковременно для ограничения частоты запросов и безопасности (например, "
-"для блокировки повторных неудачных попыток входа) и не сохраняются как часть "
-"вашей учётной записи."
+"Данные вашей учётной записи (имя пользователя и, по желанию, ваше имя и адрес"
+" электронной почты), а также всё, что вы решите записывать: история "
+"тренировок, замеры тела, данные о питании и диете, а также другие активности."
+" Технические данные, такие как ваш IP-адрес, используются кратковременно для "
+"ограничения частоты запросов и безопасности (например, для блокировки "
+"повторных неудачных попыток входа) и не сохраняются как часть вашей учётной "
+"записи."
 
 #: templates/accounts/_privacy_notice_modal.html:34
 msgid "Why"
@@ -3888,16 +4501,16 @@ msgstr "Зачем"
 
 #: templates/accounts/_privacy_notice_modal.html:35
 msgid ""
-"Solely to provide the tracking features you're using — nothing here is "
-"shared with, sold to, or processed by any third party, except the few "
-"optional integrations you have to explicitly turn on yourself (e.g. an "
-"OpenFoodFacts lookup, a Gravatar picture, Authentik single sign-on)."
+"Solely to provide the tracking features you're using — nothing here is shared"
+" with, sold to, or processed by any third party, except the few optional "
+"integrations you have to explicitly turn on yourself (e.g. an OpenFoodFacts "
+"lookup, a Gravatar picture, Authentik single sign-on)."
 msgstr ""
 "Исключительно для предоставления функций отслеживания, которыми вы "
-"пользуетесь — ничего из этого не передаётся, не продаётся и не "
-"обрабатывается какой-либо третьей стороной, за исключением немногих "
-"необязательных интеграций, которые вы должны включить сами (например, поиск "
-"через OpenFoodFacts, изображение Gravatar, единый вход через Authentik)."
+"пользуетесь — ничего из этого не передаётся, не продаётся и не обрабатывается"
+" какой-либо третьей стороной, за исключением немногих необязательных "
+"интеграций, которые вы должны включить сами (например, поиск через "
+"OpenFoodFacts, изображение Gravatar, единый вход через Authentik)."
 
 #: templates/accounts/_privacy_notice_modal.html:36
 msgid "Your rights"
@@ -3944,17 +4557,12 @@ msgstr ""
 #: templates/accounts/_two_factor_backup_codes_fragment.html:4
 msgid ""
 "Each one works once, if you ever lose access to your authenticator app. They "
-"won't be shown again — save them somewhere safe now. Your old backup codes "
-"no longer work."
+"won't be shown again — save them somewhere safe now. Your old backup codes no"
+" longer work."
 msgstr ""
 "Каждый код работает один раз — на случай, если вы потеряете доступ к "
 "приложению-аутентификатору. Они больше не будут показаны — сохраните их "
 "сейчас в надёжном месте. Старые резервные коды больше не действуют."
-
-#: templates/accounts/_two_factor_backup_codes_fragment.html:11
-#: templates/api/key_created.html:16
-msgid "Done"
-msgstr "Готово"
 
 #: templates/accounts/account_delete.html:3
 #: templates/accounts/account_delete.html:6 templates/accounts/profile.html:215
@@ -3965,8 +4573,8 @@ msgstr "Удалить учётную запись"
 msgid ""
 "This permanently deletes your account and everything tied to it: your "
 "profile, workout history, personal records, body measurements, nutrition "
-"diary and targets, diet plans, activities, feedback, and API keys. This "
-"can't be undone."
+"diary and targets, diet plans, activities, feedback, and API keys. This can't"
+" be undone."
 msgstr ""
 "Это безвозвратно удалит вашу учётную запись и всё, что с ней связано: "
 "профиль, историю тренировок, личные рекорды, замеры тела, дневник питания и "
@@ -3978,9 +4586,10 @@ msgid ""
 "created is kept, not deleted, if anyone else on this instance is already "
 "using it — it's just no longer credited to your account."
 msgstr ""
-"Созданное вами упражнение, продукт, рецепт, программа или тип замера/"
-"активности сохраняется, а не удаляется, если кто-то ещё в этой системе уже "
-"использует его — оно просто больше не будет привязано к вашей учётной записи."
+"Созданное вами упражнение, продукт, рецепт, программа или тип "
+"замера/активности сохраняется, а не удаляется, если кто-то ещё в этой системе"
+" уже использует его — оно просто больше не будет привязано к вашей учётной "
+"записи."
 
 #: templates/accounts/account_delete.html:12
 msgid ""
@@ -4019,7 +4628,7 @@ msgstr "Данные аккаунта"
 
 #: templates/accounts/account_details_form.html:18
 #: templates/accounts/data_export.html:42
-#: templates/accounts/two_factor_manage.html:34 templates/api/key_list.html:155
+#: templates/accounts/two_factor_manage.html:34 templates/api/key_list.html:159
 #: templates/coaching/client_list.html:49 templates/coaching/my_coaches.html:37
 #: templates/core/backup_list.html:74 templates/core/feedback_form.html:20
 #: templates/core/feedback_list.html:50 templates/core/seo_settings.html:18
@@ -4040,9 +4649,9 @@ msgid ""
 "files (one per section), or this very page as a single HTML file."
 msgstr ""
 "Всё ниже принадлежит исключительно вам — те же данные, показанные здесь в "
-"виде таблиц, можно скачать одним файлом JSON, в виде .zip с готовыми к "
-"работе в таблицах CSV-файлами (по одному на раздел), или эту же страницу "
-"одним HTML-файлом."
+"виде таблиц, можно скачать одним файлом JSON, в виде .zip с готовыми к работе"
+" в таблицах CSV-файлами (по одному на раздел), или эту же страницу одним "
+"HTML-файлом."
 
 #: templates/accounts/data_export.html:12
 msgid "Download as JSON"
@@ -4175,8 +4784,8 @@ msgstr "API-ключи"
 #: templates/accounts/profile.html:150
 msgid "Manage keys other apps can use to access your data."
 msgstr ""
-"Управляйте ключами, с помощью которых другие приложения могут получать "
-"доступ к вашим данным."
+"Управляйте ключами, с помощью которых другие приложения могут получать доступ"
+" к вашим данным."
 
 #: templates/accounts/profile.html:158
 msgid "Browse everything you've logged, or download it as JSON, CSV, or HTML."
@@ -4374,6 +4983,8 @@ msgstr "Назад к %(name)s"
 #: templates/activities/activity_history.html:12
 #: templates/exercises/exercise_detail.html:18
 #: templates/measurements/measurement_history.html:12
+#: templates/stretching/routine_detail.html:22
+#: templates/stretching/stretch_detail.html:18
 msgid "Inactive"
 msgstr "Неактивно"
 
@@ -4398,10 +5009,12 @@ msgstr "Динамика длительности"
 
 #: templates/activities/activity_history.html:28
 #: templates/activities/activity_history.html:45
+#: templates/stretching/session_detail.html:20
 msgid "Duration"
 msgstr "Длительность"
 
 #: templates/activities/activity_history.html:29
+#: templates/stretching/home.html:38
 msgid "min"
 msgstr "мин"
 
@@ -4411,6 +5024,7 @@ msgstr "Записать активность"
 
 #: templates/activities/activity_history.html:45
 #: templates/measurements/measurement_history.html:54
+#: templates/stretching/session_detail.html:19
 msgid "Date"
 msgstr "Дата"
 
@@ -4421,13 +5035,17 @@ msgstr "Дистанция"
 #: templates/activities/activity_history.html:54
 #: templates/exercises/exercise_detail.html:12
 #: templates/measurements/measurement_history.html:62
-#: templates/nutrition/diary_day.html:65
+#: templates/nutrition/diary_day.html:70
 #: templates/nutrition/recipe_detail.html:13
 #: templates/nutrition/recipe_detail.html:40
 #: templates/programs/program_detail.html:12
 #: templates/programs/program_detail.html:49
 #: templates/programs/program_detail.html:66
 #: templates/social/group_detail.html:10
+#: templates/stretching/routine_detail.html:12
+#: templates/stretching/routine_detail.html:54
+#: templates/stretching/session_detail.html:12
+#: templates/stretching/stretch_detail.html:12
 #: templates/workouts/_performed_exercise_card.html:24
 msgid "Edit"
 msgstr "Изменить"
@@ -4467,12 +5085,17 @@ msgstr "Новый тип активности"
 #: templates/api/key_list.html:10 templates/exercises/exercise_list.html:9
 #: templates/measurements/measurement_type_list.html:9
 #: templates/programs/program_list.html:9
+#: templates/stretching/routine_list.html:9
+#: templates/stretching/stretch_list.html:9
 msgid "New"
 msgstr "Новый"
 
 #: templates/activities/activity_type_list.html:15
 #: templates/exercises/_exercise_list_results.html:6
 #: templates/measurements/measurement_type_list.html:22
+#: templates/stretching/_routine_card.html:4
+#: templates/stretching/stretch_detail.html:17
+#: templates/stretching/stretch_list.html:32
 msgid "Custom"
 msgstr "Свой"
 
@@ -4505,8 +5128,8 @@ msgstr "Администрирование Django"
 msgid ""
 "Pick which of these %(counter)s foods to keep. Every diary entry, recipe "
 "ingredient, and diet-plan item currently pointing at one of the others will "
-"be repointed at the one you keep — nothing a user has logged is deleted, "
-"only which food row it refers to changes. The other foods are then removed."
+"be repointed at the one you keep — nothing a user has logged is deleted, only"
+" which food row it refers to changes. The other foods are then removed."
 msgstr ""
 "Выберите, какой из этих %(counter)s продуктов оставить. Каждая запись "
 "дневника, ингредиент рецепта и пункт плана питания, ссылающиеся сейчас на "
@@ -4761,15 +5384,16 @@ msgstr "Разрешения"
 
 #: templates/api/key_list.html:32
 msgid ""
-"Each key is granted Create/Read/Update/Delete separately per area "
-"(exercises, programs, workouts, measurements, activities, nutrition, "
+"Each key is granted Create/Read/Update/Delete separately per area (exercises,"
+" programs, workouts, measurements, activities, nutrition, stretching, "
 "records, analytics, profile) — set this when you create the key, above. A "
 "request outside what the key is granted gets a 403."
 msgstr ""
 "Для каждого ключа права Создание/Чтение/Обновление/Удаление предоставляются "
 "отдельно по каждой области (упражнения, программы, тренировки, измерения, "
-"активности, питание, рекорды, аналитика, профиль) — задайте это при создании "
-"ключа выше. Запрос за пределами предоставленных прав получит ответ 403."
+"активности, питание, растяжка, рекорды, аналитика, профиль) — задайте это при"
+" создании ключа выше. Запрос за пределами предоставленных прав получит ответ "
+"403."
 
 #: templates/api/key_list.html:35
 msgid ""
@@ -4805,11 +5429,11 @@ msgid ""
 "measurement/activity types); a program or recipe is a real delete, matching "
 "its own page."
 msgstr ""
-"Конечные точки списка/создания разбиты на страницы, по 25 на страницу (?"
-"page=2). Удаление чего-либо выполняется как мягкое удаление там, где веб-"
-"приложение делает то же самое (продукты, упражнения, типы измерений/"
-"активностей); программа или рецепт удаляются по-настоящему, как и на их "
-"собственной странице."
+"Конечные точки списка/создания разбиты на страницы, по 25 на страницу "
+"(?page=2). Удаление чего-либо выполняется как мягкое удаление там, где веб-"
+"приложение делает то же самое (продукты, упражнения, типы "
+"измерений/активностей); программа или рецепт удаляются по-настоящему, как и "
+"на их собственной странице."
 
 #: templates/api/key_list.html:77
 msgid "All endpoints"
@@ -4828,7 +5452,7 @@ msgid "GET/PATCH, no id"
 msgstr "GET/PATCH, без id"
 
 #: templates/api/key_list.html:90 templates/api/key_list.html:110
-#: templates/api/key_list.html:114
+#: templates/api/key_list.html:118
 msgid "read-only"
 msgstr "только чтение"
 
@@ -4840,11 +5464,11 @@ msgstr "только создание и чтение"
 msgid "all POST"
 msgstr "все POST"
 
-#: templates/api/key_list.html:118
+#: templates/api/key_list.html:122
 msgid "both read-only"
 msgstr "оба только для чтения"
 
-#: templates/api/key_list.html:129
+#: templates/api/key_list.html:133
 #, python-format
 msgid "You can create %(counter)s more key."
 msgid_plural "You can create %(counter)s more keys."
@@ -4852,31 +5476,31 @@ msgstr[0] "Вы можете создать ещё %(counter)s ключ."
 msgstr[1] "Вы можете создать ещё %(counter)s ключа."
 msgstr[2] "Вы можете создать ещё %(counter)s ключей."
 
-#: templates/api/key_list.html:137
+#: templates/api/key_list.html:141
 #, python-format
 msgid "Tier: %(tier)s"
 msgstr "Уровень: %(tier)s"
 
-#: templates/api/key_list.html:139
+#: templates/api/key_list.html:143
 #, python-format
 msgid "last used %(time)s ago"
 msgstr "последнее использование %(time)s назад"
 
-#: templates/api/key_list.html:141
+#: templates/api/key_list.html:145
 msgid "never used"
 msgstr "никогда не использовался"
 
-#: templates/api/key_list.html:144
+#: templates/api/key_list.html:148
 msgid "Revoke this API key? Anything using it will stop working immediately."
 msgstr ""
 "Отозвать этот API-ключ? Всё, что его использует, немедленно перестанет "
 "работать."
 
-#: templates/api/key_list.html:146
+#: templates/api/key_list.html:150
 msgid "Revoke"
 msgstr "Отозвать"
 
-#: templates/api/key_list.html:151
+#: templates/api/key_list.html:155
 msgid "No API keys yet."
 msgstr "Пока нет API-ключей."
 
@@ -4928,19 +5552,19 @@ msgstr "Главное меню"
 msgid "Home"
 msgstr "Главная"
 
-#: templates/base.html:182 templates/base.html:184
+#: templates/base.html:188 templates/base.html:190
 msgid "Workout"
 msgstr "Тренировка"
 
-#: templates/base.html:190
+#: templates/base.html:196
 msgid "Profile — new friend/group activity"
 msgstr "Профиль — новая активность в друзьях/группах"
 
-#: templates/base.html:229
+#: templates/base.html:235
 msgid "Continue training"
 msgstr "Продолжить тренировку"
 
-#: templates/base.html:235
+#: templates/base.html:241
 msgid "Unread messages"
 msgstr "Непрочитанные сообщения"
 
@@ -5372,11 +5996,11 @@ msgstr ""
 
 #: templates/core/backup_restore_confirm.html:14
 msgid ""
-"If in doubt, create a fresh backup of the current state first, then come "
-"back here."
+"If in doubt, create a fresh backup of the current state first, then come back"
+" here."
 msgstr ""
-"Если сомневаетесь, сначала создайте новую резервную копию текущего "
-"состояния, а затем вернитесь сюда."
+"Если сомневаетесь, сначала создайте новую резервную копию текущего состояния,"
+" а затем вернитесь сюда."
 
 #: templates/core/backup_restore_confirm.html:18
 msgid ""
@@ -5386,9 +6010,9 @@ msgid ""
 "again."
 msgstr ""
 "Эта резервная копия зашифрована, но для этого экземпляра не настроен "
-"BACKUP_ENCRYPTION_KEY (или он не совпадает с ключом, которым была создана "
-"эта копия) — восстановление завершится ошибкой. Укажите правильный ключ "
-"в .env и перезапустите приложение перед повторной попыткой."
+"BACKUP_ENCRYPTION_KEY (или он не совпадает с ключом, которым была создана эта"
+" копия) — восстановление завершится ошибкой. Укажите правильный ключ в .env и"
+" перезапустите приложение перед повторной попыткой."
 
 #: templates/core/backup_restore_confirm.html:24
 msgid "Backup"
@@ -5448,7 +6072,7 @@ msgstr "Продолжить тренировку"
 msgid "Freeform workout"
 msgstr "Свободная тренировка"
 
-#: templates/core/dashboard.html:25
+#: templates/core/dashboard.html:25 templates/stretching/home.html:16
 #, python-format
 msgid "started %(started_at)s"
 msgstr "начато %(started_at)s"
@@ -5483,8 +6107,8 @@ msgstr "Пора внести замеры тела?"
 
 #: templates/core/dashboard.html:62
 msgid ""
-"It's been a while since you tracked your weight or measurements — tap here "
-"to add a new reading."
+"It's been a while since you tracked your weight or measurements — tap here to"
+" add a new reading."
 msgstr ""
 "Вы давно не отмечали свой вес или замеры — нажмите здесь, чтобы добавить "
 "новое значение."
@@ -5534,6 +6158,10 @@ msgstr "Записывайте вес тела, измерения и тенде
 msgid "Log a run, ride, or any other non-gym activity."
 msgstr ""
 "Записывайте пробежку, велопрогулку или любую другую активность вне зала."
+
+#: templates/core/dashboard.html:144
+msgid "Follow a guided stretching routine or log one."
+msgstr "Выполните комплекс растяжки с подсказками или запишите растяжку."
 
 #: templates/core/feedback_form.html:9
 msgid ""
@@ -5604,6 +6232,7 @@ msgstr "Удалить это изображение?"
 #: templates/nutrition/recipe_detail.html:44
 #: templates/social/friend_list.html:62 templates/social/group_detail.html:93
 #: templates/social/group_detail.html:105
+#: templates/stretching/routine_detail.html:57
 msgid "Remove"
 msgstr "Удалить"
 
@@ -5675,10 +6304,12 @@ msgid "Search exercises"
 msgstr "Поиск упражнений"
 
 #: templates/exercises/exercise_list.html:14
+#: templates/stretching/stretch_list.html:14
 msgid "Filter by muscle group"
 msgstr "Фильтр по группе мышц"
 
 #: templates/exercises/exercise_list.html:15
+#: templates/stretching/stretch_list.html:15
 msgid "All muscle groups"
 msgstr "Все группы мышц"
 
@@ -5791,8 +6422,8 @@ msgid ""
 "Still nothing? Make sure the barcode is well lit and fills the frame, or "
 "close this and type it into the search box instead."
 msgstr ""
-"Всё ещё ничего? Убедитесь, что штрихкод хорошо освещён и полностью "
-"помещается в кадр, или закройте это окно и введите код в поле поиска вручную."
+"Всё ещё ничего? Убедитесь, что штрихкод хорошо освещён и полностью помещается"
+" в кадр, или закройте это окно и введите код в поле поиска вручную."
 
 #: templates/nutrition/_diet_plan_card.html:6
 #: templates/programs/program_list.html:17
@@ -5917,6 +6548,7 @@ msgstr "Количество"
 
 #: templates/nutrition/_food_search_results.html:39
 #: templates/nutrition/_most_used_foods.html:47
+#: templates/stretching/routine_detail.html:75
 #: templates/workouts/performed_exercise_form.html:15
 msgid "Add"
 msgstr "Добавить"
@@ -5993,24 +6625,28 @@ msgstr "Скользящее среднее калорий за 7 дней пр�
 msgid "Trailing 7-day average calories ran under your target"
 msgstr "Скользящее среднее калорий за 7 дней было ниже вашей нормы"
 
-#: templates/nutrition/_month_calendar.html:128
+#: templates/nutrition/_month_calendar.html:129
+msgid "Stretched that day (corner dot)"
+msgstr "В этот день была растяжка (точка в углу)"
+
+#: templates/nutrition/_month_calendar.html:134
 msgid "Close to target"
 msgstr "Близко к цели"
 
-#: templates/nutrition/_month_calendar.html:132
+#: templates/nutrition/_month_calendar.html:138
 msgid "Drifting from target"
 msgstr "Отклоняется от цели"
 
-#: templates/nutrition/_month_calendar.html:136
+#: templates/nutrition/_month_calendar.html:142
 msgid "Well off target"
 msgstr "Далеко от цели"
 
-#: templates/nutrition/_month_calendar.html:139
+#: templates/nutrition/_month_calendar.html:145
 msgid "No arrow yet means there isn't enough logged data to judge."
 msgstr ""
 "Если стрелка не отображается, значит пока недостаточно данных для оценки."
 
-#: templates/nutrition/_month_calendar.html:140
+#: templates/nutrition/_month_calendar.html:146
 msgid "Tap a day for details."
 msgstr "Нажмите на день, чтобы увидеть подробности."
 
@@ -6031,20 +6667,27 @@ msgstr ""
 
 #: templates/nutrition/_off_attribution.html:4
 msgid ""
-"Food data and product photos come from <a href=\"https://"
-"world.openfoodfacts.org\" target=\"_blank\" rel=\"noopener noreferrer\">Open "
-"Food Facts</a>, a collaborative database, under the <a href=\"https://"
-"opendatacommons.org/licenses/odbl/1-0/\" target=\"_blank\" rel=\"noopener "
-"noreferrer\">Open Database License</a>; photos are <a href=\"https://"
-"creativecommons.org/licenses/by-sa/3.0/\" target=\"_blank\" rel=\"noopener "
-"noreferrer\">CC BY-SA</a>."
-msgstr "Данные о продуктах и фотографии взяты из совместной базы <a href=\"https://world.openfoodfacts.org\" target=\"_blank\" rel=\"noopener noreferrer\">Open Food Facts</a> по лицензии <a href=\"https://opendatacommons.org/licenses/odbl/1-0/\" target=\"_blank\" rel=\"noopener noreferrer\">Open Database License</a>; фотографии — <a href=\"https://creativecommons.org/licenses/by-sa/3.0/\" target=\"_blank\" rel=\"noopener noreferrer\">CC BY-SA</a>."
+"Food data and product photos come from <a "
+"href=\"https://world.openfoodfacts.org\" target=\"_blank\" rel=\"noopener "
+"noreferrer\">Open Food Facts</a>, a collaborative database, under the <a "
+"href=\"https://opendatacommons.org/licenses/odbl/1-0/\" target=\"_blank\" "
+"rel=\"noopener noreferrer\">Open Database License</a>; photos are <a "
+"href=\"https://creativecommons.org/licenses/by-sa/3.0/\" target=\"_blank\" "
+"rel=\"noopener noreferrer\">CC BY-SA</a>."
+msgstr ""
+"Данные о продуктах и фотографии взяты из совместной базы <a "
+"href=\"https://world.openfoodfacts.org\" target=\"_blank\" rel=\"noopener "
+"noreferrer\">Open Food Facts</a> по лицензии <a "
+"href=\"https://opendatacommons.org/licenses/odbl/1-0/\" target=\"_blank\" "
+"rel=\"noopener noreferrer\">Open Database License</a>; фотографии — <a "
+"href=\"https://creativecommons.org/licenses/by-sa/3.0/\" target=\"_blank\" "
+"rel=\"noopener noreferrer\">CC BY-SA</a>."
 
 #: templates/nutrition/_subnav.html:43
 msgid "Nutrition sections"
 msgstr "Разделы питания"
 
-#: templates/nutrition/_subnav.html:45
+#: templates/nutrition/_subnav.html:45 templates/stretching/_subnav.html:10
 msgid "Overview"
 msgstr "Обзор"
 
@@ -6181,8 +6824,8 @@ msgstr "Калькулятор макронутриентов"
 
 #: templates/nutrition/calculator_macros.html:9
 msgid ""
-"Splits a calorie target into protein, carbohydrates, and fat using this "
-"app's own default ratios for the goal you pick."
+"Splits a calorie target into protein, carbohydrates, and fat using this app's"
+" own default ratios for the goal you pick."
 msgstr ""
 "Разбивает целевую калорийность на белки, углеводы и жиры, используя "
 "собственные соотношения приложения по умолчанию для выбранной вами цели."
@@ -6222,8 +6865,8 @@ msgstr "Примерно %(date)s при таком темпе."
 
 #: templates/nutrition/calculator_time_to_goal.html:30
 msgid ""
-"That rate doesn't move toward your target — check the sign (negative to "
-"lose, positive to gain) matches the direction you actually need to go."
+"That rate doesn't move toward your target — check the sign (negative to lose,"
+" positive to gain) matches the direction you actually need to go."
 msgstr ""
 "Этот темп не приближает вас к цели — проверьте, соответствует ли знак "
 "(отрицательный для похудения, положительный для набора веса) направлению, в "
@@ -6251,8 +6894,8 @@ msgstr "Калькулятор потребления воды"
 
 #: templates/nutrition/calculator_water_intake.html:9
 msgid ""
-"A rough daily fluid target based on bodyweight and activity — real needs "
-"vary with climate and sweat rate, so treat this as a starting point."
+"A rough daily fluid target based on bodyweight and activity — real needs vary"
+" with climate and sweat rate, so treat this as a starting point."
 msgstr ""
 "Приблизительная суточная норма жидкости на основе веса тела и активности — "
 "реальная потребность зависит от климата и интенсивности потоотделения, так "
@@ -6266,8 +6909,8 @@ msgstr "день"
 msgid ""
 "Quick, standalone estimates — none of these are saved or change your targets."
 msgstr ""
-"Быстрые самостоятельные оценки — ничего из этого не сохраняется и не "
-"изменяет ваши цели."
+"Быстрые самостоятельные оценки — ничего из этого не сохраняется и не изменяет"
+" ваши цели."
 
 #: templates/nutrition/calculators_home.html:14
 msgid "How many calories your body burns at rest, and in total."
@@ -6311,7 +6954,7 @@ msgstr ""
 "достижения целевого веса."
 
 #: templates/nutrition/calculators_home.html:67
-#: templates/nutrition/diary_day.html:100
+#: templates/nutrition/diary_day.html:105
 #: templates/nutrition/diet_plan_list.html:30
 #: templates/nutrition/food_list.html:90 templates/nutrition/goal_edit.html:31
 #: templates/nutrition/recipe_list.html:90 templates/nutrition/stats.html:44
@@ -6410,7 +7053,7 @@ msgstr "Изменить цель"
 
 #: templates/nutrition/diary_add_entry.html:3
 #: templates/nutrition/diary_add_entry.html:6
-#: templates/nutrition/diary_day.html:77
+#: templates/nutrition/diary_day.html:82
 msgid "Add food"
 msgstr "Добавить продукт"
 
@@ -6451,31 +7094,40 @@ msgstr "Питание за сегодня"
 msgid "Nutrition for this day"
 msgstr "Питание за этот день"
 
-#: templates/nutrition/diary_day.html:67
+#: templates/nutrition/diary_day.html:60
+msgid "P"
+msgstr "Б"
+
+#: templates/nutrition/diary_day.html:60
+#: templates/workouts/_performed_exercise_card.html:22
+msgid "F"
+msgstr "Н"
+
+#: templates/nutrition/diary_day.html:72
 msgid "Remove this entry?"
 msgstr "Удалить эту запись?"
 
-#: templates/nutrition/diary_day.html:74
+#: templates/nutrition/diary_day.html:79
 msgid "Nothing logged yet."
 msgstr "Пока ничего не записано."
 
-#: templates/nutrition/diary_day.html:81
+#: templates/nutrition/diary_day.html:86
 msgid "Save as recipe"
 msgstr "Сохранить как рецепт"
 
-#: templates/nutrition/diary_day.html:89
+#: templates/nutrition/diary_day.html:94
 msgid "Copy this day to another date"
 msgstr "Скопировать этот день на другую дату"
 
-#: templates/nutrition/diary_day.html:93
+#: templates/nutrition/diary_day.html:98
 msgid "Copy to date"
 msgstr "Скопировать на дату"
 
-#: templates/nutrition/diary_day.html:94 templates/social/group_detail.html:28
+#: templates/nutrition/diary_day.html:99 templates/social/group_detail.html:28
 msgid "Copy"
 msgstr "Копировать"
 
-#: templates/nutrition/diary_day.html:99
+#: templates/nutrition/diary_day.html:104
 msgid "Manage foods"
 msgstr "Управление продуктами"
 
@@ -6563,8 +7215,8 @@ msgstr "Составить план питания"
 #: templates/nutrition/diet_plan_form.html:9
 msgid ""
 "We'll suggest one food or recipe per meal from your own library, scaled to "
-"fit — you can swap any of them afterward. Or start from scratch below to "
-"skip the suggestions and build it entirely yourself."
+"fit — you can swap any of them afterward. Or start from scratch below to skip"
+" the suggestions and build it entirely yourself."
 msgstr ""
 "Мы предложим один продукт или рецепт на каждый приём пищи из вашей "
 "библиотеки, подобранный по количеству — вы сможете заменить любой из них "
@@ -6651,8 +7303,8 @@ msgstr ""
 
 #: templates/nutrition/food_browse.html:20
 msgid ""
-"Search to add a food to the shared library — anyone on this instance can "
-"then find and log it. Category browsing isn't available right now."
+"Search to add a food to the shared library — anyone on this instance can then"
+" find and log it. Category browsing isn't available right now."
 msgstr ""
 "Ищите, чтобы добавить продукт в общую библиотеку — после этого любой "
 "пользователь этого сервера сможет найти и записать его. Просмотр по "
@@ -6838,8 +7490,8 @@ msgid ""
 "We'll suggest an activity level from your answers, not ask you to guess it "
 "yourself."
 msgstr ""
-"Всё это необязательно — чем больше вы расскажете, тем точнее будет оценка. "
-"Мы предложим уровень активности на основе ваших ответов, а не попросим вас "
+"Всё это необязательно — чем больше вы расскажете, тем точнее будет оценка. Мы"
+" предложим уровень активности на основе ваших ответов, а не попросим вас "
 "угадывать его самостоятельно."
 
 #: templates/nutrition/onboarding_activity.html:17
@@ -6894,8 +7546,8 @@ msgid ""
 "they're actually working once you've logged some data, and adjust anytime."
 msgstr ""
 "Это оценочные, а не точные цифры — вы сможете увидеть, насколько хорошо они "
-"работают на самом деле, как только запишете немного данных, и "
-"скорректировать их в любой момент."
+"работают на самом деле, как только запишете немного данных, и скорректировать"
+" их в любой момент."
 
 #: templates/nutrition/onboarding_review.html:28
 msgid "Save and start tracking"
@@ -6981,8 +7633,8 @@ msgstr "Импортировать рецепт"
 msgid ""
 "Upload a recipe someone exported — from this instance, or a completely "
 "different IronStack instance. A food originally imported from OpenFoodFacts "
-"is looked up again by its own barcode; anything else is recreated as your "
-"own food."
+"is looked up again by its own barcode; anything else is recreated as your own"
+" food."
 msgstr ""
 "Загрузите рецепт, экспортированный кем-то — из этого экземпляра или "
 "совершенно другого экземпляра IronStack. Продукт, изначально импортированный "
@@ -7072,8 +7724,8 @@ msgid ""
 "Averages only count days you actually logged something — a day with nothing "
 "logged isn't counted as zero calories."
 msgstr ""
-"Средние значения учитывают только те дни, когда вы что-то записали — день "
-"без записей не считается днём с нулём калорий."
+"Средние значения учитывают только те дни, когда вы что-то записали — день без"
+" записей не считается днём с нулём калорий."
 
 #: templates/nutrition/stats.html:36
 msgid "Daily calories (last 30 days)"
@@ -7091,7 +7743,7 @@ msgstr ""
 #: templates/workouts/_train_panel.html:100
 #: templates/workouts/performed_exercise_form.html:3
 #: templates/workouts/performed_exercise_form.html:6
-#: templates/workouts/session_detail.html:31
+#: templates/workouts/session_detail.html:33
 msgid "Add exercise"
 msgstr "Добавить упражнение"
 
@@ -7142,7 +7794,7 @@ msgstr "Удалить эту тренировку и её упражнения?
 
 #: templates/programs/program_detail.html:70
 #: templates/workouts/_train_panel.html:99
-#: templates/workouts/session_detail.html:26
+#: templates/workouts/session_detail.html:28
 msgid "No exercises yet."
 msgstr "Упражнений пока нет."
 
@@ -7230,7 +7882,7 @@ msgid "Edit workout"
 msgstr "Изменить тренировку"
 
 #: templates/programs/workout_form.html:21
-#: templates/workouts/session_detail.html:45
+#: templates/workouts/session_detail.html:47
 msgid "Delete workout"
 msgstr "Удалить тренировку"
 
@@ -7340,8 +7992,8 @@ msgid ""
 "This password reset link is invalid, possibly because it has already been "
 "used or has expired."
 msgstr ""
-"Эта ссылка для сброса пароля недействительна — возможно, она уже "
-"использована или истекла."
+"Эта ссылка для сброса пароля недействительна — возможно, она уже использована"
+" или истекла."
 
 #: templates/registration/password_reset_confirm.html:22
 msgid "Request a new reset link"
@@ -7356,8 +8008,8 @@ msgstr "Сбросить пароль"
 
 #: templates/registration/password_reset_done.html:10
 msgid ""
-"If an account exists with that email address, we've sent a link to reset "
-"your password."
+"If an account exists with that email address, we've sent a link to reset your"
+" password."
 msgstr ""
 "Если аккаунт с таким адресом электронной почты существует, мы отправили на "
 "него ссылку для сброса пароля."
@@ -7394,8 +8046,8 @@ msgid ""
 "Enter your account's email address and we'll send you a link to reset your "
 "password."
 msgstr ""
-"Введите адрес электронной почты вашего аккаунта, и мы отправим вам ссылку "
-"для сброса пароля."
+"Введите адрес электронной почты вашего аккаунта, и мы отправим вам ссылку для"
+" сброса пароля."
 
 #: templates/registration/password_reset_form.html:19
 msgid "Send reset link"
@@ -7703,6 +8355,371 @@ msgstr "Пока нет друзей, которым можно написать
 msgid "Group chats"
 msgstr "Групповые чаты"
 
+#: templates/stretching/_cooldown_card.html:11
+msgid "Cool down with a stretch?"
+msgstr "Заминка с растяжкой?"
+
+#: templates/stretching/_cooldown_card.html:21
+msgid "Picked for the muscles you trained:"
+msgstr "Подобрано под мышцы, которые вы тренировали:"
+
+#: templates/stretching/_cooldown_card.html:26
+msgid "Start cool-down"
+msgstr "Начать заминку"
+
+#: templates/stretching/_routine_card.html:6
+#: templates/stretching/routine_detail.html:25
+#, python-format
+msgid "%(counter)s stretch"
+msgid_plural "%(counter)s stretches"
+msgstr[0] "%(counter)s упражнение"
+msgstr[1] "%(counter)s упражнения"
+msgstr[2] "%(counter)s упражнений"
+
+#: templates/stretching/_routine_card.html:12
+msgid "Start"
+msgstr "Начать"
+
+#: templates/stretching/_subnav.html:9
+msgid "Stretching sections"
+msgstr "Разделы растяжки"
+
+#: templates/stretching/_subnav.html:11
+#: templates/stretching/routine_detail.html:5
+#: templates/stretching/routine_list.html:6
+msgid "Routines"
+msgstr "Комплексы"
+
+#: templates/stretching/_subnav.html:12
+#: templates/stretching/session_play.html:71
+#: templates/stretching/stretch_detail.html:5
+#: templates/stretching/stretch_list.html:3
+#: templates/stretching/stretch_list.html:6
+msgid "Stretches"
+msgstr "Упражнения"
+
+#: templates/stretching/_subnav.html:13
+#: templates/stretching/session_detail.html:5
+#: templates/stretching/session_history.html:6
+msgctxt "stretching"
+msgid "History"
+msgstr "История"
+
+#: templates/stretching/home.html:9 templates/stretching/session_form.html:3
+#: templates/stretching/session_form.html:6
+#: templates/stretching/session_history.html:9
+#: templates/stretching/session_history.html:20
+msgid "Log stretching"
+msgstr "Записать растяжку"
+
+#: templates/stretching/home.html:15
+msgid "Continue stretching"
+msgstr "Продолжить растяжку"
+
+#: templates/stretching/home.html:22
+msgid "Streak"
+msgstr "Серия"
+
+#: templates/stretching/home.html:23
+msgid "Last 7 days"
+msgstr "Последние 7 дней"
+
+#: templates/stretching/home.html:28
+msgid "Start a routine"
+msgstr "Начать комплекс"
+
+#: templates/stretching/home.html:32 templates/stretching/routine_list.html:16
+msgid "No routines yet."
+msgstr "Комплексов пока нет."
+
+#: templates/stretching/home.html:32 templates/stretching/routine_form.html:3
+#: templates/stretching/routine_form.html:6
+msgid "New routine"
+msgstr "Новый комплекс"
+
+#: templates/stretching/home.html:36
+msgid "Minutes per week"
+msgstr "Минут в неделю"
+
+#: templates/stretching/home.html:38
+msgid "Stretching minutes per week"
+msgstr "Минут растяжки в неделю"
+
+#: templates/stretching/home.html:41
+msgid "Finish or log a stretching session to see your weekly minutes here."
+msgstr ""
+"Завершите или запишите сессию растяжки, чтобы увидеть здесь минуты по "
+"неделям."
+
+#: templates/stretching/home.html:45
+msgid "Recent sessions"
+msgstr "Последние сессии"
+
+#: templates/stretching/routine_detail.html:16
+msgid "Duplicate"
+msgstr "Дублировать"
+
+#: templates/stretching/routine_detail.html:16
+msgid "Copy to edit"
+msgstr "Копировать для редактирования"
+
+#: templates/stretching/routine_detail.html:21
+msgid "Built-in routine"
+msgstr "Встроенный комплекс"
+
+#: templates/stretching/routine_detail.html:26
+#, python-format
+msgid "about %(time)s"
+msgstr "около %(time)s"
+
+#: templates/stretching/routine_detail.html:31
+msgid "Start routine"
+msgstr "Начать комплекс"
+
+#: templates/stretching/routine_detail.html:41
+#: templates/stretching/session_detail.html:38
+#: templates/stretching/session_play.html:80
+#: templates/stretching/stretch_detail.html:21
+#: templates/stretching/stretch_list.html:34
+msgid "per side"
+msgstr "на сторону"
+
+#: templates/stretching/routine_detail.html:42
+#, python-format
+msgid "rest %(rest)s s"
+msgstr "отдых %(rest)s с"
+
+#: templates/stretching/routine_detail.html:48
+msgid "Move up"
+msgstr "Переместить вверх"
+
+#: templates/stretching/routine_detail.html:52
+msgid "Move down"
+msgstr "Переместить вниз"
+
+#: templates/stretching/routine_detail.html:63
+msgid "No stretches in this routine yet."
+msgstr "В этом комплексе пока нет упражнений."
+
+#: templates/stretching/routine_detail.html:68
+#: templates/stretching/routine_item_form.html:3
+#: templates/stretching/routine_item_form.html:6
+msgid "Add a stretch"
+msgstr "Добавить упражнение"
+
+#: templates/stretching/routine_detail.html:74
+msgid "Leave the hold empty to use the stretch's own default."
+msgstr ""
+"Оставьте удержание пустым, чтобы использовать значение упражнения по "
+"умолчанию."
+
+#: templates/stretching/routine_detail.html:79
+msgid "Remove this routine? Past sessions stay in your history."
+msgstr "Удалить этот комплекс? Прошлые сессии останутся в истории."
+
+#: templates/stretching/routine_detail.html:81
+msgid "Remove routine"
+msgstr "Удалить комплекс"
+
+#: templates/stretching/routine_detail.html:86
+msgid "Back to routines"
+msgstr "Назад к комплексам"
+
+#: templates/stretching/routine_form.html:3
+#: templates/stretching/routine_form.html:6
+msgid "Edit routine"
+msgstr "Редактировать комплекс"
+
+#: templates/stretching/routine_item_form.html:3
+#: templates/stretching/stretch_form.html:3
+#: templates/stretching/stretch_form.html:6
+msgid "Edit stretch"
+msgstr "Редактировать упражнение"
+
+#: templates/stretching/routine_item_form.html:18
+msgid "Back to routine"
+msgstr "Назад к комплексу"
+
+#: templates/stretching/routine_list.html:3
+msgid "Stretching routines"
+msgstr "Комплексы растяжки"
+
+#: templates/stretching/session_detail.html:23
+msgid "Cool-down after a workout"
+msgstr "Заминка после тренировки"
+
+#: templates/stretching/session_detail.html:32
+msgid "Stretch"
+msgstr "Упражнение"
+
+#: templates/stretching/session_detail.html:32
+msgid "Held"
+msgstr "Удержано"
+
+#: templates/stretching/session_detail.html:51
+msgid "Delete this session?"
+msgstr "Удалить эту сессию?"
+
+#: templates/stretching/session_detail.html:56
+#: templates/workouts/session_detail.html:50
+msgid "Back to history"
+msgstr "Назад к истории"
+
+#: templates/stretching/session_form.html:3
+#: templates/stretching/session_form.html:6
+msgid "Edit session"
+msgstr "Редактировать сессию"
+
+#: templates/stretching/session_history.html:3
+msgid "Stretching history"
+msgstr "История растяжки"
+
+#: templates/stretching/session_history.html:20
+msgid "No stretching sessions yet."
+msgstr "Сессий растяжки пока нет."
+
+#: templates/stretching/session_history.html:20
+msgid "Start a routine, or log one you did without the timer."
+msgstr "Начните комплекс или запишите растяжку, выполненную без таймера."
+
+#: templates/stretching/session_play.html:18
+msgid "Get ready"
+msgstr "Приготовьтесь"
+
+#: templates/stretching/session_play.html:19
+msgid "Hold"
+msgstr "Удерживайте"
+
+#: templates/stretching/session_play.html:20
+msgid "Rest"
+msgstr "Отдых"
+
+#: templates/stretching/session_play.html:21
+msgid "Left side"
+msgstr "Левая сторона"
+
+#: templates/stretching/session_play.html:22
+msgid "Right side"
+msgstr "Правая сторона"
+
+#: templates/stretching/session_play.html:23
+#, python-brace-format
+msgid "set {set}/{sets}"
+msgstr "подход {set}/{sets}"
+
+#: templates/stretching/session_play.html:25
+msgid "Guided session"
+msgstr "Сессия с подсказками"
+
+#: templates/stretching/session_play.html:27
+msgid "Unmute timer sound"
+msgstr "Включить звук таймера"
+
+#: templates/stretching/session_play.html:27
+msgid "Mute timer sound"
+msgstr "Выключить звук таймера"
+
+#: templates/stretching/session_play.html:35
+#, python-format
+msgid "%(counter)s stretch to go."
+msgid_plural "%(counter)s stretches to go."
+msgstr[0] "Осталось %(counter)s упражнение."
+msgstr[1] "Осталось %(counter)s упражнения."
+msgstr[2] "Осталось %(counter)s упражнений."
+
+#: templates/stretching/session_play.html:36
+msgid "Start timer"
+msgstr "Запустить таймер"
+
+#: templates/stretching/session_play.html:50
+msgid "Pause"
+msgstr "Пауза"
+
+#: templates/stretching/session_play.html:51
+msgid "Resume"
+msgstr "Продолжить"
+
+#: templates/stretching/session_play.html:55
+msgid "Next step"
+msgstr "Следующий шаг"
+
+#: templates/stretching/session_play.html:56
+msgid "Skip stretch"
+msgstr "Пропустить упражнение"
+
+#: templates/stretching/session_play.html:62
+msgid "Next up:"
+msgstr "Далее:"
+
+#: templates/stretching/session_play.html:67
+msgid "All stretches done — nice work."
+msgstr "Все упражнения выполнены — отличная работа."
+
+#: templates/stretching/session_play.html:89
+msgid "Skip"
+msgstr "Пропустить"
+
+#: templates/stretching/session_play.html:98
+msgid "Finish session"
+msgstr "Завершить сессию"
+
+#: templates/stretching/session_play.html:100
+msgid "Abandon this session? It stays in your history as abandoned."
+msgstr "Прервать эту сессию? Она останется в истории как прерванная."
+
+#: templates/stretching/session_play.html:102
+msgid "Abandon session"
+msgstr "Прервать сессию"
+
+#: templates/stretching/stretch_detail.html:20
+msgid "Type"
+msgstr "Тип"
+
+#: templates/stretching/stretch_detail.html:21
+msgid "Default hold"
+msgstr "Удержание по умолчанию"
+
+#: templates/stretching/stretch_detail.html:30
+msgid "How to do it"
+msgstr "Как выполнять"
+
+#: templates/stretching/stretch_detail.html:36
+msgid ""
+"Remove this stretch from your library? Routines and past sessions that use it"
+" keep working."
+msgstr ""
+"Удалить это упражнение из библиотеки? Комплексы и прошлые сессии, где оно "
+"используется, продолжат работать."
+
+#: templates/stretching/stretch_detail.html:38
+msgid "Remove stretch"
+msgstr "Удалить упражнение"
+
+#: templates/stretching/stretch_detail.html:42
+msgid "Back to stretches"
+msgstr "Назад к упражнениям"
+
+#: templates/stretching/stretch_form.html:3
+#: templates/stretching/stretch_form.html:6
+msgid "New stretch"
+msgstr "Новое упражнение"
+
+#: templates/stretching/stretch_list.html:20
+msgid "Filter by type"
+msgstr "Фильтр по типу"
+
+#: templates/stretching/stretch_list.html:21
+msgid "All types"
+msgstr "Все типы"
+
+#: templates/stretching/stretch_list.html:26
+msgid "Filter"
+msgstr "Фильтровать"
+
+#: templates/stretching/stretch_list.html:39
+msgid "No stretches match."
+msgstr "Подходящих упражнений нет."
+
 #: templates/workouts/_performed_exercise_card.html:6
 #: templates/workouts/_train_panel.html:39
 #, python-format
@@ -7720,10 +8737,6 @@ msgstr "Повторения"
 #: templates/workouts/_performed_exercise_card.html:20
 msgid "W"
 msgstr "Р"
-
-#: templates/workouts/_performed_exercise_card.html:22
-msgid "F"
-msgstr "Н"
 
 #: templates/workouts/_performed_exercise_card.html:25
 msgid "Delete this set?"
@@ -7794,28 +8807,24 @@ msgstr[0] "%(n)s подход"
 msgstr[1] "%(n)s подхода"
 msgstr[2] "%(n)s подходов"
 
-#: templates/workouts/session_detail.html:35
+#: templates/workouts/session_detail.html:37
 #: templates/workouts/session_train.html:51
 msgid "Complete workout"
 msgstr "Завершить тренировку"
 
-#: templates/workouts/session_detail.html:37
+#: templates/workouts/session_detail.html:39
 #: templates/workouts/session_train.html:53
 msgid "Abandon this workout? It stays in your history as abandoned."
 msgstr "Прервать эту тренировку? Она останется в истории как отменённая."
 
-#: templates/workouts/session_detail.html:39
+#: templates/workouts/session_detail.html:41
 #: templates/workouts/session_train.html:55
 msgid "Abandon workout"
 msgstr "Прервать тренировку"
 
-#: templates/workouts/session_detail.html:43
+#: templates/workouts/session_detail.html:45
 msgid "Delete this workout? This cannot be undone."
 msgstr "Удалить эту тренировку? Это действие необратимо."
-
-#: templates/workouts/session_detail.html:48
-msgid "Back to history"
-msgstr "Назад к истории"
 
 #: templates/workouts/session_list.html:3
 msgid "Workout history"
@@ -7835,11 +8844,11 @@ msgstr "Тренировки ещё не записаны."
 
 #: templates/workouts/session_list.html:26
 msgid ""
-"Start a freeform workout with the button below, or pick a workout from one "
-"of your programs."
+"Start a freeform workout with the button below, or pick a workout from one of"
+" your programs."
 msgstr ""
-"Начните свободную тренировку кнопкой ниже или выберите тренировку из одной "
-"из своих программ."
+"Начните свободную тренировку кнопкой ниже или выберите тренировку из одной из"
+" своих программ."
 
 #: templates/workouts/session_list.html:28
 msgid "Browse programs"
@@ -7904,6 +8913,3 @@ msgstr "Изменить подход %(number)s"
 
 #~ msgid "+ New recipe"
 #~ msgstr "+ Новый рецепт"
-
-#~ msgid "New workout"
-#~ msgstr "Новая тренировка"

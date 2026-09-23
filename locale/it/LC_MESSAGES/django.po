@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: IronStack\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-21 16:10+0000\n"
+"POT-Creation-Date: 2026-09-23 14:38+0000\n"
 "Language: it\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -32,77 +32,81 @@ msgstr ""
 "Troppe richieste di reimpostazione della password. Riprova tra qualche "
 "minuto."
 
-#: apps/accounts/forms.py:251 apps/accounts/forms.py:646
+#: apps/accounts/forms.py:253 apps/accounts/forms.py:655
 msgid "Timezone"
 msgstr "Fuso orario"
 
-#: apps/accounts/forms.py:281 apps/accounts/forms.py:626
+#: apps/accounts/forms.py:284 apps/accounts/forms.py:635
 #: templates/api/key_list.html:34
 msgid "Units"
 msgstr "Unità"
 
-#: apps/accounts/forms.py:282 apps/accounts/forms.py:676
+#: apps/accounts/forms.py:285 apps/accounts/forms.py:685
 msgid "Track nutrition"
 msgstr "Traccia la nutrizione"
 
-#: apps/accounts/forms.py:283
+#: apps/accounts/forms.py:286 apps/accounts/forms.py:695
+msgid "Track stretching"
+msgstr "Monitora lo stretching"
+
+#: apps/accounts/forms.py:287
 msgid "Remind me to log body measurements"
 msgstr "Ricordami di registrare le misurazioni corporee"
 
-#: apps/accounts/forms.py:286
+#: apps/accounts/forms.py:290
 msgid "Show"
 msgstr "Mostra"
 
-#: apps/accounts/forms.py:287 templates/core/_bmi_card.html:13
+#: apps/accounts/forms.py:291 templates/core/_bmi_card.html:13
 #: templates/core/_bmi_card.html:29
 msgid "BMI"
 msgstr "BMI"
 
-#: apps/accounts/forms.py:288
+#: apps/accounts/forms.py:292
 msgid "on the body weight page"
 msgstr "nella pagina del peso corporeo"
 
-#: apps/accounts/forms.py:290
+#: apps/accounts/forms.py:294
 msgid "Share my activity"
 msgstr "Condividi la mia attività"
 
-#: apps/accounts/forms.py:291
+#: apps/accounts/forms.py:295
 msgid "Show my name to others"
 msgstr "Mostra il mio nome agli altri"
 
-#: apps/accounts/forms.py:292
+#: apps/accounts/forms.py:296
 msgid "Show my Gravatar picture"
 msgstr "Mostra la mia immagine Gravatar"
 
-#: apps/accounts/forms.py:293 apps/accounts/forms.py:659
+#: apps/accounts/forms.py:297 apps/accounts/forms.py:668
 msgid "Allow friend requests"
 msgstr "Consenti richieste di amicizia"
 
-#: apps/accounts/forms.py:294 apps/accounts/forms.py:667
+#: apps/accounts/forms.py:298 apps/accounts/forms.py:676
 msgid "Allow group invites"
 msgstr "Consenti inviti ai gruppi"
 
-#: apps/accounts/forms.py:295
+#: apps/accounts/forms.py:299
 msgid "I'm a personal trainer / coach"
 msgstr "Sono un personal trainer / coach"
 
-#: apps/accounts/forms.py:296
+#: apps/accounts/forms.py:300
 msgid "Accepting new coaching requests"
 msgstr "Accetto nuove richieste di coaching"
 
-#: apps/accounts/forms.py:297
+#: apps/accounts/forms.py:301
 msgid "Language"
 msgstr "Lingua"
 
-#: apps/accounts/forms.py:298
+#: apps/accounts/forms.py:302
 msgid "Theme"
 msgstr "Tema"
 
-#: apps/accounts/forms.py:299
+#: apps/accounts/forms.py:303
 msgid "Appearance"
 msgstr "Aspetto"
 
-#: apps/accounts/forms.py:303
+#: apps/accounts/forms.py:307
 msgid ""
 "Which color palette the app uses. Each theme has its own dark and light look "
 "— pick which one below."
@@ -110,7 +114,7 @@ msgstr ""
 "Quale tavolozza di colori usa l'app. Ogni tema ha il proprio aspetto scuro e "
 "chiaro — scegli quale qui sotto."
 
-#: apps/accounts/forms.py:307
+#: apps/accounts/forms.py:311
 msgid ""
 "Shows nutrition (food diary, recipes, diet plans) in navigation and on the "
 "dashboard. Turn off to hide it if you don't want to track nutrition — "
@@ -122,36 +126,46 @@ msgstr ""
 "tracciare la nutrizione — i dati nutrizionali esistenti non vengono mai "
 "eliminati e le sue pagine restano raggiungibili direttamente tramite un link."
 
-#: apps/accounts/forms.py:314
+#: apps/accounts/forms.py:318
+msgid ""
+"Shows stretching (routines, guided sessions) in navigation and suggests a "
+"cool-down after a workout. Turn off to hide it — existing stretching data is "
+"never deleted."
+msgstr ""
+"Mostra lo stretching (routine, sessioni guidate) nella navigazione e "
+"suggerisce un defaticamento dopo l'allenamento. Disattivalo per nasconderlo —"
+" i dati di stretching esistenti non vengono mai eliminati."
+
+#: apps/accounts/forms.py:323
 msgid ""
 "\"Auto\" follows your device's own light/dark setting and switches "
 "automatically when it changes."
 msgstr ""
-"\"Automatico\" segue l'impostazione chiaro/scuro del tuo dispositivo e "
-"cambia automaticamente quando questa cambia."
+"\"Automatico\" segue l'impostazione chiaro/scuro del tuo dispositivo e cambia"
+" automaticamente quando questa cambia."
 
-#: apps/accounts/forms.py:318
+#: apps/accounts/forms.py:327
 msgid ""
-"Shows a dashboard card nudging you to log a body measurement when you "
-"haven't logged one in a while. Turn off to never see that reminder — you can "
-"still log a reading any time from Body tracking."
+"Shows a dashboard card nudging you to log a body measurement when you haven't"
+" logged one in a while. Turn off to never see that reminder — you can still "
+"log a reading any time from Body tracking."
 msgstr ""
 "Mostra nella dashboard una scheda che ti ricorda di registrare una "
 "misurazione corporea quando non ne hai registrata una da un po'. Disattiva "
 "per non vedere mai più questo promemoria — potrai comunque registrare una "
 "misurazione in qualsiasi momento da Monitoraggio corporeo."
 
-#: apps/accounts/forms.py:323
+#: apps/accounts/forms.py:332
 msgid "Turns off the BMI card and its category ranges entirely."
 msgstr ""
 "Disattiva completamente la scheda BMI e i suoi intervalli di categoria."
 
-#: apps/accounts/forms.py:325
+#: apps/accounts/forms.py:334
 msgid ""
 "Lets everyone using this instance see your longest streak, workout count, "
 "PRs, total weight lifted, and when you last trained, in the dashboard's "
-"achievements carousel and \"Recently active\" list. Turn off to keep your "
-"own activity private — you'll still see everyone else's."
+"achievements carousel and \"Recently active\" list. Turn off to keep your own"
+" activity private — you'll still see everyone else's."
 msgstr ""
 "Permette a chiunque usi questa istanza di vedere la tua serie più lunga, il "
 "numero di allenamenti, i record, il peso totale sollevato e quando ti sei "
@@ -159,7 +173,7 @@ msgstr ""
 "di recente\" della dashboard. Disattiva per tenere privata la tua attività — "
 "vedrai comunque quella degli altri."
 
-#: apps/accounts/forms.py:332
+#: apps/accounts/forms.py:341
 msgid ""
 "Shows your first name next to your username wherever others can see it (the "
 "achievements carousel and \"Recently active\" list). Turn off to show just "
@@ -170,7 +184,7 @@ msgstr ""
 "Disattiva per mostrare lì solo il tuo nome utente, come prima che questa "
 "impostazione esistesse."
 
-#: apps/accounts/forms.py:338
+#: apps/accounts/forms.py:347
 msgid ""
 "Shows your Gravatar (gravatar.com) picture at the top of this page, if the "
 "email on this account has one. Turning this on means your browser loads that "
@@ -184,7 +198,7 @@ msgstr ""
 "questa applicazione comunica con un server esterno alla tua istanza — che "
 "vedrà quindi l'hash della tua email e il tuo indirizzo IP."
 
-#: apps/accounts/forms.py:346
+#: apps/accounts/forms.py:355
 msgid ""
 "Off stops other users on this instance from sending you a friend request at "
 "all. Doesn't affect friend requests you already have, or friendships you "
@@ -194,16 +208,16 @@ msgstr ""
 "richiesta di amicizia. Non influisce sulle richieste o amicizie già "
 "esistenti."
 
-#: apps/accounts/forms.py:351
+#: apps/accounts/forms.py:360
 msgid ""
-"Off stops a group member from inviting you to a group directly. You can "
-"still join any group yourself using its invite link, if you have one."
+"Off stops a group member from inviting you to a group directly. You can still"
+" join any group yourself using its invite link, if you have one."
 msgstr ""
 "Disattivato impedisce a un membro del gruppo di invitarti direttamente. Puoi "
-"comunque unirti a qualsiasi gruppo tu stesso usando il suo link di invito, "
-"se ne hai uno."
+"comunque unirti a qualsiasi gruppo tu stesso usando il suo link di invito, se"
+" ne hai uno."
 
-#: apps/accounts/forms.py:356
+#: apps/accounts/forms.py:365
 msgid ""
 "Lets you build gym programs and diet plans other users can request you coach "
 "them on. Turning this off doesn't end any coaching relationship you already "
@@ -213,7 +227,7 @@ msgstr ""
 "utenti possono chiederti di seguire come coach. Disattivarlo non termina le "
 "relazioni di coaching già esistenti."
 
-#: apps/accounts/forms.py:361
+#: apps/accounts/forms.py:370
 msgid ""
 "Off stops new coaching requests from reaching you. Existing coaching "
 "relationships, and any request you already received, are unaffected."
@@ -222,67 +236,67 @@ msgstr ""
 "relazioni di coaching esistenti e le richieste già ricevute non sono "
 "interessate."
 
-#: apps/accounts/forms.py:386 apps/accounts/forms.py:702
+#: apps/accounts/forms.py:395 apps/accounts/forms.py:721
 #: apps/nutrition/forms.py:39 apps/nutrition/forms.py:455
 msgid "Height (cm)"
 msgstr "Altezza (cm)"
 
-#: apps/accounts/forms.py:386 apps/accounts/forms.py:702
+#: apps/accounts/forms.py:395 apps/accounts/forms.py:721
 #: apps/nutrition/forms.py:39 apps/nutrition/forms.py:455
 msgid "Height (in)"
 msgstr "Altezza (in)"
 
-#: apps/accounts/forms.py:440 apps/accounts/forms.py:476
+#: apps/accounts/forms.py:449 apps/accounts/forms.py:485
 msgid "Verification code"
 msgstr "Codice di verifica"
 
-#: apps/accounts/forms.py:454
+#: apps/accounts/forms.py:463
 msgid "Incorrect code — check your authenticator app and try again."
 msgstr "Codice errato — controlla la tua app di autenticazione e riprova."
 
-#: apps/accounts/forms.py:490
+#: apps/accounts/forms.py:499
 msgid "Too many incorrect codes. Try again in a few minutes."
 msgstr "Troppi codici errati. Riprova tra qualche minuto."
 
-#: apps/accounts/forms.py:503
+#: apps/accounts/forms.py:512
 msgid "Incorrect code."
 msgstr "Codice errato."
 
-#: apps/accounts/forms.py:517 apps/accounts/forms.py:543
+#: apps/accounts/forms.py:526 apps/accounts/forms.py:552
 msgid "Password"
 msgstr "Password"
 
-#: apps/accounts/forms.py:526 apps/accounts/forms.py:557
+#: apps/accounts/forms.py:535 apps/accounts/forms.py:566
 msgid "Incorrect password."
 msgstr "Password errata."
 
-#: apps/accounts/forms.py:546
+#: apps/accounts/forms.py:555
 msgid "Type your username to confirm"
 msgstr "Digita il tuo nome utente per confermare"
 
-#: apps/accounts/forms.py:559
+#: apps/accounts/forms.py:568
 msgid "Doesn't match your username."
 msgstr "Non corrisponde al tuo nome utente."
 
-#: apps/accounts/forms.py:583
+#: apps/accounts/forms.py:592
 msgid "First name"
 msgstr "Nome"
 
-#: apps/accounts/forms.py:585
+#: apps/accounts/forms.py:594
 msgid ""
 "Used to personalize your dashboard greeting, and next to your username "
 "wherever your activity is shown to others (if you allow that in your "
 "profile)."
 msgstr ""
-"Utilizzato per personalizzare il saluto nella dashboard e accanto al tuo "
-"nome utente ovunque la tua attività sia mostrata ad altri (se lo consenti "
-"nel tuo profilo)."
+"Utilizzato per personalizzare il saluto nella dashboard e accanto al tuo nome"
+" utente ovunque la tua attività sia mostrata ad altri (se lo consenti nel tuo"
+" profilo)."
 
-#: apps/accounts/forms.py:592
+#: apps/accounts/forms.py:601
 msgid "Email"
 msgstr "Email"
 
-#: apps/accounts/forms.py:594
+#: apps/accounts/forms.py:603
 msgid ""
 "Used only for password-reset emails if you ever get locked out. Never shown "
 "to other users."
@@ -291,7 +305,7 @@ msgstr ""
 "rimanessi bloccato fuori dall'account. Non viene mai mostrata ad altri "
 "utenti."
 
-#: apps/accounts/forms.py:604
+#: apps/accounts/forms.py:613
 msgid ""
 "Logged as your first body-weight entry, so your progress charts have a "
 "starting point. Leave blank and log it anytime from the Body weight page "
@@ -301,24 +315,24 @@ msgstr ""
 "grafici di progresso hanno un punto di partenza. Lascia vuoto e registralo "
 "quando vuoi dalla pagina Peso corporeo."
 
-#: apps/accounts/forms.py:619
+#: apps/accounts/forms.py:628
 msgid ""
-"Used together with a logged body weight to show your BMI. Leave blank to "
-"skip this — you can add it anytime from your profile."
+"Used together with a logged body weight to show your BMI. Leave blank to skip"
+" this — you can add it anytime from your profile."
 msgstr ""
 "Usato insieme a un peso corporeo registrato per mostrare il tuo BMI. Lascia "
 "vuoto per saltare questo passaggio — puoi aggiungerlo quando vuoi dal tuo "
 "profilo."
 
-#: apps/accounts/forms.py:628
+#: apps/accounts/forms.py:637
 msgid ""
-"Sets whether weights and distances are shown in kg/km or lb/mi throughout "
-"the app. Change this anytime from your profile."
+"Sets whether weights and distances are shown in kg/km or lb/mi throughout the"
+" app. Change this anytime from your profile."
 msgstr ""
 "Imposta se pesi e distanze vengono mostrati in kg/km o lb/mi in tutta l'app. "
 "Modificalo quando vuoi dal tuo profilo."
 
-#: apps/accounts/forms.py:648
+#: apps/accounts/forms.py:657
 msgid ""
 "Used for \"today\" and date ranges throughout the app. Change this anytime "
 "from your profile."
@@ -328,7 +342,7 @@ msgstr ""
 "vengono mostrati in kg/km o lb/mi in tutta l'app. Modificalo quando vuoi dal "
 "tuo profilo."
 
-#: apps/accounts/forms.py:661
+#: apps/accounts/forms.py:670
 msgid ""
 "Lets other users on this instance send you a friend request. Change this "
 "anytime from your profile."
@@ -336,7 +350,7 @@ msgstr ""
 "Permette ad altri utenti di questa istanza di inviarti una richiesta di "
 "amicizia. Puoi modificarlo in qualsiasi momento dal tuo profilo."
 
-#: apps/accounts/forms.py:669
+#: apps/accounts/forms.py:678
 msgid ""
 "Lets a group member invite you to a group directly. You can always join a "
 "group yourself using its invite link either way. Change this anytime from "
@@ -346,7 +360,7 @@ msgstr ""
 "sempre unirti a un gruppo tu stesso usando il suo link di invito. Puoi "
 "modificarlo in qualsiasi momento dal tuo profilo."
 
-#: apps/accounts/forms.py:678
+#: apps/accounts/forms.py:687
 msgid ""
 "Shows nutrition (food diary, recipes, diet plans) in navigation and on the "
 "dashboard. Leave unchecked if you don't want to track nutrition — you can "
@@ -358,13 +372,23 @@ msgstr ""
 "nutrizione — puoi attivarla o disattivarla in qualsiasi momento dal tuo "
 "profilo, e in ogni caso nulla viene mai eliminato."
 
-#: apps/accounts/forms.py:697 apps/nutrition/forms.py:40
+#: apps/accounts/forms.py:697
+msgid ""
+"Shows stretching routines and guided sessions in navigation, and suggests a "
+"cool-down after a workout. You can turn it on or off anytime from your "
+"profile."
+msgstr ""
+"Mostra le routine di stretching e le sessioni guidate nella navigazione e "
+"suggerisce un defaticamento dopo l'allenamento. Puoi attivarlo o disattivarlo"
+" in qualsiasi momento dal tuo profilo."
+
+#: apps/accounts/forms.py:716 apps/nutrition/forms.py:40
 #: apps/nutrition/forms.py:464 apps/nutrition/forms.py:668
 #, python-format
 msgid "Current weight (%(unit)s)"
 msgstr "Peso attuale (%(unit)s)"
 
-#: apps/accounts/forms.py:699
+#: apps/accounts/forms.py:718
 msgid "Current weight"
 msgstr "Peso attuale"
 
@@ -408,7 +432,7 @@ msgstr "Earth"
 msgid "Zen"
 msgstr "Zen"
 
-#: apps/accounts/models.py:406
+#: apps/accounts/models.py:415
 msgid ""
 "Shown as a footer note on the login and signup pages. Leave blank to hide it "
 "entirely."
@@ -443,18 +467,18 @@ msgstr "Autenticazione a due fattori disattivata."
 #: apps/accounts/views.py:389
 msgid ""
 "You're the only superuser on this instance — promote another account to "
-"superuser first, or this instance would have no one left who can reach "
-"Django admin."
+"superuser first, or this instance would have no one left who can reach Django"
+" admin."
 msgstr ""
-"Sei l'unico superutente su questa istanza — promuovi prima un altro account "
-"a superutente, altrimenti questa istanza non avrebbe più nessuno in grado di "
+"Sei l'unico superutente su questa istanza — promuovi prima un altro account a"
+" superutente, altrimenti questa istanza non avrebbe più nessuno in grado di "
 "accedere all'amministrazione di Django."
 
 #: apps/accounts/views.py:407
 msgid "Your account and all its data have been deleted."
 msgstr "Il tuo account e tutti i suoi dati sono stati eliminati."
 
-#: apps/activities/forms.py:27
+#: apps/activities/forms.py:27 apps/stretching/forms.py:126
 msgid "Duration (minutes)"
 msgstr "Durata (minuti)"
 
@@ -498,11 +522,12 @@ msgstr "Altro"
 
 #: apps/activities/models.py:18 apps/exercises/models.py:75
 #: apps/measurements/models.py:34 apps/programs/models.py:36
-#: apps/programs/models.py:118
+#: apps/programs/models.py:118 apps/stretching/models.py:32
+#: apps/stretching/models.py:96 apps/stretching/models.py:183
 msgid "name"
 msgstr "nome"
 
-#: apps/activities/models.py:70
+#: apps/activities/models.py:70 apps/stretching/models.py:190
 msgid "date"
 msgstr "data"
 
@@ -520,7 +545,7 @@ msgstr "calorie"
 
 #: apps/activities/models.py:77 apps/measurements/models.py:90
 #: apps/programs/models.py:123 apps/programs/models.py:189
-#: apps/workouts/forms.py:46
+#: apps/stretching/models.py:196 apps/workouts/forms.py:46
 msgid "notes"
 msgstr "note"
 
@@ -557,7 +582,7 @@ msgstr "Tipo di attività disattivato."
 msgid "Longest streak"
 msgstr "Serie più lunga"
 
-#: apps/analytics/achievements.py:123
+#: apps/analytics/achievements.py:123 templates/stretching/home.html:22
 #, python-format
 msgid "%(counter)s day"
 msgid_plural "%(counter)s days"
@@ -613,7 +638,7 @@ msgstr "6 mesi"
 msgid "1 year"
 msgstr "1 anno"
 
-#: apps/analytics/dateranges.py:19
+#: apps/analytics/dateranges.py:19 templates/stretching/home.html:24
 msgid "All time"
 msgstr "Sempre"
 
@@ -632,9 +657,10 @@ msgstr "Modifica"
 #: apps/api/forms.py:13 templates/activities/activity_history.html:57
 #: templates/core/_backup_row.html:22
 #: templates/measurements/measurement_history.html:65
-#: templates/nutrition/diary_day.html:69
+#: templates/nutrition/diary_day.html:74
 #: templates/programs/program_confirm_delete.html:14
 #: templates/programs/program_detail.html:52
+#: templates/stretching/session_detail.html:53
 #: templates/workouts/_performed_exercise_card.html:31
 msgid "Delete"
 msgstr "Elimina"
@@ -652,7 +678,7 @@ msgstr "Un'etichetta per distinguere le tue chiavi."
 
 #: apps/api/models.py:24 templates/accounts/profile.html:3
 #: templates/accounts/profile.html:12 templates/api/key_list.html:85
-#: templates/base.html:190 templates/base.html:213
+#: templates/base.html:196 templates/base.html:219
 msgid "Profile"
 msgstr "Profilo"
 
@@ -664,7 +690,7 @@ msgid "Exercises"
 msgstr "Esercizi"
 
 #: apps/api/models.py:26 apps/core/models.py:162 templates/api/key_list.html:93
-#: templates/base.html:186 templates/base.html:188
+#: templates/base.html:192 templates/base.html:194
 #: templates/programs/program_detail.html:5
 #: templates/programs/program_list.html:3
 #: templates/programs/program_list.html:6
@@ -691,11 +717,11 @@ msgstr "Misurazioni"
 msgid "Activities"
 msgstr "Attività"
 
-#: apps/api/models.py:30 templates/api/key_list.html:113
+#: apps/api/models.py:30 templates/api/key_list.html:117
 msgid "Records"
 msgstr "Record"
 
-#: apps/api/models.py:31 templates/api/key_list.html:117
+#: apps/api/models.py:31 templates/api/key_list.html:121
 msgid "Analytics"
 msgstr "Analisi"
 
@@ -710,6 +736,19 @@ msgstr "Analisi"
 msgid "Nutrition"
 msgstr "Alimentazione"
 
+#: apps/api/models.py:33 apps/stretching/models.py:209
+#: templates/api/key_list.html:113 templates/base.html:179
+#: templates/base.html:181 templates/core/dashboard.html:143
+#: templates/stretching/_cooldown_card.html:7 templates/stretching/home.html:3
+#: templates/stretching/home.html:6 templates/stretching/home.html:16
+#: templates/stretching/home.html:48 templates/stretching/session_detail.html:3
+#: templates/stretching/session_detail.html:5
+#: templates/stretching/session_history.html:15
+#: templates/stretching/session_play.html:3
+#: templates/stretching/session_play.html:6
+msgid "Stretching"
+msgstr "Stretching"
+
 #: apps/api/views_web.py:39
 msgid "You've reached your maximum number of API keys."
 msgstr "Hai raggiunto il numero massimo di chiavi API."
@@ -719,7 +758,7 @@ msgid "API key revoked."
 msgstr "Chiave API revocata."
 
 #: apps/coaching/models.py:23 apps/social/models.py:20
-#: apps/social/models.py:226
+#: apps/social/models.py:226 apps/stretching/models.py:213
 msgid "Pending"
 msgstr "In attesa"
 
@@ -810,7 +849,7 @@ msgid "This diet plan's coach source is no longer available."
 msgstr "L'origine del coach di questo piano alimentare non è più disponibile."
 
 #: apps/coaching/views_plans.py:59 apps/coaching/views_plans.py:73
-#: apps/nutrition/views.py:1070 apps/nutrition/views.py:1365
+#: apps/nutrition/views.py:1073 apps/nutrition/views.py:1368
 #: apps/programs/views.py:200
 #, python-format
 msgid "Imported “%(name)s”."
@@ -1075,8 +1114,8 @@ msgstr "Buonanotte, %(username)s — anche il recupero fa parte del programma."
 #, python-format
 msgid "Burning the midnight oil, %(username)s? Even legends need sleep."
 msgstr ""
-"Stai facendo le ore piccole, %(username)s? Anche le leggende hanno bisogno "
-"di dormire."
+"Stai facendo le ore piccole, %(username)s? Anche le leggende hanno bisogno di"
+" dormire."
 
 #: apps/core/greetings.py:53
 #, python-format
@@ -1096,8 +1135,8 @@ msgstr "IronStack %(version)s è ora attivo — tocca per vedere le novità."
 
 #: apps/core/models.py:42
 msgid ""
-"Turns the backup-scheduler service's daily backup off without needing to "
-"stop or remove that service."
+"Turns the backup-scheduler service's daily backup off without needing to stop"
+" or remove that service."
 msgstr ""
 "Disattiva il backup giornaliero del servizio di pianificazione backup senza "
 "doverlo arrestare o rimuovere."
@@ -1111,15 +1150,14 @@ msgid ""
 "How many backups to keep — older ones are deleted automatically after each "
 "new one is created. 0 keeps every backup forever."
 msgstr ""
-"Quanti backup conservare: quelli più vecchi vengono eliminati "
-"automaticamente dopo la creazione di ognuno nuovo. 0 conserva tutti i backup "
-"per sempre."
+"Quanti backup conservare: quelli più vecchi vengono eliminati automaticamente"
+" dopo la creazione di ognuno nuovo. 0 conserva tutti i backup per sempre."
 
 #: apps/core/models.py:88
 msgid ""
-"Lets any signed-in user submit feedback from their profile page. Turning "
-"this off only closes new submissions — feedback already on file stays "
-"visible to staff."
+"Lets any signed-in user submit feedback from their profile page. Turning this"
+" off only closes new submissions — feedback already on file stays visible to "
+"staff."
 msgstr ""
 "Consente a qualsiasi utente registrato di inviare feedback dalla propria "
 "pagina profilo. Disattivarlo chiude solo i nuovi invii — il feedback già "
@@ -1137,8 +1175,8 @@ msgstr ""
 "non un sito pubblico che qualcuno dovrebbe cercare."
 
 #: apps/core/models.py:163 templates/analytics/dashboard.html:3
-#: templates/analytics/dashboard.html:6 templates/base.html:178
-#: templates/base.html:180
+#: templates/analytics/dashboard.html:6 templates/base.html:184
+#: templates/base.html:186
 msgid "Progress"
 msgstr "Progressi"
 
@@ -1150,31 +1188,36 @@ msgstr "Misure corporee"
 msgid "Account & profile"
 msgstr "Account e profilo"
 
-#: apps/core/views.py:34
+#: apps/core/views.py:35
 msgid "Training day — new personal record!"
 msgstr "Giorno di allenamento — nuovo record personale!"
 
-#: apps/core/views.py:36
+#: apps/core/views.py:37
 msgid "Training day — a session was abandoned."
 msgstr "Giorno di allenamento — una sessione è stata abbandonata."
 
-#: apps/core/views.py:38
+#: apps/core/views.py:39
 msgid "Training day."
 msgstr "Giorno di allenamento."
 
-#: apps/core/views.py:40
+#: apps/core/views.py:41
 msgid "Rest day."
 msgstr "Giorno di riposo."
 
-#: apps/core/views.py:51
+#: apps/core/views.py:52
 #, python-format
 msgid "%(actual)s / %(target)s kcal logged."
 msgstr "%(actual)s / %(target)s kcal registrate."
 
-#: apps/core/views.py:56
+#: apps/core/views.py:57
 #, python-format
 msgid "%(actual)s kcal logged."
 msgstr "%(actual)s kcal registrate."
+
+#: apps/core/views.py:65
+#, python-format
+msgid "Stretched %(minutes)s min."
+msgstr "Stretching: %(minutes)s min."
 
 #: apps/core/views_backup.py:56
 #, python-format
@@ -1344,7 +1387,9 @@ msgstr "Push down ai tricipiti"
 msgid "Abs"
 msgstr "Addominali"
 
-#: apps/exercises/i18n_content.py:55
+#: apps/exercises/i18n_content.py:55 templates/stretching/routine_form.html:18
+#: templates/stretching/session_form.html:18
+#: templates/stretching/stretch_form.html:18
 msgid "Back"
 msgstr "Schiena"
 
@@ -1428,123 +1473,59 @@ msgstr "Elastico"
 msgid ""
 "- Starting Position: Kneel on the floor with the ab wheel in front of you.\n"
 "- Grip the Wheel: Hold the handles firmly.\n"
-"- Roll Out: Slowly roll the wheel forward, extending your body while keeping "
-"your core tight.\n"
-"- Return: Pull the wheel back towards your knees, maintaining tension in "
-"your core."
+"- Roll Out: Slowly roll the wheel forward, extending your body while keeping your core tight.\n"
+"- Return: Pull the wheel back towards your knees, maintaining tension in your core."
 msgstr ""
-"- Posizione di partenza: inginocchiati a terra con la ruota per addominali "
-"davanti a te.\n"
+"- Posizione di partenza: inginocchiati a terra con la ruota per addominali davanti a te.\n"
 "- Presa: afferra saldamente le maniglie.\n"
-"- Rotolamento: fai rotolare lentamente la ruota in avanti, estendendo il "
-"corpo mantenendo il core contratto.\n"
-"- Ritorno: riporta la ruota verso le ginocchia mantenendo la tensione nel "
-"core."
+"- Rotolamento: fai rotolare lentamente la ruota in avanti, estendendo il corpo mantenendo il core contratto.\n"
+"- Ritorno: riporta la ruota verso le ginocchia mantenendo la tensione nel core."
 
 #: apps/exercises/i18n_content.py:98
 msgid ""
-"- The barbell full squat is a compound exercise that targets multiple muscle "
-"groups in the lower body, including the quadriceps, hamstrings, and glutes.\n"
-"- Proper form is crucial for maximizing results and preventing injuries "
-"during the barbell full squat. This includes maintaining a shoulder-width "
-"stance, creating whole body tension, controlling your descent, and "
-"maintaining proper depth and knee positioning.\n"
-"- Assistance moves such as the front squat, goblet squat, split squat, and "
-"Bulgarian split squat can help improve your performance in the barbell full "
-"squat by targeting specific muscle groups and improving overall technique.\n"
-"- To achieve new personal records in your back squat, gradually increase "
-"weight over time, vary rep ranges and sets to stimulate muscle growth, and "
-"prioritize rest and recovery between training sessions."
+"- The barbell full squat is a compound exercise that targets multiple muscle groups in the lower body, including the quadriceps, hamstrings, and glutes.\n"
+"- Proper form is crucial for maximizing results and preventing injuries during the barbell full squat. This includes maintaining a shoulder-width stance, creating whole body tension, controlling your descent, and maintaining proper depth and knee positioning.\n"
+"- Assistance moves such as the front squat, goblet squat, split squat, and Bulgarian split squat can help improve your performance in the barbell full squat by targeting specific muscle groups and improving overall technique.\n"
+"- To achieve new personal records in your back squat, gradually increase weight over time, vary rep ranges and sets to stimulate muscle growth, and prioritize rest and recovery between training sessions."
 msgstr ""
-"- Lo squat completo con bilanciere è un esercizio multiarticolare che "
-"coinvolge diversi gruppi muscolari della parte inferiore del corpo, tra cui "
-"quadricipiti, femorali e glutei.\n"
-"- Una tecnica corretta è fondamentale per massimizzare i risultati e "
-"prevenire infortuni: mantieni una base larga quanto le spalle, crea tensione "
-"in tutto il corpo, controlla la discesa e mantieni la profondità e la "
-"posizione delle ginocchia corrette.\n"
-"- Esercizi complementari come lo squat frontale, il goblet squat, lo split "
-"squat e lo split squat bulgaro possono aiutarti a migliorare la tua "
-"performance nello squat con bilanciere, allenando gruppi muscolari specifici "
-"e perfezionando la tecnica generale.\n"
-"- Per ottenere nuovi record personali nello squat, aumenta gradualmente il "
-"carico nel tempo, varia range di ripetizioni e serie per stimolare la "
-"crescita muscolare, e dai priorità al riposo e al recupero tra le sessioni "
-"di allenamento."
+"- Lo squat completo con bilanciere è un esercizio multiarticolare che coinvolge diversi gruppi muscolari della parte inferiore del corpo, tra cui quadricipiti, femorali e glutei.\n"
+"- Una tecnica corretta è fondamentale per massimizzare i risultati e prevenire infortuni: mantieni una base larga quanto le spalle, crea tensione in tutto il corpo, controlla la discesa e mantieni la profondità e la posizione delle ginocchia corrette.\n"
+"- Esercizi complementari come lo squat frontale, il goblet squat, lo split squat e lo split squat bulgaro possono aiutarti a migliorare la tua performance nello squat con bilanciere, allenando gruppi muscolari specifici e perfezionando la tecnica generale.\n"
+"- Per ottenere nuovi record personali nello squat, aumenta gradualmente il carico nel tempo, varia range di ripetizioni e serie per stimolare la crescita muscolare, e dai priorità al riposo e al recupero tra le sessioni di allenamento."
 
 #: apps/exercises/i18n_content.py:111
 msgid ""
-"Lay down on a bench, the bar should be directly above your eyes, the knees "
-"are somewhat angled and the feet are firmly on the floor. Concentrate, "
-"breath deeply and grab the bar more than shoulder wide. Bring it slowly down "
-"till it briefly touches your chest at the height of your nipples. Push the "
-"bar up.\n"
-"If you train with a high weight it is advisable to have a spotter that can "
-"help you up if you can't lift the weight on your own.\n"
-"With the width of the grip you can also control which part of the chest is "
-"trained more:\n"
+"Lay down on a bench, the bar should be directly above your eyes, the knees are somewhat angled and the feet are firmly on the floor. Concentrate, breath deeply and grab the bar more than shoulder wide. Bring it slowly down till it briefly touches your chest at the height of your nipples. Push the bar up.\n"
+"If you train with a high weight it is advisable to have a spotter that can help you up if you can't lift the weight on your own.\n"
+"With the width of the grip you can also control which part of the chest is trained more:\n"
 "- wide grip: outer chest muscles\n"
 "- narrow grip: inner chest muscles and triceps"
 msgstr ""
-"Sdraiati su una panca con il bilanciere posizionato direttamente sopra gli "
-"occhi, le ginocchia leggermente piegate e i piedi ben piantati a terra. "
-"Concentrati, respira profondamente e afferra il bilanciere con una presa più "
-"larga delle spalle. Abbassalo lentamente finché non sfiora brevemente il "
-"petto all'altezza dei capezzoli. Spingi il bilanciere verso l'alto.\n"
-"Se ti alleni con carichi elevati, è consigliabile avere uno spotter che "
-"possa aiutarti a risollevare il bilanciere se non riesci a sollevarlo da "
-"solo.\n"
-"La larghezza della presa determina anche quale parte del petto viene "
-"allenata maggiormente:\n"
+"Sdraiati su una panca con il bilanciere posizionato direttamente sopra gli occhi, le ginocchia leggermente piegate e i piedi ben piantati a terra. Concentrati, respira profondamente e afferra il bilanciere con una presa più larga delle spalle. Abbassalo lentamente finché non sfiora brevemente il petto all'altezza dei capezzoli. Spingi il bilanciere verso l'alto.\n"
+"Se ti alleni con carichi elevati, è consigliabile avere uno spotter che possa aiutarti a risollevare il bilanciere se non riesci a sollevarlo da solo.\n"
+"La larghezza della presa determina anche quale parte del petto viene allenata maggiormente:\n"
 "- presa larga: parte esterna dei pettorali\n"
 "- presa stretta: parte interna dei pettorali e tricipiti"
 
 #: apps/exercises/i18n_content.py:121
 msgid ""
-"- Holding a barbell with a pronated grip (palms facing down), bend your "
-"knees slightly and bring your torso forward, by bending at the waist, while "
-"keeping the back straight until it is almost parallel to the floor. Tip: "
-"Make sure that you keep the head up. The barbell should hang directly in "
-"front of you as your arms hang perpendicular to the floor and your torso. "
-"This is your starting position.\n"
-"- Now, while keeping the torso stationary, breathe out and lift the barbell "
-"to you. Keep the elbows close to the body and only use the forearms to hold "
-"the weight. At the top contracted position, squeeze the back muscles and "
-"hold for a brief pause.\n"
+"- Holding a barbell with a pronated grip (palms facing down), bend your knees slightly and bring your torso forward, by bending at the waist, while keeping the back straight until it is almost parallel to the floor. Tip: Make sure that you keep the head up. The barbell should hang directly in front of you as your arms hang perpendicular to the floor and your torso. This is your starting position.\n"
+"- Now, while keeping the torso stationary, breathe out and lift the barbell to you. Keep the elbows close to the body and only use the forearms to hold the weight. At the top contracted position, squeeze the back muscles and hold for a brief pause.\n"
 "- Then inhale and slowly lower the barbell back to the starting position.\n"
 "- Repeat for the recommended amount of repetitions."
 msgstr ""
-"- Afferra il bilanciere con presa prona (palmi rivolti verso il basso), "
-"piega leggermente le ginocchia e inclina il busto in avanti flettendo "
-"l'anca, mantenendo la schiena dritta finché il busto non è quasi parallelo "
-"al pavimento. Consiglio: tieni la testa alta. Il bilanciere deve pendere "
-"direttamente davanti a te con le braccia perpendicolari al pavimento e al "
-"busto. Questa è la posizione di partenza.\n"
-"- Mantenendo il busto fermo, espira e tira il bilanciere verso di te. Tieni "
-"i gomiti vicini al corpo e usa solo gli avambracci per sostenere il peso. "
-"Nella posizione contratta in alto, contrai i muscoli della schiena e "
-"mantieni una breve pausa.\n"
-"- Poi inspira e abbassa lentamente il bilanciere fino alla posizione di "
-"partenza.\n"
+"- Afferra il bilanciere con presa prona (palmi rivolti verso il basso), piega leggermente le ginocchia e inclina il busto in avanti flettendo l'anca, mantenendo la schiena dritta finché il busto non è quasi parallelo al pavimento. Consiglio: tieni la testa alta. Il bilanciere deve pendere direttamente davanti a te con le braccia perpendicolari al pavimento e al busto. Questa è la posizione di partenza.\n"
+"- Mantenendo il busto fermo, espira e tira il bilanciere verso di te. Tieni i gomiti vicini al corpo e usa solo gli avambracci per sostenere il peso. Nella posizione contratta in alto, contrai i muscoli della schiena e mantieni una breve pausa.\n"
+"- Poi inspira e abbassa lentamente il bilanciere fino alla posizione di partenza.\n"
 "- Ripeti per il numero di ripetizioni consigliato."
 
 #: apps/exercises/i18n_content.py:133
 msgid ""
-"Take a barbell and stand with a straight body, the arms are hanging freely "
-"in front of you. Lift from this position the shoulders as high as you can, "
-"but don't bend the arms during the movement. On the highest point, make a "
-"short pause of 1 or 2 seconds before returning slowly to the initial "
-"position.\n"
-"When training with a higher weight, make sure that you still do the whole "
-"movement!"
+"Take a barbell and stand with a straight body, the arms are hanging freely in front of you. Lift from this position the shoulders as high as you can, but don't bend the arms during the movement. On the highest point, make a short pause of 1 or 2 seconds before returning slowly to the initial position.\n"
+"When training with a higher weight, make sure that you still do the whole movement!"
 msgstr ""
-"Prendi un bilanciere e stai in piedi con il corpo dritto, le braccia che "
-"pendono liberamente davanti a te. Da questa posizione solleva le spalle il "
-"più in alto possibile, senza piegare le braccia durante il movimento. Nel "
-"punto più alto, fai una breve pausa di 1-2 secondi prima di tornare "
-"lentamente alla posizione iniziale.\n"
-"Quando ti alleni con un carico maggiore, assicurati comunque di eseguire il "
-"movimento per intero!"
+"Prendi un bilanciere e stai in piedi con il corpo dritto, le braccia che pendono liberamente davanti a te. Da questa posizione solleva le spalle il più in alto possibile, senza piegare le braccia durante il movimento. Nel punto più alto, fai una breve pausa di 1-2 secondi prima di tornare lentamente alla posizione iniziale.\n"
+"Quando ti alleni con un carico maggiore, assicurati comunque di eseguire il movimento per intero!"
 
 #: apps/exercises/i18n_content.py:140
 msgid ""
@@ -1553,93 +1534,40 @@ msgid ""
 "legs. Pull yourself up as high as you can. Make a small pause of 1 - 2 "
 "seconds and go slowly down."
 msgstr ""
-"Sali sulla macchina per i polpacci in modo da poter abbassare completamente "
-"i talloni. Stai dritto, senza inarcare la schiena e senza piegare le gambe. "
+"Sali sulla macchina per i polpacci in modo da poter abbassare completamente i"
+" talloni. Stai dritto, senza inarcare la schiena e senza piegare le gambe. "
 "Sollevati sulle punte il più in alto possibile. Fai una breve pausa di 1-2 "
 "secondi e poi scendi lentamente."
 
 #: apps/exercises/i18n_content.py:146
 msgid ""
-"Stand firmly, with your feet slightly more than shoulder wide apart. Stand "
-"directly behind the bar where it should barely touch your shin, your feet "
-"pointing a bit out. Bend down with a straight back, the knees also pointing "
-"somewhat out. Grab the bar with a shoulder wide grip, one overhand, one "
-"underhand (mixed grip).\n"
-"Pull the weight up. At the highest point make a slight hollow back and pull "
-"the bar back. Hold 1 or 2 seconds that position. Go down, making sure the "
-"back is not bent. Once down you can either go back again as soon as the "
-"weights touch the floor, or make a pause, depending on the weight."
+"Stand firmly, with your feet slightly more than shoulder wide apart. Stand directly behind the bar where it should barely touch your shin, your feet pointing a bit out. Bend down with a straight back, the knees also pointing somewhat out. Grab the bar with a shoulder wide grip, one overhand, one underhand (mixed grip).\n"
+"Pull the weight up. At the highest point make a slight hollow back and pull the bar back. Hold 1 or 2 seconds that position. Go down, making sure the back is not bent. Once down you can either go back again as soon as the weights touch the floor, or make a pause, depending on the weight."
 msgstr ""
-"Stai in piedi in modo stabile, con i piedi leggermente più larghi delle "
-"spalle. Posizionati direttamente dietro il bilanciere in modo che sfiori "
-"appena gli stinchi, con i piedi leggermente rivolti verso l'esterno. Piegati "
-"mantenendo la schiena dritta, con le ginocchia leggermente rivolte verso "
-"l'esterno. Afferra il bilanciere con una presa larga quanto le spalle, una "
-"mano prona e una supina (presa mista).\n"
-"Solleva il peso. Nel punto più alto, inarca leggermente la schiena e tira il "
-"bilanciere indietro. Mantieni questa posizione per 1-2 secondi. Scendi "
-"assicurandoti che la schiena non si pieghi. Una volta in basso, puoi "
-"ripartire subito con la ripetizione successiva non appena i dischi toccano "
-"il pavimento, oppure fare una pausa a seconda del peso."
+"Stai in piedi in modo stabile, con i piedi leggermente più larghi delle spalle. Posizionati direttamente dietro il bilanciere in modo che sfiori appena gli stinchi, con i piedi leggermente rivolti verso l'esterno. Piegati mantenendo la schiena dritta, con le ginocchia leggermente rivolte verso l'esterno. Afferra il bilanciere con una presa larga quanto le spalle, una mano prona e una supina (presa mista).\n"
+"Solleva il peso. Nel punto più alto, inarca leggermente la schiena e tira il bilanciere indietro. Mantieni questa posizione per 1-2 secondi. Scendi assicurandoti che la schiena non si pieghi. Una volta in basso, puoi ripartire subito con la ripetizione successiva non appena i dischi toccano il pavimento, oppure fare una pausa a seconda del peso."
 
 #: apps/exercises/i18n_content.py:156
 msgid ""
-"- Setup and Starting Position: Sit at the end of a flat bench with a "
-"dumbbell resting vertically against each thigh. Carefully lean back while "
-"driving the dumbbells toward your chest with your knees.\n"
-"- The “Leg Drive” and Posture: Plant your feet firmly on the floor. Retract "
-"your shoulder blades (press them together against the bench) and maintain a "
-"slight natural lumbar curve.\n"
-"- Starting Position: Push the dumbbells toward the ceiling. Your wrists "
-"should be aligned with your elbows. Rotate the dumbbells slightly inward "
-"(about 45 degrees) so that your elbows do not splay out too far to the "
-"sides, thereby protecting your shoulders.\n"
-"- Eccentric Phase (Lowering): Lower the dumbbells in a controlled manner "
-"toward the sides of your chest. Your elbows should lower at an angle of "
-"about 45–60 degrees relative to your body. Feel the stretch in the lower "
-"part of your chest.\n"
-"- Concentric Phase (Lift): Push the weight upward in a slight arc (toward "
-"the center), without letting the dumbbells collide at the top or fully "
-"locking out your elbows to maintain muscle tension. Exhale as you lift."
+"- Setup and Starting Position: Sit at the end of a flat bench with a dumbbell resting vertically against each thigh. Carefully lean back while driving the dumbbells toward your chest with your knees.\n"
+"- The “Leg Drive” and Posture: Plant your feet firmly on the floor. Retract your shoulder blades (press them together against the bench) and maintain a slight natural lumbar curve.\n"
+"- Starting Position: Push the dumbbells toward the ceiling. Your wrists should be aligned with your elbows. Rotate the dumbbells slightly inward (about 45 degrees) so that your elbows do not splay out too far to the sides, thereby protecting your shoulders.\n"
+"- Eccentric Phase (Lowering): Lower the dumbbells in a controlled manner toward the sides of your chest. Your elbows should lower at an angle of about 45–60 degrees relative to your body. Feel the stretch in the lower part of your chest.\n"
+"- Concentric Phase (Lift): Push the weight upward in a slight arc (toward the center), without letting the dumbbells collide at the top or fully locking out your elbows to maintain muscle tension. Exhale as you lift."
 msgstr ""
-"- Preparazione e posizione di partenza: siediti sul bordo di una panca piana "
-"con un manubrio in verticale su ciascuna coscia. Sdraiati con cautela "
-"all'indietro mentre spingi i manubri verso il petto con l'aiuto delle "
-"ginocchia.\n"
-"- Spinta delle gambe e postura: pianta saldamente i piedi a terra. Retrai le "
-"scapole (premile contro la panca) e mantieni una leggera curva lombare "
-"naturale.\n"
-"- Posizione di partenza: spingi i manubri verso il soffitto. I polsi devono "
-"essere allineati con i gomiti. Ruota leggermente i manubri verso l'interno "
-"(circa 45 gradi) in modo che i gomiti non si allarghino troppo lateralmente, "
-"proteggendo così le spalle.\n"
-"- Fase eccentrica (discesa): abbassa i manubri in modo controllato verso i "
-"lati del petto. I gomiti dovrebbero scendere con un angolo di circa 45-60 "
-"gradi rispetto al corpo. Senti lo stretch nella parte bassa del petto.\n"
-"- Fase concentrica (spinta): spingi il peso verso l'alto con un leggero arco "
-"(verso il centro), senza far scontrare i manubri in alto né estendere "
-"completamente i gomiti, per mantenere la tensione muscolare. Espira mentre "
-"spingi."
+"- Preparazione e posizione di partenza: siediti sul bordo di una panca piana con un manubrio in verticale su ciascuna coscia. Sdraiati con cautela all'indietro mentre spingi i manubri verso il petto con l'aiuto delle ginocchia.\n"
+"- Spinta delle gambe e postura: pianta saldamente i piedi a terra. Retrai le scapole (premile contro la panca) e mantieni una leggera curva lombare naturale.\n"
+"- Posizione di partenza: spingi i manubri verso il soffitto. I polsi devono essere allineati con i gomiti. Ruota leggermente i manubri verso l'interno (circa 45 gradi) in modo che i gomiti non si allarghino troppo lateralmente, proteggendo così le spalle.\n"
+"- Fase eccentrica (discesa): abbassa i manubri in modo controllato verso i lati del petto. I gomiti dovrebbero scendere con un angolo di circa 45-60 gradi rispetto al corpo. Senti lo stretch nella parte bassa del petto.\n"
+"- Fase concentrica (spinta): spingi il peso verso l'alto con un leggero arco (verso il centro), senza far scontrare i manubri in alto né estendere completamente i gomiti, per mantenere la tensione muscolare. Espira mentre spingi."
 
 #: apps/exercises/i18n_content.py:172
 msgid ""
-"Hold two dumbbells, the arms are streched, the hands are on your side, the "
-"palms face inwards. Bend the arms and bring the weight with a fast movement "
-"up. At the same time, rotate your arms by 90 degrees at the very beginning "
-"of the movement. At the highest point, rotate a little the weights further "
-"outwards. Without a pause, bring them down, slowly.\n"
-"Don't allow your body to swing during the exercise, all work is done by the "
-"biceps, which are the only mucles that should move (pay attention to the "
-"elbows)."
+"Hold two dumbbells, the arms are streched, the hands are on your side, the palms face inwards. Bend the arms and bring the weight with a fast movement up. At the same time, rotate your arms by 90 degrees at the very beginning of the movement. At the highest point, rotate a little the weights further outwards. Without a pause, bring them down, slowly.\n"
+"Don't allow your body to swing during the exercise, all work is done by the biceps, which are the only mucles that should move (pay attention to the elbows)."
 msgstr ""
-"Tieni due manubri con le braccia distese lungo i fianchi, i palmi rivolti "
-"verso l'interno. Piega le braccia e porta i pesi verso l'alto con un "
-"movimento rapido. Contemporaneamente, ruota le braccia di 90 gradi fin "
-"dall'inizio del movimento. Nel punto più alto, ruota leggermente i pesi "
-"ancora più verso l'esterno. Senza pause, riportali giù lentamente.\n"
-"Non far oscillare il corpo durante l'esercizio: tutto il lavoro deve essere "
-"svolto dai bicipiti, gli unici muscoli che dovrebbero muoversi (presta "
-"attenzione ai gomiti)."
+"Tieni due manubri con le braccia distese lungo i fianchi, i palmi rivolti verso l'interno. Piega le braccia e porta i pesi verso l'alto con un movimento rapido. Contemporaneamente, ruota le braccia di 90 gradi fin dall'inizio del movimento. Nel punto più alto, ruota leggermente i pesi ancora più verso l'esterno. Senza pause, riportali giù lentamente.\n"
+"Non far oscillare il corpo durante l'esercizio: tutto il lavoro deve essere svolto dai bicipiti, gli unici muscoli che dovrebbero muoversi (presta attenzione ai gomiti)."
 
 #: apps/exercises/i18n_content.py:181
 msgid ""
@@ -1650,8 +1578,8 @@ msgid ""
 msgstr ""
 "Siediti su una panca con lo schienale quasi verticale. Prendi due manubri e "
 "portali all'altezza delle spalle, con i palmi e i gomiti rivolti in avanti "
-"per tutta la durata dell'esercizio. Spingi i pesi verso l'alto; nel punto "
-"più alto si avvicinano molto senza toccarsi. Scendi lentamente e ripeti."
+"per tutta la durata dell'esercizio. Spingi i pesi verso l'alto; nel punto più"
+" alto si avvicinano molto senza toccarsi. Scendi lentamente e ripeti."
 
 #: apps/exercises/i18n_content.py:187
 msgid ""
@@ -1661,9 +1589,9 @@ msgid ""
 "flaring them out wide, squeezing your shoulder blades together at the end, "
 "then return under control."
 msgstr ""
-"Aggancia una maniglia a corda a una macchina a cavi impostata all'altezza "
-"tra la parte alta del petto e la testa. Afferra la corda con entrambe le "
-"mani, palmi rivolti l'uno verso l'altro, e fai un passo indietro per creare "
+"Aggancia una maniglia a corda a una macchina a cavi impostata all'altezza tra"
+" la parte alta del petto e la testa. Afferra la corda con entrambe le mani, "
+"palmi rivolti l'uno verso l'altro, e fai un passo indietro per creare "
 "tensione. Tira la corda verso il viso, guidando il movimento con i gomiti e "
 "allargandoli bene, stringendo le scapole insieme alla fine, poi ritorna in "
 "modo controllato."
@@ -1672,8 +1600,8 @@ msgstr ""
 msgid ""
 "Rest the bar across the front of your shoulders, elbows raised high to keep "
 "it in place, using either a clean grip or crossed arms. Keeping your torso "
-"upright, bend your knees and hips to lower into a squat until your thighs "
-"are at least parallel to the floor, then drive back up through your heels to "
+"upright, bend your knees and hips to lower into a squat until your thighs are"
+" at least parallel to the floor, then drive back up through your heels to "
 "standing."
 msgstr ""
 "Appoggia il bilanciere sulla parte anteriore delle spalle, con i gomiti "
@@ -1685,18 +1613,13 @@ msgstr ""
 #: apps/exercises/i18n_content.py:200
 msgid ""
 "- Start: Hold dumbbells at your sides with palms facing your torso.\n"
-"- Curl: Lift the weights toward your shoulders while maintaining the neutral "
-"grip (like holding a hammer).\n"
-"- Squeeze: Contract the biceps at the top without moving your elbows "
-"forward.\n"
+"- Curl: Lift the weights toward your shoulders while maintaining the neutral grip (like holding a hammer).\n"
+"- Squeeze: Contract the biceps at the top without moving your elbows forward.\n"
 "- Lower: Slowly return to the starting position with full control."
 msgstr ""
-"- Inizio: tieni i manubri ai lati del corpo con i palmi rivolti verso il "
-"busto.\n"
-"- Curl: solleva i pesi verso le spalle mantenendo la presa neutra (come se "
-"tenessi un martello).\n"
-"- Contrazione: contrai i bicipiti in alto senza spostare i gomiti in "
-"avanti.\n"
+"- Inizio: tieni i manubri ai lati del corpo con i palmi rivolti verso il busto.\n"
+"- Curl: solleva i pesi verso le spalle mantenendo la presa neutra (come se tenessi un martello).\n"
+"- Contrazione: contrai i bicipiti in alto senza spostare i gomiti in avanti.\n"
 "- Discesa: torna lentamente e con controllo alla posizione di partenza."
 
 #: apps/exercises/i18n_content.py:207
@@ -1708,25 +1631,24 @@ msgid ""
 "the top, then lower back down under control."
 msgstr ""
 "Siediti a terra con la parte alta della schiena appoggiata a una panca e un "
-"bilanciere caricato posizionato sui fianchi (usa un cuscinetto per "
-"comodità). Pianta i piedi ben appoggiati a terra, ginocchia piegate. Spingi "
-"attraverso i talloni per sollevare i fianchi finché il corpo non forma una "
-"linea retta dalle spalle alle ginocchia, contraendo i glutei in alto, poi "
-"scendi in modo controllato."
+"bilanciere caricato posizionato sui fianchi (usa un cuscinetto per comodità)."
+" Pianta i piedi ben appoggiati a terra, ginocchia piegate. Spingi attraverso "
+"i talloni per sollevare i fianchi finché il corpo non forma una linea retta "
+"dalle spalle alle ginocchia, contraendo i glutei in alto, poi scendi in modo "
+"controllato."
 
 #: apps/exercises/i18n_content.py:214
 msgid ""
 "Lie back on an incline bench set to about 30-45°, feet flat on the floor. "
-"Grip the bar slightly wider than shoulder-width and unrack it over your "
-"upper chest. Lower the bar under control to your upper chest, then press it "
-"back up until your arms are fully extended."
+"Grip the bar slightly wider than shoulder-width and unrack it over your upper"
+" chest. Lower the bar under control to your upper chest, then press it back "
+"up until your arms are fully extended."
 msgstr ""
 "Sdraiati su una panca inclinata impostata a circa 30-45°, piedi ben "
-"appoggiati a terra. Afferra il bilanciere con una presa leggermente più "
-"larga delle spalle e sollevalo dal rack sopra la parte alta del petto. "
-"Abbassa il bilanciere in modo controllato fino alla parte alta del petto, "
-"poi spingilo di nuovo verso l'alto finché le braccia non sono completamente "
-"distese."
+"appoggiati a terra. Afferra il bilanciere con una presa leggermente più larga"
+" delle spalle e sollevalo dal rack sopra la parte alta del petto. Abbassa il "
+"bilanciere in modo controllato fino alla parte alta del petto, poi spingilo "
+"di nuovo verso l'alto finché le braccia non sono completamente distese."
 
 #: apps/exercises/i18n_content.py:220
 msgid ""
@@ -1747,28 +1669,28 @@ msgstr ""
 msgid ""
 "This exercise works the deltoid muscle of the shoulder. The movement starts "
 "with the arms straight, and the hands holding weights at the sides or in "
-"front of the body. Body is in a slight forward-leaning position with hips "
-"and knees bent a little. Arms are kept straight or slightly bent, and raised "
+"front of the body. Body is in a slight forward-leaning position with hips and"
+" knees bent a little. Arms are kept straight or slightly bent, and raised "
 "through an arc of movement in the coronal plane that terminates when the "
 "hands are at approximately shoulder height. Weights are lowered to the "
 "starting position, completing one rep. When using a cable machine the "
-"individual stands with the coronal plane in line with the pulley, which is "
-"at or near the ground. The exercise can be completed one shoulder at a time "
-"(with the other hand used to stabilize the body against the weight moved), "
-"or with both hands simultaneously if two parallel pulleys are available."
+"individual stands with the coronal plane in line with the pulley, which is at"
+" or near the ground. The exercise can be completed one shoulder at a time "
+"(with the other hand used to stabilize the body against the weight moved), or"
+" with both hands simultaneously if two parallel pulleys are available."
 msgstr ""
-"Questo esercizio allena il muscolo deltoide della spalla. Il movimento "
-"inizia con le braccia distese e i pesi tenuti ai lati o davanti al corpo. Il "
-"busto è leggermente inclinato in avanti con anche e ginocchia un po' "
-"piegate. Le braccia restano distese o leggermente piegate e vengono "
-"sollevate lungo un arco nel piano frontale finché le mani non raggiungono "
-"circa l'altezza delle spalle. I pesi vengono riabbassati alla posizione di "
-"partenza, completando una ripetizione. Quando si usa una macchina a cavi, ci "
-"si posiziona con il piano frontale allineato alla carrucola, che si trova a "
-"livello del pavimento o vicino ad esso. L'esercizio può essere eseguito una "
-"spalla alla volta (usando l'altra mano per stabilizzare il corpo contro il "
-"peso in movimento), oppure con entrambe le mani contemporaneamente se sono "
-"disponibili due carrucole parallele."
+"Questo esercizio allena il muscolo deltoide della spalla. Il movimento inizia"
+" con le braccia distese e i pesi tenuti ai lati o davanti al corpo. Il busto "
+"è leggermente inclinato in avanti con anche e ginocchia un po' piegate. Le "
+"braccia restano distese o leggermente piegate e vengono sollevate lungo un "
+"arco nel piano frontale finché le mani non raggiungono circa l'altezza delle "
+"spalle. I pesi vengono riabbassati alla posizione di partenza, completando "
+"una ripetizione. Quando si usa una macchina a cavi, ci si posiziona con il "
+"piano frontale allineato alla carrucola, che si trova a livello del pavimento"
+" o vicino ad esso. L'esercizio può essere eseguito una spalla alla volta "
+"(usando l'altra mano per stabilizzare il corpo contro il peso in movimento), "
+"oppure con entrambe le mani contemporaneamente se sono disponibili due "
+"carrucole parallele."
 
 #: apps/exercises/i18n_content.py:240
 msgid ""
@@ -1779,53 +1701,43 @@ msgid ""
 msgstr ""
 "Sdraiati a pancia in giù sulla leg curl con il cuscinetto appoggiato appena "
 "sopra i talloni e le ginocchia appena oltre il bordo della panca. Piega le "
-"gambe portando i talloni verso i glutei, poi scendi in modo controllato "
-"senza far sbattere la pila dei pesi."
+"gambe portando i talloni verso i glutei, poi scendi in modo controllato senza"
+" far sbattere la pila dei pesi."
 
 #: apps/exercises/i18n_content.py:246
 msgid ""
 "Sit in the leg press machine with your back flat against the pad and feet "
-"shoulder-width apart on the platform. Unlock the safety catches and lower "
-"the platform by bending your knees to about a 90° angle, keeping your lower "
-"back pressed against the pad. Push through your heels to extend your legs "
-"back to the starting position without locking your knees out completely."
+"shoulder-width apart on the platform. Unlock the safety catches and lower the"
+" platform by bending your knees to about a 90° angle, keeping your lower back"
+" pressed against the pad. Push through your heels to extend your legs back to"
+" the starting position without locking your knees out completely."
 msgstr ""
 "Siediti sulla leg press con la schiena appoggiata bene al cuscinetto e i "
 "piedi larghi quanto le spalle sulla pedana. Sblocca i fermi di sicurezza e "
-"abbassa la pedana piegando le ginocchia fino a circa 90°, mantenendo la "
-"parte bassa della schiena premuta contro il cuscinetto. Spingi attraverso i "
+"abbassa la pedana piegando le ginocchia fino a circa 90°, mantenendo la parte"
+" bassa della schiena premuta contro il cuscinetto. Spingi attraverso i "
 "talloni per estendere le gambe tornando alla posizione di partenza senza "
 "bloccare completamente le ginocchia."
 
 #: apps/exercises/i18n_content.py:253
 msgid ""
-"- Setup: Stand with feet together and grip the bar slightly wider than "
-"shoulders.\n"
+"- Setup: Stand with feet together and grip the bar slightly wider than shoulders.\n"
 "- Position: Rest the bar on your upper chest.\n"
-"- Press: Brace your core and push the bar straight up until your arms lock "
-"out.\n"
+"- Press: Brace your core and push the bar straight up until your arms lock out.\n"
 "- Finish: Control the bar back down to your chest."
 msgstr ""
-"- Preparazione: stai in piedi con i piedi uniti e afferra il bilanciere con "
-"una presa leggermente più larga delle spalle.\n"
+"- Preparazione: stai in piedi con i piedi uniti e afferra il bilanciere con una presa leggermente più larga delle spalle.\n"
 "- Posizione: appoggia il bilanciere sulla parte alta del petto.\n"
-"- Spinta: contrai il core e spingi il bilanciere dritto verso l'alto finché "
-"le braccia non sono completamente distese.\n"
+"- Spinta: contrai il core e spingi il bilanciere dritto verso l'alto finché le braccia non sono completamente distese.\n"
 "- Conclusione: riporta il bilanciere al petto in modo controllato."
 
 #: apps/exercises/i18n_content.py:259
 msgid ""
-"Get into a position on the floor supporting your weight on your forearms and "
-"toes. Arms are bent and directly below the shoulder.\n"
-"Keep your body straight at all times and hold this position as long as "
-"possible. To increase difficulty an arm or leg can be raised while "
-"performing this exercise."
+"Get into a position on the floor supporting your weight on your forearms and toes. Arms are bent and directly below the shoulder.\n"
+"Keep your body straight at all times and hold this position as long as possible. To increase difficulty an arm or leg can be raised while performing this exercise."
 msgstr ""
-"Assumi una posizione a terra sostenendo il peso sugli avambracci e sulle "
-"punte dei piedi. Le braccia sono piegate e direttamente sotto le spalle.\n"
-"Mantieni il corpo dritto in ogni momento e tieni questa posizione il più a "
-"lungo possibile. Per aumentare la difficoltà, puoi sollevare un braccio o "
-"una gamba durante l'esecuzione dell'esercizio."
+"Assumi una posizione a terra sostenendo il peso sugli avambracci e sulle punte dei piedi. Le braccia sono piegate e direttamente sotto le spalle.\n"
+"Mantieni il corpo dritto in ogni momento e tieni questa posizione il più a lungo possibile. Per aumentare la difficoltà, puoi sollevare un braccio o una gamba durante l'esecuzione dell'esercizio."
 
 #: apps/exercises/i18n_content.py:265
 msgid ""
@@ -1843,9 +1755,9 @@ msgstr ""
 #: apps/exercises/i18n_content.py:271
 msgid ""
 "Stand holding a barbell in front of your thighs with a shoulder-width "
-"overhand grip. Keeping your back flat and knees only slightly bent, push "
-"your hips back and lower the bar down the front of your legs until you feel "
-"a stretch in your hamstrings. Drive your hips forward to return to standing, "
+"overhand grip. Keeping your back flat and knees only slightly bent, push your"
+" hips back and lower the bar down the front of your legs until you feel a "
+"stretch in your hamstrings. Drive your hips forward to return to standing, "
 "keeping the bar close to your legs throughout."
 msgstr ""
 "Stai in piedi tenendo un bilanciere davanti alle cosce con una presa prona "
@@ -1857,57 +1769,32 @@ msgstr ""
 
 #: apps/exercises/i18n_content.py:278
 msgid ""
-"- Take a seat on the machine with your feet planted, a little wider than "
-"shoulder width. Drive the heels, and squeeze the glutes. Grab onto the cable "
-"handle.\n"
-"- Sit up tall with a slight bend through the knees. Tighten up the abs and "
-"low back to maintain a perpendicular angle to the floor with your torso.\n"
-"- Roll the shoulders back and down. Squeeze them together as you row, "
-"thinking about pinching a pencil in between them. As you do this, pull the "
-"handle back towards you, landing right above your belly button.\n"
-"- Pause here for a moment before returning the handle, still squeezing the "
-"shoulder blades. Once you've returned the weight to the stack, then allow "
-"the shoulder blades to relax, without pulling the torso forward.\n"
+"- Take a seat on the machine with your feet planted, a little wider than shoulder width. Drive the heels, and squeeze the glutes. Grab onto the cable handle.\n"
+"- Sit up tall with a slight bend through the knees. Tighten up the abs and low back to maintain a perpendicular angle to the floor with your torso.\n"
+"- Roll the shoulders back and down. Squeeze them together as you row, thinking about pinching a pencil in between them. As you do this, pull the handle back towards you, landing right above your belly button.\n"
+"- Pause here for a moment before returning the handle, still squeezing the shoulder blades. Once you've returned the weight to the stack, then allow the shoulder blades to relax, without pulling the torso forward.\n"
 "- Repeat the movement."
 msgstr ""
-"- Siediti sulla macchina con i piedi appoggiati leggermente più larghi delle "
-"spalle. Spingi con i talloni e contrai i glutei. Afferra la maniglia del "
-"cavo.\n"
-"- Siediti eretto con un leggero piegamento delle ginocchia. Contrai gli "
-"addominali e la parte bassa della schiena per mantenere il busto "
-"perpendicolare al pavimento.\n"
-"- Porta le spalle indietro e in basso. Stringile insieme durante la remata, "
-"come se stringessi una matita tra le scapole. Nel farlo, tira la maniglia "
-"verso di te, portandola appena sopra l'ombelico.\n"
-"- Fai una breve pausa prima di riportare la maniglia, continuando a "
-"stringere le scapole. Una volta che il peso è tornato sulla pila, rilassa le "
-"scapole senza inclinare il busto in avanti.\n"
+"- Siediti sulla macchina con i piedi appoggiati leggermente più larghi delle spalle. Spingi con i talloni e contrai i glutei. Afferra la maniglia del cavo.\n"
+"- Siediti eretto con un leggero piegamento delle ginocchia. Contrai gli addominali e la parte bassa della schiena per mantenere il busto perpendicolare al pavimento.\n"
+"- Porta le spalle indietro e in basso. Stringile insieme durante la remata, come se stringessi una matita tra le scapole. Nel farlo, tira la maniglia verso di te, portandola appena sopra l'ombelico.\n"
+"- Fai una breve pausa prima di riportare la maniglia, continuando a stringere le scapole. Una volta che il peso è tornato sulla pila, rilassa le scapole senza inclinare il busto in avanti.\n"
 "- Ripeti il movimento."
 
 #: apps/exercises/i18n_content.py:290
 msgid ""
-"Hold the SZ-bar and lay down on a flat bench in such a way that around 1/4 "
-"of your head is over the edge. Stretch your arms with the bar and bend them "
-"so that the bar is lowered. Just before it touches your forehead, push it "
-"up.\n"
-"Pay attention to your elbows and arms: only the triceps are doing the work, "
-"the rest of the arms should not move."
+"Hold the SZ-bar and lay down on a flat bench in such a way that around 1/4 of your head is over the edge. Stretch your arms with the bar and bend them so that the bar is lowered. Just before it touches your forehead, push it up.\n"
+"Pay attention to your elbows and arms: only the triceps are doing the work, the rest of the arms should not move."
 msgstr ""
-"Tieni il bilanciere EZ e sdraiati su una panca piana in modo che circa un "
-"quarto della testa sporga oltre il bordo. Distendi le braccia con il "
-"bilanciere, poi piegale per abbassarlo. Appena prima che tocchi la fronte, "
-"spingilo di nuovo su.\n"
-"Presta attenzione a gomiti e braccia: solo i tricipiti devono lavorare, il "
-"resto delle braccia non dovrebbe muoversi."
+"Tieni il bilanciere EZ e sdraiati su una panca piana in modo che circa un quarto della testa sporga oltre il bordo. Distendi le braccia con il bilanciere, poi piegale per abbassarlo. Appena prima che tocchi la fronte, spingilo di nuovo su.\n"
+"Presta attenzione a gomiti e braccia: solo i tricipiti devono lavorare, il resto delle braccia non dovrebbe muoversi."
 
 #: apps/exercises/i18n_content.py:297
 msgid ""
-"Keep arms straight but not locked, pulling with your lats, not your "
-"shoulders.\n"
+"Keep arms straight but not locked, pulling with your lats, not your shoulders.\n"
 "Don’t let your shoulders shrug up during the movement."
 msgstr ""
-"Tieni le braccia distese ma non bloccate, tirando con i dorsali, non con le "
-"spalle.\n"
+"Tieni le braccia distese ma non bloccate, tirando con i dorsali, non con le spalle.\n"
 "Non lasciare che le spalle si sollevino durante il movimento."
 
 #: apps/exercises/i18n_content.py:301
@@ -1918,12 +1805,11 @@ msgid ""
 "fully extended, then let it rise back under control without letting your "
 "elbows drift forward."
 msgstr ""
-"Stai in piedi di fronte a una macchina a cavi con una barra dritta o "
-"angolata agganciata alla carrucola alta. Afferra la barra con una presa "
-"prona, gomiti stretti ai fianchi. Mantenendo ferme le braccia superiori, "
-"spingi la barra verso il basso finché le braccia non sono completamente "
-"distese, poi lasciala risalire in modo controllato senza far avanzare i "
-"gomiti."
+"Stai in piedi di fronte a una macchina a cavi con una barra dritta o angolata"
+" agganciata alla carrucola alta. Afferra la barra con una presa prona, gomiti"
+" stretti ai fianchi. Mantenendo ferme le braccia superiori, spingi la barra "
+"verso il basso finché le braccia non sono completamente distese, poi lasciala"
+" risalire in modo controllato senza far avanzare i gomiti."
 
 #: apps/exercises/models.py:39 apps/exercises/models.py:111
 msgid "equipment"
@@ -1946,10 +1832,11 @@ msgid "Per hand / dumbbell"
 msgstr "Per mano / manubrio"
 
 #: apps/exercises/models.py:76 apps/programs/models.py:37
+#: apps/stretching/models.py:97
 msgid "description"
 msgstr "descrizione"
 
-#: apps/exercises/models.py:84
+#: apps/exercises/models.py:84 apps/stretching/models.py:48
 msgid "instructions"
 msgstr "istruzioni"
 
@@ -1993,8 +1880,8 @@ msgstr "ordine"
 #: apps/exercises/models.py:216
 #, python-format
 msgid ""
-"This exercise already has the maximum of %(max)d image(s) allowed. Remove "
-"one before adding another."
+"This exercise already has the maximum of %(max)d image(s) allowed. Remove one"
+" before adding another."
 msgstr ""
 "Questo esercizio ha già il numero massimo di immagini consentito (%(max)d). "
 "Rimuovine una prima di aggiungerne un'altra."
@@ -2154,7 +2041,9 @@ msgstr "Unisci alimenti"
 msgid ""
 "%(count)d more food(s) were left for later to stay within Open Food Facts' "
 "rate limit — run this action again in a minute."
-msgstr "%(count)d alimenti sono stati rimandati per rispettare il limite di richieste di Open Food Facts — esegui di nuovo l'azione tra un minuto."
+msgstr ""
+"%(count)d alimenti sono stati rimandati per rispettare il limite di richieste"
+" di Open Food Facts — esegui di nuovo l'azione tra un minuto."
 
 #: apps/nutrition/calculators.py:138 apps/nutrition/calculators.py:143
 msgid "Lower risk"
@@ -2208,8 +2097,8 @@ msgid ""
 "Your requested rate was reduced to a safer %(rate)s kg/week (capped at "
 "%(fraction)s%% of bodyweight/week)."
 msgstr ""
-"Il ritmo richiesto è stato ridotto a un valore più sicuro di %(rate)s kg/"
-"settimana (limitato al %(fraction)s%% del peso corporeo/settimana)."
+"Il ritmo richiesto è stato ridotto a un valore più sicuro di %(rate)s "
+"kg/settimana (limitato al %(fraction)s%% del peso corporeo/settimana)."
 
 #: apps/nutrition/energy.py:261
 #, python-format
@@ -2235,8 +2124,8 @@ msgid ""
 "Used by the BMR formula (Mifflin-St Jeor) — a physiological input, not a "
 "gender-identity question."
 msgstr ""
-"Utilizzato dalla formula del BMR (Mifflin-St Jeor) — un dato fisiologico, "
-"non una domanda sull'identità di genere."
+"Utilizzato dalla formula del BMR (Mifflin-St Jeor) — un dato fisiologico, non"
+" una domanda sull'identità di genere."
 
 #: apps/nutrition/forms.py:30
 msgid "Date of birth"
@@ -2309,8 +2198,8 @@ msgstr ""
 msgid ""
 "A muscle-gain goal needs a positive rate — you're asking to gain weight."
 msgstr ""
-"Un obiettivo di aumento muscolare richiede un ritmo positivo — vuoi "
-"aumentare di peso."
+"Un obiettivo di aumento muscolare richiede un ritmo positivo — vuoi aumentare"
+" di peso."
 
 #: apps/nutrition/forms.py:145
 msgid "A maintenance goal's rate should be 0 kg/week."
@@ -2400,8 +2289,8 @@ msgstr ""
 #: apps/nutrition/forms.py:352
 msgid ""
 "Each day still hits the same daily calories/macros above — only which meal "
-"fills each slot changes from day to day, so a week's worth of breakfasts "
-"(for example) aren't all identical."
+"fills each slot changes from day to day, so a week's worth of breakfasts (for"
+" example) aren't all identical."
 msgstr ""
 "Ogni giorno raggiunge comunque le stesse calorie/macro giornaliere indicate "
 "sopra — cambia solo quale pasto riempie ciascuno slot, giorno dopo giorno, "
@@ -2592,11 +2481,11 @@ msgstr ""
 
 #: apps/nutrition/i18n_content.py:71
 msgid ""
-"Pan-sear the salmon, serve over rice with steamed broccoli and a little "
-"olive oil."
+"Pan-sear the salmon, serve over rice with steamed broccoli and a little olive"
+" oil."
 msgstr ""
-"Rosola il salmone in padella, servi sopra il riso con broccoli al vapore e "
-"un filo d'olio d'oliva."
+"Rosola il salmone in padella, servi sopra il riso con broccoli al vapore e un"
+" filo d'olio d'oliva."
 
 #: apps/nutrition/i18n_content.py:72
 msgid ""
@@ -2769,7 +2658,7 @@ msgstr "A — migliore"
 msgid "B"
 msgstr "B"
 
-#: apps/nutrition/models.py:93
+#: apps/nutrition/models.py:93 templates/nutrition/diary_day.html:60
 msgid "C"
 msgstr "C"
 
@@ -2919,8 +2808,8 @@ msgstr ""
 msgid ""
 "Target: %(target)s kg/week. Actual trend: %(actual)s kg/week — on track."
 msgstr ""
-"Obiettivo: %(target)s kg/settimana. Tendenza effettiva: %(actual)s kg/"
-"settimana — in linea."
+"Obiettivo: %(target)s kg/settimana. Tendenza effettiva: %(actual)s "
+"kg/settimana — in linea."
 
 #: apps/nutrition/suggestions.py:150
 #, python-format
@@ -2928,8 +2817,8 @@ msgid ""
 "Target: %(target)s kg/week. Actual trend: %(actual)s kg/week over the last "
 "%(days)s days. Suggested adjustment: %(delta)+d kcal/day."
 msgstr ""
-"Obiettivo: %(target)s kg/settimana. Tendenza effettiva: %(actual)s kg/"
-"settimana negli ultimi %(days)s giorni. Regolazione suggerita: %(delta)+d "
+"Obiettivo: %(target)s kg/settimana. Tendenza effettiva: %(actual)s "
+"kg/settimana negli ultimi %(days)s giorni. Regolazione suggerita: %(delta)+d "
 "kcal/giorno."
 
 #: apps/nutrition/views.py:433
@@ -2945,63 +2834,63 @@ msgstr ""
 msgid "Goal updated — new target is %(calories)d kcal/day."
 msgstr "Obiettivo aggiornato — il nuovo obiettivo è %(calories)d kcal/giorno."
 
-#: apps/nutrition/views.py:758
+#: apps/nutrition/views.py:761
 msgid "Pick a date to copy this day to."
 msgstr "Scegli una data in cui copiare questo giorno."
 
-#: apps/nutrition/views.py:763
+#: apps/nutrition/views.py:766
 #, python-format
 msgid "Copied %(count)d entry to %(date)s."
 msgid_plural "Copied %(count)d entries to %(date)s."
 msgstr[0] "Copiata %(count)d voce in %(date)s."
 msgstr[1] "Copiate %(count)d voci in %(date)s."
 
-#: apps/nutrition/views.py:769
+#: apps/nutrition/views.py:772
 msgid "Nothing to copy — that day has no entries."
 msgstr "Niente da copiare — quel giorno non ha voci."
 
-#: apps/nutrition/views.py:815 apps/nutrition/views.py:1135
-#: apps/nutrition/views.py:1598
+#: apps/nutrition/views.py:818 apps/nutrition/views.py:1138
+#: apps/nutrition/views.py:1601
 msgid "That food couldn't be imported — try again."
 msgstr "Non è stato possibile importare questo alimento — riprova."
 
-#: apps/nutrition/views.py:879
+#: apps/nutrition/views.py:882
 msgid "Nothing logged for this meal yet to save as a recipe."
 msgstr ""
 "Non è stato ancora registrato nulla per questo pasto da salvare come ricetta."
 
-#: apps/nutrition/views.py:881
+#: apps/nutrition/views.py:884
 #, python-format
 msgid "Saved “%(name)s” as a new recipe."
 msgstr "Salvato “%(name)s” come nuova ricetta."
 
-#: apps/nutrition/views.py:1025
+#: apps/nutrition/views.py:1028
 #, python-format
 msgid "\"%(name)s\" created — now add its ingredients below."
 msgstr "\"%(name)s\" creata — aggiungi ora i suoi ingredienti qui sotto."
 
-#: apps/nutrition/views.py:1075 apps/nutrition/views.py:1370
+#: apps/nutrition/views.py:1078 apps/nutrition/views.py:1373
 #: apps/programs/views.py:205
 #, python-format
 msgid ""
-"This file was exported from IronStack %(version)s — worth double-checking "
-"the import if something looks off."
+"This file was exported from IronStack %(version)s — worth double-checking the"
+" import if something looks off."
 msgstr ""
 "Questo file è stato esportato da IronStack %(version)s — vale la pena "
 "ricontrollare l'importazione se qualcosa non torna."
 
-#: apps/nutrition/views.py:1519
+#: apps/nutrition/views.py:1522
 msgid "Only a personal trainer can share a diet plan."
 msgstr "Solo un personal trainer può condividere un piano alimentare."
 
-#: apps/nutrition/views.py:1636
+#: apps/nutrition/views.py:1639
 #, python-format
 msgid "Logged %(count)d item to %(date)s."
 msgid_plural "Logged %(count)d items to %(date)s."
 msgstr[0] "Registrata %(count)d voce in %(date)s."
 msgstr[1] "Registrate %(count)d voci in %(date)s."
 
-#: apps/nutrition/views.py:1647
+#: apps/nutrition/views.py:1650
 msgid "Nothing to log — this plan has no items for that date."
 msgstr "Niente da registrare — questo piano non ha voci per quella data."
 
@@ -3021,8 +2910,8 @@ msgstr ""
 
 #: apps/programs/forms.py:46
 msgid ""
-"Lets the clients checked below see and import their own copy of this "
-"program. Leave everyone unchecked to keep it private."
+"Lets the clients checked below see and import their own copy of this program."
+" Leave everyone unchecked to keep it private."
 msgstr ""
 "Consente ai clienti selezionati qui sotto di vedere e importare la propria "
 "copia di questo programma. Non selezionare nessuno per mantenerlo privato."
@@ -3090,9 +2979,9 @@ msgid ""
 "deadlift/press/pull day, and one accessory-focused day. Copy it and adjust "
 "weights/increments to your own."
 msgstr ""
-"Un classico modello full-body di tre giorni: un giorno di squat/panca/"
-"rematore, un giorno di stacco/panca/trazioni e un giorno dedicato agli "
-"esercizi accessori. Copialo e adatta pesi/incrementi a te stesso."
+"Un classico modello full-body di tre giorni: un giorno di "
+"squat/panca/rematore, un giorno di stacco/panca/trazioni e un giorno dedicato"
+" agli esercizi accessori. Copialo e adatta pesi/incrementi a te stesso."
 
 #: apps/programs/i18n_content.py:33
 msgid ""
@@ -3103,8 +2992,8 @@ msgid ""
 msgstr ""
 "Il classico split da 6 giorni per il bodybuilding reso popolare da Arnold "
 "Schwarzenegger negli anni '70: petto/schiena, spalle/braccia e gambe, "
-"ciascuno allenato due volte a settimana. Ruota tra i tre allenamenti e "
-"ripeti — non legato a giorni fissi della settimana."
+"ciascuno allenato due volte a settimana. Ruota tra i tre allenamenti e ripeti"
+" — non legato a giorni fissi della settimana."
 
 #: apps/programs/i18n_content.py:39
 msgid ""
@@ -3134,17 +3023,17 @@ msgid ""
 "routines, popular for balancing strength and volume without training every "
 "day."
 msgstr ""
-"Uno split di 4 giorni che alterna sessioni per la parte superiore e "
-"inferiore del corpo due volte a settimana ciascuna — una via di mezzo comune "
-"tra routine full-body e per singolo gruppo muscolare, popolare per "
-"bilanciare forza e volume senza allenarsi ogni giorno."
+"Uno split di 4 giorni che alterna sessioni per la parte superiore e inferiore"
+" del corpo due volte a settimana ciascuna — una via di mezzo comune tra "
+"routine full-body e per singolo gruppo muscolare, popolare per bilanciare "
+"forza e volume senza allenarsi ogni giorno."
 
 #: apps/programs/i18n_content.py:55
 msgid ""
 "The classic 10x10 high-volume method: one main lift per workout done for ten "
-"sets of ten reps at a fixed, moderate weight, paired with a lighter "
-"accessory movement. Brutal on paper, simple in practice — built for muscle "
-"growth, not 1-rep-max testing."
+"sets of ten reps at a fixed, moderate weight, paired with a lighter accessory"
+" movement. Brutal on paper, simple in practice — built for muscle growth, not"
+" 1-rep-max testing."
 msgstr ""
 "Il classico metodo ad alto volume 10x10: un esercizio principale per "
 "allenamento eseguito in dieci serie da dieci ripetizioni con un peso fisso e "
@@ -3367,11 +3256,11 @@ msgstr ""
 #: apps/progression/engine.py:277
 #, python-format
 msgid ""
-"Still within your rep range at %(weight)s kg — repeat the same weight and "
-"aim for more reps next time."
+"Still within your rep range at %(weight)s kg — repeat the same weight and aim"
+" for more reps next time."
 msgstr ""
-"Ancora nell'intervallo di ripetizioni a %(weight)s kg — ripeti lo stesso "
-"peso e punta a più ripetizioni la prossima volta."
+"Ancora nell'intervallo di ripetizioni a %(weight)s kg — ripeti lo stesso peso"
+" e punta a più ripetizioni la prossima volta."
 
 #: apps/progression/engine.py:291 apps/progression/engine.py:357
 #, python-format
@@ -3379,8 +3268,8 @@ msgid ""
 "Missed the bottom of your rep range %(streak)s sessions in a row at "
 "%(weight)s kg — recommending a deload to %(deload)s kg."
 msgstr ""
-"Base dell'intervallo di ripetizioni mancata per %(streak)s sessioni di fila "
-"a %(weight)s kg — si consiglia uno scarico a %(deload)s kg."
+"Base dell'intervallo di ripetizioni mancata per %(streak)s sessioni di fila a"
+" %(weight)s kg — si consiglia uno scarico a %(deload)s kg."
 
 #: apps/progression/engine.py:302 apps/progression/engine.py:368
 #, python-format
@@ -3388,8 +3277,8 @@ msgid ""
 "Missed the bottom of your rep range last session at %(weight)s kg — try the "
 "same weight again."
 msgstr ""
-"Base dell'intervallo di ripetizioni mancata nell'ultima sessione a "
-"%(weight)s kg — riprova lo stesso peso."
+"Base dell'intervallo di ripetizioni mancata nell'ultima sessione a %(weight)s"
+" kg — riprova lo stesso peso."
 
 #: apps/progression/engine.py:331
 #, python-format
@@ -3406,8 +3295,8 @@ msgid ""
 "Within your rep range at %(weight)s kg — keep working toward the top of the "
 "range before increasing."
 msgstr ""
-"Nell'intervallo di ripetizioni a %(weight)s kg — continua a lavorare verso "
-"il vertice dell'intervallo prima di aumentare."
+"Nell'intervallo di ripetizioni a %(weight)s kg — continua a lavorare verso il"
+" vertice dell'intervallo prima di aumentare."
 
 #: apps/progression/engine.py:402
 msgid "a manually entered 1RM"
@@ -3736,6 +3625,721 @@ msgstr "Notifiche disattivate per questo gruppo."
 msgid "Too many attempts. Try again in a few minutes."
 msgstr "Troppi tentativi. Riprova tra qualche minuto."
 
+#: apps/stretching/forms.py:34
+msgid "You already have one with this name."
+msgstr "Ne hai già uno con questo nome."
+
+#: apps/stretching/forms.py:86
+msgid "Hold (seconds)"
+msgstr "Tenuta (secondi)"
+
+#: apps/stretching/forms.py:115
+msgid "This field is required."
+msgstr "Questo campo è obbligatorio."
+
+#: apps/stretching/forms.py:137
+msgid "Routine"
+msgstr "Routine"
+
+#: apps/stretching/i18n_content.py:21
+msgid "Standing Quad Stretch"
+msgstr "Allungamento quadricipiti in piedi"
+
+#: apps/stretching/i18n_content.py:22
+msgid "Kneeling Hip Flexor Stretch"
+msgstr "Allungamento flessori dell'anca in ginocchio"
+
+#: apps/stretching/i18n_content.py:23
+msgid "Couch Stretch"
+msgstr "Allungamento al divano"
+
+#: apps/stretching/i18n_content.py:24
+msgid "Standing Hamstring Stretch"
+msgstr "Allungamento femorali in piedi"
+
+#: apps/stretching/i18n_content.py:25
+msgid "Lying Hamstring Stretch"
+msgstr "Allungamento femorali da sdraiato"
+
+#: apps/stretching/i18n_content.py:26
+msgid "Seated Forward Fold"
+msgstr "Piegamento in avanti da seduto"
+
+#: apps/stretching/i18n_content.py:27
+msgid "Wide-Leg Forward Fold"
+msgstr "Piegamento in avanti a gambe divaricate"
+
+#: apps/stretching/i18n_content.py:28
+msgid "Figure-Four Stretch"
+msgstr "Allungamento a quattro"
+
+#: apps/stretching/i18n_content.py:29
+msgid "Pigeon Pose"
+msgstr "Posizione del piccione"
+
+#: apps/stretching/i18n_content.py:30
+msgid "Knee-to-Chest Stretch"
+msgstr "Ginocchio al petto"
+
+#: apps/stretching/i18n_content.py:31
+msgid "Wall Calf Stretch"
+msgstr "Allungamento polpacci al muro"
+
+#: apps/stretching/i18n_content.py:32
+msgid "Deep Squat Hold"
+msgstr "Tenuta in squat profondo"
+
+#: apps/stretching/i18n_content.py:33
+msgid "Downward Dog"
+msgstr "Cane a testa in giù"
+
+#: apps/stretching/i18n_content.py:34
+msgid "Doorway Chest Stretch"
+msgstr "Allungamento pettorali alla porta"
+
+#: apps/stretching/i18n_content.py:35
+msgid "Cross-Body Shoulder Stretch"
+msgstr "Allungamento spalla incrociato"
+
+#: apps/stretching/i18n_content.py:36
+msgid "Overhead Triceps Stretch"
+msgstr "Allungamento tricipiti sopra la testa"
+
+#: apps/stretching/i18n_content.py:37
+msgid "Biceps Wall Stretch"
+msgstr "Allungamento bicipiti al muro"
+
+#: apps/stretching/i18n_content.py:38
+msgid "Child's Pose"
+msgstr "Posizione del bambino"
+
+#: apps/stretching/i18n_content.py:39
+msgid "Standing Side Bend"
+msgstr "Flessione laterale in piedi"
+
+#: apps/stretching/i18n_content.py:40
+msgid "Thread the Needle"
+msgstr "Infila l'ago"
+
+#: apps/stretching/i18n_content.py:41
+msgid "Cobra Stretch"
+msgstr "Posizione del cobra"
+
+#: apps/stretching/i18n_content.py:42
+msgid "Supine Spinal Twist"
+msgstr "Torsione spinale da supino"
+
+#: apps/stretching/i18n_content.py:43
+msgid "Upper Back Stretch"
+msgstr "Allungamento parte alta della schiena"
+
+#: apps/stretching/i18n_content.py:44
+msgid "Neck Side Stretch"
+msgstr "Allungamento laterale del collo"
+
+#: apps/stretching/i18n_content.py:45
+msgid "Wrist Flexor Stretch"
+msgstr "Allungamento flessori del polso"
+
+#: apps/stretching/i18n_content.py:46
+msgid "Wrist Extensor Stretch"
+msgstr "Allungamento estensori del polso"
+
+#: apps/stretching/i18n_content.py:47
+msgid "Cat-Cow"
+msgstr "Gatto-mucca"
+
+#: apps/stretching/i18n_content.py:48
+msgid "Arm Circles"
+msgstr "Cerchi con le braccia"
+
+#: apps/stretching/i18n_content.py:49
+msgid "Hip Circles"
+msgstr "Cerchi con il bacino"
+
+#: apps/stretching/i18n_content.py:50
+msgid "Torso Rotations"
+msgstr "Rotazioni del busto"
+
+#: apps/stretching/i18n_content.py:51
+msgid "Leg Swings"
+msgstr "Slanci delle gambe"
+
+#: apps/stretching/i18n_content.py:52
+msgid "World's Greatest Stretch"
+msgstr "Il miglior allungamento del mondo"
+
+#: apps/stretching/i18n_content.py:57
+msgid "Lower Body Cool-Down"
+msgstr "Defaticamento: parte inferiore"
+
+#: apps/stretching/i18n_content.py:58
+msgid "Five static stretches for the legs and hips after a lower-body workout."
+msgstr ""
+"Cinque allungamenti statici per gambe e anche dopo un allenamento della parte"
+" inferiore."
+
+#: apps/stretching/i18n_content.py:59
+msgid "Upper Body Cool-Down"
+msgstr "Defaticamento: parte superiore"
+
+#: apps/stretching/i18n_content.py:60
+msgid "Chest, shoulders, arms and neck after an upper-body workout."
+msgstr ""
+"Petto, spalle, braccia e collo dopo un allenamento della parte superiore."
+
+#: apps/stretching/i18n_content.py:61
+msgid "Full Body Stretch"
+msgstr "Stretching total body"
+
+#: apps/stretching/i18n_content.py:62
+msgid "About ten minutes of static stretching from head to toe."
+msgstr "Circa dieci minuti di stretching statico dalla testa ai piedi."
+
+#: apps/stretching/i18n_content.py:63
+msgid "Morning Mobility"
+msgstr "Mobilità mattutina"
+
+#: apps/stretching/i18n_content.py:64
+msgid "Gentle dynamic movements to wake the body up, or as a warm-up."
+msgstr ""
+"Movimenti dinamici leggeri per risvegliare il corpo o come riscaldamento."
+
+#: apps/stretching/i18n_content.py:71
+msgid ""
+"- Stand tall and hold onto a wall or chair for balance.\n"
+"- Bend one knee and grab that ankle behind you.\n"
+"- Pull the heel gently towards your glutes, keeping the knees together and the hips pushed slightly forward.\n"
+"- Hold, then switch sides."
+msgstr ""
+"- Stai in piedi dritto e appoggiati a un muro o a una sedia per l'equilibrio.\n"
+"- Piega un ginocchio e afferra quella caviglia dietro di te.\n"
+"- Tira delicatamente il tallone verso i glutei, tenendo le ginocchia unite e il bacino leggermente in avanti.\n"
+"- Mantieni, poi cambia lato."
+
+#: apps/stretching/i18n_content.py:78
+msgid ""
+"- Kneel on one knee with the other foot flat on the floor in front of you.\n"
+"- Tuck the pelvis under and squeeze the glute of the kneeling leg.\n"
+"- Shift your hips forward until you feel a stretch at the front of the hip.\n"
+"- Keep the torso upright; hold, then switch sides."
+msgstr ""
+"- Mettiti in ginocchio su una gamba con l'altro piede ben appoggiato a terra davanti a te.\n"
+"- Ruota il bacino in dentro e contrai il gluteo della gamba in ginocchio.\n"
+"- Sposta il bacino in avanti finché senti un allungamento nella parte anteriore dell'anca.\n"
+"- Mantieni il busto eretto; mantieni, poi cambia lato."
+
+#: apps/stretching/i18n_content.py:84
+msgid ""
+"- Kneel with your back to a wall or couch and slide one shin up against it.\n"
+"- Step the other foot forward into a lunge.\n"
+"- Slowly raise your torso upright while squeezing the glute of the back leg.\n"
+"- Hold, then switch sides."
+msgstr ""
+"- Mettiti in ginocchio con la schiena verso un muro o un divano e appoggia uno stinco contro di esso.\n"
+"- Porta l'altro piede in avanti in affondo.\n"
+"- Solleva lentamente il busto in posizione eretta contraendo il gluteo della gamba dietro.\n"
+"- Mantieni, poi cambia lato."
+
+#: apps/stretching/i18n_content.py:90
+msgid ""
+"- Place one heel on a low step or bench with the leg straight.\n"
+"- Keep your back flat and hinge forward from the hips.\n"
+"- Stop when you feel a stretch along the back of the thigh.\n"
+"- Hold, then switch sides."
+msgstr ""
+"- Appoggia un tallone su un gradino basso o una panca con la gamba tesa.\n"
+"- Mantieni la schiena piatta e piegati in avanti dalle anche.\n"
+"- Fermati quando senti un allungamento lungo la parte posteriore della coscia.\n"
+"- Mantieni, poi cambia lato."
+
+#: apps/stretching/i18n_content.py:96
+msgid ""
+"- Lie on your back with both legs extended.\n"
+"- Raise one leg, holding behind the thigh or calf (or use a towel around the foot).\n"
+"- Keep the knee as straight as is comfortable and pull the leg gently towards you.\n"
+"- Hold, then switch sides."
+msgstr ""
+"- Sdraiati sulla schiena con entrambe le gambe distese.\n"
+"- Solleva una gamba tenendola dietro la coscia o il polpaccio (oppure usa un asciugamano attorno al piede).\n"
+"- Tieni il ginocchio disteso quanto è comodo e tira delicatamente la gamba verso di te.\n"
+"- Mantieni, poi cambia lato."
+
+#: apps/stretching/i18n_content.py:102
+msgid ""
+"- Sit with both legs straight out in front of you.\n"
+"- Lengthen your spine, then hinge forward from the hips.\n"
+"- Reach towards your feet without forcing it.\n"
+"- Breathe slowly and relax a little deeper on each exhale."
+msgstr ""
+"- Siediti con entrambe le gambe distese davanti a te.\n"
+"- Allunga la colonna, poi piegati in avanti dalle anche.\n"
+"- Allungati verso i piedi senza forzare.\n"
+"- Respira lentamente e rilassati un po' di più a ogni espirazione."
+
+#: apps/stretching/i18n_content.py:108
+msgid ""
+"- Stand with your feet wide apart and toes pointing forward.\n"
+"- Hinge forward from the hips with a flat back.\n"
+"- Let your hands rest on the floor or your shins.\n"
+"- Relax your head and neck, and come up slowly."
+msgstr ""
+"- Stai in piedi con i piedi ben divaricati e le punte rivolte in avanti.\n"
+"- Piegati in avanti dalle anche con la schiena piatta.\n"
+"- Lascia riposare le mani sul pavimento o sugli stinchi.\n"
+"- Rilassa testa e collo e risali lentamente."
+
+#: apps/stretching/i18n_content.py:114
+msgid ""
+"- Lie on your back with both knees bent.\n"
+"- Cross one ankle over the opposite knee.\n"
+"- Pull the lower leg towards your chest by holding behind the thigh.\n"
+"- Hold, then switch sides."
+msgstr ""
+"- Sdraiati sulla schiena con entrambe le ginocchia piegate.\n"
+"- Accavalla una caviglia sul ginocchio opposto.\n"
+"- Tira la gamba sotto verso il petto tenendola dietro la coscia.\n"
+"- Mantieni, poi cambia lato."
+
+#: apps/stretching/i18n_content.py:120
+msgid ""
+"- From hands and knees, bring one knee forward behind the same wrist.\n"
+"- Extend the other leg straight back.\n"
+"- Square your hips and lower your torso over the front leg as far as is comfortable.\n"
+"- Hold, then switch sides."
+msgstr ""
+"- Da carponi, porta un ginocchio in avanti dietro il polso dello stesso lato.\n"
+"- Distendi l'altra gamba dritta all'indietro.\n"
+"- Allinea il bacino e abbassa il busto sulla gamba davanti quanto è comodo.\n"
+"- Mantieni, poi cambia lato."
+
+#: apps/stretching/i18n_content.py:126
+msgid ""
+"- Lie on your back with both legs extended.\n"
+"- Pull one knee towards your chest with both hands.\n"
+"- Keep the other leg relaxed on the floor.\n"
+"- Hold, then switch sides."
+msgstr ""
+"- Sdraiati sulla schiena con entrambe le gambe distese.\n"
+"- Tira un ginocchio verso il petto con entrambe le mani.\n"
+"- Tieni l'altra gamba rilassata a terra.\n"
+"- Mantieni, poi cambia lato."
+
+#: apps/stretching/i18n_content.py:132
+msgid ""
+"- Stand facing a wall with your hands on it.\n"
+"- Step one foot back, keeping that leg straight and the heel on the floor.\n"
+"- Lean into the wall until you feel a stretch in the calf.\n"
+"- Hold, then switch sides."
+msgstr ""
+"- Stai in piedi di fronte a un muro con le mani appoggiate.\n"
+"- Porta un piede indietro, mantenendo quella gamba tesa e il tallone a terra.\n"
+"- Spingiti verso il muro finché senti un allungamento nel polpaccio.\n"
+"- Mantieni, poi cambia lato."
+
+#: apps/stretching/i18n_content.py:138
+msgid ""
+"- Stand with your feet a little wider than hip-width.\n"
+"- Sit down into the deepest squat you can hold with your heels on the floor.\n"
+"- Use your elbows to gently press the knees outwards.\n"
+"- Keep your chest up and breathe."
+msgstr ""
+"- Stai in piedi con i piedi un po' più larghi delle anche.\n"
+"- Scendi nello squat più profondo che riesci a mantenere con i talloni a terra.\n"
+"- Usa i gomiti per spingere delicatamente le ginocchia verso l'esterno.\n"
+"- Tieni il petto alto e respira."
+
+#: apps/stretching/i18n_content.py:144
+msgid ""
+"- Start on hands and knees, then lift your hips up and back.\n"
+"- Straighten your arms and legs as far as is comfortable to form an inverted V.\n"
+"- Press your heels towards the floor and your chest towards your thighs.\n"
+"- Keep breathing slowly."
+msgstr ""
+"- Parti da carponi, poi solleva il bacino verso l'alto e indietro.\n"
+"- Distendi braccia e gambe quanto è comodo per formare una V rovesciata.\n"
+"- Spingi i talloni verso il pavimento e il petto verso le cosce.\n"
+"- Continua a respirare lentamente."
+
+#: apps/stretching/i18n_content.py:150
+msgid ""
+"- Stand in a doorway and place your forearms on the frame at shoulder height.\n"
+"- Step one foot forward.\n"
+"- Lean gently forward until you feel a stretch across the chest.\n"
+"- Keep your shoulders down and away from your ears."
+msgstr ""
+"- Stai in piedi sulla soglia di una porta e appoggia gli avambracci allo stipite all'altezza delle spalle.\n"
+"- Porta un piede in avanti.\n"
+"- Inclinati delicatamente in avanti finché senti un allungamento sul petto.\n"
+"- Tieni le spalle basse e lontane dalle orecchie."
+
+#: apps/stretching/i18n_content.py:156
+msgid ""
+"- Bring one arm straight across your chest.\n"
+"- Use the other hand to press it gently towards your body, above the elbow.\n"
+"- Keep the shoulder down and relaxed.\n"
+"- Hold, then switch sides."
+msgstr ""
+"- Porta un braccio teso davanti al petto.\n"
+"- Con l'altra mano premilo delicatamente verso il corpo, sopra il gomito.\n"
+"- Tieni la spalla bassa e rilassata.\n"
+"- Mantieni, poi cambia lato."
+
+#: apps/stretching/i18n_content.py:162
+msgid ""
+"- Raise one arm overhead and bend the elbow so the hand drops behind your head.\n"
+"- Use the other hand to gently push the elbow down and back.\n"
+"- Keep your head up and your ribs down.\n"
+"- Hold, then switch sides."
+msgstr ""
+"- Solleva un braccio sopra la testa e piega il gomito in modo che la mano scenda dietro la testa.\n"
+"- Con l'altra mano spingi delicatamente il gomito in basso e indietro.\n"
+"- Tieni la testa alta e le costole basse.\n"
+"- Mantieni, poi cambia lato."
+
+#: apps/stretching/i18n_content.py:168
+msgid ""
+"- Stand side-on to a wall and place your palm on it slightly behind you, arm straight at shoulder height.\n"
+"- Slowly turn your body away from the wall.\n"
+"- Stop when you feel a stretch along the front of the arm.\n"
+"- Hold, then switch sides."
+msgstr ""
+"- Stai di lato a un muro e appoggia il palmo leggermente dietro di te, braccio teso all'altezza della spalla.\n"
+"- Ruota lentamente il corpo allontanandoti dal muro.\n"
+"- Fermati quando senti un allungamento lungo la parte anteriore del braccio.\n"
+"- Mantieni, poi cambia lato."
+
+#: apps/stretching/i18n_content.py:175
+msgid ""
+"- Kneel and sit back on your heels with the knees apart.\n"
+"- Walk your hands forward and lower your chest towards the floor.\n"
+"- Reach your arms long and let your forehead rest down.\n"
+"- Breathe into your back."
+msgstr ""
+"- Mettiti in ginocchio e siediti sui talloni con le ginocchia divaricate.\n"
+"- Porta le mani in avanti e abbassa il petto verso il pavimento.\n"
+"- Allunga bene le braccia e lascia appoggiare la fronte.\n"
+"- Respira nella schiena."
+
+#: apps/stretching/i18n_content.py:181
+msgid ""
+"- Stand with your feet hip-width apart.\n"
+"- Raise one arm overhead.\n"
+"- Lean to the opposite side, reaching up and over without twisting.\n"
+"- Hold, then switch sides."
+msgstr ""
+"- Stai in piedi con i piedi alla larghezza delle anche.\n"
+"- Solleva un braccio sopra la testa.\n"
+"- Inclinati dal lato opposto, allungandoti verso l'alto e oltre senza ruotare.\n"
+"- Mantieni, poi cambia lato."
+
+#: apps/stretching/i18n_content.py:187
+msgid ""
+"- Start on hands and knees.\n"
+"- Slide one arm under your body towards the opposite side, palm up.\n"
+"- Lower that shoulder and the side of your head towards the floor.\n"
+"- Hold, then switch sides."
+msgstr ""
+"- Parti da carponi.\n"
+"- Fai scivolare un braccio sotto il corpo verso il lato opposto, palmo in su.\n"
+"- Abbassa quella spalla e il lato della testa verso il pavimento.\n"
+"- Mantieni, poi cambia lato."
+
+#: apps/stretching/i18n_content.py:193
+msgid ""
+"- Lie face down with your hands under your shoulders.\n"
+"- Press up slowly, lifting your chest while the hips stay on the floor.\n"
+"- Keep your shoulders away from your ears.\n"
+"- Only go as high as your lower back is comfortable."
+msgstr ""
+"- Sdraiati a pancia in giù con le mani sotto le spalle.\n"
+"- Spingi lentamente verso l'alto sollevando il petto mentre il bacino resta a terra.\n"
+"- Tieni le spalle lontane dalle orecchie.\n"
+"- Sali solo fin dove la zona lombare è a suo agio."
+
+#: apps/stretching/i18n_content.py:199
+msgid ""
+"- Lie on your back with your arms out to the sides.\n"
+"- Bend one knee and let it fall across your body to the opposite side.\n"
+"- Keep both shoulders on the floor and turn your head the other way.\n"
+"- Hold, then switch sides."
+msgstr ""
+"- Sdraiati sulla schiena con le braccia aperte ai lati.\n"
+"- Piega un ginocchio e lascialo cadere attraverso il corpo verso il lato opposto.\n"
+"- Tieni entrambe le spalle a terra e gira la testa dall'altra parte.\n"
+"- Mantieni, poi cambia lato."
+
+#: apps/stretching/i18n_content.py:205
+msgid ""
+"- Clasp your hands in front of you at shoulder height.\n"
+"- Round your upper back and push your hands away.\n"
+"- Let your head drop gently between your arms.\n"
+"- Feel the stretch between your shoulder blades."
+msgstr ""
+"- Intreccia le mani davanti a te all'altezza delle spalle.\n"
+"- Arrotonda la parte alta della schiena e spingi le mani lontano.\n"
+"- Lascia cadere delicatamente la testa tra le braccia.\n"
+"- Senti l'allungamento tra le scapole."
+
+#: apps/stretching/i18n_content.py:211
+msgid ""
+"- Sit or stand tall with your shoulders relaxed.\n"
+"- Tilt your ear towards one shoulder.\n"
+"- Optionally rest the hand on that side gently on your head, without pulling.\n"
+"- Hold, then switch sides."
+msgstr ""
+"- Siediti o stai in piedi dritto con le spalle rilassate.\n"
+"- Inclina l'orecchio verso una spalla.\n"
+"- Se vuoi, appoggia delicatamente la mano di quel lato sulla testa, senza tirare.\n"
+"- Mantieni, poi cambia lato."
+
+#: apps/stretching/i18n_content.py:217
+msgid ""
+"- Extend one arm straight in front of you, palm up.\n"
+"- Use the other hand to gently pull the fingers down and back.\n"
+"- Keep the elbow straight.\n"
+"- Hold, then switch sides."
+msgstr ""
+"- Distendi un braccio dritto davanti a te, palmo in su.\n"
+"- Con l'altra mano tira delicatamente le dita in basso e indietro.\n"
+"- Tieni il gomito disteso.\n"
+"- Mantieni, poi cambia lato."
+
+#: apps/stretching/i18n_content.py:223
+msgid ""
+"- Extend one arm straight in front of you, palm down.\n"
+"- Use the other hand to gently bend the wrist down towards you.\n"
+"- Keep the elbow straight.\n"
+"- Hold, then switch sides."
+msgstr ""
+"- Distendi un braccio dritto davanti a te, palmo in giù.\n"
+"- Con l'altra mano piega delicatamente il polso verso il basso e verso di te.\n"
+"- Tieni il gomito disteso.\n"
+"- Mantieni, poi cambia lato."
+
+#: apps/stretching/i18n_content.py:229
+msgid ""
+"- Start on hands and knees.\n"
+"- Inhale as you drop your belly and lift your chest and tailbone.\n"
+"- Exhale as you round your back and tuck your chin.\n"
+"- Move slowly with your breath."
+msgstr ""
+"- Parti da carponi.\n"
+"- Inspira mentre abbassi la pancia e sollevi petto e coccige.\n"
+"- Espira mentre arrotondi la schiena e porti il mento al petto.\n"
+"- Muoviti lentamente seguendo il respiro."
+
+#: apps/stretching/i18n_content.py:235
+msgid ""
+"- Stand tall with your arms out to the sides.\n"
+"- Draw small circles, gradually making them bigger.\n"
+"- Switch direction halfway through.\n"
+"- Keep the movement smooth and controlled."
+msgstr ""
+"- Stai in piedi dritto con le braccia aperte ai lati.\n"
+"- Disegna piccoli cerchi, allargandoli gradualmente.\n"
+"- Cambia direzione a metà.\n"
+"- Mantieni il movimento fluido e controllato."
+
+#: apps/stretching/i18n_content.py:241
+msgid ""
+"- Stand with your hands on your hips and feet hip-width apart.\n"
+"- Draw big, slow circles with your hips.\n"
+"- Switch direction halfway through.\n"
+"- Keep your upper body still."
+msgstr ""
+"- Stai in piedi con le mani sui fianchi e i piedi alla larghezza delle anche.\n"
+"- Disegna cerchi ampi e lenti con il bacino.\n"
+"- Cambia direzione a metà.\n"
+"- Tieni fermo il busto."
+
+#: apps/stretching/i18n_content.py:247
+msgid ""
+"- Stand with your feet shoulder-width apart and arms relaxed.\n"
+"- Rotate your upper body from side to side, letting the arms swing.\n"
+"- Keep your hips facing forward.\n"
+"- Gradually increase the range of motion."
+msgstr ""
+"- Stai in piedi con i piedi alla larghezza delle spalle e le braccia rilassate.\n"
+"- Ruota il busto da un lato all'altro, lasciando oscillare le braccia.\n"
+"- Tieni il bacino rivolto in avanti.\n"
+"- Aumenta gradualmente l'ampiezza del movimento."
+
+#: apps/stretching/i18n_content.py:253
+msgid ""
+"- Stand side-on to a wall and hold it for balance.\n"
+"- Swing the outside leg forward and back in a controlled arc.\n"
+"- Let the range grow gradually with each swing.\n"
+"- Then switch sides."
+msgstr ""
+"- Stai di lato a un muro e appoggiati per l'equilibrio.\n"
+"- Fai oscillare la gamba esterna avanti e indietro con un arco controllato.\n"
+"- Lascia che l'ampiezza aumenti gradualmente a ogni slancio.\n"
+"- Poi cambia lato."
+
+#: apps/stretching/i18n_content.py:259
+msgid ""
+"- Step into a long lunge and place both hands on the floor inside the front foot.\n"
+"- Drop the inside elbow towards the front ankle.\n"
+"- Rotate and reach that same arm up towards the ceiling.\n"
+"- Return and repeat slowly, then switch sides."
+msgstr ""
+"- Fai un affondo lungo e appoggia entrambe le mani a terra all'interno del piede davanti.\n"
+"- Abbassa il gomito interno verso la caviglia davanti.\n"
+"- Ruota e allunga lo stesso braccio verso il soffitto.\n"
+"- Torna e ripeti lentamente, poi cambia lato."
+
+#: apps/stretching/models.py:16
+msgid "Static"
+msgstr "Statico"
+
+#: apps/stretching/models.py:17
+msgid "Dynamic"
+msgstr "Dinamico"
+
+#: apps/stretching/models.py:46
+msgid "type"
+msgstr "tipo"
+
+#: apps/stretching/models.py:53
+msgid "muscle groups"
+msgstr "gruppi muscolari"
+
+#: apps/stretching/models.py:58
+msgid "default hold (seconds)"
+msgstr "tenuta predefinita (secondi)"
+
+#: apps/stretching/models.py:62
+msgid "one side at a time"
+msgstr "un lato alla volta"
+
+#: apps/stretching/models.py:63
+msgid "Held once for the left side and once for the right."
+msgstr "Si mantiene una volta per il lato sinistro e una per il destro."
+
+#: apps/stretching/models.py:68
+msgid "stretches"
+msgstr "allungamenti"
+
+#: apps/stretching/models.py:138
+msgid "hold (seconds)"
+msgstr "tenuta (secondi)"
+
+#: apps/stretching/models.py:143
+msgid "sets"
+msgstr "serie"
+
+#: apps/stretching/models.py:148
+msgid "rest between holds (seconds)"
+msgstr "riposo tra le tenute (secondi)"
+
+#: apps/stretching/models.py:159 apps/workouts/models.py:13
+msgid "In progress"
+msgstr "In corso"
+
+#: apps/stretching/models.py:160 apps/workouts/models.py:14
+msgid "Completed"
+msgstr "Completato"
+
+#: apps/stretching/models.py:161 apps/workouts/models.py:15
+msgid "Abandoned"
+msgstr "Abbandonato"
+
+#: apps/stretching/models.py:195
+msgid "duration"
+msgstr "durata"
+
+#: apps/stretching/models.py:214
+#: templates/accounts/_two_factor_backup_codes_fragment.html:11
+#: templates/api/key_created.html:16
+#: templates/stretching/session_detail.html:40
+#: templates/stretching/session_play.html:77
+#: templates/stretching/session_play.html:85
+msgid "Done"
+msgstr "Fatto"
+
+#: apps/stretching/models.py:215 templates/stretching/session_detail.html:41
+#: templates/stretching/session_play.html:78
+msgid "Skipped"
+msgstr "Saltato"
+
+#: apps/stretching/services.py:141
+#, python-format
+msgid "%(name)s (copy)"
+msgstr "%(name)s (copia)"
+
+#: apps/stretching/views.py:92
+msgid "Routine created. Now add some stretches."
+msgstr "Routine creata. Ora aggiungi qualche allungamento."
+
+#: apps/stretching/views.py:128
+msgid "Routine saved."
+msgstr "Routine salvata."
+
+#: apps/stretching/views.py:140
+msgid "Routine removed."
+msgstr "Routine rimossa."
+
+#: apps/stretching/views.py:149
+msgid "Copied — this one is yours to edit."
+msgstr "Copiata — questa puoi modificarla liberamente."
+
+#: apps/stretching/views.py:166
+msgid "Stretch added."
+msgstr "Allungamento aggiunto."
+
+#: apps/stretching/views.py:179 apps/stretching/views.py:261
+msgid "Stretch saved."
+msgstr "Allungamento salvato."
+
+#: apps/stretching/views.py:194
+msgid "Stretch removed."
+msgstr "Allungamento rimosso."
+
+#: apps/stretching/views.py:250
+msgid "Stretch created."
+msgstr "Allungamento creato."
+
+#: apps/stretching/views.py:273
+msgid "Stretch removed from your library."
+msgstr "Allungamento rimosso dalla tua libreria."
+
+#: apps/stretching/views.py:288
+msgid "You already have a stretching session in progress."
+msgstr "Hai già una sessione di stretching in corso."
+
+#: apps/stretching/views.py:299
+msgid "This routine has no stretches yet."
+msgstr "Questa routine non ha ancora allungamenti."
+
+#: apps/stretching/views.py:319
+msgid "No cool-down stretches match this workout."
+msgstr "Nessun allungamento di defaticamento corrisponde a questo allenamento."
+
+#: apps/stretching/views.py:326 templates/stretching/_cooldown_card.html:5
+msgid "Cool-down"
+msgstr "Defaticamento"
+
+#: apps/stretching/views.py:384
+msgid "Nicely done — stretching session saved."
+msgstr "Ben fatto — sessione di stretching salvata."
+
+#: apps/stretching/views.py:394
+msgid "Session abandoned."
+msgstr "Sessione abbandonata."
+
+#: apps/stretching/views.py:430
+msgid "Stretching logged."
+msgstr "Stretching registrato."
+
+#: apps/stretching/views.py:441
+msgid "Session updated."
+msgstr "Sessione aggiornata."
+
+#: apps/stretching/views.py:454
+msgid "Session deleted."
+msgstr "Sessione eliminata."
+
 #: apps/workouts/forms.py:40
 msgid "reps"
 msgstr "ripetizioni"
@@ -3757,21 +4361,9 @@ msgstr "Riscaldamento"
 msgid "Weight (%(unit)s)"
 msgstr "Peso (%(unit)s)"
 
-#: apps/workouts/models.py:12
+#: apps/workouts/models.py:12 templates/stretching/session_detail.html:32
 msgid "Planned"
 msgstr "Pianificato"
-
-#: apps/workouts/models.py:13
-msgid "In progress"
-msgstr "In corso"
-
-#: apps/workouts/models.py:14
-msgid "Completed"
-msgstr "Completato"
-
-#: apps/workouts/models.py:15
-msgid "Abandoned"
-msgstr "Abbandonato"
 
 #: apps/workouts/views.py:168 apps/workouts/views.py:365
 msgid "This session is no longer in progress."
@@ -3815,8 +4407,8 @@ msgstr "Qualcosa è andato storto"
 msgid ""
 "Something went wrong on our end. Your data is safe — try again in a moment."
 msgstr ""
-"Qualcosa è andato storto da parte nostra. I tuoi dati sono al sicuro: "
-"riprova tra un momento."
+"Qualcosa è andato storto da parte nostra. I tuoi dati sono al sicuro: riprova"
+" tra un momento."
 
 #: templates/accounts/_data_export_standalone.html:23
 #: templates/accounts/_data_export_standalone.html:68
@@ -3843,8 +4435,8 @@ msgstr "Non ora"
 
 #: templates/accounts/_onboarding_modal.html:12
 msgid ""
-"A few quick details help IronStack work better for you — every field below "
-"is optional, and you can always change them later from your profile."
+"A few quick details help IronStack work better for you — every field below is"
+" optional, and you can always change them later from your profile."
 msgstr ""
 "Alcuni dettagli rapidi aiutano IronStack a funzionare meglio per te — ogni "
 "campo qui sotto è facoltativo, e puoi sempre modificarli in seguito dal tuo "
@@ -3866,6 +4458,10 @@ msgstr ""
 #: templates/programs/prescription_form.html:15
 #: templates/programs/program_form.html:18
 #: templates/programs/workout_form.html:15 templates/social/group_form.html:15
+#: templates/stretching/routine_form.html:15
+#: templates/stretching/routine_item_form.html:15
+#: templates/stretching/session_form.html:15
+#: templates/stretching/stretch_form.html:15
 #: templates/workouts/set_edit_form.html:15
 msgid "Save"
 msgstr "Salva"
@@ -3906,10 +4502,10 @@ msgstr "Cosa viene raccolto"
 #: templates/accounts/_privacy_notice_modal.html:33
 msgid ""
 "Your account details (username, and optionally your name and email address), "
-"and whatever you choose to log: workout history, body measurements, "
-"nutrition and diet data, and other activities. Technical data such as your "
-"IP address is used briefly for rate-limiting and security (e.g. blocking "
-"repeated failed login attempts), not stored as part of your account."
+"and whatever you choose to log: workout history, body measurements, nutrition"
+" and diet data, and other activities. Technical data such as your IP address "
+"is used briefly for rate-limiting and security (e.g. blocking repeated failed"
+" login attempts), not stored as part of your account."
 msgstr ""
 "I dettagli del tuo account (nome utente e, facoltativamente, il tuo nome e "
 "indirizzo email), e tutto ciò che scegli di registrare: cronologia degli "
@@ -3925,10 +4521,10 @@ msgstr "Perché"
 
 #: templates/accounts/_privacy_notice_modal.html:35
 msgid ""
-"Solely to provide the tracking features you're using — nothing here is "
-"shared with, sold to, or processed by any third party, except the few "
-"optional integrations you have to explicitly turn on yourself (e.g. an "
-"OpenFoodFacts lookup, a Gravatar picture, Authentik single sign-on)."
+"Solely to provide the tracking features you're using — nothing here is shared"
+" with, sold to, or processed by any third party, except the few optional "
+"integrations you have to explicitly turn on yourself (e.g. an OpenFoodFacts "
+"lookup, a Gravatar picture, Authentik single sign-on)."
 msgstr ""
 "Solo per fornire le funzionalità di monitoraggio che stai usando — nulla di "
 "tutto ciò viene condiviso, venduto o elaborato da terze parti, ad eccezione "
@@ -3981,17 +4577,12 @@ msgstr ""
 #: templates/accounts/_two_factor_backup_codes_fragment.html:4
 msgid ""
 "Each one works once, if you ever lose access to your authenticator app. They "
-"won't be shown again — save them somewhere safe now. Your old backup codes "
-"no longer work."
+"won't be shown again — save them somewhere safe now. Your old backup codes no"
+" longer work."
 msgstr ""
 "Ognuno funziona una sola volta, nel caso perdessi l'accesso alla tua app di "
 "autenticazione. Non verranno mostrati di nuovo — salvali ora in un posto "
 "sicuro. I tuoi vecchi codici di backup non funzionano più."
-
-#: templates/accounts/_two_factor_backup_codes_fragment.html:11
-#: templates/api/key_created.html:16
-msgid "Done"
-msgstr "Fatto"
 
 #: templates/accounts/account_delete.html:3
 #: templates/accounts/account_delete.html:6 templates/accounts/profile.html:215
@@ -4002,14 +4593,14 @@ msgstr "Elimina account"
 msgid ""
 "This permanently deletes your account and everything tied to it: your "
 "profile, workout history, personal records, body measurements, nutrition "
-"diary and targets, diet plans, activities, feedback, and API keys. This "
-"can't be undone."
+"diary and targets, diet plans, activities, feedback, and API keys. This can't"
+" be undone."
 msgstr ""
-"Questo elimina permanentemente il tuo account e tutto ciò che vi è "
-"collegato: il tuo profilo, la cronologia degli allenamenti, i record "
-"personali, le misurazioni corporee, il diario alimentare e gli obiettivi, i "
-"piani alimentari, le attività, i feedback e le chiavi API. Questa azione non "
-"può essere annullata."
+"Questo elimina permanentemente il tuo account e tutto ciò che vi è collegato:"
+" il tuo profilo, la cronologia degli allenamenti, i record personali, le "
+"misurazioni corporee, il diario alimentare e gli obiettivi, i piani "
+"alimentari, le attività, i feedback e le chiavi API. Questa azione non può "
+"essere annullata."
 
 #: templates/accounts/account_delete.html:11
 msgid ""
@@ -4059,7 +4650,7 @@ msgstr "Dettagli account"
 
 #: templates/accounts/account_details_form.html:18
 #: templates/accounts/data_export.html:42
-#: templates/accounts/two_factor_manage.html:34 templates/api/key_list.html:155
+#: templates/accounts/two_factor_manage.html:34 templates/api/key_list.html:159
 #: templates/coaching/client_list.html:49 templates/coaching/my_coaches.html:37
 #: templates/core/backup_list.html:74 templates/core/feedback_form.html:20
 #: templates/core/feedback_list.html:50 templates/core/seo_settings.html:18
@@ -4323,8 +4914,8 @@ msgid ""
 "Enter your password to confirm. This removes your authenticator and deletes "
 "your remaining backup codes."
 msgstr ""
-"Inserisci la password per confermare. Questo rimuove il tuo autenticatore e "
-"i codici di backup rimanenti."
+"Inserisci la password per confermare. Questo rimuove il tuo autenticatore e i"
+" codici di backup rimanenti."
 
 #: templates/accounts/two_factor_manage.html:10
 msgid "Two-factor authentication is enabled on your account."
@@ -4368,9 +4959,8 @@ msgid ""
 "code it shows to confirm setup."
 msgstr ""
 "Scansiona questo codice QR con un'app di autenticazione (ad es. Google "
-"Authenticator, Authy o un gestore di password con supporto integrato), "
-"quindi inserisci il codice a 6 cifre mostrato per confermare la "
-"configurazione."
+"Authenticator, Authy o un gestore di password con supporto integrato), quindi"
+" inserisci il codice a 6 cifre mostrato per confermare la configurazione."
 
 #: templates/accounts/two_factor_setup.html:11
 msgid "Two-factor authentication QR code"
@@ -4405,6 +4995,8 @@ msgstr "Torna a %(name)s"
 #: templates/activities/activity_history.html:12
 #: templates/exercises/exercise_detail.html:18
 #: templates/measurements/measurement_history.html:12
+#: templates/stretching/routine_detail.html:22
+#: templates/stretching/stretch_detail.html:18
 msgid "Inactive"
 msgstr "Inattivo"
 
@@ -4429,10 +5021,12 @@ msgstr "Andamento della durata"
 
 #: templates/activities/activity_history.html:28
 #: templates/activities/activity_history.html:45
+#: templates/stretching/session_detail.html:20
 msgid "Duration"
 msgstr "Durata"
 
 #: templates/activities/activity_history.html:29
+#: templates/stretching/home.html:38
 msgid "min"
 msgstr "min"
 
@@ -4442,6 +5036,7 @@ msgstr "Registra attività"
 
 #: templates/activities/activity_history.html:45
 #: templates/measurements/measurement_history.html:54
+#: templates/stretching/session_detail.html:19
 msgid "Date"
 msgstr "Data"
 
@@ -4452,13 +5047,17 @@ msgstr "Distanza"
 #: templates/activities/activity_history.html:54
 #: templates/exercises/exercise_detail.html:12
 #: templates/measurements/measurement_history.html:62
-#: templates/nutrition/diary_day.html:65
+#: templates/nutrition/diary_day.html:70
 #: templates/nutrition/recipe_detail.html:13
 #: templates/nutrition/recipe_detail.html:40
 #: templates/programs/program_detail.html:12
 #: templates/programs/program_detail.html:49
 #: templates/programs/program_detail.html:66
 #: templates/social/group_detail.html:10
+#: templates/stretching/routine_detail.html:12
+#: templates/stretching/routine_detail.html:54
+#: templates/stretching/session_detail.html:12
+#: templates/stretching/stretch_detail.html:12
 #: templates/workouts/_performed_exercise_card.html:24
 msgid "Edit"
 msgstr "Modifica"
@@ -4498,12 +5097,17 @@ msgstr "Nuovo tipo di attività"
 #: templates/api/key_list.html:10 templates/exercises/exercise_list.html:9
 #: templates/measurements/measurement_type_list.html:9
 #: templates/programs/program_list.html:9
+#: templates/stretching/routine_list.html:9
+#: templates/stretching/stretch_list.html:9
 msgid "New"
 msgstr "Nuovo"
 
 #: templates/activities/activity_type_list.html:15
 #: templates/exercises/_exercise_list_results.html:6
 #: templates/measurements/measurement_type_list.html:22
+#: templates/stretching/_routine_card.html:4
+#: templates/stretching/stretch_detail.html:17
+#: templates/stretching/stretch_list.html:32
 msgid "Custom"
 msgstr "Personalizzato"
 
@@ -4535,8 +5139,8 @@ msgstr "Amministrazione Django"
 msgid ""
 "Pick which of these %(counter)s foods to keep. Every diary entry, recipe "
 "ingredient, and diet-plan item currently pointing at one of the others will "
-"be repointed at the one you keep — nothing a user has logged is deleted, "
-"only which food row it refers to changes. The other foods are then removed."
+"be repointed at the one you keep — nothing a user has logged is deleted, only"
+" which food row it refers to changes. The other foods are then removed."
 msgstr ""
 "Scegli quale di questi %(counter)s alimenti mantenere. Ogni voce del diario, "
 "ingrediente di ricetta e elemento del piano alimentare che attualmente punta "
@@ -4791,16 +5395,16 @@ msgstr "Permessi"
 
 #: templates/api/key_list.html:32
 msgid ""
-"Each key is granted Create/Read/Update/Delete separately per area "
-"(exercises, programs, workouts, measurements, activities, nutrition, "
+"Each key is granted Create/Read/Update/Delete separately per area (exercises,"
+" programs, workouts, measurements, activities, nutrition, stretching, "
 "records, analytics, profile) — set this when you create the key, above. A "
 "request outside what the key is granted gets a 403."
 msgstr ""
 "Ogni chiave riceve i permessi Crea/Leggi/Aggiorna/Elimina separatamente per "
 "ogni area (esercizi, programmi, allenamenti, misurazioni, attività, "
-"nutrizione, record, analisi, profilo) — impostali quando crei la chiave qui "
-"sopra. Una richiesta al di fuori di ciò che la chiave può fare riceve un "
-"errore 403."
+"nutrizione, stretching, record, analisi, profilo) — impostali quando crei la "
+"chiave qui sopra. Una richiesta al di fuori di ciò che la chiave può fare "
+"riceve un errore 403."
 
 #: templates/api/key_list.html:35
 msgid ""
@@ -4808,10 +5412,10 @@ msgid ""
 "never converted to your own display-unit preference, so a script can rely on "
 "one meaning regardless of who's asking."
 msgstr ""
-"Sempre in forma canonica: peso in chilogrammi, lunghezza in metri, energia "
-"in kcal — mai convertiti nella tua unità di visualizzazione preferita, così "
-"uno script può fare affidamento su un unico significato indipendentemente da "
-"chi lo richiede."
+"Sempre in forma canonica: peso in chilogrammi, lunghezza in metri, energia in"
+" kcal — mai convertiti nella tua unità di visualizzazione preferita, così uno"
+" script può fare affidamento su un unico significato indipendentemente da chi"
+" lo richiede."
 
 #: templates/api/key_list.html:37
 msgid "Example: reading your profile (curl)"
@@ -4839,8 +5443,8 @@ msgid ""
 msgstr ""
 "Gli endpoint di elenco/creazione sono paginati, 25 per pagina (?page=2). "
 "L'eliminazione di qualcosa è un'eliminazione soft dove anche l'app web fa lo "
-"stesso (alimenti, esercizi, tipi di misurazione/attività); un programma o "
-"una ricetta vengono eliminati realmente, come nella loro stessa pagina."
+"stesso (alimenti, esercizi, tipi di misurazione/attività); un programma o una"
+" ricetta vengono eliminati realmente, come nella loro stessa pagina."
 
 #: templates/api/key_list.html:77
 msgid "All endpoints"
@@ -4859,7 +5463,7 @@ msgid "GET/PATCH, no id"
 msgstr "GET/PATCH, nessun id"
 
 #: templates/api/key_list.html:90 templates/api/key_list.html:110
-#: templates/api/key_list.html:114
+#: templates/api/key_list.html:118
 msgid "read-only"
 msgstr "sola lettura"
 
@@ -4871,42 +5475,42 @@ msgstr "solo creazione + lettura"
 msgid "all POST"
 msgstr "tutti POST"
 
-#: templates/api/key_list.html:118
+#: templates/api/key_list.html:122
 msgid "both read-only"
 msgstr "entrambi in sola lettura"
 
-#: templates/api/key_list.html:129
+#: templates/api/key_list.html:133
 #, python-format
 msgid "You can create %(counter)s more key."
 msgid_plural "You can create %(counter)s more keys."
 msgstr[0] "Puoi creare ancora %(counter)s chiave."
 msgstr[1] "Puoi creare ancora %(counter)s chiavi."
 
-#: templates/api/key_list.html:137
+#: templates/api/key_list.html:141
 #, python-format
 msgid "Tier: %(tier)s"
 msgstr "Livello: %(tier)s"
 
-#: templates/api/key_list.html:139
+#: templates/api/key_list.html:143
 #, python-format
 msgid "last used %(time)s ago"
 msgstr "usata l'ultima volta %(time)s fa"
 
-#: templates/api/key_list.html:141
+#: templates/api/key_list.html:145
 msgid "never used"
 msgstr "mai usata"
 
-#: templates/api/key_list.html:144
+#: templates/api/key_list.html:148
 msgid "Revoke this API key? Anything using it will stop working immediately."
 msgstr ""
 "Revocare questa chiave API? Tutto ciò che la usa smetterà di funzionare "
 "immediatamente."
 
-#: templates/api/key_list.html:146
+#: templates/api/key_list.html:150
 msgid "Revoke"
 msgstr "Revoca"
 
-#: templates/api/key_list.html:151
+#: templates/api/key_list.html:155
 msgid "No API keys yet."
 msgstr "Ancora nessuna chiave API."
 
@@ -4938,8 +5542,8 @@ msgid ""
 "Could not reach the server — check your connection. That change was not "
 "saved."
 msgstr ""
-"Impossibile raggiungere il server — controlla la connessione. La modifica "
-"non è stata salvata."
+"Impossibile raggiungere il server — controlla la connessione. La modifica non"
+" è stata salvata."
 
 #: templates/base.html:123
 msgid "Camera access needs a secure (https) connection."
@@ -4957,19 +5561,19 @@ msgstr "Navigazione principale"
 msgid "Home"
 msgstr "Home"
 
-#: templates/base.html:182 templates/base.html:184
+#: templates/base.html:188 templates/base.html:190
 msgid "Workout"
 msgstr "Allenamento"
 
-#: templates/base.html:190
+#: templates/base.html:196
 msgid "Profile — new friend/group activity"
 msgstr "Profilo — nuova attività amici/gruppi"
 
-#: templates/base.html:229
+#: templates/base.html:235
 msgid "Continue training"
 msgstr "Continua l'allenamento"
 
-#: templates/base.html:235
+#: templates/base.html:241
 msgid "Unread messages"
 msgstr "Messaggi non letti"
 
@@ -5113,9 +5717,9 @@ msgid ""
 "current version. Any changes you made to your own copy since importing it "
 "will be lost."
 msgstr ""
-"L'applicazione sostituisce gli allenamenti e gli esercizi di questo "
-"programma con la versione attuale del tuo coach. Qualsiasi modifica "
-"apportata alla tua copia dopo l'importazione andrà persa."
+"L'applicazione sostituisce gli allenamenti e gli esercizi di questo programma"
+" con la versione attuale del tuo coach. Qualsiasi modifica apportata alla tua"
+" copia dopo l'importazione andrà persa."
 
 #: templates/coaching/shared_plan_list.html:3
 #: templates/coaching/shared_plan_list.html:6
@@ -5401,11 +6005,11 @@ msgstr ""
 
 #: templates/core/backup_restore_confirm.html:14
 msgid ""
-"If in doubt, create a fresh backup of the current state first, then come "
-"back here."
+"If in doubt, create a fresh backup of the current state first, then come back"
+" here."
 msgstr ""
-"In caso di dubbio, crea prima un nuovo backup dello stato attuale e poi "
-"torna qui."
+"In caso di dubbio, crea prima un nuovo backup dello stato attuale e poi torna"
+" qui."
 
 #: templates/core/backup_restore_confirm.html:18
 msgid ""
@@ -5415,8 +6019,8 @@ msgid ""
 "again."
 msgstr ""
 "Questo backup è cifrato, ma questa istanza non ha una BACKUP_ENCRYPTION_KEY "
-"configurata (oppure non corrisponde alla chiave con cui è stato creato "
-"questo backup) — il ripristino fallirà. Imposta la chiave corretta in .env e "
+"configurata (oppure non corrisponde alla chiave con cui è stato creato questo"
+" backup) — il ripristino fallirà. Imposta la chiave corretta in .env e "
 "riavvia prima di riprovare."
 
 #: templates/core/backup_restore_confirm.html:24
@@ -5477,7 +6081,7 @@ msgstr "Continua l'allenamento"
 msgid "Freeform workout"
 msgstr "Allenamento libero"
 
-#: templates/core/dashboard.html:25
+#: templates/core/dashboard.html:25 templates/stretching/home.html:16
 #, python-format
 msgid "started %(started_at)s"
 msgstr "iniziato alle %(started_at)s"
@@ -5512,8 +6116,8 @@ msgstr "È ora di registrare le tue misurazioni corporee?"
 
 #: templates/core/dashboard.html:62
 msgid ""
-"It's been a while since you tracked your weight or measurements — tap here "
-"to add a new reading."
+"It's been a while since you tracked your weight or measurements — tap here to"
+" add a new reading."
 msgstr ""
 "È passato un po' di tempo dall'ultima registrazione del tuo peso o delle tue "
 "misure — tocca qui per aggiungere una nuova rilevazione."
@@ -5564,6 +6168,10 @@ msgid "Log a run, ride, or any other non-gym activity."
 msgstr ""
 "Registra una corsa, un giro in bici o qualsiasi altra attività fuori dalla "
 "palestra."
+
+#: templates/core/dashboard.html:144
+msgid "Follow a guided stretching routine or log one."
+msgstr "Segui una routine di stretching guidata o registrane una."
 
 #: templates/core/feedback_form.html:9
 msgid ""
@@ -5635,6 +6243,7 @@ msgstr "Rimuovere questa immagine?"
 #: templates/nutrition/recipe_detail.html:44
 #: templates/social/friend_list.html:62 templates/social/group_detail.html:93
 #: templates/social/group_detail.html:105
+#: templates/stretching/routine_detail.html:57
 msgid "Remove"
 msgstr "Rimuovi"
 
@@ -5706,10 +6315,12 @@ msgid "Search exercises"
 msgstr "Cerca esercizi"
 
 #: templates/exercises/exercise_list.html:14
+#: templates/stretching/stretch_list.html:14
 msgid "Filter by muscle group"
 msgstr "Filtra per gruppo muscolare"
 
 #: templates/exercises/exercise_list.html:15
+#: templates/stretching/stretch_list.html:15
 msgid "All muscle groups"
 msgstr "Tutti i gruppi muscolari"
 
@@ -5949,6 +6560,7 @@ msgstr "Quantità"
 
 #: templates/nutrition/_food_search_results.html:39
 #: templates/nutrition/_most_used_foods.html:47
+#: templates/stretching/routine_detail.html:75
 #: templates/workouts/performed_exercise_form.html:15
 msgid "Add"
 msgstr "Aggiungi"
@@ -6029,25 +6641,29 @@ msgstr ""
 "La media mobile delle calorie degli ultimi 7 giorni è stata inferiore al tuo "
 "obiettivo"
 
-#: templates/nutrition/_month_calendar.html:128
+#: templates/nutrition/_month_calendar.html:129
+msgid "Stretched that day (corner dot)"
+msgstr "Stretching quel giorno (punto nell'angolo)"
+
+#: templates/nutrition/_month_calendar.html:134
 msgid "Close to target"
 msgstr "Vicino all'obiettivo"
 
-#: templates/nutrition/_month_calendar.html:132
+#: templates/nutrition/_month_calendar.html:138
 msgid "Drifting from target"
 msgstr "In allontanamento dall'obiettivo"
 
-#: templates/nutrition/_month_calendar.html:136
+#: templates/nutrition/_month_calendar.html:142
 msgid "Well off target"
 msgstr "Lontano dall'obiettivo"
 
-#: templates/nutrition/_month_calendar.html:139
+#: templates/nutrition/_month_calendar.html:145
 msgid "No arrow yet means there isn't enough logged data to judge."
 msgstr ""
 "Nessuna freccia significa che non ci sono ancora abbastanza dati registrati "
 "per valutare."
 
-#: templates/nutrition/_month_calendar.html:140
+#: templates/nutrition/_month_calendar.html:146
 msgid "Tap a day for details."
 msgstr "Tocca un giorno per i dettagli."
 
@@ -6068,20 +6684,27 @@ msgstr ""
 
 #: templates/nutrition/_off_attribution.html:4
 msgid ""
-"Food data and product photos come from <a href=\"https://"
-"world.openfoodfacts.org\" target=\"_blank\" rel=\"noopener noreferrer\">Open "
-"Food Facts</a>, a collaborative database, under the <a href=\"https://"
-"opendatacommons.org/licenses/odbl/1-0/\" target=\"_blank\" rel=\"noopener "
-"noreferrer\">Open Database License</a>; photos are <a href=\"https://"
-"creativecommons.org/licenses/by-sa/3.0/\" target=\"_blank\" rel=\"noopener "
-"noreferrer\">CC BY-SA</a>."
-msgstr "I dati alimentari e le foto dei prodotti provengono da <a href=\"https://world.openfoodfacts.org\" target=\"_blank\" rel=\"noopener noreferrer\">Open Food Facts</a>, un database collaborativo con licenza <a href=\"https://opendatacommons.org/licenses/odbl/1-0/\" target=\"_blank\" rel=\"noopener noreferrer\">Open Database License</a>; le foto sono <a href=\"https://creativecommons.org/licenses/by-sa/3.0/\" target=\"_blank\" rel=\"noopener noreferrer\">CC BY-SA</a>."
+"Food data and product photos come from <a "
+"href=\"https://world.openfoodfacts.org\" target=\"_blank\" rel=\"noopener "
+"noreferrer\">Open Food Facts</a>, a collaborative database, under the <a "
+"href=\"https://opendatacommons.org/licenses/odbl/1-0/\" target=\"_blank\" "
+"rel=\"noopener noreferrer\">Open Database License</a>; photos are <a "
+"href=\"https://creativecommons.org/licenses/by-sa/3.0/\" target=\"_blank\" "
+"rel=\"noopener noreferrer\">CC BY-SA</a>."
+msgstr ""
+"I dati alimentari e le foto dei prodotti provengono da <a "
+"href=\"https://world.openfoodfacts.org\" target=\"_blank\" rel=\"noopener "
+"noreferrer\">Open Food Facts</a>, un database collaborativo con licenza <a "
+"href=\"https://opendatacommons.org/licenses/odbl/1-0/\" target=\"_blank\" "
+"rel=\"noopener noreferrer\">Open Database License</a>; le foto sono <a "
+"href=\"https://creativecommons.org/licenses/by-sa/3.0/\" target=\"_blank\" "
+"rel=\"noopener noreferrer\">CC BY-SA</a>."
 
 #: templates/nutrition/_subnav.html:43
 msgid "Nutrition sections"
 msgstr "Sezioni nutrizione"
 
-#: templates/nutrition/_subnav.html:45
+#: templates/nutrition/_subnav.html:45 templates/stretching/_subnav.html:10
 msgid "Overview"
 msgstr "Panoramica"
 
@@ -6125,8 +6748,8 @@ msgid ""
 "check."
 msgstr ""
 "Indice di massa corporea — un numero di screening ampiamente utilizzato, non "
-"una diagnosi. La pagina del peso corporeo lo mostra automaticamente una "
-"volta registrato un peso e impostata un'altezza nel tuo profilo; questo è lo "
+"una diagnosi. La pagina del peso corporeo lo mostra automaticamente una volta"
+" registrato un peso e impostata un'altezza nel tuo profilo; questo è lo "
 "stesso calcolo per un controllo rapido occasionale."
 
 #: templates/nutrition/calculator_bmi.html:16
@@ -6219,8 +6842,8 @@ msgstr "Calcolatore macro"
 
 #: templates/nutrition/calculator_macros.html:9
 msgid ""
-"Splits a calorie target into protein, carbohydrates, and fat using this "
-"app's own default ratios for the goal you pick."
+"Splits a calorie target into protein, carbohydrates, and fat using this app's"
+" own default ratios for the goal you pick."
 msgstr ""
 "Suddivide un obiettivo calorico in proteine, carboidrati e grassi usando i "
 "rapporti predefiniti dell'app per l'obiettivo scelto."
@@ -6244,9 +6867,9 @@ msgid ""
 "At a chosen weekly rate, roughly how long to reach a target weight — a plain "
 "projection from the numbers you enter, not a promise."
 msgstr ""
-"A un ritmo settimanale scelto, all'incirca quanto tempo serve per "
-"raggiungere un peso obiettivo — una semplice proiezione dai numeri che "
-"inserisci, non una promessa."
+"A un ritmo settimanale scelto, all'incirca quanto tempo serve per raggiungere"
+" un peso obiettivo — una semplice proiezione dai numeri che inserisci, non "
+"una promessa."
 
 #: templates/nutrition/calculator_time_to_goal.html:24
 #, python-format
@@ -6260,8 +6883,8 @@ msgstr "Circa il %(date)s, a questo ritmo."
 
 #: templates/nutrition/calculator_time_to_goal.html:30
 msgid ""
-"That rate doesn't move toward your target — check the sign (negative to "
-"lose, positive to gain) matches the direction you actually need to go."
+"That rate doesn't move toward your target — check the sign (negative to lose,"
+" positive to gain) matches the direction you actually need to go."
 msgstr ""
 "Quel ritmo non si muove verso il tuo obiettivo — controlla che il segno "
 "(negativo per perdere, positivo per aumentare) corrisponda alla direzione in "
@@ -6289,8 +6912,8 @@ msgstr "Calcolatore assunzione di acqua"
 
 #: templates/nutrition/calculator_water_intake.html:9
 msgid ""
-"A rough daily fluid target based on bodyweight and activity — real needs "
-"vary with climate and sweat rate, so treat this as a starting point."
+"A rough daily fluid target based on bodyweight and activity — real needs vary"
+" with climate and sweat rate, so treat this as a starting point."
 msgstr ""
 "Un obiettivo giornaliero approssimativo di liquidi basato su peso corporeo e "
 "attività — il fabbisogno reale varia con clima e sudorazione, quindi "
@@ -6345,11 +6968,11 @@ msgstr ""
 #: templates/nutrition/calculators_home.html:62
 msgid "At a chosen weekly rate, roughly how long to reach a target weight."
 msgstr ""
-"A un ritmo settimanale scelto, all'incirca quanto tempo serve per "
-"raggiungere un peso obiettivo."
+"A un ritmo settimanale scelto, all'incirca quanto tempo serve per raggiungere"
+" un peso obiettivo."
 
 #: templates/nutrition/calculators_home.html:67
-#: templates/nutrition/diary_day.html:100
+#: templates/nutrition/diary_day.html:105
 #: templates/nutrition/diet_plan_list.html:30
 #: templates/nutrition/food_list.html:90 templates/nutrition/goal_edit.html:31
 #: templates/nutrition/recipe_list.html:90 templates/nutrition/stats.html:44
@@ -6448,7 +7071,7 @@ msgstr "Cambia obiettivo"
 
 #: templates/nutrition/diary_add_entry.html:3
 #: templates/nutrition/diary_add_entry.html:6
-#: templates/nutrition/diary_day.html:77
+#: templates/nutrition/diary_day.html:82
 msgid "Add food"
 msgstr "Aggiungi alimento"
 
@@ -6489,31 +7112,40 @@ msgstr "Alimentazione di oggi"
 msgid "Nutrition for this day"
 msgstr "Alimentazione di questo giorno"
 
-#: templates/nutrition/diary_day.html:67
+#: templates/nutrition/diary_day.html:60
+msgid "P"
+msgstr "P"
+
+#: templates/nutrition/diary_day.html:60
+#: templates/workouts/_performed_exercise_card.html:22
+msgid "F"
+msgstr "F"
+
+#: templates/nutrition/diary_day.html:72
 msgid "Remove this entry?"
 msgstr "Rimuovere questa voce?"
 
-#: templates/nutrition/diary_day.html:74
+#: templates/nutrition/diary_day.html:79
 msgid "Nothing logged yet."
 msgstr "Nulla registrato ancora."
 
-#: templates/nutrition/diary_day.html:81
+#: templates/nutrition/diary_day.html:86
 msgid "Save as recipe"
 msgstr "Salva come ricetta"
 
-#: templates/nutrition/diary_day.html:89
+#: templates/nutrition/diary_day.html:94
 msgid "Copy this day to another date"
 msgstr "Copia questo giorno in un'altra data"
 
-#: templates/nutrition/diary_day.html:93
+#: templates/nutrition/diary_day.html:98
 msgid "Copy to date"
 msgstr "Copia alla data"
 
-#: templates/nutrition/diary_day.html:94 templates/social/group_detail.html:28
+#: templates/nutrition/diary_day.html:99 templates/social/group_detail.html:28
 msgid "Copy"
 msgstr "Copia"
 
-#: templates/nutrition/diary_day.html:99
+#: templates/nutrition/diary_day.html:104
 msgid "Manage foods"
 msgstr "Gestisci alimenti"
 
@@ -6602,8 +7234,8 @@ msgstr "Crea un piano alimentare"
 #: templates/nutrition/diet_plan_form.html:9
 msgid ""
 "We'll suggest one food or recipe per meal from your own library, scaled to "
-"fit — you can swap any of them afterward. Or start from scratch below to "
-"skip the suggestions and build it entirely yourself."
+"fit — you can swap any of them afterward. Or start from scratch below to skip"
+" the suggestions and build it entirely yourself."
 msgstr ""
 "Suggeriremo un alimento o una ricetta per pasto dalla tua libreria, adattato "
 "alle quantità — potrai sostituirli in seguito. Oppure inizia da zero qui "
@@ -6626,8 +7258,8 @@ msgid ""
 "missing is recreated for you. Imported inactive, so it never replaces "
 "whatever plan you're currently following."
 msgstr ""
-"Carica un piano alimentare che qualcuno ha esportato — da questa istanza o "
-"da un'istanza IronStack completamente diversa. Gli alimenti e le ricette che "
+"Carica un piano alimentare che qualcuno ha esportato — da questa istanza o da"
+" un'istanza IronStack completamente diversa. Gli alimenti e le ricette che "
 "utilizza vengono associati, quando possibile, ai tuoi esistenti invece di "
 "essere duplicati; ciò che manca viene ricreato per te. Importato inattivo, "
 "così non sostituisce mai il piano che stai attualmente seguendo."
@@ -6688,12 +7320,12 @@ msgstr ""
 
 #: templates/nutrition/food_browse.html:20
 msgid ""
-"Search to add a food to the shared library — anyone on this instance can "
-"then find and log it. Category browsing isn't available right now."
+"Search to add a food to the shared library — anyone on this instance can then"
+" find and log it. Category browsing isn't available right now."
 msgstr ""
-"Cerca per aggiungere un alimento alla libreria condivisa — chiunque su "
-"questa istanza potrà poi trovarlo e registrarlo. La navigazione per "
-"categoria non è disponibile al momento."
+"Cerca per aggiungere un alimento alla libreria condivisa — chiunque su questa"
+" istanza potrà poi trovarlo e registrarlo. La navigazione per categoria non è"
+" disponibile al momento."
 
 #: templates/nutrition/food_browse.html:42
 msgid "Browse by category"
@@ -6851,8 +7483,8 @@ msgid ""
 "away — your old target stays in your history, it isn't overwritten."
 msgstr ""
 "Cambiare obiettivo ricalcola subito il tuo obiettivo calorico e dei "
-"macronutrienti giornaliero — il vecchio obiettivo resta nella cronologia, "
-"non viene sovrascritto."
+"macronutrienti giornaliero — il vecchio obiettivo resta nella cronologia, non"
+" viene sovrascritto."
 
 #: templates/nutrition/goal_edit.html:28
 msgid "Update goal"
@@ -6876,8 +7508,8 @@ msgid ""
 "We'll suggest an activity level from your answers, not ask you to guess it "
 "yourself."
 msgstr ""
-"Tutto qui è facoltativo — più ci dici, migliore sarà la stima. Suggeriremo "
-"un livello di attività in base alle tue risposte, invece di chiederti di "
+"Tutto qui è facoltativo — più ci dici, migliore sarà la stima. Suggeriremo un"
+" livello di attività in base alle tue risposte, invece di chiederti di "
 "indovinarlo tu stesso."
 
 #: templates/nutrition/onboarding_activity.html:17
@@ -6931,8 +7563,8 @@ msgid ""
 "These are estimates, not exact figures — you'll be able to see how well "
 "they're actually working once you've logged some data, and adjust anytime."
 msgstr ""
-"Queste sono stime, non cifre esatte — potrai vedere quanto funzionano "
-"davvero una volta registrati alcuni dati, e regolarle in qualsiasi momento."
+"Queste sono stime, non cifre esatte — potrai vedere quanto funzionano davvero"
+" una volta registrati alcuni dati, e regolarle in qualsiasi momento."
 
 #: templates/nutrition/onboarding_review.html:28
 msgid "Save and start tracking"
@@ -6978,8 +7610,8 @@ msgid ""
 "Fiber, sugar, saturated fat, and sodium show here once at least one "
 "ingredient has that data (e.g. imported from OpenFoodFacts)."
 msgstr ""
-"Fibre, zuccheri, grassi saturi e sodio vengono mostrati qui non appena "
-"almeno un ingrediente ha questi dati (ad es. importato da OpenFoodFacts)."
+"Fibre, zuccheri, grassi saturi e sodio vengono mostrati qui non appena almeno"
+" un ingrediente ha questi dati (ad es. importato da OpenFoodFacts)."
 
 #: templates/nutrition/recipe_detail.html:97
 #: templates/nutrition/recipe_form.html:19
@@ -7017,13 +7649,13 @@ msgstr "Importa ricetta"
 msgid ""
 "Upload a recipe someone exported — from this instance, or a completely "
 "different IronStack instance. A food originally imported from OpenFoodFacts "
-"is looked up again by its own barcode; anything else is recreated as your "
-"own food."
+"is looked up again by its own barcode; anything else is recreated as your own"
+" food."
 msgstr ""
 "Carica una ricetta che qualcuno ha esportato — da questa istanza o da "
 "un'istanza IronStack completamente diversa. Un alimento originariamente "
-"importato da OpenFoodFacts viene ricercato di nuovo tramite il proprio "
-"codice a barre; il resto viene ricreato come tuo alimento."
+"importato da OpenFoodFacts viene ricercato di nuovo tramite il proprio codice"
+" a barre; il resto viene ricreato come tuo alimento."
 
 #: templates/nutrition/recipe_ingredient_edit_form.html:3
 msgid "Edit ingredient"
@@ -7127,7 +7759,7 @@ msgstr ""
 #: templates/workouts/_train_panel.html:100
 #: templates/workouts/performed_exercise_form.html:3
 #: templates/workouts/performed_exercise_form.html:6
-#: templates/workouts/session_detail.html:31
+#: templates/workouts/session_detail.html:33
 msgid "Add exercise"
 msgstr "Aggiungi esercizio"
 
@@ -7178,7 +7810,7 @@ msgstr "Eliminare questo allenamento e i suoi esercizi?"
 
 #: templates/programs/program_detail.html:70
 #: templates/workouts/_train_panel.html:99
-#: templates/workouts/session_detail.html:26
+#: templates/workouts/session_detail.html:28
 msgid "No exercises yet."
 msgstr "Nessun esercizio ancora."
 
@@ -7266,7 +7898,7 @@ msgid "Edit workout"
 msgstr "Modifica allenamento"
 
 #: templates/programs/workout_form.html:21
-#: templates/workouts/session_detail.html:45
+#: templates/workouts/session_detail.html:47
 msgid "Delete workout"
 msgstr "Elimina allenamento"
 
@@ -7376,8 +8008,8 @@ msgid ""
 "This password reset link is invalid, possibly because it has already been "
 "used or has expired."
 msgstr ""
-"Questo link per la reimpostazione della password non è valido, forse perché "
-"è già stato utilizzato o è scaduto."
+"Questo link per la reimpostazione della password non è valido, forse perché è"
+" già stato utilizzato o è scaduto."
 
 #: templates/registration/password_reset_confirm.html:22
 msgid "Request a new reset link"
@@ -7392,8 +8024,8 @@ msgstr "Reimposta password"
 
 #: templates/registration/password_reset_done.html:10
 msgid ""
-"If an account exists with that email address, we've sent a link to reset "
-"your password."
+"If an account exists with that email address, we've sent a link to reset your"
+" password."
 msgstr ""
 "Se esiste un account con questo indirizzo email, ti abbiamo inviato un link "
 "per reimpostare la password."
@@ -7453,8 +8085,8 @@ msgid ""
 "Enter the 6-digit code from your authenticator app, or one of your backup "
 "codes."
 msgstr ""
-"Inserisci il codice a 6 cifre dalla tua app di autenticazione, oppure uno "
-"dei tuoi codici di backup."
+"Inserisci il codice a 6 cifre dalla tua app di autenticazione, oppure uno dei"
+" tuoi codici di backup."
 
 #: templates/registration/two_factor_verify.html:21
 msgid "Verify"
@@ -7733,6 +8365,370 @@ msgstr "Ancora nessun amico a cui scrivere."
 msgid "Group chats"
 msgstr "Chat di gruppo"
 
+#: templates/stretching/_cooldown_card.html:11
+msgid "Cool down with a stretch?"
+msgstr "Defaticamento con un po' di stretching?"
+
+#: templates/stretching/_cooldown_card.html:21
+msgid "Picked for the muscles you trained:"
+msgstr "Scelto in base ai muscoli che hai allenato:"
+
+#: templates/stretching/_cooldown_card.html:26
+msgid "Start cool-down"
+msgstr "Inizia il defaticamento"
+
+#: templates/stretching/_routine_card.html:6
+#: templates/stretching/routine_detail.html:25
+#, python-format
+msgid "%(counter)s stretch"
+msgid_plural "%(counter)s stretches"
+msgstr[0] "%(counter)s allungamento"
+msgstr[1] "%(counter)s allungamenti"
+
+#: templates/stretching/_routine_card.html:12
+msgid "Start"
+msgstr "Inizia"
+
+#: templates/stretching/_subnav.html:9
+msgid "Stretching sections"
+msgstr "Sezioni stretching"
+
+#: templates/stretching/_subnav.html:11
+#: templates/stretching/routine_detail.html:5
+#: templates/stretching/routine_list.html:6
+msgid "Routines"
+msgstr "Routine"
+
+#: templates/stretching/_subnav.html:12
+#: templates/stretching/session_play.html:71
+#: templates/stretching/stretch_detail.html:5
+#: templates/stretching/stretch_list.html:3
+#: templates/stretching/stretch_list.html:6
+msgid "Stretches"
+msgstr "Allungamenti"
+
+#: templates/stretching/_subnav.html:13
+#: templates/stretching/session_detail.html:5
+#: templates/stretching/session_history.html:6
+msgctxt "stretching"
+msgid "History"
+msgstr "Cronologia"
+
+#: templates/stretching/home.html:9 templates/stretching/session_form.html:3
+#: templates/stretching/session_form.html:6
+#: templates/stretching/session_history.html:9
+#: templates/stretching/session_history.html:20
+msgid "Log stretching"
+msgstr "Registra stretching"
+
+#: templates/stretching/home.html:15
+msgid "Continue stretching"
+msgstr "Continua lo stretching"
+
+#: templates/stretching/home.html:22
+msgid "Streak"
+msgstr "Serie"
+
+#: templates/stretching/home.html:23
+msgid "Last 7 days"
+msgstr "Ultimi 7 giorni"
+
+#: templates/stretching/home.html:28
+msgid "Start a routine"
+msgstr "Inizia una routine"
+
+#: templates/stretching/home.html:32 templates/stretching/routine_list.html:16
+msgid "No routines yet."
+msgstr "Ancora nessuna routine."
+
+#: templates/stretching/home.html:32 templates/stretching/routine_form.html:3
+#: templates/stretching/routine_form.html:6
+msgid "New routine"
+msgstr "Nuova routine"
+
+#: templates/stretching/home.html:36
+msgid "Minutes per week"
+msgstr "Minuti a settimana"
+
+#: templates/stretching/home.html:38
+msgid "Stretching minutes per week"
+msgstr "Minuti di stretching a settimana"
+
+#: templates/stretching/home.html:41
+msgid "Finish or log a stretching session to see your weekly minutes here."
+msgstr ""
+"Completa o registra una sessione di stretching per vedere qui i tuoi minuti "
+"settimanali."
+
+#: templates/stretching/home.html:45
+msgid "Recent sessions"
+msgstr "Sessioni recenti"
+
+#: templates/stretching/routine_detail.html:16
+msgid "Duplicate"
+msgstr "Duplica"
+
+#: templates/stretching/routine_detail.html:16
+msgid "Copy to edit"
+msgstr "Copia per modificare"
+
+#: templates/stretching/routine_detail.html:21
+msgid "Built-in routine"
+msgstr "Routine predefinita"
+
+#: templates/stretching/routine_detail.html:26
+#, python-format
+msgid "about %(time)s"
+msgstr "circa %(time)s"
+
+#: templates/stretching/routine_detail.html:31
+msgid "Start routine"
+msgstr "Inizia la routine"
+
+#: templates/stretching/routine_detail.html:41
+#: templates/stretching/session_detail.html:38
+#: templates/stretching/session_play.html:80
+#: templates/stretching/stretch_detail.html:21
+#: templates/stretching/stretch_list.html:34
+msgid "per side"
+msgstr "per lato"
+
+#: templates/stretching/routine_detail.html:42
+#, python-format
+msgid "rest %(rest)s s"
+msgstr "riposo %(rest)s s"
+
+#: templates/stretching/routine_detail.html:48
+msgid "Move up"
+msgstr "Sposta su"
+
+#: templates/stretching/routine_detail.html:52
+msgid "Move down"
+msgstr "Sposta giù"
+
+#: templates/stretching/routine_detail.html:63
+msgid "No stretches in this routine yet."
+msgstr "Ancora nessun allungamento in questa routine."
+
+#: templates/stretching/routine_detail.html:68
+#: templates/stretching/routine_item_form.html:3
+#: templates/stretching/routine_item_form.html:6
+msgid "Add a stretch"
+msgstr "Aggiungi un allungamento"
+
+#: templates/stretching/routine_detail.html:74
+msgid "Leave the hold empty to use the stretch's own default."
+msgstr ""
+"Lascia vuota la tenuta per usare il valore predefinito dell'allungamento."
+
+#: templates/stretching/routine_detail.html:79
+msgid "Remove this routine? Past sessions stay in your history."
+msgstr ""
+"Rimuovere questa routine? Le sessioni passate restano nella tua cronologia."
+
+#: templates/stretching/routine_detail.html:81
+msgid "Remove routine"
+msgstr "Rimuovi routine"
+
+#: templates/stretching/routine_detail.html:86
+msgid "Back to routines"
+msgstr "Torna alle routine"
+
+#: templates/stretching/routine_form.html:3
+#: templates/stretching/routine_form.html:6
+msgid "Edit routine"
+msgstr "Modifica routine"
+
+#: templates/stretching/routine_item_form.html:3
+#: templates/stretching/stretch_form.html:3
+#: templates/stretching/stretch_form.html:6
+msgid "Edit stretch"
+msgstr "Modifica allungamento"
+
+#: templates/stretching/routine_item_form.html:18
+msgid "Back to routine"
+msgstr "Torna alla routine"
+
+#: templates/stretching/routine_list.html:3
+msgid "Stretching routines"
+msgstr "Routine di stretching"
+
+#: templates/stretching/session_detail.html:23
+msgid "Cool-down after a workout"
+msgstr "Defaticamento dopo un allenamento"
+
+#: templates/stretching/session_detail.html:32
+msgid "Stretch"
+msgstr "Allungamento"
+
+#: templates/stretching/session_detail.html:32
+msgid "Held"
+msgstr "Mantenuto"
+
+#: templates/stretching/session_detail.html:51
+msgid "Delete this session?"
+msgstr "Eliminare questa sessione?"
+
+#: templates/stretching/session_detail.html:56
+#: templates/workouts/session_detail.html:50
+msgid "Back to history"
+msgstr "Torna alla cronologia"
+
+#: templates/stretching/session_form.html:3
+#: templates/stretching/session_form.html:6
+msgid "Edit session"
+msgstr "Modifica sessione"
+
+#: templates/stretching/session_history.html:3
+msgid "Stretching history"
+msgstr "Cronologia stretching"
+
+#: templates/stretching/session_history.html:20
+msgid "No stretching sessions yet."
+msgstr "Ancora nessuna sessione di stretching."
+
+#: templates/stretching/session_history.html:20
+msgid "Start a routine, or log one you did without the timer."
+msgstr "Inizia una routine o registrane una fatta senza timer."
+
+#: templates/stretching/session_play.html:18
+msgid "Get ready"
+msgstr "Preparati"
+
+#: templates/stretching/session_play.html:19
+msgid "Hold"
+msgstr "Mantieni"
+
+#: templates/stretching/session_play.html:20
+msgid "Rest"
+msgstr "Riposo"
+
+#: templates/stretching/session_play.html:21
+msgid "Left side"
+msgstr "Lato sinistro"
+
+#: templates/stretching/session_play.html:22
+msgid "Right side"
+msgstr "Lato destro"
+
+#: templates/stretching/session_play.html:23
+#, python-brace-format
+msgid "set {set}/{sets}"
+msgstr "serie {set}/{sets}"
+
+#: templates/stretching/session_play.html:25
+msgid "Guided session"
+msgstr "Sessione guidata"
+
+#: templates/stretching/session_play.html:27
+msgid "Unmute timer sound"
+msgstr "Riattiva il suono del timer"
+
+#: templates/stretching/session_play.html:27
+msgid "Mute timer sound"
+msgstr "Disattiva il suono del timer"
+
+#: templates/stretching/session_play.html:35
+#, python-format
+msgid "%(counter)s stretch to go."
+msgid_plural "%(counter)s stretches to go."
+msgstr[0] "Manca %(counter)s allungamento."
+msgstr[1] "Mancano %(counter)s allungamenti."
+
+#: templates/stretching/session_play.html:36
+msgid "Start timer"
+msgstr "Avvia il timer"
+
+#: templates/stretching/session_play.html:50
+msgid "Pause"
+msgstr "Pausa"
+
+#: templates/stretching/session_play.html:51
+msgid "Resume"
+msgstr "Riprendi"
+
+#: templates/stretching/session_play.html:55
+msgid "Next step"
+msgstr "Passo successivo"
+
+#: templates/stretching/session_play.html:56
+msgid "Skip stretch"
+msgstr "Salta l'allungamento"
+
+#: templates/stretching/session_play.html:62
+msgid "Next up:"
+msgstr "Prossimo:"
+
+#: templates/stretching/session_play.html:67
+msgid "All stretches done — nice work."
+msgstr "Tutti gli allungamenti fatti — ottimo lavoro."
+
+#: templates/stretching/session_play.html:89
+msgid "Skip"
+msgstr "Salta"
+
+#: templates/stretching/session_play.html:98
+msgid "Finish session"
+msgstr "Termina la sessione"
+
+#: templates/stretching/session_play.html:100
+msgid "Abandon this session? It stays in your history as abandoned."
+msgstr ""
+"Abbandonare questa sessione? Resterà nella cronologia come abbandonata."
+
+#: templates/stretching/session_play.html:102
+msgid "Abandon session"
+msgstr "Abbandona la sessione"
+
+#: templates/stretching/stretch_detail.html:20
+msgid "Type"
+msgstr "Tipo"
+
+#: templates/stretching/stretch_detail.html:21
+msgid "Default hold"
+msgstr "Tenuta predefinita"
+
+#: templates/stretching/stretch_detail.html:30
+msgid "How to do it"
+msgstr "Come si esegue"
+
+#: templates/stretching/stretch_detail.html:36
+msgid ""
+"Remove this stretch from your library? Routines and past sessions that use it"
+" keep working."
+msgstr ""
+"Rimuovere questo allungamento dalla tua libreria? Le routine e le sessioni "
+"passate che lo usano continueranno a funzionare."
+
+#: templates/stretching/stretch_detail.html:38
+msgid "Remove stretch"
+msgstr "Rimuovi allungamento"
+
+#: templates/stretching/stretch_detail.html:42
+msgid "Back to stretches"
+msgstr "Torna agli allungamenti"
+
+#: templates/stretching/stretch_form.html:3
+#: templates/stretching/stretch_form.html:6
+msgid "New stretch"
+msgstr "Nuovo allungamento"
+
+#: templates/stretching/stretch_list.html:20
+msgid "Filter by type"
+msgstr "Filtra per tipo"
+
+#: templates/stretching/stretch_list.html:21
+msgid "All types"
+msgstr "Tutti i tipi"
+
+#: templates/stretching/stretch_list.html:26
+msgid "Filter"
+msgstr "Filtra"
+
+#: templates/stretching/stretch_list.html:39
+msgid "No stretches match."
+msgstr "Nessun allungamento corrispondente."
+
 #: templates/workouts/_performed_exercise_card.html:6
 #: templates/workouts/_train_panel.html:39
 #, python-format
@@ -7750,10 +8746,6 @@ msgstr "Ripetizioni"
 #: templates/workouts/_performed_exercise_card.html:20
 msgid "W"
 msgstr "R"
-
-#: templates/workouts/_performed_exercise_card.html:22
-msgid "F"
-msgstr "F"
 
 #: templates/workouts/_performed_exercise_card.html:25
 msgid "Delete this set?"
@@ -7824,30 +8816,26 @@ msgid_plural "%(n)s sets"
 msgstr[0] "%(n)s serie"
 msgstr[1] "%(n)s serie"
 
-#: templates/workouts/session_detail.html:35
+#: templates/workouts/session_detail.html:37
 #: templates/workouts/session_train.html:51
 msgid "Complete workout"
 msgstr "Completa allenamento"
 
-#: templates/workouts/session_detail.html:37
+#: templates/workouts/session_detail.html:39
 #: templates/workouts/session_train.html:53
 msgid "Abandon this workout? It stays in your history as abandoned."
 msgstr ""
 "Abbandonare questo allenamento? Rimarrà nella tua cronologia come "
 "abbandonato."
 
-#: templates/workouts/session_detail.html:39
+#: templates/workouts/session_detail.html:41
 #: templates/workouts/session_train.html:55
 msgid "Abandon workout"
 msgstr "Abbandona allenamento"
 
-#: templates/workouts/session_detail.html:43
+#: templates/workouts/session_detail.html:45
 msgid "Delete this workout? This cannot be undone."
 msgstr "Eliminare questo allenamento? Questa azione non può essere annullata."
-
-#: templates/workouts/session_detail.html:48
-msgid "Back to history"
-msgstr "Torna alla cronologia"
 
 #: templates/workouts/session_list.html:3
 msgid "Workout history"
@@ -7866,8 +8854,8 @@ msgstr "Nessun allenamento registrato ancora."
 
 #: templates/workouts/session_list.html:26
 msgid ""
-"Start a freeform workout with the button below, or pick a workout from one "
-"of your programs."
+"Start a freeform workout with the button below, or pick a workout from one of"
+" your programs."
 msgstr ""
 "Avvia un allenamento libero con il pulsante qui sotto, oppure scegli un "
 "allenamento da uno dei tuoi programmi."
@@ -7935,6 +8923,3 @@ msgstr "Modifica serie %(number)s"
 
 #~ msgid "+ New recipe"
 #~ msgstr "+ Nuova ricetta"
-
-#~ msgid "New workout"
-#~ msgstr "Nuovo allenamento"

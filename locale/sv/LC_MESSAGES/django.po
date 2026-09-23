@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: IronStack\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-21 16:10+0000\n"
+"POT-Creation-Date: 2026-09-23 14:38+0000\n"
 "Language: sv\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -32,77 +32,81 @@ msgstr ""
 "För många förfrågningar om lösenordsåterställning. Försök igen om några "
 "minuter."
 
-#: apps/accounts/forms.py:251 apps/accounts/forms.py:646
+#: apps/accounts/forms.py:253 apps/accounts/forms.py:655
 msgid "Timezone"
 msgstr "Tidszon"
 
-#: apps/accounts/forms.py:281 apps/accounts/forms.py:626
+#: apps/accounts/forms.py:284 apps/accounts/forms.py:635
 #: templates/api/key_list.html:34
 msgid "Units"
 msgstr "Enheter"
 
-#: apps/accounts/forms.py:282 apps/accounts/forms.py:676
+#: apps/accounts/forms.py:285 apps/accounts/forms.py:685
 msgid "Track nutrition"
 msgstr "Spåra kost"
 
-#: apps/accounts/forms.py:283
+#: apps/accounts/forms.py:286 apps/accounts/forms.py:695
+msgid "Track stretching"
+msgstr "Följ stretching"
+
+#: apps/accounts/forms.py:287
 msgid "Remind me to log body measurements"
 msgstr "Påminn mig om att logga kroppsmått"
 
-#: apps/accounts/forms.py:286
+#: apps/accounts/forms.py:290
 msgid "Show"
 msgstr "Visa"
 
-#: apps/accounts/forms.py:287 templates/core/_bmi_card.html:13
+#: apps/accounts/forms.py:291 templates/core/_bmi_card.html:13
 #: templates/core/_bmi_card.html:29
 msgid "BMI"
 msgstr "BMI"
 
-#: apps/accounts/forms.py:288
+#: apps/accounts/forms.py:292
 msgid "on the body weight page"
 msgstr "på sidan för kroppsvikt"
 
-#: apps/accounts/forms.py:290
+#: apps/accounts/forms.py:294
 msgid "Share my activity"
 msgstr "Dela min aktivitet"
 
-#: apps/accounts/forms.py:291
+#: apps/accounts/forms.py:295
 msgid "Show my name to others"
 msgstr "Visa mitt namn för andra"
 
-#: apps/accounts/forms.py:292
+#: apps/accounts/forms.py:296
 msgid "Show my Gravatar picture"
 msgstr "Visa min Gravatar-bild"
 
-#: apps/accounts/forms.py:293 apps/accounts/forms.py:659
+#: apps/accounts/forms.py:297 apps/accounts/forms.py:668
 msgid "Allow friend requests"
 msgstr "Tillåt vänförfrågningar"
 
-#: apps/accounts/forms.py:294 apps/accounts/forms.py:667
+#: apps/accounts/forms.py:298 apps/accounts/forms.py:676
 msgid "Allow group invites"
 msgstr "Tillåt gruppinbjudningar"
 
-#: apps/accounts/forms.py:295
+#: apps/accounts/forms.py:299
 msgid "I'm a personal trainer / coach"
 msgstr "Jag är en personlig tränare / coach"
 
-#: apps/accounts/forms.py:296
+#: apps/accounts/forms.py:300
 msgid "Accepting new coaching requests"
 msgstr "Tar emot nya coachningsförfrågningar"
 
-#: apps/accounts/forms.py:297
+#: apps/accounts/forms.py:301
 msgid "Language"
 msgstr "Språk"
 
-#: apps/accounts/forms.py:298
+#: apps/accounts/forms.py:302
 msgid "Theme"
 msgstr "Tema"
 
-#: apps/accounts/forms.py:299
+#: apps/accounts/forms.py:303
 msgid "Appearance"
 msgstr "Utseende"
 
-#: apps/accounts/forms.py:303
+#: apps/accounts/forms.py:307
 msgid ""
 "Which color palette the app uses. Each theme has its own dark and light look "
 "— pick which one below."
@@ -110,7 +114,7 @@ msgstr ""
 "Vilken färgpalett appen använder. Varje tema har sitt eget mörka och ljusa "
 "utseende — välj vilket nedan."
 
-#: apps/accounts/forms.py:307
+#: apps/accounts/forms.py:311
 msgid ""
 "Shows nutrition (food diary, recipes, diet plans) in navigation and on the "
 "dashboard. Turn off to hide it if you don't want to track nutrition — "
@@ -122,42 +126,52 @@ msgstr ""
 "befintlig kostdata raderas aldrig, och dess sidor går fortfarande att nå "
 "direkt via en länk."
 
-#: apps/accounts/forms.py:314
+#: apps/accounts/forms.py:318
+msgid ""
+"Shows stretching (routines, guided sessions) in navigation and suggests a "
+"cool-down after a workout. Turn off to hide it — existing stretching data is "
+"never deleted."
+msgstr ""
+"Visar stretching (rutiner, guidade pass) i navigeringen och föreslår "
+"nedvarvning efter ett träningspass. Stäng av för att dölja det — befintliga "
+"stretchingdata raderas aldrig."
+
+#: apps/accounts/forms.py:323
 msgid ""
 "\"Auto\" follows your device's own light/dark setting and switches "
 "automatically when it changes."
 msgstr ""
-"\"Auto\" följer din enhets egen ljus-/mörkerinställning och byter "
-"automatiskt när den ändras."
+"\"Auto\" följer din enhets egen ljus-/mörkerinställning och byter automatiskt"
+" när den ändras."
 
-#: apps/accounts/forms.py:318
+#: apps/accounts/forms.py:327
 msgid ""
-"Shows a dashboard card nudging you to log a body measurement when you "
-"haven't logged one in a while. Turn off to never see that reminder — you can "
-"still log a reading any time from Body tracking."
+"Shows a dashboard card nudging you to log a body measurement when you haven't"
+" logged one in a while. Turn off to never see that reminder — you can still "
+"log a reading any time from Body tracking."
 msgstr ""
 "Visar ett kort på instrumentpanelen som påminner dig om att logga ett "
 "kroppsmått när du inte har loggat ett på ett tag. Stäng av för att aldrig se "
 "den påminnelsen — du kan fortfarande logga en mätning när som helst från "
 "Kroppsspårning."
 
-#: apps/accounts/forms.py:323
+#: apps/accounts/forms.py:332
 msgid "Turns off the BMI card and its category ranges entirely."
 msgstr "Stänger av BMI-kortet och dess kategoriintervall helt."
 
-#: apps/accounts/forms.py:325
+#: apps/accounts/forms.py:334
 msgid ""
 "Lets everyone using this instance see your longest streak, workout count, "
 "PRs, total weight lifted, and when you last trained, in the dashboard's "
-"achievements carousel and \"Recently active\" list. Turn off to keep your "
-"own activity private — you'll still see everyone else's."
+"achievements carousel and \"Recently active\" list. Turn off to keep your own"
+" activity private — you'll still see everyone else's."
 msgstr ""
 "Låter alla som använder den här instansen se din längsta svit, antal "
 "träningspass, PR, total lyft vikt och när du senast tränade, i "
-"instrumentpanelens prestationskarusell och listan \"Senast aktiva\". Stäng "
-"av för att hålla din egen aktivitet privat — du ser fortfarande allas andras."
+"instrumentpanelens prestationskarusell och listan \"Senast aktiva\". Stäng av"
+" för att hålla din egen aktivitet privat — du ser fortfarande allas andras."
 
-#: apps/accounts/forms.py:332
+#: apps/accounts/forms.py:341
 msgid ""
 "Shows your first name next to your username wherever others can see it (the "
 "achievements carousel and \"Recently active\" list). Turn off to show just "
@@ -167,7 +181,7 @@ msgstr ""
 "(prestationskarusellen och listan \"Senast aktiva\"). Stäng av för att bara "
 "visa ditt användarnamn där, som innan den här inställningen fanns."
 
-#: apps/accounts/forms.py:338
+#: apps/accounts/forms.py:347
 msgid ""
 "Shows your Gravatar (gravatar.com) picture at the top of this page, if the "
 "email on this account has one. Turning this on means your browser loads that "
@@ -175,32 +189,32 @@ msgid ""
 "outside your own instance — which then sees your email's hash and your IP "
 "address."
 msgstr ""
-"Visar din Gravatar-bild (gravatar.com) högst upp på den här sidan, om e-"
-"postadressen på det här kontot har en sådan. Om du aktiverar detta laddar "
+"Visar din Gravatar-bild (gravatar.com) högst upp på den här sidan, om "
+"e-postadressen på det här kontot har en sådan. Om du aktiverar detta laddar "
 "din webbläsare bilden direkt från gravatar.com — den enda plats där appen "
-"pratar med en server utanför din egen instans — som då ser hashvärdet för "
-"din e-postadress och din IP-adress."
+"pratar med en server utanför din egen instans — som då ser hashvärdet för din"
+" e-postadress och din IP-adress."
 
-#: apps/accounts/forms.py:346
+#: apps/accounts/forms.py:355
 msgid ""
 "Off stops other users on this instance from sending you a friend request at "
 "all. Doesn't affect friend requests you already have, or friendships you "
 "already made."
 msgstr ""
 "Av hindrar andra användare på den här instansen från att skicka en "
-"vänförfrågan till dig alls. Påverkar inte vänförfrågningar eller vänskaper "
-"du redan har."
+"vänförfrågan till dig alls. Påverkar inte vänförfrågningar eller vänskaper du"
+" redan har."
 
-#: apps/accounts/forms.py:351
+#: apps/accounts/forms.py:360
 msgid ""
-"Off stops a group member from inviting you to a group directly. You can "
-"still join any group yourself using its invite link, if you have one."
+"Off stops a group member from inviting you to a group directly. You can still"
+" join any group yourself using its invite link, if you have one."
 msgstr ""
 "Av hindrar en gruppmedlem från att bjuda in dig till en grupp direkt. Du kan "
 "fortfarande gå med i vilken grupp som helst själv via dess inbjudningslänk, "
 "om du har en."
 
-#: apps/accounts/forms.py:356
+#: apps/accounts/forms.py:365
 msgid ""
 "Lets you build gym programs and diet plans other users can request you coach "
 "them on. Turning this off doesn't end any coaching relationship you already "
@@ -210,7 +224,7 @@ msgstr ""
 "coacha dem i. Att stänga av det avslutar inte något coachningsförhållande du "
 "redan har."
 
-#: apps/accounts/forms.py:361
+#: apps/accounts/forms.py:370
 msgid ""
 "Off stops new coaching requests from reaching you. Existing coaching "
 "relationships, and any request you already received, are unaffected."
@@ -218,53 +232,53 @@ msgstr ""
 "Av stoppar nya coachningsförfrågningar från att nå dig. Befintliga "
 "coachningsförhållanden och förfrågningar du redan fått påverkas inte."
 
-#: apps/accounts/forms.py:386 apps/accounts/forms.py:702
+#: apps/accounts/forms.py:395 apps/accounts/forms.py:721
 #: apps/nutrition/forms.py:39 apps/nutrition/forms.py:455
 msgid "Height (cm)"
 msgstr "Längd (cm)"
 
-#: apps/accounts/forms.py:386 apps/accounts/forms.py:702
+#: apps/accounts/forms.py:395 apps/accounts/forms.py:721
 #: apps/nutrition/forms.py:39 apps/nutrition/forms.py:455
 msgid "Height (in)"
 msgstr "Längd (in)"
 
-#: apps/accounts/forms.py:440 apps/accounts/forms.py:476
+#: apps/accounts/forms.py:449 apps/accounts/forms.py:485
 msgid "Verification code"
 msgstr "Verifieringskod"
 
-#: apps/accounts/forms.py:454
+#: apps/accounts/forms.py:463
 msgid "Incorrect code — check your authenticator app and try again."
 msgstr "Fel kod — kontrollera din autentiseringsapp och försök igen."
 
-#: apps/accounts/forms.py:490
+#: apps/accounts/forms.py:499
 msgid "Too many incorrect codes. Try again in a few minutes."
 msgstr "För många felaktiga koder. Försök igen om några minuter."
 
-#: apps/accounts/forms.py:503
+#: apps/accounts/forms.py:512
 msgid "Incorrect code."
 msgstr "Fel kod."
 
-#: apps/accounts/forms.py:517 apps/accounts/forms.py:543
+#: apps/accounts/forms.py:526 apps/accounts/forms.py:552
 msgid "Password"
 msgstr "Lösenord"
 
-#: apps/accounts/forms.py:526 apps/accounts/forms.py:557
+#: apps/accounts/forms.py:535 apps/accounts/forms.py:566
 msgid "Incorrect password."
 msgstr "Fel lösenord."
 
-#: apps/accounts/forms.py:546
+#: apps/accounts/forms.py:555
 msgid "Type your username to confirm"
 msgstr "Skriv ditt användarnamn för att bekräfta"
 
-#: apps/accounts/forms.py:559
+#: apps/accounts/forms.py:568
 msgid "Doesn't match your username."
 msgstr "Matchar inte ditt användarnamn."
 
-#: apps/accounts/forms.py:583
+#: apps/accounts/forms.py:592
 msgid "First name"
 msgstr "Förnamn"
 
-#: apps/accounts/forms.py:585
+#: apps/accounts/forms.py:594
 msgid ""
 "Used to personalize your dashboard greeting, and next to your username "
 "wherever your activity is shown to others (if you allow that in your "
@@ -274,11 +288,11 @@ msgstr ""
 "användarnamn där din aktivitet visas för andra (om du tillåter det i din "
 "profil)."
 
-#: apps/accounts/forms.py:592
+#: apps/accounts/forms.py:601
 msgid "Email"
 msgstr "E-post"
 
-#: apps/accounts/forms.py:594
+#: apps/accounts/forms.py:603
 msgid ""
 "Used only for password-reset emails if you ever get locked out. Never shown "
 "to other users."
@@ -286,7 +300,7 @@ msgstr ""
 "Används endast för lösenordsåterställningsmejl om du någonsin blir utelåst. "
 "Visas aldrig för andra användare."
 
-#: apps/accounts/forms.py:604
+#: apps/accounts/forms.py:613
 msgid ""
 "Logged as your first body-weight entry, so your progress charts have a "
 "starting point. Leave blank and log it anytime from the Body weight page "
@@ -296,33 +310,33 @@ msgstr ""
 "startpunkt. Lämna tomt och logga den istället när som helst från sidan "
 "Kroppsvikt."
 
-#: apps/accounts/forms.py:619
+#: apps/accounts/forms.py:628
 msgid ""
-"Used together with a logged body weight to show your BMI. Leave blank to "
-"skip this — you can add it anytime from your profile."
+"Used together with a logged body weight to show your BMI. Leave blank to skip"
+" this — you can add it anytime from your profile."
 msgstr ""
 "Används tillsammans med en loggad kroppsvikt för att visa ditt BMI. Lämna "
 "tomt för att hoppa över detta — du kan lägga till det när som helst från din "
 "profil."
 
-#: apps/accounts/forms.py:628
+#: apps/accounts/forms.py:637
 msgid ""
-"Sets whether weights and distances are shown in kg/km or lb/mi throughout "
-"the app. Change this anytime from your profile."
+"Sets whether weights and distances are shown in kg/km or lb/mi throughout the"
+" app. Change this anytime from your profile."
 msgstr ""
 "Anger om vikter och avstånd visas i kg/km eller lb/mi i hela appen. Ändra "
 "detta när som helst från din profil."
 
-#: apps/accounts/forms.py:648
+#: apps/accounts/forms.py:657
 msgid ""
 "Used for \"today\" and date ranges throughout the app. Change this anytime "
 "from your profile."
 msgstr ""
 "Används för \"idag\" och datumintervall i hela appen. Du kan ändra detta när "
-"som helst från din profil.Anger om vikter och avstånd visas i kg/km eller lb/"
-"mi i hela appen. Ändra detta när som helst från din profil."
+"som helst från din profil.Anger om vikter och avstånd visas i kg/km eller "
+"lb/mi i hela appen. Ändra detta när som helst från din profil."
 
-#: apps/accounts/forms.py:661
+#: apps/accounts/forms.py:670
 msgid ""
 "Lets other users on this instance send you a friend request. Change this "
 "anytime from your profile."
@@ -330,17 +344,17 @@ msgstr ""
 "Låter andra användare på den här instansen skicka en vänförfrågan till dig. "
 "Du kan ändra detta när som helst från din profil."
 
-#: apps/accounts/forms.py:669
+#: apps/accounts/forms.py:678
 msgid ""
 "Lets a group member invite you to a group directly. You can always join a "
 "group yourself using its invite link either way. Change this anytime from "
 "your profile."
 msgstr ""
 "Låter en gruppmedlem bjuda in dig till en grupp direkt. Du kan alltid gå med "
-"i en grupp själv via dess inbjudningslänk oavsett. Du kan ändra detta när "
-"som helst från din profil."
+"i en grupp själv via dess inbjudningslänk oavsett. Du kan ändra detta när som"
+" helst från din profil."
 
-#: apps/accounts/forms.py:678
+#: apps/accounts/forms.py:687
 msgid ""
 "Shows nutrition (food diary, recipes, diet plans) in navigation and on the "
 "dashboard. Leave unchecked if you don't want to track nutrition — you can "
@@ -348,17 +362,27 @@ msgid ""
 "either way."
 msgstr ""
 "Visar kost (matdagbok, recept, kostplaner) i navigeringen och på "
-"instrumentpanelen. Lämna omarkerad om du inte vill spåra kost — du kan slå "
-"på eller av det när som helst från din profil, och inget raderas någonsin i "
+"instrumentpanelen. Lämna omarkerad om du inte vill spåra kost — du kan slå på"
+" eller av det när som helst från din profil, och inget raderas någonsin i "
 "vilket fall som helst."
 
-#: apps/accounts/forms.py:697 apps/nutrition/forms.py:40
+#: apps/accounts/forms.py:697
+msgid ""
+"Shows stretching routines and guided sessions in navigation, and suggests a "
+"cool-down after a workout. You can turn it on or off anytime from your "
+"profile."
+msgstr ""
+"Visar stretchingrutiner och guidade pass i navigeringen och föreslår "
+"nedvarvning efter ett träningspass. Du kan slå på eller av det när som helst "
+"i din profil."
+
+#: apps/accounts/forms.py:716 apps/nutrition/forms.py:40
 #: apps/nutrition/forms.py:464 apps/nutrition/forms.py:668
 #, python-format
 msgid "Current weight (%(unit)s)"
 msgstr "Nuvarande vikt (%(unit)s)"
 
-#: apps/accounts/forms.py:699
+#: apps/accounts/forms.py:718
 msgid "Current weight"
 msgstr "Nuvarande vikt"
 
@@ -402,7 +426,7 @@ msgstr "Earth"
 msgid "Zen"
 msgstr "Zen"
 
-#: apps/accounts/models.py:406
+#: apps/accounts/models.py:415
 msgid ""
 "Shown as a footer note on the login and signup pages. Leave blank to hide it "
 "entirely."
@@ -437,8 +461,8 @@ msgstr "Tvåfaktorsautentisering avstängd."
 #: apps/accounts/views.py:389
 msgid ""
 "You're the only superuser on this instance — promote another account to "
-"superuser first, or this instance would have no one left who can reach "
-"Django admin."
+"superuser first, or this instance would have no one left who can reach Django"
+" admin."
 msgstr ""
 "Du är den enda superanvändaren på den här instansen — befordra ett annat "
 "konto till superanvändare först, annars skulle den här instansen inte ha "
@@ -448,7 +472,7 @@ msgstr ""
 msgid "Your account and all its data have been deleted."
 msgstr "Ditt konto och alla dess uppgifter har raderats."
 
-#: apps/activities/forms.py:27
+#: apps/activities/forms.py:27 apps/stretching/forms.py:126
 msgid "Duration (minutes)"
 msgstr "Varaktighet (minuter)"
 
@@ -492,11 +516,12 @@ msgstr "Övrigt"
 
 #: apps/activities/models.py:18 apps/exercises/models.py:75
 #: apps/measurements/models.py:34 apps/programs/models.py:36
-#: apps/programs/models.py:118
+#: apps/programs/models.py:118 apps/stretching/models.py:32
+#: apps/stretching/models.py:96 apps/stretching/models.py:183
 msgid "name"
 msgstr "namn"
 
-#: apps/activities/models.py:70
+#: apps/activities/models.py:70 apps/stretching/models.py:190
 msgid "date"
 msgstr "datum"
 
@@ -514,7 +539,7 @@ msgstr "kalorier"
 
 #: apps/activities/models.py:77 apps/measurements/models.py:90
 #: apps/programs/models.py:123 apps/programs/models.py:189
-#: apps/workouts/forms.py:46
+#: apps/stretching/models.py:196 apps/workouts/forms.py:46
 msgid "notes"
 msgstr "anteckningar"
 
@@ -551,7 +576,7 @@ msgstr "Aktivitetstypen inaktiverad."
 msgid "Longest streak"
 msgstr "Längsta sviten"
 
-#: apps/analytics/achievements.py:123
+#: apps/analytics/achievements.py:123 templates/stretching/home.html:22
 #, python-format
 msgid "%(counter)s day"
 msgid_plural "%(counter)s days"
@@ -607,7 +632,7 @@ msgstr "6 månader"
 msgid "1 year"
 msgstr "1 år"
 
-#: apps/analytics/dateranges.py:19
+#: apps/analytics/dateranges.py:19 templates/stretching/home.html:24
 msgid "All time"
 msgstr "All tid"
 
@@ -626,9 +651,10 @@ msgstr "Uppdatera"
 #: apps/api/forms.py:13 templates/activities/activity_history.html:57
 #: templates/core/_backup_row.html:22
 #: templates/measurements/measurement_history.html:65
-#: templates/nutrition/diary_day.html:69
+#: templates/nutrition/diary_day.html:74
 #: templates/programs/program_confirm_delete.html:14
 #: templates/programs/program_detail.html:52
+#: templates/stretching/session_detail.html:53
 #: templates/workouts/_performed_exercise_card.html:31
 msgid "Delete"
 msgstr "Ta bort"
@@ -646,7 +672,7 @@ msgstr "En etikett för att skilja dina nycklar åt."
 
 #: apps/api/models.py:24 templates/accounts/profile.html:3
 #: templates/accounts/profile.html:12 templates/api/key_list.html:85
-#: templates/base.html:190 templates/base.html:213
+#: templates/base.html:196 templates/base.html:219
 msgid "Profile"
 msgstr "Profil"
 
@@ -658,7 +684,7 @@ msgid "Exercises"
 msgstr "Övningar"
 
 #: apps/api/models.py:26 apps/core/models.py:162 templates/api/key_list.html:93
-#: templates/base.html:186 templates/base.html:188
+#: templates/base.html:192 templates/base.html:194
 #: templates/programs/program_detail.html:5
 #: templates/programs/program_list.html:3
 #: templates/programs/program_list.html:6
@@ -685,11 +711,11 @@ msgstr "Mätningar"
 msgid "Activities"
 msgstr "Aktiviteter"
 
-#: apps/api/models.py:30 templates/api/key_list.html:113
+#: apps/api/models.py:30 templates/api/key_list.html:117
 msgid "Records"
 msgstr "Rekord"
 
-#: apps/api/models.py:31 templates/api/key_list.html:117
+#: apps/api/models.py:31 templates/api/key_list.html:121
 msgid "Analytics"
 msgstr "Analys"
 
@@ -704,6 +730,19 @@ msgstr "Analys"
 msgid "Nutrition"
 msgstr "Näring"
 
+#: apps/api/models.py:33 apps/stretching/models.py:209
+#: templates/api/key_list.html:113 templates/base.html:179
+#: templates/base.html:181 templates/core/dashboard.html:143
+#: templates/stretching/_cooldown_card.html:7 templates/stretching/home.html:3
+#: templates/stretching/home.html:6 templates/stretching/home.html:16
+#: templates/stretching/home.html:48 templates/stretching/session_detail.html:3
+#: templates/stretching/session_detail.html:5
+#: templates/stretching/session_history.html:15
+#: templates/stretching/session_play.html:3
+#: templates/stretching/session_play.html:6
+msgid "Stretching"
+msgstr "Stretching"
+
 #: apps/api/views_web.py:39
 msgid "You've reached your maximum number of API keys."
 msgstr "Du har nått ditt max antal API-nycklar."
@@ -713,7 +752,7 @@ msgid "API key revoked."
 msgstr "API-nyckeln har återkallats."
 
 #: apps/coaching/models.py:23 apps/social/models.py:20
-#: apps/social/models.py:226
+#: apps/social/models.py:226 apps/stretching/models.py:213
 msgid "Pending"
 msgstr "Väntande"
 
@@ -806,7 +845,7 @@ msgstr ""
 "Den här kostplanens ursprungliga coach-version finns inte längre tillgänglig."
 
 #: apps/coaching/views_plans.py:59 apps/coaching/views_plans.py:73
-#: apps/nutrition/views.py:1070 apps/nutrition/views.py:1365
+#: apps/nutrition/views.py:1073 apps/nutrition/views.py:1368
 #: apps/programs/views.py:200
 #, python-format
 msgid "Imported “%(name)s”."
@@ -1081,8 +1120,8 @@ msgstr "IronStack %(version)s körs nu — tryck för att se vad som är nytt."
 
 #: apps/core/models.py:42
 msgid ""
-"Turns the backup-scheduler service's daily backup off without needing to "
-"stop or remove that service."
+"Turns the backup-scheduler service's daily backup off without needing to stop"
+" or remove that service."
 msgstr ""
 "Stänger av säkerhetskopieringstjänstens dagliga säkerhetskopiering utan att "
 "behöva stoppa eller ta bort tjänsten."
@@ -1096,14 +1135,14 @@ msgid ""
 "How many backups to keep — older ones are deleted automatically after each "
 "new one is created. 0 keeps every backup forever."
 msgstr ""
-"Hur många säkerhetskopior som ska behållas — äldre tas bort automatiskt "
-"efter att en ny skapats. 0 behåller alla säkerhetskopior för alltid."
+"Hur många säkerhetskopior som ska behållas — äldre tas bort automatiskt efter"
+" att en ny skapats. 0 behåller alla säkerhetskopior för alltid."
 
 #: apps/core/models.py:88
 msgid ""
-"Lets any signed-in user submit feedback from their profile page. Turning "
-"this off only closes new submissions — feedback already on file stays "
-"visible to staff."
+"Lets any signed-in user submit feedback from their profile page. Turning this"
+" off only closes new submissions — feedback already on file stays visible to "
+"staff."
 msgstr ""
 "Låter alla inloggade användare skicka feedback från sin profilsida. Att "
 "stänga av detta stänger bara nya inskick — redan inskickad feedback förblir "
@@ -1120,8 +1159,8 @@ msgstr ""
 "inte en offentlig webbplats som någon borde söka efter."
 
 #: apps/core/models.py:163 templates/analytics/dashboard.html:3
-#: templates/analytics/dashboard.html:6 templates/base.html:178
-#: templates/base.html:180
+#: templates/analytics/dashboard.html:6 templates/base.html:184
+#: templates/base.html:186
 msgid "Progress"
 msgstr "Framsteg"
 
@@ -1133,31 +1172,36 @@ msgstr "Kroppsmått"
 msgid "Account & profile"
 msgstr "Konto och profil"
 
-#: apps/core/views.py:34
+#: apps/core/views.py:35
 msgid "Training day — new personal record!"
 msgstr "Träningsdag — nytt personbästa!"
 
-#: apps/core/views.py:36
+#: apps/core/views.py:37
 msgid "Training day — a session was abandoned."
 msgstr "Träningsdag — ett pass avbröts."
 
-#: apps/core/views.py:38
+#: apps/core/views.py:39
 msgid "Training day."
 msgstr "Träningsdag."
 
-#: apps/core/views.py:40
+#: apps/core/views.py:41
 msgid "Rest day."
 msgstr "Vilodag."
 
-#: apps/core/views.py:51
+#: apps/core/views.py:52
 #, python-format
 msgid "%(actual)s / %(target)s kcal logged."
 msgstr "%(actual)s / %(target)s kcal loggat."
 
-#: apps/core/views.py:56
+#: apps/core/views.py:57
 #, python-format
 msgid "%(actual)s kcal logged."
 msgstr "%(actual)s kcal loggat."
+
+#: apps/core/views.py:65
+#, python-format
+msgid "Stretched %(minutes)s min."
+msgstr "Stretching %(minutes)s min."
 
 #: apps/core/views_backup.py:56
 #, python-format
@@ -1327,7 +1371,9 @@ msgstr "Tricepspress i kabel"
 msgid "Abs"
 msgstr "Mage"
 
-#: apps/exercises/i18n_content.py:55
+#: apps/exercises/i18n_content.py:55 templates/stretching/routine_form.html:18
+#: templates/stretching/session_form.html:18
+#: templates/stretching/stretch_form.html:18
 msgid "Back"
 msgstr "Rygg"
 
@@ -1411,109 +1457,58 @@ msgstr "Träningsband"
 msgid ""
 "- Starting Position: Kneel on the floor with the ab wheel in front of you.\n"
 "- Grip the Wheel: Hold the handles firmly.\n"
-"- Roll Out: Slowly roll the wheel forward, extending your body while keeping "
-"your core tight.\n"
-"- Return: Pull the wheel back towards your knees, maintaining tension in "
-"your core."
+"- Roll Out: Slowly roll the wheel forward, extending your body while keeping your core tight.\n"
+"- Return: Pull the wheel back towards your knees, maintaining tension in your core."
 msgstr ""
 "- Startposition: Knäböj på golvet med hjulet framför dig.\n"
 "- Greppa hjulet: Håll handtagen med ett fast grepp.\n"
-"- Rulla ut: Rulla hjulet långsamt framåt och sträck ut kroppen medan du "
-"håller bålen spänd.\n"
+"- Rulla ut: Rulla hjulet långsamt framåt och sträck ut kroppen medan du håller bålen spänd.\n"
 "- Återgång: Dra hjulet tillbaka mot knäna och behåll spänningen i bålen."
 
 #: apps/exercises/i18n_content.py:98
 msgid ""
-"- The barbell full squat is a compound exercise that targets multiple muscle "
-"groups in the lower body, including the quadriceps, hamstrings, and glutes.\n"
-"- Proper form is crucial for maximizing results and preventing injuries "
-"during the barbell full squat. This includes maintaining a shoulder-width "
-"stance, creating whole body tension, controlling your descent, and "
-"maintaining proper depth and knee positioning.\n"
-"- Assistance moves such as the front squat, goblet squat, split squat, and "
-"Bulgarian split squat can help improve your performance in the barbell full "
-"squat by targeting specific muscle groups and improving overall technique.\n"
-"- To achieve new personal records in your back squat, gradually increase "
-"weight over time, vary rep ranges and sets to stimulate muscle growth, and "
-"prioritize rest and recovery between training sessions."
+"- The barbell full squat is a compound exercise that targets multiple muscle groups in the lower body, including the quadriceps, hamstrings, and glutes.\n"
+"- Proper form is crucial for maximizing results and preventing injuries during the barbell full squat. This includes maintaining a shoulder-width stance, creating whole body tension, controlling your descent, and maintaining proper depth and knee positioning.\n"
+"- Assistance moves such as the front squat, goblet squat, split squat, and Bulgarian split squat can help improve your performance in the barbell full squat by targeting specific muscle groups and improving overall technique.\n"
+"- To achieve new personal records in your back squat, gradually increase weight over time, vary rep ranges and sets to stimulate muscle growth, and prioritize rest and recovery between training sessions."
 msgstr ""
-"- Knäböj med skivstång är en flerledsövning som belastar flera muskelgrupper "
-"i underkroppen, bland annat lår, baklår och säte.\n"
-"- Korrekt teknik är avgörande för att maximera resultatet och förebygga "
-"skador. Det innebär att hålla en axelbrett fotisättning, skapa spänning i "
-"hela kroppen, kontrollera nedgången och hålla rätt djup och knäposition.\n"
-"- Kompletterande övningar som frontböj, goblet-böj, utfallsböj och bulgarisk "
-"utfallsböj kan förbättra din prestation i knäböjen genom att rikta in sig på "
-"specifika muskelgrupper och förbättra tekniken.\n"
-"- För att nå nya personliga rekord i knäböj, öka vikten gradvis över tid, "
-"variera repetitions- och setintervall för att stimulera muskeltillväxt, och "
-"prioritera vila och återhämtning mellan träningspassen."
+"- Knäböj med skivstång är en flerledsövning som belastar flera muskelgrupper i underkroppen, bland annat lår, baklår och säte.\n"
+"- Korrekt teknik är avgörande för att maximera resultatet och förebygga skador. Det innebär att hålla en axelbrett fotisättning, skapa spänning i hela kroppen, kontrollera nedgången och hålla rätt djup och knäposition.\n"
+"- Kompletterande övningar som frontböj, goblet-böj, utfallsböj och bulgarisk utfallsböj kan förbättra din prestation i knäböjen genom att rikta in sig på specifika muskelgrupper och förbättra tekniken.\n"
+"- För att nå nya personliga rekord i knäböj, öka vikten gradvis över tid, variera repetitions- och setintervall för att stimulera muskeltillväxt, och prioritera vila och återhämtning mellan träningspassen."
 
 #: apps/exercises/i18n_content.py:111
 msgid ""
-"Lay down on a bench, the bar should be directly above your eyes, the knees "
-"are somewhat angled and the feet are firmly on the floor. Concentrate, "
-"breath deeply and grab the bar more than shoulder wide. Bring it slowly down "
-"till it briefly touches your chest at the height of your nipples. Push the "
-"bar up.\n"
-"If you train with a high weight it is advisable to have a spotter that can "
-"help you up if you can't lift the weight on your own.\n"
-"With the width of the grip you can also control which part of the chest is "
-"trained more:\n"
+"Lay down on a bench, the bar should be directly above your eyes, the knees are somewhat angled and the feet are firmly on the floor. Concentrate, breath deeply and grab the bar more than shoulder wide. Bring it slowly down till it briefly touches your chest at the height of your nipples. Push the bar up.\n"
+"If you train with a high weight it is advisable to have a spotter that can help you up if you can't lift the weight on your own.\n"
+"With the width of the grip you can also control which part of the chest is trained more:\n"
 "- wide grip: outer chest muscles\n"
 "- narrow grip: inner chest muscles and triceps"
 msgstr ""
-"Ligg på rygg på en bänk med stången rakt ovanför ögonen, knäna något böjda "
-"och fötterna stadigt i golvet. Koncentrera dig, andas djupt och greppa "
-"stången bredare än axelbrett. Sänk den långsamt tills den lätt vidrör "
-"bröstet i höjd med bröstvårtorna. Pressa upp stången igen.\n"
-"Om du tränar med tunga vikter är det klokt att ha en avlastare som kan "
-"hjälpa dig upp om du inte klarar vikten själv.\n"
+"Ligg på rygg på en bänk med stången rakt ovanför ögonen, knäna något böjda och fötterna stadigt i golvet. Koncentrera dig, andas djupt och greppa stången bredare än axelbrett. Sänk den långsamt tills den lätt vidrör bröstet i höjd med bröstvårtorna. Pressa upp stången igen.\n"
+"Om du tränar med tunga vikter är det klokt att ha en avlastare som kan hjälpa dig upp om du inte klarar vikten själv.\n"
 "Greppets bredd avgör också vilken del av bröstet som belastas mest:\n"
 "- brett grepp: bröstmusklernas yttre del\n"
 "- smalt grepp: bröstmusklernas inre del och triceps"
 
 #: apps/exercises/i18n_content.py:121
 msgid ""
-"- Holding a barbell with a pronated grip (palms facing down), bend your "
-"knees slightly and bring your torso forward, by bending at the waist, while "
-"keeping the back straight until it is almost parallel to the floor. Tip: "
-"Make sure that you keep the head up. The barbell should hang directly in "
-"front of you as your arms hang perpendicular to the floor and your torso. "
-"This is your starting position.\n"
-"- Now, while keeping the torso stationary, breathe out and lift the barbell "
-"to you. Keep the elbows close to the body and only use the forearms to hold "
-"the weight. At the top contracted position, squeeze the back muscles and "
-"hold for a brief pause.\n"
+"- Holding a barbell with a pronated grip (palms facing down), bend your knees slightly and bring your torso forward, by bending at the waist, while keeping the back straight until it is almost parallel to the floor. Tip: Make sure that you keep the head up. The barbell should hang directly in front of you as your arms hang perpendicular to the floor and your torso. This is your starting position.\n"
+"- Now, while keeping the torso stationary, breathe out and lift the barbell to you. Keep the elbows close to the body and only use the forearms to hold the weight. At the top contracted position, squeeze the back muscles and hold for a brief pause.\n"
 "- Then inhale and slowly lower the barbell back to the starting position.\n"
 "- Repeat for the recommended amount of repetitions."
 msgstr ""
-"- Håll en skivstång med pronerat grepp (handflatorna nedåt), böj knäna lätt "
-"och luta överkroppen framåt genom att böja i höften, samtidigt som ryggen "
-"hålls rak tills överkroppen är nästan parallell med golvet. Tips: håll "
-"huvudet upp. Stången ska hänga rakt framför dig med armarna vinkelräta mot "
-"golvet och överkroppen. Detta är din startposition.\n"
-"- Håll överkroppen stilla, andas ut och lyft stången mot dig. Håll "
-"armbågarna nära kroppen och använd bara underarmarna för att hålla vikten. I "
-"den övre, sammandragna positionen, pressa samman ryggmusklerna och håll en "
-"kort paus.\n"
+"- Håll en skivstång med pronerat grepp (handflatorna nedåt), böj knäna lätt och luta överkroppen framåt genom att böja i höften, samtidigt som ryggen hålls rak tills överkroppen är nästan parallell med golvet. Tips: håll huvudet upp. Stången ska hänga rakt framför dig med armarna vinkelräta mot golvet och överkroppen. Detta är din startposition.\n"
+"- Håll överkroppen stilla, andas ut och lyft stången mot dig. Håll armbågarna nära kroppen och använd bara underarmarna för att hålla vikten. I den övre, sammandragna positionen, pressa samman ryggmusklerna och håll en kort paus.\n"
 "- Andas in och sänk stången långsamt tillbaka till startpositionen.\n"
 "- Upprepa för rekommenderat antal repetitioner."
 
 #: apps/exercises/i18n_content.py:133
 msgid ""
-"Take a barbell and stand with a straight body, the arms are hanging freely "
-"in front of you. Lift from this position the shoulders as high as you can, "
-"but don't bend the arms during the movement. On the highest point, make a "
-"short pause of 1 or 2 seconds before returning slowly to the initial "
-"position.\n"
-"When training with a higher weight, make sure that you still do the whole "
-"movement!"
+"Take a barbell and stand with a straight body, the arms are hanging freely in front of you. Lift from this position the shoulders as high as you can, but don't bend the arms during the movement. On the highest point, make a short pause of 1 or 2 seconds before returning slowly to the initial position.\n"
+"When training with a higher weight, make sure that you still do the whole movement!"
 msgstr ""
-"Ta en skivstång och stå med rak kropp, armarna hänger fritt framför dig. "
-"Lyft axlarna så högt du kan från denna position, men böj inte armarna under "
-"rörelsen. Gör en kort paus på 1–2 sekunder i den högsta punkten innan du "
-"långsamt återgår till startpositionen.\n"
+"Ta en skivstång och stå med rak kropp, armarna hänger fritt framför dig. Lyft axlarna så högt du kan från denna position, men böj inte armarna under rörelsen. Gör en kort paus på 1–2 sekunder i den högsta punkten innan du långsamt återgår till startpositionen.\n"
 "När du tränar med tyngre vikter, se till att ändå göra hela rörelsen!"
 
 #: apps/exercises/i18n_content.py:140
@@ -1529,78 +1524,33 @@ msgstr ""
 
 #: apps/exercises/i18n_content.py:146
 msgid ""
-"Stand firmly, with your feet slightly more than shoulder wide apart. Stand "
-"directly behind the bar where it should barely touch your shin, your feet "
-"pointing a bit out. Bend down with a straight back, the knees also pointing "
-"somewhat out. Grab the bar with a shoulder wide grip, one overhand, one "
-"underhand (mixed grip).\n"
-"Pull the weight up. At the highest point make a slight hollow back and pull "
-"the bar back. Hold 1 or 2 seconds that position. Go down, making sure the "
-"back is not bent. Once down you can either go back again as soon as the "
-"weights touch the floor, or make a pause, depending on the weight."
+"Stand firmly, with your feet slightly more than shoulder wide apart. Stand directly behind the bar where it should barely touch your shin, your feet pointing a bit out. Bend down with a straight back, the knees also pointing somewhat out. Grab the bar with a shoulder wide grip, one overhand, one underhand (mixed grip).\n"
+"Pull the weight up. At the highest point make a slight hollow back and pull the bar back. Hold 1 or 2 seconds that position. Go down, making sure the back is not bent. Once down you can either go back again as soon as the weights touch the floor, or make a pause, depending on the weight."
 msgstr ""
-"Stå stadigt med fötterna något bredare än axelbrett. Stå direkt bakom "
-"stången så att den nästan vidrör skenbenen, fötterna pekar lite utåt. Böj "
-"dig ner med rak rygg, knäna pekar också lite utåt. Greppa stången axelbrett, "
-"ena handen med över- och andra med undergrepp (växelgrepp).\n"
-"Dra upp vikten. I den högsta punkten, svanka lätt och dra stången bakåt. "
-"Håll positionen i 1–2 sekunder. Gå ner med rak rygg. När stången är nere kan "
-"du antingen gå direkt in i nästa repetition när vikterna vidrör golvet, "
-"eller göra en paus beroende på vikten."
+"Stå stadigt med fötterna något bredare än axelbrett. Stå direkt bakom stången så att den nästan vidrör skenbenen, fötterna pekar lite utåt. Böj dig ner med rak rygg, knäna pekar också lite utåt. Greppa stången axelbrett, ena handen med över- och andra med undergrepp (växelgrepp).\n"
+"Dra upp vikten. I den högsta punkten, svanka lätt och dra stången bakåt. Håll positionen i 1–2 sekunder. Gå ner med rak rygg. När stången är nere kan du antingen gå direkt in i nästa repetition när vikterna vidrör golvet, eller göra en paus beroende på vikten."
 
 #: apps/exercises/i18n_content.py:156
 msgid ""
-"- Setup and Starting Position: Sit at the end of a flat bench with a "
-"dumbbell resting vertically against each thigh. Carefully lean back while "
-"driving the dumbbells toward your chest with your knees.\n"
-"- The “Leg Drive” and Posture: Plant your feet firmly on the floor. Retract "
-"your shoulder blades (press them together against the bench) and maintain a "
-"slight natural lumbar curve.\n"
-"- Starting Position: Push the dumbbells toward the ceiling. Your wrists "
-"should be aligned with your elbows. Rotate the dumbbells slightly inward "
-"(about 45 degrees) so that your elbows do not splay out too far to the "
-"sides, thereby protecting your shoulders.\n"
-"- Eccentric Phase (Lowering): Lower the dumbbells in a controlled manner "
-"toward the sides of your chest. Your elbows should lower at an angle of "
-"about 45–60 degrees relative to your body. Feel the stretch in the lower "
-"part of your chest.\n"
-"- Concentric Phase (Lift): Push the weight upward in a slight arc (toward "
-"the center), without letting the dumbbells collide at the top or fully "
-"locking out your elbows to maintain muscle tension. Exhale as you lift."
+"- Setup and Starting Position: Sit at the end of a flat bench with a dumbbell resting vertically against each thigh. Carefully lean back while driving the dumbbells toward your chest with your knees.\n"
+"- The “Leg Drive” and Posture: Plant your feet firmly on the floor. Retract your shoulder blades (press them together against the bench) and maintain a slight natural lumbar curve.\n"
+"- Starting Position: Push the dumbbells toward the ceiling. Your wrists should be aligned with your elbows. Rotate the dumbbells slightly inward (about 45 degrees) so that your elbows do not splay out too far to the sides, thereby protecting your shoulders.\n"
+"- Eccentric Phase (Lowering): Lower the dumbbells in a controlled manner toward the sides of your chest. Your elbows should lower at an angle of about 45–60 degrees relative to your body. Feel the stretch in the lower part of your chest.\n"
+"- Concentric Phase (Lift): Push the weight upward in a slight arc (toward the center), without letting the dumbbells collide at the top or fully locking out your elbows to maintain muscle tension. Exhale as you lift."
 msgstr ""
-"- Förberedelse och startposition: Sitt i ändan av en plan bänk med en hantel "
-"stående vertikalt mot vardera låret. Luta dig försiktigt bakåt samtidigt som "
-"du driver hantlarna mot bröstet med hjälp av knäna.\n"
-"- Benstöd och hållning: Plantera fötterna stadigt i golvet. Dra ihop "
-"skulderbladen (pressa dem mot bänken) och behåll en lätt, naturlig svank.\n"
-"- Startposition: Pressa hantlarna mot taket. Handlederna ska vara i linje "
-"med armbågarna. Vrid hantlarna lätt inåt (cirka 45 grader) så att armbågarna "
-"inte flyger ut för mycket åt sidorna, vilket skyddar axlarna.\n"
-"- Excentrisk fas (sänkning): Sänk hantlarna kontrollerat mot sidorna av "
-"bröstet. Armbågarna ska sänkas i en vinkel på ungefär 45–60 grader relativt "
-"kroppen. Känn stretchen i den nedre delen av bröstet.\n"
-"- Koncentrisk fas (lyft): Pressa vikten uppåt i en lätt båge (mot mitten), "
-"utan att låta hantlarna kollidera högst upp eller låsa armbågarna helt, för "
-"att bibehålla muskelspänningen. Andas ut när du lyfter."
+"- Förberedelse och startposition: Sitt i ändan av en plan bänk med en hantel stående vertikalt mot vardera låret. Luta dig försiktigt bakåt samtidigt som du driver hantlarna mot bröstet med hjälp av knäna.\n"
+"- Benstöd och hållning: Plantera fötterna stadigt i golvet. Dra ihop skulderbladen (pressa dem mot bänken) och behåll en lätt, naturlig svank.\n"
+"- Startposition: Pressa hantlarna mot taket. Handlederna ska vara i linje med armbågarna. Vrid hantlarna lätt inåt (cirka 45 grader) så att armbågarna inte flyger ut för mycket åt sidorna, vilket skyddar axlarna.\n"
+"- Excentrisk fas (sänkning): Sänk hantlarna kontrollerat mot sidorna av bröstet. Armbågarna ska sänkas i en vinkel på ungefär 45–60 grader relativt kroppen. Känn stretchen i den nedre delen av bröstet.\n"
+"- Koncentrisk fas (lyft): Pressa vikten uppåt i en lätt båge (mot mitten), utan att låta hantlarna kollidera högst upp eller låsa armbågarna helt, för att bibehålla muskelspänningen. Andas ut när du lyfter."
 
 #: apps/exercises/i18n_content.py:172
 msgid ""
-"Hold two dumbbells, the arms are streched, the hands are on your side, the "
-"palms face inwards. Bend the arms and bring the weight with a fast movement "
-"up. At the same time, rotate your arms by 90 degrees at the very beginning "
-"of the movement. At the highest point, rotate a little the weights further "
-"outwards. Without a pause, bring them down, slowly.\n"
-"Don't allow your body to swing during the exercise, all work is done by the "
-"biceps, which are the only mucles that should move (pay attention to the "
-"elbows)."
+"Hold two dumbbells, the arms are streched, the hands are on your side, the palms face inwards. Bend the arms and bring the weight with a fast movement up. At the same time, rotate your arms by 90 degrees at the very beginning of the movement. At the highest point, rotate a little the weights further outwards. Without a pause, bring them down, slowly.\n"
+"Don't allow your body to swing during the exercise, all work is done by the biceps, which are the only mucles that should move (pay attention to the elbows)."
 msgstr ""
-"Håll två hantlar med raka armar vid sidorna, handflatorna vända inåt. Böj "
-"armarna och för upp vikterna med en snabb rörelse. Vrid samtidigt armarna 90 "
-"grader redan i början av rörelsen. I den högsta punkten, vrid vikterna lite "
-"mer utåt. Sänk dem sedan långsamt utan paus.\n"
-"Låt inte kroppen svänga under övningen – allt arbete ska utföras av "
-"bicepsen, som är den enda muskeln som ska röra sig (var uppmärksam på "
-"armbågarna)."
+"Håll två hantlar med raka armar vid sidorna, handflatorna vända inåt. Böj armarna och för upp vikterna med en snabb rörelse. Vrid samtidigt armarna 90 grader redan i början av rörelsen. I den högsta punkten, vrid vikterna lite mer utåt. Sänk dem sedan långsamt utan paus.\n"
+"Låt inte kroppen svänga under övningen – allt arbete ska utföras av bicepsen, som är den enda muskeln som ska röra sig (var uppmärksam på armbågarna)."
 
 #: apps/exercises/i18n_content.py:181
 msgid ""
@@ -1609,10 +1559,10 @@ msgid ""
 "the whole exercise to the front. Press the weights up, at the highest point "
 "they come very near but don't touch. Go slowly down and repeat."
 msgstr ""
-"Sitt på en bänk med ryggstödet nästan lodrätt. Ta två hantlar och för upp "
-"dem till axelhöjd, handflatorna och armbågarna pekar framåt under hela "
-"övningen. Pressa upp vikterna; i den högsta punkten kommer de mycket nära "
-"varandra men rör inte vid varandra. Sänk långsamt och upprepa."
+"Sitt på en bänk med ryggstödet nästan lodrätt. Ta två hantlar och för upp dem"
+" till axelhöjd, handflatorna och armbågarna pekar framåt under hela övningen."
+" Pressa upp vikterna; i den högsta punkten kommer de mycket nära varandra men"
+" rör inte vid varandra. Sänk långsamt och upprepa."
 
 #: apps/exercises/i18n_content.py:187
 msgid ""
@@ -1632,30 +1582,26 @@ msgstr ""
 msgid ""
 "Rest the bar across the front of your shoulders, elbows raised high to keep "
 "it in place, using either a clean grip or crossed arms. Keeping your torso "
-"upright, bend your knees and hips to lower into a squat until your thighs "
-"are at least parallel to the floor, then drive back up through your heels to "
+"upright, bend your knees and hips to lower into a squat until your thighs are"
+" at least parallel to the floor, then drive back up through your heels to "
 "standing."
 msgstr ""
-"Vila stången på framsidan av axlarna, med armbågarna högt lyfta för att "
-"hålla den på plats, antingen med rent grepp eller korsade armar. Håll "
-"överkroppen upprätt, böj knän och höfter för att sänka dig ner i en knäböj "
-"tills låren är minst parallella med golvet, res dig sedan upp igen genom att "
-"trycka genom hälarna."
+"Vila stången på framsidan av axlarna, med armbågarna högt lyfta för att hålla"
+" den på plats, antingen med rent grepp eller korsade armar. Håll överkroppen "
+"upprätt, böj knän och höfter för att sänka dig ner i en knäböj tills låren är"
+" minst parallella med golvet, res dig sedan upp igen genom att trycka genom "
+"hälarna."
 
 #: apps/exercises/i18n_content.py:200
 msgid ""
 "- Start: Hold dumbbells at your sides with palms facing your torso.\n"
-"- Curl: Lift the weights toward your shoulders while maintaining the neutral "
-"grip (like holding a hammer).\n"
-"- Squeeze: Contract the biceps at the top without moving your elbows "
-"forward.\n"
+"- Curl: Lift the weights toward your shoulders while maintaining the neutral grip (like holding a hammer).\n"
+"- Squeeze: Contract the biceps at the top without moving your elbows forward.\n"
 "- Lower: Slowly return to the starting position with full control."
 msgstr ""
 "- Start: Håll hantlarna vid sidorna med handflatorna vända mot kroppen.\n"
-"- Curl: Lyft vikterna mot axlarna samtidigt som du behåller det neutrala "
-"greppet (som att hålla en hammare).\n"
-"- Pressa samman: Kontrahera bicepsen högst upp utan att föra armbågarna "
-"framåt.\n"
+"- Curl: Lyft vikterna mot axlarna samtidigt som du behåller det neutrala greppet (som att hålla en hammare).\n"
+"- Pressa samman: Kontrahera bicepsen högst upp utan att föra armbågarna framåt.\n"
 "- Sänk: Återgå långsamt och kontrollerat till startpositionen."
 
 #: apps/exercises/i18n_content.py:207
@@ -1666,23 +1612,23 @@ msgid ""
 "body forms a straight line from shoulders to knees, squeezing your glutes at "
 "the top, then lower back down under control."
 msgstr ""
-"Sitt på golvet med övre delen av ryggen mot en bänk och en belastad "
-"skivstång rullad över höften (använd en dyna för komfort). Plantera fötterna "
-"platt i golvet, knäna böjda. Driv genom hälarna för att lyfta höften tills "
-"kroppen bildar en rak linje från axlar till knän, pressa ihop sätesmusklerna "
-"högst upp och sänk sedan kontrollerat ner igen."
+"Sitt på golvet med övre delen av ryggen mot en bänk och en belastad skivstång"
+" rullad över höften (använd en dyna för komfort). Plantera fötterna platt i "
+"golvet, knäna böjda. Driv genom hälarna för att lyfta höften tills kroppen "
+"bildar en rak linje från axlar till knän, pressa ihop sätesmusklerna högst "
+"upp och sänk sedan kontrollerat ner igen."
 
 #: apps/exercises/i18n_content.py:214
 msgid ""
 "Lie back on an incline bench set to about 30-45°, feet flat on the floor. "
-"Grip the bar slightly wider than shoulder-width and unrack it over your "
-"upper chest. Lower the bar under control to your upper chest, then press it "
-"back up until your arms are fully extended."
+"Grip the bar slightly wider than shoulder-width and unrack it over your upper"
+" chest. Lower the bar under control to your upper chest, then press it back "
+"up until your arms are fully extended."
 msgstr ""
 "Ligg på rygg i en lutande bänk inställd på cirka 30–45°, fötterna platt i "
 "golvet. Greppa stången något bredare än axelbrett och lyft ur den från "
-"stället ovanför övre bröstet. Sänk stången kontrollerat till övre bröstet "
-"och pressa den sedan tillbaka upp tills armarna är helt utsträckta."
+"stället ovanför övre bröstet. Sänk stången kontrollerat till övre bröstet och"
+" pressa den sedan tillbaka upp tills armarna är helt utsträckta."
 
 #: apps/exercises/i18n_content.py:220
 msgid ""
@@ -1702,26 +1648,26 @@ msgstr ""
 msgid ""
 "This exercise works the deltoid muscle of the shoulder. The movement starts "
 "with the arms straight, and the hands holding weights at the sides or in "
-"front of the body. Body is in a slight forward-leaning position with hips "
-"and knees bent a little. Arms are kept straight or slightly bent, and raised "
+"front of the body. Body is in a slight forward-leaning position with hips and"
+" knees bent a little. Arms are kept straight or slightly bent, and raised "
 "through an arc of movement in the coronal plane that terminates when the "
 "hands are at approximately shoulder height. Weights are lowered to the "
 "starting position, completing one rep. When using a cable machine the "
-"individual stands with the coronal plane in line with the pulley, which is "
-"at or near the ground. The exercise can be completed one shoulder at a time "
-"(with the other hand used to stabilize the body against the weight moved), "
-"or with both hands simultaneously if two parallel pulleys are available."
+"individual stands with the coronal plane in line with the pulley, which is at"
+" or near the ground. The exercise can be completed one shoulder at a time "
+"(with the other hand used to stabilize the body against the weight moved), or"
+" with both hands simultaneously if two parallel pulleys are available."
 msgstr ""
 "Denna övning tränar axelns deltamuskel. Rörelsen börjar med raka armar och "
 "vikter i händerna vid sidorna eller framför kroppen. Kroppen är i en lätt "
-"framåtlutad position med höfter och knän lätt böjda. Armarna hålls raka "
-"eller lätt böjda och lyfts i en bågrörelse i sidoplanet tills händerna når "
-"ungefär axelhöjd. Vikterna sänks tillbaka till startpositionen, vilket "
-"avslutar en repetition. Vid användning av en kabelmaskin står personen med "
-"sidoplanet i linje med blocket, som befinner sig vid eller nära golvet. "
-"Övningen kan utföras en axel i taget (med andra handen använd för att "
-"stabilisera kroppen mot vikten som rör sig), eller med båda händerna "
-"samtidigt om två parallella block finns tillgängliga."
+"framåtlutad position med höfter och knän lätt böjda. Armarna hålls raka eller"
+" lätt böjda och lyfts i en bågrörelse i sidoplanet tills händerna når ungefär"
+" axelhöjd. Vikterna sänks tillbaka till startpositionen, vilket avslutar en "
+"repetition. Vid användning av en kabelmaskin står personen med sidoplanet i "
+"linje med blocket, som befinner sig vid eller nära golvet. Övningen kan "
+"utföras en axel i taget (med andra handen använd för att stabilisera kroppen "
+"mot vikten som rör sig), eller med båda händerna samtidigt om två parallella "
+"block finns tillgängliga."
 
 #: apps/exercises/i18n_content.py:240
 msgid ""
@@ -1731,17 +1677,17 @@ msgid ""
 "down under control without letting the weight stack slam down."
 msgstr ""
 "Ligg på mage i bencurl-maskinen med dynan strax ovanför hälarna och knäna "
-"precis utanför bänkens kant. Böj benen genom att kröka knäna och föra "
-"hälarna mot sätet, sänk sedan tillbaka kontrollerat utan att låta "
-"viktstapeln smälla ner."
+"precis utanför bänkens kant. Böj benen genom att kröka knäna och föra hälarna"
+" mot sätet, sänk sedan tillbaka kontrollerat utan att låta viktstapeln smälla"
+" ner."
 
 #: apps/exercises/i18n_content.py:246
 msgid ""
 "Sit in the leg press machine with your back flat against the pad and feet "
-"shoulder-width apart on the platform. Unlock the safety catches and lower "
-"the platform by bending your knees to about a 90° angle, keeping your lower "
-"back pressed against the pad. Push through your heels to extend your legs "
-"back to the starting position without locking your knees out completely."
+"shoulder-width apart on the platform. Unlock the safety catches and lower the"
+" platform by bending your knees to about a 90° angle, keeping your lower back"
+" pressed against the pad. Push through your heels to extend your legs back to"
+" the starting position without locking your knees out completely."
 msgstr ""
 "Sitt i benpressen med ryggen platt mot dynan och fötterna axelbrett isär på "
 "plattan. Lås upp säkerhetsspärrarna och sänk plattan genom att böja knäna "
@@ -1751,32 +1697,23 @@ msgstr ""
 
 #: apps/exercises/i18n_content.py:253
 msgid ""
-"- Setup: Stand with feet together and grip the bar slightly wider than "
-"shoulders.\n"
+"- Setup: Stand with feet together and grip the bar slightly wider than shoulders.\n"
 "- Position: Rest the bar on your upper chest.\n"
-"- Press: Brace your core and push the bar straight up until your arms lock "
-"out.\n"
+"- Press: Brace your core and push the bar straight up until your arms lock out.\n"
 "- Finish: Control the bar back down to your chest."
 msgstr ""
-"- Förberedelse: Stå med fötterna ihop och greppa stången något bredare än "
-"axelbrett.\n"
+"- Förberedelse: Stå med fötterna ihop och greppa stången något bredare än axelbrett.\n"
 "- Position: Vila stången på övre bröstet.\n"
-"- Press: Spänn bålen och pressa stången rakt upp tills armarna är helt "
-"utsträckta.\n"
+"- Press: Spänn bålen och pressa stången rakt upp tills armarna är helt utsträckta.\n"
 "- Avslutning: Kontrollera stången tillbaka ner till bröstet."
 
 #: apps/exercises/i18n_content.py:259
 msgid ""
-"Get into a position on the floor supporting your weight on your forearms and "
-"toes. Arms are bent and directly below the shoulder.\n"
-"Keep your body straight at all times and hold this position as long as "
-"possible. To increase difficulty an arm or leg can be raised while "
-"performing this exercise."
+"Get into a position on the floor supporting your weight on your forearms and toes. Arms are bent and directly below the shoulder.\n"
+"Keep your body straight at all times and hold this position as long as possible. To increase difficulty an arm or leg can be raised while performing this exercise."
 msgstr ""
-"Inta en position på golvet där du stödjer din vikt på underarmarna och "
-"tårna. Armarna är böjda och direkt under axlarna.\n"
-"Håll kroppen rak hela tiden och behåll positionen så länge som möjligt. För "
-"att öka svårigheten kan en arm eller ett ben lyftas under övningen."
+"Inta en position på golvet där du stödjer din vikt på underarmarna och tårna. Armarna är böjda och direkt under axlarna.\n"
+"Håll kroppen rak hela tiden och behåll positionen så länge som möjligt. För att öka svårigheten kan en arm eller ett ben lyftas under övningen."
 
 #: apps/exercises/i18n_content.py:265
 msgid ""
@@ -1786,16 +1723,16 @@ msgid ""
 "movement down, always keeping the chest out."
 msgstr ""
 "Greppa chins-stången med brett grepp, kroppen hänger fritt. Håll bröstet "
-"framåtsträckt och dra dig upp tills hakan når stången, eller om du drar "
-"bakom nacken, tills stången vidrör nacken. Sänk dig långsamt och "
-"kontrollerat ner, håll bröstet framåtsträckt hela tiden."
+"framåtsträckt och dra dig upp tills hakan når stången, eller om du drar bakom"
+" nacken, tills stången vidrör nacken. Sänk dig långsamt och kontrollerat ner,"
+" håll bröstet framåtsträckt hela tiden."
 
 #: apps/exercises/i18n_content.py:271
 msgid ""
 "Stand holding a barbell in front of your thighs with a shoulder-width "
-"overhand grip. Keeping your back flat and knees only slightly bent, push "
-"your hips back and lower the bar down the front of your legs until you feel "
-"a stretch in your hamstrings. Drive your hips forward to return to standing, "
+"overhand grip. Keeping your back flat and knees only slightly bent, push your"
+" hips back and lower the bar down the front of your legs until you feel a "
+"stretch in your hamstrings. Drive your hips forward to return to standing, "
 "keeping the bar close to your legs throughout."
 msgstr ""
 "Stå och håll en skivstång framför låren med ett axelbrett övergrepp. Håll "
@@ -1805,51 +1742,29 @@ msgstr ""
 
 #: apps/exercises/i18n_content.py:278
 msgid ""
-"- Take a seat on the machine with your feet planted, a little wider than "
-"shoulder width. Drive the heels, and squeeze the glutes. Grab onto the cable "
-"handle.\n"
-"- Sit up tall with a slight bend through the knees. Tighten up the abs and "
-"low back to maintain a perpendicular angle to the floor with your torso.\n"
-"- Roll the shoulders back and down. Squeeze them together as you row, "
-"thinking about pinching a pencil in between them. As you do this, pull the "
-"handle back towards you, landing right above your belly button.\n"
-"- Pause here for a moment before returning the handle, still squeezing the "
-"shoulder blades. Once you've returned the weight to the stack, then allow "
-"the shoulder blades to relax, without pulling the torso forward.\n"
+"- Take a seat on the machine with your feet planted, a little wider than shoulder width. Drive the heels, and squeeze the glutes. Grab onto the cable handle.\n"
+"- Sit up tall with a slight bend through the knees. Tighten up the abs and low back to maintain a perpendicular angle to the floor with your torso.\n"
+"- Roll the shoulders back and down. Squeeze them together as you row, thinking about pinching a pencil in between them. As you do this, pull the handle back towards you, landing right above your belly button.\n"
+"- Pause here for a moment before returning the handle, still squeezing the shoulder blades. Once you've returned the weight to the stack, then allow the shoulder blades to relax, without pulling the torso forward.\n"
 "- Repeat the movement."
 msgstr ""
-"- Sätt dig i maskinen med fötterna placerade lite bredare än axelbrett. "
-"Tryck genom hälarna och pressa ihop sätesmusklerna. Greppa kabelhandtaget.\n"
-"- Sitt upprätt med en lätt böjning i knäna. Spänn magen och nedre ryggen för "
-"att hålla överkroppen vinkelrät mot golvet.\n"
-"- Rulla axlarna bakåt och nedåt. Pressa ihop dem när du drar, som om du "
-"klämde ihop en penna mellan skulderbladen. Samtidigt drar du handtaget "
-"tillbaka mot dig, så att det landar precis ovanför naveln.\n"
-"- Pausa ett ögonblick innan du för tillbaka handtaget, fortsätt pressa ihop "
-"skulderbladen. När vikten återgått till stapeln, låt skulderbladen slappna "
-"av utan att luta överkroppen framåt.\n"
+"- Sätt dig i maskinen med fötterna placerade lite bredare än axelbrett. Tryck genom hälarna och pressa ihop sätesmusklerna. Greppa kabelhandtaget.\n"
+"- Sitt upprätt med en lätt böjning i knäna. Spänn magen och nedre ryggen för att hålla överkroppen vinkelrät mot golvet.\n"
+"- Rulla axlarna bakåt och nedåt. Pressa ihop dem när du drar, som om du klämde ihop en penna mellan skulderbladen. Samtidigt drar du handtaget tillbaka mot dig, så att det landar precis ovanför naveln.\n"
+"- Pausa ett ögonblick innan du för tillbaka handtaget, fortsätt pressa ihop skulderbladen. När vikten återgått till stapeln, låt skulderbladen slappna av utan att luta överkroppen framåt.\n"
 "- Upprepa rörelsen."
 
 #: apps/exercises/i18n_content.py:290
 msgid ""
-"Hold the SZ-bar and lay down on a flat bench in such a way that around 1/4 "
-"of your head is over the edge. Stretch your arms with the bar and bend them "
-"so that the bar is lowered. Just before it touches your forehead, push it "
-"up.\n"
-"Pay attention to your elbows and arms: only the triceps are doing the work, "
-"the rest of the arms should not move."
+"Hold the SZ-bar and lay down on a flat bench in such a way that around 1/4 of your head is over the edge. Stretch your arms with the bar and bend them so that the bar is lowered. Just before it touches your forehead, push it up.\n"
+"Pay attention to your elbows and arms: only the triceps are doing the work, the rest of the arms should not move."
 msgstr ""
-"Håll SZ-stången och lägg dig på rygg på en plan bänk så att ungefär en "
-"fjärdedel av huvudet är utanför kanten. Sträck ut armarna med stången och "
-"böj dem sedan för att sänka stången. Precis innan den vidrör pannan, pressa "
-"upp den igen.\n"
-"Var uppmärksam på armbågar och armar: bara triceps ska göra jobbet, resten "
-"av armen ska inte röra sig."
+"Håll SZ-stången och lägg dig på rygg på en plan bänk så att ungefär en fjärdedel av huvudet är utanför kanten. Sträck ut armarna med stången och böj dem sedan för att sänka stången. Precis innan den vidrör pannan, pressa upp den igen.\n"
+"Var uppmärksam på armbågar och armar: bara triceps ska göra jobbet, resten av armen ska inte röra sig."
 
 #: apps/exercises/i18n_content.py:297
 msgid ""
-"Keep arms straight but not locked, pulling with your lats, not your "
-"shoulders.\n"
+"Keep arms straight but not locked, pulling with your lats, not your shoulders.\n"
 "Don’t let your shoulders shrug up during the movement."
 msgstr ""
 "Håll armarna raka men inte låsta, och dra med latissimus, inte med axlarna.\n"
@@ -1864,10 +1779,9 @@ msgid ""
 "elbows drift forward."
 msgstr ""
 "Stå vänd mot en kabelmaskin med en rak eller vinklad stång fäst i det övre "
-"blocket. Greppa stången med övergrepp, armbågarna intryckta mot sidorna. "
-"Håll överarmarna stilla och tryck ner stången tills armarna är helt "
-"utsträckta, låt den sedan återgå kontrollerat utan att armbågarna glider "
-"framåt."
+"blocket. Greppa stången med övergrepp, armbågarna intryckta mot sidorna. Håll"
+" överarmarna stilla och tryck ner stången tills armarna är helt utsträckta, "
+"låt den sedan återgå kontrollerat utan att armbågarna glider framåt."
 
 #: apps/exercises/models.py:39 apps/exercises/models.py:111
 msgid "equipment"
@@ -1890,10 +1804,11 @@ msgid "Per hand / dumbbell"
 msgstr "Per hand / hantel"
 
 #: apps/exercises/models.py:76 apps/programs/models.py:37
+#: apps/stretching/models.py:97
 msgid "description"
 msgstr "beskrivning"
 
-#: apps/exercises/models.py:84
+#: apps/exercises/models.py:84 apps/stretching/models.py:48
 msgid "instructions"
 msgstr "instruktioner"
 
@@ -1937,8 +1852,8 @@ msgstr "ordning"
 #: apps/exercises/models.py:216
 #, python-format
 msgid ""
-"This exercise already has the maximum of %(max)d image(s) allowed. Remove "
-"one before adding another."
+"This exercise already has the maximum of %(max)d image(s) allowed. Remove one"
+" before adding another."
 msgstr ""
 "Denna övning har redan det tillåtna maximiantalet (%(max)d) bilder. Ta bort "
 "en innan du lägger till en till."
@@ -2098,7 +2013,9 @@ msgstr "Slå ihop livsmedel"
 msgid ""
 "%(count)d more food(s) were left for later to stay within Open Food Facts' "
 "rate limit — run this action again in a minute."
-msgstr "%(count)d livsmedel sparades till senare för att hålla sig inom Open Food Facts hastighetsgräns – kör åtgärden igen om en minut."
+msgstr ""
+"%(count)d livsmedel sparades till senare för att hålla sig inom Open Food "
+"Facts hastighetsgräns – kör åtgärden igen om en minut."
 
 #: apps/nutrition/calculators.py:138 apps/nutrition/calculators.py:143
 msgid "Lower risk"
@@ -2292,9 +2209,8 @@ msgid ""
 "If set, the diet-plan builder only ever suggests this recipe for that meal — "
 "leave as \"Any meal\" for a recipe that fits anywhere."
 msgstr ""
-"Om inställd föreslår kostplansbyggaren det här receptet bara för den "
-"måltiden — lämna som \"Vilken måltid som helst\" för ett recept som passar "
-"överallt."
+"Om inställd föreslår kostplansbyggaren det här receptet bara för den måltiden"
+" — lämna som \"Vilken måltid som helst\" för ett recept som passar överallt."
 
 #: apps/nutrition/forms.py:304 templates/nutrition/diary_add_entry.html:38
 msgid "Meal"
@@ -2340,8 +2256,8 @@ msgstr "Variera måltider över en hel vecka i stället för att upprepa en dag"
 #: apps/nutrition/forms.py:352
 msgid ""
 "Each day still hits the same daily calories/macros above — only which meal "
-"fills each slot changes from day to day, so a week's worth of breakfasts "
-"(for example) aren't all identical."
+"fills each slot changes from day to day, so a week's worth of breakfasts (for"
+" example) aren't all identical."
 msgstr ""
 "Varje dag träffar ändå samma dagliga kalorier/makron ovan — bara vilken "
 "måltid som fyller varje plats varierar från dag till dag, så till exempel en "
@@ -2531,8 +2447,8 @@ msgstr ""
 
 #: apps/nutrition/i18n_content.py:71
 msgid ""
-"Pan-sear the salmon, serve over rice with steamed broccoli and a little "
-"olive oil."
+"Pan-sear the salmon, serve over rice with steamed broccoli and a little olive"
+" oil."
 msgstr ""
 "Stek laxen i panna, servera på ris med ångad broccoli och lite olivolja."
 
@@ -2541,8 +2457,8 @@ msgid ""
 "Roast the chicken and sweet potato together, top with crushed almonds and "
 "olive oil."
 msgstr ""
-"Ugnsrosta kycklingen och sötpotatisen tillsammans, toppa med krossade "
-"mandlar och olivolja."
+"Ugnsrosta kycklingen och sötpotatisen tillsammans, toppa med krossade mandlar"
+" och olivolja."
 
 #: apps/nutrition/i18n_content.py:73
 msgid ""
@@ -2704,7 +2620,7 @@ msgstr "A — bäst"
 msgid "B"
 msgstr "B"
 
-#: apps/nutrition/models.py:93
+#: apps/nutrition/models.py:93 templates/nutrition/diary_day.html:60
 msgid "C"
 msgstr "C"
 
@@ -2861,8 +2777,8 @@ msgid ""
 "Target: %(target)s kg/week. Actual trend: %(actual)s kg/week over the last "
 "%(days)s days. Suggested adjustment: %(delta)+d kcal/day."
 msgstr ""
-"Mål: %(target)s kg/vecka. Faktisk trend: %(actual)s kg/vecka under de "
-"senaste %(days)s dagarna. Föreslagen justering: %(delta)+d kcal/dag."
+"Mål: %(target)s kg/vecka. Faktisk trend: %(actual)s kg/vecka under de senaste"
+" %(days)s dagarna. Föreslagen justering: %(delta)+d kcal/dag."
 
 #: apps/nutrition/views.py:433
 msgid ""
@@ -2877,62 +2793,62 @@ msgstr ""
 msgid "Goal updated — new target is %(calories)d kcal/day."
 msgstr "Mål uppdaterat — nytt mål är %(calories)d kcal/dag."
 
-#: apps/nutrition/views.py:758
+#: apps/nutrition/views.py:761
 msgid "Pick a date to copy this day to."
 msgstr "Välj ett datum att kopiera denna dag till."
 
-#: apps/nutrition/views.py:763
+#: apps/nutrition/views.py:766
 #, python-format
 msgid "Copied %(count)d entry to %(date)s."
 msgid_plural "Copied %(count)d entries to %(date)s."
 msgstr[0] "Kopierade %(count)d post till %(date)s."
 msgstr[1] "Kopierade %(count)d poster till %(date)s."
 
-#: apps/nutrition/views.py:769
+#: apps/nutrition/views.py:772
 msgid "Nothing to copy — that day has no entries."
 msgstr "Inget att kopiera — den dagen har inga poster."
 
-#: apps/nutrition/views.py:815 apps/nutrition/views.py:1135
-#: apps/nutrition/views.py:1598
+#: apps/nutrition/views.py:818 apps/nutrition/views.py:1138
+#: apps/nutrition/views.py:1601
 msgid "That food couldn't be imported — try again."
 msgstr "Det gick inte att importera detta livsmedel — försök igen."
 
-#: apps/nutrition/views.py:879
+#: apps/nutrition/views.py:882
 msgid "Nothing logged for this meal yet to save as a recipe."
 msgstr "Inget har loggats för den här måltiden än att spara som recept."
 
-#: apps/nutrition/views.py:881
+#: apps/nutrition/views.py:884
 #, python-format
 msgid "Saved “%(name)s” as a new recipe."
 msgstr "Sparade ”%(name)s” som ett nytt recept."
 
-#: apps/nutrition/views.py:1025
+#: apps/nutrition/views.py:1028
 #, python-format
 msgid "\"%(name)s\" created — now add its ingredients below."
 msgstr "\"%(name)s\" skapad — lägg till dess ingredienser nedan."
 
-#: apps/nutrition/views.py:1075 apps/nutrition/views.py:1370
+#: apps/nutrition/views.py:1078 apps/nutrition/views.py:1373
 #: apps/programs/views.py:205
 #, python-format
 msgid ""
-"This file was exported from IronStack %(version)s — worth double-checking "
-"the import if something looks off."
+"This file was exported from IronStack %(version)s — worth double-checking the"
+" import if something looks off."
 msgstr ""
 "Den här filen exporterades från IronStack %(version)s — värt att dubbelkolla "
 "importen om något ser fel ut."
 
-#: apps/nutrition/views.py:1519
+#: apps/nutrition/views.py:1522
 msgid "Only a personal trainer can share a diet plan."
 msgstr "Endast en personlig tränare kan dela en kostplan."
 
-#: apps/nutrition/views.py:1636
+#: apps/nutrition/views.py:1639
 #, python-format
 msgid "Logged %(count)d item to %(date)s."
 msgid_plural "Logged %(count)d items to %(date)s."
 msgstr[0] "Loggade %(count)d post till %(date)s."
 msgstr[1] "Loggade %(count)d poster till %(date)s."
 
-#: apps/nutrition/views.py:1647
+#: apps/nutrition/views.py:1650
 msgid "Nothing to log — this plan has no items for that date."
 msgstr "Inget att logga — den här planen har inga poster för det datumet."
 
@@ -2952,8 +2868,8 @@ msgstr ""
 
 #: apps/programs/forms.py:46
 msgid ""
-"Lets the clients checked below see and import their own copy of this "
-"program. Leave everyone unchecked to keep it private."
+"Lets the clients checked below see and import their own copy of this program."
+" Leave everyone unchecked to keep it private."
 msgstr ""
 "Låter klienterna som är markerade nedan se och importera sin egen kopia av "
 "det här programmet. Lämna alla omarkerade för att hålla det privat."
@@ -3021,9 +2937,9 @@ msgid ""
 "deadlift/press/pull day, and one accessory-focused day. Copy it and adjust "
 "weights/increments to your own."
 msgstr ""
-"En klassisk tredagars helkroppsmall: en böj/press/rodd-dag, en marklyft/"
-"press/drag-dag och en dag fokuserad på accessoriska övningar. Kopiera den "
-"och justera vikter/ökningar efter dig själv."
+"En klassisk tredagars helkroppsmall: en böj/press/rodd-dag, en "
+"marklyft/press/drag-dag och en dag fokuserad på accessoriska övningar. "
+"Kopiera den och justera vikter/ökningar efter dig själv."
 
 #: apps/programs/i18n_content.py:33
 msgid ""
@@ -3072,12 +2988,12 @@ msgstr ""
 #: apps/programs/i18n_content.py:55
 msgid ""
 "The classic 10x10 high-volume method: one main lift per workout done for ten "
-"sets of ten reps at a fixed, moderate weight, paired with a lighter "
-"accessory movement. Brutal on paper, simple in practice — built for muscle "
-"growth, not 1-rep-max testing."
+"sets of ten reps at a fixed, moderate weight, paired with a lighter accessory"
+" movement. Brutal on paper, simple in practice — built for muscle growth, not"
+" 1-rep-max testing."
 msgstr ""
-"Den klassiska 10x10-högvolymmetoden: en huvudövning per pass utförd i tio "
-"set om tio repetitioner med en fast, måttlig vikt, ihopparad med en lättare "
+"Den klassiska 10x10-högvolymmetoden: en huvudövning per pass utförd i tio set"
+" om tio repetitioner med en fast, måttlig vikt, ihopparad med en lättare "
 "accessorisk övning. Brutal på papper, enkel i praktiken — byggd för "
 "muskeltillväxt, inte 1RM-testning."
 
@@ -3289,14 +3205,14 @@ msgid ""
 "Hit the top of your rep range on every set at %(weight)s kg — adding "
 "%(increment)s kg and resetting to the bottom of the range."
 msgstr ""
-"Nådde toppen av repetitionsintervallet i varje set vid %(weight)s kg — "
-"lägger till %(increment)s kg och återställer till intervallets botten."
+"Nådde toppen av repetitionsintervallet i varje set vid %(weight)s kg — lägger"
+" till %(increment)s kg och återställer till intervallets botten."
 
 #: apps/progression/engine.py:277
 #, python-format
 msgid ""
-"Still within your rep range at %(weight)s kg — repeat the same weight and "
-"aim for more reps next time."
+"Still within your rep range at %(weight)s kg — repeat the same weight and aim"
+" for more reps next time."
 msgstr ""
 "Fortfarande inom repetitionsintervallet vid %(weight)s kg — upprepa samma "
 "vikt och sikta på fler repetitioner nästa gång."
@@ -3307,8 +3223,8 @@ msgid ""
 "Missed the bottom of your rep range %(streak)s sessions in a row at "
 "%(weight)s kg — recommending a deload to %(deload)s kg."
 msgstr ""
-"Missade botten av repetitionsintervallet %(streak)s pass i rad vid "
-"%(weight)s kg — rekommenderar avlastning till %(deload)s kg."
+"Missade botten av repetitionsintervallet %(streak)s pass i rad vid %(weight)s"
+" kg — rekommenderar avlastning till %(deload)s kg."
 
 #: apps/progression/engine.py:302 apps/progression/engine.py:368
 #, python-format
@@ -3662,6 +3578,718 @@ msgstr "Aviseringar tystade för denna grupp."
 msgid "Too many attempts. Try again in a few minutes."
 msgstr "För många försök. Försök igen om några minuter."
 
+#: apps/stretching/forms.py:34
+msgid "You already have one with this name."
+msgstr "Du har redan en med det namnet."
+
+#: apps/stretching/forms.py:86
+msgid "Hold (seconds)"
+msgstr "Håll (sekunder)"
+
+#: apps/stretching/forms.py:115
+msgid "This field is required."
+msgstr "Detta fält måste fyllas i."
+
+#: apps/stretching/forms.py:137
+msgid "Routine"
+msgstr "Rutin"
+
+#: apps/stretching/i18n_content.py:21
+msgid "Standing Quad Stretch"
+msgstr "Stående lårframsidesstretch"
+
+#: apps/stretching/i18n_content.py:22
+msgid "Kneeling Hip Flexor Stretch"
+msgstr "Knästående höftböjarstretch"
+
+#: apps/stretching/i18n_content.py:23
+msgid "Couch Stretch"
+msgstr "Soffstretch"
+
+#: apps/stretching/i18n_content.py:24
+msgid "Standing Hamstring Stretch"
+msgstr "Stående baksidesstretch"
+
+#: apps/stretching/i18n_content.py:25
+msgid "Lying Hamstring Stretch"
+msgstr "Liggande baksidesstretch"
+
+#: apps/stretching/i18n_content.py:26
+msgid "Seated Forward Fold"
+msgstr "Sittande framåtfällning"
+
+#: apps/stretching/i18n_content.py:27
+msgid "Wide-Leg Forward Fold"
+msgstr "Framåtfällning med brett isär"
+
+#: apps/stretching/i18n_content.py:28
+msgid "Figure-Four Stretch"
+msgstr "Fyrans stretch"
+
+#: apps/stretching/i18n_content.py:29
+msgid "Pigeon Pose"
+msgstr "Duvan"
+
+#: apps/stretching/i18n_content.py:30
+msgid "Knee-to-Chest Stretch"
+msgstr "Knä mot bröst"
+
+#: apps/stretching/i18n_content.py:31
+msgid "Wall Calf Stretch"
+msgstr "Vadstretch mot vägg"
+
+#: apps/stretching/i18n_content.py:32
+msgid "Deep Squat Hold"
+msgstr "Djup knäböj, håll"
+
+#: apps/stretching/i18n_content.py:33
+msgid "Downward Dog"
+msgstr "Nedåtgående hund"
+
+#: apps/stretching/i18n_content.py:34
+msgid "Doorway Chest Stretch"
+msgstr "Bröststretch i dörröppning"
+
+#: apps/stretching/i18n_content.py:35
+msgid "Cross-Body Shoulder Stretch"
+msgstr "Axelstretch över kroppen"
+
+#: apps/stretching/i18n_content.py:36
+msgid "Overhead Triceps Stretch"
+msgstr "Tricepsstretch över huvudet"
+
+#: apps/stretching/i18n_content.py:37
+msgid "Biceps Wall Stretch"
+msgstr "Bicepsstretch mot vägg"
+
+#: apps/stretching/i18n_content.py:38
+msgid "Child's Pose"
+msgstr "Barnets position"
+
+#: apps/stretching/i18n_content.py:39
+msgid "Standing Side Bend"
+msgstr "Stående sidoböjning"
+
+#: apps/stretching/i18n_content.py:40
+msgid "Thread the Needle"
+msgstr "Trä nålen"
+
+#: apps/stretching/i18n_content.py:41
+msgid "Cobra Stretch"
+msgstr "Kobran"
+
+#: apps/stretching/i18n_content.py:42
+msgid "Supine Spinal Twist"
+msgstr "Liggande ryggvridning"
+
+#: apps/stretching/i18n_content.py:43
+msgid "Upper Back Stretch"
+msgstr "Övre ryggstretch"
+
+#: apps/stretching/i18n_content.py:44
+msgid "Neck Side Stretch"
+msgstr "Sidostretch för nacken"
+
+#: apps/stretching/i18n_content.py:45
+msgid "Wrist Flexor Stretch"
+msgstr "Handledsböjarstretch"
+
+#: apps/stretching/i18n_content.py:46
+msgid "Wrist Extensor Stretch"
+msgstr "Handledssträckarstretch"
+
+#: apps/stretching/i18n_content.py:47
+msgid "Cat-Cow"
+msgstr "Katt-ko"
+
+#: apps/stretching/i18n_content.py:48
+msgid "Arm Circles"
+msgstr "Armcirklar"
+
+#: apps/stretching/i18n_content.py:49
+msgid "Hip Circles"
+msgstr "Höftcirklar"
+
+#: apps/stretching/i18n_content.py:50
+msgid "Torso Rotations"
+msgstr "Bålrotationer"
+
+#: apps/stretching/i18n_content.py:51
+msgid "Leg Swings"
+msgstr "Bensvingar"
+
+#: apps/stretching/i18n_content.py:52
+msgid "World's Greatest Stretch"
+msgstr "Världens bästa stretch"
+
+#: apps/stretching/i18n_content.py:57
+msgid "Lower Body Cool-Down"
+msgstr "Nedvarvning: underkropp"
+
+#: apps/stretching/i18n_content.py:58
+msgid "Five static stretches for the legs and hips after a lower-body workout."
+msgstr ""
+"Fem statiska stretchövningar för ben och höfter efter ett underkroppspass."
+
+#: apps/stretching/i18n_content.py:59
+msgid "Upper Body Cool-Down"
+msgstr "Nedvarvning: överkropp"
+
+#: apps/stretching/i18n_content.py:60
+msgid "Chest, shoulders, arms and neck after an upper-body workout."
+msgstr "Bröst, axlar, armar och nacke efter ett överkroppspass."
+
+#: apps/stretching/i18n_content.py:61
+msgid "Full Body Stretch"
+msgstr "Helkroppsstretch"
+
+#: apps/stretching/i18n_content.py:62
+msgid "About ten minutes of static stretching from head to toe."
+msgstr "Ungefär tio minuters statisk stretching från topp till tå."
+
+#: apps/stretching/i18n_content.py:63
+msgid "Morning Mobility"
+msgstr "Morgonrörlighet"
+
+#: apps/stretching/i18n_content.py:64
+msgid "Gentle dynamic movements to wake the body up, or as a warm-up."
+msgstr "Lugna dynamiska rörelser för att väcka kroppen, eller som uppvärmning."
+
+#: apps/stretching/i18n_content.py:71
+msgid ""
+"- Stand tall and hold onto a wall or chair for balance.\n"
+"- Bend one knee and grab that ankle behind you.\n"
+"- Pull the heel gently towards your glutes, keeping the knees together and the hips pushed slightly forward.\n"
+"- Hold, then switch sides."
+msgstr ""
+"- Stå rak och håll dig i en vägg eller stol för balans.\n"
+"- Böj ena knät och ta tag i den vristen bakom dig.\n"
+"- Dra hälen försiktigt mot sätet, med knäna ihop och höfterna lätt framskjutna.\n"
+"- Håll kvar och byt sedan sida."
+
+#: apps/stretching/i18n_content.py:78
+msgid ""
+"- Kneel on one knee with the other foot flat on the floor in front of you.\n"
+"- Tuck the pelvis under and squeeze the glute of the kneeling leg.\n"
+"- Shift your hips forward until you feel a stretch at the front of the hip.\n"
+"- Keep the torso upright; hold, then switch sides."
+msgstr ""
+"- Ställ dig på ett knä med den andra foten platt i golvet framför dig.\n"
+"- Tippa bäckenet bakåt och spänn sätet på det knästående benet.\n"
+"- För höfterna framåt tills du känner en stretch på höftens framsida.\n"
+"- Håll överkroppen upprätt; håll kvar och byt sedan sida."
+
+#: apps/stretching/i18n_content.py:84
+msgid ""
+"- Kneel with your back to a wall or couch and slide one shin up against it.\n"
+"- Step the other foot forward into a lunge.\n"
+"- Slowly raise your torso upright while squeezing the glute of the back leg.\n"
+"- Hold, then switch sides."
+msgstr ""
+"- Ställ dig på knä med ryggen mot en vägg eller soffa och för upp ena smalbenet mot den.\n"
+"- Kliv fram med den andra foten till ett utfall.\n"
+"- Res långsamt upp överkroppen medan du spänner sätet på det bakre benet.\n"
+"- Håll kvar och byt sedan sida."
+
+#: apps/stretching/i18n_content.py:90
+msgid ""
+"- Place one heel on a low step or bench with the leg straight.\n"
+"- Keep your back flat and hinge forward from the hips.\n"
+"- Stop when you feel a stretch along the back of the thigh.\n"
+"- Hold, then switch sides."
+msgstr ""
+"- Placera ena hälen på ett lågt trappsteg eller en bänk med benet rakt.\n"
+"- Håll ryggen rak och fäll framåt från höfterna.\n"
+"- Stanna när du känner en stretch längs lårets baksida.\n"
+"- Håll kvar och byt sedan sida."
+
+#: apps/stretching/i18n_content.py:96
+msgid ""
+"- Lie on your back with both legs extended.\n"
+"- Raise one leg, holding behind the thigh or calf (or use a towel around the foot).\n"
+"- Keep the knee as straight as is comfortable and pull the leg gently towards you.\n"
+"- Hold, then switch sides."
+msgstr ""
+"- Ligg på rygg med båda benen utsträckta.\n"
+"- Lyft ena benet och håll bakom låret eller vaden (eller använd en handduk runt foten).\n"
+"- Håll knät så rakt som känns bekvämt och dra benet försiktigt mot dig.\n"
+"- Håll kvar och byt sedan sida."
+
+#: apps/stretching/i18n_content.py:102
+msgid ""
+"- Sit with both legs straight out in front of you.\n"
+"- Lengthen your spine, then hinge forward from the hips.\n"
+"- Reach towards your feet without forcing it.\n"
+"- Breathe slowly and relax a little deeper on each exhale."
+msgstr ""
+"- Sitt med båda benen raka framför dig.\n"
+"- Förläng ryggraden och fäll sedan framåt från höfterna.\n"
+"- Sträck dig mot fötterna utan att tvinga.\n"
+"- Andas lugnt och slappna av lite djupare vid varje utandning."
+
+#: apps/stretching/i18n_content.py:108
+msgid ""
+"- Stand with your feet wide apart and toes pointing forward.\n"
+"- Hinge forward from the hips with a flat back.\n"
+"- Let your hands rest on the floor or your shins.\n"
+"- Relax your head and neck, and come up slowly."
+msgstr ""
+"- Stå med fötterna brett isär och tårna pekande framåt.\n"
+"- Fäll framåt från höfterna med rak rygg.\n"
+"- Låt händerna vila på golvet eller smalbenen.\n"
+"- Slappna av i huvud och nacke och res dig långsamt."
+
+#: apps/stretching/i18n_content.py:114
+msgid ""
+"- Lie on your back with both knees bent.\n"
+"- Cross one ankle over the opposite knee.\n"
+"- Pull the lower leg towards your chest by holding behind the thigh.\n"
+"- Hold, then switch sides."
+msgstr ""
+"- Ligg på rygg med båda knäna böjda.\n"
+"- Lägg ena vristen över det motsatta knät.\n"
+"- Dra det nedre benet mot bröstet genom att hålla bakom låret.\n"
+"- Håll kvar och byt sedan sida."
+
+#: apps/stretching/i18n_content.py:120
+msgid ""
+"- From hands and knees, bring one knee forward behind the same wrist.\n"
+"- Extend the other leg straight back.\n"
+"- Square your hips and lower your torso over the front leg as far as is comfortable.\n"
+"- Hold, then switch sides."
+msgstr ""
+"- Från alla fyra, för fram ena knät bakom handleden på samma sida.\n"
+"- Sträck det andra benet rakt bakåt.\n"
+"- Räta upp höfterna och sänk överkroppen över det främre benet så långt det känns bekvämt.\n"
+"- Håll kvar och byt sedan sida."
+
+#: apps/stretching/i18n_content.py:126
+msgid ""
+"- Lie on your back with both legs extended.\n"
+"- Pull one knee towards your chest with both hands.\n"
+"- Keep the other leg relaxed on the floor.\n"
+"- Hold, then switch sides."
+msgstr ""
+"- Ligg på rygg med båda benen utsträckta.\n"
+"- Dra ena knät mot bröstet med båda händerna.\n"
+"- Håll det andra benet avslappnat mot golvet.\n"
+"- Håll kvar och byt sedan sida."
+
+#: apps/stretching/i18n_content.py:132
+msgid ""
+"- Stand facing a wall with your hands on it.\n"
+"- Step one foot back, keeping that leg straight and the heel on the floor.\n"
+"- Lean into the wall until you feel a stretch in the calf.\n"
+"- Hold, then switch sides."
+msgstr ""
+"- Stå vänd mot en vägg med händerna mot den.\n"
+"- Kliv bakåt med ena foten och håll det benet rakt med hälen i golvet.\n"
+"- Luta dig mot väggen tills du känner en stretch i vaden.\n"
+"- Håll kvar och byt sedan sida."
+
+#: apps/stretching/i18n_content.py:138
+msgid ""
+"- Stand with your feet a little wider than hip-width.\n"
+"- Sit down into the deepest squat you can hold with your heels on the floor.\n"
+"- Use your elbows to gently press the knees outwards.\n"
+"- Keep your chest up and breathe."
+msgstr ""
+"- Stå med fötterna lite bredare än höftbredd.\n"
+"- Sätt dig i en så djup knäböj du kan hålla med hälarna i golvet.\n"
+"- Använd armbågarna för att försiktigt pressa knäna utåt.\n"
+"- Håll bröstet uppe och andas."
+
+#: apps/stretching/i18n_content.py:144
+msgid ""
+"- Start on hands and knees, then lift your hips up and back.\n"
+"- Straighten your arms and legs as far as is comfortable to form an inverted V.\n"
+"- Press your heels towards the floor and your chest towards your thighs.\n"
+"- Keep breathing slowly."
+msgstr ""
+"- Börja på alla fyra och lyft sedan höfterna upp och bakåt.\n"
+"- Sträck ut armar och ben så långt det känns bekvämt så att kroppen bildar ett upp-och-nedvänt V.\n"
+"- Pressa hälarna mot golvet och bröstet mot låren.\n"
+"- Fortsätt andas lugnt."
+
+#: apps/stretching/i18n_content.py:150
+msgid ""
+"- Stand in a doorway and place your forearms on the frame at shoulder height.\n"
+"- Step one foot forward.\n"
+"- Lean gently forward until you feel a stretch across the chest.\n"
+"- Keep your shoulders down and away from your ears."
+msgstr ""
+"- Stå i en dörröppning och placera underarmarna mot karmen i axelhöjd.\n"
+"- Kliv fram med ena foten.\n"
+"- Luta dig försiktigt framåt tills du känner en stretch över bröstet.\n"
+"- Håll axlarna nere och bort från öronen."
+
+#: apps/stretching/i18n_content.py:156
+msgid ""
+"- Bring one arm straight across your chest.\n"
+"- Use the other hand to press it gently towards your body, above the elbow.\n"
+"- Keep the shoulder down and relaxed.\n"
+"- Hold, then switch sides."
+msgstr ""
+"- För ena armen rakt över bröstet.\n"
+"- Använd den andra handen för att försiktigt pressa den mot kroppen, ovanför armbågen.\n"
+"- Håll axeln nere och avslappnad.\n"
+"- Håll kvar och byt sedan sida."
+
+#: apps/stretching/i18n_content.py:162
+msgid ""
+"- Raise one arm overhead and bend the elbow so the hand drops behind your head.\n"
+"- Use the other hand to gently push the elbow down and back.\n"
+"- Keep your head up and your ribs down.\n"
+"- Hold, then switch sides."
+msgstr ""
+"- Lyft ena armen över huvudet och böj armbågen så att handen sjunker bakom huvudet.\n"
+"- Använd den andra handen för att försiktigt trycka armbågen nedåt och bakåt.\n"
+"- Håll huvudet uppe och revbenen nere.\n"
+"- Håll kvar och byt sedan sida."
+
+#: apps/stretching/i18n_content.py:168
+msgid ""
+"- Stand side-on to a wall and place your palm on it slightly behind you, arm straight at shoulder height.\n"
+"- Slowly turn your body away from the wall.\n"
+"- Stop when you feel a stretch along the front of the arm.\n"
+"- Hold, then switch sides."
+msgstr ""
+"- Stå med sidan mot en vägg och placera handflatan på den något bakom dig, armen rak i axelhöjd.\n"
+"- Vrid långsamt kroppen bort från väggen.\n"
+"- Stanna när du känner en stretch längs armens framsida.\n"
+"- Håll kvar och byt sedan sida."
+
+#: apps/stretching/i18n_content.py:175
+msgid ""
+"- Kneel and sit back on your heels with the knees apart.\n"
+"- Walk your hands forward and lower your chest towards the floor.\n"
+"- Reach your arms long and let your forehead rest down.\n"
+"- Breathe into your back."
+msgstr ""
+"- Ställ dig på knä och sätt dig tillbaka på hälarna med knäna isär.\n"
+"- Gå fram med händerna och sänk bröstet mot golvet.\n"
+"- Sträck ut armarna långt och låt pannan vila mot golvet.\n"
+"- Andas in i ryggen."
+
+#: apps/stretching/i18n_content.py:181
+msgid ""
+"- Stand with your feet hip-width apart.\n"
+"- Raise one arm overhead.\n"
+"- Lean to the opposite side, reaching up and over without twisting.\n"
+"- Hold, then switch sides."
+msgstr ""
+"- Stå med fötterna i höftbredd.\n"
+"- Lyft ena armen över huvudet.\n"
+"- Luta dig åt motsatt sida, sträck dig upp och över utan att vrida.\n"
+"- Håll kvar och byt sedan sida."
+
+#: apps/stretching/i18n_content.py:187
+msgid ""
+"- Start on hands and knees.\n"
+"- Slide one arm under your body towards the opposite side, palm up.\n"
+"- Lower that shoulder and the side of your head towards the floor.\n"
+"- Hold, then switch sides."
+msgstr ""
+"- Börja på alla fyra.\n"
+"- För ena armen under kroppen mot motsatt sida, med handflatan uppåt.\n"
+"- Sänk den axeln och sidan av huvudet mot golvet.\n"
+"- Håll kvar och byt sedan sida."
+
+#: apps/stretching/i18n_content.py:193
+msgid ""
+"- Lie face down with your hands under your shoulders.\n"
+"- Press up slowly, lifting your chest while the hips stay on the floor.\n"
+"- Keep your shoulders away from your ears.\n"
+"- Only go as high as your lower back is comfortable."
+msgstr ""
+"- Ligg på mage med händerna under axlarna.\n"
+"- Pressa långsamt upp och lyft bröstet medan höfterna ligger kvar mot golvet.\n"
+"- Håll axlarna borta från öronen.\n"
+"- Gå bara så högt som det känns bekvämt i ländryggen."
+
+#: apps/stretching/i18n_content.py:199
+msgid ""
+"- Lie on your back with your arms out to the sides.\n"
+"- Bend one knee and let it fall across your body to the opposite side.\n"
+"- Keep both shoulders on the floor and turn your head the other way.\n"
+"- Hold, then switch sides."
+msgstr ""
+"- Ligg på rygg med armarna utsträckta åt sidorna.\n"
+"- Böj ena knät och låt det falla över kroppen mot motsatt sida.\n"
+"- Håll båda axlarna mot golvet och vrid huvudet åt andra hållet.\n"
+"- Håll kvar och byt sedan sida."
+
+#: apps/stretching/i18n_content.py:205
+msgid ""
+"- Clasp your hands in front of you at shoulder height.\n"
+"- Round your upper back and push your hands away.\n"
+"- Let your head drop gently between your arms.\n"
+"- Feel the stretch between your shoulder blades."
+msgstr ""
+"- Knäpp händerna framför dig i axelhöjd.\n"
+"- Runda övre ryggen och tryck händerna bort från dig.\n"
+"- Låt huvudet sjunka försiktigt mellan armarna.\n"
+"- Känn stretchen mellan skulderbladen."
+
+#: apps/stretching/i18n_content.py:211
+msgid ""
+"- Sit or stand tall with your shoulders relaxed.\n"
+"- Tilt your ear towards one shoulder.\n"
+"- Optionally rest the hand on that side gently on your head, without pulling.\n"
+"- Hold, then switch sides."
+msgstr ""
+"- Sitt eller stå rak med avslappnade axlar.\n"
+"- Luta örat mot ena axeln.\n"
+"- Vila eventuellt handen på den sidan lätt mot huvudet, utan att dra.\n"
+"- Håll kvar och byt sedan sida."
+
+#: apps/stretching/i18n_content.py:217
+msgid ""
+"- Extend one arm straight in front of you, palm up.\n"
+"- Use the other hand to gently pull the fingers down and back.\n"
+"- Keep the elbow straight.\n"
+"- Hold, then switch sides."
+msgstr ""
+"- Sträck ut ena armen rakt framför dig, handflatan uppåt.\n"
+"- Använd den andra handen för att försiktigt dra fingrarna nedåt och bakåt.\n"
+"- Håll armbågen rak.\n"
+"- Håll kvar och byt sedan sida."
+
+#: apps/stretching/i18n_content.py:223
+msgid ""
+"- Extend one arm straight in front of you, palm down.\n"
+"- Use the other hand to gently bend the wrist down towards you.\n"
+"- Keep the elbow straight.\n"
+"- Hold, then switch sides."
+msgstr ""
+"- Sträck ut ena armen rakt framför dig, handflatan nedåt.\n"
+"- Använd den andra handen för att försiktigt böja handleden nedåt mot dig.\n"
+"- Håll armbågen rak.\n"
+"- Håll kvar och byt sedan sida."
+
+#: apps/stretching/i18n_content.py:229
+msgid ""
+"- Start on hands and knees.\n"
+"- Inhale as you drop your belly and lift your chest and tailbone.\n"
+"- Exhale as you round your back and tuck your chin.\n"
+"- Move slowly with your breath."
+msgstr ""
+"- Börja på alla fyra.\n"
+"- Andas in medan du sänker magen och lyfter bröstet och svanskotan.\n"
+"- Andas ut medan du rundar ryggen och drar in hakan.\n"
+"- Rör dig långsamt i takt med andningen."
+
+#: apps/stretching/i18n_content.py:235
+msgid ""
+"- Stand tall with your arms out to the sides.\n"
+"- Draw small circles, gradually making them bigger.\n"
+"- Switch direction halfway through.\n"
+"- Keep the movement smooth and controlled."
+msgstr ""
+"- Stå rak med armarna utsträckta åt sidorna.\n"
+"- Rita små cirklar och gör dem gradvis större.\n"
+"- Byt riktning halvvägs.\n"
+"- Håll rörelsen mjuk och kontrollerad."
+
+#: apps/stretching/i18n_content.py:241
+msgid ""
+"- Stand with your hands on your hips and feet hip-width apart.\n"
+"- Draw big, slow circles with your hips.\n"
+"- Switch direction halfway through.\n"
+"- Keep your upper body still."
+msgstr ""
+"- Stå med händerna på höfterna och fötterna i höftbredd.\n"
+"- Rita stora, långsamma cirklar med höfterna.\n"
+"- Byt riktning halvvägs.\n"
+"- Håll överkroppen stilla."
+
+#: apps/stretching/i18n_content.py:247
+msgid ""
+"- Stand with your feet shoulder-width apart and arms relaxed.\n"
+"- Rotate your upper body from side to side, letting the arms swing.\n"
+"- Keep your hips facing forward.\n"
+"- Gradually increase the range of motion."
+msgstr ""
+"- Stå med fötterna i axelbredd och armarna avslappnade.\n"
+"- Vrid överkroppen från sida till sida och låt armarna svänga.\n"
+"- Håll höfterna riktade framåt.\n"
+"- Öka rörelseomfånget gradvis."
+
+#: apps/stretching/i18n_content.py:253
+msgid ""
+"- Stand side-on to a wall and hold it for balance.\n"
+"- Swing the outside leg forward and back in a controlled arc.\n"
+"- Let the range grow gradually with each swing.\n"
+"- Then switch sides."
+msgstr ""
+"- Stå med sidan mot en vägg och håll dig i den för balans.\n"
+"- Sving det yttre benet framåt och bakåt i en kontrollerad båge.\n"
+"- Låt rörelseomfånget öka gradvis för varje sving.\n"
+"- Byt sedan sida."
+
+#: apps/stretching/i18n_content.py:259
+msgid ""
+"- Step into a long lunge and place both hands on the floor inside the front foot.\n"
+"- Drop the inside elbow towards the front ankle.\n"
+"- Rotate and reach that same arm up towards the ceiling.\n"
+"- Return and repeat slowly, then switch sides."
+msgstr ""
+"- Kliv ut i ett långt utfall och placera båda händerna på golvet innanför den främre foten.\n"
+"- Sänk den inre armbågen mot den främre vristen.\n"
+"- Vrid och sträck samma arm upp mot taket.\n"
+"- Återgå och upprepa långsamt, byt sedan sida."
+
+#: apps/stretching/models.py:16
+msgid "Static"
+msgstr "Statisk"
+
+#: apps/stretching/models.py:17
+msgid "Dynamic"
+msgstr "Dynamisk"
+
+#: apps/stretching/models.py:46
+msgid "type"
+msgstr "typ"
+
+#: apps/stretching/models.py:53
+msgid "muscle groups"
+msgstr "muskelgrupper"
+
+#: apps/stretching/models.py:58
+msgid "default hold (seconds)"
+msgstr "standardhåll (sekunder)"
+
+#: apps/stretching/models.py:62
+msgid "one side at a time"
+msgstr "en sida i taget"
+
+#: apps/stretching/models.py:63
+msgid "Held once for the left side and once for the right."
+msgstr "Hålls en gång för vänster sida och en gång för höger."
+
+#: apps/stretching/models.py:68
+msgid "stretches"
+msgstr "stretchövningar"
+
+#: apps/stretching/models.py:138
+msgid "hold (seconds)"
+msgstr "håll (sekunder)"
+
+#: apps/stretching/models.py:143
+msgid "sets"
+msgstr "set"
+
+#: apps/stretching/models.py:148
+msgid "rest between holds (seconds)"
+msgstr "vila mellan hållen (sekunder)"
+
+#: apps/stretching/models.py:159 apps/workouts/models.py:13
+msgid "In progress"
+msgstr "Pågår"
+
+#: apps/stretching/models.py:160 apps/workouts/models.py:14
+msgid "Completed"
+msgstr "Slutfört"
+
+#: apps/stretching/models.py:161 apps/workouts/models.py:15
+msgid "Abandoned"
+msgstr "Avbrutet"
+
+#: apps/stretching/models.py:195
+msgid "duration"
+msgstr "varaktighet"
+
+#: apps/stretching/models.py:214
+#: templates/accounts/_two_factor_backup_codes_fragment.html:11
+#: templates/api/key_created.html:16
+#: templates/stretching/session_detail.html:40
+#: templates/stretching/session_play.html:77
+#: templates/stretching/session_play.html:85
+msgid "Done"
+msgstr "Klar"
+
+#: apps/stretching/models.py:215 templates/stretching/session_detail.html:41
+#: templates/stretching/session_play.html:78
+msgid "Skipped"
+msgstr "Överhoppad"
+
+#: apps/stretching/services.py:141
+#, python-format
+msgid "%(name)s (copy)"
+msgstr "%(name)s (kopia)"
+
+#: apps/stretching/views.py:92
+msgid "Routine created. Now add some stretches."
+msgstr "Rutinen har skapats. Lägg nu till några stretchövningar."
+
+#: apps/stretching/views.py:128
+msgid "Routine saved."
+msgstr "Rutinen har sparats."
+
+#: apps/stretching/views.py:140
+msgid "Routine removed."
+msgstr "Rutinen har tagits bort."
+
+#: apps/stretching/views.py:149
+msgid "Copied — this one is yours to edit."
+msgstr "Kopierad — den här kan du redigera fritt."
+
+#: apps/stretching/views.py:166
+msgid "Stretch added."
+msgstr "Stretchövningen har lagts till."
+
+#: apps/stretching/views.py:179 apps/stretching/views.py:261
+msgid "Stretch saved."
+msgstr "Stretchövningen har sparats."
+
+#: apps/stretching/views.py:194
+msgid "Stretch removed."
+msgstr "Stretchövningen har tagits bort."
+
+#: apps/stretching/views.py:250
+msgid "Stretch created."
+msgstr "Stretchövningen har skapats."
+
+#: apps/stretching/views.py:273
+msgid "Stretch removed from your library."
+msgstr "Stretchövningen har tagits bort från ditt bibliotek."
+
+#: apps/stretching/views.py:288
+msgid "You already have a stretching session in progress."
+msgstr "Du har redan ett stretchingpass pågående."
+
+#: apps/stretching/views.py:299
+msgid "This routine has no stretches yet."
+msgstr "Den här rutinen har inga stretchövningar än."
+
+#: apps/stretching/views.py:319
+msgid "No cool-down stretches match this workout."
+msgstr "Inga nedvarvningsövningar passar det här passet."
+
+#: apps/stretching/views.py:326 templates/stretching/_cooldown_card.html:5
+msgid "Cool-down"
+msgstr "Nedvarvning"
+
+#: apps/stretching/views.py:384
+msgid "Nicely done — stretching session saved."
+msgstr "Snyggt jobbat — stretchingpasset har sparats."
+
+#: apps/stretching/views.py:394
+msgid "Session abandoned."
+msgstr "Passet avbröts."
+
+#: apps/stretching/views.py:430
+msgid "Stretching logged."
+msgstr "Stretching loggad."
+
+#: apps/stretching/views.py:441
+msgid "Session updated."
+msgstr "Passet har uppdaterats."
+
+#: apps/stretching/views.py:454
+msgid "Session deleted."
+msgstr "Passet har raderats."
+
 #: apps/workouts/forms.py:40
 msgid "reps"
 msgstr "repetitioner"
@@ -3683,21 +4311,9 @@ msgstr "Uppvärmning"
 msgid "Weight (%(unit)s)"
 msgstr "Vikt (%(unit)s)"
 
-#: apps/workouts/models.py:12
+#: apps/workouts/models.py:12 templates/stretching/session_detail.html:32
 msgid "Planned"
 msgstr "Planerat"
-
-#: apps/workouts/models.py:13
-msgid "In progress"
-msgstr "Pågår"
-
-#: apps/workouts/models.py:14
-msgid "Completed"
-msgstr "Slutfört"
-
-#: apps/workouts/models.py:15
-msgid "Abandoned"
-msgstr "Avbrutet"
 
 #: apps/workouts/views.py:168 apps/workouts/views.py:365
 msgid "This session is no longer in progress."
@@ -3766,8 +4382,8 @@ msgstr "Inte nu"
 
 #: templates/accounts/_onboarding_modal.html:12
 msgid ""
-"A few quick details help IronStack work better for you — every field below "
-"is optional, and you can always change them later from your profile."
+"A few quick details help IronStack work better for you — every field below is"
+" optional, and you can always change them later from your profile."
 msgstr ""
 "Några snabba uppgifter hjälper IronStack att fungera bättre för dig — varje "
 "fält nedan är valfritt, och du kan alltid ändra dem senare från din profil."
@@ -3788,6 +4404,10 @@ msgstr ""
 #: templates/programs/prescription_form.html:15
 #: templates/programs/program_form.html:18
 #: templates/programs/workout_form.html:15 templates/social/group_form.html:15
+#: templates/stretching/routine_form.html:15
+#: templates/stretching/routine_item_form.html:15
+#: templates/stretching/session_form.html:15
+#: templates/stretching/stretch_form.html:15
 #: templates/workouts/set_edit_form.html:15
 msgid "Save"
 msgstr "Spara"
@@ -3828,17 +4448,17 @@ msgstr "Vad som samlas in"
 #: templates/accounts/_privacy_notice_modal.html:33
 msgid ""
 "Your account details (username, and optionally your name and email address), "
-"and whatever you choose to log: workout history, body measurements, "
-"nutrition and diet data, and other activities. Technical data such as your "
-"IP address is used briefly for rate-limiting and security (e.g. blocking "
-"repeated failed login attempts), not stored as part of your account."
+"and whatever you choose to log: workout history, body measurements, nutrition"
+" and diet data, and other activities. Technical data such as your IP address "
+"is used briefly for rate-limiting and security (e.g. blocking repeated failed"
+" login attempts), not stored as part of your account."
 msgstr ""
-"Dina kontouppgifter (användarnamn, och valfritt ditt namn och din e-"
-"postadress), samt allt du väljer att logga: träningshistorik, kroppsmått, "
+"Dina kontouppgifter (användarnamn, och valfritt ditt namn och din "
+"e-postadress), samt allt du väljer att logga: träningshistorik, kroppsmått, "
 "kost- och dietdata samt andra aktiviteter. Tekniska uppgifter som din IP-"
 "adress används kortvarigt för hastighetsbegränsning och säkerhet (t.ex. att "
-"blockera upprepade misslyckade inloggningsförsök), och sparas inte som en "
-"del av ditt konto."
+"blockera upprepade misslyckade inloggningsförsök), och sparas inte som en del"
+" av ditt konto."
 
 #: templates/accounts/_privacy_notice_modal.html:34
 msgid "Why"
@@ -3846,10 +4466,10 @@ msgstr "Varför"
 
 #: templates/accounts/_privacy_notice_modal.html:35
 msgid ""
-"Solely to provide the tracking features you're using — nothing here is "
-"shared with, sold to, or processed by any third party, except the few "
-"optional integrations you have to explicitly turn on yourself (e.g. an "
-"OpenFoodFacts lookup, a Gravatar picture, Authentik single sign-on)."
+"Solely to provide the tracking features you're using — nothing here is shared"
+" with, sold to, or processed by any third party, except the few optional "
+"integrations you have to explicitly turn on yourself (e.g. an OpenFoodFacts "
+"lookup, a Gravatar picture, Authentik single sign-on)."
 msgstr ""
 "Enbart för att tillhandahålla de spårningsfunktioner du använder — inget av "
 "detta delas med, säljs till eller behandlas av någon tredje part, förutom de "
@@ -3865,8 +4485,8 @@ msgid ""
 "Access and rectification — everything you've logged is visible and editable "
 "directly in the app."
 msgstr ""
-"Åtkomst och rättelse — allt du har loggat är synligt och redigerbart direkt "
-"i appen."
+"Åtkomst och rättelse — allt du har loggat är synligt och redigerbart direkt i"
+" appen."
 
 #: templates/accounts/_privacy_notice_modal.html:39
 msgid ""
@@ -3901,17 +4521,12 @@ msgstr ""
 #: templates/accounts/_two_factor_backup_codes_fragment.html:4
 msgid ""
 "Each one works once, if you ever lose access to your authenticator app. They "
-"won't be shown again — save them somewhere safe now. Your old backup codes "
-"no longer work."
+"won't be shown again — save them somewhere safe now. Your old backup codes no"
+" longer work."
 msgstr ""
 "Varje kod fungerar en gång, om du någonsin förlorar åtkomsten till din "
 "autentiseringsapp. De visas inte igen — spara dem på ett säkert ställe nu. "
 "Dina gamla reservkoder fungerar inte längre."
-
-#: templates/accounts/_two_factor_backup_codes_fragment.html:11
-#: templates/api/key_created.html:16
-msgid "Done"
-msgstr "Klar"
 
 #: templates/accounts/account_delete.html:3
 #: templates/accounts/account_delete.html:6 templates/accounts/profile.html:215
@@ -3922,8 +4537,8 @@ msgstr "Radera konto"
 msgid ""
 "This permanently deletes your account and everything tied to it: your "
 "profile, workout history, personal records, body measurements, nutrition "
-"diary and targets, diet plans, activities, feedback, and API keys. This "
-"can't be undone."
+"diary and targets, diet plans, activities, feedback, and API keys. This can't"
+" be undone."
 msgstr ""
 "Detta raderar permanent ditt konto och allt kopplat till det: din profil, "
 "träningshistorik, personliga rekord, kroppsmått, kostdagbok och mål, "
@@ -3935,8 +4550,8 @@ msgid ""
 "created is kept, not deleted, if anyone else on this instance is already "
 "using it — it's just no longer credited to your account."
 msgstr ""
-"En anpassad övning, mat, ett recept, program eller mätnings-/aktivitetstyp "
-"du skapat behålls, raderas inte, om någon annan på den här instansen redan "
+"En anpassad övning, mat, ett recept, program eller mätnings-/aktivitetstyp du"
+" skapat behålls, raderas inte, om någon annan på den här instansen redan "
 "använder den — den krediteras bara inte längre ditt konto."
 
 #: templates/accounts/account_delete.html:12
@@ -3976,7 +4591,7 @@ msgstr "Kontouppgifter"
 
 #: templates/accounts/account_details_form.html:18
 #: templates/accounts/data_export.html:42
-#: templates/accounts/two_factor_manage.html:34 templates/api/key_list.html:155
+#: templates/accounts/two_factor_manage.html:34 templates/api/key_list.html:159
 #: templates/coaching/client_list.html:49 templates/coaching/my_coaches.html:37
 #: templates/core/backup_list.html:74 templates/core/feedback_form.html:20
 #: templates/core/feedback_list.html:50 templates/core/seo_settings.html:18
@@ -4242,8 +4857,8 @@ msgid ""
 "Enter your password to confirm. This removes your authenticator and deletes "
 "your remaining backup codes."
 msgstr ""
-"Ange ditt lösenord för att bekräfta. Detta tar bort din autentiseringsapp "
-"och dina återstående reservkoder."
+"Ange ditt lösenord för att bekräfta. Detta tar bort din autentiseringsapp och"
+" dina återstående reservkoder."
 
 #: templates/accounts/two_factor_manage.html:10
 msgid "Two-factor authentication is enabled on your account."
@@ -4285,8 +4900,8 @@ msgid ""
 "code it shows to confirm setup."
 msgstr ""
 "Skanna denna QR-kod med en autentiseringsapp (t.ex. Google Authenticator, "
-"Authy eller en lösenordshanterare med inbyggt stöd), och ange sedan den 6-"
-"siffriga koden den visar för att bekräfta konfigurationen."
+"Authy eller en lösenordshanterare med inbyggt stöd), och ange sedan den "
+"6-siffriga koden den visar för att bekräfta konfigurationen."
 
 #: templates/accounts/two_factor_setup.html:11
 msgid "Two-factor authentication QR code"
@@ -4320,6 +4935,8 @@ msgstr "Tillbaka till %(name)s"
 #: templates/activities/activity_history.html:12
 #: templates/exercises/exercise_detail.html:18
 #: templates/measurements/measurement_history.html:12
+#: templates/stretching/routine_detail.html:22
+#: templates/stretching/stretch_detail.html:18
 msgid "Inactive"
 msgstr "Inaktiv"
 
@@ -4344,10 +4961,12 @@ msgstr "Varaktighetstrend"
 
 #: templates/activities/activity_history.html:28
 #: templates/activities/activity_history.html:45
+#: templates/stretching/session_detail.html:20
 msgid "Duration"
 msgstr "Varaktighet"
 
 #: templates/activities/activity_history.html:29
+#: templates/stretching/home.html:38
 msgid "min"
 msgstr "min"
 
@@ -4357,6 +4976,7 @@ msgstr "Logga aktivitet"
 
 #: templates/activities/activity_history.html:45
 #: templates/measurements/measurement_history.html:54
+#: templates/stretching/session_detail.html:19
 msgid "Date"
 msgstr "Datum"
 
@@ -4367,13 +4987,17 @@ msgstr "Distans"
 #: templates/activities/activity_history.html:54
 #: templates/exercises/exercise_detail.html:12
 #: templates/measurements/measurement_history.html:62
-#: templates/nutrition/diary_day.html:65
+#: templates/nutrition/diary_day.html:70
 #: templates/nutrition/recipe_detail.html:13
 #: templates/nutrition/recipe_detail.html:40
 #: templates/programs/program_detail.html:12
 #: templates/programs/program_detail.html:49
 #: templates/programs/program_detail.html:66
 #: templates/social/group_detail.html:10
+#: templates/stretching/routine_detail.html:12
+#: templates/stretching/routine_detail.html:54
+#: templates/stretching/session_detail.html:12
+#: templates/stretching/stretch_detail.html:12
 #: templates/workouts/_performed_exercise_card.html:24
 msgid "Edit"
 msgstr "Redigera"
@@ -4413,12 +5037,17 @@ msgstr "Ny aktivitetstyp"
 #: templates/api/key_list.html:10 templates/exercises/exercise_list.html:9
 #: templates/measurements/measurement_type_list.html:9
 #: templates/programs/program_list.html:9
+#: templates/stretching/routine_list.html:9
+#: templates/stretching/stretch_list.html:9
 msgid "New"
 msgstr "Ny"
 
 #: templates/activities/activity_type_list.html:15
 #: templates/exercises/_exercise_list_results.html:6
 #: templates/measurements/measurement_type_list.html:22
+#: templates/stretching/_routine_card.html:4
+#: templates/stretching/stretch_detail.html:17
+#: templates/stretching/stretch_list.html:32
 msgid "Custom"
 msgstr "Anpassad"
 
@@ -4450,8 +5079,8 @@ msgstr "Django-administration"
 msgid ""
 "Pick which of these %(counter)s foods to keep. Every diary entry, recipe "
 "ingredient, and diet-plan item currently pointing at one of the others will "
-"be repointed at the one you keep — nothing a user has logged is deleted, "
-"only which food row it refers to changes. The other foods are then removed."
+"be repointed at the one you keep — nothing a user has logged is deleted, only"
+" which food row it refers to changes. The other foods are then removed."
 msgstr ""
 "Välj vilket av dessa %(counter)s livsmedel som ska behållas. Varje "
 "dagbokspost, receptingrediens och kostplansobjekt som just nu pekar på något "
@@ -4706,15 +5335,15 @@ msgstr "Behörigheter"
 
 #: templates/api/key_list.html:32
 msgid ""
-"Each key is granted Create/Read/Update/Delete separately per area "
-"(exercises, programs, workouts, measurements, activities, nutrition, "
+"Each key is granted Create/Read/Update/Delete separately per area (exercises,"
+" programs, workouts, measurements, activities, nutrition, stretching, "
 "records, analytics, profile) — set this when you create the key, above. A "
 "request outside what the key is granted gets a 403."
 msgstr ""
 "Varje nyckel beviljas Skapa/Läs/Uppdatera/Radera separat per område "
-"(övningar, program, träningspass, mätningar, aktiviteter, näring, rekord, "
-"analys, profil) — ställ in detta när du skapar nyckeln ovan. En förfrågan "
-"utanför vad nyckeln beviljats får ett 403-svar."
+"(övningar, program, träningspass, mätningar, aktiviteter, näring, stretching,"
+" rekord, analys, profil) — ställ in detta när du skapar nyckeln ovan. En "
+"förfrågan utanför vad nyckeln beviljats får ett 403-svar."
 
 #: templates/api/key_list.html:35
 msgid ""
@@ -4722,9 +5351,9 @@ msgid ""
 "never converted to your own display-unit preference, so a script can rely on "
 "one meaning regardless of who's asking."
 msgstr ""
-"Alltid kanoniskt: vikt i kilogram, längd i meter, energi i kcal — "
-"konverteras aldrig till din egen visningsenhet, så ett skript kan lita på en "
-"betydelse oavsett vem som frågar."
+"Alltid kanoniskt: vikt i kilogram, längd i meter, energi i kcal — konverteras"
+" aldrig till din egen visningsenhet, så ett skript kan lita på en betydelse "
+"oavsett vem som frågar."
 
 #: templates/api/key_list.html:37
 msgid "Example: reading your profile (curl)"
@@ -4773,7 +5402,7 @@ msgid "GET/PATCH, no id"
 msgstr "GET/PATCH, inget id"
 
 #: templates/api/key_list.html:90 templates/api/key_list.html:110
-#: templates/api/key_list.html:114
+#: templates/api/key_list.html:118
 msgid "read-only"
 msgstr "endast läsning"
 
@@ -4785,42 +5414,42 @@ msgstr "endast skapa + läsa"
 msgid "all POST"
 msgstr "alla POST"
 
-#: templates/api/key_list.html:118
+#: templates/api/key_list.html:122
 msgid "both read-only"
 msgstr "båda endast läsning"
 
-#: templates/api/key_list.html:129
+#: templates/api/key_list.html:133
 #, python-format
 msgid "You can create %(counter)s more key."
 msgid_plural "You can create %(counter)s more keys."
 msgstr[0] "Du kan skapa %(counter)s nyckel till."
 msgstr[1] "Du kan skapa %(counter)s nycklar till."
 
-#: templates/api/key_list.html:137
+#: templates/api/key_list.html:141
 #, python-format
 msgid "Tier: %(tier)s"
 msgstr "Nivå: %(tier)s"
 
-#: templates/api/key_list.html:139
+#: templates/api/key_list.html:143
 #, python-format
 msgid "last used %(time)s ago"
 msgstr "senast använd för %(time)s sedan"
 
-#: templates/api/key_list.html:141
+#: templates/api/key_list.html:145
 msgid "never used"
 msgstr "aldrig använd"
 
-#: templates/api/key_list.html:144
+#: templates/api/key_list.html:148
 msgid "Revoke this API key? Anything using it will stop working immediately."
 msgstr ""
 "Återkalla den här API-nyckeln? Allt som använder den slutar fungera "
 "omedelbart."
 
-#: templates/api/key_list.html:146
+#: templates/api/key_list.html:150
 msgid "Revoke"
 msgstr "Återkalla"
 
-#: templates/api/key_list.html:151
+#: templates/api/key_list.html:155
 msgid "No API keys yet."
 msgstr "Inga API-nycklar än."
 
@@ -4851,8 +5480,8 @@ msgid ""
 "Could not reach the server — check your connection. That change was not "
 "saved."
 msgstr ""
-"Det gick inte att nå servern — kontrollera din anslutning. Ändringen "
-"sparades inte."
+"Det gick inte att nå servern — kontrollera din anslutning. Ändringen sparades"
+" inte."
 
 #: templates/base.html:123
 msgid "Camera access needs a secure (https) connection."
@@ -4870,19 +5499,19 @@ msgstr "Huvudnavigering"
 msgid "Home"
 msgstr "Hem"
 
-#: templates/base.html:182 templates/base.html:184
+#: templates/base.html:188 templates/base.html:190
 msgid "Workout"
 msgstr "Träning"
 
-#: templates/base.html:190
+#: templates/base.html:196
 msgid "Profile — new friend/group activity"
 msgstr "Profil — ny vän-/gruppaktivitet"
 
-#: templates/base.html:229
+#: templates/base.html:235
 msgid "Continue training"
 msgstr "Fortsätt träna"
 
-#: templates/base.html:235
+#: templates/base.html:241
 msgid "Unread messages"
 msgstr "Olästa meddelanden"
 
@@ -4958,8 +5587,8 @@ msgstr "Avsluta"
 msgid ""
 "No clients yet — accept a coaching request above once someone sends you one."
 msgstr ""
-"Inga klienter än — acceptera en coachningsförfrågan ovan när någon skickar "
-"en till dig."
+"Inga klienter än — acceptera en coachningsförfrågan ovan när någon skickar en"
+" till dig."
 
 #: templates/coaching/diet_plan_update_diff.html:3
 #: templates/coaching/program_update_diff.html:3
@@ -5281,8 +5910,8 @@ msgid ""
 "Restore from a backup file you downloaded earlier, instead of one already "
 "listed below."
 msgstr ""
-"Återställ från en säkerhetskopia du laddade ner tidigare, istället för en "
-"som redan listas nedan."
+"Återställ från en säkerhetskopia du laddade ner tidigare, istället för en som"
+" redan listas nedan."
 
 #: templates/core/backup_list.html:60
 msgid "Upload and continue"
@@ -5313,11 +5942,11 @@ msgstr ""
 
 #: templates/core/backup_restore_confirm.html:14
 msgid ""
-"If in doubt, create a fresh backup of the current state first, then come "
-"back here."
+"If in doubt, create a fresh backup of the current state first, then come back"
+" here."
 msgstr ""
-"Om du är osäker, skapa först en ny säkerhetskopia av det aktuella "
-"tillståndet och kom sedan tillbaka hit."
+"Om du är osäker, skapa först en ny säkerhetskopia av det aktuella tillståndet"
+" och kom sedan tillbaka hit."
 
 #: templates/core/backup_restore_confirm.html:18
 msgid ""
@@ -5389,7 +6018,7 @@ msgstr "Fortsätt träningspass"
 msgid "Freeform workout"
 msgstr "Fritt träningspass"
 
-#: templates/core/dashboard.html:25
+#: templates/core/dashboard.html:25 templates/stretching/home.html:16
 #, python-format
 msgid "started %(started_at)s"
 msgstr "startade %(started_at)s"
@@ -5424,11 +6053,11 @@ msgstr "Dags att logga dina kroppsmått?"
 
 #: templates/core/dashboard.html:62
 msgid ""
-"It's been a while since you tracked your weight or measurements — tap here "
-"to add a new reading."
+"It's been a while since you tracked your weight or measurements — tap here to"
+" add a new reading."
 msgstr ""
-"Det var ett tag sedan du loggade din vikt eller dina mått — tryck här för "
-"att lägga till en ny mätning."
+"Det var ett tag sedan du loggade din vikt eller dina mått — tryck här för att"
+" lägga till en ny mätning."
 
 #: templates/core/dashboard.html:74
 msgid "Achievements"
@@ -5474,6 +6103,10 @@ msgstr "Logga kroppsvikt, mått och trender."
 #: templates/core/dashboard.html:138
 msgid "Log a run, ride, or any other non-gym activity."
 msgstr "Logga en löprunda, cykeltur eller annan aktivitet utanför gymmet."
+
+#: templates/core/dashboard.html:144
+msgid "Follow a guided stretching routine or log one."
+msgstr "Följ en guidad stretchingrutin eller logga en."
 
 #: templates/core/feedback_form.html:9
 msgid ""
@@ -5544,6 +6177,7 @@ msgstr "Ta bort den här bilden?"
 #: templates/nutrition/recipe_detail.html:44
 #: templates/social/friend_list.html:62 templates/social/group_detail.html:93
 #: templates/social/group_detail.html:105
+#: templates/stretching/routine_detail.html:57
 msgid "Remove"
 msgstr "Ta bort"
 
@@ -5615,10 +6249,12 @@ msgid "Search exercises"
 msgstr "Sök övningar"
 
 #: templates/exercises/exercise_list.html:14
+#: templates/stretching/stretch_list.html:14
 msgid "Filter by muscle group"
 msgstr "Filtrera efter muskelgrupp"
 
 #: templates/exercises/exercise_list.html:15
+#: templates/stretching/stretch_list.html:15
 msgid "All muscle groups"
 msgstr "Alla muskelgrupper"
 
@@ -5856,6 +6492,7 @@ msgstr "Mängd"
 
 #: templates/nutrition/_food_search_results.html:39
 #: templates/nutrition/_most_used_foods.html:47
+#: templates/stretching/routine_detail.html:75
 #: templates/workouts/performed_exercise_form.html:15
 msgid "Add"
 msgstr "Lägg till"
@@ -5932,25 +6569,29 @@ msgstr "Det glidande 7-dagarsgenomsnittet av kalorier låg över ditt mål"
 msgid "Trailing 7-day average calories ran under your target"
 msgstr "Det glidande 7-dagarsgenomsnittet av kalorier låg under ditt mål"
 
-#: templates/nutrition/_month_calendar.html:128
+#: templates/nutrition/_month_calendar.html:129
+msgid "Stretched that day (corner dot)"
+msgstr "Stretchade den dagen (prick i hörnet)"
+
+#: templates/nutrition/_month_calendar.html:134
 msgid "Close to target"
 msgstr "Nära målet"
 
-#: templates/nutrition/_month_calendar.html:132
+#: templates/nutrition/_month_calendar.html:138
 msgid "Drifting from target"
 msgstr "Driver bort från målet"
 
-#: templates/nutrition/_month_calendar.html:136
+#: templates/nutrition/_month_calendar.html:142
 msgid "Well off target"
 msgstr "Långt från målet"
 
-#: templates/nutrition/_month_calendar.html:139
+#: templates/nutrition/_month_calendar.html:145
 msgid "No arrow yet means there isn't enough logged data to judge."
 msgstr ""
 "Ingen pil ännu betyder att det inte finns tillräckligt med loggad data för "
 "att bedöma."
 
-#: templates/nutrition/_month_calendar.html:140
+#: templates/nutrition/_month_calendar.html:146
 msgid "Tap a day for details."
 msgstr "Tryck på en dag för mer information."
 
@@ -5970,20 +6611,27 @@ msgstr ""
 
 #: templates/nutrition/_off_attribution.html:4
 msgid ""
-"Food data and product photos come from <a href=\"https://"
-"world.openfoodfacts.org\" target=\"_blank\" rel=\"noopener noreferrer\">Open "
-"Food Facts</a>, a collaborative database, under the <a href=\"https://"
-"opendatacommons.org/licenses/odbl/1-0/\" target=\"_blank\" rel=\"noopener "
-"noreferrer\">Open Database License</a>; photos are <a href=\"https://"
-"creativecommons.org/licenses/by-sa/3.0/\" target=\"_blank\" rel=\"noopener "
-"noreferrer\">CC BY-SA</a>."
-msgstr "Livsmedelsdata och produktbilder kommer från <a href=\"https://world.openfoodfacts.org\" target=\"_blank\" rel=\"noopener noreferrer\">Open Food Facts</a>, en gemensam databas under <a href=\"https://opendatacommons.org/licenses/odbl/1-0/\" target=\"_blank\" rel=\"noopener noreferrer\">Open Database License</a>; bilderna är <a href=\"https://creativecommons.org/licenses/by-sa/3.0/\" target=\"_blank\" rel=\"noopener noreferrer\">CC BY-SA</a>."
+"Food data and product photos come from <a "
+"href=\"https://world.openfoodfacts.org\" target=\"_blank\" rel=\"noopener "
+"noreferrer\">Open Food Facts</a>, a collaborative database, under the <a "
+"href=\"https://opendatacommons.org/licenses/odbl/1-0/\" target=\"_blank\" "
+"rel=\"noopener noreferrer\">Open Database License</a>; photos are <a "
+"href=\"https://creativecommons.org/licenses/by-sa/3.0/\" target=\"_blank\" "
+"rel=\"noopener noreferrer\">CC BY-SA</a>."
+msgstr ""
+"Livsmedelsdata och produktbilder kommer från <a "
+"href=\"https://world.openfoodfacts.org\" target=\"_blank\" rel=\"noopener "
+"noreferrer\">Open Food Facts</a>, en gemensam databas under <a "
+"href=\"https://opendatacommons.org/licenses/odbl/1-0/\" target=\"_blank\" "
+"rel=\"noopener noreferrer\">Open Database License</a>; bilderna är <a "
+"href=\"https://creativecommons.org/licenses/by-sa/3.0/\" target=\"_blank\" "
+"rel=\"noopener noreferrer\">CC BY-SA</a>."
 
 #: templates/nutrition/_subnav.html:43
 msgid "Nutrition sections"
 msgstr "Näringsavsnitt"
 
-#: templates/nutrition/_subnav.html:45
+#: templates/nutrition/_subnav.html:45 templates/stretching/_subnav.html:10
 msgid "Overview"
 msgstr "Översikt"
 
@@ -6100,9 +6748,9 @@ msgid ""
 "bioimpedance scale needed. An estimate, typically within a few percentage "
 "points of a DEXA scan."
 msgstr ""
-"Amerikanska flottans måttbandsmetod — bara ett måttband behövs, inga "
-"kalipers eller bioimpedansvåg. En uppskattning, vanligtvis inom några "
-"procentenheter från en DEXA-mätning."
+"Amerikanska flottans måttbandsmetod — bara ett måttband behövs, inga kalipers"
+" eller bioimpedansvåg. En uppskattning, vanligtvis inom några procentenheter "
+"från en DEXA-mätning."
 
 #: templates/nutrition/calculator_body_fat.html:26
 msgid ""
@@ -6120,8 +6768,8 @@ msgstr "Makrokalkylator"
 
 #: templates/nutrition/calculator_macros.html:9
 msgid ""
-"Splits a calorie target into protein, carbohydrates, and fat using this "
-"app's own default ratios for the goal you pick."
+"Splits a calorie target into protein, carbohydrates, and fat using this app's"
+" own default ratios for the goal you pick."
 msgstr ""
 "Delar upp ett kalorimål i protein, kolhydrater och fett med appens egna "
 "standardförhållanden för det mål du väljer."
@@ -6131,8 +6779,8 @@ msgid ""
 "This calorie target is low enough that protein and/or fat had to be reduced "
 "below their usual defaults to fit."
 msgstr ""
-"Detta kalorimål är så lågt att protein och/eller fett var tvunget att "
-"minskas under sina vanliga standardvärden för att få plats."
+"Detta kalorimål är så lågt att protein och/eller fett var tvunget att minskas"
+" under sina vanliga standardvärden för att få plats."
 
 #: templates/nutrition/calculator_time_to_goal.html:3
 #: templates/nutrition/calculator_time_to_goal.html:6
@@ -6160,12 +6808,12 @@ msgstr "Ungefär %(date)s, i den här takten."
 
 #: templates/nutrition/calculator_time_to_goal.html:30
 msgid ""
-"That rate doesn't move toward your target — check the sign (negative to "
-"lose, positive to gain) matches the direction you actually need to go."
+"That rate doesn't move toward your target — check the sign (negative to lose,"
+" positive to gain) matches the direction you actually need to go."
 msgstr ""
 "Den takten rör sig inte mot ditt mål — kontrollera att tecknet (negativt för "
-"att gå ner, positivt för att gå upp) matchar den riktning du faktiskt "
-"behöver gå."
+"att gå ner, positivt för att gå upp) matchar den riktning du faktiskt behöver"
+" gå."
 
 #: templates/nutrition/calculator_waist_hip_ratio.html:3
 #: templates/nutrition/calculator_waist_hip_ratio.html:6
@@ -6189,8 +6837,8 @@ msgstr "Vätskeintagskalkylator"
 
 #: templates/nutrition/calculator_water_intake.html:9
 msgid ""
-"A rough daily fluid target based on bodyweight and activity — real needs "
-"vary with climate and sweat rate, so treat this as a starting point."
+"A rough daily fluid target based on bodyweight and activity — real needs vary"
+" with climate and sweat rate, so treat this as a starting point."
 msgstr ""
 "Ett ungefärligt dagligt vätskemål baserat på kroppsvikt och aktivitet — det "
 "verkliga behovet varierar med klimat och svettningsgrad, så se detta som en "
@@ -6245,7 +6893,7 @@ msgid "At a chosen weekly rate, roughly how long to reach a target weight."
 msgstr "Vid en vald veckotakt, ungefär hur lång tid det tar att nå en målvikt."
 
 #: templates/nutrition/calculators_home.html:67
-#: templates/nutrition/diary_day.html:100
+#: templates/nutrition/diary_day.html:105
 #: templates/nutrition/diet_plan_list.html:30
 #: templates/nutrition/food_list.html:90 templates/nutrition/goal_edit.html:31
 #: templates/nutrition/recipe_list.html:90 templates/nutrition/stats.html:44
@@ -6344,7 +6992,7 @@ msgstr "Ändra mål"
 
 #: templates/nutrition/diary_add_entry.html:3
 #: templates/nutrition/diary_add_entry.html:6
-#: templates/nutrition/diary_day.html:77
+#: templates/nutrition/diary_day.html:82
 msgid "Add food"
 msgstr "Lägg till livsmedel"
 
@@ -6385,31 +7033,40 @@ msgstr "Dagens näring"
 msgid "Nutrition for this day"
 msgstr "Näring för den här dagen"
 
-#: templates/nutrition/diary_day.html:67
+#: templates/nutrition/diary_day.html:60
+msgid "P"
+msgstr "P"
+
+#: templates/nutrition/diary_day.html:60
+#: templates/workouts/_performed_exercise_card.html:22
+msgid "F"
+msgstr "M"
+
+#: templates/nutrition/diary_day.html:72
 msgid "Remove this entry?"
 msgstr "Ta bort denna post?"
 
-#: templates/nutrition/diary_day.html:74
+#: templates/nutrition/diary_day.html:79
 msgid "Nothing logged yet."
 msgstr "Inget loggat än."
 
-#: templates/nutrition/diary_day.html:81
+#: templates/nutrition/diary_day.html:86
 msgid "Save as recipe"
 msgstr "Spara som recept"
 
-#: templates/nutrition/diary_day.html:89
+#: templates/nutrition/diary_day.html:94
 msgid "Copy this day to another date"
 msgstr "Kopiera denna dag till ett annat datum"
 
-#: templates/nutrition/diary_day.html:93
+#: templates/nutrition/diary_day.html:98
 msgid "Copy to date"
 msgstr "Kopiera till datum"
 
-#: templates/nutrition/diary_day.html:94 templates/social/group_detail.html:28
+#: templates/nutrition/diary_day.html:99 templates/social/group_detail.html:28
 msgid "Copy"
 msgstr "Kopiera"
 
-#: templates/nutrition/diary_day.html:99
+#: templates/nutrition/diary_day.html:104
 msgid "Manage foods"
 msgstr "Hantera livsmedel"
 
@@ -6497,8 +7154,8 @@ msgstr "Bygg en kostplan"
 #: templates/nutrition/diet_plan_form.html:9
 msgid ""
 "We'll suggest one food or recipe per meal from your own library, scaled to "
-"fit — you can swap any of them afterward. Or start from scratch below to "
-"skip the suggestions and build it entirely yourself."
+"fit — you can swap any of them afterward. Or start from scratch below to skip"
+" the suggestions and build it entirely yourself."
 msgstr ""
 "Vi föreslår en livsmedel eller ett recept per måltid från ditt eget "
 "bibliotek, skalat för att passa — du kan byta ut vilket som helst av dem "
@@ -6522,11 +7179,11 @@ msgid ""
 "missing is recreated for you. Imported inactive, so it never replaces "
 "whatever plan you're currently following."
 msgstr ""
-"Ladda upp en kostplan som någon exporterat — från den här instansen, eller "
-"en helt annan IronStack-instans. Livsmedel och recept den använder matchas "
-"mot dina egna befintliga där det går, i stället för att dubbleras; allt som "
-"saknas återskapas åt dig. Importeras inaktiv, så den ersätter aldrig den "
-"plan du för närvarande följer."
+"Ladda upp en kostplan som någon exporterat — från den här instansen, eller en"
+" helt annan IronStack-instans. Livsmedel och recept den använder matchas mot "
+"dina egna befintliga där det går, i stället för att dubbleras; allt som "
+"saknas återskapas åt dig. Importeras inaktiv, så den ersätter aldrig den plan"
+" du för närvarande följer."
 
 #: templates/nutrition/diet_plan_item_form.html:3
 #: templates/nutrition/diet_plan_item_form.html:6
@@ -6580,17 +7237,17 @@ msgid ""
 "this instance can then find and log it."
 msgstr ""
 "Sök eller bläddra efter kategori för att lägga till ett livsmedel i det "
-"delade biblioteket — vem som helst på denna instans kan sedan hitta och "
-"logga det."
+"delade biblioteket — vem som helst på denna instans kan sedan hitta och logga"
+" det."
 
 #: templates/nutrition/food_browse.html:20
 msgid ""
-"Search to add a food to the shared library — anyone on this instance can "
-"then find and log it. Category browsing isn't available right now."
+"Search to add a food to the shared library — anyone on this instance can then"
+" find and log it. Category browsing isn't available right now."
 msgstr ""
-"Sök för att lägga till ett livsmedel i det delade biblioteket — vem som "
-"helst på den här instansen kan sedan hitta och logga det. Kategorisökning är "
-"inte tillgänglig just nu."
+"Sök för att lägga till ett livsmedel i det delade biblioteket — vem som helst"
+" på den här instansen kan sedan hitta och logga det. Kategorisökning är inte "
+"tillgänglig just nu."
 
 #: templates/nutrition/food_browse.html:42
 msgid "Browse by category"
@@ -6827,9 +7484,8 @@ msgid ""
 "These are estimates, not exact figures — you'll be able to see how well "
 "they're actually working once you've logged some data, and adjust anytime."
 msgstr ""
-"Dessa är uppskattningar, inte exakta siffror — du kommer att kunna se hur "
-"väl de faktiskt fungerar när du har loggat lite data, och justera när som "
-"helst."
+"Dessa är uppskattningar, inte exakta siffror — du kommer att kunna se hur väl"
+" de faktiskt fungerar när du har loggat lite data, och justera när som helst."
 
 #: templates/nutrition/onboarding_review.html:28
 msgid "Save and start tracking"
@@ -6846,8 +7502,8 @@ msgid ""
 "Tagged for %(meal)s — the diet-plan builder only ever suggests this recipe "
 "for that meal."
 msgstr ""
-"Märkt för %(meal)s — kostplansbyggaren föreslår det här receptet bara för "
-"den måltiden."
+"Märkt för %(meal)s — kostplansbyggaren föreslår det här receptet bara för den"
+" måltiden."
 
 #: templates/nutrition/recipe_detail.html:42
 msgid "Remove this ingredient?"
@@ -6914,8 +7570,8 @@ msgstr "Importera recept"
 msgid ""
 "Upload a recipe someone exported — from this instance, or a completely "
 "different IronStack instance. A food originally imported from OpenFoodFacts "
-"is looked up again by its own barcode; anything else is recreated as your "
-"own food."
+"is looked up again by its own barcode; anything else is recreated as your own"
+" food."
 msgstr ""
 "Ladda upp ett recept som någon exporterat — från den här instansen, eller en "
 "helt annan IronStack-instans. Ett livsmedel som ursprungligen importerades "
@@ -7022,7 +7678,7 @@ msgstr "Logga några dagar i din matdagbok för att se din trend här."
 #: templates/workouts/_train_panel.html:100
 #: templates/workouts/performed_exercise_form.html:3
 #: templates/workouts/performed_exercise_form.html:6
-#: templates/workouts/session_detail.html:31
+#: templates/workouts/session_detail.html:33
 msgid "Add exercise"
 msgstr "Lägg till övning"
 
@@ -7073,7 +7729,7 @@ msgstr "Ta bort detta träningspass och dess övningar?"
 
 #: templates/programs/program_detail.html:70
 #: templates/workouts/_train_panel.html:99
-#: templates/workouts/session_detail.html:26
+#: templates/workouts/session_detail.html:28
 msgid "No exercises yet."
 msgstr "Inga övningar ännu."
 
@@ -7122,10 +7778,10 @@ msgid ""
 "you; a name matching one of this instance's own system exercises is reused "
 "as-is."
 msgstr ""
-"Ladda upp ett program som någon exporterat — från den här instansen, eller "
-"en helt annan IronStack-instans. Egna övningar det använder återskapas åt "
-"dig; ett namn som matchar en av den här instansens egna systemövningar "
-"återanvänds som det är."
+"Ladda upp ett program som någon exporterat — från den här instansen, eller en"
+" helt annan IronStack-instans. Egna övningar det använder återskapas åt dig; "
+"ett namn som matchar en av den här instansens egna systemövningar återanvänds"
+" som det är."
 
 #: templates/programs/program_list.html:13
 msgid "My programs"
@@ -7161,7 +7817,7 @@ msgid "Edit workout"
 msgstr "Redigera träningspass"
 
 #: templates/programs/workout_form.html:21
-#: templates/workouts/session_detail.html:45
+#: templates/workouts/session_detail.html:47
 msgid "Delete workout"
 msgstr "Ta bort träningspass"
 
@@ -7287,8 +7943,8 @@ msgstr "Återställ lösenord"
 
 #: templates/registration/password_reset_done.html:10
 msgid ""
-"If an account exists with that email address, we've sent a link to reset "
-"your password."
+"If an account exists with that email address, we've sent a link to reset your"
+" password."
 msgstr ""
 "Om det finns ett konto med den e-postadressen har vi skickat en länk för att "
 "återställa ditt lösenord."
@@ -7625,6 +8281,366 @@ msgstr "Inga vänner att skicka meddelanden till ännu."
 msgid "Group chats"
 msgstr "Gruppchattar"
 
+#: templates/stretching/_cooldown_card.html:11
+msgid "Cool down with a stretch?"
+msgstr "Varva ner med lite stretching?"
+
+#: templates/stretching/_cooldown_card.html:21
+msgid "Picked for the muscles you trained:"
+msgstr "Utvalt efter musklerna du tränade:"
+
+#: templates/stretching/_cooldown_card.html:26
+msgid "Start cool-down"
+msgstr "Starta nedvarvning"
+
+#: templates/stretching/_routine_card.html:6
+#: templates/stretching/routine_detail.html:25
+#, python-format
+msgid "%(counter)s stretch"
+msgid_plural "%(counter)s stretches"
+msgstr[0] "%(counter)s stretchövning"
+msgstr[1] "%(counter)s stretchövningar"
+
+#: templates/stretching/_routine_card.html:12
+msgid "Start"
+msgstr "Starta"
+
+#: templates/stretching/_subnav.html:9
+msgid "Stretching sections"
+msgstr "Stretchingsektioner"
+
+#: templates/stretching/_subnav.html:11
+#: templates/stretching/routine_detail.html:5
+#: templates/stretching/routine_list.html:6
+msgid "Routines"
+msgstr "Rutiner"
+
+#: templates/stretching/_subnav.html:12
+#: templates/stretching/session_play.html:71
+#: templates/stretching/stretch_detail.html:5
+#: templates/stretching/stretch_list.html:3
+#: templates/stretching/stretch_list.html:6
+msgid "Stretches"
+msgstr "Stretchövningar"
+
+#: templates/stretching/_subnav.html:13
+#: templates/stretching/session_detail.html:5
+#: templates/stretching/session_history.html:6
+msgctxt "stretching"
+msgid "History"
+msgstr "Historik"
+
+#: templates/stretching/home.html:9 templates/stretching/session_form.html:3
+#: templates/stretching/session_form.html:6
+#: templates/stretching/session_history.html:9
+#: templates/stretching/session_history.html:20
+msgid "Log stretching"
+msgstr "Logga stretching"
+
+#: templates/stretching/home.html:15
+msgid "Continue stretching"
+msgstr "Fortsätt stretcha"
+
+#: templates/stretching/home.html:22
+msgid "Streak"
+msgstr "Svit"
+
+#: templates/stretching/home.html:23
+msgid "Last 7 days"
+msgstr "Senaste 7 dagarna"
+
+#: templates/stretching/home.html:28
+msgid "Start a routine"
+msgstr "Starta en rutin"
+
+#: templates/stretching/home.html:32 templates/stretching/routine_list.html:16
+msgid "No routines yet."
+msgstr "Inga rutiner än."
+
+#: templates/stretching/home.html:32 templates/stretching/routine_form.html:3
+#: templates/stretching/routine_form.html:6
+msgid "New routine"
+msgstr "Ny rutin"
+
+#: templates/stretching/home.html:36
+msgid "Minutes per week"
+msgstr "Minuter per vecka"
+
+#: templates/stretching/home.html:38
+msgid "Stretching minutes per week"
+msgstr "Stretchingminuter per vecka"
+
+#: templates/stretching/home.html:41
+msgid "Finish or log a stretching session to see your weekly minutes here."
+msgstr ""
+"Slutför eller logga ett stretchingpass för att se dina minuter per vecka här."
+
+#: templates/stretching/home.html:45
+msgid "Recent sessions"
+msgstr "Senaste passen"
+
+#: templates/stretching/routine_detail.html:16
+msgid "Duplicate"
+msgstr "Duplicera"
+
+#: templates/stretching/routine_detail.html:16
+msgid "Copy to edit"
+msgstr "Kopiera för att redigera"
+
+#: templates/stretching/routine_detail.html:21
+msgid "Built-in routine"
+msgstr "Inbyggd rutin"
+
+#: templates/stretching/routine_detail.html:26
+#, python-format
+msgid "about %(time)s"
+msgstr "cirka %(time)s"
+
+#: templates/stretching/routine_detail.html:31
+msgid "Start routine"
+msgstr "Starta rutinen"
+
+#: templates/stretching/routine_detail.html:41
+#: templates/stretching/session_detail.html:38
+#: templates/stretching/session_play.html:80
+#: templates/stretching/stretch_detail.html:21
+#: templates/stretching/stretch_list.html:34
+msgid "per side"
+msgstr "per sida"
+
+#: templates/stretching/routine_detail.html:42
+#, python-format
+msgid "rest %(rest)s s"
+msgstr "vila %(rest)s s"
+
+#: templates/stretching/routine_detail.html:48
+msgid "Move up"
+msgstr "Flytta upp"
+
+#: templates/stretching/routine_detail.html:52
+msgid "Move down"
+msgstr "Flytta ner"
+
+#: templates/stretching/routine_detail.html:63
+msgid "No stretches in this routine yet."
+msgstr "Inga stretchövningar i den här rutinen än."
+
+#: templates/stretching/routine_detail.html:68
+#: templates/stretching/routine_item_form.html:3
+#: templates/stretching/routine_item_form.html:6
+msgid "Add a stretch"
+msgstr "Lägg till en stretchövning"
+
+#: templates/stretching/routine_detail.html:74
+msgid "Leave the hold empty to use the stretch's own default."
+msgstr "Lämna hållet tomt för att använda övningens standardvärde."
+
+#: templates/stretching/routine_detail.html:79
+msgid "Remove this routine? Past sessions stay in your history."
+msgstr "Ta bort den här rutinen? Tidigare pass finns kvar i din historik."
+
+#: templates/stretching/routine_detail.html:81
+msgid "Remove routine"
+msgstr "Ta bort rutin"
+
+#: templates/stretching/routine_detail.html:86
+msgid "Back to routines"
+msgstr "Tillbaka till rutiner"
+
+#: templates/stretching/routine_form.html:3
+#: templates/stretching/routine_form.html:6
+msgid "Edit routine"
+msgstr "Redigera rutin"
+
+#: templates/stretching/routine_item_form.html:3
+#: templates/stretching/stretch_form.html:3
+#: templates/stretching/stretch_form.html:6
+msgid "Edit stretch"
+msgstr "Redigera stretchövning"
+
+#: templates/stretching/routine_item_form.html:18
+msgid "Back to routine"
+msgstr "Tillbaka till rutinen"
+
+#: templates/stretching/routine_list.html:3
+msgid "Stretching routines"
+msgstr "Stretchingrutiner"
+
+#: templates/stretching/session_detail.html:23
+msgid "Cool-down after a workout"
+msgstr "Nedvarvning efter ett träningspass"
+
+#: templates/stretching/session_detail.html:32
+msgid "Stretch"
+msgstr "Stretchövning"
+
+#: templates/stretching/session_detail.html:32
+msgid "Held"
+msgstr "Hållet"
+
+#: templates/stretching/session_detail.html:51
+msgid "Delete this session?"
+msgstr "Radera det här passet?"
+
+#: templates/stretching/session_detail.html:56
+#: templates/workouts/session_detail.html:50
+msgid "Back to history"
+msgstr "Tillbaka till historik"
+
+#: templates/stretching/session_form.html:3
+#: templates/stretching/session_form.html:6
+msgid "Edit session"
+msgstr "Redigera pass"
+
+#: templates/stretching/session_history.html:3
+msgid "Stretching history"
+msgstr "Stretchinghistorik"
+
+#: templates/stretching/session_history.html:20
+msgid "No stretching sessions yet."
+msgstr "Inga stretchingpass än."
+
+#: templates/stretching/session_history.html:20
+msgid "Start a routine, or log one you did without the timer."
+msgstr "Starta en rutin, eller logga ett pass du gjorde utan timern."
+
+#: templates/stretching/session_play.html:18
+msgid "Get ready"
+msgstr "Gör dig redo"
+
+#: templates/stretching/session_play.html:19
+msgid "Hold"
+msgstr "Håll"
+
+#: templates/stretching/session_play.html:20
+msgid "Rest"
+msgstr "Vila"
+
+#: templates/stretching/session_play.html:21
+msgid "Left side"
+msgstr "Vänster sida"
+
+#: templates/stretching/session_play.html:22
+msgid "Right side"
+msgstr "Höger sida"
+
+#: templates/stretching/session_play.html:23
+#, python-brace-format
+msgid "set {set}/{sets}"
+msgstr "set {set}/{sets}"
+
+#: templates/stretching/session_play.html:25
+msgid "Guided session"
+msgstr "Guidat pass"
+
+#: templates/stretching/session_play.html:27
+msgid "Unmute timer sound"
+msgstr "Slå på timerljudet"
+
+#: templates/stretching/session_play.html:27
+msgid "Mute timer sound"
+msgstr "Stäng av timerljudet"
+
+#: templates/stretching/session_play.html:35
+#, python-format
+msgid "%(counter)s stretch to go."
+msgid_plural "%(counter)s stretches to go."
+msgstr[0] "%(counter)s övning kvar."
+msgstr[1] "%(counter)s övningar kvar."
+
+#: templates/stretching/session_play.html:36
+msgid "Start timer"
+msgstr "Starta timern"
+
+#: templates/stretching/session_play.html:50
+msgid "Pause"
+msgstr "Pausa"
+
+#: templates/stretching/session_play.html:51
+msgid "Resume"
+msgstr "Fortsätt"
+
+#: templates/stretching/session_play.html:55
+msgid "Next step"
+msgstr "Nästa steg"
+
+#: templates/stretching/session_play.html:56
+msgid "Skip stretch"
+msgstr "Hoppa över övningen"
+
+#: templates/stretching/session_play.html:62
+msgid "Next up:"
+msgstr "Härnäst:"
+
+#: templates/stretching/session_play.html:67
+msgid "All stretches done — nice work."
+msgstr "Alla övningar klara — bra jobbat."
+
+#: templates/stretching/session_play.html:89
+msgid "Skip"
+msgstr "Hoppa över"
+
+#: templates/stretching/session_play.html:98
+msgid "Finish session"
+msgstr "Avsluta passet"
+
+#: templates/stretching/session_play.html:100
+msgid "Abandon this session? It stays in your history as abandoned."
+msgstr "Avbryta det här passet? Det finns kvar i din historik som avbrutet."
+
+#: templates/stretching/session_play.html:102
+msgid "Abandon session"
+msgstr "Avbryt passet"
+
+#: templates/stretching/stretch_detail.html:20
+msgid "Type"
+msgstr "Typ"
+
+#: templates/stretching/stretch_detail.html:21
+msgid "Default hold"
+msgstr "Standardhåll"
+
+#: templates/stretching/stretch_detail.html:30
+msgid "How to do it"
+msgstr "Så gör du"
+
+#: templates/stretching/stretch_detail.html:36
+msgid ""
+"Remove this stretch from your library? Routines and past sessions that use it"
+" keep working."
+msgstr ""
+"Ta bort den här övningen från ditt bibliotek? Rutiner och tidigare pass som "
+"använder den fortsätter att fungera."
+
+#: templates/stretching/stretch_detail.html:38
+msgid "Remove stretch"
+msgstr "Ta bort övningen"
+
+#: templates/stretching/stretch_detail.html:42
+msgid "Back to stretches"
+msgstr "Tillbaka till övningarna"
+
+#: templates/stretching/stretch_form.html:3
+#: templates/stretching/stretch_form.html:6
+msgid "New stretch"
+msgstr "Ny stretchövning"
+
+#: templates/stretching/stretch_list.html:20
+msgid "Filter by type"
+msgstr "Filtrera efter typ"
+
+#: templates/stretching/stretch_list.html:21
+msgid "All types"
+msgstr "Alla typer"
+
+#: templates/stretching/stretch_list.html:26
+msgid "Filter"
+msgstr "Filtrera"
+
+#: templates/stretching/stretch_list.html:39
+msgid "No stretches match."
+msgstr "Inga övningar matchar."
+
 #: templates/workouts/_performed_exercise_card.html:6
 #: templates/workouts/_train_panel.html:39
 #, python-format
@@ -7642,10 +8658,6 @@ msgstr "Repetitioner"
 #: templates/workouts/_performed_exercise_card.html:20
 msgid "W"
 msgstr "U"
-
-#: templates/workouts/_performed_exercise_card.html:22
-msgid "F"
-msgstr "M"
 
 #: templates/workouts/_performed_exercise_card.html:25
 msgid "Delete this set?"
@@ -7714,28 +8726,24 @@ msgid_plural "%(n)s sets"
 msgstr[0] "%(n)s set"
 msgstr[1] "%(n)s set"
 
-#: templates/workouts/session_detail.html:35
+#: templates/workouts/session_detail.html:37
 #: templates/workouts/session_train.html:51
 msgid "Complete workout"
 msgstr "Slutför träningspass"
 
-#: templates/workouts/session_detail.html:37
+#: templates/workouts/session_detail.html:39
 #: templates/workouts/session_train.html:53
 msgid "Abandon this workout? It stays in your history as abandoned."
 msgstr "Avbryt detta träningspass? Det finns kvar i din historik som avbrutet."
 
-#: templates/workouts/session_detail.html:39
+#: templates/workouts/session_detail.html:41
 #: templates/workouts/session_train.html:55
 msgid "Abandon workout"
 msgstr "Avbryt träningspass"
 
-#: templates/workouts/session_detail.html:43
+#: templates/workouts/session_detail.html:45
 msgid "Delete this workout? This cannot be undone."
 msgstr "Ta bort detta träningspass? Detta kan inte ångras."
-
-#: templates/workouts/session_detail.html:48
-msgid "Back to history"
-msgstr "Tillbaka till historik"
 
 #: templates/workouts/session_list.html:3
 msgid "Workout history"
@@ -7754,8 +8762,8 @@ msgstr "Inga träningspass loggade ännu."
 
 #: templates/workouts/session_list.html:26
 msgid ""
-"Start a freeform workout with the button below, or pick a workout from one "
-"of your programs."
+"Start a freeform workout with the button below, or pick a workout from one of"
+" your programs."
 msgstr ""
 "Starta ett fritt träningspass med knappen nedan eller välj ett pass från ett "
 "av dina program."
@@ -7822,6 +8830,3 @@ msgstr "Redigera set %(number)s"
 
 #~ msgid "+ New recipe"
 #~ msgstr "+ Nytt recept"
-
-#~ msgid "New workout"
-#~ msgstr "Nytt träningspass"
