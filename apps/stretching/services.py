@@ -463,4 +463,6 @@ def calendar_minutes(user, year, month):
         totals[session.date] = totals.get(session.date, timedelta()) + (
             session.duration or timedelta()
         )
-    return {day: round(total.total_seconds() / 60) for day, total in totals.items()}
+    # At least 1: a day with a (very short) finished session still
+    # counts as a stretching day, never as "0 min".
+    return {day: max(1, round(total.total_seconds() / 60)) for day, total in totals.items()}

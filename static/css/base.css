@@ -3148,6 +3148,8 @@ h2.card-title {
    the oversized digits. */
 .stretch-player-name {
   margin: 0 0 0.25rem;
+  font-size: var(--text-xl);
+  font-weight: bold;
 }
 
 .stretch-player-phase {

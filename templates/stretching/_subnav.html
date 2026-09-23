@@ -10,5 +10,5 @@ rather than computed by a context processor.
   <a href="{% url 'stretching:home' %}" {% if active == "home" %}aria-current="true"{% endif %}>{% trans "Overview" %}</a>
   <a href="{% url 'stretching:routine-list' %}" {% if active == "routines" %}aria-current="true"{% endif %}>{% trans "Routines" %}</a>
   <a href="{% url 'stretching:stretch-list' %}" {% if active == "library" %}aria-current="true"{% endif %}>{% trans "Stretches" %}</a>
-  <a href="{% url 'stretching:session-history' %}" {% if active == "history" %}aria-current="true"{% endif %}>{% trans "History" %}</a>
+  <a href="{% url 'stretching:session-history' %}" {% if active == "history" %}aria-current="true"{% endif %}>{% trans "History" context "stretching" %}</a>
 </nav>

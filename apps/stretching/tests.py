@@ -382,6 +382,10 @@ class StatsTests(TestCase):
             services.calendar_minutes(self.alice, 2026, 9), {date(2026, 9, 5): 15}
         )
 
+    def test_calendar_counts_a_very_short_session_as_one_minute(self):
+        services.quick_log(self.alice, date=date(2026, 9, 5), duration=timedelta(seconds=20))
+        self.assertEqual(services.calendar_minutes(self.alice, 2026, 9), {date(2026, 9, 5): 1})
+
 
 class AccountDataTests(TestCase):
     """GDPR export/erasure (apps.accounts.services) cover stretching."""

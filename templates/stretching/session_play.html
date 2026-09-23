@@ -39,7 +39,7 @@ text stays in Django's translation catalog rather than in the JS.
   <div x-show="started && !finished" x-cloak>
     {% for item in performed %}{% if item.status == "pending" %}
       <div x-show="currentPerformed === {{ item.pk }}">
-        <h2 class="stretch-player-name">{{ item.stretch_name|translate_content }}</h2>
+        <p class="stretch-player-name">{{ item.stretch_name|translate_content }}</p>
       </div>
     {% endif %}{% endfor %}
     <p class="stretch-player-phase" x-text="phaseLabel" aria-live="polite"></p>

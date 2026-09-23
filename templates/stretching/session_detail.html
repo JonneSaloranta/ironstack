@@ -2,7 +2,7 @@
 {% load i18n core_extras stretching_extras %}
 {% block title %}{{ session.name|default:_("Stretching")|translate_content }} — IronStack{% endblock %}
 {% block content %}
-{% url 'stretching:session-history' as c1u %}{% trans "History" as c1l %}{% trans "Stretching" as fallback_name %}
+{% url 'stretching:session-history' as c1u %}{% trans "History" context "stretching" as c1l %}{% trans "Stretching" as fallback_name %}
 {% include "core/_breadcrumbs.html" with c1_url=c1u c1_label=c1l current=session.name|default:fallback_name %}
 <div class="top-bar">
   <h1 class="no-margin">{{ session.name|default:fallback_name|translate_content }}</h1>
