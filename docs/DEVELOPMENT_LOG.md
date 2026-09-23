@@ -5713,3 +5713,15 @@ stretching tab uses its own `context "stretching"`. Checked live on a
 (prepare → hold, skip, reload resumes at the next pending stretch),
 finish, dashboard calendar dot/popover, and the workout cool-down card.
 
+
+Follow-up fixes for problems found while building it: account deletion
+raised `IntegrityError` whenever a user's own ActivityType/Exercise/
+MeasurementType/MealSlot shared a name with a shared (`owner=None`) row
+— a built-in one, or one released by an earlier deleted account — since
+those models keep names unique among shared rows; clashing rows are now
+released as "Name (2)", "Name (3)", ... (never with the username).
+`workouts.services.add_performed_exercise` and the diet-plan "add item"
+view both computed the next order as `(highest or -1) + 1`, so a highest
+order of 0 produced a duplicate 0. Feedback gained Nutrition and
+Stretching categories. The stretching pages were added to the axe-core
+accessibility suite.

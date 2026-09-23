@@ -36,6 +36,16 @@ narrated summary of the same version.
 - Stretching data is included in "Download your data" and removed on
   account deletion.
 
+- Feedback categories for Nutrition and Stretching.
+
+### Fixed
+- Deleting an account no longer fails when one of your own exercises,
+  activity types, measurement types or meal slots has the same name as
+  a built-in one (or as one left behind by another deleted account) —
+  it's kept as "Name (2)" instead.
+- An exercise added to a freeform workout, or an extra item added to a
+  diet plan meal, no longer gets the same position as the first one.
+
 ### Changed
 - The workout rest timer's sound handling moved into a shared
   `timer-audio.js` used by both timers (no behaviour change).
