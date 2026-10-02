@@ -9826,3 +9826,448 @@ msgstr[1] "%(counter)s tuotetta ostoslistalla suunnitelmasta %(plan)s."
 
 #~ msgid "+ New recipe"
 #~ msgstr "+ Uusi resepti"
+
+msgid "Ask about your training or nutrition…"
+msgstr "Kysy treenaamisesta tai ravinnosta…"
+
+msgid "Anthropic API key"
+msgstr "Anthropic-API-avain"
+
+msgid "Create one at console.anthropic.com. It's stored encrypted and used only for your own conversations; usage is billed to your Anthropic account."
+msgstr "Luo avain osoitteessa console.anthropic.com. Se tallennetaan salattuna ja sitä käytetään vain omissa keskusteluissasi; käyttö laskutetaan Anthropic-tililtäsi."
+
+msgid "That doesn't look like an Anthropic API key."
+msgstr "Tämä ei näytä Anthropic-API-avaimelta."
+
+msgid "Selected users"
+msgstr "Valitut käyttäjät"
+
+msgid "Search users…"
+msgstr "Hae käyttäjiä…"
+
+msgid "Nobody selected."
+msgstr "Ketään ei ole valittu."
+
+msgid "No matching users."
+msgstr "Ei osuvia käyttäjiä."
+
+msgid "Used when access is set to “Selected users”."
+msgstr "Käytetään, kun käyttöoikeudeksi on valittu ”Valitut käyttäjät”."
+
+msgid "Assistant enabled"
+msgstr "Avustaja käytössä"
+
+msgid "Who may use this instance's AI model"
+msgstr "Kuka saa käyttää tämän palvelimen tekoälymallia"
+
+msgid "Daily token limit per user"
+msgstr "Päivittäinen token-raja käyttäjää kohden"
+
+msgid "Nobody — users must bring their own key"
+msgstr "Ei kukaan — käyttäjien on tuotava oma avain"
+
+msgid "Staff only"
+msgstr "Vain ylläpitäjät"
+
+msgid "Everyone"
+msgstr "Kaikki"
+
+msgid "Turns the assistant off for everyone, including users' own keys."
+msgstr "Poistaa avustajan käytöstä kaikilta, myös käyttäjien omilla avaimilla."
+
+msgid "Who may use this instance's own provider (ASSISTANT_API_KEY, or the Ollama server). Its usage is billed to you, the operator."
+msgstr "Kuka saa käyttää tämän palvelimen omaa palveluntarjoajaa (ASSISTANT_API_KEY tai Ollama-palvelin). Käyttö laskutetaan sinulta, ylläpitäjältä."
+
+msgid "Tokens (input + output) one user may spend per day on the shared provider. 0 means no limit. Users' own keys are never limited."
+msgstr "Tokenit (syöte + vastaus), jotka yksi käyttäjä saa käyttää päivässä yhteisellä palveluntarjoajalla. 0 tarkoittaa, ettei rajaa ole. Käyttäjien omia avaimia ei koskaan rajoiteta."
+
+msgid "This instance's provider"
+msgstr "Tämän palvelimen palveluntarjoaja"
+
+msgid "Your own API key"
+msgstr "Oma API-avaimesi"
+
+msgid "You"
+msgstr "Sinä"
+
+msgid "Assistant"
+msgstr "Avustaja"
+
+msgid "Waiting"
+msgstr "Odottaa"
+
+msgid "Writing"
+msgstr "Kirjoittaa"
+
+msgid "Failed"
+msgstr "Epäonnistui"
+
+msgid "Diet plan"
+msgstr "Ruokavaliosuunnitelma"
+
+msgid "Workout program"
+msgstr "Treeniohjelma"
+
+msgid "Waiting for you"
+msgstr "Odottaa sinua"
+
+msgid "Dismissed"
+msgstr "Hylätty"
+
+msgid "The assistant sent a malformed reply. Please try again."
+msgstr "Avustaja lähetti virheellisen vastauksen. Yritä uudelleen."
+
+msgid "The API key was rejected. Check it in your assistant settings."
+msgstr "API-avain hylättiin. Tarkista se avustajan asetuksista."
+
+msgid "This API key isn't allowed to use that model."
+msgstr "Tällä API-avaimella ei saa käyttää kyseistä mallia."
+
+msgid "The configured model (%(model)s) wasn't found."
+msgstr "Määritettyä mallia (%(model)s) ei löytynyt."
+
+msgid "The AI service is rate limiting requests. Try again in a minute."
+msgstr "Tekoälypalvelu rajoittaa pyyntöjä. Yritä uudelleen hetken kuluttua."
+
+msgid "The AI service rejected the request."
+msgstr "Tekoälypalvelu hylkäsi pyynnön."
+
+msgid "The AI service is having problems right now. Try again later."
+msgstr "Tekoälypalvelussa on juuri nyt ongelmia. Yritä myöhemmin uudelleen."
+
+msgid "Couldn't reach the AI service."
+msgstr "Tekoälypalveluun ei saatu yhteyttä."
+
+msgid "The administrator has turned the AI assistant off."
+msgstr "Ylläpitäjä on poistanut tekoälyavustajan käytöstä."
+
+msgid "This instance doesn't provide an AI model for your account. You can use the assistant with your own Anthropic API key."
+msgstr "Tämä palvelin ei tarjoa tekoälymallia tilillesi. Voit käyttää avustajaa omalla Anthropic-API-avaimellasi."
+
+msgid "Turn the assistant on in its settings first."
+msgstr "Ota avustaja ensin käyttöön sen asetuksista."
+
+msgid "Wait for the assistant to finish its current reply."
+msgstr "Odota, että avustaja saa nykyisen vastauksensa valmiiksi."
+
+msgid "You've used today's assistant allowance. It resets tomorrow."
+msgstr "Olet käyttänyt tämän päivän avustajakiintiön. Se nollautuu huomenna."
+
+msgid "This conversation used your own API key, which you've removed. Start a new conversation."
+msgstr "Tämä keskustelu käytti omaa API-avaintasi, jonka olet poistanut. Aloita uusi keskustelu."
+
+msgid "This conversation can't be continued anymore. Start a new conversation."
+msgstr "Tätä keskustelua ei voi enää jatkaa. Aloita uusi keskustelu."
+
+msgid "This conversation is getting long. Start a new one to keep replies quick."
+msgstr "Tästä keskustelusta on tulossa pitkä. Aloita uusi, niin vastaukset pysyvät nopeina."
+
+msgid "No API key is available for this conversation."
+msgstr "Tälle keskustelulle ei ole saatavilla API-avainta."
+
+msgid "Write a message first."
+msgstr "Kirjoita ensin viesti."
+
+msgid "That message is too long."
+msgstr "Viesti on liian pitkä."
+
+msgid "Thinking…"
+msgstr "Mietitään…"
+
+msgid "The assistant can't help with that request."
+msgstr "Avustaja ei voi auttaa tämän pyynnön kanssa."
+
+msgid "The reply was cut off. Try asking for something smaller."
+msgstr "Vastaus katkesi. Kokeile pyytää jotain pienempää."
+
+msgid "The reply was cut off."
+msgstr "Vastaus katkesi."
+
+msgid "The assistant stopped after too many steps."
+msgstr "Avustaja pysähtyi liian monen vaiheen jälkeen."
+
+msgid "Something went wrong while writing the reply."
+msgstr "Vastausta kirjoitettaessa tapahtui virhe."
+
+msgid "The reply was interrupted. Please try again."
+msgstr "Vastaus keskeytyi. Yritä uudelleen."
+
+msgid "Looking at your profile…"
+msgstr "Katsotaan profiiliasi…"
+
+msgid "Looking at your workouts…"
+msgstr "Katsotaan treenejäsi…"
+
+msgid "Looking at your records…"
+msgstr "Katsotaan ennätyksiäsi…"
+
+msgid "Looking at your measurements…"
+msgstr "Katsotaan mittauksiasi…"
+
+msgid "Looking at your activities…"
+msgstr "Katsotaan aktiviteettejasi…"
+
+msgid "Looking at your food diary…"
+msgstr "Katsotaan ruokapäiväkirjaasi…"
+
+msgid "Looking at your programs…"
+msgstr "Katsotaan ohjelmiasi…"
+
+msgid "Looking at your diet plans…"
+msgstr "Katsotaan ruokavaliosuunnitelmiasi…"
+
+msgid "Searching exercises…"
+msgstr "Haetaan liikkeitä…"
+
+msgid "Searching foods…"
+msgstr "Haetaan ruokia…"
+
+msgid "Searching recipes…"
+msgstr "Haetaan reseptejä…"
+
+msgid "Looking at your meals…"
+msgstr "Katsotaan aterioitasi…"
+
+msgid "Putting a diet plan together…"
+msgstr "Kootaan ruokavaliosuunnitelmaa…"
+
+msgid "Putting a program together…"
+msgstr "Kootaan ohjelmaa…"
+
+msgid "Conversation deleted."
+msgstr "Keskustelu poistettu."
+
+msgid "This suggestion can't be created anymore: %(error)s"
+msgstr "Tätä ehdotusta ei voi enää luoda: %(error)s"
+
+msgid "Diet plan created. It isn't active until you choose to use it."
+msgstr "Ruokavaliosuunnitelma luotu. Se ei ole aktiivinen ennen kuin otat sen käyttöön."
+
+msgid "Program created. Review it and make it yours."
+msgstr "Ohjelma luotu. Käy se läpi ja muokkaa siitä omasi."
+
+msgid "AI assistant turned on."
+msgstr "Tekoälyavustaja otettu käyttöön."
+
+msgid "AI assistant turned off."
+msgstr "Tekoälyavustaja poistettu käytöstä."
+
+msgid "API key saved."
+msgstr "API-avain tallennettu."
+
+msgid "API key removed."
+msgstr "API-avain poistettu."
+
+msgid "Assistant settings saved."
+msgstr "Avustajan asetukset tallennettu."
+
+msgid "AI assistant"
+msgstr "Tekoälyavustaja"
+
+msgid "Turn the assistant on or off, and add your own API key if you have one."
+msgstr "Ota avustaja käyttöön tai pois käytöstä ja lisää oma API-avaimesi, jos sinulla on sellainen."
+
+msgid "Ask anything"
+msgstr "Kysy mitä vain"
+
+msgid "Ask for a diet plan or a workout program, or about your progress. It looks at your own data before it answers."
+msgstr "Pyydä ruokavaliosuunnitelmaa tai treeniohjelmaa tai kysy edistymisestäsi. Avustaja katsoo omat tietosi ennen kuin vastaa."
+
+msgid "Your conversations"
+msgstr "Keskustelusi"
+
+msgid "Pick up where you left off. A plan it suggests is only created if you accept it."
+msgstr "Jatka siitä, mihin jäit. Avustajan ehdottama suunnitelma luodaan vain, jos hyväksyt sen."
+
+msgid "Get help with diet plans, workout programs and your progress."
+msgstr "Apua ruokavaliosuunnitelmiin, treeniohjelmiin ja edistymiseesi."
+
+msgid "Choose who may use this instance's AI model, set limits, and see usage."
+msgstr "Valitse, kuka saa käyttää tämän palvelimen tekoälymallia, aseta rajat ja katso käyttö."
+
+msgid "Your messages, and the training and nutrition data the assistant looks up to answer them, are sent to an AI model this instance runs on its own server."
+msgstr "Viestisi sekä treeni- ja ravintotiedot, jotka avustaja hakee vastatakseen niihin, lähetetään tekoälymallille, jota tämä palvelin ajaa omalla laitteistollaan."
+
+msgid "Your messages, and the training and nutrition data the assistant looks up to answer them, are sent to Anthropic (the maker of Claude) to generate replies."
+msgstr "Viestisi sekä treeni- ja ravintotiedot, jotka avustaja hakee vastatakseen niihin, lähetetään Anthropicille (Clauden kehittäjä) vastausten tuottamista varten."
+
+msgid "It only reads your own data, and only while it's answering you. It can't change anything: plans it suggests are created only if you choose to."
+msgstr "Se lukee vain omia tietojasi ja vain silloin, kun se vastaa sinulle. Se ei voi muuttaa mitään: sen ehdottamat suunnitelmat luodaan vain, jos itse niin päätät."
+
+msgid "Replies can be wrong. It isn't a doctor or a dietitian — check anything important with a professional."
+msgstr "Vastaukset voivat olla virheellisiä. Avustaja ei ole lääkäri eikä ravitsemusterapeutti — tarkista tärkeät asiat ammattilaiselta."
+
+msgid "You can turn it off, and delete your conversations, at any time."
+msgstr "Voit poistaa sen käytöstä ja poistaa keskustelusi milloin tahansa."
+
+msgid "Waiting…"
+msgstr "Odotetaan…"
+
+msgid "This is taking unusually long to start. If it never does, the assistant worker may not be running — let your administrator know."
+msgstr "Aloittaminen kestää epätavallisen kauan. Jos se ei käynnisty lainkaan, avustajan taustaprosessi ei ehkä ole käynnissä — kerro ylläpitäjälle."
+
+msgid "Target %(calories)s kcal · protein %(protein)s g · carbs %(carbs)s g · fat %(fat)s g"
+msgstr "Tavoite %(calories)s kcal · proteiini %(protein)s g · hiilihydraatit %(carbs)s g · rasva %(fat)s g"
+
+msgid "The suggested meals add up to about %(calories)s kcal a day."
+msgstr "Ehdotetut ateriat ovat yhteensä noin %(calories)s kcal päivässä."
+
+msgid "Show meals"
+msgstr "Näytä ateriat"
+
+msgid "%(servings)s servings"
+msgstr "%(servings)s annosta"
+
+msgid "new food"
+msgstr "uusi ruoka"
+
+msgid "Foods marked “new food” are added to your food library with nutrition values the assistant estimated — check them."
+msgstr "”Uusi ruoka” -merkityt ruoat lisätään ruokakirjastoosi avustajan arvioimilla ravintoarvoilla — tarkista ne."
+
+msgid "Show workouts"
+msgstr "Näytä treenit"
+
+msgid "Rate of perceived exertion"
+msgstr "Koettu kuormittavuus"
+
+msgid "Create diet plan"
+msgstr "Luo ruokavaliosuunnitelma"
+
+msgid "Create program"
+msgstr "Luo ohjelma"
+
+msgid "Nothing is saved until you create it. It's created as a new, inactive plan you can still edit."
+msgstr "Mitään ei tallenneta ennen kuin luot sen. Se luodaan uutena, ei-aktiivisena suunnitelmana, jota voit vielä muokata."
+
+msgid "Open diet plan"
+msgstr "Avaa ruokavaliosuunnitelma"
+
+msgid "Open program"
+msgstr "Avaa ohjelma"
+
+msgid "No messages yet."
+msgstr "Ei vielä viestejä."
+
+msgid "This instance's AI provider: %(provider)s."
+msgstr "Tämän palvelimen tekoälypalveluntarjoaja: %(provider)s."
+
+msgid "No AI provider is configured for this instance (ASSISTANT_API_KEY, or ASSISTANT_PROVIDER=ollama). Users can still use their own API keys."
+msgstr "Tälle palvelimelle ei ole määritetty tekoälypalveluntarjoajaa (ASSISTANT_API_KEY tai ASSISTANT_PROVIDER=ollama). Käyttäjät voivat silti käyttää omia API-avaimiaan."
+
+msgid "Usage, last 30 days"
+msgstr "Käyttö, viimeiset 30 päivää"
+
+msgid "User"
+msgstr "Käyttäjä"
+
+msgid "Key"
+msgstr "Avain"
+
+msgid "Requests"
+msgstr "Pyynnöt"
+
+msgid "Input tokens"
+msgstr "Syötetokenit"
+
+msgid "Output tokens"
+msgstr "Vastaustokenit"
+
+msgid "Own"
+msgstr "Oma"
+
+msgid "Shared"
+msgstr "Yhteinen"
+
+msgid "Nobody has used the assistant yet."
+msgstr "Kukaan ei ole vielä käyttänyt avustajaa."
+
+msgid "Back to AI assistant"
+msgstr "Takaisin tekoälyavustajaan"
+
+msgid "Replies can be wrong — check anything important."
+msgstr "Vastaukset voivat olla virheellisiä — tarkista tärkeät asiat."
+
+msgid "Delete this conversation?"
+msgstr "Poistetaanko tämä keskustelu?"
+
+msgid "Delete conversation"
+msgstr "Poista keskustelu"
+
+msgid "Open assistant settings"
+msgstr "Avaa avustajan asetukset"
+
+msgid "Plan with an assistant"
+msgstr "Suunnittele avustajan kanssa"
+
+msgid "Ask for a diet plan or a workout program built around your goals, or ask about your own progress. The assistant looks at what you've logged before it answers."
+msgstr "Pyydä tavoitteidesi mukaan rakennettua ruokavaliosuunnitelmaa tai treeniohjelmaa tai kysy omasta edistymisestäsi. Avustaja katsoo kirjaamasi tiedot ennen kuin vastaa."
+
+msgid "Turn on the assistant"
+msgstr "Ota avustaja käyttöön"
+
+msgid "New conversation"
+msgstr "Uusi keskustelu"
+
+msgid "Start conversation"
+msgstr "Aloita keskustelu"
+
+msgid "Today's use: %(used)s of %(limit)s tokens."
+msgstr "Tämän päivän käyttö: %(used)s / %(limit)s tokenia."
+
+msgid "Conversations"
+msgstr "Keskustelut"
+
+msgid "No conversations yet."
+msgstr "Ei vielä keskusteluja."
+
+msgid "Try: “Make me a 3-day full-body program” or “Build a weekly diet plan from my foods”."
+msgstr "Kokeile: ”Tee minulle 3 päivän koko kehon ohjelma” tai ”Kokoa viikon ruokavaliosuunnitelma ruoistani”."
+
+msgid "AI assistant settings"
+msgstr "Tekoälyavustajan asetukset"
+
+msgid "On. The assistant can read your data while it answers you."
+msgstr "Käytössä. Avustaja voi lukea tietojasi vastatessaan sinulle."
+
+msgid "Turn off"
+msgstr "Poista käytöstä"
+
+msgid "Off. Nothing of yours is sent to an AI model."
+msgstr "Pois käytöstä. Mitään tietojasi ei lähetetä tekoälymallille."
+
+msgid "AI model"
+msgstr "Tekoälymalli"
+
+msgid "Using your own Anthropic API key (%(model)s)."
+msgstr "Käytössä oma Anthropic-API-avaimesi (%(model)s)."
+
+msgid "Using this instance's AI model (%(model)s)."
+msgstr "Käytössä tämän palvelimen tekoälymalli (%(model)s)."
+
+msgid "Saved key ending in %(hint)s. Your conversations use it, and it's billed to your Anthropic account."
+msgstr "Tallennettu avain, joka päättyy %(hint)s. Keskustelusi käyttävät sitä, ja käyttö laskutetaan Anthropic-tililtäsi."
+
+msgid "Remove your API key?"
+msgstr "Poistetaanko API-avaimesi?"
+
+msgid "Optional. With your own Anthropic API key you can use the assistant even if this instance doesn't provide a model for you."
+msgstr "Valinnainen. Omalla Anthropic-API-avaimella voit käyttää avustajaa, vaikka tämä palvelin ei tarjoaisi sinulle mallia."
+
+msgid "Replace key"
+msgstr "Vaihda avain"
+
+msgid "Save key"
+msgstr "Tallenna avain"
+
+msgid "Ask the assistant"
+msgstr "Kysy avustajalta"
+
+msgid "Help me put together a diet plan that fits my goal."
+msgstr "Auta minua kokoamaan tavoitteeseeni sopiva ruokavaliosuunnitelma."
+
+msgid "Help me build a workout program for my goal and schedule."
+msgstr "Auta minua rakentamaan treeniohjelma tavoitteeni ja aikatauluni mukaan."
+
+msgctxt "proposal"
+msgid "Dismiss"
+msgstr "Hylkää"

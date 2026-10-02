@@ -18,6 +18,29 @@ narrated summary of the same version.
 
 ## [Unreleased]
 
+## [1.24.0] — 2026-10-03
+
+### Added
+- AI assistant (Profile → AI assistant): ask for a diet plan or a workout
+  program built from your own foods, recipes, exercises and history, or
+  ask about your progress. It looks at your data before answering and
+  only ever suggests — a suggested plan appears as a card, and it's
+  created (inactive, editable) only when you press "Create". Off until
+  you turn it on.
+- Runs on Claude with this instance's key or your own Anthropic API key
+  (stored encrypted), or on a self-hosted Ollama model. Admins choose who
+  may use the instance's key, set a daily token limit per user, and see
+  usage (Profile → Administration → AI assistant).
+- "Ask the assistant" on the diet plan and program lists.
+- A thin loading bar along the top of the screen whenever a page, a form
+  or a button is waiting on the server, so a slow connection no longer
+  looks like a tap that didn't register.
+
+### Development
+- New `assistant-worker` service in `docker-compose.yml` writes the
+  replies (`manage.py assistant_worker`); new optional `ASSISTANT_*`
+  settings (see `.env.example`); new dependency `anthropic`.
+
 ## [1.23.0] — 2026-10-02
 
 ### Added

@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% trans "AI assistant settings" %} — IronStack{% endblock %}
+{% block content %}
+{% url 'assistant:home' as assistant_home_url %}
+{% include "core/_breadcrumbs.html" with c1_url=assistant_home_url c1_label=_("AI assistant") current=_("Settings") %}
+<div class="top-bar">
+  <h1 class="no-margin">{% trans "AI assistant settings" %}</h1>
+</div>
+
+<div class="card">
+  <h2 class="card-title">{% trans "Assistant" %}</h2>
+  {% if preference.enabled %}
+    <p>{% trans "On. The assistant can read your data while it answers you." %}</p>
+    {% include "assistant/_consent_notice.html" %}
+    <form method="post" action="{% url 'assistant:disable' %}">
+      {% csrf_token %}
+      <button type="submit" class="button-secondary">{% trans "Turn off" %}</button>
+    </form>
+  {% else %}
+    <p>{% trans "Off. Nothing of yours is sent to an AI model." %}</p>
+    {% include "assistant/_consent_notice.html" %}
+    <form method="post" action="{% url 'assistant:enable' %}">
+      {% csrf_token %}
+      <button type="submit">{% trans "Turn on the assistant" %}</button>
+    </form>
+  {% endif %}
+</div>
+
+<div class="card">
+  <h2 class="card-title">{% trans "AI model" %}</h2>
+  {% if access.available %}
+    {% if access.key_source == "own" %}
+      <p>{% blocktrans with model=access.model %}Using your own Anthropic API key ({{ model }}).{% endblocktrans %}</p>
+    {% else %}
+      <p>{% blocktrans with model=access.model %}Using this instance's AI model ({{ model }}).{% endblocktrans %}</p>
+      {% if daily_limit %}
+        <p class="text-muted">{% blocktrans with used=tokens_used_today limit=daily_limit %}Today's use: {{ used }} of {{ limit }} tokens.{% endblocktrans %}</p>
+      {% endif %}
+    {% endif %}
+  {% else %}
+    <p>{{ access.reason }}</p>
+  {% endif %}
+</div>
+
+<div class="card">
+  <h2 class="card-title">{% trans "Your own API key" %}</h2>
+  {% if preference.has_own_key %}
+    <div class="card-action-row">
+      <p>{% blocktrans with hint=preference.api_key_hint %}Saved key ending in {{ hint }}. Your conversations use it, and it's billed to your Anthropic account.{% endblocktrans %}</p>
+      <form method="post" action="{% url 'assistant:key-remove' %}"
+            data-confirm="{% filter force_escape %}{% trans "Remove your API key?" %}{% endfilter %}">
+        {% csrf_token %}
+        <button type="submit" class="button-danger">{% trans "Remove" %}</button>
+      </form>
+    </div>
+  {% else %}
+    <p class="text-muted">{% trans "Optional. With your own Anthropic API key you can use the assistant even if this instance doesn't provide a model for you." %}</p>
+  {% endif %}
+  <form method="post" action="{% url 'assistant:key-save' %}">
+    {% csrf_token %}
+    {% include "core/_form_errors.html" with form=key_form %}
+    {% include "core/_field.html" with field=key_form.api_key %}
+    <button type="submit">{% if preference.has_own_key %}{% trans "Replace key" %}{% else %}{% trans "Save key" %}{% endif %}</button>
+  </form>
+</div>
+
+<p><a class="button-link" href="{% url 'assistant:home' %}">&larr; {% trans "Back to AI assistant" %}</a></p>
+{% endblock %}

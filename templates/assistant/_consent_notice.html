@@ -1,0 +1,16 @@
+{% load i18n %}
+{% comment %}
+What turning the assistant on means for the user's data — shown before
+they switch it on and again on its settings page. `access` is the
+services.Access for this user.
+{% endcomment %}
+<ul class="text-muted">
+  {% if access.provider == "ollama" %}
+    <li>{% trans "Your messages, and the training and nutrition data the assistant looks up to answer them, are sent to an AI model this instance runs on its own server." %}</li>
+  {% else %}
+    <li>{% trans "Your messages, and the training and nutrition data the assistant looks up to answer them, are sent to Anthropic (the maker of Claude) to generate replies." %}</li>
+  {% endif %}
+  <li>{% trans "It only reads your own data, and only while it's answering you. It can't change anything: plans it suggests are created only if you choose to." %}</li>
+  <li>{% trans "Replies can be wrong. It isn't a doctor or a dietitian — check anything important with a professional." %}</li>
+  <li>{% trans "You can turn it off, and delete your conversations, at any time." %}</li>
+</ul>

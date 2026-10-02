@@ -1,0 +1,7 @@
+{% load i18n %}
+{% if send_error %}<div class="alert alert-error"><p>{{ send_error }}</p></div>{% endif %}
+{% for message in thread %}
+  {% include "assistant/_message.html" %}
+{% empty %}
+  <p class="text-muted">{% trans "No messages yet." %}</p>
+{% endfor %}

@@ -675,6 +675,62 @@ def import_diet_plan(user, payload):
 
 
 @transaction.atomic
+def create_diet_plan(
+    user,
+    *,
+    name,
+    target_calories,
+    target_protein_grams,
+    target_carbohydrate_grams,
+    target_fat_grams,
+    is_weekly,
+    meals,
+):
+    """Creates an inactive DietPlan from already-resolved rows — the
+    sibling of `import_diet_plan` for a caller that holds real
+    Food/Recipe/MealSlot objects rather than a portable export payload
+    (apps.assistant.proposals, accepting an assistant's suggestion).
+    Lands inactive for the same reason an import does: activating it
+    would silently replace whatever plan `user` already follows.
+
+    `meals` is a list of dicts: `meal_slot`, `weekday` (None for a
+    one-day plan), `target_calories`, and `items` — each a dict with
+    exactly one of `food`/`recipe` plus `quantity`."""
+    from .models import DietPlanItem, DietPlanMeal
+
+    plan = DietPlan.objects.create(
+        user=user,
+        name=name,
+        goal=None,
+        target_calories=target_calories,
+        target_protein_grams=target_protein_grams,
+        target_carbohydrate_grams=target_carbohydrate_grams,
+        target_fat_grams=target_fat_grams,
+        is_active=False,
+        is_weekly=is_weekly,
+    )
+    for order, meal_data in enumerate(meals):
+        meal = DietPlanMeal.objects.create(
+            diet_plan=plan,
+            meal_slot=meal_data["meal_slot"],
+            target_calories=meal_data["target_calories"],
+            order=order,
+            weekday=meal_data["weekday"] if is_weekly else None,
+        )
+        DietPlanItem.objects.bulk_create(
+            DietPlanItem(
+                diet_plan_meal=meal,
+                food=item.get("food"),
+                recipe=item.get("recipe"),
+                quantity=item["quantity"],
+                order=item_order,
+            )
+            for item_order, item in enumerate(meal_data["items"])
+        )
+    return plan
+
+
+@transaction.atomic
 def merge_foods(keep, duplicates):
     """The admin-only "these are actually the same food" cleanup tool
     (`apps.nutrition.admin.FoodAdmin`) — re-points every reference to

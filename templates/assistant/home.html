@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% trans "AI assistant" %} — IronStack{% endblock %}
+{% block content %}
+<div class="top-bar">
+  <h1 class="no-margin">{% trans "AI assistant" %}</h1>
+</div>
+<div class="top-bar-actions">
+  <a class="button-secondary" href="{% url 'assistant:settings' %}" data-tour="assistant-settings">{% trans "Settings" %}</a>
+</div>
+
+{% if not access.available %}
+  <div class="alert alert-info">
+    <p>{{ access.reason }}</p>
+    <p><a href="{% url 'assistant:settings' %}">{% trans "Open assistant settings" %}</a></p>
+  </div>
+{% elif not preference.enabled %}
+  <div class="card">
+    <h2 class="card-title">{% trans "Plan with an assistant" %}</h2>
+    <p>{% trans "Ask for a diet plan or a workout program built around your goals, or ask about your own progress. The assistant looks at what you've logged before it answers." %}</p>
+    {% include "assistant/_consent_notice.html" %}
+    <form method="post" action="{% url 'assistant:enable' %}">
+      {% csrf_token %}
+      <button type="submit">{% trans "Turn on the assistant" %}</button>
+    </form>
+  </div>
+{% else %}
+  <form class="card" method="post" action="{% url 'assistant:conversation-create' %}" data-tour="assistant-new">
+    {% csrf_token %}
+    <h2 class="card-title">{% trans "New conversation" %}</h2>
+    {% include "core/_field.html" with field=form.text %}
+    <button type="submit">{% trans "Start conversation" %}</button>
+    {% if tokens_remaining is not None and daily_limit %}
+      <p class="text-muted text-xs">{% blocktrans with used=tokens_used_today limit=daily_limit %}Today's use: {{ used }} of {{ limit }} tokens.{% endblocktrans %}</p>
+    {% endif %}
+  </form>
+{% endif %}
+
+{% if conversations %}
+  <h2>{% trans "Conversations" %}</h2>
+  <div data-tour="assistant-conversations">
+    {% for conversation in conversations %}
+      <a class="card card-link settings-row" href="{% url 'assistant:conversation-detail' conversation.pk %}">
+        <div>
+          <strong>{{ conversation.title }}</strong>
+          <p class="text-muted">{{ conversation.updated_at|date:"Y-m-d H:i" }}</p>
+        </div>
+        {% include "core/_chevron.html" %}
+      </a>
+    {% endfor %}
+  </div>
+{% elif access.available and preference.enabled %}
+  {% include "core/_empty_state.html" with message=_("No conversations yet.") hint=_("Try: “Make me a 3-day full-body program” or “Build a weekly diet plan from my foods”.") %}
+{% endif %}
+
+<p><a class="button-link" href="{% url 'profile' %}">&larr; {% trans "Back to profile" %}</a></p>
+{% endblock %}

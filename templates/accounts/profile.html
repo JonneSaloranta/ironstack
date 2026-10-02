@@ -141,6 +141,16 @@ visual sign a plain card was pressable.
   </div>
 {% endif %}
 
+<h2>{% trans "AI assistant" %}</h2>
+
+<a class="card card-link settings-row" href="{% url 'assistant:home' %}" data-tour="profile-assistant">
+  <div>
+    <strong>{% trans "AI assistant" %}</strong>
+    <p class="text-muted">{% trans "Get help with diet plans, workout programs and your progress." %}</p>
+  </div>
+  {% include "core/_chevron.html" %}
+</a>
+
 <h2>{% trans "Your data" %}</h2>
 
 <a class="card card-link settings-row" href="{% url 'api_keys:key-list' %}">
@@ -204,6 +214,14 @@ visual sign a plain card was pressable.
       <div>
         <strong>{% trans "Feedback" %}</strong>
         <p class="text-muted">{% trans "Read what users have submitted, and turn submissions on or off." %}</p>
+      </div>
+      {% include "core/_chevron.html" %}
+    </a>
+
+    <a class="card card-link settings-row" href="{% url 'assistant:admin-settings' %}">
+      <div>
+        <strong>{% trans "AI assistant" %}</strong>
+        <p class="text-muted">{% trans "Choose who may use this instance's AI model, set limits, and see usage." %}</p>
       </div>
       {% include "core/_chevron.html" %}
     </a>

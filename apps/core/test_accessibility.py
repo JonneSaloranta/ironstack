@@ -209,6 +209,55 @@ class AccessibilityTests(StaticLiveServerTestCase):
         self.page.goto(f"{self.live_server_url}/exercises/")
         _assert_no_serious_violations(self, self.page, "Exercise list")
 
+    def test_assistant_conversation(self):
+        """The chat thread with a finished reply and a proposal card —
+        the assistant's one page with real structure of its own."""
+        from apps.assistant import proposals, services
+        from apps.assistant.models import AssistantMessage, Conversation
+        from apps.exercises.models import Exercise
+
+        services.enable(self.alice)
+        services.set_own_key(self.alice, "sk-ant-a11y-test-key-0000")
+        conversation = Conversation.objects.create(
+            user=self.alice, title="Program", provider="anthropic", model="m", key_source="own"
+        )
+        AssistantMessage.objects.create(conversation=conversation, role="user", text="Hi")
+        reply = AssistantMessage.objects.create(
+            conversation=conversation, role="assistant", text="**Sure.**\n\n- One\n- Two"
+        )
+        exercise = Exercise.objects.create(owner=self.alice, name="Test Squat")
+        proposals.record(
+            reply,
+            proposals.PROGRAM,
+            proposals.validate_program(
+                self.alice,
+                {
+                    "name": "Full body",
+                    "summary": "Three days a week.",
+                    "workouts": [
+                        {
+                            "name": "Day A",
+                            "prescriptions": [
+                                {
+                                    "exercise_id": exercise.pk,
+                                    "set_count": 3,
+                                    "min_reps": 5,
+                                    "max_reps": 8,
+                                    "target_rpe": 8,
+                                }
+                            ],
+                        }
+                    ],
+                },
+            ),
+        )
+        self._log_in()
+        self.page.goto(f"{self.live_server_url}/assistant/")
+        _assert_no_serious_violations(self, self.page, "AI assistant")
+        self.page.goto(f"{self.live_server_url}/assistant/conversations/{conversation.pk}/")
+        self.page.click("summary")
+        _assert_no_serious_violations(self, self.page, "AI assistant conversation")
+
     def test_stretching_overview(self):
         self._log_in()
         self.page.goto(f"{self.live_server_url}/stretching/")

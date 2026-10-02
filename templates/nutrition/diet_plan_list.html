@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load i18n %}
+{% load i18n assistant_tags %}
 {% block title %}{% trans "Diet plans" %} — IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
@@ -8,6 +8,8 @@
 <div data-tour="diet-plan-actions" class="top-bar-actions">
   <a class="button" href="{% url 'nutrition:diet-plan-create' %}">{% trans "New" %}</a>
   <a class="button-secondary" href="{% url 'nutrition:diet-plan-import' %}">{% trans "Import" %}</a>
+  {% trans "Ask the assistant" as ask_label %}{% trans "Help me put together a diet plan that fits my goal." as ask_prompt %}
+  {% assistant_ask_link prompt=ask_prompt label=ask_label %}
 </div>
 {% include "nutrition/_subnav.html" %}
 

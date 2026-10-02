@@ -108,6 +108,25 @@ services:
         condition: service_healthy
     command: python manage.py rest_timer_dispatcher
 
+  # Writes AI assistant replies (docs/ASSISTANT.md) — same image and
+  # build config as backup-scheduler/notification-scheduler above,
+  # running apps.assistant.management.commands.assistant_worker. A reply
+  # with a few tool calls outlasts gunicorn's 30-second timeout, so it
+  # can't run inside a web request. An idle polling loop if the assistant
+  # isn't configured — safe to leave running, or comment out/remove.
+  # Scale it (`--scale assistant-worker=2`) for more concurrent replies.
+  assistant-worker:
+    image: ghcr.io/jonnesaloranta/ironstack:${IRONSTACK_IMAGE_TAG:-latest}
+    build: *web-build
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      DJANGO_SETTINGS_MODULE: config.settings.production
+    depends_on:
+      db:
+        condition: service_healthy
+    command: python manage.py assistant_worker
+
   nginx:
     image: nginx:1.27-alpine
     restart: unless-stopped

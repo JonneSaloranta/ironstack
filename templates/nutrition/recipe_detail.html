@@ -14,7 +14,7 @@
   {% else %}
     <span class="tag tag-outline">{% trans "Template" %}</span>
   {% endif %}
-  <a class="button-secondary" href="{% url 'nutrition:recipe-export' recipe.pk %}">{% trans "Export" %}</a>
+  <a class="button-secondary" href="{% url 'nutrition:recipe-export' recipe.pk %}" download>{% trans "Export" %}</a>
 </div>
 {% include "nutrition/_subnav.html" %}
 

@@ -39,8 +39,8 @@ Every signed-in page extends `base.html` and follows this order:
   - detail pages: **"Edit"** as `.button-secondary` (editing isn't what a
     detail page is for), plus other secondary actions (Export, …).
 - The bottom "Back to X" link is the last thing on the page. Exceptions:
-  chat threads (`message_thread`, `group_thread`), which put the back link in
-  the top bar because the message composer sits at the bottom.
+  chat threads (`message_thread`, `group_thread`, the assistant's
+  `conversation_detail`), which put the back link in the top bar because the message composer sits at the bottom.
 - Signed-out pages (login, signup, 2FA verify) use
   `registration/_auth_brand.html` instead of a `.top-bar`.
 
@@ -186,7 +186,7 @@ Hierarchy (base.css "Buttons: states + one clear hierarchy"):
 | State | Use |
 |---|---|
 | Empty | `{% include "core/_empty_state.html" with message=_("…") hint=_("…") cta_url=… cta_label=_("…") %}` (build the URL first with `{% url … as empty_cta_url %}`) |
-| Loading | automatic `.htmx-request` dimming; `.spinner` / `core/_search_indicator.html` for slow ones |
+| Loading | automatic: the top loading bar (`static/js/page-loading.js`) on every link, form submit and user-started HTMX request, plus `.htmx-request` dimming; `.spinner` / `core/_search_indicator.html` inside the page for slow ones. A link that downloads a file (export, backup) needs the `download` attribute, or the bar waits for a page that never comes |
 | Field error | `_field.html` (`.field-error`) |
 | Form error | `_form_errors.html` (`.alert.alert-error`) |
 | In-page notice | `.alert` + `.alert-info/-warning/-success/-error` |
@@ -226,7 +226,8 @@ select tour targets by CSS class.
 
 Places that knowingly differ from the rules above:
 
-- Chat threads put the back link in the top bar (composer is at the bottom).
+- Chat threads put the back link in the top bar (composer is at the bottom) —
+  the AI assistant's conversation page too.
 - Training mode (`_train_panel.html`) and the set-log form render fields
   compactly without `_field.html`.
 - `500.html` is standalone (no context processors), so it can't use the shared

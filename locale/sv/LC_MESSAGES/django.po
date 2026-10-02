@@ -9800,3 +9800,448 @@ msgstr[1] "%(counter)s varor på inköpslistan för %(plan)s."
 
 #~ msgid "+ New recipe"
 #~ msgstr "+ Nytt recept"
+
+msgid "Ask about your training or nutrition…"
+msgstr "Fråga om din träning eller kost…"
+
+msgid "Anthropic API key"
+msgstr "Anthropic-API-nyckel"
+
+msgid "Create one at console.anthropic.com. It's stored encrypted and used only for your own conversations; usage is billed to your Anthropic account."
+msgstr "Skapa en på console.anthropic.com. Den lagras krypterad och används bara för dina egna konversationer; användningen faktureras ditt Anthropic-konto."
+
+msgid "That doesn't look like an Anthropic API key."
+msgstr "Det där ser inte ut som en Anthropic-API-nyckel."
+
+msgid "Selected users"
+msgstr "Valda användare"
+
+msgid "Search users…"
+msgstr "Sök användare…"
+
+msgid "Nobody selected."
+msgstr "Ingen vald."
+
+msgid "No matching users."
+msgstr "Inga matchande användare."
+
+msgid "Used when access is set to “Selected users”."
+msgstr "Används när åtkomsten är inställd på ”Valda användare”."
+
+msgid "Assistant enabled"
+msgstr "Assistenten aktiverad"
+
+msgid "Who may use this instance's AI model"
+msgstr "Vem som får använda den här instansens AI-modell"
+
+msgid "Daily token limit per user"
+msgstr "Daglig tokengräns per användare"
+
+msgid "Nobody — users must bring their own key"
+msgstr "Ingen — användarna måste ha en egen nyckel"
+
+msgid "Staff only"
+msgstr "Endast personal"
+
+msgid "Everyone"
+msgstr "Alla"
+
+msgid "Turns the assistant off for everyone, including users' own keys."
+msgstr "Stänger av assistenten för alla, även med användarnas egna nycklar."
+
+msgid "Who may use this instance's own provider (ASSISTANT_API_KEY, or the Ollama server). Its usage is billed to you, the operator."
+msgstr "Vem som får använda den här instansens egen leverantör (ASSISTANT_API_KEY eller Ollama-servern). Användningen faktureras dig som driftar instansen."
+
+msgid "Tokens (input + output) one user may spend per day on the shared provider. 0 means no limit. Users' own keys are never limited."
+msgstr "Tokens (indata + utdata) som en användare får använda per dag hos den delade leverantören. 0 betyder ingen gräns. Användarnas egna nycklar begränsas aldrig."
+
+msgid "This instance's provider"
+msgstr "Den här instansens leverantör"
+
+msgid "Your own API key"
+msgstr "Din egen API-nyckel"
+
+msgid "You"
+msgstr "Du"
+
+msgid "Assistant"
+msgstr "Assistent"
+
+msgid "Waiting"
+msgstr "Väntar"
+
+msgid "Writing"
+msgstr "Skriver"
+
+msgid "Failed"
+msgstr "Misslyckades"
+
+msgid "Diet plan"
+msgstr "Kostplan"
+
+msgid "Workout program"
+msgstr "Träningsprogram"
+
+msgid "Waiting for you"
+msgstr "Väntar på dig"
+
+msgid "Dismissed"
+msgstr "Avfärdad"
+
+msgid "The assistant sent a malformed reply. Please try again."
+msgstr "Assistenten skickade ett felaktigt svar. Försök igen."
+
+msgid "The API key was rejected. Check it in your assistant settings."
+msgstr "API-nyckeln avvisades. Kontrollera den i assistentens inställningar."
+
+msgid "This API key isn't allowed to use that model."
+msgstr "Den här API-nyckeln får inte använda den modellen."
+
+msgid "The configured model (%(model)s) wasn't found."
+msgstr "Den konfigurerade modellen (%(model)s) hittades inte."
+
+msgid "The AI service is rate limiting requests. Try again in a minute."
+msgstr "AI-tjänsten begränsar antalet förfrågningar. Försök igen om en minut."
+
+msgid "The AI service rejected the request."
+msgstr "AI-tjänsten avvisade förfrågan."
+
+msgid "The AI service is having problems right now. Try again later."
+msgstr "AI-tjänsten har problem just nu. Försök igen senare."
+
+msgid "Couldn't reach the AI service."
+msgstr "Det gick inte att nå AI-tjänsten."
+
+msgid "The administrator has turned the AI assistant off."
+msgstr "Administratören har stängt av AI-assistenten."
+
+msgid "This instance doesn't provide an AI model for your account. You can use the assistant with your own Anthropic API key."
+msgstr "Den här instansen tillhandahåller ingen AI-modell för ditt konto. Du kan använda assistenten med din egen Anthropic-API-nyckel."
+
+msgid "Turn the assistant on in its settings first."
+msgstr "Slå först på assistenten i dess inställningar."
+
+msgid "Wait for the assistant to finish its current reply."
+msgstr "Vänta tills assistenten har skrivit klart sitt svar."
+
+msgid "You've used today's assistant allowance. It resets tomorrow."
+msgstr "Du har använt dagens assistentkvot. Den återställs i morgon."
+
+msgid "This conversation used your own API key, which you've removed. Start a new conversation."
+msgstr "Den här konversationen använde din egen API-nyckel, som du har tagit bort. Starta en ny konversation."
+
+msgid "This conversation can't be continued anymore. Start a new conversation."
+msgstr "Den här konversationen kan inte fortsättas längre. Starta en ny konversation."
+
+msgid "This conversation is getting long. Start a new one to keep replies quick."
+msgstr "Den här konversationen börjar bli lång. Starta en ny så att svaren går snabbt."
+
+msgid "No API key is available for this conversation."
+msgstr "Ingen API-nyckel finns tillgänglig för den här konversationen."
+
+msgid "Write a message first."
+msgstr "Skriv ett meddelande först."
+
+msgid "That message is too long."
+msgstr "Meddelandet är för långt."
+
+msgid "Thinking…"
+msgstr "Tänker…"
+
+msgid "The assistant can't help with that request."
+msgstr "Assistenten kan inte hjälpa till med den förfrågan."
+
+msgid "The reply was cut off. Try asking for something smaller."
+msgstr "Svaret klipptes av. Försök be om något mindre."
+
+msgid "The reply was cut off."
+msgstr "Svaret klipptes av."
+
+msgid "The assistant stopped after too many steps."
+msgstr "Assistenten stannade efter för många steg."
+
+msgid "Something went wrong while writing the reply."
+msgstr "Något gick fel när svaret skrevs."
+
+msgid "The reply was interrupted. Please try again."
+msgstr "Svaret avbröts. Försök igen."
+
+msgid "Looking at your profile…"
+msgstr "Tittar på din profil…"
+
+msgid "Looking at your workouts…"
+msgstr "Tittar på dina träningspass…"
+
+msgid "Looking at your records…"
+msgstr "Tittar på dina rekord…"
+
+msgid "Looking at your measurements…"
+msgstr "Tittar på dina mätningar…"
+
+msgid "Looking at your activities…"
+msgstr "Tittar på dina aktiviteter…"
+
+msgid "Looking at your food diary…"
+msgstr "Tittar på din matdagbok…"
+
+msgid "Looking at your programs…"
+msgstr "Tittar på dina program…"
+
+msgid "Looking at your diet plans…"
+msgstr "Tittar på dina kostplaner…"
+
+msgid "Searching exercises…"
+msgstr "Söker övningar…"
+
+msgid "Searching foods…"
+msgstr "Söker livsmedel…"
+
+msgid "Searching recipes…"
+msgstr "Söker recept…"
+
+msgid "Looking at your meals…"
+msgstr "Tittar på dina måltider…"
+
+msgid "Putting a diet plan together…"
+msgstr "Sätter ihop en kostplan…"
+
+msgid "Putting a program together…"
+msgstr "Sätter ihop ett program…"
+
+msgid "Conversation deleted."
+msgstr "Konversationen raderades."
+
+msgid "This suggestion can't be created anymore: %(error)s"
+msgstr "Det här förslaget kan inte skapas längre: %(error)s"
+
+msgid "Diet plan created. It isn't active until you choose to use it."
+msgstr "Kostplanen skapades. Den är inte aktiv förrän du väljer att använda den."
+
+msgid "Program created. Review it and make it yours."
+msgstr "Programmet skapades. Gå igenom det och gör det till ditt."
+
+msgid "AI assistant turned on."
+msgstr "AI-assistenten är påslagen."
+
+msgid "AI assistant turned off."
+msgstr "AI-assistenten är avstängd."
+
+msgid "API key saved."
+msgstr "API-nyckeln sparades."
+
+msgid "API key removed."
+msgstr "API-nyckeln togs bort."
+
+msgid "Assistant settings saved."
+msgstr "Assistentens inställningar sparades."
+
+msgid "AI assistant"
+msgstr "AI-assistent"
+
+msgid "Turn the assistant on or off, and add your own API key if you have one."
+msgstr "Slå på eller av assistenten och lägg till din egen API-nyckel om du har en."
+
+msgid "Ask anything"
+msgstr "Fråga vad som helst"
+
+msgid "Ask for a diet plan or a workout program, or about your progress. It looks at your own data before it answers."
+msgstr "Be om en kostplan eller ett träningsprogram, eller fråga om dina framsteg. Den tittar på dina egna data innan den svarar."
+
+msgid "Your conversations"
+msgstr "Dina konversationer"
+
+msgid "Pick up where you left off. A plan it suggests is only created if you accept it."
+msgstr "Fortsätt där du slutade. En plan som den föreslår skapas bara om du godkänner den."
+
+msgid "Get help with diet plans, workout programs and your progress."
+msgstr "Få hjälp med kostplaner, träningsprogram och dina framsteg."
+
+msgid "Choose who may use this instance's AI model, set limits, and see usage."
+msgstr "Välj vem som får använda den här instansens AI-modell, sätt gränser och se användningen."
+
+msgid "Your messages, and the training and nutrition data the assistant looks up to answer them, are sent to an AI model this instance runs on its own server."
+msgstr "Dina meddelanden, och de tränings- och kostdata som assistenten slår upp för att svara, skickas till en AI-modell som den här instansen kör på sin egen server."
+
+msgid "Your messages, and the training and nutrition data the assistant looks up to answer them, are sent to Anthropic (the maker of Claude) to generate replies."
+msgstr "Dina meddelanden, och de tränings- och kostdata som assistenten slår upp för att svara, skickas till Anthropic (som gör Claude) för att generera svar."
+
+msgid "It only reads your own data, and only while it's answering you. It can't change anything: plans it suggests are created only if you choose to."
+msgstr "Den läser bara dina egna data, och bara medan den svarar dig. Den kan inte ändra något: planer den föreslår skapas bara om du väljer det."
+
+msgid "Replies can be wrong. It isn't a doctor or a dietitian — check anything important with a professional."
+msgstr "Svaren kan vara fel. Den är varken läkare eller dietist — kontrollera allt viktigt med en fackperson."
+
+msgid "You can turn it off, and delete your conversations, at any time."
+msgstr "Du kan stänga av den, och radera dina konversationer, när som helst."
+
+msgid "Waiting…"
+msgstr "Väntar…"
+
+msgid "This is taking unusually long to start. If it never does, the assistant worker may not be running — let your administrator know."
+msgstr "Det tar ovanligt lång tid att komma igång. Om det aldrig gör det kanske assistentens bakgrundsprocess inte körs — meddela din administratör."
+
+msgid "Target %(calories)s kcal · protein %(protein)s g · carbs %(carbs)s g · fat %(fat)s g"
+msgstr "Mål %(calories)s kcal · protein %(protein)s g · kolhydrater %(carbs)s g · fett %(fat)s g"
+
+msgid "The suggested meals add up to about %(calories)s kcal a day."
+msgstr "De föreslagna måltiderna blir sammanlagt cirka %(calories)s kcal per dag."
+
+msgid "Show meals"
+msgstr "Visa måltider"
+
+msgid "%(servings)s servings"
+msgstr "%(servings)s portioner"
+
+msgid "new food"
+msgstr "nytt livsmedel"
+
+msgid "Foods marked “new food” are added to your food library with nutrition values the assistant estimated — check them."
+msgstr "Livsmedel märkta ”nytt livsmedel” läggs till i ditt livsmedelsbibliotek med näringsvärden som assistenten uppskattat — kontrollera dem."
+
+msgid "Show workouts"
+msgstr "Visa träningspass"
+
+msgid "Rate of perceived exertion"
+msgstr "Upplevd ansträngning"
+
+msgid "Create diet plan"
+msgstr "Skapa kostplan"
+
+msgid "Create program"
+msgstr "Skapa program"
+
+msgid "Nothing is saved until you create it. It's created as a new, inactive plan you can still edit."
+msgstr "Inget sparas förrän du skapar det. Det skapas som en ny, inaktiv plan som du fortfarande kan redigera."
+
+msgid "Open diet plan"
+msgstr "Öppna kostplanen"
+
+msgid "Open program"
+msgstr "Öppna programmet"
+
+msgid "No messages yet."
+msgstr "Inga meddelanden än."
+
+msgid "This instance's AI provider: %(provider)s."
+msgstr "Den här instansens AI-leverantör: %(provider)s."
+
+msgid "No AI provider is configured for this instance (ASSISTANT_API_KEY, or ASSISTANT_PROVIDER=ollama). Users can still use their own API keys."
+msgstr "Ingen AI-leverantör är konfigurerad för den här instansen (ASSISTANT_API_KEY eller ASSISTANT_PROVIDER=ollama). Användarna kan fortfarande använda sina egna API-nycklar."
+
+msgid "Usage, last 30 days"
+msgstr "Användning, senaste 30 dagarna"
+
+msgid "User"
+msgstr "Användare"
+
+msgid "Key"
+msgstr "Nyckel"
+
+msgid "Requests"
+msgstr "Förfrågningar"
+
+msgid "Input tokens"
+msgstr "Indatatokens"
+
+msgid "Output tokens"
+msgstr "Utdatatokens"
+
+msgid "Own"
+msgstr "Egen"
+
+msgid "Shared"
+msgstr "Delad"
+
+msgid "Nobody has used the assistant yet."
+msgstr "Ingen har använt assistenten än."
+
+msgid "Back to AI assistant"
+msgstr "Tillbaka till AI-assistenten"
+
+msgid "Replies can be wrong — check anything important."
+msgstr "Svaren kan vara fel — kontrollera allt viktigt."
+
+msgid "Delete this conversation?"
+msgstr "Radera den här konversationen?"
+
+msgid "Delete conversation"
+msgstr "Radera konversationen"
+
+msgid "Open assistant settings"
+msgstr "Öppna assistentens inställningar"
+
+msgid "Plan with an assistant"
+msgstr "Planera med en assistent"
+
+msgid "Ask for a diet plan or a workout program built around your goals, or ask about your own progress. The assistant looks at what you've logged before it answers."
+msgstr "Be om en kostplan eller ett träningsprogram som byggs kring dina mål, eller fråga om dina framsteg. Assistenten tittar på det du loggat innan den svarar."
+
+msgid "Turn on the assistant"
+msgstr "Slå på assistenten"
+
+msgid "New conversation"
+msgstr "Ny konversation"
+
+msgid "Start conversation"
+msgstr "Starta konversation"
+
+msgid "Today's use: %(used)s of %(limit)s tokens."
+msgstr "Dagens användning: %(used)s av %(limit)s tokens."
+
+msgid "Conversations"
+msgstr "Konversationer"
+
+msgid "No conversations yet."
+msgstr "Inga konversationer än."
+
+msgid "Try: “Make me a 3-day full-body program” or “Build a weekly diet plan from my foods”."
+msgstr "Prova: ”Gör ett helkroppsprogram på 3 dagar åt mig” eller ”Bygg en veckokostplan av mina livsmedel”."
+
+msgid "AI assistant settings"
+msgstr "Inställningar för AI-assistenten"
+
+msgid "On. The assistant can read your data while it answers you."
+msgstr "På. Assistenten kan läsa dina data medan den svarar dig."
+
+msgid "Turn off"
+msgstr "Stäng av"
+
+msgid "Off. Nothing of yours is sent to an AI model."
+msgstr "Av. Inget av ditt skickas till en AI-modell."
+
+msgid "AI model"
+msgstr "AI-modell"
+
+msgid "Using your own Anthropic API key (%(model)s)."
+msgstr "Använder din egen Anthropic-API-nyckel (%(model)s)."
+
+msgid "Using this instance's AI model (%(model)s)."
+msgstr "Använder den här instansens AI-modell (%(model)s)."
+
+msgid "Saved key ending in %(hint)s. Your conversations use it, and it's billed to your Anthropic account."
+msgstr "Sparad nyckel som slutar på %(hint)s. Dina konversationer använder den, och den faktureras ditt Anthropic-konto."
+
+msgid "Remove your API key?"
+msgstr "Ta bort din API-nyckel?"
+
+msgid "Optional. With your own Anthropic API key you can use the assistant even if this instance doesn't provide a model for you."
+msgstr "Valfritt. Med din egen Anthropic-API-nyckel kan du använda assistenten även om den här instansen inte tillhandahåller en modell åt dig."
+
+msgid "Replace key"
+msgstr "Byt nyckel"
+
+msgid "Save key"
+msgstr "Spara nyckel"
+
+msgid "Ask the assistant"
+msgstr "Fråga assistenten"
+
+msgid "Help me put together a diet plan that fits my goal."
+msgstr "Hjälp mig att sätta ihop en kostplan som passar mitt mål."
+
+msgid "Help me build a workout program for my goal and schedule."
+msgstr "Hjälp mig att bygga ett träningsprogram för mitt mål och mitt schema."
+
+msgctxt "proposal"
+msgid "Dismiss"
+msgstr "Avfärda"

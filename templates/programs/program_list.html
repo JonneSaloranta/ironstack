@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load i18n %}
+{% load i18n assistant_tags %}
 {% block title %}{% trans "Programs" %} — IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
@@ -8,6 +8,8 @@
 <div data-tour="program-actions" class="top-bar-actions">
   <a class="button" href="{% url 'programs:program-create' %}">{% trans "New" %}</a>
   <a class="button-secondary" href="{% url 'programs:program-import' %}">{% trans "Import" %}</a>
+  {% trans "Ask the assistant" as ask_label %}{% trans "Help me build a workout program for my goal and schedule." as ask_prompt %}
+  {% assistant_ask_link prompt=ask_prompt label=ask_label %}
 </div>
 
 <h2>{% trans "My programs" %}</h2>

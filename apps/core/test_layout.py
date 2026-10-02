@@ -29,6 +29,9 @@ from django.utils import timezone  # noqa: E402
 from playwright.sync_api import sync_playwright  # noqa: E402
 
 from apps.activities.models import ActivityType  # noqa: E402
+from apps.assistant import proposals as assistant_proposals  # noqa: E402
+from apps.assistant import services as assistant  # noqa: E402
+from apps.assistant.models import AssistantMessage, Conversation  # noqa: E402
 from apps.coaching import services as coaching  # noqa: E402
 from apps.exercises.models import Exercise  # noqa: E402
 from apps.measurements.models import MeasurementType  # noqa: E402
@@ -140,6 +143,38 @@ class LongContentLayoutTests(StaticLiveServerTestCase):
             client = User.objects.create_user(username=username, password="s3cret-pass")
             request = coaching.send_coaching_request(client, user)
             coaching.accept_coaching_request(request, acting_user=user)
+        assistant.enable(user)
+        assistant.set_own_key(user, "sk-ant-layout-test-key-0000")
+        conversation = Conversation.objects.create(
+            user=user, title=LONG, provider="anthropic", model="claude-opus-5-5", key_source="own"
+        )
+        AssistantMessage.objects.create(conversation=conversation, role="user", text=LONG)
+        reply = AssistantMessage.objects.create(
+            conversation=conversation,
+            role="assistant",
+            text=f"**{WORD}**\n\n- {LONG}\n- {WORD}\n\n{LONG} {WORD}",
+        )
+        assistant_proposals.record(
+            reply,
+            assistant_proposals.DIET_PLAN,
+            assistant_proposals.validate_diet_plan(
+                user,
+                {
+                    "name": LONG,
+                    "summary": f"{LONG} {WORD}",
+                    "target_calories": 2200,
+                    "target_protein_grams": 150,
+                    "target_carbohydrate_grams": 220,
+                    "target_fat_grams": 70,
+                    "meals": [
+                        {
+                            "meal_slot": "Breakfast",
+                            "items": [{"food_id": food.pk, "quantity": 100} for food in foods],
+                        }
+                    ],
+                },
+            ),
+        )
         return [
             reverse("dashboard"),
             reverse("nutrition:dashboard"),
@@ -171,6 +206,9 @@ class LongContentLayoutTests(StaticLiveServerTestCase):
             reverse("coaching:client-list"),
             reverse("profile"),
             reverse("tutorials:list"),
+            reverse("assistant:home"),
+            reverse("assistant:conversation-detail", args=[conversation.pk]),
+            reverse("assistant:settings"),
         ]
 
     def test_long_content_stays_inside_and_rows_line_up(self):

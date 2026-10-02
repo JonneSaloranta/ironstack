@@ -19,7 +19,7 @@
     {% endif %}
   </form>
   <a class="button-secondary" href="{% url 'nutrition:diet-plan-shopping' plan.pk %}" data-tour="diet-plan-shopping">{% trans "Shopping list" %}</a>
-  <a class="button-secondary" href="{% url 'nutrition:diet-plan-export' plan.pk %}">{% trans "Export" %}</a>
+  <a class="button-secondary" href="{% url 'nutrition:diet-plan-export' plan.pk %}" download>{% trans "Export" %}</a>
   {% if user.is_personal_trainer %}
     <a class="button-secondary" href="{% url 'nutrition:diet-plan-share' plan.pk %}">
       {% if plan.shared_with_clients.all %}{% trans "Sharing" %}{% else %}{% trans "Share" %}{% endif %}
