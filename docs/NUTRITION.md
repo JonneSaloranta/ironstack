@@ -260,7 +260,8 @@ recipe's name already linked to `RecipeDetailView`.
 and supports a name filter (`q`), a category filter (`category`,
 matched with `__icontains` against the raw `categories` string), and
 a sort (`sort`: `name`/`created`/`category`/`calories`) with a
-direction (`dir`: `asc`/`desc`) — every one of these combines with
+direction (`dir`: `asc`/`desc`), newest first (`created`/`desc`) by
+default — the food a user is looking for is usually the one just added — every one of these combines with
 every other via plain `AND` filtering plus one `order_by`, and all of
 them live in the querystring rather than session/hidden state, so a
 filtered-and-sorted view stays bookmarkable and survives a refresh.
@@ -1183,8 +1184,10 @@ thin view/template:
 - **"Most used" quick add** (`services.most_used_foods`,
   `templates/nutrition/_most_used_foods.html`) — every place a food
   can be added (the food diary, a recipe's ingredients, a diet-plan
-  meal's items) shows the signed-in user's top-10 most-used foods
-  above the search box, each a single-tap "+ Add." Most people eat a
+  meal's items) shows the signed-in user's most-used foods, ten per
+  page (`most_used_page`; the pager swaps only `#most-used-foods` via
+  HTMX so the diary page's selected meal survives), each a single-tap
+  "Add." Most people eat a
   fairly small rotation of the same handful of things — re-searching
   "chicken breast" or a barcode every single time was needless
   friction once there was real usage history to rank from. Ranked by
@@ -1198,7 +1201,9 @@ thin view/template:
   frequency of use). Each entry still prefills a sensible quantity/
   meal-slot default from the food's most recent diary use, if it has
   one; a food only ever added via a recipe or diet plan falls back to
-  its own serving size with no meal-slot guess. Deliberately derived
+  its own serving size with no meal-slot guess. Plain search results in
+  the diary prefill the same last-logged quantity
+  (`services.with_prefill_quantities`/`last_diary_uses`). Deliberately derived
   live from `DiaryEntry`/`RecipeIngredient`/`DietPlanItem` history,
   not a new `FavoriteFood` model — the same "derive, don't store a
   duplicate" rule this app already follows everywhere else (a day's

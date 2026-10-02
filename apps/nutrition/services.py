@@ -997,7 +997,38 @@ class FoodUsage:
     meal_slot_id: object
 
 
-def most_used_foods(user, *, limit=10):
+def last_diary_uses(user, food_ids):
+    """`{food_id: (quantity, meal_slot_id)}` from the user's most recent
+    diary entry of each food in `food_ids` — the quantity to prefill
+    wherever that food is offered for logging again (the "Most used"
+    panel and plain search results alike), since a user usually eats
+    about the same amount of a food each time. A food never logged
+    directly is simply absent. Postgres DISTINCT ON, matching this
+    project's only supported database (docs/ARCHITECTURE.md)."""
+    from .models import DiaryEntry
+
+    return {
+        food_id: (quantity, meal_slot_id)
+        for food_id, quantity, meal_slot_id in DiaryEntry.objects.filter(
+            user=user, food_id__in=food_ids
+        )
+        .order_by("food_id", "-created_at")
+        .distinct("food_id")
+        .values_list("food_id", "quantity", "meal_slot_id")
+    }
+
+
+def with_prefill_quantities(user, foods):
+    """Sets `prefill_quantity` on each food: the user's last logged
+    quantity of it (`last_diary_uses`), else its own serving size.
+    Returns `foods` for chaining."""
+    last_uses = last_diary_uses(user, [food.pk for food in foods])
+    for food in foods:
+        food.prefill_quantity = last_uses.get(food.pk, (food.serving_size, None))[0]
+    return foods
+
+
+def most_used_foods(user, *, limit=None):
     """The user's most frequently added foods, most-used first —
     powers the "quick add" panel shown wherever a food can be added
     (the food diary, recipe ingredients, diet-plan meal items), so a
@@ -1031,19 +1062,7 @@ def most_used_foods(user, *, limit=10):
 
     top_ids = [food_id for food_id, _count in counts.most_common(limit)]
     foods_by_id = Food.objects.in_bulk(top_ids)
-
-    # The most recent diary entry per food, for a sensible quantity/
-    # meal-slot prefill — Postgres DISTINCT ON, matches this project's
-    # only supported database (docs/ARCHITECTURE.md).
-    last_diary_use = {
-        food_id: (quantity, meal_slot_id)
-        for food_id, quantity, meal_slot_id in DiaryEntry.objects.filter(
-            user=user, food_id__in=top_ids
-        )
-        .order_by("food_id", "-created_at")
-        .distinct("food_id")
-        .values_list("food_id", "quantity", "meal_slot_id")
-    }
+    last_diary_use = last_diary_uses(user, top_ids)
 
     usages = []
     for food_id in top_ids:

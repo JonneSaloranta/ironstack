@@ -8928,6 +8928,9 @@ msgstr "Отключить этот комплекс? Прошлые сесси�
 msgid "Deactivate this stretch? It will no longer appear when browsing, but routines and past sessions that use it keep working."
 msgstr "Отключить это упражнение? Оно больше не будет показываться при просмотре, но комплексы и прошлые сессии, которые его используют, продолжат работать."
 
+msgid "Most used foods pages"
+msgstr "Страницы часто используемых продуктов"
+
 #~ msgid "Back to home"
 #~ msgstr "Назад на главную"
 

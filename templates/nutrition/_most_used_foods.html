@@ -14,6 +14,10 @@ Expects: most_used (list of FoodUsage), mode ("diary"/"recipe"/
 "diet-plan-meal"), plus whichever of date/recipe/plan/meal that mode
 needs to build its post URL — same contract as _food_search_results.
 {% endcomment %}
+{% comment %}
+`most_used` is one page of them (views._most_used_page); the pager swaps
+only #most-used-foods, so the diary page's Alpine mealSlot survives paging.
+{% endcomment %}
 {% if most_used %}
   <h2>{% trans "Most used" %}</h2>
   {% if mode == "diary" %}
@@ -47,4 +51,6 @@ needs to build its post URL — same contract as _food_search_results.
       </div>
     </form>
   {% endfor %}
+  {% trans "Most used foods pages" as pager_label %}{% include "core/_pagination.html" with page=most_used param="most_used_page" hx_target="most-used-foods" label=pager_label %}
+</div>
 {% endif %}

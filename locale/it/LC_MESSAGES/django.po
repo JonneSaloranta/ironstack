@@ -8938,6 +8938,9 @@ msgstr "Disattivare questa routine? Le sessioni passate restano nella tua cronol
 msgid "Deactivate this stretch? It will no longer appear when browsing, but routines and past sessions that use it keep working."
 msgstr "Disattivare questo allungamento? Non apparirà più durante la navigazione, ma le routine e le sessioni passate che lo usano continuano a funzionare."
 
+msgid "Most used foods pages"
+msgstr "Pagine degli alimenti più usati"
+
 #~ msgid "Back to home"
 #~ msgstr "Torna alla home"
 

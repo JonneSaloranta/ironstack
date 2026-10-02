@@ -5743,6 +5743,12 @@ gained `page`/`param`/`anchor`/`label`/`hx_target` options (and
 `url_replace` a variable parameter name) — this also fixed their search
 terms going into the URL un-encoded.
 
+- The food list defaults to newest first.
+- Search results in the diary prefill the last logged quantity, shared
+  with "Most used" via `services.last_diary_uses`; "Most used" is
+  paginated (10 per page, HTMX swap of just its panel so the selected
+  meal survives).
+
 ## Faster test suite
 
 The full suite had grown to about 50 minutes. Measured in the dev

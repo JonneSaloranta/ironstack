@@ -8840,6 +8840,9 @@ msgstr "Kas deaktiveerida see rutiin? Varasemad sessioonid jäävad sinu ajalukk
 msgid "Deactivate this stretch? It will no longer appear when browsing, but routines and past sessions that use it keep working."
 msgstr "Kas deaktiveerida see venitus? Seda ei kuvata enam sirvimisel, kuid seda kasutavad rutiinid ja varasemad sessioonid töötavad edasi."
 
+msgid "Most used foods pages"
+msgstr "Enim kasutatud toiduainete lehed"
+
 #~ msgid "Back to home"
 #~ msgstr "Tagasi avalehele"
 

@@ -8871,6 +8871,9 @@ msgstr "Poistetaanko tämä rutiini käytöstä? Aiemmat sessiot säilyvät hist
 msgid "Deactivate this stretch? It will no longer appear when browsing, but routines and past sessions that use it keep working."
 msgstr "Poistetaanko tämä venytys käytöstä? Se ei enää näy selatessa, mutta sitä käyttävät rutiinit ja aiemmat sessiot toimivat edelleen."
 
+msgid "Most used foods pages"
+msgstr "Eniten käytettyjen ruokien sivut"
+
 #~ msgid "Back to home"
 #~ msgstr "Takaisin etusivulle"
 

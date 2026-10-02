@@ -2793,10 +2793,20 @@ class FoodListViewTests(TestCase):
         names = [f.name for f in response.context["foods"]]
         self.assertEqual(names, ["Chicken breast"])
 
-    def test_default_sort_is_alphabetical_by_name(self):
+    def test_default_sort_is_newest_first(self):
+        older = make_food(self.alice, name="Apple")
+        make_food(self.alice, name="Rice")
+        Food.objects.filter(pk=older.pk).update(created_at=timezone.now() - timedelta(days=1))
+        response = self.client.get(reverse("nutrition:food-list"))
+        names = [f.name for f in response.context["foods"]]
+        self.assertEqual(names, ["Rice", "Apple"])
+        self.assertEqual(response.context["selected_sort"], "created")
+        self.assertEqual(response.context["selected_dir"], "desc")
+
+    def test_sort_by_name_ascending(self):
         make_food(self.alice, name="Rice")
         make_food(self.alice, name="Apple")
-        response = self.client.get(reverse("nutrition:food-list"))
+        response = self.client.get(reverse("nutrition:food-list"), {"sort": "name", "dir": "asc"})
         names = [f.name for f in response.context["foods"]]
         self.assertEqual(names, ["Apple", "Rice"])
 
@@ -2824,7 +2834,9 @@ class FoodListViewTests(TestCase):
         Food.objects.filter(pk=first.pk).update(
             created_at=timezone.now() - timedelta(days=1)
         )
-        response = self.client.get(reverse("nutrition:food-list"), {"sort": "created"})
+        response = self.client.get(
+            reverse("nutrition:food-list"), {"sort": "created", "dir": "asc"}
+        )
         names = [f.name for f in response.context["foods"]]
         self.assertEqual(names, ["First", "Second"])
 
@@ -3081,6 +3093,25 @@ class FoodSearchResultsViewTests(TestCase):
             response = self.client.get(reverse("nutrition:food-search"), {"q": "chicken"})
         self.assertContains(response, "Chicken breast")
 
+    def test_diary_results_prefill_the_last_logged_quantity(self):
+        food = make_food(self.alice, name="Chicken breast")
+        slot = MealSlot.objects.get(name="Breakfast", owner=None)
+        DiaryEntry.objects.create(
+            user=self.alice, date=date(2026, 1, 1), meal_slot=slot,
+            food=food, quantity=Decimal("237"),
+        )
+        response = self.client.get(
+            reverse("nutrition:food-search"), {"q": "chicken", "mode": "diary"}
+        )
+        self.assertContains(response, 'name="quantity" step="0.01" value="237.00"')
+
+    def test_diary_results_fall_back_to_the_serving_size(self):
+        make_food(self.alice, name="Chicken breast")
+        response = self.client.get(
+            reverse("nutrition:food-search"), {"q": "chicken", "mode": "diary"}
+        )
+        self.assertContains(response, 'name="quantity" step="0.01" value="100.00"')
+
 
 class DiaryAddEntryViewTests(TestCase):
     def setUp(self):
@@ -3088,6 +3119,34 @@ class DiaryAddEntryViewTests(TestCase):
         self.client.login(username="alice", password="s3cret-pass")
         self.food = make_food(self.alice)
         self.slot = MealSlot.objects.get(name="Breakfast", owner=None)
+
+    def _log_foods(self, count):
+        for i in range(count):
+            DiaryEntry.objects.create(
+                user=self.alice, date=date(2026, 1, 1), meal_slot=self.slot,
+                food=make_food(self.alice, name=f"Food {i:02d}"), quantity=Decimal("100"),
+            )
+
+    def test_most_used_foods_are_paginated(self):
+        self._log_foods(12)
+        response = self.client.get(reverse("nutrition:diary-add-entry"))
+        self.assertEqual(len(response.context["most_used"]), 10)
+        self.assertContains(response, 'id="most-used-foods"')
+        self.assertContains(response, "most_used_page=2")
+        response = self.client.get(
+            reverse("nutrition:diary-add-entry"), {"most_used_page": 2}
+        )
+        self.assertEqual(len(response.context["most_used"]), 2)
+
+    def test_most_used_pager_swaps_only_its_own_panel(self):
+        self._log_foods(12)
+        response = self.client.get(reverse("nutrition:diary-add-entry"))
+        self.assertContains(response, 'hx-select="#most-used-foods"')
+
+    def test_no_most_used_pager_for_a_single_page(self):
+        self._log_foods(3)
+        response = self.client.get(reverse("nutrition:diary-add-entry"))
+        self.assertNotContains(response, "most_used_page=")
 
     def test_the_camera_barcode_scanner_is_wired_up(self):
         response = self.client.get(reverse("nutrition:diary-add-entry"))

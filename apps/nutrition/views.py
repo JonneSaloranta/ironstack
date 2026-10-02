@@ -484,8 +484,10 @@ class FoodListView(LoginRequiredMixin, ListView):
     context_object_name = "foods"
     paginate_by = 20
 
-    # Query param -> ordering field. "name" is also the default and
-    # the tiebreaker for every other sort (see get_queryset) so two
+    # Unfiltered, the list opens newest-first (DEFAULT_SORT/DEFAULT_DIR):
+    # the food a user is most likely looking for is the one they just
+    # added or imported. Query param -> ordering field. "name" is the
+    # tiebreaker for every other sort (see get_queryset) so two
     # foods sharing a sort value — the same category, the same
     # calorie count — still land in a stable, predictable order
     # instead of whatever order Postgres happens to return them in.
@@ -495,6 +497,8 @@ class FoodListView(LoginRequiredMixin, ListView):
         "category": "categories",
         "calories": "calories",
     }
+    DEFAULT_SORT = "created"
+    DEFAULT_DIR = "desc"
 
     def get_queryset(self):
         from django.db.models import Q
@@ -509,9 +513,9 @@ class FoodListView(LoginRequiredMixin, ListView):
         if category:
             qs = qs.filter(categories__icontains=category)
 
-        sort = self.request.GET.get("sort", "name")
+        sort = self.request.GET.get("sort", self.DEFAULT_SORT)
         field = self.SORT_FIELDS.get(sort, "name")
-        if self.request.GET.get("dir") == "desc":
+        if self.request.GET.get("dir", self.DEFAULT_DIR) == "desc":
             field = f"-{field}"
         return qs.order_by(field) if sort == "name" else qs.order_by(field, "name")
 
@@ -520,8 +524,8 @@ class FoodListView(LoginRequiredMixin, ListView):
         context["query"] = self.request.GET.get("q", "")
         context["categories"] = services.distinct_food_categories(self.request.user)
         context["selected_category"] = self.request.GET.get("category", "")
-        context["selected_sort"] = self.request.GET.get("sort", "name")
-        context["selected_dir"] = self.request.GET.get("dir", "asc")
+        context["selected_sort"] = self.request.GET.get("sort", self.DEFAULT_SORT)
+        context["selected_dir"] = self.request.GET.get("dir", self.DEFAULT_DIR)
         return context
 
     def get_template_names(self):
@@ -608,6 +612,9 @@ class FoodSearchResultsView(LoginRequiredMixin, View):
             "mode": mode,
         }
         if mode == "diary":
+            # Same last-logged-quantity prefill the "Most used" panel
+            # has, so a searched-for food isn't stuck at its serving size.
+            services.with_prefill_quantities(request.user, local)
             context["date"] = request.GET.get("date", "")
             context["meal_slot_id"] = request.GET.get("meal_slot", "")
         elif mode == "recipe":
@@ -773,6 +780,21 @@ def diary_day_copy(request, source_date):
     return redirect("nutrition:diary-day", target_date=target_date.isoformat())
 
 
+MOST_USED_PAGE_SIZE = 10
+
+
+def _most_used_page(request):
+    """One page of the "Most used" quick-add panel
+    (templates/nutrition/_most_used_foods.html), paged by its own
+    `most_used_page` parameter so it never collides with a page's
+    other query parameters."""
+    from django.core.paginator import Paginator
+
+    return Paginator(services.most_used_foods(request.user), MOST_USED_PAGE_SIZE).get_page(
+        request.GET.get("most_used_page")
+    )
+
+
 class DiaryAddEntryView(LoginRequiredMixin, View):
     template_name = "nutrition/diary_add_entry.html"
 
@@ -784,7 +806,7 @@ class DiaryAddEntryView(LoginRequiredMixin, View):
             {
                 "date": target_date or timezone.localdate().isoformat(),
                 "meal_slots": services.visible_meal_slots(request.user),
-                "most_used": services.most_used_foods(request.user),
+                "most_used": _most_used_page(request),
                 "selected_meal_slot": request.GET.get("meal_slot", ""),
             },
         )
@@ -802,7 +824,7 @@ class DiaryAddEntryView(LoginRequiredMixin, View):
                     "form": form,
                     "date": target_date.isoformat(),
                     "meal_slots": services.visible_meal_slots(request.user),
-                    "most_used": services.most_used_foods(request.user),
+                    "most_used": _most_used_page(request),
                     "selected_meal_slot": request.POST.get("meal_slot", ""),
                 },
             )
@@ -1116,7 +1138,7 @@ def recipe_ingredient_create(request, recipe_pk):
         return render(
             request,
             "nutrition/recipe_ingredient_form.html",
-            {"recipe": recipe, "most_used": services.most_used_foods(request.user)},
+            {"recipe": recipe, "most_used": _most_used_page(request)},
         )
 
     form = RecipeIngredientSearchForm(request.POST)
@@ -1579,7 +1601,7 @@ def diet_plan_meal_item_add(request, plan_pk, meal_pk):
         return render(
             request,
             "nutrition/diet_plan_meal_item_form.html",
-            {"plan": plan, "meal": meal, "most_used": services.most_used_foods(request.user)},
+            {"plan": plan, "meal": meal, "most_used": _most_used_page(request)},
         )
 
     form = DietPlanMealItemSearchForm(request.POST)

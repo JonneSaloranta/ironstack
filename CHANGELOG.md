@@ -19,7 +19,12 @@ narrated summary of the same version.
 ## [Unreleased]
 
 ### Added
+- "Most used" foods are paginated instead of capped at ten.
+
 ### Changed
+- The food list opens newest first.
+- Searching for a food in the diary prefills the amount you last logged
+  of it, the same as the "Most used" list already did.
 - Consistent UI across pages: card titles, empty states, "New"/"Edit"
   buttons, back and cancel links, confirmations and pagination now
   follow one set of rules (`docs/UI_COMPONENTS.md`). Stretches and

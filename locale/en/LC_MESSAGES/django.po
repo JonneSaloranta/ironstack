@@ -8812,6 +8812,9 @@ msgstr ""
 msgid "Deactivate this stretch? It will no longer appear when browsing, but routines and past sessions that use it keep working."
 msgstr ""
 
+msgid "Most used foods pages"
+msgstr ""
+
 #~ msgid "Back to home"
 #~ msgstr "Back to home"
 
