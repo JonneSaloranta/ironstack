@@ -20,6 +20,7 @@ from apps.nutrition import (
     diet_builder,
     energy,
     macros,
+    nutrition_label,
     open_prices,
     openfoodfacts,
     services,
@@ -3150,6 +3151,106 @@ class FoodDetailViewTests(TestCase):
         self.assertContains(response, "3.21")
         food.refresh_from_db()
         self.assertEqual(food.price_amount, Decimal("3.21"))
+
+
+class NutritionLabelTests(TestCase):
+    """apps.nutrition.nutrition_label — a food's table laid out like an
+    EU/Finnish package label."""
+
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        self.client.login(username="alice", password="s3cret-pass")
+        # The example label this layout was asked for with.
+        self.food = make_food(
+            self.alice, name="Tomato", calories=28, energy_kj=Decimal("118.78"),
+            fat_grams=Decimal("0.3"), saturated_fat_grams=Decimal("0"),
+            carbohydrate_grams=Decimal("4.5"), sugar_grams=Decimal("4.5"),
+            starch_grams=Decimal("0"), polyols_grams=Decimal("0"),
+            fiber_grams=Decimal("1.9"), protein_grams=Decimal("0.94"),
+            salt_grams=Decimal("0.01"),
+            other_nutrients=[
+                {"key": "vitamin-c", "value": "14", "unit": "mg"},
+                {"key": "monounsaturated-fat", "value": "0.05", "unit": "g"},
+            ],
+        )
+
+    def test_rows_follow_the_label_order(self):
+        with translation_override("fi"):
+            labels = [str(row.label) for row in nutrition_label.label_rows(self.food)]
+        self.assertEqual(labels, [
+            "Rasva", "josta tyydyttynyttä", "josta kertatyydyttymättömiä",
+            "Hiilihydraatit", "josta sokereita", "josta tärkkelystä", "josta polyoleja",
+            "Ravintokuitu", "Proteiini", "Suola",
+        ])
+
+    def test_other_nutrients_follow_the_main_table(self):
+        rows = nutrition_label.other_rows(self.food)
+        self.assertEqual([(str(r.label), r.value, r.unit) for r in rows],
+                         [("Vitamin C", Decimal("14"), "mg")])
+
+    def test_energy_kj_is_derived_from_kcal_when_unknown(self):
+        food = make_food(self.alice, calories=100)
+        self.assertEqual(nutrition_label.energy_kj(food), Decimal("418.400"))
+
+    def test_salt_is_derived_from_sodium_when_unknown(self):
+        food = make_food(self.alice, sodium_mg=400)
+        self.assertEqual(nutrition_label.salt_grams(food), Decimal("1"))
+
+    def test_unknown_mandatory_rows_still_show(self):
+        food = make_food(self.alice)
+        rows = {str(r.label): r.value for r in nutrition_label.label_rows(food)}
+        self.assertIsNone(rows["of which sugars"])
+        self.assertIsNone(rows["Salt"])
+        self.assertNotIn("of which starch", rows)
+
+    def test_amounts_are_formatted_like_a_label(self):
+        from apps.core.templatetags.core_extras import nutrient_amount
+
+        with translation_override("fi"):
+            self.assertEqual(nutrient_amount(Decimal("0.30")), "0,3")
+            self.assertEqual(nutrient_amount(Decimal("0.94")), "0,94")
+            self.assertEqual(nutrient_amount(Decimal("12.00")), "12")
+            self.assertEqual(nutrient_amount(Decimal("118.78"), 0), "119")
+            self.assertEqual(nutrient_amount(None), "–")
+
+    def test_detail_page_shows_the_label(self):
+        response = self.client.get(reverse("nutrition:food-detail", args=[self.food.pk]))
+        self.assertContains(response, "Nutrition per 100 g")
+        self.assertContains(response, "119 kJ / 28 kcal")
+        self.assertContains(response, "of which polyols")
+        self.assertContains(response, "Vitamin C")
+        self.assertContains(response, "0.94 g")
+
+    def test_off_import_keeps_the_full_label(self):
+        raw = dict(RAW_OFF_PRODUCT, nutriments=dict(
+            RAW_OFF_PRODUCT["nutriments"],
+            **{
+                "energy-kj_100g": 1464, "starch_100g": 40, "polyols_100g": 0.5,
+                "salt_100g": 0.5, "vitamin-c_100g": 0.012, "vitamin-c_unit": "mg",
+                "iron_100g": 0.000004, "iron_unit": "µg", "nutrition-score-fr_100g": 3,
+                "carbon-footprint-from-known-ingredients_100g": 12,
+            },
+        ))
+        parsed = openfoodfacts.parse_product(raw)
+        self.assertEqual(parsed["energy_kj"], Decimal("1464"))
+        self.assertEqual(parsed["starch_grams"], Decimal("40"))
+        self.assertEqual(parsed["polyols_grams"], Decimal("0.5"))
+        self.assertEqual(parsed["salt_grams"], Decimal("0.5"))
+        self.assertEqual(parsed["other_nutrients"], [
+            {"key": "vitamin-c", "value": "12", "unit": "mg"},
+            {"key": "iron", "value": "4", "unit": "µg"},
+        ])
+
+    def test_a_hand_entered_salt_also_sets_sodium(self):
+        self.client.post(reverse("nutrition:food-create"), {
+            "name": "Bread", "brand": "", "serving_size": "100", "serving_unit": "g",
+            "calories": "250", "protein_grams": "9", "carbohydrate_grams": "45",
+            "fat_grams": "3", "salt_grams": "1.1", "starch_grams": "40",
+        })
+        food = Food.objects.get(name="Bread")
+        self.assertEqual(food.salt_grams, Decimal("1.1"))
+        self.assertEqual(food.sodium_mg, 440)
+        self.assertEqual(food.starch_grams, Decimal("40"))
 
 
 class FoodCreateViewTests(TestCase):

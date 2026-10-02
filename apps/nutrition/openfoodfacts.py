@@ -15,7 +15,7 @@ from django.conf import settings
 from django.core.cache import cache
 from django.utils.translation import gettext_lazy as _
 
-from . import off_http
+from . import nutrition_label, off_http
 from .off_http import OffRateLimited, OffRequestError  # noqa: F401 (re-exported)
 
 # Overridable (settings.OFF_API_BASE / OFF_SEARCH_BASE) so dev and tests
@@ -224,6 +224,11 @@ def parse_product(raw):
             if nutriments.get("sodium_100g") is not None
             else None
         ),
+        "energy_kj": _optional("energy-kj_100g"),
+        "starch_grams": _optional("starch_100g"),
+        "polyols_grams": _optional("polyols_100g"),
+        "salt_grams": _optional("salt_100g"),
+        "other_nutrients": nutrition_label.extract_other_nutrients(nutriments),
         # Both `None` unless OFF has actually graded this product —
         # "unknown"/"not-applicable" (OFF's own placeholders for "not
         # graded") map to None rather than a misleading guess.

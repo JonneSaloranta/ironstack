@@ -5743,6 +5743,13 @@ gained `page`/`param`/`anchor`/`label`/`hx_target` options (and
 `url_replace` a variable parameter name) — this also fixed their search
 terms going into the URL un-encoded.
 
+Food diary, asked for directly:
+- Food detail shows a Finnish/EU-style nutrition label
+  (`apps.nutrition.nutrition_label`): new `Food.energy_kj`,
+  `starch_grams`, `polyols_grams`, `salt_grams` and a display-only
+  `other_nutrients` JSON list from OFF (converted from OFF's grams into
+  each nutrient's own unit). The food form follows label order and asks
+  for salt, deriving `sodium_mg` (what totals sum) from it.
 - Quick entries: `DiaryEntry` can carry its own macros instead of a
   food or recipe (the check constraint now allows exactly one of the
   three), for restaurant meals that don't deserve a library food.

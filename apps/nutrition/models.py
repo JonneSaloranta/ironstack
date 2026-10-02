@@ -365,6 +365,22 @@ class Food(TimeStampedModel):
         max_digits=6, decimal_places=2, null=True, blank=True
     )
     sodium_mg = models.PositiveIntegerField(null=True, blank=True)
+    # The rest of an EU/Finnish nutrition label (Regulation 1169/2011
+    # Annex XV), same nullable-means-unknown rule. `energy_kj` is the
+    # label's own kJ figure when known — otherwise it's derived from
+    # `calories` for display. `salt_grams` is what a label states;
+    # `sodium_mg` stays the figure totals are summed from (salt =
+    # sodium × 2.5), and either one fills in the other when missing.
+    energy_kj = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
+    starch_grams = models.DecimalField(max_digits=6, decimal_places=2, null=True, blank=True)
+    polyols_grams = models.DecimalField(max_digits=6, decimal_places=2, null=True, blank=True)
+    salt_grams = models.DecimalField(max_digits=7, decimal_places=3, null=True, blank=True)
+    # Every other per-100 g/ml nutrient OpenFoodFacts has for the
+    # product (vitamins, minerals, fat breakdown, ...), verbatim:
+    # `[{"key": "vitamin-c", "value": "12", "unit": "mg"}, ...]`.
+    # Display-only — nothing sums or scales it — so a plain JSON list
+    # rather than a column per nutrient OFF might ever report.
+    other_nutrients = models.JSONField(default=list, blank=True)
     # Set only for a food imported from OpenFoodFacts — their own
     # barcode, unique when present (Postgres allows any number of
     # NULLs alongside a unique constraint, so this stays optional for

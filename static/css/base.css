@@ -1665,6 +1665,21 @@ h2 {
      everything keeps every row's content flush with its own top edge
      regardless of how tall any one cell's content happens to be. */
   vertical-align: top;
+/* A food's nutrition table (templates/nutrition/food_detail.html), read
+   like a package label: nutrient names in normal weight, amounts right-
+   aligned so they line up, "of which" rows indented under their parent. */
+.nutrition-label th {
+  font-weight: normal;
+}
+
+.nutrition-label td {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.nutrition-label-sub th {
+  padding-left: var(--space-5);
+  color: var(--color-text-muted);
 }
 
 .set-actions {

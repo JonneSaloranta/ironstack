@@ -8938,6 +8938,34 @@ msgstr "Disattivare questa routine? Le sessioni passate restano nella tua cronol
 msgid "Deactivate this stretch? It will no longer appear when browsing, but routines and past sessions that use it keep working."
 msgstr "Disattivare questo allungamento? Non apparirà più durante la navigazione, ma le routine e le sessioni passate che lo usano continuano a funzionare."
 
+msgctxt "nutrient"
+msgid "Energy"
+msgstr "Energia"
+
+msgctxt "nutrient"
+msgid "of which saturates"
+msgstr "di cui acidi grassi saturi"
+
+msgctxt "nutrient"
+msgid "of which sugars"
+msgstr "di cui zuccheri"
+
+msgctxt "nutrient"
+msgid "of which starch"
+msgstr "di cui amido"
+
+msgctxt "nutrient"
+msgid "of which polyols"
+msgstr "di cui polioli"
+
+msgctxt "nutrient"
+msgid "Fibre"
+msgstr "Fibre"
+
+msgctxt "nutrient"
+msgid "Salt"
+msgstr "Sale"
+
 msgid "Optional — e.g. the restaurant dish."
 msgstr "Facoltativo — ad es. il piatto del ristorante."
 
@@ -8953,6 +8981,146 @@ msgstr "Voce rapida"
 msgid "Log either a food, a recipe or quick macros — exactly one of them."
 msgstr "Registra un alimento, una ricetta o dei macro rapidi — esattamente uno di essi."
 
+msgctxt "nutrient"
+msgid "of which monounsaturates"
+msgstr "di cui acidi grassi monoinsaturi"
+
+msgctxt "nutrient"
+msgid "of which polyunsaturates"
+msgstr "di cui acidi grassi polinsaturi"
+
+msgctxt "nutrient"
+msgid "Omega-3 fatty acids"
+msgstr "Acidi grassi omega-3"
+
+msgctxt "nutrient"
+msgid "Trans fat"
+msgstr "Grassi trans"
+
+msgctxt "nutrient"
+msgid "Cholesterol"
+msgstr "Colesterolo"
+
+msgctxt "nutrient"
+msgid "Lactose"
+msgstr "Lattosio"
+
+msgctxt "nutrient"
+msgid "Alcohol"
+msgstr "Alcol"
+
+msgctxt "nutrient"
+msgid "Caffeine"
+msgstr "Caffeina"
+
+msgctxt "nutrient"
+msgid "Vitamin A"
+msgstr "Vitamina A"
+
+msgctxt "nutrient"
+msgid "Vitamin D"
+msgstr "Vitamina D"
+
+msgctxt "nutrient"
+msgid "Vitamin E"
+msgstr "Vitamina E"
+
+msgctxt "nutrient"
+msgid "Vitamin K"
+msgstr "Vitamina K"
+
+msgctxt "nutrient"
+msgid "Vitamin C"
+msgstr "Vitamina C"
+
+msgctxt "nutrient"
+msgid "Thiamin (B1)"
+msgstr "Tiamina (B1)"
+
+msgctxt "nutrient"
+msgid "Riboflavin (B2)"
+msgstr "Riboflavina (B2)"
+
+msgctxt "nutrient"
+msgid "Niacin"
+msgstr "Niacina"
+
+msgctxt "nutrient"
+msgid "Vitamin B6"
+msgstr "Vitamina B6"
+
+msgctxt "nutrient"
+msgid "Folate"
+msgstr "Folato"
+
+msgctxt "nutrient"
+msgid "Vitamin B12"
+msgstr "Vitamina B12"
+
+msgctxt "nutrient"
+msgid "Biotin"
+msgstr "Biotina"
+
+msgctxt "nutrient"
+msgid "Pantothenic acid"
+msgstr "Acido pantotenico"
+
+msgctxt "nutrient"
+msgid "Potassium"
+msgstr "Potassio"
+
+msgctxt "nutrient"
+msgid "Chloride"
+msgstr "Cloruro"
+
+msgctxt "nutrient"
+msgid "Calcium"
+msgstr "Calcio"
+
+msgctxt "nutrient"
+msgid "Phosphorus"
+msgstr "Fosforo"
+
+msgctxt "nutrient"
+msgid "Magnesium"
+msgstr "Magnesio"
+
+msgctxt "nutrient"
+msgid "Iron"
+msgstr "Ferro"
+
+msgctxt "nutrient"
+msgid "Zinc"
+msgstr "Zinco"
+
+msgctxt "nutrient"
+msgid "Copper"
+msgstr "Rame"
+
+msgctxt "nutrient"
+msgid "Manganese"
+msgstr "Manganese"
+
+msgctxt "nutrient"
+msgid "Fluoride"
+msgstr "Fluoruro"
+
+msgctxt "nutrient"
+msgid "Selenium"
+msgstr "Selenio"
+
+msgctxt "nutrient"
+msgid "Chromium"
+msgstr "Cromo"
+
+msgctxt "nutrient"
+msgid "Molybdenum"
+msgstr "Molibdeno"
+
+msgctxt "nutrient"
+msgid "Iodine"
+msgstr "Iodio"
+
 msgid "Pick a meal."
 msgstr "Scegli un pasto."
 
@@ -8967,6 +9135,10 @@ msgstr "Inserisci i macro manualmente"
 
 msgid "For a meal out or anything else you don't want to save as a food."
 msgstr "Per un pasto fuori o qualsiasi cosa che non vuoi salvare come alimento."
+
+#, python-format
+msgid "Nutrition per %(size)s %(unit)s"
+msgstr "Valori nutrizionali per %(size)s %(unit)s"
 
 msgid "Notes"
 msgstr "Note"

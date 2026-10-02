@@ -521,6 +521,11 @@ class FoodSerializer(serializers.ModelSerializer):
             "sugar_grams",
             "saturated_fat_grams",
             "sodium_mg",
+            "energy_kj",
+            "starch_grams",
+            "polyols_grams",
+            "salt_grams",
+            "other_nutrients",
             "nutri_score",
             "nova_group",
             "off_id",
@@ -534,7 +539,9 @@ class FoodSerializer(serializers.ModelSerializer):
         # by barcode isn't exposed as a create here at all yet; a
         # client creates a plain hand-entered food the same way the
         # web form does (see "What's deliberately not here" below).
-        read_only_fields = ["nutri_score", "nova_group", "off_id", "active", "owner"]
+        read_only_fields = [
+            "other_nutrients", "nutri_score", "nova_group", "off_id", "active", "owner",
+        ]
 
 
 class MealSlotSerializer(serializers.ModelSerializer):

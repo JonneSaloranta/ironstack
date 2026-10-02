@@ -29,7 +29,7 @@ from apps.core.forms import ExportImportUploadForm
 from apps.measurements.models import BodyMeasurement, MeasurementType
 from apps.programs.models import Weekday as ProgramsWeekday
 
-from . import diet_builder, energy, services
+from . import diet_builder, energy, nutrition_label, services
 from .forms import (
     DEFAULT_RATES_JSON_SAFE,
     ActivityInputsForm,
@@ -566,7 +566,16 @@ class FoodDetailView(LoginRequiredMixin, View):
     def get(self, request, pk):
         food = _viewable_food_or_404(request, pk)
         food = services.refresh_food_price(food)
-        return render(request, self.template_name, {"food": food})
+        return render(
+            request,
+            self.template_name,
+            {
+                "food": food,
+                "energy_kj": nutrition_label.energy_kj(food),
+                "label_rows": nutrition_label.label_rows(food),
+                "other_rows": nutrition_label.other_rows(food),
+            },
+        )
 
 
 class FoodCreateView(LoginRequiredMixin, CreateView):

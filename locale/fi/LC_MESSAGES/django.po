@@ -8871,6 +8871,34 @@ msgstr "Poistetaanko tämä rutiini käytöstä? Aiemmat sessiot säilyvät hist
 msgid "Deactivate this stretch? It will no longer appear when browsing, but routines and past sessions that use it keep working."
 msgstr "Poistetaanko tämä venytys käytöstä? Se ei enää näy selatessa, mutta sitä käyttävät rutiinit ja aiemmat sessiot toimivat edelleen."
 
+msgctxt "nutrient"
+msgid "Energy"
+msgstr "Energia"
+
+msgctxt "nutrient"
+msgid "of which saturates"
+msgstr "josta tyydyttynyttä"
+
+msgctxt "nutrient"
+msgid "of which sugars"
+msgstr "josta sokereita"
+
+msgctxt "nutrient"
+msgid "of which starch"
+msgstr "josta tärkkelystä"
+
+msgctxt "nutrient"
+msgid "of which polyols"
+msgstr "josta polyoleja"
+
+msgctxt "nutrient"
+msgid "Fibre"
+msgstr "Ravintokuitu"
+
+msgctxt "nutrient"
+msgid "Salt"
+msgstr "Suola"
+
 msgid "Optional — e.g. the restaurant dish."
 msgstr "Valinnainen — esim. ravintola-annoksen nimi."
 
@@ -8886,6 +8914,146 @@ msgstr "Pikamerkintä"
 msgid "Log either a food, a recipe or quick macros — exactly one of them."
 msgstr "Kirjaa joko ruoka, resepti tai pikamakrot — täsmälleen yksi niistä."
 
+msgctxt "nutrient"
+msgid "of which monounsaturates"
+msgstr "josta kertatyydyttymättömiä"
+
+msgctxt "nutrient"
+msgid "of which polyunsaturates"
+msgstr "josta monityydyttymättömiä"
+
+msgctxt "nutrient"
+msgid "Omega-3 fatty acids"
+msgstr "Omega-3-rasvahapot"
+
+msgctxt "nutrient"
+msgid "Trans fat"
+msgstr "Transrasva"
+
+msgctxt "nutrient"
+msgid "Cholesterol"
+msgstr "Kolesteroli"
+
+msgctxt "nutrient"
+msgid "Lactose"
+msgstr "Laktoosi"
+
+msgctxt "nutrient"
+msgid "Alcohol"
+msgstr "Alkoholi"
+
+msgctxt "nutrient"
+msgid "Caffeine"
+msgstr "Kofeiini"
+
+msgctxt "nutrient"
+msgid "Vitamin A"
+msgstr "A-vitamiini"
+
+msgctxt "nutrient"
+msgid "Vitamin D"
+msgstr "D-vitamiini"
+
+msgctxt "nutrient"
+msgid "Vitamin E"
+msgstr "E-vitamiini"
+
+msgctxt "nutrient"
+msgid "Vitamin K"
+msgstr "K-vitamiini"
+
+msgctxt "nutrient"
+msgid "Vitamin C"
+msgstr "C-vitamiini"
+
+msgctxt "nutrient"
+msgid "Thiamin (B1)"
+msgstr "Tiamiini (B1)"
+
+msgctxt "nutrient"
+msgid "Riboflavin (B2)"
+msgstr "Riboflaviini (B2)"
+
+msgctxt "nutrient"
+msgid "Niacin"
+msgstr "Niasiini"
+
+msgctxt "nutrient"
+msgid "Vitamin B6"
+msgstr "B6-vitamiini"
+
+msgctxt "nutrient"
+msgid "Folate"
+msgstr "Folaatti"
+
+msgctxt "nutrient"
+msgid "Vitamin B12"
+msgstr "B12-vitamiini"
+
+msgctxt "nutrient"
+msgid "Biotin"
+msgstr "Biotiini"
+
+msgctxt "nutrient"
+msgid "Pantothenic acid"
+msgstr "Pantoteenihappo"
+
+msgctxt "nutrient"
+msgid "Potassium"
+msgstr "Kalium"
+
+msgctxt "nutrient"
+msgid "Chloride"
+msgstr "Kloridi"
+
+msgctxt "nutrient"
+msgid "Calcium"
+msgstr "Kalsium"
+
+msgctxt "nutrient"
+msgid "Phosphorus"
+msgstr "Fosfori"
+
+msgctxt "nutrient"
+msgid "Magnesium"
+msgstr "Magnesium"
+
+msgctxt "nutrient"
+msgid "Iron"
+msgstr "Rauta"
+
+msgctxt "nutrient"
+msgid "Zinc"
+msgstr "Sinkki"
+
+msgctxt "nutrient"
+msgid "Copper"
+msgstr "Kupari"
+
+msgctxt "nutrient"
+msgid "Manganese"
+msgstr "Mangaani"
+
+msgctxt "nutrient"
+msgid "Fluoride"
+msgstr "Fluoridi"
+
+msgctxt "nutrient"
+msgid "Selenium"
+msgstr "Seleeni"
+
+msgctxt "nutrient"
+msgid "Chromium"
+msgstr "Kromi"
+
+msgctxt "nutrient"
+msgid "Molybdenum"
+msgstr "Molybdeeni"
+
+msgctxt "nutrient"
+msgid "Iodine"
+msgstr "Jodi"
+
 msgid "Pick a meal."
 msgstr "Valitse ateria."
 
@@ -8900,6 +9068,10 @@ msgstr "Syötä makrot käsin"
 
 msgid "For a meal out or anything else you don't want to save as a food."
 msgstr "Ravintola-ateriaa tai muuta varten, jota et halua tallentaa ruoaksi."
+
+#, python-format
+msgid "Nutrition per %(size)s %(unit)s"
+msgstr "Ravintosisältö per %(size)s %(unit)s"
 
 msgid "Notes"
 msgstr "Muistiinpanot"

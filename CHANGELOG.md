@@ -22,6 +22,12 @@ narrated summary of the same version.
 - Food diary: "Enter macros manually" logs a meal's calories and macros
   straight into the diary (e.g. a restaurant's published values)
   without creating a food for it.
+- Food pages show the full nutrition table the way a Finnish/EU package
+  label does — energy in kJ and kcal, "of which" rows for saturates,
+  sugars, starch and polyols, fibre, protein, salt — followed by every
+  other nutrient OpenFoodFacts has (vitamins, minerals, …). Creating a
+  food asks for the values in the same order, with salt instead of
+  sodium.
 - "Most used" foods are paginated instead of capped at ten.
 
 ### Changed

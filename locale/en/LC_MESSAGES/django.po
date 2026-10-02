@@ -8812,6 +8812,34 @@ msgstr ""
 msgid "Deactivate this stretch? It will no longer appear when browsing, but routines and past sessions that use it keep working."
 msgstr ""
 
+msgctxt "nutrient"
+msgid "Energy"
+msgstr ""
+
+msgctxt "nutrient"
+msgid "of which saturates"
+msgstr ""
+
+msgctxt "nutrient"
+msgid "of which sugars"
+msgstr ""
+
+msgctxt "nutrient"
+msgid "of which starch"
+msgstr ""
+
+msgctxt "nutrient"
+msgid "of which polyols"
+msgstr ""
+
+msgctxt "nutrient"
+msgid "Fibre"
+msgstr ""
+
+msgctxt "nutrient"
+msgid "Salt"
+msgstr ""
+
 msgid "Optional — e.g. the restaurant dish."
 msgstr ""
 
@@ -8827,6 +8855,146 @@ msgstr ""
 msgid "Log either a food, a recipe or quick macros — exactly one of them."
 msgstr ""
 
+msgctxt "nutrient"
+msgid "of which monounsaturates"
+msgstr ""
+
+msgctxt "nutrient"
+msgid "of which polyunsaturates"
+msgstr ""
+
+msgctxt "nutrient"
+msgid "Omega-3 fatty acids"
+msgstr ""
+
+msgctxt "nutrient"
+msgid "Trans fat"
+msgstr ""
+
+msgctxt "nutrient"
+msgid "Cholesterol"
+msgstr ""
+
+msgctxt "nutrient"
+msgid "Lactose"
+msgstr ""
+
+msgctxt "nutrient"
+msgid "Alcohol"
+msgstr ""
+
+msgctxt "nutrient"
+msgid "Caffeine"
+msgstr ""
+
+msgctxt "nutrient"
+msgid "Vitamin A"
+msgstr ""
+
+msgctxt "nutrient"
+msgid "Vitamin D"
+msgstr ""
+
+msgctxt "nutrient"
+msgid "Vitamin E"
+msgstr ""
+
+msgctxt "nutrient"
+msgid "Vitamin K"
+msgstr ""
+
+msgctxt "nutrient"
+msgid "Vitamin C"
+msgstr ""
+
+msgctxt "nutrient"
+msgid "Thiamin (B1)"
+msgstr ""
+
+msgctxt "nutrient"
+msgid "Riboflavin (B2)"
+msgstr ""
+
+msgctxt "nutrient"
+msgid "Niacin"
+msgstr ""
+
+msgctxt "nutrient"
+msgid "Vitamin B6"
+msgstr ""
+
+msgctxt "nutrient"
+msgid "Folate"
+msgstr ""
+
+msgctxt "nutrient"
+msgid "Vitamin B12"
+msgstr ""
+
+msgctxt "nutrient"
+msgid "Biotin"
+msgstr ""
+
+msgctxt "nutrient"
+msgid "Pantothenic acid"
+msgstr ""
+
+msgctxt "nutrient"
+msgid "Potassium"
+msgstr ""
+
+msgctxt "nutrient"
+msgid "Chloride"
+msgstr ""
+
+msgctxt "nutrient"
+msgid "Calcium"
+msgstr ""
+
+msgctxt "nutrient"
+msgid "Phosphorus"
+msgstr ""
+
+msgctxt "nutrient"
+msgid "Magnesium"
+msgstr ""
+
+msgctxt "nutrient"
+msgid "Iron"
+msgstr ""
+
+msgctxt "nutrient"
+msgid "Zinc"
+msgstr ""
+
+msgctxt "nutrient"
+msgid "Copper"
+msgstr ""
+
+msgctxt "nutrient"
+msgid "Manganese"
+msgstr ""
+
+msgctxt "nutrient"
+msgid "Fluoride"
+msgstr ""
+
+msgctxt "nutrient"
+msgid "Selenium"
+msgstr ""
+
+msgctxt "nutrient"
+msgid "Chromium"
+msgstr ""
+
+msgctxt "nutrient"
+msgid "Molybdenum"
+msgstr ""
+
+msgctxt "nutrient"
+msgid "Iodine"
+msgstr ""
+
 msgid "Pick a meal."
 msgstr ""
 
@@ -8840,6 +9008,10 @@ msgid "Enter macros manually"
 msgstr ""
 
 msgid "For a meal out or anything else you don't want to save as a food."
+msgstr ""
+
+#, python-format
+msgid "Nutrition per %(size)s %(unit)s"
 msgstr ""
 
 msgid "Notes"

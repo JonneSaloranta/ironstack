@@ -183,11 +183,29 @@ Satisfies section 9 exactly: sensible defaults, user can rename/add.
 owner (nullable FK), name, brand (optional), serving_size, serving_unit,
 calories, protein_grams, carbohydrate_grams, fat_grams,
 fiber_grams / sugar_grams / saturated_fat_grams / sodium_mg (all
-optional/nullable), off_id (nullable, unique), off_synced_at (nullable),
+optional/nullable), energy_kj / starch_grams / polyols_grams /
+salt_grams (optional/nullable), other_nutrients (JSON list), off_id (nullable, unique), off_synced_at (nullable),
 nutri_score (nullable, A-E), nova_group (nullable, 1-4),
 image_url (blank), image_thumb_url (blank), categories (blank), active
 ```
 
+**Nutrition label.** `FoodDetailView` shows a food's values the way an
+EU/Finnish package label does (Regulation 1169/2011 Annex XV,
+`apps.nutrition.nutrition_label`): energy as "kJ / kcal", fat → of which
+saturates (→ mono-/polyunsaturates when OFF has them), carbohydrate →
+of which sugars / starch / polyols, fibre, protein, salt, then every
+other nutrient OFF reports (vitamins, minerals, ...) from
+`other_nutrients`. Amounts use the active locale's decimal separator
+with no trailing zeros (`nutrient_amount` filter). The mandatory rows
+always show (an en dash when unknown); starch, polyols and fibre only
+when known. `energy_kj` falls back to `calories × 4.184` and
+`salt_grams` to `sodium_mg × 2.5 / 1000`, so older foods still get a
+complete table. Totals keep summing `sodium_mg`, so the food form asks
+for salt (as a label states it) and derives sodium from it.
+`other_nutrients` is display-only, stored verbatim from OFF converted
+into each nutrient's own unit (`extract_other_nutrients`); foods imported
+before these fields existed fill in on their next OFF refresh
+(`OPENFOODFACTS_STALENESS_DAYS`).
 
 `image_url`/`image_thumb_url`/`categories` are all blank for every
 hand-entered food, same as `nutri_score`/`nova_group` — only ever

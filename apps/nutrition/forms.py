@@ -9,6 +9,7 @@ from decimal import Decimal
 
 from django import forms
 from django.utils.translation import gettext_lazy as _
+from django.utils.translation import pgettext_lazy
 
 from apps.core import units as core_units
 
@@ -172,21 +173,46 @@ class FoodForm(forms.ModelForm):
             "brand",
             "serving_size",
             "serving_unit",
+            # The same order as a package's nutrition label, so the
+            # values can be copied straight down it.
             "calories",
-            "protein_grams",
-            "carbohydrate_grams",
             "fat_grams",
-            "fiber_grams",
-            "sugar_grams",
             "saturated_fat_grams",
-            "sodium_mg",
+            "carbohydrate_grams",
+            "sugar_grams",
+            "starch_grams",
+            "polyols_grams",
+            "fiber_grams",
+            "protein_grams",
+            "salt_grams",
         ]
+        labels = {
+            "saturated_fat_grams": pgettext_lazy("nutrient", "of which saturates"),
+            "sugar_grams": pgettext_lazy("nutrient", "of which sugars"),
+            "starch_grams": pgettext_lazy("nutrient", "of which starch"),
+            "polyols_grams": pgettext_lazy("nutrient", "of which polyols"),
+            "fiber_grams": pgettext_lazy("nutrient", "Fibre"),
+            "salt_grams": pgettext_lazy("nutrient", "Salt"),
+        }
         help_texts = {
             "serving_size": _(
                 "All the nutrition values below are for this amount, in the unit chosen "
                 "next to it — e.g. \"100 g\" if the values are per 100 grams."
             ),
         }
+
+
+    def save(self, commit=True):
+        # Totals sum sodium (services.ScaledNutrition), while a label
+        # states salt — keep the two in step (salt = sodium × 2.5).
+        food = super().save(commit=False)
+        if food.salt_grams is None:
+            food.sodium_mg = None
+        else:
+            food.sodium_mg = int(round(food.salt_grams * 1000 / Decimal("2.5")))
+        if commit:
+            food.save()
+        return food
 
 
 class FoodSearchForm(forms.Form):

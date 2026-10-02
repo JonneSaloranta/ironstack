@@ -8845,6 +8845,34 @@ msgstr "Inaktivera den här rutinen? Tidigare pass finns kvar i din historik."
 msgid "Deactivate this stretch? It will no longer appear when browsing, but routines and past sessions that use it keep working."
 msgstr "Inaktivera den här stretchövningen? Den visas inte längre när du bläddrar, men rutiner och tidigare pass som använder den fortsätter att fungera."
 
+msgctxt "nutrient"
+msgid "Energy"
+msgstr "Energi"
+
+msgctxt "nutrient"
+msgid "of which saturates"
+msgstr "varav mättat fett"
+
+msgctxt "nutrient"
+msgid "of which sugars"
+msgstr "varav sockerarter"
+
+msgctxt "nutrient"
+msgid "of which starch"
+msgstr "varav stärkelse"
+
+msgctxt "nutrient"
+msgid "of which polyols"
+msgstr "varav polyoler"
+
+msgctxt "nutrient"
+msgid "Fibre"
+msgstr "Fiber"
+
+msgctxt "nutrient"
+msgid "Salt"
+msgstr "Salt"
+
 msgid "Optional — e.g. the restaurant dish."
 msgstr "Valfritt — t.ex. restaurangrätten."
 
@@ -8860,6 +8888,146 @@ msgstr "Snabbregistrering"
 msgid "Log either a food, a recipe or quick macros — exactly one of them."
 msgstr "Registrera antingen ett livsmedel, ett recept eller snabba makron — exakt ett av dem."
 
+msgctxt "nutrient"
+msgid "of which monounsaturates"
+msgstr "varav enkelomättat fett"
+
+msgctxt "nutrient"
+msgid "of which polyunsaturates"
+msgstr "varav fleromättat fett"
+
+msgctxt "nutrient"
+msgid "Omega-3 fatty acids"
+msgstr "Omega-3-fettsyror"
+
+msgctxt "nutrient"
+msgid "Trans fat"
+msgstr "Transfett"
+
+msgctxt "nutrient"
+msgid "Cholesterol"
+msgstr "Kolesterol"
+
+msgctxt "nutrient"
+msgid "Lactose"
+msgstr "Laktos"
+
+msgctxt "nutrient"
+msgid "Alcohol"
+msgstr "Alkohol"
+
+msgctxt "nutrient"
+msgid "Caffeine"
+msgstr "Koffein"
+
+msgctxt "nutrient"
+msgid "Vitamin A"
+msgstr "A-vitamin"
+
+msgctxt "nutrient"
+msgid "Vitamin D"
+msgstr "D-vitamin"
+
+msgctxt "nutrient"
+msgid "Vitamin E"
+msgstr "E-vitamin"
+
+msgctxt "nutrient"
+msgid "Vitamin K"
+msgstr "K-vitamin"
+
+msgctxt "nutrient"
+msgid "Vitamin C"
+msgstr "C-vitamin"
+
+msgctxt "nutrient"
+msgid "Thiamin (B1)"
+msgstr "Tiamin (B1)"
+
+msgctxt "nutrient"
+msgid "Riboflavin (B2)"
+msgstr "Riboflavin (B2)"
+
+msgctxt "nutrient"
+msgid "Niacin"
+msgstr "Niacin"
+
+msgctxt "nutrient"
+msgid "Vitamin B6"
+msgstr "B6-vitamin"
+
+msgctxt "nutrient"
+msgid "Folate"
+msgstr "Folat"
+
+msgctxt "nutrient"
+msgid "Vitamin B12"
+msgstr "B12-vitamin"
+
+msgctxt "nutrient"
+msgid "Biotin"
+msgstr "Biotin"
+
+msgctxt "nutrient"
+msgid "Pantothenic acid"
+msgstr "Pantotensyra"
+
+msgctxt "nutrient"
+msgid "Potassium"
+msgstr "Kalium"
+
+msgctxt "nutrient"
+msgid "Chloride"
+msgstr "Klorid"
+
+msgctxt "nutrient"
+msgid "Calcium"
+msgstr "Kalcium"
+
+msgctxt "nutrient"
+msgid "Phosphorus"
+msgstr "Fosfor"
+
+msgctxt "nutrient"
+msgid "Magnesium"
+msgstr "Magnesium"
+
+msgctxt "nutrient"
+msgid "Iron"
+msgstr "Järn"
+
+msgctxt "nutrient"
+msgid "Zinc"
+msgstr "Zink"
+
+msgctxt "nutrient"
+msgid "Copper"
+msgstr "Koppar"
+
+msgctxt "nutrient"
+msgid "Manganese"
+msgstr "Mangan"
+
+msgctxt "nutrient"
+msgid "Fluoride"
+msgstr "Fluorid"
+
+msgctxt "nutrient"
+msgid "Selenium"
+msgstr "Selen"
+
+msgctxt "nutrient"
+msgid "Chromium"
+msgstr "Krom"
+
+msgctxt "nutrient"
+msgid "Molybdenum"
+msgstr "Molybden"
+
+msgctxt "nutrient"
+msgid "Iodine"
+msgstr "Jod"
+
 msgid "Pick a meal."
 msgstr "Välj en måltid."
 
@@ -8874,6 +9042,10 @@ msgstr "Ange makron manuellt"
 
 msgid "For a meal out or anything else you don't want to save as a food."
 msgstr "För en restaurangmåltid eller annat du inte vill spara som livsmedel."
+
+#, python-format
+msgid "Nutrition per %(size)s %(unit)s"
+msgstr "Näringsvärde per %(size)s %(unit)s"
 
 msgid "Notes"
 msgstr "Anteckningar"
