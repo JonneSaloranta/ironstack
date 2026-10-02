@@ -6,12 +6,14 @@ aria-describedby / aria-invalid (set by the core_extras `field_a11y`
 filter), so a screen reader reads the error when the field is focused.
 Every error is listed, not just the first. (No role=alert here: the form's
 _form_errors.html summary announces on submit; these are read on focus.)
-A checkbox renders with its box beside the label (.checkbox-field) rather
-than stacked under a block label meant for text inputs.
+A single checkbox renders with its box beside the label (.checkbox-field)
+rather than stacked under a block label meant for text inputs. A list of
+checkboxes (CheckboxSelectMultiple and widgets built on it) gets the normal
+label above it instead of being wrapped, list and all, inside one <label>.
 {% endcomment %}
 {% load core_extras %}
 <div class="field">
-  {% if field.field.widget.input_type == "checkbox" %}
+  {% if field.field.widget.input_type == "checkbox" and not field.field.widget.allow_multiple_selected %}
     <label class="checkbox-field" for="{{ field.id_for_label }}">{{ field|field_a11y }} {{ field.label }}</label>
   {% else %}
     {{ field.label_tag }}

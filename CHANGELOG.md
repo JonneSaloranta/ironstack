@@ -63,6 +63,8 @@ narrated summary of the same version.
   stretch from a routine asks for confirmation.
 
 ### Fixed
+- A list of checkboxes (e.g. an exercise's muscle groups) had its whole
+  list wrapped inside the field's label; the label now sits above it.
 - Stretching forms' "Back" link showed the muscle-group translation
   ("Selkä" in Finnish) instead of "Back".
 

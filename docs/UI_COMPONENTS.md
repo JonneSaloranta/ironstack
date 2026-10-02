@@ -158,6 +158,8 @@ Hierarchy (base.css "Buttons: states + one clear hierarchy"):
   `apps.core.widgets.SearchablePickerWidget` — search box with suggestions,
   picked items as a removable list; its checkboxes stay the real input and the
   no-JS fallback. For clients use `apps.coaching.forms.ClientPickerField`.
+- A list of checkboxes gets its label above it (`_field.html`); only a single
+  checkbox sits beside its label.
 - Compact inline forms (set logging, training mode, diary quantity) use
   `.set-field`/`.set-log-form`/`.qty-input` — the only allowed exception to
   `_field.html`.
