@@ -186,7 +186,7 @@ Hierarchy (base.css "Buttons: states + one clear hierarchy"):
 | State | Use |
 |---|---|
 | Empty | `{% include "core/_empty_state.html" with message=_("…") hint=_("…") cta_url=… cta_label=_("…") %}` (build the URL first with `{% url … as empty_cta_url %}`) |
-| Loading | automatic `.htmx-request` dimming; `.spinner` / `core/_search_indicator.html` for slow ones |
+| Loading | automatic: the top loading bar (`static/js/page-loading.js`) on every link, form submit and user-started HTMX request, plus `.htmx-request` dimming; `.spinner` / `core/_search_indicator.html` inside the page for slow ones. A link that downloads a file (export, backup) needs the `download` attribute, or the bar waits for a page that never comes |
 | Field error | `_field.html` (`.field-error`) |
 | Form error | `_form_errors.html` (`.alert.alert-error`) |
 | In-page notice | `.alert` + `.alert-info/-warning/-success/-error` |

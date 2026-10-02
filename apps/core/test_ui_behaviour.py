@@ -160,6 +160,55 @@ class UiBehaviourTests(StaticLiveServerTestCase):
         expect(toast).to_be_visible()
         expect(toast).to_contain_text("not saved")
 
+    # -- page loading bar (static/js/page-loading.js) ------------------------
+    def _hold(self, pattern):
+        """Holds every request matching `pattern` until the test releases
+        it — a deterministic slow connection for an HTMX request."""
+        held = []
+        self.page.route(pattern, lambda route: held.append(route))
+        return held
+
+    def test_following_a_link_shows_the_loading_bar(self):
+        self._log_in()
+        # Let the click reach page-loading.js's document listener, then
+        # cancel the navigation from window (which runs after document) —
+        # the bar stays up as it would on a slow connection, without the
+        # test having to hold a navigation Playwright would wait on.
+        self.page.evaluate(
+            "window.addEventListener('click', (event) => event.preventDefault())"
+        )
+        self.page.locator('.bottom-nav a[data-tour="nav-programs"]').click()
+        expect(self.page.locator(".page-loading-bar.is-loading")).to_be_visible()
+
+    def test_a_modified_click_shows_no_bar(self):
+        self._log_in()
+        self.page.evaluate(
+            "window.addEventListener('click', (event) => event.preventDefault())"
+        )
+        self.page.locator('.bottom-nav a[data-tour="nav-programs"]').click(modifiers=["Control"])
+        self.page.wait_for_timeout(400)
+        expect(self.page.locator(".page-loading-bar.is-loading")).to_have_count(0)
+
+    def test_a_slow_htmx_request_shows_the_bar_until_it_answers(self):
+        session, performed = self._session_with_set()
+        self._log_in()
+        self.page.goto(self._url(reverse("workouts:session-train", args=[session.pk])))
+        held = self._hold("**" + reverse("workouts:train-set-log", args=[performed.pk]))
+        self.page.get_by_role("button", name="Log set").click()
+        expect(self.page.locator(".page-loading-bar.is-loading")).to_be_visible()
+        self.page.wait_for_timeout(50)
+        held[0].continue_()
+        expect(self.page.locator(".page-loading-bar.is-loading")).to_have_count(0)
+
+    def test_a_download_link_does_not_leave_the_bar_running(self):
+        program = Program.objects.create(owner=self.alice, name="Export me")
+        self._log_in()
+        self.page.goto(self._url(reverse("programs:program-detail", args=[program.pk])))
+        with self.page.expect_download():
+            self.page.get_by_role("link", name="Export").click()
+        self.page.wait_for_timeout(400)
+        expect(self.page.locator(".page-loading-bar.is-loading")).to_have_count(0)
+
     def test_a_save_shows_a_toast_and_the_field_partial_links_errors(self):
         self._log_in()
         self.page.goto(self._url(reverse("programs:program-create")))

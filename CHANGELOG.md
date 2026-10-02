@@ -30,6 +30,9 @@ narrated summary of the same version.
   may use the instance's key, set a daily token limit per user, and see
   usage (Profile → Administration → AI assistant).
 - "Ask the assistant" on the diet plan and program lists.
+- A thin loading bar along the top of the screen whenever a page, a form
+  or a button is waiting on the server, so a slow connection no longer
+  looks like a tap that didn't register.
 
 ### Development
 - New `assistant-worker` service in `docker-compose.yml` writes the

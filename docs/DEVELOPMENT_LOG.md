@@ -5914,3 +5914,22 @@ Decisions worth recording:
 
 The assistant pages have a tour, are in the long-content layout test and
 the axe test, and are translated into all six languages.
+
+## Loading bar
+
+Asked for directly: nothing showed a tap had registered until the next page
+arrived on a slow connection. `static/js/page-loading.js` shows a thin
+accent bar across the top (chosen over a spinner or a blocking overlay)
+for same-origin link clicks, normal form submits and HTMX requests a user
+started. Background HTMX (polling, `load`) has no trusted triggering event
+and is skipped, so chats and assistant replies don't keep it flickering.
+It appears immediately — a 150 ms show-delay first meant to spare fast
+loads a flash hid it entirely on a local network (pages answer in
+25–70 ms there), so a tap on the nav showed nothing; it starts at 15 % so a
+blink-length load still draws a line. It eases towards 90 % and finishes
+on the response — for HTMX on the XHR's `loadend`, because
+`htmx:afterRequest` fires on the triggering element, which a swap has
+often already removed. File downloads now carry `download` so the bar
+skips them; anything else that doesn't navigate clears after 20 s. Reduced
+motion: a static full-width bar. Browser tests in
+`apps/core/test_ui_behaviour.py`.
