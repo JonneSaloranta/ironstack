@@ -1221,51 +1221,122 @@ def calorie_history(user, *, days=STATS_WINDOW_DAYS):
 
 @dataclass(frozen=True)
 class NutritionStatsSummary:
-    """The nutrition stats page's headline numbers — see
-    `nutrition_stats`."""
+    """The nutrition stats page's headline numbers for one period — see
+    `nutrition_stats`/`nutrition_stats_by_period`."""
 
     days_logged: int
     days_in_range: int
-    average_calories: Decimal
-    average_protein_grams: Decimal
-    average_carbohydrate_grams: Decimal
-    average_fat_grams: Decimal
+    median_calories: Decimal
+    median_protein_grams: Decimal
+    median_carbohydrate_grams: Decimal
+    median_fat_grams: Decimal
+
+
+def _summarize(logged, days_in_range) -> NutritionStatsSummary:
+    """Median daily calories/macros over `logged` (one ScaledNutrition
+    per day something was logged). The median rather than the mean, asked
+    for directly: one barely-logged day (a forgotten dinner) drags a mean
+    down a lot but barely moves the median, which is what "how much do I
+    usually eat" actually means."""
+    from statistics import median
+
+    if not logged:
+        zero = Decimal("0")
+        return NutritionStatsSummary(0, days_in_range, zero, zero, zero, zero)
+
+    def _median(attr, places):
+        return Decimal(median(getattr(totals, attr) for totals in logged)).quantize(
+            Decimal(places)
+        )
+
+    return NutritionStatsSummary(
+        days_logged=len(logged),
+        days_in_range=days_in_range,
+        median_calories=_median("calories", "1"),
+        median_protein_grams=_median("protein_grams", "0.1"),
+        median_carbohydrate_grams=_median("carbohydrate_grams", "0.1"),
+        median_fat_grams=_median("fat_grams", "0.1"),
+    )
+
+
+def _logged_days(totals_by_date, start, end):
+    """Days in [start, end] that have something logged. An unlogged day
+    is left out rather than counted as zero calories — counting it would
+    punish anyone who logs most days but not every single one."""
+    return [
+        totals
+        for day, totals in totals_by_date.items()
+        if start <= day <= end and totals.calories > 0
+    ]
 
 
 def nutrition_stats(user, *, days=STATS_WINDOW_DAYS) -> NutritionStatsSummary:
-    """Average daily calories/macros over `calorie_history`'s window,
-    counting only days something was actually logged. An unlogged day
-    is excluded from the average rather than counted as a zero-calorie
-    day — counting it as zero would drag the average down for anyone
-    who only logs most days, not every single day, which is most
-    real usage and shouldn't be punished by the stats page itself."""
-    history = calorie_history(user, days=days)
-    logged = [totals for _day, totals in history if totals.calories > 0]
-    days_logged = len(logged)
-    if not days_logged:
-        return NutritionStatsSummary(
-            days_logged=0,
-            days_in_range=days,
-            average_calories=Decimal("0"),
-            average_protein_grams=Decimal("0"),
-            average_carbohydrate_grams=Decimal("0"),
-            average_fat_grams=Decimal("0"),
-        )
-
-    count = Decimal(days_logged)
-
-    def _average(attr, places):
-        total = sum((getattr(totals, attr) for totals in logged), Decimal("0"))
-        return (total / count).quantize(Decimal(places))
-
-    return NutritionStatsSummary(
-        days_logged=days_logged,
-        days_in_range=days,
-        average_calories=_average("calories", "1"),
-        average_protein_grams=_average("protein_grams", "0.1"),
-        average_carbohydrate_grams=_average("carbohydrate_grams", "0.1"),
-        average_fat_grams=_average("fat_grams", "0.1"),
+    """Median daily calories/macros over the last `days` days (today
+    inclusive), counting only days something was actually logged."""
+    today = timezone.localdate()
+    start = today - timezone.timedelta(days=days - 1)
+    return _summarize(
+        _logged_days(_daily_totals_by_date(user, start, today), start, today), days
     )
+
+
+def _months_before(day, months):
+    """The same day-of-month `months` earlier, clamped to that month's
+    length (May 31 → Feb 28/29)."""
+    import calendar
+
+    month_index = day.year * 12 + day.month - 1 - months
+    year, month = divmod(month_index, 12)
+    month += 1
+    return day.replace(
+        year=year, month=month, day=min(day.day, calendar.monthrange(year, month)[1])
+    )
+
+
+@dataclass(frozen=True)
+class NutritionStatsPeriod:
+    key: str
+    label: str
+    summary: NutritionStatsSummary
+
+
+def nutrition_stats_by_period(user, today=None) -> list[NutritionStatsPeriod]:
+    """`nutrition_stats`'s medians for the stats page's fixed periods —
+    7/14/30 days, 3 months, year to date, 1 year and all time. Every
+    period ends today; the diary is read once (from the user's first
+    entry) and each period is a slice of it. "All" starts at the first
+    logged day, so its day count isn't padded with time before the user
+    started logging."""
+    from django.utils.translation import gettext_lazy as _
+
+    from .models import DiaryEntry
+
+    today = today or timezone.localdate()
+    first = DiaryEntry.objects.filter(user=user).order_by("date").values_list(
+        "date", flat=True
+    ).first()
+    all_start = min(first, today) if first else today
+    starts = [
+        ("7d", _("7 days"), today - timezone.timedelta(days=6)),
+        ("14d", _("14 days"), today - timezone.timedelta(days=13)),
+        ("30d", _("30 days"), today - timezone.timedelta(days=29)),
+        ("3m", _("3 months"), _months_before(today, 3) + timezone.timedelta(days=1)),
+        ("ytd", _("Year to date"), today.replace(month=1, day=1)),
+        ("1y", _("1 year"), _months_before(today, 12) + timezone.timedelta(days=1)),
+        ("all", _("All time"), all_start),
+    ]
+    earliest = min(start for _key, _label, start in starts)
+    totals_by_date = _daily_totals_by_date(user, earliest, today)
+    return [
+        NutritionStatsPeriod(
+            key=key,
+            label=label,
+            summary=_summarize(
+                _logged_days(totals_by_date, start, today), (today - start).days + 1
+            ),
+        )
+        for key, label, start in starts
+    ]
 
 
 def is_training_day(user, target_date):

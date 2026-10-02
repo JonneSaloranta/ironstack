@@ -2616,19 +2616,71 @@ class CalorieHistoryAndStatsTests(TestCase):
     def test_stats_with_no_logged_days_returns_all_zero_not_an_error(self):
         summary = services.nutrition_stats(self.alice, days=7)
         self.assertEqual(summary.days_logged, 0)
-        self.assertEqual(summary.average_calories, Decimal("0"))
+        self.assertEqual(summary.median_calories, Decimal("0"))
 
-    def test_stats_averages_only_over_days_something_was_logged(self):
+    def test_stats_count_only_days_something_was_logged(self):
         today = timezone.localdate()
         DiaryEntry.objects.create(
             user=self.alice, date=today, meal_slot=self.breakfast,
             food=self.chicken, quantity=Decimal("200"),  # 330 kcal
         )
         summary = services.nutrition_stats(self.alice, days=7)
-        # Only 1 of the 7 days had anything logged — the average must be
+        # Only 1 of the 7 days had anything logged — the median must be
         # that one day's own total, not diluted by the other 6 empty days.
         self.assertEqual(summary.days_logged, 1)
-        self.assertEqual(summary.average_calories, Decimal("330"))
+        self.assertEqual(summary.median_calories, Decimal("330"))
+
+    def _log(self, day, grams):
+        DiaryEntry.objects.create(
+            user=self.alice, date=day, meal_slot=self.breakfast,
+            food=self.chicken, quantity=Decimal(grams),
+        )
+
+    def test_stats_use_the_median_not_the_mean(self):
+        today = timezone.localdate()
+        # 165, 165, 1.65 kcal: a barely-logged day mustn't drag it down.
+        self._log(today, "100")
+        self._log(today - timedelta(days=1), "100")
+        self._log(today - timedelta(days=2), "1")
+        summary = services.nutrition_stats(self.alice, days=7)
+        self.assertEqual(summary.median_calories, Decimal("165"))
+
+    def test_periods_each_end_today(self):
+        today = date(2026, 5, 31)
+        self._log(today, "100")                         # 165 kcal
+        self._log(today - timedelta(days=10), "200")    # 330 kcal
+        self._log(date(2026, 1, 1), "300")              # 495 kcal
+        self._log(date(2025, 6, 1), "400")              # 660 kcal
+        self._log(date(2024, 1, 1), "500")              # 825 kcal
+        periods = {
+            p.key: p.summary for p in services.nutrition_stats_by_period(self.alice, today)
+        }
+        self.assertEqual(
+            list(periods), ["7d", "14d", "30d", "3m", "ytd", "1y", "all"]
+        )
+        self.assertEqual(periods["7d"].days_logged, 1)
+        self.assertEqual(periods["7d"].days_in_range, 7)
+        self.assertEqual(periods["14d"].median_calories, Decimal("248"))  # (165+330)/2
+        self.assertEqual(periods["3m"].days_in_range, 92)  # Mar 1 – May 31
+        self.assertEqual(periods["ytd"].days_logged, 3)
+        self.assertEqual(periods["ytd"].median_calories, Decimal("330"))
+        self.assertEqual(periods["1y"].days_logged, 4)  # Jun 1 2025 – May 31 2026
+        self.assertEqual(periods["all"].days_logged, 5)
+        self.assertEqual(periods["all"].days_in_range, (today - date(2024, 1, 1)).days + 1)
+
+    def test_periods_without_any_diary_are_empty_not_an_error(self):
+        periods = services.nutrition_stats_by_period(self.alice)
+        self.assertTrue(all(p.summary.days_logged == 0 for p in periods))
+        self.assertEqual(periods[-1].summary.days_in_range, 1)
+
+    def test_stats_page_shows_every_period(self):
+        self.client.login(username="alice", password="s3cret-pass")
+        self._log(timezone.localdate(), "100")
+        response = self.client.get(reverse("nutrition:stats"))
+        self.assertContains(response, "Median calories")
+        for label in ["7 days", "14 days", "30 days", "3 months", "Year to date", "1 year",
+                      "All time"]:
+            self.assertContains(response, label)
 
 
 class CalendarMonthStatusesTests(TestCase):

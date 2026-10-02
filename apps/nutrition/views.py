@@ -1901,13 +1901,10 @@ class TimeToGoalCalculatorView(_CalculatorView):
 class NutritionStatsView(LoginRequiredMixin, View):
     """"How much have I actually been eating lately" — the calorie
     trend the daily diary total can't show on its own, since it only
-    ever shows one day at a time. A single fixed 30-day window, not a
+    ever shows one day at a time. The chart and headline card are a
     range picker like apps.analytics's own stats page: a month is
-    already the natural "am I actually consistent" window for calorie
-    tracking, and this page has one chart, not several — the extra
-    control apps.analytics needs to keep several charts legible isn't
-    earning its keep here yet (docs/NUTRITION.md "Nutrition
-    statistics")."""
+    stats page; a table adds the same medians for fixed longer and
+    shorter periods (docs/NUTRITION.md "Nutrition statistics")."""
 
     template_name = "nutrition/stats.html"
 
@@ -1918,6 +1915,7 @@ class NutritionStatsView(LoginRequiredMixin, View):
 
         history = services.calorie_history(request.user)
         summary = services.nutrition_stats(request.user)
+        periods = services.nutrition_stats_by_period(request.user)
         target = NutritionTarget.objects.filter(
             user=request.user, ended_at__isnull=True
         ).first()
@@ -1933,6 +1931,7 @@ class NutritionStatsView(LoginRequiredMixin, View):
             {
                 "calorie_chart": calorie_chart,
                 "summary": summary,
+                "periods": periods,
                 "target": target,
             },
         )

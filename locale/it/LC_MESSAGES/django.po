@@ -9143,6 +9143,42 @@ msgstr "Valori nutrizionali per %(size)s %(unit)s"
 msgid "Notes"
 msgstr "Note"
 
+msgid "14 days"
+msgstr "14 giorni"
+
+msgid "Year to date"
+msgstr "Da inizio anno"
+
+msgid "Last 30 days"
+msgstr "Ultimi 30 giorni"
+
+msgid "Median calories"
+msgstr "Calorie mediane"
+
+msgid "Median protein"
+msgstr "Proteine mediane"
+
+msgid "Median carbohydrates"
+msgstr "Carboidrati mediani"
+
+msgid "Median fat"
+msgstr "Grassi mediani"
+
+msgid "Medians of the days you actually logged something — a day with nothing logged isn't counted as zero calories, and one barely-logged day doesn't drag the figure down the way it would an average."
+msgstr "Mediane dei giorni in cui hai effettivamente registrato qualcosa — un giorno senza registrazioni non conta come zero calorie, e un giorno registrato a malapena non abbassa il valore come farebbe con una media."
+
+msgid "Median per day"
+msgstr "Mediana giornaliera"
+
+msgid "Period"
+msgstr "Periodo"
+
+msgid "Days"
+msgstr "Giorni"
+
+msgid "Days: days logged / days in the period. Macros in grams."
+msgstr "Giorni: giorni registrati / giorni del periodo. Macro in grammi."
+
 #~ msgid "Back to home"
 #~ msgstr "Torna alla home"
 

@@ -31,6 +31,10 @@ narrated summary of the same version.
 - "Most used" foods are paginated instead of capped at ten.
 
 ### Changed
+- Nutrition statistics show median daily calories and macros instead of
+  averages, so one barely-logged day no longer drags them down, plus a
+  table of medians for 7 and 14 days, 30 days, 3 months, year to date,
+  1 year and all time. The chart still covers the last 30 days.
 - The food list opens newest first.
 - Searching for a food in the diary prefills the amount you last logged
   of it, the same as the "Most used" list already did.

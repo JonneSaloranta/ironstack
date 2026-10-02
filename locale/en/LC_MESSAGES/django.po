@@ -9017,6 +9017,42 @@ msgstr ""
 msgid "Notes"
 msgstr ""
 
+msgid "14 days"
+msgstr ""
+
+msgid "Year to date"
+msgstr ""
+
+msgid "Last 30 days"
+msgstr ""
+
+msgid "Median calories"
+msgstr ""
+
+msgid "Median protein"
+msgstr ""
+
+msgid "Median carbohydrates"
+msgstr ""
+
+msgid "Median fat"
+msgstr ""
+
+msgid "Medians of the days you actually logged something — a day with nothing logged isn't counted as zero calories, and one barely-logged day doesn't drag the figure down the way it would an average."
+msgstr ""
+
+msgid "Median per day"
+msgstr ""
+
+msgid "Period"
+msgstr ""
+
+msgid "Days"
+msgstr ""
+
+msgid "Days: days logged / days in the period. Macros in grams."
+msgstr ""
+
 #~ msgid "Back to home"
 #~ msgstr "Back to home"
 

@@ -1204,13 +1204,16 @@ thin view/template:
   already uses — charted with the shared `apps.core.charts.
   build_bar_series` (`templates/core/_bar_chart.html`, the same
   component `apps.analytics`'s own stats page uses). `nutrition_stats`
-  averages calories/macros only over days something was actually
-  logged: counting an unlogged day as a zero-calorie day would drag
-  the average down for anyone who logs most days but not literally
-  every single one, which is most real usage. A fixed 30-day window,
-  not a range picker — this page has one chart, so the extra control
-  `apps.analytics` needs to keep several charts legible at once isn't
-  earning its keep here yet.
+  gives the **median** daily calories/macros, only over days something
+  was actually logged: counting an unlogged day as a zero-calorie day
+  would drag the figure down for anyone who logs most days but not
+  literally every single one, and the median (asked for directly,
+  replacing the mean) also keeps one barely-logged day from pulling it
+  down. A "Median per day" table (`nutrition_stats_by_period`) shows the
+  same medians for 7/14/30 days, 3 months, year to date, 1 year and all
+  time (from the first logged day), all ending today; the diary is read
+  once and sliced per period. The chart and the headline card stay a
+  fixed 30 days — no range picker.
 - **"Most used" quick add** (`services.most_used_foods`,
   `templates/nutrition/_most_used_foods.html`) — every place a food
   can be added (the food diary, a recipe's ingredients, a diet-plan

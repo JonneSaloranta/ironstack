@@ -9045,6 +9045,42 @@ msgstr "Toitumisalane teave %(size)s %(unit)s kohta"
 msgid "Notes"
 msgstr "Märkmed"
 
+msgid "14 days"
+msgstr "14 päeva"
+
+msgid "Year to date"
+msgstr "Aasta algusest"
+
+msgid "Last 30 days"
+msgstr "Viimased 30 päeva"
+
+msgid "Median calories"
+msgstr "Kalorite mediaan"
+
+msgid "Median protein"
+msgstr "Valgu mediaan"
+
+msgid "Median carbohydrates"
+msgstr "Süsivesikute mediaan"
+
+msgid "Median fat"
+msgstr "Rasva mediaan"
+
+msgid "Medians of the days you actually logged something — a day with nothing logged isn't counted as zero calories, and one barely-logged day doesn't drag the figure down the way it would an average."
+msgstr "Mediaanid arvutatakse ainult päevadest, mil sa midagi logisid — päeva, mil midagi ei logitud, ei arvestata nulliks ja üks vähe logitud päev ei vii näitajat alla nii nagu keskmist."
+
+msgid "Median per day"
+msgstr "Mediaan päevas"
+
+msgid "Period"
+msgstr "Periood"
+
+msgid "Days"
+msgstr "Päevad"
+
+msgid "Days: days logged / days in the period. Macros in grams."
+msgstr "Päevad: logitud päevad / perioodi päevad. Makrod grammides."
+
 #~ msgid "Back to home"
 #~ msgstr "Tagasi avalehele"
 

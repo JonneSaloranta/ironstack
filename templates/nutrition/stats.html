@@ -10,22 +10,22 @@
 <div class="card">
   <dl class="stat-row">
     <div><dt>{% trans "Days logged" %}</dt><dd>{{ summary.days_logged }} / {{ summary.days_in_range }}</dd></div>
-    <div><dt>{% trans "Average calories" %}</dt><dd>{{ summary.average_calories|floatformat:0 }}{% if target %} / {{ target.daily_calories }}{% endif %} kcal</dd></div>
+    <div><dt>{% trans "Median calories" %}</dt><dd>{{ summary.median_calories|floatformat:0 }}{% if target %} / {{ target.daily_calories }}{% endif %} kcal</dd></div>
   </dl>
   {% if summary.days_logged %}
     <div class="table-wrap"><table class="set-table">
       <tbody>
         <tr>
-          <td>{% trans "Average protein" %}</td>
-          <td>{{ summary.average_protein_grams|floatformat:0 }}{% if target %} / {{ target.protein_grams|floatformat:0 }}{% endif %} g</td>
+          <td>{% trans "Median protein" %}</td>
+          <td>{{ summary.median_protein_grams|floatformat:0 }}{% if target %} / {{ target.protein_grams|floatformat:0 }}{% endif %} g</td>
         </tr>
         <tr>
-          <td>{% trans "Average carbohydrates" %}</td>
-          <td>{{ summary.average_carbohydrate_grams|floatformat:0 }}{% if target %} / {{ target.carbohydrate_grams|floatformat:0 }}{% endif %} g</td>
+          <td>{% trans "Median carbohydrates" %}</td>
+          <td>{{ summary.median_carbohydrate_grams|floatformat:0 }}{% if target %} / {{ target.carbohydrate_grams|floatformat:0 }}{% endif %} g</td>
         </tr>
         <tr>
-          <td>{% trans "Average fat" %}</td>
-          <td>{{ summary.average_fat_grams|floatformat:0 }}{% if target %} / {{ target.fat_grams|floatformat:0 }}{% endif %} g</td>
+          <td>{% trans "Median fat" %}</td>
+          <td>{{ summary.median_fat_grams|floatformat:0 }}{% if target %} / {{ target.fat_grams|floatformat:0 }}{% endif %} g</td>
         </tr>
       </tbody>
     </table></div>
