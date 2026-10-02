@@ -9711,6 +9711,21 @@ msgctxt "tutorial"
 msgid "Done"
 msgstr "Valmis"
 
+msgid "Search your clients…"
+msgstr "Hae asiakkaitasi…"
+
+msgid "Not shared with anyone — only you can see it."
+msgstr "Ei jaettu kenellekään — vain sinä näet sen."
+
+msgid "No matching clients."
+msgstr "Ei hakua vastaavia asiakkaita."
+
+msgid "Search for a client and add them to the list: everyone on it can see and import their own copy of this program. Leave the list empty to keep it private."
+msgstr "Hae asiakas ja lisää hänet listaan: jokainen listalla oleva voi nähdä tämän ohjelman ja tuoda siitä oman kopionsa. Jätä lista tyhjäksi, jos haluat pitää sen yksityisenä."
+
+msgid "Search for a client and add them to the list: everyone on it can see and import their own copy of this diet plan. Leave the list empty to keep it private."
+msgstr "Hae asiakas ja lisää hänet listaan: jokainen listalla oleva voi nähdä tämän ruokavaliosuunnitelman ja tuoda siitä oman kopionsa. Jätä lista tyhjäksi, jos haluat pitää sen yksityisenä."
+
 #~ msgid "Back to home"
 #~ msgstr "Takaisin etusivulle"
 

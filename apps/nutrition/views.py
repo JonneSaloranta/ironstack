@@ -1902,7 +1902,7 @@ class NutritionStatsView(LoginRequiredMixin, View):
     """"How much have I actually been eating lately" — the calorie
     trend the daily diary total can't show on its own, since it only
     ever shows one day at a time. The chart and headline card are a
-    range picker like apps.analytics's own stats page: a month is
+    fixed 30-day window, not a range picker like apps.analytics's own
     stats page; a table adds the same medians for fixed longer and
     shorter periods (docs/NUTRITION.md "Nutrition statistics")."""
 

@@ -3,6 +3,7 @@ from django.contrib.auth import get_user_model
 from django.utils.translation import gettext as _gettext
 from django.utils.translation import gettext_lazy as _
 
+from apps.coaching.forms import ClientPickerField, active_clients_of
 from apps.core import units as core_units
 from apps.core.formatting import (
     ONE_RM_FULL,
@@ -43,13 +44,12 @@ class ProgramForm(forms.ModelForm):
                 "keeping the original untouched."
             ),
             "shared_with_clients": _(
-                "Lets the clients checked below see and import their own copy of "
-                "this program. Leave everyone unchecked to keep it private."
+                "Search for a client and add them to the list: everyone on it can see "
+                "and import their own copy of this program. Leave the list empty to keep "
+                "it private."
             ),
         }
-        widgets = {
-            "shared_with_clients": forms.CheckboxSelectMultiple,
-        }
+        field_classes = {"shared_with_clients": ClientPickerField}
 
     def __init__(self, *args, user=None, **kwargs):
         super().__init__(*args, **kwargs)
@@ -60,9 +60,7 @@ class ProgramForm(forms.ModelForm):
             # related_name — the reverse side of "who does this PT
             # currently coach" without a second round-trip through
             # apps.coaching.services.clients_of's own User objects.
-            self.fields["shared_with_clients"].queryset = User.objects.filter(
-                coaches__coach=user, coaches__ended_at__isnull=True
-            )
+            self.fields["shared_with_clients"].queryset = active_clients_of(user)
 
 
 class WorkoutForm(forms.ModelForm):

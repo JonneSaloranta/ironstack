@@ -3379,3 +3379,77 @@ h2.card-title {
 }
 
 
+/* apps.core.widgets.SearchablePickerWidget — search box with a suggestion
+   list under it, and the picked items as a removable list below. */
+.picker-ui {
+  position: relative;
+}
+
+.picker-suggestions {
+  position: absolute;
+  z-index: var(--z-popover);
+  left: 0;
+  right: 0;
+  margin: var(--space-1) 0 0;
+  padding: var(--space-1) 0;
+  list-style: none;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-popover);
+  max-height: 16rem;
+  overflow-y: auto;
+}
+
+.picker-suggestions li {
+  min-height: var(--touch-target);
+  display: flex;
+  align-items: center;
+  padding: 0 var(--space-3);
+  cursor: pointer;
+}
+
+.picker-suggestions li.is-active {
+  background: var(--color-bg);
+  color: var(--color-accent);
+}
+
+.picker-suggestions li.text-muted {
+  cursor: default;
+}
+
+.picker-selected {
+  list-style: none;
+  margin: var(--space-3) 0 var(--space-2);
+  padding: 0;
+  display: grid;
+  gap: var(--space-2);
+}
+
+.picker-chip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding: 0 0 0 var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-bg);
+}
+
+.picker-remove {
+  min-height: var(--touch-target);
+  min-width: var(--touch-target);
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  color: var(--color-text-muted);
+  border: 0;
+  font-size: var(--text-lg);
+}
+
+.picker-remove:hover,
+.picker-remove:focus-visible {
+  color: var(--color-danger);
+}
+

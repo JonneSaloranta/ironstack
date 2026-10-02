@@ -9685,6 +9685,21 @@ msgctxt "tutorial"
 msgid "Done"
 msgstr "Klar"
 
+msgid "Search your clients…"
+msgstr "Sök bland dina klienter…"
+
+msgid "Not shared with anyone — only you can see it."
+msgstr "Inte delad med någon — bara du kan se den."
+
+msgid "No matching clients."
+msgstr "Inga matchande klienter."
+
+msgid "Search for a client and add them to the list: everyone on it can see and import their own copy of this program. Leave the list empty to keep it private."
+msgstr "Sök efter en klient och lägg till hen i listan: alla på listan kan se det här programmet och importera en egen kopia. Lämna listan tom för att hålla det privat."
+
+msgid "Search for a client and add them to the list: everyone on it can see and import their own copy of this diet plan. Leave the list empty to keep it private."
+msgstr "Sök efter en klient och lägg till hen i listan: alla på listan kan se den här kostplanen och importera en egen kopia. Lämna listan tom för att hålla den privat."
+
 #~ msgid "Back to home"
 #~ msgstr "Tillbaka till hem"
 

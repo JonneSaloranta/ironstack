@@ -9652,6 +9652,21 @@ msgctxt "tutorial"
 msgid "Done"
 msgstr ""
 
+msgid "Search your clients…"
+msgstr ""
+
+msgid "Not shared with anyone — only you can see it."
+msgstr ""
+
+msgid "No matching clients."
+msgstr ""
+
+msgid "Search for a client and add them to the list: everyone on it can see and import their own copy of this program. Leave the list empty to keep it private."
+msgstr ""
+
+msgid "Search for a client and add them to the list: everyone on it can see and import their own copy of this diet plan. Leave the list empty to keep it private."
+msgstr ""
+
 #~ msgid "Back to home"
 #~ msgstr "Back to home"
 

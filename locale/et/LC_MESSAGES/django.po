@@ -9680,6 +9680,21 @@ msgctxt "tutorial"
 msgid "Done"
 msgstr "Valmis"
 
+msgid "Search your clients…"
+msgstr "Otsi oma kliente…"
+
+msgid "Not shared with anyone — only you can see it."
+msgstr "Pole kellegagi jagatud — näed seda ainult sina."
+
+msgid "No matching clients."
+msgstr "Sobivaid kliente pole."
+
+msgid "Search for a client and add them to the list: everyone on it can see and import their own copy of this program. Leave the list empty to keep it private."
+msgstr "Otsi klient ja lisa ta nimekirja: kõik nimekirjas olevad näevad seda kava ja saavad sellest oma koopia importida. Jäta nimekiri tühjaks, et hoida see privaatsena."
+
+msgid "Search for a client and add them to the list: everyone on it can see and import their own copy of this diet plan. Leave the list empty to keep it private."
+msgstr "Otsi klient ja lisa ta nimekirja: kõik nimekirjas olevad näevad seda toitumiskava ja saavad sellest oma koopia importida. Jäta nimekiri tühjaks, et hoida see privaatsena."
+
 #~ msgid "Back to home"
 #~ msgstr "Tagasi avalehele"
 

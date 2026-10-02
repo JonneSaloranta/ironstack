@@ -39,6 +39,9 @@ narrated summary of the same version.
 - "Most used" foods are paginated instead of capped at ten.
 
 ### Changed
+- Sharing a program or diet plan with clients: instead of a checkbox list
+  of every client, search for a client and add them to a list, where each
+  one can be removed again.
 - Nutrition statistics show median daily calories and macros instead of
   averages, so one barely-logged day no longer drags them down, plus a
   table of medians for 7 and 14 days, 30 days, 3 months, year to date,

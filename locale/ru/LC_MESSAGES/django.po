@@ -9768,6 +9768,21 @@ msgctxt "tutorial"
 msgid "Done"
 msgstr "Готово"
 
+msgid "Search your clients…"
+msgstr "Поиск среди ваших клиентов…"
+
+msgid "Not shared with anyone — only you can see it."
+msgstr "Ни с кем не поделено — видите только вы."
+
+msgid "No matching clients."
+msgstr "Подходящих клиентов нет."
+
+msgid "Search for a client and add them to the list: everyone on it can see and import their own copy of this program. Leave the list empty to keep it private."
+msgstr "Найдите клиента и добавьте его в список: каждый в списке сможет увидеть эту программу и импортировать свою копию. Оставьте список пустым, чтобы она осталась личной."
+
+msgid "Search for a client and add them to the list: everyone on it can see and import their own copy of this diet plan. Leave the list empty to keep it private."
+msgstr "Найдите клиента и добавьте его в список: каждый в списке сможет увидеть этот план питания и импортировать свою копию. Оставьте список пустым, чтобы он остался личным."
+
 #~ msgid "Back to home"
 #~ msgstr "Назад на главную"
 

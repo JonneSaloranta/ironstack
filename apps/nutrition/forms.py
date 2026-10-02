@@ -11,6 +11,7 @@ from django import forms
 from django.utils.translation import gettext_lazy as _
 from django.utils.translation import pgettext_lazy
 
+from apps.coaching.forms import ClientPickerField, active_clients_of
 from apps.core import units as core_units
 
 from . import energy
@@ -786,16 +787,15 @@ class DietPlanShareForm(forms.Form):
     ProgramForm.shared_with_clients's own narrowed queryset) can see
     and import a specific diet plan."""
 
-    clients = forms.ModelMultipleChoiceField(
-        queryset=None, widget=forms.CheckboxSelectMultiple, required=False,
+    clients = ClientPickerField(
         label=_("Share with these clients"),
+        help_text=_(
+            "Search for a client and add them to the list: everyone on it can see "
+            "and import their own copy of this diet plan. Leave the list empty to "
+            "keep it private."
+        ),
     )
 
     def __init__(self, *args, coach, **kwargs):
         super().__init__(*args, **kwargs)
-        from django.contrib.auth import get_user_model
-
-        User = get_user_model()
-        self.fields["clients"].queryset = User.objects.filter(
-            coaches__coach=coach, coaches__ended_at__isnull=True
-        )
+        self.fields["clients"].queryset = active_clients_of(coach)

@@ -1,0 +1,47 @@
+{% load i18n static %}
+{% comment %}
+apps.core.widgets.SearchablePickerWidget. The checkbox list is the real
+form input and the no-JS fallback; static/js/searchable-picker.js hides it
+and drives it from the search box and the "picked" list.
+{% endcomment %}
+<script src="{% static 'js/searchable-picker.js' %}"></script>
+<div class="picker" x-data="ironstackSearchablePicker()">
+  <div class="picker-fallback" x-ref="fallback">
+    {% for group, options, index in widget.optgroups %}{% for option in options %}
+      <label class="checkbox-field" for="{{ option.attrs.id }}">
+        <input type="checkbox" name="{{ option.name }}" value="{{ option.value|stringformat:'s' }}" id="{{ option.attrs.id }}"{% if option.selected %} checked{% endif %} data-label="{{ option.label }}">
+        {{ option.label }}
+      </label>
+    {% endfor %}{% endfor %}
+  </div>
+  <div class="picker-ui" x-show="ready" x-cloak @click.outside="open = false">
+    <input type="search" id="{{ widget.attrs.id }}" autocomplete="off"
+           placeholder="{{ widget.placeholder }}"
+           role="combobox" aria-autocomplete="list"
+           aria-controls="{{ widget.attrs.id }}-suggestions"
+           :aria-expanded="open.toString()"
+           :aria-activedescendant="open && matches.length ? '{{ widget.attrs.id }}-suggestion-' + active : ''"
+           {% for name, value in widget.attrs.items %}{% if name == "aria-describedby" or name == "aria-invalid" %} {{ name }}="{{ value }}"{% endif %}{% endfor %}
+           x-model="query" @focus="open = true" @input="open = true; active = 0"
+           @keydown.arrow-down.prevent="move(1)" @keydown.arrow-up.prevent="move(-1)"
+           @keydown.enter.prevent="pick(matches[active])" @keydown.escape="open = false">
+    <ul class="picker-suggestions" id="{{ widget.attrs.id }}-suggestions" role="listbox" x-show="open">
+      <template x-for="(option, i) in matches" :key="option.value">
+        <li role="option" :id="'{{ widget.attrs.id }}-suggestion-' + i" :aria-selected="(i === active).toString()"
+            :class="i === active && 'is-active'" @mousedown.prevent="pick(option)" @mouseenter="active = i"
+            x-text="option.label"></li>
+      </template>
+      <li class="text-muted" x-show="!matches.length">{{ widget.no_match_text }}</li>
+    </ul>
+    <ul class="picker-selected" aria-live="polite">
+      <template x-for="option in selected" :key="option.value">
+        <li class="picker-chip">
+          <span x-text="option.label"></span>
+          <button type="button" class="picker-remove" @click="remove(option)"
+                  :aria-label="'{% filter escapejs %}{% trans "Remove" %}{% endfilter %} ' + option.label">&times;</button>
+        </li>
+      </template>
+    </ul>
+    <p class="text-muted no-margin" x-show="!selected.length">{{ widget.empty_text }}</p>
+  </div>
+</div>

@@ -139,6 +139,10 @@ Hierarchy (base.css "Buttons: states + one clear hierarchy"):
 - Always `core/_field.html` (label, help, linked errors, checkbox layout) and
   `core/_form_errors.html` at the top. Never `form.as_p` etc.
 - Hand-rolled inputs outside that loop need a `<label>` or `aria-label`.
+- Picking several people/things from a known list (clients to share with):
+  `apps.core.widgets.SearchablePickerWidget` — search box with suggestions,
+  picked items as a removable list; its checkboxes stay the real input and the
+  no-JS fallback. For clients use `apps.coaching.forms.ClientPickerField`.
 - Compact inline forms (set logging, training mode, diary quantity) use
   `.set-field`/`.set-log-form`/`.qty-input` — the only allowed exception to
   `_field.html`.

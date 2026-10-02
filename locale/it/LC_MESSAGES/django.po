@@ -9778,6 +9778,21 @@ msgctxt "tutorial"
 msgid "Done"
 msgstr "Fatto"
 
+msgid "Search your clients…"
+msgstr "Cerca tra i tuoi clienti…"
+
+msgid "Not shared with anyone — only you can see it."
+msgstr "Non condiviso con nessuno — lo vedi solo tu."
+
+msgid "No matching clients."
+msgstr "Nessun cliente corrispondente."
+
+msgid "Search for a client and add them to the list: everyone on it can see and import their own copy of this program. Leave the list empty to keep it private."
+msgstr "Cerca un cliente e aggiungilo all'elenco: chiunque sia nell'elenco può vedere questo programma e importarne una propria copia. Lascia l'elenco vuoto per mantenerlo privato."
+
+msgid "Search for a client and add them to the list: everyone on it can see and import their own copy of this diet plan. Leave the list empty to keep it private."
+msgstr "Cerca un cliente e aggiungilo all'elenco: chiunque sia nell'elenco può vedere questo piano alimentare e importarne una propria copia. Lascia l'elenco vuoto per mantenerlo privato."
+
 #~ msgid "Back to home"
 #~ msgstr "Torna alla home"
 

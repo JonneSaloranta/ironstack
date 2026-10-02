@@ -5782,6 +5782,23 @@ they now use `context "navigation"`, and the tour buttons their own
 briefly referenced the not-yet-written `apps.tutorials.urls`; a container
 restart fixed it.
 
+## Client picker for sharing
+
+Sharing a program (`ProgramForm.shared_with_clients`) or a diet plan
+(`DietPlanShareForm.clients`) used a checkbox per active client. Both now
+use `apps.coaching.forms.ClientPickerField` → `apps.core.widgets.
+SearchablePickerWidget`: a combobox that suggests matching clients (by
+`public_display_name`, filtered in the browser — a coach's client list is
+small and already known), and the picked clients as a list with a remove
+button each. The widget is still a `CheckboxSelectMultiple` underneath and
+the script only (un)checks its boxes, so posted data, views and tests are
+unchanged and it works without JavaScript. Its template lives in
+templates/, which needed `FORM_RENDERER = TemplatesSetting` (+
+`django.forms` in INSTALLED_APPS). Found while checking it in a browser:
+`core/_field.html` treated any checkbox widget as a single checkbox and
+wrapped whole checkbox lists (also the exercise form's muscle groups)
+inside one `<label>`; it now does that only for a single checkbox.
+
 ## Faster test suite
 
 The full suite had grown to about 50 minutes. Measured in the dev

@@ -627,6 +627,53 @@ class ShareFormClientScopingTests(TestCase):
         self.assertNotIn(other_client, program.shared_with_clients.all())
 
 
+class ClientPickerTests(TestCase):
+    """Sharing uses a search-and-add picker (apps.core.widgets.
+    SearchablePickerWidget) whose underlying checkboxes are still the
+    real form input — so the posted data is unchanged."""
+
+    def setUp(self):
+        self.coach = make_coach(username="coach")
+        self.active_client = User.objects.create_user(
+            username="active_client", password="s3cret-pass", first_name="Aino",
+        )
+        self.active_client.show_name_to_others = True
+        self.active_client.save()
+        make_relationship(self.coach, self.active_client)
+        self.client.force_login(self.coach)
+
+    def test_program_form_renders_the_search_picker(self):
+        response = self.client.get(reverse("programs:program-create"))
+        self.assertContains(response, 'role="combobox"')
+        self.assertContains(response, 'x-data="ironstackSearchablePicker()"')
+        self.assertContains(response, "js/searchable-picker.js")
+        # The field's label names the search box.
+        self.assertContains(response, 'for="id_shared_with_clients"')
+        self.assertContains(response, 'id="id_shared_with_clients"')
+        # The no-JS fallback: a real checkbox per client, labelled with
+        # the name the client shows to others.
+        self.assertContains(response, 'name="shared_with_clients"')
+        self.assertContains(response, self.active_client.public_display_name())
+
+    def test_already_shared_clients_start_picked(self):
+        program = Program.objects.create(owner=self.coach, name="Shared")
+        program.shared_with_clients.add(self.active_client)
+        response = self.client.get(reverse("programs:program-update", args=[program.pk]))
+        self.assertContains(
+            response, f'value="{self.active_client.pk}" id="id_shared_with_clients_0" checked'
+        )
+
+    def test_diet_plan_share_page_uses_the_picker_and_saves(self):
+        plan = make_shared_diet_plan(self.coach, self.active_client)
+        plan.shared_with_clients.clear()
+        url = reverse("nutrition:diet-plan-share", args=[plan.pk])
+        self.assertContains(self.client.get(url), 'role="combobox"')
+        self.client.post(url, {"clients": [self.active_client.pk]})
+        self.assertIn(self.active_client, plan.shared_with_clients.all())
+        self.client.post(url, {})
+        self.assertFalse(plan.shared_with_clients.exists())
+
+
 class ProgramAndDietPlanListGroupingTests(TestCase):
     """apps.programs.views.ProgramListView/apps.nutrition.views.
     DietPlanListView both split a user's own flat list into groups —
