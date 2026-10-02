@@ -904,3 +904,49 @@ class StretchSessionSerializer(serializers.ModelSerializer):
         ).exists():
             raise serializers.ValidationError("Not a routine you can use.")
         return value
+
+
+# --------------------------------------------------------------------
+# Shopping list (apps.nutrition.shopping) — derived, never stored
+# --------------------------------------------------------------------
+
+
+class ShoppingSettingsSerializer(serializers.Serializer):
+    """A diet plan's shopping settings: the weekdays the user shops
+    (0=Monday .. 6=Sunday) and whether a shopping day's own meals go on
+    that day's list (`true`) or the previous one (`false`)."""
+
+    weekdays = serializers.ListField(
+        child=serializers.IntegerField(min_value=0, max_value=6), allow_empty=True
+    )
+    include_shopping_day = serializers.BooleanField()
+
+
+class ShoppingTripSerializer(serializers.Serializer):
+    weekday = serializers.IntegerField(
+        allow_null=True, help_text="The shopping day; null when no shopping days are set."
+    )
+    days = serializers.ListField(
+        child=serializers.IntegerField(), help_text="Weekdays whose meals this trip buys for."
+    )
+
+
+class ShoppingDayAmountSerializer(serializers.Serializer):
+    weekday = serializers.IntegerField()
+    quantity = serializers.DecimalField(max_digits=10, decimal_places=2)
+
+
+class ShoppingItemSerializer(serializers.Serializer):
+    food = serializers.IntegerField(source="food.pk")
+    food_name = serializers.CharField(source="food.name")
+    unit = serializers.CharField(help_text="The food's serving unit: g, ml or piece.")
+    total = serializers.DecimalField(max_digits=10, decimal_places=2)
+    by_day = ShoppingDayAmountSerializer(many=True)
+
+
+class ShoppingListSerializer(serializers.Serializer):
+    trip = ShoppingTripSerializer()
+    trips = ShoppingTripSerializer(many=True)
+    include_shopping_day = serializers.BooleanField()
+    items = ShoppingItemSerializer(many=True)
+

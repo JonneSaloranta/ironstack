@@ -5860,3 +5860,10 @@ never stored; ticking items is localStorage only. Shopping days are in
 the account data export; they aren't part of plan export or a coach's
 shared copy. The page has its own tour and is in the long-content layout
 test.
+
+The REST API got the same list and settings as two `DietPlanViewSet`
+actions, `shopping-list/` (`GET`, `?trip=`) and `shopping-settings/`
+(`GET`/`PUT`/`PATCH`), under the existing `nutrition` key context. The web
+view and the API share `shopping.plan_trips`/`pick_trip`/
+`set_shopping_settings`, so the two can't disagree about which days a trip
+covers.

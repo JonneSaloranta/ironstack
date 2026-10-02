@@ -25,6 +25,8 @@ narrated summary of the same version.
   shop. Pick your shopping days per plan — each list covers the days up
   to the next shopping day — and whether a shopping day's own meals are
   on that day's list.
+- REST API: `diet-plans/<id>/shopping-list/` and
+  `diet-plans/<id>/shopping-settings/`.
 - Tutorials: a short guided tour on every main page the first time you
   open it — the part being explained is highlighted while the rest of
   the page is dimmed, with a compact explanation right next to it. Skip

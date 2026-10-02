@@ -210,7 +210,7 @@ All under `/api/v1/`. List/create endpoints are paginated (25 per page,
 | activities | `activity-types/`, `activity-types/<id>/`, `activities/`, `activities/<id>/` |
 | records | `records/`, `records/<id>/` (read-only) |
 | analytics | `analytics/summary/?range=7d\|30d\|all` (default 30d), `analytics/achievements/` (both read-only) |
-| nutrition | `foods/`, `foods/<id>/`, `meal-slots/`, `meal-slots/<id>/`, `recipes/`, `recipes/<id>/`, `recipe-ingredients/`, `recipe-ingredients/<id>/`, `diary-entries/`, `diary-entries/<id>/`, `nutrition-goals/`, `nutrition-goals/<id>/` (read-only), `nutrition-targets/`, `nutrition-targets/<id>/` (read-only), `nutrition/profile/` (singleton — no id), `diet-plans/`, `diet-plans/<id>/`, `diet-plans/<id>/activate/`, `diet-plans/<id>/deactivate/`, `diet-plans/<id>/apply/` (all `POST`), `diet-plan-meals/`, `diet-plan-meals/<id>/` (read-only), `diet-plan-items/`, `diet-plan-items/<id>/` (read-only) |
+| nutrition | `foods/`, `foods/<id>/`, `meal-slots/`, `meal-slots/<id>/`, `recipes/`, `recipes/<id>/`, `recipe-ingredients/`, `recipe-ingredients/<id>/`, `diary-entries/`, `diary-entries/<id>/`, `nutrition-goals/`, `nutrition-goals/<id>/` (read-only), `nutrition-targets/`, `nutrition-targets/<id>/` (read-only), `nutrition/profile/` (singleton — no id), `diet-plans/`, `diet-plans/<id>/`, `diet-plans/<id>/activate/`, `diet-plans/<id>/deactivate/`, `diet-plans/<id>/apply/` (all `POST`), `diet-plans/<id>/shopping-list/` (`GET`), `diet-plans/<id>/shopping-settings/` (`GET`/`PUT`/`PATCH`), `diet-plan-meals/`, `diet-plan-meals/<id>/` (read-only), `diet-plan-items/`, `diet-plan-items/<id>/` (read-only) |
 | stretching | `stretches/`, `stretches/<id>/`, `stretch-routines/`, `stretch-routines/<id>/` (items nested read-only), `stretch-routine-items/`, `stretch-routine-items/<id>/` (own routines only), `stretch-sessions/`, `stretch-sessions/<id>/` (create = quick log with `duration`; name/routine/status and the per-stretch snapshot are read-only) |
 
 Every endpoint goes through the exact same domain service functions the
@@ -290,6 +290,21 @@ list, a plan's meals/items only ever come from the builder's own
 calorie-splitting algorithm, so nothing here accepts a write; doing so
 would silently break the calorie/macro balance the plan was built to
 hit.
+
+`diet-plans/<id>/shopping-list/` (`GET`) is the plan's shopping list for
+one trip (docs/NUTRITION.md "Shopping list"), derived from the plan on
+every request — nothing is stored. `?trip=<weekday>` (0=Monday) picks the
+trip starting that shopping day (`400` if it isn't one); without it, the
+trip shopped today or next. The response has the `trip` (`weekday` —
+`null` when the plan has no shopping days, i.e. one list for the whole
+week — and the `days` it buys for), every `trips` entry, the plan's
+`include_shopping_day`, and `items`: one per food, recipes broken into
+their ingredients, with `food`, `food_name`, `unit` (`g`/`ml`/`piece`),
+`total` and `by_day` (`[{weekday, quantity}]` in the trip's day order).
+`diet-plans/<id>/shopping-settings/` reads or writes the plan's
+`weekdays` (list of 0–6) and `include_shopping_day`; `PUT` replaces both,
+`PATCH` changes whichever is given. Both need the `nutrition` context —
+read for `GET`, update for `PUT`/`PATCH`.
 
 ## What's deliberately not here
 

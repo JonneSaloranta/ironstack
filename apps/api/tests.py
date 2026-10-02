@@ -1388,3 +1388,134 @@ class StretchingEndpointTests(APITestCase):
             reverse("api:stretch-list"), HTTP_AUTHORIZATION=f"Bearer {secret}"
         )
         self.assertEqual(response.status_code, 403)
+
+
+class ShoppingListEndpointTests(APITestCase):
+    """diet-plans/<id>/shopping-list/ and shopping-settings/
+    (apps.nutrition.shopping, docs/API.md)."""
+
+    def setUp(self):
+        from decimal import Decimal
+
+        from apps.nutrition.models import (
+            DietPlan,
+            DietPlanMeal,
+            Food,
+            MealSlot,
+            Recipe,
+            RecipeIngredient,
+            ServingUnit,
+        )
+
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        _key, self.raw_secret = _create_key(self.alice)
+        chicken = Food.objects.create(
+            owner=self.alice, name="Chicken", serving_size=Decimal("100"),
+            serving_unit=ServingUnit.GRAM, calories=165, protein_grams=Decimal("31"),
+            carbohydrate_grams=Decimal("0"), fat_grams=Decimal("3.6"),
+        )
+        egg = Food.objects.create(
+            owner=self.alice, name="Egg", serving_size=Decimal("1"),
+            serving_unit=ServingUnit.PIECE, calories=70, protein_grams=Decimal("6"),
+            carbohydrate_grams=Decimal("0"), fat_grams=Decimal("5"),
+        )
+        omelette = Recipe.objects.create(owner=self.alice, name="Omelette", servings=2)
+        RecipeIngredient.objects.create(recipe=omelette, food=egg, quantity=Decimal("4"))
+        self.plan = DietPlan.objects.create(
+            user=self.alice, name="Week", target_calories=2000,
+            target_protein_grams=Decimal("150"), target_carbohydrate_grams=Decimal("200"),
+            target_fat_grams=Decimal("60"), is_weekly=True,
+        )
+        lunch = MealSlot.objects.get(name="Lunch", owner=None)
+        for day in range(7):
+            meal = DietPlanMeal.objects.create(
+                diet_plan=self.plan, meal_slot=lunch, target_calories=600, weekday=day
+            )
+            meal.items.create(food=chicken, quantity=Decimal("300"))
+            if day == 1:
+                meal.items.create(recipe=omelette, quantity=Decimal("1"))
+        self.chicken, self.egg = chicken, egg
+
+    def _auth(self, secret=None):
+        return {"HTTP_AUTHORIZATION": f"Bearer {secret or self.raw_secret}"}
+
+    def _url(self, name):
+        return reverse(f"api:diet-plan-{name}", args=[self.plan.pk])
+
+    def test_no_shopping_days_is_one_list_for_the_week(self):
+        response = self.client.get(self._url("shopping-list"), **self._auth())
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data["trip"], {"weekday": None, "days": [0, 1, 2, 3, 4, 5, 6]})
+        items = {item["food_name"]: item for item in response.data["items"]}
+        self.assertEqual(items["Chicken"]["total"], "2100.00")
+        self.assertEqual(items["Chicken"]["unit"], "g")
+        self.assertEqual(len(items["Chicken"]["by_day"]), 7)
+        self.assertEqual(items["Egg"]["total"], "2.00")  # recipe broken down
+        self.assertEqual(items["Egg"]["by_day"], [{"weekday": 1, "quantity": "2.00"}])
+
+    def test_settings_round_trip_and_shape_the_trips(self):
+        response = self.client.put(
+            self._url("shopping-settings"),
+            {"weekdays": [3, 0, 3], "include_shopping_day": True},
+            format="json", **self._auth(),
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data, {"weekdays": [0, 3], "include_shopping_day": True})
+        self.assertEqual(
+            self.client.get(self._url("shopping-settings"), **self._auth()).data,
+            {"weekdays": [0, 3], "include_shopping_day": True},
+        )
+        response = self.client.get(self._url("shopping-list"), {"trip": 0}, **self._auth())
+        self.assertEqual(response.data["trip"], {"weekday": 0, "days": [0, 1, 2]})
+        self.assertEqual([t["weekday"] for t in response.data["trips"]], [0, 3])
+        chicken = next(i for i in response.data["items"] if i["food"] == self.chicken.pk)
+        self.assertEqual(chicken["total"], "900.00")
+        self.assertEqual([d["weekday"] for d in chicken["by_day"]], [0, 1, 2])
+
+    def test_patch_changes_only_what_is_given(self):
+        self.client.put(
+            self._url("shopping-settings"),
+            {"weekdays": [0, 3], "include_shopping_day": True}, format="json", **self._auth(),
+        )
+        response = self.client.patch(
+            self._url("shopping-settings"), {"include_shopping_day": False},
+            format="json", **self._auth(),
+        )
+        self.assertEqual(response.data, {"weekdays": [0, 3], "include_shopping_day": False})
+        response = self.client.get(self._url("shopping-list"), {"trip": 0}, **self._auth())
+        self.assertEqual(response.data["trip"]["days"], [1, 2, 3])
+
+    def test_bad_input_is_a_400(self):
+        response = self.client.put(
+            self._url("shopping-settings"), {"weekdays": [7], "include_shopping_day": True},
+            format="json", **self._auth(),
+        )
+        self.assertEqual(response.status_code, 400)
+        self.client.put(
+            self._url("shopping-settings"), {"weekdays": [0], "include_shopping_day": True},
+            format="json", **self._auth(),
+        )
+        for trip in ("monday", "4"):  # not a number; not one of the shopping days
+            response = self.client.get(self._url("shopping-list"), {"trip": trip}, **self._auth())
+            self.assertEqual(response.status_code, 400, trip)
+
+    def test_another_users_plan_is_a_404(self):
+        bob = User.objects.create_user(username="bob", password="s3cret-pass")
+        _key, bob_secret = _create_key(bob)
+        for name in ("shopping-list", "shopping-settings"):
+            response = self.client.get(self._url(name), **self._auth(bob_secret))
+            self.assertEqual(response.status_code, 404, name)
+
+    def test_changing_settings_needs_update_permission(self):
+        read_only = {
+            "can_create": False, "can_read": True, "can_update": False, "can_delete": False,
+        }
+        _key, secret = _create_key(self.alice, nutrition=read_only)
+        self.assertEqual(
+            self.client.get(self._url("shopping-list"), **self._auth(secret)).status_code, 200
+        )
+        response = self.client.patch(
+            self._url("shopping-settings"), {"weekdays": [1]}, format="json", **self._auth(secret)
+        )
+        self.assertEqual(response.status_code, 403)
+        self.assertFalse(self.plan.shopping_days.exists())

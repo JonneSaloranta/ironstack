@@ -11,7 +11,7 @@ as much a "view" as a Django one in that sense.
 
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
-from drf_spectacular.utils import extend_schema
+from drf_spectacular.utils import OpenApiParameter, extend_schema
 from rest_framework import generics, mixins, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -77,6 +77,8 @@ from .serializers import (
     RecipeIngredientSerializer,
     RecipeSerializer,
     RoutineItemSerializer,
+    ShoppingListSerializer,
+    ShoppingSettingsSerializer,
     StretchRoutineSerializer,
     StretchSerializer,
     StretchSessionSerializer,
@@ -517,6 +519,92 @@ class DietPlanViewSet(viewsets.ModelViewSet):
         plan = self.get_object()
         nutrition_services.deactivate_diet_plan(plan)
         return Response(self.get_serializer(plan).data)
+
+    @extend_schema(
+        responses=ShoppingListSerializer,
+        parameters=[
+            OpenApiParameter(
+                "trip", int, required=False,
+                description="The trip's shopping weekday, 0 (Monday) to 6 (Sunday). "
+                "Default: the trip shopped today or next.",
+            )
+        ],
+    )
+    @action(detail=True, methods=["get"], url_path="shopping-list")
+    def shopping_list(self, request, pk=None):
+        """The plan's shopping list for one trip (apps.nutrition.shopping):
+        every food the trip's days need — recipes broken into ingredients
+        — added up, with each day's amount. `?trip=<weekday>` picks the
+        trip starting that day; by default the one shopped today or next.
+        Derived from the plan on every request; nothing is stored."""
+        from apps.nutrition import shopping
+
+        plan = self.get_object()
+        trips = shopping.plan_trips(plan)
+        raw_trip = request.query_params.get("trip")
+        if raw_trip is not None and not raw_trip.isdigit():
+            return Response(
+                {"trip": "Must be a weekday number, 0 (Monday) to 6 (Sunday)."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        trip = shopping.pick_trip(
+            trips, int(raw_trip) if raw_trip is not None else None,
+            timezone.localdate().weekday(),
+        )
+        if trip is None:
+            return Response(
+                {"trip": "Not one of this plan's shopping days."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        rows = shopping.shopping_list(plan, trip)
+        data = {
+            "trip": trip,
+            "trips": trips,
+            "include_shopping_day": plan.shopping_includes_shopping_day,
+            "items": [
+                {
+                    "food": row.food,
+                    "unit": row.unit,
+                    "total": row.total,
+                    "by_day": [
+                        {"weekday": day, "quantity": quantity} for day, quantity in row.ordered_days
+                    ],
+                }
+                for row in rows
+            ],
+        }
+        return Response(ShoppingListSerializer(data).data)
+
+    @extend_schema(request=ShoppingSettingsSerializer, responses=ShoppingSettingsSerializer)
+    @action(detail=True, methods=["get", "put", "patch"], url_path="shopping-settings")
+    def shopping_settings(self, request, pk=None):
+        """The plan's shopping days and include/exclude choice. PUT
+        replaces both; PATCH changes whichever is given."""
+        from apps.nutrition import shopping
+
+        plan = self.get_object()
+        current = {
+            "weekdays": list(plan.shopping_days.values_list("weekday", flat=True)),
+            "include_shopping_day": plan.shopping_includes_shopping_day,
+        }
+        if request.method == "GET":
+            return Response(ShoppingSettingsSerializer(current).data)
+        serializer = ShoppingSettingsSerializer(
+            data=request.data, partial=request.method == "PATCH"
+        )
+        serializer.is_valid(raise_exception=True)
+        settings = {**current, **serializer.validated_data}
+        shopping.set_shopping_settings(
+            plan, settings["weekdays"], settings["include_shopping_day"]
+        )
+        return Response(
+            ShoppingSettingsSerializer(
+                {
+                    "weekdays": sorted(set(settings["weekdays"])),
+                    "include_shopping_day": settings["include_shopping_day"],
+                }
+            ).data
+        )
 
     @action(detail=True, methods=["post"])
     def apply(self, request, pk=None):
