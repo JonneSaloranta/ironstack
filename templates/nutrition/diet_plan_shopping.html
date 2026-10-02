@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% load i18n core_extras %}
+{% block title %}{% trans "Shopping list" %} — {{ plan.name }} — IronStack{% endblock %}
+{% block content %}
+{% url 'nutrition:diet-plan-list' as c1u %}{% trans "Diet plans" as c1l %}
+{% url 'nutrition:diet-plan-detail' plan.pk as c2u %}
+{% trans "Shopping list" as current %}
+{% include "core/_breadcrumbs.html" with c1_url=c1u c1_label=c1l c2_url=c2u c2_label=plan.name current=current %}
+<div class="top-bar">
+  <h1 class="no-margin">{% trans "Shopping list" %}</h1>
+</div>
+{% include "nutrition/_subnav.html" %}
+
+{% comment %}
+  apps.nutrition.shopping: one list per trip (a shopping day up to the
+  next one), the same food on several days added up into one total with
+  the per-day amounts under it. Ticks are a device-local convenience
+  while in the shop (localStorage, keyed by plan and trip), not data.
+{% endcomment %}
+{% if trips|length > 1 %}
+  <nav class="range-filter" aria-label="{% trans "Shopping trips" %}" data-tour="shopping-trips">
+    {% for item in trips %}
+      <a href="?trip={{ item.trip.weekday }}" {% if item.current %}aria-current="true"{% endif %}>{{ item.name }}</a>
+    {% endfor %}
+  </nav>
+{% endif %}
+<p class="text-muted">
+  {% if trip.weekday is None %}
+    {% trans "One list for the whole week — pick shopping days below to split it into trips." %}
+  {% else %}
+    {% blocktrans with days=trip_days|join:", " %}For: {{ days }}{% endblocktrans %}
+  {% endif %}
+</p>
+
+{% if rows %}
+  <div class="card" data-tour="shopping-list"
+       x-data="{ key: 'ironstack-shopping-{{ plan.pk }}-{% if trip.weekday is None %}week{% else %}{{ trip.weekday }}{% endif %}', ticked: [],
+                 init() { try { this.ticked = JSON.parse(localStorage.getItem(this.key) || '[]') } catch (e) {} },
+                 toggle(id) { this.ticked = this.ticked.includes(id) ? this.ticked.filter(t => t !== id) : [...this.ticked, id];
+                              try { localStorage.setItem(this.key, JSON.stringify(this.ticked)) } catch (e) {} },
+                 clear() { this.ticked = []; try { localStorage.removeItem(this.key) } catch (e) {} } }">
+    <ul class="shopping-list">
+      {% for row in rows %}
+        <li>
+          <label class="shopping-item" :class="ticked.includes({{ row.food.pk }}) && 'is-ticked'">
+            <input type="checkbox" :checked="ticked.includes({{ row.food.pk }})" @change="toggle({{ row.food.pk }})">
+            <span class="shopping-item-name">
+              {{ row.food.name }}
+              {% if row.breakdown|length > 1 %}
+                <span class="text-muted shopping-item-days">{% for day, quantity in row.breakdown %}{{ day }} {% if row.unit == "piece" %}{{ quantity|nutrient_amount:1 }}{% else %}{{ quantity|nutrient_amount:0 }}{% endif %}{% if not forloop.last %} · {% endif %}{% endfor %}</span>
+              {% endif %}
+            </span>
+            <span class="shopping-item-amount stat-figure">{% if row.unit == "piece" %}{{ row.total|nutrient_amount:1 }}{% else %}{{ row.total|nutrient_amount:0 }}{% endif %} {{ row.food.get_serving_unit_display }}</span>
+          </label>
+        </li>
+      {% endfor %}
+    </ul>
+    <button type="button" class="button-secondary" x-show="ticked.length" x-cloak @click="clear()">{% trans "Clear ticks" %}</button>
+  </div>
+{% else %}
+  {% include "core/_empty_state.html" with message=_("Nothing to buy — this plan has no meals on these days yet.") %}
+{% endif %}
+
+<details class="card preferences" data-tour="shopping-settings"{% if form.errors %} open{% endif %}>
+  <summary><h2 class="card-title no-margin">{% trans "Shopping days" %}</h2></summary>
+  <form method="post">
+    {% csrf_token %}
+    {% include "core/_form_errors.html" %}
+    {% for field in form %}
+      {% include "core/_field.html" with field=field %}
+    {% endfor %}
+    <button type="submit">{% trans "Save" %}</button>
+  </form>
+</details>
+
+<p><a class="button-link" href="{% url 'nutrition:diet-plan-detail' plan.pk %}">&larr; {% trans "Back to plan" %}</a></p>
+{% endblock %}

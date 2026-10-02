@@ -9802,6 +9802,52 @@ msgstr[2] "Конструктор плана питания предлагает
 msgid "Photo"
 msgstr "Фото"
 
+msgid "Shopping days"
+msgstr "Дни покупок"
+
+msgid "Each shopping day's list covers the days up to the next one. Pick none for one list for the whole week."
+msgstr "Список каждого дня покупок охватывает дни до следующего. Не выбирайте ни одного — будет один список на всю неделю."
+
+msgid "A shopping day's own meals go on that day's list"
+msgstr "Приёмы пищи дня покупок попадают в список этого дня"
+
+msgid "On: you shop before that day's meals. Off: they're on the previous list — you shop after that day is covered."
+msgstr "Вкл.: вы ходите в магазин до приёмов пищи этого дня. Выкл.: они в предыдущем списке — вы ходите в магазин, когда этот день уже обеспечен."
+
+msgid "Shopping days saved."
+msgstr "Дни покупок сохранены."
+
+msgid "Shopping list"
+msgstr "Список покупок"
+
+msgid "Shopping trips"
+msgstr "Походы в магазин"
+
+msgid "One list per shopping day, covering the days until the next one."
+msgstr "Один список на каждый день покупок, до следующего."
+
+msgid "What to buy"
+msgstr "Что купить"
+
+msgid "Everything the plan's meals need, recipes included. The same food on several days is added up, with each day's amount under it. Tick items off as you shop."
+msgstr "Всё, что нужно для приёмов пищи плана, включая рецепты. Один и тот же продукт в разные дни суммируется, а количество по дням показано под ним. Отмечайте купленное в магазине."
+
+msgid "Pick the days you go shopping, and whether a shopping day's own meals go on that day's list. Set separately for each plan."
+msgstr "Выберите дни, когда ходите в магазин, и попадают ли приёмы пищи дня покупок в его список. Настраивается для каждого плана отдельно."
+
+msgid "One list for the whole week — pick shopping days below to split it into trips."
+msgstr "Один список на всю неделю — выберите ниже дни покупок, чтобы разделить его."
+
+#, python-format
+msgid "For: %(days)s"
+msgstr "На: %(days)s"
+
+msgid "Clear ticks"
+msgstr "Снять отметки"
+
+msgid "Nothing to buy — this plan has no meals on these days yet."
+msgstr "Покупать нечего — в этом плане пока нет приёмов пищи на эти дни."
+
 #~ msgid "Back to home"
 #~ msgstr "Назад на главную"
 

@@ -9811,6 +9811,52 @@ msgstr[1] "Il generatore di piani alimentari suggerisce questa ricetta solo per 
 msgid "Photo"
 msgstr "Foto"
 
+msgid "Shopping days"
+msgstr "Giorni della spesa"
+
+msgid "Each shopping day's list covers the days up to the next one. Pick none for one list for the whole week."
+msgstr "La lista di ogni giorno della spesa copre i giorni fino al successivo. Non selezionarne nessuno per una lista per tutta la settimana."
+
+msgid "A shopping day's own meals go on that day's list"
+msgstr "I pasti del giorno della spesa vanno nella lista di quel giorno"
+
+msgid "On: you shop before that day's meals. Off: they're on the previous list — you shop after that day is covered."
+msgstr "Attivo: fai la spesa prima dei pasti di quel giorno. Disattivo: sono nella lista precedente — fai la spesa quando quel giorno è già coperto."
+
+msgid "Shopping days saved."
+msgstr "Giorni della spesa salvati."
+
+msgid "Shopping list"
+msgstr "Lista della spesa"
+
+msgid "Shopping trips"
+msgstr "Spese"
+
+msgid "One list per shopping day, covering the days until the next one."
+msgstr "Una lista per ogni giorno della spesa, fino al successivo."
+
+msgid "What to buy"
+msgstr "Cosa comprare"
+
+msgid "Everything the plan's meals need, recipes included. The same food on several days is added up, with each day's amount under it. Tick items off as you shop."
+msgstr "Tutto ciò che serve ai pasti del piano, ricette comprese. Lo stesso alimento in più giorni viene sommato, con la quantità di ogni giorno sotto. Spunta gli articoli mentre fai la spesa."
+
+msgid "Pick the days you go shopping, and whether a shopping day's own meals go on that day's list. Set separately for each plan."
+msgstr "Scegli i giorni in cui fai la spesa e se i pasti del giorno della spesa vanno nella lista di quel giorno. Si imposta per ogni piano."
+
+msgid "One list for the whole week — pick shopping days below to split it into trips."
+msgstr "Una lista per tutta la settimana — scegli i giorni della spesa qui sotto per dividerla."
+
+#, python-format
+msgid "For: %(days)s"
+msgstr "Per: %(days)s"
+
+msgid "Clear ticks"
+msgstr "Togli le spunte"
+
+msgid "Nothing to buy — this plan has no meals on these days yet."
+msgstr "Niente da comprare — questo piano non ha ancora pasti in questi giorni."
+
 #~ msgid "Back to home"
 #~ msgstr "Torna alla home"
 

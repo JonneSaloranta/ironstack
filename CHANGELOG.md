@@ -19,6 +19,12 @@ narrated summary of the same version.
 ## [Unreleased]
 
 ### Added
+- Shopping list for a diet plan: the same food on several days is added
+  up into one amount (with each day's amount under it), recipes are
+  broken into their ingredients, and items can be ticked off in the
+  shop. Pick your shopping days per plan — each list covers the days up
+  to the next shopping day — and whether a shopping day's own meals are
+  on that day's list.
 - Tutorials: a short guided tour on every main page the first time you
   open it — the part being explained is highlighted while the rest of
   the page is dimmed, with a compact explanation right next to it. Skip

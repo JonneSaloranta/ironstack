@@ -9713,6 +9713,52 @@ msgstr[1] "Toitumiskava koostaja soovitab seda retsepti ainult nendele toidukord
 msgid "Photo"
 msgstr "Foto"
 
+msgid "Shopping days"
+msgstr "Poepäevad"
+
+msgid "Each shopping day's list covers the days up to the next one. Pick none for one list for the whole week."
+msgstr "Iga poepäeva nimekiri katab päevad järgmise poepäevani. Ära vali ühtegi, et saada üks nimekiri kogu nädalaks."
+
+msgid "A shopping day's own meals go on that day's list"
+msgstr "Poepäeva enda toidukorrad lähevad selle päeva nimekirja"
+
+msgid "On: you shop before that day's meals. Off: they're on the previous list — you shop after that day is covered."
+msgstr "Sees: käid poes enne selle päeva toidukordi. Väljas: need on eelmises nimekirjas — käid poes, kui päev on juba kaetud."
+
+msgid "Shopping days saved."
+msgstr "Poepäevad salvestatud."
+
+msgid "Shopping list"
+msgstr "Ostunimekiri"
+
+msgid "Shopping trips"
+msgstr "Poeskäigud"
+
+msgid "One list per shopping day, covering the days until the next one."
+msgstr "Üks nimekiri iga poepäeva kohta, kuni järgmise poepäevani."
+
+msgid "What to buy"
+msgstr "Mida osta"
+
+msgid "Everything the plan's meals need, recipes included. The same food on several days is added up, with each day's amount under it. Tick items off as you shop."
+msgstr "Kõik, mida kava toidukorrad vajavad, ka retseptid. Sama toiduaine mitmel päeval liidetakse kokku ja iga päeva kogus on selle all. Märgi poes ostetud asjad."
+
+msgid "Pick the days you go shopping, and whether a shopping day's own meals go on that day's list. Set separately for each plan."
+msgstr "Vali päevad, mil käid poes, ja kas poepäeva enda toidukorrad lähevad selle päeva nimekirja. Määratakse iga kava jaoks eraldi."
+
+msgid "One list for the whole week — pick shopping days below to split it into trips."
+msgstr "Üks nimekiri kogu nädalaks — vali allpool poepäevad, et jagada see poeskäikudeks."
+
+#, python-format
+msgid "For: %(days)s"
+msgstr "Päevadele: %(days)s"
+
+msgid "Clear ticks"
+msgstr "Eemalda märked"
+
+msgid "Nothing to buy — this plan has no meals on these days yet."
+msgstr "Pole midagi osta — sellel kaval pole neil päevadel veel toidukordi."
+
 #~ msgid "Back to home"
 #~ msgstr "Tagasi avalehele"
 

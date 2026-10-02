@@ -735,6 +735,39 @@ ordering bug already fixed on the food diary's own add-food page
 (`diary_add_entry.html`), just not carried over to these other two
 "add a food" pages at the time. All three now put search first.
 
+### Shopping list (`ShoppingDay`, `apps.nutrition.shopping`)
+
+```
+DietPlan.shopping_includes_shopping_day (bool, default true)
+ShoppingDay: diet_plan (FK), weekday (0=Monday..6=Sunday), unique per plan
+```
+
+A diet plan's page links to its shopping list
+(`nutrition:diet-plan-shopping`). The settings are per plan, asked for
+directly: the days the user goes shopping, and whether a shopping day's
+own meals belong to that day's trip ("include" — shopping before that
+day's meals) or to the previous trip ("exclude" — shopping after that day
+is already covered).
+
+- **Trips** (`shopping_trips`): each shopping day starts a trip covering
+  the days up to the next shopping day; with "exclude" the window shifts
+  by one day (Mon + Thu: include → Mon–Wed / Thu–Sun, exclude → Tue–Thu /
+  Fri–Mon). One shopping day covers the whole week; none gives one list
+  for the whole week. The page opens on the trip shopped today or next
+  (`trip_for_today`); `?trip=<weekday>` picks another.
+- **The list** (`shopping_list`): every food the covered days' meals need
+  — a recipe item broken into its ingredients for the planned servings
+  (`ingredient × item servings / recipe servings`) — added up per food in
+  the food's own serving unit, with each day's amount under the total
+  (Mon 300 g · Tue 300 g → 600 g). A one-day plan (meals without a
+  weekday) counts once per covered day; a weekly plan uses each day's own
+  meals.
+- **Ticking items off** in the shop is device-local (localStorage, keyed
+  by plan and trip), not data — the list itself is always derived from the
+  plan, never stored, so editing the plan updates it immediately.
+- Not copied by diet-plan export/import or a coach's shared copy: shopping
+  days are the user's own habit, not part of the plan's content.
+
 ## Energy calculation
 
 `apps/nutrition/energy.py` — small, pure, `Decimal`-only functions, no

@@ -1562,6 +1562,63 @@ class DietPlanDetailView(LoginRequiredMixin, View):
 
 
 @login_required
+def diet_plan_shopping(request, pk):
+    """The plan's shopping list for one trip (apps.nutrition.shopping),
+    and the plan's own shopping settings (POST). `?trip=<weekday>` picks
+    a trip; by default the one whose shopping day is today or next."""
+    from apps.programs.models import Weekday as ProgramsWeekday
+
+    from . import shopping
+    from .forms import ShoppingSettingsForm
+
+    plan = _owned_diet_plan_or_404(request, pk)
+    if request.method == "POST":
+        form = ShoppingSettingsForm(request.POST)
+        if form.is_valid():
+            shopping.set_shopping_settings(
+                plan, form.cleaned_data["weekdays"], form.cleaned_data["include_shopping_day"]
+            )
+            messages.success(request, _("Shopping days saved."))
+            return redirect("nutrition:diet-plan-shopping", pk=plan.pk)
+    else:
+        form = ShoppingSettingsForm(
+            initial={
+                "weekdays": list(plan.shopping_days.values_list("weekday", flat=True)),
+                "include_shopping_day": plan.shopping_includes_shopping_day,
+            }
+        )
+
+    trips = shopping.plan_trips(plan)
+    requested = request.GET.get("trip", "")
+    today = timezone.localdate().weekday()
+    trip = (
+        shopping.pick_trip(trips, int(requested), today) if requested.isdigit() else None
+    ) or shopping.pick_trip(trips, None, today)
+    from django.utils.dates import WEEKDAYS_ABBR
+
+    day_name = dict(ProgramsWeekday.choices)
+    rows = shopping.shopping_list(plan, trip)
+    for row in rows:
+        row.breakdown = [(WEEKDAYS_ABBR[day], quantity) for day, quantity in row.ordered_days]
+    return render(
+        request,
+        "nutrition/diet_plan_shopping.html",
+        {
+            "plan": plan,
+            "form": form,
+            "trips": [
+                {"trip": t, "name": day_name[t.weekday], "current": t == trip}
+                for t in trips
+                if t.weekday is not None
+            ],
+            "trip": trip,
+            "trip_days": [day_name[day] for day in trip.days],
+            "rows": rows,
+        },
+    )
+
+
+@login_required
 def diet_plan_delete(request, pk):
     if request.method != "POST":
         return HttpResponseNotAllowed(["POST"])

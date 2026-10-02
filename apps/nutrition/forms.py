@@ -800,3 +800,33 @@ class DietPlanShareForm(forms.Form):
     def __init__(self, *args, coach, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields["clients"].queryset = active_clients_of(coach)
+
+
+class ShoppingSettingsForm(forms.Form):
+    """A diet plan's shopping list settings (apps.nutrition.shopping)."""
+
+    weekdays = forms.TypedMultipleChoiceField(
+        coerce=int,
+        required=False,
+        widget=forms.CheckboxSelectMultiple,
+        label=_("Shopping days"),
+        help_text=_(
+            "Each shopping day's list covers the days up to the next one. "
+            "Pick none for one list for the whole week."
+        ),
+    )
+    include_shopping_day = forms.BooleanField(
+        required=False,
+        label=_("A shopping day's own meals go on that day's list"),
+        help_text=_(
+            "On: you shop before that day's meals. Off: they're on the previous "
+            "list — you shop after that day is covered."
+        ),
+    )
+
+    def __init__(self, *args, **kwargs):
+        from apps.programs.models import Weekday
+
+        super().__init__(*args, **kwargs)
+        self.fields["weekdays"].choices = Weekday.choices
+

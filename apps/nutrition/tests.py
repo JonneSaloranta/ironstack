@@ -6023,3 +6023,135 @@ class SearchFoodsOnlineGatingTests(TestCase):
                 reverse("nutrition:food-search"), {"q": "muesli", "online": "1"}
             )
         self.assertContains(response, "busy right now")
+
+
+class ShoppingTripTests(TestCase):
+    """apps.nutrition.shopping.shopping_trips — pure weekday arithmetic."""
+
+    def test_no_shopping_days_is_one_list_for_the_week(self):
+        from apps.nutrition import shopping
+
+        trips = shopping.shopping_trips([])
+        self.assertEqual([(t.weekday, t.days) for t in trips], [(None, (0, 1, 2, 3, 4, 5, 6))])
+
+    def test_each_trip_runs_up_to_the_next_shopping_day(self):
+        from apps.nutrition import shopping
+
+        trips = shopping.shopping_trips([3, 0])
+        self.assertEqual([(t.weekday, t.days) for t in trips], [(0, (0, 1, 2)), (3, (3, 4, 5, 6))])
+
+    def test_excluding_the_shopping_day_moves_it_to_the_previous_trip(self):
+        from apps.nutrition import shopping
+
+        trips = shopping.shopping_trips([0, 3], include_shopping_day=False)
+        self.assertEqual([t.days for t in trips], [(1, 2, 3), (4, 5, 6, 0)])
+
+    def test_a_single_shopping_day_covers_the_whole_week(self):
+        from apps.nutrition import shopping
+
+        self.assertEqual(shopping.shopping_trips([5])[0].days, (5, 6, 0, 1, 2, 3, 4))
+        self.assertEqual(
+            shopping.shopping_trips([5], include_shopping_day=False)[0].days,
+            (6, 0, 1, 2, 3, 4, 5),
+        )
+
+    def test_todays_trip_is_the_one_shopped_today_or_next(self):
+        from apps.nutrition import shopping
+
+        trips = shopping.shopping_trips([0, 3])
+        self.assertEqual(shopping.trip_for_today(trips, 3).weekday, 3)
+        self.assertEqual(shopping.trip_for_today(trips, 4).weekday, 0)
+
+
+class ShoppingListTests(TestCase):
+    def setUp(self):
+        from apps.nutrition.models import DietPlanMeal
+
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        self.client.login(username="alice", password="s3cret-pass")
+        self.chicken = make_food(self.alice, name="Chicken")
+        self.egg = make_food(
+            self.alice, name="Egg", serving_size=Decimal("1"), serving_unit=ServingUnit.PIECE,
+            calories=70,
+        )
+        omelette = Recipe.objects.create(owner=self.alice, name="Omelette", servings=2)
+        RecipeIngredient.objects.create(recipe=omelette, food=self.egg, quantity=Decimal("4"))
+        lunch = MealSlot.objects.get(name="Lunch", owner=None)
+        self.plan = DietPlan.objects.create(
+            user=self.alice, name="Week", target_calories=2000,
+            target_protein_grams=Decimal("150"), target_carbohydrate_grams=Decimal("200"),
+            target_fat_grams=Decimal("60"), is_weekly=True,
+        )
+        for day in range(7):
+            meal = DietPlanMeal.objects.create(
+                diet_plan=self.plan, meal_slot=lunch, target_calories=600, weekday=day
+            )
+            meal.items.create(food=self.chicken, quantity=Decimal("300"))
+            if day == 1:
+                meal.items.create(recipe=omelette, quantity=Decimal("1"))
+
+    def _rows(self, days):
+        from apps.nutrition import shopping
+
+        rows = shopping.shopping_list(self.plan, shopping.Trip(days[0], tuple(days)))
+        return {row.food.name: row for row in rows}
+
+    def test_the_same_food_on_several_days_is_one_total(self):
+        rows = self._rows([0, 1])
+        self.assertEqual(rows["Chicken"].total, Decimal("600"))
+        self.assertEqual(rows["Chicken"].ordered_days, [(0, Decimal("300")), (1, Decimal("300"))])
+
+    def test_recipes_are_broken_down_for_the_planned_servings(self):
+        rows = self._rows([0, 1])
+        # 1 serving of a 2-serving, 4-egg recipe.
+        self.assertEqual(rows["Egg"].total, Decimal("2"))
+        self.assertEqual(rows["Egg"].unit, ServingUnit.PIECE)
+
+    def test_only_the_trips_days_count(self):
+        rows = self._rows([3, 4])
+        self.assertEqual(rows["Chicken"].total, Decimal("600"))
+        self.assertNotIn("Egg", rows)
+
+    def test_a_one_day_plan_repeats_every_day(self):
+        from apps.nutrition.models import DietPlanMeal
+
+        self.plan.meals.all().delete()
+        self.plan.is_weekly = False
+        self.plan.save()
+        meal = DietPlanMeal.objects.create(
+            diet_plan=self.plan, meal_slot=MealSlot.objects.get(name="Lunch", owner=None),
+            target_calories=600,
+        )
+        meal.items.create(food=self.chicken, quantity=Decimal("200"))
+        self.assertEqual(self._rows([0, 1, 2])["Chicken"].total, Decimal("600"))
+
+    def test_page_shows_todays_trip_and_saves_the_plans_settings(self):
+        url = reverse("nutrition:diet-plan-shopping", args=[self.plan.pk])
+        response = self.client.get(url)
+        self.assertContains(response, "Chicken")
+        self.assertContains(response, "2100 g")  # no shopping days: the whole week
+        self.client.post(url, {"weekdays": ["0", "3"], "include_shopping_day": "on"})
+        self.assertEqual(
+            list(self.plan.shopping_days.values_list("weekday", flat=True)), [0, 3]
+        )
+        response = self.client.get(url, {"trip": "0"})
+        self.assertContains(response, "900 g")  # Mon-Wed
+        self.assertContains(response, 'href="?trip=3"')
+        self.client.post(url, {"weekdays": ["0", "3"]})
+        self.plan.refresh_from_db()
+        self.assertFalse(self.plan.shopping_includes_shopping_day)
+        response = self.client.get(url, {"trip": "0"})
+        self.assertContains(response, "900 g")  # Tue-Thu now
+        self.assertContains(response, "Egg")  # Tuesday's omelette is on this trip
+
+    def test_settings_are_per_plan_and_owner_only(self):
+        bob = User.objects.create_user(username="bob", password="s3cret-pass")
+        self.client.force_login(bob)
+        url = reverse("nutrition:diet-plan-shopping", args=[self.plan.pk])
+        self.assertEqual(self.client.get(url).status_code, 404)
+        self.assertEqual(self.client.post(url, {"weekdays": ["1"]}).status_code, 404)
+        self.assertFalse(self.plan.shopping_days.exists())
+
+    def test_the_plan_page_links_to_its_shopping_list(self):
+        response = self.client.get(reverse("nutrition:diet-plan-detail", args=[self.plan.pk]))
+        self.assertContains(response, reverse("nutrition:diet-plan-shopping", args=[self.plan.pk]))

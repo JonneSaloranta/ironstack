@@ -5845,3 +5845,18 @@ hasher was never used (the 2FA backup-code tests, ten hashes each, still
 took 12–52 s apiece). `--ds=config.settings.test` in addopts beats the
 environment. Result: 1922 tests in 39 s (was ~50 min); the browser suite
 in 85 s.
+
+## Shopping list
+
+A diet plan's shopping list, asked for directly (docs/NUTRITION.md
+"Shopping list"): per-plan shopping days (`ShoppingDay`) and an
+include/exclude choice for a shopping day's own meals
+(`DietPlan.shopping_includes_shopping_day`). `apps.nutrition.shopping` is
+small and mostly pure: `shopping_trips` turns the weekdays into trips,
+`shopping_list` expands recipe items into ingredients and sums per food
+in its serving unit, keeping each covered day's amount for the
+"Mon 300 g · Tue 300 g" breakdown. The list is derived on every request,
+never stored; ticking items is localStorage only. Shopping days are in
+the account data export; they aren't part of plan export or a coach's
+shared copy. The page has its own tour and is in the long-content layout
+test.

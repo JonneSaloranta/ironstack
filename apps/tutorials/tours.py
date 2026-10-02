@@ -825,6 +825,39 @@ TOURS = (
         ),
     ),
     Tour(
+        key="shopping-list",
+        section=NUTRITION,
+        title=_("Shopping list"),
+        view_names=("nutrition:diet-plan-shopping",),
+        start_url=first_url(_diet_plans, "nutrition:diet-plan-shopping"),
+        steps=(
+            Step(
+                "shopping-trips",
+                _("Shopping trips"),
+                _("One list per shopping day, covering the days until the next one."),
+                optional=True,
+            ),
+            Step(
+                "shopping-list",
+                _("What to buy"),
+                _(
+                    "Everything the plan's meals need, recipes included. The same food on "
+                    "several days is added up, with each day's amount under it. Tick items "
+                    "off as you shop."
+                ),
+                optional=True,
+            ),
+            Step(
+                "shopping-settings",
+                _("Shopping days"),
+                _(
+                    "Pick the days you go shopping, and whether a shopping day's own meals "
+                    "go on that day's list. Set separately for each plan."
+                ),
+            ),
+        ),
+    ),
+    Tour(
         key="calculators",
         section=NUTRITION,
         title=_("Calculators"),

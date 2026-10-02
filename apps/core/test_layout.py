@@ -153,6 +153,7 @@ class LongContentLayoutTests(StaticLiveServerTestCase):
             reverse("nutrition:diet-plan-list"),
             reverse("nutrition:diet-plan-detail", args=[plan.pk]),
             reverse("nutrition:diet-plan-share", args=[plan.pk]),
+            reverse("nutrition:diet-plan-shopping", args=[plan.pk]),
             reverse("nutrition:calculators-home"),
             reverse("nutrition:stats"),
             reverse("programs:program-list"),

@@ -9744,6 +9744,52 @@ msgstr[1] "Ruokavaliosuunnitelman rakennin ehdottaa tätä reseptiä vain näill
 msgid "Photo"
 msgstr "Kuva"
 
+msgid "Shopping days"
+msgstr "Kauppapäivät"
+
+msgid "Each shopping day's list covers the days up to the next one. Pick none for one list for the whole week."
+msgstr "Jokaisen kauppapäivän lista kattaa päivät seuraavaan kauppapäivään asti. Jätä kaikki valitsematta, niin saat yhden listan koko viikolle."
+
+msgid "A shopping day's own meals go on that day's list"
+msgstr "Kauppapäivän omat ateriat tulevat saman päivän listalle"
+
+msgid "On: you shop before that day's meals. Off: they're on the previous list — you shop after that day is covered."
+msgstr "Päällä: käyt kaupassa ennen päivän aterioita. Pois: ne ovat edellisellä listalla — käyt kaupassa, kun päivän ruoat on jo hankittu."
+
+msgid "Shopping days saved."
+msgstr "Kauppapäivät tallennettu."
+
+msgid "Shopping list"
+msgstr "Ostoslista"
+
+msgid "Shopping trips"
+msgstr "Kauppareissut"
+
+msgid "One list per shopping day, covering the days until the next one."
+msgstr "Yksi lista kutakin kauppapäivää kohden, seuraavaan kauppapäivään asti."
+
+msgid "What to buy"
+msgstr "Mitä ostaa"
+
+msgid "Everything the plan's meals need, recipes included. The same food on several days is added up, with each day's amount under it. Tick items off as you shop."
+msgstr "Kaikki, mitä suunnitelman ateriat tarvitsevat, reseptit mukaan lukien. Sama ruoka useana päivänä lasketaan yhteen, ja kunkin päivän määrä näkyy sen alla. Ruksi tuotteet kaupassa."
+
+msgid "Pick the days you go shopping, and whether a shopping day's own meals go on that day's list. Set separately for each plan."
+msgstr "Valitse päivät, joina käyt kaupassa, ja tuleeko kauppapäivän oma ruoka saman päivän listalle. Asetetaan jokaiselle suunnitelmalle erikseen."
+
+msgid "One list for the whole week — pick shopping days below to split it into trips."
+msgstr "Yksi lista koko viikolle — valitse alta kauppapäivät jakaaksesi sen kauppareissuihin."
+
+#, python-format
+msgid "For: %(days)s"
+msgstr "Päiville: %(days)s"
+
+msgid "Clear ticks"
+msgstr "Poista ruksit"
+
+msgid "Nothing to buy — this plan has no meals on these days yet."
+msgstr "Ei ostettavaa — tällä suunnitelmalla ei ole vielä aterioita näille päiville."
+
 #~ msgid "Back to home"
 #~ msgstr "Takaisin etusivulle"
 

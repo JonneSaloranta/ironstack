@@ -660,6 +660,12 @@ class DietPlan(TimeStampedModel):
     )
     coach_snapshot = models.JSONField(null=True, blank=True, default=None)
     coach_snapshot_version = models.PositiveIntegerField(null=True, blank=True)
+    # Shopping list (apps.nutrition.shopping): whether a shopping day's
+    # own meals go on that day's trip (shopping in the morning) or on the
+    # previous trip (shopping after that day's meals are covered). The
+    # shopping days themselves are ShoppingDay rows. Per plan, like the
+    # rest of its settings.
+    shopping_includes_shopping_day = models.BooleanField(default=True)
 
     class Meta:
         ordering = ["-created_at"]
@@ -685,6 +691,30 @@ class DietPlan(TimeStampedModel):
         see apps.programs.models.Program's own bump_version."""
         self.version += 1
         self.save(update_fields=["version", "updated_at"])
+
+
+class ShoppingDay(models.Model):
+    """A weekday the user goes shopping for `diet_plan` (0=Monday ..
+    6=Sunday, Python's date.weekday(), the same numbering as
+    DietPlanMeal.weekday). Each one starts a trip whose list covers the
+    days up to the next shopping day — apps.nutrition.shopping."""
+
+    diet_plan = models.ForeignKey(DietPlan, related_name="shopping_days", on_delete=models.CASCADE)
+    weekday = models.PositiveSmallIntegerField()
+
+    class Meta:
+        ordering = ["weekday"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["diet_plan", "weekday"], name="unique_shopping_day_per_plan"
+            ),
+            models.CheckConstraint(
+                condition=models.Q(weekday__lte=6), name="shopping_day_is_a_weekday"
+            ),
+        ]
+
+    def __str__(self):
+        return f"{self.diet_plan.name}: {self.weekday}"
 
 
 class DietPlanMeal(models.Model):

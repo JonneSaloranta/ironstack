@@ -3540,3 +3540,55 @@ button,
   text-align: right;
 }
 
+/* A diet plan's shopping list (templates/nutrition/diet_plan_shopping.html):
+   tick box, the food with its per-day amounts under it, the total on the
+   right — the whole row is the tap target. */
+.shopping-list {
+  list-style: none;
+  margin: 0 0 var(--space-2);
+  padding: 0;
+}
+
+.shopping-list li + li {
+  border-top: 1px solid var(--color-border);
+}
+
+.shopping-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: var(--touch-target);
+  padding: var(--space-2) 0;
+  cursor: pointer;
+}
+
+.shopping-item input {
+  flex: 0 0 auto;
+  width: 1.25rem;
+  height: 1.25rem;
+  margin: 0;
+}
+
+.shopping-item-name {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.shopping-item-days {
+  display: block;
+  font-size: var(--text-sm);
+}
+
+.shopping-item-amount {
+  flex: 0 0 auto;
+  white-space: nowrap;
+  text-align: right;
+}
+
+.shopping-item.is-ticked .shopping-item-name,
+.shopping-item.is-ticked .shopping-item-amount {
+  text-decoration: line-through;
+  color: var(--color-text-muted);
+}
+

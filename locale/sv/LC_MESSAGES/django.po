@@ -9718,6 +9718,52 @@ msgstr[1] "Kostplansbyggaren föreslår bara det här receptet för de här mål
 msgid "Photo"
 msgstr "Foto"
 
+msgid "Shopping days"
+msgstr "Inköpsdagar"
+
+msgid "Each shopping day's list covers the days up to the next one. Pick none for one list for the whole week."
+msgstr "Varje inköpsdags lista täcker dagarna fram till nästa. Välj ingen för en lista för hela veckan."
+
+msgid "A shopping day's own meals go on that day's list"
+msgstr "En inköpsdags egna måltider hamnar på den dagens lista"
+
+msgid "On: you shop before that day's meals. Off: they're on the previous list — you shop after that day is covered."
+msgstr "På: du handlar före dagens måltider. Av: de står på föregående lista — du handlar när dagen redan är täckt."
+
+msgid "Shopping days saved."
+msgstr "Inköpsdagarna sparades."
+
+msgid "Shopping list"
+msgstr "Inköpslista"
+
+msgid "Shopping trips"
+msgstr "Inköpsturer"
+
+msgid "One list per shopping day, covering the days until the next one."
+msgstr "En lista per inköpsdag, för dagarna fram till nästa."
+
+msgid "What to buy"
+msgstr "Att köpa"
+
+msgid "Everything the plan's meals need, recipes included. The same food on several days is added up, with each day's amount under it. Tick items off as you shop."
+msgstr "Allt planens måltider behöver, recept inräknade. Samma livsmedel flera dagar läggs ihop, med varje dags mängd under. Bocka av medan du handlar."
+
+msgid "Pick the days you go shopping, and whether a shopping day's own meals go on that day's list. Set separately for each plan."
+msgstr "Välj dagarna du handlar, och om en inköpsdags egna måltider hamnar på den dagens lista. Ställs in för varje plan för sig."
+
+msgid "One list for the whole week — pick shopping days below to split it into trips."
+msgstr "En lista för hela veckan — välj inköpsdagar nedan för att dela upp den i turer."
+
+#, python-format
+msgid "For: %(days)s"
+msgstr "För: %(days)s"
+
+msgid "Clear ticks"
+msgstr "Rensa bockar"
+
+msgid "Nothing to buy — this plan has no meals on these days yet."
+msgstr "Inget att köpa — planen har inga måltider dessa dagar än."
+
 #~ msgid "Back to home"
 #~ msgstr "Tillbaka till hem"
 

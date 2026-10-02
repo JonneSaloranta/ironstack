@@ -9685,6 +9685,52 @@ msgstr[1] ""
 msgid "Photo"
 msgstr ""
 
+msgid "Shopping days"
+msgstr ""
+
+msgid "Each shopping day's list covers the days up to the next one. Pick none for one list for the whole week."
+msgstr ""
+
+msgid "A shopping day's own meals go on that day's list"
+msgstr ""
+
+msgid "On: you shop before that day's meals. Off: they're on the previous list — you shop after that day is covered."
+msgstr ""
+
+msgid "Shopping days saved."
+msgstr ""
+
+msgid "Shopping list"
+msgstr ""
+
+msgid "Shopping trips"
+msgstr ""
+
+msgid "One list per shopping day, covering the days until the next one."
+msgstr ""
+
+msgid "What to buy"
+msgstr ""
+
+msgid "Everything the plan's meals need, recipes included. The same food on several days is added up, with each day's amount under it. Tick items off as you shop."
+msgstr ""
+
+msgid "Pick the days you go shopping, and whether a shopping day's own meals go on that day's list. Set separately for each plan."
+msgstr ""
+
+msgid "One list for the whole week — pick shopping days below to split it into trips."
+msgstr ""
+
+#, python-format
+msgid "For: %(days)s"
+msgstr ""
+
+msgid "Clear ticks"
+msgstr ""
+
+msgid "Nothing to buy — this plan has no meals on these days yet."
+msgstr ""
+
 #~ msgid "Back to home"
 #~ msgstr "Back to home"
 
