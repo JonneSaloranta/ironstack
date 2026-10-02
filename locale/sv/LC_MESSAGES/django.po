@@ -9764,6 +9764,27 @@ msgstr "Rensa bockar"
 msgid "Nothing to buy — this plan has no meals on these days yet."
 msgstr "Inget att köpa — planen har inga måltider dessa dagar än."
 
+msgid "Shopping day"
+msgstr "Inköpsdag"
+
+msgid "On your shopping days, your list for the trip is one tap away here."
+msgstr "På dina inköpsdagar är turens inköpslista ett tryck bort här."
+
+msgid "Diary, shopping list, foods, recipes, diet plans, calculators and statistics."
+msgstr "Dagbok, inköpslista, livsmedel, recept, kostplaner, kalkylatorer och statistik."
+
+msgid "The shopping list comes from your active diet plan, and you don't have one yet."
+msgstr "Inköpslistan kommer från din aktiva kostplan, och du har ingen än."
+
+msgid "Create a plan, or activate one of yours."
+msgstr "Skapa en plan eller aktivera en av dina."
+
+#, python-format
+msgid "%(counter)s item on your shopping list for %(plan)s."
+msgid_plural "%(counter)s items on your shopping list for %(plan)s."
+msgstr[0] "%(counter)s vara på inköpslistan för %(plan)s."
+msgstr[1] "%(counter)s varor på inköpslistan för %(plan)s."
+
 #~ msgid "Back to home"
 #~ msgstr "Tillbaka till hem"
 

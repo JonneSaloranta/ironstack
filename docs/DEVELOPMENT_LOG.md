@@ -5867,3 +5867,12 @@ actions, `shopping-list/` (`GET`, `?trip=`) and `shopping-settings/`
 view and the API share `shopping.plan_trips`/`pick_trip`/
 `set_shopping_settings`, so the two can't disagree about which days a trip
 covers.
+
+The list was only reachable through Nutrition → Diet plans → a plan →
+Shopping list. Now: a sub-nav tab (`/nutrition/shopping/`, a stable
+address that redirects to the active plan's list — what the tab and the
+app shortcut both need), a button on the overview's "Today's plan", a
+Home card on the active plan's shopping days (`shopping.shopping_today`),
+and a web-manifest `shortcuts` entry in the per-user manifest. The Home
+and overview additions have their own optional tour steps; the redirect
+page is in `NO_TOUR_NEEDED`.

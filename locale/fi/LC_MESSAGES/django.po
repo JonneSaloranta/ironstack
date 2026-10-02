@@ -9790,6 +9790,27 @@ msgstr "Poista ruksit"
 msgid "Nothing to buy — this plan has no meals on these days yet."
 msgstr "Ei ostettavaa — tällä suunnitelmalla ei ole vielä aterioita näille päiville."
 
+msgid "Shopping day"
+msgstr "Kauppapäivä"
+
+msgid "On your shopping days, your list for the trip is one tap away here."
+msgstr "Kauppapäivinä reissun ostoslista on tässä yhden napautuksen päässä."
+
+msgid "Diary, shopping list, foods, recipes, diet plans, calculators and statistics."
+msgstr "Päiväkirja, ostoslista, ruoat, reseptit, ruokavaliosuunnitelmat, laskurit ja tilastot."
+
+msgid "The shopping list comes from your active diet plan, and you don't have one yet."
+msgstr "Ostoslista muodostetaan aktiivisesta ruokavaliosuunnitelmastasi, eikä sinulla vielä ole sellaista."
+
+msgid "Create a plan, or activate one of yours."
+msgstr "Luo suunnitelma tai aktivoi jokin omistasi."
+
+#, python-format
+msgid "%(counter)s item on your shopping list for %(plan)s."
+msgid_plural "%(counter)s items on your shopping list for %(plan)s."
+msgstr[0] "%(counter)s tuote ostoslistalla suunnitelmasta %(plan)s."
+msgstr[1] "%(counter)s tuotetta ostoslistalla suunnitelmasta %(plan)s."
+
 #~ msgid "Back to home"
 #~ msgstr "Takaisin etusivulle"
 

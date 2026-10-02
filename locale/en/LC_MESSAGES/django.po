@@ -9731,6 +9731,27 @@ msgstr ""
 msgid "Nothing to buy — this plan has no meals on these days yet."
 msgstr ""
 
+msgid "Shopping day"
+msgstr ""
+
+msgid "On your shopping days, your list for the trip is one tap away here."
+msgstr ""
+
+msgid "Diary, shopping list, foods, recipes, diet plans, calculators and statistics."
+msgstr ""
+
+msgid "The shopping list comes from your active diet plan, and you don't have one yet."
+msgstr ""
+
+msgid "Create a plan, or activate one of yours."
+msgstr ""
+
+#, python-format
+msgid "%(counter)s item on your shopping list for %(plan)s."
+msgid_plural "%(counter)s items on your shopping list for %(plan)s."
+msgstr[0] ""
+msgstr[1] ""
+
 #~ msgid "Back to home"
 #~ msgstr "Back to home"
 

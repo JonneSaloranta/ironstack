@@ -1562,6 +1562,20 @@ class DietPlanDetailView(LoginRequiredMixin, View):
 
 
 @login_required
+def shopping(request):
+    """`/nutrition/shopping/`: the active plan's shopping list — the
+    nutrition sub-nav tab and the installed app's shortcut, one stable
+    address however plans come and go. Without an active plan, says so
+    and points at the plans."""
+    from . import shopping as shopping_services
+
+    plan = shopping_services.active_plan(request.user)
+    if plan is not None:
+        return redirect("nutrition:diet-plan-shopping", pk=plan.pk)
+    return render(request, "nutrition/shopping_no_plan.html")
+
+
+@login_required
 def diet_plan_shopping(request, pk):
     """The plan's shopping list for one trip (apps.nutrition.shopping),
     and the plan's own shopping settings (POST). `?trip=<weekday>` picks

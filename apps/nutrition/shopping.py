@@ -144,3 +144,30 @@ def set_shopping_settings(plan, weekdays, include_shopping_day):
     )
     plan.shopping_includes_shopping_day = include_shopping_day
     plan.save(update_fields=["shopping_includes_shopping_day", "updated_at"])
+
+
+def active_plan(user):
+    from .models import DietPlan
+
+    return DietPlan.objects.filter(user=user, is_active=True).first()
+
+
+@dataclass(frozen=True)
+class ShoppingToday:
+    plan: object
+    trip: Trip
+    item_count: int
+
+
+def shopping_today(user, today):
+    """Today's trip when today is one of the active plan's shopping days
+    (the dashboard's "Shopping day" card), else None. A plan without
+    shopping days never has one — there's no day to remind about."""
+    plan = active_plan(user)
+    if plan is None:
+        return None
+    weekday = today.weekday()
+    if not plan.shopping_days.filter(weekday=weekday).exists():
+        return None
+    trip = pick_trip(plan_trips(plan), weekday, weekday)
+    return ShoppingToday(plan=plan, trip=trip, item_count=len(shopping_list(plan, trip)))

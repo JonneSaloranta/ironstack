@@ -9759,6 +9759,27 @@ msgstr "Eemalda märked"
 msgid "Nothing to buy — this plan has no meals on these days yet."
 msgstr "Pole midagi osta — sellel kaval pole neil päevadel veel toidukordi."
 
+msgid "Shopping day"
+msgstr "Poepäev"
+
+msgid "On your shopping days, your list for the trip is one tap away here."
+msgstr "Poepäevadel on selle poeskäigu ostunimekiri siin ühe puudutuse kaugusel."
+
+msgid "Diary, shopping list, foods, recipes, diet plans, calculators and statistics."
+msgstr "Päevik, ostunimekiri, toiduained, retseptid, toitumiskavad, kalkulaatorid ja statistika."
+
+msgid "The shopping list comes from your active diet plan, and you don't have one yet."
+msgstr "Ostunimekiri tuleb sinu aktiivsest toitumiskavast, aga sul pole veel ühtegi."
+
+msgid "Create a plan, or activate one of yours."
+msgstr "Loo kava või aktiveeri mõni oma kavadest."
+
+#, python-format
+msgid "%(counter)s item on your shopping list for %(plan)s."
+msgid_plural "%(counter)s items on your shopping list for %(plan)s."
+msgstr[0] "%(counter)s toode kava %(plan)s ostunimekirjas."
+msgstr[1] "%(counter)s toodet kava %(plan)s ostunimekirjas."
+
 #~ msgid "Back to home"
 #~ msgstr "Tagasi avalehele"
 

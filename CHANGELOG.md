@@ -27,6 +27,9 @@ narrated summary of the same version.
   on that day's list.
 - REST API: `diet-plans/<id>/shopping-list/` and
   `diet-plans/<id>/shopping-settings/`.
+- The shopping list is easy to reach: its own tab in nutrition, a button
+  on today's plan, a card on Home on your shopping days, and a shortcut
+  when you long-press the installed app's icon.
 - Tutorials: a short guided tour on every main page the first time you
   open it — the part being explained is highlighted while the rest of
   the page is dimmed, with a compact explanation right next to it. Skip

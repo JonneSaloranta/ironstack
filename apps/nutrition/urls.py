@@ -100,6 +100,7 @@ urlpatterns = [
     ),
     path("diet-plans/<int:pk>/log/", views.diet_plan_log, name="diet-plan-log"),
     path("diet-plans/<int:pk>/shopping/", views.diet_plan_shopping, name="diet-plan-shopping"),
+    path("shopping/", views.shopping, name="shopping"),
     path(
         "diet-plans/<int:plan_pk>/items/<int:pk>/edit/",
         views.diet_plan_item_edit,

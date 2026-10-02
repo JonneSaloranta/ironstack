@@ -141,6 +141,12 @@ TOURS = (
                 ),
             ),
             Step(
+                "dashboard-shopping",
+                _("Shopping day"),
+                _("On your shopping days, your list for the trip is one tap away here."),
+                optional=True,
+            ),
+            Step(
                 "dashboard-achievements",
                 _("Achievements"),
                 _("Streaks and milestones from everyone on this server who shares them."),
@@ -596,7 +602,10 @@ TOURS = (
             Step(
                 "nutrition-subnav",
                 _("Nutrition sections"),
-                _("Diary, foods, recipes, diet plans, calculators and statistics."),
+                _(
+                    "Diary, shopping list, foods, recipes, diet plans, calculators and "
+                    "statistics."
+                ),
             ),
             Step(
                 "day-type",
@@ -1137,4 +1146,7 @@ NO_TOUR_NEEDED = {
     "password_reset_complete": "signed out",
     # The tutorials page itself.
     "tutorials:list": "this is the tutorials page",
+    # Redirects to the active plan's shopping list, which has its own
+    # tour; renders only a "no active plan" notice otherwise.
+    "nutrition:shopping": "redirect / notice",
 }

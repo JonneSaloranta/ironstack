@@ -9848,6 +9848,28 @@ msgstr "Снять отметки"
 msgid "Nothing to buy — this plan has no meals on these days yet."
 msgstr "Покупать нечего — в этом плане пока нет приёмов пищи на эти дни."
 
+msgid "Shopping day"
+msgstr "День покупок"
+
+msgid "On your shopping days, your list for the trip is one tap away here."
+msgstr "В дни покупок список на этот поход — здесь, в одно касание."
+
+msgid "Diary, shopping list, foods, recipes, diet plans, calculators and statistics."
+msgstr "Дневник, список покупок, продукты, рецепты, планы питания, калькуляторы и статистика."
+
+msgid "The shopping list comes from your active diet plan, and you don't have one yet."
+msgstr "Список покупок строится по активному плану питания, а у вас его пока нет."
+
+msgid "Create a plan, or activate one of yours."
+msgstr "Создайте план или активируйте один из своих."
+
+#, python-format
+msgid "%(counter)s item on your shopping list for %(plan)s."
+msgid_plural "%(counter)s items on your shopping list for %(plan)s."
+msgstr[0] "%(counter)s товар в списке покупок для плана %(plan)s."
+msgstr[1] "%(counter)s товара в списке покупок для плана %(plan)s."
+msgstr[2] "%(counter)s товаров в списке покупок для плана %(plan)s."
+
 #~ msgid "Back to home"
 #~ msgstr "Назад на главную"
 

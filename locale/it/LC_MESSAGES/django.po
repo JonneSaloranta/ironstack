@@ -9857,6 +9857,27 @@ msgstr "Togli le spunte"
 msgid "Nothing to buy — this plan has no meals on these days yet."
 msgstr "Niente da comprare — questo piano non ha ancora pasti in questi giorni."
 
+msgid "Shopping day"
+msgstr "Giorno della spesa"
+
+msgid "On your shopping days, your list for the trip is one tap away here."
+msgstr "Nei giorni della spesa, la lista di quella spesa è a portata di tocco qui."
+
+msgid "Diary, shopping list, foods, recipes, diet plans, calculators and statistics."
+msgstr "Diario, lista della spesa, alimenti, ricette, piani alimentari, calcolatori e statistiche."
+
+msgid "The shopping list comes from your active diet plan, and you don't have one yet."
+msgstr "La lista della spesa viene dal tuo piano alimentare attivo, e non ne hai ancora uno."
+
+msgid "Create a plan, or activate one of yours."
+msgstr "Crea un piano o attivane uno dei tuoi."
+
+#, python-format
+msgid "%(counter)s item on your shopping list for %(plan)s."
+msgid_plural "%(counter)s items on your shopping list for %(plan)s."
+msgstr[0] "%(counter)s articolo nella lista della spesa per %(plan)s."
+msgstr[1] "%(counter)s articoli nella lista della spesa per %(plan)s."
+
 #~ msgid "Back to home"
 #~ msgstr "Torna alla home"
 

@@ -15,7 +15,7 @@ user who doesn't have a NutritionProfile yet.
 
 Reuses .range-filter's pill styling (templates/analytics/
 _range_filter.html) with one override: horizontal scroll instead of
-wrap (.nutrition-subnav in base.css) — 7 tabs wrapped would eat two
+wrap (.nutrition-subnav in base.css) — 8 tabs wrapped would eat two
 or three lines of vertical space on every single page, permanently.
 {% endcomment %}
 {% comment %}
@@ -44,6 +44,7 @@ Two regressions found live testing this exact bar:
        x-data x-init="$el.querySelector('[aria-current]')?.scrollIntoView({ block: 'nearest', inline: 'center' })">
     <a href="{% url 'nutrition:dashboard' %}" {% if nutrition_active_tab == "dashboard" %}aria-current="true"{% endif %}>{% trans "Overview" %}</a>
     <a href="{% url 'nutrition:diary-day' %}" {% if nutrition_active_tab == "diary" %}aria-current="true"{% endif %}>{% trans "Diary" %}</a>
+    <a href="{% url 'nutrition:shopping' %}" data-tour="nutrition-shopping-tab" {% if nutrition_active_tab == "shopping" %}aria-current="true"{% endif %}>{% trans "Shopping list" %}</a>
     <a href="{% url 'nutrition:food-list' %}" {% if nutrition_active_tab == "foods" %}aria-current="true"{% endif %}>{% trans "Foods" %}</a>
     <a href="{% url 'nutrition:recipe-list' %}" {% if nutrition_active_tab == "recipes" %}aria-current="true"{% endif %}>{% trans "Recipes" %}</a>
     <a href="{% url 'nutrition:diet-plan-list' %}" {% if nutrition_active_tab == "diet-plans" %}aria-current="true"{% endif %}>{% trans "Diet plans" %}</a>

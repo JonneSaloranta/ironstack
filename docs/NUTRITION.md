@@ -767,6 +767,15 @@ is already covered).
   plan, never stored, so editing the plan updates it immediately.
 - Not copied by diet-plan export/import or a coach's shared copy: shopping
   days are the user's own habit, not part of the plan's content.
+- **Where it's reachable** (asked for directly — at first it was only a
+  button on the plan's own page): a "Shopping list" tab in the nutrition
+  sub-nav (`nutrition:shopping`, `/nutrition/shopping/` — redirects to the
+  active plan's list, or explains there's no active plan); a button on
+  today's plan on the nutrition overview; a Home card on the active plan's
+  shopping days only (`shopping_today`, with the item count; gone the next
+  day by itself, never a prompt); and the installed app's shortcut
+  (long-press the icon), added to the per-user web manifest when
+  nutrition is on, named in the user's language.
 
 ## Energy calculation
 
@@ -1050,7 +1059,7 @@ straight back to onboarding.
 
 Styled as `.range-filter`'s existing pill tabs (`templates/analytics/
 _range_filter.html`) with one override — horizontal scroll instead of
-wrap (`.nutrition-subnav`), since 7 tabs wrapped would cost two or
+wrap (`.nutrition-subnav`), since 8 tabs wrapped would cost two or
 three lines of vertical space on every single page, permanently,
 which defeats a bar meant to stay out of the way. `position: sticky`
 keeps it reachable without scrolling back up on a long page (the
@@ -1069,7 +1078,7 @@ actually be reached, not just the first one it was built for.** This
 still applies to the plain "&larr; Back to X" links between a page and
 its own logical parent (recipe detail → recipe list, an edit form →
 whatever it edits) — the sub-nav only replaces lateral movement
-between the 7 top-level sections, not that vertical parent/child
+between the 8 top-level sections, not that vertical parent/child
 structure. Foods/Recipes/Diet plans were originally only ever reached
 from the food diary, so their own "back" link pointed there —
 reasonable at the time. Once they became reachable directly (first

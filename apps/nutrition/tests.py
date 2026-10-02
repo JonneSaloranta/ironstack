@@ -6155,3 +6155,98 @@ class ShoppingListTests(TestCase):
     def test_the_plan_page_links_to_its_shopping_list(self):
         response = self.client.get(reverse("nutrition:diet-plan-detail", args=[self.plan.pk]))
         self.assertContains(response, reverse("nutrition:diet-plan-shopping", args=[self.plan.pk]))
+
+
+class ShoppingListPlacesTests(TestCase):
+    """Where the shopping list is reachable from: the nutrition sub-nav
+    tab (/nutrition/shopping/), today's plan on the nutrition overview,
+    the Home card on shopping days, and the installed app's shortcut."""
+
+    def setUp(self):
+        from apps.nutrition.models import DietPlanMeal
+
+        self.alice = User.objects.create_user(
+            username="alice", password="s3cret-pass", onboarding_completed=True,
+            language_chosen=True, tutorials_enabled=False,
+        )
+        self.client.force_login(self.alice)
+        chicken = make_food(self.alice, name="Chicken")
+        rice = make_food(self.alice, name="Rice")
+        self.plan = DietPlan.objects.create(
+            user=self.alice, name="Cut", target_calories=2000,
+            target_protein_grams=Decimal("150"), target_carbohydrate_grams=Decimal("200"),
+            target_fat_grams=Decimal("60"), is_active=True,
+        )
+        meal = DietPlanMeal.objects.create(
+            diet_plan=self.plan, meal_slot=MealSlot.objects.get(name="Lunch", owner=None),
+            target_calories=600,
+        )
+        meal.items.create(food=chicken, quantity=Decimal("300"))
+        meal.items.create(food=rice, quantity=Decimal("80"))
+
+    def test_the_tab_opens_the_active_plans_list(self):
+        response = self.client.get(reverse("nutrition:shopping"))
+        self.assertRedirects(
+            response, reverse("nutrition:diet-plan-shopping", args=[self.plan.pk])
+        )
+        page = self.client.get(reverse("nutrition:diet-plan-shopping", args=[self.plan.pk]))
+        self.assertEqual(page.context["nutrition_active_tab"], "shopping")
+        self.assertContains(page, f'href="{reverse("nutrition:shopping")}"')
+
+    def test_without_an_active_plan_the_tab_explains_and_links_to_plans(self):
+        self.plan.is_active = False
+        self.plan.save()
+        response = self.client.get(reverse("nutrition:shopping"))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "active diet plan")
+        self.assertContains(response, reverse("nutrition:diet-plan-list"))
+
+    def test_shopping_today_only_on_a_shopping_day(self):
+        from apps.nutrition import shopping
+
+        monday, tuesday = date(2026, 9, 28), date(2026, 9, 29)
+        self.assertIsNone(shopping.shopping_today(self.alice, monday))  # no days set
+        shopping.set_shopping_settings(self.plan, [0], True)
+        today = shopping.shopping_today(self.alice, monday)
+        self.assertEqual((today.plan, today.trip.weekday, today.item_count), (self.plan, 0, 2))
+        self.assertIsNone(shopping.shopping_today(self.alice, tuesday))
+        self.plan.is_active = False
+        self.plan.save()
+        self.assertIsNone(shopping.shopping_today(self.alice, monday))
+
+    def test_home_shows_a_card_on_a_shopping_day(self):
+        from apps.nutrition import shopping
+
+        self.assertNotContains(self.client.get(reverse("dashboard")), "Shopping day")
+        shopping.set_shopping_settings(self.plan, [timezone.localdate().weekday()], True)
+        response = self.client.get(reverse("dashboard"))
+        self.assertContains(response, "Shopping day")
+        self.assertContains(response, "2 items on your shopping list for Cut.")
+        self.alice.nutrition_enabled = False
+        self.alice.save()
+        self.assertNotContains(self.client.get(reverse("dashboard")), "Shopping day")
+
+    def test_todays_plan_on_the_overview_links_to_its_list(self):
+        from apps.nutrition.models import NutritionProfile
+
+        NutritionProfile.objects.create(
+            user=self.alice, biological_sex="female", birth_date=date(1990, 1, 1),
+            activity_job="sedentary", activity_level="moderate",
+        )
+        response = self.client.get(reverse("nutrition:dashboard"))
+        self.assertContains(
+            response, reverse("nutrition:diet-plan-shopping", args=[self.plan.pk])
+        )
+
+    def test_the_installed_app_has_a_shopping_list_shortcut(self):
+        self.alice.language = "fi"
+        self.alice.save()
+        manifest = json.loads(self.client.get("/manifest.json").content)
+        self.assertEqual(
+            manifest["shortcuts"],
+            [{"name": "Ostoslista", "url": reverse("nutrition:shopping"),
+              "icons": [{"src": "/static/icons/icon-192.png", "sizes": "192x192"}]}],
+        )
+        self.alice.nutrition_enabled = False
+        self.alice.save()
+        self.assertNotIn("shortcuts", json.loads(self.client.get("/manifest.json").content))

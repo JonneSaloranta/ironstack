@@ -55,6 +55,17 @@ disclosure instead — see it further down for why.
   <p><a class="button-link" href="{% url 'measurements:history' body_weight_type_pk %}">{% trans "Log body weight" %}</a></p>
 {% endif %}
 
+{% if shopping_today %}
+  {% comment %}
+    Only on the active plan's shopping days (apps.nutrition.shopping.
+    shopping_today) — a nudge, gone tomorrow by itself, never a prompt.
+  {% endcomment %}
+  <a data-tour="dashboard-shopping" class="card card-link" href="{% url 'nutrition:diet-plan-shopping' shopping_today.plan.pk %}?trip={{ shopping_today.trip.weekday }}">
+    <strong>{% trans "Shopping day" %}</strong>
+    <p class="text-muted">{% blocktrans count counter=shopping_today.item_count with plan=shopping_today.plan.name %}{{ counter }} item on your shopping list for {{ plan }}.{% plural %}{{ counter }} items on your shopping list for {{ plan }}.{% endblocktrans %}</p>
+  </a>
+{% endif %}
+
 {% if body_tracking_reminder %}
   <a class="card card-link" href="{% url 'measurements:type-list' %}">
     <strong>{% trans "Time to log your body measurements?" %}</strong>
