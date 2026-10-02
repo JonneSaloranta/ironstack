@@ -46,6 +46,7 @@ urlpatterns = [
     # apps.accounts.views.TwoFactorRegenerateBackupCodesView's earlier
     # 405, different root cause.
     path("diary/add/", views.DiaryAddEntryView.as_view(), name="diary-add-entry"),
+    path("diary/add/quick/", views.diary_quick_add, name="diary-quick-add"),
     path("diary/entries/<int:pk>/edit/", views.diary_entry_edit, name="diary-entry-edit"),
     path("diary/entries/<int:pk>/delete/", views.diary_entry_delete, name="diary-entry-delete"),
     path("diary/<str:target_date>/", views.DiaryDayView.as_view(), name="diary-day"),

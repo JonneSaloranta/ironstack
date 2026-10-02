@@ -251,6 +251,100 @@ class DiaryEntryConstraintTests(TestCase):
             )
 
 
+    def test_a_quick_entry_is_valid(self):
+        entry = DiaryEntry(
+            user=self.alice, date=date(2026, 1, 1), meal_slot=self.meal_slot,
+            quantity=Decimal("1"), quick_calories=650,
+        )
+        entry.full_clean()  # should not raise
+
+    def test_quick_macros_alongside_a_food_are_rejected_at_the_database_level(self):
+        with self.assertRaises(IntegrityError), transaction.atomic():
+            DiaryEntry.objects.create(
+                user=self.alice, date=date(2026, 1, 1), meal_slot=self.meal_slot,
+                food=self.food, quick_calories=650, quantity=Decimal("1"),
+            )
+
+
+class QuickDiaryEntryTests(TestCase):
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        self.client.login(username="alice", password="s3cret-pass")
+        self.slot = MealSlot.objects.get(name="Lunch", owner=None)
+
+    def _post(self, **data):
+        payload = {"date": "2026-01-05", "meal_slot": self.slot.pk}
+        payload.update(data)
+        return self.client.post(reverse("nutrition:diary-quick-add"), payload)
+
+    def test_logs_the_given_macros_without_creating_a_food(self):
+        foods_before = Food.objects.count()
+        response = self._post(
+            quick_name="Burger", quick_calories="850", quick_protein_grams="40",
+            quick_carbohydrate_grams="70", quick_fat_grams="45",
+        )
+        entry = DiaryEntry.objects.get(user=self.alice)
+        day_url = reverse("nutrition:diary-day", args=["2026-01-05"])
+        self.assertRedirects(
+            response, f"{day_url}#meal-slot-{self.slot.pk}", fetch_redirect_response=False
+        )
+        self.assertEqual(Food.objects.count(), foods_before)
+        self.assertTrue(entry.is_quick)
+        self.assertEqual(entry.display_name, "Burger")
+        self.assertEqual(entry.meal_slot, self.slot)
+        nutrition = services.diary_entry_nutrition(entry)
+        self.assertEqual(nutrition.calories, Decimal("850"))
+        self.assertEqual(nutrition.fat_grams, Decimal("45"))
+
+    def test_blank_calories_are_estimated_from_the_macros(self):
+        self._post(quick_protein_grams="10", quick_carbohydrate_grams="20", quick_fat_grams="5")
+        entry = DiaryEntry.objects.get(user=self.alice)
+        self.assertEqual(entry.quick_calories, 4 * 10 + 4 * 20 + 9 * 5)
+
+    def test_nothing_entered_is_rejected_and_reopens_the_card(self):
+        response = self._post(quick_name="Mystery")
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(DiaryEntry.objects.exists())
+        self.assertContains(response, "Enter the calories or at least one macro.")
+        self.assertContains(response, 'class="card preferences" open>')
+
+    def test_counts_toward_the_days_totals(self):
+        self._post(quick_calories="500", quick_protein_grams="30")
+        totals = services.daily_totals(self.alice, date(2026, 1, 5))
+        self.assertEqual(totals.calories, Decimal("500"))
+        self.assertEqual(totals.protein_grams, Decimal("30"))
+
+    def test_shows_on_the_diary_day_and_can_be_edited(self):
+        self._post(quick_name="Pizza", quick_calories="900")
+        entry = DiaryEntry.objects.get(user=self.alice)
+        day = self.client.get(reverse("nutrition:diary-day", args=["2026-01-05"]))
+        self.assertContains(day, "Pizza")
+        self.assertContains(day, "Quick entry")
+        self.client.post(
+            reverse("nutrition:diary-entry-edit", args=[entry.pk]),
+            {"quick_name": "Pizza", "quick_calories": "1000", "notes": ""},
+        )
+        entry.refresh_from_db()
+        self.assertEqual(entry.quick_calories, 1000)
+
+    def test_copying_a_day_keeps_quick_entries(self):
+        self._post(quick_name="Pizza", quick_calories="900")
+        services.copy_diary_day(self.alice, date(2026, 1, 5), date(2026, 1, 6))
+        copy = DiaryEntry.objects.get(user=self.alice, date=date(2026, 1, 6))
+        self.assertEqual((copy.quick_name, copy.quick_calories), ("Pizza", 900))
+
+    def test_saving_a_meal_as_a_recipe_skips_quick_entries(self):
+        self._post(quick_calories="900")
+        self.assertIsNone(
+            services.create_recipe_from_diary_meal(self.alice, date(2026, 1, 5), self.slot)
+        )
+
+    def test_the_add_food_page_offers_it(self):
+        response = self.client.get(reverse("nutrition:diary-add-entry"))
+        self.assertContains(response, reverse("nutrition:diary-quick-add"))
+        self.assertContains(response, "Enter macros manually")
+
+
 class DietPlanTests(TestCase):
     def test_a_plan_can_have_meals_with_a_calorie_split(self):
         alice = User.objects.create_user(username="alice", password="s3cret-pass")

@@ -5743,6 +5743,9 @@ gained `page`/`param`/`anchor`/`label`/`hx_target` options (and
 `url_replace` a variable parameter name) — this also fixed their search
 terms going into the URL un-encoded.
 
+- Quick entries: `DiaryEntry` can carry its own macros instead of a
+  food or recipe (the check constraint now allows exactly one of the
+  three), for restaurant meals that don't deserve a library food.
 - The food list defaults to newest first.
 - Search results in the diary prefill the last logged quantity, shared
   with "Most used" via `services.last_diary_uses`; "Most used" is

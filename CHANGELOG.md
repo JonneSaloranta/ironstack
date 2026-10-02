@@ -19,6 +19,9 @@ narrated summary of the same version.
 ## [Unreleased]
 
 ### Added
+- Food diary: "Enter macros manually" logs a meal's calories and macros
+  straight into the diary (e.g. a restaurant's published values)
+  without creating a food for it.
 - "Most used" foods are paginated instead of capped at ten.
 
 ### Changed

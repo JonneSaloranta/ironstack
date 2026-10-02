@@ -561,13 +561,25 @@ until now, nothing in the UI ever surfaced.
 
 ```
 user, date (DateField — the day it counts toward, not when it was
-typed), meal_slot (FK), food (nullable FK) XOR recipe (nullable FK),
-quantity, logged_at (DateTimeField, default now), notes
+typed), meal_slot (FK), food (nullable FK) XOR recipe (nullable FK)
+XOR quick macros (quick_name, quick_calories, quick_protein_grams,
+quick_carbohydrate_grams, quick_fat_grams), quantity, logged_at
+(DateTimeField, default now), notes
 ```
 
-Exactly one of `food`/`recipe` must be set — enforced with a
-`CheckConstraint`, not just convention. `quantity` means grams/ml/pieces
-for a food entry, servings for a recipe entry. `date` vs. `logged_at`
+Exactly one of `food`/`recipe`/quick macros (`quick_calories` set) must
+be set — enforced with a `CheckConstraint`, not just convention.
+`quantity` means grams/ml/pieces for a food entry, servings for a recipe
+entry, portions (always 1 from the UI) for a quick entry.
+
+**Quick entry** ("Enter macros manually" on the add-food page,
+`diary_quick_add`, `services.create_quick_diary_entry`): macros typed
+straight in — a restaurant's published values — without creating a
+throwaway `Food`. The values live on the entry itself, so they never
+change afterwards. Every value is optional but at least one is
+required; blank calories are estimated from the macros (4/4/9 kcal/g).
+Editing a quick entry edits its macros instead of a quantity; "Copy day"
+copies it; "Save as recipe" skips it, the same as a recipe entry. `date` vs. `logged_at`
 mirrors `ExerciseSet.performed_at` vs. `created_at`: the diary date can
 be legitimately back-dated (logging breakfast at lunchtime, or
 catching up on yesterday), the audit timestamp cannot.

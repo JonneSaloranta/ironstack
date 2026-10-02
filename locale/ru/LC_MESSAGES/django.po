@@ -8928,8 +8928,38 @@ msgstr "Отключить этот комплекс? Прошлые сесси�
 msgid "Deactivate this stretch? It will no longer appear when browsing, but routines and past sessions that use it keep working."
 msgstr "Отключить это упражнение? Оно больше не будет показываться при просмотре, но комплексы и прошлые сессии, которые его используют, продолжат работать."
 
+msgid "Optional — e.g. the restaurant dish."
+msgstr "Необязательно — например, блюдо в ресторане."
+
+msgid "kcal. Leave blank to estimate it from the macros."
+msgstr "ккал. Оставьте пустым, чтобы рассчитать по макронутриентам."
+
+msgid "Enter the calories or at least one macro."
+msgstr "Введите калории или хотя бы один макронутриент."
+
+msgid "Quick entry"
+msgstr "Быстрая запись"
+
+msgid "Log either a food, a recipe or quick macros — exactly one of them."
+msgstr "Запишите продукт, рецепт или быстрые макросы — что-то одно."
+
+msgid "Pick a meal."
+msgstr "Выберите приём пищи."
+
+msgid "Added to your diary."
+msgstr "Добавлено в дневник."
+
 msgid "Most used foods pages"
 msgstr "Страницы часто используемых продуктов"
+
+msgid "Enter macros manually"
+msgstr "Ввести макросы вручную"
+
+msgid "For a meal out or anything else you don't want to save as a food."
+msgstr "Для еды вне дома или того, что не хочется сохранять как продукт."
+
+msgid "Notes"
+msgstr "Заметки"
 
 #~ msgid "Back to home"
 #~ msgstr "Назад на главную"

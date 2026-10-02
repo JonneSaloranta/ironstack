@@ -40,6 +40,7 @@ from .forms import (
     BodyStepForm,
     DiaryAddEntryForm,
     DiaryEntryQuantityForm,
+    DiaryQuickEntryForm,
     DietPlanForm,
     DietPlanItemForm,
     DietPlanMealItemSearchForm,
@@ -806,6 +807,7 @@ class DiaryAddEntryView(LoginRequiredMixin, View):
             {
                 "date": target_date or timezone.localdate().isoformat(),
                 "meal_slots": services.visible_meal_slots(request.user),
+                "quick_form": DiaryQuickEntryForm(),
                 "most_used": _most_used_page(request),
                 "selected_meal_slot": request.GET.get("meal_slot", ""),
             },
@@ -824,6 +826,7 @@ class DiaryAddEntryView(LoginRequiredMixin, View):
                     "form": form,
                     "date": target_date.isoformat(),
                     "meal_slots": services.visible_meal_slots(request.user),
+                    "quick_form": DiaryQuickEntryForm(),
                     "most_used": _most_used_page(request),
                     "selected_meal_slot": request.POST.get("meal_slot", ""),
                 },
@@ -845,6 +848,8 @@ class DiaryAddEntryView(LoginRequiredMixin, View):
                         "form": form,
                         "date": target_date.isoformat(),
                         "meal_slots": services.visible_meal_slots(request.user),
+                        "quick_form": DiaryQuickEntryForm(),
+                        "most_used": _most_used_page(request),
                         "selected_meal_slot": request.POST.get("meal_slot", ""),
                     },
                 )
@@ -867,15 +872,60 @@ def _owned_diary_entry_or_404(request, pk):
 
 
 @login_required
+def diary_quick_add(request):
+    """POST-only: logs a quick entry (macros with no Food behind them)
+    from the quick-add card on the add-food page. An invalid form
+    re-renders that page with the card open and its errors shown."""
+    if request.method != "POST":
+        return redirect("nutrition:diary-add-entry")
+    target_date = _parse_diary_date(request.POST.get("date"))
+    meal_slot = services.visible_meal_slots(request.user).filter(
+        pk=request.POST.get("meal_slot") or None
+    ).first()
+    form = DiaryQuickEntryForm(request.POST)
+    if meal_slot is None or not form.is_valid():
+        if meal_slot is None:
+            form.add_error(None, _("Pick a meal."))
+        return render(
+            request,
+            DiaryAddEntryView.template_name,
+            {
+                "quick_form": form,
+                "date": target_date.isoformat(),
+                "meal_slots": services.visible_meal_slots(request.user),
+                "most_used": _most_used_page(request),
+                "selected_meal_slot": request.POST.get("meal_slot", ""),
+            },
+        )
+    data = form.cleaned_data
+    services.create_quick_diary_entry(
+        request.user,
+        target_date=target_date,
+        meal_slot=meal_slot,
+        name=data["quick_name"],
+        calories=data["quick_calories"],
+        protein_grams=data["quick_protein_grams"],
+        carbohydrate_grams=data["quick_carbohydrate_grams"],
+        fat_grams=data["quick_fat_grams"],
+        notes=data["notes"],
+    )
+    messages.success(request, _("Added to your diary."))
+    return _diary_day_redirect(target_date, meal_slot.pk)
+
+
+@login_required
 def diary_entry_edit(request, pk):
     entry = _owned_diary_entry_or_404(request, pk)
+    # A quick entry has no food to scale, so its own macros are what
+    # gets edited, not a quantity.
+    form_class = DiaryQuickEntryForm if entry.is_quick else DiaryEntryQuantityForm
     if request.method == "POST":
-        form = DiaryEntryQuantityForm(request.POST, instance=entry)
+        form = form_class(request.POST, instance=entry)
         if form.is_valid():
             form.save()
             return _diary_day_redirect(entry.date, entry.meal_slot_id)
     else:
-        form = DiaryEntryQuantityForm(instance=entry)
+        form = form_class(instance=entry)
     return render(request, "nutrition/diary_entry_form.html", {"form": form, "entry": entry})
 
 

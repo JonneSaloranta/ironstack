@@ -533,31 +533,60 @@ class DiaryEntry(TimeStampedModel):
     recipe = models.ForeignKey(
         Recipe, related_name="diary_entries", null=True, blank=True, on_delete=models.CASCADE
     )
-    # Grams/ml/pieces for a food entry, servings for a recipe entry.
+    # Grams/ml/pieces for a food entry, servings for a recipe entry,
+    # portions (normally 1) for a quick entry.
     quantity = models.DecimalField(max_digits=8, decimal_places=2)
     notes = models.TextField(blank=True)
+    # A "quick entry": macros typed straight in (a restaurant meal's
+    # published values) with no Food behind it — stored on the entry
+    # itself, per portion, so there's no throwaway Food in the library
+    # and the logged figures never change afterwards. `quick_calories`
+    # being set is what makes an entry a quick one.
+    quick_name = models.CharField(max_length=200, blank=True)
+    quick_calories = models.PositiveIntegerField(null=True, blank=True)
+    quick_protein_grams = models.DecimalField(
+        max_digits=6, decimal_places=2, null=True, blank=True
+    )
+    quick_carbohydrate_grams = models.DecimalField(
+        max_digits=6, decimal_places=2, null=True, blank=True
+    )
+    quick_fat_grams = models.DecimalField(max_digits=6, decimal_places=2, null=True, blank=True)
 
     class Meta:
         ordering = ["-date", "-created_at"]
         constraints = [
-            # Exactly one of food/recipe — enforced here, not just by
-            # convention (docs/NUTRITION.md "DiaryEntry").
+            # Exactly one of food/recipe/quick macros — enforced here,
+            # not just by convention (docs/NUTRITION.md "DiaryEntry").
             models.CheckConstraint(
                 condition=(
-                    models.Q(food__isnull=False, recipe__isnull=True)
-                    | models.Q(food__isnull=True, recipe__isnull=False)
+                    models.Q(food__isnull=False, recipe__isnull=True, quick_calories__isnull=True)
+                    | models.Q(food__isnull=True, recipe__isnull=False, quick_calories__isnull=True)
+                    | models.Q(food__isnull=True, recipe__isnull=True, quick_calories__isnull=False)
                 ),
-                name="diary_entry_exactly_one_of_food_or_recipe",
+                name="diary_entry_exactly_one_of_food_recipe_or_quick",
             ),
         ]
 
+    @property
+    def is_quick(self):
+        return self.quick_calories is not None
+
+    @property
+    def display_name(self):
+        if self.food_id:
+            return self.food.name
+        if self.recipe_id:
+            return self.recipe.name
+        return self.quick_name or _("Quick entry")
+
     def clean(self):
-        if bool(self.food_id) == bool(self.recipe_id):
-            raise ValidationError(_("Log either a food or a recipe, not both or neither."))
+        if sum([bool(self.food_id), bool(self.recipe_id), self.is_quick]) != 1:
+            raise ValidationError(
+                _("Log either a food, a recipe or quick macros — exactly one of them.")
+            )
 
     def __str__(self):
-        item = self.food.name if self.food_id else self.recipe.name
-        return f"{self.user.username}: {item} ({self.date})"
+        return f"{self.user.username}: {self.display_name} ({self.date})"
 
 
 class DietPlan(TimeStampedModel):

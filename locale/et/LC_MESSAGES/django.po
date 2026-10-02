@@ -8840,8 +8840,38 @@ msgstr "Kas deaktiveerida see rutiin? Varasemad sessioonid jäävad sinu ajalukk
 msgid "Deactivate this stretch? It will no longer appear when browsing, but routines and past sessions that use it keep working."
 msgstr "Kas deaktiveerida see venitus? Seda ei kuvata enam sirvimisel, kuid seda kasutavad rutiinid ja varasemad sessioonid töötavad edasi."
 
+msgid "Optional — e.g. the restaurant dish."
+msgstr "Valikuline — nt restoranitoidu nimi."
+
+msgid "kcal. Leave blank to estimate it from the macros."
+msgstr "kcal. Jäta tühjaks, et seda makrode põhjal hinnata."
+
+msgid "Enter the calories or at least one macro."
+msgstr "Sisesta kalorid või vähemalt üks makro."
+
+msgid "Quick entry"
+msgstr "Kiirsisestus"
+
+msgid "Log either a food, a recipe or quick macros — exactly one of them."
+msgstr "Logi kas toiduaine, retsept või kiirmakrod — täpselt üks neist."
+
+msgid "Pick a meal."
+msgstr "Vali söögikord."
+
+msgid "Added to your diary."
+msgstr "Lisatud päevikusse."
+
 msgid "Most used foods pages"
 msgstr "Enim kasutatud toiduainete lehed"
+
+msgid "Enter macros manually"
+msgstr "Sisesta makrod käsitsi"
+
+msgid "For a meal out or anything else you don't want to save as a food."
+msgstr "Väljas söömiseks või muuks, mida sa ei soovi toiduainena salvestada."
+
+msgid "Notes"
+msgstr "Märkmed"
 
 #~ msgid "Back to home"
 #~ msgstr "Tagasi avalehele"

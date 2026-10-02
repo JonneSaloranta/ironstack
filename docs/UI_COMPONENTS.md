@@ -76,6 +76,8 @@ There are exactly two `<h2>` styles:
 | Big single number | `.stat-value` / `.stat-value-lg` | one headline figure |
 | Admin/destructive section | `.danger-zone` | staff-only or account-level dangerous actions |
 | Sub-group label in a long form | `.field-group-label` | profile preferences |
+| Collapsible section | `<details class="card preferences">` + `<summary><h2 class="card-title no-margin">` (add `open` when its form has errors) | profile preferences, diary quick entry |
+
 Numbers that should line up (weights, reps, macros, dates in tables) get
 `.stat-figure` (monospace, tabular numerals).
 

@@ -69,6 +69,26 @@
 {% include "core/_search_indicator.html" %}
   <div id="food-search-results"></div>
 
+  {% comment %}
+    Quick entry: macros typed straight in (a restaurant meal's published
+    values) without creating a Food — views.diary_quick_add. Collapsed by
+    default; reopened with its errors when the submission was invalid.
+  {% endcomment %}
+  <details data-tour="quick-entry" class="card preferences"{% if quick_form.errors %} open{% endif %}>
+    <summary><h2 class="card-title no-margin">{% trans "Enter macros manually" %}</h2></summary>
+    <p class="text-muted">{% trans "For a meal out or anything else you don't want to save as a food." %}</p>
+    <form method="post" action="{% url 'nutrition:diary-quick-add' %}">
+      {% csrf_token %}
+      <input type="hidden" name="meal_slot" x-bind:value="mealSlot" value="{{ selected_meal_slot|default:meal_slots.0.pk|default:'' }}">
+      <input type="hidden" name="date" value="{{ date }}">
+      {% include "core/_form_errors.html" with form=quick_form %}
+      {% for field in quick_form %}
+        {% include "core/_field.html" with field=field %}
+      {% endfor %}
+      <button type="submit">{% trans "Log to diary" %}</button>
+    </form>
+  </details>
+
   {% include "nutrition/_most_used_foods.html" with mode="diary" date=date meal_slots=meal_slots %}
 </div>
 

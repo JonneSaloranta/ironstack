@@ -584,7 +584,11 @@ class RecipeSerializer(serializers.ModelSerializer):
 class DiaryEntrySerializer(serializers.ModelSerializer):
     class Meta:
         model = DiaryEntry
-        fields = ["id", "date", "meal_slot", "food", "recipe", "quantity", "notes", "user"]
+        fields = [
+            "id", "date", "meal_slot", "food", "recipe", "quantity", "notes", "user",
+            "quick_name", "quick_calories", "quick_protein_grams",
+            "quick_carbohydrate_grams", "quick_fat_grams",
+        ]
         read_only_fields = ["user"]
 
     def validate(self, attrs):
@@ -592,10 +596,15 @@ class DiaryEntrySerializer(serializers.ModelSerializer):
         # checked here too so a bad request gets a normal 400 with a
         # clear message instead of a raw IntegrityError 500 from the
         # database constraint alone.
-        food = attrs.get("food", getattr(self.instance, "food", None))
-        recipe = attrs.get("recipe", getattr(self.instance, "recipe", None))
-        if bool(food) == bool(recipe):
-            raise serializers.ValidationError("Log either a food or a recipe, not both or neither.")
+        def current(name):
+            return attrs.get(name, getattr(self.instance, name, None))
+
+        kinds = [bool(current("food")), bool(current("recipe")),
+                 current("quick_calories") is not None]
+        if sum(kinds) != 1:
+            raise serializers.ValidationError(
+                "Log either a food, a recipe or quick macros (quick_calories) — exactly one."
+            )
         return attrs
 
     def validate_meal_slot(self, value):

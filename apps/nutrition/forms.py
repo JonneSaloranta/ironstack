@@ -223,12 +223,73 @@ class DiaryAddEntryForm(forms.Form):
         return cleaned
 
 
+class DiaryQuickEntryForm(forms.ModelForm):
+    """Macros typed straight into the diary — no Food behind them
+    (DiaryEntry's "quick entry"). Used both to add one and to edit it.
+    Every value is optional on its own, but at least one has to be
+    given; blank calories are estimated from the macros."""
+
+    class Meta:
+        from .models import DiaryEntry
+
+        model = DiaryEntry
+        fields = [
+            "quick_name",
+            "quick_calories",
+            "quick_protein_grams",
+            "quick_carbohydrate_grams",
+            "quick_fat_grams",
+            "notes",
+        ]
+        labels = {
+            "quick_name": _("Name"),
+            "quick_calories": _("Calories"),
+            "quick_protein_grams": _("Protein (g)"),
+            "quick_carbohydrate_grams": _("Carbohydrates (g)"),
+            "quick_fat_grams": _("Fat (g)"),
+            "notes": _("Notes"),
+        }
+        help_texts = {
+            "quick_name": _("Optional — e.g. the restaurant dish."),
+            "quick_calories": _("kcal. Leave blank to estimate it from the macros."),
+        }
+        widgets = {
+            field: forms.NumberInput(attrs={"inputmode": "decimal", "autocomplete": "off"})
+            for field in [
+                "quick_calories",
+                "quick_protein_grams",
+                "quick_carbohydrate_grams",
+                "quick_fat_grams",
+            ]
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["notes"].widget = forms.Textarea(attrs={"rows": 2})
+
+    def clean(self):
+        from . import services
+
+        cleaned = super().clean()
+        macros = [
+            cleaned.get("quick_protein_grams"),
+            cleaned.get("quick_carbohydrate_grams"),
+            cleaned.get("quick_fat_grams"),
+        ]
+        if cleaned.get("quick_calories") is None:
+            if all(value is None for value in macros):
+                raise forms.ValidationError(_("Enter the calories or at least one macro."))
+            cleaned["quick_calories"] = services.calories_from_macros(*macros)
+        return cleaned
+
+
 class DiaryEntryQuantityForm(forms.ModelForm):
     class Meta:
         from .models import DiaryEntry
 
         model = DiaryEntry
         fields = ["quantity", "notes"]
+        labels = {"notes": _("Notes")}
 
 
 class RecipeForm(forms.ModelForm):

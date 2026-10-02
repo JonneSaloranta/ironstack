@@ -906,12 +906,59 @@ def recipe_per_serving_nutrition(recipe) -> ScaledNutrition:
 
 def diary_entry_nutrition(entry) -> ScaledNutrition:
     """A single DiaryEntry's nutrition — dispatches on whichever of
-    `food`/`recipe` is set (the model's own CheckConstraint guarantees
-    exactly one is). `quantity` means the food's own unit for a food
-    entry, servings for a recipe entry."""
+    `food`/`recipe`/quick macros is set (the model's own CheckConstraint
+    guarantees exactly one is). `quantity` means the food's own unit for
+    a food entry, servings for a recipe entry, portions for a quick one."""
     if entry.food_id:
         return scale_nutrition(entry.food, entry.quantity)
-    return recipe_per_serving_nutrition(entry.recipe).scaled_by(entry.quantity)
+    if entry.recipe_id:
+        return recipe_per_serving_nutrition(entry.recipe).scaled_by(entry.quantity)
+    return ScaledNutrition(
+        calories=Decimal(entry.quick_calories),
+        protein_grams=entry.quick_protein_grams or Decimal("0"),
+        carbohydrate_grams=entry.quick_carbohydrate_grams or Decimal("0"),
+        fat_grams=entry.quick_fat_grams or Decimal("0"),
+        fiber_grams=None,
+        sugar_grams=None,
+        saturated_fat_grams=None,
+        sodium_mg=None,
+    ).scaled_by(entry.quantity)
+
+
+def calories_from_macros(protein_grams, carbohydrate_grams, fat_grams):
+    """Atwater 4/4/9 kcal per gram — the estimate a quick entry falls
+    back to when only its macros were given."""
+    return int(
+        round(
+            4 * (protein_grams or 0) + 4 * (carbohydrate_grams or 0) + 9 * (fat_grams or 0)
+        )
+    )
+
+
+def create_quick_diary_entry(
+    user, *, target_date, meal_slot, name="", calories=None,
+    protein_grams=None, carbohydrate_grams=None, fat_grams=None, notes="",
+):
+    """Logs macros typed straight in (e.g. a restaurant's published
+    values) without creating a Food for them. Calories left blank are
+    estimated from the macros; the caller's form guarantees at least
+    one value is present."""
+    from .models import DiaryEntry
+
+    if calories is None:
+        calories = calories_from_macros(protein_grams, carbohydrate_grams, fat_grams)
+    return DiaryEntry.objects.create(
+        user=user,
+        date=target_date,
+        meal_slot=meal_slot,
+        quantity=Decimal("1"),
+        quick_name=name,
+        quick_calories=calories,
+        quick_protein_grams=protein_grams,
+        quick_carbohydrate_grams=carbohydrate_grams,
+        quick_fat_grams=fat_grams,
+        notes=notes,
+    )
 
 
 def daily_totals(user, target_date) -> ScaledNutrition:
@@ -1100,6 +1147,11 @@ def copy_diary_day(user, source_date, target_date):
             recipe_id=entry.recipe_id,
             quantity=entry.quantity,
             notes=entry.notes,
+            quick_name=entry.quick_name,
+            quick_calories=entry.quick_calories,
+            quick_protein_grams=entry.quick_protein_grams,
+            quick_carbohydrate_grams=entry.quick_carbohydrate_grams,
+            quick_fat_grams=entry.quick_fat_grams,
         )
         for entry in source_entries
     ]
