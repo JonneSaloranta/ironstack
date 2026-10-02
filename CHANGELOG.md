@@ -18,6 +18,8 @@ narrated summary of the same version.
 
 ## [Unreleased]
 
+## [1.24.0] — 2026-10-03
+
 ### Added
 - AI assistant (Profile → AI assistant): ask for a diet plan or a workout
   program built from your own foods, recipes, exercises and history, or
