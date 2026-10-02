@@ -18,6 +18,8 @@ narrated summary of the same version.
 
 ## [Unreleased]
 
+## [1.23.0] — 2026-10-02
+
 ### Added
 - Shopping list for a diet plan: the same food on several days is added
   up into one amount (with each day's amount under it), recipes are
