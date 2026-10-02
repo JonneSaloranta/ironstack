@@ -1,0 +1,23 @@
+{% load i18n assistant_tags %}
+<div class="assistant-message assistant-message-{{ message.role }}" id="message-{{ message.pk }}"
+     {% if message.is_in_progress %}aria-busy="true"
+     hx-get="{% url 'assistant:message-fragment' message.pk %}"
+     hx-trigger="every 1s [document.visibilityState=='visible']" hx-swap="outerHTML"{% endif %}>
+  <p class="assistant-message-author">{{ message.get_role_display }}</p>
+  {% if message.role == "user" %}
+    <p>{{ message.text|linebreaksbr }}</p>
+  {% else %}
+    {% if message.text %}<div class="assistant-reply">{{ message.text|assistant_reply }}</div>{% endif %}
+    {% if message.is_in_progress %}
+      <p class="text-muted row"><span class="spinner" aria-hidden="true"></span> {% if message.activity %}{{ message.activity }}{% else %}{% trans "Waiting…" %}{% endif %}</p>
+      {% if message.waiting_long %}
+        <p class="text-muted text-xs">{% trans "This is taking unusually long to start. If it never does, the assistant worker may not be running — let your administrator know." %}</p>
+      {% endif %}
+    {% elif message.status == "error" %}
+      <div class="alert alert-error"><p>{{ message.error }}</p></div>
+    {% endif %}
+    {% for proposal in message.proposals.all %}
+      {% include "assistant/_proposal.html" %}
+    {% endfor %}
+  {% endif %}
+</div>

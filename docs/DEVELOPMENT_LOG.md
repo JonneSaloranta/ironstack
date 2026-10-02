@@ -5876,3 +5876,41 @@ Home card on the active plan's shopping days (`shopping.shopping_today`),
 and a web-manifest `shortcuts` entry in the per-user manifest. The Home
 and overview additions have their own optional tour steps; the redirect
 page is in `NO_TOUR_NEEDED`.
+
+## AI assistant
+
+`apps.assistant`, asked for directly: an assistant for diet plans,
+workout programs and questions about one's own data, usable with the
+operator's key in `.env` or a user's own key. Full design in
+docs/ASSISTANT.md.
+
+Decisions worth recording:
+
+- **Suggest, never act.** The model gets read tools and two `propose_*`
+  tools; a proposal is a card the user accepts. Accepting goes through
+  `apps.programs.services.import_program` and a new
+  `apps.nutrition.services.create_diet_plan` (the resolved-objects sibling
+  of `import_diet_plan` — that one would re-fetch OpenFoodFacts foods by
+  barcode), and the plan lands inactive, like an import.
+- **A worker, not the request.** A reply with tool calls outlasts
+  gunicorn's 30-second timeout, so a new `assistant-worker` container (the
+  same sleep-and-poll shape as the two schedulers, `SKIP LOCKED` so it can
+  scale) writes replies, and the page polls the one bubble being written.
+  No Celery/Redis, no SSE (nginx needs nothing new).
+- **Provider interface** with Claude (official SDK, streaming, adaptive
+  thinking, prompt caching, server-side refusal fallback) and Ollama
+  (`/api/chat` via `requests`). History is stored per message in the
+  provider's own wire format and replayed append-only, so thinking blocks
+  stay valid; a conversation is pinned to its provider.
+- **Keys and cost.** A user's own key is encrypted with
+  `EncryptedTextField`, now generalized with a `key_setting` argument
+  (`ASSISTANT_ENCRYPTION_KEY`, derived from `SECRET_KEY` when unset —
+  unlike TOTP, an API key is never stored in plain text). The shared key
+  is gated by an admin-editable access policy (default: staff only) and a
+  per-user daily token limit; usage is recorded per user and day.
+- **Untrusted output.** Replies render through a small escaped Markdown
+  subset with no links; every tool validates its own input and returns
+  mistakes to the model as error results.
+
+The assistant pages have a tour, are in the long-content layout test and
+the axe test, and are translated into all six languages.

@@ -1,0 +1,64 @@
+{% load i18n assistant_tags core_extras %}
+<div class="card assistant-proposal" id="proposal-{{ proposal.pk }}">
+  <h2 class="card-title">{{ proposal.title }} <span class="text-muted">· {{ proposal.get_kind_display }}</span></h2>
+  {% if proposal.payload.summary %}<p>{{ proposal.payload.summary }}</p>{% endif %}
+
+  {% if proposal.kind == "diet_plan" %}
+    <p class="text-muted">
+      {% blocktrans with calories=proposal.payload.target_calories protein=proposal.payload.target_protein_grams|floatformat:"0" carbs=proposal.payload.target_carbohydrate_grams|floatformat:"0" fat=proposal.payload.target_fat_grams|floatformat:"0" %}Target {{ calories }} kcal · protein {{ protein }} g · carbs {{ carbs }} g · fat {{ fat }} g{% endblocktrans %}<br>
+      {% blocktrans with calories=proposal.payload.computed_daily_calories %}The suggested meals add up to about {{ calories }} kcal a day.{% endblocktrans %}
+    </p>
+    <details>
+      <summary>{% trans "Show meals" %}</summary>
+      {% for meal in proposal.payload.meals %}
+        <p class="mt-2"><strong>{% if meal.weekday is not None %}{{ meal.weekday|weekday_name }} · {% endif %}{{ meal.meal_slot|translate_content }}</strong> <span class="text-muted">· {{ meal.calories }} kcal</span></p>
+        <ul>
+          {% for item in meal.items %}
+            <li>{{ item.label|translate_content }} — {% if item.unit %}{{ item.quantity|floatformat:"-1" }} {{ item.unit }}{% else %}{% blocktrans with servings=item.quantity|floatformat:"-1" %}{{ servings }} servings{% endblocktrans %}{% endif %} <span class="text-muted">· {{ item.calories }} kcal</span>{% if item.new_food %} <span class="tag tag-outline">{% trans "new food" %}</span>{% endif %}</li>
+          {% endfor %}
+        </ul>
+      {% endfor %}
+    </details>
+    {% if proposal.payload|has_new_foods %}
+      <p class="text-muted text-xs">{% trans "Foods marked “new food” are added to your food library with nutrition values the assistant estimated — check them." %}</p>
+    {% endif %}
+  {% else %}
+    {% if proposal.payload.description %}<p class="text-muted">{{ proposal.payload.description }}</p>{% endif %}
+    <details>
+      <summary>{% trans "Show workouts" %}</summary>
+      {% for workout in proposal.payload.workouts %}
+        <p class="mt-2"><strong>{{ workout.name }}</strong>{% if workout.scheduled_weekday is not None %} <span class="text-muted">· {{ workout.scheduled_weekday|weekday_name }}</span>{% endif %}</p>
+        <ul>
+          {% for item in workout.prescriptions %}
+            <li>{{ item.exercise_label|translate_content }} — {{ item.set_count }} × {{ item.min_reps }}{% if item.max_reps != item.min_reps %}–{{ item.max_reps }}{% endif %}{% if item.target_weight_kg %} · {{ item.target_weight_kg|proposal_weight:user }}{% endif %}{% if item.target_rpe %} · <abbr tabindex="0" title="{% trans "Rate of perceived exertion" %}">RPE</abbr> {{ item.target_rpe|floatformat:"-1" }}{% endif %}</li>
+          {% endfor %}
+        </ul>
+      {% endfor %}
+    </details>
+  {% endif %}
+
+  {% if proposal.status == "pending" %}
+    <div class="row mt-2">
+      <form method="post" action="{% url 'assistant:proposal-accept' proposal.pk %}">
+        {% csrf_token %}
+        <button type="submit">{% if proposal.kind == "diet_plan" %}{% trans "Create diet plan" %}{% else %}{% trans "Create program" %}{% endif %}</button>
+      </form>
+      <form method="post" action="{% url 'assistant:proposal-dismiss' proposal.pk %}">
+        {% csrf_token %}
+        <button type="submit" class="button-secondary">{% trans "Dismiss" context "proposal" %}</button>
+      </form>
+    </div>
+    <p class="text-muted text-xs">{% trans "Nothing is saved until you create it. It's created as a new, inactive plan you can still edit." %}</p>
+  {% elif proposal.status == "accepted" %}
+    <p class="row mt-2">
+      <span class="tag tag-success">{% trans "Created" %}</span>
+      {% if proposal.kind == "diet_plan" %}
+        <a href="{% url 'nutrition:diet-plan-detail' proposal.created_object_id %}">{% trans "Open diet plan" %}</a>
+      {% else %}
+        <a href="{% url 'programs:program-detail' proposal.created_object_id %}">{% trans "Open program" %}</a>
+      {% endif %}
+    </p>
+  {% else %}
+    <p class="mt-2"><span class="tag tag-muted">{% trans "Dismissed" %}</span></p>
+  {% endif %}
+</div>

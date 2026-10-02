@@ -38,6 +38,7 @@ urlpatterns = [
     path("social/", include("apps.social.urls", namespace="social")),
     path("coaching/", include("apps.coaching.urls", namespace="coaching")),
     path("tutorials/", include("apps.tutorials.urls", namespace="tutorials")),
+    path("assistant/", include("apps.assistant.urls", namespace="assistant")),
     # Un-namespaced and outside "social/" deliberately — the shape a
     # group invite link is shared in, /group/invite/<code>/, matters
     # more here than staying consistent with this app's other URLs

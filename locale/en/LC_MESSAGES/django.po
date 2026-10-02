@@ -9767,3 +9767,448 @@ msgstr[1] ""
 
 #~ msgid "+ New recipe"
 #~ msgstr "+ New recipe"
+
+msgid "Ask about your training or nutrition…"
+msgstr ""
+
+msgid "Anthropic API key"
+msgstr ""
+
+msgid "Create one at console.anthropic.com. It's stored encrypted and used only for your own conversations; usage is billed to your Anthropic account."
+msgstr ""
+
+msgid "That doesn't look like an Anthropic API key."
+msgstr ""
+
+msgid "Selected users"
+msgstr ""
+
+msgid "Search users…"
+msgstr ""
+
+msgid "Nobody selected."
+msgstr ""
+
+msgid "No matching users."
+msgstr ""
+
+msgid "Used when access is set to “Selected users”."
+msgstr ""
+
+msgid "Assistant enabled"
+msgstr ""
+
+msgid "Who may use this instance's AI model"
+msgstr ""
+
+msgid "Daily token limit per user"
+msgstr ""
+
+msgid "Nobody — users must bring their own key"
+msgstr ""
+
+msgid "Staff only"
+msgstr ""
+
+msgid "Everyone"
+msgstr ""
+
+msgid "Turns the assistant off for everyone, including users' own keys."
+msgstr ""
+
+msgid "Who may use this instance's own provider (ASSISTANT_API_KEY, or the Ollama server). Its usage is billed to you, the operator."
+msgstr ""
+
+msgid "Tokens (input + output) one user may spend per day on the shared provider. 0 means no limit. Users' own keys are never limited."
+msgstr ""
+
+msgid "This instance's provider"
+msgstr ""
+
+msgid "Your own API key"
+msgstr ""
+
+msgid "You"
+msgstr ""
+
+msgid "Assistant"
+msgstr ""
+
+msgid "Waiting"
+msgstr ""
+
+msgid "Writing"
+msgstr ""
+
+msgid "Failed"
+msgstr ""
+
+msgid "Diet plan"
+msgstr ""
+
+msgid "Workout program"
+msgstr ""
+
+msgid "Waiting for you"
+msgstr ""
+
+msgid "Dismissed"
+msgstr ""
+
+msgid "The assistant sent a malformed reply. Please try again."
+msgstr ""
+
+msgid "The API key was rejected. Check it in your assistant settings."
+msgstr ""
+
+msgid "This API key isn't allowed to use that model."
+msgstr ""
+
+msgid "The configured model (%(model)s) wasn't found."
+msgstr ""
+
+msgid "The AI service is rate limiting requests. Try again in a minute."
+msgstr ""
+
+msgid "The AI service rejected the request."
+msgstr ""
+
+msgid "The AI service is having problems right now. Try again later."
+msgstr ""
+
+msgid "Couldn't reach the AI service."
+msgstr ""
+
+msgid "The administrator has turned the AI assistant off."
+msgstr ""
+
+msgid "This instance doesn't provide an AI model for your account. You can use the assistant with your own Anthropic API key."
+msgstr ""
+
+msgid "Turn the assistant on in its settings first."
+msgstr ""
+
+msgid "Wait for the assistant to finish its current reply."
+msgstr ""
+
+msgid "You've used today's assistant allowance. It resets tomorrow."
+msgstr ""
+
+msgid "This conversation used your own API key, which you've removed. Start a new conversation."
+msgstr ""
+
+msgid "This conversation can't be continued anymore. Start a new conversation."
+msgstr ""
+
+msgid "This conversation is getting long. Start a new one to keep replies quick."
+msgstr ""
+
+msgid "No API key is available for this conversation."
+msgstr ""
+
+msgid "Write a message first."
+msgstr ""
+
+msgid "That message is too long."
+msgstr ""
+
+msgid "Thinking…"
+msgstr ""
+
+msgid "The assistant can't help with that request."
+msgstr ""
+
+msgid "The reply was cut off. Try asking for something smaller."
+msgstr ""
+
+msgid "The reply was cut off."
+msgstr ""
+
+msgid "The assistant stopped after too many steps."
+msgstr ""
+
+msgid "Something went wrong while writing the reply."
+msgstr ""
+
+msgid "The reply was interrupted. Please try again."
+msgstr ""
+
+msgid "Looking at your profile…"
+msgstr ""
+
+msgid "Looking at your workouts…"
+msgstr ""
+
+msgid "Looking at your records…"
+msgstr ""
+
+msgid "Looking at your measurements…"
+msgstr ""
+
+msgid "Looking at your activities…"
+msgstr ""
+
+msgid "Looking at your food diary…"
+msgstr ""
+
+msgid "Looking at your programs…"
+msgstr ""
+
+msgid "Looking at your diet plans…"
+msgstr ""
+
+msgid "Searching exercises…"
+msgstr ""
+
+msgid "Searching foods…"
+msgstr ""
+
+msgid "Searching recipes…"
+msgstr ""
+
+msgid "Looking at your meals…"
+msgstr ""
+
+msgid "Putting a diet plan together…"
+msgstr ""
+
+msgid "Putting a program together…"
+msgstr ""
+
+msgid "Conversation deleted."
+msgstr ""
+
+msgid "This suggestion can't be created anymore: %(error)s"
+msgstr ""
+
+msgid "Diet plan created. It isn't active until you choose to use it."
+msgstr ""
+
+msgid "Program created. Review it and make it yours."
+msgstr ""
+
+msgid "AI assistant turned on."
+msgstr ""
+
+msgid "AI assistant turned off."
+msgstr ""
+
+msgid "API key saved."
+msgstr ""
+
+msgid "API key removed."
+msgstr ""
+
+msgid "Assistant settings saved."
+msgstr ""
+
+msgid "AI assistant"
+msgstr ""
+
+msgid "Turn the assistant on or off, and add your own API key if you have one."
+msgstr ""
+
+msgid "Ask anything"
+msgstr ""
+
+msgid "Ask for a diet plan or a workout program, or about your progress. It looks at your own data before it answers."
+msgstr ""
+
+msgid "Your conversations"
+msgstr ""
+
+msgid "Pick up where you left off. A plan it suggests is only created if you accept it."
+msgstr ""
+
+msgid "Get help with diet plans, workout programs and your progress."
+msgstr ""
+
+msgid "Choose who may use this instance's AI model, set limits, and see usage."
+msgstr ""
+
+msgid "Your messages, and the training and nutrition data the assistant looks up to answer them, are sent to an AI model this instance runs on its own server."
+msgstr ""
+
+msgid "Your messages, and the training and nutrition data the assistant looks up to answer them, are sent to Anthropic (the maker of Claude) to generate replies."
+msgstr ""
+
+msgid "It only reads your own data, and only while it's answering you. It can't change anything: plans it suggests are created only if you choose to."
+msgstr ""
+
+msgid "Replies can be wrong. It isn't a doctor or a dietitian — check anything important with a professional."
+msgstr ""
+
+msgid "You can turn it off, and delete your conversations, at any time."
+msgstr ""
+
+msgid "Waiting…"
+msgstr ""
+
+msgid "This is taking unusually long to start. If it never does, the assistant worker may not be running — let your administrator know."
+msgstr ""
+
+msgid "Target %(calories)s kcal · protein %(protein)s g · carbs %(carbs)s g · fat %(fat)s g"
+msgstr ""
+
+msgid "The suggested meals add up to about %(calories)s kcal a day."
+msgstr ""
+
+msgid "Show meals"
+msgstr ""
+
+msgid "%(servings)s servings"
+msgstr ""
+
+msgid "new food"
+msgstr ""
+
+msgid "Foods marked “new food” are added to your food library with nutrition values the assistant estimated — check them."
+msgstr ""
+
+msgid "Show workouts"
+msgstr ""
+
+msgid "Rate of perceived exertion"
+msgstr ""
+
+msgid "Create diet plan"
+msgstr ""
+
+msgid "Create program"
+msgstr ""
+
+msgid "Nothing is saved until you create it. It's created as a new, inactive plan you can still edit."
+msgstr ""
+
+msgid "Open diet plan"
+msgstr ""
+
+msgid "Open program"
+msgstr ""
+
+msgid "No messages yet."
+msgstr ""
+
+msgid "This instance's AI provider: %(provider)s."
+msgstr ""
+
+msgid "No AI provider is configured for this instance (ASSISTANT_API_KEY, or ASSISTANT_PROVIDER=ollama). Users can still use their own API keys."
+msgstr ""
+
+msgid "Usage, last 30 days"
+msgstr ""
+
+msgid "User"
+msgstr ""
+
+msgid "Key"
+msgstr ""
+
+msgid "Requests"
+msgstr ""
+
+msgid "Input tokens"
+msgstr ""
+
+msgid "Output tokens"
+msgstr ""
+
+msgid "Own"
+msgstr ""
+
+msgid "Shared"
+msgstr ""
+
+msgid "Nobody has used the assistant yet."
+msgstr ""
+
+msgid "Back to AI assistant"
+msgstr ""
+
+msgid "Replies can be wrong — check anything important."
+msgstr ""
+
+msgid "Delete this conversation?"
+msgstr ""
+
+msgid "Delete conversation"
+msgstr ""
+
+msgid "Open assistant settings"
+msgstr ""
+
+msgid "Plan with an assistant"
+msgstr ""
+
+msgid "Ask for a diet plan or a workout program built around your goals, or ask about your own progress. The assistant looks at what you've logged before it answers."
+msgstr ""
+
+msgid "Turn on the assistant"
+msgstr ""
+
+msgid "New conversation"
+msgstr ""
+
+msgid "Start conversation"
+msgstr ""
+
+msgid "Today's use: %(used)s of %(limit)s tokens."
+msgstr ""
+
+msgid "Conversations"
+msgstr ""
+
+msgid "No conversations yet."
+msgstr ""
+
+msgid "Try: “Make me a 3-day full-body program” or “Build a weekly diet plan from my foods”."
+msgstr ""
+
+msgid "AI assistant settings"
+msgstr ""
+
+msgid "On. The assistant can read your data while it answers you."
+msgstr ""
+
+msgid "Turn off"
+msgstr ""
+
+msgid "Off. Nothing of yours is sent to an AI model."
+msgstr ""
+
+msgid "AI model"
+msgstr ""
+
+msgid "Using your own Anthropic API key (%(model)s)."
+msgstr ""
+
+msgid "Using this instance's AI model (%(model)s)."
+msgstr ""
+
+msgid "Saved key ending in %(hint)s. Your conversations use it, and it's billed to your Anthropic account."
+msgstr ""
+
+msgid "Remove your API key?"
+msgstr ""
+
+msgid "Optional. With your own Anthropic API key you can use the assistant even if this instance doesn't provide a model for you."
+msgstr ""
+
+msgid "Replace key"
+msgstr ""
+
+msgid "Save key"
+msgstr ""
+
+msgid "Ask the assistant"
+msgstr ""
+
+msgid "Help me put together a diet plan that fits my goal."
+msgstr ""
+
+msgid "Help me build a workout program for my goal and schedule."
+msgstr ""
+
+msgctxt "proposal"
+msgid "Dismiss"
+msgstr ""

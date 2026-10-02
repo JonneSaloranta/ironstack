@@ -9885,3 +9885,448 @@ msgstr[2] "%(counter)s товаров в списке покупок для пл
 
 #~ msgid "+ New recipe"
 #~ msgstr "+ Новый рецепт"
+
+msgid "Ask about your training or nutrition…"
+msgstr "Спросите о тренировках или питании…"
+
+msgid "Anthropic API key"
+msgstr "API-ключ Anthropic"
+
+msgid "Create one at console.anthropic.com. It's stored encrypted and used only for your own conversations; usage is billed to your Anthropic account."
+msgstr "Создайте его на console.anthropic.com. Ключ хранится в зашифрованном виде и используется только в ваших собственных беседах; использование оплачивается с вашего аккаунта Anthropic."
+
+msgid "That doesn't look like an Anthropic API key."
+msgstr "Это не похоже на API-ключ Anthropic."
+
+msgid "Selected users"
+msgstr "Выбранные пользователи"
+
+msgid "Search users…"
+msgstr "Поиск пользователей…"
+
+msgid "Nobody selected."
+msgstr "Никто не выбран."
+
+msgid "No matching users."
+msgstr "Подходящих пользователей нет."
+
+msgid "Used when access is set to “Selected users”."
+msgstr "Используется, если доступ установлен на «Выбранные пользователи»."
+
+msgid "Assistant enabled"
+msgstr "Ассистент включён"
+
+msgid "Who may use this instance's AI model"
+msgstr "Кто может пользоваться ИИ-моделью этого сервера"
+
+msgid "Daily token limit per user"
+msgstr "Дневной лимит токенов на пользователя"
+
+msgid "Nobody — users must bring their own key"
+msgstr "Никто — пользователи должны использовать собственный ключ"
+
+msgid "Staff only"
+msgstr "Только персонал"
+
+msgid "Everyone"
+msgstr "Все"
+
+msgid "Turns the assistant off for everyone, including users' own keys."
+msgstr "Отключает ассистента для всех, в том числе с собственными ключами пользователей."
+
+msgid "Who may use this instance's own provider (ASSISTANT_API_KEY, or the Ollama server). Its usage is billed to you, the operator."
+msgstr "Кто может пользоваться собственным провайдером этого сервера (ASSISTANT_API_KEY или сервер Ollama). Использование оплачиваете вы, администратор."
+
+msgid "Tokens (input + output) one user may spend per day on the shared provider. 0 means no limit. Users' own keys are never limited."
+msgstr "Токены (ввод + вывод), которые один пользователь может потратить за день у общего провайдера. 0 — без ограничений. Собственные ключи пользователей никогда не ограничиваются."
+
+msgid "This instance's provider"
+msgstr "Провайдер этого сервера"
+
+msgid "Your own API key"
+msgstr "Ваш собственный API-ключ"
+
+msgid "You"
+msgstr "Вы"
+
+msgid "Assistant"
+msgstr "Ассистент"
+
+msgid "Waiting"
+msgstr "Ожидание"
+
+msgid "Writing"
+msgstr "Пишет"
+
+msgid "Failed"
+msgstr "Ошибка"
+
+msgid "Diet plan"
+msgstr "План питания"
+
+msgid "Workout program"
+msgstr "Программа тренировок"
+
+msgid "Waiting for you"
+msgstr "Ждёт вашего решения"
+
+msgid "Dismissed"
+msgstr "Отклонено"
+
+msgid "The assistant sent a malformed reply. Please try again."
+msgstr "Ассистент прислал некорректный ответ. Попробуйте ещё раз."
+
+msgid "The API key was rejected. Check it in your assistant settings."
+msgstr "API-ключ отклонён. Проверьте его в настройках ассистента."
+
+msgid "This API key isn't allowed to use that model."
+msgstr "Этому API-ключу запрещено использовать эту модель."
+
+msgid "The configured model (%(model)s) wasn't found."
+msgstr "Настроенная модель (%(model)s) не найдена."
+
+msgid "The AI service is rate limiting requests. Try again in a minute."
+msgstr "ИИ-сервис ограничивает число запросов. Попробуйте через минуту."
+
+msgid "The AI service rejected the request."
+msgstr "ИИ-сервис отклонил запрос."
+
+msgid "The AI service is having problems right now. Try again later."
+msgstr "У ИИ-сервиса сейчас проблемы. Попробуйте позже."
+
+msgid "Couldn't reach the AI service."
+msgstr "Не удалось связаться с ИИ-сервисом."
+
+msgid "The administrator has turned the AI assistant off."
+msgstr "Администратор отключил ИИ-ассистента."
+
+msgid "This instance doesn't provide an AI model for your account. You can use the assistant with your own Anthropic API key."
+msgstr "Этот сервер не предоставляет ИИ-модель для вашей учётной записи. Вы можете пользоваться ассистентом со своим API-ключом Anthropic."
+
+msgid "Turn the assistant on in its settings first."
+msgstr "Сначала включите ассистента в его настройках."
+
+msgid "Wait for the assistant to finish its current reply."
+msgstr "Дождитесь, пока ассистент закончит текущий ответ."
+
+msgid "You've used today's assistant allowance. It resets tomorrow."
+msgstr "Вы израсходовали дневной лимит ассистента. Он обновится завтра."
+
+msgid "This conversation used your own API key, which you've removed. Start a new conversation."
+msgstr "В этой беседе использовался ваш API-ключ, который вы удалили. Начните новую беседу."
+
+msgid "This conversation can't be continued anymore. Start a new conversation."
+msgstr "Эту беседу больше нельзя продолжить. Начните новую беседу."
+
+msgid "This conversation is getting long. Start a new one to keep replies quick."
+msgstr "Беседа становится слишком длинной. Начните новую, чтобы ответы оставались быстрыми."
+
+msgid "No API key is available for this conversation."
+msgstr "Для этой беседы нет доступного API-ключа."
+
+msgid "Write a message first."
+msgstr "Сначала напишите сообщение."
+
+msgid "That message is too long."
+msgstr "Сообщение слишком длинное."
+
+msgid "Thinking…"
+msgstr "Думаю…"
+
+msgid "The assistant can't help with that request."
+msgstr "Ассистент не может помочь с этим запросом."
+
+msgid "The reply was cut off. Try asking for something smaller."
+msgstr "Ответ оборвался. Попробуйте попросить что-нибудь поменьше."
+
+msgid "The reply was cut off."
+msgstr "Ответ оборвался."
+
+msgid "The assistant stopped after too many steps."
+msgstr "Ассистент остановился после слишком большого числа шагов."
+
+msgid "Something went wrong while writing the reply."
+msgstr "При написании ответа что-то пошло не так."
+
+msgid "The reply was interrupted. Please try again."
+msgstr "Ответ был прерван. Попробуйте ещё раз."
+
+msgid "Looking at your profile…"
+msgstr "Смотрю ваш профиль…"
+
+msgid "Looking at your workouts…"
+msgstr "Смотрю ваши тренировки…"
+
+msgid "Looking at your records…"
+msgstr "Смотрю ваши рекорды…"
+
+msgid "Looking at your measurements…"
+msgstr "Смотрю ваши замеры…"
+
+msgid "Looking at your activities…"
+msgstr "Смотрю ваши активности…"
+
+msgid "Looking at your food diary…"
+msgstr "Смотрю ваш дневник питания…"
+
+msgid "Looking at your programs…"
+msgstr "Смотрю ваши программы…"
+
+msgid "Looking at your diet plans…"
+msgstr "Смотрю ваши планы питания…"
+
+msgid "Searching exercises…"
+msgstr "Ищу упражнения…"
+
+msgid "Searching foods…"
+msgstr "Ищу продукты…"
+
+msgid "Searching recipes…"
+msgstr "Ищу рецепты…"
+
+msgid "Looking at your meals…"
+msgstr "Смотрю ваши приёмы пищи…"
+
+msgid "Putting a diet plan together…"
+msgstr "Составляю план питания…"
+
+msgid "Putting a program together…"
+msgstr "Составляю программу…"
+
+msgid "Conversation deleted."
+msgstr "Беседа удалена."
+
+msgid "This suggestion can't be created anymore: %(error)s"
+msgstr "Это предложение больше нельзя создать: %(error)s"
+
+msgid "Diet plan created. It isn't active until you choose to use it."
+msgstr "План питания создан. Он не активен, пока вы сами его не выберете."
+
+msgid "Program created. Review it and make it yours."
+msgstr "Программа создана. Просмотрите её и настройте под себя."
+
+msgid "AI assistant turned on."
+msgstr "ИИ-ассистент включён."
+
+msgid "AI assistant turned off."
+msgstr "ИИ-ассистент выключен."
+
+msgid "API key saved."
+msgstr "API-ключ сохранён."
+
+msgid "API key removed."
+msgstr "API-ключ удалён."
+
+msgid "Assistant settings saved."
+msgstr "Настройки ассистента сохранены."
+
+msgid "AI assistant"
+msgstr "ИИ-ассистент"
+
+msgid "Turn the assistant on or off, and add your own API key if you have one."
+msgstr "Включите или выключите ассистента и добавьте свой API-ключ, если он у вас есть."
+
+msgid "Ask anything"
+msgstr "Спрашивайте что угодно"
+
+msgid "Ask for a diet plan or a workout program, or about your progress. It looks at your own data before it answers."
+msgstr "Попросите план питания или программу тренировок, или спросите о своём прогрессе. Перед ответом ассистент смотрит ваши данные."
+
+msgid "Your conversations"
+msgstr "Ваши беседы"
+
+msgid "Pick up where you left off. A plan it suggests is only created if you accept it."
+msgstr "Продолжайте с того места, где остановились. Предложенный план создаётся, только если вы его примете."
+
+msgid "Get help with diet plans, workout programs and your progress."
+msgstr "Помощь с планами питания, программами тренировок и вашим прогрессом."
+
+msgid "Choose who may use this instance's AI model, set limits, and see usage."
+msgstr "Выберите, кто может пользоваться ИИ-моделью этого сервера, задайте лимиты и смотрите статистику."
+
+msgid "Your messages, and the training and nutrition data the assistant looks up to answer them, are sent to an AI model this instance runs on its own server."
+msgstr "Ваши сообщения и данные о тренировках и питании, которые ассистент просматривает для ответа, отправляются ИИ-модели, работающей на собственном сервере этого экземпляра."
+
+msgid "Your messages, and the training and nutrition data the assistant looks up to answer them, are sent to Anthropic (the maker of Claude) to generate replies."
+msgstr "Ваши сообщения и данные о тренировках и питании, которые ассистент просматривает для ответа, отправляются в Anthropic (создатель Claude) для формирования ответов."
+
+msgid "It only reads your own data, and only while it's answering you. It can't change anything: plans it suggests are created only if you choose to."
+msgstr "Он читает только ваши данные и только пока отвечает вам. Он ничего не может изменить: предложенные планы создаются, только если вы сами этого захотите."
+
+msgid "Replies can be wrong. It isn't a doctor or a dietitian — check anything important with a professional."
+msgstr "Ответы могут быть ошибочными. Ассистент не врач и не диетолог — проверяйте важное у специалиста."
+
+msgid "You can turn it off, and delete your conversations, at any time."
+msgstr "Вы можете в любой момент выключить его и удалить свои беседы."
+
+msgid "Waiting…"
+msgstr "Ожидание…"
+
+msgid "This is taking unusually long to start. If it never does, the assistant worker may not be running — let your administrator know."
+msgstr "Запуск занимает необычно много времени. Если ответ так и не начнётся, возможно, фоновый процесс ассистента не запущен — сообщите администратору."
+
+msgid "Target %(calories)s kcal · protein %(protein)s g · carbs %(carbs)s g · fat %(fat)s g"
+msgstr "Цель %(calories)s ккал · белки %(protein)s г · углеводы %(carbs)s г · жиры %(fat)s г"
+
+msgid "The suggested meals add up to about %(calories)s kcal a day."
+msgstr "Предложенные приёмы пищи в сумме дают около %(calories)s ккал в день."
+
+msgid "Show meals"
+msgstr "Показать приёмы пищи"
+
+msgid "%(servings)s servings"
+msgstr "порций: %(servings)s"
+
+msgid "new food"
+msgstr "новый продукт"
+
+msgid "Foods marked “new food” are added to your food library with nutrition values the assistant estimated — check them."
+msgstr "Продукты с пометкой «новый продукт» добавляются в вашу библиотеку с пищевой ценностью, оценённой ассистентом, — проверьте её."
+
+msgid "Show workouts"
+msgstr "Показать тренировки"
+
+msgid "Rate of perceived exertion"
+msgstr "Субъективная оценка нагрузки"
+
+msgid "Create diet plan"
+msgstr "Создать план питания"
+
+msgid "Create program"
+msgstr "Создать программу"
+
+msgid "Nothing is saved until you create it. It's created as a new, inactive plan you can still edit."
+msgstr "Ничего не сохраняется, пока вы не создадите. Создаётся новый неактивный план, который можно редактировать."
+
+msgid "Open diet plan"
+msgstr "Открыть план питания"
+
+msgid "Open program"
+msgstr "Открыть программу"
+
+msgid "No messages yet."
+msgstr "Сообщений пока нет."
+
+msgid "This instance's AI provider: %(provider)s."
+msgstr "ИИ-провайдер этого сервера: %(provider)s."
+
+msgid "No AI provider is configured for this instance (ASSISTANT_API_KEY, or ASSISTANT_PROVIDER=ollama). Users can still use their own API keys."
+msgstr "Для этого сервера не настроен ИИ-провайдер (ASSISTANT_API_KEY или ASSISTANT_PROVIDER=ollama). Пользователи по-прежнему могут использовать свои API-ключи."
+
+msgid "Usage, last 30 days"
+msgstr "Использование за последние 30 дней"
+
+msgid "User"
+msgstr "Пользователь"
+
+msgid "Key"
+msgstr "Ключ"
+
+msgid "Requests"
+msgstr "Запросы"
+
+msgid "Input tokens"
+msgstr "Входные токены"
+
+msgid "Output tokens"
+msgstr "Выходные токены"
+
+msgid "Own"
+msgstr "Свой"
+
+msgid "Shared"
+msgstr "Общий"
+
+msgid "Nobody has used the assistant yet."
+msgstr "Ассистентом ещё никто не пользовался."
+
+msgid "Back to AI assistant"
+msgstr "Назад к ИИ-ассистенту"
+
+msgid "Replies can be wrong — check anything important."
+msgstr "Ответы могут быть ошибочными — проверяйте важное."
+
+msgid "Delete this conversation?"
+msgstr "Удалить эту беседу?"
+
+msgid "Delete conversation"
+msgstr "Удалить беседу"
+
+msgid "Open assistant settings"
+msgstr "Открыть настройки ассистента"
+
+msgid "Plan with an assistant"
+msgstr "Планируйте вместе с ассистентом"
+
+msgid "Ask for a diet plan or a workout program built around your goals, or ask about your own progress. The assistant looks at what you've logged before it answers."
+msgstr "Попросите план питания или программу тренировок под ваши цели, или спросите о своём прогрессе. Перед ответом ассистент смотрит то, что вы записали."
+
+msgid "Turn on the assistant"
+msgstr "Включить ассистента"
+
+msgid "New conversation"
+msgstr "Новая беседа"
+
+msgid "Start conversation"
+msgstr "Начать беседу"
+
+msgid "Today's use: %(used)s of %(limit)s tokens."
+msgstr "Использовано сегодня: %(used)s из %(limit)s токенов."
+
+msgid "Conversations"
+msgstr "Беседы"
+
+msgid "No conversations yet."
+msgstr "Бесед пока нет."
+
+msgid "Try: “Make me a 3-day full-body program” or “Build a weekly diet plan from my foods”."
+msgstr "Попробуйте: «Составь мне 3-дневную программу на всё тело» или «Собери недельный план питания из моих продуктов»."
+
+msgid "AI assistant settings"
+msgstr "Настройки ИИ-ассистента"
+
+msgid "On. The assistant can read your data while it answers you."
+msgstr "Включён. Ассистент может читать ваши данные, пока отвечает вам."
+
+msgid "Turn off"
+msgstr "Выключить"
+
+msgid "Off. Nothing of yours is sent to an AI model."
+msgstr "Выключен. Никакие ваши данные не отправляются ИИ-модели."
+
+msgid "AI model"
+msgstr "ИИ-модель"
+
+msgid "Using your own Anthropic API key (%(model)s)."
+msgstr "Используется ваш собственный API-ключ Anthropic (%(model)s)."
+
+msgid "Using this instance's AI model (%(model)s)."
+msgstr "Используется ИИ-модель этого сервера (%(model)s)."
+
+msgid "Saved key ending in %(hint)s. Your conversations use it, and it's billed to your Anthropic account."
+msgstr "Сохранён ключ, оканчивающийся на %(hint)s. Он используется в ваших беседах, оплата — с вашего аккаунта Anthropic."
+
+msgid "Remove your API key?"
+msgstr "Удалить ваш API-ключ?"
+
+msgid "Optional. With your own Anthropic API key you can use the assistant even if this instance doesn't provide a model for you."
+msgstr "Необязательно. Со своим API-ключом Anthropic вы можете пользоваться ассистентом, даже если этот сервер не предоставляет вам модель."
+
+msgid "Replace key"
+msgstr "Заменить ключ"
+
+msgid "Save key"
+msgstr "Сохранить ключ"
+
+msgid "Ask the assistant"
+msgstr "Спросить ассистента"
+
+msgid "Help me put together a diet plan that fits my goal."
+msgstr "Помоги мне составить план питания под мою цель."
+
+msgid "Help me build a workout program for my goal and schedule."
+msgstr "Помоги мне составить программу тренировок под мою цель и расписание."
+
+msgctxt "proposal"
+msgid "Dismiss"
+msgstr "Отклонить"

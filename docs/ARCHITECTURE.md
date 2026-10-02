@@ -30,6 +30,9 @@ nutrition
 stretching
 core
 social
+coaching
+tutorials
+assistant
 ```
 
 `records` (PR engine) was not in CLAUDE.md's original suggested list; it
@@ -114,6 +117,17 @@ short shareable invite link, and direct/group messaging — see
 rather than split by concern. Depends one-directionally on `accounts`
 (the two privacy settings live on `User`, and every relationship here
 is between `User` rows) — `accounts` doesn't know `social` exists.
+
+### assistant
+The optional AI assistant — see `docs/ASSISTANT.md`. Its own models are
+only the chat (conversations, messages, proposals), per-user preferences
+and usage. It reads other apps' data through their own visibility queries
+and services, and writes nothing to them except when the user accepts a
+proposal, through `apps.nutrition.services.create_diet_plan` and
+`apps.programs.services.import_program`. Replies are written by a separate
+`assistant-worker` container, not in the web request. No other app imports
+it, except for one template tag (`assistant_ask_link`) on the diet plan
+and program lists.
 
 ## Historical data rule
 

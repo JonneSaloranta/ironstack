@@ -3592,3 +3592,56 @@ button,
   color: var(--color-text-muted);
 }
 
+
+/* --- AI assistant (templates/assistant/) ---------------------------------
+   One thread card; each message is a block inside it, the user's own
+   offset to the right with an accent edge, the assistant's full width
+   (its replies carry lists and proposal cards and need the room). */
+.assistant-thread {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.assistant-message {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.assistant-message-user {
+  align-self: flex-end;
+  max-width: 85%;
+  padding: var(--space-2) var(--space-3);
+  border-right: 3px solid var(--color-accent);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg);
+}
+
+.assistant-message-author {
+  margin: 0 0 var(--space-1);
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+}
+
+.assistant-message > p:last-child,
+.assistant-reply > :last-child {
+  margin-bottom: 0;
+}
+
+.assistant-reply ul,
+.assistant-reply ol,
+.assistant-proposal ul {
+  padding-left: 1.25rem;
+}
+
+.assistant-proposal {
+  margin: var(--space-3) 0 0;
+  border-left: 3px solid var(--color-accent);
+}
+
+.assistant-proposal summary {
+  cursor: pointer;
+  min-height: var(--touch-target);
+  display: flex;
+  align-items: center;
+}

@@ -9893,3 +9893,448 @@ msgstr[1] "%(counter)s articoli nella lista della spesa per %(plan)s."
 
 #~ msgid "+ New recipe"
 #~ msgstr "+ Nuova ricetta"
+
+msgid "Ask about your training or nutrition…"
+msgstr "Chiedi del tuo allenamento o della tua alimentazione…"
+
+msgid "Anthropic API key"
+msgstr "Chiave API Anthropic"
+
+msgid "Create one at console.anthropic.com. It's stored encrypted and used only for your own conversations; usage is billed to your Anthropic account."
+msgstr "Creane una su console.anthropic.com. Viene salvata cifrata e usata solo per le tue conversazioni; l'utilizzo viene addebitato sul tuo account Anthropic."
+
+msgid "That doesn't look like an Anthropic API key."
+msgstr "Non sembra una chiave API Anthropic."
+
+msgid "Selected users"
+msgstr "Utenti selezionati"
+
+msgid "Search users…"
+msgstr "Cerca utenti…"
+
+msgid "Nobody selected."
+msgstr "Nessuno selezionato."
+
+msgid "No matching users."
+msgstr "Nessun utente corrispondente."
+
+msgid "Used when access is set to “Selected users”."
+msgstr "Usato quando l'accesso è impostato su “Utenti selezionati”."
+
+msgid "Assistant enabled"
+msgstr "Assistente attivo"
+
+msgid "Who may use this instance's AI model"
+msgstr "Chi può usare il modello di IA di questa istanza"
+
+msgid "Daily token limit per user"
+msgstr "Limite giornaliero di token per utente"
+
+msgid "Nobody — users must bring their own key"
+msgstr "Nessuno — gli utenti devono usare una propria chiave"
+
+msgid "Staff only"
+msgstr "Solo staff"
+
+msgid "Everyone"
+msgstr "Tutti"
+
+msgid "Turns the assistant off for everyone, including users' own keys."
+msgstr "Disattiva l'assistente per tutti, anche con le chiavi personali degli utenti."
+
+msgid "Who may use this instance's own provider (ASSISTANT_API_KEY, or the Ollama server). Its usage is billed to you, the operator."
+msgstr "Chi può usare il provider di questa istanza (ASSISTANT_API_KEY o il server Ollama). L'utilizzo viene addebitato a te, che gestisci l'istanza."
+
+msgid "Tokens (input + output) one user may spend per day on the shared provider. 0 means no limit. Users' own keys are never limited."
+msgstr "Token (input + output) che un utente può usare ogni giorno con il provider condiviso. 0 significa nessun limite. Le chiavi personali degli utenti non sono mai limitate."
+
+msgid "This instance's provider"
+msgstr "Il provider di questa istanza"
+
+msgid "Your own API key"
+msgstr "La tua chiave API"
+
+msgid "You"
+msgstr "Tu"
+
+msgid "Assistant"
+msgstr "Assistente"
+
+msgid "Waiting"
+msgstr "In attesa"
+
+msgid "Writing"
+msgstr "Sta scrivendo"
+
+msgid "Failed"
+msgstr "Non riuscito"
+
+msgid "Diet plan"
+msgstr "Piano alimentare"
+
+msgid "Workout program"
+msgstr "Programma di allenamento"
+
+msgid "Waiting for you"
+msgstr "In attesa di te"
+
+msgid "Dismissed"
+msgstr "Scartata"
+
+msgid "The assistant sent a malformed reply. Please try again."
+msgstr "L'assistente ha inviato una risposta non valida. Riprova."
+
+msgid "The API key was rejected. Check it in your assistant settings."
+msgstr "La chiave API è stata rifiutata. Controllala nelle impostazioni dell'assistente."
+
+msgid "This API key isn't allowed to use that model."
+msgstr "Questa chiave API non può usare quel modello."
+
+msgid "The configured model (%(model)s) wasn't found."
+msgstr "Il modello configurato (%(model)s) non è stato trovato."
+
+msgid "The AI service is rate limiting requests. Try again in a minute."
+msgstr "Il servizio di IA sta limitando le richieste. Riprova tra un minuto."
+
+msgid "The AI service rejected the request."
+msgstr "Il servizio di IA ha rifiutato la richiesta."
+
+msgid "The AI service is having problems right now. Try again later."
+msgstr "Il servizio di IA ha dei problemi in questo momento. Riprova più tardi."
+
+msgid "Couldn't reach the AI service."
+msgstr "Impossibile raggiungere il servizio di IA."
+
+msgid "The administrator has turned the AI assistant off."
+msgstr "L'amministratore ha disattivato l'assistente IA."
+
+msgid "This instance doesn't provide an AI model for your account. You can use the assistant with your own Anthropic API key."
+msgstr "Questa istanza non fornisce un modello di IA per il tuo account. Puoi usare l'assistente con la tua chiave API Anthropic."
+
+msgid "Turn the assistant on in its settings first."
+msgstr "Attiva prima l'assistente nelle sue impostazioni."
+
+msgid "Wait for the assistant to finish its current reply."
+msgstr "Attendi che l'assistente finisca la risposta in corso."
+
+msgid "You've used today's assistant allowance. It resets tomorrow."
+msgstr "Hai esaurito la quota giornaliera dell'assistente. Si azzera domani."
+
+msgid "This conversation used your own API key, which you've removed. Start a new conversation."
+msgstr "Questa conversazione usava la tua chiave API, che hai rimosso. Inizia una nuova conversazione."
+
+msgid "This conversation can't be continued anymore. Start a new conversation."
+msgstr "Questa conversazione non può più continuare. Inizia una nuova conversazione."
+
+msgid "This conversation is getting long. Start a new one to keep replies quick."
+msgstr "Questa conversazione sta diventando lunga. Iniziane una nuova per avere risposte rapide."
+
+msgid "No API key is available for this conversation."
+msgstr "Nessuna chiave API disponibile per questa conversazione."
+
+msgid "Write a message first."
+msgstr "Scrivi prima un messaggio."
+
+msgid "That message is too long."
+msgstr "Il messaggio è troppo lungo."
+
+msgid "Thinking…"
+msgstr "Sto pensando…"
+
+msgid "The assistant can't help with that request."
+msgstr "L'assistente non può aiutarti con questa richiesta."
+
+msgid "The reply was cut off. Try asking for something smaller."
+msgstr "La risposta è stata interrotta. Prova a chiedere qualcosa di più piccolo."
+
+msgid "The reply was cut off."
+msgstr "La risposta è stata interrotta."
+
+msgid "The assistant stopped after too many steps."
+msgstr "L'assistente si è fermato dopo troppi passaggi."
+
+msgid "Something went wrong while writing the reply."
+msgstr "Qualcosa è andato storto durante la scrittura della risposta."
+
+msgid "The reply was interrupted. Please try again."
+msgstr "La risposta è stata interrotta. Riprova."
+
+msgid "Looking at your profile…"
+msgstr "Sto guardando il tuo profilo…"
+
+msgid "Looking at your workouts…"
+msgstr "Sto guardando i tuoi allenamenti…"
+
+msgid "Looking at your records…"
+msgstr "Sto guardando i tuoi record…"
+
+msgid "Looking at your measurements…"
+msgstr "Sto guardando le tue misurazioni…"
+
+msgid "Looking at your activities…"
+msgstr "Sto guardando le tue attività…"
+
+msgid "Looking at your food diary…"
+msgstr "Sto guardando il tuo diario alimentare…"
+
+msgid "Looking at your programs…"
+msgstr "Sto guardando i tuoi programmi…"
+
+msgid "Looking at your diet plans…"
+msgstr "Sto guardando i tuoi piani alimentari…"
+
+msgid "Searching exercises…"
+msgstr "Sto cercando esercizi…"
+
+msgid "Searching foods…"
+msgstr "Sto cercando alimenti…"
+
+msgid "Searching recipes…"
+msgstr "Sto cercando ricette…"
+
+msgid "Looking at your meals…"
+msgstr "Sto guardando i tuoi pasti…"
+
+msgid "Putting a diet plan together…"
+msgstr "Sto preparando un piano alimentare…"
+
+msgid "Putting a program together…"
+msgstr "Sto preparando un programma…"
+
+msgid "Conversation deleted."
+msgstr "Conversazione eliminata."
+
+msgid "This suggestion can't be created anymore: %(error)s"
+msgstr "Questo suggerimento non può più essere creato: %(error)s"
+
+msgid "Diet plan created. It isn't active until you choose to use it."
+msgstr "Piano alimentare creato. Non è attivo finché non scegli di usarlo."
+
+msgid "Program created. Review it and make it yours."
+msgstr "Programma creato. Controllalo e adattalo a te."
+
+msgid "AI assistant turned on."
+msgstr "Assistente IA attivato."
+
+msgid "AI assistant turned off."
+msgstr "Assistente IA disattivato."
+
+msgid "API key saved."
+msgstr "Chiave API salvata."
+
+msgid "API key removed."
+msgstr "Chiave API rimossa."
+
+msgid "Assistant settings saved."
+msgstr "Impostazioni dell'assistente salvate."
+
+msgid "AI assistant"
+msgstr "Assistente IA"
+
+msgid "Turn the assistant on or off, and add your own API key if you have one."
+msgstr "Attiva o disattiva l'assistente e aggiungi la tua chiave API, se ne hai una."
+
+msgid "Ask anything"
+msgstr "Chiedi qualsiasi cosa"
+
+msgid "Ask for a diet plan or a workout program, or about your progress. It looks at your own data before it answers."
+msgstr "Chiedi un piano alimentare o un programma di allenamento, o informazioni sui tuoi progressi. Guarda i tuoi dati prima di rispondere."
+
+msgid "Your conversations"
+msgstr "Le tue conversazioni"
+
+msgid "Pick up where you left off. A plan it suggests is only created if you accept it."
+msgstr "Riprendi da dove avevi lasciato. Un piano suggerito viene creato solo se lo accetti."
+
+msgid "Get help with diet plans, workout programs and your progress."
+msgstr "Aiuto con piani alimentari, programmi di allenamento e i tuoi progressi."
+
+msgid "Choose who may use this instance's AI model, set limits, and see usage."
+msgstr "Scegli chi può usare il modello di IA di questa istanza, imposta i limiti e consulta l'utilizzo."
+
+msgid "Your messages, and the training and nutrition data the assistant looks up to answer them, are sent to an AI model this instance runs on its own server."
+msgstr "I tuoi messaggi, e i dati su allenamento e alimentazione che l'assistente consulta per rispondere, vengono inviati a un modello di IA che questa istanza esegue sul proprio server."
+
+msgid "Your messages, and the training and nutrition data the assistant looks up to answer them, are sent to Anthropic (the maker of Claude) to generate replies."
+msgstr "I tuoi messaggi, e i dati su allenamento e alimentazione che l'assistente consulta per rispondere, vengono inviati ad Anthropic (che sviluppa Claude) per generare le risposte."
+
+msgid "It only reads your own data, and only while it's answering you. It can't change anything: plans it suggests are created only if you choose to."
+msgstr "Legge solo i tuoi dati, e solo mentre ti risponde. Non può modificare nulla: i piani che suggerisce vengono creati solo se lo decidi tu."
+
+msgid "Replies can be wrong. It isn't a doctor or a dietitian — check anything important with a professional."
+msgstr "Le risposte possono essere sbagliate. Non è un medico né un dietista: verifica le cose importanti con un professionista."
+
+msgid "You can turn it off, and delete your conversations, at any time."
+msgstr "Puoi disattivarlo, ed eliminare le tue conversazioni, in qualsiasi momento."
+
+msgid "Waiting…"
+msgstr "In attesa…"
+
+msgid "This is taking unusually long to start. If it never does, the assistant worker may not be running — let your administrator know."
+msgstr "Sta impiegando insolitamente tanto ad avviarsi. Se non parte mai, il processo in background dell'assistente potrebbe non essere attivo: avvisa l'amministratore."
+
+msgid "Target %(calories)s kcal · protein %(protein)s g · carbs %(carbs)s g · fat %(fat)s g"
+msgstr "Obiettivo %(calories)s kcal · proteine %(protein)s g · carboidrati %(carbs)s g · grassi %(fat)s g"
+
+msgid "The suggested meals add up to about %(calories)s kcal a day."
+msgstr "I pasti suggeriti arrivano a circa %(calories)s kcal al giorno."
+
+msgid "Show meals"
+msgstr "Mostra i pasti"
+
+msgid "%(servings)s servings"
+msgstr "%(servings)s porzioni"
+
+msgid "new food"
+msgstr "nuovo alimento"
+
+msgid "Foods marked “new food” are added to your food library with nutrition values the assistant estimated — check them."
+msgstr "Gli alimenti contrassegnati come “nuovo alimento” vengono aggiunti alla tua libreria con valori nutrizionali stimati dall'assistente: controllali."
+
+msgid "Show workouts"
+msgstr "Mostra gli allenamenti"
+
+msgid "Rate of perceived exertion"
+msgstr "Sforzo percepito"
+
+msgid "Create diet plan"
+msgstr "Crea piano alimentare"
+
+msgid "Create program"
+msgstr "Crea programma"
+
+msgid "Nothing is saved until you create it. It's created as a new, inactive plan you can still edit."
+msgstr "Non viene salvato nulla finché non lo crei. Viene creato come nuovo piano inattivo che puoi ancora modificare."
+
+msgid "Open diet plan"
+msgstr "Apri il piano alimentare"
+
+msgid "Open program"
+msgstr "Apri il programma"
+
+msgid "No messages yet."
+msgstr "Ancora nessun messaggio."
+
+msgid "This instance's AI provider: %(provider)s."
+msgstr "Provider di IA di questa istanza: %(provider)s."
+
+msgid "No AI provider is configured for this instance (ASSISTANT_API_KEY, or ASSISTANT_PROVIDER=ollama). Users can still use their own API keys."
+msgstr "Nessun provider di IA è configurato per questa istanza (ASSISTANT_API_KEY o ASSISTANT_PROVIDER=ollama). Gli utenti possono comunque usare le proprie chiavi API."
+
+msgid "Usage, last 30 days"
+msgstr "Utilizzo, ultimi 30 giorni"
+
+msgid "User"
+msgstr "Utente"
+
+msgid "Key"
+msgstr "Chiave"
+
+msgid "Requests"
+msgstr "Richieste"
+
+msgid "Input tokens"
+msgstr "Token in ingresso"
+
+msgid "Output tokens"
+msgstr "Token in uscita"
+
+msgid "Own"
+msgstr "Propria"
+
+msgid "Shared"
+msgstr "Condivisa"
+
+msgid "Nobody has used the assistant yet."
+msgstr "Nessuno ha ancora usato l'assistente."
+
+msgid "Back to AI assistant"
+msgstr "Torna all'assistente IA"
+
+msgid "Replies can be wrong — check anything important."
+msgstr "Le risposte possono essere sbagliate: verifica le cose importanti."
+
+msgid "Delete this conversation?"
+msgstr "Eliminare questa conversazione?"
+
+msgid "Delete conversation"
+msgstr "Elimina conversazione"
+
+msgid "Open assistant settings"
+msgstr "Apri le impostazioni dell'assistente"
+
+msgid "Plan with an assistant"
+msgstr "Pianifica con un assistente"
+
+msgid "Ask for a diet plan or a workout program built around your goals, or ask about your own progress. The assistant looks at what you've logged before it answers."
+msgstr "Chiedi un piano alimentare o un programma di allenamento costruito sui tuoi obiettivi, o informazioni sui tuoi progressi. L'assistente guarda ciò che hai registrato prima di rispondere."
+
+msgid "Turn on the assistant"
+msgstr "Attiva l'assistente"
+
+msgid "New conversation"
+msgstr "Nuova conversazione"
+
+msgid "Start conversation"
+msgstr "Inizia la conversazione"
+
+msgid "Today's use: %(used)s of %(limit)s tokens."
+msgstr "Utilizzo di oggi: %(used)s su %(limit)s token."
+
+msgid "Conversations"
+msgstr "Conversazioni"
+
+msgid "No conversations yet."
+msgstr "Ancora nessuna conversazione."
+
+msgid "Try: “Make me a 3-day full-body program” or “Build a weekly diet plan from my foods”."
+msgstr "Prova: “Creami un programma total body di 3 giorni” o “Prepara un piano alimentare settimanale con i miei alimenti”."
+
+msgid "AI assistant settings"
+msgstr "Impostazioni dell'assistente IA"
+
+msgid "On. The assistant can read your data while it answers you."
+msgstr "Attivo. L'assistente può leggere i tuoi dati mentre ti risponde."
+
+msgid "Turn off"
+msgstr "Disattiva"
+
+msgid "Off. Nothing of yours is sent to an AI model."
+msgstr "Disattivato. Nessun tuo dato viene inviato a un modello di IA."
+
+msgid "AI model"
+msgstr "Modello di IA"
+
+msgid "Using your own Anthropic API key (%(model)s)."
+msgstr "Viene usata la tua chiave API Anthropic (%(model)s)."
+
+msgid "Using this instance's AI model (%(model)s)."
+msgstr "Viene usato il modello di IA di questa istanza (%(model)s)."
+
+msgid "Saved key ending in %(hint)s. Your conversations use it, and it's billed to your Anthropic account."
+msgstr "Chiave salvata che termina con %(hint)s. Le tue conversazioni la usano e l'utilizzo viene addebitato sul tuo account Anthropic."
+
+msgid "Remove your API key?"
+msgstr "Rimuovere la tua chiave API?"
+
+msgid "Optional. With your own Anthropic API key you can use the assistant even if this instance doesn't provide a model for you."
+msgstr "Facoltativo. Con la tua chiave API Anthropic puoi usare l'assistente anche se questa istanza non ti fornisce un modello."
+
+msgid "Replace key"
+msgstr "Sostituisci la chiave"
+
+msgid "Save key"
+msgstr "Salva la chiave"
+
+msgid "Ask the assistant"
+msgstr "Chiedi all'assistente"
+
+msgid "Help me put together a diet plan that fits my goal."
+msgstr "Aiutami a preparare un piano alimentare adatto al mio obiettivo."
+
+msgid "Help me build a workout program for my goal and schedule."
+msgstr "Aiutami a creare un programma di allenamento per il mio obiettivo e i miei orari."
+
+msgctxt "proposal"
+msgid "Dismiss"
+msgstr "Scarta"

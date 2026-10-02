@@ -89,19 +89,42 @@ class EncryptedTextField(models.TextField):
     ordinary save() of a given row (2FA setup, or apps.accounts.
     management.commands.encrypt_existing_totp_secrets for every row at
     once) is what actually encrypts it, from then on.
+
+    `key_setting` names the setting holding the Fernet key — TOTP's own
+    by default; apps.assistant.models.AssistantPreference.api_key passes
+    ASSISTANT_ENCRYPTION_KEY, so the two secrets can be rotated
+    independently (same reasoning as BACKUP_ENCRYPTION_KEY being its own
+    key, config.settings.base).
     """
+
+    DEFAULT_KEY_SETTING = "TOTP_ENCRYPTION_KEY"
+
+    def __init__(self, *args, key_setting=DEFAULT_KEY_SETTING, **kwargs):
+        self.key_setting = key_setting
+        super().__init__(*args, **kwargs)
+
+    def deconstruct(self):
+        name, path, args, kwargs = super().deconstruct()
+        # Left out when it's the default, so the TOTP field's existing
+        # migration (0014) stays exactly as generated.
+        if self.key_setting != self.DEFAULT_KEY_SETTING:
+            kwargs["key_setting"] = self.key_setting
+        return name, path, args, kwargs
+
+    def _key(self):
+        return getattr(settings, self.key_setting, "")
 
     def get_prep_value(self, value):
         value = super().get_prep_value(value)
-        if not value or not settings.TOTP_ENCRYPTION_KEY:
+        if not value or not self._key():
             return value
-        return Fernet(settings.TOTP_ENCRYPTION_KEY).encrypt(value.encode()).decode()
+        return Fernet(self._key()).encrypt(value.encode()).decode()
 
     def from_db_value(self, value, expression, connection):
-        if not value or not settings.TOTP_ENCRYPTION_KEY:
+        if not value or not self._key():
             return value
         try:
-            return Fernet(settings.TOTP_ENCRYPTION_KEY).decrypt(value.encode()).decode()
+            return Fernet(self._key()).decrypt(value.encode()).decode()
         except InvalidToken:
             # Not a Fernet token at all (a legacy plaintext secret —
             # see this class's own docstring), or the wrong key. Either

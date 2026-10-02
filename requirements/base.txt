@@ -83,3 +83,10 @@ pywebpush>=2.4,<3.0
 # too, rather than leaving that reliance on an undeclared transitive
 # version.
 cryptography>=43.0,<51.0
+# apps.assistant — the optional AI assistant (docs/ASSISTANT.md). The
+# official Anthropic SDK: streaming, typed errors, retries and the
+# tool-use message shapes are exactly what it exists for, and talking to
+# the Messages API by hand would mean re-implementing its streaming
+# event parsing. Inert unless ASSISTANT_API_KEY is set or a user saves
+# their own key; the Ollama provider needs nothing beyond `requests`.
+anthropic>=1.11,<2.0

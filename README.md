@@ -38,6 +38,11 @@ your progress in real charts — all on your own infrastructure.
 - **Analytics dashboard** — weekly training volume, muscle-group
   volume, PR history, per-exercise strength trends, custom date
   ranges, and a 30-day nutrition trend alongside them.
+- **Optional AI assistant** — ask for a diet plan or a workout program
+  built from your own data, or about your progress. It only suggests:
+  a plan is created when you press "Create", never by itself. Runs on
+  Claude (the instance's key or each user's own) or a self-hosted Ollama
+  model. See [`docs/ASSISTANT.md`](docs/ASSISTANT.md).
 - **A real API** — per-user API keys with per-resource CRUD
   permissions and admin-tunable rate limits, for anything you want to
   build against your own data. See [`docs/API.md`](docs/API.md).
@@ -141,6 +146,7 @@ given page actually needs.
 | [`docs/STRETCHING.md`](docs/STRETCHING.md) | Stretch library, routines, guided sessions, cool-down suggestions |
 | [`docs/ANALYTICS.md`](docs/ANALYTICS.md) | Dashboard, charts, date-range filtering |
 | [`docs/API.md`](docs/API.md) | REST API — auth, permissions, rate limits, endpoints |
+| [`docs/ASSISTANT.md`](docs/ASSISTANT.md) | The optional AI assistant — providers, keys, limits, tools, proposals |
 | [`docs/UI.md`](docs/UI.md) | UI principles and per-feature implementation notes |
 | [`docs/SECURITY.md`](docs/SECURITY.md) | TLS, email, rate limiting, CSP, and everything else before going to production |
 | [`docs/BACKUP.md`](docs/BACKUP.md) | Backup/restore, both mechanisms, in full |

@@ -526,12 +526,37 @@ Users must not be able to access another user's:
 - measurements
 - activities
 - analytics
+- AI assistant conversations, messages and proposals (`apps.assistant` —
+  every view looks them up through `user=request.user`, 404 otherwise)
 - friend requests, group memberships, or direct/group messages they
   aren't a sender/recipient/member of (`apps.social` — every view
   checks this directly, e.g. `get_object_or_404(Group, ...)` followed
   by an explicit membership check, a 404 rather than a 403 for a group
   a user isn't in, the same "don't even confirm it exists" reasoning
   `docs/API.md` already applies elsewhere)
+
+## AI assistant
+
+Optional (`docs/ASSISTANT.md`). What matters for an operator:
+
+- **Data leaves the server when the provider is Anthropic.** A user's
+  messages, and the training, body and nutrition data the assistant
+  looks up to answer them, are sent to Anthropic's API. Each user has to
+  turn the assistant on themselves after reading exactly that, and can
+  turn it off and delete their conversations at any time. Use
+  `ASSISTANT_PROVIDER=ollama` to keep everything on your own network.
+- **Cost.** Usage of `ASSISTANT_API_KEY` is billed to you. By default only
+  staff may use it. Profile → Administration → AI assistant sets who may,
+  sets a per-user daily token limit, and shows usage.
+- **Users' own keys** are encrypted at rest with `ASSISTANT_ENCRYPTION_KEY`
+  (derived from `DJANGO_SECRET_KEY` if unset, so rotating the secret key
+  makes saved keys unreadable and users re-enter them). A key is never
+  rendered back to the browser.
+- **No write access.** The assistant's tools only read the user's own data,
+  and anything it suggests is created only when the user presses "Create".
+  Model output is HTML-escaped and rendered without links or images.
+- Conversation content isn't in the Django admin, and it is deleted with
+  the account (cascade).
 
 ## Friends, groups, and messaging
 

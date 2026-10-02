@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% trans "AI assistant" %} — IronStack{% endblock %}
+{% block content %}
+<div class="top-bar">
+  <h1 class="no-margin">{% trans "AI assistant" %}</h1>
+</div>
+
+{% if shared_available %}
+  <div class="alert alert-info">
+    <p>{% blocktrans %}This instance's AI provider: {{ provider }}.{% endblocktrans %}</p>
+  </div>
+{% else %}
+  <div class="alert alert-warning">
+    <p>{% trans "No AI provider is configured for this instance (ASSISTANT_API_KEY, or ASSISTANT_PROVIDER=ollama). Users can still use their own API keys." %}</p>
+  </div>
+{% endif %}
+
+<form class="card" method="post">
+  {% csrf_token %}
+  {% include "core/_form_errors.html" %}
+  {% for field in form %}
+    {% include "core/_field.html" with field=field %}
+  {% endfor %}
+  <button type="submit">{% trans "Save settings" %}</button>
+</form>
+
+<h2>{% trans "Usage, last 30 days" %}</h2>
+{% if usage %}
+  <div class="table-wrap">
+    <table class="set-table">
+      <thead>
+        <tr>
+          <th scope="col">{% trans "User" %}</th>
+          <th scope="col">{% trans "Key" %}</th>
+          <th scope="col">{% trans "Requests" %}</th>
+          <th scope="col">{% trans "Input tokens" %}</th>
+          <th scope="col">{% trans "Output tokens" %}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in usage %}
+          <tr>
+            <td>{{ row.user__username }}</td>
+            <td>{% if row.key_source == "own" %}{% trans "Own" %}{% else %}{% trans "Shared" %}{% endif %}</td>
+            <td class="stat-figure">{{ row.requests }}</td>
+            <td class="stat-figure">{{ row.input }}</td>
+            <td class="stat-figure">{{ row.output }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% else %}
+  {% include "core/_empty_state.html" with message=_("Nobody has used the assistant yet.") %}
+{% endif %}
+
+<p><a class="button-link" href="{% url 'profile' %}">&larr; {% trans "Back to profile" %}</a></p>
+{% endblock %}

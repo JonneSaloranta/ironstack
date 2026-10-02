@@ -6,6 +6,8 @@ dependency) — see the small helpers below. Environment-specific settings
 (DEBUG, ALLOWED_HOSTS, security flags, ...) live in `dev.py`/`production.py`.
 """
 
+import base64
+import hashlib
 import os
 import sys
 import tempfile
@@ -89,6 +91,7 @@ INSTALLED_APPS = [
     "apps.social",
     "apps.coaching",
     "apps.tutorials",
+    "apps.assistant",
 ]
 
 MIDDLEWARE = [
@@ -532,6 +535,53 @@ BACKUP_ENCRYPTION_KEY = env("BACKUP_ENCRYPTION_KEY", default="")
 # not just backups made while it was set — back it up as carefully as
 # SECRET_KEY.
 TOTP_ENCRYPTION_KEY = env("TOTP_ENCRYPTION_KEY", default="")
+
+# apps.assistant — the optional AI assistant (docs/ASSISTANT.md). Entirely
+# inert until a provider is reachable: with no ASSISTANT_API_KEY here and
+# no user having saved their own key, the assistant pages just explain
+# that it isn't set up. Operator-tunable knobs that shouldn't need a
+# redeploy (who may use the shared key, the daily token limit) live in
+# the admin-editable apps.assistant.models.AssistantSettings singleton
+# instead.
+#
+# ASSISTANT_PROVIDER: "anthropic" (Claude, the default) or "ollama" (a
+# self-hosted Ollama server — nothing leaves the operator's own network,
+# and no key is needed; ASSISTANT_OLLAMA_URL/ASSISTANT_OLLAMA_MODEL).
+# Users can always bring their own Anthropic key regardless of this
+# setting (Profile → AI assistant).
+ASSISTANT_PROVIDER = env("ASSISTANT_PROVIDER", default="anthropic").strip().lower()
+# The instance-wide ("shared") Anthropic key. Its usage is billed to the
+# operator, so AssistantSettings.shared_key_access decides who may use it.
+ASSISTANT_API_KEY = env("ASSISTANT_API_KEY", default="")
+ASSISTANT_MODEL = env("ASSISTANT_MODEL", default="claude-opus-5-5")
+# How much the model thinks before answering — low/medium/high/xhigh/max
+# (output_config.effort). Higher costs more tokens per reply.
+ASSISTANT_EFFORT = env("ASSISTANT_EFFORT", default="medium")
+# On supported models, a request a safety classifier declines is re-run on
+# Anthropic's recommended fallback model within the same call (the
+# server-side-fallback beta) instead of failing. Set to false if your
+# Anthropic organization rejects that beta.
+ASSISTANT_REFUSAL_FALLBACK = env_bool("ASSISTANT_REFUSAL_FALLBACK", default=True)
+ASSISTANT_OLLAMA_URL = env("ASSISTANT_OLLAMA_URL", default="http://ollama:11434")
+ASSISTANT_OLLAMA_MODEL = env("ASSISTANT_OLLAMA_MODEL", default="qwen3:8b")
+# Encrypts every user's own saved API key at rest
+# (apps.accounts.models.EncryptedTextField). Unlike TOTP_ENCRYPTION_KEY a
+# key is always used here — an API key is money, not just a login step —
+# so when it isn't set one is derived from SECRET_KEY instead. That means
+# rotating SECRET_KEY makes saved keys unreadable (users simply re-enter
+# them); set this explicitly (`manage.py generate_assistant_encryption_key`)
+# to decouple the two.
+ASSISTANT_ENCRYPTION_KEY = env("ASSISTANT_ENCRYPTION_KEY", default="")
+if not ASSISTANT_ENCRYPTION_KEY:
+    ASSISTANT_ENCRYPTION_KEY = base64.urlsafe_b64encode(
+        hashlib.sha256(f"ironstack-assistant:{SECRET_KEY}".encode()).digest()
+    ).decode()
+# Production runs replies in the separate `assistant-worker` container
+# (apps.assistant.management.commands.assistant_worker): a reply with
+# several tool calls easily outlasts gunicorn's 30-second worker timeout.
+# True runs the reply inside the request instead — handy for `runserver`
+# without the worker, never for production.
+ASSISTANT_RUN_INLINE = env_bool("ASSISTANT_RUN_INLINE", default=False)
 
 # apps.core.management.commands.backup_scheduler — docs/BACKUP.md.
 # UTC hour (0-23) the docker-compose.yml `backup-scheduler` service

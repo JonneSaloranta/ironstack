@@ -47,3 +47,15 @@ services:
   notification-scheduler:
     image: ironstack-dev
     profiles: ["manual"]
+
+  # Unlike the two schedulers above, on by default: the assistant pages
+  # wait for this to write every reply. Bind-mounted like `web`, so code
+  # changes apply on restart (`docker compose restart assistant-worker`).
+  # Or set ASSISTANT_RUN_INLINE=true and stop this to write replies inside
+  # runserver's own request instead.
+  assistant-worker:
+    image: ironstack-dev
+    environment:
+      DJANGO_SETTINGS_MODULE: config.settings.dev
+    volumes:
+      - .:/app

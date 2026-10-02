@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{{ conversation.title }} — IronStack{% endblock %}
+{% block content %}
+<div class="top-bar">
+  <h1 class="no-margin">{{ conversation.title }}</h1>
+</div>
+<div class="top-bar-actions">
+  <a class="button-link" href="{% url 'assistant:home' %}">&larr; {% trans "Back to AI assistant" %}</a>
+</div>
+
+{% comment %}
+#assistant-thread is stable: the composer below swaps its innerHTML with
+the whole thread after sending. A reply that's still being written polls
+its own bubble (_message.html) until it's done, so nothing here needs a
+poll of its own. aria-live announces a finished reply; the bubble is
+aria-busy while it streams so a screen reader doesn't read every partial.
+{% endcomment %}
+<div class="card assistant-thread" id="assistant-thread" aria-live="polite">
+  {% include "assistant/_thread.html" %}
+</div>
+
+<form class="card" method="post" action="{% url 'assistant:message-send' conversation.pk %}"
+      hx-post="{% url 'assistant:message-send' conversation.pk %}"
+      hx-target="#assistant-thread" hx-swap="innerHTML" hx-on::after-request="this.reset()">
+  {% csrf_token %}
+  <div class="field">
+    <label for="{{ form.text.id_for_label }}" class="visually-hidden">{{ form.text.label }}</label>
+    {{ form.text }}
+  </div>
+  <button type="submit">{% trans "Send" %}</button>
+  <p class="text-muted text-xs">{% trans "Replies can be wrong — check anything important." %}</p>
+</form>
+
+<form method="post" action="{% url 'assistant:conversation-delete' conversation.pk %}"
+      data-confirm="{% filter force_escape %}{% trans "Delete this conversation?" %}{% endfilter %}">
+  {% csrf_token %}
+  <button type="submit" class="button-danger">{% trans "Delete conversation" %}</button>
+</form>
+{% endblock %}

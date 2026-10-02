@@ -39,8 +39,8 @@ Every signed-in page extends `base.html` and follows this order:
   - detail pages: **"Edit"** as `.button-secondary` (editing isn't what a
     detail page is for), plus other secondary actions (Export, …).
 - The bottom "Back to X" link is the last thing on the page. Exceptions:
-  chat threads (`message_thread`, `group_thread`), which put the back link in
-  the top bar because the message composer sits at the bottom.
+  chat threads (`message_thread`, `group_thread`, the assistant's
+  `conversation_detail`), which put the back link in the top bar because the message composer sits at the bottom.
 - Signed-out pages (login, signup, 2FA verify) use
   `registration/_auth_brand.html` instead of a `.top-bar`.
 
@@ -226,7 +226,8 @@ select tour targets by CSS class.
 
 Places that knowingly differ from the rules above:
 
-- Chat threads put the back link in the top bar (composer is at the bottom).
+- Chat threads put the back link in the top bar (composer is at the bottom) —
+  the AI assistant's conversation page too.
 - Training mode (`_train_panel.html`) and the set-log form render fields
   compactly without `_field.html`.
 - `500.html` is standalone (no context processors), so it can't use the shared

@@ -1076,6 +1076,37 @@ TOURS = (
             ),
         ),
     ),
+    Tour(
+        key="assistant",
+        section=PROFILE,
+        title=_("AI assistant"),
+        view_names=("assistant:home",),
+        steps=(
+            Step(
+                "assistant-settings",
+                _("Settings"),
+                _("Turn the assistant on or off, and add your own API key if you have one."),
+            ),
+            Step(
+                "assistant-new",
+                _("Ask anything"),
+                _(
+                    "Ask for a diet plan or a workout program, or about your progress. It "
+                    "looks at your own data before it answers."
+                ),
+                optional=True,
+            ),
+            Step(
+                "assistant-conversations",
+                _("Your conversations"),
+                _(
+                    "Pick up where you left off. A plan it suggests is only created if you "
+                    "accept it."
+                ),
+                optional=True,
+            ),
+        ),
+    ),
 )
 
 
@@ -1108,6 +1139,7 @@ NO_TOUR_NEEDED = {
     "two-factor-manage": "form",
     "two-factor-disable": "form",
     "account-delete": "form",
+    "assistant:settings": "form",
     # Nutrition onboarding is itself a guided, step-by-step flow.
     "nutrition:onboarding-body": "guided flow",
     "nutrition:onboarding-activity": "guided flow",
@@ -1138,6 +1170,7 @@ NO_TOUR_NEEDED = {
     "backup-list": "staff only",
     "feedback-list": "staff only",
     "seo-settings": "staff only",
+    "assistant:admin-settings": "staff only",
     # Signed-out pages: nobody to show a tour to yet.
     "login": "signed out",
     "signup": "signed out",
