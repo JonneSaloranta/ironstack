@@ -15,5 +15,5 @@
   <button type="submit">{% trans "Save" %}</button>
 </form>
 
-<p><a class="button-link" href="{% if session %}{% url 'stretching:session-detail' session.pk %}{% else %}{% url 'stretching:home' %}{% endif %}">&larr; {% trans "Back" %}</a></p>
+<p><a class="button-link" href="{% if session %}{% url 'stretching:session-detail' session.pk %}{% else %}{% url 'stretching:home' %}{% endif %}">&larr; {% trans "Back" context "navigation" %}</a></p>
 {% endblock %}

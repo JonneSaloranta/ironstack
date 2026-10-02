@@ -9778,6 +9778,10 @@ msgctxt "tutorial"
 msgid "Done"
 msgstr "Fatto"
 
+msgctxt "navigation"
+msgid "Back"
+msgstr "Indietro"
+
 msgid "Search your clients…"
 msgstr "Cerca tra i tuoi clienti…"
 

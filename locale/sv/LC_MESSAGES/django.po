@@ -9685,6 +9685,10 @@ msgctxt "tutorial"
 msgid "Done"
 msgstr "Klar"
 
+msgctxt "navigation"
+msgid "Back"
+msgstr "Tillbaka"
+
 msgid "Search your clients…"
 msgstr "Sök bland dina klienter…"
 

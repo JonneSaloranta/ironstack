@@ -9652,6 +9652,10 @@ msgctxt "tutorial"
 msgid "Done"
 msgstr ""
 
+msgctxt "navigation"
+msgid "Back"
+msgstr ""
+
 msgid "Search your clients…"
 msgstr ""
 

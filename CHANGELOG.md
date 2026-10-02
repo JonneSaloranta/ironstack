@@ -63,6 +63,8 @@ narrated summary of the same version.
   stretch from a routine asks for confirmation.
 
 ### Fixed
+- Stretching forms' "Back" link showed the muscle-group translation
+  ("Selkä" in Finnish) instead of "Back".
 
 ## [1.22.0] — 2026-09-23
 

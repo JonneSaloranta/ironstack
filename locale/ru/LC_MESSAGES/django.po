@@ -9768,6 +9768,10 @@ msgctxt "tutorial"
 msgid "Done"
 msgstr "Готово"
 
+msgctxt "navigation"
+msgid "Back"
+msgstr "Назад"
+
 msgid "Search your clients…"
 msgstr "Поиск среди ваших клиентов…"
 

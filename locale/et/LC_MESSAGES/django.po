@@ -9680,6 +9680,10 @@ msgctxt "tutorial"
 msgid "Done"
 msgstr "Valmis"
 
+msgctxt "navigation"
+msgid "Back"
+msgstr "Tagasi"
+
 msgid "Search your clients…"
 msgstr "Otsi oma kliente…"
 

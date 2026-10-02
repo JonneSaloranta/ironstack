@@ -9711,6 +9711,10 @@ msgctxt "tutorial"
 msgid "Done"
 msgstr "Valmis"
 
+msgctxt "navigation"
+msgid "Back"
+msgstr "Takaisin"
+
 msgid "Search your clients…"
 msgstr "Hae asiakkaitasi…"
 
