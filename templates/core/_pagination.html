@@ -1,18 +1,23 @@
 {% comment %}
-Shared previous/next pager for any paginated ListView. Keeps every other
+Shared previous/next pager for any paginated list. Keeps every other
 GET parameter (search, filters, sort) via `query_string`, url-encoded —
 built by core_extras' `url_replace`, so it never emits empty `q=` params.
 Usage: {% include "core/_pagination.html" %}   (uses page_obj + request)
+Optional, for a page with more than one pager or one that should keep its
+scroll position: `page` (a Page, default page_obj), `param` (its query
+parameter, default "page"), `anchor` (an id put on the nav and appended to
+both links, so a full page load lands back on the pager), `label`
+(aria-label, default "Pagination"), `hx_target` (an element id: the links
+then swap just that element via HTMX — same URL, `hx-select` picks it out of
+the full page — so page-level client state such as a selected meal survives;
+without JS they stay plain links).
 {% endcomment %}
-{% load i18n core_extras %}
-{% if page_obj.has_other_pages %}
-  <nav class="pagination" aria-label="{% trans "Pagination" %}">
-    {% if page_obj.has_previous %}
-      <a class="button-link" rel="prev" href="?{% url_replace request page=page_obj.previous_page_number %}">&larr; {% trans "Previous" %}</a>
-    {% else %}<span></span>{% endif %}
-    <span class="text-muted">{% blocktrans with n=page_obj.number total=page_obj.paginator.num_pages %}Page {{ n }} of {{ total }}{% endblocktrans %}</span>
-    {% if page_obj.has_next %}
-      <a class="button-secondary" rel="next" href="?{% url_replace request page=page_obj.next_page_number %}">{% trans "Next" %} &rarr;</a>
-    {% else %}<span></span>{% endif %}
-  </nav>
+{% comment %}
+`page_obj` is only looked up when no `page` was passed: a missing variable in
+a filter argument (page|default:page_obj) raises instead of rendering empty.
+{% endcomment %}
+{% if page %}
+  {% include "core/_pagination_nav.html" with pager=page param_name=param|default:"page" %}
+{% else %}
+  {% include "core/_pagination_nav.html" with pager=page_obj param_name=param|default:"page" %}
 {% endif %}

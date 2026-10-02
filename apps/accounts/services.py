@@ -179,6 +179,7 @@ def export_account_data(user):
         NutritionProfile,
         NutritionTarget,
         Recipe,
+        ShoppingDay,
     )
     from apps.programs.models import Program
     from apps.records.models import PersonalRecord
@@ -239,6 +240,7 @@ def export_account_data(user):
         "diet_plans": _dump(DietPlan.objects.filter(user=user)),
         "diet_plan_meals": _dump(DietPlanMeal.objects.filter(diet_plan__user=user)),
         "diet_plan_items": _dump(DietPlanItem.objects.filter(diet_plan_meal__diet_plan__user=user)),
+        "diet_plan_shopping_days": _dump(ShoppingDay.objects.filter(diet_plan__user=user)),
         "stretch_sessions": _dump(StretchSession.objects.filter(user=user)),
         "performed_stretches": _dump(PerformedStretch.objects.filter(session__user=user)),
         "custom_stretches": _dump(Stretch.objects.filter(owner=user)),

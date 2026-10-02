@@ -299,6 +299,11 @@ def _food_export_payload(food):
             str(food.saturated_fat_grams) if food.saturated_fat_grams is not None else None
         ),
         "sodium_mg": food.sodium_mg,
+        "energy_kj": str(food.energy_kj) if food.energy_kj is not None else None,
+        "starch_grams": str(food.starch_grams) if food.starch_grams is not None else None,
+        "polyols_grams": str(food.polyols_grams) if food.polyols_grams is not None else None,
+        "salt_grams": str(food.salt_grams) if food.salt_grams is not None else None,
+        "other_nutrients": food.other_nutrients,
         "nutri_score": food.nutri_score,
         "nova_group": food.nova_group,
         "categories": food.categories,
@@ -313,7 +318,7 @@ def export_recipe(recipe):
     """A `Recipe` (with its ingredients/foods), as a plain dict ready
     for `apps.core.data_exchange.build_envelope` — see that module's
     own docstring for why this isn't just
-    `apps.api.serializers.RecipeSerializer`. `meal_slot` is exported
+    `apps.api.serializers.RecipeSerializer`. `meal_slots` are exported
     by name, not id — resolved back to whichever row that name
     matches (system first, then the importing user's own) by
     `import_recipe` below, the same natural-key reasoning
@@ -322,7 +327,7 @@ def export_recipe(recipe):
         "name": recipe.name,
         "servings": recipe.servings,
         "instructions": recipe.instructions,
-        "meal_slot": recipe.meal_slot.name if recipe.meal_slot_id else None,
+        "meal_slots": [slot.name for slot in recipe.meal_slots.order_by("order", "pk")],
         "ingredients": [
             {
                 "quantity": str(ingredient.quantity),
@@ -424,6 +429,11 @@ def _resolve_food(user, data):
         sugar_grams=_decimal_or_none(data.get("sugar_grams")),
         saturated_fat_grams=_decimal_or_none(data.get("saturated_fat_grams")),
         sodium_mg=data.get("sodium_mg"),
+        energy_kj=_decimal_or_none(data.get("energy_kj")),
+        starch_grams=_decimal_or_none(data.get("starch_grams")),
+        polyols_grams=_decimal_or_none(data.get("polyols_grams")),
+        salt_grams=_decimal_or_none(data.get("salt_grams")),
+        other_nutrients=data.get("other_nutrients") or [],
         nutri_score=data.get("nutri_score"),
         nova_group=data.get("nova_group"),
         categories=data.get("categories", ""),
@@ -453,7 +463,16 @@ def import_recipe(user, payload):
         name=name,
         servings=payload.get("servings") or 1,
         instructions=payload.get("instructions", ""),
-        meal_slot=_resolve_meal_slot(user, payload.get("meal_slot")),
+    )
+    # `meal_slot` (a single name) is what files exported before recipes
+    # could have several meals carry — still accepted.
+    slot_names = payload.get("meal_slots")
+    if slot_names is None:
+        slot_names = [payload["meal_slot"]] if payload.get("meal_slot") else []
+    elif isinstance(slot_names, str):
+        slot_names = [slot_names]
+    recipe.meal_slots.set(
+        slot for name in slot_names if (slot := _resolve_meal_slot(user, name)) is not None
     )
     ingredients = []
     for order, ingredient_data in enumerate(payload.get("ingredients") or []):
@@ -906,12 +925,59 @@ def recipe_per_serving_nutrition(recipe) -> ScaledNutrition:
 
 def diary_entry_nutrition(entry) -> ScaledNutrition:
     """A single DiaryEntry's nutrition — dispatches on whichever of
-    `food`/`recipe` is set (the model's own CheckConstraint guarantees
-    exactly one is). `quantity` means the food's own unit for a food
-    entry, servings for a recipe entry."""
+    `food`/`recipe`/quick macros is set (the model's own CheckConstraint
+    guarantees exactly one is). `quantity` means the food's own unit for
+    a food entry, servings for a recipe entry, portions for a quick one."""
     if entry.food_id:
         return scale_nutrition(entry.food, entry.quantity)
-    return recipe_per_serving_nutrition(entry.recipe).scaled_by(entry.quantity)
+    if entry.recipe_id:
+        return recipe_per_serving_nutrition(entry.recipe).scaled_by(entry.quantity)
+    return ScaledNutrition(
+        calories=Decimal(entry.quick_calories),
+        protein_grams=entry.quick_protein_grams or Decimal("0"),
+        carbohydrate_grams=entry.quick_carbohydrate_grams or Decimal("0"),
+        fat_grams=entry.quick_fat_grams or Decimal("0"),
+        fiber_grams=None,
+        sugar_grams=None,
+        saturated_fat_grams=None,
+        sodium_mg=None,
+    ).scaled_by(entry.quantity)
+
+
+def calories_from_macros(protein_grams, carbohydrate_grams, fat_grams):
+    """Atwater 4/4/9 kcal per gram — the estimate a quick entry falls
+    back to when only its macros were given."""
+    return int(
+        round(
+            4 * (protein_grams or 0) + 4 * (carbohydrate_grams or 0) + 9 * (fat_grams or 0)
+        )
+    )
+
+
+def create_quick_diary_entry(
+    user, *, target_date, meal_slot, name="", calories=None,
+    protein_grams=None, carbohydrate_grams=None, fat_grams=None, notes="",
+):
+    """Logs macros typed straight in (e.g. a restaurant's published
+    values) without creating a Food for them. Calories left blank are
+    estimated from the macros; the caller's form guarantees at least
+    one value is present."""
+    from .models import DiaryEntry
+
+    if calories is None:
+        calories = calories_from_macros(protein_grams, carbohydrate_grams, fat_grams)
+    return DiaryEntry.objects.create(
+        user=user,
+        date=target_date,
+        meal_slot=meal_slot,
+        quantity=Decimal("1"),
+        quick_name=name,
+        quick_calories=calories,
+        quick_protein_grams=protein_grams,
+        quick_carbohydrate_grams=carbohydrate_grams,
+        quick_fat_grams=fat_grams,
+        notes=notes,
+    )
 
 
 def daily_totals(user, target_date) -> ScaledNutrition:
@@ -949,7 +1015,8 @@ def create_recipe_from_diary_meal(user, target_date, meal_slot):
     recipe unchanged, the same hint `diet_builder.suggest_item_for_
     calorie_budget` already uses to avoid suggesting a breakfast
     recipe for dinner — a recipe built from what was eaten at
-    breakfast is, definitionally, a breakfast recipe."""
+    breakfast is, definitionally, a breakfast recipe (more meals can be
+    ticked on the recipe afterwards)."""
     from django.utils.translation import gettext
 
     from .models import DiaryEntry, Recipe, RecipeIngredient
@@ -966,8 +1033,8 @@ def create_recipe_from_diary_meal(user, target_date, meal_slot):
         owner=user,
         name=f"{gettext(meal_slot.name)} — {target_date.isoformat()}",
         servings=1,
-        meal_slot=meal_slot,
     )
+    recipe.meal_slots.set([meal_slot])
     RecipeIngredient.objects.bulk_create(
         RecipeIngredient(recipe=recipe, food=entry.food, quantity=entry.quantity, order=order)
         for order, entry in enumerate(entries)
@@ -997,7 +1064,38 @@ class FoodUsage:
     meal_slot_id: object
 
 
-def most_used_foods(user, *, limit=10):
+def last_diary_uses(user, food_ids):
+    """`{food_id: (quantity, meal_slot_id)}` from the user's most recent
+    diary entry of each food in `food_ids` — the quantity to prefill
+    wherever that food is offered for logging again (the "Most used"
+    panel and plain search results alike), since a user usually eats
+    about the same amount of a food each time. A food never logged
+    directly is simply absent. Postgres DISTINCT ON, matching this
+    project's only supported database (docs/ARCHITECTURE.md)."""
+    from .models import DiaryEntry
+
+    return {
+        food_id: (quantity, meal_slot_id)
+        for food_id, quantity, meal_slot_id in DiaryEntry.objects.filter(
+            user=user, food_id__in=food_ids
+        )
+        .order_by("food_id", "-created_at")
+        .distinct("food_id")
+        .values_list("food_id", "quantity", "meal_slot_id")
+    }
+
+
+def with_prefill_quantities(user, foods):
+    """Sets `prefill_quantity` on each food: the user's last logged
+    quantity of it (`last_diary_uses`), else its own serving size.
+    Returns `foods` for chaining."""
+    last_uses = last_diary_uses(user, [food.pk for food in foods])
+    for food in foods:
+        food.prefill_quantity = last_uses.get(food.pk, (food.serving_size, None))[0]
+    return foods
+
+
+def most_used_foods(user, *, limit=None):
     """The user's most frequently added foods, most-used first —
     powers the "quick add" panel shown wherever a food can be added
     (the food diary, recipe ingredients, diet-plan meal items), so a
@@ -1031,19 +1129,7 @@ def most_used_foods(user, *, limit=10):
 
     top_ids = [food_id for food_id, _count in counts.most_common(limit)]
     foods_by_id = Food.objects.in_bulk(top_ids)
-
-    # The most recent diary entry per food, for a sensible quantity/
-    # meal-slot prefill — Postgres DISTINCT ON, matches this project's
-    # only supported database (docs/ARCHITECTURE.md).
-    last_diary_use = {
-        food_id: (quantity, meal_slot_id)
-        for food_id, quantity, meal_slot_id in DiaryEntry.objects.filter(
-            user=user, food_id__in=top_ids
-        )
-        .order_by("food_id", "-created_at")
-        .distinct("food_id")
-        .values_list("food_id", "quantity", "meal_slot_id")
-    }
+    last_diary_use = last_diary_uses(user, top_ids)
 
     usages = []
     for food_id in top_ids:
@@ -1081,6 +1167,11 @@ def copy_diary_day(user, source_date, target_date):
             recipe_id=entry.recipe_id,
             quantity=entry.quantity,
             notes=entry.notes,
+            quick_name=entry.quick_name,
+            quick_calories=entry.quick_calories,
+            quick_protein_grams=entry.quick_protein_grams,
+            quick_carbohydrate_grams=entry.quick_carbohydrate_grams,
+            quick_fat_grams=entry.quick_fat_grams,
         )
         for entry in source_entries
     ]
@@ -1140,51 +1231,122 @@ def calorie_history(user, *, days=STATS_WINDOW_DAYS):
 
 @dataclass(frozen=True)
 class NutritionStatsSummary:
-    """The nutrition stats page's headline numbers — see
-    `nutrition_stats`."""
+    """The nutrition stats page's headline numbers for one period — see
+    `nutrition_stats`/`nutrition_stats_by_period`."""
 
     days_logged: int
     days_in_range: int
-    average_calories: Decimal
-    average_protein_grams: Decimal
-    average_carbohydrate_grams: Decimal
-    average_fat_grams: Decimal
+    median_calories: Decimal
+    median_protein_grams: Decimal
+    median_carbohydrate_grams: Decimal
+    median_fat_grams: Decimal
+
+
+def _summarize(logged, days_in_range) -> NutritionStatsSummary:
+    """Median daily calories/macros over `logged` (one ScaledNutrition
+    per day something was logged). The median rather than the mean, asked
+    for directly: one barely-logged day (a forgotten dinner) drags a mean
+    down a lot but barely moves the median, which is what "how much do I
+    usually eat" actually means."""
+    from statistics import median
+
+    if not logged:
+        zero = Decimal("0")
+        return NutritionStatsSummary(0, days_in_range, zero, zero, zero, zero)
+
+    def _median(attr, places):
+        return Decimal(median(getattr(totals, attr) for totals in logged)).quantize(
+            Decimal(places)
+        )
+
+    return NutritionStatsSummary(
+        days_logged=len(logged),
+        days_in_range=days_in_range,
+        median_calories=_median("calories", "1"),
+        median_protein_grams=_median("protein_grams", "0.1"),
+        median_carbohydrate_grams=_median("carbohydrate_grams", "0.1"),
+        median_fat_grams=_median("fat_grams", "0.1"),
+    )
+
+
+def _logged_days(totals_by_date, start, end):
+    """Days in [start, end] that have something logged. An unlogged day
+    is left out rather than counted as zero calories — counting it would
+    punish anyone who logs most days but not every single one."""
+    return [
+        totals
+        for day, totals in totals_by_date.items()
+        if start <= day <= end and totals.calories > 0
+    ]
 
 
 def nutrition_stats(user, *, days=STATS_WINDOW_DAYS) -> NutritionStatsSummary:
-    """Average daily calories/macros over `calorie_history`'s window,
-    counting only days something was actually logged. An unlogged day
-    is excluded from the average rather than counted as a zero-calorie
-    day — counting it as zero would drag the average down for anyone
-    who only logs most days, not every single day, which is most
-    real usage and shouldn't be punished by the stats page itself."""
-    history = calorie_history(user, days=days)
-    logged = [totals for _day, totals in history if totals.calories > 0]
-    days_logged = len(logged)
-    if not days_logged:
-        return NutritionStatsSummary(
-            days_logged=0,
-            days_in_range=days,
-            average_calories=Decimal("0"),
-            average_protein_grams=Decimal("0"),
-            average_carbohydrate_grams=Decimal("0"),
-            average_fat_grams=Decimal("0"),
-        )
-
-    count = Decimal(days_logged)
-
-    def _average(attr, places):
-        total = sum((getattr(totals, attr) for totals in logged), Decimal("0"))
-        return (total / count).quantize(Decimal(places))
-
-    return NutritionStatsSummary(
-        days_logged=days_logged,
-        days_in_range=days,
-        average_calories=_average("calories", "1"),
-        average_protein_grams=_average("protein_grams", "0.1"),
-        average_carbohydrate_grams=_average("carbohydrate_grams", "0.1"),
-        average_fat_grams=_average("fat_grams", "0.1"),
+    """Median daily calories/macros over the last `days` days (today
+    inclusive), counting only days something was actually logged."""
+    today = timezone.localdate()
+    start = today - timezone.timedelta(days=days - 1)
+    return _summarize(
+        _logged_days(_daily_totals_by_date(user, start, today), start, today), days
     )
+
+
+def _months_before(day, months):
+    """The same day-of-month `months` earlier, clamped to that month's
+    length (May 31 → Feb 28/29)."""
+    import calendar
+
+    month_index = day.year * 12 + day.month - 1 - months
+    year, month = divmod(month_index, 12)
+    month += 1
+    return day.replace(
+        year=year, month=month, day=min(day.day, calendar.monthrange(year, month)[1])
+    )
+
+
+@dataclass(frozen=True)
+class NutritionStatsPeriod:
+    key: str
+    label: str
+    summary: NutritionStatsSummary
+
+
+def nutrition_stats_by_period(user, today=None) -> list[NutritionStatsPeriod]:
+    """`nutrition_stats`'s medians for the stats page's fixed periods —
+    7/14/30 days, 3 months, year to date, 1 year and all time. Every
+    period ends today; the diary is read once (from the user's first
+    entry) and each period is a slice of it. "All" starts at the first
+    logged day, so its day count isn't padded with time before the user
+    started logging."""
+    from django.utils.translation import gettext_lazy as _
+
+    from .models import DiaryEntry
+
+    today = today or timezone.localdate()
+    first = DiaryEntry.objects.filter(user=user).order_by("date").values_list(
+        "date", flat=True
+    ).first()
+    all_start = min(first, today) if first else today
+    starts = [
+        ("7d", _("7 days"), today - timezone.timedelta(days=6)),
+        ("14d", _("14 days"), today - timezone.timedelta(days=13)),
+        ("30d", _("30 days"), today - timezone.timedelta(days=29)),
+        ("3m", _("3 months"), _months_before(today, 3) + timezone.timedelta(days=1)),
+        ("ytd", _("Year to date"), today.replace(month=1, day=1)),
+        ("1y", _("1 year"), _months_before(today, 12) + timezone.timedelta(days=1)),
+        ("all", _("All time"), all_start),
+    ]
+    earliest = min(start for _key, _label, start in starts)
+    totals_by_date = _daily_totals_by_date(user, earliest, today)
+    return [
+        NutritionStatsPeriod(
+            key=key,
+            label=label,
+            summary=_summarize(
+                _logged_days(totals_by_date, start, today), (today - start).days + 1
+            ),
+        )
+        for key, label, start in starts
+    ]
 
 
 def is_training_day(user, target_date):

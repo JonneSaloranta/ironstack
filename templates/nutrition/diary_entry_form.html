@@ -3,7 +3,7 @@
 {% block title %}{% trans "Edit entry" %} — IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
-  <h1 class="no-margin">{% if entry.food %}<a class="inline-item-link" href="{% url 'nutrition:food-detail' entry.food.pk %}">{{ entry.food.name }}</a>{% else %}<a class="inline-item-link" href="{% url 'nutrition:recipe-detail' entry.recipe.pk %}">{% trans entry.recipe.name %}</a>{% endif %}</h1>
+  <h1 class="no-margin">{% if entry.food %}<a class="inline-item-link" href="{% url 'nutrition:food-detail' entry.food.pk %}">{{ entry.food.name }}</a>{% elif entry.recipe %}<a class="inline-item-link" href="{% url 'nutrition:recipe-detail' entry.recipe.pk %}">{% trans entry.recipe.name %}</a>{% else %}{{ entry.display_name }}{% endif %}</h1>
 </div>
 {% include "nutrition/_subnav.html" %}
 

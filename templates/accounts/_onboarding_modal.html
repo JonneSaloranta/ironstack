@@ -9,6 +9,27 @@
                 class="modal-close" aria-label="{% trans "Not now" %}">&times;</button>
       </div>
       <div class="modal-body">
+        {% if onboarding_step == "language" %}
+        {% comment %}
+          Step 1 of 2, on its own: the language. Pre-selected from the
+          browser (apps.accounts.signals.follow_browser_language); saving
+          reloads the whole page in that language, and step 2 follows.
+        {% endcomment %}
+        <form id="onboarding-form" method="post" action="{% url 'onboarding' %}"
+              hx-post="{% url 'onboarding' %}" hx-target="#onboarding-modal-container" hx-swap="outerHTML">
+          {% csrf_token %}
+          <fieldset class="language-choices">
+            <legend>{% trans "Choose your language" %}</legend>
+            {% for choice in onboarding_language_form.language %}
+              <label class="language-choice" for="{{ choice.id_for_label }}">{{ choice.tag }} <span lang="{{ choice.data.value }}">{{ choice.choice_label }}</span></label>
+            {% endfor %}
+          </fieldset>
+          {% for error in onboarding_language_form.language.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+          <div class="row-actions">
+            <button type="submit" name="action" value="language">{% trans "Continue" %}</button>
+          </div>
+        </form>
+        {% else %}
         <p>{% trans "A few quick details help IronStack work better for you — every field below is optional, and you can always change them later from your profile." %}</p>
         <form id="onboarding-form" method="post" action="{% url 'onboarding' %}"
               hx-post="{% url 'onboarding' %}" hx-target="#onboarding-modal-container" hx-swap="outerHTML" novalidate>
@@ -22,6 +43,7 @@
             <button type="submit" name="action" value="skip" class="button-secondary" formnovalidate>{% trans "Not now" %}</button>
           </div>
         </form>
+        {% endif %}
       </div>
     </div>
   </div>

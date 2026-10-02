@@ -21,7 +21,7 @@
 </div>
 
 <div class="card">
-  <strong>{% trans "Backup" %}</strong>
+  <h2 class="card-title">{% trans "Backup" %}</h2>
   <dl>
     <dt>{% trans "Version" %}</dt><dd>{{ backup_manifest.version }}</dd>
     <dt>{% trans "Git commit" %}</dt><dd>{{ backup_manifest.git_sha }}</dd>
@@ -31,7 +31,7 @@
 </div>
 
 <div class="card">
-  <strong>{% trans "Running instance" %}</strong>
+  <h2 class="card-title">{% trans "Running instance" %}</h2>
   <dl>
     <dt>{% trans "Version" %}</dt><dd>{{ running_manifest.version }}</dd>
     <dt>{% trans "Git commit" %}</dt><dd>{{ running_manifest.git_sha }}</dd>

@@ -18,17 +18,22 @@
 </div>
 {% include "nutrition/_subnav.html" %}
 
-{% if recipe.meal_slot %}
-  <p class="text-muted">{% blocktrans with meal=recipe.meal_slot.name|translate_content %}Tagged for {{ meal }} — the diet-plan builder only ever suggests this recipe for that meal.{% endblocktrans %}</p>
-{% endif %}
+{% with slots=recipe.meal_slots.all %}
+  {% if slots %}
+    <p class="row">
+      {% for slot in slots %}<span class="tag tag-outline">{{ slot.name|translate_content }}</span>{% endfor %}
+    </p>
+    <p class="text-muted">{% blocktrans count counter=slots|length %}The diet-plan builder only suggests this recipe for this meal.{% plural %}The diet-plan builder only suggests this recipe for these meals.{% endblocktrans %}</p>
+  {% endif %}
+{% endwith %}
 
 {% if recipe.instructions %}
   {% trans recipe.instructions as translated_instructions %}
   <p class="text-muted">{{ translated_instructions|linebreaksbr }}</p>
 {% endif %}
 
-<div class="card">
-  <strong>{% trans "Ingredients" %}</strong>
+<div data-tour="recipe-ingredients" class="card">
+  <h2 class="card-title">{% trans "Ingredients" %}</h2>
   {% for ingredient in ingredients %}
     <div class="card-action-row py-2">
       <div>
@@ -55,7 +60,7 @@
 </div>
 
 <div class="card">
-  <strong>{% trans "Nutrition" %}</strong>
+  <h2 class="card-title">{% trans "Nutrition" %}</h2>
   <div class="table-wrap"><table class="set-table">
     <thead>
       <tr><th scope="col"></th><th scope="col">{% trans "Total" %}</th><th scope="col">{% blocktrans with servings=recipe.servings %}Per serving (of {{ servings }}){% endblocktrans %}</th></tr>
@@ -84,7 +89,7 @@
   {% endif %}
 </div>
 
-<form class="card" method="post" action="{% url 'nutrition:recipe-log' recipe.pk %}">
+<form data-tour="recipe-log" class="card" method="post" action="{% url 'nutrition:recipe-log' recipe.pk %}">
   {% csrf_token %}
   <strong>{% trans "Log to diary" %}</strong>
   {{ log_form.non_field_errors }}

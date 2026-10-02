@@ -77,13 +77,35 @@ def weight(value, user):
     return f"{display} {core_units.weight_unit_label(unit_system)}"
 
 
+@register.filter
+def nutrient_amount(value, decimals=2):
+    """A nutrition-label figure: at most `decimals` decimals, no trailing
+    zeros (0.30 → "0,3" in Finnish, 12.00 → "12"), in the active
+    locale's number format. None (unknown) renders as an en dash."""
+    from decimal import ROUND_HALF_UP, Decimal
+
+    from django.utils.formats import number_format
+
+    if value is None or value == "":
+        return "–"
+    quantum = Decimal(1).scaleb(-int(decimals))
+    rounded = Decimal(str(value)).quantize(quantum, rounding=ROUND_HALF_UP).normalize()
+    if rounded == rounded.to_integral():
+        rounded = rounded.quantize(Decimal(1))
+    return number_format(rounded, use_l10n=True)
+
+
 @register.simple_tag
-def url_replace(request, **kwargs):
+def url_replace(request, param=None, value=None, **kwargs):
     """Current query string with `kwargs` overridden — what a pager needs
     to change `page` while keeping search/filter/sort params, url-encoded
     and without emitting empty parameters the way hand-built
-    `?page=N&q={{ query }}` links did."""
+    `?page=N&q={{ query }}` links did. `param`/`value` override a key
+    whose name is itself a variable (a page with two pagers, each with
+    its own `mine_page`/`template_page`-style parameter)."""
     params = request.GET.copy()
+    if param:
+        kwargs[param] = value
     for key, value in kwargs.items():
         params[key] = value
     for key in [k for k, v in params.items() if v == ""]:

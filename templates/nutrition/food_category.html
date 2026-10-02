@@ -21,9 +21,7 @@
     </form>
   {% endfor %}
 {% else %}
-  <div class="card empty-state">
-    <p>{% trans "Nothing found in this category right now." %}</p>
-  </div>
+  {% include "core/_empty_state.html" with message=_("Nothing found in this category right now.") %}
 {% endif %}
 
 {% include "nutrition/_off_attribution.html" %}

@@ -9,7 +9,7 @@
 </div>
 <div class="top-bar-actions">
   {% if can_edit %}
-    <a class="button" href="{% url 'programs:program-update' program.pk %}">{% trans "Edit" %}</a>
+    <a class="button-secondary" href="{% url 'programs:program-update' program.pk %}">{% trans "Edit" %}</a>
   {% endif %}
   <a class="button-secondary" href="{% url 'programs:program-export' program.pk %}">{% trans "Export" %}</a>
   {% if program.imported_from_id %}
@@ -17,7 +17,7 @@
   {% endif %}
 </div>
 
-<div class="card">
+<div data-tour="program-info" class="card">
   {% if program.is_system_template %}
     <span class="tag tag-muted">{% trans "Built-in template" %}</span>
   {% elif program.is_template %}
@@ -28,7 +28,7 @@
     {% blocktrans with version=program.version updated=program.updated_at|date:"Y-m-d" %}Version {{ version }} · updated {{ updated }}{% endblocktrans %}
   </p>
   {% if program.is_template %}
-    <form method="post" action="{% url 'programs:program-copy' program.pk %}">
+    <form data-tour="copy-template" method="post" action="{% url 'programs:program-copy' program.pk %}">
       {% csrf_token %}
       <button type="submit">{% trans "Copy to a new program" %}</button>
     </form>
@@ -36,7 +36,7 @@
 </div>
 
 {% for workout in program.workouts.all %}
-  <div class="card">
+  <div data-tour="program-workout" class="card">
     <div class="top-bar no-border">
       <h2 class="card-title">
         {% trans workout.name %}
@@ -72,22 +72,20 @@
     </ul>
 
     {% if can_edit %}
-      <a class="button" href="{% url 'programs:prescription-create' program.pk workout.pk %}">{% trans "Add exercise" %}</a>
+      <a data-tour="add-prescription" class="button" href="{% url 'programs:prescription-create' program.pk workout.pk %}">{% trans "Add exercise" %}</a>
     {% endif %}
 
-    <form method="post" action="{% url 'workouts:session-start' workout.pk %}">
+    <form data-tour="start-program-workout" method="post" action="{% url 'workouts:session-start' workout.pk %}">
       {% csrf_token %}
       <button type="submit">{% trans "Start workout" %}</button>
     </form>
   </div>
 {% empty %}
-  <div class="card empty-state">
-    <p>{% trans "No workouts yet." %}</p>
-  </div>
+  {% include "core/_empty_state.html" with message=_("No workouts yet.") %}
 {% endfor %}
 
 {% if can_edit %}
-  <a class="button" href="{% url 'programs:workout-create' program.pk %}">{% trans "Add workout" %}</a>
+  <a data-tour="add-workout" class="button" href="{% url 'programs:workout-create' program.pk %}">{% trans "Add workout" %}</a>
   <form method="post" action="{% url 'programs:program-delete' program.pk %}" data-confirm="{% filter force_escape %}{% trans "Delete this program? This cannot be undone." %}{% endfilter %}">
     {% csrf_token %}
     <button type="submit" class="button-danger">{% trans "Delete program" %}</button>

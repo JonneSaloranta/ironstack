@@ -7,7 +7,7 @@
   <h1 class="no-margin">{{ exercise_display_name }}</h1>
 </div>
 
-<div class="card">
+<div data-tour="current-prs" class="card">
   <h2 class="card-title">{% trans "Current" %} <abbr tabindex="0" title="{% trans "Personal Records" %}">PRs</abbr></h2>
   <dl>
     <dt>{% trans "Max weight" %}</dt>
@@ -24,7 +24,7 @@
   </dl>
 </div>
 
-<div class="card">
+<div data-tour="rep-maxes" class="card">
   <h2 class="card-title">{% trans "Rep maxes" %}</h2>
   <ul class="prescription-list">
     {% for rep_count, weight in records.rep_specific_pr.items %}

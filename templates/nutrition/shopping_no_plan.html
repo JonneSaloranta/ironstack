@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Shopping list" %} — IronStack{% endblock %}
+{% block content %}
+<div class="top-bar">
+  <h1 class="no-margin">{% trans "Shopping list" %}</h1>
+</div>
+{% include "nutrition/_subnav.html" %}
+
+{% url 'nutrition:diet-plan-list' as plans_url %}
+{% include "core/_empty_state.html" with message=_("The shopping list comes from your active diet plan, and you don't have one yet.") hint=_("Create a plan, or activate one of yours.") cta_url=plans_url cta_label=_("Diet plans") %}
+
+<p><a class="button-link" href="{% url 'nutrition:dashboard' %}">&larr; {% trans "Back to nutrition" %}</a></p>
+{% endblock %}

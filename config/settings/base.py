@@ -53,6 +53,10 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    # With FORM_RENDERER below: form widget templates resolve through the
+    # normal template loaders, so a custom widget's template can live in
+    # templates/ like every other template (apps.core.widgets).
+    "django.forms",
     "rest_framework",
     # apps.api's interactive docs (docs/API.md "Interactive docs") —
     # provides DEFAULT_SCHEMA_CLASS below plus the schema/Swagger-UI
@@ -84,6 +88,7 @@ INSTALLED_APPS = [
     "apps.api",
     "apps.social",
     "apps.coaching",
+    "apps.tutorials",
 ]
 
 MIDDLEWARE = [
@@ -119,6 +124,8 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = "config.urls"
 
+FORM_RENDERER = "django.forms.renderers.TemplatesSetting"
+
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
@@ -141,6 +148,7 @@ TEMPLATES = [
                 "apps.nutrition.context_processors.nutrition_subnav",
                 "apps.social.context_processors.social_badge",
                 "apps.coaching.context_processors.pending_coaching_activity",
+                "apps.tutorials.context_processors.tutorial",
             ],
         },
     },

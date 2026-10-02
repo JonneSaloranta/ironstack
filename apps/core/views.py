@@ -4,6 +4,7 @@ from datetime import timedelta
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import Http404, HttpResponse
+from django.urls import reverse
 from django.utils import timezone
 from django.utils.formats import date_format
 from django.utils.translation import gettext as _
@@ -192,6 +193,10 @@ class DashboardView(LoginRequiredMixin, TemplateView):
         context["body_tracking_reminder"] = measurement_services.needs_body_tracking_reminder(
             user
         )
+        if user.nutrition_enabled:
+            from apps.nutrition import shopping
+
+            context["shopping_today"] = shopping.shopping_today(user, today)
 
         # Shared across every user on this instance, not scoped to
         # `user` — apps.analytics.achievements.achievement_highlights
@@ -284,6 +289,19 @@ def web_manifest(request):
     color = light if getattr(user, "appearance", "") == "light" else dark
     manifest["theme_color"] = color
     manifest["background_color"] = color
+    if user.nutrition_enabled:
+        # Long-press the installed app's icon → straight to the shopping
+        # list, in the shop, without any navigating (the user's language).
+        from django.utils import translation
+
+        with translation.override(user.language):
+            manifest["shortcuts"] = [
+                {
+                    "name": str(_("Shopping list")),
+                    "url": reverse("nutrition:shopping"),
+                    "icons": [{"src": "/static/icons/icon-192.png", "sizes": "192x192"}],
+                }
+            ]
     return HttpResponse(
         json.dumps(manifest), content_type="application/manifest+json"
     )

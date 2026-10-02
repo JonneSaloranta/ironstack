@@ -9,7 +9,7 @@
 </div>
 {% if exercise.owner_id == request.user.id %}
   <div class="top-bar-actions">
-    <a class="button" href="{% url 'exercises:exercise-update' exercise.pk %}">{% trans "Edit" %}</a>
+    <a class="button-secondary" href="{% url 'exercises:exercise-update' exercise.pk %}">{% trans "Edit" %}</a>
   </div>
 {% endif %}
 
@@ -45,7 +45,7 @@
 
 {% if exercise.instructions or exercise.images.all or exercise.owner_id == request.user.id %}
 <div class="card">
-  <h2>{% trans "Instructions" %}</h2>
+  <h2 class="card-title">{% trans "Instructions" %}</h2>
   {% if exercise.instructions %}
     <p>{{ exercise.instructions|translate_content|linebreaksbr }}</p>
     {% if exercise.instructions_attribution %}<p class="attribution-note">{{ exercise.instructions_attribution }}</p>{% endif %}
@@ -60,7 +60,7 @@
           {% if exercise.owner_id == request.user.id %}
             <form method="post" action="{% url 'exercises:exercise-image-delete' image.pk %}" data-confirm="{% filter force_escape %}{% trans "Remove this image?" %}{% endfilter %}">
               {% csrf_token %}
-              <button type="submit" class="button-secondary">{% trans "Remove" %}</button>
+              <button type="submit" class="button-danger">{% trans "Remove" %}</button>
             </form>
           {% endif %}
         </figure>
@@ -84,12 +84,12 @@
 </div>
 {% endif %}
 
-<a class="card card-link" href="{% url 'records:exercise-records' exercise.pk %}">
+<a data-tour="exercise-records" class="card card-link" href="{% url 'records:exercise-records' exercise.pk %}">
   <strong>{% trans "Your" %} <abbr tabindex="0" title="{% trans "Personal Records" %}">PRs</abbr></strong>
   <p class="text-muted">{% trans "Current personal records for this exercise." %}</p>
 </a>
 
-<a class="card card-link" href="{% url 'analytics:exercise' exercise.pk %}">
+<a data-tour="exercise-progress" class="card card-link" href="{% url 'analytics:exercise' exercise.pk %}">
   <strong>{% trans "Strength trend" %}</strong>
   <p class="text-muted">{% trans "Estimated" %} <abbr tabindex="0" title="{% trans "One-Rep Max" %}">1RM</abbr> {% trans "over time and training volume." %}</p>
 </a>

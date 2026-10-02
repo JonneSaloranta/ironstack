@@ -1,0 +1,16 @@
+{% comment %}
+The pager markup itself — included only by core/_pagination.html, which picks
+`pager` (its `page`, else the view's page_obj) and `param_name`.
+{% endcomment %}
+{% load i18n core_extras %}
+{% if pager.has_other_pages %}
+  <nav class="pagination"{% if anchor %} id="{{ anchor }}"{% endif %} aria-label="{% if label %}{{ label }}{% else %}{% trans "Pagination" %}{% endif %}">
+    {% if pager.has_previous %}
+      <a class="button-secondary" rel="prev" href="?{% url_replace request param_name pager.previous_page_number %}{% if anchor %}#{{ anchor }}{% endif %}" {% if hx_target %}hx-get="?{% url_replace request param_name pager.previous_page_number %}" hx-select="#{{ hx_target }}" hx-target="#{{ hx_target }}" hx-swap="outerHTML"{% endif %}>&larr; {% trans "Previous" %}</a>
+    {% else %}<span></span>{% endif %}
+    <span class="text-muted">{% blocktrans with n=pager.number total=pager.paginator.num_pages %}Page {{ n }} of {{ total }}{% endblocktrans %}</span>
+    {% if pager.has_next %}
+      <a class="button-secondary" rel="next" href="?{% url_replace request param_name pager.next_page_number %}{% if anchor %}#{{ anchor }}{% endif %}" {% if hx_target %}hx-get="?{% url_replace request param_name pager.next_page_number %}" hx-select="#{{ hx_target }}" hx-target="#{{ hx_target }}" hx-swap="outerHTML"{% endif %}>{% trans "Next" %} &rarr;</a>
+    {% else %}<span></span>{% endif %}
+  </nav>
+{% endif %}

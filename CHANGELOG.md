@@ -18,6 +18,69 @@ narrated summary of the same version.
 
 ## [Unreleased]
 
+## [1.23.0] — 2026-10-02
+
+### Added
+- Shopping list for a diet plan: the same food on several days is added
+  up into one amount (with each day's amount under it), recipes are
+  broken into their ingredients, and items can be ticked off in the
+  shop. Pick your shopping days per plan — each list covers the days up
+  to the next shopping day — and whether a shopping day's own meals are
+  on that day's list.
+- REST API: `diet-plans/<id>/shopping-list/` and
+  `diet-plans/<id>/shopping-settings/`.
+- The shopping list is easy to reach: its own tab in nutrition, a button
+  on today's plan, a card on Home on your shopping days, and a shortcut
+  when you long-press the installed app's icon.
+- Tutorials: a short guided tour on every main page the first time you
+  open it — the part being explained is highlighted while the rest of
+  the page is dimmed, with a compact explanation right next to it. Skip
+  any tour or switch them all off; profile → Tutorials replays any of
+  them.
+- Onboarding asks for your language first, on its own step, so the rest
+  of it is already in your language. Until you choose, the app follows
+  your browser's language.
+- Food diary: "Enter macros manually" logs a meal's calories and macros
+  straight into the diary (e.g. a restaurant's published values)
+  without creating a food for it.
+- Food pages show the full nutrition table the way a Finnish/EU package
+  label does — energy in kJ and kcal, "of which" rows for saturates,
+  sugars, starch and polyols, fibre, protein, salt — followed by every
+  other nutrient OpenFoodFacts has (vitamins, minerals, …). Creating a
+  food asks for the values in the same order, with salt instead of
+  sodium.
+- "Most used" foods are paginated instead of capped at ten.
+
+### Changed
+- A recipe can be meant for several meals (e.g. both lunch and dinner)
+  instead of exactly one or "any"; the diet-plan builder suggests it for
+  each of them. Recipe files exported before this still import.
+- Layout with long names: list rows keep their buttons in the same place
+  whatever the text's length (they used to drop under a long name), long
+  words wrap instead of running off the screen, and the food list's
+  table fits a phone screen.
+- Sharing a program or diet plan with clients: instead of a checkbox list
+  of every client, search for a client and add them to a list, where each
+  one can be removed again.
+- Nutrition statistics show median daily calories and macros instead of
+  averages, so one barely-logged day no longer drags them down, plus a
+  table of medians for 7 and 14 days, 30 days, 3 months, year to date,
+  1 year and all time. The chart still covers the last 30 days.
+- The food list opens newest first.
+- Searching for a food in the diary prefills the amount you last logged
+  of it, the same as the "Most used" list already did.
+- Consistent UI across pages: card titles, empty states, "New"/"Edit"
+  buttons, back and cancel links, confirmations and pagination now
+  follow one set of rules (`docs/UI_COMPONENTS.md`). Stretches and
+  routines are now "Deactivated" rather than "Removed", and removing a
+  stretch from a routine asks for confirmation.
+
+### Fixed
+- A list of checkboxes (e.g. an exercise's muscle groups) had its whole
+  list wrapped inside the field's label; the label now sits above it.
+- Stretching forms' "Back" link showed the muscle-group translation
+  ("Selkä" in Finnish) instead of "Back".
+
 ## [1.22.0] — 2026-09-23
 
 ### Added

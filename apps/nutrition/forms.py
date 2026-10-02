@@ -9,7 +9,9 @@ from decimal import Decimal
 
 from django import forms
 from django.utils.translation import gettext_lazy as _
+from django.utils.translation import pgettext_lazy
 
+from apps.coaching.forms import ClientPickerField, active_clients_of
 from apps.core import units as core_units
 
 from . import energy
@@ -172,21 +174,46 @@ class FoodForm(forms.ModelForm):
             "brand",
             "serving_size",
             "serving_unit",
+            # The same order as a package's nutrition label, so the
+            # values can be copied straight down it.
             "calories",
-            "protein_grams",
-            "carbohydrate_grams",
             "fat_grams",
-            "fiber_grams",
-            "sugar_grams",
             "saturated_fat_grams",
-            "sodium_mg",
+            "carbohydrate_grams",
+            "sugar_grams",
+            "starch_grams",
+            "polyols_grams",
+            "fiber_grams",
+            "protein_grams",
+            "salt_grams",
         ]
+        labels = {
+            "saturated_fat_grams": pgettext_lazy("nutrient", "of which saturates"),
+            "sugar_grams": pgettext_lazy("nutrient", "of which sugars"),
+            "starch_grams": pgettext_lazy("nutrient", "of which starch"),
+            "polyols_grams": pgettext_lazy("nutrient", "of which polyols"),
+            "fiber_grams": pgettext_lazy("nutrient", "Fibre"),
+            "salt_grams": pgettext_lazy("nutrient", "Salt"),
+        }
         help_texts = {
             "serving_size": _(
                 "All the nutrition values below are for this amount, in the unit chosen "
                 "next to it — e.g. \"100 g\" if the values are per 100 grams."
             ),
         }
+
+
+    def save(self, commit=True):
+        # Totals sum sodium (services.ScaledNutrition), while a label
+        # states salt — keep the two in step (salt = sodium × 2.5).
+        food = super().save(commit=False)
+        if food.salt_grams is None:
+            food.sodium_mg = None
+        else:
+            food.sodium_mg = int(round(food.salt_grams * 1000 / Decimal("2.5")))
+        if commit:
+            food.save()
+        return food
 
 
 class FoodSearchForm(forms.Form):
@@ -223,12 +250,73 @@ class DiaryAddEntryForm(forms.Form):
         return cleaned
 
 
+class DiaryQuickEntryForm(forms.ModelForm):
+    """Macros typed straight into the diary — no Food behind them
+    (DiaryEntry's "quick entry"). Used both to add one and to edit it.
+    Every value is optional on its own, but at least one has to be
+    given; blank calories are estimated from the macros."""
+
+    class Meta:
+        from .models import DiaryEntry
+
+        model = DiaryEntry
+        fields = [
+            "quick_name",
+            "quick_calories",
+            "quick_protein_grams",
+            "quick_carbohydrate_grams",
+            "quick_fat_grams",
+            "notes",
+        ]
+        labels = {
+            "quick_name": _("Name"),
+            "quick_calories": _("Calories"),
+            "quick_protein_grams": _("Protein (g)"),
+            "quick_carbohydrate_grams": _("Carbohydrates (g)"),
+            "quick_fat_grams": _("Fat (g)"),
+            "notes": _("Notes"),
+        }
+        help_texts = {
+            "quick_name": _("Optional — e.g. the restaurant dish."),
+            "quick_calories": _("kcal. Leave blank to estimate it from the macros."),
+        }
+        widgets = {
+            field: forms.NumberInput(attrs={"inputmode": "decimal", "autocomplete": "off"})
+            for field in [
+                "quick_calories",
+                "quick_protein_grams",
+                "quick_carbohydrate_grams",
+                "quick_fat_grams",
+            ]
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["notes"].widget = forms.Textarea(attrs={"rows": 2})
+
+    def clean(self):
+        from . import services
+
+        cleaned = super().clean()
+        macros = [
+            cleaned.get("quick_protein_grams"),
+            cleaned.get("quick_carbohydrate_grams"),
+            cleaned.get("quick_fat_grams"),
+        ]
+        if cleaned.get("quick_calories") is None:
+            if all(value is None for value in macros):
+                raise forms.ValidationError(_("Enter the calories or at least one macro."))
+            cleaned["quick_calories"] = services.calories_from_macros(*macros)
+        return cleaned
+
+
 class DiaryEntryQuantityForm(forms.ModelForm):
     class Meta:
         from .models import DiaryEntry
 
         model = DiaryEntry
         fields = ["quantity", "notes"]
+        labels = {"notes": _("Notes")}
 
 
 class RecipeForm(forms.ModelForm):
@@ -236,20 +324,21 @@ class RecipeForm(forms.ModelForm):
         from .models import Recipe
 
         model = Recipe
-        fields = ["name", "servings", "instructions", "meal_slot"]
+        fields = ["name", "servings", "instructions", "meal_slots"]
+        widgets = {"meal_slots": forms.CheckboxSelectMultiple}
 
     def __init__(self, *args, user, **kwargs):
         from . import services
 
         super().__init__(*args, **kwargs)
-        self.fields["meal_slot"].label = _("Meal (optional)")
-        self.fields["meal_slot"].empty_label = _("Any meal")
-        self.fields["meal_slot"].required = False
-        self.fields["meal_slot"].help_text = _(
-            "If set, the diet-plan builder only ever suggests this recipe for that "
-            "meal — leave as \"Any meal\" for a recipe that fits anywhere."
+        self.fields["meal_slots"].label = _("Meals (optional)")
+        self.fields["meal_slots"].required = False
+        self.fields["meal_slots"].help_text = _(
+            "Tick every meal this recipe suits, e.g. both Lunch and Dinner. The "
+            "diet-plan builder only suggests it for those meals — leave all unticked "
+            "for a recipe that fits any meal."
         )
-        self.fields["meal_slot"].queryset = services.visible_meal_slots(user)
+        self.fields["meal_slots"].queryset = services.visible_meal_slots(user)
 
 
 class RecipeIngredientQuantityForm(forms.ModelForm):
@@ -699,16 +788,45 @@ class DietPlanShareForm(forms.Form):
     ProgramForm.shared_with_clients's own narrowed queryset) can see
     and import a specific diet plan."""
 
-    clients = forms.ModelMultipleChoiceField(
-        queryset=None, widget=forms.CheckboxSelectMultiple, required=False,
+    clients = ClientPickerField(
         label=_("Share with these clients"),
+        help_text=_(
+            "Search for a client and add them to the list: everyone on it can see "
+            "and import their own copy of this diet plan. Leave the list empty to "
+            "keep it private."
+        ),
     )
 
     def __init__(self, *args, coach, **kwargs):
         super().__init__(*args, **kwargs)
-        from django.contrib.auth import get_user_model
+        self.fields["clients"].queryset = active_clients_of(coach)
 
-        User = get_user_model()
-        self.fields["clients"].queryset = User.objects.filter(
-            coaches__coach=coach, coaches__ended_at__isnull=True
-        )
+
+class ShoppingSettingsForm(forms.Form):
+    """A diet plan's shopping list settings (apps.nutrition.shopping)."""
+
+    weekdays = forms.TypedMultipleChoiceField(
+        coerce=int,
+        required=False,
+        widget=forms.CheckboxSelectMultiple,
+        label=_("Shopping days"),
+        help_text=_(
+            "Each shopping day's list covers the days up to the next one. "
+            "Pick none for one list for the whole week."
+        ),
+    )
+    include_shopping_day = forms.BooleanField(
+        required=False,
+        label=_("A shopping day's own meals go on that day's list"),
+        help_text=_(
+            "On: you shop before that day's meals. Off: they're on the previous "
+            "list — you shop after that day is covered."
+        ),
+    )
+
+    def __init__(self, *args, **kwargs):
+        from apps.programs.models import Weekday
+
+        super().__init__(*args, **kwargs)
+        self.fields["weekdays"].choices = Weekday.choices
+

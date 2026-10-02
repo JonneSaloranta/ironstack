@@ -8917,6 +8917,967 @@ msgstr "Modifica serie"
 msgid "Edit set %(number)s"
 msgstr "Modifica serie %(number)s"
 
+msgid "Back to friends"
+msgstr "Torna agli amici"
+
+msgid "Back to messages"
+msgstr "Torna ai messaggi"
+
+msgid "Back to groups"
+msgstr "Torna ai gruppi"
+
+msgid "Back to group"
+msgstr "Torna al gruppo"
+
+msgid "Remove this stretch from the routine?"
+msgstr "Rimuovere questo allungamento dalla routine?"
+
+msgid "Deactivate this routine? Past sessions stay in your history."
+msgstr "Disattivare questa routine? Le sessioni passate restano nella tua cronologia."
+
+msgid "Deactivate this stretch? It will no longer appear when browsing, but routines and past sessions that use it keep working."
+msgstr "Disattivare questo allungamento? Non apparirà più durante la navigazione, ma le routine e le sessioni passate che lo usano continuano a funzionare."
+
+msgctxt "nutrient"
+msgid "Energy"
+msgstr "Energia"
+
+msgctxt "nutrient"
+msgid "of which saturates"
+msgstr "di cui acidi grassi saturi"
+
+msgctxt "nutrient"
+msgid "of which sugars"
+msgstr "di cui zuccheri"
+
+msgctxt "nutrient"
+msgid "of which starch"
+msgstr "di cui amido"
+
+msgctxt "nutrient"
+msgid "of which polyols"
+msgstr "di cui polioli"
+
+msgctxt "nutrient"
+msgid "Fibre"
+msgstr "Fibre"
+
+msgctxt "nutrient"
+msgid "Salt"
+msgstr "Sale"
+
+msgid "Optional — e.g. the restaurant dish."
+msgstr "Facoltativo — ad es. il piatto del ristorante."
+
+msgid "kcal. Leave blank to estimate it from the macros."
+msgstr "kcal. Lascia vuoto per stimarle dai macronutrienti."
+
+msgid "Enter the calories or at least one macro."
+msgstr "Inserisci le calorie o almeno un macronutriente."
+
+msgid "Quick entry"
+msgstr "Voce rapida"
+
+msgid "Log either a food, a recipe or quick macros — exactly one of them."
+msgstr "Registra un alimento, una ricetta o dei macro rapidi — esattamente uno di essi."
+
+msgctxt "nutrient"
+msgid "of which monounsaturates"
+msgstr "di cui acidi grassi monoinsaturi"
+
+msgctxt "nutrient"
+msgid "of which polyunsaturates"
+msgstr "di cui acidi grassi polinsaturi"
+
+msgctxt "nutrient"
+msgid "Omega-3 fatty acids"
+msgstr "Acidi grassi omega-3"
+
+msgctxt "nutrient"
+msgid "Trans fat"
+msgstr "Grassi trans"
+
+msgctxt "nutrient"
+msgid "Cholesterol"
+msgstr "Colesterolo"
+
+msgctxt "nutrient"
+msgid "Lactose"
+msgstr "Lattosio"
+
+msgctxt "nutrient"
+msgid "Alcohol"
+msgstr "Alcol"
+
+msgctxt "nutrient"
+msgid "Caffeine"
+msgstr "Caffeina"
+
+msgctxt "nutrient"
+msgid "Vitamin A"
+msgstr "Vitamina A"
+
+msgctxt "nutrient"
+msgid "Vitamin D"
+msgstr "Vitamina D"
+
+msgctxt "nutrient"
+msgid "Vitamin E"
+msgstr "Vitamina E"
+
+msgctxt "nutrient"
+msgid "Vitamin K"
+msgstr "Vitamina K"
+
+msgctxt "nutrient"
+msgid "Vitamin C"
+msgstr "Vitamina C"
+
+msgctxt "nutrient"
+msgid "Thiamin (B1)"
+msgstr "Tiamina (B1)"
+
+msgctxt "nutrient"
+msgid "Riboflavin (B2)"
+msgstr "Riboflavina (B2)"
+
+msgctxt "nutrient"
+msgid "Niacin"
+msgstr "Niacina"
+
+msgctxt "nutrient"
+msgid "Vitamin B6"
+msgstr "Vitamina B6"
+
+msgctxt "nutrient"
+msgid "Folate"
+msgstr "Folato"
+
+msgctxt "nutrient"
+msgid "Vitamin B12"
+msgstr "Vitamina B12"
+
+msgctxt "nutrient"
+msgid "Biotin"
+msgstr "Biotina"
+
+msgctxt "nutrient"
+msgid "Pantothenic acid"
+msgstr "Acido pantotenico"
+
+msgctxt "nutrient"
+msgid "Potassium"
+msgstr "Potassio"
+
+msgctxt "nutrient"
+msgid "Chloride"
+msgstr "Cloruro"
+
+msgctxt "nutrient"
+msgid "Calcium"
+msgstr "Calcio"
+
+msgctxt "nutrient"
+msgid "Phosphorus"
+msgstr "Fosforo"
+
+msgctxt "nutrient"
+msgid "Magnesium"
+msgstr "Magnesio"
+
+msgctxt "nutrient"
+msgid "Iron"
+msgstr "Ferro"
+
+msgctxt "nutrient"
+msgid "Zinc"
+msgstr "Zinco"
+
+msgctxt "nutrient"
+msgid "Copper"
+msgstr "Rame"
+
+msgctxt "nutrient"
+msgid "Manganese"
+msgstr "Manganese"
+
+msgctxt "nutrient"
+msgid "Fluoride"
+msgstr "Fluoruro"
+
+msgctxt "nutrient"
+msgid "Selenium"
+msgstr "Selenio"
+
+msgctxt "nutrient"
+msgid "Chromium"
+msgstr "Cromo"
+
+msgctxt "nutrient"
+msgid "Molybdenum"
+msgstr "Molibdeno"
+
+msgctxt "nutrient"
+msgid "Iodine"
+msgstr "Iodio"
+
+msgid "Pick a meal."
+msgstr "Scegli un pasto."
+
+msgid "Added to your diary."
+msgstr "Aggiunto al tuo diario."
+
+msgid "Most used foods pages"
+msgstr "Pagine degli alimenti più usati"
+
+msgid "Enter macros manually"
+msgstr "Inserisci i macro manualmente"
+
+msgid "For a meal out or anything else you don't want to save as a food."
+msgstr "Per un pasto fuori o qualsiasi cosa che non vuoi salvare come alimento."
+
+#, python-format
+msgid "Nutrition per %(size)s %(unit)s"
+msgstr "Valori nutrizionali per %(size)s %(unit)s"
+
+msgid "Notes"
+msgstr "Note"
+
+msgid "14 days"
+msgstr "14 giorni"
+
+msgid "Year to date"
+msgstr "Da inizio anno"
+
+msgid "Last 30 days"
+msgstr "Ultimi 30 giorni"
+
+msgid "Median calories"
+msgstr "Calorie mediane"
+
+msgid "Median protein"
+msgstr "Proteine mediane"
+
+msgid "Median carbohydrates"
+msgstr "Carboidrati mediani"
+
+msgid "Median fat"
+msgstr "Grassi mediani"
+
+msgid "Medians of the days you actually logged something — a day with nothing logged isn't counted as zero calories, and one barely-logged day doesn't drag the figure down the way it would an average."
+msgstr "Mediane dei giorni in cui hai effettivamente registrato qualcosa — un giorno senza registrazioni non conta come zero calorie, e un giorno registrato a malapena non abbassa il valore come farebbe con una media."
+
+msgid "Median per day"
+msgstr "Mediana giornaliera"
+
+msgid "Period"
+msgstr "Periodo"
+
+msgid "Days"
+msgstr "Giorni"
+
+msgid "Days: days logged / days in the period. Macros in grams."
+msgstr "Giorni: giorni registrati / giorni del periodo. Macro in grammi."
+
+msgid "Skip tour"
+msgstr "Salta la guida"
+
+msgid "Don't show tutorials"
+msgstr "Non mostrare le guide"
+
+#, python-format
+msgid "Step %(current)s of %(total)s"
+msgstr "Passo %(current)s di %(total)s"
+
+msgid "Getting started"
+msgstr "Per iniziare"
+
+msgid "Programs and exercises"
+msgstr "Programmi ed esercizi"
+
+msgid "Body and activities"
+msgstr "Corpo e attività"
+
+msgid "Friends and groups"
+msgstr "Amici e gruppi"
+
+msgid "A quick look around. Every section has a short tour like this the first time you open it — skip any of them, or turn them all off."
+msgstr "Un rapido giro. Ogni sezione ha una breve guida come questa la prima volta che la apri — saltane una qualsiasi o disattivale tutte."
+
+msgid "Navigation"
+msgstr "Navigazione"
+
+msgid "Everything is one tap away from here: home, nutrition and stretching (if you use them), progress, workouts, programs and your profile."
+msgstr "Tutto è a un tocco da qui: home, alimentazione e stretching (se li usi), progressi, allenamenti, programmi e il tuo profilo."
+
+msgid "Your workout"
+msgstr "Il tuo allenamento"
+
+msgid "Start a workout here, or jump back into the one you're in the middle of. To follow a plan, start a workout from one of your programs instead."
+msgstr "Inizia qui un allenamento o riprendi quello in corso. Per seguire un piano, avvia invece un allenamento da uno dei tuoi programmi."
+
+msgid "Streaks and milestones from everyone on this server who shares them."
+msgstr "Serie di giorni e traguardi di tutti su questo server che li condividono."
+
+msgid "Shortcuts"
+msgstr "Scorciatoie"
+
+msgid "The exercise library, body tracking, activities and stretching."
+msgstr "La libreria degli esercizi, le misure del corpo, le attività e lo stretching."
+
+msgid "Calendar"
+msgstr "Calendario"
+
+msgid "Each day's training and nutrition at a glance. Tap a day for details; the “?” explains the colours."
+msgstr "L'allenamento e l'alimentazione di ogni giorno a colpo d'occhio. Tocca un giorno per i dettagli; il «?» spiega i colori."
+
+msgid "Your profile"
+msgstr "Il tuo profilo"
+
+msgid "Preferences, friends, your data — and Tutorials, where you can replay any of these tours."
+msgstr "Preferenze, amici, i tuoi dati — e Guide, dove puoi rivedere una qualsiasi di queste guide."
+
+msgid "Your workouts"
+msgstr "I tuoi allenamenti"
+
+msgid "Every workout you've done, newest first. Open one to see or correct it."
+msgstr "Ogni allenamento che hai fatto, dal più recente. Aprine uno per vederlo o correggerlo."
+
+msgid "Start without a plan"
+msgstr "Inizia senza un piano"
+
+msgid "A freeform workout lets you add any exercises as you go. Workouts from a program start from the program's page."
+msgstr "In un allenamento libero aggiungi gli esercizi strada facendo. Gli allenamenti di un programma si avviano dalla pagina del programma."
+
+msgid "Logging a workout"
+msgstr "Registrare un allenamento"
+
+msgid "This workout"
+msgstr "Questo allenamento"
+
+msgid "When it started and ended, and how many sets and how much volume so far."
+msgstr "Quando è iniziato e finito, e quante serie e quanto volume finora."
+
+msgid "One card per exercise"
+msgstr "Una scheda per esercizio"
+
+msgid "The sets you've logged appear here, and you can edit or delete any of them."
+msgstr "Le serie registrate compaiono qui e puoi modificarne o eliminarne una qualsiasi."
+
+msgid "Suggested weight"
+msgstr "Peso suggerito"
+
+msgid "Based on your last sessions, with the reason and how confident it is. It's only a starting point — you decide what goes on the bar."
+msgstr "Basato sulle tue ultime sessioni, con la motivazione e il grado di affidabilità. È solo un punto di partenza — decidi tu cosa mettere sul bilanciere."
+
+msgid "Log a set"
+msgstr "Registra una serie"
+
+msgid "Enter weight and reps and tap Log set. RPE, RIR, warm-up and failure are optional. New personal records are detected automatically."
+msgstr "Inserisci peso e ripetizioni e tocca Registra serie. RPE, RIR, riscaldamento e cedimento sono facoltativi. I nuovi record personali vengono rilevati automaticamente."
+
+msgid "Add an exercise"
+msgstr "Aggiungi un esercizio"
+
+msgid "Add anything that isn't in the plan — it only changes this workout."
+msgstr "Aggiungi tutto ciò che non è nel piano — cambia solo questo allenamento."
+
+msgid "Training mode"
+msgstr "Modalità allenamento"
+
+msgid "One exercise at a time with big buttons and a rest timer — the easiest way to log at the gym. This button follows you on every page."
+msgstr "Un esercizio alla volta con pulsanti grandi e un timer di recupero — il modo più facile di registrare in palestra. Questo pulsante ti segue su ogni pagina."
+
+msgid "Finish"
+msgstr "Termina"
+
+msgid "Complete the workout when you're done. Abandon keeps it in your history as unfinished."
+msgstr "Completa l'allenamento quando hai finito. Abbandona lo lascia nella cronologia come incompleto."
+
+msgid "The dots show your progress. The arrows move between exercises in any order — the next unfinished one opens by default."
+msgstr "I puntini mostrano i tuoi progressi. Le frecce passano da un esercizio all'altro in qualsiasi ordine — di default si apre il prossimo non completato."
+
+msgid "Current exercise"
+msgstr "Esercizio attuale"
+
+msgid "Its target and the sets you've already logged; tap a set to edit it."
+msgstr "Il suo obiettivo e le serie già registrate; tocca una serie per modificarla."
+
+msgid "A starting point from your history. You can always enter something else."
+msgstr "Un punto di partenza dalla tua cronologia. Puoi sempre inserire altro."
+
+msgid "Log the set"
+msgstr "Registra la serie"
+
+msgid "Weight and reps, then Log set. “More options” has RPE, RIR, warm-up, failure and notes."
+msgstr "Peso e ripetizioni, poi Registra serie. «Altre opzioni» contiene RPE, RIR, riscaldamento, cedimento e note."
+
+msgid "Starts by itself after each set and chimes when rest is over. Adjust it by 15 seconds, skip it, or mute the sound."
+msgstr "Parte da solo dopo ogni serie e suona quando il recupero è finito. Regolalo di 15 secondi, saltalo o disattiva il suono."
+
+msgid "Every exercise at once — for reviewing or correcting the whole workout."
+msgstr "Tutti gli esercizi insieme — per rivedere o correggere l'intero allenamento."
+
+msgid "Create or import"
+msgstr "Crea o importa"
+
+msgid "Build your own program, or import one someone exported for you."
+msgstr "Costruisci il tuo programma o importane uno che qualcuno ha esportato per te."
+
+msgid "Your programs"
+msgstr "I tuoi programmi"
+
+msgid "Open a program to see its workouts and start one."
+msgstr "Apri un programma per vederne gli allenamenti e avviarne uno."
+
+msgid "Ready-made programs"
+msgstr "Programmi pronti"
+
+msgid "Copy a built-in program to make it yours. Changing your copy never changes workouts you've already logged."
+msgstr "Copia un programma integrato per renderlo tuo. Modificare la copia non cambia mai gli allenamenti già registrati."
+
+msgid "A program"
+msgstr "Un programma"
+
+msgid "About the program"
+msgstr "Informazioni sul programma"
+
+msgid "Its description and version. Editing a program never changes workouts you've already logged."
+msgstr "La sua descrizione e versione. Modificare un programma non cambia mai gli allenamenti già registrati."
+
+msgid "Make it yours"
+msgstr "Rendilo tuo"
+
+msgid "This is a template: copy it to a program of your own to edit and use it."
+msgstr "Questo è un modello: copialo in un tuo programma per modificarlo e usarlo."
+
+msgid "A program is a set of workouts, each with its exercises, sets, reps and how the weight should progress."
+msgstr "Un programma è un insieme di allenamenti, ognuno con i suoi esercizi, serie, ripetizioni e il modo in cui il peso deve progredire."
+
+msgid "Add exercises"
+msgstr "Aggiungi esercizi"
+
+msgid "Add an exercise to a workout and set its target sets and reps."
+msgstr "Aggiungi un esercizio a un allenamento e imposta serie e ripetizioni obiettivo."
+
+msgid "Start it"
+msgstr "Avvialo"
+
+msgid "Starts a workout with these exercises and targets filled in."
+msgstr "Avvia un allenamento con questi esercizi e obiettivi già compilati."
+
+msgid "Add a workout"
+msgstr "Aggiungi un allenamento"
+
+msgid "For example a second training day."
+msgstr "Per esempio un secondo giorno di allenamento."
+
+msgid "Exercise library"
+msgstr "Libreria esercizi"
+
+msgid "Find an exercise"
+msgstr "Trova un esercizio"
+
+msgid "Search by name, or filter by muscle group and equipment."
+msgstr "Cerca per nome o filtra per gruppo muscolare e attrezzatura."
+
+msgid "Your own exercises"
+msgstr "I tuoi esercizi"
+
+msgid "Missing something? Add it — only you will see it."
+msgstr "Manca qualcosa? Aggiungilo — lo vedrai solo tu."
+
+msgid "An exercise"
+msgstr "Un esercizio"
+
+msgid "Your best lifts for this exercise, kept up to date automatically."
+msgstr "I tuoi migliori sollevamenti in questo esercizio, aggiornati automaticamente."
+
+msgid "Your estimated one-rep max and volume for this exercise over time."
+msgstr "Il tuo massimale stimato e il volume per questo esercizio nel tempo."
+
+msgid "Time range"
+msgstr "Intervallo di tempo"
+
+msgid "Everything on this page follows the range you pick here."
+msgstr "Tutto in questa pagina segue l'intervallo scelto qui."
+
+msgid "Summary"
+msgstr "Riepilogo"
+
+msgid "Workouts, time spent training and total volume lifted in the range."
+msgstr "Allenamenti, tempo dedicato all'allenamento e volume totale sollevato nell'intervallo."
+
+msgid "One exercise"
+msgstr "Un esercizio"
+
+msgid "Pick an exercise to see how its strength has developed."
+msgstr "Scegli un esercizio per vedere come si è sviluppata la sua forza."
+
+msgid "Weekly volume"
+msgstr "Volume settimanale"
+
+msgid "How much you lifted each week. The table under the chart has exact figures."
+msgstr "Quanto hai sollevato ogni settimana. La tabella sotto il grafico riporta i valori esatti."
+
+msgid "Muscle groups"
+msgstr "Gruppi muscolari"
+
+msgid "Which muscles got the most work — handy for spotting imbalances."
+msgstr "Quali muscoli hanno lavorato di più — utile per notare squilibri."
+
+msgid "Progress for an exercise"
+msgstr "Progressi per un esercizio"
+
+msgid "Choose how far back to look."
+msgstr "Scegli quanto indietro guardare."
+
+msgid "The heaviest single rep you could likely lift, estimated from your sets. A rising line means you're getting stronger."
+msgstr "La ripetizione singola più pesante che probabilmente riusciresti a sollevare, stimata dalle tue serie. Una linea in salita significa che stai diventando più forte."
+
+msgid "Current records"
+msgstr "Record attuali"
+
+msgid "Heaviest weight, best estimated 1RM, most reps and more."
+msgstr "Peso massimo, miglior 1RM stimato, più ripetizioni e altro."
+
+msgid "The most weight you've lifted for each number of reps."
+msgstr "Il peso massimo che hai sollevato per ogni numero di ripetizioni."
+
+msgid "What you track"
+msgstr "Cosa monitori"
+
+msgid "Body weight, waist, body fat and more. Open one to log a reading."
+msgstr "Peso corporeo, girovita, grasso corporeo e altro. Aprine una per registrare un valore."
+
+msgid "Your own measurements"
+msgstr "Le tue misure"
+
+msgid "Add anything else you want to follow."
+msgstr "Aggiungi qualsiasi altra cosa vuoi seguire."
+
+msgid "A measurement"
+msgstr "Una misura"
+
+msgid "Your current value and how it has changed since you started."
+msgstr "Il valore attuale e come è cambiato da quando hai iniziato."
+
+msgid "Log a reading"
+msgstr "Registra un valore"
+
+msgid "Enter today's value — or an earlier date to catch up."
+msgstr "Inserisci il valore di oggi — o una data precedente per recuperare."
+
+msgid "Every reading, newest first, with edit and delete."
+msgstr "Ogni valore, dal più recente, con modifica ed eliminazione."
+
+msgid "Activity types"
+msgstr "Tipi di attività"
+
+msgid "Running, cycling, walking and more. Open one to log it."
+msgstr "Corsa, ciclismo, camminata e altro. Aprine uno per registrarlo."
+
+msgid "Your own types"
+msgstr "I tuoi tipi"
+
+msgid "Add any other activity you want to track."
+msgstr "Aggiungi qualsiasi altra attività vuoi monitorare."
+
+msgid "An activity"
+msgstr "Un'attività"
+
+msgid "Date, duration and, if you like, distance and notes."
+msgstr "Data, durata e, se vuoi, distanza e note."
+
+msgid "Everything you've logged of this activity."
+msgstr "Tutto ciò che hai registrato di questa attività."
+
+msgid "Nutrition overview"
+msgstr "Panoramica alimentazione"
+
+msgid "Diary, foods, recipes, diet plans, calculators and statistics."
+msgstr "Diario, alimenti, ricette, piani alimentari, calcolatori e statistiche."
+
+msgid "Training or rest day"
+msgstr "Giorno di allenamento o di riposo"
+
+msgid "Whether you've completed a workout today. It's shown for context only."
+msgstr "Se oggi hai completato un allenamento. È mostrato solo a titolo informativo."
+
+msgid "What you've eaten today against your targets."
+msgstr "Cosa hai mangiato oggi rispetto ai tuoi obiettivi."
+
+msgid "Target check"
+msgstr "Verifica dell'obiettivo"
+
+msgid "Compares your weight trend with your goal and may suggest a new target. Nothing changes unless you accept it."
+msgstr "Confronta l'andamento del tuo peso con l'obiettivo e può suggerirne uno nuovo. Non cambia nulla finché non lo accetti."
+
+msgid "Calories and macros, worked out from your profile and goal."
+msgstr "Calorie e macro, calcolati dal tuo profilo e dal tuo obiettivo."
+
+msgid "Your goal"
+msgstr "Il tuo obiettivo"
+
+msgid "Lose, keep or gain — and how fast. Change it at any time."
+msgstr "Perdere, mantenere o aumentare — e quanto in fretta. Puoi cambiarlo in qualsiasi momento."
+
+msgid "Pick a day"
+msgstr "Scegli un giorno"
+
+msgid "Move a day at a time, or pick any date to fill in."
+msgstr "Spostati di un giorno alla volta o scegli una data qualsiasi da compilare."
+
+msgid "Day total"
+msgstr "Totale del giorno"
+
+msgid "Calories and macros eaten on this day."
+msgstr "Calorie e macro consumati in questo giorno."
+
+msgid "Meals"
+msgstr "Pasti"
+
+msgid "Each meal lists what you logged. “Save as recipe” turns a meal you eat often into a recipe you can log in one tap."
+msgstr "Ogni pasto elenca ciò che hai registrato. «Salva come ricetta» trasforma un pasto che mangi spesso in una ricetta da registrare con un tocco."
+
+msgid "Search, scan a barcode, or enter macros straight in."
+msgstr "Cerca, scansiona un codice a barre o inserisci direttamente i macro."
+
+msgid "Copy a day"
+msgstr "Copia un giorno"
+
+msgid "Eating the same as yesterday? Copy the whole day in one go."
+msgstr "Mangi come ieri? Copia l'intera giornata in un colpo solo."
+
+msgid "Adding food"
+msgstr "Aggiungere cibo"
+
+msgid "Which meal"
+msgstr "Quale pasto"
+
+msgid "Everything you add on this page goes to the meal chosen here."
+msgstr "Tutto ciò che aggiungi in questa pagina va nel pasto scelto qui."
+
+msgid "Search or scan"
+msgstr "Cerca o scansiona"
+
+msgid "Type a name or scan a barcode. Your own foods show first; Open Food Facts can be searched too. The amount is prefilled with what you logged last time."
+msgstr "Scrivi un nome o scansiona un codice a barre. I tuoi alimenti compaiono per primi; si può cercare anche su Open Food Facts. La quantità è precompilata con quella registrata l'ultima volta."
+
+msgid "Eating out? Type in the meal's calories and macros without creating a food for it."
+msgstr "Mangi fuori? Inserisci calorie e macro del pasto senza creare un alimento."
+
+msgid "The foods you add most often, one tap away."
+msgstr "Gli alimenti che aggiungi più spesso, a un tocco di distanza."
+
+msgid "Add foods"
+msgstr "Aggiungi alimenti"
+
+msgid "Create your own, or browse Open Food Facts by category."
+msgstr "Creane uno tuo o sfoglia Open Food Facts per categoria."
+
+msgid "Search Open Food Facts or scan a barcode to bring a product into your library."
+msgstr "Cerca su Open Food Facts o scansiona un codice a barre per portare un prodotto nella tua libreria."
+
+msgid "Your library"
+msgstr "La tua libreria"
+
+msgid "Filter and sort every food you can log. Newest first by default."
+msgstr "Filtra e ordina tutti gli alimenti che puoi registrare. Di default i più recenti per primi."
+
+msgid "A food"
+msgstr "Un alimento"
+
+msgid "Nutrition facts"
+msgstr "Valori nutrizionali"
+
+msgid "Laid out like a package label: energy, fat, carbohydrate, fibre, protein and salt — then any vitamins and minerals that are known."
+msgstr "Presentati come sull'etichetta: energia, grassi, carboidrati, fibre, proteine e sale — poi le vitamine e i minerali noti."
+
+msgid "Combine foods into a recipe once, then log a serving in one tap."
+msgstr "Combina gli alimenti in una ricetta una volta, poi registra una porzione con un tocco."
+
+msgid "Ready-made recipes everyone can use."
+msgstr "Ricette pronte che tutti possono usare."
+
+msgid "A recipe"
+msgstr "Una ricetta"
+
+msgid "The foods in it and their amounts. Nutrition is worked out from these."
+msgstr "Gli alimenti che contiene e le loro quantità. I valori nutrizionali sono calcolati da questi."
+
+msgid "Add servings of this recipe to your diary."
+msgstr "Aggiungi porzioni di questa ricetta al tuo diario."
+
+msgid "Create a plan"
+msgstr "Crea un piano"
+
+msgid "A plan is built for you from your foods and recipes to hit your targets. You can adjust every item afterwards."
+msgstr "Un piano viene costruito per te con i tuoi alimenti e ricette per raggiungere i tuoi obiettivi. Puoi modificare ogni voce in seguito."
+
+msgid "A diet plan"
+msgstr "Un piano alimentare"
+
+msgid "Active plan"
+msgstr "Piano attivo"
+
+msgid "The active plan is shown on the nutrition overview each day."
+msgstr "Il piano attivo è mostrato ogni giorno nella panoramica alimentazione."
+
+msgid "Each meal's items and how close they come to its calorie budget."
+msgstr "Le voci di ogni pasto e quanto si avvicinano al suo budget calorico."
+
+msgid "Log the plan"
+msgstr "Registra il piano"
+
+msgid "Copy a day of the plan into your diary as if you'd eaten it."
+msgstr "Copia un giorno del piano nel tuo diario come se l'avessi mangiato."
+
+msgid "Energy use, macros, body fat, water, BMI and more. They only calculate — nothing is saved or changed."
+msgstr "Dispendio energetico, macro, grasso corporeo, acqua, BMI e altro. Calcolano soltanto — nulla viene salvato o modificato."
+
+msgid "Median daily calories and macros. Days with nothing logged don't count, and one barely-logged day doesn't drag the figure down."
+msgstr "Mediana giornaliera di calorie e macro. I giorni senza registrazioni non contano, e un giorno registrato a malapena non abbassa il valore."
+
+msgid "Longer and shorter periods"
+msgstr "Periodi più lunghi e più brevi"
+
+msgid "The same medians for a week up to everything you've ever logged."
+msgstr "Le stesse mediane da una settimana fino a tutto ciò che hai mai registrato."
+
+msgid "Each of the last 30 days, with the exact figures in a table below."
+msgstr "Ciascuno degli ultimi 30 giorni, con i valori esatti nella tabella sottostante."
+
+msgid "Overview, routines, the stretch library and your history."
+msgstr "Panoramica, routine, la libreria degli allungamenti e la tua cronologia."
+
+msgid "Your streak"
+msgstr "La tua serie"
+
+msgid "Days in a row with stretching, and your totals."
+msgstr "Giorni consecutivi di stretching e i tuoi totali."
+
+msgid "A guided session times every stretch for you."
+msgstr "Una sessione guidata cronometra ogni allungamento per te."
+
+msgid "Log it afterwards"
+msgstr "Registralo dopo"
+
+msgid "Stretched without the timer? Log just how long you stretched."
+msgstr "Ti sei allungato senza timer? Registra solo per quanto tempo."
+
+msgid "A routine"
+msgstr "Una routine"
+
+msgid "About the routine"
+msgstr "Informazioni sulla routine"
+
+msgid "How many stretches it has and roughly how long it takes."
+msgstr "Quanti allungamenti contiene e quanto dura all'incirca."
+
+msgid "Each stretch with its hold time, sets and sides."
+msgstr "Ogni allungamento con tempo di tenuta, serie e lati."
+
+msgid "Opens the guided player."
+msgstr "Apre il lettore guidato."
+
+msgid "Add stretches and reorder them — in your own routines."
+msgstr "Aggiungi allungamenti e riordinali — nelle tue routine."
+
+msgid "The timer"
+msgstr "Il timer"
+
+msgid "Counts down every hold and rest, with a chime between them. Pause, add or remove 10 seconds, or skip. Leaving the page keeps your place."
+msgstr "Conta alla rovescia ogni tenuta e pausa, con un segnale acustico tra l'una e l'altra. Metti in pausa, aggiungi o togli 10 secondi o salta. Uscendo dalla pagina mantieni il punto in cui eri."
+
+msgid "Mark a stretch done or skipped yourself if you prefer."
+msgstr "Segna tu stesso un allungamento come fatto o saltato, se preferisci."
+
+msgid "Saves the session to your history."
+msgstr "Salva la sessione nella tua cronologia."
+
+msgid "Search for people on this server. Friends can message you and see the progress you choose to share."
+msgstr "Cerca persone su questo server. Gli amici possono scriverti e vedere i progressi che scegli di condividere."
+
+msgid "One conversation per friend."
+msgstr "Una conversazione per amico."
+
+msgid "Every group you're in has its own chat."
+msgstr "Ogni gruppo di cui fai parte ha la sua chat."
+
+msgid "Create a group"
+msgstr "Crea un gruppo"
+
+msgid "Train together: invite friends or share an invite link."
+msgstr "Allenatevi insieme: invita amici o condividi un link di invito."
+
+msgid "Units, language, timezone, theme, and which sections you use."
+msgstr "Unità, lingua, fuso orario, tema e quali sezioni usi."
+
+msgid "Messages, friends and groups."
+msgstr "Messaggi, amici e gruppi."
+
+msgid "Everything you've logged is yours — browse it or download it."
+msgstr "Tutto ciò che hai registrato è tuo — sfoglialo o scaricalo."
+
+msgid "Tutorials"
+msgstr "Guide"
+
+msgid "Replay any tour, or turn tutorials on or off."
+msgstr "Rivedi una guida qualsiasi o attiva e disattiva le guide."
+
+msgid "Tutorial settings saved."
+msgstr "Impostazioni delle guide salvate."
+
+#, python-format
+msgid "“%(title)s” will start again the next time you open it."
+msgstr "«%(title)s» ripartirà la prossima volta che lo apri."
+
+msgid "Every tutorial will start again the next time you open its page."
+msgstr "Ogni guida ripartirà la prossima volta che apri la sua pagina."
+
+msgid "Choose your language"
+msgstr "Scegli la tua lingua"
+
+msgid "Help"
+msgstr "Aiuto"
+
+msgid "Replay the guided tour of any page, or turn tutorials on or off."
+msgstr "Rivedi la guida di qualsiasi pagina o attiva e disattiva le guide."
+
+msgid "Show each page's tutorial the first time I open it"
+msgstr "Mostra la guida di una pagina la prima volta che la apro"
+
+msgid "Off: no tutorial starts by itself. You can still start any of them below."
+msgstr "Disattivate: nessuna guida parte da sola. Puoi comunque avviarne una qualsiasi qui sotto."
+
+msgid "Seen"
+msgstr "Vista"
+
+msgid "Not seen yet"
+msgstr "Non ancora vista"
+
+msgid "Show again"
+msgstr "Mostra di nuovo"
+
+msgid "Show all tutorials again"
+msgstr "Mostra di nuovo tutte le guide"
+
+msgid "Log it"
+msgstr "Registra"
+
+msgctxt "tutorial"
+msgid "Next"
+msgstr "Avanti"
+
+msgctxt "tutorial"
+msgid "Previous"
+msgstr "Indietro"
+
+msgctxt "tutorial"
+msgid "Done"
+msgstr "Fatto"
+
+msgctxt "navigation"
+msgid "Back"
+msgstr "Indietro"
+
+msgid "Search your clients…"
+msgstr "Cerca tra i tuoi clienti…"
+
+msgid "Not shared with anyone — only you can see it."
+msgstr "Non condiviso con nessuno — lo vedi solo tu."
+
+msgid "No matching clients."
+msgstr "Nessun cliente corrispondente."
+
+msgid "Search for a client and add them to the list: everyone on it can see and import their own copy of this program. Leave the list empty to keep it private."
+msgstr "Cerca un cliente e aggiungilo all'elenco: chiunque sia nell'elenco può vedere questo programma e importarne una propria copia. Lascia l'elenco vuoto per mantenerlo privato."
+
+msgid "Search for a client and add them to the list: everyone on it can see and import their own copy of this diet plan. Leave the list empty to keep it private."
+msgstr "Cerca un cliente e aggiungilo all'elenco: chiunque sia nell'elenco può vedere questo piano alimentare e importarne una propria copia. Lascia l'elenco vuoto per mantenerlo privato."
+
+msgid "Meals (optional)"
+msgstr "Pasti (facoltativo)"
+
+msgid "Tick every meal this recipe suits, e.g. both Lunch and Dinner. The diet-plan builder only suggests it for those meals — leave all unticked for a recipe that fits any meal."
+msgstr "Seleziona tutti i pasti adatti a questa ricetta, ad es. sia pranzo sia cena. Il generatore di piani alimentari la suggerisce solo per quei pasti — lasciali tutti deselezionati per una ricetta adatta a qualsiasi pasto."
+
+msgid "The diet-plan builder only suggests this recipe for this meal."
+msgid_plural "The diet-plan builder only suggests this recipe for these meals."
+msgstr[0] "Il generatore di piani alimentari suggerisce questa ricetta solo per questo pasto."
+msgstr[1] "Il generatore di piani alimentari suggerisce questa ricetta solo per questi pasti."
+
+msgid "Photo"
+msgstr "Foto"
+
+msgid "Shopping days"
+msgstr "Giorni della spesa"
+
+msgid "Each shopping day's list covers the days up to the next one. Pick none for one list for the whole week."
+msgstr "La lista di ogni giorno della spesa copre i giorni fino al successivo. Non selezionarne nessuno per una lista per tutta la settimana."
+
+msgid "A shopping day's own meals go on that day's list"
+msgstr "I pasti del giorno della spesa vanno nella lista di quel giorno"
+
+msgid "On: you shop before that day's meals. Off: they're on the previous list — you shop after that day is covered."
+msgstr "Attivo: fai la spesa prima dei pasti di quel giorno. Disattivo: sono nella lista precedente — fai la spesa quando quel giorno è già coperto."
+
+msgid "Shopping days saved."
+msgstr "Giorni della spesa salvati."
+
+msgid "Shopping list"
+msgstr "Lista della spesa"
+
+msgid "Shopping trips"
+msgstr "Spese"
+
+msgid "One list per shopping day, covering the days until the next one."
+msgstr "Una lista per ogni giorno della spesa, fino al successivo."
+
+msgid "What to buy"
+msgstr "Cosa comprare"
+
+msgid "Everything the plan's meals need, recipes included. The same food on several days is added up, with each day's amount under it. Tick items off as you shop."
+msgstr "Tutto ciò che serve ai pasti del piano, ricette comprese. Lo stesso alimento in più giorni viene sommato, con la quantità di ogni giorno sotto. Spunta gli articoli mentre fai la spesa."
+
+msgid "Pick the days you go shopping, and whether a shopping day's own meals go on that day's list. Set separately for each plan."
+msgstr "Scegli i giorni in cui fai la spesa e se i pasti del giorno della spesa vanno nella lista di quel giorno. Si imposta per ogni piano."
+
+msgid "One list for the whole week — pick shopping days below to split it into trips."
+msgstr "Una lista per tutta la settimana — scegli i giorni della spesa qui sotto per dividerla."
+
+#, python-format
+msgid "For: %(days)s"
+msgstr "Per: %(days)s"
+
+msgid "Clear ticks"
+msgstr "Togli le spunte"
+
+msgid "Nothing to buy — this plan has no meals on these days yet."
+msgstr "Niente da comprare — questo piano non ha ancora pasti in questi giorni."
+
+msgid "Shopping day"
+msgstr "Giorno della spesa"
+
+msgid "On your shopping days, your list for the trip is one tap away here."
+msgstr "Nei giorni della spesa, la lista di quella spesa è a portata di tocco qui."
+
+msgid "Diary, shopping list, foods, recipes, diet plans, calculators and statistics."
+msgstr "Diario, lista della spesa, alimenti, ricette, piani alimentari, calcolatori e statistiche."
+
+msgid "The shopping list comes from your active diet plan, and you don't have one yet."
+msgstr "La lista della spesa viene dal tuo piano alimentare attivo, e non ne hai ancora uno."
+
+msgid "Create a plan, or activate one of yours."
+msgstr "Crea un piano o attivane uno dei tuoi."
+
+#, python-format
+msgid "%(counter)s item on your shopping list for %(plan)s."
+msgid_plural "%(counter)s items on your shopping list for %(plan)s."
+msgstr[0] "%(counter)s articolo nella lista della spesa per %(plan)s."
+msgstr[1] "%(counter)s articoli nella lista della spesa per %(plan)s."
+
 #~ msgid "Back to home"
 #~ msgstr "Torna alla home"
 
@@ -8929,8 +9890,6 @@ msgstr "Modifica serie %(number)s"
 #~ msgid "+ Add food"
 #~ msgstr "+ Aggiungi alimento"
 
-#~ msgid "Log it"
-#~ msgstr "Registra"
 
 #~ msgid "+ New recipe"
 #~ msgstr "+ Nuova ricetta"

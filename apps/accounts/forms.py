@@ -2,6 +2,7 @@ from decimal import Decimal
 from zoneinfo import available_timezones
 
 from django import forms
+from django.conf import settings
 from django.contrib.admin.forms import AdminAuthenticationForm
 from django.contrib.auth.forms import AuthenticationForm, PasswordResetForm, UserCreationForm
 from django.core.cache import cache
@@ -409,6 +410,8 @@ class ProfileForm(forms.ModelForm):
 
     def save(self, commit=True):
         instance = super().save(commit=False)
+        if "language" in self.changed_data:
+            instance.language_chosen = True
         height = self.cleaned_data.get("height")
         if height is not None:
             instance.height = (
@@ -567,6 +570,29 @@ class AccountDeleteForm(forms.Form):
         elif cleaned.get("confirm_username", "") != self.user.username:
             self.add_error("confirm_username", _("Doesn't match your username."))
         return cleaned
+
+
+class OnboardingLanguageForm(forms.Form):
+    """Onboarding's first step, on its own so every later question is
+    already asked in the chosen language. Pre-selected with the user's
+    current language — the browser's, until they choose
+    (apps.accounts.signals.follow_browser_language). Choices are each
+    language's own name (settings.LANGUAGES), readable whatever language
+    the page is currently in."""
+
+    language = forms.ChoiceField(
+        choices=settings.LANGUAGES, widget=forms.RadioSelect, label=_("Language")
+    )
+
+    def __init__(self, *args, user, **kwargs):
+        self.user = user
+        super().__init__(*args, **kwargs)
+        self.fields["language"].initial = user.language
+
+    def save(self):
+        self.user.language = self.cleaned_data["language"]
+        self.user.language_chosen = True
+        self.user.save(update_fields=["language", "language_chosen"])
 
 
 class OnboardingForm(forms.Form):

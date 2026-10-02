@@ -906,26 +906,66 @@ abbr[title]:focus::after {
 .card-action-row {
   display: flex;
   align-items: center;
-  /* Mobile-first: on a narrow viewport a long label (translations run
-     noticeably longer than English — German/Finnish-style compound
-     words in particular can be one long unbreakable "word") can no
-     longer force the row past the viewport edge. Without this, a flex
-     item's default min-width:auto refuses to shrink text below its
-     longest unbreakable run, and with no wrap the row just overflows
-     the card instead of breaking onto a second line. */
-  flex-wrap: wrap;
+  /* Text on the left, actions on the right — always, whatever the text's
+     length. This used to wrap (flex-wrap: wrap), which made a row with a
+     long name drop its button onto a line of its own while its
+     neighbours kept theirs on the right, so the buttons jumped around a
+     list (owner-reported on the food lists). Now the text column takes
+     the remaining space and wraps inside itself instead, breaking even a
+     long unbreakable compound word (overflow-wrap: anywhere) rather
+     than pushing the row past the card. */
   justify-content: space-between;
   gap: 0.5rem 1rem;
 }
 
-/* The text side (name/description) must be allowed to shrink below
-   its own min-content width, or the button(s) on the right get
-   pushed past the card's edge on a narrow screen — the classic
-   flexbox overflow trap. Buttons stay their natural size
-   (flex-shrink: 0 below) since shrinking *those* would just clip the
-   label instead of wrapping the row. */
-.card-action-row > *:first-child {
+/* The text side may shrink below its min-content width (the classic
+   flexbox overflow trap otherwise pushes the buttons off the card).
+   "First" skips hidden inputs: a <form class="card-action-row"> starts
+   with its CSRF token. */
+.card-action-row > :nth-child(1 of :not(input[type="hidden"])) {
+  flex: 1 1 auto;
   min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+/* The actions never shrink and never move under the text. A group of
+   several (a quantity box and a button, Edit + Delete) is laid out the
+   same way on every row whatever the text's length — stacked on a phone,
+   where side by side would squeeze the text to a sliver, side by side
+   from tablet width up. (It used to wrap only when the text was long,
+   so neighbouring rows disagreed.) */
+.card-action-row > :not(:nth-child(1 of :not(input[type="hidden"]))) {
+  flex: 0 0 auto;
+}
+
+.card-action-row > .row {
+  flex-direction: column;
+  flex-wrap: nowrap;
+  align-items: stretch;
+}
+
+.card-action-row > .row > * {
+  margin: 0;
+}
+
+.card-action-row > .row button,
+.card-action-row > .row .button-secondary,
+.card-action-row > .row .button-danger {
+  width: 100%;
+  justify-content: center;
+}
+
+@media (min-width: 768px) {
+  .card-action-row > .row {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .card-action-row > .row button,
+  .card-action-row > .row .button-secondary,
+  .card-action-row > .row .button-danger {
+    width: auto;
+  }
 }
 
 .card-action-row .button-secondary {
@@ -1665,6 +1705,23 @@ h2 {
      everything keeps every row's content flush with its own top edge
      regardless of how tall any one cell's content happens to be. */
   vertical-align: top;
+}
+
+/* A food's nutrition table (templates/nutrition/food_detail.html), read
+   like a package label: nutrient names in normal weight, amounts right-
+   aligned so they line up, "of which" rows indented under their parent. */
+.nutrition-label th {
+  font-weight: normal;
+}
+
+.nutrition-label td {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.nutrition-label-sub th {
+  padding-left: var(--space-5);
+  color: var(--color-text-muted);
 }
 
 .set-actions {
@@ -3104,7 +3161,7 @@ h2.card-title {
 .text-center { text-align: center; }
 .justify-center { justify-content: center; }
 .invisible { visibility: hidden; }
-.qty-input { width: 5rem; }
+.qty-input { width: 6.5rem; }
 .wrap-pre { overflow-x: auto; white-space: pre-wrap; }
 .mono-text { font-family: var(--font-mono); font-size: var(--text-base); }
 .stat-value-lg { font-size: 2rem; font-weight: bold; margin: var(--space-2) 0; }
@@ -3194,3 +3251,344 @@ h2.card-title {
 .stretch-player-instructions {
   margin-top: 0.75rem;
 }
+
+/* Onboarding's first step (templates/accounts/_onboarding_modal.html):
+   one big, easy-to-tap row per language. */
+.language-choices {
+  border: 0;
+  margin: 0 0 var(--space-4);
+  padding: 0;
+  display: grid;
+  gap: var(--space-2);
+}
+
+.language-choices legend {
+  font-weight: bold;
+  margin-bottom: var(--space-2);
+}
+
+.language-choice {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: var(--touch-target);
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+
+.language-choice:has(input:checked) {
+  border-color: var(--color-accent);
+  outline: 1px solid var(--color-accent);
+}
+
+/* Guided page tours (static/js/tutorial.js, docs/TUTORIALS.md). The
+   highlight hugs the element itself — same box, same corner rounding —
+   and its enormous box-shadow dims everything around it: dimmed, not
+   hidden, so the page stays recognisable behind the explanation. The
+   script places the card beside the highlight, never over it, so the
+   card is kept compact on a phone. */
+:root {
+  --z-tour: 400;
+  --tour-dim: rgba(0, 0, 0, 0.62);
+  --tour-move: 0.5s;
+}
+
+.tour-blocker {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-tour);
+}
+
+.tour-glass {
+  position: fixed;
+  z-index: var(--z-tour);
+  box-shadow: 0 0 0 200vmax var(--tour-dim);
+  outline: 2px solid var(--color-accent);
+  pointer-events: none;
+  /* Moving between steps glides rather than jumps (owner's request:
+     0.25s felt abrupt). */
+  transition:
+    left var(--tour-move) ease-in-out,
+    top var(--tour-move) ease-in-out,
+    width var(--tour-move) ease-in-out,
+    height var(--tour-move) ease-in-out,
+    border-radius var(--tour-move) ease-in-out;
+}
+
+.tour-glass[hidden] {
+  display: block;
+  width: 0;
+  height: 0;
+  outline: none;
+  left: 50%;
+  top: 50%;
+}
+
+.tour-card {
+  position: fixed;
+  z-index: calc(var(--z-tour) + 1);
+  left: var(--space-3);
+  right: var(--space-3);
+  max-width: 24rem;
+  margin: 0 auto;
+  padding: var(--space-3);
+  background: var(--color-surface);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  font-size: var(--text-sm);
+  transition: top var(--tour-move) ease-in-out;
+}
+
+.tour-card:focus {
+  outline: none;
+}
+
+.tour-card-center {
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.tour-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-2);
+  margin-bottom: var(--space-1);
+}
+
+.tour-card h2.card-title {
+  font-size: var(--text-base);
+  margin: 0;
+}
+
+/* The shared button bottom margin (for stacked action rows) would only
+   add empty space to this deliberately compact card. */
+.tour-card button {
+  margin-bottom: 0;
+}
+
+.tour-card p {
+  margin: 0 0 var(--space-2);
+}
+
+.tour-progress {
+  flex-shrink: 0;
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+}
+
+.tour-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-2);
+}
+
+.tour-actions button {
+  margin-bottom: 0;
+}
+
+/* .button-secondary's own display would otherwise override [hidden]
+   (the "Previous" button on a tour's first step). */
+.tour-card [hidden] {
+  display: none;
+}
+
+.tour-secondary {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--space-1) var(--space-3);
+  margin-top: var(--space-2);
+  font-size: var(--text-xs);
+}
+
+@media (min-width: 768px) {
+  .tour-card {
+    max-width: 26rem;
+    padding: var(--space-4);
+    font-size: var(--text-base);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tour-glass,
+  .tour-card {
+    transition: none;
+  }
+}
+
+
+/* apps.core.widgets.SearchablePickerWidget — search box with a suggestion
+   list under it, and the picked items as a removable list below. */
+.picker-ui {
+  position: relative;
+}
+
+.picker-suggestions {
+  position: absolute;
+  z-index: var(--z-popover);
+  left: 0;
+  right: 0;
+  margin: var(--space-1) 0 0;
+  padding: var(--space-1) 0;
+  list-style: none;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-popover);
+  max-height: 16rem;
+  overflow-y: auto;
+}
+
+.picker-suggestions li {
+  min-height: var(--touch-target);
+  display: flex;
+  align-items: center;
+  padding: 0 var(--space-3);
+  cursor: pointer;
+}
+
+.picker-suggestions li.is-active {
+  background: var(--color-bg);
+  color: var(--color-accent);
+}
+
+.picker-suggestions li.text-muted {
+  cursor: default;
+}
+
+.picker-selected {
+  list-style: none;
+  margin: var(--space-3) 0 var(--space-2);
+  padding: 0;
+  display: grid;
+  gap: var(--space-2);
+}
+
+.picker-chip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding: 0 0 0 var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-bg);
+}
+
+.picker-remove {
+  min-height: var(--touch-target);
+  min-width: var(--touch-target);
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  color: var(--color-text-muted);
+  border: 0;
+  font-size: var(--text-lg);
+}
+
+.picker-remove:hover,
+.picker-remove:focus-visible {
+  color: var(--color-danger);
+}
+
+/* Long words — Finnish/Estonian compounds, a product name, a username —
+   wrap inside their box instead of running past the card or the screen
+   (owner-reported layout audit). Page titles also hyphenate where the
+   browser knows the language (<html lang>). */
+.card,
+.top-bar h1,
+main h2 {
+  overflow-wrap: anywhere;
+}
+
+.top-bar h1 {
+  hyphens: auto;
+}
+
+/* ...but never inside a button: its label breaks only between words,
+   so a narrow row squeezes the text column, not "Poista" into
+   "Po/ist/a". */
+button,
+.button,
+.button-secondary,
+.button-danger,
+.button-link {
+  overflow-wrap: normal;
+}
+
+/* A list shown as a table (templates/nutrition/_food_list_results.html):
+   the text column takes the room and wraps — long names and unbreakable
+   compound words included — while the narrow columns keep their size,
+   so nothing is pushed off the right edge of a phone. */
+.list-table .cell-text {
+  width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.list-table .cell-fit,
+.list-table .cell-number {
+  white-space: nowrap;
+  width: 1%;
+}
+
+.list-table .cell-number {
+  text-align: right;
+}
+
+/* A diet plan's shopping list (templates/nutrition/diet_plan_shopping.html):
+   tick box, the food with its per-day amounts under it, the total on the
+   right — the whole row is the tap target. */
+.shopping-list {
+  list-style: none;
+  margin: 0 0 var(--space-2);
+  padding: 0;
+}
+
+.shopping-list li + li {
+  border-top: 1px solid var(--color-border);
+}
+
+.shopping-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: var(--touch-target);
+  padding: var(--space-2) 0;
+  cursor: pointer;
+}
+
+.shopping-item input {
+  flex: 0 0 auto;
+  width: 1.25rem;
+  height: 1.25rem;
+  margin: 0;
+}
+
+.shopping-item-name {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.shopping-item-days {
+  display: block;
+  font-size: var(--text-sm);
+}
+
+.shopping-item-amount {
+  flex: 0 0 auto;
+  white-space: nowrap;
+  text-align: right;
+}
+
+.shopping-item.is-ticked .shopping-item-name,
+.shopping-item.is-ticked .shopping-item-amount {
+  text-decoration: line-through;
+  color: var(--color-text-muted);
+}
+

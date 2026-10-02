@@ -183,10 +183,29 @@ Satisfies section 9 exactly: sensible defaults, user can rename/add.
 owner (nullable FK), name, brand (optional), serving_size, serving_unit,
 calories, protein_grams, carbohydrate_grams, fat_grams,
 fiber_grams / sugar_grams / saturated_fat_grams / sodium_mg (all
-optional/nullable), off_id (nullable, unique), off_synced_at (nullable),
+optional/nullable), energy_kj / starch_grams / polyols_grams /
+salt_grams (optional/nullable), other_nutrients (JSON list), off_id (nullable, unique), off_synced_at (nullable),
 nutri_score (nullable, A-E), nova_group (nullable, 1-4),
 image_url (blank), image_thumb_url (blank), categories (blank), active
 ```
+
+**Nutrition label.** `FoodDetailView` shows a food's values the way an
+EU/Finnish package label does (Regulation 1169/2011 Annex XV,
+`apps.nutrition.nutrition_label`): energy as "kJ / kcal", fat → of which
+saturates (→ mono-/polyunsaturates when OFF has them), carbohydrate →
+of which sugars / starch / polyols, fibre, protein, salt, then every
+other nutrient OFF reports (vitamins, minerals, ...) from
+`other_nutrients`. Amounts use the active locale's decimal separator
+with no trailing zeros (`nutrient_amount` filter). The mandatory rows
+always show (an en dash when unknown); starch, polyols and fibre only
+when known. `energy_kj` falls back to `calories × 4.184` and
+`salt_grams` to `sodium_mg × 2.5 / 1000`, so older foods still get a
+complete table. Totals keep summing `sodium_mg`, so the food form asks
+for salt (as a label states it) and derives sodium from it.
+`other_nutrients` is display-only, stored verbatim from OFF converted
+into each nutrient's own unit (`extract_other_nutrients`); foods imported
+before these fields existed fill in on their next OFF refresh
+(`OPENFOODFACTS_STALENESS_DAYS`).
 
 `image_url`/`image_thumb_url`/`categories` are all blank for every
 hand-entered food, same as `nutri_score`/`nova_group` — only ever
@@ -259,7 +278,8 @@ recipe's name already linked to `RecipeDetailView`.
 and supports a name filter (`q`), a category filter (`category`,
 matched with `__icontains` against the raw `categories` string), and
 a sort (`sort`: `name`/`created`/`category`/`calories`) with a
-direction (`dir`: `asc`/`desc`) — every one of these combines with
+direction (`dir`: `asc`/`desc`), newest first (`created`/`desc`) by
+default — the food a user is looking for is usually the one just added — every one of these combines with
 every other via plain `AND` filtering plus one `order_by`, and all of
 them live in the querystring rather than session/hidden state, so a
 filtered-and-sorted view stays bookmarkable and survives a refresh.
@@ -559,13 +579,25 @@ until now, nothing in the UI ever surfaced.
 
 ```
 user, date (DateField — the day it counts toward, not when it was
-typed), meal_slot (FK), food (nullable FK) XOR recipe (nullable FK),
-quantity, logged_at (DateTimeField, default now), notes
+typed), meal_slot (FK), food (nullable FK) XOR recipe (nullable FK)
+XOR quick macros (quick_name, quick_calories, quick_protein_grams,
+quick_carbohydrate_grams, quick_fat_grams), quantity, logged_at
+(DateTimeField, default now), notes
 ```
 
-Exactly one of `food`/`recipe` must be set — enforced with a
-`CheckConstraint`, not just convention. `quantity` means grams/ml/pieces
-for a food entry, servings for a recipe entry. `date` vs. `logged_at`
+Exactly one of `food`/`recipe`/quick macros (`quick_calories` set) must
+be set — enforced with a `CheckConstraint`, not just convention.
+`quantity` means grams/ml/pieces for a food entry, servings for a recipe
+entry, portions (always 1 from the UI) for a quick entry.
+
+**Quick entry** ("Enter macros manually" on the add-food page,
+`diary_quick_add`, `services.create_quick_diary_entry`): macros typed
+straight in — a restaurant's published values — without creating a
+throwaway `Food`. The values live on the entry itself, so they never
+change afterwards. Every value is optional but at least one is
+required; blank calories are estimated from the macros (4/4/9 kcal/g).
+Editing a quick entry edits its macros instead of a quantity; "Copy day"
+copies it; "Save as recipe" skips it, the same as a recipe entry. `date` vs. `logged_at`
 mirrors `ExerciseSet.performed_at` vs. `created_at`: the diary date can
 be legitimately back-dated (logging breakfast at lunchtime, or
 catching up on yesterday), the audit timestamp cannot.
@@ -702,6 +734,48 @@ barcode box *below* the "Most used" quick-add list — the same
 ordering bug already fixed on the food diary's own add-food page
 (`diary_add_entry.html`), just not carried over to these other two
 "add a food" pages at the time. All three now put search first.
+
+### Shopping list (`ShoppingDay`, `apps.nutrition.shopping`)
+
+```
+DietPlan.shopping_includes_shopping_day (bool, default true)
+ShoppingDay: diet_plan (FK), weekday (0=Monday..6=Sunday), unique per plan
+```
+
+A diet plan's page links to its shopping list
+(`nutrition:diet-plan-shopping`). The settings are per plan, asked for
+directly: the days the user goes shopping, and whether a shopping day's
+own meals belong to that day's trip ("include" — shopping before that
+day's meals) or to the previous trip ("exclude" — shopping after that day
+is already covered).
+
+- **Trips** (`shopping_trips`): each shopping day starts a trip covering
+  the days up to the next shopping day; with "exclude" the window shifts
+  by one day (Mon + Thu: include → Mon–Wed / Thu–Sun, exclude → Tue–Thu /
+  Fri–Mon). One shopping day covers the whole week; none gives one list
+  for the whole week. The page opens on the trip shopped today or next
+  (`trip_for_today`); `?trip=<weekday>` picks another.
+- **The list** (`shopping_list`): every food the covered days' meals need
+  — a recipe item broken into its ingredients for the planned servings
+  (`ingredient × item servings / recipe servings`) — added up per food in
+  the food's own serving unit, with each day's amount under the total
+  (Mon 300 g · Tue 300 g → 600 g). A one-day plan (meals without a
+  weekday) counts once per covered day; a weekly plan uses each day's own
+  meals.
+- **Ticking items off** in the shop is device-local (localStorage, keyed
+  by plan and trip), not data — the list itself is always derived from the
+  plan, never stored, so editing the plan updates it immediately.
+- Not copied by diet-plan export/import or a coach's shared copy: shopping
+  days are the user's own habit, not part of the plan's content.
+- **Where it's reachable** (asked for directly — at first it was only a
+  button on the plan's own page): a "Shopping list" tab in the nutrition
+  sub-nav (`nutrition:shopping`, `/nutrition/shopping/` — redirects to the
+  active plan's list, or explains there's no active plan); a button on
+  today's plan on the nutrition overview; a Home card on the active plan's
+  shopping days only (`shopping_today`, with the item count; gone the next
+  day by itself, never a prompt); and the installed app's shortcut
+  (long-press the icon), added to the per-user web manifest when
+  nutrition is on, named in the user's language.
 
 ## Energy calculation
 
@@ -985,7 +1059,7 @@ straight back to onboarding.
 
 Styled as `.range-filter`'s existing pill tabs (`templates/analytics/
 _range_filter.html`) with one override — horizontal scroll instead of
-wrap (`.nutrition-subnav`), since 7 tabs wrapped would cost two or
+wrap (`.nutrition-subnav`), since 8 tabs wrapped would cost two or
 three lines of vertical space on every single page, permanently,
 which defeats a bar meant to stay out of the way. `position: sticky`
 keeps it reachable without scrolling back up on a long page (the
@@ -1004,7 +1078,7 @@ actually be reached, not just the first one it was built for.** This
 still applies to the plain "&larr; Back to X" links between a page and
 its own logical parent (recipe detail → recipe list, an edit form →
 whatever it edits) — the sub-nav only replaces lateral movement
-between the 7 top-level sections, not that vertical parent/child
+between the 8 top-level sections, not that vertical parent/child
 structure. Foods/Recipes/Diet plans were originally only ever reached
 from the food diary, so their own "back" link pointed there —
 reasonable at the time. Once they became reachable directly (first
@@ -1172,18 +1246,23 @@ thin view/template:
   already uses — charted with the shared `apps.core.charts.
   build_bar_series` (`templates/core/_bar_chart.html`, the same
   component `apps.analytics`'s own stats page uses). `nutrition_stats`
-  averages calories/macros only over days something was actually
-  logged: counting an unlogged day as a zero-calorie day would drag
-  the average down for anyone who logs most days but not literally
-  every single one, which is most real usage. A fixed 30-day window,
-  not a range picker — this page has one chart, so the extra control
-  `apps.analytics` needs to keep several charts legible at once isn't
-  earning its keep here yet.
+  gives the **median** daily calories/macros, only over days something
+  was actually logged: counting an unlogged day as a zero-calorie day
+  would drag the figure down for anyone who logs most days but not
+  literally every single one, and the median (asked for directly,
+  replacing the mean) also keeps one barely-logged day from pulling it
+  down. A "Median per day" table (`nutrition_stats_by_period`) shows the
+  same medians for 7/14/30 days, 3 months, year to date, 1 year and all
+  time (from the first logged day), all ending today; the diary is read
+  once and sliced per period. The chart and the headline card stay a
+  fixed 30 days — no range picker.
 - **"Most used" quick add** (`services.most_used_foods`,
   `templates/nutrition/_most_used_foods.html`) — every place a food
   can be added (the food diary, a recipe's ingredients, a diet-plan
-  meal's items) shows the signed-in user's top-10 most-used foods
-  above the search box, each a single-tap "+ Add." Most people eat a
+  meal's items) shows the signed-in user's most-used foods, ten per
+  page (`most_used_page`; the pager swaps only `#most-used-foods` via
+  HTMX so the diary page's selected meal survives), each a single-tap
+  "Add." Most people eat a
   fairly small rotation of the same handful of things — re-searching
   "chicken breast" or a barcode every single time was needless
   friction once there was real usage history to rank from. Ranked by
@@ -1197,7 +1276,9 @@ thin view/template:
   frequency of use). Each entry still prefills a sensible quantity/
   meal-slot default from the food's most recent diary use, if it has
   one; a food only ever added via a recipe or diet plan falls back to
-  its own serving size with no meal-slot guess. Deliberately derived
+  its own serving size with no meal-slot guess. Plain search results in
+  the diary prefill the same last-logged quantity
+  (`services.with_prefill_quantities`/`last_diary_uses`). Deliberately derived
   live from `DiaryEntry`/`RecipeIngredient`/`DietPlanItem` history,
   not a new `FavoriteFood` model — the same "derive, don't store a
   duplicate" rule this app already follows everywhere else (a day's

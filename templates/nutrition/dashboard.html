@@ -5,7 +5,7 @@
 <div class="top-bar">
   <h1 class="no-margin">{% trans "Nutrition" %}</h1>
 </div>
-<div class="top-bar-actions">
+<div data-tour="day-type" class="top-bar-actions">
   {% trans "Based on whether you completed a workout today — this doesn't change your calorie target automatically." as day_type_help %}
   {% if is_training_day %}
     <abbr class="tag" tabindex="0" title="{{ day_type_help }}">{% trans "Training day" %}</abbr>
@@ -15,8 +15,8 @@
 </div>
 {% include "nutrition/_subnav.html" %}
 
-<div class="card">
-  <strong>{% trans "Today so far" %}</strong>
+<div data-tour="nutrition-today" class="card">
+  <h2 class="card-title">{% trans "Today so far" %}</h2>
   {% if target and target.daily_calories %}
     <div class="progress-bar{% if totals.calories > target.daily_calories %} is-over{% endif %}" role="progressbar"
          aria-label="{% trans "Calories eaten today, as a share of your daily target" %}"
@@ -53,8 +53,7 @@
 
 {% if todays_plan %}
   <div class="card">
-    <strong>{% trans "Today's plan" %}</strong>
-    <span class="text-muted">— {{ todays_plan.plan.name }}</span>
+    <h2 class="card-title">{% trans "Today's plan" %} <span class="text-muted">— {{ todays_plan.plan.name }}</span></h2>
     <div class="table-wrap"><table class="set-table">
       <tbody>
         <tr><td>{% trans "Calories" %}</td><td>{{ todays_plan.total.calories|floatformat:0 }} kcal</td></tr>
@@ -69,14 +68,17 @@
         {% for item in meal.items.all %}{% if item.food %}<a class="inline-item-link" href="{% url 'nutrition:food-detail' item.food.pk %}">{{ item.food.name }}</a>{% else %}<a class="inline-item-link" href="{% url 'nutrition:recipe-detail' item.recipe.pk %}">{% trans item.recipe.name %}</a>{% endif %}{% if not forloop.last %}, {% endif %}{% empty %}{% trans "Nothing planned" %}{% endfor %}
       </p>
     {% endfor %}
-    <a class="button-secondary" href="{% url 'nutrition:diet-plan-detail' todays_plan.plan.pk %}">{% trans "Open plan" %}</a>
+    <div class="row">
+      <a class="button-secondary" href="{% url 'nutrition:diet-plan-detail' todays_plan.plan.pk %}">{% trans "Open plan" %}</a>
+      <a class="button-secondary" href="{% url 'nutrition:diet-plan-shopping' todays_plan.plan.pk %}" data-tour="nutrition-plan-shopping">{% trans "Shopping list" %}</a>
+    </div>
   </div>
 {% endif %}
 
 {% if suggestion %}
   {% if suggestion.action == "adjust" %}
-    <div class="card">
-      <strong>{% trans "Is your current target working?" %}</strong>
+    <div data-tour="nutrition-adjustment" class="card">
+      <h2 class="card-title">{% trans "Is your current target working?" %}</h2>
       <p>{{ suggestion.reason }}</p>
       <p class="text-muted">
         {% if suggestion.confidence == "high" %}{% trans "High confidence" %}
@@ -103,15 +105,15 @@
 
 {% if weight_chart %}
   <div class="card">
-    <strong>{% trans "Weight trend" %}</strong>
+    <h2 class="card-title">{% trans "Weight trend" %}</h2>
     {% trans "Weight" as weight_chart_title %}
     {% include "core/_chart.html" with chart=weight_chart chart_title=weight_chart_title unit_label=weight_unit_label %}
   </div>
 {% endif %}
 
 {% if target %}
-  <div class="card">
-    <strong>{% trans "Daily target" %}</strong>
+  <div data-tour="nutrition-target" class="card">
+    <h2 class="card-title">{% trans "Daily target" %}</h2>
     <p class="stat-value">
       {% blocktrans with calories=target.daily_calories %}{{ calories }} kcal/day{% endblocktrans %}
     </p>
@@ -127,8 +129,8 @@
 {% endif %}
 
 {% if goal %}
-  <div class="card">
-    <strong>{% trans "Current goal" %}</strong>
+  <div data-tour="nutrition-goal" class="card">
+    <h2 class="card-title">{% trans "Current goal" %}</h2>
     <p>{{ goal.get_goal_type_display }} — {{ goal.target_rate_kg_per_week }} kg/week</p>
     <a class="button-secondary" href="{% url 'nutrition:goal-edit' %}">{% trans "Change goal" %}</a>
   </div>

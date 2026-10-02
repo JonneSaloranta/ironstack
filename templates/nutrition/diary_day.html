@@ -15,15 +15,15 @@ other page's .top-bar besides holding only a plain, unchanging title.
 {% include "nutrition/_subnav.html" %}
 
 {% url 'nutrition:diary-day' target_date='__DATE__' as date_url_template %}
-<div class="diary-date-nav">
+<div data-tour="diary-date-nav" class="diary-date-nav">
   <a class="button-secondary" href="{% url 'nutrition:diary-day' target_date=previous_date.isoformat %}" aria-label="{% trans "Previous day" %}">&larr;</a>
   <input type="date" value="{{ date|date:'Y-m-d' }}" aria-label="{% trans "Jump to date" %}"
          x-data="{}" @change="window.location = '{{ date_url_template }}'.replace('__DATE__', $event.target.value)">
   <a class="button-secondary" href="{% url 'nutrition:diary-day' target_date=next_date.isoformat %}" aria-label="{% trans "Next day" %}">&rarr;</a>
 </div>
 
-<div class="card">
-  <strong>{% if is_today %}{% trans "Today's nutrition" %}{% else %}{% trans "Nutrition for this day" %}{% endif %}</strong>
+<div data-tour="diary-totals" class="card">
+  <h2 class="card-title">{% if is_today %}{% trans "Today's nutrition" %}{% else %}{% trans "Nutrition for this day" %}{% endif %}</h2>
   <div class="table-wrap"><table class="set-table">
     <tbody>
       <tr>
@@ -53,18 +53,16 @@ other page's .top-bar besides holding only a plain, unchanging title.
 </div>
 
 {% for slot in meal_slots %}
-  <div class="card" id="meal-slot-{{ slot.pk }}">
-    <div class="card-action-row">
-      <strong>{{ slot.name|translate_content }}</strong>
-      {% if slot.entries %}
-        <span class="text-muted">{{ slot.totals.calories|floatformat:0 }} kcal · {% trans "P" context "macro" %} {{ slot.totals.protein_grams|floatformat:0 }}g · {% trans "C" context "macro" %} {{ slot.totals.carbohydrate_grams|floatformat:0 }}g · {% trans "F" context "macro" %} {{ slot.totals.fat_grams|floatformat:0 }}g</span>
-      {% endif %}
-    </div>
+  <div data-tour="diary-meal" class="card" id="meal-slot-{{ slot.pk }}">
+    <h2 class="card-title">{{ slot.name|translate_content }}</h2>
+    {% if slot.entries %}
+      <p class="text-muted mb-1">{{ slot.totals.calories|floatformat:0 }} kcal · {% trans "P" context "macro" %} {{ slot.totals.protein_grams|floatformat:0 }}g · {% trans "C" context "macro" %} {{ slot.totals.carbohydrate_grams|floatformat:0 }}g · {% trans "F" context "macro" %} {{ slot.totals.fat_grams|floatformat:0 }}g</p>
+    {% endif %}
     {% for entry in slot.entries %}
       <div class="card-action-row py-2">
         <div>
-          <span>{% if entry.food %}<a class="inline-item-link" href="{% url 'nutrition:food-detail' entry.food.pk %}">{{ entry.food.name }}</a>{% else %}<a class="inline-item-link" href="{% url 'nutrition:recipe-detail' entry.recipe.pk %}">{% trans entry.recipe.name %}</a>{% endif %}</span>
-          <span class="text-muted">— {{ entry.quantity }} {{ entry.food.serving_unit|default:"servings" }}, {{ entry.nutrition.calories|floatformat:0 }} kcal{% if entry.food.price_amount %} · {% if entry.food.quantity %}{{ entry.food.quantity }}/{% endif %}{{ entry.food.price_amount }} {{ entry.food.price_currency }}{% endif %}</span>
+          <span>{% if entry.food %}<a class="inline-item-link" href="{% url 'nutrition:food-detail' entry.food.pk %}">{{ entry.food.name }}</a>{% elif entry.recipe %}<a class="inline-item-link" href="{% url 'nutrition:recipe-detail' entry.recipe.pk %}">{% trans entry.recipe.name %}</a>{% else %}{{ entry.display_name }} <span class="tag tag-outline">{% trans "Quick entry" %}</span>{% endif %}</span>
+          <span class="text-muted">— {% if not entry.is_quick %}{{ entry.quantity }} {{ entry.food.serving_unit|default:"servings" }}, {% endif %}{{ entry.nutrition.calories|floatformat:0 }} kcal{% if entry.food.price_amount %} · {% if entry.food.quantity %}{{ entry.food.quantity }}/{% endif %}{{ entry.food.price_amount }} {{ entry.food.price_currency }}{% endif %}</span>
           {% comment %}
           This entry's own macros for the quantity actually logged
           (services.diary_entry_nutrition, already scaled) — the meal
@@ -86,7 +84,7 @@ other page's .top-bar besides holding only a plain, unchanging title.
       <p class="text-muted">{% trans "Nothing logged yet." %}</p>
     {% endfor %}
     <div class="row">
-      <a class="button-secondary" href="{% url 'nutrition:diary-add-entry' %}?date={{ date|date:'Y-m-d' }}&meal_slot={{ slot.pk }}">{% trans "Add food" %}</a>
+      <a data-tour="diary-add-food" class="button-secondary" href="{% url 'nutrition:diary-add-entry' %}?date={{ date|date:'Y-m-d' }}&meal_slot={{ slot.pk }}">{% trans "Add food" %}</a>
       {% if slot.name != "Other" and slot.entries %}
         <form method="post" action="{% url 'nutrition:diary-meal-save-as-recipe' date.isoformat slot.pk %}">
           {% csrf_token %}
@@ -97,7 +95,7 @@ other page's .top-bar besides holding only a plain, unchanging title.
   </div>
 {% endfor %}
 
-<div class="card" x-data="{ open: false }">
+<div data-tour="diary-copy" class="card" x-data="{ open: false }">
   <button type="button" class="button-secondary" @click="open = !open">{% trans "Copy this day to another date" %}</button>
   <form class="row-top" x-show="open" x-cloak method="post" action="{% url 'nutrition:diary-day-copy' source_date=date.isoformat %}"
        >

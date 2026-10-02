@@ -20,6 +20,7 @@ from apps.nutrition import (
     diet_builder,
     energy,
     macros,
+    nutrition_label,
     open_prices,
     openfoodfacts,
     services,
@@ -249,6 +250,100 @@ class DiaryEntryConstraintTests(TestCase):
                 user=self.alice, date=date(2026, 1, 1), meal_slot=self.meal_slot,
                 food=self.food, recipe=self.recipe, quantity=Decimal("1"),
             )
+
+
+    def test_a_quick_entry_is_valid(self):
+        entry = DiaryEntry(
+            user=self.alice, date=date(2026, 1, 1), meal_slot=self.meal_slot,
+            quantity=Decimal("1"), quick_calories=650,
+        )
+        entry.full_clean()  # should not raise
+
+    def test_quick_macros_alongside_a_food_are_rejected_at_the_database_level(self):
+        with self.assertRaises(IntegrityError), transaction.atomic():
+            DiaryEntry.objects.create(
+                user=self.alice, date=date(2026, 1, 1), meal_slot=self.meal_slot,
+                food=self.food, quick_calories=650, quantity=Decimal("1"),
+            )
+
+
+class QuickDiaryEntryTests(TestCase):
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        self.client.login(username="alice", password="s3cret-pass")
+        self.slot = MealSlot.objects.get(name="Lunch", owner=None)
+
+    def _post(self, **data):
+        payload = {"date": "2026-01-05", "meal_slot": self.slot.pk}
+        payload.update(data)
+        return self.client.post(reverse("nutrition:diary-quick-add"), payload)
+
+    def test_logs_the_given_macros_without_creating_a_food(self):
+        foods_before = Food.objects.count()
+        response = self._post(
+            quick_name="Burger", quick_calories="850", quick_protein_grams="40",
+            quick_carbohydrate_grams="70", quick_fat_grams="45",
+        )
+        entry = DiaryEntry.objects.get(user=self.alice)
+        day_url = reverse("nutrition:diary-day", args=["2026-01-05"])
+        self.assertRedirects(
+            response, f"{day_url}#meal-slot-{self.slot.pk}", fetch_redirect_response=False
+        )
+        self.assertEqual(Food.objects.count(), foods_before)
+        self.assertTrue(entry.is_quick)
+        self.assertEqual(entry.display_name, "Burger")
+        self.assertEqual(entry.meal_slot, self.slot)
+        nutrition = services.diary_entry_nutrition(entry)
+        self.assertEqual(nutrition.calories, Decimal("850"))
+        self.assertEqual(nutrition.fat_grams, Decimal("45"))
+
+    def test_blank_calories_are_estimated_from_the_macros(self):
+        self._post(quick_protein_grams="10", quick_carbohydrate_grams="20", quick_fat_grams="5")
+        entry = DiaryEntry.objects.get(user=self.alice)
+        self.assertEqual(entry.quick_calories, 4 * 10 + 4 * 20 + 9 * 5)
+
+    def test_nothing_entered_is_rejected_and_reopens_the_card(self):
+        response = self._post(quick_name="Mystery")
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(DiaryEntry.objects.exists())
+        self.assertContains(response, "Enter the calories or at least one macro.")
+        self.assertContains(response, 'class="card preferences" open>')
+
+    def test_counts_toward_the_days_totals(self):
+        self._post(quick_calories="500", quick_protein_grams="30")
+        totals = services.daily_totals(self.alice, date(2026, 1, 5))
+        self.assertEqual(totals.calories, Decimal("500"))
+        self.assertEqual(totals.protein_grams, Decimal("30"))
+
+    def test_shows_on_the_diary_day_and_can_be_edited(self):
+        self._post(quick_name="Pizza", quick_calories="900")
+        entry = DiaryEntry.objects.get(user=self.alice)
+        day = self.client.get(reverse("nutrition:diary-day", args=["2026-01-05"]))
+        self.assertContains(day, "Pizza")
+        self.assertContains(day, "Quick entry")
+        self.client.post(
+            reverse("nutrition:diary-entry-edit", args=[entry.pk]),
+            {"quick_name": "Pizza", "quick_calories": "1000", "notes": ""},
+        )
+        entry.refresh_from_db()
+        self.assertEqual(entry.quick_calories, 1000)
+
+    def test_copying_a_day_keeps_quick_entries(self):
+        self._post(quick_name="Pizza", quick_calories="900")
+        services.copy_diary_day(self.alice, date(2026, 1, 5), date(2026, 1, 6))
+        copy = DiaryEntry.objects.get(user=self.alice, date=date(2026, 1, 6))
+        self.assertEqual((copy.quick_name, copy.quick_calories), ("Pizza", 900))
+
+    def test_saving_a_meal_as_a_recipe_skips_quick_entries(self):
+        self._post(quick_calories="900")
+        self.assertIsNone(
+            services.create_recipe_from_diary_meal(self.alice, date(2026, 1, 5), self.slot)
+        )
+
+    def test_the_add_food_page_offers_it(self):
+        response = self.client.get(reverse("nutrition:diary-add-entry"))
+        self.assertContains(response, reverse("nutrition:diary-quick-add"))
+        self.assertContains(response, "Enter macros manually")
 
 
 class DietPlanTests(TestCase):
@@ -1164,8 +1259,9 @@ class ExportImportRecipeServiceTests(TestCase):
         breakfast = MealSlot.objects.get(name="Breakfast", owner=None)
         recipe = Recipe.objects.create(
             owner=self.alice, name="Porridge", servings=2,
-            instructions="Cook it.", meal_slot=breakfast,
+            instructions="Cook it.",
         )
+        recipe.meal_slots.set([breakfast])
         RecipeIngredient.objects.create(recipe=recipe, food=food, quantity=Decimal("80"))
 
         imported = self._round_trip(recipe)
@@ -1174,7 +1270,7 @@ class ExportImportRecipeServiceTests(TestCase):
         self.assertEqual(imported.name, "Porridge")
         self.assertEqual(imported.servings, 2)
         self.assertEqual(imported.instructions, "Cook it.")
-        self.assertEqual(imported.meal_slot, breakfast)
+        self.assertEqual(list(imported.meal_slots.all()), [breakfast])
         self.assertNotEqual(imported.pk, recipe.pk)
         ingredient = imported.ingredients.get()
         self.assertEqual(ingredient.food.name, "Oats")
@@ -1183,29 +1279,48 @@ class ExportImportRecipeServiceTests(TestCase):
 
     def test_a_system_meal_slot_is_matched_by_name_not_duplicated(self):
         breakfast = MealSlot.objects.get(name="Breakfast", owner=None)
-        recipe = Recipe.objects.create(owner=self.alice, name="R", meal_slot=breakfast)
+        recipe = Recipe.objects.create(owner=self.alice, name="R")
+        recipe.meal_slots.set([breakfast])
         before_count = MealSlot.objects.filter(owner__isnull=True).count()
 
         imported = self._round_trip(recipe)
 
         after_count = MealSlot.objects.filter(owner__isnull=True).count()
         self.assertEqual(before_count, after_count)
-        self.assertEqual(imported.meal_slot, breakfast)
+        self.assertEqual(list(imported.meal_slots.all()), [breakfast])
 
     def test_a_custom_meal_slot_is_recreated_for_the_importing_user(self):
         custom_slot = MealSlot.objects.create(owner=self.alice, name="Second Breakfast")
-        recipe = Recipe.objects.create(owner=self.alice, name="R", meal_slot=custom_slot)
+        recipe = Recipe.objects.create(owner=self.alice, name="R")
+        recipe.meal_slots.set([custom_slot])
 
         imported = self._round_trip(recipe)
 
-        self.assertEqual(imported.meal_slot.owner, self.bob)
-        self.assertEqual(imported.meal_slot.name, "Second Breakfast")
-        self.assertNotEqual(imported.meal_slot_id, custom_slot.pk)
+        imported_slot = imported.meal_slots.get()
+        self.assertEqual(imported_slot.owner, self.bob)
+        self.assertEqual(imported_slot.name, "Second Breakfast")
+        self.assertNotEqual(imported_slot.pk, custom_slot.pk)
 
     def test_no_meal_slot_stays_none(self):
-        recipe = Recipe.objects.create(owner=self.alice, name="R", meal_slot=None)
+        recipe = Recipe.objects.create(owner=self.alice, name="R")
         imported = self._round_trip(recipe)
-        self.assertIsNone(imported.meal_slot)
+        self.assertFalse(imported.meal_slots.exists())
+
+    def test_several_meal_slots_round_trip(self):
+        lunch = MealSlot.objects.get(name="Lunch", owner=None)
+        dinner = MealSlot.objects.get(name="Dinner", owner=None)
+        recipe = Recipe.objects.create(owner=self.alice, name="R")
+        recipe.meal_slots.set([lunch, dinner])
+        imported = self._round_trip(recipe)
+        self.assertEqual(set(imported.meal_slots.all()), {lunch, dinner})
+
+    def test_a_file_from_before_several_meals_still_imports(self):
+        """Exports used to carry one `meal_slot` name, not a list."""
+        lunch = MealSlot.objects.get(name="Lunch", owner=None)
+        imported = services.import_recipe(
+            self.bob, {"name": "Old", "servings": 1, "meal_slot": "Lunch", "ingredients": []}
+        )
+        self.assertEqual(list(imported.meal_slots.all()), [lunch])
 
     def test_an_off_ingredient_is_re_fetched_live_by_barcode(self):
         off_food = make_food(None, name="Nutella", off_id="3017620422003")
@@ -2521,19 +2636,71 @@ class CalorieHistoryAndStatsTests(TestCase):
     def test_stats_with_no_logged_days_returns_all_zero_not_an_error(self):
         summary = services.nutrition_stats(self.alice, days=7)
         self.assertEqual(summary.days_logged, 0)
-        self.assertEqual(summary.average_calories, Decimal("0"))
+        self.assertEqual(summary.median_calories, Decimal("0"))
 
-    def test_stats_averages_only_over_days_something_was_logged(self):
+    def test_stats_count_only_days_something_was_logged(self):
         today = timezone.localdate()
         DiaryEntry.objects.create(
             user=self.alice, date=today, meal_slot=self.breakfast,
             food=self.chicken, quantity=Decimal("200"),  # 330 kcal
         )
         summary = services.nutrition_stats(self.alice, days=7)
-        # Only 1 of the 7 days had anything logged — the average must be
+        # Only 1 of the 7 days had anything logged — the median must be
         # that one day's own total, not diluted by the other 6 empty days.
         self.assertEqual(summary.days_logged, 1)
-        self.assertEqual(summary.average_calories, Decimal("330"))
+        self.assertEqual(summary.median_calories, Decimal("330"))
+
+    def _log(self, day, grams):
+        DiaryEntry.objects.create(
+            user=self.alice, date=day, meal_slot=self.breakfast,
+            food=self.chicken, quantity=Decimal(grams),
+        )
+
+    def test_stats_use_the_median_not_the_mean(self):
+        today = timezone.localdate()
+        # 165, 165, 1.65 kcal: a barely-logged day mustn't drag it down.
+        self._log(today, "100")
+        self._log(today - timedelta(days=1), "100")
+        self._log(today - timedelta(days=2), "1")
+        summary = services.nutrition_stats(self.alice, days=7)
+        self.assertEqual(summary.median_calories, Decimal("165"))
+
+    def test_periods_each_end_today(self):
+        today = date(2026, 5, 31)
+        self._log(today, "100")                         # 165 kcal
+        self._log(today - timedelta(days=10), "200")    # 330 kcal
+        self._log(date(2026, 1, 1), "300")              # 495 kcal
+        self._log(date(2025, 6, 1), "400")              # 660 kcal
+        self._log(date(2024, 1, 1), "500")              # 825 kcal
+        periods = {
+            p.key: p.summary for p in services.nutrition_stats_by_period(self.alice, today)
+        }
+        self.assertEqual(
+            list(periods), ["7d", "14d", "30d", "3m", "ytd", "1y", "all"]
+        )
+        self.assertEqual(periods["7d"].days_logged, 1)
+        self.assertEqual(periods["7d"].days_in_range, 7)
+        self.assertEqual(periods["14d"].median_calories, Decimal("248"))  # (165+330)/2
+        self.assertEqual(periods["3m"].days_in_range, 92)  # Mar 1 – May 31
+        self.assertEqual(periods["ytd"].days_logged, 3)
+        self.assertEqual(periods["ytd"].median_calories, Decimal("330"))
+        self.assertEqual(periods["1y"].days_logged, 4)  # Jun 1 2025 – May 31 2026
+        self.assertEqual(periods["all"].days_logged, 5)
+        self.assertEqual(periods["all"].days_in_range, (today - date(2024, 1, 1)).days + 1)
+
+    def test_periods_without_any_diary_are_empty_not_an_error(self):
+        periods = services.nutrition_stats_by_period(self.alice)
+        self.assertTrue(all(p.summary.days_logged == 0 for p in periods))
+        self.assertEqual(periods[-1].summary.days_in_range, 1)
+
+    def test_stats_page_shows_every_period(self):
+        self.client.login(username="alice", password="s3cret-pass")
+        self._log(timezone.localdate(), "100")
+        response = self.client.get(reverse("nutrition:stats"))
+        self.assertContains(response, "Median calories")
+        for label in ["7 days", "14 days", "30 days", "3 months", "Year to date", "1 year",
+                      "All time"]:
+            self.assertContains(response, label)
 
 
 class CalendarMonthStatusesTests(TestCase):
@@ -2793,10 +2960,20 @@ class FoodListViewTests(TestCase):
         names = [f.name for f in response.context["foods"]]
         self.assertEqual(names, ["Chicken breast"])
 
-    def test_default_sort_is_alphabetical_by_name(self):
+    def test_default_sort_is_newest_first(self):
+        older = make_food(self.alice, name="Apple")
+        make_food(self.alice, name="Rice")
+        Food.objects.filter(pk=older.pk).update(created_at=timezone.now() - timedelta(days=1))
+        response = self.client.get(reverse("nutrition:food-list"))
+        names = [f.name for f in response.context["foods"]]
+        self.assertEqual(names, ["Rice", "Apple"])
+        self.assertEqual(response.context["selected_sort"], "created")
+        self.assertEqual(response.context["selected_dir"], "desc")
+
+    def test_sort_by_name_ascending(self):
         make_food(self.alice, name="Rice")
         make_food(self.alice, name="Apple")
-        response = self.client.get(reverse("nutrition:food-list"))
+        response = self.client.get(reverse("nutrition:food-list"), {"sort": "name", "dir": "asc"})
         names = [f.name for f in response.context["foods"]]
         self.assertEqual(names, ["Apple", "Rice"])
 
@@ -2824,7 +3001,9 @@ class FoodListViewTests(TestCase):
         Food.objects.filter(pk=first.pk).update(
             created_at=timezone.now() - timedelta(days=1)
         )
-        response = self.client.get(reverse("nutrition:food-list"), {"sort": "created"})
+        response = self.client.get(
+            reverse("nutrition:food-list"), {"sort": "created", "dir": "asc"}
+        )
         names = [f.name for f in response.context["foods"]]
         self.assertEqual(names, ["First", "Second"])
 
@@ -2863,9 +3042,9 @@ class FoodListViewTests(TestCase):
         user just clicked."""
         for i in range(25):
             make_food(self.alice, name=f"Food {i:02d}")
-        response = self.client.get(reverse("nutrition:food-list"))
-        self.assertContains(response, "page=2&q=")
-        self.assertContains(response, "#food-list-pagination")
+        response = self.client.get(reverse("nutrition:food-list"), {"q": "food"})
+        # Filters ride along url-encoded (core/_pagination.html's url_replace).
+        self.assertContains(response, 'href="?q=food&amp;page=2#food-list-pagination"')
 
     def test_list_thumbnail_prefers_the_smaller_off_thumb_over_the_full_size_photo(self):
         make_food(
@@ -3046,6 +3225,106 @@ class FoodDetailViewTests(TestCase):
         self.assertEqual(food.price_amount, Decimal("3.21"))
 
 
+class NutritionLabelTests(TestCase):
+    """apps.nutrition.nutrition_label — a food's table laid out like an
+    EU/Finnish package label."""
+
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        self.client.login(username="alice", password="s3cret-pass")
+        # The example label this layout was asked for with.
+        self.food = make_food(
+            self.alice, name="Tomato", calories=28, energy_kj=Decimal("118.78"),
+            fat_grams=Decimal("0.3"), saturated_fat_grams=Decimal("0"),
+            carbohydrate_grams=Decimal("4.5"), sugar_grams=Decimal("4.5"),
+            starch_grams=Decimal("0"), polyols_grams=Decimal("0"),
+            fiber_grams=Decimal("1.9"), protein_grams=Decimal("0.94"),
+            salt_grams=Decimal("0.01"),
+            other_nutrients=[
+                {"key": "vitamin-c", "value": "14", "unit": "mg"},
+                {"key": "monounsaturated-fat", "value": "0.05", "unit": "g"},
+            ],
+        )
+
+    def test_rows_follow_the_label_order(self):
+        with translation_override("fi"):
+            labels = [str(row.label) for row in nutrition_label.label_rows(self.food)]
+        self.assertEqual(labels, [
+            "Rasva", "josta tyydyttynyttä", "josta kertatyydyttymättömiä",
+            "Hiilihydraatit", "josta sokereita", "josta tärkkelystä", "josta polyoleja",
+            "Ravintokuitu", "Proteiini", "Suola",
+        ])
+
+    def test_other_nutrients_follow_the_main_table(self):
+        rows = nutrition_label.other_rows(self.food)
+        self.assertEqual([(str(r.label), r.value, r.unit) for r in rows],
+                         [("Vitamin C", Decimal("14"), "mg")])
+
+    def test_energy_kj_is_derived_from_kcal_when_unknown(self):
+        food = make_food(self.alice, calories=100)
+        self.assertEqual(nutrition_label.energy_kj(food), Decimal("418.400"))
+
+    def test_salt_is_derived_from_sodium_when_unknown(self):
+        food = make_food(self.alice, sodium_mg=400)
+        self.assertEqual(nutrition_label.salt_grams(food), Decimal("1"))
+
+    def test_unknown_mandatory_rows_still_show(self):
+        food = make_food(self.alice)
+        rows = {str(r.label): r.value for r in nutrition_label.label_rows(food)}
+        self.assertIsNone(rows["of which sugars"])
+        self.assertIsNone(rows["Salt"])
+        self.assertNotIn("of which starch", rows)
+
+    def test_amounts_are_formatted_like_a_label(self):
+        from apps.core.templatetags.core_extras import nutrient_amount
+
+        with translation_override("fi"):
+            self.assertEqual(nutrient_amount(Decimal("0.30")), "0,3")
+            self.assertEqual(nutrient_amount(Decimal("0.94")), "0,94")
+            self.assertEqual(nutrient_amount(Decimal("12.00")), "12")
+            self.assertEqual(nutrient_amount(Decimal("118.78"), 0), "119")
+            self.assertEqual(nutrient_amount(None), "–")
+
+    def test_detail_page_shows_the_label(self):
+        response = self.client.get(reverse("nutrition:food-detail", args=[self.food.pk]))
+        self.assertContains(response, "Nutrition per 100 g")
+        self.assertContains(response, "119 kJ / 28 kcal")
+        self.assertContains(response, "of which polyols")
+        self.assertContains(response, "Vitamin C")
+        self.assertContains(response, "0.94 g")
+
+    def test_off_import_keeps_the_full_label(self):
+        raw = dict(RAW_OFF_PRODUCT, nutriments=dict(
+            RAW_OFF_PRODUCT["nutriments"],
+            **{
+                "energy-kj_100g": 1464, "starch_100g": 40, "polyols_100g": 0.5,
+                "salt_100g": 0.5, "vitamin-c_100g": 0.012, "vitamin-c_unit": "mg",
+                "iron_100g": 0.000004, "iron_unit": "µg", "nutrition-score-fr_100g": 3,
+                "carbon-footprint-from-known-ingredients_100g": 12,
+            },
+        ))
+        parsed = openfoodfacts.parse_product(raw)
+        self.assertEqual(parsed["energy_kj"], Decimal("1464"))
+        self.assertEqual(parsed["starch_grams"], Decimal("40"))
+        self.assertEqual(parsed["polyols_grams"], Decimal("0.5"))
+        self.assertEqual(parsed["salt_grams"], Decimal("0.5"))
+        self.assertEqual(parsed["other_nutrients"], [
+            {"key": "vitamin-c", "value": "12", "unit": "mg"},
+            {"key": "iron", "value": "4", "unit": "µg"},
+        ])
+
+    def test_a_hand_entered_salt_also_sets_sodium(self):
+        self.client.post(reverse("nutrition:food-create"), {
+            "name": "Bread", "brand": "", "serving_size": "100", "serving_unit": "g",
+            "calories": "250", "protein_grams": "9", "carbohydrate_grams": "45",
+            "fat_grams": "3", "salt_grams": "1.1", "starch_grams": "40",
+        })
+        food = Food.objects.get(name="Bread")
+        self.assertEqual(food.salt_grams, Decimal("1.1"))
+        self.assertEqual(food.sodium_mg, 440)
+        self.assertEqual(food.starch_grams, Decimal("40"))
+
+
 class FoodCreateViewTests(TestCase):
     def setUp(self):
         self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
@@ -3081,6 +3360,25 @@ class FoodSearchResultsViewTests(TestCase):
             response = self.client.get(reverse("nutrition:food-search"), {"q": "chicken"})
         self.assertContains(response, "Chicken breast")
 
+    def test_diary_results_prefill_the_last_logged_quantity(self):
+        food = make_food(self.alice, name="Chicken breast")
+        slot = MealSlot.objects.get(name="Breakfast", owner=None)
+        DiaryEntry.objects.create(
+            user=self.alice, date=date(2026, 1, 1), meal_slot=slot,
+            food=food, quantity=Decimal("237"),
+        )
+        response = self.client.get(
+            reverse("nutrition:food-search"), {"q": "chicken", "mode": "diary"}
+        )
+        self.assertContains(response, 'name="quantity" step="0.01" value="237.00"')
+
+    def test_diary_results_fall_back_to_the_serving_size(self):
+        make_food(self.alice, name="Chicken breast")
+        response = self.client.get(
+            reverse("nutrition:food-search"), {"q": "chicken", "mode": "diary"}
+        )
+        self.assertContains(response, 'name="quantity" step="0.01" value="100.00"')
+
 
 class DiaryAddEntryViewTests(TestCase):
     def setUp(self):
@@ -3088,6 +3386,34 @@ class DiaryAddEntryViewTests(TestCase):
         self.client.login(username="alice", password="s3cret-pass")
         self.food = make_food(self.alice)
         self.slot = MealSlot.objects.get(name="Breakfast", owner=None)
+
+    def _log_foods(self, count):
+        for i in range(count):
+            DiaryEntry.objects.create(
+                user=self.alice, date=date(2026, 1, 1), meal_slot=self.slot,
+                food=make_food(self.alice, name=f"Food {i:02d}"), quantity=Decimal("100"),
+            )
+
+    def test_most_used_foods_are_paginated(self):
+        self._log_foods(12)
+        response = self.client.get(reverse("nutrition:diary-add-entry"))
+        self.assertEqual(len(response.context["most_used"]), 10)
+        self.assertContains(response, 'id="most-used-foods"')
+        self.assertContains(response, "most_used_page=2")
+        response = self.client.get(
+            reverse("nutrition:diary-add-entry"), {"most_used_page": 2}
+        )
+        self.assertEqual(len(response.context["most_used"]), 2)
+
+    def test_most_used_pager_swaps_only_its_own_panel(self):
+        self._log_foods(12)
+        response = self.client.get(reverse("nutrition:diary-add-entry"))
+        self.assertContains(response, 'hx-select="#most-used-foods"')
+
+    def test_no_most_used_pager_for_a_single_page(self):
+        self._log_foods(3)
+        response = self.client.get(reverse("nutrition:diary-add-entry"))
+        self.assertNotContains(response, "most_used_page=")
 
     def test_the_camera_barcode_scanner_is_wired_up(self):
         response = self.client.get(reverse("nutrition:diary-add-entry"))
@@ -3668,7 +3994,7 @@ class CreateRecipeFromDiaryMealServiceTests(TestCase):
         )
         self.assertEqual(recipe.owner, self.alice)
         self.assertEqual(recipe.servings, 1)
-        self.assertEqual(recipe.meal_slot, self.breakfast)
+        self.assertEqual(list(recipe.meal_slots.all()), [self.breakfast])
         ingredients = {i.food: i.quantity for i in recipe.ingredients.all()}
         self.assertEqual(ingredients, {self.oats: Decimal("50"), self.milk: Decimal("200")})
 
@@ -3957,6 +4283,21 @@ class RecipeViewTests(TestCase):
         recipe = Recipe.objects.get(name="Bowl")
         self.assertEqual(recipe.owner, self.alice)
 
+    def test_a_recipe_can_be_meant_for_several_meals(self):
+        lunch = MealSlot.objects.get(name="Lunch", owner=None)
+        dinner = MealSlot.objects.get(name="Dinner", owner=None)
+        form_page = self.client.get(reverse("nutrition:recipe-create"))
+        self.assertContains(form_page, 'type="checkbox" name="meal_slots"')
+        self.client.post(
+            reverse("nutrition:recipe-create"),
+            {"name": "Stew", "servings": "2", "instructions": "",
+             "meal_slots": [lunch.pk, dinner.pk]},
+        )
+        recipe = Recipe.objects.get(name="Stew")
+        self.assertEqual(set(recipe.meal_slots.all()), {lunch, dinner})
+        detail = self.client.get(reverse("nutrition:recipe-detail", args=[recipe.pk]))
+        self.assertContains(detail, "only suggests this recipe for these meals")
+
     def test_creating_a_recipe_shows_a_message_pointing_at_adding_ingredients(self):
         response = self.client.post(
             reverse("nutrition:recipe-create"),
@@ -4016,8 +4357,10 @@ class RecipeViewTests(TestCase):
         user just clicked."""
         for i in range(7):
             Recipe.objects.create(owner=self.alice, name=f"Recipe {i}", servings=1)
-        response = self.client.get(reverse("nutrition:recipe-list"))
-        self.assertContains(response, "mine_page=2&template_page=1#my-recipes-pagination")
+        response = self.client.get(reverse("nutrition:recipe-list"), {"template_page": "1"})
+        self.assertContains(
+            response, 'href="?template_page=1&amp;mine_page=2#my-recipes-pagination"'
+        )
 
     def test_recipe_list_template_recipes_paginate_independently_of_your_recipes(self):
         Recipe.objects.filter(owner__isnull=True).delete()
@@ -4069,7 +4412,8 @@ class RecipeViewTests(TestCase):
         SeoSettings.objects.create(pk=1)
         # Session auth (2) + one COUNT and one SELECT per independent
         # Paginator ("your recipes"/"template recipes" — RecipeListView
-        # docstring) + one bulk ingredient query + base.html's
+        # docstring) + one bulk ingredient query + one prefetch of every
+        # listed recipe's meal_slots (Recipe.meal_slots) + base.html's
         # training-FAB in-progress-session check + apps.core.
         # context_processors.seo's own settings lookup + four more
         # from apps.social.context_processors.social_badge (one cheap
@@ -4085,7 +4429,7 @@ class RecipeViewTests(TestCase):
         # to this view is fine to bump this number a little; a query
         # count that scales with the number of recipes is the actual
         # regression to catch.
-        with self.assertNumQueries(12):
+        with self.assertNumQueries(13):
             self.client.get(reverse("nutrition:recipe-list"))
 
     def test_the_back_link_returns_to_the_nutrition_dashboard(self):
@@ -4366,6 +4710,25 @@ class SuggestItemForCalorieBudgetTests(TestCase):
         result = diet_builder.suggest_item_for_calorie_budget(self.alice, Decimal("800"))
         self.assertEqual(result.recipe, recipe)
         self.assertIsNone(result.food)
+
+    def test_a_recipe_tagged_for_several_meals_is_suggested_for_each_of_them(self):
+        chicken = make_food(self.alice, name="Chicken", calories=165)
+        recipe = Recipe.objects.create(owner=self.alice, name="Stew", servings=1)
+        RecipeIngredient.objects.create(recipe=recipe, food=chicken, quantity=Decimal("500"))
+        lunch = MealSlot.objects.get(name="Lunch", owner=None)
+        dinner = MealSlot.objects.get(name="Dinner", owner=None)
+        breakfast = MealSlot.objects.get(name="Breakfast", owner=None)
+        recipe.meal_slots.set([lunch, dinner])
+        make_food(self.alice, name="Snack bar", calories=200)
+        for slot in (lunch, dinner):
+            result = diet_builder.suggest_item_for_calorie_budget(
+                self.alice, Decimal("800"), meal_slot=slot
+            )
+            self.assertEqual(result.recipe, recipe, slot.name)
+        result = diet_builder.suggest_item_for_calorie_budget(
+            self.alice, Decimal("800"), meal_slot=breakfast
+        )
+        self.assertIsNone(result.recipe)
 
     def test_shared_foods_are_eligible_too(self):
         make_food(None, name="Shared chicken", calories=165)
@@ -5660,3 +6023,230 @@ class SearchFoodsOnlineGatingTests(TestCase):
                 reverse("nutrition:food-search"), {"q": "muesli", "online": "1"}
             )
         self.assertContains(response, "busy right now")
+
+
+class ShoppingTripTests(TestCase):
+    """apps.nutrition.shopping.shopping_trips — pure weekday arithmetic."""
+
+    def test_no_shopping_days_is_one_list_for_the_week(self):
+        from apps.nutrition import shopping
+
+        trips = shopping.shopping_trips([])
+        self.assertEqual([(t.weekday, t.days) for t in trips], [(None, (0, 1, 2, 3, 4, 5, 6))])
+
+    def test_each_trip_runs_up_to_the_next_shopping_day(self):
+        from apps.nutrition import shopping
+
+        trips = shopping.shopping_trips([3, 0])
+        self.assertEqual([(t.weekday, t.days) for t in trips], [(0, (0, 1, 2)), (3, (3, 4, 5, 6))])
+
+    def test_excluding_the_shopping_day_moves_it_to_the_previous_trip(self):
+        from apps.nutrition import shopping
+
+        trips = shopping.shopping_trips([0, 3], include_shopping_day=False)
+        self.assertEqual([t.days for t in trips], [(1, 2, 3), (4, 5, 6, 0)])
+
+    def test_a_single_shopping_day_covers_the_whole_week(self):
+        from apps.nutrition import shopping
+
+        self.assertEqual(shopping.shopping_trips([5])[0].days, (5, 6, 0, 1, 2, 3, 4))
+        self.assertEqual(
+            shopping.shopping_trips([5], include_shopping_day=False)[0].days,
+            (6, 0, 1, 2, 3, 4, 5),
+        )
+
+    def test_todays_trip_is_the_one_shopped_today_or_next(self):
+        from apps.nutrition import shopping
+
+        trips = shopping.shopping_trips([0, 3])
+        self.assertEqual(shopping.trip_for_today(trips, 3).weekday, 3)
+        self.assertEqual(shopping.trip_for_today(trips, 4).weekday, 0)
+
+
+class ShoppingListTests(TestCase):
+    def setUp(self):
+        from apps.nutrition.models import DietPlanMeal
+
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        self.client.login(username="alice", password="s3cret-pass")
+        self.chicken = make_food(self.alice, name="Chicken")
+        self.egg = make_food(
+            self.alice, name="Egg", serving_size=Decimal("1"), serving_unit=ServingUnit.PIECE,
+            calories=70,
+        )
+        omelette = Recipe.objects.create(owner=self.alice, name="Omelette", servings=2)
+        RecipeIngredient.objects.create(recipe=omelette, food=self.egg, quantity=Decimal("4"))
+        lunch = MealSlot.objects.get(name="Lunch", owner=None)
+        self.plan = DietPlan.objects.create(
+            user=self.alice, name="Week", target_calories=2000,
+            target_protein_grams=Decimal("150"), target_carbohydrate_grams=Decimal("200"),
+            target_fat_grams=Decimal("60"), is_weekly=True,
+        )
+        for day in range(7):
+            meal = DietPlanMeal.objects.create(
+                diet_plan=self.plan, meal_slot=lunch, target_calories=600, weekday=day
+            )
+            meal.items.create(food=self.chicken, quantity=Decimal("300"))
+            if day == 1:
+                meal.items.create(recipe=omelette, quantity=Decimal("1"))
+
+    def _rows(self, days):
+        from apps.nutrition import shopping
+
+        rows = shopping.shopping_list(self.plan, shopping.Trip(days[0], tuple(days)))
+        return {row.food.name: row for row in rows}
+
+    def test_the_same_food_on_several_days_is_one_total(self):
+        rows = self._rows([0, 1])
+        self.assertEqual(rows["Chicken"].total, Decimal("600"))
+        self.assertEqual(rows["Chicken"].ordered_days, [(0, Decimal("300")), (1, Decimal("300"))])
+
+    def test_recipes_are_broken_down_for_the_planned_servings(self):
+        rows = self._rows([0, 1])
+        # 1 serving of a 2-serving, 4-egg recipe.
+        self.assertEqual(rows["Egg"].total, Decimal("2"))
+        self.assertEqual(rows["Egg"].unit, ServingUnit.PIECE)
+
+    def test_only_the_trips_days_count(self):
+        rows = self._rows([3, 4])
+        self.assertEqual(rows["Chicken"].total, Decimal("600"))
+        self.assertNotIn("Egg", rows)
+
+    def test_a_one_day_plan_repeats_every_day(self):
+        from apps.nutrition.models import DietPlanMeal
+
+        self.plan.meals.all().delete()
+        self.plan.is_weekly = False
+        self.plan.save()
+        meal = DietPlanMeal.objects.create(
+            diet_plan=self.plan, meal_slot=MealSlot.objects.get(name="Lunch", owner=None),
+            target_calories=600,
+        )
+        meal.items.create(food=self.chicken, quantity=Decimal("200"))
+        self.assertEqual(self._rows([0, 1, 2])["Chicken"].total, Decimal("600"))
+
+    def test_page_shows_todays_trip_and_saves_the_plans_settings(self):
+        url = reverse("nutrition:diet-plan-shopping", args=[self.plan.pk])
+        response = self.client.get(url)
+        self.assertContains(response, "Chicken")
+        self.assertContains(response, "2100 g")  # no shopping days: the whole week
+        self.client.post(url, {"weekdays": ["0", "3"], "include_shopping_day": "on"})
+        self.assertEqual(
+            list(self.plan.shopping_days.values_list("weekday", flat=True)), [0, 3]
+        )
+        response = self.client.get(url, {"trip": "0"})
+        self.assertContains(response, "900 g")  # Mon-Wed
+        self.assertContains(response, 'href="?trip=3"')
+        self.client.post(url, {"weekdays": ["0", "3"]})
+        self.plan.refresh_from_db()
+        self.assertFalse(self.plan.shopping_includes_shopping_day)
+        response = self.client.get(url, {"trip": "0"})
+        self.assertContains(response, "900 g")  # Tue-Thu now
+        self.assertContains(response, "Egg")  # Tuesday's omelette is on this trip
+
+    def test_settings_are_per_plan_and_owner_only(self):
+        bob = User.objects.create_user(username="bob", password="s3cret-pass")
+        self.client.force_login(bob)
+        url = reverse("nutrition:diet-plan-shopping", args=[self.plan.pk])
+        self.assertEqual(self.client.get(url).status_code, 404)
+        self.assertEqual(self.client.post(url, {"weekdays": ["1"]}).status_code, 404)
+        self.assertFalse(self.plan.shopping_days.exists())
+
+    def test_the_plan_page_links_to_its_shopping_list(self):
+        response = self.client.get(reverse("nutrition:diet-plan-detail", args=[self.plan.pk]))
+        self.assertContains(response, reverse("nutrition:diet-plan-shopping", args=[self.plan.pk]))
+
+
+class ShoppingListPlacesTests(TestCase):
+    """Where the shopping list is reachable from: the nutrition sub-nav
+    tab (/nutrition/shopping/), today's plan on the nutrition overview,
+    the Home card on shopping days, and the installed app's shortcut."""
+
+    def setUp(self):
+        from apps.nutrition.models import DietPlanMeal
+
+        self.alice = User.objects.create_user(
+            username="alice", password="s3cret-pass", onboarding_completed=True,
+            language_chosen=True, tutorials_enabled=False,
+        )
+        self.client.force_login(self.alice)
+        chicken = make_food(self.alice, name="Chicken")
+        rice = make_food(self.alice, name="Rice")
+        self.plan = DietPlan.objects.create(
+            user=self.alice, name="Cut", target_calories=2000,
+            target_protein_grams=Decimal("150"), target_carbohydrate_grams=Decimal("200"),
+            target_fat_grams=Decimal("60"), is_active=True,
+        )
+        meal = DietPlanMeal.objects.create(
+            diet_plan=self.plan, meal_slot=MealSlot.objects.get(name="Lunch", owner=None),
+            target_calories=600,
+        )
+        meal.items.create(food=chicken, quantity=Decimal("300"))
+        meal.items.create(food=rice, quantity=Decimal("80"))
+
+    def test_the_tab_opens_the_active_plans_list(self):
+        response = self.client.get(reverse("nutrition:shopping"))
+        self.assertRedirects(
+            response, reverse("nutrition:diet-plan-shopping", args=[self.plan.pk])
+        )
+        page = self.client.get(reverse("nutrition:diet-plan-shopping", args=[self.plan.pk]))
+        self.assertEqual(page.context["nutrition_active_tab"], "shopping")
+        self.assertContains(page, f'href="{reverse("nutrition:shopping")}"')
+
+    def test_without_an_active_plan_the_tab_explains_and_links_to_plans(self):
+        self.plan.is_active = False
+        self.plan.save()
+        response = self.client.get(reverse("nutrition:shopping"))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "active diet plan")
+        self.assertContains(response, reverse("nutrition:diet-plan-list"))
+
+    def test_shopping_today_only_on_a_shopping_day(self):
+        from apps.nutrition import shopping
+
+        monday, tuesday = date(2026, 9, 28), date(2026, 9, 29)
+        self.assertIsNone(shopping.shopping_today(self.alice, monday))  # no days set
+        shopping.set_shopping_settings(self.plan, [0], True)
+        today = shopping.shopping_today(self.alice, monday)
+        self.assertEqual((today.plan, today.trip.weekday, today.item_count), (self.plan, 0, 2))
+        self.assertIsNone(shopping.shopping_today(self.alice, tuesday))
+        self.plan.is_active = False
+        self.plan.save()
+        self.assertIsNone(shopping.shopping_today(self.alice, monday))
+
+    def test_home_shows_a_card_on_a_shopping_day(self):
+        from apps.nutrition import shopping
+
+        self.assertNotContains(self.client.get(reverse("dashboard")), "Shopping day")
+        shopping.set_shopping_settings(self.plan, [timezone.localdate().weekday()], True)
+        response = self.client.get(reverse("dashboard"))
+        self.assertContains(response, "Shopping day")
+        self.assertContains(response, "2 items on your shopping list for Cut.")
+        self.alice.nutrition_enabled = False
+        self.alice.save()
+        self.assertNotContains(self.client.get(reverse("dashboard")), "Shopping day")
+
+    def test_todays_plan_on_the_overview_links_to_its_list(self):
+        from apps.nutrition.models import NutritionProfile
+
+        NutritionProfile.objects.create(
+            user=self.alice, biological_sex="female", birth_date=date(1990, 1, 1),
+            activity_job="sedentary", activity_level="moderate",
+        )
+        response = self.client.get(reverse("nutrition:dashboard"))
+        self.assertContains(
+            response, reverse("nutrition:diet-plan-shopping", args=[self.plan.pk])
+        )
+
+    def test_the_installed_app_has_a_shopping_list_shortcut(self):
+        self.alice.language = "fi"
+        self.alice.save()
+        manifest = json.loads(self.client.get("/manifest.json").content)
+        self.assertEqual(
+            manifest["shortcuts"],
+            [{"name": "Ostoslista", "url": reverse("nutrition:shopping"),
+              "icons": [{"src": "/static/icons/icon-192.png", "sizes": "192x192"}]}],
+        )
+        self.alice.nutrition_enabled = False
+        self.alice.save()
+        self.assertNotIn("shortcuts", json.loads(self.client.get("/manifest.json").content))

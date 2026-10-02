@@ -8819,6 +8819,967 @@ msgstr "Muuda seeriat"
 msgid "Edit set %(number)s"
 msgstr "Muuda seeriat %(number)s"
 
+msgid "Back to friends"
+msgstr "Tagasi sõprade juurde"
+
+msgid "Back to messages"
+msgstr "Tagasi sõnumite juurde"
+
+msgid "Back to groups"
+msgstr "Tagasi gruppide juurde"
+
+msgid "Back to group"
+msgstr "Tagasi grupi juurde"
+
+msgid "Remove this stretch from the routine?"
+msgstr "Kas eemaldada see venitus rutiinist?"
+
+msgid "Deactivate this routine? Past sessions stay in your history."
+msgstr "Kas deaktiveerida see rutiin? Varasemad sessioonid jäävad sinu ajalukku."
+
+msgid "Deactivate this stretch? It will no longer appear when browsing, but routines and past sessions that use it keep working."
+msgstr "Kas deaktiveerida see venitus? Seda ei kuvata enam sirvimisel, kuid seda kasutavad rutiinid ja varasemad sessioonid töötavad edasi."
+
+msgctxt "nutrient"
+msgid "Energy"
+msgstr "Energiasisaldus"
+
+msgctxt "nutrient"
+msgid "of which saturates"
+msgstr "millest küllastunud rasvhapped"
+
+msgctxt "nutrient"
+msgid "of which sugars"
+msgstr "millest suhkrud"
+
+msgctxt "nutrient"
+msgid "of which starch"
+msgstr "millest tärklis"
+
+msgctxt "nutrient"
+msgid "of which polyols"
+msgstr "millest polüoolid"
+
+msgctxt "nutrient"
+msgid "Fibre"
+msgstr "Kiudained"
+
+msgctxt "nutrient"
+msgid "Salt"
+msgstr "Sool"
+
+msgid "Optional — e.g. the restaurant dish."
+msgstr "Valikuline — nt restoranitoidu nimi."
+
+msgid "kcal. Leave blank to estimate it from the macros."
+msgstr "kcal. Jäta tühjaks, et seda makrode põhjal hinnata."
+
+msgid "Enter the calories or at least one macro."
+msgstr "Sisesta kalorid või vähemalt üks makro."
+
+msgid "Quick entry"
+msgstr "Kiirsisestus"
+
+msgid "Log either a food, a recipe or quick macros — exactly one of them."
+msgstr "Logi kas toiduaine, retsept või kiirmakrod — täpselt üks neist."
+
+msgctxt "nutrient"
+msgid "of which monounsaturates"
+msgstr "millest monoküllastumata rasvhapped"
+
+msgctxt "nutrient"
+msgid "of which polyunsaturates"
+msgstr "millest polüküllastumata rasvhapped"
+
+msgctxt "nutrient"
+msgid "Omega-3 fatty acids"
+msgstr "Oomega-3-rasvhapped"
+
+msgctxt "nutrient"
+msgid "Trans fat"
+msgstr "Transrasvad"
+
+msgctxt "nutrient"
+msgid "Cholesterol"
+msgstr "Kolesterool"
+
+msgctxt "nutrient"
+msgid "Lactose"
+msgstr "Laktoos"
+
+msgctxt "nutrient"
+msgid "Alcohol"
+msgstr "Alkohol"
+
+msgctxt "nutrient"
+msgid "Caffeine"
+msgstr "Kofeiin"
+
+msgctxt "nutrient"
+msgid "Vitamin A"
+msgstr "A-vitamiin"
+
+msgctxt "nutrient"
+msgid "Vitamin D"
+msgstr "D-vitamiin"
+
+msgctxt "nutrient"
+msgid "Vitamin E"
+msgstr "E-vitamiin"
+
+msgctxt "nutrient"
+msgid "Vitamin K"
+msgstr "K-vitamiin"
+
+msgctxt "nutrient"
+msgid "Vitamin C"
+msgstr "C-vitamiin"
+
+msgctxt "nutrient"
+msgid "Thiamin (B1)"
+msgstr "Tiamiin (B1)"
+
+msgctxt "nutrient"
+msgid "Riboflavin (B2)"
+msgstr "Riboflaviin (B2)"
+
+msgctxt "nutrient"
+msgid "Niacin"
+msgstr "Niatsiin"
+
+msgctxt "nutrient"
+msgid "Vitamin B6"
+msgstr "B6-vitamiin"
+
+msgctxt "nutrient"
+msgid "Folate"
+msgstr "Folaat"
+
+msgctxt "nutrient"
+msgid "Vitamin B12"
+msgstr "B12-vitamiin"
+
+msgctxt "nutrient"
+msgid "Biotin"
+msgstr "Biotiin"
+
+msgctxt "nutrient"
+msgid "Pantothenic acid"
+msgstr "Pantoteenhape"
+
+msgctxt "nutrient"
+msgid "Potassium"
+msgstr "Kaalium"
+
+msgctxt "nutrient"
+msgid "Chloride"
+msgstr "Kloriid"
+
+msgctxt "nutrient"
+msgid "Calcium"
+msgstr "Kaltsium"
+
+msgctxt "nutrient"
+msgid "Phosphorus"
+msgstr "Fosfor"
+
+msgctxt "nutrient"
+msgid "Magnesium"
+msgstr "Magneesium"
+
+msgctxt "nutrient"
+msgid "Iron"
+msgstr "Raud"
+
+msgctxt "nutrient"
+msgid "Zinc"
+msgstr "Tsink"
+
+msgctxt "nutrient"
+msgid "Copper"
+msgstr "Vask"
+
+msgctxt "nutrient"
+msgid "Manganese"
+msgstr "Mangaan"
+
+msgctxt "nutrient"
+msgid "Fluoride"
+msgstr "Fluoriid"
+
+msgctxt "nutrient"
+msgid "Selenium"
+msgstr "Seleen"
+
+msgctxt "nutrient"
+msgid "Chromium"
+msgstr "Kroom"
+
+msgctxt "nutrient"
+msgid "Molybdenum"
+msgstr "Molübdeen"
+
+msgctxt "nutrient"
+msgid "Iodine"
+msgstr "Jood"
+
+msgid "Pick a meal."
+msgstr "Vali söögikord."
+
+msgid "Added to your diary."
+msgstr "Lisatud päevikusse."
+
+msgid "Most used foods pages"
+msgstr "Enim kasutatud toiduainete lehed"
+
+msgid "Enter macros manually"
+msgstr "Sisesta makrod käsitsi"
+
+msgid "For a meal out or anything else you don't want to save as a food."
+msgstr "Väljas söömiseks või muuks, mida sa ei soovi toiduainena salvestada."
+
+#, python-format
+msgid "Nutrition per %(size)s %(unit)s"
+msgstr "Toitumisalane teave %(size)s %(unit)s kohta"
+
+msgid "Notes"
+msgstr "Märkmed"
+
+msgid "14 days"
+msgstr "14 päeva"
+
+msgid "Year to date"
+msgstr "Aasta algusest"
+
+msgid "Last 30 days"
+msgstr "Viimased 30 päeva"
+
+msgid "Median calories"
+msgstr "Kalorite mediaan"
+
+msgid "Median protein"
+msgstr "Valgu mediaan"
+
+msgid "Median carbohydrates"
+msgstr "Süsivesikute mediaan"
+
+msgid "Median fat"
+msgstr "Rasva mediaan"
+
+msgid "Medians of the days you actually logged something — a day with nothing logged isn't counted as zero calories, and one barely-logged day doesn't drag the figure down the way it would an average."
+msgstr "Mediaanid arvutatakse ainult päevadest, mil sa midagi logisid — päeva, mil midagi ei logitud, ei arvestata nulliks ja üks vähe logitud päev ei vii näitajat alla nii nagu keskmist."
+
+msgid "Median per day"
+msgstr "Mediaan päevas"
+
+msgid "Period"
+msgstr "Periood"
+
+msgid "Days"
+msgstr "Päevad"
+
+msgid "Days: days logged / days in the period. Macros in grams."
+msgstr "Päevad: logitud päevad / perioodi päevad. Makrod grammides."
+
+msgid "Skip tour"
+msgstr "Jäta tutvustus vahele"
+
+msgid "Don't show tutorials"
+msgstr "Ära näita tutvustusi"
+
+#, python-format
+msgid "Step %(current)s of %(total)s"
+msgstr "Samm %(current)s / %(total)s"
+
+msgid "Getting started"
+msgstr "Alustamine"
+
+msgid "Programs and exercises"
+msgstr "Kavad ja harjutused"
+
+msgid "Body and activities"
+msgstr "Keha ja tegevused"
+
+msgid "Friends and groups"
+msgstr "Sõbrad ja grupid"
+
+msgid "A quick look around. Every section has a short tour like this the first time you open it — skip any of them, or turn them all off."
+msgstr "Kiire ringkäik. Igal jaotisel on samasugune lühike tutvustus, kui selle esimest korda avad — jäta ükskõik milline vahele või lülita kõik välja."
+
+msgid "Navigation"
+msgstr "Navigeerimine"
+
+msgid "Everything is one tap away from here: home, nutrition and stretching (if you use them), progress, workouts, programs and your profile."
+msgstr "Kõik on siit ühe puudutuse kaugusel: avaleht, toitumine ja venitamine (kui neid kasutad), areng, treeningud, kavad ja sinu profiil."
+
+msgid "Your workout"
+msgstr "Sinu treening"
+
+msgid "Start a workout here, or jump back into the one you're in the middle of. To follow a plan, start a workout from one of your programs instead."
+msgstr "Alusta siin treeningut või naase pooleliolevasse. Kava järgimiseks alusta treeningut hoopis mõnest oma kavast."
+
+msgid "Streaks and milestones from everyone on this server who shares them."
+msgstr "Seeriad ja verstapostid kõigilt selle serveri kasutajatelt, kes neid jagavad."
+
+msgid "Shortcuts"
+msgstr "Otseteed"
+
+msgid "The exercise library, body tracking, activities and stretching."
+msgstr "Harjutuste kogu, keha jälgimine, tegevused ja venitamine."
+
+msgid "Calendar"
+msgstr "Kalender"
+
+msgid "Each day's training and nutrition at a glance. Tap a day for details; the “?” explains the colours."
+msgstr "Iga päeva treening ja toitumine ühe pilguga. Puuduta päeva üksikasjade nägemiseks; „?” selgitab värve."
+
+msgid "Your profile"
+msgstr "Sinu profiil"
+
+msgid "Preferences, friends, your data — and Tutorials, where you can replay any of these tours."
+msgstr "Eelistused, sõbrad, sinu andmed — ja Tutvustused, kust saad ükskõik millise neist ringkäikudest uuesti vaadata."
+
+msgid "Your workouts"
+msgstr "Sinu treeningud"
+
+msgid "Every workout you've done, newest first. Open one to see or correct it."
+msgstr "Kõik sinu treeningud, uusimad eespool. Ava treening, et seda vaadata või parandada."
+
+msgid "Start without a plan"
+msgstr "Alusta ilma kavata"
+
+msgid "A freeform workout lets you add any exercises as you go. Workouts from a program start from the program's page."
+msgstr "Vabas treeningus lisad harjutusi jooksvalt. Kava treeningud alustatakse kava lehelt."
+
+msgid "Logging a workout"
+msgstr "Treeningu logimine"
+
+msgid "This workout"
+msgstr "See treening"
+
+msgid "When it started and ended, and how many sets and how much volume so far."
+msgstr "Millal see algas ja lõppes ning kui palju seeriaid ja mahtu seni."
+
+msgid "One card per exercise"
+msgstr "Üks kaart iga harjutuse kohta"
+
+msgid "The sets you've logged appear here, and you can edit or delete any of them."
+msgstr "Logitud seeriad on siin ja saad ükskõik millist neist muuta või kustutada."
+
+msgid "Suggested weight"
+msgstr "Soovitatud raskus"
+
+msgid "Based on your last sessions, with the reason and how confident it is. It's only a starting point — you decide what goes on the bar."
+msgstr "Põhineb sinu viimastel treeningutel, koos põhjenduse ja kindlusastmega. See on vaid lähtepunkt — sina otsustad, mis kangile läheb."
+
+msgid "Log a set"
+msgstr "Logi seeria"
+
+msgid "Enter weight and reps and tap Log set. RPE, RIR, warm-up and failure are optional. New personal records are detected automatically."
+msgstr "Sisesta raskus ja kordused ning puuduta Logi seeria. RPE, RIR, soojendus ja läbikukkumine on valikulised. Uued isiklikud rekordid tuvastatakse automaatselt."
+
+msgid "Add an exercise"
+msgstr "Lisa harjutus"
+
+msgid "Add anything that isn't in the plan — it only changes this workout."
+msgstr "Lisa kõike, mida kavas pole — see muudab ainult seda treeningut."
+
+msgid "Training mode"
+msgstr "Treeningurežiim"
+
+msgid "One exercise at a time with big buttons and a rest timer — the easiest way to log at the gym. This button follows you on every page."
+msgstr "Üks harjutus korraga, suured nupud ja puhkeaja taimer — lihtsaim viis jõusaalis logida. See nupp liigub sinuga igal lehel kaasas."
+
+msgid "Finish"
+msgstr "Lõpeta"
+
+msgid "Complete the workout when you're done. Abandon keeps it in your history as unfinished."
+msgstr "Märgi treening lõpetatuks, kui oled valmis. Katkestatud treening jääb ajalukku lõpetamata kujul."
+
+msgid "The dots show your progress. The arrows move between exercises in any order — the next unfinished one opens by default."
+msgstr "Täpid näitavad sinu edenemist. Nooltega liigud harjutuste vahel mis tahes järjekorras — vaikimisi avaneb järgmine lõpetamata harjutus."
+
+msgid "Current exercise"
+msgstr "Praegune harjutus"
+
+msgid "Its target and the sets you've already logged; tap a set to edit it."
+msgstr "Selle eesmärk ja juba logitud seeriad; puuduta seeriat selle muutmiseks."
+
+msgid "A starting point from your history. You can always enter something else."
+msgstr "Lähtepunkt sinu ajaloost. Saad alati sisestada midagi muud."
+
+msgid "Log the set"
+msgstr "Logi seeria"
+
+msgid "Weight and reps, then Log set. “More options” has RPE, RIR, warm-up, failure and notes."
+msgstr "Raskus ja kordused, siis Logi seeria. „Rohkem valikuid” sisaldab RPE-d, RIR-i, soojendust, läbikukkumist ja märkmeid."
+
+msgid "Starts by itself after each set and chimes when rest is over. Adjust it by 15 seconds, skip it, or mute the sound."
+msgstr "Käivitub iga seeria järel ise ja helistab, kui puhkus on läbi. Muuda seda 15 sekundi kaupa, jäta vahele või lülita heli välja."
+
+msgid "Every exercise at once — for reviewing or correcting the whole workout."
+msgstr "Kõik harjutused korraga — kogu treeningu ülevaatamiseks või parandamiseks."
+
+msgid "Create or import"
+msgstr "Loo või impordi"
+
+msgid "Build your own program, or import one someone exported for you."
+msgstr "Koosta oma kava või impordi kava, mille keegi sulle eksportis."
+
+msgid "Your programs"
+msgstr "Sinu kavad"
+
+msgid "Open a program to see its workouts and start one."
+msgstr "Ava kava, et näha selle treeninguid ja alustada üht neist."
+
+msgid "Ready-made programs"
+msgstr "Valmiskavad"
+
+msgid "Copy a built-in program to make it yours. Changing your copy never changes workouts you've already logged."
+msgstr "Kopeeri sisseehitatud kava endale. Koopia muutmine ei muuda kunagi juba logitud treeninguid."
+
+msgid "A program"
+msgstr "Kava"
+
+msgid "About the program"
+msgstr "Kavast"
+
+msgid "Its description and version. Editing a program never changes workouts you've already logged."
+msgstr "Selle kirjeldus ja versioon. Kava muutmine ei muuda kunagi juba logitud treeninguid."
+
+msgid "Make it yours"
+msgstr "Tee see enda omaks"
+
+msgid "This is a template: copy it to a program of your own to edit and use it."
+msgstr "See on mall: kopeeri see oma kavaks, et saaksid seda muuta ja kasutada."
+
+msgid "A program is a set of workouts, each with its exercises, sets, reps and how the weight should progress."
+msgstr "Kava koosneb treeningutest, millest igaühel on oma harjutused, seeriad, kordused ja raskuse tõstmise viis."
+
+msgid "Add exercises"
+msgstr "Lisa harjutusi"
+
+msgid "Add an exercise to a workout and set its target sets and reps."
+msgstr "Lisa treeningule harjutus ja määra selle eesmärkseeriad ja -kordused."
+
+msgid "Start it"
+msgstr "Alusta"
+
+msgid "Starts a workout with these exercises and targets filled in."
+msgstr "Alustab treeningut, kus need harjutused ja eesmärgid on juba täidetud."
+
+msgid "Add a workout"
+msgstr "Lisa treening"
+
+msgid "For example a second training day."
+msgstr "Näiteks teine treeningpäev."
+
+msgid "Exercise library"
+msgstr "Harjutuste kogu"
+
+msgid "Find an exercise"
+msgstr "Leia harjutus"
+
+msgid "Search by name, or filter by muscle group and equipment."
+msgstr "Otsi nime järgi või filtreeri lihasgrupi ja varustuse järgi."
+
+msgid "Your own exercises"
+msgstr "Sinu harjutused"
+
+msgid "Missing something? Add it — only you will see it."
+msgstr "Midagi puudu? Lisa see — ainult sina näed seda."
+
+msgid "An exercise"
+msgstr "Harjutus"
+
+msgid "Your best lifts for this exercise, kept up to date automatically."
+msgstr "Sinu parimad tõsted selles harjutuses, uuenevad automaatselt."
+
+msgid "Your estimated one-rep max and volume for this exercise over time."
+msgstr "Sinu hinnanguline ühe korduse maksimum ja maht selles harjutuses aja jooksul."
+
+msgid "Time range"
+msgstr "Ajavahemik"
+
+msgid "Everything on this page follows the range you pick here."
+msgstr "Kõik sellel lehel järgib siin valitud ajavahemikku."
+
+msgid "Summary"
+msgstr "Kokkuvõte"
+
+msgid "Workouts, time spent training and total volume lifted in the range."
+msgstr "Treeningud, treeningule kulunud aeg ja kogu tõstetud maht valitud ajavahemikus."
+
+msgid "One exercise"
+msgstr "Üks harjutus"
+
+msgid "Pick an exercise to see how its strength has developed."
+msgstr "Vali harjutus, et näha, kuidas selle jõud on arenenud."
+
+msgid "Weekly volume"
+msgstr "Nädala maht"
+
+msgid "How much you lifted each week. The table under the chart has exact figures."
+msgstr "Kui palju sa igal nädalal tõstsid. Diagrammi all olevas tabelis on täpsed arvud."
+
+msgid "Muscle groups"
+msgstr "Lihasgrupid"
+
+msgid "Which muscles got the most work — handy for spotting imbalances."
+msgstr "Millised lihased said kõige rohkem tööd — kasulik tasakaalutuse märkamiseks."
+
+msgid "Progress for an exercise"
+msgstr "Harjutuse areng"
+
+msgid "Choose how far back to look."
+msgstr "Vali, kui kaugele tagasi vaadata."
+
+msgid "The heaviest single rep you could likely lift, estimated from your sets. A rising line means you're getting stronger."
+msgstr "Raskeim üksikkordus, mida tõenäoliselt suudaksid, hinnatud sinu seeriate põhjal. Tõusev joon tähendab, et muutud tugevamaks."
+
+msgid "Current records"
+msgstr "Praegused rekordid"
+
+msgid "Heaviest weight, best estimated 1RM, most reps and more."
+msgstr "Raskeim raskus, parim hinnanguline 1RM, enim kordusi ja muud."
+
+msgid "The most weight you've lifted for each number of reps."
+msgstr "Suurim raskus, mida oled iga korduste arvuga tõstnud."
+
+msgid "What you track"
+msgstr "Mida jälgid"
+
+msgid "Body weight, waist, body fat and more. Open one to log a reading."
+msgstr "Kehakaal, vöökoht, keharasv ja muu. Ava üks näidu logimiseks."
+
+msgid "Your own measurements"
+msgstr "Sinu mõõdud"
+
+msgid "Add anything else you want to follow."
+msgstr "Lisa kõike muud, mida soovid jälgida."
+
+msgid "A measurement"
+msgstr "Mõõt"
+
+msgid "Your current value and how it has changed since you started."
+msgstr "Sinu praegune väärtus ja kuidas see on alustamisest muutunud."
+
+msgid "Log a reading"
+msgstr "Logi näit"
+
+msgid "Enter today's value — or an earlier date to catch up."
+msgstr "Sisesta tänane väärtus — või varasem kuupäev järele jõudmiseks."
+
+msgid "Every reading, newest first, with edit and delete."
+msgstr "Iga näit, uusimad eespool, muutmise ja kustutamisega."
+
+msgid "Activity types"
+msgstr "Tegevuste tüübid"
+
+msgid "Running, cycling, walking and more. Open one to log it."
+msgstr "Jooks, rattasõit, kõndimine ja muu. Ava üks selle logimiseks."
+
+msgid "Your own types"
+msgstr "Sinu tüübid"
+
+msgid "Add any other activity you want to track."
+msgstr "Lisa mis tahes muu tegevus, mida soovid jälgida."
+
+msgid "An activity"
+msgstr "Tegevus"
+
+msgid "Date, duration and, if you like, distance and notes."
+msgstr "Kuupäev, kestus ja soovi korral vahemaa ja märkmed."
+
+msgid "Everything you've logged of this activity."
+msgstr "Kõik, mida oled sellest tegevusest logitud."
+
+msgid "Nutrition overview"
+msgstr "Toitumise ülevaade"
+
+msgid "Diary, foods, recipes, diet plans, calculators and statistics."
+msgstr "Päevik, toiduained, retseptid, toitumiskavad, kalkulaatorid ja statistika."
+
+msgid "Training or rest day"
+msgstr "Treening- või puhkepäev"
+
+msgid "Whether you've completed a workout today. It's shown for context only."
+msgstr "Kas oled täna treeningu lõpetanud. Seda näidatakse ainult teadmiseks."
+
+msgid "What you've eaten today against your targets."
+msgstr "Mida oled täna söönud võrreldes oma eesmärkidega."
+
+msgid "Target check"
+msgstr "Eesmärgi kontroll"
+
+msgid "Compares your weight trend with your goal and may suggest a new target. Nothing changes unless you accept it."
+msgstr "Võrdleb sinu kaalutrendi eesmärgiga ja võib soovitada uut eesmärki. Midagi ei muutu, kui sa seda ei kinnita."
+
+msgid "Calories and macros, worked out from your profile and goal."
+msgstr "Kalorid ja makrod, arvutatud sinu profiili ja eesmärgi põhjal."
+
+msgid "Your goal"
+msgstr "Sinu eesmärk"
+
+msgid "Lose, keep or gain — and how fast. Change it at any time."
+msgstr "Kaota, hoia või kasvata — ja kui kiiresti. Muuda seda millal tahes."
+
+msgid "Pick a day"
+msgstr "Vali päev"
+
+msgid "Move a day at a time, or pick any date to fill in."
+msgstr "Liigu päev korraga või vali täitmiseks mis tahes kuupäev."
+
+msgid "Day total"
+msgstr "Päeva kokkuvõte"
+
+msgid "Calories and macros eaten on this day."
+msgstr "Sel päeval söödud kalorid ja makrod."
+
+msgid "Meals"
+msgstr "Toidukorrad"
+
+msgid "Each meal lists what you logged. “Save as recipe” turns a meal you eat often into a recipe you can log in one tap."
+msgstr "Iga toidukord näitab, mida logisid. „Salvesta retseptina” teeb tihti söödud toidukorrast retsepti, mida saad ühe puudutusega logida."
+
+msgid "Search, scan a barcode, or enter macros straight in."
+msgstr "Otsi, skanni vöötkood või sisesta makrod otse."
+
+msgid "Copy a day"
+msgstr "Kopeeri päev"
+
+msgid "Eating the same as yesterday? Copy the whole day in one go."
+msgstr "Sööd sama mis eile? Kopeeri kogu päev korraga."
+
+msgid "Adding food"
+msgstr "Toidu lisamine"
+
+msgid "Which meal"
+msgstr "Milline toidukord"
+
+msgid "Everything you add on this page goes to the meal chosen here."
+msgstr "Kõik, mida sellel lehel lisad, läheb siin valitud toidukorda."
+
+msgid "Search or scan"
+msgstr "Otsi või skanni"
+
+msgid "Type a name or scan a barcode. Your own foods show first; Open Food Facts can be searched too. The amount is prefilled with what you logged last time."
+msgstr "Kirjuta nimi või skanni vöötkood. Sinu toiduained on eespool; otsida saab ka Open Food Factsist. Kogus on eeltäidetud sellega, mida viimati logisid."
+
+msgid "Eating out? Type in the meal's calories and macros without creating a food for it."
+msgstr "Sööd väljas? Sisesta toidukorra kalorid ja makrod ilma selle jaoks toiduainet loomata."
+
+msgid "The foods you add most often, one tap away."
+msgstr "Kõige sagedamini lisatud toiduained, ühe puudutuse kaugusel."
+
+msgid "Add foods"
+msgstr "Lisa toiduaineid"
+
+msgid "Create your own, or browse Open Food Facts by category."
+msgstr "Loo oma või sirvi Open Food Factsi kategooriate kaupa."
+
+msgid "Search Open Food Facts or scan a barcode to bring a product into your library."
+msgstr "Otsi Open Food Factsist või skanni vöötkood, et tuua toode oma kogusse."
+
+msgid "Your library"
+msgstr "Sinu kogu"
+
+msgid "Filter and sort every food you can log. Newest first by default."
+msgstr "Filtreeri ja sorteeri kõiki toiduaineid, mida saad logida. Vaikimisi uusimad eespool."
+
+msgid "A food"
+msgstr "Toiduaine"
+
+msgid "Nutrition facts"
+msgstr "Toitumisalane teave"
+
+msgid "Laid out like a package label: energy, fat, carbohydrate, fibre, protein and salt — then any vitamins and minerals that are known."
+msgstr "Esitatud nagu pakendil: energia, rasvad, süsivesikud, kiudained, valgud ja sool — seejärel teadaolevad vitamiinid ja mineraalained."
+
+msgid "Combine foods into a recipe once, then log a serving in one tap."
+msgstr "Ühenda toiduained üks kord retseptiks ja logi siis portsjon ühe puudutusega."
+
+msgid "Ready-made recipes everyone can use."
+msgstr "Valmisretseptid, mida kõik saavad kasutada."
+
+msgid "A recipe"
+msgstr "Retsept"
+
+msgid "The foods in it and their amounts. Nutrition is worked out from these."
+msgstr "Selles olevad toiduained ja nende kogused. Toiteväärtus arvutatakse nende põhjal."
+
+msgid "Add servings of this recipe to your diary."
+msgstr "Lisa selle retsepti portsjoneid oma päevikusse."
+
+msgid "Create a plan"
+msgstr "Loo kava"
+
+msgid "A plan is built for you from your foods and recipes to hit your targets. You can adjust every item afterwards."
+msgstr "Kava koostatakse sulle sinu toiduainetest ja retseptidest, et jõuda eesmärkideni. Saad iga osa hiljem muuta."
+
+msgid "A diet plan"
+msgstr "Toitumiskava"
+
+msgid "Active plan"
+msgstr "Aktiivne kava"
+
+msgid "The active plan is shown on the nutrition overview each day."
+msgstr "Aktiivset kava näidatakse iga päev toitumise ülevaates."
+
+msgid "Each meal's items and how close they come to its calorie budget."
+msgstr "Iga toidukorra osad ja kui lähedale need jõuavad toidukorra kalorieelarvele."
+
+msgid "Log the plan"
+msgstr "Logi kava"
+
+msgid "Copy a day of the plan into your diary as if you'd eaten it."
+msgstr "Kopeeri kava päev oma päevikusse, nagu oleksid selle ära söönud."
+
+msgid "Energy use, macros, body fat, water, BMI and more. They only calculate — nothing is saved or changed."
+msgstr "Energiakulu, makrod, keharasv, vesi, KMI ja muu. Need ainult arvutavad — midagi ei salvestata ega muudeta."
+
+msgid "Median daily calories and macros. Days with nothing logged don't count, and one barely-logged day doesn't drag the figure down."
+msgstr "Päevaste kalorite ja makrode mediaan. Päevi, mil midagi ei logitud, ei arvestata ja üks vähe logitud päev ei vii näitajat alla."
+
+msgid "Longer and shorter periods"
+msgstr "Pikemad ja lühemad perioodid"
+
+msgid "The same medians for a week up to everything you've ever logged."
+msgstr "Samad mediaanid nädalast kuni kõige, mida oled kunagi logitud."
+
+msgid "Each of the last 30 days, with the exact figures in a table below."
+msgstr "Iga viimasest 30 päevast, täpsed arvud allolevas tabelis."
+
+msgid "Overview, routines, the stretch library and your history."
+msgstr "Ülevaade, rutiinid, venituste kogu ja sinu ajalugu."
+
+msgid "Your streak"
+msgstr "Sinu seeria"
+
+msgid "Days in a row with stretching, and your totals."
+msgstr "Järjestikused venitamispäevad ja sinu koguarvud."
+
+msgid "A guided session times every stretch for you."
+msgstr "Juhendatud sessioon ajastab sinu eest iga venituse."
+
+msgid "Log it afterwards"
+msgstr "Logi tagantjärele"
+
+msgid "Stretched without the timer? Log just how long you stretched."
+msgstr "Venitasid ilma taimerita? Logi lihtsalt, kui kaua venitasid."
+
+msgid "A routine"
+msgstr "Rutiin"
+
+msgid "About the routine"
+msgstr "Rutiinist"
+
+msgid "How many stretches it has and roughly how long it takes."
+msgstr "Kui palju venitusi sellel on ja umbes kui kaua see kestab."
+
+msgid "Each stretch with its hold time, sets and sides."
+msgstr "Iga venitus koos hoidmisaja, seeriate ja külgedega."
+
+msgid "Opens the guided player."
+msgstr "Avab juhendatud mängija."
+
+msgid "Add stretches and reorder them — in your own routines."
+msgstr "Lisa venitusi ja muuda nende järjekorda — oma rutiinides."
+
+msgid "The timer"
+msgstr "Taimer"
+
+msgid "Counts down every hold and rest, with a chime between them. Pause, add or remove 10 seconds, or skip. Leaving the page keeps your place."
+msgstr "Loeb maha iga hoidmise ja puhkuse ning nende vahel kõlab signaal. Peata, lisa või lahuta 10 sekundit või jäta vahele. Sinu koht säilib ka lehelt lahkudes."
+
+msgid "Mark a stretch done or skipped yourself if you prefer."
+msgstr "Märgi venitus soovi korral ise tehtuks või vahele jäetuks."
+
+msgid "Saves the session to your history."
+msgstr "Salvestab sessiooni sinu ajalukku."
+
+msgid "Search for people on this server. Friends can message you and see the progress you choose to share."
+msgstr "Otsi selle serveri inimesi. Sõbrad saavad sulle sõnumeid saata ja näha arengut, mida otsustad jagada."
+
+msgid "One conversation per friend."
+msgstr "Üks vestlus sõbra kohta."
+
+msgid "Every group you're in has its own chat."
+msgstr "Igal sinu grupil on oma vestlus."
+
+msgid "Create a group"
+msgstr "Loo grupp"
+
+msgid "Train together: invite friends or share an invite link."
+msgstr "Treenige koos: kutsu sõpru või jaga kutselinki."
+
+msgid "Units, language, timezone, theme, and which sections you use."
+msgstr "Ühikud, keel, ajavöönd, teema ja milliseid jaotisi kasutad."
+
+msgid "Messages, friends and groups."
+msgstr "Sõnumid, sõbrad ja grupid."
+
+msgid "Everything you've logged is yours — browse it or download it."
+msgstr "Kõik, mida oled logitud, on sinu oma — sirvi seda või laadi see alla."
+
+msgid "Tutorials"
+msgstr "Tutvustused"
+
+msgid "Replay any tour, or turn tutorials on or off."
+msgstr "Vaata mis tahes tutvustust uuesti või lülita tutvustused sisse või välja."
+
+msgid "Tutorial settings saved."
+msgstr "Tutvustuste seaded salvestatud."
+
+#, python-format
+msgid "“%(title)s” will start again the next time you open it."
+msgstr "„%(title)s” käivitub uuesti, kui selle järgmine kord avad."
+
+msgid "Every tutorial will start again the next time you open its page."
+msgstr "Iga tutvustus käivitub uuesti, kui selle lehe järgmine kord avad."
+
+msgid "Choose your language"
+msgstr "Vali oma keel"
+
+msgid "Help"
+msgstr "Abi"
+
+msgid "Replay the guided tour of any page, or turn tutorials on or off."
+msgstr "Vaata mis tahes lehe tutvustust uuesti või lülita tutvustused sisse või välja."
+
+msgid "Show each page's tutorial the first time I open it"
+msgstr "Näita lehe tutvustust, kui selle esimest korda avan"
+
+msgid "Off: no tutorial starts by itself. You can still start any of them below."
+msgstr "Väljas: ükski tutvustus ei käivitu ise. Saad siiski allpool ükskõik millise käivitada."
+
+msgid "Seen"
+msgstr "Nähtud"
+
+msgid "Not seen yet"
+msgstr "Veel nägemata"
+
+msgid "Show again"
+msgstr "Näita uuesti"
+
+msgid "Show all tutorials again"
+msgstr "Näita kõiki tutvustusi uuesti"
+
+msgid "Log it"
+msgstr "Logi"
+
+msgctxt "tutorial"
+msgid "Next"
+msgstr "Järgmine"
+
+msgctxt "tutorial"
+msgid "Previous"
+msgstr "Eelmine"
+
+msgctxt "tutorial"
+msgid "Done"
+msgstr "Valmis"
+
+msgctxt "navigation"
+msgid "Back"
+msgstr "Tagasi"
+
+msgid "Search your clients…"
+msgstr "Otsi oma kliente…"
+
+msgid "Not shared with anyone — only you can see it."
+msgstr "Pole kellegagi jagatud — näed seda ainult sina."
+
+msgid "No matching clients."
+msgstr "Sobivaid kliente pole."
+
+msgid "Search for a client and add them to the list: everyone on it can see and import their own copy of this program. Leave the list empty to keep it private."
+msgstr "Otsi klient ja lisa ta nimekirja: kõik nimekirjas olevad näevad seda kava ja saavad sellest oma koopia importida. Jäta nimekiri tühjaks, et hoida see privaatsena."
+
+msgid "Search for a client and add them to the list: everyone on it can see and import their own copy of this diet plan. Leave the list empty to keep it private."
+msgstr "Otsi klient ja lisa ta nimekirja: kõik nimekirjas olevad näevad seda toitumiskava ja saavad sellest oma koopia importida. Jäta nimekiri tühjaks, et hoida see privaatsena."
+
+msgid "Meals (optional)"
+msgstr "Toidukorrad (valikuline)"
+
+msgid "Tick every meal this recipe suits, e.g. both Lunch and Dinner. The diet-plan builder only suggests it for those meals — leave all unticked for a recipe that fits any meal."
+msgstr "Märgi kõik toidukorrad, millele retsept sobib, nt nii lõuna kui ka õhtusöök. Toitumiskava koostaja soovitab seda ainult nendele toidukordadele — jäta kõik märkimata, kui retsept sobib igale toidukorrale."
+
+msgid "The diet-plan builder only suggests this recipe for this meal."
+msgid_plural "The diet-plan builder only suggests this recipe for these meals."
+msgstr[0] "Toitumiskava koostaja soovitab seda retsepti ainult sellele toidukorrale."
+msgstr[1] "Toitumiskava koostaja soovitab seda retsepti ainult nendele toidukordadele."
+
+msgid "Photo"
+msgstr "Foto"
+
+msgid "Shopping days"
+msgstr "Poepäevad"
+
+msgid "Each shopping day's list covers the days up to the next one. Pick none for one list for the whole week."
+msgstr "Iga poepäeva nimekiri katab päevad järgmise poepäevani. Ära vali ühtegi, et saada üks nimekiri kogu nädalaks."
+
+msgid "A shopping day's own meals go on that day's list"
+msgstr "Poepäeva enda toidukorrad lähevad selle päeva nimekirja"
+
+msgid "On: you shop before that day's meals. Off: they're on the previous list — you shop after that day is covered."
+msgstr "Sees: käid poes enne selle päeva toidukordi. Väljas: need on eelmises nimekirjas — käid poes, kui päev on juba kaetud."
+
+msgid "Shopping days saved."
+msgstr "Poepäevad salvestatud."
+
+msgid "Shopping list"
+msgstr "Ostunimekiri"
+
+msgid "Shopping trips"
+msgstr "Poeskäigud"
+
+msgid "One list per shopping day, covering the days until the next one."
+msgstr "Üks nimekiri iga poepäeva kohta, kuni järgmise poepäevani."
+
+msgid "What to buy"
+msgstr "Mida osta"
+
+msgid "Everything the plan's meals need, recipes included. The same food on several days is added up, with each day's amount under it. Tick items off as you shop."
+msgstr "Kõik, mida kava toidukorrad vajavad, ka retseptid. Sama toiduaine mitmel päeval liidetakse kokku ja iga päeva kogus on selle all. Märgi poes ostetud asjad."
+
+msgid "Pick the days you go shopping, and whether a shopping day's own meals go on that day's list. Set separately for each plan."
+msgstr "Vali päevad, mil käid poes, ja kas poepäeva enda toidukorrad lähevad selle päeva nimekirja. Määratakse iga kava jaoks eraldi."
+
+msgid "One list for the whole week — pick shopping days below to split it into trips."
+msgstr "Üks nimekiri kogu nädalaks — vali allpool poepäevad, et jagada see poeskäikudeks."
+
+#, python-format
+msgid "For: %(days)s"
+msgstr "Päevadele: %(days)s"
+
+msgid "Clear ticks"
+msgstr "Eemalda märked"
+
+msgid "Nothing to buy — this plan has no meals on these days yet."
+msgstr "Pole midagi osta — sellel kaval pole neil päevadel veel toidukordi."
+
+msgid "Shopping day"
+msgstr "Poepäev"
+
+msgid "On your shopping days, your list for the trip is one tap away here."
+msgstr "Poepäevadel on selle poeskäigu ostunimekiri siin ühe puudutuse kaugusel."
+
+msgid "Diary, shopping list, foods, recipes, diet plans, calculators and statistics."
+msgstr "Päevik, ostunimekiri, toiduained, retseptid, toitumiskavad, kalkulaatorid ja statistika."
+
+msgid "The shopping list comes from your active diet plan, and you don't have one yet."
+msgstr "Ostunimekiri tuleb sinu aktiivsest toitumiskavast, aga sul pole veel ühtegi."
+
+msgid "Create a plan, or activate one of yours."
+msgstr "Loo kava või aktiveeri mõni oma kavadest."
+
+#, python-format
+msgid "%(counter)s item on your shopping list for %(plan)s."
+msgid_plural "%(counter)s items on your shopping list for %(plan)s."
+msgstr[0] "%(counter)s toode kava %(plan)s ostunimekirjas."
+msgstr[1] "%(counter)s toodet kava %(plan)s ostunimekirjas."
+
 #~ msgid "Back to home"
 #~ msgstr "Tagasi avalehele"
 
@@ -8831,8 +9792,6 @@ msgstr "Muuda seeriat %(number)s"
 #~ msgid "+ Add food"
 #~ msgstr "+ Lisa toit"
 
-#~ msgid "Log it"
-#~ msgstr "Logi"
 
 #~ msgid "+ New recipe"
 #~ msgstr "+ Uus retsept"

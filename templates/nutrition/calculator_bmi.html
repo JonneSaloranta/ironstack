@@ -18,14 +18,14 @@
 
 {% if result %}
   <div class="card">
-    <strong>{% trans "Result" %}</strong>
+    <h2 class="card-title">{% trans "Result" %}</h2>
     <p class="stat-value">
       {{ result.bmi }}{% if result.category %} — {{ result.category.name }}{% endif %}
     </p>
   </div>
 
   <div class="card">
-    <strong>{% trans "Categories" %}</strong>
+    <h2 class="card-title">{% trans "Categories" %}</h2>
     <div class="table-wrap"><table class="set-table">
       <tbody>
         {% for row in result.rows %}

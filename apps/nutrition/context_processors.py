@@ -5,8 +5,8 @@ whenever `request.resolver_match.app_name == "nutrition"`).
 Why nutrition gets a sub-nav when nothing else in this app does (see
 docs/NUTRITION.md "Navigating within nutrition" for the full
 reasoning): reported directly as hard to use, and the concrete reason
-is scale — nutrition has 7 top-level destinations (dashboard, diary,
-foods, recipes, diet plans, calculators, statistics), more than any
+is scale — nutrition has 8 top-level destinations (dashboard, diary,
+shopping list, foods, recipes, diet plans, calculators, statistics), more than any
 other app here, and the plain "one back link per page" convention that
 works fine for a 2-3-page flow elsewhere means reaching a sibling
 section (e.g. Recipes while on the Diary) requires scrolling back to
@@ -35,6 +35,7 @@ _TAB_URL_NAMES = {
         "diary-entry-delete",
         "diary-day-copy",
     },
+    "shopping": {"shopping", "diet-plan-shopping"},
     "foods": {
         "food-list",
         "food-create",

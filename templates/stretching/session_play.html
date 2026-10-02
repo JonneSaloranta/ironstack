@@ -13,7 +13,7 @@ apps.stretching.services.timer_steps() built (the json_script above).
 Every label it shows comes from a data-* attribute here, so all the
 text stays in Django's translation catalog rather than in the JS.
 {% endcomment %}
-<div class="card stretch-player" x-data="ironstackStretchTimer()"
+<div data-tour="stretch-player" class="card stretch-player" x-data="ironstackStretchTimer()"
      data-mark-url="{% url 'stretching:performed-mark' session.pk 0 %}"
      data-label-prepare="{% trans "Get ready" %}"
      data-label-hold="{% trans "Hold" %}"
@@ -71,7 +71,7 @@ text stays in Django's translation catalog rather than in the JS.
 <h2>{% trans "Stretches" %}</h2>
 <ol class="stretch-item-list">
   {% for item in performed %}
-    <li class="card" x-data="{ status: '{{ item.status }}' }"
+    <li data-tour="stretch-list-item" class="card" x-data="{ status: '{{ item.status }}' }"
         @stretch-status.window="if ($event.detail.pk === {{ item.pk }}) status = $event.detail.status">
       <strong>{{ item.stretch_name|translate_content }}</strong>
       <span class="tag tag-success" x-show="status === 'done'" {% if item.status != "done" %}x-cloak{% endif %}>{% trans "Done" %}</span>
@@ -93,7 +93,7 @@ text stays in Django's translation catalog rather than in the JS.
   {% endfor %}
 </ol>
 
-<form method="post" action="{% url 'stretching:session-complete' session.pk %}">
+<form data-tour="stretch-finish" method="post" action="{% url 'stretching:session-complete' session.pk %}">
   {% csrf_token %}
   <button type="submit">{% trans "Finish session" %}</button>
 </form>

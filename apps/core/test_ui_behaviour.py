@@ -51,8 +51,11 @@ class UiBehaviourTests(StaticLiveServerTestCase):
         self.page = self.browser.new_page()
         self.page.set_default_timeout(8000)
         self.addCleanup(self.page.close)
+        # Page tours (apps.tutorials) would otherwise open over every page
+        # these tests look at; the tour itself has its own tests below.
         self.alice = User.objects.create_user(
-            username="alice", password="s3cret-pass", onboarding_completed=True
+            username="alice", password="s3cret-pass", onboarding_completed=True,
+            tutorials_enabled=False,
         )
         self.row = Exercise.objects.create(name="Row", owner=None)
 
@@ -282,3 +285,36 @@ class UiBehaviourTests(StaticLiveServerTestCase):
                 self.assertLessEqual(
                     overflow, 1, f"{name} overflows by {overflow}px at {width}px: {culprit}"
                 )
+
+    # -- page tours (apps.tutorials) --------------------------------------------
+    def test_a_tour_highlights_beside_its_card_and_escape_marks_it_seen(self):
+        from apps.tutorials.models import TutorialCompletion
+
+        self.alice.tutorials_enabled = True
+        self.alice.save()
+        self.page.set_viewport_size({"width": 390, "height": 844})
+        self._log_in()
+        self.page.goto(self._url("/"))
+        card = self.page.locator(".tour-card")
+        expect(card).to_be_visible()
+        # The first step has no "Previous"; Next moves to a highlighted element.
+        expect(card.locator("[data-act=back]")).to_be_hidden()
+        card.locator("[data-act=next]").click()
+        self.page.wait_for_timeout(800)
+        glass = self.page.locator(".tour-glass").bounding_box()
+        box = card.bounding_box()
+        self.assertTrue(glass["width"] > 0)
+        below = box["y"] >= glass["y"] + glass["height"] - 1
+        above = box["y"] + box["height"] <= glass["y"] + 1
+        overlaps = not (below or above)
+        self.assertFalse(overlaps, "the tour card covers what it explains")
+        expect(card.locator("[data-act=back]")).to_be_visible()
+        self.page.keyboard.press("Escape")
+        expect(card).to_have_count(0)
+        self.page.wait_for_timeout(300)
+        seen = TutorialCompletion.objects.filter(user=self.alice, tour="dashboard")
+        self.assertTrue(seen.exists())
+        # Seen: it doesn't start again.
+        self.page.goto(self._url("/"))
+        self.page.wait_for_timeout(500)
+        expect(self.page.locator(".tour-card")).to_have_count(0)

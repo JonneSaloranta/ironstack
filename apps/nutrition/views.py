@@ -29,7 +29,7 @@ from apps.core.forms import ExportImportUploadForm
 from apps.measurements.models import BodyMeasurement, MeasurementType
 from apps.programs.models import Weekday as ProgramsWeekday
 
-from . import diet_builder, energy, services
+from . import diet_builder, energy, nutrition_label, services
 from .forms import (
     DEFAULT_RATES_JSON_SAFE,
     ActivityInputsForm,
@@ -40,6 +40,7 @@ from .forms import (
     BodyStepForm,
     DiaryAddEntryForm,
     DiaryEntryQuantityForm,
+    DiaryQuickEntryForm,
     DietPlanForm,
     DietPlanItemForm,
     DietPlanMealItemSearchForm,
@@ -484,8 +485,10 @@ class FoodListView(LoginRequiredMixin, ListView):
     context_object_name = "foods"
     paginate_by = 20
 
-    # Query param -> ordering field. "name" is also the default and
-    # the tiebreaker for every other sort (see get_queryset) so two
+    # Unfiltered, the list opens newest-first (DEFAULT_SORT/DEFAULT_DIR):
+    # the food a user is most likely looking for is the one they just
+    # added or imported. Query param -> ordering field. "name" is the
+    # tiebreaker for every other sort (see get_queryset) so two
     # foods sharing a sort value — the same category, the same
     # calorie count — still land in a stable, predictable order
     # instead of whatever order Postgres happens to return them in.
@@ -495,6 +498,8 @@ class FoodListView(LoginRequiredMixin, ListView):
         "category": "categories",
         "calories": "calories",
     }
+    DEFAULT_SORT = "created"
+    DEFAULT_DIR = "desc"
 
     def get_queryset(self):
         from django.db.models import Q
@@ -509,9 +514,9 @@ class FoodListView(LoginRequiredMixin, ListView):
         if category:
             qs = qs.filter(categories__icontains=category)
 
-        sort = self.request.GET.get("sort", "name")
+        sort = self.request.GET.get("sort", self.DEFAULT_SORT)
         field = self.SORT_FIELDS.get(sort, "name")
-        if self.request.GET.get("dir") == "desc":
+        if self.request.GET.get("dir", self.DEFAULT_DIR) == "desc":
             field = f"-{field}"
         return qs.order_by(field) if sort == "name" else qs.order_by(field, "name")
 
@@ -520,8 +525,8 @@ class FoodListView(LoginRequiredMixin, ListView):
         context["query"] = self.request.GET.get("q", "")
         context["categories"] = services.distinct_food_categories(self.request.user)
         context["selected_category"] = self.request.GET.get("category", "")
-        context["selected_sort"] = self.request.GET.get("sort", "name")
-        context["selected_dir"] = self.request.GET.get("dir", "asc")
+        context["selected_sort"] = self.request.GET.get("sort", self.DEFAULT_SORT)
+        context["selected_dir"] = self.request.GET.get("dir", self.DEFAULT_DIR)
         return context
 
     def get_template_names(self):
@@ -561,7 +566,16 @@ class FoodDetailView(LoginRequiredMixin, View):
     def get(self, request, pk):
         food = _viewable_food_or_404(request, pk)
         food = services.refresh_food_price(food)
-        return render(request, self.template_name, {"food": food})
+        return render(
+            request,
+            self.template_name,
+            {
+                "food": food,
+                "energy_kj": nutrition_label.energy_kj(food),
+                "label_rows": nutrition_label.label_rows(food),
+                "other_rows": nutrition_label.other_rows(food),
+            },
+        )
 
 
 class FoodCreateView(LoginRequiredMixin, CreateView):
@@ -608,6 +622,9 @@ class FoodSearchResultsView(LoginRequiredMixin, View):
             "mode": mode,
         }
         if mode == "diary":
+            # Same last-logged-quantity prefill the "Most used" panel
+            # has, so a searched-for food isn't stuck at its serving size.
+            services.with_prefill_quantities(request.user, local)
             context["date"] = request.GET.get("date", "")
             context["meal_slot_id"] = request.GET.get("meal_slot", "")
         elif mode == "recipe":
@@ -773,6 +790,21 @@ def diary_day_copy(request, source_date):
     return redirect("nutrition:diary-day", target_date=target_date.isoformat())
 
 
+MOST_USED_PAGE_SIZE = 10
+
+
+def _most_used_page(request):
+    """One page of the "Most used" quick-add panel
+    (templates/nutrition/_most_used_foods.html), paged by its own
+    `most_used_page` parameter so it never collides with a page's
+    other query parameters."""
+    from django.core.paginator import Paginator
+
+    return Paginator(services.most_used_foods(request.user), MOST_USED_PAGE_SIZE).get_page(
+        request.GET.get("most_used_page")
+    )
+
+
 class DiaryAddEntryView(LoginRequiredMixin, View):
     template_name = "nutrition/diary_add_entry.html"
 
@@ -784,7 +816,8 @@ class DiaryAddEntryView(LoginRequiredMixin, View):
             {
                 "date": target_date or timezone.localdate().isoformat(),
                 "meal_slots": services.visible_meal_slots(request.user),
-                "most_used": services.most_used_foods(request.user),
+                "quick_form": DiaryQuickEntryForm(),
+                "most_used": _most_used_page(request),
                 "selected_meal_slot": request.GET.get("meal_slot", ""),
             },
         )
@@ -802,7 +835,8 @@ class DiaryAddEntryView(LoginRequiredMixin, View):
                     "form": form,
                     "date": target_date.isoformat(),
                     "meal_slots": services.visible_meal_slots(request.user),
-                    "most_used": services.most_used_foods(request.user),
+                    "quick_form": DiaryQuickEntryForm(),
+                    "most_used": _most_used_page(request),
                     "selected_meal_slot": request.POST.get("meal_slot", ""),
                 },
             )
@@ -823,6 +857,8 @@ class DiaryAddEntryView(LoginRequiredMixin, View):
                         "form": form,
                         "date": target_date.isoformat(),
                         "meal_slots": services.visible_meal_slots(request.user),
+                        "quick_form": DiaryQuickEntryForm(),
+                        "most_used": _most_used_page(request),
                         "selected_meal_slot": request.POST.get("meal_slot", ""),
                     },
                 )
@@ -845,15 +881,60 @@ def _owned_diary_entry_or_404(request, pk):
 
 
 @login_required
+def diary_quick_add(request):
+    """POST-only: logs a quick entry (macros with no Food behind them)
+    from the quick-add card on the add-food page. An invalid form
+    re-renders that page with the card open and its errors shown."""
+    if request.method != "POST":
+        return redirect("nutrition:diary-add-entry")
+    target_date = _parse_diary_date(request.POST.get("date"))
+    meal_slot = services.visible_meal_slots(request.user).filter(
+        pk=request.POST.get("meal_slot") or None
+    ).first()
+    form = DiaryQuickEntryForm(request.POST)
+    if meal_slot is None or not form.is_valid():
+        if meal_slot is None:
+            form.add_error(None, _("Pick a meal."))
+        return render(
+            request,
+            DiaryAddEntryView.template_name,
+            {
+                "quick_form": form,
+                "date": target_date.isoformat(),
+                "meal_slots": services.visible_meal_slots(request.user),
+                "most_used": _most_used_page(request),
+                "selected_meal_slot": request.POST.get("meal_slot", ""),
+            },
+        )
+    data = form.cleaned_data
+    services.create_quick_diary_entry(
+        request.user,
+        target_date=target_date,
+        meal_slot=meal_slot,
+        name=data["quick_name"],
+        calories=data["quick_calories"],
+        protein_grams=data["quick_protein_grams"],
+        carbohydrate_grams=data["quick_carbohydrate_grams"],
+        fat_grams=data["quick_fat_grams"],
+        notes=data["notes"],
+    )
+    messages.success(request, _("Added to your diary."))
+    return _diary_day_redirect(target_date, meal_slot.pk)
+
+
+@login_required
 def diary_entry_edit(request, pk):
     entry = _owned_diary_entry_or_404(request, pk)
+    # A quick entry has no food to scale, so its own macros are what
+    # gets edited, not a quantity.
+    form_class = DiaryQuickEntryForm if entry.is_quick else DiaryEntryQuantityForm
     if request.method == "POST":
-        form = DiaryEntryQuantityForm(request.POST, instance=entry)
+        form = form_class(request.POST, instance=entry)
         if form.is_valid():
             form.save()
             return _diary_day_redirect(entry.date, entry.meal_slot_id)
     else:
-        form = DiaryEntryQuantityForm(instance=entry)
+        form = form_class(instance=entry)
     return render(request, "nutrition/diary_entry_form.html", {"form": form, "entry": entry})
 
 
@@ -940,11 +1021,11 @@ class RecipeListView(LoginRequiredMixin, View):
 
         query = request.GET.get("q", "").strip()
 
-        my_recipes_qs = Recipe.objects.filter(owner=request.user).select_related(
-            "meal_slot"
+        my_recipes_qs = Recipe.objects.filter(owner=request.user).prefetch_related(
+            "meal_slots"
         ).order_by("-created_at")
-        template_recipes_qs = Recipe.objects.filter(owner__isnull=True).select_related(
-            "meal_slot"
+        template_recipes_qs = Recipe.objects.filter(owner__isnull=True).prefetch_related(
+            "meal_slots"
         ).order_by("name")
         if query:
             my_recipes_qs = my_recipes_qs.filter(name__icontains=query)
@@ -1023,6 +1104,7 @@ def recipe_create(request):
         recipe = form.save(commit=False)
         recipe.owner = request.user
         recipe.save()
+        form.save_m2m()
         messages.success(
             request,
             _('"%(name)s" created — now add its ingredients below.') % {"name": recipe.name},
@@ -1116,7 +1198,7 @@ def recipe_ingredient_create(request, recipe_pk):
         return render(
             request,
             "nutrition/recipe_ingredient_form.html",
-            {"recipe": recipe, "most_used": services.most_used_foods(request.user)},
+            {"recipe": recipe, "most_used": _most_used_page(request)},
         )
 
     form = RecipeIngredientSearchForm(request.POST)
@@ -1480,6 +1562,77 @@ class DietPlanDetailView(LoginRequiredMixin, View):
 
 
 @login_required
+def shopping(request):
+    """`/nutrition/shopping/`: the active plan's shopping list — the
+    nutrition sub-nav tab and the installed app's shortcut, one stable
+    address however plans come and go. Without an active plan, says so
+    and points at the plans."""
+    from . import shopping as shopping_services
+
+    plan = shopping_services.active_plan(request.user)
+    if plan is not None:
+        return redirect("nutrition:diet-plan-shopping", pk=plan.pk)
+    return render(request, "nutrition/shopping_no_plan.html")
+
+
+@login_required
+def diet_plan_shopping(request, pk):
+    """The plan's shopping list for one trip (apps.nutrition.shopping),
+    and the plan's own shopping settings (POST). `?trip=<weekday>` picks
+    a trip; by default the one whose shopping day is today or next."""
+    from apps.programs.models import Weekday as ProgramsWeekday
+
+    from . import shopping
+    from .forms import ShoppingSettingsForm
+
+    plan = _owned_diet_plan_or_404(request, pk)
+    if request.method == "POST":
+        form = ShoppingSettingsForm(request.POST)
+        if form.is_valid():
+            shopping.set_shopping_settings(
+                plan, form.cleaned_data["weekdays"], form.cleaned_data["include_shopping_day"]
+            )
+            messages.success(request, _("Shopping days saved."))
+            return redirect("nutrition:diet-plan-shopping", pk=plan.pk)
+    else:
+        form = ShoppingSettingsForm(
+            initial={
+                "weekdays": list(plan.shopping_days.values_list("weekday", flat=True)),
+                "include_shopping_day": plan.shopping_includes_shopping_day,
+            }
+        )
+
+    trips = shopping.plan_trips(plan)
+    requested = request.GET.get("trip", "")
+    today = timezone.localdate().weekday()
+    trip = (
+        shopping.pick_trip(trips, int(requested), today) if requested.isdigit() else None
+    ) or shopping.pick_trip(trips, None, today)
+    from django.utils.dates import WEEKDAYS_ABBR
+
+    day_name = dict(ProgramsWeekday.choices)
+    rows = shopping.shopping_list(plan, trip)
+    for row in rows:
+        row.breakdown = [(WEEKDAYS_ABBR[day], quantity) for day, quantity in row.ordered_days]
+    return render(
+        request,
+        "nutrition/diet_plan_shopping.html",
+        {
+            "plan": plan,
+            "form": form,
+            "trips": [
+                {"trip": t, "name": day_name[t.weekday], "current": t == trip}
+                for t in trips
+                if t.weekday is not None
+            ],
+            "trip": trip,
+            "trip_days": [day_name[day] for day in trip.days],
+            "rows": rows,
+        },
+    )
+
+
+@login_required
 def diet_plan_delete(request, pk):
     if request.method != "POST":
         return HttpResponseNotAllowed(["POST"])
@@ -1579,7 +1732,7 @@ def diet_plan_meal_item_add(request, plan_pk, meal_pk):
         return render(
             request,
             "nutrition/diet_plan_meal_item_form.html",
-            {"plan": plan, "meal": meal, "most_used": services.most_used_foods(request.user)},
+            {"plan": plan, "meal": meal, "most_used": _most_used_page(request)},
         )
 
     form = DietPlanMealItemSearchForm(request.POST)
@@ -1820,13 +1973,10 @@ class TimeToGoalCalculatorView(_CalculatorView):
 class NutritionStatsView(LoginRequiredMixin, View):
     """"How much have I actually been eating lately" — the calorie
     trend the daily diary total can't show on its own, since it only
-    ever shows one day at a time. A single fixed 30-day window, not a
-    range picker like apps.analytics's own stats page: a month is
-    already the natural "am I actually consistent" window for calorie
-    tracking, and this page has one chart, not several — the extra
-    control apps.analytics needs to keep several charts legible isn't
-    earning its keep here yet (docs/NUTRITION.md "Nutrition
-    statistics")."""
+    ever shows one day at a time. The chart and headline card are a
+    fixed 30-day window, not a range picker like apps.analytics's own
+    stats page; a table adds the same medians for fixed longer and
+    shorter periods (docs/NUTRITION.md "Nutrition statistics")."""
 
     template_name = "nutrition/stats.html"
 
@@ -1837,6 +1987,7 @@ class NutritionStatsView(LoginRequiredMixin, View):
 
         history = services.calorie_history(request.user)
         summary = services.nutrition_stats(request.user)
+        periods = services.nutrition_stats_by_period(request.user)
         target = NutritionTarget.objects.filter(
             user=request.user, ended_at__isnull=True
         ).first()
@@ -1852,6 +2003,7 @@ class NutritionStatsView(LoginRequiredMixin, View):
             {
                 "calorie_chart": calorie_chart,
                 "summary": summary,
+                "periods": periods,
                 "target": target,
             },
         )

@@ -153,8 +153,14 @@ given page actually needs.
 
 ```bash
 ruff check .
-pytest
+pytest                    # every CPU core (pytest-xdist); `-n 0` for one process
+pytest -m accessibility   # browser tests — needs requirements/a11y.txt + Chromium
 ```
+
+Tests run with `config.settings.test` (development settings plus a fast
+password hasher — Django's real one costs about a second per user created
+or logged in). Each xdist worker keeps its own reusable test database; add
+`--create-db` after adding a migration.
 
 [`.github/workflows/ci.yml`](.github/workflows/ci.yml) runs the same
 two checks — plus a missing-migrations check and compiling the locale

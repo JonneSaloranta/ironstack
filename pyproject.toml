@@ -1,5 +1,5 @@
 [tool.pytest.ini_options]
-DJANGO_SETTINGS_MODULE = "config.settings.dev"
+DJANGO_SETTINGS_MODULE = "config.settings.test"
 python_files = ["tests.py", "test_*.py", "*_tests.py"]
 # Excludes the accessibility marker by default — those tests need a
 # real browser (Playwright + Chromium, requirements/a11y.txt), not
@@ -7,7 +7,17 @@ python_files = ["tests.py", "test_*.py", "*_tests.py"]
 # run (or every contributor's machine) should be forced to carry. CI's
 # own `accessibility` job (.github/workflows/ci.yml) is the one place
 # that overrides this with `-m accessibility` instead.
-addopts = "--reuse-db -m 'not accessibility'"
+#
+# `-n auto --dist loadscope` (pytest-xdist): one worker per CPU core, each
+# with its own test database (test_<name>_gw0, _gw1, ...), and every test
+# class kept on one worker so its setUpTestData runs once. Pass `-n 0` to
+# run in a single process (e.g. when debugging one test with pdb).
+#
+# `--ds` repeats DJANGO_SETTINGS_MODULE above on purpose: the dev container
+# sets DJANGO_SETTINGS_MODULE=config.settings.dev in its environment, and
+# pytest-django lets that environment variable win over this file — only a
+# command-line option beats it.
+addopts = "--ds=config.settings.test --reuse-db -m 'not accessibility' -n auto --dist loadscope"
 markers = [
     "accessibility: needs a real browser (Playwright) — see requirements/a11y.txt and apps/core/test_accessibility.py",
 ]

@@ -5,8 +5,8 @@
 <div class="top-bar">
   <h1 class="no-margin">{% trans "Diet plans" %}</h1>
 </div>
-<div class="top-bar-actions">
-  <a class="button-secondary" href="{% url 'nutrition:diet-plan-create' %}">{% trans "New plan" %}</a>
+<div data-tour="diet-plan-actions" class="top-bar-actions">
+  <a class="button" href="{% url 'nutrition:diet-plan-create' %}">{% trans "New" %}</a>
   <a class="button-secondary" href="{% url 'nutrition:diet-plan-import' %}">{% trans "Import" %}</a>
 </div>
 {% include "nutrition/_subnav.html" %}
@@ -15,9 +15,7 @@
 {% for plan in own_plans %}
   {% include "nutrition/_diet_plan_card.html" with plan=plan %}
 {% empty %}
-  <div class="card empty-state">
-    <p>{% trans "No diet plans yet." %}</p>
-  </div>
+  {% include "core/_empty_state.html" with message=_("No diet plans yet.") %}
 {% endfor %}
 
 {% if coach_plans %}

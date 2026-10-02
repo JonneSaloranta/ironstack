@@ -41,11 +41,11 @@ def suggest_item_for_calorie_budget(
     `target_calories`, then scaled to hit that budget exactly. `None`
     if the user has no foods or recipes to suggest from yet.
 
-    `meal_slot`, if given, excludes any recipe tagged for a
-    *different* one (Recipe.meal_slot — found live: a "Chicken & rice
+    `meal_slot`, if given, excludes any recipe tagged only for
+    *other* meals (Recipe.meal_slots — found live: a "Chicken & rice
     bowl" recipe suggested for breakfast, "Oats & yogurt" for dinner,
     because calorie-closeness alone has no idea either recipe was
-    written for a specific meal). A recipe with no meal_slot of its
+    written for a specific meal). A recipe with no meal_slots of its
     own (every recipe before that field existed, and any a user
     doesn't bother tagging) stays eligible for every meal, same as
     today. Plain Food is never filtered this way — an ingredient like
@@ -71,7 +71,9 @@ def suggest_item_for_calorie_budget(
     for food in Food.objects.filter(Q(owner=user) | Q(owner__isnull=True), active=True):
         if food.calories > 0:
             candidates.append(("food", food, Decimal(food.calories)))
-    recipe_qs = Recipe.objects.filter(Q(owner=user) | Q(owner__isnull=True))
+    recipe_qs = Recipe.objects.filter(Q(owner=user) | Q(owner__isnull=True)).prefetch_related(
+        "meal_slots"
+    )
     for recipe in recipe_qs:
         per_serving_calories = services.recipe_per_serving_nutrition(recipe).calories
         if per_serving_calories > 0:
@@ -81,9 +83,11 @@ def suggest_item_for_calorie_budget(
         return None
 
     if meal_slot is not None:
-        on_topic = [
-            c for c in candidates if c[0] == "food" or c[1].meal_slot_id in (None, meal_slot.pk)
-        ]
+        def _fits(recipe):
+            slot_ids = {slot.pk for slot in recipe.meal_slots.all()}
+            return not slot_ids or meal_slot.pk in slot_ids
+
+        on_topic = [c for c in candidates if c[0] == "food" or _fits(c[1])]
         if on_topic:
             candidates = on_topic
 

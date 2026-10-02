@@ -159,8 +159,11 @@ class AccessibilityTests(StaticLiveServerTestCase):
     def setUp(self):
         self.page = self.browser.new_page()
         self.addCleanup(self.page.close)
+        # Page tours (apps.tutorials) would otherwise open over every page
+        # these tests look at; the tour itself has its own tests below.
         self.alice = User.objects.create_user(
-            username="alice", password="s3cret-pass", onboarding_completed=True
+            username="alice", password="s3cret-pass", onboarding_completed=True,
+            tutorials_enabled=False,
         )
 
     def _log_in(self):
@@ -182,6 +185,18 @@ class AccessibilityTests(StaticLiveServerTestCase):
         self._log_in()
         _assert_no_serious_violations(
             self, self.page, "Dashboard", exclude=[".calendar-day-outside"]
+        )
+
+    def test_dashboard_with_its_tour_open(self):
+        """The tour's card and highlight (static/js/tutorial.js) on top of
+        the page they explain."""
+        self._log_in()
+        self.page.goto(f"{self.live_server_url}/?tour=dashboard")
+        self.page.wait_for_selector(".tour-card")
+        self.page.click(".tour-card [data-act=next]")
+        self.page.wait_for_timeout(700)
+        _assert_no_serious_violations(
+            self, self.page, "Dashboard tour", exclude=[".calendar-day-outside"]
         )
 
     def test_profile_page(self):

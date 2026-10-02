@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load i18n %}
+{% load i18n core_extras %}
 {% block title %}{{ food.name }} — IronStack{% endblock %}
 {% block content %}
 {% url 'nutrition:dashboard' as c1u %}{% trans "Nutrition" as c1l %}
@@ -20,35 +20,30 @@
   </p>
 {% endif %}
 
-<div class="card">
-  <strong>{% trans "Nutrition" %}</strong>
-  <p class="text-muted">{% blocktrans with size=food.serving_size unit=food.serving_unit %}Per {{ size }} {{ unit }}{% endblocktrans %}</p>
+{% comment %}
+  Laid out like an EU/Finnish package label (apps.nutrition.nutrition_label):
+  energy as kJ / kcal, "of which" sub-rows indented, salt rather than
+  sodium, then every other nutrient OpenFoodFacts reports.
+{% endcomment %}
+<div data-tour="nutrition-label" class="card">
+  <h2 class="card-title">{% blocktrans with size=food.serving_size|nutrient_amount unit=food.serving_unit %}Nutrition per {{ size }} {{ unit }}{% endblocktrans %}</h2>
   {% include "nutrition/_nutri_score_badge.html" %}
-  <div class="table-wrap"><table class="set-table">
+  <div class="table-wrap"><table class="set-table nutrition-label">
     <tbody>
-      <tr><td>{% trans "Calories" %}</td><td>{{ food.calories }} kcal</td></tr>
-      <tr><td>{% trans "Protein" %}</td><td>{{ food.protein_grams }} g</td></tr>
-      <tr><td>{% trans "Carbohydrates" %}</td><td>{{ food.carbohydrate_grams }} g</td></tr>
-      <tr><td>{% trans "Fat" %}</td><td>{{ food.fat_grams }} g</td></tr>
-      {% if food.fiber_grams is not None %}
-        <tr><td>{% trans "Fiber" %}</td><td>{{ food.fiber_grams }} g</td></tr>
-      {% endif %}
-      {% if food.sugar_grams is not None %}
-        <tr><td>{% trans "Sugar" %}</td><td>{{ food.sugar_grams }} g</td></tr>
-      {% endif %}
-      {% if food.saturated_fat_grams is not None %}
-        <tr><td>{% trans "Saturated fat" %}</td><td>{{ food.saturated_fat_grams }} g</td></tr>
-      {% endif %}
-      {% if food.sodium_mg is not None %}
-        <tr><td>{% trans "Sodium" %}</td><td>{{ food.sodium_mg }} mg</td></tr>
-      {% endif %}
+      <tr><th scope="row">{% trans "Energy" context "nutrient" %}</th><td class="stat-figure">{{ energy_kj|nutrient_amount:0 }} kJ / {{ food.calories }} kcal</td></tr>
+      {% for row in label_rows %}
+        <tr{% if row.indented %} class="nutrition-label-sub"{% endif %}><th scope="row">{{ row.label }}</th><td class="stat-figure">{{ row.value|nutrient_amount }}{% if row.value is not None %} {{ row.unit }}{% endif %}</td></tr>
+      {% endfor %}
+      {% for row in other_rows %}
+        <tr{% if row.indented %} class="nutrition-label-sub"{% endif %}><th scope="row">{{ row.label }}</th><td class="stat-figure">{{ row.value|nutrient_amount }} {{ row.unit }}</td></tr>
+      {% endfor %}
     </tbody>
   </table></div>
 </div>
 
 {% if food.quantity or food.ingredients_text or food.labels or food.allergens or food.categories or food.price_amount %}
   <div class="card">
-    <strong>{% trans "Product information" %}</strong>
+    <h2 class="card-title">{% trans "Product information" %}</h2>
     <div class="table-wrap"><table class="set-table">
       <tbody>
         {% if food.price_amount %}

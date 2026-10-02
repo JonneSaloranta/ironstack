@@ -12,6 +12,7 @@ from django.http import Http404, HttpResponse
 from django.shortcuts import redirect, render
 from django.template.loader import render_to_string
 from django.urls import reverse, reverse_lazy
+from django.utils.http import url_has_allowed_host_and_scheme
 from django.utils.translation import gettext as _
 from django.views.generic import CreateView, FormView, TemplateView, UpdateView, View
 
@@ -24,6 +25,7 @@ from .forms import (
     AccountDeleteForm,
     AccountDetailsForm,
     OnboardingForm,
+    OnboardingLanguageForm,
     ProfileForm,
     RateLimitedAuthenticationForm,
     RateLimitedPasswordResetForm,
@@ -589,6 +591,32 @@ class OnboardingView(LoginRequiredMixin, View):
     the page without a full navigation either way."""
 
     def post(self, request, *args, **kwargs):
+        if request.POST.get("action") == "language":
+            form = OnboardingLanguageForm(request.POST, user=request.user)
+            if not form.is_valid():
+                return render(
+                    request,
+                    "accounts/_onboarding_modal.html",
+                    {
+                        "show_onboarding": True,
+                        "onboarding_step": "language",
+                        "onboarding_language_form": form,
+                    },
+                )
+            form.save()
+            # The whole page (not just the modal) has to re-render in the
+            # new language, so reload it; the next step then shows itself.
+            if request.headers.get("HX-Request"):
+                response = HttpResponse(status=204)
+                response["HX-Refresh"] = "true"
+                return response
+            next_url = request.META.get("HTTP_REFERER") or reverse("dashboard")
+            if not url_has_allowed_host_and_scheme(
+                next_url, allowed_hosts={request.get_host()}, require_https=request.is_secure()
+            ):
+                next_url = reverse("dashboard")
+            return redirect(next_url)
+
         if request.POST.get("action") == "skip":
             request.user.onboarding_completed = True
             request.user.save(update_fields=["onboarding_completed"])

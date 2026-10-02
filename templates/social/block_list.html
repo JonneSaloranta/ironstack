@@ -15,10 +15,8 @@
     </form>
   </div>
 {% empty %}
-  <div class="card empty-state">
-    <p>{% trans "You haven't blocked anyone." %}</p>
-  </div>
+  {% include "core/_empty_state.html" with message=_("You haven't blocked anyone.") %}
 {% endfor %}
 
-<p><a class="button-link" href="{% url 'social:friend-list' %}">&larr; {% trans "Friends" %}</a></p>
+<p><a class="button-link" href="{% url 'social:friend-list' %}">&larr; {% trans "Back to friends" %}</a></p>
 {% endblock %}

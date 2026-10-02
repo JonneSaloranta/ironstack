@@ -8907,6 +8907,969 @@ msgstr "Изменить подход"
 msgid "Edit set %(number)s"
 msgstr "Изменить подход %(number)s"
 
+msgid "Back to friends"
+msgstr "Назад к друзьям"
+
+msgid "Back to messages"
+msgstr "Назад к сообщениям"
+
+msgid "Back to groups"
+msgstr "Назад к группам"
+
+msgid "Back to group"
+msgstr "Назад к группе"
+
+msgid "Remove this stretch from the routine?"
+msgstr "Удалить это упражнение из комплекса?"
+
+msgid "Deactivate this routine? Past sessions stay in your history."
+msgstr "Отключить этот комплекс? Прошлые сессии останутся в истории."
+
+msgid "Deactivate this stretch? It will no longer appear when browsing, but routines and past sessions that use it keep working."
+msgstr "Отключить это упражнение? Оно больше не будет показываться при просмотре, но комплексы и прошлые сессии, которые его используют, продолжат работать."
+
+msgctxt "nutrient"
+msgid "Energy"
+msgstr "Энергетическая ценность"
+
+msgctxt "nutrient"
+msgid "of which saturates"
+msgstr "в т.ч. насыщенные жиры"
+
+msgctxt "nutrient"
+msgid "of which sugars"
+msgstr "в т.ч. сахара"
+
+msgctxt "nutrient"
+msgid "of which starch"
+msgstr "в т.ч. крахмал"
+
+msgctxt "nutrient"
+msgid "of which polyols"
+msgstr "в т.ч. полиолы"
+
+msgctxt "nutrient"
+msgid "Fibre"
+msgstr "Пищевые волокна"
+
+msgctxt "nutrient"
+msgid "Salt"
+msgstr "Соль"
+
+msgid "Optional — e.g. the restaurant dish."
+msgstr "Необязательно — например, блюдо в ресторане."
+
+msgid "kcal. Leave blank to estimate it from the macros."
+msgstr "ккал. Оставьте пустым, чтобы рассчитать по макронутриентам."
+
+msgid "Enter the calories or at least one macro."
+msgstr "Введите калории или хотя бы один макронутриент."
+
+msgid "Quick entry"
+msgstr "Быстрая запись"
+
+msgid "Log either a food, a recipe or quick macros — exactly one of them."
+msgstr "Запишите продукт, рецепт или быстрые макросы — что-то одно."
+
+msgctxt "nutrient"
+msgid "of which monounsaturates"
+msgstr "в т.ч. мононенасыщенные жиры"
+
+msgctxt "nutrient"
+msgid "of which polyunsaturates"
+msgstr "в т.ч. полиненасыщенные жиры"
+
+msgctxt "nutrient"
+msgid "Omega-3 fatty acids"
+msgstr "Омега-3 жирные кислоты"
+
+msgctxt "nutrient"
+msgid "Trans fat"
+msgstr "Трансжиры"
+
+msgctxt "nutrient"
+msgid "Cholesterol"
+msgstr "Холестерин"
+
+msgctxt "nutrient"
+msgid "Lactose"
+msgstr "Лактоза"
+
+msgctxt "nutrient"
+msgid "Alcohol"
+msgstr "Алкоголь"
+
+msgctxt "nutrient"
+msgid "Caffeine"
+msgstr "Кофеин"
+
+msgctxt "nutrient"
+msgid "Vitamin A"
+msgstr "Витамин A"
+
+msgctxt "nutrient"
+msgid "Vitamin D"
+msgstr "Витамин D"
+
+msgctxt "nutrient"
+msgid "Vitamin E"
+msgstr "Витамин E"
+
+msgctxt "nutrient"
+msgid "Vitamin K"
+msgstr "Витамин K"
+
+msgctxt "nutrient"
+msgid "Vitamin C"
+msgstr "Витамин C"
+
+msgctxt "nutrient"
+msgid "Thiamin (B1)"
+msgstr "Тиамин (B1)"
+
+msgctxt "nutrient"
+msgid "Riboflavin (B2)"
+msgstr "Рибофлавин (B2)"
+
+msgctxt "nutrient"
+msgid "Niacin"
+msgstr "Ниацин"
+
+msgctxt "nutrient"
+msgid "Vitamin B6"
+msgstr "Витамин B6"
+
+msgctxt "nutrient"
+msgid "Folate"
+msgstr "Фолат"
+
+msgctxt "nutrient"
+msgid "Vitamin B12"
+msgstr "Витамин B12"
+
+msgctxt "nutrient"
+msgid "Biotin"
+msgstr "Биотин"
+
+msgctxt "nutrient"
+msgid "Pantothenic acid"
+msgstr "Пантотеновая кислота"
+
+msgctxt "nutrient"
+msgid "Potassium"
+msgstr "Калий"
+
+msgctxt "nutrient"
+msgid "Chloride"
+msgstr "Хлорид"
+
+msgctxt "nutrient"
+msgid "Calcium"
+msgstr "Кальций"
+
+msgctxt "nutrient"
+msgid "Phosphorus"
+msgstr "Фосфор"
+
+msgctxt "nutrient"
+msgid "Magnesium"
+msgstr "Магний"
+
+msgctxt "nutrient"
+msgid "Iron"
+msgstr "Железо"
+
+msgctxt "nutrient"
+msgid "Zinc"
+msgstr "Цинк"
+
+msgctxt "nutrient"
+msgid "Copper"
+msgstr "Медь"
+
+msgctxt "nutrient"
+msgid "Manganese"
+msgstr "Марганец"
+
+msgctxt "nutrient"
+msgid "Fluoride"
+msgstr "Фторид"
+
+msgctxt "nutrient"
+msgid "Selenium"
+msgstr "Селен"
+
+msgctxt "nutrient"
+msgid "Chromium"
+msgstr "Хром"
+
+msgctxt "nutrient"
+msgid "Molybdenum"
+msgstr "Молибден"
+
+msgctxt "nutrient"
+msgid "Iodine"
+msgstr "Йод"
+
+msgid "Pick a meal."
+msgstr "Выберите приём пищи."
+
+msgid "Added to your diary."
+msgstr "Добавлено в дневник."
+
+msgid "Most used foods pages"
+msgstr "Страницы часто используемых продуктов"
+
+msgid "Enter macros manually"
+msgstr "Ввести макросы вручную"
+
+msgid "For a meal out or anything else you don't want to save as a food."
+msgstr "Для еды вне дома или того, что не хочется сохранять как продукт."
+
+#, python-format
+msgid "Nutrition per %(size)s %(unit)s"
+msgstr "Пищевая ценность на %(size)s %(unit)s"
+
+msgid "Notes"
+msgstr "Заметки"
+
+msgid "14 days"
+msgstr "14 дней"
+
+msgid "Year to date"
+msgstr "С начала года"
+
+msgid "Last 30 days"
+msgstr "Последние 30 дней"
+
+msgid "Median calories"
+msgstr "Медиана калорий"
+
+msgid "Median protein"
+msgstr "Медиана белков"
+
+msgid "Median carbohydrates"
+msgstr "Медиана углеводов"
+
+msgid "Median fat"
+msgstr "Медиана жиров"
+
+msgid "Medians of the days you actually logged something — a day with nothing logged isn't counted as zero calories, and one barely-logged day doesn't drag the figure down the way it would an average."
+msgstr "Медианы по дням, когда вы действительно что-то записали — день без записей не считается нулём калорий, и один почти пустой день не тянет показатель вниз, как это было бы со средним."
+
+msgid "Median per day"
+msgstr "Медиана в день"
+
+msgid "Period"
+msgstr "Период"
+
+msgid "Days"
+msgstr "Дни"
+
+msgid "Days: days logged / days in the period. Macros in grams."
+msgstr "Дни: дни с записями / дни в периоде. Макросы в граммах."
+
+msgid "Skip tour"
+msgstr "Пропустить обзор"
+
+msgid "Don't show tutorials"
+msgstr "Не показывать обзоры"
+
+#, python-format
+msgid "Step %(current)s of %(total)s"
+msgstr "Шаг %(current)s из %(total)s"
+
+msgid "Getting started"
+msgstr "Начало работы"
+
+msgid "Programs and exercises"
+msgstr "Программы и упражнения"
+
+msgid "Body and activities"
+msgstr "Тело и активность"
+
+msgid "Friends and groups"
+msgstr "Друзья и группы"
+
+msgid "A quick look around. Every section has a short tour like this the first time you open it — skip any of them, or turn them all off."
+msgstr "Короткая экскурсия. В каждом разделе при первом открытии есть такой же краткий обзор — пропустите любой или отключите их все."
+
+msgid "Navigation"
+msgstr "Навигация"
+
+msgid "Everything is one tap away from here: home, nutrition and stretching (if you use them), progress, workouts, programs and your profile."
+msgstr "Отсюда всё в одном касании: главная, питание и растяжка (если вы ими пользуетесь), прогресс, тренировки, программы и ваш профиль."
+
+msgid "Your workout"
+msgstr "Ваша тренировка"
+
+msgid "Start a workout here, or jump back into the one you're in the middle of. To follow a plan, start a workout from one of your programs instead."
+msgstr "Начните тренировку здесь или вернитесь к текущей. Чтобы следовать плану, начните тренировку из одной из своих программ."
+
+msgid "Streaks and milestones from everyone on this server who shares them."
+msgstr "Серии и достижения всех на этом сервере, кто ими делится."
+
+msgid "Shortcuts"
+msgstr "Быстрые ссылки"
+
+msgid "The exercise library, body tracking, activities and stretching."
+msgstr "Библиотека упражнений, замеры тела, активности и растяжка."
+
+msgid "Calendar"
+msgstr "Календарь"
+
+msgid "Each day's training and nutrition at a glance. Tap a day for details; the “?” explains the colours."
+msgstr "Тренировки и питание за каждый день одним взглядом. Нажмите на день, чтобы увидеть подробности; «?» объясняет цвета."
+
+msgid "Your profile"
+msgstr "Ваш профиль"
+
+msgid "Preferences, friends, your data — and Tutorials, where you can replay any of these tours."
+msgstr "Настройки, друзья, ваши данные — и Обзоры, где можно повторить любой из этих обзоров."
+
+msgid "Your workouts"
+msgstr "Ваши тренировки"
+
+msgid "Every workout you've done, newest first. Open one to see or correct it."
+msgstr "Все ваши тренировки, сначала новые. Откройте тренировку, чтобы посмотреть или исправить её."
+
+msgid "Start without a plan"
+msgstr "Начать без плана"
+
+msgid "A freeform workout lets you add any exercises as you go. Workouts from a program start from the program's page."
+msgstr "В свободной тренировке вы добавляете упражнения по ходу. Тренировки из программы запускаются со страницы программы."
+
+msgid "Logging a workout"
+msgstr "Запись тренировки"
+
+msgid "This workout"
+msgstr "Эта тренировка"
+
+msgid "When it started and ended, and how many sets and how much volume so far."
+msgstr "Когда она началась и закончилась, сколько подходов и какой объём на данный момент."
+
+msgid "One card per exercise"
+msgstr "Карточка на каждое упражнение"
+
+msgid "The sets you've logged appear here, and you can edit or delete any of them."
+msgstr "Записанные подходы показываются здесь, любой из них можно изменить или удалить."
+
+msgid "Suggested weight"
+msgstr "Предлагаемый вес"
+
+msgid "Based on your last sessions, with the reason and how confident it is. It's only a starting point — you decide what goes on the bar."
+msgstr "На основе ваших последних тренировок, с обоснованием и степенью уверенности. Это лишь отправная точка — что повесить на гриф, решаете вы."
+
+msgid "Log a set"
+msgstr "Записать подход"
+
+msgid "Enter weight and reps and tap Log set. RPE, RIR, warm-up and failure are optional. New personal records are detected automatically."
+msgstr "Введите вес и повторения и нажмите «Записать подход». RPE, RIR, разминка и отказ необязательны. Новые личные рекорды определяются автоматически."
+
+msgid "Add an exercise"
+msgstr "Добавить упражнение"
+
+msgid "Add anything that isn't in the plan — it only changes this workout."
+msgstr "Добавьте то, чего нет в плане, — это изменит только эту тренировку."
+
+msgid "Training mode"
+msgstr "Режим тренировки"
+
+msgid "One exercise at a time with big buttons and a rest timer — the easiest way to log at the gym. This button follows you on every page."
+msgstr "Одно упражнение за раз, крупные кнопки и таймер отдыха — самый простой способ записывать в зале. Эта кнопка доступна на каждой странице."
+
+msgid "Finish"
+msgstr "Завершить"
+
+msgid "Complete the workout when you're done. Abandon keeps it in your history as unfinished."
+msgstr "Завершите тренировку, когда закончите. «Прервать» оставляет её в истории как незавершённую."
+
+msgid "The dots show your progress. The arrows move between exercises in any order — the next unfinished one opens by default."
+msgstr "Точки показывают ваш прогресс. Стрелки переключают упражнения в любом порядке — по умолчанию открывается следующее незавершённое."
+
+msgid "Current exercise"
+msgstr "Текущее упражнение"
+
+msgid "Its target and the sets you've already logged; tap a set to edit it."
+msgstr "Его цель и уже записанные подходы; нажмите на подход, чтобы изменить его."
+
+msgid "A starting point from your history. You can always enter something else."
+msgstr "Отправная точка из вашей истории. Вы всегда можете ввести другое значение."
+
+msgid "Log the set"
+msgstr "Записать подход"
+
+msgid "Weight and reps, then Log set. “More options” has RPE, RIR, warm-up, failure and notes."
+msgstr "Вес и повторения, затем «Записать подход». В «Больше параметров» — RPE, RIR, разминка, отказ и заметки."
+
+msgid "Starts by itself after each set and chimes when rest is over. Adjust it by 15 seconds, skip it, or mute the sound."
+msgstr "Запускается сам после каждого подхода и подаёт сигнал, когда отдых закончен. Меняйте его на 15 секунд, пропускайте или выключите звук."
+
+msgid "Every exercise at once — for reviewing or correcting the whole workout."
+msgstr "Все упражнения сразу — для просмотра или исправления всей тренировки."
+
+msgid "Create or import"
+msgstr "Создать или импортировать"
+
+msgid "Build your own program, or import one someone exported for you."
+msgstr "Составьте свою программу или импортируйте ту, что кто-то экспортировал для вас."
+
+msgid "Your programs"
+msgstr "Ваши программы"
+
+msgid "Open a program to see its workouts and start one."
+msgstr "Откройте программу, чтобы увидеть её тренировки и начать одну из них."
+
+msgid "Ready-made programs"
+msgstr "Готовые программы"
+
+msgid "Copy a built-in program to make it yours. Changing your copy never changes workouts you've already logged."
+msgstr "Скопируйте встроенную программу, чтобы сделать её своей. Изменения копии никогда не затрагивают уже записанные тренировки."
+
+msgid "A program"
+msgstr "Программа"
+
+msgid "About the program"
+msgstr "О программе"
+
+msgid "Its description and version. Editing a program never changes workouts you've already logged."
+msgstr "Её описание и версия. Изменение программы никогда не затрагивает уже записанные тренировки."
+
+msgid "Make it yours"
+msgstr "Сделайте её своей"
+
+msgid "This is a template: copy it to a program of your own to edit and use it."
+msgstr "Это шаблон: скопируйте его в свою программу, чтобы изменять и использовать."
+
+msgid "A program is a set of workouts, each with its exercises, sets, reps and how the weight should progress."
+msgstr "Программа — это набор тренировок, в каждой свои упражнения, подходы, повторения и способ увеличения веса."
+
+msgid "Add exercises"
+msgstr "Добавить упражнения"
+
+msgid "Add an exercise to a workout and set its target sets and reps."
+msgstr "Добавьте упражнение в тренировку и задайте целевые подходы и повторения."
+
+msgid "Start it"
+msgstr "Начать"
+
+msgid "Starts a workout with these exercises and targets filled in."
+msgstr "Начинает тренировку, в которой эти упражнения и цели уже заполнены."
+
+msgid "Add a workout"
+msgstr "Добавить тренировку"
+
+msgid "For example a second training day."
+msgstr "Например, второй тренировочный день."
+
+msgid "Exercise library"
+msgstr "Библиотека упражнений"
+
+msgid "Find an exercise"
+msgstr "Найти упражнение"
+
+msgid "Search by name, or filter by muscle group and equipment."
+msgstr "Ищите по названию или фильтруйте по группе мышц и инвентарю."
+
+msgid "Your own exercises"
+msgstr "Ваши упражнения"
+
+msgid "Missing something? Add it — only you will see it."
+msgstr "Чего-то не хватает? Добавьте — видеть его будете только вы."
+
+msgid "An exercise"
+msgstr "Упражнение"
+
+msgid "Your best lifts for this exercise, kept up to date automatically."
+msgstr "Ваши лучшие результаты в этом упражнении, обновляются автоматически."
+
+msgid "Your estimated one-rep max and volume for this exercise over time."
+msgstr "Ваш расчётный одноповторный максимум и объём в этом упражнении со временем."
+
+msgid "Time range"
+msgstr "Период"
+
+msgid "Everything on this page follows the range you pick here."
+msgstr "Всё на этой странице показывается за выбранный здесь период."
+
+msgid "Summary"
+msgstr "Сводка"
+
+msgid "Workouts, time spent training and total volume lifted in the range."
+msgstr "Тренировки, время на тренировки и общий поднятый объём за период."
+
+msgid "One exercise"
+msgstr "Одно упражнение"
+
+msgid "Pick an exercise to see how its strength has developed."
+msgstr "Выберите упражнение, чтобы увидеть, как росла сила в нём."
+
+msgid "Weekly volume"
+msgstr "Объём по неделям"
+
+msgid "How much you lifted each week. The table under the chart has exact figures."
+msgstr "Сколько вы подняли за каждую неделю. Точные цифры — в таблице под графиком."
+
+msgid "Muscle groups"
+msgstr "Группы мышц"
+
+msgid "Which muscles got the most work — handy for spotting imbalances."
+msgstr "Какие мышцы работали больше всего — удобно, чтобы заметить дисбаланс."
+
+msgid "Progress for an exercise"
+msgstr "Прогресс в упражнении"
+
+msgid "Choose how far back to look."
+msgstr "Выберите, насколько далеко смотреть назад."
+
+msgid "The heaviest single rep you could likely lift, estimated from your sets. A rising line means you're getting stronger."
+msgstr "Самый тяжёлый одиночный повтор, который вы, вероятно, смогли бы выполнить, рассчитанный по вашим подходам. Растущая линия означает, что вы становитесь сильнее."
+
+msgid "Current records"
+msgstr "Текущие рекорды"
+
+msgid "Heaviest weight, best estimated 1RM, most reps and more."
+msgstr "Максимальный вес, лучший расчётный 1RM, больше всего повторений и другое."
+
+msgid "The most weight you've lifted for each number of reps."
+msgstr "Наибольший вес, поднятый вами на каждое число повторений."
+
+msgid "What you track"
+msgstr "Что вы отслеживаете"
+
+msgid "Body weight, waist, body fat and more. Open one to log a reading."
+msgstr "Вес тела, талия, процент жира и другое. Откройте замер, чтобы записать значение."
+
+msgid "Your own measurements"
+msgstr "Ваши замеры"
+
+msgid "Add anything else you want to follow."
+msgstr "Добавьте всё, что ещё хотите отслеживать."
+
+msgid "A measurement"
+msgstr "Замер"
+
+msgid "Your current value and how it has changed since you started."
+msgstr "Ваше текущее значение и как оно изменилось с начала."
+
+msgid "Log a reading"
+msgstr "Записать значение"
+
+msgid "Enter today's value — or an earlier date to catch up."
+msgstr "Введите сегодняшнее значение — или более раннюю дату, чтобы наверстать."
+
+msgid "Every reading, newest first, with edit and delete."
+msgstr "Все значения, сначала новые, с изменением и удалением."
+
+msgid "Activity types"
+msgstr "Типы активности"
+
+msgid "Running, cycling, walking and more. Open one to log it."
+msgstr "Бег, велосипед, ходьба и другое. Откройте тип, чтобы записать активность."
+
+msgid "Your own types"
+msgstr "Ваши типы"
+
+msgid "Add any other activity you want to track."
+msgstr "Добавьте любую другую активность, которую хотите отслеживать."
+
+msgid "An activity"
+msgstr "Активность"
+
+msgid "Date, duration and, if you like, distance and notes."
+msgstr "Дата, продолжительность и, по желанию, расстояние и заметки."
+
+msgid "Everything you've logged of this activity."
+msgstr "Всё, что вы записали по этой активности."
+
+msgid "Nutrition overview"
+msgstr "Обзор питания"
+
+msgid "Diary, foods, recipes, diet plans, calculators and statistics."
+msgstr "Дневник, продукты, рецепты, планы питания, калькуляторы и статистика."
+
+msgid "Training or rest day"
+msgstr "Тренировочный день или день отдыха"
+
+msgid "Whether you've completed a workout today. It's shown for context only."
+msgstr "Выполнили ли вы сегодня тренировку. Показывается только для сведения."
+
+msgid "What you've eaten today against your targets."
+msgstr "Что вы съели сегодня по сравнению с вашими целями."
+
+msgid "Target check"
+msgstr "Проверка цели"
+
+msgid "Compares your weight trend with your goal and may suggest a new target. Nothing changes unless you accept it."
+msgstr "Сравнивает тренд вашего веса с целью и может предложить новую цель. Ничего не изменится, пока вы не согласитесь."
+
+msgid "Calories and macros, worked out from your profile and goal."
+msgstr "Калории и макросы, рассчитанные по вашему профилю и цели."
+
+msgid "Your goal"
+msgstr "Ваша цель"
+
+msgid "Lose, keep or gain — and how fast. Change it at any time."
+msgstr "Снизить, сохранить или набрать — и как быстро. Меняйте в любое время."
+
+msgid "Pick a day"
+msgstr "Выберите день"
+
+msgid "Move a day at a time, or pick any date to fill in."
+msgstr "Переходите по дням или выберите любую дату для заполнения."
+
+msgid "Day total"
+msgstr "Итог дня"
+
+msgid "Calories and macros eaten on this day."
+msgstr "Калории и макросы, съеденные в этот день."
+
+msgid "Meals"
+msgstr "Приёмы пищи"
+
+msgid "Each meal lists what you logged. “Save as recipe” turns a meal you eat often into a recipe you can log in one tap."
+msgstr "Каждый приём пищи показывает записанное. «Сохранить как рецепт» превращает часто повторяющийся приём пищи в рецепт, который записывается одним касанием."
+
+msgid "Search, scan a barcode, or enter macros straight in."
+msgstr "Ищите, сканируйте штрихкод или вводите макросы напрямую."
+
+msgid "Copy a day"
+msgstr "Скопировать день"
+
+msgid "Eating the same as yesterday? Copy the whole day in one go."
+msgstr "Едите то же, что вчера? Скопируйте весь день сразу."
+
+msgid "Adding food"
+msgstr "Добавление еды"
+
+msgid "Which meal"
+msgstr "Какой приём пищи"
+
+msgid "Everything you add on this page goes to the meal chosen here."
+msgstr "Всё, что вы добавите на этой странице, попадёт в выбранный здесь приём пищи."
+
+msgid "Search or scan"
+msgstr "Поиск или сканирование"
+
+msgid "Type a name or scan a barcode. Your own foods show first; Open Food Facts can be searched too. The amount is prefilled with what you logged last time."
+msgstr "Введите название или отсканируйте штрихкод. Сначала показываются ваши продукты; искать можно и в Open Food Facts. Количество заполнено тем, что вы записали в прошлый раз."
+
+msgid "Eating out? Type in the meal's calories and macros without creating a food for it."
+msgstr "Едите вне дома? Введите калории и макросы блюда, не создавая для него продукт."
+
+msgid "The foods you add most often, one tap away."
+msgstr "Продукты, которые вы добавляете чаще всего, — в одно касание."
+
+msgid "Add foods"
+msgstr "Добавить продукты"
+
+msgid "Create your own, or browse Open Food Facts by category."
+msgstr "Создайте свой или просматривайте Open Food Facts по категориям."
+
+msgid "Search Open Food Facts or scan a barcode to bring a product into your library."
+msgstr "Ищите в Open Food Facts или сканируйте штрихкод, чтобы добавить товар в свою библиотеку."
+
+msgid "Your library"
+msgstr "Ваша библиотека"
+
+msgid "Filter and sort every food you can log. Newest first by default."
+msgstr "Фильтруйте и сортируйте все продукты, которые можно записать. По умолчанию сначала новые."
+
+msgid "A food"
+msgstr "Продукт"
+
+msgid "Nutrition facts"
+msgstr "Пищевая ценность"
+
+msgid "Laid out like a package label: energy, fat, carbohydrate, fibre, protein and salt — then any vitamins and minerals that are known."
+msgstr "Как на упаковке: энергия, жиры, углеводы, пищевые волокна, белки и соль — затем известные витамины и минералы."
+
+msgid "Combine foods into a recipe once, then log a serving in one tap."
+msgstr "Объедините продукты в рецепт один раз, а затем записывайте порцию одним касанием."
+
+msgid "Ready-made recipes everyone can use."
+msgstr "Готовые рецепты, доступные всем."
+
+msgid "A recipe"
+msgstr "Рецепт"
+
+msgid "The foods in it and their amounts. Nutrition is worked out from these."
+msgstr "Продукты в нём и их количество. Пищевая ценность рассчитывается по ним."
+
+msgid "Add servings of this recipe to your diary."
+msgstr "Добавьте порции этого рецепта в свой дневник."
+
+msgid "Create a plan"
+msgstr "Создать план"
+
+msgid "A plan is built for you from your foods and recipes to hit your targets. You can adjust every item afterwards."
+msgstr "План составляется для вас из ваших продуктов и рецептов, чтобы достичь целей. Каждый пункт можно потом изменить."
+
+msgid "A diet plan"
+msgstr "План питания"
+
+msgid "Active plan"
+msgstr "Активный план"
+
+msgid "The active plan is shown on the nutrition overview each day."
+msgstr "Активный план показывается в обзоре питания каждый день."
+
+msgid "Each meal's items and how close they come to its calorie budget."
+msgstr "Пункты каждого приёма пищи и насколько они близки к его бюджету калорий."
+
+msgid "Log the plan"
+msgstr "Записать план"
+
+msgid "Copy a day of the plan into your diary as if you'd eaten it."
+msgstr "Скопируйте день плана в дневник, как будто вы его съели."
+
+msgid "Energy use, macros, body fat, water, BMI and more. They only calculate — nothing is saved or changed."
+msgstr "Расход энергии, макросы, процент жира, вода, ИМТ и другое. Они только считают — ничего не сохраняется и не меняется."
+
+msgid "Median daily calories and macros. Days with nothing logged don't count, and one barely-logged day doesn't drag the figure down."
+msgstr "Медиана калорий и макросов в день. Дни без записей не учитываются, а один почти пустой день не тянет показатель вниз."
+
+msgid "Longer and shorter periods"
+msgstr "Более длинные и короткие периоды"
+
+msgid "The same medians for a week up to everything you've ever logged."
+msgstr "Те же медианы — от недели до всего, что вы когда-либо записывали."
+
+msgid "Each of the last 30 days, with the exact figures in a table below."
+msgstr "Каждый из последних 30 дней, точные цифры — в таблице ниже."
+
+msgid "Overview, routines, the stretch library and your history."
+msgstr "Обзор, комплексы, библиотека упражнений на растяжку и ваша история."
+
+msgid "Your streak"
+msgstr "Ваша серия"
+
+msgid "Days in a row with stretching, and your totals."
+msgstr "Дни подряд с растяжкой и ваши итоги."
+
+msgid "A guided session times every stretch for you."
+msgstr "Сеанс с подсказками засекает время каждого упражнения за вас."
+
+msgid "Log it afterwards"
+msgstr "Записать потом"
+
+msgid "Stretched without the timer? Log just how long you stretched."
+msgstr "Тянулись без таймера? Просто запишите, сколько времени это заняло."
+
+msgid "A routine"
+msgstr "Комплекс"
+
+msgid "About the routine"
+msgstr "О комплексе"
+
+msgid "How many stretches it has and roughly how long it takes."
+msgstr "Сколько в нём упражнений и примерно сколько он длится."
+
+msgid "Each stretch with its hold time, sets and sides."
+msgstr "Каждое упражнение с временем удержания, подходами и сторонами."
+
+msgid "Opens the guided player."
+msgstr "Открывает плеер с подсказками."
+
+msgid "Add stretches and reorder them — in your own routines."
+msgstr "Добавляйте упражнения и меняйте порядок — в своих комплексах."
+
+msgid "The timer"
+msgstr "Таймер"
+
+msgid "Counts down every hold and rest, with a chime between them. Pause, add or remove 10 seconds, or skip. Leaving the page keeps your place."
+msgstr "Отсчитывает каждое удержание и отдых, между ними звучит сигнал. Пауза, ±10 секунд или пропуск. Если уйти со страницы, место сохранится."
+
+msgid "Mark a stretch done or skipped yourself if you prefer."
+msgstr "При желании отметьте упражнение выполненным или пропущенным сами."
+
+msgid "Saves the session to your history."
+msgstr "Сохраняет сеанс в вашей истории."
+
+msgid "Search for people on this server. Friends can message you and see the progress you choose to share."
+msgstr "Ищите людей на этом сервере. Друзья могут писать вам и видеть прогресс, которым вы решите поделиться."
+
+msgid "One conversation per friend."
+msgstr "Один разговор на каждого друга."
+
+msgid "Every group you're in has its own chat."
+msgstr "У каждой вашей группы свой чат."
+
+msgid "Create a group"
+msgstr "Создать группу"
+
+msgid "Train together: invite friends or share an invite link."
+msgstr "Тренируйтесь вместе: пригласите друзей или поделитесь ссылкой-приглашением."
+
+msgid "Units, language, timezone, theme, and which sections you use."
+msgstr "Единицы, язык, часовой пояс, тема и какие разделы вы используете."
+
+msgid "Messages, friends and groups."
+msgstr "Сообщения, друзья и группы."
+
+msgid "Everything you've logged is yours — browse it or download it."
+msgstr "Всё, что вы записали, принадлежит вам — просматривайте или скачивайте."
+
+msgid "Tutorials"
+msgstr "Обзоры"
+
+msgid "Replay any tour, or turn tutorials on or off."
+msgstr "Повторите любой обзор или включите и выключите обзоры."
+
+msgid "Tutorial settings saved."
+msgstr "Настройки обзоров сохранены."
+
+#, python-format
+msgid "“%(title)s” will start again the next time you open it."
+msgstr "«%(title)s» запустится снова при следующем открытии."
+
+msgid "Every tutorial will start again the next time you open its page."
+msgstr "Каждый обзор запустится снова при следующем открытии его страницы."
+
+msgid "Choose your language"
+msgstr "Выберите язык"
+
+msgid "Help"
+msgstr "Помощь"
+
+msgid "Replay the guided tour of any page, or turn tutorials on or off."
+msgstr "Повторите обзор любой страницы или включите и выключите обзоры."
+
+msgid "Show each page's tutorial the first time I open it"
+msgstr "Показывать обзор страницы при первом её открытии"
+
+msgid "Off: no tutorial starts by itself. You can still start any of them below."
+msgstr "Выкл.: ни один обзор не запускается сам. Любой из них можно запустить ниже."
+
+msgid "Seen"
+msgstr "Просмотрено"
+
+msgid "Not seen yet"
+msgstr "Ещё не просмотрено"
+
+msgid "Show again"
+msgstr "Показать снова"
+
+msgid "Show all tutorials again"
+msgstr "Показать все обзоры снова"
+
+msgid "Log it"
+msgstr "Записать"
+
+msgctxt "tutorial"
+msgid "Next"
+msgstr "Далее"
+
+msgctxt "tutorial"
+msgid "Previous"
+msgstr "Назад"
+
+msgctxt "tutorial"
+msgid "Done"
+msgstr "Готово"
+
+msgctxt "navigation"
+msgid "Back"
+msgstr "Назад"
+
+msgid "Search your clients…"
+msgstr "Поиск среди ваших клиентов…"
+
+msgid "Not shared with anyone — only you can see it."
+msgstr "Ни с кем не поделено — видите только вы."
+
+msgid "No matching clients."
+msgstr "Подходящих клиентов нет."
+
+msgid "Search for a client and add them to the list: everyone on it can see and import their own copy of this program. Leave the list empty to keep it private."
+msgstr "Найдите клиента и добавьте его в список: каждый в списке сможет увидеть эту программу и импортировать свою копию. Оставьте список пустым, чтобы она осталась личной."
+
+msgid "Search for a client and add them to the list: everyone on it can see and import their own copy of this diet plan. Leave the list empty to keep it private."
+msgstr "Найдите клиента и добавьте его в список: каждый в списке сможет увидеть этот план питания и импортировать свою копию. Оставьте список пустым, чтобы он остался личным."
+
+msgid "Meals (optional)"
+msgstr "Приёмы пищи (необязательно)"
+
+msgid "Tick every meal this recipe suits, e.g. both Lunch and Dinner. The diet-plan builder only suggests it for those meals — leave all unticked for a recipe that fits any meal."
+msgstr "Отметьте все приёмы пищи, которым подходит рецепт, например и обед, и ужин. Конструктор плана питания будет предлагать его только для них — оставьте всё неотмеченным, если рецепт подходит для любого приёма пищи."
+
+msgid "The diet-plan builder only suggests this recipe for this meal."
+msgid_plural "The diet-plan builder only suggests this recipe for these meals."
+msgstr[0] "Конструктор плана питания предлагает этот рецепт только для этого приёма пищи."
+msgstr[1] "Конструктор плана питания предлагает этот рецепт только для этих приёмов пищи."
+msgstr[2] "Конструктор плана питания предлагает этот рецепт только для этих приёмов пищи."
+
+msgid "Photo"
+msgstr "Фото"
+
+msgid "Shopping days"
+msgstr "Дни покупок"
+
+msgid "Each shopping day's list covers the days up to the next one. Pick none for one list for the whole week."
+msgstr "Список каждого дня покупок охватывает дни до следующего. Не выбирайте ни одного — будет один список на всю неделю."
+
+msgid "A shopping day's own meals go on that day's list"
+msgstr "Приёмы пищи дня покупок попадают в список этого дня"
+
+msgid "On: you shop before that day's meals. Off: they're on the previous list — you shop after that day is covered."
+msgstr "Вкл.: вы ходите в магазин до приёмов пищи этого дня. Выкл.: они в предыдущем списке — вы ходите в магазин, когда этот день уже обеспечен."
+
+msgid "Shopping days saved."
+msgstr "Дни покупок сохранены."
+
+msgid "Shopping list"
+msgstr "Список покупок"
+
+msgid "Shopping trips"
+msgstr "Походы в магазин"
+
+msgid "One list per shopping day, covering the days until the next one."
+msgstr "Один список на каждый день покупок, до следующего."
+
+msgid "What to buy"
+msgstr "Что купить"
+
+msgid "Everything the plan's meals need, recipes included. The same food on several days is added up, with each day's amount under it. Tick items off as you shop."
+msgstr "Всё, что нужно для приёмов пищи плана, включая рецепты. Один и тот же продукт в разные дни суммируется, а количество по дням показано под ним. Отмечайте купленное в магазине."
+
+msgid "Pick the days you go shopping, and whether a shopping day's own meals go on that day's list. Set separately for each plan."
+msgstr "Выберите дни, когда ходите в магазин, и попадают ли приёмы пищи дня покупок в его список. Настраивается для каждого плана отдельно."
+
+msgid "One list for the whole week — pick shopping days below to split it into trips."
+msgstr "Один список на всю неделю — выберите ниже дни покупок, чтобы разделить его."
+
+#, python-format
+msgid "For: %(days)s"
+msgstr "На: %(days)s"
+
+msgid "Clear ticks"
+msgstr "Снять отметки"
+
+msgid "Nothing to buy — this plan has no meals on these days yet."
+msgstr "Покупать нечего — в этом плане пока нет приёмов пищи на эти дни."
+
+msgid "Shopping day"
+msgstr "День покупок"
+
+msgid "On your shopping days, your list for the trip is one tap away here."
+msgstr "В дни покупок список на этот поход — здесь, в одно касание."
+
+msgid "Diary, shopping list, foods, recipes, diet plans, calculators and statistics."
+msgstr "Дневник, список покупок, продукты, рецепты, планы питания, калькуляторы и статистика."
+
+msgid "The shopping list comes from your active diet plan, and you don't have one yet."
+msgstr "Список покупок строится по активному плану питания, а у вас его пока нет."
+
+msgid "Create a plan, or activate one of yours."
+msgstr "Создайте план или активируйте один из своих."
+
+#, python-format
+msgid "%(counter)s item on your shopping list for %(plan)s."
+msgid_plural "%(counter)s items on your shopping list for %(plan)s."
+msgstr[0] "%(counter)s товар в списке покупок для плана %(plan)s."
+msgstr[1] "%(counter)s товара в списке покупок для плана %(plan)s."
+msgstr[2] "%(counter)s товаров в списке покупок для плана %(plan)s."
+
 #~ msgid "Back to home"
 #~ msgstr "Назад на главную"
 
@@ -8919,8 +9882,6 @@ msgstr "Изменить подход %(number)s"
 #~ msgid "+ Add food"
 #~ msgstr "+ Добавить продукт"
 
-#~ msgid "Log it"
-#~ msgstr "Записать"
 
 #~ msgid "+ New recipe"
 #~ msgstr "+ Новый рецепт"

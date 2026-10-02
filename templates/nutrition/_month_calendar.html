@@ -51,11 +51,11 @@ different month's days at all. Moving the script tag to be this
 card's own child fixes it structurally — swapping the card now always
 takes its data tag down with it, so there's only ever one.
 {% endcomment %}
-<div class="card" id="month-calendar" x-data="ironstackMonthCalendar('calendar-days-data')"
+<div data-tour="nutrition-calendar" class="card" id="month-calendar" x-data="ironstackMonthCalendar('calendar-days-data')"
      @click.outside="close()">
   {{ calendar_days_json|json_script:"calendar-days-data" }}
   <div class="calendar-header" x-data="{ helpOpen: false }">
-    <a class="button-link" href="?month={{ calendar_prev_month }}"
+    <a class="button-secondary" href="?month={{ calendar_prev_month }}"
        hx-get="?month={{ calendar_prev_month }}" hx-target="#month-calendar" hx-swap="outerHTML"
        hx-push-url="true" aria-label="{% trans "Previous month" %}">&larr;</a>
     <strong class="row-center">

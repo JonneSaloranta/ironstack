@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Tutorials" %} — IronStack{% endblock %}
+{% block content %}
+{% url 'profile' as c1u %}{% trans "Profile" as c1l %}
+{% trans "Tutorials" as current %}
+{% include "core/_breadcrumbs.html" with c1_url=c1u c1_label=c1l current=current %}
+<div class="top-bar">
+  <h1 class="no-margin">{% trans "Tutorials" %}</h1>
+</div>
+
+<form class="card" method="post" action="{% url 'tutorials:settings' %}">
+  {% csrf_token %}
+  <label class="checkbox-field" for="id_tutorials_enabled">
+    <input type="checkbox" id="id_tutorials_enabled" name="enabled" {% if user.tutorials_enabled %}checked{% endif %}>
+    {% trans "Show each page's tutorial the first time I open it" %}
+  </label>
+  <p class="field-help">{% trans "Off: no tutorial starts by itself. You can still start any of them below." %}</p>
+  <button type="submit" class="button-secondary">{% trans "Save" %}</button>
+</form>
+
+{% for section, rows in sections %}
+  <h2>{{ section }}</h2>
+  {% for row in rows %}
+    <div class="card card-action-row">
+      <div>
+        <strong>{{ row.tour.title }}</strong>
+        <p class="text-muted">{% if row.completed %}{% trans "Seen" %}{% else %}{% trans "Not seen yet" %}{% endif %}</p>
+      </div>
+      <div class="row">
+        {% if row.completed %}
+          <form method="post" action="{% url 'tutorials:reset' row.tour.key %}">
+            {% csrf_token %}
+            <button type="submit" class="button-secondary">{% trans "Show again" %}</button>
+          </form>
+        {% endif %}
+        {% if row.start_url %}
+          <a class="button-secondary" href="{{ row.start_url }}">{% trans "Start" %}</a>
+        {% endif %}
+      </div>
+    </div>
+  {% endfor %}
+{% endfor %}
+
+{% if any_completed %}
+  <form method="post" action="{% url 'tutorials:reset-all' %}">
+    {% csrf_token %}
+    <button type="submit" class="button-secondary">{% trans "Show all tutorials again" %}</button>
+  </form>
+{% endif %}
+
+<p><a class="button-link" href="{% url 'profile' %}">&larr; {% trans "Back to profile" %}</a></p>
+{% endblock %}

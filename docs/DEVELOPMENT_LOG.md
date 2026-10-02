@@ -5725,3 +5725,154 @@ view both computed the next order as `(highest or -1) + 1`, so a highest
 order of 0 produced a duplicate 0. Feedback gained Nutrition and
 Stretching categories. The stretching pages were added to the axe-core
 accessibility suite.
+
+## UI consistency audit and food diary improvements
+
+A full template audit produced `docs/UI_COMPONENTS.md`, a rulebook for
+page skeleton, headings, cards, buttons, forms, states and modals, now
+referenced from `CLAUDE.md`. The owner decided each deviation found:
+card section titles are always `h2.card-title` (~25 `<strong>` titles
+and three in-card eyebrow `<h2>`s converted); list pages put a primary
+plain "New" and detail pages a secondary "Edit" in `.top-bar-actions`;
+32 hand-written empty states moved to `core/_empty_state.html`; social
+back links say "Back to …"; every Cancel carries an arrow; the exercise
+and program forms got back links; stretch/routine retirement is labelled
+"Deactivate"; removing a stretch from a routine confirms first. The
+recipe and food-list pagers moved to `core/_pagination.html`, which
+gained `page`/`param`/`anchor`/`label`/`hx_target` options (and
+`url_replace` a variable parameter name) — this also fixed their search
+terms going into the URL un-encoded.
+
+Food diary, asked for directly:
+- Food detail shows a Finnish/EU-style nutrition label
+  (`apps.nutrition.nutrition_label`): new `Food.energy_kj`,
+  `starch_grams`, `polyols_grams`, `salt_grams` and a display-only
+  `other_nutrients` JSON list from OFF (converted from OFF's grams into
+  each nutrient's own unit). The food form follows label order and asks
+  for salt, deriving `sodium_mg` (what totals sum) from it.
+- Quick entries: `DiaryEntry` can carry its own macros instead of a
+  food or recipe (the check constraint now allows exactly one of the
+  three), for restaurant meals that don't deserve a library food.
+- The food list defaults to newest first.
+- Search results in the diary prefill the last logged quantity, shared
+  with "Most used" via `services.last_diary_uses`; "Most used" is
+  paginated (10 per page, HTMX swap of just its panel so the selected
+  meal survives).
+
+## Language first, and guided tours
+
+Onboarding now starts with a language-only step
+(`OnboardingLanguageForm`); saving it reloads the page (`HX-Refresh`) so
+step two is already in the chosen language. `User.language_chosen` (False
+for new accounts; existing accounts migrated to True so nothing changes for
+them) decides whether login keeps following the browser:
+`apps.accounts.signals.follow_browser_language` sets `language` from
+Accept-Language on every login until the user picks one (onboarding, or
+changing it on the profile).
+
+`apps.tutorials` adds per-page guided tours — design and maintenance rules
+in docs/TUTORIALS.md. Tours are data (`tours.py`), anchored to
+`data-tour` attributes rather than CSS classes, and three tests keep them
+honest: required anchors must be on their page, every argument-less page
+needs a tour or a reasoned `NO_TOUR_NEEDED` entry, and every text must be
+translated. Found along the way: the bare "Back" msgid is the muscle group
+(Finnish "Selkä"), which three stretching forms used for their back link —
+they now use `context "navigation"`, and the tour buttons their own
+`tutorial` context. The dev server's autoreloader died when `config/urls.py`
+briefly referenced the not-yet-written `apps.tutorials.urls`; a container
+restart fixed it.
+
+## Client picker for sharing
+
+Sharing a program (`ProgramForm.shared_with_clients`) or a diet plan
+(`DietPlanShareForm.clients`) used a checkbox per active client. Both now
+use `apps.coaching.forms.ClientPickerField` → `apps.core.widgets.
+SearchablePickerWidget`: a combobox that suggests matching clients (by
+`public_display_name`, filtered in the browser — a coach's client list is
+small and already known), and the picked clients as a list with a remove
+button each. The widget is still a `CheckboxSelectMultiple` underneath and
+the script only (un)checks its boxes, so posted data, views and tests are
+unchanged and it works without JavaScript. Its template lives in
+templates/, which needed `FORM_RENDERER = TemplatesSetting` (+
+`django.forms` in INSTALLED_APPS). Found while checking it in a browser:
+`core/_field.html` treated any checkbox widget as a single checkbox and
+wrapped whole checkbox lists (also the exercise form's muscle groups)
+inside one `<label>`; it now does that only for a single checkbox.
+
+## Recipes for several meals, and a layout audit
+
+`Recipe.meal_slot` (FK) became `Recipe.meal_slots` (M2M), asked for
+directly — a dish can be both a lunch and a dinner. Migration 0023 copies
+every existing tag over; `diet_builder.suggest_item_for_calorie_budget`
+treats a recipe as on-topic when it has no meals or the meal is among
+them (prefetched — the recipe list's pinned query count went 12 → 13,
+constant); export writes `meal_slots` as a list of names and import still
+accepts the old single `meal_slot`.
+
+A layout audit (Playwright, 360/390/1280px, every argument-less page plus
+detail pages, a user with long Finnish names and unbreakable compound
+words) found: `.card-action-row` wrapped its button under long text, so
+buttons jumped around within one list (food lists, diary, recipes,
+calculators, clients); long words ran past cards and the screen; long
+Finnish page titles overflowed; the food list table pushed its calorie
+column off-screen. Fixes are in the shared CSS: the row's text column
+wraps and its actions never move (an action group stacks on phones, sits
+side by side from 768px — independent of the text), `:nth-child(1 of
+:not(input[type=hidden]))` so a form row's CSRF input isn't taken for the
+text, `overflow-wrap: anywhere` in cards and headings but not buttons
+("Poista" broke into "Po/ist/a" until buttons were excluded), `.list-table`
+for list tables, and the diary's meal header became an `h2.card-title`.
+`apps/core/test_layout.py` keeps it that way; checked that it fails (37
+findings) with the old row CSS. It creates its own meal slots/program
+rather than relying on seed data, because a live-server test empties the
+database and a `--reuse-db` re-run would otherwise start without them.
+
+## Faster test suite
+
+The full suite had grown to about 50 minutes. Measured in the dev
+container: Django's default PBKDF2 hasher costs about a second per
+`make_password` and another per `check_password`, and nearly every test
+creates a user and logs in. Tests now use `config.settings.test`
+(`config.settings.dev` + `MD5PasswordHasher`; never used to run the app)
+and pytest-xdist (`-n auto --dist loadscope` in pyproject.toml addopts —
+whole test classes per worker, so `setUpTestData` still runs once; each
+worker has its own `test_*_gwN` database). `-n 0` runs in one process.
+
+The first attempt only got the suite to 17 minutes: the dev container sets
+`DJANGO_SETTINGS_MODULE=config.settings.dev` in its environment, and
+pytest-django lets that win over pyproject.toml's own setting, so the fast
+hasher was never used (the 2FA backup-code tests, ten hashes each, still
+took 12–52 s apiece). `--ds=config.settings.test` in addopts beats the
+environment. Result: 1922 tests in 39 s (was ~50 min); the browser suite
+in 85 s.
+
+## Shopping list
+
+A diet plan's shopping list, asked for directly (docs/NUTRITION.md
+"Shopping list"): per-plan shopping days (`ShoppingDay`) and an
+include/exclude choice for a shopping day's own meals
+(`DietPlan.shopping_includes_shopping_day`). `apps.nutrition.shopping` is
+small and mostly pure: `shopping_trips` turns the weekdays into trips,
+`shopping_list` expands recipe items into ingredients and sums per food
+in its serving unit, keeping each covered day's amount for the
+"Mon 300 g · Tue 300 g" breakdown. The list is derived on every request,
+never stored; ticking items is localStorage only. Shopping days are in
+the account data export; they aren't part of plan export or a coach's
+shared copy. The page has its own tour and is in the long-content layout
+test.
+
+The REST API got the same list and settings as two `DietPlanViewSet`
+actions, `shopping-list/` (`GET`, `?trip=`) and `shopping-settings/`
+(`GET`/`PUT`/`PATCH`), under the existing `nutrition` key context. The web
+view and the API share `shopping.plan_trips`/`pick_trip`/
+`set_shopping_settings`, so the two can't disagree about which days a trip
+covers.
+
+The list was only reachable through Nutrition → Diet plans → a plan →
+Shopping list. Now: a sub-nav tab (`/nutrition/shopping/`, a stable
+address that redirects to the active plan's list — what the tab and the
+app shortcut both need), a button on the overview's "Today's plan", a
+Home card on the active plan's shopping days (`shopping.shopping_today`),
+and a web-manifest `shortcuts` entry in the per-user manifest. The Home
+and overview additions have their own optional tour steps; the redirect
+page is in `NO_TOUR_NEEDED`.

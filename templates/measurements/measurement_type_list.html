@@ -5,7 +5,7 @@
 <div class="top-bar">
   <h1 class="no-margin">{% trans "Body tracking" %}</h1>
 </div>
-<div class="top-bar-actions">
+<div data-tour="measurement-actions" class="top-bar-actions">
   <a class="button" href="{% url 'measurements:type-create' %}">{% trans "New" %}</a>
 </div>
 
@@ -16,7 +16,7 @@
   82,00 kg" and six straight "No readings yet" rows all carried the
   same visual weight and none of them stood out from the others.
   {% endcomment %}
-  <a class="card card-link{% if measurement_type.latest_display is None %} card-untracked{% endif %}" href="{% url 'measurements:history' measurement_type.pk %}">
+  <a data-tour="measurement-type" class="card card-link{% if measurement_type.latest_display is None %} card-untracked{% endif %}" href="{% url 'measurements:history' measurement_type.pk %}">
     <strong>{{ measurement_type.name|translate_content }}</strong>
     {% if measurement_type.is_custom %}<span class="tag">{% trans "Custom" %}</span>{% endif %}
     <div class="text-muted{% if measurement_type.latest_display is not None %} stat-figure{% endif %}">
@@ -28,8 +28,6 @@
     </div>
   </a>
 {% empty %}
-  <div class="card empty-state">
-    <p>{% trans "No measurement types yet." %}</p>
-  </div>
+  {% include "core/_empty_state.html" with message=_("No measurement types yet.") %}
 {% endfor %}
 {% endblock %}

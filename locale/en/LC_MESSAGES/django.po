@@ -8791,6 +8791,967 @@ msgstr "Edit set"
 msgid "Edit set %(number)s"
 msgstr "Edit set %(number)s"
 
+msgid "Back to friends"
+msgstr ""
+
+msgid "Back to messages"
+msgstr ""
+
+msgid "Back to groups"
+msgstr ""
+
+msgid "Back to group"
+msgstr ""
+
+msgid "Remove this stretch from the routine?"
+msgstr ""
+
+msgid "Deactivate this routine? Past sessions stay in your history."
+msgstr ""
+
+msgid "Deactivate this stretch? It will no longer appear when browsing, but routines and past sessions that use it keep working."
+msgstr ""
+
+msgctxt "nutrient"
+msgid "Energy"
+msgstr ""
+
+msgctxt "nutrient"
+msgid "of which saturates"
+msgstr ""
+
+msgctxt "nutrient"
+msgid "of which sugars"
+msgstr ""
+
+msgctxt "nutrient"
+msgid "of which starch"
+msgstr ""
+
+msgctxt "nutrient"
+msgid "of which polyols"
+msgstr ""
+
+msgctxt "nutrient"
+msgid "Fibre"
+msgstr ""
+
+msgctxt "nutrient"
+msgid "Salt"
+msgstr ""
+
+msgid "Optional — e.g. the restaurant dish."
+msgstr ""
+
+msgid "kcal. Leave blank to estimate it from the macros."
+msgstr ""
+
+msgid "Enter the calories or at least one macro."
+msgstr ""
+
+msgid "Quick entry"
+msgstr ""
+
+msgid "Log either a food, a recipe or quick macros — exactly one of them."
+msgstr ""
+
+msgctxt "nutrient"
+msgid "of which monounsaturates"
+msgstr ""
+
+msgctxt "nutrient"
+msgid "of which polyunsaturates"
+msgstr ""
+
+msgctxt "nutrient"
+msgid "Omega-3 fatty acids"
+msgstr ""
+
+msgctxt "nutrient"
+msgid "Trans fat"
+msgstr ""
+
+msgctxt "nutrient"
+msgid "Cholesterol"
+msgstr ""
+
+msgctxt "nutrient"
+msgid "Lactose"
+msgstr ""
+
+msgctxt "nutrient"
+msgid "Alcohol"
+msgstr ""
+
+msgctxt "nutrient"
+msgid "Caffeine"
+msgstr ""
+
+msgctxt "nutrient"
+msgid "Vitamin A"
+msgstr ""
+
+msgctxt "nutrient"
+msgid "Vitamin D"
+msgstr ""
+
+msgctxt "nutrient"
+msgid "Vitamin E"
+msgstr ""
+
+msgctxt "nutrient"
+msgid "Vitamin K"
+msgstr ""
+
+msgctxt "nutrient"
+msgid "Vitamin C"
+msgstr ""
+
+msgctxt "nutrient"
+msgid "Thiamin (B1)"
+msgstr ""
+
+msgctxt "nutrient"
+msgid "Riboflavin (B2)"
+msgstr ""
+
+msgctxt "nutrient"
+msgid "Niacin"
+msgstr ""
+
+msgctxt "nutrient"
+msgid "Vitamin B6"
+msgstr ""
+
+msgctxt "nutrient"
+msgid "Folate"
+msgstr ""
+
+msgctxt "nutrient"
+msgid "Vitamin B12"
+msgstr ""
+
+msgctxt "nutrient"
+msgid "Biotin"
+msgstr ""
+
+msgctxt "nutrient"
+msgid "Pantothenic acid"
+msgstr ""
+
+msgctxt "nutrient"
+msgid "Potassium"
+msgstr ""
+
+msgctxt "nutrient"
+msgid "Chloride"
+msgstr ""
+
+msgctxt "nutrient"
+msgid "Calcium"
+msgstr ""
+
+msgctxt "nutrient"
+msgid "Phosphorus"
+msgstr ""
+
+msgctxt "nutrient"
+msgid "Magnesium"
+msgstr ""
+
+msgctxt "nutrient"
+msgid "Iron"
+msgstr ""
+
+msgctxt "nutrient"
+msgid "Zinc"
+msgstr ""
+
+msgctxt "nutrient"
+msgid "Copper"
+msgstr ""
+
+msgctxt "nutrient"
+msgid "Manganese"
+msgstr ""
+
+msgctxt "nutrient"
+msgid "Fluoride"
+msgstr ""
+
+msgctxt "nutrient"
+msgid "Selenium"
+msgstr ""
+
+msgctxt "nutrient"
+msgid "Chromium"
+msgstr ""
+
+msgctxt "nutrient"
+msgid "Molybdenum"
+msgstr ""
+
+msgctxt "nutrient"
+msgid "Iodine"
+msgstr ""
+
+msgid "Pick a meal."
+msgstr ""
+
+msgid "Added to your diary."
+msgstr ""
+
+msgid "Most used foods pages"
+msgstr ""
+
+msgid "Enter macros manually"
+msgstr ""
+
+msgid "For a meal out or anything else you don't want to save as a food."
+msgstr ""
+
+#, python-format
+msgid "Nutrition per %(size)s %(unit)s"
+msgstr ""
+
+msgid "Notes"
+msgstr ""
+
+msgid "14 days"
+msgstr ""
+
+msgid "Year to date"
+msgstr ""
+
+msgid "Last 30 days"
+msgstr ""
+
+msgid "Median calories"
+msgstr ""
+
+msgid "Median protein"
+msgstr ""
+
+msgid "Median carbohydrates"
+msgstr ""
+
+msgid "Median fat"
+msgstr ""
+
+msgid "Medians of the days you actually logged something — a day with nothing logged isn't counted as zero calories, and one barely-logged day doesn't drag the figure down the way it would an average."
+msgstr ""
+
+msgid "Median per day"
+msgstr ""
+
+msgid "Period"
+msgstr ""
+
+msgid "Days"
+msgstr ""
+
+msgid "Days: days logged / days in the period. Macros in grams."
+msgstr ""
+
+msgid "Skip tour"
+msgstr ""
+
+msgid "Don't show tutorials"
+msgstr ""
+
+#, python-format
+msgid "Step %(current)s of %(total)s"
+msgstr ""
+
+msgid "Getting started"
+msgstr ""
+
+msgid "Programs and exercises"
+msgstr ""
+
+msgid "Body and activities"
+msgstr ""
+
+msgid "Friends and groups"
+msgstr ""
+
+msgid "A quick look around. Every section has a short tour like this the first time you open it — skip any of them, or turn them all off."
+msgstr ""
+
+msgid "Navigation"
+msgstr ""
+
+msgid "Everything is one tap away from here: home, nutrition and stretching (if you use them), progress, workouts, programs and your profile."
+msgstr ""
+
+msgid "Your workout"
+msgstr ""
+
+msgid "Start a workout here, or jump back into the one you're in the middle of. To follow a plan, start a workout from one of your programs instead."
+msgstr ""
+
+msgid "Streaks and milestones from everyone on this server who shares them."
+msgstr ""
+
+msgid "Shortcuts"
+msgstr ""
+
+msgid "The exercise library, body tracking, activities and stretching."
+msgstr ""
+
+msgid "Calendar"
+msgstr ""
+
+msgid "Each day's training and nutrition at a glance. Tap a day for details; the “?” explains the colours."
+msgstr ""
+
+msgid "Your profile"
+msgstr ""
+
+msgid "Preferences, friends, your data — and Tutorials, where you can replay any of these tours."
+msgstr ""
+
+msgid "Your workouts"
+msgstr ""
+
+msgid "Every workout you've done, newest first. Open one to see or correct it."
+msgstr ""
+
+msgid "Start without a plan"
+msgstr ""
+
+msgid "A freeform workout lets you add any exercises as you go. Workouts from a program start from the program's page."
+msgstr ""
+
+msgid "Logging a workout"
+msgstr ""
+
+msgid "This workout"
+msgstr ""
+
+msgid "When it started and ended, and how many sets and how much volume so far."
+msgstr ""
+
+msgid "One card per exercise"
+msgstr ""
+
+msgid "The sets you've logged appear here, and you can edit or delete any of them."
+msgstr ""
+
+msgid "Suggested weight"
+msgstr ""
+
+msgid "Based on your last sessions, with the reason and how confident it is. It's only a starting point — you decide what goes on the bar."
+msgstr ""
+
+msgid "Log a set"
+msgstr ""
+
+msgid "Enter weight and reps and tap Log set. RPE, RIR, warm-up and failure are optional. New personal records are detected automatically."
+msgstr ""
+
+msgid "Add an exercise"
+msgstr ""
+
+msgid "Add anything that isn't in the plan — it only changes this workout."
+msgstr ""
+
+msgid "Training mode"
+msgstr ""
+
+msgid "One exercise at a time with big buttons and a rest timer — the easiest way to log at the gym. This button follows you on every page."
+msgstr ""
+
+msgid "Finish"
+msgstr ""
+
+msgid "Complete the workout when you're done. Abandon keeps it in your history as unfinished."
+msgstr ""
+
+msgid "The dots show your progress. The arrows move between exercises in any order — the next unfinished one opens by default."
+msgstr ""
+
+msgid "Current exercise"
+msgstr ""
+
+msgid "Its target and the sets you've already logged; tap a set to edit it."
+msgstr ""
+
+msgid "A starting point from your history. You can always enter something else."
+msgstr ""
+
+msgid "Log the set"
+msgstr ""
+
+msgid "Weight and reps, then Log set. “More options” has RPE, RIR, warm-up, failure and notes."
+msgstr ""
+
+msgid "Starts by itself after each set and chimes when rest is over. Adjust it by 15 seconds, skip it, or mute the sound."
+msgstr ""
+
+msgid "Every exercise at once — for reviewing or correcting the whole workout."
+msgstr ""
+
+msgid "Create or import"
+msgstr ""
+
+msgid "Build your own program, or import one someone exported for you."
+msgstr ""
+
+msgid "Your programs"
+msgstr ""
+
+msgid "Open a program to see its workouts and start one."
+msgstr ""
+
+msgid "Ready-made programs"
+msgstr ""
+
+msgid "Copy a built-in program to make it yours. Changing your copy never changes workouts you've already logged."
+msgstr ""
+
+msgid "A program"
+msgstr ""
+
+msgid "About the program"
+msgstr ""
+
+msgid "Its description and version. Editing a program never changes workouts you've already logged."
+msgstr ""
+
+msgid "Make it yours"
+msgstr ""
+
+msgid "This is a template: copy it to a program of your own to edit and use it."
+msgstr ""
+
+msgid "A program is a set of workouts, each with its exercises, sets, reps and how the weight should progress."
+msgstr ""
+
+msgid "Add exercises"
+msgstr ""
+
+msgid "Add an exercise to a workout and set its target sets and reps."
+msgstr ""
+
+msgid "Start it"
+msgstr ""
+
+msgid "Starts a workout with these exercises and targets filled in."
+msgstr ""
+
+msgid "Add a workout"
+msgstr ""
+
+msgid "For example a second training day."
+msgstr ""
+
+msgid "Exercise library"
+msgstr ""
+
+msgid "Find an exercise"
+msgstr ""
+
+msgid "Search by name, or filter by muscle group and equipment."
+msgstr ""
+
+msgid "Your own exercises"
+msgstr ""
+
+msgid "Missing something? Add it — only you will see it."
+msgstr ""
+
+msgid "An exercise"
+msgstr ""
+
+msgid "Your best lifts for this exercise, kept up to date automatically."
+msgstr ""
+
+msgid "Your estimated one-rep max and volume for this exercise over time."
+msgstr ""
+
+msgid "Time range"
+msgstr ""
+
+msgid "Everything on this page follows the range you pick here."
+msgstr ""
+
+msgid "Summary"
+msgstr ""
+
+msgid "Workouts, time spent training and total volume lifted in the range."
+msgstr ""
+
+msgid "One exercise"
+msgstr ""
+
+msgid "Pick an exercise to see how its strength has developed."
+msgstr ""
+
+msgid "Weekly volume"
+msgstr ""
+
+msgid "How much you lifted each week. The table under the chart has exact figures."
+msgstr ""
+
+msgid "Muscle groups"
+msgstr ""
+
+msgid "Which muscles got the most work — handy for spotting imbalances."
+msgstr ""
+
+msgid "Progress for an exercise"
+msgstr ""
+
+msgid "Choose how far back to look."
+msgstr ""
+
+msgid "The heaviest single rep you could likely lift, estimated from your sets. A rising line means you're getting stronger."
+msgstr ""
+
+msgid "Current records"
+msgstr ""
+
+msgid "Heaviest weight, best estimated 1RM, most reps and more."
+msgstr ""
+
+msgid "The most weight you've lifted for each number of reps."
+msgstr ""
+
+msgid "What you track"
+msgstr ""
+
+msgid "Body weight, waist, body fat and more. Open one to log a reading."
+msgstr ""
+
+msgid "Your own measurements"
+msgstr ""
+
+msgid "Add anything else you want to follow."
+msgstr ""
+
+msgid "A measurement"
+msgstr ""
+
+msgid "Your current value and how it has changed since you started."
+msgstr ""
+
+msgid "Log a reading"
+msgstr ""
+
+msgid "Enter today's value — or an earlier date to catch up."
+msgstr ""
+
+msgid "Every reading, newest first, with edit and delete."
+msgstr ""
+
+msgid "Activity types"
+msgstr ""
+
+msgid "Running, cycling, walking and more. Open one to log it."
+msgstr ""
+
+msgid "Your own types"
+msgstr ""
+
+msgid "Add any other activity you want to track."
+msgstr ""
+
+msgid "An activity"
+msgstr ""
+
+msgid "Date, duration and, if you like, distance and notes."
+msgstr ""
+
+msgid "Everything you've logged of this activity."
+msgstr ""
+
+msgid "Nutrition overview"
+msgstr ""
+
+msgid "Diary, foods, recipes, diet plans, calculators and statistics."
+msgstr ""
+
+msgid "Training or rest day"
+msgstr ""
+
+msgid "Whether you've completed a workout today. It's shown for context only."
+msgstr ""
+
+msgid "What you've eaten today against your targets."
+msgstr ""
+
+msgid "Target check"
+msgstr ""
+
+msgid "Compares your weight trend with your goal and may suggest a new target. Nothing changes unless you accept it."
+msgstr ""
+
+msgid "Calories and macros, worked out from your profile and goal."
+msgstr ""
+
+msgid "Your goal"
+msgstr ""
+
+msgid "Lose, keep or gain — and how fast. Change it at any time."
+msgstr ""
+
+msgid "Pick a day"
+msgstr ""
+
+msgid "Move a day at a time, or pick any date to fill in."
+msgstr ""
+
+msgid "Day total"
+msgstr ""
+
+msgid "Calories and macros eaten on this day."
+msgstr ""
+
+msgid "Meals"
+msgstr ""
+
+msgid "Each meal lists what you logged. “Save as recipe” turns a meal you eat often into a recipe you can log in one tap."
+msgstr ""
+
+msgid "Search, scan a barcode, or enter macros straight in."
+msgstr ""
+
+msgid "Copy a day"
+msgstr ""
+
+msgid "Eating the same as yesterday? Copy the whole day in one go."
+msgstr ""
+
+msgid "Adding food"
+msgstr ""
+
+msgid "Which meal"
+msgstr ""
+
+msgid "Everything you add on this page goes to the meal chosen here."
+msgstr ""
+
+msgid "Search or scan"
+msgstr ""
+
+msgid "Type a name or scan a barcode. Your own foods show first; Open Food Facts can be searched too. The amount is prefilled with what you logged last time."
+msgstr ""
+
+msgid "Eating out? Type in the meal's calories and macros without creating a food for it."
+msgstr ""
+
+msgid "The foods you add most often, one tap away."
+msgstr ""
+
+msgid "Add foods"
+msgstr ""
+
+msgid "Create your own, or browse Open Food Facts by category."
+msgstr ""
+
+msgid "Search Open Food Facts or scan a barcode to bring a product into your library."
+msgstr ""
+
+msgid "Your library"
+msgstr ""
+
+msgid "Filter and sort every food you can log. Newest first by default."
+msgstr ""
+
+msgid "A food"
+msgstr ""
+
+msgid "Nutrition facts"
+msgstr ""
+
+msgid "Laid out like a package label: energy, fat, carbohydrate, fibre, protein and salt — then any vitamins and minerals that are known."
+msgstr ""
+
+msgid "Combine foods into a recipe once, then log a serving in one tap."
+msgstr ""
+
+msgid "Ready-made recipes everyone can use."
+msgstr ""
+
+msgid "A recipe"
+msgstr ""
+
+msgid "The foods in it and their amounts. Nutrition is worked out from these."
+msgstr ""
+
+msgid "Add servings of this recipe to your diary."
+msgstr ""
+
+msgid "Create a plan"
+msgstr ""
+
+msgid "A plan is built for you from your foods and recipes to hit your targets. You can adjust every item afterwards."
+msgstr ""
+
+msgid "A diet plan"
+msgstr ""
+
+msgid "Active plan"
+msgstr ""
+
+msgid "The active plan is shown on the nutrition overview each day."
+msgstr ""
+
+msgid "Each meal's items and how close they come to its calorie budget."
+msgstr ""
+
+msgid "Log the plan"
+msgstr ""
+
+msgid "Copy a day of the plan into your diary as if you'd eaten it."
+msgstr ""
+
+msgid "Energy use, macros, body fat, water, BMI and more. They only calculate — nothing is saved or changed."
+msgstr ""
+
+msgid "Median daily calories and macros. Days with nothing logged don't count, and one barely-logged day doesn't drag the figure down."
+msgstr ""
+
+msgid "Longer and shorter periods"
+msgstr ""
+
+msgid "The same medians for a week up to everything you've ever logged."
+msgstr ""
+
+msgid "Each of the last 30 days, with the exact figures in a table below."
+msgstr ""
+
+msgid "Overview, routines, the stretch library and your history."
+msgstr ""
+
+msgid "Your streak"
+msgstr ""
+
+msgid "Days in a row with stretching, and your totals."
+msgstr ""
+
+msgid "A guided session times every stretch for you."
+msgstr ""
+
+msgid "Log it afterwards"
+msgstr ""
+
+msgid "Stretched without the timer? Log just how long you stretched."
+msgstr ""
+
+msgid "A routine"
+msgstr ""
+
+msgid "About the routine"
+msgstr ""
+
+msgid "How many stretches it has and roughly how long it takes."
+msgstr ""
+
+msgid "Each stretch with its hold time, sets and sides."
+msgstr ""
+
+msgid "Opens the guided player."
+msgstr ""
+
+msgid "Add stretches and reorder them — in your own routines."
+msgstr ""
+
+msgid "The timer"
+msgstr ""
+
+msgid "Counts down every hold and rest, with a chime between them. Pause, add or remove 10 seconds, or skip. Leaving the page keeps your place."
+msgstr ""
+
+msgid "Mark a stretch done or skipped yourself if you prefer."
+msgstr ""
+
+msgid "Saves the session to your history."
+msgstr ""
+
+msgid "Search for people on this server. Friends can message you and see the progress you choose to share."
+msgstr ""
+
+msgid "One conversation per friend."
+msgstr ""
+
+msgid "Every group you're in has its own chat."
+msgstr ""
+
+msgid "Create a group"
+msgstr ""
+
+msgid "Train together: invite friends or share an invite link."
+msgstr ""
+
+msgid "Units, language, timezone, theme, and which sections you use."
+msgstr ""
+
+msgid "Messages, friends and groups."
+msgstr ""
+
+msgid "Everything you've logged is yours — browse it or download it."
+msgstr ""
+
+msgid "Tutorials"
+msgstr ""
+
+msgid "Replay any tour, or turn tutorials on or off."
+msgstr ""
+
+msgid "Tutorial settings saved."
+msgstr ""
+
+#, python-format
+msgid "“%(title)s” will start again the next time you open it."
+msgstr ""
+
+msgid "Every tutorial will start again the next time you open its page."
+msgstr ""
+
+msgid "Choose your language"
+msgstr ""
+
+msgid "Help"
+msgstr ""
+
+msgid "Replay the guided tour of any page, or turn tutorials on or off."
+msgstr ""
+
+msgid "Show each page's tutorial the first time I open it"
+msgstr ""
+
+msgid "Off: no tutorial starts by itself. You can still start any of them below."
+msgstr ""
+
+msgid "Seen"
+msgstr ""
+
+msgid "Not seen yet"
+msgstr ""
+
+msgid "Show again"
+msgstr ""
+
+msgid "Show all tutorials again"
+msgstr ""
+
+msgid "Log it"
+msgstr ""
+
+msgctxt "tutorial"
+msgid "Next"
+msgstr ""
+
+msgctxt "tutorial"
+msgid "Previous"
+msgstr ""
+
+msgctxt "tutorial"
+msgid "Done"
+msgstr ""
+
+msgctxt "navigation"
+msgid "Back"
+msgstr ""
+
+msgid "Search your clients…"
+msgstr ""
+
+msgid "Not shared with anyone — only you can see it."
+msgstr ""
+
+msgid "No matching clients."
+msgstr ""
+
+msgid "Search for a client and add them to the list: everyone on it can see and import their own copy of this program. Leave the list empty to keep it private."
+msgstr ""
+
+msgid "Search for a client and add them to the list: everyone on it can see and import their own copy of this diet plan. Leave the list empty to keep it private."
+msgstr ""
+
+msgid "Meals (optional)"
+msgstr ""
+
+msgid "Tick every meal this recipe suits, e.g. both Lunch and Dinner. The diet-plan builder only suggests it for those meals — leave all unticked for a recipe that fits any meal."
+msgstr ""
+
+msgid "The diet-plan builder only suggests this recipe for this meal."
+msgid_plural "The diet-plan builder only suggests this recipe for these meals."
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "Photo"
+msgstr ""
+
+msgid "Shopping days"
+msgstr ""
+
+msgid "Each shopping day's list covers the days up to the next one. Pick none for one list for the whole week."
+msgstr ""
+
+msgid "A shopping day's own meals go on that day's list"
+msgstr ""
+
+msgid "On: you shop before that day's meals. Off: they're on the previous list — you shop after that day is covered."
+msgstr ""
+
+msgid "Shopping days saved."
+msgstr ""
+
+msgid "Shopping list"
+msgstr ""
+
+msgid "Shopping trips"
+msgstr ""
+
+msgid "One list per shopping day, covering the days until the next one."
+msgstr ""
+
+msgid "What to buy"
+msgstr ""
+
+msgid "Everything the plan's meals need, recipes included. The same food on several days is added up, with each day's amount under it. Tick items off as you shop."
+msgstr ""
+
+msgid "Pick the days you go shopping, and whether a shopping day's own meals go on that day's list. Set separately for each plan."
+msgstr ""
+
+msgid "One list for the whole week — pick shopping days below to split it into trips."
+msgstr ""
+
+#, python-format
+msgid "For: %(days)s"
+msgstr ""
+
+msgid "Clear ticks"
+msgstr ""
+
+msgid "Nothing to buy — this plan has no meals on these days yet."
+msgstr ""
+
+msgid "Shopping day"
+msgstr ""
+
+msgid "On your shopping days, your list for the trip is one tap away here."
+msgstr ""
+
+msgid "Diary, shopping list, foods, recipes, diet plans, calculators and statistics."
+msgstr ""
+
+msgid "The shopping list comes from your active diet plan, and you don't have one yet."
+msgstr ""
+
+msgid "Create a plan, or activate one of yours."
+msgstr ""
+
+#, python-format
+msgid "%(counter)s item on your shopping list for %(plan)s."
+msgid_plural "%(counter)s items on your shopping list for %(plan)s."
+msgstr[0] ""
+msgstr[1] ""
+
 #~ msgid "Back to home"
 #~ msgstr "Back to home"
 
@@ -8803,8 +9764,6 @@ msgstr "Edit set %(number)s"
 #~ msgid "+ Add food"
 #~ msgstr "+ Add food"
 
-#~ msgid "Log it"
-#~ msgstr "Log it"
 
 #~ msgid "+ New recipe"
 #~ msgstr "+ New recipe"

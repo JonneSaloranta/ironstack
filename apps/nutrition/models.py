@@ -365,6 +365,22 @@ class Food(TimeStampedModel):
         max_digits=6, decimal_places=2, null=True, blank=True
     )
     sodium_mg = models.PositiveIntegerField(null=True, blank=True)
+    # The rest of an EU/Finnish nutrition label (Regulation 1169/2011
+    # Annex XV), same nullable-means-unknown rule. `energy_kj` is the
+    # label's own kJ figure when known — otherwise it's derived from
+    # `calories` for display. `salt_grams` is what a label states;
+    # `sodium_mg` stays the figure totals are summed from (salt =
+    # sodium × 2.5), and either one fills in the other when missing.
+    energy_kj = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
+    starch_grams = models.DecimalField(max_digits=6, decimal_places=2, null=True, blank=True)
+    polyols_grams = models.DecimalField(max_digits=6, decimal_places=2, null=True, blank=True)
+    salt_grams = models.DecimalField(max_digits=7, decimal_places=3, null=True, blank=True)
+    # Every other per-100 g/ml nutrient OpenFoodFacts has for the
+    # product (vitamins, minerals, fat breakdown, ...), verbatim:
+    # `[{"key": "vitamin-c", "value": "12", "unit": "mg"}, ...]`.
+    # Display-only — nothing sums or scales it — so a plain JSON list
+    # rather than a column per nutrient OFF might ever report.
+    other_nutrients = models.JSONField(default=list, blank=True)
     # Set only for a food imported from OpenFoodFacts — their own
     # barcode, unique when present (Postgres allows any number of
     # NULLs alongside a unique constraint, so this stays optional for
@@ -471,17 +487,16 @@ class Recipe(TimeStampedModel):
     name = models.CharField(max_length=200)
     servings = models.PositiveSmallIntegerField(default=1)
     instructions = models.TextField(blank=True)
-    # Optional — which meal this recipe is meant for, e.g. a fried-egg
+    # Optional — which meals this recipe is meant for, e.g. a fried-egg
     # recipe tagged "Breakfast" so apps.nutrition.diet_builder's
     # auto-generated plans never put it in a Dinner slot (found live:
     # a chicken & rice recipe suggested as breakfast, oats & yogurt as
     # dinner — the calorie-closest-match heuristic had no idea either
-    # recipe was meant for a specific meal). Null means "any meal" —
-    # every recipe before this field existed, and any recipe a user
-    # doesn't bother tagging, stays eligible everywhere it already was.
-    meal_slot = models.ForeignKey(
-        MealSlot, related_name="+", null=True, blank=True, on_delete=models.SET_NULL
-    )
+    # recipe was meant for a specific meal). Several at once (asked for
+    # directly: a dish that's both a lunch and a dinner) — this replaced
+    # a single `meal_slot`. None picked means "any meal", so an untagged
+    # recipe stays eligible everywhere.
+    meal_slots = models.ManyToManyField(MealSlot, related_name="+", blank=True)
 
     class Meta:
         ordering = ["name"]
@@ -533,31 +548,60 @@ class DiaryEntry(TimeStampedModel):
     recipe = models.ForeignKey(
         Recipe, related_name="diary_entries", null=True, blank=True, on_delete=models.CASCADE
     )
-    # Grams/ml/pieces for a food entry, servings for a recipe entry.
+    # Grams/ml/pieces for a food entry, servings for a recipe entry,
+    # portions (normally 1) for a quick entry.
     quantity = models.DecimalField(max_digits=8, decimal_places=2)
     notes = models.TextField(blank=True)
+    # A "quick entry": macros typed straight in (a restaurant meal's
+    # published values) with no Food behind it — stored on the entry
+    # itself, per portion, so there's no throwaway Food in the library
+    # and the logged figures never change afterwards. `quick_calories`
+    # being set is what makes an entry a quick one.
+    quick_name = models.CharField(max_length=200, blank=True)
+    quick_calories = models.PositiveIntegerField(null=True, blank=True)
+    quick_protein_grams = models.DecimalField(
+        max_digits=6, decimal_places=2, null=True, blank=True
+    )
+    quick_carbohydrate_grams = models.DecimalField(
+        max_digits=6, decimal_places=2, null=True, blank=True
+    )
+    quick_fat_grams = models.DecimalField(max_digits=6, decimal_places=2, null=True, blank=True)
 
     class Meta:
         ordering = ["-date", "-created_at"]
         constraints = [
-            # Exactly one of food/recipe — enforced here, not just by
-            # convention (docs/NUTRITION.md "DiaryEntry").
+            # Exactly one of food/recipe/quick macros — enforced here,
+            # not just by convention (docs/NUTRITION.md "DiaryEntry").
             models.CheckConstraint(
                 condition=(
-                    models.Q(food__isnull=False, recipe__isnull=True)
-                    | models.Q(food__isnull=True, recipe__isnull=False)
+                    models.Q(food__isnull=False, recipe__isnull=True, quick_calories__isnull=True)
+                    | models.Q(food__isnull=True, recipe__isnull=False, quick_calories__isnull=True)
+                    | models.Q(food__isnull=True, recipe__isnull=True, quick_calories__isnull=False)
                 ),
-                name="diary_entry_exactly_one_of_food_or_recipe",
+                name="diary_entry_exactly_one_of_food_recipe_or_quick",
             ),
         ]
 
+    @property
+    def is_quick(self):
+        return self.quick_calories is not None
+
+    @property
+    def display_name(self):
+        if self.food_id:
+            return self.food.name
+        if self.recipe_id:
+            return self.recipe.name
+        return self.quick_name or _("Quick entry")
+
     def clean(self):
-        if bool(self.food_id) == bool(self.recipe_id):
-            raise ValidationError(_("Log either a food or a recipe, not both or neither."))
+        if sum([bool(self.food_id), bool(self.recipe_id), self.is_quick]) != 1:
+            raise ValidationError(
+                _("Log either a food, a recipe or quick macros — exactly one of them.")
+            )
 
     def __str__(self):
-        item = self.food.name if self.food_id else self.recipe.name
-        return f"{self.user.username}: {item} ({self.date})"
+        return f"{self.user.username}: {self.display_name} ({self.date})"
 
 
 class DietPlan(TimeStampedModel):
@@ -616,6 +660,12 @@ class DietPlan(TimeStampedModel):
     )
     coach_snapshot = models.JSONField(null=True, blank=True, default=None)
     coach_snapshot_version = models.PositiveIntegerField(null=True, blank=True)
+    # Shopping list (apps.nutrition.shopping): whether a shopping day's
+    # own meals go on that day's trip (shopping in the morning) or on the
+    # previous trip (shopping after that day's meals are covered). The
+    # shopping days themselves are ShoppingDay rows. Per plan, like the
+    # rest of its settings.
+    shopping_includes_shopping_day = models.BooleanField(default=True)
 
     class Meta:
         ordering = ["-created_at"]
@@ -641,6 +691,30 @@ class DietPlan(TimeStampedModel):
         see apps.programs.models.Program's own bump_version."""
         self.version += 1
         self.save(update_fields=["version", "updated_at"])
+
+
+class ShoppingDay(models.Model):
+    """A weekday the user goes shopping for `diet_plan` (0=Monday ..
+    6=Sunday, Python's date.weekday(), the same numbering as
+    DietPlanMeal.weekday). Each one starts a trip whose list covers the
+    days up to the next shopping day — apps.nutrition.shopping."""
+
+    diet_plan = models.ForeignKey(DietPlan, related_name="shopping_days", on_delete=models.CASCADE)
+    weekday = models.PositiveSmallIntegerField()
+
+    class Meta:
+        ordering = ["weekday"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["diet_plan", "weekday"], name="unique_shopping_day_per_plan"
+            ),
+            models.CheckConstraint(
+                condition=models.Q(weekday__lte=6), name="shopping_day_is_a_weekday"
+            ),
+        ]
+
+    def __str__(self):
+        return f"{self.diet_plan.name}: {self.weekday}"
 
 
 class DietPlanMeal(models.Model):

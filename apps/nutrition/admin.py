@@ -259,7 +259,7 @@ class RecipeAdmin(admin.ModelAdmin):
 
 @admin.register(DiaryEntry)
 class DiaryEntryAdmin(admin.ModelAdmin):
-    list_display = ["user", "date", "meal_slot", "food", "recipe", "quantity"]
+    list_display = ["user", "date", "meal_slot", "food", "recipe", "quick_name", "quantity"]
     list_filter = ["meal_slot", "date"]
     search_fields = ["user__username"]
 

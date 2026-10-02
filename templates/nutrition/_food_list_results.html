@@ -1,4 +1,4 @@
-{% load i18n %}
+{% load i18n core_extras %}
 {% comment %}
 FoodListView's own results — swapped in place by its filter form's
 hx-get (templates/nutrition/food_list.html), the same "one view, two
@@ -12,14 +12,14 @@ already does.
 {% endcomment %}
 {% if foods %}
   <div class="table-wrap">
-    <table class="set-table">
+    <table class="set-table list-table">
       <thead>
-        <tr><th scope="col"></th><th scope="col">{% trans "Name" %}</th><th scope="col">{% trans "Calories" %}</th></tr>
+        <tr><th scope="col" class="cell-fit"><span class="visually-hidden">{% trans "Photo" %}</span></th><th scope="col">{% trans "Name" %}</th><th scope="col" class="cell-number">{% trans "Calories" %}</th></tr>
       </thead>
       <tbody>
         {% for food in foods %}
           <tr>
-            <td>
+            <td class="cell-fit">
               {% if food.image_thumb_url or food.image_url %}
                 {% comment %}
                   image_thumb_url first — OFF's own smaller
@@ -35,21 +35,18 @@ already does.
                 <div class="food-thumb food-thumb-placeholder" aria-hidden="true"></div>
               {% endif %}
             </td>
-            <td><a class="inline-item-link" href="{% url 'nutrition:food-detail' food.pk %}">{{ food.name }}</a>{% if food.brand %} <span class="text-muted">({{ food.brand }})</span>{% endif %}{% include "nutrition/_nutri_score_badge.html" %}</td>
-            <td>{{ food.calories }} kcal / {{ food.serving_size }} {{ food.serving_unit }}</td>
+            <td class="cell-text"><a class="inline-item-link" href="{% url 'nutrition:food-detail' food.pk %}">{{ food.name }}</a>{% if food.brand %} <span class="text-muted">({{ food.brand }})</span>{% endif %}{% include "nutrition/_nutri_score_badge.html" %}</td>
+            <td class="cell-number stat-figure">{{ food.calories }} kcal<br><span class="text-muted">/ {{ food.serving_size|nutrient_amount }} {{ food.serving_unit }}</span></td>
           </tr>
         {% endfor %}
       </tbody>
     </table>
   </div>
 {% else %}
-  <div class="card empty-state">
-    <p>{% trans "No foods match your filters." %}</p>
-  </div>
+  {% include "core/_empty_state.html" with message=_("No foods match your filters.") %}
 {% endif %}
 
 {% if is_paginated %}
-  {% url 'nutrition:food-list' as food_list_url %}
   {% comment %}
     #food-list-pagination on both links — asked for directly: clicking
     Previous/Next is a plain full-page navigation (see this template's
@@ -58,13 +55,5 @@ already does.
     happened, undoing the very scroll position paging was meant to
     preserve. Same fix as recipe_list.html's own pagination.
   {% endcomment %}
-  <nav class="pagination" id="food-list-pagination" aria-label="{% trans "Food list pages" %}">
-    {% if page_obj.has_previous %}
-      <a class="button-secondary" href="{{ food_list_url }}?page={{ page_obj.previous_page_number }}&q={{ query }}&category={{ selected_category }}&sort={{ selected_sort }}&dir={{ selected_dir }}#food-list-pagination">{% trans "Previous" %}</a>
-    {% endif %}
-    <span>{% blocktrans with number=page_obj.number total=page_obj.paginator.num_pages %}Page {{ number }} of {{ total }}{% endblocktrans %}</span>
-    {% if page_obj.has_next %}
-      <a class="button-secondary" href="{{ food_list_url }}?page={{ page_obj.next_page_number }}&q={{ query }}&category={{ selected_category }}&sort={{ selected_sort }}&dir={{ selected_dir }}#food-list-pagination">{% trans "Next" %}</a>
-    {% endif %}
-  </nav>
+  {% trans "Food list pages" as pager_label %}{% include "core/_pagination.html" with anchor="food-list-pagination" label=pager_label %}
 {% endif %}

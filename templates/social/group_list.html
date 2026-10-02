@@ -5,8 +5,8 @@
 <div class="top-bar">
   <h1 class="no-margin">{% trans "Groups" %}</h1>
 </div>
-<div class="top-bar-actions">
-  <a class="button" href="{% url 'social:group-create' %}">{% trans "New group" %}</a>
+<div data-tour="group-new" class="top-bar-actions">
+  <a class="button" href="{% url 'social:group-create' %}">{% trans "New" %}</a>
 </div>
 
 {% if incoming_invites %}
@@ -43,10 +43,8 @@
     </div>
   </a>
 {% empty %}
-  <div class="card empty-state">
-    <p>{% trans "You're not in any groups yet." %}</p>
-  </div>
+  {% include "core/_empty_state.html" with message=_("You're not in any groups yet.") %}
 {% endfor %}
 
-<p><a class="button-link" href="{% url 'social:message-list' %}">&larr; {% trans "Messages" %}</a></p>
+<p><a class="button-link" href="{% url 'social:message-list' %}">&larr; {% trans "Back to messages" %}</a></p>
 {% endblock %}

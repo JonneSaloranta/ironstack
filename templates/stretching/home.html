@@ -5,7 +5,7 @@
 <div class="top-bar">
   <h1 class="no-margin">{% trans "Stretching" %}</h1>
 </div>
-<div class="top-bar-actions">
+<div data-tour="stretch-log" class="top-bar-actions">
   <a class="button-secondary" href="{% url 'stretching:quick-log' %}">{% trans "Log stretching" %}</a>
 </div>
 {% include "stretching/_subnav.html" with active="home" %}
@@ -17,7 +17,7 @@
   </a>
 {% endif %}
 
-<div class="card">
+<div data-tour="stretch-summary" class="card">
   <dl class="stat-row">
     <div><dt>{% trans "Streak" %}</dt><dd>{% blocktrans count counter=summary.streak_days %}{{ counter }} day{% plural %}{{ counter }} days{% endblocktrans %}</dd></div>
     <div><dt>{% trans "Last 7 days" %}</dt><dd>{{ summary.last_7_days_count }} · {{ summary.last_7_days_duration|duration }}</dd></div>
@@ -36,9 +36,9 @@
 <h2>{% trans "Minutes per week" %}</h2>
 {% if summary.count %}
   {% trans "Stretching minutes per week" as chart_title %}{% trans "min" as unit_label %}
-  {% include "core/_bar_chart.html" with chart=weekly_chart chart_title=chart_title unit_label=unit_label %}
+  {% include "core/_bar_chart.html" with chart=weekly_chart chart_title=chart_title unit_label=unit_label tour_anchor="stretch-minutes" %}
 {% else %}
-  <div class="card empty-state"><p>{% trans "Finish or log a stretching session to see your weekly minutes here." %}</p></div>
+  {% include "core/_empty_state.html" with message=_("Finish or log a stretching session to see your weekly minutes here.") %}
 {% endif %}
 
 {% if recent_sessions %}

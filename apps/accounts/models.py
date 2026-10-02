@@ -214,6 +214,17 @@ class User(AbstractUser):
     language = models.CharField(
         max_length=10, choices=settings.LANGUAGES, default=settings.LANGUAGE_CODE.split("-")[0]
     )
+    # False until the user picks a language themselves (onboarding's
+    # first step or changing it in the profile form). Until then every
+    # login re-derives `language` from the browser's Accept-Language
+    # (apps.accounts.signals.follow_browser_language), so a new account
+    # starts in the browser's language; once chosen it stays put.
+    language_chosen = models.BooleanField(default=False)
+    # apps.tutorials — whether a page's guided tour starts by itself the
+    # first time the user opens that page. "Don't show tutorials" in a
+    # tour, or the toggle on profile → Tutorials, switches it off; tours
+    # can still be started by hand from that page either way.
+    tutorials_enabled = models.BooleanField(default=True)
 
     # apps.accounts.forms.ProfileForm / templates/base.html's own
     # `data-theme`/`data-appearance` attributes — two independent

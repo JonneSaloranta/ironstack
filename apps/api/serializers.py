@@ -521,6 +521,11 @@ class FoodSerializer(serializers.ModelSerializer):
             "sugar_grams",
             "saturated_fat_grams",
             "sodium_mg",
+            "energy_kj",
+            "starch_grams",
+            "polyols_grams",
+            "salt_grams",
+            "other_nutrients",
             "nutri_score",
             "nova_group",
             "off_id",
@@ -534,7 +539,9 @@ class FoodSerializer(serializers.ModelSerializer):
         # by barcode isn't exposed as a create here at all yet; a
         # client creates a plain hand-entered food the same way the
         # web form does (see "What's deliberately not here" below).
-        read_only_fields = ["nutri_score", "nova_group", "off_id", "active", "owner"]
+        read_only_fields = [
+            "other_nutrients", "nutri_score", "nova_group", "off_id", "active", "owner",
+        ]
 
 
 class MealSlotSerializer(serializers.ModelSerializer):
@@ -584,7 +591,11 @@ class RecipeSerializer(serializers.ModelSerializer):
 class DiaryEntrySerializer(serializers.ModelSerializer):
     class Meta:
         model = DiaryEntry
-        fields = ["id", "date", "meal_slot", "food", "recipe", "quantity", "notes", "user"]
+        fields = [
+            "id", "date", "meal_slot", "food", "recipe", "quantity", "notes", "user",
+            "quick_name", "quick_calories", "quick_protein_grams",
+            "quick_carbohydrate_grams", "quick_fat_grams",
+        ]
         read_only_fields = ["user"]
 
     def validate(self, attrs):
@@ -592,10 +603,15 @@ class DiaryEntrySerializer(serializers.ModelSerializer):
         # checked here too so a bad request gets a normal 400 with a
         # clear message instead of a raw IntegrityError 500 from the
         # database constraint alone.
-        food = attrs.get("food", getattr(self.instance, "food", None))
-        recipe = attrs.get("recipe", getattr(self.instance, "recipe", None))
-        if bool(food) == bool(recipe):
-            raise serializers.ValidationError("Log either a food or a recipe, not both or neither.")
+        def current(name):
+            return attrs.get(name, getattr(self.instance, name, None))
+
+        kinds = [bool(current("food")), bool(current("recipe")),
+                 current("quick_calories") is not None]
+        if sum(kinds) != 1:
+            raise serializers.ValidationError(
+                "Log either a food, a recipe or quick macros (quick_calories) — exactly one."
+            )
         return attrs
 
     def validate_meal_slot(self, value):
@@ -888,3 +904,49 @@ class StretchSessionSerializer(serializers.ModelSerializer):
         ).exists():
             raise serializers.ValidationError("Not a routine you can use.")
         return value
+
+
+# --------------------------------------------------------------------
+# Shopping list (apps.nutrition.shopping) — derived, never stored
+# --------------------------------------------------------------------
+
+
+class ShoppingSettingsSerializer(serializers.Serializer):
+    """A diet plan's shopping settings: the weekdays the user shops
+    (0=Monday .. 6=Sunday) and whether a shopping day's own meals go on
+    that day's list (`true`) or the previous one (`false`)."""
+
+    weekdays = serializers.ListField(
+        child=serializers.IntegerField(min_value=0, max_value=6), allow_empty=True
+    )
+    include_shopping_day = serializers.BooleanField()
+
+
+class ShoppingTripSerializer(serializers.Serializer):
+    weekday = serializers.IntegerField(
+        allow_null=True, help_text="The shopping day; null when no shopping days are set."
+    )
+    days = serializers.ListField(
+        child=serializers.IntegerField(), help_text="Weekdays whose meals this trip buys for."
+    )
+
+
+class ShoppingDayAmountSerializer(serializers.Serializer):
+    weekday = serializers.IntegerField()
+    quantity = serializers.DecimalField(max_digits=10, decimal_places=2)
+
+
+class ShoppingItemSerializer(serializers.Serializer):
+    food = serializers.IntegerField(source="food.pk")
+    food_name = serializers.CharField(source="food.name")
+    unit = serializers.CharField(help_text="The food's serving unit: g, ml or piece.")
+    total = serializers.DecimalField(max_digits=10, decimal_places=2)
+    by_day = ShoppingDayAmountSerializer(many=True)
+
+
+class ShoppingListSerializer(serializers.Serializer):
+    trip = ShoppingTripSerializer()
+    trips = ShoppingTripSerializer(many=True)
+    include_shopping_day = serializers.BooleanField()
+    items = ShoppingItemSerializer(many=True)
+
