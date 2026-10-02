@@ -5725,3 +5725,21 @@ view both computed the next order as `(highest or -1) + 1`, so a highest
 order of 0 produced a duplicate 0. Feedback gained Nutrition and
 Stretching categories. The stretching pages were added to the axe-core
 accessibility suite.
+## Faster test suite
+
+The full suite had grown to about 50 minutes. Measured in the dev
+container: Django's default PBKDF2 hasher costs about a second per
+`make_password` and another per `check_password`, and nearly every test
+creates a user and logs in. Tests now use `config.settings.test`
+(`config.settings.dev` + `MD5PasswordHasher`; never used to run the app)
+and pytest-xdist (`-n auto --dist loadscope` in pyproject.toml addopts —
+whole test classes per worker, so `setUpTestData` still runs once; each
+worker has its own `test_*_gwN` database). `-n 0` runs in one process.
+
+The first attempt only got the suite to 17 minutes: the dev container sets
+`DJANGO_SETTINGS_MODULE=config.settings.dev` in its environment, and
+pytest-django lets that win over pyproject.toml's own setting, so the fast
+hasher was never used (the 2FA backup-code tests, ten hashes each, still
+took 12–52 s apiece). `--ds=config.settings.test` in addopts beats the
+environment. Result: 1922 tests in 39 s (was ~50 min); the browser suite
+in 85 s.

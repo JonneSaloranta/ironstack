@@ -6,7 +6,8 @@
 - Django 6.x
 - PostgreSQL 16
 - `psycopg` (v3) as the only new runtime dependency for DB connectivity
-- Dev-only: `pytest`, `pytest-django`, `factory_boy` for tests; `ruff` for
+- Dev-only: `pytest`, `pytest-django`, `pytest-xdist` (parallel runs),
+  `factory_boy` for tests; `ruff` for
   linting/formatting. None of these ship in the production image.
 - No REST framework is added until an actual API client needs it (see
   `ARCHITECTURE.md` → API layer).
