@@ -9081,6 +9081,9 @@ msgstr "Päevad"
 msgid "Days: days logged / days in the period. Macros in grams."
 msgstr "Päevad: logitud päevad / perioodi päevad. Makrod grammides."
 
+msgid "Choose your language"
+msgstr "Vali oma keel"
+
 #~ msgid "Back to home"
 #~ msgstr "Tagasi avalehele"
 

@@ -9086,6 +9086,9 @@ msgstr "Dagar"
 msgid "Days: days logged / days in the period. Macros in grams."
 msgstr "Dagar: loggade dagar / dagar i perioden. Makron i gram."
 
+msgid "Choose your language"
+msgstr "Välj ditt språk"
+
 #~ msgid "Back to home"
 #~ msgstr "Tillbaka till hem"
 

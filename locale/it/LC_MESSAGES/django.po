@@ -9179,6 +9179,9 @@ msgstr "Giorni"
 msgid "Days: days logged / days in the period. Macros in grams."
 msgstr "Giorni: giorni registrati / giorni del periodo. Macro in grammi."
 
+msgid "Choose your language"
+msgstr "Scegli la tua lingua"
+
 #~ msgid "Back to home"
 #~ msgstr "Torna alla home"
 

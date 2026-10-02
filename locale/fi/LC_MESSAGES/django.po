@@ -9112,6 +9112,9 @@ msgstr "Päivät"
 msgid "Days: days logged / days in the period. Macros in grams."
 msgstr "Päivät: kirjatut päivät / jakson päivät. Makrot grammoina."
 
+msgid "Choose your language"
+msgstr "Valitse kieli"
+
 #~ msgid "Back to home"
 #~ msgstr "Takaisin etusivulle"
 

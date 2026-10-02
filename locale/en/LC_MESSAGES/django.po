@@ -9053,6 +9053,9 @@ msgstr ""
 msgid "Days: days logged / days in the period. Macros in grams."
 msgstr ""
 
+msgid "Choose your language"
+msgstr ""
+
 #~ msgid "Back to home"
 #~ msgstr "Back to home"
 

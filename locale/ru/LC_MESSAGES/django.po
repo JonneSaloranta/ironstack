@@ -9169,6 +9169,9 @@ msgstr "Дни"
 msgid "Days: days logged / days in the period. Macros in grams."
 msgstr "Дни: дни с записями / дни в периоде. Макросы в граммах."
 
+msgid "Choose your language"
+msgstr "Выберите язык"
+
 #~ msgid "Back to home"
 #~ msgstr "Назад на главную"
 

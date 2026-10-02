@@ -2206,9 +2206,77 @@ class OnboardingContextProcessorTests(TestCase):
         self.assertNotContains(response, "Welcome to IronStack")
 
 
+class OnboardingLanguageStepTests(TestCase):
+    """Language is asked first, on its own step, pre-selected from the
+    browser; an explicit choice is kept from then on."""
+
+    def setUp(self):
+        self.user = User.objects.create_user(username="lena", password="s3cret-pass")
+
+    def test_login_follows_the_browser_until_a_language_is_chosen(self):
+        self.client.post(
+            reverse("login"), {"username": "lena", "password": "s3cret-pass"},
+            HTTP_ACCEPT_LANGUAGE="fi-FI,fi;q=0.9,en;q=0.8",
+        )
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.language, "fi")
+        self.assertFalse(self.user.language_chosen)
+
+    def test_a_chosen_language_is_never_overridden_by_the_browser(self):
+        self.user.language = "sv"
+        self.user.language_chosen = True
+        self.user.save()
+        self.client.post(
+            reverse("login"), {"username": "lena", "password": "s3cret-pass"},
+            HTTP_ACCEPT_LANGUAGE="fi",
+        )
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.language, "sv")
+
+    def test_the_language_step_comes_first(self):
+        self.client.login(username="lena", password="s3cret-pass")
+        response = self.client.get(reverse("profile"))
+        self.assertEqual(response.context["onboarding_step"], "language")
+        self.assertContains(response, "Choose your language")
+        self.assertContains(response, "Suomi")
+        self.assertNotIn("onboarding_form", response.context)
+
+    def test_choosing_saves_it_and_reloads_into_the_next_step(self):
+        self.client.login(username="lena", password="s3cret-pass")
+        response = self.client.post(
+            reverse("onboarding"), {"action": "language", "language": "fi"},
+            HTTP_HX_REQUEST="true",
+        )
+        self.assertEqual(response["HX-Refresh"], "true")
+        self.user.refresh_from_db()
+        self.assertEqual((self.user.language, self.user.language_chosen), ("fi", True))
+        self.assertFalse(self.user.onboarding_completed)
+        page = self.client.get(reverse("profile"))
+        self.assertNotIn("onboarding_step", page.context)
+        self.assertIn("onboarding_form", page.context)
+
+    def test_changing_language_in_the_profile_counts_as_a_choice(self):
+        self.client.login(username="lena", password="s3cret-pass")
+        profile = {
+            "unit_system": "metric", "timezone": "UTC", "theme": "default",
+            "appearance": "dark",
+        }
+        self.client.post(reverse("profile"), dict(profile, language="en"))
+        self.user.refresh_from_db()
+        self.assertFalse(self.user.language_chosen)  # unchanged: still automatic
+        self.client.post(reverse("profile"), dict(profile, language="et"))
+        self.user.refresh_from_db()
+        self.assertEqual((self.user.language, self.user.language_chosen), ("et", True))
+
+
 class OnboardingViewTests(TestCase):
+    """Onboarding's second step — the language (first step) is already
+    chosen; see OnboardingLanguageStepTests."""
+
     def setUp(self):
         self.user = User.objects.create_user(username="quinn", password="s3cret-pass")
+        self.user.language_chosen = True
+        self.user.save()
         self.client.login(username="quinn", password="s3cret-pass")
 
     def test_requires_login(self):

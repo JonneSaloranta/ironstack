@@ -5759,6 +5759,17 @@ Food diary, asked for directly:
   paginated (10 per page, HTMX swap of just its panel so the selected
   meal survives).
 
+## Language first, and guided tours
+
+Onboarding now starts with a language-only step
+(`OnboardingLanguageForm`); saving it reloads the page (`HX-Refresh`) so
+step two is already in the chosen language. `User.language_chosen` (False
+for new accounts; existing accounts migrated to True so nothing changes for
+them) decides whether login keeps following the browser:
+`apps.accounts.signals.follow_browser_language` sets `language` from
+Accept-Language on every login until the user picks one (onboarding, or
+changing it on the profile).
+
 ## Faster test suite
 
 The full suite had grown to about 50 minutes. Measured in the dev

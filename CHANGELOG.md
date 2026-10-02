@@ -19,6 +19,9 @@ narrated summary of the same version.
 ## [Unreleased]
 
 ### Added
+- Onboarding asks for your language first, on its own step, so the rest
+  of it is already in your language. Until you choose, the app follows
+  your browser's language.
 - Food diary: "Enter macros manually" logs a meal's calories and macros
   straight into the diary (e.g. a restaurant's published values)
   without creating a food for it.

@@ -7,7 +7,7 @@ threading this flag through every single view in the app instead of
 once, here.
 """
 
-from .forms import OnboardingForm
+from .forms import OnboardingForm, OnboardingLanguageForm
 
 
 def onboarding(request):
@@ -21,4 +21,12 @@ def onboarding(request):
     # appears over) — a shared key name would risk one silently
     # shadowing the other depending on context-processor/view merge
     # order.
+    # Language comes first, on its own step, so everything after it is
+    # already in the right language.
+    if not user.language_chosen:
+        return {
+            "show_onboarding": True,
+            "onboarding_step": "language",
+            "onboarding_language_form": OnboardingLanguageForm(user=user),
+        }
     return {"show_onboarding": True, "onboarding_form": OnboardingForm(user=user)}
