@@ -15,9 +15,7 @@
 {% for plan in own_plans %}
   {% include "nutrition/_diet_plan_card.html" with plan=plan %}
 {% empty %}
-  <div class="card empty-state">
-    <p>{% trans "No diet plans yet." %}</p>
-  </div>
+  {% include "core/_empty_state.html" with message=_("No diet plans yet.") %}
 {% endfor %}
 
 {% if coach_plans %}

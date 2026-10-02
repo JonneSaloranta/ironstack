@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load i18n %}
+{% load i18n core_extras %}
 {% block title %}{{ food.name }} — IronStack{% endblock %}
 {% block content %}
 {% url 'nutrition:dashboard' as c1u %}{% trans "Nutrition" as c1l %}
@@ -48,7 +48,7 @@
 
 {% if food.quantity or food.ingredients_text or food.labels or food.allergens or food.categories or food.price_amount %}
   <div class="card">
-    <strong>{% trans "Product information" %}</strong>
+    <h2 class="card-title">{% trans "Product information" %}</h2>
     <div class="table-wrap"><table class="set-table">
       <tbody>
         {% if food.price_amount %}

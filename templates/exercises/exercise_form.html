@@ -14,4 +14,10 @@
   {% endfor %}
   <button type="submit">{% trans "Save" %}</button>
 </form>
+{% if object %}
+  {% trans object.name as back_name %}
+  <p><a class="button-link" href="{% url 'exercises:exercise-detail' object.pk %}">&larr; {% blocktrans with name=back_name %}Back to {{ name }}{% endblocktrans %}</a></p>
+{% else %}
+  <p><a class="button-link" href="{% url 'exercises:exercise-list' %}">&larr; {% trans "Back to exercises" %}</a></p>
+{% endif %}
 {% endblock %}

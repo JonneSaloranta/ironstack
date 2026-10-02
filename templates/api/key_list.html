@@ -151,9 +151,7 @@ requests.post(
     </form>
   </div>
 {% empty %}
-  <div class="card empty-state">
-    <p>{% trans "No API keys yet." %}</p>
-  </div>
+  {% include "core/_empty_state.html" with message=_("No API keys yet.") %}
 {% endfor %}
 
 <p><a class="button-link" href="{% url 'profile' %}">&larr; {% trans "Back to profile" %}</a></p>

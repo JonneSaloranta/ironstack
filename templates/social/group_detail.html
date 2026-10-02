@@ -17,7 +17,7 @@
 
 {% if can_manage %}
   <div class="card">
-    <h2 class="mt-0">{% trans "Invite link" %}</h2>
+    <h2 class="card-title">{% trans "Invite link" %}</h2>
     {% if group.invite_enabled %}
       <div class="invite-link-row" x-data="{ copied: false }">
         <input type="text" readonly x-ref="inviteLink"
@@ -58,7 +58,7 @@
 {% endcomment %}
 {% if invite_form.fields.friend.queryset.exists %}
   <div class="card">
-    <h2 class="mt-0">{% trans "Invite a friend" %}</h2>
+    <h2 class="card-title">{% trans "Invite a friend" %}</h2>
     <form method="post" action="{% url 'social:group-invite-send' group.pk %}">
       {% csrf_token %}
       {% include "core/_field.html" with field=invite_form.friend %}
@@ -128,7 +128,7 @@
       <button type="submit" class="button-secondary">{% trans "Mute notifications" %}</button>
     {% endif %}
   </form>
-  <a class="button-link" href="{% url 'social:group-list' %}">&larr; {% trans "Groups" %}</a>
+  <a class="button-link" href="{% url 'social:group-list' %}">&larr; {% trans "Back to groups" %}</a>
 </div>
 
 <p>

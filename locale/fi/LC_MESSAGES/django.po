@@ -8850,6 +8850,27 @@ msgstr "Muokkaa sarjaa"
 msgid "Edit set %(number)s"
 msgstr "Muokkaa sarjaa %(number)s"
 
+msgid "Back to friends"
+msgstr "Takaisin kavereihin"
+
+msgid "Back to messages"
+msgstr "Takaisin viesteihin"
+
+msgid "Back to groups"
+msgstr "Takaisin ryhmiin"
+
+msgid "Back to group"
+msgstr "Takaisin ryhmään"
+
+msgid "Remove this stretch from the routine?"
+msgstr "Poistetaanko tämä venytys rutiinista?"
+
+msgid "Deactivate this routine? Past sessions stay in your history."
+msgstr "Poistetaanko tämä rutiini käytöstä? Aiemmat sessiot säilyvät historiassasi."
+
+msgid "Deactivate this stretch? It will no longer appear when browsing, but routines and past sessions that use it keep working."
+msgstr "Poistetaanko tämä venytys käytöstä? Se ei enää näy selatessa, mutta sitä käyttävät rutiinit ja aiemmat sessiot toimivat edelleen."
+
 #~ msgid "Back to home"
 #~ msgstr "Takaisin etusivulle"
 

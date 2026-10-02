@@ -35,24 +35,12 @@
     </div>
   {% endfor %}
   {% if my_page.paginator.num_pages > 1 %}
-    <nav class="pagination" id="my-recipes-pagination" aria-label="{% trans "Your recipes pages" %}">
-      {% if my_page.has_previous %}
-        <a class="button-secondary" href="?q={{ query }}&mine_page={{ my_page.previous_page_number }}&template_page={{ template_page.number }}#my-recipes-pagination">{% trans "Previous" %}</a>
-      {% endif %}
-      <span>{% blocktrans with number=my_page.number total=my_page.paginator.num_pages %}Page {{ number }} of {{ total }}{% endblocktrans %}</span>
-      {% if my_page.has_next %}
-        <a class="button-secondary" href="?q={{ query }}&mine_page={{ my_page.next_page_number }}&template_page={{ template_page.number }}#my-recipes-pagination">{% trans "Next" %}</a>
-      {% endif %}
-    </nav>
+    {% trans "Your recipes pages" as pager_label %}{% include "core/_pagination.html" with page=my_page param="mine_page" anchor="my-recipes-pagination" label=pager_label %}
   {% endif %}
 {% elif query %}
-  <div class="card empty-state">
-    <p>{% trans "No recipes match your search." %}</p>
-  </div>
+  {% include "core/_empty_state.html" with message=_("No recipes match your search.") %}
 {% else %}
-  <div class="card empty-state">
-    <p>{% trans "No recipes yet." %}</p>
-  </div>
+  {% include "core/_empty_state.html" with message=_("No recipes yet.") %}
 {% endif %}
 
 <h2>{% trans "Template recipes" %}</h2>
@@ -72,15 +60,7 @@
       </div>
     {% endfor %}
     {% if template_page.paginator.num_pages > 1 %}
-      <nav class="pagination" id="template-recipes-pagination" aria-label="{% trans "Template recipe pages" %}">
-        {% if template_page.has_previous %}
-          <a class="button-secondary" href="?q={{ query }}&template_page={{ template_page.previous_page_number }}&mine_page={{ my_page.number }}#template-recipes-pagination">{% trans "Previous" %}</a>
-        {% endif %}
-        <span>{% blocktrans with number=template_page.number total=template_page.paginator.num_pages %}Page {{ number }} of {{ total }}{% endblocktrans %}</span>
-        {% if template_page.has_next %}
-          <a class="button-secondary" href="?q={{ query }}&template_page={{ template_page.next_page_number }}&mine_page={{ my_page.number }}#template-recipes-pagination">{% trans "Next" %}</a>
-        {% endif %}
-      </nav>
+      {% trans "Template recipe pages" as pager_label %}{% include "core/_pagination.html" with page=template_page param="template_page" anchor="template-recipes-pagination" label=pager_label %}
     {% endif %}
   {% else %}
     <p class="text-muted">{% trans "No template recipes match your search." %}</p>

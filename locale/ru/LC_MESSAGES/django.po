@@ -8907,6 +8907,27 @@ msgstr "Изменить подход"
 msgid "Edit set %(number)s"
 msgstr "Изменить подход %(number)s"
 
+msgid "Back to friends"
+msgstr "Назад к друзьям"
+
+msgid "Back to messages"
+msgstr "Назад к сообщениям"
+
+msgid "Back to groups"
+msgstr "Назад к группам"
+
+msgid "Back to group"
+msgstr "Назад к группе"
+
+msgid "Remove this stretch from the routine?"
+msgstr "Удалить это упражнение из комплекса?"
+
+msgid "Deactivate this routine? Past sessions stay in your history."
+msgstr "Отключить этот комплекс? Прошлые сессии останутся в истории."
+
+msgid "Deactivate this stretch? It will no longer appear when browsing, but routines and past sessions that use it keep working."
+msgstr "Отключить это упражнение? Оно больше не будет показываться при просмотре, но комплексы и прошлые сессии, которые его используют, продолжат работать."
+
 #~ msgid "Back to home"
 #~ msgstr "Назад на главную"
 

@@ -119,7 +119,7 @@ visual sign a plain card was pressable.
 
 {% if push_enabled %}
   <div class="card" x-data="ironstackPushNotifications()" x-cloak>
-    <strong>{% trans "Notifications" %}</strong>
+    <h2 class="card-title">{% trans "Notifications" %}</h2>
     <p class="text-muted" x-show="supported">{% trans "Get notified on this device when you receive a message." %}</p>
     {% comment %}
       Explains *why* the toggle below is missing rather than just
@@ -155,6 +155,10 @@ visual sign a plain card was pressable.
   <div>
     <strong>{% trans "Download your data" %}</strong>
     <p class="text-muted">{% trans "Browse everything you've logged, or download it as JSON, CSV, or HTML." %}</p>
+  </div>
+  {% include "core/_chevron.html" %}
+</a>
+
   </div>
   {% include "core/_chevron.html" %}
 </a>

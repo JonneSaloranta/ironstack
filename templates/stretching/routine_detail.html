@@ -52,7 +52,7 @@
             <button type="submit" class="button-secondary" aria-label="{% trans "Move down" %}" {% if forloop.last %}disabled{% endif %}>↓</button>
           </form>
           <a class="button-secondary" href="{% url 'stretching:routine-item-update' routine.pk item.pk %}">{% trans "Edit" %}</a>
-          <form method="post" action="{% url 'stretching:routine-item-delete' routine.pk item.pk %}">
+          <form method="post" action="{% url 'stretching:routine-item-delete' routine.pk item.pk %}" data-confirm="{% filter force_escape %}{% trans "Remove this stretch from the routine?" %}{% endfilter %}">
             {% csrf_token %}
             <button type="submit" class="button-danger">{% trans "Remove" %}</button>
           </form>
@@ -76,9 +76,9 @@
   </form>
 
   {% if routine.active %}
-    <form method="post" action="{% url 'stretching:routine-deactivate' routine.pk %}" data-confirm="{% filter force_escape %}{% trans "Remove this routine? Past sessions stay in your history." %}{% endfilter %}">
+    <form method="post" action="{% url 'stretching:routine-deactivate' routine.pk %}" data-confirm="{% filter force_escape %}{% trans "Deactivate this routine? Past sessions stay in your history." %}{% endfilter %}">
       {% csrf_token %}
-      <button type="submit" class="button-danger">{% trans "Remove routine" %}</button>
+      <button type="submit" class="button-danger">{% trans "Deactivate" %}</button>
     </form>
   {% endif %}
 {% endif %}

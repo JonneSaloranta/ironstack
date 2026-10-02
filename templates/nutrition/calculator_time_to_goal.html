@@ -19,7 +19,7 @@
 {% if result %}
   {% if result.weeks is not None %}
     <div class="card">
-      <strong>{% trans "Result" %}</strong>
+      <h2 class="card-title">{% trans "Result" %}</h2>
       <p class="stat-value">
         {% blocktrans with weeks=result.weeks %}{{ weeks }} weeks{% endblocktrans %}
       </p>

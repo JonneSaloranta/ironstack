@@ -156,6 +156,7 @@ ruff check .
 pytest                    # every CPU core (pytest-xdist); `-n 0` for one process
 pytest -m accessibility   # browser tests — needs requirements/a11y.txt + Chromium
 ```
+
 Tests run with `config.settings.test` (development settings plus a fast
 password hasher — Django's real one costs about a second per user created
 or logged in). Each xdist worker keeps its own reusable test database; add

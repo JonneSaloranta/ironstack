@@ -569,6 +569,8 @@ class AccountDeleteForm(forms.Form):
         return cleaned
 
 
+
+
 class OnboardingForm(forms.Form):
     """apps.accounts.views.OnboardingView / templates/accounts/
     _onboarding_modal.html — the one-time, entirely optional prompt

@@ -31,6 +31,9 @@ The application must run entirely on the user's own infrastructure with Docker.
 
 Do not introduce React, Vue, or another SPA framework without a strong architectural reason.
 
+Before creating or changing any template or `static/css/base.css`, read `docs/UI_COMPONENTS.md` — the component rulebook (page skeleton, headings, buttons, forms, states) that keeps every page consistent. Add new patterns there; list deliberate deviations under its "Accepted exceptions".
+
+
 The application should be server-rendered first. Use HTMX for dynamic interactions and Alpine.js for small client-side state and interactions.
 
 ### Deployment

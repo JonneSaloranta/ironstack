@@ -2863,9 +2863,9 @@ class FoodListViewTests(TestCase):
         user just clicked."""
         for i in range(25):
             make_food(self.alice, name=f"Food {i:02d}")
-        response = self.client.get(reverse("nutrition:food-list"))
-        self.assertContains(response, "page=2&q=")
-        self.assertContains(response, "#food-list-pagination")
+        response = self.client.get(reverse("nutrition:food-list"), {"q": "food"})
+        # Filters ride along url-encoded (core/_pagination.html's url_replace).
+        self.assertContains(response, 'href="?q=food&amp;page=2#food-list-pagination"')
 
     def test_list_thumbnail_prefers_the_smaller_off_thumb_over_the_full_size_photo(self):
         make_food(
@@ -4016,8 +4016,10 @@ class RecipeViewTests(TestCase):
         user just clicked."""
         for i in range(7):
             Recipe.objects.create(owner=self.alice, name=f"Recipe {i}", servings=1)
-        response = self.client.get(reverse("nutrition:recipe-list"))
-        self.assertContains(response, "mine_page=2&template_page=1#my-recipes-pagination")
+        response = self.client.get(reverse("nutrition:recipe-list"), {"template_page": "1"})
+        self.assertContains(
+            response, 'href="?template_page=1&amp;mine_page=2#my-recipes-pagination"'
+        )
 
     def test_recipe_list_template_recipes_paginate_independently_of_your_recipes(self):
         Recipe.objects.filter(owner__isnull=True).delete()

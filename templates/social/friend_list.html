@@ -64,14 +64,12 @@
     </div>
   </div>
 {% empty %}
-  <div class="card empty-state">
-    <p>{% trans "No friends yet — find someone you train with to share progress and message them here." %}</p>
-    <p><a class="button-secondary" href="{% url 'social:friend-search' %}">{% trans "Find friends" %}</a></p>
-  </div>
+  {% url 'social:friend-search' as empty_cta_url %}
+  {% include "core/_empty_state.html" with message=_("No friends yet — find someone you train with to share progress and message them here.") cta_url=empty_cta_url cta_label=_("Find friends") %}
 {% endfor %}
 
 <p>
   <a class="button-secondary" href="{% url 'social:block-list' %}">{% trans "Blocked users" %}</a>
-  <a class="button-link" href="{% url 'social:message-list' %}">&larr; {% trans "Messages" %}</a>
+  <a class="button-link" href="{% url 'social:message-list' %}">&larr; {% trans "Back to messages" %}</a>
 </p>
 {% endblock %}

@@ -188,6 +188,7 @@ nutri_score (nullable, A-E), nova_group (nullable, 1-4),
 image_url (blank), image_thumb_url (blank), categories (blank), active
 ```
 
+
 `image_url`/`image_thumb_url`/`categories` are all blank for every
 hand-entered food, same as `nutri_score`/`nova_group` — only ever
 populated by an OFF import (`apps.nutrition.openfoodfacts.

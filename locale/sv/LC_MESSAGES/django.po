@@ -8824,6 +8824,27 @@ msgstr "Redigera set"
 msgid "Edit set %(number)s"
 msgstr "Redigera set %(number)s"
 
+msgid "Back to friends"
+msgstr "Tillbaka till vänner"
+
+msgid "Back to messages"
+msgstr "Tillbaka till meddelanden"
+
+msgid "Back to groups"
+msgstr "Tillbaka till grupper"
+
+msgid "Back to group"
+msgstr "Tillbaka till gruppen"
+
+msgid "Remove this stretch from the routine?"
+msgstr "Ta bort den här stretchövningen från rutinen?"
+
+msgid "Deactivate this routine? Past sessions stay in your history."
+msgstr "Inaktivera den här rutinen? Tidigare pass finns kvar i din historik."
+
+msgid "Deactivate this stretch? It will no longer appear when browsing, but routines and past sessions that use it keep working."
+msgstr "Inaktivera den här stretchövningen? Den visas inte längre när du bläddrar, men rutiner och tidigare pass som använder den fortsätter att fungera."
+
 #~ msgid "Back to home"
 #~ msgstr "Tillbaka till hem"
 

@@ -8,7 +8,7 @@
 <p class="row">
   <a class="button" href="{% url 'programs:program-create' %}">{% trans "New" %}</a>
   <a class="button-secondary" href="{% url 'programs:program-import' %}">{% trans "Import" %}</a>
-</p>
+</div>
 
 <h2>{% trans "My programs" %}</h2>
 {% for program in own_programs %}
@@ -20,10 +20,7 @@
     </div>
   </a>
 {% empty %}
-  <div class="card empty-state">
-    <p>{% trans "No programs yet." %}</p>
-    <p>{% trans "Create one, or copy a template below to get started." %}</p>
-  </div>
+  {% include "core/_empty_state.html" with message=_("No programs yet.") hint=_("Create one, or copy a template below to get started.") %}
 {% endfor %}
 
 {% if coach_programs %}
@@ -67,8 +64,6 @@
     </form>
   </div>
 {% empty %}
-  <div class="card empty-state">
-    <p>{% trans "No built-in templates available." %}</p>
-  </div>
+  {% include "core/_empty_state.html" with message=_("No built-in templates available.") %}
 {% endfor %}
 {% endblock %}

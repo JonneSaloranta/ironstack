@@ -8,7 +8,7 @@
     </a>
   {% else %}
     <div class="card">
-      <strong>{% trans "Cool down with a stretch?" %}</strong>
+      <h2 class="card-title">{% trans "Cool down with a stretch?" %}</h2>
       <p class="text-muted">
         {% if suggestion.routine %}
           {{ suggestion.routine.name|translate_content }}

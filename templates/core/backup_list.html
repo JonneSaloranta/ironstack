@@ -31,9 +31,7 @@
     {% endif %}
   </div>
 {% else %}
-  <div class="card empty-state">
-    <p>{% trans "No automatic backups yet." %}</p>
-  </div>
+  {% include "core/_empty_state.html" with message=_("No automatic backups yet.") %}
 {% endif %}
 
 <h2>{% trans "Manual & uploaded backups" %}</h2>
@@ -42,9 +40,7 @@
     {% include "core/_backup_row.html" %}
   {% endfor %}
 {% else %}
-  <div class="card empty-state">
-    <p>{% trans "No manual or uploaded backups yet." %}</p>
-  </div>
+  {% include "core/_empty_state.html" with message=_("No manual or uploaded backups yet.") %}
 {% endif %}
 
 <h2>{% trans "Upload backup" %}</h2>

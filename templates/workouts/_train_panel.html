@@ -95,10 +95,8 @@
     </form>
   </div>
 {% else %}
-  <div class="card empty-state">
-    <p>{% trans "No exercises yet." %}</p>
-    <a class="button" href="{% url 'workouts:performed-exercise-add' session.pk %}">{% trans "Add exercise" %}</a>
-  </div>
+  {% url 'workouts:performed-exercise-add' session.pk as empty_cta_url %}
+  {% include "core/_empty_state.html" with message=_("No exercises yet.") cta_url=empty_cta_url cta_label=_("Add exercise") %}
 {% endif %}
 
 </div>

@@ -5725,6 +5725,24 @@ view both computed the next order as `(highest or -1) + 1`, so a highest
 order of 0 produced a duplicate 0. Feedback gained Nutrition and
 Stretching categories. The stretching pages were added to the axe-core
 accessibility suite.
+
+## UI consistency audit and food diary improvements
+
+A full template audit produced `docs/UI_COMPONENTS.md`, a rulebook for
+page skeleton, headings, cards, buttons, forms, states and modals, now
+referenced from `CLAUDE.md`. The owner decided each deviation found:
+card section titles are always `h2.card-title` (~25 `<strong>` titles
+and three in-card eyebrow `<h2>`s converted); list pages put a primary
+plain "New" and detail pages a secondary "Edit" in `.top-bar-actions`;
+32 hand-written empty states moved to `core/_empty_state.html`; social
+back links say "Back to …"; every Cancel carries an arrow; the exercise
+and program forms got back links; stretch/routine retirement is labelled
+"Deactivate"; removing a stretch from a routine confirms first. The
+recipe and food-list pagers moved to `core/_pagination.html`, which
+gained `page`/`param`/`anchor`/`label`/`hx_target` options (and
+`url_replace` a variable parameter name) — this also fixed their search
+terms going into the URL un-encoded.
+
 ## Faster test suite
 
 The full suite had grown to about 50 minutes. Measured in the dev

@@ -33,9 +33,9 @@
 {% endif %}
 
 {% if can_edit and stretch.active %}
-  <form method="post" action="{% url 'stretching:stretch-deactivate' stretch.pk %}" data-confirm="{% filter force_escape %}{% trans "Remove this stretch from your library? Routines and past sessions that use it keep working." %}{% endfilter %}">
+  <form method="post" action="{% url 'stretching:stretch-deactivate' stretch.pk %}" data-confirm="{% filter force_escape %}{% trans "Deactivate this stretch? It will no longer appear when browsing, but routines and past sessions that use it keep working." %}{% endfilter %}">
     {% csrf_token %}
-    <button type="submit" class="button-danger">{% trans "Remove stretch" %}</button>
+    <button type="submit" class="button-danger">{% trans "Deactivate" %}</button>
   </form>
 {% endif %}
 

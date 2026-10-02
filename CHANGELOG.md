@@ -18,6 +18,16 @@ narrated summary of the same version.
 
 ## [Unreleased]
 
+### Added
+### Changed
+- Consistent UI across pages: card titles, empty states, "New"/"Edit"
+  buttons, back and cancel links, confirmations and pagination now
+  follow one set of rules (`docs/UI_COMPONENTS.md`). Stretches and
+  routines are now "Deactivated" rather than "Removed", and removing a
+  stretch from a routine asks for confirmation.
+
+### Fixed
+
 ## [1.22.0] — 2026-09-23
 
 ### Added

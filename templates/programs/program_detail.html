@@ -9,7 +9,7 @@
 </div>
 <div class="top-bar-actions">
   {% if can_edit %}
-    <a class="button" href="{% url 'programs:program-update' program.pk %}">{% trans "Edit" %}</a>
+    <a class="button-secondary" href="{% url 'programs:program-update' program.pk %}">{% trans "Edit" %}</a>
   {% endif %}
   <a class="button-secondary" href="{% url 'programs:program-export' program.pk %}">{% trans "Export" %}</a>
   {% if program.imported_from_id %}
@@ -81,9 +81,7 @@
     </form>
   </div>
 {% empty %}
-  <div class="card empty-state">
-    <p>{% trans "No workouts yet." %}</p>
-  </div>
+  {% include "core/_empty_state.html" with message=_("No workouts yet.") %}
 {% endfor %}
 
 {% if can_edit %}
