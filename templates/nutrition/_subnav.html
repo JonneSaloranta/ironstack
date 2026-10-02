@@ -39,7 +39,7 @@ Two regressions found live testing this exact bar:
    just a constant "there's more this direction" hint, the same
    pattern most native app tab bars use for the same reason.
 {% endcomment %}
-<div class="nutrition-subnav-wrap">
+<div data-tour="nutrition-subnav" class="nutrition-subnav-wrap">
   <nav class="range-filter nutrition-subnav" aria-label="{% trans "Nutrition sections" %}"
        x-data x-init="$el.querySelector('[aria-current]')?.scrollIntoView({ block: 'nearest', inline: 'center' })">
     <a href="{% url 'nutrition:dashboard' %}" {% if nutrition_active_tab == "dashboard" %}aria-current="true"{% endif %}>{% trans "Overview" %}</a>

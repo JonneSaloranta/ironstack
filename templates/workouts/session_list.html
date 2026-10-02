@@ -7,7 +7,7 @@
 </div>
 
 {% for session in sessions %}
-  <a class="card card-link" href="{% url 'workouts:session-detail' session.pk %}">
+  <a data-tour="session-history" class="card card-link" href="{% url 'workouts:session-detail' session.pk %}">
     <div>
       <strong>{% if session.workout %}{% trans session.workout.name %}{% else %}{% trans "Freeform workout" %}{% endif %}</strong>
       <span class="tag {% if session.status == 'completed' %}tag-success{% elif session.status == 'abandoned' %}tag-muted{% elif session.status == 'in_progress' %}tag-accent{% endif %}">{{ session.get_status_display }}</span>
@@ -31,7 +31,7 @@
 
 {% include "core/_pagination.html" %}
 
-<form method="post" action="{% url 'workouts:session-start-freeform' %}">
+<form data-tour="start-freeform" method="post" action="{% url 'workouts:session-start-freeform' %}">
   {% csrf_token %}
   <button type="submit" class="button">{% trans "Start freeform workout" %}</button>
 </form>

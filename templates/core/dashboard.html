@@ -18,7 +18,7 @@ tool, not a "check this now" one) moved to the bottom as a collapsed
 disclosure instead — see it further down for why.
 {% endcomment %}
 {% if in_progress_session %}
-  <a class="card card-link" href="{% url 'workouts:session-detail' in_progress_session.pk %}">
+  <a data-tour="dashboard-workout" class="card card-link" href="{% url 'workouts:session-detail' in_progress_session.pk %}">
     <strong>{% trans "Continue workout" %}</strong>
     <p class="text-muted">
       {% if in_progress_session.workout %}{% trans in_progress_session.workout.name %}{% else %}{% trans "Freeform workout" %}{% endif %}
@@ -26,7 +26,7 @@ disclosure instead — see it further down for why.
     </p>
   </a>
 {% else %}
-  <div class="card empty-state">
+  <div data-tour="dashboard-workout" class="card empty-state">
     <p>{% trans "No workout in progress." %}</p>
     <p>{% trans "Start one from a program, or log a freeform workout." %}</p>
     <div class="row justify-center">
@@ -39,7 +39,7 @@ disclosure instead — see it further down for why.
 {% endif %}
 
 {% if week_summary.session_count or body_weight is not None %}
-  <div class="card">
+  <div data-tour="dashboard-week" class="card">
     <dl class="stat-row">
       <div><dt>{% trans "This week's workouts" %}</dt><dd>{{ week_summary.session_count }}</dd></div>
       <div><dt>{% trans "This week's volume" %}</dt><dd>{{ week_summary.total_volume }} {{ weight_unit_label }}</dd></div>
@@ -70,7 +70,7 @@ disclosure instead — see it further down for why.
 {% endif %}
 
 {% if achievements %}
-  <div class="card achievements-carousel" role="region" aria-label="{% trans "Achievements" %}"
+  <div data-tour="dashboard-achievements" class="card achievements-carousel" role="region" aria-label="{% trans "Achievements" %}"
        x-data="ironstackCarousel({{ achievements|length }})" x-init="start()" @mouseenter="stop()" @mouseleave="start()">
     {% comment %}
     Slides are absolutely positioned inside .achievements-slides (a
@@ -121,7 +121,7 @@ disclosure instead — see it further down for why.
   </div>
 {% endif %}
 
-<a class="card card-link" href="{% url 'exercises:exercise-list' %}">
+<a data-tour="dashboard-shortcuts" class="card card-link" href="{% url 'exercises:exercise-list' %}">
   <strong>{% trans "Browse exercises" %}</strong>
   <p class="text-muted">{% trans "Explore the exercise library or add your own." %}</p>
 </a>

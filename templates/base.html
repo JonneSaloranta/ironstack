@@ -96,6 +96,11 @@ instead.
   <script src="{% static 'js/pwa-install-prompt.js' %}" defer></script>
   <script src="{% static 'js/alpine.min.js' %}" defer></script>
   <script src="{% static 'js/sw-register.js' %}" defer></script>
+  {% if tutorial_data %}
+    {% comment %}apps.tutorials — this page's guided tour, see docs/TUTORIALS.md.{% endcomment %}
+    {{ tutorial_data|json_script:"tutorial-data" }}
+    <script src="{% static 'js/tutorial.js' %}" defer></script>
+  {% endif %}
 </head>
 <body data-confirm-ok="{% trans "Confirm" %}"
       data-confirm-cancel="{% trans "Cancel" %}"
@@ -156,36 +161,36 @@ instead.
     {% endfor %}
   </div>
   {% if user.is_authenticated %}
-  <nav class="bottom-nav" aria-label="{% trans "Main navigation" %}">
-    <a href="{% url 'dashboard' %}" aria-label="{% trans "Home" %}" {% if request.resolver_match.view_name == 'dashboard' %}aria-current="page"{% endif %}>
+  <nav class="bottom-nav" aria-label="{% trans "Main navigation" %}" data-tour="main-nav">
+    <a href="{% url 'dashboard' %}" data-tour="nav-home" aria-label="{% trans "Home" %}" {% if request.resolver_match.view_name == 'dashboard' %}aria-current="page"{% endif %}>
       {% include "core/_icon.html" with name="home" %}
       <span class="nav-label">{% trans "Home" %}</span>
     </a>
     {% if request.user.nutrition_enabled %}
-    <a href="{% url 'nutrition:dashboard' %}" aria-label="{% trans "Nutrition" %}" {% if request.resolver_match.app_name == 'nutrition' %}aria-current="page"{% endif %}>
+    <a href="{% url 'nutrition:dashboard' %}" data-tour="nav-nutrition" aria-label="{% trans "Nutrition" %}" {% if request.resolver_match.app_name == 'nutrition' %}aria-current="page"{% endif %}>
       {% include "core/_icon.html" with name="nutrition" %}
       <span class="nav-label">{% trans "Nutrition" %}</span>
     </a>
     {% endif %}
     {% if request.user.stretching_enabled %}
-    <a href="{% url 'stretching:home' %}" aria-label="{% trans "Stretching" %}" {% if request.resolver_match.app_name == 'stretching' %}aria-current="page"{% endif %}>
+    <a href="{% url 'stretching:home' %}" data-tour="nav-stretching" aria-label="{% trans "Stretching" %}" {% if request.resolver_match.app_name == 'stretching' %}aria-current="page"{% endif %}>
       {% include "core/_icon.html" with name="stretching" %}
       <span class="nav-label">{% trans "Stretching" %}</span>
     </a>
     {% endif %}
-    <a href="{% url 'analytics:dashboard' %}" aria-label="{% trans "Progress" %}" {% if request.resolver_match.app_name == 'analytics' or request.resolver_match.app_name == 'measurements' or request.resolver_match.app_name == 'records' %}aria-current="page"{% endif %}>
+    <a href="{% url 'analytics:dashboard' %}" data-tour="nav-progress" aria-label="{% trans "Progress" %}" {% if request.resolver_match.app_name == 'analytics' or request.resolver_match.app_name == 'measurements' or request.resolver_match.app_name == 'records' %}aria-current="page"{% endif %}>
       {% include "core/_icon.html" with name="progress" %}
       <span class="nav-label">{% trans "Progress" %}</span>
     </a>
-    <a href="{% url 'workouts:session-list' %}" aria-label="{% trans "Workout" %}" {% if request.resolver_match.app_name == 'workouts' or request.resolver_match.app_name == 'activities' %}aria-current="page"{% endif %}>
+    <a href="{% url 'workouts:session-list' %}" data-tour="nav-workout" aria-label="{% trans "Workout" %}" {% if request.resolver_match.app_name == 'workouts' or request.resolver_match.app_name == 'activities' %}aria-current="page"{% endif %}>
       {% include "core/_icon.html" with name="workout" %}
       <span class="nav-label">{% trans "Workout" %}</span>
     </a>
-    <a href="{% url 'programs:program-list' %}" aria-label="{% trans "Programs" %}" {% if request.resolver_match.app_name == 'programs' or request.resolver_match.app_name == 'exercises' %}aria-current="page"{% endif %}>
+    <a href="{% url 'programs:program-list' %}" data-tour="nav-programs" aria-label="{% trans "Programs" %}" {% if request.resolver_match.app_name == 'programs' or request.resolver_match.app_name == 'exercises' %}aria-current="page"{% endif %}>
       {% include "core/_icon.html" with name="programs" %}
       <span class="nav-label">{% trans "Programs" %}</span>
     </a>
-    <a href="{% url 'profile' %}" aria-label="{% if social_badge %}{% trans "Profile — new friend/group activity" %}{% else %}{% trans "Profile" %}{% endif %}" {% if request.resolver_match.view_name == 'profile' or request.resolver_match.app_name == 'social' or request.resolver_match.app_name == 'coaching' or request.resolver_match.app_name == 'api' %}aria-current="page"{% endif %}>
+    <a href="{% url 'profile' %}" data-tour="nav-profile" aria-label="{% if social_badge %}{% trans "Profile — new friend/group activity" %}{% else %}{% trans "Profile" %}{% endif %}" {% if request.resolver_match.view_name == 'profile' or request.resolver_match.app_name == 'social' or request.resolver_match.app_name == 'coaching' or request.resolver_match.app_name == 'api' %}aria-current="page"{% endif %}>
       {% comment %}
       Same show_gravatar/gravatar_url/@error pattern templates/accounts/
       profile.html's own avatar already uses (that one's own comment
@@ -222,7 +227,7 @@ instead.
   that now applies everywhere else this still floats.
   {% endcomment %}
   {% if active_workout_session and request.resolver_match.view_name != 'workouts:session-train' %}
-    <a class="training-fab" href="{% url 'workouts:session-train' active_workout_session.pk %}" aria-label="{% trans "Continue training" %}">
+    <a data-tour="training-fab" class="training-fab" href="{% url 'workouts:session-train' active_workout_session.pk %}" aria-label="{% trans "Continue training" %}">
       {% include "core/_icon.html" with name="workout" %}
     </a>
   {% endif %}

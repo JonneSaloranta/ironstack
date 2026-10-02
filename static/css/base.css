@@ -3240,3 +3240,142 @@ h2.card-title {
   outline: 1px solid var(--color-accent);
 }
 
+/* Guided page tours (static/js/tutorial.js, docs/TUTORIALS.md). The
+   highlight hugs the element itself — same box, same corner rounding —
+   and its enormous box-shadow dims everything around it: dimmed, not
+   hidden, so the page stays recognisable behind the explanation. The
+   script places the card beside the highlight, never over it, so the
+   card is kept compact on a phone. */
+:root {
+  --z-tour: 400;
+  --tour-dim: rgba(0, 0, 0, 0.62);
+  --tour-move: 0.5s;
+}
+
+.tour-blocker {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-tour);
+}
+
+.tour-glass {
+  position: fixed;
+  z-index: var(--z-tour);
+  box-shadow: 0 0 0 200vmax var(--tour-dim);
+  outline: 2px solid var(--color-accent);
+  pointer-events: none;
+  /* Moving between steps glides rather than jumps (owner's request:
+     0.25s felt abrupt). */
+  transition:
+    left var(--tour-move) ease-in-out,
+    top var(--tour-move) ease-in-out,
+    width var(--tour-move) ease-in-out,
+    height var(--tour-move) ease-in-out,
+    border-radius var(--tour-move) ease-in-out;
+}
+
+.tour-glass[hidden] {
+  display: block;
+  width: 0;
+  height: 0;
+  outline: none;
+  left: 50%;
+  top: 50%;
+}
+
+.tour-card {
+  position: fixed;
+  z-index: calc(var(--z-tour) + 1);
+  left: var(--space-3);
+  right: var(--space-3);
+  max-width: 24rem;
+  margin: 0 auto;
+  padding: var(--space-3);
+  background: var(--color-surface);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  font-size: var(--text-sm);
+  transition: top var(--tour-move) ease-in-out;
+}
+
+.tour-card:focus {
+  outline: none;
+}
+
+.tour-card-center {
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.tour-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-2);
+  margin-bottom: var(--space-1);
+}
+
+.tour-card h2.card-title {
+  font-size: var(--text-base);
+  margin: 0;
+}
+
+/* The shared button bottom margin (for stacked action rows) would only
+   add empty space to this deliberately compact card. */
+.tour-card button {
+  margin-bottom: 0;
+}
+
+.tour-card p {
+  margin: 0 0 var(--space-2);
+}
+
+.tour-progress {
+  flex-shrink: 0;
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+}
+
+.tour-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-2);
+}
+
+.tour-actions button {
+  margin-bottom: 0;
+}
+
+/* .button-secondary's own display would otherwise override [hidden]
+   (the "Previous" button on a tour's first step). */
+.tour-card [hidden] {
+  display: none;
+}
+
+.tour-secondary {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--space-1) var(--space-3);
+  margin-top: var(--space-2);
+  font-size: var(--text-xs);
+}
+
+@media (min-width: 768px) {
+  .tour-card {
+    max-width: 26rem;
+    padding: var(--space-4);
+    font-size: var(--text-base);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tour-glass,
+  .tour-card {
+    transition: none;
+  }
+}
+
+

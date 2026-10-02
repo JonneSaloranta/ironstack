@@ -5,7 +5,8 @@
 <div class="top-bar">
   <h1 class="no-margin">{% trans "Foods" %}</h1>
 </div>
-<div class="top-bar-actions">
+<div data-tour="food-actions" class="top-bar-actions">
+  <a class="button" href="{% url 'nutrition:food-create' %}">{% trans "New" %}</a>
   <a class="button-secondary" href="{% url 'nutrition:food-browse' %}">{% trans "Browse OpenFoodFacts" %}</a>
 </div>
 {% include "nutrition/_subnav.html" %}
@@ -19,7 +20,7 @@
   reloading the page.
 {% endcomment %}
 <h2>{% trans "Find a new food" %}</h2>
-<div class="card" x-data="ironstackBarcodeScanner()">
+<div data-tour="food-find-new" class="card" x-data="ironstackBarcodeScanner()">
   <div class="field">
     <label for="id_q">{% trans "Search foods" %}</label>
     <input type="text" id="id_q" name="q"
@@ -48,7 +49,7 @@
   (FoodListView.get_template_names' HTMX branch); no hidden state
   anywhere else has to be kept in sync with it.
 {% endcomment %}
-<form class="filter-row" hx-get="{% url 'nutrition:food-list' %}" hx-target="#food-list-results"
+<form data-tour="food-filters" class="filter-row" hx-get="{% url 'nutrition:food-list' %}" hx-target="#food-list-results"
       hx-indicator="#search-indicator" hx-trigger="input changed delay:300ms from:#id_food_q, input changed delay:300ms from:#id_category, change from:#id_sort, change from:#id_dir"
       hx-push-url="true">
   <input type="search" id="id_food_q" name="q" placeholder="{% trans "Filter by name…" %}" value="{{ query }}" aria-label="{% trans "Filter by name" %}">

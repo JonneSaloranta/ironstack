@@ -8,7 +8,7 @@
     {% endfor %}
   </div>
 
-  <div class="train-progress">
+  <div data-tour="train-nav" class="train-progress">
     {% if prev_pe %}
       <a class="button-secondary" href="?pe={{ prev_pe.id }}" hx-get="?pe={{ prev_pe.id }}" hx-select="#train-panel" hx-target="#train-panel" hx-swap="outerHTML" aria-label="{% trans "Previous" %}">&larr;</a>
     {% else %}
@@ -32,7 +32,7 @@
 {% endif %}
 
 {% if current %}
-  <div class="card">
+  <div data-tour="train-exercise" class="card">
     <h2 class="mb-1">{% trans current.exercise.name %}</h2>
     {% if current.set_count %}
       <p class="text-muted">
@@ -50,7 +50,7 @@
     {% endif %}
 
     {% if suggestion and suggestion.suggested_weight %}
-      <div class="suggestion-banner">
+      <div data-tour="train-suggestion" class="suggestion-banner">
         <strong><span aria-hidden="true">💡</span> {% blocktrans with weight=suggestion.suggested_weight|weight:request.user %}Suggested: {{ weight }}{% endblocktrans %}
           {% if suggestion.target_min_reps %}× {{ suggestion.target_min_reps }}{% if suggestion.target_max_reps and suggestion.target_max_reps != suggestion.target_min_reps %}-{{ suggestion.target_max_reps }}{% endif %}{% endif %}
         </strong>
@@ -68,7 +68,7 @@
       <p class="text-muted">{% trans "This exercise is done — logging another set is still fine if you want one." %}</p>
     {% endif %}
 
-    <form class="set-log-form" x-data="{more:false}" method="post" action="{% url 'workouts:train-set-log' current.id %}"
+    <form data-tour="train-log-form" class="set-log-form" x-data="{more:false}" method="post" action="{% url 'workouts:train-set-log' current.id %}"
           hx-post="{% url 'workouts:train-set-log' current.id %}"
           hx-target="#train-panel" hx-swap="outerHTML"
           hx-disabled-elt="find button[type=submit]">

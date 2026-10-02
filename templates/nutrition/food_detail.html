@@ -20,8 +20,12 @@
   </p>
 {% endif %}
 
-<div class="card">
-  <strong>{% trans "Nutrition" %}</strong>
+{% comment %}
+  Laid out like an EU/Finnish package label (apps.nutrition.nutrition_label):
+  energy as kJ / kcal, "of which" sub-rows indented, salt rather than
+  sodium, then every other nutrient OpenFoodFacts reports.
+{% endcomment %}
+<div data-tour="nutrition-label" class="card">
   <h2 class="card-title">{% blocktrans with size=food.serving_size|nutrient_amount unit=food.serving_unit %}Nutrition per {{ size }} {{ unit }}{% endblocktrans %}</h2>
   {% include "nutrition/_nutri_score_badge.html" %}
   <div class="table-wrap"><table class="set-table nutrition-label">

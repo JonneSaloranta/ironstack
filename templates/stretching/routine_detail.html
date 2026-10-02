@@ -17,7 +17,7 @@
   </form>
 </div>
 
-<div class="card">
+<div data-tour="routine-info" class="card">
   {% if not routine.is_custom %}<span class="tag tag-muted">{% trans "Built-in routine" %}</span>{% endif %}
   {% if not routine.active %}<span class="tag tag-muted">{% trans "Inactive" %}</span>{% endif %}
   {% if routine.description %}<p>{{ routine.description|translate_content }}</p>{% endif %}
@@ -26,7 +26,7 @@
     · {% blocktrans with time=planned_seconds|clock %}about {{ time }}{% endblocktrans %}
   </p>
   {% if items and routine.active %}
-    <form method="post" action="{% url 'stretching:session-start' routine.pk %}">
+    <form data-tour="routine-start" method="post" action="{% url 'stretching:session-start' routine.pk %}">
       {% csrf_token %}
       <button type="submit">{% trans "Start routine" %}</button>
     </form>
@@ -35,7 +35,7 @@
 
 <ol class="stretch-item-list">
   {% for item in items %}
-    <li class="card" id="item-{{ item.pk }}">
+    <li data-tour="routine-item" class="card" id="item-{{ item.pk }}">
       <strong><a href="{% url 'stretching:stretch-detail' item.stretch.pk %}">{{ item.stretch.name|translate_content }}</a></strong>
       <div class="text-muted">
         {% if item.sets > 1 %}{{ item.sets }} × {% endif %}{{ item.hold_seconds|clock }}{% if item.stretch.per_side %} {% trans "per side" %}{% endif %}
@@ -66,7 +66,7 @@
 
 {% if can_edit %}
   <h2>{% trans "Add a stretch" %}</h2>
-  <form class="card" method="post" action="{% url 'stretching:routine-item-add' routine.pk %}">
+  <form data-tour="routine-add-stretch" class="card" method="post" action="{% url 'stretching:routine-item-add' routine.pk %}">
     {% csrf_token %}
     {% for field in add_form %}
       {% include "core/_field.html" with field=field %}

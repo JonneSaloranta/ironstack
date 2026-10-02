@@ -8,7 +8,7 @@
 
 {% include "analytics/_range_filter.html" %}
 
-<div class="card">
+<div data-tour="progress-summary" class="card">
   <dl class="stat-row">
     <div><dt>{% trans "Workouts" %}</dt><dd>{{ summary.session_count }}</dd></div>
     <div><dt>{% trans "Training time" %}</dt><dd>{{ summary.total_duration|duration }}</dd></div>
@@ -17,7 +17,7 @@
 </div>
 
 {% if trained_exercises %}
-  <form method="get" action="" class="card" x-data
+  <form data-tour="exercise-trend-picker" method="get" action="" class="card" x-data
         @change="if ($event.target.value) window.location = $event.target.value">
     <label for="exercise-trend-picker">{% trans "Strength trend for an exercise" %}</label>
     <select id="exercise-trend-picker">
@@ -33,7 +33,7 @@
 <h2>{% trans "Weekly training volume" %}</h2>
 {% if weekly_volume_chart %}
   {% trans "Weekly training volume" as weekly_volume_title %}
-  {% include "core/_bar_chart.html" with chart=weekly_volume_chart chart_title=weekly_volume_title unit_label=weight_unit_label %}
+  {% include "core/_bar_chart.html" with chart=weekly_volume_chart chart_title=weekly_volume_title unit_label=weight_unit_label tour_anchor="volume-chart" %}
 {% else %}
   {% trans "No completed workouts in this range." as empty_msg %}
   {% trans "Finish a workout, or widen the date range above." as empty_hint %}
@@ -45,7 +45,7 @@
 <h2>{% trans "Muscle-group volume" %}</h2>
 {% if muscle_group_chart %}
   {% trans "Muscle-group volume" as muscle_group_title %}
-  {% include "core/_bar_chart.html" with chart=muscle_group_chart chart_title=muscle_group_title unit_label=weight_unit_label %}
+  {% include "core/_bar_chart.html" with chart=muscle_group_chart chart_title=muscle_group_title unit_label=weight_unit_label tour_anchor="muscle-chart" %}
 {% else %}
   {% include "core/_empty_state.html" with message=_("No data in this range.") %}
 {% endif %}

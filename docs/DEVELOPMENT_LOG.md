@@ -5770,6 +5770,18 @@ them) decides whether login keeps following the browser:
 Accept-Language on every login until the user picks one (onboarding, or
 changing it on the profile).
 
+`apps.tutorials` adds per-page guided tours — design and maintenance rules
+in docs/TUTORIALS.md. Tours are data (`tours.py`), anchored to
+`data-tour` attributes rather than CSS classes, and three tests keep them
+honest: required anchors must be on their page, every argument-less page
+needs a tour or a reasoned `NO_TOUR_NEEDED` entry, and every text must be
+translated. Found along the way: the bare "Back" msgid is the muscle group
+(Finnish "Selkä"), which three stretching forms used for their back link —
+they now use `context "navigation"`, and the tour buttons their own
+`tutorial` context. The dev server's autoreloader died when `config/urls.py`
+briefly referenced the not-yet-written `apps.tutorials.urls`; a container
+restart fixed it.
+
 ## Faster test suite
 
 The full suite had grown to about 50 minutes. Measured in the dev

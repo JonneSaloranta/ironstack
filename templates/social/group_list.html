@@ -5,8 +5,8 @@
 <div class="top-bar">
   <h1 class="no-margin">{% trans "Groups" %}</h1>
 </div>
-<div class="top-bar-actions">
-  <a class="button" href="{% url 'social:group-create' %}">{% trans "New group" %}</a>
+<div data-tour="group-new" class="top-bar-actions">
+  <a class="button" href="{% url 'social:group-create' %}">{% trans "New" %}</a>
 </div>
 
 {% if incoming_invites %}

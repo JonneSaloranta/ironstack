@@ -33,6 +33,7 @@ Do not introduce React, Vue, or another SPA framework without a strong architect
 
 Before creating or changing any template or `static/css/base.css`, read `docs/UI_COMPONENTS.md` — the component rulebook (page skeleton, headings, buttons, forms, states) that keeps every page consistent. Add new patterns there; list deliberate deviations under its "Accepted exceptions".
 
+Every page's guided tour lives in `apps/tutorials/tours.py` and points at `data-tour="..."` anchors in the templates. When you change a toured template, add a page, or change what a page does, keep its tour in step — see `docs/TUTORIALS.md` (its tests fail when an anchor goes missing, a page has no tour or exemption, or a text is untranslated).
 
 The application should be server-rendered first. Use HTMX for dynamic interactions and Alpine.js for small client-side state and interactions.
 

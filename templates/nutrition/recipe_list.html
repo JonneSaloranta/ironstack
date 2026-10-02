@@ -5,8 +5,8 @@
 <div class="top-bar">
   <h1 class="no-margin">{% trans "Recipes" %}</h1>
 </div>
-<div class="top-bar-actions">
-  <a class="button-secondary" href="{% url 'nutrition:recipe-create' %}">{% trans "New recipe" %}</a>
+<div data-tour="recipe-actions" class="top-bar-actions">
+  <a class="button" href="{% url 'nutrition:recipe-create' %}">{% trans "New" %}</a>
   <a class="button-secondary" href="{% url 'nutrition:recipe-import' %}">{% trans "Import" %}</a>
 </div>
 {% include "nutrition/_subnav.html" %}
@@ -44,7 +44,7 @@
 {% endif %}
 
 <h2>{% trans "Template recipes" %}</h2>
-<div class="card">
+<div data-tour="template-recipes" class="card">
   {% if template_page.object_list %}
     {% for recipe in template_page %}
       <div class="card-action-row py-2">

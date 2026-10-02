@@ -19,7 +19,7 @@
 
 {% if stats %}
   <h2>{% trans "Statistics" %}</h2>
-  <div class="card">
+  <div data-tour="measurement-stats" class="card">
     <dl class="stat-row">
       <div><dt>{% trans "Current" %}</dt><dd>{{ stats.latest_value }} {{ unit_label }}</dd></div>
       <div><dt>{% trans "Change since first log" %}</dt><dd>{% if stats.change_since_first > 0 %}+{% endif %}{{ stats.change_since_first }} {{ unit_label }}</dd></div>
@@ -39,7 +39,7 @@
   {% include "core/_chart.html" with chart_title=measurement_type.name|translate_content %}
 {% endif %}
 
-<form class="card" method="post" action="{% url 'measurements:log' measurement_type.pk %}">
+<form data-tour="measurement-log" class="card" method="post" action="{% url 'measurements:log' measurement_type.pk %}">
   {% csrf_token %}
   {% include "core/_form_errors.html" %}
   {% for field in form %}
@@ -48,7 +48,7 @@
   <button type="submit">{% trans "Log reading" %}</button>
 </form>
 
-<div class="table-wrap">
+<div data-tour="measurement-table" class="table-wrap">
 <table class="set-table">
   <thead>
     <tr><th scope="col">{% trans "Date" %}</th><th scope="col">{% trans "Value" %}</th><th scope="col"></th></tr>

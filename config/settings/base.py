@@ -84,6 +84,7 @@ INSTALLED_APPS = [
     "apps.api",
     "apps.social",
     "apps.coaching",
+    "apps.tutorials",
 ]
 
 MIDDLEWARE = [
@@ -141,6 +142,7 @@ TEMPLATES = [
                 "apps.nutrition.context_processors.nutrition_subnav",
                 "apps.social.context_processors.social_badge",
                 "apps.coaching.context_processors.pending_coaching_activity",
+                "apps.tutorials.context_processors.tutorial",
             ],
         },
     },

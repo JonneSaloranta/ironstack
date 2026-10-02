@@ -18,7 +18,7 @@
 {% if one_rm_chart %}
   <h2>{% trans "Estimated" %} <abbr tabindex="0" title="{% trans "One-Rep Max" %}">1RM</abbr> {% trans "trend" %}</h2>
   {% trans "Estimated 1RM" as one_rm_title %}
-  {% include "core/_chart.html" with chart=one_rm_chart chart_title=one_rm_title unit_label=weight_unit_label %}
+  {% include "core/_chart.html" with chart=one_rm_chart chart_title=one_rm_title unit_label=weight_unit_label tour_anchor="one-rm-chart" %}
 {% else %}
   {% include "core/_empty_state.html" with message=_("Not enough history in this range for a trend line.") %}
 {% endif %}

@@ -17,7 +17,7 @@ Collapsed by default: this ~20-field form used to sit above every navigation
 row on the page, so reaching Account/Social/Coaching meant scrolling past it.
 Opens itself when the form has errors so a failed save is never hidden.
 {% endcomment %}
-<details class="preferences" {% if form.errors %}open{% endif %}>
+<details data-tour="profile-preferences" class="preferences" {% if form.errors %}open{% endif %}>
 <summary><h2 class="no-margin">{% trans "Preferences" %}</h2></summary>
 
 <form class="card" method="post" x-data="{ isPt: {{ form.is_personal_trainer.value|yesno:'true,false' }} }">
@@ -89,7 +89,7 @@ visual sign a plain card was pressable.
 
 <h2>{% trans "Social" %}</h2>
 
-<a class="card card-link settings-row" href="{% url 'social:message-list' %}">
+<a data-tour="profile-social" class="card card-link settings-row" href="{% url 'social:message-list' %}">
   <div>
     <strong>{% trans "Friends & groups" %}{% if social_badge %} <span class="nav-badge badge-inline" aria-hidden="true"></span>{% endif %}</strong>
     <p class="text-muted">{% trans "Friends, groups, and messages." %}</p>
@@ -151,7 +151,7 @@ visual sign a plain card was pressable.
   {% include "core/_chevron.html" %}
 </a>
 
-<a class="card card-link settings-row" href="{% url 'data-export' %}">
+<a data-tour="profile-data" class="card card-link settings-row" href="{% url 'data-export' %}">
   <div>
     <strong>{% trans "Download your data" %}</strong>
     <p class="text-muted">{% trans "Browse everything you've logged, or download it as JSON, CSV, or HTML." %}</p>
@@ -159,6 +159,12 @@ visual sign a plain card was pressable.
   {% include "core/_chevron.html" %}
 </a>
 
+<h2>{% trans "Help" %}</h2>
+
+<a class="card card-link settings-row" href="{% url 'tutorials:list' %}" data-tour="profile-tutorials">
+  <div>
+    <strong>{% trans "Tutorials" %}</strong>
+    <p class="text-muted">{% trans "Replay the guided tour of any page, or turn tutorials on or off." %}</p>
   </div>
   {% include "core/_chevron.html" %}
 </a>

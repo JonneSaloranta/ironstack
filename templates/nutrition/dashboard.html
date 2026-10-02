@@ -5,7 +5,7 @@
 <div class="top-bar">
   <h1 class="no-margin">{% trans "Nutrition" %}</h1>
 </div>
-<div class="top-bar-actions">
+<div data-tour="day-type" class="top-bar-actions">
   {% trans "Based on whether you completed a workout today — this doesn't change your calorie target automatically." as day_type_help %}
   {% if is_training_day %}
     <abbr class="tag" tabindex="0" title="{{ day_type_help }}">{% trans "Training day" %}</abbr>
@@ -15,8 +15,8 @@
 </div>
 {% include "nutrition/_subnav.html" %}
 
-<div class="card">
-  <strong>{% trans "Today so far" %}</strong>
+<div data-tour="nutrition-today" class="card">
+  <h2 class="card-title">{% trans "Today so far" %}</h2>
   {% if target and target.daily_calories %}
     <div class="progress-bar{% if totals.calories > target.daily_calories %} is-over{% endif %}" role="progressbar"
          aria-label="{% trans "Calories eaten today, as a share of your daily target" %}"
@@ -74,8 +74,8 @@
 
 {% if suggestion %}
   {% if suggestion.action == "adjust" %}
-    <div class="card">
-      <strong>{% trans "Is your current target working?" %}</strong>
+    <div data-tour="nutrition-adjustment" class="card">
+      <h2 class="card-title">{% trans "Is your current target working?" %}</h2>
       <p>{{ suggestion.reason }}</p>
       <p class="text-muted">
         {% if suggestion.confidence == "high" %}{% trans "High confidence" %}
@@ -109,8 +109,8 @@
 {% endif %}
 
 {% if target %}
-  <div class="card">
-    <strong>{% trans "Daily target" %}</strong>
+  <div data-tour="nutrition-target" class="card">
+    <h2 class="card-title">{% trans "Daily target" %}</h2>
     <p class="stat-value">
       {% blocktrans with calories=target.daily_calories %}{{ calories }} kcal/day{% endblocktrans %}
     </p>
@@ -126,8 +126,8 @@
 {% endif %}
 
 {% if goal %}
-  <div class="card">
-    <strong>{% trans "Current goal" %}</strong>
+  <div data-tour="nutrition-goal" class="card">
+    <h2 class="card-title">{% trans "Current goal" %}</h2>
     <p>{{ goal.get_goal_type_display }} — {{ goal.target_rate_kg_per_week }} kg/week</p>
     <a class="button-secondary" href="{% url 'nutrition:goal-edit' %}">{% trans "Change goal" %}</a>
   </div>

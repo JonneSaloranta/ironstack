@@ -220,6 +220,11 @@ class User(AbstractUser):
     # (apps.accounts.signals.follow_browser_language), so a new account
     # starts in the browser's language; once chosen it stays put.
     language_chosen = models.BooleanField(default=False)
+    # apps.tutorials — whether a page's guided tour starts by itself the
+    # first time the user opens that page. "Don't show tutorials" in a
+    # tour, or the toggle on profile → Tutorials, switches it off; tours
+    # can still be started by hand from that page either way.
+    tutorials_enabled = models.BooleanField(default=True)
 
     # apps.accounts.forms.ProfileForm / templates/base.html's own
     # `data-theme`/`data-appearance` attributes — two independent

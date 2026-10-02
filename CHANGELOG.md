@@ -19,6 +19,11 @@ narrated summary of the same version.
 ## [Unreleased]
 
 ### Added
+- Tutorials: a short guided tour on every main page the first time you
+  open it — the part being explained is highlighted while the rest of
+  the page is dimmed, with a compact explanation right next to it. Skip
+  any tour or switch them all off; profile → Tutorials replays any of
+  them.
 - Onboarding asks for your language first, on its own step, so the rest
   of it is already in your language. Until you choose, the app follows
   your browser's language.

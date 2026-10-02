@@ -33,7 +33,7 @@
   without noticing that went to the wrong meal.
 {% endcomment %}
 <div x-data="{ mealSlot: '{{ selected_meal_slot|default:meal_slots.0.pk|default:'' }}' }">
-  <div class="card">
+  <div data-tour="diary-meal-select" class="card">
     <div class="field">
       <label for="id_meal_slot">{% trans "Meal" %}</label>
       <select id="id_meal_slot" name="meal_slot" x-model="mealSlot"
@@ -50,7 +50,7 @@
     </div>
   </div>
 
-  <div class="card" x-data="ironstackBarcodeScanner()">
+  <div data-tour="food-search" class="card" x-data="ironstackBarcodeScanner()">
     <div class="field">
       <label for="id_q">{% trans "Search foods" %}</label>
       <input type="text" id="id_q" name="q"

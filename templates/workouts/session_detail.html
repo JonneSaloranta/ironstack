@@ -12,7 +12,7 @@
   <span class="tag {% if session.status == 'completed' %}tag-success{% elif session.status == 'abandoned' %}tag-muted{% endif %}">{{ session.get_status_display }}</span>
 </div>
 
-<p class="text-muted">
+<p data-tour="session-summary" class="text-muted">
   {% blocktrans with started=session.started_at|date:"Y-m-d H:i" %}Started {{ started }}{% endblocktrans %}
   {% if session.ended_at %} · {% blocktrans with ended=session.ended_at|date:"Y-m-d H:i" %}ended {{ ended }}{% endblocktrans %}{% endif %}
   {% if session.duration %} · {{ session.duration|duration }}{% endif %}
@@ -28,9 +28,9 @@
 {% endfor %}
 
 {% if session.is_in_progress %}
-  <a class="button" href="{% url 'workouts:performed-exercise-add' session.pk %}">{% trans "Add exercise" %}</a>
+  <a data-tour="add-exercise" class="button" href="{% url 'workouts:performed-exercise-add' session.pk %}">{% trans "Add exercise" %}</a>
 
-  <form method="post" action="{% url 'workouts:session-complete' session.pk %}">
+  <form data-tour="finish-workout" method="post" action="{% url 'workouts:session-complete' session.pk %}">
     {% csrf_token %}
     <button type="submit">{% trans "Complete workout" %}</button>
   </form>

@@ -29,9 +29,9 @@
   <a class="button-secondary" href="{% url 'social:block-list' %}">{% trans "Blocked users" %}</a>
 </p>
 
-<h2>{% trans "Direct messages" %}</h2>
+<h data-tour="messages-direct"2>{% trans "Direct messages" %}</h2>
 {% for entry in friend_threads %}
-  <a class="card card-link" href="{% url 'social:message-thread' entry.friend.pk %}">
+  <a data-tour="direct-message" class="card card-link" href="{% url 'social:message-thread' entry.friend.pk %}">
     <strong>{{ entry.friend.username }}</strong>
     {% if entry.unread %}<span class="tag">{% blocktrans count counter=entry.unread %}{{ counter }} unread{% plural %}{{ counter }} unread{% endblocktrans %}</span>{% endif %}
   </a>
@@ -39,9 +39,9 @@
   {% include "core/_empty_state.html" with message=_("No friends to message yet.") %}
 {% endfor %}
 
-<h2>{% trans "Group chats" %}</h2>
+<h data-tour="messages-groups"2>{% trans "Group chats" %}</h2>
 {% for entry in group_threads %}
-  <a class="card card-link" href="{% url 'social:group-thread' entry.group.pk %}">
+  <a data-tour="group-chat" class="card card-link" href="{% url 'social:group-thread' entry.group.pk %}">
     <strong>{{ entry.group.name }}</strong>
     {% if entry.unread %}<span class="tag">{% blocktrans count counter=entry.unread %}{{ counter }} unread{% plural %}{{ counter }} unread{% endblocktrans %}</span>{% endif %}
   </a>

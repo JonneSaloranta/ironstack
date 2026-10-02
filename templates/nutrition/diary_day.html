@@ -15,15 +15,15 @@ other page's .top-bar besides holding only a plain, unchanging title.
 {% include "nutrition/_subnav.html" %}
 
 {% url 'nutrition:diary-day' target_date='__DATE__' as date_url_template %}
-<div class="diary-date-nav">
+<div data-tour="diary-date-nav" class="diary-date-nav">
   <a class="button-secondary" href="{% url 'nutrition:diary-day' target_date=previous_date.isoformat %}" aria-label="{% trans "Previous day" %}">&larr;</a>
   <input type="date" value="{{ date|date:'Y-m-d' }}" aria-label="{% trans "Jump to date" %}"
          x-data="{}" @change="window.location = '{{ date_url_template }}'.replace('__DATE__', $event.target.value)">
   <a class="button-secondary" href="{% url 'nutrition:diary-day' target_date=next_date.isoformat %}" aria-label="{% trans "Next day" %}">&rarr;</a>
 </div>
 
-<div class="card">
-  <strong>{% if is_today %}{% trans "Today's nutrition" %}{% else %}{% trans "Nutrition for this day" %}{% endif %}</strong>
+<div data-tour="diary-totals" class="card">
+  <h2 class="card-title">{% if is_today %}{% trans "Today's nutrition" %}{% else %}{% trans "Nutrition for this day" %}{% endif %}</h2>
   <div class="table-wrap"><table class="set-table">
     <tbody>
       <tr>
@@ -53,7 +53,7 @@ other page's .top-bar besides holding only a plain, unchanging title.
 </div>
 
 {% for slot in meal_slots %}
-  <div class="card" id="meal-slot-{{ slot.pk }}">
+  <div data-tour="diary-meal" class="card" id="meal-slot-{{ slot.pk }}">
     <div class="card-action-row">
       <strong>{{ slot.name|translate_content }}</strong>
       {% if slot.entries %}
@@ -86,7 +86,7 @@ other page's .top-bar besides holding only a plain, unchanging title.
       <p class="text-muted">{% trans "Nothing logged yet." %}</p>
     {% endfor %}
     <div class="row">
-      <a class="button-secondary" href="{% url 'nutrition:diary-add-entry' %}?date={{ date|date:'Y-m-d' }}&meal_slot={{ slot.pk }}">{% trans "Add food" %}</a>
+      <a data-tour="diary-add-food" class="button-secondary" href="{% url 'nutrition:diary-add-entry' %}?date={{ date|date:'Y-m-d' }}&meal_slot={{ slot.pk }}">{% trans "Add food" %}</a>
       {% if slot.name != "Other" and slot.entries %}
         <form method="post" action="{% url 'nutrition:diary-meal-save-as-recipe' date.isoformat slot.pk %}">
           {% csrf_token %}
@@ -97,7 +97,7 @@ other page's .top-bar besides holding only a plain, unchanging title.
   </div>
 {% endfor %}
 
-<div class="card" x-data="{ open: false }">
+<div data-tour="diary-copy" class="card" x-data="{ open: false }">
   <button type="button" class="button-secondary" @click="open = !open">{% trans "Copy this day to another date" %}</button>
   <form class="row-top" x-show="open" x-cloak method="post" action="{% url 'nutrition:diary-day-copy' source_date=date.isoformat %}"
        >

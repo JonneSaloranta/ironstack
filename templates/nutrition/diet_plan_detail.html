@@ -8,7 +8,7 @@
 <div class="top-bar">
   <h1 class="no-margin">{{ plan.name }}</h1>
 </div>
-<div class="top-bar-actions">
+<div data-tour="diet-plan-active" class="top-bar-actions">
   <form method="post" action="{% url 'nutrition:diet-plan-toggle-active' plan.pk %}">
     {% csrf_token %}
     {% if plan.is_active %}
@@ -74,7 +74,7 @@
   {% endif %}
 {% endfor %}
 
-<form class="card" method="post" action="{% url 'nutrition:diet-plan-log' plan.pk %}">
+<form data-tour="diet-plan-log" class="card" method="post" action="{% url 'nutrition:diet-plan-log' plan.pk %}">
   {% csrf_token %}
   <strong>{% trans "Log this plan to your diary" %}</strong>
   {% if plan.is_weekly %}

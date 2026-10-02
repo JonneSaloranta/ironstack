@@ -84,12 +84,12 @@
 </div>
 {% endif %}
 
-<a class="card card-link" href="{% url 'records:exercise-records' exercise.pk %}">
+<a data-tour="exercise-records" class="card card-link" href="{% url 'records:exercise-records' exercise.pk %}">
   <strong>{% trans "Your" %} <abbr tabindex="0" title="{% trans "Personal Records" %}">PRs</abbr></strong>
   <p class="text-muted">{% trans "Current personal records for this exercise." %}</p>
 </a>
 
-<a class="card card-link" href="{% url 'analytics:exercise' exercise.pk %}">
+<a data-tour="exercise-progress" class="card card-link" href="{% url 'analytics:exercise' exercise.pk %}">
   <strong>{% trans "Strength trend" %}</strong>
   <p class="text-muted">{% trans "Estimated" %} <abbr tabindex="0" title="{% trans "One-Rep Max" %}">1RM</abbr> {% trans "over time and training volume." %}</p>
 </a>

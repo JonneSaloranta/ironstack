@@ -179,6 +179,14 @@ Hierarchy (base.css "Buttons: states + one clear hierarchy"):
 Alpine `x-show`; focus trap/return comes free from `static/js/modal-a11y.js`.
 Help/info modals open from a round `.help-button`.
 
+## Guided tours
+
+Every page's tour is in `apps/tutorials/tours.py` (docs/TUTORIALS.md). Its
+steps point at `data-tour="<anchor>"` attributes: keep them on the element
+that plays that role when you restyle a template, put one on anything new a
+tour should explain, and pass `tour_anchor=` to the chart partials. Never
+select tour targets by CSS class.
+
 ## Styling rules
 
 - No `style=""` attributes, except a value that is genuinely data-driven

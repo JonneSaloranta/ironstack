@@ -5,12 +5,12 @@
 <div class="top-bar">
   <h1 class="no-margin">{% trans "Activities" %}</h1>
 </div>
-<div class="top-bar-actions">
+<div data-tour="activity-actions" class="top-bar-actions">
   <a class="button" href="{% url 'activities:type-create' %}">{% trans "New" %}</a>
 </div>
 
 {% for activity_type in activity_types %}
-  <a class="card card-link{% if not activity_type.entry_count %} card-untracked{% endif %}" href="{% url 'activities:history' activity_type.pk %}">
+  <a data-tour="activity-type" class="card card-link{% if not activity_type.entry_count %} card-untracked{% endif %}" href="{% url 'activities:history' activity_type.pk %}">
     <strong>{{ activity_type.name|translate_content }}</strong>
     {% if activity_type.is_custom %}<span class="tag">{% trans "Custom" %}</span>{% endif %}
     <div class="text-muted{% if activity_type.entry_count %} stat-figure{% endif %}">

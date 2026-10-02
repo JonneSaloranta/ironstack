@@ -9086,8 +9086,604 @@ msgstr "Dagar"
 msgid "Days: days logged / days in the period. Macros in grams."
 msgstr "Dagar: loggade dagar / dagar i perioden. Makron i gram."
 
+msgid "Skip tour"
+msgstr "Hoppa över guiden"
+
+msgid "Don't show tutorials"
+msgstr "Visa inte guider"
+
+#, python-format
+msgid "Step %(current)s of %(total)s"
+msgstr "Steg %(current)s av %(total)s"
+
+msgid "Getting started"
+msgstr "Kom igång"
+
+msgid "Programs and exercises"
+msgstr "Program och övningar"
+
+msgid "Body and activities"
+msgstr "Kropp och aktiviteter"
+
+msgid "Friends and groups"
+msgstr "Vänner och grupper"
+
+msgid "A quick look around. Every section has a short tour like this the first time you open it — skip any of them, or turn them all off."
+msgstr "En snabb rundtur. Varje del har en kort guide som den här första gången du öppnar den — hoppa över vilken som helst, eller stäng av alla."
+
+msgid "Navigation"
+msgstr "Navigering"
+
+msgid "Everything is one tap away from here: home, nutrition and stretching (if you use them), progress, workouts, programs and your profile."
+msgstr "Allt finns ett tryck bort härifrån: hem, kost och stretching (om du använder dem), framsteg, träningspass, program och din profil."
+
+msgid "Your workout"
+msgstr "Ditt träningspass"
+
+msgid "Start a workout here, or jump back into the one you're in the middle of. To follow a plan, start a workout from one of your programs instead."
+msgstr "Starta ett pass här, eller hoppa tillbaka till det du håller på med. För att följa en plan startar du i stället ett pass från något av dina program."
+
+msgid "Streaks and milestones from everyone on this server who shares them."
+msgstr "Streaks och milstolpar från alla på den här servern som delar dem."
+
+msgid "Shortcuts"
+msgstr "Genvägar"
+
+msgid "The exercise library, body tracking, activities and stretching."
+msgstr "Övningsbiblioteket, kroppsmått, aktiviteter och stretching."
+
+msgid "Calendar"
+msgstr "Kalender"
+
+msgid "Each day's training and nutrition at a glance. Tap a day for details; the “?” explains the colours."
+msgstr "Varje dags träning och kost i en överblick. Tryck på en dag för detaljer; ”?” förklarar färgerna."
+
+msgid "Your profile"
+msgstr "Din profil"
+
+msgid "Preferences, friends, your data — and Tutorials, where you can replay any of these tours."
+msgstr "Inställningar, vänner, dina data — och Guider, där du kan spela upp vilken som helst av dessa rundturer igen."
+
+msgid "Your workouts"
+msgstr "Dina träningspass"
+
+msgid "Every workout you've done, newest first. Open one to see or correct it."
+msgstr "Alla pass du har gjort, nyast först. Öppna ett för att se eller rätta det."
+
+msgid "Start without a plan"
+msgstr "Börja utan plan"
+
+msgid "A freeform workout lets you add any exercises as you go. Workouts from a program start from the program's page."
+msgstr "I ett fritt pass lägger du till övningar allteftersom. Pass från ett program startas från programmets sida."
+
+msgid "Logging a workout"
+msgstr "Logga ett pass"
+
+msgid "This workout"
+msgstr "Det här passet"
+
+msgid "When it started and ended, and how many sets and how much volume so far."
+msgstr "När det började och slutade, och hur många set och hur mycket volym hittills."
+
+msgid "One card per exercise"
+msgstr "Ett kort per övning"
+
+msgid "The sets you've logged appear here, and you can edit or delete any of them."
+msgstr "De set du har loggat visas här, och du kan redigera eller ta bort vilket som helst av dem."
+
+msgid "Suggested weight"
+msgstr "Föreslagen vikt"
+
+msgid "Based on your last sessions, with the reason and how confident it is. It's only a starting point — you decide what goes on the bar."
+msgstr "Baserad på dina senaste pass, med motivering och hur säker den är. Det är bara en utgångspunkt — du bestämmer vad som läggs på stången."
+
+msgid "Log a set"
+msgstr "Logga ett set"
+
+msgid "Enter weight and reps and tap Log set. RPE, RIR, warm-up and failure are optional. New personal records are detected automatically."
+msgstr "Ange vikt och reps och tryck på Logga set. RPE, RIR, uppvärmning och failure är valfria. Nya personbästan upptäcks automatiskt."
+
+msgid "Add an exercise"
+msgstr "Lägg till en övning"
+
+msgid "Add anything that isn't in the plan — it only changes this workout."
+msgstr "Lägg till sådant som inte finns i planen — det ändrar bara det här passet."
+
+msgid "Training mode"
+msgstr "Träningsläge"
+
+msgid "One exercise at a time with big buttons and a rest timer — the easiest way to log at the gym. This button follows you on every page."
+msgstr "En övning i taget med stora knappar och vilotimer — det enklaste sättet att logga på gymmet. Den här knappen följer med dig på varje sida."
+
+msgid "Finish"
+msgstr "Avsluta"
+
+msgid "Complete the workout when you're done. Abandon keeps it in your history as unfinished."
+msgstr "Slutför passet när du är klar. Avbryt behåller det i historiken som ofullständigt."
+
+msgid "The dots show your progress. The arrows move between exercises in any order — the next unfinished one opens by default."
+msgstr "Prickarna visar hur långt du har kommit. Pilarna flyttar mellan övningar i valfri ordning — nästa ofärdiga öppnas som standard."
+
+msgid "Current exercise"
+msgstr "Aktuell övning"
+
+msgid "Its target and the sets you've already logged; tap a set to edit it."
+msgstr "Dess mål och de set du redan har loggat; tryck på ett set för att redigera det."
+
+msgid "A starting point from your history. You can always enter something else."
+msgstr "En utgångspunkt från din historik. Du kan alltid ange något annat."
+
+msgid "Log the set"
+msgstr "Logga setet"
+
+msgid "Weight and reps, then Log set. “More options” has RPE, RIR, warm-up, failure and notes."
+msgstr "Vikt och reps, sedan Logga set. ”Fler alternativ” har RPE, RIR, uppvärmning, failure och anteckningar."
+
+msgid "Starts by itself after each set and chimes when rest is over. Adjust it by 15 seconds, skip it, or mute the sound."
+msgstr "Startar av sig själv efter varje set och plingar när vilan är slut. Justera den med 15 sekunder, hoppa över den eller stäng av ljudet."
+
+msgid "Every exercise at once — for reviewing or correcting the whole workout."
+msgstr "Alla övningar på en gång — för att granska eller rätta hela passet."
+
+msgid "Create or import"
+msgstr "Skapa eller importera"
+
+msgid "Build your own program, or import one someone exported for you."
+msgstr "Bygg ditt eget program, eller importera ett som någon har exporterat åt dig."
+
+msgid "Your programs"
+msgstr "Dina program"
+
+msgid "Open a program to see its workouts and start one."
+msgstr "Öppna ett program för att se dess pass och starta ett."
+
+msgid "Ready-made programs"
+msgstr "Färdiga program"
+
+msgid "Copy a built-in program to make it yours. Changing your copy never changes workouts you've already logged."
+msgstr "Kopiera ett inbyggt program för att göra det till ditt. Att ändra din kopia ändrar aldrig pass du redan har loggat."
+
+msgid "A program"
+msgstr "Ett program"
+
+msgid "About the program"
+msgstr "Om programmet"
+
+msgid "Its description and version. Editing a program never changes workouts you've already logged."
+msgstr "Dess beskrivning och version. Att redigera ett program ändrar aldrig pass du redan har loggat."
+
+msgid "Make it yours"
+msgstr "Gör det till ditt"
+
+msgid "This is a template: copy it to a program of your own to edit and use it."
+msgstr "Det här är en mall: kopiera den till ett eget program för att kunna redigera och använda den."
+
+msgid "A program is a set of workouts, each with its exercises, sets, reps and how the weight should progress."
+msgstr "Ett program är en uppsättning pass, vart och ett med sina övningar, set, reps och hur vikten ska öka."
+
+msgid "Add exercises"
+msgstr "Lägg till övningar"
+
+msgid "Add an exercise to a workout and set its target sets and reps."
+msgstr "Lägg till en övning i ett pass och ange dess mål för set och reps."
+
+msgid "Start it"
+msgstr "Starta det"
+
+msgid "Starts a workout with these exercises and targets filled in."
+msgstr "Startar ett pass med dessa övningar och mål ifyllda."
+
+msgid "Add a workout"
+msgstr "Lägg till ett pass"
+
+msgid "For example a second training day."
+msgstr "Till exempel en andra träningsdag."
+
+msgid "Exercise library"
+msgstr "Övningsbibliotek"
+
+msgid "Find an exercise"
+msgstr "Hitta en övning"
+
+msgid "Search by name, or filter by muscle group and equipment."
+msgstr "Sök på namn, eller filtrera på muskelgrupp och utrustning."
+
+msgid "Your own exercises"
+msgstr "Dina egna övningar"
+
+msgid "Missing something? Add it — only you will see it."
+msgstr "Saknas något? Lägg till det — bara du ser det."
+
+msgid "An exercise"
+msgstr "En övning"
+
+msgid "Your best lifts for this exercise, kept up to date automatically."
+msgstr "Dina bästa lyft i den här övningen, uppdaterade automatiskt."
+
+msgid "Your estimated one-rep max and volume for this exercise over time."
+msgstr "Din uppskattade enrepsmax och volym för den här övningen över tid."
+
+msgid "Time range"
+msgstr "Tidsperiod"
+
+msgid "Everything on this page follows the range you pick here."
+msgstr "Allt på den här sidan följer perioden du väljer här."
+
+msgid "Summary"
+msgstr "Sammanfattning"
+
+msgid "Workouts, time spent training and total volume lifted in the range."
+msgstr "Pass, tid som lagts på träning och total lyft volym under perioden."
+
+msgid "One exercise"
+msgstr "En övning"
+
+msgid "Pick an exercise to see how its strength has developed."
+msgstr "Välj en övning för att se hur dess styrka har utvecklats."
+
+msgid "Weekly volume"
+msgstr "Volym per vecka"
+
+msgid "How much you lifted each week. The table under the chart has exact figures."
+msgstr "Hur mycket du lyfte varje vecka. Tabellen under diagrammet har exakta siffror."
+
+msgid "Muscle groups"
+msgstr "Muskelgrupper"
+
+msgid "Which muscles got the most work — handy for spotting imbalances."
+msgstr "Vilka muskler som fick mest arbete — praktiskt för att upptäcka obalanser."
+
+msgid "Progress for an exercise"
+msgstr "Framsteg för en övning"
+
+msgid "Choose how far back to look."
+msgstr "Välj hur långt bakåt du vill se."
+
+msgid "The heaviest single rep you could likely lift, estimated from your sets. A rising line means you're getting stronger."
+msgstr "Den tyngsta enkelrepetition du sannolikt skulle klara, uppskattad från dina set. En stigande linje betyder att du blir starkare."
+
+msgid "Current records"
+msgstr "Aktuella rekord"
+
+msgid "Heaviest weight, best estimated 1RM, most reps and more."
+msgstr "Tyngsta vikt, bästa uppskattade 1RM, flest reps och mer."
+
+msgid "The most weight you've lifted for each number of reps."
+msgstr "Den största vikt du har lyft för varje antal reps."
+
+msgid "What you track"
+msgstr "Vad du följer"
+
+msgid "Body weight, waist, body fat and more. Open one to log a reading."
+msgstr "Kroppsvikt, midja, kroppsfett och mer. Öppna ett för att logga ett värde."
+
+msgid "Your own measurements"
+msgstr "Dina egna mått"
+
+msgid "Add anything else you want to follow."
+msgstr "Lägg till allt annat du vill följa."
+
+msgid "A measurement"
+msgstr "Ett mått"
+
+msgid "Your current value and how it has changed since you started."
+msgstr "Ditt nuvarande värde och hur det har förändrats sedan du började."
+
+msgid "Log a reading"
+msgstr "Logga ett värde"
+
+msgid "Enter today's value — or an earlier date to catch up."
+msgstr "Ange dagens värde — eller ett tidigare datum för att komma ikapp."
+
+msgid "Every reading, newest first, with edit and delete."
+msgstr "Alla värden, nyast först, med redigering och borttagning."
+
+msgid "Activity types"
+msgstr "Aktivitetstyper"
+
+msgid "Running, cycling, walking and more. Open one to log it."
+msgstr "Löpning, cykling, promenader och mer. Öppna en för att logga den."
+
+msgid "Your own types"
+msgstr "Dina egna typer"
+
+msgid "Add any other activity you want to track."
+msgstr "Lägg till vilken annan aktivitet du vill följa."
+
+msgid "An activity"
+msgstr "En aktivitet"
+
+msgid "Date, duration and, if you like, distance and notes."
+msgstr "Datum, längd och, om du vill, sträcka och anteckningar."
+
+msgid "Everything you've logged of this activity."
+msgstr "Allt du har loggat av den här aktiviteten."
+
+msgid "Nutrition overview"
+msgstr "Kostöversikt"
+
+msgid "Diary, foods, recipes, diet plans, calculators and statistics."
+msgstr "Dagbok, livsmedel, recept, kostplaner, kalkylatorer och statistik."
+
+msgid "Training or rest day"
+msgstr "Tränings- eller vilodag"
+
+msgid "Whether you've completed a workout today. It's shown for context only."
+msgstr "Om du har slutfört ett pass i dag. Det visas bara som information."
+
+msgid "What you've eaten today against your targets."
+msgstr "Vad du har ätit i dag jämfört med dina mål."
+
+msgid "Target check"
+msgstr "Målkontroll"
+
+msgid "Compares your weight trend with your goal and may suggest a new target. Nothing changes unless you accept it."
+msgstr "Jämför din vikttrend med ditt mål och kan föreslå ett nytt mål. Inget ändras om du inte godkänner det."
+
+msgid "Calories and macros, worked out from your profile and goal."
+msgstr "Kalorier och makron, beräknade från din profil och ditt mål."
+
+msgid "Your goal"
+msgstr "Ditt mål"
+
+msgid "Lose, keep or gain — and how fast. Change it at any time."
+msgstr "Gå ner, behålla eller gå upp — och hur snabbt. Ändra det när som helst."
+
+msgid "Pick a day"
+msgstr "Välj en dag"
+
+msgid "Move a day at a time, or pick any date to fill in."
+msgstr "Flytta en dag i taget, eller välj valfritt datum att fylla i."
+
+msgid "Day total"
+msgstr "Dagens summa"
+
+msgid "Calories and macros eaten on this day."
+msgstr "Kalorier och makron som ätits den här dagen."
+
+msgid "Meals"
+msgstr "Måltider"
+
+msgid "Each meal lists what you logged. “Save as recipe” turns a meal you eat often into a recipe you can log in one tap."
+msgstr "Varje måltid listar det du loggat. ”Spara som recept” gör en måltid du ofta äter till ett recept du kan logga med ett tryck."
+
+msgid "Search, scan a barcode, or enter macros straight in."
+msgstr "Sök, skanna en streckkod eller ange makron direkt."
+
+msgid "Copy a day"
+msgstr "Kopiera en dag"
+
+msgid "Eating the same as yesterday? Copy the whole day in one go."
+msgstr "Äter du samma som i går? Kopiera hela dagen på en gång."
+
+msgid "Adding food"
+msgstr "Lägga till mat"
+
+msgid "Which meal"
+msgstr "Vilken måltid"
+
+msgid "Everything you add on this page goes to the meal chosen here."
+msgstr "Allt du lägger till på den här sidan hamnar i måltiden som väljs här."
+
+msgid "Search or scan"
+msgstr "Sök eller skanna"
+
+msgid "Type a name or scan a barcode. Your own foods show first; Open Food Facts can be searched too. The amount is prefilled with what you logged last time."
+msgstr "Skriv ett namn eller skanna en streckkod. Dina egna livsmedel visas först; Open Food Facts kan också sökas. Mängden är förifylld med det du loggade senast."
+
+msgid "Eating out? Type in the meal's calories and macros without creating a food for it."
+msgstr "Äter du ute? Skriv in måltidens kalorier och makron utan att skapa ett livsmedel för den."
+
+msgid "The foods you add most often, one tap away."
+msgstr "De livsmedel du lägger till oftast, ett tryck bort."
+
+msgid "Add foods"
+msgstr "Lägg till livsmedel"
+
+msgid "Create your own, or browse Open Food Facts by category."
+msgstr "Skapa ett eget, eller bläddra i Open Food Facts efter kategori."
+
+msgid "Search Open Food Facts or scan a barcode to bring a product into your library."
+msgstr "Sök i Open Food Facts eller skanna en streckkod för att lägga till en produkt i ditt bibliotek."
+
+msgid "Your library"
+msgstr "Ditt bibliotek"
+
+msgid "Filter and sort every food you can log. Newest first by default."
+msgstr "Filtrera och sortera alla livsmedel du kan logga. Nyast först som standard."
+
+msgid "A food"
+msgstr "Ett livsmedel"
+
+msgid "Nutrition facts"
+msgstr "Näringsvärden"
+
+msgid "Laid out like a package label: energy, fat, carbohydrate, fibre, protein and salt — then any vitamins and minerals that are known."
+msgstr "Uppställt som på en förpackning: energi, fett, kolhydrat, fiber, protein och salt — sedan de vitaminer och mineraler som är kända."
+
+msgid "Combine foods into a recipe once, then log a serving in one tap."
+msgstr "Kombinera livsmedel till ett recept en gång och logga sedan en portion med ett tryck."
+
+msgid "Ready-made recipes everyone can use."
+msgstr "Färdiga recept som alla kan använda."
+
+msgid "A recipe"
+msgstr "Ett recept"
+
+msgid "The foods in it and their amounts. Nutrition is worked out from these."
+msgstr "Livsmedlen i det och deras mängder. Näringsvärdena räknas fram från dessa."
+
+msgid "Add servings of this recipe to your diary."
+msgstr "Lägg till portioner av det här receptet i din dagbok."
+
+msgid "Create a plan"
+msgstr "Skapa en plan"
+
+msgid "A plan is built for you from your foods and recipes to hit your targets. You can adjust every item afterwards."
+msgstr "En plan byggs åt dig av dina livsmedel och recept för att nå dina mål. Du kan justera varje del efteråt."
+
+msgid "A diet plan"
+msgstr "En kostplan"
+
+msgid "Active plan"
+msgstr "Aktiv plan"
+
+msgid "The active plan is shown on the nutrition overview each day."
+msgstr "Den aktiva planen visas i kostöversikten varje dag."
+
+msgid "Each meal's items and how close they come to its calorie budget."
+msgstr "Varje måltids delar och hur nära de kommer måltidens kaloribudget."
+
+msgid "Log the plan"
+msgstr "Logga planen"
+
+msgid "Copy a day of the plan into your diary as if you'd eaten it."
+msgstr "Kopiera en dag från planen till din dagbok som om du hade ätit den."
+
+msgid "Energy use, macros, body fat, water, BMI and more. They only calculate — nothing is saved or changed."
+msgstr "Energiförbrukning, makron, kroppsfett, vatten, BMI och mer. De räknar bara — inget sparas eller ändras."
+
+msgid "Median daily calories and macros. Days with nothing logged don't count, and one barely-logged day doesn't drag the figure down."
+msgstr "Median för dagliga kalorier och makron. Dagar utan loggning räknas inte, och en knappt loggad dag drar inte ner värdet."
+
+msgid "Longer and shorter periods"
+msgstr "Längre och kortare perioder"
+
+msgid "The same medians for a week up to everything you've ever logged."
+msgstr "Samma medianer från en vecka upp till allt du någonsin har loggat."
+
+msgid "Each of the last 30 days, with the exact figures in a table below."
+msgstr "Var och en av de senaste 30 dagarna, med exakta siffror i en tabell nedanför."
+
+msgid "Overview, routines, the stretch library and your history."
+msgstr "Översikt, rutiner, stretchbiblioteket och din historik."
+
+msgid "Your streak"
+msgstr "Din streak"
+
+msgid "Days in a row with stretching, and your totals."
+msgstr "Dagar i rad med stretching, och dina totaler."
+
+msgid "A guided session times every stretch for you."
+msgstr "Ett guidat pass tar tid på varje stretchövning åt dig."
+
+msgid "Log it afterwards"
+msgstr "Logga i efterhand"
+
+msgid "Stretched without the timer? Log just how long you stretched."
+msgstr "Stretchade du utan timern? Logga bara hur länge du stretchade."
+
+msgid "A routine"
+msgstr "En rutin"
+
+msgid "About the routine"
+msgstr "Om rutinen"
+
+msgid "How many stretches it has and roughly how long it takes."
+msgstr "Hur många stretchövningar den har och ungefär hur lång tid den tar."
+
+msgid "Each stretch with its hold time, sets and sides."
+msgstr "Varje stretchövning med hålltid, set och sidor."
+
+msgid "Opens the guided player."
+msgstr "Öppnar den guidade spelaren."
+
+msgid "Add stretches and reorder them — in your own routines."
+msgstr "Lägg till stretchövningar och ändra ordningen — i dina egna rutiner."
+
+msgid "The timer"
+msgstr "Timern"
+
+msgid "Counts down every hold and rest, with a chime between them. Pause, add or remove 10 seconds, or skip. Leaving the page keeps your place."
+msgstr "Räknar ner varje hållning och vila, med ett pling emellan. Pausa, lägg till eller dra av 10 sekunder, eller hoppa över. Du behåller din plats även om du lämnar sidan."
+
+msgid "Mark a stretch done or skipped yourself if you prefer."
+msgstr "Markera en stretchövning som klar eller överhoppad själv om du vill."
+
+msgid "Saves the session to your history."
+msgstr "Sparar passet i din historik."
+
+msgid "Search for people on this server. Friends can message you and see the progress you choose to share."
+msgstr "Sök efter personer på den här servern. Vänner kan skicka meddelanden till dig och se de framsteg du väljer att dela."
+
+msgid "One conversation per friend."
+msgstr "En konversation per vän."
+
+msgid "Every group you're in has its own chat."
+msgstr "Varje grupp du är med i har sin egen chatt."
+
+msgid "Create a group"
+msgstr "Skapa en grupp"
+
+msgid "Train together: invite friends or share an invite link."
+msgstr "Träna tillsammans: bjud in vänner eller dela en inbjudningslänk."
+
+msgid "Units, language, timezone, theme, and which sections you use."
+msgstr "Enheter, språk, tidszon, tema och vilka delar du använder."
+
+msgid "Messages, friends and groups."
+msgstr "Meddelanden, vänner och grupper."
+
+msgid "Everything you've logged is yours — browse it or download it."
+msgstr "Allt du har loggat är ditt — bläddra i det eller ladda ner det."
+
+msgid "Tutorials"
+msgstr "Guider"
+
+msgid "Replay any tour, or turn tutorials on or off."
+msgstr "Spela upp valfri guide igen, eller slå på eller av guiderna."
+
+msgid "Tutorial settings saved."
+msgstr "Guideinställningarna sparades."
+
+#, python-format
+msgid "“%(title)s” will start again the next time you open it."
+msgstr "”%(title)s” startar igen nästa gång du öppnar den."
+
+msgid "Every tutorial will start again the next time you open its page."
+msgstr "Varje guide startar igen nästa gång du öppnar dess sida."
+
 msgid "Choose your language"
 msgstr "Välj ditt språk"
+
+msgid "Help"
+msgstr "Hjälp"
+
+msgid "Replay the guided tour of any page, or turn tutorials on or off."
+msgstr "Spela upp guiden för valfri sida igen, eller slå på eller av guiderna."
+
+msgid "Show each page's tutorial the first time I open it"
+msgstr "Visa sidans guide första gången jag öppnar den"
+
+msgid "Off: no tutorial starts by itself. You can still start any of them below."
+msgstr "Av: ingen guide startar av sig själv. Du kan fortfarande starta vilken som helst nedan."
+
+msgid "Seen"
+msgstr "Sedd"
+
+msgid "Not seen yet"
+msgstr "Inte sedd än"
+
+msgid "Show again"
+msgstr "Visa igen"
+
+msgid "Show all tutorials again"
+msgstr "Visa alla guider igen"
+
+msgid "Log it"
+msgstr "Logga"
+
+msgctxt "tutorial"
+msgid "Next"
+msgstr "Nästa"
+
+msgctxt "tutorial"
+msgid "Previous"
+msgstr "Föregående"
+
+msgctxt "tutorial"
+msgid "Done"
+msgstr "Klar"
 
 #~ msgid "Back to home"
 #~ msgstr "Tillbaka till hem"
@@ -9101,8 +9697,6 @@ msgstr "Välj ditt språk"
 #~ msgid "+ Add food"
 #~ msgstr "+ Lägg till livsmedel"
 
-#~ msgid "Log it"
-#~ msgstr "Logga"
 
 #~ msgid "+ New recipe"
 #~ msgstr "+ Nytt recept"

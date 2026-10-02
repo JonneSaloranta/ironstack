@@ -1918,8 +1918,9 @@ class BottomNavTests(TestCase):
         not the actual training-volume/PR/strength-trend analytics page —
         a mismatch between the label and where it actually led."""
         response = self.client.get(reverse("dashboard"))
+        progress_url = reverse("analytics:dashboard")
         self.assertContains(
-            response, f'href="{reverse("analytics:dashboard")}" aria-label="Progress"'
+            response, f'href="{progress_url}" data-tour="nav-progress" aria-label="Progress"'
         )
 
     def test_only_progress_is_current_on_the_analytics_dashboard(self):

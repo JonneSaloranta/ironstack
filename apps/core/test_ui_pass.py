@@ -201,7 +201,7 @@ class SecondPassTests(TestCase):
 
     def test_profile_preferences_are_collapsed_until_they_have_errors(self):
         response = self.client.get(reverse("profile"))
-        self.assertContains(response, '<details class="preferences" >')
+        self.assertContains(response, 'class="preferences" >')
 
     def test_dashboard_offers_a_body_weight_shortcut(self):
         MeasurementType.objects.get_or_create(
