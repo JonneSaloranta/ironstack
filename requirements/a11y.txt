@@ -18,4 +18,4 @@
 # should be forced to carry. Only .github/workflows/ci.yml's dedicated
 # `accessibility` job, and anyone locally running
 # `pytest -m accessibility`, need this file at all.
-playwright>=1.62,<2.0
+playwright>=1.63.0,<2.0
