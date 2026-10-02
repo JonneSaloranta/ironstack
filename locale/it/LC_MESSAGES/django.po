@@ -9804,6 +9804,9 @@ msgid_plural "The diet-plan builder only suggests this recipe for these meals."
 msgstr[0] "Il generatore di piani alimentari suggerisce questa ricetta solo per questo pasto."
 msgstr[1] "Il generatore di piani alimentari suggerisce questa ricetta solo per questi pasti."
 
+msgid "Photo"
+msgstr "Foto"
+
 #~ msgid "Back to home"
 #~ msgstr "Torna alla home"
 

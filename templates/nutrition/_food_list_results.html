@@ -12,14 +12,14 @@ already does.
 {% endcomment %}
 {% if foods %}
   <div class="table-wrap">
-    <table class="set-table">
+    <table class="set-table list-table">
       <thead>
-        <tr><th scope="col"></th><th scope="col">{% trans "Name" %}</th><th scope="col">{% trans "Calories" %}</th></tr>
+        <tr><th scope="col" class="cell-fit"><span class="visually-hidden">{% trans "Photo" %}</span></th><th scope="col">{% trans "Name" %}</th><th scope="col" class="cell-number">{% trans "Calories" %}</th></tr>
       </thead>
       <tbody>
         {% for food in foods %}
           <tr>
-            <td>
+            <td class="cell-fit">
               {% if food.image_thumb_url or food.image_url %}
                 {% comment %}
                   image_thumb_url first — OFF's own smaller
@@ -35,8 +35,8 @@ already does.
                 <div class="food-thumb food-thumb-placeholder" aria-hidden="true"></div>
               {% endif %}
             </td>
-            <td><a class="inline-item-link" href="{% url 'nutrition:food-detail' food.pk %}">{{ food.name }}</a>{% if food.brand %} <span class="text-muted">({{ food.brand }})</span>{% endif %}{% include "nutrition/_nutri_score_badge.html" %}</td>
-            <td>{{ food.calories }} kcal / {{ food.serving_size }} {{ food.serving_unit }}</td>
+            <td class="cell-text"><a class="inline-item-link" href="{% url 'nutrition:food-detail' food.pk %}">{{ food.name }}</a>{% if food.brand %} <span class="text-muted">({{ food.brand }})</span>{% endif %}{% include "nutrition/_nutri_score_badge.html" %}</td>
+            <td class="cell-number stat-figure">{{ food.calories }} kcal<br><span class="text-muted">/ {{ food.serving_size|nutrient_amount }} {{ food.serving_unit }}</span></td>
           </tr>
         {% endfor %}
       </tbody>

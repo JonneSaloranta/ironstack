@@ -5809,6 +5809,24 @@ them (prefetched — the recipe list's pinned query count went 12 → 13,
 constant); export writes `meal_slots` as a list of names and import still
 accepts the old single `meal_slot`.
 
+A layout audit (Playwright, 360/390/1280px, every argument-less page plus
+detail pages, a user with long Finnish names and unbreakable compound
+words) found: `.card-action-row` wrapped its button under long text, so
+buttons jumped around within one list (food lists, diary, recipes,
+calculators, clients); long words ran past cards and the screen; long
+Finnish page titles overflowed; the food list table pushed its calorie
+column off-screen. Fixes are in the shared CSS: the row's text column
+wraps and its actions never move (an action group stacks on phones, sits
+side by side from 768px — independent of the text), `:nth-child(1 of
+:not(input[type=hidden]))` so a form row's CSRF input isn't taken for the
+text, `overflow-wrap: anywhere` in cards and headings but not buttons
+("Poista" broke into "Po/ist/a" until buttons were excluded), `.list-table`
+for list tables, and the diary's meal header became an `h2.card-title`.
+`apps/core/test_layout.py` keeps it that way; checked that it fails (37
+findings) with the old row CSS. It creates its own meal slots/program
+rather than relying on seed data, because a live-server test empties the
+database and a `--reuse-db` re-run would otherwise start without them.
+
 ## Faster test suite
 
 The full suite had grown to about 50 minutes. Measured in the dev

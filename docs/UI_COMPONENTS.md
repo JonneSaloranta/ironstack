@@ -78,6 +78,21 @@ There are exactly two `<h2>` styles:
 | Sub-group label in a long form | `.field-group-label` | profile preferences |
 | Collapsible section | `<details class="card preferences">` + `<summary><h2 class="card-title no-margin">` (add `open` when its form has errors) | profile preferences, diary quick entry |
 
+**Rows must not depend on their text's length.** In a `.card-action-row`
+the first child (hidden inputs skipped) is the text column: it takes the
+remaining width and wraps inside itself, long compound words included. The
+actions never shrink and never move under the text; a group of several
+(`<div class="row">`, e.g. a quantity box + Add, Edit + Delete) is stacked
+on a phone and side by side from 768px — the same on every row. Don't use a
+`.card-action-row` for two pieces of text (a title and its totals): use an
+`h2.card-title` and a `<p>`. A list shown as a table uses `.list-table` with
+`.cell-text` (wraps, takes the room), `.cell-number`/`.cell-fit` (narrow,
+no wrap). Long words wrap everywhere in cards and headings; never inside a
+button. `apps/core/test_layout.py` (browser suite, `-m accessibility`)
+renders the variable-content pages at 360px with long Finnish content and
+fails on overflow or misaligned row actions — add a page there when you add
+one whose content varies.
+
 Numbers that should line up (weights, reps, macros, dates in tables) get
 `.stat-figure` (monospace, tabular numerals).
 

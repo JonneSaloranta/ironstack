@@ -42,6 +42,10 @@ narrated summary of the same version.
 - A recipe can be meant for several meals (e.g. both lunch and dinner)
   instead of exactly one or "any"; the diet-plan builder suggests it for
   each of them. Recipe files exported before this still import.
+- Layout with long names: list rows keep their buttons in the same place
+  whatever the text's length (they used to drop under a long name), long
+  words wrap instead of running off the screen, and the food list's
+  table fits a phone screen.
 - Sharing a program or diet plan with clients: instead of a checkbox list
   of every client, search for a client and add them to a list, where each
   one can be removed again.

@@ -906,26 +906,66 @@ abbr[title]:focus::after {
 .card-action-row {
   display: flex;
   align-items: center;
-  /* Mobile-first: on a narrow viewport a long label (translations run
-     noticeably longer than English — German/Finnish-style compound
-     words in particular can be one long unbreakable "word") can no
-     longer force the row past the viewport edge. Without this, a flex
-     item's default min-width:auto refuses to shrink text below its
-     longest unbreakable run, and with no wrap the row just overflows
-     the card instead of breaking onto a second line. */
-  flex-wrap: wrap;
+  /* Text on the left, actions on the right — always, whatever the text's
+     length. This used to wrap (flex-wrap: wrap), which made a row with a
+     long name drop its button onto a line of its own while its
+     neighbours kept theirs on the right, so the buttons jumped around a
+     list (owner-reported on the food lists). Now the text column takes
+     the remaining space and wraps inside itself instead, breaking even a
+     long unbreakable compound word (overflow-wrap: anywhere) rather
+     than pushing the row past the card. */
   justify-content: space-between;
   gap: 0.5rem 1rem;
 }
 
-/* The text side (name/description) must be allowed to shrink below
-   its own min-content width, or the button(s) on the right get
-   pushed past the card's edge on a narrow screen — the classic
-   flexbox overflow trap. Buttons stay their natural size
-   (flex-shrink: 0 below) since shrinking *those* would just clip the
-   label instead of wrapping the row. */
-.card-action-row > *:first-child {
+/* The text side may shrink below its min-content width (the classic
+   flexbox overflow trap otherwise pushes the buttons off the card).
+   "First" skips hidden inputs: a <form class="card-action-row"> starts
+   with its CSRF token. */
+.card-action-row > :nth-child(1 of :not(input[type="hidden"])) {
+  flex: 1 1 auto;
   min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+/* The actions never shrink and never move under the text. A group of
+   several (a quantity box and a button, Edit + Delete) is laid out the
+   same way on every row whatever the text's length — stacked on a phone,
+   where side by side would squeeze the text to a sliver, side by side
+   from tablet width up. (It used to wrap only when the text was long,
+   so neighbouring rows disagreed.) */
+.card-action-row > :not(:nth-child(1 of :not(input[type="hidden"]))) {
+  flex: 0 0 auto;
+}
+
+.card-action-row > .row {
+  flex-direction: column;
+  flex-wrap: nowrap;
+  align-items: stretch;
+}
+
+.card-action-row > .row > * {
+  margin: 0;
+}
+
+.card-action-row > .row button,
+.card-action-row > .row .button-secondary,
+.card-action-row > .row .button-danger {
+  width: 100%;
+  justify-content: center;
+}
+
+@media (min-width: 768px) {
+  .card-action-row > .row {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .card-action-row > .row button,
+  .card-action-row > .row .button-secondary,
+  .card-action-row > .row .button-danger {
+    width: auto;
+  }
 }
 
 .card-action-row .button-secondary {
@@ -1665,6 +1705,8 @@ h2 {
      everything keeps every row's content flush with its own top edge
      regardless of how tall any one cell's content happens to be. */
   vertical-align: top;
+}
+
 /* A food's nutrition table (templates/nutrition/food_detail.html), read
    like a package label: nutrient names in normal weight, amounts right-
    aligned so they line up, "of which" rows indented under their parent. */
@@ -3119,7 +3161,7 @@ h2.card-title {
 .text-center { text-align: center; }
 .justify-center { justify-content: center; }
 .invisible { visibility: hidden; }
-.qty-input { width: 5rem; }
+.qty-input { width: 6.5rem; }
 .wrap-pre { overflow-x: auto; white-space: pre-wrap; }
 .mono-text { font-family: var(--font-mono); font-size: var(--text-base); }
 .stat-value-lg { font-size: 2rem; font-weight: bold; margin: var(--space-2) 0; }
@@ -3209,6 +3251,7 @@ h2.card-title {
 .stretch-player-instructions {
   margin-top: 0.75rem;
 }
+
 /* Onboarding's first step (templates/accounts/_onboarding_modal.html):
    one big, easy-to-tap row per language. */
 .language-choices {
@@ -3451,5 +3494,49 @@ h2.card-title {
 .picker-remove:hover,
 .picker-remove:focus-visible {
   color: var(--color-danger);
+}
+
+/* Long words — Finnish/Estonian compounds, a product name, a username —
+   wrap inside their box instead of running past the card or the screen
+   (owner-reported layout audit). Page titles also hyphenate where the
+   browser knows the language (<html lang>). */
+.card,
+.top-bar h1,
+main h2 {
+  overflow-wrap: anywhere;
+}
+
+.top-bar h1 {
+  hyphens: auto;
+}
+
+/* ...but never inside a button: its label breaks only between words,
+   so a narrow row squeezes the text column, not "Poista" into
+   "Po/ist/a". */
+button,
+.button,
+.button-secondary,
+.button-danger,
+.button-link {
+  overflow-wrap: normal;
+}
+
+/* A list shown as a table (templates/nutrition/_food_list_results.html):
+   the text column takes the room and wraps — long names and unbreakable
+   compound words included — while the narrow columns keep their size,
+   so nothing is pushed off the right edge of a phone. */
+.list-table .cell-text {
+  width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.list-table .cell-fit,
+.list-table .cell-number {
+  white-space: nowrap;
+  width: 1%;
+}
+
+.list-table .cell-number {
+  text-align: right;
 }
 

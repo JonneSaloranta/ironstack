@@ -9706,6 +9706,9 @@ msgid_plural "The diet-plan builder only suggests this recipe for these meals."
 msgstr[0] "Toitumiskava koostaja soovitab seda retsepti ainult sellele toidukorrale."
 msgstr[1] "Toitumiskava koostaja soovitab seda retsepti ainult nendele toidukordadele."
 
+msgid "Photo"
+msgstr "Foto"
+
 #~ msgid "Back to home"
 #~ msgstr "Tagasi avalehele"
 

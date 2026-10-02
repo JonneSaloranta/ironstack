@@ -54,12 +54,10 @@ other page's .top-bar besides holding only a plain, unchanging title.
 
 {% for slot in meal_slots %}
   <div data-tour="diary-meal" class="card" id="meal-slot-{{ slot.pk }}">
-    <div class="card-action-row">
-      <strong>{{ slot.name|translate_content }}</strong>
-      {% if slot.entries %}
-        <span class="text-muted">{{ slot.totals.calories|floatformat:0 }} kcal · {% trans "P" context "macro" %} {{ slot.totals.protein_grams|floatformat:0 }}g · {% trans "C" context "macro" %} {{ slot.totals.carbohydrate_grams|floatformat:0 }}g · {% trans "F" context "macro" %} {{ slot.totals.fat_grams|floatformat:0 }}g</span>
-      {% endif %}
-    </div>
+    <h2 class="card-title">{{ slot.name|translate_content }}</h2>
+    {% if slot.entries %}
+      <p class="text-muted mb-1">{{ slot.totals.calories|floatformat:0 }} kcal · {% trans "P" context "macro" %} {{ slot.totals.protein_grams|floatformat:0 }}g · {% trans "C" context "macro" %} {{ slot.totals.carbohydrate_grams|floatformat:0 }}g · {% trans "F" context "macro" %} {{ slot.totals.fat_grams|floatformat:0 }}g</p>
+    {% endif %}
     {% for entry in slot.entries %}
       <div class="card-action-row py-2">
         <div>
