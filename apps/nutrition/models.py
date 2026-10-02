@@ -487,17 +487,16 @@ class Recipe(TimeStampedModel):
     name = models.CharField(max_length=200)
     servings = models.PositiveSmallIntegerField(default=1)
     instructions = models.TextField(blank=True)
-    # Optional — which meal this recipe is meant for, e.g. a fried-egg
+    # Optional — which meals this recipe is meant for, e.g. a fried-egg
     # recipe tagged "Breakfast" so apps.nutrition.diet_builder's
     # auto-generated plans never put it in a Dinner slot (found live:
     # a chicken & rice recipe suggested as breakfast, oats & yogurt as
     # dinner — the calorie-closest-match heuristic had no idea either
-    # recipe was meant for a specific meal). Null means "any meal" —
-    # every recipe before this field existed, and any recipe a user
-    # doesn't bother tagging, stays eligible everywhere it already was.
-    meal_slot = models.ForeignKey(
-        MealSlot, related_name="+", null=True, blank=True, on_delete=models.SET_NULL
-    )
+    # recipe was meant for a specific meal). Several at once (asked for
+    # directly: a dish that's both a lunch and a dinner) — this replaced
+    # a single `meal_slot`. None picked means "any meal", so an untagged
+    # recipe stays eligible everywhere.
+    meal_slots = models.ManyToManyField(MealSlot, related_name="+", blank=True)
 
     class Meta:
         ordering = ["name"]

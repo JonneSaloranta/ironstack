@@ -9783,6 +9783,18 @@ msgstr "Найдите клиента и добавьте его в список
 msgid "Search for a client and add them to the list: everyone on it can see and import their own copy of this diet plan. Leave the list empty to keep it private."
 msgstr "Найдите клиента и добавьте его в список: каждый в списке сможет увидеть этот план питания и импортировать свою копию. Оставьте список пустым, чтобы он остался личным."
 
+msgid "Meals (optional)"
+msgstr "Приёмы пищи (необязательно)"
+
+msgid "Tick every meal this recipe suits, e.g. both Lunch and Dinner. The diet-plan builder only suggests it for those meals — leave all unticked for a recipe that fits any meal."
+msgstr "Отметьте все приёмы пищи, которым подходит рецепт, например и обед, и ужин. Конструктор плана питания будет предлагать его только для них — оставьте всё неотмеченным, если рецепт подходит для любого приёма пищи."
+
+msgid "The diet-plan builder only suggests this recipe for this meal."
+msgid_plural "The diet-plan builder only suggests this recipe for these meals."
+msgstr[0] "Конструктор плана питания предлагает этот рецепт только для этого приёма пищи."
+msgstr[1] "Конструктор плана питания предлагает этот рецепт только для этих приёмов пищи."
+msgstr[2] "Конструктор плана питания предлагает этот рецепт только для этих приёмов пищи."
+
 #~ msgid "Back to home"
 #~ msgstr "Назад на главную"
 

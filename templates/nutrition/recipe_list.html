@@ -25,7 +25,7 @@
     <div class="card card-action-row">
       <div>
         <strong>{% trans recipe.name %}</strong>
-        {% if recipe.meal_slot %}<span class="tag tag-outline">{{ recipe.meal_slot.name|translate_content }}</span>{% endif %}
+        {% for slot in recipe.meal_slots.all %}<span class="tag tag-outline">{{ slot.name|translate_content }}</span>{% endfor %}
         <p class="text-muted">
           {{ recipe.servings }} {% trans "servings" %}
           — {% blocktrans with calories=recipe.per_serving.calories|floatformat:0 %}{{ calories }} kcal/serving{% endblocktrans %}
@@ -50,7 +50,7 @@
       <div class="card-action-row py-2">
         <div>
           <strong>{% trans recipe.name %}</strong>
-          {% if recipe.meal_slot %}<span class="tag tag-outline">{{ recipe.meal_slot.name|translate_content }}</span>{% endif %}
+          {% for slot in recipe.meal_slots.all %}<span class="tag tag-outline">{{ slot.name|translate_content }}</span>{% endfor %}
           <p class="text-muted">
             {{ recipe.servings }} {% trans "servings" %}
             — {% blocktrans with calories=recipe.per_serving.calories|floatformat:0 %}{{ calories }} kcal/serving{% endblocktrans %}

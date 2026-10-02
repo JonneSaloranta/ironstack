@@ -9695,6 +9695,17 @@ msgstr "Otsi klient ja lisa ta nimekirja: kõik nimekirjas olevad näevad seda k
 msgid "Search for a client and add them to the list: everyone on it can see and import their own copy of this diet plan. Leave the list empty to keep it private."
 msgstr "Otsi klient ja lisa ta nimekirja: kõik nimekirjas olevad näevad seda toitumiskava ja saavad sellest oma koopia importida. Jäta nimekiri tühjaks, et hoida see privaatsena."
 
+msgid "Meals (optional)"
+msgstr "Toidukorrad (valikuline)"
+
+msgid "Tick every meal this recipe suits, e.g. both Lunch and Dinner. The diet-plan builder only suggests it for those meals — leave all unticked for a recipe that fits any meal."
+msgstr "Märgi kõik toidukorrad, millele retsept sobib, nt nii lõuna kui ka õhtusöök. Toitumiskava koostaja soovitab seda ainult nendele toidukordadele — jäta kõik märkimata, kui retsept sobib igale toidukorrale."
+
+msgid "The diet-plan builder only suggests this recipe for this meal."
+msgid_plural "The diet-plan builder only suggests this recipe for these meals."
+msgstr[0] "Toitumiskava koostaja soovitab seda retsepti ainult sellele toidukorrale."
+msgstr[1] "Toitumiskava koostaja soovitab seda retsepti ainult nendele toidukordadele."
+
 #~ msgid "Back to home"
 #~ msgstr "Tagasi avalehele"
 

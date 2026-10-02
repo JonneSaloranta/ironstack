@@ -318,7 +318,7 @@ def export_recipe(recipe):
     """A `Recipe` (with its ingredients/foods), as a plain dict ready
     for `apps.core.data_exchange.build_envelope` — see that module's
     own docstring for why this isn't just
-    `apps.api.serializers.RecipeSerializer`. `meal_slot` is exported
+    `apps.api.serializers.RecipeSerializer`. `meal_slots` are exported
     by name, not id — resolved back to whichever row that name
     matches (system first, then the importing user's own) by
     `import_recipe` below, the same natural-key reasoning
@@ -327,7 +327,7 @@ def export_recipe(recipe):
         "name": recipe.name,
         "servings": recipe.servings,
         "instructions": recipe.instructions,
-        "meal_slot": recipe.meal_slot.name if recipe.meal_slot_id else None,
+        "meal_slots": [slot.name for slot in recipe.meal_slots.order_by("order", "pk")],
         "ingredients": [
             {
                 "quantity": str(ingredient.quantity),
@@ -463,7 +463,16 @@ def import_recipe(user, payload):
         name=name,
         servings=payload.get("servings") or 1,
         instructions=payload.get("instructions", ""),
-        meal_slot=_resolve_meal_slot(user, payload.get("meal_slot")),
+    )
+    # `meal_slot` (a single name) is what files exported before recipes
+    # could have several meals carry — still accepted.
+    slot_names = payload.get("meal_slots")
+    if slot_names is None:
+        slot_names = [payload["meal_slot"]] if payload.get("meal_slot") else []
+    elif isinstance(slot_names, str):
+        slot_names = [slot_names]
+    recipe.meal_slots.set(
+        slot for name in slot_names if (slot := _resolve_meal_slot(user, name)) is not None
     )
     ingredients = []
     for order, ingredient_data in enumerate(payload.get("ingredients") or []):
@@ -1006,7 +1015,8 @@ def create_recipe_from_diary_meal(user, target_date, meal_slot):
     recipe unchanged, the same hint `diet_builder.suggest_item_for_
     calorie_budget` already uses to avoid suggesting a breakfast
     recipe for dinner — a recipe built from what was eaten at
-    breakfast is, definitionally, a breakfast recipe."""
+    breakfast is, definitionally, a breakfast recipe (more meals can be
+    ticked on the recipe afterwards)."""
     from django.utils.translation import gettext
 
     from .models import DiaryEntry, Recipe, RecipeIngredient
@@ -1023,8 +1033,8 @@ def create_recipe_from_diary_meal(user, target_date, meal_slot):
         owner=user,
         name=f"{gettext(meal_slot.name)} — {target_date.isoformat()}",
         servings=1,
-        meal_slot=meal_slot,
     )
+    recipe.meal_slots.set([meal_slot])
     RecipeIngredient.objects.bulk_create(
         RecipeIngredient(recipe=recipe, food=entry.food, quantity=entry.quantity, order=order)
         for order, entry in enumerate(entries)

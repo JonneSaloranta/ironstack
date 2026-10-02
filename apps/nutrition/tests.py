@@ -1259,8 +1259,9 @@ class ExportImportRecipeServiceTests(TestCase):
         breakfast = MealSlot.objects.get(name="Breakfast", owner=None)
         recipe = Recipe.objects.create(
             owner=self.alice, name="Porridge", servings=2,
-            instructions="Cook it.", meal_slot=breakfast,
+            instructions="Cook it.",
         )
+        recipe.meal_slots.set([breakfast])
         RecipeIngredient.objects.create(recipe=recipe, food=food, quantity=Decimal("80"))
 
         imported = self._round_trip(recipe)
@@ -1269,7 +1270,7 @@ class ExportImportRecipeServiceTests(TestCase):
         self.assertEqual(imported.name, "Porridge")
         self.assertEqual(imported.servings, 2)
         self.assertEqual(imported.instructions, "Cook it.")
-        self.assertEqual(imported.meal_slot, breakfast)
+        self.assertEqual(list(imported.meal_slots.all()), [breakfast])
         self.assertNotEqual(imported.pk, recipe.pk)
         ingredient = imported.ingredients.get()
         self.assertEqual(ingredient.food.name, "Oats")
@@ -1278,29 +1279,48 @@ class ExportImportRecipeServiceTests(TestCase):
 
     def test_a_system_meal_slot_is_matched_by_name_not_duplicated(self):
         breakfast = MealSlot.objects.get(name="Breakfast", owner=None)
-        recipe = Recipe.objects.create(owner=self.alice, name="R", meal_slot=breakfast)
+        recipe = Recipe.objects.create(owner=self.alice, name="R")
+        recipe.meal_slots.set([breakfast])
         before_count = MealSlot.objects.filter(owner__isnull=True).count()
 
         imported = self._round_trip(recipe)
 
         after_count = MealSlot.objects.filter(owner__isnull=True).count()
         self.assertEqual(before_count, after_count)
-        self.assertEqual(imported.meal_slot, breakfast)
+        self.assertEqual(list(imported.meal_slots.all()), [breakfast])
 
     def test_a_custom_meal_slot_is_recreated_for_the_importing_user(self):
         custom_slot = MealSlot.objects.create(owner=self.alice, name="Second Breakfast")
-        recipe = Recipe.objects.create(owner=self.alice, name="R", meal_slot=custom_slot)
+        recipe = Recipe.objects.create(owner=self.alice, name="R")
+        recipe.meal_slots.set([custom_slot])
 
         imported = self._round_trip(recipe)
 
-        self.assertEqual(imported.meal_slot.owner, self.bob)
-        self.assertEqual(imported.meal_slot.name, "Second Breakfast")
-        self.assertNotEqual(imported.meal_slot_id, custom_slot.pk)
+        imported_slot = imported.meal_slots.get()
+        self.assertEqual(imported_slot.owner, self.bob)
+        self.assertEqual(imported_slot.name, "Second Breakfast")
+        self.assertNotEqual(imported_slot.pk, custom_slot.pk)
 
     def test_no_meal_slot_stays_none(self):
-        recipe = Recipe.objects.create(owner=self.alice, name="R", meal_slot=None)
+        recipe = Recipe.objects.create(owner=self.alice, name="R")
         imported = self._round_trip(recipe)
-        self.assertIsNone(imported.meal_slot)
+        self.assertFalse(imported.meal_slots.exists())
+
+    def test_several_meal_slots_round_trip(self):
+        lunch = MealSlot.objects.get(name="Lunch", owner=None)
+        dinner = MealSlot.objects.get(name="Dinner", owner=None)
+        recipe = Recipe.objects.create(owner=self.alice, name="R")
+        recipe.meal_slots.set([lunch, dinner])
+        imported = self._round_trip(recipe)
+        self.assertEqual(set(imported.meal_slots.all()), {lunch, dinner})
+
+    def test_a_file_from_before_several_meals_still_imports(self):
+        """Exports used to carry one `meal_slot` name, not a list."""
+        lunch = MealSlot.objects.get(name="Lunch", owner=None)
+        imported = services.import_recipe(
+            self.bob, {"name": "Old", "servings": 1, "meal_slot": "Lunch", "ingredients": []}
+        )
+        self.assertEqual(list(imported.meal_slots.all()), [lunch])
 
     def test_an_off_ingredient_is_re_fetched_live_by_barcode(self):
         off_food = make_food(None, name="Nutella", off_id="3017620422003")
@@ -3974,7 +3994,7 @@ class CreateRecipeFromDiaryMealServiceTests(TestCase):
         )
         self.assertEqual(recipe.owner, self.alice)
         self.assertEqual(recipe.servings, 1)
-        self.assertEqual(recipe.meal_slot, self.breakfast)
+        self.assertEqual(list(recipe.meal_slots.all()), [self.breakfast])
         ingredients = {i.food: i.quantity for i in recipe.ingredients.all()}
         self.assertEqual(ingredients, {self.oats: Decimal("50"), self.milk: Decimal("200")})
 
@@ -4263,6 +4283,21 @@ class RecipeViewTests(TestCase):
         recipe = Recipe.objects.get(name="Bowl")
         self.assertEqual(recipe.owner, self.alice)
 
+    def test_a_recipe_can_be_meant_for_several_meals(self):
+        lunch = MealSlot.objects.get(name="Lunch", owner=None)
+        dinner = MealSlot.objects.get(name="Dinner", owner=None)
+        form_page = self.client.get(reverse("nutrition:recipe-create"))
+        self.assertContains(form_page, 'type="checkbox" name="meal_slots"')
+        self.client.post(
+            reverse("nutrition:recipe-create"),
+            {"name": "Stew", "servings": "2", "instructions": "",
+             "meal_slots": [lunch.pk, dinner.pk]},
+        )
+        recipe = Recipe.objects.get(name="Stew")
+        self.assertEqual(set(recipe.meal_slots.all()), {lunch, dinner})
+        detail = self.client.get(reverse("nutrition:recipe-detail", args=[recipe.pk]))
+        self.assertContains(detail, "only suggests this recipe for these meals")
+
     def test_creating_a_recipe_shows_a_message_pointing_at_adding_ingredients(self):
         response = self.client.post(
             reverse("nutrition:recipe-create"),
@@ -4377,7 +4412,8 @@ class RecipeViewTests(TestCase):
         SeoSettings.objects.create(pk=1)
         # Session auth (2) + one COUNT and one SELECT per independent
         # Paginator ("your recipes"/"template recipes" — RecipeListView
-        # docstring) + one bulk ingredient query + base.html's
+        # docstring) + one bulk ingredient query + one prefetch of every
+        # listed recipe's meal_slots (Recipe.meal_slots) + base.html's
         # training-FAB in-progress-session check + apps.core.
         # context_processors.seo's own settings lookup + four more
         # from apps.social.context_processors.social_badge (one cheap
@@ -4393,7 +4429,7 @@ class RecipeViewTests(TestCase):
         # to this view is fine to bump this number a little; a query
         # count that scales with the number of recipes is the actual
         # regression to catch.
-        with self.assertNumQueries(12):
+        with self.assertNumQueries(13):
             self.client.get(reverse("nutrition:recipe-list"))
 
     def test_the_back_link_returns_to_the_nutrition_dashboard(self):
@@ -4674,6 +4710,25 @@ class SuggestItemForCalorieBudgetTests(TestCase):
         result = diet_builder.suggest_item_for_calorie_budget(self.alice, Decimal("800"))
         self.assertEqual(result.recipe, recipe)
         self.assertIsNone(result.food)
+
+    def test_a_recipe_tagged_for_several_meals_is_suggested_for_each_of_them(self):
+        chicken = make_food(self.alice, name="Chicken", calories=165)
+        recipe = Recipe.objects.create(owner=self.alice, name="Stew", servings=1)
+        RecipeIngredient.objects.create(recipe=recipe, food=chicken, quantity=Decimal("500"))
+        lunch = MealSlot.objects.get(name="Lunch", owner=None)
+        dinner = MealSlot.objects.get(name="Dinner", owner=None)
+        breakfast = MealSlot.objects.get(name="Breakfast", owner=None)
+        recipe.meal_slots.set([lunch, dinner])
+        make_food(self.alice, name="Snack bar", calories=200)
+        for slot in (lunch, dinner):
+            result = diet_builder.suggest_item_for_calorie_budget(
+                self.alice, Decimal("800"), meal_slot=slot
+            )
+            self.assertEqual(result.recipe, recipe, slot.name)
+        result = diet_builder.suggest_item_for_calorie_budget(
+            self.alice, Decimal("800"), meal_slot=breakfast
+        )
+        self.assertIsNone(result.recipe)
 
     def test_shared_foods_are_eligible_too(self):
         make_food(None, name="Shared chicken", calories=165)

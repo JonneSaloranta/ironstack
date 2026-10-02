@@ -324,20 +324,21 @@ class RecipeForm(forms.ModelForm):
         from .models import Recipe
 
         model = Recipe
-        fields = ["name", "servings", "instructions", "meal_slot"]
+        fields = ["name", "servings", "instructions", "meal_slots"]
+        widgets = {"meal_slots": forms.CheckboxSelectMultiple}
 
     def __init__(self, *args, user, **kwargs):
         from . import services
 
         super().__init__(*args, **kwargs)
-        self.fields["meal_slot"].label = _("Meal (optional)")
-        self.fields["meal_slot"].empty_label = _("Any meal")
-        self.fields["meal_slot"].required = False
-        self.fields["meal_slot"].help_text = _(
-            "If set, the diet-plan builder only ever suggests this recipe for that "
-            "meal — leave as \"Any meal\" for a recipe that fits anywhere."
+        self.fields["meal_slots"].label = _("Meals (optional)")
+        self.fields["meal_slots"].required = False
+        self.fields["meal_slots"].help_text = _(
+            "Tick every meal this recipe suits, e.g. both Lunch and Dinner. The "
+            "diet-plan builder only suggests it for those meals — leave all unticked "
+            "for a recipe that fits any meal."
         )
-        self.fields["meal_slot"].queryset = services.visible_meal_slots(user)
+        self.fields["meal_slots"].queryset = services.visible_meal_slots(user)
 
 
 class RecipeIngredientQuantityForm(forms.ModelForm):

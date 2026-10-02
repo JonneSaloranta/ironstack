@@ -5799,6 +5799,16 @@ templates/, which needed `FORM_RENDERER = TemplatesSetting` (+
 wrapped whole checkbox lists (also the exercise form's muscle groups)
 inside one `<label>`; it now does that only for a single checkbox.
 
+## Recipes for several meals, and a layout audit
+
+`Recipe.meal_slot` (FK) became `Recipe.meal_slots` (M2M), asked for
+directly — a dish can be both a lunch and a dinner. Migration 0023 copies
+every existing tag over; `diet_builder.suggest_item_for_calorie_budget`
+treats a recipe as on-topic when it has no meals or the meal is among
+them (prefetched — the recipe list's pinned query count went 12 → 13,
+constant); export writes `meal_slots` as a list of names and import still
+accepts the old single `meal_slot`.
+
 ## Faster test suite
 
 The full suite had grown to about 50 minutes. Measured in the dev

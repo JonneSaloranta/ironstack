@@ -9793,6 +9793,17 @@ msgstr "Cerca un cliente e aggiungilo all'elenco: chiunque sia nell'elenco può 
 msgid "Search for a client and add them to the list: everyone on it can see and import their own copy of this diet plan. Leave the list empty to keep it private."
 msgstr "Cerca un cliente e aggiungilo all'elenco: chiunque sia nell'elenco può vedere questo piano alimentare e importarne una propria copia. Lascia l'elenco vuoto per mantenerlo privato."
 
+msgid "Meals (optional)"
+msgstr "Pasti (facoltativo)"
+
+msgid "Tick every meal this recipe suits, e.g. both Lunch and Dinner. The diet-plan builder only suggests it for those meals — leave all unticked for a recipe that fits any meal."
+msgstr "Seleziona tutti i pasti adatti a questa ricetta, ad es. sia pranzo sia cena. Il generatore di piani alimentari la suggerisce solo per quei pasti — lasciali tutti deselezionati per una ricetta adatta a qualsiasi pasto."
+
+msgid "The diet-plan builder only suggests this recipe for this meal."
+msgid_plural "The diet-plan builder only suggests this recipe for these meals."
+msgstr[0] "Il generatore di piani alimentari suggerisce questa ricetta solo per questo pasto."
+msgstr[1] "Il generatore di piani alimentari suggerisce questa ricetta solo per questi pasti."
+
 #~ msgid "Back to home"
 #~ msgstr "Torna alla home"
 

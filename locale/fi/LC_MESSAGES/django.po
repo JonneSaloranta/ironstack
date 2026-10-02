@@ -9726,6 +9726,17 @@ msgstr "Hae asiakas ja lisää hänet listaan: jokainen listalla oleva voi nähd
 msgid "Search for a client and add them to the list: everyone on it can see and import their own copy of this diet plan. Leave the list empty to keep it private."
 msgstr "Hae asiakas ja lisää hänet listaan: jokainen listalla oleva voi nähdä tämän ruokavaliosuunnitelman ja tuoda siitä oman kopionsa. Jätä lista tyhjäksi, jos haluat pitää sen yksityisenä."
 
+msgid "Meals (optional)"
+msgstr "Ateriat (valinnainen)"
+
+msgid "Tick every meal this recipe suits, e.g. both Lunch and Dinner. The diet-plan builder only suggests it for those meals — leave all unticked for a recipe that fits any meal."
+msgstr "Valitse kaikki ateriat, joille resepti sopii, esim. sekä lounas että päivällinen. Ruokavaliosuunnitelman rakennin ehdottaa sitä vain niille aterioille — jätä kaikki valitsematta, jos resepti sopii mille tahansa aterialle."
+
+msgid "The diet-plan builder only suggests this recipe for this meal."
+msgid_plural "The diet-plan builder only suggests this recipe for these meals."
+msgstr[0] "Ruokavaliosuunnitelman rakennin ehdottaa tätä reseptiä vain tälle aterialle."
+msgstr[1] "Ruokavaliosuunnitelman rakennin ehdottaa tätä reseptiä vain näille aterioille."
+
 #~ msgid "Back to home"
 #~ msgstr "Takaisin etusivulle"
 

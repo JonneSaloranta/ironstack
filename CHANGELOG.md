@@ -39,6 +39,9 @@ narrated summary of the same version.
 - "Most used" foods are paginated instead of capped at ten.
 
 ### Changed
+- A recipe can be meant for several meals (e.g. both lunch and dinner)
+  instead of exactly one or "any"; the diet-plan builder suggests it for
+  each of them. Recipe files exported before this still import.
 - Sharing a program or diet plan with clients: instead of a checkbox list
   of every client, search for a client and add them to a list, where each
   one can be removed again.

@@ -9700,6 +9700,17 @@ msgstr "Sök efter en klient och lägg till hen i listan: alla på listan kan se
 msgid "Search for a client and add them to the list: everyone on it can see and import their own copy of this diet plan. Leave the list empty to keep it private."
 msgstr "Sök efter en klient och lägg till hen i listan: alla på listan kan se den här kostplanen och importera en egen kopia. Lämna listan tom för att hålla den privat."
 
+msgid "Meals (optional)"
+msgstr "Måltider (valfritt)"
+
+msgid "Tick every meal this recipe suits, e.g. both Lunch and Dinner. The diet-plan builder only suggests it for those meals — leave all unticked for a recipe that fits any meal."
+msgstr "Kryssa i alla måltider receptet passar till, t.ex. både lunch och middag. Kostplansbyggaren föreslår det bara för de måltiderna — lämna alla tomma för ett recept som passar till vilken måltid som helst."
+
+msgid "The diet-plan builder only suggests this recipe for this meal."
+msgid_plural "The diet-plan builder only suggests this recipe for these meals."
+msgstr[0] "Kostplansbyggaren föreslår bara det här receptet för den här måltiden."
+msgstr[1] "Kostplansbyggaren föreslår bara det här receptet för de här måltiderna."
+
 #~ msgid "Back to home"
 #~ msgstr "Tillbaka till hem"
 

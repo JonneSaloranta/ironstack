@@ -1021,11 +1021,11 @@ class RecipeListView(LoginRequiredMixin, View):
 
         query = request.GET.get("q", "").strip()
 
-        my_recipes_qs = Recipe.objects.filter(owner=request.user).select_related(
-            "meal_slot"
+        my_recipes_qs = Recipe.objects.filter(owner=request.user).prefetch_related(
+            "meal_slots"
         ).order_by("-created_at")
-        template_recipes_qs = Recipe.objects.filter(owner__isnull=True).select_related(
-            "meal_slot"
+        template_recipes_qs = Recipe.objects.filter(owner__isnull=True).prefetch_related(
+            "meal_slots"
         ).order_by("name")
         if query:
             my_recipes_qs = my_recipes_qs.filter(name__icontains=query)
@@ -1104,6 +1104,7 @@ def recipe_create(request):
         recipe = form.save(commit=False)
         recipe.owner = request.user
         recipe.save()
+        form.save_m2m()
         messages.success(
             request,
             _('"%(name)s" created — now add its ingredients below.') % {"name": recipe.name},

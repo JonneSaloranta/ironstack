@@ -18,9 +18,14 @@
 </div>
 {% include "nutrition/_subnav.html" %}
 
-{% if recipe.meal_slot %}
-  <p class="text-muted">{% blocktrans with meal=recipe.meal_slot.name|translate_content %}Tagged for {{ meal }} — the diet-plan builder only ever suggests this recipe for that meal.{% endblocktrans %}</p>
-{% endif %}
+{% with slots=recipe.meal_slots.all %}
+  {% if slots %}
+    <p class="row">
+      {% for slot in slots %}<span class="tag tag-outline">{{ slot.name|translate_content }}</span>{% endfor %}
+    </p>
+    <p class="text-muted">{% blocktrans count counter=slots|length %}The diet-plan builder only suggests this recipe for this meal.{% plural %}The diet-plan builder only suggests this recipe for these meals.{% endblocktrans %}</p>
+  {% endif %}
+{% endwith %}
 
 {% if recipe.instructions %}
   {% trans recipe.instructions as translated_instructions %}

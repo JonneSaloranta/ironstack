@@ -9667,6 +9667,17 @@ msgstr ""
 msgid "Search for a client and add them to the list: everyone on it can see and import their own copy of this diet plan. Leave the list empty to keep it private."
 msgstr ""
 
+msgid "Meals (optional)"
+msgstr ""
+
+msgid "Tick every meal this recipe suits, e.g. both Lunch and Dinner. The diet-plan builder only suggests it for those meals — leave all unticked for a recipe that fits any meal."
+msgstr ""
+
+msgid "The diet-plan builder only suggests this recipe for this meal."
+msgid_plural "The diet-plan builder only suggests this recipe for these meals."
+msgstr[0] ""
+msgstr[1] ""
+
 #~ msgid "Back to home"
 #~ msgstr "Back to home"
 
