@@ -172,6 +172,19 @@ class TourAnchorTests(TestCase):
 
     def test_every_page_has_a_tour_or_a_reason(self):
         """A new page must either get a tour or be added to NO_TOUR_NEEDED."""
+        import tempfile
+        from pathlib import Path
+        from unittest import mock
+
+        from apps.core import backups
+
+        # The staff-only backup page reads BACKUP_DIR (/app/backups, only
+        # present inside the container) — point it at an empty temp dir.
+        tmpdir = tempfile.TemporaryDirectory()
+        self.addCleanup(tmpdir.cleanup)
+        patcher = mock.patch.object(backups, "BACKUP_DIR", Path(tmpdir.name))
+        patcher.start()
+        self.addCleanup(patcher.stop)
         self.user.is_staff = True
         self.user.save()
         toured = services.tours_by_view_name()
