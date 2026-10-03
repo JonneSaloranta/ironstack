@@ -147,6 +147,38 @@ class AccessTests(TestCase):
         self.assertEqual(access.key_source, KeySource.OWN)
         self.assertEqual(access.provider, "anthropic")
 
+    def test_own_key_uses_the_users_chosen_model(self):
+        services.set_own_key(self.user, "sk-ant-my-own-key-abcdef")
+        self.assertEqual(services.access_for(self.user).model, "claude-opus-5-5")
+        services.set_own_key_options(self.user, model="claude-sonnet-5-5", effort="")
+        self.assertEqual(services.access_for(self.user).model, "claude-sonnet-5-5")
+        services.set_own_key_options(self.user, model="", effort="")
+        self.assertEqual(services.access_for(self.user).model, "claude-opus-5-5")
+
+    @override_settings(ASSISTANT_MODEL="claude-sonnet-5-5")
+    def test_chosen_model_does_not_apply_to_the_shared_key(self):
+        allow_everyone()
+        services.set_own_key_options(self.user, model="claude-haiku-4-5", effort="")
+        self.assertEqual(services.access_for(self.user).model, "claude-sonnet-5-5")
+
+    @override_settings(ASSISTANT_EFFORT="medium")
+    def test_own_key_effort_applies_to_the_next_reply(self):
+        services.enable(self.user)
+        services.set_own_key(self.user, "sk-ant-my-own-key-abcdef")
+        conversation = services.start_conversation(self.user, "Hi")
+        self.assertEqual(services._provider_for(conversation).effort, "medium")
+        services.set_own_key_options(self.user, model="", effort="max")
+        self.assertEqual(services._provider_for(conversation).effort, "max")
+
+    @override_settings(ASSISTANT_EFFORT="low")
+    def test_own_key_effort_does_not_apply_to_the_shared_key(self):
+        allow_everyone()
+        services.enable(self.user)
+        services.set_own_key_options(self.user, model="", effort="max")
+        conversation = services.start_conversation(self.user, "Hi")
+        self.assertEqual(conversation.key_source, KeySource.SHARED)
+        self.assertEqual(services._provider_for(conversation).effort, "low")
+
     def test_turned_off_by_admin_blocks_own_key_too(self):
         services.set_own_key(self.user, "sk-ant-my-own-key-abcdef")
         site = AssistantSettings.load()
@@ -253,6 +285,14 @@ class ConversationTests(TestCase):
             services.start_conversation(self.user, "   ")
         with self.assertRaises(services.AssistantError):
             services.start_conversation(self.user, "x" * (services.MAX_MESSAGE_LENGTH + 1))
+
+    def test_conversation_keeps_the_model_it_started_with(self):
+        services.set_own_key(self.user, "sk-ant-my-own-key-abcdef")
+        services.set_own_key_options(self.user, model="claude-haiku-4-5", effort="")
+        conversation = services.start_conversation(self.user, "Hi")
+        services.set_own_key_options(self.user, model="claude-opus-5-5", effort="")
+        conversation.refresh_from_db()
+        self.assertEqual(conversation.model, "claude-haiku-4-5")
 
     def test_removed_own_key_ends_that_conversation(self):
         services.set_own_key(self.user, "sk-ant-my-own-key-abcdef")
@@ -729,6 +769,24 @@ class ViewTests(TestCase):
         self.assertNotContains(response, "sk-ant-valid-key-0000")
         self.client.post(reverse("assistant:key-remove"))
         self.assertFalse(services.preference_for(self.user).has_own_key)
+
+    def test_model_choice_only_with_own_key(self):
+        url = reverse("assistant:settings")
+        self.assertNotContains(self.client.get(url), reverse("assistant:model-save"))
+        services.set_own_key(self.user, "sk-ant-valid-key-0000")
+        self.assertContains(self.client.get(url), reverse("assistant:model-save"))
+        response = self.client.post(
+            reverse("assistant:model-save"), {"model": "claude-sonnet-5-5", "effort": "xhigh"}
+        )
+        self.assertRedirects(response, url)
+        preference = services.preference_for(self.user)
+        self.assertEqual(preference.own_key_model, "claude-sonnet-5-5")
+        self.assertEqual(preference.own_key_effort, "xhigh")
+        response = self.client.post(reverse("assistant:model-save"), {"effort": "turbo"})
+        self.assertEqual(response.status_code, 200)
+        response = self.client.post(reverse("assistant:model-save"), {"model": "gpt-9"})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(services.preference_for(self.user).own_key_model, "claude-sonnet-5-5")
 
     def test_admin_settings_is_staff_only(self):
         url = reverse("assistant:admin-settings")

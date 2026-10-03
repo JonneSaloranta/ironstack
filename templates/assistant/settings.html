@@ -65,5 +65,16 @@
   </form>
 </div>
 
+{% if preference.has_own_key %}
+  <form class="card" method="post" action="{% url 'assistant:model-save' %}">
+    {% csrf_token %}
+    <h2 class="card-title">{% trans "Model" %}</h2>
+    {% include "core/_form_errors.html" with form=model_form %}
+    {% include "core/_field.html" with field=model_form.model %}
+    {% include "core/_field.html" with field=model_form.effort %}
+    <button type="submit">{% trans "Save" %}</button>
+  </form>
+{% endif %}
+
 <p><a class="button-link" href="{% url 'assistant:home' %}">&larr; {% trans "Back to AI assistant" %}</a></p>
 {% endblock %}

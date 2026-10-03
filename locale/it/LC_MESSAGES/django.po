@@ -10338,3 +10338,55 @@ msgstr "Aiutami a creare un programma di allenamento per il mio obiettivo e i mi
 msgctxt "proposal"
 msgid "Dismiss"
 msgstr "Scarta"
+
+msgid "Claude Opus 5.5 — best plans ($4 / $20)"
+msgstr "Claude Opus 5.5 — i piani migliori ($4 / $20)"
+
+msgid "Claude Sonnet 5.5 — good and half the price ($2 / $10)"
+msgstr "Claude Sonnet 5.5 — buono e a metà prezzo ($2 / $10)"
+
+msgid "Claude Haiku 4.5 — fastest and cheapest, weaker plans ($1 / $5)"
+msgstr "Claude Haiku 4.5 — il più veloce ed economico, piani meno buoni ($1 / $5)"
+
+msgid "Claude Fable 5.1 — most capable, most expensive ($10 / $50)"
+msgstr "Claude Fable 5.1 — il più capace e il più costoso ($10 / $50)"
+
+msgid "Model for your key"
+msgstr "Modello per la tua chiave"
+
+msgid "Prices are per million tokens (input / output), billed to your Anthropic account. New conversations use the model you pick; ongoing ones keep theirs."
+msgstr "I prezzi sono per milione di token (input / output), addebitati sul tuo account Anthropic. Le nuove conversazioni usano il modello scelto; quelle in corso mantengono il loro."
+
+msgid "This instance's default (%(model)s)"
+msgstr "Predefinito di questa istanza (%(model)s)"
+
+
+msgid "Model"
+msgstr "Modello"
+
+msgid "Low — quickest and cheapest; fine for everyday questions"
+msgstr "Basso — il più rapido ed economico; va bene per le domande di tutti i giorni"
+
+msgid "Medium — balanced"
+msgstr "Medio — equilibrato"
+
+msgid "High — more thorough plans, more tokens"
+msgstr "Alto — piani più accurati, più token"
+
+msgid "Extra high — for demanding planning"
+msgstr "Molto alto — per una pianificazione impegnativa"
+
+msgid "Maximum — the most thorough and the most expensive"
+msgstr "Massimo — il più accurato e il più costoso"
+
+msgid "Thinking effort"
+msgstr "Livello di ragionamento"
+
+msgid "How much the model thinks before it answers. More thinking costs more tokens and takes longer. Applies from the next reply on; Claude Haiku ignores it."
+msgstr "Quanto ragiona il modello prima di rispondere. Più ragionamento costa più token e richiede più tempo. Vale dalla prossima risposta; Claude Haiku lo ignora."
+
+msgid "This instance's default (%(effort)s)"
+msgstr "Predefinito di questa istanza (%(effort)s)"
+
+msgid "Model settings saved."
+msgstr "Impostazioni del modello salvate."

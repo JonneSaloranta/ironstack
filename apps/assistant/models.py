@@ -78,6 +78,31 @@ class AssistantSettings(models.Model):
         return "AI assistant settings"
 
 
+class OwnKeyModel(models.TextChoices):
+    """The Claude models a user may pick for their own API key (they pay
+    for it, so the choice is theirs). Blank — the default — follows the
+    instance's own ASSISTANT_MODEL. Kept to current models that support
+    everything apps.assistant.providers sends; prices are per million
+    tokens, input/output."""
+
+    OPUS = "claude-opus-5-5", _("Claude Opus 5.5 — best plans ($4 / $20)")
+    SONNET = "claude-sonnet-5-5", _("Claude Sonnet 5.5 — good and half the price ($2 / $10)")
+    HAIKU = "claude-haiku-4-5", _("Claude Haiku 4.5 — fastest and cheapest, weaker plans ($1 / $5)")
+    FABLE = "claude-fable-5-1", _("Claude Fable 5.1 — most capable, most expensive ($10 / $50)")
+
+
+class Effort(models.TextChoices):
+    """output_config.effort — how much the model thinks before it answers.
+    Every OwnKeyModel except Haiku takes all five (Haiku takes none, and
+    apps.assistant.providers simply doesn't send it there)."""
+
+    LOW = "low", _("Low — quickest and cheapest; fine for everyday questions")
+    MEDIUM = "medium", _("Medium — balanced")
+    HIGH = "high", _("High — more thorough plans, more tokens")
+    XHIGH = "xhigh", _("Extra high — for demanding planning")
+    MAX = "max", _("Maximum — the most thorough and the most expensive")
+
+
 class AssistantPreference(TimeStampedModel):
     """One user's own assistant settings. `consented_at` is the explicit
     opt-in: until a user has read what gets sent where and switched the
@@ -92,6 +117,12 @@ class AssistantPreference(TimeStampedModel):
     # back; the UI only ever shows `api_key_hint`.
     api_key = EncryptedTextField(blank=True, default="", key_setting="ASSISTANT_ENCRYPTION_KEY")
     api_key_hint = models.CharField(max_length=12, blank=True)
+    # Only used with the user's own key; blank follows the instance default.
+    # A conversation keeps the model it started with (Conversation.model).
+    own_key_model = models.CharField(max_length=50, choices=OwnKeyModel.choices, blank=True)
+    # Likewise own-key only, blank = ASSISTANT_EFFORT. Unlike the model it
+    # isn't pinned per conversation: it applies from the next reply on.
+    own_key_effort = models.CharField(max_length=10, choices=Effort.choices, blank=True)
 
     def __str__(self):
         return f"{self.user.username}: assistant preference"

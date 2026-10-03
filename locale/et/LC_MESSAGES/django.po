@@ -10240,3 +10240,55 @@ msgstr "Aita mul koostada treeningkava minu eesmärgi ja ajakava järgi."
 msgctxt "proposal"
 msgid "Dismiss"
 msgstr "Lükka tagasi"
+
+msgid "Claude Opus 5.5 — best plans ($4 / $20)"
+msgstr "Claude Opus 5.5 — parimad kavad ($4 / $20)"
+
+msgid "Claude Sonnet 5.5 — good and half the price ($2 / $10)"
+msgstr "Claude Sonnet 5.5 — hea ja poole odavam ($2 / $10)"
+
+msgid "Claude Haiku 4.5 — fastest and cheapest, weaker plans ($1 / $5)"
+msgstr "Claude Haiku 4.5 — kiireim ja odavaim, nõrgemad kavad ($1 / $5)"
+
+msgid "Claude Fable 5.1 — most capable, most expensive ($10 / $50)"
+msgstr "Claude Fable 5.1 — võimekaim ja kalleim ($10 / $50)"
+
+msgid "Model for your key"
+msgstr "Sinu võtme mudel"
+
+msgid "Prices are per million tokens (input / output), billed to your Anthropic account. New conversations use the model you pick; ongoing ones keep theirs."
+msgstr "Hinnad on miljoni tokeni kohta (sisend / väljund) ja arve esitatakse sinu Anthropicu kontole. Uued vestlused kasutavad valitud mudelit, pooleliolevad jäävad oma mudeli juurde."
+
+msgid "This instance's default (%(model)s)"
+msgstr "Selle serveri vaikimisi mudel (%(model)s)"
+
+
+msgid "Model"
+msgstr "Mudel"
+
+msgid "Low — quickest and cheapest; fine for everyday questions"
+msgstr "Madal — kiireim ja odavaim; sobib igapäevasteks küsimusteks"
+
+msgid "Medium — balanced"
+msgstr "Keskmine — tasakaalustatud"
+
+msgid "High — more thorough plans, more tokens"
+msgstr "Kõrge — põhjalikumad kavad, rohkem tokeneid"
+
+msgid "Extra high — for demanding planning"
+msgstr "Väga kõrge — nõudlikuks planeerimiseks"
+
+msgid "Maximum — the most thorough and the most expensive"
+msgstr "Maksimaalne — kõige põhjalikum ja kõige kallim"
+
+msgid "Thinking effort"
+msgstr "Mõtlemise põhjalikkus"
+
+msgid "How much the model thinks before it answers. More thinking costs more tokens and takes longer. Applies from the next reply on; Claude Haiku ignores it."
+msgstr "Kui palju mudel enne vastamist mõtleb. Rohkem mõtlemist kulutab rohkem tokeneid ja võtab kauem aega. Kehtib järgmisest vastusest alates; Claude Haiku seda ei kasuta."
+
+msgid "This instance's default (%(effort)s)"
+msgstr "Selle serveri vaikimisi väärtus (%(effort)s)"
+
+msgid "Model settings saved."
+msgstr "Mudeli seaded salvestatud."

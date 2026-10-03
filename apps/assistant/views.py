@@ -10,7 +10,7 @@ from django.views import View
 from apps.core.mixins import StaffRequiredMixin
 
 from . import proposals, services
-from .forms import ApiKeyForm, AssistantSettingsForm, MessageForm
+from .forms import ApiKeyForm, AssistantSettingsForm, MessageForm, OwnKeyOptionsForm
 from .models import (
     AssistantMessage,
     AssistantProposal,
@@ -179,8 +179,7 @@ def proposal_dismiss(request, pk):
     )
 
 
-@login_required
-def settings_view(request):
+def _render_settings(request, *, key_form=None, model_form=None):
     preference = services.preference_for(request.user)
     access = services.access_for(request.user, preference)
     return render(
@@ -189,11 +188,23 @@ def settings_view(request):
         {
             "preference": preference,
             "access": access,
-            "key_form": ApiKeyForm(),
+            "key_form": key_form or ApiKeyForm(),
+            "model_form": model_form
+            or OwnKeyOptionsForm(
+                initial={
+                    "model": preference.own_key_model,
+                    "effort": preference.own_key_effort,
+                }
+            ),
             "shared_available": services.shared_provider_configured(),
             **_usage_context(request.user, access),
         },
     )
+
+
+@login_required
+def settings_view(request):
+    return _render_settings(request)
 
 
 @login_required
@@ -223,19 +234,21 @@ def key_save(request):
         services.set_own_key(request.user, form.cleaned_data["api_key"])
         messages.success(request, _("API key saved."))
         return redirect("assistant:settings")
-    preference = services.preference_for(request.user)
-    access = services.access_for(request.user, preference)
-    return render(
-        request,
-        "assistant/settings.html",
-        {
-            "preference": preference,
-            "access": access,
-            "key_form": form,
-            "shared_available": services.shared_provider_configured(),
-            **_usage_context(request.user, access),
-        },
+    return _render_settings(request, key_form=form)
+
+
+@login_required
+def model_save(request):
+    if response := _require_post(request):
+        return response
+    form = OwnKeyOptionsForm(request.POST)
+    if not form.is_valid():
+        return _render_settings(request, model_form=form)
+    services.set_own_key_options(
+        request.user, model=form.cleaned_data["model"], effort=form.cleaned_data["effort"]
     )
+    messages.success(request, _("Model settings saved."))
+    return redirect("assistant:settings")
 
 
 @login_required

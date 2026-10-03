@@ -10271,3 +10271,55 @@ msgstr "Auta minua rakentamaan treeniohjelma tavoitteeni ja aikatauluni mukaan."
 msgctxt "proposal"
 msgid "Dismiss"
 msgstr "Hylkää"
+
+msgid "Claude Opus 5.5 — best plans ($4 / $20)"
+msgstr "Claude Opus 5.5 — parhaat suunnitelmat ($4 / $20)"
+
+msgid "Claude Sonnet 5.5 — good and half the price ($2 / $10)"
+msgstr "Claude Sonnet 5.5 — hyvä ja puolet halvempi ($2 / $10)"
+
+msgid "Claude Haiku 4.5 — fastest and cheapest, weaker plans ($1 / $5)"
+msgstr "Claude Haiku 4.5 — nopein ja halvin, heikommat suunnitelmat ($1 / $5)"
+
+msgid "Claude Fable 5.1 — most capable, most expensive ($10 / $50)"
+msgstr "Claude Fable 5.1 — tehokkain ja kallein ($10 / $50)"
+
+msgid "Model for your key"
+msgstr "Avaimesi malli"
+
+msgid "Prices are per million tokens (input / output), billed to your Anthropic account. New conversations use the model you pick; ongoing ones keep theirs."
+msgstr "Hinnat ovat miljoonaa tokenia kohden (syöte / vastaus), ja ne laskutetaan Anthropic-tililtäsi. Uudet keskustelut käyttävät valitsemaasi mallia; käynnissä olevat pitävät omansa."
+
+msgid "This instance's default (%(model)s)"
+msgstr "Tämän palvelimen oletus (%(model)s)"
+
+
+msgid "Model"
+msgstr "Malli"
+
+msgid "Low — quickest and cheapest; fine for everyday questions"
+msgstr "Matala — nopein ja halvin; riittää arkisiin kysymyksiin"
+
+msgid "Medium — balanced"
+msgstr "Keskitaso — tasapainoinen"
+
+msgid "High — more thorough plans, more tokens"
+msgstr "Korkea — perusteellisemmat suunnitelmat, enemmän tokeneita"
+
+msgid "Extra high — for demanding planning"
+msgstr "Erittäin korkea — vaativaan suunnitteluun"
+
+msgid "Maximum — the most thorough and the most expensive"
+msgstr "Maksimi — perusteellisin ja kallein"
+
+msgid "Thinking effort"
+msgstr "Ajattelun määrä"
+
+msgid "How much the model thinks before it answers. More thinking costs more tokens and takes longer. Applies from the next reply on; Claude Haiku ignores it."
+msgstr "Kuinka paljon malli miettii ennen vastaamista. Enemmän ajattelua kuluttaa enemmän tokeneita ja vie pidempään. Koskee seuraavasta vastauksesta alkaen; Claude Haiku ei käytä tätä asetusta."
+
+msgid "This instance's default (%(effort)s)"
+msgstr "Tämän palvelimen oletus (%(effort)s)"
+
+msgid "Model settings saved."
+msgstr "Malliasetukset tallennettu."

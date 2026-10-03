@@ -45,6 +45,13 @@ and never switches: its stored history is in that provider's format.
 1. The admin can turn the whole assistant off (`AssistantSettings.enabled`).
 2. A user's **own key** (Profile → AI assistant → Settings) always wins. It is
    used only for their own conversations and billed to their Anthropic account.
+   They also choose its model there (`AssistantPreference.own_key_model`:
+   Opus 5.5, Sonnet 5.5, Haiku 4.5 or Fable 5.1, with prices shown), or leave
+   it on the instance default, and its thinking effort
+   (`own_key_effort`: low, medium, high, xhigh or max). Neither choice ever
+   applies to the shared key. The model is fixed per conversation; the
+   effort applies from the next reply (a changed effort makes that request
+   re-read the conversation without the prompt cache, once).
 3. Otherwise the **instance's provider** can be used if
    `AssistantSettings.shared_key_access` allows it: nobody, staff only,
    selected users, or everyone. Staff set this in Profile → Administration →
@@ -158,8 +165,8 @@ rendered.
 |---|---|---|
 | `ASSISTANT_PROVIDER` | `anthropic` | `anthropic` or `ollama` |
 | `ASSISTANT_API_KEY` | — | the instance's Anthropic key (usage billed to the operator) |
-| `ASSISTANT_MODEL` | `claude-opus-5-5` | Claude model, also used for users' own keys |
-| `ASSISTANT_EFFORT` | `medium` | `low`…`max`; more thinking costs more tokens |
+| `ASSISTANT_MODEL` | `claude-opus-5-5` | Claude model, also the default for users' own keys (each user can pick another for their key) |
+| `ASSISTANT_EFFORT` | `medium` | `low`…`max`; more thinking costs more tokens (each user can pick another for their own key) |
 | `ASSISTANT_REFUSAL_FALLBACK` | `true` | re-run a classifier-declined request on Anthropic's fallback model (beta) |
 | `ASSISTANT_OLLAMA_URL` / `ASSISTANT_OLLAMA_MODEL` | `http://ollama:11434` / `qwen3:8b` | Ollama server and model |
 | `ASSISTANT_ENCRYPTION_KEY` | derived | encrypts users' saved keys (`manage.py generate_assistant_encryption_key`) |

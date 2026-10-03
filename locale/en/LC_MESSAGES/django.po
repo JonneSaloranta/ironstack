@@ -10212,3 +10212,55 @@ msgstr ""
 msgctxt "proposal"
 msgid "Dismiss"
 msgstr ""
+
+msgid "Claude Opus 5.5 — best plans ($4 / $20)"
+msgstr ""
+
+msgid "Claude Sonnet 5.5 — good and half the price ($2 / $10)"
+msgstr ""
+
+msgid "Claude Haiku 4.5 — fastest and cheapest, weaker plans ($1 / $5)"
+msgstr ""
+
+msgid "Claude Fable 5.1 — most capable, most expensive ($10 / $50)"
+msgstr ""
+
+msgid "Model for your key"
+msgstr ""
+
+msgid "Prices are per million tokens (input / output), billed to your Anthropic account. New conversations use the model you pick; ongoing ones keep theirs."
+msgstr ""
+
+msgid "This instance's default (%(model)s)"
+msgstr ""
+
+
+msgid "Model"
+msgstr ""
+
+msgid "Low — quickest and cheapest; fine for everyday questions"
+msgstr ""
+
+msgid "Medium — balanced"
+msgstr ""
+
+msgid "High — more thorough plans, more tokens"
+msgstr ""
+
+msgid "Extra high — for demanding planning"
+msgstr ""
+
+msgid "Maximum — the most thorough and the most expensive"
+msgstr ""
+
+msgid "Thinking effort"
+msgstr ""
+
+msgid "How much the model thinks before it answers. More thinking costs more tokens and takes longer. Applies from the next reply on; Claude Haiku ignores it."
+msgstr ""
+
+msgid "This instance's default (%(effort)s)"
+msgstr ""
+
+msgid "Model settings saved."
+msgstr ""

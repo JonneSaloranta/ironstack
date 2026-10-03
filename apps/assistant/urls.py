@@ -18,5 +18,6 @@ urlpatterns = [
     path("settings/disable/", views.disable, name="disable"),
     path("settings/key/", views.key_save, name="key-save"),
     path("settings/key/remove/", views.key_remove, name="key-remove"),
+    path("settings/model/", views.model_save, name="model-save"),
     path("admin/", views.AdminSettingsView.as_view(), name="admin-settings"),
 ]

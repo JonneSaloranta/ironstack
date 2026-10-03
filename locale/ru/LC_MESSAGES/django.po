@@ -10330,3 +10330,55 @@ msgstr "Помоги мне составить программу трениро
 msgctxt "proposal"
 msgid "Dismiss"
 msgstr "Отклонить"
+
+msgid "Claude Opus 5.5 — best plans ($4 / $20)"
+msgstr "Claude Opus 5.5 — лучшие планы ($4 / $20)"
+
+msgid "Claude Sonnet 5.5 — good and half the price ($2 / $10)"
+msgstr "Claude Sonnet 5.5 — хорошее качество вдвое дешевле ($2 / $10)"
+
+msgid "Claude Haiku 4.5 — fastest and cheapest, weaker plans ($1 / $5)"
+msgstr "Claude Haiku 4.5 — самый быстрый и дешёвый, планы слабее ($1 / $5)"
+
+msgid "Claude Fable 5.1 — most capable, most expensive ($10 / $50)"
+msgstr "Claude Fable 5.1 — самый мощный и самый дорогой ($10 / $50)"
+
+msgid "Model for your key"
+msgstr "Модель для вашего ключа"
+
+msgid "Prices are per million tokens (input / output), billed to your Anthropic account. New conversations use the model you pick; ongoing ones keep theirs."
+msgstr "Цены указаны за миллион токенов (ввод / вывод) и списываются с вашего аккаунта Anthropic. Новые беседы используют выбранную модель, текущие сохраняют свою."
+
+msgid "This instance's default (%(model)s)"
+msgstr "По умолчанию на этом сервере (%(model)s)"
+
+
+msgid "Model"
+msgstr "Модель"
+
+msgid "Low — quickest and cheapest; fine for everyday questions"
+msgstr "Низкий — быстрее и дешевле всего; подходит для повседневных вопросов"
+
+msgid "Medium — balanced"
+msgstr "Средний — сбалансированный"
+
+msgid "High — more thorough plans, more tokens"
+msgstr "Высокий — более продуманные планы, больше токенов"
+
+msgid "Extra high — for demanding planning"
+msgstr "Очень высокий — для сложного планирования"
+
+msgid "Maximum — the most thorough and the most expensive"
+msgstr "Максимальный — самый тщательный и самый дорогой"
+
+msgid "Thinking effort"
+msgstr "Глубина размышлений"
+
+msgid "How much the model thinks before it answers. More thinking costs more tokens and takes longer. Applies from the next reply on; Claude Haiku ignores it."
+msgstr "Сколько модель размышляет перед ответом. Больше размышлений — больше токенов и дольше ожидание. Действует со следующего ответа; Claude Haiku эту настройку игнорирует."
+
+msgid "This instance's default (%(effort)s)"
+msgstr "По умолчанию на этом сервере (%(effort)s)"
+
+msgid "Model settings saved."
+msgstr "Настройки модели сохранены."

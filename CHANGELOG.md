@@ -18,6 +18,13 @@ narrated summary of the same version.
 
 ## [Unreleased]
 
+### Added
+- AI assistant: with your own API key, choose which Claude model it uses
+  (Opus, Sonnet, Haiku or Fable, prices shown) in the assistant's
+  settings. New conversations use the chosen model.
+- …and how much it thinks before answering (low, medium, high, extra
+  high, maximum).
+
 ## [1.24.0] — 2026-10-03
 
 ### Added

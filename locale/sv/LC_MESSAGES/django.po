@@ -10245,3 +10245,55 @@ msgstr "Hjälp mig att bygga ett träningsprogram för mitt mål och mitt schema
 msgctxt "proposal"
 msgid "Dismiss"
 msgstr "Avfärda"
+
+msgid "Claude Opus 5.5 — best plans ($4 / $20)"
+msgstr "Claude Opus 5.5 — bäst planer ($4 / $20)"
+
+msgid "Claude Sonnet 5.5 — good and half the price ($2 / $10)"
+msgstr "Claude Sonnet 5.5 — bra och till halva priset ($2 / $10)"
+
+msgid "Claude Haiku 4.5 — fastest and cheapest, weaker plans ($1 / $5)"
+msgstr "Claude Haiku 4.5 — snabbast och billigast, svagare planer ($1 / $5)"
+
+msgid "Claude Fable 5.1 — most capable, most expensive ($10 / $50)"
+msgstr "Claude Fable 5.1 — mest kapabel, dyrast ($10 / $50)"
+
+msgid "Model for your key"
+msgstr "Modell för din nyckel"
+
+msgid "Prices are per million tokens (input / output), billed to your Anthropic account. New conversations use the model you pick; ongoing ones keep theirs."
+msgstr "Priserna gäller per miljon tokens (indata / utdata) och faktureras ditt Anthropic-konto. Nya konversationer använder modellen du väljer; pågående behåller sin."
+
+msgid "This instance's default (%(model)s)"
+msgstr "Den här instansens standard (%(model)s)"
+
+
+msgid "Model"
+msgstr "Modell"
+
+msgid "Low — quickest and cheapest; fine for everyday questions"
+msgstr "Låg — snabbast och billigast; räcker för vardagliga frågor"
+
+msgid "Medium — balanced"
+msgstr "Medel — balanserad"
+
+msgid "High — more thorough plans, more tokens"
+msgstr "Hög — grundligare planer, fler tokens"
+
+msgid "Extra high — for demanding planning"
+msgstr "Extra hög — för krävande planering"
+
+msgid "Maximum — the most thorough and the most expensive"
+msgstr "Maximal — grundligast och dyrast"
+
+msgid "Thinking effort"
+msgstr "Tankeinsats"
+
+msgid "How much the model thinks before it answers. More thinking costs more tokens and takes longer. Applies from the next reply on; Claude Haiku ignores it."
+msgstr "Hur mycket modellen tänker innan den svarar. Mer tänkande kostar fler tokens och tar längre tid. Gäller från nästa svar; Claude Haiku ignorerar det."
+
+msgid "This instance's default (%(effort)s)"
+msgstr "Den här instansens standard (%(effort)s)"
+
+msgid "Model settings saved."
+msgstr "Modellinställningarna sparades."
