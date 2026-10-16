@@ -202,6 +202,7 @@ visual sign a plain card was pressable.
       {% include "core/_chevron.html" %}
     </a>
 
+    {% if user.is_superuser %}
     <a class="card card-link settings-row" href="{% url 'backup-list' %}">
       <div>
         <strong>{% trans "Backups" %}</strong>
@@ -209,6 +210,7 @@ visual sign a plain card was pressable.
       </div>
       {% include "core/_chevron.html" %}
     </a>
+    {% endif %}
 
     <a class="card card-link settings-row" href="{% url 'feedback-list' %}">
       <div>

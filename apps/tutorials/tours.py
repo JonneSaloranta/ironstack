@@ -1169,7 +1169,7 @@ NO_TOUR_NEEDED = {
     "api_keys:key-list": "has its own help dialog",
     "data-export": "self-explanatory download page",
     # Staff/admin-only tools.
-    "backup-list": "staff only",
+    "backup-list": "superuser only",
     "feedback-list": "staff only",
     "seo-settings": "staff only",
     "assistant:admin-settings": "staff only",

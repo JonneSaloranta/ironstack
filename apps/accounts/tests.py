@@ -1003,13 +1003,14 @@ class ProfileViewTests(TestCase):
 
     def test_admin_card_also_has_its_own_cta_button_when_shown(self):
         self.alice.is_staff = True
+        self.alice.is_superuser = True
         self.alice.save()
         response = self.client.get(reverse("profile"))
         # Account details, Change password, Two-factor authentication,
         # Friends & groups, My coaches, AI assistant, API keys, Download
         # your data, Tutorials, Feedback, Delete account + Admin, Backups,
         # Feedback, AI assistant, Site & SEO (the latter five inside the
-        # staff-only "danger zone").
+        # staff-only "danger zone"; Backups for superusers only).
         self.assertContains(response, 'class="card card-link settings-row"', count=16)
         self.assertContains(
             response, f'<a class="card card-link settings-row" href="{reverse("admin:index")}">'

@@ -1469,9 +1469,28 @@ class BackupViewTests(TestCase):
 
         User = get_user_model()
         self.admin = User.objects.create_user(
-            username="admin", password="s3cret-pass", is_staff=True
+            username="admin", password="s3cret-pass", is_staff=True, is_superuser=True
         )
         self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+
+    def test_staff_who_are_not_superusers_cannot_reach_backups(self):
+        # A backup holds every user's data and password hashes, and a
+        # restore replaces it all — more than moderating feedback.
+        get_user_model().objects.create_user(
+            username="moderator", password="s3cret-pass", is_staff=True
+        )
+        self.client.login(username="moderator", password="s3cret-pass")
+        name = backup_services.create_backup()
+        for response in (
+            self.client.get(reverse("backup-list")),
+            self.client.get(reverse("backup-download", args=[name])),
+            self.client.get(reverse("backup-restore", args=[name])),
+            self.client.post(reverse("backup-restore", args=[name])),
+            self.client.post(reverse("backup-delete", args=[name])),
+            self.client.get(reverse("backup-task-status")),
+        ):
+            self.assertEqual(response.status_code, 403)
+        self.assertNotContains(self.client.get(reverse("profile")), reverse("backup-list"))
 
     def test_list_view_requires_login(self):
         response = self.client.get(reverse("backup-list"))

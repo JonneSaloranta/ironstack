@@ -14,11 +14,11 @@ from apps.core import backup_tasks
 from apps.core import backups as backup_services
 from apps.core import version as version_services
 from apps.core.forms import BackupSettingsForm, BackupUploadForm
-from apps.core.mixins import StaffRequiredMixin
+from apps.core.mixins import SuperuserRequiredMixin
 from apps.core.models import BackupSettings
 
 
-class BackupListView(StaffRequiredMixin, TemplateView):
+class BackupListView(SuperuserRequiredMixin, TemplateView):
     template_name = "core/backup_list.html"
 
     def get_context_data(self, **kwargs):
@@ -99,7 +99,7 @@ class BackupListView(StaffRequiredMixin, TemplateView):
         return self.render_to_response(context)
 
 
-class BackupDownloadView(StaffRequiredMixin, View):
+class BackupDownloadView(SuperuserRequiredMixin, View):
     def get(self, request, name):
         try:
             path = backup_services.safe_archive_path(name)
@@ -108,7 +108,7 @@ class BackupDownloadView(StaffRequiredMixin, View):
         return FileResponse(open(path, "rb"), as_attachment=True, filename=name)
 
 
-class BackupDeleteView(StaffRequiredMixin, View):
+class BackupDeleteView(SuperuserRequiredMixin, View):
     """Only ever removes a copy sitting in storage, never anything
     actually running — unlike restore, that means no manifest-
     comparison confirm page of its own, just the same JS confirm() on
@@ -123,7 +123,7 @@ class BackupDeleteView(StaffRequiredMixin, View):
         return redirect("backup-list")
 
 
-class BackupRestoreView(StaffRequiredMixin, TemplateView):
+class BackupRestoreView(SuperuserRequiredMixin, TemplateView):
     """GET shows the backup's own manifest next to the running
     instance's, plus the warning every destructive confirm page in
     this app uses (see templates/programs/program_confirm_delete.html)
@@ -178,7 +178,7 @@ class BackupRestoreView(StaffRequiredMixin, TemplateView):
         return redirect(reverse("backup-list"))
 
 
-class BackupTaskStatusView(StaffRequiredMixin, View):
+class BackupTaskStatusView(SuperuserRequiredMixin, View):
     """Polled by the Backups page while a create/restore runs in the
     background. Once it's no longer running, the whole page reloads
     (HX-Refresh) so the backup list and buttons catch up. A restore

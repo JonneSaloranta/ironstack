@@ -72,8 +72,10 @@ What it does, in order:
 ## Web UI
 
 Profile → Administration → Backups (`apps.core.backups`,
-`apps.core.views_backup`; `is_staff` required, same gate as `/admin/`
-and the rest of that page's "danger zone"). "Create backup" writes
+`apps.core.views_backup`; superusers only — a backup holds every
+user's data and password hashes and a restore replaces all of it, more
+than `is_staff`, which also gates feedback and reference data, should
+grant). "Create backup" writes
 the same three files (`database.dump`/`media.tar`/`manifest.json`)
 into one `.tar.gz`, listed with a size/timestamp, the app version (and
 git commit, if the running image has one baked in — `docs/ARCHITECTURE.md`
