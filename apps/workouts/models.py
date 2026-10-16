@@ -78,6 +78,13 @@ class PerformedExercise(TimeStampedModel):
         WorkoutSession, related_name="performed_exercises", on_delete=models.CASCADE
     )
     exercise = models.ForeignKey(Exercise, on_delete=models.PROTECT)
+    # The exercise's name as it was when this was logged. History shows
+    # this, not the live Exercise.name: renaming an exercise — your own,
+    # a coach's that your program uses, or one renamed "Name (2)" when
+    # its owner deleted their account — must not relabel past workouts.
+    # Still run through {% trans %} like Exercise.name, so a built-in
+    # exercise keeps showing in the reader's language.
+    exercise_name = models.CharField(max_length=100, blank=True)
     prescription = models.ForeignKey(
         ExercisePrescription,
         null=True,
@@ -106,7 +113,16 @@ class PerformedExercise(TimeStampedModel):
         ordering = ["session_id", "order", "id"]
 
     def __str__(self):
-        return f"{self.exercise.name} ({self.session_id})"
+        return f"{self.display_name} ({self.session_id})"
+
+    @property
+    def display_name(self):
+        return self.exercise_name or self.exercise.name
+
+    def save(self, *args, **kwargs):
+        if not self.exercise_name and self.exercise_id:
+            self.exercise_name = self.exercise.name
+        super().save(*args, **kwargs)
 
 
 class ExerciseSet(TimeStampedModel):

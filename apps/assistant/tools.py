@@ -162,7 +162,7 @@ def get_workout_history(ctx, args):
             sets = [s for s in performed.sets.all() if not s.is_warmup]
             exercises.append(
                 {
-                    "exercise": gettext(performed.exercise.name),
+                    "exercise": gettext(performed.display_name),
                     "sets": [
                         f"{_num(s.weight)}kg x {s.reps}"
                         + (f" @RPE{_num(s.rpe)}" if s.rpe is not None else "")

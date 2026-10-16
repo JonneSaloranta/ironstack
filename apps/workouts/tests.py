@@ -1122,3 +1122,49 @@ class RenumberDuplicateSetNumbersMigrationTests(TestCase):
         self.assertEqual(
             [numbers[s.pk] for s in (first, second, duplicate, last)], [1, 2, 3, 4]
         )
+
+
+class ExerciseNameSnapshotTests(TestCase):
+    """PerformedExercise.exercise_name — history keeps the name an
+    exercise had when it was logged."""
+
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        self.workout, self.prescription = _make_workout_with_prescription(self.alice)
+        self.exercise = self.prescription.exercise
+
+    def test_renaming_an_exercise_leaves_past_workouts_alone(self):
+        session = services.start_session(self.alice, workout=self.workout)
+        services.complete_session(session)
+        old_name = self.exercise.name
+        self.exercise.name = "Renamed Move"
+        self.exercise.save()
+
+        self.client.force_login(self.alice)
+        response = self.client.get(reverse("workouts:session-detail", args=[session.pk]))
+        self.assertContains(response, old_name)
+        self.assertNotContains(response, "Renamed Move")
+
+    def test_an_exercise_added_mid_session_is_snapshotted_too(self):
+        session = services.start_session(self.alice, workout=None)
+        performed = services.add_performed_exercise(session, self.exercise)
+        self.exercise.name = "Renamed Move"
+        self.exercise.save()
+        performed.refresh_from_db()
+        self.assertNotEqual(performed.display_name, "Renamed Move")
+
+    def test_the_backfill_fills_rows_from_before_the_snapshot(self):
+        import importlib
+
+        from django.apps import apps as global_apps
+
+        session = services.start_session(self.alice, workout=self.workout)
+        PerformedExercise.objects.filter(session=session).update(exercise_name="")
+        migration = importlib.import_module(
+            "apps.workouts.migrations.0006_performedexercise_exercise_name"
+        )
+        migration.backfill_exercise_names(global_apps, None)
+        self.assertEqual(
+            session.performed_exercises.get().exercise_name, self.exercise.name
+        )
+

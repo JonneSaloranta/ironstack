@@ -352,7 +352,7 @@ def _flash_new_prs(request, performed_exercise, new_prs):
             request,
             _("New PR — %(exercise)s: %(record_type)s %(value)s")
             % {
-                "exercise": performed_exercise.exercise.name,
+                "exercise": performed_exercise.display_name,
                 "record_type": record.get_record_type_display(),
                 "value": records_services.format_value(record, request.user),
             },

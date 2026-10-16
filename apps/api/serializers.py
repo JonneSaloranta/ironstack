@@ -276,6 +276,8 @@ class ExerciseSetSerializer(serializers.ModelSerializer):
 
 class PerformedExerciseSerializer(serializers.ModelSerializer):
     sets = ExerciseSetSerializer(many=True, read_only=True)
+    # The name as it was when logged (PerformedExercise.exercise_name).
+    exercise_name = serializers.CharField(source="display_name", read_only=True)
 
     class Meta:
         model = PerformedExercise
@@ -283,6 +285,7 @@ class PerformedExerciseSerializer(serializers.ModelSerializer):
             "id",
             "session",
             "exercise",
+            "exercise_name",
             "order",
             "set_count",
             "min_reps",

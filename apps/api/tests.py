@@ -433,6 +433,17 @@ class WorkoutLoggingEndpointTests(APITestCase):
         self.assertEqual(session.status, "completed")
         self.assertIsNotNone(session.ended_at)
 
+    def test_performed_exercises_carry_the_name_they_were_logged_under(self):
+        session = workout_services.start_session(self.alice, workout=None)
+        workout_services.add_performed_exercise(session, self.exercise)
+        logged_name = self.exercise.name
+        self.exercise.name = "Renamed later"
+        self.exercise.save()
+        response = self.client.get(
+            reverse("api:session-detail", args=[session.pk]), **self._auth()
+        )
+        self.assertEqual(response.data["performed_exercises"][0]["exercise_name"], logged_name)
+
     def test_a_completed_session_cannot_be_flipped_to_abandoned(self):
         session = workout_services.start_session(self.alice, workout=None)
         workout_services.complete_session(session)

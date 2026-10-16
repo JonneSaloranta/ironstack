@@ -84,6 +84,7 @@ def start_session(user, workout=None):
             PerformedExercise(
                 session=session,
                 exercise=prescription.exercise,
+                exercise_name=prescription.exercise.name,
                 prescription=prescription,
                 order=prescription.order,
                 set_count=prescription.set_count,
@@ -129,7 +130,7 @@ def add_performed_exercise(session, exercise):
     highest = session.performed_exercises.aggregate(highest=Max("order"))["highest"]
     next_order = 0 if highest is None else highest + 1
     return PerformedExercise.objects.create(
-        session=session, exercise=exercise, order=next_order
+        session=session, exercise=exercise, exercise_name=exercise.name, order=next_order
     )
 
 
