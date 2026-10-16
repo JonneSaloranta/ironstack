@@ -6040,10 +6040,15 @@ snapshotting exercise names onto performed exercises.
   `/healthz/` checks the database, service worker caches only `ok`
   responses, static hash cached in production, push strings translated.
 
-Not done on purpose: the abbreviation inside RPE/RIR labels (still
-focusable), visible table scrollbars on phones (the edge fade already
-signals scrolling), image width/height (reading them per render could
-500 on a missing file), nutrition in imperial units (module-wide),
-wider ruff rules, and the design-level items (public media paths,
-Gravatar/OFF hotlinking, CSP `unsafe-eval`).
+Then: exercise images store width/height (plain fields set on upload,
+migration 0011 backfills; not ImageField's width_field/height_field,
+which re-read the file on load and would 500 on a missing one) and get
+random upload names; ruff's bugbear rules (B) are on.
+
+Not done on purpose: the abbreviation inside RPE/RIR labels stays
+focusable (tapping it is how a phone shows the expansion), visible
+table scrollbars on phones (the edge fade already signals scrolling),
+nutrition in imperial units (module-wide), ruff DJ/UP/S/SIM, and the
+design-level items (authenticated media, Gravatar/OFF hotlinking, CSP
+`unsafe-eval`).
 

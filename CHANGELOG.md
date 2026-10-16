@@ -89,7 +89,8 @@ narrated summary of the same version.
   password reset to a new address).
 - Backups are limited to superusers instead of all staff.
 - Uploaded exercise photos are stripped of their metadata (including GPS
-  location).
+  location) and stored under a random name instead of their original
+  filename.
 - Authentik logins with an unverified email are refused, since the email
   links them to an existing account (`AUTHENTIK_REQUIRE_EMAIL_VERIFIED`).
 - A two-factor code works only once, an API key stops working when its
@@ -98,7 +99,8 @@ narrated summary of the same version.
 ### Performance
 - The dashboard's achievements no longer load everyone's whole training
   history on every visit.
-- Uploaded exercise photos are scaled down to at most 1600px.
+- Uploaded exercise photos are scaled down to at most 1600px, and
+  exercise pages no longer jump while their photos load.
 - Content-hashed static files are cached by the browser for a year.
 
 ## [1.24.0] — 2026-10-03
