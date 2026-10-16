@@ -199,6 +199,8 @@ class WorkoutSessionViewSet(viewsets.ModelViewSet):
     def perform_update(self, serializer):
         session = serializer.instance
         new_status = serializer.validated_data.get("status")
+        if not session.is_in_progress:
+            return
         if new_status == "completed":
             workout_services.complete_session(session)
         elif new_status == "abandoned":

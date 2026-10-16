@@ -107,6 +107,34 @@ class SessionLifecycleTests(TestCase):
         self.assertEqual(self.session.status, WorkoutSessionStatus.ABANDONED)
         self.assertIsNotNone(self.session.ended_at)
 
+    def test_a_completed_session_cannot_be_abandoned_or_completed_again(self):
+        services.complete_session(self.session)
+        self.session.refresh_from_db()
+        ended_at = self.session.ended_at
+
+        with self.assertRaises(services.SessionNotInProgress):
+            services.abandon_session(self.session)
+        with self.assertRaises(services.SessionNotInProgress):
+            services.complete_session(self.session)
+
+        self.session.refresh_from_db()
+        self.assertEqual(self.session.status, WorkoutSessionStatus.COMPLETED)
+        self.assertEqual(self.session.ended_at, ended_at)
+
+    def test_abandon_view_leaves_a_completed_session_alone(self):
+        services.complete_session(self.session)
+        self.client.force_login(self.alice)
+
+        response = self.client.post(reverse("workouts:session-abandon", args=[self.session.pk]))
+
+        self.assertRedirects(
+            response,
+            reverse("workouts:session-detail", args=[self.session.pk]),
+            fetch_redirect_response=False,
+        )
+        self.session.refresh_from_db()
+        self.assertEqual(self.session.status, WorkoutSessionStatus.COMPLETED)
+
 
 class SetLoggingServiceTests(TestCase):
     def setUp(self):
@@ -120,6 +148,26 @@ class SetLoggingServiceTests(TestCase):
         second = services.log_set(self.performed, weight=Decimal("100"), reps=5)
         self.assertEqual(first.set_number, 1)
         self.assertEqual(second.set_number, 2)
+
+    def test_log_set_after_a_delete_never_reuses_a_number(self):
+        services.log_set(self.performed, weight=Decimal("100"), reps=5)
+        second = services.log_set(self.performed, weight=Decimal("100"), reps=5)
+        services.log_set(self.performed, weight=Decimal("100"), reps=5)
+        second.delete()
+
+        fourth = services.log_set(self.performed, weight=Decimal("100"), reps=5)
+
+        self.assertEqual(fourth.set_number, 4)
+        self.assertEqual(
+            list(self.performed.sets.values_list("set_number", flat=True)), [1, 3, 4]
+        )
+
+    def test_set_numbers_are_unique_per_performed_exercise_in_the_database(self):
+        from django.db import IntegrityError, transaction
+
+        services.log_set(self.performed, weight=Decimal("100"), reps=5)
+        with self.assertRaises(IntegrityError), transaction.atomic():
+            self.performed.sets.create(set_number=1, weight=Decimal("90"), reps=5)
 
     def test_default_set_values_falls_back_to_target_when_no_sets_logged(self):
         defaults = services.default_set_values(self.performed)
@@ -976,3 +1024,45 @@ class AddPerformedExerciseOrderTests(TestCase):
         ]
         self.assertEqual(orders, [0, 1, 2])
 
+
+
+class RenumberDuplicateSetNumbersMigrationTests(TestCase):
+    """workouts/0004 — sets logged before the unique constraint existed
+    may share a number; the data migration must make them unique again
+    without reordering them."""
+
+    def setUp(self):
+        alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        workout, _ = _make_workout_with_prescription(alice)
+        self.performed = services.start_session(alice, workout=workout).performed_exercises.get()
+
+    def test_duplicates_are_renumbered_in_their_existing_order(self):
+        import importlib
+
+        from django.apps import apps as global_apps
+        from django.db import connection
+
+        from .models import ExerciseSet
+
+        constraint = next(
+            c
+            for c in ExerciseSet._meta.constraints
+            if c.name == "unique_set_number_per_performed_exercise"
+        )
+        # Rolled back with the rest of the test's transaction.
+        with connection.schema_editor() as editor:
+            editor.remove_constraint(ExerciseSet, constraint)
+        first = self.performed.sets.create(set_number=1, weight=Decimal("100"), reps=5)
+        second = self.performed.sets.create(set_number=2, weight=Decimal("100"), reps=5)
+        duplicate = self.performed.sets.create(set_number=2, weight=Decimal("90"), reps=5)
+        last = self.performed.sets.create(set_number=3, weight=Decimal("80"), reps=5)
+
+        migration = importlib.import_module(
+            "apps.workouts.migrations.0004_renumber_duplicate_set_numbers"
+        )
+        migration.renumber_duplicate_set_numbers(global_apps, None)
+
+        numbers = dict(self.performed.sets.values_list("pk", "set_number"))
+        self.assertEqual(
+            [numbers[s.pk] for s in (first, second, duplicate, last)], [1, 2, 3, 4]
+        )

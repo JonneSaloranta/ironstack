@@ -377,6 +377,12 @@ class WorkoutSessionSerializer(serializers.ModelSerializer):
         allowed = {"completed", "abandoned"}
         if value not in allowed:
             raise serializers.ValidationError(f"status can only be set to one of {allowed}.")
+        # A finished session is history — see
+        # apps.workouts.services.SessionNotInProgress. Re-sending the
+        # status it already has is a harmless no-op (perform_update
+        # skips it); changing it is not.
+        if not self.instance.is_in_progress and value != self.instance.status:
+            raise serializers.ValidationError("This session is no longer in progress.")
         return value
 
 

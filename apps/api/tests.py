@@ -419,6 +419,41 @@ class WorkoutLoggingEndpointTests(APITestCase):
         self.assertEqual(session.status, "completed")
         self.assertIsNotNone(session.ended_at)
 
+    def test_a_completed_session_cannot_be_flipped_to_abandoned(self):
+        session = workout_services.start_session(self.alice, workout=None)
+        workout_services.complete_session(session)
+        session.refresh_from_db()
+        ended_at = session.ended_at
+
+        response = self.client.patch(
+            reverse("api:session-detail", args=[session.pk]),
+            {"status": "abandoned"},
+            format="json",
+            **self._auth(),
+        )
+
+        self.assertEqual(response.status_code, 400)
+        session.refresh_from_db()
+        self.assertEqual(session.status, "completed")
+        self.assertEqual(session.ended_at, ended_at)
+
+    def test_resending_a_finished_sessions_own_status_changes_nothing(self):
+        session = workout_services.start_session(self.alice, workout=None)
+        workout_services.complete_session(session)
+        session.refresh_from_db()
+        ended_at = session.ended_at
+
+        response = self.client.patch(
+            reverse("api:session-detail", args=[session.pk]),
+            {"status": "completed"},
+            format="json",
+            **self._auth(),
+        )
+
+        self.assertEqual(response.status_code, 200)
+        session.refresh_from_db()
+        self.assertEqual(session.ended_at, ended_at)
+
     def test_an_invalid_status_transition_is_rejected(self):
         session = workout_services.start_session(self.alice, workout=None)
         response = self.client.patch(

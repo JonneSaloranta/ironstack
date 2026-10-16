@@ -247,7 +247,10 @@ def session_complete(request, pk):
     if request.method != "POST":
         return HttpResponseNotAllowed(["POST"])
     session = get_object_or_404(services.sessions_for(request.user), pk=pk)
-    services.complete_session(session)
+    try:
+        services.complete_session(session)
+    except services.SessionNotInProgress:
+        messages.error(request, _("This session is no longer in progress."))
     return redirect("workouts:session-detail", pk=session.pk)
 
 
@@ -256,7 +259,10 @@ def session_abandon(request, pk):
     if request.method != "POST":
         return HttpResponseNotAllowed(["POST"])
     session = get_object_or_404(services.sessions_for(request.user), pk=pk)
-    services.abandon_session(session)
+    try:
+        services.abandon_session(session)
+    except services.SessionNotInProgress:
+        messages.error(request, _("This session is no longer in progress."))
     return redirect("workouts:session-detail", pk=session.pk)
 
 

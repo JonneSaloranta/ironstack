@@ -23,6 +23,15 @@ from .models import (
 )
 
 
+class SessionNotInProgress(Exception):
+    """Raised when completing/abandoning a session that already ended.
+
+    A finished session is history: flipping a completed one to abandoned
+    (or re-completing it) would rewrite its status and `ended_at` after
+    the fact and silently move it in or out of analytics and streaks.
+    """
+
+
 def sessions_for(user):
     """A user's own workout sessions only — never shared, unlike programs."""
     return WorkoutSession.objects.filter(user=user)
@@ -66,6 +75,8 @@ def start_session(user, workout=None):
 
 
 def complete_session(session):
+    if not session.is_in_progress:
+        raise SessionNotInProgress
     session.status = WorkoutSessionStatus.COMPLETED
     session.ended_at = timezone.now()
     session.save(update_fields=["status", "ended_at", "updated_at"])
@@ -73,6 +84,8 @@ def complete_session(session):
 
 
 def abandon_session(session):
+    if not session.is_in_progress:
+        raise SessionNotInProgress
     session.status = WorkoutSessionStatus.ABANDONED
     session.ended_at = timezone.now()
     session.save(update_fields=["status", "ended_at", "updated_at"])
@@ -106,10 +119,18 @@ def default_set_values(performed_exercise):
     }
 
 
+@transaction.atomic
 def log_set(performed_exercise, **fields):
-    next_number = performed_exercise.sets.count() + 1
+    """Log the next set, numbered one past the highest existing number.
+
+    Not `count() + 1`: after a set is deleted that would reuse a number
+    still held by a later set. The row lock makes two concurrent logs
+    (a double tap) take turns instead of both reading the same maximum.
+    """
+    PerformedExercise.objects.select_for_update().filter(pk=performed_exercise.pk).first()
+    highest = performed_exercise.sets.aggregate(highest=Max("set_number"))["highest"]
     return ExerciseSet.objects.create(
-        performed_exercise=performed_exercise, set_number=next_number, **fields
+        performed_exercise=performed_exercise, set_number=(highest or 0) + 1, **fields
     )
 
 

@@ -136,6 +136,12 @@ class ExerciseSet(TimeStampedModel):
 
     class Meta:
         ordering = ["performed_exercise_id", "set_number"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["performed_exercise", "set_number"],
+                name="unique_set_number_per_performed_exercise",
+            )
+        ]
 
     def __str__(self):
         return f"Set {self.set_number}: {self.weight}kg × {self.reps}"
