@@ -108,6 +108,7 @@ instead.
       data-confirm-cancel="{% trans "Cancel" %}"
       data-htmx-error-server="{% trans "Something went wrong — that change was not saved. Please try again." %}"
       data-htmx-error-network="{% trans "Could not reach the server — check your connection. That change was not saved." %}"
+      data-dismiss-label="{% trans "Dismiss" %}"
       data-service-worker-url="{% url 'service-worker' %}"
       data-zxing-url="{% static 'js/zxing.min.js' %}"
       data-vapid-public-key="{{ push_vapid_public_key }}"

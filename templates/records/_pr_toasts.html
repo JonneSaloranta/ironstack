@@ -16,7 +16,8 @@ scrolled past. `hx-swap-oob="afterbegin:..."` requires this to sit as a
 inside the element that template's own hx-swap already targets — htmx's
 out-of-band scan only looks at direct children of the response.
 
-Each toast auto-dismisses on its own (Alpine `x-show` + a timeout) and
+Each toast auto-dismisses on its own (Alpine `x-show` + a timeout, paused
+while hovered or focused — same as base.html's message toasts) and
 carries a manual close button too — the CLAUDE.md/UI.md "user always has
 final control" principle applies to a toast's timing as much as to a
 progression suggestion.
@@ -24,7 +25,9 @@ progression suggestion.
 {% if new_prs %}
 <div hx-swap-oob="afterbegin:#pr-toast-container">
   {% for record in new_prs %}
-    <div class="pr-banner" role="status" x-data="{show: true}" x-show="show" x-transition.opacity.duration.300ms x-init="setTimeout(() => show = false, 6000)">
+    <div class="pr-banner" role="status" x-data="{show: true, hover: false, timer: null}" x-show="show" x-transition.opacity.duration.300ms
+         @mouseenter="hover = true" @mouseleave="hover = false" @focusin="hover = true" @focusout="hover = false"
+         x-init="timer = setInterval(() => { if (!hover) { show = false; clearInterval(timer) } }, 6000)">
       <button type="button" class="pr-toast-close" @click="show = false" aria-label="{% trans "Dismiss" %}">&times;</button>
       <strong><abbr tabindex="0" title="{% trans "Personal Record" %}">{% trans "New PR" %}</abbr></strong> — {{ record.weight|weight:request.user }} × {{ record.reps }}
       <div>

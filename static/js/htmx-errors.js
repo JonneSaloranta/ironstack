@@ -3,15 +3,24 @@
 // the set had saved. Validation failures (422/400 with a swapped fragment)
 // are not handled here — htmx swaps those normally.
 (function () {
+  // Stays until dismissed, like an error flash message (base.html): an
+  // error that vanished after a few seconds could be gone before a
+  // screen-reader user or a slow reader got to it.
   function showError(message) {
     var container = document.getElementById("pr-toast-container");
     if (!container) return;
     var banner = document.createElement("div");
     banner.className = "pr-banner pr-banner-error";
     banner.setAttribute("role", "alert");
-    banner.textContent = message;
+    var close = document.createElement("button");
+    close.type = "button";
+    close.className = "pr-toast-close";
+    close.setAttribute("aria-label", text("dismissLabel", "Dismiss"));
+    close.textContent = "\u00d7";
+    close.addEventListener("click", function () { banner.remove(); });
+    banner.appendChild(close);
+    banner.appendChild(document.createTextNode(message));
     container.appendChild(banner);
-    setTimeout(function () { banner.remove(); }, 10000);
   }
   function text(key, fallback) {
     return (document.body.dataset[key]) || fallback;

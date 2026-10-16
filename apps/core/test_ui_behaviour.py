@@ -159,6 +159,9 @@ class UiBehaviourTests(StaticLiveServerTestCase):
         toast = self.page.locator("#pr-toast-container .pr-banner-error")
         expect(toast).to_be_visible()
         expect(toast).to_contain_text("not saved")
+        # Stays until dismissed — no timer removes an error.
+        toast.get_by_role("button", name="Dismiss").click()
+        expect(toast).to_have_count(0)
 
     # -- focus after an HTMX swap (static/js/htmx-focus.js) -----------------
     def test_logging_a_set_from_the_keyboard_keeps_focus_in_the_form(self):

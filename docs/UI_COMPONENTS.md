@@ -190,8 +190,8 @@ Hierarchy (base.css "Buttons: states + one clear hierarchy"):
 | Field error | `_field.html` (`.field-error`) |
 | Form error | `_form_errors.html` (`.alert.alert-error`) |
 | In-page notice | `.alert` + `.alert-info/-warning/-success/-error` |
-| Success / feedback | `messages.success(...)` in the view → toast (`.pr-banner`), auto-dismisses |
-| HTMX failure | handled globally by `static/js/htmx-errors.js` |
+| Success / feedback | `messages.success(...)` in the view → toast (`.pr-banner`), auto-dismisses after 6 s, paused while hovered or focused; errors never auto-dismiss |
+| HTMX failure | handled globally by `static/js/htmx-errors.js` — an error toast with a close button that stays until dismissed |
 | Composer that clears after sending (chat, assistant) | `data-reset-on-success` on the form instead of `hx-on::after-request="this.reset()"` — cleared only when the send succeeded and the response has no `X-Form-Rejected` header; put the error in a `[data-form-error]` element inside the form (`HX-Retarget`) so a polled area doesn't wipe it |
 | Focus after a swap | automatic (`static/js/htmx-focus.js`) when the swap removed the focused element: mark the field focus should land on with `data-autofocus` (e.g. the set form's weight); otherwise it goes to the same id, the first heading, or the container |
 | Long-running admin task | run it in the background and show a polling `.alert` status card (`core/_backup_task_status.html`), never inside the request |
