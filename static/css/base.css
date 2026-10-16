@@ -2130,23 +2130,40 @@ h2 {
 .achievements-dots {
   display: flex;
   justify-content: center;
-  gap: 0.4rem;
+  align-items: center;
+  flex-wrap: wrap;
   margin-top: 0.75rem;
 }
 
+/* The button is a 24px target (WCAG 2.5.8); the dot itself stays small. */
 .achievements-dot {
-  width: 0.5rem;
-  height: 0.5rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
   min-height: 0;
   min-width: 0;
   padding: 0;
   margin-bottom: 0;
   border: none;
+  background: transparent;
+}
+
+.achievements-dot::before {
+  content: "";
+  width: 0.5rem;
+  height: 0.5rem;
   border-radius: 50%;
   background: var(--color-border);
 }
 
-.achievements-dot-active {
+.achievements-pause {
+  margin: 0 0 0 0.5rem;
+  font-size: 0.85rem;
+}
+
+.achievements-dot-active::before {
   background: var(--color-accent);
 }
 

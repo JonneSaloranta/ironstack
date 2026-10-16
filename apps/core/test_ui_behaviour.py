@@ -187,6 +187,39 @@ class UiBehaviourTests(StaticLiveServerTestCase):
         expect(self.page.locator(f"{card} .set-table tbody tr")).to_have_count(2)
         expect(self.page.locator(f"{card} input[name=weight]")).to_be_focused()
 
+    # -- achievements carousel (dashboard-carousel.js) -----------------------
+    def _dashboard_with_achievements(self, reduced_motion=False):
+        session, _ = self._session_with_set()
+        workout_services.complete_session(session)
+        if reduced_motion:
+            self.page.emulate_media(reduced_motion="reduce")
+        self.page.clock.install()
+        self._log_in()
+        self.page.goto(self._url("/"))
+        expect(self.page.locator(".achievement-slide").nth(1)).to_be_attached()
+
+    def _visible_slide(self):
+        return self.page.locator(".achievement-slide:visible").inner_text()
+
+    def test_the_carousel_rotates_until_paused(self):
+        self._dashboard_with_achievements()
+        first = self._visible_slide()
+        self.page.clock.run_for(5000)
+        self.assertNotEqual(self._visible_slide(), first)
+        self.page.get_by_role("button", name="Pause").click()
+        self.page.mouse.move(0, 0)  # leave hover so only the pause holds it
+        shown = self._visible_slide()
+        self.page.clock.run_for(15000)
+        self.assertEqual(self._visible_slide(), shown)
+        expect(self.page.get_by_role("button", name="Resume")).to_be_visible()
+
+    def test_the_carousel_never_rotates_on_its_own_with_reduced_motion(self):
+        self._dashboard_with_achievements(reduced_motion=True)
+        first = self._visible_slide()
+        self.page.clock.run_for(15000)
+        self.assertEqual(self._visible_slide(), first)
+        expect(self.page.get_by_role("button", name="Resume")).to_be_visible()
+
     # -- chat composer keeps a failed draft (htmx-errors.js) -----------------
     def test_a_failed_message_send_keeps_the_draft(self):
         from apps.social.models import FriendRequest
