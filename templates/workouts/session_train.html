@@ -25,7 +25,7 @@ manually with the presets below.
   <div class="rest-timer-header">
     <span class="text-muted">{% trans "Rest timer" %}</span>
     <button type="button" class="rest-timer-mute" @click="toggleMute()"
-            :aria-label="muted ? '{% trans "Unmute rest timer sound" %}' : '{% trans "Mute rest timer sound" %}'"
+            :aria-label="muted ? '{% filter escapejs %}{% trans "Unmute rest timer sound" %}{% endfilter %}' : '{% filter escapejs %}{% trans "Mute rest timer sound" %}{% endfilter %}'"
             :aria-pressed="muted">
       <svg x-show="!muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="4 8 8 8 12 4 12 20 8 16 4 16 4 8"/><path d="M16 8a5 5 0 0 1 0 8"/><path d="M19 5a9 9 0 0 1 0 14"/></svg>
       <svg x-show="muted" x-cloak viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="4 8 8 8 12 4 12 20 8 16 4 16 4 8"/><line x1="16" y1="8" x2="22" y2="14"/><line x1="22" y1="8" x2="16" y2="14"/></svg>

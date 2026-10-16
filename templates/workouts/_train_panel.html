@@ -82,7 +82,7 @@
         {{ set_form.reps.label }}
         {{ set_form.reps }}
       </label>
-      <button type="button" class="button-secondary flex-full" @click="more = !more" x-text="more ? '{% trans "Fewer options" %}' : '{% trans "More options (RPE, RIR, notes…)" %}'"></button>
+      <button type="button" class="button-secondary flex-full" @click="more = !more" x-text="more ? '{% filter escapejs %}{% trans "Fewer options" %}{% endfilter %}' : '{% filter escapejs %}{% trans "More options (RPE, RIR, notes…)" %}{% endfilter %}'"></button>
       <div class="field-subgroup" x-show="more" x-cloak>
         <label class="set-field">{{ set_form.target_reps.label }} {{ set_form.target_reps }}</label>
         <label class="set-field">{{ set_form.rpe.label }} {{ set_form.rpe }}</label>

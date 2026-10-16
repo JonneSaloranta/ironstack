@@ -24,7 +24,7 @@ text stays in Django's translation catalog rather than in the JS.
   <div class="rest-timer-header">
     <span class="text-muted">{% trans "Guided session" %}</span>
     <button type="button" class="rest-timer-mute" @click="audio.toggleMute()"
-            :aria-label="audio.muted ? '{% trans "Unmute timer sound" %}' : '{% trans "Mute timer sound" %}'"
+            :aria-label="audio.muted ? '{% filter escapejs %}{% trans "Unmute timer sound" %}{% endfilter %}' : '{% filter escapejs %}{% trans "Mute timer sound" %}{% endfilter %}'"
             :aria-pressed="audio.muted">
       <svg x-show="!audio.muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="4 8 8 8 12 4 12 20 8 16 4 16 4 8"/><path d="M16 8a5 5 0 0 1 0 8"/><path d="M19 5a9 9 0 0 1 0 14"/></svg>
       <svg x-show="audio.muted" x-cloak viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="4 8 8 8 12 4 12 20 8 16 4 16 4 8"/><line x1="16" y1="8" x2="22" y2="14"/><line x1="22" y1="8" x2="16" y2="14"/></svg>

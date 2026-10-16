@@ -470,6 +470,28 @@ class ProductionSettingsTests(TestCase):
         )
 
 
+class TranslatedTextInAlpineExpressionsTests(TestCase):
+    """A translation dropped into a JS string literal inside an Alpine
+    attribute (x-text="more ? '{% trans … %}' : …") is only HTML-escaped,
+    which the browser undoes before Alpine reads the attribute — so a
+    translation containing an apostrophe (common in Italian) would end
+    the string and break the whole expression. Such text must go
+    through `{% filter escapejs %}`."""
+
+    def test_no_template_puts_unescaped_translations_in_a_js_string(self):
+        import re
+
+        from django.conf import settings
+
+        unescaped = re.compile(r"""'\{% (trans|translate|blocktrans|blocktranslate)\b""")
+        offenders = []
+        for template in Path(settings.BASE_DIR, "templates").rglob("*.html"):
+            for number, line in enumerate(template.read_text().splitlines(), start=1):
+                if unescaped.search(line):
+                    offenders.append(f"{template.relative_to(settings.BASE_DIR)}:{number}")
+        self.assertEqual(offenders, [])
+
+
 class HtmxLoginRedirectMiddlewareTests(TestCase):
     """apps.core.middleware.HtmxLoginRedirectMiddleware — an HTMX
     request without a session must send the whole page to login, not
