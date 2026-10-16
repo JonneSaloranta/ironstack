@@ -1369,6 +1369,17 @@ class TwoFactorServiceTests(TestCase):
         code = pyotp.TOTP(secret).now()
         self.assertTrue(twofactor.verify_totp_code(secret, code))
 
+    def test_a_code_works_only_once_per_user(self):
+        import pyotp
+
+        cache.clear()
+        user = User.objects.create_user(username="otp", password="s3cret-pass")
+        secret = twofactor.generate_totp_secret()
+        code = pyotp.TOTP(secret).now()
+        self.assertTrue(twofactor.verify_totp_code(secret, code, user=user))
+        self.assertFalse(twofactor.verify_totp_code(secret, code, user=user))
+        cache.clear()
+
     def test_verify_totp_code_rejects_a_wrong_code(self):
         secret = twofactor.generate_totp_secret()
         self.assertFalse(twofactor.verify_totp_code(secret, "000000"))
@@ -1497,6 +1508,24 @@ class TwoFactorLoginFlowTests(TestCase):
         response = self.client.post(reverse("two-factor-verify"), {"code": self._current_code()})
         self.assertRedirects(response, "/")
         self.assertIn("_auth_user_id", self.client.session)
+
+    def test_a_foreign_next_after_2fa_goes_to_the_dashboard_instead(self):
+        self.client.post(reverse("login"), {"username": "henry", "password": "s3cret-pass"})
+        response = self.client.post(
+            reverse("two-factor-verify") + "?next=https://evil.example/",
+            {"code": self._current_code()},
+        )
+        self.assertRedirects(response, "/", fetch_redirect_response=False)
+
+    def test_a_used_code_cannot_complete_a_second_login(self):
+        code = self._current_code()
+        self.client.post(reverse("login"), {"username": "henry", "password": "s3cret-pass"})
+        self.client.post(reverse("two-factor-verify"), {"code": code})
+        self.client.logout()
+        self.client.post(reverse("login"), {"username": "henry", "password": "s3cret-pass"})
+        response = self.client.post(reverse("two-factor-verify"), {"code": code})
+        self.assertNotIn("_auth_user_id", self.client.session)
+        self.assertContains(response, "Incorrect code")
 
     def test_wrong_code_does_not_complete_login(self):
         self.client.post(reverse("login"), {"username": "henry", "password": "s3cret-pass"})

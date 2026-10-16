@@ -12,12 +12,15 @@ generated/hashed/consumed, and the provisioning URI's issuer name.
 """
 
 import base64
+import hmac
 import secrets
+import time
 from io import BytesIO
 
 import pyotp
 import qrcode
 from django.contrib.auth.hashers import check_password, make_password
+from django.core.cache import cache
 from django.utils import timezone
 
 from .models import TwoFactorBackupCode
@@ -63,13 +66,33 @@ def qr_code_data_uri(uri):
     return f"data:image/png;base64,{encoded}"
 
 
-def verify_totp_code(secret, code):
-    """valid_window=1 tolerates the code from one 30s step before/after
-    the server's own clock — real authenticator/server clocks drift a
-    few seconds against each other even when both are honestly NTP-
-    synced, and without this a code entered right at a 30s boundary
-    would intermittently, confusingly fail."""
-    return pyotp.TOTP(secret).verify(code, valid_window=1)
+def verify_totp_code(secret, code, *, user=None):
+    """Accepts the code from one 30s step before/after the server's own
+    clock as well — real authenticator/server clocks drift a few seconds
+    against each other even when both are honestly NTP-synced, and
+    without this a code entered right at a 30s boundary would
+    intermittently, confusingly fail.
+
+    With `user`, a code is also good only once: the step it belongs to is
+    remembered (shared cache), and that step or an earlier one is
+    refused afterwards — so a code someone watched being typed can't be
+    replayed while it's still inside that window."""
+    totp = pyotp.TOTP(secret)
+    now = time.time()
+    for offset in (-1, 0, 1):
+        moment = now + offset * totp.interval
+        if hmac.compare_digest(totp.at(moment), str(code)):
+            step = int(moment // totp.interval)
+            break
+    else:
+        return False
+    if user is not None:
+        key = f"totp-last-step:{user.pk}"
+        last = cache.get(key)
+        if last is not None and step <= last:
+            return False
+        cache.set(key, step, totp.interval * 4)
+    return True
 
 
 def generate_backup_codes(user):

@@ -506,7 +506,7 @@ class TwoFactorSetupConfirmForm(forms.Form):
     def clean_code(self):
 
         code = self.cleaned_data["code"].strip()
-        if not twofactor.verify_totp_code(self.user.totp_secret, code):
+        if not twofactor.verify_totp_code(self.user.totp_secret, code, user=self.user):
             raise forms.ValidationError(
                 _("Incorrect code — check your authenticator app and try again."),
                 code="invalid",
@@ -551,7 +551,7 @@ class TwoFactorVerifyForm(forms.Form):
         code = self.cleaned_data["code"].strip()
         verified = False
         if code.isdigit() and len(code) == 6:
-            verified = twofactor.verify_totp_code(self.user.totp_secret, code)
+            verified = twofactor.verify_totp_code(self.user.totp_secret, code, user=self.user)
         if not verified:
             verified = twofactor.verify_and_consume_backup_code(self.user, code)
 

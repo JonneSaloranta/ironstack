@@ -2,6 +2,7 @@ import csv
 import io
 import json
 import zipfile
+from urllib.parse import urlencode
 
 from django.conf import settings
 from django.contrib import messages
@@ -138,7 +139,7 @@ class RateLimitedLoginView(LoginView):
         if user.totp_enabled:
             self.request.session["pre_2fa_user_id"] = user.pk
             next_url = self.get_success_url()
-            return redirect(f"{reverse('two-factor-verify')}?next={next_url}")
+            return redirect(f"{reverse('two-factor-verify')}?{urlencode({'next': next_url})}")
         return super().form_valid(form)
 
 
@@ -263,7 +264,15 @@ class TwoFactorVerifyView(FormView):
         # too — an SSO login never reaches this 2FA-verify view at all
         # (see this class's own docstring/"2FA note" in docs/SECURITY.md).
         login(self.request, user, backend="django.contrib.auth.backends.ModelBackend")
-        next_url = self.request.GET.get("next") or settings.LOGIN_REDIRECT_URL
+        # Re-checked here, not only by LoginView: `next` is in this page's
+        # own URL, so it can't be trusted to still be the safe one.
+        next_url = self.request.GET.get("next")
+        if not next_url or not url_has_allowed_host_and_scheme(
+            next_url,
+            allowed_hosts={self.request.get_host()},
+            require_https=self.request.is_secure(),
+        ):
+            next_url = settings.LOGIN_REDIRECT_URL
         return redirect(next_url)
 
 

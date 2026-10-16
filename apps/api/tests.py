@@ -156,6 +156,23 @@ class ApiKeyAuthenticationTests(APITestCase):
         self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
         self.api_key, self.raw_secret = _create_key(self.alice)
 
+    def test_a_deactivated_users_key_stops_working(self):
+        self.alice.is_active = False
+        self.alice.save(update_fields=["is_active"])
+        response = self.client.get(
+            reverse("api:profile"), HTTP_AUTHORIZATION=f"Bearer {self.raw_secret}"
+        )
+        self.assertEqual(response.status_code, 401)
+
+    def test_last_used_is_written_at_most_once_a_minute(self):
+        auth = {"HTTP_AUTHORIZATION": f"Bearer {self.raw_secret}"}
+        self.client.get(reverse("api:profile"), **auth)
+        self.api_key.refresh_from_db()
+        first = self.api_key.last_used_at
+        self.client.get(reverse("api:profile"), **auth)
+        self.api_key.refresh_from_db()
+        self.assertEqual(self.api_key.last_used_at, first)
+
     def test_a_valid_key_authenticates(self):
         response = self.client.get(
             reverse("api:profile"), HTTP_AUTHORIZATION=f"Bearer {self.raw_secret}"

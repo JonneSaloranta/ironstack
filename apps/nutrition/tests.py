@@ -5332,6 +5332,18 @@ class DietPlanToggleActiveViewTests(TestCase):
         plan.refresh_from_db()
         self.assertTrue(plan.is_active)
 
+    def test_a_foreign_next_is_ignored(self):
+        plan = self._make_plan(self.alice, is_active=False)
+        response = self.client.post(
+            reverse("nutrition:diet-plan-toggle-active", args=[plan.pk]),
+            {"next": "https://evil.example/"},
+        )
+        self.assertRedirects(
+            response,
+            reverse("nutrition:diet-plan-detail", args=[plan.pk]),
+            fetch_redirect_response=False,
+        )
+
     def test_deactivates_an_active_plan(self):
         plan = self._make_plan(self.alice, is_active=True)
         response = self.client.post(
