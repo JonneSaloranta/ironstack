@@ -10462,3 +10462,9 @@ msgstr "Gli obiettivi del piano alimentare mancano o non sono validi."
 #, python-format
 msgid "%(rate)s kg/week"
 msgstr "%(rate)s kg/settimana"
+
+#, python-format
+msgid "%(counter)s result"
+msgid_plural "%(counter)s results"
+msgstr[0] "%(counter)s risultato"
+msgstr[1] "%(counter)s risultati"

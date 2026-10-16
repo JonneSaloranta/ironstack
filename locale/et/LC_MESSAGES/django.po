@@ -10364,3 +10364,9 @@ msgstr "Toitumiskava eesmärgid puuduvad või on vigased."
 #, python-format
 msgid "%(rate)s kg/week"
 msgstr "%(rate)s kg/nädalas"
+
+#, python-format
+msgid "%(counter)s result"
+msgid_plural "%(counter)s results"
+msgstr[0] "%(counter)s tulemus"
+msgstr[1] "%(counter)s tulemust"

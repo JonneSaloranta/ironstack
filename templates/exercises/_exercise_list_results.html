@@ -17,3 +17,4 @@
 {% endfor %}
 
 {% include "core/_pagination.html" %}
+{% include "core/_search_status.html" with count=page_obj.paginator.count %}

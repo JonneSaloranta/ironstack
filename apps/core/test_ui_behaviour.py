@@ -187,6 +187,15 @@ class UiBehaviourTests(StaticLiveServerTestCase):
         expect(self.page.locator(f"{card} .set-table tbody tr")).to_have_count(2)
         expect(self.page.locator(f"{card} input[name=weight]")).to_be_focused()
 
+    # -- live search result count (core/_search_status.html) ----------------
+    def test_a_live_search_updates_the_status_region(self):
+        Exercise.objects.create(name="Zzyzx Press", owner=None)
+        self._log_in()
+        self.page.goto(self._url(reverse("exercises:exercise-list")))
+        self.page.fill("#id_q", "Zzyzx Press")
+        expect(self.page.locator("#search-status")).to_have_text("1 result")
+        expect(self.page.locator("#search-status")).to_have_attribute("role", "status")
+
     # -- achievements carousel (dashboard-carousel.js) -----------------------
     def _dashboard_with_achievements(self, reduced_motion=False):
         session, _ = self._session_with_set()

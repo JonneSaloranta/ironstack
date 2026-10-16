@@ -1,0 +1,12 @@
+{% comment %}
+Announces how many results a live search found. Include at the end of a
+results partial with `count=`; on an HTMX response it updates the
+persistent role="status" region in core/_search_indicator.html
+out-of-band (innerHTML, so the region itself stays put and the change
+is announced). On a full page render it outputs nothing — the results
+are simply there.
+{% endcomment %}
+{% load i18n %}
+{% if request.headers.hx_request %}
+<div hx-swap-oob="innerHTML:#search-status">{% blocktrans count counter=count %}{{ counter }} result{% plural %}{{ counter }} results{% endblocktrans %}</div>
+{% endif %}

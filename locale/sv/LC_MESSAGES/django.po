@@ -10369,3 +10369,9 @@ msgstr "Kostplanens mål saknas eller är ogiltiga."
 #, python-format
 msgid "%(rate)s kg/week"
 msgstr "%(rate)s kg/vecka"
+
+#, python-format
+msgid "%(counter)s result"
+msgid_plural "%(counter)s results"
+msgstr[0] "%(counter)s resultat"
+msgstr[1] "%(counter)s resultat"

@@ -247,6 +247,18 @@ class ExerciseListViewTests(TestCase):
             response.templates[0].name, "exercises/_exercise_list_results.html"
         )
 
+    def test_a_live_search_announces_how_many_it_found(self):
+        Exercise.objects.create(name="Zzyzx Curl", owner=None)
+        response = self.client.get(
+            reverse("exercises:exercise-list"), {"q": "Zzyzx Curl"}, HTTP_HX_REQUEST="true"
+        )
+        self.assertContains(response, 'hx-swap-oob="innerHTML:#search-status">1 result<')
+
+    def test_the_full_page_has_the_status_region_but_no_out_of_band_update(self):
+        response = self.client.get(reverse("exercises:exercise-list"))
+        self.assertContains(response, 'id="search-status"')
+        self.assertNotContains(response, "hx-swap-oob")
+
 
 class ExerciseCreateViewTests(TestCase):
     def setUp(self):

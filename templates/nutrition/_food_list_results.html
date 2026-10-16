@@ -57,3 +57,4 @@ already does.
   {% endcomment %}
   {% trans "Food list pages" as pager_label %}{% include "core/_pagination.html" with anchor="food-list-pagination" label=pager_label %}
 {% endif %}
+{% include "core/_search_status.html" with count=page_obj.paginator.count %}

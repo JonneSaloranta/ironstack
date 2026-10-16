@@ -96,3 +96,4 @@
     {% if off_status == "ok" %}{% include "nutrition/_off_attribution.html" %}{% endif %}
   {% endif %}
 </div>
+{% if query %}{% include "core/_search_status.html" with count=result_count %}{% endif %}

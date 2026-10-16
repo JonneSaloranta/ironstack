@@ -10454,3 +10454,10 @@ msgstr "Цели плана питания не указаны или невер
 #, python-format
 msgid "%(rate)s kg/week"
 msgstr "%(rate)s кг/нед."
+
+#, python-format
+msgid "%(counter)s result"
+msgid_plural "%(counter)s results"
+msgstr[0] "%(counter)s результат"
+msgstr[1] "%(counter)s результата"
+msgstr[2] "%(counter)s результатов"

@@ -10336,3 +10336,9 @@ msgstr ""
 #, python-format
 msgid "%(rate)s kg/week"
 msgstr ""
+
+#, python-format
+msgid "%(counter)s result"
+msgid_plural "%(counter)s results"
+msgstr[0] ""
+msgstr[1] ""

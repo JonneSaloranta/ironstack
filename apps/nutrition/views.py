@@ -620,6 +620,7 @@ class FoodSearchResultsView(LoginRequiredMixin, View):
             "online_requested": online,
             "query": query,
             "mode": mode,
+            "result_count": len(local) + len(off_results),
         }
         if mode == "diary":
             # Same last-logged-quantity prefill the "Most used" panel
