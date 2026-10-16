@@ -28,7 +28,9 @@ target-version = "py314"
 exclude = [".venv", "migrations"]
 
 [tool.ruff.lint]
-select = ["E", "F", "I"]
+# B (bugbear): likely bugs — a zip() that silently truncates, an exception
+# re-raised without its cause, an unused loop variable.
+select = ["E", "F", "I", "B"]
 
 [tool.coverage.run]
 # Only this project's own apps — never the interpreter/venv or a

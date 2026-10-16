@@ -409,7 +409,7 @@ class TDEECalculationTests(TestCase):
         self.assertEqual(tdee, Decimal("2759"))
 
     def test_every_activity_level_has_a_multiplier_greater_than_one(self):
-        for level, multiplier in energy.ACTIVITY_MULTIPLIERS.items():
+        for multiplier in energy.ACTIVITY_MULTIPLIERS.values():
             self.assertGreaterEqual(multiplier, Decimal("1"))
 
     def test_multipliers_increase_monotonically_with_activity(self):

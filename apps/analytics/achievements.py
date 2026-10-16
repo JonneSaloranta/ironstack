@@ -79,7 +79,7 @@ def longest_workout_streak_days(user):
     if not dates:
         return 0
     longest = current = 1
-    for previous_date, date in zip(dates, dates[1:]):
+    for previous_date, date in zip(dates, dates[1:], strict=False):
         if (date - previous_date).days == 1:
             current += 1
             longest = max(longest, current)

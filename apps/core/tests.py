@@ -108,7 +108,7 @@ class BMICalculationTests(TestCase):
         BMI value could fall through uncategorized."""
         self.assertIsNone(BMI_CATEGORIES[0].low)
         self.assertIsNone(BMI_CATEGORIES[-1].high)
-        for earlier, later in zip(BMI_CATEGORIES, BMI_CATEGORIES[1:]):
+        for earlier, later in zip(BMI_CATEGORIES, BMI_CATEGORIES[1:], strict=False):
             self.assertEqual(earlier.high, later.low)
 
     def test_category_rows_convert_bmi_bounds_to_a_weight_range_at_a_given_height(self):

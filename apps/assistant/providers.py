@@ -145,7 +145,7 @@ class AnthropicProvider:
                             on_text("".join(streamed_text))
                     message = stream.get_final_message()
                 break
-            except ValueError:
+            except ValueError as error:
                 # A streamed tool input the SDK couldn't parse at all —
                 # there's no tool_use block to answer, so re-issue the
                 # turn (bounded). API errors aren't ValueErrors.
@@ -153,7 +153,7 @@ class AnthropicProvider:
                 if json_retries > _MAX_JSON_RETRIES:
                     raise ProviderError(
                         _("The assistant sent a malformed reply. Please try again.")
-                    )
+                    ) from error
                 on_text("")
             except anthropic.AuthenticationError as exc:
                 raise ProviderError(
