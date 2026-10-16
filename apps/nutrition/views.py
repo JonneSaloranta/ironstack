@@ -843,9 +843,7 @@ class DiaryAddEntryView(LoginRequiredMixin, View):
 
         food = None
         if form.cleaned_data.get("food_id"):
-            food = get_object_or_404(
-                Food.objects.filter(active=True), pk=form.cleaned_data["food_id"]
-            )
+            food = _viewable_food_or_404(request, form.cleaned_data["food_id"])
         elif form.cleaned_data.get("off_barcode"):
             food = services.import_or_refresh_food_from_off(form.cleaned_data["off_barcode"])
             if food is None:
@@ -1215,9 +1213,7 @@ def recipe_ingredient_create(request, recipe_pk):
 
     food = None
     if form.cleaned_data.get("food_id"):
-        food = get_object_or_404(
-            Food.objects.filter(active=True), pk=form.cleaned_data["food_id"]
-        )
+        food = _viewable_food_or_404(request, form.cleaned_data["food_id"])
     elif form.cleaned_data.get("off_barcode"):
         food = services.import_or_refresh_food_from_off(form.cleaned_data["off_barcode"])
         if food is None:
@@ -1749,9 +1745,7 @@ def diet_plan_meal_item_add(request, plan_pk, meal_pk):
 
     food = None
     if form.cleaned_data.get("food_id"):
-        food = get_object_or_404(
-            Food.objects.filter(active=True), pk=form.cleaned_data["food_id"]
-        )
+        food = _viewable_food_or_404(request, form.cleaned_data["food_id"])
     elif form.cleaned_data.get("off_barcode"):
         food = services.import_or_refresh_food_from_off(form.cleaned_data["off_barcode"])
         if food is None:

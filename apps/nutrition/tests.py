@@ -4256,6 +4256,67 @@ class DietPlanExportImportViewTests(TestCase):
         self.assertFalse(DietPlan.objects.filter(user=self.bob).exists())
 
 
+class PrivateFoodScopingTests(TestCase):
+    """Another user's own (private) food can't be added anywhere by
+    posting its id — the pickers only ever offer visible foods, but the
+    views used to look a posted food_id up among all active foods."""
+
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        bob = User.objects.create_user(username="bob", password="s3cret-pass")
+        self.bobs_food = make_food(bob, name="Bob's secret shake")
+        self.client.login(username="alice", password="s3cret-pass")
+
+    def test_not_into_the_diary(self):
+        response = self.client.post(
+            reverse("nutrition:diary-add-entry"),
+            {
+                "food_id": self.bobs_food.pk,
+                "meal_slot": MealSlot.objects.get(name="Lunch", owner=None).pk,
+                "quantity": "100", "date": "2026-01-01",
+            },
+        )
+        self.assertEqual(response.status_code, 404)
+        self.assertFalse(DiaryEntry.objects.filter(user=self.alice).exists())
+
+    def test_not_into_a_recipe(self):
+        recipe = Recipe.objects.create(owner=self.alice, name="Bowl", servings=1)
+        response = self.client.post(
+            reverse("nutrition:recipe-ingredient-create", args=[recipe.pk]),
+            {"food_id": self.bobs_food.pk, "quantity": "100"},
+        )
+        self.assertEqual(response.status_code, 404)
+        self.assertFalse(recipe.ingredients.exists())
+
+    def test_not_into_a_diet_plan(self):
+        breakfast = MealSlot.objects.get(name="Breakfast", owner=None)
+        plan = diet_builder.build_diet_plan(
+            self.alice, name="Plan", goal=None, target_calories=800,
+            target_protein_grams=Decimal("1"), target_carbohydrate_grams=Decimal("1"),
+            target_fat_grams=Decimal("1"), meal_slots=[breakfast],
+        )
+        meal = plan.meals.first()
+        response = self.client.post(
+            reverse("nutrition:diet-plan-meal-item-add", args=[plan.pk, meal.pk]),
+            {"food_id": self.bobs_food.pk, "quantity": "100"},
+        )
+        self.assertEqual(response.status_code, 404)
+        self.assertFalse(meal.items.filter(food=self.bobs_food).exists())
+
+    def test_a_shared_food_still_works(self):
+        shared = make_food(None, name="Shared oats")
+        response = self.client.post(
+            reverse("nutrition:diary-add-entry"),
+            {
+                "food_id": shared.pk,
+                "meal_slot": MealSlot.objects.get(name="Lunch", owner=None).pk,
+                "quantity": "100", "date": "2026-01-01",
+            },
+        )
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(DiaryEntry.objects.filter(user=self.alice, food=shared).exists())
+
+
 class RecipeViewTests(TestCase):
     def setUp(self):
         self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
