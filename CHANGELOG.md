@@ -24,8 +24,16 @@ narrated summary of the same version.
   settings. New conversations use the chosen model.
 - …and how much it thinks before answering (low, medium, high, extra
   high, maximum).
+- Optional email confirmation for new signups
+  (`DJANGO_SIGNUP_EMAIL_VERIFICATION=true`): a new account can log in
+  once it has opened the link sent to its email address.
 
 ### Changed
+- Past diary days keep the calories and macros they were logged with —
+  editing a food or recipe, merging foods or an Open Food Facts update no
+  longer changes them.
+- Past workouts keep the exercise name they were logged under, even if
+  the exercise is renamed later.
 - Background services now start only after the web service has applied
   migrations.
 - Backups: "Create backup" and "Restore" now run in the background, and
@@ -59,6 +67,15 @@ narrated summary of the same version.
 - Chat threads no longer re-send the whole conversation to screen
   readers every few seconds when nothing new has arrived.
 - Import errors and the nutrition goal's rate are translated.
+- RPE must be between 1 and 10; number fields open a number keypad on
+  phones.
+- Smaller accessibility fixes: one reduced-motion setting covers every
+  animation, larger touch targets, readable Nutri-Score badges, the
+  current tab marked in every subnav, and a proper heading and language
+  on the error page.
+- Deleting a set can't be sent twice by a double tap.
+- The service worker no longer caches error responses, and the health
+  check reports a database outage.
 
 ### Security
 - Login rate limiting can no longer be reset by logging into your own
@@ -73,6 +90,10 @@ narrated summary of the same version.
 - Backups are limited to superusers instead of all staff.
 - Uploaded exercise photos are stripped of their metadata (including GPS
   location).
+- Authentik logins with an unverified email are refused, since the email
+  links them to an existing account (`AUTHENTIK_REQUIRE_EMAIL_VERIFIED`).
+- A two-factor code works only once, an API key stops working when its
+  account is deactivated, and redirects after login are always checked.
 
 ### Performance
 - The dashboard's achievements no longer load everyone's whole training

@@ -6016,3 +6016,34 @@ Left open, needing a decision: OIDC linking by unverified email (depends
 on the Authentik email mapping), snapshotting diary macros, and
 snapshotting exercise names onto performed exercises.
 
+## Audit follow-ups: decisions, email confirmation, P3
+
+- **OIDC** — `verify_claims` refuses `email_verified` other than true
+  (`AUTHENTIK_REQUIRE_EMAIL_VERIFIED`, default on), logging a warning.
+- **Signup email confirmation** — `DJANGO_SIGNUP_EMAIL_VERIFICATION`
+  (default off). `User.email_verification_pending` (not `is_active`, so
+  confirming can't undo an admin's deactivation); own token generator
+  salt; login refuses pending accounts without counting a failed guess
+  and resends at most every 5 minutes.
+- **Exercise name snapshot** — `PerformedExercise.exercise_name`, set on
+  add, shown in history, API `exercise_name`; migration 0006 backfills.
+- **Diary snapshot** — `DiaryEntry.nutrition_snapshot`, per unit of
+  quantity, set in `save()` and recomputed only when the food/recipe is
+  switched (tracked via `from_db`, so `merge_foods`' bulk update keeps
+  history). Migration 0026 backfills with its own copy of the scaling.
+- **P3** — global reduced-motion rule, touch targets, Nutri-Score
+  contrast, `aria-current="page"` everywhere, 500 page heading/lang, set
+  delete `hx-disabled-elt`, RPE 1–10 (form, prescription form, API),
+  inputmode on the remaining number fields, single-use TOTP codes,
+  re-checked post-2FA/plan-toggle redirects, API keys refused for
+  inactive users and `last_used_at` written at most once a minute,
+  `/healthz/` checks the database, service worker caches only `ok`
+  responses, static hash cached in production, push strings translated.
+
+Not done on purpose: the abbreviation inside RPE/RIR labels (still
+focusable), visible table scrollbars on phones (the edge fade already
+signals scrolling), image width/height (reading them per render could
+500 on a missing file), nutrition in imperial units (module-wide),
+wider ruff rules, and the design-level items (public media paths,
+Gravatar/OFF hotlinking, CSP `unsafe-eval`).
+
