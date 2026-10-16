@@ -136,6 +136,37 @@ class SessionLifecycleTests(TestCase):
         self.assertEqual(self.session.status, WorkoutSessionStatus.COMPLETED)
 
 
+class DoubleStartTests(TestCase):
+    """Pressing Start twice (a double tap) must not open two sessions."""
+
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        self.workout, _ = _make_workout_with_prescription(self.alice)
+        self.client.force_login(self.alice)
+
+    def test_a_second_press_returns_the_session_the_first_one_started(self):
+        url = reverse("workouts:session-start", args=[self.workout.pk])
+        first = self.client.post(url)
+        second = self.client.post(url)
+        self.assertEqual(WorkoutSession.objects.filter(user=self.alice).count(), 1)
+        self.assertEqual(first.url, second.url)
+
+    def test_the_same_for_a_freeform_start(self):
+        url = reverse("workouts:session-start-freeform")
+        self.client.post(url)
+        self.client.post(url)
+        self.assertEqual(WorkoutSession.objects.filter(user=self.alice).count(), 1)
+
+    def test_starting_again_later_or_another_workout_still_starts_a_new_one(self):
+        first = services.start_session_once(self.alice, workout=self.workout)
+        WorkoutSession.objects.filter(pk=first.pk).update(
+            started_at=timezone.now() - services.DUPLICATE_START_WINDOW - timedelta(seconds=1)
+        )
+        services.start_session_once(self.alice, workout=self.workout)
+        services.start_session_once(self.alice, workout=None)
+        self.assertEqual(WorkoutSession.objects.filter(user=self.alice).count(), 3)
+
+
 class SetLoggingServiceTests(TestCase):
     def setUp(self):
         self.alice = User.objects.create_user(username="alice", password="s3cret-pass")

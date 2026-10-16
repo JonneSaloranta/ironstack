@@ -37,6 +37,34 @@ def sessions_for(user):
     return WorkoutSession.objects.filter(user=user)
 
 
+#: How recent an identical in-progress session must be for
+#: start_session_once() to treat a second start as the same tap.
+DUPLICATE_START_WINDOW = timedelta(seconds=10)
+
+
+@transaction.atomic
+def start_session_once(user, workout=None):
+    """start_session() for a user pressing "Start": a second press of the
+    same Start button a moment later (a double tap, a re-sent form)
+    returns the session the first one started instead of opening a
+    second, empty one next to it. The user row lock makes two
+    simultaneous presses take turns."""
+    from django.contrib.auth import get_user_model
+
+    get_user_model().objects.select_for_update().filter(pk=user.pk).first()
+    recent = (
+        sessions_for(user)
+        .filter(
+            status=WorkoutSessionStatus.IN_PROGRESS,
+            workout=workout,
+            started_at__gte=timezone.now() - DUPLICATE_START_WINDOW,
+        )
+        .order_by("-started_at")
+        .first()
+    )
+    return recent or start_session(user, workout=workout)
+
+
 @transaction.atomic
 def start_session(user, workout=None):
     """Start a session, snapshotting `workout`'s prescriptions if given.

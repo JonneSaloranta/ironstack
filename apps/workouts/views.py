@@ -230,7 +230,7 @@ def session_start(request, workout_pk):
     workout = get_object_or_404(
         Workout, pk=workout_pk, program__in=program_services.visible_to(request.user)
     )
-    session = services.start_session(request.user, workout=workout)
+    session = services.start_session_once(request.user, workout=workout)
     return redirect("workouts:session-detail", pk=session.pk)
 
 
@@ -238,7 +238,7 @@ def session_start(request, workout_pk):
 def session_start_freeform(request):
     if request.method != "POST":
         return HttpResponseNotAllowed(["POST"])
-    session = services.start_session(request.user, workout=None)
+    session = services.start_session_once(request.user, workout=None)
     return redirect("workouts:session-detail", pk=session.pk)
 
 
