@@ -10406,3 +10406,6 @@ msgstr "Не удалось восстановить %(name)s: %(detail)s"
 
 msgid "Creating a backup failed: %(detail)s"
 msgstr "Не удалось создать резервную копию: %(detail)s"
+
+msgid "Stretched that day"
+msgstr "В этот день была растяжка"

@@ -10316,3 +10316,6 @@ msgstr "Faili %(name)s taastamine ebaõnnestus: %(detail)s"
 
 msgid "Creating a backup failed: %(detail)s"
 msgstr "Varukoopia loomine ebaõnnestus: %(detail)s"
+
+msgid "Stretched that day"
+msgstr "Venitas sel päeval"

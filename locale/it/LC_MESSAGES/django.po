@@ -10414,3 +10414,6 @@ msgstr "Ripristino di %(name)s non riuscito: %(detail)s"
 
 msgid "Creating a backup failed: %(detail)s"
 msgstr "Creazione del backup non riuscita: %(detail)s"
+
+msgid "Stretched that day"
+msgstr "Stretching quel giorno"

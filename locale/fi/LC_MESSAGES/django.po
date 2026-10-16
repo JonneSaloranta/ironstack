@@ -10347,3 +10347,6 @@ msgstr "Varmuuskopion %(name)s palautus epäonnistui: %(detail)s"
 
 msgid "Creating a backup failed: %(detail)s"
 msgstr "Varmuuskopion luominen epäonnistui: %(detail)s"
+
+msgid "Stretched that day"
+msgstr "Venytteli sinä päivänä"

@@ -2398,6 +2398,22 @@ class DashboardCalendarTests(TestCase):
         )
         self.assertEqual(todays_cell["status"].training_status, "completed")
 
+    def test_each_day_button_says_what_its_icons_show(self):
+        # The icons are aria-hidden and the PR/abandoned/completed ones
+        # used to differ only in colour.
+        from django.utils.formats import date_format
+
+        from apps.workouts.models import WorkoutSession, WorkoutSessionStatus
+
+        WorkoutSession.objects.create(
+            user=self.alice, status=WorkoutSessionStatus.ABANDONED, started_at=timezone.now(),
+        )
+        response = self.client.get(reverse("dashboard"))
+        today = date_format(timezone.localdate(), "DATE_FORMAT")
+        self.assertContains(response, f'<span class="visually-hidden">{today}:')
+        self.assertContains(response, "A session was abandoned", count=2)  # day + legend
+        self.assertContains(response, "Rest day")
+
     def test_a_stretching_day_gets_a_marker_and_a_popover_line(self):
         from datetime import date, timedelta
 
