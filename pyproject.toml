@@ -35,6 +35,10 @@ select = ["E", "F", "I"]
 # vendored dependency's own coverage, which would just dilute the
 # number with code this project doesn't own or test.
 source = ["apps"]
+# pytest runs on every core (pytest-xdist): each worker is a subprocess
+# that writes its own data file, merged by `coverage combine`.
+parallel = true
+patch = ["subprocess"]
 omit = [
     "*/migrations/*",
     "*/tests.py",

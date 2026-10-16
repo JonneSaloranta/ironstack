@@ -102,8 +102,14 @@ jobs:
       - name: Check for missing migrations
         run: python manage.py makemigrations --check --dry-run
 
+      # Under coverage, reported in the run's summary — measured, not
+      # enforced (no fail_under) until there's a baseline worth holding.
       - name: Test
-        run: pytest
+        run: |
+          coverage run -m pytest
+          coverage combine
+          coverage report --format=markdown --skip-covered >> "$GITHUB_STEP_SUMMARY"
+          coverage report | tail -1
 
   # Real-browser accessibility checks (apps/core/test_accessibility.py,
   # axe-core via Playwright) — a separate job rather than folded into
@@ -178,7 +184,9 @@ jobs:
   # APP_VERSION/BUILD_DATE metadata scripts/build.sh already bakes in
   # for a local build — this does the equivalent for the published one.
   publish-image:
-    needs: lint-and-test
+    # accessibility too: an axe or browser regression mustn't ship as
+    # :latest just because the plain test suite was green.
+    needs: [lint-and-test, accessibility]
     if: github.event_name == 'push' && github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
     permissions:
