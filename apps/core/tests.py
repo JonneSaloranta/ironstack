@@ -517,6 +517,24 @@ class TranslatedTextInAlpineExpressionsTests(TestCase):
         self.assertEqual(offenders, [])
 
 
+class StaticAssetsHashTests(TestCase):
+    def test_cached_in_production_but_not_with_debug(self):
+        version._cached_static_assets_hash.cache_clear()
+        with override_settings(DEBUG=False), mock.patch.object(
+            version, "_hash_static_assets", return_value="abc"
+        ) as hashed:
+            version.get_static_assets_hash()
+            version.get_static_assets_hash()
+        self.assertEqual(hashed.call_count, 1)
+        with override_settings(DEBUG=True), mock.patch.object(
+            version, "_hash_static_assets", return_value="abc"
+        ) as hashed:
+            version.get_static_assets_hash()
+            version.get_static_assets_hash()
+        self.assertEqual(hashed.call_count, 2)
+        version._cached_static_assets_hash.cache_clear()
+
+
 class HtmxLoginRedirectMiddlewareTests(TestCase):
     """apps.core.middleware.HtmxLoginRedirectMiddleware — an HTMX
     request without a session must send the whole page to login, not
@@ -565,6 +583,16 @@ class HealthcheckTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.content.decode(), "ok")
 
+
+    def test_answers_503_when_the_database_is_unreachable(self):
+        from django.db import OperationalError
+
+        with mock.patch(
+            "django.db.backends.base.base.BaseDatabaseWrapper.cursor",
+            side_effect=OperationalError("down"),
+        ):
+            response = self.client.get(reverse("healthcheck"))
+        self.assertEqual(response.status_code, 503)
 
 class PWATests(TestCase):
     """Installable-PWA support: manifest + service worker, served at the
@@ -733,9 +761,8 @@ class VersionTests(TestCase):
 
     def test_get_static_assets_hash_changes_when_a_file_does(self):
         # apps.core.views.service_worker's own cache-busting signal
-        # (static/sw.js's own comment on why) — deliberately not
-        # lru_cache'd like get_version()/get_git_sha() above, since a
-        # dev container's static/ is bind-mounted and can change
+        # (static/sw.js's own comment on why) — not cached with DEBUG on,
+        # since a dev container's static/ is bind-mounted and can change
         # without a restart; this proves that live-edit case directly.
         from apps.core.version import get_static_assets_hash
 
@@ -744,7 +771,7 @@ class VersionTests(TestCase):
             (base / "static" / "css").mkdir(parents=True)
             (base / "static" / "js").mkdir(parents=True)
             (base / "static" / "css" / "base.css").write_text("body { color: red; }")
-            with override_settings(BASE_DIR=base):
+            with override_settings(BASE_DIR=base, DEBUG=True):
                 before = get_static_assets_hash()
                 (base / "static" / "css" / "base.css").write_text("body { color: blue; }")
                 after = get_static_assets_hash()

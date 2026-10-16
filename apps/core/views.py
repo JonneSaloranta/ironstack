@@ -210,7 +210,16 @@ class DashboardView(LoginRequiredMixin, TemplateView):
 
 
 def healthcheck(request):
-    """Unauthenticated liveness endpoint for Docker/reverse-proxy checks."""
+    """Unauthenticated health endpoint for Docker/reverse-proxy checks.
+    Answers 503 when the database can't be reached — "ok" from a process
+    that can't serve a single page wasn't a healthy container."""
+    from django.db import DatabaseError, connection
+
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT 1")
+    except DatabaseError:
+        return HttpResponse("database unavailable", status=503)
     return HttpResponse("ok")
 
 

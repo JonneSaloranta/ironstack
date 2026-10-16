@@ -10429,3 +10429,9 @@ msgstr "Visa alla guider igen, även de du redan har gått igenom?"
 #, python-format
 msgid "RPE goes from %(min)s to %(max)s."
 msgstr "RPE går från %(min)s till %(max)s."
+
+msgid "Notifications are blocked for this site in your browser settings."
+msgstr "Aviseringar är blockerade för den här webbplatsen i webbläsarens inställningar."
+
+msgid "Saving the subscription failed."
+msgstr "Det gick inte att spara prenumerationen."

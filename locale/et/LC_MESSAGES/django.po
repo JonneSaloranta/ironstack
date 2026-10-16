@@ -10424,3 +10424,9 @@ msgstr "Kas näidata kõiki juhendeid uuesti, ka neid, mille oled juba läbinud?
 #, python-format
 msgid "RPE goes from %(min)s to %(max)s."
 msgstr "RPE on skaalal %(min)s kuni %(max)s."
+
+msgid "Notifications are blocked for this site in your browser settings."
+msgstr "Teavitused on selle saidi jaoks brauseri seadetes blokeeritud."
+
+msgid "Saving the subscription failed."
+msgstr "Tellimuse salvestamine ebaõnnestus."

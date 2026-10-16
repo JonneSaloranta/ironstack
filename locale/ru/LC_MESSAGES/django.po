@@ -10515,3 +10515,9 @@ msgstr "Показать все подсказки снова, включая у
 #, python-format
 msgid "RPE goes from %(min)s to %(max)s."
 msgstr "RPE — от %(min)s до %(max)s."
+
+msgid "Notifications are blocked for this site in your browser settings."
+msgstr "Уведомления для этого сайта заблокированы в настройках браузера."
+
+msgid "Saving the subscription failed."
+msgstr "Не удалось сохранить подписку."

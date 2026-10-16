@@ -114,6 +114,8 @@ instead.
       data-vapid-public-key="{{ push_vapid_public_key }}"
       data-push-subscribe-url="{% url 'push-subscribe' %}"
       data-push-unsubscribe-url="{% url 'push-unsubscribe' %}"
+      data-push-blocked-message="{% trans "Notifications are blocked for this site in your browser settings." %}"
+      data-push-save-failed-message="{% trans "Saving the subscription failed." %}"
       {% comment %}
       static/js/barcode-scanner.js's own human-readable explanation
       for `!navigator.mediaDevices` — a plain .js file (unlike this

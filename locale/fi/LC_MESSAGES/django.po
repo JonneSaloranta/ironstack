@@ -10455,3 +10455,9 @@ msgstr "Näytetäänkö kaikki ohjeet uudelleen, myös jo käydyt?"
 #, python-format
 msgid "RPE goes from %(min)s to %(max)s."
 msgstr "RPE on asteikolla %(min)s–%(max)s."
+
+msgid "Notifications are blocked for this site in your browser settings."
+msgstr "Ilmoitukset on estetty tältä sivustolta selaimen asetuksissa."
+
+msgid "Saving the subscription failed."
+msgstr "Tilauksen tallentaminen epäonnistui."

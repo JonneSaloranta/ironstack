@@ -10522,3 +10522,9 @@ msgstr "Mostrare di nuovo tutti i tutorial, anche quelli già completati?"
 #, python-format
 msgid "RPE goes from %(min)s to %(max)s."
 msgstr "L'RPE va da %(min)s a %(max)s."
+
+msgid "Notifications are blocked for this site in your browser settings."
+msgstr "Le notifiche per questo sito sono bloccate nelle impostazioni del browser."
+
+msgid "Saving the subscription failed."
+msgstr "Salvataggio dell'iscrizione non riuscito."

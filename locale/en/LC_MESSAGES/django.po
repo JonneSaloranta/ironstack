@@ -10396,3 +10396,9 @@ msgstr ""
 #, python-format
 msgid "RPE goes from %(min)s to %(max)s."
 msgstr ""
+
+msgid "Notifications are blocked for this site in your browser settings."
+msgstr ""
+
+msgid "Saving the subscription failed."
+msgstr ""
