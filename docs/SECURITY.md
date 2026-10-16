@@ -283,6 +283,18 @@ be used together:
   configured correctly, or at all. Left unset (the default), any
   Authentik account can log in, same as before this setting existed.
 
+**Only a verified email links to an existing account.** The backend
+matches an Authentik login to a local account by email, so it refuses
+any login whose `email_verified` claim isn't true
+(`AUTHENTIK_REQUIRE_EMAIL_VERIFIED`, on by default) — otherwise anyone
+able to put someone else's address on their own Authentik account would
+be logged in as that person, staff accounts included. If logins start
+failing with "Refused an Authentik login: email_verified isn't true" in
+the logs, check the email scope mapping in Authentik (Customization →
+Property Mappings → the OpenID `email` scope) sends `email_verified`
+as true for addresses you trust; only set the variable to false if every
+email in your Authentik is trustworthy anyway.
+
 **2FA note**: an SSO login goes straight from Authentik's own callback
 to `django.contrib.auth.login()` — it never touches
 `RateLimitedLoginView`/`TwoFactorVerifyView` at all, so this app's own

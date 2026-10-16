@@ -2746,14 +2746,36 @@ class OIDCAuthenticationBackendTests(TestCase):
         # AUTHENTIK_REQUIRED_GROUP set, which would otherwise leak into
         # this "no required group" case and fail it.
         self.assertTrue(
-            self.backend.verify_claims({"email": "vic@example.com", "groups": []})
+            self.backend.verify_claims(
+                {"email": "vic@example.com", "groups": [], "email_verified": True}
+            )
         )
+
+    @override_settings(AUTHENTIK_REQUIRED_GROUP="", AUTHENTIK_REQUIRE_EMAIL_VERIFIED=True)
+    def test_verify_claims_rejects_an_unverified_email(self):
+        # The email links the login to an existing local account, so an
+        # address someone merely typed into Authentik mustn't be enough.
+        for claims in (
+            {"email": "vic@example.com"},
+            {"email": "vic@example.com", "email_verified": False},
+            {"email": "vic@example.com", "email_verified": "false"},
+        ):
+            with self.subTest(claims=claims), self.assertLogs("apps.accounts.oidc", "WARNING"):
+                self.assertFalse(self.backend.verify_claims(claims))
+
+    @override_settings(AUTHENTIK_REQUIRED_GROUP="", AUTHENTIK_REQUIRE_EMAIL_VERIFIED=False)
+    def test_the_email_check_can_be_turned_off(self):
+        self.assertTrue(self.backend.verify_claims({"email": "vic@example.com"}))
 
     @override_settings(AUTHENTIK_REQUIRED_GROUP="ironstack-users")
     def test_verify_claims_rejects_a_user_missing_the_required_group(self):
         self.assertFalse(
             self.backend.verify_claims(
-                {"email": "vic@example.com", "groups": ["some-other-app-users"]}
+                {
+                    "email": "vic@example.com",
+                    "groups": ["some-other-app-users"],
+                    "email_verified": True,
+                }
             )
         )
 
@@ -2761,7 +2783,11 @@ class OIDCAuthenticationBackendTests(TestCase):
     def test_verify_claims_passes_a_user_in_the_required_group(self):
         self.assertTrue(
             self.backend.verify_claims(
-                {"email": "vic@example.com", "groups": ["ironstack-users", "other"]}
+                {
+                    "email": "vic@example.com",
+                    "groups": ["ironstack-users", "other"],
+                    "email_verified": True,
+                }
             )
         )
 

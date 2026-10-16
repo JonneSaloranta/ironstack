@@ -447,6 +447,13 @@ AUTHENTIK_APPLICATION_SLUG = env("AUTHENTIK_APPLICATION_SLUG", default="ironstac
 # Application itself in Authentik's own admin UI (Applications →
 # Policy / Group / User Bindings) to the same group.
 AUTHENTIK_REQUIRED_GROUP = env("AUTHENTIK_REQUIRED_GROUP", default="")
+# Refuse an Authentik login whose email isn't marked verified
+# (`email_verified` claim) — the login is matched to an existing local
+# account by email, so an unverified address someone set for themselves
+# could otherwise take over that account. Turn off only if your
+# Authentik's email scope mapping doesn't send `email_verified: true`
+# and every address there is trustworthy anyway.
+AUTHENTIK_REQUIRE_EMAIL_VERIFIED = env_bool("AUTHENTIK_REQUIRE_EMAIL_VERIFIED", default=True)
 AUTHENTIK_ENABLED = bool(AUTHENTIK_URL and AUTHENTIK_CLIENT_ID and AUTHENTIK_CLIENT_SECRET)
 
 if AUTHENTIK_ENABLED:
