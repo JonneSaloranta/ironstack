@@ -160,6 +160,30 @@ class UiBehaviourTests(StaticLiveServerTestCase):
         expect(toast).to_be_visible()
         expect(toast).to_contain_text("not saved")
 
+    # -- focus after an HTMX swap (static/js/htmx-focus.js) -----------------
+    def test_logging_a_set_from_the_keyboard_keeps_focus_in_the_form(self):
+        session, performed = self._session_with_set()
+        self._log_in()
+        self.page.goto(self._url(reverse("workouts:session-train", args=[session.pk])))
+        # The submit button, not a field: htmx itself keeps focus on an
+        # element whose id survives the swap (id_weight), but the button
+        # has none, so focus used to drop to <body>.
+        self.page.get_by_role("button", name="Log set").focus()
+        self.page.keyboard.press("Enter")
+        expect(self.page.locator("#train-panel .train-set-history .tag")).to_have_count(2)
+        # Focus moves on htmx:afterSettle, a moment after the swap — expect() retries.
+        expect(self.page.locator("#train-panel input[name=weight]")).to_be_focused()
+
+    def test_logging_a_set_on_the_session_page_keeps_focus_in_that_card(self):
+        session, performed = self._session_with_set()
+        self._log_in()
+        self.page.goto(self._url(reverse("workouts:session-detail", args=[session.pk])))
+        card = f"#performed-exercise-{performed.pk}"
+        self.page.locator(f"{card} button[type=submit]", has_text="Log").first.focus()
+        self.page.keyboard.press("Enter")
+        expect(self.page.locator(f"{card} .set-table tbody tr")).to_have_count(2)
+        expect(self.page.locator(f"{card} input[name=weight]")).to_be_focused()
+
     # -- chat composer keeps a failed draft (htmx-errors.js) -----------------
     def test_a_failed_message_send_keeps_the_draft(self):
         from apps.social.models import FriendRequest

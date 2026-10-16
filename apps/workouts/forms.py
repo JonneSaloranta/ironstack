@@ -52,8 +52,15 @@ class ExerciseSetForm(forms.ModelForm):
         # Numeric-keypad hints for the phone: a bare type=number gives the
         # full keyboard on some Android builds. `decimal` for weight (it
         # takes a fractional), `numeric` for whole-number reps.
+        # data-autofocus: where static/js/htmx-focus.js puts focus after
+        # logging a set swaps the card/panel this form is in.
         self.fields["weight"].widget.attrs.update(
-            {"inputmode": "decimal", "enterkeyhint": "next", "autocomplete": "off"}
+            {
+                "inputmode": "decimal",
+                "enterkeyhint": "next",
+                "autocomplete": "off",
+                "data-autofocus": "",
+            }
         )
         self.fields["reps"].widget.attrs.update(
             {"inputmode": "numeric", "enterkeyhint": "done", "autocomplete": "off"}
