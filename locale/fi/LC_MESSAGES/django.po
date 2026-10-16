@@ -10405,3 +10405,43 @@ msgstr[1] "%(counter)s tulosta"
 #, python-format
 msgid "That image is too large — the limit is %(megabytes)s MB."
 msgstr "Kuva on liian suuri — enimmäiskoko on %(megabytes)s Mt."
+
+#, python-format
+msgid "Confirm your email address on %(site_name)s"
+msgstr "Vahvista sähköpostiosoitteesi palvelussa %(site_name)s"
+
+#, python-format
+msgid "Hi %(username)s,"
+msgstr "Hei %(username)s,"
+
+#, python-format
+msgid "Thanks for signing up on %(site_name)s. Open this link to confirm your email address — you can log in once it's confirmed:"
+msgstr "Kiitos rekisteröitymisestä palveluun %(site_name)s. Vahvista sähköpostiosoitteesi avaamalla tämä linkki — voit kirjautua sisään, kun osoite on vahvistettu:"
+
+msgid "If you didn't sign up, you can safely ignore this email."
+msgstr "Jos et rekisteröitynyt, voit jättää tämän viestin huomiotta."
+
+msgid "Confirm your email"
+msgstr "Vahvista sähköpostiosoitteesi"
+
+#, python-format
+msgid "We've sent a link to %(email)s. Open it to confirm your address, then log in."
+msgstr "Lähetimme linkin osoitteeseen %(email)s. Avaa se vahvistaaksesi osoitteesi ja kirjaudu sitten sisään."
+
+msgid "Nothing arrived? Check your spam folder, or try logging in — that sends a new link."
+msgstr "Eikö mitään tullut? Tarkista roskapostikansio tai yritä kirjautua sisään — se lähettää uuden linkin."
+
+msgid "This confirmation link is invalid, has expired or was already used."
+msgstr "Tämä vahvistuslinkki on virheellinen, vanhentunut tai jo käytetty."
+
+msgid "Try logging in — if your address still needs confirming, a new link is sent to it."
+msgstr "Yritä kirjautua sisään — jos osoitteesi on vielä vahvistamatta, siihen lähetetään uusi linkki."
+
+msgid "Confirm your email address first — we've sent a link to it. Check your inbox (and spam folder)."
+msgstr "Vahvista ensin sähköpostiosoitteesi — lähetimme siihen linkin. Tarkista saapuneet viestit (ja roskaposti)."
+
+msgid "Email confirmed — you can log in now."
+msgstr "Sähköpostiosoite vahvistettu — voit nyt kirjautua sisään."
+
+msgid "Email confirmation"
+msgstr "Sähköpostin vahvistus"

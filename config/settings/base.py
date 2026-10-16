@@ -386,6 +386,14 @@ ADMIN_CONTACT_EMAIL = env("DJANGO_ADMIN_CONTACT_EMAIL", default="")
 # only SignupView reads this.
 SIGNUP_ENABLED = env_bool("DJANGO_SIGNUP_ENABLED", default=True)
 
+# Require a new signup to confirm their email address (a link sent to
+# it, apps.accounts.email_verification) before they can log in. Off by
+# default: it needs working email (DJANGO_EMAIL_HOST below). Only
+# affects accounts that sign up while it's on — existing users, SSO
+# accounts and admin-created ones never have to verify. Turning it off
+# again lets anyone still unconfirmed log in.
+SIGNUP_EMAIL_VERIFICATION = env_bool("DJANGO_SIGNUP_EMAIL_VERIFICATION", default=False)
+
 # Independent of SIGNUP_ENABLED above: this gates the local username/
 # password *login* form itself (apps.accounts.views.RateLimitedLoginView/
 # RateLimitedPasswordResetView/SignupView — see docs/SECURITY.md

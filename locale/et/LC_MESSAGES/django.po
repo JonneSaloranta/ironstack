@@ -10374,3 +10374,43 @@ msgstr[1] "%(counter)s tulemust"
 #, python-format
 msgid "That image is too large — the limit is %(megabytes)s MB."
 msgstr "Pilt on liiga suur — piirang on %(megabytes)s MB."
+
+#, python-format
+msgid "Confirm your email address on %(site_name)s"
+msgstr "Kinnita oma e-posti aadress saidil %(site_name)s"
+
+#, python-format
+msgid "Hi %(username)s,"
+msgstr "Tere, %(username)s!"
+
+#, python-format
+msgid "Thanks for signing up on %(site_name)s. Open this link to confirm your email address — you can log in once it's confirmed:"
+msgstr "Aitäh, et registreerusid saidil %(site_name)s. Ava see link, et kinnitada oma e-posti aadress — saad sisse logida, kui see on kinnitatud:"
+
+msgid "If you didn't sign up, you can safely ignore this email."
+msgstr "Kui sa ei registreerunud, võid selle kirja julgelt tähelepanuta jätta."
+
+msgid "Confirm your email"
+msgstr "Kinnita oma e-post"
+
+#, python-format
+msgid "We've sent a link to %(email)s. Open it to confirm your address, then log in."
+msgstr "Saatsime lingi aadressile %(email)s. Ava see oma aadressi kinnitamiseks ja logi siis sisse."
+
+msgid "Nothing arrived? Check your spam folder, or try logging in — that sends a new link."
+msgstr "Midagi ei saabunud? Vaata rämpsposti kausta või proovi sisse logida — see saadab uue lingi."
+
+msgid "This confirmation link is invalid, has expired or was already used."
+msgstr "See kinnituslink on vigane, aegunud või juba kasutatud."
+
+msgid "Try logging in — if your address still needs confirming, a new link is sent to it."
+msgstr "Proovi sisse logida — kui su aadress vajab veel kinnitamist, saadetakse sellele uus link."
+
+msgid "Confirm your email address first — we've sent a link to it. Check your inbox (and spam folder)."
+msgstr "Kinnita esmalt oma e-posti aadress — saatsime sellele lingi. Vaata postkasti (ja rämpsposti)."
+
+msgid "Email confirmed — you can log in now."
+msgstr "E-post kinnitatud — saad nüüd sisse logida."
+
+msgid "Email confirmation"
+msgstr "E-posti kinnitamine"

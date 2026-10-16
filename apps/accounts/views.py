@@ -66,6 +66,19 @@ class SignupView(CreateView):
         return context
 
     def form_valid(self, form):
+        if settings.SIGNUP_EMAIL_VERIFICATION:
+            # No login yet: the account waits for its email to be
+            # confirmed (apps.accounts.email_verification).
+            from . import email_verification
+
+            user = form.save(commit=False)
+            user.email_verification_pending = True
+            user.save()
+            self.object = user
+            email_verification.send_verification_email(self.request, user)
+            return render(
+                self.request, "registration/verify_email_sent.html", {"email": user.email}
+            )
         response = super().form_valid(form)
         # Explicit `backend=`: form.save() creates `self.object` with a
         # plain ORM insert, never through authenticate(), so it has no
@@ -631,3 +644,14 @@ class OnboardingView(LoginRequiredMixin, View):
             "accounts/_onboarding_modal.html",
             {"onboarding_form": form, "show_onboarding": True},
         )
+
+
+def verify_email(request, uidb64, token):
+    """The link a new signup gets by email (apps.accounts.email_verification)."""
+    from . import email_verification
+
+    user = email_verification.confirm(uidb64, token)
+    if user is None:
+        return render(request, "registration/verify_email_invalid.html", status=400)
+    messages.success(request, _("Email confirmed — you can log in now."))
+    return redirect("login")

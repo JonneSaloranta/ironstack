@@ -10379,3 +10379,43 @@ msgstr[1] "%(counter)s resultat"
 #, python-format
 msgid "That image is too large — the limit is %(megabytes)s MB."
 msgstr "Bilden är för stor — gränsen är %(megabytes)s MB."
+
+#, python-format
+msgid "Confirm your email address on %(site_name)s"
+msgstr "Bekräfta din e-postadress på %(site_name)s"
+
+#, python-format
+msgid "Hi %(username)s,"
+msgstr "Hej %(username)s,"
+
+#, python-format
+msgid "Thanks for signing up on %(site_name)s. Open this link to confirm your email address — you can log in once it's confirmed:"
+msgstr "Tack för att du registrerade dig på %(site_name)s. Öppna den här länken för att bekräfta din e-postadress — du kan logga in när den är bekräftad:"
+
+msgid "If you didn't sign up, you can safely ignore this email."
+msgstr "Om du inte har registrerat dig kan du lugnt ignorera det här meddelandet."
+
+msgid "Confirm your email"
+msgstr "Bekräfta din e-post"
+
+#, python-format
+msgid "We've sent a link to %(email)s. Open it to confirm your address, then log in."
+msgstr "Vi har skickat en länk till %(email)s. Öppna den för att bekräfta din adress och logga sedan in."
+
+msgid "Nothing arrived? Check your spam folder, or try logging in — that sends a new link."
+msgstr "Kom inget? Kolla skräpposten eller försök logga in — då skickas en ny länk."
+
+msgid "This confirmation link is invalid, has expired or was already used."
+msgstr "Den här bekräftelselänken är ogiltig, har gått ut eller har redan använts."
+
+msgid "Try logging in — if your address still needs confirming, a new link is sent to it."
+msgstr "Försök logga in — om din adress fortfarande behöver bekräftas skickas en ny länk till den."
+
+msgid "Confirm your email address first — we've sent a link to it. Check your inbox (and spam folder)."
+msgstr "Bekräfta först din e-postadress — vi har skickat en länk till den. Kolla inkorgen (och skräpposten)."
+
+msgid "Email confirmed — you can log in now."
+msgstr "E-postadressen är bekräftad — du kan logga in nu."
+
+msgid "Email confirmation"
+msgstr "E-postbekräftelse"

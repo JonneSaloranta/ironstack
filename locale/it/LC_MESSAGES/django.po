@@ -10472,3 +10472,43 @@ msgstr[1] "%(counter)s risultati"
 #, python-format
 msgid "That image is too large — the limit is %(megabytes)s MB."
 msgstr "L'immagine è troppo grande — il limite è %(megabytes)s MB."
+
+#, python-format
+msgid "Confirm your email address on %(site_name)s"
+msgstr "Conferma il tuo indirizzo email su %(site_name)s"
+
+#, python-format
+msgid "Hi %(username)s,"
+msgstr "Ciao %(username)s,"
+
+#, python-format
+msgid "Thanks for signing up on %(site_name)s. Open this link to confirm your email address — you can log in once it's confirmed:"
+msgstr "Grazie per esserti registrato su %(site_name)s. Apri questo link per confermare il tuo indirizzo email — potrai accedere una volta confermato:"
+
+msgid "If you didn't sign up, you can safely ignore this email."
+msgstr "Se non ti sei registrato, puoi ignorare questa email."
+
+msgid "Confirm your email"
+msgstr "Conferma la tua email"
+
+#, python-format
+msgid "We've sent a link to %(email)s. Open it to confirm your address, then log in."
+msgstr "Abbiamo inviato un link a %(email)s. Aprilo per confermare il tuo indirizzo, poi accedi."
+
+msgid "Nothing arrived? Check your spam folder, or try logging in — that sends a new link."
+msgstr "Non è arrivato nulla? Controlla la cartella spam o prova ad accedere: verrà inviato un nuovo link."
+
+msgid "This confirmation link is invalid, has expired or was already used."
+msgstr "Questo link di conferma non è valido, è scaduto o è già stato usato."
+
+msgid "Try logging in — if your address still needs confirming, a new link is sent to it."
+msgstr "Prova ad accedere: se il tuo indirizzo deve ancora essere confermato, ti verrà inviato un nuovo link."
+
+msgid "Confirm your email address first — we've sent a link to it. Check your inbox (and spam folder)."
+msgstr "Prima conferma il tuo indirizzo email: ti abbiamo inviato un link. Controlla la posta in arrivo (e lo spam)."
+
+msgid "Email confirmed — you can log in now."
+msgstr "Email confermata: ora puoi accedere."
+
+msgid "Email confirmation"
+msgstr "Conferma email"

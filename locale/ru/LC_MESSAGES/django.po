@@ -10465,3 +10465,43 @@ msgstr[2] "%(counter)s результатов"
 #, python-format
 msgid "That image is too large — the limit is %(megabytes)s MB."
 msgstr "Изображение слишком большое — предел %(megabytes)s МБ."
+
+#, python-format
+msgid "Confirm your email address on %(site_name)s"
+msgstr "Подтвердите адрес электронной почты на %(site_name)s"
+
+#, python-format
+msgid "Hi %(username)s,"
+msgstr "Здравствуйте, %(username)s!"
+
+#, python-format
+msgid "Thanks for signing up on %(site_name)s. Open this link to confirm your email address — you can log in once it's confirmed:"
+msgstr "Спасибо за регистрацию на %(site_name)s. Откройте эту ссылку, чтобы подтвердить адрес электронной почты, — после подтверждения вы сможете войти:"
+
+msgid "If you didn't sign up, you can safely ignore this email."
+msgstr "Если вы не регистрировались, просто проигнорируйте это письмо."
+
+msgid "Confirm your email"
+msgstr "Подтвердите электронную почту"
+
+#, python-format
+msgid "We've sent a link to %(email)s. Open it to confirm your address, then log in."
+msgstr "Мы отправили ссылку на %(email)s. Откройте её, чтобы подтвердить адрес, а затем войдите."
+
+msgid "Nothing arrived? Check your spam folder, or try logging in — that sends a new link."
+msgstr "Ничего не пришло? Проверьте папку «Спам» или попробуйте войти — будет отправлена новая ссылка."
+
+msgid "This confirmation link is invalid, has expired or was already used."
+msgstr "Эта ссылка для подтверждения недействительна, устарела или уже использована."
+
+msgid "Try logging in — if your address still needs confirming, a new link is sent to it."
+msgstr "Попробуйте войти — если адрес ещё не подтверждён, на него будет отправлена новая ссылка."
+
+msgid "Confirm your email address first — we've sent a link to it. Check your inbox (and spam folder)."
+msgstr "Сначала подтвердите адрес электронной почты — мы отправили на него ссылку. Проверьте входящие (и «Спам»)."
+
+msgid "Email confirmed — you can log in now."
+msgstr "Адрес подтверждён — теперь можно войти."
+
+msgid "Email confirmation"
+msgstr "Подтверждение почты"

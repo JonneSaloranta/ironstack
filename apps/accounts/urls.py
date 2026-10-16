@@ -14,10 +14,12 @@ from .views import (
     TwoFactorRegenerateBackupCodesView,
     TwoFactorSetupView,
     TwoFactorVerifyView,
+    verify_email,
 )
 
 urlpatterns = [
     path("signup/", SignupView.as_view(), name="signup"),
+    path("verify-email/<uidb64>/<token>/", verify_email, name="verify-email"),
     path("profile/", ProfileView.as_view(), name="profile"),
     path("account-details/", AccountDetailsView.as_view(), name="account-details"),
     path("delete/", AccountDeleteView.as_view(), name="account-delete"),

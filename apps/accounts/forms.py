@@ -83,6 +83,12 @@ class SignupForm(UserCreationForm):
         model = User
         fields = ("username", "email")
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # The confirmation link has to go somewhere.
+        if settings.SIGNUP_EMAIL_VERIFICATION:
+            self.fields["email"].required = True
+
 
 # apps.core.request.client_ip — moved there once apps.social needed
 # the exact same IP-resolution logic for its own invite-code lookup
@@ -143,12 +149,29 @@ class _RateLimitedLoginMixin:
             )
         try:
             cleaned_data = super().clean()
-        except forms.ValidationError:
-            cache.set(pair_key, pair_attempts + 1, self.window_seconds)
-            cache.set(ip_key, ip_attempts + 1, self.window_seconds)
+        except forms.ValidationError as error:
+            # The right password for an account that hasn't confirmed its
+            # email yet (confirm_login_allowed below) isn't a failed guess.
+            if error.code != "email_unverified":
+                cache.set(pair_key, pair_attempts + 1, self.window_seconds)
+                cache.set(ip_key, ip_attempts + 1, self.window_seconds)
             raise
         cache.delete(pair_key)
         return cleaned_data
+
+    def confirm_login_allowed(self, user):
+        super().confirm_login_allowed(user)
+        from . import email_verification
+
+        if email_verification.is_required(user):
+            email_verification.resend_if_due(self.request, user)
+            raise forms.ValidationError(
+                _(
+                    "Confirm your email address first — we've sent a link to it. "
+                    "Check your inbox (and spam folder)."
+                ),
+                code="email_unverified",
+            )
 
 
 class RateLimitedAuthenticationForm(_RateLimitedLoginMixin, AuthenticationForm):

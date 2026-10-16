@@ -1176,6 +1176,7 @@ NO_TOUR_NEEDED = {
     # Signed-out pages: nobody to show a tour to yet.
     "login": "signed out",
     "signup": "signed out",
+    "verify-email": "signed out",
     "password_reset": "signed out",
     "password_reset_done": "signed out",
     "password_reset_complete": "signed out",

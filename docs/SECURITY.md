@@ -527,6 +527,23 @@ accounts, or from the start if this instance is reachable beyond a
 trusted network. Gates the URL itself, not just the login page's link
 to it. Existing users can still log in either way.
 
+**Email confirmation** (`DJANGO_SIGNUP_EMAIL_VERIFICATION=true`, off by
+default since it needs working email — `DJANGO_EMAIL_HOST`): a new
+signup must give an email address and open the link sent to it before
+it can log in (`apps.accounts.email_verification`). Until then the
+account is marked `email_verification_pending` — a flag of its own, not
+`is_active=False`, so an admin deactivating someone is never undone by
+that person confirming an address. A login with the right password
+while still unconfirmed is refused (without counting as a failed guess
+for rate limiting) and sends a fresh link, at most every five minutes.
+The link's token comes from its own generator (a different salt from
+password reset), stops working once used, and expires after
+`PASSWORD_RESET_TIMEOUT`. Only signups made while the setting is on are
+affected — existing, SSO and admin-created accounts never have to
+confirm — and an admin can let someone in by unticking "Email
+confirmation" on their user in /admin/. Turning the setting off lets
+anyone still unconfirmed log in.
+
 ## Authorization
 
 Every user-owned query must be scoped to the authenticated user.

@@ -374,6 +374,110 @@ class LoginFlowTests(TestCase):
         self.assertEqual(response.wsgi_request.user.username, "carol")
 
 
+@override_settings(SIGNUP_ENABLED=True, PASSWORD_LOGIN_ENABLED=True, SIGNUP_EMAIL_VERIFICATION=True)
+class SignupEmailVerificationTests(TestCase):
+    """settings.SIGNUP_EMAIL_VERIFICATION — a new signup must open the
+    link emailed to them before they can log in."""
+
+    def setUp(self):
+        cache.clear()
+        self.addCleanup(cache.clear)
+
+    def _sign_up(self, email="new@example.com"):
+        return self.client.post(
+            reverse("signup"),
+            {
+                "username": "newlifter",
+                "email": email,
+                "password1": "a-very-strong-pass-1",
+                "password2": "a-very-strong-pass-1",
+            },
+        )
+
+    def _log_in(self):
+        return self.client.post(
+            reverse("login"), {"username": "newlifter", "password": "a-very-strong-pass-1"}
+        )
+
+    def _link(self, message):
+        import re
+
+        return re.search(r"https?://\S+/accounts/verify-email/\S+/", message.body).group(0)
+
+    def test_signing_up_sends_a_link_instead_of_logging_in(self):
+        response = self._sign_up()
+        self.assertContains(response, "new@example.com")
+        self.assertNotIn("_auth_user_id", self.client.session)
+        self.assertTrue(User.objects.get(username="newlifter").email_verification_pending)
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(mail.outbox[0].to, ["new@example.com"])
+
+    def test_an_email_address_is_required(self):
+        response = self._sign_up(email="")
+        self.assertFalse(User.objects.filter(username="newlifter").exists())
+        self.assertTrue(response.context["form"].errors["email"])
+
+    def test_logging_in_before_confirming_is_refused_and_resends_the_link(self):
+        self._sign_up()
+        mail.outbox.clear()
+        cache.clear()  # past the resend interval
+        response = self._log_in()
+        self.assertContains(response, "Confirm your email address first")
+        self.assertNotIn("_auth_user_id", self.client.session)
+        self.assertEqual(len(mail.outbox), 1)
+        # Not again straight away.
+        self._log_in()
+        self.assertEqual(len(mail.outbox), 1)
+
+    def test_a_refused_unconfirmed_login_is_not_a_failed_guess(self):
+        from apps.accounts.forms import LOGIN_ATTEMPT_LIMIT
+
+        self._sign_up()
+        for _ in range(LOGIN_ATTEMPT_LIMIT + 1):
+            response = self._log_in()
+        self.assertNotContains(response, "Too many failed login attempts")
+
+    def test_the_link_confirms_the_address_once(self):
+        self._sign_up()
+        link = self._link(mail.outbox[0])
+        response = self.client.get(link)
+        self.assertRedirects(response, reverse("login"))
+        self.assertFalse(User.objects.get(username="newlifter").email_verification_pending)
+        self._log_in()
+        self.assertIn("_auth_user_id", self.client.session)
+        self.client.logout()
+        self.assertEqual(self.client.get(link).status_code, 400)
+
+    def test_a_tampered_link_is_rejected(self):
+        self._sign_up()
+        link = self._link(mail.outbox[0])
+        self.assertEqual(self.client.get(link[:-3] + "xx/").status_code, 400)
+        self.assertTrue(User.objects.get(username="newlifter").email_verification_pending)
+
+    def test_the_confirmation_token_is_not_a_password_reset_token(self):
+        from django.contrib.auth.tokens import default_token_generator
+
+        from apps.accounts.email_verification import token_generator
+
+        self._sign_up()
+        user = User.objects.get(username="newlifter")
+        token = token_generator.make_token(user)
+        self.assertFalse(default_token_generator.check_token(user, token))
+
+    @override_settings(SIGNUP_EMAIL_VERIFICATION=False)
+    def test_turning_it_off_lets_unconfirmed_accounts_in(self):
+        user = User.objects.create_user(
+            username="newlifter", password="a-very-strong-pass-1", email_verification_pending=True
+        )
+        self._log_in()
+        self.assertEqual(int(self.client.session["_auth_user_id"]), user.pk)
+
+    def test_existing_accounts_never_need_to_confirm(self):
+        User.objects.create_user(username="newlifter", password="a-very-strong-pass-1")
+        self._log_in()
+        self.assertIn("_auth_user_id", self.client.session)
+
+
 class LoginRateLimitTests(TestCase):
     """apps.accounts.forms.RateLimitedAuthenticationForm — Django's own
     login view has no brute-force protection at all otherwise (this is
