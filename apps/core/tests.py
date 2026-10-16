@@ -470,6 +470,48 @@ class ProductionSettingsTests(TestCase):
         )
 
 
+class HtmxLoginRedirectMiddlewareTests(TestCase):
+    """apps.core.middleware.HtmxLoginRedirectMiddleware — an HTMX
+    request without a session must send the whole page to login, not
+    swap the login page into a fragment."""
+
+    def test_an_htmx_request_without_a_session_gets_a_full_page_redirect(self):
+        response = self.client.post(
+            reverse("workouts:train-set-log", args=[1]),
+            {"weight": "100", "reps": "5"},
+            HTTP_HX_REQUEST="true",
+            HTTP_HX_CURRENT_URL="http://testserver/workouts/sessions/7/train/?x=1",
+        )
+        self.assertEqual(response.status_code, 204)
+        self.assertEqual(
+            response["HX-Redirect"],
+            reverse("login") + "?next=%2Fworkouts%2Fsessions%2F7%2Ftrain%2F%3Fx%3D1",
+        )
+        self.assertEqual(response.content, b"")
+
+    def test_a_foreign_current_url_falls_back_to_the_dashboard(self):
+        response = self.client.get(
+            reverse("dashboard"),
+            HTTP_HX_REQUEST="true",
+            HTTP_HX_CURRENT_URL="https://evil.example/phish",
+        )
+        self.assertEqual(response["HX-Redirect"], reverse("login") + "?next=%2F")
+
+    def test_a_plain_request_still_gets_the_normal_redirect(self):
+        response = self.client.get(reverse("dashboard"))
+        self.assertEqual(response.status_code, 302)
+        self.assertNotIn("HX-Redirect", response)
+
+    def test_other_htmx_redirects_are_left_alone(self):
+        user = get_user_model().objects.create_user(username="alice", password="s3cret-pass")
+        self.client.force_login(user)
+        response = self.client.post(
+            reverse("workouts:session-start-freeform"), HTTP_HX_REQUEST="true"
+        )
+        self.assertEqual(response.status_code, 302)
+        self.assertNotIn("HX-Redirect", response)
+
+
 class HealthcheckTests(TestCase):
     def test_healthcheck_returns_200_without_auth(self):
         response = self.client.get(reverse("healthcheck"))

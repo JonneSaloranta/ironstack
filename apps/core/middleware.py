@@ -1,3 +1,11 @@
+from urllib.parse import urlencode, urlsplit
+
+from django.conf import settings
+from django.http import HttpResponse
+from django.shortcuts import resolve_url
+from django.utils.http import url_has_allowed_host_and_scheme
+
+
 class ContentSecurityPolicyMiddleware:
     """Sets a Content-Security-Policy header on every response — see
     docs/SECURITY.md "Content-Security-Policy" for the deliberate
@@ -80,3 +88,39 @@ class ContentSecurityPolicyMiddleware:
         response = self.get_response(request)
         response.setdefault("Content-Security-Policy", self.POLICY)
         return response
+
+
+class HtmxLoginRedirectMiddleware:
+    """Turns a redirect to the login page into a full-page `HX-Redirect`
+    when the request came from HTMX.
+
+    The browser follows a plain 302 inside the XHR, so without this an
+    expired session (or a logout in another tab) made htmx swap the
+    login page's HTML into whatever fragment was being updated — a set
+    log mid-workout showed a login form inside the training panel, with
+    no error and the set not saved. The `next` it sends the user back
+    to is the page they were on (`HX-Current-URL`), not the HTMX
+    endpoint, which is usually POST-only.
+    """
+
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        response = self.get_response(request)
+        if not request.headers.get("HX-Request") or response.status_code not in (301, 302):
+            return response
+        login_path = resolve_url(settings.LOGIN_URL)
+        if urlsplit(response.get("Location", "")).path != login_path:
+            return response
+        current = request.headers.get("HX-Current-URL", "")
+        if current and url_has_allowed_host_and_scheme(
+            current, allowed_hosts={request.get_host()}, require_https=request.is_secure()
+        ):
+            parts = urlsplit(current)
+            next_url = parts.path + (f"?{parts.query}" if parts.query else "")
+        else:
+            next_url = resolve_url(settings.LOGIN_REDIRECT_URL)
+        htmx_response = HttpResponse(status=204)
+        htmx_response["HX-Redirect"] = f"{login_path}?{urlencode({'next': next_url})}"
+        return htmx_response

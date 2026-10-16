@@ -123,6 +123,9 @@ MIDDLEWARE = [
     "apps.accounts.middleware.UserTimezoneMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    # Rewrites login redirects on HTMX requests into HX-Redirect — see
+    # its docstring.
+    "apps.core.middleware.HtmxLoginRedirectMiddleware",
 ]
 
 ROOT_URLCONF = "config.urls"
