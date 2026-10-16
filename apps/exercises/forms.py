@@ -56,3 +56,19 @@ class ExerciseImageForm(forms.ModelForm):
     class Meta:
         model = ExerciseImage
         fields = ["image", "caption"]
+
+    def clean_image(self):
+        from . import services
+
+        image = self.cleaned_data["image"]
+        if image is None or not hasattr(image, "content_type"):
+            return image  # unchanged (no new upload)
+        if image.size > services.MAX_IMAGE_UPLOAD_BYTES:
+            raise forms.ValidationError(
+                gettext("That image is too large — the limit is %(megabytes)s MB.")
+                % {"megabytes": services.MAX_IMAGE_UPLOAD_BYTES // (1024 * 1024)}
+            )
+        prepared, (self.instance.width, self.instance.height) = (
+            services.prepare_uploaded_image(image, with_size=True)
+        )
+        return prepared

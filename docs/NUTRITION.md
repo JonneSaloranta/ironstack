@@ -506,9 +506,21 @@ turning many per-store reports into one representative figure.
 
 ```
 Recipe: owner (nullable), name, servings, instructions (optional),
-  meal_slot (nullable FK, SET_NULL)
+  meal_slots (M2M), active
 RecipeIngredient: recipe (FK), food (FK), quantity, order
 ```
+
+**Deleting a recipe never deletes diary history.** A diary entry's
+calories come from its recipe's ingredients, so `DiaryEntry.recipe`
+(and `DietPlanItem.recipe`) are `RESTRICT`, not `CASCADE` — the old
+cascade silently erased every past day that had logged the recipe.
+`services.delete_recipe` (used by the web UI and the API's `DELETE`)
+deletes a recipe nothing refers to, and otherwise only sets
+`active=False`: it disappears from the recipe list, search, pickers,
+the diet builder and the assistant, while the diary and existing diet
+plans still show it by name (without a link). `RESTRICT` rather than
+`PROTECT` so deleting the user, which removes their diary entries in
+the same cascade, still works.
 
 `owner=None` means a shared **template recipe** — visible and usable
 by every user, not just whoever created it, the same
@@ -582,8 +594,21 @@ user, date (DateField — the day it counts toward, not when it was
 typed), meal_slot (FK), food (nullable FK) XOR recipe (nullable FK)
 XOR quick macros (quick_name, quick_calories, quick_protein_grams,
 quick_carbohydrate_grams, quick_fat_grams), quantity, logged_at
-(DateTimeField, default now), notes
+(DateTimeField, default now), notes, nutrition_snapshot (JSON)
 ```
+
+**A logged day keeps its numbers.** A food or recipe entry stores its
+nutrition per one unit of `quantity` as the food or recipe was when it
+was logged (`nutrition_snapshot`, set in `DiaryEntry.save()`), and
+`services.diary_entry_nutrition` reads that, scaled by `quantity`.
+Editing a food, changing a recipe's ingredients, merging foods or an
+Open Food Facts refresh of a shared food no longer changes past days —
+the same rule workout history follows. Changing an entry's quantity
+just scales the stored values; only switching it to another food or
+recipe takes that one's current values. Copying a day copies the
+values too. Quick entries already store their own macros and need no
+snapshot. Migration 0026 froze existing entries at the values they had
+then.
 
 Exactly one of `food`/`recipe`/quick macros (`quick_calories` set) must
 be set — enforced with a `CheckConstraint`, not just convention.

@@ -1,0 +1,6 @@
+{% load i18n %}{% blocktrans with username=user.get_username %}Hi {{ username }},{% endblocktrans %}
+
+{% blocktrans %}Thanks for signing up on {{ site_name }}. Open this link to confirm your email address — you can log in once it's confirmed:{% endblocktrans %}
+{{ link }}
+
+{% trans "If you didn't sign up, you can safely ignore this email." %}

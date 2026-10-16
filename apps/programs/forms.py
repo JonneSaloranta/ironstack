@@ -13,6 +13,7 @@ from apps.core.formatting import (
     lazy_format_html,
 )
 from apps.exercises.services import visible_to as exercises_visible_to
+from apps.workouts.services import validate_rpe
 
 from .models import ExercisePrescription, Program, Workout
 
@@ -126,6 +127,15 @@ class ExercisePrescriptionForm(forms.ModelForm):
         # apps.exercises.i18n_content), same as everywhere else this
         # pattern is used.
         self.fields["exercise"].label_from_instance = lambda obj: _gettext(obj.name)
+        # Numeric keypads on a phone, as on the set form.
+        for name in ("order", "set_count", "min_reps", "max_reps", "target_rir"):
+            self.fields[name].widget.attrs.update({"inputmode": "numeric", "min": "0"})
+        for name in ("target_weight", "weight_increment", "percentage_target"):
+            self.fields[name].widget.attrs.update({"inputmode": "decimal"})
+        self.fields["target_rpe"].widget.attrs.update(
+            {"inputmode": "decimal", "min": "1", "max": "10", "step": "0.5"}
+        )
+        self.fields["target_rpe"].validators.append(validate_rpe)
         unit_system = getattr(user, "unit_system", "metric")
         unit_label = core_units.weight_unit_label(unit_system)
         self.fields["target_weight"].label = _("Target weight (%(unit)s)") % {"unit": unit_label}

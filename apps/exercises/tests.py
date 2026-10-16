@@ -247,6 +247,18 @@ class ExerciseListViewTests(TestCase):
             response.templates[0].name, "exercises/_exercise_list_results.html"
         )
 
+    def test_a_live_search_announces_how_many_it_found(self):
+        Exercise.objects.create(name="Zzyzx Curl", owner=None)
+        response = self.client.get(
+            reverse("exercises:exercise-list"), {"q": "Zzyzx Curl"}, HTTP_HX_REQUEST="true"
+        )
+        self.assertContains(response, 'hx-swap-oob="innerHTML:#search-status">1 result<')
+
+    def test_the_full_page_has_the_status_region_but_no_out_of_band_update(self):
+        response = self.client.get(reverse("exercises:exercise-list"))
+        self.assertContains(response, 'id="search-status"')
+        self.assertNotContains(response, "hx-swap-oob")
+
 
 class ExerciseCreateViewTests(TestCase):
     def setUp(self):
@@ -439,6 +451,74 @@ class ExerciseImageViewTests(TestCase):
         )
         self.assertEqual(self.exercise.images.count(), 1)
         self.assertEqual(self.exercise.images.first().caption, "Step 1")
+
+    def test_a_large_photo_is_scaled_down_and_stripped_of_its_metadata(self):
+        from PIL import Image
+
+        buffer = io.BytesIO()
+        exif = Image.Exif()
+        exif[0x010F] = "PhoneMaker"  # Make
+        Image.new("RGB", (4000, 3000), color="blue").save(buffer, format="JPEG", exif=exif)
+        upload = SimpleUploadedFile("photo.jpg", buffer.getvalue(), content_type="image/jpeg")
+        self.client.post(
+            reverse("exercises:exercise-image-create", args=[self.exercise.pk]), {"image": upload}
+        )
+        stored = self.exercise.images.get().image
+        with Image.open(stored.open()) as saved:
+            self.assertEqual(saved.size, (1600, 1200))
+            self.assertEqual(saved.format, "JPEG")
+            self.assertNotIn(0x010F, saved.getexif())
+
+    def test_an_upload_gets_a_random_name_and_its_size_is_stored(self):
+        self.client.post(
+            reverse("exercises:exercise-image-create", args=[self.exercise.pk]),
+            {"image": _tiny_image("My Holiday In Rome.PNG")},
+        )
+        image = self.exercise.images.get()
+        self.assertNotIn("Holiday", image.image.name)
+        self.assertTrue(image.image.name.endswith(".png"))
+        self.assertEqual((image.width, image.height), (10, 10))
+        response = self.client.get(reverse("exercises:exercise-detail", args=[self.exercise.pk]))
+        self.assertContains(response, 'width="10" height="10"')
+
+    def test_the_migration_fills_in_sizes_and_skips_missing_files(self):
+        import importlib
+
+        from django.apps import apps as global_apps
+
+        present = ExerciseImage.objects.create(exercise=self.exercise, image=_tiny_image())
+        missing = ExerciseImage.objects.create(exercise=self.exercise, image=_tiny_image())
+        missing.image.storage.delete(missing.image.name)
+
+        migration = importlib.import_module(
+            "apps.exercises.migrations.0011_exerciseimage_dimensions"
+        )
+        migration.fill_dimensions(global_apps, None)
+
+        present.refresh_from_db()
+        missing.refresh_from_db()
+        self.assertEqual((present.width, present.height), (10, 10))
+        self.assertIsNone(missing.width)
+
+    def test_a_missing_image_file_never_breaks_the_page(self):
+        image = ExerciseImage.objects.create(exercise=self.exercise, image=_tiny_image())
+        image.image.storage.delete(image.image.name)
+        response = self.client.get(reverse("exercises:exercise-detail", args=[self.exercise.pk]))
+        self.assertEqual(response.status_code, 200)
+
+    def test_an_oversized_upload_is_refused(self):
+        from unittest import mock
+
+        from . import services
+
+        with mock.patch.object(services, "MAX_IMAGE_UPLOAD_BYTES", 10):
+            response = self.client.post(
+                reverse("exercises:exercise-image-create", args=[self.exercise.pk]),
+                {"image": _tiny_image()},
+                follow=True,
+            )
+        self.assertFalse(self.exercise.images.exists())
+        self.assertContains(response, "too large")
 
     def test_cannot_add_an_image_to_another_users_exercise(self):
         bob_exercise = Exercise.objects.create(name="Bob Move", owner=self.bob)

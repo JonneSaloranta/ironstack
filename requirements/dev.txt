@@ -6,11 +6,12 @@ pytest-xdist>=3.8.0,<4.0
 factory_boy>=3.3.3,<4.0
 ruff>=0.16.2,<1.0
 # Measures which lines/branches the test suite actually exercises —
-# `coverage run -m pytest && coverage report` (see pyproject.toml
+# `coverage run -m pytest && coverage combine && coverage report`
+# (combine: each xdist worker writes its own data file; see pyproject.toml
 # [tool.coverage.*] for what's included/excluded). Dev-only, same as
 # pytest/ruff above: never imported by application code, just a way to
 # find untested code paths (an unreached error branch, a permission
 # check nothing ever actually exercises) directly instead of guessing
 # from test-file line counts, which say nothing about which lines
 # inside those tests actually got hit.
-coverage>=7.6,<8.0
+coverage>=7.10,<8.0

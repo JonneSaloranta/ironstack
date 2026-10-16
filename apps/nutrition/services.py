@@ -16,7 +16,7 @@ from decimal import Decimal, InvalidOperation
 from django.db import transaction
 from django.db.models import Q
 from django.utils import timezone
-from django.utils.translation import get_language
+from django.utils.translation import get_language, gettext
 
 from apps.core.data_exchange import ImportValidationError
 
@@ -400,13 +400,13 @@ def _resolve_food(user, data):
 
     name = data.get("name")
     if not name:
-        raise ImportValidationError("An ingredient is missing its food name.")
+        raise ImportValidationError(gettext("An ingredient is missing its food name."))
     required_fields = (
         "serving_size", "calories", "protein_grams", "carbohydrate_grams", "fat_grams",
     )
     if any(data.get(field) is None for field in required_fields):
         raise ImportValidationError(
-            "Ingredient “%s” is missing required nutrition data." % name
+            gettext("Ingredient “%(name)s” is missing required nutrition data.") % {"name": name}
         )
 
     existing = Food.objects.filter(
@@ -456,7 +456,7 @@ def import_recipe(user, payload):
 
     name = payload.get("name")
     if not name:
-        raise ImportValidationError("Missing recipe name.")
+        raise ImportValidationError(gettext("Missing recipe name."))
 
     recipe = Recipe.objects.create(
         owner=user,
@@ -480,7 +480,7 @@ def import_recipe(user, payload):
         quantity = _decimal_or_none(ingredient_data.get("quantity"))
         if quantity is None:
             raise ImportValidationError(
-                "Ingredient “%s” has an invalid quantity." % food.name
+                gettext("Ingredient “%(name)s” has an invalid quantity.") % {"name": food.name}
             )
         ingredients.append(
             RecipeIngredient(
@@ -572,8 +572,8 @@ def _resolve_recipe(user, data):
 
     name = data.get("name")
     if not name:
-        raise ImportValidationError("A diet plan item is missing its recipe name.")
-    existing = Recipe.objects.filter(name=name, owner__in=[user, None]).first()
+        raise ImportValidationError(gettext("A diet plan item is missing its recipe name."))
+    existing = Recipe.objects.filter(name=name, owner__in=[user, None], active=True).first()
     if existing is not None:
         return existing
     return import_recipe(user, data)
@@ -592,11 +592,11 @@ def _populate_diet_plan(plan, payload):
     for meal_data in payload.get("meals") or []:
         meal_slot = _resolve_meal_slot(plan.user, meal_data.get("meal_slot"))
         if meal_slot is None:
-            raise ImportValidationError("A diet plan meal is missing its meal slot.")
+            raise ImportValidationError(gettext("A diet plan meal is missing its meal slot."))
         meal_target_calories = meal_data.get("target_calories")
         if not isinstance(meal_target_calories, int):
             raise ImportValidationError(
-                "A diet plan meal is missing its target calories."
+                gettext("A diet plan meal is missing its target calories.")
             )
         meal = DietPlanMeal.objects.create(
             diet_plan=plan,
@@ -611,13 +611,13 @@ def _populate_diet_plan(plan, payload):
             recipe_data = item_data.get("recipe")
             if bool(food_data) == bool(recipe_data):
                 raise ImportValidationError(
-                    "A diet plan item must reference exactly one of a food or a recipe."
+                    gettext("A diet plan item must reference exactly one of a food or a recipe.")
                 )
             food = _resolve_food(plan.user, food_data) if food_data else None
             recipe = _resolve_recipe(plan.user, recipe_data) if recipe_data else None
             quantity = _decimal_or_none(item_data.get("quantity"))
             if quantity is None:
-                raise ImportValidationError("A diet plan item has an invalid quantity.")
+                raise ImportValidationError(gettext("A diet plan item has an invalid quantity."))
             items.append(
                 DietPlanItem(
                     diet_plan_meal=meal,
@@ -646,7 +646,7 @@ def import_diet_plan(user, payload):
     to create along the way."""
     name = payload.get("name")
     if not name:
-        raise ImportValidationError("Missing diet plan name.")
+        raise ImportValidationError(gettext("Missing diet plan name."))
     target_calories = payload.get("target_calories")
     protein = _decimal_or_none(payload.get("target_protein_grams"))
     carbohydrate = _decimal_or_none(payload.get("target_carbohydrate_grams"))
@@ -657,7 +657,7 @@ def import_diet_plan(user, payload):
         or carbohydrate is None
         or fat is None
     ):
-        raise ImportValidationError("Missing or invalid diet plan targets.")
+        raise ImportValidationError(gettext("Missing or invalid diet plan targets."))
 
     plan = DietPlan.objects.create(
         user=user,
@@ -966,6 +966,28 @@ def scale_nutrition(food, quantity) -> ScaledNutrition:
     )
 
 
+def delete_recipe(recipe):
+    """Delete `recipe`, unless diary entries or diet plans still use it.
+
+    A recipe still referenced is only hidden (`active=False`): those
+    diary entries are history, and their calories come from this
+    recipe's ingredients, so removing it would silently erase past days
+    (`DiaryEntry.recipe` is RESTRICT for the same reason). A recipe
+    nothing refers to is deleted outright.
+    """
+    from .models import DiaryEntry, DietPlanItem
+
+    in_use = (
+        DiaryEntry.objects.filter(recipe=recipe).exists()
+        or DietPlanItem.objects.filter(recipe=recipe).exists()
+    )
+    if in_use:
+        recipe.active = False
+        recipe.save(update_fields=["active", "updated_at"])
+    else:
+        recipe.delete()
+
+
 def recipe_total_nutrition(recipe) -> ScaledNutrition:
     """Sum of every ingredient's own scaled nutrition."""
     total = ZERO_NUTRITION
@@ -979,11 +1001,51 @@ def recipe_per_serving_nutrition(recipe) -> ScaledNutrition:
     return recipe_total_nutrition(recipe).scaled_by(Decimal("1") / servings)
 
 
+_SNAPSHOT_FIELDS = (
+    "calories", "protein_grams", "carbohydrate_grams", "fat_grams",
+    "fiber_grams", "sugar_grams", "saturated_fat_grams", "sodium_mg",
+)
+
+
+def nutrition_snapshot(nutrition: ScaledNutrition) -> dict:
+    """`nutrition` as JSON-safe strings (Decimal precision kept) — what
+    DiaryEntry.nutrition_snapshot stores."""
+    return {
+        name: (None if getattr(nutrition, name) is None else str(getattr(nutrition, name)))
+        for name in _SNAPSHOT_FIELDS
+    }
+
+
+def nutrition_from_snapshot(snapshot: dict) -> ScaledNutrition:
+    return ScaledNutrition(
+        **{
+            name: (None if snapshot.get(name) is None else Decimal(snapshot[name]))
+            for name in _SNAPSHOT_FIELDS
+        }
+    )
+
+
+def per_unit_entry_nutrition(entry) -> ScaledNutrition:
+    """A food or recipe entry's nutrition for a quantity of one — one of
+    the food's own units, or one serving of the recipe — from the food
+    or recipe as it is right now."""
+    if entry.food_id:
+        return scale_nutrition(entry.food, Decimal("1"))
+    return recipe_per_serving_nutrition(entry.recipe)
+
+
 def diary_entry_nutrition(entry) -> ScaledNutrition:
     """A single DiaryEntry's nutrition — dispatches on whichever of
     `food`/`recipe`/quick macros is set (the model's own CheckConstraint
     guarantees exactly one is). `quantity` means the food's own unit for
-    a food entry, servings for a recipe entry, portions for a quick one."""
+    a food entry, servings for a recipe entry, portions for a quick one.
+
+    A food or recipe entry uses the values snapshotted when it was
+    logged (DiaryEntry.nutrition_snapshot), so later changes to the food
+    or recipe never rewrite past days; only an entry without one yet
+    falls back to the live food/recipe."""
+    if entry.nutrition_snapshot:
+        return nutrition_from_snapshot(entry.nutrition_snapshot).scaled_by(entry.quantity)
     if entry.food_id:
         return scale_nutrition(entry.food, entry.quantity)
     if entry.recipe_id:
@@ -1228,6 +1290,14 @@ def copy_diary_day(user, source_date, target_date):
             quick_protein_grams=entry.quick_protein_grams,
             quick_carbohydrate_grams=entry.quick_carbohydrate_grams,
             quick_fat_grams=entry.quick_fat_grams,
+            # The same values the source day shows, not the food's
+            # current ones — a copy of that day (bulk_create skips save()).
+            nutrition_snapshot=entry.nutrition_snapshot
+            or (
+                None
+                if entry.is_quick
+                else nutrition_snapshot(per_unit_entry_nutrition(entry))
+            ),
         )
         for entry in source_entries
     ]

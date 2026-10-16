@@ -22,7 +22,7 @@ aria-busy while it streams so a screen reader doesn't read every partial.
 
 <form class="card" method="post" action="{% url 'assistant:message-send' conversation.pk %}"
       hx-post="{% url 'assistant:message-send' conversation.pk %}"
-      hx-target="#assistant-thread" hx-swap="innerHTML" hx-on::after-request="this.reset()">
+      hx-target="#assistant-thread" hx-swap="innerHTML" data-reset-on-success>
   {% csrf_token %}
   <div class="field">
     <label for="{{ form.text.id_for_label }}" class="visually-hidden">{{ form.text.label }}</label>

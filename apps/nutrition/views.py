@@ -620,6 +620,7 @@ class FoodSearchResultsView(LoginRequiredMixin, View):
             "online_requested": online,
             "query": query,
             "mode": mode,
+            "result_count": len(local) + len(off_results),
         }
         if mode == "diary":
             # Same last-logged-quantity prefill the "Most used" panel
@@ -823,7 +824,7 @@ class DiaryAddEntryView(LoginRequiredMixin, View):
         )
 
     def post(self, request):
-        from .models import DiaryEntry, Food
+        from .models import DiaryEntry
 
         form = DiaryAddEntryForm(request.POST, user=request.user)
         target_date = _parse_diary_date(request.POST.get("date"))
@@ -843,9 +844,7 @@ class DiaryAddEntryView(LoginRequiredMixin, View):
 
         food = None
         if form.cleaned_data.get("food_id"):
-            food = get_object_or_404(
-                Food.objects.filter(active=True), pk=form.cleaned_data["food_id"]
-            )
+            food = _viewable_food_or_404(request, form.cleaned_data["food_id"])
         elif form.cleaned_data.get("off_barcode"):
             food = services.import_or_refresh_food_from_off(form.cleaned_data["off_barcode"])
             if food is None:
@@ -1021,10 +1020,12 @@ class RecipeListView(LoginRequiredMixin, View):
 
         query = request.GET.get("q", "").strip()
 
-        my_recipes_qs = Recipe.objects.filter(owner=request.user).prefetch_related(
+        my_recipes_qs = Recipe.objects.filter(owner=request.user, active=True).prefetch_related(
             "meal_slots"
         ).order_by("-created_at")
-        template_recipes_qs = Recipe.objects.filter(owner__isnull=True).prefetch_related(
+        template_recipes_qs = Recipe.objects.filter(
+            owner__isnull=True, active=True
+        ).prefetch_related(
             "meal_slots"
         ).order_by("name")
         if query:
@@ -1082,7 +1083,7 @@ def _owned_recipe_or_404(request, pk):
     read-only helper below."""
     from .models import Recipe
 
-    return get_object_or_404(Recipe, pk=pk, owner=request.user)
+    return get_object_or_404(Recipe, pk=pk, owner=request.user, active=True)
 
 
 def _viewable_recipe_or_404(request, pk):
@@ -1094,7 +1095,9 @@ def _viewable_recipe_or_404(request, pk):
 
     from .models import Recipe
 
-    return get_object_or_404(Recipe, Q(owner=request.user) | Q(owner__isnull=True), pk=pk)
+    return get_object_or_404(
+        Recipe, Q(owner=request.user) | Q(owner__isnull=True), pk=pk, active=True
+    )
 
 
 @login_required
@@ -1180,7 +1183,7 @@ def recipe_delete(request, pk):
     if request.method != "POST":
         return HttpResponseNotAllowed(["POST"])
     recipe = _owned_recipe_or_404(request, pk)
-    recipe.delete()
+    services.delete_recipe(recipe)
     return redirect("nutrition:recipe-list")
 
 
@@ -1191,7 +1194,7 @@ def recipe_ingredient_create(request, recipe_pk):
     rows, so finding/importing the right one has to be at least as
     easy here as it already is in the food diary, not a bare dropdown
     of foods the user already had to create by hand elsewhere."""
-    from .models import Food, RecipeIngredient
+    from .models import RecipeIngredient
 
     recipe = _owned_recipe_or_404(request, recipe_pk)
     if request.method != "POST":
@@ -1211,9 +1214,7 @@ def recipe_ingredient_create(request, recipe_pk):
 
     food = None
     if form.cleaned_data.get("food_id"):
-        food = get_object_or_404(
-            Food.objects.filter(active=True), pk=form.cleaned_data["food_id"]
-        )
+        food = _viewable_food_or_404(request, form.cleaned_data["food_id"])
     elif form.cleaned_data.get("off_barcode"):
         food = services.import_or_refresh_food_from_off(form.cleaned_data["off_barcode"])
         if food is None:
@@ -1655,7 +1656,9 @@ def diet_plan_toggle_active(request, pk):
     else:
         services.set_active_diet_plan(request.user, plan)
     next_url = request.POST.get("next")
-    if next_url:
+    if next_url and url_has_allowed_host_and_scheme(
+        next_url, allowed_hosts={request.get_host()}, require_https=request.is_secure()
+    ):
         return redirect(next_url)
     return redirect("nutrition:diet-plan-detail", pk=plan.pk)
 
@@ -1724,7 +1727,7 @@ def diet_plan_meal_item_add(request, plan_pk, meal_pk):
     own "deliberately simple, not a knapsack solver" scope note); a
     user filling out a real day's plan needs to be able to add more to
     a meal, not just swap its one item."""
-    from .models import DietPlanMeal, Food
+    from .models import DietPlanMeal
 
     plan = _owned_diet_plan_or_404(request, plan_pk)
     meal = get_object_or_404(DietPlanMeal, pk=meal_pk, diet_plan=plan)
@@ -1745,9 +1748,7 @@ def diet_plan_meal_item_add(request, plan_pk, meal_pk):
 
     food = None
     if form.cleaned_data.get("food_id"):
-        food = get_object_or_404(
-            Food.objects.filter(active=True), pk=form.cleaned_data["food_id"]
-        )
+        food = _viewable_food_or_404(request, form.cleaned_data["food_id"])
     elif form.cleaned_data.get("off_barcode"):
         food = services.import_or_refresh_food_from_off(form.cleaned_data["off_barcode"])
         if food is None:

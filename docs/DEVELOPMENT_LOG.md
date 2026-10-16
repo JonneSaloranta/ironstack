@@ -5933,3 +5933,122 @@ often already removed. File downloads now carry `download` so the bar
 skips them; anything else that doesn't navigate clears after 20 s. Reduced
 motion: a static full-width bar. Browser tests in
 `apps/core/test_ui_behaviour.py`.
+
+## Audit fixes: history, security, backups, focus
+
+From a full read-only audit (UX, accessibility, backend, reliability);
+these are its P0/P1 findings.
+
+- **Recipes** — deleting one hard-deleted it and `DiaryEntry.recipe`
+  cascaded, silently erasing past diary days. `services.delete_recipe`
+  now soft-deletes (`Recipe.active`) a recipe still in use, and the two
+  FKs are `RESTRICT` (not `PROTECT`, so deleting the user still
+  cascades). Inactive recipes are filtered from lists, pickers, diet
+  builder, assistant, tours, import lookup and the API; the diary shows
+  them unlinked. Migration `nutrition/0025`.
+- **Set numbers** — `log_set` used `count() + 1`, reusing a number after
+  a delete. Now `Max + 1` under a row lock, plus a unique constraint
+  (`workouts/0004` renumbers existing duplicates in order, `0005` adds
+  the constraint — separate because Postgres won't ALTER a table with
+  pending trigger events from the data update).
+- **Finished sessions** — `complete_session`/`abandon_session` raise
+  `SessionNotInProgress`; the API rejects changing a finished session's
+  status (re-sending the same status is a no-op).
+- **Login rate limit** — per IP + username (cleared only by that
+  username's own success) plus a per-IP total that never resets on
+  success.
+- **Push SSRF** — endpoints must be https on `PUSH_ENDPOINT_HOSTS`,
+  checked on subscribe and before sending. Re-pointing an existing
+  endpoint to the user now subscribing is kept on purpose: it's what a
+  shared device needs, and taking someone's subscription would need
+  their secret endpoint URL.
+- **Expired session over HTMX** — `HtmxLoginRedirectMiddleware` turns
+  the login redirect into `HX-Redirect` back to the current page.
+- **Chat drafts** — composers use `data-reset-on-success`
+  (`htmx-errors.js`) instead of `hx-on::after-request="this.reset()"`,
+  which also fired on failures; a rejected send answers the composer
+  (`HX-Retarget`, `X-Form-Rejected`) rather than the polled thread.
+- **Backups** — `apps.core.backup_tasks` runs create/restore as a
+  detached `run_backup_task` process (state in a JSON file in
+  `BACKUP_DIR`, since a restore replaces the database). Chosen over the
+  `backup-scheduler` container: that one sleeps until the backup hour
+  and isn't running in dev. `restore_backup` now stages media and keeps
+  `<db>_previous` until `migrate` succeeds, rolling both back on
+  failure; archives are written as `.partial` first. Verified end to end
+  against a scratch database (restore, and a forced `migrate` failure
+  rolling back), not only with mocks.
+- **Focus after swaps** — `static/js/htmx-focus.js` moves focus to the
+  new content's `[data-autofocus]` (the set's weight field) when a swap
+  removed the focused element. htmx already restored focus for an
+  element whose id survives; the submit button has none.
+
+## Audit fixes, second round (P2)
+
+- **Security** — food_id lookups scoped to visible foods; coach update
+  check/diff/apply require the source to still be visible to the copy's
+  owner; API profile `email` read-only; backups require `is_superuser`
+  (`SuperuserRequiredMixin`).
+- **Workouts** — `start_session_once` (views only) returns an
+  in-progress session for the same workout started in the last 10 s.
+  `start_session` itself is unchanged; a one-active-workout rule is left
+  as a product decision.
+- **Accessibility** — persistent HTMX error toast with Dismiss; PR toasts
+  pause on hover/focus; set forms through `field_a11y` (every error id
+  linked) with "More options" open on error; calendar day buttons carry
+  a visually hidden description and distinct PR/abandoned shapes;
+  carousel Pause button, focus pause, reduced-motion default, 24px dots;
+  live searches announce a count via an out-of-band update of a
+  persistent `#search-status`; chat polls get 204 when nothing is newer
+  (`data-latest-message` + `hx-vals`); translations in Alpine strings go
+  through `escapejs`, enforced by a template scan test.
+- **Performance** — achievements volume via SUM, recently-active via a
+  subquery (one query); uploaded exercise images resized to 1600px and
+  re-encoded (drops EXIF); hashed static files `immutable` for a year in
+  nginx and Caddy (hashed names only — collectstatic keeps the unhashed
+  originals too).
+- **Ops/CI** — workers wait for `web` to be healthy (after `migrate`);
+  `publish-image` needs the accessibility job; tests run under coverage
+  with xdist via `parallel` + `patch = ["subprocess"]`, reported in the
+  job summary (90%), not enforced.
+- **i18n** — import validation errors and the goal rate translated.
+
+Left open, needing a decision: OIDC linking by unverified email (depends
+on the Authentik email mapping), snapshotting diary macros, and
+snapshotting exercise names onto performed exercises.
+
+## Audit follow-ups: decisions, email confirmation, P3
+
+- **OIDC** — `verify_claims` refuses `email_verified` other than true
+  (`AUTHENTIK_REQUIRE_EMAIL_VERIFIED`, default on), logging a warning.
+- **Signup email confirmation** — `DJANGO_SIGNUP_EMAIL_VERIFICATION`
+  (default off). `User.email_verification_pending` (not `is_active`, so
+  confirming can't undo an admin's deactivation); own token generator
+  salt; login refuses pending accounts without counting a failed guess
+  and resends at most every 5 minutes.
+- **Exercise name snapshot** — `PerformedExercise.exercise_name`, set on
+  add, shown in history, API `exercise_name`; migration 0006 backfills.
+- **Diary snapshot** — `DiaryEntry.nutrition_snapshot`, per unit of
+  quantity, set in `save()` and recomputed only when the food/recipe is
+  switched (tracked via `from_db`, so `merge_foods`' bulk update keeps
+  history). Migration 0026 backfills with its own copy of the scaling.
+- **P3** — global reduced-motion rule, touch targets, Nutri-Score
+  contrast, `aria-current="page"` everywhere, 500 page heading/lang, set
+  delete `hx-disabled-elt`, RPE 1–10 (form, prescription form, API),
+  inputmode on the remaining number fields, single-use TOTP codes,
+  re-checked post-2FA/plan-toggle redirects, API keys refused for
+  inactive users and `last_used_at` written at most once a minute,
+  `/healthz/` checks the database, service worker caches only `ok`
+  responses, static hash cached in production, push strings translated.
+
+Then: exercise images store width/height (plain fields set on upload,
+migration 0011 backfills; not ImageField's width_field/height_field,
+which re-read the file on load and would 500 on a missing one) and get
+random upload names; ruff's bugbear rules (B) are on.
+
+Not done on purpose: the abbreviation inside RPE/RIR labels stays
+focusable (tapping it is how a phone shows the expansion), visible
+table scrollbars on phones (the edge fade already signals scrolling),
+nutrition in imperial units (module-wide), ruff DJ/UP/S/SIM, and the
+design-level items (authenticated media, Gravatar/OFF hotlinking, CSP
+`unsafe-eval`).
+

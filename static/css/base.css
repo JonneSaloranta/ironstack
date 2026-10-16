@@ -1710,12 +1710,15 @@ h2 {
   vertical-align: middle;
 }
 
+/* Contrast for the small bold letter (WCAG 1.4.3): white only on the
+   darker grades, near-black on the light green and orange ones. */
 .nutri-score-a {
-  background: #1e8f4e;
+  background: #17773f;
 }
 
 .nutri-score-b {
   background: #6cb33f;
+  color: #1a1a1a;
 }
 
 .nutri-score-c {
@@ -1725,6 +1728,7 @@ h2 {
 
 .nutri-score-d {
   background: #e67e22;
+  color: #1a1a1a;
 }
 
 .nutri-score-e {
@@ -2130,23 +2134,40 @@ h2 {
 .achievements-dots {
   display: flex;
   justify-content: center;
-  gap: 0.4rem;
+  align-items: center;
+  flex-wrap: wrap;
   margin-top: 0.75rem;
 }
 
+/* The button is a 24px target (WCAG 2.5.8); the dot itself stays small. */
 .achievements-dot {
-  width: 0.5rem;
-  height: 0.5rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
   min-height: 0;
   min-width: 0;
   padding: 0;
   margin-bottom: 0;
   border: none;
+  background: transparent;
+}
+
+.achievements-dot::before {
+  content: "";
+  width: 0.5rem;
+  height: 0.5rem;
   border-radius: 50%;
   background: var(--color-border);
 }
 
-.achievements-dot-active {
+.achievements-pause {
+  margin: 0 0 0 0.5rem;
+  font-size: 0.85rem;
+}
+
+.achievements-dot-active::before {
   background: var(--color-accent);
 }
 
@@ -2355,8 +2376,8 @@ h2 {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 2.25rem;
-  min-width: 2.25rem;
+  min-height: var(--touch-target);
+  min-width: var(--touch-target);
   margin-bottom: 0;
   padding: 0.35rem;
   border: none;
@@ -3241,6 +3262,28 @@ h2.card-title {
   .pr-toast-close {
     min-height: var(--touch-target);
     min-width: var(--touch-target);
+  }
+
+  /* The logged-set chips in training mode are links to edit each set. */
+  .train-set-history a.tag {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--touch-target);
+    padding: 0 0.75rem;
+  }
+}
+
+/* One switch for everything that moves — including Alpine's x-transition
+   fades/scales (inline transition styles, hence !important) and anything
+   added later without its own reduced-motion rule. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
   }
 }
 

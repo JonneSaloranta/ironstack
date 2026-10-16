@@ -156,6 +156,23 @@ class ApiKeyAuthenticationTests(APITestCase):
         self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
         self.api_key, self.raw_secret = _create_key(self.alice)
 
+    def test_a_deactivated_users_key_stops_working(self):
+        self.alice.is_active = False
+        self.alice.save(update_fields=["is_active"])
+        response = self.client.get(
+            reverse("api:profile"), HTTP_AUTHORIZATION=f"Bearer {self.raw_secret}"
+        )
+        self.assertEqual(response.status_code, 401)
+
+    def test_last_used_is_written_at_most_once_a_minute(self):
+        auth = {"HTTP_AUTHORIZATION": f"Bearer {self.raw_secret}"}
+        self.client.get(reverse("api:profile"), **auth)
+        self.api_key.refresh_from_db()
+        first = self.api_key.last_used_at
+        self.client.get(reverse("api:profile"), **auth)
+        self.api_key.refresh_from_db()
+        self.assertEqual(self.api_key.last_used_at, first)
+
     def test_a_valid_key_authenticates(self):
         response = self.client.get(
             reverse("api:profile"), HTTP_AUTHORIZATION=f"Bearer {self.raw_secret}"
@@ -308,6 +325,20 @@ class ProfileEndpointTests(APITestCase):
         self.alice.refresh_from_db()
         self.assertEqual(self.alice.username, "alice")
 
+    def test_email_is_read_only(self):
+        # An API key must not be enough to take over the account through a
+        # password reset sent to a new address.
+        self.alice.email = "alice@example.com"
+        self.alice.save(update_fields=["email"])
+        response = self.client.patch(
+            reverse("api:profile"), {"email": "mallory@example.com"}, format="json",
+            **self._auth(),
+        )
+        self.assertEqual(response.status_code, 200)
+        self.alice.refresh_from_db()
+        self.assertEqual(self.alice.email, "alice@example.com")
+        self.assertEqual(response.data["email"], "alice@example.com")
+
     def test_patch_updates_social_privacy_settings(self):
         response = self.client.patch(
             reverse("api:profile"),
@@ -393,6 +424,18 @@ class WorkoutLoggingEndpointTests(APITestCase):
         )
         self.assertEqual(response.status_code, 400)
 
+    def test_an_rpe_outside_the_scale_is_a_400(self):
+        session = workout_services.start_session(self.alice, workout=None)
+        performed = workout_services.add_performed_exercise(session, self.exercise)
+        response = self.client.post(
+            reverse("api:set-list"),
+            {"performed_exercise": performed.pk, "weight": "100.00", "reps": 5, "rpe": "11"},
+            format="json",
+            **self._auth(),
+        )
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("rpe", response.data)
+
     def test_cannot_log_a_set_once_the_session_is_completed(self):
         session = workout_services.start_session(self.alice, workout=None)
         performed = workout_services.add_performed_exercise(session, self.exercise)
@@ -418,6 +461,52 @@ class WorkoutLoggingEndpointTests(APITestCase):
         session.refresh_from_db()
         self.assertEqual(session.status, "completed")
         self.assertIsNotNone(session.ended_at)
+
+    def test_performed_exercises_carry_the_name_they_were_logged_under(self):
+        session = workout_services.start_session(self.alice, workout=None)
+        workout_services.add_performed_exercise(session, self.exercise)
+        logged_name = self.exercise.name
+        self.exercise.name = "Renamed later"
+        self.exercise.save()
+        response = self.client.get(
+            reverse("api:session-detail", args=[session.pk]), **self._auth()
+        )
+        self.assertEqual(response.data["performed_exercises"][0]["exercise_name"], logged_name)
+
+    def test_a_completed_session_cannot_be_flipped_to_abandoned(self):
+        session = workout_services.start_session(self.alice, workout=None)
+        workout_services.complete_session(session)
+        session.refresh_from_db()
+        ended_at = session.ended_at
+
+        response = self.client.patch(
+            reverse("api:session-detail", args=[session.pk]),
+            {"status": "abandoned"},
+            format="json",
+            **self._auth(),
+        )
+
+        self.assertEqual(response.status_code, 400)
+        session.refresh_from_db()
+        self.assertEqual(session.status, "completed")
+        self.assertEqual(session.ended_at, ended_at)
+
+    def test_resending_a_finished_sessions_own_status_changes_nothing(self):
+        session = workout_services.start_session(self.alice, workout=None)
+        workout_services.complete_session(session)
+        session.refresh_from_db()
+        ended_at = session.ended_at
+
+        response = self.client.patch(
+            reverse("api:session-detail", args=[session.pk]),
+            {"status": "completed"},
+            format="json",
+            **self._auth(),
+        )
+
+        self.assertEqual(response.status_code, 200)
+        session.refresh_from_db()
+        self.assertEqual(session.ended_at, ended_at)
 
     def test_an_invalid_status_transition_is_rejected(self):
         session = workout_services.start_session(self.alice, workout=None)
@@ -828,6 +917,28 @@ class NutritionEndpointTests(APITestCase):
         )
         self.assertEqual(response.status_code, 204)
         self.assertFalse(Recipe.objects.filter(pk=self.recipe.pk).exists())
+
+    def test_deleting_a_recipe_used_in_the_diary_only_hides_it(self):
+        from datetime import date
+        from decimal import Decimal
+
+        from apps.nutrition.models import DiaryEntry
+
+        entry = DiaryEntry.objects.create(
+            user=self.alice, date=date(2026, 1, 1), meal_slot=self.breakfast,
+            recipe=self.recipe, quantity=Decimal("1"),
+        )
+        response = self.client.delete(
+            reverse("api:recipe-detail", args=[self.recipe.pk]), **self._auth()
+        )
+        self.assertEqual(response.status_code, 204)
+        self.assertTrue(DiaryEntry.objects.filter(pk=entry.pk).exists())
+        self.assertEqual(
+            self.client.get(
+                reverse("api:recipe-detail", args=[self.recipe.pk]), **self._auth()
+            ).status_code,
+            404,
+        )
 
     def test_adding_an_ingredient_to_my_own_recipe(self):
         response = self.client.post(

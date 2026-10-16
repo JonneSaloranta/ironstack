@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 from django.utils import timezone
 from rest_framework.authentication import BaseAuthentication, get_authorization_header
 from rest_framework.exceptions import AuthenticationFailed
@@ -6,6 +8,10 @@ from . import crypto
 from .models import ApiKey
 
 BEARER = b"bearer"
+
+
+#: How fresh ApiKey.last_used_at is kept (see authenticate()).
+LAST_USED_RESOLUTION = timedelta(minutes=1)
 
 
 class ApiKeyAuthentication(BaseAuthentication):
@@ -41,9 +47,16 @@ class ApiKeyAuthentication(BaseAuthentication):
             )
         except ApiKey.DoesNotExist:
             raise AuthenticationFailed("Invalid or inactive API key.") from None
+        # A deactivated account's keys stop working with it.
+        if not api_key.user.is_active:
+            raise AuthenticationFailed("Invalid or inactive API key.")
 
-        api_key.last_used_at = timezone.now()
-        api_key.save(update_fields=["last_used_at"])
+        # At most one write a minute: a busy client used to cost a
+        # database write on every single request just for this.
+        now = timezone.now()
+        if api_key.last_used_at is None or now - api_key.last_used_at >= LAST_USED_RESOLUTION:
+            api_key.last_used_at = now
+            api_key.save(update_fields=["last_used_at"])
         request.api_key = api_key
         return (api_key.user, api_key)
 

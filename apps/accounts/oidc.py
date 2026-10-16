@@ -11,8 +11,12 @@ customizes what happens once a set of verified claims comes back: how
 a User is matched/created from them, and what gets written onto it.
 """
 
+import logging
+
 from django.conf import settings
 from mozilla_django_oidc.auth import OIDCAuthenticationBackend
+
+logger = logging.getLogger(__name__)
 
 
 class IronStackOIDCAuthenticationBackend(OIDCAuthenticationBackend):
@@ -43,6 +47,19 @@ class IronStackOIDCAuthenticationBackend(OIDCAuthenticationBackend):
         # doesn't depend on that Authentik-side policy being configured
         # correctly, or at all.
         if not super().verify_claims(claims):
+            return False
+        # The email is what links this login to an existing local account
+        # (filter_users_by_claims), so it must be one Authentik has
+        # verified — otherwise anyone able to set their own Authentik
+        # email to a user's address would be logged in as that user.
+        if settings.AUTHENTIK_REQUIRE_EMAIL_VERIFIED and claims.get("email_verified") not in (
+            True,
+            "true",
+        ):
+            logger.warning(
+                "Refused an Authentik login: email_verified isn't true for that account "
+                "(see AUTHENTIK_REQUIRE_EMAIL_VERIFIED in docs/SECURITY.md)."
+            )
             return False
         required_group = settings.AUTHENTIK_REQUIRED_GROUP
         if required_group and required_group not in claims.get("groups", []):

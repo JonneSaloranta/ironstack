@@ -12,3 +12,4 @@
     {% include "core/_empty_state.html" with message=_("No users found.") %}
   {% endif %}
 {% endfor %}
+{% include "core/_search_status.html" with count=results|length %}

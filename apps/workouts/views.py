@@ -230,7 +230,7 @@ def session_start(request, workout_pk):
     workout = get_object_or_404(
         Workout, pk=workout_pk, program__in=program_services.visible_to(request.user)
     )
-    session = services.start_session(request.user, workout=workout)
+    session = services.start_session_once(request.user, workout=workout)
     return redirect("workouts:session-detail", pk=session.pk)
 
 
@@ -238,7 +238,7 @@ def session_start(request, workout_pk):
 def session_start_freeform(request):
     if request.method != "POST":
         return HttpResponseNotAllowed(["POST"])
-    session = services.start_session(request.user, workout=None)
+    session = services.start_session_once(request.user, workout=None)
     return redirect("workouts:session-detail", pk=session.pk)
 
 
@@ -247,7 +247,10 @@ def session_complete(request, pk):
     if request.method != "POST":
         return HttpResponseNotAllowed(["POST"])
     session = get_object_or_404(services.sessions_for(request.user), pk=pk)
-    services.complete_session(session)
+    try:
+        services.complete_session(session)
+    except services.SessionNotInProgress:
+        messages.error(request, _("This session is no longer in progress."))
     return redirect("workouts:session-detail", pk=session.pk)
 
 
@@ -256,7 +259,10 @@ def session_abandon(request, pk):
     if request.method != "POST":
         return HttpResponseNotAllowed(["POST"])
     session = get_object_or_404(services.sessions_for(request.user), pk=pk)
-    services.abandon_session(session)
+    try:
+        services.abandon_session(session)
+    except services.SessionNotInProgress:
+        messages.error(request, _("This session is no longer in progress."))
     return redirect("workouts:session-detail", pk=session.pk)
 
 
@@ -346,7 +352,7 @@ def _flash_new_prs(request, performed_exercise, new_prs):
             request,
             _("New PR — %(exercise)s: %(record_type)s %(value)s")
             % {
-                "exercise": performed_exercise.exercise.name,
+                "exercise": performed_exercise.display_name,
                 "record_type": record.get_record_type_display(),
                 "value": records_services.format_value(record, request.user),
             },

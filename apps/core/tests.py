@@ -18,8 +18,8 @@ from django.urls import reverse
 from django.utils import timezone, translation
 from django.views.defaults import permission_denied, server_error
 
+from apps.core import backup_tasks, data_exchange, version
 from apps.core import backups as backup_services
-from apps.core import data_exchange, version
 from apps.core.bmi import BMI_CATEGORIES, calculate_bmi, category_for, category_rows
 from apps.core.changelog import _render, render_changelog_html
 from apps.core.charts import build_bar_series, build_chart_series
@@ -108,7 +108,7 @@ class BMICalculationTests(TestCase):
         BMI value could fall through uncategorized."""
         self.assertIsNone(BMI_CATEGORIES[0].low)
         self.assertIsNone(BMI_CATEGORIES[-1].high)
-        for earlier, later in zip(BMI_CATEGORIES, BMI_CATEGORIES[1:]):
+        for earlier, later in zip(BMI_CATEGORIES, BMI_CATEGORIES[1:], strict=False):
             self.assertEqual(earlier.high, later.low)
 
     def test_category_rows_convert_bmi_bounds_to_a_weight_range_at_a_given_height(self):
@@ -389,6 +389,12 @@ class ErrorPageTests(TestCase):
         self.assertEqual(response.status_code, 500)
         self.assertIn(b"Something went wrong", response.content)
 
+    def test_500_page_has_a_heading_and_the_active_language(self):
+        with translation.override("fi"):
+            response = server_error(RequestFactory().get("/"))
+        self.assertIn(b'<html lang="fi">', response.content)
+        self.assertIn(b"<h1>", response.content)
+
 
 class ContentSecurityPolicyTests(TestCase):
     """apps.core.middleware.ContentSecurityPolicyMiddleware — see its
@@ -470,12 +476,123 @@ class ProductionSettingsTests(TestCase):
         )
 
 
+class FieldA11yFilterTests(TestCase):
+    def test_every_error_is_linked_not_just_the_first(self):
+        from django import forms
+
+        from apps.core.templatetags.core_extras import field_a11y
+
+        class TwoErrors(forms.Form):
+            name = forms.CharField(help_text="Help")
+
+            def clean_name(self):
+                raise forms.ValidationError(["First problem.", "Second problem."])
+
+        form = TwoErrors({"name": "x"})
+        form.is_valid()
+        html = field_a11y(form["name"])
+        self.assertIn('aria-describedby="id_name_help id_name_error id_name_error_2"', html)
+        self.assertIn('aria-invalid="true"', html)
+
+
+class TranslatedTextInAlpineExpressionsTests(TestCase):
+    """A translation dropped into a JS string literal inside an Alpine
+    attribute (x-text="more ? '{% trans … %}' : …") is only HTML-escaped,
+    which the browser undoes before Alpine reads the attribute — so a
+    translation containing an apostrophe (common in Italian) would end
+    the string and break the whole expression. Such text must go
+    through `{% filter escapejs %}`."""
+
+    def test_no_template_puts_unescaped_translations_in_a_js_string(self):
+        import re
+
+        from django.conf import settings
+
+        unescaped = re.compile(r"""'\{% (trans|translate|blocktrans|blocktranslate)\b""")
+        offenders = []
+        for template in Path(settings.BASE_DIR, "templates").rglob("*.html"):
+            for number, line in enumerate(template.read_text().splitlines(), start=1):
+                if unescaped.search(line):
+                    offenders.append(f"{template.relative_to(settings.BASE_DIR)}:{number}")
+        self.assertEqual(offenders, [])
+
+
+class StaticAssetsHashTests(TestCase):
+    def test_cached_in_production_but_not_with_debug(self):
+        version._cached_static_assets_hash.cache_clear()
+        with override_settings(DEBUG=False), mock.patch.object(
+            version, "_hash_static_assets", return_value="abc"
+        ) as hashed:
+            version.get_static_assets_hash()
+            version.get_static_assets_hash()
+        self.assertEqual(hashed.call_count, 1)
+        with override_settings(DEBUG=True), mock.patch.object(
+            version, "_hash_static_assets", return_value="abc"
+        ) as hashed:
+            version.get_static_assets_hash()
+            version.get_static_assets_hash()
+        self.assertEqual(hashed.call_count, 2)
+        version._cached_static_assets_hash.cache_clear()
+
+
+class HtmxLoginRedirectMiddlewareTests(TestCase):
+    """apps.core.middleware.HtmxLoginRedirectMiddleware — an HTMX
+    request without a session must send the whole page to login, not
+    swap the login page into a fragment."""
+
+    def test_an_htmx_request_without_a_session_gets_a_full_page_redirect(self):
+        response = self.client.post(
+            reverse("workouts:train-set-log", args=[1]),
+            {"weight": "100", "reps": "5"},
+            HTTP_HX_REQUEST="true",
+            HTTP_HX_CURRENT_URL="http://testserver/workouts/sessions/7/train/?x=1",
+        )
+        self.assertEqual(response.status_code, 204)
+        self.assertEqual(
+            response["HX-Redirect"],
+            reverse("login") + "?next=%2Fworkouts%2Fsessions%2F7%2Ftrain%2F%3Fx%3D1",
+        )
+        self.assertEqual(response.content, b"")
+
+    def test_a_foreign_current_url_falls_back_to_the_dashboard(self):
+        response = self.client.get(
+            reverse("dashboard"),
+            HTTP_HX_REQUEST="true",
+            HTTP_HX_CURRENT_URL="https://evil.example/phish",
+        )
+        self.assertEqual(response["HX-Redirect"], reverse("login") + "?next=%2F")
+
+    def test_a_plain_request_still_gets_the_normal_redirect(self):
+        response = self.client.get(reverse("dashboard"))
+        self.assertEqual(response.status_code, 302)
+        self.assertNotIn("HX-Redirect", response)
+
+    def test_other_htmx_redirects_are_left_alone(self):
+        user = get_user_model().objects.create_user(username="alice", password="s3cret-pass")
+        self.client.force_login(user)
+        response = self.client.post(
+            reverse("workouts:session-start-freeform"), HTTP_HX_REQUEST="true"
+        )
+        self.assertEqual(response.status_code, 302)
+        self.assertNotIn("HX-Redirect", response)
+
+
 class HealthcheckTests(TestCase):
     def test_healthcheck_returns_200_without_auth(self):
         response = self.client.get(reverse("healthcheck"))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.content.decode(), "ok")
 
+
+    def test_answers_503_when_the_database_is_unreachable(self):
+        from django.db import OperationalError
+
+        with mock.patch(
+            "django.db.backends.base.base.BaseDatabaseWrapper.cursor",
+            side_effect=OperationalError("down"),
+        ):
+            response = self.client.get(reverse("healthcheck"))
+        self.assertEqual(response.status_code, 503)
 
 class PWATests(TestCase):
     """Installable-PWA support: manifest + service worker, served at the
@@ -644,9 +761,8 @@ class VersionTests(TestCase):
 
     def test_get_static_assets_hash_changes_when_a_file_does(self):
         # apps.core.views.service_worker's own cache-busting signal
-        # (static/sw.js's own comment on why) — deliberately not
-        # lru_cache'd like get_version()/get_git_sha() above, since a
-        # dev container's static/ is bind-mounted and can change
+        # (static/sw.js's own comment on why) — not cached with DEBUG on,
+        # since a dev container's static/ is bind-mounted and can change
         # without a restart; this proves that live-edit case directly.
         from apps.core.version import get_static_assets_hash
 
@@ -655,7 +771,7 @@ class VersionTests(TestCase):
             (base / "static" / "css").mkdir(parents=True)
             (base / "static" / "js").mkdir(parents=True)
             (base / "static" / "css" / "base.css").write_text("body { color: red; }")
-            with override_settings(BASE_DIR=base):
+            with override_settings(BASE_DIR=base, DEBUG=True):
                 before = get_static_assets_hash()
                 (base / "static" / "css" / "base.css").write_text("body { color: blue; }")
                 after = get_static_assets_hash()
@@ -959,6 +1075,122 @@ class BackupTests(TestCase):
         backup_services.create_backup()
         backup_services.save_uploaded_backup(self._build_valid_archive_bytes())
         self.assertEqual(len(backup_services.list_backups()), 1)
+
+
+class RestoreBackupOrchestrationTests(TestCase):
+    """apps.core.backups.restore_backup — the order of the live swap and
+    what's put back when a late step fails. Postgres itself is mocked
+    (every command is recorded); media is real files in a temp dir."""
+
+    def setUp(self):
+        backup_dir = TemporaryDirectory()
+        media_dir = TemporaryDirectory()
+        self.addCleanup(backup_dir.cleanup)
+        self.addCleanup(media_dir.cleanup)
+        self.backup_dir = Path(backup_dir.name)
+        self.media_root = Path(media_dir.name)
+        for patcher in (
+            mock.patch.object(backup_services, "BACKUP_DIR", self.backup_dir),
+            override_settings(MEDIA_ROOT=str(self.media_root)),
+            mock.patch.object(backup_services, "connections"),
+        ):
+            patcher.start() if hasattr(patcher, "start") else patcher.enable()
+            self.addCleanup(patcher.stop if hasattr(patcher, "stop") else patcher.disable)
+        (self.media_root / "old.jpg").write_bytes(b"old")
+        self.name = self._write_archive()
+        self.commands = []
+
+    def _write_archive(self):
+        staging = TemporaryDirectory()
+        self.addCleanup(staging.cleanup)
+        work = Path(staging.name)
+        (work / "media").mkdir()
+        (work / "media" / "new.jpg").write_bytes(b"new")
+        with tarfile.open(work / "media.tar", "w") as tar:
+            tar.add(work / "media", arcname=".")
+        (work / "database.dump").write_bytes(b"fake dump")
+        (work / "manifest.json").write_text(json.dumps({"encrypted": False}))
+        name = "ironstack-backup-20260101-000000-000000.tar.gz"
+        with tarfile.open(self.backup_dir / name, "w:gz") as tar:
+            for member in ("database.dump", "media.tar", "manifest.json"):
+                tar.add(work / member, arcname=member)
+        return name
+
+    def _restore(self, fail_on=None):
+        def run(args, **kwargs):
+            self.commands.append(args[0] if args[0] != "pg_restore" else "pg_restore")
+            if fail_on == args[0]:
+                raise backup_services.subprocess.CalledProcessError(1, args)
+
+        def psql(maintenance_args, env, sql):
+            self.commands.append(sql)
+
+        def migrate(*args, **kwargs):
+            self.commands.append("migrate")
+            if fail_on == "migrate":
+                raise RuntimeError("migration failed")
+
+        with (
+            mock.patch.object(backup_services.subprocess, "run", side_effect=run),
+            mock.patch.object(backup_services, "_psql", side_effect=psql),
+            mock.patch.object(backup_services, "call_command", side_effect=migrate),
+        ):
+            backup_services.restore_backup(self.name)
+
+    def _renames(self):
+        return [c for c in self.commands if c.startswith("ALTER DATABASE")]
+
+    def _media(self):
+        return sorted(p.name for p in self.media_root.iterdir())
+
+    def test_a_successful_restore_swaps_in_the_new_database_and_media(self):
+        self._restore()
+        db = backup_services._db_config()["NAME"]
+        self.assertEqual(
+            self._renames(),
+            [
+                f'ALTER DATABASE "{db}" RENAME TO "{db}_previous";',
+                f'ALTER DATABASE "{db}_restoring" RENAME TO "{db}";',
+            ],
+        )
+        # The previous database is dropped only after migrate succeeded.
+        self.assertLess(self.commands.index("migrate"), len(self.commands) - 1)
+        self.assertEqual(self.commands[-1], "dropdb")
+        self.assertEqual(self._media(), ["new.jpg"])
+
+    def test_a_failed_migrate_puts_the_previous_database_and_media_back(self):
+        with self.assertRaises(RuntimeError):
+            self._restore(fail_on="migrate")
+        db = backup_services._db_config()["NAME"]
+        self.assertEqual(
+            self._renames(),
+            [
+                f'ALTER DATABASE "{db}" RENAME TO "{db}_previous";',
+                f'ALTER DATABASE "{db}_restoring" RENAME TO "{db}";',
+                f'ALTER DATABASE "{db}" RENAME TO "{db}_restoring";',
+                f'ALTER DATABASE "{db}_previous" RENAME TO "{db}";',
+            ],
+        )
+        self.assertEqual(self._media(), ["old.jpg"])
+        self.assertEqual((self.media_root / "old.jpg").read_bytes(), b"old")
+
+    def test_a_failed_pg_restore_never_touches_the_live_instance(self):
+        with self.assertRaises(backup_services.subprocess.CalledProcessError):
+            self._restore(fail_on="pg_restore")
+        self.assertEqual(self._renames(), [])
+        self.assertNotIn("migrate", self.commands)
+        self.assertEqual(self._media(), ["old.jpg"])
+
+    def test_leftover_work_directories_never_end_up_in_a_backup(self):
+        (self.media_root / ".restore-staging-1").mkdir()
+        (self.media_root / ".restore-staging-1" / "stale.jpg").write_bytes(b"x")
+        name = backup_services.create_backup()
+        with tarfile.open(self.backup_dir / name, "r:gz") as outer:
+            media = tarfile.open(fileobj=outer.extractfile("media.tar"))
+            names = media.getnames()
+        self.assertIn("./old.jpg", names)
+        self.assertFalse(any(".restore-" in n for n in names))
+        self.assertFalse(list(self.backup_dir.glob("*.partial")))
 
 
 class BackupEncryptionTests(TestCase):
@@ -1311,9 +1543,28 @@ class BackupViewTests(TestCase):
 
         User = get_user_model()
         self.admin = User.objects.create_user(
-            username="admin", password="s3cret-pass", is_staff=True
+            username="admin", password="s3cret-pass", is_staff=True, is_superuser=True
         )
         self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+
+    def test_staff_who_are_not_superusers_cannot_reach_backups(self):
+        # A backup holds every user's data and password hashes, and a
+        # restore replaces it all — more than moderating feedback.
+        get_user_model().objects.create_user(
+            username="moderator", password="s3cret-pass", is_staff=True
+        )
+        self.client.login(username="moderator", password="s3cret-pass")
+        name = backup_services.create_backup()
+        for response in (
+            self.client.get(reverse("backup-list")),
+            self.client.get(reverse("backup-download", args=[name])),
+            self.client.get(reverse("backup-restore", args=[name])),
+            self.client.post(reverse("backup-restore", args=[name])),
+            self.client.post(reverse("backup-delete", args=[name])),
+            self.client.get(reverse("backup-task-status")),
+        ):
+            self.assertEqual(response.status_code, 403)
+        self.assertNotContains(self.client.get(reverse("profile")), reverse("backup-list"))
 
     def test_list_view_requires_login(self):
         response = self.client.get(reverse("backup-list"))
@@ -1379,6 +1630,58 @@ class BackupViewTests(TestCase):
         response = self.client.post(reverse("backup-list"))
         self.assertRedirects(response, reverse("backup-list"))
         self.assertEqual(len(backup_services.list_backups()), 1)
+        name = backup_services.list_backups()[0]["name"]
+        self.assertContains(self.client.get(reverse("backup-list")), f"Backup created: {name}")
+
+    @override_settings(BACKUP_TASKS_RUN_INLINE=False)
+    def test_creating_a_backup_starts_a_background_process_instead_of_running_it(self):
+        self.client.login(username="admin", password="s3cret-pass")
+        with mock.patch.object(backup_tasks.subprocess, "Popen") as popen:
+            popen.return_value.pid = 4242
+            response = self.client.post(reverse("backup-list"))
+        self.assertRedirects(response, reverse("backup-list"), fetch_redirect_response=False)
+        command = popen.call_args.args[0]
+        self.assertEqual(command[-2:], ["run_backup_task", "create"])
+        self.assertTrue(popen.call_args.kwargs["start_new_session"])
+        self.assertEqual(backup_services.list_backups(), [])
+        with mock.patch.object(backup_tasks, "_pid_alive", return_value=True):
+            page = self.client.get(reverse("backup-list"))
+        self.assertContains(page, "Creating a backup…")
+        self.assertContains(page, 'hx-get="%s"' % reverse("backup-task-status"))
+        self.assertContains(page, "disabled")
+
+    def test_a_task_whose_process_died_is_reported_as_interrupted(self):
+        self.client.login(username="admin", password="s3cret-pass")
+        backup_tasks._write(
+            {"action": "restore", "name": "x.tar.gz", "state": "running", "pid": 4242}
+        )
+        with mock.patch.object(backup_tasks, "_pid_alive", return_value=False):
+            response = self.client.get(reverse("backup-list"))
+        self.assertContains(response, "was interrupted before it finished")
+        self.assertEqual(backup_tasks.read_status()["state"], backup_tasks.FAILED)
+
+    @override_settings(BACKUP_TASKS_RUN_INLINE=False)
+    def test_only_one_backup_task_runs_at_a_time(self):
+        self.client.login(username="admin", password="s3cret-pass")
+        with (
+            mock.patch.object(backup_tasks.subprocess, "Popen") as popen,
+            mock.patch.object(backup_tasks, "_pid_alive", return_value=True),
+        ):
+            popen.return_value.pid = 4242
+            self.client.post(reverse("backup-list"))
+            response = self.client.post(reverse("backup-list"), follow=True)
+        self.assertEqual(popen.call_count, 1)
+        self.assertContains(response, "Another backup task is still running")
+
+    def test_the_status_poll_reloads_the_page_once_the_task_is_over(self):
+        self.client.login(username="admin", password="s3cret-pass")
+        self.client.post(reverse("backup-list"))
+        response = self.client.get(reverse("backup-task-status"))
+        self.assertEqual(response["HX-Refresh"], "true")
+
+    def test_the_status_poll_requires_staff(self):
+        self.client.login(username="alice", password="s3cret-pass")
+        self.assertEqual(self.client.get(reverse("backup-task-status")).status_code, 403)
 
     def _build_valid_upload(self, name="my-download.tar.gz"):
         buf = io.BytesIO()
@@ -1521,13 +1824,29 @@ class BackupViewTests(TestCase):
         response = self.client.get(reverse("backup-restore", args=["nope.tar.gz"]))
         self.assertEqual(response.status_code, 403)
 
-    def test_posting_restore_calls_restore_backup_and_redirects_to_profile(self):
+    def test_posting_restore_calls_restore_backup_and_shows_the_result(self):
         self.client.login(username="admin", password="s3cret-pass")
         name = backup_services.create_backup()
         with mock.patch.object(backup_services, "restore_backup") as mock_restore:
             response = self.client.post(reverse("backup-restore", args=[name]))
         mock_restore.assert_called_once_with(name)
-        self.assertRedirects(response, reverse("profile"))
+        self.assertRedirects(response, reverse("backup-list"))
+        self.assertContains(self.client.get(response.url), f"Restored from backup: {name}")
+
+    def test_a_failed_restore_is_reported_on_the_backups_page(self):
+        self.client.login(username="admin", password="s3cret-pass")
+        name = backup_services.create_backup()
+        with mock.patch.object(
+            backup_services, "restore_backup", side_effect=RuntimeError("pg_restore exploded")
+        ):
+            response = self.client.post(reverse("backup-restore", args=[name]), follow=True)
+        self.assertContains(response, "pg_restore exploded")
+        self.assertContains(response, 'role="alert"')
+
+    def test_restoring_a_nonexistent_backup_is_a_404(self):
+        self.client.login(username="admin", password="s3cret-pass")
+        response = self.client.post(reverse("backup-restore", args=["nope.tar.gz"]))
+        self.assertEqual(response.status_code, 404)
 
     def test_posting_restore_shows_a_clean_error_on_a_decryption_failure(self):
         # Regression risk this guards against: a missing/wrong
@@ -1542,8 +1861,8 @@ class BackupViewTests(TestCase):
             "restore_backup",
             side_effect=backup_services.BackupDecryptionError("wrong key"),
         ):
-            response = self.client.post(reverse("backup-restore", args=[name]))
-        self.assertRedirects(response, reverse("backup-restore", args=[name]))
+            response = self.client.post(reverse("backup-restore", args=[name]), follow=True)
+        self.assertContains(response, "Couldn't decrypt")
 
     def test_restore_confirm_page_warns_when_the_key_is_missing_for_an_encrypted_backup(self):
         self.client.login(username="admin", password="s3cret-pass")
@@ -2131,6 +2450,22 @@ class DashboardCalendarTests(TestCase):
         )
         self.assertEqual(todays_cell["status"].training_status, "completed")
 
+    def test_each_day_button_says_what_its_icons_show(self):
+        # The icons are aria-hidden and the PR/abandoned/completed ones
+        # used to differ only in colour.
+        from django.utils.formats import date_format
+
+        from apps.workouts.models import WorkoutSession, WorkoutSessionStatus
+
+        WorkoutSession.objects.create(
+            user=self.alice, status=WorkoutSessionStatus.ABANDONED, started_at=timezone.now(),
+        )
+        response = self.client.get(reverse("dashboard"))
+        today = date_format(timezone.localdate(), "DATE_FORMAT")
+        self.assertContains(response, f'<span class="visually-hidden">{today}:')
+        self.assertContains(response, "A session was abandoned", count=2)  # day + legend
+        self.assertContains(response, "Rest day")
+
     def test_a_stretching_day_gets_a_marker_and_a_popover_line(self):
         from datetime import date, timedelta
 
@@ -2457,7 +2792,7 @@ class SendPushNotificationTests(TestCase):
         )
         self.subscription = PushSubscription.objects.create(
             user=self.alice,
-            endpoint="https://push.example.com/abc",
+            endpoint="https://fcm.googleapis.com/fcm/send/abc",
             p256dh_key="p256dh-value",
             auth_key="auth-value",
         )
@@ -2467,6 +2802,13 @@ class SendPushNotificationTests(TestCase):
             override_settings(PUSH_ENABLED=False),
             mock.patch("apps.core.push.webpush") as mock_webpush,
         ):
+            send_push_notification(self.alice, "Title", "Body")
+        mock_webpush.assert_not_called()
+
+    def test_a_stored_endpoint_outside_the_known_push_services_is_never_contacted(self):
+        self.subscription.endpoint = "http://db:5432/"
+        self.subscription.save(update_fields=["endpoint"])
+        with mock.patch("apps.core.push.webpush") as mock_webpush:
             send_push_notification(self.alice, "Title", "Body")
         mock_webpush.assert_not_called()
 
@@ -2484,7 +2826,7 @@ class SendPushNotificationTests(TestCase):
         self.assertEqual(
             kwargs["subscription_info"],
             {
-                "endpoint": "https://push.example.com/abc",
+                "endpoint": "https://fcm.googleapis.com/fcm/send/abc",
                 "keys": {"p256dh": "p256dh-value", "auth": "auth-value"},
             },
         )
@@ -2545,7 +2887,7 @@ class AnnounceVersionUpdateCommandTests(TestCase):
         )
         PushSubscription.objects.create(
             user=self.alice,
-            endpoint="https://push.example.com/alice",
+            endpoint="https://fcm.googleapis.com/fcm/send/alice",
             p256dh_key="p256dh-value",
             auth_key="auth-value",
         )
@@ -2609,7 +2951,7 @@ class PushSubscribeViewTests(TestCase):
             username="alice", password="s3cret-pass"
         )
 
-    def _payload(self, endpoint="https://push.example.com/abc"):
+    def _payload(self, endpoint="https://fcm.googleapis.com/fcm/send/abc"):
         return json.dumps(
             {"endpoint": endpoint, "keys": {"p256dh": "p256dh-value", "auth": "auth-value"}}
         )
@@ -2627,7 +2969,7 @@ class PushSubscribeViewTests(TestCase):
         )
         self.assertEqual(response.status_code, 200)
         subscription = PushSubscription.objects.get(user=self.alice)
-        self.assertEqual(subscription.endpoint, "https://push.example.com/abc")
+        self.assertEqual(subscription.endpoint, "https://fcm.googleapis.com/fcm/send/abc")
         self.assertEqual(subscription.p256dh_key, "p256dh-value")
 
     def test_resubscribing_the_same_endpoint_updates_rather_than_duplicates(self):
@@ -2644,6 +2986,42 @@ class PushSubscribeViewTests(TestCase):
         )
         self.assertEqual(response.status_code, 400)
 
+    def test_endpoints_outside_the_known_push_services_are_rejected(self):
+        self.client.login(username="alice", password="s3cret-pass")
+        for endpoint in (
+            "http://fcm.googleapis.com/fcm/send/abc",
+            "https://db:5432/",
+            "https://127.0.0.1/",
+            "https://192.168.1.1/admin",
+            "https://fcm.googleapis.com.evil.example/abc",
+            "https://fcm.googleapis.com:8443/abc",
+            "javascript:alert(1)",
+        ):
+            with self.subTest(endpoint=endpoint):
+                response = self.client.post(
+                    reverse("push-subscribe"),
+                    self._payload(endpoint),
+                    content_type="application/json",
+                )
+                self.assertEqual(response.status_code, 400)
+        self.assertFalse(PushSubscription.objects.exists())
+
+    def test_each_known_push_service_is_accepted(self):
+        self.client.login(username="alice", password="s3cret-pass")
+        for endpoint in (
+            "https://fcm.googleapis.com/fcm/send/abc",
+            "https://updates.push.services.mozilla.com/wpush/v2/abc",
+            "https://web.push.apple.com/abc",
+            "https://db5p.notify.windows.com/w/?token=abc",
+        ):
+            with self.subTest(endpoint=endpoint):
+                response = self.client.post(
+                    reverse("push-subscribe"),
+                    self._payload(endpoint),
+                    content_type="application/json",
+                )
+                self.assertEqual(response.status_code, 200)
+
 
 class PushUnsubscribeViewTests(TestCase):
     def setUp(self):
@@ -2653,7 +3031,7 @@ class PushUnsubscribeViewTests(TestCase):
         self.bob = get_user_model().objects.create_user(username="bob", password="s3cret-pass")
         self.subscription = PushSubscription.objects.create(
             user=self.alice,
-            endpoint="https://push.example.com/abc",
+            endpoint="https://fcm.googleapis.com/fcm/send/abc",
             p256dh_key="p256dh-value",
             auth_key="auth-value",
         )

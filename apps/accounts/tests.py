@@ -20,7 +20,11 @@ from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 
 from apps.accounts import twofactor
-from apps.accounts.forms import LOGIN_ATTEMPT_LIMIT, PASSWORD_RESET_ATTEMPT_LIMIT
+from apps.accounts.forms import (
+    LOGIN_ATTEMPT_IP_LIMIT,
+    LOGIN_ATTEMPT_LIMIT,
+    PASSWORD_RESET_ATTEMPT_LIMIT,
+)
 from apps.accounts.models import SiteDisclaimer
 from apps.accounts.views import RateLimitedLoginView
 
@@ -370,6 +374,110 @@ class LoginFlowTests(TestCase):
         self.assertEqual(response.wsgi_request.user.username, "carol")
 
 
+@override_settings(SIGNUP_ENABLED=True, PASSWORD_LOGIN_ENABLED=True, SIGNUP_EMAIL_VERIFICATION=True)
+class SignupEmailVerificationTests(TestCase):
+    """settings.SIGNUP_EMAIL_VERIFICATION — a new signup must open the
+    link emailed to them before they can log in."""
+
+    def setUp(self):
+        cache.clear()
+        self.addCleanup(cache.clear)
+
+    def _sign_up(self, email="new@example.com"):
+        return self.client.post(
+            reverse("signup"),
+            {
+                "username": "newlifter",
+                "email": email,
+                "password1": "a-very-strong-pass-1",
+                "password2": "a-very-strong-pass-1",
+            },
+        )
+
+    def _log_in(self):
+        return self.client.post(
+            reverse("login"), {"username": "newlifter", "password": "a-very-strong-pass-1"}
+        )
+
+    def _link(self, message):
+        import re
+
+        return re.search(r"https?://\S+/accounts/verify-email/\S+/", message.body).group(0)
+
+    def test_signing_up_sends_a_link_instead_of_logging_in(self):
+        response = self._sign_up()
+        self.assertContains(response, "new@example.com")
+        self.assertNotIn("_auth_user_id", self.client.session)
+        self.assertTrue(User.objects.get(username="newlifter").email_verification_pending)
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(mail.outbox[0].to, ["new@example.com"])
+
+    def test_an_email_address_is_required(self):
+        response = self._sign_up(email="")
+        self.assertFalse(User.objects.filter(username="newlifter").exists())
+        self.assertTrue(response.context["form"].errors["email"])
+
+    def test_logging_in_before_confirming_is_refused_and_resends_the_link(self):
+        self._sign_up()
+        mail.outbox.clear()
+        cache.clear()  # past the resend interval
+        response = self._log_in()
+        self.assertContains(response, "Confirm your email address first")
+        self.assertNotIn("_auth_user_id", self.client.session)
+        self.assertEqual(len(mail.outbox), 1)
+        # Not again straight away.
+        self._log_in()
+        self.assertEqual(len(mail.outbox), 1)
+
+    def test_a_refused_unconfirmed_login_is_not_a_failed_guess(self):
+        from apps.accounts.forms import LOGIN_ATTEMPT_LIMIT
+
+        self._sign_up()
+        for _ in range(LOGIN_ATTEMPT_LIMIT + 1):
+            response = self._log_in()
+        self.assertNotContains(response, "Too many failed login attempts")
+
+    def test_the_link_confirms_the_address_once(self):
+        self._sign_up()
+        link = self._link(mail.outbox[0])
+        response = self.client.get(link)
+        self.assertRedirects(response, reverse("login"))
+        self.assertFalse(User.objects.get(username="newlifter").email_verification_pending)
+        self._log_in()
+        self.assertIn("_auth_user_id", self.client.session)
+        self.client.logout()
+        self.assertEqual(self.client.get(link).status_code, 400)
+
+    def test_a_tampered_link_is_rejected(self):
+        self._sign_up()
+        link = self._link(mail.outbox[0])
+        self.assertEqual(self.client.get(link[:-3] + "xx/").status_code, 400)
+        self.assertTrue(User.objects.get(username="newlifter").email_verification_pending)
+
+    def test_the_confirmation_token_is_not_a_password_reset_token(self):
+        from django.contrib.auth.tokens import default_token_generator
+
+        from apps.accounts.email_verification import token_generator
+
+        self._sign_up()
+        user = User.objects.get(username="newlifter")
+        token = token_generator.make_token(user)
+        self.assertFalse(default_token_generator.check_token(user, token))
+
+    @override_settings(SIGNUP_EMAIL_VERIFICATION=False)
+    def test_turning_it_off_lets_unconfirmed_accounts_in(self):
+        user = User.objects.create_user(
+            username="newlifter", password="a-very-strong-pass-1", email_verification_pending=True
+        )
+        self._log_in()
+        self.assertEqual(int(self.client.session["_auth_user_id"]), user.pk)
+
+    def test_existing_accounts_never_need_to_confirm(self):
+        User.objects.create_user(username="newlifter", password="a-very-strong-pass-1")
+        self._log_in()
+        self.assertIn("_auth_user_id", self.client.session)
+
+
 class LoginRateLimitTests(TestCase):
     """apps.accounts.forms.RateLimitedAuthenticationForm — Django's own
     login view has no brute-force protection at all otherwise (this is
@@ -383,13 +491,32 @@ class LoginRateLimitTests(TestCase):
     def tearDown(self):
         cache.clear()
 
-    def _attempt(self, password="wrong-password", ip="203.0.113.10"):
+    def _attempt(self, password="wrong-password", ip="203.0.113.10", username="alice"):
         return self.client.post(
             reverse("login"),
-            {"username": "alice", "password": password},
+            {"username": username, "password": password},
             REMOTE_ADDR=ip,
             HTTP_X_REAL_IP=ip,
         )
+
+    def test_logging_into_your_own_account_does_not_reset_someone_elses_lockout(self):
+        User.objects.create_user(username="mallory", password="mallory-pass")
+        for _ in range(LOGIN_ATTEMPT_LIMIT - 1):
+            self._attempt()
+        self._attempt(username="mallory", password="mallory-pass")
+        self.client.logout()
+
+        response = self._attempt()
+        self.assertNotContains(response, "Too many failed login attempts")
+        response = self._attempt(password="s3cret-pass")
+        self.assertContains(response, "Too many failed login attempts")
+        self.assertNotIn("_auth_user_id", self.client.session)
+
+    def test_cycling_through_usernames_from_one_ip_is_capped(self):
+        for i in range(LOGIN_ATTEMPT_IP_LIMIT):
+            self._attempt(username=f"guess{i}")
+        response = self._attempt(username="someone-new")
+        self.assertContains(response, "Too many failed login attempts")
 
     def test_failed_attempts_under_the_limit_are_not_blocked(self):
         for _ in range(LOGIN_ATTEMPT_LIMIT - 1):
@@ -980,13 +1107,14 @@ class ProfileViewTests(TestCase):
 
     def test_admin_card_also_has_its_own_cta_button_when_shown(self):
         self.alice.is_staff = True
+        self.alice.is_superuser = True
         self.alice.save()
         response = self.client.get(reverse("profile"))
         # Account details, Change password, Two-factor authentication,
         # Friends & groups, My coaches, AI assistant, API keys, Download
         # your data, Tutorials, Feedback, Delete account + Admin, Backups,
         # Feedback, AI assistant, Site & SEO (the latter five inside the
-        # staff-only "danger zone").
+        # staff-only "danger zone"; Backups for superusers only).
         self.assertContains(response, 'class="card card-link settings-row"', count=16)
         self.assertContains(
             response, f'<a class="card card-link settings-row" href="{reverse("admin:index")}">'
@@ -1241,6 +1369,17 @@ class TwoFactorServiceTests(TestCase):
         code = pyotp.TOTP(secret).now()
         self.assertTrue(twofactor.verify_totp_code(secret, code))
 
+    def test_a_code_works_only_once_per_user(self):
+        import pyotp
+
+        cache.clear()
+        user = User.objects.create_user(username="otp", password="s3cret-pass")
+        secret = twofactor.generate_totp_secret()
+        code = pyotp.TOTP(secret).now()
+        self.assertTrue(twofactor.verify_totp_code(secret, code, user=user))
+        self.assertFalse(twofactor.verify_totp_code(secret, code, user=user))
+        cache.clear()
+
     def test_verify_totp_code_rejects_a_wrong_code(self):
         secret = twofactor.generate_totp_secret()
         self.assertFalse(twofactor.verify_totp_code(secret, "000000"))
@@ -1369,6 +1508,24 @@ class TwoFactorLoginFlowTests(TestCase):
         response = self.client.post(reverse("two-factor-verify"), {"code": self._current_code()})
         self.assertRedirects(response, "/")
         self.assertIn("_auth_user_id", self.client.session)
+
+    def test_a_foreign_next_after_2fa_goes_to_the_dashboard_instead(self):
+        self.client.post(reverse("login"), {"username": "henry", "password": "s3cret-pass"})
+        response = self.client.post(
+            reverse("two-factor-verify") + "?next=https://evil.example/",
+            {"code": self._current_code()},
+        )
+        self.assertRedirects(response, "/", fetch_redirect_response=False)
+
+    def test_a_used_code_cannot_complete_a_second_login(self):
+        code = self._current_code()
+        self.client.post(reverse("login"), {"username": "henry", "password": "s3cret-pass"})
+        self.client.post(reverse("two-factor-verify"), {"code": code})
+        self.client.logout()
+        self.client.post(reverse("login"), {"username": "henry", "password": "s3cret-pass"})
+        response = self.client.post(reverse("two-factor-verify"), {"code": code})
+        self.assertNotIn("_auth_user_id", self.client.session)
+        self.assertContains(response, "Incorrect code")
 
     def test_wrong_code_does_not_complete_login(self):
         self.client.post(reverse("login"), {"username": "henry", "password": "s3cret-pass"})
@@ -2026,7 +2183,7 @@ class DataExportViewTests(TestCase):
 
         PushSubscription.objects.create(
             user=self.alice,
-            endpoint="https://push.example.com/abc123",
+            endpoint="https://fcm.googleapis.com/fcm/send/abc123",
             p256dh_key="a-key",
             auth_key="an-auth-key",
         )
@@ -2722,14 +2879,36 @@ class OIDCAuthenticationBackendTests(TestCase):
         # AUTHENTIK_REQUIRED_GROUP set, which would otherwise leak into
         # this "no required group" case and fail it.
         self.assertTrue(
-            self.backend.verify_claims({"email": "vic@example.com", "groups": []})
+            self.backend.verify_claims(
+                {"email": "vic@example.com", "groups": [], "email_verified": True}
+            )
         )
+
+    @override_settings(AUTHENTIK_REQUIRED_GROUP="", AUTHENTIK_REQUIRE_EMAIL_VERIFIED=True)
+    def test_verify_claims_rejects_an_unverified_email(self):
+        # The email links the login to an existing local account, so an
+        # address someone merely typed into Authentik mustn't be enough.
+        for claims in (
+            {"email": "vic@example.com"},
+            {"email": "vic@example.com", "email_verified": False},
+            {"email": "vic@example.com", "email_verified": "false"},
+        ):
+            with self.subTest(claims=claims), self.assertLogs("apps.accounts.oidc", "WARNING"):
+                self.assertFalse(self.backend.verify_claims(claims))
+
+    @override_settings(AUTHENTIK_REQUIRED_GROUP="", AUTHENTIK_REQUIRE_EMAIL_VERIFIED=False)
+    def test_the_email_check_can_be_turned_off(self):
+        self.assertTrue(self.backend.verify_claims({"email": "vic@example.com"}))
 
     @override_settings(AUTHENTIK_REQUIRED_GROUP="ironstack-users")
     def test_verify_claims_rejects_a_user_missing_the_required_group(self):
         self.assertFalse(
             self.backend.verify_claims(
-                {"email": "vic@example.com", "groups": ["some-other-app-users"]}
+                {
+                    "email": "vic@example.com",
+                    "groups": ["some-other-app-users"],
+                    "email_verified": True,
+                }
             )
         )
 
@@ -2737,7 +2916,11 @@ class OIDCAuthenticationBackendTests(TestCase):
     def test_verify_claims_passes_a_user_in_the_required_group(self):
         self.assertTrue(
             self.backend.verify_claims(
-                {"email": "vic@example.com", "groups": ["ironstack-users", "other"]}
+                {
+                    "email": "vic@example.com",
+                    "groups": ["ironstack-users", "other"],
+                    "email_verified": True,
+                }
             )
         )
 

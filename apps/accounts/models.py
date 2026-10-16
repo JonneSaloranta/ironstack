@@ -306,6 +306,13 @@ class User(AbstractUser):
     # history.
     is_sso_user = models.BooleanField(default=False)
 
+    # Set for an account created through signup while
+    # settings.SIGNUP_EMAIL_VERIFICATION is on, until its owner opens the
+    # confirmation link (apps.accounts.email_verification). A separate
+    # flag rather than is_active=False: an admin deactivating someone
+    # must never be undone by that person "confirming their email".
+    email_verification_pending = models.BooleanField(default=False)
+
     # apps.accounts.forms.ProfileForm / templates/accounts/profile.html —
     # off by default, unlike every other display/privacy toggle on this
     # model: turning it on doesn't just change what this instance itself

@@ -517,6 +517,15 @@ class RecentlyActiveUsersTests(TestCase):
         usernames = [entry.username for entry in achievements.recently_active_users()]
         self.assertEqual(usernames, ["alice"])
 
+    def test_is_one_query_however_many_users(self):
+        for name in ("bob", "carol", "dave"):
+            workout_services.start_session(
+                User.objects.create_user(username=name, password="s3cret-pass"), workout=None
+            )
+        with self.assertNumQueries(1):
+            entries = achievements.recently_active_users()
+        self.assertEqual(len(entries), 3)
+
     def test_most_recently_active_user_comes_first(self):
         bob = User.objects.create_user(username="bob", password="s3cret-pass")
         _log_completed_session(self.alice, self.exercise, Decimal("100"), [5], days_ago=5)

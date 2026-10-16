@@ -1,4 +1,5 @@
 {% load i18n %}
+<span hidden data-latest-message="{{ latest }}"></span>
 {% for message in thread_messages %}
   <p>
     <strong>{{ message.sender.username }}:</strong> {{ message.body|linebreaksbr }}

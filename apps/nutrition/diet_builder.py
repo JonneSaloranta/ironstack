@@ -71,7 +71,9 @@ def suggest_item_for_calorie_budget(
     for food in Food.objects.filter(Q(owner=user) | Q(owner__isnull=True), active=True):
         if food.calories > 0:
             candidates.append(("food", food, Decimal(food.calories)))
-    recipe_qs = Recipe.objects.filter(Q(owner=user) | Q(owner__isnull=True)).prefetch_related(
+    recipe_qs = Recipe.objects.filter(
+        Q(owner=user) | Q(owner__isnull=True), active=True
+    ).prefetch_related(
         "meal_slots"
     )
     for recipe in recipe_qs:

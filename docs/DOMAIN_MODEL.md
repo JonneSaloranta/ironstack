@@ -307,7 +307,10 @@ computed/client-side, not persisted.
 
 Represents one exercise within a `WorkoutSession`, holding the **snapshot**
 of what was prescribed at the moment the session was created:
-- exercise reference
+- exercise reference, plus the exercise's name as it was when logged
+  (`exercise_name`) — history shows that one, so renaming an exercise
+  (your own, a coach's your program uses, or one renamed "Name (2)" when
+  its owner deleted their account) never relabels past workouts
 - snapshotted set count, rep range, target weight, progression method,
   weight increment, ordering, notes
 - link to the `ExercisePrescription` it was created from (informational

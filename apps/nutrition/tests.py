@@ -409,7 +409,7 @@ class TDEECalculationTests(TestCase):
         self.assertEqual(tdee, Decimal("2759"))
 
     def test_every_activity_level_has_a_multiplier_greater_than_one(self):
-        for level, multiplier in energy.ACTIVITY_MULTIPLIERS.items():
+        for multiplier in energy.ACTIVITY_MULTIPLIERS.values():
             self.assertGreaterEqual(multiplier, Decimal("1"))
 
     def test_multipliers_increase_monotonically_with_activity(self):
@@ -2375,12 +2375,12 @@ class NutritionSubnavTests(TestCase):
         response = self.client.get(reverse("nutrition:recipe-list"))
         self.assertContains(
             response,
-            f'href="{reverse("nutrition:recipe-list")}" aria-current="true"',
+            f'href="{reverse("nutrition:recipe-list")}" aria-current="page"',
         )
         # Foods' own tab must not *also* be marked current at the same time.
         self.assertNotContains(
             response,
-            f'href="{reverse("nutrition:food-list")}" aria-current="true"',
+            f'href="{reverse("nutrition:food-list")}" aria-current="page"',
         )
 
     def test_diary_related_pages_all_highlight_the_diary_tab(self):
@@ -2390,7 +2390,7 @@ class NutritionSubnavTests(TestCase):
         response = self.client.get(reverse("nutrition:diary-add-entry"))
         self.assertContains(
             response,
-            f'href="{reverse("nutrition:diary-day")}" aria-current="true"',
+            f'href="{reverse("nutrition:diary-day")}" aria-current="page"',
         )
 
 
@@ -4256,6 +4256,148 @@ class DietPlanExportImportViewTests(TestCase):
         self.assertFalse(DietPlan.objects.filter(user=self.bob).exists())
 
 
+class DiaryNutritionSnapshotTests(TestCase):
+    """DiaryEntry.nutrition_snapshot — a logged day keeps the values its
+    foods and recipes had when they were logged."""
+
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        self.slot = MealSlot.objects.create(name="Snack", owner=self.alice)
+        self.food = make_food(self.alice, name="Oats", calories=400)  # per 100 g
+        self.day = date(2026, 1, 1)
+
+    def _log(self, quantity=Decimal("50"), **kwargs):
+        return DiaryEntry.objects.create(
+            user=self.alice, date=self.day, meal_slot=self.slot, quantity=quantity, **kwargs
+        )
+
+    def _calories(self):
+        return services.daily_totals(self.alice, self.day).calories
+
+    def test_editing_a_food_leaves_past_days_alone(self):
+        self._log(food=self.food)
+        self.assertEqual(self._calories(), Decimal("200"))
+        self.food.calories = 999
+        self.food.save()
+        self.assertEqual(self._calories(), Decimal("200"))
+
+    def test_changing_a_recipe_leaves_past_days_alone(self):
+        recipe = Recipe.objects.create(owner=self.alice, name="Porridge", servings=1)
+        RecipeIngredient.objects.create(recipe=recipe, food=self.food, quantity=Decimal("100"))
+        self._log(recipe=recipe, quantity=Decimal("1"))
+        RecipeIngredient.objects.create(recipe=recipe, food=self.food, quantity=Decimal("100"))
+        self.assertEqual(self._calories(), Decimal("400"))
+
+    def test_changing_the_quantity_scales_the_logged_values(self):
+        entry = self._log(food=self.food)
+        self.food.calories = 999
+        self.food.save()
+        entry.quantity = Decimal("100")
+        entry.save()
+        self.assertEqual(self._calories(), Decimal("400"))
+
+    def test_switching_to_another_food_takes_that_foods_values(self):
+        entry = DiaryEntry.objects.get(pk=self._log(food=self.food).pk)
+        entry.food = make_food(self.alice, name="Rice", calories=130)
+        entry.save()
+        self.assertEqual(self._calories(), Decimal("65"))
+
+    def test_merging_foods_leaves_past_days_alone(self):
+        self._log(food=self.food)
+        keep = make_food(None, name="Oats (shared)", calories=380)
+        services.merge_foods(keep, [self.food])
+        self.assertEqual(self._calories(), Decimal("200"))
+
+    def test_a_copied_day_keeps_the_values_it_was_copied_from(self):
+        self._log(food=self.food)
+        self.food.calories = 999
+        self.food.save()
+        services.copy_diary_day(self.alice, self.day, date(2026, 1, 2))
+        self.assertEqual(
+            services.daily_totals(self.alice, date(2026, 1, 2)).calories, Decimal("200")
+        )
+
+    def test_the_backfill_matches_the_live_values(self):
+        import importlib
+
+        from django.apps import apps as global_apps
+
+        recipe = Recipe.objects.create(owner=self.alice, name="Porridge", servings=2)
+        RecipeIngredient.objects.create(recipe=recipe, food=self.food, quantity=Decimal("100"))
+        food_entry = self._log(food=self.food)
+        recipe_entry = self._log(recipe=recipe, quantity=Decimal("1"))
+        expected = [services.diary_entry_nutrition(e) for e in (food_entry, recipe_entry)]
+        DiaryEntry.objects.update(nutrition_snapshot=None)
+        migration = importlib.import_module(
+            "apps.nutrition.migrations.0026_diaryentry_nutrition_snapshot"
+        )
+        migration.snapshot_existing_entries(global_apps, None)
+        for entry, nutrition in zip((food_entry, recipe_entry), expected, strict=True):
+            entry.refresh_from_db()
+            self.assertEqual(services.diary_entry_nutrition(entry), nutrition)
+
+
+class PrivateFoodScopingTests(TestCase):
+    """Another user's own (private) food can't be added anywhere by
+    posting its id — the pickers only ever offer visible foods, but the
+    views used to look a posted food_id up among all active foods."""
+
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        bob = User.objects.create_user(username="bob", password="s3cret-pass")
+        self.bobs_food = make_food(bob, name="Bob's secret shake")
+        self.client.login(username="alice", password="s3cret-pass")
+
+    def test_not_into_the_diary(self):
+        response = self.client.post(
+            reverse("nutrition:diary-add-entry"),
+            {
+                "food_id": self.bobs_food.pk,
+                "meal_slot": MealSlot.objects.get(name="Lunch", owner=None).pk,
+                "quantity": "100", "date": "2026-01-01",
+            },
+        )
+        self.assertEqual(response.status_code, 404)
+        self.assertFalse(DiaryEntry.objects.filter(user=self.alice).exists())
+
+    def test_not_into_a_recipe(self):
+        recipe = Recipe.objects.create(owner=self.alice, name="Bowl", servings=1)
+        response = self.client.post(
+            reverse("nutrition:recipe-ingredient-create", args=[recipe.pk]),
+            {"food_id": self.bobs_food.pk, "quantity": "100"},
+        )
+        self.assertEqual(response.status_code, 404)
+        self.assertFalse(recipe.ingredients.exists())
+
+    def test_not_into_a_diet_plan(self):
+        breakfast = MealSlot.objects.get(name="Breakfast", owner=None)
+        plan = diet_builder.build_diet_plan(
+            self.alice, name="Plan", goal=None, target_calories=800,
+            target_protein_grams=Decimal("1"), target_carbohydrate_grams=Decimal("1"),
+            target_fat_grams=Decimal("1"), meal_slots=[breakfast],
+        )
+        meal = plan.meals.first()
+        response = self.client.post(
+            reverse("nutrition:diet-plan-meal-item-add", args=[plan.pk, meal.pk]),
+            {"food_id": self.bobs_food.pk, "quantity": "100"},
+        )
+        self.assertEqual(response.status_code, 404)
+        self.assertFalse(meal.items.filter(food=self.bobs_food).exists())
+
+    def test_a_shared_food_still_works(self):
+        shared = make_food(None, name="Shared oats")
+        response = self.client.post(
+            reverse("nutrition:diary-add-entry"),
+            {
+                "food_id": shared.pk,
+                "meal_slot": MealSlot.objects.get(name="Lunch", owner=None).pk,
+                "quantity": "100", "date": "2026-01-01",
+            },
+        )
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(DiaryEntry.objects.filter(user=self.alice, food=shared).exists())
+
+
 class RecipeViewTests(TestCase):
     def setUp(self):
         self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
@@ -4640,6 +4782,63 @@ class RecipeViewTests(TestCase):
         self.assertEqual(response.status_code, 302)
         entry = DiaryEntry.objects.get(user=self.alice, recipe=recipe)
         self.assertEqual(entry.date, yesterday)
+
+    def test_deleting_an_unused_recipe_removes_it(self):
+        recipe = Recipe.objects.create(owner=self.alice, name="Bowl", servings=1)
+        response = self.client.post(reverse("nutrition:recipe-delete", args=[recipe.pk]))
+        self.assertRedirects(response, reverse("nutrition:recipe-list"))
+        self.assertFalse(Recipe.objects.filter(pk=recipe.pk).exists())
+
+    def test_deleting_a_recipe_keeps_the_diary_entries_that_used_it(self):
+        # Regression: DiaryEntry.recipe was CASCADE and the recipe was
+        # hard-deleted, so every past day that logged it silently lost
+        # that entry and its calories.
+        recipe = Recipe.objects.create(owner=self.alice, name="Bowl", servings=1)
+        RecipeIngredient.objects.create(recipe=recipe, food=self.chicken, quantity=Decimal("200"))
+        slot = MealSlot.objects.get(name="Lunch", owner=None)
+        last_week = timezone.localdate() - timedelta(days=7)
+        entry = DiaryEntry.objects.create(
+            user=self.alice, date=last_week, meal_slot=slot, recipe=recipe, quantity=Decimal("1")
+        )
+        calories_before = services.daily_totals(self.alice, last_week).calories
+
+        self.client.post(reverse("nutrition:recipe-delete", args=[recipe.pk]))
+
+        self.assertTrue(DiaryEntry.objects.filter(pk=entry.pk).exists())
+        recipe.refresh_from_db()
+        self.assertFalse(recipe.active)
+        self.assertEqual(services.daily_totals(self.alice, last_week).calories, calories_before)
+        # Gone from everywhere a recipe is picked, still named in the diary.
+        self.assertNotContains(self.client.get(reverse("nutrition:recipe-list")), "Bowl")
+        self.assertEqual(
+            self.client.get(reverse("nutrition:recipe-detail", args=[recipe.pk])).status_code,
+            404,
+        )
+        diary = self.client.get(reverse("nutrition:diary-day", args=[last_week.isoformat()]))
+        self.assertContains(diary, "Bowl")
+        self.assertNotContains(diary, reverse("nutrition:recipe-detail", args=[recipe.pk]))
+
+    def test_a_recipe_cannot_be_hard_deleted_from_under_a_diary_entry(self):
+        from django.db.models import RestrictedError
+
+        recipe = Recipe.objects.create(owner=self.alice, name="Bowl", servings=1)
+        DiaryEntry.objects.create(
+            user=self.alice, date=timezone.localdate(),
+            meal_slot=MealSlot.objects.get(name="Lunch", owner=None),
+            recipe=recipe, quantity=Decimal("1"),
+        )
+        with self.assertRaises(RestrictedError):
+            recipe.delete()
+
+    def test_deleting_a_user_still_removes_their_diary_and_recipes(self):
+        recipe = Recipe.objects.create(owner=self.alice, name="Bowl", servings=1)
+        DiaryEntry.objects.create(
+            user=self.alice, date=timezone.localdate(),
+            meal_slot=MealSlot.objects.get(name="Lunch", owner=None),
+            recipe=recipe, quantity=Decimal("1"),
+        )
+        self.alice.delete()
+        self.assertFalse(Recipe.objects.filter(pk=recipe.pk).exists())
 
     def test_deleting_a_recipe_that_does_not_belong_to_the_user_is_a_404(self):
         recipe = Recipe.objects.create(owner=self.bob, name="Bob's Bowl", servings=1)
@@ -5132,6 +5331,18 @@ class DietPlanToggleActiveViewTests(TestCase):
         self.assertEqual(response.status_code, 302)
         plan.refresh_from_db()
         self.assertTrue(plan.is_active)
+
+    def test_a_foreign_next_is_ignored(self):
+        plan = self._make_plan(self.alice, is_active=False)
+        response = self.client.post(
+            reverse("nutrition:diet-plan-toggle-active", args=[plan.pk]),
+            {"next": "https://evil.example/"},
+        )
+        self.assertRedirects(
+            response,
+            reverse("nutrition:diet-plan-detail", args=[plan.pk]),
+            fetch_redirect_response=False,
+        )
 
     def test_deactivates_an_active_plan(self):
         plan = self._make_plan(self.alice, is_active=True)

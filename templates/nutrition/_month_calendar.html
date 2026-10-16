@@ -98,11 +98,11 @@ takes its data tag down with it, so there's only ever one.
           {% endcomment %}
           <ul class="calendar-legend">
             <li>
-              <svg class="calendar-day-icon calendar-day-icon-gold" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><line x1="6" y1="12" x2="18" y2="12"/><rect x="2" y="9" width="3" height="6" rx="1"/><rect x="19" y="9" width="3" height="6" rx="1"/><rect x="5" y="7" width="2" height="10" rx="1"/><rect x="17" y="7" width="2" height="10" rx="1"/></svg>
+              <svg class="calendar-day-icon calendar-day-icon-gold" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
               {% trans "New personal record" %}
             </li>
             <li>
-              <svg class="calendar-day-icon calendar-day-icon-red" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><line x1="6" y1="12" x2="18" y2="12"/><rect x="2" y="9" width="3" height="6" rx="1"/><rect x="19" y="9" width="3" height="6" rx="1"/><rect x="5" y="7" width="2" height="10" rx="1"/><rect x="17" y="7" width="2" height="10" rx="1"/></svg>
+              <svg class="calendar-day-icon calendar-day-icon-red" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><line x1="6" y1="12" x2="18" y2="12"/><rect x="2" y="9" width="3" height="6" rx="1"/><rect x="19" y="9" width="3" height="6" rx="1"/><rect x="5" y="7" width="2" height="10" rx="1"/><rect x="17" y="7" width="2" height="10" rx="1"/><line x1="4" y1="20" x2="20" y2="4"/></svg>
               {% trans "A session was abandoned" %}
             </li>
             <li>
@@ -200,12 +200,20 @@ takes its data tag down with it, so there's only ever one.
                     class="calendar-day{% if day.is_today %} calendar-day-today{% endif %}"
                     @click="toggle('{{ day.date|date:"Y-m-d" }}')"
                     :aria-expanded="(openDate === '{{ day.date|date:"Y-m-d" }}').toString()">
-              <span class="text-muted">{{ day.date.day }}</span>
+              {% comment %}
+              The icons below are aria-hidden and partly told apart only by
+              colour, so the button's accessible name spells the day out:
+              its date, then the same words the "?" legend uses.
+              {% endcomment %}
+              <span class="visually-hidden">{{ day.date|date:"DATE_FORMAT" }}:
+                {% if day.status.training_status == "pr" %}{% trans "New personal record" %}{% elif day.status.training_status == "abandoned" %}{% trans "A session was abandoned" %}{% elif day.status.training_status == "completed" %}{% trans "An ordinary training day" %}{% else %}{% trans "Rest day" %}{% endif %}{% if day.stretch_minutes %}. {% trans "Stretched that day" %}{% endif %}{% if day.status.calorie_trend %}. {% if day.status.calorie_direction == "over" %}{% trans "Trailing 7-day average calories ran over your target" %}{% else %}{% trans "Trailing 7-day average calories ran under your target" %}{% endif %}: {% if day.status.calorie_trend == "green" %}{% trans "Close to target" %}{% elif day.status.calorie_trend == "yellow" %}{% trans "Drifting from target" %}{% else %}{% trans "Well off target" %}{% endif %}{% endif %}
+              </span>
+              <span class="text-muted" aria-hidden="true">{{ day.date.day }}</span>
               {% if day.stretch_minutes %}<span class="calendar-day-stretch-dot" aria-hidden="true"></span>{% endif %}
               {% if day.status.training_status == "pr" %}
-                <svg class="calendar-day-icon calendar-day-icon-gold" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><line x1="6" y1="12" x2="18" y2="12"/><rect x="2" y="9" width="3" height="6" rx="1"/><rect x="19" y="9" width="3" height="6" rx="1"/><rect x="5" y="7" width="2" height="10" rx="1"/><rect x="17" y="7" width="2" height="10" rx="1"/></svg>
+                <svg class="calendar-day-icon calendar-day-icon-gold" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
               {% elif day.status.training_status == "abandoned" %}
-                <svg class="calendar-day-icon calendar-day-icon-red" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><line x1="6" y1="12" x2="18" y2="12"/><rect x="2" y="9" width="3" height="6" rx="1"/><rect x="19" y="9" width="3" height="6" rx="1"/><rect x="5" y="7" width="2" height="10" rx="1"/><rect x="17" y="7" width="2" height="10" rx="1"/></svg>
+                <svg class="calendar-day-icon calendar-day-icon-red" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><line x1="6" y1="12" x2="18" y2="12"/><rect x="2" y="9" width="3" height="6" rx="1"/><rect x="19" y="9" width="3" height="6" rx="1"/><rect x="5" y="7" width="2" height="10" rx="1"/><rect x="17" y="7" width="2" height="10" rx="1"/><line x1="4" y1="20" x2="20" y2="4"/></svg>
               {% elif day.status.training_status == "completed" %}
                 <svg class="calendar-day-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><line x1="6" y1="12" x2="18" y2="12"/><rect x="2" y="9" width="3" height="6" rx="1"/><rect x="19" y="9" width="3" height="6" rx="1"/><rect x="5" y="7" width="2" height="10" rx="1"/><rect x="17" y="7" width="2" height="10" rx="1"/></svg>
               {% else %}

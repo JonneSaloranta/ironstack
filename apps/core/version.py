@@ -43,10 +43,12 @@ one JSON blob).
 
 `get_version()`/`get_git_sha()` are read once and cached — neither
 file changes without a container restart anyway.
-`get_static_assets_hash()` deliberately isn't: the files it reads can
-change without one (a dev container's `static/` is bind-mounted,
-docker-compose.override.yml), so caching it would reintroduce the
-exact staleness this function exists to prevent.
+`get_static_assets_hash()` is cached only when DEBUG is off: in a
+dev container `static/` is bind-mounted (docker-compose.override.yml)
+and changes without a restart, so caching it there would reintroduce
+the exact staleness this function exists to prevent — but in
+production the files only change with a new image, and re-reading all
+of them on every service-worker update check was wasted work.
 """
 
 import hashlib
@@ -73,6 +75,17 @@ def get_git_sha():
 
 
 def get_static_assets_hash():
+    if settings.DEBUG:
+        return _hash_static_assets()
+    return _cached_static_assets_hash()
+
+
+@lru_cache(maxsize=1)
+def _cached_static_assets_hash():
+    return _hash_static_assets()
+
+
+def _hash_static_assets():
     digest = hashlib.sha256()
     for subdir in ("css", "js"):
         directory = settings.BASE_DIR / "static" / subdir

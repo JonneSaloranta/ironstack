@@ -10338,3 +10338,193 @@ msgstr "Aiutami a creare un programma di allenamento per il mio obiettivo e i mi
 msgctxt "proposal"
 msgid "Dismiss"
 msgstr "Scarta"
+
+msgid "Claude Opus 5.5 — best plans ($4 / $20)"
+msgstr "Claude Opus 5.5 — i piani migliori ($4 / $20)"
+
+msgid "Claude Sonnet 5.5 — good and half the price ($2 / $10)"
+msgstr "Claude Sonnet 5.5 — buono e a metà prezzo ($2 / $10)"
+
+msgid "Claude Haiku 4.5 — fastest and cheapest, weaker plans ($1 / $5)"
+msgstr "Claude Haiku 4.5 — il più veloce ed economico, piani meno buoni ($1 / $5)"
+
+msgid "Claude Fable 5.1 — most capable, most expensive ($10 / $50)"
+msgstr "Claude Fable 5.1 — il più capace e il più costoso ($10 / $50)"
+
+msgid "Model for your key"
+msgstr "Modello per la tua chiave"
+
+msgid "Prices are per million tokens (input / output), billed to your Anthropic account. New conversations use the model you pick; ongoing ones keep theirs."
+msgstr "I prezzi sono per milione di token (input / output), addebitati sul tuo account Anthropic. Le nuove conversazioni usano il modello scelto; quelle in corso mantengono il loro."
+
+msgid "This instance's default (%(model)s)"
+msgstr "Predefinito di questa istanza (%(model)s)"
+
+
+msgid "Model"
+msgstr "Modello"
+
+msgid "Low — quickest and cheapest; fine for everyday questions"
+msgstr "Basso — il più rapido ed economico; va bene per le domande di tutti i giorni"
+
+msgid "Medium — balanced"
+msgstr "Medio — equilibrato"
+
+msgid "High — more thorough plans, more tokens"
+msgstr "Alto — piani più accurati, più token"
+
+msgid "Extra high — for demanding planning"
+msgstr "Molto alto — per una pianificazione impegnativa"
+
+msgid "Maximum — the most thorough and the most expensive"
+msgstr "Massimo — il più accurato e il più costoso"
+
+msgid "Thinking effort"
+msgstr "Livello di ragionamento"
+
+msgid "How much the model thinks before it answers. More thinking costs more tokens and takes longer. Applies from the next reply on; Claude Haiku ignores it."
+msgstr "Quanto ragiona il modello prima di rispondere. Più ragionamento costa più token e richiede più tempo. Vale dalla prossima risposta; Claude Haiku lo ignora."
+
+msgid "This instance's default (%(effort)s)"
+msgstr "Predefinito di questa istanza (%(effort)s)"
+
+msgid "Model settings saved."
+msgstr "Impostazioni del modello salvate."
+
+msgid "Another backup task is still running — wait for it to finish."
+msgstr "Un'altra operazione di backup è ancora in corso — attendi che finisca."
+
+msgid "Creating a backup…"
+msgstr "Creazione del backup…"
+
+msgid "Restoring %(name)s…"
+msgstr "Ripristino di %(name)s…"
+
+msgid "This can take several minutes. You can leave this page — come back to see the result."
+msgstr "Può richiedere diversi minuti. Puoi lasciare questa pagina — torna più tardi per vedere il risultato."
+
+msgid "The last backup task was interrupted before it finished (did the server restart?). Check that everything looks right before relying on it."
+msgstr "L'ultima operazione di backup è stata interrotta prima di terminare (il server è stato riavviato?). Controlla che sia tutto a posto prima di farci affidamento."
+
+msgid "Couldn't decrypt %(name)s — check that BACKUP_ENCRYPTION_KEY matches the key this backup was made with. Nothing was changed."
+msgstr "Impossibile decifrare %(name)s — verifica che BACKUP_ENCRYPTION_KEY corrisponda alla chiave con cui è stato creato il backup. Non è stato modificato nulla."
+
+msgid "Restoring %(name)s failed: %(detail)s"
+msgstr "Ripristino di %(name)s non riuscito: %(detail)s"
+
+msgid "Creating a backup failed: %(detail)s"
+msgstr "Creazione del backup non riuscita: %(detail)s"
+
+msgid "Stretched that day"
+msgstr "Stretching quel giorno"
+
+msgid "A prescription is missing its exercise name."
+msgstr "A un esercizio del programma manca il nome."
+
+msgid "Missing program name."
+msgstr "Manca il nome del programma."
+
+msgid "An ingredient is missing its food name."
+msgstr "A un ingrediente manca il nome dell'alimento."
+
+#, python-format
+msgid "Ingredient “%(name)s” is missing required nutrition data."
+msgstr "All'ingrediente “%(name)s” mancano dati nutrizionali obbligatori."
+
+msgid "Missing recipe name."
+msgstr "Manca il nome della ricetta."
+
+#, python-format
+msgid "Ingredient “%(name)s” has an invalid quantity."
+msgstr "L'ingrediente “%(name)s” ha una quantità non valida."
+
+msgid "A diet plan item is missing its recipe name."
+msgstr "A una voce del piano alimentare manca il nome della ricetta."
+
+msgid "A diet plan meal is missing its meal slot."
+msgstr "A un pasto del piano alimentare manca il tipo di pasto."
+
+msgid "A diet plan meal is missing its target calories."
+msgstr "A un pasto del piano alimentare mancano le calorie obiettivo."
+
+msgid "A diet plan item must reference exactly one of a food or a recipe."
+msgstr "Una voce del piano alimentare deve riferirsi a un alimento o a una ricetta, non a entrambi."
+
+msgid "A diet plan item has an invalid quantity."
+msgstr "Una voce del piano alimentare ha una quantità non valida."
+
+msgid "Missing diet plan name."
+msgstr "Manca il nome del piano alimentare."
+
+msgid "Missing or invalid diet plan targets."
+msgstr "Gli obiettivi del piano alimentare mancano o non sono validi."
+
+#, python-format
+msgid "%(rate)s kg/week"
+msgstr "%(rate)s kg/settimana"
+
+#, python-format
+msgid "%(counter)s result"
+msgid_plural "%(counter)s results"
+msgstr[0] "%(counter)s risultato"
+msgstr[1] "%(counter)s risultati"
+
+#, python-format
+msgid "That image is too large — the limit is %(megabytes)s MB."
+msgstr "L'immagine è troppo grande — il limite è %(megabytes)s MB."
+
+#, python-format
+msgid "Confirm your email address on %(site_name)s"
+msgstr "Conferma il tuo indirizzo email su %(site_name)s"
+
+#, python-format
+msgid "Hi %(username)s,"
+msgstr "Ciao %(username)s,"
+
+#, python-format
+msgid "Thanks for signing up on %(site_name)s. Open this link to confirm your email address — you can log in once it's confirmed:"
+msgstr "Grazie per esserti registrato su %(site_name)s. Apri questo link per confermare il tuo indirizzo email — potrai accedere una volta confermato:"
+
+msgid "If you didn't sign up, you can safely ignore this email."
+msgstr "Se non ti sei registrato, puoi ignorare questa email."
+
+msgid "Confirm your email"
+msgstr "Conferma la tua email"
+
+#, python-format
+msgid "We've sent a link to %(email)s. Open it to confirm your address, then log in."
+msgstr "Abbiamo inviato un link a %(email)s. Aprilo per confermare il tuo indirizzo, poi accedi."
+
+msgid "Nothing arrived? Check your spam folder, or try logging in — that sends a new link."
+msgstr "Non è arrivato nulla? Controlla la cartella spam o prova ad accedere: verrà inviato un nuovo link."
+
+msgid "This confirmation link is invalid, has expired or was already used."
+msgstr "Questo link di conferma non è valido, è scaduto o è già stato usato."
+
+msgid "Try logging in — if your address still needs confirming, a new link is sent to it."
+msgstr "Prova ad accedere: se il tuo indirizzo deve ancora essere confermato, ti verrà inviato un nuovo link."
+
+msgid "Confirm your email address first — we've sent a link to it. Check your inbox (and spam folder)."
+msgstr "Prima conferma il tuo indirizzo email: ti abbiamo inviato un link. Controlla la posta in arrivo (e lo spam)."
+
+msgid "Email confirmed — you can log in now."
+msgstr "Email confermata: ora puoi accedere."
+
+msgid "Email confirmation"
+msgstr "Conferma email"
+
+msgid "Actions"
+msgstr "Azioni"
+
+msgid "Show every tutorial again, including the ones you've finished?"
+msgstr "Mostrare di nuovo tutti i tutorial, anche quelli già completati?"
+
+#, python-format
+msgid "RPE goes from %(min)s to %(max)s."
+msgstr "L'RPE va da %(min)s a %(max)s."
+
+msgid "Notifications are blocked for this site in your browser settings."
+msgstr "Le notifiche per questo sito sono bloccate nelle impostazioni del browser."
+
+msgid "Saving the subscription failed."
+msgstr "Salvataggio dell'iscrizione non riuscito."

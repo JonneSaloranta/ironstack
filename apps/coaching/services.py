@@ -200,21 +200,37 @@ def _snapshot_diff(before, after):
     )
 
 
+def _program_update_source(program):
+    """The coach's program `program` was imported from — but only while
+    its owner can still see it (still shared with them, by a coach they
+    still have; programs.services.visible_to). A client whose coaching
+    ended, or who was un-shared, used to keep pulling every later
+    version of the coach's program."""
+    from apps.programs.services import visible_to
+
+    if program.imported_from_id is None:
+        return None
+    if not visible_to(program.owner).filter(pk=program.imported_from_id).exists():
+        return None
+    return program.imported_from
+
+
 def program_update_available(program) -> bool:
-    """Cheap int compare, not a diff — safe to call once per row on a
-    plan list page. False whenever `imported_from` is gone (SET_NULL
-    after the source program, or its owner's whole account, was
-    deleted) — there's nothing left to update from."""
-    return (
-        program.imported_from_id is not None
-        and program.imported_from.version != program.coach_snapshot_version
-    )
+    """An int compare plus one visibility query — no diff. False
+    whenever the source is gone (SET_NULL after the source program, or
+    its owner's whole account, was deleted) or no longer visible to
+    this program's owner — there's nothing to update from."""
+    source = _program_update_source(program)
+    return source is not None and source.version != program.coach_snapshot_version
 
 
 def program_update_diff(program) -> str:
     from apps.programs.services import export_program
 
-    return _snapshot_diff(program.coach_snapshot, export_program(program.imported_from))
+    source = _program_update_source(program)
+    if source is None:
+        raise CoachingError(_("This program's coach source is no longer available."))
+    return _snapshot_diff(program.coach_snapshot, export_program(source))
 
 
 @transaction.atomic
@@ -237,7 +253,7 @@ def apply_program_update(program, acting_user):
 
     if program.owner_id != acting_user.pk:
         raise CoachingError(_("You can't update this program."))
-    source = program.imported_from
+    source = _program_update_source(program)
     if source is None:
         raise CoachingError(_("This program's coach source is no longer available."))
     _replace_program_contents(program, source)
@@ -248,17 +264,29 @@ def apply_program_update(program, acting_user):
     return program
 
 
+def _diet_plan_update_source(plan):
+    """Diet-plan equivalent of `_program_update_source`."""
+    from apps.nutrition.services import diet_plans_visible_to
+
+    if plan.imported_from_id is None:
+        return None
+    if not diet_plans_visible_to(plan.user).filter(pk=plan.imported_from_id).exists():
+        return None
+    return plan.imported_from
+
+
 def diet_plan_update_available(plan) -> bool:
-    return (
-        plan.imported_from_id is not None
-        and plan.imported_from.version != plan.coach_snapshot_version
-    )
+    source = _diet_plan_update_source(plan)
+    return source is not None and source.version != plan.coach_snapshot_version
 
 
 def diet_plan_update_diff(plan) -> str:
     from apps.nutrition.services import export_diet_plan
 
-    return _snapshot_diff(plan.coach_snapshot, export_diet_plan(plan.imported_from))
+    source = _diet_plan_update_source(plan)
+    if source is None:
+        raise CoachingError(_("This diet plan's coach source is no longer available."))
+    return _snapshot_diff(plan.coach_snapshot, export_diet_plan(source))
 
 
 @transaction.atomic
@@ -271,7 +299,7 @@ def apply_diet_plan_update(plan, acting_user):
 
     if plan.user_id != acting_user.pk:
         raise CoachingError(_("You can't update this diet plan."))
-    source = plan.imported_from
+    source = _diet_plan_update_source(plan)
     if source is None:
         raise CoachingError(_("This diet plan's coach source is no longer available."))
     plan.meals.all().delete()

@@ -1,11 +1,12 @@
 from django import forms
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
 
 from apps.core.widgets import SearchablePickerWidget
 
-from .models import AssistantSettings
-from .services import MAX_MESSAGE_LENGTH
+from .models import AssistantSettings, Effort, OwnKeyModel
+from .services import MAX_MESSAGE_LENGTH, instance_claude_model
 
 
 class MessageForm(forms.Form):
@@ -36,6 +37,39 @@ class ApiKeyForm(forms.Form):
         if not key.startswith("sk-ant-") or len(key) < 20 or any(c.isspace() for c in key):
             raise forms.ValidationError(_("That doesn't look like an Anthropic API key."))
         return key
+
+
+class OwnKeyOptionsForm(forms.Form):
+    model = forms.ChoiceField(
+        label=_("Model for your key"),
+        required=False,
+        widget=forms.RadioSelect,
+        help_text=_(
+            "Prices are per million tokens (input / output), billed to your Anthropic "
+            "account. New conversations use the model you pick; ongoing ones keep theirs."
+        ),
+    )
+    effort = forms.ChoiceField(
+        label=_("Thinking effort"),
+        required=False,
+        widget=forms.RadioSelect,
+        help_text=_(
+            "How much the model thinks before it answers. More thinking costs more tokens "
+            "and takes longer. Applies from the next reply on; Claude Haiku ignores it."
+        ),
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["model"].choices = [
+            ("", _("This instance's default (%(model)s)") % {"model": instance_claude_model()}),
+            *OwnKeyModel.choices,
+        ]
+        default_effort = settings.ASSISTANT_EFFORT
+        self.fields["effort"].choices = [
+            ("", _("This instance's default (%(effort)s)") % {"effort": default_effort}),
+            *Effort.choices,
+        ]
 
 
 class AssistantSettingsForm(forms.ModelForm):

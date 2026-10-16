@@ -10240,3 +10240,193 @@ msgstr "Aita mul koostada treeningkava minu eesmärgi ja ajakava järgi."
 msgctxt "proposal"
 msgid "Dismiss"
 msgstr "Lükka tagasi"
+
+msgid "Claude Opus 5.5 — best plans ($4 / $20)"
+msgstr "Claude Opus 5.5 — parimad kavad ($4 / $20)"
+
+msgid "Claude Sonnet 5.5 — good and half the price ($2 / $10)"
+msgstr "Claude Sonnet 5.5 — hea ja poole odavam ($2 / $10)"
+
+msgid "Claude Haiku 4.5 — fastest and cheapest, weaker plans ($1 / $5)"
+msgstr "Claude Haiku 4.5 — kiireim ja odavaim, nõrgemad kavad ($1 / $5)"
+
+msgid "Claude Fable 5.1 — most capable, most expensive ($10 / $50)"
+msgstr "Claude Fable 5.1 — võimekaim ja kalleim ($10 / $50)"
+
+msgid "Model for your key"
+msgstr "Sinu võtme mudel"
+
+msgid "Prices are per million tokens (input / output), billed to your Anthropic account. New conversations use the model you pick; ongoing ones keep theirs."
+msgstr "Hinnad on miljoni tokeni kohta (sisend / väljund) ja arve esitatakse sinu Anthropicu kontole. Uued vestlused kasutavad valitud mudelit, pooleliolevad jäävad oma mudeli juurde."
+
+msgid "This instance's default (%(model)s)"
+msgstr "Selle serveri vaikimisi mudel (%(model)s)"
+
+
+msgid "Model"
+msgstr "Mudel"
+
+msgid "Low — quickest and cheapest; fine for everyday questions"
+msgstr "Madal — kiireim ja odavaim; sobib igapäevasteks küsimusteks"
+
+msgid "Medium — balanced"
+msgstr "Keskmine — tasakaalustatud"
+
+msgid "High — more thorough plans, more tokens"
+msgstr "Kõrge — põhjalikumad kavad, rohkem tokeneid"
+
+msgid "Extra high — for demanding planning"
+msgstr "Väga kõrge — nõudlikuks planeerimiseks"
+
+msgid "Maximum — the most thorough and the most expensive"
+msgstr "Maksimaalne — kõige põhjalikum ja kõige kallim"
+
+msgid "Thinking effort"
+msgstr "Mõtlemise põhjalikkus"
+
+msgid "How much the model thinks before it answers. More thinking costs more tokens and takes longer. Applies from the next reply on; Claude Haiku ignores it."
+msgstr "Kui palju mudel enne vastamist mõtleb. Rohkem mõtlemist kulutab rohkem tokeneid ja võtab kauem aega. Kehtib järgmisest vastusest alates; Claude Haiku seda ei kasuta."
+
+msgid "This instance's default (%(effort)s)"
+msgstr "Selle serveri vaikimisi väärtus (%(effort)s)"
+
+msgid "Model settings saved."
+msgstr "Mudeli seaded salvestatud."
+
+msgid "Another backup task is still running — wait for it to finish."
+msgstr "Teine varundustoiming on veel pooleli — oota, kuni see lõpeb."
+
+msgid "Creating a backup…"
+msgstr "Varukoopia loomine…"
+
+msgid "Restoring %(name)s…"
+msgstr "Taastatakse %(name)s…"
+
+msgid "This can take several minutes. You can leave this page — come back to see the result."
+msgstr "See võib võtta mitu minutit. Võid lehelt lahkuda — tule hiljem tulemust vaatama."
+
+msgid "The last backup task was interrupted before it finished (did the server restart?). Check that everything looks right before relying on it."
+msgstr "Viimane varundustoiming katkes enne lõppu (kas server taaskäivitus?). Kontrolli enne sellele lootmist, et kõik on korras."
+
+msgid "Couldn't decrypt %(name)s — check that BACKUP_ENCRYPTION_KEY matches the key this backup was made with. Nothing was changed."
+msgstr "Faili %(name)s ei õnnestunud dekrüpteerida — kontrolli, et BACKUP_ENCRYPTION_KEY vastab võtmele, millega varukoopia tehti. Midagi ei muudetud."
+
+msgid "Restoring %(name)s failed: %(detail)s"
+msgstr "Faili %(name)s taastamine ebaõnnestus: %(detail)s"
+
+msgid "Creating a backup failed: %(detail)s"
+msgstr "Varukoopia loomine ebaõnnestus: %(detail)s"
+
+msgid "Stretched that day"
+msgstr "Venitas sel päeval"
+
+msgid "A prescription is missing its exercise name."
+msgstr "Ühel kava harjutusel puudub nimi."
+
+msgid "Missing program name."
+msgstr "Kava nimi puudub."
+
+msgid "An ingredient is missing its food name."
+msgstr "Ühel koostisosal puudub toidu nimi."
+
+#, python-format
+msgid "Ingredient “%(name)s” is missing required nutrition data."
+msgstr "Koostisosal „%(name)s” puuduvad nõutud toitumisandmed."
+
+msgid "Missing recipe name."
+msgstr "Retsepti nimi puudub."
+
+#, python-format
+msgid "Ingredient “%(name)s” has an invalid quantity."
+msgstr "Koostisosa „%(name)s” kogus on vigane."
+
+msgid "A diet plan item is missing its recipe name."
+msgstr "Ühel toitumiskava kirjel puudub retsepti nimi."
+
+msgid "A diet plan meal is missing its meal slot."
+msgstr "Ühel toitumiskava toidukorral puudub toidukorra liik."
+
+msgid "A diet plan meal is missing its target calories."
+msgstr "Ühel toitumiskava toidukorral puudub kalorieesmärk."
+
+msgid "A diet plan item must reference exactly one of a food or a recipe."
+msgstr "Toitumiskava kirje peab viitama kas toidule või retseptile, mitte mõlemale."
+
+msgid "A diet plan item has an invalid quantity."
+msgstr "Toitumiskava kirje kogus on vigane."
+
+msgid "Missing diet plan name."
+msgstr "Toitumiskava nimi puudub."
+
+msgid "Missing or invalid diet plan targets."
+msgstr "Toitumiskava eesmärgid puuduvad või on vigased."
+
+#, python-format
+msgid "%(rate)s kg/week"
+msgstr "%(rate)s kg/nädalas"
+
+#, python-format
+msgid "%(counter)s result"
+msgid_plural "%(counter)s results"
+msgstr[0] "%(counter)s tulemus"
+msgstr[1] "%(counter)s tulemust"
+
+#, python-format
+msgid "That image is too large — the limit is %(megabytes)s MB."
+msgstr "Pilt on liiga suur — piirang on %(megabytes)s MB."
+
+#, python-format
+msgid "Confirm your email address on %(site_name)s"
+msgstr "Kinnita oma e-posti aadress saidil %(site_name)s"
+
+#, python-format
+msgid "Hi %(username)s,"
+msgstr "Tere, %(username)s!"
+
+#, python-format
+msgid "Thanks for signing up on %(site_name)s. Open this link to confirm your email address — you can log in once it's confirmed:"
+msgstr "Aitäh, et registreerusid saidil %(site_name)s. Ava see link, et kinnitada oma e-posti aadress — saad sisse logida, kui see on kinnitatud:"
+
+msgid "If you didn't sign up, you can safely ignore this email."
+msgstr "Kui sa ei registreerunud, võid selle kirja julgelt tähelepanuta jätta."
+
+msgid "Confirm your email"
+msgstr "Kinnita oma e-post"
+
+#, python-format
+msgid "We've sent a link to %(email)s. Open it to confirm your address, then log in."
+msgstr "Saatsime lingi aadressile %(email)s. Ava see oma aadressi kinnitamiseks ja logi siis sisse."
+
+msgid "Nothing arrived? Check your spam folder, or try logging in — that sends a new link."
+msgstr "Midagi ei saabunud? Vaata rämpsposti kausta või proovi sisse logida — see saadab uue lingi."
+
+msgid "This confirmation link is invalid, has expired or was already used."
+msgstr "See kinnituslink on vigane, aegunud või juba kasutatud."
+
+msgid "Try logging in — if your address still needs confirming, a new link is sent to it."
+msgstr "Proovi sisse logida — kui su aadress vajab veel kinnitamist, saadetakse sellele uus link."
+
+msgid "Confirm your email address first — we've sent a link to it. Check your inbox (and spam folder)."
+msgstr "Kinnita esmalt oma e-posti aadress — saatsime sellele lingi. Vaata postkasti (ja rämpsposti)."
+
+msgid "Email confirmed — you can log in now."
+msgstr "E-post kinnitatud — saad nüüd sisse logida."
+
+msgid "Email confirmation"
+msgstr "E-posti kinnitamine"
+
+msgid "Actions"
+msgstr "Toimingud"
+
+msgid "Show every tutorial again, including the ones you've finished?"
+msgstr "Kas näidata kõiki juhendeid uuesti, ka neid, mille oled juba läbinud?"
+
+#, python-format
+msgid "RPE goes from %(min)s to %(max)s."
+msgstr "RPE on skaalal %(min)s kuni %(max)s."
+
+msgid "Notifications are blocked for this site in your browser settings."
+msgstr "Teavitused on selle saidi jaoks brauseri seadetes blokeeritud."
+
+msgid "Saving the subscription failed."
+msgstr "Tellimuse salvestamine ebaõnnestus."

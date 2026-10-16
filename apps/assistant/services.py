@@ -93,8 +93,9 @@ def may_use_shared(user, site_settings):
     return False
 
 
-def _claude_model():
-    """The Claude model for a user's own key: the configured one when the
+def instance_claude_model():
+    """The Claude model a user's own key uses unless they pick one
+    (AssistantPreference.own_key_model): the configured one when the
     instance itself runs on Claude, otherwise the default."""
     if settings.ASSISTANT_PROVIDER == ANTHROPIC and settings.ASSISTANT_MODEL:
         return settings.ASSISTANT_MODEL
@@ -109,7 +110,12 @@ def access_for(user, preference=None):
         return Access(False, _("The administrator has turned the AI assistant off."))
     preference = preference or preference_for(user)
     if preference.has_own_key:
-        return Access(True, key_source=KeySource.OWN, provider=ANTHROPIC, model=_claude_model())
+        return Access(
+            True,
+            key_source=KeySource.OWN,
+            provider=ANTHROPIC,
+            model=preference.own_key_model or instance_claude_model(),
+        )
     if shared_provider_configured() and may_use_shared(user, site_settings):
         model = (
             settings.ASSISTANT_OLLAMA_MODEL
@@ -155,6 +161,16 @@ def set_own_key(user, api_key):
     preference.api_key = api_key
     preference.api_key_hint = f"…{api_key[-4:]}"
     preference.save(update_fields=["api_key", "api_key_hint", "updated_at"])
+    return preference
+
+
+def set_own_key_options(user, *, model, effort):
+    """`model`/`effort` are OwnKeyModel/Effort values, or "" for the
+    instance default (ASSISTANT_MODEL/ASSISTANT_EFFORT)."""
+    preference, _created = AssistantPreference.objects.get_or_create(user=user)
+    preference.own_key_model = model
+    preference.own_key_effort = effort
+    preference.save(update_fields=["own_key_model", "own_key_effort", "updated_at"])
     return preference
 
 
@@ -247,8 +263,11 @@ def _check_can_send(user, conversation=None):
 def _provider_for(conversation):
     if conversation.provider == OLLAMA:
         return OllamaProvider(base_url=settings.ASSISTANT_OLLAMA_URL, model=conversation.model)
+    effort = settings.ASSISTANT_EFFORT
     if conversation.key_source == KeySource.OWN:
-        api_key = preference_for(conversation.user).api_key
+        preference = preference_for(conversation.user)
+        api_key = preference.api_key
+        effort = preference.own_key_effort or effort
     else:
         api_key = settings.ASSISTANT_API_KEY
     if not api_key:
@@ -256,7 +275,7 @@ def _provider_for(conversation):
     return AnthropicProvider(
         api_key=api_key,
         model=conversation.model,
-        effort=settings.ASSISTANT_EFFORT,
+        effort=effort,
         refusal_fallback=settings.ASSISTANT_REFUSAL_FALLBACK,
     )
 

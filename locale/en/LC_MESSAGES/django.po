@@ -10212,3 +10212,193 @@ msgstr ""
 msgctxt "proposal"
 msgid "Dismiss"
 msgstr ""
+
+msgid "Claude Opus 5.5 — best plans ($4 / $20)"
+msgstr ""
+
+msgid "Claude Sonnet 5.5 — good and half the price ($2 / $10)"
+msgstr ""
+
+msgid "Claude Haiku 4.5 — fastest and cheapest, weaker plans ($1 / $5)"
+msgstr ""
+
+msgid "Claude Fable 5.1 — most capable, most expensive ($10 / $50)"
+msgstr ""
+
+msgid "Model for your key"
+msgstr ""
+
+msgid "Prices are per million tokens (input / output), billed to your Anthropic account. New conversations use the model you pick; ongoing ones keep theirs."
+msgstr ""
+
+msgid "This instance's default (%(model)s)"
+msgstr ""
+
+
+msgid "Model"
+msgstr ""
+
+msgid "Low — quickest and cheapest; fine for everyday questions"
+msgstr ""
+
+msgid "Medium — balanced"
+msgstr ""
+
+msgid "High — more thorough plans, more tokens"
+msgstr ""
+
+msgid "Extra high — for demanding planning"
+msgstr ""
+
+msgid "Maximum — the most thorough and the most expensive"
+msgstr ""
+
+msgid "Thinking effort"
+msgstr ""
+
+msgid "How much the model thinks before it answers. More thinking costs more tokens and takes longer. Applies from the next reply on; Claude Haiku ignores it."
+msgstr ""
+
+msgid "This instance's default (%(effort)s)"
+msgstr ""
+
+msgid "Model settings saved."
+msgstr ""
+
+msgid "Another backup task is still running — wait for it to finish."
+msgstr ""
+
+msgid "Creating a backup…"
+msgstr ""
+
+msgid "Restoring %(name)s…"
+msgstr ""
+
+msgid "This can take several minutes. You can leave this page — come back to see the result."
+msgstr ""
+
+msgid "The last backup task was interrupted before it finished (did the server restart?). Check that everything looks right before relying on it."
+msgstr ""
+
+msgid "Couldn't decrypt %(name)s — check that BACKUP_ENCRYPTION_KEY matches the key this backup was made with. Nothing was changed."
+msgstr ""
+
+msgid "Restoring %(name)s failed: %(detail)s"
+msgstr ""
+
+msgid "Creating a backup failed: %(detail)s"
+msgstr ""
+
+msgid "Stretched that day"
+msgstr ""
+
+msgid "A prescription is missing its exercise name."
+msgstr ""
+
+msgid "Missing program name."
+msgstr ""
+
+msgid "An ingredient is missing its food name."
+msgstr ""
+
+#, python-format
+msgid "Ingredient “%(name)s” is missing required nutrition data."
+msgstr ""
+
+msgid "Missing recipe name."
+msgstr ""
+
+#, python-format
+msgid "Ingredient “%(name)s” has an invalid quantity."
+msgstr ""
+
+msgid "A diet plan item is missing its recipe name."
+msgstr ""
+
+msgid "A diet plan meal is missing its meal slot."
+msgstr ""
+
+msgid "A diet plan meal is missing its target calories."
+msgstr ""
+
+msgid "A diet plan item must reference exactly one of a food or a recipe."
+msgstr ""
+
+msgid "A diet plan item has an invalid quantity."
+msgstr ""
+
+msgid "Missing diet plan name."
+msgstr ""
+
+msgid "Missing or invalid diet plan targets."
+msgstr ""
+
+#, python-format
+msgid "%(rate)s kg/week"
+msgstr ""
+
+#, python-format
+msgid "%(counter)s result"
+msgid_plural "%(counter)s results"
+msgstr[0] ""
+msgstr[1] ""
+
+#, python-format
+msgid "That image is too large — the limit is %(megabytes)s MB."
+msgstr ""
+
+#, python-format
+msgid "Confirm your email address on %(site_name)s"
+msgstr ""
+
+#, python-format
+msgid "Hi %(username)s,"
+msgstr ""
+
+#, python-format
+msgid "Thanks for signing up on %(site_name)s. Open this link to confirm your email address — you can log in once it's confirmed:"
+msgstr ""
+
+msgid "If you didn't sign up, you can safely ignore this email."
+msgstr ""
+
+msgid "Confirm your email"
+msgstr ""
+
+#, python-format
+msgid "We've sent a link to %(email)s. Open it to confirm your address, then log in."
+msgstr ""
+
+msgid "Nothing arrived? Check your spam folder, or try logging in — that sends a new link."
+msgstr ""
+
+msgid "This confirmation link is invalid, has expired or was already used."
+msgstr ""
+
+msgid "Try logging in — if your address still needs confirming, a new link is sent to it."
+msgstr ""
+
+msgid "Confirm your email address first — we've sent a link to it. Check your inbox (and spam folder)."
+msgstr ""
+
+msgid "Email confirmed — you can log in now."
+msgstr ""
+
+msgid "Email confirmation"
+msgstr ""
+
+msgid "Actions"
+msgstr ""
+
+msgid "Show every tutorial again, including the ones you've finished?"
+msgstr ""
+
+#, python-format
+msgid "RPE goes from %(min)s to %(max)s."
+msgstr ""
+
+msgid "Notifications are blocked for this site in your browser settings."
+msgstr ""
+
+msgid "Saving the subscription failed."
+msgstr ""

@@ -76,7 +76,7 @@ still looks like IronStack wherever it's opened.
           <div class="table-wrap">
             <table>
               <thead>
-                <tr>{% for key in rows.0.keys %}<th>{{ key }}</th>{% endfor %}</tr>
+                <tr>{% for key in rows.0.keys %}<th scope="col">{{ key }}</th>{% endfor %}</tr>
               </thead>
               <tbody>
                 {% for row in rows %}

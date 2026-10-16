@@ -43,7 +43,8 @@
 {% endfor %}
 
 {% if any_completed %}
-  <form method="post" action="{% url 'tutorials:reset-all' %}">
+  <form method="post" action="{% url 'tutorials:reset-all' %}"
+        data-confirm="{% filter force_escape %}{% trans "Show every tutorial again, including the ones you've finished?" %}{% endfilter %}">
     {% csrf_token %}
     <button type="submit" class="button-secondary">{% trans "Show all tutorials again" %}</button>
   </form>

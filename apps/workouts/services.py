@@ -22,10 +22,63 @@ from .models import (
     WorkoutSessionStatus,
 )
 
+#: The RPE scale (rate of perceived exertion) a logged or prescribed
+#: value must fall on — anything else is a typo, not an effort level.
+RPE_MIN = 1
+RPE_MAX = 10
+
+
+def validate_rpe(value):
+    """Raises django ValidationError for an RPE outside RPE_MIN..RPE_MAX."""
+    from django.core.exceptions import ValidationError
+    from django.utils.translation import gettext
+
+    if value is not None and not RPE_MIN <= value <= RPE_MAX:
+        raise ValidationError(
+            gettext("RPE goes from %(min)s to %(max)s.") % {"min": RPE_MIN, "max": RPE_MAX}
+        )
+
+
+class SessionNotInProgress(Exception):
+    """Raised when completing/abandoning a session that already ended.
+
+    A finished session is history: flipping a completed one to abandoned
+    (or re-completing it) would rewrite its status and `ended_at` after
+    the fact and silently move it in or out of analytics and streaks.
+    """
+
 
 def sessions_for(user):
     """A user's own workout sessions only — never shared, unlike programs."""
     return WorkoutSession.objects.filter(user=user)
+
+
+#: How recent an identical in-progress session must be for
+#: start_session_once() to treat a second start as the same tap.
+DUPLICATE_START_WINDOW = timedelta(seconds=10)
+
+
+@transaction.atomic
+def start_session_once(user, workout=None):
+    """start_session() for a user pressing "Start": a second press of the
+    same Start button a moment later (a double tap, a re-sent form)
+    returns the session the first one started instead of opening a
+    second, empty one next to it. The user row lock makes two
+    simultaneous presses take turns."""
+    from django.contrib.auth import get_user_model
+
+    get_user_model().objects.select_for_update().filter(pk=user.pk).first()
+    recent = (
+        sessions_for(user)
+        .filter(
+            status=WorkoutSessionStatus.IN_PROGRESS,
+            workout=workout,
+            started_at__gte=timezone.now() - DUPLICATE_START_WINDOW,
+        )
+        .order_by("-started_at")
+        .first()
+    )
+    return recent or start_session(user, workout=workout)
 
 
 @transaction.atomic
@@ -47,6 +100,7 @@ def start_session(user, workout=None):
             PerformedExercise(
                 session=session,
                 exercise=prescription.exercise,
+                exercise_name=prescription.exercise.name,
                 prescription=prescription,
                 order=prescription.order,
                 set_count=prescription.set_count,
@@ -66,6 +120,8 @@ def start_session(user, workout=None):
 
 
 def complete_session(session):
+    if not session.is_in_progress:
+        raise SessionNotInProgress
     session.status = WorkoutSessionStatus.COMPLETED
     session.ended_at = timezone.now()
     session.save(update_fields=["status", "ended_at", "updated_at"])
@@ -73,6 +129,8 @@ def complete_session(session):
 
 
 def abandon_session(session):
+    if not session.is_in_progress:
+        raise SessionNotInProgress
     session.status = WorkoutSessionStatus.ABANDONED
     session.ended_at = timezone.now()
     session.save(update_fields=["status", "ended_at", "updated_at"])
@@ -88,7 +146,7 @@ def add_performed_exercise(session, exercise):
     highest = session.performed_exercises.aggregate(highest=Max("order"))["highest"]
     next_order = 0 if highest is None else highest + 1
     return PerformedExercise.objects.create(
-        session=session, exercise=exercise, order=next_order
+        session=session, exercise=exercise, exercise_name=exercise.name, order=next_order
     )
 
 
@@ -106,10 +164,18 @@ def default_set_values(performed_exercise):
     }
 
 
+@transaction.atomic
 def log_set(performed_exercise, **fields):
-    next_number = performed_exercise.sets.count() + 1
+    """Log the next set, numbered one past the highest existing number.
+
+    Not `count() + 1`: after a set is deleted that would reuse a number
+    still held by a later set. The row lock makes two concurrent logs
+    (a double tap) take turns instead of both reading the same maximum.
+    """
+    PerformedExercise.objects.select_for_update().filter(pk=performed_exercise.pk).first()
+    highest = performed_exercise.sets.aggregate(highest=Max("set_number"))["highest"]
     return ExerciseSet.objects.create(
-        performed_exercise=performed_exercise, set_number=next_number, **fields
+        performed_exercise=performed_exercise, set_number=(highest or 0) + 1, **fields
     )
 
 

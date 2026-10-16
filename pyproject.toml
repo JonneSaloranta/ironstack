@@ -28,13 +28,19 @@ target-version = "py314"
 exclude = [".venv", "migrations"]
 
 [tool.ruff.lint]
-select = ["E", "F", "I"]
+# B (bugbear): likely bugs — a zip() that silently truncates, an exception
+# re-raised without its cause, an unused loop variable.
+select = ["E", "F", "I", "B"]
 
 [tool.coverage.run]
 # Only this project's own apps — never the interpreter/venv or a
 # vendored dependency's own coverage, which would just dilute the
 # number with code this project doesn't own or test.
 source = ["apps"]
+# pytest runs on every core (pytest-xdist): each worker is a subprocess
+# that writes its own data file, merged by `coverage combine`.
+parallel = true
+patch = ["subprocess"]
 omit = [
     "*/migrations/*",
     "*/tests.py",

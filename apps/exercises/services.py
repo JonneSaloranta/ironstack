@@ -79,3 +79,40 @@ def image_limit_exceeded(exercise, *, exclude_pk=None):
         qs = qs.exclude(pk=exclude_pk)
     max_images = ExerciseImageSettings.load().max_images_per_exercise
     return qs.count() >= max_images
+
+
+#: Longest side, in pixels, an uploaded exercise image is scaled down to.
+MAX_IMAGE_DIMENSION = 1600
+#: Uploads larger than this are refused before Pillow even opens them.
+MAX_IMAGE_UPLOAD_BYTES = 15 * 1024 * 1024
+
+
+def prepare_uploaded_image(uploaded, *, with_size=False):
+    """An uploaded exercise image, ready to store: turned upright from its
+    EXIF orientation, scaled down to MAX_IMAGE_DIMENSION on its longer
+    side, and re-encoded — which also drops its EXIF metadata, a phone
+    photo's GPS position included, since media is served publicly.
+    Full-size phone photos used to be stored and sent as-is. Returns a
+    new file with the same name; an image already small enough is still
+    re-encoded, for the metadata."""
+    import io
+
+    from django.core.files.uploadedfile import SimpleUploadedFile
+    from PIL import Image, ImageOps
+
+    uploaded.seek(0)
+    with Image.open(uploaded) as source:
+        image_format = source.format or "PNG"
+        if image_format == "MPO":  # a multi-picture JPEG from many phones
+            image_format = "JPEG"
+        image = ImageOps.exif_transpose(source)
+        image.thumbnail((MAX_IMAGE_DIMENSION, MAX_IMAGE_DIMENSION))
+        if image_format == "JPEG" and image.mode not in ("RGB", "L"):
+            image = image.convert("RGB")
+        buffer = io.BytesIO()
+        save_options = {"quality": 85, "optimize": True} if image_format == "JPEG" else {}
+        image.save(buffer, format=image_format, **save_options)
+        size = image.size
+    content_type = Image.MIME.get(image_format, "application/octet-stream")
+    prepared = SimpleUploadedFile(uploaded.name, buffer.getvalue(), content_type=content_type)
+    return (prepared, size) if with_size else prepared

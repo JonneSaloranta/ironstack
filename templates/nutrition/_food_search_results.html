@@ -12,7 +12,7 @@
     {% endif %}
 
     {% if local %}
-      <h3>{% trans "Your foods" %}</h3>
+      <h2 class="card-title">{% trans "Your foods" %}</h2>
       {% for food in local %}
         {% if mode == "browse" %}
           <div class="card card-action-row">
@@ -35,7 +35,7 @@
               <p class="text-muted">{{ food.calories }} kcal / {{ food.serving_size }} {{ food.serving_unit }}</p>
             </div>
             <div class="row">
-              <input class="qty-input" type="number" name="quantity" step="0.01" value="{{ food.prefill_quantity|default:food.serving_size|unlocalize }}" aria-label="{% trans "Quantity" %}">
+              <input class="qty-input" type="number" name="quantity" step="0.01" value="{{ food.prefill_quantity|default:food.serving_size|unlocalize }}" min="0.01" inputmode="decimal" enterkeyhint="done" aria-label="{% trans "Quantity" %}">
               <button type="submit">{% trans "Add" %}</button>
             </div>
           </form>
@@ -44,7 +44,7 @@
     {% endif %}
 
     {% if off_results %}
-      <h3>{% trans "From OpenFoodFacts" %}</h3>
+      <h2 class="card-title">{% trans "From OpenFoodFacts" %}</h2>
       {% for product in off_results %}
         <form class="card card-action-row" method="post" action="{{ post_url }}">
           {% csrf_token %}
@@ -61,7 +61,7 @@
             <button type="submit" class="button-secondary">{% trans "Import" %}</button>
           {% else %}
             <div class="row">
-              <input class="qty-input" type="number" name="quantity" step="0.01" value="{{ product.serving_size|unlocalize }}" aria-label="{% trans "Quantity" %}">
+              <input class="qty-input" type="number" name="quantity" step="0.01" value="{{ product.serving_size|unlocalize }}" min="0.01" inputmode="decimal" enterkeyhint="done" aria-label="{% trans "Quantity" %}">
               <button type="submit">{% trans "Import & add" %}</button>
             </div>
           {% endif %}
@@ -96,3 +96,4 @@
     {% if off_status == "ok" %}{% include "nutrition/_off_attribution.html" %}{% endif %}
   {% endif %}
 </div>
+{% if query %}{% include "core/_search_status.html" with count=result_count %}{% endif %}

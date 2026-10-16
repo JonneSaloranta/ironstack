@@ -80,6 +80,10 @@ services:
     depends_on:
       db:
         condition: service_healthy
+      # Not before `web` is healthy: web's entrypoint runs `migrate`,
+      # and this new code must not query the old schema after an upgrade.
+      web:
+        condition: service_healthy
     volumes:
       - media_data:/app/media
       - backups_data:/app/backups
@@ -106,6 +110,10 @@ services:
     depends_on:
       db:
         condition: service_healthy
+      # Not before `web` is healthy: web's entrypoint runs `migrate`,
+      # and this new code must not query the old schema after an upgrade.
+      web:
+        condition: service_healthy
     command: python manage.py rest_timer_dispatcher
 
   # Writes AI assistant replies (docs/ASSISTANT.md) — same image and
@@ -124,6 +132,10 @@ services:
       DJANGO_SETTINGS_MODULE: config.settings.production
     depends_on:
       db:
+        condition: service_healthy
+      # Not before `web` is healthy: web's entrypoint runs `migrate`,
+      # and this new code must not query the old schema after an upgrade.
+      web:
         condition: service_healthy
     command: python manage.py assistant_worker
 

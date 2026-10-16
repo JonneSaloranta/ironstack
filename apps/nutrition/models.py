@@ -497,6 +497,10 @@ class Recipe(TimeStampedModel):
     # a single `meal_slot`. None picked means "any meal", so an untagged
     # recipe stays eligible everywhere.
     meal_slots = models.ManyToManyField(MealSlot, related_name="+", blank=True)
+    # False once "deleted" while diary entries or diet plans still use
+    # it — see services.delete_recipe. Hidden from every list, search
+    # and picker, but kept so that history still adds up.
+    active = models.BooleanField(default=True)
 
     class Meta:
         ordering = ["name"]
@@ -545,8 +549,13 @@ class DiaryEntry(TimeStampedModel):
     food = models.ForeignKey(
         Food, related_name="diary_entries", null=True, blank=True, on_delete=models.CASCADE
     )
+    # RESTRICT, not CASCADE: deleting a recipe must never take past
+    # diary entries with it (services.delete_recipe soft-deletes a
+    # recipe still in use instead). Unlike PROTECT, RESTRICT still lets
+    # a cascade that removes these entries too — deleting the user —
+    # go through.
     recipe = models.ForeignKey(
-        Recipe, related_name="diary_entries", null=True, blank=True, on_delete=models.CASCADE
+        Recipe, related_name="diary_entries", null=True, blank=True, on_delete=models.RESTRICT
     )
     # Grams/ml/pieces for a food entry, servings for a recipe entry,
     # portions (normally 1) for a quick entry.
@@ -566,6 +575,15 @@ class DiaryEntry(TimeStampedModel):
         max_digits=6, decimal_places=2, null=True, blank=True
     )
     quick_fat_grams = models.DecimalField(max_digits=6, decimal_places=2, null=True, blank=True)
+    # A food or recipe entry's nutrition per one unit of `quantity`, as
+    # the food/recipe was when logged (services.diary_entry_nutrition).
+    # Without it every past day was re-read from the live Food/Recipe,
+    # so editing a food, a recipe's ingredients, or an Open Food Facts
+    # refresh of a shared food silently changed old diary totals.
+    # Recomputed only when the entry is switched to another food or
+    # recipe; changing the quantity just scales it. Null for a quick
+    # entry, whose own macros are already fixed.
+    nutrition_snapshot = models.JSONField(null=True, blank=True)
 
     class Meta:
         ordering = ["-date", "-created_at"]
@@ -581,6 +599,30 @@ class DiaryEntry(TimeStampedModel):
                 name="diary_entry_exactly_one_of_food_recipe_or_quick",
             ),
         ]
+
+    @classmethod
+    def from_db(cls, db, field_names, values, *args, **kwargs):
+        instance = super().from_db(db, field_names, values, *args, **kwargs)
+        instance._loaded_source = (
+            instance.__dict__.get("food_id"),
+            instance.__dict__.get("recipe_id"),
+        )
+        return instance
+
+    def save(self, *args, **kwargs):
+        source = (self.food_id, self.recipe_id)
+        changed_source = getattr(self, "_loaded_source", source) != source
+        has_source = self.food_id is not None or self.recipe_id is not None
+        if has_source and (self.nutrition_snapshot is None or changed_source):
+            from . import services
+
+            self.nutrition_snapshot = services.nutrition_snapshot(
+                services.per_unit_entry_nutrition(self)
+            )
+            if kwargs.get("update_fields") is not None:
+                kwargs["update_fields"] = {*kwargs["update_fields"], "nutrition_snapshot"}
+        super().save(*args, **kwargs)
+        self._loaded_source = source
 
     @property
     def is_quick(self):
@@ -746,8 +788,9 @@ class DietPlanItem(models.Model):
     food = models.ForeignKey(
         Food, related_name="+", null=True, blank=True, on_delete=models.CASCADE
     )
+    # RESTRICT — see DiaryEntry.recipe.
     recipe = models.ForeignKey(
-        Recipe, related_name="+", null=True, blank=True, on_delete=models.CASCADE
+        Recipe, related_name="+", null=True, blank=True, on_delete=models.RESTRICT
     )
     quantity = models.DecimalField(max_digits=8, decimal_places=2)
     order = models.PositiveSmallIntegerField(default=0)

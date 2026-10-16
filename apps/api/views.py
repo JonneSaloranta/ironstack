@@ -199,6 +199,8 @@ class WorkoutSessionViewSet(viewsets.ModelViewSet):
     def perform_update(self, serializer):
         session = serializer.instance
         new_status = serializer.validated_data.get("status")
+        if not session.is_in_progress:
+            return
         if new_status == "completed":
             workout_services.complete_session(session)
         elif new_status == "abandoned":
@@ -392,12 +394,17 @@ class RecipeViewSet(viewsets.ModelViewSet):
         # prefetched here so listing many recipes stays two queries
         # total (recipes + ingredients), not one ingredients query per
         # recipe in the list.
-        return Recipe.objects.filter(owner=self.request.user).prefetch_related(
+        return Recipe.objects.filter(owner=self.request.user, active=True).prefetch_related(
             "ingredients__food"
         )
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
+
+    def perform_destroy(self, instance):
+        # Same as the web UI — a recipe still used by diary entries or
+        # diet plans is only hidden (nutrition_services.delete_recipe).
+        nutrition_services.delete_recipe(instance)
 
 
 class RecipeIngredientViewSet(viewsets.ModelViewSet):
@@ -405,7 +412,9 @@ class RecipeIngredientViewSet(viewsets.ModelViewSet):
     api_context = ApiContext.NUTRITION
 
     def get_queryset(self):
-        return RecipeIngredient.objects.filter(recipe__owner=self.request.user)
+        return RecipeIngredient.objects.filter(
+            recipe__owner=self.request.user, recipe__active=True
+        )
 
 
 class DiaryEntryViewSet(viewsets.ModelViewSet):

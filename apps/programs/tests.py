@@ -222,6 +222,15 @@ class ExportImportProgramServiceTests(TestCase):
         self.bob = User.objects.create_user(username="bob", password="s3cret-pass")
         self.system_exercise = Exercise.objects.filter(owner__isnull=True).first()
 
+    def test_an_import_error_is_in_the_users_language(self):
+        # These end up on the import form (form.add_error), so an
+        # untranslated one showed English in a Finnish UI.
+        from django.utils import translation
+
+        with translation.override("fi"), self.assertRaises(ImportValidationError) as raised:
+            services.import_program(self.alice, {})
+        self.assertEqual(str(raised.exception), "Ohjelman nimi puuttuu.")
+
     def _round_trip(self, program):
         payload = services.export_program(program)
         # A real json.dumps/loads round trip, not just a Python dict

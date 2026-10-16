@@ -6,6 +6,7 @@ from apps.core import units as core_units
 from apps.core.formatting import RIR_FULL, RPE_FULL, abbr_label
 from apps.exercises.services import visible_to as exercises_visible_to
 
+from . import services
 from .models import ExerciseSet, PerformedExercise
 
 
@@ -52,12 +53,25 @@ class ExerciseSetForm(forms.ModelForm):
         # Numeric-keypad hints for the phone: a bare type=number gives the
         # full keyboard on some Android builds. `decimal` for weight (it
         # takes a fractional), `numeric` for whole-number reps.
+        # data-autofocus: where static/js/htmx-focus.js puts focus after
+        # logging a set swaps the card/panel this form is in.
         self.fields["weight"].widget.attrs.update(
-            {"inputmode": "decimal", "enterkeyhint": "next", "autocomplete": "off"}
+            {
+                "inputmode": "decimal",
+                "enterkeyhint": "next",
+                "autocomplete": "off",
+                "data-autofocus": "",
+            }
         )
         self.fields["reps"].widget.attrs.update(
             {"inputmode": "numeric", "enterkeyhint": "done", "autocomplete": "off"}
         )
+        self.fields["target_reps"].widget.attrs.update({"inputmode": "numeric", "min": "0"})
+        self.fields["rpe"].widget.attrs.update(
+            {"inputmode": "decimal", "min": "1", "max": "10", "step": "0.5"}
+        )
+        self.fields["rpe"].validators.append(services.validate_rpe)
+        self.fields["rir"].widget.attrs.update({"inputmode": "numeric", "min": "0"})
         unit_system = getattr(user, "unit_system", "metric")
         self.fields["weight"].label = _("Weight (%(unit)s)") % {
             "unit": core_units.weight_unit_label(unit_system)

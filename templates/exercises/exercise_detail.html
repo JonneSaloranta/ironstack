@@ -54,7 +54,7 @@
     <div class="exercise-image-gallery">
       {% for image in exercise.images.all %}
         <figure>
-          <img src="{{ image.image.url }}" alt="{% if image.caption %}{{ image.caption }}{% else %}{% trans exercise.name %}{% endif %}" loading="lazy">
+          <img src="{{ image.image.url }}"{% if image.width and image.height %} width="{{ image.width }}" height="{{ image.height }}"{% endif %} alt="{% if image.caption %}{{ image.caption }}{% else %}{% trans exercise.name %}{% endif %}" loading="lazy">
           {% if image.caption %}<figcaption>{{ image.caption }}</figcaption>{% endif %}
           {% if image.attribution %}<figcaption class="attribution-note">{{ image.attribution }}</figcaption>{% endif %}
           {% if exercise.owner_id == request.user.id %}

@@ -1296,6 +1296,51 @@ class MessageViewTests(TestCase):
         )
         self.assertContains(response, "hi")
 
+    def test_a_rejected_send_answers_the_composer_and_keeps_the_draft(self):
+        make_friends(self.alice, self.bob)
+        response = self.client.post(
+            reverse("social:message-thread-fragment", args=[self.bob.pk]),
+            {"body": ""},
+            HTTP_HX_REQUEST="true",
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response["HX-Retarget"], "#send-error")
+        self.assertEqual(response["X-Form-Rejected"], "1")
+        self.assertContains(response, "alert-error")
+        self.assertFalse(DirectMessage.objects.exists())
+
+    def test_a_successful_send_is_not_marked_rejected(self):
+        make_friends(self.alice, self.bob)
+        response = self.client.post(
+            reverse("social:message-thread-fragment", args=[self.bob.pk]),
+            {"body": "hi"},
+            HTTP_HX_REQUEST="true",
+        )
+        self.assertNotIn("X-Form-Rejected", response)
+        self.assertNotIn("HX-Retarget", response)
+
+    def test_the_composer_resets_only_on_success(self):
+        make_friends(self.alice, self.bob)
+        response = self.client.get(reverse("social:message-thread", args=[self.bob.pk]))
+        self.assertContains(response, "data-reset-on-success")
+        self.assertContains(response, 'id="send-error"')
+        self.assertNotContains(response, "this.reset()")
+
+    def test_a_poll_with_nothing_new_changes_nothing(self):
+        make_friends(self.alice, self.bob)
+        url = reverse("social:message-thread-fragment", args=[self.bob.pk])
+        self.client.post(url, {"body": "hi"})
+        first = self.client.get(url)
+        latest = DirectMessage.objects.get().pk
+        self.assertContains(first, f'data-latest-message="{latest}"')
+
+        self.assertEqual(self.client.get(url, {"after": latest}).status_code, 204)
+
+        services.send_direct_message(self.bob, self.alice, "hello back")
+        newer = self.client.get(url, {"after": latest})
+        self.assertEqual(newer.status_code, 200)
+        self.assertContains(newer, "hello back")
+
     def test_opening_a_thread_marks_it_read(self):
         make_friends(self.alice, self.bob)
         services.send_direct_message(self.bob, self.alice, "hi")

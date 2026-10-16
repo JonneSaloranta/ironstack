@@ -159,6 +159,111 @@ class UiBehaviourTests(StaticLiveServerTestCase):
         toast = self.page.locator("#pr-toast-container .pr-banner-error")
         expect(toast).to_be_visible()
         expect(toast).to_contain_text("not saved")
+        # Stays until dismissed — no timer removes an error.
+        toast.get_by_role("button", name="Dismiss").click()
+        expect(toast).to_have_count(0)
+
+    # -- focus after an HTMX swap (static/js/htmx-focus.js) -----------------
+    def test_logging_a_set_from_the_keyboard_keeps_focus_in_the_form(self):
+        session, performed = self._session_with_set()
+        self._log_in()
+        self.page.goto(self._url(reverse("workouts:session-train", args=[session.pk])))
+        # The submit button, not a field: htmx itself keeps focus on an
+        # element whose id survives the swap (id_weight), but the button
+        # has none, so focus used to drop to <body>.
+        self.page.get_by_role("button", name="Log set").focus()
+        self.page.keyboard.press("Enter")
+        expect(self.page.locator("#train-panel .train-set-history .tag")).to_have_count(2)
+        # Focus moves on htmx:afterSettle, a moment after the swap — expect() retries.
+        expect(self.page.locator("#train-panel input[name=weight]")).to_be_focused()
+
+    def test_logging_a_set_on_the_session_page_keeps_focus_in_that_card(self):
+        session, performed = self._session_with_set()
+        self._log_in()
+        self.page.goto(self._url(reverse("workouts:session-detail", args=[session.pk])))
+        card = f"#performed-exercise-{performed.pk}"
+        self.page.locator(f"{card} button[type=submit]", has_text="Log").first.focus()
+        self.page.keyboard.press("Enter")
+        expect(self.page.locator(f"{card} .set-table tbody tr")).to_have_count(2)
+        expect(self.page.locator(f"{card} input[name=weight]")).to_be_focused()
+
+    # -- live search result count (core/_search_status.html) ----------------
+    def test_a_live_search_updates_the_status_region(self):
+        Exercise.objects.create(name="Zzyzx Press", owner=None)
+        self._log_in()
+        self.page.goto(self._url(reverse("exercises:exercise-list")))
+        self.page.fill("#id_q", "Zzyzx Press")
+        expect(self.page.locator("#search-status")).to_have_text("1 result")
+        expect(self.page.locator("#search-status")).to_have_attribute("role", "status")
+
+    # -- achievements carousel (dashboard-carousel.js) -----------------------
+    def _dashboard_with_achievements(self, reduced_motion=False):
+        session, _ = self._session_with_set()
+        workout_services.complete_session(session)
+        if reduced_motion:
+            self.page.emulate_media(reduced_motion="reduce")
+        self.page.clock.install()
+        self._log_in()
+        self.page.goto(self._url("/"))
+        expect(self.page.locator(".achievement-slide").nth(1)).to_be_attached()
+
+    def _visible_slide(self):
+        return self.page.locator(".achievement-slide:visible").inner_text()
+
+    def test_the_carousel_rotates_until_paused(self):
+        self._dashboard_with_achievements()
+        first = self._visible_slide()
+        self.page.clock.run_for(5000)
+        self.assertNotEqual(self._visible_slide(), first)
+        self.page.get_by_role("button", name="Pause").click()
+        self.page.mouse.move(0, 0)  # leave hover so only the pause holds it
+        shown = self._visible_slide()
+        self.page.clock.run_for(15000)
+        self.assertEqual(self._visible_slide(), shown)
+        expect(self.page.get_by_role("button", name="Resume")).to_be_visible()
+
+    def test_the_carousel_never_rotates_on_its_own_with_reduced_motion(self):
+        self._dashboard_with_achievements(reduced_motion=True)
+        first = self._visible_slide()
+        self.page.clock.run_for(15000)
+        self.assertEqual(self._visible_slide(), first)
+        expect(self.page.get_by_role("button", name="Resume")).to_be_visible()
+
+    # -- chat composer keeps a failed draft (htmx-errors.js) -----------------
+    def test_a_new_message_shows_up_through_polling(self):
+        from apps.social.models import FriendRequest
+
+        bob = User.objects.create_user(username="bob", password="s3cret-pass")
+        social_services.send_friend_request(self.alice, bob)
+        social_services.accept_friend_request(
+            FriendRequest.objects.get(from_user=self.alice, to_user=bob), acting_user=bob
+        )
+        social_services.send_direct_message(bob, self.alice, "first")
+        self._log_in()
+        self.page.goto(self._url(reverse("social:message-thread", args=[bob.pk])))
+        thread = self.page.locator("#thread-messages")
+        expect(thread).to_contain_text("first")
+        social_services.send_direct_message(bob, self.alice, "second")
+        expect(thread).to_contain_text("second", timeout=10000)
+
+    def test_a_failed_message_send_keeps_the_draft(self):
+        from apps.social.models import FriendRequest
+
+        bob = User.objects.create_user(username="bob", password="s3cret-pass")
+        social_services.send_friend_request(self.alice, bob)
+        social_services.accept_friend_request(
+            FriendRequest.objects.get(from_user=self.alice, to_user=bob), acting_user=bob
+        )
+        self._log_in()
+        self.page.goto(self._url(reverse("social:message-thread", args=[bob.pk])))
+        self.page.route(
+            "**" + reverse("social:message-thread-fragment", args=[bob.pk]),
+            lambda route: route.abort() if route.request.method == "POST" else route.continue_(),
+        )
+        self.page.fill("textarea[name=body]", "Don't lose me")
+        self.page.get_by_role("button", name="Send").click()
+        expect(self.page.locator("#pr-toast-container .pr-banner-error")).to_be_visible()
+        expect(self.page.locator("textarea[name=body]")).to_have_value("Don't lose me")
 
     # -- page loading bar (static/js/page-loading.js) ------------------------
     def _hold(self, pattern):

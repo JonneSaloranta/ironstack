@@ -73,9 +73,14 @@ self.addEventListener("fetch", (event) => {
         // cache for the *next* request. event.waitUntil keeps the
         // worker alive long enough for that background refetch to
         // finish even though the response has already gone out.
+        // Only a successful response replaces the cached copy — a 404 or
+        // 502 mid-deploy used to be cached and served until the next
+        // refresh happened to succeed.
         event.waitUntil(
           fetch(event.request)
-            .then((response) => cache.put(event.request, response))
+            .then((response) => {
+              if (response.ok) return cache.put(event.request, response);
+            })
             .catch(() => {}) // offline — next request just serves the same cached copy again
         );
         return cached;
@@ -83,7 +88,7 @@ self.addEventListener("fetch", (event) => {
       // Nothing cached yet — fetch from the network and cache it for
       // next time, same as before for a first-ever request.
       const response = await fetch(event.request);
-      cache.put(event.request, response.clone());
+      if (response.ok) cache.put(event.request, response.clone());
       return response;
     })
   );

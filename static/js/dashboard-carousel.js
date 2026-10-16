@@ -12,20 +12,29 @@
 // in the template itself, evaluated via Alpine's ('unsafe-eval'-gated)
 // Function()-based interpreter, not from anything templated into this
 // file — this file itself contains no server-rendered value.
+//
+// Moving content needs a way to stop it (WCAG 2.2.2): the Pause button
+// stops rotation for good, hover and keyboard focus pause it while
+// they last, and with prefers-reduced-motion it never starts on its own.
 function ironstackCarousel(total) {
   return {
     index: 0,
     total: total,
     timer: null,
+    paused: window.matchMedia("(prefers-reduced-motion: reduce)").matches,
     start() {
-      if (this.total < 2) return;
       clearInterval(this.timer);
+      if (this.total < 2 || this.paused) return;
       this.timer = setInterval(() => {
         this.index = (this.index + 1) % this.total;
       }, 4500);
     },
     stop() {
       clearInterval(this.timer);
+    },
+    togglePaused() {
+      this.paused = !this.paused;
+      this.paused ? this.stop() : this.start();
     },
     goto(i) {
       this.index = i;

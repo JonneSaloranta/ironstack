@@ -474,8 +474,12 @@ class DietPlanItemForm(forms.ModelForm):
         # visibility as `food` above; this excluded the built-in
         # template recipes (Recipe.owner's own comment) until found
         # live as "can't swap to a template recipe."
+        # Plus the item's current recipe even if it has since been
+        # deleted (Recipe.active), so editing just the quantity of an
+        # older item doesn't fail on a now-hidden choice.
         self.fields["recipe"].queryset = Recipe.objects.filter(
-            Q(owner=user) | Q(owner__isnull=True)
+            (Q(owner=user) | Q(owner__isnull=True)) & Q(active=True)
+            | Q(pk=self.instance.recipe_id or None)
         ).order_by("name")
         self.fields["food"].required = False
         self.fields["recipe"].required = False

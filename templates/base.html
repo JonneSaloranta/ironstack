@@ -94,6 +94,7 @@ instead.
   <script src="{% static 'js/confirm-dialog.js' %}" defer></script>
   <script src="{% static 'js/page-loading.js' %}" defer></script>
   <script src="{% static 'js/modal-a11y.js' %}" defer></script>
+  <script src="{% static 'js/htmx-focus.js' %}" defer></script>
   <script src="{% static 'js/pwa-install-prompt.js' %}" defer></script>
   <script src="{% static 'js/alpine.min.js' %}" defer></script>
   <script src="{% static 'js/sw-register.js' %}" defer></script>
@@ -107,11 +108,14 @@ instead.
       data-confirm-cancel="{% trans "Cancel" %}"
       data-htmx-error-server="{% trans "Something went wrong — that change was not saved. Please try again." %}"
       data-htmx-error-network="{% trans "Could not reach the server — check your connection. That change was not saved." %}"
+      data-dismiss-label="{% trans "Dismiss" %}"
       data-service-worker-url="{% url 'service-worker' %}"
       data-zxing-url="{% static 'js/zxing.min.js' %}"
       data-vapid-public-key="{{ push_vapid_public_key }}"
       data-push-subscribe-url="{% url 'push-subscribe' %}"
       data-push-unsubscribe-url="{% url 'push-unsubscribe' %}"
+      data-push-blocked-message="{% trans "Notifications are blocked for this site in your browser settings." %}"
+      data-push-save-failed-message="{% trans "Saving the subscription failed." %}"
       {% comment %}
       static/js/barcode-scanner.js's own human-readable explanation
       for `!navigator.mediaDevices` — a plain .js file (unlike this

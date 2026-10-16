@@ -6,11 +6,12 @@
   <h1 class="no-margin">{% trans "Backups" %}</h1>
 </div>
 
-<form method="post" x-data="{busy: false}" @submit="busy = true">
+{% include "core/_backup_task_status.html" %}
+
+{% comment %}Creating (and restoring) runs in the background — apps.core.backup_tasks; the status above shows how it's going. One task at a time.{% endcomment %}
+<form method="post">
   {% csrf_token %}
-  {% comment %}A backup can take a while on a large database; without this the button gave no sign anything was happening. The action value still submits because the button isn't disabled until after the submit event fires.{% endcomment %}
-  <button type="submit" name="action" value="create_backup" :aria-disabled="busy" x-text="busy ? '{% trans "Creating backup…" %}' : '{% trans "Create backup" %}'">{% trans "Create backup" %}</button>
-  <p class="text-muted" x-show="busy" x-cloak role="status">{% trans "This can take a minute — please keep this page open." %}</p>
+  <button type="submit" name="action" value="create_backup"{% if backup_task.state == "running" %} disabled{% endif %}>{% trans "Create backup" %}</button>
 </form>
 
 <h2>{% trans "Automatic backups" %}</h2>

@@ -38,6 +38,7 @@ from apps.stretching.models import (
     StretchRoutine,
     StretchSession,
 )
+from apps.workouts import services as workout_services
 from apps.workouts.models import ExerciseSet, PerformedExercise, WorkoutSession
 
 User = get_user_model()
@@ -64,7 +65,11 @@ class ProfileSerializer(serializers.ModelSerializer):
             "theme",
             "appearance",
         ]
-        read_only_fields = ["username"]
+        # email too: an API key is a narrower credential than the
+        # password, and changing the email would let whoever holds the
+        # key request a password reset to themselves — a full account
+        # takeover. Change it on the Account details page instead.
+        read_only_fields = ["username", "email"]
 
 
 # --------------------------------------------------------------------
@@ -258,6 +263,15 @@ class ExerciseSetSerializer(serializers.ModelSerializer):
         ]
         read_only_fields = ["set_number"]  # auto-numbered — see apps.workouts.services.log_set
 
+    def validate_rpe(self, value):
+        from django.core.exceptions import ValidationError as DjangoValidationError
+
+        try:
+            workout_services.validate_rpe(value)
+        except DjangoValidationError as error:
+            raise serializers.ValidationError(error.messages) from None
+        return value
+
     def validate_performed_exercise(self, value):
         request = self.context["request"]
         if value.session.user_id != request.user.id:
@@ -272,6 +286,8 @@ class ExerciseSetSerializer(serializers.ModelSerializer):
 
 class PerformedExerciseSerializer(serializers.ModelSerializer):
     sets = ExerciseSetSerializer(many=True, read_only=True)
+    # The name as it was when logged (PerformedExercise.exercise_name).
+    exercise_name = serializers.CharField(source="display_name", read_only=True)
 
     class Meta:
         model = PerformedExercise
@@ -279,6 +295,7 @@ class PerformedExerciseSerializer(serializers.ModelSerializer):
             "id",
             "session",
             "exercise",
+            "exercise_name",
             "order",
             "set_count",
             "min_reps",
@@ -377,6 +394,12 @@ class WorkoutSessionSerializer(serializers.ModelSerializer):
         allowed = {"completed", "abandoned"}
         if value not in allowed:
             raise serializers.ValidationError(f"status can only be set to one of {allowed}.")
+        # A finished session is history — see
+        # apps.workouts.services.SessionNotInProgress. Re-sending the
+        # status it already has is a harmless no-op (perform_update
+        # skips it); changing it is not.
+        if not self.instance.is_in_progress and value != self.instance.status:
+            raise serializers.ValidationError("This session is no longer in progress.")
         return value
 
 
@@ -563,7 +586,7 @@ class RecipeIngredientSerializer(serializers.ModelSerializer):
         # workout — an ingredient can only be added to a recipe this
         # user actually owns.
         request = self.context["request"]
-        if value.owner_id != request.user.id:
+        if value.owner_id != request.user.id or not value.active:
             raise serializers.ValidationError("Not a recipe you own.")
         return value
 
@@ -635,7 +658,7 @@ class DiaryEntrySerializer(serializers.ModelSerializer):
 
     def validate_recipe(self, value):
         request = self.context["request"]
-        if value.owner_id != request.user.id:
+        if value.owner_id != request.user.id or not value.active:
             raise serializers.ValidationError("Not a recipe you own.")
         return value
 

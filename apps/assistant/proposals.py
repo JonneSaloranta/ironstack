@@ -173,7 +173,7 @@ def _resolve_item(user, data, where):
         )
         recipe = (
             Recipe.objects.filter(
-                Q(owner=user) | Q(owner__isnull=True), pk=data["recipe_id"]
+                Q(owner=user) | Q(owner__isnull=True), active=True, pk=data["recipe_id"]
             ).first()
             if isinstance(data["recipe_id"], int)
             else None

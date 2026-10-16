@@ -42,7 +42,10 @@ function ironstackPushNotifications() {
       this.error = null;
       try {
         if (Notification.permission === "denied") {
-          throw new Error("Notifications are blocked for this site in your browser settings.");
+          throw new Error(
+            document.body.dataset.pushBlockedMessage ||
+              "Notifications are blocked for this site in your browser settings."
+          );
         }
         const registration = await navigator.serviceWorker.ready;
         const subscription = await registration.pushManager.subscribe({
@@ -53,7 +56,11 @@ function ironstackPushNotifications() {
           document.body.dataset.pushSubscribeUrl,
           subscription.toJSON()
         );
-        if (!response.ok) throw new Error("Saving the subscription failed.");
+        if (!response.ok) {
+          throw new Error(
+            document.body.dataset.pushSaveFailedMessage || "Saving the subscription failed."
+          );
+        }
         this.subscribed = true;
       } catch (e) {
         this.error = e.message || String(e);

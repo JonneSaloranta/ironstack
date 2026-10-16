@@ -18,6 +18,93 @@ narrated summary of the same version.
 
 ## [Unreleased]
 
+## [1.25.0] — 2026-10-17
+
+### Added
+- AI assistant: with your own API key, choose which Claude model it uses
+  (Opus, Sonnet, Haiku or Fable, prices shown) in the assistant's
+  settings. New conversations use the chosen model.
+- …and how much it thinks before answering (low, medium, high, extra
+  high, maximum).
+- Optional email confirmation for new signups
+  (`DJANGO_SIGNUP_EMAIL_VERIFICATION=true`): a new account can log in
+  once it has opened the link sent to its email address.
+
+### Changed
+- Past diary days keep the calories and macros they were logged with —
+  editing a food or recipe, merging foods or an Open Food Facts update no
+  longer changes them.
+- Past workouts keep the exercise name they were logged under, even if
+  the exercise is renamed later.
+- Background services now start only after the web service has applied
+  migrations.
+- Backups: "Create backup" and "Restore" now run in the background, and
+  the Backups page shows how it's going and the result. A restore that
+  fails partway puts the previous database and media back.
+
+### Fixed
+- Deleting a recipe no longer deletes the diary entries that used it —
+  a recipe still in use is hidden instead.
+- Deleting a set and logging another could give two sets the same
+  number; set numbers are now always unique.
+- A finished workout can no longer be switched between completed and
+  abandoned afterwards (web and API).
+- Logging a set after your session expired showed a login form inside
+  the training panel; it now takes you to the login page.
+- A chat or assistant message that failed to send no longer clears what
+  you typed, and the reason is shown.
+- After logging a set with the keyboard, focus stays in the form instead
+  of jumping to the top of the page.
+- Double-tapping Start no longer opens two workouts.
+- Error messages for a failed change stay until you dismiss them; new-PR
+  messages pause while you hover over or focus them.
+- Set-form errors are read out when you focus the field, and an error in
+  RPE, RIR or notes opens "More options" instead of hiding inside it.
+- The calendar tells screen readers what each day's icons mean, and PR
+  and abandoned days differ in shape, not only colour.
+- The achievements carousel can be paused, stops while you're using it
+  with the keyboard, and doesn't move on its own if you prefer reduced
+  motion.
+- Live searches announce how many results they found.
+- Chat threads no longer re-send the whole conversation to screen
+  readers every few seconds when nothing new has arrived.
+- Import errors and the nutrition goal's rate are translated.
+- RPE must be between 1 and 10; number fields open a number keypad on
+  phones.
+- Smaller accessibility fixes: one reduced-motion setting covers every
+  animation, larger touch targets, readable Nutri-Score badges, the
+  current tab marked in every subnav, and a proper heading and language
+  on the error page.
+- Deleting a set can't be sent twice by a double tap.
+- The service worker no longer caches error responses, and the health
+  check reports a database outage.
+
+### Security
+- Login rate limiting can no longer be reset by logging into your own
+  account between guesses.
+- Push notifications are only ever sent to known browser push services.
+- Another user's private food can't be added to your diary, recipes or
+  diet plans by guessing its id.
+- A client whose coaching has ended (or who was un-shared) no longer
+  receives a coach's later program and diet plan updates.
+- The API can no longer change an account's email (which allowed a
+  password reset to a new address).
+- Backups are limited to superusers instead of all staff.
+- Uploaded exercise photos are stripped of their metadata (including GPS
+  location) and stored under a random name instead of their original
+  filename.
+- Authentik logins with an unverified email are refused, since the email
+  links them to an existing account (`AUTHENTIK_REQUIRE_EMAIL_VERIFIED`).
+- A two-factor code works only once, an API key stops working when its
+  account is deactivated, and redirects after login are always checked.
+
+### Performance
+- The dashboard's achievements no longer load everyone's whole training
+  history on every visit.
+- Uploaded exercise photos are scaled down to at most 1600px, and
+  exercise pages no longer jump while their photos load.
+- Content-hashed static files are cached by the browser for a year.
+
 ## [1.24.0] — 2026-10-03
 
 ### Added

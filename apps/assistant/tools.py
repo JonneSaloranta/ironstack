@@ -162,7 +162,7 @@ def get_workout_history(ctx, args):
             sets = [s for s in performed.sets.all() if not s.is_warmup]
             exercises.append(
                 {
-                    "exercise": gettext(performed.exercise.name),
+                    "exercise": gettext(performed.display_name),
                     "sets": [
                         f"{_num(s.weight)}kg x {s.reps}"
                         + (f" @RPE{_num(s.rpe)}" if s.rpe is not None else "")
@@ -485,7 +485,9 @@ def search_recipes(ctx, args):
     from apps.nutrition.models import Recipe
 
     query = _str_arg(args, "query", max_length=100)
-    recipes = Recipe.objects.filter(Q(owner=ctx.user) | Q(owner__isnull=True)).prefetch_related(
+    recipes = Recipe.objects.filter(
+        Q(owner=ctx.user) | Q(owner__isnull=True), active=True
+    ).prefetch_related(
         "meal_slots"
     )
     if query:

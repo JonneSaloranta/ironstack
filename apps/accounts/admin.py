@@ -15,6 +15,8 @@ class UserAdmin(DjangoUserAdmin):
         # the correct recovery path for someone locked out with no
         # working authenticator and no backup codes, not exposing it.
         (_("Two-factor authentication"), {"fields": ("totp_enabled",)}),
+        # Untick to let someone in whose confirmation email never arrived.
+        (_("Email confirmation"), {"fields": ("email_verification_pending",)}),
     )
     list_display = DjangoUserAdmin.list_display + ("totp_enabled",)
     actions = [*DjangoUserAdmin.actions, "disable_two_factor"]

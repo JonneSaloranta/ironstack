@@ -123,6 +123,9 @@ MIDDLEWARE = [
     "apps.accounts.middleware.UserTimezoneMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    # Rewrites login redirects on HTMX requests into HX-Redirect — see
+    # its docstring.
+    "apps.core.middleware.HtmxLoginRedirectMiddleware",
 ]
 
 ROOT_URLCONF = "config.urls"
@@ -383,6 +386,14 @@ ADMIN_CONTACT_EMAIL = env("DJANGO_ADMIN_CONTACT_EMAIL", default="")
 # only SignupView reads this.
 SIGNUP_ENABLED = env_bool("DJANGO_SIGNUP_ENABLED", default=True)
 
+# Require a new signup to confirm their email address (a link sent to
+# it, apps.accounts.email_verification) before they can log in. Off by
+# default: it needs working email (DJANGO_EMAIL_HOST below). Only
+# affects accounts that sign up while it's on — existing users, SSO
+# accounts and admin-created ones never have to verify. Turning it off
+# again lets anyone still unconfirmed log in.
+SIGNUP_EMAIL_VERIFICATION = env_bool("DJANGO_SIGNUP_EMAIL_VERIFICATION", default=False)
+
 # Independent of SIGNUP_ENABLED above: this gates the local username/
 # password *login* form itself (apps.accounts.views.RateLimitedLoginView/
 # RateLimitedPasswordResetView/SignupView — see docs/SECURITY.md
@@ -444,6 +455,13 @@ AUTHENTIK_APPLICATION_SLUG = env("AUTHENTIK_APPLICATION_SLUG", default="ironstac
 # Application itself in Authentik's own admin UI (Applications →
 # Policy / Group / User Bindings) to the same group.
 AUTHENTIK_REQUIRED_GROUP = env("AUTHENTIK_REQUIRED_GROUP", default="")
+# Refuse an Authentik login whose email isn't marked verified
+# (`email_verified` claim) — the login is matched to an existing local
+# account by email, so an unverified address someone set for themselves
+# could otherwise take over that account. Turn off only if your
+# Authentik's email scope mapping doesn't send `email_verified: true`
+# and every address there is trustworthy anyway.
+AUTHENTIK_REQUIRE_EMAIL_VERIFIED = env_bool("AUTHENTIK_REQUIRE_EMAIL_VERIFIED", default=True)
 AUTHENTIK_ENABLED = bool(AUTHENTIK_URL and AUTHENTIK_CLIENT_ID and AUTHENTIK_CLIENT_SECRET)
 
 if AUTHENTIK_ENABLED:
@@ -498,6 +516,21 @@ VAPID_PUBLIC_KEY = env("VAPID_PUBLIC_KEY", default="")
 VAPID_PRIVATE_KEY = env("VAPID_PRIVATE_KEY", default="")
 VAPID_ADMIN_EMAIL = env("VAPID_ADMIN_EMAIL", default="")
 PUSH_ENABLED = bool(VAPID_PUBLIC_KEY and VAPID_PRIVATE_KEY and VAPID_ADMIN_EMAIL)
+# Hosts a browser's push subscription endpoint may point at — the
+# push services of Chrome/Edge/Opera/Samsung (FCM), Firefox (Mozilla
+# autopush), Safari (Apple) and legacy Edge (WNS). Anything else is
+# refused on subscribe and skipped on send: the server POSTs to that
+# URL, so an arbitrary one would let any user make it send requests
+# into the local network. A leading "." matches every subdomain.
+# Override (comma-separated) only for a browser using some other push
+# service, e.g. a self-hosted autopush.
+PUSH_ENDPOINT_HOSTS = env_list(
+    "PUSH_ENDPOINT_HOSTS",
+    default=(
+        "fcm.googleapis.com,android.googleapis.com,updates.push.services.mozilla.com,"
+        ".push.apple.com,.notify.windows.com"
+    ),
+)
 
 # apps.core.backups — encrypts a backup's database.dump/media.tar
 # (docs/BACKUP.md "Encryption") once set; every backup this instance's
@@ -516,6 +549,11 @@ PUSH_ENABLED = bool(VAPID_PUBLIC_KEY and VAPID_PRIVATE_KEY and VAPID_ADMIN_EMAIL
 # with the same care as VAPID_PRIVATE_KEY/SECRET_KEY: back it up
 # somewhere that isn't itself only inside an encrypted backup.
 BACKUP_ENCRYPTION_KEY = env("BACKUP_ENCRYPTION_KEY", default="")
+# apps.core.backup_tasks — the Backups page starts create/restore as a
+# detached background process. True runs it inside the request instead
+# (the test suite; never in production, where a restore outlasts
+# gunicorn's timeout).
+BACKUP_TASKS_RUN_INLINE = env_bool("BACKUP_TASKS_RUN_INLINE", default=False)
 
 # apps.accounts.models.User.totp_secret (docs/SECURITY.md "Two-factor
 # authentication") — encrypts that one field at rest once set; every

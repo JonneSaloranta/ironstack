@@ -107,6 +107,65 @@ class SessionLifecycleTests(TestCase):
         self.assertEqual(self.session.status, WorkoutSessionStatus.ABANDONED)
         self.assertIsNotNone(self.session.ended_at)
 
+    def test_a_completed_session_cannot_be_abandoned_or_completed_again(self):
+        services.complete_session(self.session)
+        self.session.refresh_from_db()
+        ended_at = self.session.ended_at
+
+        with self.assertRaises(services.SessionNotInProgress):
+            services.abandon_session(self.session)
+        with self.assertRaises(services.SessionNotInProgress):
+            services.complete_session(self.session)
+
+        self.session.refresh_from_db()
+        self.assertEqual(self.session.status, WorkoutSessionStatus.COMPLETED)
+        self.assertEqual(self.session.ended_at, ended_at)
+
+    def test_abandon_view_leaves_a_completed_session_alone(self):
+        services.complete_session(self.session)
+        self.client.force_login(self.alice)
+
+        response = self.client.post(reverse("workouts:session-abandon", args=[self.session.pk]))
+
+        self.assertRedirects(
+            response,
+            reverse("workouts:session-detail", args=[self.session.pk]),
+            fetch_redirect_response=False,
+        )
+        self.session.refresh_from_db()
+        self.assertEqual(self.session.status, WorkoutSessionStatus.COMPLETED)
+
+
+class DoubleStartTests(TestCase):
+    """Pressing Start twice (a double tap) must not open two sessions."""
+
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        self.workout, _ = _make_workout_with_prescription(self.alice)
+        self.client.force_login(self.alice)
+
+    def test_a_second_press_returns_the_session_the_first_one_started(self):
+        url = reverse("workouts:session-start", args=[self.workout.pk])
+        first = self.client.post(url)
+        second = self.client.post(url)
+        self.assertEqual(WorkoutSession.objects.filter(user=self.alice).count(), 1)
+        self.assertEqual(first.url, second.url)
+
+    def test_the_same_for_a_freeform_start(self):
+        url = reverse("workouts:session-start-freeform")
+        self.client.post(url)
+        self.client.post(url)
+        self.assertEqual(WorkoutSession.objects.filter(user=self.alice).count(), 1)
+
+    def test_starting_again_later_or_another_workout_still_starts_a_new_one(self):
+        first = services.start_session_once(self.alice, workout=self.workout)
+        WorkoutSession.objects.filter(pk=first.pk).update(
+            started_at=timezone.now() - services.DUPLICATE_START_WINDOW - timedelta(seconds=1)
+        )
+        services.start_session_once(self.alice, workout=self.workout)
+        services.start_session_once(self.alice, workout=None)
+        self.assertEqual(WorkoutSession.objects.filter(user=self.alice).count(), 3)
+
 
 class SetLoggingServiceTests(TestCase):
     def setUp(self):
@@ -120,6 +179,26 @@ class SetLoggingServiceTests(TestCase):
         second = services.log_set(self.performed, weight=Decimal("100"), reps=5)
         self.assertEqual(first.set_number, 1)
         self.assertEqual(second.set_number, 2)
+
+    def test_log_set_after_a_delete_never_reuses_a_number(self):
+        services.log_set(self.performed, weight=Decimal("100"), reps=5)
+        second = services.log_set(self.performed, weight=Decimal("100"), reps=5)
+        services.log_set(self.performed, weight=Decimal("100"), reps=5)
+        second.delete()
+
+        fourth = services.log_set(self.performed, weight=Decimal("100"), reps=5)
+
+        self.assertEqual(fourth.set_number, 4)
+        self.assertEqual(
+            list(self.performed.sets.values_list("set_number", flat=True)), [1, 3, 4]
+        )
+
+    def test_set_numbers_are_unique_per_performed_exercise_in_the_database(self):
+        from django.db import IntegrityError, transaction
+
+        services.log_set(self.performed, weight=Decimal("100"), reps=5)
+        with self.assertRaises(IntegrityError), transaction.atomic():
+            self.performed.sets.create(set_number=1, weight=Decimal("90"), reps=5)
 
     def test_default_set_values_falls_back_to_target_when_no_sets_logged(self):
         defaults = services.default_set_values(self.performed)
@@ -606,6 +685,40 @@ class TrainingModeViewTests(TestCase):
         self.assertEqual(self.performed.sets.count(), 0)
         self.assertTrue(response.context["set_form"].errors)
 
+    def test_a_field_error_is_linked_to_its_field(self):
+        response = self.client.post(
+            reverse("workouts:train-set-log", args=[self.performed.pk]),
+            {"weight": "", "reps": "5"},
+            HTTP_HX_REQUEST="true",
+        )
+        self.assertContains(response, 'id="id_weight_error"')
+        self.assertContains(response, 'aria-invalid="true"', count=1)
+        self.assertContains(response, 'aria-describedby="id_weight_error"')
+
+    def test_an_rpe_outside_the_scale_is_refused(self):
+        response = self.client.post(
+            reverse("workouts:train-set-log", args=[self.performed.pk]),
+            {"weight": "100", "reps": "5", "rpe": "99"},
+            HTTP_HX_REQUEST="true",
+        )
+        self.assertEqual(self.performed.sets.count(), 0)
+        self.assertContains(response, "RPE goes from 1 to 10.")
+
+    def test_an_error_in_the_extra_options_opens_them(self):
+        # RPE/RIR/notes sit in a section collapsed by default — an error
+        # there used to stay hidden inside it.
+        response = self.client.post(
+            reverse("workouts:train-set-log", args=[self.performed.pk]),
+            {"weight": "100", "reps": "5", "rpe": "hard"},
+            HTTP_HX_REQUEST="true",
+        )
+        self.assertContains(response, 'x-data="{more: true}"')
+        self.assertContains(response, 'aria-describedby="id_rpe_error"')
+
+    def test_the_extra_options_start_collapsed_without_errors(self):
+        response = self.client.get(reverse("workouts:session-train", args=[self.session.pk]))
+        self.assertContains(response, 'x-data="{more: false}"')
+
     def test_a_validation_error_is_shown_to_the_user_in_an_alert(self):
         response = self.client.post(
             reverse("workouts:train-set-log", args=[self.performed.pk]),
@@ -975,4 +1088,92 @@ class AddPerformedExerciseOrderTests(TestCase):
             for i in range(3)
         ]
         self.assertEqual(orders, [0, 1, 2])
+
+
+
+class RenumberDuplicateSetNumbersMigrationTests(TestCase):
+    """workouts/0004 — sets logged before the unique constraint existed
+    may share a number; the data migration must make them unique again
+    without reordering them."""
+
+    def setUp(self):
+        alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        workout, _ = _make_workout_with_prescription(alice)
+        self.performed = services.start_session(alice, workout=workout).performed_exercises.get()
+
+    def test_duplicates_are_renumbered_in_their_existing_order(self):
+        import importlib
+
+        from django.apps import apps as global_apps
+        from django.db import connection
+
+        from .models import ExerciseSet
+
+        constraint = next(
+            c
+            for c in ExerciseSet._meta.constraints
+            if c.name == "unique_set_number_per_performed_exercise"
+        )
+        # Rolled back with the rest of the test's transaction.
+        with connection.schema_editor() as editor:
+            editor.remove_constraint(ExerciseSet, constraint)
+        first = self.performed.sets.create(set_number=1, weight=Decimal("100"), reps=5)
+        second = self.performed.sets.create(set_number=2, weight=Decimal("100"), reps=5)
+        duplicate = self.performed.sets.create(set_number=2, weight=Decimal("90"), reps=5)
+        last = self.performed.sets.create(set_number=3, weight=Decimal("80"), reps=5)
+
+        migration = importlib.import_module(
+            "apps.workouts.migrations.0004_renumber_duplicate_set_numbers"
+        )
+        migration.renumber_duplicate_set_numbers(global_apps, None)
+
+        numbers = dict(self.performed.sets.values_list("pk", "set_number"))
+        self.assertEqual(
+            [numbers[s.pk] for s in (first, second, duplicate, last)], [1, 2, 3, 4]
+        )
+
+
+class ExerciseNameSnapshotTests(TestCase):
+    """PerformedExercise.exercise_name — history keeps the name an
+    exercise had when it was logged."""
+
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        self.workout, self.prescription = _make_workout_with_prescription(self.alice)
+        self.exercise = self.prescription.exercise
+
+    def test_renaming_an_exercise_leaves_past_workouts_alone(self):
+        session = services.start_session(self.alice, workout=self.workout)
+        services.complete_session(session)
+        old_name = self.exercise.name
+        self.exercise.name = "Renamed Move"
+        self.exercise.save()
+
+        self.client.force_login(self.alice)
+        response = self.client.get(reverse("workouts:session-detail", args=[session.pk]))
+        self.assertContains(response, old_name)
+        self.assertNotContains(response, "Renamed Move")
+
+    def test_an_exercise_added_mid_session_is_snapshotted_too(self):
+        session = services.start_session(self.alice, workout=None)
+        performed = services.add_performed_exercise(session, self.exercise)
+        self.exercise.name = "Renamed Move"
+        self.exercise.save()
+        performed.refresh_from_db()
+        self.assertNotEqual(performed.display_name, "Renamed Move")
+
+    def test_the_backfill_fills_rows_from_before_the_snapshot(self):
+        import importlib
+
+        from django.apps import apps as global_apps
+
+        session = services.start_session(self.alice, workout=self.workout)
+        PerformedExercise.objects.filter(session=session).update(exercise_name="")
+        migration = importlib.import_module(
+            "apps.workouts.migrations.0006_performedexercise_exercise_name"
+        )
+        migration.backfill_exercise_names(global_apps, None)
+        self.assertEqual(
+            session.performed_exercises.get().exercise_name, self.exercise.name
+        )
 

@@ -35,4 +35,5 @@ backups/
 # coverage.py's own data file (pyproject.toml [tool.coverage.*]) — a
 # local measurement artifact from the last `coverage run`, not source.
 .coverage
+.coverage.*
 htmlcov/

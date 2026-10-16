@@ -10245,3 +10245,193 @@ msgstr "Hjälp mig att bygga ett träningsprogram för mitt mål och mitt schema
 msgctxt "proposal"
 msgid "Dismiss"
 msgstr "Avfärda"
+
+msgid "Claude Opus 5.5 — best plans ($4 / $20)"
+msgstr "Claude Opus 5.5 — bäst planer ($4 / $20)"
+
+msgid "Claude Sonnet 5.5 — good and half the price ($2 / $10)"
+msgstr "Claude Sonnet 5.5 — bra och till halva priset ($2 / $10)"
+
+msgid "Claude Haiku 4.5 — fastest and cheapest, weaker plans ($1 / $5)"
+msgstr "Claude Haiku 4.5 — snabbast och billigast, svagare planer ($1 / $5)"
+
+msgid "Claude Fable 5.1 — most capable, most expensive ($10 / $50)"
+msgstr "Claude Fable 5.1 — mest kapabel, dyrast ($10 / $50)"
+
+msgid "Model for your key"
+msgstr "Modell för din nyckel"
+
+msgid "Prices are per million tokens (input / output), billed to your Anthropic account. New conversations use the model you pick; ongoing ones keep theirs."
+msgstr "Priserna gäller per miljon tokens (indata / utdata) och faktureras ditt Anthropic-konto. Nya konversationer använder modellen du väljer; pågående behåller sin."
+
+msgid "This instance's default (%(model)s)"
+msgstr "Den här instansens standard (%(model)s)"
+
+
+msgid "Model"
+msgstr "Modell"
+
+msgid "Low — quickest and cheapest; fine for everyday questions"
+msgstr "Låg — snabbast och billigast; räcker för vardagliga frågor"
+
+msgid "Medium — balanced"
+msgstr "Medel — balanserad"
+
+msgid "High — more thorough plans, more tokens"
+msgstr "Hög — grundligare planer, fler tokens"
+
+msgid "Extra high — for demanding planning"
+msgstr "Extra hög — för krävande planering"
+
+msgid "Maximum — the most thorough and the most expensive"
+msgstr "Maximal — grundligast och dyrast"
+
+msgid "Thinking effort"
+msgstr "Tankeinsats"
+
+msgid "How much the model thinks before it answers. More thinking costs more tokens and takes longer. Applies from the next reply on; Claude Haiku ignores it."
+msgstr "Hur mycket modellen tänker innan den svarar. Mer tänkande kostar fler tokens och tar längre tid. Gäller från nästa svar; Claude Haiku ignorerar det."
+
+msgid "This instance's default (%(effort)s)"
+msgstr "Den här instansens standard (%(effort)s)"
+
+msgid "Model settings saved."
+msgstr "Modellinställningarna sparades."
+
+msgid "Another backup task is still running — wait for it to finish."
+msgstr "En annan säkerhetskopieringsuppgift pågår fortfarande — vänta tills den är klar."
+
+msgid "Creating a backup…"
+msgstr "Skapar säkerhetskopia…"
+
+msgid "Restoring %(name)s…"
+msgstr "Återställer %(name)s…"
+
+msgid "This can take several minutes. You can leave this page — come back to see the result."
+msgstr "Det här kan ta flera minuter. Du kan lämna sidan — kom tillbaka för att se resultatet."
+
+msgid "The last backup task was interrupted before it finished (did the server restart?). Check that everything looks right before relying on it."
+msgstr "Den senaste säkerhetskopieringsuppgiften avbröts innan den blev klar (startades servern om?). Kontrollera att allt ser rätt ut innan du förlitar dig på det."
+
+msgid "Couldn't decrypt %(name)s — check that BACKUP_ENCRYPTION_KEY matches the key this backup was made with. Nothing was changed."
+msgstr "Det gick inte att dekryptera %(name)s — kontrollera att BACKUP_ENCRYPTION_KEY stämmer med nyckeln som säkerhetskopian skapades med. Ingenting ändrades."
+
+msgid "Restoring %(name)s failed: %(detail)s"
+msgstr "Återställningen av %(name)s misslyckades: %(detail)s"
+
+msgid "Creating a backup failed: %(detail)s"
+msgstr "Det gick inte att skapa säkerhetskopian: %(detail)s"
+
+msgid "Stretched that day"
+msgstr "Stretchade den dagen"
+
+msgid "A prescription is missing its exercise name."
+msgstr "En övning i programmet saknar namn."
+
+msgid "Missing program name."
+msgstr "Programmets namn saknas."
+
+msgid "An ingredient is missing its food name."
+msgstr "En ingrediens saknar livsmedelsnamn."
+
+#, python-format
+msgid "Ingredient “%(name)s” is missing required nutrition data."
+msgstr "Ingrediensen ”%(name)s” saknar nödvändiga näringsuppgifter."
+
+msgid "Missing recipe name."
+msgstr "Receptets namn saknas."
+
+#, python-format
+msgid "Ingredient “%(name)s” has an invalid quantity."
+msgstr "Ingrediensen ”%(name)s” har en ogiltig mängd."
+
+msgid "A diet plan item is missing its recipe name."
+msgstr "En post i kostplanen saknar receptnamn."
+
+msgid "A diet plan meal is missing its meal slot."
+msgstr "En måltid i kostplanen saknar måltidstyp."
+
+msgid "A diet plan meal is missing its target calories."
+msgstr "En måltid i kostplanen saknar kalorimål."
+
+msgid "A diet plan item must reference exactly one of a food or a recipe."
+msgstr "En post i kostplanen måste ange antingen ett livsmedel eller ett recept, inte båda."
+
+msgid "A diet plan item has an invalid quantity."
+msgstr "En post i kostplanen har en ogiltig mängd."
+
+msgid "Missing diet plan name."
+msgstr "Kostplanens namn saknas."
+
+msgid "Missing or invalid diet plan targets."
+msgstr "Kostplanens mål saknas eller är ogiltiga."
+
+#, python-format
+msgid "%(rate)s kg/week"
+msgstr "%(rate)s kg/vecka"
+
+#, python-format
+msgid "%(counter)s result"
+msgid_plural "%(counter)s results"
+msgstr[0] "%(counter)s resultat"
+msgstr[1] "%(counter)s resultat"
+
+#, python-format
+msgid "That image is too large — the limit is %(megabytes)s MB."
+msgstr "Bilden är för stor — gränsen är %(megabytes)s MB."
+
+#, python-format
+msgid "Confirm your email address on %(site_name)s"
+msgstr "Bekräfta din e-postadress på %(site_name)s"
+
+#, python-format
+msgid "Hi %(username)s,"
+msgstr "Hej %(username)s,"
+
+#, python-format
+msgid "Thanks for signing up on %(site_name)s. Open this link to confirm your email address — you can log in once it's confirmed:"
+msgstr "Tack för att du registrerade dig på %(site_name)s. Öppna den här länken för att bekräfta din e-postadress — du kan logga in när den är bekräftad:"
+
+msgid "If you didn't sign up, you can safely ignore this email."
+msgstr "Om du inte har registrerat dig kan du lugnt ignorera det här meddelandet."
+
+msgid "Confirm your email"
+msgstr "Bekräfta din e-post"
+
+#, python-format
+msgid "We've sent a link to %(email)s. Open it to confirm your address, then log in."
+msgstr "Vi har skickat en länk till %(email)s. Öppna den för att bekräfta din adress och logga sedan in."
+
+msgid "Nothing arrived? Check your spam folder, or try logging in — that sends a new link."
+msgstr "Kom inget? Kolla skräpposten eller försök logga in — då skickas en ny länk."
+
+msgid "This confirmation link is invalid, has expired or was already used."
+msgstr "Den här bekräftelselänken är ogiltig, har gått ut eller har redan använts."
+
+msgid "Try logging in — if your address still needs confirming, a new link is sent to it."
+msgstr "Försök logga in — om din adress fortfarande behöver bekräftas skickas en ny länk till den."
+
+msgid "Confirm your email address first — we've sent a link to it. Check your inbox (and spam folder)."
+msgstr "Bekräfta först din e-postadress — vi har skickat en länk till den. Kolla inkorgen (och skräpposten)."
+
+msgid "Email confirmed — you can log in now."
+msgstr "E-postadressen är bekräftad — du kan logga in nu."
+
+msgid "Email confirmation"
+msgstr "E-postbekräftelse"
+
+msgid "Actions"
+msgstr "Åtgärder"
+
+msgid "Show every tutorial again, including the ones you've finished?"
+msgstr "Visa alla guider igen, även de du redan har gått igenom?"
+
+#, python-format
+msgid "RPE goes from %(min)s to %(max)s."
+msgstr "RPE går från %(min)s till %(max)s."
+
+msgid "Notifications are blocked for this site in your browser settings."
+msgstr "Aviseringar är blockerade för den här webbplatsen i webbläsarens inställningar."
+
+msgid "Saving the subscription failed."
+msgstr "Det gick inte att spara prenumerationen."

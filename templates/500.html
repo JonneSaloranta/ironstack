@@ -1,5 +1,5 @@
-{% load i18n %}<!doctype html>
-<html lang="en">
+{% load i18n %}<!doctype html>{% get_current_language as LANGUAGE_CODE %}
+<html lang="{{ LANGUAGE_CODE }}">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -17,6 +17,10 @@
        exactly that reason until apps.core.tests.ErrorPageTests caught
        it — ask for the git history here rather than reproducing what
        broke it.) */
+    h1 {
+      font-size: 1.4rem;
+      margin: 0 0 0.75rem;
+    }
     body {
       margin: 0;
       min-height: 100vh;
@@ -49,6 +53,7 @@
 </head>
 <body>
   <div class="card">
+    <h1>{% trans "Something went wrong" %}</h1>
     <p>{% trans "Something went wrong on our end. Your data is safe — try again in a moment." %}</p>
     <p><a class="button-secondary" href="/">&larr; {% trans "Back to dashboard" %}</a></p>
   </div>

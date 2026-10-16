@@ -85,7 +85,9 @@ def _foods(user):
 def _recipes(user):
     from apps.nutrition.models import Recipe
 
-    return Recipe.objects.filter(Q(owner=user) | Q(owner__isnull=True)).order_by("owner", "name")
+    return Recipe.objects.filter(Q(owner=user) | Q(owner__isnull=True), active=True).order_by(
+        "owner", "name"
+    )
 
 
 def _diet_plans(user):
@@ -1167,13 +1169,14 @@ NO_TOUR_NEEDED = {
     "api_keys:key-list": "has its own help dialog",
     "data-export": "self-explanatory download page",
     # Staff/admin-only tools.
-    "backup-list": "staff only",
+    "backup-list": "superuser only",
     "feedback-list": "staff only",
     "seo-settings": "staff only",
     "assistant:admin-settings": "staff only",
     # Signed-out pages: nobody to show a tour to yet.
     "login": "signed out",
     "signup": "signed out",
+    "verify-email": "signed out",
     "password_reset": "signed out",
     "password_reset_done": "signed out",
     "password_reset_complete": "signed out",

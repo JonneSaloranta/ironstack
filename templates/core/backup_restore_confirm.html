@@ -40,8 +40,9 @@
 
 <form method="post" data-confirm="{% filter force_escape %}{% trans "Really replace the current database and media with this backup? This cannot be undone." %}{% endfilter %}">
   {% csrf_token %}
-  <button type="submit" class="button-danger">{% trans "Restore this backup" %}</button>
+  <button type="submit" class="button-danger"{% if task_running %} disabled{% endif %}>{% trans "Restore this backup" %}</button>
 </form>
+{% if task_running %}<p class="text-muted">{% trans "Another backup task is still running — wait for it to finish." %}</p>{% endif %}
 
 <p><a class="button-link" href="{% url 'backup-list' %}">&larr; {% trans "Back to backups" %}</a></p>
 {% endblock %}

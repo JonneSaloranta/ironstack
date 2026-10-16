@@ -82,7 +82,8 @@ disclosure instead — see it further down for why.
 
 {% if achievements %}
   <div data-tour="dashboard-achievements" class="card achievements-carousel" role="region" aria-label="{% trans "Achievements" %}"
-       x-data="ironstackCarousel({{ achievements|length }})" x-init="start()" @mouseenter="stop()" @mouseleave="start()">
+       x-data="ironstackCarousel({{ achievements|length }})" x-init="start()" @mouseenter="stop()" @mouseleave="start()"
+       @focusin="stop()" @focusout="start()">
     {% comment %}
     Slides are absolutely positioned inside .achievements-slides (a
     fixed-min-height box) rather than left in normal flow — regression:
@@ -107,9 +108,12 @@ disclosure instead — see it further down for why.
       <div class="achievements-dots">
         {% for achievement in achievements %}
           <button type="button" class="achievements-dot" :class="index === {{ forloop.counter0 }} && 'achievements-dot-active'"
+                  :aria-current="index === {{ forloop.counter0 }} ? 'true' : false"
                   @click="goto({{ forloop.counter0 }})"
                   aria-label="{% blocktrans with position=forloop.counter %}Show achievement {{ position }}{% endblocktrans %}"></button>
         {% endfor %}
+        <button type="button" class="button-link achievements-pause" @click="togglePaused()"
+                x-text="paused ? '{% filter escapejs %}{% trans "Resume" %}{% endfilter %}' : '{% filter escapejs %}{% trans "Pause" %}{% endfilter %}'">{% trans "Pause" %}</button>
       </div>
     {% endif %}
   </div>

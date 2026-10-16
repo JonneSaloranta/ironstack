@@ -10,3 +10,7 @@ from .dev import *  # noqa: F401,F403
 # logs in — that alone was most of a 50-minute suite. Tests don't need
 # the hash to resist cracking, so use the fastest one Django ships.
 PASSWORD_HASHERS = ["django.contrib.auth.hashers.MD5PasswordHasher"]
+
+# apps.core.backup_tasks — run "Create backup"/"Restore" inside the
+# request so view tests see the outcome without a background process.
+BACKUP_TASKS_RUN_INLINE = True

@@ -10271,3 +10271,193 @@ msgstr "Auta minua rakentamaan treeniohjelma tavoitteeni ja aikatauluni mukaan."
 msgctxt "proposal"
 msgid "Dismiss"
 msgstr "Hylkää"
+
+msgid "Claude Opus 5.5 — best plans ($4 / $20)"
+msgstr "Claude Opus 5.5 — parhaat suunnitelmat ($4 / $20)"
+
+msgid "Claude Sonnet 5.5 — good and half the price ($2 / $10)"
+msgstr "Claude Sonnet 5.5 — hyvä ja puolet halvempi ($2 / $10)"
+
+msgid "Claude Haiku 4.5 — fastest and cheapest, weaker plans ($1 / $5)"
+msgstr "Claude Haiku 4.5 — nopein ja halvin, heikommat suunnitelmat ($1 / $5)"
+
+msgid "Claude Fable 5.1 — most capable, most expensive ($10 / $50)"
+msgstr "Claude Fable 5.1 — tehokkain ja kallein ($10 / $50)"
+
+msgid "Model for your key"
+msgstr "Avaimesi malli"
+
+msgid "Prices are per million tokens (input / output), billed to your Anthropic account. New conversations use the model you pick; ongoing ones keep theirs."
+msgstr "Hinnat ovat miljoonaa tokenia kohden (syöte / vastaus), ja ne laskutetaan Anthropic-tililtäsi. Uudet keskustelut käyttävät valitsemaasi mallia; käynnissä olevat pitävät omansa."
+
+msgid "This instance's default (%(model)s)"
+msgstr "Tämän palvelimen oletus (%(model)s)"
+
+
+msgid "Model"
+msgstr "Malli"
+
+msgid "Low — quickest and cheapest; fine for everyday questions"
+msgstr "Matala — nopein ja halvin; riittää arkisiin kysymyksiin"
+
+msgid "Medium — balanced"
+msgstr "Keskitaso — tasapainoinen"
+
+msgid "High — more thorough plans, more tokens"
+msgstr "Korkea — perusteellisemmat suunnitelmat, enemmän tokeneita"
+
+msgid "Extra high — for demanding planning"
+msgstr "Erittäin korkea — vaativaan suunnitteluun"
+
+msgid "Maximum — the most thorough and the most expensive"
+msgstr "Maksimi — perusteellisin ja kallein"
+
+msgid "Thinking effort"
+msgstr "Ajattelun määrä"
+
+msgid "How much the model thinks before it answers. More thinking costs more tokens and takes longer. Applies from the next reply on; Claude Haiku ignores it."
+msgstr "Kuinka paljon malli miettii ennen vastaamista. Enemmän ajattelua kuluttaa enemmän tokeneita ja vie pidempään. Koskee seuraavasta vastauksesta alkaen; Claude Haiku ei käytä tätä asetusta."
+
+msgid "This instance's default (%(effort)s)"
+msgstr "Tämän palvelimen oletus (%(effort)s)"
+
+msgid "Model settings saved."
+msgstr "Malliasetukset tallennettu."
+
+msgid "Another backup task is still running — wait for it to finish."
+msgstr "Toinen varmuuskopiotehtävä on vielä käynnissä — odota, että se valmistuu."
+
+msgid "Creating a backup…"
+msgstr "Luodaan varmuuskopiota…"
+
+msgid "Restoring %(name)s…"
+msgstr "Palautetaan %(name)s…"
+
+msgid "This can take several minutes. You can leave this page — come back to see the result."
+msgstr "Tämä voi kestää useita minuutteja. Voit poistua sivulta — palaa myöhemmin katsomaan tulos."
+
+msgid "The last backup task was interrupted before it finished (did the server restart?). Check that everything looks right before relying on it."
+msgstr "Edellinen varmuuskopiotehtävä keskeytyi ennen kuin se valmistui (käynnistyikö palvelin uudelleen?). Tarkista, että kaikki näyttää oikealta, ennen kuin luotat siihen."
+
+msgid "Couldn't decrypt %(name)s — check that BACKUP_ENCRYPTION_KEY matches the key this backup was made with. Nothing was changed."
+msgstr "Varmuuskopion %(name)s salausta ei voitu purkaa — tarkista, että BACKUP_ENCRYPTION_KEY vastaa avainta, jolla varmuuskopio tehtiin. Mitään ei muutettu."
+
+msgid "Restoring %(name)s failed: %(detail)s"
+msgstr "Varmuuskopion %(name)s palautus epäonnistui: %(detail)s"
+
+msgid "Creating a backup failed: %(detail)s"
+msgstr "Varmuuskopion luominen epäonnistui: %(detail)s"
+
+msgid "Stretched that day"
+msgstr "Venytteli sinä päivänä"
+
+msgid "A prescription is missing its exercise name."
+msgstr "Yhdeltä ohjelman liikkeeltä puuttuu nimi."
+
+msgid "Missing program name."
+msgstr "Ohjelman nimi puuttuu."
+
+msgid "An ingredient is missing its food name."
+msgstr "Yhdeltä ainesosalta puuttuu ruoan nimi."
+
+#, python-format
+msgid "Ingredient “%(name)s” is missing required nutrition data."
+msgstr "Ainesosalta ”%(name)s” puuttuu pakollisia ravintotietoja."
+
+msgid "Missing recipe name."
+msgstr "Reseptin nimi puuttuu."
+
+#, python-format
+msgid "Ingredient “%(name)s” has an invalid quantity."
+msgstr "Ainesosan ”%(name)s” määrä on virheellinen."
+
+msgid "A diet plan item is missing its recipe name."
+msgstr "Yhdeltä ruokavaliosuunnitelman riviltä puuttuu reseptin nimi."
+
+msgid "A diet plan meal is missing its meal slot."
+msgstr "Yhdeltä ruokavaliosuunnitelman aterialta puuttuu ateriapaikka."
+
+msgid "A diet plan meal is missing its target calories."
+msgstr "Yhdeltä ruokavaliosuunnitelman aterialta puuttuu kaloritavoite."
+
+msgid "A diet plan item must reference exactly one of a food or a recipe."
+msgstr "Ruokavaliosuunnitelman rivin on viitattava joko ruokaan tai reseptiin, ei molempiin."
+
+msgid "A diet plan item has an invalid quantity."
+msgstr "Ruokavaliosuunnitelman rivin määrä on virheellinen."
+
+msgid "Missing diet plan name."
+msgstr "Ruokavaliosuunnitelman nimi puuttuu."
+
+msgid "Missing or invalid diet plan targets."
+msgstr "Ruokavaliosuunnitelman tavoitteet puuttuvat tai ovat virheellisiä."
+
+#, python-format
+msgid "%(rate)s kg/week"
+msgstr "%(rate)s kg/vko"
+
+#, python-format
+msgid "%(counter)s result"
+msgid_plural "%(counter)s results"
+msgstr[0] "%(counter)s tulos"
+msgstr[1] "%(counter)s tulosta"
+
+#, python-format
+msgid "That image is too large — the limit is %(megabytes)s MB."
+msgstr "Kuva on liian suuri — enimmäiskoko on %(megabytes)s Mt."
+
+#, python-format
+msgid "Confirm your email address on %(site_name)s"
+msgstr "Vahvista sähköpostiosoitteesi palvelussa %(site_name)s"
+
+#, python-format
+msgid "Hi %(username)s,"
+msgstr "Hei %(username)s,"
+
+#, python-format
+msgid "Thanks for signing up on %(site_name)s. Open this link to confirm your email address — you can log in once it's confirmed:"
+msgstr "Kiitos rekisteröitymisestä palveluun %(site_name)s. Vahvista sähköpostiosoitteesi avaamalla tämä linkki — voit kirjautua sisään, kun osoite on vahvistettu:"
+
+msgid "If you didn't sign up, you can safely ignore this email."
+msgstr "Jos et rekisteröitynyt, voit jättää tämän viestin huomiotta."
+
+msgid "Confirm your email"
+msgstr "Vahvista sähköpostiosoitteesi"
+
+#, python-format
+msgid "We've sent a link to %(email)s. Open it to confirm your address, then log in."
+msgstr "Lähetimme linkin osoitteeseen %(email)s. Avaa se vahvistaaksesi osoitteesi ja kirjaudu sitten sisään."
+
+msgid "Nothing arrived? Check your spam folder, or try logging in — that sends a new link."
+msgstr "Eikö mitään tullut? Tarkista roskapostikansio tai yritä kirjautua sisään — se lähettää uuden linkin."
+
+msgid "This confirmation link is invalid, has expired or was already used."
+msgstr "Tämä vahvistuslinkki on virheellinen, vanhentunut tai jo käytetty."
+
+msgid "Try logging in — if your address still needs confirming, a new link is sent to it."
+msgstr "Yritä kirjautua sisään — jos osoitteesi on vielä vahvistamatta, siihen lähetetään uusi linkki."
+
+msgid "Confirm your email address first — we've sent a link to it. Check your inbox (and spam folder)."
+msgstr "Vahvista ensin sähköpostiosoitteesi — lähetimme siihen linkin. Tarkista saapuneet viestit (ja roskaposti)."
+
+msgid "Email confirmed — you can log in now."
+msgstr "Sähköpostiosoite vahvistettu — voit nyt kirjautua sisään."
+
+msgid "Email confirmation"
+msgstr "Sähköpostin vahvistus"
+
+msgid "Actions"
+msgstr "Toiminnot"
+
+msgid "Show every tutorial again, including the ones you've finished?"
+msgstr "Näytetäänkö kaikki ohjeet uudelleen, myös jo käydyt?"
+
+#, python-format
+msgid "RPE goes from %(min)s to %(max)s."
+msgstr "RPE on asteikolla %(min)s–%(max)s."
+
+msgid "Notifications are blocked for this site in your browser settings."
+msgstr "Ilmoitukset on estetty tältä sivustolta selaimen asetuksissa."
+
+msgid "Saving the subscription failed."
+msgstr "Tilauksen tallentaminen epäonnistui."

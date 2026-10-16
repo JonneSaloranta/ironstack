@@ -47,7 +47,7 @@ only #most-used-foods, so the diary page's Alpine mealSlot survives paging.
         <p class="text-muted">{{ usage.quantity }} {{ usage.food.serving_unit }}</p>
       </div>
       <div class="row">
-        <input class="qty-input" type="number" name="quantity" step="0.01" value="{{ usage.quantity|unlocalize }}" aria-label="{% trans "Quantity" %}">
+        <input class="qty-input" type="number" name="quantity" step="0.01" value="{{ usage.quantity|unlocalize }}" min="0.01" inputmode="decimal" enterkeyhint="done" aria-label="{% trans "Quantity" %}">
         <button type="submit" class="button-secondary">{% trans "Add" %}</button>
       </div>
     </form>

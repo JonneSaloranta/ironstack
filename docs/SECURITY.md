@@ -82,13 +82,17 @@ API-key-only mechanism that never applies to the session-based web
 login. `apps.accounts.forms.RateLimitedAuthenticationForm` (wired in
 via `apps.accounts.views.RateLimitedLoginView`, registered ahead of
 `django.contrib.auth.urls`' own `login/` in `config.urls`) blocks
-further attempts from the same client IP for 15 minutes after 5 failed
-attempts within that window, using the same shared `DatabaseCache`
-`apps.api`'s throttling does. Keyed by client IP (`X-Real-IP`, which
+further attempts for 15 minutes after 5 failed attempts for one
+username from one client IP, or 20 failed attempts from that IP across
+all usernames, using the same shared `DatabaseCache` `apps.api`'s
+throttling does. A successful login clears only that username's own
+counter from that IP — clearing a single per-IP counter on any success
+let someone log into their own account between guesses and try other
+people's passwords without end — and never the per-IP total. Keyed by client IP (`X-Real-IP`, which
 both `compose/nginx/nginx.conf` and `compose/caddy/Caddyfile` set —
 see `apps.core.request.client_ip`'s own docstring for why plain
-`REMOTE_ADDR` doesn't work behind either proxy), not the submitted
-username, so an attacker can't lock a real user out on purpose by
+`REMOTE_ADDR` doesn't work behind either proxy), never by the submitted
+username alone, so an attacker can't lock a real user out on purpose by
 deliberately failing their login from elsewhere. The same helper backs
 `apps.social`'s own invite-code lookup throttle — see "Friends,
 groups, and messaging" below.
@@ -279,6 +283,18 @@ be used together:
   configured correctly, or at all. Left unset (the default), any
   Authentik account can log in, same as before this setting existed.
 
+**Only a verified email links to an existing account.** The backend
+matches an Authentik login to a local account by email, so it refuses
+any login whose `email_verified` claim isn't true
+(`AUTHENTIK_REQUIRE_EMAIL_VERIFIED`, on by default) — otherwise anyone
+able to put someone else's address on their own Authentik account would
+be logged in as that person, staff accounts included. If logins start
+failing with "Refused an Authentik login: email_verified isn't true" in
+the logs, check the email scope mapping in Authentik (Customization →
+Property Mappings → the OpenID `email` scope) sends `email_verified`
+as true for addresses you trust; only set the variable to false if every
+email in your Authentik is trustworthy anyway.
+
 **2FA note**: an SSO login goes straight from Authentik's own callback
 to `django.contrib.auth.login()` — it never touches
 `RateLimitedLoginView`/`TwoFactorVerifyView` at all, so this app's own
@@ -313,6 +329,18 @@ subscribe({applicationServerKey})` needs client-side. Keep
 `VAPID_PRIVATE_KEY` as secret as any other credential in `.env` —
 anyone holding it can send push notifications impersonating this
 instance to every subscribed device.
+
+**Only known push services are contacted.** The server POSTs every
+notification to the endpoint URL the browser handed over, so an
+arbitrary URL would let any logged-in user make the server send
+requests into its own network (`http://db:5432`, a router's admin
+page). `apps.core.push.is_allowed_endpoint` accepts only `https` URLs on
+`settings.PUSH_ENDPOINT_HOSTS` — by default FCM (Chrome, Edge, Opera,
+Samsung Internet), Mozilla autopush (Firefox), Apple and WNS — and is
+checked both on subscribe (anything else is a 400) and before every
+send (so a row stored before the check existed is skipped). Override
+`PUSH_ENDPOINT_HOSTS` in `.env` only for a browser using some other
+push service, e.g. a self-hosted autopush.
 
 **What's stored**: `apps.core.models.PushSubscription` — one row per
 browser/device a user has enabled notifications on (`endpoint`,
@@ -498,6 +526,23 @@ Self-hosted doesn't necessarily mean "open to the public internet" —
 accounts, or from the start if this instance is reachable beyond a
 trusted network. Gates the URL itself, not just the login page's link
 to it. Existing users can still log in either way.
+
+**Email confirmation** (`DJANGO_SIGNUP_EMAIL_VERIFICATION=true`, off by
+default since it needs working email — `DJANGO_EMAIL_HOST`): a new
+signup must give an email address and open the link sent to it before
+it can log in (`apps.accounts.email_verification`). Until then the
+account is marked `email_verification_pending` — a flag of its own, not
+`is_active=False`, so an admin deactivating someone is never undone by
+that person confirming an address. A login with the right password
+while still unconfirmed is refused (without counting as a failed guess
+for rate limiting) and sends a fresh link, at most every five minutes.
+The link's token comes from its own generator (a different salt from
+password reset), stops working once used, and expires after
+`PASSWORD_RESET_TIMEOUT`. Only signups made while the setting is on are
+affected — existing, SSO and admin-created accounts never have to
+confirm — and an admin can let someone in by unticking "Email
+confirmation" on their user in /admin/. Turning the setting off lets
+anyone still unconfirmed log in.
 
 ## Authorization
 

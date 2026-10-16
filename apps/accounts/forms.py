@@ -1,3 +1,4 @@
+import hashlib
 from decimal import Decimal
 from zoneinfo import available_timezones
 
@@ -21,6 +22,11 @@ from .models import UnitSystem, User
 # tiers. This one is fixed and simple on purpose: it exists to blunt
 # automated password guessing, not to be a tunable product feature.
 LOGIN_ATTEMPT_LIMIT = 5
+# Failed attempts from one IP across *all* usernames — the per-username
+# limit above alone would let one client cycle through guessed
+# usernames freely. Higher than LOGIN_ATTEMPT_LIMIT so a shared office
+# or household network can absorb a few people's typos.
+LOGIN_ATTEMPT_IP_LIMIT = LOGIN_ATTEMPT_LIMIT * 4
 LOGIN_ATTEMPT_WINDOW_SECONDS = 15 * 60
 
 # apps.accounts.views.RateLimitedPasswordResetView's own protection —
@@ -77,6 +83,12 @@ class SignupForm(UserCreationForm):
         model = User
         fields = ("username", "email")
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # The confirmation link has to go somewhere.
+        if settings.SIGNUP_EMAIL_VERIFICATION:
+            self.fields["email"].required = True
+
 
 # apps.core.request.client_ip — moved there once apps.social needed
 # the exact same IP-resolution logic for its own invite-code lookup
@@ -89,8 +101,9 @@ class _RateLimitedLoginMixin:
     """Shared by RateLimitedAuthenticationForm and
     RateLimitedAdminAuthenticationForm below — blocks further login
     attempts from the same client for `window_seconds` after `limit`
-    failed attempts within that window. Keyed by client IP, not the
-    submitted username: keying by username alone would let an attacker
+    failed attempts for one username, or `ip_limit` across all of them,
+    within that window (see clean()). Always keyed by client IP, never
+    by the submitted username alone: keying by username alone would let an attacker
     cycle through guessed usernames from one source freely, and would
     let an attacker lock a *real* user out on purpose by deliberately
     failing their login from elsewhere — a denial-of-service against
@@ -110,23 +123,55 @@ class _RateLimitedLoginMixin:
 
     cache_key_prefix = "login-attempts"
     limit = LOGIN_ATTEMPT_LIMIT
+    ip_limit = LOGIN_ATTEMPT_IP_LIMIT
     window_seconds = LOGIN_ATTEMPT_WINDOW_SECONDS
 
     def clean(self):
-        cache_key = f"{self.cache_key_prefix}:{_client_ip(self.request)}"
-        attempts = cache.get(cache_key, 0)
-        if attempts >= self.limit:
+        # Two counters. Per IP *and* username: `limit` failures lock
+        # that username out for this client, and only a successful
+        # login as that same username clears it — clearing a single
+        # per-IP counter on any success let someone log into their own
+        # account between guesses and try other people's passwords
+        # without end. Per IP alone: `ip_limit` failures across every
+        # username lock the client out entirely, and a success never
+        # clears it, so cycling usernames is capped too.
+        ip = _client_ip(self.request)
+        username = (self.data.get("username") or "").strip().lower()
+        username_hash = hashlib.sha256(username.encode()).hexdigest()[:32]
+        pair_key = f"{self.cache_key_prefix}:{ip}:{username_hash}"
+        ip_key = f"{self.cache_key_prefix}:{ip}"
+        pair_attempts = cache.get(pair_key, 0)
+        ip_attempts = cache.get(ip_key, 0)
+        if pair_attempts >= self.limit or ip_attempts >= self.ip_limit:
             raise forms.ValidationError(
                 _("Too many failed login attempts. Try again in a few minutes."),
                 code="rate_limited",
             )
         try:
             cleaned_data = super().clean()
-        except forms.ValidationError:
-            cache.set(cache_key, attempts + 1, self.window_seconds)
+        except forms.ValidationError as error:
+            # The right password for an account that hasn't confirmed its
+            # email yet (confirm_login_allowed below) isn't a failed guess.
+            if error.code != "email_unverified":
+                cache.set(pair_key, pair_attempts + 1, self.window_seconds)
+                cache.set(ip_key, ip_attempts + 1, self.window_seconds)
             raise
-        cache.delete(cache_key)
+        cache.delete(pair_key)
         return cleaned_data
+
+    def confirm_login_allowed(self, user):
+        super().confirm_login_allowed(user)
+        from . import email_verification
+
+        if email_verification.is_required(user):
+            email_verification.resend_if_due(self.request, user)
+            raise forms.ValidationError(
+                _(
+                    "Confirm your email address first — we've sent a link to it. "
+                    "Check your inbox (and spam folder)."
+                ),
+                code="email_unverified",
+            )
 
 
 class RateLimitedAuthenticationForm(_RateLimitedLoginMixin, AuthenticationForm):
@@ -461,7 +506,7 @@ class TwoFactorSetupConfirmForm(forms.Form):
     def clean_code(self):
 
         code = self.cleaned_data["code"].strip()
-        if not twofactor.verify_totp_code(self.user.totp_secret, code):
+        if not twofactor.verify_totp_code(self.user.totp_secret, code, user=self.user):
             raise forms.ValidationError(
                 _("Incorrect code — check your authenticator app and try again."),
                 code="invalid",
@@ -506,7 +551,7 @@ class TwoFactorVerifyForm(forms.Form):
         code = self.cleaned_data["code"].strip()
         verified = False
         if code.isdigit() and len(code) == 6:
-            verified = twofactor.verify_totp_code(self.user.totp_secret, code)
+            verified = twofactor.verify_totp_code(self.user.totp_secret, code, user=self.user)
         if not verified:
             verified = twofactor.verify_and_consume_backup_code(self.user, code)
 
