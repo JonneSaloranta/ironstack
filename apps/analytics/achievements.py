@@ -13,6 +13,7 @@ from datetime import datetime, timedelta
 from decimal import Decimal
 
 from django.contrib.auth import get_user_model
+from django.db.models import DecimalField, ExpressionWrapper, F, OuterRef, Subquery, Sum
 from django.utils import timezone
 from django.utils.translation import gettext, ngettext
 
@@ -102,17 +103,21 @@ def highlights_for(user):
 
     streak_days = longest_workout_streak_days(user)
     total_prs = PersonalRecord.objects.filter(user=user).count()
-    total_volume_kg = sum(
-        (
-            exercise_set.weight * exercise_set.reps
-            for exercise_set in ExerciseSet.objects.filter(
-                performed_exercise__session__user=user,
-                performed_exercise__session__status=WorkoutSessionStatus.COMPLETED,
-                is_warmup=False,
+    # Summed in the database: this runs for every opted-in user on every
+    # dashboard load, and loading each user's whole set history into
+    # Python just to multiply and add it grew with everyone's history.
+    total_volume_kg = ExerciseSet.objects.filter(
+        performed_exercise__session__user=user,
+        performed_exercise__session__status=WorkoutSessionStatus.COMPLETED,
+        is_warmup=False,
+    ).aggregate(
+        total=Sum(
+            ExpressionWrapper(
+                F("weight") * F("reps"),
+                output_field=DecimalField(max_digits=20, decimal_places=2),
             )
-        ),
-        Decimal("0"),
-    )
+        )
+    )["total"] or Decimal("0")
     unit_system = getattr(user, "unit_system", "metric")
     display_name = user.public_display_name()
 
@@ -199,12 +204,19 @@ def recently_active_users(limit=10):
     """
     User = get_user_model()
     now = timezone.now()
+    # Each user's latest session in the same query (one query in all, not
+    # one per user).
+    latest = WorkoutSession.objects.filter(user=OuterRef("pk")).order_by("-started_at")
+    users = User.objects.filter(show_achievements=True).annotate(
+        latest_status=Subquery(latest.values("status")[:1]),
+        latest_started_at=Subquery(latest.values("started_at")[:1]),
+        latest_ended_at=Subquery(latest.values("ended_at")[:1]),
+    )
     activity = []
-    for user in User.objects.filter(show_achievements=True):
-        latest = WorkoutSession.objects.filter(user=user).order_by("-started_at").first()
-        if latest is None:
+    for user in users:
+        if user.latest_started_at is None:
             continue
-        is_in_progress = latest.status == WorkoutSessionStatus.IN_PROGRESS
+        is_in_progress = user.latest_status == WorkoutSessionStatus.IN_PROGRESS
         # A finished session's `ended_at` — not `started_at` — is when
         # this user was actually last active: a long session that just
         # wrapped up should read as "just now", not "N hours ago" from
@@ -217,7 +229,7 @@ def recently_active_users(limit=10):
         # those, e.g. in a test, can still have `status=COMPLETED` and
         # `ended_at=None` — found by CI, not by this file's own tests,
         # which all go through those service functions).
-        last_active_at = latest.ended_at or latest.started_at
+        last_active_at = user.latest_ended_at or user.latest_started_at
         activity.append(
             RecentActivity(
                 display_name=user.public_display_name(),
