@@ -2457,7 +2457,7 @@ class SendPushNotificationTests(TestCase):
         )
         self.subscription = PushSubscription.objects.create(
             user=self.alice,
-            endpoint="https://push.example.com/abc",
+            endpoint="https://fcm.googleapis.com/fcm/send/abc",
             p256dh_key="p256dh-value",
             auth_key="auth-value",
         )
@@ -2467,6 +2467,13 @@ class SendPushNotificationTests(TestCase):
             override_settings(PUSH_ENABLED=False),
             mock.patch("apps.core.push.webpush") as mock_webpush,
         ):
+            send_push_notification(self.alice, "Title", "Body")
+        mock_webpush.assert_not_called()
+
+    def test_a_stored_endpoint_outside_the_known_push_services_is_never_contacted(self):
+        self.subscription.endpoint = "http://db:5432/"
+        self.subscription.save(update_fields=["endpoint"])
+        with mock.patch("apps.core.push.webpush") as mock_webpush:
             send_push_notification(self.alice, "Title", "Body")
         mock_webpush.assert_not_called()
 
@@ -2484,7 +2491,7 @@ class SendPushNotificationTests(TestCase):
         self.assertEqual(
             kwargs["subscription_info"],
             {
-                "endpoint": "https://push.example.com/abc",
+                "endpoint": "https://fcm.googleapis.com/fcm/send/abc",
                 "keys": {"p256dh": "p256dh-value", "auth": "auth-value"},
             },
         )
@@ -2545,7 +2552,7 @@ class AnnounceVersionUpdateCommandTests(TestCase):
         )
         PushSubscription.objects.create(
             user=self.alice,
-            endpoint="https://push.example.com/alice",
+            endpoint="https://fcm.googleapis.com/fcm/send/alice",
             p256dh_key="p256dh-value",
             auth_key="auth-value",
         )
@@ -2609,7 +2616,7 @@ class PushSubscribeViewTests(TestCase):
             username="alice", password="s3cret-pass"
         )
 
-    def _payload(self, endpoint="https://push.example.com/abc"):
+    def _payload(self, endpoint="https://fcm.googleapis.com/fcm/send/abc"):
         return json.dumps(
             {"endpoint": endpoint, "keys": {"p256dh": "p256dh-value", "auth": "auth-value"}}
         )
@@ -2627,7 +2634,7 @@ class PushSubscribeViewTests(TestCase):
         )
         self.assertEqual(response.status_code, 200)
         subscription = PushSubscription.objects.get(user=self.alice)
-        self.assertEqual(subscription.endpoint, "https://push.example.com/abc")
+        self.assertEqual(subscription.endpoint, "https://fcm.googleapis.com/fcm/send/abc")
         self.assertEqual(subscription.p256dh_key, "p256dh-value")
 
     def test_resubscribing_the_same_endpoint_updates_rather_than_duplicates(self):
@@ -2644,6 +2651,42 @@ class PushSubscribeViewTests(TestCase):
         )
         self.assertEqual(response.status_code, 400)
 
+    def test_endpoints_outside_the_known_push_services_are_rejected(self):
+        self.client.login(username="alice", password="s3cret-pass")
+        for endpoint in (
+            "http://fcm.googleapis.com/fcm/send/abc",
+            "https://db:5432/",
+            "https://127.0.0.1/",
+            "https://192.168.1.1/admin",
+            "https://fcm.googleapis.com.evil.example/abc",
+            "https://fcm.googleapis.com:8443/abc",
+            "javascript:alert(1)",
+        ):
+            with self.subTest(endpoint=endpoint):
+                response = self.client.post(
+                    reverse("push-subscribe"),
+                    self._payload(endpoint),
+                    content_type="application/json",
+                )
+                self.assertEqual(response.status_code, 400)
+        self.assertFalse(PushSubscription.objects.exists())
+
+    def test_each_known_push_service_is_accepted(self):
+        self.client.login(username="alice", password="s3cret-pass")
+        for endpoint in (
+            "https://fcm.googleapis.com/fcm/send/abc",
+            "https://updates.push.services.mozilla.com/wpush/v2/abc",
+            "https://web.push.apple.com/abc",
+            "https://db5p.notify.windows.com/w/?token=abc",
+        ):
+            with self.subTest(endpoint=endpoint):
+                response = self.client.post(
+                    reverse("push-subscribe"),
+                    self._payload(endpoint),
+                    content_type="application/json",
+                )
+                self.assertEqual(response.status_code, 200)
+
 
 class PushUnsubscribeViewTests(TestCase):
     def setUp(self):
@@ -2653,7 +2696,7 @@ class PushUnsubscribeViewTests(TestCase):
         self.bob = get_user_model().objects.create_user(username="bob", password="s3cret-pass")
         self.subscription = PushSubscription.objects.create(
             user=self.alice,
-            endpoint="https://push.example.com/abc",
+            endpoint="https://fcm.googleapis.com/fcm/send/abc",
             p256dh_key="p256dh-value",
             auth_key="auth-value",
         )

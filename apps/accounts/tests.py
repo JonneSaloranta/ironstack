@@ -2049,7 +2049,7 @@ class DataExportViewTests(TestCase):
 
         PushSubscription.objects.create(
             user=self.alice,
-            endpoint="https://push.example.com/abc123",
+            endpoint="https://fcm.googleapis.com/fcm/send/abc123",
             p256dh_key="a-key",
             auth_key="an-auth-key",
         )

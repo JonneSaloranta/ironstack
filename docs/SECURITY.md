@@ -318,6 +318,18 @@ subscribe({applicationServerKey})` needs client-side. Keep
 anyone holding it can send push notifications impersonating this
 instance to every subscribed device.
 
+**Only known push services are contacted.** The server POSTs every
+notification to the endpoint URL the browser handed over, so an
+arbitrary URL would let any logged-in user make the server send
+requests into its own network (`http://db:5432`, a router's admin
+page). `apps.core.push.is_allowed_endpoint` accepts only `https` URLs on
+`settings.PUSH_ENDPOINT_HOSTS` — by default FCM (Chrome, Edge, Opera,
+Samsung Internet), Mozilla autopush (Firefox), Apple and WNS — and is
+checked both on subscribe (anything else is a 400) and before every
+send (so a row stored before the check existed is skipped). Override
+`PUSH_ENDPOINT_HOSTS` in `.env` only for a browser using some other
+push service, e.g. a self-hosted autopush.
+
 **What's stored**: `apps.core.models.PushSubscription` — one row per
 browser/device a user has enabled notifications on (`endpoint`,
 `p256dh_key`, `auth_key`, straight from the browser's own

@@ -11,6 +11,7 @@ from django.http import HttpResponseBadRequest, JsonResponse
 from django.views import View
 
 from apps.core.models import PushSubscription
+from apps.core.push import is_allowed_endpoint
 
 
 class PushSubscribeView(LoginRequiredMixin, View):
@@ -23,6 +24,10 @@ class PushSubscribeView(LoginRequiredMixin, View):
             auth = keys["auth"]
         except (json.JSONDecodeError, KeyError, TypeError):
             return HttpResponseBadRequest("Malformed subscription.")
+        if not isinstance(endpoint, str) or len(endpoint) > 500:
+            return HttpResponseBadRequest("Malformed subscription.")
+        if not is_allowed_endpoint(endpoint):
+            return HttpResponseBadRequest("Unsupported push service.")
         # update_or_create, not create: a browser can legitimately call
         # pushManager.subscribe() again for a subscription it already
         # holds (e.g. after its own key rotation) — a bare create()

@@ -498,6 +498,21 @@ VAPID_PUBLIC_KEY = env("VAPID_PUBLIC_KEY", default="")
 VAPID_PRIVATE_KEY = env("VAPID_PRIVATE_KEY", default="")
 VAPID_ADMIN_EMAIL = env("VAPID_ADMIN_EMAIL", default="")
 PUSH_ENABLED = bool(VAPID_PUBLIC_KEY and VAPID_PRIVATE_KEY and VAPID_ADMIN_EMAIL)
+# Hosts a browser's push subscription endpoint may point at — the
+# push services of Chrome/Edge/Opera/Samsung (FCM), Firefox (Mozilla
+# autopush), Safari (Apple) and legacy Edge (WNS). Anything else is
+# refused on subscribe and skipped on send: the server POSTs to that
+# URL, so an arbitrary one would let any user make it send requests
+# into the local network. A leading "." matches every subdomain.
+# Override (comma-separated) only for a browser using some other push
+# service, e.g. a self-hosted autopush.
+PUSH_ENDPOINT_HOSTS = env_list(
+    "PUSH_ENDPOINT_HOSTS",
+    default=(
+        "fcm.googleapis.com,android.googleapis.com,updates.push.services.mozilla.com,"
+        ".push.apple.com,.notify.windows.com"
+    ),
+)
 
 # apps.core.backups — encrypts a backup's database.dump/media.tar
 # (docs/BACKUP.md "Encryption") once set; every backup this instance's

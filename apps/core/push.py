@@ -8,6 +8,7 @@ social-only concern.
 
 import json
 import logging
+from urllib.parse import urlsplit
 
 import requests
 from django.conf import settings
@@ -25,6 +26,27 @@ logger = logging.getLogger(__name__)
 _TIMEOUT_SECONDS = 5
 
 
+def is_allowed_endpoint(endpoint):
+    """Whether `endpoint` is an https URL on one of
+    settings.PUSH_ENDPOINT_HOSTS — the only URLs this server will ever
+    POST a notification to (see that setting's comment)."""
+    try:
+        parts = urlsplit(endpoint)
+    except (TypeError, ValueError):
+        return False
+    if parts.scheme != "https" or not parts.hostname or parts.port not in (None, 443):
+        return False
+    host = parts.hostname.lower()
+    for allowed in settings.PUSH_ENDPOINT_HOSTS:
+        allowed = allowed.lower()
+        if allowed.startswith("."):
+            if host.endswith(allowed):
+                return True
+        elif host == allowed:
+            return True
+    return False
+
+
 def send_push_notification(user, title, body, url=None):
     """Sends `title`/`body` (plus an optional `url` to open on click)
     to every device `user` has enabled notifications on. Silently a
@@ -38,6 +60,10 @@ def send_push_notification(user, title, body, url=None):
         return
     payload = json.dumps({"title": title, "body": body, "url": url})
     for subscription in PushSubscription.objects.filter(user=user):
+        if not is_allowed_endpoint(subscription.endpoint):
+            # Stored before endpoints were checked on subscribe.
+            logger.warning("Skipping push to a non-allowed endpoint for %s", user)
+            continue
         try:
             webpush(
                 subscription_info={
