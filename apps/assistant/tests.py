@@ -679,6 +679,16 @@ class ViewTests(TestCase):
             )
         self.assertContains(response, "<strong>Second</strong> reply")
 
+    def test_a_rejected_send_keeps_the_composers_text(self):
+        _response, conversation = self.start()
+        response = self.client.post(
+            reverse("assistant:message-send", args=[conversation.pk]),
+            {"text": ""},
+            HTTP_HX_REQUEST="true",
+        )
+        self.assertEqual(response["X-Form-Rejected"], "1")
+        self.assertContains(response, "alert-error")
+
     def test_pending_message_polls_itself(self):
         services.enable(self.user)
         with override_settings(ASSISTANT_RUN_INLINE=False):

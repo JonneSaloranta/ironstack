@@ -160,6 +160,26 @@ class UiBehaviourTests(StaticLiveServerTestCase):
         expect(toast).to_be_visible()
         expect(toast).to_contain_text("not saved")
 
+    # -- chat composer keeps a failed draft (htmx-errors.js) -----------------
+    def test_a_failed_message_send_keeps_the_draft(self):
+        from apps.social.models import FriendRequest
+
+        bob = User.objects.create_user(username="bob", password="s3cret-pass")
+        social_services.send_friend_request(self.alice, bob)
+        social_services.accept_friend_request(
+            FriendRequest.objects.get(from_user=self.alice, to_user=bob), acting_user=bob
+        )
+        self._log_in()
+        self.page.goto(self._url(reverse("social:message-thread", args=[bob.pk])))
+        self.page.route(
+            "**" + reverse("social:message-thread-fragment", args=[bob.pk]),
+            lambda route: route.abort() if route.request.method == "POST" else route.continue_(),
+        )
+        self.page.fill("textarea[name=body]", "Don't lose me")
+        self.page.get_by_role("button", name="Send").click()
+        expect(self.page.locator("#pr-toast-container .pr-banner-error")).to_be_visible()
+        expect(self.page.locator("textarea[name=body]")).to_have_value("Don't lose me")
+
     # -- page loading bar (static/js/page-loading.js) ------------------------
     def _hold(self, pattern):
         """Holds every request matching `pattern` until the test releases

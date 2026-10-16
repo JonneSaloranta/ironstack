@@ -74,6 +74,18 @@ def message_thread(request, user_id):
     return render(request, "social/message_thread.html", {"other": other, "form": MessageForm()})
 
 
+def _send_error_response(request, error):
+    """A rejected send, answered to the composer itself rather than the
+    thread: the thread is re-polled every few seconds, which would wipe
+    an error shown there. `X-Form-Rejected` keeps htmx-errors.js from
+    clearing what the user typed (`data-reset-on-success`)."""
+    response = render(request, "social/_send_error.html", {"error": error})
+    response["HX-Retarget"] = "#send-error"
+    response["HX-Reswap"] = "innerHTML"
+    response["X-Form-Rejected"] = "1"
+    return response
+
+
 @login_required
 def message_thread_fragment(request, user_id):
     """Polled by message_thread.html (`hx-trigger="load, every 4s"`)
@@ -86,11 +98,18 @@ def message_thread_fragment(request, user_id):
         raise Http404
     if request.method == "POST":
         form = MessageForm(request.POST)
+        error = None
         if form.is_valid():
             try:
                 services.send_direct_message(request.user, other, form.cleaned_data["body"])
-            except services.SocialError as error:
-                messages.error(request, str(error))
+            except services.SocialError as exc:
+                error = str(exc)
+        else:
+            error = " ".join(e for errors in form.errors.values() for e in errors)
+        if error:
+            if request.headers.get("HX-Request"):
+                return _send_error_response(request, error)
+            messages.error(request, error)
     services.mark_direct_thread_read(request.user, other)
     thread_messages = _last_n_ascending(
         DirectMessage.objects.filter(
@@ -120,11 +139,18 @@ def group_thread_fragment(request, pk):
         raise Http404
     if request.method == "POST":
         form = MessageForm(request.POST)
+        error = None
         if form.is_valid():
             try:
                 services.send_group_message(group, request.user, form.cleaned_data["body"])
-            except services.SocialError as error:
-                messages.error(request, str(error))
+            except services.SocialError as exc:
+                error = str(exc)
+        else:
+            error = " ".join(e for errors in form.errors.values() for e in errors)
+        if error:
+            if request.headers.get("HX-Request"):
+                return _send_error_response(request, error)
+            messages.error(request, error)
     services.mark_group_read(group, request.user)
     thread_messages = _last_n_ascending(
         GroupMessage.objects.filter(group=group).select_related("sender"), THREAD_MESSAGE_LIMIT

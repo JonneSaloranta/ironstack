@@ -25,4 +25,18 @@
   document.addEventListener("htmx:timeout", function () {
     showError(text("htmxErrorNetwork", "Could not reach the server — check your connection. That change was not saved."));
   });
+
+  // A composer marked data-reset-on-success (chat, assistant) is
+  // cleared only once its send actually went through — not on a
+  // network error, a 5xx, or a send the server rejected
+  // (X-Form-Rejected), so what the user typed is never thrown away.
+  // Any [data-form-error] inside it is emptied on success too.
+  document.addEventListener("htmx:afterRequest", function (event) {
+    var form = event.detail.elt;
+    if (!form || !form.matches || !form.matches("form[data-reset-on-success]")) return;
+    var xhr = event.detail.xhr;
+    if (!event.detail.successful || (xhr && xhr.getResponseHeader("X-Form-Rejected"))) return;
+    form.reset();
+    form.querySelectorAll("[data-form-error]").forEach(function (el) { el.innerHTML = ""; });
+  });
 })();

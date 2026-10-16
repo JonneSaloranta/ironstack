@@ -114,11 +114,16 @@ def message_send(request, pk):
         if error:
             messages.error(request, error)
         return redirect("assistant:conversation-detail", pk=conversation.pk)
-    return render(
+    response = render(
         request,
         "assistant/_thread.html",
         {**_thread_context(conversation), "send_error": error},
     )
+    if error:
+        # Keeps the composer's text — see htmx-errors.js
+        # `data-reset-on-success`.
+        response["X-Form-Rejected"] = "1"
+    return response
 
 
 @login_required
