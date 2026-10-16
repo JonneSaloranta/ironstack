@@ -308,6 +308,20 @@ class ProfileEndpointTests(APITestCase):
         self.alice.refresh_from_db()
         self.assertEqual(self.alice.username, "alice")
 
+    def test_email_is_read_only(self):
+        # An API key must not be enough to take over the account through a
+        # password reset sent to a new address.
+        self.alice.email = "alice@example.com"
+        self.alice.save(update_fields=["email"])
+        response = self.client.patch(
+            reverse("api:profile"), {"email": "mallory@example.com"}, format="json",
+            **self._auth(),
+        )
+        self.assertEqual(response.status_code, 200)
+        self.alice.refresh_from_db()
+        self.assertEqual(self.alice.email, "alice@example.com")
+        self.assertEqual(response.data["email"], "alice@example.com")
+
     def test_patch_updates_social_privacy_settings(self):
         response = self.client.patch(
             reverse("api:profile"),

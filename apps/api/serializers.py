@@ -64,7 +64,11 @@ class ProfileSerializer(serializers.ModelSerializer):
             "theme",
             "appearance",
         ]
-        read_only_fields = ["username"]
+        # email too: an API key is a narrower credential than the
+        # password, and changing the email would let whoever holds the
+        # key request a password reset to themselves — a full account
+        # takeover. Change it on the Account details page instead.
+        read_only_fields = ["username", "email"]
 
 
 # --------------------------------------------------------------------

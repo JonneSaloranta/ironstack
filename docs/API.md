@@ -202,7 +202,7 @@ All under `/api/v1/`. List/create endpoints are paginated (25 per page,
 
 | Context | Endpoints |
 |---|---|
-| profile | `GET`/`PATCH` `profile/` (singleton — no id) |
+| profile | `GET`/`PATCH` `profile/` (singleton — no id; `username` and `email` are read-only — an API key must not be able to redirect password resets) |
 | exercises | `exercises/`, `exercises/<id>/`, `muscle-groups/` (read-only), `equipment/` (read-only) |
 | programs | `programs/`, `programs/<id>/`, `workouts/`, `workouts/<id>/`, `prescriptions/`, `prescriptions/<id>/` |
 | workouts | `sessions/`, `sessions/<id>/` (create = start; `PATCH status` to `completed`/`abandoned` = end), `performed-exercises/` (create + read only), `sets/`, `sets/<id>/` |
