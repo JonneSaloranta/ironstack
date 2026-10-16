@@ -594,8 +594,21 @@ user, date (DateField — the day it counts toward, not when it was
 typed), meal_slot (FK), food (nullable FK) XOR recipe (nullable FK)
 XOR quick macros (quick_name, quick_calories, quick_protein_grams,
 quick_carbohydrate_grams, quick_fat_grams), quantity, logged_at
-(DateTimeField, default now), notes
+(DateTimeField, default now), notes, nutrition_snapshot (JSON)
 ```
+
+**A logged day keeps its numbers.** A food or recipe entry stores its
+nutrition per one unit of `quantity` as the food or recipe was when it
+was logged (`nutrition_snapshot`, set in `DiaryEntry.save()`), and
+`services.diary_entry_nutrition` reads that, scaled by `quantity`.
+Editing a food, changing a recipe's ingredients, merging foods or an
+Open Food Facts refresh of a shared food no longer changes past days —
+the same rule workout history follows. Changing an entry's quantity
+just scales the stored values; only switching it to another food or
+recipe takes that one's current values. Copying a day copies the
+values too. Quick entries already store their own macros and need no
+snapshot. Migration 0026 froze existing entries at the values they had
+then.
 
 Exactly one of `food`/`recipe`/quick macros (`quick_calories` set) must
 be set — enforced with a `CheckConstraint`, not just convention.

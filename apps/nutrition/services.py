@@ -1001,11 +1001,51 @@ def recipe_per_serving_nutrition(recipe) -> ScaledNutrition:
     return recipe_total_nutrition(recipe).scaled_by(Decimal("1") / servings)
 
 
+_SNAPSHOT_FIELDS = (
+    "calories", "protein_grams", "carbohydrate_grams", "fat_grams",
+    "fiber_grams", "sugar_grams", "saturated_fat_grams", "sodium_mg",
+)
+
+
+def nutrition_snapshot(nutrition: ScaledNutrition) -> dict:
+    """`nutrition` as JSON-safe strings (Decimal precision kept) — what
+    DiaryEntry.nutrition_snapshot stores."""
+    return {
+        name: (None if getattr(nutrition, name) is None else str(getattr(nutrition, name)))
+        for name in _SNAPSHOT_FIELDS
+    }
+
+
+def nutrition_from_snapshot(snapshot: dict) -> ScaledNutrition:
+    return ScaledNutrition(
+        **{
+            name: (None if snapshot.get(name) is None else Decimal(snapshot[name]))
+            for name in _SNAPSHOT_FIELDS
+        }
+    )
+
+
+def per_unit_entry_nutrition(entry) -> ScaledNutrition:
+    """A food or recipe entry's nutrition for a quantity of one — one of
+    the food's own units, or one serving of the recipe — from the food
+    or recipe as it is right now."""
+    if entry.food_id:
+        return scale_nutrition(entry.food, Decimal("1"))
+    return recipe_per_serving_nutrition(entry.recipe)
+
+
 def diary_entry_nutrition(entry) -> ScaledNutrition:
     """A single DiaryEntry's nutrition — dispatches on whichever of
     `food`/`recipe`/quick macros is set (the model's own CheckConstraint
     guarantees exactly one is). `quantity` means the food's own unit for
-    a food entry, servings for a recipe entry, portions for a quick one."""
+    a food entry, servings for a recipe entry, portions for a quick one.
+
+    A food or recipe entry uses the values snapshotted when it was
+    logged (DiaryEntry.nutrition_snapshot), so later changes to the food
+    or recipe never rewrite past days; only an entry without one yet
+    falls back to the live food/recipe."""
+    if entry.nutrition_snapshot:
+        return nutrition_from_snapshot(entry.nutrition_snapshot).scaled_by(entry.quantity)
     if entry.food_id:
         return scale_nutrition(entry.food, entry.quantity)
     if entry.recipe_id:
@@ -1250,6 +1290,14 @@ def copy_diary_day(user, source_date, target_date):
             quick_protein_grams=entry.quick_protein_grams,
             quick_carbohydrate_grams=entry.quick_carbohydrate_grams,
             quick_fat_grams=entry.quick_fat_grams,
+            # The same values the source day shows, not the food's
+            # current ones — a copy of that day (bulk_create skips save()).
+            nutrition_snapshot=entry.nutrition_snapshot
+            or (
+                None
+                if entry.is_quick
+                else nutrition_snapshot(per_unit_entry_nutrition(entry))
+            ),
         )
         for entry in source_entries
     ]

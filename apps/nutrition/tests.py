@@ -4256,6 +4256,87 @@ class DietPlanExportImportViewTests(TestCase):
         self.assertFalse(DietPlan.objects.filter(user=self.bob).exists())
 
 
+class DiaryNutritionSnapshotTests(TestCase):
+    """DiaryEntry.nutrition_snapshot — a logged day keeps the values its
+    foods and recipes had when they were logged."""
+
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        self.slot = MealSlot.objects.create(name="Snack", owner=self.alice)
+        self.food = make_food(self.alice, name="Oats", calories=400)  # per 100 g
+        self.day = date(2026, 1, 1)
+
+    def _log(self, quantity=Decimal("50"), **kwargs):
+        return DiaryEntry.objects.create(
+            user=self.alice, date=self.day, meal_slot=self.slot, quantity=quantity, **kwargs
+        )
+
+    def _calories(self):
+        return services.daily_totals(self.alice, self.day).calories
+
+    def test_editing_a_food_leaves_past_days_alone(self):
+        self._log(food=self.food)
+        self.assertEqual(self._calories(), Decimal("200"))
+        self.food.calories = 999
+        self.food.save()
+        self.assertEqual(self._calories(), Decimal("200"))
+
+    def test_changing_a_recipe_leaves_past_days_alone(self):
+        recipe = Recipe.objects.create(owner=self.alice, name="Porridge", servings=1)
+        RecipeIngredient.objects.create(recipe=recipe, food=self.food, quantity=Decimal("100"))
+        self._log(recipe=recipe, quantity=Decimal("1"))
+        RecipeIngredient.objects.create(recipe=recipe, food=self.food, quantity=Decimal("100"))
+        self.assertEqual(self._calories(), Decimal("400"))
+
+    def test_changing_the_quantity_scales_the_logged_values(self):
+        entry = self._log(food=self.food)
+        self.food.calories = 999
+        self.food.save()
+        entry.quantity = Decimal("100")
+        entry.save()
+        self.assertEqual(self._calories(), Decimal("400"))
+
+    def test_switching_to_another_food_takes_that_foods_values(self):
+        entry = DiaryEntry.objects.get(pk=self._log(food=self.food).pk)
+        entry.food = make_food(self.alice, name="Rice", calories=130)
+        entry.save()
+        self.assertEqual(self._calories(), Decimal("65"))
+
+    def test_merging_foods_leaves_past_days_alone(self):
+        self._log(food=self.food)
+        keep = make_food(None, name="Oats (shared)", calories=380)
+        services.merge_foods(keep, [self.food])
+        self.assertEqual(self._calories(), Decimal("200"))
+
+    def test_a_copied_day_keeps_the_values_it_was_copied_from(self):
+        self._log(food=self.food)
+        self.food.calories = 999
+        self.food.save()
+        services.copy_diary_day(self.alice, self.day, date(2026, 1, 2))
+        self.assertEqual(
+            services.daily_totals(self.alice, date(2026, 1, 2)).calories, Decimal("200")
+        )
+
+    def test_the_backfill_matches_the_live_values(self):
+        import importlib
+
+        from django.apps import apps as global_apps
+
+        recipe = Recipe.objects.create(owner=self.alice, name="Porridge", servings=2)
+        RecipeIngredient.objects.create(recipe=recipe, food=self.food, quantity=Decimal("100"))
+        food_entry = self._log(food=self.food)
+        recipe_entry = self._log(recipe=recipe, quantity=Decimal("1"))
+        expected = [services.diary_entry_nutrition(e) for e in (food_entry, recipe_entry)]
+        DiaryEntry.objects.update(nutrition_snapshot=None)
+        migration = importlib.import_module(
+            "apps.nutrition.migrations.0026_diaryentry_nutrition_snapshot"
+        )
+        migration.snapshot_existing_entries(global_apps, None)
+        for entry, nutrition in zip((food_entry, recipe_entry), expected, strict=True):
+            entry.refresh_from_db()
+            self.assertEqual(services.diary_entry_nutrition(entry), nutrition)
+
+
 class PrivateFoodScopingTests(TestCase):
     """Another user's own (private) food can't be added anywhere by
     posting its id — the pickers only ever offer visible foods, but the

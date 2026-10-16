@@ -575,6 +575,15 @@ class DiaryEntry(TimeStampedModel):
         max_digits=6, decimal_places=2, null=True, blank=True
     )
     quick_fat_grams = models.DecimalField(max_digits=6, decimal_places=2, null=True, blank=True)
+    # A food or recipe entry's nutrition per one unit of `quantity`, as
+    # the food/recipe was when logged (services.diary_entry_nutrition).
+    # Without it every past day was re-read from the live Food/Recipe,
+    # so editing a food, a recipe's ingredients, or an Open Food Facts
+    # refresh of a shared food silently changed old diary totals.
+    # Recomputed only when the entry is switched to another food or
+    # recipe; changing the quantity just scales it. Null for a quick
+    # entry, whose own macros are already fixed.
+    nutrition_snapshot = models.JSONField(null=True, blank=True)
 
     class Meta:
         ordering = ["-date", "-created_at"]
@@ -590,6 +599,30 @@ class DiaryEntry(TimeStampedModel):
                 name="diary_entry_exactly_one_of_food_recipe_or_quick",
             ),
         ]
+
+    @classmethod
+    def from_db(cls, db, field_names, values, *args, **kwargs):
+        instance = super().from_db(db, field_names, values, *args, **kwargs)
+        instance._loaded_source = (
+            instance.__dict__.get("food_id"),
+            instance.__dict__.get("recipe_id"),
+        )
+        return instance
+
+    def save(self, *args, **kwargs):
+        source = (self.food_id, self.recipe_id)
+        changed_source = getattr(self, "_loaded_source", source) != source
+        has_source = self.food_id is not None or self.recipe_id is not None
+        if has_source and (self.nutrition_snapshot is None or changed_source):
+            from . import services
+
+            self.nutrition_snapshot = services.nutrition_snapshot(
+                services.per_unit_entry_nutrition(self)
+            )
+            if kwargs.get("update_fields") is not None:
+                kwargs["update_fields"] = {*kwargs["update_fields"], "nutrition_snapshot"}
+        super().save(*args, **kwargs)
+        self._loaded_source = source
 
     @property
     def is_quick(self):
