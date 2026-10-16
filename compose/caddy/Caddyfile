@@ -4,6 +4,9 @@
 	# Mirrors compose/nginx/nginx.conf's own static/media handling —
 	# served directly by the proxy, never proxied through to gunicorn.
 	handle_path /static/* {
+		# Content-hashed names only — see compose/nginx/nginx.conf.
+		@hashed path_regexp \.[0-9a-f]{12}\.[a-z0-9]+$
+		header @hashed Cache-Control "public, max-age=31536000, immutable"
 		root * /app/staticfiles
 		file_server
 	}
