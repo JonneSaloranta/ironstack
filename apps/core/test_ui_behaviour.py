@@ -221,6 +221,22 @@ class UiBehaviourTests(StaticLiveServerTestCase):
         expect(self.page.get_by_role("button", name="Resume")).to_be_visible()
 
     # -- chat composer keeps a failed draft (htmx-errors.js) -----------------
+    def test_a_new_message_shows_up_through_polling(self):
+        from apps.social.models import FriendRequest
+
+        bob = User.objects.create_user(username="bob", password="s3cret-pass")
+        social_services.send_friend_request(self.alice, bob)
+        social_services.accept_friend_request(
+            FriendRequest.objects.get(from_user=self.alice, to_user=bob), acting_user=bob
+        )
+        social_services.send_direct_message(bob, self.alice, "first")
+        self._log_in()
+        self.page.goto(self._url(reverse("social:message-thread", args=[bob.pk])))
+        thread = self.page.locator("#thread-messages")
+        expect(thread).to_contain_text("first")
+        social_services.send_direct_message(bob, self.alice, "second")
+        expect(thread).to_contain_text("second", timeout=10000)
+
     def test_a_failed_message_send_keeps_the_draft(self):
         from apps.social.models import FriendRequest
 

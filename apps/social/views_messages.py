@@ -2,7 +2,7 @@ from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.db import models
-from django.http import Http404
+from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404, render
 
 from . import services
@@ -74,6 +74,20 @@ def message_thread(request, user_id):
     return render(request, "social/message_thread.html", {"other": other, "form": MessageForm()})
 
 
+def _render_thread(request, template, context, thread_messages):
+    """The polled thread fragment — or an empty 204 when the poll already
+    shows the newest message (`after`, the id the fragment last rendered
+    as data-latest-message). htmx leaves the thread alone on a 204, so a
+    screen reader isn't handed the whole thread again every 4 seconds
+    while nothing changed."""
+    latest = str(thread_messages[-1].pk) if thread_messages else ""
+    if request.method == "GET" and request.GET.get("after") == latest:
+        return HttpResponse(status=204)
+    return render(
+        request, template, {**context, "thread_messages": thread_messages, "latest": latest}
+    )
+
+
 def _send_error_response(request, error):
     """A rejected send, answered to the composer itself rather than the
     thread: the thread is re-polled every few seconds, which would wipe
@@ -117,10 +131,8 @@ def message_thread_fragment(request, user_id):
         ).select_related("sender"),
         THREAD_MESSAGE_LIMIT,
     )
-    return render(
-        request,
-        "social/_message_thread_fragment.html",
-        {"other": other, "thread_messages": thread_messages},
+    return _render_thread(
+        request, "social/_message_thread_fragment.html", {"other": other}, thread_messages
     )
 
 
@@ -155,8 +167,6 @@ def group_thread_fragment(request, pk):
     thread_messages = _last_n_ascending(
         GroupMessage.objects.filter(group=group).select_related("sender"), THREAD_MESSAGE_LIMIT
     )
-    return render(
-        request,
-        "social/_group_thread_fragment.html",
-        {"group": group, "thread_messages": thread_messages},
+    return _render_thread(
+        request, "social/_group_thread_fragment.html", {"group": group}, thread_messages
     )

@@ -1326,6 +1326,21 @@ class MessageViewTests(TestCase):
         self.assertContains(response, 'id="send-error"')
         self.assertNotContains(response, "this.reset()")
 
+    def test_a_poll_with_nothing_new_changes_nothing(self):
+        make_friends(self.alice, self.bob)
+        url = reverse("social:message-thread-fragment", args=[self.bob.pk])
+        self.client.post(url, {"body": "hi"})
+        first = self.client.get(url)
+        latest = DirectMessage.objects.get().pk
+        self.assertContains(first, f'data-latest-message="{latest}"')
+
+        self.assertEqual(self.client.get(url, {"after": latest}).status_code, 204)
+
+        services.send_direct_message(self.bob, self.alice, "hello back")
+        newer = self.client.get(url, {"after": latest})
+        self.assertEqual(newer.status_code, 200)
+        self.assertContains(newer, "hello back")
+
     def test_opening_a_thread_marks_it_read(self):
         make_friends(self.alice, self.bob)
         services.send_direct_message(self.bob, self.alice, "hi")

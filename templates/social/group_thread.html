@@ -16,7 +16,8 @@
 {% endcomment %}
 <div class="card" id="thread-messages" aria-live="polite"
      hx-get="{% url 'social:group-thread-fragment' group.pk %}"
-     hx-trigger="load, every 4s [document.visibilityState=='visible']" hx-swap="innerHTML">
+     hx-trigger="load, every 4s [document.visibilityState=='visible']" hx-swap="innerHTML"
+     hx-vals='js:{after: (document.querySelector("#thread-messages [data-latest-message]") || {dataset: {}}).dataset.latestMessage}'>
   <div class="spinner" aria-hidden="true"></div>
 </div>
 
