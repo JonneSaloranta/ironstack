@@ -18,6 +18,8 @@ narrated summary of the same version.
 
 ## [Unreleased]
 
+## [1.25.0] — 2026-10-17
+
 ### Added
 - AI assistant: with your own API key, choose which Claude model it uses
   (Opus, Sonnet, Haiku or Fable, prices shown) in the assistant's
