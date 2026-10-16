@@ -16,7 +16,7 @@ from decimal import Decimal, InvalidOperation
 from django.db import transaction
 from django.db.models import Q
 from django.utils import timezone
-from django.utils.translation import get_language
+from django.utils.translation import get_language, gettext
 
 from apps.core.data_exchange import ImportValidationError
 
@@ -400,13 +400,13 @@ def _resolve_food(user, data):
 
     name = data.get("name")
     if not name:
-        raise ImportValidationError("An ingredient is missing its food name.")
+        raise ImportValidationError(gettext("An ingredient is missing its food name."))
     required_fields = (
         "serving_size", "calories", "protein_grams", "carbohydrate_grams", "fat_grams",
     )
     if any(data.get(field) is None for field in required_fields):
         raise ImportValidationError(
-            "Ingredient “%s” is missing required nutrition data." % name
+            gettext("Ingredient “%(name)s” is missing required nutrition data.") % {"name": name}
         )
 
     existing = Food.objects.filter(
@@ -456,7 +456,7 @@ def import_recipe(user, payload):
 
     name = payload.get("name")
     if not name:
-        raise ImportValidationError("Missing recipe name.")
+        raise ImportValidationError(gettext("Missing recipe name."))
 
     recipe = Recipe.objects.create(
         owner=user,
@@ -480,7 +480,7 @@ def import_recipe(user, payload):
         quantity = _decimal_or_none(ingredient_data.get("quantity"))
         if quantity is None:
             raise ImportValidationError(
-                "Ingredient “%s” has an invalid quantity." % food.name
+                gettext("Ingredient “%(name)s” has an invalid quantity.") % {"name": food.name}
             )
         ingredients.append(
             RecipeIngredient(
@@ -572,7 +572,7 @@ def _resolve_recipe(user, data):
 
     name = data.get("name")
     if not name:
-        raise ImportValidationError("A diet plan item is missing its recipe name.")
+        raise ImportValidationError(gettext("A diet plan item is missing its recipe name."))
     existing = Recipe.objects.filter(name=name, owner__in=[user, None], active=True).first()
     if existing is not None:
         return existing
@@ -592,11 +592,11 @@ def _populate_diet_plan(plan, payload):
     for meal_data in payload.get("meals") or []:
         meal_slot = _resolve_meal_slot(plan.user, meal_data.get("meal_slot"))
         if meal_slot is None:
-            raise ImportValidationError("A diet plan meal is missing its meal slot.")
+            raise ImportValidationError(gettext("A diet plan meal is missing its meal slot."))
         meal_target_calories = meal_data.get("target_calories")
         if not isinstance(meal_target_calories, int):
             raise ImportValidationError(
-                "A diet plan meal is missing its target calories."
+                gettext("A diet plan meal is missing its target calories.")
             )
         meal = DietPlanMeal.objects.create(
             diet_plan=plan,
@@ -611,13 +611,13 @@ def _populate_diet_plan(plan, payload):
             recipe_data = item_data.get("recipe")
             if bool(food_data) == bool(recipe_data):
                 raise ImportValidationError(
-                    "A diet plan item must reference exactly one of a food or a recipe."
+                    gettext("A diet plan item must reference exactly one of a food or a recipe.")
                 )
             food = _resolve_food(plan.user, food_data) if food_data else None
             recipe = _resolve_recipe(plan.user, recipe_data) if recipe_data else None
             quantity = _decimal_or_none(item_data.get("quantity"))
             if quantity is None:
-                raise ImportValidationError("A diet plan item has an invalid quantity.")
+                raise ImportValidationError(gettext("A diet plan item has an invalid quantity."))
             items.append(
                 DietPlanItem(
                     diet_plan_meal=meal,
@@ -646,7 +646,7 @@ def import_diet_plan(user, payload):
     to create along the way."""
     name = payload.get("name")
     if not name:
-        raise ImportValidationError("Missing diet plan name.")
+        raise ImportValidationError(gettext("Missing diet plan name."))
     target_calories = payload.get("target_calories")
     protein = _decimal_or_none(payload.get("target_protein_grams"))
     carbohydrate = _decimal_or_none(payload.get("target_carbohydrate_grams"))
@@ -657,7 +657,7 @@ def import_diet_plan(user, payload):
         or carbohydrate is None
         or fat is None
     ):
-        raise ImportValidationError("Missing or invalid diet plan targets.")
+        raise ImportValidationError(gettext("Missing or invalid diet plan targets."))
 
     plan = DietPlan.objects.create(
         user=user,

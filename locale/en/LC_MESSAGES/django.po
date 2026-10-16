@@ -10291,3 +10291,48 @@ msgstr ""
 
 msgid "Stretched that day"
 msgstr ""
+
+msgid "A prescription is missing its exercise name."
+msgstr ""
+
+msgid "Missing program name."
+msgstr ""
+
+msgid "An ingredient is missing its food name."
+msgstr ""
+
+#, python-format
+msgid "Ingredient “%(name)s” is missing required nutrition data."
+msgstr ""
+
+msgid "Missing recipe name."
+msgstr ""
+
+#, python-format
+msgid "Ingredient “%(name)s” has an invalid quantity."
+msgstr ""
+
+msgid "A diet plan item is missing its recipe name."
+msgstr ""
+
+msgid "A diet plan meal is missing its meal slot."
+msgstr ""
+
+msgid "A diet plan meal is missing its target calories."
+msgstr ""
+
+msgid "A diet plan item must reference exactly one of a food or a recipe."
+msgstr ""
+
+msgid "A diet plan item has an invalid quantity."
+msgstr ""
+
+msgid "Missing diet plan name."
+msgstr ""
+
+msgid "Missing or invalid diet plan targets."
+msgstr ""
+
+#, python-format
+msgid "%(rate)s kg/week"
+msgstr ""

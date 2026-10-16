@@ -10324,3 +10324,48 @@ msgstr "Det gick inte att skapa säkerhetskopian: %(detail)s"
 
 msgid "Stretched that day"
 msgstr "Stretchade den dagen"
+
+msgid "A prescription is missing its exercise name."
+msgstr "En övning i programmet saknar namn."
+
+msgid "Missing program name."
+msgstr "Programmets namn saknas."
+
+msgid "An ingredient is missing its food name."
+msgstr "En ingrediens saknar livsmedelsnamn."
+
+#, python-format
+msgid "Ingredient “%(name)s” is missing required nutrition data."
+msgstr "Ingrediensen ”%(name)s” saknar nödvändiga näringsuppgifter."
+
+msgid "Missing recipe name."
+msgstr "Receptets namn saknas."
+
+#, python-format
+msgid "Ingredient “%(name)s” has an invalid quantity."
+msgstr "Ingrediensen ”%(name)s” har en ogiltig mängd."
+
+msgid "A diet plan item is missing its recipe name."
+msgstr "En post i kostplanen saknar receptnamn."
+
+msgid "A diet plan meal is missing its meal slot."
+msgstr "En måltid i kostplanen saknar måltidstyp."
+
+msgid "A diet plan meal is missing its target calories."
+msgstr "En måltid i kostplanen saknar kalorimål."
+
+msgid "A diet plan item must reference exactly one of a food or a recipe."
+msgstr "En post i kostplanen måste ange antingen ett livsmedel eller ett recept, inte båda."
+
+msgid "A diet plan item has an invalid quantity."
+msgstr "En post i kostplanen har en ogiltig mängd."
+
+msgid "Missing diet plan name."
+msgstr "Kostplanens namn saknas."
+
+msgid "Missing or invalid diet plan targets."
+msgstr "Kostplanens mål saknas eller är ogiltiga."
+
+#, python-format
+msgid "%(rate)s kg/week"
+msgstr "%(rate)s kg/vecka"

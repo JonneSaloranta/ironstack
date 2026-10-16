@@ -9,6 +9,7 @@ from decimal import Decimal, InvalidOperation
 
 from django.db import transaction
 from django.db.models import Q
+from django.utils.translation import gettext as _
 
 from apps.core.data_exchange import ImportValidationError
 
@@ -219,7 +220,7 @@ def _resolve_exercise(user, data):
 
     name = data.get("name")
     if not name:
-        raise ImportValidationError("A prescription is missing its exercise name.")
+        raise ImportValidationError(_("A prescription is missing its exercise name."))
 
     if data.get("is_system", True):
         exercise = Exercise.objects.filter(owner__isnull=True, name=name, active=True).first()
@@ -265,7 +266,7 @@ def import_program(user, payload):
     all, never a half-built program with some workouts missing."""
     name = payload.get("name")
     if not name:
-        raise ImportValidationError("Missing program name.")
+        raise ImportValidationError(_("Missing program name."))
 
     program = Program.objects.create(
         owner=user,

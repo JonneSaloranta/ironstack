@@ -131,7 +131,7 @@
 {% if goal %}
   <div data-tour="nutrition-goal" class="card">
     <h2 class="card-title">{% trans "Current goal" %}</h2>
-    <p>{{ goal.get_goal_type_display }} — {{ goal.target_rate_kg_per_week }} kg/week</p>
+    <p>{{ goal.get_goal_type_display }} — {% blocktrans with rate=goal.target_rate_kg_per_week %}{{ rate }} kg/week{% endblocktrans %}</p>
     <a class="button-secondary" href="{% url 'nutrition:goal-edit' %}">{% trans "Change goal" %}</a>
   </div>
 {% endif %}

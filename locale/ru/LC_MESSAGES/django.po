@@ -10409,3 +10409,48 @@ msgstr "Не удалось создать резервную копию: %(deta
 
 msgid "Stretched that day"
 msgstr "В этот день была растяжка"
+
+msgid "A prescription is missing its exercise name."
+msgstr "У одного из упражнений программы нет названия."
+
+msgid "Missing program name."
+msgstr "Не указано название программы."
+
+msgid "An ingredient is missing its food name."
+msgstr "У одного из ингредиентов нет названия продукта."
+
+#, python-format
+msgid "Ingredient “%(name)s” is missing required nutrition data."
+msgstr "У ингредиента «%(name)s» нет обязательных данных о пищевой ценности."
+
+msgid "Missing recipe name."
+msgstr "Не указано название рецепта."
+
+#, python-format
+msgid "Ingredient “%(name)s” has an invalid quantity."
+msgstr "У ингредиента «%(name)s» неверное количество."
+
+msgid "A diet plan item is missing its recipe name."
+msgstr "У одного из пунктов плана питания нет названия рецепта."
+
+msgid "A diet plan meal is missing its meal slot."
+msgstr "У одного из приёмов пищи в плане не указан тип приёма пищи."
+
+msgid "A diet plan meal is missing its target calories."
+msgstr "У одного из приёмов пищи в плане не указана целевая калорийность."
+
+msgid "A diet plan item must reference exactly one of a food or a recipe."
+msgstr "Пункт плана питания должен ссылаться либо на продукт, либо на рецепт, но не на оба сразу."
+
+msgid "A diet plan item has an invalid quantity."
+msgstr "У пункта плана питания неверное количество."
+
+msgid "Missing diet plan name."
+msgstr "Не указано название плана питания."
+
+msgid "Missing or invalid diet plan targets."
+msgstr "Цели плана питания не указаны или неверны."
+
+#, python-format
+msgid "%(rate)s kg/week"
+msgstr "%(rate)s кг/нед."

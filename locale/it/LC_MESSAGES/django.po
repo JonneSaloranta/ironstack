@@ -10417,3 +10417,48 @@ msgstr "Creazione del backup non riuscita: %(detail)s"
 
 msgid "Stretched that day"
 msgstr "Stretching quel giorno"
+
+msgid "A prescription is missing its exercise name."
+msgstr "A un esercizio del programma manca il nome."
+
+msgid "Missing program name."
+msgstr "Manca il nome del programma."
+
+msgid "An ingredient is missing its food name."
+msgstr "A un ingrediente manca il nome dell'alimento."
+
+#, python-format
+msgid "Ingredient “%(name)s” is missing required nutrition data."
+msgstr "All'ingrediente “%(name)s” mancano dati nutrizionali obbligatori."
+
+msgid "Missing recipe name."
+msgstr "Manca il nome della ricetta."
+
+#, python-format
+msgid "Ingredient “%(name)s” has an invalid quantity."
+msgstr "L'ingrediente “%(name)s” ha una quantità non valida."
+
+msgid "A diet plan item is missing its recipe name."
+msgstr "A una voce del piano alimentare manca il nome della ricetta."
+
+msgid "A diet plan meal is missing its meal slot."
+msgstr "A un pasto del piano alimentare manca il tipo di pasto."
+
+msgid "A diet plan meal is missing its target calories."
+msgstr "A un pasto del piano alimentare mancano le calorie obiettivo."
+
+msgid "A diet plan item must reference exactly one of a food or a recipe."
+msgstr "Una voce del piano alimentare deve riferirsi a un alimento o a una ricetta, non a entrambi."
+
+msgid "A diet plan item has an invalid quantity."
+msgstr "Una voce del piano alimentare ha una quantità non valida."
+
+msgid "Missing diet plan name."
+msgstr "Manca il nome del piano alimentare."
+
+msgid "Missing or invalid diet plan targets."
+msgstr "Gli obiettivi del piano alimentare mancano o non sono validi."
+
+#, python-format
+msgid "%(rate)s kg/week"
+msgstr "%(rate)s kg/settimana"
