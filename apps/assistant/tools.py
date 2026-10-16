@@ -485,7 +485,9 @@ def search_recipes(ctx, args):
     from apps.nutrition.models import Recipe
 
     query = _str_arg(args, "query", max_length=100)
-    recipes = Recipe.objects.filter(Q(owner=ctx.user) | Q(owner__isnull=True)).prefetch_related(
+    recipes = Recipe.objects.filter(
+        Q(owner=ctx.user) | Q(owner__isnull=True), active=True
+    ).prefetch_related(
         "meal_slots"
     )
     if query:

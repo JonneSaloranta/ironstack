@@ -1021,10 +1021,12 @@ class RecipeListView(LoginRequiredMixin, View):
 
         query = request.GET.get("q", "").strip()
 
-        my_recipes_qs = Recipe.objects.filter(owner=request.user).prefetch_related(
+        my_recipes_qs = Recipe.objects.filter(owner=request.user, active=True).prefetch_related(
             "meal_slots"
         ).order_by("-created_at")
-        template_recipes_qs = Recipe.objects.filter(owner__isnull=True).prefetch_related(
+        template_recipes_qs = Recipe.objects.filter(
+            owner__isnull=True, active=True
+        ).prefetch_related(
             "meal_slots"
         ).order_by("name")
         if query:
@@ -1082,7 +1084,7 @@ def _owned_recipe_or_404(request, pk):
     read-only helper below."""
     from .models import Recipe
 
-    return get_object_or_404(Recipe, pk=pk, owner=request.user)
+    return get_object_or_404(Recipe, pk=pk, owner=request.user, active=True)
 
 
 def _viewable_recipe_or_404(request, pk):
@@ -1094,7 +1096,9 @@ def _viewable_recipe_or_404(request, pk):
 
     from .models import Recipe
 
-    return get_object_or_404(Recipe, Q(owner=request.user) | Q(owner__isnull=True), pk=pk)
+    return get_object_or_404(
+        Recipe, Q(owner=request.user) | Q(owner__isnull=True), pk=pk, active=True
+    )
 
 
 @login_required
@@ -1180,7 +1184,7 @@ def recipe_delete(request, pk):
     if request.method != "POST":
         return HttpResponseNotAllowed(["POST"])
     recipe = _owned_recipe_or_404(request, pk)
-    recipe.delete()
+    services.delete_recipe(recipe)
     return redirect("nutrition:recipe-list")
 
 

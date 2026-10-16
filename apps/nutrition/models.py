@@ -497,6 +497,10 @@ class Recipe(TimeStampedModel):
     # a single `meal_slot`. None picked means "any meal", so an untagged
     # recipe stays eligible everywhere.
     meal_slots = models.ManyToManyField(MealSlot, related_name="+", blank=True)
+    # False once "deleted" while diary entries or diet plans still use
+    # it — see services.delete_recipe. Hidden from every list, search
+    # and picker, but kept so that history still adds up.
+    active = models.BooleanField(default=True)
 
     class Meta:
         ordering = ["name"]
@@ -545,8 +549,13 @@ class DiaryEntry(TimeStampedModel):
     food = models.ForeignKey(
         Food, related_name="diary_entries", null=True, blank=True, on_delete=models.CASCADE
     )
+    # RESTRICT, not CASCADE: deleting a recipe must never take past
+    # diary entries with it (services.delete_recipe soft-deletes a
+    # recipe still in use instead). Unlike PROTECT, RESTRICT still lets
+    # a cascade that removes these entries too — deleting the user —
+    # go through.
     recipe = models.ForeignKey(
-        Recipe, related_name="diary_entries", null=True, blank=True, on_delete=models.CASCADE
+        Recipe, related_name="diary_entries", null=True, blank=True, on_delete=models.RESTRICT
     )
     # Grams/ml/pieces for a food entry, servings for a recipe entry,
     # portions (normally 1) for a quick entry.
@@ -746,8 +755,9 @@ class DietPlanItem(models.Model):
     food = models.ForeignKey(
         Food, related_name="+", null=True, blank=True, on_delete=models.CASCADE
     )
+    # RESTRICT — see DiaryEntry.recipe.
     recipe = models.ForeignKey(
-        Recipe, related_name="+", null=True, blank=True, on_delete=models.CASCADE
+        Recipe, related_name="+", null=True, blank=True, on_delete=models.RESTRICT
     )
     quantity = models.DecimalField(max_digits=8, decimal_places=2)
     order = models.PositiveSmallIntegerField(default=0)

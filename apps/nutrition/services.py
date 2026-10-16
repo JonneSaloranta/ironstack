@@ -573,7 +573,7 @@ def _resolve_recipe(user, data):
     name = data.get("name")
     if not name:
         raise ImportValidationError("A diet plan item is missing its recipe name.")
-    existing = Recipe.objects.filter(name=name, owner__in=[user, None]).first()
+    existing = Recipe.objects.filter(name=name, owner__in=[user, None], active=True).first()
     if existing is not None:
         return existing
     return import_recipe(user, data)
@@ -964,6 +964,28 @@ def scale_nutrition(food, quantity) -> ScaledNutrition:
         ),
         sodium_mg=food.sodium_mg * ratio if food.sodium_mg is not None else None,
     )
+
+
+def delete_recipe(recipe):
+    """Delete `recipe`, unless diary entries or diet plans still use it.
+
+    A recipe still referenced is only hidden (`active=False`): those
+    diary entries are history, and their calories come from this
+    recipe's ingredients, so removing it would silently erase past days
+    (`DiaryEntry.recipe` is RESTRICT for the same reason). A recipe
+    nothing refers to is deleted outright.
+    """
+    from .models import DiaryEntry, DietPlanItem
+
+    in_use = (
+        DiaryEntry.objects.filter(recipe=recipe).exists()
+        or DietPlanItem.objects.filter(recipe=recipe).exists()
+    )
+    if in_use:
+        recipe.active = False
+        recipe.save(update_fields=["active", "updated_at"])
+    else:
+        recipe.delete()
 
 
 def recipe_total_nutrition(recipe) -> ScaledNutrition:

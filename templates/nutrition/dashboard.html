@@ -65,7 +65,7 @@
     {% for meal in todays_plan.meals %}
       <p class="text-muted">
         <strong>{{ meal.meal_slot.name|translate_content }}:</strong>
-        {% for item in meal.items.all %}{% if item.food %}<a class="inline-item-link" href="{% url 'nutrition:food-detail' item.food.pk %}">{{ item.food.name }}</a>{% else %}<a class="inline-item-link" href="{% url 'nutrition:recipe-detail' item.recipe.pk %}">{% trans item.recipe.name %}</a>{% endif %}{% if not forloop.last %}, {% endif %}{% empty %}{% trans "Nothing planned" %}{% endfor %}
+        {% for item in meal.items.all %}{% if item.food %}<a class="inline-item-link" href="{% url 'nutrition:food-detail' item.food.pk %}">{{ item.food.name }}</a>{% else %}{% if item.recipe.active %}<a class="inline-item-link" href="{% url 'nutrition:recipe-detail' item.recipe.pk %}">{% trans item.recipe.name %}</a>{% else %}{% trans item.recipe.name %}{% endif %}{% endif %}{% if not forloop.last %}, {% endif %}{% empty %}{% trans "Nothing planned" %}{% endfor %}
       </p>
     {% endfor %}
     <div class="row">

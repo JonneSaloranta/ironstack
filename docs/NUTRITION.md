@@ -506,9 +506,21 @@ turning many per-store reports into one representative figure.
 
 ```
 Recipe: owner (nullable), name, servings, instructions (optional),
-  meal_slot (nullable FK, SET_NULL)
+  meal_slots (M2M), active
 RecipeIngredient: recipe (FK), food (FK), quantity, order
 ```
+
+**Deleting a recipe never deletes diary history.** A diary entry's
+calories come from its recipe's ingredients, so `DiaryEntry.recipe`
+(and `DietPlanItem.recipe`) are `RESTRICT`, not `CASCADE` — the old
+cascade silently erased every past day that had logged the recipe.
+`services.delete_recipe` (used by the web UI and the API's `DELETE`)
+deletes a recipe nothing refers to, and otherwise only sets
+`active=False`: it disappears from the recipe list, search, pickers,
+the diet builder and the assistant, while the diary and existing diet
+plans still show it by name (without a link). `RESTRICT` rather than
+`PROTECT` so deleting the user, which removes their diary entries in
+the same cascade, still works.
 
 `owner=None` means a shared **template recipe** — visible and usable
 by every user, not just whoever created it, the same

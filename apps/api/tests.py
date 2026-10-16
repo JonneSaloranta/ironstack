@@ -864,6 +864,28 @@ class NutritionEndpointTests(APITestCase):
         self.assertEqual(response.status_code, 204)
         self.assertFalse(Recipe.objects.filter(pk=self.recipe.pk).exists())
 
+    def test_deleting_a_recipe_used_in_the_diary_only_hides_it(self):
+        from datetime import date
+        from decimal import Decimal
+
+        from apps.nutrition.models import DiaryEntry
+
+        entry = DiaryEntry.objects.create(
+            user=self.alice, date=date(2026, 1, 1), meal_slot=self.breakfast,
+            recipe=self.recipe, quantity=Decimal("1"),
+        )
+        response = self.client.delete(
+            reverse("api:recipe-detail", args=[self.recipe.pk]), **self._auth()
+        )
+        self.assertEqual(response.status_code, 204)
+        self.assertTrue(DiaryEntry.objects.filter(pk=entry.pk).exists())
+        self.assertEqual(
+            self.client.get(
+                reverse("api:recipe-detail", args=[self.recipe.pk]), **self._auth()
+            ).status_code,
+            404,
+        )
+
     def test_adding_an_ingredient_to_my_own_recipe(self):
         response = self.client.post(
             reverse("api:recipe-ingredient-list"),

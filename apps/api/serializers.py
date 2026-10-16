@@ -569,7 +569,7 @@ class RecipeIngredientSerializer(serializers.ModelSerializer):
         # workout — an ingredient can only be added to a recipe this
         # user actually owns.
         request = self.context["request"]
-        if value.owner_id != request.user.id:
+        if value.owner_id != request.user.id or not value.active:
             raise serializers.ValidationError("Not a recipe you own.")
         return value
 
@@ -641,7 +641,7 @@ class DiaryEntrySerializer(serializers.ModelSerializer):
 
     def validate_recipe(self, value):
         request = self.context["request"]
-        if value.owner_id != request.user.id:
+        if value.owner_id != request.user.id or not value.active:
             raise serializers.ValidationError("Not a recipe you own.")
         return value
 

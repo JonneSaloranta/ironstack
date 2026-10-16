@@ -4641,6 +4641,63 @@ class RecipeViewTests(TestCase):
         entry = DiaryEntry.objects.get(user=self.alice, recipe=recipe)
         self.assertEqual(entry.date, yesterday)
 
+    def test_deleting_an_unused_recipe_removes_it(self):
+        recipe = Recipe.objects.create(owner=self.alice, name="Bowl", servings=1)
+        response = self.client.post(reverse("nutrition:recipe-delete", args=[recipe.pk]))
+        self.assertRedirects(response, reverse("nutrition:recipe-list"))
+        self.assertFalse(Recipe.objects.filter(pk=recipe.pk).exists())
+
+    def test_deleting_a_recipe_keeps_the_diary_entries_that_used_it(self):
+        # Regression: DiaryEntry.recipe was CASCADE and the recipe was
+        # hard-deleted, so every past day that logged it silently lost
+        # that entry and its calories.
+        recipe = Recipe.objects.create(owner=self.alice, name="Bowl", servings=1)
+        RecipeIngredient.objects.create(recipe=recipe, food=self.chicken, quantity=Decimal("200"))
+        slot = MealSlot.objects.get(name="Lunch", owner=None)
+        last_week = timezone.localdate() - timedelta(days=7)
+        entry = DiaryEntry.objects.create(
+            user=self.alice, date=last_week, meal_slot=slot, recipe=recipe, quantity=Decimal("1")
+        )
+        calories_before = services.daily_totals(self.alice, last_week).calories
+
+        self.client.post(reverse("nutrition:recipe-delete", args=[recipe.pk]))
+
+        self.assertTrue(DiaryEntry.objects.filter(pk=entry.pk).exists())
+        recipe.refresh_from_db()
+        self.assertFalse(recipe.active)
+        self.assertEqual(services.daily_totals(self.alice, last_week).calories, calories_before)
+        # Gone from everywhere a recipe is picked, still named in the diary.
+        self.assertNotContains(self.client.get(reverse("nutrition:recipe-list")), "Bowl")
+        self.assertEqual(
+            self.client.get(reverse("nutrition:recipe-detail", args=[recipe.pk])).status_code,
+            404,
+        )
+        diary = self.client.get(reverse("nutrition:diary-day", args=[last_week.isoformat()]))
+        self.assertContains(diary, "Bowl")
+        self.assertNotContains(diary, reverse("nutrition:recipe-detail", args=[recipe.pk]))
+
+    def test_a_recipe_cannot_be_hard_deleted_from_under_a_diary_entry(self):
+        from django.db.models import RestrictedError
+
+        recipe = Recipe.objects.create(owner=self.alice, name="Bowl", servings=1)
+        DiaryEntry.objects.create(
+            user=self.alice, date=timezone.localdate(),
+            meal_slot=MealSlot.objects.get(name="Lunch", owner=None),
+            recipe=recipe, quantity=Decimal("1"),
+        )
+        with self.assertRaises(RestrictedError):
+            recipe.delete()
+
+    def test_deleting_a_user_still_removes_their_diary_and_recipes(self):
+        recipe = Recipe.objects.create(owner=self.alice, name="Bowl", servings=1)
+        DiaryEntry.objects.create(
+            user=self.alice, date=timezone.localdate(),
+            meal_slot=MealSlot.objects.get(name="Lunch", owner=None),
+            recipe=recipe, quantity=Decimal("1"),
+        )
+        self.alice.delete()
+        self.assertFalse(Recipe.objects.filter(pk=recipe.pk).exists())
+
     def test_deleting_a_recipe_that_does_not_belong_to_the_user_is_a_404(self):
         recipe = Recipe.objects.create(owner=self.bob, name="Bob's Bowl", servings=1)
         response = self.client.post(reverse("nutrition:recipe-delete", args=[recipe.pk]))

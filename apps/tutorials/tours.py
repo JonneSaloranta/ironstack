@@ -85,7 +85,9 @@ def _foods(user):
 def _recipes(user):
     from apps.nutrition.models import Recipe
 
-    return Recipe.objects.filter(Q(owner=user) | Q(owner__isnull=True)).order_by("owner", "name")
+    return Recipe.objects.filter(Q(owner=user) | Q(owner__isnull=True), active=True).order_by(
+        "owner", "name"
+    )
 
 
 def _diet_plans(user):
