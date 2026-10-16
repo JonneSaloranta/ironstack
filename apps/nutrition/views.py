@@ -824,7 +824,7 @@ class DiaryAddEntryView(LoginRequiredMixin, View):
         )
 
     def post(self, request):
-        from .models import DiaryEntry, Food
+        from .models import DiaryEntry
 
         form = DiaryAddEntryForm(request.POST, user=request.user)
         target_date = _parse_diary_date(request.POST.get("date"))
@@ -1194,7 +1194,7 @@ def recipe_ingredient_create(request, recipe_pk):
     rows, so finding/importing the right one has to be at least as
     easy here as it already is in the food diary, not a bare dropdown
     of foods the user already had to create by hand elsewhere."""
-    from .models import Food, RecipeIngredient
+    from .models import RecipeIngredient
 
     recipe = _owned_recipe_or_404(request, recipe_pk)
     if request.method != "POST":
@@ -1725,7 +1725,7 @@ def diet_plan_meal_item_add(request, plan_pk, meal_pk):
     own "deliberately simple, not a knapsack solver" scope note); a
     user filling out a real day's plan needs to be able to add more to
     a meal, not just swap its one item."""
-    from .models import DietPlanMeal, Food
+    from .models import DietPlanMeal
 
     plan = _owned_diet_plan_or_404(request, plan_pk)
     meal = get_object_or_404(DietPlanMeal, pk=meal_pk, diet_plan=plan)
