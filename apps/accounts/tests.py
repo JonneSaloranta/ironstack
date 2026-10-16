@@ -20,7 +20,11 @@ from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 
 from apps.accounts import twofactor
-from apps.accounts.forms import LOGIN_ATTEMPT_LIMIT, PASSWORD_RESET_ATTEMPT_LIMIT
+from apps.accounts.forms import (
+    LOGIN_ATTEMPT_IP_LIMIT,
+    LOGIN_ATTEMPT_LIMIT,
+    PASSWORD_RESET_ATTEMPT_LIMIT,
+)
 from apps.accounts.models import SiteDisclaimer
 from apps.accounts.views import RateLimitedLoginView
 
@@ -383,13 +387,32 @@ class LoginRateLimitTests(TestCase):
     def tearDown(self):
         cache.clear()
 
-    def _attempt(self, password="wrong-password", ip="203.0.113.10"):
+    def _attempt(self, password="wrong-password", ip="203.0.113.10", username="alice"):
         return self.client.post(
             reverse("login"),
-            {"username": "alice", "password": password},
+            {"username": username, "password": password},
             REMOTE_ADDR=ip,
             HTTP_X_REAL_IP=ip,
         )
+
+    def test_logging_into_your_own_account_does_not_reset_someone_elses_lockout(self):
+        User.objects.create_user(username="mallory", password="mallory-pass")
+        for _ in range(LOGIN_ATTEMPT_LIMIT - 1):
+            self._attempt()
+        self._attempt(username="mallory", password="mallory-pass")
+        self.client.logout()
+
+        response = self._attempt()
+        self.assertNotContains(response, "Too many failed login attempts")
+        response = self._attempt(password="s3cret-pass")
+        self.assertContains(response, "Too many failed login attempts")
+        self.assertNotIn("_auth_user_id", self.client.session)
+
+    def test_cycling_through_usernames_from_one_ip_is_capped(self):
+        for i in range(LOGIN_ATTEMPT_IP_LIMIT):
+            self._attempt(username=f"guess{i}")
+        response = self._attempt(username="someone-new")
+        self.assertContains(response, "Too many failed login attempts")
 
     def test_failed_attempts_under_the_limit_are_not_blocked(self):
         for _ in range(LOGIN_ATTEMPT_LIMIT - 1):

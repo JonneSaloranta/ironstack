@@ -82,13 +82,17 @@ API-key-only mechanism that never applies to the session-based web
 login. `apps.accounts.forms.RateLimitedAuthenticationForm` (wired in
 via `apps.accounts.views.RateLimitedLoginView`, registered ahead of
 `django.contrib.auth.urls`' own `login/` in `config.urls`) blocks
-further attempts from the same client IP for 15 minutes after 5 failed
-attempts within that window, using the same shared `DatabaseCache`
-`apps.api`'s throttling does. Keyed by client IP (`X-Real-IP`, which
+further attempts for 15 minutes after 5 failed attempts for one
+username from one client IP, or 20 failed attempts from that IP across
+all usernames, using the same shared `DatabaseCache` `apps.api`'s
+throttling does. A successful login clears only that username's own
+counter from that IP — clearing a single per-IP counter on any success
+let someone log into their own account between guesses and try other
+people's passwords without end — and never the per-IP total. Keyed by client IP (`X-Real-IP`, which
 both `compose/nginx/nginx.conf` and `compose/caddy/Caddyfile` set —
 see `apps.core.request.client_ip`'s own docstring for why plain
-`REMOTE_ADDR` doesn't work behind either proxy), not the submitted
-username, so an attacker can't lock a real user out on purpose by
+`REMOTE_ADDR` doesn't work behind either proxy), never by the submitted
+username alone, so an attacker can't lock a real user out on purpose by
 deliberately failing their login from elsewhere. The same helper backs
 `apps.social`'s own invite-code lookup throttle — see "Friends,
 groups, and messaging" below.
