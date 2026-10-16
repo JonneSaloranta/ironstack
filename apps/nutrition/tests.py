@@ -2375,12 +2375,12 @@ class NutritionSubnavTests(TestCase):
         response = self.client.get(reverse("nutrition:recipe-list"))
         self.assertContains(
             response,
-            f'href="{reverse("nutrition:recipe-list")}" aria-current="true"',
+            f'href="{reverse("nutrition:recipe-list")}" aria-current="page"',
         )
         # Foods' own tab must not *also* be marked current at the same time.
         self.assertNotContains(
             response,
-            f'href="{reverse("nutrition:food-list")}" aria-current="true"',
+            f'href="{reverse("nutrition:food-list")}" aria-current="page"',
         )
 
     def test_diary_related_pages_all_highlight_the_diary_tab(self):
@@ -2390,7 +2390,7 @@ class NutritionSubnavTests(TestCase):
         response = self.client.get(reverse("nutrition:diary-add-entry"))
         self.assertContains(
             response,
-            f'href="{reverse("nutrition:diary-day")}" aria-current="true"',
+            f'href="{reverse("nutrition:diary-day")}" aria-current="page"',
         )
 
 

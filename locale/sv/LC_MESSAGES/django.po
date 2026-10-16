@@ -10419,3 +10419,9 @@ msgstr "E-postadressen är bekräftad — du kan logga in nu."
 
 msgid "Email confirmation"
 msgstr "E-postbekräftelse"
+
+msgid "Actions"
+msgstr "Åtgärder"
+
+msgid "Show every tutorial again, including the ones you've finished?"
+msgstr "Visa alla guider igen, även de du redan har gått igenom?"

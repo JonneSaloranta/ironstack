@@ -389,6 +389,12 @@ class ErrorPageTests(TestCase):
         self.assertEqual(response.status_code, 500)
         self.assertIn(b"Something went wrong", response.content)
 
+    def test_500_page_has_a_heading_and_the_active_language(self):
+        with translation.override("fi"):
+            response = server_error(RequestFactory().get("/"))
+        self.assertIn(b'<html lang="fi">', response.content)
+        self.assertIn(b"<h1>", response.content)
+
 
 class ContentSecurityPolicyTests(TestCase):
     """apps.core.middleware.ContentSecurityPolicyMiddleware — see its

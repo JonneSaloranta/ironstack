@@ -12,7 +12,7 @@
     {% endif %}
 
     {% if local %}
-      <h3>{% trans "Your foods" %}</h3>
+      <h2 class="card-title">{% trans "Your foods" %}</h2>
       {% for food in local %}
         {% if mode == "browse" %}
           <div class="card card-action-row">
@@ -44,7 +44,7 @@
     {% endif %}
 
     {% if off_results %}
-      <h3>{% trans "From OpenFoodFacts" %}</h3>
+      <h2 class="card-title">{% trans "From OpenFoodFacts" %}</h2>
       {% for product in off_results %}
         <form class="card card-action-row" method="post" action="{{ post_url }}">
           {% csrf_token %}

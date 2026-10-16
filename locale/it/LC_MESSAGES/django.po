@@ -10512,3 +10512,9 @@ msgstr "Email confermata: ora puoi accedere."
 
 msgid "Email confirmation"
 msgstr "Conferma email"
+
+msgid "Actions"
+msgstr "Azioni"
+
+msgid "Show every tutorial again, including the ones you've finished?"
+msgstr "Mostrare di nuovo tutti i tutorial, anche quelli già completati?"

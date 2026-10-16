@@ -10505,3 +10505,9 @@ msgstr "Адрес подтверждён — теперь можно войти
 
 msgid "Email confirmation"
 msgstr "Подтверждение почты"
+
+msgid "Actions"
+msgstr "Действия"
+
+msgid "Show every tutorial again, including the ones you've finished?"
+msgstr "Показать все подсказки снова, включая уже пройденные?"

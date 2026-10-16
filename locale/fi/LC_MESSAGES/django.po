@@ -10445,3 +10445,9 @@ msgstr "Sähköpostiosoite vahvistettu — voit nyt kirjautua sisään."
 
 msgid "Email confirmation"
 msgstr "Sähköpostin vahvistus"
+
+msgid "Actions"
+msgstr "Toiminnot"
+
+msgid "Show every tutorial again, including the ones you've finished?"
+msgstr "Näytetäänkö kaikki ohjeet uudelleen, myös jo käydyt?"

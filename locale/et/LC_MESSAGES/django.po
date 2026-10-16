@@ -10414,3 +10414,9 @@ msgstr "E-post kinnitatud — saad nüüd sisse logida."
 
 msgid "Email confirmation"
 msgstr "E-posti kinnitamine"
+
+msgid "Actions"
+msgstr "Toimingud"
+
+msgid "Show every tutorial again, including the ones you've finished?"
+msgstr "Kas näidata kõiki juhendeid uuesti, ka neid, mille oled juba läbinud?"

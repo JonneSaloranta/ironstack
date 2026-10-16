@@ -10386,3 +10386,9 @@ msgstr ""
 
 msgid "Email confirmation"
 msgstr ""
+
+msgid "Actions"
+msgstr ""
+
+msgid "Show every tutorial again, including the ones you've finished?"
+msgstr ""
