@@ -25,6 +25,30 @@ narrated summary of the same version.
 - …and how much it thinks before answering (low, medium, high, extra
   high, maximum).
 
+### Changed
+- Backups: "Create backup" and "Restore" now run in the background, and
+  the Backups page shows how it's going and the result. A restore that
+  fails partway puts the previous database and media back.
+
+### Fixed
+- Deleting a recipe no longer deletes the diary entries that used it —
+  a recipe still in use is hidden instead.
+- Deleting a set and logging another could give two sets the same
+  number; set numbers are now always unique.
+- A finished workout can no longer be switched between completed and
+  abandoned afterwards (web and API).
+- Logging a set after your session expired showed a login form inside
+  the training panel; it now takes you to the login page.
+- A chat or assistant message that failed to send no longer clears what
+  you typed, and the reason is shown.
+- After logging a set with the keyboard, focus stays in the form instead
+  of jumping to the top of the page.
+
+### Security
+- Login rate limiting can no longer be reset by logging into your own
+  account between guesses.
+- Push notifications are only ever sent to known browser push services.
+
 ## [1.24.0] — 2026-10-03
 
 ### Added

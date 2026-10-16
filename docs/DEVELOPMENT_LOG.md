@@ -5933,3 +5933,51 @@ often already removed. File downloads now carry `download` so the bar
 skips them; anything else that doesn't navigate clears after 20 s. Reduced
 motion: a static full-width bar. Browser tests in
 `apps/core/test_ui_behaviour.py`.
+
+## Audit fixes: history, security, backups, focus
+
+From a full read-only audit (UX, accessibility, backend, reliability);
+these are its P0/P1 findings.
+
+- **Recipes** — deleting one hard-deleted it and `DiaryEntry.recipe`
+  cascaded, silently erasing past diary days. `services.delete_recipe`
+  now soft-deletes (`Recipe.active`) a recipe still in use, and the two
+  FKs are `RESTRICT` (not `PROTECT`, so deleting the user still
+  cascades). Inactive recipes are filtered from lists, pickers, diet
+  builder, assistant, tours, import lookup and the API; the diary shows
+  them unlinked. Migration `nutrition/0025`.
+- **Set numbers** — `log_set` used `count() + 1`, reusing a number after
+  a delete. Now `Max + 1` under a row lock, plus a unique constraint
+  (`workouts/0004` renumbers existing duplicates in order, `0005` adds
+  the constraint — separate because Postgres won't ALTER a table with
+  pending trigger events from the data update).
+- **Finished sessions** — `complete_session`/`abandon_session` raise
+  `SessionNotInProgress`; the API rejects changing a finished session's
+  status (re-sending the same status is a no-op).
+- **Login rate limit** — per IP + username (cleared only by that
+  username's own success) plus a per-IP total that never resets on
+  success.
+- **Push SSRF** — endpoints must be https on `PUSH_ENDPOINT_HOSTS`,
+  checked on subscribe and before sending. Re-pointing an existing
+  endpoint to the user now subscribing is kept on purpose: it's what a
+  shared device needs, and taking someone's subscription would need
+  their secret endpoint URL.
+- **Expired session over HTMX** — `HtmxLoginRedirectMiddleware` turns
+  the login redirect into `HX-Redirect` back to the current page.
+- **Chat drafts** — composers use `data-reset-on-success`
+  (`htmx-errors.js`) instead of `hx-on::after-request="this.reset()"`,
+  which also fired on failures; a rejected send answers the composer
+  (`HX-Retarget`, `X-Form-Rejected`) rather than the polled thread.
+- **Backups** — `apps.core.backup_tasks` runs create/restore as a
+  detached `run_backup_task` process (state in a JSON file in
+  `BACKUP_DIR`, since a restore replaces the database). Chosen over the
+  `backup-scheduler` container: that one sleeps until the backup hour
+  and isn't running in dev. `restore_backup` now stages media and keeps
+  `<db>_previous` until `migrate` succeeds, rolling both back on
+  failure; archives are written as `.partial` first. Verified end to end
+  against a scratch database (restore, and a forced `migrate` failure
+  rolling back), not only with mocks.
+- **Focus after swaps** — `static/js/htmx-focus.js` moves focus to the
+  new content's `[data-autofocus]` (the set's weight field) when a swap
+  removed the focused element. htmx already restored focus for an
+  element whose id survives; the submit button has none.
