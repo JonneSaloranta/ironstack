@@ -341,6 +341,29 @@ class ProgramUpdateFlowTests(TestCase):
         with self.assertRaises(services.CoachingError):
             services.apply_program_update(self.copy, acting_user=self.coach)
 
+    def _coach_publishes_a_new_version(self):
+        Workout.objects.create(program=self.program, name="Day 2", order=1)
+        self.program.bump_version()
+
+    def test_a_former_client_gets_no_more_updates(self):
+        relationship = CoachingRelationship.objects.get(coach=self.coach, coachee=self.coachee)
+        services.end_coaching_relationship(relationship, acting_user=self.coachee)
+        self._coach_publishes_a_new_version()
+
+        self.assertFalse(services.program_update_available(self.copy))
+        with self.assertRaises(services.CoachingError):
+            services.program_update_diff(self.copy)
+        with self.assertRaises(services.CoachingError):
+            services.apply_program_update(self.copy, acting_user=self.coachee)
+        self.assertEqual(self.copy.workouts.count(), 1)
+
+    def test_an_unshared_client_gets_no_more_updates(self):
+        self.program.shared_with_clients.remove(self.coachee)
+        self._coach_publishes_a_new_version()
+        self.assertFalse(services.program_update_available(self.copy))
+        with self.assertRaises(services.CoachingError):
+            services.apply_program_update(self.copy, acting_user=self.coachee)
+
     def test_existing_workout_history_survives_an_applied_update(self):
         """CLAUDE.md: "Workout history must remain historically
         trustworthy." — applying a coach's update deletes and
@@ -371,6 +394,19 @@ class DietPlanUpdateFlowTests(TestCase):
         make_relationship(self.coach, self.coachee)
         self.plan = make_shared_diet_plan(self.coach, self.coachee)
         self.copy = services.import_diet_plan_from_coach(self.plan, self.coachee)
+
+    def test_a_former_client_gets_no_more_updates(self):
+        relationship = CoachingRelationship.objects.get(coach=self.coach, coachee=self.coachee)
+        services.end_coaching_relationship(relationship, acting_user=self.coachee)
+        meal = self.plan.meals.first()
+        meal.target_calories = 999
+        meal.save()
+        self.plan.bump_version()
+
+        self.assertFalse(services.diet_plan_update_available(self.copy))
+        with self.assertRaises(services.CoachingError):
+            services.apply_diet_plan_update(self.copy, acting_user=self.coachee)
+        self.assertNotEqual(self.copy.meals.first().target_calories, 999)
 
     def test_no_update_when_unchanged(self):
         self.assertFalse(services.diet_plan_update_available(self.copy))
