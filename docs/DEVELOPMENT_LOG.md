@@ -5981,3 +5981,38 @@ these are its P0/P1 findings.
   new content's `[data-autofocus]` (the set's weight field) when a swap
   removed the focused element. htmx already restored focus for an
   element whose id survives; the submit button has none.
+
+## Audit fixes, second round (P2)
+
+- **Security** — food_id lookups scoped to visible foods; coach update
+  check/diff/apply require the source to still be visible to the copy's
+  owner; API profile `email` read-only; backups require `is_superuser`
+  (`SuperuserRequiredMixin`).
+- **Workouts** — `start_session_once` (views only) returns an
+  in-progress session for the same workout started in the last 10 s.
+  `start_session` itself is unchanged; a one-active-workout rule is left
+  as a product decision.
+- **Accessibility** — persistent HTMX error toast with Dismiss; PR toasts
+  pause on hover/focus; set forms through `field_a11y` (every error id
+  linked) with "More options" open on error; calendar day buttons carry
+  a visually hidden description and distinct PR/abandoned shapes;
+  carousel Pause button, focus pause, reduced-motion default, 24px dots;
+  live searches announce a count via an out-of-band update of a
+  persistent `#search-status`; chat polls get 204 when nothing is newer
+  (`data-latest-message` + `hx-vals`); translations in Alpine strings go
+  through `escapejs`, enforced by a template scan test.
+- **Performance** — achievements volume via SUM, recently-active via a
+  subquery (one query); uploaded exercise images resized to 1600px and
+  re-encoded (drops EXIF); hashed static files `immutable` for a year in
+  nginx and Caddy (hashed names only — collectstatic keeps the unhashed
+  originals too).
+- **Ops/CI** — workers wait for `web` to be healthy (after `migrate`);
+  `publish-image` needs the accessibility job; tests run under coverage
+  with xdist via `parallel` + `patch = ["subprocess"]`, reported in the
+  job summary (90%), not enforced.
+- **i18n** — import validation errors and the goal rate translated.
+
+Left open, needing a decision: OIDC linking by unverified email (depends
+on the Authentik email mapping), snapshotting diary macros, and
+snapshotting exercise names onto performed exercises.
+

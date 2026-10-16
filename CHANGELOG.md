@@ -26,6 +26,8 @@ narrated summary of the same version.
   high, maximum).
 
 ### Changed
+- Background services now start only after the web service has applied
+  migrations.
 - Backups: "Create backup" and "Restore" now run in the background, and
   the Backups page shows how it's going and the result. A restore that
   fails partway puts the previous database and media back.
@@ -43,11 +45,40 @@ narrated summary of the same version.
   you typed, and the reason is shown.
 - After logging a set with the keyboard, focus stays in the form instead
   of jumping to the top of the page.
+- Double-tapping Start no longer opens two workouts.
+- Error messages for a failed change stay until you dismiss them; new-PR
+  messages pause while you hover over or focus them.
+- Set-form errors are read out when you focus the field, and an error in
+  RPE, RIR or notes opens "More options" instead of hiding inside it.
+- The calendar tells screen readers what each day's icons mean, and PR
+  and abandoned days differ in shape, not only colour.
+- The achievements carousel can be paused, stops while you're using it
+  with the keyboard, and doesn't move on its own if you prefer reduced
+  motion.
+- Live searches announce how many results they found.
+- Chat threads no longer re-send the whole conversation to screen
+  readers every few seconds when nothing new has arrived.
+- Import errors and the nutrition goal's rate are translated.
 
 ### Security
 - Login rate limiting can no longer be reset by logging into your own
   account between guesses.
 - Push notifications are only ever sent to known browser push services.
+- Another user's private food can't be added to your diary, recipes or
+  diet plans by guessing its id.
+- A client whose coaching has ended (or who was un-shared) no longer
+  receives a coach's later program and diet plan updates.
+- The API can no longer change an account's email (which allowed a
+  password reset to a new address).
+- Backups are limited to superusers instead of all staff.
+- Uploaded exercise photos are stripped of their metadata (including GPS
+  location).
+
+### Performance
+- The dashboard's achievements no longer load everyone's whole training
+  history on every visit.
+- Uploaded exercise photos are scaled down to at most 1600px.
+- Content-hashed static files are cached by the browser for a year.
 
 ## [1.24.0] — 2026-10-03
 
