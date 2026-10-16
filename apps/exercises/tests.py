@@ -452,6 +452,37 @@ class ExerciseImageViewTests(TestCase):
         self.assertEqual(self.exercise.images.count(), 1)
         self.assertEqual(self.exercise.images.first().caption, "Step 1")
 
+    def test_a_large_photo_is_scaled_down_and_stripped_of_its_metadata(self):
+        from PIL import Image
+
+        buffer = io.BytesIO()
+        exif = Image.Exif()
+        exif[0x010F] = "PhoneMaker"  # Make
+        Image.new("RGB", (4000, 3000), color="blue").save(buffer, format="JPEG", exif=exif)
+        upload = SimpleUploadedFile("photo.jpg", buffer.getvalue(), content_type="image/jpeg")
+        self.client.post(
+            reverse("exercises:exercise-image-create", args=[self.exercise.pk]), {"image": upload}
+        )
+        stored = self.exercise.images.get().image
+        with Image.open(stored.open()) as saved:
+            self.assertEqual(saved.size, (1600, 1200))
+            self.assertEqual(saved.format, "JPEG")
+            self.assertNotIn(0x010F, saved.getexif())
+
+    def test_an_oversized_upload_is_refused(self):
+        from unittest import mock
+
+        from . import services
+
+        with mock.patch.object(services, "MAX_IMAGE_UPLOAD_BYTES", 10):
+            response = self.client.post(
+                reverse("exercises:exercise-image-create", args=[self.exercise.pk]),
+                {"image": _tiny_image()},
+                follow=True,
+            )
+        self.assertFalse(self.exercise.images.exists())
+        self.assertContains(response, "too large")
+
     def test_cannot_add_an_image_to_another_users_exercise(self):
         bob_exercise = Exercise.objects.create(name="Bob Move", owner=self.bob)
         response = self.client.post(

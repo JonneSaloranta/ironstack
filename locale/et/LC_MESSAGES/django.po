@@ -10370,3 +10370,7 @@ msgid "%(counter)s result"
 msgid_plural "%(counter)s results"
 msgstr[0] "%(counter)s tulemus"
 msgstr[1] "%(counter)s tulemust"
+
+#, python-format
+msgid "That image is too large — the limit is %(megabytes)s MB."
+msgstr "Pilt on liiga suur — piirang on %(megabytes)s MB."
