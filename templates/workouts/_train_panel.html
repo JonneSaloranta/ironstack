@@ -68,7 +68,7 @@
       <p class="text-muted">{% trans "This exercise is done — logging another set is still fine if you want one." %}</p>
     {% endif %}
 
-    <form data-tour="train-log-form" class="set-log-form" x-data="{more:false}" method="post" action="{% url 'workouts:train-set-log' current.id %}"
+    <form data-tour="train-log-form" class="set-log-form" x-data="{more: {% if set_form.target_reps.errors or set_form.rpe.errors or set_form.rir.errors or set_form.notes.errors or set_form.is_warmup.errors or set_form.is_failure.errors %}true{% else %}false{% endif %}}" method="post" action="{% url 'workouts:train-set-log' current.id %}"
           hx-post="{% url 'workouts:train-set-log' current.id %}"
           hx-target="#train-panel" hx-swap="outerHTML"
           hx-disabled-elt="find button[type=submit]">
@@ -76,20 +76,20 @@
       {% include "workouts/_set_form_errors.html" %}
       <label class="set-field">
         {{ set_form.weight.label }}
-        {{ set_form.weight }}
+        {{ set_form.weight|field_a11y }}
       </label>
       <label class="set-field">
         {{ set_form.reps.label }}
-        {{ set_form.reps }}
+        {{ set_form.reps|field_a11y }}
       </label>
       <button type="button" class="button-secondary flex-full" @click="more = !more" x-text="more ? '{% filter escapejs %}{% trans "Fewer options" %}{% endfilter %}' : '{% filter escapejs %}{% trans "More options (RPE, RIR, notes…)" %}{% endfilter %}'"></button>
       <div class="field-subgroup" x-show="more" x-cloak>
-        <label class="set-field">{{ set_form.target_reps.label }} {{ set_form.target_reps }}</label>
-        <label class="set-field">{{ set_form.rpe.label }} {{ set_form.rpe }}</label>
-        <label class="set-field">{{ set_form.rir.label }} {{ set_form.rir }}</label>
-        <label class="checkbox-field flex-full">{{ set_form.is_warmup }} {{ set_form.is_warmup.label }}</label>
-        <label class="checkbox-field flex-full">{{ set_form.is_failure }} {{ set_form.is_failure.label }}</label>
-        <label class="set-field flex-full">{{ set_form.notes.label }} {{ set_form.notes }}</label>
+        <label class="set-field">{{ set_form.target_reps.label }} {{ set_form.target_reps|field_a11y }}</label>
+        <label class="set-field">{{ set_form.rpe.label }} {{ set_form.rpe|field_a11y }}</label>
+        <label class="set-field">{{ set_form.rir.label }} {{ set_form.rir|field_a11y }}</label>
+        <label class="checkbox-field flex-full">{{ set_form.is_warmup|field_a11y }} {{ set_form.is_warmup.label }}</label>
+        <label class="checkbox-field flex-full">{{ set_form.is_failure|field_a11y }} {{ set_form.is_failure.label }}</label>
+        <label class="set-field flex-full">{{ set_form.notes.label }} {{ set_form.notes|field_a11y }}</label>
       </div>
       <button type="submit">{% trans "Log set" %}</button>
     </form>

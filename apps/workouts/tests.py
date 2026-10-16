@@ -685,6 +685,31 @@ class TrainingModeViewTests(TestCase):
         self.assertEqual(self.performed.sets.count(), 0)
         self.assertTrue(response.context["set_form"].errors)
 
+    def test_a_field_error_is_linked_to_its_field(self):
+        response = self.client.post(
+            reverse("workouts:train-set-log", args=[self.performed.pk]),
+            {"weight": "", "reps": "5"},
+            HTTP_HX_REQUEST="true",
+        )
+        self.assertContains(response, 'id="id_weight_error"')
+        self.assertContains(response, 'aria-invalid="true"', count=1)
+        self.assertContains(response, 'aria-describedby="id_weight_error"')
+
+    def test_an_error_in_the_extra_options_opens_them(self):
+        # RPE/RIR/notes sit in a section collapsed by default — an error
+        # there used to stay hidden inside it.
+        response = self.client.post(
+            reverse("workouts:train-set-log", args=[self.performed.pk]),
+            {"weight": "100", "reps": "5", "rpe": "hard"},
+            HTTP_HX_REQUEST="true",
+        )
+        self.assertContains(response, 'x-data="{more: true}"')
+        self.assertContains(response, 'aria-describedby="id_rpe_error"')
+
+    def test_the_extra_options_start_collapsed_without_errors(self):
+        response = self.client.get(reverse("workouts:session-train", args=[self.session.pk]))
+        self.assertContains(response, 'x-data="{more: false}"')
+
     def test_a_validation_error_is_shown_to_the_user_in_an_alert(self):
         response = self.client.post(
             reverse("workouts:train-set-log", args=[self.performed.pk]),

@@ -470,6 +470,25 @@ class ProductionSettingsTests(TestCase):
         )
 
 
+class FieldA11yFilterTests(TestCase):
+    def test_every_error_is_linked_not_just_the_first(self):
+        from django import forms
+
+        from apps.core.templatetags.core_extras import field_a11y
+
+        class TwoErrors(forms.Form):
+            name = forms.CharField(help_text="Help")
+
+            def clean_name(self):
+                raise forms.ValidationError(["First problem.", "Second problem."])
+
+        form = TwoErrors({"name": "x"})
+        form.is_valid()
+        html = field_a11y(form["name"])
+        self.assertIn('aria-describedby="id_name_help id_name_error id_name_error_2"', html)
+        self.assertIn('aria-invalid="true"', html)
+
+
 class TranslatedTextInAlpineExpressionsTests(TestCase):
     """A translation dropped into a JS string literal inside an Alpine
     attribute (x-text="more ? '{% trans … %}' : …") is only HTML-escaped,

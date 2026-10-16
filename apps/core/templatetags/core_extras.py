@@ -122,8 +122,11 @@ def field_a11y(bound_field):
     described = []
     if bound_field.help_text:
         described.append(f"{bound_field.auto_id}_help")
-    if bound_field.errors:
-        described.append(f"{bound_field.auto_id}_error")
+    # One id per error, numbered the way _field.html and
+    # workouts/_set_form_errors.html number them (_error, _error_2, ...)
+    # — linking only the first left any further error unannounced.
+    for number in range(1, len(bound_field.errors) + 1):
+        described.append(f"{bound_field.auto_id}_error" + (f"_{number}" if number > 1 else ""))
     attrs = {}
     if described:
         attrs["aria-describedby"] = " ".join(described)

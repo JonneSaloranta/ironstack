@@ -65,7 +65,7 @@
       {% for field in set_form %}
         <label class="set-field">
           {{ field.label }}
-          {{ field }}
+          {{ field|field_a11y }}
         </label>
       {% endfor %}
       <button type="submit">{% trans "Log set" %}</button>
