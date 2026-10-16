@@ -10390,3 +10390,27 @@ msgstr "Predefinito di questa istanza (%(effort)s)"
 
 msgid "Model settings saved."
 msgstr "Impostazioni del modello salvate."
+
+msgid "Another backup task is still running — wait for it to finish."
+msgstr "Un'altra operazione di backup è ancora in corso — attendi che finisca."
+
+msgid "Creating a backup…"
+msgstr "Creazione del backup…"
+
+msgid "Restoring %(name)s…"
+msgstr "Ripristino di %(name)s…"
+
+msgid "This can take several minutes. You can leave this page — come back to see the result."
+msgstr "Può richiedere diversi minuti. Puoi lasciare questa pagina — torna più tardi per vedere il risultato."
+
+msgid "The last backup task was interrupted before it finished (did the server restart?). Check that everything looks right before relying on it."
+msgstr "L'ultima operazione di backup è stata interrotta prima di terminare (il server è stato riavviato?). Controlla che sia tutto a posto prima di farci affidamento."
+
+msgid "Couldn't decrypt %(name)s — check that BACKUP_ENCRYPTION_KEY matches the key this backup was made with. Nothing was changed."
+msgstr "Impossibile decifrare %(name)s — verifica che BACKUP_ENCRYPTION_KEY corrisponda alla chiave con cui è stato creato il backup. Non è stato modificato nulla."
+
+msgid "Restoring %(name)s failed: %(detail)s"
+msgstr "Ripristino di %(name)s non riuscito: %(detail)s"
+
+msgid "Creating a backup failed: %(detail)s"
+msgstr "Creazione del backup non riuscita: %(detail)s"

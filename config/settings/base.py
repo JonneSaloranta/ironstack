@@ -534,6 +534,11 @@ PUSH_ENDPOINT_HOSTS = env_list(
 # with the same care as VAPID_PRIVATE_KEY/SECRET_KEY: back it up
 # somewhere that isn't itself only inside an encrypted backup.
 BACKUP_ENCRYPTION_KEY = env("BACKUP_ENCRYPTION_KEY", default="")
+# apps.core.backup_tasks — the Backups page starts create/restore as a
+# detached background process. True runs it inside the request instead
+# (the test suite; never in production, where a restore outlasts
+# gunicorn's timeout).
+BACKUP_TASKS_RUN_INLINE = env_bool("BACKUP_TASKS_RUN_INLINE", default=False)
 
 # apps.accounts.models.User.totp_secret (docs/SECURITY.md "Two-factor
 # authentication") — encrypts that one field at rest once set; every

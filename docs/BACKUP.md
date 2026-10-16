@@ -137,6 +137,32 @@ without stopping the very request performing the restore:
   of this feature did, and which left the live database completely
   empty the first time a restore actually failed partway through).
 
+**Create and restore run in the background** (`apps.core.backup_tasks`).
+Both used to run inside the web request, under gunicorn's 30-second
+timeout — on a real-sized instance the worker could be killed partway
+through a restore, after the database swap but before media or
+`migrate`, leaving a half-restored instance. Now the button starts
+`manage.py run_backup_task` as a detached process in the same `web`
+container and the Backups page shows a status card that polls until the
+task is done, then reloads. One task runs at a time. The task's state is
+a small file in `BACKUP_DIR` (`.backup-task.json`, output in
+`.backup-task.log`), not a database row, since a restore replaces the
+database. A task whose process vanished (the container restarted) shows
+as interrupted. After a restore the admin's session usually belongs to
+the replaced database, so the next poll lands on the login page; the
+result is waiting on the Backups page after logging back in.
+
+**A restore that fails late puts the previous state back.**
+`restore_backup` prepares everything beside the live instance first —
+the dump into `<db>_restoring`, media unpacked into a staging directory
+inside `MEDIA_ROOT` (`.restore-*`, left out of backups) — then swaps
+the databases and moves media into place, and keeps the previous
+database (`<db>_previous`) and media until `migrate` has succeeded. If
+the media swap or `migrate` fails (a backup from a newer version, say),
+the previous database and media are swapped back and the error is shown
+on the Backups page. A new archive is written as `*.partial` and renamed
+only once complete, so a backup cut short never shows up in the list.
+
 The confirmation page shows the backup's manifest next to the running
 instance's own, and the actual restore button additionally requires a
 JS `confirm()` dialog on top of the page itself — the same "load-bearing

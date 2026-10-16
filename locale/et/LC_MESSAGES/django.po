@@ -10292,3 +10292,27 @@ msgstr "Selle serveri vaikimisi väärtus (%(effort)s)"
 
 msgid "Model settings saved."
 msgstr "Mudeli seaded salvestatud."
+
+msgid "Another backup task is still running — wait for it to finish."
+msgstr "Teine varundustoiming on veel pooleli — oota, kuni see lõpeb."
+
+msgid "Creating a backup…"
+msgstr "Varukoopia loomine…"
+
+msgid "Restoring %(name)s…"
+msgstr "Taastatakse %(name)s…"
+
+msgid "This can take several minutes. You can leave this page — come back to see the result."
+msgstr "See võib võtta mitu minutit. Võid lehelt lahkuda — tule hiljem tulemust vaatama."
+
+msgid "The last backup task was interrupted before it finished (did the server restart?). Check that everything looks right before relying on it."
+msgstr "Viimane varundustoiming katkes enne lõppu (kas server taaskäivitus?). Kontrolli enne sellele lootmist, et kõik on korras."
+
+msgid "Couldn't decrypt %(name)s — check that BACKUP_ENCRYPTION_KEY matches the key this backup was made with. Nothing was changed."
+msgstr "Faili %(name)s ei õnnestunud dekrüpteerida — kontrolli, et BACKUP_ENCRYPTION_KEY vastab võtmele, millega varukoopia tehti. Midagi ei muudetud."
+
+msgid "Restoring %(name)s failed: %(detail)s"
+msgstr "Faili %(name)s taastamine ebaõnnestus: %(detail)s"
+
+msgid "Creating a backup failed: %(detail)s"
+msgstr "Varukoopia loomine ebaõnnestus: %(detail)s"

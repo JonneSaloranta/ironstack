@@ -5,11 +5,12 @@ carries real risk that scripts/restore.sh's version doesn't."""
 from django.conf import settings
 from django.contrib import messages
 from django.http import FileResponse, Http404
-from django.shortcuts import redirect
+from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.utils.translation import gettext as _
 from django.views.generic import TemplateView, View
 
+from apps.core import backup_tasks
 from apps.core import backups as backup_services
 from apps.core import version as version_services
 from apps.core.forms import BackupSettingsForm, BackupUploadForm
@@ -40,6 +41,7 @@ class BackupListView(StaffRequiredMixin, TemplateView):
             "settings_form", BackupSettingsForm(instance=BackupSettings.load())
         )
         context.setdefault("upload_form", BackupUploadForm())
+        context["backup_task"] = backup_tasks.read_status()
         return context
 
     def post(self, request, *args, **kwargs):
@@ -52,8 +54,14 @@ class BackupListView(StaffRequiredMixin, TemplateView):
             return self._save_settings(request)
         if action == "upload_backup":
             return self._upload_backup(request)
-        name = backup_services.create_backup()
-        messages.success(request, _("Backup created: %(name)s") % {"name": name})
+        # In the background (apps.core.backup_tasks) — this page shows
+        # its progress and result.
+        try:
+            backup_tasks.start(backup_tasks.CREATE)
+        except backup_tasks.TaskAlreadyRunning:
+            messages.error(
+                request, _("Another backup task is still running — wait for it to finish.")
+            )
         return redirect("backup-list")
 
     def _save_settings(self, request):
@@ -142,6 +150,7 @@ class BackupRestoreView(StaffRequiredMixin, TemplateView):
         context["key_missing_for_encrypted_backup"] = context[
             "backup_manifest"
         ].get("encrypted") and not settings.BACKUP_ENCRYPTION_KEY
+        context["task_running"] = backup_tasks.is_running()
         context["running_manifest"] = {
             "version": version_services.get_version(),
             "git_sha": version_services.get_git_sha(),
@@ -151,18 +160,35 @@ class BackupRestoreView(StaffRequiredMixin, TemplateView):
 
     def post(self, request, *args, **kwargs):
         name = kwargs["name"]
+        # In the background (apps.core.backup_tasks): a real-sized
+        # restore outlasts gunicorn's timeout, and a worker killed
+        # partway through used to leave the instance half-restored.
+        # The Backups page shows progress and the outcome — including a
+        # clean message for the common wrong/missing
+        # BACKUP_ENCRYPTION_KEY case.
         try:
-            backup_services.restore_backup(name)
-        except backup_services.BackupDecryptionError as error:
-            # The one restore_backup() failure mode worth a clean
-            # message instead of a raw 500 — a missing/wrong
-            # BACKUP_ENCRYPTION_KEY is a foreseeable, common
-            # misconfiguration (docs/BACKUP.md "Encryption"), unlike
-            # e.g. a corrupted pg_dump, and it's caught before this
-            # function has touched the live database at all (see
-            # restore_backup()'s own docstring), so there's nothing
-            # left half-done to warn about here.
-            messages.error(request, str(error))
+            backup_tasks.start(backup_tasks.RESTORE, name)
+        except backup_services.InvalidBackupName:
+            raise Http404 from None
+        except backup_tasks.TaskAlreadyRunning:
+            messages.error(
+                request, _("Another backup task is still running — wait for it to finish.")
+            )
             return redirect(reverse("backup-restore", args=[name]))
-        messages.success(request, _("Restored from backup: %(name)s") % {"name": name})
-        return redirect(reverse("profile"))
+        return redirect(reverse("backup-list"))
+
+
+class BackupTaskStatusView(StaffRequiredMixin, View):
+    """Polled by the Backups page while a create/restore runs in the
+    background. Once it's no longer running, the whole page reloads
+    (HX-Refresh) so the backup list and buttons catch up. A restore
+    replaces the sessions table too, so the poll that follows one
+    usually lands on the login page instead
+    (apps.core.middleware.HtmxLoginRedirectMiddleware)."""
+
+    def get(self, request):
+        task = backup_tasks.read_status()
+        response = render(request, "core/_backup_task_status.html", {"backup_task": task})
+        if not task or task["state"] != backup_tasks.RUNNING:
+            response["HX-Refresh"] = "true"
+        return response

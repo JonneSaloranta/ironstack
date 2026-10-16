@@ -229,6 +229,15 @@ def prune_backups(retention_count):
         (BACKUP_DIR / backup["name"]).unlink(missing_ok=True)
 
 
+def _skip_restore_work_dirs(info):
+    """tarfile filter: leave restore_backup()'s own working directories
+    inside MEDIA_ROOT out of a backup."""
+    parts = Path(info.name).parts
+    if parts and parts[0].startswith(_MEDIA_WORK_PREFIX):
+        return None
+    return info
+
+
 def create_backup(source="manual"):
     """Dumps the database, archives media/, and writes a version_info
     manifest, bundled into one `ironstack-backup-<timestamp>.tar.gz` in
@@ -267,7 +276,7 @@ def create_backup(source="manual"):
         media_root = Path(settings.MEDIA_ROOT)
         media_root.mkdir(parents=True, exist_ok=True)
         with tarfile.open(tmp / "media.tar", "w") as tar:
-            tar.add(media_root, arcname=".")
+            tar.add(media_root, arcname=".", filter=_skip_restore_work_dirs)
 
         # Encrypts database.dump/media.tar in place — the two members
         # that hold this instance's actual data — whenever
@@ -294,9 +303,17 @@ def create_backup(source="manual"):
         (tmp / "manifest.json").write_text(json.dumps(manifest, indent=2))
 
         archive_name = f"ironstack-backup-{stamp}.tar.gz"
-        with tarfile.open(BACKUP_DIR / archive_name, "w:gz") as tar:
-            for filename in (database_member, media_member, Path("manifest.json")):
-                tar.add(tmp / filename, arcname=str(filename))
+        # Written under a name list_backups() doesn't match, then
+        # renamed: an archive cut short (disk full, process killed)
+        # must never show up as a backup someone could restore.
+        partial = BACKUP_DIR / f"{archive_name}.partial"
+        try:
+            with tarfile.open(partial, "w:gz") as tar:
+                for filename in (database_member, media_member, Path("manifest.json")):
+                    tar.add(tmp / filename, arcname=str(filename))
+            partial.rename(BACKUP_DIR / archive_name)
+        finally:
+            partial.unlink(missing_ok=True)
 
     prune_backups(BackupSettings.load().retention_count)
     return archive_name
@@ -391,100 +408,133 @@ def _psql(maintenance_args, env, sql):
     )
 
 
+#: Working directories restore_backup() keeps inside MEDIA_ROOT, so that
+#: swapping media in and out is a rename on the same filesystem (the
+#: media volume) rather than a slow copy. create_backup() leaves them
+#: out of the archive; a restore that was killed outright can leave one
+#: behind, which the next restore clears.
+_MEDIA_WORK_PREFIX = ".restore-"
+
+
+def _move_children(source, destination, skip=()):
+    for child in list(source.iterdir()):
+        if child.name in skip:
+            continue
+        child.rename(destination / child.name)
+
+
+def _swap_databases(maintenance_args, env, live, new, old):
+    """Put database `new` in `live`'s place, keeping the current one as
+    `old`. Every connection to `live` is closed first — Postgres won't
+    rename a database anyone is connected to."""
+    connections.close_all()
+    _psql(
+        maintenance_args,
+        env,
+        f"SELECT pg_terminate_backend(pid) FROM pg_stat_activity "
+        f"WHERE datname = '{live}' AND pid <> pg_backend_pid();",
+    )
+    _psql(maintenance_args, env, f'ALTER DATABASE "{live}" RENAME TO "{old}";')
+    _psql(maintenance_args, env, f'ALTER DATABASE "{new}" RENAME TO "{live}";')
+
+
 def restore_backup(name):
     """DESTRUCTIVE: replaces the database from this backup's dump,
     replaces every file under media/, and runs `migrate` to bring the
-    schema forward to whatever the running code expects. See this
-    module's own docstring and docs/BACKUP.md for exactly why this is
-    riskier than scripts/restore.sh's version — most notably, the
-    request handling this call is itself using a database connection
-    that's about to be dropped out from under it.
+    schema forward to whatever the running code expects. Runs outside
+    any web request (apps.core.backup_tasks), since a real-sized
+    restore outlasts gunicorn's timeout.
 
-    Restores into a freshly created, differently-named database first,
-    rather than dropping the live one up front — regression: an
-    earlier version did drop-then-restore-in-place, and a `pg_restore`
-    failure partway through (e.g. a client/server version mismatch)
-    left the live database completely empty with no way back. Here, a
-    failed restore never touches the live database at all; only once
-    the new data has loaded successfully does a live database swap
-    (Postgres `ALTER DATABASE ... RENAME`) put it in the running
-    database's place.
+    Nothing live is touched until everything that can be prepared
+    beside it is ready: the dump is restored into a separate database
+    and media is unpacked into a staging directory first, so a broken
+    archive or a `pg_restore` failure leaves the instance exactly as
+    it was. Only then are the databases swapped (`ALTER DATABASE ...
+    RENAME`) and media moved into place — and the previous database
+    and media are kept until `migrate` has succeeded, so a failure in
+    either of those last steps (a backup from a newer version, say)
+    puts the previous state back instead of leaving a half-restored
+    instance with no way back.
     """
     path = safe_archive_path(name)
+    media_root = Path(settings.MEDIA_ROOT)
+    media_root.mkdir(parents=True, exist_ok=True)
+    for leftover in media_root.glob(f"{_MEDIA_WORK_PREFIX}*"):
+        shutil.rmtree(leftover, ignore_errors=True)
+    stamp = timezone.now().strftime("%Y%m%d%H%M%S%f")
+    staging = media_root / f"{_MEDIA_WORK_PREFIX}staging-{stamp}"
+    previous_media = media_root / f"{_MEDIA_WORK_PREFIX}previous-{stamp}"
+    work_dirs = {staging.name, previous_media.name}
+
+    env = _pg_env()
+    pg_args = _pg_connection_args()
+    db_name = _db_config()["NAME"]
+    db_user = _db_config()["USER"]
+    # A session on the `postgres` maintenance database — required for
+    # renaming/dropping `db_name` itself, which Postgres refuses while
+    # any session (including this one) is connected *to* it.
+    maintenance_args = [*pg_args, "-d", "postgres"]
+    restoring_name = f"{db_name}_restoring"
+    previous_name = f"{db_name}_previous"
+
+    def dropdb(database):
+        subprocess.run(
+            ["dropdb", *pg_args, "--if-exists", "--force", database], check=True, env=env
+        )
 
     with TemporaryDirectory() as tmp_str:
         tmp = Path(tmp_str)
         with tarfile.open(path, "r:gz") as tar:
             tar.extractall(tmp, filter="data")
-
-        # Deliberately before connections.close_all()/any dropdb below:
-        # a missing or wrong BACKUP_ENCRYPTION_KEY must abort here,
-        # before this function has done anything destructive to the
-        # live database.
+        # Before anything else that matters: a missing or wrong
+        # BACKUP_ENCRYPTION_KEY must abort while nothing has changed.
         _ensure_members_decrypted(tmp)
 
-        connections.close_all()
+        try:
+            staging.mkdir()
+            with tarfile.open(tmp / "media.tar", "r") as tar:
+                tar.extractall(staging, filter="data")
 
-        env = _pg_env()
-        pg_args = _pg_connection_args()
-        db_name = _db_config()["NAME"]
-        db_user = _db_config()["USER"]
-        # A superuser session connected to the `postgres` maintenance
-        # database — required for renaming/dropping `db_name` itself,
-        # which Postgres refuses while any session (including this
-        # one) is connected *to* it.
-        maintenance_args = [*pg_args, "-d", "postgres"]
-        restoring_name = f"{db_name}_restoring"
-        previous_name = f"{db_name}_previous"
-
-        subprocess.run(
-            ["dropdb", *pg_args, "--if-exists", "--force", restoring_name],
-            check=True,
-            env=env,
-        )
-        subprocess.run(
-            ["createdb", *pg_args, "-O", db_user, restoring_name], check=True, env=env
-        )
-        with open(tmp / "database.dump", "rb") as f:
+            dropdb(restoring_name)
             subprocess.run(
-                ["pg_restore", *pg_args, "-d", restoring_name, "--no-owner"],
-                stdin=f,
-                check=True,
-                env=env,
+                ["createdb", *pg_args, "-O", db_user, restoring_name], check=True, env=env
             )
+            with open(tmp / "database.dump", "rb") as f:
+                subprocess.run(
+                    ["pg_restore", *pg_args, "-d", restoring_name, "--no-owner"],
+                    stdin=f,
+                    check=True,
+                    env=env,
+                )
+        except BaseException:
+            shutil.rmtree(staging, ignore_errors=True)
+            dropdb(restoring_name)
+            raise
 
-        # The new data is fully loaded at this point — only now do we
-        # touch the live database.
-        connections.close_all()
-        _psql(
-            maintenance_args,
-            env,
-            f'SELECT pg_terminate_backend(pid) FROM pg_stat_activity '
-            f"WHERE datname = '{db_name}' AND pid <> pg_backend_pid();",
-        )
-        subprocess.run(
-            ["dropdb", *pg_args, "--if-exists", "--force", previous_name],
-            check=True,
-            env=env,
-        )
-        _psql(maintenance_args, env, f'ALTER DATABASE "{db_name}" RENAME TO "{previous_name}";')
-        _psql(
-            maintenance_args, env, f'ALTER DATABASE "{restoring_name}" RENAME TO "{db_name}";'
-        )
-        subprocess.run(
-            ["dropdb", *pg_args, "--if-exists", "--force", previous_name],
-            check=True,
-            env=env,
-        )
+        # Everything is prepared — only now does the live instance change.
+        dropdb(previous_name)
+        _swap_databases(maintenance_args, env, db_name, restoring_name, previous_name)
+        try:
+            previous_media.mkdir()
+            _move_children(media_root, previous_media, skip=work_dirs)
+            _move_children(staging, media_root)
+            call_command("migrate", interactive=False, verbosity=0)
+        except BaseException:
+            _swap_databases(maintenance_args, env, db_name, previous_name, restoring_name)
+            dropdb(restoring_name)
+            if previous_media.exists():
+                for child in list(media_root.iterdir()):
+                    if child.name in work_dirs:
+                        continue
+                    if child.is_dir():
+                        shutil.rmtree(child)
+                    else:
+                        child.unlink()
+                _move_children(previous_media, media_root)
+                previous_media.rmdir()
+            raise
+        finally:
+            shutil.rmtree(staging, ignore_errors=True)
 
-        media_root = Path(settings.MEDIA_ROOT)
-        media_root.mkdir(parents=True, exist_ok=True)
-        for child in media_root.iterdir():
-            if child.is_dir():
-                shutil.rmtree(child)
-            else:
-                child.unlink()
-        with tarfile.open(tmp / "media.tar", "r") as tar:
-            tar.extractall(media_root, filter="data")
-
-        call_command("migrate", interactive=False, verbosity=0)
+        dropdb(previous_name)
+        shutil.rmtree(previous_media, ignore_errors=True)

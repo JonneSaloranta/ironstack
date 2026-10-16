@@ -10297,3 +10297,27 @@ msgstr "Den här instansens standard (%(effort)s)"
 
 msgid "Model settings saved."
 msgstr "Modellinställningarna sparades."
+
+msgid "Another backup task is still running — wait for it to finish."
+msgstr "En annan säkerhetskopieringsuppgift pågår fortfarande — vänta tills den är klar."
+
+msgid "Creating a backup…"
+msgstr "Skapar säkerhetskopia…"
+
+msgid "Restoring %(name)s…"
+msgstr "Återställer %(name)s…"
+
+msgid "This can take several minutes. You can leave this page — come back to see the result."
+msgstr "Det här kan ta flera minuter. Du kan lämna sidan — kom tillbaka för att se resultatet."
+
+msgid "The last backup task was interrupted before it finished (did the server restart?). Check that everything looks right before relying on it."
+msgstr "Den senaste säkerhetskopieringsuppgiften avbröts innan den blev klar (startades servern om?). Kontrollera att allt ser rätt ut innan du förlitar dig på det."
+
+msgid "Couldn't decrypt %(name)s — check that BACKUP_ENCRYPTION_KEY matches the key this backup was made with. Nothing was changed."
+msgstr "Det gick inte att dekryptera %(name)s — kontrollera att BACKUP_ENCRYPTION_KEY stämmer med nyckeln som säkerhetskopian skapades med. Ingenting ändrades."
+
+msgid "Restoring %(name)s failed: %(detail)s"
+msgstr "Återställningen av %(name)s misslyckades: %(detail)s"
+
+msgid "Creating a backup failed: %(detail)s"
+msgstr "Det gick inte att skapa säkerhetskopian: %(detail)s"

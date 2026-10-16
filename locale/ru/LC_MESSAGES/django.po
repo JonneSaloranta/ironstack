@@ -10382,3 +10382,27 @@ msgstr "По умолчанию на этом сервере (%(effort)s)"
 
 msgid "Model settings saved."
 msgstr "Настройки модели сохранены."
+
+msgid "Another backup task is still running — wait for it to finish."
+msgstr "Другая задача резервного копирования ещё выполняется — дождитесь её завершения."
+
+msgid "Creating a backup…"
+msgstr "Создание резервной копии…"
+
+msgid "Restoring %(name)s…"
+msgstr "Восстановление %(name)s…"
+
+msgid "This can take several minutes. You can leave this page — come back to see the result."
+msgstr "Это может занять несколько минут. Можно уйти со страницы — вернитесь, чтобы увидеть результат."
+
+msgid "The last backup task was interrupted before it finished (did the server restart?). Check that everything looks right before relying on it."
+msgstr "Последняя задача резервного копирования была прервана до завершения (сервер перезапускался?). Прежде чем полагаться на результат, проверьте, что всё в порядке."
+
+msgid "Couldn't decrypt %(name)s — check that BACKUP_ENCRYPTION_KEY matches the key this backup was made with. Nothing was changed."
+msgstr "Не удалось расшифровать %(name)s — проверьте, что BACKUP_ENCRYPTION_KEY совпадает с ключом, которым была создана резервная копия. Ничего не изменено."
+
+msgid "Restoring %(name)s failed: %(detail)s"
+msgstr "Не удалось восстановить %(name)s: %(detail)s"
+
+msgid "Creating a backup failed: %(detail)s"
+msgstr "Не удалось создать резервную копию: %(detail)s"

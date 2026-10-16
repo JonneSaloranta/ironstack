@@ -6,6 +6,7 @@ from .views_backup import (
     BackupDownloadView,
     BackupListView,
     BackupRestoreView,
+    BackupTaskStatusView,
 )
 from .views_feedback import FeedbackCreateView, FeedbackListView
 from .views_push import PushSubscribeView, PushUnsubscribeView
@@ -20,6 +21,7 @@ urlpatterns = [
     path("manifest.json", web_manifest, name="web-manifest"),
     path("robots.txt", robots_txt, name="robots-txt"),
     path("backups/", BackupListView.as_view(), name="backup-list"),
+    path("backups/status/", BackupTaskStatusView.as_view(), name="backup-task-status"),
     path("backups/<str:name>/download/", BackupDownloadView.as_view(), name="backup-download"),
     path("backups/<str:name>/restore/", BackupRestoreView.as_view(), name="backup-restore"),
     path("backups/<str:name>/delete/", BackupDeleteView.as_view(), name="backup-delete"),

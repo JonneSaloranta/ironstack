@@ -18,8 +18,8 @@ from django.urls import reverse
 from django.utils import timezone, translation
 from django.views.defaults import permission_denied, server_error
 
+from apps.core import backup_tasks, data_exchange, version
 from apps.core import backups as backup_services
-from apps.core import data_exchange, version
 from apps.core.bmi import BMI_CATEGORIES, calculate_bmi, category_for, category_rows
 from apps.core.changelog import _render, render_changelog_html
 from apps.core.charts import build_bar_series, build_chart_series
@@ -1003,6 +1003,122 @@ class BackupTests(TestCase):
         self.assertEqual(len(backup_services.list_backups()), 1)
 
 
+class RestoreBackupOrchestrationTests(TestCase):
+    """apps.core.backups.restore_backup — the order of the live swap and
+    what's put back when a late step fails. Postgres itself is mocked
+    (every command is recorded); media is real files in a temp dir."""
+
+    def setUp(self):
+        backup_dir = TemporaryDirectory()
+        media_dir = TemporaryDirectory()
+        self.addCleanup(backup_dir.cleanup)
+        self.addCleanup(media_dir.cleanup)
+        self.backup_dir = Path(backup_dir.name)
+        self.media_root = Path(media_dir.name)
+        for patcher in (
+            mock.patch.object(backup_services, "BACKUP_DIR", self.backup_dir),
+            override_settings(MEDIA_ROOT=str(self.media_root)),
+            mock.patch.object(backup_services, "connections"),
+        ):
+            patcher.start() if hasattr(patcher, "start") else patcher.enable()
+            self.addCleanup(patcher.stop if hasattr(patcher, "stop") else patcher.disable)
+        (self.media_root / "old.jpg").write_bytes(b"old")
+        self.name = self._write_archive()
+        self.commands = []
+
+    def _write_archive(self):
+        staging = TemporaryDirectory()
+        self.addCleanup(staging.cleanup)
+        work = Path(staging.name)
+        (work / "media").mkdir()
+        (work / "media" / "new.jpg").write_bytes(b"new")
+        with tarfile.open(work / "media.tar", "w") as tar:
+            tar.add(work / "media", arcname=".")
+        (work / "database.dump").write_bytes(b"fake dump")
+        (work / "manifest.json").write_text(json.dumps({"encrypted": False}))
+        name = "ironstack-backup-20260101-000000-000000.tar.gz"
+        with tarfile.open(self.backup_dir / name, "w:gz") as tar:
+            for member in ("database.dump", "media.tar", "manifest.json"):
+                tar.add(work / member, arcname=member)
+        return name
+
+    def _restore(self, fail_on=None):
+        def run(args, **kwargs):
+            self.commands.append(args[0] if args[0] != "pg_restore" else "pg_restore")
+            if fail_on == args[0]:
+                raise backup_services.subprocess.CalledProcessError(1, args)
+
+        def psql(maintenance_args, env, sql):
+            self.commands.append(sql)
+
+        def migrate(*args, **kwargs):
+            self.commands.append("migrate")
+            if fail_on == "migrate":
+                raise RuntimeError("migration failed")
+
+        with (
+            mock.patch.object(backup_services.subprocess, "run", side_effect=run),
+            mock.patch.object(backup_services, "_psql", side_effect=psql),
+            mock.patch.object(backup_services, "call_command", side_effect=migrate),
+        ):
+            backup_services.restore_backup(self.name)
+
+    def _renames(self):
+        return [c for c in self.commands if c.startswith("ALTER DATABASE")]
+
+    def _media(self):
+        return sorted(p.name for p in self.media_root.iterdir())
+
+    def test_a_successful_restore_swaps_in_the_new_database_and_media(self):
+        self._restore()
+        db = backup_services._db_config()["NAME"]
+        self.assertEqual(
+            self._renames(),
+            [
+                f'ALTER DATABASE "{db}" RENAME TO "{db}_previous";',
+                f'ALTER DATABASE "{db}_restoring" RENAME TO "{db}";',
+            ],
+        )
+        # The previous database is dropped only after migrate succeeded.
+        self.assertLess(self.commands.index("migrate"), len(self.commands) - 1)
+        self.assertEqual(self.commands[-1], "dropdb")
+        self.assertEqual(self._media(), ["new.jpg"])
+
+    def test_a_failed_migrate_puts_the_previous_database_and_media_back(self):
+        with self.assertRaises(RuntimeError):
+            self._restore(fail_on="migrate")
+        db = backup_services._db_config()["NAME"]
+        self.assertEqual(
+            self._renames(),
+            [
+                f'ALTER DATABASE "{db}" RENAME TO "{db}_previous";',
+                f'ALTER DATABASE "{db}_restoring" RENAME TO "{db}";',
+                f'ALTER DATABASE "{db}" RENAME TO "{db}_restoring";',
+                f'ALTER DATABASE "{db}_previous" RENAME TO "{db}";',
+            ],
+        )
+        self.assertEqual(self._media(), ["old.jpg"])
+        self.assertEqual((self.media_root / "old.jpg").read_bytes(), b"old")
+
+    def test_a_failed_pg_restore_never_touches_the_live_instance(self):
+        with self.assertRaises(backup_services.subprocess.CalledProcessError):
+            self._restore(fail_on="pg_restore")
+        self.assertEqual(self._renames(), [])
+        self.assertNotIn("migrate", self.commands)
+        self.assertEqual(self._media(), ["old.jpg"])
+
+    def test_leftover_work_directories_never_end_up_in_a_backup(self):
+        (self.media_root / ".restore-staging-1").mkdir()
+        (self.media_root / ".restore-staging-1" / "stale.jpg").write_bytes(b"x")
+        name = backup_services.create_backup()
+        with tarfile.open(self.backup_dir / name, "r:gz") as outer:
+            media = tarfile.open(fileobj=outer.extractfile("media.tar"))
+            names = media.getnames()
+        self.assertIn("./old.jpg", names)
+        self.assertFalse(any(".restore-" in n for n in names))
+        self.assertFalse(list(self.backup_dir.glob("*.partial")))
+
+
 class BackupEncryptionTests(TestCase):
     """apps.core.backups' optional BACKUP_ENCRYPTION_KEY encryption of
     database.dump/media.tar (docs/BACKUP.md "Encryption",
@@ -1421,6 +1537,58 @@ class BackupViewTests(TestCase):
         response = self.client.post(reverse("backup-list"))
         self.assertRedirects(response, reverse("backup-list"))
         self.assertEqual(len(backup_services.list_backups()), 1)
+        name = backup_services.list_backups()[0]["name"]
+        self.assertContains(self.client.get(reverse("backup-list")), f"Backup created: {name}")
+
+    @override_settings(BACKUP_TASKS_RUN_INLINE=False)
+    def test_creating_a_backup_starts_a_background_process_instead_of_running_it(self):
+        self.client.login(username="admin", password="s3cret-pass")
+        with mock.patch.object(backup_tasks.subprocess, "Popen") as popen:
+            popen.return_value.pid = 4242
+            response = self.client.post(reverse("backup-list"))
+        self.assertRedirects(response, reverse("backup-list"), fetch_redirect_response=False)
+        command = popen.call_args.args[0]
+        self.assertEqual(command[-2:], ["run_backup_task", "create"])
+        self.assertTrue(popen.call_args.kwargs["start_new_session"])
+        self.assertEqual(backup_services.list_backups(), [])
+        with mock.patch.object(backup_tasks, "_pid_alive", return_value=True):
+            page = self.client.get(reverse("backup-list"))
+        self.assertContains(page, "Creating a backup…")
+        self.assertContains(page, 'hx-get="%s"' % reverse("backup-task-status"))
+        self.assertContains(page, "disabled")
+
+    def test_a_task_whose_process_died_is_reported_as_interrupted(self):
+        self.client.login(username="admin", password="s3cret-pass")
+        backup_tasks._write(
+            {"action": "restore", "name": "x.tar.gz", "state": "running", "pid": 4242}
+        )
+        with mock.patch.object(backup_tasks, "_pid_alive", return_value=False):
+            response = self.client.get(reverse("backup-list"))
+        self.assertContains(response, "was interrupted before it finished")
+        self.assertEqual(backup_tasks.read_status()["state"], backup_tasks.FAILED)
+
+    @override_settings(BACKUP_TASKS_RUN_INLINE=False)
+    def test_only_one_backup_task_runs_at_a_time(self):
+        self.client.login(username="admin", password="s3cret-pass")
+        with (
+            mock.patch.object(backup_tasks.subprocess, "Popen") as popen,
+            mock.patch.object(backup_tasks, "_pid_alive", return_value=True),
+        ):
+            popen.return_value.pid = 4242
+            self.client.post(reverse("backup-list"))
+            response = self.client.post(reverse("backup-list"), follow=True)
+        self.assertEqual(popen.call_count, 1)
+        self.assertContains(response, "Another backup task is still running")
+
+    def test_the_status_poll_reloads_the_page_once_the_task_is_over(self):
+        self.client.login(username="admin", password="s3cret-pass")
+        self.client.post(reverse("backup-list"))
+        response = self.client.get(reverse("backup-task-status"))
+        self.assertEqual(response["HX-Refresh"], "true")
+
+    def test_the_status_poll_requires_staff(self):
+        self.client.login(username="alice", password="s3cret-pass")
+        self.assertEqual(self.client.get(reverse("backup-task-status")).status_code, 403)
 
     def _build_valid_upload(self, name="my-download.tar.gz"):
         buf = io.BytesIO()
@@ -1563,13 +1731,29 @@ class BackupViewTests(TestCase):
         response = self.client.get(reverse("backup-restore", args=["nope.tar.gz"]))
         self.assertEqual(response.status_code, 403)
 
-    def test_posting_restore_calls_restore_backup_and_redirects_to_profile(self):
+    def test_posting_restore_calls_restore_backup_and_shows_the_result(self):
         self.client.login(username="admin", password="s3cret-pass")
         name = backup_services.create_backup()
         with mock.patch.object(backup_services, "restore_backup") as mock_restore:
             response = self.client.post(reverse("backup-restore", args=[name]))
         mock_restore.assert_called_once_with(name)
-        self.assertRedirects(response, reverse("profile"))
+        self.assertRedirects(response, reverse("backup-list"))
+        self.assertContains(self.client.get(response.url), f"Restored from backup: {name}")
+
+    def test_a_failed_restore_is_reported_on_the_backups_page(self):
+        self.client.login(username="admin", password="s3cret-pass")
+        name = backup_services.create_backup()
+        with mock.patch.object(
+            backup_services, "restore_backup", side_effect=RuntimeError("pg_restore exploded")
+        ):
+            response = self.client.post(reverse("backup-restore", args=[name]), follow=True)
+        self.assertContains(response, "pg_restore exploded")
+        self.assertContains(response, 'role="alert"')
+
+    def test_restoring_a_nonexistent_backup_is_a_404(self):
+        self.client.login(username="admin", password="s3cret-pass")
+        response = self.client.post(reverse("backup-restore", args=["nope.tar.gz"]))
+        self.assertEqual(response.status_code, 404)
 
     def test_posting_restore_shows_a_clean_error_on_a_decryption_failure(self):
         # Regression risk this guards against: a missing/wrong
@@ -1584,8 +1768,8 @@ class BackupViewTests(TestCase):
             "restore_backup",
             side_effect=backup_services.BackupDecryptionError("wrong key"),
         ):
-            response = self.client.post(reverse("backup-restore", args=[name]))
-        self.assertRedirects(response, reverse("backup-restore", args=[name]))
+            response = self.client.post(reverse("backup-restore", args=[name]), follow=True)
+        self.assertContains(response, "Couldn't decrypt")
 
     def test_restore_confirm_page_warns_when_the_key_is_missing_for_an_encrypted_backup(self):
         self.client.login(username="admin", password="s3cret-pass")

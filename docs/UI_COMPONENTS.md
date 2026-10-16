@@ -193,6 +193,7 @@ Hierarchy (base.css "Buttons: states + one clear hierarchy"):
 | Success / feedback | `messages.success(...)` in the view → toast (`.pr-banner`), auto-dismisses |
 | HTMX failure | handled globally by `static/js/htmx-errors.js` |
 | Composer that clears after sending (chat, assistant) | `data-reset-on-success` on the form instead of `hx-on::after-request="this.reset()"` — cleared only when the send succeeded and the response has no `X-Form-Rejected` header; put the error in a `[data-form-error]` element inside the form (`HX-Retarget`) so a polled area doesn't wipe it |
+| Long-running admin task | run it in the background and show a polling `.alert` status card (`core/_backup_task_status.html`), never inside the request |
 
 ## Modals
 
