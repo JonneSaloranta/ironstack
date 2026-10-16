@@ -68,4 +68,7 @@ class ExerciseImageForm(forms.ModelForm):
                 gettext("That image is too large — the limit is %(megabytes)s MB.")
                 % {"megabytes": services.MAX_IMAGE_UPLOAD_BYTES // (1024 * 1024)}
             )
-        return services.prepare_uploaded_image(image)
+        prepared, (self.instance.width, self.instance.height) = (
+            services.prepare_uploaded_image(image, with_size=True)
+        )
+        return prepared

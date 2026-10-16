@@ -8,7 +8,13 @@ from apps.core.models import TimeStampedModel
 
 
 def exercise_image_upload_to(instance, filename):
-    return f"exercise_images/{instance.exercise_id}/{filename}"
+    """A random name, keeping only the extension: media is served
+    publicly, so the uploader's own filename (often a date, a name, a
+    place) shouldn't end up in a guessable URL."""
+    from pathlib import Path
+    from uuid import uuid4
+
+    return f"exercise_images/{instance.exercise_id}/{uuid4().hex}{Path(filename).suffix.lower()}"
 
 
 class MuscleGroup(models.Model):
@@ -186,6 +192,15 @@ class ExerciseImage(TimeStampedModel):
         Exercise, related_name="images", on_delete=models.CASCADE
     )
     image = models.ImageField(upload_to=exercise_image_upload_to, verbose_name=_("image"))
+    # The stored image's size, so the page can give each <img> its size
+    # up front (no layout jump as it loads) without opening the file on
+    # every render. Set on upload (ExerciseImageForm); left empty where
+    # unknown, and the <img> just renders without it. Deliberately not
+    # ImageField's width_field/height_field: those re-read the file
+    # whenever a row with empty sizes is loaded, so one missing file
+    # would break every page that lists it.
+    width = models.PositiveIntegerField(null=True, blank=True, editable=False)
+    height = models.PositiveIntegerField(null=True, blank=True, editable=False)
     caption = models.CharField(max_length=200, blank=True, verbose_name=_("caption"))
     # Free-text credit for images sourced from an externally-licensed
     # library (e.g. the seeded system library's own images — see

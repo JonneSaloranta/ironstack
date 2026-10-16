@@ -469,6 +469,43 @@ class ExerciseImageViewTests(TestCase):
             self.assertEqual(saved.format, "JPEG")
             self.assertNotIn(0x010F, saved.getexif())
 
+    def test_an_upload_gets_a_random_name_and_its_size_is_stored(self):
+        self.client.post(
+            reverse("exercises:exercise-image-create", args=[self.exercise.pk]),
+            {"image": _tiny_image("My Holiday In Rome.PNG")},
+        )
+        image = self.exercise.images.get()
+        self.assertNotIn("Holiday", image.image.name)
+        self.assertTrue(image.image.name.endswith(".png"))
+        self.assertEqual((image.width, image.height), (10, 10))
+        response = self.client.get(reverse("exercises:exercise-detail", args=[self.exercise.pk]))
+        self.assertContains(response, 'width="10" height="10"')
+
+    def test_the_migration_fills_in_sizes_and_skips_missing_files(self):
+        import importlib
+
+        from django.apps import apps as global_apps
+
+        present = ExerciseImage.objects.create(exercise=self.exercise, image=_tiny_image())
+        missing = ExerciseImage.objects.create(exercise=self.exercise, image=_tiny_image())
+        missing.image.storage.delete(missing.image.name)
+
+        migration = importlib.import_module(
+            "apps.exercises.migrations.0011_exerciseimage_dimensions"
+        )
+        migration.fill_dimensions(global_apps, None)
+
+        present.refresh_from_db()
+        missing.refresh_from_db()
+        self.assertEqual((present.width, present.height), (10, 10))
+        self.assertIsNone(missing.width)
+
+    def test_a_missing_image_file_never_breaks_the_page(self):
+        image = ExerciseImage.objects.create(exercise=self.exercise, image=_tiny_image())
+        image.image.storage.delete(image.image.name)
+        response = self.client.get(reverse("exercises:exercise-detail", args=[self.exercise.pk]))
+        self.assertEqual(response.status_code, 200)
+
     def test_an_oversized_upload_is_refused(self):
         from unittest import mock
 

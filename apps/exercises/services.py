@@ -87,7 +87,7 @@ MAX_IMAGE_DIMENSION = 1600
 MAX_IMAGE_UPLOAD_BYTES = 15 * 1024 * 1024
 
 
-def prepare_uploaded_image(uploaded):
+def prepare_uploaded_image(uploaded, *, with_size=False):
     """An uploaded exercise image, ready to store: turned upright from its
     EXIF orientation, scaled down to MAX_IMAGE_DIMENSION on its longer
     side, and re-encoded — which also drops its EXIF metadata, a phone
@@ -112,5 +112,7 @@ def prepare_uploaded_image(uploaded):
         buffer = io.BytesIO()
         save_options = {"quality": 85, "optimize": True} if image_format == "JPEG" else {}
         image.save(buffer, format=image_format, **save_options)
+        size = image.size
     content_type = Image.MIME.get(image_format, "application/octet-stream")
-    return SimpleUploadedFile(uploaded.name, buffer.getvalue(), content_type=content_type)
+    prepared = SimpleUploadedFile(uploaded.name, buffer.getvalue(), content_type=content_type)
+    return (prepared, size) if with_size else prepared
