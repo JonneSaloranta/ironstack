@@ -10420,3 +10420,7 @@ msgstr "Toimingud"
 
 msgid "Show every tutorial again, including the ones you've finished?"
 msgstr "Kas näidata kõiki juhendeid uuesti, ka neid, mille oled juba läbinud?"
+
+#, python-format
+msgid "RPE goes from %(min)s to %(max)s."
+msgstr "RPE on skaalal %(min)s kuni %(max)s."

@@ -10425,3 +10425,7 @@ msgstr "Åtgärder"
 
 msgid "Show every tutorial again, including the ones you've finished?"
 msgstr "Visa alla guider igen, även de du redan har gått igenom?"
+
+#, python-format
+msgid "RPE goes from %(min)s to %(max)s."
+msgstr "RPE går från %(min)s till %(max)s."

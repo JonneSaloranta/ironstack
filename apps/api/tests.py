@@ -407,6 +407,18 @@ class WorkoutLoggingEndpointTests(APITestCase):
         )
         self.assertEqual(response.status_code, 400)
 
+    def test_an_rpe_outside_the_scale_is_a_400(self):
+        session = workout_services.start_session(self.alice, workout=None)
+        performed = workout_services.add_performed_exercise(session, self.exercise)
+        response = self.client.post(
+            reverse("api:set-list"),
+            {"performed_exercise": performed.pk, "weight": "100.00", "reps": 5, "rpe": "11"},
+            format="json",
+            **self._auth(),
+        )
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("rpe", response.data)
+
     def test_cannot_log_a_set_once_the_session_is_completed(self):
         session = workout_services.start_session(self.alice, workout=None)
         performed = workout_services.add_performed_exercise(session, self.exercise)

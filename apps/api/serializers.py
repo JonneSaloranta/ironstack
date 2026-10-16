@@ -38,6 +38,7 @@ from apps.stretching.models import (
     StretchRoutine,
     StretchSession,
 )
+from apps.workouts import services as workout_services
 from apps.workouts.models import ExerciseSet, PerformedExercise, WorkoutSession
 
 User = get_user_model()
@@ -261,6 +262,15 @@ class ExerciseSetSerializer(serializers.ModelSerializer):
             "performed_at",
         ]
         read_only_fields = ["set_number"]  # auto-numbered — see apps.workouts.services.log_set
+
+    def validate_rpe(self, value):
+        from django.core.exceptions import ValidationError as DjangoValidationError
+
+        try:
+            workout_services.validate_rpe(value)
+        except DjangoValidationError as error:
+            raise serializers.ValidationError(error.messages) from None
+        return value
 
     def validate_performed_exercise(self, value):
         request = self.context["request"]

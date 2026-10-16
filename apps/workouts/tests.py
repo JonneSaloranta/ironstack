@@ -695,6 +695,15 @@ class TrainingModeViewTests(TestCase):
         self.assertContains(response, 'aria-invalid="true"', count=1)
         self.assertContains(response, 'aria-describedby="id_weight_error"')
 
+    def test_an_rpe_outside_the_scale_is_refused(self):
+        response = self.client.post(
+            reverse("workouts:train-set-log", args=[self.performed.pk]),
+            {"weight": "100", "reps": "5", "rpe": "99"},
+            HTTP_HX_REQUEST="true",
+        )
+        self.assertEqual(self.performed.sets.count(), 0)
+        self.assertContains(response, "RPE goes from 1 to 10.")
+
     def test_an_error_in_the_extra_options_opens_them(self):
         # RPE/RIR/notes sit in a section collapsed by default — an error
         # there used to stay hidden inside it.

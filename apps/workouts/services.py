@@ -22,6 +22,22 @@ from .models import (
     WorkoutSessionStatus,
 )
 
+#: The RPE scale (rate of perceived exertion) a logged or prescribed
+#: value must fall on — anything else is a typo, not an effort level.
+RPE_MIN = 1
+RPE_MAX = 10
+
+
+def validate_rpe(value):
+    """Raises django ValidationError for an RPE outside RPE_MIN..RPE_MAX."""
+    from django.core.exceptions import ValidationError
+    from django.utils.translation import gettext
+
+    if value is not None and not RPE_MIN <= value <= RPE_MAX:
+        raise ValidationError(
+            gettext("RPE goes from %(min)s to %(max)s.") % {"min": RPE_MIN, "max": RPE_MAX}
+        )
+
 
 class SessionNotInProgress(Exception):
     """Raised when completing/abandoning a session that already ended.

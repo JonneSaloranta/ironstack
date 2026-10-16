@@ -10392,3 +10392,7 @@ msgstr ""
 
 msgid "Show every tutorial again, including the ones you've finished?"
 msgstr ""
+
+#, python-format
+msgid "RPE goes from %(min)s to %(max)s."
+msgstr ""
