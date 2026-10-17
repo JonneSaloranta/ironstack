@@ -1093,7 +1093,9 @@ class ProfileViewTests(TestCase):
         # your data, Tutorials, Feedback, Delete account. ("My clients" is
         # skipped - alice isn't a personal trainer.)
         self.assertContains(response, 'class="card card-link settings-row"', count=11)
-        self.assertContains(response, "settings-row-chevron", count=11)
+        # ...plus the Preferences disclosure's own (turned-down) chevron.
+        self.assertContains(response, "settings-row-chevron", count=12)
+        self.assertContains(response, '<summary class="settings-row">')
         self.assertContains(
             response, f'<a class="card card-link settings-row" href="{reverse("account-details")}">'
         )

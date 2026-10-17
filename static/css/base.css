@@ -3183,6 +3183,34 @@ details.preferences[open] > summary::after {
   content: "▴";
 }
 
+/* Profile's Preferences: the summary is a .settings-row, so it uses the
+   row's own chevron (turned down, up when open) instead of the arrow
+   above, and lights up on hover like the link rows below it. */
+details.preferences > summary.settings-row {
+  font-weight: normal;
+}
+
+details.preferences > summary.settings-row::after {
+  content: none;
+}
+
+details.preferences[open] > summary.settings-row {
+  margin-bottom: var(--space-4);
+}
+
+details.preferences > summary.settings-row .settings-row-chevron {
+  transform: rotate(90deg);
+}
+
+details.preferences[open] > summary.settings-row .settings-row-chevron {
+  transform: rotate(-90deg);
+}
+
+details.preferences:has(> summary.settings-row:hover),
+details.preferences:has(> summary.settings-row:focus-visible) {
+  border-color: var(--color-accent);
+}
+
 /* Loading bar for live searches (core/_search_indicator.html). */
 .search-indicator {
   height: 0.25rem;

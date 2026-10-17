@@ -76,7 +76,7 @@ There are exactly two `<h2>` styles:
 | Big single number | `.stat-value` / `.stat-value-lg` | one headline figure |
 | Admin/destructive section | `.danger-zone` | staff-only or account-level dangerous actions |
 | Sub-group label in a long form | `.field-group-label` | profile preferences |
-| Collapsible section | `<details class="card preferences">` + `<summary><h2 class="card-title no-margin">` (add `open` when its form has errors) | profile preferences, diary quick entry |
+| Collapsible section | `<details class="card preferences">` + `<summary><h2 class="card-title no-margin">` (add `open` when its form has errors) | diary quick entry, shopping days; profile preferences uses a `.settings-row` summary (title, description, chevron turned down) to match its neighbouring rows |
 
 **Rows must not depend on their text's length.** In a `.card-action-row`
 the first child (hidden inputs skipped) is the text column: it takes the

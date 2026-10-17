@@ -23,6 +23,11 @@ narrated summary of the same version.
   including translations, the built-in programs and recipes, and the
   empty-value placeholder in tables and stats.
 
+### Fixed
+- Profile: Preferences now looks like the rows below it - a card with a
+  short description of what's inside and the same chevron (pointing down,
+  up when open) - so it no longer looks like a plain heading.
+
 ## [1.25.0] - 2026-10-17
 
 ### Added
