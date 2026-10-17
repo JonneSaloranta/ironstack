@@ -1,6 +1,6 @@
 {% comment %}
 Shared previous/next pager for any paginated list. Keeps every other
-GET parameter (search, filters, sort) via `query_string`, url-encoded —
+GET parameter (search, filters, sort) via `query_string`, url-encoded -
 built by core_extras' `url_replace`, so it never emits empty `q=` params.
 Usage: {% include "core/_pagination.html" %}   (uses page_obj + request)
 Optional, for a page with more than one pager or one that should keep its
@@ -8,8 +8,8 @@ scroll position: `page` (a Page, default page_obj), `param` (its query
 parameter, default "page"), `anchor` (an id put on the nav and appended to
 both links, so a full page load lands back on the pager), `label`
 (aria-label, default "Pagination"), `hx_target` (an element id: the links
-then swap just that element via HTMX — same URL, `hx-select` picks it out of
-the full page — so page-level client state such as a selected meal survives;
+then swap just that element via HTMX - same URL, `hx-select` picks it out of
+the full page - so page-level client state such as a selected meal survives;
 without JS they stay plain links).
 {% endcomment %}
 {% comment %}

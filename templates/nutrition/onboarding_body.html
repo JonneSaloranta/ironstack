@@ -1,12 +1,12 @@
 {% extends "base.html" %}
 {% load i18n %}
-{% block title %}{% trans "Nutrition setup" %} — IronStack{% endblock %}
+{% block title %}{% trans "Nutrition setup" %} - IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
   <h1 class="no-margin">{% trans "Let's set up your nutrition" %}</h1>
 </div>
 {% include "nutrition/_wizard_progress.html" %}
-<p class="text-muted">{% trans "A few questions about your body — used to estimate how many calories you need." %}</p>
+<p class="text-muted">{% trans "A few questions about your body - used to estimate how many calories you need." %}</p>
 
 <form class="card" method="post">
   {% csrf_token %}

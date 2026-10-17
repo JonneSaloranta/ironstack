@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% load i18n %}
-{% block title %}{% trans "Import recipe" %} — IronStack{% endblock %}
+{% block title %}{% trans "Import recipe" %} - IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
   <h1 class="no-margin">{% trans "Import recipe" %}</h1>
@@ -9,7 +9,7 @@
 
 <form class="card" method="post" enctype="multipart/form-data">
   {% csrf_token %}
-  <p class="text-muted">{% trans "Upload a recipe someone exported — from this instance, or a completely different IronStack instance. A food originally imported from OpenFoodFacts is looked up again by its own barcode; anything else is recreated as your own food." %}</p>
+  <p class="text-muted">{% trans "Upload a recipe someone exported - from this instance, or a completely different IronStack instance. A food originally imported from OpenFoodFacts is looked up again by its own barcode; anything else is recreated as your own food." %}</p>
   {% include "core/_form_errors.html" %}
   {% for field in form %}
     {% include "core/_field.html" with field=field %}

@@ -1,11 +1,11 @@
 -r dev.txt
-# apps/core/test_accessibility.py — real-browser accessibility checks
+# apps/core/test_accessibility.py - real-browser accessibility checks
 # (axe-core, run against actual rendered pages) for the handful of key
 # pages docs/UI.md's own accessibility requirements cover, on top of
 # the plain HTML assertions the rest of the test suite already makes
-# (visually-hidden labels, aria attributes, etc. — those don't need a
+# (visually-hidden labels, aria attributes, etc. - those don't need a
 # browser at all). A genuine DOM/CSS-aware engine like axe-core can't
-# run without something that actually renders a page — Playwright is
+# run without something that actually renders a page - Playwright is
 # the standard way to drive one from Python; axe-core itself is
 # injected directly as a script (apps/core/test_accessibility.py), not
 # vendored or pulled in as a separate PyPI wrapper, since a thin

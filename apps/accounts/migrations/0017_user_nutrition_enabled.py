@@ -13,6 +13,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='user',
             name='nutrition_enabled',
-            field=models.BooleanField(default=True, help_text="Shows nutrition (food diary, recipes, diet plans) in navigation and on the dashboard. Turn off to hide it if you don't want to track nutrition — existing nutrition data is never deleted, and its pages stay reachable directly by a link."),
+            field=models.BooleanField(default=True, help_text="Shows nutrition (food diary, recipes, diet plans) in navigation and on the dashboard. Turn off to hide it if you don't want to track nutrition - existing nutrition data is never deleted, and its pages stay reachable directly by a link."),
         ),
     ]

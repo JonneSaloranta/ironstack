@@ -1,6 +1,6 @@
-"""Weight-trend analysis — see docs/NUTRITION.md "Dynamic calorie
+"""Weight-trend analysis - see docs/NUTRITION.md "Dynamic calorie
 adjustment". Pure functions over plain `(date, weight_kg)` readings, no
-DB dependency — testable against synthetic histories without touching
+DB dependency - testable against synthetic histories without touching
 apps.measurements at all. apps.nutrition.suggestions is the layer that
 actually reads real BodyMeasurement rows and calls into this module.
 """
@@ -13,7 +13,7 @@ from decimal import ROUND_HALF_UP, Decimal
 MOVING_AVERAGE_WINDOW_DAYS = 7
 # Never react to a single reading (docs/NUTRITION.md's own explicit
 # rule, echoing docs/PROGRESSION.md's "failure is a signal, not a
-# command") — no suggestion is attempted below this much history.
+# command") - no suggestion is attempted below this much history.
 MIN_SPAN_DAYS = 14
 MIN_DISTINCT_DAYS = 4
 
@@ -37,7 +37,7 @@ def moving_average_trend(
 ) -> list[tuple[date_type, Decimal]]:
     """One `(date, trend_weight)` point per day that has a real
     reading, each averaged over the `window_days` calendar days ending
-    on it, using whatever real readings actually fall in that window —
+    on it, using whatever real readings actually fall in that window -
     sparse logging just means a smaller effective average that day,
     not a gap in the trend line."""
     by_day = bucket_by_day(readings)
@@ -61,7 +61,7 @@ class TrendResult:
 
 
 def compute_trend(readings: list[tuple[date_type, Decimal]]) -> TrendResult | None:
-    """`None` if there isn't yet enough history to say anything —
+    """`None` if there isn't yet enough history to say anything -
     fewer than `MIN_DISTINCT_DAYS` distinct logging days, or less than
     `MIN_SPAN_DAYS` between the first and last. The caller
     (apps.nutrition.suggestions) turns that into an explicit

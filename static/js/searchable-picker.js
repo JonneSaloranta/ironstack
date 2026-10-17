@@ -1,7 +1,7 @@
 /* apps.core.widgets.SearchablePickerWidget (templates/core/widgets/
  * searchable_picker.html): a search box that suggests choices and a list
  * of the picked ones, each removable. The widget's checkboxes stay the
- * real form input — this only checks/unchecks them and hides the plain
+ * real form input - this only checks/unchecks them and hides the plain
  * list, so without JavaScript the checkboxes simply work as they are. */
 // eslint-disable-next-line no-unused-vars
 function ironstackSearchablePicker() {

@@ -1,10 +1,10 @@
-// Training mode's rest timer — plain client-side countdown, no server
+// Training mode's rest timer - plain client-side countdown, no server
 // round-trip needed while it runs. The countdown itself is driven
 // entirely by `remaining`. Sound (and the mute switch) comes from the
 // shared static/js/timer-audio.js, which must load before this file.
 //
 // Extracted out of templates/workouts/session_train.html into its own
-// file so it can be loaded via <script src>, not inline — see
+// file so it can be loaded via <script src>, not inline - see
 // static/js/sw-register.js's own comment for why (CSP's script-src
 // here has no 'unsafe-inline'). Contains no server-rendered value, so
 // the move is otherwise a plain copy/paste.
@@ -20,18 +20,18 @@ function ironstackRestTimer() {
     // locked phone (iOS Safari and most mobile Chrome alike) freezes
     // JS timers entirely rather than merely slowing them down, so a
     // decrement-based countdown loses every second the screen was
-    // locked — reopening the app resumed counting down from wherever
+    // locked - reopening the app resumed counting down from wherever
     // it had frozen, showing far more time left than had actually
     // passed. Deriving `remaining` from `endAt - Date.now()` on every
     // tick (see tick() below) instead means the very next tick that
-    // does run — even one long-delayed by a locked screen — catches
+    // does run - even one long-delayed by a locked screen - catches
     // straight up to how much time has really elapsed.
     endAt: 0,
     audio: createTimerAudio(MUTE_STORAGE_KEY),
     get muted() {
       return this.audio.muted;
     },
-    // Alpine calls init() automatically once this component mounts —
+    // Alpine calls init() automatically once this component mounts -
     // no separate x-init="" needed on the element.
     init() {
       // See timer-audio.js's listenForUnlock() for why this has to
@@ -66,7 +66,7 @@ function ironstackRestTimer() {
       this.scheduleServerNotification(seconds);
     },
     // Re-derives `remaining` from the wall-clock deadline rather than
-    // trusting that exactly one second passed since the last tick —
+    // trusting that exactly one second passed since the last tick -
     // see endAt's own comment for why that trust doesn't hold on a
     // locked phone. Shared by the interval (the normal path) and the
     // visibilitychange catch-up in init() above.
@@ -84,7 +84,7 @@ function ironstackRestTimer() {
       // row's fire_at to match the countdown's own new deadline.
       this.scheduleServerNotification(this.remaining);
     },
-    // Countdown reaching zero on its own — the only path that plays a
+    // Countdown reaching zero on its own - the only path that plays a
     // sound (or shows a notification, below), distinct from a manual
     // "Skip rest" (stop() below), which shouldn't do either since the
     // user is the one ending it.
@@ -95,7 +95,7 @@ function ironstackRestTimer() {
       this.beep();
       this.notify();
       // The client got here on its own, so it's not frozen right now
-      // — cancel the server-side backstop (scheduleServerNotification
+      // - cancel the server-side backstop (scheduleServerNotification
       // below) so a real push doesn't arrive moments later as a
       // redundant duplicate of the notify() call just above.
       this.cancelServerNotification();
@@ -113,13 +113,13 @@ function ironstackRestTimer() {
       this.audio.beep();
     },
     // A system notification for whenever the beep alone might not
-    // actually be *noticed* — the phone locked, or a different app/
+    // actually be *noticed* - the phone locked, or a different app/
     // tab in front, mid-rest. Only when the page genuinely isn't the
-    // thing on screen right now (document.hidden — Page Visibility
+    // thing on screen right now (document.hidden - Page Visibility
     // API): a visible countdown reaching 0:00 plus the beep above
     // already says "rest's over" clearly enough while looking
     // straight at it, so this would just be a redundant second alert.
-    // Never requests permission itself — Notification.permission is
+    // Never requests permission itself - Notification.permission is
     // only ever "granted" here if the user already turned on push
     // notifications elsewhere (Profile -> Notifications), the same
     // subscribe flow (static/js/push-subscribe.js) that's the one
@@ -131,12 +131,12 @@ function ironstackRestTimer() {
       if (!document.hidden) return;
       if (!("Notification" in window) || Notification.permission !== "granted") return;
       if (!("serviceWorker" in navigator)) return;
-      // Regression: `new Notification(...)` — the plain constructor —
+      // Regression: `new Notification(...)` - the plain constructor -
       // is what this used to call directly. That's silently a no-op on
       // iOS/iPadOS Safari: WebKit only ever displays a notification
       // triggered through a ServiceWorkerRegistration (either from a
-      // "push" event, as static/sw.js's own handler does, or — this
-      // case — a direct showNotification() call from page script), and
+      // "push" event, as static/sw.js's own handler does, or - this
+      // case - a direct showNotification() call from page script), and
       // either throws or never renders anything for the bare
       // constructor. static/js/push-subscribe.js's `enable()` already
       // registers this same service worker as part of turning push
@@ -145,7 +145,7 @@ function ironstackRestTimer() {
       //
       // Regression: reading this.$el.dataset.* *inside* the .then()
       // callback below showed a literal "undefined" title/body in the
-      // actual notification — read them here instead, synchronously,
+      // actual notification - read them here instead, synchronously,
       // while this is unambiguously still the call finish() just made
       // on this component's own instance, and pass the plain strings
       // into the promise chain instead of reaching for `this` again
@@ -163,7 +163,7 @@ function ironstackRestTimer() {
           });
         })
         .catch(() => {
-          // Silently skip — same reasoning as beep()'s own try/catch.
+          // Silently skip - same reasoning as beep()'s own try/catch.
         });
     },
     // The reliable backstop for notify() above: that one only ever
@@ -173,11 +173,11 @@ function ironstackRestTimer() {
     // (docs/DEVELOPMENT_LOG.md "A phone-testing pass"). Asking the
     // server (apps.workouts.views.RestTimerScheduleView) to send a
     // real Web Push at the right moment instead works regardless of
-    // whether this page's JS ever gets to run again before then — the
+    // whether this page's JS ever gets to run again before then - the
     // OS delivers it either way. Same permission gate as notify():
     // never requests it, only ever runs once the user already opted
     // in elsewhere (Profile → Notifications), and silently a no-op
-    // otherwise — starting/adjusting a rest period must never *cost*
+    // otherwise - starting/adjusting a rest period must never *cost*
     // anything for someone who hasn't turned notifications on.
     // Fire-and-forget: a failed request here (offline, server hiccup)
     // must never block or interrupt the countdown itself, which is
@@ -190,13 +190,13 @@ function ironstackRestTimer() {
         body: this.$el.dataset.notifyBody,
         url: window.location.href,
       }).catch(() => {
-        // Silently skip — same reasoning as notify()'s own try/catch.
+        // Silently skip - same reasoning as notify()'s own try/catch.
       });
     },
     cancelServerNotification() {
       if (!("Notification" in window) || Notification.permission !== "granted") return;
       postJSON(this.$el.dataset.restTimerCancelUrl, {}).catch(() => {
-        // Silently skip — same reasoning as notify()'s own try/catch.
+        // Silently skip - same reasoning as notify()'s own try/catch.
       });
     },
   };

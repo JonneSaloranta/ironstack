@@ -28,7 +28,7 @@ def _log_completed_session(user, exercise, weight, reps_list, *, days_ago=0):
     workout_services.complete_session(session)
     if days_ago:
         # complete_session() always stamps ended_at with the real "now"
-        # — backdate it too so a session "logged N days ago" actually
+        # - backdate it too so a session "logged N days ago" actually
         # looks like one throughout, not just at its own started_at.
         # Callers that need started_at/ended_at to diverge (e.g. a
         # session that ran long) set ended_at explicitly afterward
@@ -126,7 +126,7 @@ class WeeklyVolumeSeriesTests(TestCase):
         # fixed offset, which put it in an *earlier* ISO week than
         # days_ago=0 whenever "today" happened to be a Monday (ISO
         # weeks start on Monday, so "yesterday" is already last week
-        # on that one day out of seven) — producing 3 bars instead of
+        # on that one day out of seven) - producing 3 bars instead of
         # the 2 this test expects. Capped at today.weekday() (0 on a
         # Monday) so the two sessions are always provably in the same
         # ISO week regardless of which real-world day the test runs on.
@@ -235,7 +235,7 @@ class PrHistoryGroupedByExerciseServiceTests(TestCase):
 
         self.assertEqual(len(groups), 1)
         self.assertEqual(groups[0].exercise, self.squat)
-        # All three are "headline" types (max weight/1RM/volume) — none
+        # All three are "headline" types (max weight/1RM/volume) - none
         # relegated to secondary.
         self.assertEqual(len(groups[0].primary_records), 3)
         self.assertEqual(groups[0].secondary_records, [])
@@ -256,7 +256,7 @@ class PrHistoryGroupedByExerciseServiceTests(TestCase):
         )
 
     def test_an_exercise_with_only_secondary_types_falls_back_to_showing_them_directly(self):
-        # No max weight/1RM/volume hit in range for this exercise — a
+        # No max weight/1RM/volume hit in range for this exercise - a
         # card with nothing but a name and a chevron would look broken,
         # so its one secondary-type record is promoted to primary.
         now = timezone.now()
@@ -271,7 +271,7 @@ class PrHistoryGroupedByExerciseServiceTests(TestCase):
     def test_groups_are_ordered_by_each_exercises_own_most_recent_record(self):
         now = timezone.now()
         # Bench's most recent PR is newer than squat's, even though
-        # squat has an even older second record — group order should
+        # squat has an even older second record - group order should
         # follow the newest record per exercise, not creation order.
         self._pr(self.squat, PRType.MAX_WEIGHT, Decimal("100"), now - timedelta(hours=2))
         self._pr(self.bench, PRType.MAX_WEIGHT, Decimal("80"), now - timedelta(hours=1))
@@ -286,7 +286,7 @@ class PrHistoryGroupedByExerciseServiceTests(TestCase):
         self._pr(self.squat, PRType.MAX_WEIGHT, Decimal("100"), now)
         self._pr(self.bench, PRType.MAX_WEIGHT, Decimal("80"), now - timedelta(hours=1))
 
-        # Only the single most recent record is fetched — bench's PR
+        # Only the single most recent record is fetched - bench's PR
         # falls outside that and its group never appears at all.
         groups = services.pr_history_grouped_by_exercise(
             self.alice, dateranges.resolve("7d"), limit=1
@@ -347,7 +347,7 @@ class ExerciseAnalyticsServiceTests(TestCase):
 
 
 class AchievementsTests(TestCase):
-    """apps.analytics.achievements — all-time dashboard-carousel
+    """apps.analytics.achievements - all-time dashboard-carousel
     highlights, deliberately unbounded by any DateRange (unlike
     everything else in this file) and, unlike everything else in this
     file, shared across every user rather than scoped to one."""
@@ -373,7 +373,7 @@ class AchievementsTests(TestCase):
 
     def test_the_longest_streak_survives_after_it_ends(self):
         """"Longest streak" is an all-time best, not the user's current
-        streak — a 3-day run from ten days ago should still show even
+        streak - a 3-day run from ten days ago should still show even
         though today's run is only 1 day so far."""
         _log_completed_session(self.alice, self.exercise, Decimal("100"), [5], days_ago=10)
         _log_completed_session(self.alice, self.exercise, Decimal("100"), [5], days_ago=9)
@@ -399,7 +399,7 @@ class AchievementsTests(TestCase):
 
     def test_each_highlight_also_carries_the_real_username(self):
         """Distinct from display_name (which can carry a first name
-        too) — apps.analytics.views.MemberProfileView's own link needs
+        too) - apps.analytics.views.MemberProfileView's own link needs
         the real, stable username to build a URL from."""
         self.alice.first_name = "Alice"
         self.alice.show_name_to_others = True
@@ -445,7 +445,7 @@ class AchievementsTests(TestCase):
         self.assertNotIn("volume", icons)
 
     def test_highlights_include_every_opted_in_user(self):
-        """The carousel is shared, not personal — regression: an earlier
+        """The carousel is shared, not personal - regression: an earlier
         version scoped this to a single viewing user."""
         bob = User.objects.create_user(username="bob", password="s3cret-pass")
         _log_completed_session(self.alice, self.exercise, Decimal("100"), [5])
@@ -455,7 +455,7 @@ class AchievementsTests(TestCase):
 
     def test_a_user_who_opted_out_is_excluded_entirely(self):
         """show_achievements is a privacy setting ("don't show my stats
-        to anyone"), not a personal display toggle — turning it off
+        to anyone"), not a personal display toggle - turning it off
         removes that user's own highlights from the shared result the
         same way it would for anyone else viewing it."""
         self.alice.show_achievements = False
@@ -494,7 +494,7 @@ class AchievementsTests(TestCase):
 
 
 class RecentlyActiveUsersTests(TestCase):
-    """apps.analytics.achievements.recently_active_users — the
+    """apps.analytics.achievements.recently_active_users - the
     dashboard's "Recently active" list."""
 
     def setUp(self):
@@ -505,7 +505,7 @@ class RecentlyActiveUsersTests(TestCase):
         self.assertEqual(achievements.recently_active_users(), [])
 
     def test_starting_a_session_counts_as_activity_even_incomplete(self):
-        """A session doesn't have to be *completed* to count — starting
+        """A session doesn't have to be *completed* to count - starting
         one is itself a sign of activity, unlike the achievements
         carousel's per-figure counts."""
         workout_services.start_session(self.alice, workout=None)
@@ -557,8 +557,8 @@ class RecentlyActiveUsersTests(TestCase):
         self.assertFalse(entry.is_recent)
 
     def test_last_active_at_is_when_the_session_ended_not_when_it_started(self):
-        """Regression: a session that ran long — started days ago,
-        finished just now — used to show as "days ago" on the
+        """Regression: a session that ran long - started days ago,
+        finished just now - used to show as "days ago" on the
         dashboard, keyed off started_at. It should read as barely any
         time ago at all, since that's when this user actually stopped
         training."""
@@ -584,7 +584,7 @@ class RecentlyActiveUsersTests(TestCase):
 
 
 class MemberProfileViewTests(TestCase):
-    """apps.analytics.views.MemberProfileView — another user's public
+    """apps.analytics.views.MemberProfileView - another user's public
     fitness profile, asked for directly. Gated by the same
     User.show_achievements opt-out the achievements carousel/"Recently
     active" list already use, not a second, separate setting."""
@@ -648,7 +648,7 @@ class MemberProfileViewTests(TestCase):
     def test_shows_no_nutrition_or_body_weight_data(self):
         """Asked for directly: only workout/PR/streak figures, nothing
         about food, calories, or logged body weight. Scoped to this
-        page's own content, past its <h1> — base.html's shared chrome
+        page's own content, past its <h1> - base.html's shared chrome
         mentions "nutrition" twice already, on every single
         authenticated page regardless of this one's own content: once
         in the site-wide SEO <meta name="description">, and once for
@@ -721,7 +721,7 @@ class AnalyticsDashboardViewTests(TestCase):
 
     def test_bar_chart_labels_the_bars_directly_not_just_the_table(self):
         """Regression: bars were deliberately unlabeled in the SVG itself
-        (only the table below named them), which read as broken/blank —
+        (only the table below named them), which read as broken/blank -
         a chart of same-colored, nameless bars. Each bar now carries its
         own <text> label too."""
         chest = MuscleGroup.objects.create(name="Test Chest Direct")
@@ -736,11 +736,11 @@ class AnalyticsDashboardViewTests(TestCase):
     def test_bar_geometry_stays_period_separated_under_a_comma_decimal_locale(self):
         """Regression: apps.core.charts.build_bar_series' x/y/width/height
         are Decimals, and Django auto-localizes {{ }} output per the
-        viewing user's own language (User.language) — under "fi" that's
+        viewing user's own language (User.language) - under "fi" that's
         a comma decimal separator ("148,00"), which isn't valid SVG
         numeric syntax. Browsers silently fail to parse a comma-broken
-        coordinate, so every bar rendered at zero size — invisible, not
-        just misformatted — for any user with a comma-decimal UI
+        coordinate, so every bar rendered at zero size - invisible, not
+        just misformatted - for any user with a comma-decimal UI
         language. templates/core/_bar_chart.html wraps the SVG in
         {% localize off %} to keep these internal plot coordinates
         locale-independent; bar.value (shown to the user as text, not a
@@ -768,8 +768,8 @@ class AnalyticsDashboardViewTests(TestCase):
 
     def test_recent_prs_renders_one_box_per_exercise_not_per_record_type(self):
         """Regression: several record_types hit for the same exercise
-        used to render as several near-identical cards — one per
-        PersonalRecord row — instead of one grouped box per exercise."""
+        used to render as several near-identical cards - one per
+        PersonalRecord row - instead of one grouped box per exercise."""
         exercise = Exercise.objects.create(name="Test Deadlift Group", owner=None)
         now = timezone.now()
         for record_type, value in [

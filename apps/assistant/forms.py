@@ -5,7 +5,7 @@ from django.utils.translation import gettext_lazy as _
 
 from apps.core.widgets import SearchablePickerWidget
 
-from .models import AssistantSettings, Effort, OwnKeyModel
+from .models import AssistantPreference, AssistantSettings, DataScope, Effort, OwnKeyModel
 from .services import MAX_MESSAGE_LENGTH, instance_claude_model
 
 
@@ -37,6 +37,39 @@ class ApiKeyForm(forms.Form):
         if not key.startswith("sk-ant-") or len(key) < 20 or any(c.isspace() for c in key):
             raise forms.ValidationError(_("That doesn't look like an Anthropic API key."))
         return key
+
+
+ABOUT_ME_MAX_LENGTH = 2000
+
+
+class AboutMeForm(forms.Form):
+    about_me = forms.CharField(
+        label=_("What the assistant should know about you"),
+        max_length=ABOUT_ME_MAX_LENGTH,
+        required=False,
+        widget=forms.Textarea(
+            attrs={
+                "rows": 5,
+                "placeholder": _(
+                    "e.g. Allergic to nuts. Vegetarian. I train at home with dumbbells, "
+                    "three evenings a week. I don't like fish."
+                ),
+            }
+        ),
+        help_text=_(
+            "Allergies, foods you don't eat, equipment, schedule, injuries - anything "
+            "you'd otherwise repeat in every conversation. New conversations use it."
+        ),
+    )
+
+
+class DataAccessForm(forms.ModelForm):
+    """One checkbox per DataScope - what the assistant may read."""
+
+    class Meta:
+        model = AssistantPreference
+        fields = [f"reads_{scope.value}" for scope in DataScope]
+        labels = {f"reads_{scope.value}": scope.label for scope in DataScope}
 
 
 class OwnKeyOptionsForm(forms.Form):

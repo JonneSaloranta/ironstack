@@ -71,7 +71,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('enabled', models.BooleanField(default=True, help_text="Turns the assistant off for everyone, including users' own keys.")),
-                ('shared_key_access', models.CharField(choices=[('nobody', 'Nobody — users must bring their own key'), ('staff', 'Staff only'), ('selected', 'Selected users'), ('everyone', 'Everyone')], default='staff', help_text="Who may use this instance's own provider (ASSISTANT_API_KEY, or the Ollama server). Its usage is billed to you, the operator.", max_length=10)),
+                ('shared_key_access', models.CharField(choices=[('nobody', 'Nobody - users must bring their own key'), ('staff', 'Staff only'), ('selected', 'Selected users'), ('everyone', 'Everyone')], default='staff', help_text="Who may use this instance's own provider (ASSISTANT_API_KEY, or the Ollama server). Its usage is billed to you, the operator.", max_length=10)),
                 ('daily_token_limit', models.PositiveIntegerField(default=200000, help_text="Tokens (input + output) one user may spend per day on the shared provider. 0 means no limit. Users' own keys are never limited.")),
                 ('allowed_users', models.ManyToManyField(blank=True, help_text='Used when access is set to “Selected users”.', related_name='+', to=settings.AUTH_USER_MODEL)),
             ],

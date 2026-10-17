@@ -2,7 +2,7 @@
 <div class="card">
   <div>{{ backup.created_at|date:"Y-m-d H:i" }}</div>
   <p class="text-muted">
-    {{ backup.size|filesizeformat }} · {{ backup.version|default:"—" }}{% if backup.git_sha and backup.git_sha != "unknown" %} ({{ backup.git_sha }}){% endif %}
+    {{ backup.size|filesizeformat }} · {{ backup.version|default:"-" }}{% if backup.git_sha and backup.git_sha != "unknown" %} ({{ backup.git_sha }}){% endif %}
   </p>
   {% if backup.source == "scheduled" %}
     <span class="tag">{% trans "Automatic" %}</span>
@@ -12,7 +12,7 @@
     <span class="tag tag-muted">{% trans "Manual" %}</span>
   {% endif %}
   {% if backup.encrypted %}
-    <span class="tag tag-success" title="{% trans "database.dump/media.tar are encrypted with this instance's BACKUP_ENCRYPTION_KEY — restoring needs it." %}">{% trans "Encrypted" %}</span>
+    <span class="tag tag-success" title="{% trans "database.dump/media.tar are encrypted with this instance's BACKUP_ENCRYPTION_KEY - restoring needs it." %}">{% trans "Encrypted" %}</span>
   {% endif %}
   <div class="set-actions mt-2">
     <a class="button-secondary" href="{% url 'backup-download' backup.name %}" download>{% trans "Download" %}</a>

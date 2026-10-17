@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% load i18n core_extras stretching_extras %}
-{% block title %}{% if session.workout %}{% trans session.workout.name %}{% else %}{% trans "Freeform workout" %}{% endif %} — IronStack{% endblock %}
+{% block title %}{% if session.workout %}{% trans session.workout.name %}{% else %}{% trans "Freeform workout" %}{% endif %} - IronStack{% endblock %}
 {% block content %}
 {% url 'workouts:session-list' as c1u %}{% trans "Workouts" as c1l %}
 {% trans "Freeform workout" as freeform_label %}

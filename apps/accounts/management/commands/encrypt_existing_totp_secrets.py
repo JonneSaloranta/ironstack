@@ -6,10 +6,10 @@ from apps.accounts.models import User
 
 class Command(BaseCommand):
     """Re-saves every user's `totp_secret` so EncryptedTextField
-    (apps.accounts.models) actually encrypts it — see that field's own
+    (apps.accounts.models) actually encrypts it - see that field's own
     docstring for why turning TOTP_ENCRYPTION_KEY on doesn't do this
     by itself (only a row's *next* save does). Run once, right after
-    setting TOTP_ENCRYPTION_KEY in .env and restarting — safe to run
+    setting TOTP_ENCRYPTION_KEY in .env and restarting - safe to run
     again later too (a row already encrypted under the current key
     round-trips through save() unchanged, decrypted then re-encrypted
     to the same ciphertext-worth of protection)."""
@@ -19,10 +19,10 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         if not settings.TOTP_ENCRYPTION_KEY:
             raise CommandError(
-                "TOTP_ENCRYPTION_KEY isn't set — nothing to encrypt with. Set it in .env "
+                "TOTP_ENCRYPTION_KEY isn't set - nothing to encrypt with. Set it in .env "
                 "and restart first."
             )
-        # exclude("") — nothing to do for a user who never set up 2FA
+        # exclude("") - nothing to do for a user who never set up 2FA
         # at all (totp_secret defaults to ""), and re-saving those rows
         # too would just be wasted writes.
         users = User.objects.exclude(totp_secret="")

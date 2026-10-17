@@ -13,11 +13,11 @@ _METHOD_TO_CRUD_FIELD = {
 
 class HasContextPermission(BasePermission):
     """Every apps.api view must both (a) be authenticated via a valid
-    API key (apps.api.auth.ApiKeyAuthentication — there is no other way
+    API key (apps.api.auth.ApiKeyAuthentication - there is no other way
     in) and (b) declare which `apps.api.models.ApiContext` it belongs to
     via an `api_context` class attribute, and (c) have that key granted
     the CRUD flag matching the request's HTTP method for that context
-    (apps.api.models.ApiKeyPermission) — this is the entire authorization
+    (apps.api.models.ApiKeyPermission) - this is the entire authorization
     model for the API: no Django auth permissions, no groups, just
     "does this specific key have this specific verb on this specific
     context", checked fresh on every request.

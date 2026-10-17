@@ -14,7 +14,7 @@ NUMERIC = {"inputmode": "numeric", "autocomplete": "off"}
 
 
 class _OwnedNameMixin:
-    """Per-owner name uniqueness, checked up front — the model's
+    """Per-owner name uniqueness, checked up front - the model's
     UniqueConstraint covers `owner`, which isn't a form field, so
     ModelForm's own constraint validation skips it and a duplicate would
     otherwise surface as an IntegrityError."""
@@ -77,7 +77,7 @@ class StretchForm(_OwnedNameMixin, forms.ModelForm):
 
 class RoutineItemForm(forms.ModelForm):
     """Adding or editing one stretch in a routine. `hold_seconds` may be
-    left blank when adding — the stretch's own default is used."""
+    left blank when adding - the stretch's own default is used."""
 
     hold_seconds = forms.IntegerField(
         min_value=5,
@@ -117,7 +117,7 @@ class RoutineItemForm(forms.ModelForm):
 
 
 class QuickLogForm(forms.ModelForm):
-    """Logging a session after the fact — just a duration, optionally
+    """Logging a session after the fact - just a duration, optionally
     tied to one of the user's visible routines."""
 
     duration_minutes = forms.IntegerField(

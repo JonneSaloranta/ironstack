@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% load i18n %}
-{% block title %}{% trans "New API key" %} — IronStack{% endblock %}
+{% block title %}{% trans "New API key" %} - IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
   <h1 class="no-margin">{% trans "New API key" %}</h1>
@@ -11,7 +11,7 @@
   {% include "core/_form_errors.html" %}
   {% include "core/_field.html" with field=form.name %}
 
-  <p class="text-muted">{% trans "Choose exactly what this key is allowed to do, per resource — leave everything unchecked for a context to block it entirely." %}</p>
+  <p class="text-muted">{% trans "Choose exactly what this key is allowed to do, per resource - leave everything unchecked for a context to block it entirely." %}</p>
   <div class="table-wrap">
     <table class="set-table">
       <thead>

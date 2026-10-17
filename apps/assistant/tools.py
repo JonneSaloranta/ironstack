@@ -1,9 +1,9 @@
-"""The assistant's tools — what the model may look at and propose. See
+"""The assistant's tools - what the model may look at and propose. See
 docs/ASSISTANT.md "Tools".
 
 Every tool runs as one specific user (`ToolContext.user`) and only ever
 reads that user's own rows plus the shared/system rows they can already
-see in the app (system exercises, shared foods, built-in recipes) —
+see in the app (system exercises, shared foods, built-in recipes) -
 through the same `visible_to`-style queries the views use. There's no
 tool that writes anything except the two `propose_*` tools, which only
 record an AssistantProposal for the user to accept or dismiss
@@ -13,8 +13,9 @@ Inputs come from the model and are treated as untrusted: every tool
 validates its own arguments and raises ToolInputError, which goes back
 to the model as an error result it can correct, never as a crash.
 
-Tool results are compact JSON in canonical units (kg, meters, kcal) —
-the system prompt tells the model which units the user prefers to read.
+Tool results are TOON (apps.assistant.toon - the same data as JSON in
+fewer tokens) in canonical units (kg, meters, kcal) - the system prompt
+tells the model how to read TOON and which units the user prefers.
 """
 
 import json
@@ -27,7 +28,8 @@ from django.utils import timezone
 from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
 
-from . import proposals
+from . import proposals, toon
+from .models import DataScope
 
 
 class ToolInputError(Exception):
@@ -37,12 +39,27 @@ class ToolInputError(Exception):
 class ToolContext:
     def __init__(self, user, message):
         self.user = user
-        # The AssistantMessage being written — proposals attach to it.
+        # The AssistantMessage being written - proposals attach to it.
         self.message = message
+        self._preference = None
+
+    def may_read(self, scope):
+        """Whether the user lets the assistant read this DataScope -
+        checked on every call, so switching one off in the settings
+        applies from the very next tool call, mid-conversation too."""
+        if self._preference is None:
+            from .models import AssistantPreference
+
+            self._preference = AssistantPreference.objects.filter(
+                user=self.user
+            ).first() or AssistantPreference(user=self.user)
+        return self._preference.reads(scope)
 
 
-def _dumps(data):
-    return json.dumps(data, cls=DjangoJSONEncoder, ensure_ascii=False, separators=(",", ":"))
+def _plain(data):
+    """`data` as plain JSON types - dates, Decimals, enums and lazy
+    strings turned into strings and numbers the same way JSON would."""
+    return json.loads(json.dumps(data, cls=DjangoJSONEncoder))
 
 
 def _num(value, places=1):
@@ -70,6 +87,14 @@ def _str_arg(args, key, *, required=False, max_length=200):
     return value[:max_length]
 
 
+def _joined(values):
+    """A short list inside a result row as one "a; b" string - keeps the
+    row flat, so a list of rows stays one TOON table (apps.assistant.toon)
+    instead of nested blocks."""
+    values = [str(value) for value in values if value]
+    return "; ".join(values) if values else None
+
+
 def _since(days):
     return timezone.now() - timedelta(days=days)
 
@@ -78,6 +103,7 @@ def _since(days):
 
 
 def get_user_overview(ctx, args):
+    from apps.coaching.models import CoachingRelationship
     from apps.measurements.models import BodyMeasurement
     from apps.nutrition.models import DietPlan, NutritionGoal, NutritionProfile, NutritionTarget
 
@@ -88,23 +114,30 @@ def get_user_overview(ctx, args):
         "today": today,
         "weekday": today.strftime("%A"),
         "preferred_units": user.unit_system,
-        "height_m": _num(user.height, 3),
         "sections_enabled": {
             "nutrition": user.nutrition_enabled,
             "stretching": user.stretching_enabled,
         },
     }
+    if ctx.may_read(DataScope.PROFILE):
+        data["height_m"] = _num(user.height, 3)
     weight = (
         BodyMeasurement.objects.filter(
             user=user, measurement_type__name="Body weight", measurement_type__owner__isnull=True
         )
         .order_by("-recorded_at")
         .first()
+        if ctx.may_read(DataScope.BODY)
+        else None
     )
     if weight is not None:
         data["latest_body_weight_kg"] = _num(weight.value)
         data["latest_body_weight_date"] = weight.recorded_at.date()
-    profile = NutritionProfile.objects.filter(user=user).first()
+    profile = (
+        NutritionProfile.objects.filter(user=user).first()
+        if ctx.may_read(DataScope.PROFILE)
+        else None
+    )
     if profile is not None:
         data["nutrition_profile"] = {
             "biological_sex": profile.biological_sex,
@@ -140,7 +173,42 @@ def get_user_overview(ctx, args):
     data["active_diet_plan"] = (
         {"id": active_plan.pk, "name": active_plan.name} if active_plan else None
     )
+    if ctx.may_read(DataScope.WORKOUTS):
+        data["training_last_4_weeks"] = _training_pattern(user)
+    data["not_shared_with_you"] = [scope.value for scope in DataScope if not ctx.may_read(scope)]
+    data["active_coaches"] = CoachingRelationship.objects.filter(
+        coachee=user, ended_at__isnull=True
+    ).count()
     return data
+
+
+_WEEKDAYS = ("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
+
+
+def _training_pattern(user):
+    """Which weekdays the user actually trained on lately, and the
+    program they last trained from - the closest thing to "their
+    current program" (there's no active-program flag)."""
+    from collections import Counter
+
+    from apps.workouts.models import WorkoutSession, WorkoutSessionStatus
+
+    completed = WorkoutSession.objects.filter(user=user, status=WorkoutSessionStatus.COMPLETED)
+    started = completed.filter(started_at__gte=_since(28)).values_list("started_at", flat=True)
+    weekdays = Counter(timezone.localtime(moment).weekday() for moment in started)
+    latest = (
+        completed.filter(program__isnull=False, started_at__gte=_since(90))
+        .select_related("program")
+        .order_by("-started_at")
+        .first()
+    )
+    return {
+        "sessions": sum(weekdays.values()),
+        "sessions_by_weekday": {_WEEKDAYS[day]: weekdays[day] for day in sorted(weekdays)},
+        "latest_program": (
+            {"id": latest.program_id, "name": latest.program.name} if latest else None
+        ),
+    }
 
 
 def get_workout_history(ctx, args):
@@ -156,22 +224,11 @@ def get_workout_history(ctx, args):
         .order_by("-started_at")[:40]
     )
     result = []
-    for session in sessions:
-        exercises = []
-        for performed in session.performed_exercises.all():
-            sets = [s for s in performed.sets.all() if not s.is_warmup]
-            exercises.append(
-                {
-                    "exercise": gettext(performed.display_name),
-                    "sets": [
-                        f"{_num(s.weight)}kg x {s.reps}"
-                        + (f" @RPE{_num(s.rpe)}" if s.rpe is not None else "")
-                        for s in sets[:10]
-                    ],
-                }
-            )
+    exercises = []
+    for number, session in enumerate(sessions, start=1):
         result.append(
             {
+                "session": number,
                 "date": timezone.localtime(session.started_at).date(),
                 "workout": session.workout.name if session.workout_id else None,
                 "program": session.program.name if session.program_id else None,
@@ -180,10 +237,33 @@ def get_workout_history(ctx, args):
                     if session.ended_at
                     else None
                 ),
-                "exercises": exercises,
             }
         )
-    return {"days": days, "completed_sessions": result}
+        for performed in session.performed_exercises.all():
+            sets = [s for s in performed.sets.all() if not s.is_warmup]
+            exercises.append(
+                {
+                    "session": number,
+                    "exercise": gettext(performed.display_name),
+                    "sets": _joined(_set_label(s) for s in sets[:10]),
+                    "set_notes": _joined(
+                        f"set {s.set_number}: {s.notes[:200]}" for s in sets if s.notes
+                    ),
+                    "plan_notes": performed.notes[:300] or None,
+                }
+            )
+    return {"days": days, "completed_sessions": result, "exercises": exercises}
+
+
+def _set_label(exercise_set):
+    label = f"{_num(exercise_set.weight)}kg x {exercise_set.reps}"
+    if exercise_set.rpe is not None:
+        label += f" @RPE{_num(exercise_set.rpe)}"
+    if exercise_set.rir is not None:
+        label += f" RIR{exercise_set.rir}"
+    if exercise_set.is_failure:
+        label += " (to failure)"
+    return label
 
 
 def get_personal_records(ctx, args):
@@ -204,27 +284,35 @@ def get_personal_records(ctx, args):
             continue
         entry = best.setdefault(name, {"exercise": name, "exercise_id": record.exercise_id})
         key = "max_weight" if record.record_type == PRType.MAX_WEIGHT else "estimated_1rm"
-        if key not in entry:  # newest first, so the first one seen is current
-            entry[key] = {
-                "value_kg": _num(record.value),
-                "set": f"{_num(record.weight)}kg x {record.reps}",
-                "date": record.achieved_at.date(),
-            }
+        if f"{key}_kg" not in entry:  # newest first, so the first one seen is current
+            entry[f"{key}_kg"] = _num(record.value)
+            entry[f"{key}_set"] = f"{_num(record.weight)}kg x {record.reps}"
+            entry[f"{key}_date"] = record.achieved_at.date()
         if len(best) >= 50:
             break
     return {"records": list(best.values())}
 
 
 def get_body_measurements(ctx, args):
+    """Every measurement type the user has logged: a whole-history
+    summary (first, latest, change, range) however old the readings are,
+    plus the newest readings inside `days` with the user's notes - and
+    for body weight the trend rate and BMI the app shows too."""
+    from apps.core import bmi
+    from apps.measurements import services as measurement_services
     from apps.measurements.models import BodyMeasurement
+    from apps.nutrition import trends
 
     days = _int_arg(args, "days", 90, minimum=1, maximum=730)
+    since = _since(days)
     readings = (
-        BodyMeasurement.objects.filter(user=ctx.user, recorded_at__gte=_since(days))
+        BodyMeasurement.objects.filter(user=ctx.user)
         .select_related("measurement_type")
         .order_by("measurement_type_id", "-recorded_at")
     )
     by_type = {}
+    recent = []
+    recent_count = 0
     for reading in readings:
         kind = reading.measurement_type.unit_kind
         entry = by_type.setdefault(
@@ -232,14 +320,68 @@ def get_body_measurements(ctx, args):
             {
                 "type": gettext(reading.measurement_type.name),
                 "unit": {"weight": "kg", "length": "m", "percentage": "%"}.get(kind, kind),
-                "readings": [],
+                "readings_count": 0,
+                "_values": [],
+                "_dated": [],
+                "_system_name": (
+                    reading.measurement_type.name
+                    if reading.measurement_type.owner_id is None
+                    else None
+                ),
             },
         )
-        if len(entry["readings"]) < 15:
-            entry["readings"].append(
-                {"date": reading.recorded_at.date(), "value": _num(reading.value, 3)}
+        date, value = reading.recorded_at.date(), _num(reading.value, 3)
+        if not entry["readings_count"]:  # newest first
+            entry["latest_date"], entry["latest_value"] = date, value
+            recent_count = 0
+        entry["first_date"], entry["first_value"] = date, value
+        entry["readings_count"] += 1
+        entry["_values"].append(reading.value)
+        entry["_dated"].append((date, reading.value))
+        if reading.recorded_at >= since and recent_count < 15:
+            recent_count += 1
+            recent.append(
+                {
+                    "type": entry["type"],
+                    "date": date,
+                    "value": value,
+                    "notes": reading.notes[:200] or None,
+                }
             )
-    return {"days": days, "measurements": list(by_type.values())}
+
+    measurements = []
+    for entry in by_type.values():
+        values = entry.pop("_values")
+        dated = entry.pop("_dated")
+        system_name = entry.pop("_system_name")
+        if entry["readings_count"] > 1:
+            entry["change_since_first"] = _num(values[0] - values[-1], 3)
+            entry["min"] = _num(min(values), 3)
+            entry["max"] = _num(max(values), 3)
+        if system_name == "Body weight":
+            trend = trends.compute_trend(dated)
+            if trend is not None:
+                entry["trend_kg_per_week"] = _num(trend.actual_rate_kg_per_week, 2)
+                entry["trend_span_days"] = trend.span_days
+            body_mass_index = (
+                bmi.calculate_bmi(values[0], ctx.user.height)
+                if ctx.may_read(DataScope.PROFILE)
+                else None
+            )
+            if body_mass_index is not None:
+                category = bmi.category_for(body_mass_index)
+                entry["latest_bmi"] = _num(body_mass_index)
+                entry["latest_bmi_category"] = str(category.name) if category else None
+        measurements.append(entry)
+    tracked = {
+        gettext(t.name) for t in measurement_services.visible_to(ctx.user) if t.pk not in by_type
+    }
+    return {
+        "days": days,
+        "measurements": measurements,
+        "recent_readings": recent,
+        "types_never_logged": sorted(tracked),
+    }
 
 
 def get_activities(ctx, args):
@@ -301,6 +443,221 @@ def get_nutrition_overview(ctx, args):
     }
 
 
+def _food_details(food):
+    """What a food is beyond its macros - allergens and labels above all,
+    so a plan never leans on something the user can't or won't eat.
+    Mostly Open Food Facts data (blank for hand-entered foods), passed on
+    verbatim and only when present."""
+    details = {}
+    for key, value, limit in (
+        ("allergens", food.allergens, 200),
+        ("labels", food.labels, 200),
+        ("categories", food.categories, 150),
+        ("ingredients", food.ingredients_text, 300),
+    ):
+        if value:
+            details[key] = value[:limit]
+    if food.nutri_score:
+        details["nutri_score"] = food.nutri_score.upper()
+    if food.price_amount is not None:
+        details["package_price"] = f"{_num(food.price_amount, 2)} {food.price_currency}"
+        if food.quantity:
+            details["package_size"] = food.quantity
+    return details
+
+
+def _diary_entry_label(entry, name):
+    if entry.food_id:
+        label = f"{name} {_num(entry.quantity)}{entry.food.serving_unit}"
+    elif entry.recipe_id:
+        label = f"{name} x{_num(entry.quantity)} servings"
+    else:
+        label = f"{name} x{_num(entry.quantity)}"
+    if entry.notes:
+        label += f" (note: {entry.notes[:150]})"
+    return label
+
+
+def get_food_diary(ctx, args):
+    """What the user eats, item by item - the favorites a diet plan can
+    be built from, plus the last few logged days as they were eaten.
+    A food or recipe only carries its id while it's still active, i.e.
+    while propose_diet_plan would accept it."""
+    from collections import Counter
+    from statistics import median
+
+    from apps.nutrition.models import DiaryEntry
+
+    days = _int_arg(args, "days", 60, minimum=1, maximum=365)
+    today = timezone.localdate()
+    entries = (
+        DiaryEntry.objects.filter(
+            user=ctx.user, date__gt=today - timedelta(days=days), date__lte=today
+        )
+        .select_related("food", "recipe", "meal_slot")
+        .order_by("-date", "meal_slot__order", "created_at")
+    )
+    favorites = {}
+    recent_days = {}
+    for entry in entries:
+        if entry.food_id:
+            key = ("food", entry.food_id)
+            name = entry.food.name
+        elif entry.recipe_id:
+            key = ("recipe", entry.recipe_id)
+            name = gettext(entry.recipe.name)
+        else:
+            name = entry.quick_name or gettext("Quick entry")
+            key = ("quick", name.lower())
+        slot = gettext(entry.meal_slot.name)
+        favorite = favorites.get(key)
+        if favorite is None:
+            favorite = favorites[key] = {
+                "name": name,
+                "dates": set(),
+                "quantities": [],
+                "slots": Counter(),
+                "last_eaten": entry.date,
+                "entry": entry,
+            }
+        favorite["dates"].add(entry.date)
+        favorite["quantities"].append(entry.quantity)
+        favorite["slots"][slot] += 1
+        if entry.date in recent_days or len(recent_days) < 7:
+            meals = recent_days.setdefault(entry.date, {})
+            meals.setdefault(slot, []).append(_diary_entry_label(entry, name))
+
+    ranked = sorted(
+        favorites.values(),
+        key=lambda f: (len(f["dates"]), len(f["quantities"]), f["last_eaten"]),
+        reverse=True,
+    )
+    result = []
+    for favorite in ranked[:40]:
+        entry = favorite["entry"]
+        item = {"name": favorite["name"]}
+        if entry.food_id:
+            item["brand"] = entry.food.brand or None
+            item["food_id"] = entry.food_id if entry.food.active else None
+            item["typical_quantity"] = (
+                f"{_num(median(favorite['quantities']))}{entry.food.serving_unit}"
+            )
+            item.update(_food_details(entry.food))
+        elif entry.recipe_id:
+            item["recipe_id"] = entry.recipe_id if entry.recipe.active else None
+            item["typical_quantity"] = f"{_num(median(favorite['quantities']))} servings"
+        else:
+            item["quick_entry"] = True
+        item.update(
+            {
+                "days_eaten": len(favorite["dates"]),
+                "times_logged": len(favorite["quantities"]),
+                "usual_meals": _joined(slot for slot, _count in favorite["slots"].most_common(3)),
+                "last_eaten": favorite["last_eaten"],
+            }
+        )
+        result.append(item)
+    return {
+        "days": days,
+        "days_logged": len({date for f in favorites.values() for date in f["dates"]}),
+        "most_eaten": result,
+        "recent_meals": [
+            {"date": date, "meal": slot, "items": _joined(items)}
+            for date, meals in recent_days.items()
+            for slot, items in meals.items()
+        ],
+    }
+
+
+def get_progression_suggestions(ctx, args):
+    """The app's own next-session weight suggestions (apps.progression) -
+    the same figures the user sees when they log a workout, so advice
+    lines up with what the app shows them."""
+    from apps.programs import services as program_services
+    from apps.progression.suggestions import suggest_weight
+
+    program_id = args.get("program_id")
+    if program_id is None:
+        latest = _training_pattern(ctx.user)["latest_program"]
+        if latest is None:
+            raise ToolInputError(
+                "The user hasn't trained from a program lately - pass a program_id from "
+                "list_programs."
+            )
+        program_id = latest["id"]
+    program = (
+        program_services.visible_to(ctx.user).filter(pk=program_id).first()
+        if isinstance(program_id, int)
+        else None
+    )
+    if program is None:
+        raise ToolInputError("No program with that id is visible to this user.")
+    suggestions = []
+    for workout in program.workouts.prefetch_related("prescriptions__exercise"):
+        for prescription in workout.prescriptions.all()[:20]:
+            suggestion = suggest_weight(ctx.user, prescription)
+            suggestions.append(
+                {
+                    "workout": workout.name,
+                    "exercise": gettext(prescription.exercise.name),
+                    "suggested_weight_kg": _num(suggestion.suggested_weight),
+                    "reps": f"{suggestion.target_min_reps}-{suggestion.target_max_reps}",
+                    "decision": suggestion.action,
+                    "confidence": suggestion.confidence,
+                    "reason": str(suggestion.reason),
+                }
+            )
+    return {"program": {"id": program.pk, "name": program.name}, "suggestions": suggestions}
+
+
+def get_calorie_adjustment(ctx, args):
+    """apps.nutrition's calorie-adjustment check: the weight trend against
+    the goal's target rate, and the change it would suggest."""
+    from apps.nutrition.suggestions import suggest_calorie_adjustment
+
+    suggestion = suggest_calorie_adjustment(ctx.user)
+    return {
+        "status": suggestion.action,
+        "target_rate_kg_per_week": _num(suggestion.target_rate_kg_per_week, 2),
+        "actual_rate_kg_per_week": _num(suggestion.actual_rate_kg_per_week, 2),
+        "suggested_daily_calories": suggestion.suggested_daily_calories,
+        "change_kcal_per_day": suggestion.delta_kcal,
+        "confidence": suggestion.confidence,
+        "reason": str(suggestion.reason),
+    }
+
+
+def get_stretching(ctx, args):
+    from apps.stretching import services as stretching_services
+    from apps.stretching.models import StretchSessionStatus
+
+    if not ctx.user.stretching_enabled:
+        return {"stretching_enabled": False}
+    days = _int_arg(args, "days", 30, minimum=1, maximum=365)
+    sessions = stretching_services.sessions_for(ctx.user).filter(
+        status=StretchSessionStatus.COMPLETED,
+        date__gt=timezone.localdate() - timedelta(days=days),
+    )[:40]
+    routines = stretching_services.visible_routines(ctx.user).filter(owner=ctx.user)[:20]
+    return {
+        "stretching_enabled": True,
+        "days": days,
+        "sessions": [
+            {
+                "date": session.date,
+                "name": gettext(session.name) if session.name else None,
+                "after_workout": session.after_workout_id is not None,
+                "duration_minutes": (
+                    int(session.duration.total_seconds() // 60) if session.duration else None
+                ),
+                **({"notes": session.notes[:200]} if session.notes else {}),
+            }
+            for session in sessions
+        ],
+        "own_routines": [routine.name for routine in routines],
+    }
+
+
 def list_programs(ctx, args):
     from apps.programs import services as program_services
 
@@ -319,7 +676,7 @@ def list_programs(ctx, args):
                     if program.owner_id is None
                     else ("yours" if program.owner_id == ctx.user.pk else "shared by your coach")
                 ),
-                "workouts": [workout.name for workout in program.workouts.all()],
+                "workouts": _joined(workout.name for workout in program.workouts.all()),
             }
             for program in programs[:60]
         ]
@@ -341,24 +698,20 @@ def get_program(ctx, args):
         "id": program.pk,
         "name": program.name,
         "description": program.description,
-        "workouts": [
+        "prescriptions": [
             {
-                "name": workout.name,
+                "workout": workout.name,
                 "scheduled_weekday": workout.scheduled_weekday,
-                "prescriptions": [
-                    {
-                        "exercise": gettext(p.exercise.name),
-                        "exercise_id": p.exercise_id,
-                        "sets": p.set_count,
-                        "reps": f"{p.min_reps}-{p.max_reps}",
-                        "target_weight_kg": _num(p.target_weight),
-                        "target_rpe": _num(p.target_rpe),
-                        "progression_method": p.progression_method,
-                    }
-                    for p in workout.prescriptions.select_related("exercise")
-                ],
+                "exercise": gettext(p.exercise.name),
+                "exercise_id": p.exercise_id,
+                "sets": p.set_count,
+                "reps": f"{p.min_reps}-{p.max_reps}",
+                "target_weight_kg": _num(p.target_weight),
+                "target_rpe": _num(p.target_rpe),
+                "progression_method": p.progression_method,
             }
             for workout in program.workouts.all()
+            for p in workout.prescriptions.select_related("exercise")
         ],
     }
 
@@ -407,13 +760,13 @@ def get_diet_plan(ctx, args):
                     item.quantity
                 )
                 label = f"{gettext(item.recipe.name)} x{_num(item.quantity)} servings"
-            items.append({"item": label, "calories": int(nutrition.calories)})
+            items.append(f"{label} ({int(nutrition.calories)} kcal)")
         meals.append(
             {
                 "meal_slot": gettext(meal.meal_slot.name),
                 "weekday": meal.weekday,
                 "target_calories": meal.target_calories,
-                "items": items,
+                "items": _joined(items),
             }
         )
     return {
@@ -443,9 +796,9 @@ def search_exercises(ctx, args):
                 "name": gettext(exercise.name),
                 "english_name": exercise.name,
                 "equipment": gettext(exercise.equipment.name) if exercise.equipment_id else None,
-                "primary_muscles": [
+                "primary_muscles": _joined(
                     gettext(group.name) for group in exercise.primary_muscle_groups.all()
-                ],
+                ),
                 "movement_type": exercise.movement_type,
                 "custom": exercise.owner_id is not None,
             }
@@ -474,6 +827,7 @@ def search_foods(ctx, args):
                 "protein_g": _num(food.protein_grams),
                 "carbohydrate_g": _num(food.carbohydrate_grams),
                 "fat_g": _num(food.fat_grams),
+                **_food_details(food),
             }
             for food in foods
         ]
@@ -487,9 +841,7 @@ def search_recipes(ctx, args):
     query = _str_arg(args, "query", max_length=100)
     recipes = Recipe.objects.filter(
         Q(owner=ctx.user) | Q(owner__isnull=True), active=True
-    ).prefetch_related(
-        "meal_slots"
-    )
+    ).prefetch_related("meal_slots", "ingredients__food")
     if query:
         lowered = query.lower()
         recipes = [
@@ -505,13 +857,19 @@ def search_recipes(ctx, args):
                 "id": recipe.pk,
                 "name": gettext(recipe.name),
                 "servings": recipe.servings,
-                "per_serving": {
-                    "calories": int(per_serving.calories),
-                    "protein_g": _num(per_serving.protein_grams),
-                    "carbohydrate_g": _num(per_serving.carbohydrate_grams),
-                    "fat_g": _num(per_serving.fat_grams),
-                },
-                "meal_slots": [gettext(slot.name) for slot in recipe.meal_slots.all()],
+                "calories_per_serving": int(per_serving.calories),
+                "protein_g_per_serving": _num(per_serving.protein_grams),
+                "carbohydrate_g_per_serving": _num(per_serving.carbohydrate_grams),
+                "fat_g_per_serving": _num(per_serving.fat_grams),
+                "meal_slots": _joined(gettext(slot.name) for slot in recipe.meal_slots.all()),
+                "ingredients": _joined(
+                    f"{ingredient.food.name} {_num(ingredient.quantity)}"
+                    f"{ingredient.food.serving_unit}"
+                    for ingredient in recipe.ingredients.all()[:20]
+                ),
+                "ingredient_allergens": _joined(
+                    sorted({i.food.allergens for i in recipe.ingredients.all() if i.food.allergens})
+                ),
             }
         )
     return {"recipes": result}
@@ -591,7 +949,9 @@ TOOLS = [
         "name": "get_user_overview",
         "description": (
             "The user's profile: today's date, preferred units, height, latest body weight, "
-            "nutrition profile, current nutrition goal and daily target, active diet plan."
+            "nutrition profile, current nutrition goal and daily target, active diet plan, "
+            "which weekdays they trained on lately and from which program, and whether "
+            "they have a coach."
         ),
         "input_schema": {"type": "object", "properties": {}},
         "handler": get_user_overview,
@@ -599,9 +959,13 @@ TOOLS = [
     },
     {
         "name": "get_workout_history",
-        "description": "Completed workout sessions with their working sets (newest first).",
+        "description": (
+            "Completed workout sessions with their working sets (RPE/RIR, sets to "
+            "failure) and the user's set notes, newest first."
+        ),
         "input_schema": {"type": "object", "properties": {"days": _DAYS}},
         "handler": get_workout_history,
+        "scope": DataScope.WORKOUTS,
         "activity": _("Looking at your workouts…"),
     },
     {
@@ -617,13 +981,20 @@ TOOLS = [
             },
         },
         "handler": get_personal_records,
+        "scope": DataScope.WORKOUTS,
         "activity": _("Looking at your records…"),
     },
     {
         "name": "get_body_measurements",
-        "description": "Body measurements (weight, body fat, circumferences) over time.",
+        "description": (
+            "Body measurements (weight, body fat, circumferences, the user's own types): "
+            "a whole-history summary per type (first, latest, change, range), the newest "
+            "readings within `days` with notes, and for body weight the trend per week "
+            "and BMI."
+        ),
         "input_schema": {"type": "object", "properties": {"days": _DAYS}},
         "handler": get_body_measurements,
+        "scope": DataScope.BODY,
         "activity": _("Looking at your measurements…"),
     },
     {
@@ -631,6 +1002,7 @@ TOOLS = [
         "description": "Other logged activities (running, cycling, ...).",
         "input_schema": {"type": "object", "properties": {"days": _DAYS}},
         "handler": get_activities,
+        "scope": DataScope.ACTIVITIES,
         "activity": _("Looking at your activities…"),
     },
     {
@@ -638,7 +1010,40 @@ TOOLS = [
         "description": "What the user has actually eaten: median daily intake and recent days.",
         "input_schema": {"type": "object", "properties": {"days": _DAYS}},
         "handler": get_nutrition_overview,
+        "scope": DataScope.FOOD,
         "activity": _("Looking at your food diary…"),
+    },
+    {
+        "name": "get_food_diary",
+        "description": (
+            "Which foods and recipes the user actually eats, most eaten first (typical "
+            "portion, usual meals, last eaten), plus their last few logged days item by "
+            "item. Use it to build diet plans from food they like; the food_id/recipe_id "
+            "work in propose_diet_plan (null when that item is no longer available)."
+        ),
+        "input_schema": {"type": "object", "properties": {"days": _DAYS}},
+        "handler": get_food_diary,
+        "scope": DataScope.FOOD,
+        "activity": _("Looking at your food diary…"),
+    },
+    {
+        "name": "get_calorie_adjustment",
+        "description": (
+            "The app's own check of the user's weight trend against their nutrition goal, "
+            "and the daily calorie change it suggests (on track / adjust / not enough data)."
+        ),
+        "input_schema": {"type": "object", "properties": {}},
+        "handler": get_calorie_adjustment,
+        "scope": DataScope.BODY,
+        "activity": _("Looking at your weight trend…"),
+    },
+    {
+        "name": "get_stretching",
+        "description": "Completed stretching sessions and the user's own stretching routines.",
+        "input_schema": {"type": "object", "properties": {"days": _DAYS}},
+        "handler": get_stretching,
+        "scope": DataScope.STRETCHING,
+        "activity": _("Looking at your stretching…"),
     },
     {
         "name": "list_programs",
@@ -657,6 +1062,21 @@ TOOLS = [
         },
         "handler": get_program,
         "activity": _("Looking at your programs…"),
+    },
+    {
+        "name": "get_progression_suggestions",
+        "description": (
+            "The app's own suggested weight for each exercise's next session in a program, "
+            "with its reason - the same suggestions the user sees while logging. Defaults "
+            "to the program they last trained from."
+        ),
+        "input_schema": {
+            "type": "object",
+            "properties": {"program_id": {"type": "integer"}},
+        },
+        "handler": get_progression_suggestions,
+        "scope": DataScope.WORKOUTS,
+        "activity": _("Looking at your progression…"),
     },
     {
         "name": "list_diet_plans",
@@ -694,7 +1114,8 @@ TOOLS = [
         "name": "search_foods",
         "description": (
             "Search foods in the user's library by name or brand. Nutrition is per the "
-            "food's own serving size. Use the returned ids in propose_diet_plan."
+            "food's own serving size; allergens, labels and ingredients when known. Use "
+            "the returned ids in propose_diet_plan."
         ),
         "input_schema": {
             "type": "object",
@@ -706,7 +1127,10 @@ TOOLS = [
     },
     {
         "name": "search_recipes",
-        "description": "Search the user's and built-in recipes. Empty query lists them all.",
+        "description": (
+            "Search the user's and built-in recipes, with their ingredients and the "
+            "ingredients' allergens. Empty query lists them all."
+        ),
         "input_schema": {"type": "object", "properties": {"query": {"type": "string"}}},
         "handler": search_recipes,
         "activity": _("Searching recipes…"),
@@ -842,9 +1266,15 @@ TOOLS = [
 
 _BY_NAME = {tool["name"]: tool for tool in TOOLS}
 
+NOT_SHARED_NOTE = (
+    "The user has turned off the assistant's access to this data in its settings. "
+    "Work without it, and don't ask them to paste it; mention once that they can "
+    "turn it back on in the assistant's settings if it would help."
+)
+
 
 def definitions():
-    """The provider-neutral tool definitions sent to the model — always
+    """The provider-neutral tool definitions sent to the model - always
     the same list in the same order (a stable, cacheable prompt prefix)."""
     return [
         {"name": t["name"], "description": t["description"], "input_schema": t["input_schema"]}
@@ -858,8 +1288,16 @@ def activity_for(name):
 
 
 def run(ctx, name, args):
-    """Runs one tool call. Returns (content, is_error) — never raises for
-    anything the model got wrong."""
+    """Runs one tool call. Returns (content, is_error) - never raises for
+    anything the model got wrong. A result is sent as TOON text, an error
+    as the plain message."""
+    result, is_error = execute(ctx, name, args)
+    return (result if is_error else toon.encode(result)), is_error
+
+
+def execute(ctx, name, args):
+    """`run` without the encoding: (result data, False) or (error message,
+    True) - what the tests look at."""
     tool = _BY_NAME.get(name)
     if tool is None:
         return f"Unknown tool: {name}", True
@@ -873,7 +1311,11 @@ def run(ctx, name, args):
         args = {}
     if not isinstance(args, dict):
         return "The tool input must be a JSON object.", True
+    scope = tool.get("scope")
+    if scope is not None and not ctx.may_read(scope):
+        # Not an error the model can fix by retrying - say so plainly.
+        return {"not_shared": scope.value, "note": NOT_SHARED_NOTE}, False
     try:
-        return _dumps(tool["handler"](ctx, args)), False
+        return _plain(tool["handler"](ctx, args)), False
     except ToolInputError as exc:
         return str(exc), True

@@ -120,7 +120,7 @@ class ActivityViewPermissionTests(TestCase):
         # Regression: these were missing @login_required entirely, so
         # an anonymous request crashed with a 500 (AnonymousUser isn't
         # a real Model instance, so `.filter(user=request.user)` can't
-        # resolve it) instead of redirecting to login — same bug class
+        # resolve it) instead of redirecting to login - same bug class
         # as apps.nutrition's own equivalent fix.
         entry = Activity.objects.create(
             user=self.alice,
@@ -203,7 +203,7 @@ class LoggingFlowTests(TestCase):
 
     def test_editing_an_activity_pre_fills_the_date_and_time_pickers_correctly(self):
         """The picker's pre-filled value must be ISO format
-        (YYYY-MM-DD / HH:MM) — Django's locale-dependent default
+        (YYYY-MM-DD / HH:MM) - Django's locale-dependent default
         formatting doesn't reliably match what type="date"/type="time"
         expect."""
         entry = Activity.objects.create(
@@ -399,10 +399,10 @@ class ActivityTypeListEntryCountTests(TestCase):
 
 
 class ActivityTypeContentTranslationTests(TestCase):
-    """Seeded activity type *names* are content, not UI chrome — the
+    """Seeded activity type *names* are content, not UI chrome - the
     stored value stays canonical English (matched by get_or_create
     elsewhere), but the display goes through gettext too, via
-    apps.activities.i18n_content's extraction catalog — see
+    apps.activities.i18n_content's extraction catalog - see
     docs/ARCHITECTURE.md "Internationalization"."""
 
     def setUp(self):
@@ -419,7 +419,7 @@ class ActivityTypeContentTranslationTests(TestCase):
 
     def test_a_users_own_custom_type_name_is_never_translated(self):
         """gettext only ever matches strings actually present in the
-        catalog — a custom name a user typed themselves was never
+        catalog - a custom name a user typed themselves was never
         extracted into it, so it always renders exactly as typed,
         regardless of UI language."""
         activity_type = ActivityType.objects.create(

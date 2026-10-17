@@ -2,7 +2,7 @@
 from `seed_data/stretches.json`. The instructions are original text
 written for this project (no third-party source to attribute). Names,
 descriptions and instructions are stored in canonical English and
-translated at render time — see apps.stretching.i18n_content.
+translated at render time - see apps.stretching.i18n_content.
 
 Idempotent via get_or_create, so re-running never overwrites a later
 hand-edit of a seeded row.

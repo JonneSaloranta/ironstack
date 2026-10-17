@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% load static i18n core_extras records_extras %}
-{% block title %}{% trans "Dashboard" %} — IronStack{% endblock %}
+{% block title %}{% trans "Dashboard" %} - IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
   <h1>{% trans "Dashboard" %}</h1>
@@ -10,19 +10,19 @@
 
 {% comment %}
 Training log first (CLAUDE.md's own product principle): what a user
-actually opens this page to check — today's status, this week's
-numbers, the newest PRs — used to render *below* a full 5-week month
+actually opens this page to check - today's status, this week's
+numbers, the newest PRs - used to render *below* a full 5-week month
 calendar, pushing every one of these off the first screen on a phone.
 Reordered so they're the first thing here; the calendar (a browsing
 tool, not a "check this now" one) moved to the bottom as a collapsed
-disclosure instead — see it further down for why.
+disclosure instead - see it further down for why.
 {% endcomment %}
 {% if in_progress_session %}
   <a data-tour="dashboard-workout" class="card card-link" href="{% url 'workouts:session-detail' in_progress_session.pk %}">
     <strong>{% trans "Continue workout" %}</strong>
     <p class="text-muted">
       {% if in_progress_session.workout %}{% trans in_progress_session.workout.name %}{% else %}{% trans "Freeform workout" %}{% endif %}
-      — {% blocktrans with started_at=in_progress_session.started_at|date:"H:i" %}started {{ started_at }}{% endblocktrans %}
+      - {% blocktrans with started_at=in_progress_session.started_at|date:"H:i" %}started {{ started_at }}{% endblocktrans %}
     </p>
   </a>
 {% else %}
@@ -58,7 +58,7 @@ disclosure instead — see it further down for why.
 {% if shopping_today %}
   {% comment %}
     Only on the active plan's shopping days (apps.nutrition.shopping.
-    shopping_today) — a nudge, gone tomorrow by itself, never a prompt.
+    shopping_today) - a nudge, gone tomorrow by itself, never a prompt.
   {% endcomment %}
   <a data-tour="dashboard-shopping" class="card card-link" href="{% url 'nutrition:diet-plan-shopping' shopping_today.plan.pk %}?trip={{ shopping_today.trip.weekday }}">
     <strong>{% trans "Shopping day" %}</strong>
@@ -69,7 +69,7 @@ disclosure instead — see it further down for why.
 {% if body_tracking_reminder %}
   <a class="card card-link" href="{% url 'measurements:type-list' %}">
     <strong>{% trans "Time to log your body measurements?" %}</strong>
-    <p class="text-muted">{% trans "It's been a while since you tracked your weight or measurements — tap here to add a new reading." %}</p>
+    <p class="text-muted">{% trans "It's been a while since you tracked your weight or measurements - tap here to add a new reading." %}</p>
   </a>
 {% endif %}
 
@@ -86,7 +86,7 @@ disclosure instead — see it further down for why.
        @focusin="stop()" @focusout="start()">
     {% comment %}
     Slides are absolutely positioned inside .achievements-slides (a
-    fixed-min-height box) rather than left in normal flow — regression:
+    fixed-min-height box) rather than left in normal flow - regression:
     with x-show toggling display:none/flex on normal-flow siblings, the
     *container's* height followed whichever slide happened to be
     visible, so the whole page below the carousel visibly jumped up and
@@ -99,7 +99,7 @@ disclosure instead — see it further down for why.
           <span class="achievement-icon" aria-hidden="true">{% if achievement.icon == "streak" %}🔥{% elif achievement.icon == "workouts" %}💪{% elif achievement.icon == "pr" %}🏆{% elif achievement.icon == "volume" %}⚡{% endif %}</span>
           <div>
             <strong class="achievement-value">{{ achievement.value }}</strong>
-            <div class="text-muted">{{ achievement.label }} — <a class="inline-item-link" href="{% url 'analytics:member-profile' achievement.username %}">{{ achievement.display_name }}</a></div>
+            <div class="text-muted">{{ achievement.label }} - <a class="inline-item-link" href="{% url 'analytics:member-profile' achievement.username %}">{{ achievement.display_name }}</a></div>
           </div>
         </div>
       {% endfor %}
@@ -160,7 +160,7 @@ disclosure instead — see it further down for why.
 
 {% comment %}
 Moved below the things worth checking on every visit (this file's own
-top comment), but not collapsed behind a click — still visible on
+top comment), but not collapsed behind a click - still visible on
 first load, just further down, and now a good deal shorter (see
 .calendar-day's own comment in base.css) so scrolling this far isn't
 a lot to ask.

@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% load i18n core_extras stretching_extras %}
-{% block title %}{{ session.name|default:_("Stretching")|translate_content }} — IronStack{% endblock %}
+{% block title %}{{ session.name|default:_("Stretching")|translate_content }} - IronStack{% endblock %}
 {% block content %}
 {% url 'stretching:session-history' as c1u %}{% trans "History" context "stretching" as c1l %}{% trans "Stretching" as fallback_name %}
 {% include "core/_breadcrumbs.html" with c1_url=c1u c1_label=c1l current=session.name|default:fallback_name %}
@@ -39,7 +39,7 @@
           <td>
             {% if item.status == "done" %}{% if item.actual_seconds is not None %}{{ item.actual_seconds|clock }}{% else %}{% trans "Done" %}{% endif %}
             {% elif item.status == "skipped" %}<span class="text-muted">{% trans "Skipped" %}</span>
-            {% else %}<span class="text-muted">—</span>{% endif %}
+            {% else %}<span class="text-muted">-</span>{% endif %}
           </td>
         </tr>
       {% endfor %}

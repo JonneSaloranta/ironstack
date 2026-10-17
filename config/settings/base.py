@@ -2,7 +2,7 @@
 Base settings shared by all environments.
 
 Environment-driven configuration uses plain `os.environ` (no extra
-dependency) — see the small helpers below. Environment-specific settings
+dependency) - see the small helpers below. Environment-specific settings
 (DEBUG, ALLOWED_HOSTS, security flags, ...) live in `dev.py`/`production.py`.
 """
 
@@ -60,15 +60,15 @@ INSTALLED_APPS = [
     # templates/ like every other template (apps.core.widgets).
     "django.forms",
     "rest_framework",
-    # apps.api's interactive docs (docs/API.md "Interactive docs") —
+    # apps.api's interactive docs (docs/API.md "Interactive docs") -
     # provides DEFAULT_SCHEMA_CLASS below plus the schema/Swagger-UI
     # views apps.api.urls_docs wires in. drf_spectacular_sidecar just
     # needs to be present for `collectstatic` to pick up its vendored
-    # Swagger UI assets (SPECTACULAR_SETTINGS below) — it defines no
+    # Swagger UI assets (SPECTACULAR_SETTINGS below) - it defines no
     # models/views/urls of its own.
     "drf_spectacular",
     "drf_spectacular_sidecar",
-    # apps.accounts.oidc / AUTHENTIK_* settings below — always
+    # apps.accounts.oidc / AUTHENTIK_* settings below - always
     # installed (it defines no models/migrations, so there's no cost
     # to an instance that never configures Authentik), but its
     # views/backend only ever get exercised once AUTHENTIK_ENABLED is
@@ -97,11 +97,11 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     # Right next to SecurityMiddleware, which sets the other response-
-    # level security headers (X-Content-Type-Options, HSTS, ...) —
+    # level security headers (X-Content-Type-Options, HSTS, ...) -
     # see apps.core.middleware.ContentSecurityPolicyMiddleware's own
     # docstring and docs/SECURITY.md "Content-Security-Policy" for the
     # policy itself. Applied in every environment, not just production
-    # — a dev-only violation (e.g. a template that grew a stray
+    # - a dev-only violation (e.g. a template that grew a stray
     # external <script src>) is far easier to notice and fix locally
     # than to discover it's been silently missing in prod all along.
     "apps.core.middleware.ContentSecurityPolicyMiddleware",
@@ -114,16 +114,16 @@ MIDDLEWARE = [
     # still runs before the view/template rendering, so it can override
     # LocaleMiddleware's own guess (cookie/Accept-Language) with a
     # logged-in user's stored preference (apps.accounts.models.User.language,
-    # set on the profile page) for this same request/response — see the
+    # set on the profile page) for this same request/response - see the
     # middleware's own docstring.
     "apps.accounts.middleware.UserLanguageMiddleware",
     # Same after-auth, before-view placement as UserLanguageMiddleware
-    # just above — see apps.accounts.middleware.UserTimezoneMiddleware's
+    # just above - see apps.accounts.middleware.UserTimezoneMiddleware's
     # own docstring for what this fixes.
     "apps.accounts.middleware.UserTimezoneMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    # Rewrites login redirects on HTMX requests into HX-Redirect — see
+    # Rewrites login redirects on HTMX requests into HX-Redirect - see
     # its docstring.
     "apps.core.middleware.HtmxLoginRedirectMiddleware",
 ]
@@ -188,20 +188,20 @@ LOGIN_REDIRECT_URL = "dashboard"
 LOGOUT_REDIRECT_URL = "login"
 
 # ModelBackend must stay listed even when Authentik SSO is configured
-# below — it's what django.contrib.auth's own AuthenticationForm (via
+# below - it's what django.contrib.auth's own AuthenticationForm (via
 # apps.accounts.forms.RateLimitedAuthenticationForm) authenticates
 # local username/password logins against.
 # apps.accounts.oidc.IronStackOIDCAuthenticationBackend is appended
-# further down, only once AUTHENTIK_ENABLED is actually True — see
+# further down, only once AUTHENTIK_ENABLED is actually True - see
 # docs/SECURITY.md "Single sign-on (Authentik / OIDC)".
 AUTHENTICATION_BACKENDS = ["django.contrib.auth.backends.ModelBackend"]
 
 # UI language is a per-user preference (User.language, set on the
-# profile page — apps.accounts.middleware.UserLanguageMiddleware applies
+# profile page - apps.accounts.middleware.UserLanguageMiddleware applies
 # it) using Django's own gettext .po/.mo translation machinery. This is
 # a distinct concern from unit_system/timezone, which stay
 # apps.core/apps.accounts preferences unrelated to Django's i18n
-# framework — display units and "what time is it" don't change with UI
+# framework - display units and "what time is it" don't change with UI
 # language.
 LANGUAGE_CODE = "en-us"
 LANGUAGES = [
@@ -226,14 +226,14 @@ MEDIA_ROOT = BASE_DIR / "media"
 
 # apps.exercises' seed-image data migration (0007_seed_exercise_images)
 # writes real files under MEDIA_ROOT the first time it runs, same as a
-# real upload would — including into a *test* database's own build,
+# real upload would - including into a *test* database's own build,
 # since a migration runs before any individual test's own
 # `override_settings`/`TemporaryDirectory` (apps.core.tests' own
 # pattern for filesystem-touching tests) ever gets a chance to apply.
 # Without this, every from-scratch test database build (`manage.py
 # test`'s own default; `pytest --reuse-db` skips it on a rebuild it
 # doesn't need) would leave another copy of those files sitting in the
-# real, shared MEDIA_ROOT forever — found by running the exercises
+# real, shared MEDIA_ROOT forever - found by running the exercises
 # test suite twice and watching exercise_images/ on disk double in
 # size instead of staying put.
 if "pytest" in sys.modules or (len(sys.argv) > 1 and sys.argv[1] == "test"):
@@ -246,7 +246,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # request counters through this same cache). Production runs multiple
 # gunicorn workers (docker-compose.yml, --workers 3) as separate
 # processes with no shared memory, so Django's default LocMemCache would
-# give each worker its own independent counter — a key's real allowed
+# give each worker its own independent counter - a key's real allowed
 # throughput would end up worker_count times its configured limit,
 # silently. The database cache backend is a real shared store without
 # adding Redis or any other new infrastructure dependency; the table it
@@ -268,9 +268,9 @@ OFF_CONTACT_EMAIL = env("OFF_CONTACT_EMAIL", default="")
 OFF_API_BASE = env("OFF_API_BASE", default="https://world.openfoodfacts.org")
 OFF_SEARCH_BASE = env("OFF_SEARCH_BASE", default="https://search.openfoodfacts.org")
 
-# apps.api — see docs/API.md. Authentication/permission/throttling are
+# apps.api - see docs/API.md. Authentication/permission/throttling are
 # all API-key-driven (apps.api.auth/permissions/throttling), never
-# session/cookie auth — this is a machine-to-machine API, not a second
+# session/cookie auth - this is a machine-to-machine API, not a second
 # way to drive the same server-rendered UI a browser uses.
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": ["apps.api.auth.ApiKeyAuthentication"],
@@ -280,7 +280,7 @@ REST_FRAMEWORK = {
         "apps.api.throttling.ApiKeyDayThrottle",
     ],
     # Both throttle classes compute their actual rate per-request from
-    # the authenticated key's own tier (see apps.api.throttling) — these
+    # the authenticated key's own tier (see apps.api.throttling) - these
     # DEFAULT_THROTTLE_RATES entries exist only because DRF's
     # SimpleRateThrottle requires *some* configured rate to key its
     # per-scope cache namespace by; the real numbers never come from here.
@@ -290,7 +290,7 @@ REST_FRAMEWORK = {
     "PAGE_SIZE": 25,
     "DATETIME_FORMAT": "iso-8601",
     # drf-spectacular's schema generator, in place of DRF's own much
-    # more limited built-in one — docs/API.md "Interactive docs".
+    # more limited built-in one - docs/API.md "Interactive docs".
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
 
@@ -301,7 +301,7 @@ REST_FRAMEWORK = {
 # ApiKeyAuthentication's `Authorization: Bearer <key>` scheme.
 #
 # VERSION reads the same repo-root VERSION file apps.core.version.
-# get_version() does (docs/ARCHITECTURE.md "Versioning") — read
+# get_version() does (docs/ARCHITECTURE.md "Versioning") - read
 # directly here rather than importing that function, since this
 # module runs while Django's settings are still being assembled and
 # that function reads settings.BASE_DIR itself once called.
@@ -313,7 +313,7 @@ except FileNotFoundError:
 SPECTACULAR_SETTINGS = {
     "TITLE": "IronStack API",
     "DESCRIPTION": (
-        "Machine-to-machine API for this IronStack instance — see docs/API.md "
+        "Machine-to-machine API for this IronStack instance - see docs/API.md "
         "for the full reference (authentication, contexts/permissions, rate "
         "limits). Every operation below can be tried directly from this page: "
         "click \"Authorize\" and paste in one of your own API keys "
@@ -330,12 +330,12 @@ SPECTACULAR_SETTINGS = {
     "SWAGGER_UI_FAVICON_HREF": "SIDECAR",
 }
 
-# docs/SECURITY.md "Email" — needed for password reset
+# docs/SECURITY.md "Email" - needed for password reset
 # (django.contrib.auth's own PasswordResetView, wired in config.urls)
 # and, via ADMINS below, Django's built-in mail_admins error reporting.
 # Defaults to the console backend (prints the message instead of
 # sending it) whenever DJANGO_EMAIL_HOST isn't set, rather than failing
-# — password reset still "works" enough to unblock local development,
+# - password reset still "works" enough to unblock local development,
 # it just doesn't deliver anywhere real until SMTP is actually
 # configured. See docs/SECURITY.md before relying on this in
 # production.
@@ -353,19 +353,19 @@ DEFAULT_FROM_EMAIL = env("DJANGO_DEFAULT_FROM_EMAIL", default="IronStack <norepl
 # mail_admins() error reports (below) when nothing more specific is set.
 SERVER_EMAIL = DEFAULT_FROM_EMAIL
 
-# Whoever's listed here gets an email — via EMAIL_BACKEND above — for
+# Whoever's listed here gets an email - via EMAIL_BACKEND above - for
 # every uncaught exception once DEBUG=False (config.settings.production),
 # Django's own built-in behavior (django.utils.log.AdminEmailHandler,
-# wired by Django's default LOGGING config — no override needed, no new
+# wired by Django's default LOGGING config - no override needed, no new
 # dependency like Sentry required for this baseline). Format:
 # "Name:email,Name2:email2". Empty by default, so nothing breaks if
-# it's never set — just no one gets notified of errors, the same
+# it's never set - just no one gets notified of errors, the same
 # silence as before this existed.
 ADMINS = env_admins("DJANGO_ADMINS")
 MANAGERS = ADMINS
 
 # A public-facing "who runs this instance, and how do I reach them"
-# address — shown in the privacy notice modal (templates/accounts/
+# address - shown in the privacy notice modal (templates/accounts/
 # _privacy_notice_modal.html, reachable from the login/signup pages
 # and Profile), which already tells a user "the operator, not this
 # project's authors, is who you should contact about any of the
@@ -373,13 +373,13 @@ MANAGERS = ADMINS
 # setting from ADMINS above rather than reusing its first address:
 # ADMINS is Django's own uncaught-exception mailing list (ops-facing,
 # potentially several addresses), this is one address meant for a
-# user to read and act on — the same instance could reasonably want
+# user to read and act on - the same instance could reasonably want
 # crash reports going to one inbox and privacy/data requests to
 # another. Empty by default, so an instance that never sets it just
 # doesn't show a contact address, same silence as ADMINS unset.
 ADMIN_CONTACT_EMAIL = env("DJANGO_ADMIN_CONTACT_EMAIL", default="")
 
-# docs/SECURITY.md — self-hosted instances aren't necessarily meant to
+# docs/SECURITY.md - self-hosted instances aren't necessarily meant to
 # accept public registration; set to false once the intended users have
 # accounts, or from the start if the instance is reachable beyond a
 # trusted network. Existing users can keep logging in either way, since
@@ -389,32 +389,32 @@ SIGNUP_ENABLED = env_bool("DJANGO_SIGNUP_ENABLED", default=True)
 # Require a new signup to confirm their email address (a link sent to
 # it, apps.accounts.email_verification) before they can log in. Off by
 # default: it needs working email (DJANGO_EMAIL_HOST below). Only
-# affects accounts that sign up while it's on — existing users, SSO
+# affects accounts that sign up while it's on - existing users, SSO
 # accounts and admin-created ones never have to verify. Turning it off
 # again lets anyone still unconfirmed log in.
 SIGNUP_EMAIL_VERIFICATION = env_bool("DJANGO_SIGNUP_EMAIL_VERIFICATION", default=False)
 
 # Independent of SIGNUP_ENABLED above: this gates the local username/
 # password *login* form itself (apps.accounts.views.RateLimitedLoginView/
-# RateLimitedPasswordResetView/SignupView — see docs/SECURITY.md
+# RateLimitedPasswordResetView/SignupView - see docs/SECURITY.md
 # "Single sign-on (Authentik / OIDC)"), for an operator who wants
 # Authentik as the only way in once every intended user has an SSO-
 # linked account. False also closes signup and password reset, since
 # neither makes sense without a usable local password. Existing
 # accounts with a local password simply can't use it to log in while
-# this is off — nothing about the account itself changes, so setting
+# this is off - nothing about the account itself changes, so setting
 # it back to True restores password login for them exactly as before.
-# /admin/ is deliberately unaffected — it's Django's own separate
+# /admin/ is deliberately unaffected - it's Django's own separate
 # login view (see apps.core.admin), kept as a break-glass path so a
 # misconfigured Authentik instance can never lock every admin out of
 # this app at once.
 PASSWORD_LOGIN_ENABLED = env_bool("DJANGO_PASSWORD_LOGIN_ENABLED", default=True)
 
 # Authentik single sign-on (docs/SECURITY.md "Single sign-on (Authentik
-# / OIDC)") — an OpenID Connect Relying Party against an
+# / OIDC)") - an OpenID Connect Relying Party against an
 # externally-run Authentik instance, via mozilla-django-oidc
 # (apps.accounts.oidc). Entirely optional: leave AUTHENTIK_URL unset
-# and none of this activates — no extra INSTALLED_APPS surface beyond
+# and none of this activates - no extra INSTALLED_APPS surface beyond
 # the app being present (it defines no models), no new urls.py routes,
 # no "Log in with Authentik" button, AUTHENTICATION_BACKENDS stays
 # ModelBackend-only. AUTHENTIK_URL is this Authentik instance's own
@@ -428,13 +428,13 @@ AUTHENTIK_CLIENT_ID = env("AUTHENTIK_CLIENT_ID", default="")
 AUTHENTIK_CLIENT_SECRET = env("AUTHENTIK_CLIENT_SECRET", default="")
 # Optional: how *this app's own server* reaches Authentik, if that's a
 # different address than AUTHENTIK_URL (what the user's browser is
-# redirected to). Defaults to AUTHENTIK_URL — most deployments only
+# redirected to). Defaults to AUTHENTIK_URL - most deployments only
 # need one address. Diverges when Authentik runs as a separate Docker
 # stack: the browser needs Authentik's externally published address,
 # but this app's own container usually can't reach that same address
 # from inside its own network namespace ("localhost"/a published port
 # means something different from inside a container than from the
-# host) — pointing this at Authentik's container hostname on a shared
+# host) - pointing this at Authentik's container hostname on a shared
 # Docker network (e.g. "http://authentik-server:9000") solves that
 # without changing what the browser is ever redirected to.
 AUTHENTIK_INTERNAL_URL = env("AUTHENTIK_INTERNAL_URL", default="") or AUTHENTIK_URL
@@ -442,11 +442,11 @@ AUTHENTIK_INTERNAL_URL = env("AUTHENTIK_INTERNAL_URL", default="") or AUTHENTIK_
 # to use (Authentik's issuer_mode="per_provider" default mints a
 # distinct issuer/JWKS per application at
 # f"{AUTHENTIK_URL}/application/o/{slug}/..." rather than one shared
-# endpoint) — matches whatever slug the application was actually
+# endpoint) - matches whatever slug the application was actually
 # created with in Authentik, not necessarily "ironstack".
 AUTHENTIK_APPLICATION_SLUG = env("AUTHENTIK_APPLICATION_SLUG", default="ironstack")
 # Optional extra access gate (apps.accounts.oidc.
-# IronStackOIDCAuthenticationBackend.verify_claims) — an Authentik
+# IronStackOIDCAuthenticationBackend.verify_claims) - an Authentik
 # group name a user must belong to for "Log in with Authentik" to
 # actually let them in. Unset (the default) means having *any*
 # Authentik account is enough, which matters on a shared Authentik
@@ -456,7 +456,7 @@ AUTHENTIK_APPLICATION_SLUG = env("AUTHENTIK_APPLICATION_SLUG", default="ironstac
 # Policy / Group / User Bindings) to the same group.
 AUTHENTIK_REQUIRED_GROUP = env("AUTHENTIK_REQUIRED_GROUP", default="")
 # Refuse an Authentik login whose email isn't marked verified
-# (`email_verified` claim) — the login is matched to an existing local
+# (`email_verified` claim) - the login is matched to an existing local
 # account by email, so an unverified address someone set for themselves
 # could otherwise take over that account. Turn off only if your
 # Authentik's email scope mapping doesn't send `email_verified: true`
@@ -469,18 +469,18 @@ if AUTHENTIK_ENABLED:
 
     OIDC_RP_CLIENT_ID = AUTHENTIK_CLIENT_ID
     OIDC_RP_CLIENT_SECRET = AUTHENTIK_CLIENT_SECRET
-    # RS256, not mozilla-django-oidc's own HS256 default — Authentik
+    # RS256, not mozilla-django-oidc's own HS256 default - Authentik
     # signs id_tokens with its own per-provider RSA key (see the
     # OIDC_OP_JWKS_ENDPOINT below, fetched to verify that signature)
     # rather than the shared client secret HS256 would use.
     OIDC_RP_SIGN_ALGO = "RS256"
     # Browser-facing: the user's own browser is redirected here
     # directly, so this must be whatever address they can actually
-    # reach — always AUTHENTIK_URL.
+    # reach - always AUTHENTIK_URL.
     OIDC_OP_AUTHORIZATION_ENDPOINT = f"{AUTHENTIK_URL}/application/o/authorize/"
     # Server-facing: this app's own backend calls these directly
     # (mozilla_django_oidc.auth.OIDCAuthenticationBackend's token
-    # exchange, JWKS fetch, userinfo fetch) — AUTHENTIK_INTERNAL_URL,
+    # exchange, JWKS fetch, userinfo fetch) - AUTHENTIK_INTERNAL_URL,
     # which is just AUTHENTIK_URL again unless overridden above.
     _authentik_internal_issuer = (
         f"{AUTHENTIK_INTERNAL_URL}/application/o/{AUTHENTIK_APPLICATION_SLUG}"
@@ -489,34 +489,34 @@ if AUTHENTIK_ENABLED:
     OIDC_OP_USER_ENDPOINT = f"{AUTHENTIK_INTERNAL_URL}/application/o/userinfo/"
     OIDC_OP_JWKS_ENDPOINT = f"{_authentik_internal_issuer}/jwks/"
     OIDC_RP_SCOPES = "openid email profile"
-    # mozilla_django_oidc's own default is "/" — a login rejected by
+    # mozilla_django_oidc's own default is "/" - a login rejected by
     # IronStackOIDCAuthenticationBackend.verify_claims (e.g.
     # AUTHENTIK_REQUIRED_GROUP set and the user isn't a member) should
     # land back on the login page, not the dashboard URL an anonymous
     # visitor would just get redirected away from again anyway.
     LOGIN_REDIRECT_URL_FAILURE = "login"
-    # PKCE on top of the authorization-code flow's own state/nonce —
+    # PKCE on top of the authorization-code flow's own state/nonce -
     # cheap extra protection against an authorization code being
     # intercepted, and something Authentik supports out of the box
     # (see the discovery document's code_challenge_methods_supported).
     OIDC_USE_PKCE = True
 
-# apps.core.push — Web Push notifications for messages
+# apps.core.push - Web Push notifications for messages
 # (docs/SECURITY.md "Web Push notifications"). Entirely optional: leave
 # VAPID_PUBLIC_KEY/VAPID_PRIVATE_KEY unset and PUSH_ENABLED stays
-# False — no "Notifications" card on the profile page, no push ever
+# False - no "Notifications" card on the profile page, no push ever
 # sent, apps.core.push.send_push_notification becomes a no-op. Both
-# keys are base64url-encoded with no PEM headers, single line each —
+# keys are base64url-encoded with no PEM headers, single line each -
 # generate a pair with `manage.py generate_vapid_keys` (run once, keep
 # the private key secret). VAPID_ADMIN_EMAIL is the contact address a
 # push service sees in the VAPID JWT's "sub" claim (RFC 8292) if it
-# ever needs to reach the operator about abuse — any real address
+# ever needs to reach the operator about abuse - any real address
 # works, it's never shown to end users.
 VAPID_PUBLIC_KEY = env("VAPID_PUBLIC_KEY", default="")
 VAPID_PRIVATE_KEY = env("VAPID_PRIVATE_KEY", default="")
 VAPID_ADMIN_EMAIL = env("VAPID_ADMIN_EMAIL", default="")
 PUSH_ENABLED = bool(VAPID_PUBLIC_KEY and VAPID_PRIVATE_KEY and VAPID_ADMIN_EMAIL)
-# Hosts a browser's push subscription endpoint may point at — the
+# Hosts a browser's push subscription endpoint may point at - the
 # push services of Chrome/Edge/Opera/Samsung (FCM), Firefox (Mozilla
 # autopush), Safari (Apple) and legacy Edge (WNS). Anything else is
 # refused on subscribe and skipped on send: the server POSTs to that
@@ -532,49 +532,49 @@ PUSH_ENDPOINT_HOSTS = env_list(
     ),
 )
 
-# apps.core.backups — encrypts a backup's database.dump/media.tar
+# apps.core.backups - encrypts a backup's database.dump/media.tar
 # (docs/BACKUP.md "Encryption") once set; every backup this instance's
 # web UI or management commands create is plain, unencrypted tar
 # members otherwise, same as before this setting existed. A backup
 # archive holds this whole app's data unfiltered (docs/SECURITY.md
-# "Data isolation" — every user's own data, TOTP secrets included),
+# "Data isolation" - every user's own data, TOTP secrets included),
 # so anyone who can read one is equivalent to reading the live
 # database directly; this closes that gap for a backup file
 # specifically (a copied-off archive, cloud storage, ...), same
 # reasoning `docs/SECURITY.md`'s own TOTP-secret section already gives
 # for treating a backup with the same care as the passwords table.
 # Generate one with `manage.py generate_backup_encryption_key` (prints
-# a fresh `cryptography.fernet.Fernet` key) — losing it makes every
+# a fresh `cryptography.fernet.Fernet` key) - losing it makes every
 # backup made while it was set permanently unrestorable, so treat it
 # with the same care as VAPID_PRIVATE_KEY/SECRET_KEY: back it up
 # somewhere that isn't itself only inside an encrypted backup.
 BACKUP_ENCRYPTION_KEY = env("BACKUP_ENCRYPTION_KEY", default="")
-# apps.core.backup_tasks — the Backups page starts create/restore as a
+# apps.core.backup_tasks - the Backups page starts create/restore as a
 # detached background process. True runs it inside the request instead
 # (the test suite; never in production, where a restore outlasts
 # gunicorn's timeout).
 BACKUP_TASKS_RUN_INLINE = env_bool("BACKUP_TASKS_RUN_INLINE", default=False)
 
 # apps.accounts.models.User.totp_secret (docs/SECURITY.md "Two-factor
-# authentication") — encrypts that one field at rest once set; every
+# authentication") - encrypts that one field at rest once set; every
 # other field in this app stays deliberately unencrypted (see that
 # same doc section for why field-level encryption doesn't fit
 # health/analytics data at all). A separate key from
-# BACKUP_ENCRYPTION_KEY above on purpose, despite the shared shape —
+# BACKUP_ENCRYPTION_KEY above on purpose, despite the shared shape -
 # they protect against different compromises (a downloaded backup vs.
 # the live database) and rotating one should never require also
 # rotating the other. Generate one with `manage.py
 # generate_totp_encryption_key`. Turning this on doesn't retroactively
-# encrypt any secret already in the database by itself — run `manage.py
+# encrypt any secret already in the database by itself - run `manage.py
 # encrypt_existing_totp_secrets` once, after setting this, to re-save
 # every 2FA-enabled user's row (EncryptedTextField's own docstring
 # explains why an ordinary save() is what actually does the work).
 # Losing this key breaks 2FA login for every user who has it enabled,
-# not just backups made while it was set — back it up as carefully as
+# not just backups made while it was set - back it up as carefully as
 # SECRET_KEY.
 TOTP_ENCRYPTION_KEY = env("TOTP_ENCRYPTION_KEY", default="")
 
-# apps.assistant — the optional AI assistant (docs/ASSISTANT.md). Entirely
+# apps.assistant - the optional AI assistant (docs/ASSISTANT.md). Entirely
 # inert until a provider is reachable: with no ASSISTANT_API_KEY here and
 # no user having saved their own key, the assistant pages just explain
 # that it isn't set up. Operator-tunable knobs that shouldn't need a
@@ -583,7 +583,7 @@ TOTP_ENCRYPTION_KEY = env("TOTP_ENCRYPTION_KEY", default="")
 # instead.
 #
 # ASSISTANT_PROVIDER: "anthropic" (Claude, the default) or "ollama" (a
-# self-hosted Ollama server — nothing leaves the operator's own network,
+# self-hosted Ollama server - nothing leaves the operator's own network,
 # and no key is needed; ASSISTANT_OLLAMA_URL/ASSISTANT_OLLAMA_MODEL).
 # Users can always bring their own Anthropic key regardless of this
 # setting (Profile → AI assistant).
@@ -592,7 +592,7 @@ ASSISTANT_PROVIDER = env("ASSISTANT_PROVIDER", default="anthropic").strip().lowe
 # operator, so AssistantSettings.shared_key_access decides who may use it.
 ASSISTANT_API_KEY = env("ASSISTANT_API_KEY", default="")
 ASSISTANT_MODEL = env("ASSISTANT_MODEL", default="claude-opus-5-5")
-# How much the model thinks before answering — low/medium/high/xhigh/max
+# How much the model thinks before answering - low/medium/high/xhigh/max
 # (output_config.effort). Higher costs more tokens per reply.
 ASSISTANT_EFFORT = env("ASSISTANT_EFFORT", default="medium")
 # On supported models, a request a safety classifier declines is re-run on
@@ -604,7 +604,7 @@ ASSISTANT_OLLAMA_URL = env("ASSISTANT_OLLAMA_URL", default="http://ollama:11434"
 ASSISTANT_OLLAMA_MODEL = env("ASSISTANT_OLLAMA_MODEL", default="qwen3:8b")
 # Encrypts every user's own saved API key at rest
 # (apps.accounts.models.EncryptedTextField). Unlike TOTP_ENCRYPTION_KEY a
-# key is always used here — an API key is money, not just a login step —
+# key is always used here - an API key is money, not just a login step -
 # so when it isn't set one is derived from SECRET_KEY instead. That means
 # rotating SECRET_KEY makes saved keys unreadable (users simply re-enter
 # them); set this explicitly (`manage.py generate_assistant_encryption_key`)
@@ -617,11 +617,11 @@ if not ASSISTANT_ENCRYPTION_KEY:
 # Production runs replies in the separate `assistant-worker` container
 # (apps.assistant.management.commands.assistant_worker): a reply with
 # several tool calls easily outlasts gunicorn's 30-second worker timeout.
-# True runs the reply inside the request instead — handy for `runserver`
+# True runs the reply inside the request instead - handy for `runserver`
 # without the worker, never for production.
 ASSISTANT_RUN_INLINE = env_bool("ASSISTANT_RUN_INLINE", default=False)
 
-# apps.core.management.commands.backup_scheduler — docs/BACKUP.md.
+# apps.core.management.commands.backup_scheduler - docs/BACKUP.md.
 # UTC hour (0-23) the docker-compose.yml `backup-scheduler` service
 # runs `create_backup` at, once a day.
 BACKUP_HOUR = int(env("BACKUP_HOUR", default="3"))

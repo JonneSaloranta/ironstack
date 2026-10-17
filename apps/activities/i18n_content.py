@@ -1,10 +1,10 @@
-"""Translation catalog for seeded *content*, not UI chrome — built-in
+"""Translation catalog for seeded *content*, not UI chrome - built-in
 activity type names (apps.activities.migrations' seed data) are stored
 in the database in canonical English, the value matched by
 `get_or_create(name=...)` elsewhere, so the stored value itself must
 never be translated. This module exists solely so `makemessages`
 extracts these exact strings into the `.po` catalog; nothing here is
-ever imported or executed for its return value — see
+ever imported or executed for its return value - see
 apps.exercises.i18n_content and docs/ARCHITECTURE.md
 "Internationalization" for the full pattern (`{% trans activity_type.name %}`
 at render time).

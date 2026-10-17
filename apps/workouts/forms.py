@@ -12,14 +12,14 @@ from .models import ExerciseSet, PerformedExercise
 
 class ExerciseSetForm(forms.ModelForm):
     """`weight` is entered and displayed in the user's preferred unit
-    (apps.core.units) — converted to/from canonical kg storage here, not
+    (apps.core.units) - converted to/from canonical kg storage here, not
     left to the template or view, the same pattern as
     apps.measurements.forms.BodyMeasurementForm.
 
     Unlike that form, an unbound "new set" form's starting value doesn't
     come from `self.instance` (there isn't one yet) but from an explicit
     `initial=` dict the view builds (last-logged weight, or a smart
-    suggestion) — the view is responsible for converting that to display
+    suggestion) - the view is responsible for converting that to display
     units before constructing this form, same as it must supply `user=`.
     """
 

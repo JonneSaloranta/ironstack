@@ -1,7 +1,7 @@
 name: CI
 
 # On push (including merges) to master/dev, and on any pull request
-# targeting them — so a bad change is caught before it merges, not
+# targeting them - so a bad change is caught before it merges, not
 # just after.
 on:
   push:
@@ -9,14 +9,14 @@ on:
   pull_request:
     branches: [master, dev]
 
-# Least-privilege default — GITHUB_TOKEN gets read-only repo access
+# Least-privilege default - GITHUB_TOKEN gets read-only repo access
 # unless a job explicitly asks for more (publish-image and
 # create-release below each ask for their own, only on those jobs).
 permissions:
   contents: read
 
 # Every `uses:` below is pinned to a full commit SHA, not a mutable
-# tag (`@v7`) — a tag can be moved to point at different code after
+# tag (`@v7`) - a tag can be moved to point at different code after
 # the fact (whether by the action's own maintainer or an attacker who
 # compromises their account), which would silently change what runs
 # here on the next push with no diff in this repo to review. That
@@ -24,7 +24,7 @@ permissions:
 # specifically: both request elevated GITHUB_TOKEN scopes
 # (packages: write / contents: write) an untrusted action version
 # could abuse. The `# vX` comment after each SHA is just a label for
-# humans — `.github/dependabot.yml`'s own `github-actions` ecosystem
+# humans - `.github/dependabot.yml`'s own `github-actions` ecosystem
 # entry still resolves/bumps these by SHA on every update, same as any
 # other pinned dependency.
 
@@ -32,7 +32,7 @@ jobs:
   lint-and-test:
     runs-on: ubuntu-latest
 
-    # Matches docker-compose.yml's `postgres:16-alpine` — same major
+    # Matches docker-compose.yml's `postgres:16-alpine` - same major
     # version scripts/backup.sh's postgresql-client-16 is pinned to
     # (see docs/BACKUP.md), for the same reason: keep dev/CI/prod on
     # one Postgres version rather than three.
@@ -66,14 +66,14 @@ jobs:
         with:
           python-version: "3.14"
           cache: pip
-          # dev.txt just does `-r base.txt` — both need to be in the
+          # dev.txt just does `-r base.txt` - both need to be in the
           # cache key, or a base.txt-only change wouldn't bust a cache
           # keyed on dev.txt's unchanged text.
           cache-dependency-path: |
             requirements/base.txt
             requirements/dev.txt
 
-      # gettext (msgfmt) — needed to compile locale/*/LC_MESSAGES/*.po
+      # gettext (msgfmt) - needed to compile locale/*/LC_MESSAGES/*.po
       # into the .mo files translation-content tests read; not part of
       # the base runner image. Matches the Dockerfile's own
       # `apt-get install ... gettext` for the same reason.
@@ -90,19 +90,19 @@ jobs:
         run: ruff check .
 
       # docker-entrypoint.sh (docs/ARCHITECTURE.md "Versioning") is the
-      # one shell script this project's own test suite can't cover —
+      # one shell script this project's own test suite can't cover -
       # shellcheck is the closest equivalent to ruff for it. Already
       # on every ubuntu-latest runner, no separate install step needed.
       - name: Lint (shellcheck)
         run: shellcheck docker-entrypoint.sh
 
-      # Catches a model change committed without its migration —
+      # Catches a model change committed without its migration -
       # docs/ARCHITECTURE.md's own "verify migrations" step, enforced
       # here instead of relying on remembering to run it locally.
       - name: Check for missing migrations
         run: python manage.py makemigrations --check --dry-run
 
-      # Under coverage, reported in the run's summary — measured, not
+      # Under coverage, reported in the run's summary - measured, not
       # enforced (no fail_under) until there's a baseline worth holding.
       - name: Test
         run: |
@@ -112,12 +112,12 @@ jobs:
           coverage report | tail -1
 
   # Real-browser accessibility checks (apps/core/test_accessibility.py,
-  # axe-core via Playwright) — a separate job rather than folded into
+  # axe-core via Playwright) - a separate job rather than folded into
   # lint-and-test above: it needs a real Chromium (requirements/a11y.txt,
   # `playwright install`), a real, non-trivial download nobody running
   # the plain test suite should be forced to carry, so pyproject.toml's
   # own `addopts` excludes the `accessibility` marker from a plain
-  # `pytest` run by default — this job is the one place that overrides
+  # `pytest` run by default - this job is the one place that overrides
   # that with `-m accessibility` instead. Independent of lint-and-test
   # (no `needs:`) so a slow browser download/install never delays the
   # fast, far-more-commonly-broken checks in that job from reporting
@@ -175,14 +175,14 @@ jobs:
       - name: Accessibility tests
         run: pytest -m accessibility
 
-  # Publishes the production image to GitHub Container Registry — only
+  # Publishes the production image to GitHub Container Registry - only
   # once lint-and-test above has actually passed (needs:), and only
   # for a real push landing on master (if:), never a pull request or
   # any other branch, so a published `:latest` always reflects code
   # that's both merged and green, never a branch still under review.
   # See docs/ARCHITECTURE.md "Versioning" for the same GIT_SHA/
   # APP_VERSION/BUILD_DATE metadata scripts/build.sh already bakes in
-  # for a local build — this does the equivalent for the published one.
+  # for a local build - this does the equivalent for the published one.
   publish-image:
     # accessibility too: an axe or browser regression mustn't ship as
     # :latest just because the plain test suite was green.
@@ -228,7 +228,7 @@ jobs:
           cache-to: type=gha,mode=max
 
   # Cuts a GitHub Release whenever a push to master actually bumps the
-  # repo-root VERSION file (docs/ARCHITECTURE.md "Versioning") —
+  # repo-root VERSION file (docs/ARCHITECTURE.md "Versioning") -
   # bumping it is already the one-file-edit signal this project treats
   # as "this is a real release" (see docs/DEVELOPMENT_LOG.md's own
   # "Bump VERSION to ..." entries), so this needs no separate `git tag`
@@ -236,9 +236,9 @@ jobs:
   # master, gated the same way publish-image is (needs: both
   # lint-and-test and publish-image, so a release only ever points at
   # a commit that's both green and has a real image published for it).
-  # The release notes are auto-generated from the commit log itself —
+  # The release notes are auto-generated from the commit log itself -
   # every commit since the previous release, one line each linking
-  # straight to it, grouped by its Conventional Commits type — not
+  # straight to it, grouped by its Conventional Commits type - not
   # CHANGELOG.md's own hand-written prose for that version, which stays
   # the curated, narrated reference (see CHANGELOG.md's own intro) but
   # no longer feeds this.
@@ -249,7 +249,7 @@ jobs:
     permissions:
       contents: write
     steps:
-      # fetch-depth: 0 — the default shallow (depth-1) clone has no
+      # fetch-depth: 0 - the default shallow (depth-1) clone has no
       # tags and no history beyond this one commit, and the release-
       # notes step below needs both: `git describe` to find the
       # *previous* release's tag, and `git log <that tag>..HEAD` to
@@ -260,13 +260,13 @@ jobs:
 
       # Checks whether a release already exists for the *current*
       # VERSION, rather than diffing VERSION against the previous push
-      # (github.event.before) — that first approach broke the first
+      # (github.event.before) - that first approach broke the first
       # time a version-bump push's CI went green on lint-and-test/
       # publish-image but failed elsewhere (or this job itself failed
       # transiently): the next, fix-forward push has a `before` that
       # *also* already has the bumped VERSION, so nothing looked
       # "changed" and the release silently never got created. Asking
-      # "does v$VERSION already exist" instead is idempotent — it
+      # "does v$VERSION already exist" instead is idempotent - it
       # fires exactly once per unique VERSION value no matter how many
       # pushes/retries it takes to get a green run for it, and never
       # double-creates a release on a later push that doesn't touch
@@ -290,13 +290,13 @@ jobs:
         run: |
           version="$(cat VERSION)"
           if ! [[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-            echo "VERSION ('$version') isn't a plain X.Y.Z semantic version — skipping release." >&2
+            echo "VERSION ('$version') isn't a plain X.Y.Z semantic version - skipping release." >&2
             exit 1
           fi
 
           # Every commit since the *previous* release tag (or the
           # whole history, for this repo's very first release, when no
-          # such tag exists yet) — `git describe` finds it without
+          # such tag exists yet) - `git describe` finds it without
           # this job needing to know or compute what it is itself.
           prev_tag="$(git describe --tags --abbrev=0 2>/dev/null || true)"
           range="HEAD"
@@ -310,7 +310,7 @@ jobs:
 
           notes_file = sys.argv[1]
           # Order is most-to-least interesting to someone skimming a
-          # release, not alphabetical — matches CLAUDE.md's own
+          # release, not alphabetical - matches CLAUDE.md's own
           # "Common types" list. A commit whose subject line isn't
           # Conventional-Commits-formatted at all (a merge commit's
           # own default message, a stray typo) falls into "Other"

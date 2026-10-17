@@ -1,4 +1,4 @@
-"""Admin-only backup management, linked from the profile page — see
+"""Admin-only backup management, linked from the profile page - see
 apps.core.backups for what actually happens and why restore here
 carries real risk that scripts/restore.sh's version doesn't."""
 
@@ -25,7 +25,7 @@ class BackupListView(SuperuserRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         all_backups = backup_services.list_backups()
         # Automatic (scheduler-made) backups get their own section,
-        # separate from manual/uploaded ones — a daily schedule
+        # separate from manual/uploaded ones - a daily schedule
         # produces a fundamentally different kind of list (many,
         # similar, low-effort) than a person deliberately clicking
         # "Create backup" or uploading a file (few, each intentional).
@@ -45,8 +45,8 @@ class BackupListView(SuperuserRequiredMixin, TemplateView):
         return context
 
     def post(self, request, *args, **kwargs):
-        # Three distinct forms share this one page/URL — "Create
-        # backup", "Upload backup", and the settings card below them —
+        # Three distinct forms share this one page/URL - "Create
+        # backup", "Upload backup", and the settings card below them -
         # told apart by which submit button was actually clicked
         # (name="action").
         action = request.POST.get("action")
@@ -54,13 +54,13 @@ class BackupListView(SuperuserRequiredMixin, TemplateView):
             return self._save_settings(request)
         if action == "upload_backup":
             return self._upload_backup(request)
-        # In the background (apps.core.backup_tasks) — this page shows
+        # In the background (apps.core.backup_tasks) - this page shows
         # its progress and result.
         try:
             backup_tasks.start(backup_tasks.CREATE)
         except backup_tasks.TaskAlreadyRunning:
             messages.error(
-                request, _("Another backup task is still running — wait for it to finish.")
+                request, _("Another backup task is still running - wait for it to finish.")
             )
         return redirect("backup-list")
 
@@ -84,14 +84,14 @@ class BackupListView(SuperuserRequiredMixin, TemplateView):
                 form.add_error(
                     "archive",
                     _(
-                        "Not a valid IronStack backup archive — expected a .tar.gz "
+                        "Not a valid IronStack backup archive - expected a .tar.gz "
                         "containing database.dump, media.tar, and manifest.json."
                     ),
                 )
             else:
                 messages.success(request, _("Backup uploaded: %(name)s") % {"name": name})
                 # Straight into the same confirm-then-restore flow a
-                # server-created backup uses — the whole point of
+                # server-created backup uses - the whole point of
                 # uploading one is almost always to restore it right
                 # away.
                 return redirect("backup-restore", name=name)
@@ -110,7 +110,7 @@ class BackupDownloadView(SuperuserRequiredMixin, View):
 
 class BackupDeleteView(SuperuserRequiredMixin, View):
     """Only ever removes a copy sitting in storage, never anything
-    actually running — unlike restore, that means no manifest-
+    actually running - unlike restore, that means no manifest-
     comparison confirm page of its own, just the same JS confirm() on
     the button every other delete in this app uses."""
 
@@ -127,7 +127,7 @@ class BackupRestoreView(SuperuserRequiredMixin, TemplateView):
     """GET shows the backup's own manifest next to the running
     instance's, plus the warning every destructive confirm page in
     this app uses (see templates/programs/program_confirm_delete.html)
-    — a second, JS `confirm()` dialog on the submit button on top of
+    - a second, JS `confirm()` dialog on the submit button on top of
     that, given how much more severe this action is than an ordinary
     delete. POST actually performs the restore."""
 
@@ -143,7 +143,7 @@ class BackupRestoreView(SuperuserRequiredMixin, TemplateView):
         context["name"] = name
         # Surfaced on the confirm page itself rather than only ever
         # discovered from the error message a failed POST above
-        # produces — someone about to restore an encrypted backup onto
+        # produces - someone about to restore an encrypted backup onto
         # an instance with no (or the wrong) BACKUP_ENCRYPTION_KEY
         # configured should find that out before clicking "Restore",
         # not after.
@@ -163,7 +163,7 @@ class BackupRestoreView(SuperuserRequiredMixin, TemplateView):
         # In the background (apps.core.backup_tasks): a real-sized
         # restore outlasts gunicorn's timeout, and a worker killed
         # partway through used to leave the instance half-restored.
-        # The Backups page shows progress and the outcome — including a
+        # The Backups page shows progress and the outcome - including a
         # clean message for the common wrong/missing
         # BACKUP_ENCRYPTION_KEY case.
         try:
@@ -172,7 +172,7 @@ class BackupRestoreView(SuperuserRequiredMixin, TemplateView):
             raise Http404 from None
         except backup_tasks.TaskAlreadyRunning:
             messages.error(
-                request, _("Another backup task is still running — wait for it to finish.")
+                request, _("Another backup task is still running - wait for it to finish.")
             )
             return redirect(reverse("backup-restore", args=[name]))
         return redirect(reverse("backup-list"))

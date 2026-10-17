@@ -1,14 +1,14 @@
-"""Standalone, stateless calculators — see docs/NUTRITION.md
+"""Standalone, stateless calculators - see docs/NUTRITION.md
 "Calculators": quick, useful numbers a user can check without
 onboarding, setting a goal, or logging anything. Nothing here reads or
 writes a single nutrition domain row; every function takes plain
 numbers and returns a plain number (or a small frozen dataclass), the
-same pure-function shape as apps.nutrition.energy/macros — the two
+same pure-function shape as apps.nutrition.energy/macros - the two
 BMR/TDEE and macro-split calculators are thin wrappers around exactly
 those two modules rather than a second implementation of the same
 math (see CLAUDE.md "do not create duplicate abstractions").
 
-Every result here is an estimate, not a diagnosis or medical advice —
+Every result here is an estimate, not a diagnosis or medical advice -
 same framing apps.nutrition.energy's own docstring insists on
 throughout this app.
 """
@@ -33,18 +33,18 @@ def estimate_body_fat_percent(
     waist_cm: Decimal,
     hip_cm: Decimal | None = None,
 ) -> Decimal | None:
-    """The U.S. Navy circumference method — chosen over skinfold
+    """The U.S. Navy circumference method - chosen over skinfold
     calipers (needs a tool almost nobody owns) or bioimpedance scales
     (notoriously inconsistent between devices and even between two
     readings on the same device): just a tape measure and three (men)
     or four (women) circumferences. Validation studies against DEXA
-    put it within roughly 3-4 percentage points for most body types —
+    put it within roughly 3-4 percentage points for most body types -
     presented as an estimate, not a diagnosis.
 
     Returns `None` for physically nonsensical input (a waist not
     bigger than the neck for men; waist+hip not bigger than the neck
     for women) rather than raising or silently returning a nonsense
-    negative percentage — the caller shows this as "check your
+    negative percentage - the caller shows this as "check your
     measurements" rather than a crash.
     """
     if biological_sex == BiologicalSex.MALE:
@@ -101,7 +101,7 @@ WATER_ACTIVITY_BONUS_ML = {
 def estimate_daily_water_liters(weight_kg: Decimal, activity_level: str) -> Decimal:
     """Deliberately rough: real fluid needs vary with climate, sweat
     rate, and diet composition well beyond what bodyweight and an
-    activity bucket can capture — presented as a starting point, not a
+    activity bucket can capture - presented as a starting point, not a
     target to hit exactly, same "estimate" framing as everywhere else
     in this app."""
     base_ml = weight_kg * WATER_BASE_ML_PER_KG
@@ -127,7 +127,7 @@ class WHRRiskLevel:
     high: Decimal | None  # exclusive
 
 
-# WHO-style sex-specific thresholds — a widely cited public-health
+# WHO-style sex-specific thresholds - a widely cited public-health
 # screening cutoff for cardiovascular/metabolic risk associated with
 # where fat is carried, same "published scale, not invented here"
 # reasoning as apps.nutrition.models.NutriScoreGrade. Two separate
@@ -160,17 +160,17 @@ def estimate_weeks_to_goal(
     current_weight_kg: Decimal, target_weight_kg: Decimal, rate_kg_per_week: Decimal
 ) -> Decimal | None:
     """How many weeks, at a chosen rate, to go from `current_weight_kg`
-    to `target_weight_kg` — the same signed-rate convention
+    to `target_weight_kg` - the same signed-rate convention
     `NutritionGoal.target_rate_kg_per_week` already uses (negative for
     losing, positive for gaining). `None` when the rate doesn't
     actually move toward the target (a positive/gaining rate with a
     lower target, a negative/losing rate with a higher target, or a
     zero rate with any real gap) rather than a nonsensical negative or
-    infinite week count — the caller shows this as "check your
+    infinite week count - the caller shows this as "check your
     numbers" rather than a silently wrong answer. Already-at-target
-    returns zero, not `None` — that's a real, correct answer, not an
+    returns zero, not `None` - that's a real, correct answer, not an
     error. Deliberately returns only a week count, not a calendar
-    date — "today" is a request-time concern the caller already has
+    date - "today" is a request-time concern the caller already has
     (`timezone.localdate()`), not something a pure calculation needs
     to reach for on its own, the same "no DB/HTTP dependency" rule
     this whole module follows."""

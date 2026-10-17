@@ -1,22 +1,22 @@
-"""Seed built-in template recipes — one small library of ready-to-log
+"""Seed built-in template recipes - one small library of ready-to-log
 meals per goal (bulk / fatburner / balanced) x meal (breakfast / lunch
 / dinner), so a fresh install has something to browse and log on day
 one instead of an empty recipe list. See docs/NUTRITION.md "Recipe".
 
 Ingredient Food rows are seeded with real OpenFoodFacts data (fetched
-once, by hand, while writing this migration — the same off_id/name/
+once, by hand, while writing this migration - the same off_id/name/
 brand/macros a live `import_or_refresh_food_from_off` call would
 produce for that exact product) rather than the migration itself
 calling OFF over the network: a migration that depends on network
 access and a third-party service being up is a fragile thing to put in
 the one code path every fresh install and every upgrade must run
 through. `off_synced_at=now()` means these behave exactly like a
-normal import from here on — eligible for the usual 14-day staleness
+normal import from here on - eligible for the usual 14-day staleness
 refresh (apps.nutrition.services.OPENFOODFACTS_STALENESS_DAYS) the
 next time one of them is used, same as any other imported Food.
 
 Recipe/Food names and Recipe.instructions here are the same canonical
-English strings apps.nutrition.i18n_content lists for `makemessages` —
+English strings apps.nutrition.i18n_content lists for `makemessages` -
 see that module's own docstring for why the stored value must stay
 untranslated while the display goes through `{% trans %}` at render
 time. The ingredient Food names are real OFF product names/brands and,
@@ -28,7 +28,7 @@ from decimal import Decimal
 from django.db import migrations
 from django.utils import timezone
 
-# (off_id, name, brand, calories, protein_g, carb_g, fat_g) — all per
+# (off_id, name, brand, calories, protein_g, carb_g, fat_g) - all per
 # 100g, OpenFoodFacts' own universal unit, fetched live from
 # world.openfoodfacts.org while writing this migration.
 INGREDIENTS = {
@@ -69,96 +69,96 @@ INGREDIENTS = {
 # (name, servings, instructions, [(ingredient_key, quantity_grams), ...])
 RECIPES = [
     (
-        "Bulk breakfast — Oats & peanut butter", 1,
+        "Bulk breakfast - Oats & peanut butter", 1,
         "Mix the oats into the yogurt, top with banana slices and peanut butter.",
         [("oats", "90"), ("banana", "120"), ("peanut_butter", "25"), ("greek_yogurt", "150")],
     ),
     (
-        "Bulk breakfast — Eggs on toast", 1,
+        "Bulk breakfast - Eggs on toast", 1,
         "Fry or scramble the eggs, serve on toasted bread with peanut butter and a "
         "drizzle of olive oil.",
         [("eggs", "150"), ("bread", "90"), ("peanut_butter", "20"), ("olive_oil", "10")],
     ),
     (
-        "Bulk lunch — Chicken & rice bowl", 1,
+        "Bulk lunch - Chicken & rice bowl", 1,
         "Cook the chicken and rice, toss with olive oil, serve with steamed broccoli.",
         [("chicken", "200"), ("rice", "300"), ("olive_oil", "15"), ("broccoli", "100")],
     ),
     (
-        "Bulk lunch — Tuna & sweet potato", 1,
+        "Bulk lunch - Tuna & sweet potato", 1,
         "Roast the sweet potato, flake in the tuna, drizzle with olive oil and serve "
         "with spinach.",
         [("tuna", "150"), ("sweet_potato", "300"), ("olive_oil", "15"), ("spinach", "80")],
     ),
     (
-        "Bulk dinner — Salmon & rice", 1,
+        "Bulk dinner - Salmon & rice", 1,
         "Pan-sear the salmon, serve over rice with steamed broccoli and a little "
         "olive oil.",
         [("salmon", "200"), ("rice", "250"), ("olive_oil", "10"), ("broccoli", "120")],
     ),
     (
-        "Bulk dinner — Chicken & sweet potato", 1,
+        "Bulk dinner - Chicken & sweet potato", 1,
         "Roast the chicken and sweet potato together, top with crushed almonds and "
         "olive oil.",
         [("chicken", "220"), ("sweet_potato", "280"), ("almonds", "20"), ("olive_oil", "10")],
     ),
     (
-        "Fatburner breakfast — Egg & spinach scramble", 1,
+        "Fatburner breakfast - Egg & spinach scramble", 1,
         "Scramble the eggs with the spinach, serve with cottage cheese on the side.",
         [("eggs", "150"), ("spinach", "100"), ("cottage_cheese", "100")],
     ),
     (
-        "Fatburner breakfast — Greek yogurt bowl", 1,
+        "Fatburner breakfast - Greek yogurt bowl", 1,
         "Top the yogurt with sliced banana and a few crushed almonds.",
         [("greek_yogurt", "200"), ("banana", "80"), ("almonds", "10")],
     ),
     (
-        "Fatburner lunch — Chicken & broccoli", 1,
+        "Fatburner lunch - Chicken & broccoli", 1,
         "Grill the chicken, steam the broccoli, finish with a light drizzle of olive oil.",
         [("chicken", "200"), ("broccoli", "200"), ("olive_oil", "5")],
     ),
     (
-        "Fatburner lunch — Tuna & spinach salad", 1,
+        "Fatburner lunch - Tuna & spinach salad", 1,
         "Toss the tuna with the spinach and a small drizzle of olive oil.",
         [("tuna", "150"), ("spinach", "100"), ("olive_oil", "5")],
     ),
     (
-        "Fatburner dinner — Salmon & greens", 1,
+        "Fatburner dinner - Salmon & greens", 1,
         "Bake the salmon, serve with steamed broccoli and spinach.",
         [("salmon", "150"), ("broccoli", "200"), ("spinach", "80")],
     ),
     (
-        "Fatburner dinner — Chicken & cottage cheese", 1,
+        "Fatburner dinner - Chicken & cottage cheese", 1,
         "Grill the chicken, serve with cottage cheese and wilted spinach.",
         [("chicken", "150"), ("cottage_cheese", "150"), ("spinach", "100")],
     ),
     (
-        "Balanced breakfast — Oats & yogurt", 1,
+        "Balanced breakfast - Oats & yogurt", 1,
         "Mix the oats into the yogurt and top with sliced banana.",
         [("oats", "60"), ("greek_yogurt", "150"), ("banana", "100")],
     ),
     (
-        "Balanced breakfast — Eggs on toast", 1,
+        "Balanced breakfast - Eggs on toast", 1,
         "Fry or scramble the eggs, serve on toasted bread with a little olive oil.",
         [("eggs", "100"), ("bread", "60"), ("olive_oil", "5")],
     ),
     (
-        "Balanced lunch — Chicken & rice", 1,
+        "Balanced lunch - Chicken & rice", 1,
         "Cook the chicken and rice, serve with steamed broccoli and olive oil.",
         [("chicken", "150"), ("rice", "180"), ("broccoli", "100"), ("olive_oil", "8")],
     ),
     (
-        "Balanced lunch — Tuna sandwich", 1,
+        "Balanced lunch - Tuna sandwich", 1,
         "Mix the tuna with the spinach, serve between slices of toasted bread.",
         [("tuna", "100"), ("bread", "90"), ("spinach", "40")],
     ),
     (
-        "Balanced dinner — Salmon & sweet potato", 1,
+        "Balanced dinner - Salmon & sweet potato", 1,
         "Bake the salmon and sweet potato, serve with wilted spinach.",
         [("salmon", "150"), ("sweet_potato", "200"), ("spinach", "60")],
     ),
     (
-        "Balanced dinner — Chicken & vegetables", 1,
+        "Balanced dinner - Chicken & vegetables", 1,
         "Roast the chicken with the broccoli and sweet potato, finish with olive oil.",
         [("chicken", "150"), ("broccoli", "150"), ("sweet_potato", "100"), ("olive_oil", "8")],
     ),

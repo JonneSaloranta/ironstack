@@ -4,7 +4,7 @@ from django.core.management.base import BaseCommand
 
 class Command(BaseCommand):
     """One-time key generation for TOTP secret encryption
-    (docs/SECURITY.md "Two-factor authentication") — a self-hoster
+    (docs/SECURITY.md "Two-factor authentication") - a self-hoster
     runs this once, pastes the printed line into their .env, restarts,
     then runs `manage.py encrypt_existing_totp_secrets` once to
     encrypt any secret already stored from before. Never run again on
@@ -24,6 +24,6 @@ class Command(BaseCommand):
             self.style.WARNING(
                 "Paste this line into your .env, restart, then run 'manage.py "
                 "encrypt_existing_totp_secrets' once. Keep this key as secret as "
-                "SECRET_KEY — losing it breaks 2FA login for every user who has it enabled."
+                "SECRET_KEY - losing it breaks 2FA login for every user who has it enabled."
             )
         )

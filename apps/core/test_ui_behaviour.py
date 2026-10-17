@@ -2,7 +2,7 @@
 plus axe across more pages and every theme. Same gating as
 test_accessibility.py (the `accessibility` marker, requirements/a11y.txt):
 these need a real Chromium because what they assert only exists once real
-JS, CSS and focus semantics run — the confirm dialog, modal focus trap,
+JS, CSS and focus semantics run - the confirm dialog, modal focus trap,
 HTMX error toast, and computed colour contrast in each theme."""
 
 import os
@@ -159,7 +159,7 @@ class UiBehaviourTests(StaticLiveServerTestCase):
         toast = self.page.locator("#pr-toast-container .pr-banner-error")
         expect(toast).to_be_visible()
         expect(toast).to_contain_text("not saved")
-        # Stays until dismissed — no timer removes an error.
+        # Stays until dismissed - no timer removes an error.
         toast.get_by_role("button", name="Dismiss").click()
         expect(toast).to_have_count(0)
 
@@ -174,7 +174,7 @@ class UiBehaviourTests(StaticLiveServerTestCase):
         self.page.get_by_role("button", name="Log set").focus()
         self.page.keyboard.press("Enter")
         expect(self.page.locator("#train-panel .train-set-history .tag")).to_have_count(2)
-        # Focus moves on htmx:afterSettle, a moment after the swap — expect() retries.
+        # Focus moves on htmx:afterSettle, a moment after the swap - expect() retries.
         expect(self.page.locator("#train-panel input[name=weight]")).to_be_focused()
 
     def test_logging_a_set_on_the_session_page_keeps_focus_in_that_card(self):
@@ -268,7 +268,7 @@ class UiBehaviourTests(StaticLiveServerTestCase):
     # -- page loading bar (static/js/page-loading.js) ------------------------
     def _hold(self, pattern):
         """Holds every request matching `pattern` until the test releases
-        it — a deterministic slow connection for an HTMX request."""
+        it - a deterministic slow connection for an HTMX request."""
         held = []
         self.page.route(pattern, lambda route: held.append(route))
         return held
@@ -276,7 +276,7 @@ class UiBehaviourTests(StaticLiveServerTestCase):
     def test_following_a_link_shows_the_loading_bar(self):
         self._log_in()
         # Let the click reach page-loading.js's document listener, then
-        # cancel the navigation from window (which runs after document) —
+        # cancel the navigation from window (which runs after document) -
         # the bar stays up as it would on a slow connection, without the
         # test having to hold a navigation Playwright would wait on.
         self.page.evaluate(

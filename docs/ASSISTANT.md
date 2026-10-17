@@ -94,10 +94,17 @@ on the worker's next loop.
 **History is append-only.** Each request replays every `DONE` message's `raw`
 in order. Rows aren't edited after they finish, and a failed reply contributes
 nothing. That keeps Claude's thinking blocks valid across turns. The user's
-context (name, language, units, start date —
-`prompts.conversation_context`) goes into the conversation's first message,
-not the system prompt, so the system prompt and tools stay identical for
-every request and user, and cacheable.
+context (name, language, units, start date and the user's own "About you"
+text - `prompts.conversation_context`) goes into the conversation's first
+message, not the system prompt, so the system prompt and tools stay identical
+for every request and user, and cacheable.
+
+**About you.** On the settings page the user can write what the assistant
+should always keep in mind: allergies, foods they don't eat, equipment,
+schedule, injuries (`AssistantPreference.about_me`, at most 2000 characters).
+It goes into every new conversation's context inside `<about_user>` tags, so
+it isn't asked again. An ongoing conversation keeps the text it started with,
+like the rest of its context.
 
 ## Tools
 
@@ -107,21 +114,55 @@ queries the views use:
 
 | Tool | Reads |
 |---|---|
-| `get_user_overview` | date, units, height, latest body weight, nutrition profile, goal and target, active diet plan |
-| `get_workout_history` | completed sessions with working sets |
+| `get_user_overview` | date, units, height, latest body weight, nutrition profile, goal and target, active diet plan, the weekdays trained on in the last 4 weeks, the program last trained from, number of active coaches |
+| `get_workout_history` | completed sessions with working sets (RPE, RIR, sets to failure), the user's set notes and the plan's exercise notes |
 | `get_personal_records` | max-weight and estimated-1RM records |
-| `get_body_measurements`, `get_activities` | measurements and activities over a period |
+| `get_body_measurements` | per measurement type a whole-history summary (first, latest, change, min/max), the newest readings in the period with notes, the body-weight trend per week and BMI, and which types were never logged |
+| `get_activities` | activities over a period |
 | `get_nutrition_overview` | median intake and recently logged days |
+| `get_food_diary` | the foods and recipes the user eats most (typical portion, usual meals, food details as below) and the last logged days item by item with entry notes, so a diet plan can be built from food they like |
+| `get_calorie_adjustment` | `apps.nutrition.suggestions.suggest_calorie_adjustment`: weight trend against the goal and the suggested daily change |
+| `get_stretching` | completed stretching sessions and own routines (nothing when stretching is turned off) |
 | `list_programs`, `get_program` | own, coach-shared and built-in programs |
+| `get_progression_suggestions` | `apps.progression.suggestions.suggest_weight` for every exercise in a program (default: the one last trained from), with its reason |
 | `list_diet_plans`, `get_diet_plan` | own diet plans |
-| `search_exercises`, `search_foods`, `search_recipes`, `list_meal_slots` | the libraries a proposal draws from |
-| `propose_diet_plan`, `propose_program` | — (records a proposal) |
+| `search_exercises`, `search_foods`, `search_recipes`, `list_meal_slots` | the libraries a proposal draws from; foods with allergens, labels, categories, ingredients, Nutri-Score and package price when known, recipes with their ingredients and the ingredients' allergens |
+| `propose_diet_plan`, `propose_program` | - (records a proposal) |
+
+**What it may read.** The settings page has one checkbox per
+`models.DataScope` (`AssistantPreference.reads_*`, all on by default):
+workouts (history, records, progression suggestions, training days), body
+(measurements, weight trend, calorie adjustment), food diary, activities,
+stretching, and personal details (height, age, sex, activity level - also
+what BMI needs). Each tool in `tools.TOOLS` names its `scope`; `tools.run`
+checks it on every call, so a change applies from the next tool call, in
+ongoing conversations too. A turned-off tool returns `{"not_shared": ...}`
+rather than an error, and `get_user_overview` leaves out the gated fields
+and lists the turned-off scopes. The tool list itself never changes, so the
+prompt prefix stays cacheable. Programs, diet plans and the food, recipe and
+exercise libraries have no switch: proposals are built from them.
 
 Tool inputs are untrusted. Each tool validates its arguments, and a mistake
 goes back to the model as an error result it can correct. It never becomes an
-exception. Results are compact JSON in canonical units. The system prompt
+exception. Results are in canonical units and sent as
+[TOON](https://toonformat.dev) (Token-Oriented Object Notation,
+`apps/assistant/toon.py`): the same data as JSON, but a list of objects with
+primitive fields becomes one header and one comma-separated row per item, so
+field names aren't repeated. To make that work, tools keep their rows flat: a
+short list inside a row becomes one `"a; b"` string (`tools._joined`), and a
+nested result is split into separate tables linked by a column (workout
+history's `session`, body measurements' `type`). Rows with different fields
+still make one table, with `null` for a missing field. On the dev database's
+real data this is about 20% fewer tokens than the compact JSON used before.
+The encoder is our own, about a hundred lines, because only encoding is
+needed; its output is checked against the spec's rules in `ToonTests`.
+`tools.execute` returns the unencoded data (what the tests look at) and
+`tools.run` encodes it. Error results stay plain text. The system prompt
 (`prompts.SYSTEM_PROMPT`) tells the model which units the user reads, to reply
-in the user's language, and to suggest a professional for medical topics.
+in the user's language, and to suggest a professional for medical topics. It
+also tells it to respect the "About you" text and food allergens, to start
+from the app's own progression and calorie suggestions (and say so when it
+recommends something else), and not to work against a coach's plans.
 
 ## Proposals
 
@@ -164,7 +205,7 @@ rendered.
 | Setting | Default | Meaning |
 |---|---|---|
 | `ASSISTANT_PROVIDER` | `anthropic` | `anthropic` or `ollama` |
-| `ASSISTANT_API_KEY` | — | the instance's Anthropic key (usage billed to the operator) |
+| `ASSISTANT_API_KEY` | - | the instance's Anthropic key (usage billed to the operator) |
 | `ASSISTANT_MODEL` | `claude-opus-5-5` | Claude model, also the default for users' own keys (each user can pick another for their key) |
 | `ASSISTANT_EFFORT` | `medium` | `low`…`max`; more thinking costs more tokens (each user can pick another for their own key) |
 | `ASSISTANT_REFUSAL_FALLBACK` | `true` | re-run a classifier-declined request on Anthropic's fallback model (beta) |

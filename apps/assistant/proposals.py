@@ -1,19 +1,19 @@
 """Assistant proposals: validating what the model suggests, and turning an
-accepted suggestion into a real DietPlan/Program — see docs/ASSISTANT.md
+accepted suggestion into a real DietPlan/Program - see docs/ASSISTANT.md
 "Proposals".
 
 Validation happens twice: when the model proposes (so it can fix its own
 mistakes from the error message) and again when the user accepts (their
 library may have changed meanwhile). The stored payload is the normalized
 validator output, which the same validator accepts again unchanged. Names
-in it (meal slots, exercises, recipes) are the stored, canonical ones —
+in it (meal slots, exercises, recipes) are the stored, canonical ones -
 the card translates them when it's rendered (`translate_content`), so it
 follows the user's language rather than whatever was active when the
 model proposed.
 
 Accepting reuses the domain services that already create these objects
-— `apps.programs.services.import_program` and
-`apps.nutrition.services.create_diet_plan` — so an assistant-made plan is
+- `apps.programs.services.import_program` and
+`apps.nutrition.services.create_diet_plan` - so an assistant-made plan is
 exactly as valid, and as editable, as a hand-made or imported one. Both
 land inactive: the user decides whether to start using it.
 """
@@ -382,7 +382,7 @@ def _program(user, data):
             )
             if exercise is None:
                 raise ProposalError(
-                    f"`{item_where}.exercise_id` isn't an exercise this user can see — "
+                    f"`{item_where}.exercise_id` isn't an exercise this user can see - "
                     "use an id from search_exercises."
                 )
             exercises[exercise.pk] = exercise

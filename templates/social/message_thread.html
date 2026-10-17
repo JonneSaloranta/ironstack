@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% load i18n %}
-{% block title %}{{ other.username }} — IronStack{% endblock %}
+{% block title %}{{ other.username }} - IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
   <h1 class="no-margin">{{ other.username }}</h1>
@@ -17,7 +17,7 @@
   hx-trigger="load" fragment (templates/accounts/
   two_factor_backup_codes.html) does. The trigger's own
   [document.visibilityState=='visible'] filter skips polling while
-  this tab is backgrounded — mobile-first (docs/UI.md), no reason to
+  this tab is backgrounded - mobile-first (docs/UI.md), no reason to
   keep spending battery/data on a chat nobody's looking at right now.
   aria-live="polite" so a screen reader announces a newly-arrived
   message the same poll tick sighted users see it appear, instead of
@@ -43,7 +43,7 @@
         would be redundant clutter for a sighted user (the whole page
         is already titled with who/what this thread is), but a
         screen reader still needs an accessible name for the
-        textarea — visually-hidden, not left off entirely.
+        textarea - visually-hidden, not left off entirely.
       {% endcomment %}
       <label for="{{ field.id_for_label }}" class="visually-hidden">{{ field.label }}</label>
       {{ field }}

@@ -1,4 +1,4 @@
-"""Build/release metadata — the single source of truth future
+"""Build/release metadata - the single source of truth future
 backup/restore tooling should read instead of re-deriving any of this
 independently (see `docs/ARCHITECTURE.md` "Versioning" and the
 `version_info` management command, which bundles everything below into
@@ -10,9 +10,9 @@ one JSON blob).
   too (a shell script can just `cat VERSION`). `COPY . .` in the
   Dockerfile bakes it into the image the same way the application code
   itself is baked in, so bumping a release means editing one file and
-  rebuilding — no migration, no settings change.
+  rebuilding - no migration, no settings change.
 - `get_git_sha()` reads a `GIT_SHA` file the same way, but that file is
-  never committed (it's a build artifact, not source — see
+  never committed (it's a build artifact, not source - see
   `scripts/build.sh`) and only exists in an image actually built by
   that script; a plain `docker compose up -d --build` (or any dev
   container) has no such file, and this reports "unknown" rather than
@@ -21,32 +21,32 @@ one JSON blob).
   a commit.
 - `get_migration_state()` is the real technical compatibility signal
   for whether a database backup is safe to load into a given
-  code version — a `VERSION` string alone can't answer that (the same
+  code version - a `VERSION` string alone can't answer that (the same
   version could theoretically span a migration during development, or
   two different versions could share a migration state). Reflects live
   database state, so unlike the two functions above it is never cached.
 - `get_static_assets_hash()` is apps.core.views.service_worker's own
-  cache-busting signal for static/sw.js's `STATIC_CACHE` name — see
+  cache-busting signal for static/sw.js's `STATIC_CACHE` name - see
   that view's own docstring for why `get_git_sha()` alone doesn't
   cover this: it only ever changes on a real deploy (a build baking in
   a new commit), but a *dev* container (docker-compose.override.yml)
   never gets one at all (GIT_SHA stays "unknown" all container-
   lifetime), which is exactly the case that bit this project once
-  already — a browser tab kept open through an entire live-editing
+  already - a browser tab kept open through an entire live-editing
   session stayed on a stale cached static/js/month-calendar.js through
   several real in-place rewrites of that exact file, each only fixed
   by a hard reload discarding the cached copy by hand. Hashing the
   actual current bytes of every CSS/JS file the service worker's own
   fetch handler would cache means the value changes the instant any of
-  them genuinely does, dev live-edit or real deploy alike — the one
+  them genuinely does, dev live-edit or real deploy alike - the one
   mechanism covers both instead of needing a separate path for each.
 
-`get_version()`/`get_git_sha()` are read once and cached — neither
+`get_version()`/`get_git_sha()` are read once and cached - neither
 file changes without a container restart anyway.
 `get_static_assets_hash()` is cached only when DEBUG is off: in a
 dev container `static/` is bind-mounted (docker-compose.override.yml)
 and changes without a restart, so caching it there would reintroduce
-the exact staleness this function exists to prevent — but in
+the exact staleness this function exists to prevent - but in
 production the files only change with a new image, and re-reading all
 of them on every service-worker update check was wasted work.
 """

@@ -51,26 +51,26 @@ class MealSlotAdmin(admin.ModelAdmin):
 class FoodAdmin(admin.ModelAdmin):
     """Two admin-only bulk actions, both asked for directly:
 
-    `merge_selected_foods` — deleting a duplicate outright cascades
+    `merge_selected_foods` - deleting a duplicate outright cascades
     away every DiaryEntry/RecipeIngredient/DietPlanItem that ever
     referenced it, which is exactly the kind of silent history loss
-    CLAUDE.md warns against — re-points every reference from the
+    CLAUDE.md warns against - re-points every reference from the
     duplicates onto one kept row instead, see
     apps.nutrition.services.merge_foods's own docstring. Django's
     default "Delete selected foods" action is left as-is (still
-    reachable for a genuinely bogus row nothing references) — its own
+    reachable for a genuinely bogus row nothing references) - its own
     built-in confirmation page already lists every object that would
     cascade-delete before an admin confirms, real standard protection
     this feature doesn't need to duplicate.
 
-    `refresh_selected_from_off` — force-refreshes selected foods from
+    `refresh_selected_from_off` - force-refreshes selected foods from
     OpenFoodFacts immediately rather than waiting for the normal
     14-day staleness gate to trigger on next use. Still an explicit,
     admin-chosen selection, not the unconditional bulk re-sync this
     integration was deliberately scoped away from in the first place
     (docs/NUTRITION.md "OpenFoodFacts integration").
 
-    `refresh_selected_prices` — the same shape, for Open Prices
+    `refresh_selected_prices` - the same shape, for Open Prices
     (docs/NUTRITION.md "Open Prices integration") instead of OFF's
     core product API: force-refreshes selected foods' cached
     `price_amount`/`price_currency` immediately rather than waiting
@@ -86,7 +86,7 @@ class FoodAdmin(admin.ModelAdmin):
     @admin.action(description=_("Refresh selected foods from OpenFoodFacts"))
     def refresh_selected_from_off(self, request, queryset):
         # force=True bypasses the normal 14-day staleness gate
-        # (docs/NUTRITION.md "OpenFoodFacts integration") — an
+        # (docs/NUTRITION.md "OpenFoodFacts integration") - an
         # explicit admin request for these specific rows right now,
         # not the unconditional bulk re-sync this integration was
         # deliberately scoped away from in the first place (a
@@ -117,7 +117,7 @@ class FoodAdmin(admin.ModelAdmin):
     @admin.action(description=_("Refresh selected foods' prices from Open Prices"))
     def refresh_selected_prices(self, request, queryset):
         # force=True bypasses the normal 7-day staleness gate
-        # (docs/NUTRITION.md "Open Prices integration") — an explicit
+        # (docs/NUTRITION.md "Open Prices integration") - an explicit
         # admin request for these specific rows right now, not the
         # unconditional bulk re-sync this integration was deliberately
         # scoped away from, same reasoning as refresh_selected_from_off
@@ -224,7 +224,7 @@ def _warn_deferred(model_admin, request, deferred):
             request,
             _(
                 "%(count)d more food(s) were left for later to stay within Open Food "
-                "Facts' rate limit — run this action again in a minute."
+                "Facts' rate limit - run this action again in a minute."
             )
             % {"count": deferred},
             level=messages.WARNING,
@@ -233,7 +233,7 @@ def _warn_deferred(model_admin, request, deferred):
 
 @admin.register(OpenFoodFactsSettings)
 class OpenFoodFactsSettingsAdmin(admin.ModelAdmin):
-    """Singleton — same pattern as apps.core.admin's
+    """Singleton - same pattern as apps.core.admin's
     BackupSettingsAdmin/FeedbackSettingsAdmin."""
 
     list_display = ["__str__", "enabled", "contact_email"]

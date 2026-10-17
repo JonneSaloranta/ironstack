@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% load i18n core_extras %}
-{% block title %}{% trans recipe.name %} — IronStack{% endblock %}
+{% block title %}{% trans recipe.name %} - IronStack{% endblock %}
 {% block content %}
 {% url 'nutrition:dashboard' as c1u %}{% trans "Nutrition" as c1l %}
 {% url 'nutrition:recipe-list' as c2u %}{% trans "Recipes" as c2l %}
@@ -38,7 +38,7 @@
     <div class="card-action-row py-2">
       <div>
         <span><a class="inline-item-link" href="{% url 'nutrition:food-detail' ingredient.food.pk %}">{{ ingredient.food.name }}</a></span>
-        <span class="text-muted">— {{ ingredient.quantity }} {{ ingredient.food.serving_unit }}, {{ ingredient.nutrition.calories|floatformat:0 }} kcal{% if ingredient.food.price_amount %} · {{ ingredient.food.price_amount }} {{ ingredient.food.price_currency }}{% endif %}</span>
+        <span class="text-muted">- {{ ingredient.quantity }} {{ ingredient.food.serving_unit }}, {{ ingredient.nutrition.calories|floatformat:0 }} kcal{% if ingredient.food.price_amount %} · {{ ingredient.food.price_amount }} {{ ingredient.food.price_currency }}{% endif %}</span>
       </div>
       {% if recipe.owner_id == request.user.id %}
         <div class="row">

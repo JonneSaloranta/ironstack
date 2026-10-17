@@ -13,6 +13,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='user',
             name='show_achievements',
-            field=models.BooleanField(default=True, help_text="A privacy setting, not a display one: the dashboard's achievements carousel (longest streak, workout count, PRs, total volume — see apps.analytics.achievements) is shared across every user on this instance, so this controls whether *this* user's own achievements are included in what everyone sees, not whether they personally see the carousel at all."),
+            field=models.BooleanField(default=True, help_text="A privacy setting, not a display one: the dashboard's achievements carousel (longest streak, workout count, PRs, total volume - see apps.analytics.achievements) is shared across every user on this instance, so this controls whether *this* user's own achievements are included in what everyone sees, not whether they personally see the carousel at all."),
         ),
     ]

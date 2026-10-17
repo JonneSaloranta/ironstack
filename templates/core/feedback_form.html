@@ -1,12 +1,12 @@
 {% extends "base.html" %}
 {% load i18n %}
-{% block title %}{% trans "Feedback" %} — IronStack{% endblock %}
+{% block title %}{% trans "Feedback" %} - IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
   <h1 class="no-margin">{% trans "Feedback" %}</h1>
 </div>
 
-<p class="text-muted">{% trans "Bug reports, ideas, anything that's confusing — only visible to the people running this instance." %}</p>
+<p class="text-muted">{% trans "Bug reports, ideas, anything that's confusing - only visible to the people running this instance." %}</p>
 
 <form class="card" method="post">
   {% csrf_token %}

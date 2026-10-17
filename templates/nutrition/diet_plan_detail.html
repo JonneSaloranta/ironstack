@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% load i18n %}
-{% block title %}{{ plan.name }} — IronStack{% endblock %}
+{% block title %}{{ plan.name }} - IronStack{% endblock %}
 {% block content %}
 {% url 'nutrition:dashboard' as c1u %}{% trans "Nutrition" as c1l %}
 {% url 'nutrition:diet-plan-list' as c2u %}{% trans "Diet plans" as c2l %}
@@ -30,25 +30,25 @@
   {% endif %}
 </div>
 {% include "nutrition/_subnav.html" %}
-<p class="text-muted">{{ plan.target_calories }} kcal/day — {{ plan.target_protein_grams|floatformat:0 }}g {% trans "protein" %}, {{ plan.target_carbohydrate_grams|floatformat:0 }}g {% trans "carbs" %}, {{ plan.target_fat_grams|floatformat:0 }}g {% trans "fat" %}</p>
+<p class="text-muted">{{ plan.target_calories }} kcal/day - {{ plan.target_protein_grams|floatformat:0 }}g {% trans "protein" %}, {{ plan.target_carbohydrate_grams|floatformat:0 }}g {% trans "carbs" %}, {{ plan.target_fat_grams|floatformat:0 }}g {% trans "fat" %}</p>
 {% if plan.is_weekly %}
-  <p class="text-muted">{% trans "Varies across the week — same daily calories/macros every day, different meals." %}</p>
+  <p class="text-muted">{% trans "Varies across the week - same daily calories/macros every day, different meals." %}</p>
 {% endif %}
 
 {% comment %}
   day_groups (apps.nutrition.views._diet_plan_day_groups) is already
-  ordered by weekday (DietPlanMeal.Meta.ordering) — each entry shaped
+  ordered by weekday (DietPlanMeal.Meta.ordering) - each entry shaped
   like Django's own {% regroup %} output (.grouper/.list) plus that
   day's own totals-so-far/remaining-vs-target, which {% regroup %}
   itself has no way to carry. weekday_name (.grouper) is None for a
   one-day plan, so the whole thing collapses to a single unlabeled
-  group — the exact same flat list this looked like before weekly
+  group - the exact same flat list this looked like before weekly
   plans existed.
 {% endcomment %}
 {% for day_group in day_groups %}
   {% if plan.is_weekly %}
     {% comment %}
-      Collapsed by default — 7 days' worth of meal cards all open at
+      Collapsed by default - 7 days' worth of meal cards all open at
       once was a very long, hard-to-scan page (found live). Each day
       gets its own independent x-data scope, not one shared open/day
       map, since nothing here needs more than one open at a time to

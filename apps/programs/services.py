@@ -19,7 +19,7 @@ from .models import ExercisePrescription, Program, Workout
 def visible_to(user):
     """Programs a user may view/use: their own + system templates +
     any program a currently active coach of theirs has specifically
-    shared with them (apps.coaching) — checked both ways: `user` must
+    shared with them (apps.coaching) - checked both ways: `user` must
     actually be in that program's own `shared_with_clients`, *and*
     still be an active client of its owner (a stale M2M row from a
     since-ended relationship grants nothing on its own). Local import
@@ -39,21 +39,21 @@ def visible_to(user):
 def editable_by(user):
     """Programs a user may edit/delete: their own only.
 
-    System templates (owner is null) are read-only — copy them instead.
+    System templates (owner is null) are read-only - copy them instead.
     """
     return Program.objects.filter(owner=user)
 
 
 def _replace_program_contents(target: Program, source: Program):
     """Deletes every Workout/ExercisePrescription `target` currently
-    has (if any) and rebuilds them from `source`'s current shape —
+    has (if any) and rebuilds them from `source`'s current shape -
     the shared core of both copy_program (against a brand-new, empty
     `target`) and apps.coaching.services.apply_program_update (against
     an existing client copy, replacing its content with the coach's
     current version). Safe against WorkoutSession history either way:
     WorkoutSession.workout/PerformedExercise.prescription are both
-    SET_NULL, informational-only backlinks — see apps/workouts/
-    models.py's own "snapshot-on-start" docstrings — so deleting rows
+    SET_NULL, informational-only backlinks - see apps/workouts/
+    models.py's own "snapshot-on-start" docstrings - so deleting rows
     this freely already is exactly what apps.programs.views.
     workout_delete/prescription_delete do today for a user editing
     their own program."""
@@ -104,12 +104,12 @@ def copy_program(source: Program, owner) -> Program:
 
 def _decimal_or_none(value):
     """Best-effort parse for an optional numeric field coming from an
-    untrusted import file — `None`/missing/garbage all just come back
+    untrusted import file - `None`/missing/garbage all just come back
     as `None` rather than raising, since every field this is used for
     (target_weight/target_rpe/weight_increment/percentage_target) is
     itself optional on `ExercisePrescription`. A single malformed
     optional number in an otherwise-good file shouldn't fail the whole
-    import — see apps.core.data_exchange's own module docstring."""
+    import - see apps.core.data_exchange's own module docstring."""
     if value is None:
         return None
     try:
@@ -119,7 +119,7 @@ def _decimal_or_none(value):
 
 
 def _exercise_export_payload(exercise):
-    """One `ExercisePrescription.exercise` as a natural-key dict —
+    """One `ExercisePrescription.exercise` as a natural-key dict -
     just `name`/`is_system` for a *system* exercise (matched by name
     on import, since `unique_system_exercise_name` guarantees that's
     unambiguous and every instance's system library comes from the
@@ -147,7 +147,7 @@ def _exercise_export_payload(exercise):
 
 def export_program(program):
     """A `Program` (with its workouts/prescriptions/exercises), as a
-    plain dict ready for `apps.core.data_exchange.build_envelope` —
+    plain dict ready for `apps.core.data_exchange.build_envelope` -
     see that module's own docstring for why this isn't just
     `apps.api.serializers.ProgramSerializer`. `is_template`/`owner`
     are deliberately left out entirely: an imported program is always
@@ -208,13 +208,13 @@ def export_program(program):
 
 def _resolve_exercise(user, data):
     """Finds (or, for a custom one, creates) the `Exercise` a
-    prescription's own exported payload points at — see
+    prescription's own exported payload points at - see
     `_exercise_export_payload`'s own docstring for the system/custom
     split this mirrors. A system exercise this importing instance
     doesn't actually have (an older/smaller seed library, or one
     since renamed) falls back to creating it as the importing user's
     own custom exercise instead of failing the whole program import
-    over one missing library entry — `import_program` would rather
+    over one missing library entry - `import_program` would rather
     hand back a program with a slightly-off exercise than nothing."""
     from apps.exercises.models import Equipment, Exercise, MuscleGroup
 
@@ -258,7 +258,7 @@ def _resolve_exercise(user, data):
 
 @transaction.atomic
 def import_program(user, payload):
-    """The inverse of `export_program` — creates a brand new `Program`
+    """The inverse of `export_program` - creates a brand new `Program`
     owned by `user` from a previously-exported payload. Wrapped in one
     transaction: any `ImportValidationError` partway through (a
     missing exercise name, for instance) rolls back everything already

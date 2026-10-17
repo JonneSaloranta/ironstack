@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% load i18n static core_extras stretching_extras %}
-{% block title %}{{ session.name|default:_("Stretching")|translate_content }} — IronStack{% endblock %}
+{% block title %}{{ session.name|default:_("Stretching")|translate_content }} - IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
   <h1 class="no-margin">{{ session.name|default:_("Stretching")|translate_content }}</h1>
@@ -8,7 +8,7 @@
 
 {{ timer_steps|json_script:"stretch-timer-steps" }}
 {% comment %}
-The guided player — static/js/stretch-timer.js plays the step list
+The guided player - static/js/stretch-timer.js plays the step list
 apps.stretching.services.timer_steps() built (the json_script above).
 Every label it shows comes from a data-* attribute here, so all the
 text stays in Django's translation catalog rather than in the JS.
@@ -64,7 +64,7 @@ text stays in Django's translation catalog rather than in the JS.
   </div>
 
   <div x-show="finished" x-cloak>
-    <p><strong>{% trans "All stretches done — nice work." %}</strong></p>
+    <p><strong>{% trans "All stretches done - nice work." %}</strong></p>
   </div>
 </div>
 

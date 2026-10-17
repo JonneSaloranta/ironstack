@@ -9,7 +9,7 @@ register = template.Library()
 
 @register.filter
 def clock(seconds):
-    """Whole seconds as a stopwatch-style "m:ss" (90 → "1:30") — the
+    """Whole seconds as a stopwatch-style "m:ss" (90 → "1:30") - the
     unit hold times and routine lengths are planned in, where rounding
     to whole minutes (core_extras.duration) would hide the detail."""
     if seconds is None:
@@ -23,7 +23,7 @@ def cooldown_card(context, workout_session):
     """The "cool down with a stretch" card on a finished workout's page
     (templates/workouts/session_detail.html). An inclusion tag rather
     than extra context from apps.workouts' view, so workouts never has
-    to import stretching — the dependency stays one-directional
+    to import stretching - the dependency stays one-directional
     (stretching knows about workouts, not the other way round)."""
     request = context["request"]
     user = request.user

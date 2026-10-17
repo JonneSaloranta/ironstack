@@ -208,7 +208,7 @@ class RepRangeProgressionTests(TestCase):
 
     def test_one_session_at_the_top_of_the_range_only_maintains(self):
         """Unlike double progression, rep_range waits for a repeated
-        trend — see docs/PROGRESSION.md "recent performance trend should
+        trend - see docs/PROGRESSION.md "recent performance trend should
         be considered"."""
         _log_completed_attempt(
             self.alice, self.prescription.workout, self.exercise, Decimal("50"), [12, 12, 12]
@@ -526,7 +526,7 @@ class WeightSuggestionEngineTests(TestCase):
 
     def test_user_can_always_override_the_suggestion(self):
         """docs/SMART_SUGGESTIONS.md: "Never prevent a user from entering
-        a different value." The suggestion is only ever a form default —
+        a different value." The suggestion is only ever a form default -
         asserted end-to-end against the logging view in
         apps.workouts.tests; here we just confirm nothing in the returned
         Suggestion is mandatory/blocking (e.g. no validation-affecting

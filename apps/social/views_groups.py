@@ -31,7 +31,7 @@ def group_list(request):
     )
     unread_by_group = services.unread_group_message_counts_by_group(request.user)
     # One query for every group's total member count, not one query
-    # per row — same reasoning as unread_group_message_counts_by_group
+    # per row - same reasoning as unread_group_message_counts_by_group
     # just above. A plain group_id__in=[...] filter, not a self-join
     # through the reverse `group__memberships` relation: Django's
     # "spanning multi-valued relationships" behavior would multiply
@@ -168,7 +168,7 @@ def group_invite_regenerate(request, pk):
         messages.error(request, _("You don't have permission to manage this group's invite link."))
         return redirect("social:group-detail", pk=pk)
     services.regenerate_invite_code(group)
-    messages.success(request, _("Invite link regenerated — the old link no longer works."))
+    messages.success(request, _("Invite link regenerated - the old link no longer works."))
     return redirect("social:group-detail", pk=pk)
 
 
@@ -272,7 +272,7 @@ def group_leave(request, pk):
 @login_required
 def group_mute_toggle(request, pk):
     """Any member can mute/unmute their own notifications for this
-    group — not gated on can_manage_group, since this is a personal
+    group - not gated on can_manage_group, since this is a personal
     preference, not a group-management action (see
     services.set_group_muted's own docstring)."""
     if request.method != "POST":
@@ -289,7 +289,7 @@ def group_mute_toggle(request, pk):
 
 
 def group_invite_join(request, code):
-    """The /group/invite/<code>/ landing page — deliberately outside
+    """The /group/invite/<code>/ landing page - deliberately outside
     the social: namespace (config/urls.py registers it directly), and
     deliberately GET-then-confirm rather than joining the instant the
     link is opened, so a link preview fetch (Slack/Discord/iMessage
@@ -297,8 +297,8 @@ def group_invite_join(request, code):
 
     Deliberately NOT @login_required, unlike every other view in this
     module: someone clicking a shared invite link is very often not
-    logged in yet at all — that's the whole point of a link anyone can
-    open — so this has to render something useful (the group's name,
+    logged in yet at all - that's the whole point of a link anyone can
+    open - so this has to render something useful (the group's name,
     a "log in to join" prompt) for an anonymous request rather than
     bouncing it to the login page before ever showing what the link
     was even for. The join itself still requires being authenticated

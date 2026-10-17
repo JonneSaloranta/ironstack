@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% load i18n %}
-{% block title %}{% trans "Friends" %} — IronStack{% endblock %}
+{% block title %}{% trans "Friends" %} - IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
   <h1 class="no-margin">{% trans "Friends" %}</h1>
@@ -65,7 +65,7 @@
   </div>
 {% empty %}
   {% url 'social:friend-search' as empty_cta_url %}
-  {% include "core/_empty_state.html" with message=_("No friends yet — find someone you train with to share progress and message them here.") cta_url=empty_cta_url cta_label=_("Find friends") %}
+  {% include "core/_empty_state.html" with message=_("No friends yet - find someone you train with to share progress and message them here.") cta_url=empty_cta_url cta_label=_("Find friends") %}
 {% endfor %}
 
 <p>

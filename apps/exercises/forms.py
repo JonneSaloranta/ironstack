@@ -26,7 +26,7 @@ class ExerciseForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         # MuscleGroup/Equipment names are seeded content translated via
         # apps.exercises.i18n_content (see docs/ARCHITECTURE.md
-        # "Internationalization") — but a ModelChoiceField/
+        # "Internationalization") - but a ModelChoiceField/
         # ModelMultipleChoiceField renders each option's text via
         # str(obj) internally, bypassing the template layer {% trans %}
         # relies on entirely. label_from_instance is the documented
@@ -34,7 +34,7 @@ class ExerciseForm(forms.ModelForm):
         # ExercisePrescriptionForm/apps.workouts.forms.
         # PerformedExerciseAddForm use for their own exercise picker.
         # gettext (not the module-level lazy `_`) since this runs
-        # per-request, with translation already active — a no-op for a
+        # per-request, with translation already active - a no-op for a
         # user's own custom exercise's checkboxes, there's nothing to
         # translate here that isn't seeded content anyway.
         for field_name in ("primary_muscle_groups", "secondary_muscle_groups", "equipment"):
@@ -43,7 +43,7 @@ class ExerciseForm(forms.ModelForm):
 
 class ExerciseImageForm(forms.ModelForm):
     """Upload form for a custom exercise's own image gallery (apps.
-    exercises.views.exercise_image_create) — `exercise` isn't a form
+    exercises.views.exercise_image_create) - `exercise` isn't a form
     field, the view sets it from the URL before validating, the same
     way `ExerciseCreateView.form_valid` sets `owner` rather than
     exposing it as something the submitter picks. Uploading past
@@ -65,7 +65,7 @@ class ExerciseImageForm(forms.ModelForm):
             return image  # unchanged (no new upload)
         if image.size > services.MAX_IMAGE_UPLOAD_BYTES:
             raise forms.ValidationError(
-                gettext("That image is too large — the limit is %(megabytes)s MB.")
+                gettext("That image is too large - the limit is %(megabytes)s MB.")
                 % {"megabytes": services.MAX_IMAGE_UPLOAD_BYTES // (1024 * 1024)}
             )
         prepared, (self.instance.width, self.instance.height) = (

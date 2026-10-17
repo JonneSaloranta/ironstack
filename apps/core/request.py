@@ -6,11 +6,11 @@ not this app's own reverse proxy.
 
 def client_ip(request):
     """The `X-Real-IP` header `compose/nginx/nginx.conf` sets to
-    `$remote_addr` — nginx overwrites this unconditionally rather than
+    `$remote_addr` - nginx overwrites this unconditionally rather than
     forwarding whatever a client sent, so it can't be spoofed by a
     request that goes through that proxy. `REMOTE_ADDR` on its own
     would be nginx's *own* container IP for every proxied request
-    (docker-compose.yml never publishes a port for `web` directly —
+    (docker-compose.yml never publishes a port for `web` directly -
     only `nginx` is reachable from outside), which would make every
     visitor share one counter. Falls back to REMOTE_ADDR for direct,
     no-proxy access (e.g. `runserver` in dev).

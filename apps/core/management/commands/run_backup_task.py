@@ -4,7 +4,7 @@ from apps.core import backup_tasks
 
 
 class Command(BaseCommand):
-    """The background half of apps.core.backup_tasks — started by the
+    """The background half of apps.core.backup_tasks - started by the
     Backups page, not meant to be run by hand (use `create_backup` for
     that). The outcome goes to the task status file, not the exit code."""
 

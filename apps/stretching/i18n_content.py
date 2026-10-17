@@ -1,16 +1,16 @@
-"""Translation catalog for seeded *content*, not UI chrome — the
+"""Translation catalog for seeded *content*, not UI chrome - the
 system stretch library and routines (apps.stretching.migrations 0002,
 from seed_data/stretches.json) are stored in canonical English, so the
 stored value itself must never be translated. This module exists solely
 so `makemessages` extracts these exact strings into the `.po` catalog;
-nothing here is ever imported or executed for its return value — see
+nothing here is ever imported or executed for its return value - see
 apps.exercises.i18n_content and docs/ARCHITECTURE.md
 "Internationalization" for the full pattern. Templates render all of
 these through `|translate_content` (apps.core.templatetags.core_extras),
 since names like "Child's Pose" and multi-line instructions are exactly
 the kind of value `{% trans var %}` is awkward with.
 
-Keep this file in sync with seed_data/stretches.json — StretchingSeedTests
+Keep this file in sync with seed_data/stretches.json - StretchingSeedTests
 fails if a seeded string is missing here.
 """
 
@@ -64,7 +64,7 @@ ROUTINE_TEXTS = [
     _("Gentle dynamic movements to wake the body up, or as a warm-up."),
 ]
 
-# Stretch instructions — split into one literal per line to stay under
+# Stretch instructions - split into one literal per line to stay under
 # the line-length limit (Python concatenates adjacent literals).
 STRETCH_INSTRUCTIONS = [
     _(

@@ -1,9 +1,9 @@
 {% load i18n %}
 {% comment %}
 Shared BMI display: current value + category (when computable) and the
-WHO category ranges table (always, once shown at all — see each
-caller for what "shown at all" means on that page), plus — once a
-height is on file — the equivalent weight range for each category at
+WHO category ranges table (always, once shown at all - see each
+caller for what "shown at all" means on that page), plus - once a
+height is on file - the equivalent weight range for each category at
 that height, so "Normal weight" means something concrete rather than
 just a bare BMI number range. Expects: bmi_category_rows (list of
 apps.core.bmi.CategoryRow), weight_unit_label, and optionally
@@ -18,7 +18,7 @@ bmi / bmi_category.
     </p>
   {% else %}
     <p class="text-muted mb-3">
-      {% trans "Not enough data yet — set your height and log a body weight to see your current BMI here." %}
+      {% trans "Not enough data yet - set your height and log a body weight to see your current BMI here." %}
     </p>
   {% endif %}
   <table class="bar-chart-table">

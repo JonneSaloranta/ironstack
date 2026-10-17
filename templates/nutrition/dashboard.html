@@ -1,12 +1,12 @@
 {% extends "base.html" %}
 {% load i18n core_extras %}
-{% block title %}{% trans "Nutrition" %} — IronStack{% endblock %}
+{% block title %}{% trans "Nutrition" %} - IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
   <h1 class="no-margin">{% trans "Nutrition" %}</h1>
 </div>
 <div data-tour="day-type" class="top-bar-actions">
-  {% trans "Based on whether you completed a workout today — this doesn't change your calorie target automatically." as day_type_help %}
+  {% trans "Based on whether you completed a workout today - this doesn't change your calorie target automatically." as day_type_help %}
   {% if is_training_day %}
     <abbr class="tag" tabindex="0" title="{{ day_type_help }}">{% trans "Training day" %}</abbr>
   {% else %}
@@ -53,7 +53,7 @@
 
 {% if todays_plan %}
   <div class="card">
-    <h2 class="card-title">{% trans "Today's plan" %} <span class="text-muted">— {{ todays_plan.plan.name }}</span></h2>
+    <h2 class="card-title">{% trans "Today's plan" %} <span class="text-muted">- {{ todays_plan.plan.name }}</span></h2>
     <div class="table-wrap"><table class="set-table">
       <tbody>
         <tr><td>{% trans "Calories" %}</td><td>{{ todays_plan.total.calories|floatformat:0 }} kcal</td></tr>
@@ -131,7 +131,7 @@
 {% if goal %}
   <div data-tour="nutrition-goal" class="card">
     <h2 class="card-title">{% trans "Current goal" %}</h2>
-    <p>{{ goal.get_goal_type_display }} — {% blocktrans with rate=goal.target_rate_kg_per_week %}{{ rate }} kg/week{% endblocktrans %}</p>
+    <p>{{ goal.get_goal_type_display }} - {% blocktrans with rate=goal.target_rate_kg_per_week %}{{ rate }} kg/week{% endblocktrans %}</p>
     <a class="button-secondary" href="{% url 'nutrition:goal-edit' %}">{% trans "Change goal" %}</a>
   </div>
 {% endif %}

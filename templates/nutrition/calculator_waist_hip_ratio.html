@@ -1,12 +1,12 @@
 {% extends "base.html" %}
 {% load i18n %}
-{% block title %}{% trans "Waist-to-hip ratio calculator" %} — IronStack{% endblock %}
+{% block title %}{% trans "Waist-to-hip ratio calculator" %} - IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
   <h1 class="no-margin">{% trans "Waist-to-hip ratio calculator" %}</h1>
 </div>
 {% include "nutrition/_subnav.html" %}
-<p class="text-muted">{% trans "Where you carry weight, not just how much — a widely used screening number (WHO), not a diagnosis." %}</p>
+<p class="text-muted">{% trans "Where you carry weight, not just how much - a widely used screening number (WHO), not a diagnosis." %}</p>
 
 <form class="card" method="get">
   {% include "core/_form_errors.html" %}
@@ -20,7 +20,7 @@
   <div class="card">
     <h2 class="card-title">{% trans "Result" %}</h2>
     <p class="stat-value">
-      {{ result.ratio }}{% if result.risk %} — {{ result.risk.name }}{% endif %}
+      {{ result.ratio }}{% if result.risk %} - {{ result.risk.name }}{% endif %}
     </p>
   </div>
 {% endif %}

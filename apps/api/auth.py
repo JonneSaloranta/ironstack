@@ -15,17 +15,17 @@ LAST_USED_RESOLUTION = timedelta(minutes=1)
 
 
 class ApiKeyAuthentication(BaseAuthentication):
-    """`Authorization: Bearer <key>` — the only auth scheme apps.api
+    """`Authorization: Bearer <key>` - the only auth scheme apps.api
     accepts (no session/cookie auth: this is a machine-to-machine API,
-    not a second way to drive the browser UI — see config.settings.base's
+    not a second way to drive the browser UI - see config.settings.base's
     REST_FRAMEWORK comment). Hashes the presented secret and looks it up
-    by `key_hash`, never by comparing raw strings — apps.api.crypto's own
+    by `key_hash`, never by comparing raw strings - apps.api.crypto's own
     docstring covers why SHA-256 (not a slow password hasher) is the
     right choice here.
 
     `request.api_key` is stashed on success so
     apps.api.permissions.HasContextPermission and apps.api.throttling
-    can read it without a second lookup — DRF's `request.auth` carries
+    can read it without a second lookup - DRF's `request.auth` carries
     the same object too (the second element of the returned tuple below)
     for anything that prefers going through the standard DRF surface.
     """

@@ -47,7 +47,7 @@ def assistant_ask_link(context, prompt, label):
     """A secondary "ask the assistant" button for another app's page
     (the diet plan list, the program list), pre-filling the first
     message. Renders nothing for a user who couldn't use the assistant
-    anyway — so the check, and its couple of queries, only happens on the
+    anyway - so the check, and its couple of queries, only happens on the
     pages that offer the link."""
     request = context.get("request")
     user = getattr(request, "user", None)

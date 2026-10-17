@@ -1,6 +1,6 @@
 """Swagger UI, adapted to this app's CSP (docs/API.md "Interactive
 docs"). drf_spectacular.views.SpectacularSwaggerView's own template
-bootstraps the UI with an *inline* `<script>...</script>` block —
+bootstraps the UI with an *inline* `<script>...</script>` block -
 fine for a default install, but this app's CSP has no script-src
 'unsafe-inline' allowance at all (apps.core.middleware.
 ContentSecurityPolicyMiddleware, docs/SECURITY.md
@@ -8,7 +8,7 @@ ContentSecurityPolicyMiddleware, docs/SECURITY.md
 page. drf-spectacular's own template already anticipates exactly this
 case though: it renders that inline block only when a `script_url`
 context value is empty, and uses `<script src="{{ script_url }}">`
-instead when one is supplied — the two views below are what supplies
+instead when one is supplied - the two views below are what supplies
 it, splitting the same context the base view already builds
 (`settings`, `schema_auth_names`, `schema_url`, ...) across an HTML
 page that references a plain same-origin script, and a second,
@@ -33,7 +33,7 @@ class _JavaScriptRenderer(BaseRenderer):
 
 
 class IronStackSwaggerView(SpectacularSwaggerView):
-    """The actual `/api/docs/` page — identical to the base view's own
+    """The actual `/api/docs/` page - identical to the base view's own
     HTML except for pointing script_url at SwaggerUIBootstrapScriptView
     below instead of leaving it empty."""
 
@@ -44,9 +44,9 @@ class IronStackSwaggerView(SpectacularSwaggerView):
 
 
 class SwaggerUIBootstrapScriptView(SpectacularSwaggerView):
-    """Renders `drf_spectacular/swagger_ui.js` — the exact same
+    """Renders `drf_spectacular/swagger_ui.js` - the exact same
     template the base view would otherwise inline directly into the
-    HTML page — as its own same-origin response instead, so the page
+    HTML page - as its own same-origin response instead, so the page
     can load it via a plain `<script src>` (allowed under script-src
     'self') rather than needing 'unsafe-inline'."""
 
@@ -56,7 +56,7 @@ class SwaggerUIBootstrapScriptView(SpectacularSwaggerView):
         # Reuses the base view's own get() purely to build the same
         # context dict (settings/schema_url/csrf_header_name/
         # schema_auth_names/...) it would otherwise hand to the HTML
-        # template — cheap (no I/O beyond what serving the page itself
+        # template - cheap (no I/O beyond what serving the page itself
         # already does) and guarantees the two responses can never
         # drift out of sync with each other.
         html_response = super().get(request, *args, **kwargs)

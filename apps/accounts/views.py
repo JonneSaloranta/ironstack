@@ -44,7 +44,7 @@ class SignupView(CreateView):
     success_url = reverse_lazy("dashboard")
 
     def dispatch(self, request, *args, **kwargs):
-        # docs/SECURITY.md — a self-hosted instance isn't necessarily
+        # docs/SECURITY.md - a self-hosted instance isn't necessarily
         # meant to accept public registration; DJANGO_SIGNUP_ENABLED
         # gates this URL directly rather than only hiding its link on
         # the login page, since a hidden link doesn't stop someone who
@@ -54,7 +54,7 @@ class SignupView(CreateView):
             return redirect("login")
         # A local-password signup makes no sense once local password
         # login itself is off (docs/SECURITY.md "Single sign-on
-        # (Authentik / OIDC)") — same reasoning and same direct URL
+        # (Authentik / OIDC)") - same reasoning and same direct URL
         # gate as SIGNUP_ENABLED above, not just hiding the link.
         if not settings.PASSWORD_LOGIN_ENABLED:
             messages.info(request, _("Registration is currently closed."))
@@ -84,8 +84,8 @@ class SignupView(CreateView):
         # Explicit `backend=`: form.save() creates `self.object` with a
         # plain ORM insert, never through authenticate(), so it has no
         # `.backend` attribute for login() to read. That's normally
-        # fine — login() infers it on its own when exactly one backend
-        # is configured — but breaks the moment Authentik SSO is also
+        # fine - login() infers it on its own when exactly one backend
+        # is configured - but breaks the moment Authentik SSO is also
         # enabled (settings.AUTHENTIK_ENABLED, config.settings.base's
         # AUTHENTICATION_BACKENDS) and there are two. A local-password
         # signup is unambiguously a ModelBackend account regardless.
@@ -95,7 +95,7 @@ class SignupView(CreateView):
 
 class RateLimitedLoginView(LoginView):
     """The bare `django.contrib.auth.urls` login view has no brute-
-    force protection at all — apps.api's rate limiting is a completely
+    force protection at all - apps.api's rate limiting is a completely
     separate, API-key-only mechanism. See
     apps.accounts.forms.RateLimitedAuthenticationForm for the actual
     limiting; this subclass exists to plug that form in, to expose
@@ -107,7 +107,7 @@ class RateLimitedLoginView(LoginView):
 
     def dispatch(self, request, *args, **kwargs):
         # Blocks the POST channel directly, not just the template's
-        # own `{% if password_login_enabled %}` — see docs/SECURITY.md
+        # own `{% if password_login_enabled %}` - see docs/SECURITY.md
         # "Single sign-on (Authentik / OIDC)". GET still renders
         # normally (the page itself, minus the password form, still
         # needs to show the "Log in with Authentik" button and the
@@ -127,7 +127,7 @@ class RateLimitedLoginView(LoginView):
 
     def form_valid(self, form):
         # Username/password already checked correct at this point
-        # (AuthenticationForm.clean already ran) — django.contrib.auth.
+        # (AuthenticationForm.clean already ran) - django.contrib.auth.
         # views.LoginView's own form_valid would log the user in
         # immediately here. A user with 2FA enabled instead gets
         # parked one step short of that: their id goes into the
@@ -153,7 +153,7 @@ class RateLimitedPasswordResetView(PasswordResetView):
 
     def dispatch(self, request, *args, **kwargs):
         # A password reset is meaningless once local password login
-        # itself is off — same gate and reasoning as SignupView's own
+        # itself is off - same gate and reasoning as SignupView's own
         # (docs/SECURITY.md "Single sign-on (Authentik / OIDC)").
         if not settings.PASSWORD_LOGIN_ENABLED:
             messages.info(request, _("Password login is disabled on this instance."))
@@ -177,17 +177,17 @@ class ProfileView(LoginRequiredMixin, UpdateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         # Powers the version-number modal (docs/ARCHITECTURE.md
-        # "Versioning") — cached in apps.core.changelog, so this is a
+        # "Versioning") - cached in apps.core.changelog, so this is a
         # cheap lookup, not a re-parse of CHANGELOG.md on every load.
         context["changelog_html"] = changelog_services.render_changelog_html()
-        # ?changelog=1 opens the same modal straight away — the click
+        # ?changelog=1 opens the same modal straight away - the click
         # target apps.core.management.commands.announce_version_update's
         # push notification uses (a Web Push notification can only ever
         # open a URL, not call into Alpine state directly), same
         # ?welcome=1-on-load pattern TwoFactorBackupCodesView already
         # uses for its own "just did the thing that led here" case.
         context["open_changelog"] = self.request.GET.get("changelog") == "1"
-        # Hides the "Feedback" card below when submissions are closed —
+        # Hides the "Feedback" card below when submissions are closed -
         # apps.core.views_feedback.FeedbackCreateView enforces the same
         # setting itself, so this is just avoiding a dead link, not the
         # actual gate.
@@ -201,7 +201,7 @@ class ProfileView(LoginRequiredMixin, UpdateView):
 
 
 class AccountDetailsView(LoginRequiredMixin, UpdateView):
-    """Username/name/email — kept as its own page rather than folded
+    """Username/name/email - kept as its own page rather than folded
     into ProfileView's preferences form, next to "Change password" on
     the profile page: both are account-identity actions distinct from
     display preferences, and both already redirect straight back to
@@ -224,7 +224,7 @@ class TwoFactorVerifyView(FormView):
     """The login flow's second step, reached only via
     RateLimitedLoginView.form_valid's redirect once a correct password
     was already entered for a user with 2FA enabled. Deliberately not
-    LoginRequiredMixin — the user isn't authenticated yet at this
+    LoginRequiredMixin - the user isn't authenticated yet at this
     point, that's the whole reason this view exists."""
 
     template_name = "registration/two_factor_verify.html"
@@ -232,7 +232,7 @@ class TwoFactorVerifyView(FormView):
 
     def dispatch(self, request, *args, **kwargs):
         # No pending login to complete (a direct visit, an already-
-        # completed/expired flow, ...) — nothing to verify a code
+        # completed/expired flow, ...) - nothing to verify a code
         # against, so back to the start.
         if "pre_2fa_user_id" not in request.session:
             return redirect("login")
@@ -255,13 +255,13 @@ class TwoFactorVerifyView(FormView):
         del self.request.session["pre_2fa_user_id"]
         # Explicit `backend=`: this user was fetched with a plain
         # User.objects.get() (get_user() above), never through
-        # authenticate(), so it has no `.backend` attribute — same gap,
+        # authenticate(), so it has no `.backend` attribute - same gap,
         # same fix, and same reasoning as SignupView.form_valid's own
         # explicit backend= (see that one's comment). The password that
         # got this session to `pre_2fa_user_id` in the first place was
         # already checked by RateLimitedLoginView's ModelBackend-only
         # AuthenticationForm, so this step is unambiguously ModelBackend
-        # too — an SSO login never reaches this 2FA-verify view at all
+        # too - an SSO login never reaches this 2FA-verify view at all
         # (see this class's own docstring/"2FA note" in docs/SECURITY.md).
         login(self.request, user, backend="django.contrib.auth.backends.ModelBackend")
         # Re-checked here, not only by LoginView: `next` is in this page's
@@ -278,7 +278,7 @@ class TwoFactorVerifyView(FormView):
 
 class TwoFactorManageView(LoginRequiredMixin, TemplateView):
     """Profile → Two-factor authentication → "Manage", once already
-    enabled — consolidates "regenerate backup codes" and "disable" in
+    enabled - consolidates "regenerate backup codes" and "disable" in
     one place, the same way Profile itself only ever links out to a
     dedicated page for anything with more than one simple action
     (Account details, API keys, ...) rather than crowding several
@@ -300,7 +300,7 @@ class TwoFactorManageView(LoginRequiredMixin, TemplateView):
 
 
 class TwoFactorSetupView(LoginRequiredMixin, FormView):
-    """Profile → Two-factor authentication → "Set up" — GET generates
+    """Profile → Two-factor authentication → "Set up" - GET generates
     (or reuses, if this is a retry) a TOTP secret and shows it as a QR
     code plus the raw text fallback; POST confirms the user actually
     configured it correctly before `totp_enabled` ever flips to True.
@@ -312,7 +312,7 @@ class TwoFactorSetupView(LoginRequiredMixin, FormView):
     form_class = TwoFactorSetupConfirmForm
 
     def dispatch(self, request, *args, **kwargs):
-        # See TwoFactorManageView.dispatch's comment above — same
+        # See TwoFactorManageView.dispatch's comment above - same
         # reason for checking is_authenticated before totp_enabled.
         if not request.user.is_authenticated:
             return super().dispatch(request, *args, **kwargs)
@@ -339,7 +339,7 @@ class TwoFactorSetupView(LoginRequiredMixin, FormView):
     def form_valid(self, form):
         self.request.user.totp_enabled = True
         self.request.user.save(update_fields=["totp_enabled"])
-        # Backup-code generation is deliberately *not* done here — see
+        # Backup-code generation is deliberately *not* done here - see
         # TwoFactorBackupCodesView's own docstring for why (it takes
         # long enough, on Django's own deliberately-slow password
         # hasher, to need its own loading state rather than making
@@ -348,7 +348,7 @@ class TwoFactorSetupView(LoginRequiredMixin, FormView):
 
 
 class TwoFactorDisableView(LoginRequiredMixin, FormView):
-    """Requires the account's own password — see
+    """Requires the account's own password - see
     apps.accounts.forms.TwoFactorDisableForm's own docstring for why
     this isn't just a JS confirm() like most other destructive actions
     in this app."""
@@ -357,7 +357,7 @@ class TwoFactorDisableView(LoginRequiredMixin, FormView):
     form_class = TwoFactorDisableForm
 
     def dispatch(self, request, *args, **kwargs):
-        # See TwoFactorManageView.dispatch's comment above — same
+        # See TwoFactorManageView.dispatch's comment above - same
         # reason for checking is_authenticated before totp_enabled.
         if not request.user.is_authenticated:
             return super().dispatch(request, *args, **kwargs)
@@ -381,7 +381,7 @@ class TwoFactorDisableView(LoginRequiredMixin, FormView):
 
 
 class AccountDeleteView(LoginRequiredMixin, FormView):
-    """Profile → "Delete account" — GDPR Article 17 self-service
+    """Profile → "Delete account" - GDPR Article 17 self-service
     erasure. See apps.accounts.services.delete_account for what's
     actually hard-deleted vs. reassigned to a shared owner, and
     apps.accounts.forms.AccountDeleteForm for the password-or-
@@ -397,7 +397,7 @@ class AccountDeleteView(LoginRequiredMixin, FormView):
         # The one thing this app won't let a self-service action do:
         # delete the last remaining superuser and leave the instance
         # with no one able to reach Django admin at all. An ordinary
-        # (non-superuser) account has no such restriction — any number
+        # (non-superuser) account has no such restriction - any number
         # of those can freely delete themselves.
         if request.user.is_superuser:
             other_superusers = (
@@ -410,7 +410,7 @@ class AccountDeleteView(LoginRequiredMixin, FormView):
                 messages.error(
                     request,
                     _(
-                        "You're the only superuser on this instance — promote another "
+                        "You're the only superuser on this instance - promote another "
                         "account to superuser first, or this instance would have no one "
                         "left who can reach Django admin."
                     ),
@@ -435,16 +435,16 @@ class AccountDeleteView(LoginRequiredMixin, FormView):
 
 def _rows_for_section(key, value):
     """Normalizes one apps.accounts.services.export_account_data
-    section into a flat list of dicts — every field a plain, already-
-    JSON-safe value — for the CSV/HTML views below, which both need
+    section into a flat list of dicts - every field a plain, already-
+    JSON-safe value - for the CSV/HTML views below, which both need
     the same tabular shape regardless of a section's own underlying
     representation: `account` is a single dict, and export_account_data
     hand-builds a growing set of other sections (api_keys,
     push_subscriptions, and every apps.social section) as flat lists
     of dicts already, rather than through Django's generic serializer
     (a list of `{"model", "pk", "fields"}` dicts). Detecting that shape
-    from the data itself — instead of hardcoding which keys are
-    hand-built — means a future hand-built section doesn't silently
+    from the data itself - instead of hardcoding which keys are
+    hand-built - means a future hand-built section doesn't silently
     KeyError here the way api_keys's social-section siblings once did
     (they were added to export_account_data without this function
     being told about them)."""
@@ -456,14 +456,14 @@ def _rows_for_section(key, value):
 
 
 class DataExportView(LoginRequiredMixin, View):
-    """Profile → "Download your data" — GDPR Article 20 ("right to
+    """Profile → "Download your data" - GDPR Article 20 ("right to
     data portability"). See apps.accounts.services.export_account_data
     for exactly what's included and why. Four ways to get at the same
     export, `?format=` picking which: `json` (the complete, structured
     export, the same shape a user's own API key could already fetch),
     `csv` (a .zip of one .csv file per section, the practical format
     for opening in a spreadsheet), `html` (a single downloadable file
-    to keep or hand someone else — see _data_export_standalone.html's
+    to keep or hand someone else - see _data_export_standalone.html's
     own docstring for why that's a dedicated, self-contained template
     rather than a save of the page below), and no param at all for
     that same page, reusing this app's normal styling and nav, to
@@ -529,7 +529,7 @@ class DataExportView(LoginRequiredMixin, View):
 
 
 class TwoFactorRegenerateBackupCodesView(LoginRequiredMixin, View):
-    """Replaces every existing backup code with a fresh set — the only
+    """Replaces every existing backup code with a fresh set - the only
     recovery path if they're ever used up (or lost) without disabling
     2FA outright first. A plain confirm-then-POST (JS confirm(), like
     most other destructive-ish actions here) rather than a password
@@ -537,7 +537,7 @@ class TwoFactorRegenerateBackupCodesView(LoginRequiredMixin, View):
     an account's own protection, only invalidate codes that might
     already be lost anyway.
 
-    Doesn't generate anything itself any more — see
+    Doesn't generate anything itself any more - see
     TwoFactorBackupCodesView's own docstring for why; this POST is now
     only the "yes, I meant to click that" confirmation step, and just
     hands off to the page that actually does the (slow) work."""
@@ -549,7 +549,7 @@ class TwoFactorRegenerateBackupCodesView(LoginRequiredMixin, View):
 
 
 class TwoFactorBackupCodesView(LoginRequiredMixin, View):
-    """Replaces this user's backup codes and shows the new ones — the
+    """Replaces this user's backup codes and shows the new ones - the
     landing page for both TwoFactorSetupView's own confirm step and
     TwoFactorRegenerateBackupCodesView above, neither of which do the
     actual generation themselves any more.
@@ -557,7 +557,7 @@ class TwoFactorBackupCodesView(LoginRequiredMixin, View):
     Split into two requests deliberately: `generate_backup_codes`
     hashes each of `twofactor.BACKUP_CODE_COUNT` codes with Django's
     own password hasher (deliberately expensive work, the same reason
-    a login attempt itself isn't instant) — on ordinary hardware that
+    a login attempt itself isn't instant) - on ordinary hardware that
     measures in *seconds*, not milliseconds, and used to happen
     silently inside the same request that also rendered this page,
     which looked exactly like nothing was happening at all. Reported
@@ -570,7 +570,7 @@ class TwoFactorBackupCodesView(LoginRequiredMixin, View):
     Now: this view's own GET renders instantly, with a visible loading
     state (templates/accounts/two_factor_backup_codes.html) that
     itself triggers TwoFactorBackupCodesFragmentView below via HTMX on
-    page load — the slow part happens in *that* request instead,
+    page load - the slow part happens in *that* request instead,
     swapped into this page once it completes, with no way to
     double-submit it by accident (nothing to click a second time)."""
 
@@ -585,7 +585,7 @@ class TwoFactorBackupCodesView(LoginRequiredMixin, View):
 
 
 class TwoFactorBackupCodesFragmentView(LoginRequiredMixin, View):
-    """The actual (slow) backup-code generation — see
+    """The actual (slow) backup-code generation - see
     TwoFactorBackupCodesView's own docstring for why this is split out
     into its own request, loaded via HTMX rather than inline."""
 
@@ -604,12 +604,12 @@ class OnboardingView(LoginRequiredMixin, View):
     apps.accounts.context_processors.onboarding): "Save" and "Not now"
     are two submit buttons on the same form, distinguished by the
     `action` value, since skipping still has to mark the prompt seen
-    the same way saving does — otherwise it would just reappear on the
+    the same way saving does - otherwise it would just reappear on the
     very next page. HTMX-driven like the rest of this app's forms: a
     failed validation re-renders the same fragment with field errors
     (still targeting the modal's own container), a successful save or
     skip re-renders it with `show_onboarding` False, which is just the
-    fragment's own empty wrapper `<div>` — the modal disappears from
+    fragment's own empty wrapper `<div>` - the modal disappears from
     the page without a full navigation either way."""
 
     def post(self, request, *args, **kwargs):
@@ -662,5 +662,5 @@ def verify_email(request, uidb64, token):
     user = email_verification.confirm(uidb64, token)
     if user is None:
         return render(request, "registration/verify_email_invalid.html", status=400)
-    messages.success(request, _("Email confirmed — you can log in now."))
+    messages.success(request, _("Email confirmed - you can log in now."))
     return redirect("login")

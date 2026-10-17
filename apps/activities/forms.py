@@ -15,7 +15,7 @@ class ActivityTypeForm(forms.ModelForm):
 
 class ActivityForm(forms.ModelForm):
     """`duration_minutes` and `distance` aren't logged in the units the
-    model stores them in — a plain minutes count is far faster to enter
+    model stores them in - a plain minutes count is far faster to enter
     on mobile than a HH:MM:SS field (docs/UI.md "quick entry ... with as
     few taps as possible"), and distance is entered/shown in the user's
     preferred unit, not canonical meters. Both are converted here, same
@@ -51,7 +51,7 @@ class ActivityForm(forms.ModelForm):
             # widget pre-fills an existing value using Django's
             # locale-dependent DATE_INPUT_FORMATS/TIME_INPUT_FORMATS,
             # which don't reliably match what `type="date"`/`type="time"`
-            # expect (YYYY-MM-DD / HH:MM) — same pitfall as
+            # expect (YYYY-MM-DD / HH:MM) - same pitfall as
             # datetime-local inputs elsewhere in this app.
             "date": forms.DateInput(attrs={"type": "date"}, format="%Y-%m-%d"),
             "start_time": forms.TimeInput(attrs={"type": "time"}, format="%H:%M"),

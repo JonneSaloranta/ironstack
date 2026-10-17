@@ -13,6 +13,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='user',
             name='stretching_enabled',
-            field=models.BooleanField(default=True, help_text='Shows stretching (routines, guided sessions) in navigation and suggests a cool-down after a workout. Turn off to hide it — existing stretching data is never deleted.'),
+            field=models.BooleanField(default=True, help_text='Shows stretching (routines, guided sessions) in navigation and suggests a cool-down after a workout. Turn off to hide it - existing stretching data is never deleted.'),
         ),
     ]

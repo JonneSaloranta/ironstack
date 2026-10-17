@@ -1,12 +1,12 @@
 {% extends "base.html" %}
 {% load i18n %}
-{% block title %}{% trans "BMI calculator" %} — IronStack{% endblock %}
+{% block title %}{% trans "BMI calculator" %} - IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
   <h1 class="no-margin">{% trans "BMI calculator" %}</h1>
 </div>
 {% include "nutrition/_subnav.html" %}
-<p class="text-muted">{% trans "Body mass index — a widely used screening number, not a diagnosis. The Body weight page shows this automatically once you've logged a weight and set a height on your profile; this is the same calculation for a quick one-off check." %}</p>
+<p class="text-muted">{% trans "Body mass index - a widely used screening number, not a diagnosis. The Body weight page shows this automatically once you've logged a weight and set a height on your profile; this is the same calculation for a quick one-off check." %}</p>
 
 <form class="card" method="get">
   {% include "core/_form_errors.html" %}
@@ -20,7 +20,7 @@
   <div class="card">
     <h2 class="card-title">{% trans "Result" %}</h2>
     <p class="stat-value">
-      {{ result.bmi }}{% if result.category %} — {{ result.category.name }}{% endif %}
+      {{ result.bmi }}{% if result.category %} - {{ result.category.name }}{% endif %}
     </p>
   </div>
 

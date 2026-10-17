@@ -1,4 +1,4 @@
-"""Forms for the nutrition onboarding wizard — see docs/NUTRITION.md
+"""Forms for the nutrition onboarding wizard - see docs/NUTRITION.md
 "Phased implementation plan" step 3. Each step is a small, focused
 form (spec: "a step-by-step onboarding," not one giant form); the
 wizard view (apps.nutrition.views) accumulates answers in the session
@@ -23,7 +23,7 @@ class BodyStepForm(forms.Form):
         choices=BiologicalSex.choices,
         label=_("Biological sex"),
         help_text=_(
-            "Used by the BMR formula (Mifflin-St Jeor) — a physiological input, not a "
+            "Used by the BMR formula (Mifflin-St Jeor) - a physiological input, not a "
             "gender-identity question."
         ),
     )
@@ -89,7 +89,7 @@ class GoalStepForm(forms.Form):
     # x-model/@change: apps.nutrition.energy.DEFAULT_RATE_KG_PER_WEEK is
     # embedded as JSON in the template (see DEFAULT_RATES_JSON_SAFE
     # below) so picking a goal instantly fills in that goal's default
-    # rate client-side — no round-trip needed just to see a sensible
+    # rate client-side - no round-trip needed just to see a sensible
     # starting number, matching the rest of this app's Alpine.js usage
     # for small, purely-presentational state.
     goal_type = forms.ChoiceField(
@@ -111,19 +111,19 @@ class GoalStepForm(forms.Form):
         self.fields["target_weight"].label = _("Target weight (%(unit)s)") % {"unit": unit_label}
         self.fields["target_rate"].label = _("Target rate (kg/week)")
         self.fields["target_rate"].help_text = _(
-            "Negative to lose weight, positive to gain. Pre-filled from your goal below — "
+            "Negative to lose weight, positive to gain. Pre-filled from your goal below - "
             "capped at a safe rate for your bodyweight."
         )
 
     def clean(self):
         # The rate's sign has to agree with the goal it's attached to
-        # — e.g. a "Muscle gain" goal paired with a *negative* rate
-        # (found live: "Muscle gain — lean bulk" at -0.5 kg/week)
+        # - e.g. a "Muscle gain" goal paired with a *negative* rate
+        # (found live: "Muscle gain - lean bulk" at -0.5 kg/week)
         # would silently ask the calorie engine to cut, not bulk, the
         # opposite of what the goal itself says. `@change="rate =
         # rates[goalType]"` on the goal <select> (see its own comment
         # above) only re-fills `target_rate` when the user actively
-        # changes that dropdown — it never re-validates a rate the
+        # changes that dropdown - it never re-validates a rate the
         # user then edits by hand, or one a browser's form-restore
         # leaves stale against a since-changed goal selection. This
         # is the one server-side backstop that catches either case
@@ -136,12 +136,12 @@ class GoalStepForm(forms.Form):
         if goal_type.startswith("fat_loss") and rate >= 0:
             self.add_error(
                 "target_rate",
-                _("A fat-loss goal needs a negative rate — you're asking to lose weight."),
+                _("A fat-loss goal needs a negative rate - you're asking to lose weight."),
             )
         elif goal_type.startswith("muscle_gain") and rate <= 0:
             self.add_error(
                 "target_rate",
-                _("A muscle-gain goal needs a positive rate — you're asking to gain weight."),
+                _("A muscle-gain goal needs a positive rate - you're asking to gain weight."),
             )
         elif goal_type == GoalType.MAINTENANCE and rate != 0:
             self.add_error("target_rate", _("A maintenance goal's rate should be 0 kg/week."))
@@ -160,9 +160,9 @@ DEFAULT_RATES_JSON_SAFE = {
 
 
 class FoodForm(forms.ModelForm):
-    """A user's own custom food — see docs/NUTRITION.md "Food". Every
+    """A user's own custom food - see docs/NUTRITION.md "Food". Every
     nutrition value is *per `serving_size` of `serving_unit`*, not per
-    gram — the label makes that explicit rather than assuming it's
+    gram - the label makes that explicit rather than assuming it's
     obvious."""
 
     class Meta:
@@ -198,14 +198,14 @@ class FoodForm(forms.ModelForm):
         help_texts = {
             "serving_size": _(
                 "All the nutrition values below are for this amount, in the unit chosen "
-                "next to it — e.g. \"100 g\" if the values are per 100 grams."
+                "next to it - e.g. \"100 g\" if the values are per 100 grams."
             ),
         }
 
 
     def save(self, commit=True):
         # Totals sum sodium (services.ScaledNutrition), while a label
-        # states salt — keep the two in step (salt = sodium × 2.5).
+        # states salt - keep the two in step (salt = sodium × 2.5).
         food = super().save(commit=False)
         if food.salt_grams is None:
             food.sodium_mg = None
@@ -223,7 +223,7 @@ class FoodSearchForm(forms.Form):
 class DiaryAddEntryForm(forms.Form):
     """Adds one Food (local or freshly imported from OpenFoodFacts) to
     a specific meal slot on a specific date. Exactly one of `food_id`/
-    `off_barcode` is expected — a local pick vs. an OFF search result
+    `off_barcode` is expected - a local pick vs. an OFF search result
     the user is importing on the fly (apps.nutrition.services.
     import_or_refresh_food_from_off)."""
 
@@ -251,7 +251,7 @@ class DiaryAddEntryForm(forms.Form):
 
 
 class DiaryQuickEntryForm(forms.ModelForm):
-    """Macros typed straight into the diary — no Food behind them
+    """Macros typed straight into the diary - no Food behind them
     (DiaryEntry's "quick entry"). Used both to add one and to edit it.
     Every value is optional on its own, but at least one has to be
     given; blank calories are estimated from the macros."""
@@ -277,7 +277,7 @@ class DiaryQuickEntryForm(forms.ModelForm):
             "notes": _("Notes"),
         }
         help_texts = {
-            "quick_name": _("Optional — e.g. the restaurant dish."),
+            "quick_name": _("Optional - e.g. the restaurant dish."),
             "quick_calories": _("kcal. Leave blank to estimate it from the macros."),
         }
         widgets = {
@@ -335,7 +335,7 @@ class RecipeForm(forms.ModelForm):
         self.fields["meal_slots"].required = False
         self.fields["meal_slots"].help_text = _(
             "Tick every meal this recipe suits, e.g. both Lunch and Dinner. The "
-            "diet-plan builder only suggests it for those meals — leave all unticked "
+            "diet-plan builder only suggests it for those meals - leave all unticked "
             "for a recipe that fits any meal."
         )
         self.fields["meal_slots"].queryset = services.visible_meal_slots(user)
@@ -343,7 +343,7 @@ class RecipeForm(forms.ModelForm):
 
 class RecipeIngredientQuantityForm(forms.ModelForm):
     """Changes only how much of an already-picked ingredient a recipe
-    uses — same "quantity-only edit" shape as DiaryEntryQuantityForm
+    uses - same "quantity-only edit" shape as DiaryEntryQuantityForm
     above. Before this existed, the only way to correct "200g rice"
     to "250g rice" was to delete the ingredient and re-add it through
     the whole search-and-pick flow again, losing its position in the
@@ -358,7 +358,7 @@ class RecipeIngredientQuantityForm(forms.ModelForm):
 
 class RecipeIngredientSearchForm(forms.Form):
     """Adds one Food (local or freshly imported from OpenFoodFacts) as
-    a recipe ingredient — same shape as DiaryAddEntryForm above, minus
+    a recipe ingredient - same shape as DiaryAddEntryForm above, minus
     the meal_slot/date a diary entry needs but an ingredient doesn't.
     Search-and-pick rather than a bare dropdown of foods the user
     already had to create by hand elsewhere: this is the one place a
@@ -382,9 +382,9 @@ class RecipeIngredientSearchForm(forms.Form):
 
 
 class LogRecipeForm(forms.Form):
-    """Logs N servings of a recipe into the diary — the "diary
+    """Logs N servings of a recipe into the diary - the "diary
     version" of DiaryAddEntryForm, for a recipe instead of a raw
-    food. `date` defaults to today but is editable — same as
+    food. `date` defaults to today but is editable - same as
     LogDietPlanForm, so logging a recipe eaten yesterday (or planned
     for tomorrow) doesn't require leaving this page for a workaround
     that doesn't actually exist elsewhere (the diary's own "add food"
@@ -414,11 +414,11 @@ class LogRecipeForm(forms.Form):
 
 
 class DietPlanForm(forms.Form):
-    """Step 1 of the diet builder — see docs/NUTRITION.md "Diet
+    """Step 1 of the diet builder - see docs/NUTRITION.md "Diet
     builder wizard". Calorie/macro fields are pre-filled from the
     user's active NutritionTarget by the view, not defaulted here
     (this form has no DB access of its own to that), and stay fully
-    editable — a plan doesn't have to match the live target exactly."""
+    editable - a plan doesn't have to match the live target exactly."""
 
     name = forms.CharField(max_length=200, label=_("Plan name"))
     target_calories = forms.IntegerField(min_value=1, label=_("Daily calories"))
@@ -438,14 +438,14 @@ class DietPlanForm(forms.Form):
         required=False,
         label=_("Vary meals across a whole week instead of repeating one day"),
         help_text=_(
-            "Each day still hits the same daily calories/macros above — only which meal "
+            "Each day still hits the same daily calories/macros above - only which meal "
             "fills each slot changes from day to day, so a week's worth of breakfasts "
             "(for example) aren't all identical."
         ),
     )
     start_from_scratch = forms.BooleanField(
         required=False,
-        label=_("Start from scratch — leave every meal empty"),
+        label=_("Start from scratch - leave every meal empty"),
         help_text=_(
             "Skips the automatic suggestions above and just creates each meal ready for "
             "you to fill in yourself, on the plan's own page afterward."
@@ -460,7 +460,7 @@ class DietPlanForm(forms.Form):
 
 
 class DietPlanItemForm(forms.ModelForm):
-    """Swapping a single generated item — spec: change one meal or
+    """Swapping a single generated item - spec: change one meal or
     food without rebuilding the whole plan."""
 
     def __init__(self, *args, user, **kwargs):
@@ -470,7 +470,7 @@ class DietPlanItemForm(forms.ModelForm):
         self.fields["food"].queryset = Food.objects.filter(
             Q(owner=user) | Q(owner__isnull=True), active=True
         ).order_by("name")
-        # Q(owner=user) | Q(owner__isnull=True) — same shared-or-own
+        # Q(owner=user) | Q(owner__isnull=True) - same shared-or-own
         # visibility as `food` above; this excluded the built-in
         # template recipes (Recipe.owner's own comment) until found
         # live as "can't swap to a template recipe."
@@ -501,12 +501,12 @@ class DietPlanItemForm(forms.ModelForm):
 
 class DietPlanMealItemSearchForm(forms.Form):
     """Adds one extra Food (local or freshly imported from
-    OpenFoodFacts) to an already-generated meal — same search-and-pick
+    OpenFoodFacts) to an already-generated meal - same search-and-pick
     shape as RecipeIngredientSearchForm/DiaryAddEntryForm above. Meal
     planning shouldn't be locked to whatever single item the generator
     originally picked (see apps.nutrition.diet_builder's own
     documented "deliberately simple, not a knapsack solver" scope
-    note) — a user building out a real day's plan needs to be able to
+    note) - a user building out a real day's plan needs to be able to
     add more to a meal, not just swap its one item."""
 
     food_id = forms.IntegerField(required=False, widget=forms.HiddenInput)
@@ -534,7 +534,7 @@ class LogDietPlanForm(forms.Form):
 
 class _UnitAwareWeightHeightForm(forms.Form):
     """Shared height/weight-in-the-user's-display-unit plumbing for the
-    standalone calculators below — same conversion pattern as
+    standalone calculators below - same conversion pattern as
     BodyStepForm above, but pre-fillable from a signed-in user's
     already-known height/weight (nutrition_profile + latest logged
     body weight) rather than session state, since these calculators
@@ -569,7 +569,7 @@ class _UnitAwareWeightHeightForm(forms.Form):
 
 
 class BmrTdeeCalculatorForm(_UnitAwareWeightHeightForm):
-    """See apps.nutrition.energy.calculate_bmr/calculate_tdee — this
+    """See apps.nutrition.energy.calculate_bmr/calculate_tdee - this
     form only collects the inputs those two existing functions need,
     it does not reimplement the formula."""
 
@@ -589,7 +589,7 @@ class BmrTdeeCalculatorForm(_UnitAwareWeightHeightForm):
 
 
 class MacroCalculatorForm(_UnitAwareWeightHeightForm):
-    """See apps.nutrition.macros.calculate_macros — same "collect the
+    """See apps.nutrition.macros.calculate_macros - same "collect the
     inputs, don't reimplement the math" shape as the form above."""
 
     weight_kg = forms.DecimalField(max_digits=8, decimal_places=2, min_value=Decimal("20"))
@@ -611,7 +611,7 @@ class MacroCalculatorForm(_UnitAwareWeightHeightForm):
 
 
 class BodyFatCalculatorForm(_UnitAwareWeightHeightForm):
-    """See apps.nutrition.calculators.estimate_body_fat_percent — the
+    """See apps.nutrition.calculators.estimate_body_fat_percent - the
     U.S. Navy circumference method. `hip_cm` is only required for the
     female formula; enforced in clean() rather than a fixed
     `required=True` since which fields are required depends on the
@@ -685,7 +685,7 @@ class WaterIntakeCalculatorForm(_UnitAwareWeightHeightForm):
 
 
 class BMICalculatorForm(_UnitAwareWeightHeightForm):
-    """See apps.core.bmi.calculate_bmi — a standalone version of the
+    """See apps.core.bmi.calculate_bmi - a standalone version of the
     same calculation the Body weight measurement history page already
     shows once a height is on file (docs/DOMAIN_MODEL.md "User"), for
     anyone who wants the number without logging a weight first."""
@@ -696,7 +696,7 @@ class BMICalculatorForm(_UnitAwareWeightHeightForm):
 
 class WaistHipRatioCalculatorForm(_UnitAwareWeightHeightForm):
     """See apps.nutrition.calculators.calculate_waist_hip_ratio. Same
-    shape as BodyFatCalculatorForm's own circumference fields —
+    shape as BodyFatCalculatorForm's own circumference fields -
     entered in the user's display unit, converted to canonical cm for
     the calculation, same as everywhere else circumferences are
     logged in this app (docs/DOMAIN_MODEL.md "BodyMeasurement")."""
@@ -737,7 +737,7 @@ class WaistHipRatioCalculatorForm(_UnitAwareWeightHeightForm):
 class TimeToGoalCalculatorForm(_UnitAwareWeightHeightForm):
     """See apps.nutrition.calculators.estimate_weeks_to_goal. A raw
     signed weekly rate, not a GoalType dropdown like the onboarding
-    goal step uses — this is a flexible what-if tool ("at *this*
+    goal step uses - this is a flexible what-if tool ("at *this*
     rate, how long"), not tied to this app's own goal-type rate
     presets."""
 
@@ -750,7 +750,7 @@ class TimeToGoalCalculatorForm(_UnitAwareWeightHeightForm):
     rate_kg_per_week = forms.DecimalField(
         max_digits=5,
         decimal_places=3,
-        label=_("Rate (kg/week — negative to lose, positive to gain)"),
+        label=_("Rate (kg/week - negative to lose, positive to gain)"),
     )
 
     def __init__(self, *args, user, **kwargs):
@@ -765,7 +765,7 @@ class TimeToGoalCalculatorForm(_UnitAwareWeightHeightForm):
                 "unit": unit_label
             }
             self.fields["rate_kg_per_week"].label = _(
-                "Rate (%(unit)s/week — negative to lose, positive to gain)"
+                "Rate (%(unit)s/week - negative to lose, positive to gain)"
             ) % {"unit": unit_label}
 
     def canonical_current_weight_kg(self):
@@ -785,7 +785,7 @@ class TimeToGoalCalculatorForm(_UnitAwareWeightHeightForm):
 
 
 class DietPlanShareForm(forms.Form):
-    """apps.coaching — DietPlan has no general "edit its own fields"
+    """apps.coaching - DietPlan has no general "edit its own fields"
     form the way Program does (ProgramForm), so this one-field form is
     the entire UI for a PT choosing which of their *currently active*
     clients (queryset narrowed in __init__, same reasoning as
@@ -824,7 +824,7 @@ class ShoppingSettingsForm(forms.Form):
         label=_("A shopping day's own meals go on that day's list"),
         help_text=_(
             "On: you shop before that day's meals. Off: they're on the previous "
-            "list — you shop after that day is covered."
+            "list - you shop after that day is covered."
         ),
     )
 

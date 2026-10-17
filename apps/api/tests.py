@@ -45,7 +45,7 @@ def _create_key(user, **permission_overrides):
 
 class RateLimitTierModelTests(TestCase):
     def test_default_tiers_are_seeded(self):
-        """apps.api migration 0002 — a fresh install has something to
+        """apps.api migration 0002 - a fresh install has something to
         assign new keys to immediately."""
         self.assertTrue(RateLimitTier.objects.filter(is_default=True).exists())
 
@@ -148,7 +148,7 @@ class ApiKeyServiceTests(TestCase):
 
 
 class ApiKeyAuthenticationTests(APITestCase):
-    """apps.api.auth.ApiKeyAuthentication — exercised through a real view
+    """apps.api.auth.ApiKeyAuthentication - exercised through a real view
     (the profile endpoint) rather than unit-testing the authenticator in
     isolation, since its whole job is only meaningful in that context."""
 
@@ -213,7 +213,7 @@ class ApiKeyAuthenticationTests(APITestCase):
 
 
 class ContextPermissionTests(APITestCase):
-    """apps.api.permissions.HasContextPermission — exercised through the
+    """apps.api.permissions.HasContextPermission - exercised through the
     exercises endpoint (list = read, create = create)."""
 
     def setUp(self):
@@ -258,7 +258,7 @@ class ContextPermissionTests(APITestCase):
 
     def test_permissions_are_scoped_per_context_not_all_or_nothing(self):
         """A key granted only "programs" access must not be able to
-        touch "exercises" — the whole point of context-scoped keys."""
+        touch "exercises" - the whole point of context-scoped keys."""
         _api_key, raw_secret = _create_key(self.alice, exercises={}, programs={"can_read": True})
         exercises_response = self.client.get(
             reverse("api:exercise-list"), **self._auth(raw_secret)
@@ -286,7 +286,7 @@ class RateLimitingTests(APITestCase):
         self.assertEqual(statuses, [200, 200, 429])
 
     def test_editing_a_tiers_rate_takes_effect_without_recreating_the_key(self):
-        """The whole point of an admin-editable tier — bump the number
+        """The whole point of an admin-editable tier - bump the number
         and every key on it is affected immediately."""
         self.tiny_tier.requests_per_minute = 100
         self.tiny_tier.save()
@@ -355,7 +355,7 @@ class ProfileEndpointTests(APITestCase):
 class WorkoutLoggingEndpointTests(APITestCase):
     """The most important end-to-end path: logging a set via the API
     must trigger PR detection exactly like apps.workouts.views.set_log
-    does for the web UI — see apps.api.views.ExerciseSetViewSet."""
+    does for the web UI - see apps.api.views.ExerciseSetViewSet."""
 
     def setUp(self):
         self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
@@ -395,7 +395,7 @@ class WorkoutLoggingEndpointTests(APITestCase):
 
     def test_cannot_add_a_performed_exercise_referencing_another_users_private_exercise(self):
         # Regression, found live: PerformedExerciseSerializer's
-        # `exercise` field had no ownership check at all — a bare
+        # `exercise` field had no ownership check at all - a bare
         # PrimaryKeyRelatedField accepts *any* row's id, private
         # custom exercises very much included, until validate_exercise
         # was added.
@@ -522,7 +522,7 @@ class WorkoutLoggingEndpointTests(APITestCase):
 class ExercisePrescriptionOwnershipTests(APITestCase):
     """Regression, found live going through every endpoint by hand:
     ExercisePrescriptionSerializer's `exercise` field had no ownership
-    check at all — see its own validate_exercise for the fix and why
+    check at all - see its own validate_exercise for the fix and why
     it matters even though the raw API response never nests the
     exercise's own details (the web UI trusts this check already
     happened by the time it renders a prescription it owns)."""
@@ -557,7 +557,7 @@ class ExercisePrescriptionOwnershipTests(APITestCase):
         self.assertEqual(response.status_code, 400)
 
     def test_a_system_exercise_is_still_usable(self):
-        # The fix must not overcorrect into blocking every exercise —
+        # The fix must not overcorrect into blocking every exercise -
         # shared, system-seeded ones (owner=None) stay usable by anyone.
         system_exercise = Exercise.objects.create(name="System Squat", owner=None)
         response = self.client.post(
@@ -578,7 +578,7 @@ class ExercisePrescriptionOwnershipTests(APITestCase):
 
 class OwnedResourceViewSetTests(APITestCase):
     """apps.api.viewsets.OwnedResourceViewSet, via the exercises endpoint
-    — covers the shared ownership shape every OwnedResourceViewSet
+    - covers the shared ownership shape every OwnedResourceViewSet
     subclass gets for free."""
 
     def setUp(self):
@@ -625,7 +625,7 @@ class OwnedResourceViewSetTests(APITestCase):
 
 class ExerciseInstructionsAndImagesFieldsTests(APITestCase):
     """apps.api.serializers.ExerciseSerializer's own `instructions`/
-    `instructions_attribution`/`images` fields — added alongside the
+    `instructions_attribution`/`images` fields - added alongside the
     web app's own exercise-images feature (apps.exercises.models.
     ExerciseImage), so a machine client can read the same instructional
     content the server-rendered detail page shows."""
@@ -651,7 +651,7 @@ class ExerciseInstructionsAndImagesFieldsTests(APITestCase):
 
     def test_instructions_attribution_is_read_only(self):
         mine = Exercise.objects.create(
-            name="My Move", owner=self.alice, instructions_attribution="Someone — CC-BY-SA"
+            name="My Move", owner=self.alice, instructions_attribution="Someone - CC-BY-SA"
         )
         response = self.client.patch(
             reverse("api:exercise-detail", args=[mine.pk]),
@@ -661,7 +661,7 @@ class ExerciseInstructionsAndImagesFieldsTests(APITestCase):
         )
         self.assertEqual(response.status_code, 200)
         mine.refresh_from_db()
-        self.assertEqual(mine.instructions_attribution, "Someone — CC-BY-SA")
+        self.assertEqual(mine.instructions_attribution, "Someone - CC-BY-SA")
 
     def test_images_are_included_read_only(self):
         from apps.exercises.models import ExerciseImage
@@ -677,7 +677,7 @@ class ExerciseInstructionsAndImagesFieldsTests(APITestCase):
 
 
 class ProgramHardDeleteTests(APITestCase):
-    """Program is the one OwnedResourceViewSet with soft_delete=False —
+    """Program is the one OwnedResourceViewSet with soft_delete=False -
     it has no `active` field and its web view really deletes."""
 
     def setUp(self):
@@ -697,7 +697,7 @@ class ProgramHardDeleteTests(APITestCase):
 
 
 class ApiKeyManagementViewTests(TestCase):
-    """The self-service, session-authenticated key management pages —
+    """The self-service, session-authenticated key management pages -
     apps.api.views_web."""
 
     def setUp(self):
@@ -711,7 +711,7 @@ class ApiKeyManagementViewTests(TestCase):
 
     def test_the_key_list_page_shows_api_documentation_with_the_real_host(self):
         """The "?" help button's modal (templates/api/key_list.html)
-        — the base-URL/curl/Python examples show this deployment's
+        - the base-URL/curl/Python examples show this deployment's
         actual host (request.scheme/get_host), not a placeholder, so
         they're copy-pasteable as-is."""
         response = self.client.get(reverse("api_keys:key-list"), SERVER_NAME="ironstack.example")
@@ -723,7 +723,7 @@ class ApiKeyManagementViewTests(TestCase):
         """Regression: nutrition/profile/ and the diet-plans/diet-plan-
         meals/diet-plan-items/ endpoints (apps/api/urls.py) went live
         without this in-app help table ever being updated to mention
-        them — real endpoints an API key could already call, with no
+        them - real endpoints an API key could already call, with no
         documentation of them anywhere a user would actually look."""
         response = self.client.get(reverse("api_keys:key-list"))
         for endpoint in [
@@ -747,7 +747,7 @@ class ApiKeyManagementViewTests(TestCase):
 
         first_view = self.client.get(reverse("api_keys:key-created", args=[api_key.pk]))
         # The list page legitimately shows the short, non-secret prefix
-        # ("isk_xxxxxxxx…") for identification — what must never appear
+        # ("isk_xxxxxxxx…") for identification - what must never appear
         # a second time is the *full* raw secret itself.
         match = re.search(r"isk_[A-Za-z0-9_-]{20,}", first_view.content.decode())
         self.assertIsNotNone(match, "the full raw secret should be shown on first view")
@@ -826,7 +826,7 @@ class ApiKeyPermissionModelTests(TestCase):
 
 
 class NutritionEndpointTests(APITestCase):
-    """apps.api.views' Nutrition section — Food/MealSlot follow the
+    """apps.api.views' Nutrition section - Food/MealSlot follow the
     same OwnedResourceViewSet shape OwnedResourceViewSetTests already
     covers generically (via exercises), so this focuses on what's
     specific to nutrition: the food/recipe XOR on a diary entry, FK
@@ -1111,7 +1111,7 @@ class NutritionEndpointTests(APITestCase):
 
 class NutritionProfileEndpointTests(APITestCase):
     """A singleton resource, same shape ProfileEndpointTests already
-    covers for /profile/ — GET/PATCH always act on the authenticated
+    covers for /profile/ - GET/PATCH always act on the authenticated
     key's own NutritionProfile."""
 
     def setUp(self):
@@ -1159,7 +1159,7 @@ class NutritionProfileEndpointTests(APITestCase):
 class DietPlanEndpointTests(APITestCase):
     """DietPlan's mutating actions all route through
     apps.nutrition.diet_builder/services rather than a raw
-    ModelSerializer write — see DietPlanSerializer's own docstring.
+    ModelSerializer write - see DietPlanSerializer's own docstring.
     DietPlanMeal/DietPlanItem are read-only sub-resources."""
 
     def setUp(self):
@@ -1341,10 +1341,10 @@ class DietPlanEndpointTests(APITestCase):
 
 
 class InteractiveDocsTests(TestCase):
-    """apps.api.urls_docs / apps.api.views_docs — docs/API.md
+    """apps.api.urls_docs / apps.api.views_docs - docs/API.md
     "Interactive docs". Session-authenticated (login_required), a
     deliberately separate credential from the Bearer API keys the
-    documented endpoints themselves need — see urls_docs' own
+    documented endpoints themselves need - see urls_docs' own
     docstring for why."""
 
     def setUp(self):
@@ -1373,7 +1373,7 @@ class InteractiveDocsTests(TestCase):
         # Regression: drf-spectacular's own default template bootstraps
         # the UI from an inline <script>...</script> block, silently
         # blocked by this app's CSP (script-src has no 'unsafe-inline'
-        # — apps.core.middleware.ContentSecurityPolicyMiddleware). See
+        # - apps.core.middleware.ContentSecurityPolicyMiddleware). See
         # apps.api.views_docs' own docstring for the same-origin
         # <script src> it uses instead.
         self.client.login(username="alice", password="s3cret-pass")
@@ -1394,7 +1394,7 @@ class InteractiveDocsTests(TestCase):
         response = self.client.get(reverse("api_docs:schema"))
         self.assertEqual(response.status_code, 200)
         body = response.content.decode()
-        # ApiKeyAuthenticationScheme (apps.api.openapi) — what makes
+        # ApiKeyAuthenticationScheme (apps.api.openapi) - what makes
         # Swagger UI's "Authorize" button understand the `Authorization:
         # Bearer <key>` scheme apps.api.auth.ApiKeyAuthentication
         # actually expects, rather than showing every operation as

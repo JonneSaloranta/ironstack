@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% load i18n core_extras %}
-{% block title %}{{ measurement_type.name|translate_content }} — IronStack{% endblock %}
+{% block title %}{{ measurement_type.name|translate_content }} - IronStack{% endblock %}
 {% block content %}
 {% url 'measurements:type-list' as c1u %}{% trans "Body tracking" as c1l %}
 {% include "core/_breadcrumbs.html" with c1_url=c1u c1_label=c1l current=measurement_type.name %}

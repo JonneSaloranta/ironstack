@@ -1,9 +1,9 @@
 """All-time "look what everyone's done" highlights for the dashboard
-achievements carousel (docs/UI.md "Achievements carousel") — deliberately
+achievements carousel (docs/UI.md "Achievements carousel") - deliberately
 separate from apps.analytics.services, which is entirely date-range-
 scoped (apps.analytics.dateranges) and per-user: every figure here is a
 lifetime total, and the carousel itself is shared across every user on
-this instance, not personal to whoever's viewing it — a self-hosted app
+this instance, not personal to whoever's viewing it - a self-hosted app
 used by, e.g., one household or a small gym, where seeing a housemate's
 new streak is the point (see `User.show_achievements` for the opt-out).
 """
@@ -22,7 +22,7 @@ from apps.records.models import PersonalRecord
 from apps.workouts.models import ExerciseSet, WorkoutSession, WorkoutSessionStatus
 
 # How recent counts as "recent" for RecentActivity.is_recent's green-dot
-# tier below — a fitness-specific judgment call (not a config value or a
+# tier below - a fitness-specific judgment call (not a config value or a
 # per-user preference, since there's no principled way for a user to
 # tune "how impressive is this"), distinct from is_in_progress's own
 # "training right now" tier.
@@ -35,7 +35,7 @@ class Achievement:
     label: str
     value: str
     display_name: str
-    # The real, stable username — `display_name` alone isn't safe to
+    # The real, stable username - `display_name` alone isn't safe to
     # build a URL from (it can carry a first name too, see
     # User.public_display_name), and is meant purely for reading, not
     # matching a row. Used by templates/core/dashboard.html to link
@@ -47,12 +47,12 @@ class Achievement:
 class RecentActivity:
     display_name: str
     username: str
-    # The latest session's `ended_at` once it has one — how long ago
+    # The latest session's `ended_at` once it has one - how long ago
     # training actually *stopped*, not how long ago it happened to
     # start. Falls back to `started_at` whenever `ended_at` isn't set
     # (an in-progress session always lacks one; see
     # recently_active_users' own comment for why a finished one
-    # sometimes can too) — while `is_in_progress` is True the template
+    # sometimes can too) - while `is_in_progress` is True the template
     # shows "Training now" instead of a "time ago" built from this
     # anyway.
     last_active_at: datetime
@@ -62,11 +62,11 @@ class RecentActivity:
 
 def longest_workout_streak_days(user):
     """The longest run of *consecutive calendar days* with at least one
-    completed workout, ever — not the user's current streak, which
+    completed workout, ever - not the user's current streak, which
     changes daily and wouldn't read as a stable "achievement" the way a
     personal-best figure does. Computed in Python over the (small,
     per-user) list of distinct workout dates rather than a SQL window
-    function — docs/ANALYTICS.md: start with straightforward ORM
+    function - docs/ANALYTICS.md: start with straightforward ORM
     queries, only add more once profiling demonstrates a need.
     """
     dates = sorted(
@@ -89,7 +89,7 @@ def longest_workout_streak_days(user):
 
 
 def highlights_for(user):
-    """The up-to-4 highlight cards for a single user — `[]` if they have
+    """The up-to-4 highlight cards for a single user - `[]` if they have
     no completed workouts yet (nothing to celebrate). Public (no
     leading underscore): used both by `achievement_highlights` below
     (every opted-in user's highlights, for the dashboard carousel) and
@@ -134,7 +134,7 @@ def highlights_for(user):
             icon="workouts",
             # Reuses the same msgid/msgid_plural pair
             # templates/programs/program_list.html's per-program
-            # workout count already uses (see locale .po files) — one
+            # workout count already uses (see locale .po files) - one
             # fewer pair to translate, same wording.
             label=gettext("Workouts completed"),
             value=ngettext("%(counter)s workout", "%(counter)s workouts", total_workouts)
@@ -171,10 +171,10 @@ def highlights_for(user):
 
 
 def achievement_highlights():
-    """Every opted-in user's highlights, concatenated — see this
+    """Every opted-in user's highlights, concatenated - see this
     module's docstring for why this isn't scoped to a single viewer.
     `User.show_achievements=False` excludes that user's own achievements
-    from the result entirely (their own view of the carousel included —
+    from the result entirely (their own view of the carousel included -
     it's a privacy setting, "don't show my stats to anyone", not a
     personal "hide the carousel from me" toggle). Ordered by username
     for a stable, predictable rotation rather than by anything that
@@ -188,8 +188,8 @@ def achievement_highlights():
 
 
 def recently_active_users(limit=10):
-    """The dashboard's "Recently active" list (docs/UI.md) — every
-    opted-in user (`User.show_achievements` — the same "share my
+    """The dashboard's "Recently active" list (docs/UI.md) - every
+    opted-in user (`User.show_achievements` - the same "share my
     training activity" setting the achievements carousel uses; see its
     docstring) who has started at least one workout session, most
     recently active first. Counts *any* session status, not just
@@ -198,7 +198,7 @@ def recently_active_users(limit=10):
     rather than just an ordinary timestamp.
 
     `limit` keeps this to a glanceable size rather than a wall of
-    usernames on an instance with many users — this app is typically
+    usernames on an instance with many users - this app is typically
     self-hosted for one household or a small gym, so this is a modest
     default cap, not a paginated feature.
     """
@@ -217,17 +217,17 @@ def recently_active_users(limit=10):
         if user.latest_started_at is None:
             continue
         is_in_progress = user.latest_status == WorkoutSessionStatus.IN_PROGRESS
-        # A finished session's `ended_at` — not `started_at` — is when
+        # A finished session's `ended_at` - not `started_at` - is when
         # this user was actually last active: a long session that just
         # wrapped up should read as "just now", not "N hours ago" from
         # whenever it happened to start. Falls back to `started_at`
-        # whenever `ended_at` isn't set — not just while in progress,
+        # whenever `ended_at` isn't set - not just while in progress,
         # since nothing at the model/DB level actually guarantees
         # `ended_at` is set for every other status (`complete_session`/
         # `abandon_session` always set it together with the status,
         # but a session built directly rather than through one of
         # those, e.g. in a test, can still have `status=COMPLETED` and
-        # `ended_at=None` — found by CI, not by this file's own tests,
+        # `ended_at=None` - found by CI, not by this file's own tests,
         # which all go through those service functions).
         last_active_at = user.latest_ended_at or user.latest_started_at
         activity.append(

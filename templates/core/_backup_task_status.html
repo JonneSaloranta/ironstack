@@ -9,7 +9,7 @@ HX-Refresh so the whole Backups page catches up.
        hx-get="{% url 'backup-task-status' %}" hx-trigger="every 2s" hx-swap="outerHTML">
     <div class="spinner" aria-hidden="true"></div>
     <p>{% if backup_task.action == "restore" %}{% blocktrans with name=backup_task.name %}Restoring {{ name }}…{% endblocktrans %}{% else %}{% trans "Creating a backup…" %}{% endif %}</p>
-    <p class="text-muted">{% trans "This can take several minutes. You can leave this page — come back to see the result." %}</p>
+    <p class="text-muted">{% trans "This can take several minutes. You can leave this page - come back to see the result." %}</p>
   </div>
 {% elif backup_task.state == "done" %}
   <div class="alert alert-success" id="backup-task-status" role="status">
@@ -20,7 +20,7 @@ HX-Refresh so the whole Backups page catches up.
     {% if backup_task.error == "interrupted" %}
       <p>{% trans "The last backup task was interrupted before it finished (did the server restart?). Check that everything looks right before relying on it." %}</p>
     {% elif backup_task.error == "decryption" %}
-      <p>{% blocktrans with name=backup_task.name %}Couldn't decrypt {{ name }} — check that BACKUP_ENCRYPTION_KEY matches the key this backup was made with. Nothing was changed.{% endblocktrans %}</p>
+      <p>{% blocktrans with name=backup_task.name %}Couldn't decrypt {{ name }} - check that BACKUP_ENCRYPTION_KEY matches the key this backup was made with. Nothing was changed.{% endblocktrans %}</p>
     {% elif backup_task.action == "restore" %}
       <p>{% blocktrans with name=backup_task.name detail=backup_task.detail %}Restoring {{ name }} failed: {{ detail }}{% endblocktrans %}</p>
     {% else %}

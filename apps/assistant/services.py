@@ -1,4 +1,4 @@
-"""Assistant domain logic — who may use it, with which key, within which
+"""Assistant domain logic - who may use it, with which key, within which
 limits, and the tool loop that writes a reply. See docs/ASSISTANT.md.
 
 Views only call `access_for`, `start_conversation`/`send_message` and
@@ -22,6 +22,7 @@ from .models import (
     AssistantPreference,
     AssistantSettings,
     Conversation,
+    DataScope,
     KeySource,
     MessageRole,
     MessageStatus,
@@ -57,7 +58,7 @@ DEFAULT_CLAUDE_MODEL = "claude-opus-5-5"
 
 
 class AssistantError(Exception):
-    """Something the user tried that isn't possible right now — the
+    """Something the user tried that isn't possible right now - the
     message is translated and shown as-is."""
 
 
@@ -71,7 +72,7 @@ class Access:
 
 
 def preference_for(user):
-    """The user's preference row, or an unsaved default — reading the
+    """The user's preference row, or an unsaved default - reading the
     assistant pages never writes anything."""
     return AssistantPreference.objects.filter(user=user).first() or AssistantPreference(user=user)
 
@@ -174,6 +175,23 @@ def set_own_key_options(user, *, model, effort):
     return preference
 
 
+def set_about_me(user, text):
+    preference, _created = AssistantPreference.objects.get_or_create(user=user)
+    preference.about_me = text
+    preference.save(update_fields=["about_me", "updated_at"])
+    return preference
+
+
+def set_data_access(user, reads):
+    """`reads`: {"reads_<DataScope>": bool} - what the assistant may read."""
+    preference, _created = AssistantPreference.objects.get_or_create(user=user)
+    fields = [f"reads_{scope.value}" for scope in DataScope]
+    for field in fields:
+        setattr(preference, field, bool(reads.get(field)))
+    preference.save(update_fields=[*fields, "updated_at"])
+    return preference
+
+
 def remove_own_key(user):
     AssistantPreference.objects.filter(user=user).update(api_key="", api_key_hint="")
 
@@ -209,7 +227,7 @@ def record_usage(user, key_source, input_tokens, output_tokens):
 
 def usage_summary(days=30):
     """Per-user token totals over the last `days` days, for the staff
-    settings page — biggest spenders first."""
+    settings page - biggest spenders first."""
     since = timezone.localdate() - timezone.timedelta(days=days - 1)
     return (
         UsageRecord.objects.filter(date__gte=since)
@@ -309,7 +327,7 @@ def _queue_reply(conversation, text, *, first):
 
 
 def _provider_for_wire_format(conversation):
-    """A provider object only for building messages — no key needed."""
+    """A provider object only for building messages - no key needed."""
     if conversation.provider == OLLAMA:
         return OllamaProvider(base_url="", model=conversation.model)
     return AnthropicProvider(api_key="", model=conversation.model)
@@ -392,7 +410,7 @@ class _ReplyWriter:
 def process_message(message_id):
     """Writes the reply for one PENDING assistant message: the tool loop,
     usage accounting, and the final DONE/ERROR state. Safe to call from
-    several workers at once — only one claims a given message."""
+    several workers at once - only one claims a given message."""
     message = _claim(message_id)
     if message is None:
         return

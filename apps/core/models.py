@@ -18,12 +18,12 @@ class TimeStampedModel(models.Model):
 
 
 def _default_backup_hour():
-    # A plain lambda can't be used as a field default — Django's
+    # A plain lambda can't be used as a field default - Django's
     # migration writer needs an importable, named reference to
     # serialize into the migration file. Only used to *seed* the
     # singleton row the first time it's created (get_or_create in
     # load() below); settings.BACKUP_HOUR/the DJANGO_BACKUP_HOUR env
-    # var has no further effect after that — BackupSettings.hour is
+    # var has no further effect after that - BackupSettings.hour is
     # the one adjustable knob apps.core.management.commands.
     # backup_scheduler actually reads, on every loop iteration, so a
     # change here takes effect without restarting that container.
@@ -31,9 +31,9 @@ def _default_backup_hour():
 
 
 class BackupSettings(models.Model):
-    """Singleton row (always pk=1 — see `load()`) holding the backup-
+    """Singleton row (always pk=1 - see `load()`) holding the backup-
     scheduler knobs adjustable from Profile → Administration → Backups
-    without a redeploy — the same pattern `apps.api.models.ApiSettings`
+    without a redeploy - the same pattern `apps.api.models.ApiSettings`
     already uses for its own admin-tunable knobs."""
 
     enabled = models.BooleanField(
@@ -51,7 +51,7 @@ class BackupSettings(models.Model):
     retention_count = models.PositiveIntegerField(
         default=14,
         help_text=_(
-            "How many backups to keep — older ones are deleted automatically "
+            "How many backups to keep - older ones are deleted automatically "
             "after each new one is created. 0 keeps every backup forever."
         ),
     )
@@ -61,7 +61,7 @@ class BackupSettings(models.Model):
         super().save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):
-        pass  # singleton — deleting it would just silently recreate defaults on next load()
+        pass  # singleton - deleting it would just silently recreate defaults on next load()
 
     @classmethod
     def load(cls):
@@ -73,12 +73,12 @@ class BackupSettings(models.Model):
 
 
 class FeedbackSettings(models.Model):
-    """Singleton row (always pk=1 — see `load()`) holding the single
+    """Singleton row (always pk=1 - see `load()`) holding the single
     knob for apps.core.views_feedback.FeedbackCreateView: whether
     submitting new feedback is currently open at all. Same pattern as
     BackupSettings/apps.api.models.ApiSettings above. Turning this off
     only closes new submissions (gated in the view itself, not just
-    hidden on the profile page — see FeedbackCreateView.dispatch) —
+    hidden on the profile page - see FeedbackCreateView.dispatch) -
     it never touches feedback already on file, which stays visible to
     staff either way."""
 
@@ -86,7 +86,7 @@ class FeedbackSettings(models.Model):
         default=True,
         help_text=_(
             "Lets any signed-in user submit feedback from their profile page. "
-            "Turning this off only closes new submissions — feedback already "
+            "Turning this off only closes new submissions - feedback already "
             "on file stays visible to staff."
         ),
     )
@@ -96,7 +96,7 @@ class FeedbackSettings(models.Model):
         super().save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):
-        pass  # singleton — deleting it would just silently recreate defaults on next load()
+        pass  # singleton - deleting it would just silently recreate defaults on next load()
 
     @classmethod
     def load(cls):
@@ -108,14 +108,14 @@ class FeedbackSettings(models.Model):
 
 
 class SeoSettings(models.Model):
-    """Singleton row (always pk=1 — see `load()`) holding the one knob
+    """Singleton row (always pk=1 - see `load()`) holding the one knob
     for whether this instance wants search engines to index it at all,
     adjustable from Profile → Administration → Site & SEO without a
-    redeploy — same pattern as BackupSettings/FeedbackSettings above.
+    redeploy - same pattern as BackupSettings/FeedbackSettings above.
 
     Defaults to *disallowed*: this app runs entirely on the operator's
     own infrastructure and holds another person's private health data
-    (CLAUDE.md's own "self-hosted, mobile-first fitness tracker") —
+    (CLAUDE.md's own "self-hosted, mobile-first fitness tracker") -
     the safe-by-default choice is a search engine never indexing it in
     the first place, not an operator having to remember to opt out
     the moment they stand up a fresh install. `apps.core.
@@ -127,7 +127,7 @@ class SeoSettings(models.Model):
     search_engine_indexing_enabled = models.BooleanField(
         default=False,
         help_text=_(
-            "Lets search engines crawl and index this instance. Off by default — most "
+            "Lets search engines crawl and index this instance. Off by default - most "
             "installs are a private, self-hosted app for one household, not a public "
             "site anyone should be searching for."
         ),
@@ -138,7 +138,7 @@ class SeoSettings(models.Model):
         super().save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):
-        pass  # singleton — deleting it would just silently recreate defaults on next load()
+        pass  # singleton - deleting it would just silently recreate defaults on next load()
 
     @classmethod
     def load(cls):
@@ -151,9 +151,9 @@ class SeoSettings(models.Model):
 
 class Feedback(TimeStampedModel):
     """A free-text note from a user about the application itself (a bug,
-    a request, a "this is confusing" — not fitness data), submitted from
+    a request, a "this is confusing" - not fitness data), submitted from
     Profile → Feedback and visible only to staff (Profile → Administration
-    → Feedback, or /admin/) — never to other regular users, and not tied
+    → Feedback, or /admin/) - never to other regular users, and not tied
     to any support-ticket workflow beyond that: this is a one-way inbox,
     not a two-way conversation thread."""
 
@@ -188,14 +188,14 @@ class Feedback(TimeStampedModel):
 
 class PushSubscription(TimeStampedModel):
     """One browser/device's Web Push subscription (docs/SECURITY.md
-    "Web Push notifications") — a user can hold several (one per
+    "Web Push notifications") - a user can hold several (one per
     device they've enabled notifications on). `endpoint`/`p256dh_key`/
     `auth_key` are exactly the three fields the browser's own
     `PushSubscription.toJSON()` returns; `apps.core.push.
     send_push_notification` reassembles them into the shape
     `pywebpush.webpush`'s own `subscription_info` argument expects.
     Never exported through `apps.accounts.services.export_account_data`
-    beyond `endpoint`/`created_at` — `p256dh_key`/`auth_key` are
+    beyond `endpoint`/`created_at` - `p256dh_key`/`auth_key` are
     credential-like (the push service, and only the push service,
     needs them to route/decrypt a payload), the same reasoning
     `apps.api.models.ApiKey.key_hash` is excluded there."""
@@ -212,9 +212,9 @@ class PushSubscription(TimeStampedModel):
 
 
 class AnnouncedVersion(models.Model):
-    """Singleton row (always pk=1 — see `load()`) recording the last
+    """Singleton row (always pk=1 - see `load()`) recording the last
     `VERSION` (`apps.core.version.get_version()`) a "new version is
-    available" push notification was actually sent for — see
+    available" push notification was actually sent for - see
     `apps.core.management.commands.announce_version_update`, the one
     writer of this row, run as part of `docker-compose.yml`'s `web`
     service startup command on every container start. Comparing
@@ -223,8 +223,8 @@ class AnnouncedVersion(models.Model):
     version bump: a plain container restart on an unchanged `VERSION`
     (a host reboot, `docker compose restart`) leaves this row's
     `version` already matching and sends nothing, while a genuine
-    deploy of a new version — the only case where `VERSION` on disk
-    actually differs from what's recorded here — sends exactly once
+    deploy of a new version - the only case where `VERSION` on disk
+    actually differs from what's recorded here - sends exactly once
     and then updates this row so the *next* restart on that same new
     version is a no-op too. Blank by default (never seeded with a real
     version), so the very first deploy after this feature ships
@@ -239,7 +239,7 @@ class AnnouncedVersion(models.Model):
         super().save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):
-        pass  # singleton — deleting it would just silently recreate defaults on next load()
+        pass  # singleton - deleting it would just silently recreate defaults on next load()
 
     @classmethod
     def load(cls):

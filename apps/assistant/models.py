@@ -1,11 +1,11 @@
-"""The AI assistant's data — see docs/ASSISTANT.md.
+"""The AI assistant's data - see docs/ASSISTANT.md.
 
 Nothing here ever touches another app's rows directly: the assistant
 reads through each app's own services (apps.assistant.tools) and only
 *proposes* changes (AssistantProposal). A proposal turns into a real
-DietPlan/Program only when its owner presses "Create" — through the same
+DietPlan/Program only when its owner presses "Create" - through the same
 service functions an import or the diet builder already uses
-(apps.assistant.proposals) — so CLAUDE.md's "automation must never take
+(apps.assistant.proposals) - so CLAUDE.md's "automation must never take
 control away from the user" holds by construction, and nothing the
 assistant does can reach completed workout history at all.
 """
@@ -22,17 +22,17 @@ from apps.core.models import TimeStampedModel
 
 
 class SharedKeyAccess(models.TextChoices):
-    NOBODY = "nobody", _("Nobody — users must bring their own key")
+    NOBODY = "nobody", _("Nobody - users must bring their own key")
     STAFF = "staff", _("Staff only")
     SELECTED = "selected", _("Selected users")
     EVERYONE = "everyone", _("Everyone")
 
 
 class AssistantSettings(models.Model):
-    """Singleton (always pk=1 — see `load()`), same pattern as
+    """Singleton (always pk=1 - see `load()`), same pattern as
     apps.core.models.BackupSettings: the knobs an operator turns without
     a redeploy. The provider and the shared key itself stay in the
-    environment (config.settings.base, ASSISTANT_*) — a secret doesn't
+    environment (config.settings.base, ASSISTANT_*) - a secret doesn't
     belong in a database row an admin page can display."""
 
     enabled = models.BooleanField(
@@ -67,7 +67,7 @@ class AssistantSettings(models.Model):
         super().save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):
-        pass  # singleton — deleting it would just silently recreate defaults on next load()
+        pass  # singleton - deleting it would just silently recreate defaults on next load()
 
     @classmethod
     def load(cls):
@@ -80,27 +80,41 @@ class AssistantSettings(models.Model):
 
 class OwnKeyModel(models.TextChoices):
     """The Claude models a user may pick for their own API key (they pay
-    for it, so the choice is theirs). Blank — the default — follows the
+    for it, so the choice is theirs). Blank - the default - follows the
     instance's own ASSISTANT_MODEL. Kept to current models that support
     everything apps.assistant.providers sends; prices are per million
     tokens, input/output."""
 
-    OPUS = "claude-opus-5-5", _("Claude Opus 5.5 — best plans ($4 / $20)")
-    SONNET = "claude-sonnet-5-5", _("Claude Sonnet 5.5 — good and half the price ($2 / $10)")
-    HAIKU = "claude-haiku-4-5", _("Claude Haiku 4.5 — fastest and cheapest, weaker plans ($1 / $5)")
-    FABLE = "claude-fable-5-1", _("Claude Fable 5.1 — most capable, most expensive ($10 / $50)")
+    OPUS = "claude-opus-5-5", _("Claude Opus 5.5 - best plans ($4 / $20)")
+    SONNET = "claude-sonnet-5-5", _("Claude Sonnet 5.5 - good and half the price ($2 / $10)")
+    HAIKU = "claude-haiku-4-5", _("Claude Haiku 4.5 - fastest and cheapest, weaker plans ($1 / $5)")
+    FABLE = "claude-fable-5-1", _("Claude Fable 5.1 - most capable, most expensive ($10 / $50)")
 
 
 class Effort(models.TextChoices):
-    """output_config.effort — how much the model thinks before it answers.
+    """output_config.effort - how much the model thinks before it answers.
     Every OwnKeyModel except Haiku takes all five (Haiku takes none, and
     apps.assistant.providers simply doesn't send it there)."""
 
-    LOW = "low", _("Low — quickest and cheapest; fine for everyday questions")
-    MEDIUM = "medium", _("Medium — balanced")
-    HIGH = "high", _("High — more thorough plans, more tokens")
-    XHIGH = "xhigh", _("Extra high — for demanding planning")
-    MAX = "max", _("Maximum — the most thorough and the most expensive")
+    LOW = "low", _("Low - quickest and cheapest; fine for everyday questions")
+    MEDIUM = "medium", _("Medium - balanced")
+    HIGH = "high", _("High - more thorough plans, more tokens")
+    XHIGH = "xhigh", _("Extra high - for demanding planning")
+    MAX = "max", _("Maximum - the most thorough and the most expensive")
+
+
+class DataScope(models.TextChoices):
+    """The parts of a user's data they can keep from the assistant - each
+    one gates the tools that read it (tools.TOOLS "scope"). Programs, diet
+    plans and the food/exercise libraries aren't here: proposals are
+    built from them."""
+
+    WORKOUTS = "workouts", _("Workout history, records and progression")
+    BODY = "body", _("Body measurements and weight trend")
+    FOOD = "food", _("Food diary")
+    ACTIVITIES = "activities", _("Activities")
+    STRETCHING = "stretching", _("Stretching")
+    PROFILE = "profile", _("Personal details (height, age, sex, activity level)")
 
 
 class AssistantPreference(TimeStampedModel):
@@ -112,7 +126,7 @@ class AssistantPreference(TimeStampedModel):
         settings.AUTH_USER_MODEL, related_name="assistant_preference", on_delete=models.CASCADE
     )
     consented_at = models.DateTimeField(null=True, blank=True)
-    # The user's own Anthropic API key — always encrypted at rest, see
+    # The user's own Anthropic API key - always encrypted at rest, see
     # config.settings.base's ASSISTANT_ENCRYPTION_KEY. Never rendered
     # back; the UI only ever shows `api_key_hint`.
     api_key = EncryptedTextField(blank=True, default="", key_setting="ASSISTANT_ENCRYPTION_KEY")
@@ -123,6 +137,18 @@ class AssistantPreference(TimeStampedModel):
     # Likewise own-key only, blank = ASSISTANT_EFFORT. Unlike the model it
     # isn't pinned per conversation: it applies from the next reply on.
     own_key_effort = models.CharField(max_length=10, choices=Effort.choices, blank=True)
+    # What the user wants the assistant to always know (allergies, foods
+    # they don't eat, equipment, schedule) - written by the user, sent
+    # with every new conversation (prompts.conversation_context).
+    about_me = models.TextField(blank=True)
+    # Which DataScopes the assistant may read - all on by default, since
+    # turning the assistant on already is the consent to it reading.
+    reads_workouts = models.BooleanField(default=True)
+    reads_body = models.BooleanField(default=True)
+    reads_food = models.BooleanField(default=True)
+    reads_activities = models.BooleanField(default=True)
+    reads_stretching = models.BooleanField(default=True)
+    reads_profile = models.BooleanField(default=True)
 
     def __str__(self):
         return f"{self.user.username}: assistant preference"
@@ -134,6 +160,9 @@ class AssistantPreference(TimeStampedModel):
     @property
     def has_own_key(self):
         return bool(self.api_key)
+
+    def reads(self, scope):
+        return getattr(self, f"reads_{scope}")
 
 
 class KeySource(models.TextChoices):
@@ -178,7 +207,7 @@ class AssistantMessage(TimeStampedModel):
     """One visible chat bubble.
 
     `text` is what the page shows. `raw` is the list of provider-format
-    API messages this bubble contributed to the conversation history —
+    API messages this bubble contributed to the conversation history -
     for a user bubble its one user message; for an assistant bubble every
     assistant turn and tool-result message of its tool loop, exactly as
     exchanged. The next request replays every bubble's `raw` in order,
@@ -189,7 +218,7 @@ class AssistantMessage(TimeStampedModel):
 
     An assistant bubble is created PENDING; the assistant worker (or the
     request itself with ASSISTANT_RUN_INLINE) claims it, sets RUNNING and
-    keeps `text` updated while the reply streams in — the page polls it.
+    keeps `text` updated while the reply streams in - the page polls it.
     """
 
     conversation = models.ForeignKey(
@@ -220,7 +249,7 @@ class AssistantMessage(TimeStampedModel):
 
     @property
     def waiting_long(self):
-        """Still unclaimed well after it was sent — most likely no
+        """Still unclaimed well after it was sent - most likely no
         assistant worker is running (docs/ASSISTANT.md)."""
         return (
             self.status == MessageStatus.PENDING
@@ -242,7 +271,7 @@ class ProposalStatus(models.TextChoices):
 class AssistantProposal(TimeStampedModel):
     """Something the assistant suggests creating. `payload` is already
     validated and normalized (apps.assistant.proposals) when the row is
-    written, and validated again on accept — the user's library can have
+    written, and validated again on accept - the user's library can have
     changed in between (a food deleted, say). Accepting creates a brand
     new, inactive DietPlan/Program the user then reviews and edits like
     any other; the proposal itself is kept as a record either way."""
@@ -256,7 +285,7 @@ class AssistantProposal(TimeStampedModel):
     status = models.CharField(
         max_length=10, choices=ProposalStatus.choices, default=ProposalStatus.PENDING
     )
-    # The DietPlan/Program created on accept — a plain id, not a foreign
+    # The DietPlan/Program created on accept - a plain id, not a foreign
     # key: the user may delete that plan later, and this record of "the
     # assistant suggested it and you created it" should outlive it.
     created_object_id = models.PositiveBigIntegerField(null=True, blank=True)
@@ -269,7 +298,7 @@ class AssistantProposal(TimeStampedModel):
 
 
 class UsageRecord(models.Model):
-    """Tokens one user spent on one day, per key source — what the daily
+    """Tokens one user spent on one day, per key source - what the daily
     limit on the shared provider is checked against, and what the staff
     settings page summarizes."""
 

@@ -1,15 +1,15 @@
-"""Progression engine — decides how a prescribed exercise's next weight
+"""Progression engine - decides how a prescribed exercise's next weight
 should change, per docs/PROGRESSION.md.
 
 Pure domain logic: reads workout/PR history via the ORM but is otherwise
 independent of HTTP/templates, deterministic for the same inputs, and
-explainable (every result carries a `reason`) — see docs/PROGRESSION.md
+explainable (every result carries a `reason`) - see docs/PROGRESSION.md
 "Requirements". Turning this into an actual suggestion *UI* (confidence
 scoring, letting the user override, RPE/RIR data-entry affordances) is
 Phase 7 (docs/ROADMAP.md "Smart suggestions"); this phase only has to make
 the underlying decision correctly.
 
-Nothing here is persisted — a progression decision is recomputed live each
+Nothing here is persisted - a progression decision is recomputed live each
 time from `ExerciseSet`/`PersonalRecord` history, the same "derive, don't
 cache" approach apps.records uses for PRs. That's also why this app has no
 models: there is no new state to store.
@@ -28,7 +28,7 @@ from apps.workouts.models import PerformedExercise, WorkoutSessionStatus
 
 # A session "fails" a weight if it doesn't hit the rep target or has a
 # failed set. This many consecutive failures at the same weight escalates
-# a plain "maintain" into a deload recommendation — see docs/PROGRESSION.md
+# a plain "maintain" into a deload recommendation - see docs/PROGRESSION.md
 # "Failure handling": repeated failure, not a single bad session.
 FAILURE_STREAK_FOR_DELOAD = 2
 
@@ -48,7 +48,7 @@ class ProgressionAction(StrEnum):
     MAINTAIN = "maintain"
     DECREASE = "decrease"
     DELOAD = "deload"
-    # Percentage-based isn't a trend judgement — it's a direct formula
+    # Percentage-based isn't a trend judgement - it's a direct formula
     # result off the current 1RM source, so it gets its own action rather
     # than being forced into increase/maintain/decrease.
     CALCULATED = "calculated"
@@ -83,7 +83,7 @@ def calculate_progression(user, prescription, *, manual_one_rm=None) -> Progress
     `user`'s history and the method configured on `prescription`.
 
     `manual_one_rm`: an optional caller-supplied 1RM (e.g. typed in by the
-    user) — only consulted by percentage-based progression, as the
+    user) - only consulted by percentage-based progression, as the
     highest-priority of the three 1RM sources docs/PROGRESSION.md
     requires. There is no persisted "manual 1RM" field; a caller (a
     future UI) can offer one at call time without this engine needing to
@@ -162,7 +162,7 @@ def _no_history_result(prescription):
     return ProgressionResult(
         ProgressionAction.INSUFFICIENT_DATA,
         prescription.target_weight,
-        _("No completed history for this exercise yet — starting at the prescribed target."),
+        _("No completed history for this exercise yet - starting at the prescribed target."),
         0,
     )
 
@@ -171,7 +171,7 @@ def _manual(user, prescription):
     return ProgressionResult(
         ProgressionAction.MANUAL,
         prescription.target_weight,
-        _("Manual progression — you control the next weight and target."),
+        _("Manual progression - you control the next weight and target."),
         0,
     )
 
@@ -189,7 +189,7 @@ def _maintenance(user, prescription):
             ProgressionAction.DELOAD,
             deload_weight,
             _(
-                "Missed the target %(streak)s sessions in a row at %(weight)s kg — "
+                "Missed the target %(streak)s sessions in a row at %(weight)s kg - "
                 "even maintenance loading should come down, to %(deload)s kg."
             )
             % {"streak": failure_streak, "weight": latest.weight, "deload": deload_weight},
@@ -199,7 +199,7 @@ def _maintenance(user, prescription):
     return ProgressionResult(
         ProgressionAction.MAINTAIN,
         latest.weight,
-        _("Maintenance — keeping the same load."),
+        _("Maintenance - keeping the same load."),
         len(attempts),
     )
 
@@ -217,7 +217,7 @@ def _linear(user, prescription):
         return ProgressionResult(
             ProgressionAction.INCREASE,
             new_weight,
-            _("Hit every rep last session at %(weight)s kg — adding %(increment)s kg.")
+            _("Hit every rep last session at %(weight)s kg - adding %(increment)s kg.")
             % {"weight": latest.weight, "increment": increment},
             len(attempts),
         )
@@ -229,7 +229,7 @@ def _linear(user, prescription):
             ProgressionAction.DELOAD,
             deload_weight,
             _(
-                "Missed target reps %(streak)s sessions in a row at %(weight)s kg — "
+                "Missed target reps %(streak)s sessions in a row at %(weight)s kg - "
                 "recommending a deload to %(deload)s kg."
             )
             % {"streak": failure_streak, "weight": latest.weight, "deload": deload_weight},
@@ -240,7 +240,7 @@ def _linear(user, prescription):
         ProgressionAction.MAINTAIN,
         latest.weight,
         _(
-            "Missed target reps last session at %(weight)s kg — try the same weight again "
+            "Missed target reps last session at %(weight)s kg - try the same weight again "
             "before increasing."
         )
         % {"weight": latest.weight},
@@ -262,7 +262,7 @@ def _double_progression(user, prescription):
             ProgressionAction.INCREASE,
             new_weight,
             _(
-                "Hit the top of your rep range on every set at %(weight)s kg — adding "
+                "Hit the top of your rep range on every set at %(weight)s kg - adding "
                 "%(increment)s kg and resetting to the bottom of the range."
             )
             % {"weight": latest.weight, "increment": increment},
@@ -274,7 +274,7 @@ def _double_progression(user, prescription):
             ProgressionAction.MAINTAIN,
             latest.weight,
             _(
-                "Still within your rep range at %(weight)s kg — repeat the same weight and "
+                "Still within your rep range at %(weight)s kg - repeat the same weight and "
                 "aim for more reps next time."
             )
             % {"weight": latest.weight},
@@ -289,7 +289,7 @@ def _double_progression(user, prescription):
             deload_weight,
             _(
                 "Missed the bottom of your rep range %(streak)s sessions in a row at "
-                "%(weight)s kg — recommending a deload to %(deload)s kg."
+                "%(weight)s kg - recommending a deload to %(deload)s kg."
             )
             % {"streak": failure_streak, "weight": latest.weight, "deload": deload_weight},
             len(attempts),
@@ -299,7 +299,7 @@ def _double_progression(user, prescription):
         ProgressionAction.MAINTAIN,
         latest.weight,
         _(
-            "Missed the bottom of your rep range last session at %(weight)s kg — try the "
+            "Missed the bottom of your rep range last session at %(weight)s kg - try the "
             "same weight again."
         )
         % {"weight": latest.weight},
@@ -310,7 +310,7 @@ def _double_progression(user, prescription):
 def _rep_range(user, prescription):
     """A more patient sibling of double progression: requires
     `TOP_OF_RANGE_STREAK_FOR_INCREASE` consecutive sessions at the top of
-    the range (not just one) before recommending more weight — see
+    the range (not just one) before recommending more weight - see
     docs/PROGRESSION.md's "recent performance trend should be considered"
     applied specifically to the upside decision."""
     history_limit = max(TOP_OF_RANGE_STREAK_FOR_INCREASE, FAILURE_STREAK_FOR_DELOAD) + 1
@@ -329,7 +329,7 @@ def _rep_range(user, prescription):
             new_weight,
             _(
                 "Hit the top of your rep range for %(streak)s sessions in a row at "
-                "%(weight)s kg — adding %(increment)s kg."
+                "%(weight)s kg - adding %(increment)s kg."
             )
             % {"streak": top_streak, "weight": latest.weight, "increment": increment},
             len(attempts),
@@ -340,7 +340,7 @@ def _rep_range(user, prescription):
             ProgressionAction.MAINTAIN,
             latest.weight,
             _(
-                "Within your rep range at %(weight)s kg — keep working toward the top of "
+                "Within your rep range at %(weight)s kg - keep working toward the top of "
                 "the range before increasing."
             )
             % {"weight": latest.weight},
@@ -355,7 +355,7 @@ def _rep_range(user, prescription):
             deload_weight,
             _(
                 "Missed the bottom of your rep range %(streak)s sessions in a row at "
-                "%(weight)s kg — recommending a deload to %(deload)s kg."
+                "%(weight)s kg - recommending a deload to %(deload)s kg."
             )
             % {"streak": failure_streak, "weight": latest.weight, "deload": deload_weight},
             len(attempts),
@@ -365,7 +365,7 @@ def _rep_range(user, prescription):
         ProgressionAction.MAINTAIN,
         latest.weight,
         _(
-            "Missed the bottom of your rep range last session at %(weight)s kg — try the "
+            "Missed the bottom of your rep range last session at %(weight)s kg - try the "
             "same weight again."
         )
         % {"weight": latest.weight},
@@ -420,7 +420,7 @@ def _percentage_based(user, prescription, manual_one_rm=None):
         return ProgressionResult(
             ProgressionAction.INSUFFICIENT_DATA,
             None,
-            _("No 1RM available yet — log a set first, or enter your 1RM manually."),
+            _("No 1RM available yet - log a set first, or enter your 1RM manually."),
             0,
         )
 
@@ -447,18 +447,18 @@ def _rpe_rir(user, prescription):
 
     latest = attempts[0]
     # Judge against what was actually asked of the user *that session*
-    # (the snapshot), not whatever the live prescription says now — same
+    # (the snapshot), not whatever the live prescription says now - same
     # historical-trustworthiness reasoning as min_reps/max_reps above.
     target_rir = latest.target_rir
     actual_rir_values = [s.rir for s in latest.sets if s.rir is not None]
 
     if target_rir is None or not actual_rir_values:
-        # Never fabricate RPE/RIR — fall back to reporting no decision
+        # Never fabricate RPE/RIR - fall back to reporting no decision
         # rather than guessing, per docs/PROGRESSION.md.
         return ProgressionResult(
             ProgressionAction.INSUFFICIENT_DATA,
             latest.weight,
-            _("No RIR logged against a target yet — log sets with RIR to use this method."),
+            _("No RIR logged against a target yet - log sets with RIR to use this method."),
             len(attempts),
         )
 
@@ -470,7 +470,7 @@ def _rpe_rir(user, prescription):
             ProgressionAction.INCREASE,
             latest.weight + increment,
             _(
-                "Target RIR %(target)s, actual %(actual)g — more in reserve than planned, "
+                "Target RIR %(target)s, actual %(actual)g - more in reserve than planned, "
                 "adding %(increment)s kg."
             )
             % {"target": target_rir, "actual": actual_rir, "increment": increment},
@@ -483,7 +483,7 @@ def _rpe_rir(user, prescription):
             ProgressionAction.DECREASE,
             deload_weight,
             _(
-                "Target RIR %(target)s, actual %(actual)g — notably closer to failure than "
+                "Target RIR %(target)s, actual %(actual)g - notably closer to failure than "
                 "planned, easing back to %(deload)s kg."
             )
             % {"target": target_rir, "actual": actual_rir, "deload": deload_weight},
@@ -493,7 +493,7 @@ def _rpe_rir(user, prescription):
     return ProgressionResult(
         ProgressionAction.MAINTAIN,
         latest.weight,
-        _("Target RIR %(target)s, actual %(actual)g — close enough to plan, hold the weight.")
+        _("Target RIR %(target)s, actual %(actual)g - close enough to plan, hold the weight.")
         % {"target": target_rir, "actual": actual_rir},
         len(attempts),
     )

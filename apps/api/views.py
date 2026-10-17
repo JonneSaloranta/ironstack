@@ -1,10 +1,10 @@
-"""DRF views for every apps.api context — see docs/API.md.
+"""DRF views for every apps.api context - see docs/API.md.
 
 Every viewset here goes through the exact same domain services the
 server-rendered web views already use (apps.exercises.services,
 apps.programs.services, apps.workouts.services, apps.records.services,
 ...) rather than re-deriving ownership/visibility rules or
-snapshot-on-start/PR-detection side effects a second time — per
+snapshot-on-start/PR-detection side effects a second time - per
 CLAUDE.md, business logic belongs in services, and a DRF view is exactly
 as much a "view" as a Django one in that sense.
 """
@@ -94,7 +94,7 @@ from .viewsets import OwnedResourceViewSet
 
 
 class ProfileView(generics.RetrieveUpdateAPIView):
-    """A singleton resource — GET/PATCH always act on the authenticated
+    """A singleton resource - GET/PATCH always act on the authenticated
     key's own user, never a list or an id in the URL. Create/delete
     aren't meaningful here (an account isn't made or removed through
     this API); the profile context's can_create/can_delete permission
@@ -113,7 +113,7 @@ class ProfileView(generics.RetrieveUpdateAPIView):
 
 
 class MuscleGroupViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
-    """Reference data (system-seeded, never user-created) — read-only,
+    """Reference data (system-seeded, never user-created) - read-only,
     grouped under the exercises context since that's the only place it's
     ever used from."""
 
@@ -144,7 +144,7 @@ class ExerciseViewSet(OwnedResourceViewSet):
 class ProgramViewSet(OwnedResourceViewSet):
     serializer_class = ProgramSerializer
     api_context = ApiContext.PROGRAMS
-    soft_delete = False  # Program has no `active` field — matches its web view's real delete
+    soft_delete = False  # Program has no `active` field - matches its web view's real delete
 
     def visible_queryset(self):
         return program_services.visible_to(self.request.user)
@@ -216,7 +216,7 @@ class PerformedExerciseViewSet(
     mixins.RetrieveModelMixin,
     viewsets.GenericViewSet,
 ):
-    """Create + read only — the web UI has no way to edit or remove a
+    """Create + read only - the web UI has no way to edit or remove a
     performed exercise mid-session either, only add one
     (apps.workouts.views.performed_exercise_add)."""
 
@@ -233,7 +233,7 @@ class PerformedExerciseViewSet(
 
 
 class ExerciseSetViewSet(viewsets.ModelViewSet):
-    """The actual "log a set" endpoint — perform_create goes through
+    """The actual "log a set" endpoint - perform_create goes through
     apps.workouts.services.log_set (auto-numbers set_number, ignoring
     anything a caller sent for it) and then
     apps.records.services.check_and_record_prs, exactly the two calls
@@ -308,7 +308,7 @@ class ActivityViewSet(viewsets.ModelViewSet):
 
 
 # --------------------------------------------------------------------
-# Records (read-only — PRs are derived, never directly writable)
+# Records (read-only - PRs are derived, never directly writable)
 # --------------------------------------------------------------------
 
 
@@ -323,13 +323,13 @@ class PersonalRecordViewSet(
 
 
 # --------------------------------------------------------------------
-# Analytics (read-only aggregates — no backing model of their own)
+# Analytics (read-only aggregates - no backing model of their own)
 # --------------------------------------------------------------------
 
 
 class TrainingSummaryView(APIView):
     """`?range=7d|30d|all` (default 30d, matching
-    apps.analytics.views.AnalyticsDashboardView) — total sessions/
+    apps.analytics.views.AnalyticsDashboardView) - total sessions/
     duration/volume in canonical kg (see apps.api.serializers' own
     docstring for why this API never converts to a display unit)."""
 
@@ -337,7 +337,7 @@ class TrainingSummaryView(APIView):
 
     # A plain APIView (not GenericAPIView), so it has no serializer_class
     # attribute for drf-spectacular's schema generator to discover on
-    # its own (docs/API.md "Interactive docs") — without this it drops
+    # its own (docs/API.md "Interactive docs") - without this it drops
     # the operation from the generated schema/Swagger UI entirely
     # rather than guessing wrong.
     @extend_schema(responses=TrainingSummarySerializer)
@@ -349,7 +349,7 @@ class TrainingSummaryView(APIView):
 
 class AchievementsView(APIView):
     """The same all-time, shared-across-users highlights the dashboard
-    carousel shows (apps.analytics.achievements) — see
+    carousel shows (apps.analytics.achievements) - see
     docs/UI.md "Achievements carousel" for what show_achievements does
     to this list."""
 
@@ -390,7 +390,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     api_context = ApiContext.NUTRITION
 
     def get_queryset(self):
-        # RecipeSerializer nests every ingredient (with its food) —
+        # RecipeSerializer nests every ingredient (with its food) -
         # prefetched here so listing many recipes stays two queries
         # total (recipes + ingredients), not one ingredients query per
         # recipe in the list.
@@ -402,7 +402,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         serializer.save(owner=self.request.user)
 
     def perform_destroy(self, instance):
-        # Same as the web UI — a recipe still used by diary entries or
+        # Same as the web UI - a recipe still used by diary entries or
         # diet plans is only hidden (nutrition_services.delete_recipe).
         nutrition_services.delete_recipe(instance)
 
@@ -431,7 +431,7 @@ class DiaryEntryViewSet(viewsets.ModelViewSet):
 class NutritionGoalViewSet(
     mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet
 ):
-    """Read-only — see NutritionGoalSerializer's own docstring for why:
+    """Read-only - see NutritionGoalSerializer's own docstring for why:
     a goal is only ever created/superseded through
     apps.nutrition.services.set_goal, never a raw PATCH."""
 
@@ -445,7 +445,7 @@ class NutritionGoalViewSet(
 class NutritionTargetViewSet(
     mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet
 ):
-    """Read-only — same reasoning as NutritionGoalViewSet above."""
+    """Read-only - same reasoning as NutritionGoalViewSet above."""
 
     serializer_class = NutritionTargetSerializer
     api_context = ApiContext.NUTRITION
@@ -455,7 +455,7 @@ class NutritionTargetViewSet(
 
 
 class NutritionProfileView(generics.RetrieveUpdateAPIView):
-    """A singleton resource, the same shape as ProfileView above —
+    """A singleton resource, the same shape as ProfileView above -
     GET/PATCH always act on the authenticated key's own
     NutritionProfile. get_object_or_404 rather than a bare attribute
     lookup: a user who hasn't gone through nutrition onboarding yet
@@ -472,7 +472,7 @@ class NutritionProfileView(generics.RetrieveUpdateAPIView):
 class DietPlanViewSet(viewsets.ModelViewSet):
     """create/activate/deactivate/apply all go through
     apps.nutrition.diet_builder/services rather than a raw field
-    write — see DietPlanSerializer's own docstring for why."""
+    write - see DietPlanSerializer's own docstring for why."""
 
     serializer_class = DietPlanSerializer
     api_context = ApiContext.NUTRITION
@@ -500,7 +500,7 @@ class DietPlanViewSet(viewsets.ModelViewSet):
     # A plan's target_* fields must stay writable input on the
     # serializer (perform_create passes them straight to
     # build_diet_plan, and Meta.read_only_fields would strip them from
-    # validated_data on create too, not just update) — so "read-only
+    # validated_data on create too, not just update) - so "read-only
     # after creation" is enforced here instead, by discarding them
     # before the default ModelSerializer.update() gets a chance to
     # write them onto the instance.
@@ -542,8 +542,8 @@ class DietPlanViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=["get"], url_path="shopping-list")
     def shopping_list(self, request, pk=None):
         """The plan's shopping list for one trip (apps.nutrition.shopping):
-        every food the trip's days need — recipes broken into ingredients
-        — added up, with each day's amount. `?trip=<weekday>` picks the
+        every food the trip's days need - recipes broken into ingredients
+        - added up, with each day's amount. `?trip=<weekday>` picks the
         trip starting that day; by default the one shopped today or next.
         Derived from the plan on every request; nothing is stored."""
         from apps.nutrition import shopping
@@ -618,7 +618,7 @@ class DietPlanViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=["post"])
     def apply(self, request, pk=None):
         """Materializes this plan into real DiaryEntry rows for
-        `date` — the one thing an API consumer would otherwise have
+        `date` - the one thing an API consumer would otherwise have
         to reconstruct by hand (fetch every DietPlanItem, POST N
         diary-entries/ individually)."""
         from datetime import date as date_cls
@@ -644,7 +644,7 @@ class DietPlanViewSet(viewsets.ModelViewSet):
 class DietPlanMealViewSet(
     mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet
 ):
-    """Read-only — see DietPlanSerializer's own docstring for why."""
+    """Read-only - see DietPlanSerializer's own docstring for why."""
 
     serializer_class = DietPlanMealSerializer
     api_context = ApiContext.NUTRITION
@@ -656,7 +656,7 @@ class DietPlanMealViewSet(
 class DietPlanItemViewSet(
     mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet
 ):
-    """Read-only — same reasoning as DietPlanMealViewSet above."""
+    """Read-only - same reasoning as DietPlanMealViewSet above."""
 
     serializer_class = DietPlanItemSerializer
     api_context = ApiContext.NUTRITION

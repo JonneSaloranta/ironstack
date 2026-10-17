@@ -1,4 +1,4 @@
-"""Profile → Administration → Site & SEO (staff only) — see
+"""Profile → Administration → Site & SEO (staff only) - see
 apps.core.models.SeoSettings for what the one toggle here actually
 does once saved, and apps.core.context_processors.seo/apps.core.
 views.robots_txt for where it's actually read."""

@@ -1,20 +1,20 @@
 // Guided stretching session player (templates/stretching/session_play.html).
 //
 // Plays the step list apps.stretching.services.timer_steps() builds on
-// the server — "prepare" (get into position), "hold", and "rest" steps
-// — one countdown after another, with a chime + vibration at each
+// the server - "prepare" (get into position), "hold", and "rest" steps
+// - one countdown after another, with a chime + vibration at each
 // change. The sequencing rules live (and are tested) in Python; this
 // file only plays them. When the last hold of a stretch finishes, it
 // POSTs that stretch as done (with the seconds actually held) so a page
 // reload mid-session resumes from the next pending stretch.
 //
 // The user stays in charge throughout: pause, ±10 s, skip a step, skip
-// a whole stretch — and the plain per-stretch Done/Skip forms under the
+// a whole stretch - and the plain per-stretch Done/Skip forms under the
 // player work without any of this JS at all.
 //
 // Needs static/js/csrf.js (postJSON) and static/js/timer-audio.js
 // (createTimerAudio) loaded first. Same wall-clock-deadline countdown
-// as static/js/rest-timer.js — see that file's `endAt` comment for why
+// as static/js/rest-timer.js - see that file's `endAt` comment for why
 // a plain decrement-per-tick drifts on a locked phone.
 const STRETCH_TIMER_MUTE_KEY = "ironstack-stretch-timer-muted";
 
@@ -115,7 +115,7 @@ function ironstackStretchTimer() {
         this.held[step.performed] = (this.held[step.performed] || 0) + (this.stepLength - this.remaining);
       }
       if (natural) {
-        // A hold starting is the cue that matters most — a higher,
+        // A hold starting is the cue that matters most - a higher,
         // double chime; everything else gets a single soft one.
         const next = this.steps[this.index + 1];
         if (next && next.kind === "hold") {
@@ -153,7 +153,7 @@ function ironstackStretchTimer() {
       const performed = this.currentPerformed;
       clearInterval(this.intervalId);
       if ((this.held[performed] || 0) > 0 || this.current.kind === "hold") {
-        // Part of it was actually done — count what was held rather
+        // Part of it was actually done - count what was held rather
         // than throwing it away.
         if (this.current.kind === "hold") {
           this.held[performed] = (this.held[performed] || 0) + (this.stepLength - this.remaining);
@@ -177,7 +177,7 @@ function ironstackStretchTimer() {
       const body = { action };
       if (action === "done") body.actual_seconds = this.held[performed] || 0;
       postJSON(url, body).catch(() => {
-        // Offline or a server hiccup — the plain Done/Skip buttons
+        // Offline or a server hiccup - the plain Done/Skip buttons
         // below still let the user record it by hand.
       });
     },
@@ -193,7 +193,7 @@ function ironstackStretchTimer() {
       }
     },
 
-    // Screen Wake Lock API — keeps the phone from dimming/locking in
+    // Screen Wake Lock API - keeps the phone from dimming/locking in
     // the middle of a hold while it's lying on the floor next to you.
     // Best-effort: unsupported browsers just behave as before, and the
     // wall-clock countdown still catches up after an unlock.

@@ -1,10 +1,10 @@
 {$IRONSTACK_DOMAIN} {
 	encode gzip
 
-	# Mirrors compose/nginx/nginx.conf's own static/media handling —
+	# Mirrors compose/nginx/nginx.conf's own static/media handling -
 	# served directly by the proxy, never proxied through to gunicorn.
 	handle_path /static/* {
-		# Content-hashed names only — see compose/nginx/nginx.conf.
+		# Content-hashed names only - see compose/nginx/nginx.conf.
 		@hashed path_regexp \.[0-9a-f]{12}\.[a-z0-9]+$
 		header @hashed Cache-Control "public, max-age=31536000, immutable"
 		root * /app/staticfiles
@@ -18,7 +18,7 @@
 
 	handle {
 		reverse_proxy web:8000 {
-			# nginx's own compose/nginx/nginx.conf sets this too — keeps
+			# nginx's own compose/nginx/nginx.conf sets this too - keeps
 			# one consistent header contract regardless of which proxy
 			# fronts the app (apps.accounts.forms._client_ip reads it
 			# for login rate limiting).

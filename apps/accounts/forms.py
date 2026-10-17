@@ -16,20 +16,20 @@ from apps.core.request import client_ip
 from . import twofactor
 from .models import UnitSystem, User
 
-# apps.accounts.views.RateLimitedLoginView's brute-force protection —
+# apps.accounts.views.RateLimitedLoginView's brute-force protection -
 # no relation to apps.api's rate limiting, which is a completely
 # separate, API-key-only mechanism with its own admin-configurable
 # tiers. This one is fixed and simple on purpose: it exists to blunt
 # automated password guessing, not to be a tunable product feature.
 LOGIN_ATTEMPT_LIMIT = 5
-# Failed attempts from one IP across *all* usernames — the per-username
+# Failed attempts from one IP across *all* usernames - the per-username
 # limit above alone would let one client cycle through guessed
 # usernames freely. Higher than LOGIN_ATTEMPT_LIMIT so a shared office
 # or household network can absorb a few people's typos.
 LOGIN_ATTEMPT_IP_LIMIT = LOGIN_ATTEMPT_LIMIT * 4
 LOGIN_ATTEMPT_WINDOW_SECONDS = 15 * 60
 
-# apps.accounts.views.RateLimitedPasswordResetView's own protection —
+# apps.accounts.views.RateLimitedPasswordResetView's own protection -
 # without it, PasswordResetView (django.contrib.auth) is wide open to
 # being used as a free tool to spam an arbitrary email address with
 # reset links over and over, using this instance's own SMTP relay to
@@ -39,7 +39,7 @@ LOGIN_ATTEMPT_WINDOW_SECONDS = 15 * 60
 PASSWORD_RESET_ATTEMPT_LIMIT = 5
 PASSWORD_RESET_ATTEMPT_WINDOW_SECONDS = 15 * 60
 
-# apps.accounts.views.TwoFactorVerifyView's own protection — a 6-digit
+# apps.accounts.views.TwoFactorVerifyView's own protection - a 6-digit
 # TOTP code only has a million possible values, so this login step
 # needs its own brute-force limit just as much as the password one
 # does. Keyed by *user*, not client IP (see TwoFactorVerifyForm.
@@ -58,19 +58,19 @@ TWOFACTOR_ATTEMPT_WINDOW_SECONDS = 5 * 60
 # "localtime" sounds like it means "detect and use my device's own
 # timezone" but is actually a *fixed* server-side alias (whatever
 # /etc/localtime resolves to on the machine running this container,
-# typically UTC in a minimal Docker image) — nothing about it is
+# typically UTC in a minimal Docker image) - nothing about it is
 # dynamic, and a server-rendered app has no way to know a visiting
 # device's timezone without separate client-side detection this app
 # doesn't do (see apps.accounts.middleware.UserTimezoneMiddleware for
 # why picking a real zone, e.g. "Europe/Helsinki", is what actually
 # makes the "Timezone" setting work). "Factory" is tzdata's own
-# placeholder for "no real zone configured" — never a meaningful choice
+# placeholder for "no real zone configured" - never a meaningful choice
 # for a user to make.
 _MISLEADING_TIMEZONE_ALIASES = {"localtime", "Factory"}
 
 
 def _timezone_choices():
-    """Shared by ProfileForm and OnboardingForm below — one filtered
+    """Shared by ProfileForm and OnboardingForm below - one filtered
     list, not two copies that could drift apart on which aliases get
     excluded."""
     return sorted(
@@ -90,7 +90,7 @@ class SignupForm(UserCreationForm):
             self.fields["email"].required = True
 
 
-# apps.core.request.client_ip — moved there once apps.social needed
+# apps.core.request.client_ip - moved there once apps.social needed
 # the exact same IP-resolution logic for its own invite-code lookup
 # throttle; kept as a module-level alias here rather than rewriting
 # every `_client_ip(...)` call below to a longer import path.
@@ -99,14 +99,14 @@ _client_ip = client_ip
 
 class _RateLimitedLoginMixin:
     """Shared by RateLimitedAuthenticationForm and
-    RateLimitedAdminAuthenticationForm below — blocks further login
+    RateLimitedAdminAuthenticationForm below - blocks further login
     attempts from the same client for `window_seconds` after `limit`
     failed attempts for one username, or `ip_limit` across all of them,
     within that window (see clean()). Always keyed by client IP, never
     by the submitted username alone: keying by username alone would let an attacker
     cycle through guessed usernames from one source freely, and would
     let an attacker lock a *real* user out on purpose by deliberately
-    failing their login from elsewhere — a denial-of-service against
+    failing their login from elsewhere - a denial-of-service against
     that one account. IP-based keying costs the attacker actual
     infrastructure to route around instead. Uses the same shared
     DatabaseCache apps.api's throttling does, for the same reason:
@@ -114,7 +114,7 @@ class _RateLimitedLoginMixin:
     an in-process counter would let each worker serve its own
     independent allowance.
 
-    `cache_key_prefix` is distinct per subclass deliberately — a
+    `cache_key_prefix` is distinct per subclass deliberately - a
     regular login attempt and an admin login attempt from the same IP
     (plausible on a shared/office network) don't count against each
     other's allowance, since they're different endpoints with a
@@ -129,7 +129,7 @@ class _RateLimitedLoginMixin:
     def clean(self):
         # Two counters. Per IP *and* username: `limit` failures lock
         # that username out for this client, and only a successful
-        # login as that same username clears it — clearing a single
+        # login as that same username clears it - clearing a single
         # per-IP counter on any success let someone log into their own
         # account between guesses and try other people's passwords
         # without end. Per IP alone: `ip_limit` failures across every
@@ -167,7 +167,7 @@ class _RateLimitedLoginMixin:
             email_verification.resend_if_due(self.request, user)
             raise forms.ValidationError(
                 _(
-                    "Confirm your email address first — we've sent a link to it. "
+                    "Confirm your email address first - we've sent a link to it. "
                     "Check your inbox (and spam folder)."
                 ),
                 code="email_unverified",
@@ -181,7 +181,7 @@ class RateLimitedAuthenticationForm(_RateLimitedLoginMixin, AuthenticationForm):
 class RateLimitedAdminAuthenticationForm(_RateLimitedLoginMixin, AdminAuthenticationForm):
     """Django's own /admin/ login (AdminSite.login()) has its own,
     completely separate login view/form from the one
-    RateLimitedAuthenticationForm above protects — it's never routed
+    RateLimitedAuthenticationForm above protects - it's never routed
     through django.contrib.auth.urls or apps.accounts.views.
     RateLimitedLoginView at all, so without this, brute-forcing
     /admin/login/ directly was wide open even after the regular login
@@ -189,7 +189,7 @@ class RateLimitedAdminAuthenticationForm(_RateLimitedLoginMixin, AdminAuthentica
     `admin.site.login_form = RateLimitedAdminAuthenticationForm`.
     AdminSite.login() internally delegates to django.contrib.auth.
     views.LoginView (passing this as `authentication_form`), which is
-    what actually supplies the `request` this form's clean() needs —
+    what actually supplies the `request` this form's clean() needs -
     no extra view-level wiring required the way the non-admin login
     needed RateLimitedLoginView.get_form_kwargs (LoginView already
     does that itself)."""
@@ -205,10 +205,10 @@ class RateLimitedPasswordResetForm(PasswordResetForm):
     submitted email would let an attacker lock a real user's own
     ability to request a reset by repeatedly submitting *their* address
     from elsewhere. Every submission counts here, not just failed
-    ones — unlike a login attempt, there's no such thing as a "failed"
+    ones - unlike a login attempt, there's no such thing as a "failed"
     password-reset request to only count selectively (the form is
     deliberately valid, and sends no email, for an address that
-    doesn't exist — see its own save(), unchanged here — so counting
+    doesn't exist - see its own save(), unchanged here - so counting
     only "failures" would count nothing at all).
 
     django.contrib.auth.forms.PasswordResetForm doesn't accept a
@@ -234,7 +234,7 @@ class RateLimitedPasswordResetForm(PasswordResetForm):
 
 
 class AccountDetailsForm(forms.ModelForm):
-    """Editable account identity — username, name, email — kept
+    """Editable account identity - username, name, email - kept
     deliberately separate from ProfileForm's display preferences
     (unit_system/timezone/height/etc.) and from the password itself
     (django.contrib.auth's own PasswordChangeForm/view already handles
@@ -247,18 +247,18 @@ class AccountDetailsForm(forms.ModelForm):
 
 
 class ProfileForm(forms.ModelForm):
-    """Display preferences — unit_system/timezone drive unit conversion
+    """Display preferences - unit_system/timezone drive unit conversion
     (apps.core.units, apps.measurements.units, apps.activities.units) and
     "today"/date-range boundaries (docs/ARCHITECTURE.md "Units and
     precision") everywhere else in the app; `theme`/`appearance`
     (apps.accounts.models.Theme/Appearance) together pick which
     `[data-theme="..."][data-appearance="..."]` palette
-    templates/base.html renders — plus `height`, entered and
+    templates/base.html renders - plus `height`, entered and
     displayed in the user's preferred unit (cm/inches) the same way
     apps.measurements.forms.BodyMeasurementForm handles a length reading,
     converted to/from canonical meters here. `height` is optional and
     exists solely to compute BMI (apps.core.bmi) alongside a logged body
-    weight — nothing else in the app reads it. `show_bmi` is a separate
+    weight - nothing else in the app reads it. `show_bmi` is a separate
     on/off switch for the BMI card itself, shown on the "Body weight"
     measurement history page (apps.measurements), not here: some people
     would simply rather not see the number at all, regardless of
@@ -269,16 +269,16 @@ class ProfileForm(forms.ModelForm):
     every user on this instance, so this controls whether *this* user's
     own data (longest streak/workout count/PRs/total weight lifted, and
     when they last started a workout) is included in what everyone
-    sees — off keeps their own activity private while they still see
+    sees - off keeps their own activity private while they still see
     everyone else's. `show_name_to_others` is a second, more granular
     privacy setting: whether this user's first name is ever shown
     alongside their username in that same carousel/list
-    (`User.public_display_name()`) — the username itself is always
+    (`User.public_display_name()`) - the username itself is always
     shown regardless, unaffected by this toggle. `allow_friend_requests`/
     `allow_group_invites` are apps.social's own opt-*out* privacy
-    settings — see their own model field comments for why they default
+    settings - see their own model field comments for why they default
     on rather than off, unlike every other toggle on this form.
-    `nutrition_enabled` is neither privacy nor social either — asked
+    `nutrition_enabled` is neither privacy nor social either - asked
     during onboarding the same way allow_friend_requests/
     allow_group_invites are, it only hides nutrition from navigation
     (templates/base.html's bottom-nav tab) for a user who doesn't want
@@ -290,7 +290,7 @@ class ProfileForm(forms.ModelForm):
     log your measurements?" card (apps.measurements.services.
     needs_body_tracking_reminder), its own group between the display
     fields above and the privacy toggles below. `is_personal_trainer`/
-    `accepting_new_clients` (apps.coaching) are their own final group —
+    `accepting_new_clients` (apps.coaching) are their own final group -
     unlike everything above, `is_personal_trainer` defaults off (a new
     capability, not an existing one being opted out of), and
     `accepting_new_clients` only matters once it's on.
@@ -302,7 +302,7 @@ class ProfileForm(forms.ModelForm):
     class Meta:
         model = User
         # Order matches the visual grouping templates/accounts/profile.html
-        # renders this form's fields in (field-group-label, base.css) —
+        # renders this form's fields in (field-group-label, base.css) -
         # "language" used to sit last, after every privacy/social toggle,
         # which put it in the wrong group there once fields started being
         # grouped instead of just listed top-to-bottom in whatever order
@@ -351,19 +351,19 @@ class ProfileForm(forms.ModelForm):
         help_texts = {
             "theme": _(
                 "Which color palette the app uses. Each theme has its own "
-                "dark and light look — pick which one below."
+                "dark and light look - pick which one below."
             ),
             "nutrition_enabled": _(
                 "Shows nutrition (food diary, recipes, diet plans) in "
                 "navigation and on the dashboard. Turn off to hide it if you "
-                "don't want to track nutrition — existing nutrition data is "
+                "don't want to track nutrition - existing nutrition data is "
                 "never deleted, and its pages stay reachable directly by a "
                 "link."
             ),
             "stretching_enabled": _(
                 "Shows stretching (routines, guided sessions) in navigation "
                 "and suggests a cool-down after a workout. Turn off to hide "
-                "it — existing stretching data is never deleted."
+                "it - existing stretching data is never deleted."
             ),
             "appearance": _(
                 "\"Auto\" follows your device's own light/dark setting and "
@@ -372,7 +372,7 @@ class ProfileForm(forms.ModelForm):
             "body_tracking_reminders_enabled": _(
                 "Shows a dashboard card nudging you to log a body measurement "
                 "when you haven't logged one in a while. Turn off to never see "
-                "that reminder — you can still log a reading any time from "
+                "that reminder - you can still log a reading any time from "
                 "Body tracking."
             ),
             "show_bmi": _("Turns off the BMI card and its category ranges entirely."),
@@ -381,7 +381,7 @@ class ProfileForm(forms.ModelForm):
                 "workout count, PRs, total weight lifted, and when you last "
                 "trained, in the dashboard's achievements carousel and "
                 "\"Recently active\" list. Turn off to keep your own "
-                "activity private — you'll still see everyone else's."
+                "activity private - you'll still see everyone else's."
             ),
             "show_name_to_others": _(
                 "Shows your first name next to your username wherever "
@@ -393,8 +393,8 @@ class ProfileForm(forms.ModelForm):
                 "Shows your Gravatar (gravatar.com) picture at the top of "
                 "this page, if the email on this account has one. Turning "
                 "this on means your browser loads that image directly "
-                "from gravatar.com — the only place this app talks to a "
-                "server outside your own instance — which then sees your "
+                "from gravatar.com - the only place this app talks to a "
+                "server outside your own instance - which then sees your "
                 "email's hash and your IP address."
             ),
             "allow_friend_requests": _(
@@ -420,7 +420,7 @@ class ProfileForm(forms.ModelForm):
         }
         # is_personal_trainer's own checkbox toggles accepting_new_clients'
         # visibility client-side (templates/accounts/profile.html's form-
-        # level x-data="{ isPt: ... }") — the only field on this form
+        # level x-data="{ isPt: ... }") - the only field on this form
         # another field's visibility depends on, so a plain widget attr
         # here rather than a whole new templating mechanism.
         widgets = {
@@ -434,7 +434,7 @@ class ProfileForm(forms.ModelForm):
         # Captured before any submitted data can change unit_system on
         # the instance, so a height typed under "cm" is always converted
         # as cm even if the same submission also switches the unit
-        # system — matches what the user actually saw on the label.
+        # system - matches what the user actually saw on the label.
         self._unit_system = self.instance.unit_system
         is_metric = self._unit_system == UnitSystem.METRIC
         self.fields["height"].label = (
@@ -442,7 +442,7 @@ class ProfileForm(forms.ModelForm):
         )
         if self.instance.height is not None:
             # Canonical storage keeps 0.1mm precision (see the model
-            # field's help_text) — quantized down here to what's
+            # field's help_text) - quantized down here to what's
             # actually worth displaying, same as
             # apps.measurements.units.to_display does for a length
             # reading.
@@ -473,7 +473,7 @@ class ProfileForm(forms.ModelForm):
 
 class TwoFactorSetupConfirmForm(forms.Form):
     """Profile → Two-factor authentication → setup's own confirm step
-    — proves the user actually configured their authenticator app
+    - proves the user actually configured their authenticator app
     correctly (scanned the right QR code, device clock close enough to
     the server's) before `totp_enabled` ever flips to True. No rate
     limiting here unlike TwoFactorVerifyForm below: this only ever runs
@@ -489,7 +489,7 @@ class TwoFactorSetupConfirmForm(forms.Form):
     # accepted: it didn't get Bitwarden to offer its own inline
     # autofill-suggestion icon here in practice (that gap looks like a
     # Bitwarden-side limitation for a standalone code field rather than
-    # anything this attribute controls — its "Autofill" toolbar action
+    # anything this attribute controls - its "Autofill" toolbar action
     # still works regardless), and unlike "off" it doesn't stop the
     # browser's own plain input-history from re-suggesting stale,
     # already-expired codes from a dropdown.
@@ -508,7 +508,7 @@ class TwoFactorSetupConfirmForm(forms.Form):
         code = self.cleaned_data["code"].strip()
         if not twofactor.verify_totp_code(self.user.totp_secret, code, user=self.user):
             raise forms.ValidationError(
-                _("Incorrect code — check your authenticator app and try again."),
+                _("Incorrect code - check your authenticator app and try again."),
                 code="invalid",
             )
         return code
@@ -516,18 +516,18 @@ class TwoFactorSetupConfirmForm(forms.Form):
 
 class TwoFactorVerifyForm(forms.Form):
     """The login flow's second step (apps.accounts.views.
-    TwoFactorVerifyView) — one field takes either a 6-digit TOTP code
+    TwoFactorVerifyView) - one field takes either a 6-digit TOTP code
     or a backup code (apps.accounts.twofactor.verify_and_consume_backup_code),
     told apart by shape: a plain 6-digit value tries TOTP first, since
     that's what a normal, working login uses every time; anything else
-    (or a 6-digit value that doesn't verify — someone who mistyped a
+    (or a 6-digit value that doesn't verify - someone who mistyped a
     backup code that happened to be all digits, however unlikely) falls
     back to a backup-code lookup."""
 
-    # autocomplete="one-time-code" — see TwoFactorSetupConfirmForm's own
+    # autocomplete="one-time-code" - see TwoFactorSetupConfirmForm's own
     # `code` field above for the reasoning and trade-off. inputmode=
     # "numeric" stays despite this field also accepting a hex backup
-    # code — see that same comment's note on why the on-screen-keyboard
+    # code - see that same comment's note on why the on-screen-keyboard
     # cost there is accepted deliberately.
     code = forms.CharField(
         label=_("Verification code"),
@@ -563,7 +563,7 @@ class TwoFactorVerifyForm(forms.Form):
 
 
 class TwoFactorDisableForm(forms.Form):
-    """Profile → Two-factor authentication → "Disable" — requires the
+    """Profile → Two-factor authentication → "Disable" - requires the
     account's own password, not just a JS confirm() like most other
     destructive actions in this app: unlike deleting a workout or a
     backup, turning 2FA off is a real security-relevant change that a
@@ -585,13 +585,13 @@ class TwoFactorDisableForm(forms.Form):
 
 
 class AccountDeleteForm(forms.Form):
-    """Profile → "Delete account" — the strongest confirmation this app
+    """Profile → "Delete account" - the strongest confirmation this app
     asks for anywhere, since it's also the only truly irreversible one
     (see apps.accounts.services.delete_account). Same password-re-
     entry shape as TwoFactorDisableForm above for a password-
     authenticated user; an Authentik-linked account has no local
     password to check at all (`User.has_usable_password()` is always
-    `False` for one — apps.accounts.oidc sets it unusable on purpose),
+    `False` for one - apps.accounts.oidc sets it unusable on purpose),
     so that user instead has to type their own username, the same
     "prove you meant this, not just a stray click" strength for an
     action that can't ask for a password that doesn't exist."""
@@ -620,7 +620,7 @@ class AccountDeleteForm(forms.Form):
 class OnboardingLanguageForm(forms.Form):
     """Onboarding's first step, on its own so every later question is
     already asked in the chosen language. Pre-selected with the user's
-    current language — the browser's, until they choose
+    current language - the browser's, until they choose
     (apps.accounts.signals.follow_browser_language). Choices are each
     language's own name (settings.LANGUAGES), readable whatever language
     the page is currently in."""
@@ -642,18 +642,18 @@ class OnboardingLanguageForm(forms.Form):
 
 class OnboardingForm(forms.Form):
     """apps.accounts.views.OnboardingView / templates/accounts/
-    _onboarding_modal.html — the one-time, entirely optional prompt
+    _onboarding_modal.html - the one-time, entirely optional prompt
     shown on whatever page a user lands on right after their first
     login. Deliberately a plain Form, not a ModelForm: it writes to
     both `User` (name/email/units/height) and, for weight,
-    apps.measurements.models.BodyMeasurement — the same "Body weight"
+    apps.measurements.models.BodyMeasurement - the same "Body weight"
     system measurement type apps.measurements' own logging form uses,
     so a weight entered here shows up on the Body weight history page
     exactly like any other logged reading, not a separate, special
     "onboarding weight" field on User itself. `height` stays a plain
     User field (same as ProfileForm's own), since it's one-off context
     for BMI rather than a reading logged repeatedly over time the way
-    weight is. Every field is optional (required=False) — the whole
+    weight is. Every field is optional (required=False) - the whole
     point of a skippable prompt is that leaving any single field blank
     is a completely normal outcome, not a validation error."""
 
@@ -686,7 +686,7 @@ class OnboardingForm(forms.Form):
             "from the Body weight page instead."
         ),
     )
-    # Same field/conversion shape as ProfileForm's own `height` — stored
+    # Same field/conversion shape as ProfileForm's own `height` - stored
     # on User (canonical meters), not a BodyMeasurement, since it's
     # optional context for BMI (apps.core.bmi) rather than a repeated
     # reading over time the way weight is.
@@ -697,7 +697,7 @@ class OnboardingForm(forms.Form):
         min_value=0,
         help_text=_(
             "Used together with a logged body weight to show your BMI. "
-            "Leave blank to skip this — you can add it anytime from your "
+            "Leave blank to skip this - you can add it anytime from your "
             "profile."
         ),
     )
@@ -711,7 +711,7 @@ class OnboardingForm(forms.Form):
         ),
     )
     # Required (like unit_system above), not required=False like every
-    # other field on this form — but pre-filled with the user's current
+    # other field on this form - but pre-filled with the user's current
     # value (__init__ below, "UTC" for a brand new account) the same
     # way unit_system already is, so "Save" never actually needs a
     # manual choice, and "Not now" skips validation entirely anyway
@@ -730,7 +730,7 @@ class OnboardingForm(forms.Form):
         ),
     )
     # apps.social's own opt-*out* privacy settings (see their model
-    # field comments on User) — required=False like every other field
+    # field comments on User) - required=False like every other field
     # on this form except unit_system/timezone above, since an
     # unchecked box is itself a complete, valid answer ("no"), not a
     # missing one the way a blank ChoiceField would be.
@@ -757,7 +757,7 @@ class OnboardingForm(forms.Form):
         help_text=_(
             "Shows nutrition (food diary, recipes, diet plans) in "
             "navigation and on the dashboard. Leave unchecked if you don't "
-            "want to track nutrition — you can turn it on or off anytime "
+            "want to track nutrition - you can turn it on or off anytime "
             "from your profile, and nothing is ever deleted either way."
         ),
     )
@@ -797,7 +797,7 @@ class OnboardingForm(forms.Form):
         # (apps.measurements.units imports apps.accounts.models.
         # UnitSystem), so importing it at module level here would risk
         # a circular import the moment anything in apps.measurements
-        # ever needed apps.accounts.forms — nothing does today, but
+        # ever needed apps.accounts.forms - nothing does today, but
         # keeping the dependency one-directional at module-load time
         # costs nothing and avoids relying on import order.
         from apps.measurements import units as measurement_units
@@ -844,7 +844,7 @@ class OnboardingForm(forms.Form):
             ).first()
             # Absent only if an operator deleted the system-seeded type
             # entirely (apps.measurements lets a user deactivate but
-            # never delete it) — skip silently rather than error out of
+            # never delete it) - skip silently rather than error out of
             # an otherwise-successful save over one optional field.
             if measurement_type is not None:
                 BodyMeasurement.objects.create(

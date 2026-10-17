@@ -5,8 +5,8 @@
 Use Django authentication and a custom user model.
 
 `apps.api` (see `docs/API.md`) adds a second, deliberately separate
-authentication path — per-user API keys (`Authorization: Bearer`), never
-session/cookie auth — for programmatic access. A key's secret is shown
+authentication path - per-user API keys (`Authorization: Bearer`), never
+session/cookie auth - for programmatic access. A key's secret is shown
 once at creation and stored only as a SHA-256 hash (`ApiKey.key_hash`);
 authorization is checked per-request against that specific key's own
 per-context CRUD permissions (`apps.api.permissions.HasContextPermission`),
@@ -24,17 +24,17 @@ Production requirements:
 
 `config.settings.production` defaults `DJANGO_SECURE_SSL_REDIRECT` to
 `true` and trusts `X-Forwarded-Proto` from the reverse proxy
-(`SECURE_PROXY_SSL_HEADER`) — but the bundled `compose/nginx/nginx.conf`
+(`SECURE_PROXY_SSL_HEADER`) - but the bundled `compose/nginx/nginx.conf`
 only listens on plain port 80 and does **not** terminate TLS itself (no
-certificate management is bundled — there's no domain name to
+certificate management is bundled - there's no domain name to
 provision one for generically). Deployed exactly as shipped, this
 combination is a broken deployment: nginx always reports
 `X-Forwarded-Proto: http`, so Django redirects every request to HTTPS,
-which routes right back through the same HTTP-only nginx — an infinite
+which routes right back through the same HTTP-only nginx - an infinite
 redirect loop.
 
 Before deploying, do one of:
-- **Use `docker-compose.tls.yml`** — a ready-to-use overlay that
+- **Use `docker-compose.tls.yml`** - a ready-to-use overlay that
   replaces the bundled nginx with Caddy, which provisions and renews a
   real Let's Encrypt certificate on its own given just a domain name
   already pointed at this host:
@@ -61,14 +61,14 @@ Password reset (`django.contrib.auth`'s own views, wired in
 anywhere. Set `DJANGO_EMAIL_HOST` (plus `DJANGO_EMAIL_PORT`/
 `_USER`/`_PASSWORD`/`_USE_TLS`, `.env.example`) to use real SMTP;
 leave it unset and outgoing mail is just logged to the console instead
-(`docker compose logs web`) — password reset still "completes"
+(`docker compose logs web`) - password reset still "completes"
 without erroring, it just never reaches anyone.
 
 Set `DJANGO_ADMINS` (`"Name:email,Name2:email2"`) to also get emailed
-— through that same backend — on every uncaught server exception, once
+- through that same backend - on every uncaught server exception, once
 `DEBUG=False`. This is Django's own built-in `mail_admins` error
 reporting (`django.utils.log.AdminEmailHandler`, wired by Django's
-default `LOGGING` config with no override needed here) — deliberately
+default `LOGGING` config with no override needed here) - deliberately
 not a dependency like Sentry: this instance either already needs SMTP
 configured for password reset, in which case error emails are free, or
 it doesn't, in which case the honest fallback is still "check `docker
@@ -76,7 +76,7 @@ compose logs`", the same as before this existed.
 
 ## Brute-force protection
 
-`django.contrib.auth`'s bare login view has no rate limiting at all —
+`django.contrib.auth`'s bare login view has no rate limiting at all -
 `apps.api`'s per-key rate-limit tiers are a completely separate,
 API-key-only mechanism that never applies to the session-based web
 login. `apps.accounts.forms.RateLimitedAuthenticationForm` (wired in
@@ -86,32 +86,32 @@ further attempts for 15 minutes after 5 failed attempts for one
 username from one client IP, or 20 failed attempts from that IP across
 all usernames, using the same shared `DatabaseCache` `apps.api`'s
 throttling does. A successful login clears only that username's own
-counter from that IP — clearing a single per-IP counter on any success
+counter from that IP - clearing a single per-IP counter on any success
 let someone log into their own account between guesses and try other
-people's passwords without end — and never the per-IP total. Keyed by client IP (`X-Real-IP`, which
-both `compose/nginx/nginx.conf` and `compose/caddy/Caddyfile` set —
+people's passwords without end - and never the per-IP total. Keyed by client IP (`X-Real-IP`, which
+both `compose/nginx/nginx.conf` and `compose/caddy/Caddyfile` set -
 see `apps.core.request.client_ip`'s own docstring for why plain
 `REMOTE_ADDR` doesn't work behind either proxy), never by the submitted
 username alone, so an attacker can't lock a real user out on purpose by
 deliberately failing their login from elsewhere. The same helper backs
-`apps.social`'s own invite-code lookup throttle — see "Friends,
+`apps.social`'s own invite-code lookup throttle - see "Friends,
 groups, and messaging" below.
 
 The password-reset request view (`django.contrib.auth`'s
-`PasswordResetView`) had the identical gap — nothing stopped it being
+`PasswordResetView`) had the identical gap - nothing stopped it being
 used as a free tool to spam an arbitrary email address with reset
 links over and over, using this instance's own SMTP relay to do it.
 `apps.accounts.forms.RateLimitedPasswordResetForm` (wired in via
 `apps.accounts.views.RateLimitedPasswordResetView`, registered ahead
 of `django.contrib.auth.urls`' own `password_reset/` the same way the
 login override is) applies the same 5-per-15-minutes, per-client-IP
-limit — every submission counts here, not just ones for a real email
+limit - every submission counts here, not just ones for a real email
 address, since there's no such thing as a "failed" password-reset
 request to count selectively.
 
 ## Two-factor authentication
 
-Optional, per-user, TOTP-based (RFC 6238) — Profile → "Two-factor
+Optional, per-user, TOTP-based (RFC 6238) - Profile → "Two-factor
 authentication" → "Set up", scanning the QR code into any standard
 authenticator app. Implemented with `pyotp` (secret generation/
 verification) and `qrcode[pil]` (rendering the setup QR as an inline
@@ -122,19 +122,19 @@ RFC 6238 generate/verify pair for a single authenticator per user, not
 `django-otp`'s heavier multi-device/multi-method framework.
 
 **The TOTP secret (`User.totp_secret`) can be encrypted at rest**,
-optionally — `TOTP_ENCRYPTION_KEY` (`apps.accounts.models.
+optionally - `TOTP_ENCRYPTION_KEY` (`apps.accounts.models.
 EncryptedTextField`), unset by default. Unlike a password, the server
 still has to be able to read the secret back on every login to compute
 the expected 6-digit code itself, so this can never be a one-way hash
-the way a password is — encryption (reversible, given the key) is the
+the way a password is - encryption (reversible, given the key) is the
 strongest this specific field can realistically get, not the
 irreversible protection a password hash gives. What it actually
 defends against: someone who gets read access to the database *alone*
 (a leaked DB credential, a SQL injection, a stolen disk snapshot) but
-not to this instance's own `.env` — without the key sitting alongside
+not to this instance's own `.env` - without the key sitting alongside
 the encrypted column, the raw ciphertext alone doesn't reconstruct a
 live TOTP code. It does **not** help against a compromise that reaches
-both the database and `.env` at once (the key is right there too) —
+both the database and `.env` at once (the key is right there too) -
 treat that combination, and any downloaded backup made before
 `BACKUP_ENCRYPTION_KEY` was set (`docs/BACKUP.md` "Encryption"), with
 the same care as the passwords table regardless.
@@ -142,29 +142,29 @@ the same care as the passwords table regardless.
 **Setup**: `manage.py generate_totp_encryption_key` once, paste the
 printed line into `.env`, restart, then `manage.py
 encrypt_existing_totp_secrets` once to encrypt whatever's already
-stored — turning the key on doesn't retroactively encrypt existing
+stored - turning the key on doesn't retroactively encrypt existing
 rows by itself; only that command (or a user going through 2FA setup
 again) does. A row already in the database that isn't a valid Fernet
 token (written before this feature existed, or before you turned it
 on) is read back as-is rather than corrupted the moment the key is
-configured — see `EncryptedTextField`'s own docstring. Losing this key
+configured - see `EncryptedTextField`'s own docstring. Losing this key
 breaks 2FA login for every user who has it enabled, not just backups
-made while it was set — back it up as carefully as `SECRET_KEY`, and
+made while it was set - back it up as carefully as `SECRET_KEY`, and
 keep it a separate secret from `BACKUP_ENCRYPTION_KEY`
-(`docs/BACKUP.md` "Encryption") — the two protect against different
+(`docs/BACKUP.md` "Encryption") - the two protect against different
 compromises, and rotating one should never force rotating the other.
 
 Backup codes (`TwoFactorBackupCode`, 10 generated at setup and on any
 regeneration) are hashed with Django's own password hasher
 (`make_password`/`check_password`), not a fast digest like
-`apps.api.models.ApiKey.key_hash`'s SHA-256 — a backup code is
+`apps.api.models.ApiKey.key_hash`'s SHA-256 - a backup code is
 entered as rarely as a password and deserves the same slow-hash
 treatment, unlike an API key that's checked on every request where a
 fast hash matters for server load. Each code is single-use
 (`used_at` is stamped the moment one is consumed).
 
 That same deliberately-slow hasher makes generating a fresh set of 10
-codes take several real seconds on ordinary hardware — reported live
+codes take several real seconds on ordinary hardware - reported live
 as looking like nothing was happening at all, which led to a user
 re-submitting mid-wait and racing themselves out of ever seeing the
 codes their first click had already generated. Fixed by moving the
@@ -184,13 +184,13 @@ is deliberate: by this step an attacker already has a correct
 password and a specific account in mind, so an IP-keyed limit alone
 would be trivially routed around by retrying from a different address.
 Setup's own confirmation step (before `totp_enabled` ever flips to
-`True`) has no rate limit — nothing sensitive is guarded yet at that
+`True`) has no rate limit - nothing sensitive is guarded yet at that
 point, and the secret used there is discarded/regenerated on any
 retry if the user abandons setup.
 
 **Recovery for a fully locked-out user** (lost authenticator device
 *and* lost/exhausted backup codes) has no self-service path by
-design — that would defeat the point of a second factor. An
+design - that would defeat the point of a second factor. An
 administrator can clear it from Django admin: the `User` list has a
 "Disable two-factor authentication for selected users" action
 (`apps.accounts.admin.UserAdmin.disable_two_factor`), which clears
@@ -205,7 +205,7 @@ an externally-run [Authentik](https://goauthentik.io/) instance, via
 `mozilla-django-oidc` (`apps.accounts.oidc`). Nothing about it
 activates unless `AUTHENTIK_URL`, `AUTHENTIK_CLIENT_ID`, and
 `AUTHENTIK_CLIENT_SECRET` are all set (`settings.AUTHENTIK_ENABLED`,
-`.env.example`) — a self-hosted instance that doesn't run Authentik
+`.env.example`) - a self-hosted instance that doesn't run Authentik
 pays no cost beyond the dependency itself: no new URLs, no "Log in
 with Authentik" button, `AUTHENTICATION_BACKENDS` stays
 `ModelBackend`-only.
@@ -222,12 +222,12 @@ shared endpoint).
 **Alongside local login, not instead of it, by default.** The login
 page shows both a "Log in with Authentik" button and the existing
 username/password form. `DJANGO_PASSWORD_LOGIN_ENABLED=false`
-(`settings.PASSWORD_LOGIN_ENABLED`) closes the local form entirely —
+(`settings.PASSWORD_LOGIN_ENABLED`) closes the local form entirely -
 gated directly in `RateLimitedLoginView`/`SignupView`/
 `RateLimitedPasswordResetView.dispatch`, the same "block the URL
 itself, not just hide the link" approach `DJANGO_SIGNUP_ENABLED`
 already uses, not merely hidden in the template. `/admin/` is
-deliberately never affected by this flag — it's Django's own separate
+deliberately never affected by this flag - it's Django's own separate
 login view (`apps.core.admin`), kept as a break-glass path so a
 misconfigured or unreachable Authentik instance can never lock every
 admin out of this app at once.
@@ -236,35 +236,35 @@ admin out of this app at once.
 (`apps.accounts.oidc.IronStackOIDCAuthenticationBackend`): a user
 authenticating via Authentik is matched to an existing local account
 by email (`mozilla_django_oidc`'s own default
-`filter_users_by_claims`) — so a local-password account and its
+`filter_users_by_claims`) - so a local-password account and its
 owner's Authentik identity link up automatically the first time they
 use "Log in with Authentik", no separate linking step. If no account
 matches, one is created automatically (username from Authentik's
 `preferred_username` claim, deduplicated with a numeric suffix on
 collision; email and display name from its `email`/`name` claims; an
-unusable local password, same as `User.set_unusable_password()` —
+unusable local password, same as `User.set_unusable_password()` -
 Django's own `create_user(password=None)` default). Either way, that
-account's `User.is_sso_user` is set `True` — purely informational (a
+account's `User.is_sso_user` is set `True` - purely informational (a
 note on the profile page), never something that gates access on its
 own.
 
 **If Authentik runs as a separate Docker stack**: `AUTHENTIK_URL` is
 what the user's *browser* is redirected to, but this app's own
 container makes its own direct server-to-server calls too (token
-exchange, JWKS fetch, userinfo fetch) — and from inside a container,
+exchange, JWKS fetch, userinfo fetch) - and from inside a container,
 `localhost`/a published host port usually doesn't reach a sibling
 Docker stack the way it does from the host itself. `AUTHENTIK_INTERNAL_URL`
 (`.env.example`) overrides just those server-side calls to a
 different, container-reachable address (e.g. Authentik's container
 hostname on a Docker network this app's container has also been
-attached to — `docker network connect`), while `AUTHENTIK_URL` keeps
+attached to - `docker network connect`), while `AUTHENTIK_URL` keeps
 driving what the browser is actually sent to. Defaults to
 `AUTHENTIK_URL`; most single-host or non-containerized-Authentik
 deployments never need to set it.
 
 **Restricting who can actually use it**: having *any* account on the
 Authentik instance is enough to complete "Log in with Authentik" by
-default — a real concern once that Authentik instance also
+default - a real concern once that Authentik instance also
 authenticates other, unrelated applications (self-hosters commonly run
 one shared Authentik for everything). Two independent layers, meant to
 be used together:
@@ -276,7 +276,7 @@ be used together:
   `apps.accounts.oidc.IronStackOIDCAuthenticationBackend.verify_claims`):
   IronStack's own check against the `groups` claim Authentik's default
   OpenID `profile` scope mapping sends. Defense in depth, not a
-  substitute for the Authentik-side binding above — it still trusts
+  substitute for the Authentik-side binding above - it still trusts
   whatever `groups` the verified id_token/userinfo response says, so
   it only helps if that claim is actually accurate, but it means
   access doesn't rest solely on the Authentik-side policy being
@@ -286,7 +286,7 @@ be used together:
 **Only a verified email links to an existing account.** The backend
 matches an Authentik login to a local account by email, so it refuses
 any login whose `email_verified` claim isn't true
-(`AUTHENTIK_REQUIRE_EMAIL_VERIFIED`, on by default) — otherwise anyone
+(`AUTHENTIK_REQUIRE_EMAIL_VERIFIED`, on by default) - otherwise anyone
 able to put someone else's address on their own Authentik account would
 be logged in as that person, staff accounts included. If logins start
 failing with "Refused an Authentik login: email_verified isn't true" in
@@ -296,7 +296,7 @@ as true for addresses you trust; only set the variable to false if every
 email in your Authentik is trustworthy anyway.
 
 **2FA note**: an SSO login goes straight from Authentik's own callback
-to `django.contrib.auth.login()` — it never touches
+to `django.contrib.auth.login()` - it never touches
 `RateLimitedLoginView`/`TwoFactorVerifyView` at all, so this app's own
 TOTP second factor (above) is bypassed for that login, deliberately:
 Authentik is expected to enforce its own MFA policy upstream instead.
@@ -308,25 +308,25 @@ login it might still be able to do.
 
 Optional, same shape as Authentik above: nothing activates unless
 `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, and `VAPID_ADMIN_EMAIL` are
-all set (`settings.PUSH_ENABLED`, `.env.example`) — a self-hoster who
+all set (`settings.PUSH_ENABLED`, `.env.example`) - a self-hoster who
 doesn't configure it pays no cost beyond the dependency itself: no
 "Notifications" card on the profile page, `apps.core.push.
 send_push_notification` is a no-op.
 
 **Setup**: run `python manage.py generate_vapid_keys` once (inside the
-`web` container — `docker compose exec web python manage.py
+`web` container - `docker compose exec web python manage.py
 generate_vapid_keys`), paste the two printed lines into `.env`, set
 `VAPID_ADMIN_EMAIL` to any real contact address, restart. Never run it
-again on a live instance — a new keypair invalidates every existing
+again on a live instance - a new keypair invalidates every existing
 `PushSubscription`'s stored key material, silently breaking push for
 every already-subscribed device until each one re-subscribes. Both
-keys are base64url-encoded with no PEM headers, single line each —
+keys are base64url-encoded with no PEM headers, single line each -
 the one format `py_vapid.Vapid.from_string()` correctly auto-detects
 from a plain string (this project's `env()` helper doesn't support
 multi-line values, ruling out PEM), and, for the public key, also
 exactly the raw-uncompressed-point form the browser's `pushManager.
 subscribe({applicationServerKey})` needs client-side. Keep
-`VAPID_PRIVATE_KEY` as secret as any other credential in `.env` —
+`VAPID_PRIVATE_KEY` as secret as any other credential in `.env` -
 anyone holding it can send push notifications impersonating this
 instance to every subscribed device.
 
@@ -335,23 +335,23 @@ notification to the endpoint URL the browser handed over, so an
 arbitrary URL would let any logged-in user make the server send
 requests into its own network (`http://db:5432`, a router's admin
 page). `apps.core.push.is_allowed_endpoint` accepts only `https` URLs on
-`settings.PUSH_ENDPOINT_HOSTS` — by default FCM (Chrome, Edge, Opera,
-Samsung Internet), Mozilla autopush (Firefox), Apple and WNS — and is
+`settings.PUSH_ENDPOINT_HOSTS` - by default FCM (Chrome, Edge, Opera,
+Samsung Internet), Mozilla autopush (Firefox), Apple and WNS - and is
 checked both on subscribe (anything else is a 400) and before every
 send (so a row stored before the check existed is skipped). Override
 `PUSH_ENDPOINT_HOSTS` in `.env` only for a browser using some other
 push service, e.g. a self-hosted autopush.
 
-**What's stored**: `apps.core.models.PushSubscription` — one row per
+**What's stored**: `apps.core.models.PushSubscription` - one row per
 browser/device a user has enabled notifications on (`endpoint`,
 `p256dh_key`, `auth_key`, straight from the browser's own
 `PushSubscription.toJSON()`). Deleted automatically once the push
 service itself reports it's gone (`apps.core.push.
 send_push_notification` catches a `404`/`410` from `pywebpush.
 WebPushException` and removes the row), and via the ordinary
-`User`-cascade on account deletion — no special handling needed there
+`User`-cascade on account deletion - no special handling needed there
 beyond that. Excluded from `apps.accounts.services.
-export_account_data` beyond `endpoint`/`created_at` — `p256dh_key`/
+export_account_data` beyond `endpoint`/`created_at` - `p256dh_key`/
 `auth_key` are credential-like (only the push service needs them),
 same reasoning `apps.api.models.ApiKey.key_hash` is excluded there.
 
@@ -361,7 +361,7 @@ services.send_direct_message`/`send_group_message` call
 same request; there's no task queue in this project. A 5-second
 timeout on the underlying `pywebpush.webpush()` call bounds worst-case
 latency, and every failure mode (a bad response, a network error) is
-caught and logged, never allowed to propagate — a slow or unreachable
+caught and logged, never allowed to propagate - a slow or unreachable
 push service must never delay or break the message actually being
 sent. For a large group this means members × devices, each up to 5
 seconds, all before the response goes out; acceptable for this app's
@@ -371,14 +371,14 @@ larger groups.
 **A third caller runs at deploy time, not request time.**
 `apps.core.management.commands.announce_version_update` sends every
 subscribed user a "new version is available" notification (linking to
-Profile → the version-number changelog modal, via `?changelog=1` —
+Profile → the version-number changelog modal, via `?changelog=1` -
 see `apps.accounts.views.ProfileView`), and runs unconditionally as
 part of `docker-compose.yml`'s `web` service startup command, right
 after `migrate`/`collectstatic`/`compilemessages` and before gunicorn
 starts. It's a no-op on every ordinary restart: `apps.core.models.
 AnnouncedVersion` (a singleton row, same pattern as `BackupSettings`)
 records the last `VERSION` actually announced, so this only ever sends
-again once the running `VERSION` genuinely differs from that — a real
+again once the running `VERSION` genuinely differs from that - a real
 deploy, not a host reboot or `docker compose restart`. Bounded the
 same way as the two callers above (5s/device inside
 `send_push_notification`), just before gunicorn binds rather than
@@ -392,7 +392,7 @@ request (which reads the same token off the DOM automatically);
 views_push` are the first plain JS `POST` in this app, so they read
 the `csrftoken` cookie Django's own CSRF middleware already sets and
 send it back as the `X-CSRFToken` header that same middleware checks
-for — Django's own documented vanilla-JS pattern, not a new mechanism.
+for - Django's own documented vanilla-JS pattern, not a new mechanism.
 
 ## Gravatar profile picture
 
@@ -403,22 +403,22 @@ default, unlike this app's other display/privacy toggles
 (`show_bmi`/`show_achievements`/`show_name_to_others`): every one of
 those only changes what this instance itself shows, entirely within
 its own infrastructure. This one is the only place in the whole app
-where a user's browser talks to a server this instance doesn't run —
+where a user's browser talks to a server this instance doesn't run -
 turning it on means the browser fetches `User.gravatar_url()` directly
 from `gravatar.com` on every profile page load, handing Gravatar (a
 service run by Automattic) this user's IP address and a SHA-256 hash
 of their email. That's a deliberate, narrow exception to CLAUDE.md's
-"runs entirely on the user's own infrastructure" — the user has to opt
+"runs entirely on the user's own infrastructure" - the user has to opt
 into it explicitly, nothing fetches or displays it on their behalf
 until they do.
 
 `gravatar_url()` requests Gravatar's `d=404` fallback behavior (a 404
 response instead of a generated placeholder image) so the template can
 tell "no Gravatar for this email" apart from "Gravatar is
-unreachable" — either way, the `<img>` just disappears
+unreachable" - either way, the `<img>` just disappears
 (`templates/accounts/profile.html`'s `@error="$el.remove()"`, an
 Alpine directive rather than a native `onerror=` attribute, since the
-latter would be silently blocked by this app's own CSP script-src —
+latter would be silently blocked by this app's own CSP script-src -
 see below) rather than showing a broken-image icon or Gravatar's own
 default avatar for someone who never actually created a Gravatar
 account.
@@ -426,12 +426,12 @@ account.
 ## Cross-Site Request Forgery (CSRF)
 
 `config.settings.production` derives `CSRF_TRUSTED_ORIGINS` from
-`DJANGO_ALLOWED_HOSTS` automatically — every host this instance
+`DJANGO_ALLOWED_HOSTS` automatically - every host this instance
 answers to is also a host a real POST request to it should be trusted
 to have come from. If you see "CSRF verification failed" in production
 after changing how this instance is reached (a new domain, a proxy
 added in front, `DJANGO_ALLOWED_HOSTS` not updated to match), that
-mismatch is the first thing to check — Django 4+'s CSRF check compares
+mismatch is the first thing to check - Django 4+'s CSRF check compares
 the request's `Origin`/`Referer` against this list for HTTPS requests.
 
 ## Content-Security-Policy
@@ -441,37 +441,37 @@ header on every response, in every environment. `default-src 'self'`
 plus tight per-directive allowances (no external scripts/styles/
 fonts/images beyond `data:` URIs, `gravatar.com`, and
 `images.openfoodfacts.org`, no framing by another site, no plugins,
-forms can only submit back to this same origin) — see the
+forms can only submit back to this same origin) - see the
 middleware's own docstring for the exact policy string and reasoning.
 
 Five allowances are worth knowing about, each scoped as narrowly as
 this stack currently allows:
-- `img-src https://www.gravatar.com` — the one deliberate exception to
+- `img-src https://www.gravatar.com` - the one deliberate exception to
   "no external anything," letting `templates/accounts/profile.html`
   load a user's Gravatar picture when they've opted into
   `User.show_gravatar` (off by default). See "Gravatar profile
   picture" above.
-- `img-src https://images.openfoodfacts.org` — `apps.nutrition.models.
+- `img-src https://images.openfoodfacts.org` - `apps.nutrition.models.
   Food.image_url` links directly to OFF's own image CDN rather than
   downloading and re-hosting the file locally (see that field's own
   comment for why); without this, every browser actually rendering
-  one silently drops it — a CSP violation shows no visible error, so
+  one silently drops it - a CSP violation shows no visible error, so
   this was found by checking the policy against the new field, not
   from a broken-looking page. See "OpenFoodFacts integration" in
   `docs/NUTRITION.md`.
-- `script-src 'unsafe-eval'` — Alpine.js evaluates `x-data`/`x-show`/
+- `script-src 'unsafe-eval'` - Alpine.js evaluates `x-data`/`x-show`/
   `@click`/... expression strings via `new Function()`, which CSP
   treats as eval. Alpine ships a separate CSP-safe build (a restricted
   expression parser) that would let this be dropped; not adopted here.
-- `style-src 'unsafe-inline'` — a number of templates use plain
+- `style-src 'unsafe-inline'` - a number of templates use plain
   `style="..."` attributes rather than a dedicated class.
-- `frame-src chrome-extension: moz-extension: safari-web-extension:` —
+- `frame-src chrome-extension: moz-extension: safari-web-extension:` -
   with no frame-src of its own, that directive falls back to
   `default-src 'self'`, which also blocks a password manager
   extension's *own* injected iframe (the inline autofill-suggestion
   overlay Bitwarden and similar show on a field, e.g. the TOTP code
   field on `templates/registration/two_factor_verify.html`) from ever
-  loading — the browser leaves it stuck at `about:blank`, and the
+  loading - the browser leaves it stuck at `about:blank`, and the
   extension's next `postMessage()` to it (addressed to the extension's
   own origin) throws a mismatch error and the suggestion never
   appears. Allowing these three schemes doesn't meaningfully widen
@@ -483,20 +483,20 @@ Every template's own inline `<script>` block and every native
 `onclick=`/`onsubmit=` attribute were removed as part of adding this
 header (moved to `static/js/*.js` loaded via `<script src>`, or
 converted to Alpine's own `x-data`/`@submit`/`@click` directive syntax
-— which is not a native browser inline-script mechanism at all, so it
+- which is not a native browser inline-script mechanism at all, so it
 isn't affected by `script-src` lacking `'unsafe-inline'`). Don't
-reintroduce either in a new template — either would simply be silently
+reintroduce either in a new template - either would simply be silently
 blocked by the browser under this policy, with no server-side error to
 notice it by.
 
 ## Search engine indexing
 
-Off by default — `apps.core.models.SeoSettings` (Profile →
+Off by default - `apps.core.models.SeoSettings` (Profile →
 Administration → Site & SEO), a single admin-tunable boolean matching
 the same singleton pattern as `BackupSettings`/`FeedbackSettings`.
 Most installs of this app are a private, self-hosted instance running
 for one household and holding another person's health data, not a
-public site anyone should be finding through a search engine — the
+public site anyone should be finding through a search engine - the
 safe default is a search engine never indexing it at all, not an
 operator having to remember to opt out on a fresh install. Two
 independent, redundant signals carry this, since a crawler only
@@ -505,14 +505,14 @@ respects whichever one it actually checks: `/robots.txt`
 when off) and a `<meta name="robots" content="noindex, nofollow">` tag
 on every single page (`templates/base.html`,
 `apps.core.context_processors.seo`). Turning the setting on flips both
-to `Allow: /`/`index, follow` — meaningful only for an operator who
+to `Allow: /`/`index, follow` - meaningful only for an operator who
 deliberately wants their own instance publicly discoverable.
 
 ## Dependency updates
 
 `.github/dependabot.yml` opens a weekly, reviewed PR for outdated pip
 (`requirements/`), Docker base image, and GitHub Actions dependencies
-— plain GitHub configuration, not a new runtime dependency. Every PR
+- plain GitHub configuration, not a new runtime dependency. Every PR
 still has to pass `.github/workflows/ci.yml` (ruff, migration check,
 the full test suite) before merging like any other change.
 `requirements/*.txt` are range-pinned (`>=X,<Y`) rather than hash-
@@ -520,7 +520,7 @@ locked, so most weeks this picks up patch releases within that range.
 
 ## Registration
 
-Self-hosted doesn't necessarily mean "open to the public internet" —
+Self-hosted doesn't necessarily mean "open to the public internet" -
 `DJANGO_SIGNUP_ENABLED=false` closes self-service registration
 (`apps.accounts.views.SignupView`) once your intended users all have
 accounts, or from the start if this instance is reachable beyond a
@@ -528,10 +528,10 @@ trusted network. Gates the URL itself, not just the login page's link
 to it. Existing users can still log in either way.
 
 **Email confirmation** (`DJANGO_SIGNUP_EMAIL_VERIFICATION=true`, off by
-default since it needs working email — `DJANGO_EMAIL_HOST`): a new
+default since it needs working email - `DJANGO_EMAIL_HOST`): a new
 signup must give an email address and open the link sent to it before
 it can log in (`apps.accounts.email_verification`). Until then the
-account is marked `email_verification_pending` — a flag of its own, not
+account is marked `email_verification_pending` - a flag of its own, not
 `is_active=False`, so an admin deactivating someone is never undone by
 that person confirming an address. A login with the right password
 while still unconfirmed is refused (without counting as a failed guess
@@ -539,8 +539,8 @@ for rate limiting) and sends a fresh link, at most every five minutes.
 The link's token comes from its own generator (a different salt from
 password reset), stops working once used, and expires after
 `PASSWORD_RESET_TIMEOUT`. Only signups made while the setting is on are
-affected — existing, SSO and admin-created accounts never have to
-confirm — and an admin can let someone in by unticking "Email
+affected - existing, SSO and admin-created accounts never have to
+confirm - and an admin can let someone in by unticking "Email
 confirmation" on their user in /admin/. Turning the setting off lets
 anyone still unconfirmed log in.
 
@@ -571,10 +571,10 @@ Users must not be able to access another user's:
 - measurements
 - activities
 - analytics
-- AI assistant conversations, messages and proposals (`apps.assistant` —
+- AI assistant conversations, messages and proposals (`apps.assistant` -
   every view looks them up through `user=request.user`, 404 otherwise)
 - friend requests, group memberships, or direct/group messages they
-  aren't a sender/recipient/member of (`apps.social` — every view
+  aren't a sender/recipient/member of (`apps.social` - every view
   checks this directly, e.g. `get_object_or_404(Group, ...)` followed
   by an explicit membership check, a 404 rather than a 403 for a group
   a user isn't in, the same "don't even confirm it exists" reasoning
@@ -588,8 +588,10 @@ Optional (`docs/ASSISTANT.md`). What matters for an operator:
   messages, and the training, body and nutrition data the assistant
   looks up to answer them, are sent to Anthropic's API. Each user has to
   turn the assistant on themselves after reading exactly that, and can
-  turn it off and delete their conversations at any time. Use
-  `ASSISTANT_PROVIDER=ollama` to keep everything on your own network.
+  turn it off and delete their conversations at any time. On its settings
+  page each user can also switch off what it may read (workouts, body
+  measurements, food diary, activities, stretching, personal details).
+  Use `ASSISTANT_PROVIDER=ollama` to keep everything on your own network.
 - **Cost.** Usage of `ASSISTANT_API_KEY` is billed to you. By default only
   staff may use it. Profile → Administration → AI assistant sets who may,
   sets a per-user daily token limit, and shows usage.
@@ -610,7 +612,7 @@ points collected here for a single place to look:
 
 - **Invite codes** (`apps.social.crypto.generate_invite_code`) are 10
   characters from a 31-symbol alphabet (excluding visually-ambiguous
-  `0`/`O`/`1`/`I`/`L`), ≈8.2×10¹⁴ possible codes — stored in the clear
+  `0`/`O`/`1`/`I`/`L`), ≈8.2×10¹⁴ possible codes - stored in the clear
   on `Group.invite_code` (there's nothing to hash it against; it
   grants access to a group's messages, not an account, so it doesn't
   need password-equivalent secrecy-at-rest treatment). `/group/invite/
@@ -618,33 +620,33 @@ points collected here for a single place to look:
   throttles failed lookups to 20 per 15 minutes per client IP
   (`apps.core.request.client_ip`), the same cheap-second-layer
   reasoning as the brute-force protection above.
-- The invite link is a GET-then-confirm flow, not an instant join —
+- The invite link is a GET-then-confirm flow, not an instant join -
   opening the link only shows the group; joining requires a POST, so a
   link-preview bot (Slack/Discord/iMessage unfurling a shared link)
   can't silently consume it.
 - **Blocking** (`apps.social.services.block_user`) stops new friend
   requests and direct messages/group invites both ways, and removes
-  any existing friendship — but deliberately does not remove either
+  any existing friendship - but deliberately does not remove either
   user from a group they already share; that's left to the group's
   own owner/admin.
 - **The two opt-out privacy settings** (`User.allow_friend_requests`/
   `allow_group_invites`) only gate whether *another* user can start
-  something with this account — neither exposes any new information
+  something with this account - neither exposes any new information
   about the account itself, which is why both default on rather than
   off (unlike `User.show_gravatar`, which causes an outbound request
   to a third party the moment it's turned on).
-- No public profile page exists for any user — the only way to find
+- No public profile page exists for any user - the only way to find
   another account is a username search restricted to this instance's
   own users, and the only actions available against a found account
   are friend/invite/message (once friends)/block.
-- Moderation is Django admin only (`apps/social/admin.py`) — an
+- Moderation is Django admin only (`apps/social/admin.py`) - an
   operator can delete an abusive `Group`/message/membership row
   directly; no bespoke reporting workflow exists.
 
 ## Account deletion (GDPR)
 
 Profile → "Delete account" (`apps.accounts.views.AccountDeleteView`,
-`apps.accounts.services.delete_account`) — self-service exercise of
+`apps.accounts.services.delete_account`) - self-service exercise of
 GDPR Article 17 ("right to erasure"), the one deliberate exception to
 "prefer preserving historical records" below: erasure only means
 something if it's actually irreversible, so this is a genuine hard
@@ -658,14 +660,14 @@ touched":
   only ever mean "this specific person's own record" (workout
   history, personal records, body measurements, the nutrition diary/
   targets/diet plans, activities, feedback, API keys) already has
-  `on_delete=models.CASCADE` on its FK to `User` — `delete_account`
+  `on_delete=models.CASCADE` on its FK to `User` - `delete_account`
   doesn't need to know any of their names, `user.delete()` cascades
   through all of it in one transaction.
 - **Shared reference content this user happened to create is
   reassigned, not deleted.** A custom Exercise/Food/Recipe/Program/
   MealSlot/ActivityType/MeasurementType has `owner` set to this user,
   but this app's whole shared-instance design means another user may
-  already be actively using it — a workout logged against a custom
+  already be actively using it - a workout logged against a custom
   exercise, a diary entry against a custom food. `delete_account`
   reassigns `owner` to `None` (the same "shared, built-in default"
   meaning `owner=None` already has everywhere in this app) *before*
@@ -678,10 +680,10 @@ touched":
 
 An account with no local password (`is_sso_user`, `docs/SECURITY.md`
 "Single sign-on") has nothing to re-enter as a password, so it types
-its own username to confirm instead — the same "prove you meant this"
+its own username to confirm instead - the same "prove you meant this"
 strength for an action that can't ask for a password that doesn't
 exist. The instance's last remaining superuser is blocked from
-self-deleting (a clear error, not a silent no-op) — promoting another
+self-deleting (a clear error, not a silent no-op) - promoting another
 account first is required, so the instance can never end up with no
 one able to reach Django admin at all.
 
@@ -690,13 +692,13 @@ one able to reach Django admin at all.
 before an account deletion still contains that account's data until
 it's rotated out by `BackupSettings.retention_count`, the same as any
 other historical fact captured in it. Disclosed plainly on the
-deletion confirmation page rather than silently ignored — the honest
+deletion confirmation page rather than silently ignored - the honest
 alternative to a guarantee this action structurally can't make.
 
 ## Data export (GDPR)
 
 Profile → "Download your data" (`apps.accounts.views.DataExportView`,
-`apps.accounts.services.export_account_data`) — self-service exercise
+`apps.accounts.services.export_account_data`) - self-service exercise
 of GDPR Article 20 ("right to data portability"), the natural
 companion to account deletion above: knowing you *can* get a copy of
 everything first is part of what makes erasure a safe thing to do.
@@ -705,7 +707,7 @@ Covers the same set of models account deletion hard-deletes (workout
 history, personal records, measurements, nutrition data, activities,
 feedback, API key metadata) plus this user's own authored shared
 content (a custom exercise/food/recipe/program/meal slot they
-created) — a read of what exists today, not a statement about what
+created) - a read of what exists today, not a statement about what
 deletion would do to each of it. Built on Django's own generic model
 serializer rather than a hand-maintained field list per model, so a
 field added to any of these models later is included automatically
@@ -714,7 +716,7 @@ without this feature needing an update to match.
 **`ApiKey.key_hash` is the one deliberate field-level exclusion.**
 Every other model is exported with every field via the generic
 serializer above; `ApiKey`'s own export is hand-built instead, listing
-every field except that one explicitly — a key's hash is a
+every field except that one explicitly - a key's hash is a
 credential, not data to read back, the same reason a password hash is
 never shown to its own owner either.
 
@@ -722,11 +724,11 @@ Available as a plain HTML page (reusing this app's own templates,
 something to actually read rather than only archive), a single JSON
 file (the same shape a user's own API key could already fetch), or a
 `.zip` of one CSV file per section (opens directly in a spreadsheet)
-— three views of the exact same underlying export, not three
+- three views of the exact same underlying export, not three
 different exports to keep in sync.
 
 ## Auditability
 
-For important destructive or irreversible operations, consider preserving historical records instead of deleting them — full account deletion above is the one deliberate exception, since GDPR erasure only means something if it's genuinely irreversible.
+For important destructive or irreversible operations, consider preserving historical records instead of deleting them - full account deletion above is the one deliberate exception, since GDPR erasure only means something if it's genuinely irreversible.
 
 Workout history should be treated as durable data.

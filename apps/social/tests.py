@@ -111,7 +111,7 @@ class FriendRequestServiceTests(TestCase):
     def test_friends_of_is_a_single_query_regardless_of_friend_count(self):
         # Regression: friends_of() used to read f.user_high/f.user_low
         # without select_related, firing one extra query per friendship
-        # to lazily fetch each User row — the same N+1 shape
+        # to lazily fetch each User row - the same N+1 shape
         # unread_group_message_count had before its own fix, and one
         # this function is more exposed to, since it's called from
         # nearly every social page (friend_list, message_list,
@@ -238,7 +238,7 @@ class DirectMessageServiceTests(TestCase):
     def test_a_push_failure_never_breaks_sending_the_message(self):
         """send_push_notification itself is designed to never raise
         (apps.core.push's own docstring), but this pins the contract
-        from the caller's side too — even if it somehow did, the
+        from the caller's side too - even if it somehow did, the
         message must already be saved and the exception must not
         propagate out of send_direct_message."""
         make_friends(self.alice, self.bob)
@@ -247,7 +247,7 @@ class DirectMessageServiceTests(TestCase):
         ):
             with self.assertRaises(RuntimeError):
                 services.send_direct_message(self.alice, self.bob, "hi")
-        # The message itself was already created before the push call —
+        # The message itself was already created before the push call -
         # a RuntimeError from push here is an unrealistic worst case
         # (the real function never raises), but even then the message
         # this test just sent is still in the database.
@@ -557,7 +557,7 @@ class GroupMessageServiceTests(TestCase):
         # The whole point of the fix: apps.social.context_processors.
         # social_badge calls this (indirectly, via
         # has_unread_group_messages) on every page load for every
-        # logged-in user — it must not scale with how many groups
+        # logged-in user - it must not scale with how many groups
         # that user happens to be in.
         for i in range(5):
             group = services.create_group(self.alice, f"Group {i}")
@@ -571,7 +571,7 @@ class GroupMessageServiceTests(TestCase):
 
 
 class SocialBadgeContextProcessorTests(TestCase):
-    """apps.social.context_processors.social_badge — the small dot on
+    """apps.social.context_processors.social_badge - the small dot on
     base.html's Profile nav icon, and (see docs/SOCIAL.md "Unread
     counts are one query") a fixed four-query cost on every single
     page load for a logged-in user, regardless of how much social
@@ -637,7 +637,7 @@ class FriendViewTests(TestCase):
         self.assertContains(response, "bob")
 
     def test_friend_search_excludes_existing_friends(self):
-        # Not assertNotContains(response, "bob") — the search term
+        # Not assertNotContains(response, "bob") - the search term
         # itself ("bob") legitimately echoes back into the input's own
         # value="" attribute and the page's og:url regardless of
         # whether bob himself shows up in the results, so check the
@@ -696,7 +696,7 @@ class FriendViewTests(TestCase):
     def test_friend_request_send_shows_an_error_for_a_crafted_self_request(self):
         # friend_list.html never offers yourself as a target, but a
         # crafted POST naming your own id must still be refused by the
-        # view, not just hidden from the UI — same reasoning as
+        # view, not just hidden from the UI - same reasoning as
         # test_group_invite_send_rejects_a_crafted_non_friend_target.
         response = self.client.post(
             reverse("social:friend-request-send", args=[self.alice.pk])
@@ -892,7 +892,7 @@ class GroupViewTests(TestCase):
     def test_anonymous_visitor_sees_a_login_prompt_not_a_crash(self):
         # The most common real path for this URL: someone who isn't
         # even logged in yet clicking a link a friend shared with
-        # them — request.user is AnonymousUser here, not a real User,
+        # them - request.user is AnonymousUser here, not a real User,
         # so the view/template must not assume otherwise.
         self.client.logout()
         group = services.create_group(self.alice, "Lifters")
@@ -907,7 +907,7 @@ class GroupViewTests(TestCase):
         services.enable_invite(group)
         response = self.client.post(reverse("group-invite-join", args=[group.invite_code]))
         self.assertEqual(response.status_code, 200)
-        # Still just the owner — nobody was added as a side effect of
+        # Still just the owner - nobody was added as a side effect of
         # an unauthenticated POST.
         self.assertEqual(GroupMembership.objects.filter(group=group).count(), 1)
 
@@ -1164,7 +1164,7 @@ class GroupViewTests(TestCase):
         )
         carol = User.objects.create_user(username="carol", password="s3cret-pass")
         services.join_group_by_code(carol, group.invite_code)
-        # alice is now an admin — still not allowed to change roles,
+        # alice is now an admin - still not allowed to change roles,
         # only the owner (bob) is (services.set_member_role).
         response = self.client.post(
             reverse("social:group-member-role", args=[group.pk, carol.pk]),
@@ -1235,7 +1235,7 @@ class GroupViewTests(TestCase):
         # invite_code/invite_enabled condition right before calling it,
         # so by the time the call happens it can only fail on a genuine
         # race (the invite getting disabled between those two checks)
-        # — not something a single synchronous test request can
+        # - not something a single synchronous test request can
         # reproduce. Patched directly to exercise the view's own
         # error-handling branch instead.
         self.client.login(username="bob", password="s3cret-pass")
@@ -1271,7 +1271,7 @@ class MessageViewTests(TestCase):
 
     def test_message_input_has_an_accessible_label(self):
         # Regression: the compact chat input had no visible label (by
-        # design — redundant clutter next to a one-line box) but also
+        # design - redundant clutter next to a one-line box) but also
         # no visually-hidden one, leaving it with no accessible name
         # at all for a screen reader.
         make_friends(self.alice, self.bob)
@@ -1280,7 +1280,7 @@ class MessageViewTests(TestCase):
         self.assertContains(response, f'for="{response.context["form"]["body"].id_for_label}"')
         # Regression: the explanatory comment right above this label
         # was originally written as {# ... #} spanning multiple lines
-        # — Django's {# #} only supports a single line and leaks the
+        # - Django's {# #} only supports a single line and leaks the
         # rest literally into the page for anything longer
         # ({% comment %}...{% endcomment %} is the multi-line form).
         self.assertNotContains(response, "{#")
@@ -1375,7 +1375,7 @@ class MessageViewTests(TestCase):
             services.send_direct_message(self.alice, self.bob, f"message {i}")
         response = self.client.get(reverse("social:message-thread-fragment", args=[self.bob.pk]))
         self.assertEqual(len(response.context["thread_messages"]), THREAD_MESSAGE_LIMIT)
-        # The *most recent* messages, not the oldest — and still in
+        # The *most recent* messages, not the oldest - and still in
         # chronological order (oldest-of-the-visible-window first).
         self.assertContains(response, "message 104")
         self.assertNotContains(response, "message 0")
@@ -1397,7 +1397,7 @@ class MessageViewTests(TestCase):
     def test_message_thread_fragment_does_not_crash_when_the_service_call_fails(self):
         # block_user always removes the friendship too (services.
         # block_user calls remove_friend), so are_friends is already
-        # False by the time is_blocked could matter — meaning
+        # False by the time is_blocked could matter - meaning
         # send_direct_message's own is_blocked check can't actually be
         # reached through this view at all; the view's own are_friends
         # guard (a couple of lines above) always 404s first. Patched
@@ -1405,7 +1405,7 @@ class MessageViewTests(TestCase):
         # reasoning as GroupViewTests'
         # test_group_invite_join_shows_an_error_if_the_service_call_fails.
         # The fragment template itself never renders django.contrib.
-        # messages (it's an HTMX-swapped partial, not a full page — see
+        # messages (it's an HTMX-swapped partial, not a full page - see
         # templates/social/_message_thread_fragment.html), so there's no
         # error text to assert on here; not crashing and not creating a
         # message either is the whole of what this branch guarantees.
@@ -1432,7 +1432,7 @@ class MessageViewTests(TestCase):
         # this test above: the view's own membership check right above
         # already guarantees send_group_message's identical check would
         # pass, so there's no black-box way to reach its SocialError
-        # branch — patched directly instead. _group_thread_fragment.html
+        # branch - patched directly instead. _group_thread_fragment.html
         # doesn't render messages either, same as the direct-message
         # fragment, so this only asserts the request survives cleanly
         # and nothing got created.
@@ -1451,7 +1451,7 @@ class MessageViewTests(TestCase):
 class ReassignOwnedGroupsBeforeDeletionTests(TestCase):
     """apps.accounts.services.delete_account calls this before
     user.delete() cascades the departing user's own GroupMembership
-    rows away — see that function's own docstring for why a naive
+    rows away - see that function's own docstring for why a naive
     cascade alone would leave a group with other members still in it
     permanently unmanageable."""
 
@@ -1498,7 +1498,7 @@ class ReassignOwnedGroupsBeforeDeletionTests(TestCase):
         self.assertTrue(services.is_group_owner(self.bob, group))
 
     def test_every_group_the_departing_user_owns_gets_reassigned(self):
-        # Not just the first one found — a real account could own
+        # Not just the first one found - a real account could own
         # several groups at once.
         carol = User.objects.create_user(username="carol", password="s3cret-pass")
         gym = services.create_group(self.alice, "Gym")

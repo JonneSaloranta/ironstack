@@ -48,10 +48,10 @@ Do not implement unless explicitly requested:
 - advertisements
 
 **Nutrition/calorie tracking was on this list through v1 ("do not
-implement unless explicitly requested") — it was explicitly requested
+implement unless explicitly requested") - it was explicitly requested
 for v2, see `docs/NUTRITION.md`, so items 18-22 above are now real
 requirements, not a future possibility. Friends/groups/messaging went
-through the same door for v2 as well — see `docs/SOCIAL.md` — so items
+through the same door for v2 as well - see `docs/SOCIAL.md` - so items
 23-26 above are real requirements too; "social network" and
 "messaging" are removed from the list below accordingly.
 "Public profiles" is deliberately still out of scope: apps.social adds

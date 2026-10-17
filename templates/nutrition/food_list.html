@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% load i18n static %}
-{% block title %}{% trans "Foods" %} — IronStack{% endblock %}
+{% block title %}{% trans "Foods" %} - IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
   <h1 class="no-margin">{% trans "Foods" %}</h1>
@@ -12,10 +12,10 @@
 {% include "nutrition/_subnav.html" %}
 
 {% comment %}
-  Same search box as templates/nutrition/food_browse.html — live
+  Same search box as templates/nutrition/food_browse.html - live
   keyup search plus a barcode scanner, not the plain type-and-submit
   <form> this page used to have. Only the search *input* changed;
-  the plain, unfiltered "all your foods" table below is untouched —
+  the plain, unfiltered "all your foods" table below is untouched -
   this box's own results render into #food-search-results instead of
   reloading the page.
 {% endcomment %}
@@ -40,7 +40,7 @@
 
 <h2>{% trans "All foods" %}</h2>
 {% comment %}
-  Filters/sort combine (AND) with each other and with pagination —
+  Filters/sort combine (AND) with each other and with pagination -
   every input here lives in the querystring (hx-push-url="true"), the
   same "the URL is the whole filter state" shape
   templates/exercises/exercise_list.html already uses, so a paginated,
@@ -55,10 +55,10 @@
   <input type="search" id="id_food_q" name="q" placeholder="{% trans "Filter by name…" %}" value="{{ query }}" aria-label="{% trans "Filter by name" %}">
   {% comment %}
     A <select> forced picking an exact category from a (potentially
-    long — OFF's own categories are numerous and inconsistently
+    long - OFF's own categories are numerous and inconsistently
     cased/named) dropdown list. An `<input list>` + `<datalist>` keeps
     the same distinct_food_categories options as suggestions but lets
-    typing filter/narrow them natively — no JS, and the value it
+    typing filter/narrow them natively - no JS, and the value it
     submits is still plain text, matching the `__icontains` match
     FoodListView.get_queryset already does against `category`.
   {% endcomment %}

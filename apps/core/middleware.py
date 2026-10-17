@@ -7,14 +7,14 @@ from django.utils.http import url_has_allowed_host_and_scheme
 
 
 class ContentSecurityPolicyMiddleware:
-    """Sets a Content-Security-Policy header on every response — see
+    """Sets a Content-Security-Policy header on every response - see
     docs/SECURITY.md "Content-Security-Policy" for the deliberate
     'unsafe-eval'/'unsafe-inline' allowances this stack currently needs
     and what tightening it further would require.
 
     Hand-rolled rather than adding django-csp: the policy here is one
     fixed string, not something that needs django-csp's per-view nonce
-    machinery or its many configurable directives — see CLAUDE.md
+    machinery or its many configurable directives - see CLAUDE.md
     "Before adding a dependency, check whether Django ... already
     solves the problem" (here, a single response header does).
     """
@@ -25,23 +25,23 @@ class ContentSecurityPolicyMiddleware:
     # string itself came from. Alpine ships a separate CSP-safe build
     # (a restricted expression parser instead of Function()) that would
     # let this be dropped, at the cost of some expression syntax it
-    # doesn't support — not adopted here, out of scope for a single
+    # doesn't support - not adopted here, out of scope for a single
     # security-headers pass.
     # style-src needs 'unsafe-inline': a number of templates use plain
     # `style="..."` attributes (mostly one-off `margin:0` tweaks) rather
     # than a dedicated class. Removing this would mean auditing and
     # rewriting every one of them, or switching to a nonce-per-request
-    # scheme — again out of scope here.
+    # scheme - again out of scope here.
     # img-src additionally allows gravatar.com: apps.accounts.models.
     # User.gravatar_url, loaded by templates/accounts/profile.html only
-    # when a user has opted into User.show_gravatar (off by default —
-    # see docs/SECURITY.md "Gravatar profile picture") — and
+    # when a user has opted into User.show_gravatar (off by default -
+    # see docs/SECURITY.md "Gravatar profile picture") - and
     # images.openfoodfacts.org: apps.nutrition.models.Food.image_url,
     # linked directly to OFF's own image CDN rather than downloaded
     # and re-hosted (see that field's own comment for why), so every
     # browser actually rendering one needs this origin allowed the
     # same way gravatar's is. Found live: without this, the image
-    # simply never loads — CSP blocks it silently, no visible error,
+    # simply never loads - CSP blocks it silently, no visible error,
     # so the gap wasn't obvious from a screenshot alone, only from
     # checking this policy against the new field. The only other
     # directive not locked to 'self': no external fonts/scripts, no
@@ -51,15 +51,15 @@ class ContentSecurityPolicyMiddleware:
     # to this same origin.
     # frame-src additionally allows the browser-extension URI schemes:
     # with no frame-src of its own, that directive falls back to
-    # default-src 'self', which — concretely, not just in theory —
+    # default-src 'self', which - concretely, not just in theory -
     # blocks a password manager extension's *own* injected iframe (the
     # inline autofill-suggestion overlay Bitwarden and similar show on
     # a field) from ever loading. The browser leaves that iframe stuck
     # at about:blank (inheriting this page's own origin) instead of
     # navigating it to its real chrome-extension:/moz-extension: URL,
-    # so the extension's next postMessage() to it — addressed to the
+    # so the extension's next postMessage() to it - addressed to the
     # extension's own origin, which is what it expects to be talking to
-    # — throws "target origin ... does not match the recipient window's
+    # - throws "target origin ... does not match the recipient window's
     # origin" and the suggestion silently never appears. Allowing these
     # two schemes doesn't meaningfully widen the attack surface this
     # directive defends against (arbitrary third-party *web* content
@@ -96,7 +96,7 @@ class HtmxLoginRedirectMiddleware:
 
     The browser follows a plain 302 inside the XHR, so without this an
     expired session (or a logout in another tab) made htmx swap the
-    login page's HTML into whatever fragment was being updated — a set
+    login page's HTML into whatever fragment was being updated - a set
     log mid-workout showed a login form inside the training panel, with
     no error and the set not saved. The `next` it sends the user back
     to is the page they were on (`HX-Current-URL`), not the HTMX

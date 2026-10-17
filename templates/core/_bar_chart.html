@@ -3,13 +3,13 @@
 Single-metric bar chart (category comparison), shared across
 apps.analytics. One color for every bar: the x-axis labels already carry
 category identity via the table below, so a categorical hue per bar
-would just be noise (see dataviz skill "color-formula" — categorical
+would just be noise (see dataviz skill "color-formula" - categorical
 color is for distinguishing overlapping series, not restating what a
 label already says).
 
 Each bar's own category name is drawn directly under it (rotated, so an
-unbounded number of categories — weeks, muscle groups — doesn't force
-truncation as aggressively as horizontal text would) — a chart with
+unbounded number of categories - weeks, muscle groups - doesn't force
+truncation as aggressively as horizontal text would) - a chart with
 same-colored, unlabeled bars isn't readable at a glance. The table below
 still carries the exact figures for anyone who needs precision or a
 screen reader, and the hover tooltip's figures are never the only way
@@ -22,10 +22,10 @@ Expects: chart (apps.core.charts.BarSeries), chart_title, unit_label.
   {% comment %}
     Regression: apps.core.charts.build_bar_series' x/y/width/height are
     Decimals, and Django auto-localizes {{ }} output per the active
-    UI language (User.language) — under "fi"/"sv"/"ru" that's a comma
+    UI language (User.language) - under "fi"/"sv"/"ru" that's a comma
     decimal separator ("148,00"), which isn't valid SVG numeric syntax.
     Browsers silently fail to parse that coordinate, so every bar
-    rendered at zero size — invisible, not just misformatted. These
+    rendered at zero size - invisible, not just misformatted. These
     are internal plot coordinates, never shown to the user directly,
     so {% localize off %} is correct here; bar.value below re-enables
     it, since that number *is* shown to the user as text.

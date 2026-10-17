@@ -12,7 +12,7 @@ from . import services
 
 @login_required
 def shared_plan_list(request):
-    """"Plans from my coaches" — the coach-shared subset of
+    """"Plans from my coaches" - the coach-shared subset of
     apps.programs.services.visible_to/apps.nutrition.services.
     diet_plans_visible_to, which both also return the requesting
     user's own rows and (for programs) system templates; this view

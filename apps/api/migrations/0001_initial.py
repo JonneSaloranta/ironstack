@@ -40,7 +40,7 @@ class Migration(migrations.Migration):
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('updated_at', models.DateTimeField(auto_now=True)),
-                ('name', models.CharField(help_text='A label to tell your keys apart — not shown to anyone else.', max_length=100)),
+                ('name', models.CharField(help_text='A label to tell your keys apart - not shown to anyone else.', max_length=100)),
                 ('key_hash', models.CharField(db_index=True, max_length=64, unique=True)),
                 ('prefix', models.CharField(db_index=True, max_length=12)),
                 ('is_active', models.BooleanField(default=True)),

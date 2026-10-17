@@ -1,12 +1,12 @@
 {% extends "base.html" %}
 {% load i18n %}
-{% block title %}{% trans "Time to goal weight calculator" %} — IronStack{% endblock %}
+{% block title %}{% trans "Time to goal weight calculator" %} - IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
   <h1 class="no-margin">{% trans "Time to goal weight calculator" %}</h1>
 </div>
 {% include "nutrition/_subnav.html" %}
-<p class="text-muted">{% trans "At a chosen weekly rate, roughly how long to reach a target weight — a plain projection from the numbers you enter, not a promise." %}</p>
+<p class="text-muted">{% trans "At a chosen weekly rate, roughly how long to reach a target weight - a plain projection from the numbers you enter, not a promise." %}</p>
 
 <form class="card" method="get">
   {% include "core/_form_errors.html" %}
@@ -27,7 +27,7 @@
     </div>
   {% else %}
     <div class="card empty-state">
-      <p>{% trans "That rate doesn't move toward your target — check the sign (negative to lose, positive to gain) matches the direction you actually need to go." %}</p>
+      <p>{% trans "That rate doesn't move toward your target - check the sign (negative to lose, positive to gain) matches the direction you actually need to go." %}</p>
     </div>
   {% endif %}
 {% endif %}

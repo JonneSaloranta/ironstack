@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% load i18n core_extras %}
-{% block title %}{% trans program.name %} — IronStack{% endblock %}
+{% block title %}{% trans program.name %} - IronStack{% endblock %}
 {% block content %}
 {% url 'programs:program-list' as c1u %}{% trans "Programs" as c1l %}
 {% include "core/_breadcrumbs.html" with c1_url=c1u c1_label=c1l current=program.name %}
@@ -59,7 +59,7 @@
       {% for prescription in workout.prescriptions.all %}
         <li>
           <strong><a href="{% url 'exercises:exercise-detail' prescription.exercise.pk %}">{% trans prescription.exercise.name %}</a></strong>
-          — {{ prescription.set_count }} × {{ prescription.min_reps }}-{{ prescription.max_reps }}
+          - {{ prescription.set_count }} × {{ prescription.min_reps }}-{{ prescription.max_reps }}
           {% if prescription.target_weight %} @ {{ prescription.target_weight|weight:request.user }}{% endif %}
           {% if prescription.target_rpe %} @ <abbr tabindex="0" title="{% trans "Rate of Perceived Exertion" %}">RPE</abbr> {{ prescription.target_rpe }}{% endif %}
           {% if can_edit %}

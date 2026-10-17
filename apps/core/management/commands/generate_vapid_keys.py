@@ -7,7 +7,7 @@ from py_vapid import Vapid
 
 class Command(BaseCommand):
     """One-time key generation for Web Push (docs/SECURITY.md "Web
-    Push notifications") — a self-hoster runs this once and pastes the
+    Push notifications") - a self-hoster runs this once and pastes the
     two printed lines into their .env, then restarts. Never run
     automatically (no startup-command hook, unlike e.g.
     createcachetable): re-running this invalidates every existing
@@ -15,12 +15,12 @@ class Command(BaseCommand):
     every already-subscribed device until each one re-subscribes.
 
     Prints both keys base64url-encoded with no PEM headers, single
-    line each — the one format py_vapid.Vapid.from_string() correctly
+    line each - the one format py_vapid.Vapid.from_string() correctly
     auto-detects from a plain string (this project's env() helper
     doesn't support multi-line values, ruling out PEM), and, for the
     public key, also exactly the raw-uncompressed-point form the
     browser's PushManager.subscribe({applicationServerKey}) needs
-    client-side — one value, zero reformatting between settings.py and
+    client-side - one value, zero reformatting between settings.py and
     the page it's rendered onto.
     """
 
@@ -42,7 +42,7 @@ class Command(BaseCommand):
         self.stdout.write(
             self.style.WARNING(
                 "Paste both lines into your .env, set VAPID_ADMIN_EMAIL too, then restart. "
-                "Keep the private key secret — anyone with it can send push notifications "
+                "Keep the private key secret - anyone with it can send push notifications "
                 "impersonating this instance to every subscribed device."
             )
         )

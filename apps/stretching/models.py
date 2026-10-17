@@ -21,7 +21,7 @@ class Stretch(models.Model):
     """One stretch in the library (Standing Quad Stretch, Cat-Cow, ...).
 
     System-seeded defaults (see migration 0002) plus user-created custom
-    stretches — the same ownership/uniqueness/soft-delete pattern as
+    stretches - the same ownership/uniqueness/soft-delete pattern as
     apps.activities.ActivityType: never hard-deleted, so routines and
     past sessions keep rendering after a custom stretch is retired.
     `muscle_groups` reuses apps.exercises.MuscleGroup so a finished
@@ -88,7 +88,7 @@ class Stretch(models.Model):
 
 
 class StretchRoutine(TimeStampedModel):
-    """An editable, reusable list of stretches — the stretching
+    """An editable, reusable list of stretches - the stretching
     equivalent of apps.programs.Workout. Editing a routine never touches
     past StretchSessions: those snapshot everything they need at start
     time (services.start_session)."""
@@ -152,7 +152,7 @@ class RoutineItem(models.Model):
         ordering = ["order", "id"]
 
     def __str__(self):
-        return f"{self.routine} — {self.stretch}"
+        return f"{self.routine} - {self.stretch}"
 
 
 class StretchSessionStatus(models.TextChoices):
@@ -162,7 +162,7 @@ class StretchSessionStatus(models.TextChoices):
 
 
 class StretchSession(TimeStampedModel):
-    """One stretching session — guided (snapshotted from a routine or a
+    """One stretching session - guided (snapshotted from a routine or a
     post-workout suggestion) or quick-logged after the fact with just a
     duration. `routine` is an informational backlink only; `name` is
     the snapshot history renders from."""
@@ -191,7 +191,7 @@ class StretchSession(TimeStampedModel):
     started_at = models.DateTimeField(default=timezone.now)
     completed_at = models.DateTimeField(null=True, blank=True)
     # Wall-clock time from start to finish for a guided session, or the
-    # user's own figure for a quick log — see services.complete_session.
+    # user's own figure for a quick log - see services.complete_session.
     duration = models.DurationField(null=True, blank=True, verbose_name=_("duration"))
     notes = models.TextField(blank=True, verbose_name=_("notes"))
 
@@ -217,7 +217,7 @@ class PerformedStretchStatus(models.TextChoices):
 
 class PerformedStretch(models.Model):
     """One stretch within a session, holding the snapshot of what was
-    planned when the session started — name, hold, sets, rest, sides.
+    planned when the session started - name, hold, sets, rest, sides.
     `stretch` is kept only as a backlink (for its instructions while
     the session is being played); history never re-reads it."""
 

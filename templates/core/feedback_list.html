@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% load i18n %}
-{% block title %}{% trans "Feedback" %} — IronStack{% endblock %}
+{% block title %}{% trans "Feedback" %} - IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
   <h1 class="no-margin">{% trans "Feedback" %}</h1>
@@ -23,7 +23,7 @@
       <div class="card-action-row">
         <div>
           <strong>{{ item.subject }}</strong>
-          <p class="text-muted">{{ item.get_category_display }} — {{ item.user }} — {{ item.created_at|date:"Y-m-d H:i" }}</p>
+          <p class="text-muted">{{ item.get_category_display }} - {{ item.user }} - {{ item.created_at|date:"Y-m-d H:i" }}</p>
         </div>
       </div>
       <p>{{ item.message|linebreaksbr }}</p>

@@ -23,7 +23,7 @@ class Migration(migrations.Migration):
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('updated_at', models.DateTimeField(auto_now=True)),
                 ('record_type', models.CharField(choices=[('max_weight', 'Max weight'), ('rep_pr', 'Rep PR'), ('rep_specific_pr', 'Rep-specific PR'), ('estimated_1rm', 'Estimated 1RM'), ('set_volume', 'Set volume'), ('session_volume', 'Session volume')], max_length=20)),
-                ('rep_count', models.PositiveIntegerField(blank=True, help_text="The N in 'NRM' — only set for rep_specific_pr.", null=True)),
+                ('rep_count', models.PositiveIntegerField(blank=True, help_text="The N in 'NRM' - only set for rep_specific_pr.", null=True)),
                 ('value', models.DecimalField(decimal_places=2, max_digits=8)),
                 ('weight', models.DecimalField(decimal_places=2, max_digits=6)),
                 ('reps', models.PositiveIntegerField()),

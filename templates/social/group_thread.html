@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% load i18n %}
-{% block title %}{{ group.name }} — IronStack{% endblock %}
+{% block title %}{{ group.name }} - IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
   <h1 class="no-margin">{{ group.name }}</h1>
@@ -12,7 +12,7 @@
 {% comment %}
   See templates/social/message_thread.html's own comment on this same
   pattern (stable polled element, visibility-gated trigger, aria-live)
-  — identical reasoning here, just for a group thread instead of a DM.
+  - identical reasoning here, just for a group thread instead of a DM.
 {% endcomment %}
 <div class="card" id="thread-messages" aria-live="polite"
      hx-get="{% url 'social:group-thread-fragment' group.pk %}"
@@ -31,7 +31,7 @@
     <div class="field">
       {% comment %}
         See templates/social/message_thread.html's own comment on
-        this same pattern — visually-hidden, not left off entirely.
+        this same pattern - visually-hidden, not left off entirely.
       {% endcomment %}
       <label for="{{ field.id_for_label }}" class="visually-hidden">{{ field.label }}</label>
       {{ field }}

@@ -12,8 +12,8 @@ class SearchablePickerWidget(forms.CheckboxSelectMultiple):
 
     It is still a CheckboxSelectMultiple underneath: the checkboxes are
     rendered as the no-JavaScript fallback and the script only checks and
-    unchecks them, so the submitted data — and every view and form using
-    it — is exactly what a plain checkbox list would send.
+    unchecks them, so the submitted data - and every view and form using
+    it - is exactly what a plain checkbox list would send.
 
     `placeholder`, `empty_text` (nothing picked yet) and `no_match_text`
     are the widget's own wording, since what's being picked varies."""

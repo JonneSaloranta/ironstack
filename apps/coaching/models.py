@@ -1,4 +1,4 @@
-"""Personal-trainer coaching — a directed, consent-gated relationship
+"""Personal-trainer coaching - a directed, consent-gated relationship
 between two users, letting a coach (a user with `User.
 is_personal_trainer` on) share gym programs/diet plans with, and view
 the training/body-weight data of, whichever coachees have actually
@@ -7,7 +7,7 @@ apps.coaching.services instead (CLAUDE.md: "keep business/domain logic
 out of views" applies just as much to models).
 
 Deliberately not modeled on apps.social.Friendship's symmetric
-user_low/user_high shape — a coach and a coachee are never
+user_low/user_high shape - a coach and a coachee are never
 interchangeable, so both models here use plain, always-meaningful
 `coach`/`coachee` fields instead.
 """
@@ -26,12 +26,12 @@ class CoachingRequestStatus(models.TextChoices):
 
 
 class CoachingRequest(TimeStampedModel):
-    """A coachee asking a PT to coach them — always coachee -> coach,
+    """A coachee asking a PT to coach them - always coachee -> coach,
     never the reverse (unlike apps.social.FriendRequest, there's no
     symmetric "either side can propose" case, so no reverse-pending
     auto-accept logic like send_friend_request's is needed here).
     Kept around after a decision, same reasoning as FriendRequest's
-    own docstring — apps.coaching.services enforces the actual rules
+    own docstring - apps.coaching.services enforces the actual rules
     (can't request yourself, the target must actually be a PT who's
     accepting new clients, no duplicate pending request, can't
     request someone already actively coaching you)."""
@@ -64,11 +64,11 @@ class CoachingRequest(TimeStampedModel):
 
 
 class CoachingRelationship(TimeStampedModel):
-    """A confirmed coach/coachee pairing — created by
+    """A confirmed coach/coachee pairing - created by
     apps.coaching.services.accept_coaching_request, never directly.
 
     `ended_at` soft-ends the relationship (never hard-deleted) so both
-    sides keep the historical fact they were once coach/client —
+    sides keep the historical fact they were once coach/client -
     apps.coaching.services.end_coaching_relationship is the only place
     that sets it. A coach and coachee may have more than one row over
     time (ended, then started again later); the partial unique
@@ -76,7 +76,7 @@ class CoachingRelationship(TimeStampedModel):
     row for the same pair, mirroring NutritionTarget/DietPlan's own
     "only one open row" partial constraints elsewhere in this
     codebase. A coachee may have several *different* active coaches at
-    once (e.g. a nutrition coach and a separate strength coach) —
+    once (e.g. a nutrition coach and a separate strength coach) -
     nothing here restricts that, only the same coach twice.
     """
 

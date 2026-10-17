@@ -7,7 +7,7 @@ class ApiConfig(AppConfig):
     verbose_name = "API"
 
     def ready(self):
-        # Import side effect only — see apps.api.openapi's own
+        # Import side effect only - see apps.api.openapi's own
         # docstring for why this has to happen somewhere, and why
         # AppConfig.ready() (guaranteed to run once, after every app's
         # models are loaded) is the right place for it.

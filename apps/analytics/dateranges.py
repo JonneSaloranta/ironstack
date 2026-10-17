@@ -1,4 +1,4 @@
-"""Date-range resolution for analytics — docs/ANALYTICS.md "Date ranges".
+"""Date-range resolution for analytics - docs/ANALYTICS.md "Date ranges".
 
 Kept out of views/templates: a view only needs to turn a GET param into a
 `DateRange` and pass it to a service function.
@@ -33,7 +33,7 @@ class DateRange:
 
 def resolve(key: str | None, *, start: date | None = None, end: date | None = None) -> DateRange:
     """Resolve a preset key, or an explicit `start`/`end` pair for
-    docs/ANALYTICS.md's "custom range" — an explicit `start` takes
+    docs/ANALYTICS.md's "custom range" - an explicit `start` takes
     priority over any preset key it's passed alongside."""
     today = timezone.localdate()
     resolved_end = end or today

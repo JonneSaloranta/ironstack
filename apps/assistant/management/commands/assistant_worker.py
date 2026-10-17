@@ -11,7 +11,7 @@ POLL_SECONDS = 1
 
 
 class Command(BaseCommand):
-    """Runs forever, writing assistant replies — docker-compose.yml's
+    """Runs forever, writing assistant replies - docker-compose.yml's
     `assistant-worker` service. Replies run here rather than in a web
     request because a reply with a few tool calls easily takes longer
     than gunicorn's 30-second worker timeout; the page polls the message
@@ -20,9 +20,9 @@ class Command(BaseCommand):
 
     Not a real task queue, for the same reasons as rest_timer_dispatcher
     and backup_scheduler: a sleep-and-poll loop over one table is enough
-    for a self-contained Compose stack. Several copies can run at once —
+    for a self-contained Compose stack. Several copies can run at once -
     services.process_message claims each message with SELECT ... FOR
-    UPDATE SKIP LOCKED — so `docker compose up --scale assistant-worker=2`
+    UPDATE SKIP LOCKED - so `docker compose up --scale assistant-worker=2`
     handles more concurrent users.
     """
 

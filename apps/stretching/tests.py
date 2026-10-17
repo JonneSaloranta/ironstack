@@ -1,4 +1,4 @@
-"""Domain tests for apps.stretching — models, seed data and services.
+"""Domain tests for apps.stretching - models, seed data and services.
 View/permission tests live in test_views.py."""
 
 import json

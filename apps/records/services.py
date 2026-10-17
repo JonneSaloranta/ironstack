@@ -1,15 +1,15 @@
-"""PR detection — kept out of views/templates per CLAUDE.md.
+"""PR detection - kept out of views/templates per CLAUDE.md.
 
 `check_and_record_prs` is the entry point: called once, right after a new
 `ExerciseSet` is saved (see apps.workouts.views.set_log), it compares that
 set against the user's prior history for the exercise and records any
-newly broken personal records. Only called for newly *created* sets —
+newly broken personal records. Only called for newly *created* sets -
 editing an existing set does not retroactively re-run PR detection (see
 docs/PR_SYSTEM.md's testing list, which covers new records and ties but
 not edit-driven recalculation; that's out of scope for this phase).
 
 Every "current best" here is computed live from `ExerciseSet` history each
-time, not read back from previously stored `PersonalRecord` rows — so
+time, not read back from previously stored `PersonalRecord` rows - so
 detection is correct regardless of what's already stored, and program
 edits/deletions (which this module never queries) can't affect it.
 """
@@ -25,12 +25,12 @@ from .one_rep_max import OneRepMaxCalculator
 
 REP_MILESTONES = [1, 3, 5, 8, 10, 12]
 
-# weight (max_digits=6, decimal_places=2) * reps (a plain integer) —
+# weight (max_digits=6, decimal_places=2) * reps (a plain integer) -
 # 12 digits comfortably covers even a whole session's worth of these
 # summed together (_best_session_volume below), well past any
 # realistic single value. Shared so a set's volume is computed the
 # same way whether it's one set (previous_volumes) or summed across a
-# session (_best_session_volume) — both push this into the database
+# session (_best_session_volume) - both push this into the database
 # rather than fetching every row into Python to multiply by hand,
 # which used to mean re-scanning a whole exercise's history on every
 # single set logged (see this module's own docstring).
@@ -42,7 +42,7 @@ _one_rep_max = OneRepMaxCalculator()
 
 
 def eligible_sets(user, exercise):
-    """Sets that count toward PRs: real, completed effort only — see
+    """Sets that count toward PRs: real, completed effort only - see
     docs/DOMAIN_MODEL.md on warmup sets, and PR_SYSTEM.md's "largest
     weight ever *successfully* recorded" for why failures are excluded
     too."""
@@ -117,10 +117,10 @@ def _best_session_volume(qs, exclude_session_id=None):
     one session has ever hit for this (user, exercise). Grouped and
     summed in the database (one query, however many sessions of history
     exist) rather than pulling every eligible set into Python to total
-    by hand — `qs` is `eligible_sets(user, exercise)`, unbounded by
+    by hand - `qs` is `eligible_sets(user, exercise)`, unbounded by
     date range, so a long-time user's whole history for a favorite
     exercise (thousands of sets, run again on every single new set
-    logged — see this module's own docstring) used to mean fetching
+    logged - see this module's own docstring) used to mean fetching
     and re-summing all of it here on every set."""
     values = qs
     if exclude_session_id is not None:
@@ -137,7 +137,7 @@ def check_and_record_prs(exercise_set):
     """Check one freshly-logged set against history; create+return any
     newly broken `PersonalRecord`s. Each returned record additionally
     carries a transient `.previous_value` (not persisted) for notification
-    display — see docs/PR_SYSTEM.md's "New PR / Previous ..." example."""
+    display - see docs/PR_SYSTEM.md's "New PR / Previous ..." example."""
     if exercise_set.is_warmup or exercise_set.is_failure:
         return []
 
@@ -197,7 +197,7 @@ def check_and_record_prs(exercise_set):
     set_volume = exercise_set.weight * exercise_set.reps
     # Max(weight*reps) computed in the database rather than pulling
     # every prior set's (weight, reps) pair into Python to multiply by
-    # hand — same reasoning as _best_session_volume's own docstring.
+    # hand - same reasoning as _best_session_volume's own docstring.
     previous_best_volume = qs.exclude(pk=exercise_set.pk).aggregate(
         best=Max(_VOLUME_EXPRESSION)
     )["best"]
@@ -212,7 +212,7 @@ def check_and_record_prs(exercise_set):
 
 
 def _upsert_session_volume_record(qs, user, exercise, exercise_set, session):
-    """Session volume is a running total, not a single set's raw number —
+    """Session volume is a running total, not a single set's raw number -
     later sets in the *same* session update this row instead of each
     firing their own "new PR", per PersonalRecord's docstring."""
     total = _session_volume(qs, session.id)
@@ -255,7 +255,7 @@ def _upsert_session_volume_record(qs, user, exercise, exercise_set, session):
 
 def display_value(record, user):
     """A `PersonalRecord`'s headline `.value`, unit-converted for
-    `user`'s preferred unit — every record type except `rep_pr`, whose
+    `user`'s preferred unit - every record type except `rep_pr`, whose
     value is a plain rep count, not a weight (see `PersonalRecord`'s
     docstring for which types mean what). Returns the bare number; use
     `format_value` for a display string that also carries the unit.
@@ -290,7 +290,7 @@ def format_value(record, user):
     or bare for a rep count. Shared by the recent-PRs templates
     (apps.records.templatetags.records_extras) and the "New PR" flash
     message (apps.workouts.views.set_log) so both agree on the same
-    conversion instead of each re-implementing it — regression: that
+    conversion instead of each re-implementing it - regression: that
     message used to interpolate the raw kg value directly, unconverted
     and unlabeled, even for an imperial-preference user.
     """

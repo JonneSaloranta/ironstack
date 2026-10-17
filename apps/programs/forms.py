@@ -22,11 +22,11 @@ User = get_user_model()
 
 class ProgramForm(forms.ModelForm):
     """`shared_with_clients` (apps.coaching) only makes sense for a
-    personal trainer — popped from the form entirely for anyone else,
+    personal trainer - popped from the form entirely for anyone else,
     rather than shown-but-inert, so a plain user never sees a
     multi-select that couldn't do anything for their account. Its
     queryset is narrowed to this PT's own *currently active* clients
-    (apps.coaching.services.clients_of) — asked for directly: a coach
+    (apps.coaching.services.clients_of) - asked for directly: a coach
     assigns a program to specific clients, not to every client at
     once, so the field itself must only ever offer real choices, never
     every user on the instance."""
@@ -40,7 +40,7 @@ class ProgramForm(forms.ModelForm):
         }
         help_texts = {
             "is_template": _(
-                "Templates aren't meant to be run directly — copy them into a "
+                "Templates aren't meant to be run directly - copy them into a "
                 "new program (from the program page) whenever you start a new cycle, "
                 "keeping the original untouched."
             ),
@@ -58,7 +58,7 @@ class ProgramForm(forms.ModelForm):
             del self.fields["shared_with_clients"]
         else:
             # User.coaches is CoachingRelationship.coachee's own
-            # related_name — the reverse side of "who does this PT
+            # related_name - the reverse side of "who does this PT
             # currently coach" without a second round-trip through
             # apps.coaching.services.clients_of's own User objects.
             self.fields["shared_with_clients"].queryset = active_clients_of(user)
@@ -72,7 +72,7 @@ class WorkoutForm(forms.ModelForm):
 
 class ExercisePrescriptionForm(forms.ModelForm):
     """`target_weight` and `weight_increment` are entered and displayed in
-    the user's preferred unit (apps.core.units) — converted to/from
+    the user's preferred unit (apps.core.units) - converted to/from
     canonical kg storage here, not left to the template or view, the same
     pattern as apps.measurements.forms.BodyMeasurementForm. The model
     field itself stays "canonical kg" (see its help_text) regardless.
@@ -114,16 +114,16 @@ class ExercisePrescriptionForm(forms.ModelForm):
         self.user = user
         super().__init__(*args, **kwargs)
         # Only exercises this user can actually see (system + own custom)
-        # may be prescribed — mirrors apps.exercises visibility rules.
+        # may be prescribed - mirrors apps.exercises visibility rules.
         self.fields["exercise"].queryset = exercises_visible_to(user)
         # ModelChoiceField renders each <option> via str(exercise) by
-        # default (Exercise.__str__ returns self.name) — that bypasses
+        # default (Exercise.__str__ returns self.name) - that bypasses
         # the template layer entirely, so {% trans %} there can't reach
         # it. label_from_instance is the documented hook for controlling
         # that per-option text; gettext() (not the module's lazy `_`)
         # since this runs per-request, with translation already active,
         # not at class-definition time. A no-op for a user's own custom
-        # exercise (never in the seed catalog — see
+        # exercise (never in the seed catalog - see
         # apps.exercises.i18n_content), same as everywhere else this
         # pattern is used.
         self.fields["exercise"].label_from_instance = lambda obj: _gettext(obj.name)

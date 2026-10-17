@@ -104,7 +104,7 @@ class BMICalculationTests(TestCase):
 
     def test_categories_are_contiguous_and_exhaustive(self):
         """Every category's high bound is the next one's low bound, and
-        the whole range from 0 to infinity is covered — no gap a real
+        the whole range from 0 to infinity is covered - no gap a real
         BMI value could fall through uncategorized."""
         self.assertIsNone(BMI_CATEGORIES[0].low)
         self.assertIsNone(BMI_CATEGORIES[-1].high)
@@ -141,7 +141,7 @@ class BMICalculationTests(TestCase):
 class DurationFilterTests(TestCase):
     """Regression: a raw {{ some_timedelta }} rendered real seconds/
     microseconds from whenever a session was actually started/completed
-    (e.g. "0:03:19.893476") — meaningless noise for a training-time
+    (e.g. "0:03:19.893476") - meaningless noise for a training-time
     stat. See apps.core.templatetags.core_extras.duration."""
 
     def test_none_renders_as_empty_string(self):
@@ -171,7 +171,7 @@ class TranslateContentFilterTests(TestCase):
     """Regression: Django's `{% trans someobj.name %}` tag doubles every
     "%" in a resolved template *variable* before the gettext lookup and
     undoes the doubling afterwards (django/templatetags/i18n.py's
-    "Restore percent signs" step — meant for literal `%%` written by hand
+    "Restore percent signs" step - meant for literal `%%` written by hand
     in template source, applied unconditionally to variables too), so a
     seeded content string containing a real "%" (e.g. MeasurementType
     "Body fat %") never matches its catalog entry and silently falls back
@@ -196,7 +196,7 @@ class TranslateContentFilterTests(TestCase):
 
 class ChartSeriesServiceTests(TestCase):
     """apps.measurements and apps.activities both plot a value trend over
-    time through this shared, model-agnostic utility — tested here once
+    time through this shared, model-agnostic utility - tested here once
     against plain (value, date) tuples rather than per-app model shapes."""
 
     def test_fewer_than_two_points_returns_no_series(self):
@@ -276,7 +276,7 @@ class BarSeriesServiceTests(TestCase):
 class GreetingTests(TestCase):
     """Dashboard greeting: varied, time-of-day-aware, mixing
     encouragement and humor (apps.core.greetings) instead of a flat
-    "Signed in as X" line — originally on the profile page, moved to
+    "Signed in as X" line - originally on the profile page, moved to
     the dashboard (Home)."""
 
     def test_time_bucket_boundaries(self):
@@ -315,7 +315,7 @@ class GreetingTests(TestCase):
     def test_greeting_varies_across_calls(self):
         """Not a strict guarantee (it's random), but with 4 candidates
         and 30 draws the odds of only ever hitting one are astronomically
-        small — this exists to catch an accidental hardcoded pick, not
+        small - this exists to catch an accidental hardcoded pick, not
         to pin down exact randomness."""
         from django.contrib.auth import get_user_model
 
@@ -327,7 +327,7 @@ class GreetingTests(TestCase):
 
     def test_greeting_uses_the_first_name_when_set(self):
         """A user's own greeting always addresses them by first name if
-        they've set one — unlike apps.analytics.achievements'
+        they've set one - unlike apps.analytics.achievements'
         public_display_name(), this isn't gated by
         User.show_name_to_others, since it's this user looking at their
         own dashboard, not something shown to anyone else."""
@@ -358,7 +358,7 @@ class GreetingTests(TestCase):
 class ErrorPageTests(TestCase):
     """Phase 11 polish: custom 404/403 pages instead of the bare Django/
     browser default, styled consistently with the rest of the app. Only
-    rendered with DEBUG=False — Django shows its own debug page otherwise,
+    rendered with DEBUG=False - Django shows its own debug page otherwise,
     which is what dev should see."""
 
     @override_settings(DEBUG=False, ALLOWED_HOSTS=["testserver"])
@@ -377,11 +377,11 @@ class ErrorPageTests(TestCase):
 
     def test_500_template_actually_renders(self):
         """Regression: templates/500.html used to explain, in a comment
-        inside its <style> block, that it "can't rely on {% url %}" —
+        inside its <style> block, that it "can't rely on {% url %}" -
         but Django's template lexer scans the whole file for {% %}
         regardless of surrounding CSS/HTML comment syntax, so that
         literal "{% url %}" (with no arguments) was parsed as a real,
-        broken tag. The custom error page crashed on every render — a
+        broken tag. The custom error page crashed on every render - a
         real 500 would have shown Django's raw default error instead of
         this page, defeating the entire point of having one. Found by
         actually calling the handler, not just checking the file exists."""
@@ -397,7 +397,7 @@ class ErrorPageTests(TestCase):
 
 
 class ContentSecurityPolicyTests(TestCase):
-    """apps.core.middleware.ContentSecurityPolicyMiddleware — see its
+    """apps.core.middleware.ContentSecurityPolicyMiddleware - see its
     own docstring and docs/SECURITY.md for what each directive allows
     and why."""
 
@@ -415,7 +415,7 @@ class ContentSecurityPolicyTests(TestCase):
 
     def test_img_src_allows_gravatar_and_openfoodfacts_images_alongside_self(self):
         # apps.accounts.models.User.gravatar_url and
-        # apps.nutrition.models.Food.image_url — see docs/SECURITY.md
+        # apps.nutrition.models.Food.image_url - see docs/SECURITY.md
         # "Gravatar profile picture"/"OpenFoodFacts integration" for
         # why these are the two deliberate external allowances in an
         # otherwise 'self'-only policy.
@@ -427,7 +427,7 @@ class ContentSecurityPolicyTests(TestCase):
 
     def test_frame_src_allows_browser_extension_overlays_alongside_self(self):
         # Regression: with no frame-src of its own, that directive fell
-        # back to default-src 'self' — which silently broke a password
+        # back to default-src 'self' - which silently broke a password
         # manager extension's own injected iframe (Bitwarden's inline
         # autofill-suggestion overlay on a field), not just third-party
         # web content framing this page. See the middleware's own
@@ -440,7 +440,7 @@ class ContentSecurityPolicyTests(TestCase):
 
 
 class ProductionSettingsTests(TestCase):
-    """config.settings.production — a plain module import with the
+    """config.settings.production - a plain module import with the
     required env vars stubbed in, not a live server; DB access isn't
     needed just to check what a settings module assigns."""
 
@@ -459,12 +459,12 @@ class ProductionSettingsTests(TestCase):
     def test_static_files_get_a_content_hash_in_their_url(self):
         """Regression: a CDN in front of a real deployment (Cloudflare)
         kept serving a stale `base.css` for hours after an upgrade that
-        changed it — nothing about the unchanging `/static/css/
+        changed it - nothing about the unchanging `/static/css/
         base.css` URL told it a new version existed. ManifestStatic
         FilesStorage makes every static file's resolved URL include a
         hash of its own content, so a real content change always means
         a new URL, never a stale cache hit on the old one. Deliberately
-        only set here, not in `base.py`/`dev.py` — this needs
+        only set here, not in `base.py`/`dev.py` - this needs
         `collectstatic` to have already produced its manifest file,
         which only production's own docker-compose command runs before
         starting gunicorn; dev's `runserver` never calls
@@ -498,7 +498,7 @@ class FieldA11yFilterTests(TestCase):
 class TranslatedTextInAlpineExpressionsTests(TestCase):
     """A translation dropped into a JS string literal inside an Alpine
     attribute (x-text="more ? '{% trans … %}' : …") is only HTML-escaped,
-    which the browser undoes before Alpine reads the attribute — so a
+    which the browser undoes before Alpine reads the attribute - so a
     translation containing an apostrophe (common in Italian) would end
     the string and break the whole expression. Such text must go
     through `{% filter escapejs %}`."""
@@ -536,7 +536,7 @@ class StaticAssetsHashTests(TestCase):
 
 
 class HtmxLoginRedirectMiddlewareTests(TestCase):
-    """apps.core.middleware.HtmxLoginRedirectMiddleware — an HTMX
+    """apps.core.middleware.HtmxLoginRedirectMiddleware - an HTMX
     request without a session must send the whole page to login, not
     swap the login page into a fragment."""
 
@@ -597,7 +597,7 @@ class HealthcheckTests(TestCase):
 class PWATests(TestCase):
     """Installable-PWA support: manifest + service worker, served at the
     site root (not /static/) so the service worker's scope covers the
-    whole app — see apps.core.views._serve_static_root_file."""
+    whole app - see apps.core.views._serve_static_root_file."""
 
     def test_manifest_is_served_at_the_root_without_auth(self):
         response = self.client.get("/manifest.json")
@@ -625,20 +625,20 @@ class PWATests(TestCase):
     def test_service_worker_never_caches_non_static_requests(self):
         """The whole point: pages/forms/HTMX responses must never be
         served from a cache, or a stale "workout history" could be shown
-        as if current (CLAUDE.md — historical trustworthiness)."""
+        as if current (CLAUDE.md - historical trustworthiness)."""
         content = self.client.get("/sw.js").content.decode()
         self.assertIn('pathname.startsWith("/static/")', content)
 
     def test_the_cache_version_placeholder_is_substituted_not_left_literal(self):
         # Regression: this used to be a hand-bumped literal string
-        # ("ironstack-static-v2", then "...-v3") — a browser tab kept
+        # ("ironstack-static-v2", then "...-v3") - a browser tab kept
         # open across an entire live-editing session stayed on a stale
         # cached static/js/month-calendar.js through several real
         # in-place rewrites of that file, since nothing about a
         # forgotten-to-bump version number ever actually changes. Now
         # a real hash of the current static/css and static/js file
         # contents (apps.core.version.get_static_assets_hash), filled
-        # in at serve time — this just confirms the substitution
+        # in at serve time - this just confirms the substitution
         # itself actually happens rather than leaving the placeholder
         # (or, worse, the old literal) sitting in served content.
         from apps.core.version import get_static_assets_hash
@@ -650,7 +650,7 @@ class PWATests(TestCase):
     def test_static_assets_use_stale_while_revalidate_not_pure_cache_first(self):
         """Regression: a pure cache-first strategy served a cached
         CSS/JS asset forever once cached even once, never re-checking
-        the network for it again — since static files aren't served at
+        the network for it again - since static files aren't served at
         content-hashed URLs (no ManifestStaticFilesStorage), any later
         fix (e.g. a whole session's worth of chart/nav/layout CSS
         changes) was permanently invisible to a browser that had
@@ -664,7 +664,7 @@ class PWATests(TestCase):
 
     def test_base_page_links_the_manifest_and_registers_the_service_worker(self):
         """The registration call itself lives in static/js/sw-register.js
-        (loaded via <script src>, not inline — see apps.core.middleware.
+        (loaded via <script src>, not inline - see apps.core.middleware.
         ContentSecurityPolicyMiddleware's docstring for why an inline
         <script> block would just be silently blocked), fed the service
         worker's own URL through a data-* attribute on <body> rather than
@@ -683,7 +683,7 @@ class PWATests(TestCase):
 
     def test_install_prompt_banner_only_renders_for_authenticated_users(self):
         """templates/core/_pwa_install_prompt.html/static/js/pwa-
-        install-prompt.js — the banner itself decides client-side
+        install-prompt.js - the banner itself decides client-side
         whether there's anything to actually show (already installed,
         previously dismissed, ...), but there's no reason to even ship
         its markup/script on a page an anonymous visitor (e.g. the
@@ -702,7 +702,7 @@ class PWATests(TestCase):
 
 
 class VersionTests(TestCase):
-    """Single source of truth for the running IronStack version — a
+    """Single source of truth for the running IronStack version - a
     plain-text VERSION file at the repo root (apps.core.version), not
     hardcoded in Python, so it's readable by future non-Python tooling
     (a backup/restore script) too. Made available in every template via
@@ -741,7 +741,7 @@ class VersionTests(TestCase):
 
     def test_get_git_sha_is_unknown_without_a_baked_in_file(self):
         """GIT_SHA is only ever written by scripts/build.sh's production
-        build path (Dockerfile) — a dev container (or any plain
+        build path (Dockerfile) - a dev container (or any plain
         `docker compose up -d --build`) has no such file."""
         get_git_sha.cache_clear()
         try:
@@ -761,7 +761,7 @@ class VersionTests(TestCase):
 
     def test_get_static_assets_hash_changes_when_a_file_does(self):
         # apps.core.views.service_worker's own cache-busting signal
-        # (static/sw.js's own comment on why) — not cached with DEBUG on,
+        # (static/sw.js's own comment on why) - not cached with DEBUG on,
         # since a dev container's static/ is bind-mounted and can change
         # without a restart; this proves that live-edit case directly.
         from apps.core.version import get_static_assets_hash
@@ -805,9 +805,9 @@ class VersionTests(TestCase):
 
 
 class ChangelogTests(TestCase):
-    """apps.core.changelog — a narrowly-scoped Markdown-subset renderer
+    """apps.core.changelog - a narrowly-scoped Markdown-subset renderer
     for CHANGELOG.md specifically (not a general-purpose Markdown
-    library — see that module's own docstring for why), powering the
+    library - see that module's own docstring for why), powering the
     profile page's version-number modal."""
 
     def test_renders_the_real_changelog_file_without_error(self):
@@ -816,47 +816,47 @@ class ChangelogTests(TestCase):
         self.assertIn("[1.0.0]", html)
 
     def test_headings(self):
-        html = _render("# Title\n\n## [1.1.0] — 2026-01-01\n\n### Added\n- A thing\n")
+        html = _render("# Title\n\n## [1.1.0] - 2026-01-01\n\n### Added\n- A thing\n")
         self.assertNotIn("Title", html)  # the top-level title is skipped
-        self.assertIn("<summary>[1.1.0] — 2026-01-01</summary>", html)
+        self.assertIn("<summary>[1.1.0] - 2026-01-01</summary>", html)
         self.assertIn("<h4>✨ Added</h4>", html)
 
     def test_each_version_is_its_own_collapsible_section(self):
         """Regression: this used to render as one continuous list with
         no visual break between versions at all."""
         html = _render(
-            "## [1.2.0] — 2026-02-01\n\n### Added\n- Newer thing\n\n"
-            "## [1.1.0] — 2026-01-01\n\n### Fixed\n- Older thing\n"
+            "## [1.2.0] - 2026-02-01\n\n### Added\n- Newer thing\n\n"
+            "## [1.1.0] - 2026-01-01\n\n### Fixed\n- Older thing\n"
         )
         self.assertEqual(html.count("<details"), 2)
-        self.assertIn("<summary>[1.2.0] — 2026-02-01</summary>", html)
-        self.assertIn("<summary>[1.1.0] — 2026-01-01</summary>", html)
+        self.assertIn("<summary>[1.2.0] - 2026-02-01</summary>", html)
+        self.assertIn("<summary>[1.1.0] - 2026-01-01</summary>", html)
 
     def test_only_the_first_non_empty_version_starts_open(self):
         html = _render(
-            "## [Unreleased]\n\n## [1.2.0] — 2026-02-01\n\n### Added\n- Newer thing\n\n"
-            "## [1.1.0] — 2026-01-01\n\n### Fixed\n- Older thing\n"
+            "## [Unreleased]\n\n## [1.2.0] - 2026-02-01\n\n### Added\n- Newer thing\n\n"
+            "## [1.1.0] - 2026-01-01\n\n### Fixed\n- Older thing\n"
         )
         self.assertEqual(html.count("<details open"), 1)
-        self.assertIn('<details open><summary>[1.2.0] — 2026-02-01</summary>', html)
+        self.assertIn('<details open><summary>[1.2.0] - 2026-02-01</summary>', html)
 
     def test_an_empty_version_section_is_skipped_entirely(self):
         """The normal state of [Unreleased] right after a release cut
-        (CLAUDE.md's own release workflow) — nothing under it yet."""
-        html = _render("## [Unreleased]\n\n## [1.1.0] — 2026-01-01\n\n### Added\n- A thing\n")
+        (CLAUDE.md's own release workflow) - nothing under it yet."""
+        html = _render("## [Unreleased]\n\n## [1.1.0] - 2026-01-01\n\n### Added\n- A thing\n")
         self.assertNotIn("[Unreleased]", html)
         self.assertIn("[1.1.0]", html)
 
     def test_a_recognized_heading_gets_its_matching_emoji(self):
-        html = _render("## [1.1.0] — 2026-01-01\n\n### Fixed\n- A fix\n")
+        html = _render("## [1.1.0] - 2026-01-01\n\n### Fixed\n- A fix\n")
         self.assertIn("<h4>🐛 Fixed</h4>", html)
 
     def test_a_suffixed_heading_still_matches_its_plain_counterpart(self):
-        html = _render("## [1.1.0] — 2026-01-01\n\n### Added — API\n- A new endpoint\n")
-        self.assertIn("<h4>✨ Added — API</h4>", html)
+        html = _render("## [1.1.0] - 2026-01-01\n\n### Added - API\n- A new endpoint\n")
+        self.assertIn("<h4>✨ Added - API</h4>", html)
 
     def test_an_unrecognized_heading_gets_the_default_emoji(self):
-        html = _render("## [1.1.0] — 2026-01-01\n\n### Security\n- A hardening change\n")
+        html = _render("## [1.1.0] - 2026-01-01\n\n### Security\n- A hardening change\n")
         self.assertIn("<h4>📌 Security</h4>", html)
 
     def test_bullets_including_a_soft_wrapped_continuation_line(self):
@@ -894,10 +894,10 @@ class ChangelogTests(TestCase):
 
 
 class BackupTests(TestCase):
-    """apps.core.backups — the admin-only web-UI backup mechanism (see
+    """apps.core.backups - the admin-only web-UI backup mechanism (see
     that module's own docstring for how and why it's a separate
     mechanism from scripts/backup.sh/restore.sh). The destructive
-    restore_backup() is deliberately never called for real here — it
+    restore_backup() is deliberately never called for real here - it
     drops and recreates the actual database via subprocess, which
     would corrupt this test run's own database. Its safe surface
     (create/list/download/manifest) is exercised for real against a
@@ -1018,7 +1018,7 @@ class BackupTests(TestCase):
 
     def _build_valid_archive_bytes(self):
         """A minimal, real .tar.gz with all three members
-        save_uploaded_backup() requires — same shape create_backup()
+        save_uploaded_backup() requires - same shape create_backup()
         itself writes, just built directly in memory rather than via a
         real pg_dump/tar of MEDIA_ROOT."""
         buf = io.BytesIO()
@@ -1041,7 +1041,7 @@ class BackupTests(TestCase):
         self.assertTrue((backup_services.BACKUP_DIR / name).is_file())
 
     def test_save_uploaded_backup_ignores_the_client_supplied_name(self):
-        """The stored filename is always server-generated — never
+        """The stored filename is always server-generated - never
         whatever the uploaded file object's own .name happens to be,
         the same "don't trust the request" reasoning safe_archive_path()
         applies elsewhere in this module."""
@@ -1078,7 +1078,7 @@ class BackupTests(TestCase):
 
 
 class RestoreBackupOrchestrationTests(TestCase):
-    """apps.core.backups.restore_backup — the order of the live swap and
+    """apps.core.backups.restore_backup - the order of the live swap and
     what's put back when a late step fails. Postgres itself is mocked
     (every command is recorded); media is real files in a temp dir."""
 
@@ -1196,10 +1196,10 @@ class RestoreBackupOrchestrationTests(TestCase):
 class BackupEncryptionTests(TestCase):
     """apps.core.backups' optional BACKUP_ENCRYPTION_KEY encryption of
     database.dump/media.tar (docs/BACKUP.md "Encryption",
-    docs/SECURITY.md "Data isolation" — a backup holds this whole
+    docs/SECURITY.md "Data isolation" - a backup holds this whole
     instance's data unfiltered). restore_backup() itself is still never
     called for real here, same reasoning as BackupTests' own docstring
-    — _ensure_members_decrypted is the piece of it these tests exercise
+    - _ensure_members_decrypted is the piece of it these tests exercise
     directly instead, specifically because it was pulled out of
     restore_backup() to make that possible without a real database."""
 
@@ -1229,13 +1229,13 @@ class BackupEncryptionTests(TestCase):
         with tarfile.open(path, "r:gz") as tar:
             names = tar.getnames()
         # The encrypted members replace the plain ones outright, not
-        # sit alongside them — a real archive never carries both a
+        # sit alongside them - a real archive never carries both a
         # secret's plaintext and its own encrypted copy at once.
         self.assertIn("database.dump.enc", names)
         self.assertIn("media.tar.enc", names)
         self.assertNotIn("database.dump", names)
         self.assertNotIn("media.tar", names)
-        self.assertIn("manifest.json", names)  # always plain — see backups.py's own comment
+        self.assertIn("manifest.json", names)  # always plain - see backups.py's own comment
         self.assertTrue(backup_services.read_manifest(name)["encrypted"])
         self.assertTrue(backup_services.list_backups()[0]["encrypted"])
 
@@ -1253,7 +1253,7 @@ class BackupEncryptionTests(TestCase):
         tmp = self._create_encrypted_backup_and_extract(self.key)
         with override_settings(BACKUP_ENCRYPTION_KEY=self.key):
             backup_services._ensure_members_decrypted(tmp)
-        # media.tar is a real (if empty) tar archive either way —
+        # media.tar is a real (if empty) tar archive either way -
         # database.dump is the more informative check, a real pg_dump
         # of this test's own database, never valid gzip/tar itself, so
         # a bug leaving it still encrypted would fail *this* assertion
@@ -1288,7 +1288,7 @@ class BackupEncryptionTests(TestCase):
 
     def test_save_uploaded_backup_accepts_an_encrypted_archive(self):
         # Same shape create_backup() itself writes once
-        # BACKUP_ENCRYPTION_KEY is set — built directly here so this
+        # BACKUP_ENCRYPTION_KEY is set - built directly here so this
         # test doesn't depend on a real key being configured.
         buf = io.BytesIO()
         with tarfile.open(fileobj=buf, mode="w:gz") as tar:
@@ -1308,7 +1308,7 @@ class BackupEncryptionTests(TestCase):
 
 
 class BackupSettingsModelTests(TestCase):
-    """apps.core.models.BackupSettings — same admin-tunable singleton
+    """apps.core.models.BackupSettings - same admin-tunable singleton
     pattern as apps.api.models.ApiSettings."""
 
     def test_load_creates_the_singleton_with_defaults(self):
@@ -1342,7 +1342,7 @@ class BackupSettingsModelTests(TestCase):
 
 
 class AnnouncedVersionModelTests(TestCase):
-    """apps.core.models.AnnouncedVersion — same singleton pattern as
+    """apps.core.models.AnnouncedVersion - same singleton pattern as
     BackupSettings above, tracking the last VERSION a "new version is
     available" push notification was actually sent for (apps.core.
     management.commands.announce_version_update)."""
@@ -1374,7 +1374,7 @@ class AnnouncedVersionModelTests(TestCase):
 class BackupManagementCommandTests(TestCase):
     """The CLI entry points docs/BACKUP.md's automatic backups
     (docker-compose.yml's `backup-scheduler` service, or a host cron
-    entry) actually call — apps.core.management.commands.create_backup
+    entry) actually call - apps.core.management.commands.create_backup
     and .backup_scheduler."""
 
     def setUp(self):
@@ -1405,7 +1405,7 @@ class BackupManagementCommandTests(TestCase):
             self.assertEqual(_seconds_until(3), 15 * 3600)
 
     def test_backup_scheduler_creates_a_backup_each_time_it_wakes_up(self):
-        """The real command loops forever — this exercises exactly one
+        """The real command loops forever - this exercises exactly one
         wake-up by letting the first time.sleep() succeed (so handle()
         proceeds to call create_backup) and making the *second* one
         raise, standing in for "the process is being shut down"."""
@@ -1430,7 +1430,7 @@ class BackupManagementCommandTests(TestCase):
 
     def test_backup_scheduler_tags_its_own_backups_as_scheduled(self):
         """Profile → Administration → Backups tags each backup by who/
-        what made it — the scheduler is the only built-in caller that
+        what made it - the scheduler is the only built-in caller that
         passes --source scheduled to the create_backup management
         command (apps.core.backups.create_backup's own docstring)."""
         from apps.core.management.commands.backup_scheduler import Command
@@ -1454,7 +1454,7 @@ class BackupManagementCommandTests(TestCase):
 
     def test_backup_scheduler_skips_creating_a_backup_when_disabled(self):
         """The "Automatic daily backups" toggle (Profile → Administration
-        → Backups) — checked fresh on every wake-up, not just once at
+        → Backups) - checked fresh on every wake-up, not just once at
         process startup, so flipping it takes effect without restarting
         this container."""
         from apps.core.management.commands.backup_scheduler import Command
@@ -1499,7 +1499,7 @@ class BackupManagementCommandTests(TestCase):
             Command().handle()
 
         # From "noon", the next 09:00 is tomorrow (today's has already
-        # passed) — 21 hours away. settings.BACKUP_HOUR's own default
+        # passed) - 21 hours away. settings.BACKUP_HOUR's own default
         # (3) would instead be 15 hours away from the same "noon", so
         # this also confirms BackupSettings.hour is what's actually
         # read, not the static setting.
@@ -1507,7 +1507,7 @@ class BackupManagementCommandTests(TestCase):
 
     def test_backup_scheduler_survives_a_failed_backup_attempt(self):
         """A single failed backup must not take the whole scheduler
-        process down — otherwise one transient failure (e.g. the
+        process down - otherwise one transient failure (e.g. the
         database briefly unreachable) silently stops every future
         scheduled backup until someone notices and restarts it."""
         from apps.core.management.commands.backup_scheduler import Command
@@ -1549,7 +1549,7 @@ class BackupViewTests(TestCase):
 
     def test_staff_who_are_not_superusers_cannot_reach_backups(self):
         # A backup holds every user's data and password hashes, and a
-        # restore replaces it all — more than moderating feedback.
+        # restore replaces it all - more than moderating feedback.
         get_user_model().objects.create_user(
             username="moderator", password="s3cret-pass", is_staff=True
         )
@@ -1585,7 +1585,7 @@ class BackupViewTests(TestCase):
     def test_list_view_shows_only_the_newest_of_several_scheduled_backups(self):
         """Older scheduled backups are handed to the template
         separately (older_scheduled_backups), collapsed behind a
-        toggle, rather than cluttering the automatic-backups section —
+        toggle, rather than cluttering the automatic-backups section -
         see BackupListView.get_context_data's own docstring/comment."""
         backup_services.create_backup(source="scheduled")
         newest = backup_services.create_backup(source="scheduled")
@@ -1596,7 +1596,7 @@ class BackupViewTests(TestCase):
 
     def test_list_view_shows_manual_and_uploaded_backups_individually(self):
         """Manual/uploaded backups get their own section from
-        automatic ones, and never collapse within it — each was a
+        automatic ones, and never collapse within it - each was a
         deliberate, individual action."""
         backup_services.create_backup(source="manual")
         backup_services.create_backup(source="manual")
@@ -1759,7 +1759,7 @@ class BackupViewTests(TestCase):
         response = self.client.post(
             reverse("backup-list"),
             {"action": "save_settings", "hour": "6", "retention_count": "5"},
-            # "enabled" omitted — an unchecked checkbox isn't sent.
+            # "enabled" omitted - an unchecked checkbox isn't sent.
         )
         self.assertRedirects(response, reverse("backup-list"))
         settings_row = BackupSettings.load()
@@ -1851,7 +1851,7 @@ class BackupViewTests(TestCase):
     def test_posting_restore_shows_a_clean_error_on_a_decryption_failure(self):
         # Regression risk this guards against: a missing/wrong
         # BACKUP_ENCRYPTION_KEY used to be indistinguishable from any
-        # other restore_backup() failure — a raw 500 instead of a
+        # other restore_backup() failure - a raw 500 instead of a
         # message back on the same confirm page (docs/BACKUP.md
         # "Encryption").
         self.client.login(username="admin", password="s3cret-pass")
@@ -1880,7 +1880,7 @@ class BackupViewTests(TestCase):
 
 
 class FeedbackSettingsModelTests(TestCase):
-    """apps.core.models.FeedbackSettings — same admin-tunable singleton
+    """apps.core.models.FeedbackSettings - same admin-tunable singleton
     pattern as BackupSettings/apps.api.models.ApiSettings."""
 
     def test_load_creates_the_singleton_enabled_by_default(self):
@@ -2024,7 +2024,7 @@ class FeedbackViewTests(TestCase):
         self.client.login(username="admin", password="s3cret-pass")
         response = self.client.post(
             reverse("feedback-list"),
-            {"action": "save_settings"},  # "enabled" omitted — unchecked checkbox isn't sent
+            {"action": "save_settings"},  # "enabled" omitted - unchecked checkbox isn't sent
         )
         self.assertRedirects(response, reverse("feedback-list"))
         self.assertFalse(FeedbackSettings.load().enabled)
@@ -2037,7 +2037,7 @@ class FeedbackViewTests(TestCase):
 
 
 class SeoSettingsModelTests(TestCase):
-    """apps.core.models.SeoSettings — same admin-tunable singleton
+    """apps.core.models.SeoSettings - same admin-tunable singleton
     pattern as BackupSettings/FeedbackSettings above, except this one
     defaults to *off*: most installs of this app are a private,
     self-hosted instance holding another person's health data, not a
@@ -2112,7 +2112,7 @@ class SeoSettingsViewTests(TestCase):
 
 class RobotsTxtAndSeoMetaTests(TestCase):
     """robots.txt (apps.core.views.robots_txt) and base.html's own
-    <meta name="robots">/Open Graph tags — both driven by the same
+    <meta name="robots">/Open Graph tags - both driven by the same
     apps.core.models.SeoSettings toggle (apps.core.context_processors.
     seo), so a crawler that respects either one gets a consistent
     answer regardless of which it actually checks."""
@@ -2156,7 +2156,7 @@ class DashboardAccessTests(TestCase):
 class AdminThemeTests(TestCase):
     """Django's own admin, re-themed to match IronStack rather than a
     hand-built parallel admin page (apps.core.admin,
-    templates/admin/base_site.html, static/css/admin_theme.css) — see
+    templates/admin/base_site.html, static/css/admin_theme.css) - see
     that CSS file's own comment for the reasoning."""
 
     def test_branding_is_ironstack_not_django(self):
@@ -2177,11 +2177,11 @@ class AdminThemeTests(TestCase):
 
 class BottomNavTests(TestCase):
     """Mobile nav: Home, Nutrition, Stretching, Progress, Workout,
-    Programs, Profile in that order, icon-only on mobile — each link's
+    Programs, Profile in that order, icon-only on mobile - each link's
     accessible name comes from aria-label since the text label is
     visually hidden at that width (re-shown alongside the icon on
     desktop). "Nutrition" and "Stretching" were added alongside their
-    apps (docs/NUTRITION.md "Navigation", docs/STRETCHING.md) —
+    apps (docs/NUTRITION.md "Navigation", docs/STRETCHING.md) -
     daily-use surfaces like Workout, not occasional ones like
     Measurements/Activities/Records, which don't get their own nav
     slot. Both can be hidden per user (User.nutrition_enabled /
@@ -2218,12 +2218,12 @@ class BottomNavTests(TestCase):
 
     def test_profile_icon_becomes_the_gravatar_picture_once_enabled(self):
         # Regression: templates/accounts/profile.html used to be the
-        # only place a user's own Gravatar picture ever appeared — the
+        # only place a user's own Gravatar picture ever appeared - the
         # bottom-nav Profile icon (every authenticated page, not just
         # that one) stayed the plain outline silhouette regardless.
         # Falls back to that same silhouette on a real @error (no
         # Gravatar registered for this email, gravatar_url's own d=404)
-        # rather than a broken-image icon or an empty nav slot — both
+        # rather than a broken-image icon or an empty nav slot - both
         # elements share one x-data so @error on the <img> can actually
         # toggle the fallback <svg> back on.
         self.alice.show_gravatar = True
@@ -2234,7 +2234,7 @@ class BottomNavTests(TestCase):
 
     def test_progress_nav_link_points_to_the_analytics_dashboard(self):
         """Regression: "Progress" used to link to Body tracking (measurements),
-        not the actual training-volume/PR/strength-trend analytics page —
+        not the actual training-volume/PR/strength-trend analytics page -
         a mismatch between the label and where it actually led."""
         response = self.client.get(reverse("dashboard"))
         progress_url = reverse("analytics:dashboard")
@@ -2246,7 +2246,7 @@ class BottomNavTests(TestCase):
         """Regression: both "dashboard" (core) and "analytics:dashboard"
         share the bare url_name "dashboard", so a naive
         request.resolver_match.url_name == 'dashboard' check on the Home
-        link also matched while viewing Progress — lighting up both nav
+        link also matched while viewing Progress - lighting up both nav
         items at once. Must key off the namespaced view_name instead."""
         response = self.client.get(reverse("analytics:dashboard"))
         content = response.content.decode()
@@ -2271,7 +2271,7 @@ class BottomNavTests(TestCase):
 
 class DashboardWidgetsTests(TestCase):
     """docs/UI.md dashboard content: this week's workouts/volume, recent
-    PRs, body weight — see apps.core.views.DashboardView."""
+    PRs, body weight - see apps.core.views.DashboardView."""
 
     def setUp(self):
         from django.contrib.auth import get_user_model
@@ -2288,7 +2288,7 @@ class DashboardWidgetsTests(TestCase):
 
     def test_dashboard_shows_a_greeting(self):
         """Regression: the varied, time-of-day-aware greeting
-        (apps.core.greetings) originally opened the profile page — moved
+        (apps.core.greetings) originally opened the profile page - moved
         here instead, since Home is the page a user actually lands on."""
         response = self.client.get(reverse("dashboard"))
         self.assertContains(response, 'class="dashboard-greeting"')
@@ -2330,7 +2330,7 @@ class DashboardWidgetsTests(TestCase):
     def test_dashboard_does_not_duplicate_main_nav_destinations(self):
         """Regression: the dashboard used to carry its own "Analytics",
         "Workout history", and "Programs" cards that led to the exact
-        same pages the bottom nav already links to — each URL should now
+        same pages the bottom nav already links to - each URL should now
         appear exactly once on the page (from the nav)."""
         response = self.client.get(reverse("dashboard"))
         content = response.content.decode()
@@ -2347,11 +2347,11 @@ class DashboardWidgetsTests(TestCase):
 
     def test_actionable_content_comes_before_the_calendar(self):
         # Regression: the month calendar used to open the page, pushing
-        # "Continue workout"/this week's stats/recent PRs — the things
+        # "Continue workout"/this week's stats/recent PRs - the things
         # CLAUDE.md's own "training log first" principle says a user
-        # actually opens this page to check — off the first screen on
+        # actually opens this page to check - off the first screen on
         # a phone. The calendar now renders further down instead
-        # (still not collapsed behind a click — asked for directly, so
+        # (still not collapsed behind a click - asked for directly, so
         # it stays easy to reach, just no longer first).
         response = self.client.get(reverse("dashboard"))
         content = response.content.decode()
@@ -2391,7 +2391,7 @@ class DashboardWidgetsTests(TestCase):
 class DashboardCalendarTests(TestCase):
     """The front page's month calendar
     (apps.core.views._month_calendar_context,
-    apps.nutrition.services.calendar_month_statuses) — see
+    apps.nutrition.services.calendar_month_statuses) - see
     templates/nutrition/_month_calendar.html."""
 
     def setUp(self):
@@ -2503,7 +2503,7 @@ class DashboardCalendarTests(TestCase):
     def test_a_pr_day_renders_gold_not_green(self):
         # Regression: a PR day used to share --color-success with this
         # same calendar's own unrelated "close to nutrition target"
-        # icon a few cells over — the exact same green meaning two
+        # icon a few cells over - the exact same green meaning two
         # different things. Gold (calendar-day-icon-gold, base.css)
         # matches the 🏆 this app already uses for a PR everywhere
         # else instead.
@@ -2530,7 +2530,7 @@ class DashboardCalendarTests(TestCase):
         days = response.context["calendar_days_json"]
         self.assertEqual(len(days), 31)
         first_day = next(d for d in days if d["date"] == "2026-08-01")
-        # Just the training-status line — no second "nothing logged"
+        # Just the training-status line - no second "nothing logged"
         # line once there's nothing to actually report (see
         # DayDetailLinesTests.test_no_calorie_line_at_all_when_nothing_
         # was_logged below for why).
@@ -2538,7 +2538,7 @@ class DashboardCalendarTests(TestCase):
 
     def test_a_far_future_month_still_renders_without_data(self):
         """No clamp any more (calendar_prev_month/_next_month's own
-        docstring) — a future month with nothing logged in it yet is
+        docstring) - a future month with nothing logged in it yet is
         still a perfectly valid thing to look at, not an error."""
         response = self.client.get(reverse("dashboard"), {"month": "2099-06"})
         self.assertEqual(response.status_code, 200)
@@ -2555,14 +2555,14 @@ class DashboardCalendarTests(TestCase):
         # the button and onto the now-visible popover to actually read
         # it stayed within the *cell* (CSS kept it visible) but left
         # the *button's* bounds (its own mouseleave fired, clearing
-        # hoveredDate) — the popover stayed on screen, empty. Asserting
+        # hoveredDate) - the popover stayed on screen, empty. Asserting
         # the handler sits on the cell, before its own child button
         # even opens, is the structural guarantee that stays true.
         response = self.client.get(reverse("dashboard"))
         content = response.content.decode()
         # The first day cell in the grid is often a padding day from
-        # the previous month (no hover handler at all — see this
-        # partial's own comment on day.in_month) — anchoring on the
+        # the previous month (no hover handler at all - see this
+        # partial's own comment on day.in_month) - anchoring on the
         # first real @mouseenter instead of the first .calendar-day-
         # cell sidesteps that rather than assuming which cell is which.
         hover_pos = content.index('@mouseenter="hoveredDate')
@@ -2575,7 +2575,7 @@ class DashboardCalendarTests(TestCase):
         # card instead of inside it. hx-swap="outerHTML" only ever
         # replaces #month-calendar itself, never anything preceding
         # it, so a month change left the original script tag orphaned
-        # in the DOM instead of removed — a second one (the new
+        # in the DOM instead of removed - a second one (the new
         # month's data) landed next to it, and document.getElementById
         # (static/js/month-calendar.js) always resolves duplicate ids
         # to whichever comes *first*, i.e. the stale one. Every month
@@ -2584,7 +2584,7 @@ class DashboardCalendarTests(TestCase):
         # month's days. Asserting the tag is now a *child* (its
         # opening `id="month-calendar"` appears before the script
         # tag's own id in the response) is the structural guarantee
-        # that fix actually holds — a real browser/HTMX round trip
+        # that fix actually holds - a real browser/HTMX round trip
         # isn't something this test client can exercise directly.
         response = self.client.get(reverse("dashboard"))
         content = response.content.decode()
@@ -2594,7 +2594,7 @@ class DashboardCalendarTests(TestCase):
 
     def test_an_htmx_request_renders_only_the_calendar_partial(self):
         """Changing month is an HTMX swap of just this one card
-        (templates/nutrition/_month_calendar.html's own comment) — the
+        (templates/nutrition/_month_calendar.html's own comment) - the
         response shouldn't re-render (or re-query for) the rest of the
         dashboard at all."""
         response = self.client.get(
@@ -2611,13 +2611,13 @@ class DashboardCalendarTests(TestCase):
         self.assertContains(response, 'id="month-calendar"')
         self.assertContains(response, 'hx-target="#month-calendar"')
         self.assertContains(response, 'hx-push-url="true"')
-        # A plain href alongside hx-get, not instead of it — works even
+        # A plain href alongside hx-get, not instead of it - works even
         # if JS/HTMX never loads at all.
         self.assertContains(response, "href=\"?month=")
 
 
 class DayDetailLinesTests(TestCase):
-    """apps.core.views._day_detail_lines in isolation — every branch
+    """apps.core.views._day_detail_lines in isolation - every branch
     of the two independent lines it builds, without needing a full
     dashboard request per case (DashboardCalendarTests above already
     covers the rest-day/nothing-logged combination end to end)."""
@@ -2636,13 +2636,13 @@ class DayDetailLinesTests(TestCase):
         from apps.core.views import _day_detail_lines
 
         lines = _day_detail_lines(self._status(training_status="pr"), None)
-        self.assertEqual(lines[0], "Training day — new personal record!")
+        self.assertEqual(lines[0], "Training day - new personal record!")
 
     def test_an_abandoned_session_day(self):
         from apps.core.views import _day_detail_lines
 
         lines = _day_detail_lines(self._status(training_status="abandoned"), None)
-        self.assertEqual(lines[0], "Training day — a session was abandoned.")
+        self.assertEqual(lines[0], "Training day - a session was abandoned.")
 
     def test_calories_logged_with_a_target_shows_both_numbers(self):
         from apps.core.views import _day_detail_lines
@@ -2658,12 +2658,12 @@ class DayDetailLinesTests(TestCase):
 
     def test_no_calorie_line_at_all_when_nothing_was_logged(self):
         # Regression: this used to always be a second line either way
-        # — "1800 / 2000 kcal logged." when there was something to
+        # - "1800 / 2000 kcal logged." when there was something to
         # report, "Nothing logged that day." when there wasn't. The
         # training line above already says what the day was (rest or
         # training), so a line that only ever says "nothing" added no
         # real information on top of that for every single day with no
-        # diary entries — asked for directly, dropped entirely instead
+        # diary entries - asked for directly, dropped entirely instead
         # of reworded.
         from apps.core.views import _day_detail_lines
 
@@ -2673,7 +2673,7 @@ class DayDetailLinesTests(TestCase):
 
 class AchievementsCarouselTests(TestCase):
     """The dashboard achievements carousel (apps.analytics.achievements)
-    is shared across every user, not scoped to whoever's viewing it —
+    is shared across every user, not scoped to whoever's viewing it -
     show_achievements is a privacy setting ("don't show my stats to
     anyone"), not a personal "hide the carousel from me" toggle."""
 
@@ -2709,7 +2709,7 @@ class AchievementsCarouselTests(TestCase):
 
     def test_carousel_still_shows_a_housemates_achievements_when_this_users_toggle_is_off(self):
         """Regression: an earlier version treated show_achievements as
-        "hide the carousel from me" — turning it off must only remove
+        "hide the carousel from me" - turning it off must only remove
         *this* user's own stats from the shared carousel, not the
         carousel itself, and a housemate's achievements must still
         appear."""
@@ -2732,7 +2732,7 @@ class AchievementsCarouselTests(TestCase):
 
 
 class RecentlyActiveListTests(TestCase):
-    """The dashboard's "Recently active" list — same shared-across-
+    """The dashboard's "Recently active" list - same shared-across-
     users, privacy-toggle-gated pattern as the achievements carousel
     (both driven by apps.analytics.achievements)."""
 
@@ -2781,7 +2781,7 @@ class RecentlyActiveListTests(TestCase):
     VAPID_ADMIN_EMAIL="admin@example.com",
 )
 class SendPushNotificationTests(TestCase):
-    """apps.core.push.send_push_notification — must never raise
+    """apps.core.push.send_push_notification - must never raise
     (it's always called synchronously right after the real work it
     must never delay or break), and must self-heal a subscription the
     push service itself confirms is gone."""
@@ -2877,7 +2877,7 @@ class SendPushNotificationTests(TestCase):
     VAPID_ADMIN_EMAIL="admin@example.com",
 )
 class AnnounceVersionUpdateCommandTests(TestCase):
-    """apps.core.management.commands.announce_version_update — run
+    """apps.core.management.commands.announce_version_update - run
     unconditionally on every `web` container start (docker-compose.yml),
     must stay a no-op except on a real VERSION bump."""
 
@@ -3065,7 +3065,7 @@ class PushUnsubscribeViewTests(TestCase):
 
 
 class DataExchangeTests(TestCase):
-    """apps.core.data_exchange — the shared "export this, import it
+    """apps.core.data_exchange - the shared "export this, import it
     somewhere else" envelope apps.programs/apps.nutrition build their
     own program/recipe export-import features on top of. Per-kind
     round-trip behavior (does a program/recipe actually come back out
@@ -3114,7 +3114,7 @@ class DataExchangeTests(TestCase):
             data_exchange.parse_envelope(raw, expected_kind="program")
 
     def test_parse_envelope_accepts_an_older_schema_version(self):
-        """A schema_version <= the current one always stays readable —
+        """A schema_version <= the current one always stays readable -
         only something *newer* than this build understands is
         rejected."""
         raw = json.dumps(

@@ -13,29 +13,29 @@ User-related data includes:
 Internal values should use consistent canonical units. Convert for display.
 
 Also carries an optional `height` (canonical meters, entered/displayed in
-cm or inches like any other length reading — see `apps.core.units`) and a
+cm or inches like any other length reading - see `apps.core.units`) and a
 `show_bmi` toggle. Both exist solely for `apps.core.bmi`: the "Body
 weight" measurement history page (`apps.measurements`, not the
-dashboard or Profile — BMI only ever means anything alongside a
+dashboard or Profile - BMI only ever means anything alongside a
 logged body weight, and that's the page that logs one) computes BMI
 from `height` and the latest logged body weight whenever both exist,
 showing the WHO category thresholds (underweight/normal/overweight/
 obese) alongside the current value so the number has context rather
 than standing alone. Once a height is on file, `apps.core.bmi.
 category_rows` also converts each category's BMI bounds into the
-equivalent weight range at that height (in the user's display unit) —
+equivalent weight range at that height (in the user's display unit) -
 "Normal weight" as a bare BMI number range doesn't say much on its
 own, but "59.9–81.0 kg" does. `show_bmi` lets a user turn the whole
-card off regardless of whether it's computable — nothing else in the
+card off regardless of whether it's computable - nothing else in the
 app reads either field.
 
-Also carries `body_tracking_reminders_enabled` (default `True`) — gates
+Also carries `body_tracking_reminders_enabled` (default `True`) - gates
 the dashboard's body-tracking reminder card (see `UI.md` "Dashboard"),
 a plain notification preference rather than a privacy or display
 toggle: whether a user is nudged to log a body measurement once
 `apps.measurements.services.days_since_last_measurement` crosses
 `BODY_TRACKING_REMINDER_DAYS`. Off suppresses the card outright,
-regardless of how stale their history actually is — it never affects
+regardless of how stale their history actually is - it never affects
 whether they *can* log a reading, only whether they're reminded to.
 
 `nutrition_enabled` (default `True`) is a navigation-only toggle, not a
@@ -43,7 +43,7 @@ feature gate: off hides `templates/base.html`'s bottom-nav Nutrition
 tab (the only place outside `apps.nutrition` itself that links into
 it), asked for directly for a user who doesn't want to track nutrition
 at all. Nothing in `apps.nutrition`'s own views/urls checks this
-field — a direct link or bookmark into nutrition works identically
+field - a direct link or bookmark into nutrition works identically
 either way, and no nutrition data is ever touched by flipping it.
 Asked during onboarding (`apps.accounts.forms.OnboardingForm`) the
 same way `allow_friend_requests`/`allow_group_invites` are, and
@@ -54,13 +54,13 @@ for `apps.stretching`: off hides its bottom-nav tab, the dashboard's
 stretching card and calendar dot, and the cool-down suggestion on a
 finished workout. Stretching pages and data are untouched either way.
 
-Also carries `language` — the UI language (one of the six shipped
+Also carries `language` - the UI language (one of the six shipped
 locales, see `ARCHITECTURE.md` "Internationalization"), applied by
 `apps.accounts.middleware.UserLanguageMiddleware`. Distinct from
 `unit_system`/`timezone`: it changes what language the interface reads
 in, not what units or "today" mean.
 
-Also carries `theme` and `appearance` — two independent display
+Also carries `theme` and `appearance` - two independent display
 preferences (`UI.md` "Theming") resolved into `templates/base.html`'s
 `<html>` tag rather than applied via middleware, since nothing else in
 the app ever reads either value. `theme` (`apps.accounts.models.Theme`)
@@ -70,16 +70,16 @@ palette's dark, light, or device-following ("auto") half. Both default
 to this app's one pre-existing look, `default`/`dark`, so an existing
 install's appearance never changes on upgrade.
 
-Also carries `show_achievements` — unlike every other boolean toggle on
+Also carries `show_achievements` - unlike every other boolean toggle on
 this model, this is a *privacy* setting rather than a personal display
 preference: the dashboard's achievements carousel, "Recently active"
 list, and member profile page (`apps.analytics.achievements`/`views`,
 `UI.md` "Achievements carousel" / "Recently active" list / "Member
 profile page") all share across every user on the instance, so this
-controls whether *this* user's own data — longest streak/workout
-count/PRs/total weight lifted, and when they last started a workout —
+controls whether *this* user's own data - longest streak/workout
+count/PRs/total weight lifted, and when they last started a workout -
 is included in what everyone sees, not whether they personally see any
-of the three — turning it off doesn't hide them from their owner (who
+of the three - turning it off doesn't hide them from their owner (who
 can always reach their own profile page regardless), it hides the
 owner's own data from everyone else.
 
@@ -87,15 +87,15 @@ owner's own data from everyone else.
 top of `show_achievements`: whether this user's first name is ever
 shown alongside their username in that same carousel/list
 (`User.public_display_name()`, "username (First name)" format when on
-and a first name is set — the bare username otherwise, since the
+and a first name is set - the bare username otherwise, since the
 username itself was already visible everywhere `show_achievements`
 applies before this field existed, so there's nothing left for it to
 hide when off). Distinct from a user's own dashboard greeting
 (`apps.core.greetings`), which always addresses them by first name
-directly — that's a user looking at their own name, not something
+directly - that's a user looking at their own name, not something
 shown to anyone else, so this setting doesn't apply there.
 
-A user may also hold `ApiKey`s (`apps.api`, see `docs/API.md`) — up to
+A user may also hold `ApiKey`s (`apps.api`, see `docs/API.md`) - up to
 `ApiSettings.max_api_keys_per_user` (admin-editable, default 10) at
 once, each with its own `RateLimitTier` and per-context CRUD
 permissions. Kept in a separate app rather than on `User` directly since
@@ -110,7 +110,7 @@ An exercise represents a movement.
 Fields should support:
 - name
 - description
-- instructions (step-by-step how-to text — distinct from the shorter
+- instructions (step-by-step how-to text - distinct from the shorter
   `description` blurb above)
 - primary muscle groups
 - secondary muscle groups
@@ -121,14 +121,14 @@ Fields should support:
 
 Users can create custom exercises.
 
-An exercise can also hold a small gallery of `ExerciseImage`s — photos
+An exercise can also hold a small gallery of `ExerciseImage`s - photos
 or diagrams shown together with `instructions` in the detail page's
 own "Instructions" section, ordered and each with its own optional
 caption. `ExerciseImageSettings` (a singleton, same pattern as
 `apps.core.models.BackupSettings`) caps how many an exercise may hold
 at once, adjustable from `/admin/`. A user manages their own custom
 exercise's images from its detail page; a system exercise's images are
-admin-only, same as every other field on it — see `ExerciseImage`'s
+admin-only, same as every other field on it - see `ExerciseImage`'s
 own docstring for the full reasoning.
 
 An exercise also carries a `weight_input_mode` (e.g. total load vs.
@@ -141,11 +141,11 @@ deleted, so old history keeps rendering correctly after a user deactivates
 something they no longer use.
 
 A custom exercise (`owner` set) is visible and editable only by the user who
-created it — same cross-user privacy rule as programs/workouts/measurements
+created it - same cross-user privacy rule as programs/workouts/measurements
 (see `ARCHITECTURE.md` → Security). System exercises (`owner` null) are
 visible to everyone and only editable via the admin. Exercise names are
 unique among system exercises, and unique per-user among a user's own
-custom exercises — two different users may each name a custom exercise the
+custom exercises - two different users may each name a custom exercise the
 same thing.
 
 28 system exercises are seeded (`apps.exercises` migrations 0002, 0004,
@@ -153,27 +153,27 @@ same thing.
 cable/bodyweight/kettlebell equipment. The original 11 groups (Chest,
 Back, Shoulders, Biceps, Triceps, Quads, Hamstrings, Glutes, Calves,
 Abs, Forearms) were joined by three more commonly split out on their
-own rather than folded into a broader neighbor — Traps, Lats, and
-Obliques (migration 0005) — each shipped with one new exercise of its
+own rather than folded into a broader neighbor - Traps, Lats, and
+Obliques (migration 0005) - each shipped with one new exercise of its
 own rather than retagging an existing one, since `Exercise.primary_/
 secondary_muscle_groups` is live current-state metadata that analytics
 reads directly, not a historical snapshot, so retagging an existing
 exercise would retroactively shift past muscle-group volume charts.
 System exercise (and `MuscleGroup`/`Equipment`) names are translated
-for display — the stored name always stays canonical English — see
+for display - the stored name always stays canonical English - see
 `ARCHITECTURE.md` → "Internationalization" for how.
 
 27 of these 28 also ship with one instructional image and written
-`instructions` each (migrations 0007/0010) — "Side Plank" is the one
+`instructions` each (migrations 0007/0010) - "Side Plank" is the one
 left without either, no suitable freely-licensed match having been
 found for it. Most come from wger.de's own public exercise database
 (an open-source, self-hosted workout tracker, like this project),
 licensed CC-BY-SA and credited via `ExerciseImage.attribution`/
-`Exercise.instructions_attribution` — see those migrations' own
+`Exercise.instructions_attribution` - see those migrations' own
 docstrings, and `apps/exercises/seed_data/exercise_images/
 manifest.json`/`exercise_instructions.json` for the exact source URL/
 author/license behind each one. A handful of the seeded `instructions`
-are this project's own original text instead (left uncredited) —
+are this project's own original text instead (left uncredited) -
 written from scratch where wger's own text was too thin to actually
 explain the movement, or described the wrong equipment for how this
 project's seed data configures that exercise.
@@ -211,20 +211,20 @@ Program
 A program may optionally have a schedule.
 
 `is_template` marks a program as copyable rather than meant to be run
-directly — true for every built-in system program (`owner` null,
+directly - true for every built-in system program (`owner` null,
 seeded: a generic full-body split plus several well-known named
-programs — Arnold Split, Push/Pull/Legs, 5×5 Strength, Upper/Lower
-Split, German Volume Training — 6 total, `apps.programs` migrations
+programs - Arnold Split, Push/Pull/Legs, 5×5 Strength, Upper/Lower
+Split, German Volume Training - 6 total, `apps.programs` migrations
 0002/0004/0006). Names/descriptions/workout names of these built-in
 templates are translated for display the same way system exercise names
-are (`ARCHITECTURE.md` → "Internationalization") — the stored value
+are (`ARCHITECTURE.md` → "Internationalization") - the stored value
 always stays canonical English. `is_template` is, on request,
 settable by a user on their own programs too, so someone can keep a
 personal template (e.g. "My PPL Template") and copy it into a fresh,
 independently-editable program each time they start a new training
 block, leaving the template itself untouched. Copying (`services.copy_program`)
 works the same way regardless of whether the source is a system or
-personal template — it only ever depends on the copying user being able
+personal template - it only ever depends on the copying user being able
 to see the source program at all (`services.visible_to`), never on
 `is_template` itself, which is a UI affordance for the owner, not a
 visibility grant.
@@ -285,19 +285,19 @@ States:
 Fields include:
 - user
 - program/workout reference (informational link only, not used to compute
-  history — see snapshot-on-start above)
+  history - see snapshot-on-start above)
 - start time
 - end time
 - status
 
 A user can permanently delete their own session (any status, including
-completed) — a deliberate escape hatch for a mistaken or unwanted logged
+completed) - a deliberate escape hatch for a mistaken or unwanted logged
 workout, distinct from `abandon`'s soft "still in history, marked
 abandoned" state. Only reachable from the session's own detail page, not
 the history list, so it's never one accidental tap away while browsing.
 
 While `status` is `in_progress`, the session is also reachable via
-"training mode" (`UI.md` "Training mode") — a focused,
+"training mode" (`UI.md` "Training mode") - a focused,
 one-exercise-at-a-time alternative to the full detail page, linked from a
 floating button shown on every page. No new fields or state on the model
 itself: training mode's "current exercise" and rest timer are both
@@ -308,13 +308,13 @@ computed/client-side, not persisted.
 Represents one exercise within a `WorkoutSession`, holding the **snapshot**
 of what was prescribed at the moment the session was created:
 - exercise reference, plus the exercise's name as it was when logged
-  (`exercise_name`) — history shows that one, so renaming an exercise
+  (`exercise_name`) - history shows that one, so renaming an exercise
   (your own, a coach's your program uses, or one renamed "Name (2)" when
   its owner deleted their account) never relabels past workouts
 - snapshotted set count, rep range, target weight, progression method,
   weight increment, ordering, notes
 - link to the `ExercisePrescription` it was created from (informational
-  only — may later be edited, deactivated, or deleted without affecting
+  only - may later be edited, deactivated, or deleted without affecting
   this record)
 
 ## ExerciseSet
@@ -331,7 +331,7 @@ At minimum:
 - RPE, optional
 - RIR, optional
 - failure flag
-- `is_warmup` flag — warmup sets are excluded from PR, progression, and
+- `is_warmup` flag - warmup sets are excluded from PR, progression, and
   analytics calculations by default
 - notes
 
@@ -354,16 +354,16 @@ Fields:
 Users may create custom activity types.
 
 Implemented as `ActivityType` (a starting set of common types seeded, not
-an exhaustive doc-specified list like `MeasurementType` — users are
+an exhaustive doc-specified list like `MeasurementType` - users are
 expected to add their own) plus `Activity`. `date` and `start_time` are
 kept as separate fields rather than one combined timestamp: `start_time`
 is optional, since logging "went for a run today" shouldn't require also
 stating a precise clock time. `distance` is optional too (canonical
-meters) — plenty of activity types have none — and converts to km/miles
+meters) - plenty of activity types have none - and converts to km/miles
 the same way `BodyMeasurement`'s length readings convert to cm/inches.
 
 The 8 seeded system activity type names are translated for display the
-same way system exercise/program names are — see `ARCHITECTURE.md` →
+same way system exercise/program names are - see `ARCHITECTURE.md` →
 "Internationalization"; the stored name always stays canonical English.
 
 ## BodyMeasurement
@@ -383,28 +383,28 @@ Supported measurements:
 Users may add custom measurements.
 
 Implemented as `MeasurementType` (system-seeded for the list above, plus
-user-created custom types — same ownership/soft-delete pattern as
+user-created custom types - same ownership/soft-delete pattern as
 `Exercise`) with a `unit_kind` (weight/length/percentage) that decides how
 `apps.measurements.units` converts a reading between canonical storage
 and the user's display unit: weight in kg/lb, length (circumferences) in
 cm/inches, percentage unconverted. Canonical storage follows
 `ARCHITECTURE.md`'s "meters for distance" rule even for circumferences,
 at enough decimal places (0.1mm) that a cm/inch round-trip never loses
-precision — display values are then rounded to what's actually worth
+precision - display values are then rounded to what's actually worth
 looking at (0.01 kg, 0.1 cm/inch) independently of that storage decision.
 
 The 8 seeded system measurement type names are translated for display the
-same way system exercise/program names are — see `ARCHITECTURE.md` →
+same way system exercise/program names are - see `ARCHITECTURE.md` →
 "Internationalization", including that section's note on "Body fat %"
 and why `{% trans %}` alone isn't enough for content containing a "%".
 
 `apps.measurements.services.stats_for` summarizes a user's full logged
-history for one type — entry count, current/first value, change since
-the first log, min/max, and average — shown on that type's history page
+history for one type - entry count, current/first value, change since
+the first log, min/max, and average - shown on that type's history page
 once at least 2 readings exist (see `UI.md` "Dashboard", "Statistics").
 The same module's `needs_body_tracking_reminder` decides whether the
 dashboard nudges a user to log a reading at all, gated by `User.
-body_tracking_reminders_enabled` — see that field's own entry above.
+body_tracking_reminders_enabled` - see that field's own entry above.
 
 ## PR
 
@@ -422,93 +422,93 @@ Types:
 
 Full reasoning lives in `docs/STRETCHING.md`; the terse shape:
 
-- `Stretch` — a library stretch (static/dynamic, per-side, default
+- `Stretch` - a library stretch (static/dynamic, per-side, default
   hold, instructions, `MuscleGroup`s). System-or-custom and soft-deleted,
   like `ActivityType`.
-- `StretchRoutine` / `RoutineItem` — an editable, ordered list of
+- `StretchRoutine` / `RoutineItem` - an editable, ordered list of
   stretches with hold/sets/rest per item.
-- `StretchSession` — one guided or quick-logged session; at most one
+- `StretchSession` - one guided or quick-logged session; at most one
   in progress per user; optional `after_workout` link to the
   `WorkoutSession` it cooled down from.
-- `PerformedStretch` — the per-stretch snapshot taken at session start
+- `PerformedStretch` - the per-stretch snapshot taken at session start
   (name, hold, sets, rest, sides) plus what was actually done. Same
   snapshot-on-start rule as `PerformedExercise`: later routine edits
   never change a past session.
 
 ## Nutrition
 
-A parallel domain to training, added in v2 (see `docs/ROADMAP.md`) —
+A parallel domain to training, added in v2 (see `docs/ROADMAP.md`) -
 full reasoning for every model and field below lives in
 `docs/NUTRITION.md`, this section is only the terse shape, matching
 every other section on this page.
 
-- `NutritionProfile` — one row per user, the physiological/lifestyle
+- `NutritionProfile` - one row per user, the physiological/lifestyle
   inputs the calorie engine needs (age via `birth_date`, sex, activity
-  job/steps/training load). Not historized — corrected in place, like
+  job/steps/training load). Not historized - corrected in place, like
   `User.height`, not preserved like a decision.
-- `NutritionGoal` / `NutritionTarget` — the user's stated intent (a
+- `NutritionGoal` / `NutritionTarget` - the user's stated intent (a
   fat-loss/maintenance/muscle-gain goal at a chosen rate) and the
   derived numeric output (daily calories + macros), both historized
-  the same "append, don't mutate" way as `PR` above — setting a new
+  the same "append, don't mutate" way as `PR` above - setting a new
   one closes out whichever was previously open rather than
   overwriting it.
-- `MealSlot` — named diary categories (Breakfast/Lunch/Dinner/Evening
-  snack seeded, users may add their own) — same system-or-custom
+- `MealSlot` - named diary categories (Breakfast/Lunch/Dinner/Evening
+  snack seeded, users may add their own) - same system-or-custom
   pattern as `MeasurementType`/`ActivityType`.
-- `Food` — a trackable food, nutrition values per serving; user-owned
+- `Food` - a trackable food, nutrition values per serving; user-owned
   or shared (`owner=None`, imported from OpenFoodFacts on demand or
   hand-entered).
-- `Recipe` / `RecipeIngredient` — a named, reusable combination of
+- `Recipe` / `RecipeIngredient` - a named, reusable combination of
   `Food` rows a user can log as one unit.
-- `DiaryEntry` — one logged item for one day: exactly one of
+- `DiaryEntry` - one logged item for one day: exactly one of
   `food`/`recipe`, a `MealSlot`, a quantity.
-- `DietPlan` / `DietPlanMeal` / `DietPlanItem` — the diet-builder
+- `DietPlan` / `DietPlanMeal` / `DietPlanItem` - the diet-builder
   wizard's saved output, snapshotting the targets it was built
   against; "log today's plan" materializes its items into real
   `DiaryEntry` rows without mutating the plan itself.
 
 Also exposed through the public API (`apps.api`, `ApiContext.
-NUTRITION`) the same way every other domain here is — see `docs/API.md`.
+NUTRITION`) the same way every other domain here is - see `docs/API.md`.
 
 Do not make PR logic depend on the current program definition.
 
 ## Social
 
-Friends, groups, and messaging, added in v3 (see `docs/ROADMAP.md`) —
+Friends, groups, and messaging, added in v3 (see `docs/ROADMAP.md`) -
 full reasoning lives in `docs/SOCIAL.md`, this section is only the
 terse shape.
 
-- `FriendRequest` — one user asking another; `PENDING` →
+- `FriendRequest` - one user asking another; `PENDING` →
   `ACCEPTED`/`DECLINED`.
-- `Friendship` — a confirmed, mutual relationship, created only by
+- `Friendship` - a confirmed, mutual relationship, created only by
   accepting a request. Stored once as an ordered `(user_low,
   user_high)` pair, not twice per direction.
-- `Block` — one user blocking another; checked both directions
+- `Block` - one user blocking another; checked both directions
   everywhere it matters (friend requests, messages, direct group
   invites), regardless of which side initiated it.
-- `Group` / `GroupMembership` — a group has an owner and each member a
+- `Group` / `GroupMembership` - a group has an owner and each member a
   role (`owner`/`admin`/`member`); `Group.owner` is `SET_NULL`, not
-  `CASCADE` — deleting the account that created a group must not
+  `CASCADE` - deleting the account that created a group must not
   delete the group and its message history with it. `GroupMembership.
   last_read_at` doubles as that member's own per-group read-state for
   the unread-message badge.
-- `GroupInvite` — a direct, in-app invite to one specific friend,
+- `GroupInvite` - a direct, in-app invite to one specific friend,
   distinct from the group's own short, unguessable invite link
   (`Group.invite_code`/`invite_enabled`).
-- `DirectMessage` / `GroupMessage` — text-only, immutable; a shared
+- `DirectMessage` / `GroupMessage` - text-only, immutable; a shared
   abstract `BaseMessage` base, not a generic polymorphic
   `Conversation` model.
 
 Also exposed through the public API (`apps.api`, `ApiContext.PROFILE`
-— only the two privacy settings on `User`, not the models above; see
+- only the two privacy settings on `User`, not the models above; see
 `docs/SOCIAL.md` "Moderation" for why the rest stays server-rendered
 only).
 
 Two new fields on `User` itself, both opt-*out* (default `True`)
 rather than opt-in like `show_gravatar`, since neither exposes
-anything about the account by itself — they only gate whether another
+anything about the account by itself - they only gate whether another
 user can start something with it: `allow_friend_requests` (whether
 anyone can send a friend request at all) and `allow_group_invites`
-(whether a group member can invite this account directly — the
+(whether a group member can invite this account directly - the
 group's own invite link isn't gated by this, since using it is a
 self-initiated join, not something being done *to* the account).

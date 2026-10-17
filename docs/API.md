@@ -1,6 +1,6 @@
 # API
 
-A real, programmatic API — added on explicit request (see the git log
+A real, programmatic API - added on explicit request (see the git log
 around `apps/api`), which is why it exists at all: `docs/ARCHITECTURE.md`
 "API layer" originally said not to build one "until an actual client
 needs it," and Django REST Framework specifically was called out as a
@@ -10,7 +10,7 @@ domain logic staying HTTP-agnostic (`apps/*/services.py`) made this
 possible to add later without touching a single service function.
 
 Implemented with [Django REST Framework](https://www.django-rest-framework.org/)
-rather than hand-rolled — the combination of per-key CRUD permissions,
+rather than hand-rolled - the combination of per-key CRUD permissions,
 serialization, and rate-limit throttling this needed is exactly DRF's
 job, and hand-rolling equivalents would just be a worse-tested version
 of what it already does.
@@ -18,7 +18,7 @@ of what it already does.
 ## Authentication
 
 `Authorization: Bearer <key>` on every request. There is no other way
-in — no session/cookie auth, no Basic auth. This is deliberately a
+in - no session/cookie auth, no Basic auth. This is deliberately a
 separate front door from the server-rendered UI (which stays
 session-authenticated as before): a machine client always identifies
 itself with its own key, never by "being logged in" the way a browser
@@ -29,12 +29,12 @@ curl -H "Authorization: Bearer isk_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
      https://your-instance/api/v1/profile/
 ```
 
-A key's secret is shown exactly once, at creation (`/api/keys/new/` —
-see "Managing keys" below) — only its SHA-256 hash is ever stored
+A key's secret is shown exactly once, at creation (`/api/keys/new/` -
+see "Managing keys" below) - only its SHA-256 hash is ever stored
 (`apps.api.models.ApiKey.key_hash`), the same reasoning as a password
 hash: a database leak alone can't be used to authenticate. Unlike a
 password, a key is high-entropy and machine-generated, so it's hashed
-with plain SHA-256 rather than a slow, salted password hasher — see
+with plain SHA-256 rather than a slow, salted password hasher - see
 `apps.api.crypto`'s own docstring for why that's the correct choice
 here, not a shortcut.
 
@@ -51,59 +51,59 @@ Every endpoint belongs to exactly one **context**
 | `workouts` | Workout sessions, performed exercises, logged sets |
 | `measurements` | Measurement types, body measurement readings |
 | `activities` | Activity types, logged activities |
-| `records` | Personal records (read-only — see below) |
+| `records` | Personal records (read-only - see below) |
 | `analytics` | Training summaries, achievements (read-only) |
-| `nutrition` | Foods, meal slots, recipes, diary entries, nutrition goals/targets (goals/targets read-only), a nutrition profile, diet plans (generation/activation/apply are service-backed, not raw writes; a plan's meals/items are read-only — see below) |
+| `nutrition` | Foods, meal slots, recipes, diary entries, nutrition goals/targets (goals/targets read-only), a nutrition profile, diet plans (generation/activation/apply are service-backed, not raw writes; a plan's meals/items are read-only - see below) |
 | `stretching` | Stretches, stretch routines and their items, stretching sessions (creating one is a quick log) |
 
-Each API key carries, per context, four independent flags — **Create**,
-**Read**, **Update**, **Delete** — checked fresh on every request
+Each API key carries, per context, four independent flags - **Create**,
+**Read**, **Update**, **Delete** - checked fresh on every request
 (`apps.api.permissions.HasContextPermission`) against the HTTP method:
 `GET`/`HEAD`/`OPTIONS` need Read, `POST` needs Create, `PUT`/`PATCH`
 need Update, `DELETE` needs Delete. A key with `programs: {read}` and
 nothing else can browse programs but can't touch exercises at all, and
-can't create/edit/delete programs either — permissions are genuinely
+can't create/edit/delete programs either - permissions are genuinely
 independent per verb, not a single "allowed" toggle.
 
 `analytics/achievements/` is the one endpoint in this whole API that
-isn't scoped to the requesting user's own data — every other endpoint
+isn't scoped to the requesting user's own data - every other endpoint
 (including `analytics/summary/` right above it) only ever returns or
 accepts *your own* rows, `records`/`can_read` and all. Achievements are
 deliberately different, and match `templates/core/dashboard.html`'s own
 achievements carousel exactly: an all-time, shared-across-every-user
-list of highlights, not a personal one — see `docs/UI.md` "Achievements
+list of highlights, not a personal one - see `docs/UI.md` "Achievements
 carousel" for the full reasoning (a self-hosted instance is typically
 one household or small gym, where seeing a housemate's new streak is
 the point). `User.show_achievements=False` excludes that user's own
 figures from the result entirely, for every caller, themselves
-included — the same opt-out the dashboard itself respects, not
+included - the same opt-out the dashboard itself respects, not
 something this API route bypasses or has its own separate copy of.
 
 `records` and `profile` accept Create/Delete flags for a uniform model,
-but neither context has a route that verb could ever reach — records
+but neither context has a route that verb could ever reach - records
 are derived, never directly writable (see `docs/PR_SYSTEM.md`), and an
 account isn't created/deleted through this API. Granting those flags is
 harmless, just inert. `nutrition` has the same shape for its two
 historized sub-resources: nutrition goals and targets accept Create/
 Update/Delete flags but have no route to reach them, for the same
-reason `records` doesn't — a goal/target is only ever created or
+reason `records` doesn't - a goal/target is only ever created or
 superseded through `apps.nutrition.services.set_goal`/`set_target`
 (append a new row, close the old one), and a raw API write could
 silently corrupt that append-only history the way a hand-edited PR
 could. See `docs/NUTRITION.md` "NutritionGoal"/"NutritionTarget". A
 diet plan's meals/items have the same "no route to reach a raw write"
-shape too, for the reason given under "Endpoints" below — only a
+shape too, for the reason given under "Endpoints" below - only a
 plan's `name` and its service-backed actions are actually writable.
 
 ## Rate limits and tiers
 
 Every key belongs to a `RateLimitTier` (`apps.api.models.RateLimitTier`)
-— a named pair of `requests_per_minute`/`requests_per_day` limits, both
+- a named pair of `requests_per_minute`/`requests_per_day` limits, both
 enforced (`apps.api.throttling`). New keys get whichever tier is
 flagged `is_default` (seeded: **Basic** 30/min·2,000/day, **Standard**
-100/min·10,000/day — default — **Extended** 300/min·50,000/day).
+100/min·10,000/day - default - **Extended** 300/min·50,000/day).
 
-**These are admin-editable at runtime** — an admin edits a tier's numbers
+**These are admin-editable at runtime** - an admin edits a tier's numbers
 in Django admin, and every key on that tier is affected on its very
 next request, no redeploy, no cache to invalidate (see
 `apps.api.throttling`'s own docstring: the rate is read from the
@@ -114,11 +114,11 @@ page.
 Exceeding a limit returns `429 Too Many Requests`.
 
 Rate-limit counters live in the database (`django_cache` table,
-`CACHES["default"]` in `config/settings/base.py` — Django's own
+`CACHES["default"]` in `config/settings/base.py` - Django's own
 `DatabaseCache` backend), not Django's default in-memory cache: gunicorn
 runs multiple worker *processes* (`docker-compose.yml`, `--workers 3`)
 with no shared memory between them, so an in-memory counter would give
-each worker its own independent count — a key's real allowed throughput
+each worker its own independent count - a key's real allowed throughput
 would end up `worker_count` times its configured tier, silently. The
 database backend needs no new infrastructure (no Redis) and is created
 by `manage.py createcachetable`, wired into both compose files'
@@ -128,20 +128,20 @@ startup command right after `migrate`.
 
 Every weight in every API response/request is canonical **kilograms**;
 every length is canonical **meters**. This never converts to a user's
-`unit_system` preference the way the server-rendered UI does — a
+`unit_system` preference the way the server-rendered UI does - a
 machine caller needs one unambiguous unit it can rely on regardless of
 who's asking, not a human-facing display choice. `unit_system` itself
 is still exposed on `/api/v1/profile/` as a plain preference value (so
 a client can build its *own* imperial/metric UI on top if it wants to),
 it just never changes what any other endpoint's numbers mean.
 
-Datetimes are ISO 8601, always UTC on the wire (`USE_TZ=True`) —
+Datetimes are ISO 8601, always UTC on the wire (`USE_TZ=True`) -
 converting to a user's `timezone` preference for *display* is a client
 concern, the same reasoning as units.
 
 ## Managing keys
 
-Self-service, from the Profile page → "API keys" (`/api/keys/` —
+Self-service, from the Profile page → "API keys" (`/api/keys/` -
 session-authenticated, ordinary server-rendered pages, not part of the
 API itself):
 
@@ -149,29 +149,29 @@ API itself):
   Delete row per context described above (`apps.api.forms.
   ApiKeyCreateForm` builds this from `ApiContext` itself, so it never
   needs updating by hand when a context is added). The full secret is
-  shown exactly once immediately after — leaving that page (or
+  shown exactly once immediately after - leaving that page (or
   refreshing it) means it's gone for good; a lost key means revoking
   it and creating a new one, the same as a lost password.
 - **List** (`/api/keys/`): every key's name, short identifying prefix
-  (e.g. `isk_a1b2c3d4…` — never the full secret), tier, and last-used
+  (e.g. `isk_a1b2c3d4…` - never the full secret), tier, and last-used
   time. A "?" button next to the page heading opens an in-app
   reference (base URL, the auth header, a curl and a Python example
-  using this deployment's own real host, not a placeholder) —
+  using this deployment's own real host, not a placeholder) -
   everything on this page condensed for someone who just wants to
   start calling the API without leaving the app to find this document.
-- **Revoke** (a button on each key's row): permanently deletes it —
+- **Revoke** (a button on each key's row): permanently deletes it -
   unlike almost everything else in this app, a key is a credential, not
   training history, so there's no soft-delete/audit-trail reason to
   keep a revoked one around (see `apps.api.services.revoke_api_key`'s
   own docstring).
 
 A user may have at most `ApiSettings.max_api_keys_per_user` keys at
-once (seeded default: **10**) — also admin-editable at runtime, from
+once (seeded default: **10**) - also admin-editable at runtime, from
 the `ApiSettings` singleton in Django admin.
 
 ## Interactive docs
 
-`/api/docs/` — a Swagger UI, generated straight from the same DRF
+`/api/docs/` - a Swagger UI, generated straight from the same DRF
 viewsets/serializers `/api/v1/` itself is built from
 ([drf-spectacular](https://github.com/tfranzel/drf-spectacular)), so
 it can never drift out of sync with what the API actually does the
@@ -182,14 +182,14 @@ API keys (create one under "Managing keys" above first), and every
 instance with `Authorization: Bearer <key>` attached automatically.
 
 Session-authenticated (an ordinary logged-in page, like "Managing
-keys" above) — a deliberately separate credential from the API key
+keys" above) - a deliberately separate credential from the API key
 you authorize with inside it. The raw OpenAPI 3 schema itself is at
 `/api/docs/schema/` (also session-gated), for generating a typed
 client or importing into another tool (Postman, Insomnia, ...) instead
 of using the bundled UI.
 
 Served entirely from this instance's own static files
-(`drf-spectacular-sidecar`), not a CDN — works the same on an
+(`drf-spectacular-sidecar`), not a CDN - works the same on an
 offline/LAN-only deployment as on one with internet access, and needs
 no exception to this app's CSP (`apps.core.middleware.
 ContentSecurityPolicyMiddleware`, docs/SECURITY.md
@@ -202,7 +202,7 @@ All under `/api/v1/`. List/create endpoints are paginated (25 per page,
 
 | Context | Endpoints |
 |---|---|
-| profile | `GET`/`PATCH` `profile/` (singleton — no id; `username` and `email` are read-only — an API key must not be able to redirect password resets) |
+| profile | `GET`/`PATCH` `profile/` (singleton - no id; `username` and `email` are read-only - an API key must not be able to redirect password resets) |
 | exercises | `exercises/`, `exercises/<id>/`, `muscle-groups/` (read-only), `equipment/` (read-only) |
 | programs | `programs/`, `programs/<id>/`, `workouts/`, `workouts/<id>/`, `prescriptions/`, `prescriptions/<id>/` |
 | workouts | `sessions/`, `sessions/<id>/` (create = start; `PATCH status` to `completed`/`abandoned` = end), `performed-exercises/` (create + read only), `sets/`, `sets/<id>/` |
@@ -210,54 +210,54 @@ All under `/api/v1/`. List/create endpoints are paginated (25 per page,
 | activities | `activity-types/`, `activity-types/<id>/`, `activities/`, `activities/<id>/` |
 | records | `records/`, `records/<id>/` (read-only) |
 | analytics | `analytics/summary/?range=7d\|30d\|all` (default 30d), `analytics/achievements/` (both read-only) |
-| nutrition | `foods/`, `foods/<id>/`, `meal-slots/`, `meal-slots/<id>/`, `recipes/`, `recipes/<id>/`, `recipe-ingredients/`, `recipe-ingredients/<id>/`, `diary-entries/`, `diary-entries/<id>/`, `nutrition-goals/`, `nutrition-goals/<id>/` (read-only), `nutrition-targets/`, `nutrition-targets/<id>/` (read-only), `nutrition/profile/` (singleton — no id), `diet-plans/`, `diet-plans/<id>/`, `diet-plans/<id>/activate/`, `diet-plans/<id>/deactivate/`, `diet-plans/<id>/apply/` (all `POST`), `diet-plans/<id>/shopping-list/` (`GET`), `diet-plans/<id>/shopping-settings/` (`GET`/`PUT`/`PATCH`), `diet-plan-meals/`, `diet-plan-meals/<id>/` (read-only), `diet-plan-items/`, `diet-plan-items/<id>/` (read-only) |
+| nutrition | `foods/`, `foods/<id>/`, `meal-slots/`, `meal-slots/<id>/`, `recipes/`, `recipes/<id>/`, `recipe-ingredients/`, `recipe-ingredients/<id>/`, `diary-entries/`, `diary-entries/<id>/`, `nutrition-goals/`, `nutrition-goals/<id>/` (read-only), `nutrition-targets/`, `nutrition-targets/<id>/` (read-only), `nutrition/profile/` (singleton - no id), `diet-plans/`, `diet-plans/<id>/`, `diet-plans/<id>/activate/`, `diet-plans/<id>/deactivate/`, `diet-plans/<id>/apply/` (all `POST`), `diet-plans/<id>/shopping-list/` (`GET`), `diet-plans/<id>/shopping-settings/` (`GET`/`PUT`/`PATCH`), `diet-plan-meals/`, `diet-plan-meals/<id>/` (read-only), `diet-plan-items/`, `diet-plan-items/<id>/` (read-only) |
 | stretching | `stretches/`, `stretches/<id>/`, `stretch-routines/`, `stretch-routines/<id>/` (items nested read-only), `stretch-routine-items/`, `stretch-routine-items/<id>/` (own routines only), `stretch-sessions/`, `stretch-sessions/<id>/` (create = quick log with `duration`; name/routine/status and the per-stretch snapshot are read-only) |
 
 Every endpoint goes through the exact same domain service functions the
 server-rendered web views already use (`apps/exercises/services.py`,
-`apps/workouts/services.py`, `apps/records/services.py`, ...) — never a
+`apps/workouts/services.py`, `apps/records/services.py`, ...) - never a
 second copy of ownership-scoping, snapshot-on-start, or PR-detection
 logic. Concretely: `POST sets/` calls
 `apps.workouts.services.log_set` and then
 `apps.records.services.check_and_record_prs`, exactly the two calls the
-web UI's own set-logging view makes — a set logged through the API sets
+web UI's own set-logging view makes - a set logged through the API sets
 PRs the same as one logged through the app.
 
 Ownership rules match the web UI exactly too: a system exercise/program
 template is readable by everyone but only ever editable by whoever
 created it (or not at all, for a system template); a request against
 someone else's row 404s, the same as the equivalent web page would
-(`apps.api.viewsets.OwnedResourceViewSet` — the request never even
+(`apps.api.viewsets.OwnedResourceViewSet` - the request never even
 learns the row exists, rather than a 403 confirming it does). Deleting
 an exercise/measurement type/activity type soft-deletes it (matching
-`active=False`, never a hard delete — see `docs/DOMAIN_MODEL.md`);
+`active=False`, never a hard delete - see `docs/DOMAIN_MODEL.md`);
 deleting a program is a real, permanent delete (it has no `active`
 field, matching its own web view: "Delete this program? This cannot be
 undone.").
 
 Nutrition follows the same shapes: `foods/`/`meal-slots/` are
 soft-deletable, shared-or-own resources exactly like `measurement-
-types/`/`activity-types/` — a food or meal slot with no `owner` is
+types/`/`activity-types/` - a food or meal slot with no `owner` is
 visible to (and loggable by) every user but only ever editable by
 whoever created a *custom* one. `recipes/` is a real, permanent delete
 like `programs/` (a recipe has no `active` field either). A
 `diary-entries/` row must have exactly one of `food`/`recipe` set,
-never both or neither — the same `CheckConstraint` the model itself
+never both or neither - the same `CheckConstraint` the model itself
 enforces, checked again in the serializer so a bad request gets a
 plain `400` with a message instead of a raw database error. A
 `recipe-ingredients/`/`diary-entries/` write is only accepted if the
 `food`/`recipe`/`meal_slot` it points at is one this key's user can
-actually see — the same visibility rule `apps.nutrition.services.
+actually see - the same visibility rule `apps.nutrition.services.
 search_foods`/`visible_meal_slots` already enforce for the web UI,
 re-checked here since a `PrimaryKeyRelatedField` has no ownership
 concept of its own (same pattern `WorkoutSerializer.validate_program`
 and `BodyMeasurementSerializer.validate_measurement_type` already use
 elsewhere in this file). Importing a food from OpenFoodFacts by
-barcode isn't exposed here — a client creates a food the same way the
+barcode isn't exposed here - a client creates a food the same way the
 web form does, by supplying its own values directly; see "What's
 deliberately not here" below.
 
-`nutrition/profile/` is a singleton like `profile/` itself — every
+`nutrition/profile/` is a singleton like `profile/` itself - every
 field of `apps.nutrition.models.NutritionProfile` is plainly
 readable/writable, since (unlike a goal or target) these are inputs a
 user corrects in place, not decisions worth preserving as history. A
@@ -266,9 +266,9 @@ user with no profile yet gets a plain `404`, not a `500`.
 `diet-plans/` generates through
 `apps.nutrition.diet_builder.build_diet_plan` on `POST` rather than
 accepting a raw row: the request body supplies `name`, `goal`
-(optional — must be one of this key's own user's goals), the four
+(optional - must be one of this key's own user's goals), the four
 `target_*` numbers, `is_weekly` (optional), and `meal_slots` (a list
-of meal slot ids to build around) — the response's nested `meals`
+of meal slot ids to build around) - the response's nested `meals`
 (each nesting `items`) is whatever the builder actually generated, not
 an echo of the request. `PATCH` only accepts `name`; `is_active` and
 every `target_*` field are read-only, since the "exactly one active
@@ -277,7 +277,7 @@ ever supposed to change through the actions below, never a raw write.
 `activate/`/`deactivate/`/`apply/` (all `POST`, no body except
 `apply/`'s `{"date": "YYYY-MM-DD"}`) call
 `apps.nutrition.services.set_active_diet_plan`/`deactivate_diet_plan`/
-`apps.nutrition.diet_builder.apply_diet_plan` — `apply/` is the one
+`apps.nutrition.diet_builder.apply_diet_plan` - `apply/` is the one
 genuinely useful action a client would otherwise have to reconstruct
 by hand (fetch every item, `POST` each one to `diary-entries/`
 individually, re-deriving quantities and meal slots the plan already
@@ -285,7 +285,7 @@ knows) and returns the real `DiaryEntry` rows it created. `DELETE`
 cascades to a plan's own meals/items, same as any other delete.
 `diet-plan-meals/`/`diet-plan-items/` exist as their own top-level,
 read-only endpoints too (same double-exposure `recipes/`/
-`recipe-ingredients/` already has) — but unlike a recipe's ingredient
+`recipe-ingredients/` already has) - but unlike a recipe's ingredient
 list, a plan's meals/items only ever come from the builder's own
 calorie-splitting algorithm, so nothing here accepts a write; doing so
 would silently break the calorie/macro balance the plan was built to
@@ -293,17 +293,17 @@ hit.
 
 `diet-plans/<id>/shopping-list/` (`GET`) is the plan's shopping list for
 one trip (docs/NUTRITION.md "Shopping list"), derived from the plan on
-every request — nothing is stored. `?trip=<weekday>` (0=Monday) picks the
+every request - nothing is stored. `?trip=<weekday>` (0=Monday) picks the
 trip starting that shopping day (`400` if it isn't one); without it, the
-trip shopped today or next. The response has the `trip` (`weekday` —
+trip shopped today or next. The response has the `trip` (`weekday` -
 `null` when the plan has no shopping days, i.e. one list for the whole
-week — and the `days` it buys for), every `trips` entry, the plan's
+week - and the `days` it buys for), every `trips` entry, the plan's
 `include_shopping_day`, and `items`: one per food, recipes broken into
 their ingredients, with `food`, `food_name`, `unit` (`g`/`ml`/`piece`),
 `total` and `by_day` (`[{weekday, quantity}]` in the trip's day order).
 `diet-plans/<id>/shopping-settings/` reads or writes the plan's
 `weekdays` (list of 0–6) and `include_shopping_day`; `PUT` replaces both,
-`PATCH` changes whichever is given. Both need the `nutrition` context —
+`PATCH` changes whichever is given. Both need the `nutrition` context -
 read for `GET`, update for `PUT`/`PATCH`.
 
 ## What's deliberately not here
@@ -313,16 +313,16 @@ read for `GET`, update for `PUT`/`PATCH`.
 - **Webhooks / push notifications.** Nothing calls out to a client;
   everything here is request/response.
 - **OAuth / third-party delegated auth.** A key is issued directly by
-  the account it belongs to, for that account only — there's no
+  the account it belongs to, for that account only - there's no
   "connect your account to another service" flow, since this is a
   self-hosted, typically single-household instance, not a multi-tenant
   SaaS with external integrators.
 - **Importing a food from OpenFoodFacts by barcode.** The web UI's
   search-and-import flow (`docs/NUTRITION.md` "OpenFoodFacts
-  integration") isn't mirrored here yet — `POST foods/` creates a
+  integration") isn't mirrored here yet - `POST foods/` creates a
   plain hand-entered food (matching `FoodForm`), the same shape a
   user typing their own values in gets. Deliberately deferred rather
   than half-built alongside everything else in this pass.
 
 None of these are ruled out for later, they just aren't part of this
-first pass — see the phased-implementation principle in `CLAUDE.md`.
+first pass - see the phased-implementation principle in `CLAUDE.md`.

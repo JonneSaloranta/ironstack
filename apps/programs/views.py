@@ -35,7 +35,7 @@ class ProgramListView(LoginRequiredMixin, ListView):
             owner__isnull=True, is_template=True
         ).annotate(workout_count=Count("workouts"))
         # A plain per-object Python attribute, not a queryset
-        # annotation — apps.coaching.services.program_update_available
+        # annotation - apps.coaching.services.program_update_available
         # is one cheap int compare per coach-imported program, and this
         # list is always just one user's own programs (never hundreds,
         # unlike the workout_count above where an N+1 actually
@@ -48,12 +48,12 @@ class ProgramListView(LoginRequiredMixin, ListView):
                 program.imported_from_id is not None and program_update_available(program)
             )
         # Split the same flat queryset into the groups
-        # templates/programs/program_list.html actually renders —
+        # templates/programs/program_list.html actually renders -
         # asked for directly: a coach-imported program is visually
         # distinct from a program the user built themselves, which is
         # itself distinct from their own saved templates. A program
         # imported from a coach sorts there regardless of is_template
-        # (checked first) — that combination shouldn't happen in
+        # (checked first) - that combination shouldn't happen in
         # practice, but if it ever did, "where did this come from" is
         # more useful here than "is it a template".
         context["coach_programs"] = [
@@ -157,8 +157,8 @@ def program_copy(request, pk):
 
 @login_required
 def program_export(request, pk):
-    """Downloads one program (visible to this user — their own, or a
-    system template) as a plain, human-readable `.json` file — see
+    """Downloads one program (visible to this user - their own, or a
+    system template) as a plain, human-readable `.json` file - see
     apps.core.data_exchange's own module docstring for the whole
     export/import feature this is one half of. A GET, not a POST:
     downloading a file changes nothing server-side, so there's no
@@ -174,13 +174,13 @@ def program_export(request, pk):
 
 @login_required
 def program_import(request):
-    """The other half — uploads a previously-exported program (asked
+    """The other half - uploads a previously-exported program (asked
     for directly: this instance's own, or a completely different
     IronStack instance's) and recreates it as a new program owned by
     the current user. `apps.programs.services.import_program` runs the
     whole thing inside one transaction, so a bad file (or one this
     build genuinely can't make sense of) leaves no trace rather than a
-    half-imported program — see that function's own docstring."""
+    half-imported program - see that function's own docstring."""
     if request.method != "POST":
         return render(request, "programs/program_import.html", {"form": ExportImportUploadForm()})
 
@@ -202,7 +202,7 @@ def program_import(request):
         messages.info(
             request,
             _(
-                "This file was exported from IronStack %(version)s — worth "
+                "This file was exported from IronStack %(version)s - worth "
                 "double-checking the import if something looks off."
             )
             % {"version": exported_app_version},

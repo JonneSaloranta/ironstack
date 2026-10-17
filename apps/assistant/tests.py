@@ -15,13 +15,14 @@ from apps.nutrition.models import DietPlan, Food, MealSlot, Recipe, ServingUnit
 from apps.programs.models import Program, Workout
 from apps.workouts.models import WorkoutSession, WorkoutSessionStatus
 
-from . import formatting, proposals, services, tools
+from . import formatting, proposals, services, tools, toon
 from .models import (
     AssistantMessage,
     AssistantPreference,
     AssistantProposal,
     AssistantSettings,
     Conversation,
+    DataScope,
     KeySource,
     MessageRole,
     MessageStatus,
@@ -249,6 +250,17 @@ class ConversationTests(TestCase):
         self.assertEqual(reply.status, MessageStatus.PENDING)
         self.assertEqual(conversation.key_source, KeySource.SHARED)
 
+    def test_about_me_goes_into_the_context(self):
+        services.set_about_me(self.user, "Allergic to peanuts.")
+        conversation = services.start_conversation(self.user, "Plan my meals")
+        sent = conversation.messages.first().raw[0]["content"][0]["text"]
+        self.assertIn("<about_user>\nAllergic to peanuts.\n</about_user>", sent)
+
+    def test_empty_about_me_is_left_out(self):
+        conversation = services.start_conversation(self.user, "Hi")
+        sent = conversation.messages.first().raw[0]["content"][0]["text"]
+        self.assertNotIn("<about_user>", sent)
+
     def test_one_reply_at_a_time(self):
         conversation = services.start_conversation(self.user, "First")
         with self.assertRaises(services.AssistantError):
@@ -338,7 +350,7 @@ class ProcessMessageTests(TestCase):
         self.assertEqual(len(self.reply.raw), 3)
         tool_result = self.reply.raw[1]["content"][0]
         self.assertEqual(tool_result["type"], "tool_result")
-        self.assertEqual(json.loads(tool_result["content"])["latest_body_weight_kg"], 82.5)
+        self.assertIn("\nlatest_body_weight_kg: 82.5\n", tool_result["content"])
         # The second request carries the first turn and its tool result.
         self.assertEqual(len(provider.histories[1]), len(provider.histories[0]) + 2)
 
@@ -420,8 +432,7 @@ class ToolScopingTests(TestCase):
         self.ctx = tools.ToolContext(self.user, None)
 
     def run_tool(self, name, args):
-        content, is_error = tools.run(self.ctx, name, args)
-        return json.loads(content) if not is_error else content, is_error
+        return tools.execute(self.ctx, name, args)
 
     def test_search_foods_sees_own_and_shared_only(self):
         make_food(self.user, "Zqx mine")
@@ -458,6 +469,223 @@ class ToolScopingTests(TestCase):
         data, _ = self.run_tool("get_workout_history", {"days": 30})
         self.assertEqual(len(data["completed_sessions"]), 1)
 
+    def test_food_diary_ranks_own_favorites(self):
+        from apps.nutrition.models import DiaryEntry
+
+        slot = MealSlot.objects.filter(owner__isnull=True).first() or MealSlot.objects.create(
+            name="Breakfast"
+        )
+        oats = make_food(self.user, "Oats")
+        gone = make_food(self.user, "Old cereal", active=False)
+        today = timezone.localdate()
+        for offset in range(3):
+            DiaryEntry.objects.create(
+                user=self.user,
+                date=today - timedelta(days=offset),
+                meal_slot=slot,
+                food=oats,
+                quantity=Decimal("80"),
+            )
+        DiaryEntry.objects.create(
+            user=self.user, date=today, meal_slot=slot, food=gone, quantity=Decimal("50")
+        )
+        DiaryEntry.objects.create(
+            user=self.other,
+            date=today,
+            meal_slot=slot,
+            food=make_food(self.other, "Bob food"),
+            quantity=Decimal("100"),
+        )
+        DiaryEntry.objects.create(
+            user=self.user,
+            date=today - timedelta(days=200),
+            meal_slot=slot,
+            food=oats,
+            quantity=Decimal("80"),
+        )
+        data, is_error = self.run_tool("get_food_diary", {"days": 30})
+        self.assertFalse(is_error)
+        self.assertEqual(data["days_logged"], 3)
+        names = [item["name"] for item in data["most_eaten"]]
+        self.assertEqual(names, ["Oats", "Old cereal"])
+        first = data["most_eaten"][0]
+        self.assertEqual(first["food_id"], oats.pk)
+        self.assertEqual(first["days_eaten"], 3)
+        self.assertEqual(first["typical_quantity"], "80.0g")
+        self.assertIsNone(data["most_eaten"][1]["food_id"])
+        self.assertEqual(len({meal["date"] for meal in data["recent_meals"]}), 3)
+
+    def test_workout_history_has_rir_failure_and_set_notes(self):
+        from apps.workouts.models import ExerciseSet, PerformedExercise
+
+        session = WorkoutSession.objects.create(
+            user=self.user, status=WorkoutSessionStatus.COMPLETED, ended_at=timezone.now()
+        )
+        performed = PerformedExercise.objects.create(
+            session=session, exercise=Exercise.objects.filter(owner__isnull=True).first()
+        )
+        ExerciseSet.objects.create(
+            performed_exercise=performed,
+            set_number=1,
+            weight=Decimal("100"),
+            reps=5,
+            rir=2,
+            is_failure=True,
+            notes="Shoulder felt off",
+        )
+        data, _ = self.run_tool("get_workout_history", {})
+        exercise = data["exercises"][0]
+        self.assertEqual(exercise["session"], data["completed_sessions"][0]["session"])
+        self.assertEqual(exercise["sets"], "100.0kg x 5 RIR2 (to failure)")
+        self.assertEqual(exercise["set_notes"], "set 1: Shoulder felt off")
+
+    def test_foods_and_recipes_carry_allergens_and_ingredients(self):
+        from apps.nutrition.models import RecipeIngredient
+
+        peanut = make_food(self.user, "Zqx peanut butter", allergens="en:peanuts", labels="Vegan")
+        recipe = Recipe.objects.create(owner=self.user, name="Zqx toast", servings=1)
+        RecipeIngredient.objects.create(recipe=recipe, food=peanut, quantity=Decimal("30"))
+        data, _ = self.run_tool("search_foods", {"query": "zqx"})
+        self.assertEqual(data["foods"][0]["allergens"], "en:peanuts")
+        self.assertEqual(data["foods"][0]["labels"], "Vegan")
+        self.assertNotIn("ingredients", data["foods"][0])
+        data, _ = self.run_tool("search_recipes", {"query": "zqx"})
+        self.assertEqual(data["recipes"][0]["ingredients"], "Zqx peanut butter 30.0g")
+        self.assertEqual(data["recipes"][0]["ingredient_allergens"], "en:peanuts")
+
+    def test_overview_has_training_pattern_and_coaches(self):
+        from apps.coaching.models import CoachingRelationship
+
+        program = Program.objects.create(owner=self.user, name="My program")
+        WorkoutSession.objects.create(
+            user=self.user,
+            program=program,
+            status=WorkoutSessionStatus.COMPLETED,
+            ended_at=timezone.now(),
+        )
+        CoachingRelationship.objects.create(coach=self.other, coachee=self.user)
+        data, _ = self.run_tool("get_user_overview", {})
+        pattern = data["training_last_4_weeks"]
+        self.assertEqual(pattern["sessions"], 1)
+        self.assertEqual(list(pattern["sessions_by_weekday"].values()), [1])
+        self.assertEqual(pattern["latest_program"], {"id": program.pk, "name": "My program"})
+        self.assertEqual(data["active_coaches"], 1)
+
+    def test_progression_suggestions_default_to_latest_program(self):
+        from apps.programs.models import ExercisePrescription
+
+        _content, is_error = self.run_tool("get_progression_suggestions", {})
+        self.assertTrue(is_error)
+        program = Program.objects.create(owner=self.user, name="My program")
+        workout = Workout.objects.create(program=program, name="Day A")
+        ExercisePrescription.objects.create(
+            workout=workout,
+            exercise=Exercise.objects.filter(owner__isnull=True).first(),
+            target_weight=Decimal("60"),
+        )
+        WorkoutSession.objects.create(
+            user=self.user,
+            program=program,
+            status=WorkoutSessionStatus.COMPLETED,
+            ended_at=timezone.now(),
+        )
+        data, is_error = self.run_tool("get_progression_suggestions", {})
+        self.assertFalse(is_error)
+        self.assertEqual(data["program"]["id"], program.pk)
+        exercise = data["suggestions"][0]
+        self.assertEqual(exercise["reps"], "8-12")
+        self.assertTrue(exercise["reason"])
+        bobs = Program.objects.create(owner=self.other, name="Bob's")
+        _content, is_error = self.run_tool("get_progression_suggestions", {"program_id": bobs.pk})
+        self.assertTrue(is_error)
+
+    def test_calorie_adjustment_without_goal(self):
+        data, is_error = self.run_tool("get_calorie_adjustment", {})
+        self.assertFalse(is_error)
+        self.assertEqual(data["status"], "no_active_goal")
+
+    def test_stretching_is_own_only_and_respects_the_toggle(self):
+        from apps.stretching.models import StretchSession, StretchSessionStatus
+
+        for owner in (self.user, self.other):
+            StretchSession.objects.create(
+                user=owner, name="Evening", status=StretchSessionStatus.COMPLETED
+            )
+        data, _ = self.run_tool("get_stretching", {})
+        self.assertEqual([s["name"] for s in data["sessions"]], ["Evening"])
+        self.user.stretching_enabled = False
+        self.user.save()
+        data, _ = self.run_tool("get_stretching", {})
+        self.assertEqual(data, {"stretching_enabled": False})
+
+    def test_body_measurements_summarize_whole_history(self):
+        weight = MeasurementType.objects.get(name="Body weight", owner__isnull=True)
+        self.user.height = Decimal("1.80")
+        self.user.save()
+        now = timezone.now()
+        for days_ago, value in ((400, "90"), (20, "86"), (10, "85"), (0, "84")):
+            BodyMeasurement.objects.create(
+                user=self.user,
+                measurement_type=weight,
+                value=Decimal(value),
+                recorded_at=now - timedelta(days=days_ago),
+                notes="after holidays" if days_ago == 0 else "",
+            )
+        BodyMeasurement.objects.create(
+            user=self.other, measurement_type=weight, value=Decimal("60"), recorded_at=now
+        )
+        data, is_error = self.run_tool("get_body_measurements", {"days": 30})
+        self.assertFalse(is_error)
+        [entry] = data["measurements"]
+        self.assertEqual(entry["readings_count"], 4)
+        self.assertEqual(entry["first_value"], 90.0)
+        self.assertEqual(entry["latest_value"], 84.0)
+        self.assertEqual(entry["change_since_first"], -6.0)
+        self.assertEqual(len(data["recent_readings"]), 3)
+        self.assertEqual(data["recent_readings"][0]["notes"], "after holidays")
+        self.assertEqual(entry["latest_bmi"], 25.9)
+        self.assertIn("trend_kg_per_week", entry)
+        self.assertNotIn("Body weight", data["types_never_logged"])
+
+    def test_turned_off_data_is_not_read(self):
+        weight = MeasurementType.objects.get(name="Body weight", owner__isnull=True)
+        BodyMeasurement.objects.create(
+            user=self.user, measurement_type=weight, value=Decimal("80"), recorded_at=timezone.now()
+        )
+        self.user.height = Decimal("1.80")
+        self.user.save()
+        services.set_data_access(
+            self.user, {f"reads_{scope.value}": True for scope in DataScope} | {"reads_body": False}
+        )
+        ctx = tools.ToolContext(self.user, None)
+        for name in ("get_body_measurements", "get_calorie_adjustment"):
+            content, is_error = tools.execute(ctx, name, {})
+            self.assertFalse(is_error)
+            self.assertEqual(content["not_shared"], "body")
+        data = tools.execute(ctx, "get_user_overview", {})[0]
+        self.assertNotIn("latest_body_weight_kg", data)
+        self.assertEqual(data["height_m"], 1.8)
+        self.assertEqual(data["not_shared_with_you"], ["body"])
+        _content, is_error = tools.execute(ctx, "get_food_diary", {})
+        self.assertNotIn("not_shared", _content)
+
+    def test_turned_off_profile_hides_height_and_bmi(self):
+        weight = MeasurementType.objects.get(name="Body weight", owner__isnull=True)
+        BodyMeasurement.objects.create(
+            user=self.user, measurement_type=weight, value=Decimal("80"), recorded_at=timezone.now()
+        )
+        self.user.height = Decimal("1.80")
+        self.user.save()
+        services.set_data_access(
+            self.user,
+            {f"reads_{scope.value}": True for scope in DataScope} | {"reads_profile": False},
+        )
+        ctx = tools.ToolContext(self.user, None)
+        overview = tools.execute(ctx, "get_user_overview", {})[0]
+        self.assertNotIn("height_m", overview)
+        measurements = tools.execute(ctx, "get_body_measurements", {})[0]
+        self.assertNotIn("latest_bmi", measurements["measurements"][0])
+
     def test_unknown_tool_and_bad_input(self):
         self.assertTrue(tools.run(self.ctx, "drop_tables", {})[1])
         self.assertTrue(tools.run(self.ctx, "get_workout_history", {"days": "lots"})[1])
@@ -466,6 +694,15 @@ class ToolScopingTests(TestCase):
     def test_json_string_arguments_are_accepted(self):
         _content, is_error = tools.run(self.ctx, "search_foods", '{"query": "x"}')
         self.assertFalse(is_error)
+
+    def test_results_are_sent_as_toon(self):
+        make_food(self.user, "Zqx oats")
+        content, is_error = tools.run(self.ctx, "search_foods", {"query": "zqx"})
+        self.assertFalse(is_error)
+        self.assertTrue(content.startswith("foods[1]{id,name,brand,per,calories,"))
+        self.assertIn(",Zqx oats,null,100.0g,380,13,60,7", content)
+        content, is_error = tools.run(self.ctx, "get_workout_history", {"days": "lots"})
+        self.assertEqual((content, is_error), ("`days` must be a number.", True))
 
     def test_definitions_are_stable(self):
         self.assertEqual(tools.definitions(), tools.definitions())
@@ -798,6 +1035,29 @@ class ViewTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(services.preference_for(self.user).own_key_model, "claude-sonnet-5-5")
 
+    def test_about_me_saves_and_shows(self):
+        url = reverse("assistant:settings")
+        response = self.client.post(reverse("assistant:about-save"), {"about_me": "Vegan."})
+        self.assertRedirects(response, url)
+        self.assertEqual(services.preference_for(self.user).about_me, "Vegan.")
+        self.assertContains(self.client.get(url), "Vegan.")
+        response = self.client.post(reverse("assistant:about-save"), {"about_me": "x" * 2001})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(services.preference_for(self.user).about_me, "Vegan.")
+
+    def test_data_access_saves_unticked_scopes(self):
+        url = reverse("assistant:settings")
+        self.assertContains(self.client.get(url), 'name="reads_food"')
+        response = self.client.post(
+            reverse("assistant:data-access-save"), {"reads_workouts": "on", "reads_profile": "on"}
+        )
+        self.assertRedirects(response, url)
+        preference = services.preference_for(self.user)
+        self.assertTrue(preference.reads_workouts)
+        self.assertTrue(preference.reads_profile)
+        self.assertFalse(preference.reads_food)
+        self.assertFalse(preference.reads_body)
+
     def test_admin_settings_is_staff_only(self):
         url = reverse("assistant:admin-settings")
         self.assertEqual(self.client.get(url).status_code, 403)
@@ -816,6 +1076,63 @@ class ViewTests(TestCase):
         services.enable(self.user)
         response = self.client.get(reverse("nutrition:diet-plan-list"))
         self.assertContains(response, reverse("assistant:home") + "?prompt=")
+
+
+class ToonTests(TestCase):
+    def test_objects_nest_by_indentation(self):
+        self.assertEqual(
+            toon.encode({"id": 1, "user": {"name": "Ada", "active": True, "note": None}}),
+            "id: 1\nuser:\n  name: Ada\n  active: true\n  note: null",
+        )
+
+    def test_uniform_objects_become_a_table(self):
+        data = {"sets": [{"kg": 100.0, "reps": 5}, {"kg": 102.5, "reps": 3}]}
+        self.assertEqual(toon.encode(data), "sets[2]{kg,reps}:\n  100,5\n  102.5,3")
+
+    def test_primitive_and_empty_arrays(self):
+        self.assertEqual(toon.encode({"tags": ["a", "b"], "none": []}), "tags[2]: a,b\nnone[0]:")
+
+    def test_mixed_arrays_become_list_items(self):
+        data = {"items": [{"id": 1, "tags": ["x"]}, {"id": 2}, "text", [1, 2], [{"a": [1]}], {}]}
+        self.assertEqual(
+            toon.encode(data),
+            "items[6]:\n  - id: 1\n    tags[1]: x\n  - id: 2\n  - text\n  - [2]: 1,2\n"
+            "  - [1]:\n    - a[1]: 1\n  -",
+        )
+
+    def test_ambiguous_strings_are_quoted(self):
+        cases = {
+            "": '""',
+            "Butter, salted": '"Butter, salted"',
+            "true": '"true"',
+            "null": '"null"',
+            "42": '"42"',
+            "-5": '"-5"',
+            "05": '"05"',
+            "- item": '"- item"',
+            " padded": '" padded"',
+            "a: b": '"a: b"',
+            'say "hi"': '"say \\"hi\\""',
+            "two\nlines": '"two\\nlines"',
+            "[x]": '"[x]"',
+            "Kaurapuuro 80g": "Kaurapuuro 80g",
+            "2026-10-17": "2026-10-17",
+        }
+        for value, expected in cases.items():
+            with self.subTest(value=value):
+                self.assertEqual(toon.encode({"v": value}), f"v: {expected}")
+
+    def test_keys_and_numbers(self):
+        self.assertEqual(
+            toon.encode({"Evening snack": 1.0, "Välipala": 1e-7, "n": -0.0, "big": 1e21}),
+            '"Evening snack": 1\n"Välipala": 0.0000001\nn: 0\nbig: 1000000000000000000000',
+        )
+
+    def test_tables_need_matching_primitive_fields(self):
+        data = {"rows": [{"a": 1, "b": 2}, {"b": 3, "a": 4}, {"a": 5, "b": [6]}]}
+        self.assertTrue(toon.encode(data).startswith("rows[3]:\n  - a: 1"))
+        data = {"rows": [{"a": 1, "b": 2}, {"b": 3, "a": 4}]}
+        self.assertEqual(toon.encode(data), "rows[2]{a,b}:\n  1,2\n  4,3")
 
 
 class FormattingTests(TestCase):

@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% load i18n %}
-{% block title %}{{ group.name }} — IronStack{% endblock %}
+{% block title %}{{ group.name }} - IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
   <h1 class="no-margin">{{ group.name }}</h1>
@@ -41,7 +41,7 @@
         </form>
       </div>
     {% else %}
-      <p class="text-muted">{% trans "Anyone with this link can join — off until you turn it on." %}</p>
+      <p class="text-muted">{% trans "Anyone with this link can join - off until you turn it on." %}</p>
       <form method="post" action="{% url 'social:group-invite-toggle' group.pk %}">
         {% csrf_token %}
         <button type="submit">{% trans "Enable link" %}</button>
@@ -51,7 +51,7 @@
 {% endif %}
 
 {% comment %}
-  Deliberately not gated on can_manage — any member can invite one of
+  Deliberately not gated on can_manage - any member can invite one of
   their own friends (apps.social.services.invite_to_group), the same
   as most chat apps let any member add someone they know, unlike the
   invite *link* above, which only an owner/admin can turn on/off.
@@ -112,10 +112,10 @@
   Routine, low-stakes actions grouped together and reachable first;
   the group's own destructive action (Leave/Delete) is deliberately
   the last thing on the page instead of sitting directly between two
-  ordinary buttons — regression: it used to sit immediately after
+  ordinary buttons - regression: it used to sit immediately after
   Mute/Unmute in its own identically-styled row, with nothing setting
   it apart from a routine action beyond its own red color. A <div>,
-  not a <p> — a <form> child implicitly closes a <p> per the HTML5
+  not a <p> - a <form> child implicitly closes a <p> per the HTML5
   parsing spec, which silently dropped the flex layout entirely when
   this was first written as one.
 {% endcomment %}

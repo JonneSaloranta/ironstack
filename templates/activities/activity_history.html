@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% load i18n core_extras %}
-{% block title %}{{ activity_type.name|translate_content }} — IronStack{% endblock %}
+{% block title %}{{ activity_type.name|translate_content }} - IronStack{% endblock %}
 {% block content %}
 {% url 'activities:type-list' as c1u %}{% trans "Activities" as c1l %}
 {% include "core/_breadcrumbs.html" with c1_url=c1u c1_label=c1l current=activity_type.name %}
@@ -49,7 +49,7 @@
       <tr>
         <td>{{ entry.date|date:"Y-m-d" }}{% if entry.start_time %} {{ entry.start_time|time:"H:i" }}{% endif %}</td>
         <td>{{ entry.duration|duration }}</td>
-        <td>{% if entry.display_distance is not None %}{{ entry.display_distance }} {{ distance_label }}{% else %}—{% endif %}</td>
+        <td>{% if entry.display_distance is not None %}{{ entry.display_distance }} {{ distance_label }}{% else %}-{% endif %}</td>
         <td class="set-actions">
           <a class="button-secondary" href="{% url 'activities:entry-edit' entry.pk %}">{% trans "Edit" %}</a>
           <form method="post" action="{% url 'activities:entry-delete' entry.pk %}" data-confirm="{% filter force_escape %}{% trans "Delete this activity?" %}{% endfilter %}">

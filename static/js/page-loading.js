@@ -1,6 +1,6 @@
 /*
  * A thin progress bar along the top of the screen while the app waits on
- * the server — docs/UI_COMPONENTS.md "States". Asked for directly: on a
+ * the server - docs/UI_COMPONENTS.md "States". Asked for directly: on a
  * slow connection nothing showed that a tap had registered until the next
  * page finally arrived.
  *
@@ -8,11 +8,11 @@
  * - a full page load started from the page: following a same-origin link,
  *   or submitting a form normally (also one confirm-dialog.js resubmits);
  * - an HTMX request the user started (a click, a submit, typing in a live
- *   search). Background requests — polling (`every 4s`), `load` triggers —
+ *   search). Background requests - polling (`every 4s`), `load` triggers -
  *   have no trusted triggering event and are skipped, so a chat thread or
  *   an assistant reply being written doesn't keep the bar flickering.
  *
- * It appears at once, as feedback that the tap registered — a delay
+ * It appears at once, as feedback that the tap registered - a delay
  * before showing it (to spare fast loads a flash) hid it completely on a
  * local network, where pages answer in well under 100 ms. The bar can't
  * know real progress, so it eases towards 90% and finishes when the

@@ -1,7 +1,7 @@
 """A food's nutrition table laid out the way an EU/Finnish package label
 is (Regulation (EU) 1169/2011 Annex XV): energy in kJ and kcal, fat and
 its saturates, carbohydrate and its sugars/starch/polyols, fibre,
-protein, salt — then every other nutrient OpenFoodFacts reports.
+protein, salt - then every other nutrient OpenFoodFacts reports.
 
 Pure functions, no DB access: `extract_other_nutrients` turns OFF's raw
 `nutriments` dict into `Food.other_nutrients`, `label_rows` turns a Food
@@ -82,7 +82,7 @@ _FROM_GRAMS = {
 
 def _normalized(value):
     """A Decimal without float noise or trailing zeros (12.300 → 12.3),
-    rounded to 3 decimals — plenty for any label figure."""
+    rounded to 3 decimals - plenty for any label figure."""
     return Decimal(str(value)).quantize(Decimal("0.001")).normalize()
 
 
@@ -125,7 +125,7 @@ _FAT_SUB_ROWS = ("monounsaturated-fat", "polyunsaturated-fat")
 
 
 def energy_kj(food):
-    """The label's kJ figure — stored when the source gave one, otherwise
+    """The label's kJ figure - stored when the source gave one, otherwise
     derived from kcal."""
     if food.energy_kj is not None:
         return food.energy_kj
@@ -142,8 +142,8 @@ def salt_grams(food):
 
 def label_rows(food):
     """The food's nutrients in label order, energy excluded (it has its
-    own kJ/kcal row). The mandatory rows always show — `value=None` for
-    an unknown one — while starch/polyols/fibre only show when known,
+    own kJ/kcal row). The mandatory rows always show - `value=None` for
+    an unknown one - while starch/polyols/fibre only show when known,
     the same way a printed label lists them."""
     def sub(label, value):
         return LabelRow(label, value, "g", indented=True)

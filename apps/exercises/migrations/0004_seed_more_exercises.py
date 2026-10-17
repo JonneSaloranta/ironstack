@@ -1,4 +1,4 @@
-"""Seed more built-in exercises, on request — the original seed (0002)
+"""Seed more built-in exercises, on request - the original seed (0002)
 covered one basic exercise per major movement pattern; this rounds out
 the library with common accessory/variation lifts, using only the
 muscle groups and equipment 0002 already seeded (no new lookup rows

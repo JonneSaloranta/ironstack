@@ -4,7 +4,7 @@
 // back on close. This adds those three behaviours without rewriting each
 // modal: it watches for a backdrop becoming visible / hidden / removed.
 (function () {
-  var active = []; // [{el, opener}] — stack, last is topmost
+  var active = []; // [{el, opener}] - stack, last is topmost
   var FOCUSABLE =
     'a[href], button:not([disabled]), input:not([disabled]):not([type="hidden"]), ' +
     'select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';

@@ -3,14 +3,14 @@
 Two independent mechanisms exist, deliberately not sharing storage
 (see "Why two mechanisms" below):
 
-- **Host-side scripts** (`scripts/backup.sh`/`restore.sh`) — run from
+- **Host-side scripts** (`scripts/backup.sh`/`restore.sh`) - run from
   the Docker host, writing to `backups/` on the host filesystem. The
   safer of the two: restore stops the `web` service first, so nothing
   is trying to use the database while it's replaced.
-- **Web UI** (Profile → Administration → Backups, admin/staff only) —
+- **Web UI** (Profile → Administration → Backups, admin/staff only) -
   create, download, and restore backups without leaving the app,
   stored in the `backups_data` Docker volume. Considerably riskier for
-  restore specifically — see that section.
+  restore specifically - see that section.
 
 ## Host-side scripts
 
@@ -25,19 +25,19 @@ alongside the already-running `docker compose` stack.
 
 Writes `backups/ironstack-backup-<UTC timestamp>.tar.gz`, containing:
 
-- `database.dump` — a `pg_dump` custom-format dump of the whole
+- `database.dump` - a `pg_dump` custom-format dump of the whole
   PostgreSQL database (`docker compose exec db pg_dump ...`).
-- `media.tar` — everything under the `media` volume (`MEDIA_ROOT`).
-  Currently empty for a fresh install — no model has a `FileField`/
-  `ImageField` yet — but archived unconditionally so nothing is missed
+- `media.tar` - everything under the `media` volume (`MEDIA_ROOT`).
+  Currently empty for a fresh install - no model has a `FileField`/
+  `ImageField` yet - but archived unconditionally so nothing is missed
   the day one is added and someone forgets to update this script.
-- `manifest.json` — the running instance's `version_info` output
+- `manifest.json` - the running instance's `version_info` output
   (`docs/ARCHITECTURE.md` "Versioning": app version, git commit,
   Django migration state, timestamp), so a later restore can tell
   what it's actually looking at without guessing.
 
 `backups/` is gitignored and lives on the same disk as the running
-stack — copy the archive somewhere else (another host, object storage,
+stack - copy the archive somewhere else (another host, object storage,
 whatever your actual disaster-recovery plan is) for it to be a real
 backup rather than a second copy that dies with the first.
 
@@ -47,7 +47,7 @@ backup rather than a second copy that dies with the first.
 ./scripts/restore.sh backups/ironstack-backup-<timestamp>.tar.gz
 ```
 
-**Destructive** — replaces the running database and every file under
+**Destructive** - replaces the running database and every file under
 `media/` with the archive's contents. There is no flag to skip
 confirmation: the script prints the backup's manifest next to the
 running instance's own `version_info`, then requires typing `yes`
@@ -57,12 +57,12 @@ to capture the current state before restoring an older one over it.
 What it does, in order:
 1. Shows the backup's manifest and the running instance's own
    `version_info` side by side, and asks for confirmation.
-2. Stops the `web` service — releases its database connections, which
+2. Stops the `web` service - releases its database connections, which
    Postgres otherwise refuses to drop a database while held.
 3. Drops and recreates the database, then `pg_restore`s the dump into
    it.
 4. Replaces `media/`'s contents with the archive's.
-5. Runs `manage.py migrate` — if the backup predates the currently
+5. Runs `manage.py migrate` - if the backup predates the currently
    running code, this brings its schema forward to match, the normal
    Django migration path. Restoring a *newer* backup into *older* code
    is not supported or specially detected; upgrade the running code
@@ -72,68 +72,68 @@ What it does, in order:
 ## Web UI
 
 Profile → Administration → Backups (`apps.core.backups`,
-`apps.core.views_backup`; superusers only — a backup holds every
+`apps.core.views_backup`; superusers only - a backup holds every
 user's data and password hashes and a restore replaces all of it, more
 than `is_staff`, which also gates feedback and reference data, should
 grant). "Create backup" writes
 the same three files (`database.dump`/`media.tar`/`manifest.json`)
 into one `.tar.gz`, listed with a size/timestamp, the app version (and
-git commit, if the running image has one baked in — `docs/ARCHITECTURE.md`
+git commit, if the running image has one baked in - `docs/ARCHITECTURE.md`
 "Versioning") it was made from, and "Download"/"Restore"/"Delete" next
-to each. "Delete" just discards the copy in storage — nothing running
+to each. "Delete" just discards the copy in storage - nothing running
 is affected, so unlike restore it's a plain confirm-then-POST, no
 manifest-comparison page of its own.
 
 **Where each backup came from is tracked and shown**, in two separate
-sections: "Automatic backups" (the `backup-scheduler` service — see
+sections: "Automatic backups" (the `backup-scheduler` service - see
 "Automatic backups" below) and "Manual & uploaded backups" (the
 "Create backup" button, the `create_backup` management command run
-directly — e.g. from a host cron entry someone set up themselves — or
+directly - e.g. from a host cron entry someone set up themselves - or
 an uploaded file, each tagged "Manual"/"Uploaded" within that shared
 section). Kept apart because a daily schedule produces a
-fundamentally different kind of list — many, similar, low-effort —
-than a person deliberately clicking a button or uploading a file — few,
+fundamentally different kind of list - many, similar, low-effort -
+than a person deliberately clicking a button or uploading a file - few,
 each intentional. Automatic backups can pile up fast at their default
-daily cadence — only the single newest one shows outright; the rest
+daily cadence - only the single newest one shows outright; the rest
 collapse behind a "Show N earlier automatic backups" toggle right
 below it. Manual/uploaded backups always show individually, since each
 was a deliberate, one-at-a-time action.
 
 **Restoring from a backup you downloaded earlier** (from this
-instance or a different one running a compatible version) — the
+instance or a different one running a compatible version) - the
 "Upload backup" card takes a `.tar.gz` file directly, validates it's a
 real backup archive (readable, and containing all three of
-`database.dump`/`media.tar`/`manifest.json` — rejected with a clear
+`database.dump`/`media.tar`/`manifest.json` - rejected with a clear
 error otherwise, before anything is written to disk) via
 `apps.core.backups.save_uploaded_backup()`, stores it under a fresh,
-server-generated name (never the filename the browser sent — same
+server-generated name (never the filename the browser sent - same
 "don't trust anything from the request" reasoning
 `safe_archive_path()` already applies), and goes straight into the
 same restore-confirmation page a server-created backup uses. Subject
 to the reverse proxy's own upload size limit
 (`compose/nginx/nginx.conf`'s `client_max_body_size`, `200M` by
-default — raise it there if a real backup ever grows past that).
+default - raise it there if a real backup ever grows past that).
 
 **Restore here is riskier than the script's version, on purpose
-accepted rather than avoided** — asked explicitly and confirmed before
+accepted rather than avoided** - asked explicitly and confirmed before
 building it. The request handling the restore is itself running
 inside the same `web` service whose database connection is about to
 be replaced, so unlike the host script, `web` can't be stopped first
 without stopping the very request performing the restore:
 
-- The admin's own session lives in the database being replaced —
+- The admin's own session lives in the database being replaced -
   restoring an older backup that predates their current session can
   log them out mid-operation. Expected; log back in afterward.
 - A brief window of errors for any *other* concurrent request is
   possible while the swap happens.
 - Unlike the host script, this doesn't (and structurally can't the
-  same way) stop `web` first — see `apps.core.backups.restore_backup`'s
+  same way) stop `web` first - see `apps.core.backups.restore_backup`'s
   own docstring for exactly how it stays safe anyway: it restores into
   a freshly created, differently-named database first, and only swaps
   it in for the live one (`ALTER DATABASE ... RENAME`, with
   `pg_terminate_backend` to force out any lingering connections first)
   once the new data has actually loaded successfully. A failed restore
-  — a corrupt archive, a client/server version mismatch, anything —
+  - a corrupt archive, a client/server version mismatch, anything -
   therefore never touches the live database at all, unlike a naive
   drop-then-restore-in-place (which is exactly what an earlier version
   of this feature did, and which left the live database completely
@@ -141,7 +141,7 @@ without stopping the very request performing the restore:
 
 **Create and restore run in the background** (`apps.core.backup_tasks`).
 Both used to run inside the web request, under gunicorn's 30-second
-timeout — on a real-sized instance the worker could be killed partway
+timeout - on a real-sized instance the worker could be killed partway
 through a restore, after the database swap but before media or
 `migrate`, leaving a half-restored instance. Now the button starts
 `manage.py run_backup_task` as a detached process in the same `web`
@@ -155,9 +155,9 @@ the replaced database, so the next poll lands on the login page; the
 result is waiting on the Backups page after logging back in.
 
 **A restore that fails late puts the previous state back.**
-`restore_backup` prepares everything beside the live instance first —
+`restore_backup` prepares everything beside the live instance first -
 the dump into `<db>_restoring`, media unpacked into a staging directory
-inside `MEDIA_ROOT` (`.restore-*`, left out of backups) — then swaps
+inside `MEDIA_ROOT` (`.restore-*`, left out of backups) - then swaps
 the databases and moves media into place, and keeps the previous
 database (`<db>_previous`) and media until `migrate` has succeeded. If
 the media swap or `migrate` fails (a backup from a newer version, say),
@@ -167,13 +167,13 @@ only once complete, so a backup cut short never shows up in the list.
 
 The confirmation page shows the backup's manifest next to the running
 instance's own, and the actual restore button additionally requires a
-JS `confirm()` dialog on top of the page itself — the same "load-bearing
+JS `confirm()` dialog on top of the page itself - the same "load-bearing
 belt and suspenders" pattern other destructive actions in this app use,
 just doubled given how much more severe this one is.
 
 pg_dump/pg_restore run inside the `web` container connect to `db` over
 the network (password auth), unlike the host script's local-socket
-`docker compose exec` — Debian's default `postgresql-client` package
+`docker compose exec` - Debian's default `postgresql-client` package
 tracks whatever major version Debian currently ships (17 at the time
 of writing), a mismatch from `db`'s pinned `postgres:16-alpine` that
 broke `pg_restore` outright ("unrecognized configuration parameter
@@ -186,13 +186,13 @@ server's major version is ever upgraded.
 
 Both mechanisms above are manual-trigger only. `docker-compose.yml`'s
 `backup-scheduler` service runs `manage.py create_backup` (the same
-CLI command a host cron entry could call directly — see below) once a
-day, forever, into the web-UI's `backups_data` volume — so a fresh
+CLI command a host cron entry could call directly - see below) once a
+day, forever, into the web-UI's `backups_data` volume - so a fresh
 install actually has a real disaster-recovery story instead of relying
 on someone remembering to click a button. On by default in production
 (`docker-compose.yml` alone); disabled in local dev
 (`docker-compose.override.yml` puts it behind a `manual` Compose
-profile that plain `docker compose up` doesn't activate — start it
+profile that plain `docker compose up` doesn't activate - start it
 explicitly with `docker compose --profile manual up backup-scheduler`
 if you want to test it locally).
 
@@ -204,40 +204,40 @@ someone notices.
 ### Adjusting the schedule
 
 The scheduler's hour, on/off state, and retention count are stored in
-the database (`apps.core.models.BackupSettings`, a singleton row — the
+the database (`apps.core.models.BackupSettings`, a singleton row - the
 same `pk=1` pattern as `apps.api.models.ApiSettings`), not baked into
 the container at startup, so they can be changed without restarting or
 redeploying anything:
 
-- **Profile → Administration → Backups** — a "Settings" card right
+- **Profile → Administration → Backups** - a "Settings" card right
   above the backup list lets any staff user toggle automatic backups
   on/off, change what hour (UTC) they run at, and set how many backups
   to keep.
-- `/admin/` also exposes `BackupSettings` directly (no add/delete —
+- `/admin/` also exposes `BackupSettings` directly (no add/delete -
   there's always exactly one row).
 
 `BACKUP_HOUR` (`.env.example`, default `3`) only seeds that row's
 initial value on its first-ever read (`BackupSettings.load()`'s
-`get_or_create`) — once the row exists, further edits to `.env` don't
+`get_or_create`) - once the row exists, further edits to `.env` don't
 do anything; use the Settings card or `/admin/` instead. The scheduler
 re-reads `BackupSettings` at the top of every loop iteration and again
 right before actually running, so a change takes effect the same day
 without needing to restart the `backup-scheduler` service.
 
-Retention is enforced automatically every time a backup is created —
+Retention is enforced automatically every time a backup is created -
 by the scheduler, by clicking "Create backup" in the web UI, or by
-running `manage.py create_backup` directly — deleting the oldest
+running `manage.py create_backup` directly - deleting the oldest
 archives beyond the configured count (`apps.core.backups.prune_backups`).
 Setting it to `0` keeps every backup forever.
 
 Not a real cron daemon (no `cron` package added to the image just for
-this) — a plain sleep-until-target-hour loop
+this) - a plain sleep-until-target-hour loop
 (`apps.core.management.commands.backup_scheduler`) is enough for "runs
 automatically, roughly daily" without needing the host's own cron for
 what's otherwise a self-contained Docker Compose stack. If precise
 wall-clock timing matters more than that, remove the `backup-scheduler`
 service and point a real host cron entry at `docker compose exec web
-python manage.py create_backup` instead — same command, same
+python manage.py create_backup` instead - same command, same
 `apps.core.backups.create_backup()` and `backups_data` volume the web
 UI's own "Create backup" button uses (see "Why two mechanisms" below
 for why `scripts/backup.sh` is a genuinely separate path rather than
@@ -246,8 +246,8 @@ also calling this).
 ## Encryption
 
 Optional, off by default. `BACKUP_ENCRYPTION_KEY` (`.env`) encrypts
-`database.dump`/`media.tar` — the two members that actually hold this
-instance's data — in every backup either mechanism creates from then
+`database.dump`/`media.tar` - the two members that actually hold this
+instance's data - in every backup either mechanism creates from then
 on; `manifest.json` (version/git commit/timestamp/source) stays plain
 either way, so a backup's own metadata is still readable without the
 key. Nothing else about how backups work changes: same archive shape,
@@ -255,7 +255,7 @@ same list/download/restore flow, `.env` unset means every backup
 stays exactly as it was before this existed.
 
 Why this exists at all: a backup archive holds this whole instance's
-data unfiltered (`docs/SECURITY.md` "Data isolation") — anyone who can
+data unfiltered (`docs/SECURITY.md` "Data isolation") - anyone who can
 read one (a copied-off `.tar.gz`, a compromised backup storage
 location, ...) is equivalent to reading the live database directly.
 `docs/SECURITY.md`'s own note on the TOTP secret column ("treat
@@ -265,20 +265,20 @@ backup file specifically.
 
 **Setup**: run `docker compose exec web python manage.py
 generate_backup_encryption_key` once, paste the printed line into
-`.env`, restart. Both mechanisms read the *same* setting — the web UI/
+`.env`, restart. Both mechanisms read the *same* setting - the web UI/
 management commands (`apps.core.backups`) via
 [`cryptography`](https://cryptography.io)'s Fernet, `scripts/backup.sh`
 via `openssl enc` (reading `.env` directly, since that script's own
-encryption step runs on the host, outside any container) — different
+encryption step runs on the host, outside any container) - different
 implementations for the two different runtime contexts, one setting to
 think about either way. **Never rotate this key on a live instance
-without keeping the old one somewhere safe first** — every backup made
+without keeping the old one somewhere safe first** - every backup made
 under a key that's since been discarded becomes permanently
 unrestorable, the same "losing it is unrecoverable" shape
 `VAPID_PRIVATE_KEY`/`SECRET_KEY` already have.
 
 Restoring an encrypted backup with no key configured, or the wrong
-one, fails cleanly before touching the live database or media —
+one, fails cleanly before touching the live database or media -
 `apps.core.backups.BackupDecryptionError` for the web UI (shown right
 on the restore confirm page, which also warns upfront if the archive
 you're about to restore needs a key this instance doesn't currently
@@ -289,23 +289,23 @@ restore.sh`.
 
 The host script's `docker compose exec db pg_dump ...` (a local Unix
 socket, trust-authenticated) isn't reachable from inside a *different*
-container — `web` has no docker socket access (mounting one in would
+container - `web` has no docker socket access (mounting one in would
 be a real security anti-pattern, handing the web app root-equivalent
 access to the host), so the web-UI version necessarily works
 differently (network connection, password auth, its own storage
 volume) rather than sharing code with the host script. Both mechanisms
 produce the same archive format (`database.dump`/`media.tar`/
 `manifest.json` in one `.tar.gz`), just stored and triggered
-differently — a backup made one way can't currently be listed or
+differently - a backup made one way can't currently be listed or
 restored from the other's UI/CLI, only manually moved between
 `backups/` (host) and the `backups_data` volume (`docker cp`, or by
 mounting the volume somewhere and copying).
 
 ## What isn't covered
 
-- `.env` (secrets, `DJANGO_ALLOWED_HOSTS`, etc.) — not data, and
+- `.env` (secrets, `DJANGO_ALLOWED_HOSTS`, etc.) - not data, and
   shouldn't travel with a database backup; keep it under your own
   secrets management instead.
-- Static files (`staticfiles/`) — fully regenerated by
+- Static files (`staticfiles/`) - fully regenerated by
   `manage.py collectstatic`, already run automatically on every
   container start (`docker-compose.yml`), never worth backing up.

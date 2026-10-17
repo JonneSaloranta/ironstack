@@ -1,5 +1,5 @@
 """Add a snack slot between each pair of main meals, plus a catch-all
-"Other" slot — see docs/NUTRITION.md "MealSlot". The original seed
+"Other" slot - see docs/NUTRITION.md "MealSlot". The original seed
 (0002_seed_meal_slots) only had one snack slot, after Dinner; logging
 something eaten between breakfast and lunch, or between lunch and
 dinner, had to be miscategorized into a main meal, and food that

@@ -1,34 +1,34 @@
 # Development Log
 
-The detailed, ongoing build history of IronStack — every phase and
+The detailed, ongoing build history of IronStack - every phase and
 every feature since, in the order it actually happened, including what
 broke, what got caught during manual verification, and why a given
 approach was chosen over the alternatives. This is the file
 `CHANGELOG.md` points to for "how did this actually get built", while
 `CHANGELOG.md` itself stays a terse, version-bucketed "what changed"
 summary. `README.md` stays a short orientation for someone new to the
-project — this file is for anyone who wants the full story.
+project - this file is for anyone who wants the full story.
 
-Phase 1 (Foundation) — Django project scaffold, custom user model,
+Phase 1 (Foundation) - Django project scaffold, custom user model,
 authentication, mobile-first base layout, Docker Compose stack.
 
-Phase 2 (Exercises) — exercise library (`apps/exercises`): system-seeded
+Phase 2 (Exercises) - exercise library (`apps/exercises`): system-seeded
 muscle groups, equipment, and a starter exercise set; user-created custom
 exercises (private to their owner); browse/search/filter UI with HTMX-backed
 live filtering; soft-delete via an `active` flag so history stays intact
 after an exercise is retired.
 
-Phase 3 (Programs) — programs (`apps/programs`): `Program` → `Workout` →
+Phase 3 (Programs) - programs (`apps/programs`): `Program` → `Workout` →
 `ExercisePrescription`, private to their owner except built-in system
 templates (seeded, read-only, copyable via `services.copy_program`, which
 deep-copies workouts/prescriptions into a new program the user can edit
 independently of the source). Optional per-workout weekday scheduling.
 `Program.version`/`updated_at` are display-only counters, bumped on any
-structural edit — see `docs/ARCHITECTURE.md` "snapshot-on-start" for why
+structural edit - see `docs/ARCHITECTURE.md` "snapshot-on-start" for why
 this is enough to satisfy the historical-trustworthiness rule once workout
 logging (Phase 4) exists.
 
-Phase 4 (Workout logging) — workout sessions (`apps/workouts`):
+Phase 4 (Workout logging) - workout sessions (`apps/workouts`):
 `WorkoutSession` → `PerformedExercise` → `ExerciseSet`. Starting a session
 from a `Workout` is where snapshot-on-start actually happens:
 `services.start_session` copies each prescription's exercise, sets, rep
@@ -36,60 +36,60 @@ range, target weight, and progression method onto the session's own
 `PerformedExercise` rows, so later edits or deletes of the prescription
 never change what the session already recorded (covered directly by
 tests). Sessions can also start freeform (no program) and exercises can be
-added mid-session beyond what was planned. Set logging is HTMX-driven —
+added mid-session beyond what was planned. Set logging is HTMX-driven -
 each submit swaps in the updated set list and a fresh entry form
 pre-filled by repeating the last set's weight/reps, so back-to-back sets
 need no retyping; falls back to a normal page redirect without
-JavaScript. Sessions, performed exercises, and sets are strictly private —
+JavaScript. Sessions, performed exercises, and sets are strictly private -
 never shared like programs' system templates. Workout history lists
 in-progress, completed, and abandoned sessions alike.
 
-Phase 5 (PR engine) — a new `apps/records` app (not in the original
+Phase 5 (PR engine) - a new `apps/records` app (not in the original
 suggested list; see `docs/ARCHITECTURE.md` for why). `PersonalRecord` is
 an append-only achievement log covering all six PR types from
 `docs/PR_SYSTEM.md` (max weight, rep PR, rep-specific PR/"NRM", estimated
 1RM, set volume, session volume). Detection (`services.check_and_record_prs`)
 runs once per newly logged set, always comparing against live-computed
-history — nothing is cached from a prior run, and the module never
+history - nothing is cached from a prior run, and the module never
 references `Program`/`Workout`/`ExercisePrescription` at all, so program
 edits provably can't touch PRs. Warmup and failed sets never count.
 Estimated 1RM goes through a swappable `OneRepMaxCalculator`
 (`one_rep_max.py`, Epley by default). Session volume is the one type
 that's a running total rather than a single set's raw number, so later
 sets in the same session update the existing record instead of each
-firing their own notification — otherwise a good session would spam a
+firing their own notification - otherwise a good session would spam a
 "New PR" banner after every set. Set logging shows a PR banner
 (HTMX-instant, plus a Django message as a no-JS fallback); each exercise
 also has a "Your PRs" page showing current bests computed live. 28 new
 tests (92 total).
 
-Phase 6 (Progression engine) — `apps/progression/engine.py`:
+Phase 6 (Progression engine) - `apps/progression/engine.py`:
 `calculate_progression(user, prescription)` implements all seven methods
 from `docs/PROGRESSION.md` (manual, maintenance, linear, double
-progression, rep range, percentage-based, RPE/RIR) as pure domain logic —
+progression, rep range, percentage-based, RPE/RIR) as pure domain logic -
 no models, no views yet (that's Phase 7, "Smart suggestions"; this phase
 only had to get the decision right). Every method judges past sessions
 against what was actually snapshotted for them at the time (not the live
 prescription), consistent with the historical-trustworthiness rule.
 Failure handling is uniform: one missed session maintains, two
 consecutive missed sessions at the same weight escalates to a 10%
-deload. Percentage-based tries three 1RM sources in priority order —
+deload. Percentage-based tries three 1RM sources in priority order -
 manually supplied, latest estimated-1RM PR (`apps/records`), or a live
-estimate from the most recent set — always reporting which one it used.
+estimate from the most recent set - always reporting which one it used.
 26 new tests (118 total), including a determinism check (same inputs →
 identical `ProgressionResult`) and per-user isolation.
 
-Phase 7 (Smart suggestions) — `apps/progression/suggestions.py`:
+Phase 7 (Smart suggestions) - `apps/progression/suggestions.py`:
 `WeightSuggestionEngine` (`suggest_weight(user, prescription)`), kept as
 its own module separate from `ProgressionEngine` per
 `docs/SMART_SUGGESTIONS.md`'s architecture note. Composes the Phase 6
 decision with the prescription's rep range and a deterministic
 low/medium/high confidence (based on how many sessions of evidence
-backed the decision, or which 1RM source percentage-based used — never a
+backed the decision, or which 1RM source percentage-based used - never a
 black-box score). Reaches the logging UI via
 `apps.workouts.views._build_set_form`: a performed exercise's first set
 gets pre-filled from the suggestion, shown alongside its confidence and
-plain-language reason — purely a form default the user can freely
+plain-language reason - purely a form default the user can freely
 override before submitting, same as the existing "repeat last set"
 convenience it falls back to for every set after the first. Since
 `apps.progression` already depends on `apps.workouts` (it reads session
@@ -100,12 +100,12 @@ rep range in the last two sessions → 82.5 kg" example, and an end-to-end
 test logging a materially different weight than the one suggested to
 confirm nothing blocks overriding it. Also caught and fixed a real
 rendering bug during manual verification: Python's `str, Enum` mix
-stringifies as `Confidence.HIGH` instead of `high` — switched both
+stringifies as `Confidence.HIGH` instead of `high` - switched both
 `Confidence` and `ProgressionAction` to `enum.StrEnum`.
 
-Phase 8 (Body tracking) — `apps/measurements`: `MeasurementType`
+Phase 8 (Body tracking) - `apps/measurements`: `MeasurementType`
 (system-seeded weight/body fat %/waist/chest/arm/thigh/hip/neck, plus
-user-created custom types — same ownership/soft-delete pattern as
+user-created custom types - same ownership/soft-delete pattern as
 `apps.exercises.Exercise`) and `BodyMeasurement` (a time-stamped
 reading). `apps.core.units` gained cm/inch conversions (circumferences
 round-trip through the meters canonical unit at 0.1mm precision so no
@@ -113,60 +113,60 @@ realistic input gets rounded away); `apps.measurements.units` dispatches
 by `unit_kind` plus the user's metric/imperial preference onto those, so
 a value is entered and displayed in whatever unit the user actually
 reads, converted to canonical storage on save. Each type gets its own
-history page: a hand-rolled inline-SVG line chart (no new JS dependency —
+history page: a hand-rolled inline-SVG line chart (no new JS dependency -
 plotted server-side via `services.build_chart_series`, keeping the
 scaling/normalization math out of the template) alongside the full
 editable table, which doubles as the chart's accessible data source. 27
 new tests (161 total). Manual HTTP verification caught and fixed a real
 display bug the test suite's exact-value assertions didn't: the chart
 used raw 4-decimal-place canonical values instead of the user's converted
-display units — now both the chart and table read from the same
+display units - now both the chart and table read from the same
 converted values.
 
-Phase 9 (Activities) — `apps/activities`: `ActivityType` (a starting set
-of common types seeded — Running, Walking, Cycling, Swimming, Hiking,
-Rowing, Yoga, Other — not an exhaustive doc-specified list like
+Phase 9 (Activities) - `apps/activities`: `ActivityType` (a starting set
+of common types seeded - Running, Walking, Cycling, Swimming, Hiking,
+Rowing, Yoga, Other - not an exhaustive doc-specified list like
 `MeasurementType`, since `docs/DOMAIN_MODEL.md` expects users to add
 their own) and `Activity` (date, optional start time, duration, optional
 distance/calories, notes). `build_chart_series` was generic enough
 already that this phase needed the exact same thing Phase 8 built for
 measurements, so rather than duplicate it or have `apps.activities`
 import from the unrelated sibling `apps.measurements`, it was promoted to
-`apps.core.charts` — both apps' history pages, and the shared chart
+`apps.core.charts` - both apps' history pages, and the shared chart
 template (`templates/core/_chart.html`), now use the one shared
 implementation, model-agnostic via plain `(value, date)` tuples. Each
 activity type's history page charts total duration (the one metric every
 activity type has, unlike distance/calories which are optional) alongside
 a summary card (count, total duration, total distance/calories) and the
-full editable table — this phase's "activity analytics"; cross-activity
+full editable table - this phase's "activity analytics"; cross-activity
 dashboards are Phase 10. 25 new tests (186 total) plus a chart-test
 relocation to `apps.core` to match the refactor. Manual HTTP verification
 again caught a real bug past the test suite: the summary card's total
 distance displayed raw canonical meters labeled "km" (e.g. "18000.00 km"
-for what should read "18.00 km") — `services.summarize()` correctly
+for what should read "18.00 km") - `services.summarize()` correctly
 totals canonical values, but the view wasn't converting the total before
 handing it to the template, unlike the already-converted per-entry
 values. Fixed and re-verified live, with a regression test added.
 
-Phase 10 (Analytics) — `apps/analytics`. `apps.measurements`/
+Phase 10 (Analytics) - `apps/analytics`. `apps.measurements`/
 `apps.activities` already had dedicated trend pages from Phases 8-9, so
 this phase adds only what didn't have a home yet: a dashboard
-(`/analytics/` — training summary, a weekly-volume bar chart, a
+(`/analytics/` - training summary, a weekly-volume bar chart, a
 muscle-group-volume bar chart, PR history) and per-exercise strength
-trend (`/analytics/exercises/<pk>/` — estimated 1RM over time, one point
+trend (`/analytics/exercises/<pk>/` - estimated 1RM over time, one point
 per session). `apps.core.charts` gained `build_bar_series` alongside the
 existing line-chart builder, so both chart types share one tested,
 model-agnostic foundation. Date-range filtering
 (`apps.analytics.dateranges`) is shared across both pages: six presets
 plus an explicit `start`/`end` override for docs/ANALYTICS.md's "custom
 range". Training-load volume here deliberately counts failed sets (the
-work still happened) — a real, intentional divergence from
+work still happened) - a real, intentional divergence from
 `apps.records`' stricter PR eligibility, not an inconsistency. Also
 enhanced `apps.core`'s main dashboard with the widgets
 `docs/UI.md` calls for: this week's volume, recent PRs, latest body
 weight. 51 new tests (222 total). Manually seeding realistic workout
-history to verify live surfaced a false alarm rather than a real bug —
-"Training time: 32 days" from a first pass — traced to the seeding
+history to verify live surfaced a false alarm rather than a real bug -
+"Training time: 32 days" from a first pass - traced to the seeding
 script itself (it backdated `started_at` without also backdating
 `ended_at`), not the analytics query; re-seeding with a realistic
 `ended_at` showed the correct duration, confirming the calculation was
@@ -174,50 +174,50 @@ right all along. Also confirmed the estimated-1RM trend, both bar
 charts, and the date-range filter each read correctly against real
 multi-session history over HTTP.
 
-Phase 11 (Polish) — final pass across the whole app rather than one app's
+Phase 11 (Polish) - final pass across the whole app rather than one app's
 worth of new features:
 
 - **Query review**: two real N+1s found and fixed. The programs list
-  called `program.workouts.count` per row in the template (twice —
+  called `program.workouts.count` per row in the template (twice -
   once for the number, once for `|pluralize`); the activities list
   called the full `services.summarize()` per row, materializing every
   logged `Activity` row just to display a count. Both replaced with a
-  single annotated `Count()` query per list — the activities fix
+  single annotated `Count()` query per list - the activities fix
   specifically filters on the current user (`Count("activities",
   filter=Q(activities__user=user))`), since an unfiltered count would
   have shown every user's total against a shared system type. Added
   `db_index=True` to the four date fields every history/analytics view
   filters and orders by (`WorkoutSession.started_at`,
   `PersonalRecord.achieved_at`, `BodyMeasurement.recorded_at`,
-  `Activity.date`) — targeted at query patterns already built, not
+  `Activity.date`) - targeted at query patterns already built, not
   speculative.
 - **Accessibility**: a skip-to-content link, `.htmx-request` styling so
   every HTMX interaction in the app gets free loading feedback with no
   per-form wiring, and an audit confirming every hand-rolled `<input>`/
   `<select>` outside the standard `field.label_tag` form loop already
   carries an explicit `aria-label`.
-- **Error handling**: custom 404/403 templates (extend `base.html` —
+- **Error handling**: custom 404/403 templates (extend `base.html` -
   Django passes them a normal request context) and a deliberately
   *standalone* 500 template with hand-copied inline styles, since Django
-  renders it with no context processors at all — the moment it's needed
+  renders it with no context processors at all - the moment it's needed
   may mean the DB or session backend itself is down, so it can't lean on
   `{% url %}`, `{% static %}`, or anything else `base.html` depends on.
 - **Mobile**: wide tables (set logging, measurement/activity history)
   now scroll within themselves (`.table-wrap { overflow-x: auto }`)
   instead of pushing the whole page wider on narrow screens.
 - **A real functional gap, not just visual polish**: the "Profile"
-  bottom-nav tab had been a dead `href="#"` placeholder since Phase 1 —
+  bottom-nav tab had been a dead `href="#"` placeholder since Phase 1 -
   and `unit_system`/`timezone` had driven unit conversion since Phase 8
   with no UI to ever change them after signup. Built
-  `apps.accounts.ProfileView` (unit system, timezone — a real
+  `apps.accounts.ProfileView` (unit system, timezone - a real
   `zoneinfo.available_timezones()` dropdown, not free text) and wired up
   Django's built-in password-change flow, whose URLs had existed since
-  Phase 1 but had no templates — visiting `/accounts/password_change/`
+  Phase 1 but had no templates - visiting `/accounts/password_change/`
   would have thrown `TemplateDoesNotExist`.
 - **Docker production review**: `python manage.py check --deploy`
   against `config.settings.production` passes clean. Found and fixed a
   real deployment footgun: the bundled nginx config is HTTP-only, but
-  `DJANGO_SECURE_SSL_REDIRECT` defaults `true` — deployed exactly as
+  `DJANGO_SECURE_SSL_REDIRECT` defaults `true` - deployed exactly as
   shipped, this is an infinite redirect loop (nginx always reports
   `X-Forwarded-Proto: http`, Django redirects every request to HTTPS,
   which routes right back through the same HTTP-only nginx). Documented
@@ -227,7 +227,7 @@ worth of new features:
   domain. Also added a `web` healthcheck (hits the existing `/healthz/`)
   and gated nginx's startup on it (`depends_on: web: condition:
   service_healthy`) instead of nginx merely waiting for the container to
-  start rather than actually be ready — verified live: nginx now visibly
+  start rather than actually be ready - verified live: nginx now visibly
   waits through "Waiting → Healthy" before starting. Added explicit
   gunicorn worker/timeout/logging flags, previously left at gunicorn's
   bare defaults (1 worker).
@@ -239,48 +239,48 @@ worth of new features:
 
 Post-v1 fixes and additions (user-requested, not a numbered phase):
 
-- **Chart titles/legends audit** — every chart's title used to reach only
+- **Chart titles/legends audit** - every chart's title used to reach only
   the SVG `aria-label` (invisible to sighted users) on three pages; the
   bar charts had no visible category labels at all despite a code
-  comment claiming otherwise. Both fixed — see `docs/ANALYTICS.md`
+  comment claiming otherwise. Both fixed - see `docs/ANALYTICS.md`
   "Chart titles/legends audit".
-- **Desktop nav** — was briefly, genuinely broken ("way too big"): CSS
+- **Desktop nav** - was briefly, genuinely broken ("way too big"): CSS
   Grid's default stretch + an inherited mobile `flex: 1` combined to make
   each of the 5 sidebar links grow into an equal fifth of the full page
   height. Rewritten as a horizontal top bar (matching mobile's row
   direction instead of switching to a column), which fixes the bug more
   fundamentally than patching the sidebar would have.
-- **Mobile nav** — reordered to Home, Progress, Workout, Programs,
+- **Mobile nav** - reordered to Home, Progress, Workout, Programs,
   Profile; icon-only (hand-drawn inline SVGs) with the label visually
   hidden and carried instead by each link's `aria-label`, reappearing as
   text on desktop where there's room for both.
-- **Training-time duration formatting** — a raw `{{ timedelta }}` was
+- **Training-time duration formatting** - a raw `{{ timedelta }}` was
   rendering real seconds/microseconds ("0:03:19.893476"). Added a shared
   `duration` template filter (`apps.core.templatetags.core_extras`,
   rounds to the nearest minute) used everywhere a training/activity
   duration renders.
-- **Activity date/time inputs** — now native `type="date"`/`type="time"`
+- **Activity date/time inputs** - now native `type="date"`/`type="time"`
   pickers instead of plain text, with explicit widget `format=` so
   editing an existing entry pre-fills correctly (Django's
   locale-dependent default format doesn't reliably match what those
-  input types expect — same pitfall as this app's earlier
+  input types expect - same pitfall as this app's earlier
   datetime-local decision).
-- **Direct workout-delete button** — `workout_delete` already worked but
+- **Direct workout-delete button** - `workout_delete` already worked but
   was only reachable via Edit workout → Delete workout; now also a
   direct button on the program page next to each workout's Edit link.
 - **Installable PWA** (explicit request; `docs/ROADMAP.md`'s "Future
   possibilities" specifically says not to build this unprompted, but an
-  explicit ask overrides that caution) — a web manifest, a hand-drawn
+  explicit ask overrides that caution) - a web manifest, a hand-drawn
   barbell icon, and a minimal service worker, served at the site root
-  (`/manifest.json`, `/sw.js` — not `/static/`, which matters for the
+  (`/manifest.json`, `/sw.js` - not `/static/`, which matters for the
   service worker's scope). Deliberately installable only, not
   offline-capable: the worker only cache-first's genuinely static assets
   and never intercepts a page, form, or HTMX response, so nothing here
   can show stale workout data or silently lose a logged set while
-  offline — see `docs/ROADMAP.md`'s "Future possibilities" for exactly
+  offline - see `docs/ROADMAP.md`'s "Future possibilities" for exactly
   where that line is drawn.
 - Investigated a reported "date range doesn't filter analytics" bug and
-  could not reproduce it — seeded sessions 2 and 60 days apart and
+  could not reproduce it - seeded sessions 2 and 60 days apart and
   confirmed over HTTP that every stat and the weekly-volume chart's own
   bar count correctly change across every preset. Left as-is; most
   likely explanation is the account being tested only had data within a
@@ -293,13 +293,13 @@ templates only) but was never exposed for a user's own programs.
 `ProgramForm` now includes it ("Save as a personal template"); the
 program page shows a "My template" tag and a "Copy to a new program"
 button for any of the user's own template-flagged programs, the same
-copy mechanism system templates already used — copying only ever depends
+copy mechanism system templates already used - copying only ever depends
 on being able to *see* the source program at all, never on `is_template`
 itself, so a personal template stays exactly as private as any other
 program (tested explicitly: another user still gets a 404 trying to copy
 someone else's template). Seeded three more built-in templates alongside
 the original generic "Full Body A/B/C": Arnold Split (the classic 6-day
-bodybuilding split), Push/Pull/Legs, and 5×5 Strength — real,
+bodybuilding split), Push/Pull/Legs, and 5×5 Strength - real,
 widely-documented training methodologies; naming one after the lifter
 who popularized it is standard practice in fitness literature and
 implies no endorsement. All four system templates verified copyable
@@ -308,83 +308,83 @@ end-to-end in a single test. 9 new tests (264 total).
 **Date/time pickers, workout deletion, "Back to" buttons, mobile nav
 sizing, unit-consistency audit, and BMI.**
 
-- **Remaining date/time field** — `BodyMeasurementForm.recorded_at` was
+- **Remaining date/time field** - `BodyMeasurementForm.recorded_at` was
   the one field the earlier date/time-picker pass missed (a plain-text
   datetime), now a native `datetime-local` picker with the same
   widget-`format=` + field-`input_formats=` combination the activity
   date/time fix already established (Django's default
   `DATETIME_INPUT_FORMATS` never includes the "T"-separated format
   `datetime-local` submits).
-- **Delete a logged workout** — a `session_delete` view, reachable from
+- **Delete a logged workout** - a `session_delete` view, reachable from
   the workout's own detail page (with a confirm dialog) but deliberately
   *not* from the `/workouts` history list, which can show many sessions
-  at once — keeping a destructive action out of reach of an accidental
+  at once - keeping a destructive action out of reach of an accidental
   tap on a list row.
-- **"Back to X" links restyled as buttons** — every one of them (program,
+- **"Back to X" links restyled as buttons** - every one of them (program,
   exercise, workout, measurement, activity, records, and form pages, plus
   the error pages) was a bare text link, easy to miss and a small touch
   target. New `.button-secondary` style (outlined, lower-emphasis than
   the solid `.button` used for primary actions).
-- **Mobile nav enlarged** — icons grown from 1.5rem to 1.9rem and the bar
+- **Mobile nav enlarged** - icons grown from 1.5rem to 1.9rem and the bar
   from 3.5rem to 4.25rem tall, plus explicit top padding on each link so
   icons aren't flush against the bar's top edge; motivated specifically
   by how cramped the previous sizing felt in a PWA's standalone window
   (no browser chrome to lean on for scale reference).
-- **Unit-consistency audit (metric/imperial)** — a real, significant bug:
+- **Unit-consistency audit (metric/imperial)** - a real, significant bug:
   outside `apps.measurements` (which already converted correctly),
-  *every* weight in the app — workout sets, PRs, exercise prescriptions,
-  analytics totals/charts, the "New PR" flash message — was stored and
+  *every* weight in the app - workout sets, PRs, exercise prescriptions,
+  analytics totals/charts, the "New PR" flash message - was stored and
   redisplayed as raw kilograms with a hardcoded "kg" label, regardless of
   the user's unit preference. Worse, `ExerciseSetForm.weight` and
   `ExercisePrescriptionForm.target_weight`/`weight_increment` took
-  whatever number was typed and stored it *as kg* with no conversion —
+  whatever number was typed and stored it *as kg* with no conversion -
   an imperial user entering "225" got 225 kg stored, not 225 lb converted
   to ~102 kg. Fixed at both ends: entry forms now convert to/from
   canonical kg the same way `BodyMeasurementForm` already did, and
   display (analytics service functions, chart series, PR figures, the
-  flash message) converts via a shared `apps.core.units` dispatch — a new
+  flash message) converts via a shared `apps.core.units` dispatch - a new
   `weight` template filter for one-off spots, and
   `apps.records.services.format_value`/`format_previous_value` for
   record figures specifically (record-type-aware: a `rep_pr`'s value is
   a rep count, not a weight, so it's never run through unit conversion).
-- **Height + BMI** — `User.height` (canonical meters, entered/displayed
+- **Height + BMI** - `User.height` (canonical meters, entered/displayed
   in cm or inches like any other length reading) plus `apps.core.bmi`
-  (WHO category thresholds — underweight/normal/overweight/obese). The
+  (WHO category thresholds - underweight/normal/overweight/obese). The
   dashboard shows the current BMI and category alongside the full ranges
   table (with the user's own category row highlighted) whenever both a
   height and a logged body weight exist; a `show_bmi` profile toggle
   turns the whole feature off outright for anyone who'd rather not see
   the number, independent of whether it's computable.
 - **/workouts list delete removed, dashboard logout button removed**
-  (follow-up requests) — deleting stays a detail-page-only action; log
+  (follow-up requests) - deleting stays a detail-page-only action; log
   out stays reachable from the profile page only, not duplicated on the
   dashboard.
-- **Nav vs. dashboard duplication** — the "Progress" nav tab linked to
+- **Nav vs. dashboard duplication** - the "Progress" nav tab linked to
   Body tracking (measurements), not the actual analytics/progress-charts
   page, and the dashboard carried its own "Analytics", "Workout
   history", and "Programs" cards that led to exactly the same places the
   main nav already did. "Progress" now points to the analytics
   dashboard; the three redundant cards are gone (Body tracking, Browse
-  exercises, and Activities stay as dashboard cards — none of the three
+  exercises, and Activities stay as dashboard cards - none of the three
   has its own nav slot).
-- **BMI toggle styling** — the checkbox rendered through the same
+- **BMI toggle styling** - the checkbox rendered through the same
   block-label-then-field layout as every text field, stacking "Show BMI
   on the dashboard" above an isolated checkbox instead of the two
   sitting together. New `.checkbox-field` layout (box beside its own
   label) for any boolean field going forward. Caught in the same pass: a
   multi-line `{# ... #}` Django comment in that template rendered
-  literally instead of being stripped — Django's single-line comment tag
+  literally instead of being stripped - Django's single-line comment tag
   doesn't reliably span lines; multi-line explanatory comments need
   `{% comment %}...{% endcomment %}` instead.
-- **Top-bar/card spacing** — `.top-bar` had no `margin-bottom`, so its
+- **Top-bar/card spacing** - `.top-bar` had no `margin-bottom`, so its
   bottom border sat flush against whatever followed; on any page where a
   `.card` came immediately after, the two borders touched with no gap,
   reading as one doubled/overlapping line rather than a header
   underline. Fixed with a `margin-bottom` matching `.card`'s own spacing
   rhythm.
-- **Overlapping/oversized buttons on the program page** — `.button`
+- **Overlapping/oversized buttons on the program page** - `.button`
   (used on `<a>` tags for "Edit"/"Add exercise"/"Add workout") had no
-  `display` set, so it defaulted to plain inline — an inline box's
+  `display` set, so it defaulted to plain inline - an inline box's
   padding and `min-height` don't reserve real space in normal document
   flow, so the button visually overlapped whatever block-level element
   (typically a sibling `<form>`/`<button>`) immediately followed it. Now
@@ -394,12 +394,12 @@ sizing, unit-consistency audit, and BMI.**
   layout (workout Edit/Delete, set-row Edit/Delete) unaffected.
 - 34 new tests (298 total).
 
-**Internationalization (i18n) — six languages.** All UI text (templates,
+**Internationalization (i18n) - six languages.** All UI text (templates,
 form labels/help_text/errors, model choice labels, flash messages, the
 progression engine's explanatory `reason` strings) is now marked for
 translation and translated into English, Finnish, Swedish, Russian,
 Italian, and Estonian, using Django's own gettext `.po`/`.mo`
-machinery — no new dependency beyond the `gettext` system package
+machinery - no new dependency beyond the `gettext` system package
 (`Dockerfile`) `compilemessages` needs to build `.mo` files from the
 committed `.po` sources, run automatically at container startup. A new
 `User.language` field (profile page, alongside unit/timezone
@@ -407,7 +407,7 @@ preferences) drives it via `apps.accounts.middleware.UserLanguageMiddleware`,
 which re-derives the active language from the database on every request
 rather than caching it in a session or cookie. Deliberately out of
 scope: seeded reference data (exercise names, muscle groups, built-in
-program templates, ...) and any user-entered text — those are content,
+program templates, ...) and any user-entered text - those are content,
 not UI chrome, and would need a model-translation layer
 (`django-modeltranslation` or similar) to translate at all; gettext only
 ever matches strings actually present in its `.po` catalog, so a
@@ -416,32 +416,32 @@ Caught and fixed two real bugs along the way: Django's own
 `LANGUAGE_SESSION_KEY` doesn't exist in this Django version (the
 middleware doesn't need a session at all, so it was simplified rather
 than worked around), and Russian's PLURAL_FORMS needs its real 3-way
-rule (one/few/many — e.g. "3 тренировки" vs. "5 тренировок"), not
+rule (one/few/many - e.g. "3 тренировки" vs. "5 тренировок"), not
 gettext's English-shaped 2-form default. See `docs/ARCHITECTURE.md`
 "Internationalization" for the full write-up. 5 new tests (310 total).
 
 **Bar chart labels, and two button placement fixes.** Bar charts (weekly
-training volume, muscle-group volume) had deliberately unlabeled bars —
+training volume, muscle-group volume) had deliberately unlabeled bars -
 a color-coded row with no visible name, readable only via the table
-below or a hover tooltip — which read as broken rather than just
+below or a hover tooltip - which read as broken rather than just
 minimal. Each bar now carries its own rotated `<text>` label directly in
 the SVG (`apps.core.charts.build_bar_series` now reserves a label band
 and computes each bar's label position); the exact figures still live in
 the table below. Also added explicit `width`/`height` attributes to
-every chart `<svg>` (previously `viewBox`-only) — a defensive fix for
+every chart `<svg>` (previously `viewBox`-only) - a defensive fix for
 inconsistent height:auto intrinsic-sizing behavior across browsers when
 only `viewBox` is present. "Start freeform workout"
 (`templates/workouts/session_list.html`) and "New"
 (`templates/programs/program_list.html`) were both sitting crammed
 against their page heading in the top-bar; moved out to their own
-better-separated spots — freeform-start now sits as a secondary-styled
+better-separated spots - freeform-start now sits as a secondary-styled
 button beside "Back to programs" at the bottom, "New" sits directly
 under the "My programs" heading, above that list. 1 new test (311
 total).
 
 **Abbreviation tooltips, and BMI category ranges as actual weight.**
 RPE, RIR, 1RM, PR, the "5RM"-style rep-max shorthand, and BMI are all
-real jargon to a new user — every occurrence (form field labels
+real jargon to a new user - every occurrence (form field labels
 included) now wraps the abbreviation in an HTML `<abbr title="...">`,
 so hovering (or a screen reader) reveals "Rate of Perceived Exertion",
 "Reps In Reserve", "One-Rep Max", "Personal Record"/"Personal Records",
@@ -449,15 +449,15 @@ so hovering (or a screen reader) reveals "Rate of Perceived Exertion",
 lengthening the visible label. New `apps.core.formatting` module holds
 the canonical expansion text plus two small lazy helpers
 (`abbr_label`, `lazy_format_html`) for building a translatable,
-HTML-safe form-field label at class-definition time — genuinely
+HTML-safe form-field label at class-definition time - genuinely
 necessary because a Django `Meta.labels` value has to stay lazy
 (`gettext_lazy`), and a lazy proxy only renders unescaped HTML if its
 resolved type is itself already `SafeString`. Separately, the BMI
 category ranges table (`apps.core.bmi.category_rows`) now also shows
 the equivalent weight range for each category once a height is on
-file — "Normal weight" as a bare "18.5–25" BMI-number range doesn't
+file - "Normal weight" as a bare "18.5–25" BMI-number range doesn't
 say much on its own; "59.9–81.0 kg" does. All 320 extracted strings
-were retranslated in this pass too — several existing strings had to
+were retranslated in this pass too - several existing strings had to
 split around their new `<abbr>` tags (e.g. "Estimated 1RM:" → "Estimated"
 + the tag), which produces a fresh, untranslated `msgid` even though
 the sentence itself didn't really change; `msgmerge`'s fuzzy-match
@@ -470,38 +470,38 @@ reviewed translation instead. 5 new tests (319 total).
 templates, and translating all seeded exercise/program content.**
 
 - The `<abbr title="...">` tooltips added in the previous pass only
-  ever reached a mouse user — iOS/Android give no gesture that reveals
+  ever reached a mouse user - iOS/Android give no gesture that reveals
   a plain `title` attribute, so on a touchscreen (this is a
   mobile-first app) they were effectively invisible. Every `<abbr>`
   (`apps.core.formatting.abbr_label`, and the hand-written ones in
   templates) now carries `tabindex="0"`, and `static/css/base.css` adds
-  a small themed tooltip shown on `:focus` as well as `:hover` —
+  a small themed tooltip shown on `:focus` as well as `:hover` -
   content attribute-derived (`content: attr(title)`), so tapping,
   keyboard-focusing, or hovering the abbreviation all reveal the same
   expansion now.
 - 10 more built-in exercises (`apps.exercises` migration 0004: Romanian
   Deadlift, Front Squat, Incline Barbell Bench Press, Hip Thrust, Seated
   Cable Row, Face Pull, Lateral Raise, Hammer Curl, Skull Crusher, Ab
-  Wheel Rollout — 25 total now) and 2 more program templates
+  Wheel Rollout - 25 total now) and 2 more program templates
   (`apps.programs` migration 0006: Upper/Lower Split (4-Day), German
-  Volume Training — 6 total now), using only muscle groups/equipment
+  Volume Training - 6 total now), using only muscle groups/equipment
   already seeded.
 - Built-in exercise names, muscle groups, equipment, and program
   template names/descriptions/workout names are now translated for
-  display in all 6 languages — genuinely different from the UI-chrome
+  display in all 6 languages - genuinely different from the UI-chrome
   translation earlier: this is database *content*, so the value
   **stored** in the DB always stays canonical English (still what
   `get_or_create(name=...)`/uniqueness constraints match against), and
   only the **display** goes through gettext, via `{% trans someobj.name %}`
   (Django's `trans` tag accepts a variable, running its resolved value
-  through `gettext()` — not just a string literal). Since `makemessages`
+  through `gettext()` - not just a string literal). Since `makemessages`
   can't discover what a variable will resolve to at runtime, two new
   extraction-only modules (`apps.exercises.i18n_content`,
-  `apps.programs.i18n_content` — imported and executed by nothing) each
+  `apps.programs.i18n_content` - imported and executed by nothing) each
   hold a `gettext_lazy("...")` call per seeded name/description so
   `makemessages` finds them anyway. This is safe to apply
   unconditionally, including to a user's own data (their custom
-  exercise names, their own program names) — a string with no catalog
+  exercise names, their own program names) - a string with no catalog
   entry is just gettext's ordinary "no translation" case, rendering
   exactly as typed rather than erroring. One extra step for the
   exercise-picker `<select>` (`ExercisePrescriptionForm`,
@@ -509,13 +509,13 @@ templates, and translating all seeded exercise/program content.**
   `<option>` text via `str(obj)` internally, bypassing the template
   layer entirely, so `label_from_instance` is overridden to route that
   through `gettext()` too. No new dependency (no model-translation
-  library) — this is the same gettext catalog the UI-chrome pass
+  library) - this is the same gettext catalog the UI-chrome pass
   already built, just fed from two more source locations. All 397
   extracted strings (up from 320) translated across all 5 non-English
   catalogs; `msgfmt --statistics` confirms 0 fuzzy/untranslated. 9 new
   tests (324 total).
 
-**Translate seeded measurement/activity type names too — the one
+**Translate seeded measurement/activity type names too - the one
 remaining content-translation gap.**
 
 - Auditing "is anything still unimplemented?" turned up a genuine, real
@@ -523,7 +523,7 @@ remaining content-translation gap.**
   program content but never gave the same treatment to `MeasurementType`
   (Body weight, Body fat %, Waist, Chest, Arm, Thigh, Hip, Neck) or
   `ActivityType` (Running, Cycling, Swimming, Walking, Hiking, Rowing,
-  Yoga, Other) names — seeded content structurally identical to the
+  Yoga, Other) names - seeded content structurally identical to the
   exercises/programs case. Fixed the same way: two new extraction-only
   catalog modules (`apps.measurements.i18n_content`,
   `apps.activities.i18n_content`), templates wrapping the display value
@@ -531,12 +531,12 @@ remaining content-translation gap.**
 - This surfaced a genuine Django limitation, not just an oversight:
   `{% trans someobj.name %}` doubles every literal `%` in a resolved
   *variable's* value before the gettext lookup and undoes the doubling
-  afterwards (`TranslateNode`'s "restore percent signs" step — meant for
+  afterwards (`TranslateNode`'s "restore percent signs" step - meant for
   a `%%` a template author writes by hand in template source, applied
   unconditionally to variables too). `MeasurementType`'s seeded "Body
   fat %" hit this exactly: it looked up "Body fat %%", found nothing,
   and silently rendered the untranslated English string instead of
-  erroring — the kind of bug that only shows up by actually reading the
+  erroring - the kind of bug that only shows up by actually reading the
   rendered page in the target language, not by reasoning about the code.
   Fixed with a new `translate_content` filter
   (`apps.core.templatetags.core_extras`) that calls `gettext()` directly
@@ -544,20 +544,20 @@ remaining content-translation gap.**
   `templates/measurements/`/`templates/activities/`. Exercise/program
   content has no `%` today so `{% trans someobj.name %}` stays correct
   there, but `translate_content` is now the documented answer for any
-  future seeded content that might contain one — see
+  future seeded content that might contain one - see
   `docs/ARCHITECTURE.md` "Internationalization".
 - 16 new strings extracted and translated across all 5 non-English
   catalogs (411 total, up from 397); `msgfmt --statistics` confirms 0
   fuzzy/untranslated. 9 new tests (333 total).
 
-**Training mode** — a focused, one-page, in-workout screen: current
+**Training mode** - a focused, one-page, in-workout screen: current
 exercise, what's next, a rest timer, and the smart weight suggestion,
 reachable from a floating button on every page while a session is in
 progress.
 
 - A new floating action button (`.training-fab`, dumbbell icon, small
-  pulsing "live" dot) appears bottom-right on *every* page — not just
-  the workout ones — whenever the logged-in user has a session in
+  pulsing "live" dot) appears bottom-right on *every* page - not just
+  the workout ones - whenever the logged-in user has a session in
   progress, via a new global context processor
   (`apps.workouts.context_processors.active_workout_session`). Tapping
   it opens `/workouts/<id>/train/`.
@@ -566,18 +566,18 @@ progress.
   just an editable default, never forced), sets already logged, and a
   compact log-set form (weight/reps up front, RPE/RIR/notes/warmup/
   failure behind a "More options" disclosure). The "current" exercise is
-  automatic — the first one still short of its target set count
+  automatic - the first one still short of its target set count
   (`apps.workouts.services.is_performed_exercise_complete`/
-  `first_incomplete_performed_exercise`) — but Prev/Next always lets a
+  `first_incomplete_performed_exercise`) - but Prev/Next always lets a
   user jump anywhere regardless, matching "the user always has final
   control" (CLAUDE.md). Logging an exercise's last set auto-advances to
   the next incomplete one.
 - A pure client-side (Alpine.js) rest timer with 60/90/120s presets,
-  ±15s adjust, and skip — no model field, no server round trip while
+  ±15s adjust, and skip - no model field, no server round trip while
   it's running. Auto-starts after a successful log via htmx's
   `HX-Trigger` response header, which is what lets the view tell
   "successfully logged" apart from "validation error, same 200 status,
-  re-showing the form" — a generic `htmx:afterRequest` listener can't
+  re-showing the form" - a generic `htmx:afterRequest` listener can't
   make that distinction. The timer widget lives outside the HTMX swap
   target on purpose, so a countdown in progress survives every panel
   swap.
@@ -591,40 +591,40 @@ progress.
   and got fixed alongside it, unrelated to training mode itself but
   found because of it: (1) `templates/500.html`'s own comment
   explained, using literal Django tag syntax, that the page "can't rely
-  on the url tag" — but Django's template lexer parses that syntax
+  on the url tag" - but Django's template lexer parses that syntax
   anywhere in the file regardless of surrounding CSS/HTML comments, so
   that comment was itself a broken, argument-less tag invocation. The
   custom error page crashed on every real 500, meaning a genuine server
   error would have shown Django's raw default page instead. (2) None of
   `apps.workouts`' function-based views (only its class-based ones) ever
-  required login — `services.sessions_for(AnonymousUser())` crashes
+  required login - `services.sessions_for(AnonymousUser())` crashes
   rather than returning empty, so an anonymous visitor hitting any of
   them 500'd instead of getting a clean redirect to login. Decorated the
   two new training-mode views (`session_train`, `train_set_log`) with
   `@login_required`; the older sibling views share the same latent gap
-  but are unchanged here — out of scope for this feature.
+  but are unchanged here - out of scope for this feature.
 - `docs/UI.md` gained a full "Training mode" implementation section. 10
   new UI strings translated across all 5 non-English catalogs (421
   total). 26 new tests (358 total).
 
 **New-PR notifications became top-of-screen toasts.**
 
-- Every "New PR" notice — from the full session-detail page and training
-  mode alike — now renders as a toast fixed to the top of the screen
+- Every "New PR" notice - from the full session-detail page and training
+  mode alike - now renders as a toast fixed to the top of the screen
   (`#pr-toast-container`, defined once in `base.html`) instead of an
   inline banner buried inside whichever exercise card triggered it.
   Implemented as an HTMX out-of-band swap
   (`templates/records/_pr_toasts.html`, shared by both card templates)
-  rather than any new JS state — the same rich per-PR detail (max
+  rather than any new JS state - the same rich per-PR detail (max
   weight/rep PR/1RM/set & session volume, previous value) that used to
   live in `.pr-banner` renders exactly as before, just relocated. Each
   toast auto-dismisses after 6 seconds (Alpine `x-show` + a timeout) and
-  carries its own close button, so timing stays overridable —
+  carries its own close button, so timing stays overridable -
   CLAUDE.md/`docs/UI.md`'s "user always has final control" applies to a
   toast's lifetime too, not just to weights and progression.
 - Fixed a real, related bug found while doing this: `messages.success`
   for a new PR used to fire unconditionally, including on every HTMX
-  request — but nothing ever consumes `django.contrib.messages` there
+  request - but nothing ever consumes `django.contrib.messages` there
   (only `base.html`'s full-page `{% if messages %}` loop does), so the
   message sat in the store and would resurface, stale, on whatever
   unrelated full page the user happened to load next. Now only the no-JS
@@ -638,13 +638,13 @@ progress.
 mute toggle, and two mobile layout fixes.**
 
 - A new dashboard carousel (`apps.analytics.achievements`) auto-rotates
-  through all-time highlight cards — longest streak (consecutive
+  through all-time highlight cards - longest streak (consecutive
   calendar days with a completed workout), total workouts, total PRs,
-  total weight lifted — pausing on hover/focus, always overridable via
+  total weight lifted - pausing on hover/focus, always overridable via
   a dot row. Unlike every other dashboard widget it's **shared across
   every user on the instance**: each card names whose achievement it
   is, and a new `User.show_achievements` field is a *privacy* setting
-  (default on) rather than a personal display toggle — turning it off
+  (default on) rather than a personal display toggle - turning it off
   removes that user's own figures from what the carousel shows to
   everyone, themselves included, not a "hide the carousel from me"
   switch. Requested, then refined mid-build once the first (personal-
@@ -655,17 +655,17 @@ mute toggle, and two mobile layout fixes.**
   *carousel's own height* followed whichever slide happened to be
   showing, and the whole page below it visibly jumped up and down every
   ~4.5s as it rotated between a one-line and a two-line achievement.
-  Slides are now absolutely positioned inside a fixed-min-height box —
+  Slides are now absolutely positioned inside a fixed-min-height box -
   swapping which one is visible no longer changes the container's size
   at all.
 - Fixed a second, unrelated real bug found alongside it: `.bottom-nav`
-  had no `z-index` set, so a card near the bottom of a long page — the
-  profile page's BMI card, via its `<abbr>` tooltip specifically — could
+  had no `z-index` set, so a card near the bottom of a long page - the
+  profile page's BMI card, via its `<abbr>` tooltip specifically - could
   render *over* the nav bar instead of under it on mobile. The nav now
   sits above ordinary page content/tooltips, below the floating
   training button and PR toasts (deliberately still topmost).
 - Training mode's rest timer now plays a short two-tone chime
-  (synthesized with the Web Audio API — no audio asset to ship) when
+  (synthesized with the Web Audio API - no audio asset to ship) when
   the countdown reaches zero on its own; a manual "Skip rest" stays
   silent. A speaker icon next to the timer mutes/unmutes it, persisted
   in `localStorage` (a device setting, not a server-side preference).
@@ -677,7 +677,7 @@ anywhere.**
 
 - A real, significant bug: `User.timezone` (set on the profile page)
   was validated and stored correctly, but nothing in the app ever
-  called `django.utils.timezone.activate()` — so every rendered
+  called `django.utils.timezone.activate()` - so every rendered
   date/time, and "today"/"this week" boundaries on the dashboard and in
   analytics, silently used `settings.TIME_ZONE` (UTC) for every user
   regardless of what they'd chosen. Fixed with a new
@@ -688,31 +688,31 @@ anywhere.**
   "localtime" from the timezone dropdown looked like it should mean
   "use my device's own local time", but it's actually a fixed,
   non-dynamic `zoneinfo` alias (whatever `/etc/localtime` resolves to
-  inside the container — UTC in this image) — a server-rendered app has
+  inside the container - UTC in this image) - a server-rendered app has
   no way to detect a visiting device's timezone without separate
   client-side plumbing this app doesn't have. Removed it (and tzdata's
   own "Factory" placeholder alias) from the picker; a real IANA zone
   (e.g. "Europe/Helsinki") now actually takes effect.
 - 5 new tests (390 total).
 
-**"Recently active" dashboard list** — who's been training and when,
+**"Recently active" dashboard list** - who's been training and when,
 shared across every user the same way the achievements carousel is.
 
 - A new list (`apps.analytics.achievements.recently_active_users`) shows
   every opted-in user who has ever started a workout session, most
   recently active first, capped to 10 rows. Counts any session status,
-  not just completed ones — starting a workout is itself a sign of
+  not just completed ones - starting a workout is itself a sign of
   activity, and it's what lets a still-in-progress session show as
   "Training now" (an accent-colored pulsing dot, same visual language as
   the training FAB's own indicator) instead of an ordinary elapsed-time
   reading. A session within the last 24 hours also gets a plain green
   dot as a secondary freshness cue.
 - Relative time ("2 hours ago", "3 days ago") only needed one new
-  translatable string for the wrapping phrase — the magnitude/unit part
+  translatable string for the wrapping phrase - the magnitude/unit part
   comes from Django's own built-in `timesince` filter, already
   translated into every locale this app ships as part of Django core.
 - `User.show_achievements` now governs both the achievements carousel
-  and this list (same privacy semantics as before — off hides *this*
+  and this list (same privacy semantics as before - off hides *this*
   user's own data from everyone, themselves included); its label/help
   text were reworded from "achievements" to "activity" to reflect the
   broader scope.
@@ -721,7 +721,7 @@ shared across every user the same way the achievements carousel is.
   this feature's one new string with an embedded quote mark
   (`"Recently active"` inside a help text): its .po parser captured each
   line's content verbatim, including po's own backslash-escaping,
-  without ever decoding it back to a real character — harmless for
+  without ever decoding it back to a real character - harmless for
   every previous string (none had a literal quote/backslash in them),
   but each regeneration re-escaped the already-escaped content further,
   reaching 7 backslashes deep before being caught. Fixed by decoding on
@@ -733,43 +733,43 @@ shared across every user the same way the achievements carousel is.
 - Real cause, not a Safari quirk to work around blindly: iOS Safari (and
   other WebKit browsers) refuse to ever produce sound from a Web Audio
   `AudioContext` unless it was created/resumed *synchronously inside a
-  genuine user gesture* — but `beep()` only ever ran from a
+  genuine user gesture* - but `beep()` only ever ran from a
   `setInterval` callback (the countdown reaching zero) or an
   `HX-Trigger` event handled well after the "Log set" tap that caused
   it, and the original implementation created a brand-new `AudioContext`
   fresh inside `beep()` itself every single time, which is silent there
   no matter what.
 - Fixed by creating one `AudioContext` lazily, once, and unlocking it
-  (scheduling a near-silent blip — `resume()` alone isn't reliably
+  (scheduling a near-silent blip - `resume()` alone isn't reliably
   enough on iOS specifically) on the very first tap/touch anywhere on
   the page, which is guaranteed to happen before any rest period could
   ever finish, since reaching training mode at all means the user just
   tapped something. `beep()` now reuses that same unlocked context for
   the rest of the page's life instead of creating a fresh, never-unlocked
   one each time.
-- Pure client-side JS — no new tests (this app has no browser-level test
+- Pure client-side JS - no new tests (this app has no browser-level test
   runner), verified by inspecting the rendered page and checking the
   script's syntax directly.
 
-**Fixed: "the charts are missing their bars" — a service-worker caching
+**Fixed: "the charts are missing their bars" - a service-worker caching
 bug, not a chart bug.**
 
-- The report ("bars missing" — the exact same symptom fixed once already
+- The report ("bars missing" - the exact same symptom fixed once already
   earlier this session) traced to something else entirely: rendering
   the same analytics page directly against the live server showed
   perfectly correct `<rect>` markup and CSS the whole time. The real
   cause was `static/sw.js`'s fetch handler, which cached every static
-  asset **pure cache-first** — once `base.css` was cached once, it was
+  asset **pure cache-first** - once `base.css` was cached once, it was
   served from that cache *forever*, the network never consulted again
   for it at all. Since static files here aren't served at content-hashed
   URLs (no `ManifestStaticFilesStorage`), this meant a whole session's
   worth of CSS fixes were permanently invisible to any browser (or
-  installed PWA) that had already cached an old `base.css` — the bar
+  installed PWA) that had already cached an old `base.css` - the bar
   chart CSS just happened to be the one someone actually noticed missing.
 - Fixed by switching to stale-while-revalidate: the cached copy is still
   served immediately (fast, works offline), but every request also
   refetches in the background (`event.waitUntil` keeps the worker alive
-  for it) and updates the cache for the *next* request — a deployed fix
+  for it) and updates the cache for the *next* request - a deployed fix
   now reaches every browser within one extra load instead of never.
   `STATIC_CACHE`'s version string was also bumped once, forcing every
   existing installation to discard its stale cache immediately rather
@@ -777,12 +777,12 @@ bug, not a chart bug.**
 - 1 new test (404 total) confirming the fetch handler no longer matches
   the old cache-first shape.
 
-**A real, public API** — explicitly requested, and explicitly crossing
+**A real, public API** - explicitly requested, and explicitly crossing
 `docs/ARCHITECTURE.md`'s original "no REST/DRF API... until an actual
 client needs it" guidance, so this one started with two clarifying
 questions rather than an implementation: Django REST Framework vs.
 hand-rolled, and full resource scope now vs. a smaller first pass. Both
-answered with the recommended option — DRF, and every resource area at
+answered with the recommended option - DRF, and every resource area at
 once. See `docs/API.md` for the complete picture; summary of what
 shipped:
 
@@ -791,32 +791,32 @@ shipped:
   creation and stored only as a SHA-256 hash.
 - **Authorization**: every key carries independent Create/Read/Update/
   Delete flags *per context* (profile, exercises, programs, workouts,
-  measurements, activities, records, analytics) — a key scoped to
+  measurements, activities, records, analytics) - a key scoped to
   "programs: read" can't touch exercises at all, and can't write
   programs either, checked fresh on every request.
 - **Rate limiting**: every key belongs to an admin-editable
-  `RateLimitTier` (requests/minute + requests/day) — editing a tier's
+  `RateLimitTier` (requests/minute + requests/day) - editing a tier's
   numbers in Django admin takes effect on every key on that tier
   immediately, no redeploy. Seeded with three tiers (Basic/Standard/
   Extended); counters live in a new `django_cache` database table
   (Django's `DatabaseCache` backend) rather than the in-memory default,
-  since gunicorn's multiple worker processes don't share memory — an
+  since gunicorn's multiple worker processes don't share memory - an
   in-memory counter would silently allow `worker_count` times the
   configured rate.
-- **Key management**: self-service from Profile → "API keys" — create
+- **Key management**: self-service from Profile → "API keys" - create
   (name + an 8-context × 4-verb permission grid), list, revoke. Capped
   at `ApiSettings.max_api_keys_per_user` (admin-editable, default 10)
   keys per user.
 - **Endpoints**: full CRUD (where it makes sense) across all 8 contexts
-  — exercises, programs/workouts/prescriptions, workout session logging
+  - exercises, programs/workouts/prescriptions, workout session logging
   (including a real "log a set" endpoint that runs PR detection exactly
   like the web UI's own does), measurement/activity types and entries,
   read-only personal records, and read-only analytics summaries/
   achievements. Every endpoint calls the exact same `apps/*/services.py`
-  functions the server-rendered web views already use — never a second
+  functions the server-rendered web views already use - never a second
   copy of ownership-scoping or domain logic. All weights/lengths are
   canonical units (kg/meters), never converted to a display-unit
-  preference — a deliberate choice for an unambiguous machine contract,
+  preference - a deliberate choice for an unambiguous machine contract,
   documented in `docs/API.md` "Canonical units, always".
 - New `apps.api` app: models (`ApiKey`, `ApiKeyPermission`,
   `RateLimitTier`, `ApiSettings`), DRF authentication/permission/
@@ -827,7 +827,7 @@ shipped:
   0 fuzzy/untranslated). 52 new tests (456 total).
 
 **Django admin re-themed to match IronStack**, instead of a hand-built
-parallel admin page — asked as an explicit either/or, answered with a
+parallel admin page - asked as an explicit either/or, answered with a
 recommendation and reasoning before implementing (see
 `docs/ARCHITECTURE.md` "Admin site" for the full case): a custom admin
 UI would duplicate list views, filters, inline editing, and permission
@@ -836,7 +836,7 @@ model would then need admin coverage written twice.
 
 - `static/css/admin_theme.css` overrides Django admin's own CSS custom
   properties (a supported customization point since Django 4.x/5.x) to
-  match `static/css/base.css`'s palette — applied to all three of
+  match `static/css/base.css`'s palette - applied to all three of
   admin's theme states (light/dark/OS-preference) identically, since
   IronStack itself has no light/dark toggle of its own; the
   now-meaningless toggle is hidden.
@@ -852,17 +852,17 @@ model would then need admin coverage written twice.
   `is_staff` users (the same check Django's own admin login gate uses).
 - The Django messages framework no longer renders as a permanent card in
   `<main>`; it now shares `#pr-toast-container` and the `.pr-banner`
-  markup/behavior with PR notices — same auto-dismiss-after-6s, same
+  markup/behavior with PR notices - same auto-dismiss-after-6s, same
   close button. Error-tagged messages get a new `.pr-banner-error`
   (red) variant instead of the default success styling.
 - 2 new UI strings translated across fi/sv/ru/it/et (468 total,
   0 fuzzy/untranslated). 3 new tests (462 total).
 
-**Bottom-nav "Home"/"Progress" both lit up on the Progress page** — a
+**Bottom-nav "Home"/"Progress" both lit up on the Progress page** - a
 real bug: the Home link's active check compared
 `request.resolver_match.url_name`, but Django's core dashboard and the
 analytics dashboard both happen to be named `"dashboard"` in their own
-app — `url_name` drops the namespace, so it matched on *both* pages.
+app - `url_name` drops the namespace, so it matched on *both* pages.
 Fixed by checking `resolver_match.view_name` (namespaced) instead,
 applied to the Profile link too for the same latent reason. 2 new
 regression tests (464 total).
@@ -871,13 +871,13 @@ regression tests (464 total).
 X' links restyled as buttons" fix above to every remaining bare `<a>`
 in the app (Cancel on program delete, row-level Edit links in workout/
 measurement/activity history tables, exercise-list pagination, "View
-current PRs") — all now `.button-secondary`, with any surrounding
+current PRs") - all now `.button-secondary`, with any surrounding
 context kept as plain text next to the button rather than folded into
 its label. Login/signup's combined link+prose ("Already have an
 account? Log in") was split into muted question text plus a short CTA
 button, matching how the rest of the app pairs a link with nearby
 text. The mobile bottom-nav and the `.range-filter` date-range tabs
-were deliberately left alone — the nav is out of scope per explicit
+were deliberately left alone - the nav is out of scope per explicit
 request, and the range filter is a segmented tab control (own pill
 styling, active-state fill), not a text link. 2 new UI strings
 translated across fi/sv/ru/it/et (469 total, 0 fuzzy/untranslated).
@@ -888,24 +888,24 @@ card, and a new "Account details" page.**
 - The profile page used to open with a plain, permanent "Signed in as
   X" card. Replaced with a varied, time-of-day-aware greeting
   (`apps.core.greetings.random_greeting`) that mixes encouragement and
-  light humor — a random pick from a 4-line pool keyed to morning/
+  light humor - a random pick from a 4-line pool keyed to morning/
   afternoon/evening/night in the user's own active timezone. Then
   moved again, this time to the dashboard (`.dashboard-greeting`,
-  right below the "IronStack" heading) — Home is the page a user
+  right below the "IronStack" heading) - Home is the page a user
   actually lands on, so that's where a greeting belongs, not a
   preferences page.
 - "Change password", "API keys", and (staff-only) "Admin" used to each
-  be one giant `<a class="card card-link">` — the whole card was
+  be one giant `<a class="card card-link">` - the whole card was
   clickable but nothing about a plain card visually said so. Each is
   now a `.card-action-row`: description text on the left, a single
   explicit `.button-secondary` on the right as the only actual link.
 - New "Account details" page/card (`apps.accounts.AccountDetailsView`,
-  next to "Change password") — username, first/last name, and email,
+  next to "Change password") - username, first/last name, and email,
   kept deliberately separate from both the preferences form and the
   password-change flow (which keeps its own re-authentication
   requirement).
 - 21 new UI strings translated across fi/sv/ru/it/et (489 total, 0
-  fuzzy/untranslated — 16 of them the greeting pool itself). 10 new
+  fuzzy/untranslated - 16 of them the greeting pool itself). 10 new
   tests (479 total, full suite green).
 
 **Three more muscle groups seeded: Traps, Lats, Obliques.**
@@ -914,7 +914,7 @@ The original 11 seeded muscle groups left out three that mainstream
 fitness apps usually split out on their own rather than folding into a
 broader neighbor. Each new group ships with one new exercise of its
 own (Barbell Shrug, Straight-Arm Pulldown, Side Plank) rather than
-retagging an existing one — `Exercise.primary_/secondary_muscle_groups`
+retagging an existing one - `Exercise.primary_/secondary_muscle_groups`
 is live, current-state metadata that analytics reads directly, not a
 historical snapshot, so retagging an existing exercise would have
 retroactively shifted past muscle-group volume charts. 6 new UI
@@ -928,7 +928,7 @@ hardcoded Python constant, not derived from git) is read and cached by
 app_version` exposes it in every template's context. Shown today in
 the profile page footer (`.app-version`); intended to be the same
 value a future backup archive stamps itself with and a future restore
-path checks against, without either needing to import Django — see
+path checks against, without either needing to import Django - see
 `docs/ARCHITECTURE.md` "Versioning". 1 new UI string translated across
 fi/sv/ru/it/et (496 total, 0 fuzzy/untranslated). 3 new tests.
 
@@ -936,53 +936,53 @@ fi/sv/ru/it/et (496 total, 0 fuzzy/untranslated). 3 new tests.
 `version_info` command, `CHANGELOG.md`.**
 
 - `apps.core.version.get_git_sha()` reads an image-baked `GIT_SHA`
-  file (never committed — a build artifact, not source), distinct
+  file (never committed - a build artifact, not source), distinct
   from `VERSION` since two builds can share a version number but
   never a commit. `scripts/build.sh` is the optional build path that
   actually fills it in (along with `APP_VERSION`/`BUILD_DATE`) via
   Docker build-args, which the `Dockerfile`'s runtime stage turns into
   both that file and standard OCI image labels
-  (`org.opencontainers.image.revision`/`.version`/`.created` —
+  (`org.opencontainers.image.revision`/`.version`/`.created` -
   inspectable via `docker image inspect`). The plain `docker compose
   up -d --build` from `README.md`'s own "Production deployment"
-  section still works unchanged — everything just defaults to
+  section still works unchanged - everything just defaults to
   "unknown" instead.
 - `apps.core.version.get_migration_state()` reads Django's own
-  migration-recorder table — the real compatibility signal for
+  migration-recorder table - the real compatibility signal for
   whether a database backup is safe to load into a given code
   version, which a version string alone can't answer.
 - `python manage.py version_info [--pretty]` bundles version/git
-  commit/migration state/timestamp into one JSON blob — the intended
+  commit/migration state/timestamp into one JSON blob - the intended
   call a future backup script makes to stamp an archive, and a future
   restore path makes to check a backup against the instance it's
   restoring into.
 - New `CHANGELOG.md` (Keep a Changelog style) maps version numbers to
   what changed, distinct from this file (the detailed, ongoing build
   log).
-- 6 new tests (487 total, full suite green). No new UI strings —
+- 6 new tests (487 total, full suite green). No new UI strings -
   none of this is user-facing chrome.
 
 **Backups: host-side scripts, plus a web UI for admins.** See
-`docs/BACKUP.md` for the full picture — two independent mechanisms:
+`docs/BACKUP.md` for the full picture - two independent mechanisms:
 
-- `scripts/backup.sh`/`restore.sh` — run from the Docker host, the
+- `scripts/backup.sh`/`restore.sh` - run from the Docker host, the
   same `pg_dump`/`pg_restore` approach as above but reachable through
   `docker compose exec`'s local socket access to `db`; restore stops
   `web` first, so nothing is using the database while it's replaced.
 - Profile → Administration → Backups (`apps.core.backups`, admin-only)
-  — create/download/restore without leaving the app, stored in a new
-  `backups_data` volume. Restore here is real riskier — asked
+  - create/download/restore without leaving the app, stored in a new
+  `backups_data` volume. Restore here is real riskier - asked
   explicitly and confirmed before building it, since the request
   handling it is itself using the very database connection about to
   be replaced. Restores into a freshly created, differently-named
   database first and only swaps it in for the live one
   (`ALTER DATABASE ... RENAME`) once the new data has actually loaded
-  — an earlier version dropped-then-restored-in-place, and a
+  - an earlier version dropped-then-restored-in-place, and a
   `pg_restore` failure partway through (a client/server version
   mismatch, caught during testing) left the live database completely
   empty with nothing to fall back on.
 - The profile page's staff-only "Admin"/"Backups" cards now sit in a
-  `.danger-zone` (red-bordered box, red heading) — set visually apart
+  `.danger-zone` (red-bordered box, red heading) - set visually apart
   from the plain cards above them.
 - 20 new UI strings translated across fi/sv/ru/it/et (516 total, 0
   fuzzy/untranslated). 17 new tests (504 total, full suite green).
@@ -990,21 +990,21 @@ fi/sv/ru/it/et (496 total, 0 fuzzy/untranslated). 3 new tests.
 **A privacy toggle for first names, and greetings that use yours.**
 
 - New profile setting "Show my name to others" (`User.
-  show_name_to_others`, on by default) — a second, more granular
+  show_name_to_others`, on by default) - a second, more granular
   privacy control layered on top of `show_achievements`: that one
   decides whether a user's data appears in the achievements carousel/
   "Recently active" list *at all*; this one only decides whether their
   first name is part of it once it does. `User.public_display_name()`
   is "username (First name)" when on and a first name is set, the bare
-  username otherwise — the username itself was already shown
+  username otherwise - the username itself was already shown
   everywhere `show_achievements` applies, so there's nothing left to
   hide with this one off.
 - The dashboard greeting (`apps.core.greetings`) now addresses a user
-  by first name if they've set one — unaffected by the new toggle,
+  by first name if they've set one - unaffected by the new toggle,
   since that only governs what *other* users see, and a greeting is a
   user looking at their own name.
 - The achievements API endpoint's `AchievementSerializer` field is
-  renamed `username` → `display_name` to match — a small breaking
+  renamed `username` → `display_name` to match - a small breaking
   change to that response shape, made now while the API has no
   established external consumers yet.
 - 2 new UI strings translated across fi/sv/ru/it/et (518 total, 0
@@ -1014,19 +1014,19 @@ fi/sv/ru/it/et (496 total, 0 fuzzy/untranslated). 3 new tests.
 
 BMI only ever meant anything alongside a logged body weight, and the
 "Body weight" measurement history page (`apps.measurements`) is where
-one actually gets logged — so that's where the number (once
+one actually gets logged - so that's where the number (once
 computable) and the WHO category ranges table live now, right above
 the log-a-reading form, instead of the dashboard's old three-nudge-
 card chain ("add your height" → "log a body weight" → the actual
 card) or the profile page's unconditional copy of the same table. The
-`show_bmi`/`height` settings themselves stay on the profile page —
+`show_bmi`/`height` settings themselves stay on the profile page -
 only the card/table moved, gated the same way it always was
-(`show_bmi`, and now specifically the system "Body weight" type — any
+(`show_bmi`, and now specifically the system "Body weight" type - any
 other measurement, e.g. waist or a custom type, never shows it).
 `templates/core/_bmi_card.html`'s own "not enough data yet" fallback
 covers every missing-data sub-state, so no separate nudge cards were
 needed on the new page. 1 new UI string translated across fi/sv/ru/
-it/et (514 total, 0 fuzzy/untranslated — net fewer than before, since
+it/et (514 total, 0 fuzzy/untranslated - net fewer than before, since
 the three old nudge-card strings no longer exist). Tests moved from
 `apps.core`/`apps.accounts` to `apps.measurements` alongside the
 feature (514 total, full suite green).
@@ -1034,21 +1034,21 @@ feature (514 total, full suite green).
 **A changelog viewer, and `CHANGELOG.md` kept current.**
 
 - `CHANGELOG.md` now has an `[Unreleased]` section (Keep a Changelog
-  style) for everything that's landed since the `[1.0.0]` entry —
+  style) for everything that's landed since the `[1.0.0]` entry -
   backups, the name-privacy toggle, and the BMI move above.
 - Clicking the version number on the profile page opens a modal
-  showing that whole file — every past version and what changed,
+  showing that whole file - every past version and what changed,
   without leaving the app. `apps.core.changelog` renders it with a
   small, deliberately narrow Markdown-subset parser (headings, bullets
   with soft-wrapped continuation lines, `` `code` ``/`**bold**`/
   `[links](url)`) scoped to exactly what `CHANGELOG.md` actually uses,
-  rather than a full Markdown library — that file is the only thing
+  rather than a full Markdown library - that file is the only thing
   that writes it, so there was no real parsing surface to cover.
   Result is cached the same way `apps.core.version.get_version()` is.
 - 1 new UI string translated across fi/sv/ru/it/et (515 total, 0
   fuzzy/untranslated). 8 new tests (522 total, full suite green).
 
-**A production-readiness pass** — asked "what's left before this is
+**A production-readiness pass** - asked "what's left before this is
 production ready", answered with six concrete gaps, then asked to
 close all of them. See `docs/SECURITY.md` and `docs/BACKUP.md` for the
 full detail on each.
@@ -1056,22 +1056,22 @@ full detail on each.
 - **TLS**: `docker-compose.tls.yml`, a ready-to-use overlay replacing
   the bundled HTTP-only nginx with Caddy (`compose/caddy/Caddyfile`),
   which provisions and renews a real Let's Encrypt certificate on its
-  own given just a domain name — the "recommended path"
+  own given just a domain name - the "recommended path"
   `docs/SECURITY.md` already described, now copy-paste-ready instead
   of prose you'd have to build yourself.
 - **Password reset**: `django.contrib.auth`'s URLs were already wired
   up, but with no templates (`templates/registration/password_reset_*.
-  html`, `password_reset_email.html`, `_subject.txt` — six new files)
+  html`, `password_reset_email.html`, `_subject.txt` - six new files)
   and no `EMAIL_BACKEND` configured at all, visiting `/accounts/
   password_reset/` would 500. `DJANGO_EMAIL_HOST` (`.env.example`)
   switches from a console-logging fallback to real SMTP; `DJANGO_ADMINS`
   additionally opts into Django's own built-in `mail_admins` error
-  reporting for uncaught exceptions — deliberately not Sentry: once
+  reporting for uncaught exceptions - deliberately not Sentry: once
   SMTP is configured for password reset anyway, error emails are free,
   no new dependency.
 - **Login brute-force protection**: `apps.accounts.forms.
   RateLimitedAuthenticationForm` blocks further attempts from the same
-  client IP for 15 minutes after 5 failures within that window — a gap
+  client IP for 15 minutes after 5 failures within that window - a gap
   distinct from `apps.api`'s per-key rate limiting, which never
   touched the session-based web login at all.
 - **Signup gating**: `DJANGO_SIGNUP_ENABLED=false` closes self-service
@@ -1083,7 +1083,7 @@ full detail on each.
   `manual` Compose profile). Both mechanisms from the previous backup
   work were manual-trigger only.
 - 33 new UI strings translated across fi/sv/ru/it/et (534 total, 0
-  fuzzy/untranslated). 21 new tests (543 total, full suite green) —
+  fuzzy/untranslated). 21 new tests (543 total, full suite green) -
   all six gaps were also live-verified end to end (a real password
   reset email through to logging in with the new password, an actual
   lockout after 5 failed logins, signup gated then live-tested
@@ -1097,22 +1097,22 @@ full detail on each.
   on Profile → Administration → Backups (or `/admin/`), taking effect
   the same day without restarting `backup-scheduler`. Retention is
   enforced automatically after every backup, scheduled or manual
-  (`apps.core.backups.prune_backups`) — `0` keeps every backup forever.
+  (`apps.core.backups.prune_backups`) - `0` keeps every backup forever.
   See `docs/BACKUP.md` "Adjusting the schedule". 9 new UI strings
   translated across fi/sv/ru/it/et (543 total, 0 fuzzy/untranslated).
 - **User feedback**: any signed-in user can now submit feedback (a
-  category — Workouts/Programs/Progress/Body measurements/Activities/
-  Account & profile/Other — plus a subject and a free-text message)
+  category - Workouts/Programs/Progress/Body measurements/Activities/
+  Account & profile/Other - plus a subject and a free-text message)
   from a new "Feedback" card on the profile page
   (`apps.core.models.Feedback`, `apps.core.views_feedback.
   FeedbackCreateView`). Visible only to staff, from a matching
   "Feedback" card under Profile → Administration → Feedback
-  (`FeedbackListView`) or `/admin/` — never to other regular users. A
+  (`FeedbackListView`) or `/admin/` - never to other regular users. A
   one-way inbox, not a two-way conversation thread. Whether submissions
   are currently open is itself an admin-adjustable singleton toggle
   (`apps.core.models.FeedbackSettings`, the same `pk=1` pattern as
   `BackupSettings`/`ApiSettings`) with its own settings card on that
-  same staff-only page — turning it off only closes new submissions,
+  same staff-only page - turning it off only closes new submissions,
   gated in the view itself (not just the profile card's link) the same
   way `DJANGO_SIGNUP_ENABLED` gates signup; feedback already on file
   stays visible to staff either way. `StaffRequiredMixin` (the
@@ -1125,12 +1125,12 @@ full detail on each.
   limiting/signup-gating/TLS): see `docs/SECURITY.md` for all four in
   full.
   - **`CSRF_TRUSTED_ORIGINS`**: now derived from `DJANGO_ALLOWED_HOSTS`
-    automatically in `config.settings.production` — without it, a
+    automatically in `config.settings.production` - without it, a
     reverse-proxied deployment can hit "CSRF verification failed" on
     real form submissions the moment anything about the proxy/TLS
     setup doesn't line up exactly with what Django infers on its own.
   - **Password-reset rate limiting**: `PasswordResetView` had the same
-    brute-force gap login did before the first pass — nothing stopped
+    brute-force gap login did before the first pass - nothing stopped
     it being used to spam an arbitrary address with reset emails via
     this instance's own SMTP relay.
     `apps.accounts.forms.RateLimitedPasswordResetForm` closes it, same
@@ -1144,29 +1144,29 @@ full detail on each.
     `onclick=`/`onsubmit=` attribute (converted to Alpine's own
     `x-data`/`@submit`/`@click` directives, which aren't a native
     inline-script mechanism CSP restricts) across the whole template
-    layer — `script-src`/`style-src` still need `'unsafe-eval'`/
+    layer - `script-src`/`style-src` still need `'unsafe-eval'`/
     `'unsafe-inline'` respectively (Alpine's expression evaluator;
     plain `style="..."` attributes), everything else is `'self'`-only.
-  - **Dependabot**: `.github/dependabot.yml` — weekly, reviewed PRs for
+  - **Dependabot**: `.github/dependabot.yml` - weekly, reviewed PRs for
     outdated pip/Docker/GitHub Actions dependencies, still gated by the
     existing CI. No new runtime dependency, plain GitHub config.
   - 7 new tests (581 total, full suite green). 1 new UI string
     translated across fi/sv/ru/it/et (561 total, 0 fuzzy/untranslated).
 
-**Published Docker images — GitHub Container Registry, published on
+**Published Docker images - GitHub Container Registry, published on
 every push to master.** Production used to mean either building the
 image on the server itself (`docker compose up -d --build`) or running
-`scripts/build.sh` locally and shipping that image over — now CI does
+`scripts/build.sh` locally and shipping that image over - now CI does
 it once, centrally, and every server just pulls.
 
 - A new `publish-image` job in `.github/workflows/ci.yml`, gated with
   `needs: lint-and-test` and `if: ... github.ref == 'refs/heads/master'`
-  — only a push that's both landed on master *and* passed lint/tests
+  - only a push that's both landed on master *and* passed lint/tests
   gets published, never a pull request or another branch, so
   `:latest` always reflects code that's actually green. Pushes to
   `ghcr.io/jonnesaloranta/ironstack`, tagged `:latest` and the repo's
-  own `VERSION` file's value (e.g. `:1.1.0`) — both tags, every time.
-  Uses `GITHUB_TOKEN` (`packages: write`, requested only on this job —
+  own `VERSION` file's value (e.g. `:1.1.0`) - both tags, every time.
+  Uses `GITHUB_TOKEN` (`packages: write`, requested only on this job -
   the workflow's top-level `permissions` default to `contents: read`
   otherwise) rather than a new PAT secret. Same `GIT_SHA`/`APP_VERSION`/
   `BUILD_DATE` build-args `scripts/build.sh` already passed for a local
@@ -1174,7 +1174,7 @@ it once, centrally, and every server just pulls.
   (`docs/ARCHITECTURE.md` "Versioning") are populated the same way.
 - `docker-compose.yml`'s `web`/`backup-scheduler` gained an `image:`
   pointing at that same tag (`${IRONSTACK_IMAGE_TAG:-latest}`, pinnable
-  via `.env`) — `docker compose pull && docker compose up -d` now works
+  via `.env`) - `docker compose pull && docker compose up -d` now works
   standalone, no build step on the production host at all. `build:`
   stays too, unchanged, as a local-build fallback (both `docker compose
   up --build` and `scripts/build.sh` keep working exactly as before)
@@ -1183,7 +1183,7 @@ it once, centrally, and every server just pulls.
 - Real risk caught before it could bite: adding `image:` to the base
   compose file means `docker-compose.override.yml` (always merged for
   local dev) would otherwise inherit that same tag for a *dev* build
-  too — a `docker compose up --build` locally would then tag the
+  too - a `docker compose up --build` locally would then tag the
   result identically to the real published image. This exact failure
   mode had already happened once before this session (`scripts/build.sh`
   overwriting the dev image because both shared one tag then). Fixed
@@ -1191,7 +1191,7 @@ it once, centrally, and every server just pulls.
   for both `web` and `backup-scheduler`, verified via `docker compose
   config` (and `--profile manual config` for the latter) actually
   resolving to the two different names as expected.
-- No new tests (pure infra — Compose/CI config, no Python/UI change);
+- No new tests (pure infra - Compose/CI config, no Python/UI change);
   verified with `docker compose config`/`docker compose -f
   docker-compose.yml -f docker-compose.tls.yml config` against every
   compose file combination instead. `docs/ARCHITECTURE.md`
@@ -1203,21 +1203,21 @@ directly on GitHub (`actions/checkout` 4→7, `actions/setup-python`
 5→7, the Dockerfile's `python:3.12-slim`→`3.14-slim`, and a grouped
 bump of Django 5.0→6.1, psycopg 3.1→3.3.4, gunicorn 22→26,
 djangorestframework 3.15→3.18, pytest 8→9.1.1, pytest-django 4.8→4.14,
-factory_boy 3.3→3.3.3, ruff 0.5→0.16.2) — real major-version jumps on
+factory_boy 3.3→3.3.3, ruff 0.5→0.16.2) - real major-version jumps on
 several of these, not the patch/minor bumps Dependabot's config
 otherwise mostly proposes, and enough of them bundled together that
 "it's just Dependabot" wasn't a safe enough reason to trust without
 actually running the suite.
 
 - Rebuilt the image from a clean `--no-cache --pull` (had to
-  `docker builder prune`/`docker image prune` first — the host had
+  `docker builder prune`/`docker image prune` first - the host had
   filled its disk from this session's accumulated build cache) and ran
   the full suite against it for real: ruff clean, no missing
   migrations, all 581 tests green, live-verified pages/admin/API
   endpoints all still responding correctly. A stray finding during
   verification that turned out to be a red herring, not a bug: `/app/
   .venv` inside the container looked like it still had a `python3.12`
-  layout even after the rebuild — actually a stale directory left over
+  layout even after the rebuild - actually a stale directory left over
   on the *host* from early in this project's life, bind-mounted in by
   `docker-compose.override.yml`'s `.:/app` and irrelevant to the
   image's real venv (`/venv`, per the `Dockerfile`, correctly showing
@@ -1225,7 +1225,7 @@ actually running the suite.
 - Dependabot's own per-file scanning has no way to know that the
   Dockerfile's `FROM` tag and `.github/workflows/ci.yml`'s
   `setup-python` `python-version:` string are the same logical
-  version — it left the workflow pinned at 3.12 while the image moved
+  version - it left the workflow pinned at 3.12 while the image moved
   to 3.14, silently reintroducing exactly the "keep dev/CI/prod on one
   version" gap this project has otherwise cared about (see the
   Postgres-version comment already in `ci.yml`). Fixed by bumping
@@ -1245,7 +1245,7 @@ published for it.
 
 - No new trigger, no separate `git tag` step: bumping the repo-root
   `VERSION` file and pushing to master was already this project's
-  entire release procedure (`docs/ARCHITECTURE.md` "Versioning") —
+  entire release procedure (`docs/ARCHITECTURE.md` "Versioning") -
   the job diffs `VERSION` between the commit before this push and the
   one it lands on, and only proceeds if it actually changed. Guards
   the edge case where `github.event.before` is the all-zero SHA (a
@@ -1253,13 +1253,13 @@ published for it.
   as "not a version bump" rather than failing.
 - Release notes are read straight out of `CHANGELOG.md`'s own section
   for that version (the same `## [X.Y.Z]` heading `apps.core.changelog`
-  already parses for the profile page's changelog modal) — nothing
+  already parses for the profile page's changelog modal) - nothing
   duplicated into the workflow file itself. A version with no matching
   section still gets a release, with a placeholder body pointing at
   the commit history, rather than silently skipping it or failing the
   whole job over a documentation gap.
 - `VERSION`'s content is validated as a plain `X.Y.Z` string before
-  anything else runs — a malformed value fails loudly instead of
+  anything else runs - a malformed value fails loudly instead of
   creating a release tagged `vunknown` or similar.
 - Verified everything short of an actual live version bump (out of
   scope to trigger just to test this): full YAML parse, and the
@@ -1272,7 +1272,7 @@ published for it.
 server.** The web UI could already download and restore backups it
 had created itself, but had no way to restore from a `.tar.gz` an
 admin had downloaded earlier and now had sitting on their own
-computer — asked directly ("I want to upload a backup I downloaded
+computer - asked directly ("I want to upload a backup I downloaded
 earlier and restore from it").
 
 - A new "Upload backup" card (Profile → Administration → Backups)
@@ -1280,17 +1280,17 @@ earlier and restore from it").
   `enctype="multipart/form-data"`) and, once
   `apps.core.backups.save_uploaded_backup()` confirms it's a real
   backup archive (readable, all three of `database.dump`/`media.tar`/
-  `manifest.json` present — rejected with a clear form error
+  `manifest.json` present - rejected with a clear form error
   otherwise, before anything touches `BACKUP_DIR` at all), stores it
   under a fresh, server-generated name and redirects straight into the
-  exact same restore-confirmation page a server-created backup uses —
+  exact same restore-confirmation page a server-created backup uses -
   upload is just a second way to get a valid archive into `BACKUP_DIR`,
   nothing about actually restoring one is different. The stored
   filename never uses whatever the browser sent (same "don't trust
   anything from the request" reasoning `safe_archive_path()` already
   applies to a restore/download target).
 - `save_uploaded_backup()` writes with `shutil.copyfileobj` rather
-  than Django `UploadedFile`'s own `.chunks()` — works the same for a
+  than Django `UploadedFile`'s own `.chunks()` - works the same for a
   real multipart upload and for a plain file-like object, so the
   function doesn't assume anything Django-specific about its input
   beyond `read()`/`seek()`. Caught during testing: the first version
@@ -1298,7 +1298,7 @@ earlier and restore from it").
   plain `io.BytesIO` directly, rather than wrapping it in a real
   Django upload object just to satisfy that one method.
 - `compose/nginx/nginx.conf`'s `client_max_body_size` raised from 20M
-  to 200M — a real backup can grow well past the old limit once
+  to 200M - a real backup can grow well past the old limit once
   media/logged data exist, and 20M was already an arbitrary number,
   not load-bearing for anything else.
 - 9 new tests. 8 new UI strings translated across fi/sv/ru/it/et (569
@@ -1311,7 +1311,7 @@ earlier and restore from it").
 **Backup metadata, deletion, and a dedicated "Automatic backups"
 section separate from manual/uploaded ones.** Asked directly: show
 more about each backup (app version, ...), let admins delete one from
-the list, and distinguish automatic backups from the rest — asked
+the list, and distinguish automatic backups from the rest - asked
 again, more specifically, once the first pass only added an inline tag
 to one shared list: split them into two clearly separated sections
 instead, and fix mobile layout issues (row content overflowing the
@@ -1320,38 +1320,38 @@ introduced.
 
 - `apps.core.backups.create_backup()` gained a `source` parameter
   (`"manual"` by default) recorded straight into the archive's own
-  `manifest.json` — `apps.core.management.commands.backup_scheduler`
+  `manifest.json` - `apps.core.management.commands.backup_scheduler`
   is the only built-in caller that ever passes `"scheduled"` (via a
   new `--source` option on the `create_backup` management command).
   `list_backups()` reads it back per backup (along with `version`/
   `git_sha`, already in every manifest from the versioning work) to
-  drive both the "Version" line and the source tag — falling back to
+  drive both the "Version" line and the source tag - falling back to
   `"manual"` for a backup made before this field existed, or for a
   manifest that can't be read for any reason, rather than breaking the
   whole list page over one backup's own metadata. Uploaded backups are
   tagged `"uploaded"` purely from their filename prefix
-  (`save_uploaded_backup()`'s own naming) — their manifest belongs to
+  (`save_uploaded_backup()`'s own naming) - their manifest belongs to
   whatever instance originally created the archive and has no way to
   record how it later got here. A `git_sha` of the literal string
   `"unknown"` (`apps.core.version.get_git_sha()`'s own fallback for an
   image that skipped `scripts/build.sh`) is deliberately not shown at
-  all — a bare "(unknown)" next to a version number reads as an error,
+  all - a bare "(unknown)" next to a version number reads as an error,
   not useful info, unlike the labeled "Git commit: unknown" the
   restore-confirm page already showed elsewhere.
 - `apps.core.views_backup.BackupListView` now hands the template three
   separate things: `newest_scheduled` (one backup or `None`),
   `older_scheduled_backups` (collapsed by default behind a "▾ Show N
-  earlier automatic backups" toggle — Alpine `x-show`, no server
+  earlier automatic backups" toggle - Alpine `x-show`, no server
   round-trip), and `manual_backups` (everything else, always shown
   individually). `templates/core/backup_list.html` renders these as
   two headed sections, "Automatic backups" and "Manual & uploaded
-  backups", rather than one interleaved list with an inline tag — a
+  backups", rather than one interleaved list with an inline tag - a
   daily schedule produces a fundamentally different kind of list
   (many, similar, low-effort) than a person deliberately clicking a
   button or uploading a file (few, each intentional), and the two
   deserve visual separation, not just a tag to tell them apart within
   one list.
-- A new `BackupDeleteView`/`apps.core.backups.delete_backup()` —
+- A new `BackupDeleteView`/`apps.core.backups.delete_backup()` -
   non-destructive to anything actually running (only ever discards a
   copy in storage), so just a plain confirm-then-POST like any other
   delete in this app, no manifest-comparison confirm page of restore's
@@ -1361,7 +1361,7 @@ introduced.
 - **Mobile layout, fixed twice after being reported broken on a real
   device.** First pass: the original 5-column table (Created/Size/
   Version/tag/3 action buttons) forced real horizontal overflow on
-  narrow screens — reworked to a 2-column table (a single stacked info
+  narrow screens - reworked to a 2-column table (a single stacked info
   cell, an actions cell), `.set-actions` gained `flex-wrap: wrap` so
   its 3 buttons stack instead of forcing width, `.set-table td` gained
   `overflow-wrap: break-word`, and a new `.button-wrap` class let the
@@ -1369,19 +1369,19 @@ introduced.
   of forcing its own width. A second report (row bottom borders
   sitting at visibly different heights row to row, from `.set-table
   td`'s default `vertical-align: middle`) was patched with
-  `vertical-align: top` — a real improvement, but still patching a
+  `vertical-align: top` - a real improvement, but still patching a
   table where sibling rows fundamentally have to share column widths
   and a row's own height depends on what's in *every* cell of that
   row, not just its own content.
   Second pass, asked directly ("put a box around each one and drop the
   line underneath them instead"): dropped the `<table>`/`.set-table`
-  approach for this page entirely — `templates/core/_backup_row.html`
+  approach for this page entirely - `templates/core/_backup_row.html`
   now renders one `.card` per backup (the same per-item card pattern
   `templates/core/feedback_list.html` already uses), each sizing
   itself independently with no shared row/column grid to jitter
   against a neighbor's content in the first place. `.table-wrap`/
   `.set-table` stay exactly as they were for the *other* wide tables
-  in the app (workout set logging, measurement/activity history) —
+  in the app (workout set logging, measurement/activity history) -
   only this page's markup changed, not the shared classes' own
   definitions (the `vertical-align`/`overflow-wrap` additions from the
   first pass stay too, still a real improvement for those).
@@ -1398,7 +1398,7 @@ the profile page; while at it, fix the login/signup pages missing the
 IronStack logo/wordmark; and add an admin-editable disclaimer footer
 on those same pages disclaiming responsibility for data loss.
 
-- TOTP (RFC 6238), via `pyotp` (not `django-otp` — see
+- TOTP (RFC 6238), via `pyotp` (not `django-otp` - see
   `docs/SECURITY.md` "Two-factor authentication" for the reasoning)
   plus `qrcode[pil]` to render the setup QR code as an inline
   `data:image/png;base64,...` image, no separate image-serving
@@ -1406,13 +1406,13 @@ on those same pages disclaiming responsibility for data loss.
   `TwoFactorBackupCode` model holds 10 single-use, password-hasher-
   hashed recovery codes per user. The secret is written to the user as
   soon as setup starts (Profile → "Two-factor authentication" → "Set
-  up"), before it's confirmed — `totp_enabled` only flips to `True`
+  up"), before it's confirmed - `totp_enabled` only flips to `True`
   once the confirmation code succeeds, so an abandoned setup attempt
   never blocks a future plain-password login.
 - The login flow's second step, `TwoFactorVerifyView`
   (`RateLimitedLoginView.form_valid` detours here instead of calling
   `login()` when the user has 2FA enabled, staging their id in the
-  session under `pre_2fa_user_id` until a correct code arrives) — its
+  session under `pre_2fa_user_id` until a correct code arrives) - its
   own rate limit (5 wrong codes / 5 minutes) is keyed by user ID
   rather than client IP, deliberately different from every other
   rate limit in this app: by this step the attacker already has a
@@ -1427,7 +1427,7 @@ on those same pages disclaiming responsibility for data loss.
   card itself. A new Django-admin action, "Disable two-factor
   authentication for selected users", is the recovery path for
   someone locked out with no working authenticator and no backup
-  codes left — the one situation the self-service flows can't help
+  codes left - the one situation the self-service flows can't help
   with, since both require either the password and a working second
   factor, or the password alone but never a bypass of the second
   factor entirely.
@@ -1438,13 +1438,13 @@ on those same pages disclaiming responsibility for data loss.
   from a new singleton, `SiteDisclaimer` (same `pk=1`/`load()` pattern
   as `ApiSettings`/`BackupSettings`/`FeedbackSettings`), editable only
   from Django admin, with a sensible default and deliberately left
-  untranslated — it's operator-facing legal text a self-hoster is
+  untranslated - it's operator-facing legal text a self-hoster is
   meant to actually write themselves, not app chrome.
 - Two real bugs caught by the new tests, not by manual curl testing:
   `TwoFactorSetupView`/`TwoFactorManageView`/`TwoFactorDisableView`
   each override `dispatch()` to redirect based on `request.user`
   state (already enabled, not enabled yet, ...) before ever calling
-  `super().dispatch()` — but `LoginRequiredMixin`'s own
+  `super().dispatch()` - but `LoginRequiredMixin`'s own
   authentication check *is* that `super().dispatch()` call, so an
   anonymous request crashed with `AttributeError` (`AnonymousUser` has
   no `totp_enabled`) instead of redirecting to login. Fixed by
@@ -1453,7 +1453,7 @@ on those same pages disclaiming responsibility for data loss.
   the earlier curl-based verification, before tests existed):
   `TwoFactorRegenerateBackupCodesView` returned 405 because it called
   `TemplateView.as_view(...)( request)` from inside another view's
-  POST handler — that re-dispatches the *original* request through a
+  POST handler - that re-dispatches the *original* request through a
   second CBV's own method-routing, and a bare `TemplateView` has no
   `post()`. Fixed with a plain `django.shortcuts.render()` call
   instead.
@@ -1473,15 +1473,15 @@ on those same pages disclaiming responsibility for data loss.
 **A one-time onboarding modal for new users.** Asked directly: a
 popup right after login, asking for email/name/weight/other settings,
 explaining what each is used for. Deliberately skippable, not a
-blocking gate — consistent with docs/PRODUCT_REQUIREMENTS.md's "the
-user always has final control" — and every field is optional even on
+blocking gate - consistent with docs/PRODUCT_REQUIREMENTS.md's "the
+user always has final control" - and every field is optional even on
 the "Save" path itself, not just via the separate "Not now" button.
 
 - `User.onboarding_completed` (default `False`) gates it. The
   migration that adds the field backfills `True` onto every account
   that already existed at that point (a `RunPython` step, not just
   the field default), so it never retroactively appears for someone
-  already using the app — only for accounts created afterward.
+  already using the app - only for accounts created afterward.
 - Shown via a new context processor,
   `apps.accounts.context_processors.onboarding` (same reasoning as
   the existing `apps.workouts.context_processors.
@@ -1493,19 +1493,19 @@ the "Save" path itself, not just via the separate "Not now" button.
   `User` (first name, email, unit system) and, for weight, straight
   into `apps.measurements.models.BodyMeasurement` under the same
   system "Body weight" type `apps.measurements`' own logging form
-  uses — a weight entered here shows up on the Body weight history
+  uses - a weight entered here shows up on the Body weight history
   page like any other logged reading, not a separate "onboarding
   weight" field bolted onto `User`.
 - HTMX-driven like every other form in this app: submitting "Save" or
   "Not now" (two buttons, one form, distinguished by an `action`
-  value — skipping still has to mark the prompt seen, or it would
+  value - skipping still has to mark the prompt seen, or it would
   just reappear on the very next page) posts to `OnboardingView`,
-  which re-renders the same modal fragment either way — with field
+  which re-renders the same modal fragment either way - with field
   errors on a failed save, or as just its own empty wrapper `<div>` on
   success, so the modal disappears without a full page navigation.
 - A real naming-collision bug caught before it shipped, not by a
   test: the modal's form was initially context-keyed as `"form"`,
-  which the context processor merges into *every* page's context —
+  which the context processor merges into *every* page's context -
   including pages like Profile that already have their own
   view-specific `form` (`ProfileForm`) in context under that exact
   same name. Renamed to `onboarding_form` throughout.
@@ -1515,7 +1515,7 @@ the "Save" path itself, not just via the separate "Not now" button.
   save's data is never persisted by a subsequent skip). Because the
   modal is now included on literally every page, the full suite (not
   just `apps.accounts`) was re-run end to end to check for incidental
-  collisions with other pages' own content — all 658 tests (644
+  collisions with other pages' own content - all 658 tests (644
   existing + 14 new) pass unchanged. 11 new UI strings translated
   across fi/sv/ru/it/et (624 total, 0 fuzzy/untranslated).
   Live-verified over curl: the modal appearing on an unrelated page
@@ -1528,16 +1528,16 @@ the "Save" path itself, not just via the separate "Not now" button.
 **Height added to the same onboarding prompt**, asked for right after
 it shipped. A plain `User.height` field (same shape and cm/inch
 conversion as `ProfileForm`'s own), not a repeated measurement like
-weight — one-off context for BMI (`apps.core.bmi`), not something
+weight - one-off context for BMI (`apps.core.bmi`), not something
 logged over time. 3 new tests (metric and imperial conversion, and
 that leaving it blank leaves `height` unset rather than zeroing it).
 1 new UI string translated across fi/sv/ru/it/et (625 total, 0
-fuzzy/untranslated) — the "Height (cm)"/"Height (in)" labels
+fuzzy/untranslated) - the "Height (cm)"/"Height (in)" labels
 themselves were already translated, reused from `ProfileForm`.
 Live-verified: 180.5cm and 70in both round-tripped to the correct
 canonical meters value, and the field renders correctly in Finnish.
 
-**Cutting the 1.2.0 release surfaced two real bugs — one in the app,
+**Cutting the 1.2.0 release surfaced two real bugs - one in the app,
 one in the release pipeline itself.** `VERSION` bumped to `1.2.0`,
 `CHANGELOG.md`'s `[Unreleased]` cut into a dated section, `dev` merged
 into `master`.
@@ -1546,11 +1546,11 @@ into `master`.
   what every local verification this session had used) failed:
   `BMIOnBodyWeightHistoryPageTests` in `apps.measurements` asserts the
   literal absence of "BMI" from the whole page when a user has BMI
-  turned off — the onboarding modal's height field mentions "BMI" in
+  turned off - the onboarding modal's height field mentions "BMI" in
   its own help text, and that test's user, like any freshly created
   one, hadn't onboarded yet. Missed locally because the height field
   was only re-verified against `apps.accounts`'s own tests, not the
-  full cross-app suite — the exact kind of collision the full-suite
+  full cross-app suite - the exact kind of collision the full-suite
   rerun after the *first* onboarding-modal commit was specifically
   meant to catch, skipped this time as "low risk" for what looked like
   a small, additive change. Fixed by creating that test's user
@@ -1559,25 +1559,25 @@ into `master`.
   exactly (661 passed).
 - Pushing the fix surfaced a second, independent bug: CI went green
   end to end, but no release was created. `create-release`'s check for
-  "did VERSION change" diffed against `github.event.before` — the
+  "did VERSION change" diffed against `github.event.before` - the
   commit immediately before *this* push, which was the first (failed)
   1.2.0 attempt that had *already* bumped VERSION. Nothing looked
   different, so the release step silently skipped. Fixed by changing
   the check's whole question from "did VERSION change in this push"
   to "does a release for the current VERSION already exist"
-  (`gh release view "v$version"`) — idempotent regardless of how many
+  (`gh release view "v$version"`) - idempotent regardless of how many
   pushes or failed runs it takes to land a version bump, and it can
   no longer be silently starved by a fix-forward commit whose own
   `before` already carried the bump.
 
-**Nutrition & calorie tracking (`apps/nutrition`) — a whole new
+**Nutrition & calorie tracking (`apps/nutrition`) - a whole new
 subsystem** (`docs/NUTRITION.md`): BMR/TDEE estimation (Mifflin-St
-Jeor, chosen over Harris-Benedict/Katch-McArdle — see the module's own
+Jeor, chosen over Harris-Benedict/Katch-McArdle - see the module's own
 docstring), a suggested-not-self-reported activity level, goal-based
 calorie/macro targets with two independent safety clamps (a rate cap
 as a fraction of bodyweight, an absolute calorie floor), a food
 diary, recipes, a diet-plan builder, and a weight-trend-based dynamic
-calorie-adjustment engine — all following the same "explainable,
+calorie-adjustment engine - all following the same "explainable,
 never a black box, user always has final control" shape already
 established by `apps.progression`. Historized exactly like
 `apps.records.PersonalRecord`: `NutritionGoal`/`NutritionTarget` rows
@@ -1592,7 +1592,7 @@ test run, full details of every phase's design decisions in
 
 - **OpenFoodFacts integration, on-demand only.** Asked mid-build
   whether to bulk-import OFF's dataset (their 14-day-updating
-  mongodb/JSON dump) or fetch on demand — flagged this specifically
+  mongodb/JSON dump) or fetch on demand - flagged this specifically
   for a product decision rather than assuming, since bulk import has
   real self-hosted infrastructure cost (disk/bandwidth/CPU for a
   multi-GB dataset) that a fetch-on-demand design doesn't. Chosen: no
@@ -1600,14 +1600,14 @@ test run, full details of every phase's design decisions in
   openfoodfacts.py`), staleness-triggered refetch after 14 days, an
   admin-controlled kill switch (`OpenFoodFactsSettings`) to disable
   outbound requests entirely. A real (non-mocked) live call to OFF's
-  API returned 403 until a `User-Agent` header was added — their API
+  API returned 403 until a `User-Agent` header was added - their API
   rejects requests with none.
 - **A real, if narrow, security-shaped bug found via testing, not
   review**: every plain function-based view added across the whole
-  feature (12 of them — `diary_entry_edit/delete`, `recipe_create/
+  feature (12 of them - `diary_entry_edit/delete`, `recipe_create/
   update/delete/ingredient_create/ingredient_delete/log`, `diet_plan_
   delete/item_edit/log`, `accept_adjustment_suggestion`) had no
-  `@login_required`. Surfaced by a genuine test failure — `Anonymous
+  `@login_required`. Surfaced by a genuine test failure - `Anonymous
   User` isn't a real Django `Model` instance, so `.filter(user=
   request.user)` with an anonymous user can't be resolved by the
   ORM's FK-prep code and raises `TypeError: Field 'id' expected a
@@ -1621,7 +1621,7 @@ test run, full details of every phase's design decisions in
   another of that same user's rows (`NutritionTarget.goal`,
   `RecipeIngredient.food`, `DiaryEntry.meal_slot/food/recipe`,
   `DietPlanMeal.meal_slot`, `DietPlanItem.food/recipe`) turned out to
-  break whole-user deletion — Django's deletion collector checks
+  break whole-user deletion - Django's deletion collector checks
   `PROTECT` before it resolves whether the referencing row will also
   be deleted in the same operation, so deleting a user with any
   nutrition data referencing their own foods/recipes/meal-slots raised
@@ -1650,14 +1650,14 @@ delete, log) via the Django test client surfaced three real,
 independent bugs:
 
 - `DiaryAddEntryView.post`'s OFF-import-failure error message
-  ("That food couldn't be imported — try again.") was a bare Python
-  string, never passed through `gettext` — `apps/nutrition/views.py`
+  ("That food couldn't be imported - try again.") was a bare Python
+  string, never passed through `gettext` - `apps/nutrition/views.py`
   had no translation import at all despite every other string in the
   app going through one. Fixed; the string is now translated like
   everything else.
 - `diet_plan_log` silently redirected back to the plan's own detail
   page on an invalid form (e.g. a bad date), giving the user zero
-  indication anything had failed — inconsistent with `recipe_log`'s
+  indication anything had failed - inconsistent with `recipe_log`'s
   own established pattern of re-rendering the page with the form
   errors visible. Fixed to match; the shared meals-with-nutrition
   query (previously duplicated between `DietPlanDetailView.get` and
@@ -1667,7 +1667,7 @@ independent bugs:
   `prefetch_related("items")` was missing (an N+1 on every item's
   food/recipe lookup).
 - `food_list.html` had a dangling, always-empty third table column
-  (`<th></th>`/`<td></td>`) — dead markup from an action column that
+  (`<th></th>`/`<td></td>`) - dead markup from an action column that
   was never implemented. Removed.
 
 **Four new standalone calculators** (`/nutrition/calculators/`,
@@ -1677,15 +1677,15 @@ independent bugs:
 implementation of the same math; body fat % (U.S. Navy tape-measure
 method) and daily water intake are two small new pure functions,
 same no-DB/no-HTTP shape. Deliberately independent of the rest of the
-app — no `NutritionProfile`, goal, or target is read or written by
+app - no `NutritionProfile`, goal, or target is read or written by
 any of them, so a user gets an answer without onboarding, without
 setting a goal, and without logging anything, which is the whole
 point. Each view is a plain `GET` with a query string (bookmarkable,
 same convention as `FoodSearchResultsView`'s live search), pre-filling
 from a signed-in user's own profile/goal/target where one exists but
 leaving every field editable. Reachable from a card on the nutrition
-dashboard and — since a user who hasn't onboarded can't reach the
-dashboard at all — a direct link on the onboarding wizard's own first
+dashboard and - since a user who hasn't onboarded can't reach the
+dashboard at all - a direct link on the onboarding wizard's own first
 step, so they're not a dead end behind a redirect. 24 new tests
 (pure-function monotonicity/edge-case tests for body fat %, exact
 Decimal-arithmetic tests for water intake, view-level tests checking
@@ -1705,14 +1705,14 @@ and the full 826-plus-new-tests cross-app suite all pass.
 
 **The anonymous-access `login_required` bug flagged as pre-existing
 in the previous entry turned out to be much wider than first
-reported** — asked directly to fix it if anything needed fixing, a
+reported** - asked directly to fix it if anything needed fixing, a
 full AST sweep of every `apps/*/views.py` for a plain function view
 missing `@login_required` (the class-based views were never at risk;
 `LoginRequiredMixin` is easy to forget to add once but impossible to
 half-apply) turned up 21 more affected views across four more apps,
 not just the two originally spotted:
 
-- `apps.workouts` (9 views — the core training-log surface itself):
+- `apps.workouts` (9 views - the core training-log surface itself):
   `session_start`, `session_start_freeform`, `session_complete`,
   `session_abandon`, `session_delete`, `performed_exercise_add`,
   `set_log`, `set_edit`, `set_delete`. (`session_train`/
@@ -1720,11 +1720,11 @@ not just the two originally spotted:
 - `apps.activities` (4): `activity_log`, `activity_edit`,
   `activity_delete`, `activity_type_deactivate`.
 - `apps.exercises` (1): `exercise_deactivate`.
-- `apps.measurements` (4) and `apps.programs` (7) — the two flagged
-  last time — now actually fixed rather than just documented.
+- `apps.measurements` (4) and `apps.programs` (7) - the two flagged
+  last time - now actually fixed rather than just documented.
 
 `apps.core.views.healthcheck`/`service_worker`/`web_manifest` are
-deliberately excluded — a health-check endpoint and a PWA manifest/
+deliberately excluded - a health-check endpoint and a PWA manifest/
 service-worker script have to be reachable without a session by
 design, not an oversight. One regression test added per app (matching
 `apps.nutrition`'s own `test_the_plain_function_views_also_require_
@@ -1733,7 +1733,7 @@ client instead of crashing. All 192 tests across the five touched
 apps pass.
 
 **A mobile layout bug in `apps.nutrition`**: some button rows ran
-past the right edge of the screen — reported directly, alongside a
+past the right edge of the screen - reported directly, alongside a
 request to check the whole nutrition UI's mobile fit given how much
 longer some translated labels run than their English source (German/
 Finnish-style compound words in particular can be one long
@@ -1742,7 +1742,7 @@ than English). Root cause: `.card-action-row` (the shared
 name-and-description-on-the-left, button-on-the-right pattern used
 throughout the app) had no `flex-wrap`, and flexbox's default
 `min-width: auto` refuses to let a text item shrink below its
-longest unbreakable run — so a long label had nowhere to go but push
+longest unbreakable run - so a long label had nowhere to go but push
 the button off the card. Fixed centrally in `static/css/base.css`
 (`flex-wrap: wrap` on `.card-action-row` itself, `min-width: 0` on
 its first child so the text can actually shrink/wrap first), which
@@ -1763,7 +1763,7 @@ the full suite down**: `apps.analytics.tests.WeeklyVolumeSeriesTests.
 test_sets_are_grouped_into_iso_weeks` failed with `3 != 2` the moment
 the real-world calendar date crossed into a Monday during this same
 session. The test logged sessions at `days_ago=0` and `days_ago=1`,
-assuming both always land in the same ISO week — true on six days out
+assuming both always land in the same ISO week - true on six days out
 of seven, false specifically when "today" is a Monday, since ISO
 weeks start on Monday and "yesterday" is then already last week.
 Fixed by capping the second offset at `min(1, today.weekday())`
@@ -1772,13 +1772,13 @@ provably in the same ISO week regardless of which real day the suite
 happens to run on, rather than hand-picking a fixed offset and hoping.
 Verified directly on a real Monday (today), where it now passes.
 
-**Recipes stopped being "just text" — ingredients now pull their
+**Recipes stopped being "just text" - ingredients now pull their
 macros automatically, and diet-plan meals can hold more than one
 item.** Asked directly: "siitä pitäisi saada automaattisesti kaikkien
 ainesosien makrot yms, nyt se on vain tekstinä" (it should
 automatically get all the ingredients' macros, right now it's just
 text). Turned out `docs/NUTRITION.md` had already documented the
-intended design — "the food-search flow (diary/recipe 'add food')" —
+intended design - "the food-search flow (diary/recipe 'add food')" -
 but the actual `recipe_ingredient_create` implementation had drifted
 from it: a bare `<select>` dropdown of `Food` rows the user already
 had to create by hand elsewhere, no search, no OpenFoodFacts. Fixed
@@ -1786,7 +1786,7 @@ by giving it the exact same search-and-pick UX the food diary already
 has:
 
 - `FoodSearchResultsView`/`_food_search_results.html` generalized
-  with a `mode` parameter (`diary`/`recipe`/`diet-plan-meal`) — one
+  with a `mode` parameter (`diary`/`recipe`/`diet-plan-meal`) - one
   search implementation and one results partial serve all three
   call sites, branching only on which endpoint each result's "Add"
   button posts to.
@@ -1796,7 +1796,7 @@ has:
   `DiaryAddEntryView` does, rather than a second copy of that logic.
 - **Meal planning got the same treatment, plus a real capability
   gap closed**: a diet-plan meal was locked to the single item
-  `diet_builder` originally generated for it — `diet_plan_item_edit`
+  `diet_builder` originally generated for it - `diet_plan_item_edit`
   could only *swap* that one item, never add a second. There's no
   DB constraint stopping a meal from holding more than one
   `DietPlanItem`; it was purely a missing view/template. Added
@@ -1808,14 +1808,14 @@ has:
 - **Barcode search, asked for immediately after**: "lisää
   ruoka-aine hakuun mahdollisuus hakea viivakoodin numeroilla" (add
   the ability to search by barcode numbers). A query that's nothing
-  but 8-14 digits (`apps.nutrition.services._BARCODE_RE` — covers
+  but 8-14 digits (`apps.nutrition.services._BARCODE_RE` - covers
   every format OFF itself indexes: EAN-8/UPC-A/EAN-13/ITF-14) is now
   matched exactly rather than run through free-text search: locally
   against `Food.off_id`, and against OpenFoodFacts' own by-barcode
   endpoint (`get_product`, the same one `import_or_refresh_food_
   from_off` already used) instead of its free-text search, which is
   unreliable for a bare digit string. Applies everywhere the new
-  shared search partial is used — diary, recipe ingredients, and
+  shared search partial is used - diary, recipe ingredients, and
   diet-plan meal items alike, one implementation. The search box's
   placeholder text now mentions it.
 
@@ -1836,7 +1836,7 @@ one, confirming both persist independently and the meal's "target"/
 **The bottom-nav's Nutrition icon looked partially cut off.** Every
 coordinate in the old hand-drawn fork/knife path checked out
 mathematically within its `0 0 24 24` viewBox (nothing exceeded the
-boundary, so it wasn't literally clipped by SVG overflow rules) —
+boundary, so it wasn't literally clipped by SVG overflow rules) -
 but rendered at the real `.nav-icon` size (1.9rem) next to the other
 five icons, screenshotted at a realistic 320px-wide viewport via
 headless Chrome (no way to spot this from reading the path data
@@ -1846,55 +1846,55 @@ tines, and a curvy, ambiguous knife shape sitting further from the
 viewBox edges than every other icon's own artwork does. Replaced
 with Lucide's own "utensils" icon (a proper 3-tine fork + a
 recognizable knife, both filling their `0 0 24 24` box the same way
-the other five icons do) — same license-compatible outline-icon
+the other five icons do) - same license-compatible outline-icon
 family this project's other five nav icons were already drawn from,
 not a one-off custom shape. Re-screenshotted at 320px afterward to
-confirm — fills its box cleanly now, no ambiguity. Live-verified the
+confirm - fills its box cleanly now, no ambiguity. Live-verified the
 new path renders in the actual running app.
 
 **A dedicated "Import from OpenFoodFacts" page, category browsing,
 and a Nutri-Score/NOVA healthiness scale**, asked for directly.
 Previously OFF import only ever happened inline while adding
-something to a diary/recipe/plan — no way to just browse and grow the
+something to a diary/recipe/plan - no way to just browse and grow the
 shared food library on its own. Added:
 
-- `FoodBrowseView` (`/nutrition/foods/browse/`) — a search box (a new
+- `FoodBrowseView` (`/nutrition/foods/browse/`) - a search box (a new
   fourth `mode="browse"` on the already-shared `FoodSearchResultsView`/
   `_food_search_results.html`) plus a "browse by category" section,
-  and `food_import` (a plain POST, no quantity — this adds to the
+  and `food_import` (a plain POST, no quantity - this adds to the
   library, it doesn't log anything) as the one import endpoint both
   the search box and category pages post to. `next` is validated with
   `url_has_allowed_host_and_scheme` before ever being used as a
-  redirect target — a POST field a user's own browser controls, but a
+  redirect target - a POST field a user's own browser controls, but a
   same-site-only allowlist costs nothing and closes an open-redirect
   class of bug before it can exist.
 - Category browsing uses OFF's own `/categories.json` (ranked,
-  English-named categories, capped to a curated top N — see
+  English-named categories, capped to a curated top N - see
   `docs/NUTRITION.md`) and `/category/<id>.json`. **Live-verified
   against the real API that this specific pair of endpoints is
   currently returning `503` from OFF itself** ("Page temporarily
-  unavailable", no rate-limit headers — confirmed not caused by this
+  unavailable", no rate-limit headers - confirmed not caused by this
   session's own request volume, since `get_product`/`search_products`
-  against the *same* OFF host succeeded seconds apart) — an
+  against the *same* OFF host succeeded seconds apart) - an
   OFF-side condition, not a bug here. `list_categories`/`browse_
   category` already return `[]` on any failure by design (same
   "browsing degrades gracefully" reasoning as the rest of the OFF
   integration), so the category section simply doesn't render rather
-  than erroring — confirmed live. Nothing to fix; will recover on its
+  than erroring - confirmed live. Nothing to fix; will recover on its
   own once OFF's own service does, since the code path is already
   correct for that case.
-- **Nutri-Score (A-E) / NOVA (1-4)** — real, independently-published
+- **Nutri-Score (A-E) / NOVA (1-4)** - real, independently-published
   scales (`NutriScoreGrade`/`NovaGroup`, `docs/NUTRITION.md` "Food"),
   populated only from OFF's own `nutriscore_grade`/`nova_group` on
   import, never computed by this app for a hand-entered food. Shown
   as a small colored badge wherever a food's identity is listed
-  (`_nutri_score_badge.html`) — food list, browse search results, and
+  (`_nutri_score_badge.html`) - food list, browse search results, and
   category listings.
 
 18 new tests (216 total for `apps.nutrition`; 2 of the first pass's
-own new tests had bugs of their own — one mocked a bare `Exception`
+own new tests had bugs of their own - one mocked a bare `Exception`
 where the code specifically catches `requests.RequestException`, one
-had a wrong expected list — both fixed, not the app code), 18 new UI
+had a wrong expected list - both fixed, not the app code), 18 new UI
 strings translated across fi/sv/ru/it/et (844 total, 0 fuzzy/
 untranslated). Live-verified in Finnish against the real OpenFoodFacts
 API end to end: searched "nutella" on the browse page, saw an
@@ -1907,7 +1907,7 @@ list page.
 **A general UI/UX pass over the whole nutrition section**, asked for
 directly ("as easy to use and intuitive as possible") rather than any
 specific bug. Deliberately did *not* introduce a new navigation
-pattern for this — every other multi-page section of the app
+pattern for this - every other multi-page section of the app
 (`apps.programs`'s Program → Workout → Prescription hierarchy,
 `apps.measurements`, `apps.workouts`) already uses plain "&larr; Back
 to X" links with no persistent sub-nav bar, so a tab strip just for
@@ -1919,13 +1919,13 @@ of the app, not more intuitive. Instead:
   "Open food diary" button buried inside the totals card) with no
   direct link to Foods at all. Replaced with one "Quick links" card
   covering all five sections (Food diary, Foods, Recipes, Diet plans,
-  Calculators) — same `.button-secondary`/flex-wrap row pattern
+  Calculators) - same `.button-secondary`/flex-wrap row pattern
   already used everywhere, not a new component. Also added a
-  "+ Log food now" shortcut next to "Open food diary" — `DiaryAddEntryView`
+  "+ Log food now" shortcut next to "Open food diary" - `DiaryAddEntryView`
   already defaults to today with no `date` query param, so this reaches
   the add-food search box in one tap instead of two.
 - The food diary's Previous/Next day buttons had no way to jump
-  straight to an arbitrary date — added a `<input type="date">`
+  straight to an arbitrary date - added a `<input type="date">`
   between them (Alpine `@change` navigating via a `{% url %}`-built
   template with the date substituted in, not a hardcoded URL prefix,
   so it stays correct if the URL config ever changes), matching this
@@ -1933,7 +1933,7 @@ of the app, not more intuitive. Instead:
   small one-off interactions rather than introducing a new JS pattern.
 - **A real functional gap, not just polish**: logging a recipe to the
   diary was hardcoded to *today* with no way to log one eaten
-  yesterday or planned for tomorrow — inconsistent with diet plans,
+  yesterday or planned for tomorrow - inconsistent with diet plans,
   which already had a `date` field on `LogDietPlanForm`. Added the
   same field to `LogRecipeForm` (defaulting to today, editable), and
   the button label changed from "Log today" (no longer accurate) to
@@ -1942,19 +1942,19 @@ of the app, not more intuitive. Instead:
   existing type-the-digits barcode search. Deliberately zero new
   dependencies: `static/js/barcode-scanner.js` uses the browser's
   native `BarcodeDetector` API to do the actual decoding, not a
-  vendored JS library (CLAUDE.md "avoid unnecessary dependencies" —
+  vendored JS library (CLAUDE.md "avoid unnecessary dependencies" -
   and this needs nothing to vendor at all, unlike this project's
   existing local-only `htmx.min.js`/`alpine.min.js`, since there's no
   library here to vendor in the first place). `supported` feature-
   detects `"BarcodeDetector" in window` and hides the "Scan barcode"
   button entirely on a browser that can't decode anything (Chromium/
-  Chrome-for-Android — this app's primary mobile target per CLAUDE.md's
-  "mobile-first" goal — supports it; Firefox and older Safari don't)
+  Chrome-for-Android - this app's primary mobile target per CLAUDE.md's
+  "mobile-first" goal - supports it; Firefox and older Safari don't)
   rather than opening onto a broken camera view. One reusable include
   (`_barcode_scan_button.html`) plus the same `.modal-backdrop`/
   `.modal-card` overlay pattern `accounts/profile.html`'s changelog
   modal already established (`role="dialog"`, `@click.self="close()"`,
-  `@keydown.escape.window="close()"`, matching transitions) — wired
+  `@keydown.escape.window="close()"`, matching transitions) - wired
   into all four food-search boxes (diary, recipe ingredients,
   diet-plan meal items, food browse) via the same shared
   `ironstackBarcodeScanner()` component. On a successful scan, the
@@ -1962,15 +1962,15 @@ of the app, not more intuitive. Instead:
   synthetic `keyup` event is dispatched (`.value =` alone fires no
   DOM event at all) so the existing `hx-trigger="keyup changed
   delay:400ms"` search box picks it up exactly as if it had been
-  typed — no server-side change needed, since barcode-shaped queries
+  typed - no server-side change needed, since barcode-shaped queries
   were already handled specially by `apps.nutrition.services.
   _BARCODE_RE` (added earlier today).
 
 7 new UI strings translated across fi/sv/ru/it/et (847 total, 0
 fuzzy/untranslated). The camera scanner itself can only be
 live-verified on real camera hardware in a real (HTTPS-serving,
-Chromium-based mobile) browser — outside what a `curl`-driven session
-can exercise — so verification here was: the feature-detection guard
+Chromium-based mobile) browser - outside what a `curl`-driven session
+can exercise - so verification here was: the feature-detection guard
 tested directly in a browser console (`"BarcodeDetector" in window`),
 every other page (button/script-tag presence, modal markup, dialog
 semantics) confirmed via the test suite and a rendered-HTML check,
@@ -1985,16 +1985,16 @@ date`, `LogDietPlanForm.date`, `BodyStepForm.birth_date`) rendered
 its value in the *active locale's* date format ("17.08.2026" in
 Finnish) instead of the ISO 8601 format
 (`YYYY-MM-DD`) an HTML5 `<input type="date">` requires for its
-`value` attribute — a browser silently rejects any other format and
+`value` attribute - a browser silently rejects any other format and
 shows the picker empty rather than pre-filled with today's date. If a
 user then submitted without touching the (apparently already correct,
 actually blank) date field, the browser would send an empty string
-and the form would fail its own "this field is required" validation —
+and the form would fail its own "this field is required" validation -
 a real, not just cosmetic, breakage for exactly the "just hit log"
 flow this session's own `LogRecipeForm`/`LogDietPlanForm` date
 fields exist to make easy. Fixed with `format="%Y-%m-%d"` pinned on
 each widget, exactly the fix `apps.activities.forms`'s own `date`
-widget already had — this bug's fix already existed as a precedent
+widget already had - this bug's fix already existed as a precedent
 elsewhere in the codebase, apps.nutrition's own widgets just hadn't
 followed it. Invisible with English active (Django's default locale
 format happens to already look ISO-ish there), which is presumably
@@ -2007,18 +2007,18 @@ in a live Finnish session, confirmed via `curl` before and after the
 fix.
 
 **Two admin-only Django-admin bulk actions on `Food`, both asked for
-directly.** "Merge selected foods into one…" — the shared library
+directly.** "Merge selected foods into one…" - the shared library
 inevitably accumulates near-duplicates, and deleting one outright
 would `CASCADE`-delete every `DiaryEntry`/`RecipeIngredient`/
 `DietPlanItem` that ever referenced it, exactly the kind of silent
 history loss CLAUDE.md's "workout history must remain historically
 trustworthy" warns against. `apps.nutrition.services.merge_foods`
 re-points every such reference onto a kept row instead (an
-intermediate confirmation page — new custom admin URL/view/template,
-`templates/admin/nutrition/food/merge.html`, the project's first —
+intermediate confirmation page - new custom admin URL/view/template,
+`templates/admin/nutrition/food/merge.html`, the project's first -
 lists every selected food so a human picks which one, never a
 heuristic), then deletes the now-unreferenced duplicates. "Refresh
-selected foods from OpenFoodFacts" — `import_or_refresh_food_from_
+selected foods from OpenFoodFacts" - `import_or_refresh_food_from_
 off` gained a `force=True` parameter bypassing the normal 14-day
 staleness gate, used only by this action; still an explicit,
 admin-chosen selection, not the unconditional bulk re-sync this
@@ -2029,7 +2029,7 @@ integration was deliberately scoped away from at the start.
   multi-line `{% blocktrans %}` in the template, and the scratchpad
   `gen_po.py` script that regenerates every locale's `.po` file
   writes each `msgid`/`msgstr` as one raw quoted line with no
-  handling for an embedded literal newline — corrupting not just that
+  handling for an embedded literal newline - corrupting not just that
   one entry but, since the script also (over)writes the `en` catalog
   it reads its own extraction list from, the whole build's source-of-
   truth file, breaking `compilemessages` for every language with a
@@ -2037,7 +2037,7 @@ integration was deliberately scoped away from at the start.
   (lower-risk under time pressure than debugging PO multi-line
   string-continuation escaping): rewrote the template's blocktrans as
   a single line, matching the convention every other translated
-  string in this project already used — regenerated `locale/en` and
+  string in this project already used - regenerated `locale/en` and
   every other locale from scratch (`makemessages` on a clean slate)
   to clear the corruption, confirmed `msgfmt --check` passes with 0
   errors for all six languages.
@@ -2051,20 +2051,20 @@ integration was deliberately scoped away from at the start.
   imported food's `off_synced_at` to `None` and its name to a stale
   placeholder, ran "Päivitä valitut ruoat OpenFoodFactsista" against
   the real (non-mocked) OpenFoodFacts API, and confirmed the name and
-  `off_synced_at` both came back correct — a genuine forced refresh,
+  `off_synced_at` both came back correct - a genuine forced refresh,
   not a no-op.
 
 ## Nutrition development plan and its first three follow-ups
 
 Asked directly for a development plan for `apps.nutrition`, to be
 implemented, not just written. Re-read `docs/NUTRITION.md`'s own
-"Phased implementation plan" first — phases 1-9 were all genuinely
+"Phased implementation plan" first - phases 1-9 were all genuinely
 done, but two real gaps turned up: `apps.api` never got nutrition
 viewsets despite phase 10 asking for them (documented honestly as a
 known follow-up rather than silently dropped), and there was no way
 to see nutrition trends over more than one day at a time, no way to
 repeat a previous day's logging, and no way to quickly re-log a food
-you eat often — all real day-to-day friction that only becomes
+you eat often - all real day-to-day friction that only becomes
 visible once an app has actual usage history to design against, not
 gaps the original spec could have named up front. Picked the three
 highest-value items against CLAUDE.md's own stated goals ("provide
@@ -2074,12 +2074,12 @@ round (CLAUDE.md: "do not attempt to build the entire application in
 one pass").
 
 **Nutrition statistics page** (`/nutrition/stats/`,
-`NutritionStatsView`) — a 30-day daily-calorie bar chart plus average
+`NutritionStatsView`) - a 30-day daily-calorie bar chart plus average
 calories/macros compared against the current target, reusing
 `apps.core.charts.build_bar_series`/`templates/core/_bar_chart.html`
 verbatim (the same component `apps.analytics`'s own stats page uses,
 not a second chart implementation). `calorie_history` always returns
-one point per day, including unlogged days as zero — the same
+one point per day, including unlogged days as zero - the same
 "never skip a day" rule `apps.analytics.services.weekly_volume_series`
 already follows, so a genuinely quiet day shows as a real dip rather
 than compressing the timeline. `nutrition_stats`' averages count only
@@ -2089,20 +2089,20 @@ real average for anyone who logs most days but not literally every
 one, which is most real usage.
 
 **"Log again" quick re-log** (`services.recent_diary_foods`,
-wired into `diary_add_entry.html` above the search box) — a
+wired into `diary_add_entry.html` above the search box) - a
 one-tap repeat of a user's most recently logged foods, each keeping
 the exact meal slot and quantity it was logged with last time.
 Deliberately derived live from `DiaryEntry` history rather than a new
-`FavoriteFood` model — the same "derive, don't store a duplicate"
+`FavoriteFood` model - the same "derive, don't store a duplicate"
 rule the rest of this app already follows for daily totals, so there
 was no real case for a new table just to rank recency/frequency.
 
 **Copy a diary day** (`services.copy_diary_day`, a collapsible form
-on `diary_day.html`) — "I ate the same as yesterday" without
+on `diary_day.html`) - "I ate the same as yesterday" without
 re-adding every item by hand. Duplicates every entry from one date
 onto another as brand-new rows; the source day is never read back out
 or mutated, and copying twice (or onto a day that already has
-entries) just adds more rows rather than silently deduplicating — the
+entries) just adds more rows rather than silently deduplicating - the
 same "an explicit action does exactly what it says, nothing silently
 different" reasoning `merge_foods` already established, and the same
 CLAUDE.md "history must remain historically trustworthy" principle
@@ -2118,7 +2118,7 @@ over 2 logged days out of 30) and the right per-day chart tooltips;
 posting "Kopioi tämä päivä toiselle päivälle" duplicated a real entry
 onto a date three days out; tapping a "Kirjaa uudelleen" quick-add
 card created a new entry with the same food and quantity on a
-different date — all three confirmed by querying the database
+different date - all three confirmed by querying the database
 directly afterward, not just checking for a 200/302 response.
 
 ## Nutrition navigation fix and recipe improvements
@@ -2128,22 +2128,22 @@ sivulle, sieltä sivulta ei pääse enää takaisin edelliseen näkymään"
 (pressing a Quick link and being unable to get back). Root cause: the
 Foods/Recipes/Diet plans list pages' "back" link was written back
 when those pages were only ever reached from the food diary, and
-still pointed there — reasonable at the time, actively wrong once the
+still pointed there - reasonable at the time, actively wrong once the
 dashboard's own "Quick links" card started linking to them directly
 too. Arriving via Quick links and pressing "back" landed on the food
 diary, not the dashboard the user had actually come from. Fixed by
 pointing all three at the nutrition dashboard (their real common
 parent now that they're reachable two different ways), and gave the
-food diary itself — also directly reachable from the dashboard, not
-just bottom-nav — the same "&larr; Back to nutrition" link it never
+food diary itself - also directly reachable from the dashboard, not
+just bottom-nav - the same "&larr; Back to nutrition" link it never
 had. 4 new regression tests lock in the fix. Documented the general
 rule in `docs/NUTRITION.md`: a "back" link's target is a page's
 logical parent, not wherever it happened to be built to be reached
-from first — those drift apart the moment a second entry point is
+from first - those drift apart the moment a second entry point is
 added later.
 
-(A follow-up ask — making every link's return target track the
-*exact* page a user actually came from, "id html tagin avulla" —
+(A follow-up ask - making every link's return target track the
+*exact* page a user actually came from, "id html tagin avulla" -
 is still unclear on what "id" was meant to refer to; paused pending
 clarification rather than guessing at a systematic rework across
 every template.)
@@ -2160,10 +2160,10 @@ with a quantity-only edit, same shape as the food diary's own
 each recipe's calories per serving directly, instead of making every
 recipe a guess until opened. The recipe detail page's nutrition table
 now shows fiber, sugar, saturated fat, and sodium whenever at least
-one ingredient carries that data — fields `Food` has always stored
+one ingredient carries that data - fields `Food` has always stored
 (mostly populated by OpenFoodFacts imports) but that, until now,
 nothing in the whole nutrition UI ever surfaced anywhere. Creating a
-recipe now shows a one-time "created — now add its ingredients below"
+recipe now shows a one-time "created - now add its ingredients below"
 message, since the create-then-add-ingredients two-step flow wasn't
 obviously connected otherwise.
 
@@ -2171,16 +2171,16 @@ obviously connected otherwise.
 fuzzy/untranslated). 274/274 `apps.nutrition` tests pass (8 new: nav
 regression tests + ingredient-edit/search/nutrition-fields
 coverage); `ruff check` clean; `makemigrations --check` clean (no
-schema changes — everything here reuses existing fields). Live-
+schema changes - everything here reuses existing fields). Live-
 verified end to end in a real Finnish session: built a two-ingredient
 recipe (one ingredient carrying fiber/sodium, the other not), and
 confirmed the detail page showed exactly "Kuitu"/"Natrium" and
 correctly hid "Sokeri"/"Tyydyttynyt rasva" (neither ingredient had
-that data — the per-field conditional, not an all-or-nothing table);
+that data - the per-field conditional, not an all-or-nothing table);
 edited an ingredient's quantity from 300g to 250g and confirmed via
 the database that its `order` stayed untouched; searched the recipe
 list by name and confirmed both a match and a "no results" case;
-created a new recipe and confirmed the "luotu — lisää sen ainesosat
+created a new recipe and confirmed the "luotu - lisää sen ainesosat
 alla" toast rendered on the very next page.
 
 ## "Most used" quick add, generalized and cross-context
@@ -2195,13 +2195,13 @@ session: `services.most_used_foods(user, limit=10)` ranks by
 means overall, not per-context), and one shared, mode-parameterized
 template partial (`_most_used_foods.html`, exactly
 `_food_search_results.html`'s own established pattern) shows it in
-all three add-a-food contexts — the food diary, a recipe's
-ingredients, and a diet-plan meal's items — not just the diary. Each
+all three add-a-food contexts - the food diary, a recipe's
+ingredients, and a diet-plan meal's items - not just the diary. Each
 entry still prefills a sensible quantity (and, where it exists, a
 meal slot) from that food's most recent direct diary use, falling
 back to the food's own serving size for a food only ever used via a
 recipe or diet plan. `recent_diary_foods` and its "Log again" UI are
-removed entirely rather than kept alongside the new panel — two
+removed entirely rather than kept alongside the new panel - two
 similar-but-different quick-add lists on the same page would have
 been more confusing than either alone, and the new one is a strict
 superset of what the old one covered (any food the old one would
@@ -2209,8 +2209,8 @@ have shown was, definitionally, used at least once).
 
 **A second real, live-found bug, same family as the earlier
 `type="date"` one**: the quantity field on every food-search "Add"
-card — not just the new "Most used" panel, the *existing*
-`_food_search_results.html` cards too — rendered its `value`
+card - not just the new "Most used" panel, the *existing*
+`_food_search_results.html` cards too - rendered its `value`
 attribute with the active locale's decimal separator (a comma in
 Finnish, `value="100,00"`), but HTML5 `type="number"` requires a
 period regardless of locale; a browser silently rejects the malformed
@@ -2220,14 +2220,14 @@ way: live-verifying the new feature in a Finnish session rather than
 trusting it because the (English-only) automated tests passed. Fixed
 with `{% load l10n %}` + the `|unlocalize` filter on the three
 hand-written `type="number"` inputs in the app (`_food_search_
-results.html` ×2, `_most_used_foods.html` ×1) — every other number
+results.html` ×2, `_most_used_foods.html` ×1) - every other number
 input in the app is Django-form-widget-rendered and already immune,
 since `NumberInput.format_value` avoids localization on its own; only
 these hand-written ones bypassed that protection. 2 new regression
 tests (`NumberInputLocaleFormatTests`), same shape as
 `DateInputWidgetLocaleFormatTests`.
 
-1 new string translated across fi/sv/ru/it/et ("Most used" — net
+1 new string translated across fi/sv/ru/it/et ("Most used" - net
 message count unchanged at 889, since "Log again" left the catalog
 the same moment "Most used" entered it). 280/280 `apps.nutrition`
 tests pass; `ruff check` clean; `makemigrations --check` clean.
@@ -2242,7 +2242,7 @@ read `value="180.00"` (period) after the l10n fix, not
 ## Whole-app development plan: nutrition API, coverage tooling, accessibility/performance passes
 
 Asked directly for a development plan covering the *whole* application,
-not just nutrition — surveyed every app's model/view/test size,
+not just nutrition - surveyed every app's model/view/test size,
 `docs/ROADMAP.md` (v1 and v2/nutrition both already complete per their
 own checklists), and confirmed the bug *patterns* found in nutrition
 this session (wrong-target back links, locale-unsafe date/number
@@ -2262,25 +2262,25 @@ from test-file line counts, and pointed straight at genuine gaps
 `coverage`'s own "Missing" column named by line number rather than
 requiring a manual audit.
 
-**`apps.api` nutrition context — the confirmed gap from the earlier
+**`apps.api` nutrition context - the confirmed gap from the earlier
 plan.** `ApiContext.NUTRITION`, viewsets for `Food`/`MealSlot`
 (`OwnedResourceViewSet`, matching `MeasurementType`/`ActivityType`
-exactly — shared-or-own, soft-delete), `Recipe`/`RecipeIngredient`/
+exactly - shared-or-own, soft-delete), `Recipe`/`RecipeIngredient`/
 `DiaryEntry` (plain user-owned `ModelViewSet`s, matching
 `Activity`/`BodyMeasurement`), and read-only `NutritionGoal`/
 `NutritionTarget` (matching `PersonalRecordViewSet`'s own "derived,
-never directly writable" reasoning — a goal/target is only ever
+never directly writable" reasoning - a goal/target is only ever
 created or superseded through `services.set_goal`/`set_target`, never
 a raw PATCH). `DiaryEntrySerializer.validate()` re-checks the food-
 xor-recipe `CheckConstraint` so a bad request gets a plain `400`
 instead of a raw `IntegrityError` 500; every FK (`food`, `recipe`,
 `meal_slot`) is re-validated for visibility/ownership the same way
 `WorkoutSerializer.validate_program`/`BodyMeasurementSerializer.
-validate_measurement_type` already do elsewhere in this file — a
+validate_measurement_type` already do elsewhere in this file - a
 `PrimaryKeyRelatedField` has no ownership concept of its own. Adding
 `ApiContext.NUTRITION` needed a real migration
-(`0003_alter_apikeypermission_context.py`) — Django tracks `choices=`
-in migrations even though it's not DB-enforced — and touched three
+(`0003_alter_apikeypermission_context.py`) - Django tracks `choices=`
+in migrations even though it's not DB-enforced - and touched three
 places outside `apps.nutrition` that hardcode the context list/count:
 `apps.api.tests._all_permissions` (context list), two
 `self.assertEqual(api_key.permissions.count(), 8)` assertions
@@ -2291,7 +2291,7 @@ docstring ("8 contexts" → "one row per `ApiContext` member").
 here" updated to match (barcode import via API explicitly deferred,
 not silently missing).
 
-**Accessibility pass** — a targeted regex sweep for hand-rolled
+**Accessibility pass** - a targeted regex sweep for hand-rolled
 `<input>`/`<select>`/`<textarea>` missing both an `aria-label` and an
 `id` (the two ways an accessible name reaches a form control outside
 Django's own `field.label_tag` loop, which already handles this
@@ -2300,24 +2300,24 @@ neither introduced this session: the admin food-merge page's radio
 buttons had no accessible name distinguishing which food each one
 picked (`templates/admin/nutrition/food/merge.html`), and the
 API-key-created page's read-only secret `<textarea>` had none either
-(`templates/api/key_created.html`) — both fixed with an explicit
+(`templates/api/key_created.html`) - both fixed with an explicit
 `aria-label`. This session's own new nutrition templates were checked
 against the same sweep and came back clean, for the same reason the
 rest of the app did: consistently reusing established patterns
 (`field.label_tag`, explicit `aria-label` on every hand-rolled control)
 rather than inventing new ones.
 
-**Performance / N+1 audit** — checked every list-shaped view across
+**Performance / N+1 audit** - checked every list-shaped view across
 nutrition and analytics for a query inside a loop; found exactly one
 real regression, self-inflicted earlier this session:
 `RecipeListView`'s per-recipe calories/serving used `services.
 recipe_per_serving_nutrition(recipe)` called once per recipe in a
-`for` loop — one extra query per recipe shown, genuinely O(n) for a
+`for` loop - one extra query per recipe shown, genuinely O(n) for a
 list page (as opposed to `_diet_plan_meals_with_nutrition`'s similar-
 looking loop, which is bounded by one plan's own meal count, not a
-*list* of many plans — a different, acceptable shape, left alone).
+*list* of many plans - a different, acceptable shape, left alone).
 Fixed to one bulk `RecipeIngredient` query across every listed recipe,
-totals tallied in Python. Pinned with `assertNumQueries` — new to this
+totals tallied in Python. Pinned with `assertNumQueries` - new to this
 codebase (no prior test used it), added because "was this actually
 still N+1" is exactly the kind of regression that silently creeps back
 without a query-count assertion; the real number (5: session, user,
@@ -2325,8 +2325,8 @@ recipe queryset, ingredient bulk query, and base.html's own
 training-FAB in-progress-session check that runs on every page) needed
 one failing run to discover empirically rather than guessing. The same
 review found `RecipeSerializer`'s nested `ingredients` field would hit
-the identical N+1 through the new API's `recipes/` list endpoint —
-fixed there too (`prefetch_related("ingredients__food")`) — but left
+the identical N+1 through the new API's `recipes/` list endpoint -
+fixed there too (`prefetch_related("ingredients__food")`) - but left
 the *pre-existing*, identically-shaped nesting in
 `ProgramSerializer`/`WorkoutSerializer` (`workouts`/`prescriptions`,
 two levels deep) alone: fixing it wasn't part of what was asked for
@@ -2334,7 +2334,7 @@ here, and touching a working, already-shipped, already-tested part of
 the API deserves its own dedicated pass, not a drive-by change bundled
 into an unrelated one.
 
-**Dependency/security spot-check** — `pip list --outdated` inside the
+**Dependency/security spot-check** - `pip list --outdated` inside the
 container: nothing outdated, every package (Django 6.1, DRF 3.18,
 psycopg 3.3.4, ...) already current. Dependabot (weekly, already
 configured) is doing its job; nothing to act on beyond confirming that.
@@ -2343,7 +2343,7 @@ configured) is doing its job; nothing to act on beyond confirming that.
 counts.** The `coverage report` line-number gaps led straight to real,
 meaningful holes, all outside nutrition (which already had this
 session's own extensive coverage):
-`apps.programs.views.ProgramDeleteView` had **zero** test coverage —
+`apps.programs.views.ProgramDeleteView` had **zero** test coverage -
 not even a GET-confirm-page check, despite deleting a whole program
 being a real, irreversible action; `workout_update`/`workout_delete`/
 `prescription_update`/`prescription_delete`'s actual authenticated
@@ -2352,7 +2352,7 @@ through an anonymous-access redirect check that short-circuits before
 the view body ever runs. Same pattern in `apps.workouts`:
 `session_start_freeform`/`session_abandon`/`performed_exercise_add`
 were only ever invoked directly via `services.*` in other tests' own
-setup, never through the real view via an actual POST — the service
+setup, never through the real view via an actual POST - the service
 layer itself was already 100% covered, just never the thin view
 wrapper around it (URL routing, ownership scoping, the actual
 redirect target). `apps.exercises.ExerciseUpdateView`'s real edit-and-
@@ -2361,10 +2361,10 @@ save success path had the identical gap, plus the exercise list's
 tests added across `apps.programs`/`apps.workouts`/`apps.exercises`
 closing all of these; one of them (`test_muscle_group_filter`) first
 failed on a `MuscleGroup.name` uniqueness collision against the
-seeded exercise library's own "Chest" — fixed by using test-specific
+seeded exercise library's own "Chest" - fixed by using test-specific
 names instead of picking ones that happened to already exist.
 `apps.activities`' remaining coverage gaps turned out to be only
-wrong-HTTP-verb 405 branches, not missing success-path coverage —
+wrong-HTTP-verb 405 branches, not missing success-path coverage -
 left alone rather than padded with low-value tests for their own sake.
 
 946+ project tests pass (exact final count pending the closing full
@@ -2377,14 +2377,14 @@ this project going forward, not a one-off measurement.
 
 Two more direct reports, both fixed and shipped in the same push.
 
-**Nutrition stats showing "361,5500 kcal"** — a quantity/serving-size
+**Nutrition stats showing "361,5500 kcal"** - a quantity/serving-size
 ratio that doesn't divide evenly (150g of a 100g-serving food) carried
 several decimal places all the way into the chart's tooltip/table,
 since `apps.core.charts.build_bar_series` doesn't round the values it's
-handed — it never had to before, every existing caller's numbers
+handed - it never had to before, every existing caller's numbers
 (training volume, weight) already arrived clean. Fixed at the one
 place calorie figures enter the chart (`NutritionStatsView`), rounding
-to whole kcal with `.quantize(Decimal("1"))` — the same "no false
+to whole kcal with `.quantize(Decimal("1"))` - the same "no false
 precision" rule the calorie-adjustment suggestion engine already
 follows for its own numbers, not a new one invented for this. New
 regression test builds the exact same uneven ratio and asserts the
@@ -2392,30 +2392,30 @@ chart's own value has no fractional part. Live-verified in Finnish:
 before the fix, a chart bar's title read "361,5500 kcal"; after,
 "362 kcal".
 
-**In-app API documentation** — a "?" button next to "API keys" opens a
+**In-app API documentation** - a "?" button next to "API keys" opens a
 modal with everything needed to start calling the API without leaving
 the page: base URL, the auth header, a one-line permissions/units
-summary, and copy-pasteable curl (GET + POST) and Python examples —
+summary, and copy-pasteable curl (GET + POST) and Python examples -
 all three using `request.scheme`/`request.get_host()` so they show
 *this* deployment's real address, not a placeholder someone has to
 remember to swap out. Reuses the exact `.modal-backdrop`/`.modal-card`
 overlay pattern already established (profile's changelog modal, the
 barcode scanner) rather than inventing a new one, plus two small
-additions: `.help-button` (a round icon button opening a modal — a new,
+additions: `.help-button` (a round icon button opening a modal - a new,
 reusable pattern distinct from `.modal-close`/`.app-version`) and
 `.modal-card-wide` (a 40rem variant for content, specifically code
 examples, that wraps badly at the default 30rem). `.modal-body pre`
 scrolls horizontally inside its own box rather than ever forcing the
-page itself to scroll — a long curl command or an indented Python dict
+page itself to scroll - a long curl command or an indented Python dict
 is exactly the kind of wide content that rule exists for. Found and
 fixed the same accessibility gap this modal could have shipped with
 too: the earlier `key_created.html` `aria-label` fix (`"Your new API
-key"`) had never actually been translated — caught by the same
+key"`) had never actually been translated - caught by the same
 `gen_po.py` "missing" report this whole translation batch went through
 regardless, not a separate check.
 
 16 new strings translated across fi/sv/ru/it/et (904 total, 0 fuzzy/
-untranslated) — every heading and explanatory sentence in the modal is
+untranslated) - every heading and explanatory sentence in the modal is
 translated, the curl/Python code itself deliberately isn't (code isn't
 prose). Live-verified end to end in a real Finnish session: the modal
 opened with "API:n käyttäminen"/"Perusosoite"/"Tunnistautuminen"/
@@ -2433,21 +2433,21 @@ Two follow-up requests on the same modal, in opposite directions.
 First: swap the auto-detected `request.scheme`/`request.get_host()`
 base URL for a static `https://example.com` placeholder, and append a
 full endpoint-by-context reference table to the end of the modal
-(matching `docs/API.md`'s own Endpoints table) — both done, the
+(matching `docs/API.md`'s own Endpoints table) - both done, the
 endpoints table straightforwardly, the host swapped in all four
 places it appeared (base URL, both curl examples, the Python `BASE`
 constant), the one regression test updated to match. Then, one message
-later: "was the domain auto-detected before — if so, restore that."
-It was, so it's restored — reverted the same four spots back to
+later: "was the domain auto-detected before - if so, restore that."
+It was, so it's restored - reverted the same four spots back to
 `{{ request.scheme }}://{{ request.get_host }}`, and the test back to
 asserting the real (test-overridden) host appears, not a fixed string.
-The endpoint reference table added alongside the first change stays —
+The endpoint reference table added alongside the first change stays -
 that part of the request was never in question. `docs/API.md`'s own
 description of the modal ("using this deployment's own real host, not
 a placeholder") and the CHANGELOG's ("this deployment's own real
 address") both happened to already describe the reverted-to behavior
 correctly, having never been rewritten to describe the placeholder in
-between — so no doc text needed correcting this time, just the
+between - so no doc text needed correcting this time, just the
 template and its test.
 
 ## Template recipes, weekly diet plans, and a front-page month calendar
@@ -2466,9 +2466,9 @@ already works: an untranslated import-failure message, and two
 Alpine-bound "most used foods" quick-add forms whose meal-slot value
 could silently drift from the visible selector.
 
-**Template recipes.** Added 18 built-in recipes — six each for a bulk,
-fat-loss, and balanced goal, e.g. "Bulk breakfast — Oats & peanut
-butter", "Fatburner lunch — Chicken & broccoli" — seeded by a data
+**Template recipes.** Added 18 built-in recipes - six each for a bulk,
+fat-loss, and balanced goal, e.g. "Bulk breakfast - Oats & peanut
+butter", "Fatburner lunch - Chicken & broccoli" - seeded by a data
 migration (`0008_seed_template_recipes.py`) so they exist even on a
 brand-new install, not fetched live at migration time. Their
 ingredients are 16 real `Food` rows built the same way a real
@@ -2476,25 +2476,25 @@ OpenFoodFacts import would (real barcodes, brand names, macros looked
 up by hand against OFF), because these recipes need to behave exactly
 like anything else in the shared library, not like special-cased
 fixtures. Getting recipes to be "sharable" at all needed
-`Recipe.owner` to become nullable (`0007_alter_recipe_owner.py`) —
+`Recipe.owner` to become nullable (`0007_alter_recipe_owner.py`) -
 `owner=None` now means "shared template", visible and usable by every
 user, following the same `Q(owner=user) | Q(owner__isnull=True)`
 pattern `MealSlot` already used for its own built-ins. Two places
 still filtered recipes by `owner=user` only and so couldn't see the
-templates at all — `suggest_item_for_calorie_budget` (the diet
-builder) and `DietPlanItemForm`'s swap-an-item field — both fixed to
+templates at all - `suggest_item_for_calorie_budget` (the diet
+builder) and `DietPlanItemForm`'s swap-an-item field - both fixed to
 the shared-or-own query once found. Recipe names/instructions are
 authored English strings translated the same way `apps.exercises`'s
 and `apps.programs`'s own seeded content already is: a dummy
 `apps.nutrition.i18n_content` module purely so `makemessages` extracts
-them, `{% trans recipe.name %}` doing the real lookup at render time —
+them, `{% trans recipe.name %}` doing the real lookup at render time -
 the stored value itself is never translated, since `get_or_create`
 matches against it.
 
 A recipe with no assigned meal used to be suggested for any meal slot
 at all, which produced genuinely odd-looking generated plans (a lunch
 recipe for breakfast). Fixed with a new `Recipe.meal_slot` (nullable
-FK, `0011_recipe_meal_slot.py`) — `suggest_item_for_calorie_budget`
+FK, `0011_recipe_meal_slot.py`) - `suggest_item_for_calorie_budget`
 now prefers candidates tagged for the meal slot it's filling, falling
 back to untagged ones only if that would otherwise leave a meal empty.
 Food is never restricted this way, since a plain food (rice, chicken
@@ -2505,18 +2505,18 @@ that string isn't duplicated a second time as a hardcoded list.
 
 **Weekly diet plans.** `DietPlan` gained `is_weekly`
 (`0009_dietplan_weekly_support.py`) and `DietPlanMeal` gained a
-nullable `weekday` — a weekly plan builds one full day's meals per
+nullable `weekday` - a weekly plan builds one full day's meals per
 weekday instead of one repeating day, and `apply_diet_plan` only logs
 whichever weekday matches the date it's asked for. The daily
 calorie/macro target is deliberately identical on every weekday of a
 weekly plan; only *which* recipe/food fills a given meal slot varies
-day to day (tracked with two exclusion sets inside `build_diet_plan` —
+day to day (tracked with two exclusion sets inside `build_diet_plan` -
 one per meal-slot-across-days, so Monday's and Tuesday's breakfasts
 differ, and one per-day-across-slots, reset every weekday, so a single
 day's own breakfast/lunch/dinner aren't the same suggestion three
 times over just because they share a budget). Considered instead
 varying each day's own calorie target to add variety and deliberately
-didn't — a training log this precise shouldn't quietly redistribute a
+didn't - a training log this precise shouldn't quietly redistribute a
 user's actual daily energy target for cosmetic food variety, and the
 exclusion-set approach gets the same practical result (a week that
 doesn't repeat) without touching numbers the app is supposed to be
@@ -2528,7 +2528,7 @@ defeated it, so exclusion is now keyed by `(kind, name)` instead.
 **Activate/deactivate + today's plan on the dashboard.** Only one
 `DietPlan` can be active per user at a time, now enforced at the
 database level (`0010_dietplan_unique_active_diet_plan_per_user.py`,
-a partial unique constraint — same shape as the existing
+a partial unique constraint - same shape as the existing
 one-open-goal/one-open-target invariant). A new toggle button on the
 diet-plan list and detail pages activates or deactivates a plan
 (`services.set_active_diet_plan`/`deactivate_diet_plan`); the
@@ -2542,7 +2542,7 @@ one-month-at-a-time calendar on the actual home page (moved there
 after starting on the nutrition dashboard, once it became clear it's
 a whole-app view, not a nutrition-specific one), browsable to any
 earlier month via `?month=YYYY-MM`, clamped so it can never show a
-future month. Each day shows two independent, icon-only signals —
+future month. Each day shows two independent, icon-only signals -
 never text in the grid itself, by explicit request: a barbell for a
 training day (green for a personal record that day, red for an
 abandoned session, plain otherwise), a moon for a rest day, and an
@@ -2551,7 +2551,7 @@ ran over or under the current target, colored green/yellow/red by how
 far off. Domain logic lives in a new
 `apps.nutrition.services.calendar_month_statuses` (a `CalendarDayStatus`
 per day) and `apps.core.views._month_calendar_context`/
-`_day_detail_lines`, which composes it into what the dashboard needs —
+`_day_detail_lines`, which composes it into what the dashboard needs -
 the same "downstream app composes several others" shape the rest of
 the dashboard already uses for its recent-PRs/training-summary/
 body-weight sections.
@@ -2559,8 +2559,8 @@ body-weight sections.
 Tapping a day opens a small panel anchored right next to that day
 (not a page navigation, not a modal, and deliberately not shaped like
 a literal speech bubble) showing the one or two lines of actual text
-this calendar has anywhere — e.g. "Training day — new personal
-record!" / "1800 / 2000 kcal logged." — via a small Alpine component
+this calendar has anywhere - e.g. "Training day - new personal
+record!" / "1800 / 2000 kcal logged." - via a small Alpine component
 (`static/js/month-calendar.js`) reading each day's pre-translated text
 out of a `|json_script` block. The legend explaining the icons lives
 behind a "?" button rather than permanently taking up space under the
@@ -2572,7 +2572,7 @@ to host the anchored popover, because that `<div>` stopped the
 losing Grid's implicit `justify-items: stretch` (fixed with an
 explicit `width: 100%` on the button); and tapping a padding day from
 the adjacent month used to open a popover for a day that isn't even
-on screen, which read as broken rather than "that day is elsewhere" —
+on screen, which read as broken rather than "that day is elsewhere" -
 fixed by making an out-of-month day a link to that day's own month
 instead of a popover trigger (inert, rather than linking to a future
 month that doesn't exist yet, when the adjacent month is a blocked
@@ -2583,7 +2583,7 @@ next month).
 for computed text instead of seeded content: the "Estimated
 maintenance (TDEE) is..." sentence was rendered once, in whatever
 language was active at calculation time, and stored as a plain string
-— permanently stuck in that language afterwards. Fixed by adding
+- permanently stuck in that language afterwards. Fixed by adding
 structured snapshot fields (`tdee`, `capped_rate_kg_per_week`,
 `rate_was_capped`, and so on, `0006_nutritiontarget_reason_snapshot_fields.py`)
 alongside the old `reason` column, a new pure
@@ -2601,7 +2601,7 @@ own new code (not chasing the project's overall percentage): added
 tests for the new `diet-plan-toggle-active` view (activate, deactivate,
 only-one-active enforcement, method/ownership checks), for
 `diet_plan_log`'s new "nothing to log" branch (a weekly plan whose
-target weekday has no meals — unreachable before weekly plans
+target weekday has no meals - unreachable before weekly plans
 existed), and for `_day_detail_lines`'s personal-record/abandoned/
 target-present/target-absent branches, run in isolation against the
 `CalendarDayStatus` dataclass rather than through a full request each
@@ -2612,7 +2612,7 @@ built.
 ## Two real-deployment bugs: nginx's stale IP cache, and a CDN's stale static files
 
 Both reported live, on an actual production install, right after
-updating to 1.4.0 — neither was in the application code at all.
+updating to 1.4.0 - neither was in the application code at all.
 
 **nginx serving 502s from a healthy container.** A routine update
 (`docker compose pull && up -d`) recreates the `web` container, which
@@ -2621,12 +2621,12 @@ gets a new internal Docker-bridge IP; `compose/nginx/nginx.conf`'s
 form this project used until now) resolves that hostname exactly once,
 when nginx's own process starts, and caches it for its entire
 lifetime. `web` coming back up healthy on its new IP left nginx
-silently retrying the old, dead one forever — `connect() failed (111:
+silently retrying the old, dead one forever - `connect() failed (111:
 Connection refused)` on every request until nginx itself was also
 manually restarted, which re-resolves DNS at its own next startup.
 Fixed with the standard nginx+Docker pattern: `resolver 127.0.0.11
 valid=10s` (Docker's own embedded DNS) plus `proxy_pass` on a `set`
-variable instead of a bare hostname — a bare hostname in `proxy_pass`
+variable instead of a bare hostname - a bare hostname in `proxy_pass`
 is resolved once, permanently; a variable forces a fresh lookup
 whenever the resolver's own TTL expires. Verified live end-to-end,
 twice: once against the dev stack (`docker compose up -d
@@ -2639,11 +2639,11 @@ after the fix was applied.
 
 **A CDN serving an hours-old `base.css`.** The front page's month
 calendar (this file's own earlier entry) rendered completely
-unstyled on the same deployment — no grid, icons and buttons just
+unstyled on the same deployment - no grid, icons and buttons just
 stacked in document flow. Cloudflare, sitting in front of that
 deployment, was still serving a `base.css` two hours old and ~10KB
-smaller (`cf-cache-status: HIT`) — from before the calendar's own CSS
-existed — because nginx sends no `Cache-Control` header for a CDN to
+smaller (`cf-cache-status: HIT`) - from before the calendar's own CSS
+existed - because nginx sends no `Cache-Control` header for a CDN to
 respect instead of its own default edge-cache TTL for static
 extensions, and the plain, unchanging `/static/css/base.css` URL gives
 it nothing to notice a newer version by. This is the other half of a
@@ -2655,7 +2655,7 @@ own cache going stale forever, for the exact same underlying reason).
 Closed properly this time: `config.settings.production` now sets
 `STORAGES["staticfiles"]` to Django's built-in
 `ManifestStaticFilesStorage`, so every `{% static %}` URL includes a
-hash of its own content (`base.1d8d72b58ffc.css`) — a real change
+hash of its own content (`base.1d8d72b58ffc.css`) - a real change
 always produces a new URL, so a CDN or browser's cached response for
 the *previous* URL is simply never requested again, no cache
 configuration or manual purge needed anywhere in the chain. Verified
@@ -2664,11 +2664,11 @@ with a real `collectstatic` run under production settings (173 files,
 regressions: no static file's `url(...)` references broke across the
 hashing/rewrite pass, and `static/manifest.json`'s hardcoded PWA icon
 paths (plain JSON strings, never routed through `{% static %}`) still
-resolve — `ManifestStaticFilesStorage` keeps the original, unhashed
+resolve - `ManifestStaticFilesStorage` keeps the original, unhashed
 filename on disk alongside the hashed one for exactly this reason.
 Deliberately only set in `production.py`: `{% static %}` needs
 `collectstatic`'s manifest file already built, which only production's
-own startup command runs — dev's `runserver` serves straight from
+own startup command runs - dev's `runserver` serves straight from
 `STATICFILES_DIRS` and never calls `collectstatic` at all.
 
 Both fixes shipped as a same-day patch release, 1.4.1.
@@ -2679,27 +2679,27 @@ A direct, explicit request: Conventional Commits discipline
 ("`ci: update ci`", "`fix: fixed something`") should be non-negotiable
 project-wide, and a GitHub Release's own notes should read like a
 per-commit changelog with each entry linking to the commit that made
-it (an existing open-source project's own release notes — grouped
+it (an existing open-source project's own release notes - grouped
 under an emoji + category heading, e.g. "📈 General Changes", each
-bullet a short description plus a link — was pointed to directly as
+bullet a short description plus a link - was pointed to directly as
 the target shape).
 
 `.github/workflows/ci.yml`'s `create-release` job no longer reads
 `CHANGELOG.md`'s section for the version at all. Instead: `git
 describe --tags --abbrev=0` finds the previous release's tag (needing
-the checkout step's own new `fetch-depth: 0` — the default shallow
+the checkout step's own new `fetch-depth: 0` - the default shallow
 clone has no tags whatsoever), `git log <that tag>..HEAD --no-merges`
 lists every commit since it, and a small embedded Python script sorts
 each one into a section by its Conventional Commits type (✨ Features,
 🐛 Fixes, 📝 Documentation, ..., in a fixed most-to-least-interesting
-order, not alphabetical) — a commit whose subject doesn't parse as one
+order, not alphabetical) - a commit whose subject doesn't parse as one
 of the recognized types falls into a catch-all "Other" section rather
 than being silently dropped. Each line is the commit's own subject
 followed by its short SHA in parentheses, which GitHub's own release-
-notes renderer auto-links to that commit — no explicit markdown link
+notes renderer auto-links to that commit - no explicit markdown link
 syntax needed for that part.
 
-`CHANGELOG.md` itself is untouched by this — still hand-curated,
+`CHANGELOG.md` itself is untouched by this - still hand-curated,
 still narrated prose explaining *why* something changed, still cut
 from `[Unreleased]` into a version section at release time exactly as
 before. It simply isn't this job's source anymore; a GitHub Release's
@@ -2714,11 +2714,11 @@ Tested before ever touching a real release: extracted the exact `run:`
 script Python's own `yaml.safe_load` sees from the committed workflow
 file (not a hand-retyped approximation of it) and ran it verbatim
 against this repo's real tag history (`v1.3.0..v1.4.0`, 28 real
-commits) — confirmed correct categorization, ordering, and SHA
+commits) - confirmed correct categorization, ordering, and SHA
 rendering before it ever ran for real. `CLAUDE.md`'s own "Commit
 messages" section is updated to list the exact same eleven types the
 categorizer recognizes (`feat`, `fix`, `docs`, `refactor`, `test`,
-`chore`, `ci`, `perf`, `build`, `style`, `revert`) — previously it only
+`chore`, `ci`, `perf`, `build`, `style`, `revert`) - previously it only
 named six of them as "common", which is how a real commit this session
 (`ci: ...`) would have had nothing further to check itself against.
 
@@ -2729,11 +2729,11 @@ Three unrelated, directly-requested fixes landed together.
 **OpenGraph/SEO + an indexing opt-out.** Every page now carries Open
 Graph/Twitter Card meta tags and a meta description (`templates/
 base.html`, each overridable per page via the usual `{% block %}`
-pattern, though nothing overrides them yet) — mainly seen by a link-
+pattern, though nothing overrides them yet) - mainly seen by a link-
 unfurling bot, not a human browser. Alongside it, a new admin setting
 (`apps.core.models.SeoSettings`, Profile → Administration → Site &
 SEO, the same singleton pattern as `BackupSettings`/`FeedbackSettings`)
-controls whether search engines may index this instance at all —
+controls whether search engines may index this instance at all -
 **off by default**, on the same reasoning as every other opt-in
 external-facing thing in this app (Gravatar, Authentik): most installs
 are a private, self-hosted instance for one household holding another
@@ -2746,7 +2746,7 @@ request) and a `<meta name="robots">` tag read from a new
 
 **The two-factor backup-codes race.** Reported live, precisely
 diagnosed rather than guessed at: generating 10 backup codes hashes
-each one with Django's own password hasher — deliberately expensive
+each one with Django's own password hasher - deliberately expensive
 (the same reason a login attempt itself isn't instant), and measured
 at **~1 second per hash on this project's own dev hardware, ~10
 seconds total** for the whole batch. That whole wait used to happen
@@ -2756,23 +2756,23 @@ who clicked "Regenerate" a second time mid-wait ran into a genuine
 race: for the equivalent moment during initial setup, the second
 request's own `TwoFactorSetupView.dispatch` already saw `totp_enabled
 = True` (set fast, before the slow part) and bounced them to their
-profile with "already enabled" — never having seen the codes their
+profile with "already enabled" - never having seen the codes their
 first click had already generated. Fixed by splitting the work into
 two requests: `TwoFactorSetupView`/`TwoFactorRegenerateBackupCodes
 View` no longer generate anything themselves, only redirect to a new
 `TwoFactorBackupCodesView`, which renders instantly with a visible
 CSS spinner (`.spinner`, respecting `prefers-reduced-motion`) inside a
-`<form hx-trigger="load">` — HTMX fires that form's own POST to
+`<form hx-trigger="load">` - HTMX fires that form's own POST to
 `TwoFactorBackupCodesFragmentView` (the only place `generate_backup_
 codes` is still called) the instant the page paints, swapping the
 spinner for the real codes once that finishes. Nothing is left to
-double-click by accident any more — there's no button on the loading
+double-click by accident any more - there's no button on the loading
 page at all.
 
 **The front-page calendar, made interactive.** Two direct requests on
 the same feature: switching months used to be a full `<a href=
-"?month=...">` page navigation — reported as "the whole page flashes"
-— and future months were clamped away entirely ("there's nothing to
+"?month=...">` page navigation - reported as "the whole page flashes"
+- and future months were clamped away entirely ("there's nothing to
 show for a day that hasn't happened yet," this project's own earlier
 reasoning, reversed by direct request: an empty future month is still
 a valid thing to look at, not an error). Fixed together: every month-
@@ -2780,17 +2780,17 @@ changing link (`templates/nutrition/_month_calendar.html`'s prev/next
 arrows and its out-of-month padding-day cells) is now `hx-get` +
 `hx-target="#month-calendar"` + `hx-swap="outerHTML"` +
 `hx-push-url="true"`, alongside a plain `href` doing the exact same
-navigation if HTMX is ever unavailable — a real, working link either
+navigation if HTMX is ever unavailable - a real, working link either
 way, not a JS-only button. `outerHTML`, specifically, because Alpine's
 own `x-data="ironstackMonthCalendar(...)"` only ever reads the
-`calendar-days-data` JSON once, at that element's own init — an
+`calendar-days-data` JSON once, at that element's own init - an
 `innerHTML` swap leaving the same element alive would leave the tap-
 a-day popover silently showing the *previous* month's data forever
 after the first swap. `apps.core.views.DashboardView.get_template_
 names` now renders just `_month_calendar.html` for the resulting
 HTMX request instead of the whole dashboard template, and `get_
 context_data` returns early right after building the calendar's own
-context for that same case — a month click no longer re-queries
+context for that same case - a month click no longer re-queries
 recent PRs, achievements, body weight, or anything else on the
 dashboard that didn't change. The old clamp
 (`first_of_requested > first_of_current`) is simply gone; `calendar_
@@ -2802,10 +2802,10 @@ month, render an inert div" branch went with it.
 Direct request: let a user delete their own account, honoring GDPR,
 while thinking through what genuinely needs to be retained.
 
-The actual answer turned out to be "almost nothing" — this app's own
+The actual answer turned out to be "almost nothing" - this app's own
 existing schema already does most of the hard work. Auditing every
 `ForeignKey(settings.AUTH_USER_MODEL, ...)` across every app found
-every single one already `on_delete=models.CASCADE` — deleting a
+every single one already `on_delete=models.CASCADE` - deleting a
 `User` row already cascades through workout history, personal
 records, body measurements, the nutrition diary/targets/diet plans,
 activities, feedback, and API keys, all in one transaction, with
@@ -2815,7 +2815,7 @@ The real design work was the *other* half: this app is a shared-
 instance, multi-user design (achievements/PRs already surface across
 every user on the instance, foods/exercises/recipes/programs use a
 `Q(owner=user) | Q(owner__isnull=True)` visibility pattern throughout)
-— so a custom `Exercise`/`Food`/`Recipe`/`Program`/`MealSlot`/
+- so a custom `Exercise`/`Food`/`Recipe`/`Program`/`MealSlot`/
 `ActivityType`/`MeasurementType` the deleting user happens to have
 created might already be in active use by someone *else* on the same
 instance. Naively deleting the user and letting `owner`'s own CASCADE
@@ -2824,7 +2824,7 @@ model: `Exercise`/`MeasurementType`/`ActivityType`'s own *usage* FKs
 (`PerformedExercise.exercise`, `BodyMeasurement.measurement_type`,
 `Activity.activity_type`) are all deliberately `on_delete=PROTECT`,
 so the whole deletion would raise `ProtectedError` and fail outright
-the moment anyone else had ever used that content — a GDPR erasure
+the moment anyone else had ever used that content - a GDPR erasure
 request that can't be fulfilled is the worst possible outcome here.
 `Food`/`Recipe`/`MealSlot`'s own usage FKs are `CASCADE` instead, so
 deleting the user's own `Food` row would have gone the *opposite*
@@ -2832,7 +2832,7 @@ direction and silently deleted some other user's diary entries too.
 
 `apps.accounts.services.delete_account` fixes both failure modes with
 one step, done *before* `user.delete()`: reassign `owner` to `None` on
-every one of those seven ownable models for rows this user owns — the
+every one of those seven ownable models for rows this user owns - the
 exact same "shared, built-in default" meaning `owner=None` already
 carries everywhere in this app (a template recipe, an OpenFoodFacts-
 imported food, a built-in exercise). Whoever's still using that
@@ -2842,19 +2842,19 @@ still points at the user through that path. Verified directly, not
 just reasoned about: a test creates a shared custom `Exercise`, logs
 a *second* user's own workout against it, deletes the first user, and
 asserts the second user's `PerformedExercise` still resolves to the
-exact same (now unowned) `Exercise` row — the actual scenario
+exact same (now unowned) `Exercise` row - the actual scenario
 `PROTECT` exists to prevent, proven not to fire.
 
 Confirmation is password re-entry (matching `TwoFactorDisableView`'s
 own existing shape for the last "prove you meant this" this app
-already asks for) — except for an Authentik-linked account, which has
+already asks for) - except for an Authentik-linked account, which has
 no local password at all (`User.has_usable_password()` is always
 `False` there, set on purpose by `apps.accounts.oidc`); that account
 types its own username instead, for the same strength of confirmation
 an action that can't ask for a password that doesn't exist. One more
 guard, found worth adding while designing this rather than requested
 outright: the instance's last remaining superuser can't delete
-themselves — promoting another account to superuser first is
+themselves - promoting another account to superuser first is
 required, so a moment of "let me just clean up my test account" can
 never accidentally leave an instance with nobody able to reach Django
 admin at all.
@@ -2862,7 +2862,7 @@ admin at all.
 Deliberately disclosed, not glossed over, on the deletion page itself:
 a backup archive made before deletion (`docs/BACKUP.md`) still
 contains the deleted account's data until it's rotated out by this
-instance's own retention setting — a point-in-time snapshot can't
+instance's own retention setting - a point-in-time snapshot can't
 retroactively un-contain something, and saying so plainly is the
 honest alternative to a guarantee this feature structurally can't
 make.
@@ -2875,37 +2875,37 @@ a copy of it are what make erasure a safe, informed thing to decide
 on, not just a delete button.
 
 **Privacy notice** (`templates/accounts/_privacy_notice_modal.html`)
-— a fixed, translated notice, deliberately distinct from `SiteDisclaimer`
+- a fixed, translated notice, deliberately distinct from `SiteDisclaimer`
 (free-form, operator-authored liability text already shown on the same
 pages): what's collected, why, and a user's rights, framed honestly
-for what this app actually is — self-hosted, open-source software
+for what this app actually is - self-hosted, open-source software
 where the *operator* of a given instance is the GDPR "data controller"
 for it, not this project's authors. Shown at the point data collection
 actually starts (login/signup) and reachable again anytime from
 Profile, right above the version/changelog button, via the same
-`.modal-backdrop`/`.modal-card` pattern already used there — a small,
+`.modal-backdrop`/`.modal-card` pattern already used there - a small,
 new `.link-button` class (plain inline-text-styled button) was pulled
 out for it rather than reusing `.app-version`'s own, differently-named
 class for what's visually the identical treatment.
 
 One authoring bug found and fixed while writing it: `{% trans "...
-→ \"Delete account\" ..." %}` — a backslash-escaped quote *inside* a
-double-quoted `{% trans %}` string literal — silently truncated the
+→ \"Delete account\" ..." %}` - a backslash-escaped quote *inside* a
+double-quoted `{% trans %}` string literal - silently truncated the
 extracted msgid at the escaped quote during `makemessages`, even
 though the tag itself renders correctly at runtime. Switching to
 single-quote delimiters (`{% trans '... → "Delete account" ...' %}`,
 which Django template tags accept equally) sidesteps the whole
-problem — no escaping needed for a literal double quote inside a
+problem - no escaping needed for a literal double quote inside a
 single-quoted literal.
 
 **Data export** (`apps.accounts.services.export_account_data`,
-Profile → "Download your data") — the other direction from account
+Profile → "Download your data") - the other direction from account
 deletion, and reuses its own reasoning almost exactly: the same set of
 models deletion hard-deletes, plus this user's own authored shared
 content (a custom exercise/food/recipe they created), read rather
 than removed. Built on Django's own generic model serializer
 (`django.core.serializers.serialize("json", queryset)`) instead of a
-hand-maintained per-model field list — every field on every model is
+hand-maintained per-model field list - every field on every model is
 included automatically, including any added after this function was
 written, at the cost of the export's shape being Django's own
 `{"model", "pk", "fields"}` per row rather than a bespoke schema.
@@ -2920,7 +2920,7 @@ dict so there's only one thing to keep correct: a plain HTML page
 own `.set-table`/`.table-wrap` styling already used elsewhere), a
 single JSON file (the same shape a user's own API key could already
 fetch from the public API), and a `.zip` of one CSV file per section
-built with the stdlib's own `csv`/`zipfile` modules — no new
+built with the stdlib's own `csv`/`zipfile` modules - no new
 dependency for either format. A small `_rows_for_section` helper
 normalizes the three different underlying shapes (`account` is a
 single dict, `api_keys` is already a flat list, everything else is
@@ -2933,13 +2933,13 @@ without caring which section they're looking at.
 Two small, unrelated follow-ups surfaced by actually using the
 features above.
 
-**Timezone onboarding** — `User.timezone` and a `ProfileForm` field
+**Timezone onboarding** - `User.timezone` and a `ProfileForm` field
 for it already existed, but the one-time onboarding modal shown after
 a new account's first login never asked for it, so every "today"/
 date-range boundary in the app (`apps.accounts.middleware.
 UserTimezoneMiddleware`) silently used UTC until a new user happened
 to find the setting buried in Profile afterwards. `OnboardingForm`
-now has the same `timezone` field as `ProfileForm` — pulled the
+now has the same `timezone` field as `ProfileForm` - pulled the
 `available_timezones()`-minus-misleading-aliases list out into a
 shared `_timezone_choices()` helper so the two forms can't drift
 apart on which aliases (`localtime`, `Factory`) get excluded. Marked
@@ -2949,23 +2949,23 @@ with the user's current value in `__init__`, so "Save" never actually
 requires a manual choice, and "Not now" skips form validation
 entirely regardless (its own button is `formnovalidate`).
 
-**Data export's missing fields** — `export_account_data`'s `"account"`
+**Data export's missing fields** - `export_account_data`'s `"account"`
 section listed `username`/`first_name`/`email`/`unit_system`/
 `timezone`/`language` but never `last_name`, even though
-`AccountDetailsForm` has let a user set one for a while — an easy
+`AccountDetailsForm` has let a user set one for a while - an easy
 thing to miss by hand-listing fields once and not revisiting the
 list. Auditing the rest of `User` while fixing it turned up the same
 gap for `height`, `show_bmi`, `show_achievements`,
 `show_name_to_others`, `show_gravatar`, `onboarding_completed`,
 `is_sso_user`, and `totp_enabled` (the boolean flag, not the secret
-itself) — every remaining non-credential field on the model, so a
+itself) - every remaining non-credential field on the model, so a
 user's own export is now a genuinely complete answer to "what do you
 have on me", not just the handful of fields the profile *form* shows
 at once. Covered by a test asserting on specific fields directly
 (and one asserting `password`/`totp_secret` are still never
 included), not just the export's overall shape.
 
-**Downloadable HTML export** — "Download your data" already rendered
+**Downloadable HTML export** - "Download your data" already rendered
 an HTML page to browse online, but the only literal downloads on
 offer were JSON and CSV; asked to add a genuine `?format=html`
 download too, since a file a user can keep or hand to someone else is
@@ -2973,25 +2973,25 @@ a different thing from a page they can only read while logged into
 this instance. Implementing it surfaced a real bug in the *existing*
 browsable page along the way: its per-section collapse used Alpine
 (`x-data`/`x-show`/`x-cloak`), which depends on this app's own JS
-loading to ever reveal anything — fine for the live page, but a
+loading to ever reveal anything - fine for the live page, but a
 downloaded copy opened later with no route back to this instance (or
 just offline) would render every section permanently invisible,
 `x-cloak`'s CSS rule never lifted. Switched to native
-`<details>`/`<summary>` instead — the same pattern this app already
-uses for the changelog modal's per-version sections — so the data
+`<details>`/`<summary>` instead - the same pattern this app already
+uses for the changelog modal's per-version sections - so the data
 stays inspectable with zero JS.
 
 The first version of the actual download reused that same fixed page
 outright (`extends "base.html"`), which turned out not to be enough:
 reported back looking badly broken, with enormous icons. The page's
 nav bar has several `<svg class="nav-icon">` elements with no
-width/height of their own — sized entirely by `base.css`, which,
+width/height of their own - sized entirely by `base.css`, which,
 same as the Alpine problem above, a downloaded file has no guarantee
 of ever loading again, so each icon rendered at its raw, un-styled
 intrinsic SVG size instead. Fixed properly this time by giving the
 download its own dedicated template
 (`templates/accounts/_data_export_standalone.html`) that doesn't
-extend `base.html` at all — no nav, no icons, no external stylesheet
+extend `base.html` at all - no nav, no icons, no external stylesheet
 or script, just a trimmed, self-contained `<style>` block reusing
 `base.css`'s own dark IronStack color palette. The browsable in-app
 page keeps using the normal site chrome; only the actual downloadable
@@ -3001,13 +3001,13 @@ file needs to survive completely on its own.
 
 A full social layer, requested and designed in one sitting before any
 code was written (see the approved plan for the full design
-reasoning) — `docs/SOCIAL.md` is now the canonical write-up; this
+reasoning) - `docs/SOCIAL.md` is now the canonical write-up; this
 entry is the shorter "how it actually went" version.
 
 Two existing docs shaped the design more than they blocked it:
 `docs/PRODUCT_REQUIREMENTS.md` had "social network"/"messaging" on its
-"do not implement unless explicitly requested" list — the same door
-nutrition tracking went through for v2 — and `docs/UI.md`'s "feel like
+"do not implement unless explicitly requested" list - the same door
+nutrition tracking went through for v2 - and `docs/UI.md`'s "feel like
 a practical training tool rather than a social media application"
 ruled out a feed, reactions, gamification, and any browsable public
 profile page. Both docs were updated to reflect the new status quo
@@ -3017,12 +3017,12 @@ rather than left stale.
 cross-reference each other constantly (a block has to affect both
 friend requests *and* messages; a group invite checks the same
 privacy flag a direct message does), so `apps/social` holds all of it
-— internally split by concern the way `apps/accounts` already splits
+- internally split by concern the way `apps/accounts` already splits
 `views.py`/`views_seo.py`/`views_backup.py`, not by Django app
 boundary.
 
 **Two privacy settings, opt-out not opt-in.** `allow_friend_requests`/
-`allow_group_invites` on `User` both default `True` — unlike
+`allow_group_invites` on `User` both default `True` - unlike
 `show_gravatar` (the one existing privacy toggle that defaults off),
 neither one exposes anything about the account by itself; they only
 gate whether *another* user can start something with it. Asked once
@@ -3032,20 +3032,20 @@ anytime from Profile.
 **A real gap found while writing the docs, not the code.** Writing up
 `services.leave_group`'s existing "transfer ownership to someone else
 before leaving a group you own" error message for `docs/SOCIAL.md`
-made it obvious there was no way to actually *do* that — no
+made it obvious there was no way to actually *do* that - no
 `transfer_ownership` function existed at all, so a solo group owner
 was permanently stuck unable to leave their own group. Worse: nothing
 stopped a group's owner from just deleting their whole *account*
 first, which would cascade their `GroupMembership` row away and could
 leave a group with other members still in it holding no `OWNER`/
-`ADMIN` role at all — unmanageable forever, even though the group and
+`ADMIN` role at all - unmanageable forever, even though the group and
 its message history survived. Fixed with `services.transfer_ownership`
 (owner-only, demotes the old owner to admin rather than removing them)
 plus `services.reassign_owned_groups_before_deletion`, called from
 `apps.accounts.services.delete_account` before the cascade runs: hands
 ownership to the longest-standing admin, or failing that the
 longest-standing member, of every group the departing account owns. A
-group with no other members is simply left as-is — harmless, an
+group with no other members is simply left as-is - harmless, an
 owner-less group nobody happens to act on, not a crash or a leak.
 
 **Data export completeness, applied to a brand-new domain
@@ -3060,7 +3060,7 @@ the feature itself, not a follow-up fix discovered later.
 **Real-time-ish without WebSockets.** HTMX polling
 (`hx-trigger="load, every 4s"`) on the message thread's own list
 container, consistent with CLAUDE.md's "no SPA framework without a
-strong architectural reason" — this is the first interval-polling
+strong architectural reason" - this is the first interval-polling
 pattern in the codebase (everything before it was `hx-trigger="load"`,
 a one-shot fire-and-replace, or a debounced live-search input). The
 send-form lives outside the polled container so the poll can't
@@ -3070,7 +3070,7 @@ successful send via `hx-on::after-request="this.reset()"`.
 ## A critical pass over `apps/social`, before it ever shipped
 
 Asked to review the freshly-built social feature critically and fix
-what a real review found, before merging anywhere — not a rubber
+what a real review found, before merging anywhere - not a rubber
 stamp. Found and fixed six real issues, none of them caught by the
 test suite that was already green at the time (each new fix came with
 its own test that would have failed against the old code):
@@ -3078,39 +3078,39 @@ its own test that would have failed against the old code):
 - **The one that mattered most**: `services.unread_group_message_count`
   looped over a user's groups in Python, one `.count()` query per
   group. Harmless on its own, except it's also what `apps.social.
-  context_processors.social_badge` calls — unconditionally, on *every
-  page load*, for every logged-in user, site-wide — to decide whether
+  context_processors.social_badge` calls - unconditionally, on *every
+  page load*, for every logged-in user, site-wide - to decide whether
   to show a dot on the Profile nav icon. A user in 20 groups was
   paying 20 extra queries on every request anywhere in the app,
   forever, whether or not they ever opened Friends & groups. Rewritten
   as one query (`GroupMessage` joined straight to its sender's
   `GroupMembership`, comparing `created_at` to that row's own
   `last_read_at` via `F()`), which also required making
-  `last_read_at` default to "now" at join time instead of nullable —
+  `last_read_at` default to "now" at join time instead of nullable -
   removing a NULL special-case from every query that touches it
   turned out to be what made the single-query rewrite straightforward
   at all. Pinned with `assertNumQueries(1)`.
 - **A permission check that only existed in the template.**
   `services.invite_to_group` never actually verified the inviter and
-  invitee were friends — `group_detail.html`'s dropdown only *offered*
+  invitee were friends - `group_detail.html`'s dropdown only *offered*
   friends, but a crafted POST naming any user id on the instance would
   have gone straight through. Fixed in the service function itself,
   where a UI restriction belongs if it's meant to be a real rule.
 - **A permission check that was too strict, the opposite mistake, in
   the same feature.** That same "Invite a friend" form was rendered
-  only inside `{% if can_manage %}` — owner/admin only — even though
+  only inside `{% if can_manage %}` - owner/admin only - even though
   the service layer (correctly) lets any member invite one of their
   own friends. A regular member could invite by link but never by the
   actual "invite a friend" feature the group page seemed to offer
   them.
 - **Blocking someone didn't stop them showing up in search.** Only
   actually *sending* them a friend request failed
-  (`services.send_friend_request` already checked `is_blocked`) — the
+  (`services.send_friend_request` already checked `is_blocked`) - the
   whole point of a block is not needing to see that person at all, so
   `friend_search` now excludes both directions.
 - **An unbounded poll.** The message-thread fragment re-queried and
   re-rendered a conversation's *entire* history every 4 seconds,
-  forever — fine at first, guaranteed to get slower the longer two
+  forever - fine at first, guaranteed to get slower the longer two
   people keep talking. Capped at the most recent 100 messages, no
   pagination UI added (not asked for).
 - **Two accessibility/mobile-battery gaps caught on a second look at
@@ -3122,47 +3122,47 @@ its own test that would have failed against the old code):
   reason to keep polling).
 
 A second, smaller pass followed the first: two test failures caught
-by the full suite — a `.nav-icon-wrap` CSS class name that
+by the full suite - a `.nav-icon-wrap` CSS class name that
 accidentally contained the literal substring `nav-icon`, the exact
 text `apps.core.tests.BottomNavTests` counts occurrences of (renamed
 to `.icon-badge-wrap`, no functional change, matching the same
 accidental-substring-collision shape as an earlier find-and-replace
 mishap this same session), and `social_badge` adding four flat
 per-page queries the same way `apps.core.context_processors.seo` once
-did — fixed the same way that one was: bump the pinned count, with a
+did - fixed the same way that one was: bump the pinned count, with a
 comment explaining why (and, while there, switched all four checks
 from `.count() > 0` to `.exists()`, cheaper for a plain boolean).
 Also added two small UI touches: a "(you)" marker in the member list,
 and a member count on each group. Writing tests for those two fixes
 surfaced a real bug
 neither the original implementation nor the first review pass had
-caught: `group_invite_join` — the one view in `apps/social`
-deliberately meant to work for a logged-out visitor — had
+caught: `group_invite_join` - the one view in `apps/social`
+deliberately meant to work for a logged-out visitor - had
 `@login_required` on it anyway, the same decorator applied
 consistently to every *other* view in that module without a second
 thought for this one. The view's own anonymous-user branch
 (`already_member = request.user.is_authenticated and ...`) and the
 template's "log in to join" prompt had been dead code the entire
-time — every request from someone not already logged in was bounced
+time - every request from someone not already logged in was bounced
 straight to the login page before the view ever ran, with no
 indication what the link was even for. Caught only because a test was
-finally written for that specific path, not by inspection — the kind
+finally written for that specific path, not by inspection - the kind
 of gap that's easy to miss precisely because the code that would have
 caught it *looks* like it handles the case correctly.
 
 A third pass, asked to keep going: `services.friends_of` had the same
 missing-`select_related` N+1 shape `unread_group_message_count` did
-before its own fix — reading `Friendship.user_low`/`user_high` without
+before its own fix - reading `Friendship.user_low`/`user_high` without
 it lazily fetches each `User` row on access, one extra query per
 friendship. More exposed than the badge count was, too: `friends_of`
 runs on nearly every social page, not one context processor. Also
-added a visually-hidden `<label>` to the chat message input — the form
+added a visually-hidden `<label>` to the chat message input - the form
 already declared `label=_("Message")`, but neither template ever
 rendered it, leaving the field with no accessible name at all for a
 screen reader (a visible label next to a one-line chat box would just
 be clutter for a sighted user, so visually-hidden rather than shown or
 left off). And exposed the two privacy settings on the public API's
-profile endpoint, alongside the other preferences already there —
+profile endpoint, alongside the other preferences already there -
 `unit_system`/`show_bmi`/etc. were already readable/writable via
 `GET`/`PATCH /api/v1/profile/`; these two just hadn't caught up yet.
 
@@ -3172,11 +3172,11 @@ Asked to keep developing the software generally, with a plan drawn up
 first rather than picking a new speculative feature.
 `docs/ROADMAP.md`'s own "Future possibilities" list (PWA offline sync,
 health-app integrations, native clients, ...) is explicitly marked "do
-not implement these merely because the architecture allows them" —
+not implement these merely because the architecture allows them" -
 none of those were a safe default to start building unprompted.
 `docs/NUTRITION.md`'s "Integration with existing apps" section, on the
 other hand, already documented `apps.api` coverage as "a real,
-honestly-disclosed gap" that had been closed — but checking that claim
+honestly-disclosed gap" that had been closed - but checking that claim
 against the actual code turned up two real `apps.nutrition` models
 that had never made it into the API at all: `NutritionProfile` (the
 calorie engine's own physiological inputs) and the diet-plan builder's
@@ -3186,7 +3186,7 @@ everything except these two.
 
 `NutritionProfile` got the simplest treatment: a plain writable
 singleton at `nutrition/profile/`, the same `RetrieveUpdateAPIView`
-shape `profile/` itself already uses for `User` — matching
+shape `profile/` itself already uses for `User` - matching
 `NutritionProfile`'s own model docstring, which already draws the
 line between "an input a user corrects in place" (this) and "a
 decision worth preserving as history" (`NutritionGoal`/
@@ -3194,15 +3194,15 @@ decision worth preserving as history" (`NutritionGoal`/
 reason).
 
 `DietPlan` needed more care, because unlike every writable resource
-this API already exposes, its two sensible ways to mutate — generating
-one from scratch, and switching which plan is active — are genuinely
+this API already exposes, its two sensible ways to mutate - generating
+one from scratch, and switching which plan is active - are genuinely
 services, not raw field writes: `apps.nutrition.diet_builder.
 build_diet_plan` computes and creates a whole tree of `DietPlanMeal`/
 `DietPlanItem` rows in one transaction, and
 `apps.nutrition.services.set_active_diet_plan` is the one place
 `DietPlan`'s "exactly one active plan per user" constraint is honored
 correctly. Read `apps.api.views.WorkoutSessionViewSet` before writing
-any of this — it already established the idiom this codebase uses for
+any of this - it already established the idiom this codebase uses for
 "creation triggers complex business logic": one `ModelViewSet`, one
 serializer, `perform_create`/`perform_update` overridden to call a
 service function instead of the default raw save. (First drafted this
@@ -3212,8 +3212,8 @@ calls `build_diet_plan` with the validated input and points
 `serializer.instance` at what it returns; `activate`/`deactivate`/
 `apply` are `@action`s calling their matching service functions
 directly (`deactivate` wasn't explicitly asked for, but omitting the
-one service function's own natural API counterpart — `activate` without
-its opposite — would have been an odd, asymmetric gap). `DietPlanMeal`/
+one service function's own natural API counterpart - `activate` without
+its opposite - would have been an odd, asymmetric gap). `DietPlanMeal`/
 `DietPlanItem` are read-only sub-resources, the same shape
 `NutritionGoalViewSet` already uses, for the same reason: unlike a
 recipe's hand-edited ingredient list, a plan's meals/items only ever
@@ -3226,17 +3226,17 @@ just reading the code back: the first attempt marked `target_calories`
 and the other three target fields `read_only_fields` on
 `DietPlanSerializer`, intending to block only *updates* to them (the
 same reasoning `is_active` already gets). But DRF's `read_only_fields`
-means read-only unconditionally — it strips the field from
+means read-only unconditionally - it strips the field from
 `validated_data` on create too, so `perform_create`'s own
 `data["target_calories"]` immediately `KeyError`ed, caught by the new
 `test_creating_a_diet_plan_builds_meals_and_items` test failing outright
 rather than the intended-but-wrong `test_is_active_and_targets_are_read_only`
 silently passing for the wrong reason. Fixed by leaving the fields
 writable on the serializer and discarding them in `perform_update`
-instead — exactly the pattern already used one field over for
+instead - exactly the pattern already used one field over for
 `meal_slots` (write-only input `perform_create` needs, meaningless on
 update, popped from `validated_data` before the default `.save()`
-runs) — rather than inventing a second mechanism for the same "write
+runs) - rather than inventing a second mechanism for the same "write
 on create, not on update" shape.
 
 ## Web Push notifications, a floating unread-messages button, and browser-independent barcode scanning
@@ -3245,11 +3245,11 @@ Two unrelated requests from the same conversation, planned and built
 together since both touched `apps/core`/client JS in similar ways.
 
 **Push notifications.** `apps.social` shipped v3 with "HTMX-polled, no
-separate notification system" as a deliberate line — asked directly
+separate notification system" as a deliberate line - asked directly
 afterwards for a real, OS-level notification when a message arrives,
 plus a floating always-visible button for unread messages, the same
 treatment `active_workout_session` already gives a workout in
-progress. Landed as `apps.core.push` (generic — `send_push_notification
+progress. Landed as `apps.core.push` (generic - `send_push_notification
 (user, title, body, url)`, nothing message-specific about it) rather
 than inside `apps.social`, since push itself isn't a social-only
 concern even though messages are the only trigger today; `apps.social.
@@ -3261,13 +3261,13 @@ in `requirements/base.txt`.
 
 Before writing any of it, verified the actual library API directly
 (`pip install`ed it into the running dev container and used
-`inspect.getsource`) rather than trusting secondhand documentation —
+`inspect.getsource`) rather than trusting secondhand documentation -
 worthwhile: `WebPusher.send()`'s own source shows the request that can
 raise a connection-level failure (DNS failure, refused connection) has
 no try/except of its own inside `pywebpush.webpush()`, so only catching
 its `WebPushException` would have let an unreachable push service's
 raw `requests.exceptions.RequestException` propagate straight out of
-`send_push_notification` — a real bug against this feature's own hard
+`send_push_notification` - a real bug against this feature's own hard
 requirement ("must never delay or break the actual message being
 sent"), caught by reading the dependency's source instead of by a test
 happening to exercise that exact failure mode. Also actually ran the
@@ -3275,23 +3275,23 @@ full VAPID key-generation-and-round-trip flow inside the container
 before writing `docs/SECURITY.md`'s setup instructions or the new
 `manage.py generate_vapid_keys` command, rather than writing an
 untested snippet: generate → `Vapid.from_string()` reload → `.sign()`,
-confirmed working end to end, including one genuinely tricky detail —
+confirmed working end to end, including one genuinely tricky detail -
 `vapid_private_key` passed as a plain string must be base64url with no
 PEM headers (a PEM string only works via `Vapid.from_file()`'s
 `os.path.isfile()` auto-detection, which this project's plain `env()`
-helper — no multi-line value support — can't feed correctly anyway).
+helper - no multi-line value support - can't feed correctly anyway).
 
 Verification didn't stop at mocked unit tests either: generated a real
 VAPID keypair, rebuilt the dev image (`pywebpush` needed to actually be
 installed, not just importable in an ad-hoc `pip install` into the
 running container), and drove the whole flow with Playwright against a
-**persistent** Chrome profile — a plain (non-persistent) Playwright
+**persistent** Chrome profile - a plain (non-persistent) Playwright
 context turned out to behave like incognito mode for the Push API
 specifically ("Chrome currently does not support the Push API in
 incognito mode... deliberately no way to feature-detect this"), silently
 failing `pushManager.subscribe()` until switching profile types. Once
 subscribed, called `pywebpush.webpush()` directly against the resulting
-real Google FCM endpoint and got back a genuine `201 Created` — about
+real Google FCM endpoint and got back a genuine `201 Created` - about
 as strong a confirmation of the full VAPID/encryption pipeline as is
 achievable without an actual OS notification center to inspect inside
 a headless container.
@@ -3300,21 +3300,21 @@ One real design fix caught by the project's own established "no
 duplicate queries per page load" standard, not by a test: the floating
 button's own unread-state check was first drafted as a second,
 independent context processor (`apps.social.context_processors.
-has_unread_messages`) alongside the existing `social_badge` — but that
+has_unread_messages`) alongside the existing `social_badge` - but that
 would have run `has_unread_direct_messages`/`has_unread_group_messages`
 a second time, redundantly, on every single page load for every
 logged-in user, since `social_badge` already computes both as part of
 its own four-way check. Merged into one function computing each
 underlying boolean once and returning both context keys, the same
 "one query, not N" instinct this codebase already applies at a larger
-scale (`unread_group_message_count`'s own fix, earlier this project) —
+scale (`unread_group_message_count`'s own fix, earlier this project) -
 just applied here to two *always-run-once* queries rather than a
 count that scales with data.
 
 Also fixed while writing the message-title code: an initial draft used
 `sender.get_short_name()` for a push notification's title, which would
 have shown a first name to the recipient regardless of the sender's own
-`show_name_to_others` privacy setting — every social template already
+`show_name_to_others` privacy setting - every social template already
 shows a friend by plain `.username` only, never a first name (that's
 what `User.public_display_name()` is for, and its own docstring already
 scopes it elsewhere, to the achievements carousel). Caught by checking
@@ -3322,20 +3322,20 @@ what the existing templates actually do before writing new code, not
 after a privacy complaint.
 
 **Barcode scanning, take two.** `static/js/barcode-scanner.js` already
-existed, deliberately built with zero vendored dependencies — the
+existed, deliberately built with zero vendored dependencies - the
 browser's native `BarcodeDetector` API did the decoding, feature-gated
 so the "Scan barcode" button just didn't render where unsupported
 (Firefox, most Safari). Reported live as "the button seems to be
-missing" — confirmed via AskUserQuestion that this was exactly that
+missing" - confirmed via AskUserQuestion that this was exactly that
 browser-support gap, not a different page entirely, and that a working
 fallback was preferred over a better error message. Vendored ZXing
 (`static/js/zxing.min.js`, Apache-2.0, pinned `0.21.3`) as a fallback
-decoder — same "vendor a real file, never a CDN" precedent
+decoder - same "vendor a real file, never a CDN" precedent
 `htmx.min.js`/`alpine.min.js` already established, deliberately
 reversing the feature's own original "nothing to vendor here" framing
 now that there was a real reason to. Fetched the real bundle just to
 check its size before committing to the approach (354KB minified,
-notably heavier than htmx/alpine's ~45KB each) — loaded lazily, only
+notably heavier than htmx/alpine's ~45KB each) - loaded lazily, only
 the first time a browser without `BarcodeDetector` actually opens the
 scanner, via a runtime-inserted `<script>` reading its own
 content-hashed URL off a `data-zxing-url` attribute on `<body>` (the
@@ -3343,7 +3343,7 @@ same handoff `data-service-worker-url` already uses), so a Chrome user
 who never needs the fallback never downloads it. Verified with
 Playwright by stubbing `window.BarcodeDetector` away before any page
 script ran (simulating Firefox/Safari) and using Chrome's fake-camera
-flags — the button rendered, the fallback decoder loaded, and the
+flags - the button rendered, the fallback decoder loaded, and the
 camera modal opened cleanly against a fake video feed with zero console
 errors.
 
@@ -3351,7 +3351,7 @@ A small dev-environment quirk surfaced while verifying both features
 visually: `nginx`'s `/static/` `alias` serves from a `collectstatic`
 -populated volume, but this project's dev `docker-compose.override.yml`
 command (`runserver`, not the production command) never runs
-`collectstatic` itself — so a newly-added static file 404's through
+`collectstatic` itself - so a newly-added static file 404's through
 `http://localhost` (nginx) even though it 200s through
 `http://localhost:8000` (Django's own dev-mode static serving) until
 `collectstatic` is run by hand once. Not a bug in either feature; just
@@ -3365,20 +3365,20 @@ user silence push from one specific friend or group, without the
 existing "Disable notifications on this device" button's all-or-
 nothing scope. Both halves reused an existing shape rather than
 inventing one: a friend mute is `apps.social.models.MutedFriend`, the
-exact one-directional model `Block` already is (never symmetric — me
+exact one-directional model `Block` already is (never symmetric - me
 muting you isn't you muting me), and a group mute is one new
 `GroupMembership.notifications_muted` boolean rather than a second
 model at all, since `GroupMembership` already doubles as "one row per
 (group, user) holding this user's own per-group state" for exactly
-this reason — `last_read_at`, the unread-message read-state, got the
+this reason - `last_read_at`, the unread-message read-state, got the
 same treatment when it was added. `send_direct_message`/
 `send_group_message` each gained a one-line check right before their
 existing `send_push_notification` call(s); nothing else about either
-function changed — the message is still created, still visible, still
+function changed - the message is still created, still visible, still
 counted unread either way, muting only ever gates that one call.
 
 Deliberately not gated on `can_manage_group` (owner/admin) the way
-most of `apps.social`'s other group actions are — muting your own
+most of `apps.social`'s other group actions are - muting your own
 notifications is a personal preference any member has, not a
 group-management action, so `group_mute_toggle` only checks
 membership (`_member_or_404`, the same guard `group_leave`/
@@ -3403,11 +3403,11 @@ supports, both in `static/js/pwa-install-prompt.js`:
 - Chrome/Edge/most Android browsers fire `beforeinstallprompt` ahead of
   time. `preventDefault()`-ing it and holding onto the event is what
   lets this banner pick its own moment to show the browser's own
-  native install dialog later, via that same event's `.prompt()` —
+  native install dialog later, via that same event's `.prompt()` -
   this is the "use the browser's own install notification" case.
-- iOS Safari never fires that event — there's no programmatic install
+- iOS Safari never fires that event - there's no programmatic install
   API on iOS at all, "Add to Home Screen" only exists behind the Share
-  sheet a user opens by hand — so the banner instead shows instructions
+  sheet a user opens by hand - so the banner instead shows instructions
   pointing at it. Deliberately scoped to Safari specifically (not every
   iOS browser): Chrome/Firefox/Edge on iOS are all WebKit under the
   hood but don't expose that same Share-sheet action, and their
@@ -3417,13 +3417,13 @@ supports, both in `static/js/pwa-install-prompt.js`:
   someone looking for a menu their browser doesn't have.
 
 Three ways to back off, matching what was actually asked for, all
-`localStorage`-backed rather than a `Profile` field — installability,
+`localStorage`-backed rather than a `Profile` field - installability,
 and a user's own opinion about it, is a per-browser/per-device thing,
 the same reasoning `static/js/rest-timer.js`'s own `muted` flag
 already follows, not an account-wide setting synced across devices:
 closing the banner (×) and the explicit "Remind me later" button do
-the exact same thing (re-ask in 14 days) — either one means "not now",
-not "never" — while "Don't remind me" opts out permanently.
+the exact same thing (re-ask in 14 days) - either one means "not now",
+not "never" - while "Don't remind me" opts out permanently.
 
 ## Data export 500 for users with a hand-built export section
 
@@ -3434,10 +3434,10 @@ A production 500 report (`GET /accounts/data-export/`) traced back to
 treating everything else as Django's generic serializer output and
 reading `entry["pk"]`/`entry["fields"]` off it unconditionally. But
 `export_account_data` (`apps/accounts/services.py`) had grown several
-more hand-built sections since — every `apps.social` section
+more hand-built sections since - every `apps.social` section
 (`friend_requests_sent`/`friend_requests_received`/`friends`/
 `blocked_users`/`group_memberships`/`direct_messages`/
-`group_messages_sent`) and `push_subscriptions` — without
+`group_messages_sent`) and `push_subscriptions` - without
 `_rows_for_section` ever being updated to match, so a user with even
 one row in any of those (one friend, one registered push
 subscription) hit a bare `KeyError: 'pk'`.
@@ -3446,13 +3446,13 @@ Confirmed directly against production rather than guessed at: a
 read-only `manage.py shell` session ran `export_account_data()` for
 every user (all succeeded) and then `DataExportView()._sections()` for
 every user, which reproduced the exact `KeyError` for the two accounts
-that had actually hit the page — isolating the bug to the
+that had actually hit the page - isolating the bug to the
 view-level row-normalizing step, not the export data itself, before
 writing the fix.
 
 Fixed by having `_rows_for_section` detect the generic-serializer
 shape from the data itself (`"pk"`/`"fields"` present on the first
-row) instead of hardcoding which section keys are hand-built — a
+row) instead of hardcoding which section keys are hand-built - a
 future hand-built section added to `export_account_data` can no
 longer silently break this page the same way. Regression test creates
 a `PushSubscription` (the simplest hand-built section to set up) and
@@ -3460,8 +3460,8 @@ asserts the plain page still returns 200.
 
 ## Push notification when a new version is deployed
 
-Every subscribed user now gets a Web Push notification — "IronStack
-X.Y.Z is now running — tap to see what's new" — the moment a new
+Every subscribed user now gets a Web Push notification - "IronStack
+X.Y.Z is now running - tap to see what's new" - the moment a new
 version actually reaches production, reusing `apps.core.push.
 send_push_notification` (previously only `apps.social.services`'
 direct/group messages) rather than inventing a second delivery path.
@@ -3469,15 +3469,15 @@ direct/group messages) rather than inventing a second delivery path.
 Trigger is deploy time, not a request: `apps.core.management.commands.
 announce_version_update`, added to `docker-compose.yml`'s `web`
 service startup command right after `migrate`/`collectstatic`/
-`compilemessages` and before gunicorn starts — the same place every
+`compilemessages` and before gunicorn starts - the same place every
 other one-time-per-deploy step already lives. Making this safe to run
 unconditionally on *every* container start (not just "real" deploys)
 needed one thing: a durable record of the last version actually
 announced, so a plain restart on an unchanged `VERSION` (host reboot,
 `docker compose restart`) is a no-op instead of re-notifying every
 subscribed user for nothing. `apps.core.models.AnnouncedVersion` is
-that record — a singleton row, the same `load()`-a-pk=1-row pattern
-`BackupSettings`/`FeedbackSettings` already use — compared against
+that record - a singleton row, the same `load()`-a-pk=1-row pattern
+`BackupSettings`/`FeedbackSettings` already use - compared against
 `apps.core.version.get_version()` on each run; a match is a no-op, a
 mismatch sends and then updates the row so the *next* restart on that
 same new version is a no-op too.
@@ -3485,20 +3485,20 @@ same new version is a no-op too.
 The notification's own click target needed a real URL to exist first:
 the changelog was previously only reachable as an Alpine `x-show`
 modal on the profile page (opened by clicking the version number),
-with no URL that could ever land someone there already open — a Web
+with no URL that could ever land someone there already open - a Web
 Push notification can only ever navigate to a URL
 (`static/sw.js`'s `notificationclick` handler), not reach into a
 page's client-side state. `ProfileView` now reads a plain
 `?changelog=1` query param (the same "?welcome=1 opens something on
 load" shape `TwoFactorBackupCodesView` already established) and the
 template's Alpine `x-data` initializes `open` from that instead of
-always `false`, so `/accounts/profile/?changelog=1` — exactly what the
-notification links to — opens the modal immediately on load with no
+always `false`, so `/accounts/profile/?changelog=1` - exactly what the
+notification links to - opens the modal immediately on load with no
 extra click needed.
 
 Sent to every user with a push subscription, the same opt-in bar
 `send_direct_message`/`send_group_message` already use (subscribing at
-all, from Profile → Notifications) — deliberately no separate
+all, from Profile → Notifications) - deliberately no separate
 "release notes" preference to also opt into, and no mute, since a
 version bump isn't scoped to any one friend or group the way a
 message is.
@@ -3511,7 +3511,7 @@ hand-maintained copy an operator keeps roughly in sync by hand. Adding
 `announce_version_update` to `docker-compose.yml`'s `web` service
 `command:` (a `sh -c "migrate && ... && gunicorn"` chain) meant nothing
 until that same line was also copied into production's own
-`compose.yaml` by hand — the new step silently didn't run there at
+`compose.yaml` by hand - the new step silently didn't run there at
 first, caught only because its effect (a push notification) was
 directly observable.
 
@@ -3522,12 +3522,12 @@ into a new `docker-entrypoint.sh`, the image's own `ENTRYPOINT`
 to be running it. `docker-compose.yml`'s `web.command:` shrinks to
 just the plain `gunicorn ...` invocation. The sequence still needs to
 skip running for every *other* command sharing this same image and
-ENTRYPOINT — `backup-scheduler`'s `python manage.py backup_scheduler`,
+ENTRYPOINT - `backup-scheduler`'s `python manage.py backup_scheduler`,
 `docker-compose.override.yml`'s own separate, shorter dev chain
 (`migrate`/`createcachetable`/`compilemessages` then `runserver`, no
-`collectstatic`/`announce_version_update` — dev doesn't want a real
+`collectstatic`/`announce_version_update` - dev doesn't want a real
 push notification firing on every local run), or an operator's own
-`docker compose run web python manage.py shell` — so the script only
+`docker compose run web python manage.py shell` - so the script only
 runs it when `$1` is literally `gunicorn`, then `exec "$@"`
 unconditionally either way, keeping the container's actual PID 1 the
 real process rather than a lingering shell.
@@ -3535,17 +3535,17 @@ real process rather than a lingering shell.
 Verified with a real `docker build` + a from-scratch Postgres, not
 just reasoned about: the `gunicorn` path ran the full sequence
 (migrations, `collectstatic`, `compilemessages`, `announce_version_update`
-— "Announced version 1.9.0 to 0 user(s)." against an empty test
+- "Announced version 1.9.0 to 0 user(s)." against an empty test
 database) and then gunicorn as PID 1; a `python manage.py check`
 override skipped straight past the setup sequence with no migrations
 attempted first. Added `shellcheck docker-entrypoint.sh` to CI's
-`lint-and-test` job, next to `ruff` — the one shell script in this
+`lint-and-test` job, next to `ruff` - the one shell script in this
 codebase that runs inside a container, previously with no lint
 coverage at all (every other script here, `scripts/backup.sh` and
 friends, runs on the *host*, calling into a container rather than
 running inside one).
 
-This was a deliberate trade-off, not a free win — discussed with the
+This was a deliberate trade-off, not a free win - discussed with the
 user first rather than just done: it trims one specific recurring
 class of manual sync work (a step *added to* the startup sequence),
 at the cost of that sequence being one step less visible to an
@@ -3555,25 +3555,25 @@ instead), a slightly slower local edit-test loop for the sequence
 itself (needs an image rebuild, not just a compose edit), and a new,
 lightly-tested (shellcheck only, no Django test coverage) shell script
 where none existed before. Compose-level changes (a new service, port,
-or volume) still need the same hand-sync as always — this only ever
+or volume) still need the same hand-sync as always - this only ever
 covered the specific class of change that actually broke tonight.
 
 ## UI/UX review pass
 
 A full UI/UX audit of the running app (real screenshots, both mobile
 and desktop, taken against a real running instance rather than read
-from templates alone), followed by fixing what it found — mostly live,
+from templates alone), followed by fixing what it found - mostly live,
 iterating against a dev container the whole time, several of these
 found only because something looked wrong once actually clicked
 through rather than reasoned about from the code.
 
 **Exercise search** (apps.exercises.services.search) matched only the
 stored English name, never a search typed in the language the exercise
-name is actually *shown* in — `|translate_content` translates for
+name is actually *shown* in - `|translate_content` translates for
 display, but the old plain `.filter(name__icontains=query)` never went
 through that same catalog. Fixed in Python (pull name/pk, check both
 the raw and gettext-translated form) rather than at the database
-level, gettext having no SQL-level equivalent — the exercise library
+level, gettext having no SQL-level equivalent - the exercise library
 this searches is small enough that this is the pragmatic answer
 specifically here, not applied the same way to apps.nutrition's own
 Food/Recipe search (which can hold far more rows, an OpenFoodFacts-
@@ -3583,17 +3583,17 @@ synced catalog).
 this pass touched. In order: a stale-data bug (calendar-days-data's
 own json_script tag lived *before* #month-calendar as a sibling rather
 than inside it, so hx-swap="outerHTML" on a month change never removed
-the old one — document.getElementById always resolves the resulting
+the old one - document.getElementById always resolves the resulting
 duplicate id to whichever comes first, the stale one, so every month
 change past the first showed empty popovers); then hover-to-reveal on
 desktop, which needed its own `hoveredDate` state kept separate from
 click's own `clickedDate` (sharing one meant a mouse hovering a button
-right before clicking it — completely ordinary — made toggle() see the
+right before clicking it - completely ordinary - made toggle() see the
 day "already open" and immediately close what the click had just
 opened); then a second bug in that same feature, hover handlers bound
 to the inner `<button>` while the CSS `:hover` reveal targeted the
 outer `.calendar-day-cell` (which also contains the popover once
-shown) — moving the mouse off the button onto the now-visible popover
+shown) - moving the mouse off the button onto the now-visible popover
 left the button's own bounds, clearing hoveredDate while CSS kept the
 popover forced on screen, empty. Both handlers now live on the same
 cell CSS keys off. Click-outside-to-close and a PR day's own gold
@@ -3602,39 +3602,39 @@ sharing green with an unrelated nutrition-adherence icon a few cells
 over) came alongside.
 
 **Every page's `.top-bar` now holds only its own title.** It used to
-also carry whatever a given page needed — an action button, a status
-tag, a form — with no two pages shaped quite the same way as a result.
+also carry whatever a given page needed - an action button, a status
+tag, a form - with no two pages shaped quite the same way as a result.
 22 templates moved that content into a new `.top-bar-actions` row
 below the title instead. The profile page also stopped being a flat
 stack of 9+ identical cards, reorganized into named groups (Account,
 Social, Your data, Support) with each settings row now the entire card
 as one link (a trailing chevron for the affordance) rather than a
-small button on the right — deliberately reintroducing a shape a much
+small button on the right - deliberately reintroducing a shape a much
 earlier session moved *away* from (`.card-action-row`'s own comment
 explains why: a plain full-card link gave no visual sign it was
-clickable at all) — the chevron is what's different this time.
+clickable at all) - the chevron is what's different this time.
 
 **The service worker's own cache-busting** used to be a hand-bumped
 literal string (`ironstack-static-v2`, then `-v3` once already this
-session) — a live symptom of the exact risk static/sw.js's own
+session) - a live symptom of the exact risk static/sw.js's own
 comments already named: a browser tab kept open through this entire
 session stayed on a stale cached `month-calendar.js` through several
 real rewrites of that file, each only fixed by a hard reload
 discarding the cache by hand. `apps.core.version.
 get_static_assets_hash()` now hashes the actual current bytes of every
 static/css and static/js file, substituted into static/sw.js at serve
-time (apps.core.views.service_worker) — covers a live dev edit and a
+time (apps.core.views.service_worker) - covers a live dev edit and a
 real deploy with the same mechanism, rather than only GIT_SHA (which
 never changes at all across a dev container's lifetime).
 
 Smaller fixes from the same pass: the 32×32 favicon rendered as an
 illegible cropped fragment in a real browser tab (icon.svg's fine
-double-plate detail blurs into a smear at real favicon sizes) — a new,
+double-plate detail blurs into a smear at real favicon sizes) - a new,
 deliberately simplified favicon.svg fixes it. The barcode scanner
 could open the camera and never detect anything, silently, forever, on
 a device where `BarcodeDetector` exists in the browser but its actual
 on-device decoding service isn't installed (a real Android/Chrome
-gap) — `getSupportedFormats()` checked once up front now falls back to
+gap) - `getSupportedFormats()` checked once up front now falls back to
 the bundled ZXing decoder there instead of hanging on a detector that
 will never fire. Meal slot names (Breakfast/Lunch/...) were the one
 seeded content name in apps.nutrition never wired up for translation
@@ -3644,23 +3644,23 @@ view with no visible sign which section you were in.
 ## Group invite link overflow, and a mistranslated "Back" link
 
 Two small bugs found live in the running 1.10.0 build. A group's
-invite link rendered as a plain `<p>` of unbroken text — the URL never
+invite link rendered as a plain `<p>` of unbroken text - the URL never
 wraps, so it ran off the right edge of the card on a narrow screen
 with no way to see or select the rest of it. Now a read-only
 `<input>` in a flex row next to a Copy button
 (`navigator.clipboard.writeText`, with a 2-second "Copied!" swap in
-the button's own label) — `.invite-link-row input { min-width: 0 }`
+the button's own label) - `.invite-link-row input { min-width: 0 }`
 is the actual fix, overriding a flex item's default `min-width: auto`
 that otherwise sizes the input to the URL's full intrinsic width
 regardless of the row's own space.
 
 The edit-group page's "cancel and go back" link read `{% trans "Back"
-%}` — the exact same source string `apps.exercises.i18n_content`
+%}` - the exact same source string `apps.exercises.i18n_content`
 already uses for the "Back" muscle group, so every non-English locale
 carried that muscle group's translation onto the link instead (Finnish
 "Selkä", the body part, instead of a navigation "back"). One shared
 English word covering two unrelated meanings is a `gettext` msgid
-collision, not a translation error — the fix was to stop colliding:
+collision, not a translation error - the fix was to stop colliding:
 the link now reuses the existing "Cancel" string already established
 elsewhere for the same "leave this form without saving" pattern
 (templates/accounts/account_delete.html and others), rather than
@@ -3670,7 +3670,7 @@ call site.
 Also reorganized the group detail page's bottom actions: Mute/Unmute
 and the back-to-Groups link now sit together in one row instead of
 each alone in its own full-width block, and Delete/Leave group moved
-to be the very last thing on the page — previously it sat directly
+to be the very last thing on the page - previously it sat directly
 between two routine buttons with nothing but its own red color
 setting it apart. First attempt at grouping Mute+Back wrapped them in
 a `<p style="display:flex">`, which silently did nothing: a `<form>`
@@ -3688,16 +3688,16 @@ mostly small individually but all in the same "actually try it on the
 device" vein.
 
 **iOS Safari zoom, twice over.** Tapping the group invite-link field
-zoomed the whole page into it — its `font-size` (0.85rem, ~13.6px) was
+zoomed the whole page into it - its `font-size` (0.85rem, ~13.6px) was
 under the 16px iOS Safari treats as "small enough to zoom in on
 focus"; dropped the override so it inherits the 16px `font: inherit`
 every other input already gets. Separately, double-tapping *anywhere*
-also zoomed the page — `touch-action: manipulation` turns that
+also zoomed the page - `touch-action: manipulation` turns that
 gesture off without the viewport meta's `user-scalable=no`, which
 would also kill pinch-zoom (an accessibility regression for low-vision
 users). First attempt set it on `html` alone, which still let Safari
 double-tap-zoom to fit a block-level descendant like `.main-content`
-— Safari resolves the *used* touch-action per element as its own
+- Safari resolves the *used* touch-action per element as its own
 value intersected with its ancestors', and doesn't reliably treat an
 unset descendant as "inherit the ancestor's manipulation" the way
 you'd expect. Moved it to the universal `*` selector instead.
@@ -3705,7 +3705,7 @@ you'd expect. Moved it to the universal `*` selector instead.
 **Bottom-nav icons crowded against the home-indicator inset.**
 `.bottom-nav`'s own `height: var(--nav-height)` plus `padding-bottom:
 env(safe-area-inset-bottom)` ate the safe-area inset out of a
-fixed-height box instead of adding it — every other consumer of
+fixed-height box instead of adding it - every other consumer of
 `--nav-height` (body's own `padding-bottom`, the training/messages
 FABs) already adds the two together. The mismatch squeezed the icon
 row smaller and pushed it lower on any phone with a home-indicator,
@@ -3715,35 +3715,35 @@ bar's background still stretches down to cover the inset.
 
 **Rest timer went stale across a locked screen, and its "done" alert
 never showed on iOS at all.** It counted down by decrementing
-`remaining` once per `setInterval` tick — a locked phone freezes JS
+`remaining` once per `setInterval` tick - a locked phone freezes JS
 timers outright rather than slowing them, so every second the screen
 was locked was simply lost, and unlocking resumed from wherever it
 had frozen rather than where it should actually be. Switched to
 deriving `remaining` from a wall-clock deadline (`endAt - Date.now()`)
-on every tick instead, so the next tick that runs — even one
-long-delayed by the lock — catches straight up; a `visibilitychange`
+on every tick instead, so the next tick that runs - even one
+long-delayed by the lock - catches straight up; a `visibilitychange`
 listener also re-derives it the instant the page becomes visible
 again, in case the interval never got to fire at all while hidden.
 Separately, the "rest's over" notification called `new
 Notification(...)` directly, which iOS Safari silently never displays
-— WebKit only ever shows a notification triggered through a
+- WebKit only ever shows a notification triggered through a
 `ServiceWorkerRegistration`, the same `showNotification()`
 `static/sw.js`'s own `push` handler already uses. Switched to that;
 still gated on `document.hidden` and an already-granted permission,
 no new prompt. Even fixed, a genuinely locked screen still won't get a
-live "done" alert — iOS suspends the page's JS almost as soon as it's
+live "done" alert - iOS suspends the page's JS almost as soon as it's
 backgrounded, not just once the screen locks, so nothing runs to fire
 the notification in the first place until the phone is unlocked again.
 A reliably-on-time alert through a real lock would need the server
 itself to schedule a Web Push message for the exact moment the rest
-period ends — not built here; this project has no delayed-task
+period ends - not built here; this project has no delayed-task
 infrastructure yet (no Celery/cron), so that's a real, deliberately
 deferred architectural addition for later rather than something this
 pass papered over.
 
 **2FA verification code field had no autofill hint at all.** Both
 `TwoFactorSetupConfirmForm` and `TwoFactorVerifyForm`'s `code` field
-rendered as a bare `CharField`, no widget — nothing telling a password
+rendered as a bare `CharField`, no widget - nothing telling a password
 manager or the OS this wants a one-time code, unlike
 `AccountDetailsForm`'s password fields already getting one-tap fill
 from `autocomplete="current-password"`/`"new-password"`. Added
@@ -3759,33 +3759,33 @@ was independently blocking the extension's own injected overlay
 iframe from loading at all (`about:blank` stuck where
 `chrome-extension:`/`moz-extension:` should have loaded, so the
 extension's own next `postMessage()` to it threw a target-origin
-mismatch) — fixed regardless, since it's a legitimate general
+mismatch) - fixed regardless, since it's a legitimate general
 CSP gap even though it turned out not to be what was blocking the
 inline icon here. One more small fix on the way: an earlier attempt at
 `autocomplete="off"` (trying to also stop the browser's own plain
 input-history from re-suggesting stale, already-expired codes) got
-reverted back to `"one-time-code"` at the user's request — the
+reverted back to `"one-time-code"` at the user's request - the
 standards-correct token wins over suppressing that side effect.
 
 **nginx was serving every response uncompressed.** Its own gzip
-support defaults to off — `base.css` (60KB), `htmx.min.js` (48KB), and
+support defaults to off - `base.css` (60KB), `htmx.min.js` (48KB), and
 `alpine.min.js` (45KB), all loaded on every single page, went out
 uncompressed instead of at roughly a third their size. Turned gzip on.
 Getting the fix to actually take effect surfaced its own gotcha:
 `compose/nginx/nginx.conf` is bind-mounted as a *single file*, and
 Compose's recreate-on-update check only looks at whether the image or
 `docker-compose.yml`'s service definition changed, never at a
-bind-mounted file's contents — so a routine `pull && up -d` silently
+bind-mounted file's contents - so a routine `pull && up -d` silently
 leaves nginx running on its old in-memory config, and even `nginx -s
 reload` isn't guaranteed to see the new content (the mount can end up
 pointing at a deleted inode once the file's replaced, which is how
 most editors and git actually write a change). `up -d --force-recreate
-nginx` is what actually picks it up — confirmed live, documented in
+nginx` is what actually picks it up - confirmed live, documented in
 README.md "Updating".
 
 **Profile page footer.** Privacy notice and the version string were
 two separate buttons each bringing their own `margin: 1.5rem 0
-0.5rem` — margin collapsing between them read as an oversized gap for
+0.5rem` - margin collapsing between them read as an oversized gap for
 what's really one small-print footer. Wrapped both, plus a new GitHub
 source link placed between them, in one `.profile-footer` flex column
 with a small fixed gap instead.
@@ -3795,7 +3795,7 @@ Also caught mid-session and worth remembering on its own: running
 wiped several already-translated strings down to empty msgstr (visible
 as `#~`-commented obsolete entries reappearing, or previously-set
 translations for e.g. "Manage"/"Set up"/"No friends yet." going blank)
-— gettext's own fuzzy-matching failed to carry them over once their
+- gettext's own fuzzy-matching failed to carry them over once their
 msgid's surrounding context shifted. Reverted that regeneration
 entirely and added the one new string (`msgid "Source on GitHub"`)
 needed for the footer above by hand across all six locale files
@@ -3805,22 +3805,22 @@ instead, rather than trusting a full regenerate again.
 
 **Rest timer, taken further.** The earlier phone-testing pass's own
 notify() fix (showNotification() instead of a broken `new
-Notification()`) turned out not to be enough by itself — iOS suspends
+Notification()`) turned out not to be enough by itself - iOS suspends
 a backgrounded tab's JS almost immediately, well before the screen
 even locks, so the interval driving the countdown often never gets to
 run `finish()` at all while the app isn't in front. The only fix that
 actually reaches a phone in that state is a real Web Push, delivered
 by the OS's own push service regardless of whether this page's JS is
-running. New `RestTimerNotification` (`apps.workouts`) — one row per
+running. New `RestTimerNotification` (`apps.workouts`) - one row per
 user; `rest-timer.js`'s `start()`/`adjust()` schedule/reschedule it,
 `finish()`/`stop()` cancel it (the client already alerted by then, a
 server-sent one too would be a redundant duplicate); a new
 `rest_timer_dispatcher` management command (`notification-scheduler`
-service, same sleep-and-poll shape as `backup_scheduler` — no task
+service, same sleep-and-poll shape as `backup_scheduler` - no task
 queue added) polls every 3s and sends through the existing
 `send_push_notification`. Its own notification content
 (`notify-title`/`notify-body`) previously showed a literal
-"undefined" — found live, right after shipping the fix above: reading
+"undefined" - found live, right after shipping the fix above: reading
 `this.$el.dataset.*` *inside* the async `.then()` callback rather than
 synchronously before entering the promise chain.
 
@@ -3830,24 +3830,24 @@ the same class of bug). Found one real gap:
 `ExercisePrescriptionSerializer`/`PerformedExerciseSerializer`'s
 `exercise` field had no ownership check at all, unlike every other
 cross-object reference in `apps/api/serializers.py`. Confirmed
-exploitable live — attaching another user's private custom exercise to
+exploitable live - attaching another user's private custom exercise to
 your own prescription by id succeeded, and the row's own Django admin
 `__str__` already printed that exercise's real name. The `analytics/
 achievements/` endpoint showing other users' data turned out to be
-working as intended, not a bug — it mirrors the dashboard's own
+working as intended, not a bug - it mirrors the dashboard's own
 shared, opt-in achievements carousel exactly (`User.show_achievements`)
-— but wasn't documented as the one deliberate exception to "every
+- but wasn't documented as the one deliberate exception to "every
 other endpoint is scoped to your own data" until this pass caught that
 gap too.
 
 **Interactive API docs**, added while already deep in `apps/api`:
-`/api/docs/` — a Swagger UI generated straight from the same
+`/api/docs/` - a Swagger UI generated straight from the same
 viewsets/serializers `/api/v1/` is built from (drf-spectacular), so it
 can't drift out of sync the way a hand-written reference could.
 Getting it to actually render under this app's CSP took its own fix:
 drf-spectacular's default template bootstraps the UI from an inline
 `<script>` block, silently blocked here (no `unsafe-inline` in
-`script-src`) — `apps.api.views_docs` serves that same bootstrap
+`script-src`) - `apps.api.views_docs` serves that same bootstrap
 script as a same-origin `<script src>` instead, using a `script_url`
 context hook the upstream template already had but never populated.
 
@@ -3855,14 +3855,14 @@ context hook the upstream template already had but never populated.
 data was worth encrypting: `BACKUP_ENCRYPTION_KEY`, optional, encrypts
 `database.dump`/`media.tar` in every backup either mechanism creates
 (`apps.core.backups`' own Fernet path, `scripts/backup.sh`'s openssl
-equivalent — one setting governs both). `manifest.json` stays plain
+equivalent - one setting governs both). `manifest.json` stays plain
 either way so the list/restore-confirm pages keep working without the
 key. Tested end to end for real against the actual dev stack, host
 scripts included: create → restore round-trips correctly with the
-right key, fails cleanly — before touching the live database — with a
+right key, fails cleanly - before touching the live database - with a
 missing or wrong one. Along the way: `docker compose exec` inherits
 whatever env vars a container had at its own start/last recreation,
-not the current contents of `.env` on disk — a stale
+not the current contents of `.env` on disk - a stale
 `BACKUP_ENCRYPTION_KEY` left over from manually testing
 `scripts/restore.sh` (whose own last step recreates `web`) caused a
 batch of otherwise-unrelated test failures until the container was
@@ -3871,7 +3871,7 @@ recreated again to pick up the real, current `.env`.
 **TOTP secret encryption**, the natural follow-up once backup
 encryption's groundwork (the `cryptography` dependency, the Fernet/
 `.env`-key pattern) already existed: `TOTP_ENCRYPTION_KEY`, a
-*separate* key from the backup one on purpose — different compromises,
+*separate* key from the backup one on purpose - different compromises,
 rotating one should never force rotating the other. New
 `EncryptedTextField` (`apps.accounts.models`) transparently encrypts/
 decrypts `User.totp_secret`, so every existing call site keeps working
@@ -3893,31 +3893,31 @@ history for the sake of the screenshots actually showing something.
 needs_body_tracking_reminder`: a dashboard card ("Time to log your
 body measurements?", plain `.card-link` to Body tracking, the same
 shape as the "no workout in progress" card above it) once a user
-hasn't logged *any* body measurement — any type, not just body
-weight — in `BODY_TRACKING_REMINDER_DAYS` (14) days. A never-logged
+hasn't logged *any* body measurement - any type, not just body
+weight - in `BODY_TRACKING_REMINDER_DAYS` (14) days. A never-logged
 user is measured from `date_joined` rather than firing immediately,
 so a brand-new account isn't nudged before it's had that long to log
 a first reading at all. Purely a suggestion per this app's own
-"automation must never take control away from the user" principle —
+"automation must never take control away from the user" principle -
 never a modal, and it disappears the moment a reading is logged, no
 explicit dismissal needed.
 
 **The off switch**, requested alongside it: `User.
 body_tracking_reminders_enabled` (default `True`), a new Profile →
 Preferences group of its own ("Notifications") between the display
-fields and the privacy toggles — it's neither, so it didn't belong in
+fields and the privacy toggles - it's neither, so it didn't belong in
 either existing group. Off suppresses the card outright regardless of
 how stale the user's history actually is; it never touches whether
 they *can* log a reading, only whether they're reminded to.
 
 **Statistics**, the third piece requested in the same message: a card
 on the measurement history page (`apps.measurements.services.
-stats_for`), between the BMI card (when shown) and the trend chart —
+stats_for`), between the BMI card (when shown) and the trend chart -
 current value, change since the first-ever log (signed, `+`/`-`),
 lowest/highest/average across the full history, entry count, and the
 date tracking started. Needs at least 2 readings, the same threshold
 `apps.core.charts.build_chart_series` already uses for the trend line
-right below it — a single entry has no "change" or meaningful average
+right below it - a single entry has no "change" or meaningful average
 to report yet. Kept the existing split between `services.py` (stays
 unit-agnostic, canonical values only) and the view (converts each
 field to the user's display unit) rather than teaching the service
@@ -3927,15 +3927,15 @@ about `user.unit_system` directly, the same layering
 ## A program's prescribed exercises now link to their own detail page
 
 Small, requested directly: `/programs/<id>` listed each prescribed
-exercise as plain text (`{% trans prescription.exercise.name %}`) —
+exercise as plain text (`{% trans prescription.exercise.name %}`) -
 checking what it actually is, its equipment, or its muscle groups
 meant leaving the program and searching the exercise library by hand.
 Wrapped the name in a link to `exercises:exercise-detail` instead.
 Safe unconditionally, no extra visibility check needed: a program's
 exercises are only ever visible to a viewer who could already open
-this program at all — either their own program (referencing their own
+this program at all - either their own program (referencing their own
 or system exercises) or a system template (referencing only system
-exercises) — and `apps.exercises.services.visible_to` grants every one
+exercises) - and `apps.exercises.services.visible_to` grants every one
 of those the same owner-or-system split `apps.programs.services.
 visible_to` already applies to the program itself, so the two can
 never disagree about what a given viewer may see.
@@ -3948,13 +3948,13 @@ suggestions by priority. Read through `docs/ROADMAP.md`/
 `docs/SECURITY.md` end to end, `.github/workflows/ci.yml`/
 `dependabot.yml`, and ran `coverage run -m pytest && coverage report`
 for real, current numbers rather than guessing. Ranked findings:
-1. no offsite backup replication (the real gap — confirmed live via
+1. no offsite backup replication (the real gap - confirmed live via
    SSH: no crontab at all on the production host, backups and the
    database both sitting on the one disk), 2. GitHub Dependabot
    vulnerability alerts disabled (`gh api .../vulnerability-alerts`
    confirmed it, a one-click fix), 3. `apps.social`'s authorization
    test coverage well below the rest of the codebase (61-81%, the
-   untested lines almost entirely permission-check branches — the
+   untested lines almost entirely permission-check branches - the
    exact thing `docs/SECURITY.md`'s own "test cross-user access
    explicitly" asks for), 4. GitHub Actions pinned to tags, not commit
    SHAs, despite `CLAUDE.md`'s own commit-message example naming
@@ -3967,19 +3967,19 @@ for real, current numbers rather than guessing. Ranked findings:
    accessibility requirements. The user handled #2 directly and asked
    for #3, #4, #5, #6, #7.
 
-**#4 — pinned GitHub Actions.** Resolved every `uses: owner/repo@vN`
+**#4 - pinned GitHub Actions.** Resolved every `uses: owner/repo@vN`
 in `ci.yml` to its tag's actual commit SHA (`git ls-remote --tags`),
-kept a `# vN` comment for humans — `.github/dependabot.yml`'s existing
+kept a `# vN` comment for humans - `.github/dependabot.yml`'s existing
 `github-actions` ecosystem entry already resolves/bumps pinned SHAs
 correctly, no config change needed there. Nearly self-inflicted a
-YAML bug while adding the explanatory comment above `permissions:` —
+YAML bug while adding the explanatory comment above `permissions:` -
 wrote a second, stray `permissions: {}` block instead of just a
 comment, caught by rereading the diff before running anything.
 
-**#5 — a dev-environment doctor script.** `scripts/check-dev-env.sh`:
+**#5 - a dev-environment doctor script.** `scripts/check-dev-env.sh`:
 re-syncs installed packages against `requirements/dev.txt` (a plain,
 idempotent `pip install`) and checks `pg_dump` is present *and*
-version 16 specifically — Debian's own default `postgresql-client`
+version 16 specifically - Debian's own default `postgresql-client`
 package doesn't match `docker-compose.yml`'s `postgres:16-alpine` (the
 exact mismatch the `Dockerfile`'s own runtime stage already works
 around via the PGDG apt repo, documented there but never surfaced to
@@ -3988,25 +3988,25 @@ along the way, surfaced as a note rather than a hard failure: the
 existing local `.venv` here turned out to be Python 3.12, not the
 3.14 this project is actually pinned to.
 
-**#6 — the open Dependabot PR.** Attempted `gh pr merge`; blocked by
+**#6 - the open Dependabot PR.** Attempted `gh pr merge`; blocked by
 this environment's own permission classifier (merging touches `master`
 directly). Left for the user to merge themselves rather than working
 around the block.
 
-**#3 — apps.social test coverage.** ~40 new tests across
+**#3 - apps.social test coverage.** ~40 new tests across
 `GroupViewTests`/`FriendViewTests`/`MessageViewTests`, targeting every
 line `coverage` had flagged: every POST-only view's GET-is-405 case,
 every permission-denied branch (`can_manage_group`/`is_group_owner`
-failures — a regular member trying to remove another member, change a
+failures - a regular member trying to remove another member, change a
 role, delete the group, transfer ownership), and the success paths
 that had never actually been exercised (a manager's edit actually
 saving, an invite actually being accepted/declined, an unknown
 `action` value, an already-answered request/invite). Two branches
-turned out to be structurally unreachable through the view alone — a
+turned out to be structurally unreachable through the view alone - a
 view-level guard re-checks the exact same condition the service call
 right below it would also raise on (`group_invite_join`'s
 `join_group_by_code`, `group_thread_fragment`'s `send_group_message`)
-— `unittest.mock.patch`, already this file's own established pattern
+- `unittest.mock.patch`, already this file's own established pattern
 for `send_push_notification`, exercises those two directly instead of
 chasing an unreachable race. Found and fixed several wrong assumptions
 along the way, all from actually running the suite rather than trusting
@@ -4018,11 +4018,11 @@ first pass), and three `messages.error()` assertions needed
 the page the message actually appears on. 162 → 169 passing tests in
 this one file, all green.
 
-**#7 — real-browser accessibility testing.** New `apps/core/
+**#7 - real-browser accessibility testing.** New `apps/core/
 test_accessibility.py`: Playwright + axe-core (WCAG 2.0/2.1 A/AA only,
 not axe's own opinionated "best practice" rules) against five key
 pages (login, signup, dashboard, profile, exercise list), failing only
-on "serious"/"critical" violations — lower-impact ones still print,
+on "serious"/"critical" violations - lower-impact ones still print,
 never silently lost, just not merge-blocking. Its own CI job, not
 folded into `lint-and-test`: Chromium is a real, non-trivial download
 nothing else needs, so `pyproject.toml`'s `addopts` excludes the new
@@ -4032,7 +4032,7 @@ before any of it actually worked: Playwright's sync API's greenlet-
 based async plumbing makes Django's own `async_unsafe` ORM guard
 falsely believe it's being called from an async context (fixed with
 `DJANGO_ALLOW_ASYNC_UNSAFE`, the same env var Django's own error
-message names for exactly this false-positive) — and axe-core
+message names for exactly this false-positive) - and axe-core
 couldn't load from its usual CDN at all, this app's own
 Content-Security-Policy blocking it exactly as it would a real
 visitor's browser. Vendored `axe.min.js` into `apps/core/vendor/
@@ -4042,11 +4042,11 @@ via `page.evaluate()`, which runs through the DevTools protocol rather
 than a page-level `<script>` tag CSP would still catch.
 
 First real run immediately justified the whole effort: every one of
-the five pages failed the same `color-contrast` rule — plain white
+the five pages failed the same `color-contrast` rule - plain white
 button text on `--color-accent` is only 2.7:1, under WCAG AA's 4.5:1
 floor. Not a one-line fix: `--color-accent` is *also* used as plain
 text color against this app's dark page background elsewhere (nav
-links, icons), where it already passed comfortably (6.8:1) — darkening
+links, icons), where it already passed comfortably (6.8:1) - darkening
 it enough to fix the button case would have broken that instead. Added
 a dedicated `--color-on-accent` (this app's own near-black page
 background, which reads at 6.8:1 against the accent color) for
@@ -4056,12 +4056,12 @@ every such spot (`.button`/`button`, `.skip-link`, `.training-fab`,
 `--color-accent`/`#fff` touching `--color-accent` itself at all. One
 violation left deliberately unfixed and explicitly excluded from the
 dashboard's own test (`.calendar-day-outside`, a previous/next-month
-padding day faded to `opacity: 0.35` on purpose) — raising the opacity
+padding day faded to `opacity: 0.35` on purpose) - raising the opacity
 enough to pass axe would undo the deliberate de-emphasis those days
 are for, a real design tradeoff for whoever owns it, not one this test
 should make unilaterally by itself. `--color-danger`/`--color-success`/
 `--color-warning` all measured out under 4.5:1 against white too, in
-the course of checking `--color-accent`'s own math — not touched here
+the course of checking `--color-accent`'s own math - not touched here
 (no page this test suite actually covers currently fails on them), but
 flagged back to the user as a likely-related follow-up rather than
 silently left for a future session to rediscover from scratch.
@@ -4073,7 +4073,7 @@ many (admin-adjustable), and images added to the already-seeded
 library. The last part needed an actual source: no exercise photos
 existed anywhere in the repo, and downloading arbitrary gym photos off
 the web wasn't something to do without a licensing answer, so asked
-the user directly rather than guessing — they asked for freely-usable
+the user directly rather than guessing - they asked for freely-usable
 images to be found rather than a build-the-feature-only or hand-drawn-
 placeholder option.
 
@@ -4088,24 +4088,24 @@ full unfiltered list every time), so matched all 374 of wger's own
 images against this project's 28 seeded exercise names by pulling the
 full image list plus each one's English `exercise-translation` name
 and fuzzy-matching client-side instead. Got a clean single-image match
-for 27 of 28 — "Side Plank" had nothing suitable, shipped without one
+for 27 of 28 - "Side Plank" had nothing suitable, shipped without one
 rather than forcing a bad match. Downloaded, resized outliers (one
 was 2560x1664 and 6.4MB; Pillow already an undeclared transitive
 dependency via `qrcode[pil]`, now pinned directly since this app's own
-code — `ImageField` — relies on it too), and spot-checked every one of
+code - `ImageField` - relies on it too), and spot-checked every one of
 the 27 against a contact-sheet image before committing to the match,
 catching one bad pick along the way (an "Ab Wheel Rollout" hit that
 resolved to a generic app-icon thumbnail, not an actual exercise
-photo — a second image on that same wger exercise was the real one).
+photo - a second image on that same wger exercise was the real one).
 
-`ExerciseImage` (a gallery, not a single field — ordered, each with an
+`ExerciseImage` (a gallery, not a single field - ordered, each with an
 optional caption) and a new `ExerciseImageSettings` singleton
 (`max_images_per_exercise`, same singleton pattern as `apps.core.
 models.BackupSettings`) enforce the cap in `ExerciseImage.clean()`,
 reached automatically through `ModelForm._post_clean()` on both the
-admin's inline formset and the new user-facing upload form — one rule,
+admin's inline formset and the new user-facing upload form - one rule,
 not duplicated per entry point. A separate `Exercise.instructions`
-text field was added alongside it mid-session, once asked for — kept
+text field was added alongside it mid-session, once asked for - kept
 distinct from the existing `description` (a short blurb of what the
 movement is, not how to perform it) rather than overloading that
 field, and rendered together with the image gallery under one
@@ -4115,12 +4115,12 @@ answer the same question in different forms.
 The image-seeding data migration surfaced a real gap in this
 project's own test isolation: unlike a migration that only writes DB
 rows, one that writes real files under `MEDIA_ROOT` (a first for this
-codebase — no `ImageField`/`FileField` existed anywhere before)
+codebase - no `ImageField`/`FileField` existed anywhere before)
 duplicated all 27 files on disk on every from-scratch test database
 build, since nothing redirected `MEDIA_ROOT` away from the real,
 shared media directory the way individual filesystem-touching tests
 already do via `override_settings`/`TemporaryDirectory` (`apps.core.
-tests`'s own pattern) — a migration runs before any single test's own
+tests`'s own pattern) - a migration runs before any single test's own
 setup gets a chance to apply that. Caught by literally running the
 suite twice and watching `exercise_images/` double in size instead of
 staying put. Fixed at the settings level instead of per-test:
@@ -4130,29 +4130,29 @@ can't recur for any future `FileField` either.
 
 Also shipped: `manage.py runserver` outside Docker had no route to
 `MEDIA_URL` at all (production/dev-in-Docker both rely on nginx's own
-`/media/` `alias`, which doesn't exist there) — added `config.urls`'s
+`/media/` `alias`, which doesn't exist there) - added `config.urls`'s
 own `DEBUG`-only `static()` fallback, the same thing `STATIC_URL`
 already didn't need since `runserver` serves that straight from
 `STATICFILES_DIRS`. One regression caught by the existing translation
 test suite before it shipped: the new gallery's `alt` text fell back
 to the exercise's raw stored English name instead of running it
 through `{% trans %}` like every other display of that name already
-does — found immediately by `ExerciseContentTranslationTests`, not
+does - found immediately by `ExerciseContentTranslationTests`, not
 discovered later against a real non-English user.
 
 Also requested during the same session: all bundled seed images
 normalized to plain JPEG (several turned out to actually be PNG/WebP
-despite their own filename's extension — `manifest.json`'s `filename`
+despite their own filename's extension - `manifest.json`'s `filename`
 now always ends `.jpg`, while `source_url` keeps each image's real
-original extension for provenance) — and the exercise pages still
+original extension for provenance) - and the exercise pages still
 showed no *written* instructions at all, since `Exercise.instructions`
 had only ever been added as an empty field, never actually populated
 for the seeded library. Fixed by pulling the same wger.de exercise
 database's own English `exercise-translation` text for each of the 27
 exercises already carrying an image. Two of wger's own API filter
 query params (`language`, `search`/`name`) turned out to silently do
-nothing server-side — confirmed by fetching with and without them and
-comparing identical result counts — so both the earlier image name-
+nothing server-side - confirmed by fetching with and without them and
+comparing identical result counts - so both the earlier image name-
 matching and this text fetch actually filter by language/name client-
 side in Python instead of trusting the query string. Reviewing all 27
 by hand surfaced two distinct problems worth fixing rather than
@@ -4161,7 +4161,7 @@ instructions (one exercise's entire "how to" was "To do slowly, tempo
 is 4010"), and two others described the wrong equipment for how this
 project's own seed data configures that exercise (a dumbbell Hip
 Thrust/Face Pull description on what's seeded here as barbell/cable
-respectively) — both classes rewritten from scratch rather than
+respectively) - both classes rewritten from scratch rather than
 shipped as misleading or useless, and left uncredited since it's this
 project's own text, not wger's. `Exercise.instructions_attribution`
 (new field, same reasoning as `ExerciseImage.attribution`) carries the
@@ -4170,16 +4170,16 @@ credit line for the ones actually kept from wger's own community text.
 Asked directly, afterward, to run `makemessages` and verify every
 locale is fully translated. Followed docs/ARCHITECTURE.md's own
 documented workflow (`makemessages` for all six locales, then check
-`msgfmt --statistics` per locale) — but that same doc's own
+`msgfmt --statistics` per locale) - but that same doc's own
 "Internationalization" section already records a real prior incident:
 regenerating every locale in one pass previously wiped several
 already-translated strings down to empty via a bad fuzzy-match, caught
 only by a careful diff. Rather than trust that it wouldn't recur, this
 run's own diff was verified programmatically (`polib`, comparing every
 msgid's `msgstr` against the pre-regeneration copy from git) rather
-than eyeballing a multi-thousand-line diff — confirmed zero regressions
+than eyeballing a multi-thousand-line diff - confirmed zero regressions
 before touching anything further. `makemessages` surfaced 29 new/fuzzy
-msgids — 8 from this session's own new exercise-image/instructions UI,
+msgids - 8 from this session's own new exercise-image/instructions UI,
 the other 21 an unrelated, pre-existing backlog (apps.social's friend/
 group notification muting, Web Push permission prompts, backup
 encryption warnings) that had apparently never been run through
@@ -4188,13 +4188,13 @@ English this whole time with no test or CI check to catch it. Hand-
 translated all 29 across all five real locales (fi/sv/ru/it/et) rather
 than only the 8 actually asked for, since "everything translated" was
 the literal ask and the gap was now visible either way. Also brought
-`locale/en/LC_MESSAGES/django.po` itself up to parity — it turned out
+`locale/en/LC_MESSAGES/django.po` itself up to parity - it turned out
 1014 entries behind the other five (which were already at 1220),
 every one of its own real entries a pure identity mapping (`msgstr ==
 msgid`, confirmed by checking all 956 already-filled ones before
 assuming this), so the remaining 278 were filled the same mechanical
 way. That pass's own naive fix (blanket-clearing the `fuzzy` flag)
-briefly corrupted the file — four plural entries had been fuzzy-
+briefly corrupted the file - four plural entries had been fuzzy-
 matched against a *different* string's plural forms entirely (e.g.
 "%(counter)s unread" inheriting "%(counter)s day"/"...days"), and
 stale `#| msgid_plural` "previous string" comments left on now-
@@ -4211,9 +4211,9 @@ statistics) surfaced one more real, pre-existing bug: `ExerciseForm`'s
 muscle-group checkboxes and equipment dropdown rendered in raw English
 even for a Finnish-language user, despite `MuscleGroup`/`Equipment`
 names being seeded, translated content. Cause was the same "gotcha"
-`docs/ARCHITECTURE.md` already documents for exactly this situation —
+`docs/ARCHITECTURE.md` already documents for exactly this situation -
 `ModelChoiceField`/`ModelMultipleChoiceField` render each option via
-`str(obj)` internally, bypassing `{% trans %}` entirely — but
+`str(obj)` internally, bypassing `{% trans %}` entirely - but
 `ExerciseForm` had simply never been given the `label_from_instance`
 override `apps.programs.forms.ExercisePrescriptionForm`/`apps.
 workouts.forms.PerformedExerciseAddForm` already use for their own
@@ -4221,7 +4221,7 @@ exercise pickers. Fixed the same way. One remaining gap found but left
 alone as genuinely out of scope: the equipment dropdown's own blank
 "- Select an option -" placeholder is Django 6.1's own new built-in
 `BLANK_CHOICE_LABEL` string, translated (or not) by Django's own
-upstream locale files, not this project's `locale/` — not something a
+upstream locale files, not this project's `locale/` - not something a
 project-level `.po` edit can fix.
 
 ## Auditing every form for iOS Safari's auto-zoom-on-focus
@@ -4233,7 +4233,7 @@ already named this exact threshold). Root cause: `.set-field` (the
 compact weight/reps/RPE/notes label wrapping each input in both
 `_train_panel.html` and `_performed_exercise_card.html`) sets a smaller
 `font-size` meant for its own label text, but `input`/`select`/
-`textarea` all `font: inherit` (this file's own global reset) — with
+`textarea` all `font: inherit` (this file's own global reset) - with
 no reset back to 16px inside `.set-field`, every field nested in it
 inherited that smaller size too. Asked to then audit literally every
 form in the app for the same class of bug, not just this one instance.
@@ -4247,7 +4247,7 @@ sweep of ~20 pages across every app measuring `getComputedStyle(...)
 trusting the CSS source alone. Found and fixed one more real instance
 beyond `.set-field`: `.invite-link-row input` (the group invite-link
 field) and `templates/api/key_created.html`'s new-key `<textarea>`
-both use `font-family: monospace` — and both were still computing
+both use `font-family: monospace` - and both were still computing
 under 16px despite `.invite-link-row input`'s own code comment
 explicitly (and, it turns out, wrongly) claiming inheritance alone was
 enough. The actual cause is a genuine browser quirk, not a CSS
@@ -4255,13 +4255,13 @@ authoring mistake as such: browsers keep a separate, smaller default
 font-size specifically for the generic `monospace` family (Chrome's
 own "fixed-width font" preference, 13px by default) and re-apply it
 over an *inherited* size the instant an element's own `font-family`
-resolves to that generic keyword — even though a `font-size` set
+resolves to that generic keyword - even though a `font-size` set
 directly on that same element (not just inherited) does still win.
 Confirmed by toggling each property live in a real browser via
 Playwright rather than guessing from the CSS alone. Fixed both by
 setting `font-size` explicitly wherever `font-family: monospace`
 appears on a real form control, and corrected the misleading comment.
-No other instance of either bug class found — every other font-size
+No other instance of either bug class found - every other font-size
 in the stylesheet under 16px belongs to genuinely non-input content
 (tags, timestamps, muted captions, ...) that was never wrapping a
 field to begin with.
@@ -4273,42 +4273,42 @@ algorithmic complexity. Read through every `views.py`/`services.py`
 `for` loop across every app checking for a query fired per iteration,
 and every list view's queryset for missing `select_related`/
 `prefetch_related` against what its own template actually accesses per
-row. Turned up mostly a well-optimized codebase — several spots
+row. Turned up mostly a well-optimized codebase - several spots
 already carry their own comments documenting a *prior* N+1 fix
 (`apps.social.services.friends_of`/`unread_group_message_counts_by_group`,
 `apps.programs.views.ProgramListView`, `apps.nutrition.views.
-RecipeListView`) — plus a couple of small, low-priority, already-
+RecipeListView`) - plus a couple of small, low-priority, already-
 bounded ones left alone (`apps.analytics.achievements.
 recently_active_users` does one query per opted-in user rather than
 one window-function query for all of them; `apps.measurements.views.
 MeasurementTypeListView` does the same per measurement type, unlike
 its sibling `apps.activities.views.ActivityTypeListView`, which
-already avoids exactly this with a `Count` annotation) — both bounded
+already avoids exactly this with a `Count` annotation) - both bounded
 by a small, roughly-fixed N (opted-in users / measurement types on a
 self-hosted instance), not worth the added complexity yet per
 docs/ANALYTICS.md's own "start simple, add more once profiling
 demonstrates a need."
 
 One real find, approved to fix immediately: `apps.records.services.
-check_and_record_prs` — the PR-detection entry point, run synchronously
+check_and_record_prs` - the PR-detection entry point, run synchronously
 on *every single set logged*, checking it against `eligible_sets`
-(that user's entire history for that exercise, unbounded — a
+(that user's entire history for that exercise, unbounded - a
 long-time user's favorite lift can accumulate thousands of sets over
 years). Two of its checks, set-volume and session-volume, pulled every
 eligible set's `(weight, reps)` into Python to multiply and compare by
-hand — O(H) row transfer and computation on every set logged, for the
+hand - O(H) row transfer and computation on every set logged, for the
 whole lifetime of that exercise, not just the new set. Rewrote both to
 compute `Max`/`Sum` of `weight*reps` in the database via a shared
-`F()`-expression (`_VOLUME_EXPRESSION`) instead — O(1) round trip
+`F()`-expression (`_VOLUME_EXPRESSION`) instead - O(1) round trip
 regardless of history size. A third check (estimated-1RM) stays
 Python-side deliberately, not fixed: `docs/PR_SYSTEM.md` explicitly
 requires the 1RM formula stay swappable behind `OneRepMaxCalculator`,
 which a raw SQL expression can't be without hard-coding each formula's
-own arithmetic into the query — a real design tradeoff, not an
+own arithmetic into the query - a real design tradeoff, not an
 oversight, so left alone. Verified the rewrite is bit-for-bit identical
 to the old Python computation (compared both against the same decimal-
 weight test data live before trusting it) rather than just checking it
-compiles, and confirmed against `apps.records.tests` — several existing
+compiles, and confirmed against `apps.records.tests` - several existing
 tests already exercise cross-session volume comparison in detail
 (`test_a_later_session_with_more/less_volume_...`) and all still pass
 unchanged.
@@ -4316,7 +4316,7 @@ unchanged.
 ### Live barcode scanner never detecting anything on the ZXing fallback path
 
 Reported as "camera opens, never detects" on a non-Chromium browser
-(the native `BarcodeDetector` path was unaffected — the report was
+(the native `BarcodeDetector` path was unaffected - the report was
 first thought to also involve the "Scan barcode" button not rendering
 at all, but that turned out to be a separate, momentary observation;
 the button showed fine, it just never successfully scanned). Root-
@@ -4329,18 +4329,18 @@ Isolated layer by layer: the video element itself played the fake feed
 correctly (`readyState: 4`, not paused, correct dimensions); `window.
 ZXing` loaded correctly; ZXing's own `decodeFromImageElement` decoded
 the identical barcode from a static image with no issues at all. Only
-the live-video path never fired — `static/js/barcode-scanner.js` called
+the live-video path never fired - `static/js/barcode-scanner.js` called
 `detector.decodeFromVideoElement(video, callback)` expecting a
 continuous scan loop with a `(result, err) => {}` callback, mirroring
 the native `BarcodeDetector`-less branch's own loop. But the vendored
-ZXing build's `decodeFromVideoElement(t)` only takes one parameter — a
-single one-shot decode that returns a Promise — and silently ignores
+ZXing build's `decodeFromVideoElement(t)` only takes one parameter - a
+single one-shot decode that returns a Promise - and silently ignores
 whatever second argument gets passed to it; nothing was actually wrong
 with the camera, the video feed, or ZXing's decoding itself, the
 callback was simply dead code from the moment this feature was
 written. The continuous variant with real callback support is a
 separate method, `decodeFromVideoElementContinuously(video, callback)`
-— confirmed against the same fake-camera harness that swapping to it
+- confirmed against the same fake-camera harness that swapping to it
 fixes live decoding end-to-end, including through the real "Scan
 barcode" button and camera modal (not just an isolated ZXing call),
 with the fake barcode value landing correctly in the food-search box.
@@ -4351,31 +4351,31 @@ Requested: the food diary's meal slots should offer a snack between
 breakfast and lunch and between lunch and dinner, not just after
 dinner, and a place to log food that doesn't fit any named meal at
 all. `MealSlot` (`apps.nutrition.models`) already supports exactly
-this shape — `owner=None` system rows plus a per-user `order` a
+this shape - `owner=None` system rows plus a per-user `order` a
 migration seeds once (`0002_seed_meal_slots`) and a diary form/page
 just lists dynamically (`services.visible_meal_slots`, the
 `{% for slot in meal_slots %}` loop in `templates/nutrition/
-diary_day.html`) — so this was a seed-data change, not a schema or
+diary_day.html`) - so this was a seed-data change, not a schema or
 view change. `0013_add_more_default_meal_slots` reorders the four
 original system slots and inserts "Morning snack" (order 1, between
 Breakfast and Lunch), "Afternoon snack" (order 3, between Lunch and
 Dinner), and "Other" (order 6, after Evening snack) via `update_or_
 create` keyed on `(name, owner=None)`, so it's safe to run against an
 install that already has the original four seeded. `DiaryEntry.
-meal_slot` was already a required FK with no null option — every
-entry has always had to pick *some* slot — so "Other" just gives that
+meal_slot` was already a required FK with no null option - every
+entry has always had to pick *some* slot - so "Other" just gives that
 existing requirement an honest option for food that isn't really a
 breakfast/lunch/dinner/snack, rather than forcing it into the nearest
 approximate meal.
 
 Extended `apps.nutrition.i18n_content.MEAL_SLOT_NAMES` with the three
 new names (see "Internationalization" in `docs/ARCHITECTURE.md` for
-why seeded content needs its own `gettext_lazy` list — `makemessages`
+why seeded content needs its own `gettext_lazy` list - `makemessages`
 can't discover a runtime `{{ slot.name }}` on its own) and re-ran
 `makemessages` for all six locales. "Other" already existed verbatim
 as a msgid from `apps.activities.i18n_content`/`apps.core.models`, so
 every locale picked up an existing human translation for free; only
-"Morning snack"/"Afternoon snack" needed a real translation pass —
+"Morning snack"/"Afternoon snack" needed a real translation pass -
 `msgmerge`'s fuzzy match had guessed "Evening snack"'s translation for
 both, which would have shipped wrong if left unreviewed, exactly the
 failure mode `docs/ARCHITECTURE.md`'s i18n workflow section warns
@@ -4399,12 +4399,12 @@ starting with the app's own existing look as the default and adding
 
 Two independent `User` fields, not one, once the second request made
 clear a single field couldn't carry both axes: `theme`
-(`apps.accounts.models.Theme` — `default`/`nordic`/`vaporwave`/`earth`/
-`zen`) picks the palette, `appearance` (`Appearance` —
+(`apps.accounts.models.Theme` - `default`/`nordic`/`vaporwave`/`earth`/
+`zen`) picks the palette, `appearance` (`Appearance` -
 `dark`/`light`/`auto`) picks that palette's dark or light half. Both
 resolve into `data-theme`/`data-appearance` attributes on
 `templates/base.html`'s `<html>` tag, each omitted for its own "this
-is what happens with nothing set" value (`default`, `auto`) — `auto`
+is what happens with nothing set" value (`default`, `auto`) - `auto`
 specifically renders no attribute at all and leans on a plain
 `@media (prefers-color-scheme: light)` rule in `static/css/base.css`,
 so it tracks a live OS-level light/dark change with zero JavaScript
@@ -4412,13 +4412,13 @@ and no flash-of-wrong-theme on load, since the resolution happens
 server-side in the same response as everything else on the page.
 
 Went through two designs before landing here. First pass shipped
-`ThemePreference` (`dark`/`light`/`auto`) as a single field — reasonable
+`ThemePreference` (`dark`/`light`/`auto`) as a single field - reasonable
 for "add a light/dark/auto setting" read on its own, but the very next
 message asking for named themes each with their own dark/light variant
 made a single flat enum unworkable (there's no clean way to fit
 "Nordic, but light" into one dark/light/auto axis without either a
 combinatorial `nordic-light`/`nordic-dark`/... enum or two fields).
-Caught before anything shipped past the local dev database — the
+Caught before anything shipped past the local dev database - the
 `0016_user_theme` migration this first pass produced was deleted and
 regenerated as `0016_user_appearance_user_theme` rather than layered
 under a rename migration, since nothing had been pushed yet; the stray
@@ -4428,31 +4428,31 @@ COLUMN`, a matching `DELETE FROM django_migrations`) before
 re-migrating cleanly.
 
 Every one of the four new palettes' ~11 `--color-*` custom properties
-(`static/css/base.css`) — both the dark and light half — was contrast-
+(`static/css/base.css`) - both the dark and light half - was contrast-
 checked against WCAG AA's 4.5:1 normal-text minimum before shipping,
 the same rigor `[data-theme="light"]`'s original comment already
 applied to the very first light palette: computed relative luminance
 per the WCAG formula for text/muted/accent/danger/success/warning/gold
 against both `--color-bg` and `--color-surface`, in a throwaway Python
 script, not eyeballed. Several first-pass colors failed on the first
-try (Vaporwave's light half worst of all — pastel enough to look
+try (Vaporwave's light half worst of all - pastel enough to look
 right, several pairings well under 3:1) and were darkened until every
-pairing cleared 4.5:1 without losing each theme's identity — Nordic
+pairing cleared 4.5:1 without losing each theme's identity - Nordic
 cool blue-gray, Vaporwave magenta/cyan-on-purple (and a pastel-lavender
 light half), Earth warm terracotta/brown, Zen muted sage-green.
 
-Each theme is a literal three-block shape in base.css — `[data-theme="X"]`
+Each theme is a literal three-block shape in base.css - `[data-theme="X"]`
 (dark, the default the moment that theme is selected, covering both an
 explicit dark choice and "auto" with no light preference),
 `[data-theme="X"][data-appearance="light"]` (explicit light), and the
 same declarations again inside the prefers-color-scheme media query,
-scoped `:not([data-appearance])` (light via "auto") — chosen over any
+scoped `:not([data-appearance])` (light via "auto") - chosen over any
 shared/mixin approach since this is plain CSS with no preprocessor;
 adding a sixth theme later is one more `Theme` value plus one more
 copy of that same three-block shape, never a schema change. A
 `<meta name="theme-color">` (browser chrome, PWA splash) can't read a
-CSS custom property, so `apps.accounts.models.THEME_BG_COLORS` — a
-plain dict, each theme's dark/light `--color-bg` — backs a new
+CSS custom property, so `apps.accounts.models.THEME_BG_COLORS` - a
+plain dict, each theme's dark/light `--color-bg` - backs a new
 `apps.core.context_processors.theming` context processor instead,
 kept in sync with base.css by hand since nothing lets the two share a
 single source.
@@ -4462,13 +4462,13 @@ tests added for the two model fields/profile form/base.html rendering:
 drove a real logged-in session through Playwright against the running
 dev container for all eight dark/light combinations of the four new
 themes plus the existing default, screenshotting the food diary each
-time and reading every one back before trusting it. Hit — and this
-time actually caught before believing a screenshot — a silent failure
+time and reading every one back before trusting it. Hit - and this
+time actually caught before believing a screenshot - a silent failure
 mode in that verification loop itself: a retry-on-failure `bash` loop
 around Playwright's own occasionally-flaky `page.screenshot()` call
 copied whichever *stale* screenshot file happened to already exist at
 its fixed output path when every retry attempt failed, rather than
-erroring — so a theme whose screenshot attempts all failed silently
+erroring - so a theme whose screenshot attempts all failed silently
 inherited the previous theme's image under its own filename instead of
 being reported missing. Rewritten to delete the target file before
 each attempt and verify it was actually recreated before copying it
@@ -4481,8 +4481,8 @@ Requested: the dashboard/Analytics "Recent PRs" listing should group by
 exercise instead of showing one card per PR, with everything visible
 directly and a tap for more detail. Root cause of the old shape:
 `PersonalRecord` (`apps.records`) logs one immutable row per
-`record_type` hit — max weight, estimated 1RM, set volume, session
-volume, a rep-specific PR per rep count, a plain rep PR — so a single
+`record_type` hit - max weight, estimated 1RM, set volume, session
+volume, a rep-specific PR per rep count, a plain rep PR - so a single
 good session could produce several rows for the *same* exercise, and
 `apps.analytics.services.pr_history` (a flat, most-recent-first list)
 rendered each one as its own near-identical card. Worst case seen live
@@ -4490,11 +4490,11 @@ on the Analytics page: fifteen rows, all for one exercise, as fifteen
 cards.
 
 Added `pr_history_grouped_by_exercise` alongside the existing
-`pr_history` (kept as-is — still used directly by one existing test and
+`pr_history` (kept as-is - still used directly by one existing test and
 by nothing that needs pre-grouped data) rather than changing what
 `pr_history` returns: groups the same rows via a plain dict keyed by
 `exercise_id`, relying on dict insertion order rather than a second
-sort — since the input is already most-recent-first, the first row
+sort - since the input is already most-recent-first, the first row
 seen for a given exercise is, by construction, that exercise's own
 most recent, so the resulting group order falls out for free. `limit`
 still caps the underlying row count, not the group count, deliberately:
@@ -4507,27 +4507,27 @@ One new partial, `templates/records/_pr_exercise_group.html`, shared by
 `templates/core/dashboard.html` (several stacked inside its existing
 single wrapping card, a `.prescription-list`-style border-top divider
 between them) and `templates/analytics/dashboard.html` (one top-level
-`.card` per group, wrapping the same include) — written card-agnostic
+`.card` per group, wrapping the same include) - written card-agnostic
 on purpose so both call sites could keep their own existing rhythm
 (one card total vs. one card per item) instead of forcing a single
 shared shape on both. Each record type still renders directly, as
-before ("all the info in the box" — asked for explicitly); an Alpine
+before ("all the info in the box" - asked for explicitly); an Alpine
 `x-data="{ open: false }"` toggle (the exact `@click`/`:aria-expanded`/
 `x-show` shape `templates/nutrition/diet_plan_detail.html`'s day-group
 disclosure already established) reveals, per record, its source set's
-weight × reps and achieved date — context the model's own docstring
-already called out as the right thing to show ("Bench Press — 100 kg
+weight × reps and achieved date - context the model's own docstring
+already called out as the right thing to show ("Bench Press - 100 kg
 × 5") but that nothing rendering `pr_history` actually did until now.
 
 Deliberately left out of the expanded detail: `PersonalRecord`'s
-`.previous_value` — read from `apps.records.services.format_previous_value`,
+`.previous_value` - read from `apps.records.services.format_previous_value`,
 already used by the "New PR" toast (`templates/records/_pr_toasts.html`)
-— because that attribute is transient, set only at the moment
+- because that attribute is transient, set only at the moment
 `apps.records.services.check_and_record_prs` creates a fresh row, and
 never persisted. A row re-fetched later from the database the way
 `pr_history` does (the entire point of a "recent PRs" *listing*, as
 opposed to the toast that fires once right after logging) simply
-doesn't carry it — checked before wiring it up, rather than shipping a
+doesn't carry it - checked before wiring it up, rather than shipping a
 "previous:" line that would silently never render anything.
 
 Verified with three new service tests (grouping several record types
@@ -4535,7 +4535,7 @@ for one exercise into one group; group order following each exercise's
 own most recent record, not creation order or alphabetical; `limit`
 capping rows rather than groups) plus a template regression test
 asserting an exercise with three record types renders its name exactly
-once — the previous shape would have rendered it three times. All
+once - the previous shape would have rendered it three times. All
 pass, alongside the full existing `apps.analytics`/`apps.core` suites
 unchanged. Confirmed visually too: real dashboard and Analytics pages
 in a running dev container, both collapsed and expanded, including the
@@ -4544,7 +4544,7 @@ place.
 
 Two follow-up requests refined this further, both acted on the same
 day. First: each exercise's box didn't actually look like the rest of
-the app — the dashboard nested several of them, each a full-width
+the app - the dashboard nested several of them, each a full-width
 flex row with its own bold heading, inside one shared wrapping
 "Recent PRs" card, which read as a distinct new widget rather than
 "a card like the other cards." Fixed by giving `_pr_exercise_group.html`
@@ -4552,11 +4552,11 @@ its own `.card` per exercise (matching what the Analytics page already
 did) on both pages, and swapping the dashboard's wrapping `<strong>`
 label for the same muted, uppercase `<h2>` eyebrow the Analytics page
 and `templates/programs/program_list.html` already use ahead of a list
-of cards — one heading shape for "a label above several cards,"
+of cards - one heading shape for "a label above several cards,"
 instead of two.
 
 Second: even collapsed, a card still showed *every* record type hit
-in range directly — fine for one or two, but an exercise with a good
+in range directly - fine for one or two, but an exercise with a good
 session could rack up a max weight, an estimated 1RM, both volumes,
 and five separate rep-specific PRs, all listed with nothing collapsed.
 Asked to show only the "most important" ones on the card face. Rather
@@ -4567,19 +4567,19 @@ primary `<dl>`, with rep-specific and plain rep PRs broken out into
 their own separate, secondary sections below. `ExercisePRGroup` now
 carries `primary_records`/`secondary_records` split on exactly that
 same `PRType` boundary (`_PRIMARY_RECORD_TYPES`) instead of one flat
-list — the four headline types render directly as before; rep-specific/
+list - the four headline types render directly as before; rep-specific/
 rep PRs move behind the expand toggle entirely, not just their
 weight×reps/date detail. One edge case the split introduces on its
 own: an exercise whose only hit in range is a secondary type (say, a
 single rep-specific PR, no max weight or volume that day) would
-otherwise collapse to a card with nothing but a name and a chevron —
+otherwise collapse to a card with nothing but a name and a chevron -
 handled by falling back to treating that exercise's secondary records
 as primary when there are no real primary ones, so a card is never
 emptier than "at least one figure showing."
 
 Two more service tests cover the split itself (rep-specific/rep PRs
 sorted into `secondary_records`; an exercise with no primary-type hit
-falling back to showing its secondary ones directly) — all pass,
+falling back to showing its secondary ones directly) - all pass,
 alongside the rest of `apps.analytics`/`apps.core` (74 tests). Verified
 visually again with the same real dashboard/Analytics pages: a card
 now shows exactly its headline figures collapsed, with every
@@ -4588,7 +4588,7 @@ rep-specific PR staying hidden until expanded.
 ## Food diary: wrong meal preselected on "+ Add food", plus a Food detail page
 
 Reported: tapping "+ Add food" under one meal (Dinner, say) landed on
-the add-food page with a *different* meal (Breakfast) preselected —
+the add-food page with a *different* meal (Breakfast) preselected -
 described as having repeatedly logged food to the wrong meal because
 of it. Root-caused to two independent gaps that only mattered
 together: `templates/nutrition/diary_day.html`'s per-meal "+ Add food"
@@ -4597,11 +4597,11 @@ separately, `DiaryAddEntryView.get()`/`.post()`'s invalid-form
 re-render never read or forwarded a `meal_slot` value at all, so
 `diary_add_entry.html`'s shared Alpine `mealSlot` state
 (`x-data="{ mealSlot: '{{ meal_slots.0.pk }}' }"`) had nothing to
-initialize from besides always the first meal slot in `order` —
+initialize from besides always the first meal slot in `order` -
 Breakfast. Fixed by threading a `selected_meal_slot` value through
 both the link (`&meal_slot={{ slot.pk }}`) and the view (read from
 `request.GET`/`request.POST` as appropriate, falling back to the
-first slot only when truly nothing was specified — e.g. arriving from
+first slot only when truly nothing was specified - e.g. arriving from
 somewhere that isn't a specific meal card). Covered by four new tests:
 the query param preselecting the right meal, no param falling back to
 the first slot, an invalid-form resubmit preserving whatever was
@@ -4611,11 +4611,11 @@ link carrying the right `meal_slot` per card.
 Same session, two follow-up requests:
 
 **Reorder "Add food."** Search/barcode scan sat below "Most used" on
-`diary_add_entry.html` (unlike its two sibling reuse sites — the same
+`diary_add_entry.html` (unlike its two sibling reuse sites - the same
 `_most_used_foods.html`/search partials also back
 `recipe_ingredient_form.html`/`diet_plan_meal_item_form.html`, which
 keep "Most used" first). Asked to put search above it here
-specifically — search/barcode is the more frequent path on this one
+specifically - search/barcode is the more frequent path on this one
 page. Simple reorder, no logic change; updated
 `_most_used_foods.html`'s own comment to describe the (now
 per-page-different) ordering honestly instead of asserting one
@@ -4623,12 +4623,12 @@ universal shape.
 
 **Every food/recipe name should link somewhere.** Broader ask:
 wherever a food or recipe's name is shown, it should be tappable
-through to that item's own page — called out specifically that "Most
+through to that item's own page - called out specifically that "Most
 used" cards on the add-food page were plain text with nowhere to go.
 Recipes already had this (`RecipeDetailView`); `Food` had no detail
-view *at all* — only a list, a create form, and search/import, no way
+view *at all* - only a list, a create form, and search/import, no way
 to open a single food and see its own nutrition facts. Added
-`FoodDetailView` (`/nutrition/foods/<pk>/`, read-only — `Food` has no
+`FoodDetailView` (`/nutrition/foods/<pk>/`, read-only - `Food` has no
 update view yet either, so this only ever needed the same
 `Q(owner=request.user) | Q(owner__isnull=True)` visibility
 `FoodListView`/`_viewable_recipe_or_404` already establish, not an
@@ -4636,12 +4636,12 @@ edit permission story) and a `food_detail.html` modeled directly on
 `recipe_detail.html`'s own nutrition-facts table. Then linked every
 plain-text food/recipe name found across the app to it:
 `food_list.html`, `_most_used_foods.html`, `_food_search_results.html`
-(only its already-imported "local" results — an OpenFoodFacts result
+(only its already-imported "local" results - an OpenFoodFacts result
 not yet imported has no `Food` row and nothing to link to),
 `recipe_detail.html`'s own ingredient list, `_diet_plan_meal_card.html`,
 `diary_day.html`, `diary_entry_form.html`'s and
 `recipe_ingredient_edit_form.html`'s own `<h1>`, and the nutrition
-dashboard's "today's diet plan" preview — eight spots in total.
+dashboard's "today's diet plan" preview - eight spots in total.
 `recipe_list.html` was left alone: it already has a working "Open"
 button per recipe, so nothing there was actually broken.
 
@@ -4649,7 +4649,7 @@ Verified with new `FoodDetailView` tests (shows the food's own
 figures; a shared food is viewable; another user's private food and
 an inactive food both 404 the same way `FoodListView` already filters
 them out; requires login) plus two link-presence regression tests
-(`food_list.html`, "most used") — all pass, alongside the full
+(`food_list.html`, "most used") - all pass, alongside the full
 `apps.nutrition` suite (351 tests) unchanged. Confirmed visually in a
 running dev container: the add-food page for a specific meal now
 preselects that meal, search sits above "most used," a most-used
@@ -4659,17 +4659,17 @@ NOVA badge, and the full nutrition table.
 ## Double-tap-to-zoom on a food/recipe link, and the Foods page catching up
 
 Reported: double-tapping a food name on the Foods page zoomed the
-page in on iOS Safari — this app already has a site-wide fix for
+page in on iOS Safari - this app already has a site-wide fix for
 exactly that class of bug (`touch-action: manipulation` on a
 universal `*` selector, base.css's own comment explains why it has to
 be that broad), so the regression had to be something specific to the
 food-name links just added. Confirmed via computed styles
 (`getComputedStyle` on the link and every ancestor, through a real
 Chromium instance) that `touch-action: manipulation` genuinely was
-already in effect everywhere — so the `*` rule wasn't the gap.
+already in effect everywhere - so the `*` rule wasn't the gap.
 Root cause instead: these links were plain default `display: inline`,
 unlike every other tappable link already in the app
-(`.button-secondary` is `inline-flex`, `.card-link` is `block`) —
+(`.button-secondary` is `inline-flex`, `.card-link` is `block`) -
 WebKit doesn't reliably honor `touch-action` on a plain non-replaced
 inline element, a long-standing engine quirk the touch-action spec
 itself doesn't carve out. Fixed with a new `.inline-item-link` class
@@ -4684,7 +4684,7 @@ specifically:
 type-and-submit `<form>` from before this app grew live HTMX search
 + barcode scanning everywhere else. Swapped for the identical
 box `food_browse.html` already uses (`mode=browse` against the same
-`FoodSearchResultsView`) — `apps.nutrition.services.search_foods`
+`FoodSearchResultsView`) - `apps.nutrition.services.search_foods`
 already handles a barcode-shaped query specially, so no server-side
 change was needed, only wiring the existing pieces together on one
 more page. Covered by a `test_the_camera_barcode_scanner_is_wired_up`
@@ -4692,13 +4692,13 @@ test mirroring the one already covering `diary_add_entry.html`.
 
 **Every food/recipe name should link somewhere.** The same "make it
 tappable" principle applied to eight more spots found across the app
-— `food_list.html`, `_most_used_foods.html`, `_food_search_results.html`
-(only its already-imported "local" results — nothing to link to for
+- `food_list.html`, `_most_used_foods.html`, `_food_search_results.html`
+(only its already-imported "local" results - nothing to link to for
 an OpenFoodFacts result not yet imported), `recipe_detail.html`'s own
 ingredient list, `_diet_plan_meal_card.html`, `diary_day.html`,
 `diary_entry_form.html`'s and `recipe_ingredient_edit_form.html`'s
 own `<h1>`, and the nutrition dashboard's "today's diet plan"
-preview. `recipe_list.html` was left alone — it already has a working
+preview. `recipe_list.html` was left alone - it already has a working
 "Open" button per recipe, so nothing there was actually broken.
 
 ## Foods page: pagination, OFF photos/categories, and combinable filters
@@ -4707,57 +4707,57 @@ Three more requests, same page, same session:
 
 **Pagination.** `FoodListView` already had `paginate_by` set (50,
 now 20 per the request) but the template never actually rendered any
-pagination controls — a page beyond the first was silently
+pagination controls - a page beyond the first was silently
 unreachable. Added the exact `is_paginated`/`page_obj` nav
 `_exercise_list_results.html` already uses.
 
 **Photos and categories from OpenFoodFacts.** Two new `Food` fields,
 both blank for every hand-entered food (same as `nutri_score`/
-`nova_group`): `image_url` — OFF's own `image_front_url`, linked
+`nova_group`): `image_url` - OFF's own `image_front_url`, linked
 directly rather than downloaded and re-hosted locally, since OFF
 already operates an image CDN for exactly this and mirroring it would
 mean a Pillow resize pipeline, a media-storage growth story, and a
 second staleness concern for a field that's purely decorative; and
 `categories`, OFF's raw comma-separated `categories` string verbatim.
-Both just added to `openfoodfacts.parse_product`'s returned dict —
+Both just added to `openfoodfacts.parse_product`'s returned dict -
 `services.import_or_refresh_food_from_off` already applies every key
 in that dict generically, so no change was needed there at all.
 Displayed as a `.food-thumb` (`object-fit: cover`, small and fixed-
-size — the actual "optimize the image to fit the view" ask, done via
+size - the actual "optimize the image to fit the view" ask, done via
 CSS sizing rather than a server-side resize pipeline) in the list and
 a larger `.food-detail-image` (`object-fit: contain`, so a label's
-own text/branding — often the very thing that makes a food
-recognizable — never gets cropped off) on the detail page.
+own text/branding - often the very thing that makes a food
+recognizable - never gets cropped off) on the detail page.
 
 Caught late, via a Playwright check of the actual rendered `<img>`
 (`naturalWidth`/`complete`) rather than trusting a screenshot alone:
 the image never loaded in a real browser at all, screenshot or not.
 Root cause: `apps.core.middleware.ContentSecurityPolicyMiddleware`'s
-`img-src` only ever allowed `'self'` plus `gravatar.com` — a CSP
+`img-src` only ever allowed `'self'` plus `gravatar.com` - a CSP
 violation blocks silently, no visible error, so nothing about a
 broken-looking screenshot pointed at it directly. Added
 `images.openfoodfacts.org` to `img-src`, the same deliberate,
 narrowly-scoped exception gravatar.com already is. Second, smaller
 finding from the same live check: `loading="lazy"` on the thumbnail
 never triggered a load in headless Chromium even after scrolling the
-element into view and waiting — removed rather than chased further,
+element into view and waiting - removed rather than chased further,
 since the actual performance case for lazy-loading a paginated list
 of twenty ~40px thumbnails is marginal at best.
 
 **Combinable filters/sort.** Name (`q`), category (`category`,
 `__icontains` against the raw string), and a sort
 (`name`/`created`/`category`/`calories`) with direction (`asc`/`desc`)
-— every one an independent querystring parameter that plain `AND`-
+- every one an independent querystring parameter that plain `AND`-
 filters and a single `order_by` combine, so any subset can be active
 at once and the whole state stays bookmarkable. `apps.nutrition.
 services.distinct_food_categories` (a Python-side split/dedupe over
-each visible food's raw `categories` string — not a query the
+each visible food's raw `categories` string - not a query the
 database could serve directly, since the column is free text, not a
 normalized taxonomy) backs the category dropdown's own options. Filter
 form live-updates via HTMX exactly the way `apps.exercises.views.
 ExerciseListView`/`exercise_list.html` already do it
 (`get_template_names` swapping to a bare results partial for the HTMX
-request, `hx-push-url="true"`) — the identical shape, reused rather
+request, `hx-push-url="true"`) - the identical shape, reused rather
 than invented a second time; even renamed that shared row's CSS class
 from `.exercise-filters` to the now-accurate `.filter-row` while
 touching it, since Foods was no longer the odd one out borrowing an
@@ -4765,11 +4765,11 @@ exercise-specific name.
 
 35 new/changed tests across service-level sorting/filtering, the
 image/categories OFF-parsing round trip, the CSP allowance, and the
-HTMX partial-rendering branch — all pass, alongside the full
+HTMX partial-rendering branch - all pass, alongside the full
 `apps.nutrition`/`apps.core` suites. Verified end-to-end against a
 real OpenFoodFacts barcode (Nutella, `3017620422003`) rather than a
 synthetic fixture for the final visual check: real photo, real
-Nutri-Score/NOVA grade, real (if occasionally messy — one product's
+Nutri-Score/NOVA grade, real (if occasionally messy - one product's
 own OFF data mixed locale-prefixed and clean category names) category
 list, all rendering correctly once the CSP fix landed.
 
@@ -4780,29 +4780,29 @@ one above.
 
 **Product information.** Four more `Food` fields, same blank-for-
 every-hand-entered-food pattern as `image_url`/`categories`:
-`quantity` (OFF's own free-text pack size, e.g. "400 g" — not the same
+`quantity` (OFF's own free-text pack size, e.g. "400 g" - not the same
 figure as `serving_size`, which is always per-100g/ml regardless of
 real package size, so this is pure "how much is in the package"
 context, never used in any nutrition math), `ingredients_text`,
 `labels`, and `allergens` (all OFF's own strings verbatim, including
-OFF's own occasional locale-tag prefixing like `en:gluten` — shown as
+OFF's own occasional locale-tag prefixing like `en:gluten` - shown as
 OFF provides it rather than second-guessed). All four just added to
 `openfoodfacts.parse_product`'s returned dict, same as `image_url`/
-`categories` before them — no other code needed to change to pick them
+`categories` before them - no other code needed to change to pick them
 up. `food_detail.html` shows them in a "Product information" card,
 conditionally rendered only when at least one of them (or a price,
 below) has something to show.
 
-**Prices, and a real gap in the initial ask.** Asked for directly —
+**Prices, and a real gap in the initial ask.** Asked for directly -
 "add prices from OFF, shown on the food page, in recipes, in the food
-diary" — but OFF's own core product API turned out to have **no price
+diary" - but OFF's own core product API turned out to have **no price
 field at all**, confirmed live against several real barcodes before
 writing a line of code. Checked with the user directly rather than
 building a feature against a field that doesn't exist: pricing lives
 in a distinct OpenFoodFacts project, Open Prices
 (`prices.openfoodfacts.org`), which the user chose to integrate.
 
-Open Prices has no single canonical price for a product either — every
+Open Prices has no single canonical price for a product either - every
 report is one shopper's submission, tied to one store, one day, in
 whatever currency that store trades in, and a popular product can
 easily have reports spanning half a dozen currencies. `apps.nutrition.
@@ -4810,23 +4810,23 @@ open_prices.summarize_prices` turns a barcode's most recent 20 reports
 into one figure: group by currency, keep whichever currency has the
 most reports in that sample (the one most representative of wherever
 this product is actually bought), and take that currency's *median*
-price — not a mean, since a single misread report (a shopper
+price - not a mean, since a single misread report (a shopper
 submitting a receipt total instead of a unit price, say) would skew an
 average far more than a median. `Food.price_amount`/`price_currency`/
 `price_sample_count`/`price_synced_at` cache that summary on the row,
 the same shape `off_synced_at` already established, refreshed lazily
-(`services.refresh_food_price`) rather than on a schedule — and gated
+(`services.refresh_food_price`) rather than on a schedule - and gated
 on the same `OpenFoodFactsSettings.enabled` switch OFF's own client
 already uses, since Open Prices is run by the same organization and an
 operator turning off outbound requests clearly means both.
 
-Refresh is triggered only by viewing `FoodDetailView` — the diary and
+Refresh is triggered only by viewing `FoodDetailView` - the diary and
 a recipe's ingredient list just display whatever's already cached, no
 extra lookup per appearance. `OPEN_PRICES_STALENESS_DAYS` is 7, half
 `OPENFOODFACTS_STALENESS_DAYS`'s 14: a product's nutrition facts
 barely change once published, but what it costs in a shop does, far
 more often. Shown as plain `amount currency` text (e.g. "3.21 EUR")
-everywhere a price is cached — deliberately not a currency symbol,
+everywhere a price is cached - deliberately not a currency symbol,
 since a symbol table would have to guess a locale for every ISO code
 Open Prices might return and would sometimes guess wrong, where the
 code itself never is. Mirrored the existing "Refresh selected foods
@@ -4834,7 +4834,7 @@ from OpenFoodFacts" admin action with a "Refresh selected foods'
 prices from Open Prices" one, same force-refresh-a-selection shape.
 
 Verified live against Nutella's real barcode again
-(`3017620422003`) — Open Prices returned over a hundred real price
+(`3017620422003`) - Open Prices returned over a hundred real price
 reports across several currencies, and the summarized figure matched
 manually eyeballing the raw response. Full `apps.nutrition` suite
 (including new coverage for `open_prices.py`, `refresh_food_price`,
@@ -4847,30 +4847,30 @@ Three more requests in the same session.
 
 **Two more "add food" pages had the search-below-"Most used" bug.**
 The food diary's own add-food page got this fix earlier, but
-`recipe_ingredient_form.html` and `diet_plan_meal_item_form.html` —
+`recipe_ingredient_form.html` and `diet_plan_meal_item_form.html` -
 the exact same search-then-most-used layout, used for a recipe's
-ingredients and a diet plan meal's items — still had search rendering
+ingredients and a diet plan meal's items - still had search rendering
 last. Moved both, same as the diary page.
 
 **Starting a diet plan from scratch.** `DietPlanCreateView` always
 forced `diet_builder.build_diet_plan`'s auto-suggestion into every
 meal, with no way to skip it short of deleting each suggested item by
 hand afterward. Added `DietPlanForm.start_from_scratch` (unchecked by
-default — existing behavior unchanged unless a user opts in) and
+default - existing behavior unchanged unless a user opts in) and
 `build_diet_plan(..., auto_fill=False)`: identical `DietPlan`/
 `DietPlanMeal` rows, same calorie/macro targets and per-meal shares,
 just skips `suggest_item_for_calorie_budget` entirely so every meal
 starts empty, ready for `diet_plan_meal_item_add`.
 
 **A "how much is left" totals widget**, for the same page shown right
-after creating (or opening) a plan — a small, collapsible box fixed
+after creating (or opening) a plan - a small, collapsible box fixed
 to the bottom-right corner, showing that day's calories/macros so far
 against the plan's own target and how much of each is still left.
 Building it needed restructuring how the detail page groups meals by
 day: swapped Django's own `{% regroup %}` templatetag for a new
 `apps.nutrition.views._diet_plan_day_groups` (using `itertools.
 groupby`, since `meals` is already ordered by weekday) specifically
-because `{% regroup %}` has no way to attach extra per-group data —
+because `{% regroup %}` has no way to attach extra per-group data -
 each group now carries its own totals-so-far and remaining-vs-target
 alongside the same `.grouper`/`.list` shape `{% regroup %}` already
 produced, so the template's own loop barely changed. `DietPlanItem`
@@ -4886,7 +4886,7 @@ not by reading the template:
   help with.** First version defaulted the widget open; on a
   phone-sized viewport, its fixed bottom-right position sat directly
   on top of whichever meal card's "+ Add item" button happened to be
-  underneath it — a small floating box that blocks the thing it's
+  underneath it - a small floating box that blocks the thing it's
   floating over isn't actually small. Now starts minimized (just the
   toggle pill, sized to its own label rather than a fixed width so
   the collapsed state stays genuinely compact), expanding only on tap.
@@ -4894,23 +4894,23 @@ not by reading the template:
   three table columns (label / so far·target / left). Verified via
   Playwright against a Finnish-language user: "Hiilihydraatit"
   (carbohydrates) alone didn't fit its column's share of the widget's
-  14rem width, and the table visibly overflowed the box's own edge —
+  14rem width, and the table visibly overflowed the box's own edge -
   `scrollWidth` (249px) exceeding `clientWidth` (222px) confirmed it
   wasn't just a screenshot artifact. Redesigned to two columns
   (reusing `diary_day.html`'s own already-proven "so far / target"
   row shape) with "left" moved to one wrapping text line below the
-  table instead of a rigid column — flowing text wraps cleanly in a
+  table instead of a rigid column - flowing text wraps cleanly in a
   narrow box where a clipped table header doesn't. Re-verified with
   the same Finnish user afterward: `scrollWidth` equals `clientWidth`,
   no overflow.
 
-**A contribute-data prompt**, for any food with an `off_id` — this app
+**A contribute-data prompt**, for any food with an `off_id` - this app
 only ever consumes OFF/Open Prices data, and every lookup it makes
 benefits from someone eventually fixing a wrong grade or submitting a
 price report upstream. Two links built straight from the food's own
 barcode: OFF's `cgi/product.pl?type=edit&code=<barcode>` edit form,
 and Open Prices' own `app/products/<barcode>` page. Both checked live
-against a real barcode before writing the template — a wrong
+against a real barcode before writing the template - a wrong
 contribute link would be worse than no prompt at all.
 
 New/changed test coverage across all four pieces (search ordering on
@@ -4924,7 +4924,7 @@ Two more requests, same session.
 
 **No photo yet → link to OFF instead of nothing.** `food_detail.html`
 showed nothing at all above the Nutrition card for an OFF-imported
-food OFF itself has no photo for — now falls back to a plain link to
+food OFF itself has no photo for - now falls back to a plain link to
 that product's own OFF page (`world.openfoodfacts.org/product/
 <barcode>`, OFF's own canonical product URL, distinct from the
 `cgi/product.pl?type=edit` edit-form link the contribute prompt below
@@ -4934,29 +4934,29 @@ A hand-entered food (no `off_id`) still shows neither.
 **Recipes page: your recipes and template recipes, separately
 paginated.** `RecipeListView` used to be a single `ListView` over one
 combined, unpaginated, alphabetically-sorted queryset mixing a user's
-own recipes with every built-in template recipe — asked to split
-these into "Your recipes" (most recent first — this is the list
+own recipes with every built-in template recipe - asked to split
+these into "Your recipes" (most recent first - this is the list
 someone actively adds to, so a just-created recipe is the one they're
 most likely looking for) above "Template recipes" in its own box
-(alphabetical — a fixed, shared reference list, browsed rather than
+(alphabetical - a fixed, shared reference list, browsed rather than
 added to), each paginated independently (5/page for your own, 10/page
-for templates — small enough that the current ~18-strong built-in
+for templates - small enough that the current ~18-strong built-in
 library actually spans more than one page, unlike the 20/page first
 tried, which happened to be larger than the whole library and so
 never showed any pagination controls at all). Rebuilt as a plain
 `View`: Django's `ListView` pagination machinery only ever handles one
 `object_list`/`page_obj` pair, and this page now needs two independent
-`Paginator`s that don't reset each other's page when one changes —
+`Paginator`s that don't reset each other's page when one changes -
 `?mine_page=`/`?template_page=` are separate querystring params, each
 preserved across the other section's own Previous/Next links.
 
 **Pagination no longer resets scroll to the top of the page.** Found
 directly: clicking Previous/Next is a plain full-page navigation (no
 HTMX here), and a normal page load always scrolls to the top
-regardless of where the click happened — annoying on a page where the
+regardless of where the click happened - annoying on a page where the
 pagination controls sit well below the fold. Each `<nav class=
 "pagination">` now carries its own `id`, and its own Previous/Next
-links append that same `#anchor` — the browser's native fragment
+links append that same `#anchor` - the browser's native fragment
 scroll lands directly back on the control just clicked, no JS needed.
 Needed one CSS companion, `scroll-margin-top` on `.pagination`, so the
 landing spot isn't tucked directly under `.nutrition-subnav`'s own
@@ -4968,7 +4968,7 @@ expected.
 
 Also fixed along the way: the "your recipes" vs. "template recipes"
 split made the per-serving-calories query-count regression test's own
-expected number stale — two independent `Paginator`s each issue their
+expected number stale - two independent `Paginator`s each issue their
 own `COUNT` query, a fixed +2 over the single unpaginated fetch the
 test was written against, not a scaling N+1 (updated the pinned
 number and its comment rather than loosening the assertion).
@@ -4977,17 +4977,17 @@ number and its comment rather than loosening the assertion).
 
 Reported directly: the dashboard month calendar's calorie trend arrow
 (`apps.nutrition.services.calendar_month_statuses`) appeared on days
-in the future — before they could possibly have anything logged.
+in the future - before they could possibly have anything logged.
 
 Root cause: each day's trend is the average of its own trailing
 `CALENDAR_CALORIE_TREND_WINDOW_DAYS` (7) days, looking *backward* from
 that day. For a future day, that backward-looking window still
-reaches across today and other already-logged recent days — so
+reaches across today and other already-logged recent days - so
 `logged_calories` came out non-empty (and a trend got computed and
 shown) purely because *earlier* days in the window had something
 logged, never because the future day itself did. Fixed with one
 extra condition, `day <= today`, gating trend computation entirely for
-any day beyond today — a day that hasn't happened yet has no
+any day beyond today - a day that hasn't happened yet has no
 meaningful "how's it going" to show regardless of what its window
 average happens to compute to.
 
@@ -5005,20 +5005,20 @@ Two more requests, same session.
 page's own two paginated sections, reported separately for
 `_food_list_results.html`: clicking Previous/Next is a plain
 full-page navigation, and a normal page load resets scroll to the top
-regardless of where the click happened. Same fix — `id="food-list-
+regardless of where the click happened. Same fix - `id="food-list-
 pagination"` on the `<nav>`, `#food-list-pagination` appended to both
 Previous/Next hrefs, reusing `.pagination`'s own `scroll-margin-top`
 already added for the Recipes page.
 
 **Smaller list thumbnails.** Asked directly: what could speed up food
 image loading? Checked OpenFoodFacts' real product payload for a live
-barcode rather than guessing — alongside `image_front_url` (400px,
+barcode rather than guessing - alongside `image_front_url` (400px,
 what `Food.image_url` already stores), OFF also returns
 `image_front_thumb_url`, its own separately-hosted 100px variant of
 the exact same photo. `Food.image_thumb_url` stores it (new field,
 same blank-for-hand-entered pattern as every other OFF-only column,
 populated by `apps.nutrition.openfoodfacts.parse_product` the same
-way `image_url` already is — and so already covered by the existing
+way `image_url` already is - and so already covered by the existing
 "Refresh selected foods from OpenFoodFacts" admin action and the
 admin change form both, with zero extra code, since both apply to
 whichever fields the model actually has). `_food_list_results.html`'s
@@ -5028,7 +5028,7 @@ refreshed; `FoodDetailView`'s own larger photo keeps using `image_url`
 unchanged, since a 100px thumb blown up there would look blurry.
 Also restored `loading="lazy"` on the list thumbnail, removed earlier
 this session only because it never triggered in headless Chromium
-during a Playwright check — a real test-tooling limitation, not a
+during a Playwright check - a real test-tooling limitation, not a
 reason to skip a real optimization in actual browsers.
 
 Verified against Nutella's real barcode again: OFF really does return
@@ -5037,12 +5037,12 @@ different files at genuinely different sizes, not the same URL twice.
 
 ## The profile's API help modal had gone stale
 
-Asked directly to "update the API page texts" — turned out to be a
+Asked directly to "update the API page texts" - turned out to be a
 real drift, not a wording nitpick: `templates/api/key_list.html`'s
 "Using the API" modal (the "?" button on Profile → API keys) lists
 every context's endpoints in a table, and its Nutrition row was
 missing `nutrition/profile/` and the whole `diet-plans/`/`diet-plan-
-meals/`/`diet-plan-items/` family — all of them real, already-live
+meals/`/`diet-plan-items/` family - all of them real, already-live
 endpoints (`apps/api/urls.py`, matching `docs/API.md`'s own accurate
 "Endpoints" table) that an API key could already call, just with no
 mention of them anywhere a user browsing this in-app reference would
@@ -5051,7 +5051,7 @@ in-app copy was.
 
 `test_the_api_documentation_lists_every_context_and_its_endpoints`
 (`apps/api/tests.py`) already existed as exactly the right regression
-guard for this, but was never extended when those endpoints shipped —
+guard for this, but was never extended when those endpoints shipped -
 extended it to assert the four missing endpoints too, so this can't
 silently drift again the same way.
 
@@ -5064,21 +5064,21 @@ Two more requests, same session.
 turns everything logged in that meal, on that day, into a new,
 reusable `Recipe`, at the exact quantities actually eaten. Docs/
 NUTRITION.md's own `DiaryEntry` section already made the underlying
-point — a group of `DiaryEntry` rows sharing one `(date, meal_slot)`
+point - a group of `DiaryEntry` rows sharing one `(date, meal_slot)`
 *is* conceptually a recipe's own ingredient list, just computed live
-rather than saved — so `services.create_recipe_from_diary_meal` is a
+rather than saved - so `services.create_recipe_from_diary_meal` is a
 small function: gather that meal's food-type entries, create one
 `Recipe` (`servings=1`, `meal_slot` carried over from the entries'
 own meal slot) and one `RecipeIngredient` per entry at its logged
 quantity. A recipe-type entry logged for the same meal is skipped
-rather than flattened into its own ingredients — `RecipeIngredient.
+rather than flattened into its own ingredients - `RecipeIngredient.
 food` is required and can never point at another `Recipe`, and
 re-deriving that here risked double-counting anything also logged as
 a plain food the same meal, for a case (re-saving an
 already-a-recipe meal as *another* recipe) rare enough not to justify
 it. The button itself is hidden for an empty meal and for "Other"
 specifically (a dumping ground for food that doesn't fit a named
-meal, not a coherent combination worth saving) — matched by name
+meal, not a coherent combination worth saving) - matched by name
 (`slot.name != "Other"`) against the seeded system slot, same as
 every other place this app already special-cases stored English
 content rather than the per-language displayed label.
@@ -5086,7 +5086,7 @@ content rather than the per-language displayed label.
 **The diary's own scroll-jump bug**, reported directly: adding,
 editing, removing, or logging a recipe to any meal always redirected
 to the bare `diary-day` URL, landing the browser at the top of the
-page regardless of which meal card was actually being worked in — the
+page regardless of which meal card was actually being worked in - the
 exact same class of bug already fixed for the Recipes and Foods
 pages' own pagination, just via a full-page redirect instead of a
 Previous/Next link. New `_diary_day_redirect(target_date,
@@ -5107,28 +5107,28 @@ reset to the top.
 
 Asked for directly: not everyone using an instance wants to track
 nutrition, and it shouldn't be forced on them. New `User.
-nutrition_enabled` (default `True` — see docs/DOMAIN_MODEL.md's own
+nutrition_enabled` (default `True` - see docs/DOMAIN_MODEL.md's own
 entry for why), asked during onboarding
 (`apps.accounts.forms.OnboardingForm`, same shape as `allow_friend_
-requests`/`allow_group_invites` — pre-checked, `required=False`, so
+requests`/`allow_group_invites` - pre-checked, `required=False`, so
 skipping the whole prompt or leaving it checked both keep the
 default) and editable anytime from Profile → Preferences, in a new
-"Features" group of its own (not Notifications, Privacy, or Social —
+"Features" group of its own (not Notifications, Privacy, or Social -
 none of those fit).
 
 Deliberately a **navigation-only** toggle, nowhere near
 `apps.nutrition` itself: `templates/base.html`'s bottom-nav Nutrition
 tab is the *only* place outside the nutrition app that links into it
-(checked directly — grepped every template for `{% url 'nutrition:`
+(checked directly - grepped every template for `{% url 'nutrition:`
 outside `templates/nutrition/`), so hiding it there when the field is
 off is the entire feature. No view, url, or permission check anywhere
-in `apps.nutrition` was touched — a direct link or bookmark into
+in `apps.nutrition` was touched - a direct link or bookmark into
 nutrition works identically whether this is on or off, exactly as
 asked ("still allow browsing there via a link"), and no nutrition
 data is ever read, written, or deleted by this toggle either way.
 The home dashboard's own calorie-trend calendar
 (`nutrition/_month_calendar.html`, included directly from `core/
-dashboard.html`) was deliberately left alone too — it's a data
+dashboard.html`) was deliberately left alone too - it's a data
 display, not a link, and in practice shows nothing for a user who
 never set up nutrition anyway (`calorie_trend` stays `None` with no
 active `NutritionTarget`).
@@ -5145,53 +5145,53 @@ Reported directly: the iOS home-screen icon (added-to-home-screen PWA)
 showed a dumbbell with no visible bar connecting its two ends.
 
 `static/icons/icon.svg`'s handle was a stroked `<line>` (round
-linecap, to look like a rounded bar) rather than a filled shape — and
+linecap, to look like a rounded bar) rather than a filled shape - and
 whichever tool had originally rasterized it down to the actual shipped
 PNGs (`apple-touch-icon.png` 180×180, `icon-192.png`, `icon-512.png`)
 rendered that particular element wrong, near-invisible against the
 dark background, even though a real browser engine (checked with
 Playwright/Chromium) renders the same SVG's line correctly. The bug
 was baked into the committed PNGs themselves, not something a live
-page load could ever trigger — `favicon.svg` (a separate, deliberately
+page load could ever trigger - `favicon.svg` (a separate, deliberately
 simplified 32×32 design from an earlier fix, see this log's own
 "32×32 favicon" entry above) was never affected, since it already
 built its own bar from a plain `<rect>`, not a stroked line.
 
 Fixed by replacing the `<line>` with an equivalent filled `<rect>`
-(`x="140" y="239" width="232" height="34" rx="17"` — same span, same
+(`x="140" y="239" width="232" height="34" rx="17"` - same span, same
 fully-rounded pill ends a round linecap would have given it), then
 regenerating all three PNGs from the corrected source. Verified each
 rendered size directly (`apple-touch-icon.png`/`icon-192.png`/
-`icon-512.png` all show a continuous, clearly-connected handle now) —
+`icon-512.png` all show a continuous, clearly-connected handle now) -
 no template or manifest change needed, since both only ever referenced
 these files by name.
 
 ## A public member profile page, reusing show_achievements as its own opt-out
 
 Asked for directly: a per-user "profile" page other users on the
-instance can view — recent PRs, streak, workout count, total weight
-lifted, and how long they've been a member — with an opt-out toggle on
+instance can view - recent PRs, streak, workout count, total weight
+lifted, and how long they've been a member - with an opt-out toggle on
 the Profile page. Explicitly nothing about food, calories, or logged
 body weight, and existing data was never in question either way.
 
 Before writing any code: this is almost exactly what
 `apps.analytics.achievements`/`User.show_achievements` already do for
-the dashboard's achievements carousel and "Recently active" list — "a
+the dashboard's achievements carousel and "Recently active" list - "a
 privacy setting... whether *this* user's own data... is included in
 what everyone sees" (that field's own docstring, written long before
 this request). Rather than adding a second, separate "let others view
 my profile" field for the same underlying decision, this new page
-reuses `show_achievements` outright — one settings-page toggle
+reuses `show_achievements` outright - one settings-page toggle
 ("Share my activity"), one meaning, three places it now applies
 instead of two.
 
-`apps.analytics.achievements._highlights_for` — previously a private
+`apps.analytics.achievements._highlights_for` - previously a private
 helper `achievement_highlights()` called once per opted-in user to
-build the shared carousel — is now public (`highlights_for`, no
+build the shared carousel - is now public (`highlights_for`, no
 leading underscore) and called directly by the new
 `MemberProfileView` for one specific user's own page, rather than
 duplicating that computation. `Achievement`/`RecentActivity` both grew
-a `username` field alongside their existing `display_name` — the
+a `username` field alongside their existing `display_name` - the
 latter can carry a decorated "username (First name)" string
 (`User.public_display_name()`), which was never safe to build a URL
 out of; the former is the real, stable identifier the new page's link
@@ -5201,18 +5201,18 @@ needs.
 `get_object_or_404(User, username=username)` first, *then* checks
 `show_achievements` itself (`if not member.show_achievements and
 member != request.user: raise Http404`) rather than folding the flag
-into the queryset filter — the point being that a user can always view
+into the queryset filter - the point being that a user can always view
 their *own* profile regardless of this setting (it hides your profile
 from others, not from yourself), which a queryset-level filter
 couldn't express without duplicating the "is this me" check anyway.
 Recent PRs reuse `services.pr_history_grouped_by_exercise` and the
-existing `records/_pr_exercise_group.html` partial verbatim — that
+existing `records/_pr_exercise_group.html` partial verbatim - that
 partial already formats weights in *the viewer's* own unit preference
 via `request.user` (not the profile owner's), so no change was needed
 there to make someone else's PRs display correctly in your own units.
 
-Every place a user's name already appeared to other users — the
-achievements carousel, the "Recently active" list — now links it to
+Every place a user's name already appeared to other users - the
+achievements carousel, the "Recently active" list - now links it to
 this new page; nowhere else changed, since (checked directly, again)
 `templates/base.html`'s nutrition nav tab aside, `templates/core/
 dashboard.html` is the only place one user's identity was ever shown
@@ -5230,9 +5230,9 @@ say "nutrition" on every single page, regardless of this one).
 ## Export/import for gym programs and nutrition recipes
 
 Asked for directly: let a user download one of their own gym programs
-or nutrition recipes as a file, and hand it to someone else — a
+or nutrition recipes as a file, and hand it to someone else - a
 different account, or a completely different self-hosted IronStack
-instance — to import back in, with every related object (exercises,
+instance - to import back in, with every related object (exercises,
 meal slots, foods) reconstructed along the way rather than left
 dangling. Also asked for: the file should carry the exporting
 instance's software version, for an at-a-glance "this might be from an
@@ -5241,7 +5241,7 @@ that a bad or incompatible file can never corrupt data or crash the
 app, only fail cleanly.
 
 Plain JSON, not the newer TOON (Token-Oriented Object Notation)
-format — considered directly, since the user asked. TOON's entire
+format - considered directly, since the user asked. TOON's entire
 value proposition is reducing token counts for LLM context windows;
 it has no bearing on a file two IronStack instances (or two humans)
 hand back and forth, and the only Python package for it on PyPI
@@ -5252,7 +5252,7 @@ the file directly. Decided with the user before writing any code.
 
 The new shared module, `apps.core.data_exchange`, is deliberately not
 built on the REST API's own `ModelSerializer`s
-(`apps.api.serializers`) — those reference related rows by primary
+(`apps.api.serializers`) - those reference related rows by primary
 key, which means nothing once a file crosses into a different
 database. Everything in an export is instead keyed by a *natural*
 identifier that's guaranteed to mean the same thing on both the
@@ -5263,9 +5263,9 @@ from OpenFoodFacts by its barcode (`Food.off_id`) rather than its own
 database row.
 
 `build_envelope`/`parse_envelope` wrap every export in a small shared
-envelope — `schema_version` (this wire format's own version, `1` right
+envelope - `schema_version` (this wire format's own version, `1` right
 now), `kind` (`"program"` or `"recipe"`), `app_version`
-(`apps.core.version.get_version()`, informational only — never
+(`apps.core.version.get_version()`, informational only - never
 compared automatically, since the app's own version number alone
 can't reliably say whether this module's dict shape changed between
 two releases), and `exported_at`. `parse_envelope` only ever rejects a
@@ -5279,7 +5279,7 @@ same default a brand new payload would; only an actual rename,
 repurposing, or restructuring needs `schema_version` bumped, with a
 small upgrade shim added to the top of the relevant `import_*`
 function to normalize an old file's shape before the rest of the
-function runs. No such shim exists yet, deliberately — there is no
+function runs. No such shim exists yet, deliberately - there is no
 `schema_version` 2 to migrate from, and writing one now for a
 hypothetical future shape would be speculative code with nothing real
 to test it against.
@@ -5289,12 +5289,12 @@ to test it against.
 kind-specific halves. Exporting a program walks every workout and
 prescription, and for each prescription's exercise emits either
 `{"name", "is_system": True}` (system exercises, matched back by name
-on import — `apps.programs.services.copy_program`'s existing
+on import - `apps.programs.services.copy_program`'s existing
 "deep-copy for a new owner" function directly informed exactly which
 fields a prescription/exercise export needs) or a full payload
 (description, instructions, movement type, weight-input mode,
 equipment, primary/secondary muscle groups, all by name) for a custom
-exercise, recreated fresh under the importing user on import — or
+exercise, recreated fresh under the importing user on import - or
 reused as-is if that user already has a custom exercise with the same
 name from an earlier import, so re-importing the same file twice
 doesn't pile up duplicates. `is_template`/`owner` are never part of
@@ -5303,38 +5303,38 @@ program.
 
 Recipe import resolves each ingredient's food the same way: an
 OFF-sourced food is looked up again live, by barcode, via the existing
-`import_or_refresh_food_from_off` — so importing on a different
+`import_or_refresh_food_from_off` - so importing on a different
 instance re-fetches current OFF data rather than trusting a
-potentially stale snapshot — falling back to an embedded snapshot only
+potentially stale snapshot - falling back to an embedded snapshot only
 if that live lookup fails (network down, barcode delisted from OFF
 since export). A hand-entered food is matched by `(owner, name,
 calories)` against the importing user's existing foods before a new
 row is created, for the same "reimporting doesn't duplicate" reason as
 custom exercises. A recipe's meal slot is resolved the same way system
-exercises are — matched by name against system `MealSlot`s first, a
+exercises are - matched by name against system `MealSlot`s first, a
 custom one recreated for the importer otherwise, and left `None` if
 the export never had one.
 
 Both `import_program` and `import_recipe` run inside
 `@transaction.atomic` and raise the shared `ImportValidationError`
 (also raised by `parse_envelope` itself) for anything malformed inside
-the kind-specific payload — a missing program/recipe name, a
+the kind-specific payload - a missing program/recipe name, a
 prescription or ingredient missing its exercise/food name, missing
 required nutrition data, an unparseable quantity. The importing view
 (`apps.programs.views.program_import`/`apps.nutrition.views.
 recipe_import`) is the only place that ever catches
-`ImportValidationError`, turning it into a plain form error — nothing
+`ImportValidationError`, turning it into a plain form error - nothing
 here can reach the user as a raw 500, since an uploaded file is
 exactly the kind of untrusted input that must never be able to take
 the request down with it. A test for each app
 (`test_a_failed_import_leaves_no_partial_program_behind`/`..._recipe_
 behind`) confirms directly that a mid-import failure leaves zero trace
-in the database — nothing partially written, satisfying "should
+in the database - nothing partially written, satisfying "should
 always work or at least not break anything" as an actual guarantee,
 not just an intention.
 
 The upload form, `apps.core.forms.ExportImportUploadForm`, is shared
-by both apps' import views rather than duplicated — one `FileField`, a
+by both apps' import views rather than duplicated - one `FileField`, a
 `clean_export_file` that only checks the `.json` extension, following
 the same division of labor `BackupUploadForm` (right above it in the
 same file) already uses: real validation happens once
@@ -5346,7 +5346,7 @@ since an export is generated in memory rather than read off disk), and
 name the downloaded file from the program/recipe's own slugified name.
 
 Verified with real cross-account round-trips in a shell before writing
-any formal test — including one against the live OpenFoodFacts API
+any formal test - including one against the live OpenFoodFacts API
 using Nutella's real barcode (`3017620422003`), confirming a re-import
 on a "different" account resolves back to the same shared `Food` row
 rather than creating a duplicate. 45 automated tests followed: 10 for
@@ -5362,13 +5362,13 @@ by anyone).
 ### Extending export/import to diet plans
 
 Asked for directly, right after the above shipped: the same export/
-import treatment for `DietPlan`, the diet builder's own saved output —
+import treatment for `DietPlan`, the diet builder's own saved output -
 and asked for explicitly alongside it, a guarantee that importing a
 diet plan or a gym program never creates a duplicate food or exercise
 that already exists on the importing side.
 
 That guarantee, it turned out, already existed for gym programs and
-recipe ingredients before this request — `apps.programs.services.
+recipe ingredients before this request - `apps.programs.services.
 _resolve_exercise` already matches a system exercise by name first,
 then the importing user's own custom one, before ever creating
 anything new; `apps.nutrition.services._resolve_food` already matches
@@ -5383,20 +5383,20 @@ A `DietPlanItem` is new territory those two functions didn't cover
 though: it points at either a `Food` *or* a `Recipe` (`DietPlanItem`'s
 own `diet_plan_item_exactly_one_of_food_or_recipe` check constraint),
 never both. Its export embeds a full `export_recipe` payload for a
-recipe item — not just a name — since a recipe brought along this way
+recipe item - not just a name - since a recipe brought along this way
 needs its own ingredients resolvable too, the exact same self-
 contained shape a standalone recipe export already has. The new
 `_resolve_recipe` gives this its own "match first" step: an existing
 recipe with the same name, owned by the importing user or shared
-(`owner=None` — see `Recipe.owner`'s own docstring for what a `None`
+(`owner=None` - see `Recipe.owner`'s own docstring for what a `None`
 owner already means), is reused outright; only a genuinely new name
-calls `import_recipe` to build one — which is safe to call from inside
+calls `import_recipe` to build one - which is safe to call from inside
 `import_diet_plan`'s own `@transaction.atomic`, since Django nests
 atomic blocks as savepoints, so a failure anywhere later in the same
 diet plan import still rolls that freshly-created recipe back out too.
 
 `DietPlan.goal` (a `NutritionGoal` FK) is deliberately never part of
-the export at all, unlike almost everything else here — it's this
+the export at all, unlike almost everything else here - it's this
 specific user's own historized statement of intent, dated and
 personal, not something a different account's import could ever
 meaningfully reattach to. `target_calories` and the three macro target
@@ -5406,7 +5406,7 @@ always creates a plan with `goal=None`, the same as building one from
 scratch without linking a goal.
 
 The imported plan is also always created with `is_active=False`,
-regardless of whether the exported one was active — `set_active_diet_
+regardless of whether the exported one was active - `set_active_diet_
 plan` is the only place ever allowed to flip that flag on, specifically
 because doing it would deactivate whatever plan the importing user
 already has running (`unique_active_diet_plan_per_user`'s own
@@ -5421,7 +5421,7 @@ recreation, `goal`/active-state handling above, system meal slot
 matched not duplicated, weekday preserved for a weekly plan, an
 embedded recipe item recreated with its own ingredients, re-importing
 matching an existing recipe/food/OFF-food instead of duplicating any
-of them, and the validation-error/atomic-rollback paths — missing
+of them, and the validation-error/atomic-rollback paths - missing
 name/targets/meal slot, an item with both or neither of food/recipe),
 7 for the views (the same auth/ownership/upload shape as programs and
 recipes before it).
@@ -5441,49 +5441,49 @@ A new `apps.coaching` app owns the relationship itself:
 `CoachingRequest` (`coach`/`coachee`, PENDING/ACCEPTED/DECLINED,
 unique per pair, kept forever as an audit trail) and
 `CoachingRelationship` (the accepted pairing, soft-ended via
-`ended_at` rather than deleted — asked for directly, so both sides
-keep the historical fact they were once coach/client — with a partial
+`ended_at` rather than deleted - asked for directly, so both sides
+keep the historical fact they were once coach/client - with a partial
 unique constraint blocking only a second *simultaneously active* row
 for the same pair). Deliberately not modeled on
-`apps.social.Friendship`'s symmetric `user_low`/`user_high` shape —
+`apps.social.Friendship`'s symmetric `user_low`/`user_high` shape -
 `apps.social.services.py`'s own `FriendRequest`/`Friendship`/
 `send_friend_request`/`accept_friend_request` were still the direct
 template for everything else (plain functions raising a translated
 `CoachingError` a view catches and flashes, `@transaction.atomic` on
 every multi-step mutation, `get_or_create`-shaped idempotency on
-accept) — coach and coachee are never interchangeable, so both models
+accept) - coach and coachee are never interchangeable, so both models
 here use plain, always-meaningful fields instead. A client may have
 several different active coaches at once (asked for directly, e.g. a
-separate nutrition coach and strength coach) — nothing enforces
+separate nutrition coach and strength coach) - nothing enforces
 exclusivity, only "not the same coach twice."
 
-`User.is_personal_trainer` (default off — a brand new capability,
+`User.is_personal_trainer` (default off - a brand new capability,
 unlike `allow_friend_requests`/`allow_group_invites`'s own opt-*out*
 of an existing one) and `accepting_new_clients` (default on, same
 "capability starts open" reasoning) slot into `ProfileForm` as a new
 "Coaching" group, with `accepting_new_clients` hidden via a small
-Alpine `x-show` until `is_personal_trainer` is checked — the one field
+Alpine `x-show` until `is_personal_trainer` is checked - the one field
 on this form whose visibility depends on another, so a plain
 `CheckboxInput` widget attribute or (`@change="isPt = ...")` rather
 than a new templating mechanism for what's otherwise still one plain
 `{% for field in form %}` loop.
 
 **Sharing and importing.** `Program`/`DietPlan` each grew four fields:
-`shared_with_clients` — a many-to-many to specific `User`s, not a
+`shared_with_clients` - a many-to-many to specific `User`s, not a
 blanket boolean (asked for directly, after an initial pass that shared
 a plan with *every* current client at once turned out not to be what
 was wanted: a coach needs to assign a program to one client without
 automatically exposing it to every other client too), empty by
 default so a trainer's own drafts stay private until specific clients
-are deliberately picked — `imported_from` (a `SET_NULL` self-FK —
+are deliberately picked - `imported_from` (a `SET_NULL` self-FK -
 deleting the source, or its owner's whole account, can never break an
 already-independent client copy, it just permanently stops offering
 updates), and `coach_snapshot`/`coach_snapshot_version` (a JSON
 payload plus the source's `version` at snapshot time, together the
 entire "is there an update, and if so what changed" mechanism below).
-`DietPlan` also gained its own `version`/`bump_version()` — `Program`
+`DietPlan` also gained its own `version`/`bump_version()` - `Program`
 already had this exact display-only counter (`docs/ARCHITECTURE.md`
-"Historical integrity mechanism: snapshot-on-start" — its own
+"Historical integrity mechanism: snapshot-on-start" - its own
 docstring already anticipated "tell a user this program changed since
 you started using it," almost word for word what this feature
 needed), bumped now from the three existing structural mutators
@@ -5496,7 +5496,7 @@ creation.
 trainer), its queryset narrowed in `__init__` to only this trainer's
 own currently active clients (`User.objects.filter(coaches__coach=
 user, coaches__ended_at__isnull=True)`, `coaches` being
-`CoachingRelationship.coachee`'s own `related_name`) — never every
+`CoachingRelationship.coachee`'s own `related_name`) - never every
 user on the instance. `DietPlan` has no general "edit its own fields"
 form to attach an equivalent field to, so it gets one dedicated view
 instead, `apps.nutrition.views.diet_plan_share` (backed by a new
@@ -5508,7 +5508,7 @@ reachable from the plan's own detail page.
 branch, checked both ways on purpose: a program/diet plan is also
 visible if the viewing user is actually a member of its own
 `shared_with_clients` *and* still a currently active coaching client
-of its owner (`apps.coaching.services.active_coach_ids_for`) — a
+of its owner (`apps.coaching.services.active_coach_ids_for`) - a
 stale M2M membership left over from a since-ended relationship grants
 nothing on its own. Imported via `apps.coaching.services.
 import_program_from_coach`/`import_diet_plan_from_coach`, which
@@ -5520,7 +5520,7 @@ machinery rather than duplicating it:
 extracted into `_replace_program_contents(target, source)` so the
 update-apply flow below can reuse it against an *existing* program,
 not just a fresh empty one), and for diet plans, simply
-`import_diet_plan(coachee, export_diet_plan(source))` — this
+`import_diet_plan(coachee, export_diet_plan(source))` - this
 session's own recent export/import feature turned out to be exactly
 the right shape for an in-app, same-database hand-off too, once its
 inner meal/item-building loop was pulled out into `_populate_diet_plan`
@@ -5528,25 +5528,25 @@ for the same "reuse against an existing plan" reason.
 
 **"Your coach updated this."** Explicitly not a live-synced link
 (asked for directly: importing gives an independent, editable copy,
-full stop) — but also explicitly not silent forever, and explicitly
+full stop) - but also explicitly not silent forever, and explicitly
 not a redo of the file-based export/import's download-then-upload
 friction. `program_update_available`/`diet_plan_update_available` are
 a single cheap integer compare (`imported_from.version` vs the
-copy's own `coach_snapshot_version`) — safe to call once per row on a
+copy's own `coach_snapshot_version`) - safe to call once per row on a
 plain list page, which is exactly where a small "Coach update
 available" badge now shows (`apps.programs.views.ProgramListView`/
 `apps.nutrition.views.DietPlanListView`, a plain per-object Python
 attribute rather than a queryset annotation, since these lists are
 always just one user's own small set of programs/plans, not hundreds).
 `program_update_diff`/`diet_plan_update_diff` reuse `export_program`/
-`export_diet_plan` a second time — diffing two pretty-printed,
+`export_diet_plan` a second time - diffing two pretty-printed,
 key-sorted JSON blobs with plain `difflib.unified_diff` rather than
 writing a bespoke structural differ, since this session's own export
 functions already turn either model into exactly the shape a diff
 needs. `apply_program_update`/`apply_diet_plan_update` delete and
 rebuild the copy's `Workout`/`ExercisePrescription` (or `DietPlanMeal`/
 `DietPlanItem`) rows from the coach's current shape, refresh the
-snapshot, and bump the copy's own version — explicitly discarding
+snapshot, and bump the copy's own version - explicitly discarding
 anything the client changed on their own copy since import, which is
 inherent to "apply the coach's current version" and exactly what the
 diff preview is for showing first; there's no separate "skip" action
@@ -5560,13 +5560,13 @@ models.py` and confirmed `WorkoutSession.program`/`.workout` and
 `PerformedExercise.prescription` are all `SET_NULL`, purely
 informational backlinks, with `PerformedExercise` snapshotting every
 set/rep/weight target onto itself at session-start and never
-re-reading `prescription` afterward — explicitly documented there as
+re-reading `prescription` afterward - explicitly documented there as
 "snapshot-on-start," the exact mechanism `apps.programs.views.
 workout_delete`/`prescription_delete` already rely on for a user
 freely editing their own program today. Deleting and recreating a
 program's structure during an applied update is therefore not a new
 risk, just the same already-proven-safe operation running
-programmatically — confirmed live in a throwaway shell session (a
+programmatically - confirmed live in a throwaway shell session (a
 real `WorkoutSession`/`PerformedExercise`/`ExerciseSet` logged before
 an update, still fully intact and still showing its original logged
 weight, immediately after applying it) before it was written up as
@@ -5574,7 +5574,7 @@ weight, immediately after applying it) before it was written up as
 applied_update`, the single most important assertion in this entire
 feature.
 
-**Discovery and analytics.** No new "browse trainers" page — a
+**Discovery and analytics.** No new "browse trainers" page - a
 coaching request is proposed from a PT's own existing profile page
 (`apps.analytics.views.MemberProfileView`, at `/analytics/members/
 <username>/`), which already exists for viewing anyone's public
@@ -5583,7 +5583,7 @@ achievements; it now also shows a "Request coaching" button (or
 depending on state) whenever the viewed user `is_personal_trainer`.
 The new `apps.coaching.views_analytics.ClientDetailView` is
 deliberately **not** gated by `User.show_achievements` the way
-`MemberProfileView` itself is — accepting a coaching request is,
+`MemberProfileView` itself is - accepting a coaching request is,
 per this feature's own explicit product decision, the entire consent
 to share training/PR/body-weight data with that one specific coach,
 so that separate, unrelated privacy toggle plays no part here
@@ -5592,7 +5592,7 @@ test_show_achievements_off_does_not_block_the_coach`). It reuses,
 completely unmodified, `apps.analytics.achievements.highlights_for`,
 `apps.analytics.services.training_summary_canonical`/
 `pr_history_grouped_by_exercise`, and `apps.measurements.services.
-visible_to`/`latest_for`/`stats_for` for every measurement type —
+visible_to`/`latest_for`/`stats_for` for every measurement type -
 manually converting to the *coach's* own unit system for display
 (`apps.core.units.kg_to_display`/`apps.measurements.units.
 to_display`), not the client's, the same "viewer's own units, not the
@@ -5600,12 +5600,12 @@ profile owner's" precedent this session's own `MemberProfileView`
 reuse of the PR partial already established for weights.
 
 **Sharing a specific program/plan, not every client at once.** The
-first working version of `shared_with_clients` was a plain boolean —
+first working version of `shared_with_clients` was a plain boolean -
 sharing meant "visible to every currently active client." Corrected
 immediately once flagged: a coach needs to hand one client a specific
 program without automatically exposing it to every other client too.
 `shared_with_clients` became a `ManyToManyField` to specific `User`s
-instead — `ProgramForm` renders it as a `CheckboxSelectMultiple`
+instead - `ProgramForm` renders it as a `CheckboxSelectMultiple`
 (popped from the form entirely for anyone who isn't a personal
 trainer), its queryset narrowed in `__init__` to only this trainer's
 own currently active clients; `DietPlan` has no general "edit its own
@@ -5614,11 +5614,11 @@ dedicated view instead (`apps.nutrition.views.diet_plan_share`, backed
 by a new `DietPlanShareForm`, same narrowed-queryset reasoning),
 reachable from the plan's own detail page. `visible_to`/
 `diet_plans_visible_to`'s own `Q` branch checks both conditions on
-purpose — the viewing user must actually be a member of that specific
+purpose - the viewing user must actually be a member of that specific
 program/plan's `shared_with_clients`, *and* still be a currently
 active coaching client of its owner, so a stale M2M membership left
 over from an ended relationship grants nothing on its own. Migrated
-as two small steps rather than one — the field had already been
+as two small steps rather than one - the field had already been
 applied as a boolean once; converting it in place (`RemoveField` +
 `AddField`) rather than deleting and regenerating the original
 migration kept the dev database's already-applied history intact
@@ -5629,7 +5629,7 @@ coach-imported content started showing up mixed into a user's own
 list with no visual distinction: `ProgramListView`/`DietPlanListView`
 each now split their own flat queryset into named groups in
 `get_context_data` (a plain per-object Python partition, not several
-separate queries) — "My programs" / "From my coach" / "My templates" /
+separate queries) - "My programs" / "From my coach" / "My templates" /
 "Built-in templates" for programs (a coach-imported program sorts by
 `imported_from_id` first, ahead of `is_template`, since that
 combination shouldn't happen in practice but "where did this come
@@ -5640,10 +5640,10 @@ html` is a new small partial factoring out the identical per-plan card
 markup both diet-plan groups render, rather than duplicating it.
 
 61 automated tests in `apps.coaching.tests` alone (request/relationship
-lifecycle and every guard — self-request, not-a-PT, not-accepting,
+lifecycle and every guard - self-request, not-a-PT, not-accepting,
 duplicate-pending, already-active, only-the-coach-can-accept,
 already-answered, only-part-of-the-relationship-can-end-it,
-ending-twice; visibility/import for both programs and diet plans —
+ending-twice; visibility/import for both programs and diet plans -
 unshared, no-relationship, success-and-independent, blocked-after-
 ending, and directly proving the per-client scoping this feature was
 revised for: sharing with one client never exposes the same program/
@@ -5659,7 +5659,7 @@ regression across `apps.accounts`/`apps.programs`/`apps.nutrition`/
 `apps.workouts`/`apps.analytics`/`apps.measurements`/`apps.social` to
 catch any collateral effect of extending `visible_to`, adding fields
 to two long-lived models, and inserting `bump_version()` calls into
-three existing views — including two pre-existing `apps.accounts`
+three existing views - including two pre-existing `apps.accounts`
 tests whose exact `settings-row` element counts needed updating for
 the two new "My clients"/"My coaches" rows on the Profile page.
 
@@ -5687,7 +5687,7 @@ language code (`en`, not `en-us`).
 
 ## Stretching app
 
-Added `apps.stretching` alongside activities and nutrition — see
+Added `apps.stretching` alongside activities and nutrition - see
 `docs/STRETCHING.md`. Scope was agreed up front: routines + a guided
 session player (not just duration logging), a seeded library of its
 own (not time-based `Exercise` rows, which would have reached into
@@ -5701,7 +5701,7 @@ audio-unlock code moved to a shared `static/js/timer-audio.js`.
 
 Real findings along the way: `RoutineItem.stretch` is `PROTECT`, which
 would have made account deletion fail for anyone with a custom stretch
-in their own routine — `delete_account` now deletes the (private)
+in their own routine - `delete_account` now deletes the (private)
 routines first. A cool-down match initially preferred the dynamic
 "Morning Mobility" routine for leg day (it was shorter and touched the
 same muscles); coverage now counts static stretches only. A finished
@@ -5717,7 +5717,7 @@ finish, dashboard calendar dot/popover, and the workout cool-down card.
 Follow-up fixes for problems found while building it: account deletion
 raised `IntegrityError` whenever a user's own ActivityType/Exercise/
 MeasurementType/MealSlot shared a name with a shared (`owner=None`) row
-— a built-in one, or one released by an earlier deleted account — since
+- a built-in one, or one released by an earlier deleted account - since
 those models keep names unique among shared rows; clashing rows are now
 released as "Name (2)", "Name (3)", ... (never with the username).
 `workouts.services.add_performed_exercise` and the diet-plan "add item"
@@ -5740,7 +5740,7 @@ and program forms got back links; stretch/routine retirement is labelled
 "Deactivate"; removing a stretch from a routine confirms first. The
 recipe and food-list pagers moved to `core/_pagination.html`, which
 gained `page`/`param`/`anchor`/`label`/`hx_target` options (and
-`url_replace` a variable parameter name) — this also fixed their search
+`url_replace` a variable parameter name) - this also fixed their search
 terms going into the URL un-encoded.
 
 Food diary, asked for directly:
@@ -5770,13 +5770,13 @@ them) decides whether login keeps following the browser:
 Accept-Language on every login until the user picks one (onboarding, or
 changing it on the profile).
 
-`apps.tutorials` adds per-page guided tours — design and maintenance rules
+`apps.tutorials` adds per-page guided tours - design and maintenance rules
 in docs/TUTORIALS.md. Tours are data (`tours.py`), anchored to
 `data-tour` attributes rather than CSS classes, and three tests keep them
 honest: required anchors must be on their page, every argument-less page
 needs a tour or a reasoned `NO_TOUR_NEEDED` entry, and every text must be
 translated. Found along the way: the bare "Back" msgid is the muscle group
-(Finnish "Selkä"), which three stretching forms used for their back link —
+(Finnish "Selkä"), which three stretching forms used for their back link -
 they now use `context "navigation"`, and the tour buttons their own
 `tutorial` context. The dev server's autoreloader died when `config/urls.py`
 briefly referenced the not-yet-written `apps.tutorials.urls`; a container
@@ -5788,7 +5788,7 @@ Sharing a program (`ProgramForm.shared_with_clients`) or a diet plan
 (`DietPlanShareForm.clients`) used a checkbox per active client. Both now
 use `apps.coaching.forms.ClientPickerField` → `apps.core.widgets.
 SearchablePickerWidget`: a combobox that suggests matching clients (by
-`public_display_name`, filtered in the browser — a coach's client list is
+`public_display_name`, filtered in the browser - a coach's client list is
 small and already known), and the picked clients as a list with a remove
 button each. The widget is still a `CheckboxSelectMultiple` underneath and
 the script only (un)checks its boxes, so posted data, views and tests are
@@ -5802,10 +5802,10 @@ inside one `<label>`; it now does that only for a single checkbox.
 ## Recipes for several meals, and a layout audit
 
 `Recipe.meal_slot` (FK) became `Recipe.meal_slots` (M2M), asked for
-directly — a dish can be both a lunch and a dinner. Migration 0023 copies
+directly - a dish can be both a lunch and a dinner. Migration 0023 copies
 every existing tag over; `diet_builder.suggest_item_for_calorie_budget`
 treats a recipe as on-topic when it has no meals or the meal is among
-them (prefetched — the recipe list's pinned query count went 12 → 13,
+them (prefetched - the recipe list's pinned query count went 12 → 13,
 constant); export writes `meal_slots` as a list of names and import still
 accepts the old single `meal_slot`.
 
@@ -5817,7 +5817,7 @@ calculators, clients); long words ran past cards and the screen; long
 Finnish page titles overflowed; the food list table pushed its calorie
 column off-screen. Fixes are in the shared CSS: the row's text column
 wraps and its actions never move (an action group stacks on phones, sits
-side by side from 768px — independent of the text), `:nth-child(1 of
+side by side from 768px - independent of the text), `:nth-child(1 of
 :not(input[type=hidden]))` so a form row's CSRF input isn't taken for the
 text, `overflow-wrap: anywhere` in cards and headings but not buttons
 ("Poista" broke into "Po/ist/a" until buttons were excluded), `.list-table`
@@ -5834,7 +5834,7 @@ container: Django's default PBKDF2 hasher costs about a second per
 `make_password` and another per `check_password`, and nearly every test
 creates a user and logs in. Tests now use `config.settings.test`
 (`config.settings.dev` + `MD5PasswordHasher`; never used to run the app)
-and pytest-xdist (`-n auto --dist loadscope` in pyproject.toml addopts —
+and pytest-xdist (`-n auto --dist loadscope` in pyproject.toml addopts -
 whole test classes per worker, so `setUpTestData` still runs once; each
 worker has its own `test_*_gwN` database). `-n 0` runs in one process.
 
@@ -5870,7 +5870,7 @@ covers.
 
 The list was only reachable through Nutrition → Diet plans → a plan →
 Shopping list. Now: a sub-nav tab (`/nutrition/shopping/`, a stable
-address that redirects to the active plan's list — what the tab and the
+address that redirects to the active plan's list - what the tab and the
 app shortcut both need), a button on the overview's "Today's plan", a
 Home card on the active plan's shopping days (`shopping.shopping_today`),
 and a web-manifest `shortcuts` entry in the per-user manifest. The Home
@@ -5890,7 +5890,7 @@ Decisions worth recording:
   tools; a proposal is a card the user accepts. Accepting goes through
   `apps.programs.services.import_program` and a new
   `apps.nutrition.services.create_diet_plan` (the resolved-objects sibling
-  of `import_diet_plan` — that one would re-fetch OpenFoodFacts foods by
+  of `import_diet_plan` - that one would re-fetch OpenFoodFacts foods by
   barcode), and the plan lands inactive, like an import.
 - **A worker, not the request.** A reply with tool calls outlasts
   gunicorn's 30-second timeout, so a new `assistant-worker` container (the
@@ -5904,7 +5904,7 @@ Decisions worth recording:
   stay valid; a conversation is pinned to its provider.
 - **Keys and cost.** A user's own key is encrypted with
   `EncryptedTextField`, now generalized with a `key_setting` argument
-  (`ASSISTANT_ENCRYPTION_KEY`, derived from `SECRET_KEY` when unset —
+  (`ASSISTANT_ENCRYPTION_KEY`, derived from `SECRET_KEY` when unset -
   unlike TOTP, an API key is never stored in plain text). The shared key
   is gated by an admin-editable access policy (default: staff only) and a
   per-user daily token limit; usage is recorded per user and day.
@@ -5923,11 +5923,11 @@ accent bar across the top (chosen over a spinner or a blocking overlay)
 for same-origin link clicks, normal form submits and HTMX requests a user
 started. Background HTMX (polling, `load`) has no trusted triggering event
 and is skipped, so chats and assistant replies don't keep it flickering.
-It appears immediately — a 150 ms show-delay first meant to spare fast
+It appears immediately - a 150 ms show-delay first meant to spare fast
 loads a flash hid it entirely on a local network (pages answer in
 25–70 ms there), so a tap on the nav showed nothing; it starts at 15 % so a
 blink-length load still draws a line. It eases towards 90 % and finishes
-on the response — for HTMX on the XHR's `loadend`, because
+on the response - for HTMX on the XHR's `loadend`, because
 `htmx:afterRequest` fires on the triggering element, which a swap has
 often already removed. File downloads now carry `download` so the bar
 skips them; anything else that doesn't navigate clears after 20 s. Reduced
@@ -5939,36 +5939,36 @@ motion: a static full-width bar. Browser tests in
 From a full read-only audit (UX, accessibility, backend, reliability);
 these are its P0/P1 findings.
 
-- **Recipes** — deleting one hard-deleted it and `DiaryEntry.recipe`
+- **Recipes** - deleting one hard-deleted it and `DiaryEntry.recipe`
   cascaded, silently erasing past diary days. `services.delete_recipe`
   now soft-deletes (`Recipe.active`) a recipe still in use, and the two
   FKs are `RESTRICT` (not `PROTECT`, so deleting the user still
   cascades). Inactive recipes are filtered from lists, pickers, diet
   builder, assistant, tours, import lookup and the API; the diary shows
   them unlinked. Migration `nutrition/0025`.
-- **Set numbers** — `log_set` used `count() + 1`, reusing a number after
+- **Set numbers** - `log_set` used `count() + 1`, reusing a number after
   a delete. Now `Max + 1` under a row lock, plus a unique constraint
   (`workouts/0004` renumbers existing duplicates in order, `0005` adds
-  the constraint — separate because Postgres won't ALTER a table with
+  the constraint - separate because Postgres won't ALTER a table with
   pending trigger events from the data update).
-- **Finished sessions** — `complete_session`/`abandon_session` raise
+- **Finished sessions** - `complete_session`/`abandon_session` raise
   `SessionNotInProgress`; the API rejects changing a finished session's
   status (re-sending the same status is a no-op).
-- **Login rate limit** — per IP + username (cleared only by that
+- **Login rate limit** - per IP + username (cleared only by that
   username's own success) plus a per-IP total that never resets on
   success.
-- **Push SSRF** — endpoints must be https on `PUSH_ENDPOINT_HOSTS`,
+- **Push SSRF** - endpoints must be https on `PUSH_ENDPOINT_HOSTS`,
   checked on subscribe and before sending. Re-pointing an existing
   endpoint to the user now subscribing is kept on purpose: it's what a
   shared device needs, and taking someone's subscription would need
   their secret endpoint URL.
-- **Expired session over HTMX** — `HtmxLoginRedirectMiddleware` turns
+- **Expired session over HTMX** - `HtmxLoginRedirectMiddleware` turns
   the login redirect into `HX-Redirect` back to the current page.
-- **Chat drafts** — composers use `data-reset-on-success`
+- **Chat drafts** - composers use `data-reset-on-success`
   (`htmx-errors.js`) instead of `hx-on::after-request="this.reset()"`,
   which also fired on failures; a rejected send answers the composer
   (`HX-Retarget`, `X-Form-Rejected`) rather than the polled thread.
-- **Backups** — `apps.core.backup_tasks` runs create/restore as a
+- **Backups** - `apps.core.backup_tasks` runs create/restore as a
   detached `run_backup_task` process (state in a JSON file in
   `BACKUP_DIR`, since a restore replaces the database). Chosen over the
   `backup-scheduler` container: that one sleeps until the backup hour
@@ -5977,22 +5977,22 @@ these are its P0/P1 findings.
   failure; archives are written as `.partial` first. Verified end to end
   against a scratch database (restore, and a forced `migrate` failure
   rolling back), not only with mocks.
-- **Focus after swaps** — `static/js/htmx-focus.js` moves focus to the
+- **Focus after swaps** - `static/js/htmx-focus.js` moves focus to the
   new content's `[data-autofocus]` (the set's weight field) when a swap
   removed the focused element. htmx already restored focus for an
   element whose id survives; the submit button has none.
 
 ## Audit fixes, second round (P2)
 
-- **Security** — food_id lookups scoped to visible foods; coach update
+- **Security** - food_id lookups scoped to visible foods; coach update
   check/diff/apply require the source to still be visible to the copy's
   owner; API profile `email` read-only; backups require `is_superuser`
   (`SuperuserRequiredMixin`).
-- **Workouts** — `start_session_once` (views only) returns an
+- **Workouts** - `start_session_once` (views only) returns an
   in-progress session for the same workout started in the last 10 s.
   `start_session` itself is unchanged; a one-active-workout rule is left
   as a product decision.
-- **Accessibility** — persistent HTMX error toast with Dismiss; PR toasts
+- **Accessibility** - persistent HTMX error toast with Dismiss; PR toasts
   pause on hover/focus; set forms through `field_a11y` (every error id
   linked) with "More options" open on error; calendar day buttons carry
   a visually hidden description and distinct PR/abandoned shapes;
@@ -6001,16 +6001,16 @@ these are its P0/P1 findings.
   persistent `#search-status`; chat polls get 204 when nothing is newer
   (`data-latest-message` + `hx-vals`); translations in Alpine strings go
   through `escapejs`, enforced by a template scan test.
-- **Performance** — achievements volume via SUM, recently-active via a
+- **Performance** - achievements volume via SUM, recently-active via a
   subquery (one query); uploaded exercise images resized to 1600px and
   re-encoded (drops EXIF); hashed static files `immutable` for a year in
-  nginx and Caddy (hashed names only — collectstatic keeps the unhashed
+  nginx and Caddy (hashed names only - collectstatic keeps the unhashed
   originals too).
-- **Ops/CI** — workers wait for `web` to be healthy (after `migrate`);
+- **Ops/CI** - workers wait for `web` to be healthy (after `migrate`);
   `publish-image` needs the accessibility job; tests run under coverage
   with xdist via `parallel` + `patch = ["subprocess"]`, reported in the
   job summary (90%), not enforced.
-- **i18n** — import validation errors and the goal rate translated.
+- **i18n** - import validation errors and the goal rate translated.
 
 Left open, needing a decision: OIDC linking by unverified email (depends
 on the Authentik email mapping), snapshotting diary macros, and
@@ -6018,20 +6018,20 @@ snapshotting exercise names onto performed exercises.
 
 ## Audit follow-ups: decisions, email confirmation, P3
 
-- **OIDC** — `verify_claims` refuses `email_verified` other than true
+- **OIDC** - `verify_claims` refuses `email_verified` other than true
   (`AUTHENTIK_REQUIRE_EMAIL_VERIFIED`, default on), logging a warning.
-- **Signup email confirmation** — `DJANGO_SIGNUP_EMAIL_VERIFICATION`
+- **Signup email confirmation** - `DJANGO_SIGNUP_EMAIL_VERIFICATION`
   (default off). `User.email_verification_pending` (not `is_active`, so
   confirming can't undo an admin's deactivation); own token generator
   salt; login refuses pending accounts without counting a failed guess
   and resends at most every 5 minutes.
-- **Exercise name snapshot** — `PerformedExercise.exercise_name`, set on
+- **Exercise name snapshot** - `PerformedExercise.exercise_name`, set on
   add, shown in history, API `exercise_name`; migration 0006 backfills.
-- **Diary snapshot** — `DiaryEntry.nutrition_snapshot`, per unit of
+- **Diary snapshot** - `DiaryEntry.nutrition_snapshot`, per unit of
   quantity, set in `save()` and recomputed only when the food/recipe is
   switched (tracked via `from_db`, so `merge_foods`' bulk update keeps
   history). Migration 0026 backfills with its own copy of the scaling.
-- **P3** — global reduced-motion rule, touch targets, Nutri-Score
+- **P3** - global reduced-motion rule, touch targets, Nutri-Score
   contrast, `aria-current="page"` everywhere, 500 page heading/lang, set
   delete `hx-disabled-elt`, RPE 1–10 (form, prescription form, API),
   inputmode on the remaining number fields, single-use TOTP codes,

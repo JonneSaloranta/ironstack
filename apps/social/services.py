@@ -2,7 +2,7 @@
 lives here, not in views or templates (CLAUDE.md: "keep business/
 domain logic out of Django views"). Each function either succeeds or
 raises `SocialError` with a translated, user-facing message a view can
-show directly — mirrors apps.accounts.services.delete_account's own
+show directly - mirrors apps.accounts.services.delete_account's own
 shape (a plain function per operation, not a class), just with an
 explicit exception instead of a bare assumption the caller already
 checked everything.
@@ -31,7 +31,7 @@ from .models import (
 
 class SocialError(Exception):
     """Raised for any rule violation above a plain 404/permission
-    check (already-friends, blocked, privacy setting off, ...) — a
+    check (already-friends, blocked, privacy setting off, ...) - a
     view catches this and re-renders with `str(error)` as a flash
     message, rather than every caller re-deriving the same checks."""
 
@@ -48,7 +48,7 @@ def are_friends(a, b):
 
 
 def is_blocked(a, b):
-    """True if either has blocked the other — the two directions are
+    """True if either has blocked the other - the two directions are
     deliberately never distinguished by any caller; see Block's own
     docstring for why."""
     return Block.objects.filter(blocker=a, blocked=b).exists() or Block.objects.filter(
@@ -58,7 +58,7 @@ def is_blocked(a, b):
 
 def blocked_either_direction_ids(user):
     """Every user id `user` has blocked or been blocked by, one query
-    — apps.social.views_friends.friend_search uses this to exclude
+    - apps.social.views_friends.friend_search uses this to exclude
     them from search results entirely, not just from who can
     successfully be friend-requested."""
     blocking = Block.objects.filter(blocker=user).values_list("blocked_id", flat=True)
@@ -68,13 +68,13 @@ def blocked_either_direction_ids(user):
 
 def friends_of(user):
     """Every other user `user` is friends with, as a list of User
-    objects — resolves Friendship's low/high storage back to "the
+    objects - resolves Friendship's low/high storage back to "the
     other person" so callers never have to think about the ordering.
     select_related on both sides: this is called on nearly every
     social page (friend_list, message_list, group_detail's invitable-
     friends calc, friend_search's exclusion set), and without it,
     reading f.user_high/f.user_low below fires one extra query per
-    friendship — the exact N+1 shape apps.social.services.
+    friendship - the exact N+1 shape apps.social.services.
     unread_group_message_count had before its own fix."""
     friendships = Friendship.objects.filter(user_low=user) | Friendship.objects.filter(
         user_high=user
@@ -96,7 +96,7 @@ def send_friend_request(from_user, to_user):
     existing = FriendRequest.objects.filter(from_user=from_user, to_user=to_user).first()
     if existing and existing.status == FriendRequestStatus.PENDING:
         raise SocialError(_("You already sent a friend request to this user."))
-    # A reverse request already waiting ("they asked first") — accept
+    # A reverse request already waiting ("they asked first") - accept
     # that one instead of creating a second, competing row.
     reverse = FriendRequest.objects.filter(
         from_user=to_user, to_user=from_user, status=FriendRequestStatus.PENDING
@@ -160,7 +160,7 @@ def unblock_user(blocker, blocked):
 
 
 def mute_friend(user, friend):
-    """`user`'s own private preference — doesn't touch the friendship,
+    """`user`'s own private preference - doesn't touch the friendship,
     doesn't need `friend`'s awareness or consent, same as `block_user`
     above but with none of its side effects (still friends, still able
     to message each other; only push notifications are affected, see
@@ -187,7 +187,7 @@ def send_direct_message(sender, recipient, body):
 
         from apps.core.push import send_push_notification
 
-        # .username, not first_name/public_display_name() — every social
+        # .username, not first_name/public_display_name() - every social
         # template already shows a friend by username only (see e.g.
         # templates/social/message_thread.html), never a first name; a
         # push notification shouldn't be the one place that's different.
@@ -212,7 +212,7 @@ def unread_direct_message_count(user):
 
 def has_unread_direct_messages(user):
     """Same as unread_direct_message_count(user) > 0, but .exists()
-    stops at the first match instead of counting every row — the
+    stops at the first match instead of counting every row - the
     social_badge context processor (context_processors.py) only ever
     needs the boolean, and runs on every page load for every logged-in
     user."""
@@ -282,7 +282,7 @@ def invite_to_group(group, invited_by, invited_user):
         raise SocialError(_("This user is already in the group."))
     # "Invite a friend" is the actual feature (docs/SOCIAL.md,
     # templates/social/group_detail.html's own friend-only dropdown)
-    # — enforced here too, not just in the dropdown's queryset, since
+    # - enforced here too, not just in the dropdown's queryset, since
     # a crafted POST could otherwise name any user on the instance
     # regardless of what the form offered. No separate is_blocked
     # check needed: block_user always removes the friendship too, so
@@ -369,7 +369,7 @@ def set_member_role(group, acting_user, target_user, role):
 @transaction.atomic
 def transfer_ownership(group, acting_user, new_owner):
     """The other half of leave_group's own error message ("transfer
-    ownership to someone else before leaving a group you own") — also
+    ownership to someone else before leaving a group you own") - also
     what apps.accounts.services.delete_account calls automatically
     (via _successor_for) before deleting an account that owns a group
     with other members still in it, so deleting your account can never
@@ -395,7 +395,7 @@ def transfer_ownership(group, acting_user, new_owner):
 def _successor_for(group, departing_user):
     """The best candidate to inherit ownership of `group` once
     `departing_user` (its current owner) is gone: the longest-standing
-    admin if there is one, otherwise the longest-standing member —
+    admin if there is one, otherwise the longest-standing member -
     `joined_at` ordering (GroupMembership.Meta.ordering) already gives
     "oldest first" for free. None if departing_user was the only
     member, in which case there's no one left to transfer to."""
@@ -416,7 +416,7 @@ def reassign_owned_groups_before_deletion(user):
     user.delete() cascades this user's own GroupMembership rows away.
     Without this, a group whose only OWNER-role member deletes their
     account would cascade straight to "no member has OWNER or ADMIN
-    role at all" — permanently unmanageable (no one could ever change
+    role at all" - permanently unmanageable (no one could ever change
     its invite link, roles, or delete it) even though it might still
     have other members and message history. Mirrors delete_account's
     own "reassign shared content, don't just delete it" reasoning for
@@ -455,7 +455,7 @@ def mark_group_read(group, user):
 
 def set_group_muted(group, user, muted):
     """`user`'s own private push-notification preference for `group`
-    (GroupMembership.notifications_muted's own docstring) — any member
+    (GroupMembership.notifications_muted's own docstring) - any member
     can set this for themselves, not just the owner/admin; it's a
     personal preference, not a group-management action."""
     GroupMembership.objects.filter(group=group, user=user).update(notifications_muted=muted)
@@ -473,7 +473,7 @@ def unread_group_message_count(user, group=None):
     last_read_at` always has a value (see its own field comment for
     why it's never null), so "unread" is a single `created_at > ...`
     comparison joined straight through to each message's own
-    membership row — not a separate query per group. An earlier
+    membership row - not a separate query per group. An earlier
     version looped over memberships in Python, one .count() query per
     group; harmless for one group, but this function is also called
     with no `group` (every group at once) from
@@ -491,7 +491,7 @@ def unread_group_message_count(user, group=None):
 
 def has_unread_group_messages(user):
     """Same query as unread_group_message_count(user), but .exists()
-    instead of .count() — the badge only ever needs a boolean, and
+    instead of .count() - the badge only ever needs a boolean, and
     can stop at the first match instead of counting every row."""
     return GroupMessage.objects.filter(
         group__memberships__user=user,
@@ -501,7 +501,7 @@ def has_unread_group_messages(user):
 
 def unread_group_message_counts_by_group(user):
     """{group_id: unread_count} for every group `user` belongs to, in
-    one query — what apps.social.views_groups.group_list and
+    one query - what apps.social.views_groups.group_list and
     apps.social.views_messages.message_list actually need (an unread
     count *per row* of a list), instead of calling
     unread_group_message_count once per group in a Python loop (still
@@ -523,7 +523,7 @@ def pending_friend_request_count(user):
 
 
 def has_pending_friend_requests(user):
-    """See has_unread_direct_messages's own comment — same reasoning."""
+    """See has_unread_direct_messages's own comment - same reasoning."""
     return FriendRequest.objects.filter(
         to_user=user, status=FriendRequestStatus.PENDING
     ).exists()
@@ -536,7 +536,7 @@ def pending_group_invite_count(user):
 
 
 def has_pending_group_invites(user):
-    """See has_unread_direct_messages's own comment — same reasoning."""
+    """See has_unread_direct_messages's own comment - same reasoning."""
     return GroupInvite.objects.filter(
         invited_user=user, status=GroupInviteStatus.PENDING
     ).exists()

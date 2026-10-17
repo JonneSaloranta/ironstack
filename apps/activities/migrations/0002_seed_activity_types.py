@@ -1,6 +1,6 @@
 """Seed a reasonable common set of system activity types. Unlike
 apps.measurements.MeasurementType, docs/DOMAIN_MODEL.md doesn't specify an
-exact list for activities ("users may create custom activity types") —
+exact list for activities ("users may create custom activity types") -
 this is a starting point users are free to extend.
 """
 

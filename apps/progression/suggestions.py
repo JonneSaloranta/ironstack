@@ -1,18 +1,18 @@
-"""WeightSuggestionEngine — turns a ProgressionEngine decision into a full,
+"""WeightSuggestionEngine - turns a ProgressionEngine decision into a full,
 explainable suggestion a user can see, accept, edit, or ignore.
 
 Kept as its own module, separate from engine.py, per
 docs/SMART_SUGGESTIONS.md "Architecture": ProgressionEngine defines the
 intended *method*; this module decides a sensible next *load* from the
 evidence available and adds the two things a suggestion needs that a pure
-progression decision doesn't — a confidence level and the target rep
+progression decision doesn't - a confidence level and the target rep
 range to display alongside the weight (which comes from the prescription,
 not from progression math).
 
 This module never talks to HTTP/templates directly (docs/SMART_SUGGESTIONS.md
 requirements match docs/PROGRESSION.md's); it is called from
 apps.workouts.views, which is where the suggestion actually reaches a
-form as a pre-filled, freely-overridable default — see that module for
+form as a pre-filled, freely-overridable default - see that module for
 why: apps.progression already depends on apps.workouts (for history), so
 apps.workouts itself can't depend back on apps.progression without a
 cycle. Only the view layer is allowed to cross that boundary.
@@ -51,7 +51,7 @@ _CALCULATED_CONFIDENCE_BY_SOURCE = {
 
 def _confidence_for(result: ProgressionResult) -> Confidence:
     """Confidence should be understandable and never imply statistical
-    certainty (docs/SMART_SUGGESTIONS.md) — it's a direct, deterministic
+    certainty (docs/SMART_SUGGESTIONS.md) - it's a direct, deterministic
     function of how much evidence the underlying decision actually used,
     not a black-box score."""
     if result.action in (ProgressionAction.INSUFFICIENT_DATA, ProgressionAction.MANUAL):
@@ -68,10 +68,10 @@ def _confidence_for(result: ProgressionResult) -> Confidence:
 def suggest_weight(user, prescription, *, manual_one_rm=None) -> Suggestion:
     """The single entry point the UI calls. Deterministic for the same
     inputs (delegates entirely to calculate_progression, which is itself
-    deterministic) and always carries a human-readable `reason` — see
+    deterministic) and always carries a human-readable `reason` - see
     docs/SMART_SUGGESTIONS.md "Explainability": never a black box.
 
-    Insufficient history is not a special case here — it already falls
+    Insufficient history is not a special case here - it already falls
     back to the prescription's configured target_weight inside
     ProgressionEngine (docs/SMART_SUGGESTIONS.md "Insufficient history"),
     so this function doesn't need its own fallback chain.

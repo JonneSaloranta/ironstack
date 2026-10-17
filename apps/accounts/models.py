@@ -13,7 +13,7 @@ class UnitSystem(models.TextChoices):
 
 
 class Appearance(models.TextChoices):
-    """Light/dark mode — independent of, and layered on top of, which
+    """Light/dark mode - independent of, and layered on top of, which
     named `Theme` (below) is active: every `Theme` ships both a DARK
     and a LIGHT palette, and this is what picks between them.
     `templates/base.html` renders it as `data-appearance="dark"`/
@@ -21,7 +21,7 @@ class Appearance(models.TextChoices):
     attribute entirely and instead lets a plain
     `prefers-color-scheme` CSS media query decide, so it tracks the
     device's own setting live with no JS involved (`docs/UI.md`
-    "Theming"). `DARK` stays the default — the app only ever had a
+    "Theming"). `DARK` stays the default - the app only ever had a
     dark UI before this setting existed, so an existing install's look
     never changes on upgrade."""
 
@@ -32,14 +32,14 @@ class Appearance(models.TextChoices):
 
 class Theme(models.TextChoices):
     """Which named palette of CSS custom-property overrides
-    (`static/css/base.css` — `[data-theme="..."]`) is active; `Appearance`
+    (`static/css/base.css` - `[data-theme="..."]`) is active; `Appearance`
     above then picks that palette's dark or light half. `DEFAULT` is
     the app's own original, only-ever palette (`:root` in base.css,
-    unconditionally — no `data-theme` attribute needed for it) and
+    unconditionally - no `data-theme` attribute needed for it) and
     stays the default choice so an existing install's look never
     changes on upgrade. Adding another named theme later is just
     another value here plus one more `[data-theme="..."]` block of
-    `light-dark()` declarations in base.css (`docs/UI.md` "Theming") — never a schema
+    `light-dark()` declarations in base.css (`docs/UI.md` "Theming") - never a schema
     change, and never something existing accounts are opted into."""
 
     DEFAULT = "default", _("Default")
@@ -49,12 +49,12 @@ class Theme(models.TextChoices):
     ZEN = "zen", _("Zen")
 
 
-# Each theme's --color-bg, dark and light — apps.core.context_processors.
+# Each theme's --color-bg, dark and light - apps.core.context_processors.
 # theming reads this to pick templates/base.html's <meta name="theme-color">
 # (browser chrome/PWA splash), which can't reference a CSS custom
 # property the way the rest of the app's colors do. Keep in sync with
 # the matching `[data-theme="..."]` block in static/css/base.css by
-# hand — there's no single source both read from, the same trade-off
+# hand - there's no single source both read from, the same trade-off
 # apps.core.formatting's jargon-abbreviation helpers accept for their
 # own hand-kept-in-sync English expansions.
 THEME_BG_COLORS = {
@@ -68,13 +68,13 @@ THEME_BG_COLORS = {
 
 class EncryptedTextField(models.TextField):
     """Transparently encrypted at rest with settings.TOTP_ENCRYPTION_KEY
-    (Fernet) once that's configured — see User.totp_secret's own
+    (Fernet) once that's configured - see User.totp_secret's own
     comment for why this one field is the deliberate exception to
     "this app doesn't field-level-encrypt data" (docs/SECURITY.md
     "Two-factor authentication"). Every call site reads/writes
     `user.totp_secret` as a plain string exactly as before this field
     type existed (`pyotp.TOTP(user.totp_secret)`, `user.totp_secret =
-    twofactor.generate_totp_secret()`, ...) — encryption/decryption
+    twofactor.generate_totp_secret()`, ...) - encryption/decryption
     happens here, once, rather than at every one of those.
 
     TextField, not CharField: a Fernet token is a fair bit longer than
@@ -82,15 +82,15 @@ class EncryptedTextField(models.TextField):
     CharField's max_length=32 the column used before this existed.
 
     Tolerates a value already in the column that *isn't* a Fernet
-    token — a row written back before TOTP_ENCRYPTION_KEY was ever
-    configured, or before this field type existed at all — by
+    token - a row written back before TOTP_ENCRYPTION_KEY was ever
+    configured, or before this field type existed at all - by
     returning it unchanged rather than raising. That also means
     turning the key on doesn't need its own data migration: the next
     ordinary save() of a given row (2FA setup, or apps.accounts.
     management.commands.encrypt_existing_totp_secrets for every row at
     once) is what actually encrypts it, from then on.
 
-    `key_setting` names the setting holding the Fernet key — TOTP's own
+    `key_setting` names the setting holding the Fernet key - TOTP's own
     by default; apps.assistant.models.AssistantPreference.api_key passes
     ASSISTANT_ENCRYPTION_KEY, so the two secrets can be rotated
     independently (same reasoning as BACKUP_ENCRYPTION_KEY being its own
@@ -126,7 +126,7 @@ class EncryptedTextField(models.TextField):
         try:
             return Fernet(self._key()).decrypt(value.encode()).decode()
         except InvalidToken:
-            # Not a Fernet token at all (a legacy plaintext secret —
+            # Not a Fernet token at all (a legacy plaintext secret -
             # see this class's own docstring), or the wrong key. Either
             # way, surfacing it as the raw stored value here rather
             # than raising means a wrong key fails obviously and
@@ -140,7 +140,7 @@ class User(AbstractUser):
 
     Required from the start (Django can't swap the user model after the
     first migration). Carries the per-user display preferences referenced
-    throughout docs/DOMAIN_MODEL.md — internal data always stays in
+    throughout docs/DOMAIN_MODEL.md - internal data always stays in
     canonical units (see apps.core.units); these fields only drive display.
     """
 
@@ -150,27 +150,27 @@ class User(AbstractUser):
     timezone = models.CharField(max_length=64, default="UTC")
     height = models.DecimalField(
         # Same precision as apps.measurements.BodyMeasurement.value for a
-        # length reading (0.1mm) — a cm/inch round-trip through
+        # length reading (0.1mm) - a cm/inch round-trip through
         # apps.core.units never loses precision at this scale.
         max_digits=8,
         decimal_places=4,
         null=True,
         blank=True,
-        help_text="Canonical meters — see apps.core.units. Optional; only "
+        help_text="Canonical meters - see apps.core.units. Optional; only "
         "used to compute BMI alongside a logged body weight.",
     )
     show_bmi = models.BooleanField(
         default=True,
-        help_text="Whether the dashboard's BMI card is shown at all — "
+        help_text="Whether the dashboard's BMI card is shown at all - "
         "independent of whether height/weight exist to compute it, so a "
         "user who'd rather not see the figure can turn it off outright.",
     )
     # apps.measurements.services.needs_body_tracking_reminder / the
-    # dashboard's own "Time to log your measurements?" card — on by
+    # dashboard's own "Time to log your measurements?" card - on by
     # default, the same reasoning show_bmi/show_achievements already
     # follow for a toggle that only ever adds a passive dashboard card,
     # never something a user has to actively dismiss. Off stops that
-    # card from ever appearing, full stop — it never blocks logging a
+    # card from ever appearing, full stop - it never blocks logging a
     # reading directly, only the reminder to do so.
     body_tracking_reminders_enabled = models.BooleanField(
         default=True,
@@ -180,14 +180,14 @@ class User(AbstractUser):
     )
     # Asked for directly: not everyone using this instance wants to
     # track nutrition at all. On by default (matching allow_friend_
-    # requests/allow_group_invites below — an existing, core feature
+    # requests/allow_group_invites below - an existing, core feature
     # area stays on unless a user actively turns it off, rather than
     # every current user losing access the moment this field's
-    # migration runs) — the actual gate lives entirely in navigation
+    # migration runs) - the actual gate lives entirely in navigation
     # (templates/base.html's bottom-nav Nutrition tab, hidden when
     # this is off), never in apps.nutrition's own views/urls: a direct
     # link or bookmark into nutrition still works either way, and no
-    # nutrition data is ever touched by this toggle — turning it off
+    # nutrition data is ever touched by this toggle - turning it off
     # only hides the door, not what's behind it. Asked during
     # onboarding (apps.accounts.forms.OnboardingForm) the same way
     # allow_friend_requests/allow_group_invites already are, and
@@ -196,16 +196,16 @@ class User(AbstractUser):
         default=True,
         help_text="Shows nutrition (food diary, recipes, diet plans) in "
         "navigation and on the dashboard. Turn off to hide it if you don't "
-        "want to track nutrition — existing nutrition data is never "
+        "want to track nutrition - existing nutrition data is never "
         "deleted, and its pages stay reachable directly by a link.",
     )
     # Same "only hides the door" toggle as nutrition_enabled above, for
-    # apps.stretching — its bottom-nav tab and the post-workout
+    # apps.stretching - its bottom-nav tab and the post-workout
     # cool-down suggestion.
     stretching_enabled = models.BooleanField(
         default=True,
         help_text="Shows stretching (routines, guided sessions) in navigation "
-        "and suggests a cool-down after a workout. Turn off to hide it — "
+        "and suggests a cool-down after a workout. Turn off to hide it - "
         "existing stretching data is never deleted.",
     )
     show_achievements = models.BooleanField(
@@ -213,7 +213,7 @@ class User(AbstractUser):
         help_text="A privacy setting, not a display one: the dashboard's "
         "achievements carousel (longest streak, workout count, PRs, "
         "total volume) and \"Recently active\" list (last time this user "
-        "started a workout — see apps.analytics.achievements) are both "
+        "started a workout - see apps.analytics.achievements) are both "
         "shared across every user on this instance, so this controls "
         "whether *this* user's own data is included in what everyone "
         "sees, not whether they personally see either widget at all.",
@@ -222,12 +222,12 @@ class User(AbstractUser):
         default=True,
         help_text="A second, more granular privacy setting than "
         "show_achievements: whether other users on this instance ever see "
-        "this user's first name (see public_display_name()) — the "
+        "this user's first name (see public_display_name()) - the "
         "username itself is always shown regardless, since it was already "
         "visible everywhere show_achievements applies before this field "
         "existed. Off falls back to the username alone.",
     )
-    # Applied by apps.accounts.middleware.UserLanguageMiddleware — a
+    # Applied by apps.accounts.middleware.UserLanguageMiddleware - a
     # distinct concern from unit_system/timezone above (see
     # config.settings.base's LANGUAGES comment). Defaults to
     # settings.LANGUAGE_CODE's base language ("en-us" -> "en") rather
@@ -243,14 +243,14 @@ class User(AbstractUser):
     # (apps.accounts.signals.follow_browser_language), so a new account
     # starts in the browser's language; once chosen it stays put.
     language_chosen = models.BooleanField(default=False)
-    # apps.tutorials — whether a page's guided tour starts by itself the
+    # apps.tutorials - whether a page's guided tour starts by itself the
     # first time the user opens that page. "Don't show tutorials" in a
     # tour, or the toggle on profile → Tutorials, switches it off; tours
     # can still be started by hand from that page either way.
     tutorials_enabled = models.BooleanField(default=True)
 
     # apps.accounts.forms.ProfileForm / templates/base.html's own
-    # `data-theme`/`data-appearance` attributes — two independent
+    # `data-theme`/`data-appearance` attributes - two independent
     # display preferences, same shape as unit_system/language above,
     # not privacy or notification ones. `theme` picks the palette,
     # `appearance` picks that palette's dark or light half (see each
@@ -263,11 +263,11 @@ class User(AbstractUser):
     )
 
     # Two-factor authentication (apps.accounts.twofactor,
-    # apps.accounts.views.TwoFactorSetupView/TwoFactorVerifyView) — a
+    # apps.accounts.views.TwoFactorSetupView/TwoFactorVerifyView) - a
     # single TOTP secret per user, no separate "device" model, since
     # nothing here needs more than one authenticator at a time.
     # Encrypted at rest with settings.TOTP_ENCRYPTION_KEY once that's
-    # configured (EncryptedTextField above) — off by default, same as
+    # configured (EncryptedTextField above) - off by default, same as
     # BACKUP_ENCRYPTION_KEY, since the server still has to be able to
     # read the secret back to compute the expected code on every login
     # (unlike a password, this can't be one-way hashed) regardless of
@@ -284,7 +284,7 @@ class User(AbstractUser):
     totp_enabled = models.BooleanField(default=False)
 
     # apps.accounts.context_processors.onboarding / views.OnboardingView /
-    # templates/accounts/_onboarding_modal.html — a one-time, skippable
+    # templates/accounts/_onboarding_modal.html - a one-time, skippable
     # prompt shown on whatever page a user lands on right after their
     # first login, asking for name/email/starting weight/units and
     # explaining what each is used for. False is the right default for
@@ -294,13 +294,13 @@ class User(AbstractUser):
     # was already using the app before this feature shipped.
     onboarding_completed = models.BooleanField(default=False)
 
-    # apps.accounts.oidc.IronStackOIDCAuthenticationBackend — set True
+    # apps.accounts.oidc.IronStackOIDCAuthenticationBackend - set True
     # the first time this account authenticates via Authentik, whether
     # that's the login that created it or a later one that matched it
     # to an existing local-password account by email (see that
     # backend's own docstring). Purely informational (a "linked to
     # Authentik" note on the profile page, docs/SECURITY.md "Single
-    # sign-on (Authentik / OIDC)") — it never gates anything on its
+    # sign-on (Authentik / OIDC)") - it never gates anything on its
     # own, since PASSWORD_LOGIN_ENABLED already controls whether local
     # password login works at all, independent of any one account's
     # history.
@@ -313,7 +313,7 @@ class User(AbstractUser):
     # must never be undone by that person "confirming their email".
     email_verification_pending = models.BooleanField(default=False)
 
-    # apps.accounts.forms.ProfileForm / templates/accounts/profile.html —
+    # apps.accounts.forms.ProfileForm / templates/accounts/profile.html -
     # off by default, unlike every other display/privacy toggle on this
     # model: turning it on doesn't just change what this instance itself
     # shows, it makes the *browser* fetch gravatar_url() directly from
@@ -325,7 +325,7 @@ class User(AbstractUser):
     # rather than something this app does for them automatically.
     show_gravatar = models.BooleanField(default=False)
 
-    # apps.social — opt-*out* (both default True) rather than opt-in,
+    # apps.social - opt-*out* (both default True) rather than opt-in,
     # since neither one exposes anything by itself the way
     # show_gravatar does: it only gates whether *other* users on this
     # instance can start something with you (a friend request, a
@@ -346,14 +346,14 @@ class User(AbstractUser):
         "link, if you have one.",
     )
 
-    # apps.coaching — a wholly new capability, unrelated to is_staff/
+    # apps.coaching - a wholly new capability, unrelated to is_staff/
     # is_superuser. Off by default, unlike allow_friend_requests/
     # allow_group_invites above: those opt *out* of an existing
     # capability every account already has, while becoming a personal
     # trainer is a brand new one nobody has until they actively turn it
     # on. The only thing this actually gates is apps.coaching.services.
     # send_coaching_request (a client can only request a user who has
-    # this on) — turning it off later never ends a coaching relationship
+    # this on) - turning it off later never ends a coaching relationship
     # already in progress.
     is_personal_trainer = models.BooleanField(
         default=False,
@@ -361,9 +361,9 @@ class User(AbstractUser):
         "users can request you coach them on. Turning this off doesn't "
         "end any coaching relationship you already have.",
     )
-    # Only meaningful once is_personal_trainer is on. On by default —
+    # Only meaningful once is_personal_trainer is on. On by default -
     # same "the capability starts open" reasoning allow_friend_requests
-    # follows — so a brand new PT is immediately requestable rather
+    # follows - so a brand new PT is immediately requestable rather
     # than invisible until they remember to flip a second switch.
     accepting_new_clients = models.BooleanField(
         default=True,
@@ -377,7 +377,7 @@ class User(AbstractUser):
 
     def gravatar_url(self, size=80):
         """The Gravatar (https://gravatar.com) picture for this
-        account's email, if one exists — shown on the profile page only
+        account's email, if one exists - shown on the profile page only
         when `show_gravatar` is on (see that field's own comment for
         why it defaults off). `d=404` asks Gravatar to respond 404
         instead of falling back to a generated placeholder, so the
@@ -389,7 +389,7 @@ class User(AbstractUser):
         return f"https://www.gravatar.com/avatar/{email_hash}?s={size}&d=404"
 
     def public_display_name(self):
-        """What OTHER users see for this user — the achievements
+        """What OTHER users see for this user - the achievements
         carousel, "Recently active" list, and member profile page
         (apps.analytics.achievements/views), the only places one
         user's identity is ever shown to another. Username plus first
@@ -397,7 +397,7 @@ class User(AbstractUser):
         and a first name is actually set; the bare username otherwise.
         Distinct from this user's own dashboard greeting
         (apps.core.greetings), which always uses their first name
-        directly — that's this user looking at their own name, not
+        directly - that's this user looking at their own name, not
         something shown to anyone else, so show_name_to_others doesn't
         apply there."""
         if self.show_name_to_others and self.first_name:
@@ -407,7 +407,7 @@ class User(AbstractUser):
 
 class TwoFactorBackupCode(models.Model):
     """One single-use recovery code for a user who's enabled 2FA
-    (apps.accounts.twofactor.generate_backup_codes) — the standard
+    (apps.accounts.twofactor.generate_backup_codes) - the standard
     fallback for "I lost my authenticator device" that doesn't require
     an admin to intervene. Hashed with Django's own password hasher
     (`code_hash`, via make_password/check_password) rather than a fast
@@ -416,7 +416,7 @@ class TwoFactorBackupCode(models.Model):
     timing-attack-resistant, deliberately-slow treatment, unlike an API
     key sent on every single request where a fast hash matters for
     server load. The plain code itself is only ever shown once, right
-    after generation — never stored anywhere, never recoverable."""
+    after generation - never stored anywhere, never recoverable."""
 
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="backup_codes"
@@ -437,15 +437,15 @@ _DEFAULT_DISCLAIMER_TEXT = (
 
 
 class SiteDisclaimer(models.Model):
-    """Singleton row (always pk=1 — see `load()`), the same pattern as
-    apps.core.models.BackupSettings/FeedbackSettings — a footer note
+    """Singleton row (always pk=1 - see `load()`), the same pattern as
+    apps.core.models.BackupSettings/FeedbackSettings - a footer note
     shown on the login and signup pages (apps.accounts.views.
     RateLimitedLoginView/SignupView), editable from /admin/ without a
     redeploy. Plain text, not translated per-viewer the way UI chrome
     is: it's operator-authored content specific to *this* instance
     (who's running it, what they will or won't be liable for), so
     unlike this app's own strings there's nothing for gettext to
-    translate — an operator who wants it in another language edits it
+    translate - an operator who wants it in another language edits it
     directly. Blank hides it entirely, for an operator who'd rather
     not show one at all."""
 
@@ -463,7 +463,7 @@ class SiteDisclaimer(models.Model):
         super().save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):
-        pass  # singleton — deleting it would just silently recreate the default on next load()
+        pass  # singleton - deleting it would just silently recreate the default on next load()
 
     @classmethod
     def load(cls):

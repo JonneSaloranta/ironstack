@@ -17,7 +17,7 @@ class Migration(migrations.Migration):
             name='FeedbackSettings',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('enabled', models.BooleanField(default=True, help_text='Lets any signed-in user submit feedback from their profile page. Turning this off only closes new submissions — feedback already on file stays visible to staff.')),
+                ('enabled', models.BooleanField(default=True, help_text='Lets any signed-in user submit feedback from their profile page. Turning this off only closes new submissions - feedback already on file stays visible to staff.')),
             ],
         ),
         migrations.CreateModel(

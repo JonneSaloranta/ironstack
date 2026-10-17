@@ -1,7 +1,7 @@
 // Keeps keyboard focus when an HTMX swap replaces the element that had
 // it. Logging a set swaps the whole exercise card / training panel
 // (outerHTML), so the focused submit button was removed and focus fell
-// back to <body> — a keyboard or screen-reader user had to find their
+// back to <body> - a keyboard or screen-reader user had to find their
 // way back from the top of the page after every set.
 //
 // Only acts when the focused element was inside the swapped target and

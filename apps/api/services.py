@@ -1,4 +1,4 @@
-"""API key issuance/permission logic — kept out of views per CLAUDE.md.
+"""API key issuance/permission logic - kept out of views per CLAUDE.md.
 
 Shared by the self-service key-management pages (apps.api.views_web) and
 the Django admin (apps.api.admin), so both ever only go through one path
@@ -17,14 +17,14 @@ def api_keys_for(user):
 
 
 def remaining_key_quota(user):
-    """How many more keys `user` may create right now — never negative."""
+    """How many more keys `user` may create right now - never negative."""
     max_keys = ApiSettings.load().max_api_keys_per_user
     return max(0, max_keys - api_keys_for(user).count())
 
 
 def default_tier():
     """The tier newly created keys get, unless changed later by an admin
-    (apps.api.admin.ApiKeyAdmin) — falls back to whichever tier sorts
+    (apps.api.admin.ApiKeyAdmin) - falls back to whichever tier sorts
     first if no admin has flagged one `is_default` yet (e.g. a fresh
     install before the seed migration's tier exists for some reason),
     so key creation never hard-fails just because that flag is unset.
@@ -41,11 +41,11 @@ def create_api_key(user, *, name, permissions):
     through that form at all).
 
     `permissions`: a dict of `{ApiContext value: {"can_create": bool,
-    "can_read": bool, "can_update": bool, "can_delete": bool}}` — every
+    "can_read": bool, "can_update": bool, "can_delete": bool}}` - every
     context not present defaults to no access at all, matching a form
     field simply being left unchecked.
 
-    Returns `(api_key, raw_secret)` — `raw_secret` is the only time the
+    Returns `(api_key, raw_secret)` - `raw_secret` is the only time the
     real credential is ever available; nothing persists it (see
     apps.api.crypto's own docstring).
     """
@@ -61,7 +61,7 @@ def create_api_key(user, *, name, permissions):
 
 
 def set_permissions(api_key, permissions):
-    """Upserts one ApiKeyPermission row per ApiContext for `api_key` —
+    """Upserts one ApiKeyPermission row per ApiContext for `api_key` -
     always all 8, even when every flag on a given context is False, so
     "no access to this context" is an explicit, visible row rather than
     an absent one (apps.api.permissions still treats a missing row and
@@ -83,7 +83,7 @@ def set_permissions(api_key, permissions):
 
 
 def revoke_api_key(api_key):
-    """Permanently removes a key — it's a credential, not training
+    """Permanently removes a key - it's a credential, not training
     history, so unlike the rest of this app's "never hard-delete, use
     active=False" convention (docs/DOMAIN_MODEL.md), there's no later
     record that needs it to keep existing, and "revoke" should mean the

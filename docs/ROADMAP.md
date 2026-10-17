@@ -39,9 +39,9 @@ UI:
 - accessibility
 - loading/error/empty states
 
-## v2 — Nutrition
+## v2 - Nutrition
 
-**Explicitly requested, complete — see `docs/NUTRITION.md`.** Moved
+**Explicitly requested, complete - see `docs/NUTRITION.md`.** Moved
 out of "future possibilities" below (where it sat as "do not implement
 merely because the architecture allows it") once it stopped being
 hypothetical.
@@ -60,15 +60,15 @@ hypothetical.
   barcode with your camera; Nutri-Score/NOVA badges where OFF grades a
   product
 - full public API support (`ApiContext.NUTRITION`), matching every
-  other domain — see `docs/API.md`
+  other domain - see `docs/API.md`
 
-## v3 — Friends & groups
+## v3 - Friends & groups
 
-**Explicitly requested, complete — see `docs/SOCIAL.md`.** Went
+**Explicitly requested, complete - see `docs/SOCIAL.md`.** Went
 through the same door nutrition tracking did for v2:
 `docs/PRODUCT_REQUIREMENTS.md`'s "explicitly out of scope for v1"
-listed *social network* and *messaging* — "do not implement unless
-explicitly requested" — until they were.
+listed *social network* and *messaging* - "do not implement unless
+explicitly requested" - until they were.
 
 - friend requests (send/accept/decline), an opt-out privacy setting
   controlling who can send one
@@ -76,7 +76,7 @@ explicitly requested" — until they were.
 - groups with owner/admin/member roles; a short, unguessable invite
   link, or a direct invite to a friend (its own opt-out privacy
   setting)
-- direct messages and group chat, HTMX-polled — plus an opt-in Web
+- direct messages and group chat, HTMX-polled - plus an opt-in Web
   Push notification when a message arrives, and a floating
   always-visible unread-messages button on every page (the same
   treatment training-in-progress already gets), both added on direct
@@ -99,13 +99,13 @@ Architecture may later support:
 
 Do not implement these merely because the architecture allows them.
 
-**An external food/barcode database integration — done, see v2 above.**
+**An external food/barcode database integration - done, see v2 above.**
 Was listed here as a future possibility; OpenFoodFacts search/browse/
 barcode-scan is now a real, shipped part of nutrition tracking
 (`docs/NUTRITION.md` "OpenFoodFacts integration"), not hypothetical.
 
-**PWA — partially done, on explicit request.** The app is installable
-(web manifest, icons, a minimal service worker) — see
+**PWA - partially done, on explicit request.** The app is installable
+(web manifest, icons, a minimal service worker) - see
 `docs/UI.md` "Implementation" → PWA. Full **offline functionality**
 (logging a workout with no connection, syncing later) is deliberately
 still not built: this app's core principle is that workout history stays
@@ -115,5 +115,5 @@ the server. The service worker installed only caches static assets
 (CSS/JS/icons); every page, form, and HTMX response always goes to the
 network. Building real offline data entry would need an explicit
 queue-and-sync design (e.g. IndexedDB + background sync with clear
-"pending" UI state) — a deliberate future decision, not a natural
+"pending" UI state) - a deliberate future decision, not a natural
 extension of what's here now.

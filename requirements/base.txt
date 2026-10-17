@@ -1,12 +1,12 @@
 Django>=6.1,<6.2
 psycopg[binary]>=3.3.4,<3.4
 gunicorn>=26.0.0,<27.0
-# apps.api — a real public API (permission-scoped API keys, rate limits)
+# apps.api - a real public API (permission-scoped API keys, rate limits)
 # is enough surface (serialization, per-key permission classes,
 # throttling) that hand-rolling it would just re-invent a worse version
-# of what this already does well — see docs/API.md.
+# of what this already does well - see docs/API.md.
 djangorestframework>=3.18.0,<3.19
-# apps.api's interactive docs (docs/API.md "Interactive docs") —
+# apps.api's interactive docs (docs/API.md "Interactive docs") -
 # generates the OpenAPI schema straight from the DRF viewsets/
 # serializers apps.api already has, and serves a Swagger UI with a
 # working "Try it out" against the real API. The de facto standard
@@ -19,71 +19,71 @@ drf-spectacular>=0.28,<0.29
 # Vendors Swagger UI's own JS/CSS/fonts as ordinary Django static
 # files (SPECTACULAR_SETTINGS["SWAGGER_UI_DIST"] = "SIDECAR" in
 # config.settings.base) instead of drf-spectacular's own CDN-hosted
-# default — this app's CSP has no external script-src/style-src
+# default - this app's CSP has no external script-src/style-src
 # allowance (apps.core.middleware.ContentSecurityPolicyMiddleware,
 # docs/SECURITY.md "Content-Security-Policy") and isn't getting one
 # just for this, so Swagger UI has to be served from 'self' like
 # every other script/style here.
 drf-spectacular-sidecar
-# apps.accounts.twofactor — TOTP (RFC 6238) generation/verification is
+# apps.accounts.twofactor - TOTP (RFC 6238) generation/verification is
 # security-critical, narrow-purpose code that shouldn't be hand-rolled
 # (unlike, say, this project's own Markdown-subset changelog parser or
-# scrollbar CSS) — pyotp is a small, focused, widely-used library that
+# scrollbar CSS) - pyotp is a small, focused, widely-used library that
 # does exactly that and nothing else, not django-otp's heavier
 # multi-device-type framework this project doesn't need. qrcode
 # renders the setup QR code server-side (a data: URI embedded directly
 # in the page, no separate image endpoint).
 pyotp>=2.9,<3.0
 qrcode[pil]>=8.0,<9.0
-# apps.exercises.models.ExerciseImage — Django's own ImageField needs
+# apps.exercises.models.ExerciseImage - Django's own ImageField needs
 # Pillow to validate/read an uploaded file's dimensions. Already an
 # undeclared transitive dependency via qrcode[pil] above; pinned
 # directly here now that this app's own code relies on it too, same
 # reasoning cryptography is pinned directly further down for the same
 # "don't leave a real dependency undeclared" reason.
 Pillow>=11.0,<13.0
-# apps.nutrition.openfoodfacts — on-demand product lookups against
+# apps.nutrition.openfoodfacts - on-demand product lookups against
 # OpenFoodFacts' public JSON API (docs/NUTRITION.md "OpenFoodFacts
 # integration"). No existing project code does outbound HTTP to a JSON
 # API; hand-rolling this on urllib would just reimplement a worse,
 # unmaintained version of what requests already does well (timeouts,
 # JSON decoding, connection pooling).
 requests>=2.32,<3.0
-# apps.accounts.oidc — optional Authentik/OIDC single sign-on
+# apps.accounts.oidc - optional Authentik/OIDC single sign-on
 # (docs/SECURITY.md "Single sign-on (Authentik / OIDC)"). An
 # OAuth2/OIDC authorization-code flow (state/nonce/PKCE, JWKS
 # signature verification, token exchange) is exactly the kind of
 # security-critical, narrow-purpose code this project already avoids
-# hand-rolling elsewhere (see pyotp above) — mozilla-django-oidc plugs
+# hand-rolling elsewhere (see pyotp above) - mozilla-django-oidc plugs
 # straight into Django's own AUTHENTICATION_BACKENDS/auth.login(),
 # unlike a heavier framework such as django-allauth that would also
 # bring in unrelated social-auth providers this project has no use
 # for. Always installed, but inert unless AUTHENTIK_* env vars are set
-# (settings.AUTHENTIK_ENABLED) — self-hosters who don't run Authentik
+# (settings.AUTHENTIK_ENABLED) - self-hosters who don't run Authentik
 # pay no configuration cost beyond the dependency itself.
 mozilla-django-oidc>=5.0,<6.0
-# apps.core.push — Web Push (RFC 8291/8292: VAPID JWT signing +
+# apps.core.push - Web Push (RFC 8291/8292: VAPID JWT signing +
 # aes128gcm payload encryption) for message notifications
 # (docs/SOCIAL.md). Same "security-critical, narrow-purpose code
 # shouldn't be hand-rolled" reasoning as pyotp/mozilla-django-oidc
-# above — pywebpush (+ its own py_vapid/http_ece dependencies) is the
+# above - pywebpush (+ its own py_vapid/http_ece dependencies) is the
 # standard, widely-used library for this, not something worth
 # reimplementing. Always installed, but inert unless VAPID_* env vars
-# are set (settings.PUSH_ENABLED) — self-hosters who don't configure
+# are set (settings.PUSH_ENABLED) - self-hosters who don't configure
 # push pay no configuration cost beyond the dependency itself.
 pywebpush>=2.4,<3.0
-# apps.core.backups — encrypts a backup's database.dump/media.tar once
+# apps.core.backups - encrypts a backup's database.dump/media.tar once
 # BACKUP_ENCRYPTION_KEY is set (docs/BACKUP.md "Encryption"); also
-# apps.accounts.models.EncryptedTextField — encrypts User.totp_secret
+# apps.accounts.models.EncryptedTextField - encrypts User.totp_secret
 # once TOTP_ENCRYPTION_KEY is set (docs/SECURITY.md "Two-factor
 # authentication"). Same "don't hand-roll security-critical crypto"
 # reasoning as pyotp/pywebpush above. Already a transitive dependency
 # of mozilla-django-oidc/pywebpush (both use it for JWT/JWK handling)
-# — pinned directly here now that this app's own code relies on it
+# - pinned directly here now that this app's own code relies on it
 # too, rather than leaving that reliance on an undeclared transitive
 # version.
 cryptography>=43.0,<51.0
-# apps.assistant — the optional AI assistant (docs/ASSISTANT.md). The
+# apps.assistant - the optional AI assistant (docs/ASSISTANT.md). The
 # official Anthropic SDK: streaming, typed errors, retries and the
 # tool-use message shapes are exactly what it exists for, and talking to
 # the Messages API by hand would mean re-implementing its streaming

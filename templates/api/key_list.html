@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% load i18n %}
-{% block title %}{% trans "API keys" %} — IronStack{% endblock %}
+{% block title %}{% trans "API keys" %} - IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
   <h1 class="no-margin">{% trans "API keys" %}</h1>
@@ -29,17 +29,17 @@
         <pre><code>Authorization: Bearer isk_your_secret_here</code></pre>
 
         <h3>{% trans "Permissions" %}</h3>
-        <p>{% trans "Each key is granted Create/Read/Update/Delete separately per area (exercises, programs, workouts, measurements, activities, nutrition, stretching, records, analytics, profile) — set this when you create the key, above. A request outside what the key is granted gets a 403." %}</p>
+        <p>{% trans "Each key is granted Create/Read/Update/Delete separately per area (exercises, programs, workouts, measurements, activities, nutrition, stretching, records, analytics, profile) - set this when you create the key, above. A request outside what the key is granted gets a 403." %}</p>
 
         <h3>{% trans "Units" %}</h3>
-        <p>{% trans "Always canonical: weight in kilograms, length in meters, energy in kcal — never converted to your own display-unit preference, so a script can rely on one meaning regardless of who's asking." %}</p>
+        <p>{% trans "Always canonical: weight in kilograms, length in meters, energy in kcal - never converted to your own display-unit preference, so a script can rely on one meaning regardless of who's asking." %}</p>
 
         <h3>{% trans "Example: reading your profile (curl)" %}</h3>
         <pre><code>curl {{ request.scheme }}://{{ request.get_host }}/api/v1/profile/ \
   -H "Authorization: Bearer isk_your_secret_here"</code></pre>
 
         <h3>{% trans "Example: creating something (curl)" %}</h3>
-        <p>{% trans "A POST with a JSON body — this adds a food to your library:" %}</p>
+        <p>{% trans "A POST with a JSON body - this adds a food to your library:" %}</p>
         <pre><code>curl -X POST {{ request.scheme }}://{{ request.get_host }}/api/v1/foods/ \
   -H "Authorization: Bearer isk_your_secret_here" \
   -H "Content-Type: application/json" \

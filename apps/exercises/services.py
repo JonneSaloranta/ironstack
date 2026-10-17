@@ -1,7 +1,7 @@
 """Query helpers for exercise visibility.
 
 Kept out of views per CLAUDE.md ("keep business/domain logic out of Django
-views") even though the rule here is simple — this is the one place that
+views") even though the rule here is simple - this is the one place that
 decides which exercises a user is allowed to see/use, so later phases
 (programs, workouts) can reuse it instead of re-deriving the same filter.
 """
@@ -24,18 +24,18 @@ def visible_to(user, *, include_inactive=False):
 
 def search(queryset, query):
     """Exercise names are stored in English (the seeded library's own
-    `name` values — apps.exercises.views used to `.filter(name__
+    `name` values - apps.exercises.views used to `.filter(name__
     icontains=query)` directly against those), but every one of them
     is also a real gettext msgid, translated for display wherever it's
     shown via `{% trans %}`/`|translate_content` (see that filter's own
-    docstring, apps.core.templatetags.core_extras — "Bent-over Row" ->
+    docstring, apps.core.templatetags.core_extras - "Bent-over Row" ->
     "Kulmasoutu tangolla" for a Finnish user). A plain `icontains`
     against the stored English name can never match what a non-English
-    user actually *sees* and types back — searching "kulmasoutu" found
+    user actually *sees* and types back - searching "kulmasoutu" found
     nothing, even for a user staring at an exercise literally labeled
     that on screen.
 
-    Matches against *either* the raw stored name (still needed — an
+    Matches against *either* the raw stored name (still needed - an
     exercise search should also work in English regardless of the
     active language, and covers a custom exercise a user named in
     their own language to begin with, which was never a msgid at all)
@@ -43,12 +43,12 @@ def search(queryset, query):
     database level: gettext has no SQL-level equivalent to push this
     filter down into, and the exercise library `visible_to` already
     scopes this to (system exercises + one user's own) is small enough
-    — dozens, not thousands of rows — that pulling `pk`/`name` for all
+    - dozens, not thousands of rows - that pulling `pk`/`name` for all
     of them and filtering in Python is the pragmatic answer, not a
     performance risk here specifically. Deliberately not applied the
     same way to apps.nutrition's own name searches (Food/Recipe), which
     can plausibly hold far more rows (an OpenFoodFacts-synced catalog)
-    — see docs/DEVELOPMENT_LOG.md for that scope decision.
+    - see docs/DEVELOPMENT_LOG.md for that scope decision.
     """
     query = query.strip()
     if not query:
@@ -64,7 +64,7 @@ def search(queryset, query):
 
 def image_limit_exceeded(exercise, *, exclude_pk=None):
     """Whether `exercise` already holds `ExerciseImageSettings.
-    max_images_per_exercise` images or more — the one place that
+    max_images_per_exercise` images or more - the one place that
     counts against the cap, called from both `ExerciseImage.clean()`
     (so admin/form saves enforce it) and anywhere else that wants to
     check before offering an upload control at all (e.g. hiding the
@@ -90,7 +90,7 @@ MAX_IMAGE_UPLOAD_BYTES = 15 * 1024 * 1024
 def prepare_uploaded_image(uploaded, *, with_size=False):
     """An uploaded exercise image, ready to store: turned upright from its
     EXIF orientation, scaled down to MAX_IMAGE_DIMENSION on its longer
-    side, and re-encoded — which also drops its EXIF metadata, a phone
+    side, and re-encoded - which also drops its EXIF metadata, a phone
     photo's GPS position included, since media is served publicly.
     Full-size phone photos used to be stored and sent as-is. Returns a
     new file with the same name; an image already small enough is still

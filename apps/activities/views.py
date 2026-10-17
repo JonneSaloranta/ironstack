@@ -23,7 +23,7 @@ class ActivityTypeListView(LoginRequiredMixin, ListView):
     context_object_name = "activity_types"
 
     def get_queryset(self):
-        # The list page only needs a count per type — annotate it in one
+        # The list page only needs a count per type - annotate it in one
         # query rather than materializing every logged Activity row per
         # type via services.summarize() (which the history page needs in
         # full, but the list page doesn't). Filtered on this user
@@ -68,7 +68,7 @@ class ActivityHistoryView(LoginRequiredMixin, DetailView):
         context["page_obj"] = paginate_list(self.request, history)
         context["history"] = history
         # summarize() totals canonical meters (it doesn't know about
-        # display units) — convert the one distance-shaped field before
+        # display units) - convert the one distance-shaped field before
         # it reaches the template, same as each entry's own distance.
         summary = services.summarize(history)
         if summary.total_distance is not None:

@@ -1,6 +1,6 @@
 #!/bin/sh
 # Full backup: a PostgreSQL dump, the media volume's contents, and a
-# version_info manifest (docs/ARCHITECTURE.md "Versioning") — bundled
+# version_info manifest (docs/ARCHITECTURE.md "Versioning") - bundled
 # into one timestamped archive under backups/ on the host, not a
 # Docker volume, so it survives even if every container/volume is
 # destroyed. See docs/BACKUP.md; scripts/restore.sh is the destructive
@@ -10,12 +10,12 @@ set -eu
 cd "$(dirname "$0")/.."
 
 if ! docker compose ps --status running --services 2>/dev/null | grep -qx web; then
-  echo "The 'web' service isn't running — start the stack first (docker compose up -d)." >&2
+  echo "The 'web' service isn't running - start the stack first (docker compose up -d)." >&2
   exit 1
 fi
 
 # Same BACKUP_ENCRYPTION_KEY .env's Python-side counterpart
-# (apps.core.backups, docs/BACKUP.md "Encryption") reads — one setting
+# (apps.core.backups, docs/BACKUP.md "Encryption") reads - one setting
 # governs encryption for both backup mechanisms, even though this
 # script uses openssl rather than that module's own Fernet: a
 # self-hoster only ever has to think about "is BACKUP_ENCRYPTION_KEY
@@ -23,7 +23,7 @@ fi
 # Read directly from .env (not `docker compose exec`'s env_file
 # handling) since this script's own encryption step runs on the host,
 # never inside a container. Empty/unset (the default) leaves this
-# archive exactly as before this feature existed — plain
+# archive exactly as before this feature existed - plain
 # database.dump/media.tar members.
 BACKUP_ENCRYPTION_KEY="$(grep -m1 '^BACKUP_ENCRYPTION_KEY=' .env 2>/dev/null | cut -d= -f2- || true)"
 
@@ -44,7 +44,7 @@ DATABASE_MEMBER="database.dump"
 MEDIA_MEMBER="media.tar"
 if [ -n "$BACKUP_ENCRYPTION_KEY" ]; then
   echo "Encrypting..."
-  # -pass env:VAR, not pass:$BACKUP_ENCRYPTION_KEY — the latter would
+  # -pass env:VAR, not pass:$BACKUP_ENCRYPTION_KEY - the latter would
   # put the key itself on this process's command line, briefly visible
   # to any other user on the same host via `ps`.
   export BACKUP_ENCRYPTION_KEY

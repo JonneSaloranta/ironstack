@@ -11,7 +11,7 @@
     {% if message.is_in_progress %}
       <p class="text-muted row"><span class="spinner" aria-hidden="true"></span> {% if message.activity %}{{ message.activity }}{% else %}{% trans "Waiting…" %}{% endif %}</p>
       {% if message.waiting_long %}
-        <p class="text-muted text-xs">{% trans "This is taking unusually long to start. If it never does, the assistant worker may not be running — let your administrator know." %}</p>
+        <p class="text-muted text-xs">{% trans "This is taking unusually long to start. If it never does, the assistant worker may not be running - let your administrator know." %}</p>
       {% endif %}
     {% elif message.status == "error" %}
       <div class="alert alert-error"><p>{{ message.error }}</p></div>

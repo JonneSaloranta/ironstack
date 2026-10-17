@@ -8,7 +8,7 @@ from . import services
 
 
 class ExerciseRecordsView(LoginRequiredMixin, TemplateView):
-    """A user's current PRs for one exercise — computed live from history,
+    """A user's current PRs for one exercise - computed live from history,
     see apps.records.services.current_records."""
 
     template_name = "records/exercise_records.html"

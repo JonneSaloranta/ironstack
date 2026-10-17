@@ -82,7 +82,7 @@ class ExerciseUpdateView(LoginRequiredMixin, UpdateView):
     template_name = "exercises/exercise_form.html"
 
     def get_queryset(self):
-        # Only a user's own custom exercises can be edited — system
+        # Only a user's own custom exercises can be edited - system
         # exercises are managed via the admin, not user-facing views.
         return Exercise.objects.filter(owner=self.request.user)
 
@@ -109,9 +109,9 @@ def exercise_deactivate(request, pk):
 @login_required
 def exercise_image_create(request, pk):
     """Adds one image to a user's own custom exercise (system exercises'
-    images are admin-only, same as every other edit to them — see
+    images are admin-only, same as every other edit to them - see
     ExerciseUpdateView's own docstring). Redirects back to the detail
-    page either way rather than re-rendering a dedicated upload page —
+    page either way rather than re-rendering a dedicated upload page -
     there's no separate page to re-render, the upload form lives
     directly on the exercise detail page next to the gallery it feeds.
     """

@@ -1,4 +1,4 @@
-"""Seed more well-known built-in program templates, on request — the
+"""Seed more well-known built-in program templates, on request - the
 original seed (0002) shipped only one generic "Full Body A/B/C". Each of
 these describes a real, widely-documented training methodology; naming
 one after the lifter who popularized it is standard practice in fitness
@@ -19,7 +19,7 @@ TEMPLATES = [
             "The classic 6-day bodybuilding split popularized by Arnold "
             "Schwarzenegger in the 1970s: chest/back, shoulders/arms, and "
             "legs, each trained twice a week. Rotate through all three "
-            "workouts, then repeat — not tied to fixed calendar days."
+            "workouts, then repeat - not tied to fixed calendar days."
         ),
         [
             (
