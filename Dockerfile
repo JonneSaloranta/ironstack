@@ -25,7 +25,7 @@ COPY --from=build /venv /venv
 ENV PATH="/venv/bin:${PATH}"
 
 # postgresql-client-16 (not Debian's own default `postgresql-client`,
-# whatever major version that happens to be — currently 17, a mismatch
+# whatever major version that happens to be - currently 17, a mismatch
 # from db's `postgres:16-alpine` in docker-compose.yml causes pg_dump/
 # pg_restore to embed/expect session settings the *server* doesn't
 # recognize, e.g. "unrecognized configuration parameter
@@ -33,7 +33,7 @@ ENV PATH="/venv/bin:${PATH}"
 # repository, not Debian's, since Debian trixie only ships one
 # postgresql-client version at a time. Keep this "16" and
 # docker-compose.yml's `postgres:16-alpine` in sync if the server's
-# major version is ever upgraded — apps.core.backups (the web-UI
+# major version is ever upgraded - apps.core.backups (the web-UI
 # backup feature) is what actually needs a matching client. Only in
 # the runtime stage, not `base`: the build stage needs its own,
 # untouched ca-certificates for pip's own HTTPS fetches, and purging
@@ -54,7 +54,7 @@ RUN apt-get update \
 RUN useradd --create-home --uid 1000 django
 COPY . .
 
-# Build-time metadata (docs/ARCHITECTURE.md "Versioning") — none of
+# Build-time metadata (docs/ARCHITECTURE.md "Versioning") - none of
 # these are required for `docker compose up -d --build` to work; they
 # default to "unknown" so that simple path is unaffected.
 # scripts/build.sh fills them in for anyone who wants full version/

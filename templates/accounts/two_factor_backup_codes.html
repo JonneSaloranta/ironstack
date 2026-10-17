@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% load i18n %}
-{% block title %}{% trans "New backup codes" %} — IronStack{% endblock %}
+{% block title %}{% trans "New backup codes" %} - IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
   <h1 class="no-margin">{% trans "New backup codes" %}</h1>
@@ -14,9 +14,9 @@
 
 {% comment %}
   Generating a fresh set of codes hashes each one with Django's own
-  password hasher — deliberately expensive, seconds rather than
+  password hasher - deliberately expensive, seconds rather than
   milliseconds on ordinary hardware (see TwoFactorBackupCodesFragment
-  View's own docstring) — so this form auto-submits itself via HTMX
+  View's own docstring) - so this form auto-submits itself via HTMX
   the instant this page loads (hx-trigger="load", no button to click,
   nothing to double-submit by accident) instead of making a user wait
   on a blank screen for a normal form POST with no idea whether

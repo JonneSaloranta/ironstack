@@ -14,7 +14,7 @@ User = get_user_model()
 
 
 def _tiny_image(name="test.png"):
-    """A minimal real PNG, not just arbitrary bytes — Django's
+    """A minimal real PNG, not just arbitrary bytes - Django's
     ImageField (via Pillow) validates that an uploaded file actually
     decodes as an image, so a fake `b"not-an-image"` upload would fail
     validation for the wrong reason in every test below."""
@@ -50,7 +50,7 @@ class ExerciseLibrarySeedTests(TestCase):
 
     def test_third_seed_migration_adds_traps_lats_and_obliques(self):
         """Regression: the original 11 seeded muscle groups left out
-        Traps, Lats, and Obliques — three groups mainstream fitness
+        Traps, Lats, and Obliques - three groups mainstream fitness
         apps usually list on their own rather than folding into a
         broader neighbor (Back/Abs)."""
         for name in ["Traps", "Lats", "Obliques"]:
@@ -58,7 +58,7 @@ class ExerciseLibrarySeedTests(TestCase):
 
     def test_third_seed_migration_adds_one_exercise_per_new_muscle_group(self):
         """Each new muscle group ships with at least one exercise tagged
-        to it, so it isn't an empty option in the muscle-group filter —
+        to it, so it isn't an empty option in the muscle-group filter -
         see the migration's own docstring for why existing exercises
         aren't retagged instead."""
         cases = [
@@ -76,9 +76,9 @@ class ExerciseLibrarySeedTests(TestCase):
 
 class ExerciseContentTranslationTests(TestCase):
     """Seeded exercise/muscle-group/equipment *names* are content, not UI
-    chrome — the stored value stays canonical English (matched by
+    chrome - the stored value stays canonical English (matched by
     get_or_create/uniqueness elsewhere), but the display goes through
-    gettext too, via apps.exercises.i18n_content's extraction catalog —
+    gettext too, via apps.exercises.i18n_content's extraction catalog -
     see docs/ARCHITECTURE.md "Internationalization"."""
 
     def setUp(self):
@@ -95,7 +95,7 @@ class ExerciseContentTranslationTests(TestCase):
 
     def test_a_users_own_custom_exercise_name_is_never_translated(self):
         """gettext only ever matches strings actually present in the
-        catalog — a custom name a user typed themselves was never
+        catalog - a custom name a user typed themselves was never
         extracted into it, so it always renders exactly as typed,
         regardless of UI language."""
         exercise = Exercise.objects.create(name="My Weird Custom Move", owner=self.alice)
@@ -170,7 +170,7 @@ class ExerciseListViewTests(TestCase):
     def test_the_plain_function_view_also_requires_login(self):
         # Regression: exercise_deactivate was missing @login_required,
         # so an anonymous request crashed with a 500 instead of
-        # redirecting to login — same bug class as apps.nutrition's
+        # redirecting to login - same bug class as apps.nutrition's
         # own equivalent fix.
         exercise = Exercise.objects.create(name="Alice Move", owner=self.alice)
         self.client.logout()
@@ -195,13 +195,13 @@ class ExerciseListViewTests(TestCase):
 
     def test_search_also_matches_the_translated_name(self):
         # Regression: exercise names are stored in English ("Barbell
-        # Row") but displayed translated (`|translate_content` —
+        # Row") but displayed translated (`|translate_content` -
         # "Kulmasoutu tangolla" for a Finnish user, its real msgstr in
         # locale/fi). Searching in the language actually shown on
         # screen used to find nothing at all, since the old plain
         # `name__icontains` only ever matched the stored English.
         #
-        # `translation.override()` alone doesn't reach the view here —
+        # `translation.override()` alone doesn't reach the view here -
         # apps.core.middleware overrides LocaleMiddleware's own guess
         # with the logged-in user's own `language` field partway
         # through the request, same as a real browser request would
@@ -223,7 +223,7 @@ class ExerciseListViewTests(TestCase):
         from apps.exercises.models import MuscleGroup
 
         # Names distinct from the seeded library's own muscle groups
-        # (MuscleGroup.name is unique) — "Chest"/"Legs" already exist
+        # (MuscleGroup.name is unique) - "Chest"/"Legs" already exist
         # from the seed migration.
         group_a = MuscleGroup.objects.create(name="Test Group Alpha")
         group_b = MuscleGroup.objects.create(name="Test Group Beta")
@@ -281,7 +281,7 @@ class ExerciseCreateViewTests(TestCase):
         )
 
     def test_updating_my_own_exercise(self):
-        """ExerciseUpdateView's actual success path had no test —
+        """ExerciseUpdateView's actual success path had no test -
         ExercisePermissionTests only ever checks the 404-for-another-
         user's-exercise case (found via `coverage report`)."""
         exercise = Exercise.objects.create(
@@ -321,7 +321,7 @@ class ExercisePermissionTests(TestCase):
         self.assertTrue(self.bob_exercise.active)
 
     def test_cannot_view_another_users_custom_exercise_detail(self):
-        # Custom exercises are user-owned data, same as programs/workouts —
+        # Custom exercises are user-owned data, same as programs/workouts -
         # visible_to() scopes the detail view to system + own exercises.
         response = self.client.get(
             reverse("exercises:exercise-detail", args=[self.bob_exercise.pk])
@@ -340,7 +340,7 @@ class ExercisePermissionTests(TestCase):
 
 
 class ExerciseInstructionsTests(TestCase):
-    """`Exercise.instructions` — the written step-by-step counterpart to
+    """`Exercise.instructions` - the written step-by-step counterpart to
     `ExerciseImage` (see that field's own docstring for how the two
     relate), editable the same way `description` already is."""
 
@@ -376,14 +376,14 @@ class ExerciseInstructionsTests(TestCase):
             name="My Move",
             owner=self.alice,
             instructions="Step one.",
-            instructions_attribution="Someone — CC-BY-SA, via wger.de",
+            instructions_attribution="Someone - CC-BY-SA, via wger.de",
         )
         response = self.client.get(reverse("exercises:exercise-detail", args=[exercise.pk]))
-        self.assertContains(response, "Someone — CC-BY-SA, via wger.de")
+        self.assertContains(response, "Someone - CC-BY-SA, via wger.de")
 
     def test_detail_page_omits_the_instructions_card_for_a_bare_system_exercise(self):
         # No instructions, no images, and not the viewer's own exercise
-        # to manage — nothing left to show, so the whole card (not just
+        # to manage - nothing left to show, so the whole card (not just
         # its now-empty contents) is skipped.
         exercise = Exercise.objects.create(name="Bare System Move", owner=None)
         response = self.client.get(reverse("exercises:exercise-detail", args=[exercise.pk]))
@@ -564,7 +564,7 @@ class ExerciseImageViewTests(TestCase):
 
 
 class SeedExerciseImagesTests(TestCase):
-    """Regression coverage for migration 0007_seed_exercise_images —
+    """Regression coverage for migration 0007_seed_exercise_images -
     see that migration's own docstring for why "Side Plank" is the one
     seeded exercise deliberately left without one."""
 
@@ -585,7 +585,7 @@ class SeedExerciseImagesTests(TestCase):
 
 class SeedExerciseInstructionsTests(TestCase):
     """Regression coverage for migration 0010_seed_exercise_instructions
-    — see that migration's own docstring for why "Side Plank" is left
+    - see that migration's own docstring for why "Side Plank" is left
     without instructions too, and why a few of the 27 carry no
     `instructions_attribution` despite the rest being wger-sourced."""
 
@@ -605,7 +605,7 @@ class SeedExerciseInstructionsTests(TestCase):
     def test_a_rewritten_exercise_carries_no_attribution(self):
         # Regression: Face Pull's own wger source described a dumbbell
         # variant, wrong equipment for how this project seeds it
-        # (Cable) — rewritten from scratch, so it must not carry a
+        # (Cable) - rewritten from scratch, so it must not carry a
         # credit line for text that isn't actually wger's.
         face_pull = Exercise.objects.get(name="Face Pull", owner=None)
         self.assertTrue(face_pull.instructions)

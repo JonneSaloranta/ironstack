@@ -1,4 +1,4 @@
-"""The nutrition onboarding wizard — see docs/NUTRITION.md "Phased
+"""The nutrition onboarding wizard - see docs/NUTRITION.md "Phased
 implementation plan" step 3. Five small steps (spec: step-by-step, not
 one giant form), state accumulated in the session between them
 (`request.session["nutrition_onboarding"]`, Decimal/date values kept
@@ -192,7 +192,7 @@ class OnboardingGoalView(_OnboardingStepView):
 
 
 def _draft_profile(data):
-    """An unsaved NutritionProfile from session data — age_years and
+    """An unsaved NutritionProfile from session data - age_years and
     the other fields the energy engine needs work on an unsaved
     instance, so the review step doesn't need to persist anything to
     show its preview."""
@@ -279,7 +279,7 @@ class OnboardingReviewView(_OnboardingStepView):
 def _todays_diet_plan_summary(user, today):
     """The active DietPlan's own meals for `today` specifically (all
     of them for a one-day plan, just today's weekday's for a weekly
-    one — DietPlan.is_weekly's own docstring) plus their combined
+    one - DietPlan.is_weekly's own docstring) plus their combined
     nutrition, for the dashboard's "Today's plan" card. `None` if
     there's no active plan at all, or a weekly one with nothing built
     for today's weekday (e.g. a meal slot added after the plan was
@@ -305,10 +305,10 @@ class NutritionDashboardView(LoginRequiredMixin, View):
     """Redirects a not-yet-onboarded user to the wizard; otherwise
     answers spec section 16's questions at a glance: today's calories/
     macros vs. target, a weight trend chart, whether today is a
-    training day (informational only — apps.nutrition.services.
+    training day (informational only - apps.nutrition.services.
     is_training_day, no separate calorie target derived from it, see
     docs/NUTRITION.md "Integration with existing apps"), and the
-    dynamic-adjustment suggestion card (apps.nutrition.suggestions) —
+    dynamic-adjustment suggestion card (apps.nutrition.suggestions) -
     "is this working, does something need to change.\""""
 
     def get(self, request):
@@ -331,7 +331,7 @@ class NutritionDashboardView(LoginRequiredMixin, View):
         weight_chart = None
         if weight_type is not None:
             # Charted in the user's own display unit, not canonical kg
-            # — same convention as apps.measurements.views.
+            # - same convention as apps.measurements.views.
             # MeasurementHistoryView's own chart.
             readings = [
                 (
@@ -360,15 +360,15 @@ class NutritionDashboardView(LoginRequiredMixin, View):
 
 
 class GoalUpdateView(LoginRequiredMixin, View):
-    """Change goal_type/target_weight/target_rate after onboarding —
+    """Change goal_type/target_weight/target_rate after onboarding -
     reuses the exact same GoalStepForm and calculate_target_for_goal
     -> set_goal/set_target pipeline OnboardingReviewView's own POST
     uses, since a changed goal always needs a freshly derived calorie/
     macro target to match it (services.set_goal/set_target's append-
     only history keeps the old goal and target around, never
-    overwritten — docs/NUTRITION.md "NutritionGoal"/"NutritionTarget").
+    overwritten - docs/NUTRITION.md "NutritionGoal"/"NutritionTarget").
     Not part of the onboarding wizard's session-accumulated flow
-    (`_SESSION_KEY`) — the user already has a saved NutritionProfile
+    (`_SESSION_KEY`) - the user already has a saved NutritionProfile
     by the time they can reach this, so there's nothing to accumulate
     across steps."""
 
@@ -423,7 +423,7 @@ class GoalUpdateView(LoginRequiredMixin, View):
         if latest_weight is None:
             # Every onboarded user should have at least the body-
             # weight measurement OnboardingReviewView's own POST
-            # creates — this only fires if that measurement was since
+            # creates - this only fires if that measurement was since
             # deleted, or the "Body weight" MeasurementType itself
             # isn't seeded on this install. The calorie engine needs a
             # current weight (Mifflin-St Jeor), so there's no
@@ -431,7 +431,7 @@ class GoalUpdateView(LoginRequiredMixin, View):
             form.add_error(
                 None,
                 _(
-                    "Log a body weight measurement before changing your goal — the "
+                    "Log a body weight measurement before changing your goal - the "
                     "calorie target needs your current weight."
                 ),
             )
@@ -468,7 +468,7 @@ class GoalUpdateView(LoginRequiredMixin, View):
         )
         messages.success(
             request,
-            _("Goal updated — new target is %(calories)d kcal/day.")
+            _("Goal updated - new target is %(calories)d kcal/day.")
             % {"calories": calorie_result.daily_calories},
         )
         return redirect("nutrition:dashboard")
@@ -476,7 +476,7 @@ class GoalUpdateView(LoginRequiredMixin, View):
 
 class FoodListView(LoginRequiredMixin, ListView):
     """`get_template_names` swaps to the bare results partial for an
-    HTMX request — the exact same "one view, two templates" shape
+    HTMX request - the exact same "one view, two templates" shape
     `apps.exercises.views.ExerciseListView` already uses for its own
     filter form, reused here rather than inventing a second way to do
     the same thing."""
@@ -489,8 +489,8 @@ class FoodListView(LoginRequiredMixin, ListView):
     # the food a user is most likely looking for is the one they just
     # added or imported. Query param -> ordering field. "name" is the
     # tiebreaker for every other sort (see get_queryset) so two
-    # foods sharing a sort value — the same category, the same
-    # calorie count — still land in a stable, predictable order
+    # foods sharing a sort value - the same category, the same
+    # calorie count - still land in a stable, predictable order
     # instead of whatever order Postgres happens to return them in.
     SORT_FIELDS = {
         "name": "name",
@@ -536,13 +536,13 @@ class FoodListView(LoginRequiredMixin, ListView):
 
 
 def _viewable_food_or_404(request, pk):
-    """Read-only access to one food — a user's own food, or a shared
+    """Read-only access to one food - a user's own food, or a shared
     one (owner=None: hand-entered by another user made visible to
     everyone, or imported from OpenFoodFacts), same visibility as
     FoodListView.get_queryset above and the exact
     _viewable_recipe_or_404 pattern below reuses for Recipe. There is
-    no equivalent _owned_food_or_404 / food-update view yet — Food has
-    no edit page at all today, only creation — so unlike Recipe this
+    no equivalent _owned_food_or_404 / food-update view yet - Food has
+    no edit page at all today, only creation - so unlike Recipe this
     helper backs every food view that exists, not just the read-only
     ones."""
     from django.db.models import Q
@@ -555,7 +555,7 @@ def _viewable_food_or_404(request, pk):
 
 
 class FoodDetailView(LoginRequiredMixin, View):
-    """One food's own nutrition facts — asked for directly: every
+    """One food's own nutrition facts - asked for directly: every
     other place a food's name appears (the diary, a recipe's
     ingredient list, "most used", search results, ...) used to show
     plain text with nowhere to tap through to, unlike a recipe, which
@@ -593,11 +593,11 @@ class FoodCreateView(LoginRequiredMixin, CreateView):
 
 
 class FoodSearchResultsView(LoginRequiredMixin, View):
-    """HTMX partial — local + live OpenFoodFacts results for every
+    """HTMX partial - local + live OpenFoodFacts results for every
     "search for a food and add it" box in the app
     (apps.nutrition.services.search_foods): the food diary, adding a
     recipe ingredient, and adding an extra item to a diet plan meal.
-    One search implementation, one results partial — `mode` (plus
+    One search implementation, one results partial - `mode` (plus
     whatever extra id that mode needs) only changes which hidden
     fields/POST target the results partial renders, not how the
     search itself works."""
@@ -633,14 +633,14 @@ class FoodSearchResultsView(LoginRequiredMixin, View):
         elif mode == "diet-plan-meal":
             context["plan_pk"] = request.GET.get("plan_pk", "")
             context["meal_pk"] = request.GET.get("meal_pk", "")
-        # mode == "browse" needs no extra id — importing to the shared
+        # mode == "browse" needs no extra id - importing to the shared
         # library isn't scoped to a diary date, a recipe, or a meal.
         return render(request, self.template_name, context)
 
 
 class FoodBrowseView(LoginRequiredMixin, View):
     """Search-or-browse-by-category, import straight into the shared
-    food library — distinct from FoodSearchResultsView's other three
+    food library - distinct from FoodSearchResultsView's other three
     modes in that there's nothing to log a quantity *into* here, just
     "add this to what everyone on this instance can find." See
     docs/NUTRITION.md "OpenFoodFacts integration"."""
@@ -670,7 +670,7 @@ class FoodCategoryView(LoginRequiredMixin, View):
 @login_required
 def food_import(request):
     """Imports one OpenFoodFacts product straight into the shared
-    library (owner=None, same as every other OFF import) — the POST
+    library (owner=None, same as every other OFF import) - the POST
     target for both the browse search box and a category listing's
     "Import" buttons. No quantity: this adds the food to the library,
     it doesn't log anything."""
@@ -697,7 +697,7 @@ def _parse_diary_date(value):
 
 
 def _diary_day_redirect(target_date, meal_slot_pk=None):
-    """Redirects back to one day's diary — with a `#meal-slot-<pk>`
+    """Redirects back to one day's diary - with a `#meal-slot-<pk>`
     fragment when a specific meal slot is given, asked for directly:
     adding/editing/removing an entry used to always redirect to the
     bare diary-day URL, which lands the browser at the very top of the
@@ -712,7 +712,7 @@ def _diary_day_redirect(target_date, meal_slot_pk=None):
 
 
 class DiaryDayView(LoginRequiredMixin, View):
-    """The food diary for one day, grouped by meal slot — spec section
+    """The food diary for one day, grouped by meal slot - spec section
     8: add/edit/remove a food, see calories and macros, see how much
     is left against today's target."""
 
@@ -724,7 +724,7 @@ class DiaryDayView(LoginRequiredMixin, View):
         target_date = _parse_diary_date(target_date)
         # A plain list, not a queryset, from here on: each slot gets
         # its own `.entries` attribute below so the template can do a
-        # simple `{% for entry in slot.entries %}` — Django templates
+        # simple `{% for entry in slot.entries %}` - Django templates
         # have no clean way to look a dict up by a *variable* key
         # (`entries_by_slot[slot.pk]`) without a custom filter, so the
         # entries are attached directly to the objects that already
@@ -768,7 +768,7 @@ class DiaryDayView(LoginRequiredMixin, View):
 @login_required
 def diary_day_copy(request, source_date):
     """Duplicates one day's whole diary onto another date
-    (apps.nutrition.services.copy_diary_day) — "I ate the same as
+    (apps.nutrition.services.copy_diary_day) - "I ate the same as
     yesterday" without re-adding every item by hand. POST-only, same
     convention as every other diary mutation here."""
     if request.method != "POST":
@@ -787,7 +787,7 @@ def diary_day_copy(request, source_date):
         ) % {"count": count, "date": target_date.isoformat()}
         messages.success(request, message)
     else:
-        messages.info(request, _("Nothing to copy — that day has no entries."))
+        messages.info(request, _("Nothing to copy - that day has no entries."))
     return redirect("nutrition:diary-day", target_date=target_date.isoformat())
 
 
@@ -848,7 +848,7 @@ class DiaryAddEntryView(LoginRequiredMixin, View):
         elif form.cleaned_data.get("off_barcode"):
             food = services.import_or_refresh_food_from_off(form.cleaned_data["off_barcode"])
             if food is None:
-                form.add_error(None, _("That food couldn't be imported — try again."))
+                form.add_error(None, _("That food couldn't be imported - try again."))
                 return render(
                     request,
                     self.template_name,
@@ -950,7 +950,7 @@ def diary_entry_delete(request, pk):
 
 @login_required
 def diary_meal_save_as_recipe(request, target_date, meal_slot_pk):
-    """"Save this meal as a recipe" (diary_day.html) — asked for
+    """"Save this meal as a recipe" (diary_day.html) - asked for
     directly, for whichever meal slot the button was tapped under.
     POST-only, same convention as every other diary mutation here."""
     if request.method != "POST":
@@ -966,12 +966,12 @@ def diary_meal_save_as_recipe(request, target_date, meal_slot_pk):
 
 
 def _annotate_recipes_with_per_serving(recipes):
-    """Per-serving calories at a glance, without opening each recipe —
+    """Per-serving calories at a glance, without opening each recipe -
     the same reason food_list.html shows calories directly rather
     than making every recipe a guess until opened. Computed as one
     bulk query across every listed recipe's ingredients (not
     services.recipe_per_serving_nutrition called once per recipe in a
-    loop, which would be a real N+1 here — this is a *list* of
+    loop, which would be a real N+1 here - this is a *list* of
     recipes, unlike that function's other call sites which each only
     ever look at one recipe at a time). Mutates each recipe in place
     (sets `.per_serving`) rather than returning a parallel structure,
@@ -996,10 +996,10 @@ def _annotate_recipes_with_per_serving(recipes):
 
 class RecipeListView(LoginRequiredMixin, View):
     """Two independent, separately-paginated lists on one page, asked
-    for directly: a user's own recipes (most recent first — this is
+    for directly: a user's own recipes (most recent first - this is
     the list someone actively adds to, so what they just created is
     what they're most likely looking for) above the built-in template
-    recipes (alphabetical — a fixed, shared reference list, browsed
+    recipes (alphabetical - a fixed, shared reference list, browsed
     rather than added to), each in its own section so paginating one
     never resets the other's page. A plain View rather than ListView
     since ListView's pagination machinery only ever handles one
@@ -1007,7 +1007,7 @@ class RecipeListView(LoginRequiredMixin, View):
 
     template_name = "nutrition/recipe_list.html"
     my_recipes_page_size = 5
-    # Smaller than FoodListView's own 20/page — the built-in template
+    # Smaller than FoodListView's own 20/page - the built-in template
     # library is currently ~18 recipes, so 20/page would never
     # actually show a second page at all, making "paginated" true in
     # code but invisible in practice.
@@ -1075,7 +1075,7 @@ class RecipeDetailView(LoginRequiredMixin, View):
 
 def _owned_recipe_or_404(request, pk):
     """For any *mutating* action (edit/delete the recipe itself, or
-    add/edit/remove an ingredient) — a built-in template recipe
+    add/edit/remove an ingredient) - a built-in template recipe
     (owner=None) never matches `owner=request.user`, so this 404s for
     it exactly as it would for another user's own recipe. That's the
     whole access control for "shared but read-only": no separate
@@ -1088,7 +1088,7 @@ def _owned_recipe_or_404(request, pk):
 
 def _viewable_recipe_or_404(request, pk):
     """For read-only access (the detail page, logging it to your own
-    diary) — a user's own recipe, or a shared, built-in template
+    diary) - a user's own recipe, or a shared, built-in template
     recipe (owner=None), same visibility as RecipeListView.get_queryset
     above."""
     from django.db.models import Q
@@ -1110,7 +1110,7 @@ def recipe_create(request):
         form.save_m2m()
         messages.success(
             request,
-            _('"%(name)s" created — now add its ingredients below.') % {"name": recipe.name},
+            _('"%(name)s" created - now add its ingredients below.') % {"name": recipe.name},
         )
         return redirect("nutrition:recipe-detail", pk=recipe.pk)
     return render(request, "nutrition/recipe_form.html", {"form": form})
@@ -1118,8 +1118,8 @@ def recipe_create(request):
 
 @login_required
 def recipe_export(request, pk):
-    """Downloads one recipe (visible to this user — their own, or a
-    shared template) as a plain, human-readable `.json` file — see
+    """Downloads one recipe (visible to this user - their own, or a
+    shared template) as a plain, human-readable `.json` file - see
     apps.core.data_exchange's own module docstring for the whole
     export/import feature this is one half of."""
     recipe = _viewable_recipe_or_404(request, pk)
@@ -1132,13 +1132,13 @@ def recipe_export(request, pk):
 
 @login_required
 def recipe_import(request):
-    """The other half — uploads a previously-exported recipe (this
+    """The other half - uploads a previously-exported recipe (this
     instance's own, or a completely different IronStack instance's)
     and recreates it as a new recipe owned by the current user.
     `apps.nutrition.services.import_recipe` runs the whole thing
     inside one transaction, and re-imports any OpenFoodFacts-sourced
     ingredient live by barcode rather than trusting the file's own
-    snapshot of it — see that function's own docstring."""
+    snapshot of it - see that function's own docstring."""
     if request.method != "POST":
         return render(request, "nutrition/recipe_import.html", {"form": ExportImportUploadForm()})
 
@@ -1160,7 +1160,7 @@ def recipe_import(request):
         messages.info(
             request,
             _(
-                "This file was exported from IronStack %(version)s — worth "
+                "This file was exported from IronStack %(version)s - worth "
                 "double-checking the import if something looks off."
             )
             % {"version": exported_app_version},
@@ -1189,7 +1189,7 @@ def recipe_delete(request, pk):
 
 @login_required
 def recipe_ingredient_create(request, recipe_pk):
-    """Search-and-pick, same shape as DiaryAddEntryView below — a
+    """Search-and-pick, same shape as DiaryAddEntryView below - a
     recipe's macros come entirely from its ingredients' own Food
     rows, so finding/importing the right one has to be at least as
     easy here as it already is in the food diary, not a bare dropdown
@@ -1218,7 +1218,7 @@ def recipe_ingredient_create(request, recipe_pk):
     elif form.cleaned_data.get("off_barcode"):
         food = services.import_or_refresh_food_from_off(form.cleaned_data["off_barcode"])
         if food is None:
-            form.add_error(None, _("That food couldn't be imported — try again."))
+            form.add_error(None, _("That food couldn't be imported - try again."))
             return render(
                 request,
                 "nutrition/recipe_ingredient_form.html",
@@ -1237,7 +1237,7 @@ def recipe_ingredient_create(request, recipe_pk):
 @login_required
 def recipe_ingredient_edit(request, recipe_pk, pk):
     """Changes only the quantity of an ingredient already on the
-    recipe — see RecipeIngredientQuantityForm's own docstring for why
+    recipe - see RecipeIngredientQuantityForm's own docstring for why
     this exists alongside create/delete rather than requiring a
     delete-and-re-add round trip for a simple amount correction."""
     from .models import RecipeIngredient
@@ -1274,7 +1274,7 @@ def recipe_ingredient_delete(request, recipe_pk, pk):
 def recipe_log(request, pk):
     from .models import DiaryEntry
 
-    # Viewable, not owned-only — logging a shared template recipe to
+    # Viewable, not owned-only - logging a shared template recipe to
     # your own diary is exactly what it's there for.
     recipe = _viewable_recipe_or_404(request, pk)
     if request.method != "POST":
@@ -1314,7 +1314,7 @@ class DietPlanListView(LoginRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs):
         # See apps.programs.views.ProgramListView's own identical
-        # comment — a plain per-object attribute, not a queryset
+        # comment - a plain per-object attribute, not a queryset
         # annotation, for the same "small list, cheap per-row check"
         # reasoning.
         context = super().get_context_data(**kwargs)
@@ -1325,7 +1325,7 @@ class DietPlanListView(LoginRequiredMixin, ListView):
                 plan.imported_from_id is not None and diet_plan_update_available(plan)
             )
         # Same grouping apps.programs.views.ProgramListView splits its
-        # own flat list into — asked for directly, mirrored here minus
+        # own flat list into - asked for directly, mirrored here minus
         # the template groups, since DietPlan has no template concept.
         context["coach_plans"] = [
             plan for plan in context["plans"] if plan.imported_from_id is not None
@@ -1337,15 +1337,15 @@ class DietPlanListView(LoginRequiredMixin, ListView):
 
 
 class DietPlanCreateView(LoginRequiredMixin, View):
-    """Step 1 (and only step — see docs/NUTRITION.md "Diet builder
+    """Step 1 (and only step - see docs/NUTRITION.md "Diet builder
     wizard") of the diet builder: one form, pre-filled from the active
-    target, generates the whole plan on submit — or, with "start from
+    target, generates the whole plan on submit - or, with "start from
     scratch" ticked, creates the same empty meal structure with no
     auto-generated suggestions in it, asked for directly by a user who
     wants to build a plan entirely by hand rather than swap out
     whatever `diet_builder.build_diet_plan` guessed. Review/swap/add
     happens on the plan's own detail page afterward either way, not as
-    further wizard steps — unlike onboarding, there's nothing here
+    further wizard steps - unlike onboarding, there's nothing here
     that depends on an earlier answer to render the next question."""
 
     template_name = "nutrition/diet_plan_form.html"
@@ -1356,7 +1356,7 @@ class DietPlanCreateView(LoginRequiredMixin, View):
         target = NutritionTarget.objects.filter(
             user=request.user, ended_at__isnull=True
         ).first()
-        # Pre-checked, not left for the user to tick one by one — every
+        # Pre-checked, not left for the user to tick one by one - every
         # other field on this step is already pre-filled from real data
         # (the active target, or "My diet plan"); leaving a required
         # multi-select empty by default is the one inconsistent gap,
@@ -1410,7 +1410,7 @@ def _owned_diet_plan_or_404(request, pk):
 @login_required
 def diet_plan_export(request, pk):
     """Downloads one of this user's own diet plans as a plain,
-    human-readable `.json` file — see apps.core.data_exchange's own
+    human-readable `.json` file - see apps.core.data_exchange's own
     module docstring for the whole export/import feature this is one
     third of, alongside programs and recipes."""
     plan = _owned_diet_plan_or_404(request, pk)
@@ -1423,12 +1423,12 @@ def diet_plan_export(request, pk):
 
 @login_required
 def diet_plan_import(request):
-    """The other half — uploads a previously-exported diet plan and
+    """The other half - uploads a previously-exported diet plan and
     recreates it as a new, inactive plan owned by the current user.
     `apps.nutrition.services.import_diet_plan` runs the whole thing
     inside one transaction, resolving each meal's slot and each item's
     food/recipe the same way a standalone recipe import already
-    does — see that function's own docstring for why it never comes in
+    does - see that function's own docstring for why it never comes in
     already active."""
     if request.method != "POST":
         return render(
@@ -1453,7 +1453,7 @@ def diet_plan_import(request):
         messages.info(
             request,
             _(
-                "This file was exported from IronStack %(version)s — worth "
+                "This file was exported from IronStack %(version)s - worth "
                 "double-checking the import if something looks off."
             )
             % {"version": exported_app_version},
@@ -1463,7 +1463,7 @@ def diet_plan_import(request):
 
 def _diet_plan_meals_with_nutrition(plan):
     """The plan's meals/items, each item annotated with its computed
-    `.nutrition` — shared by the detail page and diet_plan_log's own
+    `.nutrition` - shared by the detail page and diet_plan_log's own
     error re-render below, so there's exactly one place this query
     shape and the food-vs-recipe branch live."""
     from .models import DietPlanItem
@@ -1477,11 +1477,11 @@ def _diet_plan_meals_with_nutrition(plan):
         )
     )
     for meal in meals:
-        # Only meaningful for a weekly plan (DietPlan.is_weekly) — None
+        # Only meaningful for a weekly plan (DietPlan.is_weekly) - None
         # for a one-day plan's meals, same as their own weekday field.
         # apps.programs.models.Weekday is the same 0=Monday..6=Sunday
         # numbering DietPlanMeal.weekday itself uses (Python's own
-        # date.weekday()) — reused rather than a second copy of the
+        # date.weekday()) - reused rather than a second copy of the
         # same seven translated day names.
         meal.weekday_name = (
             ProgramsWeekday(meal.weekday).label if meal.weekday is not None else None
@@ -1494,11 +1494,11 @@ def _diet_plan_meals_with_nutrition(plan):
                     item.quantity
                 )
             )
-        # "So far" against the meal's own target — meaningful now that
+        # "So far" against the meal's own target - meaningful now that
         # a meal can hold more than the one item diet_builder
         # originally generated for it (diet_plan_meal_item_add below).
         # nutrition_total is the full ScaledNutrition (not just
-        # calories) — _diet_plan_day_groups below sums these further,
+        # calories) - _diet_plan_day_groups below sums these further,
         # per day, for the plan-wide "how much is left" widget.
         meal.nutrition_total = sum(
             (item.nutrition for item in meal.items.all()), services.ZERO_NUTRITION
@@ -1509,17 +1509,17 @@ def _diet_plan_meals_with_nutrition(plan):
 
 def _diet_plan_day_groups(plan, meals):
     """One entry per distinct day in `meals` (already ordered by
-    weekday — DietPlanMeal.Meta.ordering — so `itertools.groupby`'s
+    weekday - DietPlanMeal.Meta.ordering - so `itertools.groupby`'s
     "consecutive equal values" requirement is satisfied without a
     separate sort), each carrying that day's own totals-so-far and
     how much of the plan's daily target is still left. Replaces
     Django's `{% regroup %}` templatetag, which has no way to attach
-    extra per-group data like this on its own — every group still
+    extra per-group data like this on its own - every group still
     comes out shaped as `.grouper`/`.list`, so the detail template's
     loop barely had to change.
 
     For a one-day plan, `meals` has exactly one distinct
-    `weekday_name` (`None`), so this produces exactly one group — the
+    `weekday_name` (`None`), so this produces exactly one group - the
     "how much is left" widget (`_diet_plan_totals_widget.html`) needs
     no separate code path for weekly vs. one-day plans, only the
     template deciding *where* to render whichever group is currently
@@ -1564,7 +1564,7 @@ class DietPlanDetailView(LoginRequiredMixin, View):
 
 @login_required
 def shopping(request):
-    """`/nutrition/shopping/`: the active plan's shopping list — the
+    """`/nutrition/shopping/`: the active plan's shopping list - the
     nutrition sub-nav tab and the installed app's shortcut, one stable
     address however plans come and go. Without an active plan, says so
     and points at the plans."""
@@ -1645,7 +1645,7 @@ def diet_plan_delete(request, pk):
 @login_required
 def diet_plan_toggle_active(request, pk):
     """One button, both directions: activates this plan (and
-    deactivates whichever other one was active — only one ever is,
+    deactivates whichever other one was active - only one ever is,
     services.set_active_diet_plan's own docstring) if it wasn't
     already, or turns it off entirely if it was."""
     if request.method != "POST":
@@ -1665,7 +1665,7 @@ def diet_plan_toggle_active(request, pk):
 
 @login_required
 def diet_plan_share(request, pk):
-    """apps.coaching — only a personal trainer can share a diet plan
+    """apps.coaching - only a personal trainer can share a diet plan
     at all (same gate ProgramForm's own shared_with_clients field
     applies); which of their *currently active* clients it's shared
     with is picked here, one plan at a time, the diet-plan-side
@@ -1721,7 +1721,7 @@ def diet_plan_item_delete(request, plan_pk, pk):
 
 @login_required
 def diet_plan_meal_item_add(request, plan_pk, meal_pk):
-    """Search-and-pick, same shape as recipe_ingredient_create above —
+    """Search-and-pick, same shape as recipe_ingredient_create above -
     meal planning shouldn't be locked to whatever single item
     diet_builder originally generated for a meal (see that module's
     own "deliberately simple, not a knapsack solver" scope note); a
@@ -1752,7 +1752,7 @@ def diet_plan_meal_item_add(request, plan_pk, meal_pk):
     elif form.cleaned_data.get("off_barcode"):
         food = services.import_or_refresh_food_from_off(form.cleaned_data["off_barcode"])
         if food is None:
-            form.add_error(None, _("That food couldn't be imported — try again."))
+            form.add_error(None, _("That food couldn't be imported - try again."))
             return render(
                 request,
                 "nutrition/diet_plan_meal_item_form.html",
@@ -1798,17 +1798,17 @@ def diet_plan_log(request, pk):
         messages.success(request, message)
     else:
         # Realistic for a weekly plan (DietPlan.is_weekly) whose
-        # target date's weekday has nothing built for it — e.g. a meal
+        # target date's weekday has nothing built for it - e.g. a meal
         # slot added after the plan was generated for every other day.
         # A one-day plan always has *some* meal, so this was
         # unreachable before weekly plans existed.
-        messages.info(request, _("Nothing to log — this plan has no items for that date."))
+        messages.info(request, _("Nothing to log - this plan has no items for that date."))
     return redirect("nutrition:diary-day", target_date=target_date.isoformat())
 
 
 @login_required
 def accept_adjustment_suggestion(request):
-    """Accepting the dashboard's dynamic-adjustment card — never
+    """Accepting the dashboard's dynamic-adjustment card - never
     automatic (docs/NUTRITION.md "Dynamic calorie adjustment"), always
     this one explicit POST from a user action."""
     from .suggestions import AdjustmentAction, suggest_calorie_adjustment
@@ -1822,7 +1822,7 @@ def accept_adjustment_suggestion(request):
 
 
 class CalculatorsHomeView(LoginRequiredMixin, View):
-    """A small hub linking to the standalone calculators below — see
+    """A small hub linking to the standalone calculators below - see
     docs/NUTRITION.md "Calculators". None of these need a nutrition
     profile or an active goal, unlike the rest of this app, so this
     page (unlike NutritionDashboardView) never redirects into the
@@ -1835,7 +1835,7 @@ class CalculatorsHomeView(LoginRequiredMixin, View):
 class _CalculatorView(LoginRequiredMixin, View):
     """Shared shape for every calculator below: a GET-only form (no
     side effect, so a plain GET with query-string input is the right
-    verb — bookmarkable/shareable, same convention as
+    verb - bookmarkable/shareable, same convention as
     FoodSearchResultsView), computing and showing a result inline on
     the same page when the query string carries a complete, valid
     submission."""
@@ -1914,7 +1914,7 @@ class WaterIntakeCalculatorView(_CalculatorView):
 
 
 class BMICalculatorView(_CalculatorView):
-    """Thin wrapper around apps.core.bmi — not a second BMI
+    """Thin wrapper around apps.core.bmi - not a second BMI
     implementation, the same "quick number without setting anything
     up" framing as every other calculator here, for the same
     calculation the Body weight measurement history page already
@@ -1972,7 +1972,7 @@ class TimeToGoalCalculatorView(_CalculatorView):
 
 
 class NutritionStatsView(LoginRequiredMixin, View):
-    """"How much have I actually been eating lately" — the calorie
+    """"How much have I actually been eating lately" - the calorie
     trend the daily diary total can't show on its own, since it only
     ever shows one day at a time. The chart and headline card are a
     fixed 30-day window, not a range picker like apps.analytics's own

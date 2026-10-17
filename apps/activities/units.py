@@ -1,6 +1,6 @@
 """Display-unit conversion for activity distance.
 
-Only one field needs it (distance — canonical meters, see
+Only one field needs it (distance - canonical meters, see
 docs/ARCHITECTURE.md), so unlike apps.measurements.units this has no
 unit_kind to dispatch on: just metric (km) vs imperial (miles), reusing
 apps.core.units' existing conversions (already built for workout/activity

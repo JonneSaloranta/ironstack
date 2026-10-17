@@ -1,4 +1,4 @@
-"""Shared ViewSet shapes — factors out the one ownership pattern that
+"""Shared ViewSet shapes - factors out the one ownership pattern that
 repeats across Exercise/Program/MeasurementType/ActivityType (system-or-
 shared rows are readable by everyone, but only a user's own rows are
 ever writable), so each concrete viewset in apps.api.views only has to
@@ -12,7 +12,7 @@ from rest_framework import viewsets
 class OwnedResourceViewSet(viewsets.ModelViewSet):
     """`visible_queryset()` (system rows + this user's own) backs list/
     retrieve; `editable_queryset()` (this user's own only) backs update/
-    destroy — the exact same split each of these models' web views
+    destroy - the exact same split each of these models' web views
     already enforce (services.visible_to vs. an owner=request.user
     filter, or services.editable_by for Program specifically), just
     reused here instead of re-derived. Scoping the queryset itself

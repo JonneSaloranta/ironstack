@@ -1,11 +1,11 @@
-"""Energy expenditure and calorie-target calculation — see
+"""Energy expenditure and calorie-target calculation - see
 docs/NUTRITION.md "Energy calculation" and "Safety bounds" for the full
 reasoning behind every formula/constant here. Pure functions, no
 Django DB/HTTP dependency, same shape as apps.core.bmi.
 
 Every number this module produces is an *estimate*. Callers must
-present them as such ("estimated," "recommended," "target" — never
-"you burn exactly X") — see docs/NUTRITION.md's own opening goal.
+present them as such ("estimated," "recommended," "target" - never
+"you burn exactly X") - see docs/NUTRITION.md's own opening goal.
 """
 
 from dataclasses import dataclass
@@ -13,18 +13,18 @@ from decimal import ROUND_HALF_UP, Decimal
 
 # Eager gettext, not gettext_lazy (unlike apps.core.bmi's BMI_CATEGORIES
 # or apps.progression.engine's reason strings): every translated string
-# here is built and consumed entirely within one function call — most
+# here is built and consumed entirely within one function call - most
 # get joined together with str.join(), which a lazy proxy doesn't
-# support — never stashed at module/class load time, so laziness would
+# support - never stashed at module/class load time, so laziness would
 # buy nothing.
 from django.utils.translation import gettext as _
 
 from .models import ActivityLevel, BiologicalSex, GoalType
 
-CALORIE_PLACES = Decimal("1")  # whole kcal — no false precision.
+CALORIE_PLACES = Decimal("1")  # whole kcal - no false precision.
 
 # The standard approximation this module's rate<->calorie conversions
-# are built on. An approximation, not a law of physics — real weight
+# are built on. An approximation, not a law of physics - real weight
 # change also involves water retention, metabolic adaptation, and body
 # composition shifts, which is exactly why the dynamic-adjustment
 # engine (apps.nutrition.trends/suggestions) exists: to correct for
@@ -51,7 +51,7 @@ DEFAULT_RATE_KG_PER_WEEK = {
     GoalType.MUSCLE_GAIN_AGGRESSIVE: Decimal("0.5"),
 }
 
-# Safety caps as a fraction of current bodyweight/week — scales
+# Safety caps as a fraction of current bodyweight/week - scales
 # correctly across body sizes, unlike a flat kg number.
 MAX_FAT_LOSS_RATE_FRACTION = Decimal("0.01")  # 1% bodyweight/week
 MAX_MUSCLE_GAIN_RATE_FRACTION = Decimal("0.005")  # 0.5% bodyweight/week
@@ -68,7 +68,7 @@ BMR_FLOOR_FRACTION = Decimal("0.9")
 def calculate_bmr(
     weight_kg: Decimal, height_cm: Decimal, age_years: int, biological_sex: str
 ) -> Decimal:
-    """Mifflin-St Jeor — chosen over Harris-Benedict (less accurate
+    """Mifflin-St Jeor - chosen over Harris-Benedict (less accurate
     against modern population data) and Katch-McArdle (needs a
     body-fat % this app has no reliable way to measure). See
     docs/NUTRITION.md "BMR"."""
@@ -101,7 +101,7 @@ def suggest_activity_level(
     other_exercise_minutes_per_week: int | None = None,
 ) -> ActivityLevelSuggestion:
     """Scores the concrete, answerable onboarding inputs into one of
-    the five standard TDEE buckets, with a one-line explanation — see
+    the five standard TDEE buckets, with a one-line explanation - see
     docs/NUTRITION.md "Choosing an activity level" for why this is
     suggested instead of asked directly. The score is a simple sum of
     independent signals (job, steps, training frequency, other
@@ -169,12 +169,12 @@ def suggest_activity_level(
         level = ActivityLevel.VERY_ACTIVE
 
     if reasons:
-        reason = _("Suggested: %(label)s — %(factors)s") % {
+        reason = _("Suggested: %(label)s - %(factors)s") % {
             "label": ActivityLevel(level).label,
             "factors": ", ".join(reasons),
         }
     else:
-        reason = _("Suggested: %(label)s — no activity details given yet") % {
+        reason = _("Suggested: %(label)s - no activity details given yet") % {
             "label": ActivityLevel(level).label
         }
     return ActivityLevelSuggestion(activity_level=level, reason=reason)
@@ -193,7 +193,7 @@ def max_safe_rate_kg_per_week(weight_kg: Decimal, goal_type: str) -> Decimal:
 
 def clamp_rate(weight_kg: Decimal, goal_type: str, target_rate_kg_per_week: Decimal) -> Decimal:
     """`target_rate_kg_per_week`, capped to `max_safe_rate_kg_per_week`
-    — a fat-loss rate can never be *more negative* than the cap, a
+    - a fat-loss rate can never be *more negative* than the cap, a
     muscle-gain rate never *more positive* than it."""
     cap = max_safe_rate_kg_per_week(weight_kg, goal_type)
     if goal_type == GoalType.MAINTENANCE:
@@ -206,7 +206,7 @@ def clamp_rate(weight_kg: Decimal, goal_type: str, target_rate_kg_per_week: Deci
 def calorie_floor(
     weight_kg: Decimal, height_cm: Decimal, age_years: int, biological_sex: str
 ) -> Decimal:
-    """`max(sex-based clinical minimum, 90% of BMR)` — see
+    """`max(sex-based clinical minimum, 90% of BMR)` - see
     docs/NUTRITION.md "Safety bounds" for why both caps exist
     independently."""
     bmr = calculate_bmr(weight_kg, height_cm, age_years, biological_sex)
@@ -216,7 +216,7 @@ def calorie_floor(
 @dataclass(frozen=True)
 class CalorieTargetReasonData:
     """Every number `render_calorie_target_reason` needs, snapshotted
-    at calculation time — stored on NutritionTarget (see
+    at calculation time - stored on NutritionTarget (see
     apps.nutrition.models) so a *current* target's explanation can be
     re-rendered in whichever language is active whenever it's shown,
     instead of freezing at whatever language happened to be active the
@@ -236,7 +236,7 @@ class CalorieTargetReasonData:
 def render_calorie_target_reason(data: CalorieTargetReasonData, final_calories: int) -> str:
     """Builds the human-readable explanation from already-computed
     numbers, in whatever language is active right now. The one place
-    this sentence gets assembled — called both immediately after
+    this sentence gets assembled - called both immediately after
     `calculate_calorie_target` (e.g. the onboarding review step's
     preview, before anything is even saved) and again on every later
     view of a still-current NutritionTarget
@@ -259,7 +259,7 @@ def render_calorie_target_reason(data: CalorieTargetReasonData, final_calories: 
             str(
                 _(
                     "Your target rate would need %(raw)s kcal/day, below a safe "
-                    "minimum — capped at %(floor)s kcal/day."
+                    "minimum - capped at %(floor)s kcal/day."
                 )
             )
             % {"raw": data.raw_calories, "floor": data.floor}
@@ -294,7 +294,7 @@ def calculate_calorie_target(
     """The full goal → calorie-target pipeline: cap the requested rate
     to a safe bound, derive a calorie delta from the (possibly capped)
     rate via `KCAL_PER_KG_BODY_FAT`, then clamp the result to the
-    absolute floor. Either clamp can fire independently — both are
+    absolute floor. Either clamp can fire independently - both are
     reported so the caller can explain exactly what happened."""
     capped_rate = clamp_rate(weight_kg, goal_type, target_rate_kg_per_week)
     rate_was_capped = capped_rate != target_rate_kg_per_week

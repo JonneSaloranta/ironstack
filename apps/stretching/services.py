@@ -129,7 +129,7 @@ def move_routine_item(item, direction):
 
 @transaction.atomic
 def copy_routine(routine, user):
-    """A user's own editable copy of any visible routine — how a built-in
+    """A user's own editable copy of any visible routine - how a built-in
     routine gets customised without touching the shared original."""
     # A system routine's canonical-English text is translated into the
     # user's language on the way into their own copy, which they then
@@ -166,7 +166,7 @@ def start_session(user, *, routine=None, stretches=None, name="", after_workout=
     """Start a guided session from `routine`, or from a plain list of
     `stretches` (a post-workout suggestion) at their default holds.
 
-    Only one session may be in progress at a time — raises
+    Only one session may be in progress at a time - raises
     SessionAlreadyInProgress with the existing one so the caller can
     send the user back to it instead.
     """
@@ -217,7 +217,7 @@ def start_session(user, *, routine=None, stretches=None, name="", after_workout=
 
 def mark_performed(performed, *, done, actual_seconds=None):
     """Record one stretch as done (optionally with the seconds actually
-    held) or skipped. Always the user's call — the timer only proposes."""
+    held) or skipped. Always the user's call - the timer only proposes."""
     performed.status = PerformedStretchStatus.DONE if done else PerformedStretchStatus.SKIPPED
     performed.actual_seconds = actual_seconds if done else None
     performed.save(update_fields=["status", "actual_seconds"])
@@ -241,7 +241,7 @@ def abandon_session(session):
 
 
 def quick_log(user, *, date, duration, routine=None, name="", notes=""):
-    """Log a session after the fact, with just a duration — no guided
+    """Log a session after the fact, with just a duration - no guided
     timer, no per-stretch detail."""
     now = timezone.now()
     return StretchSession.objects.create(
@@ -335,7 +335,7 @@ def suggest_cooldown(workout_session):
     muscle groups of the exercises it contained. Prefers an existing
     routine (system or the user's own) that covers most of those
     muscles; otherwise builds a short list straight from the library.
-    Returns None if nothing matches. Only ever a suggestion — nothing is
+    Returns None if nothing matches. Only ever a suggestion - nothing is
     started until the user taps it."""
     user = workout_session.user
     muscles = trained_muscle_groups(workout_session)
@@ -355,7 +355,7 @@ def suggest_cooldown(workout_session):
         } & muscle_ids
         coverage = Decimal(len(covered)) / Decimal(len(muscle_ids))
         seconds = routine_seconds(routine)
-        # Ties go to the shorter routine — a cool-down should be quick.
+        # Ties go to the shorter routine - a cool-down should be quick.
         if coverage > best_coverage or (
             coverage == best_coverage and best is not None and seconds < best_seconds
         ):
@@ -402,7 +402,7 @@ def completed_sessions(user):
 
 
 def current_streak(dates, today):
-    """Consecutive days with a session, ending today — or yesterday, so
+    """Consecutive days with a session, ending today - or yesterday, so
     the streak doesn't read as broken before today's stretch is done."""
     dates = set(dates)
     day = today if today in dates else today - timedelta(days=1)
@@ -454,7 +454,7 @@ def weekly_chart(user, *, weeks=8, today=None):
 
 
 def calendar_minutes(user, year, month):
-    """{date: total minutes} of completed stretching in one month — the
+    """{date: total minutes} of completed stretching in one month - the
     dashboard calendar's stretching marker (apps.core.views)."""
     totals = {}
     for session in completed_sessions(user).filter(

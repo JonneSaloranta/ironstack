@@ -1,11 +1,11 @@
-"""Analytics queries — kept out of views/templates per CLAUDE.md ("do not
+"""Analytics queries - kept out of views/templates per CLAUDE.md ("do not
 put analytics logic in templates"). Straightforward ORM queries per
 docs/ANALYTICS.md ("start with straightforward ORM queries and indexes...
 only add denormalized/cached aggregates when profiling demonstrates a
-need") — nothing here is persisted or cached.
+need") - nothing here is persisted or cached.
 
 Every query is scoped to a single user and, where dated, to a DateRange
-(apps.analytics.dateranges) — docs/ANALYTICS.md: "analytics must always
+(apps.analytics.dateranges) - docs/ANALYTICS.md: "analytics must always
 respect user ownership."
 """
 
@@ -24,7 +24,7 @@ _one_rep_max = OneRepMaxCalculator()
 
 def _weight_display(value, user):
     """Convert a canonical-kg volume/1RM figure to `user`'s preferred
-    display unit before it's staged into a summary or chart — the same
+    display unit before it's staged into a summary or chart - the same
     "convert before building the series" convention apps.measurements
     uses, so a chart's own min/max/point values are already in the unit
     its label claims, not just re-labeled kg. See apps.core.units."""
@@ -41,7 +41,7 @@ def _completed_sessions(user, date_range):
 def _training_sets(user, date_range, *, exercise=None):
     """Sets that count toward training-load analytics: real working sets
     from completed sessions. Unlike apps.records' PR eligibility, a
-    failed set still counts here — the work still happened, even if it
+    failed set still counts here - the work still happened, even if it
     didn't "successfully" set a record."""
     qs = ExerciseSet.objects.filter(
         performed_exercise__session__user=user,
@@ -83,7 +83,7 @@ def training_summary(user, date_range) -> TrainingSummary:
 
 def training_summary_canonical(user, date_range) -> TrainingSummary:
     """Same figures as `training_summary`, but `total_volume` stays
-    canonical kg rather than converting to the user's display unit —
+    canonical kg rather than converting to the user's display unit -
     for apps.api, which never applies that conversion on any endpoint
     (see apps.api.serializers' own docstring for why: an unambiguous
     unit a machine caller can rely on regardless of who's asking, not a
@@ -92,7 +92,7 @@ def training_summary_canonical(user, date_range) -> TrainingSummary:
 
 
 def weekly_volume_series(user, date_range):
-    """Bar chart: total training volume per ISO week —
+    """Bar chart: total training volume per ISO week -
     docs/ANALYTICS.md "bar chart: weekly training volume"."""
     weekly = {}
     for exercise_set in _training_sets(user, date_range):
@@ -108,9 +108,9 @@ def weekly_volume_series(user, date_range):
 
 
 def muscle_group_volume_series(user, date_range):
-    """Bar chart: total volume attributed to each primary muscle group —
+    """Bar chart: total volume attributed to each primary muscle group -
     docs/ANALYTICS.md "bar chart: muscle-group volume". A set with
-    multiple primary muscle groups counts its full volume toward each —
+    multiple primary muscle groups counts its full volume toward each -
     simplest defensible split, rather than dividing volume fractionally
     with no principled basis for the split."""
     sets = _training_sets(user, date_range).prefetch_related(
@@ -126,7 +126,7 @@ def muscle_group_volume_series(user, date_range):
 
 
 def pr_history(user, date_range, limit=None):
-    """docs/ANALYTICS.md "PR history" — every PR achieved in range, most
+    """docs/ANALYTICS.md "PR history" - every PR achieved in range, most
     recent first. Reuses apps.records' immutable achievement log rather
     than recomputing anything."""
     qs = PersonalRecord.objects.filter(user=user).select_related("exercise")
@@ -139,7 +139,7 @@ def pr_history(user, date_range, limit=None):
 @dataclass(frozen=True)
 class ExercisePRGroup:
     """One exercise's rows from a single `pr_history()` call, still in
-    that call's own most-recent-first order within each list —
+    that call's own most-recent-first order within each list -
     templates/core/dashboard.html and templates/analytics/dashboard.html's
     own "Recent PRs" group by exercise rather than rendering one card
     per row, since `PersonalRecord` logs a separate row per
@@ -149,7 +149,7 @@ class ExercisePRGroup:
 
     Split into `primary_records` (shown directly on the card) and
     `secondary_records` (shown only once expanded) rather than one
-    flat list — `_PRIMARY_RECORD_TYPES` below is exactly the set
+    flat list - `_PRIMARY_RECORD_TYPES` below is exactly the set
     `apps.records.views.ExerciseRecordsView`'s own "Current PRs" `<dl>`
     already treats as the headline figures (max weight, estimated 1RM,
     best set/session volume); rep-specific and plain rep PRs are that
@@ -162,7 +162,7 @@ class ExercisePRGroup:
 
 
 # apps.records.views.ExerciseRecordsView's own "Current PRs" grouping
-# (templates/records/exercise_records.html) — see ExercisePRGroup's
+# (templates/records/exercise_records.html) - see ExercisePRGroup's
 # own docstring for why the same split applies here.
 _PRIMARY_RECORD_TYPES = frozenset(
     {PRType.MAX_WEIGHT, PRType.ESTIMATED_1RM, PRType.SET_VOLUME, PRType.SESSION_VOLUME}
@@ -172,10 +172,10 @@ _PRIMARY_RECORD_TYPES = frozenset(
 def pr_history_grouped_by_exercise(user, date_range, limit=None):
     """`pr_history(user, date_range, limit)`, grouped by exercise and
     split into `ExercisePRGroup.primary_records`/`secondary_records`
-    afterward — not a second query, and not a reordering: a plain
+    afterward - not a second query, and not a reordering: a plain
     `dict` preserves insertion order, and since the input is already
     most-recent-first, the first row seen for a given exercise is, by
-    definition, that exercise's own most recent — so the resulting
+    definition, that exercise's own most recent - so the resulting
     groups come out in exactly the order that exercise's most recent
     PR would have sorted to on its own, with no separate sort step
     needed, and each group's own two lists keep that same relative
@@ -183,8 +183,8 @@ def pr_history_grouped_by_exercise(user, date_range, limit=None):
 
     An exercise whose only PR(s) in range are secondary-type (e.g. a
     lone rep-specific PR, no max weight/1RM/volume hit) still needs
-    *something* to show without expanding — a card that's just a name
-    and a chevron reads as broken, not minimal — so a group with no
+    *something* to show without expanding - a card that's just a name
+    and a chevron reads as broken, not minimal - so a group with no
     primary records falls back to treating its secondary ones as
     primary instead."""
     per_exercise = {}
@@ -220,7 +220,7 @@ def exercise_summary(user, exercise, date_range) -> ExerciseAnalyticsSummary:
 
 
 def exercise_one_rm_trend(user, exercise, date_range):
-    """Line chart: estimated 1RM over time — docs/ANALYTICS.md "line
+    """Line chart: estimated 1RM over time - docs/ANALYTICS.md "line
     chart: estimated 1RM over time" / "line chart: exercise strength
     trend". One point per session (that session's best estimate), not
     per set, so the trend stays readable."""
@@ -250,7 +250,7 @@ def exercise_one_rm_trend(user, exercise, date_range):
 
 
 def trained_exercises(user):
-    """Every exercise `user` has logged at least one set for, alphabetical —
+    """Every exercise `user` has logged at least one set for, alphabetical -
     the picker on the Analytics page, so a strength trend is one tap away
     instead of reachable only by first finding the exercise in the library."""
     from apps.exercises.models import Exercise

@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% load i18n core_extras %}
-{% block title %}{{ food.name }} — IronStack{% endblock %}
+{% block title %}{{ food.name }} - IronStack{% endblock %}
 {% block content %}
 {% url 'nutrition:dashboard' as c1u %}{% trans "Nutrition" as c1l %}
 {% url 'nutrition:food-list' as c2u %}{% trans "Foods" as c2l %}

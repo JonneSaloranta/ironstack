@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% load i18n core_extras %}
-{% block title %}{% trans "Recipes" %} — IronStack{% endblock %}
+{% block title %}{% trans "Recipes" %} - IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
   <h1 class="no-margin">{% trans "Recipes" %}</h1>
@@ -28,7 +28,7 @@
         {% for slot in recipe.meal_slots.all %}<span class="tag tag-outline">{{ slot.name|translate_content }}</span>{% endfor %}
         <p class="text-muted">
           {{ recipe.servings }} {% trans "servings" %}
-          — {% blocktrans with calories=recipe.per_serving.calories|floatformat:0 %}{{ calories }} kcal/serving{% endblocktrans %}
+          - {% blocktrans with calories=recipe.per_serving.calories|floatformat:0 %}{{ calories }} kcal/serving{% endblocktrans %}
         </p>
       </div>
       <a class="button-secondary" href="{% url 'nutrition:recipe-detail' recipe.pk %}">{% trans "Open" %}</a>
@@ -53,7 +53,7 @@
           {% for slot in recipe.meal_slots.all %}<span class="tag tag-outline">{{ slot.name|translate_content }}</span>{% endfor %}
           <p class="text-muted">
             {{ recipe.servings }} {% trans "servings" %}
-            — {% blocktrans with calories=recipe.per_serving.calories|floatformat:0 %}{{ calories }} kcal/serving{% endblocktrans %}
+            - {% blocktrans with calories=recipe.per_serving.calories|floatformat:0 %}{{ calories }} kcal/serving{% endblocktrans %}
           </p>
         </div>
         <a class="button-secondary" href="{% url 'nutrition:recipe-detail' recipe.pk %}">{% trans "Open" %}</a>

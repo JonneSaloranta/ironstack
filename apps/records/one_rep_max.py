@@ -4,7 +4,7 @@ Kept behind its own small interface, not hard-coded into PR detection, per
 docs/PR_SYSTEM.md: "Do not hard-code the application to one formula. Put
 the calculation behind a service/interface so the formula can be changed
 later." Swap `DEFAULT_FORMULA`, or pass `formula=` explicitly, to change
-which one is used — no caller outside this module needs to change.
+which one is used - no caller outside this module needs to change.
 """
 
 from decimal import Decimal

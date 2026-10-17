@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% load i18n %}
-{% block title %}{% trans "Change goal" %} — IronStack{% endblock %}
+{% block title %}{% trans "Change goal" %} - IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
   <h1 class="no-margin">{% trans "Change goal" %}</h1>
@@ -8,7 +8,7 @@
 {% include "nutrition/_subnav.html" %}
 
 <p class="text-muted">
-  {% trans "Changing your goal recalculates your daily calorie and macro target right away — your old target stays in your history, it isn't overwritten." %}
+  {% trans "Changing your goal recalculates your daily calorie and macro target right away - your old target stays in your history, it isn't overwritten." %}
 </p>
 
 {{ default_rates_json|json_script:"default-rates" }}

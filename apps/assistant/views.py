@@ -120,7 +120,7 @@ def message_send(request, pk):
         {**_thread_context(conversation), "send_error": error},
     )
     if error:
-        # Keeps the composer's text — see htmx-errors.js
+        # Keeps the composer's text - see htmx-errors.js
         # `data-reset-on-success`.
         response["X-Form-Rejected"] = "1"
     return response

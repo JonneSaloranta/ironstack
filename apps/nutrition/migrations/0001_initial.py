@@ -89,7 +89,7 @@ class Migration(migrations.Migration):
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('updated_at', models.DateTimeField(auto_now=True)),
-                ('goal_type', models.CharField(choices=[('fat_loss_aggressive', 'Fat loss — aggressive'), ('fat_loss_moderate', 'Fat loss — moderate'), ('fat_loss_conservative', 'Fat loss — conservative'), ('maintenance', 'Maintenance'), ('muscle_gain_lean', 'Muscle gain — lean bulk'), ('muscle_gain_moderate', 'Muscle gain — moderate bulk'), ('muscle_gain_aggressive', 'Muscle gain — aggressive bulk')], max_length=25)),
+                ('goal_type', models.CharField(choices=[('fat_loss_aggressive', 'Fat loss - aggressive'), ('fat_loss_moderate', 'Fat loss - moderate'), ('fat_loss_conservative', 'Fat loss - conservative'), ('maintenance', 'Maintenance'), ('muscle_gain_lean', 'Muscle gain - lean bulk'), ('muscle_gain_moderate', 'Muscle gain - moderate bulk'), ('muscle_gain_aggressive', 'Muscle gain - aggressive bulk')], max_length=25)),
                 ('target_weight', models.DecimalField(blank=True, decimal_places=4, max_digits=8, null=True)),
                 ('target_rate_kg_per_week', models.DecimalField(decimal_places=3, max_digits=5)),
                 ('started_at', models.DateTimeField(auto_now_add=True)),
@@ -120,7 +120,7 @@ class Migration(migrations.Migration):
                 ('training_session_minutes', models.PositiveSmallIntegerField(blank=True, null=True)),
                 ('other_exercise_minutes_per_week', models.PositiveSmallIntegerField(blank=True, null=True)),
                 ('activity_level', models.CharField(choices=[('sedentary', 'Sedentary'), ('light', 'Lightly active'), ('moderate', 'Moderately active'), ('active', 'Active'), ('very_active', 'Very active')], max_length=15)),
-                ('self_reported_daily_calories', models.PositiveIntegerField(blank=True, help_text="If you already track this, tell us — used only to compare against this app's own estimate, never as an input to it.", null=True)),
+                ('self_reported_daily_calories', models.PositiveIntegerField(blank=True, help_text="If you already track this, tell us - used only to compare against this app's own estimate, never as an input to it.", null=True)),
                 ('user', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='nutrition_profile', to=settings.AUTH_USER_MODEL)),
             ],
             options={

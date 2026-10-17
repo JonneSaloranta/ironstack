@@ -1,12 +1,12 @@
 {% extends "base.html" %}
 {% load i18n %}
-{% block title %}{% trans "Nutrition setup" %} — IronStack{% endblock %}
+{% block title %}{% trans "Nutrition setup" %} - IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
   <h1 class="no-margin">{% trans "How active are you?" %}</h1>
 </div>
 {% include "nutrition/_wizard_progress.html" %}
-<p class="text-muted">{% trans "Everything here is optional — the more you tell us, the better the estimate. We'll suggest an activity level from your answers, not ask you to guess it yourself." %}</p>
+<p class="text-muted">{% trans "Everything here is optional - the more you tell us, the better the estimate. We'll suggest an activity level from your answers, not ask you to guess it yourself." %}</p>
 
 <form class="card" method="post">
   {% csrf_token %}

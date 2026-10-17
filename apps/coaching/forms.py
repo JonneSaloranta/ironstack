@@ -10,7 +10,7 @@ from apps.core.widgets import SearchablePickerWidget
 
 
 def active_clients_of(coach):
-    """The coach's *currently active* clients — the only people a plan
+    """The coach's *currently active* clients - the only people a plan
     can be shared with."""
     return get_user_model().objects.filter(
         coaches__coach=coach, coaches__ended_at__isnull=True
@@ -29,7 +29,7 @@ class ClientPickerField(forms.ModelMultipleChoiceField):
             "widget",
             SearchablePickerWidget(
                 placeholder=_("Search your clients…"),
-                empty_text=_("Not shared with anyone — only you can see it."),
+                empty_text=_("Not shared with anyone - only you can see it."),
                 no_match_text=_("No matching clients."),
             ),
         )

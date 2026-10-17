@@ -9,7 +9,7 @@ class ActivityType(models.Model):
     """A kind of non-gym activity (Running, Yoga, ...).
 
     System-seeded defaults (see migration 0002) plus user-created custom
-    types — same ownership/uniqueness/soft-delete pattern as
+    types - same ownership/uniqueness/soft-delete pattern as
     apps.exercises.Exercise and apps.measurements.MeasurementType: never
     hard-deleted, so a user's past Activity entries keep rendering
     correctly after a custom type is retired.
@@ -50,14 +50,14 @@ class ActivityType(models.Model):
 
 
 class Activity(TimeStampedModel):
-    """One manually logged non-gym activity — see docs/DOMAIN_MODEL.md.
+    """One manually logged non-gym activity - see docs/DOMAIN_MODEL.md.
 
     `date`/`start_time` are kept separate (rather than one combined
     timestamp, unlike apps.workouts.WorkoutSession.started_at): a user
     logging "went for a run today" shouldn't have to also state a precise
     clock time they may not remember or care about, so `start_time` is
     optional. `distance` is canonical meters (docs/ARCHITECTURE.md) and
-    optional — plenty of activity types (yoga, sports) have none.
+    optional - plenty of activity types (yoga, sports) have none.
     """
 
     user = models.ForeignKey(

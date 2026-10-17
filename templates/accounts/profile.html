@@ -1,9 +1,9 @@
 {% extends "base.html" %}
 {% load i18n static %}
-{% block title %}{% trans "Profile" %} — IronStack{% endblock %}
+{% block title %}{% trans "Profile" %} - IronStack{% endblock %}
 {% block content %}
 {% comment %}
-Gravatar picture removed from here — asked for directly, now that
+Gravatar picture removed from here - asked for directly, now that
 templates/base.html's own bottom-nav Profile icon shows the same
 picture (when show_gravatar is on) on every page, this page's own
 copy of it was redundant.
@@ -41,13 +41,13 @@ Opens itself when the form has errors so a failed save is never hidden.
 Grouped under a plain <h2> eyebrow per section (the same muted,
 uppercase, uneditorialized label templates/programs/program_list.html's
 "OMAT OHJELMAT"/"SISÄÄNRAKENNETUT MALLIT" already use for exactly this
-— sorting a flat list of cards into named groups) — this used to be
+- sorting a flat list of cards into named groups) - this used to be
 one undifferentiated stack of nine-plus cards in a row, no structure
 beyond top-to-bottom order.
 
 Every settings-row card is now the *entire* card as one link (.card-
-link, plus a trailing chevron — .settings-row in base.css) rather
-than just a small button on the right — see that class's own comment
+link, plus a trailing chevron - .settings-row in base.css) rather
+than just a small button on the right - see that class's own comment
 for why a chevron, not just "the whole card is clickable" on its own:
 .card-action-row (still used below for Notifications, which isn't a
 link at all) exists specifically because that shape alone gave no
@@ -79,7 +79,7 @@ visual sign a plain card was pressable.
   <div>
     <strong>{% trans "Two-factor authentication" %}</strong>
     {% if user.totp_enabled %}
-      <p class="text-muted">{% trans "Enabled — protecting your account with a second step at login." %}</p>
+      <p class="text-muted">{% trans "Enabled - protecting your account with a second step at login." %}</p>
     {% else %}
       <p class="text-muted">{% trans "Add a second step at login, using an authenticator app." %}</p>
     {% endif %}
@@ -123,7 +123,7 @@ visual sign a plain card was pressable.
     <p class="text-muted" x-show="supported">{% trans "Get notified on this device when you receive a message." %}</p>
     {% comment %}
       Explains *why* the toggle below is missing rather than just
-      silently having no button at all — the exact "a feature quietly
+      silently having no button at all - the exact "a feature quietly
       disappears with no explanation" gap already found and fixed for
       static/js/barcode-scanner.js's own feature-detection, applied
       here from the start instead of needing a second report.
@@ -255,12 +255,12 @@ visual sign a plain card was pressable.
 
 {% comment %}
 One tight cluster (.profile-footer, static/css/base.css) instead of
-each item bringing its own top/bottom margin — the previous plain
+each item bringing its own top/bottom margin - the previous plain
 stacking (each a bare .app-version button with its own `margin: 1.5rem
 0 0.5rem`) left Privacy notice and the version string separated by
 whatever the two adjacent margins collapsed to (1.5rem), read as an
 oversized, unrelated-looking gap for two lines that are really the
-same "small print" footer. The GitHub link sits between them here —
+same "small print" footer. The GitHub link sits between them here -
 identity/source link belongs with "what is this software", not
 tucked among the account-management settings above.
 {% endcomment %}

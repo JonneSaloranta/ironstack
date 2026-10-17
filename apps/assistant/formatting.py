@@ -1,4 +1,4 @@
-"""Renders a model's reply as HTML — a deliberately tiny Markdown subset.
+"""Renders a model's reply as HTML - a deliberately tiny Markdown subset.
 
 The system prompt asks for plain text with **bold**, `code`, `- `
 bullets and numbered lists (apps.assistant.prompts), so that's all this

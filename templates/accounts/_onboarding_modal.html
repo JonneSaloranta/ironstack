@@ -30,7 +30,7 @@
           </div>
         </form>
         {% else %}
-        <p>{% trans "A few quick details help IronStack work better for you — every field below is optional, and you can always change them later from your profile." %}</p>
+        <p>{% trans "A few quick details help IronStack work better for you - every field below is optional, and you can always change them later from your profile." %}</p>
         <form id="onboarding-form" method="post" action="{% url 'onboarding' %}"
               hx-post="{% url 'onboarding' %}" hx-target="#onboarding-modal-container" hx-swap="outerHTML" novalidate>
           {% csrf_token %}

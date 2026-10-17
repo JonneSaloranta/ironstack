@@ -1,1 +1,1 @@
-"""No admin registrations — apps.progression has no models (see models.py)."""
+"""No admin registrations - apps.progression has no models (see models.py)."""

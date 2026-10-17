@@ -2,7 +2,7 @@
 
 Dispatches by `MeasurementType.unit_kind` + the user's `unit_system`
 preference (apps.accounts) onto apps.core.units' generic conversion
-primitives — this module only decides *which* conversion applies,
+primitives - this module only decides *which* conversion applies,
 matching apps.exercises/apps.programs' pattern of keeping unit-aware
 display logic out of templates.
 """
@@ -32,8 +32,8 @@ def to_display(value: Decimal, unit_kind: str, unit_system: str) -> Decimal:
     """Canonical stored value -> the user's preferred display unit.
 
     Canonical storage keeps more precision than anyone needs to look at
-    (0.1mm for lengths, so cm/inch round-trips never lose data — see
-    apps.core.units) — quantized here to what's actually worth displaying,
+    (0.1mm for lengths, so cm/inch round-trips never lose data - see
+    apps.core.units) - quantized here to what's actually worth displaying,
     independent of the (unrelated) precision decision for storage.
     """
     if unit_kind == UnitKind.WEIGHT:

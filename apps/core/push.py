@@ -1,5 +1,5 @@
 """Web Push notifications (docs/SECURITY.md "Web Push notifications")
-— triggered from apps.social.services' send_direct_message/
+- triggered from apps.social.services' send_direct_message/
 send_group_message and apps.core.management.commands.
 announce_version_update, kept generic (any user/title/body/url)
 rather than message-specific, since push itself isn't inherently a
@@ -19,7 +19,7 @@ from .models import PushSubscription
 logger = logging.getLogger(__name__)
 
 # Bounds worst-case latency added to whatever synchronous call site
-# triggered this (today: right after a message is saved) — a slow or
+# triggered this (today: right after a message is saved) - a slow or
 # unreachable push service must never delay or break that. Internal
 # reliability bound, not exposed as a setting: nothing about it is a
 # self-hoster's decision to make.
@@ -28,7 +28,7 @@ _TIMEOUT_SECONDS = 5
 
 def is_allowed_endpoint(endpoint):
     """Whether `endpoint` is an https URL on one of
-    settings.PUSH_ENDPOINT_HOSTS — the only URLs this server will ever
+    settings.PUSH_ENDPOINT_HOSTS - the only URLs this server will ever
     POST a notification to (see that setting's comment)."""
     try:
         parts = urlsplit(endpoint)
@@ -51,7 +51,7 @@ def send_push_notification(user, title, body, url=None):
     """Sends `title`/`body` (plus an optional `url` to open on click)
     to every device `user` has enabled notifications on. Silently a
     no-op if push isn't configured (settings.PUSH_ENABLED) or the user
-    has no subscriptions. Never raises — a dead or unreachable
+    has no subscriptions. Never raises - a dead or unreachable
     subscription is logged (and, if the push service confirms it's
     permanently gone, deleted) rather than propagated, since this
     always runs synchronously right after the real work (saving a
@@ -81,7 +81,7 @@ def send_push_notification(user, title, body, url=None):
         except WebPushException as exc:
             # 404/410: the browser/OS has permanently discarded this
             # subscription (uninstalled, permission revoked, storage
-            # cleared) — the push service itself is telling us to stop
+            # cleared) - the push service itself is telling us to stop
             # trying, not a transient failure to just log and move on
             # from like anything else here.
             status = exc.response.status_code if exc.response is not None else None
@@ -90,7 +90,7 @@ def send_push_notification(user, title, body, url=None):
             else:
                 logger.warning("Push notification failed for %s: %s", user, exc)
         except requests.exceptions.RequestException as exc:
-            # Connection refused/timed out/DNS failure, etc. —
+            # Connection refused/timed out/DNS failure, etc. -
             # pywebpush.webpush() doesn't wrap these into
             # WebPushException itself (confirmed by reading its
             # source: the request that can raise these isn't inside

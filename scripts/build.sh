@@ -1,6 +1,6 @@
 #!/bin/sh
 # Builds the production image with full version/build metadata baked
-# in (docs/ARCHITECTURE.md "Versioning") — the plain `docker compose
+# in (docs/ARCHITECTURE.md "Versioning") - the plain `docker compose
 # -f docker-compose.yml up -d --build` from README's "Production"
 # section still works fine without this; its image's GIT_SHA file and
 # OCI labels just default to "unknown" instead of the real values this

@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% load i18n core_extras %}
-{% block title %}{% trans "Shopping list" %} — {{ plan.name }} — IronStack{% endblock %}
+{% block title %}{% trans "Shopping list" %} - {{ plan.name }} - IronStack{% endblock %}
 {% block content %}
 {% url 'nutrition:diet-plan-list' as c1u %}{% trans "Diet plans" as c1l %}
 {% url 'nutrition:diet-plan-detail' plan.pk as c2u %}
@@ -26,7 +26,7 @@
 {% endif %}
 <p class="text-muted">
   {% if trip.weekday is None %}
-    {% trans "One list for the whole week — pick shopping days below to split it into trips." %}
+    {% trans "One list for the whole week - pick shopping days below to split it into trips." %}
   {% else %}
     {% blocktrans with days=trip_days|join:", " %}For: {{ days }}{% endblocktrans %}
   {% endif %}
@@ -58,7 +58,7 @@
     <button type="button" class="button-secondary" x-show="ticked.length" x-cloak @click="clear()">{% trans "Clear ticks" %}</button>
   </div>
 {% else %}
-  {% include "core/_empty_state.html" with message=_("Nothing to buy — this plan has no meals on these days yet.") %}
+  {% include "core/_empty_state.html" with message=_("Nothing to buy - this plan has no meals on these days yet.") %}
 {% endif %}
 
 <details class="card preferences" data-tour="shopping-settings"{% if form.errors %} open{% endif %}>

@@ -28,7 +28,7 @@ from .tours import NO_TOUR_NEEDED, TOURS
 User = get_user_model()
 
 # Strings that are genuinely spelled the same in some language
-# (checked by hand) — keep this short; anything else must differ.
+# (checked by hand) - keep this short; anything else must differ.
 SAME_IN_TRANSLATION = {
     ("Home", "it"),
     ("Stretching", "sv"), ("Stretching", "it"),
@@ -179,7 +179,7 @@ class TourAnchorTests(TestCase):
         from apps.core import backups
 
         # The staff-only backup page reads BACKUP_DIR (/app/backups, only
-        # present inside the container) — point it at an empty temp dir.
+        # present inside the container) - point it at an empty temp dir.
         tmpdir = tempfile.TemporaryDirectory()
         self.addCleanup(tmpdir.cleanup)
         patcher = mock.patch.object(backups, "BACKUP_DIR", Path(tmpdir.name))
@@ -197,7 +197,7 @@ class TourAnchorTests(TestCase):
             with self.subTest(page=name):
                 self.assertTrue(
                     name in toured or name in NO_TOUR_NEEDED,
-                    f"{name} ({url}) has no tour — add one to apps/tutorials/tours.py or "
+                    f"{name} ({url}) has no tour - add one to apps/tutorials/tours.py or "
                     "list it in NO_TOUR_NEEDED with a reason",
                 )
 

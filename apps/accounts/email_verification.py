@@ -63,7 +63,7 @@ def resend_if_due(request, user):
 
 
 def confirm(uidb64, token):
-    """The user whose address this link confirms, now confirmed — or
+    """The user whose address this link confirms, now confirmed - or
     None for a link that's invalid, expired or already used."""
     User = get_user_model()
     try:

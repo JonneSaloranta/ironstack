@@ -2,10 +2,10 @@
 // (docs/SECURITY.md "Web Push notifications"). Only ever loaded on
 // that page (like barcode-scanner.js, only where it's actually used),
 // and only rendered there at all when settings.PUSH_ENABLED is true
-// server-side — apps.core.context_processors.push.
+// server-side - apps.core.context_processors.push.
 //
 // getCsrfCookie()/postJSON() come from static/js/csrf.js, loaded
-// right before this file in templates/accounts/profile.html — this
+// right before this file in templates/accounts/profile.html - this
 // was the first JS-initiated POST in this codebase (everything else
 // is HTMX or a real <form> with {% csrf_token %}), and static/js/
 // rest-timer.js needed the exact same pair later, so they moved out

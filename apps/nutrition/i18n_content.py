@@ -1,26 +1,26 @@
-"""Translation catalog for seeded *content*, not UI chrome — the
+"""Translation catalog for seeded *content*, not UI chrome - the
 built-in template recipes' names and instructions
 (apps.nutrition.migrations' seed data) are stored in the database in
 canonical English, the value `get_or_create(name=...)` matches against
 elsewhere, so the stored value itself must never be translated. This
 module exists solely so `makemessages` extracts these exact strings
 into the `.po` catalog; nothing here is ever imported or executed for
-its return value — see apps.exercises.i18n_content and
+its return value - see apps.exercises.i18n_content and
 docs/ARCHITECTURE.md "Internationalization" for the full pattern
 (`{% trans recipe.name %}` etc. at render time).
 
 The ingredient Food rows these recipes reference are deliberately
-*not* listed here — they're seeded with the same shape a real
+*not* listed here - they're seeded with the same shape a real
 OpenFoodFacts import produces (off_id, a real product name/brand), and
 exactly like any other OFF-imported Food, that name is never
 translated (see apps.nutrition.openfoodfacts.parse_product's own
-docstring) — only this app's own authored copy is.
+docstring) - only this app's own authored copy is.
 """
 
 from django.utils.translation import gettext_lazy as _
 
 # Default meal slots (apps.nutrition.migrations.0002_seed_meal_slots,
-# apps.nutrition.migrations.0013_add_more_default_meal_slots) —
+# apps.nutrition.migrations.0013_add_more_default_meal_slots) -
 # missing from this file until now, the one seeded-content name in
 # this app that was never actually wired up for translation: every
 # {{ slot.name }}/{{ meal.meal_slot.name }} in templates/nutrition
@@ -36,27 +36,27 @@ MEAL_SLOT_NAMES = [
     _("Other"),
 ]
 
-# Template recipe names (apps.nutrition.migrations' seed data) — the
+# Template recipe names (apps.nutrition.migrations' seed data) - the
 # name itself says which goal it's built for, per docs/NUTRITION.md.
 RECIPE_NAMES = [
-    _("Bulk breakfast — Oats & peanut butter"),
-    _("Bulk breakfast — Eggs on toast"),
-    _("Bulk lunch — Chicken & rice bowl"),
-    _("Bulk lunch — Tuna & sweet potato"),
-    _("Bulk dinner — Salmon & rice"),
-    _("Bulk dinner — Chicken & sweet potato"),
-    _("Fatburner breakfast — Egg & spinach scramble"),
-    _("Fatburner breakfast — Greek yogurt bowl"),
-    _("Fatburner lunch — Chicken & broccoli"),
-    _("Fatburner lunch — Tuna & spinach salad"),
-    _("Fatburner dinner — Salmon & greens"),
-    _("Fatburner dinner — Chicken & cottage cheese"),
-    _("Balanced breakfast — Oats & yogurt"),
-    _("Balanced breakfast — Eggs on toast"),
-    _("Balanced lunch — Chicken & rice"),
-    _("Balanced lunch — Tuna sandwich"),
-    _("Balanced dinner — Salmon & sweet potato"),
-    _("Balanced dinner — Chicken & vegetables"),
+    _("Bulk breakfast - Oats & peanut butter"),
+    _("Bulk breakfast - Eggs on toast"),
+    _("Bulk lunch - Chicken & rice bowl"),
+    _("Bulk lunch - Tuna & sweet potato"),
+    _("Bulk dinner - Salmon & rice"),
+    _("Bulk dinner - Chicken & sweet potato"),
+    _("Fatburner breakfast - Egg & spinach scramble"),
+    _("Fatburner breakfast - Greek yogurt bowl"),
+    _("Fatburner lunch - Chicken & broccoli"),
+    _("Fatburner lunch - Tuna & spinach salad"),
+    _("Fatburner dinner - Salmon & greens"),
+    _("Fatburner dinner - Chicken & cottage cheese"),
+    _("Balanced breakfast - Oats & yogurt"),
+    _("Balanced breakfast - Eggs on toast"),
+    _("Balanced lunch - Chicken & rice"),
+    _("Balanced lunch - Tuna sandwich"),
+    _("Balanced dinner - Salmon & sweet potato"),
+    _("Balanced dinner - Chicken & vegetables"),
 ]
 
 # Template recipe instructions (same migration, one per name above).

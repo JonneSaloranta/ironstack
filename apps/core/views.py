@@ -29,19 +29,19 @@ from apps.workouts.services import sessions_for
 
 def _day_detail_lines(status, target_calories):
     """The two short, plain-language lines a tap on a calendar day
-    reveals (templates/nutrition/_month_calendar.html's popover) — the
+    reveals (templates/nutrition/_month_calendar.html's popover) - the
     one place in this calendar actual text appears, since the grid
     itself is deliberately icon/color-only."""
     if status.training_status == "pr":
-        training_line = _("Training day — new personal record!")
+        training_line = _("Training day - new personal record!")
     elif status.training_status == "abandoned":
-        training_line = _("Training day — a session was abandoned.")
+        training_line = _("Training day - a session was abandoned.")
     elif status.training_status == "completed":
         training_line = _("Training day.")
     else:
         training_line = _("Rest day.")
 
-    # No second line at all once there's nothing to report — asked for
+    # No second line at all once there's nothing to report - asked for
     # directly, choosing this over a more specific "no food logged"
     # wording: the training line above already says what this day
     # actually was (rest/training), so a second line that only ever
@@ -68,13 +68,13 @@ def _stretch_detail_lines(minutes):
 
 def _month_calendar_context(request, today):
     """The dashboard's month calendar (templates/nutrition/
-    _month_calendar.html) — one real month at a time, browsable to any
+    _month_calendar.html) - one real month at a time, browsable to any
     earlier *or later* one via `?month=YYYY-MM`. `weeks` is a list of
     7-day rows, Monday first (matching apps.programs.Weekday's own
     numbering elsewhere in this app), each day a dict the template can
     render without any further lookups. `calendar_days_json` is the
     same days' data again, shaped for the tap-a-day detail popover (a
-    JS component, not more Django template — see that partial's own
+    JS component, not more Django template - see that partial's own
     comment) via `|json_script`."""
     import calendar as calendar_module
     from datetime import date as date_cls
@@ -92,7 +92,7 @@ def _month_calendar_context(request, today):
     target_calories = target.daily_calories if target is not None else None
     all_statuses = nutrition_services.calendar_month_statuses(request.user, year, month)
     statuses_by_date = {status.date: status for status in all_statuses}
-    # Stretching days get their own small marker (and popover line) —
+    # Stretching days get their own small marker (and popover line) -
     # only for users who haven't turned stretching off.
     stretch_minutes = (
         stretching_services.calendar_minutes(request.user, year, month)
@@ -137,9 +137,9 @@ def _month_calendar_context(request, today):
 
 
 class DashboardView(LoginRequiredMixin, TemplateView):
-    """docs/UI.md "Dashboard — Possible content": next/last workout (the
+    """docs/UI.md "Dashboard - Possible content": next/last workout (the
     in-progress banner below), this week's volume, recent PRs, body
-    weight, recent activity (that last one is left to its own section —
+    weight, recent activity (that last one is left to its own section -
     apps.activities already has a dedicated, working history per type;
     duplicating it here would just be a second, staler copy)."""
 
@@ -149,7 +149,7 @@ class DashboardView(LoginRequiredMixin, TemplateView):
         # Changing month is an HTMX request (templates/nutrition/
         # _month_calendar.html's own prev/next links and out-of-month
         # day cells) swapping just that one card, not a full page
-        # navigation — so only that partial needs rendering, not
+        # navigation - so only that partial needs rendering, not
         # every other section's own query below (recent PRs, weight,
         # achievements, ...) none of which changed at all.
         if self.request.headers.get("HX-Request"):
@@ -199,10 +199,10 @@ class DashboardView(LoginRequiredMixin, TemplateView):
             context["shopping_today"] = shopping.shopping_today(user, today)
 
         # Shared across every user on this instance, not scoped to
-        # `user` — apps.analytics.achievements.achievement_highlights
+        # `user` - apps.analytics.achievements.achievement_highlights
         # already excludes anyone with show_achievements=False (a
         # privacy opt-out of being *included*, not a personal "hide the
-        # carousel from me" toggle — see that function's docstring), so
+        # carousel from me" toggle - see that function's docstring), so
         # there's nothing left to gate here.
         context["achievements"] = achievement_services.achievement_highlights()
         context["recently_active"] = achievement_services.recently_active_users()
@@ -211,7 +211,7 @@ class DashboardView(LoginRequiredMixin, TemplateView):
 
 def healthcheck(request):
     """Unauthenticated health endpoint for Docker/reverse-proxy checks.
-    Answers 503 when the database can't be reached — "ok" from a process
+    Answers 503 when the database can't be reached - "ok" from a process
     that can't serve a single page wasn't a healthy container."""
     from django.db import DatabaseError, connection
 
@@ -226,7 +226,7 @@ def healthcheck(request):
 def _serve_static_root_file(filename, content_type):
     """Serve a file from the `static/` source directory at the *site
     root* rather than under `/static/`. A service worker's default scope
-    is the directory it's served from — `/sw.js` covers the whole app,
+    is the directory it's served from - `/sw.js` covers the whole app,
     `/static/sw.js` would only ever cover `/static/`, which is useless.
     Reads the source file directly (not STATIC_ROOT), so this works
     whether or not `collectstatic` has run yet.
@@ -252,13 +252,13 @@ def service_worker(request):
 
     Real bug this fixes: static/sw.js's own stale-while-revalidate
     fetch handler serves whatever's already cached *immediately*,
-    refetching in the background only for the *next* request — a
+    refetching in the background only for the *next* request - a
     browser tab kept open through an entire live-editing session (a
     dev container's `static/` is bind-mounted, no rebuild needed to
     see a JS/CSS edit) stayed on a stale cached static/js/month-
     calendar.js through several real in-place rewrites of that exact
     file, each only fixed by a hard reload discarding the cached copy
-    by hand — nothing about the file's own *name* ever changed to
+    by hand - nothing about the file's own *name* ever changed to
     tell the browser a new version existed. Substituting in a hash of
     the actual current file contents here means `STATIC_CACHE` itself
     changes the instant any cached asset genuinely does, dev live-edit
@@ -317,11 +317,11 @@ def web_manifest(request):
 
 
 def robots_txt(request):
-    """Generated, not a static file — its whole content depends on
+    """Generated, not a static file - its whole content depends on
     apps.core.models.SeoSettings, which an operator can flip from
     Profile → Administration → Site & SEO without a redeploy. `<meta
     name="robots">` (base.html, apps.core.context_processors.seo) is
-    the second, more universally-respected half of the same control —
+    the second, more universally-respected half of the same control -
     robots.txt itself is only ever advisory, a well-behaved crawler's
     own choice to honor."""
     if SeoSettings.load().search_engine_indexing_enabled:

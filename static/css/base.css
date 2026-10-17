@@ -1,4 +1,4 @@
-/* IronStack base styles — mobile-first, ~360-430px baseline, then desktop. */
+/* IronStack base styles - mobile-first, ~360-430px baseline, then desktop. */
 
 :root {
   --color-bg: light-dark(#f2f3f5, #101317);
@@ -9,13 +9,13 @@
   --color-accent: light-dark(#2563eb, #5b9dfd);
   /* Text/icon color for anything rendered *on top of* a
      --color-accent background (a button, .skip-link, .training-fab,
-     .tag, the active .range-filter link, ...) — found live by
+     .tag, the active .range-filter link, ...) - found live by
      apps/core/test_accessibility.py (axe-core): plain white text on
      --color-accent is only 2.7:1, well under WCAG AA's 4.5:1 minimum
      for normal text. --color-accent itself can't just be darkened to
      fix that: it's also used as plain *text* color against this
      app's dark page background (nav links, icons, ...), where it
-     already comfortably passes (6.8:1) — darkening it enough to fix
+     already comfortably passes (6.8:1) - darkening it enough to fix
      the button case would have broken that instead. This app's own
      near-black page background reused as the "text" side of that pair
      gives 6.8:1 against --color-accent, comfortably clearing 4.5:1,
@@ -27,58 +27,58 @@
   --color-warning: light-dark(#8f6208, #e0a94f);
   /* A day's PR icon in the month calendar used to share --color-
      success with that same calendar's own nutrition-adherence icons
-     (a day close to its calorie target) — the exact same green
+     (a day close to its calorie target) - the exact same green
      meaning two different things a few cells apart. A PR is already
      "gold" everywhere else this app marks one (the achievements
      carousel's own 🏆), so the calendar's PR day now matches instead
      of colliding with an unrelated meaning. */
   --color-gold: light-dark(#7d5a14, #d4af37);
   /* Sized for comfortable thumb reach in a mobile browser tab *and* a
-     PWA's standalone window (no browser chrome to lean on) — bumped up
+     PWA's standalone window (no browser chrome to lean on) - bumped up
      from 3.5rem/1.5rem icons after those felt cramped when installed. */
   --nav-height: 4.25rem;
   --touch-target: 2.75rem;
   --radius: 0.5rem;
   /* Every logged/measured number (weight, reps, PR values, volume,
-     dates in a stat context) sets in this instead of the body font —
+     dates in a stat context) sets in this instead of the body font -
      a self-hosted training *log*'s own numbers read as recorded data,
      not prose, the same way a real logbook or spreadsheet would set
      them apart from its own labels. Deliberately not a downloaded
      webfont (this app vendors every third-party asset it ships,
      static/js/htmx.min.js included, rather than fetching from a CDN
-     at runtime — see docs/SECURITY.md's own "the only external call"
-     framing for Gravatar) — this stack is universally available
+     at runtime - see docs/SECURITY.md's own "the only external call"
+     framing for Gravatar) - this stack is universally available
      without one, and tabular-nums (applied alongside it, not baked
      into the stack) is what actually keeps a column of numbers
      lining up. */
   --font-mono: ui-monospace, "SF Mono", "Cascadia Code", "Roboto Mono", Consolas,
     "Liberation Mono", monospace;
   /* Tells the browser itself (not just this stylesheet) which palette
-     is active, so native, non-CSS-able chrome — the <input type="date">
-     calendar popup, scrollbars, form-control default styling — matches
+     is active, so native, non-CSS-able chrome - the <input type="date">
+     calendar popup, scrollbars, form-control default styling - matches
      the page around it instead of defaulting to light regardless of
      what --color-bg says. */
   color-scheme: light dark;
 }
 
 /* Theming (apps.accounts.models.Theme/Appearance, docs/UI.md "Theming")
-   — every rule below this point already reads color through the
+   - every rule below this point already reads color through the
    --color-* custom properties above rather than a literal value (the
-   handful of genuinely fixed colors — a modal backdrop, the barcode
+   handful of genuinely fixed colors - a modal backdrop, the barcode
    scanner's placeholder video background, the nutri-score/NOVA badge
-   scale — are deliberately theme-independent and left alone), so each
+   scale - are deliberately theme-independent and left alone), so each
    theme below is just another set of values for the same properties,
    not a parallel stylesheet.
 
    Two independent axes, both resolved by templates/base.html into
    attributes on <html>: `data-theme` picks the palette (absent for
-   Theme.DEFAULT, which is the bare :root above — no attribute needed);
+   Theme.DEFAULT, which is the bare :root above - no attribute needed);
    `data-appearance` picks dark or light explicitly, and is left off for
    Appearance.AUTO.
 
    Each color is declared once as `light-dark(<light>, <dark>)`. Which half
    applies is the used `color-scheme`: `light dark` (:root) follows the
-   device's own preference — that is AUTO — and an explicit choice pins it
+   device's own preference - that is AUTO - and an explicit choice pins it
    with the two [data-appearance] rules right below. This replaced three
    hand-copied blocks per theme (dark / explicit light / @media light), so
    a new theme is one block. Keep apps.accounts.models.THEME_BG_COLORS
@@ -154,11 +154,11 @@
   box-sizing: border-box;
   /* Stops iOS Safari's double-tap-to-zoom gesture site-wide. Deliberately
      not done via the viewport meta's `user-scalable=no`/`maximum-scale`
-     — that also kills pinch-zoom, which is an accessibility regression
+     - that also kills pinch-zoom, which is an accessibility regression
      for low-vision users. `touch-action: manipulation` only removes the
      double-tap gesture; pinch-zoom still works.
      Set on `html` alone this still let iOS Safari double-tap-zoom to
-     fit a block-level element (e.g. .main-content) — Safari resolves
+     fit a block-level element (e.g. .main-content) - Safari resolves
      the used touch-action per element as its own value intersected
      with its ancestors', and doesn't reliably treat an unset value on
      a descendant as "inherit the ancestor's manipulation" the way you'd
@@ -179,11 +179,11 @@ body {
   line-height: 1.4;
 }
 
-/* Page titles (.top-bar h1 — "Liikkeet", "Profiili", ...) previously
+/* Page titles (.top-bar h1 - "Liikkeet", "Profiili", ...) previously
    rendered at the plain browser default: whatever weight/size a bare
    <h1> gets with no rule of its own at all. Heavy weight + tightened
    tracking is a deliberate, considered choice rather than that
-   default — a page title should feel stamped, not just "big and
+   default - a page title should feel stamped, not just "big and
    bold" the way every unstyled heading on the web already is. */
 h1 {
   font-weight: 800;
@@ -191,7 +191,7 @@ h1 {
 }
 
 /* See --font-mono's own comment (this file's :root) for why. Applied
-   as a class rather than a blanket rule on e.g. <dd> — plenty of
+   as a class rather than a blanket rule on e.g. <dd> - plenty of
    non-numeric content (exercise names, dates in prose) also lives in
    the same structural elements and must stay in the body font. */
 .stat-figure {
@@ -201,7 +201,7 @@ h1 {
 
 /* Extra clearance for whichever FAB (.training-fab/.messages-fab
    below) base.html's own `has-fab` check decided will render on this
-   page — same offset math those two already use for their own
+   page - same offset math those two already use for their own
    `bottom`, plus the FAB's own height and a little breathing room, so
    the last card in .container can never end up underneath one. */
 body.has-fab {
@@ -214,15 +214,15 @@ a {
 
 /* A food/recipe name rendered as a link to its own detail page (the
    diary, "most used", search results, a recipe's own ingredient
-   list, ...) — plain default `display: inline` like any other link
+   list, ...) - plain default `display: inline` like any other link
    in running text, except here it sat inside a dense table cell/row
    next to little else worth double-tapping, and got double-tapped
    often enough to matter. `touch-action: manipulation` (the `*` rule
    above) stops iOS Safari's double-tap-to-zoom on a *block* or
    *inline-block* element reliably, but WebKit doesn't consistently
-   honor it on a plain non-replaced `inline` element — a long-standing
+   honor it on a plain non-replaced `inline` element - a long-standing
    engine quirk, not something the touch-action spec itself carves out
-   — so these still zoomed the page in on a double-tap despite the
+   - so these still zoomed the page in on a double-tap despite the
    site-wide rule. `inline-block` keeps the same in-flow text
    appearance (no width/height set) while giving WebKit an actual box
    to apply touch-action to. */
@@ -251,7 +251,7 @@ a {
   padding: 2rem 1rem;
 }
 
-/* Login/signup (templates/registration/_auth_brand.html) — the only
+/* Login/signup (templates/registration/_auth_brand.html) - the only
    pages in the app with no nav bar and no other visual cue what
    they're looking at, so a first-time visitor sees at least a name
    before ever creating an account. */
@@ -271,7 +271,7 @@ a {
   font-weight: bold;
 }
 
-/* templates/registration/_auth_disclaimer.html — an operator-editable
+/* templates/registration/_auth_disclaimer.html - an operator-editable
    footer note (apps.accounts.models.SiteDisclaimer, via /admin/), not
    this app's own copy, so deliberately understated rather than styled
    like a warning banner. */
@@ -292,7 +292,7 @@ textarea {
 button,
 .button {
   /* `<button>` already defaults to an inline-block-ish box, but a
-     `.button`-classed `<a>` defaults to plain `display: inline` — an
+     `.button`-classed `<a>` defaults to plain `display: inline` - an
      inline box's padding/min-height doesn't reserve real space in
      normal flow, so it visually overlapped whatever block-level
      element (typically a sibling <form>/<button>) came right after it.
@@ -340,7 +340,7 @@ input[type="radio"] {
   vertical-align: middle;
 }
 
-/* Alpine.js hasn't run yet on first paint (loaded with `defer`) — any
+/* Alpine.js hasn't run yet on first paint (loaded with `defer`) - any
    x-show="false"-by-default element needs this or it flashes visible
    for a moment before Alpine hides it. */
 [x-cloak] {
@@ -352,7 +352,7 @@ input[type="radio"] {
   outline-offset: 2px;
 }
 
-/* Visually hidden until focused — lets keyboard/screen-reader users jump
+/* Visually hidden until focused - lets keyboard/screen-reader users jump
    past the nav straight to the page content. */
 .skip-link {
   position: absolute;
@@ -370,7 +370,7 @@ input[type="radio"] {
   top: 0.5rem;
 }
 
-/* Free loading feedback for every HTMX interaction in the app — htmx
+/* Free loading feedback for every HTMX interaction in the app - htmx
    adds/removes this class on the triggering element automatically
    around each request, no per-form wiring needed. */
 .htmx-request {
@@ -380,7 +380,7 @@ input[type="radio"] {
 
 /* A visible "something is happening" spinner for a request slow
    enough that .htmx-request's own dim-and-disable isn't obvious
-   enough on its own — found needed for backup-code generation
+   enough on its own - found needed for backup-code generation
    (templates/accounts/two_factor_backup_codes.html), which hashes
    each code with Django's own deliberately-expensive password hasher
    and can take several real seconds, not the sub-second HTMX
@@ -402,7 +402,7 @@ input[type="radio"] {
   }
 }
 
-/* WCAG 2.3.3 "Animation from Interactions" — a spinning circle isn't
+/* WCAG 2.3.3 "Animation from Interactions" - a spinning circle isn't
    essential to what it communicates (only its *presence* is; a static
    ring still says "loading" for anyone who's told their OS they'd
    rather not see continuous motion). */
@@ -412,7 +412,7 @@ input[type="radio"] {
   }
 }
 
-/* Page loading bar (static/js/page-loading.js) — a thin accent line
+/* Page loading bar (static/js/page-loading.js) - a thin accent line
    across the top while a page or a user-started HTMX request is on its
    way. Real progress is unknowable, so it eases towards 90% over several
    seconds and jumps to the end when the response arrives. Sits above
@@ -478,10 +478,10 @@ input[type="radio"] {
   right: 0;
   bottom: 0;
   /* Regression: had no z-index at all (auto), so anything else with its
-     own stacking context — most visibly the <abbr> tooltip popups
+     own stacking context - most visibly the <abbr> tooltip popups
      (z-index: 20) a card near the bottom of a long page (e.g. the
      profile page's BMI card) could render close enough to the bar to
-     overlap it — painted over the nav instead of under it. Below the
+     overlap it - painted over the nav instead of under it. Below the
      floating training button/PR toasts (they're deliberately meant to
      float above everything, nav included) but above ordinary page
      content and its tooltips. */
@@ -492,7 +492,7 @@ input[type="radio"] {
      border-box-shrinking the icon row on phones with a home-indicator
      inset). Every other consumer of --nav-height (body's own
      padding-bottom, .training-fab/.messages-fab, the PWA banner) already
-     adds the two together — this keeps the bar consistent with them:
+     adds the two together - this keeps the bar consistent with them:
      the icon row keeps its full height and sits higher, thumb-reachable,
      while the background still stretches down to cover the inset. */
   height: calc(var(--nav-height) + env(safe-area-inset-bottom));
@@ -507,7 +507,7 @@ input[type="radio"] {
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  /* Room above the icon itself, not just a taller bar — icons sat
+  /* Room above the icon itself, not just a taller bar - icons sat
      flush against the top edge of the bar otherwise, cramped-looking
      especially in a PWA's standalone window. */
   padding-top: 0.65rem;
@@ -532,7 +532,7 @@ input[type="radio"] {
 }
 
 /* Every other nav icon shows "you're on this page" via `color:
-   var(--color-accent)` (.bottom-nav a[aria-current="page"] above) —
+   var(--color-accent)` (.bottom-nav a[aria-current="page"] above) -
    an <svg stroke="currentColor"> picks that straight up, but a plain
    <img> (the Gravatar picture replacing this one icon) can't recolor
    itself the same way. A ring around it instead carries the same
@@ -541,11 +541,11 @@ input[type="radio"] {
   border-color: var(--color-accent);
 }
 
-/* apps.social.context_processors.social_badge — a pending friend
+/* apps.social.context_processors.social_badge - a pending friend
    request/group invite or an unread message, surfaced as a small dot
    on the existing Profile nav icon rather than yet another bottom-nav
    item (up to seven with nutrition and stretching both on, and this
-   app is mobile-first — docs/UI.md). Needs its
+   app is mobile-first - docs/UI.md). Needs its
    own positioning wrapper (.icon-badge-wrap) since .bottom-nav a centers
    its icon via justify-content, so an absolutely-positioned child of
    the <a> itself wouldn't reliably sit at the icon's own corner. */
@@ -565,14 +565,14 @@ input[type="radio"] {
   border: 2px solid var(--color-surface);
 }
 
-/* Icon-only on mobile — the label stays in the accessibility tree via
+/* Icon-only on mobile - the label stays in the accessibility tree via
    the link's own aria-label, not this (hidden) text, since there's no
    room to show both icon and text at this width. */
 .nav-label {
   display: none;
 }
 
-/* Training mode's floating entry point — shown on every page (base.html,
+/* Training mode's floating entry point - shown on every page (base.html,
    gated on apps.workouts.context_processors.active_workout_session)
    whenever the user has a workout in progress, so it's reachable from
    wherever they are, not just the workout pages themselves. Sits above
@@ -600,7 +600,7 @@ input[type="radio"] {
   height: 1.75rem;
 }
 
-/* The "still going" pulse — a plain dumbbell glyph alone doesn't say
+/* The "still going" pulse - a plain dumbbell glyph alone doesn't say
    *live*, and this is the one button in the app meant to catch the eye
    from any page. */
 .training-fab::after {
@@ -622,11 +622,11 @@ input[type="radio"] {
 }
 
 /* Unread messages' own floating entry point (base.html, gated on
-   apps.social.context_processors.social_badge's has_unread_messages) —
+   apps.social.context_processors.social_badge's has_unread_messages) -
    the same "reachable from any page" treatment .training-fab already
    gets, opposite corner so the two never collide or need stacking math
    between them (training-fab only shows during an in-progress workout,
-   rarely coinciding anyway). --color-danger, not --color-accent —
+   rarely coinciding anyway). --color-danger, not --color-accent -
    matches the red .nav-badge dot already used for pending social
    activity elsewhere in this app, visually distinct from the blue
    training button. */
@@ -653,12 +653,12 @@ input[type="radio"] {
 }
 
 /* Diet plan totals widget
-   (templates/nutrition/_diet_plan_totals_widget.html) — a small
+   (templates/nutrition/_diet_plan_totals_widget.html) - a small
    corner summary of a diet plan's calorie/macro totals-so-far and
    how much is left, asked for directly. Same fixed-to-viewport,
    "reachable, not blocking" corner .training-fab/.messages-fab
    already use, offset further up rather than sharing their exact
-   spot — .training-fab in particular can be showing at the same time
+   spot - .training-fab in particular can be showing at the same time
    (a workout in progress while a diet plan page is also open) and is
    a circular button this card-shaped widget would otherwise sit
    right on top of. */
@@ -667,7 +667,7 @@ input[type="radio"] {
   right: 1rem;
   bottom: calc(var(--nav-height) + env(safe-area-inset-bottom) + 5.5rem);
   z-index: var(--z-fab-secondary);
-  /* Auto-width while minimized — just big enough for the toggle
+  /* Auto-width while minimized - just big enough for the toggle
      button's own label, not the widest a food name/target number
      could ever make it. Regression: a fixed 14rem width even while
      minimized still covered a meal card's "+ Add item" button behind
@@ -712,12 +712,12 @@ input[type="radio"] {
   border-bottom: 1px solid var(--color-border);
 }
 
-/* .top-bar holds a page's own title and nothing else — asked for
+/* .top-bar holds a page's own title and nothing else - asked for
    directly, so every page's own header looks the same regardless of
    whether that page also happens to need an action button, a status
    tag, or (templates/nutrition/diary_day.html) day-navigation
    controls. Those move here instead, in normal flow right below the
-   title instead of squeezed into the same flex row as it — no border
+   title instead of squeezed into the same flex row as it - no border
    of its own (.top-bar's own border-bottom already closes off the
    header), just enough spacing to read as "this page's own actions",
    not part of the title bar itself. */
@@ -732,8 +732,8 @@ input[type="radio"] {
 /* Regression found live: templates/nutrition/_subnav.html's tab bar
    sits right after every nutrition page's own .top-bar, but each
    page's own title/actions vary a lot in height (a bare "Statistics"
-   title vs. Foods' two wrapped action buttons — measured 78px to
-   182px across the 7 nutrition pages) — landing on one tab then
+   title vs. Foods' two wrapped action buttons - measured 78px to
+   182px across the 7 nutrition pages) - landing on one tab then
    tapping another visibly jumped the whole page up or down as that
    height changed, since nothing reserved a consistent amount of space
    for it. `:has()` scopes this to only the top-bars actually
@@ -741,7 +741,7 @@ input[type="radio"] {
    one destination per top-bar, no sibling tabs to jump between, so
    this isn't a problem worth reserving space for there). Sized to the
    common case (a title plus zero or one action), not Foods' own
-   two-button outlier — that one page legitimately has more to show
+   two-button outlier - that one page legitimately has more to show
    and stays a little taller; the goal is smoothing the other six
    pages against each other, not forcing every page to an identical
    height regardless of content. */
@@ -766,16 +766,16 @@ input[type="radio"] {
   border: 1px solid var(--color-border);
 }
 
-/* A food's OFF-hosted photo (Food.image_url — its own comment
+/* A food's OFF-hosted photo (Food.image_url - its own comment
    explains why this links to OFF's CDN rather than downloading and
-   re-storing/resizing the file locally) — `object-fit: cover` at a
+   re-storing/resizing the file locally) - `object-fit: cover` at a
    small, fixed size is what actually does the "optimize the image to
    fit the view" asked for: whatever aspect ratio/resolution OFF's own
    photo happens to be, it always renders as the same small, cropped
    square here, so a row of foods reads as a uniform, scannable list
    rather than one with wildly different-shaped thumbnails. The
    placeholder (a hand-entered food, or an OFF import from before this
-   field existed, has no photo) is a plain muted square — keeps the
+   field existed, has no photo) is a plain muted square - keeps the
    name column's own alignment identical whether or not a given row
    has a photo, rather than that column silently shifting narrower
    for rows with a blank first cell. */
@@ -793,7 +793,7 @@ input[type="radio"] {
   background: var(--color-border);
 }
 
-/* The same photo, shown large on Food's own detail page — `contain`,
+/* The same photo, shown large on Food's own detail page - `contain`,
    not `cover`, here: a food label often carries the exact information
    (brand, flavor, size) that makes it recognizable, and cropping that
    off to fill a fixed box the way the small list thumbnail does would
@@ -801,13 +801,13 @@ input[type="radio"] {
 .food-detail-image {
   display: block;
   width: 100%;
-  /* Smaller than a first pass (220px) — asked for directly after
+  /* Smaller than a first pass (220px) - asked for directly after
      seeing it on a desktop screen: this app's own .container caps
      every page at 30rem (480px) wide regardless of viewport, mobile
      or desktop alike, so the fixed pixel size here is what actually
      controlled how "big" this looked either way, not the device. A
      non-square product photo (most of them) also doesn't fill this
-     box at all under object-fit: contain — the box itself reading as
+     box at all under object-fit: contain - the box itself reading as
      oversized was as much about the letterboxed empty space around a
      small photo as the photo's own size. */
   max-width: 160px;
@@ -840,14 +840,14 @@ input[type="radio"] {
   color: var(--color-text-muted);
 }
 
-/* A state that's simply "the other one" of a pair — e.g. "Rest day"
-   next to "Training day" — not a lesser/inactive one. `.tag-muted`
+/* A state that's simply "the other one" of a pair - e.g. "Rest day"
+   next to "Training day" - not a lesser/inactive one. `.tag-muted`
    above is for exactly that latter meaning app-wide (abandoned,
    inactive, a template rather than a real record) and would wrongly
    editorialize a rest day as some kind of "off" state instead of a
    normal, expected half of the pair. Outlined instead of filled, but
    in the same full-strength text color as everything else on the
-   page — present, not faded. */
+   page - present, not faded. */
 .tag-outline {
   background: transparent;
   color: var(--color-text);
@@ -855,7 +855,7 @@ input[type="radio"] {
 }
 
 /* `<abbr title>` gets a dotted underline (see the jargon-abbreviation
-   comment below) to hint "more info on hover/focus" in running text —
+   comment below) to hint "more info on hover/focus" in running text -
    right for "RPE" inline in a sentence, wrong cutting through a pill
    badge's own label. `.tag`'s pill shape already signals it's
    interactive/informational on its own; this just keeps the same
@@ -867,11 +867,11 @@ abbr.tag {
 
 /* Jargon abbreviations (RPE, RIR, 1RM, PR, BMI, ...) carry their full
    expansion in `title`, but a plain `title` attribute has no touch
-   equivalent — iOS/Android give a touchscreen user no gesture that
+   equivalent - iOS/Android give a touchscreen user no gesture that
    reveals it, unlike a mouse's hover. Each `<abbr>` is made focusable
    (`tabindex="0"`, apps.core.formatting.abbr_label / the same attribute
    hand-written in templates) so tapping it *focuses* it, and this CSS
-   tooltip reveals `title` on `:focus` as well as `:hover` — the same
+   tooltip reveals `title` on `:focus` as well as `:hover` - the same
    content, now reachable by tap, keyboard, and mouse alike. */
 abbr[title] {
   text-decoration: underline dotted;
@@ -903,7 +903,7 @@ abbr[title]:focus::after {
 }
 
 /* A live-search-plus-dropdown-filters row (exercise_list.html,
-   nutrition/food_list.html's own "All foods" filters) — generically
+   nutrition/food_list.html's own "All foods" filters) - generically
    named since both reuse this identical shape rather than each
    carrying its own copy. flex-wrap because food_list.html's own use
    has four controls (name/category/sort/direction) instead of
@@ -917,7 +917,7 @@ abbr[title]:focus::after {
 }
 
 /* Smaller than the generic input/select default (var(--touch-target),
-   the same 2.75rem every ordinary form field uses) — asked for
+   the same 2.75rem every ordinary form field uses) - asked for
    directly once food_list.html grew from two filters to four. `flex:
    1 1 160px` is what actually makes "smaller" visible rather than
    just shorter: each control only claims the width it needs down to
@@ -942,10 +942,10 @@ abbr[title]:focus::after {
 
 /* A list of trackable types (measurements/activities) used to give a
    type with real history and one that's never been logged the exact
-   same visual weight — "Body weight: 82,00 kg" read no differently
+   same visual weight - "Body weight: 82,00 kg" read no differently
    from six straight "No readings yet" rows around it. Dimming the
    untracked ones (rather than boosting the tracked ones) needs only
-   one variant, and reads as "nothing here yet" rather than "broken" —
+   one variant, and reads as "nothing here yet" rather than "broken" -
    still full contrast on focus/hover, so it's never actually harder
    to find or use than a tracked one, just quieter until then. */
 .card-untracked {
@@ -957,7 +957,7 @@ abbr[title]:focus::after {
   opacity: 1;
 }
 
-/* A card whose whole surface used to be the link — easy to miss that
+/* A card whose whole surface used to be the link - easy to miss that
    it was clickable at all, since nothing about a plain card visually
    says "press me". Text stays in a plain, non-link block on the left;
    the only actual link is the button on the right, so the affordance
@@ -965,7 +965,7 @@ abbr[title]:focus::after {
 .card-action-row {
   display: flex;
   align-items: center;
-  /* Text on the left, actions on the right — always, whatever the text's
+  /* Text on the left, actions on the right - always, whatever the text's
      length. This used to wrap (flex-wrap: wrap), which made a row with a
      long name drop its button onto a line of its own while its
      neighbours kept theirs on the right, so the buttons jumped around a
@@ -989,7 +989,7 @@ abbr[title]:focus::after {
 
 /* The actions never shrink and never move under the text. A group of
    several (a quantity box and a button, Edit + Delete) is laid out the
-   same way on every row whatever the text's length — stacked on a phone,
+   same way on every row whatever the text's length - stacked on a phone,
    where side by side would squeeze the text to a sliver, side by side
    from tablet width up. (It used to wrap only when the text was long,
    so neighbouring rows disagreed.) */
@@ -1032,15 +1032,15 @@ abbr[title]:focus::after {
   flex-shrink: 0;
 }
 
-/* A settings row (templates/accounts/profile.html) — unlike
+/* A settings row (templates/accounts/profile.html) - unlike
    .card-action-row above, the *entire* card is the link to wherever
    it leads, not just a button on the right. .card-action-row
    deliberately avoided that shape once already (see its own comment:
-   a plain card gave no visual sign it was clickable at all) — the
+   a plain card gave no visual sign it was clickable at all) - the
    trailing chevron here is what's different this time, the one shape
    web/mobile users already read as "this row navigates" without
    needing a separate boxed button to prove it. Only ever used for a
-   row that actually *is* a single link to another page — Notifications
+   row that actually *is* a single link to another page - Notifications
    below stays a plain .card with its own real buttons, since enabling
    push doesn't navigate anywhere. */
 .settings-row {
@@ -1077,7 +1077,7 @@ abbr[title]:focus::after {
   margin: 0 0 1rem;
 }
 
-/* A <button> that reads as plain inline text, not a boxed button — for
+/* A <button> that reads as plain inline text, not a boxed button - for
    an action that's secondary to the whole page it's on (expanding one
    section of templates/accounts/data_export.html's own per-category
    breakdown) and shouldn't visually compete with the page's own
@@ -1092,13 +1092,13 @@ abbr[title]:focus::after {
   cursor: pointer;
 }
 
-/* A <button>, not just styled text — clicking it opens a modal (the
+/* A <button>, not just styled text - clicking it opens a modal (the
    changelog below, or templates/accounts/_privacy_notice_modal.html's
    privacy notice, sharing this exact look on purpose rather than a
    second near-identical class), so it needs the usual button resets
    (no native background/border) on top of looking like the plain
    muted footer text it always was. */
-/* Wraps Privacy notice / GitHub link / version string — templates/
+/* Wraps Privacy notice / GitHub link / version string - templates/
    accounts/profile.html's own comment above that markup explains why
    these three read as one small-print cluster instead of each
    .app-version item bringing its own top/bottom margin. */
@@ -1135,7 +1135,7 @@ abbr[title]:focus::after {
 /* The GitHub link keeps .app-version's own color/size/hover styling
    (same "small print" weight as Privacy notice and the version
    string) but needs icon+text laid out side by side, not
-   .app-version's own `display: block` — a plain <a>, no click-to-
+   .app-version's own `display: block` - a plain <a>, no click-to-
    open-modal behavior, so no `cursor: pointer`/dotted-underline
    "this is a button" affordance either. */
 .app-version-github {
@@ -1212,7 +1212,7 @@ abbr[title]:focus::after {
 }
 
 /* The changelog modal's per-version sections
-   (apps.core.changelog._render, templates/accounts/profile.html) —
+   (apps.core.changelog._render, templates/accounts/profile.html) -
    native <details>/<summary> instead of Alpine state, since each
    version is independent of every other one (no shared "only one
    open" behavior needed) and a screen reader/keyboard user already
@@ -1245,13 +1245,13 @@ abbr[title]:focus::after {
   margin: 0 0 0.75rem;
 }
 
-/* templates/accounts/data_export.html's per-section cards — native
+/* templates/accounts/data_export.html's per-section cards - native
    <details>/<summary> for the same reason as the changelog modal
    above: nothing here needs Alpine's more elaborate state, and a
    screen reader/keyboard user already knows how to operate a native
    disclosure widget. ("Download as HTML" is a separate, deliberately
-   self-contained template — templates/accounts/
-   _data_export_standalone.html — with its own inline copy of these
+   self-contained template - templates/accounts/
+   _data_export_standalone.html - with its own inline copy of these
    same rules, since a downloaded file can't rely on this stylesheet
    ever loading again either.) */
 .card > summary {
@@ -1276,10 +1276,10 @@ abbr[title]:focus::after {
 }
 
 /* Multi-line code examples (apps.api's "Using the API" help modal,
-   templates/api/key_list.html) — .modal-body code above is sized for
+   templates/api/key_list.html) - .modal-body code above is sized for
    a short inline snippet, not a whole curl/Python block. A wide
    `<pre>` line (a long curl command, an indented Python dict) must
-   never force the page itself to scroll horizontally — it scrolls
+   never force the page itself to scroll horizontally - it scrolls
    inside its own box instead, the same rule every other wide content
    block in this app already follows. */
 .modal-body pre {
@@ -1299,7 +1299,7 @@ abbr[title]:focus::after {
 }
 
 /* A small round icon button opening a help/info modal (currently
-   apps.api's "Using the API" docs) — distinct from .modal-close
+   apps.api's "Using the API" docs) - distinct from .modal-close
    (dismisses a modal already open) and .app-version (opens the
    changelog modal but reads as a version string, not a button).
    Full --touch-target hit area even though the visible circle is
@@ -1327,14 +1327,14 @@ abbr[title]:focus::after {
 }
 
 /* A roomier .modal-card for content that doesn't fit the default
-   30rem comfortably — code examples specifically, which wrap badly
+   30rem comfortably - code examples specifically, which wrap badly
    narrower than this. */
 .modal-card-wide {
   max-width: 40rem;
 }
 
 /* apps.nutrition's camera barcode scanner (static/js/barcode-scanner.js)
-   — a live <video> preview inside the same .modal-card the changelog
+   - a live <video> preview inside the same .modal-card the changelog
    and other overlays already use. */
 .barcode-scanner-video {
   width: 100%;
@@ -1342,7 +1342,7 @@ abbr[title]:focus::after {
   background: #000;
 }
 
-/* Profile page's staff-only Admin/Backups section — visually set apart
+/* Profile page's staff-only Admin/Backups section - visually set apart
    as a "danger zone" (red border/heading) since everything inside it
    can affect every user on the instance, not just the one looking at
    it, unlike the plain cards above it. */
@@ -1371,7 +1371,7 @@ abbr[title]:focus::after {
   /* Previous/Next links that carry a same-page #anchor (e.g.
      recipe_list.html's two independently-paginated sections) land the
      browser's native anchor-scroll right here instead of back at the
-     top of the page — asked for directly, since a full page reload
+     top of the page - asked for directly, since a full page reload
      otherwise always resets scroll to the top regardless of where the
      click happened. scroll-margin-top leaves room for
      .nutrition-subnav's own `position: sticky; top: 0`, which would
@@ -1380,7 +1380,7 @@ abbr[title]:focus::after {
   scroll-margin-top: 3.5rem;
 }
 
-/* diary_day.html's own meal-slot cards (id="meal-slot-<pk>") — same
+/* diary_day.html's own meal-slot cards (id="meal-slot-<pk>") - same
    #anchor-landing-spot fix as .pagination above, for redirects back
    from adding/editing/removing an entry or saving a meal as a recipe,
    so the page lands back at the meal that was actually being worked
@@ -1394,9 +1394,9 @@ abbr[title]:focus::after {
 }
 
 /* Sub-groups fields *within* one form (templates/accounts/profile.html's
-   preferences form — unit_system/timezone/height/language, then
+   preferences form - unit_system/timezone/height/language, then
    privacy toggles, then social toggles, all still one POST/one submit
-   button) — a page-level `h2` eyebrow would read as heavier than this
+   button) - a page-level `h2` eyebrow would read as heavier than this
    is: one form's own internal structure, not a new top-level section
    of the page the way ACCOUNT/SOCIAL below it are. */
 .field-group-label {
@@ -1433,7 +1433,7 @@ abbr[title]:focus::after {
   font-family: monospace;
   /* Explicit, not left to inherit the 1rem/16px from `input, select,
      textarea { font: inherit }` above like this comment used to claim
-     — turns out relying on inheritance alone doesn't actually work
+     - turns out relying on inheritance alone doesn't actually work
      here: browsers keep a separate, smaller default font-size just
      for the generic "monospace" family (Chrome's own "fixed-width
      font" setting, 13px by default) and apply it over an *inherited*
@@ -1450,13 +1450,13 @@ abbr[title]:focus::after {
   flex-shrink: 0;
 }
 
-/* Exercise image gallery (templates/exercises/exercise_detail.html) —
+/* Exercise image gallery (templates/exercises/exercise_detail.html) -
    stacked full-width figures rather than a row of fixed-size
    thumbnails: most exercises hold just one photo, and a small,
    letterboxed 160×160 thumbnail (this rule's own original shape)
    left most of that box empty padding around a landscape photo
    instead of actually showing it at a readable size. `height: auto`
-   lets each image keep its own natural aspect ratio — no cropping —
+   lets each image keep its own natural aspect ratio - no cropping -
    while `max-height` only steps in for the unusually tall
    (portrait-orientation) source photos, at which point `margin: 0
    auto` keeps the now-narrower-than-full-width image centered rather
@@ -1492,8 +1492,8 @@ abbr[title]:focus::after {
 }
 
 /* Small credit line for content sourced from an externally-licensed
-   library — apps.exercises.models.ExerciseImage.attribution/Exercise.
-   instructions_attribution — not just inside the gallery, since
+   library - apps.exercises.models.ExerciseImage.attribution/Exercise.
+   instructions_attribution - not just inside the gallery, since
    written instructions carry their own credit line too. */
 .attribution-note {
   font-size: var(--text-xs);
@@ -1519,7 +1519,7 @@ abbr[title]:focus::after {
   font-size: var(--text-sm);
 }
 
-/* Checkbox + its own label side by side, box first — the block-level
+/* Checkbox + its own label side by side, box first - the block-level
    `label` rule above (meant for text/select inputs) would otherwise
    stack the label above a lone checkbox, which reads badly for a
    single on/off toggle like "Show BMI on the dashboard". */
@@ -1532,12 +1532,12 @@ abbr[title]:focus::after {
 }
 
 /* A real sliding toggle switch rather than the browser's own bare
-   checkbox square — every .checkbox-field here (profile preferences,
+   checkbox square - every .checkbox-field here (profile preferences,
    backup/SEO/feedback admin settings, a set's warmup/failure flags)
    is genuinely a plain on/off setting, never one item in a multi-
    select list, so the switch metaphor fits every one of them. Still
    a real <input type="checkbox"> underneath (appearance: none only
-   removes its *default painted appearance*, not its behavior) — a
+   removes its *default painted appearance*, not its behavior) - a
    screen reader, keyboard Space-to-toggle, and `:checked` form
    submission all keep working exactly as before; only the paint job
    changes. */
@@ -1608,7 +1608,7 @@ dd {
 }
 
 /* A lower-emphasis button for navigational actions ("Back to X") that
-   used to render as bare text links — those were too small a touch
+   used to render as bare text links - those were too small a touch
    target and easy to miss. Outlined rather than filled like .button so
    a page's primary action (e.g. "Save") still reads as the one to
    reach for first. */
@@ -1642,7 +1642,7 @@ dd {
 }
 
 /* One exercise's grouped PRs (templates/records/_pr_exercise_group.html)
-   — a plain .card, same as every other card on the dashboard/Analytics
+   - a plain .card, same as every other card on the dashboard/Analytics
    page; only the toggle button and its expand-only detail rows below
    need their own rules. */
 .pr-exercise-group-toggle {
@@ -1691,9 +1691,9 @@ h2 {
   background: var(--color-accent);
 }
 
-/* Nutri-Score — a fixed A-E grade with its own established, publicly
+/* Nutri-Score - a fixed A-E grade with its own established, publicly
    defined colors (green through red), not this project's own status
-   palette — showing it in anything but its real colors would make it
+   palette - showing it in anything but its real colors would make it
    harder to recognize, not more consistent. See
    apps.nutrition.models.NutriScoreGrade. */
 .nutri-score {
@@ -1756,10 +1756,10 @@ h2 {
   font-size: var(--text-sm);
   /* A long, unbroken word/value (a filename, a translated string with
      no natural break point at this column's width, ...) must wrap
-     rather than force the whole table — and via .table-wrap's own
-     overflow-x, the whole page — wider than the viewport. */
+     rather than force the whole table - and via .table-wrap's own
+     overflow-x, the whole page - wider than the viewport. */
   overflow-wrap: break-word;
-  /* The default table-cell vertical-align is "middle" — fine when
+  /* The default table-cell vertical-align is "middle" - fine when
      every row's content is the same height, but once one column
      wraps to a different number of lines than its neighbor (e.g. a
      multi-line info cell next to a single-line actions cell), middle-
@@ -1808,7 +1808,7 @@ h2 {
 }
 
 /* A button's own inline-flex box (.button, above) sizes to fit its
-   label's *unwrapped* width by default, same as inline-block would —
+   label's *unwrapped* width by default, same as inline-block would -
    fine for a short label, but the "Show N earlier automatic backups"
    toggle's label (templates/core/backup_list.html) is long enough in
    several languages to force real overflow on a narrow screen if it's
@@ -1838,7 +1838,7 @@ h2 {
 
 /* `.set-field`'s own smaller font-size above is meant for its label
    text only, but `input`/`select`/`textarea` all `font: inherit` (this
-   file's own global rule) — with no reset here, weight/reps/RPE/notes
+   file's own global rule) - with no reset here, weight/reps/RPE/notes
    entry during a workout inherited that same ~12px, well under the
    16px iOS Safari needs to *not* auto-zoom the whole page in on focus.
    Found live: kept zooming in on every tap while logging a set. */
@@ -1853,7 +1853,7 @@ h2 {
   flex: 1 1 100%;
 }
 
-/* PR toasts (templates/records/_pr_toasts.html) — fixed to the top of
+/* PR toasts (templates/records/_pr_toasts.html) - fixed to the top of
    the screen via .toast-container below, one .pr-banner per new PR,
    stacked newest-first, each auto-dismissing on its own. */
 .toast-container {
@@ -1868,7 +1868,7 @@ h2 {
   gap: 0.5rem;
   padding: 0.75rem 1rem 0;
   /* The container spans the full width so its children can center
-     themselves, but it has no visible content of its own — clicks
+     themselves, but it has no visible content of its own - clicks
      through the gaps between toasts must still reach the page. */
   pointer-events: none;
 }
@@ -1891,7 +1891,7 @@ h2 {
 }
 
 /* Django messages framework toasts (base.html) reuse .pr-banner's
-   shape/positioning — this is just the "error" level's color, success
+   shape/positioning - this is just the "error" level's color, success
    (and every other level actually used) stays the default green. */
 .pr-banner-error {
   background: var(--color-danger);
@@ -1912,7 +1912,7 @@ h2 {
   line-height: 1;
 }
 
-/* Measurement trend chart — single series, no legend needed */
+/* Measurement trend chart - single series, no legend needed */
 .chart-card {
   background: var(--color-surface);
   border: 1px solid var(--color-border);
@@ -1977,7 +1977,7 @@ h2 {
 }
 
 /* Highlights the row matching the user's current BMI in the ranges
-   table on the dashboard — otherwise a bare number has no context for
+   table on the dashboard - otherwise a bare number has no context for
    whether it's high, low, or unremarkable. */
 .bmi-current-row th,
 .bmi-current-row td {
@@ -2023,14 +2023,14 @@ h2 {
   border-color: var(--color-accent);
 }
 
-/* Nutrition's persistent sub-nav (templates/nutrition/_subnav.html) —
+/* Nutrition's persistent sub-nav (templates/nutrition/_subnav.html) -
    reuses .range-filter's pill look above with one deliberate
    difference: this scrolls horizontally instead of wrapping. 7 tabs
    wrapped to 2-3 lines would cost real vertical space on every single
    nutrition page, permanently, which defeats the point of a bar meant
    to stay out of the way. Sticky under the top app chrome so a long
    page (the dashboard, mainly) never buries it below a scroll a user
-   has to reverse to reach navigation — the concrete complaint this
+   has to reverse to reach navigation - the concrete complaint this
    whole component exists to fix. */
 .nutrition-subnav {
   flex-wrap: nowrap;
@@ -2038,7 +2038,7 @@ h2 {
   -webkit-overflow-scrolling: touch;
   position: sticky;
   /* Sits right under each page's own .top-bar (which itself starts
-     flush at the top of .container) — sticking to the very top of the
+     flush at the top of .container) - sticking to the very top of the
      scroll area, not offset, is correct once scrolled past it. */
   top: 0;
   z-index: var(--z-subnav);
@@ -2050,7 +2050,7 @@ h2 {
   flex-shrink: 0;
 }
 
-/* templates/nutrition/_subnav.html's own wrapper — .nutrition-subnav
+/* templates/nutrition/_subnav.html's own wrapper - .nutrition-subnav
    itself is the scrolling element, so this fade has to live on a
    non-scrolling ancestor to stay pinned to the *bar's* right edge
    instead of scrolling away with the tabs underneath it. */
@@ -2099,7 +2099,7 @@ h2 {
 }
 
 /* Fixed-height box the individual slides are absolutely positioned
-   inside of (see the template's own comment on .achievement-slide) —
+   inside of (see the template's own comment on .achievement-slide) -
    this height, not any slide's own content, is what determines the
    carousel's box size, so swapping between a one-line and a two-line
    achievement never reflows the rest of the page. Sized for two lines
@@ -2199,7 +2199,7 @@ h2 {
   background: var(--color-success);
 }
 
-/* Same pulse as the training FAB's own "still going" dot — deliberately
+/* Same pulse as the training FAB's own "still going" dot - deliberately
    the same visual language for "a workout is happening right now". */
 .recent-activity-dot-live {
   background: var(--color-accent);
@@ -2223,11 +2223,11 @@ h2 {
 }
 
 /* apps.progression's own explainable weight suggestion (CLAUDE.md
-   "provide explainable smart weight suggestions" — one of this app's
+   "provide explainable smart weight suggestions" - one of this app's
    stated core goals) used to be visually indistinguishable from any
    other muted card: same near-invisible var(--color-bg) fill as the
    page behind it. A tinted fill + left accent bar (the same
-   var(--color-success) green already used for a PR badge elsewhere —
+   var(--color-success) green already used for a PR badge elsewhere -
    reused rather than adding a new color to the palette just for this,
    since "the app noticed something good" is the same idea either
    way) now makes this the one thing on the training screen that
@@ -2251,14 +2251,14 @@ h2 {
 
 /* Mobile: hide every scrollbar track (page itself, the changelog
    modal's own scrolling body, and wide tables' horizontal scroll-
-   within-themselves container — .table-wrap, above) — scrolling still
+   within-themselves container - .table-wrap, above) - scrolling still
    works exactly the same, just without a visible track/thumb, closer
    to how a native mobile app looks. Left alone on desktop (below,
    min-width: 768px is where mouse/trackpad users benefit from an
    actual visible scrollbar as a real UI affordance), so this is
    scoped to a max-width query rather than a mobile-first default that
    the desktop query would then need to undo. Three declarations
-   needed for the three browser engines' three different mechanisms —
+   needed for the three browser engines' three different mechanisms -
    none of them is a shorthand for the others. */
 @media (max-width: 767.98px) {
   html,
@@ -2275,7 +2275,7 @@ h2 {
   }
 }
 
-/* Desktop: horizontal top nav bar (not a sidebar) — same flex-direction:
+/* Desktop: horizontal top nav bar (not a sidebar) - same flex-direction:
    row as mobile, just pinned to the top instead of the bottom, so the
    nav items behave like a normal horizontal bar rather than stretching
    to fill a sidebar's height. */
@@ -2297,7 +2297,7 @@ h2 {
 
   .bottom-nav a {
     /* Un-set the mobile flex:1 (equal-width tabs filling a narrow
-       screen) — on a wide desktop bar that would stretch 5 links across
+       screen) - on a wide desktop bar that would stretch 5 links across
        the full viewport width with huge gaps; size to content instead. */
     flex: none;
     align-items: center;
@@ -2311,7 +2311,7 @@ h2 {
     height: 1.25rem;
   }
 
-  /* Desktop has room for both — icon-only was specifically a mobile
+  /* Desktop has room for both - icon-only was specifically a mobile
      space constraint. */
   .nav-label {
     display: inline;
@@ -2322,7 +2322,7 @@ h2 {
     padding: 2rem;
   }
 
-  /* No bottom-nav bar to clear on desktop — the mobile offset would
+  /* No bottom-nav bar to clear on desktop - the mobile offset would
      otherwise leave a large, pointless gap under the button. */
   .training-fab,
   .messages-fab {
@@ -2333,14 +2333,14 @@ h2 {
     bottom: 0;
   }
 
-  /* Toasts (.toast-container/.pr-banner) — top-center full-width on
+  /* Toasts (.toast-container/.pr-banner) - top-center full-width on
      mobile makes sense (the one place consistently reachable/visible
      above the thumb without covering the bottom-nav), asked for
      directly to move to the bottom-right corner on desktop instead,
      the conventional desktop toast position rather than a banner
      spanning the browser window's own full width. `bottom: 6rem`
      rather than matching .training-fab/.messages-fab's own 1.5rem
-     right above — a PR toast fires exactly while a workout's in
+     right above - a PR toast fires exactly while a workout's in
      progress (the one time that FAB is on screen at all), so sharing
      its corner risked the two overlapping; 6rem clears the FAB's own
      3.5rem height plus its 1.5rem offset with room to spare. */
@@ -2397,7 +2397,7 @@ h2 {
   flex-wrap: wrap;
 }
 
-/* Food diary's day navigation (templates/nutrition/diary_day.html) —
+/* Food diary's day navigation (templates/nutrition/diary_day.html) -
    "Previous day"/date/"Next day" kept on one row even at the
    ~360-430px mobile baseline. A "Previous day"/"Next day" text label
    next to the arrow made the two buttons together wider than the row
@@ -2424,7 +2424,7 @@ h2 {
   min-width: 0;
   /* Every input carries a 0.75rem bottom margin by default (the
      generic `input, select, textarea` rule above, meant for stacked
-     form fields) — inside a flex row, `align-items: center` centers
+     form fields) - inside a flex row, `align-items: center` centers
      each item's full margin box, so that margin alone pushed the
      date visibly above the buttons flanking it even though all three
      sat on the same line. */
@@ -2488,7 +2488,7 @@ h2 {
 }
 
 /* Nutrition dashboard's month calendar (templates/nutrition/
-   dashboard.html) — deliberately icon/color-only inside each cell, no
+   dashboard.html) - deliberately icon/color-only inside each cell, no
    text beyond the day number itself (docs/NUTRITION.md/the card's own
    legend underneath carries the explanation instead), so a month's
    worth of days stays scannable at a glance rather than turning into
@@ -2506,13 +2506,13 @@ h2 {
   gap: 0.25rem;
 }
 
-/* A day cell is a <button> (tap for detail — see the calendar's own
+/* A day cell is a <button> (tap for detail - see the calendar's own
    template comment), so it starts from the shared `button` rule's
-   solid accent-blue fill/1rem padding/touch-target min-size — none of
+   solid accent-blue fill/1rem padding/touch-target min-size - none of
    which belong on a compact grid square, all overridden here. */
 .calendar-day {
   /* Grid's implicit stretch only reaches its direct children
-     (calendar-day-cell) — this button is one level deeper (to make
+     (calendar-day-cell) - this button is one level deeper (to make
      room for calendar-day-cell's own popover child, see the
      template), so it needs its own explicit full-size fill rather
      than the auto/shrink-to-content width a lone <button> defaults
@@ -2536,12 +2536,12 @@ h2 {
   font-size: var(--text-xs);
   color: var(--color-text);
   /* A padding day (calendar-day-outside) is an <a> when its month is
-     reachable — no underline on the bare day number. */
+     reachable - no underline on the bare day number. */
   text-decoration: none;
 }
 
 /* A padding day from the previous/next month, filling out the grid's
-   first/last week — present so the weekday columns line up, but
+   first/last week - present so the weekday columns line up, but
    visually out of the way of the month actually being looked at. */
 .calendar-day-outside {
   opacity: 0.35;
@@ -2552,7 +2552,7 @@ h2 {
   border-width: 2px;
 }
 
-/* A day with a finished stretching session (apps.stretching) — a small
+/* A day with a finished stretching session (apps.stretching) - a small
    corner dot rather than a third stacked icon, which wouldn't fit a
    phone-width day cell alongside the training and calorie icons. */
 .calendar-day {
@@ -2579,7 +2579,7 @@ h2 {
 }
 
 /* Same three-color vocabulary as everywhere else in the app a status
-   needs one (tag-success's own background, PR/streak badges) — never
+   needs one (tag-success's own background, PR/streak badges) - never
    invented fresh just for this calendar. */
 .calendar-day-icon-green {
   color: var(--color-success);
@@ -2603,7 +2603,7 @@ h2 {
 
 /* Anchors the tap-a-day detail panel to its own cell (calendar-day-
    popover below) instead of one shared panel always at the bottom of
-   the grid — "opens next to whatever you tapped," found live. */
+   the grid - "opens next to whatever you tapped," found live. */
 .calendar-day-cell {
   position: relative;
 }
@@ -2638,7 +2638,7 @@ h2 {
   right: 0;
 }
 
-/* Last week row only (templates/nutrition/_month_calendar.html) —
+/* Last week row only (templates/nutrition/_month_calendar.html) -
    opens upward instead of down past the grid's own bottom edge, the
    same "flip near an edge" reasoning -start/-end above already use
    for the left/right edges. */
@@ -2648,11 +2648,11 @@ h2 {
 }
 
 /* Desktop: hovering a day reveals its popover immediately, no click
-   needed — asked for directly, and matches how a mouse-driven user
+   needed - asked for directly, and matches how a mouse-driven user
    already expects a hover target to behave. Scoped to `hover: hover`
    (a real mouse/trackpad, not a touchscreen faking a hover on long-
    press) so this never fights the tap-to-toggle behavior touch relies
-   on instead — those devices keep using Alpine's own `toggle()`/
+   on instead - those devices keep using Alpine's own `toggle()`/
    `openDate` untouched. `!important` is load-bearing here: Alpine's
    `x-show` sets `display: none` as an *inline* style when a day isn't
    the active `openDate`, which otherwise wins over a plain class-based
@@ -2664,7 +2664,7 @@ h2 {
 }
 
 /* The "?" legend's own list (templates/nutrition/_month_calendar.html)
-   — one row per icon/color actually used in the grid above it, the
+   - one row per icon/color actually used in the grid above it, the
    real <svg> markup reused as-is rather than described in prose a
    reader had to match back to the pixels themselves. */
 .calendar-legend {
@@ -2683,7 +2683,7 @@ h2 {
 }
 
 /* A plain color swatch for the trend arrow's *other* dimension (how
-   far off, not which direction) — `background: currentColor` picks up
+   far off, not which direction) - `background: currentColor` picks up
    whatever `.calendar-day-icon-green/-yellow/-red` sets `color` to,
    the same three classes the grid's own icons already use, so this
    is guaranteed to always match them instead of a second, driftable
@@ -2698,7 +2698,7 @@ h2 {
 }
 
 /* Install-app recommendation (static/js/pwa-install-prompt.js,
-   templates/core/_pwa_install_prompt.html) — a slim bar pinned just
+   templates/core/_pwa_install_prompt.html) - a slim bar pinned just
    above the bottom-nav, the same "reachable, not blocking" spot
    .training-fab/.messages-fab already use, rather than a full-screen
    modal that would cover the very page it's recommending someone
@@ -2750,7 +2750,7 @@ h2 {
   margin-bottom: 0;
 }
 
-/* Styled as plain underlined text rather than a button — a
+/* Styled as plain underlined text rather than a button - a
    deliberate, easy-to-ignore opt-out sitting next to "Remind me
    later", the same reasoning .app-version reads as a version string
    rather than a button even though it also opens a modal (the
@@ -2783,7 +2783,7 @@ h2 {
 }
 
 /* ==========================================================================
-   UI/UX audit pass — design-system foundation.
+   UI/UX audit pass - design-system foundation.
    Appended (not woven into the rules above) so this whole layer can be
    read, and later folded into the sections it refines, in one place.
    ========================================================================== */
@@ -2831,7 +2831,7 @@ h2 {
    primary   .button / bare <button>   the one action a screen wants
    secondary .button-secondary         other actions
    danger    .button-danger            destructive
-   link      .button-link              "Back", "Cancel" — navigation, not an action */
+   link      .button-link              "Back", "Cancel" - navigation, not an action */
 button:hover:not(:disabled),
 .button:hover,
 .button-secondary:hover {
@@ -2948,7 +2948,7 @@ button:disabled,
   min-width: 2rem;
 }
 
-/* Inline, in-page alert (form-level errors, notices) — not a toast. */
+/* Inline, in-page alert (form-level errors, notices) - not a toast. */
 .alert {
   border: 1px solid var(--color-border);
   border-left-width: 4px;
@@ -3063,7 +3063,7 @@ abbr[title]:focus-visible {
 }
 
 /* --- Data views ------------------------------------------------------------ */
-/* A horizontally scrollable table on a phone must *look* scrollable — the
+/* A horizontally scrollable table on a phone must *look* scrollable - the
    scrollbar-hiding rule above removes the usual cue, so fade the right edge. */
 .table-wrap {
   background:
@@ -3273,7 +3273,7 @@ h2.card-title {
   }
 }
 
-/* One switch for everything that moves — including Alpine's x-transition
+/* One switch for everything that moves - including Alpine's x-transition
    fades/scales (inline transition styles, hence !important) and anything
    added later without its own reduced-motion rule. */
 @media (prefers-reduced-motion: reduce) {
@@ -3297,7 +3297,7 @@ h2.card-title {
   }
 }
 
-/* Stretching (templates/stretching/) — a routine's or session's
+/* Stretching (templates/stretching/) - a routine's or session's
    ordered stretch list is a plain list of cards, numbered by the
    card order itself rather than list markers. */
 .stretch-item-list {
@@ -3310,7 +3310,7 @@ h2.card-title {
   margin-top: 0.5rem;
 }
 
-/* The guided session player (session_play.html) — the clock is the one
+/* The guided session player (session_play.html) - the clock is the one
    thing that has to be readable from a mat a metre or two away, hence
    the oversized digits. */
 .stretch-player-name {
@@ -3387,7 +3387,7 @@ h2.card-title {
 }
 
 /* Guided page tours (static/js/tutorial.js, docs/TUTORIALS.md). The
-   highlight hugs the element itself — same box, same corner rounding —
+   highlight hugs the element itself - same box, same corner rounding -
    and its enormous box-shadow dims everything around it: dimmed, not
    hidden, so the page stays recognisable behind the explanation. The
    script places the card beside the highlight, never over it, so the
@@ -3525,7 +3525,7 @@ h2.card-title {
 }
 
 
-/* apps.core.widgets.SearchablePickerWidget — search box with a suggestion
+/* apps.core.widgets.SearchablePickerWidget - search box with a suggestion
    list under it, and the picked items as a removable list below. */
 .picker-ui {
   position: relative;
@@ -3599,7 +3599,7 @@ h2.card-title {
   color: var(--color-danger);
 }
 
-/* Long words — Finnish/Estonian compounds, a product name, a username —
+/* Long words - Finnish/Estonian compounds, a product name, a username -
    wrap inside their box instead of running past the card or the screen
    (owner-reported layout audit). Page titles also hyphenate where the
    browser knows the language (<html lang>). */
@@ -3625,8 +3625,8 @@ button,
 }
 
 /* A list shown as a table (templates/nutrition/_food_list_results.html):
-   the text column takes the room and wraps — long names and unbreakable
-   compound words included — while the narrow columns keep their size,
+   the text column takes the room and wraps - long names and unbreakable
+   compound words included - while the narrow columns keep their size,
    so nothing is pushed off the right edge of a phone. */
 .list-table .cell-text {
   width: 100%;
@@ -3645,7 +3645,7 @@ button,
 
 /* A diet plan's shopping list (templates/nutrition/diet_plan_shopping.html):
    tick box, the food with its per-day amounts under it, the total on the
-   right — the whole row is the tap target. */
+   right - the whole row is the tap target. */
 .shopping-list {
   list-style: none;
   margin: 0 0 var(--space-2);

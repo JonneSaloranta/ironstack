@@ -1,13 +1,13 @@
 {% extends "base.html" %}
 {% load i18n %}
-{% block title %}{% trans "Download your data" %} — IronStack{% endblock %}
+{% block title %}{% trans "Download your data" %} - IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
   <h1 class="no-margin">{% trans "Download your data" %}</h1>
 </div>
 
 <div class="card">
-  <p class="text-muted">{% trans "Everything below is exclusively yours — the same data shown as tables here can be downloaded as a single JSON file, a .zip of spreadsheet-ready CSV files (one per section), or this very page as a single HTML file." %}</p>
+  <p class="text-muted">{% trans "Everything below is exclusively yours - the same data shown as tables here can be downloaded as a single JSON file, a .zip of spreadsheet-ready CSV files (one per section), or this very page as a single HTML file." %}</p>
   <div class="row-3">
     <a class="button-secondary" href="?format=json" download>{% trans "Download as JSON" %}</a>
     <a class="button-secondary" href="?format=csv" download>{% trans "Download as CSV (.zip)" %}</a>

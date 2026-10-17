@@ -1,4 +1,4 @@
-# Fitness & Activity Tracker — Claude Code Instructions
+# Fitness & Activity Tracker - Claude Code Instructions
 
 ## Project goal
 
@@ -31,9 +31,9 @@ The application must run entirely on the user's own infrastructure with Docker.
 
 Do not introduce React, Vue, or another SPA framework without a strong architectural reason.
 
-Before creating or changing any template or `static/css/base.css`, read `docs/UI_COMPONENTS.md` — the component rulebook (page skeleton, headings, buttons, forms, states) that keeps every page consistent. Add new patterns there; list deliberate deviations under its "Accepted exceptions".
+Before creating or changing any template or `static/css/base.css`, read `docs/UI_COMPONENTS.md` - the component rulebook (page skeleton, headings, buttons, forms, states) that keeps every page consistent. Add new patterns there; list deliberate deviations under its "Accepted exceptions".
 
-Every page's guided tour lives in `apps/tutorials/tours.py` and points at `data-tour="..."` anchors in the templates. When you change a toured template, add a page, or change what a page does, keep its tour in step — see `docs/TUTORIALS.md` (its tests fail when an anchor goes missing, a page has no tour or exemption, or a text is untranslated).
+Every page's guided tour lives in `apps/tutorials/tours.py` and points at `data-tour="..."` anchors in the templates. When you change a toured template, add a page, or change what a page does, keep its tour in step - see `docs/TUTORIALS.md` (its tests fail when an anchor goes missing, a page has no tour or exemption, or a text is untranslated).
 
 The application should be server-rendered first. Use HTMX for dynamic interactions and Alpine.js for small client-side state and interactions.
 
@@ -105,9 +105,13 @@ Do not create duplicate abstractions when an existing abstraction can be extende
 
 Before adding a dependency, check whether Django, HTMX, Alpine.js, or existing project code already solves the problem.
 
+## Dashes
+
+Never write an em-dash (U+2014) anywhere - UI text, templates, translations (`.po`), code, comments, docs, commit messages. Use a plain hyphen-minus `-` instead (` - ` between clauses, `-` as an empty-value placeholder). Where code genuinely has to match the character (e.g. a data migration cleaning old rows), spell it as the escape `"\u2014"`, never the literal.
+
 ## Commit messages
 
-Always use Conventional Commits (`<type>[optional scope]: <description>`) for the summary line of every commit — e.g. `feat(backups): add admin-only web UI for creating and restoring backups`, `fix(nav): stop Home lighting up alongside Progress`, `docs: update CHANGELOG.md for 1.1.0`, `ci: pin GitHub Actions to a commit SHA`. Types: `feat`, `fix`, `docs`, `refactor`, `test`, `chore`, `ci`, `perf`, `build`, `style`, `revert` — this exact set, since `.github/workflows/ci.yml`'s `create-release` job groups a release's auto-generated notes by this same type (see `docs/ARCHITECTURE.md` "Versioning"); a commit whose subject doesn't match one of these falls into a catch-all "Other" section there instead of being categorized properly. A longer body explaining the why (matching this project's established style) is still welcome below the summary line.
+Always use Conventional Commits (`<type>[optional scope]: <description>`) for the summary line of every commit - e.g. `feat(backups): add admin-only web UI for creating and restoring backups`, `fix(nav): stop Home lighting up alongside Progress`, `docs: update CHANGELOG.md for 1.1.0`, `ci: pin GitHub Actions to a commit SHA`. Types: `feat`, `fix`, `docs`, `refactor`, `test`, `chore`, `ci`, `perf`, `build`, `style`, `revert` - this exact set, since `.github/workflows/ci.yml`'s `create-release` job groups a release's auto-generated notes by this same type (see `docs/ARCHITECTURE.md` "Versioning"); a commit whose subject doesn't match one of these falls into a catch-all "Other" section there instead of being categorized properly. A longer body explaining the why (matching this project's established style) is still welcome below the summary line.
 
 ## Implementation order
 

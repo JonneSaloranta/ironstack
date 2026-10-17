@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% load i18n core_extras stretching_extras %}
-{% block title %}{{ stretch.name|translate_content }} — IronStack{% endblock %}
+{% block title %}{{ stretch.name|translate_content }} - IronStack{% endblock %}
 {% block content %}
 {% url 'stretching:stretch-list' as c1u %}{% trans "Stretches" as c1l %}
 {% include "core/_breadcrumbs.html" with c1_url=c1u c1_label=c1l current=stretch.name %}

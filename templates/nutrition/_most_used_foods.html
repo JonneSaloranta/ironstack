@@ -1,10 +1,10 @@
 {% load i18n l10n %}
 {% comment %}
 Quick-add panel shown alongside the search box wherever a food can be
-added — the user's top N most-used foods (apps.nutrition.services.
+added - the user's top N most-used foods (apps.nutrition.services.
 most_used_foods), one tap instead of a fresh search every time. Below
 the search box on templates/nutrition/diary_add_entry.html (asked for
-directly — search/barcode scan is the more frequent path there, so it
+directly - search/barcode scan is the more frequent path there, so it
 comes first), above it on recipe_ingredient_form.html/
 diet_plan_meal_item_form.html. Mode-parameterized the same way
 _food_search_results.html is, since this shows up in the same three
@@ -12,7 +12,7 @@ places that partial does.
 
 Expects: most_used (list of FoodUsage), mode ("diary"/"recipe"/
 "diet-plan-meal"), plus whichever of date/recipe/plan/meal that mode
-needs to build its post URL — same contract as _food_search_results.
+needs to build its post URL - same contract as _food_search_results.
 {% endcomment %}
 {% comment %}
 `most_used` is one page of them (views._most_used_page); the pager swaps
@@ -36,7 +36,7 @@ only #most-used-foods, so the diary page's Alpine mealSlot survives paging.
         {% comment %}
           Follows the page's shared mealSlot (see diary_add_entry.html)
           instead of a value baked in from this food's own last diary
-          entry — so this always matches whatever the visible "Meal"
+          entry - so this always matches whatever the visible "Meal"
           selector above is showing, the same as the search box below.
         {% endcomment %}
         <input type="hidden" name="meal_slot" x-bind:value="mealSlot">

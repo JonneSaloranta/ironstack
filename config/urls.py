@@ -9,7 +9,7 @@ from apps.social import views_groups as social_views_groups
 urlpatterns = [
     path("admin/", admin.site.urls),
     # Must come before django.contrib.auth.urls' own "login/"/
-    # "password_reset/" below — Django resolves urlpatterns in order
+    # "password_reset/" below - Django resolves urlpatterns in order
     # and both mount at "accounts/", so these are what actually serve
     # those two URLs, under the same "login"/"password_reset" names
     # every existing {% url %}/reverse() call already uses (see
@@ -39,7 +39,7 @@ urlpatterns = [
     path("coaching/", include("apps.coaching.urls", namespace="coaching")),
     path("tutorials/", include("apps.tutorials.urls", namespace="tutorials")),
     path("assistant/", include("apps.assistant.urls", namespace="assistant")),
-    # Un-namespaced and outside "social/" deliberately — the shape a
+    # Un-namespaced and outside "social/" deliberately - the shape a
     # group invite link is shared in, /group/invite/<code>/, matters
     # more here than staying consistent with this app's other URLs
     # living under one prefix.
@@ -53,7 +53,7 @@ urlpatterns = [
 
 if settings.AUTHENTIK_ENABLED:
     # "oidc/authenticate/", "oidc/callback/", "oidc/logout/" (see
-    # mozilla_django_oidc.urls) — gated the same way settings.
+    # mozilla_django_oidc.urls) - gated the same way settings.
     # AUTHENTICATION_BACKENDS/OIDC_* config.settings.base is, so a
     # request never reaches a view that would fail with a confusing
     # error against unconfigured OIDC_OP_* endpoints. The callback
@@ -64,7 +64,7 @@ if settings.AUTHENTIK_ENABLED:
 if settings.DEBUG:
     # Production/dev-in-Docker both serve MEDIA_URL from nginx directly
     # (compose/nginx/nginx.conf's own "/media/" location, reading the
-    # same media_data volume django-web writes to) — this is only for
+    # same media_data volume django-web writes to) - this is only for
     # `manage.py runserver` outside Docker, which has no such reverse
     # proxy in front of it to serve an uploaded ExerciseImage back out.
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

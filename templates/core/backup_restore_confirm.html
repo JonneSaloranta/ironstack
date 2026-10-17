@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% load i18n %}
-{% block title %}{% trans "Restore backup" %} — IronStack{% endblock %}
+{% block title %}{% trans "Restore backup" %} - IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
   <h1 class="no-margin">{% trans "Restore backup" %}</h1>
@@ -15,7 +15,7 @@
   </p>
   {% if key_missing_for_encrypted_backup %}
     <p class="field-error">
-      {% trans "This backup is encrypted, but this instance has no BACKUP_ENCRYPTION_KEY configured (or it doesn't match the key this backup was made with) — restoring will fail. Set the correct key in .env and restart before trying again." %}
+      {% trans "This backup is encrypted, but this instance has no BACKUP_ENCRYPTION_KEY configured (or it doesn't match the key this backup was made with) - restoring will fail. Set the correct key in .env and restart before trying again." %}
     </p>
   {% endif %}
 </div>
@@ -42,7 +42,7 @@
   {% csrf_token %}
   <button type="submit" class="button-danger"{% if task_running %} disabled{% endif %}>{% trans "Restore this backup" %}</button>
 </form>
-{% if task_running %}<p class="text-muted">{% trans "Another backup task is still running — wait for it to finish." %}</p>{% endif %}
+{% if task_running %}<p class="text-muted">{% trans "Another backup task is still running - wait for it to finish." %}</p>{% endif %}
 
 <p><a class="button-link" href="{% url 'backup-list' %}">&larr; {% trans "Back to backups" %}</a></p>
 {% endblock %}

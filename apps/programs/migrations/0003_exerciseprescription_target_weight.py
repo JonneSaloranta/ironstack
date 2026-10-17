@@ -13,6 +13,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='exerciseprescription',
             name='target_weight',
-            field=models.DecimalField(blank=True, decimal_places=2, help_text='Canonical kg. What a workout session snapshots as its starting target — set manually for now; a future progression engine (Phase 6) may update it between cycles.', max_digits=6, null=True),
+            field=models.DecimalField(blank=True, decimal_places=2, help_text='Canonical kg. What a workout session snapshots as its starting target - set manually for now; a future progression engine (Phase 6) may update it between cycles.', max_digits=6, null=True),
         ),
     ]

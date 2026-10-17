@@ -14,7 +14,7 @@ class Migration(migrations.Migration):
             name='SeoSettings',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('search_engine_indexing_enabled', models.BooleanField(default=False, help_text='Lets search engines crawl and index this instance. Off by default — most installs are a private, self-hosted app for one household, not a public site anyone should be searching for.')),
+                ('search_engine_indexing_enabled', models.BooleanField(default=False, help_text='Lets search engines crawl and index this instance. Off by default - most installs are a private, self-hosted app for one household, not a public site anyone should be searching for.')),
             ],
         ),
     ]

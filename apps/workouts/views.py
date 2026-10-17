@@ -16,7 +16,7 @@ from apps.programs.models import Workout
 
 # apps.progression depends on apps.workouts (it reads session/set history),
 # so apps.workouts itself must never import from apps.progression at the
-# services/models layer — that would be a cycle. The view layer is the one
+# services/models layer - that would be a cycle. The view layer is the one
 # place allowed to cross that boundary, same reasoning as apps.records
 # above: views orchestrate across apps, per docs/ARCHITECTURE.md.
 from apps.progression.suggestions import suggest_weight
@@ -26,7 +26,7 @@ from . import services
 from .forms import ExerciseSetForm, PerformedExerciseAddForm
 from .models import ExerciseSet, PerformedExercise, WorkoutSessionStatus
 
-# Training mode's rest-timer default (docs/UI.md "Training mode") — a
+# Training mode's rest-timer default (docs/UI.md "Training mode") - a
 # fixed UI convenience, not a domain/progression rule, so it lives here
 # rather than as a per-prescription model field; the timer widget itself
 # lets a user adjust or skip it freely for any single rest either way.
@@ -70,7 +70,7 @@ class WorkoutSessionDetailView(LoginRequiredMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         # Attached per-row rather than passed as a separate dict so the
-        # template can do `pe.set_form` — Django template dict lookups
+        # template can do `pe.set_form` - Django template dict lookups
         # can't take a variable key (`dict.pe.id` won't resolve `pe.id`).
         context["summary"] = services.session_summary(self.object)
         for performed_exercise in self.object.performed_exercises.all():
@@ -87,11 +87,11 @@ def session_train(request, pk):
     returning an empty queryset for an anonymous `AnonymousUser`
     (Django's ORM rejects filtering a ForeignKey against it), and this
     view is reachable from a button shown on *every* page, including to
-    a session that's expired mid-visit — a clean redirect to login is
+    a session that's expired mid-visit - a clean redirect to login is
     worth the one extra line here even though the sibling views in this
     file share the same latent gap.
 
-    Training mode (docs/UI.md "Training mode") — a single, focused page
+    Training mode (docs/UI.md "Training mode") - a single, focused page
     for actually being at the gym mid-workout: one exercise at a time,
     what's next, a rest timer, and the same smart suggestion the full
     session-detail page shows, without that page's full history/edit/
@@ -107,7 +107,7 @@ def session_train(request, pk):
     )
     if not session.is_in_progress:
         # Nothing left to train mid-workout once it's completed/abandoned
-        # — the full detail page is the right place to review it.
+        # - the full detail page is the right place to review it.
         return redirect("workouts:session-detail", pk=session.pk)
     return render(request, "workouts/session_train.html", _train_context(request, session))
 
@@ -123,7 +123,7 @@ def _train_context(request, session, current=None):
 
     `current` lets a caller pin a specific exercise (e.g. re-showing the
     same one after a validation error) instead of falling back to the
-    `?pe=` query param or the auto-picked first incomplete exercise —
+    `?pe=` query param or the auto-picked first incomplete exercise -
     see `session_train`/`train_set_log`.
     """
     performed_exercises = list(session.performed_exercises.all())
@@ -179,7 +179,7 @@ def train_set_log(request, performed_exercise_pk):
     if not request.headers.get("HX-Request"):
         # Same fallback set_log/_render_session_or_card use: without JS,
         # the browser does a plain form POST and expects a full page back
-        # — this endpoint only ever renders the #train-panel *fragment*,
+        # - this endpoint only ever renders the #train-panel *fragment*,
         # which has no <head>/stylesheet/nav of its own. A validation
         # error's details don't survive this redirect (same tradeoff
         # set_log already accepts for the same reason), but that's
@@ -191,7 +191,7 @@ def train_set_log(request, performed_exercise_pk):
     if logged:
         # Stay on the same exercise if it still has sets left to log
         # (default_set_values will repeat this one as the next default);
-        # otherwise hand off to whichever exercise is next incomplete —
+        # otherwise hand off to whichever exercise is next incomplete -
         # the same auto-advance _train_context falls back to on a plain
         # page load, just computed right after the set that may have
         # just finished this one. `performed_exercise` here was fetched
@@ -205,7 +205,7 @@ def train_set_log(request, performed_exercise_pk):
         )
         context = _train_context(request, session, current=next_current)
     else:
-        # Validation error (or session no longer in progress) — keep
+        # Validation error (or session no longer in progress) - keep
         # showing the same exercise and the bound form with its errors,
         # rather than silently discarding what the user typed.
         context = _train_context(request, session, current=performed_exercise)
@@ -215,7 +215,7 @@ def train_set_log(request, performed_exercise_pk):
     if logged:
         # Tells the rest-timer widget (base.html/session_train.html, kept
         # outside this HTMX swap target so a countdown in progress
-        # survives it) to auto-start — but only on an actual successful
+        # survives it) to auto-start - but only on an actual successful
         # log, never on a validation error, which a generic
         # htmx:afterRequest listener couldn't tell apart from this (both
         # return 200 so the swap happens either way).
@@ -302,7 +302,7 @@ def _owned_performed_exercise_or_404(request, pk):
 def _build_set_form(user, performed_exercise, session=None):
     """A set-log form pre-filled with the best default available: a smart
     suggestion for the exercise's first set (docs/SMART_SUGGESTIONS.md),
-    falling back to repeating the last logged set for subsequent ones —
+    falling back to repeating the last logged set for subsequent ones -
     see apps.workouts.services.default_set_values. The suggestion is only
     ever a form default; nothing here stops the user entering something
     else before submitting ("never prevent a user from entering a
@@ -312,7 +312,7 @@ def _build_set_form(user, performed_exercise, session=None):
     over one session's performed exercises) avoid an extra query;
     function-based views fall back to `performed_exercise.session`.
 
-    Returns `(form, suggestion)` — `suggestion` is None once a set has
+    Returns `(form, suggestion)` - `suggestion` is None once a set has
     already been logged this exercise (nothing left to suggest toward),
     the session is no longer in progress (nothing to log at all), or the
     exercise has no prescription behind it (freeform/ad hoc additions
@@ -329,7 +329,7 @@ def _build_set_form(user, performed_exercise, session=None):
         if suggestion.target_min_reps is not None:
             initial["reps"] = suggestion.target_min_reps
     # `initial["weight"]` above is canonical kg (from stored history or
-    # the progression engine) — ExerciseSetForm displays/accepts the
+    # the progression engine) - ExerciseSetForm displays/accepts the
     # user's preferred unit, so it must be converted here before the
     # form ever renders it, the same as an instance's own weight is
     # converted inside the form itself.
@@ -340,7 +340,7 @@ def _build_set_form(user, performed_exercise, session=None):
 
 
 def _flash_new_prs(request, performed_exercise, new_prs):
-    """The no-JS fallback's only way to report a new PR — an HTMX
+    """The no-JS fallback's only way to report a new PR - an HTMX
     request gets a toast instead (templates/records/_pr_toasts.html).
     Shared by set_log and train_set_log so the message text/conversion
     logic exists in exactly one place."""
@@ -350,7 +350,7 @@ def _flash_new_prs(request, performed_exercise, new_prs):
         # sees their own unit here too, not raw stored kg.
         messages.success(
             request,
-            _("New PR — %(exercise)s: %(record_type)s %(value)s")
+            _("New PR - %(exercise)s: %(record_type)s %(value)s")
             % {
                 "exercise": performed_exercise.display_name,
                 "record_type": record.get_record_type_display(),
@@ -372,7 +372,7 @@ def set_log(request, performed_exercise_pk):
     elif form.is_valid():
         # services.log_set takes cleaned_data directly rather than going
         # through form.save() (there's no ExerciseSet instance to save
-        # onto yet — set_number is computed here), so the form's own
+        # onto yet - set_number is computed here), so the form's own
         # display-unit -> canonical-kg conversion (see ExerciseSetForm.save)
         # has to be repeated here rather than reused.
         fields = dict(form.cleaned_data)
@@ -383,13 +383,13 @@ def set_log(request, performed_exercise_pk):
         new_prs = records_services.check_and_record_prs(logged_set)
         if not request.headers.get("HX-Request"):
             # Only for the no-JS fallback (a plain POST + redirect,
-            # `_render_session_or_card` below) — an HTMX request instead
+            # `_render_session_or_card` below) - an HTMX request instead
             # gets the same news via a toast (templates/records/
             # _pr_toasts.html, an out-of-band swap included from the
             # re-rendered card). Regression: this used to fire
             # unconditionally, including on every HTMX request, where
             # nothing ever consumes django.contrib.messages (only
-            # base.html's full-page `{% if messages %}` loop does) — the
+            # base.html's full-page `{% if messages %}` loop does) - the
             # message sat in the store and would suddenly resurface,
             # stale, whenever the user's next *actual* full page load
             # happened to be, however much later and unrelated that was.
@@ -454,11 +454,11 @@ def _render_session_or_card(request, performed_exercise, set_form, new_prs=None,
 
 class RestTimerScheduleView(LoginRequiredMixin, View):
     """Called from static/js/rest-timer.js every time it starts or
-    adjusts its own countdown (never from a template/HX-Trigger — the
+    adjusts its own countdown (never from a template/HX-Trigger - the
     client is the one place that already knows the countdown's exact
     remaining seconds regardless of which of its several start paths
     triggered it: auto-start's HX-Trigger, or a manual 60/90/120s
-    button). JSON in, JSON out, same shape as apps.core.views_push —
+    button). JSON in, JSON out, same shape as apps.core.views_push -
     the caller is client JS via fetch(), not a form submit."""
 
     def post(self, request):
@@ -479,7 +479,7 @@ class RestTimerScheduleView(LoginRequiredMixin, View):
 
 
 class RestTimerCancelView(LoginRequiredMixin, View):
-    """The other half of RestTimerScheduleView above — called when the
+    """The other half of RestTimerScheduleView above - called when the
     client's own countdown ends on its own (it already showed its own
     beep/notify(), a server-sent one too would be a redundant
     duplicate) or the user taps "Skip rest"."""

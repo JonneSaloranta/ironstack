@@ -82,28 +82,28 @@ Analytics must always respect user ownership.
 
 Body/circumference/custom-measurement trends and activity minutes/
 distance/frequency already got dedicated, working pages in Phases 8-9
-(`apps.measurements`, `apps.activities`) — `apps.analytics` doesn't
+(`apps.measurements`, `apps.activities`) - `apps.analytics` doesn't
 duplicate those. What it adds:
 
-- `/analytics/` — a dashboard: training summary (workouts, training
+- `/analytics/` - a dashboard: training summary (workouts, training
   time, total volume), a weekly training volume bar chart, a
   muscle-group volume bar chart (a set's full volume counts toward every
-  primary muscle group its exercise targets — the simplest defensible
+  primary muscle group its exercise targets - the simplest defensible
   split, rather than dividing fractionally with no principled basis),
   and PR history (reuses `apps.records`' immutable achievement log,
-  grouped by exercise — `apps.analytics.services.
-  pr_history_grouped_by_exercise` — rather than one card per PR row,
+  grouped by exercise - `apps.analytics.services.
+  pr_history_grouped_by_exercise` - rather than one card per PR row,
   since a single session can produce several `record_type` rows for
   the same exercise).
-- `/analytics/exercises/<pk>/` — per-exercise strength trend: estimated
-  1RM over time (one point per session — that session's best estimate,
+- `/analytics/exercises/<pk>/` - per-exercise strength trend: estimated
+  1RM over time (one point per session - that session's best estimate,
   not one point per set, so the trend stays readable) plus session
   count/volume in range.
 - Date-range filtering (`apps.analytics.dateranges`) is shared by both:
   presets resolve relative to today; an explicit `start`/`end` pair (the
   "custom range" requirement) overrides any preset.
-- Training-load volume (here) intentionally counts failed sets — the
-  work still happened — unlike `apps.records`' PR eligibility, which
+- Training-load volume (here) intentionally counts failed sets - the
+  work still happened - unlike `apps.records`' PR eligibility, which
   requires a clean, successful set to count as a record.
 - `apps.core.charts` gained `build_bar_series` alongside the existing
   `build_chart_series` (Phase 8/9), so bar and line charts share the
@@ -118,7 +118,7 @@ in-progress-workout banner.
 
 Every chart in the app is single-series (one line, or one set of
 same-colored bars), which per the dataviz skill's own rule never needs a
-legend box — but only if the chart's title is actually visible to a
+legend box - but only if the chart's title is actually visible to a
 sighted user, not just present for screen readers. An audit of every
 `core/_chart.html`/`core/_bar_chart.html` usage found two real gaps and
 fixed both:
@@ -132,17 +132,17 @@ fixed both:
   name (e.g. "Running") where "Duration trend" is what's actually
   plotted.
 - The bar charts (weekly volume, muscle-group volume) had **no visible
-  category labels at all** — no x-axis text, no legend, and (despite a
-  code comment claiming otherwise) no table — only a per-bar hover
+  category labels at all** - no x-axis text, no legend, and (despite a
+  code comment claiming otherwise) no table - only a per-bar hover
   tooltip, which isn't discoverable on touch devices. `core/_bar_chart.html`
   now renders a small table (category, value) directly below every bar
-  chart — not a legend, since a categorical color key wouldn't have
+  chart - not a legend, since a categorical color key wouldn't have
   helped when every bar is deliberately the same color (see the file's
   own reasoning for why).
 - Follow-up: even with the table, an unlabeled row of same-colored bars
   read as broken rather than minimal, so each bar now also carries its
   own rotated `<text>` label directly in the SVG
   (`apps.core.charts.build_bar_series` reserves a label band below the
-  plot area and computes each bar's label position) — the table stays
+  plot area and computes each bar's label position) - the table stays
   as the precise, always-accessible source of the exact figures, but
   the chart itself is readable at a glance now too.

@@ -3,7 +3,7 @@
 // an HTMX request opts in with hx-confirm="…" (htmx:confirm is intercepted
 // below). Built on <dialog>.showModal(), which gives a real focus trap,
 // Escape-to-cancel, an inert background, and focus return to the trigger
-// for free — the things a hand-rolled .modal-backdrop needs Alpine plugins
+// for free - the things a hand-rolled .modal-backdrop needs Alpine plugins
 // for. Cancel is focused first so a stray Enter never confirms a delete.
 (function () {
   var dialog = null;

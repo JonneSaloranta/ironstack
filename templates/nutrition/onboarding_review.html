@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% load i18n %}
-{% block title %}{% trans "Nutrition setup" %} — IronStack{% endblock %}
+{% block title %}{% trans "Nutrition setup" %} - IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
   <h1 class="no-margin">{% trans "Your estimated targets" %}</h1>
@@ -21,7 +21,7 @@
   </table></div>
 </div>
 
-<p class="text-muted">{% trans "These are estimates, not exact figures — you'll be able to see how well they're actually working once you've logged some data, and adjust anytime." %}</p>
+<p class="text-muted">{% trans "These are estimates, not exact figures - you'll be able to see how well they're actually working once you've logged some data, and adjust anytime." %}</p>
 
 <form method="post">
   {% csrf_token %}

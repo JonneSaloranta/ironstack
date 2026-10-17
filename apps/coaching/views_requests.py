@@ -15,7 +15,7 @@ User = get_user_model()
 @login_required
 def my_coaches(request):
     """A coachee's own view: active coaches + their own outgoing
-    pending requests — mirrors apps.social.views_friends.friend_list's
+    pending requests - mirrors apps.social.views_friends.friend_list's
     incoming/outgoing split, just one-directional (a coachee has no
     "incoming" side of this particular relationship)."""
     coaching = services.coaches_of(request.user)
@@ -67,7 +67,7 @@ def coaching_relationship_end(request, pk):
     if request.method != "POST":
         return HttpResponseNotAllowed(["POST"])
     # Not pre-filtered to `coach=request.user` or `coachee=request.user`
-    # in the queryset itself — either side may end it, and
+    # in the queryset itself - either side may end it, and
     # services.end_coaching_relationship already does the real "are
     # you actually part of this relationship" check, raising
     # CoachingError (shown as a flash message) rather than a bare 404

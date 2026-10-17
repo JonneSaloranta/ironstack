@@ -6,16 +6,16 @@ from apps.core.models import TimeStampedModel
 
 
 class ApiContext(models.TextChoices):
-    """Every resource area an API key's permissions can be scoped to —
+    """Every resource area an API key's permissions can be scoped to -
     the "profiili, ohjelmat, liikkeet jne" grouping, one flag per
     context rather than per individual model/endpoint, since that's the
     granularity a user actually thinks in when deciding what a key
     should be allowed to touch. Maps 1:1 onto apps.api.views' viewsets
     (each declares `api_context = ApiContext.X`) and this app's key
-    creation form (one CRUD row per context — see apps.api.forms).
+    creation form (one CRUD row per context - see apps.api.forms).
 
     A couple of contexts have no create/update/delete route at all
-    (profile is a singleton, records are derived/immutable — see
+    (profile is a singleton, records are derived/immutable - see
     docs/API.md "Contexts"), so their can_create/can_update/can_delete
     flags are accepted but simply have nothing to authorize; left in
     for a uniform permission model rather than special-cased away.
@@ -34,9 +34,9 @@ class ApiContext(models.TextChoices):
 
 
 class RateLimitTier(models.Model):
-    """An admin-defined, admin-editable rate-limit profile — the
+    """An admin-defined, admin-editable rate-limit profile - the
     "ratelimit tier" the request asked for. Editing a row's numbers here
-    takes effect immediately for every key on that tier, no redeploy —
+    takes effect immediately for every key on that tier, no redeploy -
     see apps.api.throttling, which reads these two fields fresh on every
     request rather than baking a rate into settings.py.
     """
@@ -46,7 +46,7 @@ class RateLimitTier(models.Model):
     requests_per_day = models.PositiveIntegerField(default=5000)
     # Assigned to every newly created key unless an admin picks a
     # different tier for it afterward (apps.api.services.create_api_key)
-    # — exactly one tier should carry this at a time, enforced in
+    # - exactly one tier should carry this at a time, enforced in
     # ApiKeyAdmin.save_model rather than a DB constraint, since "exactly
     # one" is a business rule about the *set* of rows, not a single
     # row's own validity.
@@ -60,7 +60,7 @@ class RateLimitTier(models.Model):
 
 
 class ApiSettings(models.Model):
-    """Singleton row (always pk=1 — see `load()`) holding instance-wide
+    """Singleton row (always pk=1 - see `load()`) holding instance-wide
     API knobs an admin can tune from the Django admin without a
     redeploy, the same "adjustable without touching code" requirement
     RateLimitTier serves for rate limits.
@@ -76,7 +76,7 @@ class ApiSettings(models.Model):
         super().save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):
-        pass  # singleton — deleting it would just silently recreate defaults on next load()
+        pass  # singleton - deleting it would just silently recreate defaults on next load()
 
     @classmethod
     def load(cls):
@@ -88,11 +88,11 @@ class ApiSettings(models.Model):
 
 
 class ApiKey(TimeStampedModel):
-    """A user-issued credential for apps.api — see apps.api.crypto for
+    """A user-issued credential for apps.api - see apps.api.crypto for
     how the secret itself is generated/hashed. `key_hash` is what
     authentication actually looks up against; the raw secret is never
     stored anywhere and is shown to its owner exactly once, at creation
-    (apps.api.views_web.ApiKeyCreateView) — a leaked database dump alone
+    (apps.api.views_web.ApiKeyCreateView) - a leaked database dump alone
     can't be used to authenticate, the same reasoning as a password hash.
     """
 
@@ -100,12 +100,12 @@ class ApiKey(TimeStampedModel):
         settings.AUTH_USER_MODEL, related_name="api_keys", on_delete=models.CASCADE
     )
     name = models.CharField(
-        max_length=100, help_text="A label to tell your keys apart — not shown to anyone else."
+        max_length=100, help_text="A label to tell your keys apart - not shown to anyone else."
     )
     key_hash = models.CharField(max_length=64, unique=True, db_index=True)
     # First few characters of the raw secret, kept in the clear so the
     # key list can show *something* identifying without ever storing or
-    # re-displaying the full secret — the same convention GitHub/Stripe
+    # re-displaying the full secret - the same convention GitHub/Stripe
     # etc. use for their own API key management UIs.
     prefix = models.CharField(max_length=12, db_index=True)
     tier = models.ForeignKey(
@@ -123,7 +123,7 @@ class ApiKey(TimeStampedModel):
 
 class ApiKeyPermission(models.Model):
     """One row per (key, context): which CRUD verbs that key may use
-    against that context — see apps.api.permissions.HasContextPermission,
+    against that context - see apps.api.permissions.HasContextPermission,
     which is the only thing that ever reads these.
     """
 
@@ -145,4 +145,4 @@ class ApiKeyPermission(models.Model):
         ]
 
     def __str__(self):
-        return f"{self.api_key.name} — {self.get_context_display()}"
+        return f"{self.api_key.name} - {self.get_context_display()}"

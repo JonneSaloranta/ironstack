@@ -2,23 +2,28 @@
 
 All notable changes to IronStack are recorded here, in the style of
 [Keep a Changelog](https://keepachangelog.com/). The running version
-lives in the repo-root `VERSION` file, not this document — see
+lives in the repo-root `VERSION` file, not this document - see
 `docs/ARCHITECTURE.md` "Versioning" for how that value gets baked into
 a build and surfaced in the app (profile page footer, `version_info`
 management command).
 
 This file exists to answer "what changed between two versions", not to
-duplicate the detailed, ongoing build log — that's
+duplicate the detailed, ongoing build log - that's
 `docs/DEVELOPMENT_LOG.md`, which is updated with every feature as it
 lands and remains the authoritative history. Each GitHub Release's own
 notes are a separate, auto-generated list of every commit since the
-previous release (`docs/ARCHITECTURE.md` "Versioning") — a terse,
+previous release (`docs/ARCHITECTURE.md` "Versioning") - a terse,
 complete audit trail, not a replacement for this file's shorter,
 narrated summary of the same version.
 
 ## [Unreleased]
 
-## [1.25.0] — 2026-10-17
+### Changed
+- Every page now uses a plain hyphen (-) instead of the em-dash,
+  including translations, the built-in programs and recipes, and the
+  empty-value placeholder in tables and stats.
+
+## [1.25.0] - 2026-10-17
 
 ### Added
 - AI assistant: with your own API key, choose which Claude model it uses
@@ -31,7 +36,7 @@ narrated summary of the same version.
   once it has opened the link sent to its email address.
 
 ### Changed
-- Past diary days keep the calories and macros they were logged with —
+- Past diary days keep the calories and macros they were logged with -
   editing a food or recipe, merging foods or an Open Food Facts update no
   longer changes them.
 - Past workouts keep the exercise name they were logged under, even if
@@ -43,7 +48,7 @@ narrated summary of the same version.
   fails partway puts the previous database and media back.
 
 ### Fixed
-- Deleting a recipe no longer deletes the diary entries that used it —
+- Deleting a recipe no longer deletes the diary entries that used it -
   a recipe still in use is hidden instead.
 - Deleting a set and logging another could give two sets the same
   number; set numbers are now always unique.
@@ -105,13 +110,13 @@ narrated summary of the same version.
   exercise pages no longer jump while their photos load.
 - Content-hashed static files are cached by the browser for a year.
 
-## [1.24.0] — 2026-10-03
+## [1.24.0] - 2026-10-03
 
 ### Added
 - AI assistant (Profile → AI assistant): ask for a diet plan or a workout
   program built from your own foods, recipes, exercises and history, or
   ask about your progress. It looks at your data before answering and
-  only ever suggests — a suggested plan appears as a card, and it's
+  only ever suggests - a suggested plan appears as a card, and it's
   created (inactive, editable) only when you press "Create". Off until
   you turn it on.
 - Runs on Claude with this instance's key or your own Anthropic API key
@@ -128,14 +133,14 @@ narrated summary of the same version.
   replies (`manage.py assistant_worker`); new optional `ASSISTANT_*`
   settings (see `.env.example`); new dependency `anthropic`.
 
-## [1.23.0] — 2026-10-02
+## [1.23.0] - 2026-10-02
 
 ### Added
 - Shopping list for a diet plan: the same food on several days is added
   up into one amount (with each day's amount under it), recipes are
   broken into their ingredients, and items can be ticked off in the
-  shop. Pick your shopping days per plan — each list covers the days up
-  to the next shopping day — and whether a shopping day's own meals are
+  shop. Pick your shopping days per plan - each list covers the days up
+  to the next shopping day - and whether a shopping day's own meals are
   on that day's list.
 - REST API: `diet-plans/<id>/shopping-list/` and
   `diet-plans/<id>/shopping-settings/`.
@@ -143,7 +148,7 @@ narrated summary of the same version.
   on today's plan, a card on Home on your shopping days, and a shortcut
   when you long-press the installed app's icon.
 - Tutorials: a short guided tour on every main page the first time you
-  open it — the part being explained is highlighted while the rest of
+  open it - the part being explained is highlighted while the rest of
   the page is dimmed, with a compact explanation right next to it. Skip
   any tour or switch them all off; profile → Tutorials replays any of
   them.
@@ -154,8 +159,8 @@ narrated summary of the same version.
   straight into the diary (e.g. a restaurant's published values)
   without creating a food for it.
 - Food pages show the full nutrition table the way a Finnish/EU package
-  label does — energy in kJ and kcal, "of which" rows for saturates,
-  sugars, starch and polyols, fibre, protein, salt — followed by every
+  label does - energy in kJ and kcal, "of which" rows for saturates,
+  sugars, starch and polyols, fibre, protein, salt - followed by every
   other nutrient OpenFoodFacts has (vitamins, minerals, …). Creating a
   food asks for the values in the same order, with salt instead of
   sodium.
@@ -191,12 +196,12 @@ narrated summary of the same version.
 - Stretching forms' "Back" link showed the muscle-group translation
   ("Selkä" in Finnish) instead of "Back".
 
-## [1.22.0] — 2026-09-23
+## [1.22.0] - 2026-09-23
 
 ### Added
 - Stretching: a new section with 32 built-in stretches (with
   instructions and target muscles), four ready-made routines, your own
-  stretches and routines, and a guided session player — get-ready, hold
+  stretches and routines, and a guided session player - get-ready, hold
   and rest countdowns per side and set, chimes and vibration, a screen
   wake lock, pause/±10 s/skip, and progress that survives a reload.
   Sessions can also be logged afterwards with just a duration; the
@@ -221,7 +226,7 @@ narrated summary of the same version.
   have their own translations in every language.
 - Deleting an account no longer fails when one of your own exercises,
   activity types, measurement types or meal slots has the same name as
-  a built-in one (or as one left behind by another deleted account) —
+  a built-in one (or as one left behind by another deleted account) -
   it's kept as "Name (2)" instead.
 - An exercise added to a freeform workout, or an extra item added to a
   diet plan meal, no longer gets the same position as the first one.
@@ -230,7 +235,7 @@ narrated summary of the same version.
 - The workout rest timer's sound handling moved into a shared
   `timer-audio.js` used by both timers (no behaviour change).
 
-## [1.21.0] — 2026-09-21
+## [1.21.0] - 2026-09-21
 
 ### Changed
 - Open Food Facts integration now follows OFF's API guidelines: text
@@ -253,7 +258,7 @@ narrated summary of the same version.
   `*.openfoodfacts.net`).
 - Translations for the new strings in all six languages.
 
-## [1.20.0] — 2026-09-21
+## [1.20.0] - 2026-09-21
 
 ### Added
 - Breadcrumbs on detail pages (programs, exercises, recipes, diet plans,
@@ -277,26 +282,26 @@ narrated summary of the same version.
 - Every form now renders through the shared field template (labels,
   checkboxes, help text and errors linked for screen readers); card headings
   no longer skip heading levels; touch screens get full-size row buttons.
-- Themes are one block each (`light-dark()`) instead of three copies — no
+- Themes are one block each (`light-dark()`) instead of three copies - no
   colour changes; design tokens replace hard-coded z-indexes, shadows and
   font sizes; the last repeated inline styles became utility classes;
   Complete workout asks first when exercises still have sets left.
 
-## [1.19.0] — 2026-09-20
+## [1.19.0] - 2026-09-20
 
 ### Added
 - Personal trainer coaching: turn on "I'm a personal trainer / coach"
   in Profile → Preferences to let other users request coaching from
-  you (never the other way around) — toggle "Accepting new coaching
+  you (never the other way around) - toggle "Accepting new coaching
   requests" off anytime to stop new requests without affecting
   clients you already have. A trainer can share any gym program or
   diet plan with specific clients they choose, letting each one
-  import their own independent copy with one click — no file to
+  import their own independent copy with one click - no file to
   download and re-upload. When a trainer later updates a shared plan,
   an imported copy shows "Coach update available", with a
   plain-language preview of exactly what changed before choosing to
   apply it or keep your own version. Accepting a coaching request is
-  the only consent needed — from then on your coach can see your
+  the only consent needed - from then on your coach can see your
   training history, PRs, and body-weight data on their own "My
   clients" page, until either of you ends the relationship. Programs
   and diet plans imported from a coach now show in their own "From my
@@ -330,11 +335,11 @@ narrated summary of the same version.
   and tables get a scroll hint on phones. The manifest no longer
   locks the installed app to portrait.
 
-## [1.18.0] — 2026-09-20
+## [1.18.0] - 2026-09-20
 
 ### Added
 - Export any of your own gym programs, nutrition recipes, or diet
-  plans as a `.json` file, and import one back in — from your own
+  plans as a `.json` file, and import one back in - from your own
   account, from someone else's, or from a completely different
   self-hosted IronStack instance. Custom exercises, custom meal slots,
   and foods originally imported from OpenFoodFacts are all
@@ -346,7 +351,7 @@ narrated summary of the same version.
   The file also carries the exporting instance's app version, shown
   as an informational note if it differs from yours.
 - Every name in the dashboard's achievements carousel and "Recently
-  active" list now links to that person's own profile page — recent
+  active" list now links to that person's own profile page - recent
   PRs, streak, workout count, total weight lifted, and how long
   they've been a member. Nothing about food, calories, or body
   weight. Turn off "Share my activity" in Profile → Preferences →
@@ -355,16 +360,16 @@ narrated summary of the same version.
 
 ### Fixed
 - The iOS home-screen app icon's dumbbell now shows a connected
-  handle bar — it rendered as nearly invisible on the actual shipped
+  handle bar - it rendered as nearly invisible on the actual shipped
   icon sizes, even though it looked fine in a regular browser.
 
-## [1.17.0] — 2026-09-19
+## [1.17.0] - 2026-09-19
 
 ### Added
 - Every meal card in the food diary (except "Other") now has a "Save
   as recipe" button, turning everything logged there into a new,
   reusable recipe at the exact amounts eaten.
-- Nutrition tracking can now be turned off — asked about during your
+- Nutrition tracking can now be turned off - asked about during your
   first login, and switchable anytime from Profile → Preferences →
   Features. Off hides nutrition from navigation and the dashboard;
   your existing nutrition data is never deleted, and its pages stay
@@ -372,14 +377,14 @@ narrated summary of the same version.
 
 ### Fixed
 - The dashboard calendar's calorie trend arrow no longer shows up on
-  future days — its trailing 7-day average could still pull in
+  future days - its trailing 7-day average could still pull in
   already-logged past days even though the future day itself has
   nothing logged.
 - Clicking Previous/Next on the "All foods" list now keeps your place
   at the pagination buttons instead of jumping back to the top of the
   page.
 - The API keys page's "Using the API" documentation now lists the
-  nutrition profile and diet plan endpoints — live for a while, but
+  nutrition profile and diet plan endpoints - live for a while, but
   missing from this in-app reference.
 - Adding, editing, removing, or logging a food/recipe to a meal in the
   food diary now returns you to that meal's own card instead of
@@ -390,23 +395,23 @@ narrated summary of the same version.
   pre-generated photo instead of the larger one used on a food's own
   page, cutting how much needs to download while browsing the list.
 
-## [1.16.0] — 2026-09-19
+## [1.16.0] - 2026-09-19
 
 ### Added
-- Every food now has its own nutrition-facts page — tap its name
+- Every food now has its own nutrition-facts page - tap its name
   anywhere it appears (the diary, a recipe's ingredients, "most
   used", search results, a diet plan's meal preview) to open it.
 - Foods imported from OpenFoodFacts now show a photo (in the food
-  list and on the food's own page) and their OFF categories — makes a
+  list and on the food's own page) and their OFF categories - makes a
   food much easier to recognize at a glance.
 - The "All foods" list is now paginated (20 per page) and can be
   filtered by name/category and sorted by name, date added, category,
-  or calories (ascending or descending) — all combinable at once.
+  or calories (ascending or descending) - all combinable at once.
 - A food's own page now shows its product information from
   OpenFoodFacts (package size, categories, labels, allergens,
   ingredients) when available.
 - Foods imported from OpenFoodFacts now show a typical price, sourced
-  from Open Prices — on the food's own page, next to a recipe
+  from Open Prices - on the food's own page, next to a recipe
   ingredient's calories, and next to a diary entry's calories.
 - A food imported from OpenFoodFacts now shows a prompt to edit it on
   OpenFoodFacts or add a price on Open Prices, linked straight to
@@ -436,10 +441,10 @@ narrated summary of the same version.
 ### Fixed
 - Tapping "+ Add food" under a specific meal (e.g. Dinner) no longer
   lands on the add-food page with a different meal (Breakfast)
-  preselected — food logged there went to the wrong meal until you
+  preselected - food logged there went to the wrong meal until you
   noticed and switched it by hand.
 
-## [1.15.0] — 2026-09-16
+## [1.15.0] - 2026-09-16
 
 ### Added
 - The food diary now offers a morning snack (between breakfast and
@@ -453,7 +458,7 @@ narrated summary of the same version.
 - "Recent PRs" (dashboard and Analytics) now shows one card per
   exercise instead of one card per record type, with only the
   headline figures (max weight, estimated 1RM, best set/session
-  volume) visible by default — tap an exercise to reveal any
+  volume) visible by default - tap an exercise to reveal any
   rep-specific/rep PRs plus each record's source set (weight × reps)
   and date.
 
@@ -461,25 +466,25 @@ narrated summary of the same version.
 - The food diary's "Previous day"/date/"Next day" row no longer wraps
   onto three separate lines on a phone-width screen.
 
-## [1.14.1] — 2026-09-14
+## [1.14.1] - 2026-09-14
 
 ### Fixed
 - The live-training "quick set" panel (weight/reps/RPE/notes) still
-  made an iPhone zoom the whole page in on focus — its compact labels'
+  made an iPhone zoom the whole page in on focus - its compact labels'
   smaller font-size was inherited by the input/textarea nested inside
   them, well under the 16px iOS Safari needs to not auto-zoom. Audited
   every form in the app for the same class of bug and found two more:
   the group invite-link field and a new API key's textarea both use a
   monospace font, which browsers apply a separate, smaller default
-  size to unless the page sets one explicitly — even when a normal
+  size to unless the page sets one explicitly - even when a normal
   16px is already being inherited from further up the page.
 - The dashboard's "Recently active" list showed how long ago a
   session *started*, not how long ago this person actually stopped
-  training — a long session that just finished read as "hours ago"
+  training - a long session that just finished read as "hours ago"
   instead of "just now".
 - Live camera barcode scanning (the "Scan barcode" button next to food
   search boxes) never actually detected anything on any browser using
-  the vendored ZXing fallback — the camera opened and the video played
+  the vendored ZXing fallback - the camera opened and the video played
   fine, but the scan callback was hooked up to a one-shot decode
   method that ignores a callback argument entirely, so it silently
   never ran. Chrome/Android users with the native BarcodeDetector
@@ -488,17 +493,17 @@ narrated summary of the same version.
 ### Performance
 - Personal-record detection (checked on every set you log) no longer
   re-fetches an exercise's entire logged history into Python just to
-  find its highest set/session volume — the database now computes
+  find its highest set/session volume - the database now computes
   that directly. Only noticeable on an exercise with a long logging
   history, where it kept every new set's response time growing with
   that history's size.
 
-## [1.14.0] — 2026-09-13
+## [1.14.0] - 2026-09-13
 
 ### Added
 - Exercises can now hold a small gallery of instructional images, each
   with an optional caption, plus a dedicated written instructions
-  field — shown together in a new "Instructions" section on the
+  field - shown together in a new "Instructions" section on the
   exercise detail page. A user manages their own custom exercise's
   images from that page; system exercises' images are admin-only. How
   many images a single exercise may hold is capped by a new
@@ -514,28 +519,28 @@ narrated summary of the same version.
 
 ### Fixed
 - All six locales (`en`/`fi`/`sv`/`ru`/`it`/`et`) are fully translated
-  again — `makemessages` had drifted out of sync with a pre-existing
+  again - `makemessages` had drifted out of sync with a pre-existing
   backlog from `apps.social`'s friend/group notification muting, Web
   Push permission prompts, and backup encryption warnings, silently
   falling back to English with nothing to flag it.
 - The "new/edit exercise" form's muscle group checkboxes and equipment
   dropdown rendered in English regardless of a user's own language
-  setting — they were never given the `label_from_instance` override
+  setting - they were never given the `label_from_instance` override
   every other exercise picker in this app already uses.
 
-## [1.13.1] — 2026-09-10
+## [1.13.1] - 2026-09-10
 
 ### Fixed
 - White text on the accent color (every primary button, tags, the
   skip-to-content link, the active range-filter tab) fell short of
-  WCAG AA's minimum contrast — found by a new automated accessibility
+  WCAG AA's minimum contrast - found by a new automated accessibility
   check, not visually obvious on its own.
 
-## [1.13.0] — 2026-09-10
+## [1.13.0] - 2026-09-10
 
 ### Added
 - A dashboard card reminding you to log a body measurement once you
-  haven't logged one (of any type) in 14 days — on by default, with a
+  haven't logged one (of any type) in 14 days - on by default, with a
   new Profile → Preferences → Notifications toggle to turn it off.
 - A "Statistics" card on each body measurement's history page: current
   value, change since your first log, lowest/highest/average, entry
@@ -544,16 +549,16 @@ narrated summary of the same version.
   page, to check the description, equipment, or muscle groups without
   leaving to search the exercise library.
 
-## [1.12.0] — 2026-09-09
+## [1.12.0] - 2026-09-09
 
 ### Added
 - A server-side push notification when the rest timer finishes, for
   when the client-side one can't fire (the phone backgrounded or
-  locked) — needs Web Push already turned on (Profile → Notifications).
-- Interactive API docs at `/api/docs/` — a Swagger UI generated
+  locked) - needs Web Push already turned on (Profile → Notifications).
+- Interactive API docs at `/api/docs/` - a Swagger UI generated
   straight from the real API, with a working "Try it out" against your
   own API key.
-- Optional backup encryption (`BACKUP_ENCRYPTION_KEY`) — every backup,
+- Optional backup encryption (`BACKUP_ENCRYPTION_KEY`) - every backup,
   either mechanism, can now be encrypted at rest.
 - Optional TOTP secret encryption at rest (`TOTP_ENCRYPTION_KEY`).
 - Screenshots on the README.
@@ -561,16 +566,16 @@ narrated summary of the same version.
 ### Fixed
 - An API key with permission to create programs could attach another
   user's private custom exercise to their own prescription or
-  performed exercise by id — the exercise ownership check every other
+  performed exercise by id - the exercise ownership check every other
   write in the API already had.
 
-## [1.11.1] — 2026-09-09
+## [1.11.1] - 2026-09-09
 
 ### Fixed
 - The rest timer's "time's up" notification showed a literal
   "undefined" instead of its actual title/body text.
 
-## [1.11.0] — 2026-09-08
+## [1.11.0] - 2026-09-08
 
 ### Added
 - A GitHub link to the profile page footer, next to the privacy
@@ -590,7 +595,7 @@ narrated summary of the same version.
   extension's own inline autofill-suggestion overlay from loading.
 - Every page and static asset was served uncompressed by nginx.
 
-## [1.10.1] — 2026-09-03
+## [1.10.1] - 2026-09-03
 
 ### Changed
 - A group page's routine actions (Mute notifications, back to Groups)
@@ -599,7 +604,7 @@ narrated summary of the same version.
   buttons with nothing setting it apart but its own red color.
 
 ### Fixed
-- A group's invite link could run off the right edge of the screen —
+- A group's invite link could run off the right edge of the screen -
   it's a read-only text field with a Copy button now, instead of a
   long unbroken line of plain text.
 - The "Cancel" link on the edit-group page showed as "Back", which a
@@ -607,13 +612,13 @@ narrated summary of the same version.
   group of the same name (e.g. Finnish "Selkä", the body part) since
   both shared the same source string.
 
-## [1.10.0] — 2026-09-03
+## [1.10.0] - 2026-09-03
 
 ### Added
 - An operator contact address (`DJANGO_ADMIN_CONTACT_EMAIL`), shown in
   the privacy notice for anyone to reach whoever runs this instance.
 - Rest timer: a system notification when it finishes and the page
-  isn't visible (phone locked, a different app/tab in front) — on top
+  isn't visible (phone locked, a different app/tab in front) - on top
   of the beep and the visible countdown reaching 0:00, and only ever
   for someone who's already turned on notifications.
 - Calendar: hovering a day (desktop) shows its details immediately, no
@@ -621,10 +626,10 @@ narrated summary of the same version.
   personal record's own day is gold instead of sharing a color with
   an unrelated nutrition icon a few cells over.
 - The bottom-nav Profile icon shows your own Gravatar picture, when
-  you've turned that on — previously only shown on the profile page.
+  you've turned that on - previously only shown on the profile page.
 
 ### Changed
-- Every page's title bar now holds only the title — action buttons,
+- Every page's title bar now holds only the title - action buttons,
   status tags, and the like moved to their own row right below it,
   for a consistent look across the whole app.
 - Profile page reorganized into named sections (Account, Social, Your
@@ -632,7 +637,7 @@ narrated summary of the same version.
   in place of plain checkboxes.
 - Dashboard: the month calendar moved below what you're actually
   likely checking (continue a workout, this week's numbers, recent
-  PRs) instead of opening the page and pushing them off-screen — still
+  PRs) instead of opening the page and pushing them off-screen - still
   reachable without a click, just lower.
 - Toast notifications (e.g. "Preferences saved.") appear in the
   bottom-right corner on desktop instead of spanning the top of the
@@ -640,13 +645,13 @@ narrated summary of the same version.
 
 ### Fixed
 - Searching exercises (or anything relying on the same seeded-name
-  translation) in a non-English language now actually finds matches —
+  translation) in a non-English language now actually finds matches -
   it used to only ever match the stored English name.
 - The 32×32 favicon rendered as an illegible cropped fragment in a
   real browser tab.
 - Barcode scanning could silently do nothing forever on a device where
   the camera opened but the browser's native barcode decoder wasn't
-  actually usable — now falls back to the bundled decoder instead.
+  actually usable - now falls back to the bundled decoder instead.
 - A month change in the calendar could leave a day's popover showing
   stale data from the previous month, or nothing at all.
 - Meal names (Breakfast, Lunch, ...) were never translated.
@@ -655,40 +660,40 @@ narrated summary of the same version.
   actually in.
 - A stale cached copy of the app's own JavaScript/CSS could keep
   serving from before an update, sometimes well after installing a
-  new version — the cache now invalidates itself automatically instead
+  new version - the cache now invalidates itself automatically instead
   of relying on a hand-updated version number.
 
-## [1.9.1] — 2026-09-02
+## [1.9.1] - 2026-09-02
 
 ### Changed
 - Deploy-time setup (database migrations, static files, translations,
   and 1.9.0's new-version notification) now lives inside the Docker
   image itself (`docker-entrypoint.sh`) instead of `docker-compose.yml`.
   No effect on how updating works (`docker compose pull && up -d`
-  still does everything) — it just means a self-hoster's own copy of
+  still does everything) - it just means a self-hoster's own copy of
   the compose file can no longer fall out of sync with what actually
   runs on startup.
 
-## [1.9.0] — 2026-09-02
+## [1.9.0] - 2026-09-02
 
 ### Added
-- A push notification when a new version is deployed — "IronStack
-  X.Y.Z is now running — tap to see what's new" — for anyone
+- A push notification when a new version is deployed - "IronStack
+  X.Y.Z is now running - tap to see what's new" - for anyone
   subscribed to notifications (Profile → Notifications). Tapping it
   opens the same changelog you'd already get from tapping the version
   number on your profile page.
 
-## [1.8.1] — 2026-09-02
+## [1.8.1] - 2026-09-02
 
 ### Fixed
 - Profile → "Download your data" (the plain, non-download page) threw
   a 500 for any user with so much as one friend, blocked user, group
-  membership, direct/group message, or registered push subscription —
+  membership, direct/group message, or registered push subscription -
   a handful of sections the export builds by hand rather than through
   Django's generic serializer, which the page's own row-normalizing
   code didn't know about.
 
-## [1.8.0] — 2026-08-29
+## [1.8.0] - 2026-08-29
 
 ### Added
 - Install-to-home-screen recommendation, shown once and dismissible
@@ -697,11 +702,11 @@ narrated summary of the same version.
   browsers), and falls back to on-screen instructions on iOS Safari,
   which has no such prompt at all.
 
-## [1.7.0] — 2026-08-28
+## [1.7.0] - 2026-08-28
 
 ### Added
 - Opt-in Web Push notifications (Profile → Notifications) for direct
-  and group messages, delivered even when the app isn't open —
+  and group messages, delivered even when the app isn't open -
   entirely optional, no cost unless `VAPID_*` env vars are configured
   (`docs/SECURITY.md` "Web Push notifications"). A floating
   unread-messages button now also appears on every page, the same
@@ -709,14 +714,14 @@ narrated summary of the same version.
   gets.
 - Mute a friend or a group (Friends & groups) to stop push
   notifications from just that one, without disabling notifications
-  entirely — private to you, doesn't affect the friendship, group
+  entirely - private to you, doesn't affect the friendship, group
   membership, or the messages themselves.
 - Camera barcode scanning for food search/import now works in every
-  browser with a camera, not just Chromium-based ones — a vendored
+  browser with a camera, not just Chromium-based ones - a vendored
   fallback decoder (ZXing) loads automatically, only for browsers
   without the native `BarcodeDetector` API.
 
-## [1.6.0] — 2026-08-28
+## [1.6.0] - 2026-08-28
 
 ### Added
 - Friends, groups, and messaging (`apps/social`, `docs/SOCIAL.md`):
@@ -740,20 +745,20 @@ narrated summary of the same version.
   `diet-plan-meals/`/`diet-plan-items/` sub-resources). See
   `docs/API.md` "Endpoints".
 
-## [1.5.0] — 2026-08-27
+## [1.5.0] - 2026-08-27
 
 ### Added
 - Open Graph/Twitter Card meta tags and a meta description on every
   page, for a nicer preview when a link to this instance is shared.
 - A "Site & SEO" admin setting (Profile → Administration), off by
   default: whether search engines are allowed to index this instance
-  at all — a self-hosted instance holding personal health data
+  at all - a self-hosted instance holding personal health data
   shouldn't be publicly indexed unless an operator deliberately opts
   in. Backed by both `/robots.txt` and a `<meta name="robots">` tag on
   every page.
 - The front-page month calendar can now browse into future months
   too, not just past ones.
-- Profile → "Delete account" — self-service, GDPR Article 17 account
+- Profile → "Delete account" - self-service, GDPR Article 17 account
   deletion. Everything exclusively yours (workout history, personal
   records, measurements, nutrition data, activities, feedback, API
   keys) is permanently deleted; a custom exercise/food/recipe/program/
@@ -762,15 +767,15 @@ narrated summary of the same version.
   credited to your account. See `docs/SECURITY.md` "Account deletion
   (GDPR)" for exactly what this can and can't reach (backup archives
   made before deletion are the one honest exception).
-- Profile → "Download your data" — GDPR Article 20 data portability.
+- Profile → "Download your data" - GDPR Article 20 data portability.
   Browse everything you've logged as a plain page, or download it as
   a single JSON file, a `.zip` of spreadsheet-ready CSV files, or
   that same page as one HTML file to keep or hand to someone else.
 - A privacy notice, shown on the login/signup pages and reachable
-  again anytime from Profile — what's collected, why, your rights
+  again anytime from Profile - what's collected, why, your rights
   (including the two features above), and what's retained.
 - The first-login onboarding modal now also asks for your timezone
-  (pre-filled, so "Save" never actually requires picking one) —
+  (pre-filled, so "Save" never actually requires picking one) -
   previously only available afterwards, from Profile, meaning every
   "today"/date-range boundary in the app used UTC by default until a
   new user happened to find that setting.
@@ -778,25 +783,25 @@ narrated summary of the same version.
 ### Fixed
 - Changing month on the front-page calendar reloaded and repainted
   the entire dashboard for a one-card change, visible as a brief
-  flash every time — it now swaps just that card.
+  flash every time - it now swaps just that card.
 - Generating (or regenerating) two-factor backup codes could take
   several real seconds with no visible feedback, which could look
-  like nothing had happened and invited clicking again mid-wait —
+  like nothing had happened and invited clicking again mid-wait -
   racing a second request that could bounce you away before you ever
   saw the codes the first one had already generated. Now shows a
   loading page immediately and loads the result once it's ready.
 - Profile → "Download your data" left out your last name and several
   display/privacy settings (height, and whether you show BMI,
-  achievements, your name, or a Gravatar picture to others) — it only
+  achievements, your name, or a Gravatar picture to others) - it only
   ever covered a handful of account fields, not everything on your
   account that isn't a credential.
 
-## [1.4.1] — 2026-08-27
+## [1.4.1] - 2026-08-27
 
 ### Fixed
 - A routine update (README.md "Updating": `docker compose pull && up
-  -d`) could leave the site unreachable — `502`/"Connection refused"
-  from nginx — until nginx itself was also manually restarted. nginx
+  -d`) could leave the site unreachable - `502`/"Connection refused"
+  from nginx - until nginx itself was also manually restarted. nginx
   resolved the `web` container's hostname to an IP once at its own
   startup and cached it forever; `web` recreating with a new image got
   a new internal IP that nginx never noticed. nginx now re-resolves it
@@ -805,16 +810,16 @@ narrated summary of the same version.
 - A CDN in front of a real deployment (Cloudflare) could keep serving
   a stale, hours-old CSS/JS file well after an update changed it,
   since the plain filename never changed and nginx sent no cache
-  header telling it otherwise — a page could render badly broken
+  header telling it otherwise - a page could render badly broken
   (e.g. the front-page calendar's grid layout collapsing entirely)
   until the CDN's cache was manually purged. Static files now include
   a content hash in their URL (Django's `ManifestStaticFilesStorage`),
   so a real change always gets a new URL instead of colliding with a
-  cached response for the old one — no CDN configuration or manual
+  cached response for the old one - no CDN configuration or manual
   purge needed after an update. See `docs/ARCHITECTURE.md` "Static
   files".
 
-## [1.4.0] — 2026-08-27
+## [1.4.0] - 2026-08-27
 
 ### Added
 - Nutrition & calorie tracking (`apps/nutrition`): a step-by-step
@@ -827,30 +832,30 @@ narrated summary of the same version.
   `docs/NUTRITION.md`.
 - Seven standalone nutrition calculators (`/nutrition/calculators/`):
   BMR/TDEE, macro split, body fat percentage (U.S. Navy method), daily
-  water intake, BMI, waist-to-hip ratio, and time-to-goal-weight —
+  water intake, BMI, waist-to-hip ratio, and time-to-goal-weight -
   quick estimates that don't require completing nutrition onboarding
   or setting a goal.
 - A persistent sub-nav across every nutrition page (dashboard, diary,
   foods, recipes, diet plans, calculators, statistics), reported as
   needed once nutrition grew to more top-level sections than any other
-  part of the app — reaching a sibling section no longer means
+  part of the app - reaching a sibling section no longer means
   scrolling back to the dashboard first. The dashboard's old "Quick
   links" card is gone; the sub-nav reaches the same places from
   everywhere, not just there.
 - Adding a recipe ingredient is now search-and-pick (local foods, live
   OpenFoodFacts results, and barcode-number search) instead of a
-  dropdown of foods you already had to create by hand — macros are
+  dropdown of foods you already had to create by hand - macros are
   pulled in automatically.
-- Diet-plan meals can now hold more than one item — add extras
+- Diet-plan meals can now hold more than one item - add extras
   alongside the auto-generated one, and remove any item individually.
 - Searching for a food by its barcode number now works everywhere the
   food-search box appears (diary, recipe ingredients, diet-plan
   meals).
 - A dedicated "Import from OpenFoodFacts" page (Foods → "Import from
-  OpenFoodFacts") — search or browse by category to add a food to
+  OpenFoodFacts") - search or browse by category to add a food to
   the shared library on its own, not just while logging something.
 - Foods now show a Nutri-Score (A-E) and NOVA (1-4) badge when
-  OpenFoodFacts has graded them — a real, independently-published
+  OpenFoodFacts has graded them - a real, independently-published
   healthiness/processing-level scale, not one this app invents.
 - Every food-search box (diary, recipe ingredients, diet-plan meals,
   browse/import) can now scan a barcode with your camera, on browsers
@@ -863,22 +868,22 @@ narrated summary of the same version.
 - A recipe can now be logged to the diary for a past or future date,
   not only today.
 - Admins can now merge duplicate foods in the shared library (Foods →
-  select two or more → "Merge selected foods into one…") — every
+  select two or more → "Merge selected foods into one…") - every
   diary entry, recipe ingredient, and diet-plan item that referenced
   a duplicate is repointed at the kept food, never deleted.
 - Admins can now force-refresh selected foods from OpenFoodFacts
   immediately (Foods → select → "Refresh selected foods from
   OpenFoodFacts") instead of waiting for the normal 14-day
   staleness-triggered refresh.
-- A nutrition statistics page (Nutrition → "Statistics") — a 30-day
+- A nutrition statistics page (Nutrition → "Statistics") - a 30-day
   calorie chart plus average daily calories/macros, alongside the
   current target for comparison.
 - Every place you can add a food (the food diary, a recipe's
   ingredients, a diet-plan meal's items) now shows a "Most used"
-  quick-add list of your top 10 most-used foods — one tap instead of
+  quick-add list of your top 10 most-used foods - one tap instead of
   a fresh search every time.
 - A day in the food diary can now be copied to another date ("Copy
-  this day to another date") — repeats every item logged that day
+  this day to another date") - repeats every item logged that day
   onto a new date in one action.
 - A recipe ingredient's quantity can now be edited directly, instead
   of having to delete it and re-add it through search.
@@ -887,24 +892,24 @@ narrated summary of the same version.
 - A recipe's nutrition breakdown now shows fiber, sugar, saturated
   fat, and sodium too, whenever at least one ingredient has that data.
 - 18 built-in template recipes (six each for bulking, fat loss, and a
-  balanced maintenance goal — e.g. "Bulk breakfast — Oats & peanut
-  butter", "Fatburner lunch — Chicken & broccoli"), seeded into every
+  balanced maintenance goal - e.g. "Bulk breakfast - Oats & peanut
+  butter", "Fatburner lunch - Chicken & broccoli"), seeded into every
   installation including a brand new one, built from real OpenFoodFacts
   data and tagged with the meal (breakfast/lunch/dinner) each is meant
   for. They're shared with every user (not owned by anyone in
   particular), show up alongside your own recipes everywhere a recipe
   can be picked, and are what the diet-plan builder now actually
-  suggests from — a lunch recipe is never suggested for breakfast.
+  suggests from - a lunch recipe is never suggested for breakfast.
 - A diet plan can now span a full week instead of always repeating one
-  day — the diet-plan builder varies which recipe/food fills each meal
+  day - the diet-plan builder varies which recipe/food fills each meal
   across the seven days (never the day's own calorie/macro target)
   so a week's meals aren't identical every day.
 - A diet plan can now be marked active/inactive (Diet plans →
-  Activate/Deactivate) — only one plan is ever active at a time — and
+  Activate/Deactivate) - only one plan is ever active at a time - and
   the nutrition dashboard shows today's planned meals and macros from
   whichever plan is currently active. A weekly plan's page shows each
   weekday collapsed by default; tap one to see its meals.
-- A month calendar on the front page (browsable to earlier months) —
+- A month calendar on the front page (browsable to earlier months) -
   a barbell icon for a training day (colored for a personal record or
   an abandoned session), a moon for a rest day, and an arrow for
   whether your trailing 7-day average calories ran over or under
@@ -912,7 +917,7 @@ narrated summary of the same version.
   explains what they mean, and tapping a day shows a short plain-text
   summary of it.
 - A "Change goal" button on the nutrition dashboard's "Current goal"
-  card, so a goal set during onboarding isn't stuck there forever —
+  card, so a goal set during onboarding isn't stuck there forever -
   picking a new goal recalculates and saves a fresh calorie/macro
   target right away, without touching your target/goal history.
 
@@ -929,23 +934,23 @@ narrated summary of the same version.
   (older targets saved before this fix keep their original frozen
   text, since the numbers behind it were never stored).
 - The diet-plan builder, and swapping an item on an existing diet
-  plan, couldn't see or use the template recipes above — only recipes
+  plan, couldn't see or use the template recipes above - only recipes
   you'd created yourself.
 - The Foods/Recipes/Diet plans pages' "back" link went to the food
   diary instead of the nutrition dashboard, even when you'd arrived
-  from the dashboard's own "Quick links" — pressing "back" landed
+  from the dashboard's own "Quick links" - pressing "back" landed
   somewhere you'd never actually been. The food diary itself had no
   way back to the dashboard at all. Both fixed.
 - Date pickers on the recipe/diet-plan "log for date" fields and the
   onboarding wizard's date of birth showed blank instead of
   pre-filled whenever the site language wasn't English (e.g. in
-  Finnish) — a browser rejects a date value that isn't in ISO
+  Finnish) - a browser rejects a date value that isn't in ISO
   format, and these were rendering it in the site's own date format
   instead.
 - The quantity field on every food-search "Add" card (diary, recipe
   ingredients, diet-plan meals, browse) showed blank instead of
   pre-filled whenever the site language uses a comma as its decimal
-  separator (e.g. Finnish) — same root cause as the date-picker fix
+  separator (e.g. Finnish) - same root cause as the date-picker fix
   above, for `type="number"` instead of `type="date"`.
 - An OpenFoodFacts import-failure message in the food diary that was
   never translated.
@@ -971,28 +976,28 @@ narrated summary of the same version.
 - The nutrition stats page's daily-calorie chart could show several
   decimal places (e.g. "361,5500 kcal") instead of a whole number.
 
-### Added — API
+### Added - API
 - A public API context for nutrition (`foods/`, `meal-slots/`,
   `recipes/`, `recipe-ingredients/`, `diary-entries/`,
-  `nutrition-goals/`, `nutrition-targets/`) — every other part of the
+  `nutrition-goals/`, `nutrition-targets/`) - every other part of the
   app already had one, nutrition was the one exception. Goals/targets
   are read-only, matching how personal records already work in the
   API: both are historized and only ever change through their own
   dedicated service functions, never a raw write. See `docs/API.md`.
-- The API keys page has an in-app "?" documentation button — base URL,
+- The API keys page has an in-app "?" documentation button - base URL,
   auth header, permissions, units, and copy-pasteable curl/Python
   examples using this deployment's own real address.
 
 ### Development
 - Test coverage measurement (`coverage`) is now part of the dev
-  toolchain — `coverage run -m pytest && coverage report`.
+  toolchain - `coverage run -m pytest && coverage report`.
 
-## [1.3.0] — 2026-08-26
+## [1.3.0] - 2026-08-26
 
 ### Added
 - Authentik single sign-on (OIDC) as an optional login method
   alongside username/password + TOTP, `docs/SECURITY.md` "Single
-  sign-on (Authentik / OIDC)" — matches an Authentik login to an
+  sign-on (Authentik / OIDC)" - matches an Authentik login to an
   existing local account by email or auto-provisions a new one,
   entirely opt-in (nothing activates unless `AUTHENTIK_URL`/
   `AUTHENTIK_CLIENT_ID`/`AUTHENTIK_CLIENT_SECRET` are all set), with
@@ -1000,7 +1005,7 @@ narrated summary of the same version.
   `DJANGO_PASSWORD_LOGIN_ENABLED` switch to close local password
   login once every user has an Authentik-linked account.
 - An opt-in Gravatar profile picture, Profile → "Show my Gravatar
-  picture" (off by default) — see `docs/SECURITY.md` "Gravatar
+  picture" (off by default) - see `docs/SECURITY.md` "Gravatar
   profile picture" for why: it's the only place this app talks to a
   server outside its own infrastructure.
 
@@ -1010,14 +1015,14 @@ narrated summary of the same version.
   backends configured at once).
 - Bar and line charts (Analytics, Progress) rendered invisible for
   any user with a comma-decimal UI language (Finnish, Swedish,
-  Russian) — Django's locale-aware number formatting broke the
+  Russian) - Django's locale-aware number formatting broke the
   underlying SVG coordinate syntax.
 
-## [1.2.0] — 2026-08-15
+## [1.2.0] - 2026-08-15
 
 ### Added
 - Optional two-factor authentication (TOTP), Profile → "Two-factor
-  authentication" — QR-code setup, single-use backup codes, and an
+  authentication" - QR-code setup, single-use backup codes, and an
   admin recovery action for a fully locked-out user. See
   `docs/SECURITY.md` "Two-factor authentication".
 - The login and signup pages now show the IronStack logo/wordmark.
@@ -1027,7 +1032,7 @@ narrated summary of the same version.
   user's first login, asking for name/email/starting weight/height/
   units and explaining what each is used for.
 
-## [1.1.0] — 2026-08-15
+## [1.1.0] - 2026-08-15
 
 ### Added
 - Backup & restore, two independent mechanisms (`docs/BACKUP.md`):
@@ -1035,7 +1040,7 @@ narrated summary of the same version.
   admin-only web UI (Profile → Administration → Backups) to create,
   download, and restore backups without leaving the app.
 - A privacy toggle, "Show my name to others"
-  (`User.show_name_to_others`) — lets a user's first name appear next
+  (`User.show_name_to_others`) - lets a user's first name appear next
   to their username in the achievements carousel and "Recently
   active" list, separate from whether their data appears there at
   all (`show_achievements`).
@@ -1043,7 +1048,7 @@ narrated summary of the same version.
   they've set one.
 - A red-bordered "danger zone" around the profile page's staff-only
   Admin/Backups cards.
-- This changelog viewer — click the version number on the profile
+- This changelog viewer - click the version number on the profile
   page.
 
 ### Changed
@@ -1064,10 +1069,10 @@ narrated summary of the same version.
   freshly created database first and only swaps it in once that
   succeeds.
 
-## [1.0.0] — 2026-08-14
+## [1.0.0] - 2026-08-14
 
 Initial versioned release, marking the point `VERSION` started being
-tracked — not a rewrite or a fresh start. Everything below already
+tracked - not a rewrite or a fresh start. Everything below already
 existed going into this release; see `README.md` for the complete,
 detailed history of how each part was built.
 
@@ -1085,7 +1090,7 @@ detailed history of how each part was built.
 - Six-language UI (English, Finnish, Swedish, Russian, Italian,
   Estonian), an installable PWA, and a Django admin re-themed to match
   the rest of the app.
-- Application version metadata (this file's own reason for existing) —
+- Application version metadata (this file's own reason for existing) -
   a `VERSION` file, optional git-commit/build-date OCI image labels
   (`scripts/build.sh`), and a `version_info` management command, laid
   out as the intended single source of truth for a future

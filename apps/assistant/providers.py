@@ -1,4 +1,4 @@
-"""Model providers behind one small interface — see docs/ASSISTANT.md
+"""Model providers behind one small interface - see docs/ASSISTANT.md
 "Providers".
 
 A provider turns (system prompt, tools, history) into one model turn and
@@ -7,8 +7,8 @@ batch of tool results look like. apps.assistant.services drives the tool
 loop and stores each provider's messages verbatim (AssistantMessage.raw),
 so nothing outside this module ever needs to know either format.
 
-- `AnthropicProvider` — Claude through the official `anthropic` SDK.
-- `OllamaProvider` — a self-hosted Ollama server's native /api/chat
+- `AnthropicProvider` - Claude through the official `anthropic` SDK.
+- `OllamaProvider` - a self-hosted Ollama server's native /api/chat
   (plain `requests`, already a dependency; Ollama has no SDK worth adding
   for one endpoint). Nothing leaves the operator's own network.
 """
@@ -27,8 +27,8 @@ OLLAMA = "ollama"
 
 # Models that accept the server-side refusal fallback (`fallbacks:
 # "default"`, beta server-side-fallback-2026-07-01). When a safety
-# classifier declines a request — health and nutrition talk can
-# occasionally trip one — the API re-runs it on Anthropic's recommended
+# classifier declines a request - health and nutrition talk can
+# occasionally trip one - the API re-runs it on Anthropic's recommended
 # fallback model within the same call instead of returning a refusal.
 _FALLBACK_MODELS = {"claude-fable-5-1", "claude-opus-5-5", "claude-opus-5", "claude-sonnet-5-5"}
 _FALLBACK_BETA = "server-side-fallback-2026-07-01"
@@ -42,7 +42,7 @@ _MAX_JSON_RETRIES = 2
 
 
 class ProviderError(Exception):
-    """Something the user should see instead of a reply — always a
+    """Something the user should see instead of a reply - always a
     translated, plain-language message, never a raw exception."""
 
 
@@ -105,7 +105,7 @@ class AnthropicProvider:
             "model": self.model,
             "max_tokens": _MAX_TOKENS,
             "system": [{"type": "text", "text": system}],
-            # Tool inputs (a whole week's diet plan) can be long — stream
+            # Tool inputs (a whole week's diet plan) can be long - stream
             # them as they're generated. The server doesn't validate a
             # streamed input, so apps.assistant.tools validates every one
             # before running it.
@@ -146,7 +146,7 @@ class AnthropicProvider:
                     message = stream.get_final_message()
                 break
             except ValueError as error:
-                # A streamed tool input the SDK couldn't parse at all —
+                # A streamed tool input the SDK couldn't parse at all -
                 # there's no tool_use block to answer, so re-issue the
                 # turn (bounded). API errors aren't ValueErrors.
                 json_retries += 1
@@ -187,7 +187,7 @@ class AnthropicProvider:
             + (getattr(usage, "cache_read_input_tokens", 0) or 0)
         )
         if message.stop_reason == "refusal":
-            # Discard any partial output — a refused reply isn't an answer.
+            # Discard any partial output - a refused reply isn't an answer.
             return TurnResult(
                 raw=[],
                 text="",
@@ -227,12 +227,12 @@ _MODEL_INTERNAL_BLOCKS = {"thinking", "redacted_thinking", "tool_use"}
 def _echoable_content(blocks):
     """The response's content blocks as plain dicts, ready to be stored
     and sent back unchanged on the next request (thinking blocks
-    included — they're only valid if echoed exactly as received).
+    included - they're only valid if echoed exactly as received).
 
     One exception, from the refusal-fallback rules: when a model declined
     mid-reply and the fallback model took over, the blocks the declining
     model produced *before* the last `fallback` marker are omitted, apart
-    from its text — they belong to a model that's no longer answering.
+    from its text - they belong to a model that's no longer answering.
     """
     content = [block.to_dict(mode="json", exclude_none=True) for block in blocks]
     boundary = max(

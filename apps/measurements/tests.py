@@ -105,7 +105,7 @@ class MeasurementViewPermissionTests(TestCase):
     def test_the_plain_function_views_also_require_login(self):
         # Regression: these were missing @login_required entirely, so
         # an anonymous request crashed with a 500 instead of
-        # redirecting to login — same bug class as apps.nutrition's
+        # redirecting to login - same bug class as apps.nutrition's
         # own equivalent fix.
         entry = BodyMeasurement.objects.create(
             user=self.alice, measurement_type=self.measurement_type, value=Decimal("80")
@@ -265,14 +265,14 @@ class LoggingFlowTests(TestCase):
 
 
 class BMIOnBodyWeightHistoryPageTests(TestCase):
-    """BMI (apps.core.bmi) moved here from the dashboard/profile — it
+    """BMI (apps.core.bmi) moved here from the dashboard/profile - it
     only ever meant anything alongside a logged body weight, and this
     is the page that logs one. Gated by the profile's show_bmi toggle
     and specifically the system "Body weight" type."""
 
     def setUp(self):
         # onboarding_completed=True: these tests assert the literal
-        # absence of "BMI" from the whole page — apps.accounts's
+        # absence of "BMI" from the whole page - apps.accounts's
         # onboarding modal (shown to any not-yet-onboarded user on
         # every page) asks for height specifically to compute BMI, so
         # a default, unrelated user would make that assertion collide
@@ -367,7 +367,7 @@ class BMIOnBodyWeightHistoryPageTests(TestCase):
 
     def test_bmi_no_longer_appears_on_the_dashboard_or_profile(self):
         """Regression: BMI used to live on both the dashboard and
-        profile page — moved here entirely, not duplicated."""
+        profile page - moved here entirely, not duplicated."""
         self.alice.height = Decimal("1.80")
         self.alice.save()
         BodyMeasurement.objects.create(
@@ -379,7 +379,7 @@ class BMIOnBodyWeightHistoryPageTests(TestCase):
         self.assertNotContains(dashboard_response, "BMI")
         self.assertNotIn("bmi", profile_response.context)
         # The show_bmi *setting* still lives on the profile page (its
-        # checkbox label mentions "BMI") — only the card/table itself
+        # checkbox label mentions "BMI") - only the card/table itself
         # moved, so this checks for the category-ranges table's own
         # heading rather than the word "BMI" appearing at all.
         self.assertNotContains(profile_response, "BMI category ranges")
@@ -410,10 +410,10 @@ class CustomMeasurementTypeFlowTests(TestCase):
 
 
 class MeasurementTypeContentTranslationTests(TestCase):
-    """Seeded measurement type *names* are content, not UI chrome — the
+    """Seeded measurement type *names* are content, not UI chrome - the
     stored value stays canonical English (matched by get_or_create
     elsewhere), but the display goes through gettext too, via
-    apps.measurements.i18n_content's extraction catalog — see
+    apps.measurements.i18n_content's extraction catalog - see
     docs/ARCHITECTURE.md "Internationalization"."""
 
     def setUp(self):
@@ -432,7 +432,7 @@ class MeasurementTypeContentTranslationTests(TestCase):
         """Regression: Django's `{% trans someobj.name %}` tag doubles every
         "%" in a resolved *variable* before the gettext lookup and undoes
         it after (meant for literal `%%` written in template source, but
-        applied to variables too) — so "Body fat %" looked up "Body fat %%",
+        applied to variables too) - so "Body fat %" looked up "Body fat %%",
         found nothing, and silently fell back to English. Fixed by using
         apps.core.templatetags.core_extras.translate_content (a direct
         gettext() call) instead of `{% trans %}` for this content."""
@@ -443,7 +443,7 @@ class MeasurementTypeContentTranslationTests(TestCase):
 
     def test_a_users_own_custom_type_name_is_never_translated(self):
         """gettext only ever matches strings actually present in the
-        catalog — a custom name a user typed themselves was never
+        catalog - a custom name a user typed themselves was never
         extracted into it, so it always renders exactly as typed,
         regardless of UI language."""
         measurement_type = MeasurementType.objects.create(
@@ -454,7 +454,7 @@ class MeasurementTypeContentTranslationTests(TestCase):
 
 
 class BodyTrackingReminderServiceTests(TestCase):
-    """apps.measurements.services.needs_body_tracking_reminder — the
+    """apps.measurements.services.needs_body_tracking_reminder - the
     dashboard's "Time to log your body measurements?" card."""
 
     def setUp(self):
@@ -538,7 +538,7 @@ class BodyTrackingReminderDashboardTests(TestCase):
 
 
 class MeasurementStatsServiceTests(TestCase):
-    """apps.measurements.services.stats_for — the history page's
+    """apps.measurements.services.stats_for - the history page's
     "Statistics" card."""
 
     def setUp(self):

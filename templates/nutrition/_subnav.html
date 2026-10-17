@@ -1,6 +1,6 @@
 {% load i18n %}
 {% comment %}
-Persistent tab bar across every nutrition page — included directly by
+Persistent tab bar across every nutrition page - included directly by
 each page's own template, right after its `.top-bar` (heading + the
 border-bottom line under it), not from templates/base.html: it needs
 to render *below* each page's own title, not above every page's
@@ -9,32 +9,32 @@ point would have to sit. See apps.nutrition.context_processors.
 nutrition_subnav for which tab counts as active on a given page, and
 docs/NUTRITION.md "Navigating within nutrition" for why nutrition
 gets this when nothing else in this app does. Deliberately omitted
-from the onboarding wizard's own templates — its destinations (diary,
+from the onboarding wizard's own templates - its destinations (diary,
 foods, ...) would all just bounce back to onboarding anyway for a
 user who doesn't have a NutritionProfile yet.
 
 Reuses .range-filter's pill styling (templates/analytics/
 _range_filter.html) with one override: horizontal scroll instead of
-wrap (.nutrition-subnav in base.css) — 8 tabs wrapped would eat two
+wrap (.nutrition-subnav in base.css) - 8 tabs wrapped would eat two
 or three lines of vertical space on every single page, permanently.
 {% endcomment %}
 {% comment %}
 Two regressions found live testing this exact bar:
 
 1. Landing on a tab that isn't one of the first few (Calculators,
-   Statistics — off the right edge of this bar's own horizontal
+   Statistics - off the right edge of this bar's own horizontal
    scroll on a phone) left its own highlighted pill invisible,
    scrolled out of view, with nothing on screen showing which section
-   you were actually in — exactly the "unclear which page you're on"
+   you were actually in - exactly the "unclear which page you're on"
    complaint this whole component exists to prevent. x-init scrolls
    the active tab into view once, on load, the same way opening a
    link straight to it should have looked all along; nothing to do
    once a tap on the bar itself changes tabs, since the browser's own
    navigation re-runs this on the next page anyway.
 2. Nothing on screen hinted there even *were* more tabs to scroll to
-   in the first place — a plain horizontal-scroll container gives no
+   in the first place - a plain horizontal-scroll container gives no
    affordance of its own. .nutrition-subnav-fade (base.css) is a
-   fixed right-edge gradient — not scroll-position-aware (that needs
+   fixed right-edge gradient - not scroll-position-aware (that needs
    JS this is deliberately not reaching for, for a static edge cue),
    just a constant "there's more this direction" hint, the same
    pattern most native app tab bars use for the same reason.

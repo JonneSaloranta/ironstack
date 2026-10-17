@@ -16,14 +16,14 @@ class EquipmentAdmin(admin.ModelAdmin):
 
 
 class ExerciseImageInline(admin.TabularInline):
-    """The way a system exercise's images are managed — a user-facing
+    """The way a system exercise's images are managed - a user-facing
     upload control only exists for a user's own custom exercise (see
     apps.exercises.views.exercise_image_create's own docstring); system
     exercises are admin-only, same as every other field on them.
     `ExerciseImage.clean()` (run via this inline formset's own
     `ModelForm._post_clean()`) enforces `ExerciseImageSettings.
     max_images_per_exercise` here exactly the same way it does for
-    that user-facing form — one rule, enforced wherever an image gets
+    that user-facing form - one rule, enforced wherever an image gets
     saved."""
 
     model = ExerciseImage
@@ -54,7 +54,7 @@ class ExerciseAdmin(admin.ModelAdmin):
 
 @admin.register(ExerciseImageSettings)
 class ExerciseImageSettingsAdmin(admin.ModelAdmin):
-    """Singleton, same pattern as apps.core.admin.BackupSettingsAdmin —
+    """Singleton, same pattern as apps.core.admin.BackupSettingsAdmin -
     the one place to change how many images an exercise may hold at
     once (there's no user-facing settings card for this, unlike
     Backups/Feedback/SEO, since it isn't a per-installation preference

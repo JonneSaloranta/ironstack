@@ -1,4 +1,4 @@
-"""Self-service API key management — the human-facing (server-rendered,
+"""Self-service API key management - the human-facing (server-rendered,
 session-authenticated) counterpart to apps.api's actual API, which never
 accepts session auth (see apps.api.auth.ApiKeyAuthentication's own
 docstring). Reachable from the Profile page.
@@ -15,7 +15,7 @@ from .forms import CRUD_VERBS, ApiKeyCreateForm
 from .models import ApiContext
 
 # The session key a freshly created secret is stashed under for exactly
-# one page load (see key_created below) — never persisted anywhere else,
+# one page load (see key_created below) - never persisted anywhere else,
 # matching apps.api.crypto's "the raw secret is shown once and never
 # stored" guarantee.
 _SECRET_SESSION_KEY = "api_key_secret_once"
@@ -48,7 +48,7 @@ def key_create(request):
         return redirect("api_keys:key-created", pk=api_key.pk)
 
     # Reshaped for the template into one row per context, each holding
-    # its 4 BoundFields in CRUD_VERBS order — a template can't easily
+    # its 4 BoundFields in CRUD_VERBS order - a template can't easily
     # look up a dynamically-named field (`form["profile__can_create"]`)
     # on its own, so the grid is assembled here instead.
     grid_rows = [
@@ -75,7 +75,7 @@ def key_created(request, pk):
     raw_secret = request.session.pop(_SECRET_SESSION_KEY, None)
     if raw_secret is None:
         # Already shown once, or a direct/bookmarked visit to this URL
-        # — there's nothing left to reveal a second time, by design.
+        # - there's nothing left to reveal a second time, by design.
         return redirect("api_keys:key-list")
     return render(request, "api/key_created.html", {"api_key": api_key, "raw_secret": raw_secret})
 

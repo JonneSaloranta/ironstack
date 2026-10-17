@@ -5,14 +5,14 @@ A tour's steps point at elements by `data-tour="<anchor>"`; the
 anchors live in the templates. apps.tutorials.tests renders every
 tour's page and fails if a required anchor has gone missing, if a page
 without arguments has neither a tour nor an entry in NO_TOUR_NEEDED, or
-if a tour's text lacks a translation — so a template change can't
+if a tour's text lacks a translation - so a template change can't
 silently break a tour, and a new page can't silently go without one.
 
 Depth follows the page: the pages people log on (a workout, training
 mode, the food diary) get several steps; a simple list gets one or two;
 plain forms get none (their labels and help texts already explain them).
 
-Tours are grouped by `section` in the order they appear here — that is
+Tours are grouped by `section` in the order they appear here - that is
 the order of profile → Tutorials. Keep each section's tours together.
 """
 
@@ -123,7 +123,7 @@ TOURS = (
                 _("Welcome to IronStack"),
                 _(
                     "A quick look around. Every section has a short tour like this the first "
-                    "time you open it — skip any of them, or turn them all off."
+                    "time you open it - skip any of them, or turn them all off."
                 ),
             ),
             Step(
@@ -172,7 +172,7 @@ TOURS = (
                 "nav-profile",
                 _("Your profile"),
                 _(
-                    "Preferences, friends, your data — and Tutorials, where you can replay "
+                    "Preferences, friends, your data - and Tutorials, where you can replay "
                     "any of these tours."
                 ),
             ),
@@ -224,7 +224,7 @@ TOURS = (
                 _("Suggested weight"),
                 _(
                     "Based on your last sessions, with the reason and how confident it is. "
-                    "It's only a starting point — you decide what goes on the bar."
+                    "It's only a starting point - you decide what goes on the bar."
                 ),
                 optional=True,
             ),
@@ -240,14 +240,14 @@ TOURS = (
             Step(
                 "add-exercise",
                 _("Add an exercise"),
-                _("Add anything that isn't in the plan — it only changes this workout."),
+                _("Add anything that isn't in the plan - it only changes this workout."),
                 optional=True,
             ),
             Step(
                 "training-fab",
                 _("Training mode"),
                 _(
-                    "One exercise at a time with big buttons and a rest timer — the easiest "
+                    "One exercise at a time with big buttons and a rest timer - the easiest "
                     "way to log at the gym. This button follows you on every page."
                 ),
                 optional=True,
@@ -275,7 +275,7 @@ TOURS = (
                 _("Exercises"),
                 _(
                     "The dots show your progress. The arrows move between exercises in any "
-                    "order — the next unfinished one opens by default."
+                    "order - the next unfinished one opens by default."
                 ),
             ),
             Step(
@@ -310,7 +310,7 @@ TOURS = (
             Step(
                 "train-full-view",
                 _("Full view"),
-                _("Every exercise at once — for reviewing or correcting the whole workout."),
+                _("Every exercise at once - for reviewing or correcting the whole workout."),
             ),
         ),
     ),
@@ -407,7 +407,7 @@ TOURS = (
             Step(
                 "exercise-new",
                 _("Your own exercises"),
-                _("Missing something? Add it — only you will see it."),
+                _("Missing something? Add it - only you will see it."),
             ),
         ),
     ),
@@ -462,7 +462,7 @@ TOURS = (
             Step(
                 "muscle-chart",
                 _("Muscle groups"),
-                _("Which muscles got the most work — handy for spotting imbalances."),
+                _("Which muscles got the most work - handy for spotting imbalances."),
                 optional=True,
             ),
         ),
@@ -545,7 +545,7 @@ TOURS = (
             Step(
                 "measurement-log",
                 _("Log a reading"),
-                _("Enter today's value — or an earlier date to catch up."),
+                _("Enter today's value - or an earlier date to catch up."),
             ),
             Step(
                 "measurement-table",
@@ -637,7 +637,7 @@ TOURS = (
             Step(
                 "nutrition-goal",
                 _("Your goal"),
-                _("Lose, keep or gain — and how fast. Change it at any time."),
+                _("Lose, keep or gain - and how fast. Change it at any time."),
                 optional=True,
             ),
         ),
@@ -749,7 +749,7 @@ TOURS = (
                 _("Nutrition facts"),
                 _(
                     "Laid out like a package label: energy, fat, carbohydrate, fibre, protein "
-                    "and salt — then any vitamins and minerals that are known."
+                    "and salt - then any vitamins and minerals that are known."
                 ),
             ),
         ),
@@ -879,7 +879,7 @@ TOURS = (
                 _("Calculators"),
                 _(
                     "Energy use, macros, body fat, water, BMI and more. They only calculate "
-                    "— nothing is saved or changed."
+                    "- nothing is saved or changed."
                 ),
             ),
         ),
@@ -968,7 +968,7 @@ TOURS = (
             Step(
                 "routine-add-stretch",
                 _("Make it yours"),
-                _("Add stretches and reorder them — in your own routines."),
+                _("Add stretches and reorder them - in your own routines."),
                 optional=True,
             ),
         ),
@@ -1069,7 +1069,7 @@ TOURS = (
             Step(
                 "profile-data",
                 _("Your data"),
-                _("Everything you've logged is yours — browse it or download it."),
+                _("Everything you've logged is yours - browse it or download it."),
             ),
             Step(
                 "profile-tutorials",

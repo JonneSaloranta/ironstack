@@ -1,12 +1,12 @@
 {% extends "base.html" %}
 {% load i18n %}
-{% block title %}{% trans "Calculators" %} — IronStack{% endblock %}
+{% block title %}{% trans "Calculators" %} - IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
   <h1 class="no-margin">{% trans "Calculators" %}</h1>
 </div>
 {% include "nutrition/_subnav.html" %}
-<p class="text-muted">{% trans "Quick, standalone estimates — none of these are saved or change your targets." %}</p>
+<p class="text-muted">{% trans "Quick, standalone estimates - none of these are saved or change your targets." %}</p>
 
 <div data-tour="calculator" class="card card-action-row">
   <div>
@@ -51,7 +51,7 @@
 <div class="card card-action-row">
   <div>
     <strong>{% trans "Waist-to-hip ratio calculator" %}</strong>
-    <p class="text-muted">{% trans "Where you carry weight, not just how much — a tape measure and one more number." %}</p>
+    <p class="text-muted">{% trans "Where you carry weight, not just how much - a tape measure and one more number." %}</p>
   </div>
   <a class="button-secondary" href="{% url 'nutrition:calculator-waist-hip-ratio' %}">{% trans "Open" %}</a>
 </div>

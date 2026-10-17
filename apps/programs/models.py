@@ -16,7 +16,7 @@ class Program(TimeStampedModel):
     available to everyone to copy). A user's own programs always have
     `owner` set.
 
-    `version` is a display-only counter — see docs/ARCHITECTURE.md
+    `version` is a display-only counter - see docs/ARCHITECTURE.md
     "Historical integrity mechanism: snapshot-on-start". It is not a
     row-versioning system: editing a program never rewrites history,
     because workout sessions (from Phase 4 onward) copy the prescription
@@ -41,25 +41,25 @@ class Program(TimeStampedModel):
     )
     version = models.PositiveIntegerField(default=1)
 
-    # apps.coaching — empty by default so a personal trainer can keep a
+    # apps.coaching - empty by default so a personal trainer can keep a
     # program as a private draft; sharing is a separate, deliberate
     # action from just owning one. A many-to-many, not a boolean:
-    # asked for directly — a coach assigns a program to specific
+    # asked for directly - a coach assigns a program to specific
     # clients, not to every current client at once. Visible/importable
     # only to a user actually in this set *and* currently an active
     # coaching client of this program's owner (apps.programs.services.
     # visible_to's own extended Q filter, apps.coaching.services.
-    # import_program_from_coach's own explicit re-check) — being added
+    # import_program_from_coach's own explicit re-check) - being added
     # here never bypasses that relationship check on its own.
     shared_with_clients = models.ManyToManyField(
         settings.AUTH_USER_MODEL, blank=True, related_name="shared_programs"
     )
-    # The coach's program this was imported from, if any — set only by
+    # The coach's program this was imported from, if any - set only by
     # apps.coaching.services.import_program_from_coach, never by the
     # plain apps.programs.services.copy_program a user runs on their
     # own/a system template. SET_NULL (not PROTECT/CASCADE): deleting
     # the source program, or its owner's whole account, must never
-    # break this independent copy — it just permanently stops being
+    # break this independent copy - it just permanently stops being
     # able to offer coach updates (apps.coaching.services.
     # program_update_available already treats a null imported_from as
     # "no update possible").
@@ -68,11 +68,11 @@ class Program(TimeStampedModel):
     )
     # export_program() payload of imported_from as of the last import
     # or applied coach update (apps.coaching.services.
-    # apply_program_update) — diffed against imported_from's *current*
+    # apply_program_update) - diffed against imported_from's *current*
     # export to preview an update, never against this copy's own live
     # state, which the client may have edited independently since.
     coach_snapshot = models.JSONField(null=True, blank=True, default=None)
-    # imported_from.version at the time coach_snapshot was captured — a
+    # imported_from.version at the time coach_snapshot was captured - a
     # cheap integer compare (apps.coaching.services.
     # program_update_available) against imported_from.version's
     # *current* value for whether an update exists at all, so listing a
@@ -109,7 +109,7 @@ class Weekday(models.IntegerChoices):
 class Workout(TimeStampedModel):
     """A planned workout inside a program (e.g. "Workout A").
 
-    `scheduled_weekday` is optional — a program can be run as a fixed
+    `scheduled_weekday` is optional - a program can be run as a fixed
     weekly schedule or as an unscheduled rotation the user works through
     in `order` (see docs/PRODUCT_REQUIREMENTS.md).
     """
@@ -126,12 +126,12 @@ class Workout(TimeStampedModel):
         ordering = ["program_id", "order", "id"]
 
     def __str__(self):
-        return f"{self.program.name} — {self.name}"
+        return f"{self.program.name} - {self.name}"
 
 
 class ProgressionMethod(models.TextChoices):
     """See docs/PROGRESSION.md. The algorithms themselves belong to
-    apps.progression (Phase 6) — this enum just records, per prescription,
+    apps.progression (Phase 6) - this enum just records, per prescription,
     which one applies; apps.progression will interpret it."""
 
     DOUBLE_PROGRESSION = "double_progression", _("Double progression")
@@ -147,7 +147,7 @@ class ExercisePrescription(TimeStampedModel):
     """What a workout expects for one exercise: sets, rep range, targets.
 
     Values here are the *plan*. Once workout logging exists (Phase 4),
-    starting a session snapshots these onto the session's own records —
+    starting a session snapshots these onto the session's own records -
     editing a prescription afterward never changes already-performed
     history (see docs/ARCHITECTURE.md).
     """
@@ -168,7 +168,7 @@ class ExercisePrescription(TimeStampedModel):
         null=True,
         blank=True,
         help_text="Canonical kg. What a workout session snapshots as its "
-        "starting target — set manually for now; a future progression "
+        "starting target - set manually for now; a future progression "
         "engine (Phase 6) may update it between cycles.",
     )
     target_rpe = models.DecimalField(
@@ -192,7 +192,7 @@ class ExercisePrescription(TimeStampedModel):
         ordering = ["workout_id", "order", "id"]
 
     def __str__(self):
-        return f"{self.workout.name} — {self.exercise.name}"
+        return f"{self.workout.name} - {self.exercise.name}"
 
     def clean(self):
         if self.min_reps and self.max_reps and self.min_reps > self.max_reps:

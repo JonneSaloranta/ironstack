@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% load static i18n %}
-{% block title %}{% trans "Training" %} — IronStack{% endblock %}
+{% block title %}{% trans "Training" %} - IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
   <h1 class="no-margin">{% if session.workout %}{% trans session.workout.name %}{% else %}{% trans "Freeform workout" %}{% endif %}</h1>
@@ -10,7 +10,7 @@
 </div>
 
 {% comment %}
-Rest timer lives outside #train-panel deliberately — it must survive
+Rest timer lives outside #train-panel deliberately - it must survive
 the hx-swap that happens every time a set is logged or Prev/Next is
 tapped, or a countdown in progress would reset to zero mid-rest.
 Started automatically via the "rest-timer-start" HX-Trigger event

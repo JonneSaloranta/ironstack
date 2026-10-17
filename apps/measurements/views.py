@@ -76,11 +76,11 @@ class MeasurementHistoryView(LoginRequiredMixin, DetailView):
         context["history"] = history
         context["unit_label"] = unit_label
         # The chart plots display units (what the user actually reads),
-        # not canonical storage — same converted values as the table.
+        # not canonical storage - same converted values as the table.
         chart_points = [(entry.display_value, entry.recorded_at) for entry in history]
         context["chart"] = services.build_chart_series(chart_points)
 
-        # Statistics card — canonical stats converted to display units
+        # Statistics card - canonical stats converted to display units
         # here, the same split every other converted value on this page
         # already follows (services stays unit-agnostic; the view/
         # template are the only layers that know about `user`'s
@@ -110,7 +110,7 @@ class MeasurementHistoryView(LoginRequiredMixin, DetailView):
         context["form"] = BodyMeasurementForm(user=user, measurement_type=measurement_type)
         context["can_deactivate"] = measurement_type.owner_id == user.id
 
-        # BMI lives here, not on the dashboard/profile — it only ever
+        # BMI lives here, not on the dashboard/profile - it only ever
         # meant anything alongside a *logged body weight*, and this is
         # the page that logs one. Gated the same way it always was:
         # `show_bmi` (a personal display toggle) and specifically the

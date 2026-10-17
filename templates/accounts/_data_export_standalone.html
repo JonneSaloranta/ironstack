@@ -1,7 +1,7 @@
 {% load i18n %}<!doctype html>
 {% comment %}
 Used only for "Download as HTML" (apps.accounts.views.DataExportView.
-_html_download_response) — deliberately NOT templates/accounts/
+_html_download_response) - deliberately NOT templates/accounts/
 data_export.html, and deliberately not extending base.html at all.
 That page's nav bar, icons, and layout only look right with base.css
 loaded from this instance's own server; a downloaded copy is meant to
@@ -10,7 +10,7 @@ against this instance again (or even online at all), so every style
 it needs has to travel inside the file itself. A first version reused
 data_export.html directly: its <svg class="nav-icon"> elements have
 no width/height of their own (sized entirely by a CSS class that
-never loaded), rendering at the browser's raw intrinsic SVG size —
+never loaded), rendering at the browser's raw intrinsic SVG size -
 enormous, and the actual bug report that led here. This template
 carries no icons, no nav, no external stylesheet or script at all,
 just a trimmed, self-contained subset of the same dark IronStack
@@ -20,7 +20,7 @@ still looks like IronStack wherever it's opened.
 <html lang="{{ LANGUAGE_CODE }}">
 <head>
   <meta charset="utf-8">
-  <title>IronStack — {% trans "Your data" %}</title>
+  <title>IronStack - {% trans "Your data" %}</title>
   <style>
     :root {
       --color-bg: #101317;
@@ -65,7 +65,7 @@ still looks like IronStack wherever it's opened.
 </head>
 <body>
   <div class="container">
-    <h1>IronStack — {% trans "Your data" %}</h1>
+    <h1>IronStack - {% trans "Your data" %}</h1>
     <p class="text-muted">
       {% blocktrans %}A snapshot of everything in {{ username }}'s IronStack account.{% endblocktrans %}
     </p>

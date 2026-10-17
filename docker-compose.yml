@@ -13,10 +13,10 @@ services:
 
   web:
     # Published by .github/workflows/ci.yml's publish-image job on
-    # every push to master — :latest plus a :<VERSION> tag. `docker
+    # every push to master - :latest plus a :<VERSION> tag. `docker
     # compose pull && docker compose up -d` (no --build) uses this
     # image directly, no local build needed on the production host at
-    # all. `build:` below stays as a local-build fallback — `docker
+    # all. `build:` below stays as a local-build fallback - `docker
     # compose up --build`/`scripts/build.sh` still work exactly as
     # before, e.g. for anyone who'd rather not depend on GHCR. Pin a
     # specific released version instead of always-latest by setting
@@ -49,7 +49,7 @@ services:
       start_period: 15s
     # migrate/createcachetable/collectstatic/compilemessages/
     # announce_version_update all used to live here too, chained ahead
-    # of gunicorn with `sh -c "... && gunicorn ..."` — moved into the
+    # of gunicorn with `sh -c "... && gunicorn ..."` - moved into the
     # image's own docker-entrypoint.sh (docs/ARCHITECTURE.md
     # "Versioning") so a step added to that sequence ships with every
     # `docker compose pull`, not just wherever this exact command
@@ -57,7 +57,7 @@ services:
     command: gunicorn config.wsgi:application --bind 0.0.0.0:8000
       --workers 3 --timeout 30 --access-logfile - --error-logfile -
 
-  # Automatic daily backups (docs/BACKUP.md) — the same image as `web`
+  # Automatic daily backups (docs/BACKUP.md) - the same image as `web`
   # (build: *web-build reuses its exact build config via a YAML
   # anchor, so there's one source of truth for it, not two configs
   # that could drift apart), just running apps.core.management.
@@ -68,7 +68,7 @@ services:
   # see `web`'s filesystem without its own mount of the same volume.
   # Comment out or remove this service entirely if you'd rather rely
   # on a host cron entry calling `docker compose exec web python
-  # manage.py create_backup` instead — there's no separate on/off
+  # manage.py create_backup` instead - there's no separate on/off
   # toggle for it.
   backup-scheduler:
     image: ghcr.io/jonnesaloranta/ironstack:${IRONSTACK_IMAGE_TAG:-latest}
@@ -90,14 +90,14 @@ services:
     command: python manage.py backup_scheduler
 
   # The rest timer's server-side "time's up" backstop
-  # (apps.workouts.models.RestTimerNotification's own docstring) —
+  # (apps.workouts.models.RestTimerNotification's own docstring) -
   # same shape as backup-scheduler just above (same image, same
   # build config via the *web-build anchor), running apps.workouts.
   # management.commands.rest_timer_dispatcher instead. No media/
   # backups volume needed: this only ever reads/writes the database
   # and calls out to the push service, unlike backup-scheduler's own
   # filesystem archiving. A no-op loop (send_push_notification's own
-  # early return) if VAPID_*/PUSH_ENABLED aren't configured — safe to
+  # early return) if VAPID_*/PUSH_ENABLED aren't configured - safe to
   # leave running either way, but comment out or remove entirely if
   # you'd rather not run the extra container at all.
   notification-scheduler:
@@ -116,12 +116,12 @@ services:
         condition: service_healthy
     command: python manage.py rest_timer_dispatcher
 
-  # Writes AI assistant replies (docs/ASSISTANT.md) — same image and
+  # Writes AI assistant replies (docs/ASSISTANT.md) - same image and
   # build config as backup-scheduler/notification-scheduler above,
   # running apps.assistant.management.commands.assistant_worker. A reply
   # with a few tool calls outlasts gunicorn's 30-second timeout, so it
   # can't run inside a web request. An idle polling loop if the assistant
-  # isn't configured — safe to leave running, or comment out/remove.
+  # isn't configured - safe to leave running, or comment out/remove.
   # Scale it (`--scale assistant-worker=2`) for more concurrent replies.
   assistant-worker:
     image: ghcr.io/jonnesaloranta/ironstack:${IRONSTACK_IMAGE_TAG:-latest}

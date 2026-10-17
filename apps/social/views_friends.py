@@ -42,14 +42,14 @@ def friend_search(request):
     results = []
     if query:
         friend_ids = [f.pk for f in services.friends_of(request.user)]
-        # Excluded from the queryset itself, before the [:20] slice —
+        # Excluded from the queryset itself, before the [:20] slice -
         # not filtered out of an already-sliced Python list, which
         # could silently return fewer than 20 (or zero) results even
         # when 20+ real matches exist further down, if the ones that
         # happened to sort first were all friends. Blocked users are
         # excluded too (either direction): sending them a request
         # would just fail anyway (services.send_friend_request), so
-        # there's no reason for them to show up as a result at all —
+        # there's no reason for them to show up as a result at all -
         # the point of a block is not needing to see that person.
         results = list(
             User.objects.filter(username__icontains=query)

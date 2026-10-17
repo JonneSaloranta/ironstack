@@ -1,7 +1,7 @@
 {% load static i18n %}<!doctype html>
 {% comment %}
 data-theme/data-appearance (apps.accounts.models.Theme/Appearance,
-static/css/base.css) — data-theme names which palette (omitted for
+static/css/base.css) - data-theme names which palette (omitted for
 Theme.DEFAULT, which is what a signed-out visitor gets too, since
 AnonymousUser has no `.theme`); data-appearance picks that palette's
 dark or light half for an explicit choice, and is left off entirely
@@ -17,7 +17,7 @@ instead.
   {% comment %}
     seo_indexing_enabled: apps.core.context_processors.seo, backed by
     apps.core.models.SeoSettings (Profile → Administration → Site &
-    SEO) — off by default, since almost every install of this app is
+    SEO) - off by default, since almost every install of this app is
     a private, self-hosted instance for one household holding another
     person's health data, not a public site anyone should be finding
     through a search engine. robots.txt (apps.core.views.robots_txt)
@@ -30,9 +30,9 @@ instead.
   {% else %}
     <meta name="robots" content="noindex, nofollow">
   {% endif %}
-  <meta name="description" content="{% block meta_description %}{% trans "Self-hosted, mobile-first fitness and activity tracker — workout logging, progression, nutrition, and body tracking, running entirely on your own infrastructure." %}{% endblock %}">
+  <meta name="description" content="{% block meta_description %}{% trans "Self-hosted, mobile-first fitness and activity tracker - workout logging, progression, nutrition, and body tracking, running entirely on your own infrastructure." %}{% endblock %}">
   {% comment %}
-    Open Graph/Twitter Card — mainly seen by a link-unfurling bot
+    Open Graph/Twitter Card - mainly seen by a link-unfurling bot
     (Slack, Discord, iMessage, ...) when someone shares a link to this
     instance, not by a human browser; every block below can be
     overridden per page (e.g. login.html's own og:title), but the
@@ -50,9 +50,9 @@ instead.
   <link rel="manifest" href="{% url 'web-manifest' %}" crossorigin="use-credentials">
   {% comment %}
   Mirrors the data-theme/data-appearance resolution above this
-  document's own <html> tag — browser chrome (address bar, PWA splash)
+  document's own <html> tag - browser chrome (address bar, PWA splash)
   follows the same explicit choice, or the same prefers-color-scheme
-  media queries when "auto" — using theme_color_dark/theme_color_light
+  media queries when "auto" - using theme_color_dark/theme_color_light
   (apps.core.context_processors.theming) since a <meta> tag can't read
   a CSS custom property the way the rest of this app's colors resolve.
   Two meta tags, not one, for "auto": browsers that support per-scheme
@@ -74,16 +74,16 @@ instead.
   Any page-specific script defining a function an Alpine x-data=""
   expression references (ironstackCarousel, ironstackRestTimer, ...)
   must execute *before* alpine.min.js's own deferred script runs, not
-  just appear anywhere before it in the rendered page — deferred
+  just appear anywhere before it in the rendered page - deferred
   scripts execute in document order, but Alpine's own auto-start calls
   Alpine.start() synchronously the instant its script runs if the
   document has already finished parsing (which is always true for
   *any* deferred script, defer-by-definition only runs once parsing
-  completes) — it does not wait for a later deferred script's globals
+  completes) - it does not wait for a later deferred script's globals
   to exist first. This used to work by accident when these were
   unconverted inline <script> blocks lower in <body> (they ran
   synchronously *during* parsing, before any deferred script could
-  run at all) — see apps.core.middleware.ContentSecurityPolicyMiddleware
+  run at all) - see apps.core.middleware.ContentSecurityPolicyMiddleware
   for why they were moved to external files at all. Regression fixed:
   the achievements carousel silently failed to init (ironstackCarousel
   was still undefined when Alpine scanned x-data="ironstackCarousel(...)")
@@ -99,15 +99,15 @@ instead.
   <script src="{% static 'js/alpine.min.js' %}" defer></script>
   <script src="{% static 'js/sw-register.js' %}" defer></script>
   {% if tutorial_data %}
-    {% comment %}apps.tutorials — this page's guided tour, see docs/TUTORIALS.md.{% endcomment %}
+    {% comment %}apps.tutorials - this page's guided tour, see docs/TUTORIALS.md.{% endcomment %}
     {{ tutorial_data|json_script:"tutorial-data" }}
     <script src="{% static 'js/tutorial.js' %}" defer></script>
   {% endif %}
 </head>
 <body data-confirm-ok="{% trans "Confirm" %}"
       data-confirm-cancel="{% trans "Cancel" %}"
-      data-htmx-error-server="{% trans "Something went wrong — that change was not saved. Please try again." %}"
-      data-htmx-error-network="{% trans "Could not reach the server — check your connection. That change was not saved." %}"
+      data-htmx-error-server="{% trans "Something went wrong - that change was not saved. Please try again." %}"
+      data-htmx-error-network="{% trans "Could not reach the server - check your connection. That change was not saved." %}"
       data-dismiss-label="{% trans "Dismiss" %}"
       data-service-worker-url="{% url 'service-worker' %}"
       data-zxing-url="{% static 'js/zxing.min.js' %}"
@@ -118,7 +118,7 @@ instead.
       data-push-save-failed-message="{% trans "Saving the subscription failed." %}"
       {% comment %}
       static/js/barcode-scanner.js's own human-readable explanation
-      for `!navigator.mediaDevices` — a plain .js file (unlike this
+      for `!navigator.mediaDevices` - a plain .js file (unlike this
       template) is never run through Django's template engine, so a
       translated string it needs has to be handed to it this same
       data-attribute way, the same reasoning every other server-
@@ -129,7 +129,7 @@ instead.
       {% comment %}
       Reserves clearance at the bottom of the page for whichever FAB
       (training-fab and/or messages-fab, below) is actually about to
-      render on *this* page — without it, nothing stopped either one
+      render on *this* page - without it, nothing stopped either one
       from floating directly on top of the last card's own content
       (concretely: session-train's "Mark complete" button, and the
       dashboard's "Continue training" card). See body.has-fab in
@@ -140,7 +140,7 @@ instead.
   {% comment %}
   Populated two ways: directly below, with any Django `messages`
   framework message this request's response carries ("Preferences
-  saved.", "API key revoked.", ...) — regression: these used to render
+  saved.", "API key revoked.", ...) - regression: these used to render
   as a plain, permanent `.card` at the top of <main>, staying on screen
   until the next full page navigation happened to push it off; also via
   HTMX out-of-band swaps whenever a logged set creates a new PR
@@ -195,12 +195,12 @@ instead.
       {% include "core/_icon.html" with name="programs" %}
       <span class="nav-label">{% trans "Programs" %}</span>
     </a>
-    <a href="{% url 'profile' %}" data-tour="nav-profile" aria-label="{% if social_badge %}{% trans "Profile — new friend/group activity" %}{% else %}{% trans "Profile" %}{% endif %}" {% if request.resolver_match.view_name == 'profile' or request.resolver_match.app_name == 'social' or request.resolver_match.app_name == 'coaching' or request.resolver_match.app_name == 'api' %}aria-current="page"{% endif %}>
+    <a href="{% url 'profile' %}" data-tour="nav-profile" aria-label="{% if social_badge %}{% trans "Profile - new friend/group activity" %}{% else %}{% trans "Profile" %}{% endif %}" {% if request.resolver_match.view_name == 'profile' or request.resolver_match.app_name == 'social' or request.resolver_match.app_name == 'coaching' or request.resolver_match.app_name == 'api' %}aria-current="page"{% endif %}>
       {% comment %}
       Same show_gravatar/gravatar_url/@error pattern templates/accounts/
       profile.html's own avatar already uses (that one's own comment
       explains the `d=404` request-fails-outright behavior a user with
-      no Gravatar image gets) — this is the one other place a user's
+      no Gravatar image gets) - this is the one other place a user's
       own picture appears, so it gets the same "assume it loads, fall
       back to the plain icon if it doesn't" treatment rather than
       trusting it unconditionally. Both elements need one shared
@@ -223,12 +223,12 @@ instead.
   {% endif %}
 
   {% comment %}
-  Not shown on the training-fab's own destination page — pointless to
+  Not shown on the training-fab's own destination page - pointless to
   float a "continue training" shortcut over the training screen you're
   already on, and (the real reason this is checked, not just tidiness)
   it used to sit fixed over this page's own "Mark complete" button
   with no content-side clearance, since nothing reserved space for a
-  fixed-position element at all — see body.has-fab below for the fix
+  fixed-position element at all - see body.has-fab below for the fix
   that now applies everywhere else this still floats.
   {% endcomment %}
   {% if active_workout_session and request.resolver_match.view_name != 'workouts:session-train' %}

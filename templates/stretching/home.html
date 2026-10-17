@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% load i18n core_extras %}
-{% block title %}{% trans "Stretching" %} — IronStack{% endblock %}
+{% block title %}{% trans "Stretching" %} - IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
   <h1 class="no-margin">{% trans "Stretching" %}</h1>
@@ -13,7 +13,7 @@
 {% if active_session %}
   <a class="card card-link" href="{% url 'stretching:session-play' active_session.pk %}">
     <strong>{% trans "Continue stretching" %}</strong>
-    <p class="text-muted">{{ active_session.name|default:_("Stretching")|translate_content }} — {% blocktrans with started_at=active_session.started_at|date:"H:i" %}started {{ started_at }}{% endblocktrans %}</p>
+    <p class="text-muted">{{ active_session.name|default:_("Stretching")|translate_content }} - {% blocktrans with started_at=active_session.started_at|date:"H:i" %}started {{ started_at }}{% endblocktrans %}</p>
   </a>
 {% endif %}
 

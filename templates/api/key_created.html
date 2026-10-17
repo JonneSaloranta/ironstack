@@ -1,13 +1,13 @@
 {% extends "base.html" %}
 {% load i18n %}
-{% block title %}{% trans "API key created" %} — IronStack{% endblock %}
+{% block title %}{% trans "API key created" %} - IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
   <h1 class="no-margin">{% trans "API key created" %}</h1>
 </div>
 
 <div class="card">
-  <p><strong>{% trans "Copy this key now — you won't be able to see it again." %}</strong></p>
+  <p><strong>{% trans "Copy this key now - you won't be able to see it again." %}</strong></p>
   <p class="text-muted">{{ api_key.name }}</p>
   <textarea class="mono-text" readonly rows="3" x-data="{}" @click="$el.select()"
             aria-label="{% trans "Your new API key" %}">{{ raw_secret }}</textarea>

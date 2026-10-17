@@ -4,7 +4,7 @@ from django.core.management.base import BaseCommand
 
 class Command(BaseCommand):
     """Prints a fresh Fernet key for ASSISTANT_ENCRYPTION_KEY
-    (config.settings.base) — what users' own saved API keys are encrypted
+    (config.settings.base) - what users' own saved API keys are encrypted
     with. Changing it later makes every saved key unreadable; users then
     simply enter theirs again (apps.assistant's settings page says the key
     was rejected)."""

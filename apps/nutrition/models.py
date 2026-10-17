@@ -1,4 +1,4 @@
-"""Domain model for the nutrition/calorie system — see docs/NUTRITION.md
+"""Domain model for the nutrition/calorie system - see docs/NUTRITION.md
 for the full reasoning behind every model and field here, not just what
 each one is.
 
@@ -6,10 +6,10 @@ Two historized "append, don't mutate" chains, same shape as
 apps.records.PersonalRecord: NutritionGoal (the user's stated intent)
 and NutritionTarget (the derived, numeric calories/macros output).
 Setting a new one stamps `ended_at` on whichever row was previously
-open rather than overwriting it in place — see
+open rather than overwriting it in place - see
 apps.nutrition.services.set_goal/set_target.
 
-Calories are always kcal — unlike weight/length (apps.core.units,
+Calories are always kcal - unlike weight/length (apps.core.units,
 apps.measurements.units), there's no per-user display unit to convert
 between, so no unit_kind-style dispatch layer exists here.
 """
@@ -27,7 +27,7 @@ from apps.core.models import TimeStampedModel
 class BiologicalSex(models.TextChoices):
     """A physiological input to the Mifflin-St Jeor BMR formula
     (apps.nutrition.energy.calculate_bmr), not a gender-identity
-    field — see docs/NUTRITION.md "NutritionProfile"."""
+    field - see docs/NUTRITION.md "NutritionProfile"."""
 
     MALE = "male", _("Male")
     FEMALE = "female", _("Female")
@@ -42,7 +42,7 @@ class ActivityJob(models.TextChoices):
 
 class ActivityLevel(models.TextChoices):
     """The actual TDEE-multiplier bucket (apps.nutrition.energy.
-    ACTIVITY_MULTIPLIERS) — suggested from the more concrete fields
+    ACTIVITY_MULTIPLIERS) - suggested from the more concrete fields
     above via apps.nutrition.energy.suggest_activity_level rather than
     asked directly, then confirmed/overridden by the user. See
     docs/NUTRITION.md "Choosing an activity level"."""
@@ -55,13 +55,13 @@ class ActivityLevel(models.TextChoices):
 
 
 class GoalType(models.TextChoices):
-    FAT_LOSS_AGGRESSIVE = "fat_loss_aggressive", _("Fat loss — aggressive")
-    FAT_LOSS_MODERATE = "fat_loss_moderate", _("Fat loss — moderate")
-    FAT_LOSS_CONSERVATIVE = "fat_loss_conservative", _("Fat loss — conservative")
+    FAT_LOSS_AGGRESSIVE = "fat_loss_aggressive", _("Fat loss - aggressive")
+    FAT_LOSS_MODERATE = "fat_loss_moderate", _("Fat loss - moderate")
+    FAT_LOSS_CONSERVATIVE = "fat_loss_conservative", _("Fat loss - conservative")
     MAINTENANCE = "maintenance", _("Maintenance")
-    MUSCLE_GAIN_LEAN = "muscle_gain_lean", _("Muscle gain — lean bulk")
-    MUSCLE_GAIN_MODERATE = "muscle_gain_moderate", _("Muscle gain — moderate bulk")
-    MUSCLE_GAIN_AGGRESSIVE = "muscle_gain_aggressive", _("Muscle gain — aggressive bulk")
+    MUSCLE_GAIN_LEAN = "muscle_gain_lean", _("Muscle gain - lean bulk")
+    MUSCLE_GAIN_MODERATE = "muscle_gain_moderate", _("Muscle gain - moderate bulk")
+    MUSCLE_GAIN_AGGRESSIVE = "muscle_gain_aggressive", _("Muscle gain - aggressive bulk")
 
 
 class TargetSource(models.TextChoices):
@@ -77,40 +77,40 @@ class ServingUnit(models.TextChoices):
 
 
 class NutriScoreGrade(models.TextChoices):
-    """Nutri-Score — a published, independently-defined A-E healthiness
+    """Nutri-Score - a published, independently-defined A-E healthiness
     grade (France's public health agency, adopted by OpenFoodFacts and
     several EU retailers), not a score this app invents itself. Only
     ever set from an imported OpenFoodFacts product's own
-    `nutriscore_grade` (apps.nutrition.openfoodfacts.parse_product) —
+    `nutriscore_grade` (apps.nutrition.openfoodfacts.parse_product) -
     never computed here, since doing that correctly needs the full
     published formula (energy, sugars, saturated fat, sodium, fibre,
     protein, fruit/veg/nut content) this app doesn't otherwise track
     for a user's own hand-entered food. See docs/NUTRITION.md
     "Nutri-Score / NOVA"."""
 
-    A = "a", _("A — best")
+    A = "a", _("A - best")
     B = "b", _("B")
     C = "c", _("C")
     D = "d", _("D")
-    E = "e", _("E — worst")
+    E = "e", _("E - worst")
 
 
 class NovaGroup(models.IntegerChoices):
-    """NOVA — a published 1-4 food-processing-level classification
+    """NOVA - a published 1-4 food-processing-level classification
     (not a nutrition score; a highly processed food can still be
     "healthy" by other measures, and vice versa), same "imported from
     OpenFoodFacts, never invented here" reasoning as NutriScoreGrade
     above."""
 
-    UNPROCESSED = 1, _("1 — unprocessed or minimally processed")
-    PROCESSED_CULINARY = 2, _("2 — processed culinary ingredients")
-    PROCESSED = 3, _("3 — processed food")
-    ULTRA_PROCESSED = 4, _("4 — ultra-processed food")
+    UNPROCESSED = 1, _("1 - unprocessed or minimally processed")
+    PROCESSED_CULINARY = 2, _("2 - processed culinary ingredients")
+    PROCESSED = 3, _("3 - processed food")
+    ULTRA_PROCESSED = 4, _("4 - ultra-processed food")
 
 
 class NutritionProfile(TimeStampedModel):
     """Current physiological/lifestyle facts the energy engine
-    (apps.nutrition.energy) needs — one row per user, not historized
+    (apps.nutrition.energy) needs - one row per user, not historized
     (see docs/NUTRITION.md: these are inputs a user corrects in place,
     like User.height, not decisions worth preserving like a goal is).
     """
@@ -132,7 +132,7 @@ class NutritionProfile(TimeStampedModel):
         null=True,
         blank=True,
         help_text=_(
-            "If you already track this, tell us — used only to compare against this "
+            "If you already track this, tell us - used only to compare against this "
             "app's own estimate, never as an input to it."
         ),
     )
@@ -151,7 +151,7 @@ class NutritionProfile(TimeStampedModel):
 
 
 class NutritionGoal(TimeStampedModel):
-    """The user's stated intent — historized (append, don't mutate),
+    """The user's stated intent - historized (append, don't mutate),
     same shape as apps.records.PersonalRecord's immutable log, just
     for a decision rather than an achievement. See
     apps.nutrition.services.set_goal for how a new row supersedes the
@@ -161,12 +161,12 @@ class NutritionGoal(TimeStampedModel):
         settings.AUTH_USER_MODEL, related_name="nutrition_goals", on_delete=models.CASCADE
     )
     goal_type = models.CharField(max_length=25, choices=GoalType.choices)
-    # Canonical kilograms, same as apps.measurements.BodyMeasurement —
+    # Canonical kilograms, same as apps.measurements.BodyMeasurement -
     # optional, since a goal like "maintenance" has no target weight.
     target_weight = models.DecimalField(max_digits=8, decimal_places=4, null=True, blank=True)
     # Signed: negative for fat loss, positive for muscle gain, 0 for
     # maintenance. See docs/NUTRITION.md "Calorie target from a goal"
-    # for why this — not a raw calorie delta — is what the user sets.
+    # for why this - not a raw calorie delta - is what the user sets.
     target_rate_kg_per_week = models.DecimalField(max_digits=5, decimal_places=3)
     started_at = models.DateTimeField(auto_now_add=True)
     ended_at = models.DateTimeField(null=True, blank=True)
@@ -176,7 +176,7 @@ class NutritionGoal(TimeStampedModel):
         ordering = ["-started_at"]
         constraints = [
             # Only one open (not-yet-superseded) goal per user at a
-            # time — the "current goal" query is always
+            # time - the "current goal" query is always
             # filter(user=user, ended_at__isnull=True), same shape as
             # WorkoutSession's "in-progress session" and
             # NutritionTarget's "current target" below.
@@ -192,11 +192,11 @@ class NutritionGoal(TimeStampedModel):
 
 
 class NutritionTarget(TimeStampedModel):
-    """The derived, numeric output — historized the same way as
+    """The derived, numeric output - historized the same way as
     NutritionGoal above. Deliberately one model for calories *and*
     macros, not two: they're always set together (macros are computed
     *from* the calorie figure) and the spec asks for them to be
-    historized as one unit — see docs/NUTRITION.md "NutritionTarget"
+    historized as one unit - see docs/NUTRITION.md "NutritionTarget"
     for why this deviates from the example CalorieTarget/MacroTarget
     split."""
 
@@ -205,7 +205,7 @@ class NutritionTarget(TimeStampedModel):
     )
     # CASCADE, not PROTECT: a goal and its targets always belong to
     # the same user and are only ever deleted together (deleting the
-    # user cascades to both) — PROTECT would block exactly that
+    # user cascades to both) - PROTECT would block exactly that
     # cascade, since Django's deletion collector checks a PROTECT
     # relation before resolving whether the referencer is also being
     # deleted in the same operation. There is no scenario where a
@@ -220,15 +220,15 @@ class NutritionTarget(TimeStampedModel):
     fat_grams = models.DecimalField(max_digits=6, decimal_places=2)
     source = models.CharField(max_length=10, choices=TargetSource.choices)
     # Human-readable explanation, same convention as
-    # apps.progression.engine.ProgressionResult.reason — every target
+    # apps.progression.engine.ProgressionResult.reason - every target
     # can say why it is what it is, never a bare number. Frozen at
-    # whatever language was active when this row was created — the
+    # whatever language was active when this row was created - the
     # structured fields below let `display_reason` re-render this
     # sentence in the *current* language instead, for any row that has
     # them; `reason` itself stays as the original, permanent fallback
     # for a row created before those fields existed.
     reason = models.TextField(blank=True)
-    # Snapshot of apps.nutrition.energy.CalorieTargetReasonData — only
+    # Snapshot of apps.nutrition.energy.CalorieTargetReasonData - only
     # populated for a target created via the "calculated" (onboarding/
     # goal-change) path, apps.nutrition.energy.calculate_calorie_target.
     # All null for a target from any other source (e.g. TargetSource.
@@ -236,7 +236,7 @@ class NutritionTarget(TimeStampedModel):
     # case `display_reason` falls back to the frozen `reason` text
     # above. Kept as the individual numbers rather than a pre-joined
     # sentence specifically so that sentence can be rebuilt in whatever
-    # language is active at display time — the numbers themselves never
+    # language is active at display time - the numbers themselves never
     # change, only the words around them.
     tdee = models.PositiveIntegerField(null=True, blank=True)
     capped_rate_kg_per_week = models.DecimalField(
@@ -270,7 +270,7 @@ class NutritionTarget(TimeStampedModel):
         """`reason`, re-rendered in whichever language is active right
         now when the structured snapshot is available, instead of
         whatever language happened to be active when this row was
-        created — see the field comments above and
+        created - see the field comments above and
         apps.nutrition.energy.render_calorie_target_reason. Falls back
         to the frozen `reason` text itself when it isn't (a target
         created before these fields existed, or via a source that
@@ -292,10 +292,10 @@ class NutritionTarget(TimeStampedModel):
 
 
 class MealSlot(models.Model):
-    """Named diary categories — Breakfast/Lunch/Dinner/Evening snack
+    """Named diary categories - Breakfast/Lunch/Dinner/Evening snack
     seeded as system defaults (owner=None), a user can add their own.
     Exactly apps.measurements.MeasurementType's owner-nullable
-    system-or-custom pattern reused verbatim — see
+    system-or-custom pattern reused verbatim - see
     docs/NUTRITION.md "MealSlot"."""
 
     name = models.CharField(max_length=50)
@@ -339,7 +339,7 @@ class Food(TimeStampedModel):
     MeasurementType's system-or-custom split: a user-created food has
     `owner=request.user`; a food imported from OpenFoodFacts
     (apps.nutrition.openfoodfacts, docs/NUTRITION.md "OpenFoodFacts
-    integration") gets `owner=None` — a shared row every user can see
+    integration") gets `owner=None` - a shared row every user can see
     and log, the same as a system MeasurementType."""
 
     owner = models.ForeignKey(
@@ -357,7 +357,7 @@ class Food(TimeStampedModel):
     protein_grams = models.DecimalField(max_digits=6, decimal_places=2)
     carbohydrate_grams = models.DecimalField(max_digits=6, decimal_places=2)
     fat_grams = models.DecimalField(max_digits=6, decimal_places=2)
-    # Optional extras — nullable, not defaulted to 0, so "unknown" is
+    # Optional extras - nullable, not defaulted to 0, so "unknown" is
     # never confused with "genuinely zero" (docs/NUTRITION.md "Food").
     fiber_grams = models.DecimalField(max_digits=6, decimal_places=2, null=True, blank=True)
     sugar_grams = models.DecimalField(max_digits=6, decimal_places=2, null=True, blank=True)
@@ -367,7 +367,7 @@ class Food(TimeStampedModel):
     sodium_mg = models.PositiveIntegerField(null=True, blank=True)
     # The rest of an EU/Finnish nutrition label (Regulation 1169/2011
     # Annex XV), same nullable-means-unknown rule. `energy_kj` is the
-    # label's own kJ figure when known — otherwise it's derived from
+    # label's own kJ figure when known - otherwise it's derived from
     # `calories` for display. `salt_grams` is what a label states;
     # `sodium_mg` stays the figure totals are summed from (salt =
     # sodium × 2.5), and either one fills in the other when missing.
@@ -378,10 +378,10 @@ class Food(TimeStampedModel):
     # Every other per-100 g/ml nutrient OpenFoodFacts has for the
     # product (vitamins, minerals, fat breakdown, ...), verbatim:
     # `[{"key": "vitamin-c", "value": "12", "unit": "mg"}, ...]`.
-    # Display-only — nothing sums or scales it — so a plain JSON list
+    # Display-only - nothing sums or scales it - so a plain JSON list
     # rather than a column per nutrient OFF might ever report.
     other_nutrients = models.JSONField(default=list, blank=True)
-    # Set only for a food imported from OpenFoodFacts — their own
+    # Set only for a food imported from OpenFoodFacts - their own
     # barcode, unique when present (Postgres allows any number of
     # NULLs alongside a unique constraint, so this stays optional for
     # every user-created food). off_synced_at drives the staleness
@@ -390,7 +390,7 @@ class Food(TimeStampedModel):
     # used, rather than a periodic bulk re-sync.
     off_id = models.CharField(max_length=64, null=True, blank=True, unique=True)
     off_synced_at = models.DateTimeField(null=True, blank=True)
-    # Both null for every hand-entered food — see NutriScoreGrade/
+    # Both null for every hand-entered food - see NutriScoreGrade/
     # NovaGroup's own docstrings for why neither is ever computed here.
     nutri_score = models.CharField(
         max_length=1, choices=NutriScoreGrade.choices, null=True, blank=True
@@ -399,9 +399,9 @@ class Food(TimeStampedModel):
         choices=NovaGroup.choices, null=True, blank=True
     )
     # Both blank for every hand-entered food, same as nutri_score/
-    # nova_group above — neither is something this app generates on
+    # nova_group above - neither is something this app generates on
     # its own, only ever imported. `image_url` is OFF's own hosted
-    # "front of pack" photo (`image_front_url` — already a modest,
+    # "front of pack" photo (`image_front_url` - already a modest,
     # web-sized product photo, not the raw uploaded original), linked
     # directly rather than downloaded and re-stored: OFF operates its
     # own image CDN precisely for this, and mirroring it ourselves
@@ -410,13 +410,13 @@ class Food(TimeStampedModel):
     # decorative (identifying a food at a glance) and never read by
     # any nutrition calculation. `categories` is OFF's own
     # comma-separated `categories` string (e.g. "Meats, Poultry,
-    # Chicken") verbatim, plain display text — not the taxonomy
+    # Chicken") verbatim, plain display text - not the taxonomy
     # `apps.nutrition.openfoodfacts.list_categories` browses by ID,
     # which is a live-queried OFF concept with no need to ever land in
     # this column.
     image_url = models.URLField(max_length=500, blank=True)
     # OFF's own pre-generated 100px "thumb" variant of the same photo
-    # (`image_front_thumb_url`) — a separate, smaller file OFF already
+    # (`image_front_thumb_url`) - a separate, smaller file OFF already
     # hosts, not a resize of `image_url` done by this app. Used for
     # the small `.food-thumb` in a food list (`_food_list_results.html`)
     # instead of `image_url`'s own 400px version, cutting real bytes
@@ -424,19 +424,19 @@ class Food(TimeStampedModel):
     # (bigger, `object-fit: contain` so a label's own text/branding
     # isn't cropped off) stays for the larger detail-page photo, where
     # a 100px thumb would look blurry blown up. Blank wherever
-    # `image_url` is blank — no photo means no thumb either.
+    # `image_url` is blank - no photo means no thumb either.
     image_thumb_url = models.URLField(max_length=500, blank=True)
     categories = models.TextField(blank=True)
     # More OFF product info, asked for directly alongside the two
-    # above — same blank-for-hand-entered pattern, same reasoning:
+    # above - same blank-for-hand-entered pattern, same reasoning:
     # verbatim display text from OFF, nothing this app computes or
     # normalizes. `quantity` is OFF's own free-text pack size (e.g.
-    # "400 g" — often *not* the same figure as `serving_size`, which
+    # "400 g" - often *not* the same figure as `serving_size`, which
     # is always per-100g/ml regardless of the real package size; this
     # is purely "how much is in the package" context, never used in
     # any nutrition math). `ingredients_text` and `labels`/`allergens`
     # are OFF's own `ingredients_text`/`labels`/`allergens` strings
-    # verbatim — the latter two share `categories`' own caveat that
+    # verbatim - the latter two share `categories`' own caveat that
     # OFF's data is sometimes locale-tag-prefixed ("en:milk") rather
     # than a clean display name, shown as OFF provides it regardless.
     quantity = models.CharField(max_length=100, blank=True)
@@ -444,13 +444,13 @@ class Food(TimeStampedModel):
     labels = models.TextField(blank=True)
     allergens = models.TextField(blank=True)
     # Sourced from Open Prices (prices.openfoodfacts.org), a distinct
-    # project from OFF's own core product API above — that API has no
+    # project from OFF's own core product API above - that API has no
     # price field at all. Null/blank for every food with no `off_id`
     # (nothing to look a price up by) and for any OFF-imported food
     # whose price hasn't been looked up yet. `price_amount` is the
     # median of `price_sample_count` recent shopper-submitted reports
     # in whichever currency has the most reports for this product
-    # (apps.nutrition.open_prices.summarize_prices) — never "the"
+    # (apps.nutrition.open_prices.summarize_prices) - never "the"
     # price, since Open Prices has no single canonical one, just the
     # most representative figure available. Refreshed lazily on a
     # shorter staleness window than off_synced_at
@@ -470,7 +470,7 @@ class Food(TimeStampedModel):
 
 
 class Recipe(TimeStampedModel):
-    # Nullable, same owner-or-shared pattern as Food/MealSlot above —
+    # Nullable, same owner-or-shared pattern as Food/MealSlot above -
     # `owner=None` is a built-in template recipe (apps.nutrition.
     # migrations' seed data, apps.nutrition.i18n_content), visible to
     # every user but editable by none (views._owned_recipe_or_404's
@@ -487,18 +487,18 @@ class Recipe(TimeStampedModel):
     name = models.CharField(max_length=200)
     servings = models.PositiveSmallIntegerField(default=1)
     instructions = models.TextField(blank=True)
-    # Optional — which meals this recipe is meant for, e.g. a fried-egg
+    # Optional - which meals this recipe is meant for, e.g. a fried-egg
     # recipe tagged "Breakfast" so apps.nutrition.diet_builder's
     # auto-generated plans never put it in a Dinner slot (found live:
     # a chicken & rice recipe suggested as breakfast, oats & yogurt as
-    # dinner — the calorie-closest-match heuristic had no idea either
+    # dinner - the calorie-closest-match heuristic had no idea either
     # recipe was meant for a specific meal). Several at once (asked for
-    # directly: a dish that's both a lunch and a dinner) — this replaced
+    # directly: a dish that's both a lunch and a dinner) - this replaced
     # a single `meal_slot`. None picked means "any meal", so an untagged
     # recipe stays eligible everywhere.
     meal_slots = models.ManyToManyField(MealSlot, related_name="+", blank=True)
     # False once "deleted" while diary entries or diet plans still use
-    # it — see services.delete_recipe. Hidden from every list, search
+    # it - see services.delete_recipe. Hidden from every list, search
     # and picker, but kept so that history still adds up.
     active = models.BooleanField(default=True)
 
@@ -510,15 +510,15 @@ class Recipe(TimeStampedModel):
 
 
 class RecipeIngredient(models.Model):
-    """`quantity` is in the same unit as `food.serving_unit` — nutrition
+    """`quantity` is in the same unit as `food.serving_unit` - nutrition
     for this line is `food`'s per-serving values scaled by
     `quantity / food.serving_size` (apps.nutrition.services.
     scale_nutrition), the same scaling a DiaryEntry logging raw food
-    uses — one function, not two copies of the same math."""
+    uses - one function, not two copies of the same math."""
 
     recipe = models.ForeignKey(Recipe, related_name="ingredients", on_delete=models.CASCADE)
     # CASCADE, not PROTECT: same reasoning as NutritionTarget.goal
-    # above — a food and the recipe ingredients that reference it are
+    # above - a food and the recipe ingredients that reference it are
     # very often owned by the same user, so deleting that user cascades
     # to both at once, and PROTECT would block exactly that cascade.
     # Retiring a Food a normal user shouldn't touch is `active=False`
@@ -537,14 +537,14 @@ class RecipeIngredient(models.Model):
 class DiaryEntry(TimeStampedModel):
     """One logged item. `date` is the day it counts toward (can be
     legitimately back-dated); `created_at` (from TimeStampedModel) is
-    when it was actually logged — the same split as
+    when it was actually logged - the same split as
     apps.workouts.ExerciseSet's performed_at vs. created_at."""
 
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL, related_name="diary_entries", on_delete=models.CASCADE
     )
     date = models.DateField(db_index=True)
-    # CASCADE throughout — see RecipeIngredient.food's own comment.
+    # CASCADE throughout - see RecipeIngredient.food's own comment.
     meal_slot = models.ForeignKey(MealSlot, related_name="+", on_delete=models.CASCADE)
     food = models.ForeignKey(
         Food, related_name="diary_entries", null=True, blank=True, on_delete=models.CASCADE
@@ -552,7 +552,7 @@ class DiaryEntry(TimeStampedModel):
     # RESTRICT, not CASCADE: deleting a recipe must never take past
     # diary entries with it (services.delete_recipe soft-deletes a
     # recipe still in use instead). Unlike PROTECT, RESTRICT still lets
-    # a cascade that removes these entries too — deleting the user —
+    # a cascade that removes these entries too - deleting the user -
     # go through.
     recipe = models.ForeignKey(
         Recipe, related_name="diary_entries", null=True, blank=True, on_delete=models.RESTRICT
@@ -562,7 +562,7 @@ class DiaryEntry(TimeStampedModel):
     quantity = models.DecimalField(max_digits=8, decimal_places=2)
     notes = models.TextField(blank=True)
     # A "quick entry": macros typed straight in (a restaurant meal's
-    # published values) with no Food behind it — stored on the entry
+    # published values) with no Food behind it - stored on the entry
     # itself, per portion, so there's no throwaway Food in the library
     # and the logged figures never change afterwards. `quick_calories`
     # being set is what makes an entry a quick one.
@@ -588,7 +588,7 @@ class DiaryEntry(TimeStampedModel):
     class Meta:
         ordering = ["-date", "-created_at"]
         constraints = [
-            # Exactly one of food/recipe/quick macros — enforced here,
+            # Exactly one of food/recipe/quick macros - enforced here,
             # not just by convention (docs/NUTRITION.md "DiaryEntry").
             models.CheckConstraint(
                 condition=(
@@ -639,7 +639,7 @@ class DiaryEntry(TimeStampedModel):
     def clean(self):
         if sum([bool(self.food_id), bool(self.recipe_id), self.is_quick]) != 1:
             raise ValidationError(
-                _("Log either a food, a recipe or quick macros — exactly one of them.")
+                _("Log either a food, a recipe or quick macros - exactly one of them.")
             )
 
     def __str__(self):
@@ -647,7 +647,7 @@ class DiaryEntry(TimeStampedModel):
 
 
 class DietPlan(TimeStampedModel):
-    """The diet-builder wizard's saved output — snapshots the targets
+    """The diet-builder wizard's saved output - snapshots the targets
     it was built against (immutable, so a past plan stays
     interpretable even after the user's live targets change). Applying
     it to a date materializes DiaryEntry rows
@@ -669,19 +669,19 @@ class DietPlan(TimeStampedModel):
     # False (the default) is the original one-day plan: the same
     # `meals` are applied to whatever date apply_diet_plan is given,
     # every time. True means `meals` spans a full week instead of one
-    # repeating day — see DietPlanMeal.weekday and
+    # repeating day - see DietPlanMeal.weekday and
     # apps.nutrition.diet_builder.build_diet_plan's own docstring for
     # why (variety: a different, still goal-appropriate meal each day
     # instead of the same one on repeat). `target_calories` and the
     # macro fields above stay the plan's own *daily average* either
-    # way — a weekly plan's actual days vary around that average
+    # way - a weekly plan's actual days vary around that average
     # rather than hitting it exactly every single day, the same
     # flexibility real meal planning needs and docs/NUTRITION.md
     # "Safety bounds" already extends to the calorie target itself.
     is_weekly = models.BooleanField(default=False)
 
     # Display-only counter, same role as apps.programs.models.Program's
-    # own version/bump_version — bumped by every structural edit
+    # own version/bump_version - bumped by every structural edit
     # (apps.nutrition.views.diet_plan_item_edit/diet_plan_item_delete/
     # diet_plan_meal_item_add) so apps.coaching.services.
     # diet_plan_update_available can tell "this coach's plan changed
@@ -689,7 +689,7 @@ class DietPlan(TimeStampedModel):
     # of diffing on every page render.
     version = models.PositiveIntegerField(default=1)
 
-    # apps.coaching — same four-field shape as apps.programs.models.
+    # apps.coaching - same four-field shape as apps.programs.models.
     # Program's own coaching fields; see that model's comments for the
     # full reasoning (empty/private draft by default, a many-to-many
     # to specific clients rather than a blanket boolean, SET_NULL
@@ -713,7 +713,7 @@ class DietPlan(TimeStampedModel):
         ordering = ["-created_at"]
         constraints = [
             # Same "only one open row" shape as NutritionGoal/
-            # NutritionTarget above — apps.nutrition.services.
+            # NutritionTarget above - apps.nutrition.services.
             # set_active_diet_plan is the one place that activates a
             # plan, and it always deactivates whichever one was active
             # first in the same transaction, but this is the actual
@@ -729,7 +729,7 @@ class DietPlan(TimeStampedModel):
         return f"{self.user.username}: {self.name}"
 
     def bump_version(self):
-        """Record that the plan's meals/items changed (display-only) —
+        """Record that the plan's meals/items changed (display-only) -
         see apps.programs.models.Program's own bump_version."""
         self.version += 1
         self.save(update_fields=["version", "updated_at"])
@@ -739,7 +739,7 @@ class ShoppingDay(models.Model):
     """A weekday the user goes shopping for `diet_plan` (0=Monday ..
     6=Sunday, Python's date.weekday(), the same numbering as
     DietPlanMeal.weekday). Each one starts a trip whose list covers the
-    days up to the next shopping day — apps.nutrition.shopping."""
+    days up to the next shopping day - apps.nutrition.shopping."""
 
     diet_plan = models.ForeignKey(DietPlan, related_name="shopping_days", on_delete=models.CASCADE)
     weekday = models.PositiveSmallIntegerField()
@@ -761,14 +761,14 @@ class ShoppingDay(models.Model):
 
 class DietPlanMeal(models.Model):
     diet_plan = models.ForeignKey(DietPlan, related_name="meals", on_delete=models.CASCADE)
-    # CASCADE — see RecipeIngredient.food's own comment.
+    # CASCADE - see RecipeIngredient.food's own comment.
     meal_slot = models.ForeignKey(MealSlot, related_name="+", on_delete=models.CASCADE)
     target_calories = models.PositiveIntegerField()
     order = models.PositiveSmallIntegerField(default=0)
-    # Null for a one-day DietPlan (diet_plan.is_weekly=False) — this
+    # Null for a one-day DietPlan (diet_plan.is_weekly=False) - this
     # meal applies regardless of date, exactly as before this field
     # existed. 0-6 (Python's own date.weekday(): 0=Monday..6=Sunday)
-    # for a weekly plan — apps.nutrition.diet_builder.apply_diet_plan
+    # for a weekly plan - apps.nutrition.diet_builder.apply_diet_plan
     # only materializes the meals whose weekday matches the target
     # date, so a Monday and a Thursday breakfast can genuinely differ.
     weekday = models.PositiveSmallIntegerField(null=True, blank=True)
@@ -784,11 +784,11 @@ class DietPlanItem(models.Model):
     diet_plan_meal = models.ForeignKey(
         DietPlanMeal, related_name="items", on_delete=models.CASCADE
     )
-    # CASCADE — see RecipeIngredient.food's own comment.
+    # CASCADE - see RecipeIngredient.food's own comment.
     food = models.ForeignKey(
         Food, related_name="+", null=True, blank=True, on_delete=models.CASCADE
     )
-    # RESTRICT — see DiaryEntry.recipe.
+    # RESTRICT - see DiaryEntry.recipe.
     recipe = models.ForeignKey(
         Recipe, related_name="+", null=True, blank=True, on_delete=models.RESTRICT
     )
@@ -817,11 +817,11 @@ class DietPlanItem(models.Model):
 
 
 class OpenFoodFactsSettings(models.Model):
-    """Singleton — same pattern as apps.core.models.BackupSettings/
+    """Singleton - same pattern as apps.core.models.BackupSettings/
     FeedbackSettings and apps.accounts.models.SiteDisclaimer. The only
     way to turn off outbound OpenFoodFacts requests entirely (no
     internet egress, or an operator's own preference not to call a
-    third-party service from their server) — see docs/NUTRITION.md
+    third-party service from their server) - see docs/NUTRITION.md
     "OpenFoodFacts integration"."""
 
     enabled = models.BooleanField(default=True)
@@ -835,7 +835,7 @@ class OpenFoodFactsSettings(models.Model):
         super().save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):
-        pass  # singleton — deleting it would just silently recreate the default on next load()
+        pass  # singleton - deleting it would just silently recreate the default on next load()
 
     @classmethod
     def load(cls):

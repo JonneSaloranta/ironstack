@@ -1,4 +1,4 @@
-"""Global template context — the "My clients" settings-row on the
+"""Global template context - the "My clients" settings-row on the
 Profile page (templates/accounts/profile.html) needs its own pending-
 request badge on every page that row appears on, the same reasoning
 apps.social.context_processors.social_badge already follows for its
@@ -9,7 +9,7 @@ from . import services
 
 
 def pending_coaching_activity(request):
-    """Only a coach can have *incoming* coaching requests to badge —
+    """Only a coach can have *incoming* coaching requests to badge -
     a coachee's own outgoing pending requests aren't a "you need to
     act" signal, matching apps.social's own one-directional
     has_pending_friend_requests shape."""

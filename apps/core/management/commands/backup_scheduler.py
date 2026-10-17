@@ -17,7 +17,7 @@ def _seconds_until(hour):
 
 
 class Command(BaseCommand):
-    """Runs `create_backup` once a day, forever — docker-compose.yml's
+    """Runs `create_backup` once a day, forever - docker-compose.yml's
     `backup-scheduler` service's only job (docs/BACKUP.md). Deliberately
     not a real cron daemon (no `cron` package added to the image just
     for this): a plain sleep-until-target-hour loop is enough for "run
@@ -28,7 +28,7 @@ class Command(BaseCommand):
     instead and drop this service.
 
     Reads BackupSettings.load() fresh on every wake-up, not just once
-    at process startup — so changing the hour or toggling "enabled" on
+    at process startup - so changing the hour or toggling "enabled" on
     Profile → Administration → Backups takes effect without restarting
     this container. A settings change made *while* the loop is asleep
     only takes effect from the *next* wake-up onward, since a sleep
@@ -55,7 +55,7 @@ class Command(BaseCommand):
 
             backup_settings = BackupSettings.load()  # may have changed while asleep
             if not backup_settings.enabled:
-                self.stdout.write("Automatic backups are disabled — skipping.")
+                self.stdout.write("Automatic backups are disabled - skipping.")
                 continue
             try:
                 call_command("create_backup", source="scheduled")

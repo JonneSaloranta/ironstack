@@ -23,7 +23,7 @@ from .models import (
 )
 
 #: The RPE scale (rate of perceived exertion) a logged or prescribed
-#: value must fall on — anything else is a typo, not an effort level.
+#: value must fall on - anything else is a typo, not an effort level.
 RPE_MIN = 1
 RPE_MAX = 10
 
@@ -49,7 +49,7 @@ class SessionNotInProgress(Exception):
 
 
 def sessions_for(user):
-    """A user's own workout sessions only — never shared, unlike programs."""
+    """A user's own workout sessions only - never shared, unlike programs."""
     return WorkoutSession.objects.filter(user=user)
 
 
@@ -85,7 +85,7 @@ def start_session_once(user, workout=None):
 def start_session(user, workout=None):
     """Start a session, snapshotting `workout`'s prescriptions if given.
 
-    `workout=None` starts a freeform session with no planned exercises —
+    `workout=None` starts a freeform session with no planned exercises -
     the user adds exercises as they go via `add_performed_exercise`.
     """
     session = WorkoutSession.objects.create(
@@ -139,7 +139,7 @@ def abandon_session(session):
 
 def add_performed_exercise(session, exercise):
     """Add an exercise to an in-progress session with no prescription
-    behind it — used for freeform sessions and for going off-plan mid
+    behind it - used for freeform sessions and for going off-plan mid
     workout (the user always keeps the option to deviate)."""
     # Not `(highest or -1) + 1`: a highest order of 0 is falsy, which
     # used to give the second added exercise order 0 as well.
@@ -153,7 +153,7 @@ def add_performed_exercise(session, exercise):
 def default_set_values(performed_exercise):
     """Best starting guess for a new set's weight/reps: repeat the most
     recently logged set in this exercise, falling back to the snapshotted
-    target. Pure UX convenience (fewer taps), not a progression decision —
+    target. Pure UX convenience (fewer taps), not a progression decision -
     the user can always change it before saving."""
     last_set = performed_exercise.sets.order_by("-set_number").first()
     if last_set is not None:
@@ -180,13 +180,13 @@ def log_set(performed_exercise, **fields):
 
 
 def is_performed_exercise_complete(performed_exercise):
-    """Whether a performed exercise has nothing obviously left to log —
+    """Whether a performed exercise has nothing obviously left to log -
     the definition training mode's "what's next" stepper (see
     `first_incomplete_performed_exercise`) is built on. A prescribed
     exercise (`set_count` snapshotted from the plan) is complete once it
     has that many sets; a freeform/ad-hoc addition has no target to
     compare against, so it's treated as complete once it has at least one
-    set — there's no way to know a user wants a second set on an
+    set - there's no way to know a user wants a second set on an
     unplanned exercise until they say so via `train-set-log`'s "add
     another set" affordance, which stays available regardless of this.
 
@@ -202,7 +202,7 @@ def is_performed_exercise_complete(performed_exercise):
 
 def first_incomplete_performed_exercise(performed_exercises):
     """The first performed exercise (in program order) that still has
-    sets left to log — training mode's default "current exercise", per
+    sets left to log - training mode's default "current exercise", per
     `is_performed_exercise_complete`. `None` once every exercise in the
     list is done."""
     for performed_exercise in performed_exercises:
@@ -213,7 +213,7 @@ def first_incomplete_performed_exercise(performed_exercises):
 
 def schedule_rest_timer_notification(user, *, seconds, title, body, url=""):
     """Replaces (update_or_create, not create) whatever server-side
-    "time's up" notification is already pending for `user` — see
+    "time's up" notification is already pending for `user` - see
     RestTimerNotification's own docstring for why there's only ever
     one row per user. Called from apps.workouts.views whenever the
     client (static/js/rest-timer.js) starts or adjusts its own
@@ -232,17 +232,17 @@ def schedule_rest_timer_notification(user, *, seconds, title, body, url=""):
 
 def cancel_rest_timer_notification(user):
     """Called whenever the client itself ends the countdown on its
-    own — naturally finishing (it already showed its own beep/visible
+    own - naturally finishing (it already showed its own beep/visible
     countdown/notify(), so a second, server-sent one would just be a
     redundant duplicate) or "Skip rest". Harmless no-op if there was
     never a pending row, or the dispatcher already sent and deleted
-    one — apps.workouts.tests covers both."""
+    one - apps.workouts.tests covers both."""
     RestTimerNotification.objects.filter(user=user).delete()
 
 
 def due_rest_timer_notifications():
     """apps.core.management.commands.rest_timer_dispatcher's own query
-    — every row whose scheduled time has already passed, oldest first
+    - every row whose scheduled time has already passed, oldest first
     so a dispatcher that's fallen behind still sends in the order
     users actually started resting."""
     return RestTimerNotification.objects.filter(fire_at__lte=timezone.now()).order_by("fire_at")

@@ -43,7 +43,7 @@ class CustomUserModelTests(TestCase):
 
 
 class PublicDisplayNameTests(TestCase):
-    """User.public_display_name() — what other users see for this user
+    """User.public_display_name() - what other users see for this user
     (apps.analytics.achievements); a separate concern from this user's
     own dashboard greeting (apps.core.greetings), which always uses
     their first name regardless of this setting."""
@@ -73,7 +73,7 @@ class PublicDisplayNameTests(TestCase):
 
 
 class GravatarTests(TestCase):
-    """User.gravatar_url()/show_gravatar — see docs/SECURITY.md
+    """User.gravatar_url()/show_gravatar - see docs/SECURITY.md
     "Gravatar profile picture" for why this defaults off unlike this
     app's other display/privacy toggles: it's the only place a user's
     browser talks to a server outside this instance."""
@@ -97,7 +97,7 @@ class GravatarTests(TestCase):
 
 
 class LanguagePreferenceTests(TestCase):
-    """apps.accounts.middleware.UserLanguageMiddleware — a logged-in
+    """apps.accounts.middleware.UserLanguageMiddleware - a logged-in
     user's stored `language` (set on the profile page) drives Django's
     gettext-based UI translation, overriding whatever LocaleMiddleware
     would otherwise guess from the session/cookie/Accept-Language header.
@@ -141,7 +141,7 @@ class LanguagePreferenceTests(TestCase):
 class ThemePreferenceTests(TestCase):
     """apps.accounts.models.Theme/Appearance / templates/base.html's own
     `data-theme`/`data-appearance` attributes and `theme-color` meta
-    tags — two independent display preferences, same shape as language
+    tags - two independent display preferences, same shape as language
     above, but resolved into the initial server-rendered HTML rather
     than applied via middleware, since they only ever affect markup
     this same response already produces."""
@@ -173,7 +173,7 @@ class ThemePreferenceTests(TestCase):
 
     def test_default_theme_omits_data_theme_attribute(self):
         # The app's original, only-ever palette before this setting
-        # existed — rendering with no data-theme attribute at all is
+        # existed - rendering with no data-theme attribute at all is
         # what static/css/base.css's bare :root already covers.
         response = self.client.get(reverse("dashboard"))
         self.assertContains(response, '<html lang="en" data-appearance="dark">')
@@ -192,7 +192,7 @@ class ThemePreferenceTests(TestCase):
         self.assertContains(response, '<meta name="theme-color" content="#f2f3f5">')
 
     def test_dark_appearance_sets_theme_color(self):
-        # Already the default, but set explicitly — a user picking
+        # Already the default, but set explicitly - a user picking
         # "Dark" from the dropdown should render identically to one
         # who never touched the setting at all.
         self.alice.appearance = "dark"
@@ -225,7 +225,7 @@ class ThemePreferenceTests(TestCase):
 
 
 class TimezonePreferenceTests(TestCase):
-    """apps.accounts.middleware.UserTimezoneMiddleware — regression: a
+    """apps.accounts.middleware.UserTimezoneMiddleware - regression: a
     logged-in user's stored `timezone` (set on the profile page) was
     saved and validated but never actually applied anywhere; every
     timezone-aware render silently used settings.TIME_ZONE (UTC)
@@ -241,7 +241,7 @@ class TimezonePreferenceTests(TestCase):
         self.client.login(username="alice", password="s3cret-pass")
         self.session = workout_services.start_session(self.alice, workout=None)
         # Deliberately close to UTC midnight so a +14 zone lands on the
-        # *next* calendar date — the clearest possible signal that the
+        # *next* calendar date - the clearest possible signal that the
         # active timezone, not just the clock face, actually changed.
         self.session.started_at = datetime(2026, 1, 1, 23, 0, tzinfo=dt_timezone.utc)
         self.session.save(update_fields=["started_at"])
@@ -276,7 +276,7 @@ class TimezonePreferenceTests(TestCase):
     def test_an_invalid_stored_timezone_does_not_crash_the_request(self):
         """ProfileForm always validates against the real IANA list, but
         a hand-edited/stale value (direct ORM write, admin, a future
-        tzdata removal) shouldn't 500 the whole app — falls back to
+        tzdata removal) shouldn't 500 the whole app - falls back to
         settings.TIME_ZONE instead."""
         self.alice.timezone = "Not/A_Real_Zone"
         self.alice.save()
@@ -286,7 +286,7 @@ class TimezonePreferenceTests(TestCase):
     def test_misleading_timezone_aliases_are_not_offered_as_choices(self):
         """"localtime" reads as "use my device's own timezone" but is
         actually a fixed server-side alias (whatever /etc/localtime
-        resolves to in the container, typically UTC) — nothing about it
+        resolves to in the container, typically UTC) - nothing about it
         is dynamic, so offering it just reproduces the exact confusion
         this whole feature fixes. "Factory" is tzdata's own placeholder
         for "no real zone", never a meaningful choice."""
@@ -313,7 +313,7 @@ class SignupFlowTests(TestCase):
 
 
 class SignupGatingTests(TestCase):
-    """docs/SECURITY.md — DJANGO_SIGNUP_ENABLED. Gates the URL itself,
+    """docs/SECURITY.md - DJANGO_SIGNUP_ENABLED. Gates the URL itself,
     not just the login page's link to it: a hidden link doesn't stop
     someone who already knows/guesses the path."""
 
@@ -376,7 +376,7 @@ class LoginFlowTests(TestCase):
 
 @override_settings(SIGNUP_ENABLED=True, PASSWORD_LOGIN_ENABLED=True, SIGNUP_EMAIL_VERIFICATION=True)
 class SignupEmailVerificationTests(TestCase):
-    """settings.SIGNUP_EMAIL_VERIFICATION — a new signup must open the
+    """settings.SIGNUP_EMAIL_VERIFICATION - a new signup must open the
     link emailed to them before they can log in."""
 
     def setUp(self):
@@ -479,7 +479,7 @@ class SignupEmailVerificationTests(TestCase):
 
 
 class LoginRateLimitTests(TestCase):
-    """apps.accounts.forms.RateLimitedAuthenticationForm — Django's own
+    """apps.accounts.forms.RateLimitedAuthenticationForm - Django's own
     login view has no brute-force protection at all otherwise (this is
     a completely separate mechanism from apps.api's rate limiting,
     which only ever applies to API keys)."""
@@ -548,7 +548,7 @@ class LoginRateLimitTests(TestCase):
         response = self._attempt(password="s3cret-pass")
         self.assertIn("_auth_user_id", self.client.session)
         self.client.logout()
-        # Back under the limit again — the earlier near-lockout was
+        # Back under the limit again - the earlier near-lockout was
         # cleared by the successful login, not just paused.
         for _ in range(LOGIN_ATTEMPT_LIMIT - 1):
             response = self._attempt()
@@ -556,7 +556,7 @@ class LoginRateLimitTests(TestCase):
 
 
 class AdminLoginRateLimitTests(TestCase):
-    """apps.accounts.forms.RateLimitedAdminAuthenticationForm —
+    """apps.accounts.forms.RateLimitedAdminAuthenticationForm -
     /admin/login/ is Django's own, completely separate login view/form
     from the one LoginRateLimitTests above covers; without this it
     stayed wide open to brute-force even after the regular login got
@@ -594,7 +594,7 @@ class AdminLoginRateLimitTests(TestCase):
 
     def test_admin_lockout_is_a_separate_counter_from_the_regular_login(self):
         """Same client IP, same near-simultaneous failed attempts on
-        both endpoints — locking out /admin/login/ must not also lock
+        both endpoints - locking out /admin/login/ must not also lock
         out /accounts/login/ for that IP, and vice versa."""
         for _ in range(LOGIN_ATTEMPT_LIMIT):
             self._attempt(ip="203.0.113.10")
@@ -634,7 +634,7 @@ class ProfileViewTests(TestCase):
 
     def test_changelog_query_param_opens_the_modal(self):
         # apps.core.management.commands.announce_version_update's push
-        # notification links here — a Web Push notification can only
+        # notification links here - a Web Push notification can only
         # ever open a URL, so this is how it lands the user straight
         # in the changelog rather than just the plain profile page.
         response = self.client.get(reverse("profile"), {"changelog": "1"})
@@ -907,7 +907,7 @@ class ProfileViewTests(TestCase):
     def test_checking_show_gravatar_turns_it_on_and_renders_the_image(self):
         # The image itself now only ever renders in templates/base.html's
         # own bottom-nav Profile icon (every authenticated page,
-        # profile included) — this page stopped carrying its own
+        # profile included) - this page stopped carrying its own
         # separate copy of it, redundant once the nav icon already
         # showed the same picture everywhere.
         self.client.post(
@@ -1059,7 +1059,7 @@ class ProfileViewTests(TestCase):
     def test_saving_preferences_shows_a_dismissable_toast_not_a_static_card(self):
         """Regression: "Preferences saved." used to render as a plain,
         permanent .card at the top of <main>, staying on screen until
-        the next full page navigation happened to push it off — now the
+        the next full page navigation happened to push it off - now the
         same top-of-screen toast every other Django message (and PR
         notice) uses."""
         response = self.client.post(
@@ -1081,7 +1081,7 @@ class ProfileViewTests(TestCase):
         """Regression, in both directions: the whole "Change password"/
         "API keys" card used to be one big <a> with no visual sign it
         was clickable at all, so it became a plain container with a
-        separate .button-secondary as the only link instead — which
+        separate .button-secondary as the only link instead - which
         then meant *tapping the card itself* did nothing, easy to miss
         the other way. It's the whole card again, but this time with a
         trailing chevron (.settings-row-chevron, base.css's own
@@ -1091,7 +1091,7 @@ class ProfileViewTests(TestCase):
         # Account details, Change password, Two-factor authentication,
         # Friends & groups, My coaches, AI assistant, API keys, Download
         # your data, Tutorials, Feedback, Delete account. ("My clients" is
-        # skipped — alice isn't a personal trainer.)
+        # skipped - alice isn't a personal trainer.)
         self.assertContains(response, 'class="card card-link settings-row"', count=11)
         self.assertContains(response, "settings-row-chevron", count=11)
         self.assertContains(
@@ -1125,7 +1125,7 @@ class ProfileViewTests(TestCase):
 
 class PasswordChangeTests(TestCase):
     """The URLs (django.contrib.auth.urls) already existed since Phase 1,
-    but with no templates — visiting them would 500. Phase 11 polish."""
+    but with no templates - visiting them would 500. Phase 11 polish."""
 
     def setUp(self):
         self.alice = User.objects.create_user(username="alice", password="old-pass-123")
@@ -1151,7 +1151,7 @@ class PasswordChangeTests(TestCase):
 
 class PasswordResetFlowTests(TestCase):
     """django.contrib.auth.urls already wired these URLs up, but with
-    no templates (they'd 500) and no EMAIL_BACKEND configured — the
+    no templates (they'd 500) and no EMAIL_BACKEND configured - the
     only self-service recovery for a forgotten password was an admin
     manually resetting it via /admin/. See docs/SECURITY.md "Email"."""
 
@@ -1188,7 +1188,7 @@ class PasswordResetFlowTests(TestCase):
 
         # GET redirects the one-time token in the URL to a session-
         # backed "set-password" URL (Django's own anti-Referer-leak
-        # mechanism) — that's the page/URL the form actually posts to.
+        # mechanism) - that's the page/URL the form actually posts to.
         confirm_response = self.client.get(reset_path, follow=True)
         self.assertContains(confirm_response, "Set new password")
         set_password_url = confirm_response.wsgi_request.path
@@ -1216,7 +1216,7 @@ class PasswordResetFlowTests(TestCase):
 
 
 class PasswordResetRateLimitTests(TestCase):
-    """apps.accounts.forms.RateLimitedPasswordResetForm — without it,
+    """apps.accounts.forms.RateLimitedPasswordResetForm - without it,
     PasswordResetView is wide open to spamming an arbitrary email
     address with reset links using this instance's own SMTP relay."""
 
@@ -1253,7 +1253,7 @@ class PasswordResetRateLimitTests(TestCase):
 
     def test_every_request_counts_toward_the_limit_not_just_ones_that_send_an_email(self):
         """Unlike a login attempt, there's no "failed" password-reset
-        submission to count selectively — a request for an unknown
+        submission to count selectively - a request for an unknown
         email is just as valid a submission (and just as easy to spam
         with) as one for a real address, even though it sends no
         email."""
@@ -1270,7 +1270,7 @@ class PasswordResetRateLimitTests(TestCase):
 
 
 class AccountDetailsTests(TestCase):
-    """Username/name/email — a separate page from ProfileView's display
+    """Username/name/email - a separate page from ProfileView's display
     preferences and from the password itself, linked from the profile
     page's "Account details" card."""
 
@@ -1338,7 +1338,7 @@ class AccountDetailsTests(TestCase):
         password_pos = content.find(reverse("password_change"))
         self.assertNotEqual(account_pos, -1)
         self.assertNotEqual(password_pos, -1)
-        # "Next to" — no other settings-row card opens between the two
+        # "Next to" - no other settings-row card opens between the two
         # (password_pos itself lands inside the *next* card's own
         # opening tag, hence 1 here rather than 0).
         between = content[account_pos:password_pos]
@@ -1346,7 +1346,7 @@ class AccountDetailsTests(TestCase):
 
 
 class TwoFactorServiceTests(TestCase):
-    """apps.accounts.twofactor — the RFC 6238 math itself is pyotp's
+    """apps.accounts.twofactor - the RFC 6238 math itself is pyotp's
     job; this covers the thin IronStack-specific layer on top."""
 
     def setUp(self):
@@ -1451,7 +1451,7 @@ class TwoFactorSetupTests(TestCase):
 
     def test_confirming_with_the_correct_code_enables_2fa_and_redirects_to_backup_codes(self):
         """Backup codes aren't generated in this same request any more
-        — see TwoFactorBackupCodesView's own docstring for why
+        - see TwoFactorBackupCodesView's own docstring for why
         (they're slow enough to need their own loading page instead of
         this request silently hanging for them)."""
         import pyotp
@@ -1644,7 +1644,7 @@ class TwoFactorRegenerateBackupCodesTests(TestCase):
 
     def test_redirects_to_the_backup_codes_page_without_generating_anything_itself(self):
         """The actual generation moved to TwoFactorBackupCodesFragment
-        View, loaded via HTMX from the page this redirects to — see
+        View, loaded via HTMX from the page this redirects to - see
         that view's own docstring for why."""
         response = self.client.post(reverse("two-factor-regenerate-backup-codes"))
         self.assertRedirects(response, reverse("two-factor-backup-codes"))
@@ -1655,7 +1655,7 @@ class TwoFactorRegenerateBackupCodesTests(TestCase):
 
 class TwoFactorBackupCodesViewTests(TestCase):
     """The loading-state page both TwoFactorSetupView's confirm step
-    and TwoFactorRegenerateBackupCodesView redirect to — see
+    and TwoFactorRegenerateBackupCodesView redirect to - see
     TwoFactorBackupCodesView's own docstring for why generating a
     fresh set of codes needed a page of its own instead of happening
     silently inside whichever request landed the user here."""
@@ -1694,7 +1694,7 @@ class TwoFactorBackupCodesViewTests(TestCase):
 
 class TwoFactorBackupCodesFragmentViewTests(TestCase):
     """The HTMX-loaded fragment that actually does the (slow) backup-
-    code generation — see TwoFactorBackupCodesView's own docstring."""
+    code generation - see TwoFactorBackupCodesView's own docstring."""
 
     def setUp(self):
         self.user = User.objects.create_user(username="liam", password="s3cret-pass")
@@ -1740,10 +1740,10 @@ class TwoFactorAdminActionTests(TestCase):
 
 
 class TotpSecretEncryptionTests(TestCase):
-    """apps.accounts.models.EncryptedTextField — TOTP_ENCRYPTION_KEY
+    """apps.accounts.models.EncryptedTextField - TOTP_ENCRYPTION_KEY
     (docs/SECURITY.md "Two-factor authentication"). Reads the actual
     stored column value with a raw cursor, not just round-tripping
-    through the ORM — the whole point of these tests is confirming
+    through the ORM - the whole point of these tests is confirming
     what's really sitting in the database, which User.objects.get()
     alone would already transparently decrypt back to the plaintext
     and hide a bug in."""
@@ -1776,7 +1776,7 @@ class TotpSecretEncryptionTests(TestCase):
 
     def test_a_legacy_plaintext_secret_still_reads_back_correctly(self):
         # A row written before TOTP_ENCRYPTION_KEY was ever configured
-        # (or before this field type existed at all) — turning the key
+        # (or before this field type existed at all) - turning the key
         # on afterward must not corrupt it on the next read.
         self.user.totp_secret = "ABCDEFGHIJKLMNOP"
         self.user.save()
@@ -1786,7 +1786,7 @@ class TotpSecretEncryptionTests(TestCase):
 
     def test_the_wrong_key_does_not_raise_or_silently_corrupt_a_login(self):
         # See EncryptedTextField.from_db_value's own docstring for why
-        # this deliberately doesn't raise — a wrong key should fail an
+        # this deliberately doesn't raise - a wrong key should fail an
         # actual TOTP verification later, not crash every single read
         # of the user it's on.
         with override_settings(TOTP_ENCRYPTION_KEY=self.key):
@@ -1811,11 +1811,11 @@ class TotpSecretEncryptionTests(TestCase):
             self.user.refresh_from_db()
             self.assertEqual(self.user.totp_secret, "ABCDEFGHIJKLMNOP")
         other.refresh_from_db()
-        self.assertEqual(other.totp_secret, "")  # untouched — nothing to encrypt
+        self.assertEqual(other.totp_secret, "")  # untouched - nothing to encrypt
 
 
 class DeleteAccountServiceTests(TestCase):
-    """apps.accounts.services.delete_account — GDPR Article 17
+    """apps.accounts.services.delete_account - GDPR Article 17
     self-service erasure. See that function's own docstring for the
     two different treatments (hard-delete vs. reassign-to-shared) and
     why."""
@@ -1964,7 +1964,7 @@ class AccountDeleteViewTests(TestCase):
         self.alice.set_unusable_password()
         self.alice.save()
         # Client.login() itself needs a real password to authenticate
-        # against — force_login bypasses that the same way an actual
+        # against - force_login bypasses that the same way an actual
         # Authentik-issued session would (apps.accounts.oidc), not a
         # username/password form submission at all.
         self.client.force_login(self.alice)
@@ -2005,7 +2005,7 @@ class AccountDeleteViewTests(TestCase):
 
 
 class DataExportServiceTests(TestCase):
-    """apps.accounts.services.export_account_data — GDPR Article 20
+    """apps.accounts.services.export_account_data - GDPR Article 20
     ("right to data portability"). Mirrors delete_account's own set of
     "exclusively personal" models, plus this user's own authored
     shared content (a custom exercise they created, say), since it's
@@ -2032,7 +2032,7 @@ class DataExportServiceTests(TestCase):
         self.assertEqual(data["account"]["last_name"], "Anderson")
 
     def test_includes_display_and_privacy_settings_too(self):
-        # Not just the handful of fields shown on the profile form —
+        # Not just the handful of fields shown on the profile form -
         # everything on the user record that isn't a credential (see
         # export_account_data's own comment on why `password`/
         # `totp_secret` are the only two exceptions).
@@ -2176,7 +2176,7 @@ class DataExportViewTests(TestCase):
         # as flat lists of dicts rather than through Django's generic
         # serializer, the same way `api_keys` already is. _rows_for_section
         # used to only know about `account`/`api_keys` as hand-built and
-        # tried to read every other section as {"pk", "fields"} dicts —
+        # tried to read every other section as {"pk", "fields"} dicts -
         # a real user with so much as one push subscription or friend
         # hit a KeyError on "pk" and got a 500 on this page.
         from apps.core.models import PushSubscription
@@ -2224,7 +2224,7 @@ class DataExportViewTests(TestCase):
     def test_sections_use_native_details_not_javascript_so_a_downloaded_copy_still_works(self):
         # The whole point of "Download as HTML" is a file that still
         # shows its data once saved and reopened somewhere this app's
-        # own JS never loads again — see static/css/base.css's own
+        # own JS never loads again - see static/css/base.css's own
         # comment on `.card > summary` for why this is `<details>`,
         # not Alpine's x-show/x-cloak.
         response = self.client.get(reverse("data-export"), {"format": "html"})
@@ -2235,7 +2235,7 @@ class DataExportViewTests(TestCase):
         # A real regression, not a hypothetical one: an earlier version
         # of this download reused the browsable page's own template
         # (extends base.html), whose nav-bar <svg class="nav-icon">
-        # elements are sized entirely by base.css — invisible here,
+        # elements are sized entirely by base.css - invisible here,
         # since a downloaded file has no guarantee that stylesheet is
         # ever reachable again, so every icon rendered at its raw,
         # enormous intrinsic SVG size instead. The download now uses
@@ -2291,7 +2291,7 @@ class SiteDisclaimerTests(TestCase):
 
 
 class PrivacyNoticeTests(TestCase):
-    """templates/accounts/_privacy_notice_modal.html — a fixed,
+    """templates/accounts/_privacy_notice_modal.html - a fixed,
     translated notice (unlike SiteDisclaimer above, which is free-form
     operator-authored text), shown at the point data collection starts
     (login/signup) and reachable again later from the profile page."""
@@ -2339,7 +2339,7 @@ class OnboardingModelTests(TestCase):
 
 
 class OnboardingContextProcessorTests(TestCase):
-    """apps.accounts.context_processors.onboarding — merged into every
+    """apps.accounts.context_processors.onboarding - merged into every
     page's context (templates/base.html always includes
     accounts/_onboarding_modal.html), not just one view's."""
 
@@ -2428,7 +2428,7 @@ class OnboardingLanguageStepTests(TestCase):
 
 
 class OnboardingViewTests(TestCase):
-    """Onboarding's second step — the language (first step) is already
+    """Onboarding's second step - the language (first step) is already
     chosen; see OnboardingLanguageStepTests."""
 
     def setUp(self):
@@ -2655,7 +2655,7 @@ class OnboardingViewTests(TestCase):
 
 
 class NutritionNavVisibilityTests(TestCase):
-    """User.nutrition_enabled — asked for directly: not everyone using
+    """User.nutrition_enabled - asked for directly: not everyone using
     this instance wants to track nutrition. Only navigation is gated;
     nutrition's own views/urls have no idea this setting exists, so a
     direct link keeps working regardless, and no nutrition data is
@@ -2676,7 +2676,7 @@ class NutritionNavVisibilityTests(TestCase):
         self.assertNotContains(response, 'aria-label="Nutrition"')
 
     def test_nutrition_pages_stay_reachable_directly_when_disabled(self):
-        # nutrition:food-list rather than nutrition:dashboard — the
+        # nutrition:food-list rather than nutrition:dashboard - the
         # dashboard itself redirects a not-yet-onboarded user (no
         # NutritionProfile) to the nutrition onboarding wizard
         # regardless of this setting, which isn't what this test is
@@ -2688,7 +2688,7 @@ class NutritionNavVisibilityTests(TestCase):
 
 
 class StretchingEnabledTests(TestCase):
-    """User.stretching_enabled — the same "only hides the door" toggle
+    """User.stretching_enabled - the same "only hides the door" toggle
     as nutrition_enabled, for apps.stretching."""
 
     def setUp(self):
@@ -2716,7 +2716,7 @@ class StretchingEnabledTests(TestCase):
         self.assertContains(response, 'id="id_stretching_enabled"')
 
 class PasswordLoginGatingTests(TestCase):
-    """docs/SECURITY.md "Single sign-on (Authentik / OIDC)" —
+    """docs/SECURITY.md "Single sign-on (Authentik / OIDC)" -
     DJANGO_PASSWORD_LOGIN_ENABLED. Same "gate the URL/POST itself, not
     just hide the link" approach as SignupGatingTests above for
     DJANGO_SIGNUP_ENABLED, applied to local password login/signup/
@@ -2756,7 +2756,7 @@ class PasswordLoginGatingTests(TestCase):
         self.assertNotContains(response, reverse("password_reset"))
 
     def test_admin_login_is_unaffected_by_password_login_disabled(self):
-        # apps.core.admin's own separate login view — a break-glass
+        # apps.core.admin's own separate login view - a break-glass
         # path that must survive a misconfigured/unreachable Authentik
         # instance (docs/SECURITY.md).
         with override_settings(PASSWORD_LOGIN_ENABLED=False):
@@ -2768,7 +2768,7 @@ class PasswordLoginGatingTests(TestCase):
 class AuthentikLoginButtonTests(TestCase):
     """settings.AUTHENTIK_ENABLED is computed once, at process startup,
     from whether AUTHENTIK_URL/AUTHENTIK_CLIENT_ID/AUTHENTIK_CLIENT_SECRET
-    are set — like config.urls' conditional inclusion of
+    are set - like config.urls' conditional inclusion of
     mozilla_django_oidc's own urls, override_settings can flip the
     template-visible flag for a test but can't retroactively register
     urlpatterns that were only ever built once at import time. So this
@@ -2783,7 +2783,7 @@ class AuthentikLoginButtonTests(TestCase):
         # already has real AUTHENTIK_* values set (e.g. to manually
         # verify the SSO flow against a real Authentik instance) would
         # otherwise make this test falsely fail there, even though
-        # nothing about the app itself is broken — see this class's own
+        # nothing about the app itself is broken - see this class's own
         # docstring for why the override here doesn't hit the
         # "urlpatterns fixed at process startup" problem that stops the
         # *enabled* case from being tested the same way.
@@ -2795,8 +2795,8 @@ class AuthentikLoginButtonTests(TestCase):
         # Not a full self.client.get(reverse("login")) render: the
         # template's {% url 'oidc_authentication_init' %} would raise
         # NoReverseMatch here, since override_settings can flip this
-        # flag but — unlike a real deployment started with real
-        # AUTHENTIK_* values — can't retroactively register the
+        # flag but - unlike a real deployment started with real
+        # AUTHENTIK_* values - can't retroactively register the
         # mozilla_django_oidc urls config.urls only ever included once,
         # at process-startup import time. So this checks the view's own
         # context data directly instead of the rendered page.
@@ -2808,7 +2808,7 @@ class AuthentikLoginButtonTests(TestCase):
 
 
 class OIDCAuthenticationBackendTests(TestCase):
-    """apps.accounts.oidc.IronStackOIDCAuthenticationBackend — unit
+    """apps.accounts.oidc.IronStackOIDCAuthenticationBackend - unit
     tests against its own claim-handling methods directly, not the
     full mozilla_django_oidc.auth.OIDCAuthenticationBackend.authenticate()
     flow (that would mean mocking the token/userinfo HTTP round-trip
@@ -2851,7 +2851,7 @@ class OIDCAuthenticationBackendTests(TestCase):
         self.assertFalse(user.has_usable_password())
 
     def test_create_user_takes_only_the_first_word_of_authentiks_full_name_claim(self):
-        # Authentik has no first/last name split of its own — its
+        # Authentik has no first/last name split of its own - its
         # default OpenID 'profile' scope mapping sends the account's
         # single full-name field as "name" (docs/SECURITY.md "Single
         # sign-on (Authentik / OIDC)"). Only the first word should ever
@@ -2872,7 +2872,7 @@ class OIDCAuthenticationBackendTests(TestCase):
     @override_settings(AUTHENTIK_REQUIRED_GROUP="")
     def test_verify_claims_passes_by_default_with_no_required_group(self):
         # Explicit override rather than relying on the ambient default
-        # (settings.AUTHENTIK_REQUIRED_GROUP default is "" — see
+        # (settings.AUTHENTIK_REQUIRED_GROUP default is "" - see
         # config.settings.base) for the same reason as
         # AuthentikLoginButtonTests.test_button_hidden_by_default's own
         # override: a dev environment's .env may already have a real
@@ -2933,6 +2933,6 @@ class OIDCAuthenticationBackendTests(TestCase):
         self.assertTrue(user.is_sso_user)
         self.assertEqual(user.first_name, "Uma")
         # A local password set before ever linking Authentik stays
-        # usable — this account can still log in with it unless/until
+        # usable - this account can still log in with it unless/until
         # DJANGO_PASSWORD_LOGIN_ENABLED is turned off separately.
         self.assertTrue(user.has_usable_password())

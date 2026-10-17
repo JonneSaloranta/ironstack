@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% load i18n %}
-{% block title %}{% trans "Nutrition setup" %} — IronStack{% endblock %}
+{% block title %}{% trans "Nutrition setup" %} - IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
   <h1 class="no-margin">{% trans "Confirm your activity level" %}</h1>
@@ -17,7 +17,7 @@
   {% for field in form %}
     {% include "core/_field.html" with field=field %}
   {% endfor %}
-  <p class="text-muted">{% trans "This is only a suggestion — change it if you know it's wrong." %}</p>
+  <p class="text-muted">{% trans "This is only a suggestion - change it if you know it's wrong." %}</p>
   <button type="submit">{% trans "Continue" %}</button>
 </form>
 {% endblock %}

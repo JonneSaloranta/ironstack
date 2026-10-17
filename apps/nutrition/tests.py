@@ -90,7 +90,7 @@ class MealSlotSeedTests(TestCase):
         alice = User.objects.create_user(username="alice", password="s3cret-pass")
         bob = User.objects.create_user(username="bob", password="s3cret-pass")
         MealSlot.objects.create(name="Pre-workout", owner=alice)
-        # Should not raise — unique_user_meal_slot_name is scoped per owner.
+        # Should not raise - unique_user_meal_slot_name is scoped per owner.
         MealSlot.objects.create(name="Pre-workout", owner=bob)
         self.assertTrue(MealSlot.objects.filter(name="Pre-workout", owner=alice).exists())
         self.assertTrue(MealSlot.objects.filter(name="Pre-workout", owner=bob).exists())
@@ -108,7 +108,7 @@ class MealSlotSeedTests(TestCase):
 
 
 class NutritionGoalHistoryTests(TestCase):
-    """NutritionGoal is append-only — see docs/NUTRITION.md
+    """NutritionGoal is append-only - see docs/NUTRITION.md
     "NutritionGoal": setting a new goal must never overwrite an old
     one, only stamp ended_at on it."""
 
@@ -497,7 +497,7 @@ class CalorieFloorTests(TestCase):
 
 
 class CalorieTargetTests(TestCase):
-    """apps.nutrition.energy.calculate_calorie_target — the full
+    """apps.nutrition.energy.calculate_calorie_target - the full
     goal -> calorie pipeline. See docs/NUTRITION.md "Safety bounds":
     both the rate cap and the absolute floor can fire independently."""
 
@@ -1155,7 +1155,7 @@ class SummarizePricesTests(TestCase):
 
 
 class RefreshFoodPriceServiceTests(TestCase):
-    """apps.nutrition.services.refresh_food_price — the same lazy,
+    """apps.nutrition.services.refresh_food_price - the same lazy,
     on-demand staleness shape as import_or_refresh_food_from_off
     above, for Open Prices instead of OFF's core product API."""
 
@@ -1240,7 +1240,7 @@ class RefreshFoodPriceServiceTests(TestCase):
 
 
 class ExportImportRecipeServiceTests(TestCase):
-    """apps.nutrition.services.export_recipe/import_recipe — see
+    """apps.nutrition.services.export_recipe/import_recipe - see
     apps.core.data_exchange's own module docstring for the whole
     export/import feature these two are one half of."""
 
@@ -1400,7 +1400,7 @@ class ExportImportRecipeServiceTests(TestCase):
 
 
 class ExportImportDietPlanServiceTests(TestCase):
-    """apps.nutrition.services.export_diet_plan/import_diet_plan — see
+    """apps.nutrition.services.export_diet_plan/import_diet_plan - see
     apps.core.data_exchange's own module docstring for the whole
     export/import feature these two are one third of, alongside
     recipes and (apps.programs.services) gym programs."""
@@ -1622,7 +1622,7 @@ class ExportImportDietPlanServiceTests(TestCase):
 
 
 class MergeFoodsTests(TestCase):
-    """apps.nutrition.services.merge_foods — the admin-only duplicate
+    """apps.nutrition.services.merge_foods - the admin-only duplicate
     cleanup tool. The core guarantee under test: nothing a user
     actually logged (a DiaryEntry, a RecipeIngredient, a
     DietPlanItem) is ever deleted by a merge, only repointed."""
@@ -1835,7 +1835,7 @@ class SearchFoodsTests(TestCase):
     def setUp(self):
         self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
         # Isolate from apps.nutrition.migrations' seeded template foods
-        # — see SuggestItemForCalorieBudgetTests' own setUp comment.
+        # - see SuggestItemForCalorieBudgetTests' own setUp comment.
         # "chicken" below would otherwise also match e.g. "Chicken
         # Breast Fillets Skinless".
         Food.objects.filter(owner__isnull=True).delete()
@@ -1891,7 +1891,7 @@ class SearchFoodsTests(TestCase):
         self.assertEqual(off_results, [])
 
     def test_a_short_digit_string_is_treated_as_a_name_search_not_a_barcode(self):
-        # Below the 8-digit floor for any real barcode format — e.g. a
+        # Below the 8-digit floor for any real barcode format - e.g. a
         # quantity typo or a product code fragment, not a barcode.
         with mock.patch.object(
             openfoodfacts, "search_products", return_value=[]
@@ -2051,7 +2051,7 @@ class OpenFoodFactsSettingsTests(TestCase):
 class UserDeletionCascadeTests(TestCase):
     """Regression: several apps.nutrition FKs used on_delete=PROTECT
     on rows that are very commonly owned by the same user as the row
-    referencing them (a food logged in its own owner's diary, etc.) —
+    referencing them (a food logged in its own owner's diary, etc.) -
     deleting that user tried to cascade both sides at once, which
     PROTECT blocked outright. See docs/NUTRITION.md and each field's
     own comment in models.py."""
@@ -2199,7 +2199,7 @@ class OnboardingWizardTests(TestCase):
 
 class GoalUpdateViewTests(TestCase):
     """Changing a goal after onboarding (apps.nutrition.views.
-    GoalUpdateView) — reuses OnboardingReviewView's own set_goal/
+    GoalUpdateView) - reuses OnboardingReviewView's own set_goal/
     set_target pipeline, so most of the "does this compute the right
     target" behavior is already covered by CalculateTargetForGoalTests
     and GoalAndTargetServiceTests; these tests focus on what's new:
@@ -2250,7 +2250,7 @@ class GoalUpdateViewTests(TestCase):
         new_target = NutritionTarget.objects.get(user=self.alice, ended_at__isnull=True)
         self.assertEqual(new_target.goal_id, new_goal.pk)
         self.assertNotEqual(new_target.daily_calories, 2209)
-        # The old rows are superseded, never deleted — same history the
+        # The old rows are superseded, never deleted - same history the
         # dashboard's own "old target stays in your history" copy
         # (templates/nutrition/goal_edit.html) promises.
         self.assertEqual(NutritionGoal.objects.filter(user=self.alice).count(), 2)
@@ -2330,7 +2330,7 @@ class NutritionDashboardViewTests(TestCase):
 
 class NutritionSubnavTests(TestCase):
     """The persistent tab bar (templates/nutrition/_subnav.html,
-    apps.nutrition.context_processors.nutrition_subnav) — reported
+    apps.nutrition.context_processors.nutrition_subnav) - reported
     directly as needed once nutrition grew to more top-level sections
     than any other app here has, see docs/NUTRITION.md "Navigating
     within nutrition"."""
@@ -2361,7 +2361,7 @@ class NutritionSubnavTests(TestCase):
         self.assertNotContains(response, "nutrition-subnav")
 
     def test_hidden_during_onboarding(self):
-        # A not-yet-onboarded user has no NutritionProfile — the
+        # A not-yet-onboarded user has no NutritionProfile - the
         # dashboard itself redirects into the wizard, where the
         # sub-nav's own destinations (diary, foods, recipes, ...)
         # would all just bounce back here anyway.
@@ -2384,7 +2384,7 @@ class NutritionSubnavTests(TestCase):
         )
 
     def test_diary_related_pages_all_highlight_the_diary_tab(self):
-        """Not just diary-day itself — every view under that umbrella
+        """Not just diary-day itself - every view under that umbrella
         (adding an entry here) should highlight the same tab, per
         apps.nutrition.context_processors._TAB_URL_NAMES."""
         response = self.client.get(reverse("nutrition:diary-add-entry"))
@@ -2486,7 +2486,7 @@ class MostUsedFoodsTests(TestCase):
 
     def test_ranks_by_how_often_a_food_was_logged_not_by_recency(self):
         # Chicken logged twice (older), rice logged once (more recent)
-        # — chicken must still rank first, since this ranks by
+        # - chicken must still rank first, since this ranks by
         # frequency, not by which was eaten most recently.
         DiaryEntry.objects.create(
             user=self.alice, date=date(2026, 1, 1), meal_slot=self.breakfast,
@@ -2645,7 +2645,7 @@ class CalorieHistoryAndStatsTests(TestCase):
             food=self.chicken, quantity=Decimal("200"),  # 330 kcal
         )
         summary = services.nutrition_stats(self.alice, days=7)
-        # Only 1 of the 7 days had anything logged — the median must be
+        # Only 1 of the 7 days had anything logged - the median must be
         # that one day's own total, not diluted by the other 6 empty days.
         self.assertEqual(summary.days_logged, 1)
         self.assertEqual(summary.median_calories, Decimal("330"))
@@ -2704,7 +2704,7 @@ class CalorieHistoryAndStatsTests(TestCase):
 
 
 class CalendarMonthStatusesTests(TestCase):
-    """apps.nutrition.services.calendar_month_statuses — the front
+    """apps.nutrition.services.calendar_month_statuses - the front
     page's month calendar (apps.core.views.DashboardView)."""
 
     def setUp(self):
@@ -2723,7 +2723,7 @@ class CalendarMonthStatusesTests(TestCase):
         )
 
     def _log_calories(self, day, calories):
-        # self.chicken is 100 kcal/100g, so quantity in grams == kcal —
+        # self.chicken is 100 kcal/100g, so quantity in grams == kcal -
         # a convenient 1:1 knob for hitting an exact daily total.
         DiaryEntry.objects.create(
             user=self.alice, date=day, meal_slot=self.breakfast,
@@ -2803,19 +2803,19 @@ class CalendarMonthStatusesTests(TestCase):
 
     def test_a_trailing_average_close_to_target_is_green(self):
         self._set_target(2000)
-        self._log_calories(date(2026, 6, 10), 2050)  # 2.5% over — within the green band
+        self._log_calories(date(2026, 6, 10), 2050)  # 2.5% over - within the green band
         statuses = {s.date: s for s in services.calendar_month_statuses(self.alice, 2026, 6)}
         self.assertEqual(statuses[date(2026, 6, 10)].calorie_trend, "green")
 
     def test_a_trailing_average_moderately_off_is_yellow(self):
         self._set_target(2000)
-        self._log_calories(date(2026, 6, 10), 2200)  # 10% over — outside green, within yellow
+        self._log_calories(date(2026, 6, 10), 2200)  # 10% over - outside green, within yellow
         statuses = {s.date: s for s in services.calendar_month_statuses(self.alice, 2026, 6)}
         self.assertEqual(statuses[date(2026, 6, 10)].calorie_trend, "yellow")
 
     def test_a_trailing_average_far_off_is_red(self):
         self._set_target(2000)
-        self._log_calories(date(2026, 6, 10), 2800)  # 40% over — well past yellow
+        self._log_calories(date(2026, 6, 10), 2800)  # 40% over - well past yellow
         statuses = {s.date: s for s in services.calendar_month_statuses(self.alice, 2026, 6)}
         self.assertEqual(statuses[date(2026, 6, 10)].calorie_trend, "red")
 
@@ -2827,7 +2827,7 @@ class CalendarMonthStatusesTests(TestCase):
 
     def test_average_only_counts_days_actually_logged_within_the_window(self):
         self._set_target(2000)
-        # Only one of the seven trailing days has anything logged — the
+        # Only one of the seven trailing days has anything logged - the
         # average must be that single day's own total (2000, "on
         # target"), not diluted by six unlogged days averaging in as 0
         # (which would wrongly read as "way under target").
@@ -2838,7 +2838,7 @@ class CalendarMonthStatusesTests(TestCase):
     def test_a_days_own_trend_is_unaffected_by_logging_outside_its_window(self):
         self._set_target(2000)
         self._log_calories(date(2026, 6, 10), 2000)
-        # More than 7 days before the 17th — outside that day's own
+        # More than 7 days before the 17th - outside that day's own
         # trailing window, so it must not be pulled into its average.
         self._log_calories(date(2026, 6, 1), 6000)
         statuses = {s.date: s for s in services.calendar_month_statuses(self.alice, 2026, 6)}
@@ -2848,7 +2848,7 @@ class CalendarMonthStatusesTests(TestCase):
         """Regression: a future day's own trailing window still reaches
         back across today and other already-logged days, so its
         average came out non-empty even though nothing has (or could
-        have) been logged for the future day itself — the trend arrow
+        have) been logged for the future day itself - the trend arrow
         showed up on days that hadn't happened yet."""
         self._set_target(2000)
         today = timezone.localdate()
@@ -2918,8 +2918,8 @@ class DistinctFoodCategoriesServiceTests(TestCase):
     def test_sort_is_case_insensitive(self):
         """Regression: OFF's own category casing is inconsistent (a
         plain "Cereals" alongside a locale-prefixed "en:Confectionary
-        ..."), and a bare sorted() is case-sensitive — every uppercase
-        letter sorts before every lowercase one — so "Zebra" landed
+        ..."), and a bare sorted() is case-sensitive - every uppercase
+        letter sorts before every lowercase one - so "Zebra" landed
         before "apple" instead of after it."""
         make_food(self.alice, name="Food A", categories="Zebra")
         make_food(self.alice, name="Food B", categories="apple")
@@ -2932,7 +2932,7 @@ class FoodListViewTests(TestCase):
         self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
         self.bob = User.objects.create_user(username="bob", password="s3cret-pass")
         # Isolate from apps.nutrition.migrations' seeded template foods
-        # — see SuggestItemForCalorieBudgetTests' own setUp comment.
+        # - see SuggestItemForCalorieBudgetTests' own setUp comment.
         Food.objects.filter(owner__isnull=True).delete()
         self.client.login(username="alice", password="s3cret-pass")
 
@@ -3019,7 +3019,7 @@ class FoodListViewTests(TestCase):
     def test_category_filter_is_a_searchable_text_input_not_a_select(self):
         """Regression: a plain <select> forced picking an exact
         category from what can be a long, inconsistently-cased OFF
-        category list — a <datalist>-backed text input keeps the same
+        category list - a <datalist>-backed text input keeps the same
         options as suggestions but lets typing narrow them, with no
         change to the __icontains match the backend already does."""
         make_food(self.alice, name="Chicken breast", categories="Meats, Poultry")
@@ -3058,7 +3058,7 @@ class FoodListViewTests(TestCase):
 
     def test_list_thumbnail_falls_back_to_the_full_size_photo_with_no_thumb_cached(self):
         """A food imported before image_thumb_url existed, not yet
-        refreshed from OFF — still shows a photo rather than nothing."""
+        refreshed from OFF - still shows a photo rather than nothing."""
         make_food(
             self.alice, name="Muesli",
             image_url="https://images.openfoodfacts.org/muesli.400.jpg", image_thumb_url="",
@@ -3079,7 +3079,7 @@ class FoodListViewTests(TestCase):
 
     def test_the_back_link_returns_to_the_nutrition_dashboard(self):
         """Regression: this used to link "back" to the food diary
-        instead — a leftover from before this page was also reachable
+        instead - a leftover from before this page was also reachable
         directly from the dashboard's own "Quick links" card, so
         arriving that way and clicking "back" landed somewhere the
         user never came from."""
@@ -3094,7 +3094,7 @@ class FoodListViewTests(TestCase):
     def test_the_camera_barcode_scanner_is_wired_up(self):
         """Regression: this page's own search used to be a plain
         type-and-submit <form>, unlike every other "search for a food"
-        box in the app — no live search, and no way to scan a
+        box in the app - no live search, and no way to scan a
         barcode."""
         response = self.client.get(reverse("nutrition:food-list"))
         self.assertContains(response, "barcode-scanner.js")
@@ -3103,7 +3103,7 @@ class FoodListViewTests(TestCase):
 
 
 class FoodDetailViewTests(TestCase):
-    """apps.nutrition.views.FoodDetailView — asked for directly: every
+    """apps.nutrition.views.FoodDetailView - asked for directly: every
     other place a food's name appeared (the diary, a recipe's own
     ingredient list, "most used", search results, ...) was plain text
     with nowhere to tap through to, unlike a recipe, which already had
@@ -3226,7 +3226,7 @@ class FoodDetailViewTests(TestCase):
 
 
 class NutritionLabelTests(TestCase):
-    """apps.nutrition.nutrition_label — a food's table laid out like an
+    """apps.nutrition.nutrition_label - a food's table laid out like an
     EU/Finnish package label."""
 
     def setUp(self):
@@ -3485,7 +3485,7 @@ class DiaryAddEntryViewTests(TestCase):
         """Regression: templates/nutrition/diary_day.html's per-meal
         "+ Add food" link used to only pass ?date=, never which meal
         card it was on, so this page always preselected the first meal
-        slot (Breakfast) regardless of which one was actually tapped —
+        slot (Breakfast) regardless of which one was actually tapped -
         a food added under Dinner silently landed under Breakfast
         unless the user noticed and switched it by hand."""
         dinner = MealSlot.objects.get(name="Dinner", owner=None)
@@ -3637,7 +3637,7 @@ class NutritionStatsViewTests(TestCase):
         """Regression, reported live: a quantity/serving-size ratio
         that doesn't divide evenly (150g of a 100g-serving 241kcal
         food) produced a calorie figure with several decimal places
-        in the chart tooltip/table (e.g. "361,5500 kcal") — the chart
+        in the chart tooltip/table (e.g. "361,5500 kcal") - the chart
         component itself doesn't round, so the raw Decimal has to be
         quantized before it gets there, the same "no false precision"
         rule the calorie-adjustment suggestion engine already
@@ -3765,7 +3765,7 @@ class DiaryDayViewTests(TestCase):
     def test_an_entrys_package_size_shows_next_to_its_price(self):
         """Asked for directly: the price alone ("3.21 EUR") doesn't say
         what it's the price of, so a food's OFF-sourced pack size
-        (`Food.quantity`, e.g. "400 g") renders right before it —
+        (`Food.quantity`, e.g. "400 g") renders right before it -
         "400 g/3.21 EUR"."""
         food = make_food(
             self.alice, price_amount=Decimal("3.21"), price_currency="EUR",
@@ -3815,8 +3815,8 @@ class DiaryDayViewTests(TestCase):
     def test_meal_slot_name_renders_translated_for_a_non_english_user(self):
         # Regression: MealSlot names (Breakfast/Lunch/...) were the one
         # seeded content name in this app rendered as plain
-        # {{ slot.name }} — no |translate_content, no msgid in
-        # apps.nutrition.i18n_content — so it stayed raw English
+        # {{ slot.name }} - no |translate_content, no msgid in
+        # apps.nutrition.i18n_content - so it stayed raw English
         # regardless of the active UI language, unlike every other
         # seeded name (exercises, measurement types, ...) elsewhere.
         self.alice.language = "fi"
@@ -3845,7 +3845,7 @@ class DiaryDayViewTests(TestCase):
 
     def test_has_a_way_back_to_the_nutrition_dashboard(self):
         """Regression: the diary day used to have no link back to the
-        nutrition dashboard at all — reachable directly from the
+        nutrition dashboard at all - reachable directly from the
         dashboard itself (Quick links, "+ Log food now"), it needs the
         same "back to nutrition" affordance every other nutrition
         section already has."""
@@ -3885,7 +3885,7 @@ class DiaryDayViewTests(TestCase):
     def test_meal_card_shows_its_own_calorie_and_macro_subtotal(self):
         """Asked for directly: a meal card only ever showed each logged
         food's own calories, never a running total for the meal itself
-        — so following "how much did I eat for breakfast" meant adding
+        - so following "how much did I eat for breakfast" meant adding
         each line up by hand."""
         breakfast = MealSlot.objects.get(name="Breakfast", owner=None)
         oats = make_food(
@@ -4006,7 +4006,7 @@ class CreateRecipeFromDiaryMealServiceTests(TestCase):
         recipe = services.create_recipe_from_diary_meal(
             self.alice, date(2026, 1, 1), self.breakfast
         )
-        self.assertEqual(recipe.name, "Breakfast — 2026-01-01")
+        self.assertEqual(recipe.name, "Breakfast - 2026-01-01")
 
     def test_returns_none_for_a_meal_with_nothing_logged(self):
         result = services.create_recipe_from_diary_meal(
@@ -4094,7 +4094,7 @@ class DiaryMealSaveAsRecipeViewTests(TestCase):
         self.assertEqual(response.status_code, 302)
 
     def test_another_users_meal_slot_id_still_works_since_meal_slots_are_shared(self):
-        """System meal slots (owner=None) are visible to every user —
+        """System meal slots (owner=None) are visible to every user -
         this isn't an ownership check to begin with, only the diary
         entries themselves are scoped by user (the query in
         create_recipe_from_diary_meal filters on `user=`)."""
@@ -4108,7 +4108,7 @@ class DiaryMealSaveAsRecipeViewTests(TestCase):
             follow=True,
         )
         # Bob has nothing logged for this meal himself, even though
-        # Alice does — never leaks Alice's entries into Bob's recipe.
+        # Alice does - never leaks Alice's entries into Bob's recipe.
         self.assertContains(response, "Nothing logged for this meal")
         self.assertFalse(Recipe.objects.filter(owner=bob).exists())
 
@@ -4257,7 +4257,7 @@ class DietPlanExportImportViewTests(TestCase):
 
 
 class DiaryNutritionSnapshotTests(TestCase):
-    """DiaryEntry.nutrition_snapshot — a logged day keeps the values its
+    """DiaryEntry.nutrition_snapshot - a logged day keeps the values its
     foods and recipes had when they were logged."""
 
     def setUp(self):
@@ -4339,7 +4339,7 @@ class DiaryNutritionSnapshotTests(TestCase):
 
 class PrivateFoodScopingTests(TestCase):
     """Another user's own (private) food can't be added anywhere by
-    posting its id — the pickers only ever offer visible foods, but the
+    posting its id - the pickers only ever offer visible foods, but the
     views used to look a posted food_id up among all active foods."""
 
     def setUp(self):
@@ -4403,9 +4403,9 @@ class RecipeViewTests(TestCase):
         self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
         self.bob = User.objects.create_user(username="bob", password="s3cret-pass")
         # Isolate from apps.nutrition.migrations' seeded template
-        # foods/recipes — see SuggestItemForCalorieBudgetTests' own
+        # foods/recipes - see SuggestItemForCalorieBudgetTests' own
         # setUp comment. Several tests below search/list by name and
-        # would otherwise pick up e.g. "Bulk lunch — Chicken & rice
+        # would otherwise pick up e.g. "Bulk lunch - Chicken & rice
         # bowl" alongside whatever this class creates itself.
         Food.objects.filter(owner__isnull=True).delete()
         Recipe.objects.filter(owner__isnull=True).delete()
@@ -4459,8 +4459,8 @@ class RecipeViewTests(TestCase):
     def test_recipe_list_template_recipes_are_shown_separately(self):
         """A built-in template recipe (owner=None,
         apps.nutrition.migrations' seed data) is visible to every
-        user, the same as a shared Food already is — see
-        Recipe.owner's own comment — but listed in its own "Template
+        user, the same as a shared Food already is - see
+        Recipe.owner's own comment - but listed in its own "Template
         recipes" section/page, not mixed into "Your recipes"."""
         Recipe.objects.create(owner=None, name="Shared Template Bowl", servings=1)
         response = self.client.get(reverse("nutrition:recipe-list"))
@@ -4532,7 +4532,7 @@ class RecipeViewTests(TestCase):
     def test_recipe_list_per_serving_calories_is_not_an_n_plus_1(self):
         """Regression: per-serving calories used to be computed with
         one query per recipe in a loop
-        (services.recipe_per_serving_nutrition called per row) — a
+        (services.recipe_per_serving_nutrition called per row) - a
         real N+1 for anyone with more than a couple of recipes. Fixed
         to one bulk ingredient query for the whole list regardless of
         how many recipes are shown; this pins the query count so it
@@ -4545,7 +4545,7 @@ class RecipeViewTests(TestCase):
                 recipe=recipe, food=self.chicken, quantity=Decimal("100")
             )
         # Pre-create the singleton apps.core.context_processors.seo
-        # reads on every page — TestCase rolls back each test method's
+        # reads on every page - TestCase rolls back each test method's
         # own writes, so without this, this specific test would always
         # see get_or_create()'s more expensive "doesn't exist yet"
         # path (a SELECT plus a SAVEPOINT/INSERT/RELEASE), which real
@@ -4553,20 +4553,20 @@ class RecipeViewTests(TestCase):
         # request this instance ever serves.
         SeoSettings.objects.create(pk=1)
         # Session auth (2) + one COUNT and one SELECT per independent
-        # Paginator ("your recipes"/"template recipes" — RecipeListView
+        # Paginator ("your recipes"/"template recipes" - RecipeListView
         # docstring) + one bulk ingredient query + one prefetch of every
         # listed recipe's meal_slots (Recipe.meal_slots) + base.html's
         # training-FAB in-progress-session check + apps.core.
         # context_processors.seo's own settings lookup + four more
         # from apps.social.context_processors.social_badge (one cheap
         # EXISTS each: pending friend requests, pending group invites,
-        # unread direct messages, unread group messages) — every
+        # unread direct messages, unread group messages) - every
         # context processor here runs on every page regardless of
         # recipe count, not one query per recipe. This test's own
         # setUp clears every template recipe, so the template
         # Paginator's own SELECT never actually reaches the database
         # (Django recognizes an empty `[0:0]` slice and skips the
-        # query entirely) — only its COUNT does, hence 2 fixed queries
+        # query entirely) - only its COUNT does, hence 2 fixed queries
         # for pagination rather than 4. A future unrelated query added
         # to this view is fine to bump this number a little; a query
         # count that scales with the number of recipes is the actual
@@ -4620,7 +4620,7 @@ class RecipeViewTests(TestCase):
     def test_search_comes_before_most_used_foods(self):
         """Regression: the search/barcode box used to render below
         "Most used", the same ordering bug already fixed on the food
-        diary's own add-food page — moved above it here too."""
+        diary's own add-food page - moved above it here too."""
         other_recipe = Recipe.objects.create(owner=self.alice, name="Other", servings=1)
         RecipeIngredient.objects.create(
             recipe=other_recipe, food=self.chicken, quantity=Decimal("100")
@@ -4880,7 +4880,7 @@ class SuggestItemForCalorieBudgetTests(TestCase):
     def setUp(self):
         self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
         # Isolate from apps.nutrition.migrations' seeded template
-        # foods/recipes (0008_seed_template_recipes) — every test below
+        # foods/recipes (0008_seed_template_recipes) - every test below
         # builds its own small, deliberately controlled candidate set
         # to test the "closest match" ranking, which the seed data's
         # realistic calorie spread would otherwise silently win or
@@ -4940,7 +4940,7 @@ class BuildAndApplyDietPlanTests(TestCase):
     def setUp(self):
         self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
         # Isolate from apps.nutrition.migrations' seeded template
-        # foods/recipes — see SuggestItemForCalorieBudgetTests' own
+        # foods/recipes - see SuggestItemForCalorieBudgetTests' own
         # setUp comment. MealSlot's own seeded rows are left alone:
         # every test here explicitly needs a real Breakfast/Lunch slot.
         Food.objects.filter(owner__isnull=True).delete()
@@ -4966,7 +4966,7 @@ class BuildAndApplyDietPlanTests(TestCase):
         self.assertEqual(sum(m.target_calories for m in plan.meals.all()), 1600)
 
     def test_auto_fill_false_creates_the_same_meals_with_zero_items(self):
-        """"Start from scratch" — asked for directly: a plan should be
+        """"Start from scratch" - asked for directly: a plan should be
         creatable with no auto-generated suggestion in it at all,
         ready for the user to fill in themselves."""
         plan = diet_builder.build_diet_plan(
@@ -5154,7 +5154,7 @@ class DietPlanViewTests(TestCase):
 
     def test_search_comes_before_most_used_foods(self):
         """Regression: same ordering bug already fixed on the food
-        diary's own add-food page and the recipe ingredient page —
+        diary's own add-food page and the recipe ingredient page -
         search/barcode used to render below "Most used" here too."""
         rice = make_food(self.alice, name="Rice", calories=130)
         DiaryEntry.objects.create(
@@ -5234,7 +5234,7 @@ class DietPlanViewTests(TestCase):
     def test_logging_a_weekly_plans_weekday_with_no_meals_shows_an_info_message_not_an_error(self):
         """A weekly plan whose target weekday has nothing built for it
         (diet_plan_log's own comment: unreachable before weekly plans
-        existed) — 'nothing to log' rather than a crash or a silent
+        existed) - 'nothing to log' rather than a crash or a silent
         empty diary."""
         plan = DietPlan.objects.create(
             user=self.alice, name="Weekly plan", is_weekly=True, target_calories=800,
@@ -5288,7 +5288,7 @@ class DietPlanViewTests(TestCase):
         meal.items.create(food=self.chicken, quantity=Decimal("100"), order=0)
         response = self.client.get(reverse("nutrition:diet-plan-detail", args=[plan.pk]))
         self.assertContains(response, "Totals")
-        # self.chicken is 165 kcal/100g (make_food's own default) — so
+        # self.chicken is 165 kcal/100g (make_food's own default) - so
         # far 165 of a 2000 target leaves 1835.
         self.assertContains(response, "165 / 2000")
         self.assertContains(response, "1835")
@@ -5303,7 +5303,7 @@ class DietPlanViewTests(TestCase):
         response = self.client.get(reverse("nutrition:diet-plan-detail", args=[plan.pk]))
         # count() on the bare class name would also match each
         # widget's own conditional "diet-plan-totals-widget-expanded"
-        # modifier class in its :class="..." binding — anchor on the
+        # modifier class in its :class="..." binding - anchor on the
         # exact opening-tag class attribute instead.
         self.assertEqual(
             response.content.decode().count('class="card diet-plan-totals-widget"'), 7
@@ -5577,7 +5577,7 @@ class EstimateBodyFatPercentTests(TestCase):
 
 
 class EstimateDailyWaterLitersTests(TestCase):
-    """Plain Decimal arithmetic — exact, hand-derivable expected values."""
+    """Plain Decimal arithmetic - exact, hand-derivable expected values."""
 
     def test_sedentary_80kg_is_exactly_the_base_rate(self):
         result = calculators.estimate_daily_water_liters(Decimal("80"), ActivityLevel.SEDENTARY)
@@ -5619,7 +5619,7 @@ class WhrRiskLevelTests(TestCase):
 
     def test_female_thresholds_are_lower_than_male(self):
         # The same 0.85 ratio is "lower risk" for a man but "higher
-        # risk" for a woman — the whole reason these are two separate
+        # risk" for a woman - the whole reason these are two separate
         # tables, not one shared scale.
         self.assertEqual(
             calculators.whr_risk_level(Decimal("0.85"), BiologicalSex.FEMALE).name,
@@ -5654,7 +5654,7 @@ class EstimateWeeksToGoalTests(TestCase):
 
     def test_rate_moving_the_wrong_direction_returns_none(self):
         # Wants to lose weight (target below current) but entered a
-        # positive (gaining) rate — this can never reach the target.
+        # positive (gaining) rate - this can never reach the target.
         weeks = calculators.estimate_weeks_to_goal(
             current_weight_kg=Decimal("90"),
             target_weight_kg=Decimal("85"),
@@ -5678,7 +5678,7 @@ class CalculatorsHomeViewTests(TestCase):
 
     def test_renders_without_a_nutrition_profile(self):
         # The whole point of the calculators is that they don't require
-        # onboarding — unlike NutritionDashboardView, this must not
+        # onboarding - unlike NutritionDashboardView, this must not
         # redirect an un-onboarded user into the wizard.
         self.assertFalse(hasattr(self.alice, "nutrition_profile"))
         response = self.client.get(reverse("nutrition:calculators-home"))
@@ -5945,7 +5945,7 @@ class DateInputWidgetLocaleFormatTests(TestCase):
     rendered its value in the *active locale's* date format (e.g.
     Finnish "17.08.2026") rather than the ISO 8601 format
     (`YYYY-MM-DD`) HTML5 `<input type="date">` requires for its
-    `value` attribute — a browser silently rejects any other format
+    `value` attribute - a browser silently rejects any other format
     and shows the picker empty instead. `format="%Y-%m-%d"` on the
     widget itself pins the display format regardless of locale, the
     same fix already established in apps.activities.forms's own
@@ -5982,19 +5982,19 @@ class NumberInputLocaleFormatTests(TestCase):
     attribute must use a period decimal separator regardless of
     locale (the HTML spec's floating-point number token), but a raw
     `{{ some_decimal }}` renders with the active locale's decimal
-    separator (Finnish uses a comma) — a browser silently rejects the
+    separator (Finnish uses a comma) - a browser silently rejects the
     malformed value and leaves the field empty instead of prefilled.
     Found live in a Finnish session while verifying the "Most used"
     quick-add panel. Fixed with `{% load l10n %}` + `|unlocalize` on
     every hand-written `type="number"` value in
-    `_food_search_results.html`/`_most_used_foods.html` — the only
+    `_food_search_results.html`/`_most_used_foods.html` - the only
     hand-written number inputs in the app; every Django-form-rendered
     NumberInput widget elsewhere already avoids this on its own."""
 
     def setUp(self):
         # A user's active UI language comes from their stored
         # User.language preference (apps.accounts.middleware.
-        # UserLanguageMiddleware), re-derived fresh on every request —
+        # UserLanguageMiddleware), re-derived fresh on every request -
         # translation.override() wrapped around self.client.get() gets
         # overridden right back by that middleware, so the language has
         # to be set here instead (see this class's own docstring).
@@ -6010,7 +6010,7 @@ class NumberInputLocaleFormatTests(TestCase):
                 reverse("nutrition:food-search"), {"q": self.food.name, "mode": "diary"}
             )
         # serving_size is a decimal_places=2 field, so "100.5" in is
-        # "100.50" back out — the point being the period, not the
+        # "100.50" back out - the point being the period, not the
         # trailing zero.
         self.assertContains(response, 'value="100.50"')
         self.assertNotContains(response, 'value="100,50"')
@@ -6040,7 +6040,7 @@ def _fake_response(payload, status=200):
 
 
 class OffHttpTests(TestCase):
-    """apps.nutrition.off_http — OFF's usage rules: an identifying
+    """apps.nutrition.off_http - OFF's usage rules: an identifying
     User-Agent with a contact, and at most 10 searches / 15 reads a
     minute per IP (docs/NUTRITION.md "OpenFoodFacts integration")."""
 
@@ -6237,7 +6237,7 @@ class SearchFoodsOnlineGatingTests(TestCase):
 
 
 class ShoppingTripTests(TestCase):
-    """apps.nutrition.shopping.shopping_trips — pure weekday arithmetic."""
+    """apps.nutrition.shopping.shopping_trips - pure weekday arithmetic."""
 
     def test_no_shopping_days_is_one_list_for_the_week(self):
         from apps.nutrition import shopping

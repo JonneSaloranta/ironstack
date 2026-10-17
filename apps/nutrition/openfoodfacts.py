@@ -1,10 +1,10 @@
-"""A thin, on-demand OpenFoodFacts client — see docs/NUTRITION.md
+"""A thin, on-demand OpenFoodFacts client - see docs/NUTRITION.md
 "OpenFoodFacts integration" for why this is per-lookup, not a bulk
 dataset import/sync.
 
 Deliberately narrow: two read-only functions against OFF's public JSON
 API, and a parser mapping their product shape onto this app's own
-`Food` fields. No writes, no auth — apps.nutrition.services is where a
+`Food` fields. No writes, no auth - apps.nutrition.services is where a
 parsed result actually becomes (or updates) a `Food` row.
 """
 
@@ -23,12 +23,12 @@ from .off_http import OffRateLimited, OffRequestError  # noqa: F401 (re-exported
 API_BASE = getattr(settings, "OFF_API_BASE", "https://world.openfoodfacts.org")
 SEARCH_BASE = getattr(settings, "OFF_SEARCH_BASE", "https://search.openfoodfacts.org")
 # kcal per 100g/100ml is OFF's own universal unit for every product,
-# regardless of that product's real-world serving size — matches this
+# regardless of that product's real-world serving size - matches this
 # app's own "per serving_size of serving_unit" Food shape directly
 # when serving_size=100.
 PER_100_SERVING_SIZE = Decimal("100")
 
-# Only what `parse_product` reads — Search-a-licious and the v2 product
+# Only what `parse_product` reads - Search-a-licious and the v2 product
 # API both return just these, keeping responses small.
 PRODUCT_FIELDS = (
     "code,product_name,generic_name,brands,nutriments,nutriscore_grade,"
@@ -43,7 +43,7 @@ SEARCH_CACHE_SECONDS = 60 * 60 * 24
 
 
 class OpenFoodFactsError(off_http.OffRequestError):
-    """Raised for a network/parse failure — never for "no results,"
+    """Raised for a network/parse failure - never for "no results,"
     which is a normal, silently-empty outcome, not an error."""
 
 
@@ -64,7 +64,7 @@ def _get_json(url, *, bucket, params=None):
 
 
 def _search(q, *, page_size, language="en"):
-    """One Search-a-licious query (OFF's supported full-text search —
+    """One Search-a-licious query (OFF's supported full-text search -
     the old /cgi/search.pl is deprecated). Cached per query."""
     key = "nutrition:off_search:" + hashlib.sha256(
         f"{language}|{page_size}|{q}".encode()
@@ -88,7 +88,7 @@ def _search(q, *, page_size, language="en"):
 
 
 def search_products(query, *, page_size=SEARCH_PAGE_SIZE, language="en"):
-    """Free-text search — returns a list of raw OFF product dicts
+    """Free-text search - returns a list of raw OFF product dicts
     (unparsed; call `parse_product` on each to get this app's shape).
     """
     return _search(query, page_size=page_size, language=language)
@@ -148,7 +148,7 @@ BROWSE_CATEGORIES = [
 
 
 def list_categories():
-    """The curated browse-by-category shortcuts (id + name) — static,
+    """The curated browse-by-category shortcuts (id + name) - static,
     so it costs no OFF request and can't fail."""
     return [{"id": cid, "name": name} for cid, name in BROWSE_CATEGORIES]
 
@@ -182,7 +182,7 @@ def parse_product(raw):
     """Maps a raw OFF product dict onto this app's `Food` field names,
     always as "per 100g/100ml" (OFF's own universal unit) regardless
     of the product's real package size. Returns `None` if the product
-    is missing its barcode or core macros entirely — a product OFF
+    is missing its barcode or core macros entirely - a product OFF
     itself has incomplete data for isn't worth creating a Food row
     that would show misleading zeros."""
     barcode = raw.get("code")
@@ -229,7 +229,7 @@ def parse_product(raw):
         "polyols_grams": _optional("polyols_100g"),
         "salt_grams": _optional("salt_100g"),
         "other_nutrients": nutrition_label.extract_other_nutrients(nutriments),
-        # Both `None` unless OFF has actually graded this product —
+        # Both `None` unless OFF has actually graded this product -
         # "unknown"/"not-applicable" (OFF's own placeholders for "not
         # graded") map to None rather than a misleading guess.
         "nutri_score": (
@@ -240,15 +240,15 @@ def parse_product(raw):
         "nova_group": (
             int(raw["nova_group"]) if raw.get("nova_group") in (1, 2, 3, 4) else None
         ),
-        # `image_front_url` — OFF's own already-sized "front of pack"
-        # photo, not `image_url` (their largest/raw upload) — see
+        # `image_front_url` - OFF's own already-sized "front of pack"
+        # photo, not `image_url` (their largest/raw upload) - see
         # Food.image_url's own comment for why this is linked rather
         # than downloaded. Empty string, not None, when OFF has no
         # photo for this product: both URLField(blank=True) and the
         # `{% if food.image_url %}` template check treat "" as
         # "nothing to show" identically to a genuinely missing key.
         "image_url": raw.get("image_front_url") or raw.get("image_url") or "",
-        # OFF's own smaller pre-generated variant — see Food.
+        # OFF's own smaller pre-generated variant - see Food.
         # image_thumb_url's own comment for why this is a separate
         # stored field rather than a resize of image_url.
         "image_thumb_url": raw.get("image_front_thumb_url") or raw.get("image_thumb_url") or "",

@@ -1,4 +1,4 @@
-"""Global template context — same reasoning as
+"""Global template context - same reasoning as
 apps.workouts.context_processors.active_workout_session: the one-time
 onboarding prompt (templates/accounts/_onboarding_modal.html) has to be
 able to appear on whatever page a user happens to land on right after
@@ -18,7 +18,7 @@ def onboarding(request):
     # page's template context (see this module's own docstring), and
     # several pages already have their own view-specific "form" (e.g.
     # ProfileView's own preferences form on the very page this modal
-    # appears over) — a shared key name would risk one silently
+    # appears over) - a shared key name would risk one silently
     # shadowing the other depending on context-processor/view merge
     # order.
     # Language comes first, on its own step, so everything after it is

@@ -65,7 +65,7 @@
     {% endif %}
 
     {% if current|is_complete and not all_done %}
-      <p class="text-muted">{% trans "This exercise is done — logging another set is still fine if you want one." %}</p>
+      <p class="text-muted">{% trans "This exercise is done - logging another set is still fine if you want one." %}</p>
     {% endif %}
 
     <form data-tour="train-log-form" class="set-log-form" x-data="{more: {% if set_form.target_reps.errors or set_form.rpe.errors or set_form.rir.errors or set_form.notes.errors or set_form.is_warmup.errors or set_form.is_failure.errors %}true{% else %}false{% endif %}}" method="post" action="{% url 'workouts:train-set-log' current.id %}"

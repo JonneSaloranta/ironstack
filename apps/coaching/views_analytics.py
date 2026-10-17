@@ -17,7 +17,7 @@ User = get_user_model()
 
 
 class ClientListView(LoginRequiredMixin, View):
-    """A PT's own "My clients" — active CoachingRelationships plus the
+    """A PT's own "My clients" - active CoachingRelationships plus the
     incoming CoachingRequests still waiting on them, same
     incoming-requests-alongside-the-list shape as apps.social.
     views_friends.friend_list."""
@@ -43,10 +43,10 @@ class ClientDetailView(LoginRequiredMixin, View):
     training and body-weight data. Gated on an accepted
     CoachingRelationship (services.get_active_relationship), NOT on
     `User.show_achievements` the way apps.analytics.views.
-    MemberProfileView is — accepting the coaching request is itself
+    MemberProfileView is - accepting the coaching request is itself
     the consent to share this (this feature's own product decision),
     so that separate, unrelated privacy toggle plays no part here. An
-    ended/declined/never-requested relationship all 404 identically —
+    ended/declined/never-requested relationship all 404 identically -
     never leaking which case it was, the same reasoning
     MemberProfileView's own opted-out 404 already follows."""
 
@@ -58,7 +58,7 @@ class ClientDetailView(LoginRequiredMixin, View):
         if relationship is None:
             raise Http404
         date_range = dateranges.resolve(dateranges.DEFAULT_RANGE)
-        # training_summary_canonical, not training_summary — the
+        # training_summary_canonical, not training_summary - the
         # latter converts total_volume using *member*'s own
         # unit_system, but this page is meant to display in the
         # *coach's* (request.user's) units, the same "viewer's own
@@ -73,7 +73,7 @@ class ClientDetailView(LoginRequiredMixin, View):
             member, dateranges.resolve("all"), limit=10
         )
         # Displayed in the *coach's* own unit preference, not the
-        # client's — same "the viewer's own units, not the profile
+        # client's - same "the viewer's own units, not the profile
         # owner's" precedent apps.analytics.views.MemberProfileView's
         # reused PR partial already follows, and the same manual
         # canonical-to-display conversion apps.measurements.views does

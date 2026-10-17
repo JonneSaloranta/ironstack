@@ -3,7 +3,7 @@ from django.utils.translation import gettext_lazy as _
 
 from .models import ApiContext
 
-# (ApiKeyPermission field name, column label) — the order here is the
+# (ApiKeyPermission field name, column label) - the order here is the
 # column order in the create-key permission grid (apps.api.views_web,
 # templates/api/key_form.html).
 CRUD_VERBS = [
@@ -15,10 +15,10 @@ CRUD_VERBS = [
 
 
 class ApiKeyCreateForm(forms.Form):
-    """`name` plus one checkbox per (context, CRUD verb) — one row per
+    """`name` plus one checkbox per (context, CRUD verb) - one row per
     `ApiContext` member × 4 verbs, added dynamically in `__init__`
     rather than hand-written since the context list is a single
-    source of truth (apps.api.models.ApiContext) — adding a new
+    source of truth (apps.api.models.ApiContext) - adding a new
     context (e.g. `nutrition`) needs no change here at all.
     `permissions()` reshapes the flat checkbox fields back into the
     `{context: {can_create: bool, ...}}` dict

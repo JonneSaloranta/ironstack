@@ -1,13 +1,13 @@
-"""Seed a few more commonly-split-out muscle groups, on request — the
+"""Seed a few more commonly-split-out muscle groups, on request - the
 original seed (0002) covered 11 broad groups but left out three that
 mainstream fitness apps usually list on their own rather than folding
 into a broader neighbor: Traps (upper back/neck, distinct enough that
 plenty of exercises target only it), Lats (the primary back-width
-muscle — "Back" alone doesn't let a user single it out), and Obliques
+muscle - "Back" alone doesn't let a user single it out), and Obliques
 (side core, distinct from straight Abs work).
 
 Deliberately does not retag any exercise seeded by 0002/0004 (e.g.
-"Barbell Row"/"Pull-Up" stay tagged "Back" only, not also "Lats") —
+"Barbell Row"/"Pull-Up" stay tagged "Back" only, not also "Lats") -
 Exercise.primary/secondary_muscle_groups is live, current-state
 metadata that analytics reads directly, not a historical snapshot,
 so silently changing an existing exercise's muscle groups would

@@ -3,7 +3,7 @@ from django.db import migrations, models
 
 def backfill_exercise_names(apps, schema_editor):
     """Rows logged before the snapshot existed get the exercise's current
-    name — the best record left of what it was called at the time."""
+    name - the best record left of what it was called at the time."""
     Exercise = apps.get_model("exercises", "Exercise")
     PerformedExercise = apps.get_model("workouts", "PerformedExercise")
     PerformedExercise.objects.filter(exercise_name="").update(

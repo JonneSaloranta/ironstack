@@ -7,8 +7,8 @@ or to the previous one (you shop after that day is covered) is the plan's
 `shopping_includes_shopping_day`. No shopping days means one trip for the
 whole week.
 
-The list for a trip adds up every food the covered days' meals need —
-recipes broken down into their ingredients for the planned servings — so
+The list for a trip adds up every food the covered days' meals need -
+recipes broken down into their ingredients for the planned servings - so
 the same food used on several days appears once, as a total, with the
 per-day amounts beside it.
 """
@@ -22,7 +22,7 @@ WEEK = tuple(range(7))  # 0=Monday .. 6=Sunday, date.weekday()
 
 @dataclass(frozen=True)
 class Trip:
-    weekday: int | None  # None: no shopping days set — one trip for the week
+    weekday: int | None  # None: no shopping days set - one trip for the week
     days: tuple[int, ...]  # the weekdays whose meals this trip buys for
 
 
@@ -47,7 +47,7 @@ def shopping_trips(shopping_weekdays, *, include_shopping_day=True):
 
 
 def trip_for_today(trips, today_weekday):
-    """The trip whose shopping day is today or comes next — the list a
+    """The trip whose shopping day is today or comes next - the list a
     user opening the page most likely wants."""
     if trips[0].weekday is None:
         return trips[0]
@@ -134,7 +134,7 @@ def pick_trip(trips, requested_weekday, today_weekday):
 
 
 def set_shopping_settings(plan, weekdays, include_shopping_day):
-    """Replace a plan's shopping days and include/exclude choice — the one
+    """Replace a plan's shopping days and include/exclude choice - the one
     place both the web page and the API write them."""
     from .models import ShoppingDay
 
@@ -162,7 +162,7 @@ class ShoppingToday:
 def shopping_today(user, today):
     """Today's trip when today is one of the active plan's shopping days
     (the dashboard's "Shopping day" card), else None. A plan without
-    shopping days never has one — there's no day to remind about."""
+    shopping days never has one - there's no day to remind about."""
     plan = active_plan(user)
     if plan is None:
         return None

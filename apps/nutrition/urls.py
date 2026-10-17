@@ -37,7 +37,7 @@ urlpatterns = [
     ),
     path("foods/import/", views.food_import, name="food-import"),
     path("diary/", views.DiaryDayView.as_view(), name="diary-day"),
-    # Must come before "diary/<str:target_date>/" below — Django tries
+    # Must come before "diary/<str:target_date>/" below - Django tries
     # urlpatterns in order, and <str:target_date> matches any segment
     # including the literal "add", which would otherwise route POSTs
     # meant for DiaryAddEntryView into DiaryDayView (no post() method

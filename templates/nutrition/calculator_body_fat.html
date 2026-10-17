@@ -1,12 +1,12 @@
 {% extends "base.html" %}
 {% load i18n %}
-{% block title %}{% trans "Body fat calculator" %} — IronStack{% endblock %}
+{% block title %}{% trans "Body fat calculator" %} - IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
   <h1 class="no-margin">{% trans "Body fat calculator" %}</h1>
 </div>
 {% include "nutrition/_subnav.html" %}
-<p class="text-muted">{% trans "The U.S. Navy tape-measure method — just a tape measure, no calipers or bioimpedance scale needed. An estimate, typically within a few percentage points of a DEXA scan." %}</p>
+<p class="text-muted">{% trans "The U.S. Navy tape-measure method - just a tape measure, no calipers or bioimpedance scale needed. An estimate, typically within a few percentage points of a DEXA scan." %}</p>
 
 <form class="card" method="get">
   {% include "core/_form_errors.html" %}
@@ -23,7 +23,7 @@
   </div>
 {% elif submitted and form.is_valid %}
   <div class="card empty-state">
-    <p>{% trans "Couldn't estimate this from those measurements — double-check them (waist should be larger than neck)." %}</p>
+    <p>{% trans "Couldn't estimate this from those measurements - double-check them (waist should be larger than neck)." %}</p>
   </div>
 {% endif %}
 

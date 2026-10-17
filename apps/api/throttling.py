@@ -2,7 +2,7 @@ from rest_framework.throttling import SimpleRateThrottle
 
 
 class _TierRateThrottle(SimpleRateThrottle):
-    """Base for both throttle classes below — computes its actual rate
+    """Base for both throttle classes below - computes its actual rate
     fresh, per request, from the authenticated key's own
     `apps.api.models.RateLimitTier` rather than a static
     settings.py-configured one: an admin editing a tier's numbers in
@@ -12,7 +12,7 @@ class _TierRateThrottle(SimpleRateThrottle):
 
     `DEFAULT_THROTTLE_RATES` in `config.settings.base.REST_FRAMEWORK`
     still needs *some* value per `scope`, purely to satisfy
-    `SimpleRateThrottle.__init__`'s constructor — `get_cache_key` below
+    `SimpleRateThrottle.__init__`'s constructor - `get_cache_key` below
     always overwrites `self.num_requests`/`self.duration` with the real,
     per-key numbers before `allow_request` ever reads them.
     """

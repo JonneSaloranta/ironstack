@@ -107,31 +107,31 @@ msgstr "Appearance"
 #: apps/accounts/forms.py:307
 msgid ""
 "Which color palette the app uses. Each theme has its own dark and light look "
-"— pick which one below."
+"- pick which one below."
 msgstr ""
 "Which color palette the app uses. Each theme has its own dark and light look "
-"— pick which one below."
+"- pick which one below."
 
 #: apps/accounts/forms.py:311
 msgid ""
 "Shows nutrition (food diary, recipes, diet plans) in navigation and on the "
-"dashboard. Turn off to hide it if you don't want to track nutrition — "
+"dashboard. Turn off to hide it if you don't want to track nutrition - "
 "existing nutrition data is never deleted, and its pages stay reachable "
 "directly by a link."
 msgstr ""
 "Shows nutrition (food diary, recipes, diet plans) in navigation and on the "
-"dashboard. Turn off to hide it if you don't want to track nutrition — "
+"dashboard. Turn off to hide it if you don't want to track nutrition - "
 "existing nutrition data is never deleted, and its pages stay reachable "
 "directly by a link."
 
 #: apps/accounts/forms.py:318
 msgid ""
 "Shows stretching (routines, guided sessions) in navigation and suggests a "
-"cool-down after a workout. Turn off to hide it — existing stretching data is "
+"cool-down after a workout. Turn off to hide it - existing stretching data is "
 "never deleted."
 msgstr ""
 "Shows stretching (routines, guided sessions) in navigation and suggests a "
-"cool-down after a workout. Turn off to hide it — existing stretching data is "
+"cool-down after a workout. Turn off to hide it - existing stretching data is "
 "never deleted."
 
 #: apps/accounts/forms.py:323
@@ -145,11 +145,11 @@ msgstr ""
 #: apps/accounts/forms.py:327
 msgid ""
 "Shows a dashboard card nudging you to log a body measurement when you haven't"
-" logged one in a while. Turn off to never see that reminder — you can still "
+" logged one in a while. Turn off to never see that reminder - you can still "
 "log a reading any time from Body tracking."
 msgstr ""
 "Shows a dashboard card nudging you to log a body measurement when you haven't"
-" logged one in a while. Turn off to never see that reminder — you can still "
+" logged one in a while. Turn off to never see that reminder - you can still "
 "log a reading any time from Body tracking."
 
 #: apps/accounts/forms.py:332
@@ -161,12 +161,12 @@ msgid ""
 "Lets everyone using this instance see your longest streak, workout count, "
 "PRs, total weight lifted, and when you last trained, in the dashboard's "
 "achievements carousel and \"Recently active\" list. Turn off to keep your own"
-" activity private — you'll still see everyone else's."
+" activity private - you'll still see everyone else's."
 msgstr ""
 "Lets everyone using this instance see your longest streak, workout count, "
 "PRs, total weight lifted, and when you last trained, in the dashboard's "
 "achievements carousel and \"Recently active\" list. Turn off to keep your own"
-" activity private — you'll still see everyone else's."
+" activity private - you'll still see everyone else's."
 
 #: apps/accounts/forms.py:341
 msgid ""
@@ -182,14 +182,14 @@ msgstr ""
 msgid ""
 "Shows your Gravatar (gravatar.com) picture at the top of this page, if the "
 "email on this account has one. Turning this on means your browser loads that "
-"image directly from gravatar.com — the only place this app talks to a server "
-"outside your own instance — which then sees your email's hash and your IP "
+"image directly from gravatar.com - the only place this app talks to a server "
+"outside your own instance - which then sees your email's hash and your IP "
 "address."
 msgstr ""
 "Shows your Gravatar (gravatar.com) picture at the top of this page, if the "
 "email on this account has one. Turning this on means your browser loads that "
-"image directly from gravatar.com — the only place this app talks to a server "
-"outside your own instance — which then sees your email's hash and your IP "
+"image directly from gravatar.com - the only place this app talks to a server "
+"outside your own instance - which then sees your email's hash and your IP "
 "address."
 
 #: apps/accounts/forms.py:355
@@ -243,8 +243,8 @@ msgid "Verification code"
 msgstr "Verification code"
 
 #: apps/accounts/forms.py:463
-msgid "Incorrect code — check your authenticator app and try again."
-msgstr "Incorrect code — check your authenticator app and try again."
+msgid "Incorrect code - check your authenticator app and try again."
+msgstr "Incorrect code - check your authenticator app and try again."
 
 #: apps/accounts/forms.py:499
 msgid "Too many incorrect codes. Try again in a few minutes."
@@ -309,10 +309,10 @@ msgstr ""
 #: apps/accounts/forms.py:628
 msgid ""
 "Used together with a logged body weight to show your BMI. Leave blank to skip"
-" this — you can add it anytime from your profile."
+" this - you can add it anytime from your profile."
 msgstr ""
 "Used together with a logged body weight to show your BMI. Leave blank to skip"
-" this — you can add it anytime from your profile."
+" this - you can add it anytime from your profile."
 
 #: apps/accounts/forms.py:637
 msgid ""
@@ -351,12 +351,12 @@ msgstr ""
 #: apps/accounts/forms.py:687
 msgid ""
 "Shows nutrition (food diary, recipes, diet plans) in navigation and on the "
-"dashboard. Leave unchecked if you don't want to track nutrition — you can "
+"dashboard. Leave unchecked if you don't want to track nutrition - you can "
 "turn it on or off anytime from your profile, and nothing is ever deleted "
 "either way."
 msgstr ""
 "Shows nutrition (food diary, recipes, diet plans) in navigation and on the "
-"dashboard. Leave unchecked if you don't want to track nutrition — you can "
+"dashboard. Leave unchecked if you don't want to track nutrition - you can "
 "turn it on or off anytime from your profile, and nothing is ever deleted "
 "either way."
 
@@ -454,11 +454,11 @@ msgstr "Two-factor authentication turned off."
 
 #: apps/accounts/views.py:389
 msgid ""
-"You're the only superuser on this instance — promote another account to "
+"You're the only superuser on this instance - promote another account to "
 "superuser first, or this instance would have no one left who can reach Django"
 " admin."
 msgstr ""
-"You're the only superuser on this instance — promote another account to "
+"You're the only superuser on this instance - promote another account to "
 "superuser first, or this instance would have no one left who can reach Django"
 " admin."
 
@@ -1025,9 +1025,9 @@ msgstr "Good morning, %(username)s! Time to get after it."
 #: apps/core/greetings.py:30
 #, python-format
 msgid ""
-"Rise and grind, %(username)s — the weights aren't going to lift themselves."
+"Rise and grind, %(username)s - the weights aren't going to lift themselves."
 msgstr ""
-"Rise and grind, %(username)s — the weights aren't going to lift themselves."
+"Rise and grind, %(username)s - the weights aren't going to lift themselves."
 
 #: apps/core/greetings.py:31
 #, python-format
@@ -1046,9 +1046,9 @@ msgstr "Good afternoon, %(username)s! Keep the momentum going."
 
 #: apps/core/greetings.py:37
 #, python-format
-msgid "Hey %(username)s, halfway through the day and still standing — not bad."
+msgid "Hey %(username)s, halfway through the day and still standing - not bad."
 msgstr ""
-"Hey %(username)s, halfway through the day and still standing — not bad."
+"Hey %(username)s, halfway through the day and still standing - not bad."
 
 #: apps/core/greetings.py:38
 #, python-format
@@ -1078,9 +1078,9 @@ msgstr "Hey %(username)s, the evening session hits different."
 #: apps/core/greetings.py:46
 #, python-format
 msgid ""
-"Good evening, %(username)s — finish the day stronger than you started it."
+"Good evening, %(username)s - finish the day stronger than you started it."
 msgstr ""
-"Good evening, %(username)s — finish the day stronger than you started it."
+"Good evening, %(username)s - finish the day stronger than you started it."
 
 #: apps/core/greetings.py:50
 #, python-format
@@ -1089,8 +1089,8 @@ msgstr "Still up, %(username)s? Respect the hustle."
 
 #: apps/core/greetings.py:51
 #, python-format
-msgid "Good night, %(username)s — recovery is part of the program too."
-msgstr "Good night, %(username)s — recovery is part of the program too."
+msgid "Good night, %(username)s - recovery is part of the program too."
+msgstr "Good night, %(username)s - recovery is part of the program too."
 
 #: apps/core/greetings.py:52
 #, python-format
@@ -1108,8 +1108,8 @@ msgstr "New IronStack version"
 
 #: apps/core/management/commands/announce_version_update.py:53
 #, python-format
-msgid "IronStack %(version)s is now running — tap to see what's new."
-msgstr "IronStack %(version)s is now running — tap to see what's new."
+msgid "IronStack %(version)s is now running - tap to see what's new."
+msgstr "IronStack %(version)s is now running - tap to see what's new."
 
 #: apps/core/models.py:42
 msgid ""
@@ -1125,29 +1125,29 @@ msgstr "What time (UTC) the daily automatic backup runs at."
 
 #: apps/core/models.py:54
 msgid ""
-"How many backups to keep — older ones are deleted automatically after each "
+"How many backups to keep - older ones are deleted automatically after each "
 "new one is created. 0 keeps every backup forever."
 msgstr ""
-"How many backups to keep — older ones are deleted automatically after each "
+"How many backups to keep - older ones are deleted automatically after each "
 "new one is created. 0 keeps every backup forever."
 
 #: apps/core/models.py:88
 msgid ""
 "Lets any signed-in user submit feedback from their profile page. Turning this"
-" off only closes new submissions — feedback already on file stays visible to "
+" off only closes new submissions - feedback already on file stays visible to "
 "staff."
 msgstr ""
 "Lets any signed-in user submit feedback from their profile page. Turning this"
-" off only closes new submissions — feedback already on file stays visible to "
+" off only closes new submissions - feedback already on file stays visible to "
 "staff."
 
 #: apps/core/models.py:130
 msgid ""
-"Lets search engines crawl and index this instance. Off by default — most "
+"Lets search engines crawl and index this instance. Off by default - most "
 "installs are a private, self-hosted app for one household, not a public site "
 "anyone should be searching for."
 msgstr ""
-"Lets search engines crawl and index this instance. Off by default — most "
+"Lets search engines crawl and index this instance. Off by default - most "
 "installs are a private, self-hosted app for one household, not a public site "
 "anyone should be searching for."
 
@@ -1166,12 +1166,12 @@ msgid "Account & profile"
 msgstr "Account & profile"
 
 #: apps/core/views.py:35
-msgid "Training day — new personal record!"
-msgstr "Training day — new personal record!"
+msgid "Training day - new personal record!"
+msgstr "Training day - new personal record!"
 
 #: apps/core/views.py:37
-msgid "Training day — a session was abandoned."
-msgstr "Training day — a session was abandoned."
+msgid "Training day - a session was abandoned."
+msgstr "Training day - a session was abandoned."
 
 #: apps/core/views.py:39
 msgid "Training day."
@@ -1207,10 +1207,10 @@ msgstr "Backup settings saved."
 
 #: apps/core/views_backup.py:79
 msgid ""
-"Not a valid IronStack backup archive — expected a .tar.gz containing "
+"Not a valid IronStack backup archive - expected a .tar.gz containing "
 "database.dump, media.tar, and manifest.json."
 msgstr ""
-"Not a valid IronStack backup archive — expected a .tar.gz containing "
+"Not a valid IronStack backup archive - expected a .tar.gz containing "
 "database.dump, media.tar, and manifest.json."
 
 #: apps/core/views_backup.py:84
@@ -2008,10 +2008,10 @@ msgstr "Merge foods"
 #, python-format
 msgid ""
 "%(count)d more food(s) were left for later to stay within Open Food Facts' "
-"rate limit — run this action again in a minute."
+"rate limit - run this action again in a minute."
 msgstr ""
 "%(count)d more food(s) were left for later to stay within Open Food Facts' "
-"rate limit — run this action again in a minute."
+"rate limit - run this action again in a minute."
 
 #: apps/nutrition/calculators.py:138 apps/nutrition/calculators.py:143
 msgid "Lower risk"
@@ -2046,13 +2046,13 @@ msgstr "other regular exercise"
 
 #: apps/nutrition/energy.py:172
 #, python-format
-msgid "Suggested: %(label)s — %(factors)s"
-msgstr "Suggested: %(label)s — %(factors)s"
+msgid "Suggested: %(label)s - %(factors)s"
+msgstr "Suggested: %(label)s - %(factors)s"
 
 #: apps/nutrition/energy.py:177
 #, python-format
-msgid "Suggested: %(label)s — no activity details given yet"
-msgstr "Suggested: %(label)s — no activity details given yet"
+msgid "Suggested: %(label)s - no activity details given yet"
+msgstr "Suggested: %(label)s - no activity details given yet"
 
 #: apps/nutrition/energy.py:246
 #, python-format
@@ -2071,10 +2071,10 @@ msgstr ""
 #: apps/nutrition/energy.py:261
 #, python-format
 msgid ""
-"Your target rate would need %(raw)s kcal/day, below a safe minimum — capped "
+"Your target rate would need %(raw)s kcal/day, below a safe minimum - capped "
 "at %(floor)s kcal/day."
 msgstr ""
-"Your target rate would need %(raw)s kcal/day, below a safe minimum — capped "
+"Your target rate would need %(raw)s kcal/day, below a safe minimum - capped "
 "at %(floor)s kcal/day."
 
 #: apps/nutrition/energy.py:269
@@ -2089,10 +2089,10 @@ msgstr "Biological sex"
 
 #: apps/nutrition/forms.py:24
 msgid ""
-"Used by the BMR formula (Mifflin-St Jeor) — a physiological input, not a "
+"Used by the BMR formula (Mifflin-St Jeor) - a physiological input, not a "
 "gender-identity question."
 msgstr ""
-"Used by the BMR formula (Mifflin-St Jeor) — a physiological input, not a "
+"Used by the BMR formula (Mifflin-St Jeor) - a physiological input, not a "
 "gender-identity question."
 
 #: apps/nutrition/forms.py:30
@@ -2150,21 +2150,21 @@ msgstr "Target rate (kg/week)"
 
 #: apps/nutrition/forms.py:112
 msgid ""
-"Negative to lose weight, positive to gain. Pre-filled from your goal below — "
+"Negative to lose weight, positive to gain. Pre-filled from your goal below - "
 "capped at a safe rate for your bodyweight."
 msgstr ""
-"Negative to lose weight, positive to gain. Pre-filled from your goal below — "
+"Negative to lose weight, positive to gain. Pre-filled from your goal below - "
 "capped at a safe rate for your bodyweight."
 
 #: apps/nutrition/forms.py:137
-msgid "A fat-loss goal needs a negative rate — you're asking to lose weight."
-msgstr "A fat-loss goal needs a negative rate — you're asking to lose weight."
+msgid "A fat-loss goal needs a negative rate - you're asking to lose weight."
+msgstr "A fat-loss goal needs a negative rate - you're asking to lose weight."
 
 #: apps/nutrition/forms.py:142
 msgid ""
-"A muscle-gain goal needs a positive rate — you're asking to gain weight."
+"A muscle-gain goal needs a positive rate - you're asking to gain weight."
 msgstr ""
-"A muscle-gain goal needs a positive rate — you're asking to gain weight."
+"A muscle-gain goal needs a positive rate - you're asking to gain weight."
 
 #: apps/nutrition/forms.py:145
 msgid "A maintenance goal's rate should be 0 kg/week."
@@ -2173,10 +2173,10 @@ msgstr "A maintenance goal's rate should be 0 kg/week."
 #: apps/nutrition/forms.py:186
 msgid ""
 "All the nutrition values below are for this amount, in the unit chosen next "
-"to it — e.g. \"100 g\" if the values are per 100 grams."
+"to it - e.g. \"100 g\" if the values are per 100 grams."
 msgstr ""
 "All the nutrition values below are for this amount, in the unit chosen next "
-"to it — e.g. \"100 g\" if the values are per 100 grams."
+"to it - e.g. \"100 g\" if the values are per 100 grams."
 
 #: apps/nutrition/forms.py:193 templates/nutrition/diary_add_entry.html:55
 #: templates/nutrition/diet_plan_meal_item_form.html:16
@@ -2201,10 +2201,10 @@ msgstr "Any meal"
 
 #: apps/nutrition/forms.py:249
 msgid ""
-"If set, the diet-plan builder only ever suggests this recipe for that meal — "
+"If set, the diet-plan builder only ever suggests this recipe for that meal - "
 "leave as \"Any meal\" for a recipe that fits anywhere."
 msgstr ""
-"If set, the diet-plan builder only ever suggests this recipe for that meal — "
+"If set, the diet-plan builder only ever suggests this recipe for that meal - "
 "leave as \"Any meal\" for a recipe that fits anywhere."
 
 #: apps/nutrition/forms.py:304 templates/nutrition/diary_add_entry.html:38
@@ -2250,17 +2250,17 @@ msgstr "Vary meals across a whole week instead of repeating one day"
 
 #: apps/nutrition/forms.py:352
 msgid ""
-"Each day still hits the same daily calories/macros above — only which meal "
+"Each day still hits the same daily calories/macros above - only which meal "
 "fills each slot changes from day to day, so a week's worth of breakfasts (for"
 " example) aren't all identical."
 msgstr ""
-"Each day still hits the same daily calories/macros above — only which meal "
+"Each day still hits the same daily calories/macros above - only which meal "
 "fills each slot changes from day to day, so a week's worth of breakfasts (for"
 " example) aren't all identical."
 
 #: apps/nutrition/forms.py:359
-msgid "Start from scratch — leave every meal empty"
-msgstr "Start from scratch — leave every meal empty"
+msgid "Start from scratch - leave every meal empty"
+msgstr "Start from scratch - leave every meal empty"
 
 #: apps/nutrition/forms.py:361
 msgid ""
@@ -2303,13 +2303,13 @@ msgid "Target weight (kg)"
 msgstr "Target weight (kg)"
 
 #: apps/nutrition/forms.py:660
-msgid "Rate (kg/week — negative to lose, positive to gain)"
-msgstr "Rate (kg/week — negative to lose, positive to gain)"
+msgid "Rate (kg/week - negative to lose, positive to gain)"
+msgstr "Rate (kg/week - negative to lose, positive to gain)"
 
 #: apps/nutrition/forms.py:675
 #, python-format
-msgid "Rate (%(unit)s/week — negative to lose, positive to gain)"
-msgstr "Rate (%(unit)s/week — negative to lose, positive to gain)"
+msgid "Rate (%(unit)s/week - negative to lose, positive to gain)"
+msgstr "Rate (%(unit)s/week - negative to lose, positive to gain)"
 
 #: apps/nutrition/forms.py:704 apps/programs/forms.py:37
 msgid "Share with these clients"
@@ -2340,76 +2340,76 @@ msgid "Evening snack"
 msgstr "Evening snack"
 
 #: apps/nutrition/i18n_content.py:42
-msgid "Bulk breakfast — Oats & peanut butter"
-msgstr "Bulk breakfast — Oats & peanut butter"
+msgid "Bulk breakfast - Oats & peanut butter"
+msgstr "Bulk breakfast - Oats & peanut butter"
 
 #: apps/nutrition/i18n_content.py:43
-msgid "Bulk breakfast — Eggs on toast"
-msgstr "Bulk breakfast — Eggs on toast"
+msgid "Bulk breakfast - Eggs on toast"
+msgstr "Bulk breakfast - Eggs on toast"
 
 #: apps/nutrition/i18n_content.py:44
-msgid "Bulk lunch — Chicken & rice bowl"
-msgstr "Bulk lunch — Chicken & rice bowl"
+msgid "Bulk lunch - Chicken & rice bowl"
+msgstr "Bulk lunch - Chicken & rice bowl"
 
 #: apps/nutrition/i18n_content.py:45
-msgid "Bulk lunch — Tuna & sweet potato"
-msgstr "Bulk lunch — Tuna & sweet potato"
+msgid "Bulk lunch - Tuna & sweet potato"
+msgstr "Bulk lunch - Tuna & sweet potato"
 
 #: apps/nutrition/i18n_content.py:46
-msgid "Bulk dinner — Salmon & rice"
-msgstr "Bulk dinner — Salmon & rice"
+msgid "Bulk dinner - Salmon & rice"
+msgstr "Bulk dinner - Salmon & rice"
 
 #: apps/nutrition/i18n_content.py:47
-msgid "Bulk dinner — Chicken & sweet potato"
-msgstr "Bulk dinner — Chicken & sweet potato"
+msgid "Bulk dinner - Chicken & sweet potato"
+msgstr "Bulk dinner - Chicken & sweet potato"
 
 #: apps/nutrition/i18n_content.py:48
-msgid "Fatburner breakfast — Egg & spinach scramble"
-msgstr "Fatburner breakfast — Egg & spinach scramble"
+msgid "Fatburner breakfast - Egg & spinach scramble"
+msgstr "Fatburner breakfast - Egg & spinach scramble"
 
 #: apps/nutrition/i18n_content.py:49
-msgid "Fatburner breakfast — Greek yogurt bowl"
-msgstr "Fatburner breakfast — Greek yogurt bowl"
+msgid "Fatburner breakfast - Greek yogurt bowl"
+msgstr "Fatburner breakfast - Greek yogurt bowl"
 
 #: apps/nutrition/i18n_content.py:50
-msgid "Fatburner lunch — Chicken & broccoli"
-msgstr "Fatburner lunch — Chicken & broccoli"
+msgid "Fatburner lunch - Chicken & broccoli"
+msgstr "Fatburner lunch - Chicken & broccoli"
 
 #: apps/nutrition/i18n_content.py:51
-msgid "Fatburner lunch — Tuna & spinach salad"
-msgstr "Fatburner lunch — Tuna & spinach salad"
+msgid "Fatburner lunch - Tuna & spinach salad"
+msgstr "Fatburner lunch - Tuna & spinach salad"
 
 #: apps/nutrition/i18n_content.py:52
-msgid "Fatburner dinner — Salmon & greens"
-msgstr "Fatburner dinner — Salmon & greens"
+msgid "Fatburner dinner - Salmon & greens"
+msgstr "Fatburner dinner - Salmon & greens"
 
 #: apps/nutrition/i18n_content.py:53
-msgid "Fatburner dinner — Chicken & cottage cheese"
-msgstr "Fatburner dinner — Chicken & cottage cheese"
+msgid "Fatburner dinner - Chicken & cottage cheese"
+msgstr "Fatburner dinner - Chicken & cottage cheese"
 
 #: apps/nutrition/i18n_content.py:54
-msgid "Balanced breakfast — Oats & yogurt"
-msgstr "Balanced breakfast — Oats & yogurt"
+msgid "Balanced breakfast - Oats & yogurt"
+msgstr "Balanced breakfast - Oats & yogurt"
 
 #: apps/nutrition/i18n_content.py:55
-msgid "Balanced breakfast — Eggs on toast"
-msgstr "Balanced breakfast — Eggs on toast"
+msgid "Balanced breakfast - Eggs on toast"
+msgstr "Balanced breakfast - Eggs on toast"
 
 #: apps/nutrition/i18n_content.py:56
-msgid "Balanced lunch — Chicken & rice"
-msgstr "Balanced lunch — Chicken & rice"
+msgid "Balanced lunch - Chicken & rice"
+msgstr "Balanced lunch - Chicken & rice"
 
 #: apps/nutrition/i18n_content.py:57
-msgid "Balanced lunch — Tuna sandwich"
-msgstr "Balanced lunch — Tuna sandwich"
+msgid "Balanced lunch - Tuna sandwich"
+msgstr "Balanced lunch - Tuna sandwich"
 
 #: apps/nutrition/i18n_content.py:58
-msgid "Balanced dinner — Salmon & sweet potato"
-msgstr "Balanced dinner — Salmon & sweet potato"
+msgid "Balanced dinner - Salmon & sweet potato"
+msgstr "Balanced dinner - Salmon & sweet potato"
 
 #: apps/nutrition/i18n_content.py:59
-msgid "Balanced dinner — Chicken & vegetables"
-msgstr "Balanced dinner — Chicken & vegetables"
+msgid "Balanced dinner - Chicken & vegetables"
+msgstr "Balanced dinner - Chicken & vegetables"
 
 #: apps/nutrition/i18n_content.py:64
 msgid "Mix the oats into the yogurt, top with banana slices and peanut butter."
@@ -2558,32 +2558,32 @@ msgid "Very active"
 msgstr "Very active"
 
 #: apps/nutrition/models.py:58
-msgid "Fat loss — aggressive"
-msgstr "Fat loss — aggressive"
+msgid "Fat loss - aggressive"
+msgstr "Fat loss - aggressive"
 
 #: apps/nutrition/models.py:59
-msgid "Fat loss — moderate"
-msgstr "Fat loss — moderate"
+msgid "Fat loss - moderate"
+msgstr "Fat loss - moderate"
 
 #: apps/nutrition/models.py:60
-msgid "Fat loss — conservative"
-msgstr "Fat loss — conservative"
+msgid "Fat loss - conservative"
+msgstr "Fat loss - conservative"
 
 #: apps/nutrition/models.py:61 apps/programs/models.py:142
 msgid "Maintenance"
 msgstr "Maintenance"
 
 #: apps/nutrition/models.py:62
-msgid "Muscle gain — lean bulk"
-msgstr "Muscle gain — lean bulk"
+msgid "Muscle gain - lean bulk"
+msgstr "Muscle gain - lean bulk"
 
 #: apps/nutrition/models.py:63
-msgid "Muscle gain — moderate bulk"
-msgstr "Muscle gain — moderate bulk"
+msgid "Muscle gain - moderate bulk"
+msgstr "Muscle gain - moderate bulk"
 
 #: apps/nutrition/models.py:64
-msgid "Muscle gain — aggressive bulk"
-msgstr "Muscle gain — aggressive bulk"
+msgid "Muscle gain - aggressive bulk"
+msgstr "Muscle gain - aggressive bulk"
 
 #: apps/nutrition/models.py:68
 msgid "Calculated from goal"
@@ -2610,8 +2610,8 @@ msgid "piece"
 msgstr "piece"
 
 #: apps/nutrition/models.py:91
-msgid "A — best"
-msgstr "A — best"
+msgid "A - best"
+msgstr "A - best"
 
 #: apps/nutrition/models.py:92
 msgid "B"
@@ -2626,24 +2626,24 @@ msgid "D"
 msgstr "D"
 
 #: apps/nutrition/models.py:95
-msgid "E — worst"
-msgstr "E — worst"
+msgid "E - worst"
+msgstr "E - worst"
 
 #: apps/nutrition/models.py:105
-msgid "1 — unprocessed or minimally processed"
-msgstr "1 — unprocessed or minimally processed"
+msgid "1 - unprocessed or minimally processed"
+msgstr "1 - unprocessed or minimally processed"
 
 #: apps/nutrition/models.py:106
-msgid "2 — processed culinary ingredients"
-msgstr "2 — processed culinary ingredients"
+msgid "2 - processed culinary ingredients"
+msgstr "2 - processed culinary ingredients"
 
 #: apps/nutrition/models.py:107
-msgid "3 — processed food"
-msgstr "3 — processed food"
+msgid "3 - processed food"
+msgstr "3 - processed food"
 
 #: apps/nutrition/models.py:108
-msgid "4 — ultra-processed food"
-msgstr "4 — ultra-processed food"
+msgid "4 - ultra-processed food"
+msgstr "4 - ultra-processed food"
 
 #: apps/nutrition/models.py:123
 msgid "Stored instead of a raw age, so it never goes stale."
@@ -2651,10 +2651,10 @@ msgstr "Stored instead of a raw age, so it never goes stale."
 
 #: apps/nutrition/models.py:135
 msgid ""
-"If you already track this, tell us — used only to compare against this app's "
+"If you already track this, tell us - used only to compare against this app's "
 "own estimate, never as an input to it."
 msgstr ""
-"If you already track this, tell us — used only to compare against this app's "
+"If you already track this, tell us - used only to compare against this app's "
 "own estimate, never as an input to it."
 
 #: apps/nutrition/models.py:309
@@ -2755,18 +2755,18 @@ msgstr "Set a nutrition goal to get adjustment suggestions."
 
 #: apps/nutrition/suggestions.py:117
 msgid ""
-"Not enough logged weight yet — keep logging your weight regularly and check "
+"Not enough logged weight yet - keep logging your weight regularly and check "
 "back in a couple of weeks."
 msgstr ""
-"Not enough logged weight yet — keep logging your weight regularly and check "
+"Not enough logged weight yet - keep logging your weight regularly and check "
 "back in a couple of weeks."
 
 #: apps/nutrition/suggestions.py:135
 #, python-format
 msgid ""
-"Target: %(target)s kg/week. Actual trend: %(actual)s kg/week — on track."
+"Target: %(target)s kg/week. Actual trend: %(actual)s kg/week - on track."
 msgstr ""
-"Target: %(target)s kg/week. Actual trend: %(actual)s kg/week — on track."
+"Target: %(target)s kg/week. Actual trend: %(actual)s kg/week - on track."
 
 #: apps/nutrition/suggestions.py:150
 #, python-format
@@ -2779,16 +2779,16 @@ msgstr ""
 
 #: apps/nutrition/views.py:433
 msgid ""
-"Log a body weight measurement before changing your goal — the calorie target "
+"Log a body weight measurement before changing your goal - the calorie target "
 "needs your current weight."
 msgstr ""
-"Log a body weight measurement before changing your goal — the calorie target "
+"Log a body weight measurement before changing your goal - the calorie target "
 "needs your current weight."
 
 #: apps/nutrition/views.py:470
 #, python-format
-msgid "Goal updated — new target is %(calories)d kcal/day."
-msgstr "Goal updated — new target is %(calories)d kcal/day."
+msgid "Goal updated - new target is %(calories)d kcal/day."
+msgstr "Goal updated - new target is %(calories)d kcal/day."
 
 #: apps/nutrition/views.py:761
 msgid "Pick a date to copy this day to."
@@ -2802,13 +2802,13 @@ msgstr[0] "Copied %(count)d entry to %(date)s."
 msgstr[1] "Copied %(count)d entries to %(date)s."
 
 #: apps/nutrition/views.py:772
-msgid "Nothing to copy — that day has no entries."
-msgstr "Nothing to copy — that day has no entries."
+msgid "Nothing to copy - that day has no entries."
+msgstr "Nothing to copy - that day has no entries."
 
 #: apps/nutrition/views.py:818 apps/nutrition/views.py:1138
 #: apps/nutrition/views.py:1601
-msgid "That food couldn't be imported — try again."
-msgstr "That food couldn't be imported — try again."
+msgid "That food couldn't be imported - try again."
+msgstr "That food couldn't be imported - try again."
 
 #: apps/nutrition/views.py:882
 msgid "Nothing logged for this meal yet to save as a recipe."
@@ -2821,17 +2821,17 @@ msgstr "Saved “%(name)s” as a new recipe."
 
 #: apps/nutrition/views.py:1028
 #, python-format
-msgid "\"%(name)s\" created — now add its ingredients below."
-msgstr "\"%(name)s\" created — now add its ingredients below."
+msgid "\"%(name)s\" created - now add its ingredients below."
+msgstr "\"%(name)s\" created - now add its ingredients below."
 
 #: apps/nutrition/views.py:1078 apps/nutrition/views.py:1373
 #: apps/programs/views.py:205
 #, python-format
 msgid ""
-"This file was exported from IronStack %(version)s — worth double-checking the"
+"This file was exported from IronStack %(version)s - worth double-checking the"
 " import if something looks off."
 msgstr ""
-"This file was exported from IronStack %(version)s — worth double-checking the"
+"This file was exported from IronStack %(version)s - worth double-checking the"
 " import if something looks off."
 
 #: apps/nutrition/views.py:1522
@@ -2846,8 +2846,8 @@ msgstr[0] "Logged %(count)d item to %(date)s."
 msgstr[1] "Logged %(count)d items to %(date)s."
 
 #: apps/nutrition/views.py:1651
-msgid "Nothing to log — this plan has no items for that date."
-msgstr "Nothing to log — this plan has no items for that date."
+msgid "Nothing to log - this plan has no items for that date."
+msgstr "Nothing to log - this plan has no items for that date."
 
 #: apps/programs/forms.py:36
 msgid "Save as a personal template"
@@ -2855,11 +2855,11 @@ msgstr "Save as a personal template"
 
 #: apps/programs/forms.py:41
 msgid ""
-"Templates aren't meant to be run directly — copy them into a new program "
+"Templates aren't meant to be run directly - copy them into a new program "
 "(from the program page) whenever you start a new cycle, keeping the original "
 "untouched."
 msgstr ""
-"Templates aren't meant to be run directly — copy them into a new program "
+"Templates aren't meant to be run directly - copy them into a new program "
 "(from the program page) whenever you start a new cycle, keeping the original "
 "untouched."
 
@@ -2942,12 +2942,12 @@ msgstr ""
 msgid ""
 "The classic 6-day bodybuilding split popularized by Arnold Schwarzenegger in "
 "the 1970s: chest/back, shoulders/arms, and legs, each trained twice a week. "
-"Rotate through all three workouts, then repeat — not tied to fixed calendar "
+"Rotate through all three workouts, then repeat - not tied to fixed calendar "
 "days."
 msgstr ""
 "The classic 6-day bodybuilding split popularized by Arnold Schwarzenegger in "
 "the 1970s: chest/back, shoulders/arms, and legs, each trained twice a week. "
-"Rotate through all three workouts, then repeat — not tied to fixed calendar "
+"Rotate through all three workouts, then repeat - not tied to fixed calendar "
 "days."
 
 #: apps/programs/i18n_content.py:39
@@ -2973,12 +2973,12 @@ msgstr ""
 #: apps/programs/i18n_content.py:49
 msgid ""
 "A 4-day split alternating upper-body and lower-body sessions twice each per "
-"week — a common middle ground between full-body and single-muscle-group "
+"week - a common middle ground between full-body and single-muscle-group "
 "routines, popular for balancing strength and volume without training every "
 "day."
 msgstr ""
 "A 4-day split alternating upper-body and lower-body sessions twice each per "
-"week — a common middle ground between full-body and single-muscle-group "
+"week - a common middle ground between full-body and single-muscle-group "
 "routines, popular for balancing strength and volume without training every "
 "day."
 
@@ -2986,12 +2986,12 @@ msgstr ""
 msgid ""
 "The classic 10x10 high-volume method: one main lift per workout done for ten "
 "sets of ten reps at a fixed, moderate weight, paired with a lighter accessory"
-" movement. Brutal on paper, simple in practice — built for muscle growth, not"
+" movement. Brutal on paper, simple in practice - built for muscle growth, not"
 " 1-rep-max testing."
 msgstr ""
 "The classic 10x10 high-volume method: one main lift per workout done for ten "
 "sets of ten reps at a fixed, moderate weight, paired with a lighter accessory"
-" movement. Brutal on paper, simple in practice — built for muscle growth, not"
+" movement. Brutal on paper, simple in practice - built for muscle growth, not"
 " 1-rep-max testing."
 
 #: apps/programs/i18n_content.py:67
@@ -3148,104 +3148,104 @@ msgstr "Exercise removed."
 
 #: apps/progression/engine.py:165
 msgid ""
-"No completed history for this exercise yet — starting at the prescribed "
+"No completed history for this exercise yet - starting at the prescribed "
 "target."
 msgstr ""
-"No completed history for this exercise yet — starting at the prescribed "
+"No completed history for this exercise yet - starting at the prescribed "
 "target."
 
 #: apps/progression/engine.py:174
-msgid "Manual progression — you control the next weight and target."
-msgstr "Manual progression — you control the next weight and target."
+msgid "Manual progression - you control the next weight and target."
+msgstr "Manual progression - you control the next weight and target."
 
 #: apps/progression/engine.py:192
 #, python-format
 msgid ""
-"Missed the target %(streak)s sessions in a row at %(weight)s kg — even "
+"Missed the target %(streak)s sessions in a row at %(weight)s kg - even "
 "maintenance loading should come down, to %(deload)s kg."
 msgstr ""
-"Missed the target %(streak)s sessions in a row at %(weight)s kg — even "
+"Missed the target %(streak)s sessions in a row at %(weight)s kg - even "
 "maintenance loading should come down, to %(deload)s kg."
 
 #: apps/progression/engine.py:202
-msgid "Maintenance — keeping the same load."
-msgstr "Maintenance — keeping the same load."
+msgid "Maintenance - keeping the same load."
+msgstr "Maintenance - keeping the same load."
 
 #: apps/progression/engine.py:220
 #, python-format
-msgid "Hit every rep last session at %(weight)s kg — adding %(increment)s kg."
-msgstr "Hit every rep last session at %(weight)s kg — adding %(increment)s kg."
+msgid "Hit every rep last session at %(weight)s kg - adding %(increment)s kg."
+msgstr "Hit every rep last session at %(weight)s kg - adding %(increment)s kg."
 
 #: apps/progression/engine.py:232
 #, python-format
 msgid ""
-"Missed target reps %(streak)s sessions in a row at %(weight)s kg — "
+"Missed target reps %(streak)s sessions in a row at %(weight)s kg - "
 "recommending a deload to %(deload)s kg."
 msgstr ""
-"Missed target reps %(streak)s sessions in a row at %(weight)s kg — "
+"Missed target reps %(streak)s sessions in a row at %(weight)s kg - "
 "recommending a deload to %(deload)s kg."
 
 #: apps/progression/engine.py:243
 #, python-format
 msgid ""
-"Missed target reps last session at %(weight)s kg — try the same weight again "
+"Missed target reps last session at %(weight)s kg - try the same weight again "
 "before increasing."
 msgstr ""
-"Missed target reps last session at %(weight)s kg — try the same weight again "
+"Missed target reps last session at %(weight)s kg - try the same weight again "
 "before increasing."
 
 #: apps/progression/engine.py:265
 #, python-format
 msgid ""
-"Hit the top of your rep range on every set at %(weight)s kg — adding "
+"Hit the top of your rep range on every set at %(weight)s kg - adding "
 "%(increment)s kg and resetting to the bottom of the range."
 msgstr ""
-"Hit the top of your rep range on every set at %(weight)s kg — adding "
+"Hit the top of your rep range on every set at %(weight)s kg - adding "
 "%(increment)s kg and resetting to the bottom of the range."
 
 #: apps/progression/engine.py:277
 #, python-format
 msgid ""
-"Still within your rep range at %(weight)s kg — repeat the same weight and aim"
+"Still within your rep range at %(weight)s kg - repeat the same weight and aim"
 " for more reps next time."
 msgstr ""
-"Still within your rep range at %(weight)s kg — repeat the same weight and aim"
+"Still within your rep range at %(weight)s kg - repeat the same weight and aim"
 " for more reps next time."
 
 #: apps/progression/engine.py:291 apps/progression/engine.py:357
 #, python-format
 msgid ""
 "Missed the bottom of your rep range %(streak)s sessions in a row at "
-"%(weight)s kg — recommending a deload to %(deload)s kg."
+"%(weight)s kg - recommending a deload to %(deload)s kg."
 msgstr ""
 "Missed the bottom of your rep range %(streak)s sessions in a row at "
-"%(weight)s kg — recommending a deload to %(deload)s kg."
+"%(weight)s kg - recommending a deload to %(deload)s kg."
 
 #: apps/progression/engine.py:302 apps/progression/engine.py:368
 #, python-format
 msgid ""
-"Missed the bottom of your rep range last session at %(weight)s kg — try the "
+"Missed the bottom of your rep range last session at %(weight)s kg - try the "
 "same weight again."
 msgstr ""
-"Missed the bottom of your rep range last session at %(weight)s kg — try the "
+"Missed the bottom of your rep range last session at %(weight)s kg - try the "
 "same weight again."
 
 #: apps/progression/engine.py:331
 #, python-format
 msgid ""
 "Hit the top of your rep range for %(streak)s sessions in a row at %(weight)s "
-"kg — adding %(increment)s kg."
+"kg - adding %(increment)s kg."
 msgstr ""
 "Hit the top of your rep range for %(streak)s sessions in a row at %(weight)s "
-"kg — adding %(increment)s kg."
+"kg - adding %(increment)s kg."
 
 #: apps/progression/engine.py:343
 #, python-format
 msgid ""
-"Within your rep range at %(weight)s kg — keep working toward the top of the "
+"Within your rep range at %(weight)s kg - keep working toward the top of the "
 "range before increasing."
 msgstr ""
-"Within your rep range at %(weight)s kg — keep working toward the top of the "
+"Within your rep range at %(weight)s kg - keep working toward the top of the "
 "range before increasing."
 
 #: apps/progression/engine.py:402
@@ -3265,8 +3265,8 @@ msgid "No percentage target configured on this prescription."
 msgstr "No percentage target configured on this prescription."
 
 #: apps/progression/engine.py:423
-msgid "No 1RM available yet — log a set first, or enter your 1RM manually."
-msgstr "No 1RM available yet — log a set first, or enter your 1RM manually."
+msgid "No 1RM available yet - log a set first, or enter your 1RM manually."
+msgstr "No 1RM available yet - log a set first, or enter your 1RM manually."
 
 #: apps/progression/engine.py:431
 #, python-format
@@ -3275,35 +3275,35 @@ msgstr "%(percentage)s%% of %(one_rm)s kg (%(source)s) = %(suggested)s kg."
 
 #: apps/progression/engine.py:461
 msgid ""
-"No RIR logged against a target yet — log sets with RIR to use this method."
+"No RIR logged against a target yet - log sets with RIR to use this method."
 msgstr ""
-"No RIR logged against a target yet — log sets with RIR to use this method."
+"No RIR logged against a target yet - log sets with RIR to use this method."
 
 #: apps/progression/engine.py:473
 #, python-format
 msgid ""
-"Target RIR %(target)s, actual %(actual)g — more in reserve than planned, "
+"Target RIR %(target)s, actual %(actual)g - more in reserve than planned, "
 "adding %(increment)s kg."
 msgstr ""
-"Target RIR %(target)s, actual %(actual)g — more in reserve than planned, "
+"Target RIR %(target)s, actual %(actual)g - more in reserve than planned, "
 "adding %(increment)s kg."
 
 #: apps/progression/engine.py:486
 #, python-format
 msgid ""
-"Target RIR %(target)s, actual %(actual)g — notably closer to failure than "
+"Target RIR %(target)s, actual %(actual)g - notably closer to failure than "
 "planned, easing back to %(deload)s kg."
 msgstr ""
-"Target RIR %(target)s, actual %(actual)g — notably closer to failure than "
+"Target RIR %(target)s, actual %(actual)g - notably closer to failure than "
 "planned, easing back to %(deload)s kg."
 
 #: apps/progression/engine.py:496
 #, python-format
 msgid ""
-"Target RIR %(target)s, actual %(actual)g — close enough to plan, hold the "
+"Target RIR %(target)s, actual %(actual)g - close enough to plan, hold the "
 "weight."
 msgstr ""
-"Target RIR %(target)s, actual %(actual)g — close enough to plan, hold the "
+"Target RIR %(target)s, actual %(actual)g - close enough to plan, hold the "
 "weight."
 
 #: apps/records/models.py:11 templates/records/exercise_records.html:13
@@ -3523,8 +3523,8 @@ msgid "Invite link enabled."
 msgstr "Invite link enabled."
 
 #: apps/social/views_groups.py:171
-msgid "Invite link regenerated — the old link no longer works."
-msgstr "Invite link regenerated — the old link no longer works."
+msgid "Invite link regenerated - the old link no longer works."
+msgstr "Invite link regenerated - the old link no longer works."
 
 #: apps/social/views_groups.py:185
 msgid "Invite sent."
@@ -4223,8 +4223,8 @@ msgid "Routine removed."
 msgstr "Routine removed."
 
 #: apps/stretching/views.py:149
-msgid "Copied — this one is yours to edit."
-msgstr "Copied — this one is yours to edit."
+msgid "Copied - this one is yours to edit."
+msgstr "Copied - this one is yours to edit."
 
 #: apps/stretching/views.py:166
 msgid "Stretch added."
@@ -4263,8 +4263,8 @@ msgid "Cool-down"
 msgstr "Cool-down"
 
 #: apps/stretching/views.py:384
-msgid "Nicely done — stretching session saved."
-msgstr "Nicely done — stretching session saved."
+msgid "Nicely done - stretching session saved."
+msgstr "Nicely done - stretching session saved."
 
 #: apps/stretching/views.py:394
 msgid "Session abandoned."
@@ -4313,8 +4313,8 @@ msgstr "This session is no longer in progress."
 
 #: apps/workouts/views.py:347
 #, python-format
-msgid "New PR — %(exercise)s: %(record_type)s %(value)s"
-msgstr "New PR — %(exercise)s: %(record_type)s %(value)s"
+msgid "New PR - %(exercise)s: %(record_type)s %(value)s"
+msgstr "New PR - %(exercise)s: %(record_type)s %(value)s"
 
 #: templates/403.html:3 templates/403.html:5
 msgid "Not allowed"
@@ -4347,9 +4347,9 @@ msgstr "Something went wrong"
 
 #: templates/500.html:52
 msgid ""
-"Something went wrong on our end. Your data is safe — try again in a moment."
+"Something went wrong on our end. Your data is safe - try again in a moment."
 msgstr ""
-"Something went wrong on our end. Your data is safe — try again in a moment."
+"Something went wrong on our end. Your data is safe - try again in a moment."
 
 #: templates/accounts/_data_export_standalone.html:23
 #: templates/accounts/_data_export_standalone.html:68
@@ -4374,10 +4374,10 @@ msgstr "Not now"
 
 #: templates/accounts/_onboarding_modal.html:12
 msgid ""
-"A few quick details help IronStack work better for you — every field below is"
+"A few quick details help IronStack work better for you - every field below is"
 " optional, and you can always change them later from your profile."
 msgstr ""
-"A few quick details help IronStack work better for you — every field below is"
+"A few quick details help IronStack work better for you - every field below is"
 " optional, and you can always change them later from your profile."
 
 #: templates/accounts/_onboarding_modal.html:21
@@ -4419,12 +4419,12 @@ msgstr "Dismiss"
 
 #: templates/accounts/_privacy_notice_modal.html:30
 msgid ""
-"IronStack is self-hosted, open-source software — the person or organization "
+"IronStack is self-hosted, open-source software - the person or organization "
 "running this particular installation (not the software's authors) is who's "
 "responsible for the data on it, and who you should contact about any of the "
 "below."
 msgstr ""
-"IronStack is self-hosted, open-source software — the person or organization "
+"IronStack is self-hosted, open-source software - the person or organization "
 "running this particular installation (not the software's authors) is who's "
 "responsible for the data on it, and who you should contact about any of the "
 "below."
@@ -4457,12 +4457,12 @@ msgstr "Why"
 
 #: templates/accounts/_privacy_notice_modal.html:35
 msgid ""
-"Solely to provide the tracking features you're using — nothing here is shared"
+"Solely to provide the tracking features you're using - nothing here is shared"
 " with, sold to, or processed by any third party, except the few optional "
 "integrations you have to explicitly turn on yourself (e.g. an OpenFoodFacts "
 "lookup, a Gravatar picture, Authentik single sign-on)."
 msgstr ""
-"Solely to provide the tracking features you're using — nothing here is shared"
+"Solely to provide the tracking features you're using - nothing here is shared"
 " with, sold to, or processed by any third party, except the few optional "
 "integrations you have to explicitly turn on yourself (e.g. an OpenFoodFacts "
 "lookup, a Gravatar picture, Authentik single sign-on)."
@@ -4473,26 +4473,26 @@ msgstr "Your rights"
 
 #: templates/accounts/_privacy_notice_modal.html:38
 msgid ""
-"Access and rectification — everything you've logged is visible and editable "
+"Access and rectification - everything you've logged is visible and editable "
 "directly in the app."
 msgstr ""
-"Access and rectification — everything you've logged is visible and editable "
+"Access and rectification - everything you've logged is visible and editable "
 "directly in the app."
 
 #: templates/accounts/_privacy_notice_modal.html:39
 msgid ""
-"Erasure — Profile → \"Delete account\" permanently deletes your account and "
+"Erasure - Profile → \"Delete account\" permanently deletes your account and "
 "everything exclusively tied to it."
 msgstr ""
-"Erasure — Profile → \"Delete account\" permanently deletes your account and "
+"Erasure - Profile → \"Delete account\" permanently deletes your account and "
 "everything exclusively tied to it."
 
 #: templates/accounts/_privacy_notice_modal.html:40
 msgid ""
-"Portability — the public API (Profile → \"API keys\") can export your own "
+"Portability - the public API (Profile → \"API keys\") can export your own "
 "data in a structured format."
 msgstr ""
-"Portability — the public API (Profile → \"API keys\") can export your own "
+"Portability - the public API (Profile → \"API keys\") can export your own "
 "data in a structured format."
 
 #: templates/accounts/_privacy_notice_modal.html:42
@@ -4502,21 +4502,21 @@ msgstr "Retention"
 #: templates/accounts/_privacy_notice_modal.html:43
 msgid ""
 "Kept for as long as your account exists. A backup made before you delete "
-"anything may still contain it until that backup itself is rotated out — see "
+"anything may still contain it until that backup itself is rotated out - see "
 "the account deletion page for details."
 msgstr ""
 "Kept for as long as your account exists. A backup made before you delete "
-"anything may still contain it until that backup itself is rotated out — see "
+"anything may still contain it until that backup itself is rotated out - see "
 "the account deletion page for details."
 
 #: templates/accounts/_two_factor_backup_codes_fragment.html:4
 msgid ""
 "Each one works once, if you ever lose access to your authenticator app. They "
-"won't be shown again — save them somewhere safe now. Your old backup codes no"
+"won't be shown again - save them somewhere safe now. Your old backup codes no"
 " longer work."
 msgstr ""
 "Each one works once, if you ever lose access to your authenticator app. They "
-"won't be shown again — save them somewhere safe now. Your old backup codes no"
+"won't be shown again - save them somewhere safe now. Your old backup codes no"
 " longer work."
 
 #: templates/accounts/account_delete.html:3
@@ -4540,11 +4540,11 @@ msgstr ""
 msgid ""
 "A custom exercise, food, recipe, program, or measurement/activity type you "
 "created is kept, not deleted, if anyone else on this instance is already "
-"using it — it's just no longer credited to your account."
+"using it - it's just no longer credited to your account."
 msgstr ""
 "A custom exercise, food, recipe, program, or measurement/activity type you "
 "created is kept, not deleted, if anyone else on this instance is already "
-"using it — it's just no longer credited to your account."
+"using it - it's just no longer credited to your account."
 
 #: templates/accounts/account_delete.html:12
 msgid ""
@@ -4557,10 +4557,10 @@ msgstr ""
 #: templates/accounts/account_delete.html:21
 msgid ""
 "Your account is linked to Authentik, so there's no local password to confirm "
-"with — type your username instead."
+"with - type your username instead."
 msgstr ""
 "Your account is linked to Authentik, so there's no local password to confirm "
-"with — type your username instead."
+"with - type your username instead."
 
 #: templates/accounts/account_delete.html:24
 msgid "Permanently delete my account"
@@ -4598,11 +4598,11 @@ msgstr "Download your data"
 
 #: templates/accounts/data_export.html:10
 msgid ""
-"Everything below is exclusively yours — the same data shown as tables here "
+"Everything below is exclusively yours - the same data shown as tables here "
 "can be downloaded as a single JSON file, a .zip of spreadsheet-ready CSV "
 "files (one per section), or this very page as a single HTML file."
 msgstr ""
-"Everything below is exclusively yours — the same data shown as tables here "
+"Everything below is exclusively yours - the same data shown as tables here "
 "can be downloaded as a single JSON file, a .zip of spreadsheet-ready CSV "
 "files (one per section), or this very page as a single HTML file."
 
@@ -4674,8 +4674,8 @@ msgid "Update the password you use to sign in."
 msgstr "Update the password you use to sign in."
 
 #: templates/accounts/profile.html:82
-msgid "Enabled — protecting your account with a second step at login."
-msgstr "Enabled — protecting your account with a second step at login."
+msgid "Enabled - protecting your account with a second step at login."
+msgstr "Enabled - protecting your account with a second step at login."
 
 #: templates/accounts/profile.html:84
 msgid "Add a second step at login, using an authenticator app."
@@ -5063,12 +5063,12 @@ msgstr "Django administration"
 msgid ""
 "Pick which of these %(counter)s foods to keep. Every diary entry, recipe "
 "ingredient, and diet-plan item currently pointing at one of the others will "
-"be repointed at the one you keep — nothing a user has logged is deleted, only"
+"be repointed at the one you keep - nothing a user has logged is deleted, only"
 " which food row it refers to changes. The other foods are then removed."
 msgstr ""
 "Pick which of these %(counter)s foods to keep. Every diary entry, recipe "
 "ingredient, and diet-plan item currently pointing at one of the others will "
-"be repointed at the one you keep — nothing a user has logged is deleted, only"
+"be repointed at the one you keep - nothing a user has logged is deleted, only"
 " which food row it refers to changes. The other foods are then removed."
 
 #: templates/admin/nutrition/food/merge.html:13
@@ -5228,8 +5228,8 @@ msgid "This person is coaching you."
 msgstr "This person is coaching you."
 
 #: templates/analytics/member_profile.html:15
-msgid "Coaching request sent — waiting for a response."
-msgstr "Coaching request sent — waiting for a response."
+msgid "Coaching request sent - waiting for a response."
+msgstr "Coaching request sent - waiting for a response."
 
 #: templates/analytics/member_profile.html:19
 msgid "Request coaching"
@@ -5253,8 +5253,8 @@ msgid "API key created"
 msgstr "API key created"
 
 #: templates/api/key_created.html:10
-msgid "Copy this key now — you won't be able to see it again."
-msgstr "Copy this key now — you won't be able to see it again."
+msgid "Copy this key now - you won't be able to see it again."
+msgstr "Copy this key now - you won't be able to see it again."
 
 #: templates/api/key_created.html:13
 msgid "Your new API key"
@@ -5266,10 +5266,10 @@ msgstr "New API key"
 
 #: templates/api/key_form.html:14
 msgid ""
-"Choose exactly what this key is allowed to do, per resource — leave "
+"Choose exactly what this key is allowed to do, per resource - leave "
 "everything unchecked for a context to block it entirely."
 msgstr ""
-"Choose exactly what this key is allowed to do, per resource — leave "
+"Choose exactly what this key is allowed to do, per resource - leave "
 "everything unchecked for a context to block it entirely."
 
 #: templates/api/key_form.html:19
@@ -5320,21 +5320,21 @@ msgstr "Permissions"
 msgid ""
 "Each key is granted Create/Read/Update/Delete separately per area (exercises,"
 " programs, workouts, measurements, activities, nutrition, stretching, "
-"records, analytics, profile) — set this when you create the key, above. A "
+"records, analytics, profile) - set this when you create the key, above. A "
 "request outside what the key is granted gets a 403."
 msgstr ""
 "Each key is granted Create/Read/Update/Delete separately per area (exercises,"
 " programs, workouts, measurements, activities, nutrition, stretching, "
-"records, analytics, profile) — set this when you create the key, above. A "
+"records, analytics, profile) - set this when you create the key, above. A "
 "request outside what the key is granted gets a 403."
 
 #: templates/api/key_list.html:35
 msgid ""
-"Always canonical: weight in kilograms, length in meters, energy in kcal — "
+"Always canonical: weight in kilograms, length in meters, energy in kcal - "
 "never converted to your own display-unit preference, so a script can rely on "
 "one meaning regardless of who's asking."
 msgstr ""
-"Always canonical: weight in kilograms, length in meters, energy in kcal — "
+"Always canonical: weight in kilograms, length in meters, energy in kcal - "
 "never converted to your own display-unit preference, so a script can rely on "
 "one meaning regardless of who's asking."
 
@@ -5347,8 +5347,8 @@ msgid "Example: creating something (curl)"
 msgstr "Example: creating something (curl)"
 
 #: templates/api/key_list.html:42
-msgid "A POST with a JSON body — this adds a food to your library:"
-msgstr "A POST with a JSON body — this adds a food to your library:"
+msgid "A POST with a JSON body - this adds a food to your library:"
+msgstr "A POST with a JSON body - this adds a food to your library:"
 
 #: templates/api/key_list.html:51
 msgid "Example: Python"
@@ -5434,11 +5434,11 @@ msgstr "No API keys yet."
 
 #: templates/base.html:34
 msgid ""
-"Self-hosted, mobile-first fitness and activity tracker — workout logging, "
+"Self-hosted, mobile-first fitness and activity tracker - workout logging, "
 "progression, nutrition, and body tracking, running entirely on your own "
 "infrastructure."
 msgstr ""
-"Self-hosted, mobile-first fitness and activity tracker — workout logging, "
+"Self-hosted, mobile-first fitness and activity tracker - workout logging, "
 "progression, nutrition, and body tracking, running entirely on your own "
 "infrastructure."
 
@@ -5451,15 +5451,15 @@ msgid "Confirm"
 msgstr "Confirm"
 
 #: templates/base.html:106
-msgid "Something went wrong — that change was not saved. Please try again."
-msgstr "Something went wrong — that change was not saved. Please try again."
+msgid "Something went wrong - that change was not saved. Please try again."
+msgstr "Something went wrong - that change was not saved. Please try again."
 
 #: templates/base.html:107
 msgid ""
-"Could not reach the server — check your connection. That change was not "
+"Could not reach the server - check your connection. That change was not "
 "saved."
 msgstr ""
-"Could not reach the server — check your connection. That change was not "
+"Could not reach the server - check your connection. That change was not "
 "saved."
 
 #: templates/base.html:123
@@ -5483,8 +5483,8 @@ msgid "Workout"
 msgstr "Workout"
 
 #: templates/base.html:196
-msgid "Profile — new friend/group activity"
-msgstr "Profile — new friend/group activity"
+msgid "Profile - new friend/group activity"
+msgstr "Profile - new friend/group activity"
 
 #: templates/base.html:235
 msgid "Continue training"
@@ -5564,9 +5564,9 @@ msgstr "End"
 
 #: templates/coaching/client_list.html:45
 msgid ""
-"No clients yet — accept a coaching request above once someone sends you one."
+"No clients yet - accept a coaching request above once someone sends you one."
 msgstr ""
-"No clients yet — accept a coaching request above once someone sends you one."
+"No clients yet - accept a coaching request above once someone sends you one."
 
 #: templates/coaching/diet_plan_update_diff.html:3
 #: templates/coaching/program_update_diff.html:3
@@ -5616,10 +5616,10 @@ msgstr "Plans"
 
 #: templates/coaching/my_coaches.html:33
 msgid ""
-"No one is coaching you yet — a personal trainer's own profile page has a "
+"No one is coaching you yet - a personal trainer's own profile page has a "
 "“Request coaching” button."
 msgstr ""
-"No one is coaching you yet — a personal trainer's own profile page has a "
+"No one is coaching you yet - a personal trainer's own profile page has a "
 "“Request coaching” button."
 
 #: templates/coaching/program_update_diff.html:6
@@ -5700,10 +5700,10 @@ msgstr "Uploaded"
 #: templates/core/_backup_row.html:15
 msgid ""
 "database.dump/media.tar are encrypted with this instance's "
-"BACKUP_ENCRYPTION_KEY — restoring needs it."
+"BACKUP_ENCRYPTION_KEY - restoring needs it."
 msgstr ""
 "database.dump/media.tar are encrypted with this instance's "
-"BACKUP_ENCRYPTION_KEY — restoring needs it."
+"BACKUP_ENCRYPTION_KEY - restoring needs it."
 
 #: templates/core/_backup_row.html:15
 #: templates/core/backup_restore_confirm.html:29
@@ -5736,10 +5736,10 @@ msgstr "%(title)s by category"
 
 #: templates/core/_bmi_card.html:21
 msgid ""
-"Not enough data yet — set your height and log a body weight to see your "
+"Not enough data yet - set your height and log a body weight to see your "
 "current BMI here."
 msgstr ""
-"Not enough data yet — set your height and log a body weight to see your "
+"Not enough data yet - set your height and log a body weight to see your "
 "current BMI here."
 
 #: templates/core/_bmi_card.html:25
@@ -5849,8 +5849,8 @@ msgid "Create backup"
 msgstr "Create backup"
 
 #: templates/core/backup_list.html:14
-msgid "This can take a minute — please keep this page open."
-msgstr "This can take a minute — please keep this page open."
+msgid "This can take a minute - please keep this page open."
+msgstr "This can take a minute - please keep this page open."
 
 #: templates/core/backup_list.html:17
 msgid "Automatic backups"
@@ -5929,12 +5929,12 @@ msgstr ""
 #: templates/core/backup_restore_confirm.html:18
 msgid ""
 "This backup is encrypted, but this instance has no BACKUP_ENCRYPTION_KEY "
-"configured (or it doesn't match the key this backup was made with) — "
+"configured (or it doesn't match the key this backup was made with) - "
 "restoring will fail. Set the correct key in .env and restart before trying "
 "again."
 msgstr ""
 "This backup is encrypted, but this instance has no BACKUP_ENCRYPTION_KEY "
-"configured (or it doesn't match the key this backup was made with) — "
+"configured (or it doesn't match the key this backup was made with) - "
 "restoring will fail. Set the correct key in .env and restart before trying "
 "again."
 
@@ -6031,10 +6031,10 @@ msgstr "Time to log your body measurements?"
 
 #: templates/core/dashboard.html:62
 msgid ""
-"It's been a while since you tracked your weight or measurements — tap here to"
+"It's been a while since you tracked your weight or measurements - tap here to"
 " add a new reading."
 msgstr ""
-"It's been a while since you tracked your weight or measurements — tap here to"
+"It's been a while since you tracked your weight or measurements - tap here to"
 " add a new reading."
 
 #: templates/core/dashboard.html:74
@@ -6088,10 +6088,10 @@ msgstr "Follow a guided stretching routine or log one."
 
 #: templates/core/feedback_form.html:9
 msgid ""
-"Bug reports, ideas, anything that's confusing — only visible to the people "
+"Bug reports, ideas, anything that's confusing - only visible to the people "
 "running this instance."
 msgstr ""
-"Bug reports, ideas, anything that's confusing — only visible to the people "
+"Bug reports, ideas, anything that's confusing - only visible to the people "
 "running this instance."
 
 #: templates/core/feedback_form.html:17
@@ -6395,8 +6395,8 @@ msgid "Remove this item?"
 msgstr "Remove this item?"
 
 #: templates/nutrition/_diet_plan_meal_card.html:30
-msgid "Nothing suggested yet — add some foods or recipes first."
-msgstr "Nothing suggested yet — add some foods or recipes first."
+msgid "Nothing suggested yet - add some foods or recipes first."
+msgstr "Nothing suggested yet - add some foods or recipes first."
 
 #: templates/nutrition/_diet_plan_meal_card.html:32
 msgid "Add item"
@@ -6496,8 +6496,8 @@ msgid "Create a custom food"
 msgstr "Create a custom food"
 
 #: templates/nutrition/_food_search_results.html:82
-msgid "Online search is busy right now — please try again in a minute."
-msgstr "Online search is busy right now — please try again in a minute."
+msgid "Online search is busy right now - please try again in a minute."
+msgstr "Online search is busy right now - please try again in a minute."
 
 #: templates/nutrition/_food_search_results.html:84
 msgid "Open Food Facts couldn't be reached right now."
@@ -6581,8 +6581,8 @@ msgid "Nutri-Score %(grade)s"
 msgstr "Nutri-Score %(grade)s"
 
 #: templates/nutrition/_nutri_score_badge.html:6
-msgid "NOVA — food processing level, 1 (unprocessed) to 4 (ultra-processed)"
-msgstr "NOVA — food processing level, 1 (unprocessed) to 4 (ultra-processed)"
+msgid "NOVA - food processing level, 1 (unprocessed) to 4 (ultra-processed)"
+msgstr "NOVA - food processing level, 1 (unprocessed) to 4 (ultra-processed)"
 
 #: templates/nutrition/_off_attribution.html:4
 msgid ""
@@ -6644,12 +6644,12 @@ msgstr "BMI calculator"
 
 #: templates/nutrition/calculator_bmi.html:9
 msgid ""
-"Body mass index — a widely used screening number, not a diagnosis. The Body "
+"Body mass index - a widely used screening number, not a diagnosis. The Body "
 "weight page shows this automatically once you've logged a weight and set a "
 "height on your profile; this is the same calculation for a quick one-off "
 "check."
 msgstr ""
-"Body mass index — a widely used screening number, not a diagnosis. The Body "
+"Body mass index - a widely used screening number, not a diagnosis. The Body "
 "weight page shows this automatically once you've logged a weight and set a "
 "height on your profile; this is the same calculation for a quick one-off "
 "check."
@@ -6719,20 +6719,20 @@ msgstr "Body fat calculator"
 
 #: templates/nutrition/calculator_body_fat.html:9
 msgid ""
-"The U.S. Navy tape-measure method — just a tape measure, no calipers or "
+"The U.S. Navy tape-measure method - just a tape measure, no calipers or "
 "bioimpedance scale needed. An estimate, typically within a few percentage "
 "points of a DEXA scan."
 msgstr ""
-"The U.S. Navy tape-measure method — just a tape measure, no calipers or "
+"The U.S. Navy tape-measure method - just a tape measure, no calipers or "
 "bioimpedance scale needed. An estimate, typically within a few percentage "
 "points of a DEXA scan."
 
 #: templates/nutrition/calculator_body_fat.html:26
 msgid ""
-"Couldn't estimate this from those measurements — double-check them (waist "
+"Couldn't estimate this from those measurements - double-check them (waist "
 "should be larger than neck)."
 msgstr ""
-"Couldn't estimate this from those measurements — double-check them (waist "
+"Couldn't estimate this from those measurements - double-check them (waist "
 "should be larger than neck)."
 
 #: templates/nutrition/calculator_macros.html:3
@@ -6765,10 +6765,10 @@ msgstr "Time to goal weight calculator"
 
 #: templates/nutrition/calculator_time_to_goal.html:9
 msgid ""
-"At a chosen weekly rate, roughly how long to reach a target weight — a plain "
+"At a chosen weekly rate, roughly how long to reach a target weight - a plain "
 "projection from the numbers you enter, not a promise."
 msgstr ""
-"At a chosen weekly rate, roughly how long to reach a target weight — a plain "
+"At a chosen weekly rate, roughly how long to reach a target weight - a plain "
 "projection from the numbers you enter, not a promise."
 
 #: templates/nutrition/calculator_time_to_goal.html:24
@@ -6783,10 +6783,10 @@ msgstr "Around %(date)s, at this rate."
 
 #: templates/nutrition/calculator_time_to_goal.html:30
 msgid ""
-"That rate doesn't move toward your target — check the sign (negative to lose,"
+"That rate doesn't move toward your target - check the sign (negative to lose,"
 " positive to gain) matches the direction you actually need to go."
 msgstr ""
-"That rate doesn't move toward your target — check the sign (negative to lose,"
+"That rate doesn't move toward your target - check the sign (negative to lose,"
 " positive to gain) matches the direction you actually need to go."
 
 #: templates/nutrition/calculator_waist_hip_ratio.html:3
@@ -6797,10 +6797,10 @@ msgstr "Waist-to-hip ratio calculator"
 
 #: templates/nutrition/calculator_waist_hip_ratio.html:9
 msgid ""
-"Where you carry weight, not just how much — a widely used screening number "
+"Where you carry weight, not just how much - a widely used screening number "
 "(WHO), not a diagnosis."
 msgstr ""
-"Where you carry weight, not just how much — a widely used screening number "
+"Where you carry weight, not just how much - a widely used screening number "
 "(WHO), not a diagnosis."
 
 #: templates/nutrition/calculator_water_intake.html:3
@@ -6811,10 +6811,10 @@ msgstr "Water intake calculator"
 
 #: templates/nutrition/calculator_water_intake.html:9
 msgid ""
-"A rough daily fluid target based on bodyweight and activity — real needs vary"
+"A rough daily fluid target based on bodyweight and activity - real needs vary"
 " with climate and sweat rate, so treat this as a starting point."
 msgstr ""
-"A rough daily fluid target based on bodyweight and activity — real needs vary"
+"A rough daily fluid target based on bodyweight and activity - real needs vary"
 " with climate and sweat rate, so treat this as a starting point."
 
 #: templates/nutrition/calculator_water_intake.html:22
@@ -6823,9 +6823,9 @@ msgstr "day"
 
 #: templates/nutrition/calculators_home.html:9
 msgid ""
-"Quick, standalone estimates — none of these are saved or change your targets."
+"Quick, standalone estimates - none of these are saved or change your targets."
 msgstr ""
-"Quick, standalone estimates — none of these are saved or change your targets."
+"Quick, standalone estimates - none of these are saved or change your targets."
 
 #: templates/nutrition/calculators_home.html:14
 msgid "How many calories your body burns at rest, and in total."
@@ -6853,10 +6853,10 @@ msgstr ""
 
 #: templates/nutrition/calculators_home.html:54
 msgid ""
-"Where you carry weight, not just how much — a tape measure and one more "
+"Where you carry weight, not just how much - a tape measure and one more "
 "number."
 msgstr ""
-"Where you carry weight, not just how much — a tape measure and one more "
+"Where you carry weight, not just how much - a tape measure and one more "
 "number."
 
 #: templates/nutrition/calculators_home.html:62
@@ -6873,10 +6873,10 @@ msgstr "Back to nutrition"
 
 #: templates/nutrition/dashboard.html:9
 msgid ""
-"Based on whether you completed a workout today — this doesn't change your "
+"Based on whether you completed a workout today - this doesn't change your "
 "calorie target automatically."
 msgstr ""
-"Based on whether you completed a workout today — this doesn't change your "
+"Based on whether you completed a workout today - this doesn't change your "
 "calorie target automatically."
 
 #: templates/nutrition/dashboard.html:11
@@ -7086,10 +7086,10 @@ msgstr "fat"
 
 #: templates/nutrition/diet_plan_detail.html:34
 msgid ""
-"Varies across the week — same daily calories/macros every day, different "
+"Varies across the week - same daily calories/macros every day, different "
 "meals."
 msgstr ""
-"Varies across the week — same daily calories/macros every day, different "
+"Varies across the week - same daily calories/macros every day, different "
 "meals."
 
 #: templates/nutrition/diet_plan_detail.html:80
@@ -7131,11 +7131,11 @@ msgstr "Build a diet plan"
 #: templates/nutrition/diet_plan_form.html:9
 msgid ""
 "We'll suggest one food or recipe per meal from your own library, scaled to "
-"fit — you can swap any of them afterward. Or start from scratch below to skip"
+"fit - you can swap any of them afterward. Or start from scratch below to skip"
 " the suggestions and build it entirely yourself."
 msgstr ""
 "We'll suggest one food or recipe per meal from your own library, scaled to "
-"fit — you can swap any of them afterward. Or start from scratch below to skip"
+"fit - you can swap any of them afterward. Or start from scratch below to skip"
 " the suggestions and build it entirely yourself."
 
 #: templates/nutrition/diet_plan_form.html:17
@@ -7149,13 +7149,13 @@ msgstr "Import diet plan"
 
 #: templates/nutrition/diet_plan_import.html:12
 msgid ""
-"Upload a diet plan someone exported — from this instance, or a completely "
+"Upload a diet plan someone exported - from this instance, or a completely "
 "different IronStack instance. Foods and recipes it uses are matched against "
 "your own existing ones where possible, rather than duplicated; anything "
 "missing is recreated for you. Imported inactive, so it never replaces "
 "whatever plan you're currently following."
 msgstr ""
-"Upload a diet plan someone exported — from this instance, or a completely "
+"Upload a diet plan someone exported - from this instance, or a completely "
 "different IronStack instance. Foods and recipes it uses are matched against "
 "your own existing ones where possible, rather than duplicated; anything "
 "missing is recreated for you. Imported inactive, so it never replaces "
@@ -7209,18 +7209,18 @@ msgstr "Import from OpenFoodFacts"
 
 #: templates/nutrition/food_browse.html:10
 msgid ""
-"Search or browse by category to add a food to the shared library — anyone on "
+"Search or browse by category to add a food to the shared library - anyone on "
 "this instance can then find and log it."
 msgstr ""
-"Search or browse by category to add a food to the shared library — anyone on "
+"Search or browse by category to add a food to the shared library - anyone on "
 "this instance can then find and log it."
 
 #: templates/nutrition/food_browse.html:20
 msgid ""
-"Search to add a food to the shared library — anyone on this instance can then"
+"Search to add a food to the shared library - anyone on this instance can then"
 " find and log it. Category browsing isn't available right now."
 msgstr ""
-"Search to add a food to the shared library — anyone on this instance can then"
+"Search to add a food to the shared library - anyone on this instance can then"
 " find and log it. Category browsing isn't available right now."
 
 #: templates/nutrition/food_browse.html:42
@@ -7376,10 +7376,10 @@ msgstr "Descending"
 #: templates/nutrition/goal_edit.html:11
 msgid ""
 "Changing your goal recalculates your daily calorie and macro target right "
-"away — your old target stays in your history, it isn't overwritten."
+"away - your old target stays in your history, it isn't overwritten."
 msgstr ""
 "Changing your goal recalculates your daily calorie and macro target right "
-"away — your old target stays in your history, it isn't overwritten."
+"away - your old target stays in your history, it isn't overwritten."
 
 #: templates/nutrition/goal_edit.html:28
 msgid "Update goal"
@@ -7399,11 +7399,11 @@ msgstr "How active are you?"
 
 #: templates/nutrition/onboarding_activity.html:9
 msgid ""
-"Everything here is optional — the more you tell us, the better the estimate. "
+"Everything here is optional - the more you tell us, the better the estimate. "
 "We'll suggest an activity level from your answers, not ask you to guess it "
 "yourself."
 msgstr ""
-"Everything here is optional — the more you tell us, the better the estimate. "
+"Everything here is optional - the more you tell us, the better the estimate. "
 "We'll suggest an activity level from your answers, not ask you to guess it "
 "yourself."
 
@@ -7418,8 +7418,8 @@ msgid "Confirm your activity level"
 msgstr "Confirm your activity level"
 
 #: templates/nutrition/onboarding_activity_level.html:20
-msgid "This is only a suggestion — change it if you know it's wrong."
-msgstr "This is only a suggestion — change it if you know it's wrong."
+msgid "This is only a suggestion - change it if you know it's wrong."
+msgstr "This is only a suggestion - change it if you know it's wrong."
 
 #: templates/nutrition/onboarding_body.html:6
 msgid "Let's set up your nutrition"
@@ -7427,10 +7427,10 @@ msgstr "Let's set up your nutrition"
 
 #: templates/nutrition/onboarding_body.html:9
 msgid ""
-"A few questions about your body — used to estimate how many calories you "
+"A few questions about your body - used to estimate how many calories you "
 "need."
 msgstr ""
-"A few questions about your body — used to estimate how many calories you "
+"A few questions about your body - used to estimate how many calories you "
 "need."
 
 #: templates/nutrition/onboarding_body.html:21
@@ -7455,10 +7455,10 @@ msgstr "Your estimated targets"
 
 #: templates/nutrition/onboarding_review.html:24
 msgid ""
-"These are estimates, not exact figures — you'll be able to see how well "
+"These are estimates, not exact figures - you'll be able to see how well "
 "they're actually working once you've logged some data, and adjust anytime."
 msgstr ""
-"These are estimates, not exact figures — you'll be able to see how well "
+"These are estimates, not exact figures - you'll be able to see how well "
 "they're actually working once you've logged some data, and adjust anytime."
 
 #: templates/nutrition/onboarding_review.html:28
@@ -7473,10 +7473,10 @@ msgstr "Template"
 #: templates/nutrition/recipe_detail.html:22
 #, python-format
 msgid ""
-"Tagged for %(meal)s — the diet-plan builder only ever suggests this recipe "
+"Tagged for %(meal)s - the diet-plan builder only ever suggests this recipe "
 "for that meal."
 msgstr ""
-"Tagged for %(meal)s — the diet-plan builder only ever suggests this recipe "
+"Tagged for %(meal)s - the diet-plan builder only ever suggests this recipe "
 "for that meal."
 
 #: templates/nutrition/recipe_detail.html:42
@@ -7542,12 +7542,12 @@ msgstr "Import recipe"
 
 #: templates/nutrition/recipe_import.html:12
 msgid ""
-"Upload a recipe someone exported — from this instance, or a completely "
+"Upload a recipe someone exported - from this instance, or a completely "
 "different IronStack instance. A food originally imported from OpenFoodFacts "
 "is looked up again by its own barcode; anything else is recreated as your own"
 " food."
 msgstr ""
-"Upload a recipe someone exported — from this instance, or a completely "
+"Upload a recipe someone exported - from this instance, or a completely "
 "different IronStack instance. A food originally imported from OpenFoodFacts "
 "is looked up again by its own barcode; anything else is recreated as your own"
 " food."
@@ -7632,10 +7632,10 @@ msgstr "Average fat"
 
 #: templates/nutrition/stats.html:33
 msgid ""
-"Averages only count days you actually logged something — a day with nothing "
+"Averages only count days you actually logged something - a day with nothing "
 "logged isn't counted as zero calories."
 msgstr ""
-"Averages only count days you actually logged something — a day with nothing "
+"Averages only count days you actually logged something - a day with nothing "
 "logged isn't counted as zero calories."
 
 #: templates/nutrition/stats.html:36
@@ -7747,12 +7747,12 @@ msgstr "Import program"
 
 #: templates/programs/program_import.html:11
 msgid ""
-"Upload a program someone exported — from this instance, or a completely "
+"Upload a program someone exported - from this instance, or a completely "
 "different IronStack instance. Any custom exercises it uses are recreated for "
 "you; a name matching one of this instance's own system exercises is reused "
 "as-is."
 msgstr ""
-"Upload a program someone exported — from this instance, or a completely "
+"Upload a program someone exported - from this instance, or a completely "
 "different IronStack instance. Any custom exercises it uses are recreated for "
 "you; a name matching one of this instance's own system exercises is reused "
 "as-is."
@@ -7994,8 +7994,8 @@ msgstr "No users found."
 
 #: templates/social/_group_thread_fragment.html:8
 #: templates/social/_message_thread_fragment.html:8
-msgid "No messages yet — say hello."
-msgstr "No messages yet — say hello."
+msgid "No messages yet - say hello."
+msgstr "No messages yet - say hello."
 
 #: templates/social/block_list.html:3 templates/social/block_list.html:6
 #: templates/social/friend_list.html:74 templates/social/message_list.html:29
@@ -8043,10 +8043,10 @@ msgstr "Remove this friend?"
 
 #: templates/social/friend_list.html:68
 msgid ""
-"No friends yet — find someone you train with to share progress and message "
+"No friends yet - find someone you train with to share progress and message "
 "them here."
 msgstr ""
-"No friends yet — find someone you train with to share progress and message "
+"No friends yet - find someone you train with to share progress and message "
 "them here."
 
 #: templates/social/friend_list.html:75 templates/social/group_list.html:51
@@ -8083,8 +8083,8 @@ msgid "Regenerate the invite link? The old link will stop working."
 msgstr "Regenerate the invite link? The old link will stop working."
 
 #: templates/social/group_detail.html:44
-msgid "Anyone with this link can join — off until you turn it on."
-msgstr "Anyone with this link can join — off until you turn it on."
+msgid "Anyone with this link can join - off until you turn it on."
+msgstr "Anyone with this link can join - off until you turn it on."
 
 #: templates/social/group_detail.html:47
 msgid "Enable link"
@@ -8546,8 +8546,8 @@ msgid "Next up:"
 msgstr "Next up:"
 
 #: templates/stretching/session_play.html:67
-msgid "All stretches done — nice work."
-msgstr "All stretches done — nice work."
+msgid "All stretches done - nice work."
+msgstr "All stretches done - nice work."
 
 #: templates/stretching/session_play.html:89
 msgid "Skip"
@@ -8670,9 +8670,9 @@ msgstr "Edit this set"
 
 #: templates/workouts/_train_panel.html:68
 msgid ""
-"This exercise is done — logging another set is still fine if you want one."
+"This exercise is done - logging another set is still fine if you want one."
 msgstr ""
-"This exercise is done — logging another set is still fine if you want one."
+"This exercise is done - logging another set is still fine if you want one."
 
 #: templates/workouts/_train_panel.html:85
 msgid "Fewer options"
@@ -8840,7 +8840,7 @@ msgctxt "nutrient"
 msgid "Salt"
 msgstr ""
 
-msgid "Optional — e.g. the restaurant dish."
+msgid "Optional - e.g. the restaurant dish."
 msgstr ""
 
 msgid "kcal. Leave blank to estimate it from the macros."
@@ -8852,7 +8852,7 @@ msgstr ""
 msgid "Quick entry"
 msgstr ""
 
-msgid "Log either a food, a recipe or quick macros — exactly one of them."
+msgid "Log either a food, a recipe or quick macros - exactly one of them."
 msgstr ""
 
 msgctxt "nutrient"
@@ -9038,7 +9038,7 @@ msgstr ""
 msgid "Median fat"
 msgstr ""
 
-msgid "Medians of the days you actually logged something — a day with nothing logged isn't counted as zero calories, and one barely-logged day doesn't drag the figure down the way it would an average."
+msgid "Medians of the days you actually logged something - a day with nothing logged isn't counted as zero calories, and one barely-logged day doesn't drag the figure down the way it would an average."
 msgstr ""
 
 msgid "Median per day"
@@ -9075,7 +9075,7 @@ msgstr ""
 msgid "Friends and groups"
 msgstr ""
 
-msgid "A quick look around. Every section has a short tour like this the first time you open it — skip any of them, or turn them all off."
+msgid "A quick look around. Every section has a short tour like this the first time you open it - skip any of them, or turn them all off."
 msgstr ""
 
 msgid "Navigation"
@@ -9108,7 +9108,7 @@ msgstr ""
 msgid "Your profile"
 msgstr ""
 
-msgid "Preferences, friends, your data — and Tutorials, where you can replay any of these tours."
+msgid "Preferences, friends, your data - and Tutorials, where you can replay any of these tours."
 msgstr ""
 
 msgid "Your workouts"
@@ -9141,7 +9141,7 @@ msgstr ""
 msgid "Suggested weight"
 msgstr ""
 
-msgid "Based on your last sessions, with the reason and how confident it is. It's only a starting point — you decide what goes on the bar."
+msgid "Based on your last sessions, with the reason and how confident it is. It's only a starting point - you decide what goes on the bar."
 msgstr ""
 
 msgid "Log a set"
@@ -9153,13 +9153,13 @@ msgstr ""
 msgid "Add an exercise"
 msgstr ""
 
-msgid "Add anything that isn't in the plan — it only changes this workout."
+msgid "Add anything that isn't in the plan - it only changes this workout."
 msgstr ""
 
 msgid "Training mode"
 msgstr ""
 
-msgid "One exercise at a time with big buttons and a rest timer — the easiest way to log at the gym. This button follows you on every page."
+msgid "One exercise at a time with big buttons and a rest timer - the easiest way to log at the gym. This button follows you on every page."
 msgstr ""
 
 msgid "Finish"
@@ -9168,7 +9168,7 @@ msgstr ""
 msgid "Complete the workout when you're done. Abandon keeps it in your history as unfinished."
 msgstr ""
 
-msgid "The dots show your progress. The arrows move between exercises in any order — the next unfinished one opens by default."
+msgid "The dots show your progress. The arrows move between exercises in any order - the next unfinished one opens by default."
 msgstr ""
 
 msgid "Current exercise"
@@ -9189,7 +9189,7 @@ msgstr ""
 msgid "Starts by itself after each set and chimes when rest is over. Adjust it by 15 seconds, skip it, or mute the sound."
 msgstr ""
 
-msgid "Every exercise at once — for reviewing or correcting the whole workout."
+msgid "Every exercise at once - for reviewing or correcting the whole workout."
 msgstr ""
 
 msgid "Create or import"
@@ -9258,7 +9258,7 @@ msgstr ""
 msgid "Your own exercises"
 msgstr ""
 
-msgid "Missing something? Add it — only you will see it."
+msgid "Missing something? Add it - only you will see it."
 msgstr ""
 
 msgid "An exercise"
@@ -9297,7 +9297,7 @@ msgstr ""
 msgid "Muscle groups"
 msgstr ""
 
-msgid "Which muscles got the most work — handy for spotting imbalances."
+msgid "Which muscles got the most work - handy for spotting imbalances."
 msgstr ""
 
 msgid "Progress for an exercise"
@@ -9339,7 +9339,7 @@ msgstr ""
 msgid "Log a reading"
 msgstr ""
 
-msgid "Enter today's value — or an earlier date to catch up."
+msgid "Enter today's value - or an earlier date to catch up."
 msgstr ""
 
 msgid "Every reading, newest first, with edit and delete."
@@ -9393,7 +9393,7 @@ msgstr ""
 msgid "Your goal"
 msgstr ""
 
-msgid "Lose, keep or gain — and how fast. Change it at any time."
+msgid "Lose, keep or gain - and how fast. Change it at any time."
 msgstr ""
 
 msgid "Pick a day"
@@ -9465,7 +9465,7 @@ msgstr ""
 msgid "Nutrition facts"
 msgstr ""
 
-msgid "Laid out like a package label: energy, fat, carbohydrate, fibre, protein and salt — then any vitamins and minerals that are known."
+msgid "Laid out like a package label: energy, fat, carbohydrate, fibre, protein and salt - then any vitamins and minerals that are known."
 msgstr ""
 
 msgid "Combine foods into a recipe once, then log a serving in one tap."
@@ -9507,7 +9507,7 @@ msgstr ""
 msgid "Copy a day of the plan into your diary as if you'd eaten it."
 msgstr ""
 
-msgid "Energy use, macros, body fat, water, BMI and more. They only calculate — nothing is saved or changed."
+msgid "Energy use, macros, body fat, water, BMI and more. They only calculate - nothing is saved or changed."
 msgstr ""
 
 msgid "Median daily calories and macros. Days with nothing logged don't count, and one barely-logged day doesn't drag the figure down."
@@ -9555,7 +9555,7 @@ msgstr ""
 msgid "Opens the guided player."
 msgstr ""
 
-msgid "Add stretches and reorder them — in your own routines."
+msgid "Add stretches and reorder them - in your own routines."
 msgstr ""
 
 msgid "The timer"
@@ -9591,7 +9591,7 @@ msgstr ""
 msgid "Messages, friends and groups."
 msgstr ""
 
-msgid "Everything you've logged is yours — browse it or download it."
+msgid "Everything you've logged is yours - browse it or download it."
 msgstr ""
 
 msgid "Tutorials"
@@ -9659,7 +9659,7 @@ msgstr ""
 msgid "Search your clients…"
 msgstr ""
 
-msgid "Not shared with anyone — only you can see it."
+msgid "Not shared with anyone - only you can see it."
 msgstr ""
 
 msgid "No matching clients."
@@ -9674,7 +9674,7 @@ msgstr ""
 msgid "Meals (optional)"
 msgstr ""
 
-msgid "Tick every meal this recipe suits, e.g. both Lunch and Dinner. The diet-plan builder only suggests it for those meals — leave all unticked for a recipe that fits any meal."
+msgid "Tick every meal this recipe suits, e.g. both Lunch and Dinner. The diet-plan builder only suggests it for those meals - leave all unticked for a recipe that fits any meal."
 msgstr ""
 
 msgid "The diet-plan builder only suggests this recipe for this meal."
@@ -9694,7 +9694,7 @@ msgstr ""
 msgid "A shopping day's own meals go on that day's list"
 msgstr ""
 
-msgid "On: you shop before that day's meals. Off: they're on the previous list — you shop after that day is covered."
+msgid "On: you shop before that day's meals. Off: they're on the previous list - you shop after that day is covered."
 msgstr ""
 
 msgid "Shopping days saved."
@@ -9718,7 +9718,7 @@ msgstr ""
 msgid "Pick the days you go shopping, and whether a shopping day's own meals go on that day's list. Set separately for each plan."
 msgstr ""
 
-msgid "One list for the whole week — pick shopping days below to split it into trips."
+msgid "One list for the whole week - pick shopping days below to split it into trips."
 msgstr ""
 
 #, python-format
@@ -9728,7 +9728,7 @@ msgstr ""
 msgid "Clear ticks"
 msgstr ""
 
-msgid "Nothing to buy — this plan has no meals on these days yet."
+msgid "Nothing to buy - this plan has no meals on these days yet."
 msgstr ""
 
 msgid "Shopping day"
@@ -9804,7 +9804,7 @@ msgstr ""
 msgid "Daily token limit per user"
 msgstr ""
 
-msgid "Nobody — users must bring their own key"
+msgid "Nobody - users must bring their own key"
 msgstr ""
 
 msgid "Staff only"
@@ -10035,7 +10035,7 @@ msgstr ""
 msgid "It only reads your own data, and only while it's answering you. It can't change anything: plans it suggests are created only if you choose to."
 msgstr ""
 
-msgid "Replies can be wrong. It isn't a doctor or a dietitian — check anything important with a professional."
+msgid "Replies can be wrong. It isn't a doctor or a dietitian - check anything important with a professional."
 msgstr ""
 
 msgid "You can turn it off, and delete your conversations, at any time."
@@ -10044,7 +10044,7 @@ msgstr ""
 msgid "Waiting…"
 msgstr ""
 
-msgid "This is taking unusually long to start. If it never does, the assistant worker may not be running — let your administrator know."
+msgid "This is taking unusually long to start. If it never does, the assistant worker may not be running - let your administrator know."
 msgstr ""
 
 msgid "Target %(calories)s kcal · protein %(protein)s g · carbs %(carbs)s g · fat %(fat)s g"
@@ -10062,7 +10062,7 @@ msgstr ""
 msgid "new food"
 msgstr ""
 
-msgid "Foods marked “new food” are added to your food library with nutrition values the assistant estimated — check them."
+msgid "Foods marked “new food” are added to your food library with nutrition values the assistant estimated - check them."
 msgstr ""
 
 msgid "Show workouts"
@@ -10125,7 +10125,7 @@ msgstr ""
 msgid "Back to AI assistant"
 msgstr ""
 
-msgid "Replies can be wrong — check anything important."
+msgid "Replies can be wrong - check anything important."
 msgstr ""
 
 msgid "Delete this conversation?"
@@ -10213,16 +10213,16 @@ msgctxt "proposal"
 msgid "Dismiss"
 msgstr ""
 
-msgid "Claude Opus 5.5 — best plans ($4 / $20)"
+msgid "Claude Opus 5.5 - best plans ($4 / $20)"
 msgstr ""
 
-msgid "Claude Sonnet 5.5 — good and half the price ($2 / $10)"
+msgid "Claude Sonnet 5.5 - good and half the price ($2 / $10)"
 msgstr ""
 
-msgid "Claude Haiku 4.5 — fastest and cheapest, weaker plans ($1 / $5)"
+msgid "Claude Haiku 4.5 - fastest and cheapest, weaker plans ($1 / $5)"
 msgstr ""
 
-msgid "Claude Fable 5.1 — most capable, most expensive ($10 / $50)"
+msgid "Claude Fable 5.1 - most capable, most expensive ($10 / $50)"
 msgstr ""
 
 msgid "Model for your key"
@@ -10238,19 +10238,19 @@ msgstr ""
 msgid "Model"
 msgstr ""
 
-msgid "Low — quickest and cheapest; fine for everyday questions"
+msgid "Low - quickest and cheapest; fine for everyday questions"
 msgstr ""
 
-msgid "Medium — balanced"
+msgid "Medium - balanced"
 msgstr ""
 
-msgid "High — more thorough plans, more tokens"
+msgid "High - more thorough plans, more tokens"
 msgstr ""
 
-msgid "Extra high — for demanding planning"
+msgid "Extra high - for demanding planning"
 msgstr ""
 
-msgid "Maximum — the most thorough and the most expensive"
+msgid "Maximum - the most thorough and the most expensive"
 msgstr ""
 
 msgid "Thinking effort"
@@ -10265,7 +10265,7 @@ msgstr ""
 msgid "Model settings saved."
 msgstr ""
 
-msgid "Another backup task is still running — wait for it to finish."
+msgid "Another backup task is still running - wait for it to finish."
 msgstr ""
 
 msgid "Creating a backup…"
@@ -10274,13 +10274,13 @@ msgstr ""
 msgid "Restoring %(name)s…"
 msgstr ""
 
-msgid "This can take several minutes. You can leave this page — come back to see the result."
+msgid "This can take several minutes. You can leave this page - come back to see the result."
 msgstr ""
 
 msgid "The last backup task was interrupted before it finished (did the server restart?). Check that everything looks right before relying on it."
 msgstr ""
 
-msgid "Couldn't decrypt %(name)s — check that BACKUP_ENCRYPTION_KEY matches the key this backup was made with. Nothing was changed."
+msgid "Couldn't decrypt %(name)s - check that BACKUP_ENCRYPTION_KEY matches the key this backup was made with. Nothing was changed."
 msgstr ""
 
 msgid "Restoring %(name)s failed: %(detail)s"
@@ -10344,7 +10344,7 @@ msgstr[0] ""
 msgstr[1] ""
 
 #, python-format
-msgid "That image is too large — the limit is %(megabytes)s MB."
+msgid "That image is too large - the limit is %(megabytes)s MB."
 msgstr ""
 
 #, python-format
@@ -10356,7 +10356,7 @@ msgid "Hi %(username)s,"
 msgstr ""
 
 #, python-format
-msgid "Thanks for signing up on %(site_name)s. Open this link to confirm your email address — you can log in once it's confirmed:"
+msgid "Thanks for signing up on %(site_name)s. Open this link to confirm your email address - you can log in once it's confirmed:"
 msgstr ""
 
 msgid "If you didn't sign up, you can safely ignore this email."
@@ -10369,19 +10369,19 @@ msgstr ""
 msgid "We've sent a link to %(email)s. Open it to confirm your address, then log in."
 msgstr ""
 
-msgid "Nothing arrived? Check your spam folder, or try logging in — that sends a new link."
+msgid "Nothing arrived? Check your spam folder, or try logging in - that sends a new link."
 msgstr ""
 
 msgid "This confirmation link is invalid, has expired or was already used."
 msgstr ""
 
-msgid "Try logging in — if your address still needs confirming, a new link is sent to it."
+msgid "Try logging in - if your address still needs confirming, a new link is sent to it."
 msgstr ""
 
-msgid "Confirm your email address first — we've sent a link to it. Check your inbox (and spam folder)."
+msgid "Confirm your email address first - we've sent a link to it. Check your inbox (and spam folder)."
 msgstr ""
 
-msgid "Email confirmed — you can log in now."
+msgid "Email confirmed - you can log in now."
 msgstr ""
 
 msgid "Email confirmation"

@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% load i18n %}
-{% block title %}{% trans "Backups" %} — IronStack{% endblock %}
+{% block title %}{% trans "Backups" %} - IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
   <h1 class="no-margin">{% trans "Backups" %}</h1>
@@ -8,7 +8,7 @@
 
 {% include "core/_backup_task_status.html" %}
 
-{% comment %}Creating (and restoring) runs in the background — apps.core.backup_tasks; the status above shows how it's going. One task at a time.{% endcomment %}
+{% comment %}Creating (and restoring) runs in the background - apps.core.backup_tasks; the status above shows how it's going. One task at a time.{% endcomment %}
 <form method="post">
   {% csrf_token %}
   <button type="submit" name="action" value="create_backup"{% if backup_task.state == "running" %} disabled{% endif %}>{% trans "Create backup" %}</button>

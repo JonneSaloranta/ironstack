@@ -5,12 +5,12 @@ from .models import BackupSettings, Feedback, FeedbackSettings, SeoSettings
 
 
 class BackupSettingsForm(forms.ModelForm):
-    """Profile → Administration → Backups' own settings card — see
+    """Profile → Administration → Backups' own settings card - see
     apps.core.models.BackupSettings for what each field actually does
     once saved. The 0-23 range on `hour` is already enforced by the
     model field's own MaxValueValidator (PositiveSmallIntegerField
     rules out negative values on its own), so the ModelForm inherits
-    that validation for free — no need to repeat it here."""
+    that validation for free - no need to repeat it here."""
 
     class Meta:
         model = BackupSettings
@@ -23,13 +23,13 @@ class BackupSettingsForm(forms.ModelForm):
 
 
 class BackupUploadForm(forms.Form):
-    """Profile → Administration → Backups' "Upload backup" card — lets
+    """Profile → Administration → Backups' "Upload backup" card - lets
     an admin restore from a .tar.gz they downloaded earlier (from this
     instance or another one) instead of only ever picking from what's
     already sitting in BACKUP_DIR. Only a basic filename-shape check
     here; the real validation (readable archive, all three expected
     members present) happens in apps.core.backups.save_uploaded_backup,
-    called from the view once this form's own clean() passes — kept
+    called from the view once this form's own clean() passes - kept
     out of the form the same way every other real validation in this
     app lives in a service function, not a form/view."""
 
@@ -49,7 +49,7 @@ class BackupUploadForm(forms.Form):
 
 class ExportImportUploadForm(forms.Form):
     """A previously-exported program or recipe (apps.core.
-    data_exchange) — a `.json` file someone downloaded from their own
+    data_exchange) - a `.json` file someone downloaded from their own
     account, this instance or a different one entirely, and wants to
     import into theirs. Shared by apps.programs' and apps.nutrition's
     own import views rather than two near-identical copies of the same
@@ -72,7 +72,7 @@ class ExportImportUploadForm(forms.Form):
 
 
 class FeedbackForm(forms.ModelForm):
-    """Profile → Feedback — the form any signed-in user fills in
+    """Profile → Feedback - the form any signed-in user fills in
     themselves; `user` is set from the request in the view, not exposed
     here as a field."""
 
@@ -87,7 +87,7 @@ class FeedbackForm(forms.ModelForm):
 
 
 class FeedbackSettingsForm(forms.ModelForm):
-    """Profile → Administration → Feedback's own settings card — see
+    """Profile → Administration → Feedback's own settings card - see
     apps.core.models.FeedbackSettings for what the toggle actually
     does once saved."""
 
@@ -98,7 +98,7 @@ class FeedbackSettingsForm(forms.ModelForm):
 
 
 class SeoSettingsForm(forms.ModelForm):
-    """Profile → Administration → Site & SEO's own settings card — see
+    """Profile → Administration → Site & SEO's own settings card - see
     apps.core.models.SeoSettings for what the toggle actually does
     once saved."""
 

@@ -9,7 +9,7 @@ Answer, for any user, at any time:
 
 Covers energy expenditure estimation, goal-based calorie/macro
 targets, a food diary with meals and recipes, a guided diet-plan
-builder, and — the feature that makes this more than a calculator —
+builder, and - the feature that makes this more than a calculator -
 turning the user's *actual* logged weight trend into an explainable,
 never-auto-applied calorie adjustment suggestion.
 
@@ -17,19 +17,19 @@ This is domain logic, same rule as `docs/PROGRESSION.md`: **independent
 of views/templates**, testable in isolation, and every number-producing
 function must be able to explain itself. Nutrition tracking was
 explicitly out of scope through v1 (`docs/PRODUCT_REQUIREMENTS.md` said
-"do not implement unless explicitly requested") — it has now been
+"do not implement unless explicitly requested") - it has now been
 requested, so this document, and the `apps/nutrition` app it describes,
 supersede that line.
 
 ## Why a new app, not an extension of `apps/measurements`
 
 `apps/measurements` already owns body-weight tracking (`BodyMeasurement`
-under the system "Body weight" `MeasurementType`) — nutrition **reads
+under the system "Body weight" `MeasurementType`) - nutrition **reads
 that**, it does not duplicate it. A user's target weight is a plain
 scalar on a goal, not a new time series.
 
-Everything else here — food, recipes, diary entries, calorie/macro
-targets, diet plans — is a genuinely different domain (nutrition, not
+Everything else here - food, recipes, diary entries, calorie/macro
+targets, diet plans - is a genuinely different domain (nutrition, not
 anthropometry) with its own lifecycle and its own history requirements.
 Folding it into `apps/measurements` would make that app's one clear job
 ("a time-stamped reading of a measurement type") do two unrelated
@@ -42,49 +42,49 @@ views or templates), is the smaller, more consistent change.
 
 All weight/energy values are `Decimal`, never `float` (project-wide
 rule, `docs/ARCHITECTURE.md` "Units and precision"). Calories are
-always kcal — no display-unit conversion needed, unlike weight/length,
+always kcal - no display-unit conversion needed, unlike weight/length,
 so no `unit_kind`-style dispatch layer is required for energy itself.
 
-### `NutritionProfile` — current facts, one row per user
+### `NutritionProfile` - current facts, one row per user
 
 The physiological/lifestyle inputs the calorie engine needs. A
-`OneToOneField` to `User`, not more fields bolted onto `User` itself —
+`OneToOneField` to `User`, not more fields bolted onto `User` itself -
 `accounts` already carries display preferences (`height`, `unit_system`,
 ...); this is a different, nutrition-specific concern, kept in its own
 app the same way `apps.measurements` doesn't live inside `apps.accounts`
 either.
 
 - `user` (`OneToOneField`)
-- `biological_sex` — `male`/`female` (the Mifflin-St Jeor constant is a
+- `biological_sex` - `male`/`female` (the Mifflin-St Jeor constant is a
   physiological input, not a gender-identity field; labelled precisely
   so it's clear why it's being asked)
-- `birth_date` — stored, not raw `age`, so it never silently goes stale
+- `birth_date` - stored, not raw `age`, so it never silently goes stale
   the way a once-entered "age" would; age is computed on read
-- `activity_job` — `sedentary` / `light` / `moderate` / `physical`
+- `activity_job` - `sedentary` / `light` / `moderate` / `physical`
   (desk job vs. on-your-feet vs. manual labour)
-- `daily_steps` — optional `PositiveIntegerField`
-- `training_sessions_per_week`, `training_session_minutes` — optional
+- `daily_steps` - optional `PositiveIntegerField`
+- `training_sessions_per_week`, `training_session_minutes` - optional
   ints, the user's own estimate (later phases can cross-check this
-  against real `apps.workouts` history — see "Training integration")
-- `other_exercise_minutes_per_week` — optional int (cardio, sport, ...)
-- `activity_level` — the actual TDEE-multiplier bucket
+  against real `apps.workouts` history - see "Training integration")
+- `other_exercise_minutes_per_week` - optional int (cardio, sport, ...)
+- `activity_level` - the actual TDEE-multiplier bucket
   (`sedentary`/`light`/`moderate`/`active`/`very_active`). **Not asked
-  directly** — see "Choosing an activity level" below for why, and how
+  directly** - see "Choosing an activity level" below for why, and how
   it's suggested instead of self-reported.
-- `self_reported_daily_calories` — optional int, "if you already track
-  this, tell us" (section 3 of the spec) — used only as a secondary
+- `self_reported_daily_calories` - optional int, "if you already track
+  this, tell us" (section 3 of the spec) - used only as a secondary
   data point the dashboard can compare its own estimate against, never
   as an input to the estimate itself
 - `created_at`, `updated_at`
 
-No history needed on this model itself — it's inputs, not an output
+No history needed on this model itself - it's inputs, not an output
 a user would want to compare month-to-month the way a *target* is
 (see `NutritionGoal`/`NutritionTarget` below). If the user gets a year
 older or changes jobs, the old birth_date/job value was never a
-"decision" worth preserving — it's just a fact that update in place,
+"decision" worth preserving - it's just a fact that update in place,
 same as `User.height`.
 
-### `NutritionGoal` — the user's stated intent, historized
+### `NutritionGoal` - the user's stated intent, historized
 
 ```
 user, goal_type, target_weight (nullable, kg),
@@ -96,7 +96,7 @@ notes
 `fat_loss_conservative`, `maintenance`, `muscle_gain_lean`,
 `muscle_gain_moderate`, `muscle_gain_aggressive`.
 
-Setting a new goal never overwrites the old one — it stamps `ended_at`
+Setting a new goal never overwrites the old one - it stamps `ended_at`
 on whichever goal was previously open (`ended_at IS NULL`) and inserts
 a new row. This is the same "append, don't mutate" shape as
 `PersonalRecord` (`apps.records`), just for a *stated intent* rather
@@ -109,14 +109,14 @@ The onboarding wizard's last step is one way into `services.set_goal`/
 `set_target` (`OnboardingReviewView`); `GoalUpdateView` (Nutrition
 dashboard → "Change goal") is the other, for a user who's already
 onboarded and wants a different goal later (a cut finished, a bulk
-starting) — same `GoalStepForm`, same `calculate_target_for_goal` ->
+starting) - same `GoalStepForm`, same `calculate_target_for_goal` ->
 `set_goal`/`set_target` pipeline, just reading the user's current
 weight from their latest `BodyMeasurement` instead of a value fresh
 off the onboarding body step. It refuses to proceed (a form error, not
 a guess) if no body-weight measurement exists yet, since the calorie
 engine has no other source for the current weight it needs.
 
-### `NutritionTarget` — the derived, numeric output, historized
+### `NutritionTarget` - the derived, numeric output, historized
 
 ```
 user, goal (FK), daily_calories, protein_grams, carbohydrate_grams,
@@ -127,11 +127,11 @@ raw_calories_before_floor, calorie_floor, floor_was_applied (all nullable)
 
 `source` choices: `calculated` (straight from the goal via the energy
 engine), `manual` (user typed a number directly), `adjusted` (the user
-accepted a dynamic-adjustment suggestion — see below).
+accepted a dynamic-adjustment suggestion - see below).
 
 `reason` is a plain sentence describing how `daily_calories` was
 derived, but it's written once at calculation time and never revisited
-— fine for the number itself (this is a historized snapshot) but wrong
+- fine for the number itself (this is a historized snapshot) but wrong
 for translated *text*: a sentence built while French was active must
 not stay in French forever after the user switches to Finnish. The
 `tdee`/`capped_rate_kg_per_week`/etc. fields exist so it doesn't have
@@ -142,34 +142,34 @@ whatever language is active *now*. Every caller that shows a target's
 reason (the dashboard, the public API's `NutritionTargetSerializer`)
 uses `display_reason`, never the raw `reason` column directly. A
 target saved before these fields existed has no snapshot to rebuild
-from — `display_reason` falls back to the old frozen `reason` text for
+from - `display_reason` falls back to the old frozen `reason` text for
 those, rather than guessing.
 
 **Deliberately one model, not the example list's separate
 `CalorieTarget`/`MacroTarget`.** Calories and macros are always set as
 one coherent unit (macros are computed *from* the calorie figure) and
 the spec asks for them to be historized *together* ("Sama koskee:
-makroja, painotavoitteita...") — a single historized row per change
+makroja, painotavoitteita...") - a single historized row per change
 keeps that atomic instead of needing two tables to always stay in sync.
 
 Same append/supersede shape as `NutritionGoal`. A goal change *and* a
 dynamic adjustment both create a new `NutritionTarget` row; only a goal
 change also creates a new `NutritionGoal` row. The "current" target for
 a user is simply `NutritionTarget.objects.filter(user=user,
-ended_at__isnull=True).first()` — same query shape as `NutritionGoal`'s
+ended_at__isnull=True).first()` - same query shape as `NutritionGoal`'s
 "current goal" and `WorkoutSession`'s "in-progress session," so nothing
 new to learn.
 
-### `MealSlot` — named diary categories, per-user + system defaults
+### `MealSlot` - named diary categories, per-user + system defaults
 
 ```
 name, order, owner (nullable FK), active
 ```
 
 Exactly `apps.measurements.MeasurementType`'s pattern reused verbatim:
-`owner=None` rows are system-seeded defaults — Breakfast, Morning
+`owner=None` rows are system-seeded defaults - Breakfast, Morning
 snack, Lunch, Afternoon snack, Dinner, Evening snack, Other, in that
-`order` — a migration data seed (0002_seed_meal_slots, extended by
+`order` - a migration data seed (0002_seed_meal_slots, extended by
 0013_add_more_default_meal_slots to add a snack slot between each
 pair of main meals plus a catch-all "Other" for anything that doesn't
 fit), same shape as measurement types' 0002 seed. A user can add their
@@ -208,17 +208,17 @@ before these fields existed fill in on their next OFF refresh
 (`OPENFOODFACTS_STALENESS_DAYS`).
 
 `image_url`/`image_thumb_url`/`categories` are all blank for every
-hand-entered food, same as `nutri_score`/`nova_group` — only ever
+hand-entered food, same as `nutri_score`/`nova_group` - only ever
 populated by an OFF import (`apps.nutrition.openfoodfacts.
 parse_product`). `image_url` is OFF's own hosted "front of pack"
 photo (`image_front_url`), linked directly rather than downloaded and
-re-stored locally — OFF operates its own image CDN for exactly this,
+re-stored locally - OFF operates its own image CDN for exactly this,
 and mirroring it would mean a Pillow resize pipeline, a media-storage
 growth story, and a second staleness concern for a field that's
 purely decorative (identifying a food at a glance) and never read by
 any nutrition calculation. `image_thumb_url` is a *separate* smaller
 photo OFF already generates and hosts (`image_front_thumb_url`,
-100px) — not a resize of `image_url` done by this app, asked for
+100px) - not a resize of `image_url` done by this app, asked for
 directly to cut real bytes transferred on `FoodListView`'s own list
 thumbnail (`_food_list_results.html`, `object-fit: cover`), which
 falls back to `image_url` when `image_thumb_url` is blank (a food
@@ -229,49 +229,49 @@ off), where a 100px thumb would look blurry blown up. Since a browser
 has to load either directly from
 `images.openfoodfacts.org`, that origin is explicitly allowed in
 `apps.core.middleware.ContentSecurityPolicyMiddleware`'s `img-src`
-(docs/SECURITY.md "Content-Security-Policy") — otherwise CSP silently
+(docs/SECURITY.md "Content-Security-Policy") - otherwise CSP silently
 blocks it with no visible error. `categories` is OFF's own raw,
 comma-separated `categories` string verbatim (plain display text, not
-a normalized taxonomy) — `apps.nutrition.services.
+a normalized taxonomy) - `apps.nutrition.services.
 distinct_food_categories` splits/dedupes it across a user's visible
 foods for `FoodListView`'s own category filter dropdown.
 
-`serving_unit` choices: `g`, `ml`, `piece` — precise mass/volume for
+`serving_unit` choices: `g`, `ml`, `piece` - precise mass/volume for
 most foods, a count unit for things like "1 egg" where a gram weight
 isn't how anyone thinks about it. All nutrition fields are *per
-`serving_size` of `serving_unit`* — e.g. "100 g → 165 kcal" for
+`serving_size` of `serving_unit`* - e.g. "100 g → 165 kcal" for
 chicken breast, not "per gram." `owner` nullable, matching
 `MeasurementType` again: user-created foods have `owner=request.user`;
-foods imported from OpenFoodFacts (below) get `owner=None` — shared,
+foods imported from OpenFoodFacts (below) get `owner=None` - shared,
 system-visible library rows, the same "system vs. custom" split every
 other owner-nullable model in this app already uses.
 
-**`nutri_score` / `nova_group` — a healthiness scale, asked for
+**`nutri_score` / `nova_group` - a healthiness scale, asked for
 directly, but not one this app invents.** Nutri-Score (France's public
 health agency's published A-E grade, adopted by OpenFoodFacts and
 several EU retailers) and NOVA (a published 1-4 food-processing-level
 classification) are both real, independently-defined, published
-scales — used here exactly as OFF itself reports them
+scales - used here exactly as OFF itself reports them
 (`apps.nutrition.models.NutriScoreGrade`/`NovaGroup`, `nutriscore_
 grade`/`nova_group` on the raw OFF product,
 `apps.nutrition.openfoodfacts.parse_product`). Neither is ever
-computed by this app for a hand-entered `Food` — doing Nutri-Score's
+computed by this app for a hand-entered `Food` - doing Nutri-Score's
 own formula correctly needs the full published input set (energy,
 sugars, saturated fat, sodium, fibre, protein, fruit/veg/nut content),
 which a manually-entered food doesn't reliably have; a home-grown
 approximation would be worse than no grade at all. Both stay `None`
 for every food this app hasn't imported from OFF. Shown as a small
-colored badge (Nutri-Score, its own real published colors — green
+colored badge (Nutri-Score, its own real published colors - green
 through red, not this project's own status palette) plus a plain
 "NOVA N" label, wherever a food's identity is shown in a list
 (`templates/nutrition/_nutri_score_badge.html`).
 
 `FoodDetailView` (`/nutrition/foods/<pk>/`) is a plain, read-only
-nutrition-facts page — same `Q(owner=request.user) | Q(owner__isnull=True)`
+nutrition-facts page - same `Q(owner=request.user) | Q(owner__isnull=True)`
 visibility as `FoodListView`, no edit form (`Food` has no update view
-at all yet, only creation). Every place a food's name is shown —
+at all yet, only creation). Every place a food's name is shown -
 the diary, a recipe's own ingredient list, "most used", search
-results, a diet plan's meal preview — links there, the same way a
+results, a diet plan's meal preview - links there, the same way a
 recipe's name already linked to `RecipeDetailView`.
 
 `FoodListView` ("All foods" on `/nutrition/foods/`) paginates at 20
@@ -279,18 +279,18 @@ and supports a name filter (`q`), a category filter (`category`,
 matched with `__icontains` against the raw `categories` string), and
 a sort (`sort`: `name`/`created`/`category`/`calories`) with a
 direction (`dir`: `asc`/`desc`), newest first (`created`/`desc`) by
-default — the food a user is looking for is usually the one just added — every one of these combines with
+default - the food a user is looking for is usually the one just added - every one of these combines with
 every other via plain `AND` filtering plus one `order_by`, and all of
 them live in the querystring rather than session/hidden state, so a
 filtered-and-sorted view stays bookmarkable and survives a refresh.
 The filter form live-updates via HTMX (`hx-push-url="true"`,
 `get_template_names` swapping to a bare `_food_list_results.html` for
-the HTMX request) — the exact same "one view, two templates" shape
+the HTMX request) - the exact same "one view, two templates" shape
 `apps.exercises.views.ExerciseListView`/`exercise_list.html` already
 use for their own filter row, reused here rather than inventing a
 second way to do the same thing. Pagination links themselves are
 plain page loads, not `hx-get`, since this app sets no `hx-boost`
-anywhere — clicking one is a normal full-page navigation carrying
+anywhere - clicking one is a normal full-page navigation carrying
 every filter forward in the URL already, same as
 `_exercise_list_results.html`'s own pagination.
 
@@ -299,37 +299,37 @@ every filter forward in the URL already, same as
 Three `apps.nutrition.admin.FoodAdmin` bulk actions, all asked for
 directly:
 
-- **Merge selected foods into one…** — the shared library
+- **Merge selected foods into one…** - the shared library
   inevitably accumulates near-duplicates (two users each creating
   their own "Chicken breast", or the same product imported twice
   under slightly different names). Deleting a duplicate outright
   would cascade-delete every `DiaryEntry`/`RecipeIngredient`/
-  `DietPlanItem` that ever referenced it via `on_delete=CASCADE` —
+  `DietPlanItem` that ever referenced it via `on_delete=CASCADE` -
   exactly the kind of silent history loss CLAUDE.md's "workout
   history must remain historically trustworthy" warns against, just
   for food data instead of workout data. `apps.nutrition.services.
   merge_foods(keep, duplicates)` re-points every such reference onto
   the kept row instead, then deletes the now-unreferenced duplicates
-  — a user's own logged history is never touched, only which `Food`
+  - a user's own logged history is never touched, only which `Food`
   row it points at changes. Which row to keep is always a human
   decision (an intermediate confirmation page lists every selected
   food; the admin picks one), never inferred by a heuristic (e.g.
   "most recently created") that could confidently pick wrong.
   Django's own default "Delete selected foods" action is left alone
-  for a genuinely bogus row nothing references — its built-in
+  for a genuinely bogus row nothing references - its built-in
   confirmation page already lists every object that would
   cascade-delete before an admin confirms, real protection this
   feature doesn't need to duplicate.
-- **Refresh selected foods from OpenFoodFacts** — force-refreshes
+- **Refresh selected foods from OpenFoodFacts** - force-refreshes
   right now rather than waiting for the normal 14-day staleness gate
   (`import_or_refresh_food_from_off`'s new `force=True` parameter,
   used only here). Still an explicit, admin-chosen selection from the
   changelist, not an unconditional "refresh every OFF food in the
-  database" button reachable with no selection at all — the whole
+  database" button reachable with no selection at all - the whole
   reason this integration was scoped to on-demand lookup in the first
   place (below) was to avoid exactly that kind of unbounded bulk
   operation against a third-party API.
-- **Refresh selected foods' prices from Open Prices** — the same
+- **Refresh selected foods' prices from Open Prices** - the same
   shape as the action above, for the separate Open Prices integration
   ("Open Prices integration" below) instead of OFF's core product
   API: force-refreshes right now rather than waiting for the normal
@@ -339,35 +339,35 @@ directly:
 
 Requested explicitly, and explicitly scoped to **on-demand lookup, not
 a bulk import**: OpenFoodFacts' full dataset is ~3.5 million products
-(multiple GB compressed, tens of GB as rows) — importing and
+(multiple GB compressed, tens of GB as rows) - importing and
 periodically re-syncing all of it is disproportionate for this app's
 self-hosted, single/small-household deployment target, and was
 rejected for exactly that reason when discussed directly. Instead:
 
-- `apps/nutrition/openfoodfacts.py` — a thin client
+- `apps/nutrition/openfoodfacts.py` - a thin client
   (`search_products(query)`, `get_product(barcode)`, `search_by_
   category(category_id)`, `list_categories()`) against OFF's public
-  read APIs — the v2 product API (`world.openfoodfacts.org`) for
+  read APIs - the v2 product API (`world.openfoodfacts.org`) for
   barcode lookups and **Search-a-licious** (`search.openfoodfacts.org`)
   for text search and category browsing (OFF deprecated
-  `/cgi/search.pl`) — using `requests` (new
-  dependency — no existing project code does outbound HTTP to a JSON
+  `/cgi/search.pl`) - using `requests` (new
+  dependency - no existing project code does outbound HTTP to a JSON
   API, `apps.accounts.twofactor`'s `pyotp`/`qrcode` precedent is the
   closest, and hand-rolling this on `urllib` would just reimplement a
   worse `requests`). Parses a raw OFF product into this app's `Food`
   field shape; a product missing core macros entirely is skipped
   rather than creating a useless empty row.
 - **A dedicated "Import from OpenFoodFacts" page**
-  (`/nutrition/foods/browse/`, `FoodBrowseView`), asked for directly —
+  (`/nutrition/foods/browse/`, `FoodBrowseView`), asked for directly -
   search or browse by category to add a food straight to the shared
   library, independent of logging anything to a diary/recipe/plan.
   Category browsing shows a short static, curated list of food groups
-  (`openfoodfacts.BROWSE_CATEGORIES` — OFF indexes tens of thousands
+  (`openfoodfacts.BROWSE_CATEGORIES` - OFF indexes tens of thousands
   of categories and `/categories.json` is a multi-megabyte download,
   so it costs no request at all) and lists a category's products with
   a Search-a-licious `categories_tags:"<id>"` query.
 - The food-search flow (`apps.nutrition` diary/recipe/diet-plan-meal
-  "add food" — one shared `FoodSearchResultsView`/`_food_search_
+  "add food" - one shared `FoodSearchResultsView`/`_food_search_
   results.html`, parameterized by `mode` for which endpoint each
   result's "Add" button posts to) searches local `Food` rows first;
   if OpenFoodFacts lookup is enabled or turns up more, results are
@@ -375,7 +375,7 @@ rejected for exactly that reason when discussed directly. Instead:
   `Food` row with `owner=None`, `off_id` set to OFF's own barcode. A
   query that's nothing but 8-14 digits (`apps.nutrition.services.
   _BARCODE_RE`) is treated as a barcode being typed or scanned in
-  rather than a food name — matched exactly, both locally
+  rather than a food name - matched exactly, both locally
   (`Food.off_id`) and against OFF's own by-barcode endpoint
   (`get_product`), instead of OFF's free-text search, which is
   unreliable for a raw digit string.
@@ -384,11 +384,11 @@ rejected for exactly that reason when discussed directly. Instead:
   `OPENFOODFACTS_STALENESS_DAYS` (14, matching the interval
   originally asked for) is transparently re-fetched and updated the
   next time it's looked up or logged, rather than a scheduler
-  re-syncing the whole dataset on a timer — there's no dataset to
+  re-syncing the whole dataset on a timer - there's no dataset to
   re-sync once nothing is bulk-imported in the first place.
 - `OpenFoodFactsSettings` (singleton, same `ApiSettings`/
   `BackupSettings`/`FeedbackSettings` pattern) has one field,
-  `enabled` — an operator can turn off all outbound OpenFoodFacts
+  `enabled` - an operator can turn off all outbound OpenFoodFacts
   requests entirely (no internet egress, or a simple preference not to
   call a third-party service from their own server), same reasoning as
   `DJANGO_SIGNUP_ENABLED`/optional `DJANGO_EMAIL_HOST`.
@@ -432,64 +432,64 @@ Everything here follows OFF's published guidelines
 ### Open Prices integration
 
 Prices were requested directly, and it turned out OFF's own core
-product API (above) has **no price field at all** — a separate
+product API (above) has **no price field at all** - a separate
 OpenFoodFacts project, Open Prices (`prices.openfoodfacts.org`), is
 where crowdsourced pricing actually lives, and it has no single
 canonical "the price" for a product: every report is one shopper's
 submission, tied to one store, one day, in whatever currency that
 store trades in. A popular product can easily have reports in half a
 dozen currencies. This integration is scoped the same way the
-OpenFoodFacts one is — **on-demand lookup, never a bulk import** —
+OpenFoodFacts one is - **on-demand lookup, never a bulk import** -
 plus one more step specific to a dataset with no canonical value:
 turning many per-store reports into one representative figure.
 
-- `apps/nutrition/open_prices.py` — a thin client
+- `apps/nutrition/open_prices.py` - a thin client
   (`get_prices_for_barcode(barcode)`) against Open Prices' public read
   API, and `summarize_prices(raw_prices)`, which groups a barcode's
   most recent reports (`PRICE_SAMPLE_SIZE`, 20) by currency, keeps
   whichever currency has the most reports in that sample (the most
   representative one for wherever this product is actually reported
   from), and returns that currency's median price plus how many
-  reports it's based on. Never an average — a handful of outlier or
+  reports it's based on. Never an average - a handful of outlier or
   misread reports (a shopper submitting a receipt total instead of a
   unit price, say) would otherwise skew a mean far more than a
   median.
 - `Food.price_amount` / `price_currency` / `price_sample_count` /
   `price_synced_at` cache that summary on the row itself, the same
-  shape `off_synced_at` already uses — refreshed lazily
+  shape `off_synced_at` already uses - refreshed lazily
   (`apps.nutrition.services.refresh_food_price`) rather than on a
   schedule, gated on the same `OpenFoodFactsSettings.enabled` switch
   OFF's own client uses (Open Prices is run by the same organization;
   an operator turning off outbound requests to one clearly means both,
   not just OFF's core API). All four stay unset for any food with no
-  `off_id` — there's no barcode to look a price up by for a
-  hand-entered food — and for any OFF-imported food whose price
+  `off_id` - there's no barcode to look a price up by for a
+  hand-entered food - and for any OFF-imported food whose price
   hasn't been looked up yet.
 - **Refreshed on next view of `FoodDetailView`**, not on every diary/
-  recipe/diet-plan appearance — the same "look at it enough to want
+  recipe/diet-plan appearance - the same "look at it enough to want
   detail, that's when it's worth a network round-trip" trigger point
   `import_or_refresh_food_from_off` uses for barcode entry. The diary,
   a recipe's ingredient list, and everywhere else a food's price is
   shown (below) just display whatever's already cached on the row,
-  no extra lookup — a price is more volatile than a nutrition fact,
+  no extra lookup - a price is more volatile than a nutrition fact,
   which is exactly why `OPEN_PRICES_STALENESS_DAYS` (7) is much
   shorter than `OPENFOODFACTS_STALENESS_DAYS` (14), not because it's
   fetched any more eagerly.
 - Shown wherever a food's price is cached: `FoodDetailView`'s own
   "Product information" card ("Typical price: 3.21 EUR (median of 3
   recent Open Prices reports)"), inline next to a recipe ingredient's
-  calories, and inline next to a diary entry's calories — plain
+  calories, and inline next to a diary entry's calories - plain
   `amount currency` text (e.g. "3.21 EUR"), deliberately not a
   currency symbol: a symbol table would have to guess a locale for
   every ISO currency code Open Prices might return, and would
   sometimes guess wrong, where the code itself is always unambiguous.
 - `apps.nutrition.admin.FoodAdmin`'s "Refresh selected foods' prices
-  from Open Prices" bulk action — the same shape as "Refresh selected
+  from Open Prices" bulk action - the same shape as "Refresh selected
   foods from OpenFoodFacts" above, force-refreshing an explicit
   admin-chosen selection immediately rather than waiting on the
   7-day staleness gate.
 - **A contribute-data prompt on `FoodDetailView`**, for any food with
-  an `off_id` — asked for directly: this app is a pure consumer of
+  an `off_id` - asked for directly: this app is a pure consumer of
   both OFF's and Open Prices' data, and every barcode lookup it makes
   benefits from someone, at some point, actually fixing a wrong
   Nutri-Score or submitting a price report upstream. Two plain links,
@@ -499,7 +499,7 @@ turning many per-store reports into one representative figure.
   own web app lets a user add a price report for that exact product.
   Both verified live (a real barcode against each URL) rather than
   guessed, since a wrong contribute link would be worse than no
-  prompt at all. Absent entirely for a hand-entered food — there's no
+  prompt at all. Absent entirely for a hand-entered food - there's no
   upstream OFF/Open Prices product to contribute to.
 
 ### `Recipe` / `RecipeIngredient`
@@ -512,7 +512,7 @@ RecipeIngredient: recipe (FK), food (FK), quantity, order
 
 **Deleting a recipe never deletes diary history.** A diary entry's
 calories come from its recipe's ingredients, so `DiaryEntry.recipe`
-(and `DietPlanItem.recipe`) are `RESTRICT`, not `CASCADE` — the old
+(and `DietPlanItem.recipe`) are `RESTRICT`, not `CASCADE` - the old
 cascade silently erased every past day that had logged the recipe.
 `services.delete_recipe` (used by the web UI and the API's `DELETE`)
 deletes a recipe nothing refers to, and otherwise only sets
@@ -522,27 +522,27 @@ plans still show it by name (without a link). `RESTRICT` rather than
 `PROTECT` so deleting the user, which removes their diary entries in
 the same cascade, still works.
 
-`owner=None` means a shared **template recipe** — visible and usable
+`owner=None` means a shared **template recipe** - visible and usable
 by every user, not just whoever created it, the same
 `Q(owner=user) | Q(owner__isnull=True)` visibility `MealSlot` already
 uses for its own built-ins. The app ships 18 of these out of the box
 (seeded by a data migration so they exist on a fresh install, not
 fetched live), six each for a bulk, fat-loss, and balanced goal, named
-by what they're for (e.g. "Bulk breakfast — Oats & peanut butter"),
+by what they're for (e.g. "Bulk breakfast - Oats & peanut butter"),
 built from real `Food` rows sourced the same way an OpenFoodFacts
 import would be. `meal_slot` is an optional hint for which meal a
-recipe suits — set on all 18 templates, left blank by default on a
-user's own recipes — that `diet_builder.suggest_item_for_calorie_
+recipe suits - set on all 18 templates, left blank by default on a
+user's own recipes - that `diet_builder.suggest_item_for_calorie_
 budget` prefers when filling a given meal slot, so a lunch recipe
 isn't suggested for breakfast; it falls back to an untagged recipe
 rather than leave a meal with no suggestion at all. `Food` itself is
-never restricted this way — a plain ingredient like rice isn't "a
+never restricted this way - a plain ingredient like rice isn't "a
 breakfast food" the way a whole recipe can be.
 
-`quantity` is in the *same unit* as `food.serving_unit` — nutrition for
+`quantity` is in the *same unit* as `food.serving_unit` - nutrition for
 that line is `food`'s per-serving values scaled by
 `quantity / food.serving_size`. One shared pure function,
-`nutrition.services.scale_nutrition(food, quantity)`, computes this —
+`nutrition.services.scale_nutrition(food, quantity)`, computes this -
 reused identically by `RecipeIngredient` totals and by a `DiaryEntry`
 logging raw food directly, so there is exactly one place this maths
 lives.
@@ -552,7 +552,7 @@ nutrition; per-serving is that total divided by `servings`.
 
 Adding an ingredient is search-and-pick (`recipe_ingredient_create`,
 `RecipeIngredientSearchForm`), not a bare dropdown of foods the user
-already had to create by hand elsewhere — a recipe's macros come
+already had to create by hand elsewhere - a recipe's macros come
 entirely from its ingredients' own `Food` rows, so finding or
 importing the right one (local search, OpenFoodFacts, or a barcode)
 has to be at least as easy here as it already is in the food diary.
@@ -562,7 +562,7 @@ hand.
 
 Changing how much of an ingredient a recipe uses (`recipe_ingredient_
 edit`, `RecipeIngredientQuantityForm`) is a quantity-only edit, not a
-delete-and-re-add through the whole search-and-pick flow again —
+delete-and-re-add through the whole search-and-pick flow again -
 before this existed, correcting "200g rice" to "250g rice" meant
 losing the ingredient's position in the list too, since a fresh
 `RecipeIngredient` always gets appended at the end. Editing only ever
@@ -573,24 +573,24 @@ The recipe list (`RecipeListView`) shows each recipe's per-serving
 calories directly, the same reason `food_list.html` shows a food's
 own calories rather than making every entry a guess until opened, and
 supports a `?q=` name search once a user has more than a handful of
-recipes — the same `name__icontains` pattern `FoodListView` already
+recipes - the same `name__icontains` pattern `FoodListView` already
 uses, applied separately to each of two independently-paginated
 sections: "Your recipes" (`?mine_page=`, 5/page, most recent first)
 above "Template recipes" in its own box (`?template_page=`, 10/page,
-alphabetical) — a plain `View` rather than a `ListView`, since
+alphabetical) - a plain `View` rather than a `ListView`, since
 `ListView`'s own pagination only ever handles one `object_list`/
 `page_obj` pair and this page needs two that don't reset each other.
 The recipe detail page's nutrition table shows fiber, sugar,
 saturated fat, and sodium too whenever at least one ingredient
 carries that data (typically an OpenFoodFacts import, which usually
-has it; a hand-entered `Food` usually doesn't) — the same optional,
+has it; a hand-entered `Food` usually doesn't) - the same optional,
 nullable-not-zero fields `Food` itself has always stored but that,
 until now, nothing in the UI ever surfaced.
 
-### `DiaryEntry` — one logged item
+### `DiaryEntry` - one logged item
 
 ```
-user, date (DateField — the day it counts toward, not when it was
+user, date (DateField - the day it counts toward, not when it was
 typed), meal_slot (FK), food (nullable FK) XOR recipe (nullable FK)
 XOR quick macros (quick_name, quick_calories, quick_protein_grams,
 quick_carbohydrate_grams, quick_fat_grams), quantity, logged_at
@@ -602,7 +602,7 @@ nutrition per one unit of `quantity` as the food or recipe was when it
 was logged (`nutrition_snapshot`, set in `DiaryEntry.save()`), and
 `services.diary_entry_nutrition` reads that, scaled by `quantity`.
 Editing a food, changing a recipe's ingredients, merging foods or an
-Open Food Facts refresh of a shared food no longer changes past days —
+Open Food Facts refresh of a shared food no longer changes past days -
 the same rule workout history follows. Changing an entry's quantity
 just scales the stored values; only switching it to another food or
 recipe takes that one's current values. Copying a day copies the
@@ -611,13 +611,13 @@ snapshot. Migration 0026 froze existing entries at the values they had
 then.
 
 Exactly one of `food`/`recipe`/quick macros (`quick_calories` set) must
-be set — enforced with a `CheckConstraint`, not just convention.
+be set - enforced with a `CheckConstraint`, not just convention.
 `quantity` means grams/ml/pieces for a food entry, servings for a recipe
 entry, portions (always 1 from the UI) for a quick entry.
 
 **Quick entry** ("Enter macros manually" on the add-food page,
 `diary_quick_add`, `services.create_quick_diary_entry`): macros typed
-straight in — a restaurant's published values — without creating a
+straight in - a restaurant's published values - without creating a
 throwaway `Food`. The values live on the entry itself, so they never
 change afterwards. Every value is optional but at least one is
 required; blank calories are estimated from the macros (4/4/9 kcal/g).
@@ -628,7 +628,7 @@ be legitimately back-dated (logging breakfast at lunchtime, or
 catching up on yesterday), the audit timestamp cannot.
 
 There is deliberately **no separate "Meal" model** distinct from
-`Recipe` — the spec's "a meal can have multiple foods, a recipe, a
+`Recipe` - the spec's "a meal can have multiple foods, a recipe, a
 serving size, nutrition values" describes exactly what a group of
 `DiaryEntry` rows sharing one `(date, meal_slot)` already *is*, computed
 live (sum of each entry's scaled nutrition), the same "derive, don't
@@ -641,25 +641,25 @@ diverge.
 
 **"Save as recipe"** (`diary_meal_save_as_recipe`,
 `services.create_recipe_from_diary_meal`) turns exactly that
-live-computed group — one `(date, meal_slot)`'s worth of `DiaryEntry`
-rows — into a real, saved `Recipe`, asked for directly ("I eat this
+live-computed group - one `(date, meal_slot)`'s worth of `DiaryEntry`
+rows - into a real, saved `Recipe`, asked for directly ("I eat this
 same breakfast most days"). Only food-type entries become
 `RecipeIngredient` rows, at the exact quantities logged; a recipe-type
 entry for the same meal is skipped rather than flattened into its own
-ingredients (`RecipeIngredient.food` is required — it can never point
+ingredients (`RecipeIngredient.food` is required - it can never point
 at another `Recipe`), since re-deriving that risks double-counting
 anything also logged as a plain food the same meal, for a case rare
 enough not to justify the complexity. The new recipe's `servings` is
 always 1 (this is exactly what was eaten, not a batch to divide) and
-its `meal_slot` carries over from the diary entries' own meal slot —
+its `meal_slot` carries over from the diary entries' own meal slot -
 a recipe built from what was actually eaten at breakfast is,
 definitionally, a breakfast recipe. Shown as a button on every meal
 card on `diary_day.html` except the system "Other" catch-all (asked
-for directly — "Other" is a dumping ground for food that doesn't fit
+for directly - "Other" is a dumping ground for food that doesn't fit
 a named meal, not a coherent combination worth saving), and only when
 that meal has something logged.
 
-### `DietPlan` / `DietPlanMeal` / `DietPlanItem` — the diet-builder's saved output
+### `DietPlan` / `DietPlanMeal` / `DietPlanItem` - the diet-builder's saved output
 
 ```
 DietPlan: user, name, goal (nullable FK), target_calories,
@@ -671,7 +671,7 @@ DietPlanItem: diet_plan_meal (FK), food (nullable FK) XOR recipe
   (nullable FK), quantity, order
 ```
 
-A plan snapshots the targets it was built against (immutable — a past
+A plan snapshots the targets it was built against (immutable - a past
 plan stays interpretable even after the user's live targets change).
 `is_active` marks the one plan currently surfaced on the dashboard
 (today's meals/macros) and materialized by "Log today's plan"; a
@@ -683,21 +683,21 @@ Older plans are kept, not deleted (a user should be able to look back
 at "what was I eating during my last cut"). "Log today's plan"
 (section 12/13) is one service call (`diet_builder.apply_diet_plan`)
 that materializes each `DietPlanItem` into a real `DiaryEntry` for the
-chosen date — the plan itself is never mutated by logging it, so it
+chosen date - the plan itself is never mutated by logging it, so it
 can be reused across many days.
 
 `is_weekly` plans generate one full day's meals per weekday
-(`DietPlanMeal.weekday` set) instead of a single repeating day —
+(`DietPlanMeal.weekday` set) instead of a single repeating day -
 `apply_diet_plan` only ever materializes whichever weekday matches the
 target date. The daily calorie/macro target is identical across every
 weekday of the same plan; `diet_builder.build_diet_plan` gets variety
 purely by tracking what it already suggested (per meal slot across
 days, and separately per day across meal slots) and avoiding repeats,
-never by drifting a day's own energy target to manufacture variety —
+never by drifting a day's own energy target to manufacture variety -
 this app's numbers stay accurate even when the food choices vary.
 
 A meal isn't locked to the single item `diet_builder` originally
-generated for it — there's no uniqueness constraint on `diet_plan_
+generated for it - there's no uniqueness constraint on `diet_plan_
 meal` in `DietPlanItem` at the DB level, and `diet_plan_meal_item_add`
 (same search-and-pick UX as a recipe ingredient) lets a user add more
 to a meal, with `diet_plan_item_delete` to remove one again. Swapping
@@ -705,18 +705,18 @@ to a meal, with `diet_plan_item_delete` to remove one again. Swapping
 item in place. This matches `diet_builder`'s own documented scope
 decision (a single best-fit item per meal, not a multi-item knapsack
 solver) without boxing a user in once they're actually planning a
-real day by hand — automation gets them a starting point, no further
+real day by hand - automation gets them a starting point, no further
 than that.
 
 **Starting a plan from scratch.** `DietPlanCreateView`'s form always
 used to force `diet_builder.build_diet_plan`'s auto-suggestion into
 every meal, with no way to opt out short of deleting each suggested
-item by hand afterward — asked for directly. `DietPlanForm.
+item by hand afterward - asked for directly. `DietPlanForm.
 start_from_scratch` (unchecked by default, so the existing
 auto-generated behavior is still what plain "Create plan" does) maps
 to `build_diet_plan(..., auto_fill=False)`: the exact same `DietPlan`/
 `DietPlanMeal` rows, same calorie/macro targets, same per-meal calorie
-shares, just without ever calling `suggest_item_for_calorie_budget` —
+shares, just without ever calling `suggest_item_for_calorie_budget` -
 every meal starts with zero items, ready for `diet_plan_meal_item_add`
 to fill in by hand. Nothing downstream (applying the plan, swapping/
 adding items) treats a meal emptied this way any differently than one
@@ -725,19 +725,19 @@ available in the user's library yet).
 
 **The "how much is left" totals widget**
 (`templates/nutrition/_diet_plan_totals_widget.html`), asked for
-directly for the detail page shown while building/filling a plan — a
+directly for the detail page shown while building/filling a plan - a
 small, collapsible box fixed to the bottom-right corner (same
 "reachable, not blocking" spot `.training-fab`/`.messages-fab` use,
 offset further up so a workout-in-progress FAB and this widget don't
 land on top of each other), showing that day's totals-so-far against
 `plan.target_calories`/macros and how much of each is still left.
-Starts minimized (just the toggle pill) rather than expanded — an
+Starts minimized (just the toggle pill) rather than expanded - an
 earlier version defaulted to expanded and, on a phone-sized viewport,
 covered the very "+ Add item" button of the meal card behind it, which
 defeated the point of calling it a small floating box. `apps.nutrition
 .views._diet_plan_day_groups` computes one entry per distinct day in
 the plan (matching `DietPlanMeal`'s own weekday ordering, so
-`itertools.groupby` needs no extra sort) — for a one-day plan that's
+`itertools.groupby` needs no extra sort) - for a one-day plan that's
 exactly one entry, so the widget needs no separate weekly/non-weekly
 code path, only the template deciding *where* to render whichever
 group is currently relevant (each weekday's own collapsible section
@@ -745,7 +745,7 @@ for a weekly plan, the one implicit section otherwise). Replaces
 Django's own `{% regroup %}` templatetag, which has no way to attach
 this per-group total onto its own output. The table itself is two
 columns ("so far / target" per macro, `services.daily_totals`'s own
-row shape), not three — a first version added a separate "left"
+row shape), not three - a first version added a separate "left"
 column, which overflowed the widget's own narrow fixed width in
 several languages (found live in Finnish, where "Hiilihydraatit"
 alone doesn't fit that column's share of a 14rem-wide box); "left"
@@ -755,7 +755,7 @@ clipped table header does.
 
 **Search before "Most used."** `diet_plan_meal_item_form.html` and
 `recipe_ingredient_form.html` both used to render their search/
-barcode box *below* the "Most used" quick-add list — the same
+barcode box *below* the "Most used" quick-add list - the same
 ordering bug already fixed on the food diary's own add-food page
 (`diary_add_entry.html`), just not carried over to these other two
 "add a food" pages at the time. All three now put search first.
@@ -770,8 +770,8 @@ ShoppingDay: diet_plan (FK), weekday (0=Monday..6=Sunday), unique per plan
 A diet plan's page links to its shopping list
 (`nutrition:diet-plan-shopping`). The settings are per plan, asked for
 directly: the days the user goes shopping, and whether a shopping day's
-own meals belong to that day's trip ("include" — shopping before that
-day's meals) or to the previous trip ("exclude" — shopping after that day
+own meals belong to that day's trip ("include" - shopping before that
+day's meals) or to the previous trip ("exclude" - shopping after that day
 is already covered).
 
 - **Trips** (`shopping_trips`): each shopping day starts a trip covering
@@ -781,20 +781,20 @@ is already covered).
   for the whole week. The page opens on the trip shopped today or next
   (`trip_for_today`); `?trip=<weekday>` picks another.
 - **The list** (`shopping_list`): every food the covered days' meals need
-  — a recipe item broken into its ingredients for the planned servings
-  (`ingredient × item servings / recipe servings`) — added up per food in
+  - a recipe item broken into its ingredients for the planned servings
+  (`ingredient × item servings / recipe servings`) - added up per food in
   the food's own serving unit, with each day's amount under the total
   (Mon 300 g · Tue 300 g → 600 g). A one-day plan (meals without a
   weekday) counts once per covered day; a weekly plan uses each day's own
   meals.
 - **Ticking items off** in the shop is device-local (localStorage, keyed
-  by plan and trip), not data — the list itself is always derived from the
+  by plan and trip), not data - the list itself is always derived from the
   plan, never stored, so editing the plan updates it immediately.
 - Not copied by diet-plan export/import or a coach's shared copy: shopping
   days are the user's own habit, not part of the plan's content.
-- **Where it's reachable** (asked for directly — at first it was only a
+- **Where it's reachable** (asked for directly - at first it was only a
   button on the plan's own page): a "Shopping list" tab in the nutrition
-  sub-nav (`nutrition:shopping`, `/nutrition/shopping/` — redirects to the
+  sub-nav (`nutrition:shopping`, `/nutrition/shopping/` - redirects to the
   active plan's list, or explains there's no active plan); a button on
   today's plan on the nutrition overview; a Home card on the active plan's
   shopping days only (`shopping_today`, with the item count; gone the next
@@ -804,14 +804,14 @@ is already covered).
 
 ## Energy calculation
 
-`apps/nutrition/energy.py` — small, pure, `Decimal`-only functions, no
+`apps/nutrition/energy.py` - small, pure, `Decimal`-only functions, no
 Django/DB/HTTP dependency, same shape as `apps/core/bmi.py`.
 
-### BMR — Mifflin-St Jeor
+### BMR - Mifflin-St Jeor
 
 Chosen over Harris-Benedict (older, less accurate against modern
 population data) and Katch-McArdle (needs body-fat %, which this app
-doesn't reliably have — no scale/DEXA integration). Mifflin-St Jeor is
+doesn't reliably have - no scale/DEXA integration). Mifflin-St Jeor is
 the formula most current sports-nutrition guidance treats as the best
 general-population default, needs only weight/height/age/sex, and is
 transparent enough to show its own working.
@@ -821,19 +821,19 @@ male:   BMR = 10×weight_kg + 6.25×height_cm − 5×age + 5
 female: BMR = 10×weight_kg + 6.25×height_cm − 5×age − 161
 ```
 
-### Choosing an activity level — suggested, not self-reported
+### Choosing an activity level - suggested, not self-reported
 
 Asking a user to self-classify as "moderately active" is exactly the
-kind of ungrounded input `docs/SMART_SUGGESTIONS.md` warns against —
+kind of ungrounded input `docs/SMART_SUGGESTIONS.md` warns against -
 people are bad at it, and it silently becomes a black-box multiplier
 with no explanation. Instead, `NutritionProfile`'s granular answers
 (`activity_job`, `daily_steps`, `training_sessions_per_week`,
 `other_exercise_minutes_per_week`) feed a small scoring function,
 `suggest_activity_level(profile)`, that proposes one of the five
 standard buckets **with a one-line reason** ("Suggested: Moderately
-active — a light-activity job, ~7,000 steps/day, and 3 gym sessions a
+active - a light-activity job, ~7,000 steps/day, and 3 gym sessions a
 week"). The onboarding wizard pre-fills `activity_level` with that
-suggestion; the user can override it directly before continuing — same
+suggestion; the user can override it directly before continuing - same
 "pre-filled, editable, explained, never forced" shape the weight
 suggestion engine already established.
 
@@ -865,7 +865,7 @@ The user picks a `goal_type`; each sub-level pre-fills a default
 | muscle_gain_aggressive | +0.5 kg/week |
 
 A rate, not a raw calorie delta, is the thing the user actually has an
-intuition for ("lose half a kilo a week") — the calorie figure is
+intuition for ("lose half a kilo a week") - the calorie figure is
 *derived* from it, using the standard approximation that 1 kg of body
 fat represents ≈7,700 kcal:
 
@@ -876,21 +876,21 @@ daily_calories = TDEE + daily_calorie_delta
 
 This is an approximation, not a law of physics (metabolic adaptation,
 water-weight noise, and body-composition changes all mean the real
-number drifts) — which is exactly why section 6's dynamic adjustment
+number drifts) - which is exactly why section 6's dynamic adjustment
 exists: it corrects for reality diverging from this estimate, instead
 of trusting the formula forever.
 
-### Safety bounds — enforced, not just suggested
+### Safety bounds - enforced, not just suggested
 
 Two independent caps, both applied before a target is ever saved:
 
 1. **Rate cap, as % of current bodyweight/week** (scales correctly
    across body sizes, unlike a flat kg number): fat loss capped at
-   1%/week, muscle gain capped at 0.5%/week — both widely-cited
+   1%/week, muscle gain capped at 0.5%/week - both widely-cited
    sports-nutrition upper bounds for a rate that doesn't risk excess
    muscle loss (cutting) or excess fat gain (bulking).
 2. **Absolute calorie floor**: `max(1500 if male else 1200, 0.9 × BMR)`
-   — the classical clinical minimum-intake figures, raised further for
+   - the classical clinical minimum-intake figures, raised further for
    anyone whose BMR alone is already close to or above that (a very
    large/muscular person's safe floor is higher than a generic
    number).
@@ -902,16 +902,16 @@ exactly X." The calorie target is never presented as a diagnosis.
 
 ## Macros
 
-`apps/nutrition/macros.py` — `calculate_macros(weight_kg,
+`apps/nutrition/macros.py` - `calculate_macros(weight_kg,
 daily_calories, goal_type, *, protein_g_per_kg=None, fat_percent=None)`.
 
-Defaults (both overridable — configurable per spec section 7):
+Defaults (both overridable - configurable per spec section 7):
 
-- **Protein**: g/kg bodyweight, by goal — 2.2 g/kg for any fat-loss
+- **Protein**: g/kg bodyweight, by goal - 2.2 g/kg for any fat-loss
   level (higher protein spares lean mass in a deficit), 2.0 g/kg for
   any muscle-gain level, 1.8 g/kg for maintenance.
 - **Fat**: 25% of total daily calories by default.
-- **Carbohydrate**: whatever's left —
+- **Carbohydrate**: whatever's left -
   `(daily_calories − protein_kcal − fat_kcal) / 4`, floored at zero. If
   protein+fat alone would exceed the calorie target (only possible at
   an unusually low calorie target with high protein), fat's share is
@@ -919,30 +919,30 @@ Defaults (both overridable — configurable per spec section 7):
   with the same kind of explicit notice as the safety-floor clamp
   above.
 
-Returns grams, kcal, and percent-of-total for each macro — the display
+Returns grams, kcal, and percent-of-total for each macro - the display
 shape section 7 asks for directly. Not locked to one algorithm: the
 function's keyword overrides mean a future "high-carb" or "keto"
 preset is a new caller, not a rewrite.
 
-## Dynamic calorie adjustment — the weight-trend engine
+## Dynamic calorie adjustment - the weight-trend engine
 
 `apps/nutrition/trends.py` (moving-average/trend math, pure) +
 `apps/nutrition/suggestions.py` (the suggestion engine, mirroring
 `apps.progression.suggestions`'s exact shape: a frozen dataclass, a
 single public `suggest_calorie_adjustment(user)` entry point, no
-persisted model — recomputed live every time, same "derive, don't
+persisted model - recomputed live every time, same "derive, don't
 cache" rule as everywhere else in this codebase).
 
 1. Read the user's logged weight from `apps.measurements`
-   (`BodyMeasurement` under the system "Body weight" type) — nutrition
+   (`BodyMeasurement` under the system "Body weight" type) - nutrition
    never keeps its own copy of this data.
 2. Bucket readings by day (averaging same-day multiples), then compute
-   a **7-day moving average** trend line — never react to a single
+   a **7-day moving average** trend line - never react to a single
    reading, exactly the principle section 6 states outright and
    `docs/PROGRESSION.md` states for training ("failure is a signal, not
    a command").
 3. Require a minimum of 14 days' span and at least 4 distinct
-   measurement days before attempting a suggestion at all — otherwise
+   measurement days before attempting a suggestion at all - otherwise
    return an explicit `INSUFFICIENT_DATA` result, the same escape hatch
    `apps.progression.engine.ProgressionAction` already has for exactly
    this situation ("don't pretend to have confidence when there isn't
@@ -953,24 +953,24 @@ cache" rule as everywhere else in this codebase).
 5. If the two are within a tolerance band (±30% of the target rate's
    own magnitude, with an absolute floor of ±0.1 kg/week so a
    near-zero maintenance target isn't impossibly strict), the result is
-   `ON_TRACK` — no adjustment suggested.
+   `ON_TRACK` - no adjustment suggested.
 6. Otherwise, convert the shortfall into a calorie suggestion via the
    same 7,700 kcal/kg approximation used for the initial target,
-   rounded to the nearest 25 kcal (false precision — "-137 kcal/day" —
+   rounded to the nearest 25 kcal (false precision - "-137 kcal/day" -
    is exactly what section 20 warns against), and **capped at ±250
    kcal per suggestion** even if the raw math implies more: a big
    single jump risks over-correcting off one trend estimate, so a
    larger gap gets corrected over more than one adjustment cycle
-   instead — the same "don't overreact" philosophy as progression's
+   instead - the same "don't overreact" philosophy as progression's
    two-consecutive-failures-before-deload rule, applied here as
    one-suggestion-at-a-time instead of a single big swing.
-7. Confidence (`LOW`/`MEDIUM`/`HIGH` only — never a numeric score, per
+7. Confidence (`LOW`/`MEDIUM`/`HIGH` only - never a numeric score, per
    `docs/SMART_SUGGESTIONS.md`) scales with how much trend data backs
    the suggestion: `LOW` right at the minimum window, `MEDIUM` for a
    few weeks of consistent logging, `HIGH` for a long, low-variance
    trend.
 8. `reason` is a plain sentence built the same way
-   `apps.progression.engine`'s branches build theirs — e.g. "Target:
+   `apps.progression.engine`'s branches build theirs - e.g. "Target:
    −0.5 kg/week. Actual trend: −0.15 kg/week over the last 3 weeks.
    Suggested adjustment: −150 kcal/day," directly matching the spec's
    own example.
@@ -983,11 +983,11 @@ recomputed (and can change) next time the dashboard is viewed.
 
 ## Integration with existing apps
 
-- **`apps.measurements`** — the only source of weight-history data; no
+- **`apps.measurements`** - the only source of weight-history data; no
   duplicate weight log inside nutrition (see "Why a new app" above).
-- **`apps.workouts`** — a day counts as a "training day" if it has ≥1
+- **`apps.workouts`** - a day counts as a "training day" if it has ≥1
   `WorkoutSession` with `status=COMPLETED` and that `started_at__date`
-  — the exact filter `apps.analytics.services` already uses. **Not**
+  - the exact filter `apps.analytics.services` already uses. **Not**
   built as a hard training-day/rest-day calorie split in this pass: the
   spec explicitly says not to force this if the data doesn't support it
   reliably, and a fresh user has no session history yet to build it
@@ -995,29 +995,29 @@ recomputed (and can change) next time the dashboard is viewed.
   day" / "Rest day," informational) with real session data behind it;
   a distinct training-day calorie *target* is a natural, low-risk
   follow-up once that's live and proven useful, not a v1 requirement.
-- **`apps.progression`/`apps.records`** — no direct dependency, but
+- **`apps.progression`/`apps.records`** - no direct dependency, but
   every architectural pattern here (frozen-dataclass results,
   confidence enum, explicit reason strings, derive-don't-cache,
   append-don't-mutate for history) is deliberately copied from them,
   for the reasons `docs/SMART_SUGGESTIONS.md`/`docs/PR_SYSTEM.md`
   already give.
-- **`apps.accounts`** — reuses `User.unit_system` for weight display
+- **`apps.accounts`** - reuses `User.unit_system` for weight display
   (BodyMeasurement's own conversion layer) but **does not** touch the
   existing account `OnboardingForm`/modal. Nutrition's own onboarding
-  (age/sex/height/weight/activity/goal — a much longer flow) is a
+  (age/sex/height/weight/activity/goal - a much longer flow) is a
   separate, dedicated wizard reachable from the Nutrition section
   itself, not bolted onto the global first-login modal. Firing two
   unrelated onboarding flows back-to-back at first login would be
   exactly the kind of "asking for the sake of asking" section 3
   explicitly warns against for a user who may not even want nutrition
   tracking yet.
-- **`apps.api`** — `ApiContext.NUTRITION`, one viewset per top-level
+- **`apps.api`** - `ApiContext.NUTRITION`, one viewset per top-level
   resource (`Food`, `MealSlot`, `Recipe`, `RecipeIngredient`,
   `DiaryEntry`, `DietPlan`, plus read-only `NutritionGoal`/
   `NutritionTarget`/`DietPlanMeal`/`DietPlanItem`, and a writable
   `NutritionProfile` singleton at `nutrition/profile/`), serializers
   always in canonical kcal/grams (never display-converted, matching
-  every other context) — no new architecture, `apps/nutrition` just
+  every other context) - no new architecture, `apps/nutrition` just
   follows `docs/API.md`'s existing contract. `DietPlan` generation/
   activation/apply route through `apps.nutrition.diet_builder`/
   `services` rather than raw writes, the same "a raw write could
@@ -1032,9 +1032,9 @@ recomputed (and can change) next time the dashboard is viewed.
 ## Navigation
 
 The bottom nav currently has exactly 5 fixed items (Home, Progress,
-Workout, Programs, Profile — `templates/base.html`, guarded by
+Workout, Programs, Profile - `templates/base.html`, guarded by
 `apps.core.tests.BottomNavTests`). Nutrition becomes a **6th item**,
-not a replacement for any existing one — it's asked for as a
+not a replacement for any existing one - it's asked for as a
 first-class, daily-use surface ("Training + Nutrition + Bodyweight +
 Progression as one system"), not a rarely-visited settings page (which
 is why `apps.measurements`/`apps.activities`/`apps.records`, all real
@@ -1044,7 +1044,7 @@ casual addition.
 
 ### Navigating within nutrition
 
-**A persistent sub-nav (`templates/nutrition/_subnav.html`) — the one
+**A persistent sub-nav (`templates/nutrition/_subnav.html`) - the one
 deliberate exception to this project's "plain back links, no tab bar"
 convention.** Originally built the same way as everywhere else
 (`apps.programs`'s Program → Workout → Prescription hierarchy,
@@ -1053,23 +1053,23 @@ explicitly reasoned as more consistent than adding a nutrition-only
 tab bar. Reported directly as hard to use once real day-to-day use
 caught up with how much nutrition had actually grown: it has 7
 top-level destinations (dashboard, diary, foods, recipes, diet plans,
-calculators, statistics) — more than any other app here — so reaching
+calculators, statistics) - more than any other app here - so reaching
 a sibling section from wherever you actually were meant scrolling
 back to the dashboard's own link list first, every time. No other app
 in this project has enough sibling sections for that problem to exist
 at all, which is exactly why the earlier "stay consistent, no tab bar"
-reasoning doesn't generalize here — it was right for the app sizes it
+reasoning doesn't generalize here - it was right for the app sizes it
 was reasoned about, not for one that grew past them.
 
 Implementation: `apps.nutrition.context_processors.nutrition_subnav`
 computes which tab is "active" from `request.resolver_match.url_name`
-(grouped so every diary-related view — add, edit, copy — highlights
+(grouped so every diary-related view - add, edit, copy - highlights
 "Diary", not just the bare day view) and is registered globally in
 `TEMPLATES` `context_processors`, the same mechanism `apps.workouts`'s
 training-FAB already uses. `_subnav.html` itself is included directly
-by each nutrition page's own template — right after that page's own
+by each nutrition page's own template - right after that page's own
 `.top-bar` (its heading, and the border line under it), not injected
-once from `templates/base.html` — so it visually reads as "this page's
+once from `templates/base.html` - so it visually reads as "this page's
 title, then its section tabs," not a strip of navigation sitting above
 every page's own identity. Concretely this means editing 23 individual
 templates rather than one shared insertion point, the direct
@@ -1078,22 +1078,22 @@ inside `{% block content %}` rather than a shared header block; still
 the smaller, more predictable change than restructuring every page to
 extend a new intermediate base template just to get one shared
 insertion point. Deliberately excluded from the five onboarding wizard
-templates — none of the sub-nav's destinations are reachable yet for a
+templates - none of the sub-nav's destinations are reachable yet for a
 user without a `NutritionProfile`; every one of them would just bounce
 straight back to onboarding.
 
 Styled as `.range-filter`'s existing pill tabs (`templates/analytics/
-_range_filter.html`) with one override — horizontal scroll instead of
+_range_filter.html`) with one override - horizontal scroll instead of
 wrap (`.nutrition-subnav`), since 8 tabs wrapped would cost two or
 three lines of vertical space on every single page, permanently,
 which defeats a bar meant to stay out of the way. `position: sticky`
 keeps it reachable without scrolling back up on a long page (the
-dashboard, mainly) — directly answering the original complaint, not
+dashboard, mainly) - directly answering the original complaint, not
 just relocating it.
 
 The dashboard's old "Quick links" card (the same six destinations,
 minus itself) is gone now that the sub-nav reaches every section from
-every page, not just the dashboard — keeping both would have been
+every page, not just the dashboard - keeping both would have been
 pure redundancy. "+ Log food now" stays on the dashboard's own "Today
 so far" card: a specific action (jump straight to the add-food form),
 not a navigation destination the sub-nav already covers.
@@ -1102,10 +1102,10 @@ not a navigation destination the sub-nav already covers.
 actually be reached, not just the first one it was built for.** This
 still applies to the plain "&larr; Back to X" links between a page and
 its own logical parent (recipe detail → recipe list, an edit form →
-whatever it edits) — the sub-nav only replaces lateral movement
+whatever it edits) - the sub-nav only replaces lateral movement
 between the 8 top-level sections, not that vertical parent/child
 structure. Foods/Recipes/Diet plans were originally only ever reached
-from the food diary, so their own "back" link pointed there —
+from the food diary, so their own "back" link pointed there -
 reasonable at the time. Once they became reachable directly (first
 via the dashboard's "Quick links", now via the sub-nav from anywhere),
 that same link became actively wrong for anyone arriving that way:
@@ -1114,40 +1114,40 @@ where they'd actually come from. Fixed by pointing all three at the
 nutrition dashboard instead (their real, common parent). General rule
 going forward: a "back" link's target is "this page's logical
 parent," never "wherever this page happened to be built to be reached
-from first" — those two drift apart exactly when a second entry point
+from first" - those two drift apart exactly when a second entry point
 gets added later, as it did here, twice.
 
 ### Camera barcode scanning
 
-`static/js/barcode-scanner.js` — the browser's own native
+`static/js/barcode-scanner.js` - the browser's own native
 `BarcodeDetector` API decodes when it's available (Chromium/Chrome-for-
-Android — this app's primary mobile target — supports it), with a
+Android - this app's primary mobile target - supports it), with a
 vendored fallback for browsers that don't (Firefox, older Safari):
-`static/js/zxing.min.js` (ZXing, Apache-2.0, pinned at `0.21.3` — the
+`static/js/zxing.min.js` (ZXing, Apache-2.0, pinned at `0.21.3` - the
 same "only ever vendor a JS file, never load from a CDN" precedent as
 `htmx.min.js`/`alpine.min.js`, extended here specifically because
 there was no native-API-only way to cover those browsers, unlike when
 this feature first shipped Chromium-only "since there's nothing to
-vendor" — reversed once the resulting gap was reported live). The
+vendor" - reversed once the resulting gap was reported live). The
 fallback is loaded lazily, only the first time a browser without
 `BarcodeDetector` actually opens the scanner (`loadZxing()`, a
 runtime-inserted `<script>` reading its own content-hashed URL off a
 `data-zxing-url` attribute on `<body>`, the same handoff
-`data-service-worker-url` already uses) — a Chrome user, who never
+`data-service-worker-url` already uses) - a Chrome user, who never
 needs it, never downloads its ~330KB. `supported` is unconditionally
-`true` now (any browser with `getUserMedia` can plausibly scan) —
+`true` now (any browser with `getUserMedia` can plausibly scan) -
 camera/permission failures, and a failed `zxing.min.js` fetch on a
 first-ever offline load, are both still handled by the scanner's
 existing try/catch, same as before. One shared Alpine component
 (`ironstackBarcodeScanner()`) and one reusable template include
 (`_barcode_scan_button.html`, the same `.modal-backdrop`/`.modal-card`
 overlay `accounts/profile.html`'s changelog modal already established)
-wired into all four food-search boxes. A successful scan — from
-either decoder — writes the barcode into the search `<input>`
+wired into all four food-search boxes. A successful scan - from
+either decoder - writes the barcode into the search `<input>`
 and dispatches a synthetic `keyup` event (setting `.value` directly
 fires no DOM event on its own) so the existing `hx-trigger="keyup
 changed delay:400ms"` search box picks it up exactly as if it had
-been typed — no server-side change needed, since barcode-shaped
+been typed - no server-side change needed, since barcode-shaped
 queries were already handled specially
 (`apps.nutrition.services._BARCODE_RE`).
 
@@ -1161,41 +1161,41 @@ waist-to-hip ratio, and time-to-goal-weight (added on direct request,
 once the first four were already live). Deliberately separate from
 the rest of the app in one important way: **nothing here reads or
 writes a `NutritionProfile`, `NutritionGoal`, or `NutritionTarget`
-row** — a user can get an answer without onboarding, without setting
+row** - a user can get an answer without onboarding, without setting
 a goal, and without logging anything, which is the whole point (a
 quick one-off lookup, not a commitment). The BMR/TDEE and macro
 calculators are thin forms in front of the *existing*
 `energy.calculate_bmr`/`calculate_tdee` and `macros.calculate_macros`;
 the BMI calculator is the same thing for `apps.core.bmi.
-calculate_bmi`/`category_for`/`category_rows` — the exact calculation
+calculate_bmi`/`category_for`/`category_rows` - the exact calculation
 the Body weight measurement history page already shows once a height
 is on file, not a second implementation (see CLAUDE.md "do not create
 duplicate abstractions"). Body fat %, water intake, waist-to-hip
 ratio, and time-to-goal are new, small pure functions in
 `apps/nutrition/calculators.py`, same no-DB/no-HTTP shape as
 `energy.py`/`macros.py`. Waist-to-hip ratio's risk thresholds are
-sex-specific WHO-style cutoffs — a published scale, not invented here,
+sex-specific WHO-style cutoffs - a published scale, not invented here,
 the same "real, independently-defined scale" reasoning as Nutri-Score/
 NOVA on `Food`. Time-to-goal deliberately returns only a week count
-from its pure function, not a calendar date — "today" is a
+from its pure function, not a calendar date - "today" is a
 request-time concern the view already has (`timezone.localdate()`),
 not something a pure calculation should reach for on its own.
 
 Each calculator view is a plain `GET` (no side effect, so a GET with a
-query string is the right verb — bookmarkable/shareable, same
+query string is the right verb - bookmarkable/shareable, same
 convention already used by `FoodSearchResultsView`), computing and
 showing a result inline on the same page only once the query string
 carries a complete, valid submission; a signed-in user who has already
 completed nutrition onboarding gets the relevant fields (sex, age,
 activity level, current goal/target) pre-filled from their own data,
-but every field stays editable — useful for a "what if" check against
+but every field stays editable - useful for a "what if" check against
 a hypothetical weight or activity level too, not just today's real
 numbers.
 
 Reachable two ways: a "Calculators" card on the nutrition dashboard,
-and — since a user who hasn't onboarded can't reach the dashboard at
+and - since a user who hasn't onboarded can't reach the dashboard at
 all (`NutritionDashboardView` redirects straight into the onboarding
-wizard) — a direct link on the onboarding wizard's first step ("Just
+wizard) - a direct link on the onboarding wizard's first step ("Just
 want a quick number without setting anything up?"), so the
 calculators are actually reachable by someone who deliberately doesn't
 want to onboard yet, not just a dead end behind a redirect.
@@ -1205,7 +1205,7 @@ want to onboard yet, not just a dead end behind a redirect.
 Mirrors `apps/core/tests.py`'s `BMICalculationTests` (pure functions,
 no DB) for `energy.py`/`macros.py`/`trends.py`, and
 `apps/progression/tests.py`'s per-branch `TestCase` classes for the
-suggestion engine — one class per calorie-adjustment scenario
+suggestion engine - one class per calorie-adjustment scenario
 (on-track, under-target, over-target, insufficient data, goal changed
 mid-trend), plus a dedicated determinism test class the same way
 progression has one. View/flow tests follow
@@ -1222,53 +1222,53 @@ Adapted from the spec's suggested order, reordered slightly so each
 phase is independently testable and builds only on phases already
 done:
 
-1. **Domain model** — all models above, migrations, admin registration,
+1. **Domain model** - all models above, migrations, admin registration,
    seed migration for default `MealSlot`s.
-2. **Energy engine** — `energy.py` (BMR/TDEE/goal→calories),
+2. **Energy engine** - `energy.py` (BMR/TDEE/goal→calories),
    `macros.py`, safety bounds. Fully unit-tested before any UI exists.
-3. **Nutrition onboarding wizard** — collects `NutritionProfile` +
+3. **Nutrition onboarding wizard** - collects `NutritionProfile` +
    first `NutritionGoal`/`NutritionTarget`, using the engine from #2.
-4. **Food + food diary** — `Food` CRUD, `DiaryEntry` logging UI,
+4. **Food + food diary** - `Food` CRUD, `DiaryEntry` logging UI,
    day-total calories/macros display.
-5. **Recipes** — `Recipe`/`RecipeIngredient`, logging a recipe into the
+5. **Recipes** - `Recipe`/`RecipeIngredient`, logging a recipe into the
    diary.
-6. **Weight-trend engine** — `trends.py`, `suggestions.py`, fully
+6. **Weight-trend engine** - `trends.py`, `suggestions.py`, fully
    unit-tested against synthetic weight histories before any UI.
-7. **Nutrition dashboard** — today's totals vs. target, weight trend,
+7. **Nutrition dashboard** - today's totals vs. target, weight trend,
    goal status, the adjustment-suggestion card from #6.
-8. **Diet builder wizard** — `DietPlan` generation from
+8. **Diet builder wizard** - `DietPlan` generation from
    Food/Recipe + targets, swap-one-item editing, "log today's plan."
-9. **Training-day awareness** — the informational label described
+9. **Training-day awareness** - the informational label described
    above, once the rest is live.
-10. **Polish** — translations (6 languages, matching this project's
+10. **Polish** - translations (6 languages, matching this project's
     existing catalog), accessibility pass, full test suite + live
     verification, `docs/DEVELOPMENT_LOG.md` + `CHANGELOG.md` entries.
-11. **Daily-use polish: statistics, quick re-log, copying a day** — see
+11. **Daily-use polish: statistics, quick re-log, copying a day** - see
     "Nutrition statistics and quick re-log" below. Added once the rest
     of the app had real day-to-day usage patterns to design against
     (a stats page that only shows one day at a time, and no way to
     repeat yesterday's logging without re-searching every item, were
     both friction spotted only after the rest of the app was actually
     being used, not gaps visible from the original spec alone).
-12. **`apps.api` nutrition context** — closed a real, honestly-disclosed
+12. **`apps.api` nutrition context** - closed a real, honestly-disclosed
     gap: every other context in `docs/API.md` had a viewset, nutrition
     didn't. See "Integration with existing apps" → `apps.api` above.
 
 ## Nutrition statistics and quick re-log
 
 Three small, independent additions once the rest of the app already
-had daily-use history to work from — none of them touch the domain
+had daily-use history to work from - none of them touch the domain
 model, all three are pure service functions over `DiaryEntry` plus a
 thin view/template:
 
-- **`/nutrition/stats/`** (`NutritionStatsView`) — the food diary only
+- **`/nutrition/stats/`** (`NutritionStatsView`) - the food diary only
   ever shows one day; this answers "how have I actually been eating
   the last month," the way `apps.analytics` answers the same question
   for training. `apps.nutrition.services.calorie_history(user, days=30)`
-  returns exactly one point per day — including days nothing was
+  returns exactly one point per day - including days nothing was
   logged (`ZERO_NUTRITION`), the same "never skip a day, a quiet day
   is a real dip" rule `apps.analytics.services.weekly_volume_series`
-  already uses — charted with the shared `apps.core.charts.
+  already uses - charted with the shared `apps.core.charts.
   build_bar_series` (`templates/core/_bar_chart.html`, the same
   component `apps.analytics`'s own stats page uses). `nutrition_stats`
   gives the **median** daily calories/macros, only over days something
@@ -1280,23 +1280,23 @@ thin view/template:
   same medians for 7/14/30 days, 3 months, year to date, 1 year and all
   time (from the first logged day), all ending today; the diary is read
   once and sliced per period. The chart and the headline card stay a
-  fixed 30 days — no range picker.
+  fixed 30 days - no range picker.
 - **"Most used" quick add** (`services.most_used_foods`,
-  `templates/nutrition/_most_used_foods.html`) — every place a food
+  `templates/nutrition/_most_used_foods.html`) - every place a food
   can be added (the food diary, a recipe's ingredients, a diet-plan
   meal's items) shows the signed-in user's most-used foods, ten per
   page (`most_used_page`; the pager swaps only `#most-used-foods` via
   HTMX so the diary page's selected meal survives), each a single-tap
   "Add." Most people eat a
-  fairly small rotation of the same handful of things — re-searching
+  fairly small rotation of the same handful of things - re-searching
   "chicken breast" or a barcode every single time was needless
   friction once there was real usage history to rank from. Ranked by
   **frequency**, not recency: usage is counted across every place a
-  food actually gets added — the diary, recipe ingredients, and
+  food actually gets added - the diary, recipe ingredients, and
   diet-plan items combined, not just whichever one the panel happens
-  to be shown in — since "used the most" means overall, not "most
+  to be shown in - since "used the most" means overall, not "most
   recent in this one context" (an earlier, diary-only, recency-ranked
-  version of this — "Log again" — was replaced once the ask was
+  version of this - "Log again" - was replaced once the ask was
   generalized to every add-a-food context and to ranking by actual
   frequency of use). Each entry still prefills a sensible quantity/
   meal-slot default from the food's most recent diary use, if it has
@@ -1305,7 +1305,7 @@ thin view/template:
   the diary prefill the same last-logged quantity
   (`services.with_prefill_quantities`/`last_diary_uses`). Deliberately derived
   live from `DiaryEntry`/`RecipeIngredient`/`DietPlanItem` history,
-  not a new `FavoriteFood` model — the same "derive, don't store a
+  not a new `FavoriteFood` model - the same "derive, don't store a
   duplicate" rule this app already follows everywhere else (a day's
   totals are computed live, never cached), and a frequency ranking
   needs no separate table to stay correct. Only ever counts the
@@ -1316,11 +1316,11 @@ thin view/template:
   established for the search results themselves.
 - **Copy a diary day** (`services.copy_diary_day`,
   `templates/nutrition/diary_day.html`'s "Copy this day to another
-  date") — "I ate the same as yesterday" without re-adding every item
+  date") - "I ate the same as yesterday" without re-adding every item
   by hand: duplicates every `DiaryEntry` on one date onto another as
-  brand-new rows. The source day is never read back out or mutated —
+  brand-new rows. The source day is never read back out or mutated -
   same "an explicit action must never look like it silently touched
-  something else" reasoning as `merge_foods` — and copying is purely
+  something else" reasoning as `merge_foods` - and copying is purely
   additive: copying twice, or onto a day that already has entries,
   adds more rows rather than silently deduplicating, matching how
   every other diary mutation in this app behaves.

@@ -3,9 +3,9 @@
 `apps.tutorials` shows each page's short guided tour the first time a user
 opens that page: the element being explained is highlighted in its own shape
 (an outline hugging it, with its own corner rounding) while the rest of the
-page is dimmed (not hidden), and a compact card explaining it sits beside it —
+page is dimmed (not hidden), and a compact card explaining it sits beside it -
 below or above, wherever there's room, never on top of it. The page scrolls
-so both fit. This document is the maintenance guide — read it before
+so both fit. This document is the maintenance guide - read it before
 changing a tour, a toured template, or adding a page.
 
 ## Pieces
@@ -24,7 +24,7 @@ changing a tour, a toured template, or adding a page.
 
 ## When a tour runs
 
-- Automatically on a page that has one, the first time the user opens it —
+- Automatically on a page that has one, the first time the user opens it -
   unless they've switched tutorials off, haven't finished onboarding yet (one
   overlay at a time), or have already finished or skipped that tour.
 - Always with `?tour=<key>` (profile → Tutorials → "Start").
@@ -39,11 +39,11 @@ changing a tour, a toured template, or adding a page.
 Match the page, not a quota:
 
 - Pages people log on (a workout, training mode, the food diary, adding
-  food): one step per thing they'll touch — several steps.
-- Overview and list pages: what's there and the one or two actions — one to
+  food): one step per thing they'll touch - several steps.
+- Overview and list pages: what's there and the one or two actions - one to
   three steps.
 - Plain forms, single calculators, simple lists covered by their parent's
-  tour: no tour — add them to `NO_TOUR_NEEDED` with the reason.
+  tour: no tour - add them to `NO_TOUR_NEEDED` with the reason.
 
 Keep each step's text to one or two short sentences that say what the thing
 is for, not how HTML works. Mention user control where it matters (a
@@ -77,7 +77,7 @@ when a required anchor disappears from its page.
 ### Add a page
 
 Every page without URL arguments needs a tour **or** a `NO_TOUR_NEEDED`
-entry — the coverage test lists offenders. For a page with arguments (a
+entry - the coverage test lists offenders. For a page with arguments (a
 detail page), add a tour if it's worth one and give it a `start_url`
 (`first_url(<queryset for user>, "<url name>")`) so profile → Tutorials can
 open it.
@@ -103,16 +103,16 @@ a muscle group).
 
 `apps/tutorials/tests.py`:
 
-- **Anchors** — every tour's page is rendered for a user with data on every
+- **Anchors** - every tour's page is rendered for a user with data on every
   page; each required step's `data-tour` must be in the HTML.
-- **Coverage** — every argument-less page that renders the app shell (signed
+- **Coverage** - every argument-less page that renders the app shell (signed
   in, even as staff) has a tour or a `NO_TOUR_NEEDED` entry; every
   `NO_TOUR_NEEDED` name is a real URL and has no tour.
-- **Translations** — every tour title, section and step text differs from the
+- **Translations** - every tour title, section and step text differs from the
   English in every other language.
-- **Registry** — unique keys, at most one tour per page, contiguous sections,
+- **Registry** - unique keys, at most one tour per page, contiguous sections,
   a required step in every tour.
-- **Behaviour** — runs once, not during onboarding, not when switched off,
+- **Behaviour** - runs once, not during onboarding, not when switched off,
   `?tour=` forces it, completion/disable/reset endpoints.
 
 The player itself (`tutorial.js`) has no unit test; check it in a browser

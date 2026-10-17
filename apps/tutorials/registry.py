@@ -1,4 +1,4 @@
-"""The shapes every guided tour is built from — the tours themselves live
+"""The shapes every guided tour is built from - the tours themselves live
 in `apps.tutorials.tours`. See docs/TUTORIALS.md for how to add or change
 one without breaking it."""
 
@@ -19,7 +19,7 @@ class Step:
     the page (an empty list, a staff-only control, a feature the user
     turned off). The tour silently skips a step whose element isn't
     there, but only optional steps are allowed to be missing in
-    apps.tutorials.tests — a required one that disappears fails the
+    apps.tutorials.tests - a required one that disappears fails the
     suite instead of quietly vanishing from the tour."""
 
     anchor: str | None
@@ -35,7 +35,7 @@ class Tour:
 
     `view_names` are the namespaced URL names (request.resolver_match.
     view_name) the tour runs on. `start_url(user)` returns a URL for the
-    profile's Tutorials page "Start" button — the page's own URL for a
+    profile's Tutorials page "Start" button - the page's own URL for a
     page without arguments, or one of the user's own objects for a
     detail page (None when they have none yet)."""
 

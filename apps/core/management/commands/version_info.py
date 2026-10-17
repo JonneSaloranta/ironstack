@@ -8,7 +8,7 @@ from apps.core.version import get_git_sha, get_migration_state, get_version
 
 class Command(BaseCommand):
     """Prints IronStack's running version/build/migration metadata as
-    one JSON blob — the intended hook for a future backup script to
+    one JSON blob - the intended hook for a future backup script to
     call (e.g. `docker compose exec web python manage.py version_info`)
     to stamp an archive, and for a future restore path to compare
     against the instance it's restoring into, rather than either script

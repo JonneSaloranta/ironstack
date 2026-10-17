@@ -129,7 +129,7 @@ def start(action, name=None):
 
 
 def run(action, name=None):
-    """Do the work and record how it went — what `run_backup_task` runs.
+    """Do the work and record how it went - what `run_backup_task` runs.
     Never raises: the outcome is the status file."""
     status = read_status() or {"action": action, "name": name}
     status.update(action=action, name=name, state=RUNNING, pid=os.getpid())

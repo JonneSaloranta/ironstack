@@ -1,9 +1,9 @@
-"""The assistant's tools — what the model may look at and propose. See
+"""The assistant's tools - what the model may look at and propose. See
 docs/ASSISTANT.md "Tools".
 
 Every tool runs as one specific user (`ToolContext.user`) and only ever
 reads that user's own rows plus the shared/system rows they can already
-see in the app (system exercises, shared foods, built-in recipes) —
+see in the app (system exercises, shared foods, built-in recipes) -
 through the same `visible_to`-style queries the views use. There's no
 tool that writes anything except the two `propose_*` tools, which only
 record an AssistantProposal for the user to accept or dismiss
@@ -13,7 +13,7 @@ Inputs come from the model and are treated as untrusted: every tool
 validates its own arguments and raises ToolInputError, which goes back
 to the model as an error result it can correct, never as a crash.
 
-Tool results are compact JSON in canonical units (kg, meters, kcal) —
+Tool results are compact JSON in canonical units (kg, meters, kcal) -
 the system prompt tells the model which units the user prefers to read.
 """
 
@@ -37,7 +37,7 @@ class ToolInputError(Exception):
 class ToolContext:
     def __init__(self, user, message):
         self.user = user
-        # The AssistantMessage being written — proposals attach to it.
+        # The AssistantMessage being written - proposals attach to it.
         self.message = message
 
 
@@ -844,7 +844,7 @@ _BY_NAME = {tool["name"]: tool for tool in TOOLS}
 
 
 def definitions():
-    """The provider-neutral tool definitions sent to the model — always
+    """The provider-neutral tool definitions sent to the model - always
     the same list in the same order (a stable, cacheable prompt prefix)."""
     return [
         {"name": t["name"], "description": t["description"], "input_schema": t["input_schema"]}
@@ -858,7 +858,7 @@ def activity_for(name):
 
 
 def run(ctx, name, args):
-    """Runs one tool call. Returns (content, is_error) — never raises for
+    """Runs one tool call. Returns (content, is_error) - never raises for
     anything the model got wrong."""
     tool = _BY_NAME.get(name)
     if tool is None:

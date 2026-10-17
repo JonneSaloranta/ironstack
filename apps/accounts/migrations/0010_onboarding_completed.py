@@ -6,7 +6,7 @@ from django.db import migrations, models
 def backfill_existing_users_as_onboarded(apps, schema_editor):
     """Every account that already exists at the point this migration
     runs was, by definition, created before the onboarding prompt
-    existed — there's nothing to ask a returning user that a "welcome"
+    existed - there's nothing to ask a returning user that a "welcome"
     modal is meant for. Only accounts created *after* this migration
     (via the model's own default=False) should ever see it."""
     User = apps.get_model("accounts", "User")

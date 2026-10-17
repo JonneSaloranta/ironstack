@@ -366,7 +366,7 @@ class ProgramUpdateFlowTests(TestCase):
 
     def test_existing_workout_history_survives_an_applied_update(self):
         """CLAUDE.md: "Workout history must remain historically
-        trustworthy." — applying a coach's update deletes and
+        trustworthy." - applying a coach's update deletes and
         recreates the client's own Workout/ExercisePrescription rows;
         this proves a WorkoutSession/PerformedExercise logged before
         that happened is completely unaffected by it."""
@@ -666,7 +666,7 @@ class ShareFormClientScopingTests(TestCase):
 class ClientPickerTests(TestCase):
     """Sharing uses a search-and-add picker (apps.core.widgets.
     SearchablePickerWidget) whose underlying checkboxes are still the
-    real form input — so the posted data is unchanged."""
+    real form input - so the posted data is unchanged."""
 
     def setUp(self):
         self.coach = make_coach(username="coach")
@@ -712,7 +712,7 @@ class ClientPickerTests(TestCase):
 
 class ProgramAndDietPlanListGroupingTests(TestCase):
     """apps.programs.views.ProgramListView/apps.nutrition.views.
-    DietPlanListView both split a user's own flat list into groups —
+    DietPlanListView both split a user's own flat list into groups -
     asked for directly: a program/plan imported from a coach should
     never be indistinguishable from one the user built themselves."""
 

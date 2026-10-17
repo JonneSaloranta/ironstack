@@ -94,7 +94,7 @@ on the worker's next loop.
 **History is append-only.** Each request replays every `DONE` message's `raw`
 in order. Rows aren't edited after they finish, and a failed reply contributes
 nothing. That keeps Claude's thinking blocks valid across turns. The user's
-context (name, language, units, start date —
+context (name, language, units, start date -
 `prompts.conversation_context`) goes into the conversation's first message,
 not the system prompt, so the system prompt and tools stay identical for
 every request and user, and cacheable.
@@ -115,7 +115,7 @@ queries the views use:
 | `list_programs`, `get_program` | own, coach-shared and built-in programs |
 | `list_diet_plans`, `get_diet_plan` | own diet plans |
 | `search_exercises`, `search_foods`, `search_recipes`, `list_meal_slots` | the libraries a proposal draws from |
-| `propose_diet_plan`, `propose_program` | — (records a proposal) |
+| `propose_diet_plan`, `propose_program` | - (records a proposal) |
 
 Tool inputs are untrusted. Each tool validates its arguments, and a mistake
 goes back to the model as an error result it can correct. It never becomes an
@@ -164,7 +164,7 @@ rendered.
 | Setting | Default | Meaning |
 |---|---|---|
 | `ASSISTANT_PROVIDER` | `anthropic` | `anthropic` or `ollama` |
-| `ASSISTANT_API_KEY` | — | the instance's Anthropic key (usage billed to the operator) |
+| `ASSISTANT_API_KEY` | - | the instance's Anthropic key (usage billed to the operator) |
 | `ASSISTANT_MODEL` | `claude-opus-5-5` | Claude model, also the default for users' own keys (each user can pick another for their key) |
 | `ASSISTANT_EFFORT` | `medium` | `low`…`max`; more thinking costs more tokens (each user can pick another for their own key) |
 | `ASSISTANT_REFUSAL_FALLBACK` | `true` | re-run a classifier-declined request on Anthropic's fallback model (beta) |

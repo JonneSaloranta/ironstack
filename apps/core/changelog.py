@@ -1,12 +1,12 @@
 """Renders `CHANGELOG.md` (repo root) to HTML for the profile page's
-version-number modal (`templates/accounts/profile.html`) — the version
+version-number modal (`templates/accounts/profile.html`) - the version
 number, the previous versions, and what changed, all in one place a
 user can actually read without leaving the app.
 
 Deliberately not a real Markdown library: `CHANGELOG.md` only ever
 uses a handful of constructs (`#`/`##`/`###` headings, `- ` bullets
 with soft-wrapped continuation lines, `` `code` ``/`**bold**`/
-`[text](url)` inline spans) — this file is the *only* thing that
+`[text](url)` inline spans) - this file is the *only* thing that
 writes CHANGELOG.md, so a parser narrowly scoped to exactly what it
 actually contains is simpler and has no new dependency to track,
 matching CLAUDE.md's "avoid unnecessary dependencies". If the file's
@@ -24,13 +24,13 @@ from django.utils.safestring import mark_safe
 # CHANGELOG.md's own Keep a Changelog-style `###` headings, each
 # tagged with the same emoji `.github/workflows/ci.yml`'s `create-
 # release` job uses for the nearest-matching Conventional Commits type
-# — reported directly: this file used to read as "one big list", one
+# - reported directly: this file used to read as "one big list", one
 # version bleeding into the next with no visual break at all, and a
 # reader had no way to tell at a glance which of two very differently
 # structured "what changed" views (this hand-curated one, or a GitHub
 # Release's own auto-generated per-commit one) they were looking at.
 # Matching emoji/heading style here ties the two together without
-# actually sharing any code — CHANGELOG.md still has no idea commits
+# actually sharing any code - CHANGELOG.md still has no idea commits
 # or Conventional Commits types even exist. A heading not listed here
 # (there isn't one today, but a future one before this list is
 # updated) gets the same generic "catch-all" mark the release-notes
@@ -46,7 +46,7 @@ _DEFAULT_HEADING_EMOJI = "📌"
 
 
 def _heading_with_emoji(text):
-    # "Added — API" still starts with "Added" — matches on that
+    # "Added - API" still starts with "Added" - matches on that
     # leading word so a suffixed variant gets the same emoji as its
     # plain counterpart instead of falling through to the default.
     for heading, emoji in _HEADING_EMOJI.items():
@@ -70,7 +70,7 @@ def _inline(text):
 
 
 def _render(markdown_text):
-    # Each `##` heading is a version (`[Unreleased]` included) — its
+    # Each `##` heading is a version (`[Unreleased]` included) - its
     # own collapsed <details>/<summary>, not blocks flowing straight
     # into the next version's with nothing marking the boundary. Only
     # the first *non-empty* one starts open, so landing on this modal
@@ -82,7 +82,7 @@ def _render(markdown_text):
     sections = []
     # `current_heading` stays `None` for any content appearing before
     # the first `##` line (or the whole document, if it has none at
-    # all) — rendered as loose blocks with no <details> wrapper around
+    # all) - rendered as loose blocks with no <details> wrapper around
     # them at all, the same shape this function always had before
     # per-version sections existed. CHANGELOG.md itself never actually
     # has content there (every real version starts with its own `##`
@@ -126,7 +126,7 @@ def _render(markdown_text):
         elif line.startswith("## "):
             start_section(_inline(line[3:]))
         elif line.startswith("# "):
-            # The document's own top-level title — skipped, since
+            # The document's own top-level title - skipped, since
             # whatever includes this HTML supplies its own heading.
             flush_paragraph()
             flush_list()
@@ -137,7 +137,7 @@ def _render(markdown_text):
             list_items.append(line[2:])
         elif list_items is not None:
             # A soft-wrapped continuation of the current bullet, not a
-            # new paragraph — CHANGELOG.md wraps long bullets onto
+            # new paragraph - CHANGELOG.md wraps long bullets onto
             # multiple source lines the way the rest of this repo's
             # prose does.
             list_items[-1] += " " + line

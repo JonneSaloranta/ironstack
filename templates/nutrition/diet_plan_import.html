@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% load i18n %}
-{% block title %}{% trans "Import diet plan" %} — IronStack{% endblock %}
+{% block title %}{% trans "Import diet plan" %} - IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
   <h1 class="no-margin">{% trans "Import diet plan" %}</h1>
@@ -9,7 +9,7 @@
 
 <form class="card" method="post" enctype="multipart/form-data">
   {% csrf_token %}
-  <p class="text-muted">{% trans "Upload a diet plan someone exported — from this instance, or a completely different IronStack instance. Foods and recipes it uses are matched against your own existing ones where possible, rather than duplicated; anything missing is recreated for you. Imported inactive, so it never replaces whatever plan you're currently following." %}</p>
+  <p class="text-muted">{% trans "Upload a diet plan someone exported - from this instance, or a completely different IronStack instance. Foods and recipes it uses are matched against your own existing ones where possible, rather than duplicated; anything missing is recreated for you. Imported inactive, so it never replaces whatever plan you're currently following." %}</p>
   {% include "core/_form_errors.html" %}
   {% for field in form %}
     {% include "core/_field.html" with field=field %}

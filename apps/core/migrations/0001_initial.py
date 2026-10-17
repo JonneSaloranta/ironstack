@@ -19,7 +19,7 @@ class Migration(migrations.Migration):
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('enabled', models.BooleanField(default=True, help_text="Turns the backup-scheduler service's daily backup off without needing to stop or remove that service.")),
                 ('hour', models.PositiveSmallIntegerField(default=apps.core.models._default_backup_hour, help_text='What time (UTC) the daily automatic backup runs at.', validators=[django.core.validators.MaxValueValidator(23)])),
-                ('retention_count', models.PositiveIntegerField(default=14, help_text='How many backups to keep — older ones are deleted automatically after each new one is created. 0 keeps every backup forever.')),
+                ('retention_count', models.PositiveIntegerField(default=14, help_text='How many backups to keep - older ones are deleted automatically after each new one is created. 0 keeps every backup forever.')),
             ],
         ),
     ]

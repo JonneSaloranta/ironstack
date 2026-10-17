@@ -6,7 +6,7 @@ from .models import ApiKey, ApiKeyPermission, ApiSettings, RateLimitTier
 @admin.register(RateLimitTier)
 class RateLimitTierAdmin(admin.ModelAdmin):
     """The admin-adjustable rate-limit knobs the original request asked
-    for — editing requests_per_minute/requests_per_day here takes effect
+    for - editing requests_per_minute/requests_per_day here takes effect
     immediately (apps.api.throttling reads them fresh every request, no
     caching, no redeploy needed)."""
 
@@ -14,7 +14,7 @@ class RateLimitTierAdmin(admin.ModelAdmin):
 
     def save_model(self, request, obj, form, change):
         # Exactly one tier should ever be the default (apps.api.services
-        # .default_tier() assumes this) — enforced here rather than a DB
+        # .default_tier() assumes this) - enforced here rather than a DB
         # constraint, since it's a rule about the *set* of rows, not any
         # single row's own validity.
         if obj.is_default:
@@ -24,7 +24,7 @@ class RateLimitTierAdmin(admin.ModelAdmin):
 
 @admin.register(ApiSettings)
 class ApiSettingsAdmin(admin.ModelAdmin):
-    """Singleton — the "max 10 (säädettävä) api avainta" cap, and
+    """Singleton - the "max 10 (säädettävä) api avainta" cap, and
     anything else instance-wide that later needs to be admin-tunable
     without a redeploy. No add/delete: apps.api.models.ApiSettings.load()
     always works from exactly one row (pk=1)."""
@@ -47,7 +47,7 @@ class ApiKeyPermissionInline(admin.TabularInline):
 
 @admin.register(ApiKey)
 class ApiKeyAdmin(admin.ModelAdmin):
-    """key_hash is deliberately never shown or editable here — same
+    """key_hash is deliberately never shown or editable here - same
     reasoning as a password hash: nothing legitimate is ever done with
     it except equality-checked lookups in apps.api.auth, and displaying
     it would just be one more place a leaked screenshot/access log entry

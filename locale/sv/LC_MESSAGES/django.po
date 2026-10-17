@@ -109,31 +109,31 @@ msgstr "Utseende"
 #: apps/accounts/forms.py:307
 msgid ""
 "Which color palette the app uses. Each theme has its own dark and light look "
-"— pick which one below."
+"- pick which one below."
 msgstr ""
 "Vilken färgpalett appen använder. Varje tema har sitt eget mörka och ljusa "
-"utseende — välj vilket nedan."
+"utseende - välj vilket nedan."
 
 #: apps/accounts/forms.py:311
 msgid ""
 "Shows nutrition (food diary, recipes, diet plans) in navigation and on the "
-"dashboard. Turn off to hide it if you don't want to track nutrition — "
+"dashboard. Turn off to hide it if you don't want to track nutrition - "
 "existing nutrition data is never deleted, and its pages stay reachable "
 "directly by a link."
 msgstr ""
 "Visar kost (matdagbok, recept, kostplaner) i navigeringen och på "
-"instrumentpanelen. Stäng av för att dölja den om du inte vill spåra kost — "
+"instrumentpanelen. Stäng av för att dölja den om du inte vill spåra kost - "
 "befintlig kostdata raderas aldrig, och dess sidor går fortfarande att nå "
 "direkt via en länk."
 
 #: apps/accounts/forms.py:318
 msgid ""
 "Shows stretching (routines, guided sessions) in navigation and suggests a "
-"cool-down after a workout. Turn off to hide it — existing stretching data is "
+"cool-down after a workout. Turn off to hide it - existing stretching data is "
 "never deleted."
 msgstr ""
 "Visar stretching (rutiner, guidade pass) i navigeringen och föreslår "
-"nedvarvning efter ett träningspass. Stäng av för att dölja det — befintliga "
+"nedvarvning efter ett träningspass. Stäng av för att dölja det - befintliga "
 "stretchingdata raderas aldrig."
 
 #: apps/accounts/forms.py:323
@@ -147,12 +147,12 @@ msgstr ""
 #: apps/accounts/forms.py:327
 msgid ""
 "Shows a dashboard card nudging you to log a body measurement when you haven't"
-" logged one in a while. Turn off to never see that reminder — you can still "
+" logged one in a while. Turn off to never see that reminder - you can still "
 "log a reading any time from Body tracking."
 msgstr ""
 "Visar ett kort på instrumentpanelen som påminner dig om att logga ett "
 "kroppsmått när du inte har loggat ett på ett tag. Stäng av för att aldrig se "
-"den påminnelsen — du kan fortfarande logga en mätning när som helst från "
+"den påminnelsen - du kan fortfarande logga en mätning när som helst från "
 "Kroppsspårning."
 
 #: apps/accounts/forms.py:332
@@ -164,12 +164,12 @@ msgid ""
 "Lets everyone using this instance see your longest streak, workout count, "
 "PRs, total weight lifted, and when you last trained, in the dashboard's "
 "achievements carousel and \"Recently active\" list. Turn off to keep your own"
-" activity private — you'll still see everyone else's."
+" activity private - you'll still see everyone else's."
 msgstr ""
 "Låter alla som använder den här instansen se din längsta svit, antal "
 "träningspass, PR, total lyft vikt och när du senast tränade, i "
 "instrumentpanelens prestationskarusell och listan \"Senast aktiva\". Stäng av"
-" för att hålla din egen aktivitet privat — du ser fortfarande allas andras."
+" för att hålla din egen aktivitet privat - du ser fortfarande allas andras."
 
 #: apps/accounts/forms.py:341
 msgid ""
@@ -185,14 +185,14 @@ msgstr ""
 msgid ""
 "Shows your Gravatar (gravatar.com) picture at the top of this page, if the "
 "email on this account has one. Turning this on means your browser loads that "
-"image directly from gravatar.com — the only place this app talks to a server "
-"outside your own instance — which then sees your email's hash and your IP "
+"image directly from gravatar.com - the only place this app talks to a server "
+"outside your own instance - which then sees your email's hash and your IP "
 "address."
 msgstr ""
 "Visar din Gravatar-bild (gravatar.com) högst upp på den här sidan, om "
 "e-postadressen på det här kontot har en sådan. Om du aktiverar detta laddar "
-"din webbläsare bilden direkt från gravatar.com — den enda plats där appen "
-"pratar med en server utanför din egen instans — som då ser hashvärdet för din"
+"din webbläsare bilden direkt från gravatar.com - den enda plats där appen "
+"pratar med en server utanför din egen instans - som då ser hashvärdet för din"
 " e-postadress och din IP-adress."
 
 #: apps/accounts/forms.py:355
@@ -247,8 +247,8 @@ msgid "Verification code"
 msgstr "Verifieringskod"
 
 #: apps/accounts/forms.py:463
-msgid "Incorrect code — check your authenticator app and try again."
-msgstr "Fel kod — kontrollera din autentiseringsapp och försök igen."
+msgid "Incorrect code - check your authenticator app and try again."
+msgstr "Fel kod - kontrollera din autentiseringsapp och försök igen."
 
 #: apps/accounts/forms.py:499
 msgid "Too many incorrect codes. Try again in a few minutes."
@@ -313,10 +313,10 @@ msgstr ""
 #: apps/accounts/forms.py:628
 msgid ""
 "Used together with a logged body weight to show your BMI. Leave blank to skip"
-" this — you can add it anytime from your profile."
+" this - you can add it anytime from your profile."
 msgstr ""
 "Används tillsammans med en loggad kroppsvikt för att visa ditt BMI. Lämna "
-"tomt för att hoppa över detta — du kan lägga till det när som helst från din "
+"tomt för att hoppa över detta - du kan lägga till det när som helst från din "
 "profil."
 
 #: apps/accounts/forms.py:637
@@ -357,12 +357,12 @@ msgstr ""
 #: apps/accounts/forms.py:687
 msgid ""
 "Shows nutrition (food diary, recipes, diet plans) in navigation and on the "
-"dashboard. Leave unchecked if you don't want to track nutrition — you can "
+"dashboard. Leave unchecked if you don't want to track nutrition - you can "
 "turn it on or off anytime from your profile, and nothing is ever deleted "
 "either way."
 msgstr ""
 "Visar kost (matdagbok, recept, kostplaner) i navigeringen och på "
-"instrumentpanelen. Lämna omarkerad om du inte vill spåra kost — du kan slå på"
+"instrumentpanelen. Lämna omarkerad om du inte vill spåra kost - du kan slå på"
 " eller av det när som helst från din profil, och inget raderas någonsin i "
 "vilket fall som helst."
 
@@ -460,11 +460,11 @@ msgstr "Tvåfaktorsautentisering avstängd."
 
 #: apps/accounts/views.py:389
 msgid ""
-"You're the only superuser on this instance — promote another account to "
+"You're the only superuser on this instance - promote another account to "
 "superuser first, or this instance would have no one left who can reach Django"
 " admin."
 msgstr ""
-"Du är den enda superanvändaren på den här instansen — befordra ett annat "
+"Du är den enda superanvändaren på den här instansen - befordra ett annat "
 "konto till superanvändare först, annars skulle den här instansen inte ha "
 "någon kvar som kan nå Django-administrationen."
 
@@ -1034,8 +1034,8 @@ msgstr "God morgon, %(username)s! Dags att sätta igång."
 #: apps/core/greetings.py:30
 #, python-format
 msgid ""
-"Rise and grind, %(username)s — the weights aren't going to lift themselves."
-msgstr "Upp och hoppa, %(username)s — vikterna lyfter inte sig själva."
+"Rise and grind, %(username)s - the weights aren't going to lift themselves."
+msgstr "Upp och hoppa, %(username)s - vikterna lyfter inte sig själva."
 
 #: apps/core/greetings.py:31
 #, python-format
@@ -1054,9 +1054,9 @@ msgstr "God eftermiddag, %(username)s! Håll farten uppe."
 
 #: apps/core/greetings.py:37
 #, python-format
-msgid "Hey %(username)s, halfway through the day and still standing — not bad."
+msgid "Hey %(username)s, halfway through the day and still standing - not bad."
 msgstr ""
-"Hej %(username)s, halva dagen avklarad och fortfarande på benen — inte illa."
+"Hej %(username)s, halva dagen avklarad och fortfarande på benen - inte illa."
 
 #: apps/core/greetings.py:38
 #, python-format
@@ -1086,8 +1086,8 @@ msgstr "Hej %(username)s, kvällspasset känns alltid speciellt."
 #: apps/core/greetings.py:46
 #, python-format
 msgid ""
-"Good evening, %(username)s — finish the day stronger than you started it."
-msgstr "God kväll, %(username)s — avsluta dagen starkare än du började den."
+"Good evening, %(username)s - finish the day stronger than you started it."
+msgstr "God kväll, %(username)s - avsluta dagen starkare än du började den."
 
 #: apps/core/greetings.py:50
 #, python-format
@@ -1096,8 +1096,8 @@ msgstr "Fortfarande vaken, %(username)s? Respekt för slitet."
 
 #: apps/core/greetings.py:51
 #, python-format
-msgid "Good night, %(username)s — recovery is part of the program too."
-msgstr "God natt, %(username)s — återhämtning är också en del av programmet."
+msgid "Good night, %(username)s - recovery is part of the program too."
+msgstr "God natt, %(username)s - återhämtning är också en del av programmet."
 
 #: apps/core/greetings.py:52
 #, python-format
@@ -1116,8 +1116,8 @@ msgstr "Ny IronStack-version"
 
 #: apps/core/management/commands/announce_version_update.py:53
 #, python-format
-msgid "IronStack %(version)s is now running — tap to see what's new."
-msgstr "IronStack %(version)s körs nu — tryck för att se vad som är nytt."
+msgid "IronStack %(version)s is now running - tap to see what's new."
+msgstr "IronStack %(version)s körs nu - tryck för att se vad som är nytt."
 
 #: apps/core/models.py:42
 msgid ""
@@ -1133,30 +1133,30 @@ msgstr "Vilken tid (UTC) den dagliga automatiska säkerhetskopieringen körs."
 
 #: apps/core/models.py:54
 msgid ""
-"How many backups to keep — older ones are deleted automatically after each "
+"How many backups to keep - older ones are deleted automatically after each "
 "new one is created. 0 keeps every backup forever."
 msgstr ""
-"Hur många säkerhetskopior som ska behållas — äldre tas bort automatiskt efter"
+"Hur många säkerhetskopior som ska behållas - äldre tas bort automatiskt efter"
 " att en ny skapats. 0 behåller alla säkerhetskopior för alltid."
 
 #: apps/core/models.py:88
 msgid ""
 "Lets any signed-in user submit feedback from their profile page. Turning this"
-" off only closes new submissions — feedback already on file stays visible to "
+" off only closes new submissions - feedback already on file stays visible to "
 "staff."
 msgstr ""
 "Låter alla inloggade användare skicka feedback från sin profilsida. Att "
-"stänga av detta stänger bara nya inskick — redan inskickad feedback förblir "
+"stänga av detta stänger bara nya inskick - redan inskickad feedback förblir "
 "synlig för personalen."
 
 #: apps/core/models.py:130
 msgid ""
-"Lets search engines crawl and index this instance. Off by default — most "
+"Lets search engines crawl and index this instance. Off by default - most "
 "installs are a private, self-hosted app for one household, not a public site "
 "anyone should be searching for."
 msgstr ""
 "Låter sökmotorer genomsöka och indexera denna instans. Avstängt som standard "
-"— de flesta installationer är en privat, självhostad app för ett hushåll, "
+"- de flesta installationer är en privat, självhostad app för ett hushåll, "
 "inte en offentlig webbplats som någon borde söka efter."
 
 #: apps/core/models.py:163 templates/analytics/dashboard.html:3
@@ -1174,12 +1174,12 @@ msgid "Account & profile"
 msgstr "Konto och profil"
 
 #: apps/core/views.py:35
-msgid "Training day — new personal record!"
-msgstr "Träningsdag — nytt personbästa!"
+msgid "Training day - new personal record!"
+msgstr "Träningsdag - nytt personbästa!"
 
 #: apps/core/views.py:37
-msgid "Training day — a session was abandoned."
-msgstr "Träningsdag — ett pass avbröts."
+msgid "Training day - a session was abandoned."
+msgstr "Träningsdag - ett pass avbröts."
 
 #: apps/core/views.py:39
 msgid "Training day."
@@ -1215,10 +1215,10 @@ msgstr "Säkerhetskopieringens inställningar sparade."
 
 #: apps/core/views_backup.py:79
 msgid ""
-"Not a valid IronStack backup archive — expected a .tar.gz containing "
+"Not a valid IronStack backup archive - expected a .tar.gz containing "
 "database.dump, media.tar, and manifest.json."
 msgstr ""
-"Inte ett giltigt IronStack-säkerhetskopiearkiv — förväntade en .tar.gz som "
+"Inte ett giltigt IronStack-säkerhetskopiearkiv - förväntade en .tar.gz som "
 "innehåller database.dump, media.tar och manifest.json."
 
 #: apps/core/views_backup.py:84
@@ -2013,7 +2013,7 @@ msgstr "Slå ihop livsmedel"
 #, python-format
 msgid ""
 "%(count)d more food(s) were left for later to stay within Open Food Facts' "
-"rate limit — run this action again in a minute."
+"rate limit - run this action again in a minute."
 msgstr ""
 "%(count)d livsmedel sparades till senare för att hålla sig inom Open Food "
 "Facts hastighetsgräns – kör åtgärden igen om en minut."
@@ -2051,13 +2051,13 @@ msgstr "annan regelbunden träning"
 
 #: apps/nutrition/energy.py:172
 #, python-format
-msgid "Suggested: %(label)s — %(factors)s"
-msgstr "Förslag: %(label)s — %(factors)s"
+msgid "Suggested: %(label)s - %(factors)s"
+msgstr "Förslag: %(label)s - %(factors)s"
 
 #: apps/nutrition/energy.py:177
 #, python-format
-msgid "Suggested: %(label)s — no activity details given yet"
-msgstr "Förslag: %(label)s — inga aktivitetsuppgifter angivna ännu"
+msgid "Suggested: %(label)s - no activity details given yet"
+msgstr "Förslag: %(label)s - inga aktivitetsuppgifter angivna ännu"
 
 #: apps/nutrition/energy.py:246
 #, python-format
@@ -2076,10 +2076,10 @@ msgstr ""
 #: apps/nutrition/energy.py:261
 #, python-format
 msgid ""
-"Your target rate would need %(raw)s kcal/day, below a safe minimum — capped "
+"Your target rate would need %(raw)s kcal/day, below a safe minimum - capped "
 "at %(floor)s kcal/day."
 msgstr ""
-"Din måltakt skulle kräva %(raw)s kcal/dag, under en säker miniminivå — "
+"Din måltakt skulle kräva %(raw)s kcal/dag, under en säker miniminivå - "
 "begränsad till %(floor)s kcal/dag."
 
 #: apps/nutrition/energy.py:269
@@ -2094,10 +2094,10 @@ msgstr "Biologiskt kön"
 
 #: apps/nutrition/forms.py:24
 msgid ""
-"Used by the BMR formula (Mifflin-St Jeor) — a physiological input, not a "
+"Used by the BMR formula (Mifflin-St Jeor) - a physiological input, not a "
 "gender-identity question."
 msgstr ""
-"Används i BMR-formeln (Mifflin-St Jeor) — en fysiologisk uppgift, inte en "
+"Används i BMR-formeln (Mifflin-St Jeor) - en fysiologisk uppgift, inte en "
 "fråga om könsidentitet."
 
 #: apps/nutrition/forms.py:30
@@ -2156,21 +2156,21 @@ msgstr "Måltakt (kg/vecka)"
 
 #: apps/nutrition/forms.py:112
 msgid ""
-"Negative to lose weight, positive to gain. Pre-filled from your goal below — "
+"Negative to lose weight, positive to gain. Pre-filled from your goal below - "
 "capped at a safe rate for your bodyweight."
 msgstr ""
 "Negativt för att gå ner i vikt, positivt för att gå upp. Förifyllt utifrån "
-"ditt mål nedan — begränsat till en säker takt för din kroppsvikt."
+"ditt mål nedan - begränsat till en säker takt för din kroppsvikt."
 
 #: apps/nutrition/forms.py:137
-msgid "A fat-loss goal needs a negative rate — you're asking to lose weight."
-msgstr "Ett viktminskningsmål behöver en negativ takt — du vill gå ner i vikt."
+msgid "A fat-loss goal needs a negative rate - you're asking to lose weight."
+msgstr "Ett viktminskningsmål behöver en negativ takt - du vill gå ner i vikt."
 
 #: apps/nutrition/forms.py:142
 msgid ""
-"A muscle-gain goal needs a positive rate — you're asking to gain weight."
+"A muscle-gain goal needs a positive rate - you're asking to gain weight."
 msgstr ""
-"Ett muskeluppbyggnadsmål behöver en positiv takt — du vill gå upp i vikt."
+"Ett muskeluppbyggnadsmål behöver en positiv takt - du vill gå upp i vikt."
 
 #: apps/nutrition/forms.py:145
 msgid "A maintenance goal's rate should be 0 kg/week."
@@ -2179,10 +2179,10 @@ msgstr "Ett underhållsmåls takt bör vara 0 kg/vecka."
 #: apps/nutrition/forms.py:186
 msgid ""
 "All the nutrition values below are for this amount, in the unit chosen next "
-"to it — e.g. \"100 g\" if the values are per 100 grams."
+"to it - e.g. \"100 g\" if the values are per 100 grams."
 msgstr ""
 "Alla näringsvärden nedan gäller denna mängd, i enheten som valts bredvid den "
-"— t.ex. \"100 g\" om värdena är per 100 gram."
+"- t.ex. \"100 g\" om värdena är per 100 gram."
 
 #: apps/nutrition/forms.py:193 templates/nutrition/diary_add_entry.html:55
 #: templates/nutrition/diet_plan_meal_item_form.html:16
@@ -2207,11 +2207,11 @@ msgstr "Vilken måltid som helst"
 
 #: apps/nutrition/forms.py:249
 msgid ""
-"If set, the diet-plan builder only ever suggests this recipe for that meal — "
+"If set, the diet-plan builder only ever suggests this recipe for that meal - "
 "leave as \"Any meal\" for a recipe that fits anywhere."
 msgstr ""
 "Om inställd föreslår kostplansbyggaren det här receptet bara för den måltiden"
-" — lämna som \"Vilken måltid som helst\" för ett recept som passar överallt."
+" - lämna som \"Vilken måltid som helst\" för ett recept som passar överallt."
 
 #: apps/nutrition/forms.py:304 templates/nutrition/diary_add_entry.html:38
 msgid "Meal"
@@ -2256,17 +2256,17 @@ msgstr "Variera måltider över en hel vecka i stället för att upprepa en dag"
 
 #: apps/nutrition/forms.py:352
 msgid ""
-"Each day still hits the same daily calories/macros above — only which meal "
+"Each day still hits the same daily calories/macros above - only which meal "
 "fills each slot changes from day to day, so a week's worth of breakfasts (for"
 " example) aren't all identical."
 msgstr ""
-"Varje dag träffar ändå samma dagliga kalorier/makron ovan — bara vilken "
+"Varje dag träffar ändå samma dagliga kalorier/makron ovan - bara vilken "
 "måltid som fyller varje plats varierar från dag till dag, så till exempel en "
 "veckas frukostar inte alla är identiska."
 
 #: apps/nutrition/forms.py:359
-msgid "Start from scratch — leave every meal empty"
-msgstr "Börja om från början — lämna varje måltid tom"
+msgid "Start from scratch - leave every meal empty"
+msgstr "Börja om från början - lämna varje måltid tom"
 
 #: apps/nutrition/forms.py:361
 msgid ""
@@ -2309,14 +2309,14 @@ msgid "Target weight (kg)"
 msgstr "Målvikt (kg)"
 
 #: apps/nutrition/forms.py:660
-msgid "Rate (kg/week — negative to lose, positive to gain)"
-msgstr "Takt (kg/vecka — negativt för att gå ner, positivt för att gå upp)"
+msgid "Rate (kg/week - negative to lose, positive to gain)"
+msgstr "Takt (kg/vecka - negativt för att gå ner, positivt för att gå upp)"
 
 #: apps/nutrition/forms.py:675
 #, python-format
-msgid "Rate (%(unit)s/week — negative to lose, positive to gain)"
+msgid "Rate (%(unit)s/week - negative to lose, positive to gain)"
 msgstr ""
-"Takt (%(unit)s/vecka — negativt för att gå ner, positivt för att gå upp)"
+"Takt (%(unit)s/vecka - negativt för att gå ner, positivt för att gå upp)"
 
 #: apps/nutrition/forms.py:704 apps/programs/forms.py:37
 msgid "Share with these clients"
@@ -2347,76 +2347,76 @@ msgid "Evening snack"
 msgstr "Kvällsmål"
 
 #: apps/nutrition/i18n_content.py:42
-msgid "Bulk breakfast — Oats & peanut butter"
-msgstr "Bulkfrukost — havregryn & jordnötssmör"
+msgid "Bulk breakfast - Oats & peanut butter"
+msgstr "Bulkfrukost - havregryn & jordnötssmör"
 
 #: apps/nutrition/i18n_content.py:43
-msgid "Bulk breakfast — Eggs on toast"
-msgstr "Bulkfrukost — ägg på rostat bröd"
+msgid "Bulk breakfast - Eggs on toast"
+msgstr "Bulkfrukost - ägg på rostat bröd"
 
 #: apps/nutrition/i18n_content.py:44
-msgid "Bulk lunch — Chicken & rice bowl"
-msgstr "Bulklunch — kyckling- & risbunke"
+msgid "Bulk lunch - Chicken & rice bowl"
+msgstr "Bulklunch - kyckling- & risbunke"
 
 #: apps/nutrition/i18n_content.py:45
-msgid "Bulk lunch — Tuna & sweet potato"
-msgstr "Bulklunch — tonfisk & sötpotatis"
+msgid "Bulk lunch - Tuna & sweet potato"
+msgstr "Bulklunch - tonfisk & sötpotatis"
 
 #: apps/nutrition/i18n_content.py:46
-msgid "Bulk dinner — Salmon & rice"
-msgstr "Bulkmiddag — lax & ris"
+msgid "Bulk dinner - Salmon & rice"
+msgstr "Bulkmiddag - lax & ris"
 
 #: apps/nutrition/i18n_content.py:47
-msgid "Bulk dinner — Chicken & sweet potato"
-msgstr "Bulkmiddag — kyckling & sötpotatis"
+msgid "Bulk dinner - Chicken & sweet potato"
+msgstr "Bulkmiddag - kyckling & sötpotatis"
 
 #: apps/nutrition/i18n_content.py:48
-msgid "Fatburner breakfast — Egg & spinach scramble"
-msgstr "Fettförbrännarfrukost — ägg- & spenatröra"
+msgid "Fatburner breakfast - Egg & spinach scramble"
+msgstr "Fettförbrännarfrukost - ägg- & spenatröra"
 
 #: apps/nutrition/i18n_content.py:49
-msgid "Fatburner breakfast — Greek yogurt bowl"
-msgstr "Fettförbrännarfrukost — grekisk yoghurtbunke"
+msgid "Fatburner breakfast - Greek yogurt bowl"
+msgstr "Fettförbrännarfrukost - grekisk yoghurtbunke"
 
 #: apps/nutrition/i18n_content.py:50
-msgid "Fatburner lunch — Chicken & broccoli"
-msgstr "Fettförbrännarlunch — kyckling & broccoli"
+msgid "Fatburner lunch - Chicken & broccoli"
+msgstr "Fettförbrännarlunch - kyckling & broccoli"
 
 #: apps/nutrition/i18n_content.py:51
-msgid "Fatburner lunch — Tuna & spinach salad"
-msgstr "Fettförbrännarlunch — tonfisk- & spenatsallad"
+msgid "Fatburner lunch - Tuna & spinach salad"
+msgstr "Fettförbrännarlunch - tonfisk- & spenatsallad"
 
 #: apps/nutrition/i18n_content.py:52
-msgid "Fatburner dinner — Salmon & greens"
-msgstr "Fettförbrännarmiddag — lax & grönsaker"
+msgid "Fatburner dinner - Salmon & greens"
+msgstr "Fettförbrännarmiddag - lax & grönsaker"
 
 #: apps/nutrition/i18n_content.py:53
-msgid "Fatburner dinner — Chicken & cottage cheese"
-msgstr "Fettförbrännarmiddag — kyckling & keso"
+msgid "Fatburner dinner - Chicken & cottage cheese"
+msgstr "Fettförbrännarmiddag - kyckling & keso"
 
 #: apps/nutrition/i18n_content.py:54
-msgid "Balanced breakfast — Oats & yogurt"
-msgstr "Balanserad frukost — havregryn & yoghurt"
+msgid "Balanced breakfast - Oats & yogurt"
+msgstr "Balanserad frukost - havregryn & yoghurt"
 
 #: apps/nutrition/i18n_content.py:55
-msgid "Balanced breakfast — Eggs on toast"
-msgstr "Balanserad frukost — ägg på rostat bröd"
+msgid "Balanced breakfast - Eggs on toast"
+msgstr "Balanserad frukost - ägg på rostat bröd"
 
 #: apps/nutrition/i18n_content.py:56
-msgid "Balanced lunch — Chicken & rice"
-msgstr "Balanserad lunch — kyckling & ris"
+msgid "Balanced lunch - Chicken & rice"
+msgstr "Balanserad lunch - kyckling & ris"
 
 #: apps/nutrition/i18n_content.py:57
-msgid "Balanced lunch — Tuna sandwich"
-msgstr "Balanserad lunch — tonfiskmacka"
+msgid "Balanced lunch - Tuna sandwich"
+msgstr "Balanserad lunch - tonfiskmacka"
 
 #: apps/nutrition/i18n_content.py:58
-msgid "Balanced dinner — Salmon & sweet potato"
-msgstr "Balanserad middag — lax & sötpotatis"
+msgid "Balanced dinner - Salmon & sweet potato"
+msgstr "Balanserad middag - lax & sötpotatis"
 
 #: apps/nutrition/i18n_content.py:59
-msgid "Balanced dinner — Chicken & vegetables"
-msgstr "Balanserad middag — kyckling & grönsaker"
+msgid "Balanced dinner - Chicken & vegetables"
+msgstr "Balanserad middag - kyckling & grönsaker"
 
 #: apps/nutrition/i18n_content.py:64
 msgid "Mix the oats into the yogurt, top with banana slices and peanut butter."
@@ -2562,32 +2562,32 @@ msgid "Very active"
 msgstr "Mycket aktiv"
 
 #: apps/nutrition/models.py:58
-msgid "Fat loss — aggressive"
-msgstr "Fettförlust — aggressiv"
+msgid "Fat loss - aggressive"
+msgstr "Fettförlust - aggressiv"
 
 #: apps/nutrition/models.py:59
-msgid "Fat loss — moderate"
-msgstr "Fettförlust — måttlig"
+msgid "Fat loss - moderate"
+msgstr "Fettförlust - måttlig"
 
 #: apps/nutrition/models.py:60
-msgid "Fat loss — conservative"
-msgstr "Fettförlust — försiktig"
+msgid "Fat loss - conservative"
+msgstr "Fettförlust - försiktig"
 
 #: apps/nutrition/models.py:61 apps/programs/models.py:142
 msgid "Maintenance"
 msgstr "Underhåll"
 
 #: apps/nutrition/models.py:62
-msgid "Muscle gain — lean bulk"
-msgstr "Muskeltillväxt — mager bulk"
+msgid "Muscle gain - lean bulk"
+msgstr "Muskeltillväxt - mager bulk"
 
 #: apps/nutrition/models.py:63
-msgid "Muscle gain — moderate bulk"
-msgstr "Muskeltillväxt — måttlig bulk"
+msgid "Muscle gain - moderate bulk"
+msgstr "Muskeltillväxt - måttlig bulk"
 
 #: apps/nutrition/models.py:64
-msgid "Muscle gain — aggressive bulk"
-msgstr "Muskeltillväxt — aggressiv bulk"
+msgid "Muscle gain - aggressive bulk"
+msgstr "Muskeltillväxt - aggressiv bulk"
 
 #: apps/nutrition/models.py:68
 msgid "Calculated from goal"
@@ -2614,8 +2614,8 @@ msgid "piece"
 msgstr "st"
 
 #: apps/nutrition/models.py:91
-msgid "A — best"
-msgstr "A — bäst"
+msgid "A - best"
+msgstr "A - bäst"
 
 #: apps/nutrition/models.py:92
 msgid "B"
@@ -2630,24 +2630,24 @@ msgid "D"
 msgstr "D"
 
 #: apps/nutrition/models.py:95
-msgid "E — worst"
-msgstr "E — sämst"
+msgid "E - worst"
+msgstr "E - sämst"
 
 #: apps/nutrition/models.py:105
-msgid "1 — unprocessed or minimally processed"
-msgstr "1 — obearbetat eller minimalt bearbetat"
+msgid "1 - unprocessed or minimally processed"
+msgstr "1 - obearbetat eller minimalt bearbetat"
 
 #: apps/nutrition/models.py:106
-msgid "2 — processed culinary ingredients"
-msgstr "2 — bearbetade kulinariska ingredienser"
+msgid "2 - processed culinary ingredients"
+msgstr "2 - bearbetade kulinariska ingredienser"
 
 #: apps/nutrition/models.py:107
-msgid "3 — processed food"
-msgstr "3 — bearbetad mat"
+msgid "3 - processed food"
+msgstr "3 - bearbetad mat"
 
 #: apps/nutrition/models.py:108
-msgid "4 — ultra-processed food"
-msgstr "4 — ultrabearbetad mat"
+msgid "4 - ultra-processed food"
+msgstr "4 - ultrabearbetad mat"
 
 #: apps/nutrition/models.py:123
 msgid "Stored instead of a raw age, so it never goes stale."
@@ -2655,10 +2655,10 @@ msgstr "Sparas istället för en rå ålder, så att den aldrig blir inaktuell."
 
 #: apps/nutrition/models.py:135
 msgid ""
-"If you already track this, tell us — used only to compare against this app's "
+"If you already track this, tell us - used only to compare against this app's "
 "own estimate, never as an input to it."
 msgstr ""
-"Om du redan följer detta, berätta för oss — används endast för att jämföra "
+"Om du redan följer detta, berätta för oss - används endast för att jämföra "
 "med appens egen uppskattning, aldrig som indata till den."
 
 #: apps/nutrition/models.py:309
@@ -2759,18 +2759,18 @@ msgstr "Ställ in ett näringsmål för att få justeringsförslag."
 
 #: apps/nutrition/suggestions.py:117
 msgid ""
-"Not enough logged weight yet — keep logging your weight regularly and check "
+"Not enough logged weight yet - keep logging your weight regularly and check "
 "back in a couple of weeks."
 msgstr ""
-"Inte tillräckligt med loggad vikt än — fortsätt logga din vikt regelbundet "
+"Inte tillräckligt med loggad vikt än - fortsätt logga din vikt regelbundet "
 "och kolla igen om ett par veckor."
 
 #: apps/nutrition/suggestions.py:135
 #, python-format
 msgid ""
-"Target: %(target)s kg/week. Actual trend: %(actual)s kg/week — on track."
+"Target: %(target)s kg/week. Actual trend: %(actual)s kg/week - on track."
 msgstr ""
-"Mål: %(target)s kg/vecka. Faktisk trend: %(actual)s kg/vecka — på rätt spår."
+"Mål: %(target)s kg/vecka. Faktisk trend: %(actual)s kg/vecka - på rätt spår."
 
 #: apps/nutrition/suggestions.py:150
 #, python-format
@@ -2783,16 +2783,16 @@ msgstr ""
 
 #: apps/nutrition/views.py:433
 msgid ""
-"Log a body weight measurement before changing your goal — the calorie target "
+"Log a body weight measurement before changing your goal - the calorie target "
 "needs your current weight."
 msgstr ""
-"Logga en kroppsviktsmätning innan du ändrar ditt mål — kalorimålet behöver "
+"Logga en kroppsviktsmätning innan du ändrar ditt mål - kalorimålet behöver "
 "din nuvarande vikt."
 
 #: apps/nutrition/views.py:470
 #, python-format
-msgid "Goal updated — new target is %(calories)d kcal/day."
-msgstr "Mål uppdaterat — nytt mål är %(calories)d kcal/dag."
+msgid "Goal updated - new target is %(calories)d kcal/day."
+msgstr "Mål uppdaterat - nytt mål är %(calories)d kcal/dag."
 
 #: apps/nutrition/views.py:761
 msgid "Pick a date to copy this day to."
@@ -2806,13 +2806,13 @@ msgstr[0] "Kopierade %(count)d post till %(date)s."
 msgstr[1] "Kopierade %(count)d poster till %(date)s."
 
 #: apps/nutrition/views.py:772
-msgid "Nothing to copy — that day has no entries."
-msgstr "Inget att kopiera — den dagen har inga poster."
+msgid "Nothing to copy - that day has no entries."
+msgstr "Inget att kopiera - den dagen har inga poster."
 
 #: apps/nutrition/views.py:818 apps/nutrition/views.py:1138
 #: apps/nutrition/views.py:1601
-msgid "That food couldn't be imported — try again."
-msgstr "Det gick inte att importera detta livsmedel — försök igen."
+msgid "That food couldn't be imported - try again."
+msgstr "Det gick inte att importera detta livsmedel - försök igen."
 
 #: apps/nutrition/views.py:882
 msgid "Nothing logged for this meal yet to save as a recipe."
@@ -2825,17 +2825,17 @@ msgstr "Sparade ”%(name)s” som ett nytt recept."
 
 #: apps/nutrition/views.py:1028
 #, python-format
-msgid "\"%(name)s\" created — now add its ingredients below."
-msgstr "\"%(name)s\" skapad — lägg till dess ingredienser nedan."
+msgid "\"%(name)s\" created - now add its ingredients below."
+msgstr "\"%(name)s\" skapad - lägg till dess ingredienser nedan."
 
 #: apps/nutrition/views.py:1078 apps/nutrition/views.py:1373
 #: apps/programs/views.py:205
 #, python-format
 msgid ""
-"This file was exported from IronStack %(version)s — worth double-checking the"
+"This file was exported from IronStack %(version)s - worth double-checking the"
 " import if something looks off."
 msgstr ""
-"Den här filen exporterades från IronStack %(version)s — värt att dubbelkolla "
+"Den här filen exporterades från IronStack %(version)s - värt att dubbelkolla "
 "importen om något ser fel ut."
 
 #: apps/nutrition/views.py:1522
@@ -2850,8 +2850,8 @@ msgstr[0] "Loggade %(count)d post till %(date)s."
 msgstr[1] "Loggade %(count)d poster till %(date)s."
 
 #: apps/nutrition/views.py:1651
-msgid "Nothing to log — this plan has no items for that date."
-msgstr "Inget att logga — den här planen har inga poster för det datumet."
+msgid "Nothing to log - this plan has no items for that date."
+msgstr "Inget att logga - den här planen har inga poster för det datumet."
 
 #: apps/programs/forms.py:36
 msgid "Save as a personal template"
@@ -2859,11 +2859,11 @@ msgstr "Spara som personlig mall"
 
 #: apps/programs/forms.py:41
 msgid ""
-"Templates aren't meant to be run directly — copy them into a new program "
+"Templates aren't meant to be run directly - copy them into a new program "
 "(from the program page) whenever you start a new cycle, keeping the original "
 "untouched."
 msgstr ""
-"Mallar är inte avsedda att köras direkt — kopiera dem till ett nytt program "
+"Mallar är inte avsedda att köras direkt - kopiera dem till ett nytt program "
 "(från programsidan) varje gång du börjar en ny cykel, så förblir originalet "
 "orört."
 
@@ -2946,12 +2946,12 @@ msgstr ""
 msgid ""
 "The classic 6-day bodybuilding split popularized by Arnold Schwarzenegger in "
 "the 1970s: chest/back, shoulders/arms, and legs, each trained twice a week. "
-"Rotate through all three workouts, then repeat — not tied to fixed calendar "
+"Rotate through all three workouts, then repeat - not tied to fixed calendar "
 "days."
 msgstr ""
 "Den klassiska 6-dagars bodybuilding-splitten som populariserades av Arnold "
 "Schwarzenegger på 1970-talet: bröst/rygg, axlar/armar och ben, var och en "
-"tränad två gånger i veckan. Rotera genom alla tre passen och upprepa — inte "
+"tränad två gånger i veckan. Rotera genom alla tre passen och upprepa - inte "
 "bunden till fasta veckodagar."
 
 #: apps/programs/i18n_content.py:39
@@ -2977,12 +2977,12 @@ msgstr ""
 #: apps/programs/i18n_content.py:49
 msgid ""
 "A 4-day split alternating upper-body and lower-body sessions twice each per "
-"week — a common middle ground between full-body and single-muscle-group "
+"week - a common middle ground between full-body and single-muscle-group "
 "routines, popular for balancing strength and volume without training every "
 "day."
 msgstr ""
 "En 4-dagars split som alternerar överkropps- och underkroppspass två gånger "
-"vardera per vecka — en vanlig mellanväg mellan helkropps- och enskilda "
+"vardera per vecka - en vanlig mellanväg mellan helkropps- och enskilda "
 "muskelgruppsrutiner, populär för att balansera styrka och volym utan att "
 "träna varje dag."
 
@@ -2990,12 +2990,12 @@ msgstr ""
 msgid ""
 "The classic 10x10 high-volume method: one main lift per workout done for ten "
 "sets of ten reps at a fixed, moderate weight, paired with a lighter accessory"
-" movement. Brutal on paper, simple in practice — built for muscle growth, not"
+" movement. Brutal on paper, simple in practice - built for muscle growth, not"
 " 1-rep-max testing."
 msgstr ""
 "Den klassiska 10x10-högvolymmetoden: en huvudövning per pass utförd i tio set"
 " om tio repetitioner med en fast, måttlig vikt, ihopparad med en lättare "
-"accessorisk övning. Brutal på papper, enkel i praktiken — byggd för "
+"accessorisk övning. Brutal på papper, enkel i praktiken - byggd för "
 "muskeltillväxt, inte 1RM-testning."
 
 #: apps/programs/i18n_content.py:67
@@ -3152,106 +3152,106 @@ msgstr "Övningen borttagen."
 
 #: apps/progression/engine.py:165
 msgid ""
-"No completed history for this exercise yet — starting at the prescribed "
+"No completed history for this exercise yet - starting at the prescribed "
 "target."
 msgstr ""
-"Ingen genomförd historik för denna övning ännu — startar vid det föreskrivna "
+"Ingen genomförd historik för denna övning ännu - startar vid det föreskrivna "
 "målet."
 
 #: apps/progression/engine.py:174
-msgid "Manual progression — you control the next weight and target."
-msgstr "Manuell progression — du styr nästa vikt och mål."
+msgid "Manual progression - you control the next weight and target."
+msgstr "Manuell progression - du styr nästa vikt och mål."
 
 #: apps/progression/engine.py:192
 #, python-format
 msgid ""
-"Missed the target %(streak)s sessions in a row at %(weight)s kg — even "
+"Missed the target %(streak)s sessions in a row at %(weight)s kg - even "
 "maintenance loading should come down, to %(deload)s kg."
 msgstr ""
-"Missade målet %(streak)s pass i rad vid %(weight)s kg — även "
+"Missade målet %(streak)s pass i rad vid %(weight)s kg - även "
 "underhållsbelastningen bör sänkas, till %(deload)s kg."
 
 #: apps/progression/engine.py:202
-msgid "Maintenance — keeping the same load."
-msgstr "Underhåll — behåller samma belastning."
+msgid "Maintenance - keeping the same load."
+msgstr "Underhåll - behåller samma belastning."
 
 #: apps/progression/engine.py:220
 #, python-format
-msgid "Hit every rep last session at %(weight)s kg — adding %(increment)s kg."
+msgid "Hit every rep last session at %(weight)s kg - adding %(increment)s kg."
 msgstr ""
-"Klarade alla repetitioner senaste passet vid %(weight)s kg — lägger till "
+"Klarade alla repetitioner senaste passet vid %(weight)s kg - lägger till "
 "%(increment)s kg."
 
 #: apps/progression/engine.py:232
 #, python-format
 msgid ""
-"Missed target reps %(streak)s sessions in a row at %(weight)s kg — "
+"Missed target reps %(streak)s sessions in a row at %(weight)s kg - "
 "recommending a deload to %(deload)s kg."
 msgstr ""
-"Missade repetitionsmålet %(streak)s pass i rad vid %(weight)s kg — "
+"Missade repetitionsmålet %(streak)s pass i rad vid %(weight)s kg - "
 "rekommenderar avlastning till %(deload)s kg."
 
 #: apps/progression/engine.py:243
 #, python-format
 msgid ""
-"Missed target reps last session at %(weight)s kg — try the same weight again "
+"Missed target reps last session at %(weight)s kg - try the same weight again "
 "before increasing."
 msgstr ""
-"Missade repetitionsmålet senaste passet vid %(weight)s kg — prova samma vikt "
+"Missade repetitionsmålet senaste passet vid %(weight)s kg - prova samma vikt "
 "igen innan du ökar."
 
 #: apps/progression/engine.py:265
 #, python-format
 msgid ""
-"Hit the top of your rep range on every set at %(weight)s kg — adding "
+"Hit the top of your rep range on every set at %(weight)s kg - adding "
 "%(increment)s kg and resetting to the bottom of the range."
 msgstr ""
-"Nådde toppen av repetitionsintervallet i varje set vid %(weight)s kg — lägger"
+"Nådde toppen av repetitionsintervallet i varje set vid %(weight)s kg - lägger"
 " till %(increment)s kg och återställer till intervallets botten."
 
 #: apps/progression/engine.py:277
 #, python-format
 msgid ""
-"Still within your rep range at %(weight)s kg — repeat the same weight and aim"
+"Still within your rep range at %(weight)s kg - repeat the same weight and aim"
 " for more reps next time."
 msgstr ""
-"Fortfarande inom repetitionsintervallet vid %(weight)s kg — upprepa samma "
+"Fortfarande inom repetitionsintervallet vid %(weight)s kg - upprepa samma "
 "vikt och sikta på fler repetitioner nästa gång."
 
 #: apps/progression/engine.py:291 apps/progression/engine.py:357
 #, python-format
 msgid ""
 "Missed the bottom of your rep range %(streak)s sessions in a row at "
-"%(weight)s kg — recommending a deload to %(deload)s kg."
+"%(weight)s kg - recommending a deload to %(deload)s kg."
 msgstr ""
 "Missade botten av repetitionsintervallet %(streak)s pass i rad vid %(weight)s"
-" kg — rekommenderar avlastning till %(deload)s kg."
+" kg - rekommenderar avlastning till %(deload)s kg."
 
 #: apps/progression/engine.py:302 apps/progression/engine.py:368
 #, python-format
 msgid ""
-"Missed the bottom of your rep range last session at %(weight)s kg — try the "
+"Missed the bottom of your rep range last session at %(weight)s kg - try the "
 "same weight again."
 msgstr ""
-"Missade botten av repetitionsintervallet senaste passet vid %(weight)s kg — "
+"Missade botten av repetitionsintervallet senaste passet vid %(weight)s kg - "
 "prova samma vikt igen."
 
 #: apps/progression/engine.py:331
 #, python-format
 msgid ""
 "Hit the top of your rep range for %(streak)s sessions in a row at %(weight)s "
-"kg — adding %(increment)s kg."
+"kg - adding %(increment)s kg."
 msgstr ""
 "Nådde toppen av repetitionsintervallet %(streak)s pass i rad vid %(weight)s "
-"kg — lägger till %(increment)s kg."
+"kg - lägger till %(increment)s kg."
 
 #: apps/progression/engine.py:343
 #, python-format
 msgid ""
-"Within your rep range at %(weight)s kg — keep working toward the top of the "
+"Within your rep range at %(weight)s kg - keep working toward the top of the "
 "range before increasing."
 msgstr ""
-"Inom repetitionsintervallet vid %(weight)s kg — fortsätt jobba mot toppen av "
+"Inom repetitionsintervallet vid %(weight)s kg - fortsätt jobba mot toppen av "
 "intervallet innan du ökar."
 
 #: apps/progression/engine.py:402
@@ -3271,9 +3271,9 @@ msgid "No percentage target configured on this prescription."
 msgstr "Inget procentmål har konfigurerats för denna föreskrift."
 
 #: apps/progression/engine.py:423
-msgid "No 1RM available yet — log a set first, or enter your 1RM manually."
+msgid "No 1RM available yet - log a set first, or enter your 1RM manually."
 msgstr ""
-"Ingen 1RM tillgänglig ännu — logga ett set först, eller ange din 1RM "
+"Ingen 1RM tillgänglig ännu - logga ett set först, eller ange din 1RM "
 "manuellt."
 
 #: apps/progression/engine.py:431
@@ -3283,36 +3283,36 @@ msgstr "%(percentage)s%% av %(one_rm)s kg (%(source)s) = %(suggested)s kg."
 
 #: apps/progression/engine.py:461
 msgid ""
-"No RIR logged against a target yet — log sets with RIR to use this method."
+"No RIR logged against a target yet - log sets with RIR to use this method."
 msgstr ""
-"Ingen RIR loggad mot ett mål ännu — logga set med RIR för att använda denna "
+"Ingen RIR loggad mot ett mål ännu - logga set med RIR för att använda denna "
 "metod."
 
 #: apps/progression/engine.py:473
 #, python-format
 msgid ""
-"Target RIR %(target)s, actual %(actual)g — more in reserve than planned, "
+"Target RIR %(target)s, actual %(actual)g - more in reserve than planned, "
 "adding %(increment)s kg."
 msgstr ""
-"Mål-RIR %(target)s, faktiskt %(actual)g — mer i reserv än planerat, lägger "
+"Mål-RIR %(target)s, faktiskt %(actual)g - mer i reserv än planerat, lägger "
 "till %(increment)s kg."
 
 #: apps/progression/engine.py:486
 #, python-format
 msgid ""
-"Target RIR %(target)s, actual %(actual)g — notably closer to failure than "
+"Target RIR %(target)s, actual %(actual)g - notably closer to failure than "
 "planned, easing back to %(deload)s kg."
 msgstr ""
-"Mål-RIR %(target)s, faktiskt %(actual)g — märkbart närmare utmattning än "
+"Mål-RIR %(target)s, faktiskt %(actual)g - märkbart närmare utmattning än "
 "planerat, lättar till %(deload)s kg."
 
 #: apps/progression/engine.py:496
 #, python-format
 msgid ""
-"Target RIR %(target)s, actual %(actual)g — close enough to plan, hold the "
+"Target RIR %(target)s, actual %(actual)g - close enough to plan, hold the "
 "weight."
 msgstr ""
-"Mål-RIR %(target)s, faktiskt %(actual)g — nära nog planen, behåll vikten."
+"Mål-RIR %(target)s, faktiskt %(actual)g - nära nog planen, behåll vikten."
 
 #: apps/records/models.py:11 templates/records/exercise_records.html:13
 msgid "Max weight"
@@ -3531,9 +3531,9 @@ msgid "Invite link enabled."
 msgstr "Inbjudningslänken aktiverades."
 
 #: apps/social/views_groups.py:171
-msgid "Invite link regenerated — the old link no longer works."
+msgid "Invite link regenerated - the old link no longer works."
 msgstr ""
-"Inbjudningslänken skapades på nytt — den gamla länken fungerar inte längre."
+"Inbjudningslänken skapades på nytt - den gamla länken fungerar inte längre."
 
 #: apps/social/views_groups.py:185
 msgid "Invite sent."
@@ -4232,8 +4232,8 @@ msgid "Routine removed."
 msgstr "Rutinen har tagits bort."
 
 #: apps/stretching/views.py:149
-msgid "Copied — this one is yours to edit."
-msgstr "Kopierad — den här kan du redigera fritt."
+msgid "Copied - this one is yours to edit."
+msgstr "Kopierad - den här kan du redigera fritt."
 
 #: apps/stretching/views.py:166
 msgid "Stretch added."
@@ -4272,8 +4272,8 @@ msgid "Cool-down"
 msgstr "Nedvarvning"
 
 #: apps/stretching/views.py:384
-msgid "Nicely done — stretching session saved."
-msgstr "Snyggt jobbat — stretchingpasset har sparats."
+msgid "Nicely done - stretching session saved."
+msgstr "Snyggt jobbat - stretchingpasset har sparats."
 
 #: apps/stretching/views.py:394
 msgid "Session abandoned."
@@ -4322,8 +4322,8 @@ msgstr "Detta pass pågår inte längre."
 
 #: apps/workouts/views.py:347
 #, python-format
-msgid "New PR — %(exercise)s: %(record_type)s %(value)s"
-msgstr "Nytt PR — %(exercise)s: %(record_type)s %(value)s"
+msgid "New PR - %(exercise)s: %(record_type)s %(value)s"
+msgstr "Nytt PR - %(exercise)s: %(record_type)s %(value)s"
 
 #: templates/403.html:3 templates/403.html:5
 msgid "Not allowed"
@@ -4356,9 +4356,9 @@ msgstr "Något gick fel"
 
 #: templates/500.html:52
 msgid ""
-"Something went wrong on our end. Your data is safe — try again in a moment."
+"Something went wrong on our end. Your data is safe - try again in a moment."
 msgstr ""
-"Något gick fel på vår sida. Din data är säker — försök igen om en stund."
+"Något gick fel på vår sida. Din data är säker - försök igen om en stund."
 
 #: templates/accounts/_data_export_standalone.html:23
 #: templates/accounts/_data_export_standalone.html:68
@@ -4383,10 +4383,10 @@ msgstr "Inte nu"
 
 #: templates/accounts/_onboarding_modal.html:12
 msgid ""
-"A few quick details help IronStack work better for you — every field below is"
+"A few quick details help IronStack work better for you - every field below is"
 " optional, and you can always change them later from your profile."
 msgstr ""
-"Några snabba uppgifter hjälper IronStack att fungera bättre för dig — varje "
+"Några snabba uppgifter hjälper IronStack att fungera bättre för dig - varje "
 "fält nedan är valfritt, och du kan alltid ändra dem senare från din profil."
 
 #: templates/accounts/_onboarding_modal.html:21
@@ -4428,12 +4428,12 @@ msgstr "Stäng"
 
 #: templates/accounts/_privacy_notice_modal.html:30
 msgid ""
-"IronStack is self-hosted, open-source software — the person or organization "
+"IronStack is self-hosted, open-source software - the person or organization "
 "running this particular installation (not the software's authors) is who's "
 "responsible for the data on it, and who you should contact about any of the "
 "below."
 msgstr ""
-"IronStack är självhostad programvara med öppen källkod — den person eller "
+"IronStack är självhostad programvara med öppen källkod - den person eller "
 "organisation som driver just den här installationen (inte programvarans "
 "upphovspersoner) ansvarar för uppgifterna på den, och är den du bör kontakta "
 "angående något av nedanstående."
@@ -4467,12 +4467,12 @@ msgstr "Varför"
 
 #: templates/accounts/_privacy_notice_modal.html:35
 msgid ""
-"Solely to provide the tracking features you're using — nothing here is shared"
+"Solely to provide the tracking features you're using - nothing here is shared"
 " with, sold to, or processed by any third party, except the few optional "
 "integrations you have to explicitly turn on yourself (e.g. an OpenFoodFacts "
 "lookup, a Gravatar picture, Authentik single sign-on)."
 msgstr ""
-"Enbart för att tillhandahålla de spårningsfunktioner du använder — inget av "
+"Enbart för att tillhandahålla de spårningsfunktioner du använder - inget av "
 "detta delas med, säljs till eller behandlas av någon tredje part, förutom de "
 "få valfria integrationer du själv uttryckligen måste aktivera (t.ex. en "
 "OpenFoodFacts-sökning, en Gravatar-bild, Authentik-inloggning)."
@@ -4483,26 +4483,26 @@ msgstr "Dina rättigheter"
 
 #: templates/accounts/_privacy_notice_modal.html:38
 msgid ""
-"Access and rectification — everything you've logged is visible and editable "
+"Access and rectification - everything you've logged is visible and editable "
 "directly in the app."
 msgstr ""
-"Åtkomst och rättelse — allt du har loggat är synligt och redigerbart direkt i"
+"Åtkomst och rättelse - allt du har loggat är synligt och redigerbart direkt i"
 " appen."
 
 #: templates/accounts/_privacy_notice_modal.html:39
 msgid ""
-"Erasure — Profile → \"Delete account\" permanently deletes your account and "
+"Erasure - Profile → \"Delete account\" permanently deletes your account and "
 "everything exclusively tied to it."
 msgstr ""
-"Radering — Profil → \"Radera konto\" raderar permanent ditt konto och allt "
+"Radering - Profil → \"Radera konto\" raderar permanent ditt konto och allt "
 "som uteslutande hör till det."
 
 #: templates/accounts/_privacy_notice_modal.html:40
 msgid ""
-"Portability — the public API (Profile → \"API keys\") can export your own "
+"Portability - the public API (Profile → \"API keys\") can export your own "
 "data in a structured format."
 msgstr ""
-"Portabilitet — det publika API:et (Profil → \"API-nycklar\") kan exportera "
+"Portabilitet - det publika API:et (Profil → \"API-nycklar\") kan exportera "
 "dina egna uppgifter i ett strukturerat format."
 
 #: templates/accounts/_privacy_notice_modal.html:42
@@ -4512,21 +4512,21 @@ msgstr "Lagringstid"
 #: templates/accounts/_privacy_notice_modal.html:43
 msgid ""
 "Kept for as long as your account exists. A backup made before you delete "
-"anything may still contain it until that backup itself is rotated out — see "
+"anything may still contain it until that backup itself is rotated out - see "
 "the account deletion page for details."
 msgstr ""
 "Sparas så länge ditt konto finns. En säkerhetskopia som gjorts innan du "
 "raderar något kan fortfarande innehålla det tills säkerhetskopian själv "
-"roteras bort — se sidan för kontoradering för detaljer."
+"roteras bort - se sidan för kontoradering för detaljer."
 
 #: templates/accounts/_two_factor_backup_codes_fragment.html:4
 msgid ""
 "Each one works once, if you ever lose access to your authenticator app. They "
-"won't be shown again — save them somewhere safe now. Your old backup codes no"
+"won't be shown again - save them somewhere safe now. Your old backup codes no"
 " longer work."
 msgstr ""
 "Varje kod fungerar en gång, om du någonsin förlorar åtkomsten till din "
-"autentiseringsapp. De visas inte igen — spara dem på ett säkert ställe nu. "
+"autentiseringsapp. De visas inte igen - spara dem på ett säkert ställe nu. "
 "Dina gamla reservkoder fungerar inte längre."
 
 #: templates/accounts/account_delete.html:3
@@ -4549,11 +4549,11 @@ msgstr ""
 msgid ""
 "A custom exercise, food, recipe, program, or measurement/activity type you "
 "created is kept, not deleted, if anyone else on this instance is already "
-"using it — it's just no longer credited to your account."
+"using it - it's just no longer credited to your account."
 msgstr ""
 "En anpassad övning, mat, ett recept, program eller mätnings-/aktivitetstyp du"
 " skapat behålls, raderas inte, om någon annan på den här instansen redan "
-"använder den — den krediteras bara inte längre ditt konto."
+"använder den - den krediteras bara inte längre ditt konto."
 
 #: templates/accounts/account_delete.html:12
 msgid ""
@@ -4567,10 +4567,10 @@ msgstr ""
 #: templates/accounts/account_delete.html:21
 msgid ""
 "Your account is linked to Authentik, so there's no local password to confirm "
-"with — type your username instead."
+"with - type your username instead."
 msgstr ""
 "Ditt konto är kopplat till Authentik, så det finns inget lokalt lösenord att "
-"bekräfta med — skriv ditt användarnamn istället."
+"bekräfta med - skriv ditt användarnamn istället."
 
 #: templates/accounts/account_delete.html:24
 msgid "Permanently delete my account"
@@ -4608,11 +4608,11 @@ msgstr "Ladda ner dina uppgifter"
 
 #: templates/accounts/data_export.html:10
 msgid ""
-"Everything below is exclusively yours — the same data shown as tables here "
+"Everything below is exclusively yours - the same data shown as tables here "
 "can be downloaded as a single JSON file, a .zip of spreadsheet-ready CSV "
 "files (one per section), or this very page as a single HTML file."
 msgstr ""
-"Allt nedan tillhör uteslutande dig — samma data som visas som tabeller här "
+"Allt nedan tillhör uteslutande dig - samma data som visas som tabeller här "
 "kan laddas ner som en enda JSON-fil, en .zip med kalkylbladsklara CSV-filer "
 "(en per sektion), eller den här sidan som en enda HTML-fil."
 
@@ -4684,8 +4684,8 @@ msgid "Update the password you use to sign in."
 msgstr "Uppdatera lösenordet du använder för att logga in."
 
 #: templates/accounts/profile.html:82
-msgid "Enabled — protecting your account with a second step at login."
-msgstr "Aktiverad — skyddar ditt konto med ett andra steg vid inloggning."
+msgid "Enabled - protecting your account with a second step at login."
+msgstr "Aktiverad - skyddar ditt konto med ett andra steg vid inloggning."
 
 #: templates/accounts/profile.html:84
 msgid "Add a second step at login, using an authenticator app."
@@ -5080,12 +5080,12 @@ msgstr "Django-administration"
 msgid ""
 "Pick which of these %(counter)s foods to keep. Every diary entry, recipe "
 "ingredient, and diet-plan item currently pointing at one of the others will "
-"be repointed at the one you keep — nothing a user has logged is deleted, only"
+"be repointed at the one you keep - nothing a user has logged is deleted, only"
 " which food row it refers to changes. The other foods are then removed."
 msgstr ""
 "Välj vilket av dessa %(counter)s livsmedel som ska behållas. Varje "
 "dagbokspost, receptingrediens och kostplansobjekt som just nu pekar på något "
-"av de andra kommer att omdirigeras till det du behåller — inget en användare "
+"av de andra kommer att omdirigeras till det du behåller - inget en användare "
 "har loggat tas bort, bara vilken livsmedelsrad det pekar på ändras. De andra "
 "livsmedlen tas sedan bort."
 
@@ -5246,8 +5246,8 @@ msgid "This person is coaching you."
 msgstr "Den här personen coachar dig."
 
 #: templates/analytics/member_profile.html:15
-msgid "Coaching request sent — waiting for a response."
-msgstr "Coachningsförfrågan skickad — väntar på svar."
+msgid "Coaching request sent - waiting for a response."
+msgstr "Coachningsförfrågan skickad - väntar på svar."
 
 #: templates/analytics/member_profile.html:19
 msgid "Request coaching"
@@ -5271,8 +5271,8 @@ msgid "API key created"
 msgstr "API-nyckel skapad"
 
 #: templates/api/key_created.html:10
-msgid "Copy this key now — you won't be able to see it again."
-msgstr "Kopiera den här nyckeln nu — du kan inte se den igen."
+msgid "Copy this key now - you won't be able to see it again."
+msgstr "Kopiera den här nyckeln nu - du kan inte se den igen."
 
 #: templates/api/key_created.html:13
 msgid "Your new API key"
@@ -5284,10 +5284,10 @@ msgstr "Ny API-nyckel"
 
 #: templates/api/key_form.html:14
 msgid ""
-"Choose exactly what this key is allowed to do, per resource — leave "
+"Choose exactly what this key is allowed to do, per resource - leave "
 "everything unchecked for a context to block it entirely."
 msgstr ""
-"Välj exakt vad den här nyckeln får göra, per resurs — lämna allt omarkerat "
+"Välj exakt vad den här nyckeln får göra, per resurs - lämna allt omarkerat "
 "för att blockera en resurs helt."
 
 #: templates/api/key_form.html:19
@@ -5338,21 +5338,21 @@ msgstr "Behörigheter"
 msgid ""
 "Each key is granted Create/Read/Update/Delete separately per area (exercises,"
 " programs, workouts, measurements, activities, nutrition, stretching, "
-"records, analytics, profile) — set this when you create the key, above. A "
+"records, analytics, profile) - set this when you create the key, above. A "
 "request outside what the key is granted gets a 403."
 msgstr ""
 "Varje nyckel beviljas Skapa/Läs/Uppdatera/Radera separat per område "
 "(övningar, program, träningspass, mätningar, aktiviteter, näring, stretching,"
-" rekord, analys, profil) — ställ in detta när du skapar nyckeln ovan. En "
+" rekord, analys, profil) - ställ in detta när du skapar nyckeln ovan. En "
 "förfrågan utanför vad nyckeln beviljats får ett 403-svar."
 
 #: templates/api/key_list.html:35
 msgid ""
-"Always canonical: weight in kilograms, length in meters, energy in kcal — "
+"Always canonical: weight in kilograms, length in meters, energy in kcal - "
 "never converted to your own display-unit preference, so a script can rely on "
 "one meaning regardless of who's asking."
 msgstr ""
-"Alltid kanoniskt: vikt i kilogram, längd i meter, energi i kcal — konverteras"
+"Alltid kanoniskt: vikt i kilogram, längd i meter, energi i kcal - konverteras"
 " aldrig till din egen visningsenhet, så ett skript kan lita på en betydelse "
 "oavsett vem som frågar."
 
@@ -5365,9 +5365,9 @@ msgid "Example: creating something (curl)"
 msgstr "Exempel: skapa något (curl)"
 
 #: templates/api/key_list.html:42
-msgid "A POST with a JSON body — this adds a food to your library:"
+msgid "A POST with a JSON body - this adds a food to your library:"
 msgstr ""
-"En POST med en JSON-body — det här lägger till ett livsmedel i ditt "
+"En POST med en JSON-body - det här lägger till ett livsmedel i ditt "
 "bibliotek:"
 
 #: templates/api/key_list.html:51
@@ -5456,11 +5456,11 @@ msgstr "Inga API-nycklar än."
 
 #: templates/base.html:34
 msgid ""
-"Self-hosted, mobile-first fitness and activity tracker — workout logging, "
+"Self-hosted, mobile-first fitness and activity tracker - workout logging, "
 "progression, nutrition, and body tracking, running entirely on your own "
 "infrastructure."
 msgstr ""
-"Självhostad, mobilanpassad app för träning och aktivitetsspårning — "
+"Självhostad, mobilanpassad app för träning och aktivitetsspårning - "
 "träningsloggning, progression, kost och kroppsspårning, som körs helt på din "
 "egen infrastruktur."
 
@@ -5473,15 +5473,15 @@ msgid "Confirm"
 msgstr "Bekräfta"
 
 #: templates/base.html:106
-msgid "Something went wrong — that change was not saved. Please try again."
-msgstr "Något gick fel — ändringen sparades inte. Försök igen."
+msgid "Something went wrong - that change was not saved. Please try again."
+msgstr "Något gick fel - ändringen sparades inte. Försök igen."
 
 #: templates/base.html:107
 msgid ""
-"Could not reach the server — check your connection. That change was not "
+"Could not reach the server - check your connection. That change was not "
 "saved."
 msgstr ""
-"Det gick inte att nå servern — kontrollera din anslutning. Ändringen sparades"
+"Det gick inte att nå servern - kontrollera din anslutning. Ändringen sparades"
 " inte."
 
 #: templates/base.html:123
@@ -5505,8 +5505,8 @@ msgid "Workout"
 msgstr "Träning"
 
 #: templates/base.html:196
-msgid "Profile — new friend/group activity"
-msgstr "Profil — ny vän-/gruppaktivitet"
+msgid "Profile - new friend/group activity"
+msgstr "Profil - ny vän-/gruppaktivitet"
 
 #: templates/base.html:235
 msgid "Continue training"
@@ -5586,9 +5586,9 @@ msgstr "Avsluta"
 
 #: templates/coaching/client_list.html:45
 msgid ""
-"No clients yet — accept a coaching request above once someone sends you one."
+"No clients yet - accept a coaching request above once someone sends you one."
 msgstr ""
-"Inga klienter än — acceptera en coachningsförfrågan ovan när någon skickar en"
+"Inga klienter än - acceptera en coachningsförfrågan ovan när någon skickar en"
 " till dig."
 
 #: templates/coaching/diet_plan_update_diff.html:3
@@ -5639,10 +5639,10 @@ msgstr "Planer"
 
 #: templates/coaching/my_coaches.html:33
 msgid ""
-"No one is coaching you yet — a personal trainer's own profile page has a "
+"No one is coaching you yet - a personal trainer's own profile page has a "
 "“Request coaching” button."
 msgstr ""
-"Ingen coachar dig än — en personlig tränares egen profilsida har en ”Begär "
+"Ingen coachar dig än - en personlig tränares egen profilsida har en ”Begär "
 "coachning”-knapp."
 
 #: templates/coaching/program_update_diff.html:6
@@ -5723,10 +5723,10 @@ msgstr "Uppladdad"
 #: templates/core/_backup_row.html:15
 msgid ""
 "database.dump/media.tar are encrypted with this instance's "
-"BACKUP_ENCRYPTION_KEY — restoring needs it."
+"BACKUP_ENCRYPTION_KEY - restoring needs it."
 msgstr ""
 "database.dump/media.tar är krypterade med den här instansens "
-"BACKUP_ENCRYPTION_KEY — återställning behöver den."
+"BACKUP_ENCRYPTION_KEY - återställning behöver den."
 
 #: templates/core/_backup_row.html:15
 #: templates/core/backup_restore_confirm.html:29
@@ -5759,10 +5759,10 @@ msgstr "%(title)s per kategori"
 
 #: templates/core/_bmi_card.html:21
 msgid ""
-"Not enough data yet — set your height and log a body weight to see your "
+"Not enough data yet - set your height and log a body weight to see your "
 "current BMI here."
 msgstr ""
-"Inte tillräckligt med data ännu — ange din längd och logga en kroppsvikt för "
+"Inte tillräckligt med data ännu - ange din längd och logga en kroppsvikt för "
 "att se din BMI här."
 
 #: templates/core/_bmi_card.html:25
@@ -5872,8 +5872,8 @@ msgid "Create backup"
 msgstr "Skapa säkerhetskopia"
 
 #: templates/core/backup_list.html:14
-msgid "This can take a minute — please keep this page open."
-msgstr "Detta kan ta en minut — låt sidan vara öppen."
+msgid "This can take a minute - please keep this page open."
+msgstr "Detta kan ta en minut - låt sidan vara öppen."
 
 #: templates/core/backup_list.html:17
 msgid "Automatic backups"
@@ -5952,13 +5952,13 @@ msgstr ""
 #: templates/core/backup_restore_confirm.html:18
 msgid ""
 "This backup is encrypted, but this instance has no BACKUP_ENCRYPTION_KEY "
-"configured (or it doesn't match the key this backup was made with) — "
+"configured (or it doesn't match the key this backup was made with) - "
 "restoring will fail. Set the correct key in .env and restart before trying "
 "again."
 msgstr ""
 "Denna säkerhetskopia är krypterad, men den här instansen har ingen "
 "BACKUP_ENCRYPTION_KEY konfigurerad (eller så matchar den inte nyckeln som "
-"säkerhetskopian gjordes med) — återställningen kommer att misslyckas. Ange "
+"säkerhetskopian gjordes med) - återställningen kommer att misslyckas. Ange "
 "rätt nyckel i .env och starta om innan du försöker igen."
 
 #: templates/core/backup_restore_confirm.html:24
@@ -6054,10 +6054,10 @@ msgstr "Dags att logga dina kroppsmått?"
 
 #: templates/core/dashboard.html:62
 msgid ""
-"It's been a while since you tracked your weight or measurements — tap here to"
+"It's been a while since you tracked your weight or measurements - tap here to"
 " add a new reading."
 msgstr ""
-"Det var ett tag sedan du loggade din vikt eller dina mått — tryck här för att"
+"Det var ett tag sedan du loggade din vikt eller dina mått - tryck här för att"
 " lägga till en ny mätning."
 
 #: templates/core/dashboard.html:74
@@ -6111,10 +6111,10 @@ msgstr "Följ en guidad stretchingrutin eller logga en."
 
 #: templates/core/feedback_form.html:9
 msgid ""
-"Bug reports, ideas, anything that's confusing — only visible to the people "
+"Bug reports, ideas, anything that's confusing - only visible to the people "
 "running this instance."
 msgstr ""
-"Buggrapporter, idéer, allt som känns förvirrande — synligt bara för dem som "
+"Buggrapporter, idéer, allt som känns förvirrande - synligt bara för dem som "
 "driver den här instansen."
 
 #: templates/core/feedback_form.html:17
@@ -6417,8 +6417,8 @@ msgid "Remove this item?"
 msgstr "Ta bort detta objekt?"
 
 #: templates/nutrition/_diet_plan_meal_card.html:30
-msgid "Nothing suggested yet — add some foods or recipes first."
-msgstr "Inga förslag än — lägg till livsmedel eller recept först."
+msgid "Nothing suggested yet - add some foods or recipes first."
+msgstr "Inga förslag än - lägg till livsmedel eller recept först."
 
 #: templates/nutrition/_diet_plan_meal_card.html:32
 msgid "Add item"
@@ -6519,7 +6519,7 @@ msgid "Create a custom food"
 msgstr "Skapa ett eget livsmedel"
 
 #: templates/nutrition/_food_search_results.html:82
-msgid "Online search is busy right now — please try again in a minute."
+msgid "Online search is busy right now - please try again in a minute."
 msgstr "Onlinesökningen är upptagen just nu – försök igen om en minut."
 
 #: templates/nutrition/_food_search_results.html:84
@@ -6606,9 +6606,9 @@ msgid "Nutri-Score %(grade)s"
 msgstr "Nutri-Score %(grade)s"
 
 #: templates/nutrition/_nutri_score_badge.html:6
-msgid "NOVA — food processing level, 1 (unprocessed) to 4 (ultra-processed)"
+msgid "NOVA - food processing level, 1 (unprocessed) to 4 (ultra-processed)"
 msgstr ""
-"NOVA — livsmedlets bearbetningsgrad, 1 (obearbetat) till 4 (ultrabearbetat)"
+"NOVA - livsmedlets bearbetningsgrad, 1 (obearbetat) till 4 (ultrabearbetat)"
 
 #: templates/nutrition/_off_attribution.html:4
 msgid ""
@@ -6670,12 +6670,12 @@ msgstr "BMI-kalkylator"
 
 #: templates/nutrition/calculator_bmi.html:9
 msgid ""
-"Body mass index — a widely used screening number, not a diagnosis. The Body "
+"Body mass index - a widely used screening number, not a diagnosis. The Body "
 "weight page shows this automatically once you've logged a weight and set a "
 "height on your profile; this is the same calculation for a quick one-off "
 "check."
 msgstr ""
-"Body mass index — ett allmänt använt screeningtal, inte en diagnos. Sidan "
+"Body mass index - ett allmänt använt screeningtal, inte en diagnos. Sidan "
 "Kroppsvikt visar detta automatiskt när du har loggat en vikt och angett en "
 "längd i din profil; det här är samma beräkning för en snabb engångskoll."
 
@@ -6745,20 +6745,20 @@ msgstr "Kroppsfettkalkylator"
 
 #: templates/nutrition/calculator_body_fat.html:9
 msgid ""
-"The U.S. Navy tape-measure method — just a tape measure, no calipers or "
+"The U.S. Navy tape-measure method - just a tape measure, no calipers or "
 "bioimpedance scale needed. An estimate, typically within a few percentage "
 "points of a DEXA scan."
 msgstr ""
-"Amerikanska flottans måttbandsmetod — bara ett måttband behövs, inga kalipers"
+"Amerikanska flottans måttbandsmetod - bara ett måttband behövs, inga kalipers"
 " eller bioimpedansvåg. En uppskattning, vanligtvis inom några procentenheter "
 "från en DEXA-mätning."
 
 #: templates/nutrition/calculator_body_fat.html:26
 msgid ""
-"Couldn't estimate this from those measurements — double-check them (waist "
+"Couldn't estimate this from those measurements - double-check them (waist "
 "should be larger than neck)."
 msgstr ""
-"Kunde inte uppskatta detta utifrån dessa mått — kontrollera dem (midjan bör "
+"Kunde inte uppskatta detta utifrån dessa mått - kontrollera dem (midjan bör "
 "vara större än halsen)."
 
 #: templates/nutrition/calculator_macros.html:3
@@ -6791,10 +6791,10 @@ msgstr "Tid till målvikt-kalkylator"
 
 #: templates/nutrition/calculator_time_to_goal.html:9
 msgid ""
-"At a chosen weekly rate, roughly how long to reach a target weight — a plain "
+"At a chosen weekly rate, roughly how long to reach a target weight - a plain "
 "projection from the numbers you enter, not a promise."
 msgstr ""
-"Vid en vald veckotakt, ungefär hur lång tid det tar att nå en målvikt — bara "
+"Vid en vald veckotakt, ungefär hur lång tid det tar att nå en målvikt - bara "
 "en projektion utifrån de siffror du anger, inget löfte."
 
 #: templates/nutrition/calculator_time_to_goal.html:24
@@ -6809,10 +6809,10 @@ msgstr "Ungefär %(date)s, i den här takten."
 
 #: templates/nutrition/calculator_time_to_goal.html:30
 msgid ""
-"That rate doesn't move toward your target — check the sign (negative to lose,"
+"That rate doesn't move toward your target - check the sign (negative to lose,"
 " positive to gain) matches the direction you actually need to go."
 msgstr ""
-"Den takten rör sig inte mot ditt mål — kontrollera att tecknet (negativt för "
+"Den takten rör sig inte mot ditt mål - kontrollera att tecknet (negativt för "
 "att gå ner, positivt för att gå upp) matchar den riktning du faktiskt behöver"
 " gå."
 
@@ -6824,10 +6824,10 @@ msgstr "Midja-höft-kvot-kalkylator"
 
 #: templates/nutrition/calculator_waist_hip_ratio.html:9
 msgid ""
-"Where you carry weight, not just how much — a widely used screening number "
+"Where you carry weight, not just how much - a widely used screening number "
 "(WHO), not a diagnosis."
 msgstr ""
-"Var du bär vikt, inte bara hur mycket — ett allmänt använt screeningtal "
+"Var du bär vikt, inte bara hur mycket - ett allmänt använt screeningtal "
 "(WHO), inte en diagnos."
 
 #: templates/nutrition/calculator_water_intake.html:3
@@ -6838,10 +6838,10 @@ msgstr "Vätskeintagskalkylator"
 
 #: templates/nutrition/calculator_water_intake.html:9
 msgid ""
-"A rough daily fluid target based on bodyweight and activity — real needs vary"
+"A rough daily fluid target based on bodyweight and activity - real needs vary"
 " with climate and sweat rate, so treat this as a starting point."
 msgstr ""
-"Ett ungefärligt dagligt vätskemål baserat på kroppsvikt och aktivitet — det "
+"Ett ungefärligt dagligt vätskemål baserat på kroppsvikt och aktivitet - det "
 "verkliga behovet varierar med klimat och svettningsgrad, så se detta som en "
 "utgångspunkt."
 
@@ -6851,9 +6851,9 @@ msgstr "dag"
 
 #: templates/nutrition/calculators_home.html:9
 msgid ""
-"Quick, standalone estimates — none of these are saved or change your targets."
+"Quick, standalone estimates - none of these are saved or change your targets."
 msgstr ""
-"Snabba, fristående uppskattningar — inget av detta sparas eller ändrar dina "
+"Snabba, fristående uppskattningar - inget av detta sparas eller ändrar dina "
 "mål."
 
 #: templates/nutrition/calculators_home.html:14
@@ -6884,10 +6884,10 @@ msgstr ""
 
 #: templates/nutrition/calculators_home.html:54
 msgid ""
-"Where you carry weight, not just how much — a tape measure and one more "
+"Where you carry weight, not just how much - a tape measure and one more "
 "number."
 msgstr ""
-"Var du bär vikt, inte bara hur mycket — ett måttband och en siffra till."
+"Var du bär vikt, inte bara hur mycket - ett måttband och en siffra till."
 
 #: templates/nutrition/calculators_home.html:62
 msgid "At a chosen weekly rate, roughly how long to reach a target weight."
@@ -6903,10 +6903,10 @@ msgstr "Tillbaka till näring"
 
 #: templates/nutrition/dashboard.html:9
 msgid ""
-"Based on whether you completed a workout today — this doesn't change your "
+"Based on whether you completed a workout today - this doesn't change your "
 "calorie target automatically."
 msgstr ""
-"Baseras på om du har tränat idag — det här ändrar inte ditt kalorimål "
+"Baseras på om du har tränat idag - det här ändrar inte ditt kalorimål "
 "automatiskt."
 
 #: templates/nutrition/dashboard.html:11
@@ -7116,10 +7116,10 @@ msgstr "fett"
 
 #: templates/nutrition/diet_plan_detail.html:34
 msgid ""
-"Varies across the week — same daily calories/macros every day, different "
+"Varies across the week - same daily calories/macros every day, different "
 "meals."
 msgstr ""
-"Varierar under veckan — samma dagliga kalorier/makron varje dag, olika "
+"Varierar under veckan - samma dagliga kalorier/makron varje dag, olika "
 "måltider."
 
 #: templates/nutrition/diet_plan_detail.html:80
@@ -7161,11 +7161,11 @@ msgstr "Bygg en kostplan"
 #: templates/nutrition/diet_plan_form.html:9
 msgid ""
 "We'll suggest one food or recipe per meal from your own library, scaled to "
-"fit — you can swap any of them afterward. Or start from scratch below to skip"
+"fit - you can swap any of them afterward. Or start from scratch below to skip"
 " the suggestions and build it entirely yourself."
 msgstr ""
 "Vi föreslår en livsmedel eller ett recept per måltid från ditt eget "
-"bibliotek, skalat för att passa — du kan byta ut vilket som helst av dem "
+"bibliotek, skalat för att passa - du kan byta ut vilket som helst av dem "
 "efteråt. Eller börja om från början nedan för att hoppa över förslagen och "
 "bygga det helt själv."
 
@@ -7180,13 +7180,13 @@ msgstr "Importera kostplan"
 
 #: templates/nutrition/diet_plan_import.html:12
 msgid ""
-"Upload a diet plan someone exported — from this instance, or a completely "
+"Upload a diet plan someone exported - from this instance, or a completely "
 "different IronStack instance. Foods and recipes it uses are matched against "
 "your own existing ones where possible, rather than duplicated; anything "
 "missing is recreated for you. Imported inactive, so it never replaces "
 "whatever plan you're currently following."
 msgstr ""
-"Ladda upp en kostplan som någon exporterat — från den här instansen, eller en"
+"Ladda upp en kostplan som någon exporterat - från den här instansen, eller en"
 " helt annan IronStack-instans. Livsmedel och recept den använder matchas mot "
 "dina egna befintliga där det går, i stället för att dubbleras; allt som "
 "saknas återskapas åt dig. Importeras inaktiv, så den ersätter aldrig den plan"
@@ -7240,19 +7240,19 @@ msgstr "Importera från OpenFoodFacts"
 
 #: templates/nutrition/food_browse.html:10
 msgid ""
-"Search or browse by category to add a food to the shared library — anyone on "
+"Search or browse by category to add a food to the shared library - anyone on "
 "this instance can then find and log it."
 msgstr ""
 "Sök eller bläddra efter kategori för att lägga till ett livsmedel i det "
-"delade biblioteket — vem som helst på denna instans kan sedan hitta och logga"
+"delade biblioteket - vem som helst på denna instans kan sedan hitta och logga"
 " det."
 
 #: templates/nutrition/food_browse.html:20
 msgid ""
-"Search to add a food to the shared library — anyone on this instance can then"
+"Search to add a food to the shared library - anyone on this instance can then"
 " find and log it. Category browsing isn't available right now."
 msgstr ""
-"Sök för att lägga till ett livsmedel i det delade biblioteket — vem som helst"
+"Sök för att lägga till ett livsmedel i det delade biblioteket - vem som helst"
 " på den här instansen kan sedan hitta och logga det. Kategorisökning är inte "
 "tillgänglig just nu."
 
@@ -7409,9 +7409,9 @@ msgstr "Fallande"
 #: templates/nutrition/goal_edit.html:11
 msgid ""
 "Changing your goal recalculates your daily calorie and macro target right "
-"away — your old target stays in your history, it isn't overwritten."
+"away - your old target stays in your history, it isn't overwritten."
 msgstr ""
-"Att ändra ditt mål räknar genast om ditt dagliga kalori- och makromål — ditt "
+"Att ändra ditt mål räknar genast om ditt dagliga kalori- och makromål - ditt "
 "gamla mål finns kvar i din historik, det skrivs inte över."
 
 #: templates/nutrition/goal_edit.html:28
@@ -7432,11 +7432,11 @@ msgstr "Hur aktiv är du?"
 
 #: templates/nutrition/onboarding_activity.html:9
 msgid ""
-"Everything here is optional — the more you tell us, the better the estimate. "
+"Everything here is optional - the more you tell us, the better the estimate. "
 "We'll suggest an activity level from your answers, not ask you to guess it "
 "yourself."
 msgstr ""
-"Allt här är valfritt — ju mer du berättar, desto bättre uppskattning. Vi "
+"Allt här är valfritt - ju mer du berättar, desto bättre uppskattning. Vi "
 "föreslår en aktivitetsnivå utifrån dina svar, istället för att be dig gissa "
 "den själv."
 
@@ -7451,8 +7451,8 @@ msgid "Confirm your activity level"
 msgstr "Bekräfta din aktivitetsnivå"
 
 #: templates/nutrition/onboarding_activity_level.html:20
-msgid "This is only a suggestion — change it if you know it's wrong."
-msgstr "Detta är bara ett förslag — ändra det om du vet att det är fel."
+msgid "This is only a suggestion - change it if you know it's wrong."
+msgstr "Detta är bara ett förslag - ändra det om du vet att det är fel."
 
 #: templates/nutrition/onboarding_body.html:6
 msgid "Let's set up your nutrition"
@@ -7460,10 +7460,10 @@ msgstr "Låt oss ställa in din näring"
 
 #: templates/nutrition/onboarding_body.html:9
 msgid ""
-"A few questions about your body — used to estimate how many calories you "
+"A few questions about your body - used to estimate how many calories you "
 "need."
 msgstr ""
-"Några frågor om din kropp — används för att uppskatta hur många kalorier du "
+"Några frågor om din kropp - används för att uppskatta hur många kalorier du "
 "behöver."
 
 #: templates/nutrition/onboarding_body.html:21
@@ -7488,10 +7488,10 @@ msgstr "Dina uppskattade mål"
 
 #: templates/nutrition/onboarding_review.html:24
 msgid ""
-"These are estimates, not exact figures — you'll be able to see how well "
+"These are estimates, not exact figures - you'll be able to see how well "
 "they're actually working once you've logged some data, and adjust anytime."
 msgstr ""
-"Dessa är uppskattningar, inte exakta siffror — du kommer att kunna se hur väl"
+"Dessa är uppskattningar, inte exakta siffror - du kommer att kunna se hur väl"
 " de faktiskt fungerar när du har loggat lite data, och justera när som helst."
 
 #: templates/nutrition/onboarding_review.html:28
@@ -7506,10 +7506,10 @@ msgstr "Mall"
 #: templates/nutrition/recipe_detail.html:22
 #, python-format
 msgid ""
-"Tagged for %(meal)s — the diet-plan builder only ever suggests this recipe "
+"Tagged for %(meal)s - the diet-plan builder only ever suggests this recipe "
 "for that meal."
 msgstr ""
-"Märkt för %(meal)s — kostplansbyggaren föreslår det här receptet bara för den"
+"Märkt för %(meal)s - kostplansbyggaren föreslår det här receptet bara för den"
 " måltiden."
 
 #: templates/nutrition/recipe_detail.html:42
@@ -7575,12 +7575,12 @@ msgstr "Importera recept"
 
 #: templates/nutrition/recipe_import.html:12
 msgid ""
-"Upload a recipe someone exported — from this instance, or a completely "
+"Upload a recipe someone exported - from this instance, or a completely "
 "different IronStack instance. A food originally imported from OpenFoodFacts "
 "is looked up again by its own barcode; anything else is recreated as your own"
 " food."
 msgstr ""
-"Ladda upp ett recept som någon exporterat — från den här instansen, eller en "
+"Ladda upp ett recept som någon exporterat - från den här instansen, eller en "
 "helt annan IronStack-instans. Ett livsmedel som ursprungligen importerades "
 "från OpenFoodFacts slås upp igen med sin egen streckkod; allt annat "
 "återskapas som ditt eget livsmedel."
@@ -7665,10 +7665,10 @@ msgstr "Genomsnittligt fett"
 
 #: templates/nutrition/stats.html:33
 msgid ""
-"Averages only count days you actually logged something — a day with nothing "
+"Averages only count days you actually logged something - a day with nothing "
 "logged isn't counted as zero calories."
 msgstr ""
-"Genomsnitten räknas bara för dagar du faktiskt loggade något — en dag utan "
+"Genomsnitten räknas bara för dagar du faktiskt loggade något - en dag utan "
 "loggning räknas inte som noll kalorier."
 
 #: templates/nutrition/stats.html:36
@@ -7780,12 +7780,12 @@ msgstr "Importera program"
 
 #: templates/programs/program_import.html:11
 msgid ""
-"Upload a program someone exported — from this instance, or a completely "
+"Upload a program someone exported - from this instance, or a completely "
 "different IronStack instance. Any custom exercises it uses are recreated for "
 "you; a name matching one of this instance's own system exercises is reused "
 "as-is."
 msgstr ""
-"Ladda upp ett program som någon exporterat — från den här instansen, eller en"
+"Ladda upp ett program som någon exporterat - från den här instansen, eller en"
 " helt annan IronStack-instans. Egna övningar det använder återskapas åt dig; "
 "ett namn som matchar en av den här instansens egna systemövningar återanvänds"
 " som det är."
@@ -8026,8 +8026,8 @@ msgstr "Inga användare hittades."
 
 #: templates/social/_group_thread_fragment.html:8
 #: templates/social/_message_thread_fragment.html:8
-msgid "No messages yet — say hello."
-msgstr "Inga meddelanden ännu — säg hej."
+msgid "No messages yet - say hello."
+msgstr "Inga meddelanden ännu - säg hej."
 
 #: templates/social/block_list.html:3 templates/social/block_list.html:6
 #: templates/social/friend_list.html:74 templates/social/message_list.html:29
@@ -8075,10 +8075,10 @@ msgstr "Ta bort den här vännen?"
 
 #: templates/social/friend_list.html:68
 msgid ""
-"No friends yet — find someone you train with to share progress and message "
+"No friends yet - find someone you train with to share progress and message "
 "them here."
 msgstr ""
-"Inga vänner än — hitta någon du tränar med för att dela framsteg och skicka "
+"Inga vänner än - hitta någon du tränar med för att dela framsteg och skicka "
 "meddelanden här."
 
 #: templates/social/friend_list.html:75 templates/social/group_list.html:51
@@ -8115,9 +8115,9 @@ msgid "Regenerate the invite link? The old link will stop working."
 msgstr "Skapa en ny inbjudningslänk? Den gamla länken slutar fungera."
 
 #: templates/social/group_detail.html:44
-msgid "Anyone with this link can join — off until you turn it on."
+msgid "Anyone with this link can join - off until you turn it on."
 msgstr ""
-"Vem som helst med den här länken kan gå med — av tills du aktiverar den."
+"Vem som helst med den här länken kan gå med - av tills du aktiverar den."
 
 #: templates/social/group_detail.html:47
 msgid "Enable link"
@@ -8580,8 +8580,8 @@ msgid "Next up:"
 msgstr "Härnäst:"
 
 #: templates/stretching/session_play.html:67
-msgid "All stretches done — nice work."
-msgstr "Alla övningar klara — bra jobbat."
+msgid "All stretches done - nice work."
+msgstr "Alla övningar klara - bra jobbat."
 
 #: templates/stretching/session_play.html:89
 msgid "Skip"
@@ -8704,8 +8704,8 @@ msgstr "Redigera den här serien"
 
 #: templates/workouts/_train_panel.html:68
 msgid ""
-"This exercise is done — logging another set is still fine if you want one."
-msgstr "Den här övningen är klar — du kan ändå logga ett extra set om du vill."
+"This exercise is done - logging another set is still fine if you want one."
+msgstr "Den här övningen är klar - du kan ändå logga ett extra set om du vill."
 
 #: templates/workouts/_train_panel.html:85
 msgid "Fewer options"
@@ -8873,8 +8873,8 @@ msgctxt "nutrient"
 msgid "Salt"
 msgstr "Salt"
 
-msgid "Optional — e.g. the restaurant dish."
-msgstr "Valfritt — t.ex. restaurangrätten."
+msgid "Optional - e.g. the restaurant dish."
+msgstr "Valfritt - t.ex. restaurangrätten."
 
 msgid "kcal. Leave blank to estimate it from the macros."
 msgstr "kcal. Lämna tomt för att uppskatta det från makronäringsämnena."
@@ -8885,8 +8885,8 @@ msgstr "Ange kalorierna eller minst ett makronäringsämne."
 msgid "Quick entry"
 msgstr "Snabbregistrering"
 
-msgid "Log either a food, a recipe or quick macros — exactly one of them."
-msgstr "Registrera antingen ett livsmedel, ett recept eller snabba makron — exakt ett av dem."
+msgid "Log either a food, a recipe or quick macros - exactly one of them."
+msgstr "Registrera antingen ett livsmedel, ett recept eller snabba makron - exakt ett av dem."
 
 msgctxt "nutrient"
 msgid "of which monounsaturates"
@@ -9071,8 +9071,8 @@ msgstr "Median för kolhydrater"
 msgid "Median fat"
 msgstr "Median för fett"
 
-msgid "Medians of the days you actually logged something — a day with nothing logged isn't counted as zero calories, and one barely-logged day doesn't drag the figure down the way it would an average."
-msgstr "Medianer av de dagar du faktiskt loggat något — en dag utan loggning räknas inte som noll kalorier, och en knappt loggad dag drar inte ner värdet så som den skulle dra ner ett medelvärde."
+msgid "Medians of the days you actually logged something - a day with nothing logged isn't counted as zero calories, and one barely-logged day doesn't drag the figure down the way it would an average."
+msgstr "Medianer av de dagar du faktiskt loggat något - en dag utan loggning räknas inte som noll kalorier, och en knappt loggad dag drar inte ner värdet så som den skulle dra ner ett medelvärde."
 
 msgid "Median per day"
 msgstr "Median per dag"
@@ -9108,8 +9108,8 @@ msgstr "Kropp och aktiviteter"
 msgid "Friends and groups"
 msgstr "Vänner och grupper"
 
-msgid "A quick look around. Every section has a short tour like this the first time you open it — skip any of them, or turn them all off."
-msgstr "En snabb rundtur. Varje del har en kort guide som den här första gången du öppnar den — hoppa över vilken som helst, eller stäng av alla."
+msgid "A quick look around. Every section has a short tour like this the first time you open it - skip any of them, or turn them all off."
+msgstr "En snabb rundtur. Varje del har en kort guide som den här första gången du öppnar den - hoppa över vilken som helst, eller stäng av alla."
 
 msgid "Navigation"
 msgstr "Navigering"
@@ -9141,8 +9141,8 @@ msgstr "Varje dags träning och kost i en överblick. Tryck på en dag för deta
 msgid "Your profile"
 msgstr "Din profil"
 
-msgid "Preferences, friends, your data — and Tutorials, where you can replay any of these tours."
-msgstr "Inställningar, vänner, dina data — och Guider, där du kan spela upp vilken som helst av dessa rundturer igen."
+msgid "Preferences, friends, your data - and Tutorials, where you can replay any of these tours."
+msgstr "Inställningar, vänner, dina data - och Guider, där du kan spela upp vilken som helst av dessa rundturer igen."
 
 msgid "Your workouts"
 msgstr "Dina träningspass"
@@ -9174,8 +9174,8 @@ msgstr "De set du har loggat visas här, och du kan redigera eller ta bort vilke
 msgid "Suggested weight"
 msgstr "Föreslagen vikt"
 
-msgid "Based on your last sessions, with the reason and how confident it is. It's only a starting point — you decide what goes on the bar."
-msgstr "Baserad på dina senaste pass, med motivering och hur säker den är. Det är bara en utgångspunkt — du bestämmer vad som läggs på stången."
+msgid "Based on your last sessions, with the reason and how confident it is. It's only a starting point - you decide what goes on the bar."
+msgstr "Baserad på dina senaste pass, med motivering och hur säker den är. Det är bara en utgångspunkt - du bestämmer vad som läggs på stången."
 
 msgid "Log a set"
 msgstr "Logga ett set"
@@ -9186,14 +9186,14 @@ msgstr "Ange vikt och reps och tryck på Logga set. RPE, RIR, uppvärmning och f
 msgid "Add an exercise"
 msgstr "Lägg till en övning"
 
-msgid "Add anything that isn't in the plan — it only changes this workout."
-msgstr "Lägg till sådant som inte finns i planen — det ändrar bara det här passet."
+msgid "Add anything that isn't in the plan - it only changes this workout."
+msgstr "Lägg till sådant som inte finns i planen - det ändrar bara det här passet."
 
 msgid "Training mode"
 msgstr "Träningsläge"
 
-msgid "One exercise at a time with big buttons and a rest timer — the easiest way to log at the gym. This button follows you on every page."
-msgstr "En övning i taget med stora knappar och vilotimer — det enklaste sättet att logga på gymmet. Den här knappen följer med dig på varje sida."
+msgid "One exercise at a time with big buttons and a rest timer - the easiest way to log at the gym. This button follows you on every page."
+msgstr "En övning i taget med stora knappar och vilotimer - det enklaste sättet att logga på gymmet. Den här knappen följer med dig på varje sida."
 
 msgid "Finish"
 msgstr "Avsluta"
@@ -9201,8 +9201,8 @@ msgstr "Avsluta"
 msgid "Complete the workout when you're done. Abandon keeps it in your history as unfinished."
 msgstr "Slutför passet när du är klar. Avbryt behåller det i historiken som ofullständigt."
 
-msgid "The dots show your progress. The arrows move between exercises in any order — the next unfinished one opens by default."
-msgstr "Prickarna visar hur långt du har kommit. Pilarna flyttar mellan övningar i valfri ordning — nästa ofärdiga öppnas som standard."
+msgid "The dots show your progress. The arrows move between exercises in any order - the next unfinished one opens by default."
+msgstr "Prickarna visar hur långt du har kommit. Pilarna flyttar mellan övningar i valfri ordning - nästa ofärdiga öppnas som standard."
 
 msgid "Current exercise"
 msgstr "Aktuell övning"
@@ -9222,8 +9222,8 @@ msgstr "Vikt och reps, sedan Logga set. ”Fler alternativ” har RPE, RIR, uppv
 msgid "Starts by itself after each set and chimes when rest is over. Adjust it by 15 seconds, skip it, or mute the sound."
 msgstr "Startar av sig själv efter varje set och plingar när vilan är slut. Justera den med 15 sekunder, hoppa över den eller stäng av ljudet."
 
-msgid "Every exercise at once — for reviewing or correcting the whole workout."
-msgstr "Alla övningar på en gång — för att granska eller rätta hela passet."
+msgid "Every exercise at once - for reviewing or correcting the whole workout."
+msgstr "Alla övningar på en gång - för att granska eller rätta hela passet."
 
 msgid "Create or import"
 msgstr "Skapa eller importera"
@@ -9291,8 +9291,8 @@ msgstr "Sök på namn, eller filtrera på muskelgrupp och utrustning."
 msgid "Your own exercises"
 msgstr "Dina egna övningar"
 
-msgid "Missing something? Add it — only you will see it."
-msgstr "Saknas något? Lägg till det — bara du ser det."
+msgid "Missing something? Add it - only you will see it."
+msgstr "Saknas något? Lägg till det - bara du ser det."
 
 msgid "An exercise"
 msgstr "En övning"
@@ -9330,8 +9330,8 @@ msgstr "Hur mycket du lyfte varje vecka. Tabellen under diagrammet har exakta si
 msgid "Muscle groups"
 msgstr "Muskelgrupper"
 
-msgid "Which muscles got the most work — handy for spotting imbalances."
-msgstr "Vilka muskler som fick mest arbete — praktiskt för att upptäcka obalanser."
+msgid "Which muscles got the most work - handy for spotting imbalances."
+msgstr "Vilka muskler som fick mest arbete - praktiskt för att upptäcka obalanser."
 
 msgid "Progress for an exercise"
 msgstr "Framsteg för en övning"
@@ -9372,8 +9372,8 @@ msgstr "Ditt nuvarande värde och hur det har förändrats sedan du började."
 msgid "Log a reading"
 msgstr "Logga ett värde"
 
-msgid "Enter today's value — or an earlier date to catch up."
-msgstr "Ange dagens värde — eller ett tidigare datum för att komma ikapp."
+msgid "Enter today's value - or an earlier date to catch up."
+msgstr "Ange dagens värde - eller ett tidigare datum för att komma ikapp."
 
 msgid "Every reading, newest first, with edit and delete."
 msgstr "Alla värden, nyast först, med redigering och borttagning."
@@ -9426,8 +9426,8 @@ msgstr "Kalorier och makron, beräknade från din profil och ditt mål."
 msgid "Your goal"
 msgstr "Ditt mål"
 
-msgid "Lose, keep or gain — and how fast. Change it at any time."
-msgstr "Gå ner, behålla eller gå upp — och hur snabbt. Ändra det när som helst."
+msgid "Lose, keep or gain - and how fast. Change it at any time."
+msgstr "Gå ner, behålla eller gå upp - och hur snabbt. Ändra det när som helst."
 
 msgid "Pick a day"
 msgstr "Välj en dag"
@@ -9498,8 +9498,8 @@ msgstr "Ett livsmedel"
 msgid "Nutrition facts"
 msgstr "Näringsvärden"
 
-msgid "Laid out like a package label: energy, fat, carbohydrate, fibre, protein and salt — then any vitamins and minerals that are known."
-msgstr "Uppställt som på en förpackning: energi, fett, kolhydrat, fiber, protein och salt — sedan de vitaminer och mineraler som är kända."
+msgid "Laid out like a package label: energy, fat, carbohydrate, fibre, protein and salt - then any vitamins and minerals that are known."
+msgstr "Uppställt som på en förpackning: energi, fett, kolhydrat, fiber, protein och salt - sedan de vitaminer och mineraler som är kända."
 
 msgid "Combine foods into a recipe once, then log a serving in one tap."
 msgstr "Kombinera livsmedel till ett recept en gång och logga sedan en portion med ett tryck."
@@ -9540,8 +9540,8 @@ msgstr "Logga planen"
 msgid "Copy a day of the plan into your diary as if you'd eaten it."
 msgstr "Kopiera en dag från planen till din dagbok som om du hade ätit den."
 
-msgid "Energy use, macros, body fat, water, BMI and more. They only calculate — nothing is saved or changed."
-msgstr "Energiförbrukning, makron, kroppsfett, vatten, BMI och mer. De räknar bara — inget sparas eller ändras."
+msgid "Energy use, macros, body fat, water, BMI and more. They only calculate - nothing is saved or changed."
+msgstr "Energiförbrukning, makron, kroppsfett, vatten, BMI och mer. De räknar bara - inget sparas eller ändras."
 
 msgid "Median daily calories and macros. Days with nothing logged don't count, and one barely-logged day doesn't drag the figure down."
 msgstr "Median för dagliga kalorier och makron. Dagar utan loggning räknas inte, och en knappt loggad dag drar inte ner värdet."
@@ -9588,8 +9588,8 @@ msgstr "Varje stretchövning med hålltid, set och sidor."
 msgid "Opens the guided player."
 msgstr "Öppnar den guidade spelaren."
 
-msgid "Add stretches and reorder them — in your own routines."
-msgstr "Lägg till stretchövningar och ändra ordningen — i dina egna rutiner."
+msgid "Add stretches and reorder them - in your own routines."
+msgstr "Lägg till stretchövningar och ändra ordningen - i dina egna rutiner."
 
 msgid "The timer"
 msgstr "Timern"
@@ -9624,8 +9624,8 @@ msgstr "Enheter, språk, tidszon, tema och vilka delar du använder."
 msgid "Messages, friends and groups."
 msgstr "Meddelanden, vänner och grupper."
 
-msgid "Everything you've logged is yours — browse it or download it."
-msgstr "Allt du har loggat är ditt — bläddra i det eller ladda ner det."
+msgid "Everything you've logged is yours - browse it or download it."
+msgstr "Allt du har loggat är ditt - bläddra i det eller ladda ner det."
 
 msgid "Tutorials"
 msgstr "Guider"
@@ -9692,8 +9692,8 @@ msgstr "Tillbaka"
 msgid "Search your clients…"
 msgstr "Sök bland dina klienter…"
 
-msgid "Not shared with anyone — only you can see it."
-msgstr "Inte delad med någon — bara du kan se den."
+msgid "Not shared with anyone - only you can see it."
+msgstr "Inte delad med någon - bara du kan se den."
 
 msgid "No matching clients."
 msgstr "Inga matchande klienter."
@@ -9707,8 +9707,8 @@ msgstr "Sök efter en klient och lägg till hen i listan: alla på listan kan se
 msgid "Meals (optional)"
 msgstr "Måltider (valfritt)"
 
-msgid "Tick every meal this recipe suits, e.g. both Lunch and Dinner. The diet-plan builder only suggests it for those meals — leave all unticked for a recipe that fits any meal."
-msgstr "Kryssa i alla måltider receptet passar till, t.ex. både lunch och middag. Kostplansbyggaren föreslår det bara för de måltiderna — lämna alla tomma för ett recept som passar till vilken måltid som helst."
+msgid "Tick every meal this recipe suits, e.g. both Lunch and Dinner. The diet-plan builder only suggests it for those meals - leave all unticked for a recipe that fits any meal."
+msgstr "Kryssa i alla måltider receptet passar till, t.ex. både lunch och middag. Kostplansbyggaren föreslår det bara för de måltiderna - lämna alla tomma för ett recept som passar till vilken måltid som helst."
 
 msgid "The diet-plan builder only suggests this recipe for this meal."
 msgid_plural "The diet-plan builder only suggests this recipe for these meals."
@@ -9727,8 +9727,8 @@ msgstr "Varje inköpsdags lista täcker dagarna fram till nästa. Välj ingen f�
 msgid "A shopping day's own meals go on that day's list"
 msgstr "En inköpsdags egna måltider hamnar på den dagens lista"
 
-msgid "On: you shop before that day's meals. Off: they're on the previous list — you shop after that day is covered."
-msgstr "På: du handlar före dagens måltider. Av: de står på föregående lista — du handlar när dagen redan är täckt."
+msgid "On: you shop before that day's meals. Off: they're on the previous list - you shop after that day is covered."
+msgstr "På: du handlar före dagens måltider. Av: de står på föregående lista - du handlar när dagen redan är täckt."
 
 msgid "Shopping days saved."
 msgstr "Inköpsdagarna sparades."
@@ -9751,8 +9751,8 @@ msgstr "Allt planens måltider behöver, recept inräknade. Samma livsmedel fler
 msgid "Pick the days you go shopping, and whether a shopping day's own meals go on that day's list. Set separately for each plan."
 msgstr "Välj dagarna du handlar, och om en inköpsdags egna måltider hamnar på den dagens lista. Ställs in för varje plan för sig."
 
-msgid "One list for the whole week — pick shopping days below to split it into trips."
-msgstr "En lista för hela veckan — välj inköpsdagar nedan för att dela upp den i turer."
+msgid "One list for the whole week - pick shopping days below to split it into trips."
+msgstr "En lista för hela veckan - välj inköpsdagar nedan för att dela upp den i turer."
 
 #, python-format
 msgid "For: %(days)s"
@@ -9761,8 +9761,8 @@ msgstr "För: %(days)s"
 msgid "Clear ticks"
 msgstr "Rensa bockar"
 
-msgid "Nothing to buy — this plan has no meals on these days yet."
-msgstr "Inget att köpa — planen har inga måltider dessa dagar än."
+msgid "Nothing to buy - this plan has no meals on these days yet."
+msgstr "Inget att köpa - planen har inga måltider dessa dagar än."
 
 msgid "Shopping day"
 msgstr "Inköpsdag"
@@ -9837,8 +9837,8 @@ msgstr "Vem som får använda den här instansens AI-modell"
 msgid "Daily token limit per user"
 msgstr "Daglig tokengräns per användare"
 
-msgid "Nobody — users must bring their own key"
-msgstr "Ingen — användarna måste ha en egen nyckel"
+msgid "Nobody - users must bring their own key"
+msgstr "Ingen - användarna måste ha en egen nyckel"
 
 msgid "Staff only"
 msgstr "Endast personal"
@@ -10068,8 +10068,8 @@ msgstr "Dina meddelanden, och de tränings- och kostdata som assistenten slår u
 msgid "It only reads your own data, and only while it's answering you. It can't change anything: plans it suggests are created only if you choose to."
 msgstr "Den läser bara dina egna data, och bara medan den svarar dig. Den kan inte ändra något: planer den föreslår skapas bara om du väljer det."
 
-msgid "Replies can be wrong. It isn't a doctor or a dietitian — check anything important with a professional."
-msgstr "Svaren kan vara fel. Den är varken läkare eller dietist — kontrollera allt viktigt med en fackperson."
+msgid "Replies can be wrong. It isn't a doctor or a dietitian - check anything important with a professional."
+msgstr "Svaren kan vara fel. Den är varken läkare eller dietist - kontrollera allt viktigt med en fackperson."
 
 msgid "You can turn it off, and delete your conversations, at any time."
 msgstr "Du kan stänga av den, och radera dina konversationer, när som helst."
@@ -10077,8 +10077,8 @@ msgstr "Du kan stänga av den, och radera dina konversationer, när som helst."
 msgid "Waiting…"
 msgstr "Väntar…"
 
-msgid "This is taking unusually long to start. If it never does, the assistant worker may not be running — let your administrator know."
-msgstr "Det tar ovanligt lång tid att komma igång. Om det aldrig gör det kanske assistentens bakgrundsprocess inte körs — meddela din administratör."
+msgid "This is taking unusually long to start. If it never does, the assistant worker may not be running - let your administrator know."
+msgstr "Det tar ovanligt lång tid att komma igång. Om det aldrig gör det kanske assistentens bakgrundsprocess inte körs - meddela din administratör."
 
 msgid "Target %(calories)s kcal · protein %(protein)s g · carbs %(carbs)s g · fat %(fat)s g"
 msgstr "Mål %(calories)s kcal · protein %(protein)s g · kolhydrater %(carbs)s g · fett %(fat)s g"
@@ -10095,8 +10095,8 @@ msgstr "%(servings)s portioner"
 msgid "new food"
 msgstr "nytt livsmedel"
 
-msgid "Foods marked “new food” are added to your food library with nutrition values the assistant estimated — check them."
-msgstr "Livsmedel märkta ”nytt livsmedel” läggs till i ditt livsmedelsbibliotek med näringsvärden som assistenten uppskattat — kontrollera dem."
+msgid "Foods marked “new food” are added to your food library with nutrition values the assistant estimated - check them."
+msgstr "Livsmedel märkta ”nytt livsmedel” läggs till i ditt livsmedelsbibliotek med näringsvärden som assistenten uppskattat - kontrollera dem."
 
 msgid "Show workouts"
 msgstr "Visa träningspass"
@@ -10158,8 +10158,8 @@ msgstr "Ingen har använt assistenten än."
 msgid "Back to AI assistant"
 msgstr "Tillbaka till AI-assistenten"
 
-msgid "Replies can be wrong — check anything important."
-msgstr "Svaren kan vara fel — kontrollera allt viktigt."
+msgid "Replies can be wrong - check anything important."
+msgstr "Svaren kan vara fel - kontrollera allt viktigt."
 
 msgid "Delete this conversation?"
 msgstr "Radera den här konversationen?"
@@ -10246,17 +10246,17 @@ msgctxt "proposal"
 msgid "Dismiss"
 msgstr "Avfärda"
 
-msgid "Claude Opus 5.5 — best plans ($4 / $20)"
-msgstr "Claude Opus 5.5 — bäst planer ($4 / $20)"
+msgid "Claude Opus 5.5 - best plans ($4 / $20)"
+msgstr "Claude Opus 5.5 - bäst planer ($4 / $20)"
 
-msgid "Claude Sonnet 5.5 — good and half the price ($2 / $10)"
-msgstr "Claude Sonnet 5.5 — bra och till halva priset ($2 / $10)"
+msgid "Claude Sonnet 5.5 - good and half the price ($2 / $10)"
+msgstr "Claude Sonnet 5.5 - bra och till halva priset ($2 / $10)"
 
-msgid "Claude Haiku 4.5 — fastest and cheapest, weaker plans ($1 / $5)"
-msgstr "Claude Haiku 4.5 — snabbast och billigast, svagare planer ($1 / $5)"
+msgid "Claude Haiku 4.5 - fastest and cheapest, weaker plans ($1 / $5)"
+msgstr "Claude Haiku 4.5 - snabbast och billigast, svagare planer ($1 / $5)"
 
-msgid "Claude Fable 5.1 — most capable, most expensive ($10 / $50)"
-msgstr "Claude Fable 5.1 — mest kapabel, dyrast ($10 / $50)"
+msgid "Claude Fable 5.1 - most capable, most expensive ($10 / $50)"
+msgstr "Claude Fable 5.1 - mest kapabel, dyrast ($10 / $50)"
 
 msgid "Model for your key"
 msgstr "Modell för din nyckel"
@@ -10271,20 +10271,20 @@ msgstr "Den här instansens standard (%(model)s)"
 msgid "Model"
 msgstr "Modell"
 
-msgid "Low — quickest and cheapest; fine for everyday questions"
-msgstr "Låg — snabbast och billigast; räcker för vardagliga frågor"
+msgid "Low - quickest and cheapest; fine for everyday questions"
+msgstr "Låg - snabbast och billigast; räcker för vardagliga frågor"
 
-msgid "Medium — balanced"
-msgstr "Medel — balanserad"
+msgid "Medium - balanced"
+msgstr "Medel - balanserad"
 
-msgid "High — more thorough plans, more tokens"
-msgstr "Hög — grundligare planer, fler tokens"
+msgid "High - more thorough plans, more tokens"
+msgstr "Hög - grundligare planer, fler tokens"
 
-msgid "Extra high — for demanding planning"
-msgstr "Extra hög — för krävande planering"
+msgid "Extra high - for demanding planning"
+msgstr "Extra hög - för krävande planering"
 
-msgid "Maximum — the most thorough and the most expensive"
-msgstr "Maximal — grundligast och dyrast"
+msgid "Maximum - the most thorough and the most expensive"
+msgstr "Maximal - grundligast och dyrast"
 
 msgid "Thinking effort"
 msgstr "Tankeinsats"
@@ -10298,8 +10298,8 @@ msgstr "Den här instansens standard (%(effort)s)"
 msgid "Model settings saved."
 msgstr "Modellinställningarna sparades."
 
-msgid "Another backup task is still running — wait for it to finish."
-msgstr "En annan säkerhetskopieringsuppgift pågår fortfarande — vänta tills den är klar."
+msgid "Another backup task is still running - wait for it to finish."
+msgstr "En annan säkerhetskopieringsuppgift pågår fortfarande - vänta tills den är klar."
 
 msgid "Creating a backup…"
 msgstr "Skapar säkerhetskopia…"
@@ -10307,14 +10307,14 @@ msgstr "Skapar säkerhetskopia…"
 msgid "Restoring %(name)s…"
 msgstr "Återställer %(name)s…"
 
-msgid "This can take several minutes. You can leave this page — come back to see the result."
-msgstr "Det här kan ta flera minuter. Du kan lämna sidan — kom tillbaka för att se resultatet."
+msgid "This can take several minutes. You can leave this page - come back to see the result."
+msgstr "Det här kan ta flera minuter. Du kan lämna sidan - kom tillbaka för att se resultatet."
 
 msgid "The last backup task was interrupted before it finished (did the server restart?). Check that everything looks right before relying on it."
 msgstr "Den senaste säkerhetskopieringsuppgiften avbröts innan den blev klar (startades servern om?). Kontrollera att allt ser rätt ut innan du förlitar dig på det."
 
-msgid "Couldn't decrypt %(name)s — check that BACKUP_ENCRYPTION_KEY matches the key this backup was made with. Nothing was changed."
-msgstr "Det gick inte att dekryptera %(name)s — kontrollera att BACKUP_ENCRYPTION_KEY stämmer med nyckeln som säkerhetskopian skapades med. Ingenting ändrades."
+msgid "Couldn't decrypt %(name)s - check that BACKUP_ENCRYPTION_KEY matches the key this backup was made with. Nothing was changed."
+msgstr "Det gick inte att dekryptera %(name)s - kontrollera att BACKUP_ENCRYPTION_KEY stämmer med nyckeln som säkerhetskopian skapades med. Ingenting ändrades."
 
 msgid "Restoring %(name)s failed: %(detail)s"
 msgstr "Återställningen av %(name)s misslyckades: %(detail)s"
@@ -10377,8 +10377,8 @@ msgstr[0] "%(counter)s resultat"
 msgstr[1] "%(counter)s resultat"
 
 #, python-format
-msgid "That image is too large — the limit is %(megabytes)s MB."
-msgstr "Bilden är för stor — gränsen är %(megabytes)s MB."
+msgid "That image is too large - the limit is %(megabytes)s MB."
+msgstr "Bilden är för stor - gränsen är %(megabytes)s MB."
 
 #, python-format
 msgid "Confirm your email address on %(site_name)s"
@@ -10389,8 +10389,8 @@ msgid "Hi %(username)s,"
 msgstr "Hej %(username)s,"
 
 #, python-format
-msgid "Thanks for signing up on %(site_name)s. Open this link to confirm your email address — you can log in once it's confirmed:"
-msgstr "Tack för att du registrerade dig på %(site_name)s. Öppna den här länken för att bekräfta din e-postadress — du kan logga in när den är bekräftad:"
+msgid "Thanks for signing up on %(site_name)s. Open this link to confirm your email address - you can log in once it's confirmed:"
+msgstr "Tack för att du registrerade dig på %(site_name)s. Öppna den här länken för att bekräfta din e-postadress - du kan logga in när den är bekräftad:"
 
 msgid "If you didn't sign up, you can safely ignore this email."
 msgstr "Om du inte har registrerat dig kan du lugnt ignorera det här meddelandet."
@@ -10402,20 +10402,20 @@ msgstr "Bekräfta din e-post"
 msgid "We've sent a link to %(email)s. Open it to confirm your address, then log in."
 msgstr "Vi har skickat en länk till %(email)s. Öppna den för att bekräfta din adress och logga sedan in."
 
-msgid "Nothing arrived? Check your spam folder, or try logging in — that sends a new link."
-msgstr "Kom inget? Kolla skräpposten eller försök logga in — då skickas en ny länk."
+msgid "Nothing arrived? Check your spam folder, or try logging in - that sends a new link."
+msgstr "Kom inget? Kolla skräpposten eller försök logga in - då skickas en ny länk."
 
 msgid "This confirmation link is invalid, has expired or was already used."
 msgstr "Den här bekräftelselänken är ogiltig, har gått ut eller har redan använts."
 
-msgid "Try logging in — if your address still needs confirming, a new link is sent to it."
-msgstr "Försök logga in — om din adress fortfarande behöver bekräftas skickas en ny länk till den."
+msgid "Try logging in - if your address still needs confirming, a new link is sent to it."
+msgstr "Försök logga in - om din adress fortfarande behöver bekräftas skickas en ny länk till den."
 
-msgid "Confirm your email address first — we've sent a link to it. Check your inbox (and spam folder)."
-msgstr "Bekräfta först din e-postadress — vi har skickat en länk till den. Kolla inkorgen (och skräpposten)."
+msgid "Confirm your email address first - we've sent a link to it. Check your inbox (and spam folder)."
+msgstr "Bekräfta först din e-postadress - vi har skickat en länk till den. Kolla inkorgen (och skräpposten)."
 
-msgid "Email confirmed — you can log in now."
-msgstr "E-postadressen är bekräftad — du kan logga in nu."
+msgid "Email confirmed - you can log in now."
+msgstr "E-postadressen är bekräftad - du kan logga in nu."
 
 msgid "Email confirmation"
 msgstr "E-postbekräftelse"

@@ -1,7 +1,7 @@
 """The assistant's system prompt and per-conversation context.
 
-The system prompt is one constant string — identical for every user and
-every request — so it, together with the equally fixed tool list, forms
+The system prompt is one constant string - identical for every user and
+every request - so it, together with the equally fixed tool list, forms
 a prompt prefix the provider can cache. Everything user-specific (name,
 language, units, date) goes into `conversation_context`, which is sent
 once as part of the conversation's first user message and then stays put
@@ -28,7 +28,7 @@ create something is propose_diet_plan or propose_program, which show the user a 
 card they can accept or dismiss, and an accepted plan is created as a new, \
 inactive plan they can still edit. Their logged workout history is never changed. \
 When the user asks for a plan or program, gather what you need (their goal, \
-schedule, equipment, preferences — ask briefly if it matters and you can't tell \
+schedule, equipment, preferences - ask briefly if it matters and you can't tell \
 from their data), then propose it, and mention in your reply that it's waiting \
 for them below. If a proposal tool returns an error, fix the problem and try again.
 
@@ -54,7 +54,7 @@ def conversation_context(user):
     """The user-specific facts the model needs from the very first turn.
     Fixed for the conversation's lifetime (it's part of the stored
     history), which is why it carries the date the conversation started
-    rather than pretending to be "today" forever — the get_user_overview
+    rather than pretending to be "today" forever - the get_user_overview
     tool gives the current date whenever it matters."""
     language_names = dict(settings.LANGUAGES)
     language = language_names.get(user.language, user.language)
@@ -62,7 +62,7 @@ def conversation_context(user):
     return (
         "<conversation_context>\n"
         f"User's name: {name}\n"
-        f"User's language: {language} ({user.language}) — reply in this language.\n"
+        f"User's language: {language} ({user.language}) - reply in this language.\n"
         f"Preferred units: {user.unit_system}\n"
         f"Conversation started: {timezone.localdate().isoformat()}\n"
         "</conversation_context>"

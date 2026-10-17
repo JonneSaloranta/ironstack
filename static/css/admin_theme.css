@@ -1,16 +1,16 @@
 /* Restyles Django's own admin to match IronStack's palette
    (static/css/base.css's :root) instead of building a parallel
-   custom admin UI — see docs/ARCHITECTURE.md "API layer"-adjacent
+   custom admin UI - see docs/ARCHITECTURE.md "API layer"-adjacent
    reasoning: the admin already does everything needed (list views,
    filters, search, inline editing, permission checks); duplicating
    that as a hand-rolled page would just be a worse-tested rebuild of
    it. Loaded via templates/admin/base_site.html's `extrastyle` block,
    after Django's own admin/css/base.css and dark_mode.css, so these
    custom-property overrides win by source order at equal specificity
-   — no need to fight Django's own selectors' specificity.
+   - no need to fight Django's own selectors' specificity.
 
    IronStack has no light/dark toggle of its own (static/css/base.css
-   ships one fixed dark palette) — the same palette is applied here to
+   ships one fixed dark palette) - the same palette is applied here to
    all three of Django admin's theme states (default/light, OS
    `prefers-color-scheme: dark`, and the manual toggle's
    `data-theme="dark"`) so the admin looks the same regardless of
@@ -107,7 +107,7 @@ html[data-theme="dark"] {
   }
 }
 
-/* No theme choice actually changes anything above — offering the
+/* No theme choice actually changes anything above - offering the
    toggle anyway would just be a control that visibly does nothing. */
 .theme-toggle {
   display: none !important;

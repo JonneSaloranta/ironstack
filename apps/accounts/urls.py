@@ -43,7 +43,7 @@ urlpatterns = [
         TwoFactorBackupCodesFragmentView.as_view(),
         name="two-factor-backup-codes-fragment",
     ),
-    # Not under login_required — the user isn't authenticated yet at
+    # Not under login_required - the user isn't authenticated yet at
     # this point (see TwoFactorVerifyView's own docstring). No naming
     # collision with django.contrib.auth.urls to worry about here
     # (unlike login/password_reset above in config.urls), so this can

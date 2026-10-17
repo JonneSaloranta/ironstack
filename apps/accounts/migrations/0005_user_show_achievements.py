@@ -13,6 +13,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='user',
             name='show_achievements',
-            field=models.BooleanField(default=True, help_text="Whether the dashboard's achievements carousel (longest streak, workout count, PRs, total volume — see apps.analytics.achievements) is shown at all — same independent-of-whether-there's-anything-to-show opt-out as show_bmi, for a user who'd rather not see it."),
+            field=models.BooleanField(default=True, help_text="Whether the dashboard's achievements carousel (longest streak, workout count, PRs, total volume - see apps.analytics.achievements) is shown at all - same independent-of-whether-there's-anything-to-show opt-out as show_bmi, for a user who'd rather not see it."),
         ),
     ]

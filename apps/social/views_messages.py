@@ -12,7 +12,7 @@ from .models import DirectMessage, Group, GroupMembership, GroupMessage
 User = get_user_model()
 
 # The polling fragments below re-render the whole thread every 4
-# seconds (templates/social/message_thread.html/group_thread.html) —
+# seconds (templates/social/message_thread.html/group_thread.html) -
 # with no cap, a long-running conversation would mean re-querying and
 # re-rendering its *entire* history on every single poll tick,
 # forever. No pagination UI exists (or was asked for) to go further
@@ -23,7 +23,7 @@ THREAD_MESSAGE_LIMIT = 100
 
 def _last_n_ascending(queryset, n):
     """The last `n` rows of an ascending-ordered queryset, still in
-    ascending order — order_by("-created_at")[:n] gives the most
+    ascending order - order_by("-created_at")[:n] gives the most
     recent n newest-first, which this reverses back to chronological
     (oldest of the visible window first) for display."""
     return list(reversed(list(queryset.order_by("-created_at")[:n])))
@@ -31,14 +31,14 @@ def _last_n_ascending(queryset, n):
 
 @login_required
 def message_list(request):
-    """The social hub — conversation list (friends with a thread,
+    """The social hub - conversation list (friends with a thread,
     groups you're in) plus anything waiting on a response (friend
     requests, group invites), so it doubles as the one entry point
     linked from the profile page rather than needing its own separate
     landing page."""
     friends = services.friends_of(request.user)
     # One query for every friend's unread count, not one query per
-    # friend in a Python loop — see apps.social.services.
+    # friend in a Python loop - see apps.social.services.
     # unread_group_message_counts_by_group's own comment for the same
     # concern applied to groups just below.
     unread_dm_by_sender = dict(
@@ -75,7 +75,7 @@ def message_thread(request, user_id):
 
 
 def _render_thread(request, template, context, thread_messages):
-    """The polled thread fragment — or an empty 204 when the poll already
+    """The polled thread fragment - or an empty 204 when the poll already
     shows the newest message (`after`, the id the fragment last rendered
     as data-latest-message). htmx leaves the thread alone on a 204, so a
     screen reader isn't handed the whole thread again every 4 seconds
@@ -103,7 +103,7 @@ def _send_error_response(request, error):
 @login_required
 def message_thread_fragment(request, user_id):
     """Polled by message_thread.html (`hx-trigger="load, every 4s"`)
-    and also what a message-send POST targets — one render path for
+    and also what a message-send POST targets - one render path for
     both "a new message just arrived" and "I just sent one", so
     there's no second, subtly different code path for the sender's
     own message appearing (see apps/social's own plan notes)."""

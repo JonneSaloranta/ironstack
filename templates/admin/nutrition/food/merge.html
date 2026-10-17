@@ -2,7 +2,7 @@
 {% load i18n %}
 
 {% block content %}
-<p>{% blocktrans with counter=foods|length %}Pick which of these {{ counter }} foods to keep. Every diary entry, recipe ingredient, and diet-plan item currently pointing at one of the others will be repointed at the one you keep — nothing a user has logged is deleted, only which food row it refers to changes. The other foods are then removed.{% endblocktrans %}</p>
+<p>{% blocktrans with counter=foods|length %}Pick which of these {{ counter }} foods to keep. Every diary entry, recipe ingredient, and diet-plan item currently pointing at one of the others will be repointed at the one you keep - nothing a user has logged is deleted, only which food row it refers to changes. The other foods are then removed.{% endblocktrans %}</p>
 
 <form method="post">
   {% csrf_token %}
@@ -28,11 +28,11 @@
                    {% if forloop.first %}checked{% endif %} required>
           </td>
           <td>{{ food.name }}</td>
-          <td>{{ food.brand|default:"—" }}</td>
+          <td>{{ food.brand|default:"-" }}</td>
           <td>{{ food.owner|default:_("shared") }}</td>
           <td>{{ food.calories }} kcal</td>
           <td>{{ food.serving_size }} {{ food.serving_unit }}</td>
-          <td>{{ food.off_id|default:"—" }}</td>
+          <td>{{ food.off_id|default:"-" }}</td>
         </tr>
       {% endfor %}
     </tbody>

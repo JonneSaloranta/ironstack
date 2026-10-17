@@ -11,19 +11,19 @@ db.sqlite3
 staticfiles/
 media/
 
-# Compiled translation catalogs — derived from the committed locale/*/LC_MESSAGES/django.po
+# Compiled translation catalogs - derived from the committed locale/*/LC_MESSAGES/django.po
 # sources via `manage.py compilemessages`, run automatically at container startup
 # (docker-compose.yml); regenerate locally with the same command rather than committing
 # the binaries.
 *.mo
 
-# Build-time metadata (docs/ARCHITECTURE.md "Versioning") — written into
+# Build-time metadata (docs/ARCHITECTURE.md "Versioning") - written into
 # the image by the Dockerfile's runtime stage from scripts/build.sh's
 # GIT_SHA build-arg; never committed since it's a build artifact tied to
 # whatever commit produced a given image, not part of the source itself.
 GIT_SHA
 
-# Backup archives (scripts/backup.sh, docs/BACKUP.md) — contain real
+# Backup archives (scripts/backup.sh, docs/BACKUP.md) - contain real
 # user data, never committed. Copy them off-host yourself for actual
 # disaster recovery; this directory existing on the same disk as the
 # running stack is not a backup strategy on its own.
@@ -32,7 +32,7 @@ backups/
 .DS_Store
 *.swp
 
-# coverage.py's own data file (pyproject.toml [tool.coverage.*]) — a
+# coverage.py's own data file (pyproject.toml [tool.coverage.*]) - a
 # local measurement artifact from the last `coverage run`, not source.
 .coverage
 .coverage.*

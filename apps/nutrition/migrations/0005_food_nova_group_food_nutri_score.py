@@ -13,11 +13,11 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='food',
             name='nova_group',
-            field=models.PositiveSmallIntegerField(blank=True, choices=[(1, '1 — unprocessed or minimally processed'), (2, '2 — processed culinary ingredients'), (3, '3 — processed food'), (4, '4 — ultra-processed food')], null=True),
+            field=models.PositiveSmallIntegerField(blank=True, choices=[(1, '1 - unprocessed or minimally processed'), (2, '2 - processed culinary ingredients'), (3, '3 - processed food'), (4, '4 - ultra-processed food')], null=True),
         ),
         migrations.AddField(
             model_name='food',
             name='nutri_score',
-            field=models.CharField(blank=True, choices=[('a', 'A — best'), ('b', 'B'), ('c', 'C'), ('d', 'D'), ('e', 'E — worst')], max_length=1, null=True),
+            field=models.CharField(blank=True, choices=[('a', 'A - best'), ('b', 'B'), ('c', 'C'), ('d', 'D'), ('e', 'E - worst')], max_length=1, null=True),
         ),
     ]

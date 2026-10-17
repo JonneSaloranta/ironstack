@@ -16,13 +16,13 @@ class WorkoutSessionStatus(models.TextChoices):
 
 
 class WorkoutSession(TimeStampedModel):
-    """An actual attempt at a workout — the historical record of a gym visit.
+    """An actual attempt at a workout - the historical record of a gym visit.
 
     `program`/`workout` are informational links only, per
     docs/ARCHITECTURE.md "snapshot-on-start": history is never computed by
     dereferencing them, so editing or deleting the program later can't
     change what this session says happened. A session isn't required to
-    come from a program at all — a freeform session (both null) lets a
+    come from a program at all - a freeform session (both null) lets a
     user log an ad-hoc workout.
     """
 
@@ -50,7 +50,7 @@ class WorkoutSession(TimeStampedModel):
 
     def __str__(self):
         label = self.workout.name if self.workout else "Freeform workout"
-        return f"{label} — {self.started_at:%Y-%m-%d}"
+        return f"{label} - {self.started_at:%Y-%m-%d}"
 
     @property
     def duration(self):
@@ -70,7 +70,7 @@ class PerformedExercise(TimeStampedModel):
     """One exercise within a session, holding the snapshot of what was
     prescribed at the moment the session was created (see
     docs/DOMAIN_MODEL.md "PerformedExercise"). `prescription` is kept only
-    as an informational backlink — it may later be edited, deactivated, or
+    as an informational backlink - it may later be edited, deactivated, or
     deleted without touching any field snapshotted here.
     """
 
@@ -79,9 +79,9 @@ class PerformedExercise(TimeStampedModel):
     )
     exercise = models.ForeignKey(Exercise, on_delete=models.PROTECT)
     # The exercise's name as it was when this was logged. History shows
-    # this, not the live Exercise.name: renaming an exercise — your own,
+    # this, not the live Exercise.name: renaming an exercise - your own,
     # a coach's that your program uses, or one renamed "Name (2)" when
-    # its owner deleted their account — must not relabel past workouts.
+    # its owner deleted their account - must not relabel past workouts.
     # Still run through {% trans %} like Exercise.name, so a built-in
     # exercise keeps showing in the reader's language.
     exercise_name = models.CharField(max_length=100, blank=True)
@@ -94,7 +94,7 @@ class PerformedExercise(TimeStampedModel):
     )
     order = models.PositiveIntegerField(default=0)
 
-    # Snapshotted plan — copied at session-start time, never re-read from
+    # Snapshotted plan - copied at session-start time, never re-read from
     # `prescription` afterward. All null/blank for exercises added ad hoc
     # during a freeform (or deviated-from-plan) session.
     set_count = models.PositiveIntegerField(null=True, blank=True)
@@ -126,7 +126,7 @@ class PerformedExercise(TimeStampedModel):
 
 
 class ExerciseSet(TimeStampedModel):
-    """One actual performed set — the historical unit of truth. `created_at`
+    """One actual performed set - the historical unit of truth. `created_at`
     (from TimeStampedModel) is the DB audit timestamp; `performed_at` is
     the domain timestamp of when the set happened and, unlike most
     historical data here, may legitimately be corrected later (e.g.
@@ -169,11 +169,11 @@ class RestTimerNotification(TimeStampedModel):
     can only fire while the page's JS is actually still running, which
     iOS Safari doesn't guarantee once the tab is merely backgrounded,
     let alone once the screen locks (docs/DEVELOPMENT_LOG.md "A
-    phone-testing pass" — the earlier fix already found this and left
+    phone-testing pass" - the earlier fix already found this and left
     it as deliberately out of scope). apps.core.management.commands.
     rest_timer_dispatcher polls for rows due now and sends a real Web
     Push through them (apps.core.push.send_push_notification) instead
-    — delivered by the OS's own push service, so it reaches the device
+    - delivered by the OS's own push service, so it reaches the device
     even if this app's own JS never gets to run at all.
 
     One row per user (OneToOneField), not a queue: a user only ever
@@ -191,7 +191,7 @@ class RestTimerNotification(TimeStampedModel):
     fire_at = models.DateTimeField()
     title = models.CharField(max_length=200)
     body = models.CharField(max_length=200)
-    # Where tapping the eventual notification should open — the
+    # Where tapping the eventual notification should open - the
     # training page the user was actually resting on
     # (window.location.href at schedule time), same "open the relevant
     # page" reasoning apps.social's own message notifications already

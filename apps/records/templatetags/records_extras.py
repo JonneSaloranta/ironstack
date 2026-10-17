@@ -1,4 +1,4 @@
-"""Template filters for displaying `PersonalRecord` figures — thin
+"""Template filters for displaying `PersonalRecord` figures - thin
 wrappers around apps.records.services' display-unit conversion, kept out
 of apps.core.templatetags since the record-type-aware decision (weight
 vs. rep count) is a records-app concept, not a generic one.

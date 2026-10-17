@@ -1,9 +1,9 @@
 # IronStack
 
-Self-hosted, mobile-first fitness and activity tracker — a training log
+Self-hosted, mobile-first fitness and activity tracker - a training log
 first, an intelligent assistant second. Log workouts, follow a program,
 get explainable weight suggestions, track PRs automatically, and see
-your progress in real charts — all on your own infrastructure.
+your progress in real charts - all on your own infrastructure.
 
 [![CI](https://github.com/JonneSaloranta/ironstack/actions/workflows/ci.yml/badge.svg)](https://github.com/JonneSaloranta/ironstack/actions/workflows/ci.yml)
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPLv3-blue.svg)](LICENSE)
@@ -13,59 +13,59 @@ your progress in real charts — all on your own infrastructure.
 
 ## Features
 
-- **Workout logging** — fast, HTMX-driven set entry that pre-fills from
+- **Workout logging** - fast, HTMX-driven set entry that pre-fills from
   your last set; works fully as plain forms with JavaScript off, too.
-- **Programs & templates** — build your own program or start from a
+- **Programs & templates** - build your own program or start from a
   built-in template (5×5, Push/Pull/Legs, Arnold Split, ...); copying a
   template never touches the original, and editing a program never
   rewrites history already logged against it.
-- **Automatic PR detection** — max weight, rep PRs, estimated 1RM, set
+- **Automatic PR detection** - max weight, rep PRs, estimated 1RM, set
   and session volume, detected live off your real history, no caching.
-- **Explainable smart weight suggestions** — seven progression methods
+- **Explainable smart weight suggestions** - seven progression methods
   (linear, double progression, RPE/RIR, percentage-based, ...), always
-  shown with a plain-language reason and confidence — always just a
+  shown with a plain-language reason and confidence - always just a
   form default you can override, never a decision made for you.
-- **Body & activity tracking** — measurements (weight, body fat %,
+- **Body & activity tracking** - measurements (weight, body fat %,
   circumferences, ...) and manually logged activities (runs, rides,
   anything), each with its own trend chart.
-- **Nutrition & calorie tracking** — an explainable calorie/macro
+- **Nutrition & calorie tracking** - an explainable calorie/macro
   estimate, goal-based targets with a dynamic adjustment suggestion
   once your real weight trend has something to compare against, a
   food diary backed by on-demand OpenFoodFacts lookup (search, browse
   by category, or scan a barcode with your camera), recipes with
   automatic macros, and a guided diet-plan builder. See
   [`docs/NUTRITION.md`](docs/NUTRITION.md).
-- **Analytics dashboard** — weekly training volume, muscle-group
+- **Analytics dashboard** - weekly training volume, muscle-group
   volume, PR history, per-exercise strength trends, custom date
   ranges, and a 30-day nutrition trend alongside them.
-- **Optional AI assistant** — ask for a diet plan or a workout program
+- **Optional AI assistant** - ask for a diet plan or a workout program
   built from your own data, or about your progress. It only suggests:
   a plan is created when you press "Create", never by itself. Runs on
   Claude (the instance's key or each user's own) or a self-hosted Ollama
   model. See [`docs/ASSISTANT.md`](docs/ASSISTANT.md).
-- **A real API** — per-user API keys with per-resource CRUD
+- **A real API** - per-user API keys with per-resource CRUD
   permissions and admin-tunable rate limits, for anything you want to
   build against your own data. See [`docs/API.md`](docs/API.md).
-- **Installable PWA** — add it to your home screen; static assets are
+- **Installable PWA** - add it to your home screen; static assets are
   cached for speed, but nothing about your actual training data ever
   is, so you never see stale history.
-- **Automatic backups** — a daily scheduled backup plus an admin-only
+- **Automatic backups** - a daily scheduled backup plus an admin-only
   web UI and host-side scripts to create, download, and restore full
   backups on demand. See [`docs/BACKUP.md`](docs/BACKUP.md).
-- **Translated** — English, Finnish, Swedish, Russian, Italian, and
+- **Translated** - English, Finnish, Swedish, Russian, Italian, and
   Estonian, UI chrome and seeded content alike.
 
 ## Screenshots
 
-Mobile-first, so this is what it actually looks like day to day —
+Mobile-first, so this is what it actually looks like day to day -
 the bottom nav and every page below render the same on a real phone.
 
 <table>
 <tr>
-<td width="20%"><img src="docs/screenshots/dashboard.png" alt="Dashboard — this week's stats, recent PRs, and current streak"></td>
-<td width="20%"><img src="docs/screenshots/training.png" alt="Training mode — an explainable smart weight suggestion, one tap to log a set"></td>
-<td width="20%"><img src="docs/screenshots/programs.png" alt="Programs — your own programs plus copyable built-in templates"></td>
-<td width="20%"><img src="docs/screenshots/analytics.png" alt="Analytics — weekly training volume and muscle-group volume charts"></td>
+<td width="20%"><img src="docs/screenshots/dashboard.png" alt="Dashboard - this week's stats, recent PRs, and current streak"></td>
+<td width="20%"><img src="docs/screenshots/training.png" alt="Training mode - an explainable smart weight suggestion, one tap to log a set"></td>
+<td width="20%"><img src="docs/screenshots/programs.png" alt="Programs - your own programs plus copyable built-in templates"></td>
+<td width="20%"><img src="docs/screenshots/analytics.png" alt="Analytics - weekly training volume and muscle-group volume charts"></td>
 <td width="20%"><img src="docs/screenshots/session-detail.png" alt="A completed session's full logged history, set by set"></td>
 </tr>
 <tr>
@@ -93,7 +93,7 @@ Then create an admin account:
 docker compose exec web python manage.py createsuperuser
 ```
 
-That's it — PostgreSQL, migrations, and the Django dev server (with
+That's it - PostgreSQL, migrations, and the Django dev server (with
 auto-reload) are all running. The default `.env` works out of the box
 for local development; nothing needs editing to get started.
 
@@ -109,12 +109,12 @@ python manage.py runserver
 ```
 
 A host venv like this one drifts out of sync in ways Docker never does
-— `requirements/dev.txt` grows a package nobody re-installed for, or
+- `requirements/dev.txt` grows a package nobody re-installed for, or
 `pg_dump` is missing/the wrong major version (needed for
 `apps.core.backups`' web-UI backups, not just `scripts/backup.sh`).
 Both fail tests in a way that looks like an unrelated regression.
 Run `./scripts/check-dev-env.sh` any time a fresh `pytest` run fails
-tests you didn't touch — it re-syncs installed packages and checks
+tests you didn't touch - it re-syncs installed packages and checks
 `pg_dump` for you, with exact fix commands if either is off.
 
 ## Tech stack
@@ -122,12 +122,12 @@ tests you didn't touch — it re-syncs installed packages and checks
 | Layer | Choice |
 |---|---|
 | Backend | Python, Django, PostgreSQL |
-| Frontend | Django Templates, HTMX, Alpine.js — server-rendered first, no SPA framework |
+| Frontend | Django Templates, HTMX, Alpine.js - server-rendered first, no SPA framework |
 | API | Django REST Framework, API-key auth, per-key rate limiting |
-| Deployment | Docker Compose — app, PostgreSQL, reverse proxy (nginx, or Caddy for automatic TLS) |
-| i18n | Django's own gettext catalogs — no third-party translation library |
+| Deployment | Docker Compose - app, PostgreSQL, reverse proxy (nginx, or Caddy for automatic TLS) |
+| i18n | Django's own gettext catalogs - no third-party translation library |
 
-No JavaScript build step, no Node dependency, no SPA framework — pages
+No JavaScript build step, no Node dependency, no SPA framework - pages
 render on the server; HTMX and Alpine.js add just the interactivity a
 given page actually needs.
 
@@ -145,8 +145,8 @@ given page actually needs.
 | [`docs/NUTRITION.md`](docs/NUTRITION.md) | Calorie/macro engine, food diary, recipes, diet plans, OpenFoodFacts integration |
 | [`docs/STRETCHING.md`](docs/STRETCHING.md) | Stretch library, routines, guided sessions, cool-down suggestions |
 | [`docs/ANALYTICS.md`](docs/ANALYTICS.md) | Dashboard, charts, date-range filtering |
-| [`docs/API.md`](docs/API.md) | REST API — auth, permissions, rate limits, endpoints |
-| [`docs/ASSISTANT.md`](docs/ASSISTANT.md) | The optional AI assistant — providers, keys, limits, tools, proposals |
+| [`docs/API.md`](docs/API.md) | REST API - auth, permissions, rate limits, endpoints |
+| [`docs/ASSISTANT.md`](docs/ASSISTANT.md) | The optional AI assistant - providers, keys, limits, tools, proposals |
 | [`docs/UI.md`](docs/UI.md) | UI principles and per-feature implementation notes |
 | [`docs/SECURITY.md`](docs/SECURITY.md) | TLS, email, rate limiting, CSP, and everything else before going to production |
 | [`docs/BACKUP.md`](docs/BACKUP.md) | Backup/restore, both mechanisms, in full |
@@ -160,17 +160,17 @@ given page actually needs.
 ```bash
 ruff check .
 pytest                    # every CPU core (pytest-xdist); `-n 0` for one process
-pytest -m accessibility   # browser tests — needs requirements/a11y.txt + Chromium
+pytest -m accessibility   # browser tests - needs requirements/a11y.txt + Chromium
 ```
 
 Tests run with `config.settings.test` (development settings plus a fast
-password hasher — Django's real one costs about a second per user created
+password hasher - Django's real one costs about a second per user created
 or logged in). Each xdist worker keeps its own reusable test database; add
 `--create-db` after adding a migration.
 
 [`.github/workflows/ci.yml`](.github/workflows/ci.yml) runs the same
-two checks — plus a missing-migrations check and compiling the locale
-catalogs first — on every push and pull request against `master` and
+two checks - plus a missing-migrations check and compiling the locale
+catalogs first - on every push and pull request against `master` and
 `dev`, against a real `postgres:16-alpine` service container.
 [`.github/dependabot.yml`](.github/dependabot.yml) opens a weekly,
 reviewed PR for outdated pip/Docker/GitHub Actions dependencies, still
@@ -179,13 +179,13 @@ gated by that same CI.
 ## Production deployment
 
 `docker-compose.override.yml` is a **local development** file Docker
-Compose merges in automatically — do not ship it to a server. On the
+Compose merges in automatically - do not ship it to a server. On the
 production host, only `docker-compose.yml` should be present, with
 `.env` set to real secrets, `DJANGO_ALLOWED_HOSTS`, etc.
 
 `.github/workflows/ci.yml` publishes a production image to GitHub
 Container Registry (`ghcr.io/jonnesaloranta/ironstack`, tagged
-`:latest` and `:<VERSION>`) on every push to master that passes CI —
+`:latest` and `:<VERSION>`) on every push to master that passes CI -
 `docker-compose.yml` already points at it, so the normal deploy is
 just pulling and starting, no build step on the server at all:
 
@@ -200,7 +200,7 @@ GHCR package is private, `docker login ghcr.io` on the host first.
 
 ### Updating
 
-Same two commands as the initial deploy above — pull the new image,
+Same two commands as the initial deploy above - pull the new image,
 then recreate the container with it:
 
 ```bash
@@ -212,7 +212,7 @@ No extra manual step needed for a routine update: the image's own
 startup sequence (`docker-entrypoint.sh`) already runs `migrate`,
 `collectstatic`, and `compilemessages` every time the `web` container
 starts, so schema changes, new static assets, and updated translations
-all apply automatically on the new version's first start — and, since
+all apply automatically on the new version's first start - and, since
 that sequence is baked into the image itself rather than
 `docker-compose.yml`, a future step added to it arrives with the pull
 above too, with no separate file on this server to also keep in sync.
@@ -220,16 +220,16 @@ Existing data (`postgres_data`/`static_data`/`media_data`/
 `backups_data` volumes) isn't touched by recreating the container.
 
 One exception the two commands above don't cover: a change to
-`compose/nginx/nginx.conf` itself (a real one shipped once — adding
+`compose/nginx/nginx.conf` itself (a real one shipped once - adding
 gzip compression). `nginx`'s `image:` tag never changes on an update,
 and Compose's own recreate check doesn't look inside a bind-mounted
-file's *contents* — only at whether the image or the `docker-
-compose.yml` service definition around it changed — so `up -d` alone
+file's *contents* - only at whether the image or the `docker-
+compose.yml` service definition around it changed - so `up -d` alone
 leaves the `nginx` container running on whatever config it already had
 in memory. Worse than a no-op: `nginx.conf` is mounted as a *single
 file*, and editors/`git` typically replace a file by writing a new
 inode rather than editing the old one in place, which can leave the
-bind mount itself pointing at a now-deleted inode — so even `docker
+bind mount itself pointing at a now-deleted inode - so even `docker
 compose exec nginx nginx -s reload` (which only re-reads config, not
 the mount) isn't guaranteed to see the new file either. After any
 update that touched `compose/nginx/nginx.conf`, force nginx to pick up
@@ -239,14 +239,14 @@ its current on-disk config by recreating the container outright:
 Still worth doing before any update, as routine hygiene rather than
 because the automatic part is untrustworthy: take a fresh backup first
 (the profile page's admin-only Backups screen, or `./scripts/backup.sh`
-— see [`docs/BACKUP.md`](docs/BACKUP.md)), and skim
+- see [`docs/BACKUP.md`](docs/BACKUP.md)), and skim
 [`CHANGELOG.md`](CHANGELOG.md) for anything under "Changed"/"Removed"
-if you're jumping more than one version at once — a deliberately
+if you're jumping more than one version at once - a deliberately
 breaking change (a newly *required* setting with no default, a manual
 one-time step) would be called out there rather than assumed silent.
 
 **Before your first deploy, read [`docs/SECURITY.md`](docs/SECURITY.md)'s
-"TLS" section** — the bundled nginx config is HTTP-only, and the
+"TLS" section** - the bundled nginx config is HTTP-only, and the
 default `DJANGO_SECURE_SSL_REDIRECT=true` will redirect-loop until you
 either add TLS (`docker-compose.tls.yml` is a ready-to-use overlay for
 that) or explicitly opt out.
@@ -269,15 +269,15 @@ docker compose -f docker-compose.yml up -d
 ```
 
 Backups run automatically once a day out of the box
-(`docker-compose.yml`'s `backup-scheduler` service) — see
+(`docker-compose.yml`'s `backup-scheduler` service) - see
 [`docs/BACKUP.md`](docs/BACKUP.md) for the full picture, including the
 admin-only web UI and host-side scripts for on-demand ones.
 
 ## Project history
 
 `README.md` (this file) stays a short orientation. For the detailed
-story of how each feature was actually built — including bugs found
-and fixed along the way — see
+story of how each feature was actually built - including bugs found
+and fixed along the way - see
 [`docs/DEVELOPMENT_LOG.md`](docs/DEVELOPMENT_LOG.md). For a terse,
 version-bucketed summary of what changed, see
 [`CHANGELOG.md`](CHANGELOG.md).
@@ -286,11 +286,11 @@ version-bucketed summary of what changed, see
 
 Most of the seeded exercise library's instructional images come from
 [wger.de](https://wger.de)'s own public exercise database, licensed
-CC-BY-SA 3.0/4.0 — see [`apps/exercises/seed_data/exercise_images/
+CC-BY-SA 3.0/4.0 - see [`apps/exercises/seed_data/exercise_images/
 manifest.json`](apps/exercises/seed_data/exercise_images/manifest.json)
 for the exact source URL, author, and license per image. A few were
 resized/re-compressed for this project; none were otherwise altered.
 
 ## License
 
-[GNU AGPLv3](LICENSE) — see [`LICENSE`](LICENSE) for the full text.
+[GNU AGPLv3](LICENSE) - see [`LICENSE`](LICENSE) for the full text.

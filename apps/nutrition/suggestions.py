@@ -1,15 +1,15 @@
-"""The dynamic calorie-adjustment engine — see docs/NUTRITION.md
+"""The dynamic calorie-adjustment engine - see docs/NUTRITION.md
 "Dynamic calorie adjustment". Mirrors apps.progression.suggestions'
 exact shape: a frozen dataclass, one public entry point, no persisted
-model (derive, don't cache — recomputed live every call).
+model (derive, don't cache - recomputed live every call).
 
 Reads real weight history from apps.measurements (never a duplicate
-copy of it — see docs/NUTRITION.md "Why a new app") and composes it
+copy of it - see docs/NUTRITION.md "Why a new app") and composes it
 with apps.nutrition.trends' pure trend math. This is the one place in
 apps.nutrition allowed to reach into apps.measurements for a specific
 reason: the boundary-crossing rule apps.progression/apps.workouts
 already established (docs/NUTRITION.md "Integration with existing
-apps") — composition happens in whichever module is downstream of both
+apps") - composition happens in whichever module is downstream of both
 concerns, never inside the lower-level app itself.
 """
 
@@ -32,9 +32,9 @@ TOLERANCE_FRACTION = Decimal("0.3")
 MIN_TOLERANCE_KG_PER_WEEK = Decimal("0.1")
 
 # A suggested change is rounded to the nearest 25 kcal (false precision
-# — "-137 kcal/day" — is exactly what docs/NUTRITION.md "Safety bounds"
+# - "-137 kcal/day" - is exactly what docs/NUTRITION.md "Safety bounds"
 # warns against) and capped per suggestion, so a large gap is corrected
-# over more than one cycle rather than one big swing — the same
+# over more than one cycle rather than one big swing - the same
 # "don't overreact" rule docs/PROGRESSION.md applies to deload timing.
 ADJUSTMENT_ROUNDING_KCAL = Decimal("25")
 MAX_SINGLE_ADJUSTMENT_KCAL = Decimal("250")
@@ -66,7 +66,7 @@ class AdjustmentSuggestion:
 
 def _confidence_for(trend_result: trends.TrendResult) -> Confidence:
     """A direct, deterministic function of how much evidence backs the
-    trend — never a black-box score (docs/SMART_SUGGESTIONS.md)."""
+    trend - never a black-box score (docs/SMART_SUGGESTIONS.md)."""
     if trend_result.distinct_days >= 10 and trend_result.span_days >= 21:
         return Confidence.HIGH
     if trend_result.distinct_days >= 6 and trend_result.span_days >= 14:
@@ -87,7 +87,7 @@ def _weight_readings_for(user) -> list[tuple]:
 
 
 def suggest_calorie_adjustment(user) -> AdjustmentSuggestion:
-    """The single entry point the dashboard calls. Never auto-applied —
+    """The single entry point the dashboard calls. Never auto-applied -
     the caller presents this as a dismissible suggestion; accepting it
     is a separate, explicit action that creates a new NutritionTarget
     (source="adjusted")."""
@@ -114,7 +114,7 @@ def suggest_calorie_adjustment(user) -> AdjustmentSuggestion:
             delta_kcal=None,
             confidence=None,
             reason=_(
-                "Not enough logged weight yet — keep logging your weight regularly and "
+                "Not enough logged weight yet - keep logging your weight regularly and "
                 "check back in a couple of weeks."
             ),
         )
@@ -132,7 +132,7 @@ def suggest_calorie_adjustment(user) -> AdjustmentSuggestion:
             suggested_daily_calories=None,
             delta_kcal=None,
             confidence=confidence,
-            reason=_("Target: %(target)s kg/week. Actual trend: %(actual)s kg/week — on track.")
+            reason=_("Target: %(target)s kg/week. Actual trend: %(actual)s kg/week - on track.")
             % {"target": target_rate, "actual": actual_rate},
         )
 

@@ -227,7 +227,7 @@ class SessionViewPermissionTests(TestCase):
     def test_the_plain_function_views_also_require_login(self):
         # Regression: these were missing @login_required entirely, so
         # an anonymous request crashed with a 500 instead of
-        # redirecting to login — same bug class as apps.nutrition's
+        # redirecting to login - same bug class as apps.nutrition's
         # own equivalent fix. (session_train/train_set_log already had
         # the decorator, so they're not repeated here.)
         workout, prescription = _make_workout_with_prescription(self.alice)
@@ -272,7 +272,7 @@ class SessionViewPermissionTests(TestCase):
 
     def test_can_start_a_freeform_session(self):
         """session_start_freeform's own success path had no test at
-        all — every other test that needed a freeform session created
+        all - every other test that needed a freeform session created
         one directly via services.start_session, bypassing the view
         entirely (found via `coverage report`)."""
         response = self.client.post(reverse("workouts:session-start-freeform"))
@@ -293,7 +293,7 @@ class SessionViewPermissionTests(TestCase):
         self.assertEqual(session.status, WorkoutSessionStatus.ABANDONED)
 
     def test_can_add_a_performed_exercise_to_own_session(self):
-        """Same gap as above, for performed_exercise_add — only ever
+        """Same gap as above, for performed_exercise_add - only ever
         exercised indirectly via services.add_performed_exercise in
         other tests' setup, never as a real POST through the view."""
         session = services.start_session(self.alice, workout=None)
@@ -351,7 +351,7 @@ class SessionViewPermissionTests(TestCase):
 
     def test_can_delete_a_completed_session(self):
         """Regression: deleting was added specifically so a mistaken or
-        unwanted logged workout can be removed from history — including
+        unwanted logged workout can be removed from history - including
         after it's been completed, not just while in progress."""
         session = services.start_session(self.alice, workout=None)
         services.complete_session(session)
@@ -360,7 +360,7 @@ class SessionViewPermissionTests(TestCase):
         self.assertFalse(WorkoutSession.objects.filter(pk=session.pk).exists())
 
     def test_delete_is_reachable_from_the_session_detail_page_not_the_list(self):
-        """Deleting is a detail-page-only action — the list page (which
+        """Deleting is a detail-page-only action - the list page (which
         can show many sessions at once) deliberately has no per-row
         delete button, to keep an accidental tap far from a destructive
         action reachable in one click."""
@@ -383,7 +383,7 @@ class SetLoggingFlowTests(TestCase):
         self.client.login(username="alice", password="s3cret-pass")
 
     def test_rpe_and_rir_labels_explain_the_abbreviation(self):
-        """RPE/RIR are opaque jargon to a new user — the field label
+        """RPE/RIR are opaque jargon to a new user - the field label
         itself carries the expansion via a native <abbr tabindex="0" title="...">
         tooltip, not just the bare letters."""
         response = self.client.get(reverse("workouts:session-detail", args=[self.session.pk]))
@@ -434,7 +434,7 @@ class SetLoggingFlowTests(TestCase):
         """Regression: ExerciseSetForm always stored the submitted number
         as raw kg, so an imperial-preference user entering a weight in
         pounds would have it stored (and later shown right back to them)
-        as if it were kilograms — over double the real weight."""
+        as if it were kilograms - over double the real weight."""
         self.alice.unit_system = "imperial"
         self.alice.save()
         self.client.post(
@@ -476,7 +476,7 @@ class SetLoggingFlowTests(TestCase):
 
 class SmartSuggestionIntegrationTests(TestCase):
     """Phase 7: the progression engine's suggestion reaches the logging
-    form as a pre-filled, freely-overridable default — never a black box,
+    form as a pre-filled, freely-overridable default - never a black box,
     never forced (docs/SMART_SUGGESTIONS.md)."""
 
     def setUp(self):
@@ -502,7 +502,7 @@ class SmartSuggestionIntegrationTests(TestCase):
         self.assertEqual(performed.set_form.initial["weight"], Decimal("100.00"))
 
     def test_user_can_log_a_different_weight_than_the_one_suggested(self):
-        """"Never prevent a user from entering a different value" —
+        """"Never prevent a user from entering a different value" -
         exercised end-to-end: the suggestion pre-fills 100kg, but nothing
         stops logging something else entirely."""
         response = self.client.post(
@@ -539,7 +539,7 @@ class SmartSuggestionIntegrationTests(TestCase):
 
 
 class PerformedExerciseCompletionTests(TestCase):
-    """Training mode's "what's next" stepper is built on this — see
+    """Training mode's "what's next" stepper is built on this - see
     apps.workouts.services.is_performed_exercise_complete/
     first_incomplete_performed_exercise."""
 
@@ -588,7 +588,7 @@ class PerformedExerciseCompletionTests(TestCase):
 
 
 class TrainingModeViewTests(TestCase):
-    """Training mode (docs/UI.md "Training mode") — a focused, one-page
+    """Training mode (docs/UI.md "Training mode") - a focused, one-page
     view for logging sets mid-workout: current exercise, what's next,
     and the same smart suggestion the full session-detail page shows."""
 
@@ -625,10 +625,10 @@ class TrainingModeViewTests(TestCase):
 
     def test_rest_timer_carries_its_own_notification_text(self):
         # static/js/rest-timer.js's own notify() reads these off the
-        # component's root element — a plain .js file can't render
+        # component's root element - a plain .js file can't render
         # {% trans %} itself, so the translated text has to be handed
         # to it this same data-attribute way (data-zxing-url,
-        # data-service-worker-url, ... — every other server-rendered
+        # data-service-worker-url, ... - every other server-rendered
         # value a script here needs already follows it).
         response = self.client.get(reverse("workouts:session-train", args=[self.session.pk]))
         self.assertContains(response, 'data-notify-title="Rest over"')
@@ -705,7 +705,7 @@ class TrainingModeViewTests(TestCase):
         self.assertContains(response, "RPE goes from 1 to 10.")
 
     def test_an_error_in_the_extra_options_opens_them(self):
-        # RPE/RIR/notes sit in a section collapsed by default — an error
+        # RPE/RIR/notes sit in a section collapsed by default - an error
         # there used to stay hidden inside it.
         response = self.client.post(
             reverse("workouts:train-set-log", args=[self.performed.pk]),
@@ -764,7 +764,7 @@ class TrainingModeViewTests(TestCase):
     def test_a_non_htmx_request_redirects_back_to_the_training_page(self):
         """Regression: without the HX-Request check, this endpoint would
         return the bare #train-panel fragment as a full response to a
-        plain (no-JS) form POST — no <head>, no stylesheet, no nav.
+        plain (no-JS) form POST - no <head>, no stylesheet, no nav.
         set_log's identical _render_session_or_card fallback is the
         established pattern this mirrors."""
         response = self.client.post(
@@ -800,7 +800,7 @@ class TrainingModeViewTests(TestCase):
 
     def test_a_new_pr_renders_as_a_top_of_screen_toast(self):
         """See apps.records.tests.SetLoggingNotifiesNewPRsTests for the
-        equivalent full-session-detail-page coverage — training mode's
+        equivalent full-session-detail-page coverage - training mode's
         train_set_log shares the exact same toast partial
         (templates/records/_pr_toasts.html)."""
         response = self.client.post(
@@ -823,7 +823,7 @@ class TrainingModeViewTests(TestCase):
 class TrainingFabTests(TestCase):
     """The floating "go to training mode" button (base.html, gated on
     apps.workouts.context_processors.active_workout_session) has to
-    appear from *any* page, not just the workout ones — that's the
+    appear from *any* page, not just the workout ones - that's the
     entire point (docs/UI.md "Training mode")."""
 
     def setUp(self):
@@ -846,7 +846,7 @@ class TrainingFabTests(TestCase):
     def test_fab_hidden_on_its_own_destination_page(self):
         # Regression: this used to render on the training screen too,
         # a "continue training" shortcut floating over the very page
-        # you're already training on — with no clearance reserved for
+        # you're already training on - with no clearance reserved for
         # it in the page's own bottom padding, it sat directly on top
         # of that page's "Mark complete" button.
         session = services.start_session(self.alice, workout=None)
@@ -867,7 +867,7 @@ class TrainingFabTests(TestCase):
         # Regression: nothing reserved space at the bottom of the page
         # for the fixed-position FAB at all, so it always ended up
         # floating directly on top of whatever card happened to be
-        # last — see base.css's body.has-fab for the padding this
+        # last - see base.css's body.has-fab for the padding this
         # class adds.
         response = self.client.get(reverse("dashboard"))
         self.assertNotContains(response, "has-fab")
@@ -877,7 +877,7 @@ class TrainingFabTests(TestCase):
 
 
 class RestTimerNotificationServiceTests(TestCase):
-    """apps.workouts.services' schedule/cancel/due functions — the
+    """apps.workouts.services' schedule/cancel/due functions - the
     server-side backstop for the rest timer's own client-side "time's
     up" alert (RestTimerNotification's own docstring)."""
 
@@ -900,7 +900,7 @@ class RestTimerNotificationServiceTests(TestCase):
     def test_scheduling_again_replaces_the_pending_row_instead_of_stacking(self):
         # Regression risk this guards against: adjust()/a second "Log
         # set" auto-start both call schedule_rest_timer_notification
-        # again for the same user — must update the one existing row,
+        # again for the same user - must update the one existing row,
         # not create a second one a user could get two notifications
         # from.
         services.schedule_rest_timer_notification(
@@ -941,7 +941,7 @@ class RestTimerNotificationServiceTests(TestCase):
 
 
 class RestTimerNotificationViewTests(TestCase):
-    """apps.workouts.views.RestTimerScheduleView/RestTimerCancelView —
+    """apps.workouts.views.RestTimerScheduleView/RestTimerCancelView -
     static/js/rest-timer.js's own JSON POST endpoints."""
 
     def setUp(self):
@@ -999,7 +999,7 @@ class RestTimerNotificationViewTests(TestCase):
 
 
 class RestTimerDispatcherCommandTests(TestCase):
-    """apps.workouts.management.commands.rest_timer_dispatcher — the
+    """apps.workouts.management.commands.rest_timer_dispatcher - the
     always-running loop apps.core.push.send_push_notification is
     actually called from for the rest timer's server-side backstop.
     """
@@ -1008,7 +1008,7 @@ class RestTimerDispatcherCommandTests(TestCase):
         self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
 
     def _run_one_tick(self):
-        # The command's own handle() is `while True: sleep; ...` —
+        # The command's own handle() is `while True: sleep; ...` -
         # forever by design (same shape as backup_scheduler). Making
         # time.sleep()'s second call raise is what turns "forever"
         # into "exactly one pass through the loop body" for a test:
@@ -1066,7 +1066,7 @@ class RestTimerDispatcherCommandTests(TestCase):
             ):
                 with self.assertRaises(StopIteration):
                     call_command("rest_timer_dispatcher")
-        # Both rows are gone either way — see the command's own
+        # Both rows are gone either way - see the command's own
         # docstring for why a failed send still removes the row
         # (resending well after fire_at has passed would be pointless).
         self.assertFalse(RestTimerNotification.objects.filter(user=self.alice).exists())
@@ -1092,7 +1092,7 @@ class AddPerformedExerciseOrderTests(TestCase):
 
 
 class RenumberDuplicateSetNumbersMigrationTests(TestCase):
-    """workouts/0004 — sets logged before the unique constraint existed
+    """workouts/0004 - sets logged before the unique constraint existed
     may share a number; the data migration must make them unique again
     without reordering them."""
 
@@ -1134,7 +1134,7 @@ class RenumberDuplicateSetNumbersMigrationTests(TestCase):
 
 
 class ExerciseNameSnapshotTests(TestCase):
-    """PerformedExercise.exercise_name — history keeps the name an
+    """PerformedExercise.exercise_name - history keeps the name an
     exercise had when it was logged."""
 
     def setUp(self):

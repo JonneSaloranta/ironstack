@@ -1,11 +1,11 @@
 # Automatically merged by `docker compose up` for local development.
-# Do NOT deploy this file to production — use docker-compose.yml alone there
+# Do NOT deploy this file to production - use docker-compose.yml alone there
 # (e.g. `docker compose -f docker-compose.yml up -d` on the server, or simply
 # don't ship this file with the production checkout).
 services:
   web:
     # Overrides docker-compose.yml's own `image:` (the published GHCR
-    # tag) with a distinct local one — a dev build (requirements/dev.txt,
+    # tag) with a distinct local one - a dev build (requirements/dev.txt,
     # runserver, bind-mounted source) must never end up tagged the same
     # as the real production image, or a later `docker compose -f
     # docker-compose.yml pull` on the same machine could resolve to a
@@ -29,7 +29,7 @@ services:
              python manage.py compilemessages &&
              python manage.py runserver 0.0.0.0:8000"
 
-  # docs/BACKUP.md — automatic in production (docker-compose.yml alone),
+  # docs/BACKUP.md - automatic in production (docker-compose.yml alone),
   # off by default here: an unrequested profile means plain `docker
   # compose up` skips it entirely, so local dev isn't rebuilding a
   # second image and running a scheduler nothing needs. Start it

@@ -1,27 +1,27 @@
 // Minimal PWA service worker for IronStack.
 //
 // Deliberately NOT an offline-first data cache: this app is a training
-// log where historical accuracy matters (CLAUDE.md — "Workout history
+// log where historical accuracy matters (CLAUDE.md - "Workout history
 // must remain historically trustworthy"). Caching page or HTMX
 // responses risks showing stale numbers, or letting a user believe a
 // logged set saved when it never reached the server while offline. This
-// worker exists only to (a) make the app installable — a fetch handler
-// is part of most browsers' installability criteria — and (b) speed up
+// worker exists only to (a) make the app installable - a fetch handler
+// is part of most browsers' installability criteria - and (b) speed up
 // repeat loads of genuinely static assets (CSS/JS/icons) via a
 // stale-while-revalidate strategy. Every other request (pages, forms,
 // HTMX responses) always goes straight to the network, untouched.
 //
-// Regression fixed here: this used to be pure cache-first — once an
+// Regression fixed here: this used to be pure cache-first - once an
 // asset (e.g. base.css) was cached, it was served from that cache
 // *forever*, with the network never consulted again for it at all.
 // Static files here aren't served at content-hashed URLs (no
 // ManifestStaticFilesStorage), so every later CSS/JS fix was
 // permanently invisible to any browser that had already cached the old
-// version — including, concretely, a whole session's worth of chart/
+// version - including, concretely, a whole session's worth of chart/
 // nav/layout CSS fixes never reaching a user whose phone had cached
 // base.css before any of them shipped. See the fetch handler below.
 
-// This used to be a hand-bumped literal ("...-v2", then "...-v3") —
+// This used to be a hand-bumped literal ("...-v2", then "...-v3") -
 // replaced with a real content hash instead (apps.core.views.
 // service_worker substitutes this placeholder in at serve time, from
 // apps.core.version.get_static_assets_hash()) after a live, real
@@ -32,7 +32,7 @@
 // only fixed by a hard reload discarding the cached copy by hand,
 // because nothing about a hand-bumped version number changes just
 // because someone forgot to bump it. A hash of the actual current
-// file contents can't be forgotten to update — it changes the instant
+// file contents can't be forgotten to update - it changes the instant
 // any cached asset genuinely does, dev live-edit or a real deploy
 // alike, every install discarding its entire old cache the same way
 // the v1 -> v2 bump once did by hand.
@@ -68,12 +68,12 @@ self.addEventListener("fetch", (event) => {
     caches.open(STATIC_CACHE).then(async (cache) => {
       const cached = await cache.match(event.request);
       if (cached) {
-        // Serve the cached copy immediately — fast, and works offline —
+        // Serve the cached copy immediately - fast, and works offline -
         // but always refetch in the background too and update the
         // cache for the *next* request. event.waitUntil keeps the
         // worker alive long enough for that background refetch to
         // finish even though the response has already gone out.
-        // Only a successful response replaces the cached copy — a 404 or
+        // Only a successful response replaces the cached copy - a 404 or
         // 502 mid-deploy used to be cached and served until the next
         // refresh happened to succeed.
         event.waitUntil(
@@ -81,11 +81,11 @@ self.addEventListener("fetch", (event) => {
             .then((response) => {
               if (response.ok) return cache.put(event.request, response);
             })
-            .catch(() => {}) // offline — next request just serves the same cached copy again
+            .catch(() => {}) // offline - next request just serves the same cached copy again
         );
         return cached;
       }
-      // Nothing cached yet — fetch from the network and cache it for
+      // Nothing cached yet - fetch from the network and cache it for
       // next time, same as before for a first-ever request.
       const response = await fetch(event.request);
       if (response.ok) cache.put(event.request, response.clone());
@@ -95,11 +95,11 @@ self.addEventListener("fetch", (event) => {
 });
 
 // Web Push (apps.core.push, docs/SECURITY.md "Web Push notifications")
-// — the two handlers below are the only place a notification actually
+// - the two handlers below are the only place a notification actually
 // gets shown; everything server-side (apps.core.views_push,
 // apps.social.services) only ever sends the encrypted payload this
 // event decodes. Purely additive to the cache-only fetch handler
-// above — a browser with no active PushSubscription simply never
+// above - a browser with no active PushSubscription simply never
 // fires a "push" event, so this is inert until static/js/push-
 // subscribe.js's subscribe flow actually completes once.
 self.addEventListener("push", (event) => {

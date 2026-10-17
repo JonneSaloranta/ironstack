@@ -1,4 +1,4 @@
-"""DRF serializers for every apps.api context — see docs/API.md.
+"""DRF serializers for every apps.api context - see docs/API.md.
 
 Deliberate design choice covering every serializer here: all weights are
 canonical kilograms and all lengths are canonical meters, never converted
@@ -67,7 +67,7 @@ class ProfileSerializer(serializers.ModelSerializer):
         ]
         # email too: an API key is a narrower credential than the
         # password, and changing the email would let whoever holds the
-        # key request a password reset to themselves — a full account
+        # key request a password reset to themselves - a full account
         # takeover. Change it on the Account details page instead.
         read_only_fields = ["username", "email"]
 
@@ -97,12 +97,12 @@ class ExerciseImageSerializer(serializers.ModelSerializer):
 
 class ExerciseSerializer(serializers.ModelSerializer):
     is_custom = serializers.BooleanField(read_only=True)
-    # Read-only, same pattern as e.g. DietPlanMealSerializer.items below —
+    # Read-only, same pattern as e.g. DietPlanMealSerializer.items below -
     # a client manages its own exercise's gallery through the same
     # instructions/description fields it already writes, not through this
     # nested list; there's no apps.api endpoint for creating/deleting a
-    # single ExerciseImage (the web app's own upload flow — apps.
-    # exercises.views.exercise_image_create — handles multipart image
+    # single ExerciseImage (the web app's own upload flow - apps.
+    # exercises.views.exercise_image_create - handles multipart image
     # bytes directly, which this JSON API has no equivalent for yet).
     images = ExerciseImageSerializer(many=True, read_only=True)
 
@@ -128,7 +128,7 @@ class ExerciseSerializer(serializers.ModelSerializer):
 
 
 # --------------------------------------------------------------------
-# Programs (also covers Workout / ExercisePrescription — same context)
+# Programs (also covers Workout / ExercisePrescription - same context)
 # --------------------------------------------------------------------
 
 
@@ -154,7 +154,7 @@ class ExercisePrescriptionSerializer(serializers.ModelSerializer):
 
     def validate(self, attrs):
         # ExercisePrescription.clean() enforces this same rule for the
-        # web ModelForm path — DRF's ModelSerializer doesn't call a
+        # web ModelForm path - DRF's ModelSerializer doesn't call a
         # model's clean() automatically, so it's repeated here rather
         # than silently only half-enforced depending on which door a
         # request came through.
@@ -169,7 +169,7 @@ class ExercisePrescriptionSerializer(serializers.ModelSerializer):
     def validate_workout(self, value):
         # A prescription can only ever be added to a workout this user
         # can actually edit (their own program, never a system
-        # template) — apps.api.views.ExercisePrescriptionViewSet's own
+        # template) - apps.api.views.ExercisePrescriptionViewSet's own
         # get_queryset makes the same check for update/destroy, but
         # create has no existing instance for a queryset to scope, so
         # it's enforced here instead.
@@ -184,13 +184,13 @@ class ExercisePrescriptionSerializer(serializers.ModelSerializer):
         # Regression found live: a plain ModelSerializer's
         # PrimaryKeyRelatedField has no ownership concept of its own
         # (same reasoning as BodyMeasurementSerializer.
-        # validate_measurement_type's own comment) — without this, a
+        # validate_measurement_type's own comment) - without this, a
         # request could attach *any* exercise id, including someone
         # else's private custom exercise this user was never meant to
         # see at all, to their own prescription. The API response
         # itself only ever echoes back the bare id (this serializer
         # never nests exercise details), but the web UI trusts that
-        # every prescription it renders already passed this check —
+        # every prescription it renders already passed this check -
         # confirmed live, it happily prints a private exercise's name
         # on the *attacker's own* program page once such a row exists.
         from apps.exercises import services as exercise_services
@@ -210,7 +210,7 @@ class WorkoutSerializer(serializers.ModelSerializer):
 
     def validate_program(self, value):
         # Same reasoning as ExercisePrescriptionSerializer.validate_workout
-        # above — a workout can only be added to a program this user
+        # above - a workout can only be added to a program this user
         # actually owns.
         from apps.programs import services as program_services
 
@@ -261,7 +261,7 @@ class ExerciseSetSerializer(serializers.ModelSerializer):
             "notes",
             "performed_at",
         ]
-        read_only_fields = ["set_number"]  # auto-numbered — see apps.workouts.services.log_set
+        read_only_fields = ["set_number"]  # auto-numbered - see apps.workouts.services.log_set
 
     def validate_rpe(self, value):
         from django.core.exceptions import ValidationError as DjangoValidationError
@@ -277,7 +277,7 @@ class ExerciseSetSerializer(serializers.ModelSerializer):
         if value.session.user_id != request.user.id:
             raise serializers.ValidationError("Not your workout session.")
         # Only a brand-new set requires the session still be in
-        # progress — editing an existing one doesn't (apps.workouts
+        # progress - editing an existing one doesn't (apps.workouts
         # .views.set_edit has no such check either).
         if self.instance is None and not value.session.is_in_progress:
             raise serializers.ValidationError("This session is no longer in progress.")
@@ -310,7 +310,7 @@ class PerformedExerciseSerializer(serializers.ModelSerializer):
         ]
         read_only_fields = [
             # All snapshotted at session-start (apps.workouts.services
-            # .start_session) from the plan's ExercisePrescription — an
+            # .start_session) from the plan's ExercisePrescription - an
             # API caller adds exercises and logs sets against them, the
             # same as the web UI, but never edits the snapshot itself.
             "set_count",
@@ -335,7 +335,7 @@ class PerformedExerciseSerializer(serializers.ModelSerializer):
 
     def validate_exercise(self, value):
         # Same regression as ExercisePrescriptionSerializer.validate_
-        # exercise's own comment, same fix — going off-plan mid-session
+        # exercise's own comment, same fix - going off-plan mid-session
         # (apps.workouts.services.add_performed_exercise) is exactly as
         # exploitable as adding a prescription is.
         from apps.exercises import services as exercise_services
@@ -367,7 +367,7 @@ class WorkoutSessionSerializer(serializers.ModelSerializer):
     def validate_workout(self, value):
         # Matches apps.workouts.views.session_start's own
         # get_object_or_404(Workout, ..., program__in=visible_to(user))
-        # — starting a session from a workout you can't even see would
+        # - starting a session from a workout you can't even see would
         # otherwise leak whether some other user's private workout id
         # exists at all.
         if value is None:
@@ -380,13 +380,13 @@ class WorkoutSessionSerializer(serializers.ModelSerializer):
         return value
 
     def validate_status(self, value):
-        # Only checked on update — a create() carries whatever default
+        # Only checked on update - a create() carries whatever default
         # status a fresh session gets regardless of what's in the
         # payload (perform_create never reads it), so there's nothing
         # to validate there. On update, only the two "end a session"
         # transitions are ever valid (starting one goes through
         # create() instead, since it needs a workout/freeform choice,
-        # not a bare status flip) — matches what the web UI's own
+        # not a bare status flip) - matches what the web UI's own
         # session-complete/session-abandon endpoints allow and nothing
         # more.
         if self.instance is None:
@@ -394,7 +394,7 @@ class WorkoutSessionSerializer(serializers.ModelSerializer):
         allowed = {"completed", "abandoned"}
         if value not in allowed:
             raise serializers.ValidationError(f"status can only be set to one of {allowed}.")
-        # A finished session is history — see
+        # A finished session is history - see
         # apps.workouts.services.SessionNotInProgress. Re-sending the
         # status it already has is a harmless no-op (perform_update
         # skips it); changing it is not.
@@ -424,7 +424,7 @@ class BodyMeasurementSerializer(serializers.ModelSerializer):
 
     def validate_measurement_type(self, value):
         # A user may only log against a type they can actually see
-        # (system types + their own) — mirrors
+        # (system types + their own) - mirrors
         # apps.measurements.services.visible_to, checked here since a
         # ModelSerializer's PrimaryKeyRelatedField has no ownership
         # concept of its own.
@@ -474,7 +474,7 @@ class ActivitySerializer(serializers.ModelSerializer):
 
 
 # --------------------------------------------------------------------
-# Records (read-only — PRs are derived, never directly writable)
+# Records (read-only - PRs are derived, never directly writable)
 # --------------------------------------------------------------------
 
 
@@ -497,7 +497,7 @@ class PersonalRecordSerializer(serializers.ModelSerializer):
 
 
 # --------------------------------------------------------------------
-# Analytics (read-only aggregates — no backing model of their own)
+# Analytics (read-only aggregates - no backing model of their own)
 # --------------------------------------------------------------------
 
 
@@ -515,7 +515,7 @@ class AchievementSerializer(serializers.Serializer):
     label = serializers.CharField()
     value = serializers.CharField()
     # Matches apps.analytics.achievements.Achievement's own field name
-    # (renamed from `username`) — this can be "alice (Alice)", not
+    # (renamed from `username`) - this can be "alice (Alice)", not
     # necessarily the bare username, once a user opts in via
     # User.show_name_to_others, so the API field is named for what it
     # actually contains.
@@ -557,7 +557,7 @@ class FoodSerializer(serializers.ModelSerializer):
         ]
         # nutri_score/nova_group/off_id are only ever set by an
         # OpenFoodFacts import (apps.nutrition.services.import_or_
-        # refresh_food_from_off), never hand-entered — same reasoning
+        # refresh_food_from_off), never hand-entered - same reasoning
         # as docs/NUTRITION.md's own "Food" section. Importing a food
         # by barcode isn't exposed as a create here at all yet; a
         # client creates a plain hand-entered food the same way the
@@ -583,7 +583,7 @@ class RecipeIngredientSerializer(serializers.ModelSerializer):
 
     def validate_recipe(self, value):
         # Same reasoning as ExercisePrescriptionSerializer.validate_
-        # workout — an ingredient can only be added to a recipe this
+        # workout - an ingredient can only be added to a recipe this
         # user actually owns.
         request = self.context["request"]
         if value.owner_id != request.user.id or not value.active:
@@ -622,7 +622,7 @@ class DiaryEntrySerializer(serializers.ModelSerializer):
         read_only_fields = ["user"]
 
     def validate(self, attrs):
-        # Mirrors DiaryEntry.clean() / its own CheckConstraint —
+        # Mirrors DiaryEntry.clean() / its own CheckConstraint -
         # checked here too so a bad request gets a normal 400 with a
         # clear message instead of a raw IntegrityError 500 from the
         # database constraint alone.
@@ -633,7 +633,7 @@ class DiaryEntrySerializer(serializers.ModelSerializer):
                  current("quick_calories") is not None]
         if sum(kinds) != 1:
             raise serializers.ValidationError(
-                "Log either a food, a recipe or quick macros (quick_calories) — exactly one."
+                "Log either a food, a recipe or quick macros (quick_calories) - exactly one."
             )
         return attrs
 
@@ -665,11 +665,11 @@ class DiaryEntrySerializer(serializers.ModelSerializer):
 
 # Goals/targets are historized and only ever change through
 # apps.nutrition.services.set_goal/set_target (append a new row,
-# close the old one) — exposed read-only here for exactly the same
+# close the old one) - exposed read-only here for exactly the same
 # reason PersonalRecordSerializer is read-only above: a raw PATCH
 # through a generic serializer could silently rewrite history a
 # derived/historized resource must never allow. Setting a goal or
-# target through the API isn't in scope for this pass — see "What's
+# target through the API isn't in scope for this pass - see "What's
 # deliberately not here" in docs/API.md.
 class NutritionGoalSerializer(serializers.ModelSerializer):
     class Meta:
@@ -687,7 +687,7 @@ class NutritionGoalSerializer(serializers.ModelSerializer):
 
 class NutritionTargetSerializer(serializers.ModelSerializer):
     # NutritionTarget.display_reason under the API's existing "reason"
-    # key — re-rendered in the request's active language when the
+    # key - re-rendered in the request's active language when the
     # structured snapshot is available, same as the dashboard, rather
     # than exposing the raw model field that can be frozen in whatever
     # language was active when the row was created. See
@@ -712,7 +712,7 @@ class NutritionTargetSerializer(serializers.ModelSerializer):
 
 class NutritionProfileSerializer(serializers.ModelSerializer):
     # A property, not a model field (NutritionProfile.age_years,
-    # derived from birth_date so it never goes stale) — exposed
+    # derived from birth_date so it never goes stale) - exposed
     # read-only the same way DiaryEntrySerializer doesn't re-derive
     # anything the model already computes for it.
     age_years = serializers.IntegerField(read_only=True)
@@ -748,28 +748,28 @@ class DietPlanMealSerializer(serializers.ModelSerializer):
 
 
 class DietPlanSerializer(serializers.ModelSerializer):
-    """`meals`/each meal's `items` are read-only here — they're always
+    """`meals`/each meal's `items` are read-only here - they're always
     generated by apps.nutrition.diet_builder.build_diet_plan's own
     calorie-splitting algorithm (DietPlanViewSet.perform_create below),
     never hand-inserted through this serializer, the same "a raw write
     could silently corrupt what a domain service guarantees" reasoning
-    NutritionGoal/NutritionTarget above already follow — unlike a
+    NutritionGoal/NutritionTarget above already follow - unlike a
     recipe's own hand-edited ingredient list, a diet plan's meals/items
     are meant to stay whatever the wizard actually computed.
-    `is_active` is a real Meta.read_only_fields entry — it's never
+    `is_active` is a real Meta.read_only_fields entry - it's never
     valid input, on create or update alike. The four `target_*` fields
     aren't: DietPlanViewSet.perform_create needs them as writable input
     to pass through to `build_diet_plan`, so they can't be marked
     read-only in Meta (DRF strips a read-only field from
     validated_data unconditionally, create included). Instead
     perform_update discards them the same way it already discards
-    `meal_slots` — on update only, they're a snapshot of what the plan
+    `meal_slots` - on update only, they're a snapshot of what the plan
     was actually built against (DietPlan's own model docstring), and
     only `build_diet_plan` should ever set them; a raw PATCH changing
     them would silently disconnect a plan's stated targets from what
     its `meals` were actually generated to hit.
 
-    `meal_slots` isn't a real DietPlan field at all — write-only input
+    `meal_slots` isn't a real DietPlan field at all - write-only input
     for `build_diet_plan`'s own `meal_slots` kwarg, only meaningful on
     create (DietPlanViewSet.perform_update discards it from an update).
     """
@@ -845,7 +845,7 @@ class RoutineItemSerializer(serializers.ModelSerializer):
         fields = ["id", "routine", "stretch", "order", "hold_seconds", "sets", "rest_seconds"]
 
     def validate_routine(self, value):
-        # Same reasoning as RecipeIngredientSerializer.validate_recipe —
+        # Same reasoning as RecipeIngredientSerializer.validate_recipe -
         # only a routine this user owns can be edited.
         if value.owner_id != self.context["request"].user.id:
             raise serializers.ValidationError("Not a routine you own.")
@@ -889,7 +889,7 @@ class PerformedStretchSerializer(serializers.ModelSerializer):
 
 
 class StretchSessionSerializer(serializers.ModelSerializer):
-    """Creating one through the API is a quick log — a finished session
+    """Creating one through the API is a quick log - a finished session
     with a duration (services.quick_log); guided sessions only come from
     the web player. Everything snapshotted at start (name, routine,
     per-stretch plan) is read-only afterwards, same as the web edit
@@ -930,7 +930,7 @@ class StretchSessionSerializer(serializers.ModelSerializer):
 
 
 # --------------------------------------------------------------------
-# Shopping list (apps.nutrition.shopping) — derived, never stored
+# Shopping list (apps.nutrition.shopping) - derived, never stored
 # --------------------------------------------------------------------
 
 

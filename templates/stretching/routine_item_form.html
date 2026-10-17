@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% load i18n core_extras %}
-{% block title %}{% if item %}{% trans "Edit stretch" %}{% else %}{% trans "Add a stretch" %}{% endif %} — IronStack{% endblock %}
+{% block title %}{% if item %}{% trans "Edit stretch" %}{% else %}{% trans "Add a stretch" %}{% endif %} - IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
   <h1 class="no-margin">{% if item %}{{ item.stretch.name|translate_content }}{% else %}{% trans "Add a stretch" %}{% endif %}</h1>

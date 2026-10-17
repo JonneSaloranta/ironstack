@@ -9,7 +9,7 @@ _FIELDS = (
 
 
 def _per_unit_food(food):
-    """One of the food's own units — the same scaling as
+    """One of the food's own units - the same scaling as
     services.scale_nutrition(food, 1), kept here so later changes to the
     service can't change what this migration did."""
     ratio = Decimal("1") / food.serving_size
@@ -34,7 +34,7 @@ def _per_serving_recipe(recipe, RecipeIngredient):
 
 
 def snapshot_existing_entries(apps, schema_editor):
-    """Freeze every existing food/recipe entry at today's values — the
+    """Freeze every existing food/recipe entry at today's values - the
     best record left of what it was when logged. From here on a later
     edit of the food or recipe no longer changes these days."""
     DiaryEntry = apps.get_model("nutrition", "DiaryEntry")

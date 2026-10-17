@@ -12,7 +12,7 @@
 - No REST framework is added until an actual API client needs it (see
   `ARCHITECTURE.md` → API layer).
 
-## Phase 1 — Foundation
+## Phase 1 - Foundation
 
 Implement:
 - Django project
@@ -29,7 +29,7 @@ Acceptance:
 - tests run
 - basic responsive layout works
 
-## Phase 2 — Exercises
+## Phase 2 - Exercises
 
 Implement:
 - exercises
@@ -42,7 +42,7 @@ Acceptance:
 - users can create custom exercises
 - permissions are enforced
 
-## Phase 3 — Programs
+## Phase 3 - Programs
 
 Implement:
 - programs
@@ -58,7 +58,7 @@ Acceptance:
 - users can copy templates
 - program edits do not alter historical sessions
 
-## Phase 4 — Workout logging
+## Phase 4 - Workout logging
 
 Implement:
 - start workout
@@ -73,7 +73,7 @@ Acceptance:
 - historical data is preserved
 - incomplete workouts remain visible
 
-## Phase 5 — PR engine
+## Phase 5 - PR engine
 
 Implement:
 - max weight
@@ -88,7 +88,7 @@ Acceptance:
 - PR tests pass
 - records survive program changes
 
-## Phase 6 — Progression engine
+## Phase 6 - Progression engine
 
 Implement:
 - double progression
@@ -103,7 +103,7 @@ Acceptance:
 - progression logic has unit tests
 - algorithms are independent from HTTP/templates
 
-## Phase 7 — Smart suggestions
+## Phase 7 - Smart suggestions
 
 Implement:
 - history analysis
@@ -118,14 +118,14 @@ Acceptance:
 - user can override suggestions
 - explanations are understandable
 
-## Phase 8 — Body tracking
+## Phase 8 - Body tracking
 
 Implement:
 - measurements
 - history
 - charts
 
-## Phase 9 — Activities
+## Phase 9 - Activities
 
 Implement:
 - manual activity types
@@ -133,7 +133,7 @@ Implement:
 - activity history
 - activity analytics
 
-## Phase 10 — Analytics
+## Phase 10 - Analytics
 
 Implement:
 - dashboard
@@ -143,7 +143,7 @@ Implement:
 - muscle-group analytics
 - date-range filtering
 
-## Phase 11 — Polish
+## Phase 11 - Polish
 
 Perform:
 - mobile UI refinement

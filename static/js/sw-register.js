@@ -2,7 +2,7 @@
 // deliberately, doesn't do (no offline caching of pages/data).
 //
 // Extracted out of templates/base.html into its own file so it can be
-// loaded via <script src>, not inline — apps.core.middleware.
+// loaded via <script src>, not inline - apps.core.middleware.
 // ContentSecurityPolicyMiddleware's script-src doesn't allow
 // 'unsafe-inline' (only 'unsafe-eval', for Alpine.js's own expression
 // evaluation), so an inline <script>...</script> block would simply

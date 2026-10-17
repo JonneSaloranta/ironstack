@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% load i18n core_extras %}
-{% block title %}{% trans "Body tracking" %} — IronStack{% endblock %}
+{% block title %}{% trans "Body tracking" %} - IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
   <h1 class="no-margin">{% trans "Body tracking" %}</h1>
@@ -11,7 +11,7 @@
 
 {% for measurement_type in measurement_types %}
   {% comment %}
-  card-untracked dims a type with nothing logged yet — previously
+  card-untracked dims a type with nothing logged yet - previously
   identical in every way to one with real history, so "Body weight:
   82,00 kg" and six straight "No readings yet" rows all carried the
   same visual weight and none of them stood out from the others.

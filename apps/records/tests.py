@@ -200,7 +200,7 @@ class PRDetectionTests(TestCase):
 class PRSurvivesProgramChangesTests(TestCase):
     """docs/PR_SYSTEM.md: "A program edit must never erase or rewrite
     previous PRs." PersonalRecord/PRService never reference
-    Program/Workout/ExercisePrescription, so this holds by construction —
+    Program/Workout/ExercisePrescription, so this holds by construction -
     asserted directly here."""
 
     def test_editing_and_deleting_the_program_does_not_affect_stored_prs(self):
@@ -283,7 +283,7 @@ class SetLoggingNotifiesNewPRsTests(TestCase):
     def test_new_pr_flash_message_shows_the_converted_weight_with_its_unit(self):
         """Regression: the "New PR" flash message used to interpolate the
         raw stored kg value directly, unconverted and with no unit label
-        at all, for every record type — including for an
+        at all, for every record type - including for an
         imperial-preference user, who'd see a plain number that was
         neither their unit nor labeled as anything."""
         self.alice.unit_system = "imperial"
@@ -299,7 +299,7 @@ class SetLoggingNotifiesNewPRsTests(TestCase):
     def test_htmx_response_renders_the_pr_as_a_top_of_screen_toast(self):
         """New PRs render as an HTMX out-of-band swap into the toast
         container base.html defines once (#pr-toast-container, fixed to
-        the top of the screen) — not inline in the exercise card itself."""
+        the top of the screen) - not inline in the exercise card itself."""
         response = self.client.post(
             reverse("workouts:set-log", args=[self.performed.pk]),
             {"weight": "100", "reps": "5"},
@@ -309,7 +309,7 @@ class SetLoggingNotifiesNewPRsTests(TestCase):
 
     def test_an_htmx_request_does_not_flash_a_message(self):
         """Regression: messages.success used to fire unconditionally,
-        including on every HTMX request — but nothing ever consumes
+        including on every HTMX request - but nothing ever consumes
         django.contrib.messages there (only base.html's full-page `{% if
         messages %}` loop does), so the message sat in the store and
         would resurface, stale, on whatever the user's next *unrelated*

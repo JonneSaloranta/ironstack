@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% load i18n %}
-{% block title %}{{ display_name }} — IronStack{% endblock %}
+{% block title %}{{ display_name }} - IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
   <h1 class="no-margin">{{ display_name }}</h1>
@@ -12,7 +12,7 @@
     {% if active_coaching %}
       <p>{% trans "This person is coaching you." %}</p>
     {% elif pending_coaching_request %}
-      <p class="text-muted">{% trans "Coaching request sent — waiting for a response." %}</p>
+      <p class="text-muted">{% trans "Coaching request sent - waiting for a response." %}</p>
     {% elif member.accepting_new_clients %}
       <form method="post" action="{% url 'coaching:request-send' member.pk %}">
         {% csrf_token %}

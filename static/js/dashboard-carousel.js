@@ -1,17 +1,17 @@
-// Achievements carousel (apps.analytics.achievements) — auto-advances
+// Achievements carousel (apps.analytics.achievements) - auto-advances
 // through whichever highlight cards the server rendered, pausing on
 // hover/focus so a user reading one isn't fighting the timer, and the
 // dot row (also Alpine-driven) always lets a user jump straight to a
-// specific card instead — "auto-rotate" is only ever the default.
+// specific card instead - "auto-rotate" is only ever the default.
 //
 // Extracted out of templates/core/dashboard.html into its own file so
-// it can be loaded via <script src>, not inline — see
+// it can be loaded via <script src>, not inline - see
 // static/js/sw-register.js's own comment for why (CSP's script-src
 // here has no 'unsafe-inline'). `total` still comes from Alpine's own
 // `x-data="ironstackCarousel({{ achievements|length }})"` expression
 // in the template itself, evaluated via Alpine's ('unsafe-eval'-gated)
 // Function()-based interpreter, not from anything templated into this
-// file — this file itself contains no server-rendered value.
+// file - this file itself contains no server-rendered value.
 //
 // Moving content needs a way to stop it (WCAG 2.2.2): the Pause button
 // stops rotation for good, hover and keyboard focus pause it while

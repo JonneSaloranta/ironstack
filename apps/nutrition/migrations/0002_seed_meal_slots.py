@@ -1,4 +1,4 @@
-"""Seed the default meal slots — see docs/NUTRITION.md "MealSlot"."""
+"""Seed the default meal slots - see docs/NUTRITION.md "MealSlot"."""
 
 from django.db import migrations
 

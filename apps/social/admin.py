@@ -53,7 +53,7 @@ class GroupInviteAdmin(admin.ModelAdmin):
 
 @admin.register(DirectMessage)
 class DirectMessageAdmin(admin.ModelAdmin):
-    # Django admin's own delete action is this app's moderation tool —
+    # Django admin's own delete action is this app's moderation tool -
     # no bespoke reporting UI was asked for (see apps/social's plan
     # notes on scope).
     list_display = ["sender", "recipient", "created_at"]

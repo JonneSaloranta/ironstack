@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% load i18n %}
-{% block title %}{% trans "My coaches" %} — IronStack{% endblock %}
+{% block title %}{% trans "My coaches" %} - IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
   <h1 class="no-margin">{% trans "My coaches" %}</h1>
@@ -29,7 +29,7 @@
     </div>
   </div>
 {% empty %}
-  {% include "core/_empty_state.html" with message=_("No one is coaching you yet — a personal trainer's own profile page has a “Request coaching” button.") %}
+  {% include "core/_empty_state.html" with message=_("No one is coaching you yet - a personal trainer's own profile page has a “Request coaching” button.") %}
 {% endfor %}
 
 <p><a class="button-link" href="{% url 'profile' %}">&larr; {% trans "Back to profile" %}</a></p>

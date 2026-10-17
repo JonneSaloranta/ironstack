@@ -1,10 +1,10 @@
-"""Orchestration for the historized goal/target chains — see
+"""Orchestration for the historized goal/target chains - see
 docs/NUTRITION.md "NutritionGoal"/"NutritionTarget". Views call these,
 never touch the append/supersede logic directly, so there's exactly
 one place a goal or target row ever gets closed out.
 
 Also home to the nutrition-scaling functions (scale_nutrition and
-friends) — these read real Food/Recipe rows and their relations, so
+friends) - these read real Food/Recipe rows and their relations, so
 they belong here rather than in a pure, DB-free module like
 apps.nutrition.energy/macros.
 """
@@ -30,12 +30,12 @@ from .models import (
     TargetSource,
 )
 
-# See docs/NUTRITION.md "OpenFoodFacts integration" — the interval a
+# See docs/NUTRITION.md "OpenFoodFacts integration" - the interval a
 # food imported from OFF is trusted before being transparently
 # re-fetched on next use, instead of a periodic bulk re-sync.
 OPENFOODFACTS_STALENESS_DAYS = 14
 
-# See docs/NUTRITION.md "Open Prices integration" — shorter than
+# See docs/NUTRITION.md "Open Prices integration" - shorter than
 # OPENFOODFACTS_STALENESS_DAYS above: a product's nutrition facts
 # barely change once published, but what it actually costs in a shop
 # does, far more often.
@@ -45,7 +45,7 @@ OPEN_PRICES_STALENESS_DAYS = 7
 @transaction.atomic
 def set_goal(user, *, goal_type, target_rate_kg_per_week, target_weight=None, notes=""):
     """Ends whichever goal is currently open (if any) and starts a new
-    one — never mutates an existing row in place (docs/NUTRITION.md
+    one - never mutates an existing row in place (docs/NUTRITION.md
     "NutritionGoal")."""
     now = timezone.now()
     NutritionGoal.objects.filter(user=user, ended_at__isnull=True).update(ended_at=now)
@@ -61,10 +61,10 @@ def set_goal(user, *, goal_type, target_rate_kg_per_week, target_weight=None, no
 @transaction.atomic
 def set_target(user, *, goal, daily_calories, macro_breakdown, source, reason, reason_data=None):
     """Same append/supersede shape as `set_goal`. `macro_breakdown` is
-    an `apps.nutrition.macros.MacroBreakdown` — this is the one place
+    an `apps.nutrition.macros.MacroBreakdown` - this is the one place
     its grams get written into a persisted `NutritionTarget` row.
     `reason_data` (an `energy.CalorieTargetReasonData`, from
-    `energy.calculate_calorie_target`) is optional — passing it lets
+    `energy.calculate_calorie_target`) is optional - passing it lets
     `NutritionTarget.display_reason` re-render `reason` in whatever
     language is active later, instead of it staying frozen in
     whichever language was active right now. Omitted by
@@ -99,11 +99,11 @@ def set_target(user, *, goal, daily_calories, macro_breakdown, source, reason, r
 
 def calculate_target_for_goal(profile, *, weight_kg, height_cm, goal_type, target_rate_kg_per_week):
     """The full profile+goal -> (calorie target, macro breakdown)
-    pipeline — used by both the onboarding wizard (a brand new goal)
+    pipeline - used by both the onboarding wizard (a brand new goal)
     and changing goals later. Pure composition of
     apps.nutrition.energy/macros; no DB writes. `weight_kg`/
     `height_cm` are explicit rather than read off `profile`, since
-    neither lives there — weight comes from apps.measurements, height
+    neither lives there - weight comes from apps.measurements, height
     from apps.accounts.User (docs/NUTRITION.md "Why a new app")."""
     age_years = profile.age_years
     bmr = energy.calculate_bmr(weight_kg, height_cm, age_years, profile.biological_sex)
@@ -124,7 +124,7 @@ def calculate_target_for_goal(profile, *, weight_kg, height_cm, goal_type, targe
 @transaction.atomic
 def set_active_diet_plan(user, plan):
     """Makes `plan` the one active plan for `user`, deactivating
-    whichever other plan (if any) was active before — DietPlan.Meta's
+    whichever other plan (if any) was active before - DietPlan.Meta's
     own unique constraint guarantees only one ever is; this is the one
     place that transition actually happens, the same shape as
     `set_goal`/`set_target` above for their own "only one open row"
@@ -137,7 +137,7 @@ def set_active_diet_plan(user, plan):
 
 
 def deactivate_diet_plan(plan):
-    """Turns a plan off without making any other plan active — having
+    """Turns a plan off without making any other plan active - having
     no active plan at all is a valid state (docs/NUTRITION.md "DietPlan"),
     unlike a goal or target, which always have exactly one open row."""
     plan.is_active = False
@@ -147,7 +147,7 @@ def deactivate_diet_plan(plan):
 @transaction.atomic
 def apply_adjustment_suggestion(user, suggestion):
     """Accepting a dynamic-adjustment suggestion
-    (apps.nutrition.suggestions) — never automatic, always this one
+    (apps.nutrition.suggestions) - never automatic, always this one
     explicit call from a user action. Keeps the same goal and macro
     split, just moves daily_calories by the suggested delta and
     rebalances macros against the new total."""
@@ -160,7 +160,7 @@ def apply_adjustment_suggestion(user, suggestion):
     body_weight_type = MeasurementType.objects.filter(name="Body weight", owner=None).first()
     latest_weight = latest_for(user, body_weight_type) if body_weight_type else None
     # A suggestion is only ever produced once trend data exists, so
-    # this should always resolve — guarded anyway rather than assume.
+    # this should always resolve - guarded anyway rather than assume.
     weight_kg = latest_weight.value if latest_weight else None
 
     macro_breakdown = macros.calculate_macros(
@@ -184,18 +184,18 @@ def _food_is_stale(food):
 
 def import_or_refresh_food_from_off(barcode, *, force=False):
     """Creates a shared (`owner=None`) `Food` row from OpenFoodFacts,
-    or refreshes an existing one if it's gone stale — see
+    or refreshes an existing one if it's gone stale - see
     docs/NUTRITION.md "OpenFoodFacts integration": staleness-triggered
     refresh on next use, not a periodic bulk re-sync. Returns `None`
     if the integration is turned off (OpenFoodFactsSettings) or OFF
     has nothing usable for this barcode.
 
-    `force=True` skips the staleness check and always re-fetches —
+    `force=True` skips the staleness check and always re-fetches -
     used only by `apps.nutrition.admin.FoodAdmin`'s "Refresh selected
     foods from OpenFoodFacts" action, an explicit admin-initiated
     request for specific rows, not a scheduled or unconditional
     bulk re-sync (still the thing this whole integration was
-    deliberately scoped away from — see the module docstring)."""
+    deliberately scoped away from - see the module docstring)."""
     if not OpenFoodFactsSettings.load().enabled:
         return None
 
@@ -233,17 +233,17 @@ def _price_is_stale(food):
 
 def refresh_food_price(food, *, force=False):
     """Refreshes `food`'s cached `price_amount`/`price_currency`/
-    `price_sample_count` from Open Prices if they've gone stale — see
+    `price_sample_count` from Open Prices if they've gone stale - see
     docs/NUTRITION.md "Open Prices integration": lazy, on-demand
     refresh on next use (`FoodDetailView`), the same shape
     `import_or_refresh_food_from_off` above already uses for nutrition
     data, gated on the same `OpenFoodFactsSettings.enabled` switch
     (Open Prices is run by the same organization as OFF's core API,
     and an operator turning off outbound OFF-ecosystem requests means
-    both, not just one). A no-op for any food with no `off_id` — there
+    both, not just one). A no-op for any food with no `off_id` - there
     is no barcode to look a price up by for a hand-entered food.
 
-    `force=True` skips the staleness check and always re-fetches —
+    `force=True` skips the staleness check and always re-fetches -
     used only by `apps.nutrition.admin.FoodAdmin`'s "Refresh selected
     foods' prices from Open Prices" action, an explicit admin-chosen
     selection, never a scheduled or unconditional bulk re-sync."""
@@ -274,12 +274,12 @@ def refresh_food_price(food, *, force=False):
 
 
 def _food_export_payload(food):
-    """One `RecipeIngredient.food` as a plain dict — enough both to
+    """One `RecipeIngredient.food` as a plain dict - enough both to
     re-fetch it live from OpenFoodFacts by barcode on import (the
     preferred path for anything OFF-sourced, same reasoning `off_id`
     already carries elsewhere in this file: OFF's own data can have
     moved on since this was exported) and, as a fallback, to recreate
-    it from this exact snapshot if that live lookup ever fails —
+    it from this exact snapshot if that live lookup ever fails -
     OpenFoodFacts being unreachable, disabled on the importing
     instance, or the barcode no longer listed shouldn't fail an
     otherwise-good recipe import."""
@@ -316,10 +316,10 @@ def _food_export_payload(food):
 
 def export_recipe(recipe):
     """A `Recipe` (with its ingredients/foods), as a plain dict ready
-    for `apps.core.data_exchange.build_envelope` — see that module's
+    for `apps.core.data_exchange.build_envelope` - see that module's
     own docstring for why this isn't just
     `apps.api.serializers.RecipeSerializer`. `meal_slots` are exported
-    by name, not id — resolved back to whichever row that name
+    by name, not id - resolved back to whichever row that name
     matches (system first, then the importing user's own) by
     `import_recipe` below, the same natural-key reasoning
     `_food_export_payload`'s own `off_id` follows."""
@@ -340,10 +340,10 @@ def export_recipe(recipe):
 
 
 def _resolve_meal_slot(user, name):
-    """System meal slot first (matched by name — `unique_system_meal_
+    """System meal slot first (matched by name - `unique_system_meal_
     slot_name` guarantees that's unambiguous), then this user's own
     existing custom one with the same name, then a brand new custom
-    one for them — the same "always resolve to something usable, never
+    one for them - the same "always resolve to something usable, never
     fail the whole import over a missing lookup row" approach
     `_resolve_food`/`apps.programs.services._resolve_exercise` both
     take. `None` (no meal slot tagged) is a valid, common answer,
@@ -363,7 +363,7 @@ def _resolve_meal_slot(user, name):
 
 def _decimal_or_none(value):
     """Best-effort parse for an optional numeric field coming from an
-    untrusted import file — see apps.programs.services' own copy of
+    untrusted import file - see apps.programs.services' own copy of
     this same helper for why a bad value here comes back `None`
     instead of raising."""
     if value is None:
@@ -377,13 +377,13 @@ def _decimal_or_none(value):
 def _resolve_food(user, data):
     """Finds (or creates) the `Food` a recipe ingredient's own
     exported payload points at. `off_id` present is always tried
-    first, live, via `import_or_refresh_food_from_off` — the exact
+    first, live, via `import_or_refresh_food_from_off` - the exact
     same shared-row lookup/import a barcode scan already uses, so an
     OFF-sourced ingredient ends up pointing at the same shared `Food`
     row (or a freshly-imported one) any other user on this instance
     scanning that same barcode would. Only falls back to the embedded
     snapshot in `data` if that live lookup comes back empty (OFF
-    disabled here, unreachable, or the barcode's gone) — never because
+    disabled here, unreachable, or the barcode's gone) - never because
     the snapshot is somehow preferred.
 
     A hand-entered food with no `off_id` is matched against this
@@ -446,7 +446,7 @@ def _resolve_food(user, data):
 
 @transaction.atomic
 def import_recipe(user, payload):
-    """The inverse of `export_recipe` — creates a brand new `Recipe`
+    """The inverse of `export_recipe` - creates a brand new `Recipe`
     owned by `user` from a previously-exported payload. Wrapped in one
     transaction, same reasoning as `apps.programs.services.
     import_program`: any `ImportValidationError` partway through rolls
@@ -465,7 +465,7 @@ def import_recipe(user, payload):
         instructions=payload.get("instructions", ""),
     )
     # `meal_slot` (a single name) is what files exported before recipes
-    # could have several meals carry — still accepted.
+    # could have several meals carry - still accepted.
     slot_names = payload.get("meal_slots")
     if slot_names is None:
         slot_names = [payload["meal_slot"]] if payload.get("meal_slot") else []
@@ -497,7 +497,7 @@ def import_recipe(user, payload):
 def diet_plans_visible_to(user):
     """Diet plans a user may view/import: their own + any diet plan
     specifically shared with them by one of their currently active
-    coaches (apps.coaching) — same "checked both ways" reasoning as
+    coaches (apps.coaching) - same "checked both ways" reasoning as
     apps.programs.services.visible_to's own extension, but with no
     "system template" branch: unlike Program, DietPlan has no
     owner=None concept at all."""
@@ -511,7 +511,7 @@ def diet_plans_visible_to(user):
 def export_diet_plan(plan):
     """A `DietPlan` (with its meals/items), as a plain dict ready for
     `apps.core.data_exchange.build_envelope`. Each item nests a full
-    `_food_export_payload`/`export_recipe` rather than a bare name —
+    `_food_export_payload`/`export_recipe` rather than a bare name -
     unlike a recipe's own ingredients, a diet plan item can point at
     either a `Food` or a `Recipe`, and a recipe embedded here needs
     its own ingredients re-resolvable too, so it gets the exact same
@@ -519,7 +519,7 @@ def export_diet_plan(plan):
 
     `goal` is deliberately not exported at all: it's this specific
     user's own historized statement of intent (`NutritionGoal`), not
-    something that means anything reattached to a different account —
+    something that means anything reattached to a different account -
     `target_calories`/the macro targets below already carry the
     numbers that actually matter, snapshotted the same way they are on
     the plan itself. `import_diet_plan` always creates a plan with
@@ -559,9 +559,9 @@ def export_diet_plan(plan):
 
 def _resolve_recipe(user, data):
     """The recipe half of a diet plan item's `_resolve_food`/
-    `_resolve_meal_slot`-shaped counterpart. Matched by name first —
+    `_resolve_meal_slot`-shaped counterpart. Matched by name first -
     against this user's own recipes and this instance's shared/
-    template ones (`owner=None`, see `Recipe.owner`'s own docstring) —
+    template ones (`owner=None`, see `Recipe.owner`'s own docstring) -
     so re-importing the same file twice reuses the same recipe instead
     of piling up duplicates; a genuinely new one is created by simply
     delegating to `import_recipe` (safe to call from inside
@@ -632,12 +632,12 @@ def _populate_diet_plan(plan, payload):
 
 @transaction.atomic
 def import_diet_plan(user, payload):
-    """The inverse of `export_diet_plan` — creates a brand new
+    """The inverse of `export_diet_plan` - creates a brand new
     `DietPlan` owned by `user`, never active on creation regardless of
     whether the exported plan was (`set_active_diet_plan` is the only
     place allowed to flip that on, and doing it automatically here
     would silently deactivate whatever plan `user` already has
-    running) — same "import lands inert, the user decides what to do
+    running) - same "import lands inert, the user decides what to do
     with it next" behavior `apps.programs.services.import_program`
     already gives a program (`is_template` never carried over either).
     Wrapped in one transaction: any `ImportValidationError` partway
@@ -686,7 +686,7 @@ def create_diet_plan(
     is_weekly,
     meals,
 ):
-    """Creates an inactive DietPlan from already-resolved rows — the
+    """Creates an inactive DietPlan from already-resolved rows - the
     sibling of `import_diet_plan` for a caller that holds real
     Food/Recipe/MealSlot objects rather than a portable export payload
     (apps.assistant.proposals, accepting an assistant's suggestion).
@@ -694,7 +694,7 @@ def create_diet_plan(
     would silently replace whatever plan `user` already follows.
 
     `meals` is a list of dicts: `meal_slot`, `weekday` (None for a
-    one-day plan), `target_calories`, and `items` — each a dict with
+    one-day plan), `target_calories`, and `items` - each a dict with
     exactly one of `food`/`recipe` plus `quantity`."""
     from .models import DietPlanItem, DietPlanMeal
 
@@ -733,17 +733,17 @@ def create_diet_plan(
 @transaction.atomic
 def merge_foods(keep, duplicates):
     """The admin-only "these are actually the same food" cleanup tool
-    (`apps.nutrition.admin.FoodAdmin`) — re-points every reference to
+    (`apps.nutrition.admin.FoodAdmin`) - re-points every reference to
     `duplicates` onto `keep`, then deletes the now-unreferenced
     duplicate rows. Deliberately never deletes a `DiaryEntry`/
     `RecipeIngredient`/`DietPlanItem` itself, only changes which
-    `Food` row it points at — a duplicate entry in the food library is
+    `Food` row it points at - a duplicate entry in the food library is
     a data-quality problem, not a reason to erase what a user actually
     logged (docs/NUTRITION.md and CLAUDE.md's own "workout history
     must remain historically trustworthy" apply here too: a merge
     tidies the library, it must never look like the user's own diary
     lost an entry). `keep` is chosen by whoever calls this, not
-    inferred — see the admin view for why that has to stay a human
+    inferred - see the admin view for why that has to stay a human
     decision, not a heuristic."""
     from .models import DiaryEntry, DietPlanItem, RecipeIngredient
 
@@ -757,7 +757,7 @@ def merge_foods(keep, duplicates):
 
 
 # EAN-8/UPC-A/EAN-13/ITF-14 cover every barcode format OpenFoodFacts
-# itself indexes products by — a query that's nothing but 8-14 digits
+# itself indexes products by - a query that's nothing but 8-14 digits
 # is unambiguously a barcode being typed or scanned in, not a food
 # name, so it gets looked up directly rather than run through OFF's
 # free-text search (which is unreliable for raw digit strings).
@@ -772,18 +772,18 @@ def search_foods(user, query, *, online=False):
     OFF's usage rules allow only 10 searches a minute per IP and want
     one API call per real user action (docs/NUTRITION.md
     "OpenFoodFacts integration"), so a text query only reaches OFF
-    when the caller passes `online=True` — the user pressing "Search
+    when the caller passes `online=True` - the user pressing "Search
     Open Food Facts", not merely typing. A query that looks like a
-    barcode (8-14 digits — see `_BARCODE_RE`) is different: it's a
+    barcode (8-14 digits - see `_BARCODE_RE`) is different: it's a
     scan, exactly what the by-barcode lookup is for, so it always
     goes online, matched exactly against `Food.off_id` locally and
     OFF's own by-barcode lookup rather than free-text search, which
     is unreliable for a bare digit string.
 
-    `off_status` is "available" (OFF not consulted yet — the UI offers
+    `off_status` is "available" (OFF not consulted yet - the UI offers
     a button), "ok", "disabled", "busy"
     (our own rate budget is spent or OFF recently failed) or "error".
-    OFF results aren't imported just for appearing in this list —
+    OFF results aren't imported just for appearing in this list -
     only `import_or_refresh_food_from_off` (called once the caller
     actually picks one) ever creates or updates a `Food` row."""
     is_barcode = bool(_BARCODE_RE.match(query.strip()))
@@ -813,7 +813,7 @@ def search_foods(user, query, *, online=False):
         for raw in raw_products
         if raw is not None
         and (parsed := openfoodfacts.parse_product(raw)) is not None
-        # Skip anything already imported locally — no point
+        # Skip anything already imported locally - no point
         # offering to "import" a food that's already there.
         and not Food.objects.filter(off_id=parsed["off_id"]).exists()
     ]
@@ -822,10 +822,10 @@ def search_foods(user, query, *, online=False):
 
 def distinct_food_categories(user):
     """Every distinct category name across the foods visible to `user`
-    (their own plus shared/imported) — for `FoodListView`'s own
+    (their own plus shared/imported) - for `FoodListView`'s own
     "filter by category" dropdown. `Food.categories` is OFF's raw,
     free-text, comma-separated string (see that field's own comment
-    for why — it's display text, not a normalized taxonomy), so this
+    for why - it's display text, not a normalized taxonomy), so this
     is a plain Python split/dedupe over each row's value rather than
     a query the database could serve directly; nothing else in this
     app needs a distinct-categories list often enough to justify
@@ -844,7 +844,7 @@ def distinct_food_categories(user):
             name = name.strip()
             if name:
                 names.add(name)
-    # key=str.lower, not a bare sort — OFF's own category casing is
+    # key=str.lower, not a bare sort - OFF's own category casing is
     # inconsistent (a plain "Cereals" alongside a locale-prefixed
     # "en:Confectionary based spreads"), and Python's default string
     # sort is case-sensitive (every uppercase letter sorts before
@@ -855,7 +855,7 @@ def distinct_food_categories(user):
 
 
 def suggested_categories():
-    """The "browse by category" list — a static curated list
+    """The "browse by category" list - a static curated list
     (`openfoodfacts.list_categories`), so no request and nothing to
     cache. Returns `[]` if the integration is off, so the browse page
     doesn't promise categories it couldn't then load."""
@@ -866,7 +866,7 @@ def suggested_categories():
 
 def browse_category(category_id):
     """Live OFF results for one category, same "skip anything already
-    imported locally" filtering as `search_foods` — browsing and
+    imported locally" filtering as `search_foods` - browsing and
     searching both only ever show an OFF product as an *importable*
     result once, never a duplicate of something already in the user's
     own library."""
@@ -887,7 +887,7 @@ def browse_category(category_id):
 @dataclass(frozen=True)
 class ScaledNutrition:
     """One food/recipe amount's nutrition, already scaled to whatever
-    quantity was actually logged — the shape apps.nutrition.services.
+    quantity was actually logged - the shape apps.nutrition.services.
     scale_nutrition/diary_entry_nutrition/recipe_total_nutrition all
     return, and what the food diary/recipe templates render directly.
     """
@@ -948,7 +948,7 @@ ZERO_NUTRITION = ScaledNutrition(
 
 def scale_nutrition(food, quantity) -> ScaledNutrition:
     """`food`'s own nutrition values, scaled from its `serving_size`
-    to `quantity` (same unit as `food.serving_unit`) — the one place
+    to `quantity` (same unit as `food.serving_unit`) - the one place
     this ratio is computed, reused by recipe totals and a diary entry
     logging raw food directly (docs/NUTRITION.md "RecipeIngredient")."""
     ratio = quantity / food.serving_size
@@ -1008,7 +1008,7 @@ _SNAPSHOT_FIELDS = (
 
 
 def nutrition_snapshot(nutrition: ScaledNutrition) -> dict:
-    """`nutrition` as JSON-safe strings (Decimal precision kept) — what
+    """`nutrition` as JSON-safe strings (Decimal precision kept) - what
     DiaryEntry.nutrition_snapshot stores."""
     return {
         name: (None if getattr(nutrition, name) is None else str(getattr(nutrition, name)))
@@ -1026,8 +1026,8 @@ def nutrition_from_snapshot(snapshot: dict) -> ScaledNutrition:
 
 
 def per_unit_entry_nutrition(entry) -> ScaledNutrition:
-    """A food or recipe entry's nutrition for a quantity of one — one of
-    the food's own units, or one serving of the recipe — from the food
+    """A food or recipe entry's nutrition for a quantity of one - one of
+    the food's own units, or one serving of the recipe - from the food
     or recipe as it is right now."""
     if entry.food_id:
         return scale_nutrition(entry.food, Decimal("1"))
@@ -1035,7 +1035,7 @@ def per_unit_entry_nutrition(entry) -> ScaledNutrition:
 
 
 def diary_entry_nutrition(entry) -> ScaledNutrition:
-    """A single DiaryEntry's nutrition — dispatches on whichever of
+    """A single DiaryEntry's nutrition - dispatches on whichever of
     `food`/`recipe`/quick macros is set (the model's own CheckConstraint
     guarantees exactly one is). `quantity` means the food's own unit for
     a food entry, servings for a recipe entry, portions for a quick one.
@@ -1063,7 +1063,7 @@ def diary_entry_nutrition(entry) -> ScaledNutrition:
 
 
 def calories_from_macros(protein_grams, carbohydrate_grams, fat_grams):
-    """Atwater 4/4/9 kcal per gram — the estimate a quick entry falls
+    """Atwater 4/4/9 kcal per gram - the estimate a quick entry falls
     back to when only its macros were given."""
     return int(
         round(
@@ -1099,7 +1099,7 @@ def create_quick_diary_entry(
 
 
 def daily_totals(user, target_date) -> ScaledNutrition:
-    """Every DiaryEntry logged for `user` on `target_date`, summed —
+    """Every DiaryEntry logged for `user` on `target_date`, summed -
     the figure the food diary's "today so far" header shows."""
     from .models import DiaryEntry
 
@@ -1114,13 +1114,13 @@ def daily_totals(user, target_date) -> ScaledNutrition:
 
 def create_recipe_from_diary_meal(user, target_date, meal_slot):
     """Turns everything logged in one meal slot on one date into a
-    new, reusable `Recipe` — asked for directly ("I eat this same
+    new, reusable `Recipe` - asked for directly ("I eat this same
     breakfast most days, let me save it instead of re-adding each
     food by hand"). Only food-type `DiaryEntry` rows become
     `RecipeIngredient` rows: a `RecipeIngredient` always points at a
     `Food`, never another `Recipe` (that model's own shape), so a
     recipe-type entry logged for the same meal is skipped rather than
-    flattened into its own ingredients — re-deriving that here risks
+    flattened into its own ingredients - re-deriving that here risks
     double-counting anything also logged as a plain food the same
     meal, for a case (re-saving an already-a-recipe meal as *another*
     recipe) that's rare enough not to justify the complexity. Returns
@@ -1128,11 +1128,11 @@ def create_recipe_from_diary_meal(user, target_date, meal_slot):
     one logged purely via existing recipes) rather than creating a
     useless empty recipe.
 
-    `servings=1` — this is exactly the amount actually eaten, not a
+    `servings=1` - this is exactly the amount actually eaten, not a
     batch meant to be divided. `meal_slot` carries over onto the new
     recipe unchanged, the same hint `diet_builder.suggest_item_for_
     calorie_budget` already uses to avoid suggesting a breakfast
-    recipe for dinner — a recipe built from what was eaten at
+    recipe for dinner - a recipe built from what was eaten at
     breakfast is, definitionally, a breakfast recipe (more meals can be
     ticked on the recipe afterwards)."""
     from django.utils.translation import gettext
@@ -1149,7 +1149,7 @@ def create_recipe_from_diary_meal(user, target_date, meal_slot):
 
     recipe = Recipe.objects.create(
         owner=user,
-        name=f"{gettext(meal_slot.name)} — {target_date.isoformat()}",
+        name=f"{gettext(meal_slot.name)} - {target_date.isoformat()}",
         servings=1,
     )
     recipe.meal_slots.set([meal_slot])
@@ -1161,7 +1161,7 @@ def create_recipe_from_diary_meal(user, target_date, meal_slot):
 
 
 def visible_meal_slots(user):
-    """System defaults + this user's own, active only — same
+    """System defaults + this user's own, active only - same
     system-or-custom visibility rule as apps.measurements.services.
     visible_to."""
     from .models import MealSlot
@@ -1171,7 +1171,7 @@ def visible_meal_slots(user):
 
 @dataclass(frozen=True)
 class FoodUsage:
-    """One entry in a "quick add" panel — see `most_used_foods`.
+    """One entry in a "quick add" panel - see `most_used_foods`.
     `quantity`/`meal_slot_id` are sensible defaults to prefill, not
     part of what ranks the food: the most recent diary quantity/meal
     for that food if it's ever been logged directly, else the food's
@@ -1184,7 +1184,7 @@ class FoodUsage:
 
 def last_diary_uses(user, food_ids):
     """`{food_id: (quantity, meal_slot_id)}` from the user's most recent
-    diary entry of each food in `food_ids` — the quantity to prefill
+    diary entry of each food in `food_ids` - the quantity to prefill
     wherever that food is offered for logging again (the "Most used"
     panel and plain search results alike), since a user usually eats
     about the same amount of a food each time. A food never logged
@@ -1214,13 +1214,13 @@ def with_prefill_quantities(user, foods):
 
 
 def most_used_foods(user, *, limit=None):
-    """The user's most frequently added foods, most-used first —
+    """The user's most frequently added foods, most-used first -
     powers the "quick add" panel shown wherever a food can be added
     (the food diary, recipe ingredients, diet-plan meal items), so a
     food eaten often doesn't need re-typing into a search box every
     single time. Ranked by frequency, not recency: usage is counted
-    across every place a food actually gets added for this user — the
-    diary, recipe ingredients, and diet-plan items — not just one of
+    across every place a food actually gets added for this user - the
+    diary, recipe ingredients, and diet-plan items - not just one of
     them, since "used the most" means overall, not "most recent in
     this one context." Only ever counts this user's own usage, even
     for a shared (`owner=None`) food other users also have."""
@@ -1262,14 +1262,14 @@ def most_used_foods(user, *, limit=None):
 @transaction.atomic
 def copy_diary_day(user, source_date, target_date):
     """Duplicates every DiaryEntry logged on `source_date` onto
-    `target_date` as brand new rows — "I ate the same as yesterday"
+    `target_date` as brand new rows - "I ate the same as yesterday"
     without re-searching and re-adding every item by hand. The source
     day is never read back out or mutated (docs/NUTRITION.md /
     CLAUDE.md's "history must remain historically trustworthy"
     extends here the same way it does to `merge_foods`), and copying
     is purely additive: running it twice, or copying onto a day that
     already has entries, just adds more rows rather than silently
-    deduplicating — the same "an explicit user action always does
+    deduplicating - the same "an explicit user action always does
     exactly what it says" rule as every other diary action in this
     app. Returns how many entries were copied, so the caller can tell
     a genuinely empty source day apart from a successful copy."""
@@ -1291,7 +1291,7 @@ def copy_diary_day(user, source_date, target_date):
             quick_carbohydrate_grams=entry.quick_carbohydrate_grams,
             quick_fat_grams=entry.quick_fat_grams,
             # The same values the source day shows, not the food's
-            # current ones — a copy of that day (bulk_create skips save()).
+            # current ones - a copy of that day (bulk_create skips save()).
             nutrition_snapshot=entry.nutrition_snapshot
             or (
                 None
@@ -1306,7 +1306,7 @@ def copy_diary_day(user, source_date, target_date):
 
 
 # How many days of calorie_history/nutrition_stats look back by
-# default — long enough to see a real weekly pattern (weekday vs.
+# default - long enough to see a real weekly pattern (weekday vs.
 # weekend eating), short enough to stay one screen's worth of bars,
 # same "30" apps.nutrition.dashboard's own weight chart already uses
 # for the same reason (docs/NUTRITION.md dashboard weight chart).
@@ -1315,7 +1315,7 @@ STATS_WINDOW_DAYS = 30
 
 def _daily_totals_by_date(user, start_date, end_date):
     """Every day's total nutrition in [start_date, end_date] inclusive,
-    as {date: ScaledNutrition} — only for a day with at least one
+    as {date: ScaledNutrition} - only for a day with at least one
     DiaryEntry; a day with nothing logged simply has no key, left to
     each caller to decide whether that means `ZERO_NUTRITION` (a
     30-day chart with no gaps, calorie_history below) or "not enough
@@ -1337,7 +1337,7 @@ def _daily_totals_by_date(user, start_date, end_date):
 
 def calorie_history(user, *, days=STATS_WINDOW_DAYS):
     """The last `days` calendar days' totals (today inclusive), oldest
-    first, with exactly one entry per day — including days nothing was
+    first, with exactly one entry per day - including days nothing was
     logged at all (`ZERO_NUTRITION`), the same "always one point per
     day, not just days with data" shape
     apps.analytics.services.weekly_volume_series uses, so a genuinely
@@ -1357,7 +1357,7 @@ def calorie_history(user, *, days=STATS_WINDOW_DAYS):
 
 @dataclass(frozen=True)
 class NutritionStatsSummary:
-    """The nutrition stats page's headline numbers for one period — see
+    """The nutrition stats page's headline numbers for one period - see
     `nutrition_stats`/`nutrition_stats_by_period`."""
 
     days_logged: int
@@ -1397,7 +1397,7 @@ def _summarize(logged, days_in_range) -> NutritionStatsSummary:
 
 def _logged_days(totals_by_date, start, end):
     """Days in [start, end] that have something logged. An unlogged day
-    is left out rather than counted as zero calories — counting it would
+    is left out rather than counted as zero calories - counting it would
     punish anyone who logs most days but not every single one."""
     return [
         totals
@@ -1437,7 +1437,7 @@ class NutritionStatsPeriod:
 
 
 def nutrition_stats_by_period(user, today=None) -> list[NutritionStatsPeriod]:
-    """`nutrition_stats`'s medians for the stats page's fixed periods —
+    """`nutrition_stats`'s medians for the stats page's fixed periods -
     7/14/30 days, 3 months, year to date, 1 year and all time. Every
     period ends today; the diary is read once (from the user's first
     entry) and each period is a slice of it. "All" starts at the first
@@ -1477,9 +1477,9 @@ def nutrition_stats_by_period(user, today=None) -> list[NutritionStatsPeriod]:
 
 def is_training_day(user, target_date):
     """Whether `target_date` has at least one *completed* workout
-    session — the same filter apps.analytics.services uses to define
+    session - the same filter apps.analytics.services uses to define
     "training day" everywhere else. Informational only
-    (docs/NUTRITION.md "Integration with existing apps" — no separate
+    (docs/NUTRITION.md "Integration with existing apps" - no separate
     training-day calorie target is derived from this in this pass, it
     only labels the dashboard)."""
     from apps.workouts.models import WorkoutSession, WorkoutSessionStatus
@@ -1490,7 +1490,7 @@ def is_training_day(user, target_date):
 
 
 # How many trailing days' calories calendar_month_statuses averages
-# together for one day's "on track" color — a single day is noisy (a
+# together for one day's "on track" color - a single day is noisy (a
 # birthday dinner, a sick day with no appetite shouldn't flip a whole
 # day red on its own), the same reasoning
 # apps.nutrition.suggestions.suggest_calorie_adjustment already
@@ -1498,7 +1498,7 @@ def is_training_day(user, target_date):
 # that module's date-range span.
 CALENDAR_CALORIE_TREND_WINDOW_DAYS = 7
 # Fraction of the daily target the trailing average may differ by and
-# still count as "on track"/"drifting" rather than "off track" — wide
+# still count as "on track"/"drifting" rather than "off track" - wide
 # enough that ordinary day-to-day logging noise doesn't turn green
 # into red, narrow enough that a real, sustained over/under shows up
 # within the window.
@@ -1509,10 +1509,10 @@ CALENDAR_CALORIE_TREND_YELLOW_TOLERANCE = Decimal("0.15")
 @dataclass(frozen=True)
 class CalendarDayStatus:
     """One calendar day's at-a-glance status for the front page's
-    month calendar — two independent signals, deliberately never
+    month calendar - two independent signals, deliberately never
     combined into one score:
 
-    `training_status` — `"pr"` if a personal record
+    `training_status` - `"pr"` if a personal record
     (apps.records.PersonalRecord) was set that day, `"abandoned"` if a
     workout session was started and abandoned, `"completed"` for an
     ordinary completed session with neither, or `None` for a rest day
@@ -1521,12 +1521,12 @@ class CalendarDayStatus:
     of that day, if it happened at all), then an abandoned session
     (worth a second look), completed last.
 
-    `calorie_trend`/`calorie_direction` — how the trailing
+    `calorie_trend`/`calorie_direction` - how the trailing
     `CALENDAR_CALORIE_TREND_WINDOW_DAYS` days' average calorie intake
     compares to the currently active target: `calorie_trend` is
     "green"/"yellow"/"red" for how far off, `calorie_direction` is
-    "over"/"under" for which way. Both are `None` together — not
-    defaulted to some color/direction — for a day with no active
+    "over"/"under" for which way. Both are `None` together - not
+    defaulted to some color/direction - for a day with no active
     target to compare against, or whose own trailing window has no
     logged calories at all (a brand new user's first week): "no data
     yet" and "way off target" mean very different things, and a bare
@@ -1536,7 +1536,7 @@ class CalendarDayStatus:
     training_status: str | None  # "pr" / "abandoned" / "completed" / None
     calorie_trend: str | None  # "green" / "yellow" / "red" / None
     calorie_direction: str | None  # "over" / "under" / None
-    # That day's own actual logged calories — distinct from the
+    # That day's own actual logged calories - distinct from the
     # trailing-window average calorie_trend/calorie_direction are
     # based on, kept here so a UI can show "here's specifically what
     # you logged this day" (apps.core's day-detail popover) alongside
@@ -1546,13 +1546,13 @@ class CalendarDayStatus:
 
 def calendar_month_statuses(user, year, month):
     """One `CalendarDayStatus` per real calendar day in `year`-`month`
-    — the front page's month calendar. Every day is compared against
+    - the front page's month calendar. Every day is compared against
     the *current* active target regardless of which target was
     actually active back then, deliberately: the calendar is a "how
     are things going" glance, not a historical audit, and the
     alternative (reconstructing which target was active on every past
     day) is a lot of complexity for a display that never claims to be
-    anything but a simple approximation — see docs/NUTRITION.md
+    anything but a simple approximation - see docs/NUTRITION.md
     "Safety bounds" for the same simplicity-over-precision call this
     app already makes for the calorie target itself."""
     import calendar as calendar_module
@@ -1613,7 +1613,7 @@ def calendar_month_statuses(user, year, month):
         # A future day's own trailing window still reaches back across
         # today and other already-logged days, so `logged_calories`
         # here can be non-empty even though nothing has (or could
-        # have) been logged for the future day itself — regression:
+        # have) been logged for the future day itself - regression:
         # the trend arrow showed up on days that hadn't happened yet.
         if target is not None and logged_calories and day <= today:
             average = sum(logged_calories) / len(logged_calories)

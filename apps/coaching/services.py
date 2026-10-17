@@ -1,9 +1,9 @@
 """Every rule about who may request/accept/end a coaching relationship,
 and what a coach's shared programs/diet plans actually let a client
-do, lives here — not in views or templates (CLAUDE.md: "keep business/
+do, lives here - not in views or templates (CLAUDE.md: "keep business/
 domain logic out of Django views"). Each mutating function either
 succeeds or raises `CoachingError` with a translated, user-facing
-message a view can show directly — same shape as
+message a view can show directly - same shape as
 `apps.social.services.SocialError`.
 """
 
@@ -19,13 +19,13 @@ from .models import CoachingRelationship, CoachingRequest, CoachingRequestStatus
 
 class CoachingError(Exception):
     """Raised for any rule violation above a plain 404/permission
-    check — a view catches this and re-renders/redirects with
+    check - a view catches this and re-renders/redirects with
     `str(error)` as a flash message, rather than every caller
     re-deriving the same checks."""
 
 
 def active_coach_ids_for(user):
-    """Every user id currently, actively coaching `user` — the one
+    """Every user id currently, actively coaching `user` - the one
     query apps.programs.services.visible_to/apps.nutrition.services.
     diet_plans_visible_to both filter against, so a coach's own shared
     library only ever appears for someone actually in an active
@@ -39,7 +39,7 @@ def active_coach_ids_for(user):
 
 def coaches_of(coachee):
     """Every active CoachingRelationship where `coachee` is being
-    coached, most recently started first — select_related so
+    coached, most recently started first - select_related so
     templates/coaching/my_coaches.html can read `.coach` for free."""
     return CoachingRelationship.objects.filter(
         coachee=coachee, ended_at__isnull=True
@@ -48,7 +48,7 @@ def coaches_of(coachee):
 
 def clients_of(coach):
     """Every active CoachingRelationship where `coach` is coaching
-    someone — the PT's own "My clients" list."""
+    someone - the PT's own "My clients" list."""
     return CoachingRelationship.objects.filter(
         coach=coach, ended_at__isnull=True
     ).select_related("coachee")
@@ -96,7 +96,7 @@ def accept_coaching_request(coaching_request, acting_user):
     coaching_request.status = CoachingRequestStatus.ACCEPTED
     coaching_request.responded_at = timezone.now()
     coaching_request.save(update_fields=["status", "responded_at"])
-    # Not get_or_create(ended_at__isnull=True, ...) — that lookup isn't
+    # Not get_or_create(ended_at__isnull=True, ...) - that lookup isn't
     # a valid field to also pass to CoachingRelationship's constructor.
     # A pending CoachingRequest already being PENDING (checked above)
     # is what stops this from ever running twice for the same pair in
@@ -145,7 +145,7 @@ def import_program_from_coach(source, coachee):
     """The client-facing half of a PT's shared program library: an
     independent copy for `coachee`, exactly like `apps.programs.
     services.copy_program` already gives anyone copying a system
-    template — plus the lineage (`imported_from`/`coach_snapshot`/
+    template - plus the lineage (`imported_from`/`coach_snapshot`/
     `coach_snapshot_version`) `apply_program_update` below needs to
     later offer "your coach updated this"."""
     from apps.programs.services import copy_program, export_program
@@ -183,7 +183,7 @@ def import_diet_plan_from_coach(source, coachee):
 
 
 def _snapshot_diff(before, after):
-    """`difflib.unified_diff` over key-sorted, indented JSON — reuses
+    """`difflib.unified_diff` over key-sorted, indented JSON - reuses
     `export_program`/`export_diet_plan`'s already-tested serialization
     instead of a bespoke structural differ, the same "diff the JSON,
     don't diff the object graph" approach apps.core.data_exchange's
@@ -201,7 +201,7 @@ def _snapshot_diff(before, after):
 
 
 def _program_update_source(program):
-    """The coach's program `program` was imported from — but only while
+    """The coach's program `program` was imported from - but only while
     its owner can still see it (still shared with them, by a coach they
     still have; programs.services.visible_to). A client whose coaching
     ended, or who was un-shared, used to keep pulling every later
@@ -216,10 +216,10 @@ def _program_update_source(program):
 
 
 def program_update_available(program) -> bool:
-    """An int compare plus one visibility query — no diff. False
+    """An int compare plus one visibility query - no diff. False
     whenever the source is gone (SET_NULL after the source program, or
     its owner's whole account, was deleted) or no longer visible to
-    this program's owner — there's nothing to update from."""
+    this program's owner - there's nothing to update from."""
     source = _program_update_source(program)
     return source is not None and source.version != program.coach_snapshot_version
 
@@ -236,18 +236,18 @@ def program_update_diff(program) -> str:
 @transaction.atomic
 def apply_program_update(program, acting_user):
     """Overwrites `program`'s Workouts/ExercisePrescriptions with the
-    coach's current shape, via `_replace_program_contents` — the exact
+    coach's current shape, via `_replace_program_contents` - the exact
     mechanism `apps.programs.views.workout_delete`/`prescription_delete`
     already prove safe against `WorkoutSession` history (both hold
     only `SET_NULL` informational backlinks, snapshotting everything
     else onto `PerformedExercise` at session-start).
 
-    Only structure is replaced — `program.name`/`description` (which
+    Only structure is replaced - `program.name`/`description` (which
     the client may have personalized) are left untouched. This
     discards any edits the client made to their own copy's workouts
     since import; that's inherent to "apply the coach's current
     version", and exactly what `program_update_diff` is for showing
-    before this runs. There is no separate "skip" action to perform —
+    before this runs. There is no separate "skip" action to perform -
     not calling this is skipping."""
     from apps.programs.services import _replace_program_contents, export_program
 
@@ -291,7 +291,7 @@ def diet_plan_update_diff(plan) -> str:
 
 @transaction.atomic
 def apply_diet_plan_update(plan, acting_user):
-    """Diet-plan equivalent of `apply_program_update` — clears `plan`'s
+    """Diet-plan equivalent of `apply_program_update` - clears `plan`'s
     own meals (cascades to their items) and rebuilds from the coach's
     current shape via `_populate_diet_plan`, the same helper
     `apps.nutrition.services.import_diet_plan` itself uses."""

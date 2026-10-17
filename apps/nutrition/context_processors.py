@@ -5,7 +5,7 @@ whenever `request.resolver_match.app_name == "nutrition"`).
 Why nutrition gets a sub-nav when nothing else in this app does (see
 docs/NUTRITION.md "Navigating within nutrition" for the full
 reasoning): reported directly as hard to use, and the concrete reason
-is scale — nutrition has 8 top-level destinations (dashboard, diary,
+is scale - nutrition has 8 top-level destinations (dashboard, diary,
 shopping list, foods, recipes, diet plans, calculators, statistics), more than any
 other app here, and the plain "one back link per page" convention that
 works fine for a 2-3-page flow elsewhere means reaching a sibling
@@ -14,7 +14,7 @@ the dashboard's own link list first. A persistent, always-reachable
 tab bar fixes that directly; nothing else in this app has enough
 sibling sections for the same problem to exist.
 
-This context processor only computes *which tab is active* — not
+This context processor only computes *which tab is active* - not
 whether the sub-nav renders at all (that's `_subnav.html`'s own
 `{% if %}` gate in base.html, since a context processor can't
 conditionally skip adding to every request's context, only return an
@@ -23,7 +23,7 @@ empty dict cheaply when there's nothing to add).
 
 # One entry per sub-nav tab: the URL names that should highlight it.
 # Deliberately whichever *view* the URL resolves to, not the URL
-# pattern's path shape — e.g. every diary-related view (viewing a day,
+# pattern's path shape - e.g. every diary-related view (viewing a day,
 # adding an entry, editing one, copying a day) belongs under "diary",
 # not just the bare diary-day view itself.
 _TAB_URL_NAMES = {
@@ -87,7 +87,7 @@ def nutrition_subnav(request):
         if match.url_name in url_names:
             return {"nutrition_active_tab": tab}
     # Onboarding and anything else not in a sub-nav tab (e.g. a future
-    # page added here without also being added above) — the sub-nav
+    # page added here without also being added above) - the sub-nav
     # itself is only shown outside onboarding (_subnav.html's own
     # check), so this mostly matters for "no tab happens to match,
     # don't crash or highlight the wrong one."

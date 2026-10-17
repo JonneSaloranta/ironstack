@@ -1,10 +1,10 @@
-"""Friends, groups, and messaging — see docs/SOCIAL.md for the domain
+"""Friends, groups, and messaging - see docs/SOCIAL.md for the domain
 model narrated in full (why blocking doesn't remove a shared group,
 what the two User privacy flags actually gate, the invite link's
 threat model). This module is deliberately just the schema; every
 rule about who's allowed to do what lives in apps.social.services
 instead (CLAUDE.md: "keep business/domain logic out of views" applies
-just as much to models — nothing here should ever need to know about
+just as much to models - nothing here should ever need to know about
 a request or a view).
 """
 
@@ -26,7 +26,7 @@ class FriendRequest(TimeStampedModel):
     """One user asking another to become friends. Kept around after a
     decision (not deleted) so "declined" has a record and a second
     request to the same person doesn't just silently look like the
-    first one — apps.social.services enforces the actual rules (can't
+    first one - apps.social.services enforces the actual rules (can't
     send if already friends, if the recipient has friend requests
     turned off, or if either side has blocked the other; a reverse
     pending request auto-accepts instead of creating a second row).
@@ -58,7 +58,7 @@ class FriendRequest(TimeStampedModel):
 
 
 class Friendship(TimeStampedModel):
-    """A confirmed, mutual friendship — created by
+    """A confirmed, mutual friendship - created by
     apps.social.services.accept_friend_request, never directly.
     Always stored with user_low.pk < user_high.pk (enforced in
     services._ordered_pair, not here) so the same friendship is never
@@ -86,12 +86,12 @@ class Friendship(TimeStampedModel):
 
 class Block(TimeStampedModel):
     """`blocker` has blocked `blocked`. One-directional by design (A
-    blocking B doesn't require B to also block A back) — but
+    blocking B doesn't require B to also block A back) - but
     apps.social.services checks both directions everywhere a block
     matters (friend requests, direct messages, direct group invites),
     so in practice either side blocking is enough to stop 1:1
     interaction between the two. Deliberately does *not* remove either
-    user from a group they're both already in — see docs/SOCIAL.md
+    user from a group they're both already in - see docs/SOCIAL.md
     "Blocking" for why that's left to the group's own owner/admin.
     """
 
@@ -111,12 +111,12 @@ class Block(TimeStampedModel):
 
 
 class MutedFriend(TimeStampedModel):
-    """`user` has muted push notifications from `muted_user` — the
+    """`user` has muted push notifications from `muted_user` - the
     exact same one-directional shape as `Block` above (me muting you
     is my own private state, never symmetric: it doesn't mute you from
     me), reused for that reason rather than adding fields to
     `Friendship`. Unlike `Block`, muting has no effect on anything but
-    push (docs/SOCIAL.md "Muting") — the friendship, the ability to
+    push (docs/SOCIAL.md "Muting") - the friendship, the ability to
     message, and the message itself all stay exactly as they were;
     only `apps.core.push.send_push_notification` ever checks this."""
 
@@ -145,7 +145,7 @@ class GroupRole(models.TextChoices):
 
 class Group(TimeStampedModel):
     """A user-created group with its own message thread. `owner` is
-    `SET_NULL` rather than `CASCADE` — deleting the account that
+    `SET_NULL` rather than `CASCADE` - deleting the account that
     created a group shouldn't delete the group and its message history
     out from under everyone still in it, the same "history stays
     trustworthy" reasoning CLAUDE.md applies to workout data; ownership
@@ -153,7 +153,7 @@ class Group(TimeStampedModel):
     member, not tied to this FK surviving.
 
     `invite_code`/`invite_enabled` back the /group/invite/<code>/ link
-    (apps.social.crypto.generate_invite_code) — `invite_enabled`
+    (apps.social.crypto.generate_invite_code) - `invite_enabled`
     defaults off, since a group being joinable by anyone with a link is
     a deliberate choice an owner/admin makes (apps.social.services.
     enable_invite/disable_invite/regenerate_invite_code), not this
@@ -180,14 +180,14 @@ class Group(TimeStampedModel):
 
 
 class GroupMembership(TimeStampedModel):
-    """One row per (group, user) — also doubles as this user's
+    """One row per (group, user) - also doubles as this user's
     per-group read-state (`last_read_at`) for the unread-message badge,
     rather than a separate per-message read-state table: there's
     already exactly one row per group a user belongs to, so one more
     field is simpler than a second model.
 
     `last_read_at` defaults to "now" (join time) rather than being
-    nullable — deliberately, so "unread" is always the single
+    nullable - deliberately, so "unread" is always the single
     comparison `GroupMessage.created_at > membership.last_read_at`,
     with no separate "never read anything yet" case to special-case in
     every query that touches it. It also gives the right behavior for
@@ -198,7 +198,7 @@ class GroupMembership(TimeStampedModel):
     shape put to a second use, the same reasoning `last_read_at`
     already follows: this user's own private push-notification
     preference for this one group (docs/SOCIAL.md "Muting"), affecting
-    nothing else — the message is still created, still visible, still
+    nothing else - the message is still created, still visible, still
     counted unread; only `apps.core.push.send_push_notification` skips
     a member with this set.
     """
@@ -229,7 +229,7 @@ class GroupInviteStatus(models.TextChoices):
 
 
 class GroupInvite(TimeStampedModel):
-    """A direct, in-app invite to a specific person — distinct from
+    """A direct, in-app invite to a specific person - distinct from
     the group's own /group/invite/<code>/ link: this is what
     User.allow_group_invites actually gates (the link itself can't be
     gated per-recipient, since whoever holds it can already use it).
@@ -258,7 +258,7 @@ class GroupInvite(TimeStampedModel):
 
 
 class BaseMessage(TimeStampedModel):
-    """Shared shape for DirectMessage/GroupMessage — text-only,
+    """Shared shape for DirectMessage/GroupMessage - text-only,
     immutable (no editing, no delete flag): the confirmed scope for
     this first version. `body`'s max length is enforced in the form,
     not here, matching Feedback.message's existing precedent.
@@ -275,7 +275,7 @@ class BaseMessage(TimeStampedModel):
 class DirectMessage(BaseMessage):
     """A message between two friends. apps.social.services.
     send_direct_message refuses to create one unless the two are
-    actually friends and neither has blocked the other — existing
+    actually friends and neither has blocked the other - existing
     message history is never retroactively hidden by a later block,
     the same "history stays trustworthy" principle Group.owner's
     SET_NULL above follows."""

@@ -2,7 +2,7 @@ from django.db import migrations, models
 
 
 def mark_existing_users_chosen(apps, schema_editor):
-    # Existing accounts already live in their stored language — keep it,
+    # Existing accounts already live in their stored language - keep it,
     # rather than switching them to whatever their browser says.
     apps.get_model("accounts", "User").objects.update(language_chosen=True)
 

@@ -7,7 +7,7 @@ def renumber_duplicate_set_numbers(apps, schema_editor):
     `log_set` used to number a new set `count() + 1`, so deleting a set
     and logging another could reuse a number a later set still held.
     Only performed exercises with such a collision are touched, and
-    within them the existing order (set_number, then id) is kept — the
+    within them the existing order (set_number, then id) is kept - the
     numbers are just made consecutive again.
     """
     ExerciseSet = apps.get_model("workouts", "ExerciseSet")

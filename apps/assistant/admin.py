@@ -31,7 +31,7 @@ class UsageRecordAdmin(admin.ModelAdmin):
 
 @admin.register(Conversation)
 class ConversationAdmin(admin.ModelAdmin):
-    """Metadata only — what people talk to the assistant about is their
+    """Metadata only - what people talk to the assistant about is their
     own business, the same as their messages to each other (apps.social
     registers no message admin either)."""
 

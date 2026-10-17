@@ -1,4 +1,4 @@
-"""Activity visibility, summary stats, and chart data prep — kept out of
+"""Activity visibility, summary stats, and chart data prep - kept out of
 views/templates per CLAUDE.md ("do not put analytics logic in
 templates"). This is Phase 9's "activity analytics"; cross-activity-type
 dashboards/trends are Phase 10.
@@ -24,7 +24,7 @@ def visible_to(user, *, include_inactive=False):
 
 
 def history_for(user, activity_type, limit=None):
-    """A user's own logged activities of one type — never another user's,
+    """A user's own logged activities of one type - never another user's,
     regardless of whether the type is system or custom."""
     qs = Activity.objects.filter(user=user, activity_type=activity_type)
     return qs[:limit] if limit else qs
@@ -51,7 +51,7 @@ def summarize(activities):
 
 
 def duration_chart_series(activities):
-    """Duration (minutes) over time — the one metric every activity type
+    """Duration (minutes) over time - the one metric every activity type
     has, unlike distance/calories which are optional."""
     readings = [
         (Decimal(activity.duration.total_seconds()) / Decimal(60), activity.date)

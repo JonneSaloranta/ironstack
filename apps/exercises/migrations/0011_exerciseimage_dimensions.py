@@ -5,7 +5,7 @@ from django.db import migrations, models
 
 def fill_dimensions(apps, schema_editor):
     """Read the size of every image already stored. A file that's gone
-    or unreadable is skipped — its <img> simply renders without a size,
+    or unreadable is skipped - its <img> simply renders without a size,
     as before."""
     from PIL import Image
 

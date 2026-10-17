@@ -13,6 +13,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='user',
             name='show_name_to_others',
-            field=models.BooleanField(default=True, help_text="A second, more granular privacy setting than show_achievements: whether other users on this instance ever see this user's first name (see public_display_name()) — the username itself is always shown regardless, since it was already visible everywhere show_achievements applies before this field existed. Off falls back to the username alone."),
+            field=models.BooleanField(default=True, help_text="A second, more granular privacy setting than show_achievements: whether other users on this instance ever see this user's first name (see public_display_name()) - the username itself is always shown regardless, since it was already visible everywhere show_achievements applies before this field existed. Off falls back to the username alone."),
         ),
     ]

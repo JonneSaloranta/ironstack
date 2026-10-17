@@ -1,11 +1,11 @@
 {% load i18n %}
 {% comment %}
 The month calendar shown on the main dashboard (templates/core/
-dashboard.html) — training/rest days and how the trailing 7-day
+dashboard.html) - training/rest days and how the trailing 7-day
 calorie average compares to target, icon/color-only inside each cell
 (the "?" legend explains what they mean instead of spelling it out 31
 times over; tapping a day instead reveals the one place actual text
-appears — a small panel anchored right next to that day, via the
+appears - a small panel anchored right next to that day, via the
 ironstackMonthCalendar Alpine component in static/js/month-calendar.js
 and each day's pre-translated data in the `|json_script` tag below).
 
@@ -20,35 +20,35 @@ different app).
 
 Every month-changing link below is HTMX (hx-get + hx-target="#month-
 calendar" + hx-swap="outerHTML"), not a plain <a href>, so switching
-months swaps just this one card instead of a full-page navigation —
+months swaps just this one card instead of a full-page navigation -
 found needed live: every click used to reload and repaint the entire
 dashboard for a one-card change, visible as a brief flash each time.
 `href` stays set on every link regardless (a normal, working page
-navigation) — HTMX only intercepts the click, so this degrades
+navigation) - HTMX only intercepts the click, so this degrades
 correctly if JS is ever unavailable. `hx-push-url="true"` keeps the
 address bar's own `?month=` in sync either way, so reloading, sharing,
 or using the browser's own back/forward buttons all still land on the
 right month. DashboardView.get_template_names() renders just this
 partial for the HTMX request that results (never the whole dashboard
 again), and outerHTML swaps the whole card including the `x-data`
-below — Alpine only reads `calendar-days-data`'s contents once, at
+below - Alpine only reads `calendar-days-data`'s contents once, at
 `x-data` init, so the *element* has to be replaced wholesale for a new
 month's popover data to ever take effect, not just its inner content.
 
 Regression fixed: `calendar-days-data`'s own `json_script` tag used to
-sit *before* this card as a separate sibling rather than inside it —
+sit *before* this card as a separate sibling rather than inside it -
 harmless on the very first render, but hx-swap="outerHTML" only ever
 replaces `#month-calendar` itself, never anything before it, so that
 old script tag was never removed on a month change. Its replacement
 (this same partial's own re-render) landed right next to it instead
-of over it, leaving two elements sharing one id — document.
+of over it, leaving two elements sharing one id - document.
 getElementById (inside ironstackMonthCalendar, static/js/month-
 calendar.js) always returns the *first* one in document order, so
 every month change after the first kept silently reading the
 original month's now-stale data: tapping any day showed an empty
 popover, since that stale data's own `date` strings never matched a
 different month's days at all. Moving the script tag to be this
-card's own child fixes it structurally — swapping the card now always
+card's own child fixes it structurally - swapping the card now always
 takes its data tag down with it, so there's only ever one.
 {% endcomment %}
 <div data-tour="nutrition-calendar" class="card" id="month-calendar" x-data="ironstackMonthCalendar('calendar-days-data')"
@@ -62,7 +62,7 @@ takes its data tag down with it, so there's only ever one.
       {% comment %}
         capfirst: Finnish/Swedish/Estonian month names are lowercase
         by their own language's own grammar rules ("elokuu", not
-        "Elokuu") — correct in a sentence, but this heads a card the
+        "Elokuu") - correct in a sentence, but this heads a card the
         same way "August 2026" would in English, so it's capitalized
         here regardless of what the active language's own grammar
         says about a month name appearing mid-sentence.
@@ -85,12 +85,12 @@ takes its data tag down with it, so there's only ever one.
         <div class="modal-body">
           {% comment %}
             Every icon/color shown here is the exact same markup used
-            in the grid itself (same classes, same <svg> paths) —
+            in the grid itself (same classes, same <svg> paths) -
             found needed live: describing "green" and "a barbell" in
             plain prose still left it up to a reader's own imagination
             to match that description back to the actual pixels on
             screen, especially for the trend arrow's two independent
-            dimensions (shape = over/under, color = how far off —
+            dimensions (shape = over/under, color = how far off -
             apps.nutrition.services.CalendarDayStatus's own docstring)
             shown here as two separate rows rather than one still
             asking a reader to combine three colors with two shapes
@@ -159,7 +159,7 @@ takes its data tag down with it, so there's only ever one.
              {% endif %}>
           {% if not day.in_month %}
             {% comment %}
-              A padding day from the adjacent month — found live:
+              A padding day from the adjacent month - found live:
               tapping one used to open a detail popover for a day
               whose own month isn't even the one on screen, which read
               as "broken" rather than "this belongs elsewhere." Jumps
@@ -182,14 +182,14 @@ takes its data tag down with it, so there's only ever one.
           {% else %}
             {% comment %}
             @mouseenter/@mouseleave live on the parent .calendar-day-
-            cell (above), not this button — a real bug found live
+            cell (above), not this button - a real bug found live
             testing this exact feature: base.css's own `:hover` reveal
             targets .calendar-day-cell too, which also contains the
             popover itself once it's shown. Moving the mouse off the
             button and onto the now-visible popover (to actually read
             it) stayed within the *cell*, so CSS kept it visible, but
             it left *this* button's own bounds, firing this button's
-            mouseleave and clearing hoveredDate — the popover was still
+            mouseleave and clearing hoveredDate - the popover was still
             forced on-screen by CSS, just empty, since <template x-if=
             "openDay"> had nothing left to render. Binding both to the
             same element CSS keys off keeps them in agreement: hovering
@@ -231,7 +231,7 @@ takes its data tag down with it, so there's only ever one.
             </button>
             {% comment %}
             calendar-day-popover-flip-up (base.css) for the last week
-            row — found live: a popover always opened *below* its own
+            row - found live: a popover always opened *below* its own
             day, which for the bottom row ran past the card's own
             bottom edge (nothing below the grid to push down and make
             room for it), and often past the viewport's bottom edge

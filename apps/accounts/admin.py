@@ -9,7 +9,7 @@ from .models import SiteDisclaimer, User
 class UserAdmin(DjangoUserAdmin):
     fieldsets = DjangoUserAdmin.fieldsets + (
         ("Preferences", {"fields": ("unit_system", "timezone")}),
-        # totp_secret is deliberately never in a fieldset here — an
+        # totp_secret is deliberately never in a fieldset here - an
         # admin needing to see it to help a user would defeat the
         # entire point of it being a secret; disabling it (below) is
         # the correct recovery path for someone locked out with no
@@ -24,13 +24,13 @@ class UserAdmin(DjangoUserAdmin):
     @admin.action(description=_("Disable two-factor authentication for selected users"))
     def disable_two_factor(self, request, queryset):
         # Support/recovery path for "I lost my authenticator device
-        # and my backup codes" — the one situation the self-service
+        # and my backup codes" - the one situation the self-service
         # flows (apps.accounts.views.TwoFactorDisableView/
         # TwoFactorVerifyView) can't handle on their own, since both
         # require either the password *and* a working second factor,
         # or the password alone but never bypass the second factor
         # entirely. Clears backup codes too, the same as the self-
-        # service disable does — they're meaningless without
+        # service disable does - they're meaningless without
         # totp_enabled anyway.
         for user in queryset.filter(totp_enabled=True):
             user.totp_enabled = False
@@ -42,7 +42,7 @@ class UserAdmin(DjangoUserAdmin):
 @admin.register(SiteDisclaimer)
 class SiteDisclaimerAdmin(admin.ModelAdmin):
     """Singleton, same pattern as apps.core.admin's BackupSettingsAdmin/
-    FeedbackSettingsAdmin — this is the only way to edit the login/
+    FeedbackSettingsAdmin - this is the only way to edit the login/
     signup pages' footer disclaimer, there's no in-app settings card
     for it (it's operator-facing content, not a per-user preference)."""
 

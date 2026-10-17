@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% load i18n core_extras %}
-{% block title %}{% trans exercise.name %} — IronStack{% endblock %}
+{% block title %}{% trans exercise.name %} - IronStack{% endblock %}
 {% block content %}
 {% url 'exercises:exercise-list' as c1u %}{% trans "Exercises" as c1l %}
 {% include "core/_breadcrumbs.html" with c1_url=c1u c1_label=c1l current=exercise.name %}

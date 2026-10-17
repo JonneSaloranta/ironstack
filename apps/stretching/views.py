@@ -146,7 +146,7 @@ def routine_copy(request, pk):
     if (response := _post_only(request)) is not None:
         return response
     copy = services.copy_routine(_visible_routine_or_404(request, pk), request.user)
-    messages.success(request, _("Copied — this one is yours to edit."))
+    messages.success(request, _("Copied - this one is yours to edit."))
     return redirect("stretching:routine-detail", pk=copy.pk)
 
 
@@ -350,7 +350,7 @@ def session_play(request, pk):
 
 @login_required
 def performed_mark(request, pk, performed_pk):
-    """Mark one stretch done or skipped — from the guided timer (a JSON
+    """Mark one stretch done or skipped - from the guided timer (a JSON
     fetch, answered with 204) or the plain per-stretch buttons (a normal
     form POST, answered with a redirect back to the session)."""
     if (response := _post_only(request)) is not None:
@@ -381,7 +381,7 @@ def session_complete(request, pk):
         return response
     session = _owned_session_or_404(request, pk, status=StretchSessionStatus.IN_PROGRESS)
     services.complete_session(session)
-    messages.success(request, _("Nicely done — stretching session saved."))
+    messages.success(request, _("Nicely done - stretching session saved."))
     return redirect("stretching:session-detail", pk=session.pk)
 
 

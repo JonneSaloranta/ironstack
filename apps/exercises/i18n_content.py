@@ -1,4 +1,4 @@
-"""Translation catalog for seeded *content*, not UI chrome — exercise
+"""Translation catalog for seeded *content*, not UI chrome - exercise
 names, muscle group names, and equipment names (apps.exercises.migrations'
 seed data, including migration 0005's extra muscle groups) are stored
 in the database in canonical English, the same
@@ -8,11 +8,11 @@ translated. This module exists solely so `makemessages` extracts these
 exact strings into the `.po` catalog; nothing here is ever imported or
 executed for its return value. Templates then look the *display* value
 up in that catalog at render time via `{% trans exercise.name %}`
-(Django's `trans` tag accepts a variable, not just a literal — it runs
+(Django's `trans` tag accepts a variable, not just a literal - it runs
 the variable's resolved value through `gettext()`), which is a no-op
 for a string with no catalog entry (a user's own custom exercise, never
 in this list, just renders as typed) and a real translation for any of
-these seeded names — see docs/ARCHITECTURE.md "Internationalization".
+these seeded names - see docs/ARCHITECTURE.md "Internationalization".
 """
 
 from django.utils.translation import gettext_lazy as _
@@ -79,10 +79,10 @@ EQUIPMENT_NAMES = [
 ]
 
 
-# Exercise written instructions (apps.exercises.migrations 0010) — kept
+# Exercise written instructions (apps.exercises.migrations 0010) - kept
 # as a separate list from EXERCISE_NAMES above since these are looked up
 # via `|translate_content` (apps.core.templatetags.core_extras), not
-# `{% trans %}` directly — see that filter's own docstring for why. Each
+# `{% trans %}` directly - see that filter's own docstring for why. Each
 # entry is split across several adjacent string literals (Python
 # concatenates them with no separator of its own, so each literal but the
 # last keeps its own trailing space) purely to stay under this project's

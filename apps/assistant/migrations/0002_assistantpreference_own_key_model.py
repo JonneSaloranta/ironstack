@@ -13,6 +13,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='assistantpreference',
             name='own_key_model',
-            field=models.CharField(blank=True, choices=[('claude-opus-5-5', 'Claude Opus 5.5 — best plans ($4 / $20)'), ('claude-sonnet-5-5', 'Claude Sonnet 5.5 — good and half the price ($2 / $10)'), ('claude-haiku-4-5', 'Claude Haiku 4.5 — fastest and cheapest, weaker plans ($1 / $5)'), ('claude-fable-5-1', 'Claude Fable 5.1 — most capable, most expensive ($10 / $50)')], max_length=50),
+            field=models.CharField(blank=True, choices=[('claude-opus-5-5', 'Claude Opus 5.5 - best plans ($4 / $20)'), ('claude-sonnet-5-5', 'Claude Sonnet 5.5 - good and half the price ($2 / $10)'), ('claude-haiku-4-5', 'Claude Haiku 4.5 - fastest and cheapest, weaker plans ($1 / $5)'), ('claude-fable-5-1', 'Claude Fable 5.1 - most capable, most expensive ($10 / $50)')], max_length=50),
         ),
     ]

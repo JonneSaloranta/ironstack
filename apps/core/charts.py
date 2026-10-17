@@ -1,13 +1,13 @@
-"""Generic chart data prep, shared by any app that needs to plot values —
+"""Generic chart data prep, shared by any app that needs to plot values -
 kept out of views/templates per CLAUDE.md ("do not put analytics logic in
 templates"). `build_chart_series` (line, change-over-time) was promoted
 here from apps.measurements once apps.activities needed the same thing;
 `build_bar_series` (bar, category comparison) was added directly here in
-Phase 10 for apps.analytics, for the same reason — one shared,
+Phase 10 for apps.analytics, for the same reason - one shared,
 model-agnostic implementation instead of each app rolling its own.
 
 Both take plain tuples rather than model instances, so neither has an
-opinion about field names — callers project whatever they're plotting
+opinion about field names - callers project whatever they're plotting
 into that shape first.
 """
 
@@ -40,7 +40,7 @@ def build_chart_series(readings, *, width=600, height=200, padding=20):
     """`readings`: an iterable of `(value, date)` tuples, any order.
 
     Normalizes into SVG-ready coordinates, oldest first. Returns None for
-    fewer than 2 points — a single dot isn't a trend line.
+    fewer than 2 points - a single dot isn't a trend line.
     """
     ordered = sorted(readings, key=lambda reading: reading[1])
     if len(ordered) < 2:
@@ -79,7 +79,7 @@ class BarPoint:
     y: Decimal
     width: Decimal
     height: Decimal
-    label_x: Decimal  # center of the bar — anchor point for the category label below it
+    label_x: Decimal  # center of the bar - anchor point for the category label below it
     label_y: Decimal
 
 
@@ -93,7 +93,7 @@ class BarSeries:
 
 # Reserved band below the plot area for each bar's own category label,
 # rotated to fit an unbounded number of categories without guaranteed
-# collisions — see build_bar_series' docstring. Added on top of the
+# collisions - see build_bar_series' docstring. Added on top of the
 # caller's requested `height` (which stays the plot area's height, so
 # existing callers that don't care about labels don't need to change).
 LABEL_BAND = Decimal("38")
@@ -101,13 +101,13 @@ LABEL_BAND = Decimal("38")
 
 def build_bar_series(categories, *, width=600, height=200, padding=20):
     """`categories`: an iterable of `(label, value)` pairs, in display
-    order (not sorted here — callers decide chronological vs.
+    order (not sorted here - callers decide chronological vs.
     ranked-by-value). Returns None for no categories at all; unlike line
     charts, a single bar is still a meaningful comparison-of-one.
 
     Each bar carries its own `label_x`/`label_y` so the template can draw
     the category name directly under the bar (rotated, since labels are
-    typically wider than a bar's slot) — the exact figures still live in
+    typically wider than a bar's slot) - the exact figures still live in
     the table below for anyone who needs precision or a screen reader,
     but a bar chart with unlabeled bars is hard to read at a glance, so
     the chart itself needs the names too, not just the table.

@@ -1,5 +1,5 @@
 """Template filters for training mode (templates/workouts/_train_panel.html)
-— thin wrappers around apps.workouts.services so the progress-stepper
+- thin wrappers around apps.workouts.services so the progress-stepper
 markup doesn't have to reimplement "is this exercise done?" in template
 logic (CLAUDE.md: no business logic in templates).
 """

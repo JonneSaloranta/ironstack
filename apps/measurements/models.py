@@ -8,10 +8,10 @@ from apps.core.models import TimeStampedModel
 
 class UnitKind(models.TextChoices):
     """How a measurement type's canonical `value` should be interpreted
-    and converted for display — see apps.measurements.units.
+    and converted for display - see apps.measurements.units.
 
     WEIGHT: canonical kilograms (kg/lb display).
-    LENGTH: canonical meters (cm/inches display) — circumferences.
+    LENGTH: canonical meters (cm/inches display) - circumferences.
     PERCENTAGE: dimensionless 0-100, no unit conversion at all.
     """
 
@@ -26,7 +26,7 @@ class MeasurementType(models.Model):
     System-seeded defaults (see migration 0002) cover
     docs/DOMAIN_MODEL.md's supported list; `owner` is set for a user's own
     custom measurement type, same ownership/visibility pattern as
-    apps.exercises.Exercise. Never hard-deleted — `active=False` instead,
+    apps.exercises.Exercise. Never hard-deleted - `active=False` instead,
     so historical BodyMeasurement entries keep rendering correctly after a
     user retires a custom type they no longer track.
     """
@@ -72,7 +72,7 @@ class BodyMeasurement(TimeStampedModel):
     """One time-stamped reading of a measurement type.
 
     `value` is always canonical for `measurement_type.unit_kind` (kg,
-    meters, or a raw 0-100 percentage) — see apps.measurements.units for
+    meters, or a raw 0-100 percentage) - see apps.measurements.units for
     conversion to/from the user's display unit preference.
     """
 

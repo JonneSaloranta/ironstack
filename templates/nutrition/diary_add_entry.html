@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% load i18n static core_extras %}
-{% block title %}{% trans "Add food" %} — IronStack{% endblock %}
+{% block title %}{% trans "Add food" %} - IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
   <h1 class="no-margin">{% trans "Add food" %}</h1>
@@ -14,7 +14,7 @@
 {% comment %}
   mealSlot is shared (Alpine) state for the whole page: which meal
   slot food gets logged to, whether it's added via a "Most used" quick
-  tap below or a fresh search. It used to be split in two — the search
+  tap below or a fresh search. It used to be split in two - the search
   box always read the "Meal" select at submit time (via hx-include),
   but each "Most used" card carried its own hidden meal_slot baked in
   server-side from that food's last diary entry, completely ignoring
@@ -27,7 +27,7 @@
   food" link on templates/nutrition/diary_day.html passes ?meal_slot=,
   and DiaryAddEntryView.post's invalid-form re-render passes back
   whatever was actually submitted) rather than always the first slot
-  in the list — regression: tapping "+ Add food" under Dinner still
+  in the list - regression: tapping "+ Add food" under Dinner still
   landed on this page with Breakfast preselected, since nothing here
   ever looked at which meal the link came from, and a food logged
   without noticing that went to the wrong meal.
@@ -71,7 +71,7 @@
 
   {% comment %}
     Quick entry: macros typed straight in (a restaurant meal's published
-    values) without creating a Food — views.diary_quick_add. Collapsed by
+    values) without creating a Food - views.diary_quick_add. Collapsed by
     default; reopened with its errors when the submission was invalid.
   {% endcomment %}
   <details data-tour="quick-entry" class="card preferences"{% if quick_form.errors %} open{% endif %}>

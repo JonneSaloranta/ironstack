@@ -1,5 +1,5 @@
 """The one place every outbound Open Food Facts request goes through
-(apps.nutrition.openfoodfacts and apps.nutrition.open_prices) — see
+(apps.nutrition.openfoodfacts and apps.nutrition.open_prices) - see
 docs/NUTRITION.md "OpenFoodFacts integration" for the policy this
 implements.
 
@@ -7,7 +7,7 @@ OFF's usage rules (https://openfoodfacts.github.io/openfoodfacts-server/api/):
 every request carries an `AppName/Version (contact)` User-Agent, and
 per IP address at most 15 product reads and 10 searches per minute
 (exceeding them risks an IP ban). The limits are enforced here, with
-a safety margin, using Django's cache — `DatabaseCache` in this
+a safety margin, using Django's cache - `DatabaseCache` in this
 project, so the counters are shared across gunicorn workers.
 """
 
@@ -35,14 +35,14 @@ class OffRequestError(Exception):
 
 
 class OffRateLimited(OffRequestError):
-    """Our own per-minute budget is spent, or OFF recently failed —
+    """Our own per-minute budget is spent, or OFF recently failed -
     no request was sent."""
 
 
 def user_agent():
     """`IronStack/<version> (<contact>)`. The contact is the operator's
     own address (OpenFoodFactsSettings.contact_email, falling back to
-    the OFF_CONTACT_EMAIL setting) — never hardcoded, since it's
+    the OFF_CONTACT_EMAIL setting) - never hardcoded, since it's
     whoever runs this instance."""
     from .models import OpenFoodFactsSettings
 

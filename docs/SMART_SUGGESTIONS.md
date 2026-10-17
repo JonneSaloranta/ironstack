@@ -131,7 +131,7 @@ Do not pretend to have confidence when there is not enough history.
 own configured rep range, adding only what the engine doesn't already
 produce: `target_min_reps`/`target_max_reps` and a `confidence` level.
 Confidence is a direct, deterministic function of how much evidence the
-underlying decision used — never a black-box score:
+underlying decision used - never a black-box score:
 
 - `insufficient_data` or `manual` action → low
 - `calculated` (percentage-based) → high for a manual or PR-backed 1RM,
@@ -142,24 +142,24 @@ underlying decision used — never a black-box score:
 Reached from the UI in `apps.workouts.views._build_set_form`: a
 performed exercise's very first set (only) gets its weight/reps
 pre-filled from the suggestion, with the confidence and reason shown
-alongside as plain, editable form defaults — never validated against,
+alongside as plain, editable form defaults - never validated against,
 never forced. `apps.workouts` cannot import `apps.progression` directly
 (the dependency already runs the other way, since progression reads
 workout history), so this composition happens at the view layer, the one
-place allowed to cross that boundary — see `docs/ARCHITECTURE.md`.
+place allowed to cross that boundary - see `docs/ARCHITECTURE.md`.
 
 The rendered banner (`templates/workouts/_performed_exercise_card.html`)
 always leads with an explicit "Suggested:" label plus a confidence tag
-before the weight/reps, so — unlike the charts covered in
-`docs/ANALYTICS.md`'s "Chart titles/legends audit" — there's no
+before the weight/reps, so - unlike the charts covered in
+`docs/ANALYTICS.md`'s "Chart titles/legends audit" - there's no
 analogous "what am I looking at" gap here: this is plain labeled text,
 not an SVG that could hide its meaning behind a screen-reader-only
 `aria-label`. Checked as part of the same audit; nothing to fix.
 
 The reason strings `apps.progression.engine` actually generates (e.g.
-"Hit the top of your rep range for 2 sessions in a row at 80.00 kg —
+"Hit the top of your rep range for 2 sessions in a row at 80.00 kg -
 adding 2.50 kg.") are worded differently from this doc's illustrative
 Examples above ("You reached the top of the target rep range in the
-last two sessions at 80 kg.") — same meaning, different phrasing. The
+last two sessions at 80 kg.") - same meaning, different phrasing. The
 examples are illustrative, not a literal string spec; don't expect to
 find their exact wording in the code.

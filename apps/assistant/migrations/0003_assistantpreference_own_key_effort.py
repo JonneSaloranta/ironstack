@@ -13,6 +13,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='assistantpreference',
             name='own_key_effort',
-            field=models.CharField(blank=True, choices=[('low', 'Low — quickest and cheapest; fine for everyday questions'), ('medium', 'Medium — balanced'), ('high', 'High — more thorough plans, more tokens'), ('xhigh', 'Extra high — for demanding planning'), ('max', 'Maximum — the most thorough and the most expensive')], max_length=10),
+            field=models.CharField(blank=True, choices=[('low', 'Low - quickest and cheapest; fine for everyday questions'), ('medium', 'Medium - balanced'), ('high', 'High - more thorough plans, more tokens'), ('xhigh', 'Extra high - for demanding planning'), ('max', 'Maximum - the most thorough and the most expensive')], max_length=10),
         ),
     ]

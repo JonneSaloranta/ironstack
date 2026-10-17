@@ -1,18 +1,18 @@
 /* Guided page tours (apps.tutorials, docs/TUTORIALS.md).
  *
  * Reads the tour templates/base.html renders as JSON (#tutorial-data)
- * and walks through its steps: each step's element — found by its
- * `data-tour="<anchor>"` attribute — is highlighted in its own shape
+ * and walks through its steps: each step's element - found by its
+ * `data-tour="<anchor>"` attribute - is highlighted in its own shape
  * (an outline hugging the element, with its own corner rounding) while
  * the rest of the page is dimmed (but still visible), with a card
- * explaining it placed beside it — below or above, wherever there's
- * room — so the card never sits on top of what it explains. A step whose element isn't on
+ * explaining it placed beside it - below or above, wherever there's
+ * room - so the card never sits on top of what it explains. A step whose element isn't on
  * the page (or is hidden) is skipped. Finishing or skipping tells the
  * server (TutorialCompletion) so the tour doesn't start by itself again;
  * "Don't show tutorials" switches automatic tours off altogether.
  *
  * Keyboard: Enter/→ next, ← back, Escape skips; Tab stays inside the
- * card. No dependencies, no Alpine — the same shape as confirm-dialog.js.
+ * card. No dependencies, no Alpine - the same shape as confirm-dialog.js.
  */
 (function () {
   "use strict";

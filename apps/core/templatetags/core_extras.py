@@ -1,4 +1,4 @@
-"""Shared template filters — apps.core, matching its role as the home for
+"""Shared template filters - apps.core, matching its role as the home for
 cross-cutting display formatting (see apps.core.units, apps.core.charts).
 """
 
@@ -13,18 +13,18 @@ register = template.Library()
 @register.filter
 def translate_content(value):
     """Translate a piece of seeded *content* (an exercise/program/
-    measurement-type/activity-type name — see docs/ARCHITECTURE.md
+    measurement-type/activity-type name - see docs/ARCHITECTURE.md
     "Internationalization") whose value might contain a literal "%".
 
     The usual pattern for this is `{% trans someobj.name %}`, but Django's
-    `{% trans %}` tag — when given a template *variable* rather than a
-    string literal — doubles every "%" in the resolved value before
+    `{% trans %}` tag - when given a template *variable* rather than a
+    string literal - doubles every "%" in the resolved value before
     passing it to gettext as the msgid, then undoes the doubling on the
     way back out (`django/templatetags/i18n.py`, "Restore percent
-    signs" — meant for literal `%%` written by hand in template source
+    signs" - meant for literal `%%` written by hand in template source
     to escape it from string-format interpolation, but applied
     unconditionally to variables too). For a value with a single, real
-    "%" — e.g. the seeded MeasurementType name "Body fat %" — this looks
+    "%" - e.g. the seeded MeasurementType name "Body fat %" - this looks
     up the catalog for "Body fat %%", finds nothing, and silently falls
     back to the untranslated English string. This filter calls
     `gettext()` directly on the resolved value instead, with no
@@ -43,7 +43,7 @@ def duration(value):
     """Format a `timedelta` as e.g. "1h 15min" / "45min" / "<1min".
 
     A raw `{{ some_timedelta }}` renders via Python's default str(), e.g.
-    "0:03:19.893476" — real seconds/microseconds from whenever a workout
+    "0:03:19.893476" - real seconds/microseconds from whenever a workout
     session was actually started/completed, which is meaningless noise
     for a training-time stat (docs/ANALYTICS.md). Round to the nearest
     whole minute instead, the smallest unit worth showing here.
@@ -67,7 +67,7 @@ def weight(value, user):
     Regression: workout sets, PRs, prescriptions, and analytics totals
     were all rendered with a hardcoded " kg" suffix and no conversion,
     so an imperial-preference user saw raw kilograms everywhere outside
-    apps.measurements (which already converted correctly) — see
+    apps.measurements (which already converted correctly) - see
     apps.core.units for the shared conversion dispatch this wraps.
     """
     if value is None:
@@ -97,7 +97,7 @@ def nutrient_amount(value, decimals=2):
 
 @register.simple_tag
 def url_replace(request, param=None, value=None, **kwargs):
-    """Current query string with `kwargs` overridden — what a pager needs
+    """Current query string with `kwargs` overridden - what a pager needs
     to change `page` while keeping search/filter/sort params, url-encoded
     and without emitting empty parameters the way hand-built
     `?page=N&q={{ query }}` links did. `param`/`value` override a key
@@ -124,7 +124,7 @@ def field_a11y(bound_field):
         described.append(f"{bound_field.auto_id}_help")
     # One id per error, numbered the way _field.html and
     # workouts/_set_form_errors.html number them (_error, _error_2, ...)
-    # — linking only the first left any further error unannounced.
+    # - linking only the first left any further error unannounced.
     for number in range(1, len(bound_field.errors) + 1):
         described.append(f"{bound_field.auto_id}_error" + (f"_{number}" if number > 1 else ""))
     attrs = {}

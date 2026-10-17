@@ -1,4 +1,4 @@
-"""Macro (protein/carbohydrate/fat) target calculation — see
+"""Macro (protein/carbohydrate/fat) target calculation - see
 docs/NUTRITION.md "Macros". Pure functions, same shape as
 apps.nutrition.energy: no Django DB/HTTP dependency.
 
@@ -20,7 +20,7 @@ KCAL_PER_G_PROTEIN = Decimal("4")
 KCAL_PER_G_CARBOHYDRATE = Decimal("4")
 KCAL_PER_G_FAT = Decimal("9")
 
-# g of protein per kg bodyweight, by goal — higher in a deficit to
+# g of protein per kg bodyweight, by goal - higher in a deficit to
 # spare lean mass, matching the sports-nutrition consensus this
 # project's other domain modules (docs/PROGRESSION.md) also lean on
 # for defaults rather than inventing numbers from nothing.
@@ -63,8 +63,8 @@ def calculate_macros(
     calories respectively), carbohydrate takes whatever's left. If
     protein alone, or protein+fat together, would exceed
     `daily_calories` (only realistic at an unusually low calorie
-    target with high protein), fat is reduced first, then — only if
-    that still isn't enough — protein itself, rather than ever letting
+    target with high protein), fat is reduced first, then - only if
+    that still isn't enough - protein itself, rather than ever letting
     carbohydrate go negative. Both reductions are reported so the
     caller can tell the user what happened, the same transparency
     `apps.nutrition.energy.calculate_calorie_target` gives its own
@@ -99,7 +99,7 @@ def calculate_macros(
     )
 
     # Recompute kcal from the *quantized* grams, so a displayed
-    # "180 g protein" and its displayed kcal figure always agree —
+    # "180 g protein" and its displayed kcal figure always agree -
     # rounding grams first then deriving kcal from that, not the other
     # way around.
     protein_kcal = protein_grams * KCAL_PER_G_PROTEIN

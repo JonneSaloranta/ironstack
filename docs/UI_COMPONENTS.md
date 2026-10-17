@@ -16,7 +16,7 @@ Every signed-in page extends `base.html` and follows this order:
 ```django
 {% extends "base.html" %}
 {% load i18n %}
-{% block title %}{% trans "Page name" %} — IronStack{% endblock %}
+{% block title %}{% trans "Page name" %} - IronStack{% endblock %}
 {% block content %}
 {% include "core/_breadcrumbs.html" with ... %}   {# only on pages two+ levels deep #}
 <div class="top-bar">
@@ -30,11 +30,11 @@ Every signed-in page extends `base.html` and follows this order:
 {% endblock %}
 ```
 
-- `<title>` is always `<Page name> — IronStack`.
+- `<title>` is always `<Page name> - IronStack`.
 - The `<h1>` lives in `.top-bar`, and that's the only `<h1>` on the page.
 - `.top-bar` holds only the title. `.top-bar-actions`, directly after it,
   holds status tags (`.tag`) and the page's own entry points:
-  - list pages: **"New"** as primary `a.button` (plain "New" — the page title
+  - list pages: **"New"** as primary `a.button` (plain "New" - the page title
     already says what), then secondary extras like "Import";
   - detail pages: **"Edit"** as `.button-secondary` (editing isn't what a
     detail page is for), plus other secondary actions (Export, …).
@@ -56,11 +56,11 @@ There are exactly two `<h2>` styles:
 - Don't put a bare eyebrow `<h2>` inside a `.card`.
 - `<h3>` only below an `<h2>` in the same container (modals, the API help).
 - Modal titles: `<h2 class="no-margin">` inside `.modal-header`.
-- Every card that has a title uses `h2.card-title` — also result cards,
+- Every card that has a title uses `h2.card-title` - also result cards,
   meal cards and settings cards. Extra context after the title goes in a
   `<span class="text-muted">` inside the `<h2>` or a following `<p>`.
 - `<strong>` is for a **list row's item name** (a recipe, a key, a member)
-  and for the headline inside an `a.card.card-link` nudge — never a card's
+  and for the headline inside an `a.card.card-link` nudge - never a card's
   section title.
 
 ## Cards and rows
@@ -83,14 +83,14 @@ the first child (hidden inputs skipped) is the text column: it takes the
 remaining width and wraps inside itself, long compound words included. The
 actions never shrink and never move under the text; a group of several
 (`<div class="row">`, e.g. a quantity box + Add, Edit + Delete) is stacked
-on a phone and side by side from 768px — the same on every row. Don't use a
+on a phone and side by side from 768px - the same on every row. Don't use a
 `.card-action-row` for two pieces of text (a title and its totals): use an
 `h2.card-title` and a `<p>`. A list shown as a table uses `.list-table` with
 `.cell-text` (wraps, takes the room), `.cell-number`/`.cell-fit` (narrow,
 no wrap). Long words wrap everywhere in cards and headings; never inside a
 button. `apps/core/test_layout.py` (browser suite, `-m accessibility`)
 renders the variable-content pages at 360px with long Finnish content and
-fails on overflow or misaligned row actions — add a page there when you add
+fails on overflow or misaligned row actions - add a page there when you add
 one whose content varies.
 
 Numbers that should line up (weights, reps, macros, dates in tables) get
@@ -102,7 +102,7 @@ Hierarchy (base.css "Buttons: states + one clear hierarchy"):
 
 | Class | Meaning | Examples |
 |---|---|---|
-| bare `<button>` / `a.button` | **primary** — the one action the screen exists for | Save, Log set, Start workout |
+| bare `<button>` / `a.button` | **primary** - the one action the screen exists for | Save, Log set, Start workout |
 | `.button-secondary` | any other action | Edit (in a row), Import, Export, Full view, ←/→ icon arrows |
 | `.button-danger` | destroys or ends something | Delete, Remove, Deactivate, Abandon, Revoke, Leave group |
 | `.button-link` | navigation away, not an action | ← Back to X, Cancel |
@@ -111,7 +111,7 @@ Hierarchy (base.css "Buttons: states + one clear hierarchy"):
 - No `+` prefix in labels; use text ("New", "Add …").
 - Disabled: the `disabled` attribute (or `aria-disabled="true"` on an `<a>`);
   never fake it with color.
-- Hover/active states come from `filter` — never hand-pick per-theme colors.
+- Hover/active states come from `filter` - never hand-pick per-theme colors.
 - Icon-only buttons need an `aria-label`. Icons come from
   `core/_icon.html` (add an `elif` for a new one); close buttons use
   `&times;` with `aria-label="Close"` (`.modal-close` / `.pr-toast-close`).
@@ -155,13 +155,13 @@ Hierarchy (base.css "Buttons: states + one clear hierarchy"):
   `core/_form_errors.html` at the top. Never `form.as_p` etc.
 - Hand-rolled inputs outside that loop need a `<label>` or `aria-label`.
 - Picking several people/things from a known list (clients to share with):
-  `apps.core.widgets.SearchablePickerWidget` — search box with suggestions,
+  `apps.core.widgets.SearchablePickerWidget` - search box with suggestions,
   picked items as a removable list; its checkboxes stay the real input and the
   no-JS fallback. For clients use `apps.coaching.forms.ClientPickerField`.
 - A list of checkboxes gets its label above it (`_field.html`); only a single
   checkbox sits beside its label.
 - Compact inline forms (set logging, training mode, diary quantity) use
-  `.set-field`/`.set-log-form`/`.qty-input` — the only allowed exception to
+  `.set-field`/`.set-log-form`/`.qty-input` - the only allowed exception to
   `_field.html`.
 - Live search: `hx-get` + `hx-trigger="input changed delay:…"` with
   `hx-indicator` pointing at `core/_search_indicator.html`.
@@ -175,10 +175,10 @@ Hierarchy (base.css "Buttons: states + one clear hierarchy"):
   same page, `anchor=` to land back on the pager after a full page load,
   `label=` for its aria-label. Previous and Next are both
   `.button-secondary`, like every other pair of prev/next arrows (calendar
-  months, diary days, training-mode exercises) — the two sides of one
+  months, diary days, training-mode exercises) - the two sides of one
   control always look the same.
 - Status/metadata pills: `.tag` (accent), `.tag-success`, `.tag-muted`,
-  `.tag-outline`; never rely on color alone — the tag has text.
+  `.tag-outline`; never rely on color alone - the tag has text.
 - Filters: `.filter-row`; date ranges: `.range-filter` (segmented control).
 
 ## States
@@ -191,8 +191,8 @@ Hierarchy (base.css "Buttons: states + one clear hierarchy"):
 | Form error | `_form_errors.html` (`.alert.alert-error`) |
 | In-page notice | `.alert` + `.alert-info/-warning/-success/-error` |
 | Success / feedback | `messages.success(...)` in the view → toast (`.pr-banner`), auto-dismisses after 6 s, paused while hovered or focused; errors never auto-dismiss |
-| HTMX failure | handled globally by `static/js/htmx-errors.js` — an error toast with a close button that stays until dismissed |
-| Composer that clears after sending (chat, assistant) | `data-reset-on-success` on the form instead of `hx-on::after-request="this.reset()"` — cleared only when the send succeeded and the response has no `X-Form-Rejected` header; put the error in a `[data-form-error]` element inside the form (`HX-Retarget`) so a polled area doesn't wipe it |
+| HTMX failure | handled globally by `static/js/htmx-errors.js` - an error toast with a close button that stays until dismissed |
+| Composer that clears after sending (chat, assistant) | `data-reset-on-success` on the form instead of `hx-on::after-request="this.reset()"` - cleared only when the send succeeded and the response has no `X-Form-Rejected` header; put the error in a `[data-form-error]` element inside the form (`HX-Retarget`) so a polled area doesn't wipe it |
 | Focus after a swap | automatic (`static/js/htmx-focus.js`) when the swap removed the focused element: mark the field focus should land on with `data-autofocus` (e.g. the set form's weight); otherwise it goes to the same id, the first heading, or the container |
 | Long-running admin task | run it in the background and show a polling `.alert` status card (`core/_backup_task_status.html`), never inside the request |
 
@@ -220,7 +220,7 @@ select tour targets by CSS class.
   `--z-*`. Reach for an existing utility (`.row`, `.stack`, `.mt-*`,
   `.text-muted`, `.text-danger`, `.flex-full`, …) before writing new CSS.
 - Touch targets ≥ `--touch-target` (2.75rem).
-- Animations respect `prefers-reduced-motion` — a global rule at the end of
+- Animations respect `prefers-reduced-motion` - a global rule at the end of
   base.css cuts every transition/animation (Alpine's `x-transition` too), so a
   new animation is covered without its own rule.
 - The current item in any nav or subnav is `aria-current="page"`.
@@ -234,7 +234,7 @@ select tour targets by CSS class.
 
 Places that knowingly differ from the rules above:
 
-- Chat threads put the back link in the top bar (composer is at the bottom) —
+- Chat threads put the back link in the top bar (composer is at the bottom) -
   the AI assistant's conversation page too.
 - Training mode (`_train_panel.html`) and the set-log form render fields
   compactly without `_field.html`.
@@ -250,7 +250,7 @@ Places that knowingly differ from the rules above:
 
 ## Audit log
 
-### 2026-10-01 — first full template audit
+### 2026-10-01 - first full template audit
 
 Found consistent: no stray inline styles, every back link uses
 `.button-link` with `&larr;`, no `confirm()` calls, no `form.as_p`, every

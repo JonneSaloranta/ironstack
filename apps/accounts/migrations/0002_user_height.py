@@ -13,6 +13,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='user',
             name='height',
-            field=models.DecimalField(blank=True, decimal_places=4, help_text='Canonical meters — see apps.core.units. Optional; only used to compute BMI alongside a logged body weight.', max_digits=8, null=True),
+            field=models.DecimalField(blank=True, decimal_places=4, help_text='Canonical meters - see apps.core.units. Optional; only used to compute BMI alongside a logged body weight.', max_digits=8, null=True),
         ),
     ]

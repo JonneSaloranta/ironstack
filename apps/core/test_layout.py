@@ -1,8 +1,8 @@
-"""Layout holds up with real-world content (the `accessibility` marker —
+"""Layout holds up with real-world content (the `accessibility` marker -
 a real Chromium, requirements/a11y.txt; see test_ui_behaviour.py).
 
-Every page whose content varies — names, brands, long Finnish compound
-words — is rendered at a 360px phone width with deliberately long
+Every page whose content varies - names, brands, long Finnish compound
+words - is rendered at a 360px phone width with deliberately long
 content next to short content, and checked for: anything running past
 the screen or its card, and rows in one list whose actions don't line
 up (a long name pushing its button under the text while its

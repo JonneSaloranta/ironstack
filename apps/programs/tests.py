@@ -56,7 +56,7 @@ class ProgramTemplateSeedTests(TestCase):
 
 class ProgramContentTranslationTests(TestCase):
     """Built-in template names/descriptions/workout names are content,
-    not UI chrome — see apps.programs.i18n_content and
+    not UI chrome - see apps.programs.i18n_content and
     docs/ARCHITECTURE.md "Internationalization"."""
 
     def setUp(self):
@@ -213,7 +213,7 @@ class CopyProgramServiceTests(TestCase):
 
 
 class ExportImportProgramServiceTests(TestCase):
-    """apps.programs.services.export_program/import_program — see
+    """apps.programs.services.export_program/import_program - see
     apps.core.data_exchange's own module docstring for the whole
     export/import feature these two are one half of."""
 
@@ -234,7 +234,7 @@ class ExportImportProgramServiceTests(TestCase):
     def _round_trip(self, program):
         payload = services.export_program(program)
         # A real json.dumps/loads round trip, not just a Python dict
-        # passed straight through — catches anything that isn't
+        # passed straight through - catches anything that isn't
         # actually JSON-serializable (e.g. a stray Decimal/model
         # instance left in the payload by mistake).
         raw = json.dumps(data_exchange.build_envelope("program", payload))
@@ -326,7 +326,7 @@ class ExportImportProgramServiceTests(TestCase):
 
     def test_a_failed_import_leaves_no_partial_program_behind(self):
         """The whole point of wrapping import_program in one
-        transaction — a bad prescription partway through must not
+        transaction - a bad prescription partway through must not
         leave an orphaned Program/Workout with nothing in it."""
         payload = {
             "name": "Doomed Program",
@@ -362,7 +362,7 @@ class ProgramViewPermissionTests(TestCase):
     def test_the_plain_function_views_also_require_login(self):
         # Regression: these were missing @login_required entirely, so
         # an anonymous request crashed with a 500 instead of
-        # redirecting to login — same bug class as apps.nutrition's
+        # redirecting to login - same bug class as apps.nutrition's
         # own equivalent fix.
         from apps.exercises.models import Exercise
 
@@ -415,8 +415,8 @@ class ProgramViewPermissionTests(TestCase):
         self.assertFalse(self.bob_program.workouts.filter(name="Sneaky Workout").exists())
 
     def test_deleting_a_program_removes_it(self):
-        """ProgramDeleteView had no test coverage at all — not even a
-        confirm-page GET — found via `coverage report`."""
+        """ProgramDeleteView had no test coverage at all - not even a
+        confirm-page GET - found via `coverage report`."""
         program = Program.objects.create(owner=self.alice, name="Delete Me")
         get_response = self.client.get(reverse("programs:program-delete", args=[program.pk]))
         self.assertEqual(get_response.status_code, 200)
@@ -553,7 +553,7 @@ class ProgramCreateEditFlowTests(TestCase):
 
     def test_updating_a_workout_bumps_program_version(self):
         """Regression: workout_update had no test at all beyond the
-        anonymous-access redirect check — the actual authenticated
+        anonymous-access redirect check - the actual authenticated
         edit-and-save path was untested (found via `coverage run -m
         pytest && coverage report`, not by inspection)."""
         program = Program.objects.create(owner=self.alice, name="Original")
@@ -569,7 +569,7 @@ class ProgramCreateEditFlowTests(TestCase):
         self.assertEqual(program.version, 2)
 
     def test_deleting_a_workout_removes_it_and_bumps_version(self):
-        """Same gap as above — workout_delete's actual delete was
+        """Same gap as above - workout_delete's actual delete was
         never exercised by an authenticated, owning user."""
         program = Program.objects.create(owner=self.alice, name="Original")
         workout = Workout.objects.create(program=program, name="Day 1", order=0)
@@ -696,7 +696,7 @@ class ProgramCopyViewTests(TestCase):
 
     def test_cannot_copy_another_users_private_program_even_if_flagged_as_a_template(self):
         """is_template is a UI affordance for the owner, not a visibility
-        grant — a personal template stays exactly as private as any
+        grant - a personal template stays exactly as private as any
         other program belonging to someone else."""
         bob = User.objects.create_user(username="bob", password="s3cret-pass")
         bob_template = Program.objects.create(

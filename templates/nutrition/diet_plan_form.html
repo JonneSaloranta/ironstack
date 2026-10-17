@@ -1,12 +1,12 @@
 {% extends "base.html" %}
 {% load i18n %}
-{% block title %}{% trans "New diet plan" %} — IronStack{% endblock %}
+{% block title %}{% trans "New diet plan" %} - IronStack{% endblock %}
 {% block content %}
 <div class="top-bar">
   <h1 class="no-margin">{% trans "Build a diet plan" %}</h1>
 </div>
 {% include "nutrition/_subnav.html" %}
-<p class="text-muted">{% trans "We'll suggest one food or recipe per meal from your own library, scaled to fit — you can swap any of them afterward. Or start from scratch below to skip the suggestions and build it entirely yourself." %}</p>
+<p class="text-muted">{% trans "We'll suggest one food or recipe per meal from your own library, scaled to fit - you can swap any of them afterward. Or start from scratch below to skip the suggestions and build it entirely yourself." %}</p>
 
 <form class="card" method="post">
   {% csrf_token %}

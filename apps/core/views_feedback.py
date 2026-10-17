@@ -1,5 +1,5 @@
 """Profile → Feedback (any signed-in user) and Profile → Administration
-→ Feedback (staff only) — see apps.core.models.Feedback/FeedbackSettings
+→ Feedback (staff only) - see apps.core.models.Feedback/FeedbackSettings
 for what's actually stored and why this is a one-way inbox rather than
 a two-way conversation thread."""
 
@@ -21,7 +21,7 @@ class FeedbackCreateView(LoginRequiredMixin, CreateView):
     success_url = reverse_lazy("profile")
 
     def dispatch(self, request, *args, **kwargs):
-        # Gate the URL itself, not just the profile page's link to it —
+        # Gate the URL itself, not just the profile page's link to it -
         # same reasoning as apps.accounts.views.SignupView's own
         # SIGNUP_ENABLED check: a hidden link doesn't stop someone who
         # already knows/guesses the path.

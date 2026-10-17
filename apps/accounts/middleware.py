@@ -6,9 +6,9 @@ class UserTimezoneMiddleware:
     the profile page) as the active timezone for this request.
 
     Regression: nothing in the app ever called `timezone.activate()`
-    anywhere — `user.timezone` was stored and validated on save, but
+    anywhere - `user.timezone` was stored and validated on save, but
     every timezone-aware render (`django.utils.timezone.localdate`/
-    `localtime`, the `{% now %}` tag, and — most visibly — every plain
+    `localtime`, the `{% now %}` tag, and - most visibly - every plain
     `{{ some_datetime|date:"..." }}` template filter on a stored
     datetime, which Django automatically converts to whatever timezone
     is *currently active* before formatting) silently used
@@ -21,7 +21,7 @@ class UserTimezoneMiddleware:
     into the wrong week.
 
     Same "re-derive from the database every request, nothing cached
-    elsewhere" pattern as `UserLanguageMiddleware` below — must sit
+    elsewhere" pattern as `UserLanguageMiddleware` below - must sit
     after `AuthenticationMiddleware` (needs `request.user`) but still
     before the view/template rendering.
     """
@@ -35,7 +35,7 @@ class UserTimezoneMiddleware:
             try:
                 timezone.activate(user.timezone)
             except Exception:
-                # An unrecognized zone name shouldn't 500 the request —
+                # An unrecognized zone name shouldn't 500 the request -
                 # ProfileForm validates against the real IANA list on
                 # save, so this should never actually happen, but a
                 # stale/hand-edited value falling back to
@@ -56,7 +56,7 @@ class UserLanguageMiddleware:
     Must sit after `AuthenticationMiddleware` in `MIDDLEWARE` (needs
     `request.user`) but still runs before the view and template
     rendering, so `translation.activate()` here affects *this* request's
-    own response. Nothing needs to be persisted for future requests —
+    own response. Nothing needs to be persisted for future requests -
     `user.language` in the database is the single source of truth, and
     this middleware re-derives the active language from it on every
     request rather than caching the choice anywhere else (a cookie or

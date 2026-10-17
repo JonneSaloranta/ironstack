@@ -1,12 +1,12 @@
 {% extends "base.html" %}
 {% load i18n %}
-{% block title %}{% trans "Confirm your email" %} — IronStack{% endblock %}
+{% block title %}{% trans "Confirm your email" %} - IronStack{% endblock %}
 {% block content %}
 {% include "registration/_auth_brand.html" %}
 <h1>{% trans "Confirm your email" %}</h1>
 <div class="card">
   <p>{% blocktrans %}We've sent a link to {{ email }}. Open it to confirm your address, then log in.{% endblocktrans %}</p>
-  <p class="text-muted">{% trans "Nothing arrived? Check your spam folder, or try logging in — that sends a new link." %}</p>
+  <p class="text-muted">{% trans "Nothing arrived? Check your spam folder, or try logging in - that sends a new link." %}</p>
 </div>
 <p><a class="button-link" href="{% url 'login' %}">&larr; {% trans "Back to login" %}</a></p>
 {% endblock %}

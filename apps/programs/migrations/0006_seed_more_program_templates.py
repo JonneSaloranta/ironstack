@@ -12,7 +12,7 @@ TEMPLATES = [
         "Upper/Lower Split (4-Day)",
         (
             "A 4-day split alternating upper-body and lower-body sessions "
-            "twice each per week — a common middle ground between full-body "
+            "twice each per week - a common middle ground between full-body "
             "and single-muscle-group routines, popular for balancing "
             "strength and volume without training every day."
         ),
@@ -67,7 +67,7 @@ TEMPLATES = [
             "The classic 10x10 high-volume method: one main lift per "
             "workout done for ten sets of ten reps at a fixed, moderate "
             "weight, paired with a lighter accessory movement. Brutal on "
-            "paper, simple in practice — built for muscle growth, not "
+            "paper, simple in practice - built for muscle growth, not "
             "1-rep-max testing."
         ),
         [

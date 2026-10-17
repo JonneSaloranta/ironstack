@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% load i18n core_extras stretching_extras %}
-{% block title %}{{ routine.name|translate_content }} — IronStack{% endblock %}
+{% block title %}{{ routine.name|translate_content }} - IronStack{% endblock %}
 {% block content %}
 {% url 'stretching:routine-list' as c1u %}{% trans "Routines" as c1l %}
 {% include "core/_breadcrumbs.html" with c1_url=c1u c1_label=c1l current=routine.name %}

@@ -13,6 +13,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='user',
             name='show_bmi',
-            field=models.BooleanField(default=True, help_text="Whether the dashboard's BMI card is shown at all — independent of whether height/weight exist to compute it, so a user who'd rather not see the figure can turn it off outright."),
+            field=models.BooleanField(default=True, help_text="Whether the dashboard's BMI card is shown at all - independent of whether height/weight exist to compute it, so a user who'd rather not see the figure can turn it off outright."),
         ),
     ]

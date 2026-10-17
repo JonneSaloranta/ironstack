@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% load i18n %}
-{% block title %}{% trans "AI assistant settings" %} — IronStack{% endblock %}
+{% block title %}{% trans "AI assistant settings" %} - IronStack{% endblock %}
 {% block content %}
 {% url 'assistant:home' as assistant_home_url %}
 {% include "core/_breadcrumbs.html" with c1_url=assistant_home_url c1_label=_("AI assistant") current=_("Settings") %}

@@ -41,19 +41,19 @@ class AnalyticsDashboardView(LoginRequiredMixin, TemplateView):
 
 
 class MemberProfileView(LoginRequiredMixin, View):
-    """Another user's public fitness profile — asked for directly:
+    """Another user's public fitness profile - asked for directly:
     recent PRs, achievement highlights, and how long they've been a
     member. Deliberately nothing nutrition/body-weight related (no
-    logged foods, no weight readings, no measurements) — only the same
+    logged foods, no weight readings, no measurements) - only the same
     workout/PR/streak scope `achievements.highlights_for` already has.
 
     Gated by `User.show_achievements`, the same "share my training
     activity" opt-out the achievements carousel and "Recently active"
-    list already use (see that field's own docstring) — not a second,
+    list already use (see that field's own docstring) - not a second,
     separate privacy setting for what would otherwise be the exact
     same decision. A user can always view their *own* profile
     regardless of this setting (it hides your profile from others, not
-    from yourself) — matched with `request.user == member` rather than
+    from yourself) - matched with `request.user == member` rather than
     folding it into the queryset filter, so a 404 for a genuinely
     opted-out member stays a plain, unconditional 404 for anyone else.
     """
@@ -69,7 +69,7 @@ class MemberProfileView(LoginRequiredMixin, View):
             member, dateranges.resolve("all"), limit=10
         )
         # A PT's own profile is the surface a prospective client
-        # requests coaching from — apps.coaching has no separate
+        # requests coaching from - apps.coaching has no separate
         # "browse trainers" page, since a coaching relationship is
         # only ever proposed by a coachee who already knows who
         # they're asking (same discovery model apps.social's own
