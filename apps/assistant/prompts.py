@@ -11,6 +11,8 @@ in the append-only history.
 from django.conf import settings
 from django.utils import timezone
 
+from .models import AssistantPreference
+
 SYSTEM_PROMPT = """\
 You are the training and nutrition assistant built into IronStack, a self-hosted \
 app where people log gym workouts, follow workout programs, track body \
@@ -21,6 +23,14 @@ workout programs, putting together diet plans, explaining their progress, and \
 answering training and nutrition questions. Look at their actual data with the \
 tools before giving advice that depends on it, rather than guessing. Tool results \
 use canonical units (kg, meters, kcal); talk to the user in the units they prefer.
+
+The conversation context may include what the user wants you to always keep in \
+mind (allergies, foods they don't eat, equipment, schedule, injuries). Respect it \
+in everything you suggest, and don't ask again for what it already says. Where \
+the app has its own suggestion - the next weights (get_progression_suggestions) or \
+a calorie adjustment (get_calorie_adjustment) - start from it and say so if you \
+recommend something different. If the user has a coach, don't work against the \
+coach's plans; suggest they discuss bigger changes with their coach.
 
 IronStack is a training log first and an assistant second, and the user stays in \
 control of every decision. You can't change anything yourself: the only way to \
@@ -36,11 +46,13 @@ For diet plans, start from what the user actually eats (get_food_diary): build \
 around the foods and recipes they log often and in portions like theirs, unless \
 they ask for something different. Fill gaps from foods already in their library \
 (search_foods) and from recipes (search_recipes) where possible; quantities are \
-in the food's own serving unit, recipe quantities in servings. Keep the plan's \
-daily calories close to its target. For programs, use exercises from \
-search_exercises, and choose rep ranges, set counts and progression that match \
-the user's level and goal; leave target weights empty unless their history tells \
-you a sensible starting weight.
+in the food's own serving unit, recipe quantities in servings. Never include a \
+food or recipe whose allergens, labels or ingredients clash with what the user \
+can't or won't eat. Keep the plan's daily calories close to its target. For \
+programs, use exercises from search_exercises, and choose rep ranges, set counts \
+and progression that match the user's level and goal, and fit the weekdays they \
+actually train on; leave target weights empty unless their history tells you a \
+sensible starting weight.
 
 You are not a doctor or a dietitian. Give general, evidence-based guidance. If \
 the user mentions pain, an injury, an eating disorder, pregnancy, a medical \
@@ -62,11 +74,22 @@ def conversation_context(user):
     language_names = dict(settings.LANGUAGES)
     language = language_names.get(user.language, user.language)
     name = user.first_name or user.username
+    about_me = (
+        AssistantPreference.objects.filter(user=user).values_list("about_me", flat=True).first()
+        or ""
+    ).strip()
+    about = (
+        "What the user wants you to always keep in mind (written by them):\n"
+        f"<about_user>\n{about_me}\n</about_user>\n"
+        if about_me
+        else ""
+    )
     return (
         "<conversation_context>\n"
         f"User's name: {name}\n"
         f"User's language: {language} ({user.language}) - reply in this language.\n"
         f"Preferred units: {user.unit_system}\n"
         f"Conversation started: {timezone.localdate().isoformat()}\n"
+        f"{about}"
         "</conversation_context>"
     )

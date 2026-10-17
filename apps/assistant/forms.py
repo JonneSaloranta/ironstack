@@ -39,6 +39,30 @@ class ApiKeyForm(forms.Form):
         return key
 
 
+ABOUT_ME_MAX_LENGTH = 2000
+
+
+class AboutMeForm(forms.Form):
+    about_me = forms.CharField(
+        label=_("What the assistant should know about you"),
+        max_length=ABOUT_ME_MAX_LENGTH,
+        required=False,
+        widget=forms.Textarea(
+            attrs={
+                "rows": 5,
+                "placeholder": _(
+                    "e.g. Allergic to nuts. Vegetarian. I train at home with dumbbells, "
+                    "three evenings a week. I don't like fish."
+                ),
+            }
+        ),
+        help_text=_(
+            "Allergies, foods you don't eat, equipment, schedule, injuries - anything "
+            "you'd otherwise repeat in every conversation. New conversations use it."
+        ),
+    )
+
+
 class OwnKeyOptionsForm(forms.Form):
     model = forms.ChoiceField(
         label=_("Model for your key"),

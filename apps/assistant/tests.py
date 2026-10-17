@@ -249,6 +249,17 @@ class ConversationTests(TestCase):
         self.assertEqual(reply.status, MessageStatus.PENDING)
         self.assertEqual(conversation.key_source, KeySource.SHARED)
 
+    def test_about_me_goes_into_the_context(self):
+        services.set_about_me(self.user, "Allergic to peanuts.")
+        conversation = services.start_conversation(self.user, "Plan my meals")
+        sent = conversation.messages.first().raw[0]["content"][0]["text"]
+        self.assertIn("<about_user>\nAllergic to peanuts.\n</about_user>", sent)
+
+    def test_empty_about_me_is_left_out(self):
+        conversation = services.start_conversation(self.user, "Hi")
+        sent = conversation.messages.first().raw[0]["content"][0]["text"]
+        self.assertNotIn("<about_user>", sent)
+
     def test_one_reply_at_a_time(self):
         conversation = services.start_conversation(self.user, "First")
         with self.assertRaises(services.AssistantError):
@@ -503,6 +514,108 @@ class ToolScopingTests(TestCase):
         self.assertEqual(first["typical_quantity"], "80.0g")
         self.assertIsNone(data["most_eaten"][1]["food_id"])
         self.assertEqual(len(data["recent_days"]), 3)
+
+    def test_workout_history_has_rir_failure_and_set_notes(self):
+        from apps.workouts.models import ExerciseSet, PerformedExercise
+
+        session = WorkoutSession.objects.create(
+            user=self.user, status=WorkoutSessionStatus.COMPLETED, ended_at=timezone.now()
+        )
+        performed = PerformedExercise.objects.create(
+            session=session, exercise=Exercise.objects.filter(owner__isnull=True).first()
+        )
+        ExerciseSet.objects.create(
+            performed_exercise=performed,
+            set_number=1,
+            weight=Decimal("100"),
+            reps=5,
+            rir=2,
+            is_failure=True,
+            notes="Shoulder felt off",
+        )
+        data, _ = self.run_tool("get_workout_history", {})
+        exercise = data["completed_sessions"][0]["exercises"][0]
+        self.assertEqual(exercise["sets"], ["100.0kg x 5 RIR2 (to failure)"])
+        self.assertEqual(exercise["set_notes"], ["set 1: Shoulder felt off"])
+
+    def test_foods_and_recipes_carry_allergens_and_ingredients(self):
+        from apps.nutrition.models import RecipeIngredient
+
+        peanut = make_food(self.user, "Zqx peanut butter", allergens="en:peanuts", labels="Vegan")
+        recipe = Recipe.objects.create(owner=self.user, name="Zqx toast", servings=1)
+        RecipeIngredient.objects.create(recipe=recipe, food=peanut, quantity=Decimal("30"))
+        data, _ = self.run_tool("search_foods", {"query": "zqx"})
+        self.assertEqual(data["foods"][0]["allergens"], "en:peanuts")
+        self.assertEqual(data["foods"][0]["labels"], "Vegan")
+        self.assertNotIn("ingredients", data["foods"][0])
+        data, _ = self.run_tool("search_recipes", {"query": "zqx"})
+        self.assertEqual(data["recipes"][0]["ingredients"], ["Zqx peanut butter 30.0g"])
+        self.assertEqual(data["recipes"][0]["ingredient_allergens"], "en:peanuts")
+
+    def test_overview_has_training_pattern_and_coaches(self):
+        from apps.coaching.models import CoachingRelationship
+
+        program = Program.objects.create(owner=self.user, name="My program")
+        WorkoutSession.objects.create(
+            user=self.user,
+            program=program,
+            status=WorkoutSessionStatus.COMPLETED,
+            ended_at=timezone.now(),
+        )
+        CoachingRelationship.objects.create(coach=self.other, coachee=self.user)
+        data, _ = self.run_tool("get_user_overview", {})
+        pattern = data["training_last_4_weeks"]
+        self.assertEqual(pattern["sessions"], 1)
+        self.assertEqual(list(pattern["sessions_by_weekday"].values()), [1])
+        self.assertEqual(pattern["latest_program"], {"id": program.pk, "name": "My program"})
+        self.assertEqual(data["active_coaches"], 1)
+
+    def test_progression_suggestions_default_to_latest_program(self):
+        from apps.programs.models import ExercisePrescription
+
+        _content, is_error = self.run_tool("get_progression_suggestions", {})
+        self.assertTrue(is_error)
+        program = Program.objects.create(owner=self.user, name="My program")
+        workout = Workout.objects.create(program=program, name="Day A")
+        ExercisePrescription.objects.create(
+            workout=workout,
+            exercise=Exercise.objects.filter(owner__isnull=True).first(),
+            target_weight=Decimal("60"),
+        )
+        WorkoutSession.objects.create(
+            user=self.user,
+            program=program,
+            status=WorkoutSessionStatus.COMPLETED,
+            ended_at=timezone.now(),
+        )
+        data, is_error = self.run_tool("get_progression_suggestions", {})
+        self.assertFalse(is_error)
+        self.assertEqual(data["program"]["id"], program.pk)
+        exercise = data["workouts"][0]["exercises"][0]
+        self.assertEqual(exercise["reps"], "8-12")
+        self.assertTrue(exercise["reason"])
+        bobs = Program.objects.create(owner=self.other, name="Bob's")
+        _content, is_error = self.run_tool("get_progression_suggestions", {"program_id": bobs.pk})
+        self.assertTrue(is_error)
+
+    def test_calorie_adjustment_without_goal(self):
+        data, is_error = self.run_tool("get_calorie_adjustment", {})
+        self.assertFalse(is_error)
+        self.assertEqual(data["status"], "no_active_goal")
+
+    def test_stretching_is_own_only_and_respects_the_toggle(self):
+        from apps.stretching.models import StretchSession, StretchSessionStatus
+
+        for owner in (self.user, self.other):
+            StretchSession.objects.create(
+                user=owner, name="Evening", status=StretchSessionStatus.COMPLETED
+            )
+        data, _ = self.run_tool("get_stretching", {})
+        self.assertEqual([s["name"] for s in data["sessions"]], ["Evening"])
+        self.user.stretching_enabled = False
+        self.user.save()
+        data, _ = self.run_tool("get_stretching", {})
+        self.assertEqual(data, {"stretching_enabled": False})
 
     def test_unknown_tool_and_bad_input(self):
         self.assertTrue(tools.run(self.ctx, "drop_tables", {})[1])
@@ -843,6 +956,16 @@ class ViewTests(TestCase):
         response = self.client.post(reverse("assistant:model-save"), {"model": "gpt-9"})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(services.preference_for(self.user).own_key_model, "claude-sonnet-5-5")
+
+    def test_about_me_saves_and_shows(self):
+        url = reverse("assistant:settings")
+        response = self.client.post(reverse("assistant:about-save"), {"about_me": "Vegan."})
+        self.assertRedirects(response, url)
+        self.assertEqual(services.preference_for(self.user).about_me, "Vegan.")
+        self.assertContains(self.client.get(url), "Vegan.")
+        response = self.client.post(reverse("assistant:about-save"), {"about_me": "x" * 2001})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(services.preference_for(self.user).about_me, "Vegan.")
 
     def test_admin_settings_is_staff_only(self):
         url = reverse("assistant:admin-settings")

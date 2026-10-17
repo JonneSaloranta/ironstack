@@ -94,10 +94,17 @@ on the worker's next loop.
 **History is append-only.** Each request replays every `DONE` message's `raw`
 in order. Rows aren't edited after they finish, and a failed reply contributes
 nothing. That keeps Claude's thinking blocks valid across turns. The user's
-context (name, language, units, start date -
-`prompts.conversation_context`) goes into the conversation's first message,
-not the system prompt, so the system prompt and tools stay identical for
-every request and user, and cacheable.
+context (name, language, units, start date and the user's own "About you"
+text - `prompts.conversation_context`) goes into the conversation's first
+message, not the system prompt, so the system prompt and tools stay identical
+for every request and user, and cacheable.
+
+**About you.** On the settings page the user can write what the assistant
+should always keep in mind: allergies, foods they don't eat, equipment,
+schedule, injuries (`AssistantPreference.about_me`, at most 2000 characters).
+It goes into every new conversation's context inside `<about_user>` tags, so
+it isn't asked again. An ongoing conversation keeps the text it started with,
+like the rest of its context.
 
 ## Tools
 
@@ -107,22 +114,28 @@ queries the views use:
 
 | Tool | Reads |
 |---|---|
-| `get_user_overview` | date, units, height, latest body weight, nutrition profile, goal and target, active diet plan |
-| `get_workout_history` | completed sessions with working sets |
+| `get_user_overview` | date, units, height, latest body weight, nutrition profile, goal and target, active diet plan, the weekdays trained on in the last 4 weeks, the program last trained from, number of active coaches |
+| `get_workout_history` | completed sessions with working sets (RPE, RIR, sets to failure), the user's set notes and the plan's exercise notes |
 | `get_personal_records` | max-weight and estimated-1RM records |
 | `get_body_measurements`, `get_activities` | measurements and activities over a period |
 | `get_nutrition_overview` | median intake and recently logged days |
-| `get_food_diary` | the foods and recipes the user eats most (typical portion, usual meals) and the last logged days item by item, so a diet plan can be built from food they like |
+| `get_food_diary` | the foods and recipes the user eats most (typical portion, usual meals, food details as below) and the last logged days item by item with entry notes, so a diet plan can be built from food they like |
+| `get_calorie_adjustment` | `apps.nutrition.suggestions.suggest_calorie_adjustment`: weight trend against the goal and the suggested daily change |
+| `get_stretching` | completed stretching sessions and own routines (nothing when stretching is turned off) |
 | `list_programs`, `get_program` | own, coach-shared and built-in programs |
+| `get_progression_suggestions` | `apps.progression.suggestions.suggest_weight` for every exercise in a program (default: the one last trained from), with its reason |
 | `list_diet_plans`, `get_diet_plan` | own diet plans |
-| `search_exercises`, `search_foods`, `search_recipes`, `list_meal_slots` | the libraries a proposal draws from |
+| `search_exercises`, `search_foods`, `search_recipes`, `list_meal_slots` | the libraries a proposal draws from; foods with allergens, labels, categories, ingredients, Nutri-Score and package price when known, recipes with their ingredients and the ingredients' allergens |
 | `propose_diet_plan`, `propose_program` | - (records a proposal) |
 
 Tool inputs are untrusted. Each tool validates its arguments, and a mistake
 goes back to the model as an error result it can correct. It never becomes an
 exception. Results are compact JSON in canonical units. The system prompt
 (`prompts.SYSTEM_PROMPT`) tells the model which units the user reads, to reply
-in the user's language, and to suggest a professional for medical topics.
+in the user's language, and to suggest a professional for medical topics. It
+also tells it to respect the "About you" text and food allergens, to start
+from the app's own progression and calorie suggestions (and say so when it
+recommends something else), and not to work against a coach's plans.
 
 ## Proposals
 

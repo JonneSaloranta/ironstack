@@ -123,6 +123,10 @@ class AssistantPreference(TimeStampedModel):
     # Likewise own-key only, blank = ASSISTANT_EFFORT. Unlike the model it
     # isn't pinned per conversation: it applies from the next reply on.
     own_key_effort = models.CharField(max_length=10, choices=Effort.choices, blank=True)
+    # What the user wants the assistant to always know (allergies, foods
+    # they don't eat, equipment, schedule) - written by the user, sent
+    # with every new conversation (prompts.conversation_context).
+    about_me = models.TextField(blank=True)
 
     def __str__(self):
         return f"{self.user.username}: assistant preference"

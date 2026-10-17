@@ -174,6 +174,13 @@ def set_own_key_options(user, *, model, effort):
     return preference
 
 
+def set_about_me(user, text):
+    preference, _created = AssistantPreference.objects.get_or_create(user=user)
+    preference.about_me = text
+    preference.save(update_fields=["about_me", "updated_at"])
+    return preference
+
+
 def remove_own_key(user):
     AssistantPreference.objects.filter(user=user).update(api_key="", api_key_hint="")
 

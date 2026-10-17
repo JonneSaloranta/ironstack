@@ -22,6 +22,14 @@ narrated summary of the same version.
 - AI assistant: it can now read the food diary - which foods and recipes
   you eat most, in what portions and at which meals - and builds diet
   plans around the food you actually like.
+- AI assistant: an "About you" box on its settings page for what it should
+  always remember - allergies, foods you don't eat, equipment, schedule,
+  injuries. Every new conversation starts with it.
+- AI assistant: it now sees food allergens, labels and ingredients (and
+  what goes into a recipe), so plans avoid what you can't eat; RIR, sets to
+  failure and your set notes in workout history; the app's own weight
+  suggestions for your program and its calorie-adjustment check; which
+  weekdays you train on; stretching; and whether you have a coach.
 
 ### Changed
 - Every page now uses a plain hyphen (-) instead of the em-dash,

@@ -27,6 +27,14 @@
   {% endif %}
 </div>
 
+<form class="card" method="post" action="{% url 'assistant:about-save' %}">
+  {% csrf_token %}
+  <h2 class="card-title">{% trans "About you" %}</h2>
+  {% include "core/_form_errors.html" with form=about_form %}
+  {% include "core/_field.html" with field=about_form.about_me %}
+  <button type="submit">{% trans "Save" %}</button>
+</form>
+
 <div class="card">
   <h2 class="card-title">{% trans "AI model" %}</h2>
   {% if access.available %}
