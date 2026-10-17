@@ -30,6 +30,9 @@ narrated summary of the same version.
   failure and your set notes in workout history; the app's own weight
   suggestions for your program and its calorie-adjustment check; which
   weekdays you train on; stretching; and whether you have a coach.
+- AI assistant: body measurements now come with their whole history -
+  first and latest reading, change and range, however long ago they were
+  logged - plus your notes, the weight trend per week and BMI.
 
 ### Changed
 - Every page now uses a plain hyphen (-) instead of the em-dash,

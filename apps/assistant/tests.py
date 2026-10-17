@@ -617,6 +617,35 @@ class ToolScopingTests(TestCase):
         data, _ = self.run_tool("get_stretching", {})
         self.assertEqual(data, {"stretching_enabled": False})
 
+    def test_body_measurements_summarize_whole_history(self):
+        weight = MeasurementType.objects.get(name="Body weight", owner__isnull=True)
+        self.user.height = Decimal("1.80")
+        self.user.save()
+        now = timezone.now()
+        for days_ago, value in ((400, "90"), (20, "86"), (10, "85"), (0, "84")):
+            BodyMeasurement.objects.create(
+                user=self.user,
+                measurement_type=weight,
+                value=Decimal(value),
+                recorded_at=now - timedelta(days=days_ago),
+                notes="after holidays" if days_ago == 0 else "",
+            )
+        BodyMeasurement.objects.create(
+            user=self.other, measurement_type=weight, value=Decimal("60"), recorded_at=now
+        )
+        data, is_error = self.run_tool("get_body_measurements", {"days": 30})
+        self.assertFalse(is_error)
+        [entry] = data["measurements"]
+        self.assertEqual(entry["readings_count"], 4)
+        self.assertEqual(entry["first"]["value"], 90.0)
+        self.assertEqual(entry["latest"]["value"], 84.0)
+        self.assertEqual(entry["change_since_first"], -6.0)
+        self.assertEqual(len(entry["recent_readings"]), 3)
+        self.assertEqual(entry["recent_readings"][0]["notes"], "after holidays")
+        self.assertEqual(entry["latest_bmi"], 25.9)
+        self.assertIn("trend_kg_per_week", entry)
+        self.assertNotIn("Body weight", data["types_never_logged"])
+
     def test_unknown_tool_and_bad_input(self):
         self.assertTrue(tools.run(self.ctx, "drop_tables", {})[1])
         self.assertTrue(tools.run(self.ctx, "get_workout_history", {"days": "lots"})[1])

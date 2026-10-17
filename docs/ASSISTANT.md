@@ -117,7 +117,8 @@ queries the views use:
 | `get_user_overview` | date, units, height, latest body weight, nutrition profile, goal and target, active diet plan, the weekdays trained on in the last 4 weeks, the program last trained from, number of active coaches |
 | `get_workout_history` | completed sessions with working sets (RPE, RIR, sets to failure), the user's set notes and the plan's exercise notes |
 | `get_personal_records` | max-weight and estimated-1RM records |
-| `get_body_measurements`, `get_activities` | measurements and activities over a period |
+| `get_body_measurements` | per measurement type a whole-history summary (first, latest, change, min/max), the newest readings in the period with notes, the body-weight trend per week and BMI, and which types were never logged |
+| `get_activities` | activities over a period |
 | `get_nutrition_overview` | median intake and recently logged days |
 | `get_food_diary` | the foods and recipes the user eats most (typical portion, usual meals, food details as below) and the last logged days item by item with entry notes, so a diet plan can be built from food they like |
 | `get_calorie_adjustment` | `apps.nutrition.suggestions.suggest_calorie_adjustment`: weight trend against the goal and the suggested daily change |

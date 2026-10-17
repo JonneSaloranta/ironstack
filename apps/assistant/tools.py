@@ -261,11 +261,19 @@ def get_personal_records(ctx, args):
 
 
 def get_body_measurements(ctx, args):
+    """Every measurement type the user has logged: a whole-history
+    summary (first, latest, change, range) however old the readings are,
+    plus the newest readings inside `days` with the user's notes - and
+    for body weight the trend rate and BMI the app shows too."""
+    from apps.core import bmi
+    from apps.measurements import services as measurement_services
     from apps.measurements.models import BodyMeasurement
+    from apps.nutrition import trends
 
     days = _int_arg(args, "days", 90, minimum=1, maximum=730)
+    since = _since(days)
     readings = (
-        BodyMeasurement.objects.filter(user=ctx.user, recorded_at__gte=_since(days))
+        BodyMeasurement.objects.filter(user=ctx.user)
         .select_related("measurement_type")
         .order_by("measurement_type_id", "-recorded_at")
     )
@@ -277,14 +285,58 @@ def get_body_measurements(ctx, args):
             {
                 "type": gettext(reading.measurement_type.name),
                 "unit": {"weight": "kg", "length": "m", "percentage": "%"}.get(kind, kind),
-                "readings": [],
+                "readings_count": 0,
+                "first": None,
+                "latest": None,
+                "recent_readings": [],
+                "_values": [],
+                "_dated": [],
+                "_system_name": (
+                    reading.measurement_type.name
+                    if reading.measurement_type.owner_id is None
+                    else None
+                ),
             },
         )
-        if len(entry["readings"]) < 15:
-            entry["readings"].append(
-                {"date": reading.recorded_at.date(), "value": _num(reading.value, 3)}
-            )
-    return {"days": days, "measurements": list(by_type.values())}
+        point = {"date": reading.recorded_at.date(), "value": _num(reading.value, 3)}
+        entry["readings_count"] += 1
+        entry["latest"] = entry["latest"] or point
+        entry["first"] = point  # newest first, so the last one seen is the oldest
+        entry["_values"].append(reading.value)
+        entry["_dated"].append((reading.recorded_at.date(), reading.value))
+        if reading.recorded_at >= since and len(entry["recent_readings"]) < 15:
+            if reading.notes:
+                point = {**point, "notes": reading.notes[:200]}
+            entry["recent_readings"].append(point)
+
+    measurements = []
+    for entry in by_type.values():
+        values = entry.pop("_values")
+        dated = entry.pop("_dated")
+        system_name = entry.pop("_system_name")
+        if entry["readings_count"] > 1:
+            entry["change_since_first"] = _num(values[0] - values[-1], 3)
+            entry["min"] = _num(min(values), 3)
+            entry["max"] = _num(max(values), 3)
+        if system_name == "Body weight":
+            trend = trends.compute_trend(dated)
+            if trend is not None:
+                entry["trend_kg_per_week"] = _num(trend.actual_rate_kg_per_week, 2)
+                entry["trend_span_days"] = trend.span_days
+            body_mass_index = bmi.calculate_bmi(values[0], ctx.user.height)
+            if body_mass_index is not None:
+                category = bmi.category_for(body_mass_index)
+                entry["latest_bmi"] = _num(body_mass_index)
+                entry["latest_bmi_category"] = str(category.name) if category else None
+        measurements.append(entry)
+    tracked = {
+        gettext(t.name) for t in measurement_services.visible_to(ctx.user) if t.pk not in by_type
+    }
+    return {
+        "days": days,
+        "measurements": measurements,
+        "types_never_logged": sorted(tracked),
+    }
 
 
 def get_activities(ctx, args):
@@ -890,7 +942,12 @@ TOOLS = [
     },
     {
         "name": "get_body_measurements",
-        "description": "Body measurements (weight, body fat, circumferences) over time.",
+        "description": (
+            "Body measurements (weight, body fat, circumferences, the user's own types): "
+            "a whole-history summary per type (first, latest, change, range), the newest "
+            "readings within `days` with notes, and for body weight the trend per week "
+            "and BMI."
+        ),
         "input_schema": {"type": "object", "properties": {"days": _DAYS}},
         "handler": get_body_measurements,
         "activity": _("Looking at your measurements…"),
