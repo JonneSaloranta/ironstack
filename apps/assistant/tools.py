@@ -301,6 +301,100 @@ def get_nutrition_overview(ctx, args):
     }
 
 
+def _diary_entry_label(entry, name):
+    if entry.food_id:
+        return f"{name} {_num(entry.quantity)}{entry.food.serving_unit}"
+    if entry.recipe_id:
+        return f"{name} x{_num(entry.quantity)} servings"
+    return f"{name} x{_num(entry.quantity)}"
+
+
+def get_food_diary(ctx, args):
+    """What the user eats, item by item - the favorites a diet plan can
+    be built from, plus the last few logged days as they were eaten.
+    A food or recipe only carries its id while it's still active, i.e.
+    while propose_diet_plan would accept it."""
+    from collections import Counter
+    from statistics import median
+
+    from apps.nutrition.models import DiaryEntry
+
+    days = _int_arg(args, "days", 60, minimum=1, maximum=365)
+    today = timezone.localdate()
+    entries = (
+        DiaryEntry.objects.filter(
+            user=ctx.user, date__gt=today - timedelta(days=days), date__lte=today
+        )
+        .select_related("food", "recipe", "meal_slot")
+        .order_by("-date", "meal_slot__order", "created_at")
+    )
+    favorites = {}
+    recent_days = {}
+    for entry in entries:
+        if entry.food_id:
+            key = ("food", entry.food_id)
+            name = entry.food.name
+        elif entry.recipe_id:
+            key = ("recipe", entry.recipe_id)
+            name = gettext(entry.recipe.name)
+        else:
+            name = entry.quick_name or gettext("Quick entry")
+            key = ("quick", name.lower())
+        slot = gettext(entry.meal_slot.name)
+        favorite = favorites.get(key)
+        if favorite is None:
+            favorite = favorites[key] = {
+                "name": name,
+                "dates": set(),
+                "quantities": [],
+                "slots": Counter(),
+                "last_eaten": entry.date,
+                "entry": entry,
+            }
+        favorite["dates"].add(entry.date)
+        favorite["quantities"].append(entry.quantity)
+        favorite["slots"][slot] += 1
+        if entry.date in recent_days or len(recent_days) < 7:
+            meals = recent_days.setdefault(entry.date, {})
+            meals.setdefault(slot, []).append(_diary_entry_label(entry, name))
+
+    ranked = sorted(
+        favorites.values(),
+        key=lambda f: (len(f["dates"]), len(f["quantities"]), f["last_eaten"]),
+        reverse=True,
+    )
+    result = []
+    for favorite in ranked[:40]:
+        entry = favorite["entry"]
+        item = {"name": favorite["name"]}
+        if entry.food_id:
+            item["brand"] = entry.food.brand or None
+            item["food_id"] = entry.food_id if entry.food.active else None
+            item["typical_quantity"] = (
+                f"{_num(median(favorite['quantities']))}{entry.food.serving_unit}"
+            )
+        elif entry.recipe_id:
+            item["recipe_id"] = entry.recipe_id if entry.recipe.active else None
+            item["typical_quantity"] = f"{_num(median(favorite['quantities']))} servings"
+        else:
+            item["quick_entry"] = True
+        item.update(
+            {
+                "days_eaten": len(favorite["dates"]),
+                "times_logged": len(favorite["quantities"]),
+                "usual_meals": [slot for slot, _count in favorite["slots"].most_common(3)],
+                "last_eaten": favorite["last_eaten"],
+            }
+        )
+        result.append(item)
+    return {
+        "days": days,
+        "days_logged": len({date for f in favorites.values() for date in f["dates"]}),
+        "most_eaten": result,
+        "recent_days": [{"date": date, "meals": meals} for date, meals in recent_days.items()],
+    }
+
+
 def list_programs(ctx, args):
     from apps.programs import services as program_services
 
@@ -638,6 +732,18 @@ TOOLS = [
         "description": "What the user has actually eaten: median daily intake and recent days.",
         "input_schema": {"type": "object", "properties": {"days": _DAYS}},
         "handler": get_nutrition_overview,
+        "activity": _("Looking at your food diary…"),
+    },
+    {
+        "name": "get_food_diary",
+        "description": (
+            "Which foods and recipes the user actually eats, most eaten first (typical "
+            "portion, usual meals, last eaten), plus their last few logged days item by "
+            "item. Use it to build diet plans from food they like; the food_id/recipe_id "
+            "work in propose_diet_plan (null when that item is no longer available)."
+        ),
+        "input_schema": {"type": "object", "properties": {"days": _DAYS}},
+        "handler": get_food_diary,
         "activity": _("Looking at your food diary…"),
     },
     {

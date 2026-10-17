@@ -18,6 +18,11 @@ narrated summary of the same version.
 
 ## [Unreleased]
 
+### Added
+- AI assistant: it can now read the food diary - which foods and recipes
+  you eat most, in what portions and at which meals - and builds diet
+  plans around the food you actually like.
+
 ### Changed
 - Every page now uses a plain hyphen (-) instead of the em-dash,
   including translations, the built-in programs and recipes, and the

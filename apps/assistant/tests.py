@@ -458,6 +458,52 @@ class ToolScopingTests(TestCase):
         data, _ = self.run_tool("get_workout_history", {"days": 30})
         self.assertEqual(len(data["completed_sessions"]), 1)
 
+    def test_food_diary_ranks_own_favorites(self):
+        from apps.nutrition.models import DiaryEntry
+
+        slot = MealSlot.objects.filter(owner__isnull=True).first() or MealSlot.objects.create(
+            name="Breakfast"
+        )
+        oats = make_food(self.user, "Oats")
+        gone = make_food(self.user, "Old cereal", active=False)
+        today = timezone.localdate()
+        for offset in range(3):
+            DiaryEntry.objects.create(
+                user=self.user,
+                date=today - timedelta(days=offset),
+                meal_slot=slot,
+                food=oats,
+                quantity=Decimal("80"),
+            )
+        DiaryEntry.objects.create(
+            user=self.user, date=today, meal_slot=slot, food=gone, quantity=Decimal("50")
+        )
+        DiaryEntry.objects.create(
+            user=self.other,
+            date=today,
+            meal_slot=slot,
+            food=make_food(self.other, "Bob food"),
+            quantity=Decimal("100"),
+        )
+        DiaryEntry.objects.create(
+            user=self.user,
+            date=today - timedelta(days=200),
+            meal_slot=slot,
+            food=oats,
+            quantity=Decimal("80"),
+        )
+        data, is_error = self.run_tool("get_food_diary", {"days": 30})
+        self.assertFalse(is_error)
+        self.assertEqual(data["days_logged"], 3)
+        names = [item["name"] for item in data["most_eaten"]]
+        self.assertEqual(names, ["Oats", "Old cereal"])
+        first = data["most_eaten"][0]
+        self.assertEqual(first["food_id"], oats.pk)
+        self.assertEqual(first["days_eaten"], 3)
+        self.assertEqual(first["typical_quantity"], "80.0g")
+        self.assertIsNone(data["most_eaten"][1]["food_id"])
+        self.assertEqual(len(data["recent_days"]), 3)
+
     def test_unknown_tool_and_bad_input(self):
         self.assertTrue(tools.run(self.ctx, "drop_tables", {})[1])
         self.assertTrue(tools.run(self.ctx, "get_workout_history", {"days": "lots"})[1])

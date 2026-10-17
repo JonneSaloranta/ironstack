@@ -112,6 +112,7 @@ queries the views use:
 | `get_personal_records` | max-weight and estimated-1RM records |
 | `get_body_measurements`, `get_activities` | measurements and activities over a period |
 | `get_nutrition_overview` | median intake and recently logged days |
+| `get_food_diary` | the foods and recipes the user eats most (typical portion, usual meals) and the last logged days item by item, so a diet plan can be built from food they like |
 | `list_programs`, `get_program` | own, coach-shared and built-in programs |
 | `list_diet_plans`, `get_diet_plan` | own diet plans |
 | `search_exercises`, `search_foods`, `search_recipes`, `list_meal_slots` | the libraries a proposal draws from |
