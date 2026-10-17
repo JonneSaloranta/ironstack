@@ -18,6 +18,8 @@ narrated summary of the same version.
 
 ## [Unreleased]
 
+## [1.26.0] - 2026-10-17
+
 ### Added
 - AI assistant: it can now read the food diary - which foods and recipes
   you eat most, in what portions and at which meals - and builds diet
