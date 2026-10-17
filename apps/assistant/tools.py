@@ -13,8 +13,9 @@ Inputs come from the model and are treated as untrusted: every tool
 validates its own arguments and raises ToolInputError, which goes back
 to the model as an error result it can correct, never as a crash.
 
-Tool results are compact JSON in canonical units (kg, meters, kcal) -
-the system prompt tells the model which units the user prefers to read.
+Tool results are TOON (apps.assistant.toon - the same data as JSON in
+fewer tokens) in canonical units (kg, meters, kcal) - the system prompt
+tells the model how to read TOON and which units the user prefers.
 """
 
 import json
@@ -27,7 +28,7 @@ from django.utils import timezone
 from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
 
-from . import proposals
+from . import proposals, toon
 from .models import DataScope
 
 
@@ -55,8 +56,10 @@ class ToolContext:
         return self._preference.reads(scope)
 
 
-def _dumps(data):
-    return json.dumps(data, cls=DjangoJSONEncoder, ensure_ascii=False, separators=(",", ":"))
+def _plain(data):
+    """`data` as plain JSON types - dates, Decimals, enums and lazy
+    strings turned into strings and numbers the same way JSON would."""
+    return json.loads(json.dumps(data, cls=DjangoJSONEncoder))
 
 
 def _num(value, places=1):
@@ -82,6 +85,14 @@ def _str_arg(args, key, *, required=False, max_length=200):
     if required and not value:
         raise ToolInputError(f"`{key}` is required.")
     return value[:max_length]
+
+
+def _joined(values):
+    """A short list inside a result row as one "a; b" string - keeps the
+    row flat, so a list of rows stays one TOON table (apps.assistant.toon)
+    instead of nested blocks."""
+    values = [str(value) for value in values if value]
+    return "; ".join(values) if values else None
 
 
 def _since(days):
@@ -213,22 +224,11 @@ def get_workout_history(ctx, args):
         .order_by("-started_at")[:40]
     )
     result = []
-    for session in sessions:
-        exercises = []
-        for performed in session.performed_exercises.all():
-            sets = [s for s in performed.sets.all() if not s.is_warmup]
-            exercise = {
-                "exercise": gettext(performed.display_name),
-                "sets": [_set_label(s) for s in sets[:10]],
-            }
-            if performed.notes:
-                exercise["plan_notes"] = performed.notes[:300]
-            set_notes = [f"set {s.set_number}: {s.notes[:200]}" for s in sets if s.notes]
-            if set_notes:
-                exercise["set_notes"] = set_notes[:10]
-            exercises.append(exercise)
+    exercises = []
+    for number, session in enumerate(sessions, start=1):
         result.append(
             {
+                "session": number,
                 "date": timezone.localtime(session.started_at).date(),
                 "workout": session.workout.name if session.workout_id else None,
                 "program": session.program.name if session.program_id else None,
@@ -237,10 +237,22 @@ def get_workout_history(ctx, args):
                     if session.ended_at
                     else None
                 ),
-                "exercises": exercises,
             }
         )
-    return {"days": days, "completed_sessions": result}
+        for performed in session.performed_exercises.all():
+            sets = [s for s in performed.sets.all() if not s.is_warmup]
+            exercises.append(
+                {
+                    "session": number,
+                    "exercise": gettext(performed.display_name),
+                    "sets": _joined(_set_label(s) for s in sets[:10]),
+                    "set_notes": _joined(
+                        f"set {s.set_number}: {s.notes[:200]}" for s in sets if s.notes
+                    ),
+                    "plan_notes": performed.notes[:300] or None,
+                }
+            )
+    return {"days": days, "completed_sessions": result, "exercises": exercises}
 
 
 def _set_label(exercise_set):
@@ -272,12 +284,10 @@ def get_personal_records(ctx, args):
             continue
         entry = best.setdefault(name, {"exercise": name, "exercise_id": record.exercise_id})
         key = "max_weight" if record.record_type == PRType.MAX_WEIGHT else "estimated_1rm"
-        if key not in entry:  # newest first, so the first one seen is current
-            entry[key] = {
-                "value_kg": _num(record.value),
-                "set": f"{_num(record.weight)}kg x {record.reps}",
-                "date": record.achieved_at.date(),
-            }
+        if f"{key}_kg" not in entry:  # newest first, so the first one seen is current
+            entry[f"{key}_kg"] = _num(record.value)
+            entry[f"{key}_set"] = f"{_num(record.weight)}kg x {record.reps}"
+            entry[f"{key}_date"] = record.achieved_at.date()
         if len(best) >= 50:
             break
     return {"records": list(best.values())}
@@ -301,6 +311,8 @@ def get_body_measurements(ctx, args):
         .order_by("measurement_type_id", "-recorded_at")
     )
     by_type = {}
+    recent = []
+    recent_count = 0
     for reading in readings:
         kind = reading.measurement_type.unit_kind
         entry = by_type.setdefault(
@@ -309,9 +321,6 @@ def get_body_measurements(ctx, args):
                 "type": gettext(reading.measurement_type.name),
                 "unit": {"weight": "kg", "length": "m", "percentage": "%"}.get(kind, kind),
                 "readings_count": 0,
-                "first": None,
-                "latest": None,
-                "recent_readings": [],
                 "_values": [],
                 "_dated": [],
                 "_system_name": (
@@ -321,16 +330,24 @@ def get_body_measurements(ctx, args):
                 ),
             },
         )
-        point = {"date": reading.recorded_at.date(), "value": _num(reading.value, 3)}
+        date, value = reading.recorded_at.date(), _num(reading.value, 3)
+        if not entry["readings_count"]:  # newest first
+            entry["latest_date"], entry["latest_value"] = date, value
+            recent_count = 0
+        entry["first_date"], entry["first_value"] = date, value
         entry["readings_count"] += 1
-        entry["latest"] = entry["latest"] or point
-        entry["first"] = point  # newest first, so the last one seen is the oldest
         entry["_values"].append(reading.value)
-        entry["_dated"].append((reading.recorded_at.date(), reading.value))
-        if reading.recorded_at >= since and len(entry["recent_readings"]) < 15:
-            if reading.notes:
-                point = {**point, "notes": reading.notes[:200]}
-            entry["recent_readings"].append(point)
+        entry["_dated"].append((date, reading.value))
+        if reading.recorded_at >= since and recent_count < 15:
+            recent_count += 1
+            recent.append(
+                {
+                    "type": entry["type"],
+                    "date": date,
+                    "value": value,
+                    "notes": reading.notes[:200] or None,
+                }
+            )
 
     measurements = []
     for entry in by_type.values():
@@ -362,6 +379,7 @@ def get_body_measurements(ctx, args):
     return {
         "days": days,
         "measurements": measurements,
+        "recent_readings": recent,
         "types_never_logged": sorted(tracked),
     }
 
@@ -534,7 +552,7 @@ def get_food_diary(ctx, args):
             {
                 "days_eaten": len(favorite["dates"]),
                 "times_logged": len(favorite["quantities"]),
-                "usual_meals": [slot for slot, _count in favorite["slots"].most_common(3)],
+                "usual_meals": _joined(slot for slot, _count in favorite["slots"].most_common(3)),
                 "last_eaten": favorite["last_eaten"],
             }
         )
@@ -543,7 +561,11 @@ def get_food_diary(ctx, args):
         "days": days,
         "days_logged": len({date for f in favorites.values() for date in f["dates"]}),
         "most_eaten": result,
-        "recent_days": [{"date": date, "meals": meals} for date, meals in recent_days.items()],
+        "recent_meals": [
+            {"date": date, "meal": slot, "items": _joined(items)}
+            for date, meals in recent_days.items()
+            for slot, items in meals.items()
+        ],
     }
 
 
@@ -570,13 +592,13 @@ def get_progression_suggestions(ctx, args):
     )
     if program is None:
         raise ToolInputError("No program with that id is visible to this user.")
-    workouts = []
+    suggestions = []
     for workout in program.workouts.prefetch_related("prescriptions__exercise"):
-        exercises = []
         for prescription in workout.prescriptions.all()[:20]:
             suggestion = suggest_weight(ctx.user, prescription)
-            exercises.append(
+            suggestions.append(
                 {
+                    "workout": workout.name,
                     "exercise": gettext(prescription.exercise.name),
                     "suggested_weight_kg": _num(suggestion.suggested_weight),
                     "reps": f"{suggestion.target_min_reps}-{suggestion.target_max_reps}",
@@ -585,8 +607,7 @@ def get_progression_suggestions(ctx, args):
                     "reason": str(suggestion.reason),
                 }
             )
-        workouts.append({"workout": workout.name, "exercises": exercises})
-    return {"program": {"id": program.pk, "name": program.name}, "workouts": workouts}
+    return {"program": {"id": program.pk, "name": program.name}, "suggestions": suggestions}
 
 
 def get_calorie_adjustment(ctx, args):
@@ -655,7 +676,7 @@ def list_programs(ctx, args):
                     if program.owner_id is None
                     else ("yours" if program.owner_id == ctx.user.pk else "shared by your coach")
                 ),
-                "workouts": [workout.name for workout in program.workouts.all()],
+                "workouts": _joined(workout.name for workout in program.workouts.all()),
             }
             for program in programs[:60]
         ]
@@ -677,24 +698,20 @@ def get_program(ctx, args):
         "id": program.pk,
         "name": program.name,
         "description": program.description,
-        "workouts": [
+        "prescriptions": [
             {
-                "name": workout.name,
+                "workout": workout.name,
                 "scheduled_weekday": workout.scheduled_weekday,
-                "prescriptions": [
-                    {
-                        "exercise": gettext(p.exercise.name),
-                        "exercise_id": p.exercise_id,
-                        "sets": p.set_count,
-                        "reps": f"{p.min_reps}-{p.max_reps}",
-                        "target_weight_kg": _num(p.target_weight),
-                        "target_rpe": _num(p.target_rpe),
-                        "progression_method": p.progression_method,
-                    }
-                    for p in workout.prescriptions.select_related("exercise")
-                ],
+                "exercise": gettext(p.exercise.name),
+                "exercise_id": p.exercise_id,
+                "sets": p.set_count,
+                "reps": f"{p.min_reps}-{p.max_reps}",
+                "target_weight_kg": _num(p.target_weight),
+                "target_rpe": _num(p.target_rpe),
+                "progression_method": p.progression_method,
             }
             for workout in program.workouts.all()
+            for p in workout.prescriptions.select_related("exercise")
         ],
     }
 
@@ -743,13 +760,13 @@ def get_diet_plan(ctx, args):
                     item.quantity
                 )
                 label = f"{gettext(item.recipe.name)} x{_num(item.quantity)} servings"
-            items.append({"item": label, "calories": int(nutrition.calories)})
+            items.append(f"{label} ({int(nutrition.calories)} kcal)")
         meals.append(
             {
                 "meal_slot": gettext(meal.meal_slot.name),
                 "weekday": meal.weekday,
                 "target_calories": meal.target_calories,
-                "items": items,
+                "items": _joined(items),
             }
         )
     return {
@@ -779,9 +796,9 @@ def search_exercises(ctx, args):
                 "name": gettext(exercise.name),
                 "english_name": exercise.name,
                 "equipment": gettext(exercise.equipment.name) if exercise.equipment_id else None,
-                "primary_muscles": [
+                "primary_muscles": _joined(
                     gettext(group.name) for group in exercise.primary_muscle_groups.all()
-                ],
+                ),
                 "movement_type": exercise.movement_type,
                 "custom": exercise.owner_id is not None,
             }
@@ -840,23 +857,21 @@ def search_recipes(ctx, args):
                 "id": recipe.pk,
                 "name": gettext(recipe.name),
                 "servings": recipe.servings,
-                "per_serving": {
-                    "calories": int(per_serving.calories),
-                    "protein_g": _num(per_serving.protein_grams),
-                    "carbohydrate_g": _num(per_serving.carbohydrate_grams),
-                    "fat_g": _num(per_serving.fat_grams),
-                },
-                "meal_slots": [gettext(slot.name) for slot in recipe.meal_slots.all()],
-                "ingredients": [
+                "calories_per_serving": int(per_serving.calories),
+                "protein_g_per_serving": _num(per_serving.protein_grams),
+                "carbohydrate_g_per_serving": _num(per_serving.carbohydrate_grams),
+                "fat_g_per_serving": _num(per_serving.fat_grams),
+                "meal_slots": _joined(gettext(slot.name) for slot in recipe.meal_slots.all()),
+                "ingredients": _joined(
                     f"{ingredient.food.name} {_num(ingredient.quantity)}"
                     f"{ingredient.food.serving_unit}"
                     for ingredient in recipe.ingredients.all()[:20]
-                ],
+                ),
+                "ingredient_allergens": _joined(
+                    sorted({i.food.allergens for i in recipe.ingredients.all() if i.food.allergens})
+                ),
             }
         )
-        allergens = sorted({i.food.allergens for i in recipe.ingredients.all() if i.food.allergens})
-        if allergens:
-            result[-1]["ingredient_allergens"] = ", ".join(allergens)[:300]
     return {"recipes": result}
 
 
@@ -1274,7 +1289,15 @@ def activity_for(name):
 
 def run(ctx, name, args):
     """Runs one tool call. Returns (content, is_error) - never raises for
-    anything the model got wrong."""
+    anything the model got wrong. A result is sent as TOON text, an error
+    as the plain message."""
+    result, is_error = execute(ctx, name, args)
+    return (result if is_error else toon.encode(result)), is_error
+
+
+def execute(ctx, name, args):
+    """`run` without the encoding: (result data, False) or (error message,
+    True) - what the tests look at."""
     tool = _BY_NAME.get(name)
     if tool is None:
         return f"Unknown tool: {name}", True
@@ -1291,8 +1314,8 @@ def run(ctx, name, args):
     scope = tool.get("scope")
     if scope is not None and not ctx.may_read(scope):
         # Not an error the model can fix by retrying - say so plainly.
-        return _dumps({"not_shared": scope.value, "note": NOT_SHARED_NOTE}), False
+        return {"not_shared": scope.value, "note": NOT_SHARED_NOTE}, False
     try:
-        return _dumps(tool["handler"](ctx, args)), False
+        return _plain(tool["handler"](ctx, args)), False
     except ToolInputError as exc:
         return str(exc), True

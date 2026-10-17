@@ -15,7 +15,7 @@ from apps.nutrition.models import DietPlan, Food, MealSlot, Recipe, ServingUnit
 from apps.programs.models import Program, Workout
 from apps.workouts.models import WorkoutSession, WorkoutSessionStatus
 
-from . import formatting, proposals, services, tools
+from . import formatting, proposals, services, tools, toon
 from .models import (
     AssistantMessage,
     AssistantPreference,
@@ -350,7 +350,7 @@ class ProcessMessageTests(TestCase):
         self.assertEqual(len(self.reply.raw), 3)
         tool_result = self.reply.raw[1]["content"][0]
         self.assertEqual(tool_result["type"], "tool_result")
-        self.assertEqual(json.loads(tool_result["content"])["latest_body_weight_kg"], 82.5)
+        self.assertIn("\nlatest_body_weight_kg: 82.5\n", tool_result["content"])
         # The second request carries the first turn and its tool result.
         self.assertEqual(len(provider.histories[1]), len(provider.histories[0]) + 2)
 
@@ -432,8 +432,7 @@ class ToolScopingTests(TestCase):
         self.ctx = tools.ToolContext(self.user, None)
 
     def run_tool(self, name, args):
-        content, is_error = tools.run(self.ctx, name, args)
-        return json.loads(content) if not is_error else content, is_error
+        return tools.execute(self.ctx, name, args)
 
     def test_search_foods_sees_own_and_shared_only(self):
         make_food(self.user, "Zqx mine")
@@ -514,7 +513,7 @@ class ToolScopingTests(TestCase):
         self.assertEqual(first["days_eaten"], 3)
         self.assertEqual(first["typical_quantity"], "80.0g")
         self.assertIsNone(data["most_eaten"][1]["food_id"])
-        self.assertEqual(len(data["recent_days"]), 3)
+        self.assertEqual(len({meal["date"] for meal in data["recent_meals"]}), 3)
 
     def test_workout_history_has_rir_failure_and_set_notes(self):
         from apps.workouts.models import ExerciseSet, PerformedExercise
@@ -535,9 +534,10 @@ class ToolScopingTests(TestCase):
             notes="Shoulder felt off",
         )
         data, _ = self.run_tool("get_workout_history", {})
-        exercise = data["completed_sessions"][0]["exercises"][0]
-        self.assertEqual(exercise["sets"], ["100.0kg x 5 RIR2 (to failure)"])
-        self.assertEqual(exercise["set_notes"], ["set 1: Shoulder felt off"])
+        exercise = data["exercises"][0]
+        self.assertEqual(exercise["session"], data["completed_sessions"][0]["session"])
+        self.assertEqual(exercise["sets"], "100.0kg x 5 RIR2 (to failure)")
+        self.assertEqual(exercise["set_notes"], "set 1: Shoulder felt off")
 
     def test_foods_and_recipes_carry_allergens_and_ingredients(self):
         from apps.nutrition.models import RecipeIngredient
@@ -550,7 +550,7 @@ class ToolScopingTests(TestCase):
         self.assertEqual(data["foods"][0]["labels"], "Vegan")
         self.assertNotIn("ingredients", data["foods"][0])
         data, _ = self.run_tool("search_recipes", {"query": "zqx"})
-        self.assertEqual(data["recipes"][0]["ingredients"], ["Zqx peanut butter 30.0g"])
+        self.assertEqual(data["recipes"][0]["ingredients"], "Zqx peanut butter 30.0g")
         self.assertEqual(data["recipes"][0]["ingredient_allergens"], "en:peanuts")
 
     def test_overview_has_training_pattern_and_coaches(self):
@@ -592,7 +592,7 @@ class ToolScopingTests(TestCase):
         data, is_error = self.run_tool("get_progression_suggestions", {})
         self.assertFalse(is_error)
         self.assertEqual(data["program"]["id"], program.pk)
-        exercise = data["workouts"][0]["exercises"][0]
+        exercise = data["suggestions"][0]
         self.assertEqual(exercise["reps"], "8-12")
         self.assertTrue(exercise["reason"])
         bobs = Program.objects.create(owner=self.other, name="Bob's")
@@ -638,11 +638,11 @@ class ToolScopingTests(TestCase):
         self.assertFalse(is_error)
         [entry] = data["measurements"]
         self.assertEqual(entry["readings_count"], 4)
-        self.assertEqual(entry["first"]["value"], 90.0)
-        self.assertEqual(entry["latest"]["value"], 84.0)
+        self.assertEqual(entry["first_value"], 90.0)
+        self.assertEqual(entry["latest_value"], 84.0)
         self.assertEqual(entry["change_since_first"], -6.0)
-        self.assertEqual(len(entry["recent_readings"]), 3)
-        self.assertEqual(entry["recent_readings"][0]["notes"], "after holidays")
+        self.assertEqual(len(data["recent_readings"]), 3)
+        self.assertEqual(data["recent_readings"][0]["notes"], "after holidays")
         self.assertEqual(entry["latest_bmi"], 25.9)
         self.assertIn("trend_kg_per_week", entry)
         self.assertNotIn("Body weight", data["types_never_logged"])
@@ -659,14 +659,14 @@ class ToolScopingTests(TestCase):
         )
         ctx = tools.ToolContext(self.user, None)
         for name in ("get_body_measurements", "get_calorie_adjustment"):
-            content, is_error = tools.run(ctx, name, {})
+            content, is_error = tools.execute(ctx, name, {})
             self.assertFalse(is_error)
-            self.assertEqual(json.loads(content)["not_shared"], "body")
-        data = json.loads(tools.run(ctx, "get_user_overview", {})[0])
+            self.assertEqual(content["not_shared"], "body")
+        data = tools.execute(ctx, "get_user_overview", {})[0]
         self.assertNotIn("latest_body_weight_kg", data)
         self.assertEqual(data["height_m"], 1.8)
         self.assertEqual(data["not_shared_with_you"], ["body"])
-        _content, is_error = tools.run(ctx, "get_food_diary", {})
+        _content, is_error = tools.execute(ctx, "get_food_diary", {})
         self.assertNotIn("not_shared", _content)
 
     def test_turned_off_profile_hides_height_and_bmi(self):
@@ -681,9 +681,9 @@ class ToolScopingTests(TestCase):
             {f"reads_{scope.value}": True for scope in DataScope} | {"reads_profile": False},
         )
         ctx = tools.ToolContext(self.user, None)
-        overview = json.loads(tools.run(ctx, "get_user_overview", {})[0])
+        overview = tools.execute(ctx, "get_user_overview", {})[0]
         self.assertNotIn("height_m", overview)
-        measurements = json.loads(tools.run(ctx, "get_body_measurements", {})[0])
+        measurements = tools.execute(ctx, "get_body_measurements", {})[0]
         self.assertNotIn("latest_bmi", measurements["measurements"][0])
 
     def test_unknown_tool_and_bad_input(self):
@@ -694,6 +694,15 @@ class ToolScopingTests(TestCase):
     def test_json_string_arguments_are_accepted(self):
         _content, is_error = tools.run(self.ctx, "search_foods", '{"query": "x"}')
         self.assertFalse(is_error)
+
+    def test_results_are_sent_as_toon(self):
+        make_food(self.user, "Zqx oats")
+        content, is_error = tools.run(self.ctx, "search_foods", {"query": "zqx"})
+        self.assertFalse(is_error)
+        self.assertTrue(content.startswith("foods[1]{id,name,brand,per,calories,"))
+        self.assertIn(",Zqx oats,null,100.0g,380,13,60,7", content)
+        content, is_error = tools.run(self.ctx, "get_workout_history", {"days": "lots"})
+        self.assertEqual((content, is_error), ("`days` must be a number.", True))
 
     def test_definitions_are_stable(self):
         self.assertEqual(tools.definitions(), tools.definitions())
@@ -1067,6 +1076,63 @@ class ViewTests(TestCase):
         services.enable(self.user)
         response = self.client.get(reverse("nutrition:diet-plan-list"))
         self.assertContains(response, reverse("assistant:home") + "?prompt=")
+
+
+class ToonTests(TestCase):
+    def test_objects_nest_by_indentation(self):
+        self.assertEqual(
+            toon.encode({"id": 1, "user": {"name": "Ada", "active": True, "note": None}}),
+            "id: 1\nuser:\n  name: Ada\n  active: true\n  note: null",
+        )
+
+    def test_uniform_objects_become_a_table(self):
+        data = {"sets": [{"kg": 100.0, "reps": 5}, {"kg": 102.5, "reps": 3}]}
+        self.assertEqual(toon.encode(data), "sets[2]{kg,reps}:\n  100,5\n  102.5,3")
+
+    def test_primitive_and_empty_arrays(self):
+        self.assertEqual(toon.encode({"tags": ["a", "b"], "none": []}), "tags[2]: a,b\nnone[0]:")
+
+    def test_mixed_arrays_become_list_items(self):
+        data = {"items": [{"id": 1, "tags": ["x"]}, {"id": 2}, "text", [1, 2], [{"a": [1]}], {}]}
+        self.assertEqual(
+            toon.encode(data),
+            "items[6]:\n  - id: 1\n    tags[1]: x\n  - id: 2\n  - text\n  - [2]: 1,2\n"
+            "  - [1]:\n    - a[1]: 1\n  -",
+        )
+
+    def test_ambiguous_strings_are_quoted(self):
+        cases = {
+            "": '""',
+            "Butter, salted": '"Butter, salted"',
+            "true": '"true"',
+            "null": '"null"',
+            "42": '"42"',
+            "-5": '"-5"',
+            "05": '"05"',
+            "- item": '"- item"',
+            " padded": '" padded"',
+            "a: b": '"a: b"',
+            'say "hi"': '"say \\"hi\\""',
+            "two\nlines": '"two\\nlines"',
+            "[x]": '"[x]"',
+            "Kaurapuuro 80g": "Kaurapuuro 80g",
+            "2026-10-17": "2026-10-17",
+        }
+        for value, expected in cases.items():
+            with self.subTest(value=value):
+                self.assertEqual(toon.encode({"v": value}), f"v: {expected}")
+
+    def test_keys_and_numbers(self):
+        self.assertEqual(
+            toon.encode({"Evening snack": 1.0, "Välipala": 1e-7, "n": -0.0, "big": 1e21}),
+            '"Evening snack": 1\n"Välipala": 0.0000001\nn: 0\nbig: 1000000000000000000000',
+        )
+
+    def test_tables_need_matching_primitive_fields(self):
+        data = {"rows": [{"a": 1, "b": 2}, {"b": 3, "a": 4}, {"a": 5, "b": [6]}]}
+        self.assertTrue(toon.encode(data).startswith("rows[3]:\n  - a: 1"))
+        data = {"rows": [{"a": 1, "b": 2}, {"b": 3, "a": 4}]}
+        self.assertEqual(toon.encode(data), "rows[2]{a,b}:\n  1,2\n  4,3")
 
 
 class FormattingTests(TestCase):

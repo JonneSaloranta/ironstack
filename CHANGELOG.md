@@ -36,6 +36,9 @@ narrated summary of the same version.
 - AI assistant: choose what it may read on its settings page - workouts,
   body measurements, food diary, activities, stretching and personal
   details can each be switched off, and the change applies straight away.
+- AI assistant: the data it looks up is sent in TOON instead of JSON, with
+  flatter tool results - about a fifth fewer tokens per lookup, so replies
+  cost less and long conversations fit more history.
 
 ### Changed
 - Every page now uses a plain hyphen (-) instead of the em-dash,

@@ -144,7 +144,20 @@ exercise libraries have no switch: proposals are built from them.
 
 Tool inputs are untrusted. Each tool validates its arguments, and a mistake
 goes back to the model as an error result it can correct. It never becomes an
-exception. Results are compact JSON in canonical units. The system prompt
+exception. Results are in canonical units and sent as
+[TOON](https://toonformat.dev) (Token-Oriented Object Notation,
+`apps/assistant/toon.py`): the same data as JSON, but a list of objects with
+primitive fields becomes one header and one comma-separated row per item, so
+field names aren't repeated. To make that work, tools keep their rows flat: a
+short list inside a row becomes one `"a; b"` string (`tools._joined`), and a
+nested result is split into separate tables linked by a column (workout
+history's `session`, body measurements' `type`). Rows with different fields
+still make one table, with `null` for a missing field. On the dev database's
+real data this is about 20% fewer tokens than the compact JSON used before.
+The encoder is our own, about a hundred lines, because only encoding is
+needed; its output is checked against the spec's rules in `ToonTests`.
+`tools.execute` returns the unencoded data (what the tests look at) and
+`tools.run` encodes it. Error results stay plain text. The system prompt
 (`prompts.SYSTEM_PROMPT`) tells the model which units the user reads, to reply
 in the user's language, and to suggest a professional for medical topics. It
 also tells it to respect the "About you" text and food allergens, to start
