@@ -172,6 +172,11 @@ html {
 
 body {
   margin: 0;
+  /* viewport-fit=cover (base.html) lets the page run under the status
+     bar, and an installed PWA on iOS 26+ always shows it that way, with
+     a blur over that strip - so without this the page title started
+     under the clock and was blurred. Zero in a normal browser tab. */
+  padding-top: env(safe-area-inset-top);
   padding-bottom: calc(var(--nav-height) + env(safe-area-inset-bottom));
   background: var(--color-bg);
   color: var(--color-text);
@@ -367,7 +372,7 @@ input[type="radio"] {
 }
 
 .skip-link:focus {
-  top: 0.5rem;
+  top: calc(env(safe-area-inset-top) + 0.5rem);
 }
 
 /* Free loading feedback for every HTMX interaction in the app - htmx
@@ -1374,10 +1379,11 @@ abbr[title]:focus::after {
      top of the page - asked for directly, since a full page reload
      otherwise always resets scroll to the top regardless of where the
      click happened. scroll-margin-top leaves room for
-     .nutrition-subnav's own `position: sticky; top: 0`, which would
-     otherwise sit on top of (rather than above) this element once
-     scrolled flush against the viewport's own top edge. */
-  scroll-margin-top: 3.5rem;
+     .nutrition-subnav's own `position: sticky` (and a PWA's status
+     bar above it), which would otherwise sit on top of (rather than
+     above) this element once scrolled flush against the viewport's
+     own top edge. */
+  scroll-margin-top: calc(3.5rem + env(safe-area-inset-top));
 }
 
 /* diary_day.html's own meal-slot cards (id="meal-slot-<pk>") - same
@@ -1386,7 +1392,7 @@ abbr[title]:focus::after {
    so the page lands back at the meal that was actually being worked
    on instead of the very top of the diary. */
 [id^="meal-slot-"] {
-  scroll-margin-top: 3.5rem;
+  scroll-margin-top: calc(3.5rem + env(safe-area-inset-top));
 }
 
 .field {
@@ -2039,8 +2045,9 @@ h2 {
   position: sticky;
   /* Sits right under each page's own .top-bar (which itself starts
      flush at the top of .container) - sticking to the very top of the
-     scroll area, not offset, is correct once scrolled past it. */
-  top: 0;
+     scroll area, not offset, is correct once scrolled past it - the
+     scroll area's top being just below the status bar in a PWA. */
+  top: env(safe-area-inset-top);
   z-index: var(--z-subnav);
   background: var(--color-bg);
   padding: 0.5rem 0;
@@ -2286,7 +2293,8 @@ h2 {
 
   .bottom-nav {
     position: sticky;
-    top: 0;
+    /* Below the status bar of an installed PWA on an iPad. */
+    top: env(safe-area-inset-top);
     z-index: var(--z-nav);
     height: auto;
     min-height: var(--nav-height);

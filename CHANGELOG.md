@@ -18,6 +18,10 @@ narrated summary of the same version.
 
 ## [Unreleased]
 
+### Fixed
+- Installed app on iPhone (iOS 26 and later): the top of every page no
+  longer starts under the status bar, where iOS blurred the page title.
+
 ## [1.26.0] - 2026-10-17
 
 ### Added

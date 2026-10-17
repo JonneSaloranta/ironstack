@@ -220,6 +220,10 @@ select tour targets by CSS class.
   `--z-*`. Reach for an existing utility (`.row`, `.stack`, `.mt-*`,
   `.text-muted`, `.text-danger`, `.flex-full`, …) before writing new CSS.
 - Touch targets ≥ `--touch-target` (2.75rem).
+- The page runs edge to edge (`viewport-fit=cover`), and an installed PWA on
+  iOS 26+ puts it under a blurred status bar. `body` pads itself by
+  `env(safe-area-inset-top)`, so anything fixed or sticky to the top uses
+  `top: env(safe-area-inset-top)` (plus its own offset), never a bare `top: 0`.
 - Animations respect `prefers-reduced-motion` - a global rule at the end of
   base.css cuts every transition/animation (Alpine's `x-transition` too), so a
   new animation is covered without its own rule.
