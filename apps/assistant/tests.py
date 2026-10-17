@@ -22,6 +22,7 @@ from .models import (
     AssistantProposal,
     AssistantSettings,
     Conversation,
+    DataScope,
     KeySource,
     MessageRole,
     MessageStatus,
@@ -646,6 +647,45 @@ class ToolScopingTests(TestCase):
         self.assertIn("trend_kg_per_week", entry)
         self.assertNotIn("Body weight", data["types_never_logged"])
 
+    def test_turned_off_data_is_not_read(self):
+        weight = MeasurementType.objects.get(name="Body weight", owner__isnull=True)
+        BodyMeasurement.objects.create(
+            user=self.user, measurement_type=weight, value=Decimal("80"), recorded_at=timezone.now()
+        )
+        self.user.height = Decimal("1.80")
+        self.user.save()
+        services.set_data_access(
+            self.user, {f"reads_{scope.value}": True for scope in DataScope} | {"reads_body": False}
+        )
+        ctx = tools.ToolContext(self.user, None)
+        for name in ("get_body_measurements", "get_calorie_adjustment"):
+            content, is_error = tools.run(ctx, name, {})
+            self.assertFalse(is_error)
+            self.assertEqual(json.loads(content)["not_shared"], "body")
+        data = json.loads(tools.run(ctx, "get_user_overview", {})[0])
+        self.assertNotIn("latest_body_weight_kg", data)
+        self.assertEqual(data["height_m"], 1.8)
+        self.assertEqual(data["not_shared_with_you"], ["body"])
+        _content, is_error = tools.run(ctx, "get_food_diary", {})
+        self.assertNotIn("not_shared", _content)
+
+    def test_turned_off_profile_hides_height_and_bmi(self):
+        weight = MeasurementType.objects.get(name="Body weight", owner__isnull=True)
+        BodyMeasurement.objects.create(
+            user=self.user, measurement_type=weight, value=Decimal("80"), recorded_at=timezone.now()
+        )
+        self.user.height = Decimal("1.80")
+        self.user.save()
+        services.set_data_access(
+            self.user,
+            {f"reads_{scope.value}": True for scope in DataScope} | {"reads_profile": False},
+        )
+        ctx = tools.ToolContext(self.user, None)
+        overview = json.loads(tools.run(ctx, "get_user_overview", {})[0])
+        self.assertNotIn("height_m", overview)
+        measurements = json.loads(tools.run(ctx, "get_body_measurements", {})[0])
+        self.assertNotIn("latest_bmi", measurements["measurements"][0])
+
     def test_unknown_tool_and_bad_input(self):
         self.assertTrue(tools.run(self.ctx, "drop_tables", {})[1])
         self.assertTrue(tools.run(self.ctx, "get_workout_history", {"days": "lots"})[1])
@@ -995,6 +1035,19 @@ class ViewTests(TestCase):
         response = self.client.post(reverse("assistant:about-save"), {"about_me": "x" * 2001})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(services.preference_for(self.user).about_me, "Vegan.")
+
+    def test_data_access_saves_unticked_scopes(self):
+        url = reverse("assistant:settings")
+        self.assertContains(self.client.get(url), 'name="reads_food"')
+        response = self.client.post(
+            reverse("assistant:data-access-save"), {"reads_workouts": "on", "reads_profile": "on"}
+        )
+        self.assertRedirects(response, url)
+        preference = services.preference_for(self.user)
+        self.assertTrue(preference.reads_workouts)
+        self.assertTrue(preference.reads_profile)
+        self.assertFalse(preference.reads_food)
+        self.assertFalse(preference.reads_body)
 
     def test_admin_settings_is_staff_only(self):
         url = reverse("assistant:admin-settings")

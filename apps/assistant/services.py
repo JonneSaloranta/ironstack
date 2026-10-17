@@ -22,6 +22,7 @@ from .models import (
     AssistantPreference,
     AssistantSettings,
     Conversation,
+    DataScope,
     KeySource,
     MessageRole,
     MessageStatus,
@@ -178,6 +179,16 @@ def set_about_me(user, text):
     preference, _created = AssistantPreference.objects.get_or_create(user=user)
     preference.about_me = text
     preference.save(update_fields=["about_me", "updated_at"])
+    return preference
+
+
+def set_data_access(user, reads):
+    """`reads`: {"reads_<DataScope>": bool} - what the assistant may read."""
+    preference, _created = AssistantPreference.objects.get_or_create(user=user)
+    fields = [f"reads_{scope.value}" for scope in DataScope]
+    for field in fields:
+        setattr(preference, field, bool(reads.get(field)))
+    preference.save(update_fields=[*fields, "updated_at"])
     return preference
 
 

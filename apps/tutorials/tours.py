@@ -1088,8 +1088,9 @@ TOURS = (
                 "assistant-settings",
                 _("Settings"),
                 _(
-                    "Turn the assistant on or off, tell it what it should always know about "
-                    "you (allergies, equipment, schedule), and add your own API key."
+                    "Turn the assistant on or off, choose what it may read, tell it what it "
+                    "should always know about you (allergies, equipment, schedule), and add "
+                    "your own API key."
                 ),
             ),
             Step(

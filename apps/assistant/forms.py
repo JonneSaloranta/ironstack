@@ -5,7 +5,7 @@ from django.utils.translation import gettext_lazy as _
 
 from apps.core.widgets import SearchablePickerWidget
 
-from .models import AssistantSettings, Effort, OwnKeyModel
+from .models import AssistantPreference, AssistantSettings, DataScope, Effort, OwnKeyModel
 from .services import MAX_MESSAGE_LENGTH, instance_claude_model
 
 
@@ -61,6 +61,15 @@ class AboutMeForm(forms.Form):
             "you'd otherwise repeat in every conversation. New conversations use it."
         ),
     )
+
+
+class DataAccessForm(forms.ModelForm):
+    """One checkbox per DataScope - what the assistant may read."""
+
+    class Meta:
+        model = AssistantPreference
+        fields = [f"reads_{scope.value}" for scope in DataScope]
+        labels = {f"reads_{scope.value}": scope.label for scope in DataScope}
 
 
 class OwnKeyOptionsForm(forms.Form):

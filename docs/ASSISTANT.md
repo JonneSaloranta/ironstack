@@ -129,6 +129,19 @@ queries the views use:
 | `search_exercises`, `search_foods`, `search_recipes`, `list_meal_slots` | the libraries a proposal draws from; foods with allergens, labels, categories, ingredients, Nutri-Score and package price when known, recipes with their ingredients and the ingredients' allergens |
 | `propose_diet_plan`, `propose_program` | - (records a proposal) |
 
+**What it may read.** The settings page has one checkbox per
+`models.DataScope` (`AssistantPreference.reads_*`, all on by default):
+workouts (history, records, progression suggestions, training days), body
+(measurements, weight trend, calorie adjustment), food diary, activities,
+stretching, and personal details (height, age, sex, activity level - also
+what BMI needs). Each tool in `tools.TOOLS` names its `scope`; `tools.run`
+checks it on every call, so a change applies from the next tool call, in
+ongoing conversations too. A turned-off tool returns `{"not_shared": ...}`
+rather than an error, and `get_user_overview` leaves out the gated fields
+and lists the turned-off scopes. The tool list itself never changes, so the
+prompt prefix stays cacheable. Programs, diet plans and the food, recipe and
+exercise libraries have no switch: proposals are built from them.
+
 Tool inputs are untrusted. Each tool validates its arguments, and a mistake
 goes back to the model as an error result it can correct. It never becomes an
 exception. Results are compact JSON in canonical units. The system prompt

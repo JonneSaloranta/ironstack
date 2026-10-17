@@ -28,6 +28,7 @@ from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
 
 from . import proposals
+from .models import DataScope
 
 
 class ToolInputError(Exception):
@@ -39,6 +40,19 @@ class ToolContext:
         self.user = user
         # The AssistantMessage being written - proposals attach to it.
         self.message = message
+        self._preference = None
+
+    def may_read(self, scope):
+        """Whether the user lets the assistant read this DataScope -
+        checked on every call, so switching one off in the settings
+        applies from the very next tool call, mid-conversation too."""
+        if self._preference is None:
+            from .models import AssistantPreference
+
+            self._preference = AssistantPreference.objects.filter(
+                user=self.user
+            ).first() or AssistantPreference(user=self.user)
+        return self._preference.reads(scope)
 
 
 def _dumps(data):
@@ -89,23 +103,30 @@ def get_user_overview(ctx, args):
         "today": today,
         "weekday": today.strftime("%A"),
         "preferred_units": user.unit_system,
-        "height_m": _num(user.height, 3),
         "sections_enabled": {
             "nutrition": user.nutrition_enabled,
             "stretching": user.stretching_enabled,
         },
     }
+    if ctx.may_read(DataScope.PROFILE):
+        data["height_m"] = _num(user.height, 3)
     weight = (
         BodyMeasurement.objects.filter(
             user=user, measurement_type__name="Body weight", measurement_type__owner__isnull=True
         )
         .order_by("-recorded_at")
         .first()
+        if ctx.may_read(DataScope.BODY)
+        else None
     )
     if weight is not None:
         data["latest_body_weight_kg"] = _num(weight.value)
         data["latest_body_weight_date"] = weight.recorded_at.date()
-    profile = NutritionProfile.objects.filter(user=user).first()
+    profile = (
+        NutritionProfile.objects.filter(user=user).first()
+        if ctx.may_read(DataScope.PROFILE)
+        else None
+    )
     if profile is not None:
         data["nutrition_profile"] = {
             "biological_sex": profile.biological_sex,
@@ -141,7 +162,9 @@ def get_user_overview(ctx, args):
     data["active_diet_plan"] = (
         {"id": active_plan.pk, "name": active_plan.name} if active_plan else None
     )
-    data["training_last_4_weeks"] = _training_pattern(user)
+    if ctx.may_read(DataScope.WORKOUTS):
+        data["training_last_4_weeks"] = _training_pattern(user)
+    data["not_shared_with_you"] = [scope.value for scope in DataScope if not ctx.may_read(scope)]
     data["active_coaches"] = CoachingRelationship.objects.filter(
         coachee=user, ended_at__isnull=True
     ).count()
@@ -323,7 +346,11 @@ def get_body_measurements(ctx, args):
             if trend is not None:
                 entry["trend_kg_per_week"] = _num(trend.actual_rate_kg_per_week, 2)
                 entry["trend_span_days"] = trend.span_days
-            body_mass_index = bmi.calculate_bmi(values[0], ctx.user.height)
+            body_mass_index = (
+                bmi.calculate_bmi(values[0], ctx.user.height)
+                if ctx.may_read(DataScope.PROFILE)
+                else None
+            )
             if body_mass_index is not None:
                 category = bmi.category_for(body_mass_index)
                 entry["latest_bmi"] = _num(body_mass_index)
@@ -923,6 +950,7 @@ TOOLS = [
         ),
         "input_schema": {"type": "object", "properties": {"days": _DAYS}},
         "handler": get_workout_history,
+        "scope": DataScope.WORKOUTS,
         "activity": _("Looking at your workouts…"),
     },
     {
@@ -938,6 +966,7 @@ TOOLS = [
             },
         },
         "handler": get_personal_records,
+        "scope": DataScope.WORKOUTS,
         "activity": _("Looking at your records…"),
     },
     {
@@ -950,6 +979,7 @@ TOOLS = [
         ),
         "input_schema": {"type": "object", "properties": {"days": _DAYS}},
         "handler": get_body_measurements,
+        "scope": DataScope.BODY,
         "activity": _("Looking at your measurements…"),
     },
     {
@@ -957,6 +987,7 @@ TOOLS = [
         "description": "Other logged activities (running, cycling, ...).",
         "input_schema": {"type": "object", "properties": {"days": _DAYS}},
         "handler": get_activities,
+        "scope": DataScope.ACTIVITIES,
         "activity": _("Looking at your activities…"),
     },
     {
@@ -964,6 +995,7 @@ TOOLS = [
         "description": "What the user has actually eaten: median daily intake and recent days.",
         "input_schema": {"type": "object", "properties": {"days": _DAYS}},
         "handler": get_nutrition_overview,
+        "scope": DataScope.FOOD,
         "activity": _("Looking at your food diary…"),
     },
     {
@@ -976,6 +1008,7 @@ TOOLS = [
         ),
         "input_schema": {"type": "object", "properties": {"days": _DAYS}},
         "handler": get_food_diary,
+        "scope": DataScope.FOOD,
         "activity": _("Looking at your food diary…"),
     },
     {
@@ -986,6 +1019,7 @@ TOOLS = [
         ),
         "input_schema": {"type": "object", "properties": {}},
         "handler": get_calorie_adjustment,
+        "scope": DataScope.BODY,
         "activity": _("Looking at your weight trend…"),
     },
     {
@@ -993,6 +1027,7 @@ TOOLS = [
         "description": "Completed stretching sessions and the user's own stretching routines.",
         "input_schema": {"type": "object", "properties": {"days": _DAYS}},
         "handler": get_stretching,
+        "scope": DataScope.STRETCHING,
         "activity": _("Looking at your stretching…"),
     },
     {
@@ -1025,6 +1060,7 @@ TOOLS = [
             "properties": {"program_id": {"type": "integer"}},
         },
         "handler": get_progression_suggestions,
+        "scope": DataScope.WORKOUTS,
         "activity": _("Looking at your progression…"),
     },
     {
@@ -1215,6 +1251,12 @@ TOOLS = [
 
 _BY_NAME = {tool["name"]: tool for tool in TOOLS}
 
+NOT_SHARED_NOTE = (
+    "The user has turned off the assistant's access to this data in its settings. "
+    "Work without it, and don't ask them to paste it; mention once that they can "
+    "turn it back on in the assistant's settings if it would help."
+)
+
 
 def definitions():
     """The provider-neutral tool definitions sent to the model - always
@@ -1246,6 +1288,10 @@ def run(ctx, name, args):
         args = {}
     if not isinstance(args, dict):
         return "The tool input must be a JSON object.", True
+    scope = tool.get("scope")
+    if scope is not None and not ctx.may_read(scope):
+        # Not an error the model can fix by retrying - say so plainly.
+        return _dumps({"not_shared": scope.value, "note": NOT_SHARED_NOTE}), False
     try:
         return _dumps(tool["handler"](ctx, args)), False
     except ToolInputError as exc:

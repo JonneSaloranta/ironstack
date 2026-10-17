@@ -35,6 +35,15 @@
   <button type="submit">{% trans "Save" %}</button>
 </form>
 
+<form class="card" method="post" action="{% url 'assistant:data-access-save' %}">
+  {% csrf_token %}
+  <h2 class="card-title">{% trans "What the assistant may read" %}</h2>
+  <p class="text-muted">{% trans "Untick anything you'd rather keep to yourself. It applies straight away, also in ongoing conversations. Your programs, diet plans and the food and exercise libraries stay readable, since its suggestions are built from them." %}</p>
+  {% include "core/_form_errors.html" with form=access_form %}
+  {% for field in access_form %}{% include "core/_field.html" with field=field %}{% endfor %}
+  <button type="submit">{% trans "Save" %}</button>
+</form>
+
 <div class="card">
   <h2 class="card-title">{% trans "AI model" %}</h2>
   {% if access.available %}

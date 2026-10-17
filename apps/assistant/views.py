@@ -14,6 +14,7 @@ from .forms import (
     AboutMeForm,
     ApiKeyForm,
     AssistantSettingsForm,
+    DataAccessForm,
     MessageForm,
     OwnKeyOptionsForm,
 )
@@ -190,7 +191,7 @@ def proposal_dismiss(request, pk):
     )
 
 
-def _render_settings(request, *, key_form=None, model_form=None, about_form=None):
+def _render_settings(request, *, key_form=None, model_form=None, about_form=None, access_form=None):
     preference = services.preference_for(request.user)
     access = services.access_for(request.user, preference)
     return render(
@@ -208,6 +209,7 @@ def _render_settings(request, *, key_form=None, model_form=None, about_form=None
                 }
             ),
             "about_form": about_form or AboutMeForm(initial={"about_me": preference.about_me}),
+            "access_form": access_form or DataAccessForm(instance=preference),
             "shared_available": services.shared_provider_configured(),
             **_usage_context(request.user, access),
         },
@@ -272,6 +274,18 @@ def about_save(request):
         return _render_settings(request, about_form=form)
     services.set_about_me(request.user, form.cleaned_data["about_me"])
     messages.success(request, _("Details for the assistant saved."))
+    return redirect("assistant:settings")
+
+
+@login_required
+def data_access_save(request):
+    if response := _require_post(request):
+        return response
+    form = DataAccessForm(request.POST)
+    if not form.is_valid():
+        return _render_settings(request, access_form=form)
+    services.set_data_access(request.user, form.cleaned_data)
+    messages.success(request, _("What the assistant may read was saved."))
     return redirect("assistant:settings")
 
 

@@ -20,5 +20,6 @@ urlpatterns = [
     path("settings/key/remove/", views.key_remove, name="key-remove"),
     path("settings/model/", views.model_save, name="model-save"),
     path("settings/about/", views.about_save, name="about-save"),
+    path("settings/data/", views.data_access_save, name="data-access-save"),
     path("admin/", views.AdminSettingsView.as_view(), name="admin-settings"),
 ]

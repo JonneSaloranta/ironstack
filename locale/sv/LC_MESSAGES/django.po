@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: IronStack\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-17 11:30+0000\n"
+"POT-Creation-Date: 2026-10-17 11:46+0000\n"
 "Language: sv\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -723,8 +723,8 @@ msgstr "Träningspass"
 msgid "Measurements"
 msgstr "Mätningar"
 
-#: apps/api/models.py:29 apps/core/models.py:165 apps/tutorials/tours.py:561
-#: templates/activities/activity_history.html:5
+#: apps/api/models.py:29 apps/assistant/models.py:115 apps/core/models.py:165
+#: apps/tutorials/tours.py:561 templates/activities/activity_history.html:5
 #: templates/activities/activity_type_list.html:3
 #: templates/activities/activity_type_list.html:6
 #: templates/api/key_list.html:105 templates/core/dashboard.html:153
@@ -750,13 +750,14 @@ msgstr "Analys"
 msgid "Nutrition"
 msgstr "Näring"
 
-#: apps/api/models.py:33 apps/core/models.py:167 apps/stretching/models.py:209
-#: apps/tutorials/tours.py:30 apps/tutorials/tours.py:918
-#: templates/api/key_list.html:113 templates/base.html:190
-#: templates/base.html:192 templates/core/dashboard.html:159
-#: templates/stretching/_cooldown_card.html:7 templates/stretching/home.html:3
-#: templates/stretching/home.html:6 templates/stretching/home.html:16
-#: templates/stretching/home.html:48 templates/stretching/session_detail.html:3
+#: apps/api/models.py:33 apps/assistant/models.py:116 apps/core/models.py:167
+#: apps/stretching/models.py:209 apps/tutorials/tours.py:30
+#: apps/tutorials/tours.py:918 templates/api/key_list.html:113
+#: templates/base.html:190 templates/base.html:192
+#: templates/core/dashboard.html:159 templates/stretching/_cooldown_card.html:7
+#: templates/stretching/home.html:3 templates/stretching/home.html:6
+#: templates/stretching/home.html:16 templates/stretching/home.html:48
+#: templates/stretching/session_detail.html:3
 #: templates/stretching/session_detail.html:5
 #: templates/stretching/session_history.html:15
 #: templates/stretching/session_play.html:3
@@ -817,11 +818,11 @@ msgstr ""
 "Allergier, mat du inte äter, utrustning, schema, skador - allt du annars "
 "skulle upprepa i varje samtal. Nya samtal använder det."
 
-#: apps/assistant/forms.py:68
+#: apps/assistant/forms.py:77
 msgid "Model for your key"
 msgstr "Modell för din nyckel"
 
-#: apps/assistant/forms.py:72
+#: apps/assistant/forms.py:81
 msgid ""
 "Prices are per million tokens (input / output), billed to your Anthropic "
 "account. New conversations use the model you pick; ongoing ones keep theirs."
@@ -830,11 +831,11 @@ msgstr ""
 "Anthropic-konto. Nya konversationer använder modellen du väljer; pågående "
 "behåller sin."
 
-#: apps/assistant/forms.py:77
+#: apps/assistant/forms.py:86
 msgid "Thinking effort"
 msgstr "Tankeinsats"
 
-#: apps/assistant/forms.py:81
+#: apps/assistant/forms.py:90
 msgid ""
 "How much the model thinks before it answers. More thinking costs more tokens "
 "and takes longer. Applies from the next reply on; Claude Haiku ignores it."
@@ -842,45 +843,45 @@ msgstr ""
 "Hur mycket modellen tänker innan den svarar. Mer tänkande kostar fler tokens "
 "och tar längre tid. Gäller från nästa svar; Claude Haiku ignorerar det."
 
-#: apps/assistant/forms.py:89
+#: apps/assistant/forms.py:98
 #, python-format
 msgid "This instance's default (%(model)s)"
 msgstr "Den här instansens standard (%(model)s)"
 
-#: apps/assistant/forms.py:94
+#: apps/assistant/forms.py:103
 #, python-format
 msgid "This instance's default (%(effort)s)"
 msgstr "Den här instansens standard (%(effort)s)"
 
-#: apps/assistant/forms.py:101 apps/assistant/models.py:27
+#: apps/assistant/forms.py:110 apps/assistant/models.py:27
 msgid "Selected users"
 msgstr "Valda användare"
 
-#: apps/assistant/forms.py:105
+#: apps/assistant/forms.py:114
 msgid "Search users…"
 msgstr "Sök användare…"
 
-#: apps/assistant/forms.py:106
+#: apps/assistant/forms.py:115
 msgid "Nobody selected."
 msgstr "Ingen vald."
 
-#: apps/assistant/forms.py:107
+#: apps/assistant/forms.py:116
 msgid "No matching users."
 msgstr "Inga matchande användare."
 
-#: apps/assistant/forms.py:109 apps/assistant/models.py:55
+#: apps/assistant/forms.py:118 apps/assistant/models.py:55
 msgid "Used when access is set to “Selected users”."
 msgstr "Används när åtkomsten är inställd på ”Valda användare”."
 
-#: apps/assistant/forms.py:116
+#: apps/assistant/forms.py:125
 msgid "Assistant enabled"
 msgstr "Assistenten aktiverad"
 
-#: apps/assistant/forms.py:117
+#: apps/assistant/forms.py:126
 msgid "Who may use this instance's AI model"
 msgstr "Vem som får använda den här instansens AI-modell"
 
-#: apps/assistant/forms.py:118
+#: apps/assistant/forms.py:127
 msgid "Daily token limit per user"
 msgstr "Daglig tokengräns per användare"
 
@@ -953,31 +954,48 @@ msgstr "Extra hög - för krävande planering"
 msgid "Maximum - the most thorough and the most expensive"
 msgstr "Maximal - grundligast och dyrast"
 
-#: apps/assistant/models.py:144
+#: apps/assistant/models.py:112
+msgid "Workout history, records and progression"
+msgstr "Träningshistorik, rekord och progression"
+
+#: apps/assistant/models.py:113
+msgid "Body measurements and weight trend"
+msgstr "Kroppsmått och viktutveckling"
+
+#: apps/assistant/models.py:114 apps/tutorials/tours.py:648
+#: templates/nutrition/diary_day.html:3 templates/nutrition/diary_day.html:13
+msgid "Food diary"
+msgstr "Matdagbok"
+
+#: apps/assistant/models.py:117
+msgid "Personal details (height, age, sex, activity level)"
+msgstr "Personuppgifter (längd, ålder, kön, aktivitetsnivå)"
+
+#: apps/assistant/models.py:169
 msgid "This instance's provider"
 msgstr "Den här instansens leverantör"
 
-#: apps/assistant/models.py:145 templates/assistant/settings.html:55
+#: apps/assistant/models.py:170 templates/assistant/settings.html:64
 msgid "Your own API key"
 msgstr "Din egen API-nyckel"
 
-#: apps/assistant/models.py:170
+#: apps/assistant/models.py:195
 msgid "You"
 msgstr "Du"
 
-#: apps/assistant/models.py:171 templates/assistant/settings.html:12
+#: apps/assistant/models.py:196 templates/assistant/settings.html:12
 msgid "Assistant"
 msgstr "Assistent"
 
-#: apps/assistant/models.py:175
+#: apps/assistant/models.py:200
 msgid "Waiting"
 msgstr "Väntar"
 
-#: apps/assistant/models.py:176
+#: apps/assistant/models.py:201
 msgid "Writing"
 msgstr "Skriver"
 
-#: apps/assistant/models.py:177 apps/stretching/models.py:214
+#: apps/assistant/models.py:202 apps/stretching/models.py:214
 #: templates/accounts/_two_factor_backup_codes_fragment.html:11
 #: templates/api/key_created.html:16
 #: templates/stretching/session_detail.html:40
@@ -986,28 +1004,28 @@ msgstr "Skriver"
 msgid "Done"
 msgstr "Klar"
 
-#: apps/assistant/models.py:178
+#: apps/assistant/models.py:203
 msgid "Failed"
 msgstr "Misslyckades"
 
-#: apps/assistant/models.py:236
+#: apps/assistant/models.py:261
 msgid "Diet plan"
 msgstr "Kostplan"
 
-#: apps/assistant/models.py:237
+#: apps/assistant/models.py:262
 msgid "Workout program"
 msgstr "Träningsprogram"
 
-#: apps/assistant/models.py:241
+#: apps/assistant/models.py:266
 msgid "Waiting for you"
 msgstr "Väntar på dig"
 
-#: apps/assistant/models.py:242 templates/assistant/_proposal.html:54
+#: apps/assistant/models.py:267 templates/assistant/_proposal.html:54
 #: templates/core/backup_restore_confirm.html:28
 msgid "Created"
 msgstr "Skapad"
 
-#: apps/assistant/models.py:243 templates/assistant/_proposal.html:62
+#: apps/assistant/models.py:268 templates/assistant/_proposal.html:62
 msgid "Dismissed"
 msgstr "Avfärdad"
 
@@ -1044,11 +1062,11 @@ msgstr "AI-tjänsten har problem just nu. Försök igen senare."
 msgid "Couldn't reach the AI service."
 msgstr "Det gick inte att nå AI-tjänsten."
 
-#: apps/assistant/services.py:110
+#: apps/assistant/services.py:111
 msgid "The administrator has turned the AI assistant off."
 msgstr "Administratören har stängt av AI-assistenten."
 
-#: apps/assistant/services.py:131
+#: apps/assistant/services.py:132
 msgid ""
 "This instance doesn't provide an AI model for your account. You can use the "
 "assistant with your own Anthropic API key."
@@ -1056,19 +1074,19 @@ msgstr ""
 "Den här instansen tillhandahåller ingen AI-modell för ditt konto. Du kan "
 "använda assistenten med din egen Anthropic-API-nyckel."
 
-#: apps/assistant/services.py:235
+#: apps/assistant/services.py:246
 msgid "Turn the assistant on in its settings first."
 msgstr "Slå först på assistenten i dess inställningar."
 
-#: apps/assistant/services.py:243
+#: apps/assistant/services.py:254
 msgid "Wait for the assistant to finish its current reply."
 msgstr "Vänta tills assistenten har skrivit klart sitt svar."
 
-#: apps/assistant/services.py:246
+#: apps/assistant/services.py:257
 msgid "You've used today's assistant allowance. It resets tomorrow."
 msgstr "Du har använt dagens assistentkvot. Den återställs i morgon."
 
-#: apps/assistant/services.py:251
+#: apps/assistant/services.py:262
 msgid ""
 "This conversation used your own API key, which you've removed. Start a new "
 "conversation."
@@ -1076,175 +1094,179 @@ msgstr ""
 "Den här konversationen använde din egen API-nyckel, som du har tagit bort. "
 "Starta en ny konversation."
 
-#: apps/assistant/services.py:260
+#: apps/assistant/services.py:271
 msgid "This conversation can't be continued anymore. Start a new conversation."
 msgstr ""
 "Den här konversationen kan inte fortsättas längre. Starta en ny konversation."
 
-#: apps/assistant/services.py:265
+#: apps/assistant/services.py:276
 msgid ""
 "This conversation is getting long. Start a new one to keep replies quick."
 msgstr ""
 "Den här konversationen börjar bli lång. Starta en ny så att svaren går "
 "snabbt."
 
-#: apps/assistant/services.py:281
+#: apps/assistant/services.py:292
 msgid "No API key is available for this conversation."
 msgstr "Ingen API-nyckel finns tillgänglig för den här konversationen."
 
-#: apps/assistant/services.py:293 apps/assistant/views.py:76
-#: apps/assistant/views.py:118
+#: apps/assistant/services.py:304 apps/assistant/views.py:77
+#: apps/assistant/views.py:119
 msgid "Write a message first."
 msgstr "Skriv ett meddelande först."
 
-#: apps/assistant/services.py:295
+#: apps/assistant/services.py:306
 msgid "That message is too long."
 msgstr "Meddelandet är för långt."
 
-#: apps/assistant/services.py:426
+#: apps/assistant/services.py:437
 msgid "Thinking…"
 msgstr "Tänker…"
 
-#: apps/assistant/services.py:440
+#: apps/assistant/services.py:451
 msgid "The assistant can't help with that request."
 msgstr "Assistenten kan inte hjälpa till med den förfrågan."
 
-#: apps/assistant/services.py:446
+#: apps/assistant/services.py:457
 msgid "The reply was cut off. Try asking for something smaller."
 msgstr "Svaret klipptes av. Försök be om något mindre."
 
-#: apps/assistant/services.py:452
+#: apps/assistant/services.py:463
 msgid "The reply was cut off."
 msgstr "Svaret klipptes av."
 
-#: apps/assistant/services.py:461
+#: apps/assistant/services.py:472
 msgid "The assistant stopped after too many steps."
 msgstr "Assistenten stannade efter för många steg."
 
-#: apps/assistant/services.py:467
+#: apps/assistant/services.py:478
 msgid "Something went wrong while writing the reply."
 msgstr "Något gick fel när svaret skrevs."
 
-#: apps/assistant/services.py:503
+#: apps/assistant/services.py:514
 msgid "The reply was interrupted. Please try again."
 msgstr "Svaret avbröts. Försök igen."
 
-#: apps/assistant/tools.py:413 apps/nutrition/models.py:637
+#: apps/assistant/tools.py:492 apps/nutrition/models.py:637
 #: templates/nutrition/diary_day.html:64
 msgid "Quick entry"
 msgstr "Snabbregistrering"
 
-#: apps/assistant/tools.py:864
+#: apps/assistant/tools.py:943
 msgid "Looking at your profile…"
 msgstr "Tittar på din profil…"
 
-#: apps/assistant/tools.py:874
+#: apps/assistant/tools.py:954
 msgid "Looking at your workouts…"
 msgstr "Tittar på dina träningspass…"
 
-#: apps/assistant/tools.py:889
+#: apps/assistant/tools.py:970
 msgid "Looking at your records…"
 msgstr "Tittar på dina rekord…"
 
-#: apps/assistant/tools.py:896
+#: apps/assistant/tools.py:983
 msgid "Looking at your measurements…"
 msgstr "Tittar på dina mätningar…"
 
-#: apps/assistant/tools.py:903
+#: apps/assistant/tools.py:991
 msgid "Looking at your activities…"
 msgstr "Tittar på dina aktiviteter…"
 
-#: apps/assistant/tools.py:910 apps/assistant/tools.py:922
+#: apps/assistant/tools.py:999 apps/assistant/tools.py:1012
 msgid "Looking at your food diary…"
 msgstr "Tittar på din matdagbok…"
 
-#: apps/assistant/tools.py:932
+#: apps/assistant/tools.py:1023
 msgid "Looking at your weight trend…"
 msgstr "Tittar på din viktutveckling…"
 
-#: apps/assistant/tools.py:939
+#: apps/assistant/tools.py:1031
 msgid "Looking at your stretching…"
 msgstr "Tittar på din stretching…"
 
-#: apps/assistant/tools.py:946 apps/assistant/tools.py:957
+#: apps/assistant/tools.py:1038 apps/assistant/tools.py:1049
 msgid "Looking at your programs…"
 msgstr "Tittar på dina program…"
 
-#: apps/assistant/tools.py:971
+#: apps/assistant/tools.py:1064
 msgid "Looking at your progression…"
 msgstr "Tittar på din progression…"
 
-#: apps/assistant/tools.py:978 apps/assistant/tools.py:989
+#: apps/assistant/tools.py:1071 apps/assistant/tools.py:1082
 msgid "Looking at your diet plans…"
 msgstr "Tittar på dina kostplaner…"
 
-#: apps/assistant/tools.py:1003
+#: apps/assistant/tools.py:1096
 msgid "Searching exercises…"
 msgstr "Söker övningar…"
 
-#: apps/assistant/tools.py:1018
+#: apps/assistant/tools.py:1111
 msgid "Searching foods…"
 msgstr "Söker livsmedel…"
 
-#: apps/assistant/tools.py:1028
+#: apps/assistant/tools.py:1121
 msgid "Searching recipes…"
 msgstr "Söker recept…"
 
-#: apps/assistant/tools.py:1035
+#: apps/assistant/tools.py:1128
 msgid "Looking at your meals…"
 msgstr "Tittar på dina måltider…"
 
-#: apps/assistant/tools.py:1095
+#: apps/assistant/tools.py:1188
 msgid "Putting a diet plan together…"
 msgstr "Sätter ihop en kostplan…"
 
-#: apps/assistant/tools.py:1155
+#: apps/assistant/tools.py:1248
 msgid "Putting a program together…"
 msgstr "Sätter ihop ett program…"
 
-#: apps/assistant/views.py:147
+#: apps/assistant/views.py:148
 msgid "Conversation deleted."
 msgstr "Konversationen raderades."
 
-#: apps/assistant/views.py:169
+#: apps/assistant/views.py:170
 #, python-format
 msgid "This suggestion can't be created anymore: %(error)s"
 msgstr "Det här förslaget kan inte skapas längre: %(error)s"
 
-#: apps/assistant/views.py:174
+#: apps/assistant/views.py:175
 msgid "Diet plan created. It isn't active until you choose to use it."
 msgstr ""
 "Kostplanen skapades. Den är inte aktiv förrän du väljer att använda den."
 
-#: apps/assistant/views.py:177
+#: apps/assistant/views.py:178
 msgid "Program created. Review it and make it yours."
 msgstr "Programmet skapades. Gå igenom det och gör det till ditt."
 
-#: apps/assistant/views.py:227
+#: apps/assistant/views.py:229
 msgid "AI assistant turned on."
 msgstr "AI-assistenten är påslagen."
 
-#: apps/assistant/views.py:236
+#: apps/assistant/views.py:238
 msgid "AI assistant turned off."
 msgstr "AI-assistenten är avstängd."
 
-#: apps/assistant/views.py:247
+#: apps/assistant/views.py:249
 msgid "API key saved."
 msgstr "API-nyckeln sparades."
 
-#: apps/assistant/views.py:262
+#: apps/assistant/views.py:264
 msgid "Model settings saved."
 msgstr "Modellinställningarna sparades."
 
-#: apps/assistant/views.py:274
+#: apps/assistant/views.py:276
 msgid "Details for the assistant saved."
 msgstr "Uppgifterna till assistenten sparades."
 
-#: apps/assistant/views.py:283
+#: apps/assistant/views.py:288
+msgid "What the assistant may read was saved."
+msgstr "Det assistenten får läsa sparades."
+
+#: apps/assistant/views.py:297
 msgid "API key removed."
 msgstr "API-nyckeln togs bort."
 
-#: apps/assistant/views.py:312
+#: apps/assistant/views.py:326
 msgid "Assistant settings saved."
 msgstr "Assistentens inställningar sparades."
 
@@ -5966,11 +5988,6 @@ msgid "Lose, keep or gain - and how fast. Change it at any time."
 msgstr ""
 "Gå ner, behålla eller gå upp - och hur snabbt. Ändra det när som helst."
 
-#: apps/tutorials/tours.py:648 templates/nutrition/diary_day.html:3
-#: templates/nutrition/diary_day.html:13
-msgid "Food diary"
-msgstr "Matdagbok"
-
 #: apps/tutorials/tours.py:653
 msgid "Pick a day"
 msgstr "Välj en dag"
@@ -6472,17 +6489,19 @@ msgstr "Inställningar"
 
 #: apps/tutorials/tours.py:1091
 msgid ""
-"Turn the assistant on or off, tell it what it should always know about you "
-"(allergies, equipment, schedule), and add your own API key."
+"Turn the assistant on or off, choose what it may read, tell it what it "
+"should always know about you (allergies, equipment, schedule), and add your "
+"own API key."
 msgstr ""
-"Slå på eller av assistenten, berätta vad den alltid ska veta om dig "
-"(allergier, utrustning, schema) och lägg till din egen API-nyckel."
+"Slå på eller av assistenten, välj vad den får läsa, berätta vad den alltid "
+"ska veta om dig (allergier, utrustning, schema) och lägg till din egen API-"
+"nyckel."
 
-#: apps/tutorials/tours.py:1097
+#: apps/tutorials/tours.py:1098
 msgid "Ask anything"
 msgstr "Fråga vad som helst"
 
-#: apps/tutorials/tours.py:1099
+#: apps/tutorials/tours.py:1100
 msgid ""
 "Ask for a diet plan or a workout program, or about your progress. It looks "
 "at your own data before it answers."
@@ -6490,11 +6509,11 @@ msgstr ""
 "Be om en kostplan eller ett träningsprogram, eller fråga om dina framsteg. "
 "Den tittar på dina egna data innan den svarar."
 
-#: apps/tutorials/tours.py:1106
+#: apps/tutorials/tours.py:1107
 msgid "Your conversations"
 msgstr "Dina konversationer"
 
-#: apps/tutorials/tours.py:1108
+#: apps/tutorials/tours.py:1109
 msgid ""
 "Pick up where you left off. A plan it suggests is only created if you accept "
 "it."
@@ -6625,7 +6644,8 @@ msgstr ""
 #: templates/accounts/account_details_form.html:15
 #: templates/activities/activity_form.html:15
 #: templates/activities/activity_type_form.html:15
-#: templates/assistant/settings.html:35 templates/assistant/settings.html:83
+#: templates/assistant/settings.html:35 templates/assistant/settings.html:44
+#: templates/assistant/settings.html:92
 #: templates/exercises/exercise_form.html:15
 #: templates/measurements/measurement_form.html:15
 #: templates/measurements/measurement_type_form.html:15
@@ -7726,13 +7746,21 @@ msgstr ""
 
 #: templates/assistant/_consent_notice.html:14
 msgid ""
+"You choose what it may read - body measurements, food diary and more - on "
+"its settings page."
+msgstr ""
+"Du väljer i dess inställningar vad den får läsa - kroppsmått, matdagbok med "
+"mera."
+
+#: templates/assistant/_consent_notice.html:15
+msgid ""
 "Replies can be wrong. It isn't a doctor or a dietitian - check anything "
 "important with a professional."
 msgstr ""
 "Svaren kan vara fel. Den är varken läkare eller dietist - kontrollera allt "
 "viktigt med en fackperson."
 
-#: templates/assistant/_consent_notice.html:15
+#: templates/assistant/_consent_notice.html:16
 msgid "You can turn it off, and delete your conversations, at any time."
 msgstr "Du kan stänga av den, och radera dina konversationer, när som helst."
 
@@ -7882,7 +7910,7 @@ msgid "Nobody has used the assistant yet."
 msgstr "Ingen har använt assistenten än."
 
 #: templates/assistant/conversation_detail.html:9
-#: templates/assistant/settings.html:87
+#: templates/assistant/settings.html:96
 msgid "Back to AI assistant"
 msgstr "Tillbaka till AI-assistenten"
 
@@ -7933,7 +7961,7 @@ msgstr "Ny konversation"
 msgid "Start conversation"
 msgstr "Starta konversation"
 
-#: templates/assistant/home.html:34 templates/assistant/settings.html:46
+#: templates/assistant/home.html:34 templates/assistant/settings.html:55
 #, python-format
 msgid "Today's use: %(used)s of %(limit)s tokens."
 msgstr "Dagens användning: %(used)s av %(limit)s tokens."
@@ -7974,21 +8002,35 @@ msgstr "Av. Inget av ditt skickas till en AI-modell."
 msgid "About you"
 msgstr "Om dig"
 
-#: templates/assistant/settings.html:39
+#: templates/assistant/settings.html:40
+msgid "What the assistant may read"
+msgstr "Vad assistenten får läsa"
+
+#: templates/assistant/settings.html:41
+msgid ""
+"Untick anything you'd rather keep to yourself. It applies straight away, "
+"also in ongoing conversations. Your programs, diet plans and the food and "
+"exercise libraries stay readable, since its suggestions are built from them."
+msgstr ""
+"Bocka ur det du hellre vill behålla för dig själv. Det gäller direkt, även i "
+"pågående samtal. Dina program, kostplaner och livsmedels- och "
+"övningsbiblioteken förblir läsbara, eftersom dess förslag bygger på dem."
+
+#: templates/assistant/settings.html:48
 msgid "AI model"
 msgstr "AI-modell"
 
-#: templates/assistant/settings.html:42
+#: templates/assistant/settings.html:51
 #, python-format
 msgid "Using your own Anthropic API key (%(model)s)."
 msgstr "Använder din egen Anthropic-API-nyckel (%(model)s)."
 
-#: templates/assistant/settings.html:44
+#: templates/assistant/settings.html:53
 #, python-format
 msgid "Using this instance's AI model (%(model)s)."
 msgstr "Använder den här instansens AI-modell (%(model)s)."
 
-#: templates/assistant/settings.html:58
+#: templates/assistant/settings.html:67
 #, python-format
 msgid ""
 "Saved key ending in %(hint)s. Your conversations use it, and it's billed to "
@@ -7997,11 +8039,11 @@ msgstr ""
 "Sparad nyckel som slutar på %(hint)s. Dina konversationer använder den, och "
 "den faktureras ditt Anthropic-konto."
 
-#: templates/assistant/settings.html:60
+#: templates/assistant/settings.html:69
 msgid "Remove your API key?"
 msgstr "Ta bort din API-nyckel?"
 
-#: templates/assistant/settings.html:62
+#: templates/assistant/settings.html:71
 #: templates/core/widgets/searchable_picker.html:41
 #: templates/exercises/exercise_detail.html:63
 #: templates/nutrition/_diet_plan_meal_card.html:25
@@ -8012,7 +8054,7 @@ msgstr "Ta bort din API-nyckel?"
 msgid "Remove"
 msgstr "Ta bort"
 
-#: templates/assistant/settings.html:66
+#: templates/assistant/settings.html:75
 msgid ""
 "Optional. With your own Anthropic API key you can use the assistant even if "
 "this instance doesn't provide a model for you."
@@ -8020,15 +8062,15 @@ msgstr ""
 "Valfritt. Med din egen Anthropic-API-nyckel kan du använda assistenten även "
 "om den här instansen inte tillhandahåller en modell åt dig."
 
-#: templates/assistant/settings.html:72
+#: templates/assistant/settings.html:81
 msgid "Replace key"
 msgstr "Byt nyckel"
 
-#: templates/assistant/settings.html:72
+#: templates/assistant/settings.html:81
 msgid "Save key"
 msgstr "Spara nyckel"
 
-#: templates/assistant/settings.html:79
+#: templates/assistant/settings.html:88
 msgid "Model"
 msgstr "Modell"
 

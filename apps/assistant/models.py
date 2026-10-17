@@ -103,6 +103,20 @@ class Effort(models.TextChoices):
     MAX = "max", _("Maximum - the most thorough and the most expensive")
 
 
+class DataScope(models.TextChoices):
+    """The parts of a user's data they can keep from the assistant - each
+    one gates the tools that read it (tools.TOOLS "scope"). Programs, diet
+    plans and the food/exercise libraries aren't here: proposals are
+    built from them."""
+
+    WORKOUTS = "workouts", _("Workout history, records and progression")
+    BODY = "body", _("Body measurements and weight trend")
+    FOOD = "food", _("Food diary")
+    ACTIVITIES = "activities", _("Activities")
+    STRETCHING = "stretching", _("Stretching")
+    PROFILE = "profile", _("Personal details (height, age, sex, activity level)")
+
+
 class AssistantPreference(TimeStampedModel):
     """One user's own assistant settings. `consented_at` is the explicit
     opt-in: until a user has read what gets sent where and switched the
@@ -127,6 +141,14 @@ class AssistantPreference(TimeStampedModel):
     # they don't eat, equipment, schedule) - written by the user, sent
     # with every new conversation (prompts.conversation_context).
     about_me = models.TextField(blank=True)
+    # Which DataScopes the assistant may read - all on by default, since
+    # turning the assistant on already is the consent to it reading.
+    reads_workouts = models.BooleanField(default=True)
+    reads_body = models.BooleanField(default=True)
+    reads_food = models.BooleanField(default=True)
+    reads_activities = models.BooleanField(default=True)
+    reads_stretching = models.BooleanField(default=True)
+    reads_profile = models.BooleanField(default=True)
 
     def __str__(self):
         return f"{self.user.username}: assistant preference"
@@ -138,6 +160,9 @@ class AssistantPreference(TimeStampedModel):
     @property
     def has_own_key(self):
         return bool(self.api_key)
+
+    def reads(self, scope):
+        return getattr(self, f"reads_{scope}")
 
 
 class KeySource(models.TextChoices):

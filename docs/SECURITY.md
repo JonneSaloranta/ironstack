@@ -588,8 +588,10 @@ Optional (`docs/ASSISTANT.md`). What matters for an operator:
   messages, and the training, body and nutrition data the assistant
   looks up to answer them, are sent to Anthropic's API. Each user has to
   turn the assistant on themselves after reading exactly that, and can
-  turn it off and delete their conversations at any time. Use
-  `ASSISTANT_PROVIDER=ollama` to keep everything on your own network.
+  turn it off and delete their conversations at any time. On its settings
+  page each user can also switch off what it may read (workouts, body
+  measurements, food diary, activities, stretching, personal details).
+  Use `ASSISTANT_PROVIDER=ollama` to keep everything on your own network.
 - **Cost.** Usage of `ASSISTANT_API_KEY` is billed to you. By default only
   staff may use it. Profile → Administration → AI assistant sets who may,
   sets a per-user daily token limit, and shows usage.

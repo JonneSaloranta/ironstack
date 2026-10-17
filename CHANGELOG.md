@@ -33,6 +33,9 @@ narrated summary of the same version.
 - AI assistant: body measurements now come with their whole history -
   first and latest reading, change and range, however long ago they were
   logged - plus your notes, the weight trend per week and BMI.
+- AI assistant: choose what it may read on its settings page - workouts,
+  body measurements, food diary, activities, stretching and personal
+  details can each be switched off, and the change applies straight away.
 
 ### Changed
 - Every page now uses a plain hyphen (-) instead of the em-dash,
