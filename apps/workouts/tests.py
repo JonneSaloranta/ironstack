@@ -1,5 +1,5 @@
 import json
-from datetime import timedelta
+from datetime import date, datetime, time, timedelta
 from decimal import Decimal
 from unittest import mock
 
@@ -623,6 +623,22 @@ class TrainingModeViewTests(TestCase):
         response = self.client.get(reverse("workouts:session-train", args=[self.session.pk]))
         self.assertEqual(response.context["current"], self.performed)
 
+    def test_training_page_links_the_current_exercises_guide(self):
+        response = self.client.get(reverse("workouts:session-train", args=[self.session.pk]))
+        self.assertContains(
+            response,
+            reverse("exercises:exercise-guide", args=[self.performed.exercise_id]),
+        )
+        self.assertContains(response, 'data-tour="train-exercise-guide"')
+
+    def test_session_detail_links_each_exercises_guide(self):
+        response = self.client.get(reverse("workouts:session-detail", args=[self.session.pk]))
+        self.assertContains(
+            response,
+            reverse("exercises:exercise-guide", args=[self.performed.exercise_id]),
+        )
+        self.assertContains(response, 'data-tour="exercise-guide"')
+
     def test_rest_timer_carries_its_own_notification_text(self):
         # static/js/rest-timer.js's own notify() reads these off the
         # component's root element - a plain .js file can't render
@@ -1177,3 +1193,114 @@ class ExerciseNameSnapshotTests(TestCase):
             session.performed_exercises.get().exercise_name, self.exercise.name
         )
 
+
+
+class UpNextTests(TestCase):
+    """apps.workouts.services.next_workout/up_next - which workout a
+    program offers next, for weekly and continuous programs."""
+
+    # A Wednesday, so the weekday maths below is easy to follow.
+    TODAY = date(2026, 10, 21)
+
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        self.program = Program.objects.create(owner=self.alice, name="Split")
+        self.a = Workout.objects.create(program=self.program, name="A", order=0)
+        self.b = Workout.objects.create(program=self.program, name="B", order=1)
+        self.c = Workout.objects.create(program=self.program, name="C", order=2)
+
+    def _complete(self, workout, day):
+        session = services.start_session(self.alice, workout=workout)
+        services.complete_session(session)
+        started = timezone.make_aware(datetime.combine(day, time(12)))
+        WorkoutSession.objects.filter(pk=session.pk).update(started_at=started)
+        return session
+
+    def _next(self):
+        return services.next_workout(self.alice, self.program, self.TODAY)
+
+    def test_a_rotation_starts_with_the_first_workout(self):
+        self.assertEqual(self._next(), services.UpNext(self.program, self.a))
+
+    def test_a_rotation_offers_the_workout_after_the_last_one_done(self):
+        self._complete(self.a, self.TODAY - timedelta(days=3))
+        self._complete(self.b, self.TODAY - timedelta(days=1))
+        self.assertEqual(self._next().workout, self.c)
+
+    def test_a_rotation_wraps_around(self):
+        self._complete(self.c, self.TODAY - timedelta(days=1))
+        self.assertEqual(self._next().workout, self.a)
+
+    def test_an_abandoned_session_doesnt_move_the_rotation(self):
+        self._complete(self.a, self.TODAY - timedelta(days=2))
+        session = services.start_session(self.alice, workout=self.b)
+        services.abandon_session(session)
+        self.assertEqual(self._next().workout, self.b)
+
+    def test_a_weekly_program_offers_todays_workout(self):
+        Workout.objects.filter(pk=self.a.pk).update(scheduled_weekday=0)  # Monday
+        Workout.objects.filter(pk=self.b.pk).update(scheduled_weekday=2)  # Wednesday
+        self.assertEqual(self._next(), services.UpNext(self.program, self.b, self.TODAY))
+
+    def test_a_weekly_program_offers_the_next_scheduled_day_on_a_rest_day(self):
+        Workout.objects.filter(pk=self.a.pk).update(scheduled_weekday=0)  # Monday
+        Workout.objects.filter(pk=self.b.pk).update(scheduled_weekday=4)  # Friday
+        self.assertEqual(
+            self._next(), services.UpNext(self.program, self.b, self.TODAY + timedelta(days=2))
+        )
+
+    def test_a_weekly_program_moves_on_once_todays_workout_is_done(self):
+        Workout.objects.filter(pk=self.a.pk).update(scheduled_weekday=2)  # Wednesday
+        self._complete(self.a, self.TODAY)
+        self.assertEqual(
+            self._next(), services.UpNext(self.program, self.a, self.TODAY + timedelta(days=7))
+        )
+
+    def test_a_continuous_program_ignores_weekdays(self):
+        Workout.objects.filter(pk=self.b.pk).update(scheduled_weekday=2)  # Wednesday
+        self.program.is_continuous = True
+        self.program.save()
+        self._complete(self.b, self.TODAY - timedelta(days=1))
+        self.assertEqual(self._next(), services.UpNext(self.program, self.c))
+
+    def test_a_program_without_workouts_has_nothing_next(self):
+        empty = Program.objects.create(owner=self.alice, name="Empty")
+        self.assertIsNone(services.next_workout(self.alice, empty, self.TODAY))
+
+    def test_up_next_follows_the_program_last_trained_from(self):
+        other = Program.objects.create(owner=self.alice, name="Other")
+        other_x = Workout.objects.create(program=other, name="X", order=0)
+        Workout.objects.create(program=other, name="Y", order=1)
+        self._complete(self.a, self.TODAY - timedelta(days=2))
+        self._complete(other_x, self.TODAY - timedelta(days=1))
+        self.assertEqual(services.up_next(self.alice, self.TODAY).workout.name, "Y")
+
+    def test_up_next_is_none_before_training_from_a_program(self):
+        services.complete_session(services.start_session(self.alice, workout=None))
+        self.assertIsNone(services.up_next(self.alice, self.TODAY))
+
+    def test_dashboard_offers_the_next_workout(self):
+        self._complete(self.a, timezone.localdate() - timedelta(days=1))
+        self.client.login(username="alice", password="s3cret-pass")
+        response = self.client.get(reverse("dashboard"))
+        self.assertContains(response, "Up next")
+        self.assertContains(response, reverse("workouts:session-start", args=[self.b.pk]))
+
+    def test_dashboard_shows_the_in_progress_workout_instead(self):
+        self._complete(self.a, timezone.localdate() - timedelta(days=1))
+        services.start_session(self.alice, workout=self.b)
+        self.client.login(username="alice", password="s3cret-pass")
+        response = self.client.get(reverse("dashboard"))
+        self.assertContains(response, "Continue workout")
+        self.assertNotContains(response, "Up next")
+
+    def test_program_page_marks_the_next_workout(self):
+        self.program.is_continuous = True
+        self.program.save()
+        Workout.objects.filter(pk=self.a.pk).update(scheduled_weekday=0)
+        self.client.login(username="alice", password="s3cret-pass")
+        response = self.client.get(reverse("programs:program-detail", args=[self.program.pk]))
+        self.assertContains(response, 'data-tour="program-up-next"', count=1)
+        self.assertContains(response, "Continuous")
+        # A continuous program's weekdays are hidden, not just ignored.
+        self.assertNotContains(response, ">Monday<")

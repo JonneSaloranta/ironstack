@@ -32,6 +32,11 @@ class OpenPricesError(Exception):
     empty outcome, not an error."""
 
 
+class OpenPricesRateLimited(OpenPricesError):
+    """No request was sent: our own OFF budget is spent, or OFF
+    failed moments ago (apps.nutrition.off_http)."""
+
+
 def get_prices_for_barcode(barcode, *, size=PRICE_SAMPLE_SIZE):
     """The most recent raw Open Prices price reports for one product
     barcode (unparsed; call `summarize_prices` to collapse them into
@@ -49,6 +54,8 @@ def get_prices_for_barcode(barcode, *, size=PRICE_SAMPLE_SIZE):
             },
         )
         return response.json().get("items", [])
+    except off_http.OffRateLimited as exc:
+        raise OpenPricesRateLimited(str(exc)) from exc
     except (off_http.OffRequestError, ValueError) as exc:
         raise OpenPricesError(str(exc)) from exc
 

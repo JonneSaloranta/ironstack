@@ -1,0 +1,32 @@
+{% load i18n %}
+{% comment %}
+An info button that opens the exercise's guide (instructions, images,
+muscles) in a modal - used on the workout session pages so an
+unfamiliar exercise can be checked without leaving the session.
+Parameters: exercise_id, name (shown as the title - pass the performed
+exercise's display_name, the name as it was logged), tour (optional
+data-tour anchor for the button). The body is fetched on first open
+only, so the session page itself stays as light as before.
+{% endcomment %}
+{% trans name as translated_name %}
+<span x-data="{ guideOpen: false }">
+  <button type="button" class="help-button" @click="guideOpen = true"
+          hx-get="{% url 'exercises:exercise-guide' exercise_id %}" hx-trigger="click once"
+          hx-target="next .modal-body" hx-swap="innerHTML"
+          {% if tour %}data-tour="{{ tour }}"{% endif %}
+          aria-label="{% blocktrans with name=translated_name %}How to do {{ name }}{% endblocktrans %}">i</button>
+
+  <div class="modal-backdrop" x-show="guideOpen" x-cloak x-transition.opacity.duration.200ms
+       @click.self="guideOpen = false" @keydown.escape.window="guideOpen = false">
+    <div class="modal-card modal-card-wide" role="dialog" aria-modal="true" aria-label="{{ translated_name }}"
+         x-show="guideOpen" x-transition.scale.duration.200ms.origin.bottom>
+      <div class="modal-header">
+        <h2 class="no-margin">{{ translated_name }}</h2>
+        <button type="button" class="modal-close" @click="guideOpen = false" aria-label="{% trans "Dismiss" %}">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p class="text-muted">{% trans "Loading…" %}</p>
+      </div>
+    </div>
+  </div>
+</span>

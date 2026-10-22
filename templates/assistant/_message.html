@@ -1,8 +1,15 @@
 {% load i18n assistant_tags %}
+{% comment %}
+A reply being written polls itself: every 400 ms while RUNNING so the
+text streams in small steps (the worker writes it every 0.2 s,
+apps.assistant.services._TEXT_FLUSH_SECONDS), every second while it's
+still waiting for a worker. Real server-sent streaming would hold a
+gunicorn sync worker for the whole reply (docs/ASSISTANT.md).
+{% endcomment %}
 <div class="assistant-message assistant-message-{{ message.role }}" id="message-{{ message.pk }}"
      {% if message.is_in_progress %}aria-busy="true"
      hx-get="{% url 'assistant:message-fragment' message.pk %}"
-     hx-trigger="every 1s [document.visibilityState=='visible']" hx-swap="outerHTML"{% endif %}>
+     hx-trigger="every {% if message.status == "running" %}400ms{% else %}1s{% endif %} [document.visibilityState=='visible']" hx-swap="outerHTML"{% endif %}>
   <p class="assistant-message-author">{{ message.get_role_display }}</p>
   {% if message.role == "user" %}
     <p>{{ message.text|linebreaksbr }}</p>

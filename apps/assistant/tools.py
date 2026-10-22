@@ -698,6 +698,9 @@ def get_program(ctx, args):
         "id": program.pk,
         "name": program.name,
         "description": program.description,
+        # Continuous: workouts run in order regardless of the day, and
+        # scheduled_weekday is ignored.
+        "is_continuous": program.is_continuous,
         "prescriptions": [
             {
                 "workout": workout.name,

@@ -1,0 +1,46 @@
+{% load i18n core_extras %}
+{% comment %}
+The guide modal's body (exercises/_exercise_guide_modal.html), loaded on
+first open by ExerciseGuideView. Read-only on purpose - editing stays on
+the exercise page.
+{% endcomment %}
+{% if exercise.description %}<p>{{ exercise.description }}</p>{% endif %}
+
+{% if exercise.instructions %}
+  <h3>{% trans "Instructions" %}</h3>
+  <p>{{ exercise.instructions|translate_content|linebreaksbr }}</p>
+  {% if exercise.instructions_attribution %}<p class="attribution-note">{{ exercise.instructions_attribution }}</p>{% endif %}
+{% endif %}
+
+{% if exercise.images.all %}
+  <div class="exercise-image-gallery">
+    {% for image in exercise.images.all %}
+      <figure>
+        <img src="{{ image.image.url }}"{% if image.width and image.height %} width="{{ image.width }}" height="{{ image.height }}"{% endif %} alt="{% if image.caption %}{{ image.caption }}{% else %}{% trans exercise.name %}{% endif %}" loading="lazy">
+        {% if image.caption %}<figcaption>{{ image.caption }}</figcaption>{% endif %}
+        {% if image.attribution %}<figcaption class="attribution-note">{{ image.attribution }}</figcaption>{% endif %}
+      </figure>
+    {% endfor %}
+  </div>
+{% endif %}
+
+{% if not exercise.instructions and not exercise.images.all and not exercise.description %}
+  <p class="text-muted">{% trans "No instructions for this exercise yet." %}</p>
+{% endif %}
+
+<dl>
+  {% if exercise.equipment %}
+    <dt>{% trans "Equipment" %}</dt>
+    <dd>{% trans exercise.equipment.name %}</dd>
+  {% endif %}
+  {% if exercise.primary_muscle_groups.all %}
+    <dt>{% trans "Primary muscles" %}</dt>
+    <dd>{% for mg in exercise.primary_muscle_groups.all %}{% trans mg.name %}{% if not forloop.last %}, {% endif %}{% endfor %}</dd>
+  {% endif %}
+  {% if exercise.secondary_muscle_groups.all %}
+    <dt>{% trans "Secondary muscles" %}</dt>
+    <dd>{% for mg in exercise.secondary_muscle_groups.all %}{% trans mg.name %}{% if not forloop.last %}, {% endif %}{% endfor %}</dd>
+  {% endif %}
+</dl>
+
+<p><a class="button-link" href="{% url 'exercises:exercise-detail' exercise.pk %}">{% trans "Open exercise page" %} &rarr;</a></p>

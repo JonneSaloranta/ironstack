@@ -230,6 +230,7 @@ class ProgramSerializer(serializers.ModelSerializer):
             "id",
             "name",
             "description",
+            "is_continuous",
             "is_template",
             "version",
             "is_system_template",

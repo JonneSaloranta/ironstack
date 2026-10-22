@@ -7,7 +7,8 @@ PerformedExercise rows so later edits to the program can never rewrite
 what this session says happened.
 """
 
-from datetime import timedelta
+from dataclasses import dataclass
+from datetime import date, timedelta
 from decimal import Decimal
 
 from django.db import transaction
@@ -51,6 +52,69 @@ class SessionNotInProgress(Exception):
 def sessions_for(user):
     """A user's own workout sessions only - never shared, unlike programs."""
     return WorkoutSession.objects.filter(user=user)
+
+
+@dataclass(frozen=True)
+class UpNext:
+    """The workout that's next in a program. `day` is the date it's
+    scheduled for (a weekly program), or None for a rotation, which is
+    simply next whenever the user trains."""
+
+    program: object
+    workout: object
+    day: date | None = None
+
+
+def next_workout(user, program, today):
+    """The workout `user` has next in `program`, or None if it has none.
+
+    A weekly program (not `is_continuous`, at least one workout with a
+    `scheduled_weekday`) offers today's workout - or, if today has none
+    or it's already been done today, the next scheduled day's. Anything
+    else is a rotation: the workout after the one the user last
+    completed from this program, wrapping around, starting with the
+    first. Only a suggestion: the user can still start any workout."""
+    workouts = list(program.workouts.order_by("order", "id"))
+    if not workouts:
+        return None
+    completed = sessions_for(user).filter(
+        program=program, status=WorkoutSessionStatus.COMPLETED
+    )
+    scheduled = [w for w in workouts if w.scheduled_weekday is not None]
+    if not program.is_continuous and scheduled:
+        start = 1 if completed.filter(started_at__date=today).exists() else 0
+        for offset in range(start, start + 7):
+            day = today + timedelta(days=offset)
+            for workout in scheduled:
+                if workout.scheduled_weekday == day.weekday():
+                    return UpNext(program, workout, day)
+    last_workout_id = (
+        completed.filter(workout__isnull=False)
+        .order_by("-started_at")
+        .values_list("workout_id", flat=True)
+        .first()
+    )
+    ids = [w.id for w in workouts]
+    if last_workout_id in ids:
+        return UpNext(program, workouts[(ids.index(last_workout_id) + 1) % len(workouts)])
+    return UpNext(program, workouts[0])
+
+
+def up_next(user, today):
+    """What the dashboard offers next: next_workout() in the program the
+    user last completed a workout from, as long as they can still see
+    it. None if they haven't trained from a program yet."""
+    from apps.programs.services import visible_to
+
+    session = (
+        sessions_for(user)
+        .filter(status=WorkoutSessionStatus.COMPLETED, program__isnull=False)
+        .select_related("program")
+        .first()
+    )
+    if session is None or not visible_to(user).filter(pk=session.program_id).exists():
+        return None
+    return next_workout(user, session.program, today)
 
 
 #: How recent an identical in-progress session must be for

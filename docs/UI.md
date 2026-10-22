@@ -422,17 +422,27 @@ body_tracking_reminders_enabled` (Profile → Preferences →
 Notifications, on by default) turns the whole thing off regardless of
 staleness, for a user who'd simply rather not be reminded.
 
-Two items from this doc's original wishlist were deliberately
-not built as dashboard widgets:
-- **Recent activity** - `apps.activities` already has its own working,
-  dedicated history page per activity type; a dashboard widget would
-  just be a second, staler copy of the same data.
-- **Next workout** (a specific upcoming *scheduled* workout) - programs
-  do carry an optional per-workout weekday (`Workout.scheduled_weekday`,
-  Phase 3), but nothing reads it to compute "what's next" yet. The
-  in-progress banner covers "what am I doing right now"; a
-  schedule-aware "next workout" widget would be new logic, not just a
-  new dashboard card, so it's left out rather than half-built.
+**Recent activity** from this doc's original wishlist was deliberately
+not built as a dashboard widget: `apps.activities` already has its own
+working, dedicated history page per activity type, and a dashboard widget
+would just be a second, staler copy of the same data.
+
+**Up next.** With no workout in progress, the dashboard offers the next
+workout of the program the user last completed a workout from
+(`apps.workouts.services.up_next`), with a Start button, the freeform
+button and a link to the program to pick another. The program page tags
+the same workout "Up next". `next_workout` decides what's next:
+- A weekly program (some workout has `Workout.scheduled_weekday`) offers
+  today's workout, or - on a rest day, or once today's is done - the
+  next scheduled day's, labelled with that day.
+- A continuous program (`Program.is_continuous`, "no fixed weekdays") and
+  a program with no weekdays at all are a rotation: the workout after the
+  last one completed from it, in `order`, wrapping around. Weekdays on a
+  continuous program's workouts are ignored and hidden, and its workout
+  form doesn't offer one.
+
+It's only a suggestion - any workout can still be started from its
+program, and an abandoned session doesn't move the rotation.
 
 ### Mobile navigation
 All five bottom-nav sections are real, not placeholders: Home

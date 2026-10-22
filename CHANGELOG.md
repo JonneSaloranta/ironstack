@@ -18,6 +18,34 @@ narrated summary of the same version.
 
 ## [Unreleased]
 
+## [1.27.0] - 2026-10-22
+
+### Added
+- Programs: a program can be marked continuous - no fixed weekdays, the
+  workouts simply follow each other in order. The dashboard now shows
+  the next workout of the program you last trained from (today's or
+  the next scheduled day's in a weekly program, the one after your last
+  workout in a continuous one) with a Start button, and the program
+  page tags it "Up next".
+- Workouts: an "i" button next to each exercise during a session (both
+  the training view and the full view) opens the exercise's
+  instructions, images and muscles in a popup, so you don't have to
+  leave the workout to check how an exercise is done.
+- Admin: the food list shows when each food was last synced from
+  OpenFoodFacts and Open Prices, can be sorted by it, and can be
+  filtered by sync status (never synced, stale, fresh, queued). A new
+  action cancels queued refreshes.
+
+### Changed
+- AI assistant: a reply now appears in small steps as it's written,
+  instead of in two or three big jumps that made it look like it
+  arrived all at once.
+- Admin: "Refresh selected foods from OpenFoodFacts" (and the Open
+  Prices variant) now works for any number of foods. The selection is
+  queued and refreshed in the background at a pace that stays within
+  Open Food Facts' rate limit, instead of only the first 12 being
+  refreshed and the rest left for you to select again.
+
 ## [1.26.1] - 2026-10-17
 
 ### Fixed

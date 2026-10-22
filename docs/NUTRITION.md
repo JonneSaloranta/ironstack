@@ -423,9 +423,25 @@ Everything here follows OFF's published guidelines
   pages.
 - **Bulk data.** OFF asks that bulk needs use its CSV/JSONL/Parquet
   dumps, not the API. This app has no bulk sync; if one is ever added
-  it must use the dumps. Admin "refresh selected" actions are paced by
-  the same read budget (large selections are partly skipped and can be
-  re-run a minute later).
+  it must use the dumps. The admin "Refresh selected foods" actions
+  are not a bulk sync: they only re-fetch foods already imported, that
+  the admin picked, through the API, one product read at a time. They
+  queue the selection (`Food.off_refresh_requested_at` /
+  `price_refresh_requested_at`, `services.queue_off_refresh`) and start
+  a detached `manage.py refresh_off_queue` process
+  (`apps/nutrition/off_refresh_worker.py`, same shape as
+  `apps.core.backup_tasks`) that works through it at 6 reads a minute -
+  half the read budget, so users' own lookups keep working. If the
+  budget is spent anyway or OFF is in its failure cooldown, it waits a
+  minute and retries the same food; a food OFF has no data for, or that
+  fails for another reason, is dropped from the queue so it can't block
+  it. One worker runs at a time (a cache lock with a 2-minute
+  heartbeat); the queue is in the database, so after a restart the next
+  refresh action, or running the command by hand, carries on. The food
+  changelist shows `off_synced_at`/`price_synced_at` (sortable) and an
+  "OpenFoodFacts sync" filter (never synced / stale / fresh / queued),
+  so "Stale" + select all + one action refreshes everything that needs
+  it.
 - **Staging.** `OFF_API_BASE` / `OFF_SEARCH_BASE` point the client at
   `world.openfoodfacts.net` for testing.
 

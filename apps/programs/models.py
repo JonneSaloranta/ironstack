@@ -40,6 +40,11 @@ class Program(TimeStampedModel):
         help_text="Available to be copied rather than run directly.",
     )
     version = models.PositiveIntegerField(default=1)
+    # Run as a rotation: the workouts follow each other in `order`
+    # whatever the day, and any Workout.scheduled_weekday is ignored -
+    # see apps.workouts.services.next_workout for what "next" means
+    # either way.
+    is_continuous = models.BooleanField(default=False, verbose_name=_("continuous"))
 
     # apps.coaching - empty by default so a personal trainer can keep a
     # program as a private draft; sharing is a separate, deliberate

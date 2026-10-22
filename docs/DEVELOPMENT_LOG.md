@@ -6052,3 +6052,42 @@ nutrition in imperial units (module-wide), ruff DJ/UP/S/SIM, and the
 design-level items (authenticated media, Gravatar/OFF hotlinking, CSP
 `unsafe-eval`).
 
+## OpenFoodFacts refresh queue
+
+The admin "Refresh selected foods" actions only refreshed one minute's
+read budget (12 foods) and left the admin to re-select the rest, which
+didn't work for a large library. They now queue the selection on
+`Food.off_refresh_requested_at`/`price_refresh_requested_at` and start
+`manage.py refresh_off_queue` as a detached process
+(`apps/nutrition/off_refresh_worker.py`), which drains the queue at 6
+reads a minute, waits out rate limits instead of skipping, and exits
+when the queue is empty. The refresh functions got a
+`raise_on_rate_limit` flag (plus `open_prices.OpenPricesRateLimited`) so
+the worker can tell "not sent" from "no data", and save only the fields
+they change. The changelist shows both sync times (sortable), a sync
+status filter, the queue size and a cancel action.
+
+## Exercise guide during a session
+
+The session pages only showed an exercise's name, so checking how an
+unfamiliar exercise is done meant leaving the workout. An "i"
+`.help-button` next to the name (training view and full view,
+`exercises/_exercise_guide_modal.html`) opens a modal whose body is
+fetched on first open from `exercises:exercise-guide` - a read-only
+fragment (`ExerciseGuideView`, same `visible_to(..., include_inactive=True)`
+scoping as the detail page) with instructions, images, equipment,
+muscles and a link to the full page. The title is the performed
+exercise's `display_name`, so an old session keeps its logged name.
+
+## Continuous programs and "Up next"
+
+`Program.is_continuous` marks a program as a rotation with no fixed
+weekdays. `apps.workouts.services.next_workout` picks a program's next
+workout (weekly: today's or the next scheduled day's, skipping today
+once it's done; otherwise the one after the last completed, wrapping),
+and `up_next` applies it to the program last trained from. The dashboard
+shows it with a Start button when no workout is in progress, and the
+program page tags it. The flag is copied, exported/imported, in the API
+and in the assistant's program tool; a continuous program's workout form
+drops the weekday field and its weekday tags are hidden.
+

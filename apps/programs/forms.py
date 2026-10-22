@@ -33,12 +33,18 @@ class ProgramForm(forms.ModelForm):
 
     class Meta:
         model = Program
-        fields = ["name", "description", "is_template", "shared_with_clients"]
+        fields = ["name", "description", "is_continuous", "is_template", "shared_with_clients"]
         labels = {
+            "is_continuous": _("Continuous - no fixed weekdays"),
             "is_template": _("Save as a personal template"),
             "shared_with_clients": _("Share with these clients"),
         }
         help_texts = {
+            "is_continuous": _(
+                "The workouts follow each other in order, whatever the day: after "
+                "you finish one, the next one is up. Weekdays set on the workouts "
+                "are ignored."
+            ),
             "is_template": _(
                 "Templates aren't meant to be run directly - copy them into a "
                 "new program (from the program page) whenever you start a new cycle, "
@@ -65,9 +71,19 @@ class ProgramForm(forms.ModelForm):
 
 
 class WorkoutForm(forms.ModelForm):
+    """A continuous program (Program.is_continuous) has no weekdays, so
+    its workouts don't offer one - a value saved before the program
+    was switched stays in the row, unused, and returns if it's switched
+    back."""
+
     class Meta:
         model = Workout
         fields = ["name", "order", "scheduled_weekday", "notes"]
+
+    def __init__(self, *args, program=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        if program is not None and program.is_continuous:
+            del self.fields["scheduled_weekday"]
 
 
 class ExercisePrescriptionForm(forms.ModelForm):

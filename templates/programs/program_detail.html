@@ -24,6 +24,9 @@
     <span class="tag tag-muted">{% trans "My template" %}</span>
   {% endif %}
   {% if program.description %}<p>{% trans program.description %}</p>{% endif %}
+  {% if program.is_continuous %}
+    <p><span class="tag tag-outline">{% trans "Continuous" %}</span> <span class="text-muted">{% trans "The workouts follow each other in order, whatever the day." %}</span></p>
+  {% endif %}
   <p class="text-muted">
     {% blocktrans with version=program.version updated=program.updated_at|date:"Y-m-d" %}Version {{ version }} · updated {{ updated }}{% endblocktrans %}
   </p>
@@ -40,8 +43,11 @@
     <div class="top-bar no-border">
       <h2 class="card-title">
         {% trans workout.name %}
-        {% if workout.scheduled_weekday is not None %}
+        {% if workout.scheduled_weekday is not None and not program.is_continuous %}
           <span class="tag tag-muted">{{ workout.get_scheduled_weekday_display }}</span>
+        {% endif %}
+        {% if up_next.workout == workout %}
+          <span data-tour="program-up-next" class="tag">{% trans "Up next" %}{% if up_next.day %} · {% include "workouts/_up_next_day.html" with day=up_next.day %}{% endif %}</span>
         {% endif %}
       </h2>
       {% if can_edit %}

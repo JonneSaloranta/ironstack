@@ -1,9 +1,15 @@
+import math
+from datetime import timedelta
+
 from django.contrib import admin, messages
+from django.db.models import Q
 from django.shortcuts import redirect, render
 from django.urls import path, reverse
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
+from django.utils.translation import ngettext
 
-from . import off_http, services
+from . import off_refresh_worker, services
 from .models import (
     DiaryEntry,
     DietPlan,
@@ -47,6 +53,39 @@ class MealSlotAdmin(admin.ModelAdmin):
     search_fields = ["name"]
 
 
+class OffSyncStatusFilter(admin.SimpleListFilter):
+    """Finds the OpenFoodFacts foods that need a refresh, so "Stale" +
+    "select all" + one action refreshes every one of them."""
+
+    title = _("OpenFoodFacts sync")
+    parameter_name = "off_sync"
+
+    def lookups(self, request, model_admin):
+        return [
+            ("never", _("Never synced")),
+            ("stale", _("Stale")),
+            ("fresh", _("Fresh")),
+            ("queued", _("Queued for refresh")),
+        ]
+
+    def queryset(self, request, queryset):
+        cutoff = timezone.now() - timedelta(days=services.OPENFOODFACTS_STALENESS_DAYS)
+        off_foods = queryset.exclude(off_id__isnull=True).exclude(off_id="")
+        match self.value():
+            case "never":
+                return off_foods.filter(off_synced_at__isnull=True)
+            case "stale":
+                return off_foods.filter(off_synced_at__lte=cutoff)
+            case "fresh":
+                return off_foods.filter(off_synced_at__gt=cutoff)
+            case "queued":
+                return queryset.filter(
+                    Q(off_refresh_requested_at__isnull=False)
+                    | Q(price_refresh_requested_at__isnull=False)
+                )
+        return queryset
+
+
 @admin.register(Food)
 class FoodAdmin(admin.ModelAdmin):
     """Two admin-only bulk actions, both asked for directly:
@@ -64,11 +103,13 @@ class FoodAdmin(admin.ModelAdmin):
     this feature doesn't need to duplicate.
 
     `refresh_selected_from_off` - force-refreshes selected foods from
-    OpenFoodFacts immediately rather than waiting for the normal
-    14-day staleness gate to trigger on next use. Still an explicit,
-    admin-chosen selection, not the unconditional bulk re-sync this
-    integration was deliberately scoped away from in the first place
-    (docs/NUTRITION.md "OpenFoodFacts integration").
+    OpenFoodFacts rather than waiting for the normal 14-day staleness
+    gate to trigger on next use. Still an explicit, admin-chosen
+    selection, not the unconditional bulk re-sync this integration was
+    deliberately scoped away from in the first place
+    (docs/NUTRITION.md "OpenFoodFacts integration"). The selection is
+    queued and refreshed in the background at a rate-limit-safe pace
+    (apps.nutrition.off_refresh_worker), so it can be any size.
 
     `refresh_selected_prices` - the same shape, for Open Prices
     (docs/NUTRITION.md "Open Prices integration") instead of OFF's
@@ -77,72 +118,101 @@ class FoodAdmin(admin.ModelAdmin):
     for the normal 7-day staleness gate."""
 
     list_display = [
-        "name", "brand", "owner", "calories", "nutri_score", "nova_group", "off_id", "active",
+        "name", "brand", "owner", "calories", "nutri_score", "nova_group", "off_id",
+        "off_synced_at", "price_synced_at", "active",
     ]
-    list_filter = ["active", "nutri_score", "nova_group"]
+    list_filter = [OffSyncStatusFilter, "active", "nutri_score", "nova_group"]
     search_fields = ["name", "brand", "off_id"]
-    actions = ["merge_selected_foods", "refresh_selected_from_off", "refresh_selected_prices"]
+    actions = [
+        "merge_selected_foods",
+        "refresh_selected_from_off",
+        "refresh_selected_prices",
+        "cancel_queued_refresh",
+    ]
+
+    def changelist_view(self, request, extra_context=None):
+        pending = services.pending_off_refresh_count()
+        if pending and request.method == "GET":
+            if off_refresh_worker.is_running():
+                text = ngettext(
+                    "%(count)d food is queued for an OpenFoodFacts refresh and is being "
+                    "refreshed in the background.",
+                    "%(count)d foods are queued for an OpenFoodFacts refresh and are being "
+                    "refreshed in the background.",
+                    pending,
+                )
+            else:
+                text = ngettext(
+                    "%(count)d food is queued for an OpenFoodFacts refresh, but the "
+                    "background refresh isn't running - run a refresh action again to "
+                    "restart it.",
+                    "%(count)d foods are queued for an OpenFoodFacts refresh, but the "
+                    "background refresh isn't running - run a refresh action again to "
+                    "restart it.",
+                    pending,
+                )
+            self.message_user(request, text % {"count": pending}, level=messages.INFO)
+        return super().changelist_view(request, extra_context)
 
     @admin.action(description=_("Refresh selected foods from OpenFoodFacts"))
     def refresh_selected_from_off(self, request, queryset):
-        # force=True bypasses the normal 14-day staleness gate
-        # (docs/NUTRITION.md "OpenFoodFacts integration") - an
-        # explicit admin request for these specific rows right now,
-        # not the unconditional bulk re-sync this integration was
-        # deliberately scoped away from in the first place (a
-        # selection the admin made themselves, not "every OFF food
-        # in the database on a timer").
-        off_foods = list(queryset.exclude(off_id__isnull=True).exclude(off_id=""))
-        if not off_foods:
-            self.message_user(
-                request,
-                _("None of the selected foods were imported from OpenFoodFacts."),
-                level=messages.WARNING,
-            )
-            return
-        off_foods, deferred = _within_off_budget(off_foods)
-        refreshed = 0
-        for food in off_foods:
-            previous_synced_at = food.off_synced_at
-            result = services.import_or_refresh_food_from_off(food.off_id, force=True)
-            if result is not None and result.off_synced_at != previous_synced_at:
-                refreshed += 1
-        self.message_user(
-            request,
-            _("Refreshed %(refreshed)d of %(total)d food(s) from OpenFoodFacts.")
-            % {"refreshed": refreshed, "total": len(off_foods)},
-        )
-        _warn_deferred(self, request, deferred)
+        # Queued, not refreshed here: a request can only spend one
+        # minute of Open Food Facts' read budget, while the background
+        # worker (apps.nutrition.off_refresh_worker) paces any number
+        # of foods. force=True there bypasses the 14-day staleness gate
+        # - an explicit admin request for these rows, not the
+        # unconditional bulk re-sync this integration was deliberately
+        # scoped away from (docs/NUTRITION.md "OpenFoodFacts integration").
+        self._queue_refresh(request, queryset, prices=False)
 
     @admin.action(description=_("Refresh selected foods' prices from Open Prices"))
     def refresh_selected_prices(self, request, queryset):
-        # force=True bypasses the normal 7-day staleness gate
-        # (docs/NUTRITION.md "Open Prices integration") - an explicit
-        # admin request for these specific rows right now, not the
-        # unconditional bulk re-sync this integration was deliberately
-        # scoped away from, same reasoning as refresh_selected_from_off
-        # above.
-        off_foods = list(queryset.exclude(off_id__isnull=True).exclude(off_id=""))
-        if not off_foods:
+        # Same queue and worker as refresh_selected_from_off, for Open
+        # Prices (docs/NUTRITION.md "Open Prices integration").
+        self._queue_refresh(request, queryset, prices=True)
+
+    @admin.action(description=_("Cancel queued OpenFoodFacts refresh"))
+    def cancel_queued_refresh(self, request, queryset):
+        cancelled = services.cancel_off_refresh(queryset)
+        self.message_user(
+            request,
+            ngettext(
+                "Removed %(count)d food from the refresh queue.",
+                "Removed %(count)d foods from the refresh queue.",
+                cancelled,
+            )
+            % {"count": cancelled},
+        )
+
+    def _queue_refresh(self, request, queryset, *, prices):
+        if not queryset.exclude(off_id__isnull=True).exclude(off_id="").exists():
             self.message_user(
                 request,
                 _("None of the selected foods were imported from OpenFoodFacts."),
                 level=messages.WARNING,
             )
             return
-        off_foods, deferred = _within_off_budget(off_foods)
-        refreshed = 0
-        for food in off_foods:
-            previous_synced_at = food.price_synced_at
-            result = services.refresh_food_price(food, force=True)
-            if result.price_synced_at != previous_synced_at:
-                refreshed += 1
+        queued = services.queue_off_refresh(queryset, prices=prices)
+        pending = services.pending_off_refresh_count()
         self.message_user(
             request,
-            _("Refreshed %(refreshed)d of %(total)d food price(s) from Open Prices.")
-            % {"refreshed": refreshed, "total": len(off_foods)},
+            ngettext(
+                "Queued %(queued)d food for a background refresh.",
+                "Queued %(queued)d foods for a background refresh.",
+                queued,
+            )
+            % {"queued": queued}
+            + " "
+            + _(
+                "To stay within Open Food Facts' rate limit about %(rate)d are refreshed "
+                "a minute, so the %(pending)d still queued take about %(minutes)d min."
+            )
+            % {
+                "rate": off_refresh_worker.WORKER_READS_PER_MINUTE,
+                "pending": pending,
+                "minutes": math.ceil(pending / off_refresh_worker.WORKER_READS_PER_MINUTE),
+            },
         )
-        _warn_deferred(self, request, deferred)
 
     @admin.action(description=_("Merge selected foods into one…"))
     def merge_selected_foods(self, request, queryset):
@@ -206,29 +276,6 @@ class FoodAdmin(admin.ModelAdmin):
             "ids": ids_param,
         }
         return render(request, "admin/nutrition/food/merge.html", context)
-
-
-def _within_off_budget(foods):
-    """Split a selection into what one run may refresh and the rest.
-    Open Food Facts allows 15 product reads a minute per IP, so a run
-    handles at most `off_http.READ_LIMIT_PER_MINUTE` foods (see
-    docs/NUTRITION.md "OpenFoodFacts integration") and reports the
-    remainder instead of silently skipping it."""
-    limit = off_http.READ_LIMIT_PER_MINUTE
-    return foods[:limit], len(foods[limit:])
-
-
-def _warn_deferred(model_admin, request, deferred):
-    if deferred:
-        model_admin.message_user(
-            request,
-            _(
-                "%(count)d more food(s) were left for later to stay within Open Food "
-                "Facts' rate limit - run this action again in a minute."
-            )
-            % {"count": deferred},
-            level=messages.WARNING,
-        )
 
 
 @admin.register(OpenFoodFactsSettings)

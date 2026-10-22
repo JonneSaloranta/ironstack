@@ -555,6 +555,12 @@ BACKUP_ENCRYPTION_KEY = env("BACKUP_ENCRYPTION_KEY", default="")
 # gunicorn's timeout).
 BACKUP_TASKS_RUN_INLINE = env_bool("BACKUP_TASKS_RUN_INLINE", default=False)
 
+# apps.nutrition.off_refresh_worker - FoodAdmin's "Refresh selected
+# foods" actions start a detached, rate-paced background process. True
+# drains the queue inside the request without pausing between requests
+# (the test suite only - it would ignore Open Food Facts' rate limit).
+OFF_REFRESH_RUN_INLINE = env_bool("OFF_REFRESH_RUN_INLINE", default=False)
+
 # apps.accounts.models.User.totp_secret (docs/SECURITY.md "Two-factor
 # authentication") - encrypts that one field at rest once set; every
 # other field in this app stays deliberately unencrypted (see that

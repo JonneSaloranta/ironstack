@@ -182,6 +182,33 @@ class ProgramVisibilityServiceTests(TestCase):
         self.assertFalse(qs.filter(owner__isnull=True).exists())
 
 
+class ContinuousProgramFormTests(TestCase):
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        self.client.login(username="alice", password="s3cret-pass")
+
+    def test_a_program_can_be_created_as_continuous(self):
+        self.client.post(
+            reverse("programs:program-create"), {"name": "Rotation", "is_continuous": "on"}
+        )
+        self.assertTrue(Program.objects.get(name="Rotation").is_continuous)
+
+    def test_a_continuous_programs_workouts_offer_no_weekday(self):
+        program = Program.objects.create(owner=self.alice, name="Rotation", is_continuous=True)
+        response = self.client.get(reverse("programs:workout-create", args=[program.pk]))
+        self.assertNotContains(response, 'name="scheduled_weekday"')
+        program.is_continuous = False
+        program.save()
+        response = self.client.get(reverse("programs:workout-create", args=[program.pk]))
+        self.assertContains(response, 'name="scheduled_weekday"')
+
+    def test_export_round_trips_the_continuous_flag(self):
+        program = Program.objects.create(owner=self.alice, name="Rotation", is_continuous=True)
+        payload = services.export_program(program)
+        self.assertTrue(payload["is_continuous"])
+        self.assertTrue(services.import_program(self.alice, payload).is_continuous)
+
+
 class CopyProgramServiceTests(TestCase):
     def test_copy_program_deep_copies_workouts_and_prescriptions(self):
         alice = User.objects.create_user(username="alice", password="s3cret-pass")
@@ -199,6 +226,11 @@ class CopyProgramServiceTests(TestCase):
             workout__program=copy
         ).count()
         self.assertEqual(copy_prescription_count, template_prescription_count)
+
+    def test_copy_keeps_the_continuous_flag(self):
+        alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        source = Program.objects.create(owner=alice, name="Rotation", is_continuous=True)
+        self.assertTrue(services.copy_program(source, owner=alice).is_continuous)
 
     def test_editing_the_copy_does_not_affect_the_source_template(self):
         alice = User.objects.create_user(username="alice", password="s3cret-pass")
@@ -256,6 +288,7 @@ class ExportImportProgramServiceTests(TestCase):
         self.assertEqual(imported.owner, self.bob)
         self.assertEqual(imported.name, "Push Pull Legs")
         self.assertEqual(imported.description, "A 3-day split")
+        self.assertFalse(imported.is_continuous)
         self.assertFalse(imported.is_template)
         self.assertNotEqual(imported.pk, program.pk)
         imported_workout = imported.workouts.get()
