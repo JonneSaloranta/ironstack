@@ -18,6 +18,8 @@ narrated summary of the same version.
 
 ## [Unreleased]
 
+## [1.27.0] - 2026-10-22
+
 ### Added
 - Programs: a program can be marked continuous - no fixed weekdays, the
   workouts simply follow each other in order. The dashboard now shows
