@@ -390,6 +390,59 @@ class ExerciseInstructionsTests(TestCase):
         self.assertNotContains(response, ">Instructions<")
 
 
+class ExerciseGuideViewTests(TestCase):
+    """The read-only guide fragment the workout session pages open in a
+    modal (exercises/_exercise_guide_modal.html)."""
+
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        self.bob = User.objects.create_user(username="bob", password="s3cret-pass")
+        self.client.login(username="alice", password="s3cret-pass")
+
+    def _get(self, exercise):
+        return self.client.get(reverse("exercises:exercise-guide", args=[exercise.pk]))
+
+    def test_shows_instructions_images_and_a_link_to_the_full_page(self):
+        exercise = Exercise.objects.create(
+            name="My Move", owner=self.alice, instructions="Step one.\nStep two."
+        )
+        ExerciseImage.objects.create(exercise=exercise, image=_tiny_image(), caption="Start")
+        response = self._get(exercise)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Step one.<br>Step two.")
+        self.assertContains(response, "Start")
+        self.assertContains(response, reverse("exercises:exercise-detail", args=[exercise.pk]))
+        self.assertNotContains(response, "<html")
+
+    def test_has_no_owner_edit_controls(self):
+        exercise = Exercise.objects.create(name="My Move", owner=self.alice, instructions="x")
+        ExerciseImage.objects.create(exercise=exercise, image=_tiny_image())
+        response = self._get(exercise)
+        self.assertNotContains(response, "<form")
+        self.assertNotContains(
+            response, reverse("exercises:exercise-update", args=[exercise.pk])
+        )
+
+    def test_empty_state_for_an_exercise_with_nothing_to_show(self):
+        exercise = Exercise.objects.create(name="Bare System Move", owner=None)
+        self.assertContains(self._get(exercise), "No instructions for this exercise yet.")
+
+    def test_an_inactive_exercise_still_opens(self):
+        exercise = Exercise.objects.create(
+            name="Old Move", owner=self.alice, instructions="Still here.", active=False
+        )
+        self.assertContains(self._get(exercise), "Still here.")
+
+    def test_another_users_custom_exercise_is_not_found(self):
+        exercise = Exercise.objects.create(name="Bob Move", owner=self.bob, instructions="x")
+        self.assertEqual(self._get(exercise).status_code, 404)
+
+    def test_requires_login(self):
+        exercise = Exercise.objects.create(name="Bare System Move", owner=None)
+        self.client.logout()
+        self.assertEqual(self._get(exercise).status_code, 302)
+
+
 class ExerciseImageModelTests(TestCase):
     def setUp(self):
         self.alice = User.objects.create_user(username="alice", password="s3cret-pass")

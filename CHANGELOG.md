@@ -18,18 +18,22 @@ narrated summary of the same version.
 
 ## [Unreleased]
 
+### Added
+- Workouts: an "i" button next to each exercise during a session (both
+  the training view and the full view) opens the exercise's
+  instructions, images and muscles in a popup, so you don't have to
+  leave the workout to check how an exercise is done.
+- Admin: the food list shows when each food was last synced from
+  OpenFoodFacts and Open Prices, can be sorted by it, and can be
+  filtered by sync status (never synced, stale, fresh, queued). A new
+  action cancels queued refreshes.
+
 ### Changed
 - Admin: "Refresh selected foods from OpenFoodFacts" (and the Open
   Prices variant) now works for any number of foods. The selection is
   queued and refreshed in the background at a pace that stays within
   Open Food Facts' rate limit, instead of only the first 12 being
   refreshed and the rest left for you to select again.
-
-### Added
-- Admin: the food list shows when each food was last synced from
-  OpenFoodFacts and Open Prices, can be sorted by it, and can be
-  filtered by sync status (never synced, stale, fresh, queued). A new
-  action cancels queued refreshes.
 
 ## [1.26.1] - 2026-10-17
 

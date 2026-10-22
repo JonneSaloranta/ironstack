@@ -61,6 +61,26 @@ class ExerciseDetailView(LoginRequiredMixin, DetailView):
         return context
 
 
+class ExerciseGuideView(LoginRequiredMixin, DetailView):
+    """The "how to do it" part of an exercise - instructions, images,
+    equipment and muscles - as a bare fragment for the guide modal on
+    the workout session pages (exercises/_exercise_guide_modal.html),
+    so checking an unfamiliar exercise doesn't mean leaving the
+    session. Read-only: no owner edit controls. Inactive exercises
+    still open, since an old session can refer to one."""
+
+    model = Exercise
+    template_name = "exercises/_exercise_guide.html"
+    context_object_name = "exercise"
+
+    def get_queryset(self):
+        return (
+            services.visible_to(self.request.user, include_inactive=True)
+            .select_related("equipment")
+            .prefetch_related("images", "primary_muscle_groups", "secondary_muscle_groups")
+        )
+
+
 class ExerciseCreateView(LoginRequiredMixin, CreateView):
     model = Exercise
     form_class = ExerciseForm

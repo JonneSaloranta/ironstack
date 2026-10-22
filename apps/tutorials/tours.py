@@ -220,6 +220,15 @@ TOURS = (
                 optional=True,
             ),
             Step(
+                "exercise-guide",
+                _("How to do it"),
+                _(
+                    "Tap i to see the exercise's instructions and images without "
+                    "leaving your workout."
+                ),
+                optional=True,
+            ),
+            Step(
                 "set-suggestion",
                 _("Suggested weight"),
                 _(
@@ -282,6 +291,15 @@ TOURS = (
                 "train-exercise",
                 _("Current exercise"),
                 _("Its target and the sets you've already logged; tap a set to edit it."),
+                optional=True,
+            ),
+            Step(
+                "train-exercise-guide",
+                _("How to do it"),
+                _(
+                    "Tap i to see the exercise's instructions and images without "
+                    "leaving your workout."
+                ),
                 optional=True,
             ),
             Step(

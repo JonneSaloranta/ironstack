@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: IronStack\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-22 10:36+0000\n"
+"POT-Creation-Date: 2026-10-22 14:40+0000\n"
 "Language: et\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -610,8 +610,8 @@ msgid_plural "%(counter)s workouts"
 msgstr[0] "%(counter)s trenn"
 msgstr[1] "%(counter)s trenni"
 
-#: apps/analytics/achievements.py:150 apps/tutorials/tours.py:423
-#: apps/tutorials/tours.py:496
+#: apps/analytics/achievements.py:150 apps/tutorials/tours.py:441
+#: apps/tutorials/tours.py:514
 msgid "Personal records"
 msgstr "Isiklikke rekordeid"
 
@@ -670,7 +670,7 @@ msgstr "Muutmine"
 #: templates/programs/program_confirm_delete.html:14
 #: templates/programs/program_detail.html:52
 #: templates/stretching/session_detail.html:53
-#: templates/workouts/_performed_exercise_card.html:32
+#: templates/workouts/_performed_exercise_card.html:35
 msgid "Delete"
 msgstr "Kustuta"
 
@@ -686,21 +686,21 @@ msgid "A label to tell your keys apart."
 msgstr "Silt, mille abil eristada oma võtmeid."
 
 #: apps/api/models.py:24 apps/tutorials/tours.py:32
-#: apps/tutorials/tours.py:1056 templates/accounts/profile.html:3
+#: apps/tutorials/tours.py:1074 templates/accounts/profile.html:3
 #: templates/accounts/profile.html:12 templates/api/key_list.html:85
 #: templates/base.html:207 templates/base.html:230
 #: templates/tutorials/tutorial_list.html:5
 msgid "Profile"
 msgstr "Profiil"
 
-#: apps/api/models.py:25 apps/tutorials/tours.py:275
+#: apps/api/models.py:25 apps/tutorials/tours.py:284
 #: templates/api/key_list.html:89 templates/exercises/exercise_detail.html:5
 #: templates/exercises/exercise_list.html:3
 #: templates/exercises/exercise_list.html:6
 msgid "Exercises"
 msgstr "Harjutused"
 
-#: apps/api/models.py:26 apps/core/models.py:162 apps/tutorials/tours.py:321
+#: apps/api/models.py:26 apps/core/models.py:162 apps/tutorials/tours.py:339
 #: templates/api/key_list.html:93 templates/base.html:203
 #: templates/base.html:205 templates/programs/program_detail.html:5
 #: templates/programs/program_list.html:3
@@ -709,7 +709,7 @@ msgid "Programs"
 msgstr "Programmid"
 
 #: apps/api/models.py:27 apps/core/models.py:161 apps/tutorials/tours.py:25
-#: apps/tutorials/tours.py:369 templates/analytics/dashboard.html:13
+#: apps/tutorials/tours.py:387 templates/analytics/dashboard.html:13
 #: templates/api/key_list.html:97 templates/coaching/client_detail.html:26
 #: templates/workouts/session_detail.html:5
 #: templates/workouts/session_list.html:6
@@ -721,7 +721,7 @@ msgid "Measurements"
 msgstr "Mõõtmised"
 
 #: apps/api/models.py:29 apps/assistant/models.py:115 apps/core/models.py:165
-#: apps/tutorials/tours.py:561 templates/activities/activity_history.html:5
+#: apps/tutorials/tours.py:579 templates/activities/activity_history.html:5
 #: templates/activities/activity_type_list.html:3
 #: templates/activities/activity_type_list.html:6
 #: templates/api/key_list.html:105 templates/core/dashboard.html:153
@@ -749,7 +749,7 @@ msgstr "Toitumine"
 
 #: apps/api/models.py:33 apps/assistant/models.py:116 apps/core/models.py:167
 #: apps/stretching/models.py:209 apps/tutorials/tours.py:30
-#: apps/tutorials/tours.py:918 templates/api/key_list.html:113
+#: apps/tutorials/tours.py:936 templates/api/key_list.html:113
 #: templates/base.html:190 templates/base.html:192
 #: templates/core/dashboard.html:159 templates/stretching/_cooldown_card.html:7
 #: templates/stretching/home.html:3 templates/stretching/home.html:6
@@ -961,7 +961,7 @@ msgstr "Treeningute ajalugu, rekordid ja progressioon"
 msgid "Body measurements and weight trend"
 msgstr "Kehamõõdud ja kaalu trend"
 
-#: apps/assistant/models.py:114 apps/tutorials/tours.py:648
+#: apps/assistant/models.py:114 apps/tutorials/tours.py:666
 #: templates/nutrition/diary_day.html:3 templates/nutrition/diary_day.html:13
 msgid "Food diary"
 msgstr "Toidupäevik"
@@ -1460,7 +1460,7 @@ msgid "unknown"
 msgstr "tundmatu"
 
 #: apps/core/formatting.py:16 templates/programs/program_detail.html:64
-#: templates/workouts/_performed_exercise_card.html:8
+#: templates/workouts/_performed_exercise_card.html:11
 msgid "Rate of Perceived Exertion"
 msgstr "Tajutud pingutuse aste"
 
@@ -1680,7 +1680,7 @@ msgstr ""
 "ühele leibkonnale, mitte avalik sait, mida keegi peaks otsima."
 
 #: apps/core/models.py:163 apps/tutorials/tours.py:27
-#: apps/tutorials/tours.py:428 apps/tutorials/tours.py:437
+#: apps/tutorials/tours.py:446 apps/tutorials/tours.py:455
 #: templates/analytics/dashboard.html:3 templates/analytics/dashboard.html:6
 #: templates/base.html:195 templates/base.html:197
 msgid "Progress"
@@ -1725,7 +1725,7 @@ msgstr "%(actual)s kcal logitud."
 msgid "Stretched %(minutes)s min."
 msgstr "Venitamist %(minutes)s min."
 
-#: apps/core/views.py:309 apps/tutorials/tours.py:841
+#: apps/core/views.py:309 apps/tutorials/tours.py:859
 #: templates/nutrition/_subnav.html:47 templates/nutrition/dashboard.html:73
 #: templates/nutrition/diet_plan_detail.html:21
 #: templates/nutrition/diet_plan_shopping.html:3
@@ -2528,23 +2528,23 @@ msgstr ""
 "Mitu pilti võib üks harjutus korraga sisaldada. Kehtib kõigi harjutuste "
 "kohta, nii süsteemi enda kui ka kasutaja loodud."
 
-#: apps/exercises/views.py:72
+#: apps/exercises/views.py:92
 msgid "Exercise created."
 msgstr "Harjutus loodud."
 
-#: apps/exercises/views.py:91
+#: apps/exercises/views.py:111
 msgid "Exercise updated."
 msgstr "Harjutus uuendatud."
 
-#: apps/exercises/views.py:105
+#: apps/exercises/views.py:125
 msgid "Exercise deactivated."
 msgstr "Harjutus deaktiveeritud."
 
-#: apps/exercises/views.py:126
+#: apps/exercises/views.py:146
 msgid "Image added."
 msgstr "Pilt lisatud."
 
-#: apps/exercises/views.py:142
+#: apps/exercises/views.py:162
 msgid "Image removed."
 msgstr "Pilt eemaldatud."
 
@@ -2588,7 +2588,7 @@ msgstr "Kael"
 
 #: apps/measurements/models.py:18 templates/core/_bmi_card.html:31
 #: templates/nutrition/dashboard.html:109
-#: templates/workouts/_performed_exercise_card.html:15
+#: templates/workouts/_performed_exercise_card.html:18
 msgid "Weight"
 msgstr "Kaal"
 
@@ -3019,7 +3019,7 @@ msgid "Plan name"
 msgstr "Plaani nimi"
 
 #: apps/nutrition/forms.py:424 apps/nutrition/forms.py:596
-#: apps/tutorials/tours.py:908 templates/nutrition/stats.html:76
+#: apps/tutorials/tours.py:926 templates/nutrition/stats.html:76
 msgid "Daily calories"
 msgstr "Päevased kalorid"
 
@@ -3113,7 +3113,7 @@ msgstr ""
 "toitumiskava ja saavad sellest oma koopia importida. Jäta nimekiri tühjaks, "
 "et hoida see privaatsena."
 
-#: apps/nutrition/forms.py:816 apps/tutorials/tours.py:863
+#: apps/nutrition/forms.py:816 apps/tutorials/tours.py:881
 #: templates/nutrition/diet_plan_shopping.html:65
 msgid "Shopping days"
 msgstr "Poepäevad"
@@ -4428,7 +4428,7 @@ msgstr "Korduste rekord"
 msgid "Rep-specific PR"
 msgstr "Kordusepõhine rekord"
 
-#: apps/records/models.py:14 apps/tutorials/tours.py:484
+#: apps/records/models.py:14 apps/tutorials/tours.py:502
 #: templates/analytics/exercise_analytics.html:20
 msgid "Estimated 1RM"
 msgstr "Hinnanguline 1RM"
@@ -5448,7 +5448,7 @@ msgstr "Kavad ja harjutused"
 msgid "Body and activities"
 msgstr "Keha ja tegevused"
 
-#: apps/tutorials/tours.py:31 apps/tutorials/tours.py:1066
+#: apps/tutorials/tours.py:31 apps/tutorials/tours.py:1084
 msgid "Friends and groups"
 msgstr "Sõbrad ja grupid"
 
@@ -5592,11 +5592,23 @@ msgid ""
 msgstr ""
 "Logitud seeriad on siin ja saad ükskõik millist neist muuta või kustutada."
 
-#: apps/tutorials/tours.py:224 apps/tutorials/tours.py:289
+#: apps/tutorials/tours.py:224 apps/tutorials/tours.py:298
+#: templates/stretching/stretch_detail.html:30
+msgid "How to do it"
+msgstr "Kuidas teha"
+
+#: apps/tutorials/tours.py:226 apps/tutorials/tours.py:300
+msgid ""
+"Tap i to see the exercise's instructions and images without leaving your "
+"workout."
+msgstr ""
+"Puuduta i-nuppu, et näha harjutuse juhiseid ja pilte trennist lahkumata."
+
+#: apps/tutorials/tours.py:233 apps/tutorials/tours.py:307
 msgid "Suggested weight"
 msgstr "Soovitatud raskus"
 
-#: apps/tutorials/tours.py:226
+#: apps/tutorials/tours.py:235
 msgid ""
 "Based on your last sessions, with the reason and how confident it is. It's "
 "only a starting point - you decide what goes on the bar."
@@ -5604,11 +5616,11 @@ msgstr ""
 "Põhineb sinu viimastel treeningutel, koos põhjenduse ja kindlusastmega. See "
 "on vaid lähtepunkt - sina otsustad, mis kangile läheb."
 
-#: apps/tutorials/tours.py:233
+#: apps/tutorials/tours.py:242
 msgid "Log a set"
 msgstr "Logi seeria"
 
-#: apps/tutorials/tours.py:235
+#: apps/tutorials/tours.py:244
 msgid ""
 "Enter weight and reps and tap Log set. RPE, RIR, warm-up and failure are "
 "optional. New personal records are detected automatically."
@@ -5617,19 +5629,19 @@ msgstr ""
 "läbikukkumine on valikulised. Uued isiklikud rekordid tuvastatakse "
 "automaatselt."
 
-#: apps/tutorials/tours.py:242
+#: apps/tutorials/tours.py:251
 msgid "Add an exercise"
 msgstr "Lisa harjutus"
 
-#: apps/tutorials/tours.py:243
+#: apps/tutorials/tours.py:252
 msgid "Add anything that isn't in the plan - it only changes this workout."
 msgstr "Lisa kõike, mida kavas pole - see muudab ainult seda treeningut."
 
-#: apps/tutorials/tours.py:248 apps/tutorials/tours.py:269
+#: apps/tutorials/tours.py:257 apps/tutorials/tours.py:278
 msgid "Training mode"
 msgstr "Treeningurežiim"
 
-#: apps/tutorials/tours.py:250
+#: apps/tutorials/tours.py:259
 msgid ""
 "One exercise at a time with big buttons and a rest timer - the easiest way "
 "to log at the gym. This button follows you on every page."
@@ -5637,11 +5649,11 @@ msgstr ""
 "Üks harjutus korraga, suured nupud ja puhkeaja taimer - lihtsaim viis "
 "jõusaalis logida. See nupp liigub sinuga igal lehel kaasas."
 
-#: apps/tutorials/tours.py:257 apps/tutorials/tours.py:999
+#: apps/tutorials/tours.py:266 apps/tutorials/tours.py:1017
 msgid "Finish"
 msgstr "Lõpeta"
 
-#: apps/tutorials/tours.py:259
+#: apps/tutorials/tours.py:268
 msgid ""
 "Complete the workout when you're done. Abandon keeps it in your history as "
 "unfinished."
@@ -5649,7 +5661,7 @@ msgstr ""
 "Märgi treening lõpetatuks, kui oled valmis. Katkestatud treening jääb "
 "ajalukku lõpetamata kujul."
 
-#: apps/tutorials/tours.py:277
+#: apps/tutorials/tours.py:286
 msgid ""
 "The dots show your progress. The arrows move between exercises in any order "
 "- the next unfinished one opens by default."
@@ -5657,25 +5669,25 @@ msgstr ""
 "Täpid näitavad sinu edenemist. Nooltega liigud harjutuste vahel mis tahes "
 "järjekorras - vaikimisi avaneb järgmine lõpetamata harjutus."
 
-#: apps/tutorials/tours.py:283
+#: apps/tutorials/tours.py:292
 msgid "Current exercise"
 msgstr "Praegune harjutus"
 
-#: apps/tutorials/tours.py:284
+#: apps/tutorials/tours.py:293
 msgid "Its target and the sets you've already logged; tap a set to edit it."
 msgstr ""
 "Selle eesmärk ja juba logitud seeriad; puuduta seeriat selle muutmiseks."
 
-#: apps/tutorials/tours.py:290
+#: apps/tutorials/tours.py:308
 msgid ""
 "A starting point from your history. You can always enter something else."
 msgstr "Lähtepunkt sinu ajaloost. Saad alati sisestada midagi muud."
 
-#: apps/tutorials/tours.py:295
+#: apps/tutorials/tours.py:313
 msgid "Log the set"
 msgstr "Logi seeria"
 
-#: apps/tutorials/tours.py:297
+#: apps/tutorials/tours.py:315
 msgid ""
 "Weight and reps, then Log set. “More options” has RPE, RIR, warm-up, failure "
 "and notes."
@@ -5683,11 +5695,11 @@ msgstr ""
 "Raskus ja kordused, siis Logi seeria. „Rohkem valikuid” sisaldab RPE-d, RIR-"
 "i, soojendust, läbikukkumist ja märkmeid."
 
-#: apps/tutorials/tours.py:304 templates/workouts/session_train.html:26
+#: apps/tutorials/tours.py:322 templates/workouts/session_train.html:26
 msgid "Rest timer"
 msgstr "Puhkeajastin"
 
-#: apps/tutorials/tours.py:306
+#: apps/tutorials/tours.py:324
 msgid ""
 "Starts by itself after each set and chimes when rest is over. Adjust it by "
 "15 seconds, skip it, or mute the sound."
@@ -5695,36 +5707,36 @@ msgstr ""
 "Käivitub iga seeria järel ise ja helistab, kui puhkus on läbi. Muuda seda 15 "
 "sekundi kaupa, jäta vahele või lülita heli välja."
 
-#: apps/tutorials/tours.py:312 templates/workouts/session_train.html:9
+#: apps/tutorials/tours.py:330 templates/workouts/session_train.html:9
 msgid "Full view"
 msgstr "Täisvaade"
 
-#: apps/tutorials/tours.py:313
+#: apps/tutorials/tours.py:331
 msgid "Every exercise at once - for reviewing or correcting the whole workout."
 msgstr ""
 "Kõik harjutused korraga - kogu treeningu ülevaatamiseks või parandamiseks."
 
-#: apps/tutorials/tours.py:326
+#: apps/tutorials/tours.py:344
 msgid "Create or import"
 msgstr "Loo või impordi"
 
-#: apps/tutorials/tours.py:327
+#: apps/tutorials/tours.py:345
 msgid "Build your own program, or import one someone exported for you."
 msgstr "Koosta oma kava või impordi kava, mille keegi sulle eksportis."
 
-#: apps/tutorials/tours.py:331
+#: apps/tutorials/tours.py:349
 msgid "Your programs"
 msgstr "Sinu kavad"
 
-#: apps/tutorials/tours.py:332
+#: apps/tutorials/tours.py:350
 msgid "Open a program to see its workouts and start one."
 msgstr "Ava kava, et näha selle treeninguid ja alustada üht neist."
 
-#: apps/tutorials/tours.py:337
+#: apps/tutorials/tours.py:355
 msgid "Ready-made programs"
 msgstr "Valmiskavad"
 
-#: apps/tutorials/tours.py:339
+#: apps/tutorials/tours.py:357
 msgid ""
 "Copy a built-in program to make it yours. Changing your copy never changes "
 "workouts you've already logged."
@@ -5732,15 +5744,15 @@ msgstr ""
 "Kopeeri sisseehitatud kava endale. Koopia muutmine ei muuda kunagi juba "
 "logitud treeninguid."
 
-#: apps/tutorials/tours.py:349
+#: apps/tutorials/tours.py:367
 msgid "A program"
 msgstr "Kava"
 
-#: apps/tutorials/tours.py:355
+#: apps/tutorials/tours.py:373
 msgid "About the program"
 msgstr "Kavast"
 
-#: apps/tutorials/tours.py:357
+#: apps/tutorials/tours.py:375
 msgid ""
 "Its description and version. Editing a program never changes workouts you've "
 "already logged."
@@ -5748,17 +5760,17 @@ msgstr ""
 "Selle kirjeldus ja versioon. Kava muutmine ei muuda kunagi juba logitud "
 "treeninguid."
 
-#: apps/tutorials/tours.py:363 apps/tutorials/tours.py:970
+#: apps/tutorials/tours.py:381 apps/tutorials/tours.py:988
 msgid "Make it yours"
 msgstr "Tee see enda omaks"
 
-#: apps/tutorials/tours.py:364
+#: apps/tutorials/tours.py:382
 msgid ""
 "This is a template: copy it to a program of your own to edit and use it."
 msgstr ""
 "See on mall: kopeeri see oma kavaks, et saaksid seda muuta ja kasutada."
 
-#: apps/tutorials/tours.py:371
+#: apps/tutorials/tours.py:389
 msgid ""
 "A program is a set of workouts, each with its exercises, sets, reps and how "
 "the weight should progress."
@@ -5766,118 +5778,118 @@ msgstr ""
 "Kava koosneb treeningutest, millest igaühel on oma harjutused, seeriad, "
 "kordused ja raskuse tõstmise viis."
 
-#: apps/tutorials/tours.py:378
+#: apps/tutorials/tours.py:396
 msgid "Add exercises"
 msgstr "Lisa harjutusi"
 
-#: apps/tutorials/tours.py:379
+#: apps/tutorials/tours.py:397
 msgid "Add an exercise to a workout and set its target sets and reps."
 msgstr "Lisa treeningule harjutus ja määra selle eesmärkseeriad ja -kordused."
 
-#: apps/tutorials/tours.py:384
+#: apps/tutorials/tours.py:402
 msgid "Start it"
 msgstr "Alusta"
 
-#: apps/tutorials/tours.py:385
+#: apps/tutorials/tours.py:403
 msgid "Starts a workout with these exercises and targets filled in."
 msgstr "Alustab treeningut, kus need harjutused ja eesmärgid on juba täidetud."
 
-#: apps/tutorials/tours.py:390
+#: apps/tutorials/tours.py:408
 msgid "Add a workout"
 msgstr "Lisa treening"
 
-#: apps/tutorials/tours.py:391
+#: apps/tutorials/tours.py:409
 msgid "For example a second training day."
 msgstr "Näiteks teine treeningpäev."
 
-#: apps/tutorials/tours.py:399
+#: apps/tutorials/tours.py:417
 msgid "Exercise library"
 msgstr "Harjutuste kogu"
 
-#: apps/tutorials/tours.py:404
+#: apps/tutorials/tours.py:422
 msgid "Find an exercise"
 msgstr "Leia harjutus"
 
-#: apps/tutorials/tours.py:405
+#: apps/tutorials/tours.py:423
 msgid "Search by name, or filter by muscle group and equipment."
 msgstr "Otsi nime järgi või filtreeri lihasgrupi ja varustuse järgi."
 
-#: apps/tutorials/tours.py:409
+#: apps/tutorials/tours.py:427
 msgid "Your own exercises"
 msgstr "Sinu harjutused"
 
-#: apps/tutorials/tours.py:410
+#: apps/tutorials/tours.py:428
 msgid "Missing something? Add it - only you will see it."
 msgstr "Midagi puudu? Lisa see - ainult sina näed seda."
 
-#: apps/tutorials/tours.py:417
+#: apps/tutorials/tours.py:435
 msgid "An exercise"
 msgstr "Harjutus"
 
-#: apps/tutorials/tours.py:424
+#: apps/tutorials/tours.py:442
 msgid "Your best lifts for this exercise, kept up to date automatically."
 msgstr "Sinu parimad tõsted selles harjutuses, uuenevad automaatselt."
 
-#: apps/tutorials/tours.py:429
+#: apps/tutorials/tours.py:447
 msgid "Your estimated one-rep max and volume for this exercise over time."
 msgstr ""
 "Sinu hinnanguline ühe korduse maksimum ja maht selles harjutuses aja jooksul."
 
-#: apps/tutorials/tours.py:442 apps/tutorials/tours.py:479
+#: apps/tutorials/tours.py:460 apps/tutorials/tours.py:497
 msgid "Time range"
 msgstr "Ajavahemik"
 
-#: apps/tutorials/tours.py:443
+#: apps/tutorials/tours.py:461
 msgid "Everything on this page follows the range you pick here."
 msgstr "Kõik sellel lehel järgib siin valitud ajavahemikku."
 
-#: apps/tutorials/tours.py:447
+#: apps/tutorials/tours.py:465
 msgid "Summary"
 msgstr "Kokkuvõte"
 
-#: apps/tutorials/tours.py:448
+#: apps/tutorials/tours.py:466
 msgid "Workouts, time spent training and total volume lifted in the range."
 msgstr ""
 "Treeningud, treeningule kulunud aeg ja kogu tõstetud maht valitud "
 "ajavahemikus."
 
-#: apps/tutorials/tours.py:452
+#: apps/tutorials/tours.py:470
 msgid "One exercise"
 msgstr "Üks harjutus"
 
-#: apps/tutorials/tours.py:453
+#: apps/tutorials/tours.py:471
 msgid "Pick an exercise to see how its strength has developed."
 msgstr "Vali harjutus, et näha, kuidas selle jõud on arenenud."
 
-#: apps/tutorials/tours.py:458
+#: apps/tutorials/tours.py:476
 msgid "Weekly volume"
 msgstr "Nädala maht"
 
-#: apps/tutorials/tours.py:459
+#: apps/tutorials/tours.py:477
 msgid ""
 "How much you lifted each week. The table under the chart has exact figures."
 msgstr ""
 "Kui palju sa igal nädalal tõstsid. Diagrammi all olevas tabelis on täpsed "
 "arvud."
 
-#: apps/tutorials/tours.py:464
+#: apps/tutorials/tours.py:482
 msgid "Muscle groups"
 msgstr "Lihasgrupid"
 
-#: apps/tutorials/tours.py:465
+#: apps/tutorials/tours.py:483
 msgid "Which muscles got the most work - handy for spotting imbalances."
 msgstr ""
 "Millised lihased said kõige rohkem tööd - kasulik tasakaalutuse märkamiseks."
 
-#: apps/tutorials/tours.py:473
+#: apps/tutorials/tours.py:491
 msgid "Progress for an exercise"
 msgstr "Harjutuse areng"
 
-#: apps/tutorials/tours.py:480
+#: apps/tutorials/tours.py:498
 msgid "Choose how far back to look."
 msgstr "Vali, kui kaugele tagasi vaadata."
 
-#: apps/tutorials/tours.py:486
+#: apps/tutorials/tours.py:504
 msgid ""
 "The heaviest single rep you could likely lift, estimated from your sets. A "
 "rising line means you're getting stronger."
@@ -5885,143 +5897,143 @@ msgstr ""
 "Raskeim üksikkordus, mida tõenäoliselt suudaksid, hinnatud sinu seeriate "
 "põhjal. Tõusev joon tähendab, et muutud tugevamaks."
 
-#: apps/tutorials/tours.py:502
+#: apps/tutorials/tours.py:520
 msgid "Current records"
 msgstr "Praegused rekordid"
 
-#: apps/tutorials/tours.py:503
+#: apps/tutorials/tours.py:521
 msgid "Heaviest weight, best estimated 1RM, most reps and more."
 msgstr "Raskeim raskus, parim hinnanguline 1RM, enim kordusi ja muud."
 
-#: apps/tutorials/tours.py:507 templates/records/exercise_records.html:28
+#: apps/tutorials/tours.py:525 templates/records/exercise_records.html:28
 msgid "Rep maxes"
 msgstr "Korduste maksimumid"
 
-#: apps/tutorials/tours.py:508
+#: apps/tutorials/tours.py:526
 msgid "The most weight you've lifted for each number of reps."
 msgstr "Suurim raskus, mida oled iga korduste arvuga tõstnud."
 
-#: apps/tutorials/tours.py:516 templates/core/dashboard.html:148
+#: apps/tutorials/tours.py:534 templates/core/dashboard.html:148
 #: templates/measurements/measurement_history.html:5
 #: templates/measurements/measurement_type_list.html:3
 #: templates/measurements/measurement_type_list.html:6
 msgid "Body tracking"
 msgstr "Keha jälgimine"
 
-#: apps/tutorials/tours.py:521
+#: apps/tutorials/tours.py:539
 msgid "What you track"
 msgstr "Mida jälgid"
 
-#: apps/tutorials/tours.py:522
+#: apps/tutorials/tours.py:540
 msgid "Body weight, waist, body fat and more. Open one to log a reading."
 msgstr "Kehakaal, vöökoht, keharasv ja muu. Ava üks näidu logimiseks."
 
-#: apps/tutorials/tours.py:527
+#: apps/tutorials/tours.py:545
 msgid "Your own measurements"
 msgstr "Sinu mõõdud"
 
-#: apps/tutorials/tours.py:528
+#: apps/tutorials/tours.py:546
 msgid "Add anything else you want to follow."
 msgstr "Lisa kõike muud, mida soovid jälgida."
 
-#: apps/tutorials/tours.py:535
+#: apps/tutorials/tours.py:553
 msgid "A measurement"
 msgstr "Mõõt"
 
-#: apps/tutorials/tours.py:541
+#: apps/tutorials/tours.py:559
 #: templates/measurements/measurement_history.html:21
 #: templates/nutrition/_subnav.html:52 templates/nutrition/stats.html:6
 msgid "Statistics"
 msgstr "Statistika"
 
-#: apps/tutorials/tours.py:542
+#: apps/tutorials/tours.py:560
 msgid "Your current value and how it has changed since you started."
 msgstr "Sinu praegune väärtus ja kuidas see on alustamisest muutunud."
 
-#: apps/tutorials/tours.py:547
+#: apps/tutorials/tours.py:565
 msgid "Log a reading"
 msgstr "Logi näit"
 
-#: apps/tutorials/tours.py:548
+#: apps/tutorials/tours.py:566
 msgid "Enter today's value - or an earlier date to catch up."
 msgstr "Sisesta tänane väärtus - või varasem kuupäev järele jõudmiseks."
 
-#: apps/tutorials/tours.py:552 apps/tutorials/tours.py:591
+#: apps/tutorials/tours.py:570 apps/tutorials/tours.py:609
 msgid "History"
 msgstr "Ajalugu"
 
-#: apps/tutorials/tours.py:553
+#: apps/tutorials/tours.py:571
 msgid "Every reading, newest first, with edit and delete."
 msgstr "Iga näit, uusimad eespool, muutmise ja kustutamisega."
 
-#: apps/tutorials/tours.py:566
+#: apps/tutorials/tours.py:584
 msgid "Activity types"
 msgstr "Tegevuste tüübid"
 
-#: apps/tutorials/tours.py:567
+#: apps/tutorials/tours.py:585
 msgid "Running, cycling, walking and more. Open one to log it."
 msgstr "Jooks, rattasõit, kõndimine ja muu. Ava üks selle logimiseks."
 
-#: apps/tutorials/tours.py:572
+#: apps/tutorials/tours.py:590
 msgid "Your own types"
 msgstr "Sinu tüübid"
 
-#: apps/tutorials/tours.py:573
+#: apps/tutorials/tours.py:591
 msgid "Add any other activity you want to track."
 msgstr "Lisa mis tahes muu tegevus, mida soovid jälgida."
 
-#: apps/tutorials/tours.py:580
+#: apps/tutorials/tours.py:598
 msgid "An activity"
 msgstr "Tegevus"
 
-#: apps/tutorials/tours.py:586 apps/tutorials/tours.py:790
+#: apps/tutorials/tours.py:604 apps/tutorials/tours.py:808
 msgid "Log it"
 msgstr "Logi"
 
-#: apps/tutorials/tours.py:587
+#: apps/tutorials/tours.py:605
 msgid "Date, duration and, if you like, distance and notes."
 msgstr "Kuupäev, kestus ja soovi korral vahemaa ja märkmed."
 
-#: apps/tutorials/tours.py:592
+#: apps/tutorials/tours.py:610
 msgid "Everything you've logged of this activity."
 msgstr "Kõik, mida oled sellest tegevusest logitud."
 
-#: apps/tutorials/tours.py:601
+#: apps/tutorials/tours.py:619
 msgid "Nutrition overview"
 msgstr "Toitumise ülevaade"
 
-#: apps/tutorials/tours.py:606 templates/nutrition/_subnav.html:43
+#: apps/tutorials/tours.py:624 templates/nutrition/_subnav.html:43
 msgid "Nutrition sections"
 msgstr "Toitumise jaotised"
 
-#: apps/tutorials/tours.py:608
+#: apps/tutorials/tours.py:626
 msgid ""
 "Diary, shopping list, foods, recipes, diet plans, calculators and statistics."
 msgstr ""
 "Päevik, ostunimekiri, toiduained, retseptid, toitumiskavad, kalkulaatorid ja "
 "statistika."
 
-#: apps/tutorials/tours.py:614
+#: apps/tutorials/tours.py:632
 msgid "Training or rest day"
 msgstr "Treening- või puhkepäev"
 
-#: apps/tutorials/tours.py:615
+#: apps/tutorials/tours.py:633
 msgid "Whether you've completed a workout today. It's shown for context only."
 msgstr "Kas oled täna treeningu lõpetanud. Seda näidatakse ainult teadmiseks."
 
-#: apps/tutorials/tours.py:619 templates/nutrition/dashboard.html:19
+#: apps/tutorials/tours.py:637 templates/nutrition/dashboard.html:19
 msgid "Today so far"
 msgstr "Tänaseni"
 
-#: apps/tutorials/tours.py:620
+#: apps/tutorials/tours.py:638
 msgid "What you've eaten today against your targets."
 msgstr "Mida oled täna söönud võrreldes oma eesmärkidega."
 
-#: apps/tutorials/tours.py:624
+#: apps/tutorials/tours.py:642
 msgid "Target check"
 msgstr "Eesmärgi kontroll"
 
-#: apps/tutorials/tours.py:626
+#: apps/tutorials/tours.py:644
 msgid ""
 "Compares your weight trend with your goal and may suggest a new target. "
 "Nothing changes unless you accept it."
@@ -6029,43 +6041,43 @@ msgstr ""
 "Võrdleb sinu kaalutrendi eesmärgiga ja võib soovitada uut eesmärki. Midagi "
 "ei muutu, kui sa seda ei kinnita."
 
-#: apps/tutorials/tours.py:633 templates/nutrition/dashboard.html:116
+#: apps/tutorials/tours.py:651 templates/nutrition/dashboard.html:116
 msgid "Daily target"
 msgstr "Päevane eesmärk"
 
-#: apps/tutorials/tours.py:634
+#: apps/tutorials/tours.py:652
 msgid "Calories and macros, worked out from your profile and goal."
 msgstr "Kalorid ja makrod, arvutatud sinu profiili ja eesmärgi põhjal."
 
-#: apps/tutorials/tours.py:639
+#: apps/tutorials/tours.py:657
 msgid "Your goal"
 msgstr "Sinu eesmärk"
 
-#: apps/tutorials/tours.py:640
+#: apps/tutorials/tours.py:658
 msgid "Lose, keep or gain - and how fast. Change it at any time."
 msgstr "Kaota, hoia või kasvata - ja kui kiiresti. Muuda seda millal tahes."
 
-#: apps/tutorials/tours.py:653
+#: apps/tutorials/tours.py:671
 msgid "Pick a day"
 msgstr "Vali päev"
 
-#: apps/tutorials/tours.py:654
+#: apps/tutorials/tours.py:672
 msgid "Move a day at a time, or pick any date to fill in."
 msgstr "Liigu päev korraga või vali täitmiseks mis tahes kuupäev."
 
-#: apps/tutorials/tours.py:658
+#: apps/tutorials/tours.py:676
 msgid "Day total"
 msgstr "Päeva kokkuvõte"
 
-#: apps/tutorials/tours.py:659
+#: apps/tutorials/tours.py:677
 msgid "Calories and macros eaten on this day."
 msgstr "Sel päeval söödud kalorid ja makrod."
 
-#: apps/tutorials/tours.py:663 apps/tutorials/tours.py:826
+#: apps/tutorials/tours.py:681 apps/tutorials/tours.py:844
 msgid "Meals"
 msgstr "Toidukorrad"
 
-#: apps/tutorials/tours.py:665
+#: apps/tutorials/tours.py:683
 msgid ""
 "Each meal lists what you logged. “Save as recipe” turns a meal you eat often "
 "into a recipe you can log in one tap."
@@ -6073,41 +6085,41 @@ msgstr ""
 "Iga toidukord näitab, mida logisid. „Salvesta retseptina” teeb tihti söödud "
 "toidukorrast retsepti, mida saad ühe puudutusega logida."
 
-#: apps/tutorials/tours.py:671 templates/nutrition/diary_add_entry.html:3
+#: apps/tutorials/tours.py:689 templates/nutrition/diary_add_entry.html:3
 #: templates/nutrition/diary_add_entry.html:6
 #: templates/nutrition/diary_day.html:88
 msgid "Add food"
 msgstr "Lisa toit"
 
-#: apps/tutorials/tours.py:672
+#: apps/tutorials/tours.py:690
 msgid "Search, scan a barcode, or enter macros straight in."
 msgstr "Otsi, skanni vöötkood või sisesta makrod otse."
 
-#: apps/tutorials/tours.py:676
+#: apps/tutorials/tours.py:694
 msgid "Copy a day"
 msgstr "Kopeeri päev"
 
-#: apps/tutorials/tours.py:677
+#: apps/tutorials/tours.py:695
 msgid "Eating the same as yesterday? Copy the whole day in one go."
 msgstr "Sööd sama mis eile? Kopeeri kogu päev korraga."
 
-#: apps/tutorials/tours.py:684
+#: apps/tutorials/tours.py:702
 msgid "Adding food"
 msgstr "Toidu lisamine"
 
-#: apps/tutorials/tours.py:689
+#: apps/tutorials/tours.py:707
 msgid "Which meal"
 msgstr "Milline toidukord"
 
-#: apps/tutorials/tours.py:690
+#: apps/tutorials/tours.py:708
 msgid "Everything you add on this page goes to the meal chosen here."
 msgstr "Kõik, mida sellel lehel lisad, läheb siin valitud toidukorda."
 
-#: apps/tutorials/tours.py:694
+#: apps/tutorials/tours.py:712
 msgid "Search or scan"
 msgstr "Otsi või skanni"
 
-#: apps/tutorials/tours.py:696
+#: apps/tutorials/tours.py:714
 msgid ""
 "Type a name or scan a barcode. Your own foods show first; Open Food Facts "
 "can be searched too. The amount is prefilled with what you logged last time."
@@ -6115,11 +6127,11 @@ msgstr ""
 "Kirjuta nimi või skanni vöötkood. Sinu toiduained on eespool; otsida saab ka "
 "Open Food Factsist. Kogus on eeltäidetud sellega, mida viimati logisid."
 
-#: apps/tutorials/tours.py:703 templates/nutrition/diary_add_entry.html:79
+#: apps/tutorials/tours.py:721 templates/nutrition/diary_add_entry.html:79
 msgid "Enter macros manually"
 msgstr "Sisesta makrod käsitsi"
 
-#: apps/tutorials/tours.py:705
+#: apps/tutorials/tours.py:723
 msgid ""
 "Eating out? Type in the meal's calories and macros without creating a food "
 "for it."
@@ -6127,58 +6139,58 @@ msgstr ""
 "Sööd väljas? Sisesta toidukorra kalorid ja makrod ilma selle jaoks "
 "toiduainet loomata."
 
-#: apps/tutorials/tours.py:711 templates/nutrition/_most_used_foods.html:23
+#: apps/tutorials/tours.py:729 templates/nutrition/_most_used_foods.html:23
 msgid "Most used"
 msgstr "Enim kasutatud"
 
-#: apps/tutorials/tours.py:712
+#: apps/tutorials/tours.py:730
 msgid "The foods you add most often, one tap away."
 msgstr "Kõige sagedamini lisatud toiduained, ühe puudutuse kaugusel."
 
-#: apps/tutorials/tours.py:720 templates/nutrition/_subnav.html:48
+#: apps/tutorials/tours.py:738 templates/nutrition/_subnav.html:48
 #: templates/nutrition/food_detail.html:6 templates/nutrition/food_list.html:3
 #: templates/nutrition/food_list.html:6
 msgid "Foods"
 msgstr "Toidud"
 
-#: apps/tutorials/tours.py:725
+#: apps/tutorials/tours.py:743
 msgid "Add foods"
 msgstr "Lisa toiduaineid"
 
-#: apps/tutorials/tours.py:726
+#: apps/tutorials/tours.py:744
 msgid "Create your own, or browse Open Food Facts by category."
 msgstr "Loo oma või sirvi Open Food Factsi kategooriate kaupa."
 
-#: apps/tutorials/tours.py:730 templates/nutrition/food_list.html:22
+#: apps/tutorials/tours.py:748 templates/nutrition/food_list.html:22
 msgid "Find a new food"
 msgstr "Leia uus toit"
 
-#: apps/tutorials/tours.py:731
+#: apps/tutorials/tours.py:749
 msgid ""
 "Search Open Food Facts or scan a barcode to bring a product into your "
 "library."
 msgstr ""
 "Otsi Open Food Factsist või skanni vöötkood, et tuua toode oma kogusse."
 
-#: apps/tutorials/tours.py:735
+#: apps/tutorials/tours.py:753
 msgid "Your library"
 msgstr "Sinu kogu"
 
-#: apps/tutorials/tours.py:736
+#: apps/tutorials/tours.py:754
 msgid "Filter and sort every food you can log. Newest first by default."
 msgstr ""
 "Filtreeri ja sorteeri kõiki toiduaineid, mida saad logida. Vaikimisi uusimad "
 "eespool."
 
-#: apps/tutorials/tours.py:743
+#: apps/tutorials/tours.py:761
 msgid "A food"
 msgstr "Toiduaine"
 
-#: apps/tutorials/tours.py:749
+#: apps/tutorials/tours.py:767
 msgid "Nutrition facts"
 msgstr "Toitumisalane teave"
 
-#: apps/tutorials/tours.py:751
+#: apps/tutorials/tours.py:769
 msgid ""
 "Laid out like a package label: energy, fat, carbohydrate, fibre, protein and "
 "salt - then any vitamins and minerals that are known."
@@ -6186,50 +6198,50 @@ msgstr ""
 "Esitatud nagu pakendil: energia, rasvad, süsivesikud, kiudained, valgud ja "
 "sool - seejärel teadaolevad vitamiinid ja mineraalained."
 
-#: apps/tutorials/tours.py:760 templates/nutrition/_subnav.html:49
+#: apps/tutorials/tours.py:778 templates/nutrition/_subnav.html:49
 #: templates/nutrition/recipe_detail.html:6
 #: templates/nutrition/recipe_list.html:3
 #: templates/nutrition/recipe_list.html:6
 msgid "Recipes"
 msgstr "Retseptid"
 
-#: apps/tutorials/tours.py:765 templates/nutrition/recipe_list.html:22
+#: apps/tutorials/tours.py:783 templates/nutrition/recipe_list.html:22
 msgid "Your recipes"
 msgstr "Sinu retseptid"
 
-#: apps/tutorials/tours.py:766
+#: apps/tutorials/tours.py:784
 msgid "Combine foods into a recipe once, then log a serving in one tap."
 msgstr ""
 "Ühenda toiduained üks kord retseptiks ja logi siis portsjon ühe puudutusega."
 
-#: apps/tutorials/tours.py:770 templates/nutrition/recipe_list.html:46
+#: apps/tutorials/tours.py:788 templates/nutrition/recipe_list.html:46
 msgid "Template recipes"
 msgstr "Malliretseptid"
 
-#: apps/tutorials/tours.py:771
+#: apps/tutorials/tours.py:789
 msgid "Ready-made recipes everyone can use."
 msgstr "Valmisretseptid, mida kõik saavad kasutada."
 
-#: apps/tutorials/tours.py:779
+#: apps/tutorials/tours.py:797
 msgid "A recipe"
 msgstr "Retsept"
 
-#: apps/tutorials/tours.py:785 templates/nutrition/food_detail.html:73
+#: apps/tutorials/tours.py:803 templates/nutrition/food_detail.html:73
 #: templates/nutrition/recipe_detail.html:36
 msgid "Ingredients"
 msgstr "Koostisosad"
 
-#: apps/tutorials/tours.py:786
+#: apps/tutorials/tours.py:804
 msgid "The foods in it and their amounts. Nutrition is worked out from these."
 msgstr ""
 "Selles olevad toiduained ja nende kogused. Toiteväärtus arvutatakse nende "
 "põhjal."
 
-#: apps/tutorials/tours.py:791
+#: apps/tutorials/tours.py:809
 msgid "Add servings of this recipe to your diary."
 msgstr "Lisa selle retsepti portsjoneid oma päevikusse."
 
-#: apps/tutorials/tours.py:799 templates/coaching/shared_plan_list.html:29
+#: apps/tutorials/tours.py:817 templates/coaching/shared_plan_list.html:29
 #: templates/nutrition/_subnav.html:50
 #: templates/nutrition/diet_plan_detail.html:6
 #: templates/nutrition/diet_plan_list.html:3
@@ -6239,11 +6251,11 @@ msgstr "Lisa selle retsepti portsjoneid oma päevikusse."
 msgid "Diet plans"
 msgstr "Toitumisplaanid"
 
-#: apps/tutorials/tours.py:804
+#: apps/tutorials/tours.py:822
 msgid "Create a plan"
 msgstr "Loo kava"
 
-#: apps/tutorials/tours.py:806
+#: apps/tutorials/tours.py:824
 msgid ""
 "A plan is built for you from your foods and recipes to hit your targets. You "
 "can adjust every item afterwards."
@@ -6251,44 +6263,44 @@ msgstr ""
 "Kava koostatakse sulle sinu toiduainetest ja retseptidest, et jõuda "
 "eesmärkideni. Saad iga osa hiljem muuta."
 
-#: apps/tutorials/tours.py:815
+#: apps/tutorials/tours.py:833
 msgid "A diet plan"
 msgstr "Toitumiskava"
 
-#: apps/tutorials/tours.py:821
+#: apps/tutorials/tours.py:839
 msgid "Active plan"
 msgstr "Aktiivne kava"
 
-#: apps/tutorials/tours.py:822
+#: apps/tutorials/tours.py:840
 msgid "The active plan is shown on the nutrition overview each day."
 msgstr "Aktiivset kava näidatakse iga päev toitumise ülevaates."
 
-#: apps/tutorials/tours.py:827
+#: apps/tutorials/tours.py:845
 msgid "Each meal's items and how close they come to its calorie budget."
 msgstr ""
 "Iga toidukorra osad ja kui lähedale need jõuavad toidukorra kalorieelarvele."
 
-#: apps/tutorials/tours.py:832
+#: apps/tutorials/tours.py:850
 msgid "Log the plan"
 msgstr "Logi kava"
 
-#: apps/tutorials/tours.py:833
+#: apps/tutorials/tours.py:851
 msgid "Copy a day of the plan into your diary as if you'd eaten it."
 msgstr "Kopeeri kava päev oma päevikusse, nagu oleksid selle ära söönud."
 
-#: apps/tutorials/tours.py:847 templates/nutrition/diet_plan_shopping.html:21
+#: apps/tutorials/tours.py:865 templates/nutrition/diet_plan_shopping.html:21
 msgid "Shopping trips"
 msgstr "Poeskäigud"
 
-#: apps/tutorials/tours.py:848
+#: apps/tutorials/tours.py:866
 msgid "One list per shopping day, covering the days until the next one."
 msgstr "Üks nimekiri iga poepäeva kohta, kuni järgmise poepäevani."
 
-#: apps/tutorials/tours.py:853
+#: apps/tutorials/tours.py:871
 msgid "What to buy"
 msgstr "Mida osta"
 
-#: apps/tutorials/tours.py:855
+#: apps/tutorials/tours.py:873
 msgid ""
 "Everything the plan's meals need, recipes included. The same food on several "
 "days is added up, with each day's amount under it. Tick items off as you "
@@ -6298,7 +6310,7 @@ msgstr ""
 "päeval liidetakse kokku ja iga päeva kogus on selle all. Märgi poes ostetud "
 "asjad."
 
-#: apps/tutorials/tours.py:865
+#: apps/tutorials/tours.py:883
 msgid ""
 "Pick the days you go shopping, and whether a shopping day's own meals go on "
 "that day's list. Set separately for each plan."
@@ -6306,14 +6318,14 @@ msgstr ""
 "Vali päevad, mil käid poes, ja kas poepäeva enda toidukorrad lähevad selle "
 "päeva nimekirja. Määratakse iga kava jaoks eraldi."
 
-#: apps/tutorials/tours.py:874 apps/tutorials/tours.py:879
+#: apps/tutorials/tours.py:892 apps/tutorials/tours.py:897
 #: templates/nutrition/_subnav.html:51
 #: templates/nutrition/calculators_home.html:3
 #: templates/nutrition/calculators_home.html:6
 msgid "Calculators"
 msgstr "Kalkulaatorid"
 
-#: apps/tutorials/tours.py:881
+#: apps/tutorials/tours.py:899
 msgid ""
 "Energy use, macros, body fat, water, BMI and more. They only calculate - "
 "nothing is saved or changed."
@@ -6321,15 +6333,15 @@ msgstr ""
 "Energiakulu, makrod, keharasv, vesi, KMI ja muu. Need ainult arvutavad - "
 "midagi ei salvestata ega muudeta."
 
-#: apps/tutorials/tours.py:890 templates/nutrition/stats.html:3
+#: apps/tutorials/tours.py:908 templates/nutrition/stats.html:3
 msgid "Nutrition statistics"
 msgstr "Toitumise statistika"
 
-#: apps/tutorials/tours.py:895 templates/nutrition/stats.html:11
+#: apps/tutorials/tours.py:913 templates/nutrition/stats.html:11
 msgid "Last 30 days"
 msgstr "Viimased 30 päeva"
 
-#: apps/tutorials/tours.py:897
+#: apps/tutorials/tours.py:915
 msgid ""
 "Median daily calories and macros. Days with nothing logged don't count, and "
 "one barely-logged day doesn't drag the figure down."
@@ -6337,63 +6349,63 @@ msgstr ""
 "Päevaste kalorite ja makrode mediaan. Päevi, mil midagi ei logitud, ei "
 "arvestata ja üks vähe logitud päev ei vii näitajat alla."
 
-#: apps/tutorials/tours.py:903
+#: apps/tutorials/tours.py:921
 msgid "Longer and shorter periods"
 msgstr "Pikemad ja lühemad perioodid"
 
-#: apps/tutorials/tours.py:904
+#: apps/tutorials/tours.py:922
 msgid "The same medians for a week up to everything you've ever logged."
 msgstr "Samad mediaanid nädalast kuni kõige, mida oled kunagi logitud."
 
-#: apps/tutorials/tours.py:909
+#: apps/tutorials/tours.py:927
 msgid "Each of the last 30 days, with the exact figures in a table below."
 msgstr "Iga viimasest 30 päevast, täpsed arvud allolevas tabelis."
 
-#: apps/tutorials/tours.py:923 templates/stretching/_subnav.html:9
+#: apps/tutorials/tours.py:941 templates/stretching/_subnav.html:9
 msgid "Stretching sections"
 msgstr "Venitamise jaotised"
 
-#: apps/tutorials/tours.py:924
+#: apps/tutorials/tours.py:942
 msgid "Overview, routines, the stretch library and your history."
 msgstr "Ülevaade, rutiinid, venituste kogu ja sinu ajalugu."
 
-#: apps/tutorials/tours.py:928
+#: apps/tutorials/tours.py:946
 msgid "Your streak"
 msgstr "Sinu seeria"
 
-#: apps/tutorials/tours.py:929
+#: apps/tutorials/tours.py:947
 msgid "Days in a row with stretching, and your totals."
 msgstr "Järjestikused venitamispäevad ja sinu koguarvud."
 
-#: apps/tutorials/tours.py:933 templates/stretching/home.html:28
+#: apps/tutorials/tours.py:951 templates/stretching/home.html:28
 msgid "Start a routine"
 msgstr "Alusta rutiini"
 
-#: apps/tutorials/tours.py:934
+#: apps/tutorials/tours.py:952
 msgid "A guided session times every stretch for you."
 msgstr "Juhendatud sessioon ajastab sinu eest iga venituse."
 
-#: apps/tutorials/tours.py:939
+#: apps/tutorials/tours.py:957
 msgid "Log it afterwards"
 msgstr "Logi tagantjärele"
 
-#: apps/tutorials/tours.py:940
+#: apps/tutorials/tours.py:958
 msgid "Stretched without the timer? Log just how long you stretched."
 msgstr "Venitasid ilma taimerita? Logi lihtsalt, kui kaua venitasid."
 
-#: apps/tutorials/tours.py:947
+#: apps/tutorials/tours.py:965
 msgid "A routine"
 msgstr "Rutiin"
 
-#: apps/tutorials/tours.py:953
+#: apps/tutorials/tours.py:971
 msgid "About the routine"
 msgstr "Rutiinist"
 
-#: apps/tutorials/tours.py:954
+#: apps/tutorials/tours.py:972
 msgid "How many stretches it has and roughly how long it takes."
 msgstr "Kui palju venitusi sellel on ja umbes kui kaua see kestab."
 
-#: apps/tutorials/tours.py:958 apps/tutorials/tours.py:993
+#: apps/tutorials/tours.py:976 apps/tutorials/tours.py:1011
 #: templates/stretching/_subnav.html:12
 #: templates/stretching/session_play.html:71
 #: templates/stretching/stretch_detail.html:5
@@ -6402,32 +6414,32 @@ msgstr "Kui palju venitusi sellel on ja umbes kui kaua see kestab."
 msgid "Stretches"
 msgstr "Venitused"
 
-#: apps/tutorials/tours.py:959
+#: apps/tutorials/tours.py:977
 msgid "Each stretch with its hold time, sets and sides."
 msgstr "Iga venitus koos hoidmisaja, seeriate ja külgedega."
 
-#: apps/tutorials/tours.py:964 templates/stretching/_routine_card.html:12
+#: apps/tutorials/tours.py:982 templates/stretching/_routine_card.html:12
 #: templates/tutorials/tutorial_list.html:38
 msgid "Start"
 msgstr "Alusta"
 
-#: apps/tutorials/tours.py:965
+#: apps/tutorials/tours.py:983
 msgid "Opens the guided player."
 msgstr "Avab juhendatud mängija."
 
-#: apps/tutorials/tours.py:971
+#: apps/tutorials/tours.py:989
 msgid "Add stretches and reorder them - in your own routines."
 msgstr "Lisa venitusi ja muuda nende järjekorda - oma rutiinides."
 
-#: apps/tutorials/tours.py:979 templates/stretching/session_play.html:25
+#: apps/tutorials/tours.py:997 templates/stretching/session_play.html:25
 msgid "Guided session"
 msgstr "Juhendatud sessioon"
 
-#: apps/tutorials/tours.py:985
+#: apps/tutorials/tours.py:1003
 msgid "The timer"
 msgstr "Taimer"
 
-#: apps/tutorials/tours.py:987
+#: apps/tutorials/tours.py:1005
 msgid ""
 "Counts down every hold and rest, with a chime between them. Pause, add or "
 "remove 10 seconds, or skip. Leaving the page keeps your place."
@@ -6436,26 +6448,26 @@ msgstr ""
 "lisa või lahuta 10 sekundit või jäta vahele. Sinu koht säilib ka lehelt "
 "lahkudes."
 
-#: apps/tutorials/tours.py:994
+#: apps/tutorials/tours.py:1012
 msgid "Mark a stretch done or skipped yourself if you prefer."
 msgstr "Märgi venitus soovi korral ise tehtuks või vahele jäetuks."
 
-#: apps/tutorials/tours.py:1000
+#: apps/tutorials/tours.py:1018
 msgid "Saves the session to your history."
 msgstr "Salvestab sessiooni sinu ajalukku."
 
-#: apps/tutorials/tours.py:1008 templates/social/friend_list.html:3
+#: apps/tutorials/tours.py:1026 templates/social/friend_list.html:3
 #: templates/social/friend_list.html:6 templates/social/message_list.html:27
 msgid "Friends"
 msgstr "Sõbrad"
 
-#: apps/tutorials/tours.py:1013 templates/social/friend_list.html:9
+#: apps/tutorials/tours.py:1031 templates/social/friend_list.html:9
 #: templates/social/friend_list.html:68 templates/social/friend_search.html:3
 #: templates/social/friend_search.html:6
 msgid "Find friends"
 msgstr "Otsi sõpru"
 
-#: apps/tutorials/tours.py:1015
+#: apps/tutorials/tours.py:1033
 msgid ""
 "Search for people on this server. Friends can message you and see the "
 "progress you choose to share."
@@ -6463,75 +6475,75 @@ msgstr ""
 "Otsi selle serveri inimesi. Sõbrad saavad sulle sõnumeid saata ja näha "
 "arengut, mida otsustad jagada."
 
-#: apps/tutorials/tours.py:1024 templates/social/message_list.html:3
+#: apps/tutorials/tours.py:1042 templates/social/message_list.html:3
 msgid "Messages"
 msgstr "Sõnumid"
 
-#: apps/tutorials/tours.py:1029 templates/social/message_list.html:32
+#: apps/tutorials/tours.py:1047 templates/social/message_list.html:32
 msgid "Direct messages"
 msgstr "Otsesõnumid"
 
-#: apps/tutorials/tours.py:1030
+#: apps/tutorials/tours.py:1048
 msgid "One conversation per friend."
 msgstr "Üks vestlus sõbra kohta."
 
-#: apps/tutorials/tours.py:1034 templates/social/message_list.html:42
+#: apps/tutorials/tours.py:1052 templates/social/message_list.html:42
 msgid "Group chats"
 msgstr "Grupivestlused"
 
-#: apps/tutorials/tours.py:1035
+#: apps/tutorials/tours.py:1053
 msgid "Every group you're in has its own chat."
 msgstr "Igal sinu grupil on oma vestlus."
 
-#: apps/tutorials/tours.py:1042 templates/social/group_list.html:3
+#: apps/tutorials/tours.py:1060 templates/social/group_list.html:3
 #: templates/social/group_list.html:6 templates/social/message_list.html:28
 msgid "Groups"
 msgstr "Grupid"
 
-#: apps/tutorials/tours.py:1047
+#: apps/tutorials/tours.py:1065
 msgid "Create a group"
 msgstr "Loo grupp"
 
-#: apps/tutorials/tours.py:1048
+#: apps/tutorials/tours.py:1066
 msgid "Train together: invite friends or share an invite link."
 msgstr "Treenige koos: kutsu sõpru või jaga kutselinki."
 
-#: apps/tutorials/tours.py:1061 templates/accounts/profile.html:25
+#: apps/tutorials/tours.py:1079 templates/accounts/profile.html:25
 msgid "Preferences"
 msgstr "Eelistused"
 
-#: apps/tutorials/tours.py:1062 templates/accounts/profile.html:26
+#: apps/tutorials/tours.py:1080 templates/accounts/profile.html:26
 msgid "Units, language, timezone, theme, and which sections you use."
 msgstr "Ühikud, keel, ajavöönd, teema ja milliseid jaotisi kasutad."
 
-#: apps/tutorials/tours.py:1067
+#: apps/tutorials/tours.py:1085
 msgid "Messages, friends and groups."
 msgstr "Sõnumid, sõbrad ja grupid."
 
-#: apps/tutorials/tours.py:1071
+#: apps/tutorials/tours.py:1089
 #: templates/accounts/_data_export_standalone.html:23
 #: templates/accounts/_data_export_standalone.html:68
 #: templates/accounts/profile.html:163
 msgid "Your data"
 msgstr "Sinu andmed"
 
-#: apps/tutorials/tours.py:1072
+#: apps/tutorials/tours.py:1090
 msgid "Everything you've logged is yours - browse it or download it."
 msgstr "Kõik, mida oled logitud, on sinu oma - sirvi seda või laadi see alla."
 
-#: apps/tutorials/tours.py:1076 templates/accounts/profile.html:185
+#: apps/tutorials/tours.py:1094 templates/accounts/profile.html:185
 #: templates/tutorials/tutorial_list.html:3
 #: templates/tutorials/tutorial_list.html:6
 #: templates/tutorials/tutorial_list.html:9
 msgid "Tutorials"
 msgstr "Tutvustused"
 
-#: apps/tutorials/tours.py:1077
+#: apps/tutorials/tours.py:1095
 msgid "Replay any tour, or turn tutorials on or off."
 msgstr ""
 "Vaata mis tahes tutvustust uuesti või lülita tutvustused sisse või välja."
 
-#: apps/tutorials/tours.py:1084 templates/accounts/profile.html:153
+#: apps/tutorials/tours.py:1102 templates/accounts/profile.html:153
 #: templates/accounts/profile.html:157 templates/accounts/profile.html:234
 #: templates/assistant/admin_settings.html:3
 #: templates/assistant/admin_settings.html:6 templates/assistant/home.html:3
@@ -6539,13 +6551,13 @@ msgstr ""
 msgid "AI assistant"
 msgstr "Tehisintellekti assistent"
 
-#: apps/tutorials/tours.py:1089 templates/assistant/home.html:9
+#: apps/tutorials/tours.py:1107 templates/assistant/home.html:9
 #: templates/assistant/settings.html:6 templates/core/backup_list.html:60
 #: templates/core/feedback_list.html:9
 msgid "Settings"
 msgstr "Seaded"
 
-#: apps/tutorials/tours.py:1091
+#: apps/tutorials/tours.py:1109
 msgid ""
 "Turn the assistant on or off, choose what it may read, tell it what it "
 "should always know about you (allergies, equipment, schedule), and add your "
@@ -6555,11 +6567,11 @@ msgstr ""
 "see peaks sinu kohta alati teadma (allergiad, varustus, ajakava), ja lisa "
 "oma API-võti."
 
-#: apps/tutorials/tours.py:1098
+#: apps/tutorials/tours.py:1116
 msgid "Ask anything"
 msgstr "Küsi ükskõik mida"
 
-#: apps/tutorials/tours.py:1100
+#: apps/tutorials/tours.py:1118
 msgid ""
 "Ask for a diet plan or a workout program, or about your progress. It looks "
 "at your own data before it answers."
@@ -6567,11 +6579,11 @@ msgstr ""
 "Küsi toitumiskava või treeningkava või oma edusammude kohta. Enne vastamist "
 "vaatab see sinu enda andmeid."
 
-#: apps/tutorials/tours.py:1107
+#: apps/tutorials/tours.py:1125
 msgid "Your conversations"
 msgstr "Sinu vestlused"
 
-#: apps/tutorials/tours.py:1109
+#: apps/tutorials/tours.py:1127
 msgid ""
 "Pick up where you left off. A plan it suggests is only created if you accept "
 "it."
@@ -6601,12 +6613,12 @@ msgid "Target reps"
 msgstr "Sihtkordused"
 
 #: apps/workouts/forms.py:45
-#: templates/workouts/_performed_exercise_card.html:22
+#: templates/workouts/_performed_exercise_card.html:25
 msgid "Failed set"
 msgstr "Ebaõnnestunud seeria"
 
 #: apps/workouts/forms.py:46
-#: templates/workouts/_performed_exercise_card.html:20
+#: templates/workouts/_performed_exercise_card.html:23
 msgid "Warm-up"
 msgstr "Soojendus"
 
@@ -6736,6 +6748,7 @@ msgstr "Privaatsusteatis"
 #: templates/accounts/_privacy_notice_modal.html:27
 #: templates/accounts/profile.html:298 templates/api/key_list.html:20
 #: templates/base.html:116 templates/base.html:172
+#: templates/exercises/_exercise_guide_modal.html:25
 #: templates/nutrition/_month_calendar.html:84
 #: templates/records/_pr_toasts.html:31
 msgid "Dismiss"
@@ -7332,7 +7345,7 @@ msgstr "Vahemaa"
 #: templates/stretching/routine_detail.html:54
 #: templates/stretching/session_detail.html:12
 #: templates/stretching/stretch_detail.html:12
-#: templates/workouts/_performed_exercise_card.html:24
+#: templates/workouts/_performed_exercise_card.html:27
 msgid "Edit"
 msgstr "Muuda"
 
@@ -8842,6 +8855,43 @@ msgstr "Lehekülg %(number)s / %(total)s"
 msgid "No feedback yet."
 msgstr "Tagasisidet pole veel."
 
+#: templates/exercises/_exercise_guide.html:10
+#: templates/exercises/exercise_detail.html:48
+msgid "Instructions"
+msgstr "Juhised"
+
+#: templates/exercises/_exercise_guide.html:28
+msgid "No instructions for this exercise yet."
+msgstr "Selle harjutuse kohta pole veel juhiseid."
+
+#: templates/exercises/_exercise_guide.html:33
+#: templates/exercises/exercise_detail.html:30
+msgid "Equipment"
+msgstr "Varustus"
+
+#: templates/exercises/_exercise_guide.html:37
+#: templates/exercises/exercise_detail.html:35
+msgid "Primary muscles"
+msgstr "Peamised lihased"
+
+#: templates/exercises/_exercise_guide.html:41
+#: templates/exercises/exercise_detail.html:40
+msgid "Secondary muscles"
+msgstr "Teisesed lihased"
+
+#: templates/exercises/_exercise_guide.html:46
+msgid "Open exercise page"
+msgstr "Ava harjutuse leht"
+
+#: templates/exercises/_exercise_guide_modal.html:17
+#, python-format
+msgid "How to do %(name)s"
+msgstr "Kuidas teha: %(name)s"
+
+#: templates/exercises/_exercise_guide_modal.html:28
+msgid "Loading…"
+msgstr "Laadin…"
+
 #: templates/exercises/_exercise_list_results.html:14
 msgid "No exercises match your search."
 msgstr "Su otsingule ei vastanud ükski harjutus."
@@ -8857,22 +8907,6 @@ msgstr "Liigutuse tüüp"
 #: templates/exercises/exercise_detail.html:26
 msgid "Weight logging"
 msgstr "Raskuse logimine"
-
-#: templates/exercises/exercise_detail.html:30
-msgid "Equipment"
-msgstr "Varustus"
-
-#: templates/exercises/exercise_detail.html:35
-msgid "Primary muscles"
-msgstr "Peamised lihased"
-
-#: templates/exercises/exercise_detail.html:40
-msgid "Secondary muscles"
-msgstr "Teisesed lihased"
-
-#: templates/exercises/exercise_detail.html:48
-msgid "Instructions"
-msgstr "Juhised"
 
 #: templates/exercises/exercise_detail.html:61
 msgid "Remove this image?"
@@ -9597,20 +9631,20 @@ msgid "Is your current target working?"
 msgstr "Kas praegune eesmärk toimib?"
 
 #: templates/nutrition/dashboard.html:84
-#: templates/workouts/_performed_exercise_card.html:53
-#: templates/workouts/_train_panel.html:60
+#: templates/workouts/_performed_exercise_card.html:56
+#: templates/workouts/_train_panel.html:63
 msgid "High confidence"
 msgstr "Kõrge kindlus"
 
 #: templates/nutrition/dashboard.html:85
-#: templates/workouts/_performed_exercise_card.html:52
-#: templates/workouts/_train_panel.html:59
+#: templates/workouts/_performed_exercise_card.html:55
+#: templates/workouts/_train_panel.html:62
 msgid "Medium confidence"
 msgstr "Keskmine kindlus"
 
 #: templates/nutrition/dashboard.html:86
-#: templates/workouts/_performed_exercise_card.html:51
-#: templates/workouts/_train_panel.html:58
+#: templates/workouts/_performed_exercise_card.html:54
+#: templates/workouts/_train_panel.html:61
 msgid "Low confidence"
 msgstr "Madal kindlus"
 
@@ -10358,7 +10392,7 @@ msgstr "Logi mõni päev oma toidupäevikusse, et näha siin oma trendi."
 #: templates/programs/prescription_form.html:3
 #: templates/programs/prescription_form.html:6
 #: templates/programs/program_detail.html:75
-#: templates/workouts/_train_panel.html:99
+#: templates/workouts/_train_panel.html:102
 #: templates/workouts/performed_exercise_form.html:3
 #: templates/workouts/performed_exercise_form.html:6
 #: templates/workouts/session_detail.html:31
@@ -10411,7 +10445,7 @@ msgid "Delete this workout and its exercises?"
 msgstr "Kustutada see trenn ja selle harjutused?"
 
 #: templates/programs/program_detail.html:70
-#: templates/workouts/_train_panel.html:99
+#: templates/workouts/_train_panel.html:102
 #: templates/workouts/session_detail.html:27
 msgid "No exercises yet."
 msgstr "Harjutusi pole veel."
@@ -11299,10 +11333,6 @@ msgstr "Tüüp"
 msgid "Default hold"
 msgstr "Vaikimisi hoidmine"
 
-#: templates/stretching/stretch_detail.html:30
-msgid "How to do it"
-msgstr "Kuidas teha"
-
 #: templates/stretching/stretch_detail.html:36
 msgid ""
 "Deactivate this stretch? It will no longer appear when browsing, but "
@@ -11367,48 +11397,48 @@ msgstr "Kas näidata kõiki juhendeid uuesti, ka neid, mille oled juba läbinud?
 msgid "Show all tutorials again"
 msgstr "Näita kõiki tutvustusi uuesti"
 
-#: templates/workouts/_performed_exercise_card.html:6
-#: templates/workouts/_train_panel.html:39
+#: templates/workouts/_performed_exercise_card.html:9
+#: templates/workouts/_train_panel.html:42
 #, python-format
 msgid "Target: %(count)s × %(min)s-%(max)s"
 msgstr "Sihtmärk: %(count)s × %(min)s-%(max)s"
 
-#: templates/workouts/_performed_exercise_card.html:15
+#: templates/workouts/_performed_exercise_card.html:18
 msgid "Set"
 msgstr "Seeria"
 
-#: templates/workouts/_performed_exercise_card.html:15
+#: templates/workouts/_performed_exercise_card.html:18
 msgid "Reps"
 msgstr "Kordused"
 
-#: templates/workouts/_performed_exercise_card.html:15
+#: templates/workouts/_performed_exercise_card.html:18
 msgid "Actions"
 msgstr "Toimingud"
 
-#: templates/workouts/_performed_exercise_card.html:20
+#: templates/workouts/_performed_exercise_card.html:23
 msgid "W"
 msgstr "S"
 
-#: templates/workouts/_performed_exercise_card.html:22
+#: templates/workouts/_performed_exercise_card.html:25
 msgid "F"
 msgstr "E"
 
-#: templates/workouts/_performed_exercise_card.html:25
+#: templates/workouts/_performed_exercise_card.html:28
 msgid "Delete this set?"
 msgstr "Kas kustutada see seeria?"
 
-#: templates/workouts/_performed_exercise_card.html:37
+#: templates/workouts/_performed_exercise_card.html:40
 msgid "No sets logged yet."
 msgstr "Seeriaid pole veel logitud."
 
-#: templates/workouts/_performed_exercise_card.html:47
-#: templates/workouts/_train_panel.html:54
+#: templates/workouts/_performed_exercise_card.html:50
+#: templates/workouts/_train_panel.html:57
 #, python-format
 msgid "Suggested: %(weight)s"
 msgstr "Soovitatud: %(weight)s"
 
-#: templates/workouts/_performed_exercise_card.html:72
-#: templates/workouts/_train_panel.html:94
+#: templates/workouts/_performed_exercise_card.html:75
+#: templates/workouts/_train_panel.html:97
 msgid "Log set"
 msgstr "Logi seeria"
 
@@ -11421,21 +11451,21 @@ msgstr "Harjutus %(position)s / %(total)s"
 msgid "All exercises done for today."
 msgstr "Kõik tänased harjutused tehtud."
 
-#: templates/workouts/_train_panel.html:47
+#: templates/workouts/_train_panel.html:50
 msgid "Edit this set"
 msgstr "Muuda seda seeriat"
 
-#: templates/workouts/_train_panel.html:68
+#: templates/workouts/_train_panel.html:71
 msgid ""
 "This exercise is done - logging another set is still fine if you want one."
 msgstr ""
 "See harjutus on tehtud - võid siiski lisada veel ühe seeria, kui soovid."
 
-#: templates/workouts/_train_panel.html:85
+#: templates/workouts/_train_panel.html:88
 msgid "Fewer options"
 msgstr "Vähem valikuid"
 
-#: templates/workouts/_train_panel.html:85
+#: templates/workouts/_train_panel.html:88
 msgid "More options (RPE, RIR, notes…)"
 msgstr "Rohkem valikuid (RPE, RIR, märkmed…)"
 

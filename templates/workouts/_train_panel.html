@@ -33,7 +33,10 @@
 
 {% if current %}
   <div data-tour="train-exercise" class="card">
-    <h2 class="mb-1">{% trans current.display_name %}</h2>
+    <div class="row-center mb-1">
+      <h2 class="no-margin">{% trans current.display_name %}</h2>
+      <span class="ml-auto">{% include "exercises/_exercise_guide_modal.html" with exercise_id=current.exercise_id name=current.display_name tour="train-exercise-guide" %}</span>
+    </div>
     {% if current.set_count %}
       <p class="text-muted">
         {% blocktrans with count=current.set_count min=current.min_reps max=current.max_reps %}Target: {{ count }} × {{ min }}-{{ max }}{% endblocktrans %}

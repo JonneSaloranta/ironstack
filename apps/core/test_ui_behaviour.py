@@ -133,6 +133,21 @@ class UiBehaviourTests(StaticLiveServerTestCase):
             self.page.evaluate("document.activeElement.textContent"),
         )
 
+    def test_the_exercise_guide_opens_over_the_training_view(self):
+        self.row.instructions = "Pull the bar to your belly."
+        self.row.save()
+        session, _ = self._session_with_set()
+        self._log_in()
+        self.page.goto(self._url(reverse("workouts:session-train", args=[session.pk])))
+        self.page.get_by_role("button", name="How to do Row").click()
+        card = self.page.locator("#train-panel .modal-card[aria-label=Row]")
+        expect(card).to_be_visible()
+        expect(card).to_contain_text("Pull the bar to your belly.")
+        self.page.keyboard.press("Escape")
+        expect(card).to_be_hidden()
+        # Still on the session, with the set form right where it was.
+        expect(self.page.locator("#train-panel input[name=weight]")).to_be_visible()
+
     # -- HTMX feedback -------------------------------------------------------
     def test_a_bad_set_is_explained_in_an_alert(self):
         session, _ = self._session_with_set()

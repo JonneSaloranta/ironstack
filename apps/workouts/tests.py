@@ -623,6 +623,22 @@ class TrainingModeViewTests(TestCase):
         response = self.client.get(reverse("workouts:session-train", args=[self.session.pk]))
         self.assertEqual(response.context["current"], self.performed)
 
+    def test_training_page_links_the_current_exercises_guide(self):
+        response = self.client.get(reverse("workouts:session-train", args=[self.session.pk]))
+        self.assertContains(
+            response,
+            reverse("exercises:exercise-guide", args=[self.performed.exercise_id]),
+        )
+        self.assertContains(response, 'data-tour="train-exercise-guide"')
+
+    def test_session_detail_links_each_exercises_guide(self):
+        response = self.client.get(reverse("workouts:session-detail", args=[self.session.pk]))
+        self.assertContains(
+            response,
+            reverse("exercises:exercise-guide", args=[self.performed.exercise_id]),
+        )
+        self.assertContains(response, 'data-tour="exercise-guide"')
+
     def test_rest_timer_carries_its_own_notification_text(self):
         # static/js/rest-timer.js's own notify() reads these off the
         # component's root element - a plain .js file can't render

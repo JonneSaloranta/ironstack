@@ -201,7 +201,10 @@ Hierarchy (base.css "Buttons: states + one clear hierarchy"):
 `.modal-backdrop` > `.modal-card` (`.modal-card-wide` for long content) >
 `.modal-header` (`<h2 class="no-margin">` + `.modal-close`) + `.modal-body`.
 Alpine `x-show`; focus trap/return comes free from `static/js/modal-a11y.js`.
-Help/info modals open from a round `.help-button`.
+Help/info modals open from a round `.help-button`. A modal showing another
+page's content loads its body on first open (`hx-trigger="click once"`,
+`hx-target="next .modal-body"`) from a fragment view, so the host page stays
+light - see `exercises/_exercise_guide_modal.html`.
 
 ## Guided tours
 

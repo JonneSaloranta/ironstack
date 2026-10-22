@@ -6067,3 +6067,15 @@ the worker can tell "not sent" from "no data", and save only the fields
 they change. The changelist shows both sync times (sortable), a sync
 status filter, the queue size and a cancel action.
 
+## Exercise guide during a session
+
+The session pages only showed an exercise's name, so checking how an
+unfamiliar exercise is done meant leaving the workout. An "i"
+`.help-button` next to the name (training view and full view,
+`exercises/_exercise_guide_modal.html`) opens a modal whose body is
+fetched on first open from `exercises:exercise-guide` - a read-only
+fragment (`ExerciseGuideView`, same `visible_to(..., include_inactive=True)`
+scoping as the detail page) with instructions, images, equipment,
+muscles and a link to the full page. The title is the performed
+exercise's `display_name`, so an old session keeps its logged name.
+

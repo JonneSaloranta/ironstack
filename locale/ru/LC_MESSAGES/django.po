@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: IronStack\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-22 10:36+0000\n"
+"POT-Creation-Date: 2026-10-22 14:40+0000\n"
 "Language: ru\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -620,8 +620,8 @@ msgstr[0] "%(counter)s тренировка"
 msgstr[1] "%(counter)s тренировки"
 msgstr[2] "%(counter)s тренировок"
 
-#: apps/analytics/achievements.py:150 apps/tutorials/tours.py:423
-#: apps/tutorials/tours.py:496
+#: apps/analytics/achievements.py:150 apps/tutorials/tours.py:441
+#: apps/tutorials/tours.py:514
 msgid "Personal records"
 msgstr "Личных рекордов"
 
@@ -681,7 +681,7 @@ msgstr "Изменение"
 #: templates/programs/program_confirm_delete.html:14
 #: templates/programs/program_detail.html:52
 #: templates/stretching/session_detail.html:53
-#: templates/workouts/_performed_exercise_card.html:32
+#: templates/workouts/_performed_exercise_card.html:35
 msgid "Delete"
 msgstr "Удалить"
 
@@ -697,21 +697,21 @@ msgid "A label to tell your keys apart."
 msgstr "Метка, чтобы отличать ваши ключи друг от друга."
 
 #: apps/api/models.py:24 apps/tutorials/tours.py:32
-#: apps/tutorials/tours.py:1056 templates/accounts/profile.html:3
+#: apps/tutorials/tours.py:1074 templates/accounts/profile.html:3
 #: templates/accounts/profile.html:12 templates/api/key_list.html:85
 #: templates/base.html:207 templates/base.html:230
 #: templates/tutorials/tutorial_list.html:5
 msgid "Profile"
 msgstr "Профиль"
 
-#: apps/api/models.py:25 apps/tutorials/tours.py:275
+#: apps/api/models.py:25 apps/tutorials/tours.py:284
 #: templates/api/key_list.html:89 templates/exercises/exercise_detail.html:5
 #: templates/exercises/exercise_list.html:3
 #: templates/exercises/exercise_list.html:6
 msgid "Exercises"
 msgstr "Упражнения"
 
-#: apps/api/models.py:26 apps/core/models.py:162 apps/tutorials/tours.py:321
+#: apps/api/models.py:26 apps/core/models.py:162 apps/tutorials/tours.py:339
 #: templates/api/key_list.html:93 templates/base.html:203
 #: templates/base.html:205 templates/programs/program_detail.html:5
 #: templates/programs/program_list.html:3
@@ -720,7 +720,7 @@ msgid "Programs"
 msgstr "Программы"
 
 #: apps/api/models.py:27 apps/core/models.py:161 apps/tutorials/tours.py:25
-#: apps/tutorials/tours.py:369 templates/analytics/dashboard.html:13
+#: apps/tutorials/tours.py:387 templates/analytics/dashboard.html:13
 #: templates/api/key_list.html:97 templates/coaching/client_detail.html:26
 #: templates/workouts/session_detail.html:5
 #: templates/workouts/session_list.html:6
@@ -732,7 +732,7 @@ msgid "Measurements"
 msgstr "Измерения"
 
 #: apps/api/models.py:29 apps/assistant/models.py:115 apps/core/models.py:165
-#: apps/tutorials/tours.py:561 templates/activities/activity_history.html:5
+#: apps/tutorials/tours.py:579 templates/activities/activity_history.html:5
 #: templates/activities/activity_type_list.html:3
 #: templates/activities/activity_type_list.html:6
 #: templates/api/key_list.html:105 templates/core/dashboard.html:153
@@ -760,7 +760,7 @@ msgstr "Питание"
 
 #: apps/api/models.py:33 apps/assistant/models.py:116 apps/core/models.py:167
 #: apps/stretching/models.py:209 apps/tutorials/tours.py:30
-#: apps/tutorials/tours.py:918 templates/api/key_list.html:113
+#: apps/tutorials/tours.py:936 templates/api/key_list.html:113
 #: templates/base.html:190 templates/base.html:192
 #: templates/core/dashboard.html:159 templates/stretching/_cooldown_card.html:7
 #: templates/stretching/home.html:3 templates/stretching/home.html:6
@@ -976,7 +976,7 @@ msgstr "История тренировок, рекорды и прогресс�
 msgid "Body measurements and weight trend"
 msgstr "Замеры тела и динамика веса"
 
-#: apps/assistant/models.py:114 apps/tutorials/tours.py:648
+#: apps/assistant/models.py:114 apps/tutorials/tours.py:666
 #: templates/nutrition/diary_day.html:3 templates/nutrition/diary_day.html:13
 msgid "Food diary"
 msgstr "Дневник питания"
@@ -1477,7 +1477,7 @@ msgid "unknown"
 msgstr "неизвестно"
 
 #: apps/core/formatting.py:16 templates/programs/program_detail.html:64
-#: templates/workouts/_performed_exercise_card.html:8
+#: templates/workouts/_performed_exercise_card.html:11
 msgid "Rate of Perceived Exertion"
 msgstr "Субъективная оценка нагрузки"
 
@@ -1700,7 +1700,7 @@ msgstr ""
 "должен искать."
 
 #: apps/core/models.py:163 apps/tutorials/tours.py:27
-#: apps/tutorials/tours.py:428 apps/tutorials/tours.py:437
+#: apps/tutorials/tours.py:446 apps/tutorials/tours.py:455
 #: templates/analytics/dashboard.html:3 templates/analytics/dashboard.html:6
 #: templates/base.html:195 templates/base.html:197
 msgid "Progress"
@@ -1745,7 +1745,7 @@ msgstr "%(actual)s ккал записано."
 msgid "Stretched %(minutes)s min."
 msgstr "Растяжка: %(minutes)s мин."
 
-#: apps/core/views.py:309 apps/tutorials/tours.py:841
+#: apps/core/views.py:309 apps/tutorials/tours.py:859
 #: templates/nutrition/_subnav.html:47 templates/nutrition/dashboard.html:73
 #: templates/nutrition/diet_plan_detail.html:21
 #: templates/nutrition/diet_plan_shopping.html:3
@@ -2562,23 +2562,23 @@ msgstr ""
 "Сколько изображений может одновременно содержать одно упражнение. "
 "Применяется ко всем упражнениям - как системным, так и пользовательским."
 
-#: apps/exercises/views.py:72
+#: apps/exercises/views.py:92
 msgid "Exercise created."
 msgstr "Упражнение создано."
 
-#: apps/exercises/views.py:91
+#: apps/exercises/views.py:111
 msgid "Exercise updated."
 msgstr "Упражнение обновлено."
 
-#: apps/exercises/views.py:105
+#: apps/exercises/views.py:125
 msgid "Exercise deactivated."
 msgstr "Упражнение деактивировано."
 
-#: apps/exercises/views.py:126
+#: apps/exercises/views.py:146
 msgid "Image added."
 msgstr "Изображение добавлено."
 
-#: apps/exercises/views.py:142
+#: apps/exercises/views.py:162
 msgid "Image removed."
 msgstr "Изображение удалено."
 
@@ -2622,7 +2622,7 @@ msgstr "Шея"
 
 #: apps/measurements/models.py:18 templates/core/_bmi_card.html:31
 #: templates/nutrition/dashboard.html:109
-#: templates/workouts/_performed_exercise_card.html:15
+#: templates/workouts/_performed_exercise_card.html:18
 msgid "Weight"
 msgstr "Вес"
 
@@ -3062,7 +3062,7 @@ msgid "Plan name"
 msgstr "Название плана"
 
 #: apps/nutrition/forms.py:424 apps/nutrition/forms.py:596
-#: apps/tutorials/tours.py:908 templates/nutrition/stats.html:76
+#: apps/tutorials/tours.py:926 templates/nutrition/stats.html:76
 msgid "Daily calories"
 msgstr "Суточные калории"
 
@@ -3155,7 +3155,7 @@ msgstr ""
 "план питания и импортировать свою копию. Оставьте список пустым, чтобы он "
 "остался личным."
 
-#: apps/nutrition/forms.py:816 apps/tutorials/tours.py:863
+#: apps/nutrition/forms.py:816 apps/tutorials/tours.py:881
 #: templates/nutrition/diet_plan_shopping.html:65
 msgid "Shopping days"
 msgstr "Дни покупок"
@@ -4482,7 +4482,7 @@ msgstr "Рекорд по повторениям"
 msgid "Rep-specific PR"
 msgstr "Рекорд для конкретного числа повторений"
 
-#: apps/records/models.py:14 apps/tutorials/tours.py:484
+#: apps/records/models.py:14 apps/tutorials/tours.py:502
 #: templates/analytics/exercise_analytics.html:20
 msgid "Estimated 1RM"
 msgstr "Оценённый 1ПМ"
@@ -5508,7 +5508,7 @@ msgstr "Программы и упражнения"
 msgid "Body and activities"
 msgstr "Тело и активность"
 
-#: apps/tutorials/tours.py:31 apps/tutorials/tours.py:1066
+#: apps/tutorials/tours.py:31 apps/tutorials/tours.py:1084
 msgid "Friends and groups"
 msgstr "Друзья и группы"
 
@@ -5653,11 +5653,24 @@ msgstr ""
 "Записанные подходы показываются здесь, любой из них можно изменить или "
 "удалить."
 
-#: apps/tutorials/tours.py:224 apps/tutorials/tours.py:289
+#: apps/tutorials/tours.py:224 apps/tutorials/tours.py:298
+#: templates/stretching/stretch_detail.html:30
+msgid "How to do it"
+msgstr "Как выполнять"
+
+#: apps/tutorials/tours.py:226 apps/tutorials/tours.py:300
+msgid ""
+"Tap i to see the exercise's instructions and images without leaving your "
+"workout."
+msgstr ""
+"Нажмите i, чтобы посмотреть инструкции и изображения упражнения, не покидая "
+"тренировку."
+
+#: apps/tutorials/tours.py:233 apps/tutorials/tours.py:307
 msgid "Suggested weight"
 msgstr "Предлагаемый вес"
 
-#: apps/tutorials/tours.py:226
+#: apps/tutorials/tours.py:235
 msgid ""
 "Based on your last sessions, with the reason and how confident it is. It's "
 "only a starting point - you decide what goes on the bar."
@@ -5665,11 +5678,11 @@ msgstr ""
 "На основе ваших последних тренировок, с обоснованием и степенью уверенности. "
 "Это лишь отправная точка - что повесить на гриф, решаете вы."
 
-#: apps/tutorials/tours.py:233
+#: apps/tutorials/tours.py:242
 msgid "Log a set"
 msgstr "Записать подход"
 
-#: apps/tutorials/tours.py:235
+#: apps/tutorials/tours.py:244
 msgid ""
 "Enter weight and reps and tap Log set. RPE, RIR, warm-up and failure are "
 "optional. New personal records are detected automatically."
@@ -5677,19 +5690,19 @@ msgstr ""
 "Введите вес и повторения и нажмите «Записать подход». RPE, RIR, разминка и "
 "отказ необязательны. Новые личные рекорды определяются автоматически."
 
-#: apps/tutorials/tours.py:242
+#: apps/tutorials/tours.py:251
 msgid "Add an exercise"
 msgstr "Добавить упражнение"
 
-#: apps/tutorials/tours.py:243
+#: apps/tutorials/tours.py:252
 msgid "Add anything that isn't in the plan - it only changes this workout."
 msgstr "Добавьте то, чего нет в плане, - это изменит только эту тренировку."
 
-#: apps/tutorials/tours.py:248 apps/tutorials/tours.py:269
+#: apps/tutorials/tours.py:257 apps/tutorials/tours.py:278
 msgid "Training mode"
 msgstr "Режим тренировки"
 
-#: apps/tutorials/tours.py:250
+#: apps/tutorials/tours.py:259
 msgid ""
 "One exercise at a time with big buttons and a rest timer - the easiest way "
 "to log at the gym. This button follows you on every page."
@@ -5697,11 +5710,11 @@ msgstr ""
 "Одно упражнение за раз, крупные кнопки и таймер отдыха - самый простой "
 "способ записывать в зале. Эта кнопка доступна на каждой странице."
 
-#: apps/tutorials/tours.py:257 apps/tutorials/tours.py:999
+#: apps/tutorials/tours.py:266 apps/tutorials/tours.py:1017
 msgid "Finish"
 msgstr "Завершить"
 
-#: apps/tutorials/tours.py:259
+#: apps/tutorials/tours.py:268
 msgid ""
 "Complete the workout when you're done. Abandon keeps it in your history as "
 "unfinished."
@@ -5709,7 +5722,7 @@ msgstr ""
 "Завершите тренировку, когда закончите. «Прервать» оставляет её в истории как "
 "незавершённую."
 
-#: apps/tutorials/tours.py:277
+#: apps/tutorials/tours.py:286
 msgid ""
 "The dots show your progress. The arrows move between exercises in any order "
 "- the next unfinished one opens by default."
@@ -5717,26 +5730,26 @@ msgstr ""
 "Точки показывают ваш прогресс. Стрелки переключают упражнения в любом "
 "порядке - по умолчанию открывается следующее незавершённое."
 
-#: apps/tutorials/tours.py:283
+#: apps/tutorials/tours.py:292
 msgid "Current exercise"
 msgstr "Текущее упражнение"
 
-#: apps/tutorials/tours.py:284
+#: apps/tutorials/tours.py:293
 msgid "Its target and the sets you've already logged; tap a set to edit it."
 msgstr ""
 "Его цель и уже записанные подходы; нажмите на подход, чтобы изменить его."
 
-#: apps/tutorials/tours.py:290
+#: apps/tutorials/tours.py:308
 msgid ""
 "A starting point from your history. You can always enter something else."
 msgstr ""
 "Отправная точка из вашей истории. Вы всегда можете ввести другое значение."
 
-#: apps/tutorials/tours.py:295
+#: apps/tutorials/tours.py:313
 msgid "Log the set"
 msgstr "Записать подход"
 
-#: apps/tutorials/tours.py:297
+#: apps/tutorials/tours.py:315
 msgid ""
 "Weight and reps, then Log set. “More options” has RPE, RIR, warm-up, failure "
 "and notes."
@@ -5744,11 +5757,11 @@ msgstr ""
 "Вес и повторения, затем «Записать подход». В «Больше параметров» - RPE, RIR, "
 "разминка, отказ и заметки."
 
-#: apps/tutorials/tours.py:304 templates/workouts/session_train.html:26
+#: apps/tutorials/tours.py:322 templates/workouts/session_train.html:26
 msgid "Rest timer"
 msgstr "Таймер отдыха"
 
-#: apps/tutorials/tours.py:306
+#: apps/tutorials/tours.py:324
 msgid ""
 "Starts by itself after each set and chimes when rest is over. Adjust it by "
 "15 seconds, skip it, or mute the sound."
@@ -5756,37 +5769,37 @@ msgstr ""
 "Запускается сам после каждого подхода и подаёт сигнал, когда отдых закончен. "
 "Меняйте его на 15 секунд, пропускайте или выключите звук."
 
-#: apps/tutorials/tours.py:312 templates/workouts/session_train.html:9
+#: apps/tutorials/tours.py:330 templates/workouts/session_train.html:9
 msgid "Full view"
 msgstr "Полный вид"
 
-#: apps/tutorials/tours.py:313
+#: apps/tutorials/tours.py:331
 msgid "Every exercise at once - for reviewing or correcting the whole workout."
 msgstr "Все упражнения сразу - для просмотра или исправления всей тренировки."
 
-#: apps/tutorials/tours.py:326
+#: apps/tutorials/tours.py:344
 msgid "Create or import"
 msgstr "Создать или импортировать"
 
-#: apps/tutorials/tours.py:327
+#: apps/tutorials/tours.py:345
 msgid "Build your own program, or import one someone exported for you."
 msgstr ""
 "Составьте свою программу или импортируйте ту, что кто-то экспортировал для "
 "вас."
 
-#: apps/tutorials/tours.py:331
+#: apps/tutorials/tours.py:349
 msgid "Your programs"
 msgstr "Ваши программы"
 
-#: apps/tutorials/tours.py:332
+#: apps/tutorials/tours.py:350
 msgid "Open a program to see its workouts and start one."
 msgstr "Откройте программу, чтобы увидеть её тренировки и начать одну из них."
 
-#: apps/tutorials/tours.py:337
+#: apps/tutorials/tours.py:355
 msgid "Ready-made programs"
 msgstr "Готовые программы"
 
-#: apps/tutorials/tours.py:339
+#: apps/tutorials/tours.py:357
 msgid ""
 "Copy a built-in program to make it yours. Changing your copy never changes "
 "workouts you've already logged."
@@ -5794,15 +5807,15 @@ msgstr ""
 "Скопируйте встроенную программу, чтобы сделать её своей. Изменения копии "
 "никогда не затрагивают уже записанные тренировки."
 
-#: apps/tutorials/tours.py:349
+#: apps/tutorials/tours.py:367
 msgid "A program"
 msgstr "Программа"
 
-#: apps/tutorials/tours.py:355
+#: apps/tutorials/tours.py:373
 msgid "About the program"
 msgstr "О программе"
 
-#: apps/tutorials/tours.py:357
+#: apps/tutorials/tours.py:375
 msgid ""
 "Its description and version. Editing a program never changes workouts you've "
 "already logged."
@@ -5810,17 +5823,17 @@ msgstr ""
 "Её описание и версия. Изменение программы никогда не затрагивает уже "
 "записанные тренировки."
 
-#: apps/tutorials/tours.py:363 apps/tutorials/tours.py:970
+#: apps/tutorials/tours.py:381 apps/tutorials/tours.py:988
 msgid "Make it yours"
 msgstr "Сделайте её своей"
 
-#: apps/tutorials/tours.py:364
+#: apps/tutorials/tours.py:382
 msgid ""
 "This is a template: copy it to a program of your own to edit and use it."
 msgstr ""
 "Это шаблон: скопируйте его в свою программу, чтобы изменять и использовать."
 
-#: apps/tutorials/tours.py:371
+#: apps/tutorials/tours.py:389
 msgid ""
 "A program is a set of workouts, each with its exercises, sets, reps and how "
 "the weight should progress."
@@ -5828,115 +5841,115 @@ msgstr ""
 "Программа - это набор тренировок, в каждой свои упражнения, подходы, "
 "повторения и способ увеличения веса."
 
-#: apps/tutorials/tours.py:378
+#: apps/tutorials/tours.py:396
 msgid "Add exercises"
 msgstr "Добавить упражнения"
 
-#: apps/tutorials/tours.py:379
+#: apps/tutorials/tours.py:397
 msgid "Add an exercise to a workout and set its target sets and reps."
 msgstr ""
 "Добавьте упражнение в тренировку и задайте целевые подходы и повторения."
 
-#: apps/tutorials/tours.py:384
+#: apps/tutorials/tours.py:402
 msgid "Start it"
 msgstr "Начать"
 
-#: apps/tutorials/tours.py:385
+#: apps/tutorials/tours.py:403
 msgid "Starts a workout with these exercises and targets filled in."
 msgstr "Начинает тренировку, в которой эти упражнения и цели уже заполнены."
 
-#: apps/tutorials/tours.py:390
+#: apps/tutorials/tours.py:408
 msgid "Add a workout"
 msgstr "Добавить тренировку"
 
-#: apps/tutorials/tours.py:391
+#: apps/tutorials/tours.py:409
 msgid "For example a second training day."
 msgstr "Например, второй тренировочный день."
 
-#: apps/tutorials/tours.py:399
+#: apps/tutorials/tours.py:417
 msgid "Exercise library"
 msgstr "Библиотека упражнений"
 
-#: apps/tutorials/tours.py:404
+#: apps/tutorials/tours.py:422
 msgid "Find an exercise"
 msgstr "Найти упражнение"
 
-#: apps/tutorials/tours.py:405
+#: apps/tutorials/tours.py:423
 msgid "Search by name, or filter by muscle group and equipment."
 msgstr "Ищите по названию или фильтруйте по группе мышц и инвентарю."
 
-#: apps/tutorials/tours.py:409
+#: apps/tutorials/tours.py:427
 msgid "Your own exercises"
 msgstr "Ваши упражнения"
 
-#: apps/tutorials/tours.py:410
+#: apps/tutorials/tours.py:428
 msgid "Missing something? Add it - only you will see it."
 msgstr "Чего-то не хватает? Добавьте - видеть его будете только вы."
 
-#: apps/tutorials/tours.py:417
+#: apps/tutorials/tours.py:435
 msgid "An exercise"
 msgstr "Упражнение"
 
-#: apps/tutorials/tours.py:424
+#: apps/tutorials/tours.py:442
 msgid "Your best lifts for this exercise, kept up to date automatically."
 msgstr "Ваши лучшие результаты в этом упражнении, обновляются автоматически."
 
-#: apps/tutorials/tours.py:429
+#: apps/tutorials/tours.py:447
 msgid "Your estimated one-rep max and volume for this exercise over time."
 msgstr ""
 "Ваш расчётный одноповторный максимум и объём в этом упражнении со временем."
 
-#: apps/tutorials/tours.py:442 apps/tutorials/tours.py:479
+#: apps/tutorials/tours.py:460 apps/tutorials/tours.py:497
 msgid "Time range"
 msgstr "Период"
 
-#: apps/tutorials/tours.py:443
+#: apps/tutorials/tours.py:461
 msgid "Everything on this page follows the range you pick here."
 msgstr "Всё на этой странице показывается за выбранный здесь период."
 
-#: apps/tutorials/tours.py:447
+#: apps/tutorials/tours.py:465
 msgid "Summary"
 msgstr "Сводка"
 
-#: apps/tutorials/tours.py:448
+#: apps/tutorials/tours.py:466
 msgid "Workouts, time spent training and total volume lifted in the range."
 msgstr "Тренировки, время на тренировки и общий поднятый объём за период."
 
-#: apps/tutorials/tours.py:452
+#: apps/tutorials/tours.py:470
 msgid "One exercise"
 msgstr "Одно упражнение"
 
-#: apps/tutorials/tours.py:453
+#: apps/tutorials/tours.py:471
 msgid "Pick an exercise to see how its strength has developed."
 msgstr "Выберите упражнение, чтобы увидеть, как росла сила в нём."
 
-#: apps/tutorials/tours.py:458
+#: apps/tutorials/tours.py:476
 msgid "Weekly volume"
 msgstr "Объём по неделям"
 
-#: apps/tutorials/tours.py:459
+#: apps/tutorials/tours.py:477
 msgid ""
 "How much you lifted each week. The table under the chart has exact figures."
 msgstr ""
 "Сколько вы подняли за каждую неделю. Точные цифры - в таблице под графиком."
 
-#: apps/tutorials/tours.py:464
+#: apps/tutorials/tours.py:482
 msgid "Muscle groups"
 msgstr "Группы мышц"
 
-#: apps/tutorials/tours.py:465
+#: apps/tutorials/tours.py:483
 msgid "Which muscles got the most work - handy for spotting imbalances."
 msgstr "Какие мышцы работали больше всего - удобно, чтобы заметить дисбаланс."
 
-#: apps/tutorials/tours.py:473
+#: apps/tutorials/tours.py:491
 msgid "Progress for an exercise"
 msgstr "Прогресс в упражнении"
 
-#: apps/tutorials/tours.py:480
+#: apps/tutorials/tours.py:498
 msgid "Choose how far back to look."
 msgstr "Выберите, насколько далеко смотреть назад."
 
-#: apps/tutorials/tours.py:486
+#: apps/tutorials/tours.py:504
 msgid ""
 "The heaviest single rep you could likely lift, estimated from your sets. A "
 "rising line means you're getting stronger."
@@ -5945,148 +5958,148 @@ msgstr ""
 "рассчитанный по вашим подходам. Растущая линия означает, что вы становитесь "
 "сильнее."
 
-#: apps/tutorials/tours.py:502
+#: apps/tutorials/tours.py:520
 msgid "Current records"
 msgstr "Текущие рекорды"
 
-#: apps/tutorials/tours.py:503
+#: apps/tutorials/tours.py:521
 msgid "Heaviest weight, best estimated 1RM, most reps and more."
 msgstr ""
 "Максимальный вес, лучший расчётный 1RM, больше всего повторений и другое."
 
-#: apps/tutorials/tours.py:507 templates/records/exercise_records.html:28
+#: apps/tutorials/tours.py:525 templates/records/exercise_records.html:28
 msgid "Rep maxes"
 msgstr "Максимумы по повторениям"
 
-#: apps/tutorials/tours.py:508
+#: apps/tutorials/tours.py:526
 msgid "The most weight you've lifted for each number of reps."
 msgstr "Наибольший вес, поднятый вами на каждое число повторений."
 
-#: apps/tutorials/tours.py:516 templates/core/dashboard.html:148
+#: apps/tutorials/tours.py:534 templates/core/dashboard.html:148
 #: templates/measurements/measurement_history.html:5
 #: templates/measurements/measurement_type_list.html:3
 #: templates/measurements/measurement_type_list.html:6
 msgid "Body tracking"
 msgstr "Отслеживание тела"
 
-#: apps/tutorials/tours.py:521
+#: apps/tutorials/tours.py:539
 msgid "What you track"
 msgstr "Что вы отслеживаете"
 
-#: apps/tutorials/tours.py:522
+#: apps/tutorials/tours.py:540
 msgid "Body weight, waist, body fat and more. Open one to log a reading."
 msgstr ""
 "Вес тела, талия, процент жира и другое. Откройте замер, чтобы записать "
 "значение."
 
-#: apps/tutorials/tours.py:527
+#: apps/tutorials/tours.py:545
 msgid "Your own measurements"
 msgstr "Ваши замеры"
 
-#: apps/tutorials/tours.py:528
+#: apps/tutorials/tours.py:546
 msgid "Add anything else you want to follow."
 msgstr "Добавьте всё, что ещё хотите отслеживать."
 
-#: apps/tutorials/tours.py:535
+#: apps/tutorials/tours.py:553
 msgid "A measurement"
 msgstr "Замер"
 
-#: apps/tutorials/tours.py:541
+#: apps/tutorials/tours.py:559
 #: templates/measurements/measurement_history.html:21
 #: templates/nutrition/_subnav.html:52 templates/nutrition/stats.html:6
 msgid "Statistics"
 msgstr "Статистика"
 
-#: apps/tutorials/tours.py:542
+#: apps/tutorials/tours.py:560
 msgid "Your current value and how it has changed since you started."
 msgstr "Ваше текущее значение и как оно изменилось с начала."
 
-#: apps/tutorials/tours.py:547
+#: apps/tutorials/tours.py:565
 msgid "Log a reading"
 msgstr "Записать значение"
 
-#: apps/tutorials/tours.py:548
+#: apps/tutorials/tours.py:566
 msgid "Enter today's value - or an earlier date to catch up."
 msgstr ""
 "Введите сегодняшнее значение - или более раннюю дату, чтобы наверстать."
 
-#: apps/tutorials/tours.py:552 apps/tutorials/tours.py:591
+#: apps/tutorials/tours.py:570 apps/tutorials/tours.py:609
 msgid "History"
 msgstr "История"
 
-#: apps/tutorials/tours.py:553
+#: apps/tutorials/tours.py:571
 msgid "Every reading, newest first, with edit and delete."
 msgstr "Все значения, сначала новые, с изменением и удалением."
 
-#: apps/tutorials/tours.py:566
+#: apps/tutorials/tours.py:584
 msgid "Activity types"
 msgstr "Типы активности"
 
-#: apps/tutorials/tours.py:567
+#: apps/tutorials/tours.py:585
 msgid "Running, cycling, walking and more. Open one to log it."
 msgstr ""
 "Бег, велосипед, ходьба и другое. Откройте тип, чтобы записать активность."
 
-#: apps/tutorials/tours.py:572
+#: apps/tutorials/tours.py:590
 msgid "Your own types"
 msgstr "Ваши типы"
 
-#: apps/tutorials/tours.py:573
+#: apps/tutorials/tours.py:591
 msgid "Add any other activity you want to track."
 msgstr "Добавьте любую другую активность, которую хотите отслеживать."
 
-#: apps/tutorials/tours.py:580
+#: apps/tutorials/tours.py:598
 msgid "An activity"
 msgstr "Активность"
 
-#: apps/tutorials/tours.py:586 apps/tutorials/tours.py:790
+#: apps/tutorials/tours.py:604 apps/tutorials/tours.py:808
 msgid "Log it"
 msgstr "Записать"
 
-#: apps/tutorials/tours.py:587
+#: apps/tutorials/tours.py:605
 msgid "Date, duration and, if you like, distance and notes."
 msgstr "Дата, продолжительность и, по желанию, расстояние и заметки."
 
-#: apps/tutorials/tours.py:592
+#: apps/tutorials/tours.py:610
 msgid "Everything you've logged of this activity."
 msgstr "Всё, что вы записали по этой активности."
 
-#: apps/tutorials/tours.py:601
+#: apps/tutorials/tours.py:619
 msgid "Nutrition overview"
 msgstr "Обзор питания"
 
-#: apps/tutorials/tours.py:606 templates/nutrition/_subnav.html:43
+#: apps/tutorials/tours.py:624 templates/nutrition/_subnav.html:43
 msgid "Nutrition sections"
 msgstr "Разделы питания"
 
-#: apps/tutorials/tours.py:608
+#: apps/tutorials/tours.py:626
 msgid ""
 "Diary, shopping list, foods, recipes, diet plans, calculators and statistics."
 msgstr ""
 "Дневник, список покупок, продукты, рецепты, планы питания, калькуляторы и "
 "статистика."
 
-#: apps/tutorials/tours.py:614
+#: apps/tutorials/tours.py:632
 msgid "Training or rest day"
 msgstr "Тренировочный день или день отдыха"
 
-#: apps/tutorials/tours.py:615
+#: apps/tutorials/tours.py:633
 msgid "Whether you've completed a workout today. It's shown for context only."
 msgstr "Выполнили ли вы сегодня тренировку. Показывается только для сведения."
 
-#: apps/tutorials/tours.py:619 templates/nutrition/dashboard.html:19
+#: apps/tutorials/tours.py:637 templates/nutrition/dashboard.html:19
 msgid "Today so far"
 msgstr "Сегодня на данный момент"
 
-#: apps/tutorials/tours.py:620
+#: apps/tutorials/tours.py:638
 msgid "What you've eaten today against your targets."
 msgstr "Что вы съели сегодня по сравнению с вашими целями."
 
-#: apps/tutorials/tours.py:624
+#: apps/tutorials/tours.py:642
 msgid "Target check"
 msgstr "Проверка цели"
 
-#: apps/tutorials/tours.py:626
+#: apps/tutorials/tours.py:644
 msgid ""
 "Compares your weight trend with your goal and may suggest a new target. "
 "Nothing changes unless you accept it."
@@ -6094,43 +6107,43 @@ msgstr ""
 "Сравнивает тренд вашего веса с целью и может предложить новую цель. Ничего "
 "не изменится, пока вы не согласитесь."
 
-#: apps/tutorials/tours.py:633 templates/nutrition/dashboard.html:116
+#: apps/tutorials/tours.py:651 templates/nutrition/dashboard.html:116
 msgid "Daily target"
 msgstr "Дневная цель"
 
-#: apps/tutorials/tours.py:634
+#: apps/tutorials/tours.py:652
 msgid "Calories and macros, worked out from your profile and goal."
 msgstr "Калории и макросы, рассчитанные по вашему профилю и цели."
 
-#: apps/tutorials/tours.py:639
+#: apps/tutorials/tours.py:657
 msgid "Your goal"
 msgstr "Ваша цель"
 
-#: apps/tutorials/tours.py:640
+#: apps/tutorials/tours.py:658
 msgid "Lose, keep or gain - and how fast. Change it at any time."
 msgstr "Снизить, сохранить или набрать - и как быстро. Меняйте в любое время."
 
-#: apps/tutorials/tours.py:653
+#: apps/tutorials/tours.py:671
 msgid "Pick a day"
 msgstr "Выберите день"
 
-#: apps/tutorials/tours.py:654
+#: apps/tutorials/tours.py:672
 msgid "Move a day at a time, or pick any date to fill in."
 msgstr "Переходите по дням или выберите любую дату для заполнения."
 
-#: apps/tutorials/tours.py:658
+#: apps/tutorials/tours.py:676
 msgid "Day total"
 msgstr "Итог дня"
 
-#: apps/tutorials/tours.py:659
+#: apps/tutorials/tours.py:677
 msgid "Calories and macros eaten on this day."
 msgstr "Калории и макросы, съеденные в этот день."
 
-#: apps/tutorials/tours.py:663 apps/tutorials/tours.py:826
+#: apps/tutorials/tours.py:681 apps/tutorials/tours.py:844
 msgid "Meals"
 msgstr "Приёмы пищи"
 
-#: apps/tutorials/tours.py:665
+#: apps/tutorials/tours.py:683
 msgid ""
 "Each meal lists what you logged. “Save as recipe” turns a meal you eat often "
 "into a recipe you can log in one tap."
@@ -6138,42 +6151,42 @@ msgstr ""
 "Каждый приём пищи показывает записанное. «Сохранить как рецепт» превращает "
 "часто повторяющийся приём пищи в рецепт, который записывается одним касанием."
 
-#: apps/tutorials/tours.py:671 templates/nutrition/diary_add_entry.html:3
+#: apps/tutorials/tours.py:689 templates/nutrition/diary_add_entry.html:3
 #: templates/nutrition/diary_add_entry.html:6
 #: templates/nutrition/diary_day.html:88
 msgid "Add food"
 msgstr "Добавить продукт"
 
-#: apps/tutorials/tours.py:672
+#: apps/tutorials/tours.py:690
 msgid "Search, scan a barcode, or enter macros straight in."
 msgstr "Ищите, сканируйте штрихкод или вводите макросы напрямую."
 
-#: apps/tutorials/tours.py:676
+#: apps/tutorials/tours.py:694
 msgid "Copy a day"
 msgstr "Скопировать день"
 
-#: apps/tutorials/tours.py:677
+#: apps/tutorials/tours.py:695
 msgid "Eating the same as yesterday? Copy the whole day in one go."
 msgstr "Едите то же, что вчера? Скопируйте весь день сразу."
 
-#: apps/tutorials/tours.py:684
+#: apps/tutorials/tours.py:702
 msgid "Adding food"
 msgstr "Добавление еды"
 
-#: apps/tutorials/tours.py:689
+#: apps/tutorials/tours.py:707
 msgid "Which meal"
 msgstr "Какой приём пищи"
 
-#: apps/tutorials/tours.py:690
+#: apps/tutorials/tours.py:708
 msgid "Everything you add on this page goes to the meal chosen here."
 msgstr ""
 "Всё, что вы добавите на этой странице, попадёт в выбранный здесь приём пищи."
 
-#: apps/tutorials/tours.py:694
+#: apps/tutorials/tours.py:712
 msgid "Search or scan"
 msgstr "Поиск или сканирование"
 
-#: apps/tutorials/tours.py:696
+#: apps/tutorials/tours.py:714
 msgid ""
 "Type a name or scan a barcode. Your own foods show first; Open Food Facts "
 "can be searched too. The amount is prefilled with what you logged last time."
@@ -6182,11 +6195,11 @@ msgstr ""
 "продукты; искать можно и в Open Food Facts. Количество заполнено тем, что вы "
 "записали в прошлый раз."
 
-#: apps/tutorials/tours.py:703 templates/nutrition/diary_add_entry.html:79
+#: apps/tutorials/tours.py:721 templates/nutrition/diary_add_entry.html:79
 msgid "Enter macros manually"
 msgstr "Ввести макросы вручную"
 
-#: apps/tutorials/tours.py:705
+#: apps/tutorials/tours.py:723
 msgid ""
 "Eating out? Type in the meal's calories and macros without creating a food "
 "for it."
@@ -6194,33 +6207,33 @@ msgstr ""
 "Едите вне дома? Введите калории и макросы блюда, не создавая для него "
 "продукт."
 
-#: apps/tutorials/tours.py:711 templates/nutrition/_most_used_foods.html:23
+#: apps/tutorials/tours.py:729 templates/nutrition/_most_used_foods.html:23
 msgid "Most used"
 msgstr "Часто используемые"
 
-#: apps/tutorials/tours.py:712
+#: apps/tutorials/tours.py:730
 msgid "The foods you add most often, one tap away."
 msgstr "Продукты, которые вы добавляете чаще всего, - в одно касание."
 
-#: apps/tutorials/tours.py:720 templates/nutrition/_subnav.html:48
+#: apps/tutorials/tours.py:738 templates/nutrition/_subnav.html:48
 #: templates/nutrition/food_detail.html:6 templates/nutrition/food_list.html:3
 #: templates/nutrition/food_list.html:6
 msgid "Foods"
 msgstr "Продукты"
 
-#: apps/tutorials/tours.py:725
+#: apps/tutorials/tours.py:743
 msgid "Add foods"
 msgstr "Добавить продукты"
 
-#: apps/tutorials/tours.py:726
+#: apps/tutorials/tours.py:744
 msgid "Create your own, or browse Open Food Facts by category."
 msgstr "Создайте свой или просматривайте Open Food Facts по категориям."
 
-#: apps/tutorials/tours.py:730 templates/nutrition/food_list.html:22
+#: apps/tutorials/tours.py:748 templates/nutrition/food_list.html:22
 msgid "Find a new food"
 msgstr "Найти новый продукт"
 
-#: apps/tutorials/tours.py:731
+#: apps/tutorials/tours.py:749
 msgid ""
 "Search Open Food Facts or scan a barcode to bring a product into your "
 "library."
@@ -6228,25 +6241,25 @@ msgstr ""
 "Ищите в Open Food Facts или сканируйте штрихкод, чтобы добавить товар в свою "
 "библиотеку."
 
-#: apps/tutorials/tours.py:735
+#: apps/tutorials/tours.py:753
 msgid "Your library"
 msgstr "Ваша библиотека"
 
-#: apps/tutorials/tours.py:736
+#: apps/tutorials/tours.py:754
 msgid "Filter and sort every food you can log. Newest first by default."
 msgstr ""
 "Фильтруйте и сортируйте все продукты, которые можно записать. По умолчанию "
 "сначала новые."
 
-#: apps/tutorials/tours.py:743
+#: apps/tutorials/tours.py:761
 msgid "A food"
 msgstr "Продукт"
 
-#: apps/tutorials/tours.py:749
+#: apps/tutorials/tours.py:767
 msgid "Nutrition facts"
 msgstr "Пищевая ценность"
 
-#: apps/tutorials/tours.py:751
+#: apps/tutorials/tours.py:769
 msgid ""
 "Laid out like a package label: energy, fat, carbohydrate, fibre, protein and "
 "salt - then any vitamins and minerals that are known."
@@ -6254,50 +6267,50 @@ msgstr ""
 "Как на упаковке: энергия, жиры, углеводы, пищевые волокна, белки и соль - "
 "затем известные витамины и минералы."
 
-#: apps/tutorials/tours.py:760 templates/nutrition/_subnav.html:49
+#: apps/tutorials/tours.py:778 templates/nutrition/_subnav.html:49
 #: templates/nutrition/recipe_detail.html:6
 #: templates/nutrition/recipe_list.html:3
 #: templates/nutrition/recipe_list.html:6
 msgid "Recipes"
 msgstr "Рецепты"
 
-#: apps/tutorials/tours.py:765 templates/nutrition/recipe_list.html:22
+#: apps/tutorials/tours.py:783 templates/nutrition/recipe_list.html:22
 msgid "Your recipes"
 msgstr "Ваши рецепты"
 
-#: apps/tutorials/tours.py:766
+#: apps/tutorials/tours.py:784
 msgid "Combine foods into a recipe once, then log a serving in one tap."
 msgstr ""
 "Объедините продукты в рецепт один раз, а затем записывайте порцию одним "
 "касанием."
 
-#: apps/tutorials/tours.py:770 templates/nutrition/recipe_list.html:46
+#: apps/tutorials/tours.py:788 templates/nutrition/recipe_list.html:46
 msgid "Template recipes"
 msgstr "Рецепты-шаблоны"
 
-#: apps/tutorials/tours.py:771
+#: apps/tutorials/tours.py:789
 msgid "Ready-made recipes everyone can use."
 msgstr "Готовые рецепты, доступные всем."
 
-#: apps/tutorials/tours.py:779
+#: apps/tutorials/tours.py:797
 msgid "A recipe"
 msgstr "Рецепт"
 
-#: apps/tutorials/tours.py:785 templates/nutrition/food_detail.html:73
+#: apps/tutorials/tours.py:803 templates/nutrition/food_detail.html:73
 #: templates/nutrition/recipe_detail.html:36
 msgid "Ingredients"
 msgstr "Ингредиенты"
 
-#: apps/tutorials/tours.py:786
+#: apps/tutorials/tours.py:804
 msgid "The foods in it and their amounts. Nutrition is worked out from these."
 msgstr ""
 "Продукты в нём и их количество. Пищевая ценность рассчитывается по ним."
 
-#: apps/tutorials/tours.py:791
+#: apps/tutorials/tours.py:809
 msgid "Add servings of this recipe to your diary."
 msgstr "Добавьте порции этого рецепта в свой дневник."
 
-#: apps/tutorials/tours.py:799 templates/coaching/shared_plan_list.html:29
+#: apps/tutorials/tours.py:817 templates/coaching/shared_plan_list.html:29
 #: templates/nutrition/_subnav.html:50
 #: templates/nutrition/diet_plan_detail.html:6
 #: templates/nutrition/diet_plan_list.html:3
@@ -6307,11 +6320,11 @@ msgstr "Добавьте порции этого рецепта в свой дн
 msgid "Diet plans"
 msgstr "Планы питания"
 
-#: apps/tutorials/tours.py:804
+#: apps/tutorials/tours.py:822
 msgid "Create a plan"
 msgstr "Создать план"
 
-#: apps/tutorials/tours.py:806
+#: apps/tutorials/tours.py:824
 msgid ""
 "A plan is built for you from your foods and recipes to hit your targets. You "
 "can adjust every item afterwards."
@@ -6319,44 +6332,44 @@ msgstr ""
 "План составляется для вас из ваших продуктов и рецептов, чтобы достичь "
 "целей. Каждый пункт можно потом изменить."
 
-#: apps/tutorials/tours.py:815
+#: apps/tutorials/tours.py:833
 msgid "A diet plan"
 msgstr "План питания"
 
-#: apps/tutorials/tours.py:821
+#: apps/tutorials/tours.py:839
 msgid "Active plan"
 msgstr "Активный план"
 
-#: apps/tutorials/tours.py:822
+#: apps/tutorials/tours.py:840
 msgid "The active plan is shown on the nutrition overview each day."
 msgstr "Активный план показывается в обзоре питания каждый день."
 
-#: apps/tutorials/tours.py:827
+#: apps/tutorials/tours.py:845
 msgid "Each meal's items and how close they come to its calorie budget."
 msgstr ""
 "Пункты каждого приёма пищи и насколько они близки к его бюджету калорий."
 
-#: apps/tutorials/tours.py:832
+#: apps/tutorials/tours.py:850
 msgid "Log the plan"
 msgstr "Записать план"
 
-#: apps/tutorials/tours.py:833
+#: apps/tutorials/tours.py:851
 msgid "Copy a day of the plan into your diary as if you'd eaten it."
 msgstr "Скопируйте день плана в дневник, как будто вы его съели."
 
-#: apps/tutorials/tours.py:847 templates/nutrition/diet_plan_shopping.html:21
+#: apps/tutorials/tours.py:865 templates/nutrition/diet_plan_shopping.html:21
 msgid "Shopping trips"
 msgstr "Походы в магазин"
 
-#: apps/tutorials/tours.py:848
+#: apps/tutorials/tours.py:866
 msgid "One list per shopping day, covering the days until the next one."
 msgstr "Один список на каждый день покупок, до следующего."
 
-#: apps/tutorials/tours.py:853
+#: apps/tutorials/tours.py:871
 msgid "What to buy"
 msgstr "Что купить"
 
-#: apps/tutorials/tours.py:855
+#: apps/tutorials/tours.py:873
 msgid ""
 "Everything the plan's meals need, recipes included. The same food on several "
 "days is added up, with each day's amount under it. Tick items off as you "
@@ -6366,7 +6379,7 @@ msgstr ""
 "продукт в разные дни суммируется, а количество по дням показано под ним. "
 "Отмечайте купленное в магазине."
 
-#: apps/tutorials/tours.py:865
+#: apps/tutorials/tours.py:883
 msgid ""
 "Pick the days you go shopping, and whether a shopping day's own meals go on "
 "that day's list. Set separately for each plan."
@@ -6374,14 +6387,14 @@ msgstr ""
 "Выберите дни, когда ходите в магазин, и попадают ли приёмы пищи дня покупок "
 "в его список. Настраивается для каждого плана отдельно."
 
-#: apps/tutorials/tours.py:874 apps/tutorials/tours.py:879
+#: apps/tutorials/tours.py:892 apps/tutorials/tours.py:897
 #: templates/nutrition/_subnav.html:51
 #: templates/nutrition/calculators_home.html:3
 #: templates/nutrition/calculators_home.html:6
 msgid "Calculators"
 msgstr "Калькуляторы"
 
-#: apps/tutorials/tours.py:881
+#: apps/tutorials/tours.py:899
 msgid ""
 "Energy use, macros, body fat, water, BMI and more. They only calculate - "
 "nothing is saved or changed."
@@ -6389,15 +6402,15 @@ msgstr ""
 "Расход энергии, макросы, процент жира, вода, ИМТ и другое. Они только "
 "считают - ничего не сохраняется и не меняется."
 
-#: apps/tutorials/tours.py:890 templates/nutrition/stats.html:3
+#: apps/tutorials/tours.py:908 templates/nutrition/stats.html:3
 msgid "Nutrition statistics"
 msgstr "Статистика питания"
 
-#: apps/tutorials/tours.py:895 templates/nutrition/stats.html:11
+#: apps/tutorials/tours.py:913 templates/nutrition/stats.html:11
 msgid "Last 30 days"
 msgstr "Последние 30 дней"
 
-#: apps/tutorials/tours.py:897
+#: apps/tutorials/tours.py:915
 msgid ""
 "Median daily calories and macros. Days with nothing logged don't count, and "
 "one barely-logged day doesn't drag the figure down."
@@ -6405,63 +6418,63 @@ msgstr ""
 "Медиана калорий и макросов в день. Дни без записей не учитываются, а один "
 "почти пустой день не тянет показатель вниз."
 
-#: apps/tutorials/tours.py:903
+#: apps/tutorials/tours.py:921
 msgid "Longer and shorter periods"
 msgstr "Более длинные и короткие периоды"
 
-#: apps/tutorials/tours.py:904
+#: apps/tutorials/tours.py:922
 msgid "The same medians for a week up to everything you've ever logged."
 msgstr "Те же медианы - от недели до всего, что вы когда-либо записывали."
 
-#: apps/tutorials/tours.py:909
+#: apps/tutorials/tours.py:927
 msgid "Each of the last 30 days, with the exact figures in a table below."
 msgstr "Каждый из последних 30 дней, точные цифры - в таблице ниже."
 
-#: apps/tutorials/tours.py:923 templates/stretching/_subnav.html:9
+#: apps/tutorials/tours.py:941 templates/stretching/_subnav.html:9
 msgid "Stretching sections"
 msgstr "Разделы растяжки"
 
-#: apps/tutorials/tours.py:924
+#: apps/tutorials/tours.py:942
 msgid "Overview, routines, the stretch library and your history."
 msgstr "Обзор, комплексы, библиотека упражнений на растяжку и ваша история."
 
-#: apps/tutorials/tours.py:928
+#: apps/tutorials/tours.py:946
 msgid "Your streak"
 msgstr "Ваша серия"
 
-#: apps/tutorials/tours.py:929
+#: apps/tutorials/tours.py:947
 msgid "Days in a row with stretching, and your totals."
 msgstr "Дни подряд с растяжкой и ваши итоги."
 
-#: apps/tutorials/tours.py:933 templates/stretching/home.html:28
+#: apps/tutorials/tours.py:951 templates/stretching/home.html:28
 msgid "Start a routine"
 msgstr "Начать комплекс"
 
-#: apps/tutorials/tours.py:934
+#: apps/tutorials/tours.py:952
 msgid "A guided session times every stretch for you."
 msgstr "Сеанс с подсказками засекает время каждого упражнения за вас."
 
-#: apps/tutorials/tours.py:939
+#: apps/tutorials/tours.py:957
 msgid "Log it afterwards"
 msgstr "Записать потом"
 
-#: apps/tutorials/tours.py:940
+#: apps/tutorials/tours.py:958
 msgid "Stretched without the timer? Log just how long you stretched."
 msgstr "Тянулись без таймера? Просто запишите, сколько времени это заняло."
 
-#: apps/tutorials/tours.py:947
+#: apps/tutorials/tours.py:965
 msgid "A routine"
 msgstr "Комплекс"
 
-#: apps/tutorials/tours.py:953
+#: apps/tutorials/tours.py:971
 msgid "About the routine"
 msgstr "О комплексе"
 
-#: apps/tutorials/tours.py:954
+#: apps/tutorials/tours.py:972
 msgid "How many stretches it has and roughly how long it takes."
 msgstr "Сколько в нём упражнений и примерно сколько он длится."
 
-#: apps/tutorials/tours.py:958 apps/tutorials/tours.py:993
+#: apps/tutorials/tours.py:976 apps/tutorials/tours.py:1011
 #: templates/stretching/_subnav.html:12
 #: templates/stretching/session_play.html:71
 #: templates/stretching/stretch_detail.html:5
@@ -6470,32 +6483,32 @@ msgstr "Сколько в нём упражнений и примерно ско
 msgid "Stretches"
 msgstr "Упражнения"
 
-#: apps/tutorials/tours.py:959
+#: apps/tutorials/tours.py:977
 msgid "Each stretch with its hold time, sets and sides."
 msgstr "Каждое упражнение с временем удержания, подходами и сторонами."
 
-#: apps/tutorials/tours.py:964 templates/stretching/_routine_card.html:12
+#: apps/tutorials/tours.py:982 templates/stretching/_routine_card.html:12
 #: templates/tutorials/tutorial_list.html:38
 msgid "Start"
 msgstr "Начать"
 
-#: apps/tutorials/tours.py:965
+#: apps/tutorials/tours.py:983
 msgid "Opens the guided player."
 msgstr "Открывает плеер с подсказками."
 
-#: apps/tutorials/tours.py:971
+#: apps/tutorials/tours.py:989
 msgid "Add stretches and reorder them - in your own routines."
 msgstr "Добавляйте упражнения и меняйте порядок - в своих комплексах."
 
-#: apps/tutorials/tours.py:979 templates/stretching/session_play.html:25
+#: apps/tutorials/tours.py:997 templates/stretching/session_play.html:25
 msgid "Guided session"
 msgstr "Сессия с подсказками"
 
-#: apps/tutorials/tours.py:985
+#: apps/tutorials/tours.py:1003
 msgid "The timer"
 msgstr "Таймер"
 
-#: apps/tutorials/tours.py:987
+#: apps/tutorials/tours.py:1005
 msgid ""
 "Counts down every hold and rest, with a chime between them. Pause, add or "
 "remove 10 seconds, or skip. Leaving the page keeps your place."
@@ -6503,26 +6516,26 @@ msgstr ""
 "Отсчитывает каждое удержание и отдых, между ними звучит сигнал. Пауза, ±10 "
 "секунд или пропуск. Если уйти со страницы, место сохранится."
 
-#: apps/tutorials/tours.py:994
+#: apps/tutorials/tours.py:1012
 msgid "Mark a stretch done or skipped yourself if you prefer."
 msgstr "При желании отметьте упражнение выполненным или пропущенным сами."
 
-#: apps/tutorials/tours.py:1000
+#: apps/tutorials/tours.py:1018
 msgid "Saves the session to your history."
 msgstr "Сохраняет сеанс в вашей истории."
 
-#: apps/tutorials/tours.py:1008 templates/social/friend_list.html:3
+#: apps/tutorials/tours.py:1026 templates/social/friend_list.html:3
 #: templates/social/friend_list.html:6 templates/social/message_list.html:27
 msgid "Friends"
 msgstr "Друзья"
 
-#: apps/tutorials/tours.py:1013 templates/social/friend_list.html:9
+#: apps/tutorials/tours.py:1031 templates/social/friend_list.html:9
 #: templates/social/friend_list.html:68 templates/social/friend_search.html:3
 #: templates/social/friend_search.html:6
 msgid "Find friends"
 msgstr "Найти друзей"
 
-#: apps/tutorials/tours.py:1015
+#: apps/tutorials/tours.py:1033
 msgid ""
 "Search for people on this server. Friends can message you and see the "
 "progress you choose to share."
@@ -6530,75 +6543,75 @@ msgstr ""
 "Ищите людей на этом сервере. Друзья могут писать вам и видеть прогресс, "
 "которым вы решите поделиться."
 
-#: apps/tutorials/tours.py:1024 templates/social/message_list.html:3
+#: apps/tutorials/tours.py:1042 templates/social/message_list.html:3
 msgid "Messages"
 msgstr "Сообщения"
 
-#: apps/tutorials/tours.py:1029 templates/social/message_list.html:32
+#: apps/tutorials/tours.py:1047 templates/social/message_list.html:32
 msgid "Direct messages"
 msgstr "Личные сообщения"
 
-#: apps/tutorials/tours.py:1030
+#: apps/tutorials/tours.py:1048
 msgid "One conversation per friend."
 msgstr "Один разговор на каждого друга."
 
-#: apps/tutorials/tours.py:1034 templates/social/message_list.html:42
+#: apps/tutorials/tours.py:1052 templates/social/message_list.html:42
 msgid "Group chats"
 msgstr "Групповые чаты"
 
-#: apps/tutorials/tours.py:1035
+#: apps/tutorials/tours.py:1053
 msgid "Every group you're in has its own chat."
 msgstr "У каждой вашей группы свой чат."
 
-#: apps/tutorials/tours.py:1042 templates/social/group_list.html:3
+#: apps/tutorials/tours.py:1060 templates/social/group_list.html:3
 #: templates/social/group_list.html:6 templates/social/message_list.html:28
 msgid "Groups"
 msgstr "Группы"
 
-#: apps/tutorials/tours.py:1047
+#: apps/tutorials/tours.py:1065
 msgid "Create a group"
 msgstr "Создать группу"
 
-#: apps/tutorials/tours.py:1048
+#: apps/tutorials/tours.py:1066
 msgid "Train together: invite friends or share an invite link."
 msgstr ""
 "Тренируйтесь вместе: пригласите друзей или поделитесь ссылкой-приглашением."
 
-#: apps/tutorials/tours.py:1061 templates/accounts/profile.html:25
+#: apps/tutorials/tours.py:1079 templates/accounts/profile.html:25
 msgid "Preferences"
 msgstr "Настройки"
 
-#: apps/tutorials/tours.py:1062 templates/accounts/profile.html:26
+#: apps/tutorials/tours.py:1080 templates/accounts/profile.html:26
 msgid "Units, language, timezone, theme, and which sections you use."
 msgstr "Единицы, язык, часовой пояс, тема и какие разделы вы используете."
 
-#: apps/tutorials/tours.py:1067
+#: apps/tutorials/tours.py:1085
 msgid "Messages, friends and groups."
 msgstr "Сообщения, друзья и группы."
 
-#: apps/tutorials/tours.py:1071
+#: apps/tutorials/tours.py:1089
 #: templates/accounts/_data_export_standalone.html:23
 #: templates/accounts/_data_export_standalone.html:68
 #: templates/accounts/profile.html:163
 msgid "Your data"
 msgstr "Ваши данные"
 
-#: apps/tutorials/tours.py:1072
+#: apps/tutorials/tours.py:1090
 msgid "Everything you've logged is yours - browse it or download it."
 msgstr "Всё, что вы записали, принадлежит вам - просматривайте или скачивайте."
 
-#: apps/tutorials/tours.py:1076 templates/accounts/profile.html:185
+#: apps/tutorials/tours.py:1094 templates/accounts/profile.html:185
 #: templates/tutorials/tutorial_list.html:3
 #: templates/tutorials/tutorial_list.html:6
 #: templates/tutorials/tutorial_list.html:9
 msgid "Tutorials"
 msgstr "Обзоры"
 
-#: apps/tutorials/tours.py:1077
+#: apps/tutorials/tours.py:1095
 msgid "Replay any tour, or turn tutorials on or off."
 msgstr "Повторите любой обзор или включите и выключите обзоры."
 
-#: apps/tutorials/tours.py:1084 templates/accounts/profile.html:153
+#: apps/tutorials/tours.py:1102 templates/accounts/profile.html:153
 #: templates/accounts/profile.html:157 templates/accounts/profile.html:234
 #: templates/assistant/admin_settings.html:3
 #: templates/assistant/admin_settings.html:6 templates/assistant/home.html:3
@@ -6606,13 +6619,13 @@ msgstr "Повторите любой обзор или включите и вы
 msgid "AI assistant"
 msgstr "ИИ-ассистент"
 
-#: apps/tutorials/tours.py:1089 templates/assistant/home.html:9
+#: apps/tutorials/tours.py:1107 templates/assistant/home.html:9
 #: templates/assistant/settings.html:6 templates/core/backup_list.html:60
 #: templates/core/feedback_list.html:9
 msgid "Settings"
 msgstr "Настройки"
 
-#: apps/tutorials/tours.py:1091
+#: apps/tutorials/tours.py:1109
 msgid ""
 "Turn the assistant on or off, choose what it may read, tell it what it "
 "should always know about you (allergies, equipment, schedule), and add your "
@@ -6622,11 +6635,11 @@ msgstr ""
 "расскажите, что ему всегда нужно о вас знать (аллергии, инвентарь, "
 "расписание), и добавьте свой API-ключ."
 
-#: apps/tutorials/tours.py:1098
+#: apps/tutorials/tours.py:1116
 msgid "Ask anything"
 msgstr "Спрашивайте что угодно"
 
-#: apps/tutorials/tours.py:1100
+#: apps/tutorials/tours.py:1118
 msgid ""
 "Ask for a diet plan or a workout program, or about your progress. It looks "
 "at your own data before it answers."
@@ -6634,11 +6647,11 @@ msgstr ""
 "Попросите план питания или программу тренировок, или спросите о своём "
 "прогрессе. Перед ответом ассистент смотрит ваши данные."
 
-#: apps/tutorials/tours.py:1107
+#: apps/tutorials/tours.py:1125
 msgid "Your conversations"
 msgstr "Ваши беседы"
 
-#: apps/tutorials/tours.py:1109
+#: apps/tutorials/tours.py:1127
 msgid ""
 "Pick up where you left off. A plan it suggests is only created if you accept "
 "it."
@@ -6668,12 +6681,12 @@ msgid "Target reps"
 msgstr "Целевые повторения"
 
 #: apps/workouts/forms.py:45
-#: templates/workouts/_performed_exercise_card.html:22
+#: templates/workouts/_performed_exercise_card.html:25
 msgid "Failed set"
 msgstr "Неудачный подход"
 
 #: apps/workouts/forms.py:46
-#: templates/workouts/_performed_exercise_card.html:20
+#: templates/workouts/_performed_exercise_card.html:23
 msgid "Warm-up"
 msgstr "Разминка"
 
@@ -6803,6 +6816,7 @@ msgstr "Уведомление о конфиденциальности"
 #: templates/accounts/_privacy_notice_modal.html:27
 #: templates/accounts/profile.html:298 templates/api/key_list.html:20
 #: templates/base.html:116 templates/base.html:172
+#: templates/exercises/_exercise_guide_modal.html:25
 #: templates/nutrition/_month_calendar.html:84
 #: templates/records/_pr_toasts.html:31
 msgid "Dismiss"
@@ -7412,7 +7426,7 @@ msgstr "Дистанция"
 #: templates/stretching/routine_detail.html:54
 #: templates/stretching/session_detail.html:12
 #: templates/stretching/stretch_detail.html:12
-#: templates/workouts/_performed_exercise_card.html:24
+#: templates/workouts/_performed_exercise_card.html:27
 msgid "Edit"
 msgstr "Изменить"
 
@@ -8938,6 +8952,43 @@ msgstr "Страница %(number)s из %(total)s"
 msgid "No feedback yet."
 msgstr "Пока нет отзывов."
 
+#: templates/exercises/_exercise_guide.html:10
+#: templates/exercises/exercise_detail.html:48
+msgid "Instructions"
+msgstr "Инструкции"
+
+#: templates/exercises/_exercise_guide.html:28
+msgid "No instructions for this exercise yet."
+msgstr "Для этого упражнения пока нет инструкций."
+
+#: templates/exercises/_exercise_guide.html:33
+#: templates/exercises/exercise_detail.html:30
+msgid "Equipment"
+msgstr "Оборудование"
+
+#: templates/exercises/_exercise_guide.html:37
+#: templates/exercises/exercise_detail.html:35
+msgid "Primary muscles"
+msgstr "Основные мышцы"
+
+#: templates/exercises/_exercise_guide.html:41
+#: templates/exercises/exercise_detail.html:40
+msgid "Secondary muscles"
+msgstr "Второстепенные мышцы"
+
+#: templates/exercises/_exercise_guide.html:46
+msgid "Open exercise page"
+msgstr "Открыть страницу упражнения"
+
+#: templates/exercises/_exercise_guide_modal.html:17
+#, python-format
+msgid "How to do %(name)s"
+msgstr "Как выполнять: %(name)s"
+
+#: templates/exercises/_exercise_guide_modal.html:28
+msgid "Loading…"
+msgstr "Загрузка…"
+
 #: templates/exercises/_exercise_list_results.html:14
 msgid "No exercises match your search."
 msgstr "По вашему запросу упражнений не найдено."
@@ -8953,22 +9004,6 @@ msgstr "Тип движения"
 #: templates/exercises/exercise_detail.html:26
 msgid "Weight logging"
 msgstr "Запись веса"
-
-#: templates/exercises/exercise_detail.html:30
-msgid "Equipment"
-msgstr "Оборудование"
-
-#: templates/exercises/exercise_detail.html:35
-msgid "Primary muscles"
-msgstr "Основные мышцы"
-
-#: templates/exercises/exercise_detail.html:40
-msgid "Secondary muscles"
-msgstr "Второстепенные мышцы"
-
-#: templates/exercises/exercise_detail.html:48
-msgid "Instructions"
-msgstr "Инструкции"
 
 #: templates/exercises/exercise_detail.html:61
 msgid "Remove this image?"
@@ -9702,20 +9737,20 @@ msgid "Is your current target working?"
 msgstr "Работает ли ваша текущая цель?"
 
 #: templates/nutrition/dashboard.html:84
-#: templates/workouts/_performed_exercise_card.html:53
-#: templates/workouts/_train_panel.html:60
+#: templates/workouts/_performed_exercise_card.html:56
+#: templates/workouts/_train_panel.html:63
 msgid "High confidence"
 msgstr "Высокая уверенность"
 
 #: templates/nutrition/dashboard.html:85
-#: templates/workouts/_performed_exercise_card.html:52
-#: templates/workouts/_train_panel.html:59
+#: templates/workouts/_performed_exercise_card.html:55
+#: templates/workouts/_train_panel.html:62
 msgid "Medium confidence"
 msgstr "Средняя уверенность"
 
 #: templates/nutrition/dashboard.html:86
-#: templates/workouts/_performed_exercise_card.html:51
-#: templates/workouts/_train_panel.html:58
+#: templates/workouts/_performed_exercise_card.html:54
+#: templates/workouts/_train_panel.html:61
 msgid "Low confidence"
 msgstr "Низкая уверенность"
 
@@ -10472,7 +10507,7 @@ msgstr ""
 #: templates/programs/prescription_form.html:3
 #: templates/programs/prescription_form.html:6
 #: templates/programs/program_detail.html:75
-#: templates/workouts/_train_panel.html:99
+#: templates/workouts/_train_panel.html:102
 #: templates/workouts/performed_exercise_form.html:3
 #: templates/workouts/performed_exercise_form.html:6
 #: templates/workouts/session_detail.html:31
@@ -10525,7 +10560,7 @@ msgid "Delete this workout and its exercises?"
 msgstr "Удалить эту тренировку и её упражнения?"
 
 #: templates/programs/program_detail.html:70
-#: templates/workouts/_train_panel.html:99
+#: templates/workouts/_train_panel.html:102
 #: templates/workouts/session_detail.html:27
 msgid "No exercises yet."
 msgstr "Упражнений пока нет."
@@ -11426,10 +11461,6 @@ msgstr "Тип"
 msgid "Default hold"
 msgstr "Удержание по умолчанию"
 
-#: templates/stretching/stretch_detail.html:30
-msgid "How to do it"
-msgstr "Как выполнять"
-
 #: templates/stretching/stretch_detail.html:36
 msgid ""
 "Deactivate this stretch? It will no longer appear when browsing, but "
@@ -11493,48 +11524,48 @@ msgstr "Показать все подсказки снова, включая у
 msgid "Show all tutorials again"
 msgstr "Показать все обзоры снова"
 
-#: templates/workouts/_performed_exercise_card.html:6
-#: templates/workouts/_train_panel.html:39
+#: templates/workouts/_performed_exercise_card.html:9
+#: templates/workouts/_train_panel.html:42
 #, python-format
 msgid "Target: %(count)s × %(min)s-%(max)s"
 msgstr "Цель: %(count)s × %(min)s-%(max)s"
 
-#: templates/workouts/_performed_exercise_card.html:15
+#: templates/workouts/_performed_exercise_card.html:18
 msgid "Set"
 msgstr "Подход"
 
-#: templates/workouts/_performed_exercise_card.html:15
+#: templates/workouts/_performed_exercise_card.html:18
 msgid "Reps"
 msgstr "Повторения"
 
-#: templates/workouts/_performed_exercise_card.html:15
+#: templates/workouts/_performed_exercise_card.html:18
 msgid "Actions"
 msgstr "Действия"
 
-#: templates/workouts/_performed_exercise_card.html:20
+#: templates/workouts/_performed_exercise_card.html:23
 msgid "W"
 msgstr "Р"
 
-#: templates/workouts/_performed_exercise_card.html:22
+#: templates/workouts/_performed_exercise_card.html:25
 msgid "F"
 msgstr "Н"
 
-#: templates/workouts/_performed_exercise_card.html:25
+#: templates/workouts/_performed_exercise_card.html:28
 msgid "Delete this set?"
 msgstr "Удалить этот подход?"
 
-#: templates/workouts/_performed_exercise_card.html:37
+#: templates/workouts/_performed_exercise_card.html:40
 msgid "No sets logged yet."
 msgstr "Подходы ещё не записаны."
 
-#: templates/workouts/_performed_exercise_card.html:47
-#: templates/workouts/_train_panel.html:54
+#: templates/workouts/_performed_exercise_card.html:50
+#: templates/workouts/_train_panel.html:57
 #, python-format
 msgid "Suggested: %(weight)s"
 msgstr "Предложено: %(weight)s"
 
-#: templates/workouts/_performed_exercise_card.html:72
-#: templates/workouts/_train_panel.html:94
+#: templates/workouts/_performed_exercise_card.html:75
+#: templates/workouts/_train_panel.html:97
 msgid "Log set"
 msgstr "Записать подход"
 
@@ -11547,21 +11578,21 @@ msgstr "Упражнение %(position)s из %(total)s"
 msgid "All exercises done for today."
 msgstr "Все упражнения на сегодня выполнены."
 
-#: templates/workouts/_train_panel.html:47
+#: templates/workouts/_train_panel.html:50
 msgid "Edit this set"
 msgstr "Изменить этот подход"
 
-#: templates/workouts/_train_panel.html:68
+#: templates/workouts/_train_panel.html:71
 msgid ""
 "This exercise is done - logging another set is still fine if you want one."
 msgstr ""
 "Это упражнение выполнено - можно записать ещё один подход, если хотите."
 
-#: templates/workouts/_train_panel.html:85
+#: templates/workouts/_train_panel.html:88
 msgid "Fewer options"
 msgstr "Меньше параметров"
 
-#: templates/workouts/_train_panel.html:85
+#: templates/workouts/_train_panel.html:88
 msgid "More options (RPE, RIR, notes…)"
 msgstr "Больше параметров (RPE, RIR, заметки…)"
 
