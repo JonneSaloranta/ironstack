@@ -19,6 +19,12 @@ narrated summary of the same version.
 ## [Unreleased]
 
 ### Added
+- Programs: a program can be marked continuous - no fixed weekdays, the
+  workouts simply follow each other in order. The dashboard now shows
+  the next workout of the program you last trained from (today's or
+  the next scheduled day's in a weekly program, the one after your last
+  workout in a continuous one) with a Start button, and the program
+  page tags it "Up next".
 - Workouts: an "i" button next to each exercise during a session (both
   the training view and the full view) opens the exercise's
   instructions, images and muscles in a popup, so you don't have to

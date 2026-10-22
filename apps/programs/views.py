@@ -5,6 +5,7 @@ from django.db.models import Count
 from django.http import HttpResponseNotAllowed, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
+from django.utils import timezone
 from django.utils.text import slugify
 from django.utils.translation import gettext as _
 from django.views.generic import CreateView, DeleteView, DetailView, ListView, UpdateView
@@ -12,6 +13,7 @@ from django.views.generic import CreateView, DeleteView, DetailView, ListView, U
 from apps.core import version as version_info
 from apps.core.data_exchange import ImportValidationError, build_envelope, parse_envelope
 from apps.core.forms import ExportImportUploadForm
+from apps.workouts.services import next_workout
 
 from . import services
 from .forms import ExercisePrescriptionForm, ProgramForm, WorkoutForm
@@ -84,6 +86,9 @@ class ProgramDetailView(LoginRequiredMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["can_edit"] = self.object.owner_id == self.request.user.id
+        today = timezone.localdate()
+        context["up_next"] = next_workout(self.request.user, self.object, today)
+        context["today"] = today
         return context
 
 
@@ -217,7 +222,7 @@ def _owned_program_or_404(request, program_pk):
 @login_required
 def workout_create(request, program_pk):
     program = _owned_program_or_404(request, program_pk)
-    form = WorkoutForm(request.POST or None)
+    form = WorkoutForm(request.POST or None, program=program)
     if request.method == "POST" and form.is_valid():
         workout = form.save(commit=False)
         workout.program = program
@@ -234,7 +239,7 @@ def workout_create(request, program_pk):
 def workout_update(request, program_pk, pk):
     program = _owned_program_or_404(request, program_pk)
     workout = get_object_or_404(Workout, pk=pk, program=program)
-    form = WorkoutForm(request.POST or None, instance=workout)
+    form = WorkoutForm(request.POST or None, instance=workout, program=program)
     if request.method == "POST" and form.is_valid():
         form.save()
         program.bump_version()

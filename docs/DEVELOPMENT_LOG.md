@@ -6079,3 +6079,15 @@ scoping as the detail page) with instructions, images, equipment,
 muscles and a link to the full page. The title is the performed
 exercise's `display_name`, so an old session keeps its logged name.
 
+## Continuous programs and "Up next"
+
+`Program.is_continuous` marks a program as a rotation with no fixed
+weekdays. `apps.workouts.services.next_workout` picks a program's next
+workout (weekly: today's or the next scheduled day's, skipping today
+once it's done; otherwise the one after the last completed, wrapping),
+and `up_next` applies it to the program last trained from. The dashboard
+shows it with a Start button when no workout is in progress, and the
+program page tags it. The flag is copied, exported/imported, in the API
+and in the assistant's program tool; a continuous program's workout form
+drops the weekday field and its weekday tags are hidden.
+

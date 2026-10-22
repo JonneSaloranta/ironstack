@@ -24,7 +24,7 @@ from apps.nutrition import services as nutrition_services
 from apps.nutrition.models import NutritionTarget
 from apps.stretching import services as stretching_services
 from apps.workouts.models import WorkoutSessionStatus
-from apps.workouts.services import sessions_for
+from apps.workouts.services import sessions_for, up_next
 
 
 def _day_detail_lines(status, target_calories):
@@ -168,6 +168,9 @@ class DashboardView(LoginRequiredMixin, TemplateView):
         context["in_progress_session"] = (
             sessions_for(user).filter(status=WorkoutSessionStatus.IN_PROGRESS).first()
         )
+        if context["in_progress_session"] is None:
+            context["up_next"] = up_next(user, today)
+        context["today"] = today
         this_week = dateranges.resolve(None, start=today - timedelta(days=today.weekday()))
         context["week_summary"] = analytics_services.training_summary(user, this_week)
         context["recent_prs"] = analytics_services.pr_history_grouped_by_exercise(

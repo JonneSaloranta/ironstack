@@ -96,6 +96,7 @@ def copy_program(source: Program, owner) -> Program:
         owner=owner,
         name=source.name,
         description=source.description,
+        is_continuous=source.is_continuous,
         is_template=False,
     )
     _replace_program_contents(copy, source)
@@ -157,6 +158,7 @@ def export_program(program):
     return {
         "name": program.name,
         "description": program.description,
+        "is_continuous": program.is_continuous,
         "workouts": [
             {
                 "name": workout.name,
@@ -272,6 +274,7 @@ def import_program(user, payload):
         owner=user,
         name=name,
         description=payload.get("description", ""),
+        is_continuous=bool(payload.get("is_continuous", False)),
         is_template=False,
     )
     for workout_data in payload.get("workouts") or []:

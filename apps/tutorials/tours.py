@@ -139,7 +139,7 @@ TOURS = (
                 _("Your workout"),
                 _(
                     "Start a workout here, or jump back into the one you're in the middle of. "
-                    "To follow a plan, start a workout from one of your programs instead."
+                    "Once you've trained from a program, its next workout is offered here."
                 ),
             ),
             Step(
@@ -388,6 +388,15 @@ TOURS = (
                 _(
                     "A program is a set of workouts, each with its exercises, sets, reps and "
                     "how the weight should progress."
+                ),
+                optional=True,
+            ),
+            Step(
+                "program-up-next",
+                _("Up next"),
+                _(
+                    "The workout that's next: today's or the next scheduled day's, or in a "
+                    "continuous program the one after the last you finished."
                 ),
                 optional=True,
             ),
