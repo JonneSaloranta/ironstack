@@ -50,8 +50,12 @@ MAX_TOOL_ROUNDS = 12
 MAX_USER_MESSAGES_PER_CONVERSATION = 40
 MAX_MESSAGE_LENGTH = 4000
 # How often a streaming reply's partial text is written to the database
-# for the polling page.
-_TEXT_FLUSH_SECONDS = 0.5
+# for the polling page (templates/assistant/_message.html polls a
+# RUNNING reply every 400 ms). Small steps make the text appear to
+# stream; a fast model writes a whole answer in two or three seconds,
+# so half-second flushes and one-second polls showed it in a few big
+# jumps.
+_TEXT_FLUSH_SECONDS = 0.2
 # A RUNNING reply untouched this long belongs to a worker that died.
 STALE_AFTER = timezone.timedelta(minutes=10)
 DEFAULT_CLAUDE_MODEL = "claude-opus-5-5"

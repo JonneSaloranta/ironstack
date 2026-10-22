@@ -29,6 +29,9 @@ narrated summary of the same version.
   action cancels queued refreshes.
 
 ### Changed
+- AI assistant: a reply now appears in small steps as it's written,
+  instead of in two or three big jumps that made it look like it
+  arrived all at once.
 - Admin: "Refresh selected foods from OpenFoodFacts" (and the Open
   Prices variant) now works for any number of foods. The selection is
   queued and refreshed in the background at a pace that stays within

@@ -79,9 +79,13 @@ request:
    tool loop. Several workers can run at once
    (`docker compose up -d --scale assistant-worker=2`).
 3. While the reply streams in, the worker writes the partial text and a short
-   activity note ("Looking at your workouts…") to the message about twice a
-   second. The page polls only that one bubble with HTMX
-   (`assistant:message-fragment`, `hx-trigger="every 1s"`) until it's done.
+   activity note ("Looking at your workouts…") to the message every 0.2
+   seconds. The page polls only that one bubble with HTMX
+   (`assistant:message-fragment`) until it's done: every 400 ms while it's
+   `RUNNING`, so the text appears in small steps, and every second while it's
+   still `PENDING`. True server-sent streaming isn't used: each open stream
+   would hold one of gunicorn's three sync workers (30-second timeout) for the
+   whole reply, while a poll is a short indexed read.
 4. Finished: `DONE`, with `raw` holding every API message the reply exchanged.
    Failed: `ERROR` with a plain-language error and an empty `raw`.
 

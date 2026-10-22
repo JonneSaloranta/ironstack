@@ -934,6 +934,24 @@ class ViewTests(TestCase):
         response = self.client.get(reverse("assistant:message-fragment", args=[reply.pk]))
         self.assertContains(response, 'hx-trigger="every 1s')
 
+    def test_a_reply_being_written_polls_faster_so_its_text_streams(self):
+        services.enable(self.user)
+        with override_settings(ASSISTANT_RUN_INLINE=False):
+            conversation = services.start_conversation(self.user, "Hi")
+        reply = conversation.messages.get(role=MessageRole.ASSISTANT)
+        AssistantMessage.objects.filter(pk=reply.pk).update(
+            status=MessageStatus.RUNNING, text="Half a sent"
+        )
+        response = self.client.get(reverse("assistant:message-fragment", args=[reply.pk]))
+        self.assertContains(response, 'hx-trigger="every 400ms')
+        self.assertContains(response, "Half a sent")
+
+    def test_a_finished_reply_stops_polling(self):
+        _response, conversation = self.start()
+        reply = conversation.messages.get(role=MessageRole.ASSISTANT)
+        response = self.client.get(reverse("assistant:message-fragment", args=[reply.pk]))
+        self.assertNotContains(response, "hx-trigger")
+
     def test_other_users_conversation_is_hidden(self):
         _response, conversation = self.start()
         reply = conversation.messages.get(role=MessageRole.ASSISTANT)
