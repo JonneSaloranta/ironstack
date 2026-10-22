@@ -14,3 +14,7 @@ PASSWORD_HASHERS = ["django.contrib.auth.hashers.MD5PasswordHasher"]
 # apps.core.backup_tasks - run "Create backup"/"Restore" inside the
 # request so view tests see the outcome without a background process.
 BACKUP_TASKS_RUN_INLINE = True
+
+# apps.nutrition.off_refresh_worker - drain the OFF refresh queue
+# inside the request, without the worker's pauses.
+OFF_REFRESH_RUN_INLINE = True

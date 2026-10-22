@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: IronStack\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-17 11:46+0000\n"
+"POT-Creation-Date: 2026-10-22 10:36+0000\n"
 "Language: sv\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -629,15 +629,15 @@ msgstr[1] "%(counter)s PR"
 msgid "Total weight lifted"
 msgstr "Total lyft vikt"
 
-#: apps/analytics/dateranges.py:14 apps/nutrition/services.py:1456
+#: apps/analytics/dateranges.py:14 apps/nutrition/services.py:1567
 msgid "7 days"
 msgstr "7 dagar"
 
-#: apps/analytics/dateranges.py:15 apps/nutrition/services.py:1458
+#: apps/analytics/dateranges.py:15 apps/nutrition/services.py:1569
 msgid "30 days"
 msgstr "30 dagar"
 
-#: apps/analytics/dateranges.py:16 apps/nutrition/services.py:1459
+#: apps/analytics/dateranges.py:16 apps/nutrition/services.py:1570
 msgid "3 months"
 msgstr "3 månader"
 
@@ -645,11 +645,11 @@ msgstr "3 månader"
 msgid "6 months"
 msgstr "6 månader"
 
-#: apps/analytics/dateranges.py:18 apps/nutrition/services.py:1461
+#: apps/analytics/dateranges.py:18 apps/nutrition/services.py:1572
 msgid "1 year"
 msgstr "1 år"
 
-#: apps/analytics/dateranges.py:19 apps/nutrition/services.py:1462
+#: apps/analytics/dateranges.py:19 apps/nutrition/services.py:1573
 #: templates/stretching/home.html:24
 msgid "All time"
 msgstr "All tid"
@@ -1147,76 +1147,76 @@ msgstr "Något gick fel när svaret skrevs."
 msgid "The reply was interrupted. Please try again."
 msgstr "Svaret avbröts. Försök igen."
 
-#: apps/assistant/tools.py:492 apps/nutrition/models.py:637
+#: apps/assistant/tools.py:510 apps/nutrition/models.py:642
 #: templates/nutrition/diary_day.html:64
 msgid "Quick entry"
 msgstr "Snabbregistrering"
 
-#: apps/assistant/tools.py:943
+#: apps/assistant/tools.py:958
 msgid "Looking at your profile…"
 msgstr "Tittar på din profil…"
 
-#: apps/assistant/tools.py:954
+#: apps/assistant/tools.py:969
 msgid "Looking at your workouts…"
 msgstr "Tittar på dina träningspass…"
 
-#: apps/assistant/tools.py:970
+#: apps/assistant/tools.py:985
 msgid "Looking at your records…"
 msgstr "Tittar på dina rekord…"
 
-#: apps/assistant/tools.py:983
+#: apps/assistant/tools.py:998
 msgid "Looking at your measurements…"
 msgstr "Tittar på dina mätningar…"
 
-#: apps/assistant/tools.py:991
+#: apps/assistant/tools.py:1006
 msgid "Looking at your activities…"
 msgstr "Tittar på dina aktiviteter…"
 
-#: apps/assistant/tools.py:999 apps/assistant/tools.py:1012
+#: apps/assistant/tools.py:1014 apps/assistant/tools.py:1027
 msgid "Looking at your food diary…"
 msgstr "Tittar på din matdagbok…"
 
-#: apps/assistant/tools.py:1023
+#: apps/assistant/tools.py:1038
 msgid "Looking at your weight trend…"
 msgstr "Tittar på din viktutveckling…"
 
-#: apps/assistant/tools.py:1031
+#: apps/assistant/tools.py:1046
 msgid "Looking at your stretching…"
 msgstr "Tittar på din stretching…"
 
-#: apps/assistant/tools.py:1038 apps/assistant/tools.py:1049
+#: apps/assistant/tools.py:1053 apps/assistant/tools.py:1064
 msgid "Looking at your programs…"
 msgstr "Tittar på dina program…"
 
-#: apps/assistant/tools.py:1064
+#: apps/assistant/tools.py:1079
 msgid "Looking at your progression…"
 msgstr "Tittar på din progression…"
 
-#: apps/assistant/tools.py:1071 apps/assistant/tools.py:1082
+#: apps/assistant/tools.py:1086 apps/assistant/tools.py:1097
 msgid "Looking at your diet plans…"
 msgstr "Tittar på dina kostplaner…"
 
-#: apps/assistant/tools.py:1096
+#: apps/assistant/tools.py:1111
 msgid "Searching exercises…"
 msgstr "Söker övningar…"
 
-#: apps/assistant/tools.py:1111
+#: apps/assistant/tools.py:1126
 msgid "Searching foods…"
 msgstr "Söker livsmedel…"
 
-#: apps/assistant/tools.py:1121
+#: apps/assistant/tools.py:1136
 msgid "Searching recipes…"
 msgstr "Söker recept…"
 
-#: apps/assistant/tools.py:1128
+#: apps/assistant/tools.py:1143
 msgid "Looking at your meals…"
 msgstr "Tittar på dina måltider…"
 
-#: apps/assistant/tools.py:1188
+#: apps/assistant/tools.py:1203
 msgid "Putting a diet plan together…"
 msgstr "Sätter ihop en kostplan…"
 
-#: apps/assistant/tools.py:1248
+#: apps/assistant/tools.py:1263
 msgid "Putting a program together…"
 msgstr "Sätter ihop ett program…"
 
@@ -2632,38 +2632,107 @@ msgstr "Mätvärdet uppdaterat."
 msgid "Reading deleted."
 msgstr "Mätvärdet borttaget."
 
-#: apps/nutrition/admin.py:86
+#: apps/nutrition/admin.py:60
+msgid "OpenFoodFacts sync"
+msgstr "OpenFoodFacts-synkronisering"
+
+#: apps/nutrition/admin.py:65
+msgid "Never synced"
+msgstr "Aldrig synkroniserad"
+
+#: apps/nutrition/admin.py:66
+msgid "Stale"
+msgstr "Inaktuell"
+
+#: apps/nutrition/admin.py:67
+msgid "Fresh"
+msgstr "Aktuell"
+
+#: apps/nutrition/admin.py:68
+msgid "Queued for refresh"
+msgstr "I kö för uppdatering"
+
+#: apps/nutrition/admin.py:138
+#, python-format
+msgid ""
+"%(count)d food is queued for an OpenFoodFacts refresh and is being refreshed "
+"in the background."
+msgid_plural ""
+"%(count)d foods are queued for an OpenFoodFacts refresh and are being "
+"refreshed in the background."
+msgstr[0] ""
+"%(count)d livsmedel står i kö för en OpenFoodFacts-uppdatering och "
+"uppdateras i bakgrunden."
+msgstr[1] ""
+"%(count)d livsmedel står i kö för en OpenFoodFacts-uppdatering och "
+"uppdateras i bakgrunden."
+
+#: apps/nutrition/admin.py:146
+#, python-format
+msgid ""
+"%(count)d food is queued for an OpenFoodFacts refresh, but the background "
+"refresh isn't running - run a refresh action again to restart it."
+msgid_plural ""
+"%(count)d foods are queued for an OpenFoodFacts refresh, but the background "
+"refresh isn't running - run a refresh action again to restart it."
+msgstr[0] ""
+"%(count)d livsmedel står i kö för en OpenFoodFacts-uppdatering, men "
+"bakgrundsuppdateringen körs inte - kör en uppdateringsåtgärd igen för att "
+"starta om den."
+msgstr[1] ""
+"%(count)d livsmedel står i kö för en OpenFoodFacts-uppdatering, men "
+"bakgrundsuppdateringen körs inte - kör en uppdateringsåtgärd igen för att "
+"starta om den."
+
+#: apps/nutrition/admin.py:157
 msgid "Refresh selected foods from OpenFoodFacts"
 msgstr "Uppdatera valda livsmedel från OpenFoodFacts"
 
-#: apps/nutrition/admin.py:99 apps/nutrition/admin.py:129
-msgid "None of the selected foods were imported from OpenFoodFacts."
-msgstr "Inget av de valda livsmedlen importerades från OpenFoodFacts."
-
-#: apps/nutrition/admin.py:112
-#, python-format
-msgid "Refreshed %(refreshed)d of %(total)d food(s) from OpenFoodFacts."
-msgstr "Uppdaterade %(refreshed)d av %(total)d livsmedel från OpenFoodFacts."
-
-#: apps/nutrition/admin.py:117
+#: apps/nutrition/admin.py:168
 msgid "Refresh selected foods' prices from Open Prices"
 msgstr "Uppdatera priser för valda livsmedel från Open Prices"
 
-#: apps/nutrition/admin.py:142
-#, python-format
-msgid "Refreshed %(refreshed)d of %(total)d food price(s) from Open Prices."
-msgstr ""
-"Uppdaterade priser för %(refreshed)d av %(total)d livsmedel från Open Prices."
+#: apps/nutrition/admin.py:174
+msgid "Cancel queued OpenFoodFacts refresh"
+msgstr "Avbryt köad OpenFoodFacts-uppdatering"
 
-#: apps/nutrition/admin.py:147
+#: apps/nutrition/admin.py:180
+#, python-format
+msgid "Removed %(count)d food from the refresh queue."
+msgid_plural "Removed %(count)d foods from the refresh queue."
+msgstr[0] "Tog bort %(count)d livsmedel från uppdateringskön."
+msgstr[1] "Tog bort %(count)d livsmedel från uppdateringskön."
+
+#: apps/nutrition/admin.py:191
+msgid "None of the selected foods were imported from OpenFoodFacts."
+msgstr "Inget av de valda livsmedlen importerades från OpenFoodFacts."
+
+#: apps/nutrition/admin.py:200
+#, python-format
+msgid "Queued %(queued)d food for a background refresh."
+msgid_plural "Queued %(queued)d foods for a background refresh."
+msgstr[0] "Köade %(queued)d livsmedel för uppdatering i bakgrunden."
+msgstr[1] "Köade %(queued)d livsmedel för uppdatering i bakgrunden."
+
+#: apps/nutrition/admin.py:207
+#, python-format
+msgid ""
+"To stay within Open Food Facts' rate limit about %(rate)d are refreshed a "
+"minute, so the %(pending)d still queued take about %(minutes)d min."
+msgstr ""
+"För att hålla sig inom Open Food Facts hastighetsgräns uppdateras cirka "
+"%(rate)d per minut, så de %(pending)d som står i kö tar cirka %(minutes)d "
+"min."
+
+#: apps/nutrition/admin.py:217
 msgid "Merge selected foods into one…"
 msgstr "Slå ihop valda livsmedel till ett…"
 
-#: apps/nutrition/admin.py:152 apps/nutrition/admin.py:180
+#: apps/nutrition/admin.py:222 apps/nutrition/admin.py:250
 msgid "Select at least two foods to merge."
 msgstr "Välj minst två livsmedel att slå ihop."
 
-#: apps/nutrition/admin.py:193
+#: apps/nutrition/admin.py:263
 #, python-format
 msgid ""
 "Merged %(count)d food(s) into “%(name)s”. Every diary entry, recipe "
@@ -2674,18 +2743,9 @@ msgstr ""
 "receptingrediens och kostplansobjekt som tidigare pekade på något av dem "
 "pekar nu på detta istället."
 
-#: apps/nutrition/admin.py:203
+#: apps/nutrition/admin.py:273
 msgid "Merge foods"
 msgstr "Slå ihop livsmedel"
-
-#: apps/nutrition/admin.py:226
-#, python-format
-msgid ""
-"%(count)d more food(s) were left for later to stay within Open Food Facts' "
-"rate limit - run this action again in a minute."
-msgstr ""
-"%(count)d livsmedel sparades till senare för att hålla sig inom Open Food "
-"Facts hastighetsgräns – kör åtgärden igen om en minut."
 
 #: apps/nutrition/calculators.py:138 apps/nutrition/calculators.py:143
 msgid "Lower risk"
@@ -3422,13 +3482,13 @@ msgstr ""
 msgid "Null for the built-in default meal slots."
 msgstr "Null för de inbyggda standardmåltiderna."
 
-#: apps/nutrition/models.py:642
+#: apps/nutrition/models.py:647
 msgid "Log either a food, a recipe or quick macros - exactly one of them."
 msgstr ""
 "Registrera antingen ett livsmedel, ett recept eller snabba makron - exakt "
 "ett av dem."
 
-#: apps/nutrition/models.py:812
+#: apps/nutrition/models.py:817
 msgid "Use either a food or a recipe, not both or neither."
 msgstr "Använd antingen ett livsmedel eller ett recept, inte båda eller inget."
 
@@ -3720,59 +3780,59 @@ msgstr "Drycker"
 msgid "Protein bars"
 msgstr "Proteinbars"
 
-#: apps/nutrition/services.py:403
+#: apps/nutrition/services.py:514
 msgid "An ingredient is missing its food name."
 msgstr "En ingrediens saknar livsmedelsnamn."
 
-#: apps/nutrition/services.py:409
+#: apps/nutrition/services.py:520
 #, python-format
 msgid "Ingredient “%(name)s” is missing required nutrition data."
 msgstr "Ingrediensen ”%(name)s” saknar nödvändiga näringsuppgifter."
 
-#: apps/nutrition/services.py:459
+#: apps/nutrition/services.py:570
 msgid "Missing recipe name."
 msgstr "Receptets namn saknas."
 
-#: apps/nutrition/services.py:483
+#: apps/nutrition/services.py:594
 #, python-format
 msgid "Ingredient “%(name)s” has an invalid quantity."
 msgstr "Ingrediensen ”%(name)s” har en ogiltig mängd."
 
-#: apps/nutrition/services.py:575
+#: apps/nutrition/services.py:686
 msgid "A diet plan item is missing its recipe name."
 msgstr "En post i kostplanen saknar receptnamn."
 
-#: apps/nutrition/services.py:595
+#: apps/nutrition/services.py:706
 msgid "A diet plan meal is missing its meal slot."
 msgstr "En måltid i kostplanen saknar måltidstyp."
 
-#: apps/nutrition/services.py:599
+#: apps/nutrition/services.py:710
 msgid "A diet plan meal is missing its target calories."
 msgstr "En måltid i kostplanen saknar kalorimål."
 
-#: apps/nutrition/services.py:614
+#: apps/nutrition/services.py:725
 msgid "A diet plan item must reference exactly one of a food or a recipe."
 msgstr ""
 "En post i kostplanen måste ange antingen ett livsmedel eller ett recept, "
 "inte båda."
 
-#: apps/nutrition/services.py:620
+#: apps/nutrition/services.py:731
 msgid "A diet plan item has an invalid quantity."
 msgstr "En post i kostplanen har en ogiltig mängd."
 
-#: apps/nutrition/services.py:649
+#: apps/nutrition/services.py:760
 msgid "Missing diet plan name."
 msgstr "Kostplanens namn saknas."
 
-#: apps/nutrition/services.py:660
+#: apps/nutrition/services.py:771
 msgid "Missing or invalid diet plan targets."
 msgstr "Kostplanens mål saknas eller är ogiltiga."
 
-#: apps/nutrition/services.py:1457
+#: apps/nutrition/services.py:1568
 msgid "14 days"
 msgstr "14 dagar"
 
-#: apps/nutrition/services.py:1460
+#: apps/nutrition/services.py:1571
 msgid "Year to date"
 msgstr "Hittills i år"
 
@@ -11488,6 +11548,25 @@ msgstr "Redigera set"
 #, python-format
 msgid "Edit set %(number)s"
 msgstr "Redigera set %(number)s"
+
+#, python-format
+#~ msgid "Refreshed %(refreshed)d of %(total)d food(s) from OpenFoodFacts."
+#~ msgstr ""
+#~ "Uppdaterade %(refreshed)d av %(total)d livsmedel från OpenFoodFacts."
+
+#, python-format
+#~ msgid "Refreshed %(refreshed)d of %(total)d food price(s) from Open Prices."
+#~ msgstr ""
+#~ "Uppdaterade priser för %(refreshed)d av %(total)d livsmedel från Open "
+#~ "Prices."
+
+#, python-format
+#~ msgid ""
+#~ "%(count)d more food(s) were left for later to stay within Open Food "
+#~ "Facts' rate limit - run this action again in a minute."
+#~ msgstr ""
+#~ "%(count)d livsmedel sparades till senare för att hålla sig inom Open Food "
+#~ "Facts hastighetsgräns – kör åtgärden igen om en minut."
 
 #~ msgid "Meal (optional)"
 #~ msgstr "Måltid (valfritt)"

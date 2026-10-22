@@ -390,6 +390,10 @@ class Food(TimeStampedModel):
     # used, rather than a periodic bulk re-sync.
     off_id = models.CharField(max_length=64, null=True, blank=True, unique=True)
     off_synced_at = models.DateTimeField(null=True, blank=True)
+    # Set while an admin-queued refresh is waiting for
+    # apps.nutrition.off_refresh_worker (FoodAdmin's "Refresh selected
+    # foods" actions), cleared once it has been tried.
+    off_refresh_requested_at = models.DateTimeField(null=True, blank=True, db_index=True)
     # Both null for every hand-entered food - see NutriScoreGrade/
     # NovaGroup's own docstrings for why neither is ever computed here.
     nutri_score = models.CharField(
@@ -460,6 +464,7 @@ class Food(TimeStampedModel):
     price_currency = models.CharField(max_length=3, blank=True)
     price_sample_count = models.PositiveIntegerField(default=0)
     price_synced_at = models.DateTimeField(null=True, blank=True)
+    price_refresh_requested_at = models.DateTimeField(null=True, blank=True, db_index=True)
     active = models.BooleanField(default=True)
 
     class Meta:

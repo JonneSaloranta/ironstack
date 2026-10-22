@@ -4,6 +4,7 @@ from decimal import Decimal
 from unittest import mock
 
 from django.contrib.auth import get_user_model
+from django.core.cache import cache
 from django.core.exceptions import ValidationError
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.db import IntegrityError, transaction
@@ -21,6 +22,7 @@ from apps.nutrition import (
     energy,
     macros,
     nutrition_label,
+    off_refresh_worker,
     open_prices,
     openfoodfacts,
     services,
@@ -28,6 +30,7 @@ from apps.nutrition import (
     trends,
 )
 
+from .admin import FoodAdmin
 from .forms import BodyStepForm, LogDietPlanForm, LogRecipeForm
 from .models import (
     ActivityJob,
@@ -1755,9 +1758,12 @@ class RefreshSelectedFromOffAdminActionTests(TestCase):
                 follow=True,
             )
         mocked.assert_called_once_with("1234567890123")
-        self.assertContains(response, "Refreshed 1 of 1 food(s) from OpenFoodFacts.")
+        self.assertContains(response, "Queued 1 food for a background refresh.")
+        off_food.refresh_from_db()
+        self.assertIsNotNone(off_food.off_synced_at)
+        self.assertIsNone(off_food.off_refresh_requested_at)
 
-    def test_a_large_selection_is_capped_to_the_read_budget_and_the_rest_reported(self):
+    def test_a_selection_larger_than_one_minutes_budget_is_all_refreshed(self):
         limit = openfoodfacts.off_http.READ_LIMIT_PER_MINUTE
         foods = [
             make_food(None, name=f"Food {i}", off_id=f"{1000000000000 + i}")
@@ -1776,8 +1782,11 @@ class RefreshSelectedFromOffAdminActionTests(TestCase):
                 },
                 follow=True,
             )
-        self.assertEqual(mocked.call_count, limit)
-        self.assertContains(response, "3 more food(s) were left for later")
+        self.assertEqual(mocked.call_count, limit + 3)
+        self.assertContains(response, f"Queued {limit + 3} foods for a background refresh.")
+        self.assertFalse(
+            Food.objects.filter(pk__in=[f.pk for f in foods], off_synced_at__isnull=True).exists()
+        )
 
     def test_none_selected_have_an_off_id_shows_a_warning_and_makes_no_calls(self):
         custom_food = make_food(None, name="Homemade soup")
@@ -1815,7 +1824,10 @@ class RefreshSelectedPricesAdminActionTests(TestCase):
                 follow=True,
             )
         mocked.assert_called_once_with("1234567890123")
-        self.assertContains(response, "Refreshed 1 of 1 food price(s) from Open Prices.")
+        self.assertContains(response, "Queued 1 food for a background refresh.")
+        off_food.refresh_from_db()
+        self.assertIsNotNone(off_food.price_synced_at)
+        self.assertIsNone(off_food.price_refresh_requested_at)
 
     def test_none_selected_have_an_off_id_shows_a_warning_and_makes_no_calls(self):
         custom_food = make_food(None, name="Homemade soup")
@@ -1829,6 +1841,142 @@ class RefreshSelectedPricesAdminActionTests(TestCase):
         self.assertContains(
             response, "None of the selected foods were imported from OpenFoodFacts."
         )
+
+
+class OffRefreshQueueTests(TestCase):
+    """apps.nutrition.services.queue_off_refresh/process_next_queued_refresh
+    and apps.nutrition.off_refresh_worker, driven directly rather than
+    through the inline admin path, so the queue's state between
+    refreshes can be checked."""
+
+    def setUp(self):
+        self.food = make_food(None, name="Muesli", off_id="1234567890123")
+
+    def _queue(self, *, prices=False):
+        with mock.patch.object(off_refresh_worker, "ensure_running") as ensure_running:
+            queued = services.queue_off_refresh(Food.objects.filter(pk=self.food.pk), prices=prices)
+        ensure_running.assert_called_once_with()
+        return queued
+
+    def test_queue_skips_foods_without_an_off_id(self):
+        custom = make_food(None, name="Homemade soup")
+        with mock.patch.object(off_refresh_worker, "ensure_running"):
+            queued = services.queue_off_refresh(
+                Food.objects.filter(pk__in=[self.food.pk, custom.pk])
+            )
+        self.assertEqual(queued, 1)
+        custom.refresh_from_db()
+        self.assertIsNone(custom.off_refresh_requested_at)
+
+    def test_a_rate_limited_refresh_stays_queued(self):
+        self._queue()
+        with mock.patch.object(
+            openfoodfacts, "get_product", side_effect=openfoodfacts.OpenFoodFactsRateLimited("x")
+        ):
+            outcome = services.process_next_queued_refresh()
+        self.assertEqual(outcome, services.REFRESH_RATE_LIMITED)
+        self.food.refresh_from_db()
+        self.assertIsNotNone(self.food.off_refresh_requested_at)
+        self.assertIsNone(self.food.off_synced_at)
+
+    def test_an_unknown_barcode_is_dequeued_without_changing_the_food(self):
+        self._queue()
+        with mock.patch.object(openfoodfacts, "get_product", return_value=None):
+            outcome = services.process_next_queued_refresh()
+        self.assertEqual(outcome, services.REFRESH_DONE)
+        self.food.refresh_from_db()
+        self.assertIsNone(self.food.off_refresh_requested_at)
+        self.assertIsNone(self.food.off_synced_at)
+        self.assertEqual(services.process_next_queued_refresh(), services.REFRESH_QUEUE_EMPTY)
+
+    def test_a_rate_limited_price_refresh_stays_queued(self):
+        self._queue(prices=True)
+        with mock.patch.object(
+            open_prices,
+            "get_prices_for_barcode",
+            side_effect=open_prices.OpenPricesRateLimited("x"),
+        ):
+            outcome = services.process_next_queued_refresh()
+        self.assertEqual(outcome, services.REFRESH_RATE_LIMITED)
+        self.food.refresh_from_db()
+        self.assertIsNotNone(self.food.price_refresh_requested_at)
+
+    def test_worker_waits_out_a_rate_limit_and_then_finishes(self):
+        self._queue()
+        sleeps = []
+        with mock.patch.object(
+            openfoodfacts,
+            "get_product",
+            side_effect=[openfoodfacts.OpenFoodFactsRateLimited("x"), RAW_OFF_PRODUCT],
+        ):
+            attempted = off_refresh_worker.run(sleep=sleeps.append)
+        self.assertEqual(attempted, 1)
+        self.assertEqual(
+            sleeps,
+            [
+                off_refresh_worker.RATE_LIMITED_WAIT_SECONDS,
+                off_refresh_worker.SECONDS_BETWEEN_READS,
+            ],
+        )
+        self.food.refresh_from_db()
+        self.assertIsNotNone(self.food.off_synced_at)
+        self.assertFalse(off_refresh_worker.is_running())
+
+    def test_a_second_worker_does_nothing_while_one_holds_the_lock(self):
+        self._queue()
+        cache.set(off_refresh_worker.LOCK_KEY, True, 60)
+        try:
+            with (
+                mock.patch.object(openfoodfacts, "get_product") as mocked,
+                mock.patch.object(off_refresh_worker.subprocess, "Popen") as popen,
+            ):
+                self.assertEqual(off_refresh_worker.run(sleep=lambda s: None), 0)
+                off_refresh_worker.ensure_running()
+            mocked.assert_not_called()
+            popen.assert_not_called()
+        finally:
+            cache.delete(off_refresh_worker.LOCK_KEY)
+
+
+class FoodAdminSyncColumnsTests(TestCase):
+    def setUp(self):
+        User.objects.create_superuser(
+            username="admin", password="s3cret-pass", email="admin@example.com"
+        )
+        self.client.login(username="admin", password="s3cret-pass")
+        # Isolate from apps.nutrition.migrations' seeded template foods
+        # - see SuggestItemForCalorieBudgetTests' own setUp comment.
+        Food.objects.filter(owner__isnull=True).delete()
+        now = timezone.now()
+        self.never = make_food(None, name="Never food", off_id="1000000000001")
+        self.stale = make_food(None, name="Stale food", off_id="1000000000002")
+        self.fresh = make_food(None, name="Fresh food", off_id="1000000000003")
+        Food.objects.filter(pk=self.stale.pk).update(off_synced_at=now - timedelta(days=30))
+        Food.objects.filter(pk=self.fresh.pk).update(
+            off_synced_at=now - timedelta(days=1), price_refresh_requested_at=now
+        )
+
+    def _names(self, off_sync):
+        response = self.client.get(
+            reverse("admin:nutrition_food_changelist"), {"off_sync": off_sync}
+        )
+        return {food.name for food in response.context["cl"].result_list}
+
+    def test_sync_status_filter(self):
+        self.assertEqual(self._names("never"), {"Never food"})
+        self.assertEqual(self._names("stale"), {"Stale food"})
+        self.assertEqual(self._names("fresh"), {"Fresh food"})
+        self.assertEqual(self._names("queued"), {"Fresh food"})
+
+    def test_changelist_can_sort_by_last_sync_and_reports_the_queue(self):
+        response = self.client.get(reverse("admin:nutrition_food_changelist"))
+        self.assertContains(response, "Off synced at")
+        self.assertContains(response, "1 food is queued for an OpenFoodFacts refresh")
+        index = FoodAdmin.list_display.index("off_synced_at") + 1
+        response = self.client.get(
+            reverse("admin:nutrition_food_changelist"), {"o": f"-{index}", "off_sync": "stale"}
+        )
+        self.assertEqual(response.status_code, 200)
 
 
 class SearchFoodsTests(TestCase):

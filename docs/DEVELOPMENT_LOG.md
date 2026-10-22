@@ -6052,3 +6052,18 @@ nutrition in imperial units (module-wide), ruff DJ/UP/S/SIM, and the
 design-level items (authenticated media, Gravatar/OFF hotlinking, CSP
 `unsafe-eval`).
 
+## OpenFoodFacts refresh queue
+
+The admin "Refresh selected foods" actions only refreshed one minute's
+read budget (12 foods) and left the admin to re-select the rest, which
+didn't work for a large library. They now queue the selection on
+`Food.off_refresh_requested_at`/`price_refresh_requested_at` and start
+`manage.py refresh_off_queue` as a detached process
+(`apps/nutrition/off_refresh_worker.py`), which drains the queue at 6
+reads a minute, waits out rate limits instead of skipping, and exits
+when the queue is empty. The refresh functions got a
+`raise_on_rate_limit` flag (plus `open_prices.OpenPricesRateLimited`) so
+the worker can tell "not sent" from "no data", and save only the fields
+they change. The changelist shows both sync times (sortable), a sync
+status filter, the queue size and a cancel action.
+

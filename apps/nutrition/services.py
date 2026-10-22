@@ -9,6 +9,7 @@ they belong here rather than in a pure, DB-free module like
 apps.nutrition.energy/macros.
 """
 
+import logging
 import re
 from dataclasses import dataclass
 from decimal import Decimal, InvalidOperation
@@ -40,6 +41,8 @@ OPENFOODFACTS_STALENESS_DAYS = 14
 # barely change once published, but what it actually costs in a shop
 # does, far more often.
 OPEN_PRICES_STALENESS_DAYS = 7
+
+logger = logging.getLogger(__name__)
 
 
 @transaction.atomic
@@ -182,7 +185,7 @@ def _food_is_stale(food):
     return (timezone.now() - food.off_synced_at).days >= OPENFOODFACTS_STALENESS_DAYS
 
 
-def import_or_refresh_food_from_off(barcode, *, force=False):
+def import_or_refresh_food_from_off(barcode, *, force=False, raise_on_rate_limit=False):
     """Creates a shared (`owner=None`) `Food` row from OpenFoodFacts,
     or refreshes an existing one if it's gone stale - see
     docs/NUTRITION.md "OpenFoodFacts integration": staleness-triggered
@@ -195,7 +198,12 @@ def import_or_refresh_food_from_off(barcode, *, force=False):
     foods from OpenFoodFacts" action, an explicit admin-initiated
     request for specific rows, not a scheduled or unconditional
     bulk re-sync (still the thing this whole integration was
-    deliberately scoped away from - see the module docstring)."""
+    deliberately scoped away from - see the module docstring).
+
+    `raise_on_rate_limit=True` lets `OpenFoodFactsRateLimited` through
+    instead of quietly returning the stale row, so the background
+    refresh queue (process_next_queued_refresh) can wait and retry
+    rather than counting a request that was never sent as done."""
     if not OpenFoodFactsSettings.load().enabled:
         return None
 
@@ -205,6 +213,10 @@ def import_or_refresh_food_from_off(barcode, *, force=False):
 
     try:
         raw = openfoodfacts.get_product(barcode)
+    except openfoodfacts.OpenFoodFactsRateLimited:
+        if raise_on_rate_limit:
+            raise
+        return existing
     except openfoodfacts.OpenFoodFactsError:
         # A flaky third-party API must never break a lookup that
         # already has a (merely stale) local row to fall back on.
@@ -220,7 +232,9 @@ def import_or_refresh_food_from_off(barcode, *, force=False):
     if existing is not None:
         for field, value in parsed.items():
             setattr(existing, field, value)
-        existing.save()
+        # Only what OFF supplied, so a refresh can't overwrite a queue
+        # flag (price_refresh_requested_at) set in the meantime.
+        existing.save(update_fields=[*parsed, "updated_at"])
         return existing
     return Food.objects.create(owner=None, **parsed)
 
@@ -231,7 +245,7 @@ def _price_is_stale(food):
     return (timezone.now() - food.price_synced_at).days >= OPEN_PRICES_STALENESS_DAYS
 
 
-def refresh_food_price(food, *, force=False):
+def refresh_food_price(food, *, force=False, raise_on_rate_limit=False):
     """Refreshes `food`'s cached `price_amount`/`price_currency`/
     `price_sample_count` from Open Prices if they've gone stale - see
     docs/NUTRITION.md "Open Prices integration": lazy, on-demand
@@ -246,7 +260,8 @@ def refresh_food_price(food, *, force=False):
     `force=True` skips the staleness check and always re-fetches -
     used only by `apps.nutrition.admin.FoodAdmin`'s "Refresh selected
     foods' prices from Open Prices" action, an explicit admin-chosen
-    selection, never a scheduled or unconditional bulk re-sync."""
+    selection, never a scheduled or unconditional bulk re-sync.
+    `raise_on_rate_limit` as in import_or_refresh_food_from_off."""
     if food.off_id is None or not OpenFoodFactsSettings.load().enabled:
         return food
     if not force and not _price_is_stale(food):
@@ -254,6 +269,10 @@ def refresh_food_price(food, *, force=False):
 
     try:
         raw_prices = open_prices.get_prices_for_barcode(food.off_id)
+    except open_prices.OpenPricesRateLimited:
+        if raise_on_rate_limit:
+            raise
+        return food
     except open_prices.OpenPricesError:
         # A flaky third-party API must never break viewing a food
         # that already has a (merely stale) cached price to fall back on.
@@ -269,8 +288,100 @@ def refresh_food_price(food, *, force=False):
         food.price_amount = summary["amount"]
         food.price_currency = summary["currency"]
         food.price_sample_count = summary["sample_count"]
-    food.save()
+    food.save(
+        update_fields=[
+            "price_amount", "price_currency", "price_sample_count", "price_synced_at", "updated_at"
+        ]
+    )
     return food
+
+
+def queue_off_refresh(queryset, *, prices=False):
+    """Queue the OpenFoodFacts-imported foods in `queryset` for a
+    forced refresh (nutrition data, or Open Prices if `prices`) and
+    make sure the background worker is running. Returns how many were
+    queued. Any number of foods can be queued: the worker paces itself
+    to OFF's rate limit (apps.nutrition.off_refresh_worker), unlike a
+    refresh inside the admin request, which could only manage a
+    minute's budget at a time."""
+    from . import off_refresh_worker
+
+    field = "price_refresh_requested_at" if prices else "off_refresh_requested_at"
+    queued = (
+        queryset.exclude(off_id__isnull=True)
+        .exclude(off_id="")
+        .filter(**{f"{field}__isnull": True})
+        .update(**{field: timezone.now()})
+    )
+    if pending_off_refresh_count():
+        off_refresh_worker.ensure_running()
+    return queued
+
+
+def cancel_off_refresh(queryset):
+    """Drop `queryset`'s foods from both refresh queues; returns how
+    many were queued."""
+    queued = queryset.filter(
+        Q(off_refresh_requested_at__isnull=False) | Q(price_refresh_requested_at__isnull=False)
+    )
+    return queued.update(off_refresh_requested_at=None, price_refresh_requested_at=None)
+
+
+def pending_off_refresh_count():
+    return Food.objects.filter(
+        Q(off_refresh_requested_at__isnull=False) | Q(price_refresh_requested_at__isnull=False)
+    ).count()
+
+
+# process_next_queued_refresh's outcomes.
+REFRESH_DONE = "done"
+REFRESH_RATE_LIMITED = "rate_limited"
+REFRESH_QUEUE_EMPTY = "empty"
+
+
+def process_next_queued_refresh():
+    """Refresh the oldest queued food (nutrition data before prices).
+
+    The request is cleared once OFF has actually been asked - whether
+    it returned new data, nothing for that barcode, or an error - so a
+    dead barcode can't block the queue forever. A rate-limited attempt
+    sent nothing, so the food stays queued and REFRESH_RATE_LIMITED
+    tells the worker to wait."""
+    if not OpenFoodFactsSettings.load().enabled:
+        # Nothing would be sent anyway; leave the queue for when it's
+        # switched back on.
+        return REFRESH_QUEUE_EMPTY
+    food = (
+        Food.objects.filter(off_refresh_requested_at__isnull=False)
+        .order_by("off_refresh_requested_at", "pk")
+        .first()
+    )
+    if food is not None:
+        try:
+            import_or_refresh_food_from_off(food.off_id, force=True, raise_on_rate_limit=True)
+        except openfoodfacts.OpenFoodFactsRateLimited:
+            return REFRESH_RATE_LIMITED
+        except Exception:
+            # e.g. a product shape parse_product didn't expect - log it
+            # and move on rather than retrying the same row forever.
+            logger.exception("Refreshing food %s from Open Food Facts failed", food.pk)
+        Food.objects.filter(pk=food.pk).update(off_refresh_requested_at=None)
+        return REFRESH_DONE
+    food = (
+        Food.objects.filter(price_refresh_requested_at__isnull=False)
+        .order_by("price_refresh_requested_at", "pk")
+        .first()
+    )
+    if food is not None:
+        try:
+            refresh_food_price(food, force=True, raise_on_rate_limit=True)
+        except open_prices.OpenPricesRateLimited:
+            return REFRESH_RATE_LIMITED
+        except Exception:
+            logger.exception("Refreshing food %s's price from Open Prices failed", food.pk)
+        Food.objects.filter(pk=food.pk).update(price_refresh_requested_at=None)
+        return REFRESH_DONE
+    return REFRESH_QUEUE_EMPTY
 
 
 def _food_export_payload(food):
