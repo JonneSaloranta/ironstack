@@ -6166,3 +6166,37 @@ hook drops them. The two Swagger views were being listed as operations
 oasdiff calls the old-vs-new schema 95 breaking changes - all of them
 these corrections, not behaviour changes, which is why the first
 committed schema is the baseline rather than compared with anything.
+
+## UI/UX audit in a real browser
+
+A second whole-app audit, this time rendered: `apps/core/test_ui_audit_crawl.py`
+(opt-in, `UI_AUDIT=1`) seeds data and renders every page at
+320/390/768/1280/1680px in dark and light with axe-core, the layout check
+and screenshots. Results, fixes and what's deferred are in
+`docs/ui-ux/audit.md`. No page overflowed at any width. The real failures:
+the API key permission grid had 40 unnamed checkboxes, `.tag-muted` and the
+untracked type cards (opacity) failed AA contrast, a few small or spaced
+targets, empty table headers, the FABs outside any landmark, and the
+OpenFoodFacts attribution rendered in `<head>`. All fixed; the rules that
+came out of it are in `docs/UI_COMPONENTS.md`.
+
+## Set cycle time
+
+Only a set's completion is recorded, so `apps/workouts/set_timing.py`
+estimates the set cycle - the gap between two logged sets of one exercise -
+and a transition into each exercise's first set, from every user's
+completed workouts. Hard limits drop misfires, forgotten logs, edited
+times, supersets and warm-ups; Tukey's fences on the log of each group's
+gaps drop the rest of what's off the curve. Shown as "x ± y" on a program's
+workout card, in training mode (time left), on the exercise page (own and
+everyone's) and live on the add/edit-exercise form. Method and limits:
+docs/ANALYTICS.md "Set cycle time".
+
+## Meal slot names and the training-mode finish confirmation
+
+`MealSlot.__str__` returned the English name, and form widgets render from
+`str()`, so meal pickers stayed English in every language although the
+catalogs had the translations; built-in slots are now translated there.
+Training mode's Complete form was outside the HTMX-swapped panel, so its
+"sets left to log" confirmation was decided at page load and stayed after
+the last set; the finish forms now live in the panel.
