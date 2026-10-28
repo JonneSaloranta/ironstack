@@ -6140,3 +6140,29 @@ second request, rolls back the row it created (and any PRs) and answers
 it with the first response. The request hash covers method, path and
 parsed body; only 2xx responses are stored, and a user's keys older
 than 24 hours are cleared when they store a new one.
+
+## API versioning and a committed contract
+
+`/api/v1/` was only a fixed URL prefix: nothing defined what may change
+within it, and nothing noticed a field disappearing. Now the version is
+DRF `NamespaceVersioning` (the include's namespace in `config/urls.py`
+is `v1`, `request.version` is set everywhere; `app_name` stays `api`, so
+every `reverse("api:...")` kept working). The docs views opt out of it
+and name v1 explicitly. Each version's schema is committed as
+`docs/api/openapi-<version>.yaml` by `manage.py api_schema`, with
+`info.version` set to the API version rather than the app release so a
+release alone doesn't touch it; `--check` runs in CI and the tests. A
+CI job compares it with master's copy using oasdiff (official image,
+pinned by digest) and gates `publish-image`.
+
+Getting the schema clean enough to be a contract first: the viewsets'
+querysets need the request's user, so drf-spectacular couldn't type
+`{id}` and guessed string for 27 viewsets. `apps.api.urls.ApiRouter`
+now builds `<int:pk>` paths; with path converters drf-spectacular no
+longer skips the router's `{format}` duplicates, so a preprocessing
+hook drops them. The two Swagger views were being listed as operations
+(their overridden `get` lost the base class's `exclude=True`), and
+`total_duration_seconds` was typed string. `--fail-on-warn` now passes.
+oasdiff calls the old-vs-new schema 95 breaking changes - all of them
+these corrections, not behaviour changes, which is why the first
+committed schema is the baseline rather than compared with anything.

@@ -102,6 +102,14 @@ jobs:
       - name: Check for missing migrations
         run: python manage.py makemigrations --check --dry-run
 
+      # The committed OpenAPI contract (docs/api/openapi-v1.yaml,
+      # docs/API.md "Versioning") must match the code - an API change
+      # has to arrive with its regenerated schema, so it's reviewed as
+      # a diff. Also covered by the test suite; a step of its own so the
+      # failure says what to do.
+      - name: Check the committed API schema
+        run: python manage.py api_schema --check
+
       # Under coverage, reported in the run's summary - measured, not
       # enforced (no fail_under) until there's a baseline worth holding.
       - name: Test
@@ -110,6 +118,46 @@ jobs:
           coverage combine
           coverage report --format=markdown --skip-covered >> "$GITHUB_STEP_SUMMARY"
           coverage report | tail -1
+
+  # Within an API version only additions are allowed (docs/API.md
+  # "Versioning") - this compares every committed docs/api/openapi-*.yaml
+  # with master's copy, the contract clients are actually using, and
+  # fails on anything oasdiff classifies as breaking (a removed field,
+  # endpoint or enum value, a changed type, a new required parameter).
+  # On a push to master itself the previous master commit is the base.
+  # A version master doesn't have yet (a brand-new v2) has nothing to
+  # break. oasdiff runs from its official image pinned by digest, for
+  # the same reason the actions above are pinned by SHA.
+  api-compatibility:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          fetch-depth: 0
+
+      - name: Check for breaking API changes
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          REF_NAME: ${{ github.ref_name }}
+          OASDIFF_IMAGE: tufin/oasdiff@sha256:82b1840a77335562bb11ce95f77ad31745a0c6f3a770929333ed1c5ef466e400 # v1.35.0
+        run: |
+          if [ "$EVENT_NAME" = "push" ] && [ "$REF_NAME" = "master" ]; then
+            base="HEAD^1"
+          else
+            base="origin/master"
+          fi
+          mkdir -p "$RUNNER_TEMP/base"
+          for schema in docs/api/openapi-*.yaml; do
+            name="$(basename "$schema")"
+            if ! git show "$base:$schema" > "$RUNNER_TEMP/base/$name" 2>/dev/null; then
+              echo "::notice::$schema is new compared with $base - nothing to break."
+              continue
+            fi
+            echo "Comparing $schema with $base"
+            docker run --rm -v "$RUNNER_TEMP/base:/base:ro" -v "$PWD:/work:ro" \
+              "$OASDIFF_IMAGE" breaking "/base/$name" "/work/$schema" --fail-on ERR
+          done
 
   # Real-browser accessibility checks (apps/core/test_accessibility.py,
   # axe-core via Playwright) - a separate job rather than folded into
@@ -185,8 +233,9 @@ jobs:
   # for a local build - this does the equivalent for the published one.
   publish-image:
     # accessibility too: an axe or browser regression mustn't ship as
-    # :latest just because the plain test suite was green.
-    needs: [lint-and-test, accessibility]
+    # :latest just because the plain test suite was green - nor a
+    # breaking API change (api-compatibility).
+    needs: [lint-and-test, accessibility, api-compatibility]
     if: github.event_name == 'push' && github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
     permissions:

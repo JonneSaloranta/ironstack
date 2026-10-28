@@ -32,7 +32,10 @@ urlpatterns = [
     path("analytics/", include("apps.analytics.urls")),
     path("nutrition/", include("apps.nutrition.urls")),
     path("stretching/", include("apps.stretching.urls")),
-    path("api/v1/", include("apps.api.urls")),
+    # The instance namespace is the API version (DRF NamespaceVersioning,
+    # docs/API.md "Versioning") - a v2 would be another include of an
+    # apps.api URLconf under "api/v2/" with namespace="v2".
+    path("api/v1/", include("apps.api.urls", namespace="v1")),
     path("api/keys/", include("apps.api.urls_web")),
     path("api/docs/", include("apps.api.urls_docs")),
     path("social/", include("apps.social.urls", namespace="social")),

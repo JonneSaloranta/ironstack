@@ -34,3 +34,14 @@ class ApiKeyAuthenticationScheme(OpenApiAuthenticationExtension):
                 "The raw secret is only ever shown once, at creation."
             ),
         }
+
+
+def drop_format_suffix_endpoints(endpoints, **kwargs):
+    """SPECTACULAR_SETTINGS["PREPROCESSING_HOOKS"]: leave the router's
+    `.json`-style format-suffix duplicates (`exercises{format}`) out of
+    the schema. They still resolve, as before; listing every operation
+    twice would only bloat the docs and the committed contract
+    (apps.api.schema). drf-spectacular skipped them on its own while the
+    router used regex paths - not since it uses typed `<int:pk>` ones
+    (apps.api.urls.ApiRouter)."""
+    return [endpoint for endpoint in endpoints if "{format}" not in endpoint[0]]

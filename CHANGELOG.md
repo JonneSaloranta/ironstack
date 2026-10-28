@@ -34,6 +34,15 @@ narrated summary of the same version.
 - API: logging a set, starting a session and adding an exercise accept
   an `Idempotency-Key` header, so a retried request on a bad connection
   never logs the same thing twice.
+- API versioning rules: within `/api/v1/` only additions are allowed.
+  The OpenAPI schema is committed as `docs/api/openapi-v1.yaml`, and CI
+  fails on a breaking API change. See docs/API.md "Versioning".
+
+### Changed
+- API schema: ids in URLs are integers (a non-numeric id is a 404, as
+  before), `total_duration_seconds` is documented as a number, and the
+  docs pages are no longer listed as API operations. The responses
+  themselves are unchanged.
 
 ### Fixed
 - Deleting or correcting a logged set (or deleting a workout) now

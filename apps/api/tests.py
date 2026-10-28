@@ -1,3 +1,4 @@
+import io
 from datetime import timedelta
 from decimal import Decimal
 
@@ -1880,6 +1881,10 @@ class InteractiveDocsTests(TestCase):
         # unauthenticated or guessing wrong.
         self.assertIn("ApiKeyAuth", body)
         self.assertIn("bearer", body)
+        # The docs views opt out of NamespaceVersioning and name v1
+        # themselves (apps.api.views_docs.SchemaView) - without that the
+        # schema came back with no operations at all.
+        self.assertIn("/api/v1/sets/", body)
 
 
 class StretchingEndpointTests(APITestCase):
@@ -2109,3 +2114,49 @@ class ShoppingListEndpointTests(APITestCase):
         )
         self.assertEqual(response.status_code, 403)
         self.assertFalse(self.plan.shopping_days.exists())
+
+
+class ApiVersioningTests(APITestCase):
+    """docs/API.md "Versioning" - the version is part of the URL, every
+    API view knows it, and the committed contract matches the code."""
+
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        _api_key, self.raw_secret = _create_key(self.alice)
+
+    def test_urls_are_under_the_version(self):
+        self.assertTrue(reverse("api:exercise-list").startswith("/api/v1/"))
+
+    def test_views_know_their_version(self):
+        response = self.client.get(
+            reverse("api:profile"), HTTP_AUTHORIZATION=f"Bearer {self.raw_secret}"
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.renderer_context["request"].version, "v1")
+
+    def test_an_unknown_version_is_a_404(self):
+        response = self.client.get(
+            "/api/v2/profile/", HTTP_AUTHORIZATION=f"Bearer {self.raw_secret}"
+        )
+        self.assertEqual(response.status_code, 404)
+
+    def test_every_served_version_has_a_committed_schema(self):
+        from django.conf import settings
+
+        from apps.api import schema
+
+        self.assertEqual(schema.VERSIONS, settings.REST_FRAMEWORK["ALLOWED_VERSIONS"])
+
+    def test_the_committed_schema_matches_the_code(self):
+        # Fails whenever what a client sees changes - run
+        # `python manage.py api_schema`, then review the diff of
+        # docs/api/openapi-v1.yaml: in v1 only additions are allowed.
+        from django.core.management import call_command
+
+        call_command("api_schema", "--check", stdout=io.StringIO())
+
+    def test_ids_in_urls_are_integers(self):
+        response = self.client.get(
+            "/api/v1/exercises/abc/", HTTP_AUTHORIZATION=f"Bearer {self.raw_secret}"
+        )
+        self.assertEqual(response.status_code, 404)

@@ -558,7 +558,7 @@ class TrainingSummarySerializer(serializers.Serializer):
     total_duration_seconds = serializers.SerializerMethodField()
     total_volume = serializers.DecimalField(max_digits=12, decimal_places=2)
 
-    def get_total_duration_seconds(self, obj):
+    def get_total_duration_seconds(self, obj) -> float:
         return obj.total_duration.total_seconds()
 
 

@@ -349,6 +349,13 @@ server-rendered web views already call - see `docs/API.md`'s own
 "Endpoints" section for concrete examples (set logging, PR detection,
 ownership scoping) of what that means in practice.
 
+The API is versioned separately from the app (`/api/v1/`, DRF
+`NamespaceVersioning`): an app release never changes what a v1 client
+sees except by adding to it. Its contract is the committed
+`docs/api/openapi-v1.yaml`, kept in step by `manage.py api_schema` and
+guarded in CI by a schema check and an oasdiff breaking-change job -
+see `docs/API.md` "Versioning".
+
 ## Admin site
 
 Django's own admin (`/admin/`) is used as-is for staff/superuser
