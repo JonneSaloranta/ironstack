@@ -510,6 +510,22 @@ class PersonalRecordSerializer(serializers.ModelSerializer):
 # --------------------------------------------------------------------
 
 
+class UpNextProgramSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Program
+        fields = ["id", "name", "is_continuous"]
+
+
+class UpNextSerializer(serializers.Serializer):
+    """apps.workouts.services.UpNext - every field null when there's
+    nothing next (no program trained from yet), so the shape never
+    changes."""
+
+    program = UpNextProgramSerializer(allow_null=True)
+    workout = WorkoutSerializer(allow_null=True)
+    day = serializers.DateField(allow_null=True)
+
+
 class TrainingSummarySerializer(serializers.Serializer):
     session_count = serializers.IntegerField()
     total_duration_seconds = serializers.SerializerMethodField()

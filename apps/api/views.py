@@ -87,6 +87,7 @@ from .serializers import (
     StretchSerializer,
     StretchSessionSerializer,
     TrainingSummarySerializer,
+    UpNextSerializer,
     WorkoutSerializer,
     WorkoutSessionSerializer,
 )
@@ -446,6 +447,28 @@ class PersonalRecordViewSet(
 # --------------------------------------------------------------------
 # Analytics (read-only aggregates - no backing model of their own)
 # --------------------------------------------------------------------
+
+
+class UpNextView(APIView):
+    """The program and workout the dashboard offers next
+    (apps.workouts.services.up_next, issue #16): `day` is the date a
+    weekly program's workout is scheduled for, null for a continuous
+    one. All three fields are null before the user has completed a
+    workout from a program. Unlike the dashboard, this answers even
+    while a session is in progress - `sessions/?status=in_progress`
+    tells a client that. Only a suggestion: any workout can be
+    started."""
+
+    api_context = ApiContext.PROGRAMS
+
+    # See TrainingSummaryView's own comment below for why this is here.
+    @extend_schema(responses=UpNextSerializer)
+    def get(self, request):
+        upcoming = workout_services.up_next(request.user, timezone.localdate())
+        data = {"program": None, "workout": None, "day": None}
+        if upcoming is not None:
+            data = {"program": upcoming.program, "workout": upcoming.workout, "day": upcoming.day}
+        return Response(UpNextSerializer(data, context={"request": request}).data)
 
 
 class TrainingSummaryView(APIView):

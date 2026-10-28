@@ -26,6 +26,7 @@ narrated summary of the same version.
 - API: exercises can be searched by name (in your own language too) and
   fetched by a list of ids, and every list takes `?page_size=` (up to
   100).
+- API: `up-next/` returns the "Up next" workout the dashboard offers.
 
 ### Fixed
 - Deleting or correcting a logged set (or deleting a workout) now

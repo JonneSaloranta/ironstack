@@ -206,7 +206,7 @@ not refused).
 |---|---|
 | profile | `GET`/`PATCH` `profile/` (singleton - no id; `username` and `email` are read-only - an API key must not be able to redirect password resets) |
 | exercises | `exercises/` (`?search=<text>` matches the name, also as translated to your language; `?ids=1,2,3` fetches a known set), `exercises/<id>/`, `muscle-groups/` (read-only), `equipment/` (read-only) |
-| programs | `programs/`, `programs/<id>/`, `workouts/`, `workouts/<id>/`, `prescriptions/`, `prescriptions/<id>/` (each prescription, nested or not, carries a read-only `exercise_name`) |
+| programs | `programs/`, `programs/<id>/`, `workouts/`, `workouts/<id>/`, `prescriptions/`, `prescriptions/<id>/` (each prescription, nested or not, carries a read-only `exercise_name`), `up-next/` (`GET` - the dashboard's "Up next": `program`, `workout` and the `day` a weekly program schedules it for, all null before the user has completed a workout from a program; answers even while a session is in progress) |
 | workouts | `sessions/`, `sessions/<id>/` (create = start; `PATCH status` to `completed`/`abandoned` = end; the list takes `?status=planned\|in_progress\|completed\|abandoned`, `?started_after=` (inclusive) and `?started_before=` (exclusive), each an ISO 8601 datetime or a date meaning its midnight in the server's time zone), `performed-exercises/` (create + read only), `sets/`, `sets/<id>/` |
 | measurements | `measurement-types/`, `measurement-types/<id>/`, `measurements/`, `measurements/<id>/` |
 | activities | `activity-types/`, `activity-types/<id>/`, `activities/`, `activities/<id>/` |

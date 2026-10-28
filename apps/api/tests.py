@@ -705,6 +705,50 @@ class ExercisePrescriptionOwnershipTests(APITestCase):
         self.assertEqual(detail.data["exercise_name"], "System Bench")
 
 
+class UpNextEndpointTests(APITestCase):
+    """Issue #16 - the dashboard's "Up next" workout, for a client."""
+
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        self.program = Program.objects.create(
+            owner=self.alice, name="Rotation", is_continuous=True
+        )
+        self.day_a = Workout.objects.create(program=self.program, name="A", order=0)
+        self.day_b = Workout.objects.create(program=self.program, name="B", order=1)
+
+    def _get(self, **permission_overrides):
+        _api_key, raw_secret = _create_key(self.alice, **permission_overrides)
+        return self.client.get(reverse("api:up-next"), HTTP_AUTHORIZATION=f"Bearer {raw_secret}")
+
+    def test_nothing_next_before_training_from_a_program(self):
+        response = self._get()
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data, {"program": None, "workout": None, "day": None})
+
+    def test_the_workout_after_the_last_completed_one(self):
+        session = workout_services.start_session(self.alice, workout=self.day_a)
+        workout_services.complete_session(session)
+
+        response = self._get()
+
+        self.assertEqual(response.data["program"]["id"], self.program.pk)
+        self.assertEqual(response.data["program"]["name"], "Rotation")
+        self.assertEqual(response.data["workout"]["id"], self.day_b.pk)
+        self.assertEqual(response.data["workout"]["name"], "B")
+        self.assertIsNone(response.data["day"])
+
+    def test_needs_programs_read_permission(self):
+        response = self._get(
+            programs={
+                "can_create": False,
+                "can_read": False,
+                "can_update": False,
+                "can_delete": False,
+            }
+        )
+        self.assertEqual(response.status_code, 403)
+
+
 class ExerciseListQueryTests(APITestCase):
     """Issue #18 - an exercise picker shouldn't need one request per
     page of the whole library."""
