@@ -700,6 +700,22 @@ class TrainingModeViewTests(TestCase):
         self.assertTrue(response.context["all_done"])
         self.assertContains(response, "All exercises done for today.")
 
+    def test_finish_confirmation_goes_away_once_the_last_set_is_logged(self):
+        # Regression: the Complete form sat outside the HTMX-swapped panel,
+        # so it kept the "sets left to log" confirmation from page load.
+        session, performed = self.session, self.performed
+        for _ in range(performed.set_count - 1):
+            services.log_set(performed, weight=Decimal("100"), reps=5)
+        page = self.client.get(reverse("workouts:session-train", args=[session.pk]))
+        self.assertContains(page, "Some exercises still have sets left to log.")
+        swap = self.client.post(
+            reverse("workouts:train-set-log", args=[performed.pk]),
+            {"weight": "100", "reps": "5"},
+            HTTP_HX_REQUEST="true",
+        )
+        self.assertContains(swap, reverse("workouts:session-complete", args=[session.pk]))
+        self.assertNotContains(swap, "Some exercises still have sets left to log.")
+
     def test_a_validation_error_keeps_the_same_exercise_and_logs_nothing(self):
         response = self.client.post(
             reverse("workouts:train-set-log", args=[self.performed.pk]),

@@ -102,5 +102,19 @@
   {% include "core/_empty_state.html" with message=_("No exercises yet.") cta_url=empty_cta_url cta_label=_("Add exercise") %}
 {% endif %}
 
+{% comment %}
+Inside the panel, not after it on session_train.html: logging a set
+swaps only #train-panel, so a form outside it kept the "sets left to
+log" confirmation from page load even after the last set was logged.
+{% endcomment %}
+<form method="post" action="{% url 'workouts:session-complete' session.pk %}"{% if not all_done %} data-confirm="{% filter force_escape %}{% trans "Complete this workout? Some exercises still have sets left to log." %}{% endfilter %}"{% endif %}>
+  {% csrf_token %}
+  <button type="submit">{% trans "Complete workout" %}</button>
+</form>
+<form method="post" action="{% url 'workouts:session-abandon' session.pk %}" data-confirm="{% filter force_escape %}{% trans "Abandon this workout? It stays in your history as abandoned." %}{% endfilter %}">
+  {% csrf_token %}
+  <button type="submit" class="button-danger">{% trans "Abandon workout" %}</button>
+</form>
+
 </div>
 {% include "records/_pr_toasts.html" %}

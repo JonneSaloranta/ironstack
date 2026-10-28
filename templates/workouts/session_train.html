@@ -45,15 +45,6 @@ manually with the presets below.
 </div>
 
 {% include "workouts/_train_panel.html" %}
-
-<form method="post" action="{% url 'workouts:session-complete' session.pk %}"{% if not all_done %} data-confirm="{% filter force_escape %}{% trans "Complete this workout? Some exercises still have sets left to log." %}{% endfilter %}"{% endif %}>
-  {% csrf_token %}
-  <button type="submit">{% trans "Complete workout" %}</button>
-</form>
-<form method="post" action="{% url 'workouts:session-abandon' session.pk %}" data-confirm="{% filter force_escape %}{% trans "Abandon this workout? It stays in your history as abandoned." %}{% endfilter %}">
-  {% csrf_token %}
-  <button type="submit" class="button-danger">{% trans "Abandon workout" %}</button>
-</form>
 {% endblock %}
 
 {% block extra_scripts %}
