@@ -102,6 +102,25 @@ class MealSlotSeedTests(TestCase):
         with self.assertRaises(IntegrityError), transaction.atomic():
             MealSlot.objects.create(name="Breakfast", owner=None)
 
+    def test_built_in_slots_are_translated_wherever_they_are_shown(self):
+        # Regression: str() - what form widgets render - returned the raw
+        # English name, so the recipe/diet plan/diary meal pickers stayed
+        # "Breakfast/Lunch/Dinner" in every language.
+        alice = User.objects.create_user(
+            username="alice", password="s3cret-pass", language="fi", language_chosen=True,
+            onboarding_completed=True,
+        )
+        custom = MealSlot.objects.create(name="Lunch", owner=alice)
+        with translation_override("fi"):
+            self.assertEqual(str(MealSlot.objects.get(name="Breakfast", owner=None)), "Aamiainen")
+            self.assertEqual(str(custom), "Lunch")
+        self.client.login(username="alice", password="s3cret-pass")
+        for url_name in ("nutrition:recipe-create", "nutrition:diet-plan-create"):
+            with self.subTest(url_name=url_name):
+                response = self.client.get(reverse(url_name))
+                self.assertContains(response, "Aamiainen</label>")
+                self.assertNotContains(response, "Breakfast</label>")
+
     def test_is_custom_reflects_ownership(self):
         alice = User.objects.create_user(username="alice", password="s3cret-pass")
         custom = MealSlot.objects.create(name="Pre-workout", owner=alice)
