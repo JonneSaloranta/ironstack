@@ -27,6 +27,13 @@ narrated summary of the same version.
   fetched by a list of ids, and every list takes `?page_size=` (up to
   100).
 - API: `up-next/` returns the "Up next" workout the dashboard offers.
+- API: `exercises/<id>/last-performance/` returns the sets you did last
+  time for an exercise.
+- API: `performed-exercises/<id>/suggestion/` returns the same
+  explainable weight suggestion the app shows when logging a set.
+- API: logging a set, starting a session and adding an exercise accept
+  an `Idempotency-Key` header, so a retried request on a bad connection
+  never logs the same thing twice.
 
 ### Fixed
 - Deleting or correcting a logged set (or deleting a workout) now

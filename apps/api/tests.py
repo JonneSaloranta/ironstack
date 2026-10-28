@@ -1,8 +1,10 @@
+from datetime import timedelta
 from decimal import Decimal
 
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse
+from django.utils import timezone
 from rest_framework.test import APITestCase
 
 from apps.exercises.models import Exercise
@@ -747,6 +749,256 @@ class UpNextEndpointTests(APITestCase):
             }
         )
         self.assertEqual(response.status_code, 403)
+
+
+class IdempotencyKeyTests(APITestCase):
+    """Issue #22 - a retried write must not log the same set twice."""
+
+    def setUp(self):
+        from apps.workouts.models import ExerciseSet
+
+        self.ExerciseSet = ExerciseSet
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        self.exercise = Exercise.objects.create(name="API Test Squat", owner=None)
+        session = workout_services.start_session(self.alice, workout=None)
+        self.performed = workout_services.add_performed_exercise(session, self.exercise)
+        _api_key, self.raw_secret = _create_key(self.alice)
+
+    def _post_set(self, key=None, weight="100.00", secret=None):
+        headers = {"HTTP_AUTHORIZATION": f"Bearer {secret or self.raw_secret}"}
+        if key is not None:
+            headers["HTTP_IDEMPOTENCY_KEY"] = key
+        return self.client.post(
+            reverse("api:set-list"),
+            {"performed_exercise": self.performed.pk, "weight": weight, "reps": 5},
+            format="json",
+            **headers,
+        )
+
+    def test_a_retry_with_the_same_key_gets_the_first_response(self):
+        first = self._post_set("3f0c6a52")
+        retry = self._post_set("3f0c6a52")
+
+        self.assertEqual(first.status_code, 201)
+        self.assertEqual(retry.status_code, 201)
+        self.assertEqual(retry.data, first.data)
+        self.assertEqual(retry["Idempotent-Replayed"], "true")
+        self.assertEqual(self.ExerciseSet.objects.count(), 1)
+
+    def test_without_a_key_every_request_creates(self):
+        self._post_set()
+        self._post_set()
+        self.assertEqual(self.ExerciseSet.objects.count(), 2)
+
+    def test_different_keys_create_separately(self):
+        self._post_set("a")
+        self._post_set("b")
+        self.assertEqual(self.ExerciseSet.objects.count(), 2)
+
+    def test_the_same_key_for_a_different_request_is_refused(self):
+        self._post_set("3f0c6a52")
+        response = self._post_set("3f0c6a52", weight="120.00")
+        self.assertEqual(response.status_code, 422)
+        self.assertEqual(self.ExerciseSet.objects.count(), 1)
+
+    def test_keys_are_per_user(self):
+        from apps.api.models import IdempotencyKey
+
+        self._post_set("shared")
+        bob = User.objects.create_user(username="bob", password="s3cret-pass")
+        _bob_key, bob_secret = _create_key(bob)
+        response = self._post_set("shared", secret=bob_secret)
+        # Bob can't log on Alice's exercise, but his key is his own: his
+        # request ran (and failed) instead of replaying Alice's response.
+        self.assertEqual(response.status_code, 400)
+        self.assertFalse(IdempotencyKey.objects.filter(user=bob).exists())
+
+    def test_a_failed_request_is_not_remembered(self):
+        failed = self._post_set("3f0c6a52", weight="not a number")
+        retried = self._post_set("3f0c6a52")
+        self.assertEqual(failed.status_code, 400)
+        self.assertEqual(retried.status_code, 201)
+        self.assertEqual(self.ExerciseSet.objects.count(), 1)
+
+    def test_an_expired_key_runs_the_request_again(self):
+        from apps.api.idempotency import KEY_LIFETIME
+        from apps.api.models import IdempotencyKey
+
+        self._post_set("3f0c6a52")
+        IdempotencyKey.objects.update(created_at=timezone.now() - KEY_LIFETIME - timedelta(1))
+        response = self._post_set("3f0c6a52")
+
+        self.assertEqual(response.status_code, 201)
+        self.assertNotIn("Idempotent-Replayed", response)
+        self.assertEqual(self.ExerciseSet.objects.count(), 2)
+        self.assertEqual(IdempotencyKey.objects.count(), 1)
+
+    def test_the_same_key_arriving_twice_at_once_still_creates_once(self):
+        # The second request misses the stored key (both looked before
+        # either had stored it); the unique constraint then rolls its
+        # set back and it answers with the first request's response.
+        from unittest import mock
+
+        from django.db.models.query import QuerySet
+
+        from apps.api.models import IdempotencyKey
+
+        first = self._post_set("3f0c6a52")
+        original_first = QuerySet.first
+        missed = []
+
+        def first_missing_the_key_once(queryset):
+            if queryset.model is IdempotencyKey and not missed:
+                missed.append(True)
+                return None
+            return original_first(queryset)
+
+        with mock.patch.object(QuerySet, "first", first_missing_the_key_once):
+            retry = self._post_set("3f0c6a52")
+
+        self.assertTrue(missed)
+        self.assertEqual(retry.status_code, 201)
+        self.assertEqual(retry.data, first.data)
+        self.assertEqual(self.ExerciseSet.objects.count(), 1)
+
+    def test_an_overlong_key_is_a_400(self):
+        self.assertEqual(self._post_set("x" * 256).status_code, 400)
+
+    def test_sessions_and_performed_exercises_honour_it_too(self):
+        auth = {
+            "HTTP_AUTHORIZATION": f"Bearer {self.raw_secret}",
+            "HTTP_IDEMPOTENCY_KEY": "start-1",
+        }
+        first = self.client.post(reverse("api:session-list"), {}, format="json", **auth)
+        retry = self.client.post(reverse("api:session-list"), {}, format="json", **auth)
+        self.assertEqual(retry.data["id"], first.data["id"])
+
+        auth["HTTP_IDEMPOTENCY_KEY"] = "add-1"
+        body = {"session": first.data["id"], "exercise": self.exercise.pk}
+        url = reverse("api:performed-exercise-list")
+        first = self.client.post(url, body, format="json", **auth)
+        retry = self.client.post(url, body, format="json", **auth)
+        self.assertEqual(retry.data["id"], first.data["id"])
+
+
+class SuggestionEndpointTests(APITestCase):
+    """Issue #15 - the web's smart weight suggestion, for a client."""
+
+    def setUp(self):
+        from apps.programs.models import ExercisePrescription
+
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        self.exercise = Exercise.objects.create(name="API Test Bench", owner=None)
+        program = Program.objects.create(owner=self.alice, name="Program")
+        self.workout = Workout.objects.create(program=program, name="Day 1")
+        ExercisePrescription.objects.create(
+            workout=self.workout,
+            exercise=self.exercise,
+            set_count=3,
+            min_reps=5,
+            max_reps=5,
+            target_weight=Decimal("60"),
+            progression_method="linear",
+            weight_increment=Decimal("2.5"),
+        )
+        _api_key, self.raw_secret = _create_key(self.alice)
+
+    def _suggestion(self):
+        session = workout_services.start_session(self.alice, workout=self.workout)
+        performed = session.performed_exercises.get()
+        return self.client.get(
+            reverse("api:performed-exercise-suggestion", args=[performed.pk]),
+            HTTP_AUTHORIZATION=f"Bearer {self.raw_secret}",
+        )
+
+    def test_without_history_it_suggests_the_prescribed_target(self):
+        response = self._suggestion()
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data["weight"], "60.00")
+        self.assertEqual(response.data["min_reps"], 5)
+        self.assertEqual(response.data["method"], "linear")
+        self.assertEqual(response.data["action"], "insufficient_data")
+        self.assertEqual(response.data["confidence"], "low")
+        self.assertTrue(response.data["reason"])
+
+    def test_after_a_successful_session_it_adds_the_increment(self):
+        session = workout_services.start_session(self.alice, workout=self.workout)
+        performed = session.performed_exercises.get()
+        for _ in range(3):
+            workout_services.log_set(performed, weight=Decimal("60"), reps=5)
+        workout_services.complete_session(session)
+
+        response = self._suggestion()
+
+        self.assertEqual(response.data["weight"], "62.50")
+        self.assertEqual(response.data["action"], "increase")
+        self.assertEqual(response.data["confidence"], "medium")
+
+    def test_the_reason_is_in_the_users_language(self):
+        english = self._suggestion().data["reason"]
+        self.alice.language = "fi"
+        self.alice.save()
+        self.assertNotEqual(self._suggestion().data["reason"], english)
+
+    def test_no_prescription_means_no_suggestion(self):
+        session = workout_services.start_session(self.alice, workout=None)
+        performed = workout_services.add_performed_exercise(session, self.exercise)
+        response = self.client.get(
+            reverse("api:performed-exercise-suggestion", args=[performed.pk]),
+            HTTP_AUTHORIZATION=f"Bearer {self.raw_secret}",
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(set(response.data.values()), {None})
+
+
+class LastPerformanceEndpointTests(APITestCase):
+    """Issue #20 - "last time" for an exercise, across sessions."""
+
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="s3cret-pass")
+        self.exercise = Exercise.objects.create(name="API Test Press", owner=None)
+        _api_key, self.raw_secret = _create_key(self.alice)
+
+    def _get(self, exercise=None):
+        return self.client.get(
+            reverse("api:exercise-last-performance", args=[(exercise or self.exercise).pk]),
+            HTTP_AUTHORIZATION=f"Bearer {self.raw_secret}",
+        )
+
+    def _session(self, sets, complete=True):
+        session = workout_services.start_session(self.alice, workout=None)
+        performed = workout_services.add_performed_exercise(session, self.exercise)
+        for weight, reps, is_warmup in sets:
+            workout_services.log_set(
+                performed, weight=Decimal(weight), reps=reps, is_warmup=is_warmup
+            )
+        if complete:
+            workout_services.complete_session(session)
+        return session
+
+    def test_never_performed(self):
+        response = self._get()
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data, {"session": None, "started_at": None, "sets": []})
+
+    def test_the_most_recent_completed_session_with_sets(self):
+        self._session([("70", 5, False)])
+        latest = self._session([("40", 8, True), ("80", 5, False), ("80", 5, False)])
+        self._session([])  # completed, but nothing logged for it
+        self._session([("200", 1, False)], complete=False)  # still in progress
+
+        response = self._get()
+
+        self.assertEqual(response.data["session"], latest.pk)
+        self.assertEqual(
+            [(row["weight"], row["reps"], row["is_warmup"]) for row in response.data["sets"]],
+            [("40.00", 8, True), ("80.00", 5, False), ("80.00", 5, False)],
+        )
+
+    def test_another_users_private_exercise_is_a_404(self):
+        bob = User.objects.create_user(username="bob", password="s3cret-pass")
+        bobs = Exercise.objects.create(name="Bob's Lift", owner=bob)
+        self.assertEqual(self._get(bobs).status_code, 404)
 
 
 class ExerciseListQueryTests(APITestCase):

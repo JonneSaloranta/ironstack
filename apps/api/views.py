@@ -53,6 +53,8 @@ from apps.stretching.models import RoutineItem
 from apps.workouts import services as workout_services
 from apps.workouts.models import ExerciseSet, PerformedExercise, WorkoutSessionStatus
 
+from . import idempotency
+from .idempotency import IdempotentCreateMixin
 from .models import ApiContext
 from .serializers import (
     AchievementSerializer,
@@ -68,6 +70,7 @@ from .serializers import (
     ExerciseSerializer,
     ExerciseSetSerializer,
     FoodSerializer,
+    LastPerformanceSerializer,
     MealSlotSerializer,
     MeasurementTypeSerializer,
     MuscleGroupSerializer,
@@ -86,6 +89,7 @@ from .serializers import (
     StretchRoutineSerializer,
     StretchSerializer,
     StretchSessionSerializer,
+    SuggestionSerializer,
     TrainingSummarySerializer,
     UpNextSerializer,
     WorkoutSerializer,
@@ -252,6 +256,7 @@ def _query_datetime(request, name):
 
 
 @extend_schema_view(
+    create=extend_schema(parameters=[idempotency.SCHEMA_PARAMETER]),
     list=extend_schema(
         parameters=[
             OpenApiParameter("status", enum=WorkoutSessionStatus.values),
@@ -264,7 +269,7 @@ def _query_datetime(request, name):
         ]
     )
 )
-class WorkoutSessionViewSet(viewsets.ModelViewSet):
+class WorkoutSessionViewSet(IdempotentCreateMixin, viewsets.ModelViewSet):
     """`?status=` and `?started_after=`/`?started_before=` narrow the
     list (issue #17) - a client resuming after a restart finds the
     session in progress with one request instead of paging through
@@ -315,7 +320,9 @@ class WorkoutSessionViewSet(viewsets.ModelViewSet):
         records_services.rebuild_records_for_exercises(self.request.user, exercise_ids)
 
 
+@extend_schema_view(create=extend_schema(parameters=[idempotency.SCHEMA_PARAMETER]))
 class PerformedExerciseViewSet(
+    IdempotentCreateMixin,
     mixins.CreateModelMixin,
     mixins.ListModelMixin,
     mixins.RetrieveModelMixin,
@@ -336,8 +343,40 @@ class PerformedExerciseViewSet(
         exercise = serializer.validated_data["exercise"]
         serializer.instance = workout_services.add_performed_exercise(session, exercise)
 
+    @extend_schema(responses=SuggestionSerializer)
+    @action(detail=True, methods=["get"])
+    def suggestion(self, request, pk=None):
+        """The explainable weight suggestion the web shows when logging
+        a set (apps.progression.suggestions.suggest_weight, issue #15).
+        Only ever a default: nothing is logged until the client posts a
+        set the user confirmed."""
+        from apps.progression.suggestions import suggest_weight
 
-class ExerciseSetViewSet(viewsets.ModelViewSet):
+        performed = self.get_object()
+        empty = dict.fromkeys(SuggestionSerializer().fields)
+        if performed.prescription_id is None:
+            return Response(empty)
+        # The reason text is translated as it's built; an API key's
+        # request has no user language active yet (see ExerciseViewSet).
+        language = request.user.language
+        with translation.override(language) if language else nullcontext():
+            suggestion = suggest_weight(request.user, performed.prescription)
+            data = SuggestionSerializer(
+                {
+                    "suggested_weight": suggestion.suggested_weight,
+                    "target_min_reps": suggestion.target_min_reps,
+                    "target_max_reps": suggestion.target_max_reps,
+                    "method": performed.prescription.progression_method,
+                    "action": suggestion.action,
+                    "confidence": suggestion.confidence,
+                    "reason": suggestion.reason,
+                }
+            ).data
+        return Response(data)
+
+
+@extend_schema_view(create=extend_schema(parameters=[idempotency.SCHEMA_PARAMETER]))
+class ExerciseSetViewSet(IdempotentCreateMixin, viewsets.ModelViewSet):
     """The actual "log a set" endpoint - perform_create goes through
     apps.workouts.services.log_set (auto-numbers set_number, ignoring
     anything a caller sent for it) and then
@@ -447,6 +486,33 @@ class PersonalRecordViewSet(
 # --------------------------------------------------------------------
 # Analytics (read-only aggregates - no backing model of their own)
 # --------------------------------------------------------------------
+
+
+class LastPerformanceView(APIView):
+    """`exercises/<id>/last-performance/` (issue #20): the sets from the
+    user's most recent completed session that included the exercise
+    (apps.workouts.services.last_performance), warmups flagged - for
+    "last time: 3 x 5 @ 80 kg" or prefilling a new session's first set.
+    Workouts context, since it reads logged sets; 404 for an exercise
+    the user can't see, same as `exercises/<id>/`."""
+
+    api_context = ApiContext.WORKOUTS
+
+    # See TrainingSummaryView's own comment below for why this is here.
+    @extend_schema(responses=LastPerformanceSerializer)
+    def get(self, request, pk):
+        exercise = get_object_or_404(
+            exercise_services.visible_to(request.user, include_inactive=True), pk=pk
+        )
+        performed = workout_services.last_performance(request.user, exercise)
+        data = {"session": None, "started_at": None, "sets": []}
+        if performed is not None:
+            data = {
+                "session": performed.session_id,
+                "started_at": performed.session.started_at,
+                "sets": performed.sets.all(),
+            }
+        return Response(LastPerformanceSerializer(data, context={"request": request}).data)
 
 
 class UpNextView(APIView):

@@ -207,7 +207,7 @@ not refused).
 | profile | `GET`/`PATCH` `profile/` (singleton - no id; `username` and `email` are read-only - an API key must not be able to redirect password resets) |
 | exercises | `exercises/` (`?search=<text>` matches the name, also as translated to your language; `?ids=1,2,3` fetches a known set), `exercises/<id>/`, `muscle-groups/` (read-only), `equipment/` (read-only) |
 | programs | `programs/`, `programs/<id>/`, `workouts/`, `workouts/<id>/`, `prescriptions/`, `prescriptions/<id>/` (each prescription, nested or not, carries a read-only `exercise_name`), `up-next/` (`GET` - the dashboard's "Up next": `program`, `workout` and the `day` a weekly program schedules it for, all null before the user has completed a workout from a program; answers even while a session is in progress) |
-| workouts | `sessions/`, `sessions/<id>/` (create = start; `PATCH status` to `completed`/`abandoned` = end; the list takes `?status=planned\|in_progress\|completed\|abandoned`, `?started_after=` (inclusive) and `?started_before=` (exclusive), each an ISO 8601 datetime or a date meaning its midnight in the server's time zone), `performed-exercises/` (create + read only), `sets/`, `sets/<id>/` |
+| workouts | `exercises/<id>/last-performance/` (`GET` - the sets from the most recent completed session that included the exercise, warmups flagged; `session`/`started_at` null and `sets` empty if none), `sessions/`, `sessions/<id>/` (create = start; `PATCH status` to `completed`/`abandoned` = end; the list takes `?status=planned\|in_progress\|completed\|abandoned`, `?started_after=` (inclusive) and `?started_before=` (exclusive), each an ISO 8601 datetime or a date meaning its midnight in the server's time zone), `performed-exercises/` (create + read only), `performed-exercises/<id>/suggestion/` (`GET` - the smart weight suggestion the web shows when logging a set: `weight` in kg, `min_reps`/`max_reps`, the prescription's progression `method`, `action`, `confidence` and a plain-language `reason` in the user's language; every field null when no prescription is behind the exercise; only ever a default the user confirms), `sets/`, `sets/<id>/` |
 | measurements | `measurement-types/`, `measurement-types/<id>/`, `measurements/`, `measurements/<id>/` |
 | activities | `activity-types/`, `activity-types/<id>/`, `activities/`, `activities/<id>/` |
 | records | `records/`, `records/<id>/` (read-only, with `exercise_name`) |
@@ -311,6 +311,28 @@ their ingredients, with `food`, `food_name`, `unit` (`g`/`ml`/`piece`),
 `weekdays` (list of 0–6) and `include_shopping_day`; `PUT` replaces both,
 `PATCH` changes whichever is given. Both need the `nutrition` context -
 read for `GET`, update for `PUT`/`PATCH`.
+
+## Retrying writes
+
+A client on a bad connection retries a write until it gets an answer -
+but if the first attempt reached the server and only the response was
+lost, the retry would log the same set twice. `POST sets/`,
+`POST sessions/` and `POST performed-exercises/` therefore accept an
+optional `Idempotency-Key` header (1-255 characters; one random value,
+e.g. a UUID, per queued write, sent unchanged with every retry of it).
+
+- The first request with a key runs normally; a successful (2xx)
+  response is stored for that key and user (`apps.api.models.
+  IdempotencyKey`, `apps.api.idempotency`).
+- A repeat with the same key and the same method, path and body gets
+  that stored response back, with an `Idempotent-Replayed: true` header,
+  and creates nothing. Two requests with the same key at the same
+  moment still create only one row.
+- The same key with a different request is refused with `422`.
+- A failed request (4xx/5xx) isn't stored, so retrying it with the same
+  key simply runs it again.
+- Keys are remembered for 24 hours, then forgotten. Without the header a
+  request behaves exactly as before.
 
 ## What's deliberately not here
 
